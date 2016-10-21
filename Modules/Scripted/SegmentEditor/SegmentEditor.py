@@ -139,6 +139,20 @@ class SegmentEditorWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
   def cleanup(self):
     self.removeObservers()
 
+  def switchSegment(self, segmentIndexOffset = 1):
+    """Select previous/next visible segment"""
+    currentSegmentId = self.editor.currentSegmentID()
+    visibleSegmentIds = vtk.vtkStringArray()
+    self.editor.segmentationNode().GetDisplayNode().GetVisibleSegmentIDs(visibleSegmentIds)
+    for segmentIndex in range(visibleSegmentIds.GetNumberOfValues()):
+      segmentId = visibleSegmentIds.GetValue(segmentIndex)
+      if segmentId == currentSegmentId:
+        newSegmentIndex = segmentIndex + segmentIndexOffset
+        if newSegmentIndex>=0 and newSegmentIndex<visibleSegmentIds.GetNumberOfValues():
+          newSegmentId = visibleSegmentIds.GetValue(newSegmentIndex)
+          self.editor.setCurrentSegmentID(newSegmentId)
+        return
+
   def installShortcutKeys(self):
     """Turn on editor-wide shortcuts.  These are active independent
     of the currently selected effect."""
@@ -147,16 +161,25 @@ class SegmentEditorWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     Key_Space = 0x20 # not in PythonQt
     self.shortcuts = []
     keysAndCallbacks = (
-      # ('z', self.toolsBox.undoRedo.undo),
-      # ('y', self.toolsBox.undoRedo.redo),
+      ('z', self.editor.undo),
+      ('y', self.editor.redo),
       ('h', self.toggleCrosshair),
       (Key_Escape, lambda : self.editor.setActiveEffect(None)),
-      ('e', lambda : self.editor.setActiveEffect(self.editor.effectByName('Erase'))),
-      ('p', lambda : self.editor.setActiveEffect(self.editor.effectByName('Paint'))),
-      ('d', lambda : self.editor.setActiveEffect(self.editor.effectByName('Draw'))),
-      ('w', lambda : self.editor.setActiveEffect(self.editor.effectByName('Wand'))),
-      ('r', lambda : self.editor.setActiveEffect(self.editor.effectByName('Rectangle'))),
-      # (Key_Space, self.toolsBox.toggleFloatingMode),
+      ('0', lambda : self.editor.setActiveEffect(None)),
+      ('1', lambda : self.editor.setActiveEffect(self.editor.effectByName('Paint'))),
+      ('2', lambda : self.editor.setActiveEffect(self.editor.effectByName('Draw'))),
+      ('3', lambda : self.editor.setActiveEffect(self.editor.effectByName('Erase'))),
+      ('4', lambda : self.editor.setActiveEffect(self.editor.effectByName('LevelTracing'))),
+      ('5', lambda : self.editor.setActiveEffect(self.editor.effectByName('Auto-complete'))),
+      ('6', lambda : self.editor.setActiveEffect(self.editor.effectByName('Threshold'))),
+      ('q', lambda : self.switchSegment(-1)), # near effect selector numbers on a regular keyboard
+      ('w', lambda : self.switchSegment(+1)), # near effect selector numbers on a regular keyboard
+      ('/', lambda : self.switchSegment(-1)), # available on the numpad
+      ('*', lambda : self.switchSegment(+1)), # available on the numpad
+      (',', lambda : self.switchSegment(-1)), # commonly used in other applications
+      ('.', lambda : self.switchSegment(+1)), # commonly used in other applications
+      ('<', lambda : self.switchSegment(-1)), # commonly used in other applications
+      ('>', lambda : self.switchSegment(+1)), # commonly used in other applications
       )
     for key,callback in keysAndCallbacks:
       shortcut = qt.QShortcut(slicer.util.mainWindow())

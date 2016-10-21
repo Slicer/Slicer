@@ -139,6 +139,9 @@ void qMRMLSegmentsTableViewPrivate::init()
   // Select rows
   this->SegmentsTable->setSelectionBehavior(QAbstractItemView::SelectRows);
 
+  // Change edit triggers so that starting typing does not rename the segment
+  this->SegmentsTable->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
+
   // Make connections
   QObject::connect(this->SegmentsTable, SIGNAL(itemChanged(QTableWidgetItem*)),
                    q, SLOT(onSegmentTableItemChanged(QTableWidgetItem*)));
@@ -153,6 +156,7 @@ void qMRMLSegmentsTableViewPrivate::init()
   //this->SegmentsTable->setItemDelegateForColumn(this->columnIndex("Opacity"), new qMRMLDoubleSpinBoxDelegate(this->SegmentsTable));
 
   this->SegmentsTable->installEventFilter(q);
+
 }
 
 //-----------------------------------------------------------------------------

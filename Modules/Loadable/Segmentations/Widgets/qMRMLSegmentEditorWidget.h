@@ -85,6 +85,7 @@ public:
 
   /// Get segment ID of selected segment
   Q_INVOKABLE QString currentSegmentID()const;
+  Q_INVOKABLE void setCurrentSegmentID(const QString segmentID);
 
   /// Return active effect if selected, NULL otherwise
   /// \sa m_ActiveEffect, setActiveEffect()
@@ -161,6 +162,12 @@ public slots:
   /// Set amximum number of saved undo/redo states.
   void setMaximumNumberOfUndoStates(int);
 
+  /// Restores previous saved state of the segmentation
+  void undo();
+
+  /// Restores next saved state of the segmentation
+  void redo();
+
 protected slots:
   /// Handles changing of current segmentation MRML node
   Q_INVOKABLE void onSegmentationNodeChanged(vtkMRMLNode* node);
@@ -201,12 +208,6 @@ protected slots:
 
   /// Sets default parameters in parameter set node (after setting or closing scene)
   void initializeParameterSetNode();
-
-  /// Restores previous saved state of the segmentation
-  void onUndo();
-
-  /// Restores next saved state of the segmentation
-  void onRedo();
 
   /// Updates GUI if segmentation history is changed (e.g., undo/redo button states)
   void onSegmentationHistoryChanged();

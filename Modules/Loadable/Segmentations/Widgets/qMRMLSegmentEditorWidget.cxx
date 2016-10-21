@@ -313,8 +313,8 @@ void qMRMLSegmentEditorWidgetPrivate::init()
   QObject::connect( this->MasterVolumeIntensityMaskRangeWidget, SIGNAL(valuesChanged(double,double)), q, SLOT(onMasterVolumeIntensityMaskRangeChanged(double,double)));
   QObject::connect( this->OverwriteModeComboBox, SIGNAL(currentIndexChanged(int)), q, SLOT(onOverwriteModeChanged(int)));
 
-  QObject::connect( this->UndoButton, SIGNAL(clicked()), q, SLOT(onUndo()));
-  QObject::connect( this->RedoButton, SIGNAL(clicked()), q, SLOT(onRedo()));
+  QObject::connect( this->UndoButton, SIGNAL(clicked()), q, SLOT(undo()));
+  QObject::connect( this->RedoButton, SIGNAL(clicked()), q, SLOT(redo()));
 
   q->qvtkConnect(this->SegmentationHistory, vtkCommand::ModifiedEvent,
     q, SLOT(onSegmentationHistoryChanged()));
@@ -1597,14 +1597,11 @@ void qMRMLSegmentEditorWidget::onSegmentSelectionChanged(const QItemSelection &s
 
   QStringList selectedSegmentIDs = d->SegmentsTableView->selectedSegmentIDs();
   d->RemoveSegmentButton->setEnabled(selectedSegmentIDs.count() > 0);
-  if (selectedSegmentIDs.size() > 1)
-    {
-    qCritical() << Q_FUNC_INFO << ": One segment should be selected!";
-    return;
-    }
 
   // If selection did not change, then return
   QString currentSegmentID(d->ParameterSetNode->GetSelectedSegmentID());
+  // Only the first selected segment is used (if multiple segments are selected then the others
+  // are ignored; multi-select may be added in the future).
   QString selectedSegmentID(selectedSegmentIDs.isEmpty() ? QString() : selectedSegmentIDs[0]);
   if (!currentSegmentID.compare(selectedSegmentID))
     {
@@ -1631,6 +1628,16 @@ void qMRMLSegmentEditorWidget::onSegmentSelectionChanged(const QItemSelection &s
 
   // Only enable remove button if a segment is selected
   d->RemoveSegmentButton->setEnabled(!selectedSegmentID.isEmpty());
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::setCurrentSegmentID(const QString segmentID)
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  if (d->ParameterSetNode)
+    {
+    d->ParameterSetNode->SetSelectedSegmentID(segmentID.toLatin1().constData());
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -2292,7 +2299,7 @@ void qMRMLSegmentEditorWidget::setMaximumNumberOfUndoStates(int maxNumberOfState
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSegmentEditorWidget::onUndo()
+void qMRMLSegmentEditorWidget::undo()
 {
   Q_D(qMRMLSegmentEditorWidget);
   if (d->SegmentationNode == NULL)
@@ -2303,7 +2310,7 @@ void qMRMLSegmentEditorWidget::onUndo()
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSegmentEditorWidget::onRedo()
+void qMRMLSegmentEditorWidget::redo()
 {
   Q_D(qMRMLSegmentEditorWidget);
   d->SegmentationHistory->RestoreNextState();
