@@ -343,6 +343,7 @@ a complete segmentation, taking into account the master volume content. Minimum 
       self.mergedLabelmapGeometryImage.SetExtent(labelsExpandedExtent)
 
       previewNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLSegmentationNode')
+      previewNode.UnRegister(None)
       previewNode = slicer.mrmlScene.AddNode(previewNode)
       previewNode.CreateDefaultDisplayNodes()
       previewNode.GetDisplayNode().SetVisibility2DOutline(False)
