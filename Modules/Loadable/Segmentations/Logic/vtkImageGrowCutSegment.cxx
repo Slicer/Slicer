@@ -533,7 +533,7 @@ void vtkImageGrowCutSegment::ExecuteDataWithInformation(
     break;
     }
   logger->StopTimer();
-  vtkInfoMacro(<< "vtkImageGrowCutSegment execution time: " << logger->GetElapsedTime());
+  vtkDebugMacro(<< "vtkImageGrowCutSegment execution time: " << logger->GetElapsedTime());
 }
 
 //-----------------------------------------------------------------------------

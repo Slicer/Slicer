@@ -146,8 +146,7 @@ a complete segmentation, taking into account the master volume content. Minimum 
       segment = segmentation.GetSegment(segmentID)
       if not segment:
         # selected segment was deleted, cancel segmentation
-        logging.warning("Segmentation cancelled")
-        #qt.QTimer.singleShot(0, self.onCancel)
+        logging.debug("Segmentation cancelled")
         self.onCancel()
         return
       segmentLabelmap = segment.GetRepresentation(vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName())
@@ -162,7 +161,7 @@ a complete segmentation, taking into account the master volume content. Minimum 
     if not updateNeeded:
       return
 
-    logging.warning("Segmentation update requested")
+    logging.debug("Segmentation update requested")
     # There could be multiple update events for a single paint operation (e.g., one segment overwrites the other)
     # therefore don't update directly, just set up/reset a timer that will perform the update when it elapses.
     self.delayedAutoUpdateTimer.start()
