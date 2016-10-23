@@ -360,7 +360,6 @@ a complete segmentation, taking into account the master volume content. Minimum 
       self.clippedMasterImageData.ShallowCopy(masterImageClipper.GetOutput())
       self.clippedMasterImageData.CopyDirections(self.mergedLabelmapGeometryImage)
 
-    previewNode.GetSegmentation().RemoveAllSegments()
     previewNode.SetName(segmentationNode.GetName()+" preview")
 
     mergedImage = vtkSegmentationCore.vtkOrientedImageData()
@@ -397,10 +396,8 @@ a complete segmentation, taking into account the master volume content. Minimum 
       return
 
     # Write output segmentation results in segments
-    segmentIDs = vtk.vtkStringArray()
-    segmentationNode.GetDisplayNode().GetVisibleSegmentIDs(segmentIDs)
-    for index in xrange(segmentIDs.GetNumberOfValues()):
-      segmentID = segmentIDs.GetValue(index)
+    for index in xrange(self.selectedSegmentIds.GetNumberOfValues()):
+      segmentID = self.selectedSegmentIds.GetValue(index)
       segment = segmentationNode.GetSegmentation().GetSegment(segmentID)
       # Disable save with scene?
 
@@ -420,10 +417,12 @@ a complete segmentation, taking into account the master volume content. Minimum 
       newSegmentLabelmap = vtkSegmentationCore.vtkOrientedImageData()
       newSegmentLabelmap.ShallowCopy(thresh.GetOutput())
       newSegmentLabelmap.CopyDirections(mergedImage)
-      newSegment = vtkSegmentationCore.vtkSegment()
-      newSegment.SetName(segment.GetName())
-      previewNode.GetSegmentation().AddSegment(newSegment, segmentID)
-      previewNode.GetDisplayNode().SetSegmentColor(segmentID, segmentationNode.GetDisplayNode().GetSegmentColor(segmentID))
+      newSegment = previewNode.GetSegmentation().GetSegment(segmentID)
+      if not newSegment:
+        newSegment = vtkSegmentationCore.vtkSegment()
+        newSegment.SetName(segment.GetName())
+        previewNode.GetSegmentation().AddSegment(newSegment, segmentID)
+        previewNode.GetDisplayNode().SetSegmentColor(segmentID, segmentationNode.GetDisplayNode().GetSegmentColor(segmentID))
       slicer.vtkSlicerSegmentationsModuleLogic.SetBinaryLabelmapToSegment(newSegmentLabelmap, previewNode, segmentID)
 
     self.updateGUIFromMRML()
