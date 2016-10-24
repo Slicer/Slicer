@@ -146,7 +146,7 @@ a complete segmentation, taking into account the master volume content. Minimum 
       segment = segmentation.GetSegment(segmentID)
       if not segment:
         # selected segment was deleted, cancel segmentation
-        logging.debug("Segmentation cancelled")
+        logging.debug("Segmentation cancelled because an input segment was deleted")
         self.onCancel()
         return
       segmentLabelmap = segment.GetRepresentation(vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName())
@@ -312,7 +312,8 @@ a complete segmentation, taking into account the master volume content. Minimum 
     method = self.scriptedEffect.parameter("AutoCompleteMethod")
 
     previewNode = self.scriptedEffect.parameterSetNode().GetNodeReference(ResultPreviewNodeReferenceRole)
-    if not previewNode or not self.clippedMasterImageData or not self.mergedLabelmapGeometryImage:
+    if not previewNode or not self.mergedLabelmapGeometryImage \
+      or (method == GROWCUT and not self.clippedMasterImageData):
       self.reset()
       # Compute merged labelmap extent (effective extent slightly expanded)
       self.selectedSegmentIds = vtk.vtkStringArray()
@@ -352,13 +353,14 @@ a complete segmentation, taking into account the master volume content. Minimum 
       self.scriptedEffect.parameterSetNode().SetNodeReferenceID(ResultPreviewNodeReferenceRole, previewNode.GetID())
       self.setPreviewOpacity(0.6)
 
-      self.clippedMasterImageData = vtkSegmentationCore.vtkOrientedImageData()
-      masterImageClipper = vtk.vtkImageConstantPad()
-      masterImageClipper.SetInputData(masterImageData)
-      masterImageClipper.SetOutputWholeExtent(self.mergedLabelmapGeometryImage.GetExtent())
-      masterImageClipper.Update()
-      self.clippedMasterImageData.ShallowCopy(masterImageClipper.GetOutput())
-      self.clippedMasterImageData.CopyDirections(self.mergedLabelmapGeometryImage)
+      if method == GROWCUT:
+        self.clippedMasterImageData = vtkSegmentationCore.vtkOrientedImageData()
+        masterImageClipper = vtk.vtkImageConstantPad()
+        masterImageClipper.SetInputData(masterImageData)
+        masterImageClipper.SetOutputWholeExtent(self.mergedLabelmapGeometryImage.GetExtent())
+        masterImageClipper.Update()
+        self.clippedMasterImageData.ShallowCopy(masterImageClipper.GetOutput())
+        self.clippedMasterImageData.CopyDirections(self.mergedLabelmapGeometryImage)
 
     previewNode.SetName(segmentationNode.GetName()+" preview")
 
