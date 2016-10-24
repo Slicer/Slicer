@@ -835,26 +835,48 @@ void qMRMLSegmentsTableView::setSelectedSegmentIDs(QStringList segmentIDs)
     }
 
   // Select items that have to be selected
-  foreach(QString segmentID, segmentIDs)
+  // (need to select first to avoid a transient state when nothing is selected)
+  int columnCount = d->SegmentsTable->columnCount();
+  for (int row = 0; row<d->SegmentsTable->rowCount(); ++row)
     {
-    QTableWidgetItem* segmentItem = d->findItemBySegmentID(segmentID);
-    if (!segmentItem)
+    QTableWidgetItem* nameItem = d->SegmentsTable->item(row, d->columnIndex("Name"));
+    if (!nameItem)
       {
-      // no such segment is in the table, ignore it
+      // invalid item, canot determine selection state
       continue;
       }
-
-    // Select item for segment
-    d->SegmentsTable->setItemSelected(segmentItem, true);
+    if (!segmentIDs.contains(nameItem->data(IDRole).toString()))
+      {
+      // not selected
+      continue;
+      }
+    // select all items in this row
+    for (int column = 0; column < columnCount; column++)
+      {
+      QModelIndex index = d->SegmentsTable->model()->index(row, column);
+      d->SegmentsTable->selectionModel()->select(index, QItemSelectionModel::Select);
+      }
     }
 
   // Deselect items that don't have to be selected anymore
-  QList<QTableWidgetItem*> selectedItems = d->SegmentsTable->selectedItems();
-  foreach(QTableWidgetItem* item, selectedItems)
+  for (int row = 0; row<d->SegmentsTable->rowCount(); ++row)
     {
-    if (!segmentIDs.contains(item->data(IDRole).toString()))
+    QTableWidgetItem* nameItem = d->SegmentsTable->item(row, d->columnIndex("Name"));
+    if (!nameItem)
       {
-      d->SegmentsTable->setItemSelected(item, false);
+      // invalid item, canot determine selection state
+      continue;
+      }
+    if (segmentIDs.contains(nameItem->data(IDRole).toString()))
+      {
+      // selected
+      continue;
+      }
+    // unselect all items in this row
+    for (int column = 0; column < columnCount; column++)
+      {
+      QModelIndex index = d->SegmentsTable->model()->index(row, column);
+      d->SegmentsTable->selectionModel()->select(index, QItemSelectionModel::Deselect);
       }
     }
 }
