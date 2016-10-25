@@ -280,55 +280,31 @@ void vtkMRMLVolumeRenderingDisplayableManager::SetupHistograms(vtkMRMLVolumeRend
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLVolumeRenderingDisplayableManager
-::GetMaxMemory(vtkVolumeMapper* volumeMapper,
+vtkIdType vtkMRMLVolumeRenderingDisplayableManager
+::GetMaxMemoryInBytes(vtkVolumeMapper* volumeMapper,
                vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
-
-  int memory = vspNode && vspNode->GetGPUMemorySize() ?
-    vspNode->GetGPUMemorySize() :
-    vtkMRMLVolumeRenderingDisplayableManager::DefaultGPUMemorySize;
-
-  int gpuRayCastMapper = 128*1024*1024;
-  if (memory <= 128)
+  int gpuMemorySize_megabytes = vtkMRMLVolumeRenderingDisplayableManager::DefaultGPUMemorySize;
+  if (vspNode && vspNode->GetGPUMemorySize() > 0)
     {
-    }
-  else if (memory <= 256)
-    {
-    gpuRayCastMapper = 256*1024*1024;
-    }
-  else if (memory <= 512)
-    {
-    gpuRayCastMapper = 512*1024*1024;
-    }
-  else if (memory <= 1024)
-    {
-    gpuRayCastMapper = 1024*1024*1024;
-    }
-  else if (memory <= 1536)
-    {
-    gpuRayCastMapper = 1536*1024*1024;
-    }
-  else if (memory <= 2048)
-    {
-    gpuRayCastMapper = 2047*1024*1024;
-    }
-  else if (memory <= 3072)
-    {
-    gpuRayCastMapper = 2047*1024*1024;
-    }
-  else if (memory <= 4096)
-    {
-    gpuRayCastMapper = 2047*1024*1024;
+    gpuMemorySize_megabytes = vspNode->GetGPUMemorySize();
     }
 
+  // Special case: for GPU volume raycast mapper, round up to nearest 128MB
   if (volumeMapper->IsA("vtkGPUVolumeRayCastMapper"))
     {
-    return gpuRayCastMapper;
+    if (gpuMemorySize_megabytes < 128)
+      {
+      gpuMemorySize_megabytes = 128;
+      }
+    else
+      {
+      gpuMemorySize_megabytes = ((gpuMemorySize_megabytes - 1) / 128 + 1) * 128;
+      }
     }
 
-  // By default, return the node memory
-  return memory * 1024 * 1024;
+  vtkIdType gpuMemorySize_bytes = vtkIdType(gpuMemorySize_megabytes) * vtkIdType(1024 * 1024);
+  return gpuMemorySize_bytes;
 }
 
 //---------------------------------------------------------------------------
@@ -448,7 +424,7 @@ void vtkMRMLVolumeRenderingDisplayableManager
   mapper->SetAutoAdjustSampleDistances( highDef ? 0 : 1);
   mapper->SetSampleDistance(this->GetSampleDistance(vspNode));
   mapper->SetImageSampleDistance(highDef ? 1. : 1.);
-  mapper->SetMaxMemoryInBytes(this->GetMaxMemory(mapper, vspNode));
+  mapper->SetMaxMemoryInBytes(this->GetMaxMemoryInBytes(mapper, vspNode));
 
   switch(vspNode->GetRaycastTechnique())
     {

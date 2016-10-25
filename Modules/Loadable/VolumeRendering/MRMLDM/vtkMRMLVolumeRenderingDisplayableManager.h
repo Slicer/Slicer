@@ -216,7 +216,7 @@ protected:
   int ValidateDisplayNode(vtkMRMLVolumeRenderingDisplayNode* vspNode);
   double GetSampleDistance(vtkMRMLVolumeRenderingDisplayNode* vspNode);
   double GetFramerate(vtkMRMLVolumeRenderingDisplayNode* vspNode);
-  virtual int GetMaxMemory(vtkVolumeMapper* mapper, vtkMRMLVolumeRenderingDisplayNode* vspNode);
+  virtual vtkIdType GetMaxMemoryInBytes(vtkVolumeMapper* mapper, vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
 };
 
