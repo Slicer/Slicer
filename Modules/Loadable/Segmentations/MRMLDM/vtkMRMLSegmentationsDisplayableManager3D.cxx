@@ -410,7 +410,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayNodePip
     {
     return;
     }
-  bool displayNodeVisible = displayNode->GetVisibility3D()>0 && displayNode->GetOpacity3D()>0
+  bool displayNodeVisible = displayNode->GetVisibility3D() && displayNode->GetOpacity3D()>0
     && displayNode->GetVisibility(this->External->GetMRMLViewNode()->GetID());
 
   // Get segmentation display node
