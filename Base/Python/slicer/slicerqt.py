@@ -97,6 +97,17 @@ def initLogging(logger):
 #
 initLogging(logging.getLogger())
 
+def getSlicerRCFileName():
+  """Return slicer resource script file name '~/.slicerrc.py'"""
+  import os
+  if os.environ.has_key('SLICERRC'):
+    rcfile = os.environ['SLICERRC']
+  else:
+    import os.path
+    rcfile = os.path.expanduser( '~/.slicerrc.py' )
+  rcfile = rcfile.replace('\\','/') # make slashed consistent on Windows
+  return rcfile
+
 #-----------------------------------------------------------------------------
 #
 # loadSlicerRCFile - Let's not add this function to 'slicer.util' so that
@@ -104,14 +115,8 @@ initLogging(logging.getLogger())
 #
 
 def loadSlicerRCFile():
-  """If it exists, execute slicer resource script '~/.slicerrc.py'"""
-  import os
-  if os.environ.has_key('SLICERRC'):
-    rcfile = os.environ['SLICERRC']
-  else:
-    import os.path
-    rcfile = os.path.expanduser( '~/.slicerrc.py' )
-
+  """If it exists, execute slicer resource script"""
+  rcfile = getSlicerRCFileName()
   if os.path.isfile( rcfile ):
     print 'Loading Slicer RC file [%s]' % ( rcfile )
     execfile( rcfile )

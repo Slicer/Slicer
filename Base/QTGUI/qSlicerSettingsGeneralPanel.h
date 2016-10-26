@@ -49,6 +49,7 @@ public:
 
 public slots:
   void setDefaultScenePath(const QString& path);
+  void openSlicerRCFile();
 
 protected:
   QScopedPointer<qSlicerSettingsGeneralPanelPrivate> d_ptr;
