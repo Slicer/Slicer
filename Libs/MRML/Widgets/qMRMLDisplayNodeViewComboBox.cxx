@@ -123,7 +123,12 @@ void qMRMLDisplayNodeViewComboBox::updateWidgetFromMRML()
   for (int i = 0; i < this->nodeCount(); ++i)
     {
     vtkMRMLNode* view = this->nodeFromIndex(i);
-    Q_ASSERT(view);
+    if (!view)
+      {
+      // we get here if there is an orphan view node and the scene is closing
+      this->setCheckState(view, Qt::Unchecked);
+      continue;
+      }
     bool check = d->MRMLDisplayNode->IsDisplayableInView(view->GetID());
     Qt::CheckState viewCheckState = check ? Qt::Checked : Qt::Unchecked;
     if (this->checkState(view) != viewCheckState)
