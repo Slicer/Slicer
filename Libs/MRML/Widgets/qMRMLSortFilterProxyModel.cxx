@@ -130,8 +130,8 @@ void qMRMLSortFilterProxyModel::addAttribute(const QString& nodeType,
 {
   Q_D(qMRMLSortFilterProxyModel);
   if (!d->NodeTypes.contains(nodeType) ||
-      (d->Attributes[nodeType].first == attributeName &&
-       d->Attributes[nodeType].second == attributeValue))
+      (d->Attributes.value(nodeType).first == attributeName &&
+       d->Attributes.value(nodeType).second == attributeValue))
     {
     return;
     }
@@ -146,12 +146,20 @@ void qMRMLSortFilterProxyModel::removeAttribute(const QString& nodeType,
 {
   Q_D(qMRMLSortFilterProxyModel);
   if (!d->NodeTypes.contains(nodeType) ||
-      d->Attributes[nodeType].first != attributeName)
+      d->Attributes.value(nodeType).first != attributeName)
     {
     return;
     }
   d->Attributes.remove(nodeType);
   this->invalidateFilter();
+}
+
+//-----------------------------------------------------------------------------
+QVariant qMRMLSortFilterProxyModel::attributeFilter(const QString& nodeType,
+                                                    const QString& attributeName) const
+{
+  Q_D(const qMRMLSortFilterProxyModel);
+  return d->Attributes.value(nodeType).second;
 }
 
 //------------------------------------------------------------------------------

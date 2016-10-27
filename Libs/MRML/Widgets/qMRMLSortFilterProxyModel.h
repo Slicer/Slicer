@@ -162,6 +162,11 @@ public:
   /// \sa addAttribute
   Q_INVOKABLE void removeAttribute(const QString& nodeType, const QString& attributeName);
 
+  /// Return the current attribute filter for the given node type.
+  /// \sa addAttribute, removeAttribute
+  Q_INVOKABLE QVariant attributeFilter(
+    const QString& nodeType, const QString& attributeName) const;
+
   /// Display or not the nodes that are excluded by
   /// the ExcludedChildNodeTypes list.
   /// true by default.

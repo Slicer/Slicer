@@ -61,6 +61,7 @@ set(TEST_SOURCES
   qMRMLNodeComboBoxTest6.cxx
   qMRMLNodeComboBoxTest7.cxx
   qMRMLNodeComboBoxTest8.cxx
+  qMRMLNodeComboBoxTest9.cxx
   qMRMLNodeComboBoxLazyUpdateTest1.cxx
   qMRMLNodeFactoryTest1.cxx
   qMRMLScalarInvariantComboBoxTest1.cxx
@@ -201,6 +202,7 @@ simple_test( qMRMLNodeComboBoxTest5 )
 simple_test( qMRMLNodeComboBoxTest6 )
 simple_test( qMRMLNodeComboBoxTest7 )
 simple_test( qMRMLNodeComboBoxTest8 )
+simple_test( qMRMLNodeComboBoxTest9 )
 simple_test( qMRMLNodeComboBoxLazyUpdateTest1 )
 simple_test( qMRMLNodeFactoryTest1 )
 simple_test( qMRMLScalarInvariantComboBoxTest1 )
