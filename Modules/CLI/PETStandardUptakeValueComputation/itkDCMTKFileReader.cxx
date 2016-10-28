@@ -30,21 +30,21 @@
 #define INCLUDE_CSTDIO
 #define INCLUDE_CSTRING
 
-#include "dcdict.h"             // For DcmDataDictionary
-#include "dcsequen.h"        /* for DcmSequenceOfItems */
-#include "dcvrcs.h"          /* for DcmCodeString */
-#include "dcvrfd.h"          /* for DcmFloatingPointDouble */
-#include "dcvrfl.h"          /* for DcmFloatingPointDouble */
-#include "dcvrus.h"          /* for DcmUnsignedShort */
-#include "dcvris.h"          /* for DcmIntegerString */
-#include "dcvrobow.h"        /* for DcmOtherByteOtherWord */
-#include "dcvrui.h"          /* for DcmUniqueIdentifier */
-#include "dcfilefo.h"        /* for DcmFileFormat */
-#include "dcdeftag.h"        /* for DCM_NumberOfFrames */
-#include "dcvrlo.h"          /* for DcmLongString */
-#include "dcvrtm.h"          /* for DCMTime */
-#include "dcvrda.h"          /* for DcmDate */
-#include "dcvrpn.h"          /* for DcmPersonName */
+#include "dcmtk/dcmdata/dcdict.h"             // For DcmDataDictionary
+#include "dcmtk/dcmdata/dcsequen.h"        /* for DcmSequenceOfItems */
+#include "dcmtk/dcmdata/dcvrcs.h"          /* for DcmCodeString */
+#include "dcmtk/dcmdata/dcvrfd.h"          /* for DcmFloatingPointDouble */
+#include "dcmtk/dcmdata/dcvrfl.h"          /* for DcmFloatingPointDouble */
+#include "dcmtk/dcmdata/dcvrus.h"          /* for DcmUnsignedShort */
+#include "dcmtk/dcmdata/dcvris.h"          /* for DcmIntegerString */
+#include "dcmtk/dcmdata/dcvrobow.h"        /* for DcmOtherByteOtherWord */
+#include "dcmtk/dcmdata/dcvrui.h"          /* for DcmUniqueIdentifier */
+#include "dcmtk/dcmdata/dcfilefo.h"        /* for DcmFileFormat */
+#include "dcmtk/dcmdata/dcdeftag.h"        /* for DCM_NumberOfFrames */
+#include "dcmtk/dcmdata/dcvrlo.h"          /* for DcmLongString */
+#include "dcmtk/dcmdata/dcvrtm.h"          /* for DCMTime */
+#include "dcmtk/dcmdata/dcvrda.h"          /* for DcmDate */
+#include "dcmtk/dcmdata/dcvrpn.h"          /* for DcmPersonName */
 // #include "diregist.h"     /* include to support color images */
 #include "vnl/vnl_cross.h"
 

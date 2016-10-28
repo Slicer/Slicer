@@ -127,7 +127,7 @@ GrowCutSegmentationImageFilter< TInputImage, TOutputImage, TWeightPixelType >
 ::GetStateImage()
 {
   typename OutputImageType::Pointer stateImage = OutputImageType::New();
-  stateImage->Graft(this->ProcessObject::GetInput(3));
+  stateImage->Graft(static_cast< OutputImageType *>(this->ProcessObject::GetInput(3)));
   return stateImage;
 }
 
@@ -149,7 +149,7 @@ GrowCutSegmentationImageFilter< TInputImage, TOutputImage, TWeightPixelType >
 ::GetDistancesImage()
 {
   typename WeightImageType::Pointer distanceImage = WeightImageType::New();
-  distanceImage->Graft(this->ProcessObject::GetInput(4));
+  distanceImage->Graft(static_cast< WeightImageType *>(this->ProcessObject::GetInput(4)));
   return distanceImage;
   //return const_cast< WeightImageType*> (this->ProcessObject::GetInput(4));
 }
@@ -173,7 +173,7 @@ GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 ::GetMaxSaturationImage()
 {
   typename WeightImageType::Pointer maxSaturationImage = WeightImageType::New();
-  maxSaturationImage->Graft(this->ProcessObject::GetInput(5));
+  maxSaturationImage->Graft(static_cast< WeightImageType*>(this->ProcessObject::GetInput(5)));
   return maxSaturationImage;
   //return const_cast< WeightImageType*> (this->ProcessObject::GetInput(5));
 }
@@ -197,7 +197,7 @@ GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 ::GetStrengthImage()
 {
   typename WeightImageType::Pointer weightImage = WeightImageType::New();
-  weightImage->Graft(this->ProcessObject::GetInput(2));
+  weightImage->Graft(static_cast< WeightImageType*> (this->ProcessObject::GetInput(2)));
   return weightImage;
 }
 
@@ -325,7 +325,7 @@ InitializeStateImage( OutputImageType *stateImage)
   //  bool setEnd = false;
 
   typename OutputImageType::Pointer labelImage = OutputImageType::New();
-  labelImage->Graft(this->ProcessObject::GetInput(1));
+  labelImage->Graft(static_cast< OutputImageType*> (this->ProcessObject::GetInput(1)));
 
   typename OutputImageType::SizeType lsize =
     labelImage->GetBufferedRegion().GetSize();
@@ -508,7 +508,7 @@ GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
   unsigned int ndims = static_cast< unsigned int>(output->GetImageDimension());
 
   typename InputImageType::Pointer inputImage = InputImageType::New();
-  inputImage->Graft( this->ProcessObject::GetInput(0));
+  inputImage->Graft( static_cast< InputImageType*>(this->ProcessObject::GetInput(0)));
 
   typename OutputImageType::Pointer pixelStateImage = OutputImageType::New();
   typename WeightImageType::Pointer maxDistancesImage = WeightImageType::New();
@@ -760,22 +760,22 @@ void GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 {
   // make a shallow copy of the image to break the pipeline from re-executing in each thread
   typename InputImageType::Pointer inputImage = InputImageType::New();
-  inputImage->Graft( this->ProcessObject::GetInput(0));
+  inputImage->Graft( static_cast< InputImageType*>(this->ProcessObject::GetInput(0)));
 
   typename OutputImageType::Pointer labelImage = OutputImageType::New();
-  labelImage->Graft(this->ProcessObject::GetInput(1) );
+  labelImage->Graft(static_cast< OutputImageType*>(this->ProcessObject::GetInput(1)) );
 
   typename WeightImageType::Pointer weightImage = WeightImageType::New();
-  weightImage->Graft(this->ProcessObject::GetInput(2) );
+  weightImage->Graft(static_cast< WeightImageType*>(this->ProcessObject::GetInput(2)) );
 
   typename OutputImageType::Pointer stateImage = OutputImageType::New();
-  stateImage->Graft(this->ProcessObject::GetInput(3) );
+  stateImage->Graft(static_cast< OutputImageType*>(this->ProcessObject::GetInput(3)) );
 
   typename WeightImageType::Pointer distanceImage = WeightImageType::New();
-  distanceImage->Graft(this->ProcessObject::GetInput(4) );
+  distanceImage->Graft(static_cast< WeightImageType*>(this->ProcessObject::GetInput(4)) );
 
   typename WeightImageType::Pointer maxSaturationImage = WeightImageType::New();
-  maxSaturationImage->Graft(this->ProcessObject::GetInput(5) );
+  maxSaturationImage->Graft(static_cast< WeightImageType*>(this->ProcessObject::GetInput(5)) );
   //maxSaturationImage->Graft(m_MaxSaturationImage );
 
   typename OutputImageType::Pointer outputImage = OutputImageType::New();
@@ -1061,7 +1061,7 @@ GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
   m_Saturated = 0;
 
   typename OutputImageType::Pointer stateImage = OutputImageType::New();
-  stateImage->Graft(this->ProcessObject::GetInput(3) );
+  stateImage->Graft(static_cast< OutputImageType*>(this->ProcessObject::GetInput(3)) );
 
   ImageRegionIterator< OutputImageType > state(stateImage, stateImage->GetBufferedRegion());
   ImageRegionIterator< WeightImageType > weight(m_WeightImage, m_WeightImage->GetBufferedRegion());
