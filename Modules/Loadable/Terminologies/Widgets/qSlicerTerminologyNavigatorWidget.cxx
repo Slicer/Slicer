@@ -202,17 +202,25 @@ void qSlicerTerminologyNavigatorWidgetPrivate::init()
 //-----------------------------------------------------------------------------
 vtkSlicerTerminologiesModuleLogic* qSlicerTerminologyNavigatorWidgetPrivate::terminologyLogic()
 {
-  qSlicerAbstractCoreModule* terminologiesModule =
-    qSlicerCoreApplication::application()->moduleManager()->module("Terminologies");
-  if (terminologiesModule)
-  {
-    vtkSlicerTerminologiesModuleLogic* terminologyLogic =
-      vtkSlicerTerminologiesModuleLogic::SafeDownCast(terminologiesModule->logic());
-    return terminologyLogic;
-  }
-
-  qCritical() << Q_FUNC_INFO << ": Terminologies module is not found";
-  return NULL;
+  if (!qSlicerCoreApplication::application()
+    || !qSlicerCoreApplication::application()->moduleManager())
+    {
+    qCritical() << Q_FUNC_INFO << ": Module manager is not found";
+    return NULL;
+    }
+  qSlicerAbstractCoreModule* terminologiesModule = qSlicerCoreApplication::application()->moduleManager()->module("Terminologies");
+  if (!terminologiesModule)
+    {
+    qCritical() << Q_FUNC_INFO << ": Terminologies module is not found";
+    return NULL;
+    }
+  vtkSlicerTerminologiesModuleLogic* terminologyLogic =
+    vtkSlicerTerminologiesModuleLogic::SafeDownCast(terminologiesModule->logic());
+  if (!terminologyLogic)
+    {
+    qWarning() << Q_FUNC_INFO << ": Terminologies module logic is invalid";
+    }
+  return terminologyLogic;
 }
 
 //-----------------------------------------------------------------------------
@@ -588,13 +596,7 @@ bool qSlicerTerminologyNavigatorWidget::terminologyEntryFromCodeMeanings(QString
     }
 
   // Get terminology logic
-  vtkSlicerTerminologiesModuleLogic* terminologyLogic = NULL;
-  qSlicerAbstractCoreModule* terminologiesModule =
-    qSlicerCoreApplication::application()->moduleManager()->module("Terminologies");
-  if (terminologiesModule)
-    {
-    terminologyLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(terminologiesModule->logic());
-    }
+  vtkSlicerTerminologiesModuleLogic* terminologyLogic = d->terminologyLogic();
   if (!terminologyLogic)
     {
     qCritical() << Q_FUNC_INFO << ": Unable to access terminology logic";
