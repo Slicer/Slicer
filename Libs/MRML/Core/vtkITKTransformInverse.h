@@ -265,10 +265,10 @@ namespace itk
 
 } // end of ITK namespace
 
-typedef itk::InverseBSplineDeformableTransform< float, VTKDimension, VTKDimension > InverseBSplineTransformFloatITKv3Type;
-typedef itk::InverseBSplineDeformableTransform< double, VTKDimension, VTKDimension > InverseBSplineTransformDoubleITKv3Type;
-typedef itk::InverseBSplineTransform< float, VTKDimension, VTKDimension > InverseBSplineTransformFloatITKv4Type;
-typedef itk::InverseBSplineTransform< double, VTKDimension, VTKDimension > InverseBSplineTransformDoubleITKv4Type;
+typedef itk::InverseBSplineDeformableTransform< float, VTKDimension, BSPLINE_TRANSFORM_ORDER > InverseBSplineTransformFloatITKv3Type;
+typedef itk::InverseBSplineDeformableTransform< double, VTKDimension, BSPLINE_TRANSFORM_ORDER > InverseBSplineTransformDoubleITKv3Type;
+typedef itk::InverseBSplineTransform< float, VTKDimension, BSPLINE_TRANSFORM_ORDER > InverseBSplineTransformFloatITKv4Type;
+typedef itk::InverseBSplineTransform< double, VTKDimension, BSPLINE_TRANSFORM_ORDER > InverseBSplineTransformDoubleITKv4Type;
 
 typedef itk::InverseDisplacementFieldTransform< float, 3 > InverseDisplacementFieldTransformFloatType;
 typedef itk::InverseDisplacementFieldTransform< double, 3 > InverseDisplacementFieldTransformDoubleType;
