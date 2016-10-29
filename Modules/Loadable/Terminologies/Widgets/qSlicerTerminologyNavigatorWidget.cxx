@@ -55,7 +55,7 @@ public:
   void init();
 
   /// Get terminology module logic
-  vtkSlicerTerminologiesModuleLogic* terminologyLogic();
+  static vtkSlicerTerminologiesModuleLogic* terminologyLogic();
 
   /// Reset current category name and container object
   void resetCurrentCategory();
@@ -596,7 +596,8 @@ bool qSlicerTerminologyNavigatorWidget::terminologyEntryFromCodeMeanings(QString
     }
 
   // Get terminology logic
-  vtkSlicerTerminologiesModuleLogic* terminologyLogic = d->terminologyLogic();
+  vtkSlicerTerminologiesModuleLogic* terminologyLogic =
+      qSlicerTerminologyNavigatorWidgetPrivate::terminologyLogic();
   if (!terminologyLogic)
     {
     qCritical() << Q_FUNC_INFO << ": Unable to access terminology logic";
