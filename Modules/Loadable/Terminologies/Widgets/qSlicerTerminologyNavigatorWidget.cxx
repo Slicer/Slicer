@@ -1008,6 +1008,8 @@ void qSlicerTerminologyNavigatorWidget::onTypeClicked(QTableWidgetItem* item)
 //-----------------------------------------------------------------------------
 void qSlicerTerminologyNavigatorWidget::onTypeModifierSelectionChanged(int index)
 {
+  Q_UNUSED(index);
+
   Q_D(qSlicerTerminologyNavigatorWidget);
 
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
@@ -1191,6 +1193,8 @@ void qSlicerTerminologyNavigatorWidget::populateRegionModifierComboBox()
 //-----------------------------------------------------------------------------
 void qSlicerTerminologyNavigatorWidget::onAnatomicContextSelectionChanged(int index)
 {
+  Q_UNUSED(index);
+
   Q_D(qSlicerTerminologyNavigatorWidget);
 
   // Reset current region and region modifier
