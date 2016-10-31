@@ -372,7 +372,6 @@ vtkOrientedImageData* vtkSlicerSegmentationsModuleLogic::CreateOrientedImageData
     vtkOrientedImageDataResample::TransformOrientedImage(orientedImageData, nodeToOutputTransform);
     }
 
-  //TODO: This method leaks from python. The function SlicerRtCommon::ConvertVolumeNodeToVtkOrientedImageData can be used istead.
   return orientedImageData;
 }
 
@@ -663,7 +662,7 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentToRepresentationNode(vtkSeg
     representationNode->GetScene(), segment, segmentId);
   if (segmentationNode)
     {
-    representationNode->SetName(segmentId.c_str());
+    representationNode->SetName(segment->GetName());
     }
   vtkMRMLTransformNode* parentTransformNode = segmentationNode->GetParentTransformNode();
 
@@ -752,7 +751,8 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentToRepresentationNode(vtkSeg
 }
 
 //-----------------------------------------------------------------------------
-bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode, std::vector<std::string>& segmentIDs, vtkMRMLLabelMapVolumeNode* labelmapNode)
+bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode,
+  std::vector<std::string>& segmentIDs, vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode /*=NULL*/)
 {
   if (!segmentationNode)
     {
@@ -774,16 +774,71 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
     return false;
     }
 
+  // Use reference volume's parent transform if available, otherwise put under the same transform as segmentation node
+  vtkMRMLTransformNode* parentTransformNode = NULL;
+  if (referenceVolumeNode && referenceVolumeNode->GetParentTransformNode())
+    {
+    parentTransformNode = referenceVolumeNode->GetParentTransformNode();
+    }
+  else
+    {
+    parentTransformNode = segmentationNode->GetParentTransformNode();
+    }
+  labelmapNode->SetAndObserveTransformNodeID(parentTransformNode ? parentTransformNode->GetID() : "");
+
+  // Get reference geometry in the segmentation node's coordinate system
+  vtkSmartPointer<vtkOrientedImageData> referenceGeometry_Reference; // reference geometry in reference node coordinate system
+  vtkSmartPointer<vtkOrientedImageData> referenceGeometry_Segmentation; // reference geometry in segmentation coordinate system
+  vtkSmartPointer<vtkGeneralTransform> referenceGeometryToSegmentationTransform;
+  if (referenceVolumeNode && referenceVolumeNode->GetImageData())
+    {
+    // Create (non-allocated) image data that matches reference geometry
+    referenceGeometry_Reference = vtkSmartPointer<vtkOrientedImageData>::New();
+    referenceGeometry_Reference->SetExtent(referenceVolumeNode->GetImageData()->GetExtent());
+    vtkSmartPointer<vtkMatrix4x4> ijkToRasMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+    referenceVolumeNode->GetIJKToRASMatrix(ijkToRasMatrix);
+    referenceGeometry_Reference->SetGeometryFromImageToWorldMatrix(ijkToRasMatrix);
+
+    // Transform it to the segmentation node coordinate system
+    referenceGeometry_Segmentation = vtkSmartPointer<vtkOrientedImageData>::New();
+    referenceGeometry_Segmentation->DeepCopy(referenceGeometry_Reference);
+    // Apply parent transform of the volume node if any
+    if (referenceVolumeNode->GetParentTransformNode() != segmentationNode->GetParentTransformNode())
+      {
+      referenceGeometryToSegmentationTransform = vtkSmartPointer<vtkGeneralTransform>::New();
+      vtkMRMLTransformNode::GetTransformBetweenNodes(referenceVolumeNode->GetParentTransformNode(),
+        segmentationNode->GetParentTransformNode(), referenceGeometryToSegmentationTransform);
+      vtkOrientedImageDataResample::TransformOrientedImage(referenceGeometry_Segmentation, referenceGeometryToSegmentationTransform, true /* geometry only */);
+      }
+    }
+
   // Generate merged labelmap for the exported segments
-  vtkSmartPointer<vtkOrientedImageData> mergedImage = vtkSmartPointer<vtkOrientedImageData>::New();
-  if (!segmentationNode->GenerateMergedLabelmap(mergedImage, vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS, NULL, segmentIDs))
+  vtkSmartPointer<vtkOrientedImageData> mergedImage_Segmentation = vtkSmartPointer<vtkOrientedImageData>::New();
+  if (!segmentationNode->GenerateMergedLabelmap(mergedImage_Segmentation, vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS,
+    referenceGeometry_Segmentation, segmentIDs))
     {
     vtkErrorWithObjectMacro(segmentationNode, "ExportSegmentsToLabelmapNode: Failed to generate merged labelmap!");
     return false;
     }
 
+  // Transform merged labelmap to reference geometry coordiante system
+  vtkSmartPointer<vtkOrientedImageData> mergedImage_Reference;
+  if (referenceGeometryToSegmentationTransform)
+    {
+    mergedImage_Reference = vtkSmartPointer<vtkOrientedImageData>::New();
+    vtkAbstractTransform* segmentationToReferenceGeometryTransform = referenceGeometryToSegmentationTransform->GetInverse();
+    segmentationToReferenceGeometryTransform->Update();
+    vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(mergedImage_Segmentation, referenceGeometry_Reference, mergedImage_Reference,
+      false /* nearest neighbor interpolation*/, false /* no padding */, segmentationToReferenceGeometryTransform);
+    }
+  else
+    {
+    mergedImage_Reference = mergedImage_Segmentation;
+    }
+  mergedImage_Segmentation = NULL; // free up memory
+
   // Export merged labelmap to the output node
-  if (!vtkSlicerSegmentationsModuleLogic::CreateLabelmapVolumeFromOrientedImageData(mergedImage, labelmapNode))
+  if (!vtkSlicerSegmentationsModuleLogic::CreateLabelmapVolumeFromOrientedImageData(mergedImage_Reference, labelmapNode))
     {
     vtkErrorWithObjectMacro(segmentationNode, "ExportSegmentsToLabelmapNode: Failed to create labelmap from merged segments image!");
     return false;
@@ -796,13 +851,6 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
       {
       labelmapNode->GetDisplayNode()->SetAndObserveColorNodeID(segmentationNode->GetDisplayNode()->GetColorNodeID());
       }
-    }
-
-  // Set segmentation's parent transform to exported node
-  vtkMRMLTransformNode* parentTransformNode = segmentationNode->GetParentTransformNode();
-  if (parentTransformNode)
-    {
-    labelmapNode->SetAndObserveTransformNodeID(parentTransformNode->GetID());
     }
 
   return true;

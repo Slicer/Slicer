@@ -43,6 +43,7 @@ class vtkMRMLScalarVolumeNode;
 class vtkMRMLSegmentationStorageNode;
 class vtkMRMLLabelMapVolumeNode;
 class vtkMRMLModelNode;
+class vtkMRMLVolumeNode;
 
 /// \ingroup SlicerRt_QtModules_Segmentations
 class VTK_SLICER_SEGMENTATIONS_LOGIC_EXPORT vtkSlicerSegmentationsModuleLogic :
@@ -129,7 +130,9 @@ public:
   /// \param segmentationNode Segmentation node from which the the segments are exported
   /// \param segmentIds List of segment IDs to export
   /// \param labelmapNode Labelmap node to export the segments to
-  static bool ExportSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode, std::vector<std::string>& segmentIDs, vtkMRMLLabelMapVolumeNode* labelmapNode);
+  /// \param referenceVolumeNode If specified, then the merged labelmap node will match the geometry of referenceVolumeNode
+  static bool ExportSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode, std::vector<std::string>& segmentIDs,
+    vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode = NULL);
 
   /// Export all segments into a multi-label labelmap volume node
   /// \param segmentationNode Segmentation node from which the the segments are exported
