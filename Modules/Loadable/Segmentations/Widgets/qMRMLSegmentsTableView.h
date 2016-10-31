@@ -72,9 +72,6 @@ public:
   /// Get segmentation MRML node
   Q_INVOKABLE vtkMRMLNode* segmentationNode();
 
-  /// Get representation MRML node (model or labelmap volume MRML node for import/export)
-  Q_INVOKABLE vtkMRMLNode* representationNode();
-
   /// Get access to the table widget to allow low-level customization
   Q_INVOKABLE QTableWidget* tableWidget();
 
@@ -105,11 +102,6 @@ public:
 public slots:
   /// Set segmentation MRML node
   void setSegmentationNode(vtkMRMLNode* node);
-
-  /// Set representation MRML node (model or labelmap volume MRML node for import/export)
-  /// If representation node is set then instead of showing segments, a single node is displayed in the table.
-  /// It allows using the same widget for selecting source/target segment or MRML node.
-  void setRepresentationNode(vtkMRMLNode* node);
 
   virtual void setMRMLScene(vtkMRMLScene* newScene);
 

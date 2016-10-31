@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>358</width>
-    <height>601</height>
+    <width>600</width>
+    <height>1270</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -168,7 +168,10 @@
    <item>
     <widget class="ctkCollapsibleButton" name="CollapsibleButton_CopyMoveSegment">
      <property name="text">
-      <string>Copy/move segment (import/export)</string>
+      <string>Copy/move segments</string>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
      </property>
      <property name="collapsed">
       <bool>true</bool>
@@ -351,67 +354,24 @@
              </size>
             </property>
             <property name="toolTip">
-             <string>Select Segmentation node for copy/move. Select Model or Labelmap node for import/export</string>
+             <string>Select Segmentation node to copy/move segments to/from.</string>
             </property>
             <property name="nodeTypes">
              <stringlist>
               <string>vtkMRMLSegmentationNode</string>
-              <string>vtkMRMLModelNode</string>
-              <string>vtkMRMLLabelMapVolumeNode</string>
              </stringlist>
             </property>
             <property name="noneEnabled">
              <bool>true</bool>
             </property>
             <property name="addEnabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="removeEnabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QToolButton" name="toolButton_AddLabelmap">
-            <property name="minimumSize">
-             <size>
-              <width>25</width>
-              <height>25</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>25</width>
-              <height>25</height>
-             </size>
-            </property>
-            <property name="toolTip">
-             <string>Add labelmap volume node into the scene so that segment can be exported into it.</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QToolButton" name="toolButton_AddModel">
-            <property name="minimumSize">
-             <size>
-              <width>25</width>
-              <height>25</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>25</width>
-              <height>25</height>
-             </size>
-            </property>
-            <property name="toolTip">
-             <string>Add model node into the scene so that segment can be exported into it.</string>
-            </property>
-            <property name="text">
-             <string/>
+            <property name="renameEnabled">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -428,6 +388,181 @@
          </widget>
         </item>
        </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="ctkCollapsibleButton" name="CollapsibleButton_ImportExportSegment">
+     <property name="text">
+      <string>Export/import segments</string>
+     </property>
+     <property name="collapsed">
+      <bool>true</bool>
+     </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <property name="margin">
+       <number>4</number>
+      </property>
+      <property name="spacing">
+       <number>9</number>
+      </property>
+      <item row="2" column="1" colspan="2">
+       <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBox_ImportExportNode">
+        <property name="addEnabled">
+         <bool>false</bool>
+        </property>
+        <property name="renameEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="noneDisplay">
+         <string>Export to new node</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0" colspan="3">
+       <widget class="ctkPushButton" name="PushButton_ImportExport">
+        <property name="text">
+         <string>Apply</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QRadioButton" name="radioButton_Import">
+        <property name="text">
+         <string>Import</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QRadioButton" name="radioButton_Labelmap">
+        <property name="text">
+         <string>Labelmap</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_ImportExportType">
+        <property name="text">
+         <string>Output type:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QRadioButton" name="radioButton_Model">
+        <property name="text">
+         <string>Models</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QRadioButton" name="radioButton_Export">
+        <property name="text">
+         <string>Export</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_ImportExportNode">
+        <property name="text">
+         <string>Output node:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Operation:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="3">
+       <widget class="ctkCollapsibleGroupBox" name="CollapsibleGroupBox_ImporExportAdvanced">
+        <property name="title">
+         <string>Advanced</string>
+        </property>
+        <property name="collapsed">
+         <bool>true</bool>
+        </property>
+        <layout class="QFormLayout" name="formLayout">
+         <property name="fieldGrowthPolicy">
+          <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+         </property>
+         <property name="horizontalSpacing">
+          <number>9</number>
+         </property>
+         <property name="verticalSpacing">
+          <number>9</number>
+         </property>
+         <property name="margin">
+          <number>4</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>Exported segments:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="ctkComboBox" name="ComboBox_ExportedSegments">
+           <item>
+            <property name="text">
+             <string>All</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Visible</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_6">
+           <property name="toolTip">
+            <string>Exported labelmap geometry will match this volume's geometry</string>
+           </property>
+           <property name="text">
+            <string>Reference volume:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBox_ExportLabelmapReferenceVolume">
+           <property name="toolTip">
+            <string>Exported labelmap geometry will match this volume's geometry</string>
+           </property>
+           <property name="nodeTypes">
+            <stringlist>
+             <string>vtkMRMLVolumeNode</string>
+            </stringlist>
+           </property>
+           <property name="noneEnabled">
+            <bool>true</bool>
+           </property>
+           <property name="addEnabled">
+            <bool>false</bool>
+           </property>
+           <property name="removeEnabled">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -488,10 +623,26 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>ctkCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>ctkCollapsibleGroupBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkComboBox</class>
+   <extends>QComboBox</extends>
+   <header>ctkComboBox.h</header>
+  </customwidget>
+  <customwidget>
    <class>ctkExpandableWidget</class>
    <extends>QFrame</extends>
    <header>ctkExpandableWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkPushButton</class>
+   <extends>QPushButton</extends>
+   <header>ctkPushButton.h</header>
   </customwidget>
  </customwidgets>
  <resources>
@@ -543,6 +694,38 @@
     <hint type="destinationlabel">
      <x>137</x>
      <y>289</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerSegmentationsModule</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>MRMLNodeComboBox_ExportLabelmapReferenceVolume</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>299</x>
+     <y>634</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>396</x>
+     <y>1181</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerSegmentationsModule</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>MRMLNodeComboBox_ImportExportNode</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>299</x>
+     <y>634</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>398</x>
+     <y>1029</y>
     </hint>
    </hints>
   </connection>

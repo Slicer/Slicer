@@ -81,9 +81,6 @@ public:
   /// Segmentation MRML node containing shown segments
   vtkWeakPointer<vtkMRMLSegmentationNode> SegmentationNode;
 
-  /// Model or labelmap volume MRML node containing a representation (for import/export)
-  vtkWeakPointer<vtkMRMLDisplayableNode> RepresentationNode;
-
   /// Flag determining whether the long-press per-view segment visibility options are available
   bool AdvancedSegmentVisibility;
 
@@ -107,7 +104,6 @@ private:
 qMRMLSegmentsTableViewPrivate::qMRMLSegmentsTableViewPrivate(qMRMLSegmentsTableView& object)
   : q_ptr(&object)
   , SegmentationNode(NULL)
-  , RepresentationNode(NULL)
   , AdvancedSegmentVisibility(false)
   , IsUpdatingWidgetFromMRML(false)
 {
@@ -226,12 +222,6 @@ void qMRMLSegmentsTableView::setSegmentationNode(vtkMRMLNode* node)
 
   vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(node);
 
-  // Clear representation node if segmentation node is valid
-  if (segmentationNode)
-    {
-    this->setRepresentationNode(NULL);
-    }
-
   // Connect display modified event to population of the table
   qvtkReconnect( d->SegmentationNode, segmentationNode, vtkMRMLDisplayableNode::DisplayModifiedEvent,
                  this, SLOT( updateWidgetFromMRML() ) );
@@ -245,25 +235,6 @@ void qMRMLSegmentsTableView::setSegmentationNode(vtkMRMLNode* node)
                  this, SLOT( updateWidgetFromMRML() ) );
 
   d->SegmentationNode = segmentationNode;
-  this->populateSegmentTable();
-}
-
-//-----------------------------------------------------------------------------
-void qMRMLSegmentsTableView::setRepresentationNode(vtkMRMLNode* node)
-{
-  Q_D(qMRMLSegmentsTableView);
-
-  vtkMRMLLabelMapVolumeNode* labelmapNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(node);
-  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(node);
-
-  // Clear segmentation node if representation node is valid
-  if (labelmapNode || modelNode)
-    {
-    this->setSegmentationNode(NULL);
-    }
-
-  d->RepresentationNode = ( (labelmapNode ? (vtkMRMLDisplayableNode*)labelmapNode : (vtkMRMLDisplayableNode*)modelNode) );
-
   this->populateSegmentTable();
 }
 
@@ -295,14 +266,6 @@ vtkMRMLNode* qMRMLSegmentsTableView::segmentationNode()
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLNode* qMRMLSegmentsTableView::representationNode()
-{
-  Q_D(qMRMLSegmentsTableView);
-
-  return d->RepresentationNode;
-}
-
-//-----------------------------------------------------------------------------
 QTableWidget* qMRMLSegmentsTableView::tableWidget()
 {
   Q_D(qMRMLSegmentsTableView);
@@ -330,28 +293,6 @@ void qMRMLSegmentsTableView::populateSegmentTable()
   // Clear table so that it can be populated
   d->SegmentsTable->clearContents();
 
-  // Show node name and type if representation node
-  if (d->RepresentationNode)
-    {
-    d->SegmentsTable->setRowCount(1);
-    d->SegmentsTable->setRowHeight(0, 52);
-
-    QString name = QString("%1\n(%2 node)").arg(d->RepresentationNode->GetName()).arg(d->RepresentationNode->GetNodeTagName());
-    QTableWidgetItem* representationItem = new QTableWidgetItem(name);
-    representationItem->setToolTip(name);
-    representationItem->setFlags(representationItem->flags() & ~Qt::ItemIsEditable);
-    QFont boldFont;
-    boldFont.setWeight(QFont::Bold);
-    representationItem->setFont(boldFont);
-    d->SegmentsTable->setItem(0, d->columnIndex("Name"), representationItem);
-
-    d->SegmentsTable->blockSignals(wasBlocked);
-    d->IsUpdatingWidgetFromMRML = false;
-    emit selectionChanged(QItemSelection(), QItemSelection());
-    return;
-    }
-
-  // If not representation, then segmentation must be selected. Check validity
   if (!d->SegmentationNode)
     {
     d->setMessage(tr("No node is selected"));
@@ -478,11 +419,6 @@ void qMRMLSegmentsTableView::updateWidgetFromMRML()
     return;
     }
 
-  if (d->RepresentationNode!=NULL)
-    {
-    qCritical() << Q_FUNC_INFO << ": This function must not be called in representation mode";
-    return;
-    }
   if ( !d->SegmentationNode
     || d->SegmentsTable->rowCount() != d->SegmentationNode->GetSegmentation()->GetNumberOfSegments() )
     {

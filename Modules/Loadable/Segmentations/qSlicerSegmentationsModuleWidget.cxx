@@ -38,11 +38,13 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLLabelMapVolumeNode.h"
 #include "vtkMRMLModelNode.h"
+#include "vtkMRMLModelHierarchyNode.h"
 #include "vtkMRMLSubjectHierarchyNode.h"
 
 // VTK includes
+#include <vtkCollection.h>
+#include <vtkNew.h>
 #include <vtkSmartPointer.h>
-
 // Qt includes
 #include <QDebug>
 #include <QMessageBox>
@@ -63,6 +65,9 @@ public:
   /// Using this flag prevents overriding the parameter set node contents when the
   ///   QMRMLCombobox selects the first instance of the specified node type when initializing
   bool ModuleWindowInitialized;
+
+  QButtonGroup* ImportExportOperationButtonGroup; // import/export
+  QButtonGroup* ImportExportTypeButtonGroup; // model/labelmap
 };
 
 //-----------------------------------------------------------------------------
@@ -72,6 +77,8 @@ public:
 qSlicerSegmentationsModuleWidgetPrivate::qSlicerSegmentationsModuleWidgetPrivate(qSlicerSegmentationsModuleWidget& object)
   : q_ptr(&object)
   , ModuleWindowInitialized(false)
+  , ImportExportOperationButtonGroup(NULL)
+  , ImportExportTypeButtonGroup(NULL)
 {
 }
 
@@ -219,17 +226,11 @@ void qSlicerSegmentationsModuleWidget::updateCopyMoveButtonStates()
   // Set button states that copy/move to current segmentation
   vtkMRMLSegmentationNode* otherSegmentationNode = vtkMRMLSegmentationNode::SafeDownCast(
     d->SegmentsTableView_Other->segmentationNode() );
-  vtkMRMLNode* otherRepresentationNode = d->SegmentsTableView_Other->representationNode();
   if (otherSegmentationNode)
     {
     // All options are possible if other node is segmentation
     d->toolButton_CopyToCurrentSegmentation->setEnabled(true);
     d->toolButton_MoveToCurrentSegmentation->setEnabled(true);
-    }
-  else if (otherRepresentationNode)
-    {
-    // Move from other node is disabled if other node is representation
-    d->toolButton_CopyToCurrentSegmentation->setEnabled(true);
     }
 
   // Set button states that copy/move from current segmentation
@@ -252,9 +253,13 @@ void qSlicerSegmentationsModuleWidget::init()
   // Ensure that four representations fit in the table by default
   d->RepresentationsListView->setMinimumHeight(108);
 
-  // Set icons to tool buttons
-  d->toolButton_AddLabelmap->setIcon(QIcon(":/Icons/AddLabelmap.png"));
-  d->toolButton_AddModel->setIcon(QIcon(":/Icons/Small/SlicerAddModel.png"));
+  d->ImportExportOperationButtonGroup = new QButtonGroup(d->CollapsibleButton_ImportExportSegment);
+  d->ImportExportOperationButtonGroup->addButton(d->radioButton_Export);
+  d->ImportExportOperationButtonGroup->addButton(d->radioButton_Import);
+
+  d->ImportExportTypeButtonGroup = new QButtonGroup(d->CollapsibleButton_ImportExportSegment);
+  d->ImportExportTypeButtonGroup->addButton(d->radioButton_Labelmap);
+  d->ImportExportTypeButtonGroup->addButton(d->radioButton_Model);
 
   // Make connections
   connect(d->MRMLNodeComboBox_Segmentation, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
@@ -278,10 +283,16 @@ void qSlicerSegmentationsModuleWidget::init()
   connect(d->MRMLNodeComboBox_OtherSegmentationOrRepresentationNode, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
     this, SLOT(setOtherSegmentationOrRepresentationNode(vtkMRMLNode*)) );
 
-  connect(d->toolButton_AddLabelmap, SIGNAL(clicked()),
-    this, SLOT(onAddLabelmap()) );
-  connect(d->toolButton_AddModel, SIGNAL(clicked()),
-    this, SLOT(onAddModel()) );
+  this->connect(d->ImportExportOperationButtonGroup,
+    SIGNAL(buttonClicked(QAbstractButton*)),
+    SLOT(onImportExportOperationButtonClicked()));
+
+  this->connect(d->ImportExportTypeButtonGroup,
+    SIGNAL(buttonClicked(QAbstractButton*)),
+    SLOT(onImportExportTypeButtonClicked()));
+
+  connect(d->PushButton_ImportExport, SIGNAL(clicked()),
+    this, SLOT(onImportExportApply()));
 
   connect(d->toolButton_MoveFromCurrentSegmentation, SIGNAL(clicked()),
     this, SLOT(onMoveFromCurrentSegmentation()) );
@@ -304,6 +315,11 @@ void qSlicerSegmentationsModuleWidget::init()
   d->SegmentsTableView_Other->setVisibilityColumnVisible(false);
   d->SegmentsTableView_Other->setColorColumnVisible(false);
   d->SegmentsTableView_Other->setOpacityColumnVisible(false);
+
+  d->radioButton_Export->setChecked(true);
+  d->radioButton_Labelmap->setChecked(true);
+  this->onImportExportOperationButtonClicked();
+  this->onImportExportTypeButtonClicked();
 }
 
 //-----------------------------------------------------------------------------
@@ -320,6 +336,11 @@ void qSlicerSegmentationsModuleWidget::onSegmentationNodeChanged(vtkMRMLNode* no
     }
 
   vtkMRMLSegmentationNode* segmentationNode =  vtkMRMLSegmentationNode::SafeDownCast(node);
+  if (segmentationNode)
+    {
+    // Make sure display node exists
+    segmentationNode->CreateDefaultDisplayNodes();
+    }
 
   qvtkReconnect(d->SegmentationNode, segmentationNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
   qvtkReconnect(d->SegmentationNode, segmentationNode, vtkMRMLDisplayableNode::DisplayModifiedEvent, this, SLOT(updateWidgetFromMRML()));
@@ -454,61 +475,77 @@ void qSlicerSegmentationsModuleWidget::setOtherSegmentationOrRepresentationNode(
 
   // Decide if segmentation or representation node
   vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(node);
-  vtkMRMLLabelMapVolumeNode* labelmapNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(node);
-  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(node);
-
-  if (segmentationNode)
-    {
-    d->SegmentsTableView_Other->setSegmentationNode(node);
-    }
-  else if (labelmapNode || modelNode)
-    {
-    d->SegmentsTableView_Other->setRepresentationNode(node);
-    }
-  else
-    {
-    d->SegmentsTableView_Other->setSegmentationNode(NULL);
-    d->SegmentsTableView_Other->setRepresentationNode(NULL);
-    }
+  d->SegmentsTableView_Other->setSegmentationNode(segmentationNode);
 
   // Update widgets based on selection
   this->updateCopyMoveButtonStates();
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentationsModuleWidget::onAddLabelmap()
+void qSlicerSegmentationsModuleWidget::onImportExportOperationButtonClicked()
 {
   Q_D(qSlicerSegmentationsModuleWidget);
-
-  vtkMRMLScene* scene = this->mrmlScene();
-  if (!scene)
+  if (d->radioButton_Export->isChecked())
     {
-    return;
+    d->label_ImportExportType->setText("Output type:");
+    d->label_ImportExportNode->setText("Output node:");
+    d->PushButton_ImportExport->setText("Export");
     }
-
-  vtkSmartPointer<vtkMRMLLabelMapVolumeNode> labelmapNode = vtkSmartPointer<vtkMRMLLabelMapVolumeNode>::New();
-  scene->AddNode(labelmapNode);
-
-  // Select new labelmap in the other representation combobox
-  d->MRMLNodeComboBox_OtherSegmentationOrRepresentationNode->setCurrentNode(labelmapNode);
+  else
+    {
+    d->label_ImportExportType->setText("Input type:");
+    d->label_ImportExportNode->setText("Input node:");
+    d->PushButton_ImportExport->setText("Import");
+    }
+  d->MRMLNodeComboBox_ImportExportNode->setNoneEnabled(d->radioButton_Export->isChecked());
+  d->ComboBox_ExportedSegments->setEnabled(d->radioButton_Export->isChecked());
+  d->MRMLNodeComboBox_ExportLabelmapReferenceVolume->setEnabled(
+    d->radioButton_Labelmap->isChecked() && d->radioButton_Export->isChecked());
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentationsModuleWidget::onAddModel()
+void qSlicerSegmentationsModuleWidget::onImportExportTypeButtonClicked()
 {
   Q_D(qSlicerSegmentationsModuleWidget);
-
-  vtkMRMLScene* scene = this->mrmlScene();
-  if (!scene)
+  QStringList nodeTypes;
+  if (d->radioButton_Labelmap->isChecked())
     {
-    return;
+    nodeTypes << "vtkMRMLLabelMapVolumeNode";
+    if (d->radioButton_Export->isChecked())
+      {
+      d->MRMLNodeComboBox_ImportExportNode->setNoneDisplay("Export to new labelmap");
+      }
     }
+  else
+    {
+    nodeTypes << "vtkMRMLModelHierarchyNode";
+    if (d->radioButton_Export->isChecked())
+      {
+      d->MRMLNodeComboBox_ImportExportNode->setNoneDisplay("Export to new model");
+      }
+    else
+      {
+      // Import is supported from an individual model node as well
+      nodeTypes << "vtkMRMLModelNode";
+      }
+    }
+  d->MRMLNodeComboBox_ImportExportNode->setNodeTypes(nodeTypes);
+  d->MRMLNodeComboBox_ExportLabelmapReferenceVolume->setEnabled(
+    d->radioButton_Labelmap->isChecked() && d->radioButton_Export->isChecked());
+}
 
-  vtkSmartPointer<vtkMRMLModelNode> modelNode = vtkSmartPointer<vtkMRMLModelNode>::New();
-  scene->AddNode(modelNode);
-
-  // Select new model in the other representation table
-  d->MRMLNodeComboBox_OtherSegmentationOrRepresentationNode->setCurrentNode(modelNode);
+//-----------------------------------------------------------------------------
+void qSlicerSegmentationsModuleWidget::onImportExportApply()
+{
+  Q_D(qSlicerSegmentationsModuleWidget);
+  if (d->radioButton_Export->isChecked())
+    {
+    this->exportFromCurrentSegmentation();
+    }
+  else
+    {
+    this->importToCurrentSegmentation();
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -585,7 +622,7 @@ bool qSlicerSegmentationsModuleWidget::copySegmentBetweenSegmentations(
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerSegmentationsModuleWidget::copyFromCurrentSegmentation(bool removeFromSource/*=false*/)
+bool qSlicerSegmentationsModuleWidget::copySegmentsBetweenSegmentations(bool copyFromCurrentSegmentation, bool removeFromSource/*=false*/)
 {
   Q_D(qSlicerSegmentationsModuleWidget);
 
@@ -593,211 +630,318 @@ bool qSlicerSegmentationsModuleWidget::copyFromCurrentSegmentation(bool removeFr
     d->MRMLNodeComboBox_Segmentation->currentNode() );
   if (!currentSegmentationNode)
     {
-    qWarning() << Q_FUNC_INFO << ": No segmentation selected!";
+    qWarning() << Q_FUNC_INFO << ": No current segmentation is selected";
     return false;
     }
 
   vtkMRMLSegmentationNode* otherSegmentationNode = vtkMRMLSegmentationNode::SafeDownCast(
     d->SegmentsTableView_Other->segmentationNode() );
-  vtkMRMLNode* otherRepresentationNode = d->SegmentsTableView_Other->representationNode();
+  if (!otherSegmentationNode)
+    {
+    qWarning() << Q_FUNC_INFO << ": No other segmentation is selected";
+    return false;
+    }
 
   // Get selected segment IDs
   QStringList selectedSegmentIds = d->SegmentsTableView_Current->selectedSegmentIDs();
   if (selectedSegmentIds.empty())
     {
+    qWarning() << Q_FUNC_INFO << ": No segments are selected";
     return false;
     }
 
-  // If other node is segmentation
-  if (otherSegmentationNode)
+  // Get source and target segmentation
+  vtkSegmentation* sourceSegmentation = NULL;
+  vtkSegmentation* targetSegmentation = NULL;
+  if (copyFromCurrentSegmentation)
     {
-    // Copy/move selected segments into other segmentation
-    foreach (QString segmentId, selectedSegmentIds)
+    sourceSegmentation = currentSegmentationNode->GetSegmentation();
+    targetSegmentation = otherSegmentationNode->GetSegmentation();
+    otherSegmentationNode->CreateDefaultDisplayNodes();
+    }
+  else
+    {
+    sourceSegmentation = otherSegmentationNode->GetSegmentation();
+    targetSegmentation = currentSegmentationNode->GetSegmentation();
+    currentSegmentationNode->CreateDefaultDisplayNodes();
+    }
+
+  // Copy/move segments
+  bool success = true;
+  foreach(QString segmentId, selectedSegmentIds)
+    {
+    success = success && this->copySegmentBetweenSegmentations(sourceSegmentation,
+      targetSegmentation, segmentId, removeFromSource);
+    }
+
+  return success;
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
+{
+  Q_D(qSlicerSegmentationsModuleWidget);
+
+  vtkMRMLSegmentationNode* currentSegmentationNode =  vtkMRMLSegmentationNode::SafeDownCast(
+    d->MRMLNodeComboBox_Segmentation->currentNode() );
+  if (!currentSegmentationNode || !currentSegmentationNode->GetSegmentation())
+    {
+    qWarning() << Q_FUNC_INFO << ": No segmentation selected!";
+    return false;
+    }
+
+  // If existing node was not selected then create a new one that we will export into
+  vtkMRMLNode* otherRepresentationNode = d->MRMLNodeComboBox_ImportExportNode->currentNode();
+  if (!otherRepresentationNode)
+    {
+    std::string namePostfix;
+    if (d->radioButton_Labelmap->isChecked())
       {
-      this->copySegmentBetweenSegmentations(currentSegmentationNode->GetSegmentation(),
-        otherSegmentationNode->GetSegmentation(), segmentId, removeFromSource);
+      vtkSmartPointer<vtkMRMLNode> newNode = vtkSmartPointer<vtkMRMLNode>::Take(
+        currentSegmentationNode->GetScene()->CreateNodeByClass("vtkMRMLLabelMapVolumeNode"));
+      vtkMRMLLabelMapVolumeNode* newLabelmapNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(
+        currentSegmentationNode->GetScene()->AddNode(newNode));
+      newLabelmapNode->CreateDefaultDisplayNodes();
+      otherRepresentationNode = newLabelmapNode;
+      namePostfix = "-label";
+      }
+    else
+      {
+      vtkSmartPointer<vtkMRMLNode> newNode = vtkSmartPointer<vtkMRMLNode>::Take(
+        currentSegmentationNode->GetScene()->CreateNodeByClass("vtkMRMLModelHierarchyNode"));
+      vtkMRMLModelHierarchyNode* newModelHierarchyNode = vtkMRMLModelHierarchyNode::SafeDownCast(
+        currentSegmentationNode->GetScene()->AddNode(newNode));
+      otherRepresentationNode = newModelHierarchyNode;
+      namePostfix = "-models";
+      }
+    std::string exportedNodeName = std::string(currentSegmentationNode->GetName() ? currentSegmentationNode->GetName() : "Unknown") + namePostfix;
+    exportedNodeName = currentSegmentationNode->GetScene()->GetUniqueNameByString(exportedNodeName.c_str());
+    otherRepresentationNode->SetName(exportedNodeName.c_str());
+    d->MRMLNodeComboBox_ImportExportNode->setCurrentNode(otherRepresentationNode);
+    }
+
+  // Get IDs of segments to be exported
+  std::vector<std::string> segmentIDs;
+  if (d->ComboBox_ExportedSegments->currentIndex() == 0)
+    {
+    // all segments
+    currentSegmentationNode->GetSegmentation()->GetSegmentIDs(segmentIDs);
+    }
+  else
+    {
+    // visible segments
+    vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(currentSegmentationNode->GetDisplayNode());
+    displayNode->GetVisibleSegmentIDs(segmentIDs);
+    }
+
+  vtkMRMLLabelMapVolumeNode* labelmapNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(otherRepresentationNode);
+  vtkMRMLModelHierarchyNode* modelHierarchyNode = vtkMRMLModelHierarchyNode::SafeDownCast(otherRepresentationNode);
+  if (labelmapNode)
+    {
+    // Export selected segments into a multi-label labelmap volume
+    QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+    bool success = vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(currentSegmentationNode, segmentIDs, labelmapNode,
+      vtkMRMLVolumeNode::SafeDownCast(d->MRMLNodeComboBox_ExportLabelmapReferenceVolume->currentNode()));
+    QApplication::restoreOverrideCursor();
+    if (!success)
+      {
+      QString message = QString("Failed to export segments from segmentation %1 to representation node %2!\n\n"
+        "Most probably the segment cannot be converted into representation corresponding to the selected representation node.").
+        arg(currentSegmentationNode->GetName()).arg(labelmapNode->GetName());
+      qCritical() << Q_FUNC_INFO << ": " << message;
+      QMessageBox::warning(NULL, tr("Failed to export segment"), message);
+      return false;
       }
     }
-  // If other node is representation
-  else if (otherRepresentationNode)
+  else if (modelHierarchyNode)
     {
-    if (selectedSegmentIds.count() == 1)
+    // Create a map that can be used for quickly looking up existing models in a hierarchy
+    vtkNew<vtkCollection> existingModels;
+    modelHierarchyNode->GetChildrenModelNodes(existingModels.GetPointer());
+    std::map< std::string, vtkMRMLModelNode* > existingModelNamesToModels;
+    vtkObject* object = NULL;
+    vtkCollectionSimpleIterator it;
+    for (existingModels->InitTraversal(it); (object = existingModels->GetNextItemAsObject(it));)
       {
-      // Export segment into representation node
-      QString firstSegmentId = selectedSegmentIds.first();
-      vtkSegment* segment = currentSegmentationNode->GetSegmentation()->GetSegment(firstSegmentId.toLatin1().constData());
-      if (!vtkSlicerSegmentationsModuleLogic::ExportSegmentToRepresentationNode(segment, otherRepresentationNode))
+      vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(object);
+      if (!modelNode)
         {
-        QString message = QString("Failed to export segment %1 from segmentation %2 to representation node %3!\n\nMost probably the segment cannot be converted into representation corresponding to the selected representation node.").
-          arg(firstSegmentId).arg(currentSegmentationNode->GetName()).arg(otherRepresentationNode->GetName());
-        qCritical() << Q_FUNC_INFO << ": " << message;
-        QMessageBox::warning(NULL, tr("Failed to export segment"), message);
-        return false;
+        continue;
         }
-      else if (removeFromSource)
+      existingModelNamesToModels[modelNode->GetName()] = modelNode;
+      }
+    // Export each segment into a model
+    vtkMRMLSubjectHierarchyNode* currentSegmentationShNode = vtkMRMLSubjectHierarchyNode::GetAssociatedSubjectHierarchyNode(currentSegmentationNode);
+    QString errorMessage;
+    for (std::vector<std::string>::iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
+      {
+      // Export segment into model node
+      vtkSegment* segment = currentSegmentationNode->GetSegmentation()->GetSegment(*segmentIdIt);
+      vtkMRMLModelNode* modelNode = NULL;
+      if (existingModelNamesToModels.find(segment->GetName()) != existingModelNamesToModels.end())
         {
-        // Remove segment from current segmentation if export was successful
-        currentSegmentationNode->GetSegmentation()->RemoveSegment(firstSegmentId.toLatin1().constData());
+        // Model by the same name exists in the selected hierarchy, overwrite that model
+        modelNode = existingModelNamesToModels[segment->GetName()];
         }
+      else
+        {
+        // Create new model node
+        vtkNew<vtkMRMLModelNode> newModelNode;
+        modelHierarchyNode->GetScene()->AddNode(newModelNode.GetPointer());
+        newModelNode->CreateDefaultDisplayNodes();
+        modelNode = newModelNode.GetPointer();
+        // Add to model hierarchy
+        vtkNew<vtkMRMLModelHierarchyNode> newModelHierarchyNode;
+        newModelHierarchyNode->SetHideFromEditors(true);
+        newModelHierarchyNode->SetAssociatedNodeID(modelNode->GetID());
+        newModelHierarchyNode->SetParentNodeID(modelHierarchyNode->GetID());
+        modelHierarchyNode->GetScene()->AddNode(newModelHierarchyNode.GetPointer());
+        }
+      QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+      if (!vtkSlicerSegmentationsModuleLogic::ExportSegmentToRepresentationNode(segment, modelNode))
+        {
+        if (errorMessage.isEmpty())
+          {
+          errorMessage = QString("Failed to export segment(s) to model:");
+          }
+        errorMessage.append(" ");
+        errorMessage.append(modelNode->GetName());
+        }
+      QApplication::restoreOverrideCursor();
       // Add representation node into the same subject hierarchy branch as the segmentation
-      vtkMRMLSubjectHierarchyNode* currentSegmentationShNode = vtkMRMLSubjectHierarchyNode::GetAssociatedSubjectHierarchyNode(currentSegmentationNode);
-      vtkMRMLSubjectHierarchyNode* otherRepresentationShNode = vtkMRMLSubjectHierarchyNode::GetAssociatedSubjectHierarchyNode(otherRepresentationNode);
+      vtkMRMLSubjectHierarchyNode* otherRepresentationShNode = vtkMRMLSubjectHierarchyNode::GetAssociatedSubjectHierarchyNode(modelNode);
       if (otherRepresentationShNode && currentSegmentationShNode->GetParentNodeID())
         {
         otherRepresentationShNode->SetParentNodeID(currentSegmentationShNode->GetParentNodeID());
         }
       }
-    // Multiple selection is only allowed for exporting to labelmap volume
-    else
+    if (!errorMessage.isEmpty())
       {
-      if (!otherRepresentationNode->IsA("vtkMRMLLabelMapVolumeNode"))
-        {
-        QMessageBox::warning(NULL, tr("Failed to export multiple segments"), tr("More than one segment can only be exported into a labelmap volume node"));
-        return false;
-        }
-
-      // Export selected segments into a multi-label labelmap volume
-      std::vector<std::string> segmentIDs;
-      foreach (QString segmentId, selectedSegmentIds)
-        {
-        segmentIDs.push_back(segmentId.toLatin1().constData());
-        }
-      vtkMRMLLabelMapVolumeNode* otherLabelmapNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(otherRepresentationNode);
-      if (!vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(currentSegmentationNode, segmentIDs, otherLabelmapNode))
-        {
-        QString message = QString("Failed to export segments from segmentation %1 to representation node %2!\n\nMost probably the segment cannot be converted into representation corresponding to the selected representation node.").
-          arg(currentSegmentationNode->GetName()).arg(otherLabelmapNode->GetName());
-        qCritical() << Q_FUNC_INFO << ": " << message;
-        QMessageBox::warning(NULL, tr("Failed to export segment"), message);
-        return false;
-        }
-      else if (removeFromSource)
-        {
-        // Remove segments from current segmentation if export was successful
-        foreach (QString segmentId, selectedSegmentIds)
-          {
-          currentSegmentationNode->GetSegmentation()->RemoveSegment(segmentId.toLatin1().constData());
-          }
-        }
+      qCritical() << Q_FUNC_INFO << ": " << errorMessage;
+      QMessageBox::warning(NULL, tr("Failed to export segment"), errorMessage);
+      return false;
       }
-
-    // Refresh other representation table
-    d->SegmentsTableView_Other->setRepresentationNode(otherRepresentationNode);
     }
 
   return true;
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerSegmentationsModuleWidget::importToCurrentSegmentation()
+{
+  Q_D(qSlicerSegmentationsModuleWidget);
+
+  vtkMRMLSegmentationNode* currentSegmentationNode = vtkMRMLSegmentationNode::SafeDownCast(
+    d->MRMLNodeComboBox_Segmentation->currentNode());
+  if (!currentSegmentationNode)
+    {
+    qWarning() << Q_FUNC_INFO << ": No segmentation selected";
+    return false;
+    }
+  currentSegmentationNode->CreateDefaultDisplayNodes();
+
+  vtkMRMLNode* otherRepresentationNode = d->MRMLNodeComboBox_ImportExportNode->currentNode();
+  if (!otherRepresentationNode)
+    {
+    qWarning() << Q_FUNC_INFO << ": No other node is selected";
+    return false;
+    }
+  vtkMRMLLabelMapVolumeNode* labelmapNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(otherRepresentationNode);
+  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(otherRepresentationNode);
+  vtkMRMLModelHierarchyNode* modelHierarchyNode = vtkMRMLModelHierarchyNode::SafeDownCast(otherRepresentationNode);
+
+  if (labelmapNode)
+    {
+    if (this->updateMasterRepresentationInSegmentation(currentSegmentationNode->GetSegmentation(),
+      vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()))
+      {
+      QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+      bool success = vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(labelmapNode, currentSegmentationNode);
+      QApplication::restoreOverrideCursor();
+      if (!success)
+        {
+        QString message = QString("Failed to copy labels from labelmap volume node %1!").arg(labelmapNode->GetName());
+        qCritical() << Q_FUNC_INFO << ": " << message;
+        QMessageBox::warning(NULL, tr("Failed to import from labelmap volume"), message);
+        return false;
+        }
+      }
+    }
+  else if (modelNode || modelHierarchyNode)
+    {
+    QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+    if (this->updateMasterRepresentationInSegmentation(currentSegmentationNode->GetSegmentation(),
+      vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName()))
+      {
+      vtkNew<vtkCollection> modelNodes;
+      if (modelNode)
+        {
+        modelNodes->AddItem(modelNode);
+        }
+      else if (modelHierarchyNode)
+        {
+        modelHierarchyNode->GetChildrenModelNodes(modelNodes.GetPointer());
+        }
+      QString errorMessage;
+      vtkObject* object = NULL;
+      vtkCollectionSimpleIterator it;
+      for (modelNodes->InitTraversal(it); (object = modelNodes->GetNextItemAsObject(it));)
+        {
+        modelNode = vtkMRMLModelNode::SafeDownCast(object);
+        if (!modelNode)
+          {
+          continue;
+          }
+        // TODO: look up segment with matching name and overwrite that
+        if (!vtkSlicerSegmentationsModuleLogic::ImportModelToSegmentationNode(modelNode, currentSegmentationNode))
+          {
+          if (errorMessage.isEmpty())
+            {
+            errorMessage = tr("Failed to copy polydata from model node:");
+            }
+          errorMessage.append(" ");
+          errorMessage.append(QString(modelNode->GetName() ? modelNode->GetName() : "(unknown)"));
+          }
+        }
+      if (!errorMessage.isEmpty())
+        {
+        qCritical() << Q_FUNC_INFO << ": " << errorMessage;
+        QMessageBox::warning(NULL, tr("Failed to import model node"), errorMessage);
+        }
+      }
+    QApplication::restoreOverrideCursor();
+    }
+  else
+    {
+    qCritical() << Q_FUNC_INFO << ": Reprsentation node needs to be either model, model hierarchy, or labelmap, but "
+      << otherRepresentationNode->GetName() << " is " << otherRepresentationNode->GetNodeTagName();
+    return false;
+    }
+  return true;
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerSegmentationsModuleWidget::onMoveFromCurrentSegmentation()
 {
-  this->copyFromCurrentSegmentation(true);
+  this->copySegmentsBetweenSegmentations(true, true);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerSegmentationsModuleWidget::onCopyFromCurrentSegmentation()
 {
-  this->copyFromCurrentSegmentation();
+  this->copySegmentsBetweenSegmentations(true, false);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerSegmentationsModuleWidget::onCopyToCurrentSegmentation()
 {
-  Q_D(qSlicerSegmentationsModuleWidget);
-
-  vtkMRMLSegmentationNode* currentSegmentationNode =  vtkMRMLSegmentationNode::SafeDownCast(
-    d->MRMLNodeComboBox_Segmentation->currentNode() );
-  if (!currentSegmentationNode)
-    {
-    qWarning() << Q_FUNC_INFO << ": No segmentation selected!";
-    return;
-    }
-
-  vtkMRMLSegmentationNode* otherSegmentationNode = vtkMRMLSegmentationNode::SafeDownCast(
-    d->SegmentsTableView_Other->segmentationNode() );
-  vtkMRMLNode* otherRepresentationNode = d->SegmentsTableView_Other->representationNode();
-
-  // If other node is segmentation
-  if (otherSegmentationNode)
-    {
-    // Copy other segments into current segmentation
-    foreach (QString segmentId, d->SegmentsTableView_Other->selectedSegmentIDs())
-      {
-      this->copySegmentBetweenSegmentations(otherSegmentationNode->GetSegmentation(),
-        currentSegmentationNode->GetSegmentation(), segmentId, false);
-      }
-    }
-  // If other node is representation
-  else if (otherRepresentationNode)
-    {
-    vtkMRMLLabelMapVolumeNode* labelmapNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(otherRepresentationNode);
-    vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(otherRepresentationNode);
-
-    if (labelmapNode)
-      {
-      if (this->updateMasterRepresentationInSegmentation(currentSegmentationNode->GetSegmentation(), vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()))
-        {
-        if (!vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(labelmapNode, currentSegmentationNode))
-          {
-          QString message = QString("Failed to copy labels from labelmap volume node %1!").arg(labelmapNode->GetName());
-          qCritical() << Q_FUNC_INFO << ": " << message;
-          QMessageBox::warning(NULL, tr("Failed to import from labelmap volume"), message);
-          }
-        }
-      }
-    else if (modelNode)
-      {
-      if (this->updateMasterRepresentationInSegmentation(currentSegmentationNode->GetSegmentation(),
-        vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName()))
-        {
-        if (!vtkSlicerSegmentationsModuleLogic::ImportModelToSegmentationNode(modelNode, currentSegmentationNode))
-          {
-          QString message = QString("Failed to copy polydata from model node %1!").arg(modelNode->GetName());
-          qCritical() << Q_FUNC_INFO << ": " << message;
-          QMessageBox::warning(NULL, tr("Failed to import model node"), message);
-          }
-        }
-      }
-    else
-      {
-      qCritical() << Q_FUNC_INFO << ": Reprsentation node needs to be either model or labelmap, but " << otherRepresentationNode->GetName() << " is " << otherRepresentationNode->GetNodeTagName();
-      return;
-      }
-    }
-  currentSegmentationNode->CreateDefaultDisplayNodes();
+  this->copySegmentsBetweenSegmentations(false, false);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerSegmentationsModuleWidget::onMoveToCurrentSegmentation()
 {
-  Q_D(qSlicerSegmentationsModuleWidget);
-
-  vtkMRMLSegmentationNode* currentSegmentationNode =  vtkMRMLSegmentationNode::SafeDownCast(
-    d->MRMLNodeComboBox_Segmentation->currentNode() );
-  if (!currentSegmentationNode)
-    {
-    qWarning() << Q_FUNC_INFO << ": No segmentation selected!";
-    return;
-    }
-
-  vtkMRMLSegmentationNode* otherSegmentationNode = vtkMRMLSegmentationNode::SafeDownCast(
-    d->SegmentsTableView_Other->segmentationNode() );
-  // If other node is segmentation
-  if (otherSegmentationNode)
-    {
-    // Move other segment into current segmentation
-    foreach (QString segmentId, d->SegmentsTableView_Other->selectedSegmentIDs())
-      {
-      this->copySegmentBetweenSegmentations(otherSegmentationNode->GetSegmentation(),
-        currentSegmentationNode->GetSegmentation(), segmentId, true);
-      }
-    }
-  // Only segment in segmentation can be moved into current segmentation
-  else
-    {
-    qCritical() << Q_FUNC_INFO << ": Invalid operation!";
-    }
-  currentSegmentationNode->CreateDefaultDisplayNodes();
+  this->copySegmentsBetweenSegmentations(false, true);
 }
 
 //-----------------------------------------------------------------------------
@@ -912,9 +1056,9 @@ bool qSlicerSegmentationsModuleWidget::setEditedNode(
   Q_UNUSED(role);
   Q_UNUSED(context);
   if (vtkMRMLSegmentationNode::SafeDownCast(node))
-      {
+    {
     d->MRMLNodeComboBox_Segmentation->setCurrentNode(node);
     return true;
-      }
+    }
   return false;
 }

@@ -219,14 +219,6 @@ void qSlicerSegmentationsModule::onNodeAdded(vtkObject* sceneObject, vtkObject* 
       segmentationsPlugin, SLOT( onSegmentRemoved(vtkObject*,void*) ) );
     qvtkConnect( segmentationNode, vtkSegmentation::SegmentModified,
       segmentationsPlugin, SLOT( onSegmentModified(vtkObject*,void*) ) );
-
-    // Workaround for auto-select new segmentation node issue
-    // (although the flag is on in the MRML node combobox, it does not select newly added nodes)
-    qSlicerSegmentationsModuleWidget* moduleWidget = dynamic_cast<qSlicerSegmentationsModuleWidget*>(this->widgetRepresentation());
-    if (moduleWidget)
-      {
-      moduleWidget->selectSegmentationNode(segmentationNode);
-      }
     }
 
   // Connect subject hierarchy modified event to handle renaming segments

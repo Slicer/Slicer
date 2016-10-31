@@ -86,10 +86,14 @@ protected:
   bool copySegmentBetweenSegmentations(vtkSegmentation* fromSegmentation,
     vtkSegmentation* toSegmentation, QString segmentId, bool removeFromSource=false);
 
-  /// Copy segment from current segmentation to other segmentation/representation
+  /// Copy segments to/from current segmentation from/to other segmentation.
+  /// \param copyFromCurrentSegmentation If true, then copy current->other; otherwise other->current.
   /// \param removeFromSource If true, then delete segment from source segmentation after copying. Default value is false.
   /// \return Success flag
-  bool copyFromCurrentSegmentation(bool removeFromSource=false);
+  bool copySegmentsBetweenSegmentations(bool copyFromCurrentSegmentation, bool removeFromSource = false);
+
+  bool exportFromCurrentSegmentation();
+  bool importToCurrentSegmentation();
 
   /// Update master representation in segmentation to a given representation.
   /// Used before adding a certain segment to a segmentation, making sure the user knows if data loss is possible.
@@ -116,8 +120,9 @@ protected slots:
   void onEditSelectedSegment();
   void onRemoveSelectedSegments();
 
-  void onAddLabelmap();
-  void onAddModel();
+  void onImportExportOperationButtonClicked();
+  void onImportExportTypeButtonClicked();
+  void onImportExportApply();
 
   void onMoveFromCurrentSegmentation();
   void onCopyFromCurrentSegmentation();
