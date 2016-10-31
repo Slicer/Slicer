@@ -244,9 +244,12 @@ public:
   /// Get all visible segment IDs.
   void GetVisibleSegmentIDs(vtkStringArray* segmentIDs);
 
+  /// Get all visible segment IDs.
+  void GetVisibleSegmentIDs(std::vector<std::string>& segmentIDs);
+
 protected:
   /// Convenience function for getting all segment IDs.
-  void GetAllSegmentIDs(std::vector<std::string>& segmentIDs, bool visibleSegmentsOnly);
+  void GetSegmentIDs(std::vector<std::string>& segmentIDs, bool visibleSegmentsOnly);
 
   /// Update list of segment display properties.
   /// Remove entries for missing segments and add missing entries for existing segments

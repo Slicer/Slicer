@@ -446,7 +446,7 @@ void vtkMRMLSegmentationDisplayNode::SetSegmentVisibility(std::string segmentID,
 void vtkMRMLSegmentationDisplayNode::SetAllSegmentsVisibility(bool visible)
 {
   std::vector<std::string> segmentIDs;
-  this->GetAllSegmentIDs(segmentIDs, false);
+  this->GetSegmentIDs(segmentIDs, false);
   for (std::vector<std::string>::iterator segmentIDIt = segmentIDs.begin(); segmentIDIt != segmentIDs.end(); ++segmentIDIt)
     {
     this->SetSegmentVisibility(*segmentIDIt, visible);
@@ -478,7 +478,7 @@ void vtkMRMLSegmentationDisplayNode::SetSegmentVisibility3D(std::string segmentI
 void vtkMRMLSegmentationDisplayNode::SetAllSegmentsVisibility3D(bool visible, bool changeVisibleSegmentsOnly /* = false */)
 {
   std::vector<std::string> segmentIDs;
-  this->GetAllSegmentIDs(segmentIDs, changeVisibleSegmentsOnly);
+  this->GetSegmentIDs(segmentIDs, changeVisibleSegmentsOnly);
   for (std::vector<std::string>::iterator segmentIDIt = segmentIDs.begin(); segmentIDIt != segmentIDs.end(); ++segmentIDIt)
     {
     this->SetSegmentVisibility3D(*segmentIDIt, visible);
@@ -510,7 +510,7 @@ void vtkMRMLSegmentationDisplayNode::SetSegmentVisibility2DFill(std::string segm
 void vtkMRMLSegmentationDisplayNode::SetAllSegmentsVisibility2DFill(bool visible, bool changeVisibleSegmentsOnly /* = false */)
 {
   std::vector<std::string> segmentIDs;
-  this->GetAllSegmentIDs(segmentIDs, changeVisibleSegmentsOnly);
+  this->GetSegmentIDs(segmentIDs, changeVisibleSegmentsOnly);
   for (std::vector<std::string>::iterator segmentIDIt = segmentIDs.begin(); segmentIDIt != segmentIDs.end(); ++segmentIDIt)
     {
     this->SetSegmentVisibility2DFill(*segmentIDIt, visible);
@@ -542,7 +542,7 @@ void vtkMRMLSegmentationDisplayNode::SetSegmentVisibility2DOutline(std::string s
 void vtkMRMLSegmentationDisplayNode::SetAllSegmentsVisibility2DOutline(bool visible, bool changeVisibleSegmentsOnly /* = false */)
 {
   std::vector<std::string> segmentIDs;
-  this->GetAllSegmentIDs(segmentIDs, changeVisibleSegmentsOnly);
+  this->GetSegmentIDs(segmentIDs, changeVisibleSegmentsOnly);
   for (std::vector<std::string>::iterator segmentIDIt = segmentIDs.begin(); segmentIDIt != segmentIDs.end(); ++segmentIDIt)
     {
     this->SetSegmentVisibility2DOutline(*segmentIDIt, visible);
@@ -574,7 +574,7 @@ void vtkMRMLSegmentationDisplayNode::SetSegmentOpacity3D(std::string segmentID, 
 void vtkMRMLSegmentationDisplayNode::SetAllSegmentsOpacity3D(double opacity, bool changeVisibleSegmentsOnly /* = false */)
 {
   std::vector<std::string> segmentIDs;
-  this->GetAllSegmentIDs(segmentIDs, changeVisibleSegmentsOnly);
+  this->GetSegmentIDs(segmentIDs, changeVisibleSegmentsOnly);
   for (std::vector<std::string>::iterator segmentIDIt = segmentIDs.begin(); segmentIDIt != segmentIDs.end(); ++segmentIDIt)
     {
     this->SetSegmentOpacity3D(*segmentIDIt, opacity);
@@ -607,7 +607,7 @@ void vtkMRMLSegmentationDisplayNode::SetSegmentOpacity2DFill(std::string segment
 void vtkMRMLSegmentationDisplayNode::SetAllSegmentsOpacity2DFill(double opacity, bool changeVisibleSegmentsOnly /* = false */)
 {
   std::vector<std::string> segmentIDs;
-  this->GetAllSegmentIDs(segmentIDs, changeVisibleSegmentsOnly);
+  this->GetSegmentIDs(segmentIDs, changeVisibleSegmentsOnly);
   for (std::vector<std::string>::iterator segmentIDIt = segmentIDs.begin(); segmentIDIt != segmentIDs.end(); ++segmentIDIt)
     {
     this->SetSegmentOpacity2DFill(*segmentIDIt, opacity);
@@ -640,7 +640,7 @@ void vtkMRMLSegmentationDisplayNode::SetSegmentOpacity2DOutline(std::string segm
 void vtkMRMLSegmentationDisplayNode::SetAllSegmentsOpacity2DOutline(double opacity, bool changeVisibleSegmentsOnly /* = false */)
 {
   std::vector<std::string> segmentIDs;
-  this->GetAllSegmentIDs(segmentIDs, changeVisibleSegmentsOnly);
+  this->GetSegmentIDs(segmentIDs, changeVisibleSegmentsOnly);
   for (std::vector<std::string>::iterator segmentIDIt = segmentIDs.begin(); segmentIDIt != segmentIDs.end(); ++segmentIDIt)
     {
     this->SetSegmentOpacity2DOutline(*segmentIDIt, opacity);
@@ -662,7 +662,7 @@ void vtkMRMLSegmentationDisplayNode::SetSegmentOpacity(std::string segmentID, do
 void vtkMRMLSegmentationDisplayNode::SetAllSegmentsOpacity(double opacity, bool changeVisibleSegmentsOnly /* = false */)
 {
   std::vector<std::string> segmentIDs;
-  this->GetAllSegmentIDs(segmentIDs, changeVisibleSegmentsOnly);
+  this->GetSegmentIDs(segmentIDs, changeVisibleSegmentsOnly);
   for (std::vector<std::string>::iterator segmentIDIt = segmentIDs.begin(); segmentIDIt != segmentIDs.end(); ++segmentIDIt)
     {
     this->SetSegmentOpacity(*segmentIDIt, opacity);
@@ -980,20 +980,26 @@ void vtkMRMLSegmentationDisplayNode::GetPolyDataRepresentationNames(std::set<std
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationDisplayNode::GetAllSegmentIDs(std::vector<std::string>& segmentIDs, bool visibleSegmentsOnly)
+void vtkMRMLSegmentationDisplayNode::GetVisibleSegmentIDs(std::vector<std::string>& segmentIDs)
+{
+  this->GetSegmentIDs(segmentIDs, true);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLSegmentationDisplayNode::GetSegmentIDs(std::vector<std::string>& segmentIDs, bool visibleSegmentsOnly)
 {
   segmentIDs.clear();
   vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(this->GetDisplayableNode());
   if (!segmentationNode)
     {
-    vtkErrorMacro("vtkMRMLSegmentationDisplayNode::GetAllSegmentIDs: No segmentation node is associated to this display node");
+    vtkErrorMacro("vtkMRMLSegmentationDisplayNode::GetSegmentIDs: No segmentation node is associated to this display node");
     return;
     }
   // Make sure the requested representation exists
   vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
   if (!segmentation)
     {
-    vtkErrorMacro("vtkMRMLSegmentationDisplayNode::GetAllSegmentIDs: No segmentation is associated to this display node");
+    vtkErrorMacro("vtkMRMLSegmentationDisplayNode::GetSegmentIDs: No segmentation is associated to this display node");
     return;
     }
   segmentation->GetSegmentIDs(segmentIDs);
@@ -1023,7 +1029,7 @@ void vtkMRMLSegmentationDisplayNode::GetVisibleSegmentIDs(vtkStringArray* segmen
     return;
     }
   std::vector<std::string> segmentIDsVector;
-  this->GetAllSegmentIDs(segmentIDsVector, true);
+  this->GetSegmentIDs(segmentIDsVector, true);
   segmentIDs->Reset();
   for (std::vector<std::string>::iterator it = segmentIDsVector.begin(); it != segmentIDsVector.end(); ++it)
     {
