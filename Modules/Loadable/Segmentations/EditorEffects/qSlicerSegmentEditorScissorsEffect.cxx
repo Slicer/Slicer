@@ -415,6 +415,7 @@ void qSlicerSegmentEditorScissorsEffectPrivate::updateGlyphWithNewPosition(Sciss
     pipeline->ActorThin->VisibilityOff();
     }
 }
+
 //-----------------------------------------------------------------------------
 bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* viewWidget)
 {
@@ -436,6 +437,30 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
     {
     return false;
     }
+
+  // Get bounds of modifier labelmap
+  if (!q->parameterSetNode())
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid segment editor parameter set node";
+    return false;
+    }
+  vtkMRMLSegmentationNode* segmentationNode = q->parameterSetNode()->GetSegmentationNode();
+  if (!segmentationNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid segmentationNode";
+    return false;
+    }
+  vtkOrientedImageData* modifierLabelmap = q->modifierLabelmap();
+  if (!modifierLabelmap)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid modifierLabelmap";
+    return false;
+    }
+  vtkNew<vtkMatrix4x4> segmentationToWorldMatrix;
+  // We don't support painting in non-linearly transformed node (it could be implemented, but would probably slow down things too much)
+  // TODO: show a meaningful error message to the user if attempted
+  vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(segmentationNode->GetParentTransformNode(), NULL, segmentationToWorldMatrix.GetPointer());
+
   qMRMLSliceWidget* sliceWidget = qobject_cast<qMRMLSliceWidget*>(viewWidget);
   qMRMLThreeDWidget* threeDWidget = qobject_cast<qMRMLThreeDWidget*>(viewWidget);
   if (sliceWidget)
@@ -449,33 +474,11 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
 
     // Get modifier labelmap extent in slice coordinate system to know how much we
     // have to cut through
-    if (!q->parameterSetNode())
-      {
-      qCritical() << Q_FUNC_INFO << ": Invalid segment editor parameter set node";
-      return false;
-      }
-    vtkMRMLSegmentationNode* segmentationNode = q->parameterSetNode()->GetSegmentationNode();
-    if (!segmentationNode)
-      {
-      qCritical() << Q_FUNC_INFO << ": Invalid segmentationNode";
-      return false;
-      }
-    vtkOrientedImageData* modifierLabelmap = q->modifierLabelmap();
-    if (!modifierLabelmap)
-      {
-      qCritical() << Q_FUNC_INFO << ": Invalid modifierLabelmap";
-      return false;
-      }
     vtkNew<vtkTransform> segmentationToSliceXYTransform;
     vtkNew<vtkMatrix4x4> worldToSliceXYMatrix;
     vtkMatrix4x4::Invert(sliceNode->GetXYToRAS(), worldToSliceXYMatrix.GetPointer());
     segmentationToSliceXYTransform->Concatenate(worldToSliceXYMatrix.GetPointer());
-    vtkNew<vtkMatrix4x4> segmentationToWorldMatrix;
-    // We don't support painting in non-linearly transformed node (it could be implemented, but would probably slow down things too much)
-    // TODO: show a meaningful error message to the user if attempted
-    vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(segmentationNode->GetParentTransformNode(), NULL, segmentationToWorldMatrix.GetPointer());
     segmentationToSliceXYTransform->Concatenate(segmentationToWorldMatrix.GetPointer());
-
     double segmentationBounds_SliceXY[6] = { 0, -1, 0, -1, 0, -1 };
     vtkOrientedImageDataResample::TransformOrientedImageDataBounds(modifierLabelmap, segmentationToSliceXYTransform.GetPointer(), segmentationBounds_SliceXY);
     // Extend bounds by half slice to make sure the boundaries are included
@@ -520,18 +523,68 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
       return false;
       }
 
+    // Camera parameters
+    // Camera position
     double cameraPos[4] = { 0 };
-    double cameraFP[4] = { 0 };
-
     camera->GetPosition(cameraPos);
     cameraPos[3] = 1.0;
+    // Focal point position
+    double cameraFP[4] = { 0 };
     camera->GetFocalPoint(cameraFP);
     cameraFP[3] = 1.0;
+    // Direction of projection
+    double cameraDOP[3] = { 0 };
+    for (int i = 0; i < 3; i++)
+      {
+      cameraDOP[i] = cameraFP[i] - cameraPos[i];
+      }
+    vtkMath::Normalize(cameraDOP);
+    // Camera view up
+    double cameraViewUp[3] = { 0 };
+    camera->GetViewUp(cameraViewUp);
+    vtkMath::Normalize(cameraViewUp);
 
     renderer->SetWorldPoint(cameraFP[0], cameraFP[1], cameraFP[2], cameraFP[3]);
     renderer->WorldToDisplay();
     double* displayCoords = renderer->GetDisplayPoint();
     double selectionZ = displayCoords[2];
+
+    // Get modifier labelmap extent in camera coordinate system to know how much we
+    // have to cut through
+    vtkNew<vtkMatrix4x4> cameraToWorldMatrix;
+    double cameraViewRight[3] = { 1, 0, 0 };
+    vtkMath::Cross(cameraDOP, cameraViewUp, cameraViewRight);
+    for (int i = 0; i < 3; i++)
+      {
+      cameraToWorldMatrix->SetElement(i, 3, cameraPos[i]);
+      cameraToWorldMatrix->SetElement(i, 0, cameraViewUp[i]);
+      cameraToWorldMatrix->SetElement(i, 1, cameraViewRight[i]);
+      cameraToWorldMatrix->SetElement(i, 2, cameraDOP[i]);
+      }
+    vtkNew<vtkMatrix4x4> worldToCameraMatrix;
+    vtkMatrix4x4::Invert(cameraToWorldMatrix.GetPointer(), worldToCameraMatrix.GetPointer());
+    vtkNew<vtkTransform> segmentationToCameraTransform;
+    segmentationToCameraTransform->Concatenate(worldToCameraMatrix.GetPointer());
+    segmentationToCameraTransform->Concatenate(segmentationToWorldMatrix.GetPointer());
+    double segmentationBounds_Camera[6] = { 0, -1, 0, -1, 0, -1 };
+    vtkOrientedImageDataResample::TransformOrientedImageDataBounds(modifierLabelmap, segmentationToCameraTransform.GetPointer(), segmentationBounds_Camera);
+    double clipRangeFromModifierLabelmap[2] =
+      {
+      std::min(segmentationBounds_Camera[4], segmentationBounds_Camera[5]),
+      std::max(segmentationBounds_Camera[4], segmentationBounds_Camera[5])
+      };
+    // Extend bounds by half slice to make sure the boundaries are included
+    clipRangeFromModifierLabelmap[0] -= 0.5;
+    clipRangeFromModifierLabelmap[1] += 0.5;
+
+    // Clip what we see on the camera but reduce it to the modifier labelmap's range
+    // to keep the stencil as small as possible
+    double* clipRangeFromCamera = camera->GetClippingRange();
+    double clipRange[2] =
+      {
+      std::max(clipRangeFromModifierLabelmap[0], clipRangeFromCamera[0]),
+      std::min(clipRangeFromModifierLabelmap[1], clipRangeFromCamera[1]),
+      };
 
     for (int pointIndex = 0; pointIndex < numberOfPoints; pointIndex++)
       {
@@ -562,12 +615,6 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
         {
         ray[i] = pickPosition[i] - cameraPos[i];
         }
-      double cameraDOP[3] = { 0 }; // direction of projection
-      for (int i = 0; i < 3; i++)
-        {
-        cameraDOP[i] = cameraFP[i] - cameraPos[i];
-        }
-      vtkMath::Normalize(cameraDOP);
 
       double rayLength = vtkMath::Dot(cameraDOP, ray);
       if (rayLength == 0.0)
@@ -578,10 +625,6 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
 
       double p1World[4] = { 0 };
       double p2World[4] = { 0 };
-      // TODO: instead of useing the camera's clipping range
-      // it would be probably more correct to take range from
-      // the modifier labelmap extent
-      double* clipRange = camera->GetClippingRange();
       double tF = 0;
       double tB = 0;
       if (camera->GetParallelProjection())
