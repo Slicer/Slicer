@@ -193,8 +193,12 @@ def findChildren(widget=None, name="", text="", title="", className=""):
         if attribute == 'className':
           # className is a method, not a direct attribute. Invoke the method
           attr_name = attr_name()
-        if fnmatch.fnmatchcase(attr_name, kwargs[attribute]):
-          matched_filter_criteria = matched_filter_criteria + 1
+        # Objects may have text attributes with non-string value (for example,
+        # QUndoStack objects have text attribute of 'builtin_qt_slot' type.
+        # We only consider string type attributes.
+        if isinstance(attr_name, basestring):
+          if fnmatch.fnmatchcase(attr_name, kwargs[attribute]):
+            matched_filter_criteria = matched_filter_criteria + 1
     if matched_filter_criteria == len(expected_matches):
       children.append(p)
   return children
