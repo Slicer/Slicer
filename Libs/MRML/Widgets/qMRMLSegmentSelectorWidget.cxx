@@ -188,7 +188,7 @@ void qMRMLSegmentSelectorWidget::populateSegmentCombobox()
   d->CheckableComboBox_Segment->clear();
 
   // Check if segmentation is valid and non-empty
-  if (!d->SegmentationNode || d->SegmentationNode->GetSegmentation()->GetNumberOfSegments() == 0)
+  if (!d->SegmentationNode || !d->SegmentationNode->GetSegmentation() || d->SegmentationNode->GetSegmentation()->GetNumberOfSegments() == 0)
     {
     d->setMessage(tr( d->SegmentationNode ? "No segments in segmentation" : "No node is selected" ));
 
@@ -210,13 +210,16 @@ void qMRMLSegmentSelectorWidget::populateSegmentCombobox()
     bool wasBlocked = d->CheckableComboBox_Segment->blockSignals(true);
 
     // Add items for each segment
-    vtkSegmentation::SegmentMap segmentMap = d->SegmentationNode->GetSegmentation()->GetSegments();
-    for (vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.begin(); segmentIt != segmentMap.end(); ++segmentIt)
-      {
-      QString segmentId(segmentIt->first.c_str());
+    vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
+    std::vector< std::string > segmentIDs;
+    segmentation->GetSegmentIDs(segmentIDs);
+    for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
+    {
+      QString segmentId(segmentIdIt->c_str());
+      vtkSegment* segment = segmentation->GetSegment(*segmentIdIt);
 
       // Segment name
-      QString name(segmentIt->second->GetName());
+      QString name(segment->GetName());
       d->CheckableComboBox_Segment->addItem(name, QVariant(segmentId));
       }
 
@@ -240,13 +243,14 @@ void qMRMLSegmentSelectorWidget::populateSegmentCombobox()
       }
 
     // Add items for each segment
-    vtkSegmentation::SegmentMap segmentMap = d->SegmentationNode->GetSegmentation()->GetSegments();
-    for (vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.begin(); segmentIt != segmentMap.end(); ++segmentIt)
-      {
-      QString segmentId(segmentIt->first.c_str());
-
+    vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
+    std::vector< std::string > segmentIDs;
+    segmentation->GetSegmentIDs(segmentIDs);
+    for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
+    {
+      QString segmentId(segmentIdIt->c_str());
       // Segment name
-      QString name(segmentIt->second->GetName());
+      QString name(segmentation->GetSegment(*segmentIdIt)->GetName());
       d->comboBox_Segment->addItem(name, QVariant(segmentId));
       }
 

@@ -929,12 +929,13 @@ int vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation(vtkMRMLSeg
   vtkNew<vtkImageAppendComponents> appender;
 
   // Dimensions of the output 4D NRRD file: (i, j, k, segment)
-  vtkSegmentation::SegmentMap segmentMap = segmentation->GetSegments();
   unsigned int segmentIndex = 0;
-  for (vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.begin(); segmentIt != segmentMap.end(); ++segmentIt, ++segmentIndex)
+  std::vector< std::string > segmentIDs;
+  segmentation->GetSegmentIDs(segmentIDs);
+  for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt, ++segmentIndex)
     {
-    std::string currentSegmentID = segmentIt->first;
-    vtkSegment* currentSegment = segmentIt->second.GetPointer();
+    std::string currentSegmentID = *segmentIdIt;
+    vtkSegment* currentSegment = segmentation->GetSegment(*segmentIdIt);
 
     // Get master representation from segment
     vtkSmartPointer<vtkOrientedImageData> currentBinaryLabelmap = vtkOrientedImageData::SafeDownCast(
@@ -1046,13 +1047,14 @@ int vtkMRMLSegmentationStorageNode::WritePolyDataRepresentation(vtkMRMLSegmentat
   vtkSmartPointer<vtkMultiBlockDataSet> multiBlockDataset = vtkSmartPointer<vtkMultiBlockDataSet>::New();
   multiBlockDataset->SetNumberOfBlocks(segmentation->GetNumberOfSegments());
 
-  // Add segment poly datas to dataset
-  vtkSegmentation::SegmentMap segmentMap = segmentation->GetSegments();
+  // Add segment polydata objects to dataset
+  std::vector< std::string > segmentIDs;
+  segmentation->GetSegmentIDs(segmentIDs);
   unsigned int segmentIndex = 0;
-  for (vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.begin(); segmentIt != segmentMap.end(); ++segmentIt, ++segmentIndex)
+  for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt, ++segmentIndex)
     {
-    std::string currentSegmentID = segmentIt->first;
-    vtkSegment* currentSegment = segmentIt->second.GetPointer();
+    std::string currentSegmentID = *segmentIdIt;
+    vtkSegment* currentSegment = segmentation->GetSegment(*segmentIdIt);
 
     // Get master representation from segment
     vtkPolyData* currentPolyData = vtkPolyData::SafeDownCast(currentSegment->GetRepresentation(

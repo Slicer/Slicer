@@ -1754,29 +1754,31 @@ void qMRMLSegmentEditorWidget::onRemoveSegment()
 
   // Switch to a new valid segment now (to avoid transient state when no segments are selected
   // as it could inactivate current effect).
-  vtkSegmentation::SegmentMap segmentMap = segmentationNode->GetSegmentation()->GetSegments();
-  if (segmentMap.size() > 1)
+  vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
+  std::vector< std::string > segmentIDs;
+  segmentation->GetSegmentIDs(segmentIDs);
+  if (segmentIDs.size() > 1)
     {
     std::string newSelectedSegmentID;
-    vtkSegmentation::SegmentMap::iterator previousSegmentIt = segmentMap.begin();
-    for (vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.begin(); segmentIt != segmentMap.end(); ++segmentIt)
+    std::string previousSegmentID = segmentIDs.front();
+    for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
       {
-      if (segmentIt->first == selectedSegmentID)
+      if (*segmentIdIt == selectedSegmentID)
         {
         // found the currently selected segment
         // use the next segment (if at the end, use the previous)
-        ++segmentIt;
-        if (segmentIt != segmentMap.end())
+        ++segmentIdIt;
+        if (segmentIdIt != segmentIDs.end())
           {
-          newSelectedSegmentID = segmentIt->first;
+          newSelectedSegmentID = *segmentIdIt;
           }
         else
           {
-          newSelectedSegmentID = previousSegmentIt->first;
+          newSelectedSegmentID = previousSegmentID;
           }
         break;
         }
-      previousSegmentIt = segmentIt;
+      previousSegmentID = *segmentIdIt;
       }
     QStringList newSelectedSegmentIdList;
     newSelectedSegmentIdList << QString(newSelectedSegmentID.c_str());
@@ -1892,11 +1894,12 @@ void qMRMLSegmentEditorWidget::onSegmentAddedRemoved()
     //  vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName() );
 
     vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
-    vtkSegmentation::SegmentMap segmentMap = segmentation->GetSegments();
-    for (vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.begin(); segmentIt != segmentMap.end(); ++segmentIt)
+    std::vector< std::string > segmentIDs;
+    segmentation->GetSegmentIDs(segmentIDs);
+    for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
       {
-      QString segmentName = segmentIt->second->GetName();
-      d->MaskModeComboBox->addItem(tr("Inside ") + segmentName, QString::fromLocal8Bit(segmentIt->first.c_str()));
+      QString segmentName = segmentation->GetSegment(*segmentIdIt)->GetName();
+      d->MaskModeComboBox->addItem(tr("Inside ") + segmentName, QString::fromLocal8Bit(segmentIdIt->c_str()));
       }
 
     // restore selection

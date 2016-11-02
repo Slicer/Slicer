@@ -296,10 +296,11 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::AddDisplayNode(vtkMR
     return;
     }
   PipelineMapType pipelineVector;
-  vtkSegmentation::SegmentMap segmentMap = segmentation->GetSegments();
-  for (vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.begin(); segmentIt != segmentMap.end(); ++segmentIt)
+  std::vector< std::string > segmentIDs;
+  segmentation->GetSegmentIDs(segmentIDs);
+  for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
     {
-    pipelineVector[segmentIt->first] = this->CreateSegmentPipeline(segmentIt->first);
+    pipelineVector[*segmentIdIt] = this->CreateSegmentPipeline(*segmentIdIt);
     }
 
   this->DisplayPipelines.insert( std::make_pair(displayNode, pipelineVector) );
@@ -366,18 +367,17 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateSegmentPipelin
     return;
     }
 
-  // Get segments
-  vtkSegmentation::SegmentMap segmentMap = segmentation->GetSegments();
-
   // Make sure each segment has a pipeline
-  for (vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.begin(); segmentIt != segmentMap.end(); ++segmentIt)
+  std::vector< std::string > segmentIDs;
+  segmentation->GetSegmentIDs(segmentIDs);
+  for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
     {
     // If segment does not have a pipeline, create one
-    PipelineMapType::iterator pipelineIt = pipelines.find(segmentIt->first);
+    PipelineMapType::iterator pipelineIt = pipelines.find(*segmentIdIt);
     if (pipelineIt == pipelines.end())
       {
-      pipelines[segmentIt->first] = this->CreateSegmentPipeline(segmentIt->first);
-      this->GetNodeTransformToWorld(segmentationNode, pipelines[segmentIt->first]->NodeToWorld);
+      pipelines[*segmentIdIt] = this->CreateSegmentPipeline(*segmentIdIt);
+      this->GetNodeTransformToWorld(segmentationNode, pipelines[*segmentIdIt]->NodeToWorld);
       }
     }
 
@@ -386,8 +386,8 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateSegmentPipelin
   while (pipelineIt != pipelines.end())
     {
     const Pipeline* pipeline = pipelineIt->second;
-    vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.find(pipelineIt->first);
-    if (segmentIt == segmentMap.end())
+    vtkSegment* segment = segmentation->GetSegment(pipelineIt->first);
+    if (segment == NULL)
       {
       PipelineMapType::iterator erasedIt = pipelineIt;
       ++pipelineIt;

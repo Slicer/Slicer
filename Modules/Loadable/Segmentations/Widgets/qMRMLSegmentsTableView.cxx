@@ -233,6 +233,8 @@ void qMRMLSegmentsTableView::setSegmentationNode(vtkMRMLNode* node)
                  this, SLOT( populateSegmentTable() ) );
   qvtkReconnect( d->SegmentationNode, segmentationNode, vtkSegmentation::SegmentModified,
                  this, SLOT( updateWidgetFromMRML() ) );
+  qvtkReconnect(d->SegmentationNode, segmentationNode, vtkSegmentation::SegmentsOrderModified,
+                 this, SLOT(populateSegmentTable()));
 
   d->SegmentationNode = segmentationNode;
   this->populateSegmentTable();
@@ -316,18 +318,21 @@ void qMRMLSegmentsTableView::populateSegmentTable()
   vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(
     d->SegmentationNode->GetDisplayNode() );
 
-  vtkSegmentation::SegmentMap segmentMap = d->SegmentationNode->GetSegmentation()->GetSegments();
-  d->SegmentsTable->setRowCount(segmentMap.size());
+  vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
+  std::vector< std::string > segmentIDs;
+  segmentation->GetSegmentIDs(segmentIDs);
+  d->SegmentsTable->setRowCount(segmentIDs.size());
   int row = 0;
-  for (vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.begin(); segmentIt != segmentMap.end(); ++segmentIt, ++row)
-    {
-    QString segmentId(segmentIt->first.c_str());
+  for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt, ++row)
+  {
+    QString segmentId(segmentIdIt->c_str());
+    vtkSegment* segment = segmentation->GetSegment(*segmentIdIt);
 
     // Row height is smaller than default (which is 30)
     d->SegmentsTable->setRowHeight(row, 20);
 
     // Segment name
-    QString name(segmentIt->second->GetName());
+    QString name(segment->GetName());
     QTableWidgetItem* nameItem = new QTableWidgetItem(name);
     nameItem->setData(IDRole, segmentId);
     d->SegmentsTable->setItem(row, d->columnIndex("Name"), nameItem);
@@ -336,7 +341,7 @@ void qMRMLSegmentsTableView::populateSegmentTable()
     vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
     if (displayNode)
       {
-      displayNode->GetSegmentDisplayProperties(segmentIt->first, properties);
+      displayNode->GetSegmentDisplayProperties(*segmentIdIt, properties);
       }
 
     // Visibility (show only 3D visibility; if the user changes it then it applies to all types of visibility)
@@ -387,9 +392,9 @@ void qMRMLSegmentsTableView::populateSegmentTable()
     QTableWidgetItem* colorItem = new QTableWidgetItem();
     QColor color = QColor::fromRgbF(properties.Color[0], properties.Color[1], properties.Color[2]);
     colorItem->setData(Qt::DecorationRole, color);
-    colorItem->setData(Qt::EditRole, qMRMLSegmentsTableView::getCodeMeaningsFromTerminologySegmentTags(segmentIt->second));
+    colorItem->setData(Qt::EditRole, qMRMLSegmentsTableView::getCodeMeaningsFromTerminologySegmentTags(segment));
     colorItem->setData(IDRole, segmentId);
-    colorItem->setToolTip(qMRMLSegmentsTableView::terminologyInfoStringForSegment(segmentIt->second));
+    colorItem->setToolTip(qMRMLSegmentsTableView::terminologyInfoStringForSegment(segment));
     d->SegmentsTable->setItem(row, d->columnIndex("Color"), colorItem);
 
     // Opacity (only 3D opacity - 2D outline and fill can be set in the display widget)
@@ -430,26 +435,29 @@ void qMRMLSegmentsTableView::updateWidgetFromMRML()
     d->SegmentationNode->GetDisplayNode() );
 
   // Find items for each segment and update each field
-  vtkSegmentation::SegmentMap segmentMap = d->SegmentationNode->GetSegmentation()->GetSegments();
-  for (vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.begin(); segmentIt != segmentMap.end(); ++segmentIt)
+  vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
+  std::vector< std::string > segmentIDs;
+  segmentation->GetSegmentIDs(segmentIDs);
+  for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
     {
-    QTableWidgetItem* nameItem = d->findItemBySegmentID(segmentIt->first.c_str());
+    QTableWidgetItem* nameItem = d->findItemBySegmentID(segmentIdIt->c_str());
     if (!nameItem)
       {
       qCritical() << Q_FUNC_INFO << ": Cannot find table item corresponding to segment ID '"
-        << segmentIt->first.c_str() << "' in segmentation node " << d->SegmentationNode->GetName();
+        << segmentIdIt->c_str() << "' in segmentation node " << d->SegmentationNode->GetName();
       continue;
       }
     int row = nameItem->row();
 
     // Name
-    nameItem->setText(segmentIt->second->GetName());
+    vtkSegment* segment = segmentation->GetSegment(*segmentIdIt);
+    nameItem->setText(segment->GetName());
 
     // Get segment display properties
     vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
     if (displayNode)
       {
-      displayNode->GetSegmentDisplayProperties(segmentIt->first, properties);
+      displayNode->GetSegmentDisplayProperties(*segmentIdIt, properties);
       }
 
     // Visibility
@@ -484,8 +492,8 @@ void qMRMLSegmentsTableView::updateWidgetFromMRML()
     if (colorItem)
       {
       // Set terminology information from segment to item
-      colorItem->setData(Qt::EditRole, qMRMLSegmentsTableView::getCodeMeaningsFromTerminologySegmentTags(segmentIt->second));
-      colorItem->setToolTip(qMRMLSegmentsTableView::terminologyInfoStringForSegment(segmentIt->second));
+      colorItem->setData(Qt::EditRole, qMRMLSegmentsTableView::getCodeMeaningsFromTerminologySegmentTags(segment));
+      colorItem->setToolTip(qMRMLSegmentsTableView::terminologyInfoStringForSegment(segment));
       // Set color
       QColor color = QColor::fromRgbF(properties.Color[0], properties.Color[1], properties.Color[2]);
       colorItem->setData(Qt::DecorationRole, color);
@@ -973,16 +981,18 @@ void qMRMLSegmentsTableView::showOnlySelectedSegments()
 
   // Hide all segments except the selected ones
   int disabledModify = displayNode->StartModify();
-  vtkSegmentation::SegmentMap segmentMap = d->SegmentationNode->GetSegmentation()->GetSegments();
-  for (vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.begin(); segmentIt != segmentMap.end(); ++segmentIt)
-    {
+  vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
+  std::vector< std::string > segmentIDs;
+  segmentation->GetSegmentIDs(segmentIDs);
+  for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
+  {
     bool visible = false;
-    if (selectedSegmentIDs.contains(segmentIt->first.c_str()))
+    if (selectedSegmentIDs.contains(segmentIdIt->c_str()))
       {
       visible = true;
       }
 
-    displayNode->SetSegmentVisibility(segmentIt->first, visible);
+    displayNode->SetSegmentVisibility(*segmentIdIt, visible);
     }
   displayNode->EndModify(disabledModify);
 }

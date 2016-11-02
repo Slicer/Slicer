@@ -642,15 +642,8 @@ bool qSlicerSegmentationsModuleWidget::copySegmentsBetweenSegmentations(bool cop
     return false;
     }
 
-  // Get selected segment IDs
-  QStringList selectedSegmentIds = d->SegmentsTableView_Current->selectedSegmentIDs();
-  if (selectedSegmentIds.empty())
-    {
-    qWarning() << Q_FUNC_INFO << ": No segments are selected";
-    return false;
-    }
-
   // Get source and target segmentation
+  QStringList selectedSegmentIds;
   vtkSegmentation* sourceSegmentation = NULL;
   vtkSegmentation* targetSegmentation = NULL;
   if (copyFromCurrentSegmentation)
@@ -658,12 +651,20 @@ bool qSlicerSegmentationsModuleWidget::copySegmentsBetweenSegmentations(bool cop
     sourceSegmentation = currentSegmentationNode->GetSegmentation();
     targetSegmentation = otherSegmentationNode->GetSegmentation();
     otherSegmentationNode->CreateDefaultDisplayNodes();
+    selectedSegmentIds = d->SegmentsTableView_Current->selectedSegmentIDs();
     }
   else
     {
     sourceSegmentation = otherSegmentationNode->GetSegmentation();
     targetSegmentation = currentSegmentationNode->GetSegmentation();
     currentSegmentationNode->CreateDefaultDisplayNodes();
+    selectedSegmentIds = d->SegmentsTableView_Other->selectedSegmentIDs();
+    }
+
+  if (selectedSegmentIds.empty())
+    {
+    qWarning() << Q_FUNC_INFO << ": No segments are selected";
+    return false;
     }
 
   // Copy/move segments

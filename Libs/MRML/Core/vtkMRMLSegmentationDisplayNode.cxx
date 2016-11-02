@@ -881,7 +881,7 @@ std::string vtkMRMLSegmentationDisplayNode::GetDisplayRepresentationName3D()
     }
 
   // Assume the first segment contains the same name of representations as all segments (this should be the case by design)
-  vtkSegment* firstSegment = segmentation->GetSegments().begin()->second;
+  vtkSegment* firstSegment = segmentation->GetNthSegment(0);
 
   // If preferred representation is defined and exists then use that (double check it is poly data)
   if (this->PreferredDisplayRepresentationName3D)
@@ -1082,14 +1082,15 @@ void vtkMRMLSegmentationDisplayNode::UpdateSegmentList()
 
   // Add missing segment display properties
   // Get segment list of segments that do not have display properties.
-  vtkSegmentation::SegmentMap segmentMap = segmentation->GetSegments();
+  std::vector< std::string > segmentIDs;
+  segmentation->GetSegmentIDs(segmentIDs);
   std::vector<std::string> missingSegmentIDs;
-  for (vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.begin(); segmentIt != segmentMap.end(); ++segmentIt)
+  for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
     {
-    if (this->SegmentationDisplayProperties.find(segmentIt->first) == this->SegmentationDisplayProperties.end())
+    if (this->SegmentationDisplayProperties.find(*segmentIdIt) == this->SegmentationDisplayProperties.end())
       {
       // the segment does not exist in segmentation
-      missingSegmentIDs.push_back(segmentIt->first);
+      missingSegmentIDs.push_back(*segmentIdIt);
       }
     }
   // Add missing properties

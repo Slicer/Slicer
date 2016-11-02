@@ -27,6 +27,7 @@
 
 // STD includes
 #include <map>
+#include <deque>
 
 // SegmentationCore includes
 #include "vtkSegment.h"
@@ -100,7 +101,9 @@ public:
     /// Note: the event is not invoked when content of a representation in a segment is changed.
     SegmentModified,
     /// Invoked if a representation is created or removed in the segments (e.g., created by conversion from master).
-    ContainedRepresentationNamesModified
+    ContainedRepresentationNamesModified,
+    /// Invoked if segment IDs order is changed. Not called when a segment is added or removed.
+    SegmentsOrderModified
     };
 
   enum
@@ -207,9 +210,6 @@ public:
   /// \param segmentId Segment identifier in the container to access
   vtkSegment* GetSegment(std::string segmentId);
 
-  /// Return all contained segments
-  SegmentMap GetSegments() { return this->Segments; };
-
   /// Get IDs for all contained segments
   void GetSegmentIDs(std::vector<std::string> &segmentIds);
 
@@ -219,7 +219,15 @@ public:
   /// Request the total number of segments, primarily used for iterating over all segments
   int GetNumberOfSegments() const;
 
+  /// Request segment by index
+  vtkSegment* GetNthSegment(int index) const;
+
+  /// Changes segment order. Segment order may be used for display and generating merged labelmaps.
+  /// \return True if segment index has changed successfully (or the index has already been set).
+  bool SetSegmentIndex(const std::string& segmentId, int newIndex);
+
   /// Find segment ID by segment instance
+  /// Returns empty string if segment is not found.
   std::string GetSegmentIdBySegment(vtkSegment* segment);
 
   /// Get segments that contain a certain tag
@@ -400,6 +408,15 @@ protected:
 
   /// Modified events of  master representations are observed
   bool MasterRepresentationModifiedEnabled;
+
+  /// This number is incremented and used for generating the next
+  /// segment ID.
+  int SegmentIdAutogeneratorIndex;
+
+  /// This contains the segment IDs in display order.
+  /// (we could retrieve segment IDs from SegmentMap too, but that always contains segments in
+  /// alphabetical order)
+  std::deque< std::string > SegmentIds;
 
   friend class vtkSlicerSegmentationsModuleLogic;
   friend class qMRMLSegmentEditorWidgetPrivate;

@@ -75,6 +75,8 @@ vtkSegmentation::vtkSegmentation()
   this->MasterRepresentationCallbackCommand->SetCallback( vtkSegmentation::OnMasterRepresentationModified );
 
   this->MasterRepresentationModifiedEnabled = true;
+
+  this->SegmentIdAutogeneratorIndex = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -144,10 +146,10 @@ void vtkSegmentation::DeepCopy(vtkSegmentation* aSegmentation)
   this->Converter->DeepCopy(aSegmentation->Converter);
 
   // Deep copy segments list
-  for (SegmentMap::iterator it = aSegmentation->Segments.begin(); it != aSegmentation->Segments.end(); ++it)
+  for (std::deque< std::string >::iterator segmentIdIt = aSegmentation->SegmentIds.begin(); segmentIdIt != aSegmentation->SegmentIds.end(); ++segmentIdIt)
     {
     vtkSmartPointer<vtkSegment> segment = vtkSmartPointer<vtkSegment>::New();
-    segment->DeepCopy(it->second);
+    segment->DeepCopy(aSegmentation->Segments[*segmentIdIt]);
     this->AddSegment(segment);
     }
 }
@@ -170,10 +172,11 @@ void vtkSegmentation::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "MasterRepresentationName:  " << this->MasterRepresentationName << "\n";
   os << indent << "Number of segments:  " << this->Segments.size() << "\n";
 
-  for (SegmentMap::iterator it = this->Segments.begin(); it != this->Segments.end(); ++it)
-    {
-    os << indent << "Segment: " << it->first << "\n";
-    vtkSegment* segment = it->second;
+  for (std::deque< std::string >::iterator segmentIdIt = this->SegmentIds.begin();
+    segmentIdIt != this->SegmentIds.end(); ++segmentIdIt)
+  {
+    os << indent << "Segment: " << (*segmentIdIt) << "\n";
+    vtkSegment* segment = this->Segments[*segmentIdIt];
     segment->PrintSelf(os, indent.GetNextIndent());
     }
   os << indent << "Segment converter:\n";
@@ -265,25 +268,39 @@ bool vtkSegmentation::SetMasterRepresentationModifiedEnabled(bool enabled)
 //---------------------------------------------------------------------------
 std::string vtkSegmentation::GenerateUniqueSegmentId(std::string id)
 {
-  // If input ID string is empty then set it to default "SegmentN", where N is the number of segments
+  if (!id.empty() &&  this->Segments.find(id) == this->Segments.end())
+    {
+    // the provided id is already unique
+    return id;
+    }
+
   if (id.empty())
     {
-    std::stringstream idStream;
-    idStream << "Segment_" << this->GetNumberOfSegments();
-    id = this->GenerateUniqueSegmentId(idStream.str());
+    // use a non-empty default prefix if no id is provided
+    id = "Segment_";
     }
 
-  // If ID already exists then postfix it with "_1"
-  SegmentMap::iterator segmentIt = this->Segments.find(id);
-  if (segmentIt != this->Segments.end())
+  // try to make it unique by attaching a postfix
+  while (true)
     {
-    id.append("_1");
-
-    // Make sure the postfixed ID is unique, too
-    id = this->GenerateUniqueSegmentId(id);
+    this->SegmentIdAutogeneratorIndex++;
+    if (this->SegmentIdAutogeneratorIndex < 0)
+      {
+      // wrapped around (almost impossible)
+      this->SegmentIdAutogeneratorIndex = 0;
+      break;
+      }
+    std::stringstream idStream;
+    idStream << id << this->SegmentIdAutogeneratorIndex;
+    if (this->Segments.find(idStream.str()) == this->Segments.end())
+      {
+      // found a unique ID
+      return idStream.str();
+      }
     }
 
-  return id;
+  // try to make it unique by modifying prefix
+  return this->GenerateUniqueSegmentId(id + "_");
 }
 
 //---------------------------------------------------------------------------
@@ -424,6 +441,7 @@ bool vtkSegmentation::AddSegment(vtkSegment* segment, std::string segmentId/*=""
     key = this->GenerateUniqueSegmentId(key);
     }
   this->Segments[key] = segment;
+  this->SegmentIds.push_back(key);
 
   // Add observation of master representation in new segment
   vtkDataObject* masterRepresentation = segment->GetRepresentation(this->MasterRepresentationName);
@@ -500,7 +518,12 @@ void vtkSegmentation::RemoveSegment(SegmentMap::iterator segmentIt)
     }
 
   // Remove segment
+  this->SegmentIds.erase(std::remove(this->SegmentIds.begin(), this->SegmentIds.end(), segmentId), this->SegmentIds.end());
   this->Segments.erase(segmentIt);
+  if (this->Segments.empty())
+    {
+    this->SegmentIdAutogeneratorIndex = 0;
+    }
 
   this->Modified();
 
@@ -511,7 +534,8 @@ void vtkSegmentation::RemoveSegment(SegmentMap::iterator segmentIt)
 //---------------------------------------------------------------------------
 void vtkSegmentation::RemoveAllSegments()
 {
-  // Properly remove all segments
+  this->SegmentIds.clear();
+
   std::vector<std::string> segmentIds;
   this->GetSegmentIDs(segmentIds);
   for (std::vector<std::string>::iterator segmentIt = segmentIds.begin(); segmentIt != segmentIds.end(); ++segmentIt)
@@ -519,6 +543,8 @@ void vtkSegmentation::RemoveAllSegments()
     this->RemoveSegment(*segmentIt);
     }
   this->Segments.clear();
+
+  this->SegmentIdAutogeneratorIndex = 0;
 }
 
 //---------------------------------------------------------------------------
@@ -579,7 +605,45 @@ vtkSegment* vtkSegmentation::GetSegment(std::string segmentId)
 //---------------------------------------------------------------------------
 int vtkSegmentation::GetNumberOfSegments() const
 {
-  return this->Segments.size();
+  return this->SegmentIds.size();
+}
+
+//---------------------------------------------------------------------------
+vtkSegment* vtkSegmentation::GetNthSegment(int index) const
+{
+  if (index < 0 || index >= this->SegmentIds.size())
+    {
+    return NULL;
+    }
+  std::string segmentId = this->SegmentIds[index];
+  SegmentMap::const_iterator segmentIt = this->Segments.find(segmentId);
+  if (segmentIt == this->Segments.end())
+    {
+    // inconsistent segment ID and segment list
+    return NULL;
+    }
+  return segmentIt->second;
+}
+
+//---------------------------------------------------------------------------
+bool vtkSegmentation::SetSegmentIndex(const std::string& segmentId, int newIndex)
+{
+  if (newIndex < 0 || newIndex >= this->SegmentIds.size())
+    {
+    vtkErrorMacro("vtkSegmentation::SetSegmentIndex failed: index " << newIndex
+      << " is out of range [0," << this->SegmentIds.size()-1 << "]");
+    return false;
+    }
+  std::deque< std::string >::iterator foundIt = std::find(this->SegmentIds.begin(), this->SegmentIds.end(), segmentId);
+  if (foundIt == this->SegmentIds.end())
+    {
+    vtkErrorMacro("vtkSegmentation::SetSegmentIndex failed: segment " << segmentId << " not found");
+    return false;
+    }
+  std::swap(*foundIt, this->SegmentIds[newIndex]);
+  this->Modified();
+  this->InvokeEvent(vtkSegmentation::SegmentsOrderModified);
+  return true;
 }
 
 //---------------------------------------------------------------------------
@@ -631,9 +695,9 @@ std::vector<vtkSegment*> vtkSegmentation::GetSegmentsByTag(std::string tag, std:
 void vtkSegmentation::GetSegmentIDs(std::vector<std::string> &segmentIds)
 {
   segmentIds.clear();
-  for (SegmentMap::iterator segmentIt = this->Segments.begin(); segmentIt != this->Segments.end(); ++segmentIt)
+  for (std::deque< std::string >::iterator segmentIdIt = this->SegmentIds.begin(); segmentIdIt != this->SegmentIds.end(); ++segmentIdIt)
     {
-    segmentIds.push_back(segmentIt->first);
+    segmentIds.push_back(*segmentIdIt);
     }
 }
 
@@ -645,9 +709,9 @@ void vtkSegmentation::GetSegmentIDs(vtkStringArray* segmentIds)
     return;
     }
   segmentIds->Initialize();
-  for (SegmentMap::iterator segmentIt = this->Segments.begin(); segmentIt != this->Segments.end(); ++segmentIt)
+  for (std::deque< std::string >::iterator segmentIdIt = this->SegmentIds.begin(); segmentIdIt != this->SegmentIds.end(); ++segmentIdIt)
     {
-    segmentIds->InsertNextValue(segmentIt->first.c_str());
+    segmentIds->InsertNextValue(segmentIdIt->c_str());
     }
 }
 
@@ -1199,11 +1263,7 @@ std::string vtkSegmentation::DetermineCommonLabelmapGeometry(int extentComputati
   std::vector<std::string> mergedSegmentIDs;
   if (segmentIDs.empty())
     {
-    vtkSegmentation::SegmentMap segmentMap = this->GetSegments();
-    for (vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.begin(); segmentIt != segmentMap.end(); ++segmentIt)
-      {
-      mergedSegmentIDs.push_back(segmentIt->first);
-      }
+    this->GetSegmentIDs(mergedSegmentIDs);
     }
   else
     {
@@ -1294,11 +1354,7 @@ void vtkSegmentation::DetermineCommonLabelmapExtent(int commonGeometryExtent[6],
   std::vector<std::string> mergedSegmentIDs;
   if (segmentIDs.empty())
     {
-    vtkSegmentation::SegmentMap segmentMap = this->GetSegments();
-    for (vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.begin(); segmentIt != segmentMap.end(); ++segmentIt)
-      {
-      mergedSegmentIDs.push_back(segmentIt->first);
-      }
+    this->GetSegmentIDs(mergedSegmentIDs);
     }
   else
     {

@@ -193,7 +193,9 @@ void vtkMRMLSegmentationNode::SetAndObserveSegmentation(vtkSegmentation* segment
       this->Segmentation, vtkSegmentation::ContainedRepresentationNamesModified, this, this->SegmentationModifiedCallbackCommand);
     vtkEventBroker::GetInstance()->AddObservation(
       this->Segmentation, vtkSegmentation::RepresentationModified, this, this->SegmentationModifiedCallbackCommand);
-    }
+    vtkEventBroker::GetInstance()->AddObservation(
+      this->Segmentation, vtkSegmentation::SegmentsOrderModified, this, this->SegmentationModifiedCallbackCommand);
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -237,6 +239,10 @@ void vtkMRMLSegmentationNode::SegmentationModifiedCallback(vtkObject* vtkNotUsed
       self->StorableModifiedTime.Modified();
       self->OnSegmentModified(reinterpret_cast<char*>(callData));
       self->InvokeCustomModifiedEvent(eid, callData);
+      break;
+    case vtkSegmentation::SegmentsOrderModified:
+      self->StorableModifiedTime.Modified();
+      self->InvokeCustomModifiedEvent(eid);
       break;
     default:
       vtkErrorWithObjectMacro(self, "vtkMRMLSegmentationNode::SegmentationModifiedCallback: Unknown event id "<<eid);
@@ -471,14 +477,10 @@ bool vtkMRMLSegmentationNode::GenerateMergedLabelmap(
     }
 
   // If segment IDs list is empty then include all segments
-  vtkSegmentation::SegmentMap segmentMap = this->Segmentation->GetSegments();
   std::vector<std::string> mergedSegmentIDs;
   if (segmentIDs.empty())
     {
-    for (vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.begin(); segmentIt != segmentMap.end(); ++segmentIt)
-      {
-      mergedSegmentIDs.push_back(segmentIt->first);
-      }
+    this->Segmentation->GetSegmentIDs(mergedSegmentIDs);
     }
   else
     {
