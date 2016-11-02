@@ -46,7 +46,7 @@ class vtkStringArray;
 ///   The primary purpose of this class is to serve as a container to store the segments (in labelmap analogy the "labels").
 ///   Also provides generic functions on the segmentation level. Performs conversion to a specified representation, extracts
 ///   geometry information etc.
-/// 
+///
 ///   Main points to remember:
 ///   * Each segment has the same set of representations. This means that if segments are copied/moved between segmentations,
 ///     then conversion will take place if possible (if not then copy will fail)
@@ -69,9 +69,9 @@ class vtkStringArray;
 ///       * All conversions use it as source (up-to-date representations along conversion path are used if available)
 ///       * When changed all other representations are invalidated (and is re-converted later from master)
 ///       * It is the representation that is saved to disk
-///       
+///
 ///  Schematic illustration of the segmentation container:
-///  
+///
 ///                            +=============================================+
 ///                            |             Patient (vtkSegmentation)       |
 ///                            +======================+======================+
@@ -83,7 +83,7 @@ class vtkStringArray;
 ///                            +----------------------+----------------------+
 ///      Custom representation | vtkDataObject        | vtkDataObject        |
 ///                            +----------------------+----------------------+
-///    
+///
 class vtkSegmentationCore_EXPORT vtkSegmentation : public vtkObject
 {
 public:
@@ -221,6 +221,9 @@ public:
 
   /// Request segment by index
   vtkSegment* GetNthSegment(int index) const;
+
+  /// Get n-th segment ID. Return with "" if no segment is found by that index.
+  std::string GetNthSegmentID(int index) const;
 
   /// Changes segment order. Segment order may be used for display and generating merged labelmaps.
   /// \return True if segment index has changed successfully (or the index has already been set).

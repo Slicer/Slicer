@@ -626,6 +626,16 @@ vtkSegment* vtkSegmentation::GetNthSegment(int index) const
 }
 
 //---------------------------------------------------------------------------
+std::string vtkSegmentation::GetNthSegmentID(int index) const
+{
+  if (index < 0 || index >= this->SegmentIds.size())
+    {
+    return "";
+    }
+  return this->SegmentIds[index];
+}
+
+//---------------------------------------------------------------------------
 bool vtkSegmentation::SetSegmentIndex(const std::string& segmentId, int newIndex)
 {
   if (newIndex < 0 || newIndex >= this->SegmentIds.size())

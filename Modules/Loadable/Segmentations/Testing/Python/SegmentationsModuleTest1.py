@@ -115,9 +115,15 @@ class SegmentationsModuleTest1(unittest.TestCase):
     self.assertIsNotNone(displayNode)
     # If segments are not found then the returned color is the pre-defined invalid color
     bodyColor = displayNode.GetSegmentColor('Body_Contour')
-    #self.assertTrue(int(bodyColor[0]*100) == 33 and int(bodyColor[1]*100) == 66 and bodyColor[2] == 0.0)
+    logging.info("bodyColor: {0}".format(bodyColor))
+    self.assertEqual(int(bodyColor[0]*100), 33)
+    self.assertEqual(int(bodyColor[1]*100), 66)
+    self.assertEqual(int(bodyColor[2]*100), 0)
     tumorColor = displayNode.GetSegmentColor('Tumor_Contour')
-    #self.assertTrue(tumorColor[0] == 1.0 and tumorColor[1] == 0.0 and tumorColor[2] == 0.0)
+    logging.info("tumorColor: {0}".format(tumorColor))
+    self.assertEqual(int(tumorColor[0]*100), 100)
+    self.assertEqual(int(tumorColor[1]*100), 0)
+    self.assertEqual(int(tumorColor[2]*100), 0)
 
     # Create new segment
     sphere = vtk.vtkSphereSource()
@@ -136,7 +142,9 @@ class SegmentationsModuleTest1(unittest.TestCase):
     self.inputSegmentationNode.GetSegmentation().AddSegment(self.sphereSegment)
     self.assertEqual(self.inputSegmentationNode.GetSegmentation().GetNumberOfSegments(), 3)
     sphereColor = displayNode.GetSegmentColor(self.sphereSegmentName)
-    self.assertTrue(sphereColor[0] == 0.0 and sphereColor[1] == 0.0 and sphereColor[2] == 1.0)
+    self.assertEqual(int(sphereColor[0]*100), 0)
+    self.assertEqual(int(sphereColor[1]*100), 0)
+    self.assertEqual(int(sphereColor[2]*100), 100)
 
     # Check merged labelmap
     mergedLabelmap = vtkSegmentationCore.vtkOrientedImageData()
@@ -158,8 +166,10 @@ class SegmentationsModuleTest1(unittest.TestCase):
     self.assertEqual(imageStatResult.GetScalarComponentAsDouble(3,0,0,0), 7)
 
     # Check if segment reorder is taken into account in merged labelmap generation
+    # Change segment order
     sphereSegmentId = self.inputSegmentationNode.GetSegmentation().GetSegmentIdBySegment(self.sphereSegment)
     self.inputSegmentationNode.GetSegmentation().SetSegmentIndex(sphereSegmentId, 1)
+    # Re-generate merged labelmap
     self.inputSegmentationNode.GenerateMergedLabelmapForAllSegments(mergedLabelmap, 0)
     imageStat.SetInputData(mergedLabelmap)
     imageStat.Update()

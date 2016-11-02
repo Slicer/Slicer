@@ -252,25 +252,46 @@ int vtkMRMLSegmentationStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     return 0;
     }
 
+  bool success = false;
   // Try to read as labelmap first then as poly data
   if (this->ReadBinaryLabelmapRepresentation(segmentationNode, fullName))
     {
-    return 1;
+    success = true;
     }
 #ifdef SUPPORT_4D_SPATIAL_NRRD
   else if (this->ReadBinaryLabelmapRepresentation4DSpatial(segmentationNode, fullName))
     {
-    return 1;
+    success = true;
     }
 #endif
   else if (this->ReadPolyDataRepresentation(segmentationNode, fullName))
     {
-    return 1;
+    success = true;
     }
 
-  // Failed to read
-  vtkErrorMacro("ReadDataInternal: File " << fullName << " could not be read neither as labelmap nor poly data");
-  return 0;
+  if (!success)
+  {
+    // Failed to read
+    vtkErrorMacro("ReadDataInternal: File " << fullName << " could not be read neither as labelmap nor poly data");
+    return 0;
+  }
+
+  // Set display node defaults if there is no display node
+  vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
+  if (segmentation != NULL && segmentationNode->GetDisplayNode() == NULL)
+    {
+    segmentationNode->CreateDefaultDisplayNodes();
+    vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
+    std::vector< std::string > segmentIDs;
+    segmentation->GetSegmentIDs(segmentIDs);
+    for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
+      {
+      std::string currentSegmentID = *segmentIdIt;
+      vtkSegment* currentSegment = segmentation->GetSegment(*segmentIdIt);
+      displayNode->SetSegmentColor(*segmentIdIt, vtkVector3d(currentSegment->GetDefaultColor()));
+      }
+    }
+  return 1;
 }
 
 #ifdef SUPPORT_4D_SPATIAL_NRRD
@@ -290,9 +311,6 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation4DSpatial(vt
     return 0;
     }
   vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
-
-  // Get display node to load displayed color and opacity
-  segmentationNode->CreateDefaultDisplayNodes();
 
   // Read 4D NRRD image file
   typedef itk::ImageFileReader<BinaryLabelmap4DImageType> FileReaderType;
@@ -470,9 +488,6 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
     return 0;
     }
   vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
-
-  // Get display node to load displayed color and opacity
-  segmentationNode->CreateDefaultDisplayNodes();
 
   vtkNew<vtkNRRDReader> reader;
   reader->SetFileName(path.c_str());
@@ -692,9 +707,6 @@ int vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation(vtkMRMLSegmentati
     }
 
   int segmentationNodeWasModified = segmentationNode->StartModify();
-
-  // Get display node to load displayed color and opacity
-  segmentationNode->CreateDefaultDisplayNodes();
 
   // Read segment poly datas
   std::string masterRepresentationName;

@@ -297,6 +297,7 @@ bool vtkMRMLSegmentationDisplayNode::GetSegmentDisplayProperties(std::string seg
 //---------------------------------------------------------------------------
 void vtkMRMLSegmentationDisplayNode::SetSegmentDisplayProperties(std::string segmentId, SegmentDisplayProperties &properties)
 {
+  this->UpdateSegmentList();
   SegmentDisplayPropertiesMap::iterator propsIt = this->SegmentationDisplayProperties.find(segmentId);
   bool modified = false;
   if (propsIt == this->SegmentationDisplayProperties.end())
@@ -386,6 +387,7 @@ void vtkMRMLSegmentationDisplayNode::SetSegmentDisplayProperties(std::string seg
 //---------------------------------------------------------------------------
 vtkVector3d vtkMRMLSegmentationDisplayNode::GetSegmentColor(std::string segmentID)
 {
+  this->UpdateSegmentList();
   SegmentDisplayPropertiesMap::iterator propsIt = this->SegmentationDisplayProperties.find(segmentID);
   if (propsIt == this->SegmentationDisplayProperties.end())
     {
@@ -424,6 +426,7 @@ void vtkMRMLSegmentationDisplayNode::SetSegmentColor(std::string segmentID, vtkV
 //---------------------------------------------------------------------------
 bool vtkMRMLSegmentationDisplayNode::GetSegmentVisibility(std::string segmentID)
 {
+  this->UpdateSegmentList();
   SegmentDisplayPropertiesMap::iterator propsIt = this->SegmentationDisplayProperties.find(segmentID);
   if (propsIt == this->SegmentationDisplayProperties.end())
     {
@@ -456,6 +459,7 @@ void vtkMRMLSegmentationDisplayNode::SetAllSegmentsVisibility(bool visible)
 //---------------------------------------------------------------------------
 bool vtkMRMLSegmentationDisplayNode::GetSegmentVisibility3D(std::string segmentID)
 {
+  this->UpdateSegmentList();
   SegmentDisplayPropertiesMap::iterator propsIt = this->SegmentationDisplayProperties.find(segmentID);
   if (propsIt == this->SegmentationDisplayProperties.end())
     {
@@ -488,6 +492,7 @@ void vtkMRMLSegmentationDisplayNode::SetAllSegmentsVisibility3D(bool visible, bo
 //---------------------------------------------------------------------------
 bool vtkMRMLSegmentationDisplayNode::GetSegmentVisibility2DFill(std::string segmentID)
 {
+  this->UpdateSegmentList();
   SegmentDisplayPropertiesMap::iterator propsIt = this->SegmentationDisplayProperties.find(segmentID);
   if (propsIt == this->SegmentationDisplayProperties.end())
     {
@@ -520,6 +525,7 @@ void vtkMRMLSegmentationDisplayNode::SetAllSegmentsVisibility2DFill(bool visible
 //---------------------------------------------------------------------------
 bool vtkMRMLSegmentationDisplayNode::GetSegmentVisibility2DOutline(std::string segmentID)
 {
+  this->UpdateSegmentList();
   SegmentDisplayPropertiesMap::iterator propsIt = this->SegmentationDisplayProperties.find(segmentID);
   if (propsIt == this->SegmentationDisplayProperties.end())
     {
@@ -552,6 +558,7 @@ void vtkMRMLSegmentationDisplayNode::SetAllSegmentsVisibility2DOutline(bool visi
 //---------------------------------------------------------------------------
 double vtkMRMLSegmentationDisplayNode::GetSegmentOpacity3D(std::string segmentID)
 {
+  this->UpdateSegmentList();
   SegmentDisplayPropertiesMap::iterator propsIt = this->SegmentationDisplayProperties.find(segmentID);
   if (propsIt == this->SegmentationDisplayProperties.end())
     {
@@ -584,6 +591,7 @@ void vtkMRMLSegmentationDisplayNode::SetAllSegmentsOpacity3D(double opacity, boo
 //---------------------------------------------------------------------------
 double vtkMRMLSegmentationDisplayNode::GetSegmentOpacity2DFill(std::string segmentID)
 {
+  this->UpdateSegmentList();
   SegmentDisplayPropertiesMap::iterator propsIt = this->SegmentationDisplayProperties.find(segmentID);
   if (propsIt == this->SegmentationDisplayProperties.end())
     {
@@ -617,6 +625,7 @@ void vtkMRMLSegmentationDisplayNode::SetAllSegmentsOpacity2DFill(double opacity,
 //---------------------------------------------------------------------------
 double vtkMRMLSegmentationDisplayNode::GetSegmentOpacity2DOutline(std::string segmentID)
 {
+  this->UpdateSegmentList();
   SegmentDisplayPropertiesMap::iterator propsIt = this->SegmentationDisplayProperties.find(segmentID);
   if (propsIt == this->SegmentationDisplayProperties.end())
     {
