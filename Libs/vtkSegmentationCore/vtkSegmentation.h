@@ -181,7 +181,7 @@ public:
     vtkStringArray* segmentIds, bool computeEffectiveExtent=false, bool addPadding=false);
 
 // Segment related methods
-public:
+
   /// Add a segment to this segmentation, do necessary conversions, and observe underlying
   /// data for changes.
   /// Necessary conversions:
@@ -194,6 +194,11 @@ public:
   /// \param segment the segment to observe
   /// \return Success flag
   bool AddSegment(vtkSegment* segment, std::string segmentId="");
+
+  /// Generate unique segment ID. If argument is empty then a new ID will be generated in the form "Segment_",
+  /// where N is the number of segments. If argument is unique it is returned unchanged. If there is a segment
+  /// with the given name, then it is postfixed by a number to make it unique.
+  std::string GenerateUniqueSegmentID(std::string id);
 
   /// Remove a segment by ID
   /// \param segmentId Identifier of the segment to remove from the segmentation
@@ -251,7 +256,7 @@ public:
   bool CopySegmentFromSegmentation(vtkSegmentation* fromSegmentation, std::string segmentId, bool removeFromSource=false);
 
 // Representation related methods
-public:
+
   /// Get representation names present in this segmentation in an output string vector
   /// Note: This assumes the first segment contains the same type of representations as
   ///       all segments (this should be the case by design)
@@ -275,7 +280,7 @@ public:
   void InvalidateNonMasterRepresentations();
 
 // Conversion related methods
-public:
+
   /// Create a representation in all segments, using the conversion path with the
   /// lowest cost. The stored conversion parameters are used (which are the defaults if not changed by the user).
   /// Conversion starts from the master representation. If a representation along
@@ -341,7 +346,7 @@ public:
   void DeserializeConversionParameters(std::string conversionParametersString);
 
 // Get/set methods
-public:
+
   /// Get master representation name
   vtkGetMacro(MasterRepresentationName, std::string);
   /// Set master representation name.
@@ -364,11 +369,6 @@ protected:
   /// Remove segment by iterator. The two \sa RemoveSegment methods call this function after
   /// finding the iterator based on their different input arguments.
   void RemoveSegment(SegmentMap::iterator segmentIt);
-
-  /// Generate unique segment ID. If argument is empty then a new ID will be generated in the form "SegmentN",
-  /// where N is the number of segments. If argument is unique it is returned unchanged. If there is a segment
-  /// with the given name, then it is postfixed by "_1"
-  std::string GenerateUniqueSegmentId(std::string id);
 
   /// Temporarily enable/disable master representation modified event.
   /// \return Old value of MasterRepresentationModifiedEnabled.

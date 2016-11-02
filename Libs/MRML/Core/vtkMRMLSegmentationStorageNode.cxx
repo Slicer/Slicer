@@ -557,14 +557,22 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
     if (kit != keys.end())
       {
       GetImageExtentFromString(commonGeometryExtent, reader->GetHeaderValue(GetSegmentationMetaDataKey(KEY_SEGMENTATION_EXTENT).c_str()));
+      if (imageExtentInFile[1] - imageExtentInFile[0] != commonGeometryExtent[1] - commonGeometryExtent[0]
+        || imageExtentInFile[3] - imageExtentInFile[2] != commonGeometryExtent[3] - commonGeometryExtent[2]
+        || imageExtentInFile[5] - imageExtentInFile[4] != commonGeometryExtent[5] - commonGeometryExtent[4])
+        {
+        vtkErrorMacro("vtkMRMLVolumeSequenceStorageNode::ReadDataInternal: "
+          << GetSegmentationMetaDataKey(KEY_SEGMENTATION_EXTENT) << " is inconsistent with the image size");
+        return 0;
+        }
       }
-    if (imageExtentInFile[1] - imageExtentInFile[0] != commonGeometryExtent[1] - commonGeometryExtent[0]
-      || imageExtentInFile[3] - imageExtentInFile[2] != commonGeometryExtent[3] - commonGeometryExtent[2]
-      || imageExtentInFile[5] - imageExtentInFile[4] != commonGeometryExtent[5] - commonGeometryExtent[4])
+    else
       {
-      vtkErrorMacro("vtkMRMLVolumeSequenceStorageNode::ReadDataInternal: "
-        << GetSegmentationMetaDataKey(KEY_SEGMENTATION_EXTENT) << " is inconsistent with the image size");
-      return 0;
+      // Neither KEY_SEGMENTATION_REFERENCE_IMAGE_EXTENT_OFFSET nor KEY_SEGMENTATION_EXTENT is specified,
+      // which means that this is probably a regular NRRD file that should be imported as a segmentation.
+      // Use the image extent as common geometry extent.
+      vtkWarningMacro(<< KEY_SEGMENTATION_REFERENCE_IMAGE_EXTENT_OFFSET << " attribute was not found in NRRD segmentation file. Assume no offset.");
+      imageData->GetExtent(commonGeometryExtent);
       }
     }
 
@@ -613,29 +621,63 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
     // Get metadata for current segment
 
     // ID
-    std::string currentSegmentID = reader->GetHeaderValue(GetSegmentMetaDataKey(segmentIndex, KEY_SEGMENT_ID).c_str());
+    const char* headerValue = reader->GetHeaderValue(GetSegmentMetaDataKey(segmentIndex, KEY_SEGMENT_ID).c_str());
+    std::string currentSegmentID = (headerValue ? headerValue : "");
+    if (headerValue)
+      {
+      currentSegmentID = headerValue;
+      }
+    else
+      {
+      currentSegmentID = segmentation->GenerateUniqueSegmentID("SegmentAuto");
+      vtkWarningMacro("Segment ID is missing for segment " << segmentIndex << " adding segment with ID: " << currentSegmentID);
+      }
 
     // Name
-    std::string currentSegmentName = reader->GetHeaderValue(GetSegmentMetaDataKey(segmentIndex, KEY_SEGMENT_NAME).c_str());
-    currentSegment->SetName(currentSegmentName.c_str());
+    headerValue = reader->GetHeaderValue(GetSegmentMetaDataKey(segmentIndex, KEY_SEGMENT_NAME).c_str());
+    if (headerValue)
+      {
+      currentSegment->SetName(headerValue);
+      }
+    else
+      {
+      vtkWarningMacro("Segment name is missing for segment " << segmentIndex);
+      }
 
     // DefaultColor
-    std::string defaultColorValue = reader->GetHeaderValue(GetSegmentMetaDataKey(segmentIndex, KEY_SEGMENT_DEFAULT_COLOR).c_str());
-    double currentSegmentDefaultColor[3] = { 0.0, 0.0, 0.0 };
-    GetSegmentDefaultColorFromString(currentSegmentDefaultColor, defaultColorValue);
-    currentSegment->SetDefaultColor(currentSegmentDefaultColor);
+    headerValue = reader->GetHeaderValue(GetSegmentMetaDataKey(segmentIndex, KEY_SEGMENT_DEFAULT_COLOR).c_str());
+    if (headerValue)
+      {
+      double currentSegmentDefaultColor[3] = { 0.0, 0.0, 0.0 };
+      this->GetSegmentDefaultColorFromString(currentSegmentDefaultColor, headerValue);
+      currentSegment->SetDefaultColor(currentSegmentDefaultColor);
+      }
 
     // Tags
-    std::string tagsValue = reader->GetHeaderValue(GetSegmentMetaDataKey(segmentIndex, KEY_SEGMENT_TAGS).c_str());
-    SetSegmentTagsFromString(currentSegment, tagsValue);
+    headerValue = reader->GetHeaderValue(GetSegmentMetaDataKey(segmentIndex, KEY_SEGMENT_TAGS).c_str());
+    if (headerValue)
+      {
+      this->SetSegmentTagsFromString(currentSegment, headerValue);
+      }
 
     // Create binary labelmap volume
     vtkSmartPointer<vtkOrientedImageData> currentBinaryLabelmap = vtkSmartPointer<vtkOrientedImageData>::New();
 
     // Extent
-    std::string extentValue = reader->GetHeaderValue(GetSegmentMetaDataKey(segmentIndex, KEY_SEGMENT_EXTENT).c_str());
+    headerValue = reader->GetHeaderValue(GetSegmentMetaDataKey(segmentIndex, KEY_SEGMENT_EXTENT).c_str());
     int currentSegmentExtent[6] = { 0, -1, 0, -1, 0, -1 };
-    GetImageExtentFromString(currentSegmentExtent, extentValue);
+    if (headerValue)
+      {
+      GetImageExtentFromString(currentSegmentExtent, headerValue);
+      }
+    else
+      {
+      vtkWarningMacro("Segment extent is missing for segment " << segmentIndex);
+      for (int i = 0; i < 6; i++)
+        {
+        currentSegmentExtent[i] = imageExtentInFile[i];
+        }
+      }
     for (int i = 0; i < 3; i++)
       {
       currentSegmentExtent[i * 2] += referenceImageExtentOffset[i];
@@ -664,6 +706,10 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
     currentSegment->AddRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName(), currentBinaryLabelmap);
 
     // Add segment to segmentation
+    if (segmentation->GetSegment(currentSegmentID) != NULL)
+      {
+      vtkErrorMacro("Segment by ID " << currentSegmentID << " already exists in segmentation.");
+      }
     segmentation->AddSegment(currentSegment, currentSegmentID);
     }
 

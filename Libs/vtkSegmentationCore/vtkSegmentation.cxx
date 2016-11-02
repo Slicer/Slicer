@@ -266,7 +266,7 @@ bool vtkSegmentation::SetMasterRepresentationModifiedEnabled(bool enabled)
 }
 
 //---------------------------------------------------------------------------
-std::string vtkSegmentation::GenerateUniqueSegmentId(std::string id)
+std::string vtkSegmentation::GenerateUniqueSegmentID(std::string id)
 {
   if (!id.empty() &&  this->Segments.find(id) == this->Segments.end())
     {
@@ -277,7 +277,7 @@ std::string vtkSegmentation::GenerateUniqueSegmentId(std::string id)
   if (id.empty())
     {
     // use a non-empty default prefix if no id is provided
-    id = "Segment_";
+    id = "Segment";
     }
 
   // try to make it unique by attaching a postfix
@@ -291,7 +291,7 @@ std::string vtkSegmentation::GenerateUniqueSegmentId(std::string id)
       break;
       }
     std::stringstream idStream;
-    idStream << id << this->SegmentIdAutogeneratorIndex;
+    idStream << id << "_" << this->SegmentIdAutogeneratorIndex;
     if (this->Segments.find(idStream.str()) == this->Segments.end())
       {
       // found a unique ID
@@ -300,7 +300,7 @@ std::string vtkSegmentation::GenerateUniqueSegmentId(std::string id)
     }
 
   // try to make it unique by modifying prefix
-  return this->GenerateUniqueSegmentId(id + "_");
+  return this->GenerateUniqueSegmentID(id + "_");
 }
 
 //---------------------------------------------------------------------------
@@ -438,7 +438,7 @@ bool vtkSegmentation::AddSegment(vtkSegment* segment, std::string segmentId/*=""
       return false;
       }
     key = segment->GetName();
-    key = this->GenerateUniqueSegmentId(key);
+    key = this->GenerateUniqueSegmentID(key);
     }
   this->Segments[key] = segment;
   this->SegmentIds.push_back(key);
@@ -1152,7 +1152,7 @@ std::string vtkSegmentation::AddEmptySegment(std::string segmentId/*=""*/, std::
     }
 
   // Segment ID will be segment name by default
-  segmentId = this->GenerateUniqueSegmentId(segmentId);
+  segmentId = this->GenerateUniqueSegmentID(segmentId);
   if (!segmentName.empty())
     {
     segment->SetName(segmentName.c_str());
@@ -1190,7 +1190,7 @@ bool vtkSegmentation::CopySegmentFromSegmentation(vtkSegmentation* fromSegmentat
   std::string targetSegmentId = segmentId;
   if (this->GetSegment(segmentId))
     {
-    targetSegmentId = this->GenerateUniqueSegmentId(segmentId);
+    targetSegmentId = this->GenerateUniqueSegmentID(segmentId);
     vtkWarningMacro("CopySegmentFromSegmentation: Segment with the same ID as the copied one (" << segmentId << ") already exists in the target segmentation. Generate a new unique segment ID: " << targetSegmentId);
     }
 
