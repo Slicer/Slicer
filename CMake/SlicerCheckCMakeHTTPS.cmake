@@ -11,7 +11,7 @@
 #
 
 function(slicer_check_cmake_https)
-  set(url "https://wiki.slicer.org/slicerWiki/images/5/5a/Checkmark.png")
+  set(url "https://raw.githubusercontent.com/Slicer/Slicer/master/CMakeLists.txt")
   set(dest "${CMAKE_CURRENT_BINARY_DIR}/slicer_check_cmake_https_output")
 
   set(msg "Checking if CMake supports https")
