@@ -71,7 +71,7 @@ a complete segmentation, taking into account the master volume content. Minimum 
 
     self.autoUpdateCheckBox = qt.QCheckBox("Auto-update")
     self.autoUpdateCheckBox.setToolTip("Auto-update results preview when input segments change.")
-    self.autoUpdateCheckBox.setChecked(False)
+    self.autoUpdateCheckBox.setChecked(True)
     self.autoUpdateCheckBox.setEnabled(False)
 
     self.previewButton = qt.QPushButton("Initialize")
@@ -129,7 +129,7 @@ a complete segmentation, taking into account the master volume content. Minimum 
 
   def setMRMLDefaults(self):
     self.scriptedEffect.setParameterDefault("AutoCompleteMethod", MORPHOLOGICAL_SLICE_INTERPOLATION)
-    self.scriptedEffect.setParameterDefault("AutoUpdate", "0")
+    self.scriptedEffect.setParameterDefault("AutoUpdate", "1")
 
   def onSegmentationModified(self, caller, event):
     if not self.autoUpdateCheckBox.isChecked():
