@@ -223,12 +223,12 @@ vtkMRMLSegmentationNode* vtkSlicerSegmentationsModuleLogic::GetSegmentationNodeF
   for (unsigned int nodeIndex=0; nodeIndex<numberOfNodes; nodeIndex++)
     {
     vtkMRMLSegmentationNode* node = vtkMRMLSegmentationNode::SafeDownCast(segmentationNodes[nodeIndex]);
-    if (!node->GetSegmentation()->GetSegmentIdBySegment(segment).empty())
+    segmentId = node->GetSegmentation()->GetSegmentIdBySegment(segment);
+    if (!segmentId.empty())
       {
       return node;
       }
     }
-
   return NULL;
 }
 
