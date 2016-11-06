@@ -1050,12 +1050,19 @@ void vtkMRMLSegmentationDisplayNode::GetVisibleSegmentIDs(vtkStringArray* segmen
 void vtkMRMLSegmentationDisplayNode::UpdateSegmentList()
 {
   vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(this->GetDisplayableNode());
-  if (!segmentationNode)
+  vtkSegmentation* segmentation = segmentationNode ? segmentationNode->GetSegmentation() : NULL;
+  if (segmentation == NULL)
     {
-    vtkErrorMacro("vtkMRMLSegmentationDisplayNode::UpdateSegmentList: No segmentation node associated to this display node");
+    // Only clear display properties if a segmentation was set before (to enable setting
+    // display properties before associating with a segmentation node)
+    if (this->SegmentListUpdateSource != segmentation)
+      {
+      this->SegmentationDisplayProperties.clear();
+      this->SegmentListUpdateTime = 0;
+      this->SegmentListUpdateSource = NULL;
+      }
     return;
     }
-  vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
   if (this->SegmentListUpdateSource == segmentation && this->SegmentListUpdateTime >= segmentation->GetMTime())
     {
     // already up-to-date
