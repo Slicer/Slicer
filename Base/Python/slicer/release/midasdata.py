@@ -118,14 +118,21 @@ def duplicateFolderfolders(sourceID, destID, token, communicator, overwrite):
   folderChildren = communicator.folder_children(token, sourceID)
   folder_subfolders = folderChildren["folders"]
 
+  destFolderChildren = communicator.folder_children(token, destID)
+
   if len(folder_subfolders) > 0:
     for subfolder in folder_subfolders:
-      # Create a corresponding subfolder at the destination
-      dst_folder = communicator.create_folder(token, subfolder["name"], destID)
+      # If needed, create a corresponding subfolder at the destination
+      dst_index = _getFolderIndex(destFolderChildren, subfolder["name"])
+      if dst_index == -1:
+        dst_folder = communicator.create_folder(token, subfolder["name"], destID)
+        dst_folderID = dst_folder["folder_id"]
+      else:
+        dst_folderID = _getIDfromIndex(destFolderChildren, "folder", dst_index)
       # Duplicate recursively
-      duplicateFolderfolders(subfolder["folder_id"], dst_folder["folder_id"], token, communicator, overwrite)
+      duplicateFolderfolders(subfolder["folder_id"], dst_folderID, token, communicator, overwrite)
       # Duplicate all the items from the source subfolder to new dest subfolder
-      duplicateFolderItems(subfolder["folder_id"], dst_folder["folder_id"], token, communicator, overwrite)
+      duplicateFolderItems(subfolder["folder_id"], dst_folderID, token, communicator, overwrite)
 
 def versionDataApplicationDirectory(sourceVersion, destVersion, token, communicator, applicationID, overwrite):
   """Version the Data/Application directory
@@ -181,21 +188,28 @@ def versionDataModulesDirectory(sourceVersion, destVersion, token, communicator,
       continue
 
     moduleFolderID = _getIDfromIndex(availableModules, "folder", num_module)
+    moduleName = availableModulesFolders[num_module]["name"]
     availableVersions = communicator.folder_children(token, moduleFolderID)
+
     sourceIndex = _getFolderIndex(availableVersions, sourceVersion)
     if sourceIndex == -1:
-      _error("No folder named " + sourceVersion + " in module: " + availableModulesFolders[num_module]["name"])
+      _error("No folder named " + sourceVersion + " in module: " + moduleName)
     sourceID = _getIDfromIndex(availableVersions, "folder", sourceIndex)
 
-    # Create a new folder for destination under the module folder
-    print "Creating folder", destVersion, "under", availableModulesFolders[num_module]["name"], "module directory"
-    dest_folder = communicator.create_folder(token, destVersion, moduleFolderID)
-    destID = dest_folder["folder_id"]
+    # If needed, create a new folder for destination under the module folder
+    destIndex = _getFolderIndex(availableVersions, destVersion)
+    if destIndex == -1:
+      print "Creating folder", destVersion, "under", moduleName, "module directory"
+      dest_folder = communicator.create_folder(token, destVersion, moduleFolderID)
+      destID = dest_folder["folder_id"]
+    else:
+      print "Re-using existing folder", destVersion, "under", moduleName, "module directory"
+      destID = _getIDfromIndex(availableVersions, "folder", destIndex)
 
     # Duplicate the child items from source to destination
     duplicateFolderItems(sourceID, destID, token, communicator, overwrite)
 
-    message = "Duplicating subfolders from %s to %s for %s module..." % (sourceVersion, destVersion, availableModulesFolders[num_module]["name"])
+    message = "Duplicating subfolders from %s to %s for %s module..." % (sourceVersion, destVersion, moduleName)
     print message
     # Duplicate all the sub-folders from source to destination
     duplicateFolderfolders(sourceID, destID, token, communicator, overwrite)
