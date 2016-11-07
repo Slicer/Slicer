@@ -357,6 +357,11 @@ class SlicerExtensionBuildSystemTest(unittest.TestCase):
     #     be included.
     compiler_name = os.path.splitext(os.path.basename(config.CMAKE_CXX_COMPILER))[0].upper()
 
+    cmake_osx_architectures = (
+      'CMAKE_OSX_ARCHITECTURES=' + config.CMAKE_OSX_ARCHITECTURES
+      if config.CMAKE_OSX_ARCHITECTURES.strip() else ''
+    )
+
     content = \
 """
 set(MY_OPERATING_SYSTEM   "{operating_system}")
@@ -387,7 +392,7 @@ Slicer_LOCAL_EXTENSIONS_DIR:PATH={local_extensions_dir}
 CMAKE_C_COMPILER:PATH={cmake_c_compiler}
 CMAKE_CXX_COMPILER:PATH={cmake_cxx_compiler}
 CMAKE_OSX_DEPLOYMENT_TARGET={cmake_osx_deployment_target}
-CMAKE_OSX_ARCHITECTURES= {cmake_osx_architectures}
+{cmake_osx_architectures}
 CMAKE_OSX_SYSROOT={cmake_osx_sysroot}
 ")
 
@@ -425,7 +430,7 @@ include({slicer_source_dir}/Extensions/CMake/SlicerExtensionsDashboardDriverScri
       cmake_generator_platform=config.CMAKE_GENERATOR_PLATFORM,
       cmake_generator_toolset=config.CMAKE_GENERATOR_TOOLSET,
       cmake_osx_deployment_target=config.CMAKE_OSX_DEPLOYMENT_TARGET,
-      cmake_osx_architectures=config.CMAKE_OSX_ARCHITECTURES,
+      cmake_osx_architectures=cmake_osx_architectures,
       cmake_osx_sysroot=config.CMAKE_OSX_SYSROOT,
       compiler_name=compiler_name,
       ctest_drop_site=self.ctest_drop_site,
@@ -466,6 +471,11 @@ include({slicer_source_dir}/Extensions/CMake/SlicerExtensionsDashboardDriverScri
 
     self._prepare_test_binary_dir(test_binary_dir)
 
+    cmake_osx_architectures = (
+      '-DCMAKE_OSX_ARCHITECTURES:STRING=' + config.CMAKE_OSX_ARCHITECTURES
+      if config.CMAKE_OSX_ARCHITECTURES.strip() else ''
+    )
+
     # Prepare configure command
     cmd = [
       config.CMAKE_COMMAND,
@@ -479,7 +489,7 @@ include({slicer_source_dir}/Extensions/CMake/SlicerExtensionsDashboardDriverScri
       '-DGIT_EXECUTABLE:PATH=' + config.GIT_EXECUTABLE,
       '-DSubversion_SVN_EXECUTABLE:PATH=' + config.Subversion_SVN_EXECUTABLE,
       '-DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=' + config.CMAKE_OSX_DEPLOYMENT_TARGET,
-      '-DCMAKE_OSX_ARCHITECTURES:STRING=' + config.CMAKE_OSX_ARCHITECTURES,
+      cmake_osx_architectures,
       '-DCMAKE_OSX_SYSROOT:PATH=' + config.CMAKE_OSX_SYSROOT
       ]
 
