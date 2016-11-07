@@ -120,8 +120,7 @@ protected slots:
   void onEditSelectedSegment();
   void onRemoveSelectedSegments();
 
-  void onImportExportOperationButtonClicked();
-  void onImportExportTypeButtonClicked();
+  void onImportExportOptionsButtonClicked();
   void onImportExportApply();
 
   void onMoveFromCurrentSegmentation();

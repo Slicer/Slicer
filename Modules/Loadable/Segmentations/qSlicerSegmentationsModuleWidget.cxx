@@ -285,11 +285,11 @@ void qSlicerSegmentationsModuleWidget::init()
 
   this->connect(d->ImportExportOperationButtonGroup,
     SIGNAL(buttonClicked(QAbstractButton*)),
-    SLOT(onImportExportOperationButtonClicked()));
+    SLOT(onImportExportOptionsButtonClicked()));
 
   this->connect(d->ImportExportTypeButtonGroup,
     SIGNAL(buttonClicked(QAbstractButton*)),
-    SLOT(onImportExportTypeButtonClicked()));
+    SLOT(onImportExportOptionsButtonClicked()));
 
   connect(d->PushButton_ImportExport, SIGNAL(clicked()),
     this, SLOT(onImportExportApply()));
@@ -318,8 +318,7 @@ void qSlicerSegmentationsModuleWidget::init()
 
   d->radioButton_Export->setChecked(true);
   d->radioButton_Labelmap->setChecked(true);
-  this->onImportExportOperationButtonClicked();
-  this->onImportExportTypeButtonClicked();
+  this->onImportExportOptionsButtonClicked();
 }
 
 //-----------------------------------------------------------------------------
@@ -482,9 +481,11 @@ void qSlicerSegmentationsModuleWidget::setOtherSegmentationOrRepresentationNode(
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentationsModuleWidget::onImportExportOperationButtonClicked()
+void qSlicerSegmentationsModuleWidget::onImportExportOptionsButtonClicked()
 {
   Q_D(qSlicerSegmentationsModuleWidget);
+
+  // Operation: export/import
   if (d->radioButton_Export->isChecked())
     {
     d->label_ImportExportType->setText("Output type:");
@@ -501,12 +502,8 @@ void qSlicerSegmentationsModuleWidget::onImportExportOperationButtonClicked()
   d->ComboBox_ExportedSegments->setEnabled(d->radioButton_Export->isChecked());
   d->MRMLNodeComboBox_ExportLabelmapReferenceVolume->setEnabled(
     d->radioButton_Labelmap->isChecked() && d->radioButton_Export->isChecked());
-}
 
-//-----------------------------------------------------------------------------
-void qSlicerSegmentationsModuleWidget::onImportExportTypeButtonClicked()
-{
-  Q_D(qSlicerSegmentationsModuleWidget);
+  // Type: labelmap/model
   QStringList nodeTypes;
   if (d->radioButton_Labelmap->isChecked())
     {
@@ -521,7 +518,7 @@ void qSlicerSegmentationsModuleWidget::onImportExportTypeButtonClicked()
     nodeTypes << "vtkMRMLModelHierarchyNode";
     if (d->radioButton_Export->isChecked())
       {
-      d->MRMLNodeComboBox_ImportExportNode->setNoneDisplay("Export to new model");
+      d->MRMLNodeComboBox_ImportExportNode->setNoneDisplay("Export to new model hierarchy");
       }
     else
       {
