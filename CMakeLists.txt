@@ -36,7 +36,7 @@ if(NOT DEFINED Slicer_VERSION_MINOR)
   set(Slicer_VERSION_MINOR "6")
 endif()
 if(NOT DEFINED Slicer_VERSION_PATCH)
-  set(Slicer_VERSION_PATCH "1")
+  set(Slicer_VERSION_PATCH "2")
 endif()
 if(POLICY CMP0048)
   set(_project_version VERSION "${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}.${Slicer_VERSION_PATCH}")
@@ -461,7 +461,7 @@ message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} text of disc
 # Slicer version number.
 #-----------------------------------------------------------------------------
 # Releases define a tweak level
-#set(Slicer_VERSION_TWEAK 0)
+set(Slicer_VERSION_TWEAK 0)
 #set(Slicer_VERSION_RC 0)
 include(SlicerVersion)
 
