@@ -24,8 +24,12 @@ The SampleData module can be used to download data for working with in slicer.  
 """
     self.parent.helpText += self.getDefaultModuleDocumentationLink()
     self.parent.acknowledgementText = """
-This work was was funded by Cancer Care Ontario
-and the Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO)
+<p>This work was was funded by Cancer Care Ontario
+and the Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO)</p>
+
+<p>CTA abdomen (Panoramix) dataset comes from <a href="http://www.osirix-viewer.com/resources/dicom-image-library/">Osirix DICOM image library</a>
+and is exclusively available for research and teaching. You are not authorized to redistribute or sell it, or
+use it for commercial purposes.</p>
 """
 
     if slicer.mrmlScene.GetTagByClassName( "vtkMRMLScriptedModuleNode" ) != 'ScriptedModule':
