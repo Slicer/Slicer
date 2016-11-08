@@ -177,7 +177,7 @@ class SampleDataLogic:
             'http://slicer.kitware.com/midas3/download/?items=2010,1', ),
           ('DTIVolume.raw.gz', 'DTIVolume.nhdr'), (None, 'DTIVolume')),
         ('DWIVolume', ('http://slicer.kitware.com/midas3/download/?items=2142,1', 'http://slicer.kitware.com/midas3/download/?items=2141,1'), ('dwi.raw.gz', 'dwi.nhdr'), (None, 'dwi')),
-        ('Panoramix', 'http://slicer.kitware.com/midas3/download/?items=9073,1', 'Panoramix-cropped.nrrd', 'Panoramix-cropped'),
+        ('CTA abdomen (Panoramix)', 'http://slicer.kitware.com/midas3/download/?items=9073,1', 'Panoramix-cropped.nrrd', 'Panoramix-cropped'),
         ('CBCTDentalSurgery',
           ('http://slicer.kitware.com/midas3/download/item/94510/Greyscale_presurg.gipl.gz',
             'http://slicer.kitware.com/midas3/download/item/94509/Greyscale_postsurg.gipl.gz',),
