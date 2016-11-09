@@ -147,12 +147,7 @@ void vtkSlicerMarkupsLogic::ObserveMRMLScene()
     return;
     }
   // add known markup types to the selection node
-  vtkMRMLSelectionNode *selectionNode = NULL;
-  vtkMRMLNode *mrmlNode = this->GetMRMLScene()->GetNodeByID(this->GetSelectionNodeID().c_str());
-  if (mrmlNode)
-    {
-    selectionNode = vtkMRMLSelectionNode::SafeDownCast(mrmlNode);
-    }
+  vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->GetSelectionNodeID().c_str()));
   if (selectionNode)
     {
     // got into batch process mode so that an update on the mouse mode tool
@@ -307,16 +302,7 @@ std::string vtkSlicerMarkupsLogic::GetActiveListID()
     }
 
   // get the selection node
-  vtkMRMLSelectionNode *selectionNode = NULL;;
-  std::string selectionNodeID = this->GetSelectionNodeID();
-  vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID(selectionNodeID.c_str());
-  if (!node)
-    {
-    vtkErrorMacro("GetActiveListID: no selection node to govern active lists.");
-    return listID;
-    }
-  selectionNode = vtkMRMLSelectionNode::SafeDownCast(node);
-
+  vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->GetSelectionNodeID().c_str()));
   if (!selectionNode)
     {
     vtkErrorMacro("GetActiveListID: unable to get the selection node that governs active lists.");
@@ -338,31 +324,44 @@ std::string vtkSlicerMarkupsLogic::GetActiveListID()
 //---------------------------------------------------------------------------
 void vtkSlicerMarkupsLogic::SetActiveListID(vtkMRMLMarkupsNode *markupsNode)
 {
-  std::string selectionNodeID = this->GetSelectionNodeID();
-  vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID(selectionNodeID.c_str());
-  vtkMRMLSelectionNode *selectionNode = NULL;
-  if (node)
+  vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->GetSelectionNodeID().c_str()));
+  if (!selectionNode)
     {
-    selectionNode = vtkMRMLSelectionNode::SafeDownCast(node);
+    vtkErrorMacro("vtkSlicerMarkupsLogic::SetActiveListID: No selection node in the scene.");
+    return;
     }
-  if (selectionNode)
+
+  if (markupsNode == NULL)
     {
-    // check if need to update the current type of node that's being placed
+    // If fiducial node was placed then reset node ID and deactivate placement
     const char *activePlaceNodeClassName = selectionNode->GetActivePlaceNodeClassName();
-    if (!activePlaceNodeClassName ||
-        (activePlaceNodeClassName &&
-         strcmp(activePlaceNodeClassName, markupsNode->GetClassName()) != 0))
+    if (activePlaceNodeClassName && strcmp(activePlaceNodeClassName, "vtkMRMLMarkupsFiducialNode") == 0)
       {
-      // call the set reference to make sure the event is invoked
-      selectionNode->SetReferenceActivePlaceNodeClassName(markupsNode->GetClassName());
+      selectionNode->SetActivePlaceNodeID(NULL);
+      vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
+      if (interactionNode && interactionNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place)
+        {
+        interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
+        }
       }
-    // set this markup node active if it's not already
-    const char *activePlaceNodeID = selectionNode->GetActivePlaceNodeID();
-    if (!activePlaceNodeID ||
-        (activePlaceNodeID && strcmp(activePlaceNodeID, markupsNode->GetID()) != 0))
-      {
-      selectionNode->SetActivePlaceNodeID(markupsNode->GetID());
-      }
+    return;
+    }
+
+  // check if need to update the current type of node that's being placed
+  const char *activePlaceNodeClassName = selectionNode->GetActivePlaceNodeClassName();
+  if (!activePlaceNodeClassName ||
+      (activePlaceNodeClassName &&
+        strcmp(activePlaceNodeClassName, markupsNode->GetClassName()) != 0))
+    {
+    // call the set reference to make sure the event is invoked
+    selectionNode->SetReferenceActivePlaceNodeClassName(markupsNode->GetClassName());
+    }
+  // set this markup node active if it's not already
+  const char *activePlaceNodeID = selectionNode->GetActivePlaceNodeID();
+  if (!activePlaceNodeID ||
+      (activePlaceNodeID && strcmp(activePlaceNodeID, markupsNode->GetID()) != 0))
+    {
+    selectionNode->SetActivePlaceNodeID(markupsNode->GetID());
     }
 }
 
