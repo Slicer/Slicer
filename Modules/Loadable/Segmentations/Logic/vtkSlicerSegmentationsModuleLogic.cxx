@@ -771,7 +771,7 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
 
   // Use reference volume's parent transform if available, otherwise put under the same transform as segmentation node
   vtkMRMLTransformNode* parentTransformNode = NULL;
-  if (referenceVolumeNode && referenceVolumeNode->GetParentTransformNode())
+  if (referenceVolumeNode)
     {
     parentTransformNode = referenceVolumeNode->GetParentTransformNode();
     }
