@@ -11,6 +11,7 @@ set(modules
   SampleData
   ScreenCapture
   SegmentEditor
+  SegmentStatistics
   SelfTests
   SurfaceToolbox
   VectorToScalarVolume
