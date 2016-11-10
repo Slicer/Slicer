@@ -24,6 +24,7 @@
 #include "vtkSlicerTablesLogic.h"
 
 // MRML includes
+#include <vtkMRMLLayoutNode.h>
 #include <vtkMRMLTableNode.h>
 #include <vtkMRMLTableStorageNode.h>
 #include <vtkMRMLScene.h>
@@ -153,4 +154,20 @@ vtkMRMLTableNode* vtkSlicerTablesLogic
     }
 
   return tableNode;
+}
+
+//----------------------------------------------------------------------------
+int vtkSlicerTablesLogic::GetLayoutWithTable(int currentLayout)
+{
+  switch (currentLayout)
+    {
+    case vtkMRMLLayoutNode::SlicerLayoutFourUpTableView:
+    case vtkMRMLLayoutNode::SlicerLayout3DTableView:
+      // table already shown, no need to change
+      return currentLayout;
+    case vtkMRMLLayoutNode::SlicerLayoutOneUp3DView:
+      return vtkMRMLLayoutNode::SlicerLayout3DTableView;
+    default:
+      return vtkMRMLLayoutNode::SlicerLayoutFourUpTableView;
+    }
 }

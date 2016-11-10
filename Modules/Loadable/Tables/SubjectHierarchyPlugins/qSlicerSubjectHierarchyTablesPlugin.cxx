@@ -36,6 +36,9 @@
 #include <vtkMRMLLayoutNode.h>
 #include <vtkMRMLTableViewNode.h>
 
+// Module logic includes
+#include "vtkSlicerTablesLogic.h"
+
 // MRML widgets includes
 #include "qMRMLNodeComboBox.h"
 
@@ -212,18 +215,9 @@ void qSlicerSubjectHierarchyTablesPlugin::setDisplayVisibility(vtkMRMLSubjectHie
   if (associatedTableNode && visible)
     {
     // Switch to a layout that contains table
-    switch (qSlicerApplication::application()->layoutManager()->layout())
-      {
-      case vtkMRMLLayoutNode::SlicerLayoutFourUpTableView:
-      case vtkMRMLLayoutNode::SlicerLayout3DTableView:
-        // table already shown, no need to change
-        break;
-      case vtkMRMLLayoutNode::SlicerLayoutOneUp3DView:
-        layoutNode->SetViewArrangement( vtkMRMLLayoutNode::SlicerLayout3DTableView );
-        break;
-      default:
-        layoutNode->SetViewArrangement( vtkMRMLLayoutNode::SlicerLayoutFourUpTableView );
-      }
+    int currentLayout = qSlicerApplication::application()->layoutManager()->layout();
+    int layoutWithTable = vtkSlicerTablesLogic::GetLayoutWithTable(currentLayout);
+    layoutNode->SetViewArrangement(layoutWithTable);
 
     // Make sure we have a valid table view node (if we want to show the table, but there was
     // no table view, then one was just created when we switched to table layout)

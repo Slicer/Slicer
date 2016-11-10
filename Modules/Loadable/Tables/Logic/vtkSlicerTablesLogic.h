@@ -49,6 +49,9 @@ public:
 
   vtkMRMLTableNode* AddTable(const char* fileName, const char* name = 0);
 
+  /// Returns ID of the layout that is similar to current layout but also contains a table view
+  static int GetLayoutWithTable(int currentLayout);
+
 protected:
   vtkSlicerTablesLogic();
   virtual ~vtkSlicerTablesLogic();
