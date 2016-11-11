@@ -761,7 +761,8 @@ bool vtkMRMLSegmentationDisplayNode::CalculateAutoOpacitiesForSegments()
 
   // Make sure the requested representation exists
   vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
-  if (!segmentation->CreateRepresentation(this->PreferredDisplayRepresentationName3D))
+  if ( !this->PreferredDisplayRepresentationName3D
+    || !segmentation->CreateRepresentation(this->PreferredDisplayRepresentationName3D) )
     {
     return false;
     }
@@ -769,7 +770,10 @@ bool vtkMRMLSegmentationDisplayNode::CalculateAutoOpacitiesForSegments()
   // Get displayed 3D representation (always poly data)
   std::string displayedPolyDataRepresentationName = this->GetDisplayRepresentationName3D();
 
-  // Assemble segment poly datas into a collection that can be fed to topological hierarchy algorithm
+  // Make sure the segment display properties are updated
+  this->UpdateSegmentList();
+
+  // Assemble segment polydatas into a collection that can be fed to topological hierarchy algorithm
   vtkSmartPointer<vtkPolyDataCollection> segmentPolyDataCollection = vtkSmartPointer<vtkPolyDataCollection>::New();
   for (SegmentDisplayPropertiesMap::iterator propIt = this->SegmentationDisplayProperties.begin();
     propIt != this->SegmentationDisplayProperties.end(); ++propIt)
