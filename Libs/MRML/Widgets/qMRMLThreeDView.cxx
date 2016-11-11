@@ -109,6 +109,7 @@ void qMRMLThreeDViewPrivate::initDisplayableManagers()
                       << "vtkMRMLViewDisplayableManager"
                       << "vtkMRMLModelDisplayableManager"
                       << "vtkMRMLThreeDReformatDisplayableManager"
+                      << "vtkMRMLCrosshairDisplayableManager3D"
                       << "vtkMRMLOrientationMarkerDisplayableManager"
                       << "vtkMRMLRulerDisplayableManager";
   foreach(const QString& displayableManager, displayableManagers)

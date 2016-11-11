@@ -16,6 +16,8 @@
 #include "vtkSliceViewInteractorStyle.h"
 
 // MRML includes
+#include "vtkMRMLCrosshairDisplayableManager.h"
+#include "vtkMRMLCrosshairNode.h"
 #include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSliceLogic.h"
@@ -399,13 +401,30 @@ void vtkSliceViewInteractorStyle::OnMouseMove()
       break;
     default:
       {
-      if (this->Interactor->GetShiftKey())
+      bool performDefaultAction = true;
+      vtkMRMLScene *scene = this->SliceLogic->GetMRMLScene();
+      vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairDisplayableManager::FindCrosshairNode(scene);
+      if (crosshairNode)
         {
-        double eventRAS[4];
-        this->GetEventRAS(eventRAS);
-        sliceNode->JumpAllSlices(eventRAS[0],eventRAS[1],eventRAS[2]);
+        int *pos = this->GetInteractor()->GetEventPosition();
+        double xyz[3];
+        vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(this->GetInteractor(), sliceNode, pos[0], pos[1], xyz);
+        crosshairNode->SetCursorPositionXYZ(xyz, sliceNode);
+        if (this->Interactor->GetShiftKey())
+          {
+          performDefaultAction = false;
+          double cursorPositionRAS[3];
+          if (crosshairNode->GetCursorPositionRAS(cursorPositionRAS))
+            {
+            crosshairNode->SetCrosshairRAS(cursorPositionRAS);
+            if (crosshairNode->GetCrosshairBehavior() == vtkMRMLCrosshairNode::JumpSlice)
+              {
+              sliceNode->JumpAllSlices(cursorPositionRAS[0], cursorPositionRAS[1], cursorPositionRAS[2]);
+              }
+            }
+          }
         }
-      else
+      if (performDefaultAction)
         {
         this->Superclass::OnMouseMove();
         }
@@ -450,6 +469,12 @@ void vtkSliceViewInteractorStyle::OnEnter()
 //----------------------------------------------------------------------------
 void vtkSliceViewInteractorStyle::OnLeave()
 {
+  vtkMRMLScene *scene = this->SliceLogic->GetMRMLScene();
+  vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairDisplayableManager::FindCrosshairNode(scene);
+  if (crosshairNode)
+    {
+    crosshairNode->SetCursorPositionInvalid();
+    }
   this->Superclass::OnLeave();
 }
 

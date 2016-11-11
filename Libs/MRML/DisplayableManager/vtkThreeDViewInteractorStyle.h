@@ -64,6 +64,7 @@ public:
   /// Event bindings controlling the effects of pressing mouse buttons
   /// or moving the mouse.
   virtual void OnMouseMove();
+  virtual void OnLeave();
   virtual void OnLeftButtonDown();
   virtual void OnLeftButtonUp();
   virtual void OnMiddleButtonDown();

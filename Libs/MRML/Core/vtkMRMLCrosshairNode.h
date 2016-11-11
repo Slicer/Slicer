@@ -110,7 +110,7 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
 
 
   ///
-  /// Is the crosshair to be used for navigation or as just a cursor
+  /// Deprecated. This member has no effect anymore and will be removed in the future.
   vtkSetMacro(Navigation, int);
   vtkGetMacro(Navigation, int);
   vtkBooleanMacro(Navigation, int);
@@ -124,7 +124,7 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
     return this->GetSingletonTag();
   }
 
-  /// Modes for crosshair display and behavior
+  /// Modes for crosshair display
   enum
     {
       NoCrosshair = 0,
@@ -141,10 +141,13 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
       Medium,
       Thick
     };
+  /// Behavior when crosshair position is changed.
+  /// "Normal" mode is deprecated. Use JumpSlice (default) or NoAction instead.
   enum
     {
-      Normal = 0,
-      JumpSlice
+      Normal = 0, // Deprecated
+      JumpSlice = 0,
+      NoAction = 1
     };
 
 protected:

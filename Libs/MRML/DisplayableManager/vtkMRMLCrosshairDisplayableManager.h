@@ -25,6 +25,9 @@
 #include "vtkMRMLAbstractSliceViewDisplayableManager.h"
 #include "vtkMRMLDisplayableManagerWin32Header.h"
 
+class vtkMRMLCrosshairNode;
+class vtkMRMLScene;
+
 /// \brief Displayable manager for the crosshair on slice (2D) views
 ///
 /// Responsible for any display of the crosshair on Slice views.
@@ -37,6 +40,9 @@ public:
                        vtkMRMLAbstractSliceViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  // Utility functions (used by 2D and 3D crosshair displayable managers)
+  static vtkMRMLCrosshairNode* FindCrosshairNode(vtkMRMLScene* scene);
+
 protected:
   vtkMRMLCrosshairDisplayableManager();
   virtual ~vtkMRMLCrosshairDisplayableManager();
@@ -44,20 +50,6 @@ protected:
   /// Initialize the displayable manager based on its associated
   /// vtkMRMLSliceNode
   virtual void Create();
-
-  /// Override the default interaction modes under which this
-  /// displayable manager gets events.
-  virtual int ActiveInteractionModes();
-
-  /// Called after interactor style event specified using
-  /// AddInteractorStyleObservableEvent are invoked.
-  /// \sa AddInteractorStyleObservableEvent RemoveInteractorStyleObservableEvent
-  virtual void OnInteractorStyleEvent(int eventid);
-
-  /// Called after interactor event specified using
-  /// AddInteractorObservableEvent are invoked.
-  /// \sa AddInteractorObservableEvent RemoveInteractorObservableEvent
-  virtual void OnInteractorEvent(int eventid);
 
   /// Called when the SliceNode is modified. May cause Crosshair to remap its position on screen.
   virtual void OnMRMLSliceNodeModifiedEvent();

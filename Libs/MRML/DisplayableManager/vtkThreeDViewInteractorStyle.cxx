@@ -15,6 +15,8 @@
 #include "vtkThreeDViewInteractorStyle.h"
 
 // MRML includes
+#include "vtkMRMLCrosshairDisplayableManager.h"
+#include "vtkMRMLCrosshairNode.h"
 #include "vtkMRMLModelDisplayableManager.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSliceNode.h"
@@ -229,11 +231,22 @@ void vtkThreeDViewInteractorStyle::OnMouseMove()
         if (picked)
           {
           vtkMRMLScene* scene = this->GetCameraNode()->GetScene();
-          vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(scene->GetNthNodeByClass(0, "vtkMRMLSliceNode"));
-          if (sliceNode)
+          vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairDisplayableManager::FindCrosshairNode(scene);
+          if (crosshairNode)
             {
-            sliceNode->JumpSlice(pickedRAS[0], pickedRAS[1], pickedRAS[2]);
-            sliceNode->JumpAllSlices(pickedRAS[0], pickedRAS[1], pickedRAS[2]);
+            crosshairNode->SetCrosshairRAS(pickedRAS);
+            // Computing pick position in 3D is expensive,
+            // therefore we only update the cursor position if shift key is pressed
+            crosshairNode->SetCursorPositionRAS(pickedRAS);
+            if (crosshairNode->GetCrosshairBehavior() == vtkMRMLCrosshairNode::JumpSlice)
+              {
+              vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(scene->GetNthNodeByClass(0, "vtkMRMLSliceNode"));
+              if (sliceNode)
+                {
+                sliceNode->JumpSlice(pickedRAS[0], pickedRAS[1], pickedRAS[2]);
+                sliceNode->JumpAllSlices(pickedRAS[0], pickedRAS[1], pickedRAS[2]);
+                }
+              }
             }
           }
         }
@@ -248,6 +261,18 @@ void vtkThreeDViewInteractorStyle::OnMouseMove()
     {
     this->CameraNode->EndModify(disabledModify);
     }
+}
+
+//----------------------------------------------------------------------------
+void vtkThreeDViewInteractorStyle::OnLeave()
+{
+  vtkMRMLScene* scene = this->GetCameraNode()->GetScene();
+  vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairDisplayableManager::FindCrosshairNode(scene);
+  if (crosshairNode)
+    {
+    crosshairNode->SetCursorPositionInvalid();
+    }
+  this->Superclass::OnLeave();
 }
 
 //----------------------------------------------------------------------------

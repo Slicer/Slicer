@@ -31,7 +31,7 @@ vtkMRMLCrosshairNode::vtkMRMLCrosshairNode()
   this->HideFromEditors = 1;
 
   this->CrosshairMode = vtkMRMLCrosshairNode::NoCrosshair;
-  this->CrosshairBehavior = vtkMRMLCrosshairNode::Normal;
+  this->CrosshairBehavior = vtkMRMLCrosshairNode::JumpSlice;
   this->CrosshairThickness = vtkMRMLCrosshairNode::Fine;
   this->Navigation = 0;
   this->CrosshairRAS[0] = this->CrosshairRAS[1] = this->CrosshairRAS[2] = 0.0;
@@ -88,13 +88,14 @@ void vtkMRMLCrosshairNode::WriteXML(ostream& of, int nIndent)
 
   of << indent << " navigation=\"" << (this->Navigation ? "true" : "false") << "\"";
 
-  if ( this->CrosshairBehavior == vtkMRMLCrosshairNode::JumpSlice )
+  if ( this->CrosshairBehavior == vtkMRMLCrosshairNode::JumpSlice
+    || this->CrosshairBehavior == vtkMRMLCrosshairNode::Normal )
     {
     of << indent << " crosshairBehavior=\"" << "JumpSlice" << "\"";
     }
-  else if ( this->CrosshairBehavior == vtkMRMLCrosshairNode::Normal )
+  else if (this->CrosshairBehavior == vtkMRMLCrosshairNode::NoAction)
     {
-    of << indent << " crosshairBehavior=\"" << "Normal" << "\"";
+    of << indent << " crosshairBehavior=\"" << "NoAction" << "\"";
     }
 
   if ( this->CrosshairThickness == vtkMRMLCrosshairNode::Fine )
@@ -175,13 +176,14 @@ void vtkMRMLCrosshairNode::ReadXMLAttributes(const char** atts)
       }
     else if (!strcmp (attName, "crosshairBehavior" ))
       {
-      if ( !strcmp (attValue, "JumpSlice"))
+      if ( !strcmp (attValue, "JumpSlice")
+        || !strcmp(attValue, "Normal"))
         {
         this->SetCrosshairBehavior ( vtkMRMLCrosshairNode::JumpSlice);
         }
-      if ( !strcmp (attValue, "Normal"))
+      else if ( !strcmp (attValue, "NoAction"))
         {
-        this->SetCrosshairBehavior ( vtkMRMLCrosshairNode::Normal);
+        this->SetCrosshairBehavior(vtkMRMLCrosshairNode::NoAction);
         }
       }
     else if(!strcmp (attName, "crosshairThickness" ))
