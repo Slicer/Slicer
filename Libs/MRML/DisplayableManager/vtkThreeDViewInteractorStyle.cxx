@@ -266,6 +266,11 @@ void vtkThreeDViewInteractorStyle::OnMouseMove()
 //----------------------------------------------------------------------------
 void vtkThreeDViewInteractorStyle::OnLeave()
 {
+  if (this->GetCameraNode() == NULL || this->GetCameraNode()->GetScene() == NULL)
+    {
+    // interactor is not initialized
+    return;
+    }
   vtkMRMLScene* scene = this->GetCameraNode()->GetScene();
   vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairDisplayableManager::FindCrosshairNode(scene);
   if (crosshairNode)
