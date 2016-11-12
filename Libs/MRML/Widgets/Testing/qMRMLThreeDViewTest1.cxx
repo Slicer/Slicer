@@ -42,6 +42,7 @@ int qMRMLThreeDViewTest1(int argc, char * argv [] )
   // test the list of displayable managers
   QStringList expectedDisplayableManagerClassNames =
     QStringList() << "vtkMRMLCameraDisplayableManager"
+                  << "vtkMRMLCrosshairDisplayableManager3D"
                   << "vtkMRMLViewDisplayableManager"
                   << "vtkMRMLModelDisplayableManager"
                   << "vtkMRMLThreeDReformatDisplayableManager"
