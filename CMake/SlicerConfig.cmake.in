@@ -131,6 +131,10 @@ set(Slicer_LAUNCHER_EXECUTABLE "@Slicer_LAUNCHER_EXECUTABLE_CONFIG@")
 set(Slicer_LAUNCH_COMMAND "@Slicer_LAUNCH_COMMAND_CONFIG@")
 set(SEM_LAUNCH_COMMAND "@Slicer_LAUNCH_COMMAND_CONFIG@")
 
+# VCS commands
+set(Subversion_SVN_EXECUTABLE "@Subversion_SVN_EXECUTABLE@")
+set(GIT_EXECUTABLE "@GIT_EXECUTABLE@")
+
 # Slicer working copy Revision, URL and Root
 set(Slicer_WC_REVISION "@Slicer_WC_REVISION@")
 set(Slicer_WC_URL "@Slicer_WC_URL@")
