@@ -12,9 +12,9 @@ endif()
 
 if(NOT SWIG_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  set(SWIG_TARGET_VERSION 3.0.2)
-  set(SWIG_DOWNLOAD_SOURCE_HASH "62f9b0d010cef36a13a010dc530d0d41")
-  set(SWIG_DOWNLOAD_WIN_HASH "3f18de4fc09ab9abb0d3be37c11fbc8f")
+  set(SWIG_TARGET_VERSION 3.0.10)
+  set(SWIG_DOWNLOAD_SOURCE_HASH "bb4ab8047159469add7d00910e203124")
+  set(SWIG_DOWNLOAD_WIN_HASH "f229724fe856aa78df6128ecfefe6e0a")
 
   if(WIN32)
     # swig.exe available as pre-built binary on Windows:
