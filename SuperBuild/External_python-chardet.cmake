@@ -18,8 +18,8 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    URL "https://pypi.python.org/packages/source/c/chardet/chardet-2.2.1.tar.gz"
-    URL_MD5 "4a758402eaefd0331bdedc7ecb6f452c"
+    URL "https://pypi.python.org/packages/7d/87/4e3a3f38b2f5c578ce44f8dc2aa053217de9f0b6d737739b0ddac38ed237/chardet-2.3.0.tar.gz"
+    URL_MD5 "25274d664ccb5130adae08047416e1a8"
     SOURCE_DIR ${proj}
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ""

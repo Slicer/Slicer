@@ -18,8 +18,8 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    URL "https://pypi.python.org/packages/source/P/PyGithub/PyGithub-1.23.0.tar.gz"
-    URL_MD5 "58bbbf17358d7b61c32d8095a6f56011"
+    URL "https://pypi.python.org/packages/1a/2d/7c1ee64a1b477c22eca28a583464172c92403df87ccdf56b34eabf68fce4/PyGithub-1.29.tar.gz"
+    URL_MD5 "c921400a5c1acd4b7d7c4fd9ee42650d"
     SOURCE_DIR ${proj}
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ""

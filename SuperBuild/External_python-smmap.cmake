@@ -18,8 +18,8 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    URL "https://pypi.python.org/packages/source/s/smmap/smmap-0.8.2.tar.gz"
-    URL_MD5 "f5426b7626ddcf5e447253fae0396b0c"
+    URL "https://pypi.python.org/packages/bc/aa/b744b3761fff1b10579df996a2d2e87f124ae07b8336e37edc89cc502f86/smmap-0.9.0.tar.gz"
+    URL_MD5 "d7932d5ace206bf4ae15198cf36fb6ab"
     SOURCE_DIR ${proj}
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ""

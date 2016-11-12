@@ -1,7 +1,7 @@
 set(proj python-gitdb)
 
 # Set dependency list
-set(${proj}_DEPENDENCIES python python-setuptools python-async python-smmap)
+set(${proj}_DEPENDENCIES python python-setuptools python-smmap)
 
 # Include dependent projects if any
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
@@ -33,8 +33,8 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py in
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    URL "http://pypi.python.org/packages/source/g/gitdb/gitdb-0.5.4.tar.gz"
-    URL_MD5 "25353bb8d3ea527ba443dd88cd4e8a1c"
+    URL "https://pypi.python.org/packages/5c/bb/ab74c6914e3b570ab2e960fda17a01aec93474426eecd3b34751ba1c3b38/gitdb2-2.0.0.tar.gz"
+    URL_MD5 "78fdc7645665067862e3ba1e02db6884"
     SOURCE_DIR ${proj}
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ""
