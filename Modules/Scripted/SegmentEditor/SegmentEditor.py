@@ -12,7 +12,7 @@ class SegmentEditor(ScriptedLoadableModule):
     ScriptedLoadableModule.__init__(self, parent)
     import string
     self.parent.title = "Segment Editor"
-    self.parent.categories = ["Segmentation"]
+    self.parent.categories = ["", "Segmentation"]
     self.parent.dependencies = ["Segmentations"]
     self.parent.contributors = ["Csaba Pinter (Queen's University), Andras Lasso (Queen's University)"]
     self.parent.helpText = """
