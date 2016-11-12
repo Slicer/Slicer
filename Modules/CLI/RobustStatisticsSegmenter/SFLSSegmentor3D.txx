@@ -1452,7 +1452,7 @@ CSFLSSegmentor3D<TPixel>
 }
 
 template <typename TPixel>
-void
+typename CSFLSSegmentor3D<TPixel>::CSFLSLayer
 CSFLSSegmentor3D<TPixel>
 ::getZeroLayerAtIteration(unsigned long i)
 {

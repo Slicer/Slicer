@@ -94,7 +94,7 @@ public:
   {
     m_keepZeroLayerHistory = b;
   }
-  void getZeroLayerAtIteration(unsigned long i);
+  CSFLSLayer getZeroLayerAtIteration(unsigned long i);
 
   void writeZeroLayerAtIterationToFile(unsigned long i, const char* name);
 
