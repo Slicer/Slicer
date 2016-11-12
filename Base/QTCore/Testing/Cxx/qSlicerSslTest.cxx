@@ -109,12 +109,12 @@ void qSlicerSslTester::testHttpsConnection_data()
   QTest::newRow("slicer-clear-with-redirect-NoError-302")
       << "http://slicer.org"
       << (QList<QSslError::SslError>())
-      << QNetworkReply::NoError << 302;
+      << QNetworkReply::NoError << 301;
 
   QTest::newRow("slicer-secured-HostNameMismatch-0")
       << "https://slicer.org"
-      << (QList<QSslError::SslError>() << QSslError::HostNameMismatch)
-      << QNetworkReply::NoError << 0;
+      << (QList<QSslError::SslError>())
+      << QNetworkReply::NoError << 200;
 
   QTest::newRow("other-secured-NoError-200")
       << "https://www.eff.org/https-everywhere"
