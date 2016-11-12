@@ -216,9 +216,9 @@ def getFork(user, upstream, create=False):
     fork = GithubHelper.getFork(user=user, upstream=upstream)
   """
 
-  for repo in user.get_repos():
-    if repo.fork and repo.parent.url == upstream.url:
-      return repo
+  repo = user.get_repo(upstream.name)
+  if repo.fork and repo.parent.url == upstream.url:
+    return repo
 
   if create:
     return user.create_fork(upstream)
