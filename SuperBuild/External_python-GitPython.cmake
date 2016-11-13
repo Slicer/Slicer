@@ -18,8 +18,8 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    URL "https://pypi.python.org/packages/d7/16/e914d345d7d4e988f9196b9719a99220bad6a5dbd636162f9b5cc35f3bd6/GitPython-2.1.0.tar.gz"
-    URL_MD5 "29b1fcf504d080dc7a5e630957e829d7"
+    URL "https://pypi.python.org/packages/4b/f7/4ddb9678961c2284261bdfc94b02a04c7d1bc45a593414c2489e83e7b80e/GitPython-2.0.9.tar.gz"
+    URL_MD5 "b45b441d573cc1aaa955204faf2f117e"
     SOURCE_DIR ${proj}
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ""
