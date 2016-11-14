@@ -30,8 +30,9 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   endif()
 
   set(ITKv4_REPOSITORY ${git_protocol}://github.com/Slicer/ITK.git)
-  # ITK master (v4.11) of 2016-11-07
-  set(ITKv4_GIT_TAG 057bededda8db2fcbbf9c73994e8c5dff9a0ba8c)
+  # ITK master (v4.11) of 2016-11-07 with
+  # * workaround to fix MacOSX/XCode Debug build error
+  set(ITKv4_GIT_TAG cb4946ddaac2d7c066c3a00c059bf9001a4b9c04)
 
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 
