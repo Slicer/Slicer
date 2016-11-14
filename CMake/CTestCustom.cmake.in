@@ -160,7 +160,6 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "Modules.audioop.c.*warning C4018"
   "Modules._multiprocessing.*warning"
   "(Python|Objects|Modules|modules|PC).*conversion from '(Py_uintptr_t|Py_ssize_t|INT_PTR|size_t|__int64)' to '.*', possible loss of data"
-  "dist.py.*UserWarning.*Unknown distribution option.*test_requirements"
   # Python - Linux
   "dist.py.*UserWarning.*licence.*distribution option is deprecated"
   "Objects.unicodeobject.c.*warning:.*differ in signedness"
@@ -220,6 +219,9 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
 
 set(CTEST_CUSTOM_ERROR_EXCEPTION
   ${CTEST_CUSTOM_ERROR_EXCEPTION}
+  # Python - Windows
+  # This warning is interpreted as an error on Windows
+  "dist.py.*UserWarning.*Unknown distribution option.*test_requirements"
   # Numpy errors
   "NUMPY.*Warning"
   "NUMPY._configtest.*undefined reference"
