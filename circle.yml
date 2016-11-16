@@ -3,19 +3,20 @@ machine:
     - curl -sSL https://s3.amazonaws.com/circle-downloads/install-circleci-docker.sh | bash -s -- 1.10.0
   services:
     - docker
+  python:
+    version: 2.7.11
 
 dependencies:
   cache_directories:
-        - "~/docker"
+    - "~/docker"
 
   override:
     - docker info
-    - if [[ -e ~/docker/image.tar ]]; then docker load -i ~/docker/image.tar; fi
-    - docker pull slicer/slicer-build-deps
-    - mkdir -p ~/docker; docker save slicer/slicer-build-deps > ~/docker/image.tar
+    - pip install scikit-ci-addons==0.11.0
+    - ci_addons docker load-pull-save slicer/slicer-dependencies
 
 test:
   override:
     - "echo 'Notice: CircleCI does not build changes to Slicer dependencies' && if git diff --name-only master | grep -q SuperBuild > /dev/null; then false; fi"
-    - docker run -e "BUILD_TOOL_FLAGS=-j5" --name slicer -v ~/Slicer:/usr/src/Slicer slicer/slicer-build-deps
+    - docker run -e "BUILD_TOOL_FLAGS=-j5" --name slicer -v ~/Slicer:/usr/src/Slicer slicer/slicer-dependencies
     - docker cp slicer:$(docker cp slicer:/usr/src/Slicer-build/Slicer-build/PACKAGE_FILE.txt - | tar xO) $CIRCLE_ARTIFACTS
