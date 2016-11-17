@@ -1,7 +1,4 @@
-import os
-import qt
 import slicer
-import DICOMLib
 
 
 #########################################################
