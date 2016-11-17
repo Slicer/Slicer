@@ -337,7 +337,7 @@ class DICOMDetailsPopup(VTKObservationMixin):
     # Plugin selection widget
     #
     self.pluginSelector = DICOMPluginSelector(self.window)
-    self.loadableTableLayout.addRow(self.pluginSelector.widget, self.loadableTable)
+    self.loadableTableLayout.addRow(self.pluginSelector, self.loadableTable)
     self.checkBoxByPlugins = []
 
     for pluginClass in slicer.modules.dicomPlugins:
@@ -795,7 +795,7 @@ class DICOMDetailsPopup(VTKObservationMixin):
     return
 
 
-class DICOMPluginSelector(object):
+class DICOMPluginSelector(qt.QWidget):
   """Implement the Qt code for a table of
   selectable DICOM Plugins that determine
   which mappings from DICOM to slicer datatypes
@@ -803,21 +803,16 @@ class DICOMPluginSelector(object):
   """
 
   def __init__(self, parent, width=50, height=100):
-    self.widget = qt.QWidget(parent)
-    self.widget.setMinimumHeight(height)
-    self.widget.setMinimumWidth(width)
-    self.width = width
-    self.height = height
-    self.layout = qt.QVBoxLayout()
-    self.widget.setLayout(self.layout)
+    super(DICOMPluginSelector, self).__init__(parent, width=width, height=height)
+    self.setMinimumHeight(height)
+    self.setMinimumWidth(width)
+    self.setLayout(qt.QVBoxLayout())
     self.checkBoxByPlugin = {}
     settings = qt.QSettings()
 
-    slicerPlugins = slicer.modules.dicomPlugins
-
     for pluginClass in slicer.modules.dicomPlugins:
       self.checkBoxByPlugin[pluginClass] = qt.QCheckBox(pluginClass)
-      self.layout.addWidget(self.checkBoxByPlugin[pluginClass])
+      self.layout().addWidget(self.checkBoxByPlugin[pluginClass])
 
     if settings.contains('DICOM/disabledPlugins/size'):
       size = settings.beginReadArray('DICOM/disabledPlugins')
@@ -835,9 +830,7 @@ class DICOMPluginSelector(object):
           # Activate plugins for the ones who are not in the disabled list
           # and also plugins installed with extensions
           self.checkBoxByPlugin[pluginClass].checked = True
-
     else:
-
       # All DICOM plugins would be enabled by default
       for pluginClass in slicer.modules.dicomPlugins:
         self.checkBoxByPlugin[pluginClass].checked = True
