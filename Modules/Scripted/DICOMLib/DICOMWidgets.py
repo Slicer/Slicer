@@ -863,27 +863,42 @@ class DICOMLoadableTable(qt.QTableWidget):
     self.setMinimumWidth(width)
     self.loadables = {}
     self.setLoadables([])
+    self.configure()
+
+  def configure(self):
+    self.setColumnCount(3)
+    self.setHorizontalHeaderLabels(['DICOM Data', 'Reader', 'Warnings'])
+    self.setSelectionBehavior(qt.QTableView.SelectRows)
+    self.horizontalHeader().setResizeMode(qt.QHeaderView.Stretch)
+    self.horizontalHeader().setResizeMode(0, qt.QHeaderView.ResizeToContents)
+    self.horizontalHeader().setResizeMode(1, qt.QHeaderView.Stretch)
+    self.horizontalHeader().setResizeMode(2, qt.QHeaderView.Stretch)
 
   def addLoadableRow(self, loadable, row, reader):
-    """Add a row to the loadable table
-    """
-    # name and check state
-    qt_ItemIsEditable = 2  # not in PythonQt
+    self.insertRow(row)
     self.loadables[row] = loadable
     item = qt.QTableWidgetItem(loadable.name)
-    item.setCheckState(loadable.selected * 2)
     self.setItem(row, 0, item)
+    self.setCheckState(item, loadable)
+    self.addReaderColumn(item, reader, row)
+    self.addWarningColumn(item, loadable, row)
+
+  def setCheckState(self, item, loadable):
+    item.setCheckState(loadable.selected * 2)
     item.setToolTip(loadable.tooltip)
-    # reader
-    if reader:
-      readerItem = qt.QTableWidgetItem(reader)
-      readerItem.setFlags(readerItem.flags() ^ qt_ItemIsEditable)
-      self.setItem(row, 1, readerItem)
-      readerItem.setToolTip(item.toolTip())
-    # warning
+
+  def addReaderColumn(self, item, reader, row):
+    if not reader:
+      return
+    readerItem = qt.QTableWidgetItem(reader)
+    readerItem.setFlags(readerItem.flags() ^ qt.Qt.ItemIsEditable)
+    self.setItem(row, 1, readerItem)
+    readerItem.setToolTip(item.toolTip())
+
+  def addWarningColumn(self, item, loadable, row):
     warning = loadable.warning if loadable.warning else ''
     warnItem = qt.QTableWidgetItem(warning)
-    warnItem.setFlags(warnItem.flags() ^ qt_ItemIsEditable)
+    warnItem.setFlags(warnItem.flags() ^ qt.Qt.ItemIsEditable)
     self.setItem(row, 2, warnItem)
     item.setToolTip(item.toolTip() + "\n" + warning)
     warnItem.setToolTip(item.toolTip())
@@ -892,19 +907,9 @@ class DICOMLoadableTable(qt.QTableWidget):
     """Load the table widget with a list
     of volume options (of class DICOMVolume)
     """
-    loadableCount = 0
-    for plugin in loadablesByPlugin:
-      loadableCount += sum(1 for loadable in loadablesByPlugin[plugin])
     self.clearContents()
-    self.setColumnCount(3)
-    self.setHorizontalHeaderLabels(['DICOM Data', 'Reader', 'Warnings'])
-    self.horizontalHeader().setResizeMode(qt.QHeaderView.Stretch)
-    self.horizontalHeader().setResizeMode(0, qt.QHeaderView.ResizeToContents)
-    self.horizontalHeader().setResizeMode(1, qt.QHeaderView.Stretch)
-    self.horizontalHeader().setResizeMode(2, qt.QHeaderView.Stretch)
-    self.setRowCount(loadableCount)
+    self.setRowCount(0)
     self.loadables = {}
-    row = 0
 
     for plugin in loadablesByPlugin:
       for thisLoadableId in xrange(len(loadablesByPlugin[plugin])):
@@ -921,6 +926,7 @@ class DICOMLoadableTable(qt.QTableWidget):
             thisLoadable.selected = False
             break
 
+    row = 0
     for selectState in (True, False):
       for plugin in loadablesByPlugin:
         for loadable in loadablesByPlugin[plugin]:
