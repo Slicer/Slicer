@@ -53,6 +53,7 @@ public:
   static const char* GetTerminologyCategoryTagName();
   static const char* GetTerminologyTypeTagName();
   static const char* GetTerminologyTypeModifierTagName();
+  static const char* GetRecommendedColorTagName();
   static const char* GetAnatomicContextTagName();
   static const char* GetAnatomicRegionTagName();
   static const char* GetAnatomicRegionModifierTagName();

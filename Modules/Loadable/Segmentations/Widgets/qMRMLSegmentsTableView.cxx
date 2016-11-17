@@ -587,6 +587,7 @@ void qMRMLSegmentsTableView::onSegmentTableItemChanged(QTableWidgetItem* changed
         }
       QStringList terminologyCodeMeanings = changedItem->data(Qt::EditRole).toStringList();
       qMRMLSegmentsTableView::setTerminologySegmentTagsFromCodeMeanings(terminologyCodeMeanings, segment);
+      changedItem->setToolTip(qMRMLSegmentsTableView::terminologyInfoStringForSegment(segment));
       }
     // Opacity changed
     else if (changedItem->column() == d->columnIndex("Opacity"))
@@ -1006,7 +1007,7 @@ void qMRMLSegmentsTableView::setTerminologySegmentTagsFromCodeMeanings(QStringLi
     return;
     }
 
-  int index=0;
+  int index = 0;
   foreach (QString string, codeMeanings) // Do it in a loop so that it exits at last element
     {
     switch (index)
@@ -1024,12 +1025,15 @@ void qMRMLSegmentsTableView::setTerminologySegmentTagsFromCodeMeanings(QStringLi
         segment->SetTag(vtkSegment::GetTerminologyTypeModifierTagName(), string.toLatin1().constData());
         break;
       case 4:
-        segment->SetTag(vtkSegment::GetAnatomicContextTagName(), string.toLatin1().constData());
+        segment->SetTag(vtkSegment::GetRecommendedColorTagName(), string.toLatin1().constData());
         break;
       case 5:
-        segment->SetTag(vtkSegment::GetAnatomicRegionTagName(), string.toLatin1().constData());
+        segment->SetTag(vtkSegment::GetAnatomicContextTagName(), string.toLatin1().constData());
         break;
       case 6:
+        segment->SetTag(vtkSegment::GetAnatomicRegionTagName(), string.toLatin1().constData());
+        break;
+      case 7:
         segment->SetTag(vtkSegment::GetAnatomicRegionModifierTagName(), string.toLatin1().constData());
         break;
       }
@@ -1054,6 +1058,7 @@ QStringList qMRMLSegmentsTableView::getCodeMeaningsFromTerminologySegmentTags(vt
   codeMeanings << ( segment->GetTag(vtkSegment::GetTerminologyCategoryTagName(), tagValue) ? tagValue.c_str() : "" );
   codeMeanings << ( segment->GetTag(vtkSegment::GetTerminologyTypeTagName(), tagValue) ? tagValue.c_str() : "" );
   codeMeanings << ( segment->GetTag(vtkSegment::GetTerminologyTypeModifierTagName(), tagValue) ? tagValue.c_str() : "" );
+  codeMeanings << ( segment->GetTag(vtkSegment::GetRecommendedColorTagName(), tagValue) ? tagValue.c_str() : "" );
   codeMeanings << ( segment->GetTag(vtkSegment::GetAnatomicContextTagName(), tagValue) ? tagValue.c_str() : "" );
   codeMeanings << ( segment->GetTag(vtkSegment::GetAnatomicRegionTagName(), tagValue) ? tagValue.c_str() : "" );
   codeMeanings << ( segment->GetTag(vtkSegment::GetAnatomicRegionModifierTagName(), tagValue) ? tagValue.c_str() : "" );

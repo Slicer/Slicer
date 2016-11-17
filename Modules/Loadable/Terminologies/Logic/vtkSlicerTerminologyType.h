@@ -36,6 +36,9 @@ public:
   vtkTypeMacro(vtkSlicerTerminologyType, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  /// Copy one type into another
+  virtual void Copy(vtkSlicerTerminologyType* aType);
+
 public:
   vtkGetVector3Macro(RecommendedDisplayRGBValue, unsigned char);
   vtkSetVector3Macro(RecommendedDisplayRGBValue, unsigned char);

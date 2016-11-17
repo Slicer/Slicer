@@ -61,3 +61,21 @@ void vtkSlicerTerminologyCategory::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "ContextGroupName:   " << (this->ContextGroupName?this->ContextGroupName:"NULL") << "\n";
   os << indent << "ShowAnatomy:   " << (this->ShowAnatomy?"true":"false") << "\n";
 }
+
+//----------------------------------------------------------------------------
+void vtkSlicerTerminologyCategory::Copy(vtkSlicerTerminologyCategory* aCategory)
+{
+  if (!aCategory)
+    {
+    return;
+    }
+
+  this->SetCodeMeaning(aCategory->GetCodeMeaning());
+  this->SetCodingScheme(aCategory->GetCodingScheme());
+  this->SetSNOMEDCTConceptID(aCategory->GetSNOMEDCTConceptID());
+  this->SetUMLSConceptUID(aCategory->GetUMLSConceptUID());
+  this->SetCid(aCategory->GetCid());
+  this->SetCodeValue(aCategory->GetCodeValue());
+  this->SetContextGroupName(aCategory->GetContextGroupName());
+  this->SetShowAnatomy(aCategory->GetShowAnatomy());
+}

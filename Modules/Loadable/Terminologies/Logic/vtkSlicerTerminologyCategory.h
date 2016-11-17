@@ -36,6 +36,9 @@ public:
   vtkTypeMacro(vtkSlicerTerminologyCategory, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  /// Copy one category into another
+  virtual void Copy(vtkSlicerTerminologyCategory* aCategory);
+
 public:
   vtkGetStringMacro(CodeMeaning);
   vtkSetStringMacro(CodeMeaning);

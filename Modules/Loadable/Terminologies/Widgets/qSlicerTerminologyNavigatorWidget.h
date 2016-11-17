@@ -76,12 +76,29 @@ public:
   ///  \return Success flag
   static bool terminologyEntryFromCodeMeanings(QStringList codeMeanings, vtkSlicerTerminologyEntry* entry);
 
-  /// Get recommended color from type (or type modifier if any) of the selected terminology entry
+  /// Get recommended color from type (or type modifier if any) of the given terminology entry
   static QColor recommendedColorFromTerminology(vtkSlicerTerminologyEntry* entry);
+  /// Set recommended color to type (or type modifier if any) of the given terminology entry
+  static void setRecommendedColorToTerminology(vtkSlicerTerminologyEntry* entry, QColor color);
 
 public slots:
   /// Show/hide anatomic region section section
   void setAnatomicRegionSectionVisible(bool);
+
+  /// Set terminology to widget
+  void setTerminologyByName(QString terminologyName);
+  /// Set category to widget
+  void setCategoryByName(QString categoryName);
+  /// Set type to widget
+  void setTypeByName(QString typeName);
+  /// Set type modifier to widget
+  void setTypeModifierByName(QString modifierName);
+  /// Set anatomic context to widget
+  void setAnatomicContextByName(QString contextName);
+  /// Set region to widget
+  void setRegionByName(QString regionName);
+  /// Set region modifier to widget
+  void setRegionModifierByName(QString modifierName);
 
 protected:
   /// Populate terminology combobox based on current selection

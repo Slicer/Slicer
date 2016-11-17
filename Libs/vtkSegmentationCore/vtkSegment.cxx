@@ -47,6 +47,7 @@ const char* vtkSegment::GetTerminologyContextTagName() { return "TerminologyCont
 const char* vtkSegment::GetTerminologyCategoryTagName() { return "TerminologyCategoryCodeMeaning"; };
 const char* vtkSegment::GetTerminologyTypeTagName() { return "TerminologyTypeCodeMeaning"; };
 const char* vtkSegment::GetTerminologyTypeModifierTagName() { return "TerminologyTypeModifierCodeMeaning"; };
+const char* vtkSegment::GetRecommendedColorTagName() { return "RecommendedColor"; };
 const char* vtkSegment::GetAnatomicContextTagName() { return "AnatomicContextName"; };
 const char* vtkSegment::GetAnatomicRegionTagName() { return "AnatomicRegionCodeMeaning"; };
 const char* vtkSegment::GetAnatomicRegionModifierTagName() { return "AnatomicRegionModifierCodeMeaning"; };

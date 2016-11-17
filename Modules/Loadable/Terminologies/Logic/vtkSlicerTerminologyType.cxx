@@ -68,3 +68,23 @@ void vtkSlicerTerminologyType::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "ContextGroupName:   " << (this->ContextGroupName?this->ContextGroupName:"NULL") << "\n";
   os << indent << "HasModifiers:   " << (this->HasModifiers?"true":"false") << "\n";
 }
+
+//----------------------------------------------------------------------------
+void vtkSlicerTerminologyType::Copy(vtkSlicerTerminologyType* aType)
+{
+  if (!aType)
+    {
+    return;
+    }
+
+  this->SetRecommendedDisplayRGBValue(aType->GetRecommendedDisplayRGBValue());
+  this->SetCodeMeaning(aType->GetCodeMeaning());
+  this->SetCodingScheme(aType->GetCodingScheme());
+  this->SetSlicerLabel(aType->GetSlicerLabel());
+  this->SetSNOMEDCTConceptID(aType->GetSNOMEDCTConceptID());
+  this->SetUMLSConceptUID(aType->GetUMLSConceptUID());
+  this->SetCid(aType->GetCid());
+  this->SetCodeValue(aType->GetCodeValue());
+  this->SetContextGroupName(aType->GetContextGroupName());
+  this->SetHasModifiers(aType->GetHasModifiers());
+}

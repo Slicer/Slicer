@@ -80,10 +80,9 @@ void qSlicerTerminologySelectorDialogPrivate::init()
   layout->setContentsMargins(0, 0, 0, 0);
 
   this->NavigatorWidget = new qSlicerTerminologyNavigatorWidget();
-  this->NavigatorWidget->setTerminologyEntry(this->TerminologyEntry);
   layout->addWidget(this->NavigatorWidget);
 
-  QHBoxLayout* buttonsLayout = new QHBoxLayout(this);
+  QHBoxLayout* buttonsLayout = new QHBoxLayout();
   buttonsLayout->setSpacing(4);
   buttonsLayout->setContentsMargins(4, 0, 4, 0);
 
@@ -110,6 +109,8 @@ qSlicerTerminologySelectorDialog::qSlicerTerminologySelectorDialog(vtkSlicerTerm
 {
   Q_D(qSlicerTerminologySelectorDialog);
   d->TerminologyEntry = initialTerminology;
+
+  d->init();
 }
 
 //-----------------------------------------------------------------------------
@@ -123,7 +124,6 @@ bool qSlicerTerminologySelectorDialog::exec()
   Q_D(qSlicerTerminologySelectorDialog);
 
   // Initialize dialog
-  d->init();
   d->NavigatorWidget->setTerminologyEntry(d->TerminologyEntry);
 
   // Show dialog
