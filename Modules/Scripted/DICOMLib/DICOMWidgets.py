@@ -986,28 +986,27 @@ class DICOMHeaderWidget(qt.QTableWidget):
       self.setItem(row, 1, item)
 
 
-class DICOMRecentActivityWidget(object):
+class DICOMRecentActivityWidget(qt.QWidget):
   """Display the recent activity of the slicer DICOM database
   """
 
   def __init__(self, parent, dicomDatabase=None, detailsPopup=None):
+    super(DICOMRecentActivityWidget, self).__init__(parent)
     if dicomDatabase:
       self.dicomDatabase = dicomDatabase
     else:
       self.dicomDatabase = slicer.dicomDatabase
     self.detailsPopup = detailsPopup
     self.recentSeries = []
-    self.widget = qt.QWidget(parent)
-    self.widget.name = 'recentActivityWidget'
-    self.layout = qt.QVBoxLayout()
-    self.widget.setLayout(self.layout)
+    self.name = 'recentActivityWidget'
+    self.setLayout(qt.QVBoxLayout())
 
     self.statusLabel = qt.QLabel(self.widget)
-    self.layout.addWidget(self.statusLabel)
+    self.layout().addWidget(self.statusLabel)
     self.statusLabel.text = 'No inserts in the past hour'
 
     self.scrollArea = qt.QScrollArea()
-    self.layout.addWidget(self.scrollArea)
+    self.layout().addWidget(self.scrollArea)
     self.listWidget = qt.QListWidget()
     self.listWidget.name = 'recentActivityListWidget'
     self.scrollArea.setWidget(self.listWidget)
@@ -1016,7 +1015,7 @@ class DICOMRecentActivityWidget(object):
     self.listWidget.connect('activated(QModelIndex)', self.onActivated)
 
     self.refreshButton = qt.QPushButton(self.widget)
-    self.layout.addWidget(self.refreshButton)
+    self.layout().addWidget(self.refreshButton)
     self.refreshButton.text = 'Refresh'
     self.refreshButton.connect('clicked()', self.update)
 
