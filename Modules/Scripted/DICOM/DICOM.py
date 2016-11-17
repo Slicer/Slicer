@@ -276,7 +276,7 @@ class DICOMWidget:
     self.layout.addWidget(self.activityFrame)
 
     self.recentActivity = DICOMLib.DICOMRecentActivityWidget(self.activityFrame,detailsPopup=self.detailsPopup)
-    self.activityFrame.layout().addWidget(self.recentActivity.widget)
+    self.activityFrame.layout().addWidget(self.recentActivity)
     self.requestUpdateRecentActivity()
 
 
