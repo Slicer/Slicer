@@ -324,9 +324,9 @@ class DICOMDetailsPopup(VTKObservationMixin):
     #
     if showHeader:
       self.headerLayout = qt.QVBoxLayout()
-      self.layout.addLayout(self.headerLayout, selectionRow, 2)
+      self.layout.addLayout(self.headerLayout)
       self.header = DICOMHeaderWidget(self.window)
-      self.headerLayout.addWidget(self.header.widget)
+      self.headerLayout.addWidget(self.header)
 
     #
     # Series selection
@@ -949,7 +949,7 @@ class DICOMLoadableTable(qt.QTableWidget):
       self.loadables[row].name = item.text()
 
 
-class DICOMHeaderWidget(object):
+class DICOMHeaderWidget(qt.QTableWidget):
   """Implement the Qt code for a table of
   DICOM header values
   """
@@ -958,39 +958,39 @@ class DICOMHeaderWidget(object):
   # tag names
 
   def __init__(self, parent):
-    self.widget = qt.QTableWidget(parent, width=350, height=300)
-    self.items = []
-    self.setHeader(None)
+    super(DICOMHeaderWidget, self).__init__(parent, width=350, height=300)
+    self.configure()
+    self.setHeader()
 
-  def setHeader(self, file):
+  def configure(self):
+    self.setColumnCount(2)
+    self.setHorizontalHeaderLabels(['Tag', 'Value'])
+    self.horizontalHeader().setResizeMode(qt.QHeaderView.Stretch)
+    self.horizontalHeader().setResizeMode(0, qt.QHeaderView.Stretch)
+    self.horizontalHeader().setResizeMode(1, qt.QHeaderView.Stretch)
+
+  def setHeader(self, file=None):
+    #TODO: this method never gets called. Should be called when clicking on items from the SeriesTable
     """Load the table widget with header values for the file
     """
-    self.widget.clearContents()
-    self.widget.setColumnCount(2)
-    self.widget.setHorizontalHeaderLabels(['Tag', 'Value'])
-    self.widget.setColumnWidth(0, 100)
-    self.widget.setColumnWidth(1, 200)
+    self.clearContents()
 
     if not file:
       return
 
     slicer.dicomDatabase.loadFileHeader(file)
     keys = slicer.dicomDatabase.headerKeys()
-    self.widget.setRowCount(len(keys))
-    row = 0
-    for key in keys:
+    self.setRowCount(len(keys))
+    for row, key in enumerate(keys):
       item = qt.QTableWidgetItem(key)
-      self.widget.setItem(row, 0, item)
-      self.items.append(item)
+      self.setItem(row, 0, item)
       dump = slicer.dicomDatabase.headerValue(key)
       try:
         value = dump[dump.index('[') + 1:dump.index(']')]
       except ValueError:
         value = "Unknown"
       item = qt.QTableWidgetItem(value)
-      self.widget.setItem(row, 1, item)
-      self.items.append(item)
-      row += 1
+      self.setItem(row, 1, item)
 
 
 class DICOMRecentActivityWidget(object):
