@@ -638,6 +638,16 @@ endif()
 add_custom_target(Experimental ${CMAKE_CTEST_COMMAND} ${__conf_types} -D Experimental)
 
 #-----------------------------------------------------------------------------
+# ExternalData Object Stores configuration
+#-----------------------------------------------------------------------------
+set(ExternalData_OBJECT_STORES_DEFAULT "${Slicer_BINARY_DIR}/ExternalData/Objects")
+if(DEFINED "ENV{ExternalData_OBJECT_STORES}")
+  set(ExternalData_OBJECT_STORES_DEFAULT $ENV{ExternalData_OBJECT_STORES})
+endif()
+set(ExternalData_OBJECT_STORES "${ExternalData_OBJECT_STORES_DEFAULT}")
+message(STATUS "Setting ExternalData_OBJECT_STORES to '${ExternalData_OBJECT_STORES}'")
+
+#-----------------------------------------------------------------------------
 # Superbuild script
 #-----------------------------------------------------------------------------
 if(Slicer_SUPERBUILD)
@@ -703,7 +713,6 @@ message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} for [${Slice
 #-----------------------------------------------------------------------------
 set(Slicer_ExternalData_DATA_MANAGEMENT_TARGET ${PROJECT_NAME}Data)
 list(APPEND ExternalData_URL_TEMPLATES "http://slicer.kitware.com/midas3/api/rest?method=midas.bitstream.download&checksum=%(hash)")
-set(ExternalData_OBJECT_STORES ${Slicer_BINARY_DIR}/ExternalData/Objects)
 include(ExternalData)
 set(Slicer_ExternalData_OBJECT_STORES ${ExternalData_OBJECT_STORES})
 set(Slicer_ExternalData_URL_TEMPLATES ${ExternalData_URL_TEMPLATES})

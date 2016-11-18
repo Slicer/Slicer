@@ -93,6 +93,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DKWSYS_USE_MD5:BOOL=ON # Required by SlicerExecutionModel
       -DITK_WRAPPING:BOOL=OFF #${BUILD_SHARED_LIBS} ## HACK:  QUICK CHANGE
       -DITK_WRAP_PYTHON:BOOL=${Slicer_BUILD_ITKPython}
+      -DExternalData_OBJECT_STORES:PATH=${ExternalData_OBJECT_STORES}
       # VTK
       -DModule_ITKVtkGlue:BOOL=ON
       -DVTK_DIR:PATH=${VTK_DIR}

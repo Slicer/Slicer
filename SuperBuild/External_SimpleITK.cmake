@@ -89,6 +89,7 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" Packaging/s
       -DWRAP_CSHARP:BOOL=OFF
       -DWRAP_R:BOOL=OFF
       -DSimpleITK_BUILD_DISTRIBUTE:BOOL=ON # Shorten version and install path removing -g{GIT-HASH} suffix.
+      -DExternalData_OBJECT_STORES:PATH=${ExternalData_OBJECT_STORES}
     #
     INSTALL_COMMAND ${CMAKE_COMMAND} -P ${_install_script}
     #
