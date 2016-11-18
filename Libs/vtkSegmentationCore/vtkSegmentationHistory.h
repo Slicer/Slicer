@@ -60,7 +60,7 @@ public:
   bool RestorePreviousState();
 
   /// Check if it is possible to go back to a previous state (undo).
-  /// \return True if the operation is allowded
+  /// \return True if the operation is allowed
   bool IsRestorePreviousStateAvailable();
 
   /// Restores next state of the segmentation.
@@ -68,7 +68,7 @@ public:
   bool RestoreNextState();
 
   /// Check if it is possible to go restore the next state (redo).
-  /// \return True if the operation is allowded
+  /// \return True if the operation is allowed
   bool IsRestoreNextStateAvailable();
 
   /// Delete all states from memory
