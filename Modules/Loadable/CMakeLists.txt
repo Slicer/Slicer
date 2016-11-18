@@ -7,12 +7,12 @@ set(qtmodules
   Units
   Terminologies
   Colors
-  SubjectHierarchy
-  Transforms
   Annotations
+  Markups
+  Transforms
+  SubjectHierarchy
   Data
   DoubleArrays
-  Markups
   #Measurements
   Models
   SceneViews

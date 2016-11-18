@@ -98,6 +98,11 @@ class VTK_MRML_EXPORT vtkMRMLTransformDisplayNode : public vtkMRMLDisplayNode
   vtkMRMLNode* GetRegionNode();
   void SetAndObserveRegionNode(vtkMRMLNode* node);
 
+  /// A node that defines glyph starting point positions.
+  /// If not set then glyphs positions are arranged evenly in the full region.
+  vtkMRMLNode* GetGlyphPointsNode();
+  void SetAndObserveGlyphPointsNode(vtkMRMLNode* node);
+
   vtkSetMacro(VisualizationMode, int);
   vtkGetMacro(VisualizationMode, int);
   /// Convert visualization mode index to a string for serialization.

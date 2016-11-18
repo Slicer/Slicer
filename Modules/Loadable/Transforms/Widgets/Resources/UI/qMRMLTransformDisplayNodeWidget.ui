@@ -262,7 +262,7 @@
         <string/>
        </property>
        <property name="noneEnabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="addEnabled">
         <bool>false</bool>
@@ -275,6 +275,9 @@
        </property>
        <property name="renameEnabled">
         <bool>true</bool>
+       </property>
+       <property name="noneDisplay">
+        <string>Select a node</string>
        </property>
       </widget>
      </item>
@@ -308,7 +311,7 @@
          <enum>QFrame::Raised</enum>
         </property>
         <layout class="QGridLayout" name="gridLayout_4">
-         <item row="0" column="0">
+         <item row="1" column="0">
           <widget class="QLabel" name="GlyphSpacingLabel">
            <property name="toolTip">
             <string>Distance between the glyph points</string>
@@ -318,7 +321,27 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="1" colspan="2">
+         <item row="2" column="0">
+          <widget class="QLabel" name="label">
+           <property name="toolTip">
+            <string>Percentage of displacement usef for setting the glyph size. 100% means the glyph size equals the actual displacement.</string>
+           </property>
+           <property name="text">
+            <string>Scale factor:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_10">
+           <property name="toolTip">
+            <string>Glyphs are shown if the displacement magnitude is within this range</string>
+           </property>
+           <property name="text">
+            <string>Visible range:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" colspan="2">
           <widget class="qMRMLSliderWidget" name="GlyphSpacingMm">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -355,17 +378,7 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="label_10">
-           <property name="toolTip">
-            <string>Glyphs are shown if the displacement magnitude is within this range</string>
-           </property>
-           <property name="text">
-            <string>Visible range:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1" colspan="2">
+         <item row="3" column="1" colspan="2">
           <widget class="qMRMLRangeWidget" name="GlyphDisplayRangeMm">
            <property name="toolTip">
             <string>Only those glyphs are shown that have displacement magnitude within this range</string>
@@ -384,48 +397,7 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label">
-           <property name="toolTip">
-            <string>Percentage of displacement usef for setting the glyph size. 100% means the glyph size equals the actual displacement.</string>
-           </property>
-           <property name="text">
-            <string>Scale factor:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1" colspan="2">
-          <widget class="qMRMLSliderWidget" name="GlyphScalePercent">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="toolTip">
-            <string>Percentage of displacement used for setting the glyph size. 100% means the glyph size equals the actual displacement. Does not affect coloring and visible range.</string>
-           </property>
-           <property name="decimals">
-            <number>0</number>
-           </property>
-           <property name="singleStep">
-            <double>1.000000000000000</double>
-           </property>
-           <property name="pageStep">
-            <double>10.000000000000000</double>
-           </property>
-           <property name="maximum">
-            <double>1000.000000000000000</double>
-           </property>
-           <property name="value">
-            <double>100.000000000000000</double>
-           </property>
-           <property name="suffix">
-            <string>%</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
+         <item row="4" column="0">
           <widget class="QLabel" name="label_2">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -441,7 +413,7 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="1" colspan="2">
+         <item row="4" column="1" colspan="2">
           <widget class="ctkComboBox" name="GlyphTypeComboBox">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -472,7 +444,38 @@
            </item>
           </widget>
          </item>
-         <item row="4" column="0" colspan="3">
+         <item row="2" column="1" colspan="2">
+          <widget class="qMRMLSliderWidget" name="GlyphScalePercent">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>Percentage of displacement used for setting the glyph size. 100% means the glyph size equals the actual displacement. Does not affect coloring and visible range.</string>
+           </property>
+           <property name="decimals">
+            <number>0</number>
+           </property>
+           <property name="singleStep">
+            <double>1.000000000000000</double>
+           </property>
+           <property name="pageStep">
+            <double>10.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>1000.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>100.000000000000000</double>
+           </property>
+           <property name="suffix">
+            <string>%</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0" colspan="3">
           <widget class="ctkCollapsibleGroupBox" name="GlyphSourceOptions">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -640,6 +643,37 @@
              </widget>
             </item>
            </layout>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="GlyphPointsLabel">
+           <property name="text">
+            <string>Source points:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" colspan="2">
+          <widget class="qMRMLNodeComboBox" name="GlyphPointsNodeComboBox">
+           <property name="toolTip">
+            <string>Markups node that defines glyph starting positions. If specified then 3D view 'Region' is ignored.</string>
+           </property>
+           <property name="nodeTypes">
+            <stringlist>
+             <string>vtkMRMLMarkupsFiducialNode</string>
+            </stringlist>
+           </property>
+           <property name="noneEnabled">
+            <bool>true</bool>
+           </property>
+           <property name="addEnabled">
+            <bool>false</bool>
+           </property>
+           <property name="renameEnabled">
+            <bool>true</bool>
+           </property>
+           <property name="noneDisplay">
+            <string>Entire region</string>
+           </property>
           </widget>
          </item>
         </layout>
@@ -1312,6 +1346,54 @@
     <hint type="destinationlabel">
      <x>183</x>
      <y>316</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>GlyphToggle</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>GlyphPointsLabel</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>52</x>
+     <y>80</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>57</x>
+     <y>191</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>GlyphToggle</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>GlyphPointsNodeComboBox</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>52</x>
+     <y>80</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>194</x>
+     <y>191</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qMRMLTransformDisplayNodeWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>GlyphPointsNodeComboBox</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>156</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>194</x>
+     <y>191</y>
     </hint>
    </hints>
   </connection>

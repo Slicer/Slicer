@@ -42,6 +42,7 @@
 #include <sstream>
 
 const char RegionReferenceRole[] = "region";
+const char GlyphPointsReferenceRole[] = "glyphPoints";
 const char* DISPLACEMENT_MAGNITUDE_SCALAR_NAME = "DisplacementMagnitude";
 const char CONTOUR_LEVEL_SEPARATOR=' ';
 const char* DEFAULT_COLOR_TABLE_NAME = "Displacement to color";
@@ -87,6 +88,11 @@ vtkMRMLTransformDisplayNode::vtkMRMLTransformDisplayNode()
     this->ContourLevelsMm.push_back(level);
     }
 
+  vtkNew<vtkIntArray> events;
+  events->InsertNextValue(vtkCommand::ModifiedEvent);
+  events->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
+  this->AddNodeReferenceRole(RegionReferenceRole, RegionReferenceRole, events.GetPointer());
+  this->AddNodeReferenceRole(GlyphPointsReferenceRole, GlyphPointsReferenceRole, events.GetPointer());
 }
 
 
@@ -263,7 +269,16 @@ void vtkMRMLTransformDisplayNode::ProcessMRMLEvents ( vtkObject *caller, unsigne
     // If 3D visibility is disabled then we can ignore this event, as the region is only used for 3D display.
     this->Modified();
     }
-  if (caller!=NULL
+  else if (caller!=NULL
+    && (event==vtkCommand::ModifiedEvent || event==vtkMRMLTransformableNode::TransformModifiedEvent)
+    && caller==GetGlyphPointsNode()
+    && this->VisualizationMode == VIS_MODE_GLYPH
+    && (this->Visibility || this->GetSliceIntersectionVisibility()) )
+    {
+    // update visualization if glyph points are changed
+    this->Modified();
+    }
+  else if (caller!=NULL
     && event==vtkCommand::ModifiedEvent
     && caller==GetColorNode())
     {
@@ -282,17 +297,19 @@ vtkMRMLNode* vtkMRMLTransformDisplayNode::GetRegionNode()
 //----------------------------------------------------------------------------
 void vtkMRMLTransformDisplayNode::SetAndObserveRegionNode(vtkMRMLNode* node)
 {
-  if (node)
-    {
-    vtkNew<vtkIntArray> events;
-    events->InsertNextValue(vtkCommand::ModifiedEvent);
-    events->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
-    this->SetAndObserveNthNodeReferenceID(RegionReferenceRole,0,node->GetID(),events.GetPointer());
-    }
-  else
-    {
-    this->RemoveNthNodeReferenceID(RegionReferenceRole,0);
-    }
+  this->SetAndObserveNthNodeReferenceID(RegionReferenceRole, 0, node ? node->GetID() : NULL);
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLNode* vtkMRMLTransformDisplayNode::GetGlyphPointsNode()
+{
+  return this->GetNodeReference(GlyphPointsReferenceRole);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformDisplayNode::SetAndObserveGlyphPointsNode(vtkMRMLNode* node)
+{
+  this->SetAndObserveNthNodeReferenceID(GlyphPointsReferenceRole, 0, node ? node->GetID() : NULL);
 }
 
 //----------------------------------------------------------------------------

@@ -27,6 +27,7 @@
 #include "vtkSlicerTransformLogic.h"
 
 // MRML includes
+#include <vtkMRMLMarkupsFiducialNode.h>
 #include <vtkMRMLProceduralColorNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceCompositeNode.h>
@@ -346,7 +347,8 @@ void vtkMRMLTransformsDisplayableManager2D::vtkInternal::UpdateDisplayNodePipeli
   vtkMRMLTransformDisplayNode* transformDisplayNode = vtkMRMLTransformDisplayNode::SafeDownCast(displayNode);
 
   vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
-  vtkSlicerTransformLogic::GetVisualization2d(polyData, transformDisplayNode, this->SliceNode);
+  vtkMRMLMarkupsFiducialNode* glyphPointsNode = vtkMRMLMarkupsFiducialNode::SafeDownCast(displayNode->GetGlyphPointsNode());
+  vtkSlicerTransformLogic::GetVisualization2d(polyData, transformDisplayNode, this->SliceNode, glyphPointsNode);
 
   pipeline->Transformer->SetInputData(polyData);
 

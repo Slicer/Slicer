@@ -52,4 +52,3 @@ int vtkSlicerTransformLogicTest1(int argc, char * argv [])
 
   return EXIT_SUCCESS;
 }
-

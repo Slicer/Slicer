@@ -300,6 +300,11 @@ void vtkMRMLTransformsDisplayableManager3D::vtkInternal::UpdateDisplayNodePipeli
     }
 
   vtkMRMLNode* regionNode=displayNode->GetRegionNode();
+  if (displayNode->GetVisualizationMode() == vtkMRMLTransformDisplayNode::VIS_MODE_GLYPH && displayNode->GetGlyphPointsNode())
+    {
+    // If a node is specified for glyph visualization then region is ignored.
+    regionNode = displayNode->GetGlyphPointsNode();
+    }
   if (regionNode==NULL)
     {
     pipeline->Actor->SetVisibility(false);

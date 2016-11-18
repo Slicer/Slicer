@@ -69,6 +69,7 @@ public slots:
 
   void updateGlyphSourceOptions(int sourceOption);
   void regionNodeChanged(vtkMRMLNode* node);
+  void glyphPointsNodeChanged(vtkMRMLNode* node);
   void setGlyphSpacingMm(double spacing);
   void setGlyphScalePercent(double scale);
   void setGlyphDisplayRangeMm(double min, double max);

@@ -122,6 +122,7 @@ void qMRMLTransformDisplayNodeWidgetPrivate
   QObject::connect(this->ContourToggle, SIGNAL(toggled(bool)), q, SLOT(setContourVisualizationMode(bool)));
 
   // Glyph Parameters
+  QObject::connect(this->GlyphPointsNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), q, SLOT(glyphPointsNodeChanged(vtkMRMLNode*)));
   QObject::connect(this->GlyphSpacingMm, SIGNAL(valueChanged(double)), q, SLOT(setGlyphSpacingMm(double)));
   QObject::connect(this->GlyphScalePercent, SIGNAL(valueChanged(double)), q, SLOT(setGlyphScalePercent(double)));
   QObject::connect(this->GlyphDisplayRangeMm, SIGNAL(valuesChanged(double, double)), q, SLOT(setGlyphDisplayRangeMm(double, double)));
@@ -222,7 +223,9 @@ void qMRMLTransformDisplayNodeWidget
 
   // Update Visualization Parameters
   // Glyph Parameters
+  d->GlyphPointsNodeComboBox->setCurrentNode(d->TransformDisplayNode->GetGlyphPointsNode());
   d->GlyphSpacingMm->setValue(d->TransformDisplayNode->GetGlyphSpacingMm());
+  d->GlyphSpacingMm->setEnabled(d->TransformDisplayNode->GetGlyphPointsNode() == NULL);
   d->GlyphScalePercent->setValue(d->TransformDisplayNode->GetGlyphScalePercent());
   d->GlyphDisplayRangeMm->setMaximumValue(d->TransformDisplayNode->GetGlyphDisplayRangeMaxMm());
   d->GlyphDisplayRangeMm->setMinimumValue(d->TransformDisplayNode->GetGlyphDisplayRangeMinMm());
@@ -309,6 +312,17 @@ void qMRMLTransformDisplayNodeWidget::regionNodeChanged(vtkMRMLNode* node)
     return;
     }
   d->TransformDisplayNode->SetAndObserveRegionNode(node);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLTransformDisplayNodeWidget::glyphPointsNodeChanged(vtkMRMLNode* node)
+{
+  Q_D(qMRMLTransformDisplayNodeWidget);
+  if (!d->TransformDisplayNode)
+  {
+    return;
+  }
+  d->TransformDisplayNode->SetAndObserveGlyphPointsNode(node);
 }
 
 //-----------------------------------------------------------------------------
