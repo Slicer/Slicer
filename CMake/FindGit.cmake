@@ -81,7 +81,8 @@ find_program(GIT_EXECUTABLE ${git_names}
     "C:/Program Files/Git/bin"
     "C:/Program Files (x86)/Git/bin"
   DOC "git command line client")
-mark_as_advanced(GIT_EXECUTABLE)
+# XXX Comment to workaround https://gitlab.kitware.com/cmake/cmake/issues/15448
+# mark_as_advanced(GIT_EXECUTABLE)
 
 if(GIT_EXECUTABLE)
   execute_process(COMMAND ${GIT_EXECUTABLE} --version
