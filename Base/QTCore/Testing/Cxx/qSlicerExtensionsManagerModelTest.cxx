@@ -1400,7 +1400,7 @@ void qSlicerExtensionsManagerModelTester::testIsExtensionEnabled()
   QFETCH(QStringList, extensionNamesToDisable);
   QFETCH(QStringList, expectedEnabledExtensionNamesAfterDisable);
 
-  QHash<QString, QStringList> additonalModulePathsPerExtension;
+  QHash<QString, QStringList> additionalModulePathsPerExtension;
 
   {
     qSlicerExtensionsManagerModel model;
@@ -1414,7 +1414,7 @@ void qSlicerExtensionsManagerModelTester::testIsExtensionEnabled()
 
     foreach(const QString& extensionName, expectedEnabledExtensionNames)
       {
-      additonalModulePathsPerExtension.insert(extensionName, model.extensionModulePaths(extensionName));
+      additionalModulePathsPerExtension.insert(extensionName, model.extensionModulePaths(extensionName));
       }
 
     foreach(const QString& extensionName, extensionNamesToDisable)
@@ -1426,7 +1426,7 @@ void qSlicerExtensionsManagerModelTester::testIsExtensionEnabled()
     QStringList expectedAdditionalPaths;
     foreach(const QString& extensionName, expectedEnabledExtensionNamesAfterDisable)
       {
-      expectedAdditionalPaths << additonalModulePathsPerExtension.value(extensionName);
+      expectedAdditionalPaths << additionalModulePathsPerExtension.value(extensionName);
       }
 
     QStringList currentAdditionalPaths = QSettings().value("Modules/AdditionalPaths").toStringList();
@@ -1442,7 +1442,7 @@ void qSlicerExtensionsManagerModelTester::testIsExtensionEnabled()
     QStringList expectedAdditionalPaths;
     foreach(const QString& extensionName, expectedEnabledExtensionNamesAfterDisable)
       {
-      expectedAdditionalPaths << additonalModulePathsPerExtension.value(extensionName);
+      expectedAdditionalPaths << additionalModulePathsPerExtension.value(extensionName);
       }
 
     QStringList currentAdditionalPaths = QSettings().value("Modules/AdditionalPaths").toStringList();

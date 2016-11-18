@@ -931,7 +931,7 @@ void qSlicerApplication::logApplicationInformation() const
       this->revisionUserSettings()->value("Modules/AdditionalPaths").toStringList();
 
   qSlicerModuleFactoryManager* moduleFactoryManager = this->moduleManager()->factoryManager();
-  foreach(const QString& extensionOrModulePath, this->commandOptions()->additonalModulePaths())
+  foreach(const QString& extensionOrModulePath, this->commandOptions()->additionalModulePaths())
     {
     QStringList modulePaths = moduleFactoryManager->modulePaths(extensionOrModulePath);
     if (!modulePaths.empty())

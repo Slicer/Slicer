@@ -3,7 +3,7 @@
 #
 # In case the extension is build using a multi-configuration system, the build
 # type will be know at build. For that reason, a script allowing to configure
-# the "additonal launcher settings" at build time will be generated.
+# the "additional launcher settings" at build time will be generated.
 #
 
 if(NOT TARGET ConfigureAdditionalLauncherSettings)
@@ -36,8 +36,8 @@ size=4")
     set(THIRD_PARTY_PYTHONPATHS "size=3")
   endif()
 
-  set(_additonal_settings_configure_script ${CMAKE_CURRENT_BINARY_DIR}/AdditionalLauncherSettings-configure.cmake)
-  file(WRITE ${_additonal_settings_configure_script}
+  set(_additional_settings_configure_script ${CMAKE_CURRENT_BINARY_DIR}/AdditionalLauncherSettings-configure.cmake)
+  file(WRITE ${_additional_settings_configure_script}
   "
   file(WRITE ${Slicer_ADDITIONAL_LAUNCHER_SETTINGS_FILE}
 \"[LibraryPaths]
@@ -65,7 +65,7 @@ ${THIRD_PARTY_PYTHONPATHS}
       ${Slicer_ADDITIONAL_LAUNCHER_SETTINGS_FILE}
     COMMAND ${CMAKE_COMMAND}
       -DCMAKE_CFG_INTDIR:STRING=${CMAKE_CFG_INTDIR}
-      -P ${_additonal_settings_configure_script}
+      -P ${_additional_settings_configure_script}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Configuring: AdditionalLauncherSettings.ini"
     )

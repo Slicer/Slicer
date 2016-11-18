@@ -58,7 +58,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreCommandOptions : public ctkCommandL
 #ifdef Slicer_USE_PYTHONQT
   Q_PROPERTY(bool pythonDisabled READ isPythonDisabled CONSTANT)
 #endif
-  Q_PROPERTY(QStringList additonalModulePaths READ additonalModulePaths CONSTANT)
+  Q_PROPERTY(QStringList additionalModulePaths READ additionalModulePaths CONSTANT)
   Q_PROPERTY(QStringList modulesToIgnore READ modulesToIgnore CONSTANT)
 public:
   typedef ctkCommandLineParser Superclass;
@@ -96,7 +96,7 @@ public:
   void setRunPythonAndExit(bool value);
 
   /// Return list of additional module path that should be considered when searching for modules to load.
-  QStringList additonalModulePaths()const;
+  QStringList additionalModulePaths()const;
 
   /// Return list of modules that should not be loaded.
   QStringList modulesToIgnore()const;
