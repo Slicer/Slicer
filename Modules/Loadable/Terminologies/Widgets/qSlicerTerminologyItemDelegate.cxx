@@ -42,7 +42,7 @@ qSlicerTerminologyItemDelegate::qSlicerTerminologyItemDelegate(QObject *parent)
 QWidget* qSlicerTerminologyItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &/* option */, const QModelIndex &/* index */) const
 {
   qSlicerTerminologySelectorButton* terminologyButton = new qSlicerTerminologySelectorButton(parent);
-  terminologyButton->setProperty("changeColorOnSet", true);
+  terminologyButton->setProperty("changeDataOnSet", true);
   connect(terminologyButton, SIGNAL(terminologyChanged()), this, SLOT(commitAndClose()), Qt::QueuedConnection);
   connect(terminologyButton, SIGNAL(canceled()), this, SLOT(close()), Qt::QueuedConnection);
   return terminologyButton;
@@ -51,19 +51,24 @@ QWidget* qSlicerTerminologyItemDelegate::createEditor(QWidget *parent, const QSt
 //-----------------------------------------------------------------------------
 void qSlicerTerminologyItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
-  // Get string list value from model index
-  QStringList value = index.model()->data(index, Qt::EditRole).toStringList();
-
-  // Convert string list to VTK terminology entry. Do not check success, as an empty terminology is also a valid starting point
-  vtkSmartPointer<vtkSlicerTerminologyEntry> terminologyEntry = vtkSmartPointer<vtkSlicerTerminologyEntry>::New();
-  qSlicerTerminologyNavigatorWidget::terminologyEntryFromCodeMeanings(value, terminologyEntry);
-
   // Set terminology to button
   qSlicerTerminologySelectorButton* terminologyButton = qobject_cast<qSlicerTerminologySelectorButton*>(editor);
-  terminologyButton->setTerminologyEntry(terminologyEntry, false);
-  if (terminologyButton->property("changeColorOnSet").toBool())
+  if (terminologyButton->property("changeDataOnSet").toBool())
     {
-    terminologyButton->setProperty("changeColorOnSet", false);
+    terminologyButton->setProperty("changeDataOnSet", false);
+
+    // Get string list value from model index
+    QString terminologyString = index.model()->data(index, Qt::WhatsThisRole).toString();
+
+    // Convert string list to VTK terminology entry. Do not check success, as an empty terminology is also a valid starting point
+    vtkSmartPointer<vtkSlicerTerminologyEntry> terminologyEntry = vtkSmartPointer<vtkSlicerTerminologyEntry>::New();
+    qSlicerTerminologyNavigatorWidget::deserializeTerminologyEntry(terminologyString, terminologyEntry);
+    // Get color
+    QColor color = index.model()->data(index, Qt::DecorationRole).value<QColor>();
+
+    terminologyButton->setTerminologyEntry(terminologyEntry, false);
+    terminologyButton->setColor(color);
+
     terminologyButton->changeTerminology();
     }
 }
@@ -75,17 +80,17 @@ void qSlicerTerminologyItemDelegate::setModelData(QWidget *editor, QAbstractItem
   qSlicerTerminologySelectorButton* terminologyButton = qobject_cast<qSlicerTerminologySelectorButton*>(editor);
   vtkSlicerTerminologyEntry* terminologyEntry = terminologyButton->terminologyEntry();
 
-  // Get color
-  QColor color = qSlicerTerminologyNavigatorWidget::recommendedColorFromTerminology(terminologyEntry);
-  // Set color to model
-  model->blockSignals(true); // To avoid widget update
-  model->setData(index, color, Qt::DecorationRole);
-  model->blockSignals(false);
+  // Get recommended color from terminology if custom color is invalid (which means it was not changed by the user)
+  QColor color = terminologyButton->color();
+  if (!color.isValid())
+    {
+    color = qSlicerTerminologyNavigatorWidget::recommendedColorFromTerminology(terminologyEntry);
+    }
 
-  // Convert VTK terminology entry to string list
-  QStringList terminologyStringList = qSlicerTerminologyNavigatorWidget::codeMeaningsFromTerminologyEntry(terminologyEntry);
-  // Set terminology code meanings string list to model
-  model->setData(index, terminologyStringList, Qt::EditRole);
+  // Set color to model
+  model->setData(index, color, Qt::DecorationRole);
+  // Set terminology string to model
+  model->setData(index, qSlicerTerminologyNavigatorWidget::serializeTerminologyEntry(terminologyEntry), Qt::WhatsThisRole);
 }
 
 //-----------------------------------------------------------------------------

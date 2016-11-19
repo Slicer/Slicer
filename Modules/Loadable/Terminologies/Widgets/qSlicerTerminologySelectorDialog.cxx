@@ -55,6 +55,8 @@ private:
 
   /// Terminology entry object into which the selection is set
   vtkWeakPointer<vtkSlicerTerminologyEntry> TerminologyEntry;
+  /// Selected color
+  QColor Color;
 };
 
 //-----------------------------------------------------------------------------
@@ -103,12 +105,13 @@ void qSlicerTerminologySelectorDialogPrivate::init()
 // qSlicerTerminologySelectorDialog methods
 
 //-----------------------------------------------------------------------------
-qSlicerTerminologySelectorDialog::qSlicerTerminologySelectorDialog(vtkSlicerTerminologyEntry* initialTerminology, QObject* parent)
+qSlicerTerminologySelectorDialog::qSlicerTerminologySelectorDialog(vtkSlicerTerminologyEntry* initialTerminology, QColor initialColor, QObject* parent)
   : QObject(parent)
   , d_ptr(new qSlicerTerminologySelectorDialogPrivate(*this))
 {
   Q_D(qSlicerTerminologySelectorDialog);
   d->TerminologyEntry = initialTerminology;
+  d->Color = initialColor;
 
   d->init();
 }
@@ -125,6 +128,7 @@ bool qSlicerTerminologySelectorDialog::exec()
 
   // Initialize dialog
   d->NavigatorWidget->setTerminologyEntry(d->TerminologyEntry);
+  d->NavigatorWidget->setColor(d->Color);
 
   // Show dialog
   bool result = false;
@@ -133,28 +137,15 @@ bool qSlicerTerminologySelectorDialog::exec()
     return result;
     }
 
-  // Perform actions after clean exit
-  result = this->updateTerminologyEntryFromWidget();
+  // Save selection after clean exit
+  result = d->NavigatorWidget->terminologyEntry(d->TerminologyEntry);
+  d->Color = d->NavigatorWidget->customColor(); // Invalid if color has not been changed by the user from the recommended one from terminology
 
   return result;
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerTerminologySelectorDialog::updateTerminologyEntryFromWidget()
-{
-  Q_D(qSlicerTerminologySelectorDialog);
-
-  if (!d->TerminologyEntry)
-    {
-    qCritical() << Q_FUNC_INFO << ": Invalid terminology entry object!";
-    return false;
-    }
-
-  return d->NavigatorWidget->terminologyEntry(d->TerminologyEntry);
-}
-
-//-----------------------------------------------------------------------------
-bool qSlicerTerminologySelectorDialog::getTerminology(vtkSlicerTerminologyEntry* terminology, QObject* parent)
+bool qSlicerTerminologySelectorDialog::getTerminology(vtkSlicerTerminologyEntry* terminology, QColor &color, QObject* parent)
 {
   if (!terminology)
     {
@@ -162,6 +153,27 @@ bool qSlicerTerminologySelectorDialog::getTerminology(vtkSlicerTerminologyEntry*
     return false;
     }
 
-  qSlicerTerminologySelectorDialog dialog(terminology, parent);
-  return dialog.exec();
+  // Open terminology dialog and store result
+  qSlicerTerminologySelectorDialog dialog(terminology, color, parent);
+  bool result = dialog.exec();
+
+  // Set color to output color argument
+  if (dialog.color().isValid())
+    {
+    color.setRgb(dialog.color().rgb());
+    }
+  else
+    {
+    //TODO: Throws error message, but haven't found a better way to invalidate existing color object yet
+    color.setRgb(-1,-1,-1); // Make it invalid, indicating that no custom color was set
+    }
+
+  return result;
+}
+
+//-----------------------------------------------------------------------------
+QColor qSlicerTerminologySelectorDialog::color()
+{
+  Q_D(qSlicerTerminologySelectorDialog);
+  return d->Color;
 }

@@ -35,7 +35,6 @@
 
 // VTK includes
 #include <vtkSmartPointer.h>
-#include <vtkStringArray.h>
 
 // Qt includes
 #include <QDebug>
@@ -67,22 +66,24 @@ public:
   // Set recommended color from current selection to color picker
   // Note: will only set it if does not contain modifiers, because in that case it does not include
   //   recommended RGB color member. If modifier is selected then the color will be set from that.
-  void setRecommendedColorFromCurrentSelection();
+  void setRecommendedColorFromCurrentTerminology();
 
   /// Reset current region name and container object
   void resetCurrentRegion();
   /// Reset current region modifier name and container object
   void resetCurrentRegionModifier();
 
+  /// Find item in category table widget corresponding to a given category
+  QTableWidgetItem* findTableWidgetItemForCategory(vtkSlicerTerminologyCategory* category);
+  /// Find item in (type or region) table widget corresponding to a given type
+  QTableWidgetItem* findTableWidgetItemForType(QTableWidget* tableWidget, vtkSlicerTerminologyType* type);
+  /// Find index in (type or region) modifier combobox corresponding to a given modifier
+  /// \return -1 if not found
+  int findComboBoxIndexForModifier(ctkComboBox* comboBox, vtkSlicerTerminologyType* modifier);
+
 public:
   /// Name (SegmentationCategoryTypeContextName) of the current terminology
   QString CurrentTerminologyName;
-  /// Name (codeMeaning member) of the current category
-  QString CurrentCategoryName;
-  /// Name (codeMeaning member) of the current type
-  QString CurrentTypeName;
-  /// Name (codeMeaning member) of the current type modifier
-  QString CurrentTypeModifierName;
 
   /// Object containing the details of the current category
   vtkSlicerTerminologyCategory* CurrentCategoryObject;
@@ -93,15 +94,14 @@ public:
 
   /// Name (AnatomicContextName) of the current anatomic context
   QString CurrentAnatomicContextName;
-  /// Name (codeMeaning member) of the current region
-  QString CurrentRegionName;
-  /// Name (codeMeaning member) of the current region modifier
-  QString CurrentRegionModifierName;
 
   /// Object containing the details of the current region
   vtkSlicerTerminologyType* CurrentRegionObject;
   /// Object containing the details of the current region modifier if any
   vtkSlicerTerminologyType* CurrentRegionModifierObject;
+
+  /// Custom color selected by the user
+  QColor CustomColor;
 };
 
 //-----------------------------------------------------------------------------
@@ -175,7 +175,7 @@ void qSlicerTerminologyNavigatorWidgetPrivate::init()
     q, SLOT(onRegionSearchTextChanged(QString)) );
 
   QObject::connect(this->ColorPickerButton_RecommendedRGB, SIGNAL(colorChanged(QColor)),
-    q, SLOT(onRecommendedColorChanged(QColor)));
+    q, SLOT(onColorChanged(QColor)) );
 
   // Set default settings for widgets
   this->tableWidget_Category->setEnabled(false);
@@ -226,8 +226,6 @@ vtkSlicerTerminologiesModuleLogic* qSlicerTerminologyNavigatorWidgetPrivate::ter
 //-----------------------------------------------------------------------------
 void qSlicerTerminologyNavigatorWidgetPrivate::resetCurrentCategory()
 {
-  this->CurrentCategoryName = QString();
-
   if (this->CurrentCategoryObject)
     {
     this->CurrentCategoryObject->Delete();
@@ -239,8 +237,6 @@ void qSlicerTerminologyNavigatorWidgetPrivate::resetCurrentCategory()
 //-----------------------------------------------------------------------------
 void qSlicerTerminologyNavigatorWidgetPrivate::resetCurrentType()
 {
-  this->CurrentTypeName = QString();
-
   if (this->CurrentTypeObject)
     {
     this->CurrentTypeObject->Delete();
@@ -252,8 +248,6 @@ void qSlicerTerminologyNavigatorWidgetPrivate::resetCurrentType()
 //-----------------------------------------------------------------------------
 void qSlicerTerminologyNavigatorWidgetPrivate::resetCurrentTypeModifier()
 {
-  this->CurrentTypeModifierName = QString();
-
   if (this->CurrentTypeModifierObject)
     {
     this->CurrentTypeModifierObject->Delete();
@@ -263,14 +257,15 @@ void qSlicerTerminologyNavigatorWidgetPrivate::resetCurrentTypeModifier()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTerminologyNavigatorWidgetPrivate::setRecommendedColorFromCurrentSelection()
+void qSlicerTerminologyNavigatorWidgetPrivate::setRecommendedColorFromCurrentTerminology()
 {
   // Set 'invalid' gray color if type is not selected,
   // or the selected type has modifiers but no modifier is selected
   unsigned char r=127, g=127, b=127;
-  if ( this->CurrentTypeName.isEmpty() ||
-       (this->CurrentTypeObject->GetHasModifiers() && this->CurrentTypeModifierName.isEmpty()) )
+  if ( !this->CurrentTypeObject ||
+       (this->CurrentTypeObject->GetHasModifiers() && !this->CurrentTypeModifierObject) )
     {
+    this->ColorPickerButton_RecommendedRGB->blockSignals(true); // The callback function is to save the user's custom color selection
     this->ColorPickerButton_RecommendedRGB->setColor(QColor(r,g,b));
     this->ColorPickerButton_RecommendedRGB->setEnabled(false);
     return;
@@ -278,6 +273,8 @@ void qSlicerTerminologyNavigatorWidgetPrivate::setRecommendedColorFromCurrentSel
 
   // Valid color is present, enable color picker
   this->ColorPickerButton_RecommendedRGB->setEnabled(true);
+  // Clear custom color
+  this->CustomColor = QColor();
 
   // If the current type has no modifiers then set color form the type
   if (!this->CurrentTypeObject->GetHasModifiers())
@@ -288,14 +285,14 @@ void qSlicerTerminologyNavigatorWidgetPrivate::setRecommendedColorFromCurrentSel
     {
     this->CurrentTypeModifierObject->GetRecommendedDisplayRGBValue(r,g,b);
     }
+  this->ColorPickerButton_RecommendedRGB->blockSignals(true); // The callback function is to save the user's custom color selection
   this->ColorPickerButton_RecommendedRGB->setColor(QColor(r,g,b));
+  this->ColorPickerButton_RecommendedRGB->blockSignals(false);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerTerminologyNavigatorWidgetPrivate::resetCurrentRegion()
 {
-  this->CurrentRegionName = QString();
-
   if (this->CurrentRegionObject)
     {
     this->CurrentRegionObject->Delete();
@@ -307,8 +304,6 @@ void qSlicerTerminologyNavigatorWidgetPrivate::resetCurrentRegion()
 //-----------------------------------------------------------------------------
 void qSlicerTerminologyNavigatorWidgetPrivate::resetCurrentRegionModifier()
 {
-  this->CurrentRegionModifierName = QString();
-
   if (this->CurrentRegionModifierObject)
     {
     this->CurrentRegionModifierObject->Delete();
@@ -317,6 +312,78 @@ void qSlicerTerminologyNavigatorWidgetPrivate::resetCurrentRegionModifier()
   this->CurrentRegionModifierObject = vtkSlicerTerminologyType::New();
 }
 
+//-----------------------------------------------------------------------------
+QTableWidgetItem* qSlicerTerminologyNavigatorWidgetPrivate::findTableWidgetItemForCategory(vtkSlicerTerminologyCategory* category)
+{
+  if (!category)
+    {
+    return NULL;
+    }
+
+  QString categoryName(category->GetCodeMeaning());
+  Qt::MatchFlags flags = Qt::MatchExactly | Qt::MatchCaseSensitive;
+  QList<QTableWidgetItem*> items = this->tableWidget_Category->findItems(categoryName, flags);
+  if (items.count() == 0)
+    {
+    return NULL;
+    }
+
+  foreach (QTableWidgetItem* item, items)
+    {
+    QString codingSchemeDesignator = item->data(qSlicerTerminologyNavigatorWidget::CodingSchemeDesignatorRole).toString();
+    QString codeValue = item->data(qSlicerTerminologyNavigatorWidget::CodeValueRole).toString();
+    if ( category->GetCodingScheme() && !codingSchemeDesignator.compare(category->GetCodingScheme())
+      && category->GetCodeValue() && !codeValue.compare(category->GetCodeValue()) )
+      {
+      return item;
+      }
+    }
+
+    return NULL;
+}
+
+//-----------------------------------------------------------------------------
+QTableWidgetItem* qSlicerTerminologyNavigatorWidgetPrivate::findTableWidgetItemForType(QTableWidget* tableWidget, vtkSlicerTerminologyType* type)
+{
+  if (!tableWidget || !type)
+    {
+    return NULL;
+    }
+
+  QString typeName(type->GetCodeMeaning());
+  Qt::MatchFlags flags = Qt::MatchExactly | Qt::MatchCaseSensitive;
+  QList<QTableWidgetItem*> items = tableWidget->findItems(typeName, flags);
+  if (items.count() == 0)
+    {
+    return NULL;
+    }
+
+  foreach (QTableWidgetItem* item, items)
+    {
+    QString codingSchemeDesignator = item->data(qSlicerTerminologyNavigatorWidget::CodingSchemeDesignatorRole).toString();
+    QString codeValue = item->data(qSlicerTerminologyNavigatorWidget::CodeValueRole).toString();
+    if ( type->GetCodingScheme() && !codingSchemeDesignator.compare(type->GetCodingScheme())
+      && type->GetCodeValue() && !codeValue.compare(type->GetCodeValue()) )
+      {
+      return item;
+      }
+    }
+
+    return NULL;
+}
+
+//-----------------------------------------------------------------------------
+int qSlicerTerminologyNavigatorWidgetPrivate::findComboBoxIndexForModifier(ctkComboBox* comboBox, vtkSlicerTerminologyType* modifier)
+{
+  if (!comboBox || !modifier)
+    {
+    return -1;
+    }
+
+  QString modifierName(modifier->GetCodeMeaning());
+  int modifierIndex = comboBox->findText(modifierName);
+  return modifierIndex;
+}
 
 //-----------------------------------------------------------------------------
 
@@ -358,7 +425,7 @@ bool qSlicerTerminologyNavigatorWidget::terminologyEntry(vtkSlicerTerminologyEnt
   entry->SetTerminologyContextName(d->CurrentTerminologyName.toLatin1().constData());
 
   // Terminology category
-  if (d->CurrentCategoryName.isEmpty())
+  if (!d->CurrentCategoryObject)
     {
     qCritical() << Q_FUNC_INFO << ": No terminology category selected";
     return false;
@@ -366,7 +433,7 @@ bool qSlicerTerminologyNavigatorWidget::terminologyEntry(vtkSlicerTerminologyEnt
   entry->SetCategoryObject(d->CurrentCategoryObject);
 
   // Terminology type
-  if (d->CurrentTypeName.isEmpty())
+  if (!d->CurrentTypeObject)
     {
     qCritical() << Q_FUNC_INFO << ": No terminology type selected";
     return false;
@@ -374,7 +441,7 @@ bool qSlicerTerminologyNavigatorWidget::terminologyEntry(vtkSlicerTerminologyEnt
   entry->SetTypeObject(d->CurrentTypeObject);
 
   // Terminology type modifier
-  if (!d->CurrentTypeModifierName.isEmpty())
+  if (d->CurrentTypeModifierObject)
     {
     entry->SetTypeModifierObject(d->CurrentTypeModifierObject);
     }
@@ -386,13 +453,13 @@ bool qSlicerTerminologyNavigatorWidget::terminologyEntry(vtkSlicerTerminologyEnt
     }
 
   // Anatomic region
-  if (!d->CurrentRegionName.isEmpty())
+  if (d->CurrentRegionObject)
     {
     entry->SetAnatomicRegionObject(d->CurrentRegionObject);
     }
 
   // Anatomic region modifier
-  if (!d->CurrentRegionModifierName.isEmpty())
+  if (d->CurrentRegionModifierObject)
     {
     entry->SetAnatomicRegionModifierObject(d->CurrentRegionModifierObject);
     }
@@ -425,7 +492,7 @@ bool qSlicerTerminologyNavigatorWidget::setTerminologyEntry(vtkSlicerTerminology
     }
   if (terminologyIndex != d->ComboBox_Terminology->currentIndex())
     {
-    this->setTerminologyByName(d->ComboBox_Terminology->itemText(terminologyIndex));
+    this->setCurrentTerminology(d->ComboBox_Terminology->itemText(terminologyIndex));
     }
   d->ComboBox_Terminology->blockSignals(true);
   d->ComboBox_Terminology->setCurrentIndex(terminologyIndex);
@@ -438,21 +505,11 @@ bool qSlicerTerminologyNavigatorWidget::setTerminologyEntry(vtkSlicerTerminology
     return false; // The terminology is not invalid but empty
     }
   bool returnValue = true;
-  QString categoryName(categoryObject->GetCodeMeaning());
-  Qt::MatchFlags flags = Qt::MatchExactly | Qt::MatchCaseSensitive;
-  QList<QTableWidgetItem*> items = d->tableWidget_Category->findItems(categoryName, flags);
-  if (items.count() != 1)
+  if (!this->setCurrentCategory(categoryObject))
     {
-    qCritical() << Q_FUNC_INFO << ": Failed to find category with name " << categoryName;
+    qCritical() << Q_FUNC_INFO << ": Failed to find category with name " << (categoryObject->GetCodeMeaning()?categoryObject->GetCodeMeaning():"NULL");
     returnValue = false;
     }
-  if (d->CurrentCategoryName.compare(categoryName))
-    {
-    this->setCategoryByName(items[0]->text());
-    }
-  d->tableWidget_Category->blockSignals(true);
-  d->tableWidget_Category->setCurrentItem(items[0]);
-  d->tableWidget_Category->blockSignals(false);
 
   // Select type
   vtkSlicerTerminologyType* typeObject = entry->GetTypeObject();
@@ -461,53 +518,22 @@ bool qSlicerTerminologyNavigatorWidget::setTerminologyEntry(vtkSlicerTerminology
     qCritical() << Q_FUNC_INFO << ": No type object in terminology entry";
     returnValue = false;
     }
-  QString typeName(typeObject->GetCodeMeaning());
-  items = d->tableWidget_Type->findItems(typeName, flags);
-  if (items.count() < 1) // Sometimes it is 2 due to duplicate entries (e.g. Tissue, Needle)
+  if (!this->setCurrentType(typeObject))
     {
-    qCritical() << Q_FUNC_INFO << ": Failed to find type with name " << typeName;
+    qCritical() << Q_FUNC_INFO << ": Failed to find type with name " << (typeObject->GetCodeMeaning()?typeObject->GetCodeMeaning():"NULL");
     returnValue = false;
     }
-  if (d->CurrentTypeName.compare(typeName))
-    {
-    this->setTypeByName(items[0]->text());
-    }
-  d->tableWidget_Type->blockSignals(true);
-  d->tableWidget_Type->setCurrentItem(items[0]);
-  d->tableWidget_Type->blockSignals(false);
 
   // Select type modifier
-  unsigned char colorChar[3] = {0,0,0};
   vtkSlicerTerminologyType* typeModifierObject = entry->GetTypeModifierObject();
   if (typeObject->GetHasModifiers() && typeModifierObject)
     {
-    QString typeModifierName(typeModifierObject->GetCodeMeaning());
-    int typeModifierIndex = d->ComboBox_TypeModifier->findText(typeModifierName);
-    if (typeModifierIndex == -1)
+    if (!this->setCurrentTypeModifier(typeModifierObject))
       {
-      qCritical() << Q_FUNC_INFO << ": Failed to find type modifier with name " << typeModifierName;
+      qCritical() << Q_FUNC_INFO << ": Failed to find type modifier with name " << (typeModifierObject->GetCodeMeaning()?typeModifierObject->GetCodeMeaning():"NULL");
       returnValue = false;
       }
-    if (d->CurrentTypeModifierName.compare(typeModifierName))
-      {
-      this->setTypeModifierByName(typeModifierName);
-      }
-    d->ComboBox_TypeModifier->blockSignals(true);
-    d->ComboBox_TypeModifier->setCurrentIndex(typeModifierIndex);
-    d->ComboBox_TypeModifier->blockSignals(false);
-
-    // Set back the original type modifier object from the input terminology entry in case custom color has been
-    // overwritten by setTypeModifierByName from the loaded terminology dictionary
-    d->CurrentTypeModifierObject->Copy(typeModifierObject);
     }
-  else
-    {
-    // Set back the original type object from the input terminology entry in case custom color has been
-    // overwritten by setTypeByName from the loaded terminology dictionary
-    d->CurrentTypeObject->Copy(typeObject);
-    }
-  // Set custom or original recommended color
-  d->setRecommendedColorFromCurrentSelection();
 
   // Set anatomic context selection if category allows
   if (categoryObject->GetShowAnatomy())
@@ -524,7 +550,7 @@ bool qSlicerTerminologyNavigatorWidget::setTerminologyEntry(vtkSlicerTerminology
         }
       if (anatomicContextIndex != d->ComboBox_AnatomicContext->currentIndex())
         {
-        this->setAnatomicContextByName(d->ComboBox_AnatomicContext->itemText(anatomicContextIndex));
+        this->setCurrentAnatomicContext(d->ComboBox_AnatomicContext->itemText(anatomicContextIndex));
         }
       d->ComboBox_AnatomicContext->blockSignals(true);
       d->ComboBox_AnatomicContext->setCurrentIndex(anatomicContextIndex);
@@ -535,77 +561,118 @@ bool qSlicerTerminologyNavigatorWidget::setTerminologyEntry(vtkSlicerTerminology
     vtkSlicerTerminologyType* regionObject = entry->GetAnatomicRegionObject();
     if (regionObject) // Optional
       {
-      QString regionName(regionObject->GetCodeMeaning());
-      items = d->tableWidget_AnatomicRegion->findItems(regionName, flags);
-      if (items.count() != 1)
+      if (!this->setCurrentRegion(regionObject))
         {
-        qCritical() << Q_FUNC_INFO << ": Failed to find anatomic region with name " << regionName;
+        qCritical() << Q_FUNC_INFO << ": Failed to find region with name " << (regionObject->GetCodeMeaning()?regionObject->GetCodeMeaning():"NULL");
         returnValue = false;
         }
-      if (d->CurrentRegionName.compare(regionName))
-        {
-        this->setRegionByName(items[0]->text());
-        }
-      d->tableWidget_AnatomicRegion->blockSignals(true);
-      d->tableWidget_AnatomicRegion->setCurrentItem(items[0]);
-      d->tableWidget_AnatomicRegion->blockSignals(false);
 
       // Select region modifier
       vtkSlicerTerminologyType* regionModifierObject = entry->GetAnatomicRegionModifierObject();
       if (regionObject->GetHasModifiers() && regionModifierObject)
         {
-        QString regionModifierName(regionModifierObject->GetCodeMeaning());
-        int regionModifierIndex = d->ComboBox_AnatomicRegionModifier->findText(regionModifierName);
-        if (regionModifierIndex == -1)
+        if (!this->setCurrentRegionModifier(regionModifierObject))
           {
-          qCritical() << Q_FUNC_INFO << ": Failed to find anatomic region modifier with name " << regionModifierName;
+          qCritical() << Q_FUNC_INFO << ": Failed to find region modifier with name " << (regionModifierObject->GetCodeMeaning()?regionModifierObject->GetCodeMeaning():"NULL");
           returnValue = false;
           }
-        if (d->CurrentRegionModifierName.compare(regionModifierName))
-          {
-          this->setRegionModifierByName(regionModifierName);
-          }
-        d->ComboBox_AnatomicRegionModifier->blockSignals(true);
-        d->ComboBox_AnatomicRegionModifier->setCurrentIndex(regionModifierIndex);
-        d->ComboBox_AnatomicRegionModifier->blockSignals(false);
         }
       } // If region is selected
     } // If showAnatomy is true
+
+  // Set color to color picker if no custom color is used
+  if (!d->CustomColor.isValid())
+    {
+    d->setRecommendedColorFromCurrentTerminology();
+    }
 
   return returnValue;
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerTerminologyNavigatorWidget::codeMeaningsFromTerminologyEntry(vtkSlicerTerminologyEntry* entry)
+QColor qSlicerTerminologyNavigatorWidget::customColor()
 {
-  QStringList returnList;
-  if (!entry)
+  Q_D(qSlicerTerminologyNavigatorWidget);
+
+  QColor color = d->ColorPickerButton_RecommendedRGB->color();
+
+  bool isCustomColor = false;
+  QColor recommendedColor = this->recommendedColorFromCurrentTerminology();
+  if (recommendedColor.isValid() && color != recommendedColor)
     {
-    qCritical() << Q_FUNC_INFO << ": Invalid terminology given";
-    return returnList;
+    isCustomColor = true;
     }
 
-  /// The string list contains the following strings:
-  ///   [ terminologyContextName, categoryCodeMeaning, typeCodeMeaning, typeModifierCodeMeaning,
-  ///     customColor,
-  ///     anatomicContextName, anatomicRegionCodeMeaning, anatomicRegionModifierCodeMeaning ]
-  returnList << QString(entry->GetTerminologyContextName()); // Invalid string if NULL
-  returnList << QString(entry->GetCategoryObject() ? entry->GetCategoryObject()->GetCodeMeaning() : NULL);
-  returnList << QString(entry->GetTypeObject() ? entry->GetTypeObject()->GetCodeMeaning() : NULL);
-  returnList << QString(entry->GetTypeModifierObject() ? entry->GetTypeModifierObject()->GetCodeMeaning() : NULL);
-
-  QColor recommendedColor = qSlicerTerminologyNavigatorWidget::recommendedColorFromTerminology(entry);
-  returnList << QString(recommendedColor.isValid() ? recommendedColor.name() : NULL);
-
-  returnList << QString(entry->GetAnatomicContextName());
-  returnList << QString(entry->GetAnatomicRegionObject() ? entry->GetAnatomicRegionObject()->GetCodeMeaning() : NULL);
-  returnList << QString(entry->GetAnatomicRegionModifierObject() ? entry->GetAnatomicRegionModifierObject()->GetCodeMeaning() : NULL);
-
-  return returnList;
+  if (isCustomColor)
+    {
+    return color;
+    }
+  // Return invalid color if terminology is invalid or color is custom (different from recommended color in terminology)
+  return QColor();
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerTerminologyNavigatorWidget::terminologyEntryFromCodeMeanings(QStringList codeMeanings, vtkSlicerTerminologyEntry* entry)
+void qSlicerTerminologyNavigatorWidget::setColor(QColor color)
+{
+  Q_D(qSlicerTerminologyNavigatorWidget);
+
+  if (d->CurrentAnatomicContextName.isEmpty() || !d->CurrentCategoryObject || !d->CurrentTypeObject)
+    {
+    qCritical() << Q_FUNC_INFO << ": Color can only be set if current terminology is valid (it was set before)";
+    return;
+    }
+
+  // Only set custom color if different from recommended color in current terminology
+  QColor recommendedColor = this->recommendedColorFromCurrentTerminology();
+  if (color != recommendedColor)
+    {
+    d->CustomColor = color;
+    d->ColorPickerButton_RecommendedRGB->setColor(d->CustomColor);
+    }
+  else
+    {
+    // Invalidate custom color if set color is the same as recommended (to indicate that no custom color is set when queried later)
+    d->CustomColor = QColor();
+    d->ColorPickerButton_RecommendedRGB->setColor(color);
+    }
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerTerminologyNavigatorWidget::serializeTerminologyEntry(vtkSlicerTerminologyEntry* entry)
+{
+  if (!entry)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid terminology given";
+    return QString();
+    }
+
+  // Serialized terminology entry consists of the following: terminologyContextName, category (codingScheme,  
+  // codeValue, codeMeaning triple), type, typeModifier, anatomicContextName, anatomicRegion, anatomicRegionModifier
+  QString serializedEntry;
+  serializedEntry += QString(entry->GetTerminologyContextName()) + "|"; // Invalid string if NULL
+  serializedEntry += QString(entry->GetCategoryObject() ? entry->GetCategoryObject()->GetCodingScheme() : NULL) + "^"
+    + QString(entry->GetCategoryObject() ? entry->GetCategoryObject()->GetCodeValue() : NULL) + "^"
+    + QString(entry->GetCategoryObject() ? entry->GetCategoryObject()->GetCodeMeaning() : NULL) + "|";
+  serializedEntry += QString(entry->GetTypeObject() ? entry->GetTypeObject()->GetCodingScheme() : NULL) + "^"
+    + QString(entry->GetTypeObject() ? entry->GetTypeObject()->GetCodeValue() : NULL) + "^"
+    + QString(entry->GetTypeObject() ? entry->GetTypeObject()->GetCodeMeaning() : NULL) + "|";
+  serializedEntry += QString(entry->GetTypeModifierObject() ? entry->GetTypeModifierObject()->GetCodingScheme() : NULL) + "^"
+    + QString(entry->GetTypeModifierObject() ? entry->GetTypeModifierObject()->GetCodeValue() : NULL) + "^"
+    + QString(entry->GetTypeModifierObject() ? entry->GetTypeModifierObject()->GetCodeMeaning() : NULL) + "|";
+
+  serializedEntry += QString(entry->GetAnatomicContextName()) + "|";
+  serializedEntry += QString(entry->GetAnatomicRegionObject() ? entry->GetAnatomicRegionObject()->GetCodingScheme() : NULL) + "^"
+    + QString(entry->GetAnatomicRegionObject() ? entry->GetAnatomicRegionObject()->GetCodeValue() : NULL) + "^"
+    + QString(entry->GetAnatomicRegionObject() ? entry->GetAnatomicRegionObject()->GetCodeMeaning() : NULL) + "|";
+  serializedEntry += QString(entry->GetAnatomicRegionModifierObject() ? entry->GetAnatomicRegionModifierObject()->GetCodingScheme() : NULL) + "^"
+    + QString(entry->GetAnatomicRegionModifierObject() ? entry->GetAnatomicRegionModifierObject()->GetCodeValue() : NULL) + "^"
+    + QString(entry->GetAnatomicRegionModifierObject() ? entry->GetAnatomicRegionModifierObject()->GetCodeMeaning() : NULL);
+
+  return serializedEntry;
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerTerminologyNavigatorWidget::deserializeTerminologyEntry(QString serializedEntry, vtkSlicerTerminologyEntry* entry)
 {
   // Clear terminology entry object
   entry->SetTerminologyContextName(NULL);
@@ -616,11 +683,10 @@ bool qSlicerTerminologyNavigatorWidget::terminologyEntryFromCodeMeanings(QString
   entry->SetAnatomicRegionObject(NULL);
   entry->SetAnatomicRegionModifierObject(NULL);
 
-  // A valid, fully set terminology code meanings string list looks like this (last two rows optional):
-  ///   [ terminologyContextName, categoryCodeMeaning, typeCodeMeaning, typeModifierCodeMeaning,
-  ///     customColor,
-  ///     anatomicContextName, anatomicRegionCodeMeaning, anatomicRegionModifierCodeMeaning ]
-  if (codeMeanings.count() < 3)
+  // Serialized terminology entry consists of the following: terminologyContextName, category (codingScheme,  
+  // codeValue, codeMeaning triple), type, typeModifier, anatomicContextName, anatomicRegion, anatomicRegionModifier
+  QStringList entryComponents = serializedEntry.split("|");
+  if (entryComponents.count() != 7)
     {
     return false;
     }
@@ -635,83 +701,88 @@ bool qSlicerTerminologyNavigatorWidget::terminologyEntryFromCodeMeanings(QString
     }
 
   // Terminology context name
-  if (codeMeanings[0].isEmpty())
+  if (entryComponents[0].isEmpty())
     {
     return false;
     }
-  entry->SetTerminologyContextName(codeMeanings[0].toLatin1().constData());
+  std::string terminologyName(entryComponents[0].toLatin1().constData());
+  entry->SetTerminologyContextName(terminologyName.empty()?NULL:terminologyName.c_str());
 
-  // Terminology category
+  // Category
+  QStringList categoryIds = entryComponents[1].split("^");
+  if (categoryIds.count() != 3)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid category component";
+    return false;
+    }
+  vtkSlicerTerminologiesModuleLogic::CodeIdentifier categoryId(
+    categoryIds[0].toLatin1().constData(), categoryIds[1].toLatin1().constData(), categoryIds[2].toLatin1().constData() );
   vtkSmartPointer<vtkSlicerTerminologyCategory> categoryObject = vtkSmartPointer<vtkSlicerTerminologyCategory>::New();
-  if ( !terminologyLogic->GetCategoryInTerminology(
-    codeMeanings[0].toLatin1().constData(), codeMeanings[1].toLatin1().constData(), categoryObject ) )
+  if ( !terminologyLogic->GetCategoryInTerminology(terminologyName, categoryId, categoryObject) )
     {
     qCritical() << Q_FUNC_INFO << ": Failed to get terminology category";
     return false;
    }
   entry->SetCategoryObject(categoryObject);
 
-  // Terminology type
+  // Type
+  QStringList typeIds = entryComponents[2].split("^");
+  if (typeIds.count() != 3)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid type component";
+    return false;
+    }
+  vtkSlicerTerminologiesModuleLogic::CodeIdentifier typeId(
+    typeIds[0].toLatin1().constData(), typeIds[1].toLatin1().constData(), typeIds[2].toLatin1().constData() );
   vtkSmartPointer<vtkSlicerTerminologyType> typeObject = vtkSmartPointer<vtkSlicerTerminologyType>::New();
-  if (!terminologyLogic->GetTypeInTerminologyCategory(
-    codeMeanings[0].toLatin1().constData(), codeMeanings[1].toLatin1().constData(),
-    codeMeanings[2].toLatin1().constData(), typeObject ) )
+  if (!terminologyLogic->GetTypeInTerminologyCategory(terminologyName, categoryId, typeId, typeObject) )
     {
     qCritical() << Q_FUNC_INFO << ": Failed to get terminology type";
     return false;
     }
   entry->SetTypeObject(typeObject);
 
-  // Terminology type modifier (optional)
-  if (codeMeanings.count() == 3)
+  // Type modifier (optional)
+  QStringList typeModifierIds = entryComponents[3].split("^");
+  if (typeModifierIds.count() == 3)
     {
-    return true; // Already valid. Return because there are no more strings in string list
+    vtkSlicerTerminologiesModuleLogic::CodeIdentifier typeModifierId(
+      typeModifierIds[0].toLatin1().constData(), typeModifierIds[1].toLatin1().constData(), typeModifierIds[2].toLatin1().constData() );
+    vtkSmartPointer<vtkSlicerTerminologyType> typeModifierObject = vtkSmartPointer<vtkSlicerTerminologyType>::New();
+    if ( terminologyLogic->GetTypeModifierInTerminologyType(terminologyName, categoryId, typeId, typeModifierId, typeModifierObject) )
+      {
+      entry->SetTypeModifierObject(typeModifierObject);
+      }
     }
-  vtkSmartPointer<vtkSlicerTerminologyType> typeModifierObject = vtkSmartPointer<vtkSlicerTerminologyType>::New();
-  if ( terminologyLogic->GetTypeModifierInTerminologyType(
-    codeMeanings[0].toLatin1().constData(), codeMeanings[1].toLatin1().constData(),
-    codeMeanings[2].toLatin1().constData(), codeMeanings[3].toLatin1().constData(), typeModifierObject ) )
-    {
-    entry->SetTypeModifierObject(typeModifierObject);
-    }
-
-  // Custom color (optional)
-  if (codeMeanings.count() == 4)
-    {
-    return true; // Already valid. Return because there are no more strings in string list
-    }
-  qSlicerTerminologyNavigatorWidget::setRecommendedColorToTerminology( entry, QColor(codeMeanings[4]) );
 
   // Anatomic context name (optional)
-  if (codeMeanings.count() == 5)
-    {
-    return true; // Already valid. Return because there are no more strings in string list
-    }
-  entry->SetAnatomicContextName(codeMeanings[5].toLatin1().constData());
+  std::string anatomicContextName = entryComponents[4].toLatin1().constData();
+  entry->SetAnatomicContextName(anatomicContextName.empty()?NULL:anatomicContextName.c_str());
 
   // Anatomic region (optional)
-  if (codeMeanings.count() == 6)
+  QStringList regionIds = entryComponents[5].split("^");
+  if (regionIds.count() == 3)
     {
-    return true; // Already valid. Return because there are no more strings in string list
-    }
-  vtkSmartPointer<vtkSlicerTerminologyType> regionObject = vtkSmartPointer<vtkSlicerTerminologyType>::New();
-  if ( terminologyLogic->GetRegionInAnatomicContext(
-    codeMeanings[5].toLatin1().constData(), codeMeanings[6].toLatin1().constData(), regionObject ) )
-    {
-    entry->SetAnatomicRegionObject(regionObject);
-    }
+    vtkSlicerTerminologiesModuleLogic::CodeIdentifier regionId(
+      regionIds[0].toLatin1().constData(), regionIds[1].toLatin1().constData(), regionIds[2].toLatin1().constData() );
+    vtkSmartPointer<vtkSlicerTerminologyType> regionObject = vtkSmartPointer<vtkSlicerTerminologyType>::New();
+    if ( terminologyLogic->GetRegionInAnatomicContext(anatomicContextName, regionId, regionObject) )
+      {
+      entry->SetAnatomicRegionObject(regionObject);
+      }
 
-  // Anatomic region modifier (optional)
-  if (codeMeanings.count() == 7)
-    {
-    return true; // Already valid. Return because there are no more strings in string list
-    }
-  vtkSmartPointer<vtkSlicerTerminologyType> regionModifierObject = vtkSmartPointer<vtkSlicerTerminologyType>::New();
-  if ( terminologyLogic->GetRegionModifierInAnatomicRegion(
-    codeMeanings[5].toLatin1().constData(), codeMeanings[6].toLatin1().constData(),
-    codeMeanings[7].toLatin1().constData(), regionModifierObject ) )
-    {
-    entry->SetAnatomicRegionModifierObject(regionModifierObject);
+    // Anatomic region modifier (optional)
+    QStringList regionModifierIds = entryComponents[6].split("^");
+    if (regionModifierIds.count() == 3)
+      {
+      vtkSlicerTerminologiesModuleLogic::CodeIdentifier regionModifierId(
+        regionModifierIds[0].toLatin1().constData(), regionModifierIds[1].toLatin1().constData(), regionModifierIds[2].toLatin1().constData() );
+      vtkSmartPointer<vtkSlicerTerminologyType> regionModifierObject = vtkSmartPointer<vtkSlicerTerminologyType>::New();
+      if ( terminologyLogic->GetRegionModifierInAnatomicRegion(anatomicContextName, regionId, regionModifierId, regionModifierObject ))
+        {
+        entry->SetAnatomicRegionModifierObject(regionModifierObject);
+        }
+      }
     }
 
   return true;
@@ -740,22 +811,28 @@ QColor qSlicerTerminologyNavigatorWidget::recommendedColorFromTerminology(vtkSli
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTerminologyNavigatorWidget::setRecommendedColorToTerminology(vtkSlicerTerminologyEntry* entry, QColor color)
+QColor qSlicerTerminologyNavigatorWidget::recommendedColorFromCurrentTerminology()
 {
-  if (!entry || !entry->GetTypeObject())
+  Q_D(qSlicerTerminologyNavigatorWidget);
+
+  QColor color;
+  if (d->CurrentAnatomicContextName.isEmpty() || !d->CurrentCategoryObject || !d->CurrentTypeObject)
     {
-    return;
+    qWarning() << Q_FUNC_INFO << ": Invalid current terminology";
+    return color;
     }
 
-  vtkSlicerTerminologyType* typeObject = entry->GetTypeObject();
-  if (typeObject->GetHasModifiers())
+  vtkSlicerTerminologyType* typeObject = d->CurrentTypeObject;
+  if (d->CurrentTypeObject->GetHasModifiers())
     {
     // Get color from modifier if any
-    typeObject = entry->GetTypeModifierObject();
+    typeObject = d->CurrentTypeModifierObject;
     }
 
-  unsigned char colorChar[3] = {(unsigned char)color.red(), (unsigned char)color.green(), (unsigned char)color.blue()};
-  typeObject->SetRecommendedDisplayRGBValue(colorChar);
+  unsigned char colorChar[3] = {0,0,0};
+  typeObject->GetRecommendedDisplayRGBValue(colorChar);
+  color.setRgb(colorChar[0], colorChar[1], colorChar[2]);
+  return color;
 }
 
 //-----------------------------------------------------------------------------
@@ -816,21 +893,27 @@ void qSlicerTerminologyNavigatorWidget::populateCategoryTable()
     }
 
   // Get category names containing the search string. If no search string then add every category
-  vtkSmartPointer<vtkStringArray> categoryNamesArray = vtkSmartPointer<vtkStringArray>::New();
-  logic->FindCategoryNamesInTerminology(
-    d->CurrentTerminologyName.toLatin1().constData(), categoryNamesArray, d->SearchBox_Category->text().toLatin1().constData() );
+  std::vector<vtkSlicerTerminologiesModuleLogic::CodeIdentifier> categories;
+  logic->FindCategoriesInTerminology(
+    d->CurrentTerminologyName.toLatin1().constData(), categories, d->SearchBox_Category->text().toLatin1().constData() );
 
   QTableWidgetItem* selectedItem = NULL;
-  d->tableWidget_Category->setRowCount(categoryNamesArray->GetNumberOfValues());
-  for (int index=0; index<categoryNamesArray->GetNumberOfValues(); ++index)
+  d->tableWidget_Category->setRowCount(categories.size());
+  int index = 0;
+  std::vector<vtkSlicerTerminologiesModuleLogic::CodeIdentifier>::iterator idIt;
+  for (idIt=categories.begin(); idIt!=categories.end(); ++idIt, ++index)
     {
-    QString currentCategoryName( categoryNamesArray->GetValue(index).c_str() );
-    QTableWidgetItem* currentCategoryItem = new QTableWidgetItem(currentCategoryName);
-    d->tableWidget_Category->setItem(index, 0, currentCategoryItem);
+    vtkSlicerTerminologiesModuleLogic::CodeIdentifier addedCategoryId = (*idIt);
+    QString addedCategoryName(addedCategoryId.CodeMeaning.c_str());
+    QTableWidgetItem* addedCategoryItem = new QTableWidgetItem(addedCategoryName);
+    addedCategoryItem->setData(CodingSchemeDesignatorRole, QString(addedCategoryId.CodingSchemeDesignator.c_str()));
+    addedCategoryItem->setData(CodeValueRole, QString(addedCategoryId.CodeValue.c_str()));
+    d->tableWidget_Category->setItem(index, 0, addedCategoryItem);
 
-    if (!currentCategoryName.compare(d->CurrentCategoryName))
+    if ( d->CurrentCategoryObject->GetCodingScheme() && !addedCategoryId.CodingSchemeDesignator.compare(d->CurrentCategoryObject->GetCodingScheme())
+      && d->CurrentCategoryObject->GetCodeValue() && !addedCategoryId.CodeValue.compare(d->CurrentCategoryObject->GetCodeValue()) )
       {
-      selectedItem = currentCategoryItem;
+      selectedItem = addedCategoryItem;
       }
     }
 
@@ -848,7 +931,7 @@ void qSlicerTerminologyNavigatorWidget::populateTypeTable()
 
   d->tableWidget_Type->clearContents();
 
-  if (d->CurrentTerminologyName.isEmpty() || d->CurrentCategoryName.isEmpty())
+  if (d->CurrentTerminologyName.isEmpty() || !d->CurrentCategoryObject || !d->CurrentCategoryObject->GetCodeValue())
     {
     d->tableWidget_Type->setRowCount(0);
     return;
@@ -862,22 +945,29 @@ void qSlicerTerminologyNavigatorWidget::populateTypeTable()
     }
 
   // Get type names containing the search string. If no search string then add every type
-  vtkSmartPointer<vtkStringArray> typeNamesArray = vtkSmartPointer<vtkStringArray>::New();
-  logic->FindTypeNamesInTerminologyCategory(
-    d->CurrentTerminologyName.toLatin1().constData(), d->CurrentCategoryName.toLatin1().constData(),
-    typeNamesArray, d->SearchBox_Type->text().toLatin1().constData() );
+  std::vector<vtkSlicerTerminologiesModuleLogic::CodeIdentifier> types;
+  logic->FindTypesInTerminologyCategory(
+    d->CurrentTerminologyName.toLatin1().constData(),
+    vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyCategory(d->CurrentCategoryObject),
+    types, d->SearchBox_Type->text().toLatin1().constData() );
 
   QTableWidgetItem* selectedItem = NULL;
-  d->tableWidget_Type->setRowCount(typeNamesArray->GetNumberOfValues());
-  for (int index=0; index<typeNamesArray->GetNumberOfValues(); ++index)
+  d->tableWidget_Type->setRowCount(types.size());
+  int index = 0;
+  std::vector<vtkSlicerTerminologiesModuleLogic::CodeIdentifier>::iterator idIt;
+  for (idIt=types.begin(); idIt!=types.end(); ++idIt, ++index)
     {
-    QString currentTypeName( typeNamesArray->GetValue(index).c_str() );
-    QTableWidgetItem* currentTypeItem = new QTableWidgetItem(currentTypeName);
-    d->tableWidget_Type->setItem(index, 0, currentTypeItem);
+    vtkSlicerTerminologiesModuleLogic::CodeIdentifier addedTypeId = (*idIt);
+    QString addedTypeName(addedTypeId.CodeMeaning.c_str());
+    QTableWidgetItem* addedTypeItem = new QTableWidgetItem(addedTypeName);
+    addedTypeItem->setData(CodingSchemeDesignatorRole, QString(addedTypeId.CodingSchemeDesignator.c_str()));
+    addedTypeItem->setData(CodeValueRole, QString(addedTypeId.CodeValue.c_str()));
+    d->tableWidget_Type->setItem(index, 0, addedTypeItem);
 
-    if (!currentTypeName.compare(d->CurrentTypeName))
+    if ( d->CurrentTypeObject->GetCodingScheme() && !addedTypeId.CodingSchemeDesignator.compare(d->CurrentTypeObject->GetCodingScheme())
+      && d->CurrentTypeObject->GetCodeValue() && !addedTypeId.CodeValue.compare(d->CurrentTypeObject->GetCodeValue()) )
       {
-      selectedItem = currentTypeItem;
+      selectedItem = addedTypeItem;
       }
     }
 
@@ -895,7 +985,7 @@ void qSlicerTerminologyNavigatorWidget::populateTypeModifierComboBox()
 
   d->ComboBox_TypeModifier->clear();
 
-  if (d->CurrentTerminologyName.isEmpty() || d->CurrentCategoryName.isEmpty() || d->CurrentTypeName.isEmpty())
+  if (d->CurrentTerminologyName.isEmpty() || !d->CurrentCategoryObject || !d->CurrentTypeObject || !d->CurrentTypeObject->GetCodeValue())
     {
     d->ComboBox_TypeModifier->setEnabled(false);
     return;
@@ -915,20 +1005,41 @@ void qSlicerTerminologyNavigatorWidget::populateTypeModifierComboBox()
     }
 
   // Get type modifier names
-  vtkSmartPointer<vtkStringArray> typeModifierNamesArray = vtkSmartPointer<vtkStringArray>::New();
-  logic->GetTypeModifierNamesInTerminologyType(
-    d->CurrentTerminologyName.toLatin1().constData(), d->CurrentCategoryName.toLatin1().constData(),
-    d->CurrentTypeName.toLatin1().constData(), typeModifierNamesArray );
+  std::vector<vtkSlicerTerminologiesModuleLogic::CodeIdentifier> typeModifiers;
+  logic->GetTypeModifiersInTerminologyType(
+    d->CurrentTerminologyName.toLatin1().constData(),
+    vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyCategory(d->CurrentCategoryObject),
+    vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyType(d->CurrentTypeObject),
+    typeModifiers );
 
-  for (int index=0; index<typeModifierNamesArray->GetNumberOfValues(); ++index)
+  int selectedIndex = -1;
+  int index = 0;
+  std::vector<vtkSlicerTerminologiesModuleLogic::CodeIdentifier>::iterator idIt;
+  for (idIt=typeModifiers.begin(); idIt!=typeModifiers.end(); ++idIt, ++index)
     {
-    QString currentTypeModifierName( typeModifierNamesArray->GetValue(index).c_str() );
-    d->ComboBox_TypeModifier->addItem(currentTypeModifierName);
+    vtkSlicerTerminologiesModuleLogic::CodeIdentifier addedTypeModifierId = (*idIt);
+    QString addedTypeModifierName(addedTypeModifierId.CodeMeaning.c_str());
+
+    QMap<QString, QVariant> userData;
+    userData[QString::number(CodingSchemeDesignatorRole)] = QString(addedTypeModifierId.CodingSchemeDesignator.c_str());
+    userData[QString::number(CodeValueRole)] = QString(addedTypeModifierId.CodeValue.c_str());
+    d->ComboBox_TypeModifier->addItem(addedTypeModifierName, QVariant(userData));
+    
+    if (!addedTypeModifierName.compare(d->CurrentTypeModifierObject->GetCodeMeaning()))
+      {
+      selectedIndex = index;
+      }
+    }
+
+  // Select modifier if selection was valid
+  if (selectedIndex != -1)
+    {
+    d->ComboBox_TypeModifier->setCurrentIndex(selectedIndex);
     }
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTerminologyNavigatorWidget::setTerminologyByName(QString terminologyName)
+void qSlicerTerminologyNavigatorWidget::setCurrentTerminology(QString terminologyName)
 {
   Q_D(qSlicerTerminologyNavigatorWidget);
 
@@ -977,13 +1088,13 @@ void qSlicerTerminologyNavigatorWidget::onTerminologySelectionChanged(int index)
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
 
   // Set current terminology
-  this->setTerminologyByName(d->ComboBox_Terminology->itemText(index));
+  this->setCurrentTerminology(d->ComboBox_Terminology->itemText(index));
 
   QApplication::restoreOverrideCursor();
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTerminologyNavigatorWidget::setCategoryByName(QString categoryName)
+bool qSlicerTerminologyNavigatorWidget::setCurrentCategory(vtkSlicerTerminologyCategory* category)
 {
   Q_D(qSlicerTerminologyNavigatorWidget);
 
@@ -995,22 +1106,7 @@ void qSlicerTerminologyNavigatorWidget::setCategoryByName(QString categoryName)
   d->resetCurrentRegionModifier();
 
   // Set current category
-  d->CurrentCategoryName = categoryName;
-  if (categoryName.isEmpty())
-    {
-    return;
-    }
-
-  // Get current category object
-  vtkSlicerTerminologiesModuleLogic* logic = d->terminologyLogic();
-  if (!logic)
-    {
-    qCritical() << Q_FUNC_INFO << ": Failed to access terminology logic";
-    return;
-    }
-  logic->GetCategoryInTerminology(
-    d->CurrentTerminologyName.toLatin1().constData(), d->CurrentCategoryName.toLatin1().constData(),
-    d->CurrentCategoryObject );
+  d->CurrentCategoryObject->Copy(category);
 
   // Populate type table, and reset type modifier combobox and region widgets
   this->populateTypeTable();
@@ -1040,6 +1136,16 @@ void qSlicerTerminologyNavigatorWidget::setCategoryByName(QString categoryName)
   d->tableWidget_AnatomicRegion->setEnabled(d->CurrentCategoryObject->GetShowAnatomy());
   d->SearchBox_AnatomicRegion->setEnabled(d->CurrentCategoryObject->GetShowAnatomy());
   d->ComboBox_AnatomicRegionModifier->setEnabled(false); // Disabled until valid region selection
+
+  // Select category if found
+  QTableWidgetItem* categoryItem = d->findTableWidgetItemForCategory(category);
+  if (categoryItem)
+    {
+    d->tableWidget_Category->blockSignals(true);
+    d->tableWidget_Category->setCurrentItem(categoryItem);
+    d->tableWidget_Category->blockSignals(false);
+    }
+  return categoryItem; // Return true if category found and selected
 }
 
 //-----------------------------------------------------------------------------
@@ -1049,14 +1155,33 @@ void qSlicerTerminologyNavigatorWidget::onCategoryClicked(QTableWidgetItem* item
 
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
 
+  // Get current category object
+  vtkSlicerTerminologiesModuleLogic* logic = d->terminologyLogic();
+  if (!logic)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access terminology logic";
+    return;
+    }
+  vtkSlicerTerminologiesModuleLogic::CodeIdentifier categoryId(
+    item->data(CodingSchemeDesignatorRole).toString().toLatin1().constData(),
+    item->data(CodeValueRole).toString().toLatin1().constData(),
+    item->text().toLatin1().constData() );
+  vtkSmartPointer<vtkSlicerTerminologyCategory> category = vtkSmartPointer<vtkSlicerTerminologyCategory>::New();
+  if (!logic->GetCategoryInTerminology(
+    d->CurrentTerminologyName.toLatin1().constData(), categoryId, category) )
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to find category '" << item->text();
+    return;
+    }
+
   // Set category from item
-  this->setCategoryByName(item->text());
+  this->setCurrentCategory(category);
 
   QApplication::restoreOverrideCursor();
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTerminologyNavigatorWidget::setTypeByName(QString typeName)
+bool qSlicerTerminologyNavigatorWidget::setCurrentType(vtkSlicerTerminologyType* type)
 {
   Q_D(qSlicerTerminologyNavigatorWidget);
 
@@ -1064,28 +1189,23 @@ void qSlicerTerminologyNavigatorWidget::setTypeByName(QString typeName)
   d->resetCurrentTypeModifier();
 
   // Set current type
-  d->CurrentTypeName = typeName;
-  if (typeName.isEmpty())
-    {
-    return;
-    }
-
-  // Get current type container object
-  vtkSlicerTerminologiesModuleLogic* logic = d->terminologyLogic();
-  if (!logic)
-    {
-    qCritical() << Q_FUNC_INFO << ": Failed to access terminology logic";
-    return;
-    }
-  logic->GetTypeInTerminologyCategory(
-    d->CurrentTerminologyName.toLatin1().constData(), d->CurrentCategoryName.toLatin1().constData(),
-    d->CurrentTypeName.toLatin1().constData(), d->CurrentTypeObject );
+  d->CurrentTypeObject->Copy(type);
 
   // Populate type modifier combobox
   this->populateTypeModifierComboBox();
 
   // Only enable type modifier combobox if there are items in it
   d->ComboBox_TypeModifier->setEnabled(d->ComboBox_TypeModifier->count());
+
+  // Select type if found
+  QTableWidgetItem* typeItem = d->findTableWidgetItemForType(d->tableWidget_Type, type);
+  if (typeItem)
+    {
+    d->tableWidget_Type->blockSignals(true);
+    d->tableWidget_Type->setCurrentItem(typeItem);
+    d->tableWidget_Type->blockSignals(false);
+    }
+  return typeItem; // Return true if category found and selected
 }
 
 //-----------------------------------------------------------------------------
@@ -1095,38 +1215,53 @@ void qSlicerTerminologyNavigatorWidget::onTypeClicked(QTableWidgetItem* item)
 
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
 
-  // Set type from item
-  this->setTypeByName(item->text());
-
-  // Set recommended color to color picker
-  d->setRecommendedColorFromCurrentSelection();
-
-  QApplication::restoreOverrideCursor();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerTerminologyNavigatorWidget::setTypeModifierByName(QString modifierName)
-{
-  Q_D(qSlicerTerminologyNavigatorWidget);
-
-  // Set current type modifier
-  d->CurrentTypeModifierName = modifierName;
-  if (modifierName.isEmpty())
-    {
-    return;
-    }
-
-  // Get current type modifier container object
+  // Get current type object
   vtkSlicerTerminologiesModuleLogic* logic = d->terminologyLogic();
   if (!logic)
     {
     qCritical() << Q_FUNC_INFO << ": Failed to access terminology logic";
     return;
     }
-  logic->GetTypeModifierInTerminologyType(
-    d->CurrentTerminologyName.toLatin1().constData(), d->CurrentCategoryName.toLatin1().constData(),
-    d->CurrentTypeName.toLatin1().constData(), d->CurrentTypeModifierName.toLatin1().constData(),
-    d->CurrentTypeModifierObject );
+  vtkSlicerTerminologiesModuleLogic::CodeIdentifier typeId(
+    item->data(CodingSchemeDesignatorRole).toString().toLatin1().constData(),
+    item->data(CodeValueRole).toString().toLatin1().constData(),
+    item->text().toLatin1().constData() );
+  vtkSmartPointer<vtkSlicerTerminologyType> type = vtkSmartPointer<vtkSlicerTerminologyType>::New();
+  if (!logic->GetTypeInTerminologyCategory(
+    d->CurrentTerminologyName.toLatin1().constData(),
+    vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyCategory(d->CurrentCategoryObject),
+    typeId, type) )
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to find type '" << item->text();
+    return;
+    }
+
+  // Set type from item
+  this->setCurrentType(type);
+
+  // Set recommended color to color picker
+  d->setRecommendedColorFromCurrentTerminology();
+
+  QApplication::restoreOverrideCursor();
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerTerminologyNavigatorWidget::setCurrentTypeModifier(vtkSlicerTerminologyType* modifier)
+{
+  Q_D(qSlicerTerminologyNavigatorWidget);
+
+  // Set current type modifier
+  d->CurrentTypeModifierObject->Copy(modifier);
+
+  // Select modifier if found
+  int modifierIndex = d->findComboBoxIndexForModifier(d->ComboBox_TypeModifier, modifier);
+  if (modifierIndex != -1)
+    {
+    d->ComboBox_TypeModifier->blockSignals(true);
+    d->ComboBox_TypeModifier->setCurrentIndex(modifierIndex);
+    d->ComboBox_TypeModifier->blockSignals(false);
+    }
+  return (modifierIndex != -1);
 }
 
 //-----------------------------------------------------------------------------
@@ -1137,11 +1272,34 @@ void qSlicerTerminologyNavigatorWidget::onTypeModifierSelectionChanged(int index
 
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
 
+  // Get current modifier object
+  vtkSlicerTerminologiesModuleLogic* logic = d->terminologyLogic();
+  if (!logic)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access terminology logic";
+    return;
+    }
+  QMap<QString, QVariant> userData = d->ComboBox_TypeModifier->itemData(index).toMap();
+  vtkSlicerTerminologiesModuleLogic::CodeIdentifier modifierId(
+    userData[QString::number(CodingSchemeDesignatorRole)].toString().toLatin1().constData(),
+    userData[QString::number(CodeValueRole)].toString().toLatin1().constData(),
+    d->ComboBox_TypeModifier->itemText(index).toLatin1().constData() );
+  vtkSmartPointer<vtkSlicerTerminologyType> modifier = vtkSmartPointer<vtkSlicerTerminologyType>::New();
+  if (!logic->GetTypeModifierInTerminologyType(
+    d->CurrentTerminologyName.toLatin1().constData(),
+    vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyCategory(d->CurrentCategoryObject),
+    vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyType(d->CurrentTypeObject),
+    modifierId, modifier) )
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to find modifier '" << d->ComboBox_TypeModifier->itemText(index);
+    return;
+    }
+
   // Set current region modifier
-  this->setTypeModifierByName(d->ComboBox_TypeModifier->currentText());
+  this->setCurrentTypeModifier(modifier);
 
   // Set recommended color to color picker
-  d->setRecommendedColorFromCurrentSelection();
+  d->setRecommendedColorFromCurrentTerminology();
 
   QApplication::restoreOverrideCursor();
 }
@@ -1163,26 +1321,13 @@ void qSlicerTerminologyNavigatorWidget::onTypeSearchTextChanged(QString search)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTerminologyNavigatorWidget::onRecommendedColorChanged(QColor color)
+void qSlicerTerminologyNavigatorWidget::onColorChanged(QColor color)
 {
   Q_D(qSlicerTerminologyNavigatorWidget);
 
-  if ( d->CurrentTypeName.isEmpty() ||
-       (d->CurrentTypeObject->GetHasModifiers() && d->CurrentTypeModifierName.isEmpty()) )
-    {
-    qCritical() << Q_FUNC_INFO << ": No type or type modifier object available to set color";
-    return;
-    }
-
-  // If the current type has no modifiers then set color form the type
-  if (!d->CurrentTypeObject->GetHasModifiers())
-    {
-    d->CurrentTypeObject->SetRecommendedDisplayRGBValue(color.red(), color.green(), color.blue());
-    }
-  else
-    {
-    d->CurrentTypeModifierObject->SetRecommendedDisplayRGBValue(color.red(), color.green(), color.blue());
-    }
+  // Save selected color as custom color
+  // (the recommended color coming from type and type modifier are already stored in they current entry)
+  d->CustomColor = color;
 }
 
 //-----------------------------------------------------------------------------
@@ -1237,27 +1382,33 @@ void qSlicerTerminologyNavigatorWidget::populateRegionTable()
     return;
     }
 
-  // Get type names containing the search string. If no search string then add every type
-  vtkSmartPointer<vtkStringArray> regionNamesArray = vtkSmartPointer<vtkStringArray>::New();
-  logic->FindRegionNamesInAnatomicContext(
-    d->CurrentAnatomicContextName.toLatin1().constData(), regionNamesArray,
-    d->SearchBox_AnatomicRegion->text().toLatin1().constData() );
+  // Get region names containing the search string. If no search string then add every region
+  std::vector<vtkSlicerTerminologiesModuleLogic::CodeIdentifier> regions;
+  logic->FindRegionsInAnatomicContext(
+    d->CurrentAnatomicContextName.toLatin1().constData(),
+    regions, d->SearchBox_Type->text().toLatin1().constData() );
 
   QTableWidgetItem* selectedItem = NULL;
-  d->tableWidget_AnatomicRegion->setRowCount(regionNamesArray->GetNumberOfValues());
-  for (int index=0; index<regionNamesArray->GetNumberOfValues(); ++index)
+  d->tableWidget_AnatomicRegion->setRowCount(regions.size());
+  int index = 0;
+  std::vector<vtkSlicerTerminologiesModuleLogic::CodeIdentifier>::iterator idIt;
+  for (idIt=regions.begin(); idIt!=regions.end(); ++idIt, ++index)
     {
-    QString currentRegionName( regionNamesArray->GetValue(index).c_str() );
-    QTableWidgetItem* currentRegionItem = new QTableWidgetItem(currentRegionName);
-    d->tableWidget_AnatomicRegion->setItem(index, 0, currentRegionItem);
+    vtkSlicerTerminologiesModuleLogic::CodeIdentifier addedRegionId = (*idIt);
+    QString addedRegionName(addedRegionId.CodeMeaning.c_str());
+    QTableWidgetItem* addedRegionItem = new QTableWidgetItem(addedRegionName);
+    addedRegionItem->setData(CodingSchemeDesignatorRole, QString(addedRegionId.CodingSchemeDesignator.c_str()));
+    addedRegionItem->setData(CodeValueRole, QString(addedRegionId.CodeValue.c_str()));
+    d->tableWidget_AnatomicRegion->setItem(index, 0, addedRegionItem);
 
-    if (!currentRegionName.compare(d->CurrentRegionName))
+    if ( d->CurrentRegionObject->GetCodingScheme() && !addedRegionId.CodingSchemeDesignator.compare(d->CurrentRegionObject->GetCodingScheme())
+      && d->CurrentRegionObject->GetCodeValue() && !addedRegionId.CodeValue.compare(d->CurrentRegionObject->GetCodeValue()) )
       {
-      selectedItem = currentRegionItem;
+      selectedItem = addedRegionItem;
       }
     }
 
-  // Select type if selection was valid and item shows up in search
+  // Select region if selection was valid and item shows up in search
   if (selectedItem)
     {
     d->tableWidget_AnatomicRegion->setCurrentItem(selectedItem);
@@ -1271,7 +1422,7 @@ void qSlicerTerminologyNavigatorWidget::populateRegionModifierComboBox()
 
   d->ComboBox_AnatomicRegionModifier->clear();
 
-  if (d->CurrentAnatomicContextName.isEmpty() || d->CurrentRegionName.isEmpty())
+  if (d->CurrentAnatomicContextName.isEmpty() || !d->CurrentRegionObject || !d->CurrentRegionObject->GetCodeValue())
     {
     d->ComboBox_AnatomicRegionModifier->setEnabled(false);
     return;
@@ -1291,19 +1442,40 @@ void qSlicerTerminologyNavigatorWidget::populateRegionModifierComboBox()
     }
 
   // Get region modifier names
-  vtkSmartPointer<vtkStringArray> regionModifierNamesArray = vtkSmartPointer<vtkStringArray>::New();
-  logic->GetRegionModifierNamesInAnatomicRegion(
-    d->CurrentAnatomicContextName.toLatin1().constData(), d->CurrentRegionName.toLatin1().constData(), regionModifierNamesArray );
+  std::vector<vtkSlicerTerminologiesModuleLogic::CodeIdentifier> regionModifiers;
+  logic->GetRegionModifiersInAnatomicRegion(
+    d->CurrentAnatomicContextName.toLatin1().constData(),
+    vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyType(d->CurrentRegionObject),
+    regionModifiers );
 
-  for (int index=0; index<regionModifierNamesArray->GetNumberOfValues(); ++index)
+  int selectedIndex = -1;
+  int index = 0;
+  std::vector<vtkSlicerTerminologiesModuleLogic::CodeIdentifier>::iterator idIt;
+  for (idIt=regionModifiers.begin(); idIt!=regionModifiers.end(); ++idIt, ++index)
     {
-    QString currentRegionModifierName( regionModifierNamesArray->GetValue(index).c_str() );
-    d->ComboBox_AnatomicRegionModifier->addItem(currentRegionModifierName);
+    vtkSlicerTerminologiesModuleLogic::CodeIdentifier addedRegionModifierId = (*idIt);
+    QString addedRegionModifierName(addedRegionModifierId.CodeMeaning.c_str());
+
+    QMap<QString, QVariant> userData;
+    userData[QString::number(CodingSchemeDesignatorRole)] = QString(addedRegionModifierId.CodingSchemeDesignator.c_str());
+    userData[QString::number(CodeValueRole)] = QString(addedRegionModifierId.CodeValue.c_str());
+    d->ComboBox_AnatomicRegionModifier->addItem(addedRegionModifierName, QVariant(userData));
+
+    if (!addedRegionModifierName.compare(d->CurrentRegionModifierObject->GetCodeMeaning()))
+      {
+      selectedIndex = index;
+      }
+    }
+
+  // Select modifier if selection was valid
+  if (selectedIndex != -1)
+    {
+    d->ComboBox_AnatomicRegionModifier->setCurrentIndex(selectedIndex);
     }
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTerminologyNavigatorWidget::setAnatomicContextByName(QString contextName)
+void qSlicerTerminologyNavigatorWidget::setCurrentAnatomicContext(QString contextName)
 {
   Q_D(qSlicerTerminologyNavigatorWidget);
 
@@ -1348,13 +1520,13 @@ void qSlicerTerminologyNavigatorWidget::onAnatomicContextSelectionChanged(int in
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
 
   // Set current anatomic context
-  this->setAnatomicContextByName(d->ComboBox_AnatomicContext->itemText(index));
+  this->setCurrentAnatomicContext(d->ComboBox_AnatomicContext->itemText(index));
 
   QApplication::restoreOverrideCursor();
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTerminologyNavigatorWidget::setRegionByName(QString regionName)
+bool qSlicerTerminologyNavigatorWidget::setCurrentRegion(vtkSlicerTerminologyType* region)
 {
   Q_D(qSlicerTerminologyNavigatorWidget);
 
@@ -1362,27 +1534,23 @@ void qSlicerTerminologyNavigatorWidget::setRegionByName(QString regionName)
   d->resetCurrentRegionModifier();
 
   // Set current region
-  d->CurrentRegionName = regionName;
-  if (regionName.isEmpty())
-    {
-    return;
-    }
-
-  // Get current region container object
-  vtkSlicerTerminologiesModuleLogic* logic = d->terminologyLogic();
-  if (!logic)
-    {
-    qCritical() << Q_FUNC_INFO << ": Failed to access terminology logic";
-    return;
-    }
-  logic->GetRegionInAnatomicContext(
-    d->CurrentAnatomicContextName.toLatin1().constData(), d->CurrentRegionName.toLatin1().constData(), d->CurrentRegionObject );
+  d->CurrentRegionObject->Copy(region);
 
   // Populate region modifier combobox
   this->populateRegionModifierComboBox();
 
   // Only enable region modifier combobox if there are items in it
   d->ComboBox_AnatomicRegionModifier->setEnabled(d->ComboBox_AnatomicRegionModifier->count());
+
+  // Select region if found
+  QTableWidgetItem* regionItem = d->findTableWidgetItemForType(d->tableWidget_AnatomicRegion, region);
+  if (regionItem)
+    {
+    d->tableWidget_AnatomicRegion->blockSignals(true);
+    d->tableWidget_AnatomicRegion->setCurrentItem(regionItem);
+    d->tableWidget_AnatomicRegion->blockSignals(false);
+    }
+  return regionItem; // Return true if category found and selected
 }
 
 //-----------------------------------------------------------------------------
@@ -1392,34 +1560,49 @@ void qSlicerTerminologyNavigatorWidget::onRegionClicked(QTableWidgetItem* item)
 
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
 
-  // Set current region
-  this->setRegionByName(item->text());
-
-  QApplication::restoreOverrideCursor();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerTerminologyNavigatorWidget::setRegionModifierByName(QString modifierName)
-{
-  Q_D(qSlicerTerminologyNavigatorWidget);
-
-  // Set current region modifier
-  d->CurrentRegionModifierName = modifierName;
-  if (modifierName.isEmpty())
-    {
-    return;
-    }
-
-  // Get current region modifier container object
+  // Get current region object
   vtkSlicerTerminologiesModuleLogic* logic = d->terminologyLogic();
   if (!logic)
     {
     qCritical() << Q_FUNC_INFO << ": Failed to access terminology logic";
     return;
     }
-  logic->GetRegionModifierInAnatomicRegion(
-    d->CurrentAnatomicContextName.toLatin1().constData(), d->CurrentRegionName.toLatin1().constData(),
-    d->CurrentRegionModifierName.toLatin1().constData(), d->CurrentRegionModifierObject );
+  vtkSlicerTerminologiesModuleLogic::CodeIdentifier regionId(
+    item->data(CodingSchemeDesignatorRole).toString().toLatin1().constData(),
+    item->data(CodeValueRole).toString().toLatin1().constData(),
+    item->text().toLatin1().constData() );
+  vtkSmartPointer<vtkSlicerTerminologyType> region = vtkSmartPointer<vtkSlicerTerminologyType>::New();
+  if (!logic->GetRegionInAnatomicContext(
+    d->CurrentAnatomicContextName.toLatin1().constData(),
+    regionId, region) )
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to find region '" << item->text();
+    return;
+    }
+
+  // Set current region
+  this->setCurrentRegion(region);
+
+  QApplication::restoreOverrideCursor();
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerTerminologyNavigatorWidget::setCurrentRegionModifier(vtkSlicerTerminologyType* modifier)
+{
+  Q_D(qSlicerTerminologyNavigatorWidget);
+
+  // Set current type modifier
+  d->CurrentRegionModifierObject->Copy(modifier);
+
+  // Select modifier if found
+  int modifierIndex = d->findComboBoxIndexForModifier(d->ComboBox_AnatomicRegionModifier, modifier);
+  if (modifierIndex != -1)
+    {
+    d->ComboBox_AnatomicRegionModifier->blockSignals(true);
+    d->ComboBox_AnatomicRegionModifier->setCurrentIndex(modifierIndex);
+    d->ComboBox_AnatomicRegionModifier->blockSignals(false);
+    }
+  return (modifierIndex != -1);
 }
 
 //-----------------------------------------------------------------------------
@@ -1430,8 +1613,30 @@ void qSlicerTerminologyNavigatorWidget::onRegionModifierSelectionChanged(int ind
 
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
 
+  // Get current modifier object
+  vtkSlicerTerminologiesModuleLogic* logic = d->terminologyLogic();
+  if (!logic)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access terminology logic";
+    return;
+    }
+  QMap<QString, QVariant> userData = d->ComboBox_AnatomicRegionModifier->itemData(index).toMap();
+  vtkSlicerTerminologiesModuleLogic::CodeIdentifier modifierId(
+    userData[QString::number(CodingSchemeDesignatorRole)].toString().toLatin1().constData(),
+    userData[QString::number(CodeValueRole)].toString().toLatin1().constData(),
+    d->ComboBox_AnatomicRegionModifier->itemText(index).toLatin1().constData() );
+  vtkSmartPointer<vtkSlicerTerminologyType> modifier = vtkSmartPointer<vtkSlicerTerminologyType>::New();
+  if (!logic->GetRegionModifierInAnatomicRegion(
+    d->CurrentAnatomicContextName.toLatin1().constData(),
+    vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyType(d->CurrentRegionObject),
+    modifierId, modifier) )
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to find modifier '" << d->ComboBox_AnatomicRegionModifier->itemText(index);
+    return;
+    }
+
   // Set current region modifier
-  this->setRegionModifierByName(d->ComboBox_AnatomicRegionModifier->currentText());
+  this->setCurrentRegionModifier(modifier);
 
   QApplication::restoreOverrideCursor();
 }

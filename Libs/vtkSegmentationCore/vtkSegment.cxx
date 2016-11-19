@@ -43,14 +43,7 @@
 //----------------------------------------------------------------------------
 const double vtkSegment::SEGMENT_COLOR_VALUE_INVALID[4] = {0.5, 0.5, 0.5, 1.0};
 
-const char* vtkSegment::GetTerminologyContextTagName() { return "TerminologyContextName"; };
-const char* vtkSegment::GetTerminologyCategoryTagName() { return "TerminologyCategoryCodeMeaning"; };
-const char* vtkSegment::GetTerminologyTypeTagName() { return "TerminologyTypeCodeMeaning"; };
-const char* vtkSegment::GetTerminologyTypeModifierTagName() { return "TerminologyTypeModifierCodeMeaning"; };
-const char* vtkSegment::GetRecommendedColorTagName() { return "RecommendedColor"; };
-const char* vtkSegment::GetAnatomicContextTagName() { return "AnatomicContextName"; };
-const char* vtkSegment::GetAnatomicRegionTagName() { return "AnatomicRegionCodeMeaning"; };
-const char* vtkSegment::GetAnatomicRegionModifierTagName() { return "AnatomicRegionModifierCodeMeaning"; };
+const char* vtkSegment::GetTerminologyEntryTagName() { return "TerminologyEntry"; };
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSegment);

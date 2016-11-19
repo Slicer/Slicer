@@ -62,25 +62,25 @@ public:
   Json::Value GetCategoryArrayInTerminology(std::string terminologyName);
   /// Get category Json object from terminology with given category name
   /// \return Null Json value on failure, the category Json object otherwise
-  Json::Value GetCategoryInTerminology(std::string terminologyName, std::string categoryName);
+  Json::Value GetCategoryInTerminology(std::string terminologyName, CodeIdentifier categoryId);
   /// Populate \sa vtkSlicerTerminologyCategory from Json terminology
   bool PopulateTerminologyCategoryFromJson(Json::Value categoryObject, vtkSlicerTerminologyCategory* category);
 
   /// Get type array Json value for a given terminology and category
   /// \return Null Json value on failure, the array object otherwise
-  Json::Value GetTypeArrayInTerminologyCategory(std::string terminologyName, std::string categoryName);
+  Json::Value GetTypeArrayInTerminologyCategory(std::string terminologyName, CodeIdentifier categoryId);
   /// Get type Json object from a terminology category with given type name
   /// \return Null Json value on failure, the type Json object otherwise
-  Json::Value GetTypeInTerminologyCategory(std::string terminologyName, std::string categoryName, std::string typeName);
+  Json::Value GetTypeInTerminologyCategory(std::string terminologyName, CodeIdentifier categoryId, CodeIdentifier typeId);
   /// Populate \sa vtkSlicerTerminologyType from Json terminology
   bool PopulateTerminologyTypeFromJson(Json::Value typeObject, vtkSlicerTerminologyType* type);
 
   /// Get type modifier array Json value for a given terminology, category, and type
   /// \return Null Json value on failure, the array object otherwise
-  Json::Value GetTypeModifierArrayInTerminologyType(std::string terminologyName, std::string categoryName, std::string typeName);
+  Json::Value GetTypeModifierArrayInTerminologyType(std::string terminologyName, CodeIdentifier categoryId, CodeIdentifier typeId);
   /// Get type modifier Json object from a terminology, category, and type with given modifier name
   /// \return Null Json value on failure, the type Json object otherwise
-  Json::Value GetTypeModifierInTerminologyType(std::string terminologyName, std::string categoryName, std::string typeName, std::string modifierName);
+  Json::Value GetTypeModifierInTerminologyType(std::string terminologyName, CodeIdentifier categoryId, CodeIdentifier typeId, CodeIdentifier modifierId);
 
   /// Get root Json value for the anatomic context with given name
   Json::Value GetAnatomicContextRootByName(std::string anatomicContextName);
@@ -90,16 +90,16 @@ public:
   Json::Value GetRegionArrayInAnatomicContext(std::string anatomicContextName);
   /// Get type Json object from an anatomic context with given region name
   /// \return Null Json value on failure, the type Json object otherwise
-  Json::Value GetRegionInAnatomicContext(std::string anatomicContextName, std::string regionName);
+  Json::Value GetRegionInAnatomicContext(std::string anatomicContextName, CodeIdentifier regionId);
   /// Populate \sa vtkSlicerTerminologyType from Json anatomic region
   bool PopulateRegionFromJson(Json::Value anatomicRegionObject, vtkSlicerTerminologyType* region);
 
   /// Get region modifier array Json value for a given anatomic context and region
   /// \return Null Json value on failure, the array object otherwise
-  Json::Value GetRegionModifierArrayInRegion(std::string anatomicContextName, std::string regionName);
+  Json::Value GetRegionModifierArrayInRegion(std::string anatomicContextName, CodeIdentifier regionId);
   /// Get type modifier Json object from an anatomic context and region with given modifier name
   /// \return Null Json value on failure, the type Json object otherwise
-  Json::Value GetRegionModifierInRegion(std::string anatomicContextName, std::string regionName, std::string modifierName);
+  Json::Value GetRegionModifierInRegion(std::string anatomicContextName, CodeIdentifier regionId, CodeIdentifier modifierId);
 
 public:
   /// Loaded terminologies. Key is the context name, value is the root item.
@@ -169,9 +169,9 @@ Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetCategoryArrayInTe
 }
 
 //---------------------------------------------------------------------------
-Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetCategoryInTerminology(std::string terminologyName, std::string categoryName)
+Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetCategoryInTerminology(std::string terminologyName, CodeIdentifier categoryId)
 {
-  if (categoryName.empty())
+  if (categoryId.CodingSchemeDesignator.empty() || categoryId.CodeValue.empty())
     {
     return Json::Value();
     }
@@ -189,8 +189,10 @@ Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetCategoryInTermino
     Json::Value category = categoryArray[index];
     if (category.isObject())
       {
-      Json::Value categoryCodeMeaning = category["codeMeaning"];
-      if (categoryCodeMeaning.isString() && !categoryName.compare(categoryCodeMeaning.asString()))
+      Json::Value categoryCodingSchemeDesignator = category["CodingSchemeDesignator"];
+      Json::Value categoryCodeValue = category["CodeValue"];
+      if ( categoryCodingSchemeDesignator.isString() && !categoryId.CodingSchemeDesignator.compare(categoryCodingSchemeDesignator.asString())
+        && categoryCodeValue.isString() && !categoryId.CodeValue.compare(categoryCodeValue.asString()) )
         {
         return category;
         }
@@ -210,12 +212,12 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::PopulateTerminologyCategory
     return false;
     }
 
-  Json::Value codeMeaning = categoryObject["codeMeaning"];             // e.g. "Tissue" (mandatory)
-  Json::Value codingScheme = categoryObject["codingScheme"];           // e.g. "SRT"
+  Json::Value codeMeaning = categoryObject["CodeMeaning"];             // e.g. "Tissue" (mandatory)
+  Json::Value codingScheme = categoryObject["CodingSchemeDesignator"]; // e.g. "SRT"
   Json::Value SNOMEDCTConceptID = categoryObject["SNOMEDCTConceptID"]; // e.g. "85756007"
   Json::Value UMLSConceptUID = categoryObject["UMLSConceptUID"];       // e.g. "C0040300"
   Json::Value cid = categoryObject["cid"];                             // e.g. "7051"
-  Json::Value codeValue = categoryObject["codeValue"];                 // e.g. "T-D0050"
+  Json::Value codeValue = categoryObject["CodeValue"];                 // e.g. "T-D0050"
   Json::Value contextGroupName = categoryObject["contextGroupName"];   // e.g. "Segmentation Property Categories" (mandatory)
   Json::Value showAnatomy = categoryObject["showAnatomy"];
   if (!codeMeaning.isString() || !contextGroupName.isString())
@@ -250,16 +252,16 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::PopulateTerminologyCategory
 }
 
 //---------------------------------------------------------------------------
-Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetTypeArrayInTerminologyCategory(std::string terminologyName, std::string categoryName)
+Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetTypeArrayInTerminologyCategory(std::string terminologyName, CodeIdentifier categoryId)
 {
-  if (categoryName.empty())
+  if (categoryId.CodingSchemeDesignator.empty() || categoryId.CodeValue.empty())
     {
     return Json::Value();
     }
-  Json::Value categoryObject = this->GetCategoryInTerminology(terminologyName, categoryName);
+  Json::Value categoryObject = this->GetCategoryInTerminology(terminologyName, categoryId);
   if (categoryObject.isNull())
     {
-    vtkGenericWarningMacro("GetTypeArrayInTerminologyCategory: Failed to find category '" << categoryName << "' in terminology '" << terminologyName << "'");
+    vtkGenericWarningMacro("GetTypeArrayInTerminologyCategory: Failed to find category '" << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
     return Json::Value();
     }
 
@@ -267,7 +269,7 @@ Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetTypeArrayInTermin
   if (!typeArray.isArray())
     {
     vtkGenericWarningMacro("GetTypeArrayInTerminologyCategory: Failed to find Type array member in category '"
-      << categoryName << "' in terminology '" << terminologyName << "'");
+      << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
     return Json::Value();
     }
 
@@ -276,17 +278,17 @@ Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetTypeArrayInTermin
 
 //---------------------------------------------------------------------------
 Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetTypeInTerminologyCategory(
-  std::string terminologyName, std::string categoryName, std::string typeName)
+  std::string terminologyName, CodeIdentifier categoryId, CodeIdentifier typeId)
 {
-  if (typeName.empty())
+  if (typeId.CodingSchemeDesignator.empty() || typeId.CodeValue.empty())
     {
     return Json::Value();
     }
-  Json::Value typeArray = this->GetTypeArrayInTerminologyCategory(terminologyName, categoryName);
+  Json::Value typeArray = this->GetTypeArrayInTerminologyCategory(terminologyName, categoryId);
   if (typeArray.isNull())
     {
     vtkGenericWarningMacro("GetTypeInTerminologyCategory: Failed to find type array for category '"
-      << categoryName << "' in terminology '" << terminologyName << "'");
+      << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
     return Json::Value();
     }
 
@@ -297,8 +299,10 @@ Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetTypeInTerminology
     Json::Value type = typeArray[index];
     if (type.isObject())
       {
-      Json::Value typeCodeMeaning = type["codeMeaning"];
-      if (typeCodeMeaning.isString() && !typeName.compare(typeCodeMeaning.asString()))
+      Json::Value typeCodingSchemeDesignator = type["CodingSchemeDesignator"];
+      Json::Value typeCodeValue = type["CodeValue"];
+      if ( typeCodingSchemeDesignator.isString() && !typeId.CodingSchemeDesignator.compare(typeCodingSchemeDesignator.asString())
+        && typeCodeValue.isString() && !typeId.CodeValue.compare(typeCodeValue.asString()) )
         {
         return type;
         }
@@ -319,13 +323,13 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::PopulateTerminologyTypeFrom
     }
 
   Json::Value recommendedDisplayRGBValue = typeObject["recommendedDisplayRGBValue"];
-  Json::Value codeMeaning = typeObject["codeMeaning"];             // e.g. "Artery" (mandatory)
-  Json::Value codingScheme = typeObject["codingScheme"];           // e.g. "SRT"
+  Json::Value codeMeaning = typeObject["CodeMeaning"];             // e.g. "Artery" (mandatory)
+  Json::Value codingScheme = typeObject["CodingSchemeDesignator"]; // e.g. "SRT"
   Json::Value slicerLabel = typeObject["3dSlicerLabel"];           // e.g. "artery"
   Json::Value SNOMEDCTConceptID = typeObject["SNOMEDCTConceptID"]; // e.g. "85756007"
   Json::Value UMLSConceptUID = typeObject["UMLSConceptUID"];       // e.g. "C0040300"
   Json::Value cid = typeObject["cid"];                             // e.g. "7051"
-  Json::Value codeValue = typeObject["codeValue"];                 // e.g. "T-D0050"
+  Json::Value codeValue = typeObject["CodeValue"];                 // e.g. "T-D0050"
   Json::Value contextGroupName = typeObject["contextGroupName"];   // e.g. "Segmentation Property Categories" (mandatory)
   Json::Value modifier = typeObject["Modifier"];                   // Modifier array, containing modifiers of this type, e.g. "Left"
   if (!codeMeaning.isString() || !contextGroupName.isString())
@@ -364,25 +368,25 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::PopulateTerminologyTypeFrom
 
 //---------------------------------------------------------------------------
 Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetTypeModifierArrayInTerminologyType(
-  std::string terminologyName, std::string categoryName, std::string typeName)
+  std::string terminologyName, CodeIdentifier categoryId, CodeIdentifier typeId)
 {
-  if (typeName.empty())
+  if (typeId.CodingSchemeDesignator.empty() || typeId.CodeValue.empty())
     {
     return Json::Value();
     }
-  Json::Value categoryObject = this->GetCategoryInTerminology(terminologyName, categoryName);
+  Json::Value categoryObject = this->GetCategoryInTerminology(terminologyName, categoryId);
   if (categoryObject.isNull())
     {
     vtkGenericWarningMacro("GetTypeModifierArrayInTerminologyType: Failed to find category '" <<
-      categoryName << "' in terminology '" << terminologyName << "'");
+      categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
     return Json::Value();
     }
 
-  Json::Value typeObject = this->GetTypeInTerminologyCategory(terminologyName, categoryName, typeName);
+  Json::Value typeObject = this->GetTypeInTerminologyCategory(terminologyName, categoryId, typeId);
   if (typeObject.isNull())
     {
-    vtkGenericWarningMacro("GetTypeModifierArrayInTerminologyType: Failed to find type '" << typeName << "' in category '"
-      << categoryName << "' in terminology '" << terminologyName << "'");
+    vtkGenericWarningMacro("GetTypeModifierArrayInTerminologyType: Failed to find type '" << typeId.CodeMeaning << "' in category '"
+      << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
     return Json::Value();
     }
 
@@ -397,17 +401,17 @@ Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetTypeModifierArray
 
 //---------------------------------------------------------------------------
 Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetTypeModifierInTerminologyType(
-  std::string terminologyName, std::string categoryName, std::string typeName, std::string modifierName)
+  std::string terminologyName, CodeIdentifier categoryId, CodeIdentifier typeId, CodeIdentifier modifierId)
 {
-  if (modifierName.empty())
+  if (modifierId.CodingSchemeDesignator.empty() || modifierId.CodeValue.empty())
     {
     return Json::Value();
     }
-  Json::Value typeModifierArray = this->GetTypeModifierArrayInTerminologyType(terminologyName, categoryName, typeName);
+  Json::Value typeModifierArray = this->GetTypeModifierArrayInTerminologyType(terminologyName, categoryId, typeId);
   if (typeModifierArray.isNull())
     {
-    vtkGenericWarningMacro("GetTypeModifierInTerminologyType: Failed to find type modifier array for type '" << typeName << "' in category '"
-      << categoryName << "' in terminology '" << terminologyName << "'");
+    vtkGenericWarningMacro("GetTypeModifierInTerminologyType: Failed to find type modifier array for type '" << typeId.CodeMeaning << "' in category '"
+      << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
     return Json::Value();
     }
 
@@ -418,8 +422,10 @@ Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetTypeModifierInTer
     Json::Value typeModifier = typeModifierArray[index];
     if (typeModifier.isObject())
       {
-      Json::Value typeModifierCodeMeaning = typeModifier["codeMeaning"];
-      if (typeModifierCodeMeaning.isString() && !modifierName.compare(typeModifierCodeMeaning.asString()))
+      Json::Value typeModifierCodingSchemeDesignator = typeModifier["CodingSchemeDesignator"];
+      Json::Value typeModifierCodeValue = typeModifier["CodeValue"];
+      if ( typeModifierCodingSchemeDesignator.isString() && !modifierId.CodingSchemeDesignator.compare(typeModifierCodingSchemeDesignator.asString())
+        && typeModifierCodeValue.isString() && !modifierId.CodeValue.compare(typeModifierCodeValue.asString()) )
         {
         return typeModifier;
         }
@@ -474,9 +480,9 @@ Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetRegionArrayInAnat
 }
 
 //---------------------------------------------------------------------------
-Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetRegionInAnatomicContext(std::string anatomicContextName, std::string regionName)
+Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetRegionInAnatomicContext(std::string anatomicContextName, CodeIdentifier regionId)
 {
-  if (regionName.empty())
+  if (regionId.CodingSchemeDesignator.empty() || regionId.CodeValue.empty())
     {
     return Json::Value();
     }
@@ -494,8 +500,10 @@ Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetRegionInAnatomicC
     Json::Value region = regionArray[index];
     if (region.isObject())
       {
-      Json::Value regionCodeMeaning = region["codeMeaning"];
-      if (regionCodeMeaning.isString() && !regionName.compare(regionCodeMeaning.asString()))
+      Json::Value regionCodingSchemeDesignator = region["CodingSchemeDesignator"];
+      Json::Value regionCodeValue = region["CodeValue"];
+      if ( regionCodingSchemeDesignator.isString() && !regionId.CodingSchemeDesignator.compare(regionCodingSchemeDesignator.asString())
+        && regionCodeValue.isString() && !regionId.CodeValue.compare(regionCodeValue.asString()) )
         {
         return region;
         }
@@ -514,25 +522,25 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::PopulateRegionFromJson(Json
 }
 
 //---------------------------------------------------------------------------
-Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetRegionModifierArrayInRegion(std::string anatomicContextName, std::string regionName)
+Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetRegionModifierArrayInRegion(std::string anatomicContextName, CodeIdentifier regionId)
 {
-  if (regionName.empty())
+  if (regionId.CodingSchemeDesignator.empty() || regionId.CodeValue.empty())
     {
     return Json::Value();
     }
-  Json::Value regionObject = this->GetRegionInAnatomicContext(anatomicContextName, regionName);
+  Json::Value regionObject = this->GetRegionInAnatomicContext(anatomicContextName, regionId);
   if (regionObject.isNull())
     {
     vtkGenericWarningMacro("GetRegionModifierArrayInAnatomicRegion: Failed to find region '" <<
-      regionName << "' in anatomic context '" << anatomicContextName << "'");
+      regionId.CodeMeaning << "' in anatomic context '" << anatomicContextName << "'");
     return Json::Value();
     }
 
   Json::Value regionModifierArray = regionObject["Modifier"];
   if (!regionModifierArray.isArray())
     {
-    vtkGenericWarningMacro("GetRegionModifierArrayInAnatomicRegion: Failed to find Modifier array member in region '" << regionName
-      << "' in anatomic context '" << anatomicContextName << "'");
+    vtkGenericWarningMacro("GetRegionModifierArrayInAnatomicRegion: Failed to find Modifier array member in region '" <<
+      regionId.CodeMeaning << "' in anatomic context '" << anatomicContextName << "'");
     return Json::Value();
     }
 
@@ -541,17 +549,17 @@ Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetRegionModifierArr
 
 //---------------------------------------------------------------------------
 Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetRegionModifierInRegion(
-  std::string anatomicContextName, std::string regionName, std::string modifierName )
+  std::string anatomicContextName, CodeIdentifier regionId, CodeIdentifier modifierId )
 {
-  if (modifierName.empty())
+  if (modifierId.CodingSchemeDesignator.empty() || modifierId.CodeValue.empty())
     {
     return Json::Value();
     }
-  Json::Value regionModifierArray = this->GetRegionModifierArrayInRegion(anatomicContextName, regionName);
+  Json::Value regionModifierArray = this->GetRegionModifierArrayInRegion(anatomicContextName, regionId);
   if (regionModifierArray.isNull())
     {
-    vtkGenericWarningMacro("GetRegionModifierInRegion: Failed to find region modifier array for region '" << regionName
-      << "' in anatomic context '" << anatomicContextName << "'");
+    vtkGenericWarningMacro("GetRegionModifierInRegion: Failed to find region modifier array for region '" <<
+      regionId.CodeMeaning << "' in anatomic context '" << anatomicContextName << "'");
     return Json::Value();
     }
 
@@ -562,8 +570,10 @@ Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetRegionModifierInR
     Json::Value regionModifier = regionModifierArray[index];
     if (regionModifier.isObject())
       {
-      Json::Value typeModifierCodeMeaning = regionModifier["codeMeaning"];
-      if (typeModifierCodeMeaning.isString() && !modifierName.compare(typeModifierCodeMeaning.asString()))
+      Json::Value regionModifierCodingSchemeDesignator = regionModifier["CodingSchemeDesignator"];
+      Json::Value regionModifierCodeValue = regionModifier["CodeValue"];
+      if ( regionModifierCodingSchemeDesignator.isString() && !modifierId.CodingSchemeDesignator.compare(regionModifierCodingSchemeDesignator.asString())
+        && regionModifierCodeValue.isString() && !modifierId.CodeValue.compare(regionModifierCodeValue.asString()) )
         {
         return regionModifier;
         }
@@ -760,56 +770,20 @@ void vtkSlicerTerminologiesModuleLogic::GetLoadedAnatomicContextNames(vtkStringA
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::GetCategoriesInTerminology(std::string terminologyName, vtkCollection* categoryCollection)
+bool vtkSlicerTerminologiesModuleLogic::GetCategoriesInTerminology(std::string terminologyName, std::vector<CodeIdentifier>& categories)
 {
-  if (!categoryCollection)
-    {
-    return false;
-    }
-  categoryCollection->RemoveAllItems();
-
-  Json::Value categoryArray = this->Internal->GetCategoryArrayInTerminology(terminologyName);
-  if (categoryArray.isNull())
-    {
-    vtkErrorMacro("GetCategoriesInTerminology: Failed to find Category array in terminology '" << terminologyName << "'");
-    return false;
-    }
-
-  // Collect categories
-  Json::ArrayIndex index = 0;
-  while (categoryArray.isValidIndex(index))
-    {
-    Json::Value category = categoryArray[index];
-    if (category.isObject())
-      {
-      vtkSmartPointer<vtkSlicerTerminologyCategory> currentCategory = vtkSmartPointer<vtkSlicerTerminologyCategory>::New();
-      if (!this->Internal->PopulateTerminologyCategoryFromJson(category, currentCategory))
-        {
-        vtkErrorMacro("GetCategoriesInTerminology: Unable to parse a category in terminology '" << terminologyName << "'");
-        continue;
-        }
-
-      categoryCollection->AddItem(currentCategory);
-      }
-    ++index;
-    } // For each category index
-
-  return true;
+  return this->FindCategoriesInTerminology(terminologyName, categories, "");
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::FindCategoryNamesInTerminology(std::string terminologyName, vtkStringArray* categoryNames, std::string search/*=""*/)
+bool vtkSlicerTerminologiesModuleLogic::FindCategoriesInTerminology(std::string terminologyName, std::vector<CodeIdentifier>& categories, std::string search/*=""*/)
 {
-  if (!categoryNames)
-    {
-    return false;
-    }
-  categoryNames->Initialize();
+  categories.clear();
 
   Json::Value categoryArray = this->Internal->GetCategoryArrayInTerminology(terminologyName);
   if (categoryArray.isNull())
     {
-    vtkErrorMacro("FindCategoryNamesInTerminology: Failed to find Category array in terminology '" << terminologyName << "'");
+    vtkErrorMacro("FindCategoriesInTerminology: Failed to find category array in terminology '" << terminologyName << "'");
     return false;
     }
 
@@ -823,17 +797,24 @@ bool vtkSlicerTerminologiesModuleLogic::FindCategoryNamesInTerminology(std::stri
     Json::Value category = categoryArray[index];
     if (category.isObject())
       {
-      Json::Value categoryName = category["codeMeaning"];
-      if (categoryName.isString())
+      Json::Value categoryName = category["CodeMeaning"];
+      Json::Value categoryCodingSchemeDesignator = category["CodingSchemeDesignator"];
+      Json::Value categoryCodeValue = category["CodeValue"];
+      if (categoryName.isString() && categoryCodingSchemeDesignator.isString() && categoryCodeValue.isString())
         {
-        // Add category name to list if search string is empty or is contained by the current category name
+        // Add category to list if search string is empty or is contained by the current category name
         std::string categoryNameStr = categoryName.asString();
         std::string categoryNameLowerCase(categoryNameStr);
         std::transform(categoryNameLowerCase.begin(), categoryNameLowerCase.end(), categoryNameLowerCase.begin(), ::tolower);
         if (search.empty() || categoryNameLowerCase.find(search) != std::string::npos)
           {
-          categoryNames->InsertNextValue(categoryNameStr);
+          CodeIdentifier categoryId(categoryCodingSchemeDesignator.asString(), categoryCodeValue.asString(), categoryNameStr);
+          categories.push_back(categoryId);
           }
+        }
+      else
+        {
+        vtkErrorMacro("FindCategoriesInTerminology: Invalid category '" << categoryName.asString() << "' in terminology '" << terminologyName << "'");
         }
       }
     ++index;
@@ -843,90 +824,41 @@ bool vtkSlicerTerminologiesModuleLogic::FindCategoryNamesInTerminology(std::stri
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::GetCategoryNamesInTerminology(std::string terminologyName, vtkStringArray* categoryNames)
+bool vtkSlicerTerminologiesModuleLogic::GetCategoryInTerminology(std::string terminologyName, CodeIdentifier categoryId, vtkSlicerTerminologyCategory* category)
 {
-  return this->FindCategoryNamesInTerminology(terminologyName, categoryNames, "");
-}
-
-//---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::GetCategoryInTerminology(std::string terminologyName, std::string categoryName, vtkSlicerTerminologyCategory* category)
-{
-  if (!category || categoryName.empty())
+  if (!category || categoryId.CodingSchemeDesignator.empty() || categoryId.CodeValue.empty())
     {
     return false;
     }
 
-  Json::Value categoryObject = this->Internal->GetCategoryInTerminology(terminologyName, categoryName);
+  Json::Value categoryObject = this->Internal->GetCategoryInTerminology(terminologyName, categoryId);
   if (categoryObject.isNull())
     {
-    vtkErrorMacro("GetCategoryInTerminology: Failed to find category '" << categoryName << "' in terminology '" << terminologyName << "'");
+    vtkErrorMacro("GetCategoryInTerminology: Failed to find category '" << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
     return false;
     }
 
-  // Category with specified name found
+  // Category found
   return this->Internal->PopulateTerminologyCategoryFromJson(categoryObject, category);
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::GetTypesInTerminologyCategory(std::string terminologyName, std::string categoryName, vtkCollection* typeCollection)
+bool vtkSlicerTerminologiesModuleLogic::GetTypesInTerminologyCategory(std::string terminologyName, CodeIdentifier categoryId, std::vector<CodeIdentifier>& types)
 {
-  if (!typeCollection || categoryName.empty())
-    {
-    return false;
-    }
-  typeCollection->RemoveAllItems();
-
-  Json::Value typeArray = this->Internal->GetTypeArrayInTerminologyCategory(terminologyName, categoryName);
-  if (typeArray.isNull())
-    {
-    vtkErrorMacro("GetTypesInTerminologyCategory: Failed to find Type array member in category '"
-      << categoryName << "' in terminology '" << terminologyName << "'");
-    return false;
-    }
-
-  // Collect types
-  Json::ArrayIndex index = 0;
-  while (typeArray.isValidIndex(index))
-    {
-    Json::Value type = typeArray[index];
-    if (type.isObject())
-      {
-      vtkSmartPointer<vtkSlicerTerminologyType> currentType = vtkSmartPointer<vtkSlicerTerminologyType>::New();
-      if (!this->Internal->PopulateTerminologyTypeFromJson(type, currentType))
-        {
-        vtkErrorMacro("GetTypesInTerminologyCategory: Unable to parse a type in category '" << categoryName << "' in terminology '" << terminologyName << "'");
-        continue;
-        }
-
-      typeCollection->AddItem(currentType);
-      }
-    ++index;
-    } // For each type index
-
-  return true;
+  return this->FindTypesInTerminologyCategory(terminologyName, categoryId, types, "");
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::GetTypeNamesInTerminologyCategory(std::string terminologyName, std::string categoryName, vtkStringArray* typeNames)
+bool vtkSlicerTerminologiesModuleLogic::FindTypesInTerminologyCategory(
+  std::string terminologyName, CodeIdentifier categoryId, std::vector<CodeIdentifier>& types, std::string search)
 {
-  return this->FindTypeNamesInTerminologyCategory(terminologyName, categoryName, typeNames, "");
-}
+  types.clear();
 
-//---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::FindTypeNamesInTerminologyCategory(
-  std::string terminologyName, std::string categoryName, vtkStringArray* typeNames, std::string search)
-{
-  if (!typeNames)
-    {
-    return false;
-    }
-  typeNames->Initialize();
-
-  Json::Value typeArray = this->Internal->GetTypeArrayInTerminologyCategory(terminologyName, categoryName);
+  Json::Value typeArray = this->Internal->GetTypeArrayInTerminologyCategory(terminologyName, categoryId);
   if (typeArray.isNull())
     {
-    vtkErrorMacro("FindTypeNamesInTerminologyCategory: Failed to find Type array member in category '"
-      << categoryName << "' in terminology '" << terminologyName << "'");
+    vtkErrorMacro("FindTypesInTerminologyCategory: Failed to find Type array member in category '"
+      << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
     return false;
     }
 
@@ -940,17 +872,25 @@ bool vtkSlicerTerminologiesModuleLogic::FindTypeNamesInTerminologyCategory(
     Json::Value type = typeArray[index];
     if (type.isObject())
       {
-      Json::Value typeName = type["codeMeaning"];
-      if (typeName.isString())
+      Json::Value typeName = type["CodeMeaning"];
+      Json::Value typeCodingSchemeDesignator = type["CodingSchemeDesignator"];
+      Json::Value typeCodeValue = type["CodeValue"];
+      if (typeName.isString() && typeCodingSchemeDesignator.isString() && typeCodeValue.isString())
         {
-        // Add type name to list if search string is empty or is contained by the current type name
+        // Add type to list if search string is empty or is contained by the current type name
         std::string typeNameStr = typeName.asString();
         std::string typeNameLowerCase(typeNameStr);
         std::transform(typeNameLowerCase.begin(), typeNameLowerCase.end(), typeNameLowerCase.begin(), ::tolower);
         if (search.empty() || typeNameLowerCase.find(search) != std::string::npos)
           {
-          typeNames->InsertNextValue(typeNameStr);
+          CodeIdentifier typeId(typeCodingSchemeDesignator.asString(), typeCodeValue.asString(), typeNameStr);
+          types.push_back(typeId);
           }
+        }
+      else
+        {
+        vtkErrorMacro("FindTypesInTerminologyCategory: Invalid type '" << typeName.asString() << "in category '"
+          << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
         }
       }
     ++index;
@@ -961,40 +901,36 @@ bool vtkSlicerTerminologiesModuleLogic::FindTypeNamesInTerminologyCategory(
 
 //---------------------------------------------------------------------------
 bool vtkSlicerTerminologiesModuleLogic::GetTypeInTerminologyCategory(
-  std::string terminologyName, std::string categoryName, std::string typeName, vtkSlicerTerminologyType* type)
+  std::string terminologyName, CodeIdentifier categoryId, CodeIdentifier typeId, vtkSlicerTerminologyType* type)
 {
-  if (!type || typeName.empty())
+  if (!type || typeId.CodingSchemeDesignator.empty() || typeId.CodeValue.empty())
     {
     return false;
     }
 
-  Json::Value typeObject = this->Internal->GetTypeInTerminologyCategory(terminologyName, categoryName, typeName);
+  Json::Value typeObject = this->Internal->GetTypeInTerminologyCategory(terminologyName, categoryId, typeId);
   if (typeObject.isNull())
     {
-    vtkErrorMacro("GetTypeInTerminologyCategory: Failed to find type '" << typeName << "' in category '"
-      << categoryName << "' in terminology '" << terminologyName << "'");
+    vtkErrorMacro("GetTypeInTerminologyCategory: Failed to find type '" << typeId.CodeMeaning << "' in category '"
+      << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
     return false;
     }
 
-  // Type with specified name found
+  // Type found
   return this->Internal->PopulateTerminologyTypeFromJson(typeObject, type);
 }
 
 //---------------------------------------------------------------------------
 bool vtkSlicerTerminologiesModuleLogic::GetTypeModifiersInTerminologyType(
-  std::string terminologyName, std::string categoryName, std::string typeName, vtkCollection* typeModifierCollection)
+  std::string terminologyName, CodeIdentifier categoryId, CodeIdentifier typeId, std::vector<CodeIdentifier>& typeModifiers)
 {
-  if (!typeModifierCollection)
-    {
-    return false;
-    }
-  typeModifierCollection->RemoveAllItems();
+  typeModifiers.clear();
 
-  Json::Value typeModifierArray = this->Internal->GetTypeModifierArrayInTerminologyType(terminologyName, categoryName, typeName);
+  Json::Value typeModifierArray = this->Internal->GetTypeModifierArrayInTerminologyType(terminologyName, categoryId, typeId);
   if (typeModifierArray.isNull())
     {
-    vtkErrorMacro("GetTypeModifiersInTerminologyType: Failed to find Type Modifier array member in type '" << typeName << "' in category "
-      << categoryName << "' in terminology '" << terminologyName << "'");
+    vtkErrorMacro("GetTypeModifiersInTerminologyType: Failed to find Type Modifier array member in type '" << typeId.CodeMeaning << "' in category "
+      << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
     return false;
     }
 
@@ -1005,15 +941,14 @@ bool vtkSlicerTerminologiesModuleLogic::GetTypeModifiersInTerminologyType(
     Json::Value typeModifier = typeModifierArray[index];
     if (typeModifier.isObject())
       {
-      vtkSmartPointer<vtkSlicerTerminologyType> currentTypeModifier = vtkSmartPointer<vtkSlicerTerminologyType>::New();
-      if (!this->Internal->PopulateTerminologyTypeFromJson(typeModifier, currentTypeModifier))
+      Json::Value typeModifierName = typeModifier["CodeMeaning"];
+      Json::Value typeModifierCodingSchemeDesignator = typeModifier["CodingSchemeDesignator"];
+      Json::Value typeModifierCodeValue = typeModifier["CodeValue"];
+      if (typeModifierName.isString() && typeModifierCodingSchemeDesignator.isString() && typeModifierCodeValue.isString())
         {
-        vtkErrorMacro("GetTypeModifiersInTerminologyType: Unable to parse a type modifier in type '" << typeName << "' in category '"
-          << categoryName << "' in terminology '" << terminologyName << "'");
-        continue;
+          CodeIdentifier typeModifierId(typeModifierCodingSchemeDesignator.asString(), typeModifierCodeValue.asString(), typeModifierName.asString());
+          typeModifiers.push_back(typeModifierId);
         }
-
-      typeModifierCollection->AddItem(currentTypeModifier);
       }
     ++index;
     } // For each type index
@@ -1022,56 +957,19 @@ bool vtkSlicerTerminologiesModuleLogic::GetTypeModifiersInTerminologyType(
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::GetTypeModifierNamesInTerminologyType(
-  std::string terminologyName, std::string categoryName, std::string typeName, vtkStringArray* typeModifierNames)
-{
-  if (!typeModifierNames)
-    {
-    return false;
-    }
-  typeModifierNames->Initialize();
-
-  Json::Value typeModifierArray = this->Internal->GetTypeModifierArrayInTerminologyType(terminologyName, categoryName, typeName);
-  if (typeModifierArray.isNull())
-    {
-    vtkErrorMacro("GetTypeModifierNamesInTerminologyType: Failed to find Type Modifier array member in type '" << typeName << "' in category "
-      << categoryName << "' in terminology '" << terminologyName << "'");
-    return false;
-    }
-
-  // Traverse type modifiers
-  Json::ArrayIndex index = 0;
-  while (typeModifierArray.isValidIndex(index))
-    {
-    Json::Value typeModifier = typeModifierArray[index];
-    if (typeModifier.isObject())
-      {
-      Json::Value typeNameObject = typeModifier["codeMeaning"];
-      if (typeNameObject.isString())
-        {
-        typeModifierNames->InsertNextValue(typeNameObject.asString());
-        }
-      }
-    ++index;
-    }
-
-  return true;
-}
-
-//---------------------------------------------------------------------------
 bool vtkSlicerTerminologiesModuleLogic::GetTypeModifierInTerminologyType(
-std::string terminologyName, std::string categoryName, std::string typeName, std::string modifierName, vtkSlicerTerminologyType* typeModifier)
+  std::string terminologyName, CodeIdentifier categoryId, CodeIdentifier typeId, CodeIdentifier modifierId, vtkSlicerTerminologyType* typeModifier)
 {
-  if (!typeModifier || modifierName.empty())
+  if (!typeModifier || modifierId.CodingSchemeDesignator.empty() || modifierId.CodeValue.empty())
     {
     return false;
     }
 
-  Json::Value typeModifierObject = this->Internal->GetTypeModifierInTerminologyType(terminologyName, categoryName, typeName, modifierName);
+  Json::Value typeModifierObject = this->Internal->GetTypeModifierInTerminologyType(terminologyName, categoryId, typeId, modifierId);
   if (typeModifierObject.isNull())
     {
-    vtkErrorMacro("GetTypeModifierInTerminologyType: Failed to find type modifier '" << modifierName << "' in type '" << typeName << "' in category '"
-      << categoryName << "' in terminology '" << terminologyName << "'");
+    vtkErrorMacro("GetTypeModifierInTerminologyType: Failed to find type modifier '" << modifierId.CodeMeaning << "' in type '"
+      << typeId.CodeMeaning << "' in category '" << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
     return false;
     }
 
@@ -1080,62 +978,20 @@ std::string terminologyName, std::string categoryName, std::string typeName, std
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::GetRegionsInAnatomicContext(std::string anatomicContextName, vtkCollection* regionCollection)
+bool vtkSlicerTerminologiesModuleLogic::GetRegionsInAnatomicContext(std::string anatomicContextName, std::vector<CodeIdentifier>& regions)
 {
-  if (!regionCollection)
-    {
-    return false;
-    }
-  regionCollection->RemoveAllItems();
+  return this->FindRegionsInAnatomicContext(anatomicContextName, regions, "");
+}
+
+//---------------------------------------------------------------------------
+bool vtkSlicerTerminologiesModuleLogic::FindRegionsInAnatomicContext(std::string anatomicContextName, std::vector<CodeIdentifier>& regions, std::string search)
+{
+  regions.clear();
 
   Json::Value regionArray = this->Internal->GetRegionArrayInAnatomicContext(anatomicContextName);
   if (regionArray.isNull())
     {
-    vtkErrorMacro("GetRegionsInAnatomicContext: Failed to find Region array in anatomic context '" << anatomicContextName << "'");
-    return false;
-    }
-
-  // Collect regions
-  Json::ArrayIndex index = 0;
-  while (regionArray.isValidIndex(index))
-    {
-    Json::Value region = regionArray[index];
-    if (region.isObject())
-      {
-      vtkSmartPointer<vtkSlicerTerminologyType> currentRegion = vtkSmartPointer<vtkSlicerTerminologyType>::New();
-      if (!this->Internal->PopulateRegionFromJson(region, currentRegion))
-        {
-        vtkErrorMacro("GetRegionsInAnatomicContext: Unable to parse a region in anatomic context '" << anatomicContextName << "'");
-        continue;
-        }
-
-      regionCollection->AddItem(currentRegion);
-      }
-    ++index;
-    } // For each region index
-
-  return true;
-}
-
-//---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::GetRegionNamesInAnatomicContext(std::string anatomicContextName, vtkStringArray* regionNames)
-{
-  return this->FindRegionNamesInAnatomicContext(anatomicContextName, regionNames, "");
-}
-
-//---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::FindRegionNamesInAnatomicContext(std::string anatomicContextName, vtkStringArray* regionNames, std::string search)
-{
-  if (!regionNames)
-    {
-    return false;
-    }
-  regionNames->Initialize();
-
-  Json::Value regionArray = this->Internal->GetRegionArrayInAnatomicContext(anatomicContextName);
-  if (regionArray.isNull())
-    {
-    vtkErrorMacro("FindRegionNamesInAnatomicContext: Failed to find Region array member in anatomic context '" << anatomicContextName << "'");
+    vtkErrorMacro("FindRegionsInAnatomicContext: Failed to find region array member in anatomic context '" << anatomicContextName << "'");
     return false;
     }
 
@@ -1149,8 +1005,10 @@ bool vtkSlicerTerminologiesModuleLogic::FindRegionNamesInAnatomicContext(std::st
     Json::Value region = regionArray[index];
     if (region.isObject())
       {
-      Json::Value regionName = region["codeMeaning"];
-      if (regionName.isString())
+      Json::Value regionName = region["CodeMeaning"];
+      Json::Value regionCodingSchemeDesignator = region["CodingSchemeDesignator"];
+      Json::Value regionCodeValue = region["CodeValue"];
+      if (regionName.isString() && regionCodingSchemeDesignator.isString() && regionCodeValue.isString())
         {
         // Add region name to list if search string is empty or is contained by the current region name
         std::string regionNameStr = regionName.asString();
@@ -1158,8 +1016,13 @@ bool vtkSlicerTerminologiesModuleLogic::FindRegionNamesInAnatomicContext(std::st
         std::transform(regionNameLowerCase.begin(), regionNameLowerCase.end(), regionNameLowerCase.begin(), ::tolower);
         if (search.empty() || regionNameLowerCase.find(search) != std::string::npos)
           {
-          regionNames->InsertNextValue(regionNameStr);
+          CodeIdentifier regionId(regionCodingSchemeDesignator.asString(), regionCodeValue.asString(), regionNameStr);
+          regions.push_back(regionId);
           }
+        }
+      else
+        {
+        vtkErrorMacro("FindRegionsInAnatomicContext: Invalid region '" << regionName.asString() << "' in anatomic context '" << anatomicContextName << "'");
         }
       }
     ++index;
@@ -1169,17 +1032,17 @@ bool vtkSlicerTerminologiesModuleLogic::FindRegionNamesInAnatomicContext(std::st
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::GetRegionInAnatomicContext(std::string anatomicContextName, std::string regionName, vtkSlicerTerminologyType* region)
+bool vtkSlicerTerminologiesModuleLogic::GetRegionInAnatomicContext(std::string anatomicContextName, CodeIdentifier regionId, vtkSlicerTerminologyType* region)
 {
-  if (!region || regionName.empty())
+  if (!region || regionId.CodingSchemeDesignator.empty() || regionId.CodeValue.empty())
     {
     return false;
     }
 
-  Json::Value regionObject = this->Internal->GetRegionInAnatomicContext(anatomicContextName, regionName);
+  Json::Value regionObject = this->Internal->GetRegionInAnatomicContext(anatomicContextName, regionId);
   if (regionObject.isNull())
     {
-    vtkErrorMacro("GetRegionInAnatomicContext: Failed to find region '" << regionName << "' in anatomic context '" << anatomicContextName << "'");
+    vtkErrorMacro("GetRegionInAnatomicContext: Failed to find region '" << regionId.CodeMeaning << "' in anatomic context '" << anatomicContextName << "'");
     return false;
     }
 
@@ -1189,19 +1052,15 @@ bool vtkSlicerTerminologiesModuleLogic::GetRegionInAnatomicContext(std::string a
 
 //---------------------------------------------------------------------------
 bool vtkSlicerTerminologiesModuleLogic::GetRegionModifiersInAnatomicRegion(
-  std::string anatomicContextName, std::string regionName, vtkCollection* regionModifierCollection )
+  std::string anatomicContextName, CodeIdentifier regionId, std::vector<CodeIdentifier>& regionModifiers )
 {
-  if (!regionModifierCollection || regionName.empty())
-    {
-    return false;
-    }
-  regionModifierCollection->RemoveAllItems();
+  regionModifiers.clear();
 
-  Json::Value regionModifierArray = this->Internal->GetRegionModifierArrayInRegion(anatomicContextName, regionName);
+  Json::Value regionModifierArray = this->Internal->GetRegionModifierArrayInRegion(anatomicContextName, regionId);
   if (regionModifierArray.isNull())
     {
-    vtkErrorMacro("GetRegionModifiersInRegion: Failed to find Region Modifier array member in region '" << regionName
-      << "' in anatomic context '" << anatomicContextName << "'");
+    vtkErrorMacro("GetRegionModifiersInRegion: Failed to find Region Modifier array member in region '"
+      << regionId.CodeMeaning << "' in anatomic context '" << anatomicContextName << "'");
     return false;
     }
 
@@ -1212,15 +1071,14 @@ bool vtkSlicerTerminologiesModuleLogic::GetRegionModifiersInAnatomicRegion(
     Json::Value regionModifier = regionModifierArray[index];
     if (regionModifier.isObject())
       {
-      vtkSmartPointer<vtkSlicerTerminologyType> currentRegionModifier = vtkSmartPointer<vtkSlicerTerminologyType>::New();
-      if (!this->Internal->PopulateRegionFromJson(regionModifier, currentRegionModifier))
+      Json::Value regionModifierName = regionModifier["CodeMeaning"];
+      Json::Value regionModifierCodingSchemeDesignator = regionModifier["CodingSchemeDesignator"];
+      Json::Value regionModifierCodeValue = regionModifier["CodeValue"];
+      if (regionModifierName.isString() && regionModifierCodingSchemeDesignator.isString() && regionModifierCodeValue.isString())
         {
-        vtkErrorMacro("GetRegionModifiersInRegion: Unable to parse a region modifier in region '" << regionName
-          << "' in anatomic context '" << anatomicContextName << "'");
-        continue;
+          CodeIdentifier regionModifierId(regionModifierCodingSchemeDesignator.asString(), regionModifierCodeValue.asString(), regionModifierName.asString());
+          regionModifiers.push_back(regionModifierId);
         }
-
-      regionModifierCollection->AddItem(currentRegionModifier);
       }
     ++index;
     } // For each region index
@@ -1229,59 +1087,50 @@ bool vtkSlicerTerminologiesModuleLogic::GetRegionModifiersInAnatomicRegion(
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::GetRegionModifierNamesInAnatomicRegion(
-  std::string anatomicContextName, std::string regionName, vtkStringArray* regionModifierNames )
-{
-  if (!regionModifierNames)
-    {
-    return false;
-    }
-  regionModifierNames->Initialize();
-
-  Json::Value regionModifierArray = this->Internal->GetRegionModifierArrayInRegion(anatomicContextName, regionName);
-  if (regionModifierArray.isNull())
-    {
-    vtkErrorMacro("GetRegionModifierNamesInAnatomicRegion: Failed to find Region Modifier array member in region '" << regionName
-      << "' in anatomic context '" << anatomicContextName << "'");
-    return false;
-    }
-
-  // Traverse region modifiers
-  Json::ArrayIndex index = 0;
-  while (regionModifierArray.isValidIndex(index))
-    {
-    Json::Value regionModifier = regionModifierArray[index];
-    if (regionModifier.isObject())
-      {
-      Json::Value regionNameObject = regionModifier["codeMeaning"];
-      if (regionNameObject.isString())
-        {
-        regionModifierNames->InsertNextValue(regionNameObject.asString());
-        }
-      }
-    ++index;
-    }
-
-  return true;
-}
-
-//---------------------------------------------------------------------------
 bool vtkSlicerTerminologiesModuleLogic::GetRegionModifierInAnatomicRegion(std::string anatomicContextName,
-    std::string regionName, std::string modifierName, vtkSlicerTerminologyType* regionModifier)
+    CodeIdentifier regionId, CodeIdentifier modifierId, vtkSlicerTerminologyType* regionModifier)
 {
-  if (!regionModifier || modifierName.empty())
+  if (!regionModifier || modifierId.CodingSchemeDesignator.empty() || modifierId.CodeValue.empty())
     {
     return false;
     }
 
-  Json::Value regionModifierObject = this->Internal->GetRegionModifierInRegion(anatomicContextName, regionName, modifierName);
+  Json::Value regionModifierObject = this->Internal->GetRegionModifierInRegion(anatomicContextName, regionId, modifierId);
   if (regionModifierObject.isNull())
     {
-    vtkErrorMacro("GetRegionModifierInAnatomicRegion: Failed to find region modifier '" << modifierName << "' in region '" << regionName
-      << "' in anatomic context '" << anatomicContextName << "'");
+    vtkErrorMacro("GetRegionModifierInAnatomicRegion: Failed to find region modifier '" << modifierId.CodeMeaning
+      << "' in region '" << regionId.CodeMeaning << "' in anatomic context '" << anatomicContextName << "'");
     return false;
     }
 
   // Region modifier with specified name found
   return this->Internal->PopulateTerminologyTypeFromJson(regionModifierObject, regionModifier);
+}
+
+//---------------------------------------------------------------------------
+vtkSlicerTerminologiesModuleLogic::CodeIdentifier vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyCategory(vtkSlicerTerminologyCategory* category)
+{
+  if (!category)
+    {
+    return CodeIdentifier("","","");
+    }
+  CodeIdentifier id(
+    (category->GetCodingScheme()?category->GetCodingScheme():""),
+    (category->GetCodeValue()?category->GetCodeValue():""),
+    (category->GetCodeMeaning()?category->GetCodeMeaning():"") );
+  return id;
+}
+
+//---------------------------------------------------------------------------
+vtkSlicerTerminologiesModuleLogic::CodeIdentifier vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyType(vtkSlicerTerminologyType* type)
+{
+  if (!type)
+    {
+    return CodeIdentifier("","","");
+    }
+  CodeIdentifier id(
+    (type->GetCodingScheme()?type->GetCodingScheme():""),
+    (type->GetCodeValue()?type->GetCodeValue():""),
+    (type->GetCodeMeaning()?type->GetCodeMeaning():"") );
+  return id;
 }

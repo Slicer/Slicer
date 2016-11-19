@@ -37,6 +37,8 @@ class qSlicerTerminologyNavigatorWidgetPrivate;
 class QTableWidgetItem;
 class QColor;
 class vtkSlicerTerminologyEntry;
+class vtkSlicerTerminologyCategory;
+class vtkSlicerTerminologyType;
 
 /// \brief Qt widget for browsing a terminology dictionary.
 ///   DICOM properties of the selected entry can also be set if enabled.
@@ -45,6 +47,13 @@ class Q_SLICER_MODULE_TERMINOLOGIES_WIDGETS_EXPORT qSlicerTerminologyNavigatorWi
 {
   Q_OBJECT
   Q_PROPERTY(bool anatomicRegionSectionVisible READ anatomicRegionSectionVisible WRITE setAnatomicRegionSectionVisible)
+
+  /// Roles set to the items in the terminology tables uniquely identifying the entries
+  enum TerminologyItemDataRole
+    {
+    CodingSchemeDesignatorRole = Qt::UserRole + 100,
+    CodeValueRole
+    };
 
 public:
   /// Constructor
@@ -55,50 +64,57 @@ public:
   /// Populate terminology entry from terminology and anatomy selection
   /// \return Success flag (e.g. fail if no type is selected)
   bool terminologyEntry(vtkSlicerTerminologyEntry* entry);
-
   /// Update terminology and anatomy widgets and selections from terminology entry
   /// \return Success flag (e.g. fail if no type is specified in entry)
   bool setTerminologyEntry(vtkSlicerTerminologyEntry* entry);
 
+  /// Get custom color (invalid color object if user has not changed from recommended color)
+  QColor customColor();
+  /// Set color to show (needed if custom color is used)
+  void setColor(QColor color);
+
   /// Get whether anatomic region section are visible
   bool anatomicRegionSectionVisible() const;
+  /// Get recommended color from type (or type modifier if any) of the current terminology in the widget
+  QColor recommendedColorFromCurrentTerminology();
 
-  /// Convert terminology entry VTK object to string list with the contained code meanings.
-  /// The string list contains the following strings:
-  ///   [ terminologyContextName, categoryCodeMeaning, typeCodeMeaning, typeModifierCodeMeaning,
-  ///     anatomicContextName, anatomicRegionCodeMeaning, anatomicRegionModifierCodeMeaning ]
-  static QStringList codeMeaningsFromTerminologyEntry(vtkSlicerTerminologyEntry* entry);
+  /// Convert terminology entry VTK object to string containing identifiers
+  /// Serialized terminology entry consists of the following: terminologyContextName, category (codingScheme,  
+  /// codeValue, codeMeaning triple), type, typeModifier, anatomicContextName, anatomicRegion, anatomicRegionModifier
+  static QString serializeTerminologyEntry(vtkSlicerTerminologyEntry* entry);
 
-  /// Populate terminology entry VTK object with code meanings in a string list
-  /// The string list contains the following strings:
-  ///   [ terminologyContextName, categoryCodeMeaning, typeCodeMeaning, typeModifierCodeMeaning,
-  ///     anatomicContextName, anatomicRegionCodeMeaning, anatomicRegionModifierCodeMeaning ]
+  /// Populate terminology entry VTK object based on serialized entry
+  /// Serialized terminology entry consists of the following: terminologyContextName, category (codingScheme,  
+  /// codeValue, codeMeaning triple), type, typeModifier, anatomicContextName, anatomicRegion, anatomicRegionModifier
   ///  \return Success flag
-  static bool terminologyEntryFromCodeMeanings(QStringList codeMeanings, vtkSlicerTerminologyEntry* entry);
+  static bool deserializeTerminologyEntry(QString serializedEntry, vtkSlicerTerminologyEntry* entry);
 
   /// Get recommended color from type (or type modifier if any) of the given terminology entry
   static QColor recommendedColorFromTerminology(vtkSlicerTerminologyEntry* entry);
-  /// Set recommended color to type (or type modifier if any) of the given terminology entry
-  static void setRecommendedColorToTerminology(vtkSlicerTerminologyEntry* entry, QColor color);
 
 public slots:
   /// Show/hide anatomic region section section
   void setAnatomicRegionSectionVisible(bool);
 
-  /// Set terminology to widget
-  void setTerminologyByName(QString terminologyName);
-  /// Set category to widget
-  void setCategoryByName(QString categoryName);
-  /// Set type to widget
-  void setTypeByName(QString typeName);
-  /// Set type modifier to widget
-  void setTypeModifierByName(QString modifierName);
-  /// Set anatomic context to widget
-  void setAnatomicContextByName(QString contextName);
-  /// Set region to widget
-  void setRegionByName(QString regionName);
-  /// Set region modifier to widget
-  void setRegionModifierByName(QString modifierName);
+  /// Set current terminology to widget
+  void setCurrentTerminology(QString terminologyName);
+  /// Set current category to widget
+  /// \return Flag indicating whether the given category was found in the category table
+  bool setCurrentCategory(vtkSlicerTerminologyCategory* category);
+  /// Set current type to widget
+  /// \return Flag indicating whether the given type was found in the type table
+  bool setCurrentType(vtkSlicerTerminologyType* type);
+  /// Set current type modifier to widget
+  /// \return Flag indicating whether the given modifier was found in the combobox
+  bool setCurrentTypeModifier(vtkSlicerTerminologyType* modifier);
+  /// Set current anatomic context to widget
+  void setCurrentAnatomicContext(QString contextName);
+  /// Set current region to widget
+  /// \return Flag indicating whether the given region was found in the region table
+  bool setCurrentRegion(vtkSlicerTerminologyType* region);
+  /// Set current region modifier to widget
+  /// \return Flag indicating whether the given modifier was found in the combobox
+  bool setCurrentRegionModifier(vtkSlicerTerminologyType* modifier);
 
 protected:
   /// Populate terminology combobox based on current selection
@@ -130,7 +146,7 @@ protected slots:
   void onRegionModifierSelectionChanged(int);
   void onRegionSearchTextChanged(QString);
 
-  void onRecommendedColorChanged(QColor);
+  void onColorChanged(QColor);
 
 protected:
   QScopedPointer<qSlicerTerminologyNavigatorWidgetPrivate> d_ptr;

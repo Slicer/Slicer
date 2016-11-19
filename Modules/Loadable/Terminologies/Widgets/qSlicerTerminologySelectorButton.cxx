@@ -49,8 +49,9 @@ public:
   void computeIcon();
   QString text()const;
 
-  QIcon  Icon;
+  QIcon Icon;
   vtkWeakPointer<vtkSlicerTerminologyEntry> TerminologyEntry;
+  QColor Color;
   mutable QSize CachedSizeHint;
 };
 
@@ -76,15 +77,24 @@ void qSlicerTerminologySelectorButtonPrivate::computeIcon()
 {
   Q_Q(qSlicerTerminologySelectorButton);
 
-  // Get recommended color from terminology entry
-  QColor recommendedColor = qSlicerTerminologyNavigatorWidget::recommendedColorFromTerminology(this->TerminologyEntry);
+  QColor iconColor;
+  if (this->Color.isValid())
+    {
+    // If custom color was chosen then use that
+    iconColor = this->Color;
+    }
+  else
+    {
+    // If recommended color is used then show that
+    iconColor = qSlicerTerminologyNavigatorWidget::recommendedColorFromTerminology(this->TerminologyEntry);
+    }
 
   int _iconSize = q->style()->pixelMetric(QStyle::PM_SmallIconSize);
   QPixmap pix(_iconSize, _iconSize);
-  pix.fill(recommendedColor.isValid() ? q->palette().button().color() : Qt::transparent);
+  pix.fill(iconColor.isValid() ? q->palette().button().color() : Qt::transparent);
   QPainter p(&pix);
   p.setPen(QPen(Qt::gray));
-  p.setBrush(recommendedColor.isValid() ? recommendedColor : QBrush(Qt::NoBrush));
+  p.setBrush(iconColor.isValid() ? iconColor : QBrush(Qt::NoBrush));
   p.drawRect(2, 2, pix.width() - 5, pix.height() - 5);
 
   this->Icon = QIcon(pix);
@@ -109,7 +119,7 @@ qSlicerTerminologySelectorButton::~qSlicerTerminologySelectorButton()
 void qSlicerTerminologySelectorButton::changeTerminology()
 {
   Q_D(qSlicerTerminologySelectorButton);
-  if (qSlicerTerminologySelectorDialog::getTerminology(d->TerminologyEntry, this))
+  if (qSlicerTerminologySelectorDialog::getTerminology(d->TerminologyEntry, d->Color, this))
     {
     d->computeIcon();
     this->update();
@@ -170,13 +180,26 @@ vtkSlicerTerminologyEntry* qSlicerTerminologySelectorButton::terminologyEntry()
 }
 
 //-----------------------------------------------------------------------------
+QColor qSlicerTerminologySelectorButton::color()
+{
+  Q_D(qSlicerTerminologySelectorButton);
+  return d->Color;
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerTerminologySelectorButton::paintEvent(QPaintEvent *)
 {
   Q_D(qSlicerTerminologySelectorButton);
   QStylePainter p(this);
   QStyleOptionButton option;
   this->initStyleOption(&option);
-  //option.text = d->text();
   option.icon = d->Icon;
   p.drawControl(QStyle::CE_PushButton, option);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTerminologySelectorButton::setColor(QColor color)
+{
+  Q_D(qSlicerTerminologySelectorButton);
+  d->Color = color;
 }

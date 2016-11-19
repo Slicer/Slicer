@@ -32,6 +32,7 @@
 class qSlicerTerminologySelectorDialogPrivate;
 
 class vtkSlicerTerminologyEntry;
+class QColor;
 
 /// \brief Qt dialog for selecting a terminology entry
 /// \ingroup SlicerRt_QtModules_Terminologies_Widgets
@@ -42,14 +43,15 @@ public:
 
 public:
   typedef QObject Superclass;
-  qSlicerTerminologySelectorDialog(vtkSlicerTerminologyEntry* initialTerminology, QObject* parent = NULL);
+  qSlicerTerminologySelectorDialog(vtkSlicerTerminologyEntry* initialTerminology, QColor initialColor, QObject* parent = NULL);
   virtual ~qSlicerTerminologySelectorDialog();
 
 public:
   /// Convenience function to start dialog, initialized with a terminology entry
   /// \param terminology Initial terminology shown by the dialog. The selected terminology is set to this as well.
+  /// \param color Initial color shown by the dialog. Selected color (only if custom) is set to this as well.
   /// \return Success flag
-  static bool getTerminology(vtkSlicerTerminologyEntry* terminology, QObject* parent);
+  static bool getTerminology(vtkSlicerTerminologyEntry* terminology, QColor &color, QObject* parent);
 
   /// Show dialog
   /// \param nodeToSelect Node is selected in the tree if given
@@ -59,11 +61,8 @@ public:
   /// Python compatibility function for showing dialog (calls \a exec)
   Q_INVOKABLE bool execDialog() { return this->exec(); };
 
-protected:
-  /// Populate output terminology entry (same as what was passed in the argument of \a exec) from
-  /// terminology and anatomy selection in the terminology navigator widget
-  /// \return Success flag
-  bool updateTerminologyEntryFromWidget();
+  /// Get color
+  QColor color();
 
 protected:
   QScopedPointer<qSlicerTerminologySelectorDialogPrivate> d_ptr;

@@ -41,9 +41,8 @@ class Q_SLICER_MODULE_TERMINOLOGIES_WIDGETS_EXPORT qSlicerTerminologySelectorBut
 {
   Q_OBJECT
 
-  /// This property controls the name of the color.
-  /// Black (0,0,0) by default.
   Q_PROPERTY(vtkSlicerTerminologyEntry* terminologyEntry READ terminologyEntry WRITE setTerminologyEntry NOTIFY terminologyChanged USER true)
+  Q_PROPERTY(QColor color READ color WRITE setColor)
 
 public:
   //TODO:
@@ -57,9 +56,15 @@ public:
   /// Current selected terminology
   vtkSlicerTerminologyEntry* terminologyEntry();
 
+  /// Current color
+  QColor color();
+
 public slots:
   /// Set a new current color without opening a dialog
   void setTerminologyEntry(vtkSlicerTerminologyEntry* newTerminology, bool modifiedEvent=true);
+
+  /// Set color
+  void setColor(QColor color);
 
   /// Opens a color dialog to select a new current color.
   /// If the CTK color dialog (\a UseCTKColorDialog) is used, then the color
