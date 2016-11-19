@@ -32,9 +32,6 @@
 #include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLStorageNode.h>
 
-// Slicer Libs includes
-#include <vtkSlicerTransformLogic.h>
-
 // VTK includes
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>
@@ -338,7 +335,7 @@ void vtkSlicerSubjectHierarchyModuleLogic::TransformBranch(vtkMRMLSubjectHierarc
       if (hardenExistingTransforms)
         {
         //vtkDebugMacro("TransformBranch: Hardening transform " << transformNode->GetName() << " on node " << transformableNode->GetName());
-        vtkSlicerTransformLogic::hardenTransform(transformableNode);
+        transformableNode->HardenTransform();
         }
       }
 
@@ -375,7 +372,11 @@ void vtkSlicerSubjectHierarchyModuleLogic::HardenTransformOnBranch(vtkMRMLSubjec
     {
     vtkMRMLTransformableNode* transformableNode = vtkMRMLTransformableNode::SafeDownCast(
       childTransformableNodes->GetItemAsObject(childNodeIndex) );
-    vtkSlicerTransformLogic::hardenTransform(transformableNode);
+    if (!transformableNode)
+      {
+      continue;
+      }
+    transformableNode->HardenTransform();
 
     // Trigger update by setting the modified flag on the subject hierarchy node
     vtkMRMLSubjectHierarchyNode* subjectHierarchyNode =

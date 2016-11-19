@@ -163,6 +163,32 @@ void vtkMRMLTransformableNode::ApplyTransform(vtkAbstractTransform* vtkNotUsed(t
 }
 
 //-----------------------------------------------------------
+bool vtkMRMLTransformableNode::HardenTransform()
+{
+  vtkMRMLTransformNode* transformNode = this->GetParentTransformNode();
+  if (!transformNode)
+    {
+    // already in the world coordinate system
+    return true;
+    }
+  if (transformNode->IsTransformToWorldLinear())
+    {
+    vtkNew<vtkMatrix4x4> hardeningMatrix;
+    transformNode->GetMatrixTransformToWorld(hardeningMatrix.GetPointer());
+    transformableNode->ApplyTransformMatrix(hardeningMatrix.GetPointer());
+    }
+  else
+    {
+    vtkNew<vtkGeneralTransform> hardeningTransform;
+    transformNode->GetTransformToWorld(hardeningTransform.GetPointer());
+    transformableNode->ApplyTransform(hardeningTransform.GetPointer());
+    }
+
+  transformableNode->SetAndObserveTransformNodeID(NULL);
+  return true;
+}
+
+//-----------------------------------------------------------
 void vtkMRMLTransformableNode::TransformPointToWorld(const double inLocal[3], double outWorld[3])
 {
   vtkMRMLTransformNode* tnode = this->GetParentTransformNode();

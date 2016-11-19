@@ -91,27 +91,11 @@ vtkSlicerTransformLogic::~vtkSlicerTransformLogic()
 //-----------------------------------------------------------------------------
 bool vtkSlicerTransformLogic::hardenTransform(vtkMRMLTransformableNode* transformableNode)
 {
-  vtkMRMLTransformNode* transformNode =
-    transformableNode ? transformableNode->GetParentTransformNode() : 0;
-  if (!transformNode)
-  {
+  if (!transformableNode)
+    {
     return false;
-  }
-  if (transformNode->IsTransformToWorldLinear())
-  {
-    vtkNew<vtkMatrix4x4> hardeningMatrix;
-    transformNode->GetMatrixTransformToWorld(hardeningMatrix.GetPointer());
-    transformableNode->ApplyTransformMatrix(hardeningMatrix.GetPointer());
-  }
-  else
-  {
-    vtkNew<vtkGeneralTransform> hardeningTransform;
-    transformNode->GetTransformToWorld(hardeningTransform.GetPointer());
-    transformableNode->ApplyTransform(hardeningTransform.GetPointer());
-  }
-
-  transformableNode->SetAndObserveTransformNodeID(NULL);
-  return true;
+    }
+  return transformableNode->HardenTransform();
 }
 
 //----------------------------------------------------------------------------

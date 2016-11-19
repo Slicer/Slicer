@@ -27,9 +27,6 @@
 // Data Logic includes
 #include "vtkSlicerDataModuleLogic.h"
 
-// SlicerLibs includes
-#include <vtkSlicerTransformLogic.h>
-
 // MRMLWidgets includes
 #include <qMRMLSceneModel.h>
 
@@ -236,7 +233,9 @@ void qSlicerDataModuleWidget::hardenTransformOnCurrentNode()
 {
   Q_D(qSlicerDataModuleWidget);
   vtkMRMLNode* node = d->MRMLTreeView->currentNode();
-  vtkSlicerTransformLogic::hardenTransform(
-    vtkMRMLTransformableNode::SafeDownCast(node));
+  vtkMRMLTransformableNode* transformableNode = vtkMRMLTransformableNode::SafeDownCast(node);
+  if (transformableNode)
+    {
+    transformableNode->HardenTransform();
+    }
 }
-

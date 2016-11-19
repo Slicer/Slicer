@@ -101,6 +101,10 @@ public:
   /// Get referenced transform node id
   const char *GetTransformNodeID();
 
+  /// Apply the associated transform to the transformable node. Return true
+  /// on success, false otherwise.
+  bool HardenTransform();
+
 protected:
   vtkMRMLTransformableNode();
   ~vtkMRMLTransformableNode();

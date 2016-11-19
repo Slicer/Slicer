@@ -56,6 +56,8 @@ class VTK_SLICER_TRANSFORMS_MODULE_LOGIC_EXPORT vtkSlicerTransformLogic : public
 
   /// Apply the associated transform to the transformable node. Return true
   /// on success, false otherwise.
+  /// This method is kept for backward compatibility only, it is recommended to use
+  /// vtkMRMLTransformableNode::HardenTransform() method instead.
   static bool hardenTransform(vtkMRMLTransformableNode* node);
 
   ///
