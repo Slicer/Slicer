@@ -175,16 +175,16 @@ bool vtkMRMLTransformableNode::HardenTransform()
     {
     vtkNew<vtkMatrix4x4> hardeningMatrix;
     transformNode->GetMatrixTransformToWorld(hardeningMatrix.GetPointer());
-    transformableNode->ApplyTransformMatrix(hardeningMatrix.GetPointer());
+    this->ApplyTransformMatrix(hardeningMatrix.GetPointer());
     }
   else
     {
     vtkNew<vtkGeneralTransform> hardeningTransform;
     transformNode->GetTransformToWorld(hardeningTransform.GetPointer());
-    transformableNode->ApplyTransform(hardeningTransform.GetPointer());
+    this->ApplyTransform(hardeningTransform.GetPointer());
     }
 
-  transformableNode->SetAndObserveTransformNodeID(NULL);
+  this->SetAndObserveTransformNodeID(NULL);
   return true;
 }
 
