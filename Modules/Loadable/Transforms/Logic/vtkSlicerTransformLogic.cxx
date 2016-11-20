@@ -271,7 +271,6 @@ void vtkSlicerTransformLogic::GetTransformedPointSamples(vtkPointSet* outputPoin
     inputTransformNode->GetTransformFromWorld(inputTransform.GetPointer());
     }
 
-  double point_RAS[4] = { 0, 0, 0, 1 };
   double transformedPoint_RAS[4] = { 0, 0, 0, 1 };
   double pointDislocationVector_RAS[4] = { 0, 0, 0, 1 };
   for (int sampleIndex = 0; sampleIndex < numOfSamples; sampleIndex++)
