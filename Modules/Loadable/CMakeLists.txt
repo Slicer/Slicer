@@ -8,9 +8,9 @@ set(qtmodules
   Terminologies
   Colors
   Annotations
+  SubjectHierarchy
   Markups
   Transforms
-  SubjectHierarchy
   Data
   DoubleArrays
   #Measurements
