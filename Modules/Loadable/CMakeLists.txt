@@ -7,6 +7,7 @@ set(qtmodules
   Units
   Terminologies
   Colors
+  SubjectHierarchy
   Annotations
   SubjectHierarchy
   Markups
