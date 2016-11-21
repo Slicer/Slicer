@@ -155,7 +155,12 @@ class SurfaceToolboxWidget(ScriptedLoadableModuleWidget):
     self.layout.addWidget(normalsFrame)
     normalsFormLayout = qt.QFormLayout(normalsFrame)
 
+    autoOrientNormalsCheckBox = qt.QCheckBox("Auto-orient Normals")
+    autoOrientNormalsCheckBox.setToolTip("Orient the normals outwards from closed surface")
+    normalsFormLayout.addWidget(autoOrientNormalsCheckBox)
+
     flipNormalsCheckBox = qt.QCheckBox("Flip Normals")
+    flipNormalsCheckBox.setToolTip("Flip normal direction from its current or auto-oriented state")
     normalsFormLayout.addWidget(flipNormalsCheckBox)
 
     splittingCheckBox = qt.QCheckBox("Splitting")
@@ -163,6 +168,25 @@ class SurfaceToolboxWidget(ScriptedLoadableModuleWidget):
 
     featureAngleFrame, featureAngleSlider, featureAngleSpinBox = numericInputFrame(self.parent,"Feature Angle:","Tooltip",0.0,180.0,1.0,0)
     normalsFormLayout.addWidget(featureAngleFrame)
+
+    mirrorButton = qt.QPushButton("Mirror")
+    mirrorButton.checkable = True
+    self.layout.addWidget(mirrorButton)
+    mirrorFrame = qt.QFrame(self.parent)
+    self.layout.addWidget(mirrorFrame)
+    mirrorFormLayout = qt.QFormLayout(mirrorFrame)
+
+    mirrorXCheckBox = qt.QCheckBox("X-axis")
+    mirrorXCheckBox.setToolTip("Flip model along its X axis")
+    mirrorFormLayout.addWidget(mirrorXCheckBox)
+
+    mirrorYCheckBox = qt.QCheckBox("Y-axis")
+    mirrorYCheckBox.setToolTip("Flip model along its Y axis")
+    mirrorFormLayout.addWidget(mirrorYCheckBox)
+
+    mirrorZCheckBox = qt.QCheckBox("Z-axis")
+    mirrorZCheckBox.setToolTip("Flip model along its Z axis")
+    mirrorFormLayout.addWidget(mirrorZCheckBox)
 
     cleanerButton = qt.QPushButton("Cleaner")
     cleanerButton.checkable = True
@@ -210,6 +234,11 @@ class SurfaceToolboxWidget(ScriptedLoadableModuleWidget):
       boundarySmoothing = True
       normals = False
       flipNormals = False
+      autoOrientNormals = False
+      mirror = False
+      mirrorX = False
+      mirrorY = False
+      mirrorZ = False
       splitting = False
       featureAngle = 30.0
       cleaner = False
@@ -255,11 +284,18 @@ class SurfaceToolboxWidget(ScriptedLoadableModuleWidget):
 
       normalsButton.checked = state.normals
       normalsFrame.visible = state.normals
+      autoOrientNormalsCheckBox.checked = state.autoOrientNormals
       flipNormalsCheckBox.checked = state.flipNormals
       splittingCheckBox.checked = state.splitting
       featureAngleFrame.visible = state.splitting
       featureAngleSlider.value = state.featureAngle
       featureAngleSpinBox.value = state.featureAngle
+
+      mirrorButton.checked = state.mirror
+      mirrorFrame.visible = state.mirror
+      mirrorXCheckBox.checked = state.mirrorX
+      mirrorYCheckBox.checked = state.mirrorY
+      mirrorZCheckBox.checked = state.mirrorZ
 
       cleanerButton.checked = state.cleaner
 
@@ -305,11 +341,16 @@ class SurfaceToolboxWidget(ScriptedLoadableModuleWidget):
     connect(boundarySmoothingCheckBox, 'stateChanged(int)', 'state.boundarySmoothing = bool(args[0])')
 
     connect(normalsButton, 'clicked(bool)', 'state.normals = args[0]')
-
-    connect(flipNormalsCheckBox, 'stateChanged(int)', 'state.flipNormals = bool(args[0])')
+    connect(autoOrientNormalsCheckBox, 'toggled(bool)', 'state.autoOrientNormals = bool(args[0])')
+    connect(flipNormalsCheckBox, 'toggled(bool)', 'state.flipNormals = bool(args[0])')
     connect(splittingCheckBox, 'stateChanged(int)', 'state.splitting = bool(args[0])')
     connect(featureAngleSlider, 'valueChanged(double)', 'state.featureAngle = args[0]')
     connect(featureAngleSpinBox, 'valueChanged(double)', 'state.featureAngle = args[0]')
+
+    connect(mirrorButton, 'clicked(bool)', 'state.mirror = args[0]')
+    connect(mirrorXCheckBox, 'toggled(bool)', 'state.mirrorX = bool(args[0])')
+    connect(mirrorYCheckBox, 'toggled(bool)', 'state.mirrorY = bool(args[0])')
+    connect(mirrorZCheckBox, 'toggled(bool)', 'state.mirrorZ = bool(args[0])')
 
     connect(cleanerButton, 'clicked(bool)', 'state.cleaner = args[0]')
     connect(connectivityButton, 'clicked(bool)', 'state.connectivity = args[0]')
@@ -386,13 +427,29 @@ class SurfaceToolboxLogic(ScriptedLoadableModuleLogic):
 
     if state.normals:
       normals = vtk.vtkPolyDataNormals()
-      normals.AutoOrientNormalsOn()
+      normals.SetAutoOrientNormals(state.autoOrientNormals)
       normals.SetFlipNormals(state.flipNormals)
       normals.SetSplitting(state.splitting)
       normals.SetFeatureAngle(state.featureAngle)
       normals.ConsistencyOn()
       normals.SetInputConnection(surface)
       surface = normals.GetOutputPort()
+
+    if state.mirror:
+      mirrorTransformMatrix = vtk.vtkMatrix4x4()
+      mirrorTransformMatrix.SetElement(0, 0, -1 if state.mirrorX else 1)
+      mirrorTransformMatrix.SetElement(1, 1, -1 if state.mirrorY else 1)
+      mirrorTransformMatrix.SetElement(2, 2, -1 if state.mirrorZ else 1)
+      mirrorTransform = vtk.vtkTransform()
+      mirrorTransform.SetMatrix(mirrorTransformMatrix)
+      transformFilter = vtk.vtkTransformPolyDataFilter()
+      transformFilter.SetInputConnection(surface)
+      transformFilter.SetTransform(mirrorTransform)
+      surface = transformFilter.GetOutputPort()
+      if mirrorTransformMatrix.Determinant()<0:
+        reverse = vtk.vtkReverseSense()
+        reverse.SetInputConnection(surface)
+        surface = reverse.GetOutputPort()
 
     if state.cleaner:
       cleaner = vtk.vtkCleanPolyData()
