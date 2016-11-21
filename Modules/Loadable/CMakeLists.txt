@@ -9,7 +9,6 @@ set(qtmodules
   Colors
   SubjectHierarchy
   Annotations
-  SubjectHierarchy
   Markups
   Transforms
   Data
