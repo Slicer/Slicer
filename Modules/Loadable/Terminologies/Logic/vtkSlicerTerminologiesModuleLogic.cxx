@@ -54,6 +54,11 @@ public:
   vtkInternal(vtkSlicerTerminologiesModuleLogic* external);
   ~vtkInternal();
 
+  /// Utility function to get code in Json array
+  /// \param foundIndex Output parameter for index of found object in input array. -1 if not found
+  /// \return Json object if found, otherwise null Json object
+  Json::Value GetCodeInArray(CodeIdentifier codeId, Json::Value jsonArray, int &foundIndex);
+  
   /// Get root Json value for the terminology with given name
   Json::Value GetTerminologyRootByName(std::string terminologyName);
 
@@ -101,6 +106,13 @@ public:
   /// \return Null Json value on failure, the type Json object otherwise
   Json::Value GetRegionModifierInRegion(std::string anatomicContextName, CodeIdentifier regionId, CodeIdentifier modifierId);
 
+  /// Convert a segmentation descriptor Json structure to a terminology context one
+  /// \return Terminology context Json structure, Null Json value on failure
+  Json::Value ConvertSegmentationDescriptorToTerminologyContext(Json::Value descriptorRoot, std::string contextName);
+  /// Copy basic identifier members from an identifier object into a Json object
+  /// \return The code object with the identifiers set
+  Json::Value GetJsonCodeFromIdentifier(Json::Value code, CodeIdentifier idenfifier);
+
 public:
   /// Loaded terminologies. Key is the context name, value is the root item.
   TerminologyMap LoadedTerminologies;
@@ -124,6 +136,38 @@ vtkSlicerTerminologiesModuleLogic::vtkInternal::vtkInternal(vtkSlicerTerminologi
 //---------------------------------------------------------------------------
 vtkSlicerTerminologiesModuleLogic::vtkInternal::~vtkInternal()
 {
+}
+
+//---------------------------------------------------------------------------
+Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetCodeInArray(CodeIdentifier codeId, Json::Value jsonArray, int &foundIndex)
+{
+  if (!jsonArray.isArray())
+    {
+    return Json::Value();
+    }
+
+  // Traverse array and try to find the object with given identifier
+  Json::ArrayIndex index = 0;
+  while (jsonArray.isValidIndex(index))
+    {
+    Json::Value currentObject = jsonArray[index];
+    if (currentObject.isObject())
+      {
+      Json::Value codingSchemeDesignator = currentObject["CodingSchemeDesignator"];
+      Json::Value codeValue = currentObject["CodeValue"];
+      if ( codingSchemeDesignator.isString() && !codeId.CodingSchemeDesignator.compare(codingSchemeDesignator.asString())
+        && codeValue.isString() && !codeId.CodeValue.compare(codeValue.asString()) )
+        {
+        foundIndex = index;
+        return currentObject;
+        }
+      }
+    ++index;
+    }
+
+  // Not found
+  foundIndex = -1;
+  return Json::Value();
 }
 
 //---------------------------------------------------------------------------
@@ -182,26 +226,8 @@ Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetCategoryInTermino
     return Json::Value();
     }
 
-  // Traverse categories and try to find the one with the given name
-  Json::ArrayIndex index = 0;
-  while (categoryArray.isValidIndex(index))
-    {
-    Json::Value category = categoryArray[index];
-    if (category.isObject())
-      {
-      Json::Value categoryCodingSchemeDesignator = category["CodingSchemeDesignator"];
-      Json::Value categoryCodeValue = category["CodeValue"];
-      if ( categoryCodingSchemeDesignator.isString() && !categoryId.CodingSchemeDesignator.compare(categoryCodingSchemeDesignator.asString())
-        && categoryCodeValue.isString() && !categoryId.CodeValue.compare(categoryCodeValue.asString()) )
-        {
-        return category;
-        }
-      }
-    ++index;
-    }
-
-  // No category with the specified name was found
-  return Json::Value();
+  int index = -1;
+  return this->GetCodeInArray(categoryId, categoryArray, index);
 }
 
 //---------------------------------------------------------------------------
@@ -213,26 +239,26 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::PopulateTerminologyCategory
     }
 
   Json::Value codeMeaning = categoryObject["CodeMeaning"];             // e.g. "Tissue" (mandatory)
-  Json::Value codingScheme = categoryObject["CodingSchemeDesignator"]; // e.g. "SRT"
+  Json::Value codingScheme = categoryObject["CodingSchemeDesignator"]; // e.g. "SRT" (mandatory)
   Json::Value SNOMEDCTConceptID = categoryObject["SNOMEDCTConceptID"]; // e.g. "85756007"
   Json::Value UMLSConceptUID = categoryObject["UMLSConceptUID"];       // e.g. "C0040300"
   Json::Value cid = categoryObject["cid"];                             // e.g. "7051"
-  Json::Value codeValue = categoryObject["CodeValue"];                 // e.g. "T-D0050"
-  Json::Value contextGroupName = categoryObject["contextGroupName"];   // e.g. "Segmentation Property Categories" (mandatory)
+  Json::Value codeValue = categoryObject["CodeValue"];                 // e.g. "T-D0050" (mandatory)
+  Json::Value contextGroupName = categoryObject["contextGroupName"];   // e.g. "Segmentation Property Categories"
   Json::Value showAnatomy = categoryObject["showAnatomy"];
-  if (!codeMeaning.isString() || !contextGroupName.isString())
+  if (!codingScheme.isString() || !codeValue.isString() || !codeMeaning.isString())
     {
     vtkGenericWarningMacro("PopulateTerminologyCategoryFromJson: Unable to access mandatory category member");
     return false;
     }
 
   category->SetCodeMeaning(codeMeaning.asCString());
-  category->SetCodingScheme(codingScheme.isString() ? codingScheme.asCString() : NULL);
+  category->SetCodingScheme(codingScheme.asCString());
   category->SetSNOMEDCTConceptID(SNOMEDCTConceptID.isString() ? SNOMEDCTConceptID.asCString() : NULL);
   category->SetUMLSConceptUID(UMLSConceptUID.isString()? UMLSConceptUID.asCString() : NULL);
   category->SetCid(cid.isString() ? cid.asCString() : NULL);
-  category->SetCodeValue(codeValue.isString() ? codeValue.asCString() : NULL);
-  category->SetContextGroupName(contextGroupName.asCString());
+  category->SetCodeValue(codeValue.asCString());
+  category->SetContextGroupName(contextGroupName.isString() ? contextGroupName.asCString() : NULL);
   if (showAnatomy.isString())
     {
     std::string showAnatomyStr = showAnatomy.asString();
@@ -245,7 +271,7 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::PopulateTerminologyCategory
     }
   else
     {
-    category->SetShowAnatomy(false); // Default
+    category->SetShowAnatomy(true); // Default
     }
 
   return true;
@@ -292,26 +318,8 @@ Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetTypeInTerminology
     return Json::Value();
     }
 
-  // Traverse types and try to find the one with the given name
-  Json::ArrayIndex index = 0;
-  while (typeArray.isValidIndex(index))
-    {
-    Json::Value type = typeArray[index];
-    if (type.isObject())
-      {
-      Json::Value typeCodingSchemeDesignator = type["CodingSchemeDesignator"];
-      Json::Value typeCodeValue = type["CodeValue"];
-      if ( typeCodingSchemeDesignator.isString() && !typeId.CodingSchemeDesignator.compare(typeCodingSchemeDesignator.asString())
-        && typeCodeValue.isString() && !typeId.CodeValue.compare(typeCodeValue.asString()) )
-        {
-        return type;
-        }
-      }
-    ++index;
-    }
-
-  // No type with the specified name was found
-  return Json::Value();
+  int index = -1;
+  return this->GetCodeInArray(typeId, typeArray, index);
 }
 
 //---------------------------------------------------------------------------
@@ -324,37 +332,49 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::PopulateTerminologyTypeFrom
 
   Json::Value recommendedDisplayRGBValue = typeObject["recommendedDisplayRGBValue"];
   Json::Value codeMeaning = typeObject["CodeMeaning"];             // e.g. "Artery" (mandatory)
-  Json::Value codingScheme = typeObject["CodingSchemeDesignator"]; // e.g. "SRT"
+  Json::Value codingScheme = typeObject["CodingSchemeDesignator"]; // e.g. "SRT" (mandatory)
   Json::Value slicerLabel = typeObject["3dSlicerLabel"];           // e.g. "artery"
   Json::Value SNOMEDCTConceptID = typeObject["SNOMEDCTConceptID"]; // e.g. "85756007"
   Json::Value UMLSConceptUID = typeObject["UMLSConceptUID"];       // e.g. "C0040300"
   Json::Value cid = typeObject["cid"];                             // e.g. "7051"
-  Json::Value codeValue = typeObject["CodeValue"];                 // e.g. "T-D0050"
-  Json::Value contextGroupName = typeObject["contextGroupName"];   // e.g. "Segmentation Property Categories" (mandatory)
+  Json::Value codeValue = typeObject["CodeValue"];                 // e.g. "T-D0050" (mandatory)
+  Json::Value contextGroupName = typeObject["contextGroupName"];   // e.g. "Segmentation Property Categories"
   Json::Value modifier = typeObject["Modifier"];                   // Modifier array, containing modifiers of this type, e.g. "Left"
-  if (!codeMeaning.isString() || !contextGroupName.isString())
+  if (!codingScheme.isString() || !codeValue.isString() || !codeMeaning.isString())
     {
     vtkGenericWarningMacro("PopulateTerminologyTypeFromJson: Unable to access mandatory type member");
     return false;
     }
 
   type->SetCodeMeaning(codeMeaning.asCString());
-  type->SetCodingScheme(codingScheme.isString() ? codingScheme.asCString() : NULL);
+  type->SetCodingScheme(codingScheme.asCString());
   type->SetSlicerLabel(slicerLabel.isString() ? slicerLabel.asCString() : NULL);
   type->SetSNOMEDCTConceptID(SNOMEDCTConceptID.isString() ? SNOMEDCTConceptID.asCString() : NULL);
   type->SetUMLSConceptUID(UMLSConceptUID.isString()? UMLSConceptUID.asCString() : NULL);
   type->SetCid(cid.isString() ? cid.asCString() : NULL);
-  type->SetCodeValue(codeValue.isString() ? codeValue.asCString() : NULL);
-  type->SetContextGroupName(contextGroupName.asCString());
-  type->SetContextGroupName(contextGroupName.asCString());
+  type->SetCodeValue(codeValue.asCString());
+  type->SetContextGroupName(contextGroupName.isString() ? contextGroupName.asCString() : NULL);
 
-  if ( recommendedDisplayRGBValue.isArray() && recommendedDisplayRGBValue.isValidIndex(2) &&
-       recommendedDisplayRGBValue[0].isString() )
+  if (recommendedDisplayRGBValue.isArray() && recommendedDisplayRGBValue.size() == 3)
     {
-    type->SetRecommendedDisplayRGBValue( // Note: Casting directly to unsigned char fails
-      (unsigned char)vtkVariant(recommendedDisplayRGBValue[0].asString()).ToInt(),
-      (unsigned char)vtkVariant(recommendedDisplayRGBValue[1].asString()).ToInt(),
-      (unsigned char)vtkVariant(recommendedDisplayRGBValue[2].asString()).ToInt() );
+    if (recommendedDisplayRGBValue[0].isString())
+      {
+      type->SetRecommendedDisplayRGBValue( // Note: Casting directly to unsigned char fails
+        (unsigned char)vtkVariant(recommendedDisplayRGBValue[0].asString()).ToInt(),
+        (unsigned char)vtkVariant(recommendedDisplayRGBValue[1].asString()).ToInt(),
+        (unsigned char)vtkVariant(recommendedDisplayRGBValue[2].asString()).ToInt() );
+      }
+    else if (recommendedDisplayRGBValue[0].isInt())
+      {
+      type->SetRecommendedDisplayRGBValue(
+        (unsigned char)recommendedDisplayRGBValue[0].asInt(),
+        (unsigned char)recommendedDisplayRGBValue[1].asInt(),
+        (unsigned char)recommendedDisplayRGBValue[2].asInt() );
+      }
+    else
+      {
+      vtkGenericWarningMacro("PopulateTerminologyTypeFromJson: Unsupported data type for recommendedDisplayRGBValue");
+      }
     }
   else
     {
@@ -415,38 +435,23 @@ Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetTypeModifierInTer
     return Json::Value();
     }
 
-  // Traverse type modifiers and try to find the one with the given name
-  Json::ArrayIndex index = 0;
-  while (typeModifierArray.isValidIndex(index))
-    {
-    Json::Value typeModifier = typeModifierArray[index];
-    if (typeModifier.isObject())
-      {
-      Json::Value typeModifierCodingSchemeDesignator = typeModifier["CodingSchemeDesignator"];
-      Json::Value typeModifierCodeValue = typeModifier["CodeValue"];
-      if ( typeModifierCodingSchemeDesignator.isString() && !modifierId.CodingSchemeDesignator.compare(typeModifierCodingSchemeDesignator.asString())
-        && typeModifierCodeValue.isString() && !modifierId.CodeValue.compare(typeModifierCodeValue.asString()) )
-        {
-        return typeModifier;
-        }
-      }
-    ++index;
-    }
-
-  // No type modifier with the specified name was found
-  return Json::Value();
+  int index = -1;
+  return this->GetCodeInArray(modifierId, typeModifierArray, index);
 }
 
 //---------------------------------------------------------------------------
 Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetAnatomicContextRootByName(std::string anatomicContextName)
 {
-  TerminologyMap::iterator anIt = this->LoadedAnatomicContexts.find(anatomicContextName);
-  if (anIt != this->LoadedAnatomicContexts.end())
-    {
-    return anIt->second;
-    }
+  //TODO: For now it is assumed that there is one anatomic context and it is used at all times
+  return this->LoadedAnatomicContexts.begin()->second;
 
-  return Json::Value();
+  //TerminologyMap::iterator anIt = this->LoadedAnatomicContexts.find(anatomicContextName);
+  //if (anIt != this->LoadedAnatomicContexts.end())
+  //  {
+  //  return anIt->second;
+  //  }
+
+  //return Json::Value();
 }
 
 //---------------------------------------------------------------------------
@@ -493,26 +498,8 @@ Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetRegionInAnatomicC
     return Json::Value();
     }
 
-  // Traverse regions and try to find the one with the given name
-  Json::ArrayIndex index = 0;
-  while (regionArray.isValidIndex(index))
-    {
-    Json::Value region = regionArray[index];
-    if (region.isObject())
-      {
-      Json::Value regionCodingSchemeDesignator = region["CodingSchemeDesignator"];
-      Json::Value regionCodeValue = region["CodeValue"];
-      if ( regionCodingSchemeDesignator.isString() && !regionId.CodingSchemeDesignator.compare(regionCodingSchemeDesignator.asString())
-        && regionCodeValue.isString() && !regionId.CodeValue.compare(regionCodeValue.asString()) )
-        {
-        return region;
-        }
-      }
-    ++index;
-    }
-
-  // No region with the specified name was found
-  return Json::Value();
+  int index = -1;
+  return this->GetCodeInArray(regionId, regionArray, index);
 }
 
 //---------------------------------------------------------------------------
@@ -563,26 +550,162 @@ Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetRegionModifierInR
     return Json::Value();
     }
 
-  // Traverse region modifiers and try to find the one with the given name
-  Json::ArrayIndex index = 0;
-  while (regionModifierArray.isValidIndex(index))
+  int index = -1;
+  return this->GetCodeInArray(modifierId, regionModifierArray, index);
+}
+
+//---------------------------------------------------------------------------
+Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescriptorToTerminologyContext(Json::Value descriptorRoot, std::string contextName)
+{
+  if (descriptorRoot.isNull() || contextName.empty())
     {
-    Json::Value regionModifier = regionModifierArray[index];
-    if (regionModifier.isObject())
+    return Json::Value();
+    }
+
+  // Get segment attributes
+  Json::Value segmentAttributesArray = descriptorRoot["segmentAttributes"];
+  if (!segmentAttributesArray.isArray())
+    {
+    vtkGenericWarningMacro("ConvertSegmentationDescriptorToTerminologyContext: Invalid segmentAttributes member");
+    return Json::Value();
+    }
+
+  // Use terminology with context name if exists
+  Json::Value terminologyRoot = this->GetTerminologyRootByName(contextName);
+  Json::Value segmentationCodes;
+  Json::Value categoryArray = Json::Value(Json::arrayValue);
+  if (!terminologyRoot.isNull())
+    {
+    segmentationCodes = terminologyRoot["SegmentationCodes"];
+    categoryArray = this->GetCategoryArrayInTerminology(contextName);
+    }
+  else
+    {
+    terminologyRoot["SegmentationCategoryTypeContextName"] = contextName;
+    }
+
+  // Parse segment attributes
+  Json::ArrayIndex index = 0;
+  while (segmentAttributesArray.isValidIndex(index))
+    {
+    Json::Value segmentAttributes = segmentAttributesArray[index];
+    if (!segmentAttributes.isArray())
       {
-      Json::Value regionModifierCodingSchemeDesignator = regionModifier["CodingSchemeDesignator"];
-      Json::Value regionModifierCodeValue = regionModifier["CodeValue"];
-      if ( regionModifierCodingSchemeDesignator.isString() && !modifierId.CodingSchemeDesignator.compare(regionModifierCodingSchemeDesignator.asString())
-        && regionModifierCodeValue.isString() && !modifierId.CodeValue.compare(regionModifierCodeValue.asString()) )
+      continue;
+      }
+    //TODO: If innerList contains the segments for a segmentation and segmentAttributes contain the segmentations, then this needs to be changed
+    //     "The reason for the inner list is that we have one single schema both for input and output. When we provide input metafile,
+    //     we can have multiple input files, and each file can have multiple labels, that is why we need to have list of lists"
+    segmentAttributes = segmentAttributes[0]; // Enter "innerList"
+    Json::Value segmentCategory = segmentAttributes["SegmentedPropertyCategoryCodeSequence"];
+    Json::Value segmentType = segmentAttributes["SegmentedPropertyTypeCodeSequence"];
+    Json::Value segmentTypeModifier = segmentAttributes["SegmentedPropertyTypeModifierCodeSequence"];
+    // We assume there is only one anatomic context and it is already loaded //TODO: Is this correct?
+    //Json::Value segmentRegion = segmentAttributes["AnatomicRegionCodeSequence"];
+    //Json::Value segmentRegionModifier = segmentAttributes["AnatomicRegionModifierCodeSequence"];
+    Json::Value segmentRecommendedDisplayRGBValue = segmentAttributes["recommendedDisplayRGBValue"];
+    if (!segmentCategory.isObject() || !segmentType.isObject())
+      {
+      vtkGenericWarningMacro("ConvertSegmentationDescriptorToTerminologyContext: Invalid segment terminology entry at index " << index);
+      continue;
+      }
+
+    // Get type array if category already exists, create empty otherwise
+    vtkSlicerTerminologiesModuleLogic::CodeIdentifier categoryId(
+      segmentCategory["CodingSchemeDesignator"].asString(), segmentCategory["CodeValue"].asString(), segmentCategory["CodeMeaning"].asString() );
+    int foundCategoryIndex = -1;
+    Json::Value category = this->GetCodeInArray(categoryId, categoryArray, foundCategoryIndex);
+    Json::Value typeArray = Json::Value(Json::arrayValue);
+    if (!category.isNull())
+      {
+      typeArray = category["Type"];
+      if (!typeArray.isArray())
         {
-        return regionModifier;
+        vtkGenericWarningMacro("ConvertSegmentationDescriptorToTerminologyContext: Failed to find Type array in category '" << categoryId.CodeMeaning);
+        continue;
         }
       }
+
+    // Get type modifier array if type already exists, create empty otherwise
+    vtkSlicerTerminologiesModuleLogic::CodeIdentifier typeId(
+      segmentType["CodingSchemeDesignator"].asString(), segmentType["CodeValue"].asString(), segmentType["CodeMeaning"].asString() );
+    int foundTypeIndex = -1;
+    Json::Value type = this->GetCodeInArray(typeId, typeArray, foundTypeIndex);
+    Json::Value typeModifierArray = Json::Value(Json::arrayValue);
+    if (!type.isNull())
+      {
+      typeModifierArray = type["Modifier"];
+      }
+
+    // Add modifier if specified in descriptor and does not yet exist in terminology
+    if (segmentTypeModifier.isObject())
+      {
+      vtkSlicerTerminologiesModuleLogic::CodeIdentifier typeModifierId(
+        segmentTypeModifier["CodingSchemeDesignator"].asString(), segmentTypeModifier["CodeValue"].asString(), segmentTypeModifier["CodeMeaning"].asString() );
+      int foundTypeModifierIndex = -1;
+      Json::Value typeModifier = this->GetCodeInArray(typeModifierId, typeModifierArray, foundTypeModifierIndex);
+      // Modifier already exists, nothing to do
+      if (typeModifier.isObject())
+        {
+        continue;
+        }
+
+      // Create and populate modifier
+      typeModifier = this->GetJsonCodeFromIdentifier(typeModifier, typeModifierId);
+      typeModifier["recommendedDisplayRGBValue"] = segmentRecommendedDisplayRGBValue; // Add color to type modifier
+
+      // Set modifier to type
+      typeModifierArray.append(typeModifier);
+      type["Modifier"] = typeModifierArray;
+      }
+    else
+      {
+      // Add color to type if there is no modifier
+      type["recommendedDisplayRGBValue"] = segmentRecommendedDisplayRGBValue;
+      }
+
+    // Add type if has not been added yet, overwrite otherwise
+    type = this->GetJsonCodeFromIdentifier(type, typeId);
+    if (foundTypeIndex == -1)
+      {
+      typeArray.append(type);
+      }
+    else
+      {
+      typeArray[foundTypeIndex] = type;
+      }
+
+    // Set type array back to category
+    category["Type"] = typeArray;
+
+    // Add category if has not been added yet, overwrite otherwise
+    category = this->GetJsonCodeFromIdentifier(category, categoryId);
+    if (foundCategoryIndex == -1)
+      {
+      categoryArray.append(category);
+      }
+    else
+      {
+      categoryArray[foundCategoryIndex] = category;
+      }
+
     ++index;
     }
 
-  // No region modifier with the specified name was found
-  return Json::Value();
+  // Set objects back to terminology Json object
+  segmentationCodes["Category"] = categoryArray;
+  terminologyRoot["SegmentationCodes"] = segmentationCodes;
+
+  return terminologyRoot;
+}
+
+//---------------------------------------------------------------------------
+Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetJsonCodeFromIdentifier(Json::Value code, CodeIdentifier idenfifier)
+{
+  code["CodingSchemeDesignator"] = idenfifier.CodingSchemeDesignator;
+  code["CodeValue"] = idenfifier.CodeValue;
+  code["CodeMeaning"] = idenfifier.CodeMeaning;
+  return code;
 }
 
 
@@ -617,8 +740,11 @@ void vtkSlicerTerminologiesModuleLogic::SetMRMLSceneInternal(vtkMRMLScene* newSc
 
   // Load default terminologies and anatomical contexts
   // Note: Do it here not in the constructor so that the module shared directory is properly initialized
+  bool wasModifying = this->GetDisableModifiedEvent();
+  this->SetDisableModifiedEvent(true);
   this->LoadDefaultTerminologies();
   this->LoadDefaultAnatomicContexts();
+  this->SetDisableModifiedEvent(wasModifying);
 }
 
 //---------------------------------------------------------------------------
@@ -639,6 +765,7 @@ std::string vtkSlicerTerminologiesModuleLogic::LoadTerminologyFromFile(std::stri
   std::string contextName("");
   Json::Value terminologyRoot;
 
+  // Load JSON file
   try
     {
     terminologyStream >> terminologyRoot;
@@ -646,7 +773,7 @@ std::string vtkSlicerTerminologiesModuleLogic::LoadTerminologyFromFile(std::stri
     }
   catch (std::exception &e)
     {
-    vtkErrorMacro("LoadDefaultTerminologies: Failed to load default terminology - exception: " << e.what());
+    vtkErrorMacro("LoadTerminologyFromFile: Failed to load terminology from file '" << filePath << "' - exception: " << e.what());
     return "";
     }
 
@@ -654,7 +781,40 @@ std::string vtkSlicerTerminologiesModuleLogic::LoadTerminologyFromFile(std::stri
   this->Internal->LoadedTerminologies[contextName] = terminologyRoot;
 
   vtkInfoMacro("Terminology named '" << contextName << "' successfully loaded from file " << filePath);
+  this->Modified();
   return contextName;
+}
+
+//---------------------------------------------------------------------------
+bool vtkSlicerTerminologiesModuleLogic::LoadTerminologyFromSegmentDescriptorFile(std::string contextName, std::string filePath)
+{
+  std::ifstream descriptorStream(filePath.c_str(), std::ios_base::binary);
+  Json::Value descriptorRoot;
+
+  // Load JSON file
+  try
+    {
+    descriptorStream >> descriptorRoot;
+    }
+  catch (std::exception &e)
+    {
+    vtkErrorMacro("LoadTerminologyFromSegmentDescriptorFile: Failed to load descriptor file '" << filePath << "' - exception: " << e.what());
+    return false;
+    }
+
+  Json::Value terminologyRoot = this->Internal->ConvertSegmentationDescriptorToTerminologyContext(descriptorRoot, contextName);
+  if (terminologyRoot.isNull())
+    {
+    vtkErrorMacro("LoadTerminologyFromSegmentDescriptorFile: Failed to parse descriptor file '" << filePath);
+    return false;
+    }
+
+  // Store terminology
+  this->Internal->LoadedTerminologies[contextName] = terminologyRoot;
+
+  vtkInfoMacro("Terminology named '" << contextName << "' successfully loaded from file " << filePath);
+  this->Modified();
+  return true;
 }
 
 //---------------------------------------------------------------------------

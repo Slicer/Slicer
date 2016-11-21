@@ -398,6 +398,13 @@ qSlicerTerminologyNavigatorWidget::qSlicerTerminologyNavigatorWidget(QWidget* _p
 {
   Q_D(qSlicerTerminologyNavigatorWidget);
   d->init();
+
+  // Connect logic modified event (cannot call QVTK from private implementation)
+  vtkSlicerTerminologiesModuleLogic* logic = qSlicerTerminologyNavigatorWidgetPrivate::terminologyLogic();
+  if (logic)
+    {
+    qvtkConnect( logic, vtkCommand::ModifiedEvent, this, SLOT(onLogicModified()) );
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -667,6 +674,28 @@ QString qSlicerTerminologyNavigatorWidget::serializeTerminologyEntry(vtkSlicerTe
   serializedEntry += QString(entry->GetAnatomicRegionModifierObject() ? entry->GetAnatomicRegionModifierObject()->GetCodingScheme() : NULL) + "^"
     + QString(entry->GetAnatomicRegionModifierObject() ? entry->GetAnatomicRegionModifierObject()->GetCodeValue() : NULL) + "^"
     + QString(entry->GetAnatomicRegionModifierObject() ? entry->GetAnatomicRegionModifierObject()->GetCodeMeaning() : NULL);
+
+  return serializedEntry;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerTerminologyNavigatorWidget::serializeTerminologyEntry(
+  QString contextName,
+  QString categoryValue, QString categorySchemeDesignator, QString categoryMeaning,
+  QString typeValue, QString typeSchemeDesignator, QString typeMeaning,
+  QString modifierValue, QString modifierSchemeDesignator, QString modifierMeaning,
+  QString regionValue, QString regionSchemeDesignator, QString regionMeaning,
+  QString regionModifierValue, QString regionModifierSchemeDesignator, QString regionModifierMeaning )
+{
+  QString serializedEntry;
+  serializedEntry += contextName + "|";
+  serializedEntry += categorySchemeDesignator + "^" + categoryValue + "^" + categoryMeaning + "|";
+  serializedEntry += typeSchemeDesignator + "^" + typeValue + "^" + typeMeaning + "|";
+  serializedEntry += modifierSchemeDesignator + "^" + modifierValue + "^" + modifierMeaning + "|";
+
+  serializedEntry += "|"; // Assume there is only one anatomic context, do not pass anything for anatomic context name
+  serializedEntry += regionSchemeDesignator + "^" + regionValue + "^" + regionMeaning + "|";
+  serializedEntry += regionModifierSchemeDesignator + "^" + regionModifierValue + "^" + regionModifierMeaning;
 
   return serializedEntry;
 }
@@ -1647,4 +1676,13 @@ void qSlicerTerminologyNavigatorWidget::onRegionSearchTextChanged(QString search
   Q_UNUSED(search);
 
   this->populateRegionTable();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTerminologyNavigatorWidget::onLogicModified()
+{
+  Q_D(qSlicerTerminologyNavigatorWidget);
+
+  this->populateTerminologyComboBox();
+  d->resetCurrentCategory();
 }

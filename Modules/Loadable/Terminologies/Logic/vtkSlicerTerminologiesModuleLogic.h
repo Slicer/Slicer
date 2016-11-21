@@ -58,7 +58,7 @@ public:
       std::string CodeMeaning; // Human readable name (not required for ID)
     };
 
-  /// Load terminology dictionary from JSON into \sa LoadedTerminologies
+  /// Load terminology dictionary from JSON terminology context file into \sa LoadedTerminologies.
   /// \param filePath File containing the terminology to load
   /// \return Context name (SegmentationCategoryTypeContextName) of the loaded terminology. Empty string on failure.
   std::string LoadTerminologyFromFile(std::string filePath);
@@ -66,6 +66,11 @@ public:
   /// \param filePath File containing the anatomic context to load
   /// \return Context name (AnatomicContextName) of the loaded anatomic context. Empty string on failure.
   std::string LoadAnatomicContextFromFile(std::string filePath);
+  /// Load terminology dictionary from segmentation descriptor JSON file into \sa LoadedTerminologies.
+  /// \param Terminology context name (the descriptor file does not contain information about that)
+  /// \param filePath File containing the terminology to load
+  /// \return Success flag
+  bool LoadTerminologyFromSegmentDescriptorFile(std::string contextName, std::string filePath);
 
   /// Get context names of loaded terminologies
   void GetLoadedTerminologyNames(std::vector<std::string> &terminologyNames);
