@@ -175,6 +175,7 @@ class DICOMPlugin(object):
     tags['patientSex'] = "0010,0040"
     tags['patientBirthDate'] = "0010,0030"
     tags['patientComments'] = "0010,4000"
+    tags['classUID'] = "0008,0016"
     tags['instanceUID'] = "0008,0018"
 
     # Import and check dependencies

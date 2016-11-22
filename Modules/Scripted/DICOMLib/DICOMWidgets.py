@@ -76,6 +76,8 @@ class DICOMDetailsPopup(VTKObservationMixin):
     setDatabasePrecacheTags(self.dicomBrowser)
 
     self.dicomBrowser.connect('databaseDirectoryChanged(QString)', self.onDatabaseDirectoryChanged)
+    self.extensionCheckPending = False
+    self.dicomBrowser.connect('directoryImported()', self.onDirectoryImported)
 
     # Update visibility
     for name in [
@@ -397,6 +399,95 @@ class DICOMDetailsPopup(VTKObservationMixin):
           self.settings.sync()
     if slicer.dicomDatabase:
       slicer.app.setDICOMDatabase(slicer.dicomDatabase)
+
+  def onDirectoryImported(self):
+    """The dicom browser will emit multiple directoryImported
+    signals during the same operation, so we collapse them
+    into a single check for compatible extensions."""
+    if not self.extensionCheckPending:
+      self.extensionCheckPending = True
+      def timerCallback():
+        self.promptForExtensions()
+        self.extensionCheckPending = False
+      qt.QTimer.singleShot(0, timerCallback)
+
+  def promptForExtensions(self):
+    extensionsToOffer = self.checkForExtensions()
+    if len(extensionsToOffer) != 0:
+      if len(extensionsToOffer) == 1:
+        pluralOrNot = " is"
+      else:
+        pluralOrNot = "s are"
+      message = "The following data type%s in your database:\n\n" % pluralOrNot
+      for extension in extensionsToOffer:
+        message += '  ' + extension['typeDescription'] + '\n'
+      message += "\nThe following extension%s not installed, but may help you work with this data:\n\n" % pluralOrNot
+      for extension in extensionsToOffer:
+        message += '  ' + extension['name'] + '\n'
+      message += "\n\nYou can install extensions using the Extension Manager option from the View menu."
+      slicer.util.infoDisplay(message, windowTitle='DICOM')
+
+  def checkForExtensions(self):
+    """Check to see if there
+    are any registered extensions that might be available to
+    help the user work with data in the database.
+
+    1) load extension json description
+    2) load info for each series
+    3) check if data matches
+
+    then return matches
+
+    See
+    http://www.na-mic.org/Bug/view.php?id=4146
+    """
+
+    # 1 - load json
+    import logging, os, json
+    logging.info('Imported a DICOM directory, checking for extensions')
+    modulePath = os.path.dirname(slicer.modules.dicom.path)
+    extensionDescriptorPath = os.path.join(modulePath, 'DICOMExtensions.json')
+    try:
+      with open(extensionDescriptorPath, 'r') as extensionDescriptorFP:
+        extensionDescriptor = extensionDescriptorFP.read()
+        dicomExtensions = json.loads(extensionDescriptor)
+    except:
+      logging.error('Cannot access DICOMExtensions.json file')
+      return
+
+    # 2 - get series info
+    #  - iterate though metatdata - should be fast even with large database
+    #  - the fileValue call checks the tag cache so it's fast
+    modalityTag = "0008,0060"
+    sopClassUIDTag = "0008,0016"
+    sopClassUIDs = set()
+    modalities = set()
+    for patient in slicer.dicomDatabase.patients():
+      for study in slicer.dicomDatabase.studiesForPatient(patient):
+        for series in slicer.dicomDatabase.seriesForStudy(study):
+          instance0 = slicer.dicomDatabase.filesForSeries(series)[0]
+          modality = slicer.dicomDatabase.fileValue(instance0, modalityTag)
+          sopClassUID = slicer.dicomDatabase.fileValue(instance0, sopClassUIDTag)
+          modalities.add(modality)
+          sopClassUIDs.add(sopClassUID)
+
+    # 3 - check if data matches
+    extensionsManagerModel = slicer.app.extensionsManagerModel()
+    installedExtensions = extensionsManagerModel.installedExtensions
+    extensionsToOffer = []
+    for extension in dicomExtensions['extensions']:
+      extensionName = extension['name']
+      if extensionName not in installedExtensions:
+        tagValues = extension['tagValues']
+        if 'Modality' in tagValues:
+          for modality in tagValues['Modality']:
+            if modality in modalities:
+              extensionsToOffer.append(extension)
+        if 'SOPClassUID' in tagValues:
+          for sopClassUID in tagValues['SOPClassUID']:
+            if sopClassUID in sopClassUIDs:
+              extensionsToOffer.add(extension)
+    return extensionsToOffer
 
   def promptForDatabaseDirectory(self):
     """ Select User's Documents directory as default database directory.
