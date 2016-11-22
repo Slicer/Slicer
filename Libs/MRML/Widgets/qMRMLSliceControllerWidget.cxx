@@ -812,18 +812,9 @@ void qMRMLSliceControllerWidgetPrivate::enableLayerWidgets()
 // --------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::updateFromMRMLScene()
 {
-  this->updateWidgetFromMRMLSliceCompositeNode();
-
-  // If there are any segmentation nodes in the scene and selection is None, then select the first one
   Q_Q(qMRMLSliceControllerWidget);
-  if (!this->SegmentSelectorWidget->currentNode())
-    {
-    vtkMRMLNode* firstSegmentationNode = q->mrmlScene()->GetNthNodeByClass(0, "vtkMRMLSegmentationNode");
-    if (firstSegmentationNode)
-      {
-      this->SegmentSelectorWidget->setCurrentNode(firstSegmentationNode);
-      }
-    }
+  this->updateWidgetFromMRMLSliceCompositeNode();
+  q->updateSegmentationControlsVisibility();
 }
 
 // --------------------------------------------------------------------------
@@ -1134,12 +1125,6 @@ void qMRMLSliceControllerWidgetPrivate::onSegmentationNodeSelected(vtkMRMLNode* 
     {
     return;
     }
-  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(
-    segmentationNode->GetDisplayNode() );
-  if (!displayNode)
-    {
-    return;
-    }
 
   // Update the controls with the new segmentation node
   this->onSegmentationNodeDisplayModifiedEvent(segmentationNode);
@@ -1147,6 +1132,10 @@ void qMRMLSliceControllerWidgetPrivate::onSegmentationNodeSelected(vtkMRMLNode* 
   // Connect segmentation and segment display change events
   this->qvtkReconnect(0, segmentationNode, vtkMRMLDisplayableNode::DisplayModifiedEvent,
                       this, SLOT(onSegmentationNodeDisplayModifiedEvent(vtkObject*)) );
+  this->qvtkReconnect(0, segmentationNode, vtkSegmentation::SegmentAdded,
+                      this, SLOT(onSegmentationNodeDisplayModifiedEvent(vtkObject*)));
+  this->qvtkReconnect(0, segmentationNode, vtkSegmentation::SegmentRemoved,
+                      this, SLOT(onSegmentationNodeDisplayModifiedEvent(vtkObject*)));
 }
 
 // --------------------------------------------------------------------------
@@ -1157,8 +1146,14 @@ void qMRMLSliceControllerWidgetPrivate::onSegmentationNodeDisplayModifiedEvent(v
     {
     return;
     }
+
   vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(
-    segmentationNode->GetDisplayNode() );
+    segmentationNode->GetDisplayNode());
+
+  // Update segmentation visibility and opacity controls
+  this->actionSegmentationVisibility->setEnabled(displayNode != NULL);
+  this->SegmentationOpacitySlider->setEnabled(displayNode != NULL);
+
   if (!displayNode)
     {
     return;
@@ -1178,16 +1173,13 @@ void qMRMLSliceControllerWidgetPrivate::onSegmentationNodeDisplayModifiedEvent(v
   this->updateSegmentationOutlineFillButton();
 
   // Segment visibilities
+  std::vector<std::string> visibleSegmentIDsStd;
+  displayNode->GetVisibleSegmentIDs(visibleSegmentIDsStd);
   QStringList visibleSegmentIDs;
-  std::vector<std::string> allSegmentIDs;
-  segmentationNode->GetSegmentation()->GetSegmentIDs(allSegmentIDs);
-  std::vector<std::string>::iterator segmentIDIt;
-  for (segmentIDIt = allSegmentIDs.begin(); segmentIDIt != allSegmentIDs.end(); ++segmentIDIt)
+  for (std::vector<std::string>::iterator segmentIDIt = visibleSegmentIDsStd.begin();
+    segmentIDIt != visibleSegmentIDsStd.end(); ++segmentIDIt)
     {
-    if (displayNode->GetSegmentVisibility(*segmentIDIt))
-      {
-      visibleSegmentIDs << segmentIDIt->c_str();
-      }
+    visibleSegmentIDs << segmentIDIt->c_str();
     }
   this->SegmentSelectorWidget->setSelectedSegmentIDs(visibleSegmentIDs);
 }
@@ -2762,8 +2754,17 @@ void qMRMLSliceControllerWidget::updateSegmentationControlsVisibility()
   Q_D(qMRMLSliceControllerWidget);
 
   bool popupVisible = d->MoreButton->isChecked();
-  bool segmentationNodesPresent =
-    this->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLSegmentationNode");
+
+  // If there are any segmentation nodes in the scene and selection is None, then select the first one
+  if (!d->SegmentSelectorWidget->currentNode())
+    {
+    vtkMRMLNode* firstSegmentationNode = this->mrmlScene()->GetFirstNode(0, "vtkMRMLSegmentationNode");
+    if (firstSegmentationNode)
+      {
+      d->SegmentSelectorWidget->setCurrentNode(firstSegmentationNode);
+      }
+    }
+  bool segmentationNodesPresent = (d->SegmentSelectorWidget->currentNode() != NULL);
 
   // Show segmentation controls only if the popup is visible and if there are
   // segmentation nodes in the scene

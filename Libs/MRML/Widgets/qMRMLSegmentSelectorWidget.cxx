@@ -190,7 +190,7 @@ void qMRMLSegmentSelectorWidget::populateSegmentCombobox()
   // Check if segmentation is valid and non-empty
   if (!d->SegmentationNode || !d->SegmentationNode->GetSegmentation() || d->SegmentationNode->GetSegmentation()->GetNumberOfSegments() == 0)
     {
-    d->setMessage(tr( d->SegmentationNode ? "No segments in segmentation" : "No node is selected" ));
+    d->setMessage(tr( d->SegmentationNode ? "No segments in segmentation" : "No node is selected" )+" ");
 
     d->label_Segment->setVisible(false);
     d->comboBox_Segment->setVisible(false);
