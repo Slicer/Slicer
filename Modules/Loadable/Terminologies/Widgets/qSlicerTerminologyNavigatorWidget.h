@@ -99,7 +99,7 @@ public:
   /// Serialized terminology entry consists of the following: terminologyContextName, category (codingScheme,  
   /// codeValue, codeMeaning triple), type, typeModifier, anatomicContextName, anatomicRegion, anatomicRegionModifier
   ///  \return Success flag
-  static bool deserializeTerminologyEntry(QString serializedEntry, vtkSlicerTerminologyEntry* entry);
+  Q_INVOKABLE static bool deserializeTerminologyEntry(QString serializedEntry, vtkSlicerTerminologyEntry* entry);
 
   /// Get recommended color from type (or type modifier if any) of the given terminology entry
   static QColor recommendedColorFromTerminology(vtkSlicerTerminologyEntry* entry);
