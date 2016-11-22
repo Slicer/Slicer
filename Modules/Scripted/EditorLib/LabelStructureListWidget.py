@@ -51,7 +51,6 @@ class LabelStructureListWidget(qt.QWidget):
     self.splitButton.connect("clicked()", self.split)
     self.mergeButton.connect("clicked()", self.mergeStructures)
     self.mergeAndBuildButton.connect("clicked()", self.onMergeAndBuild)
-    self.exportButton.connect("clicked()", self.export)
 
   #---------------------------------------------------------------------------
   @property
@@ -103,14 +102,6 @@ class LabelStructureListWidget(qt.QWidget):
     self.splitButton.objectName = 'SplitStructureButton'
     self.splitButton.setToolTip( "Split distinct labels from merge volume into new volumes" )
     self.structureButtonsFrame.layout().addWidget(self.splitButton)
-
-    # dicom export button
-
-    self.exportButton = qt.QPushButton("Export DICOM SEG")
-    self.exportButton.objectName = 'ExportDICOMButton'
-    self.exportButton.setToolTip( "Export current merge (only if Reporting extension is installed and Master Volume has DICOM context)" )
-    self.structureButtonsFrame.layout().addWidget(self.exportButton)
-    self.exportButton.enabled = hasattr(slicer.modules, 'encodeseg')
 
     # structures view
 
@@ -384,31 +375,6 @@ class LabelStructureListWidget(qt.QWidget):
     self.statusText( "Finished splitting." )
 
   #---------------------------------------------------------------------------
-  def export(self):
-    """create a DICOM Segmentation Object from the current labels
-    and put it in the slicer dicom database"""
-
-    if not hasattr(slicer.modules, 'encodeseg'):
-      # TODO: change this message when EncodeSEG is in the trunk
-      qt.QMessageBox.critical(slicer.util.mainWindow(), "DICOM", "The Reporting extension must be installed in order to export segmentation objects")
-      return
-
-    if not self.master.GetAttribute("DICOM.instanceUIDs"):
-      qt.QMessageBox.critical(slicer.util.mainWindow(), "DICOM", "Master volume must have DICOM context")
-      return
-
-    rows = self.structures.rowCount()
-    if rows == 0:
-      self.split()
-      rows = self.structures.rowCount()
-      if rows == 0:
-        logging.info("Cannot export empty segmentation") # TODO: should you be able to?
-        return
-
-    EditUtil.exportAsDICOMSEG(self.master)
-    logging.info("Segmentations exported to DICOM Database")
-
-  #---------------------------------------------------------------------------
   def build(self):
     """make models of current merge volume"""
 
@@ -537,7 +503,6 @@ class LabelStructureListWidget(qt.QWidget):
     self.deleteSelectedStructureButton.setDisabled(not merge)
     self.mergeButton.setDisabled(not merge)
     self.splitButton.setDisabled(not merge)
-    self.exportButton.setDisabled(not merge)
     self.mergeAndBuildButton.setDisabled(not merge)
     self.replaceModels.setDisabled(not merge)
     if self.mergeValidCommand:
