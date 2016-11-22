@@ -63,6 +63,7 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentEditorWidget : pu
   Q_PROPERTY(bool masterVolumeNodeSelectorVisible READ masterVolumeNodeSelectorVisible WRITE setMasterVolumeNodeSelectorVisible)
   Q_PROPERTY(bool undoEnabled READ undoEnabled WRITE setUndoEnabled)
   Q_PROPERTY(int maximumNumberOfUndoStates READ maximumNumberOfUndoStates WRITE setMaximumNumberOfUndoStates)
+  Q_PROPERTY(bool readOnly READ readOnly WRITE setReadOnly)
 
 public:
   typedef qMRMLWidget Superclass;
@@ -111,15 +112,14 @@ public:
 
   /// Show/hide the segmentation node selector widget.
   bool segmentationNodeSelectorVisible() const;
-
   /// Show/hide the master volume node selector widget.
   bool masterVolumeNodeSelectorVisible() const;
-
   /// Undo/redo enabled.
   bool undoEnabled() const;
-
-  /// Get amximum number of saved undo/redo states.
+  /// Get maximum number of saved undo/redo states.
   int maximumNumberOfUndoStates() const;
+  /// Get whether widget is read-only
+  bool readOnly() const;
 
 public slots:
   /// Set the MRML \a scene associated with the widget
@@ -152,15 +152,14 @@ public slots:
 
   /// Show/hide the segmentation node selector widget.
   void setSegmentationNodeSelectorVisible(bool);
-
   /// Show/hide the master volume node selector widget.
   void setMasterVolumeNodeSelectorVisible(bool);
-
   /// Undo/redo enabled.
   void setUndoEnabled(bool);
-
-  /// Set amximum number of saved undo/redo states.
+  /// Set maximum number of saved undo/redo states.
   void setMaximumNumberOfUndoStates(int);
+  /// Set whether the widget is read-only
+  void setReadOnly(bool aReadOnly);
 
   /// Restores previous saved state of the segmentation
   void undo();

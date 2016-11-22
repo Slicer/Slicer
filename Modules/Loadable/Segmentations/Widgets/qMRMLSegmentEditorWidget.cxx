@@ -2301,6 +2301,23 @@ void qMRMLSegmentEditorWidget::setMaximumNumberOfUndoStates(int maxNumberOfState
   d->SegmentationHistory->SetMaximumNumberOfStates(maxNumberOfStates);
 }
 
+//------------------------------------------------------------------------------
+bool qMRMLSegmentEditorWidget::readOnly() const
+{
+  Q_D(const qMRMLSegmentEditorWidget);
+  return d->SegmentsTableView->readOnly();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::setReadOnly(bool aReadOnly)
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  d->AddSegmentButton->setEnabled(!aReadOnly);
+  d->RemoveSegmentButton->setEnabled(!aReadOnly);
+  d->CreateSurfaceButton->setEnabled(!aReadOnly);
+  d->SegmentsTableView->setReadOnly(aReadOnly);
+}
+
 //-----------------------------------------------------------------------------
 void qMRMLSegmentEditorWidget::undo()
 {

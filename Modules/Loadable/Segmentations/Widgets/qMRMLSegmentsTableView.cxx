@@ -142,8 +142,8 @@ void qMRMLSegmentsTableViewPrivate::init()
   // Select rows
   this->SegmentsTable->setSelectionBehavior(QAbstractItemView::SelectRows);
 
-  // Change edit triggers so that starting typing does not rename the segment
-  this->SegmentsTable->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
+  // Unset read-only by default (edit triggers are double click and edit key press)
+  q->setReadOnly(false);
 
   // Make connections
   QObject::connect(this->SegmentsTable, SIGNAL(itemChanged(QTableWidgetItem*)),
@@ -930,6 +930,20 @@ void qMRMLSegmentsTableView::setOpacityColumnVisible(bool visible)
 }
 
 //------------------------------------------------------------------------------
+void qMRMLSegmentsTableView::setReadOnly(bool aReadOnly)
+{
+  Q_D(qMRMLSegmentsTableView);
+  if (aReadOnly)
+    {
+    d->SegmentsTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    }
+  else
+    {
+    d->SegmentsTable->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
+    }
+}
+
+//------------------------------------------------------------------------------
 int qMRMLSegmentsTableView::selectionMode()
 {
   Q_D(qMRMLSegmentsTableView);
@@ -962,6 +976,13 @@ bool qMRMLSegmentsTableView::opacityColumnVisible()
 {
   Q_D(qMRMLSegmentsTableView);
   return !d->SegmentsTable->isColumnHidden(d->columnIndex("Opacity"));
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLSegmentsTableView::readOnly()
+{
+  Q_D(qMRMLSegmentsTableView);
+  return (d->SegmentsTable->editTriggers() == QAbstractItemView::NoEditTriggers);
 }
 
 //------------------------------------------------------------------------------

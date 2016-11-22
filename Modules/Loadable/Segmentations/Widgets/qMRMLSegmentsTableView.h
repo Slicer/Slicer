@@ -62,6 +62,7 @@ public:
   Q_PROPERTY(bool visibilityColumnVisible READ visibilityColumnVisible WRITE setVisibilityColumnVisible)
   Q_PROPERTY(bool colorColumnVisible READ colorColumnVisible WRITE setColorColumnVisible)
   Q_PROPERTY(bool opacityColumnVisible READ opacityColumnVisible WRITE setOpacityColumnVisible)
+  Q_PROPERTY(bool readOnly READ readOnly WRITE setReadOnly)
 
   typedef qMRMLWidget Superclass;
   /// Constructor
@@ -93,6 +94,7 @@ public:
   bool visibilityColumnVisible();
   bool colorColumnVisible();
   bool opacityColumnVisible();
+  bool readOnly();
 
 public slots:
   /// Set segmentation MRML node
@@ -109,6 +111,7 @@ public slots:
   void setVisibilityColumnVisible(bool visible);
   void setColorColumnVisible(bool visible);
   void setOpacityColumnVisible(bool visible);
+  void setReadOnly(bool aReadOnly);
 
   /// Show only selected segments
   void showOnlySelectedSegments();
