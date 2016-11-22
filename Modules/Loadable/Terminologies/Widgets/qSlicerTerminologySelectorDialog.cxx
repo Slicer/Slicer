@@ -89,6 +89,7 @@ void qSlicerTerminologySelectorDialogPrivate::init()
   buttonsLayout->setContentsMargins(4, 0, 4, 0);
 
   this->SelectButton = new QPushButton("Select");
+  this->SelectButton->setEnabled(false); // Disabled until terminology selection becomes valid
   buttonsLayout->addWidget(this->SelectButton);
 
   this->CancelButton = new QPushButton("Cancel");
@@ -97,6 +98,7 @@ void qSlicerTerminologySelectorDialogPrivate::init()
   layout->addLayout(buttonsLayout);
 
   // Make connections
+  connect(this->NavigatorWidget, SIGNAL(selectionValidityChanged(bool)), q, SLOT(setSelectButtonEnabled(bool)));
   connect(this->SelectButton, SIGNAL(clicked()), this, SLOT(accept()));
   connect(this->CancelButton, SIGNAL(clicked()), this, SLOT(reject()));
 }
@@ -176,4 +178,11 @@ QColor qSlicerTerminologySelectorDialog::color()
 {
   Q_D(qSlicerTerminologySelectorDialog);
   return d->Color;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTerminologySelectorDialog::setSelectButtonEnabled(bool enabled)
+{
+  Q_D(qSlicerTerminologySelectorDialog);
+  d->SelectButton->setEnabled(enabled);
 }

@@ -64,6 +64,9 @@ public:
   /// Get color
   QColor color();
 
+protected slots:
+  void setSelectButtonEnabled(bool);
+
 protected:
   QScopedPointer<qSlicerTerminologySelectorDialogPrivate> d_ptr;
 

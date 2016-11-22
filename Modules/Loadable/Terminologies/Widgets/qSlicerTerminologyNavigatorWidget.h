@@ -162,6 +162,10 @@ protected slots:
 
   void onLogicModified();
 
+signals:
+  /// Emitted when selection becomes valid (true argument) or invalid (false argument)
+  void selectionValidityChanged(bool);
+
 protected:
   QScopedPointer<qSlicerTerminologyNavigatorWidgetPrivate> d_ptr;
 

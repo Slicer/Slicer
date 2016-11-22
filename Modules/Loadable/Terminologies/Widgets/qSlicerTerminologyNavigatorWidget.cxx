@@ -525,7 +525,7 @@ bool qSlicerTerminologyNavigatorWidget::setTerminologyEntry(vtkSlicerTerminology
     qCritical() << Q_FUNC_INFO << ": No type object in terminology entry";
     returnValue = false;
     }
-  if (!this->setCurrentType(typeObject))
+  else if (!this->setCurrentType(typeObject))
     {
     qCritical() << Q_FUNC_INFO << ": Failed to find type with name " << (typeObject->GetCodeMeaning()?typeObject->GetCodeMeaning():"NULL");
     returnValue = false;
@@ -533,7 +533,7 @@ bool qSlicerTerminologyNavigatorWidget::setTerminologyEntry(vtkSlicerTerminology
 
   // Select type modifier
   vtkSlicerTerminologyType* typeModifierObject = entry->GetTypeModifierObject();
-  if (typeObject->GetHasModifiers() && typeModifierObject)
+  if (typeObject && typeObject->GetHasModifiers() && typeModifierObject)
     {
     if (!this->setCurrentTypeModifier(typeModifierObject))
       {
@@ -1072,6 +1072,12 @@ void qSlicerTerminologyNavigatorWidget::setCurrentTerminology(QString terminolog
 {
   Q_D(qSlicerTerminologyNavigatorWidget);
 
+  // If no change then nothing to do
+  if (d->CurrentTerminologyName == terminologyName)
+    {
+    return;
+    }
+
   // Reset current category, type, and type modifier
   d->resetCurrentCategory();
   d->resetCurrentType();
@@ -1107,6 +1113,9 @@ void qSlicerTerminologyNavigatorWidget::setCurrentTerminology(QString terminolog
     d->tableWidget_Category->setEnabled(true);
     d->SearchBox_Category->setEnabled(true);
     }
+
+  // Selection is invalid until category then type is selected
+  emit selectionValidityChanged(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -1133,6 +1142,13 @@ bool qSlicerTerminologyNavigatorWidget::setCurrentCategory(vtkSlicerTerminologyC
   // Reset anatomic region information as well
   d->resetCurrentRegion();
   d->resetCurrentRegionModifier();
+
+  if (!category)
+    {
+    d->resetCurrentCategory();
+    qCritical() << Q_FUNC_INFO << ": Invalid category object set";
+    return false;
+    }
 
   // Set current category
   d->CurrentCategoryObject->Copy(category);
@@ -1165,6 +1181,9 @@ bool qSlicerTerminologyNavigatorWidget::setCurrentCategory(vtkSlicerTerminologyC
   d->tableWidget_AnatomicRegion->setEnabled(d->CurrentCategoryObject->GetShowAnatomy());
   d->SearchBox_AnatomicRegion->setEnabled(d->CurrentCategoryObject->GetShowAnatomy());
   d->ComboBox_AnatomicRegionModifier->setEnabled(false); // Disabled until valid region selection
+
+  // Selection is invalid until type is selected
+  emit selectionValidityChanged(false);
 
   // Select category if found
   QTableWidgetItem* categoryItem = d->findTableWidgetItemForCategory(category);
@@ -1217,6 +1236,13 @@ bool qSlicerTerminologyNavigatorWidget::setCurrentType(vtkSlicerTerminologyType*
   // Reset current type modifier
   d->resetCurrentTypeModifier();
 
+  if (!type)
+    {
+    d->resetCurrentType();
+    qCritical() << Q_FUNC_INFO << ": Invalid type object set";
+    return false;
+    }
+
   // Set current type
   d->CurrentTypeObject->Copy(type);
 
@@ -1225,6 +1251,9 @@ bool qSlicerTerminologyNavigatorWidget::setCurrentType(vtkSlicerTerminologyType*
 
   // Only enable type modifier combobox if there are items in it
   d->ComboBox_TypeModifier->setEnabled(d->ComboBox_TypeModifier->count());
+
+  // With valid type selected, terminology selection becomes also valid
+  emit selectionValidityChanged(true);
 
   // Select type if found
   QTableWidgetItem* typeItem = d->findTableWidgetItemForType(d->tableWidget_Type, type);
@@ -1278,6 +1307,13 @@ void qSlicerTerminologyNavigatorWidget::onTypeClicked(QTableWidgetItem* item)
 bool qSlicerTerminologyNavigatorWidget::setCurrentTypeModifier(vtkSlicerTerminologyType* modifier)
 {
   Q_D(qSlicerTerminologyNavigatorWidget);
+
+  if (!modifier)
+    {
+    d->resetCurrentTypeModifier();
+    qCritical() << Q_FUNC_INFO << ": Invalid type modifier object set";
+    return false;
+    }
 
   // Set current type modifier
   d->CurrentTypeModifierObject->Copy(modifier);
@@ -1562,6 +1598,13 @@ bool qSlicerTerminologyNavigatorWidget::setCurrentRegion(vtkSlicerTerminologyTyp
   // Reset current region modifier
   d->resetCurrentRegionModifier();
 
+  if (!region)
+    {
+    d->resetCurrentRegion();
+    qCritical() << Q_FUNC_INFO << ": Invalid region object set";
+    return false;
+    }
+
   // Set current region
   d->CurrentRegionObject->Copy(region);
 
@@ -1619,6 +1662,13 @@ void qSlicerTerminologyNavigatorWidget::onRegionClicked(QTableWidgetItem* item)
 bool qSlicerTerminologyNavigatorWidget::setCurrentRegionModifier(vtkSlicerTerminologyType* modifier)
 {
   Q_D(qSlicerTerminologyNavigatorWidget);
+
+  if (!modifier)
+    {
+    d->resetCurrentRegionModifier();
+    qCritical() << Q_FUNC_INFO << ": Invalid region modifier object set";
+    return false;
+    }
 
   // Set current type modifier
   d->CurrentRegionModifierObject->Copy(modifier);
