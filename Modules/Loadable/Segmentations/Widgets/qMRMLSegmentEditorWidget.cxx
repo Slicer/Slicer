@@ -2312,9 +2312,17 @@ bool qMRMLSegmentEditorWidget::readOnly() const
 void qMRMLSegmentEditorWidget::setReadOnly(bool aReadOnly)
 {
   Q_D(qMRMLSegmentEditorWidget);
+  
   d->AddSegmentButton->setEnabled(!aReadOnly);
   d->RemoveSegmentButton->setEnabled(!aReadOnly);
   d->CreateSurfaceButton->setEnabled(!aReadOnly);
+  
+  d->EffectsGroupBox->setEnabled(!aReadOnly);
+  d->UndoButton->setEnabled(!aReadOnly);
+  d->RedoButton->setEnabled(!aReadOnly);
+  d->OptionsGroupBox->setEnabled(!aReadOnly);
+  d->MaskingGroupBox->setEnabled(!aReadOnly);
+  
   d->SegmentsTableView->setReadOnly(aReadOnly);
 }
 
