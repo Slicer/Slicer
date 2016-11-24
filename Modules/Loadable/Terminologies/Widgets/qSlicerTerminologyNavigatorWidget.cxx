@@ -658,21 +658,21 @@ QString qSlicerTerminologyNavigatorWidget::serializeTerminologyEntry(vtkSlicerTe
   // Serialized terminology entry consists of the following: terminologyContextName, category (codingScheme,  
   // codeValue, codeMeaning triple), type, typeModifier, anatomicContextName, anatomicRegion, anatomicRegionModifier
   QString serializedEntry;
-  serializedEntry += QString(entry->GetTerminologyContextName()) + "|"; // Invalid string if NULL
+  serializedEntry += QString(entry->GetTerminologyContextName()) + "~"; // Invalid string if NULL
   serializedEntry += QString(entry->GetCategoryObject() ? entry->GetCategoryObject()->GetCodingScheme() : NULL) + "^"
     + QString(entry->GetCategoryObject() ? entry->GetCategoryObject()->GetCodeValue() : NULL) + "^"
-    + QString(entry->GetCategoryObject() ? entry->GetCategoryObject()->GetCodeMeaning() : NULL) + "|";
+    + QString(entry->GetCategoryObject() ? entry->GetCategoryObject()->GetCodeMeaning() : NULL) + "~";
   serializedEntry += QString(entry->GetTypeObject() ? entry->GetTypeObject()->GetCodingScheme() : NULL) + "^"
     + QString(entry->GetTypeObject() ? entry->GetTypeObject()->GetCodeValue() : NULL) + "^"
-    + QString(entry->GetTypeObject() ? entry->GetTypeObject()->GetCodeMeaning() : NULL) + "|";
+    + QString(entry->GetTypeObject() ? entry->GetTypeObject()->GetCodeMeaning() : NULL) + "~";
   serializedEntry += QString(entry->GetTypeModifierObject() ? entry->GetTypeModifierObject()->GetCodingScheme() : NULL) + "^"
     + QString(entry->GetTypeModifierObject() ? entry->GetTypeModifierObject()->GetCodeValue() : NULL) + "^"
-    + QString(entry->GetTypeModifierObject() ? entry->GetTypeModifierObject()->GetCodeMeaning() : NULL) + "|";
+    + QString(entry->GetTypeModifierObject() ? entry->GetTypeModifierObject()->GetCodeMeaning() : NULL) + "~";
 
-  serializedEntry += QString(entry->GetAnatomicContextName()) + "|";
+  serializedEntry += QString(entry->GetAnatomicContextName()) + "~";
   serializedEntry += QString(entry->GetAnatomicRegionObject() ? entry->GetAnatomicRegionObject()->GetCodingScheme() : NULL) + "^"
     + QString(entry->GetAnatomicRegionObject() ? entry->GetAnatomicRegionObject()->GetCodeValue() : NULL) + "^"
-    + QString(entry->GetAnatomicRegionObject() ? entry->GetAnatomicRegionObject()->GetCodeMeaning() : NULL) + "|";
+    + QString(entry->GetAnatomicRegionObject() ? entry->GetAnatomicRegionObject()->GetCodeMeaning() : NULL) + "~";
   serializedEntry += QString(entry->GetAnatomicRegionModifierObject() ? entry->GetAnatomicRegionModifierObject()->GetCodingScheme() : NULL) + "^"
     + QString(entry->GetAnatomicRegionModifierObject() ? entry->GetAnatomicRegionModifierObject()->GetCodeValue() : NULL) + "^"
     + QString(entry->GetAnatomicRegionModifierObject() ? entry->GetAnatomicRegionModifierObject()->GetCodeMeaning() : NULL);
@@ -691,13 +691,13 @@ QString qSlicerTerminologyNavigatorWidget::serializeTerminologyEntry(
   QString regionModifierValue, QString regionModifierSchemeDesignator, QString regionModifierMeaning )
 {
   QString serializedEntry;
-  serializedEntry += terminologyContextName + "|";
-  serializedEntry += categorySchemeDesignator + "^" + categoryValue + "^" + categoryMeaning + "|";
-  serializedEntry += typeSchemeDesignator + "^" + typeValue + "^" + typeMeaning + "|";
-  serializedEntry += modifierSchemeDesignator + "^" + modifierValue + "^" + modifierMeaning + "|";
+  serializedEntry += terminologyContextName + "~";
+  serializedEntry += categorySchemeDesignator + "^" + categoryValue + "^" + categoryMeaning + "~";
+  serializedEntry += typeSchemeDesignator + "^" + typeValue + "^" + typeMeaning + "~";
+  serializedEntry += modifierSchemeDesignator + "^" + modifierValue + "^" + modifierMeaning + "~";
 
-  serializedEntry += anatomicContextName + "|";
-  serializedEntry += regionSchemeDesignator + "^" + regionValue + "^" + regionMeaning + "|";
+  serializedEntry += anatomicContextName + "~";
+  serializedEntry += regionSchemeDesignator + "^" + regionValue + "^" + regionMeaning + "~";
   serializedEntry += regionModifierSchemeDesignator + "^" + regionModifierValue + "^" + regionModifierMeaning;
 
   return serializedEntry;
@@ -717,7 +717,7 @@ bool qSlicerTerminologyNavigatorWidget::deserializeTerminologyEntry(QString seri
 
   // Serialized terminology entry consists of the following: terminologyContextName, category (codingScheme,  
   // codeValue, codeMeaning triple), type, typeModifier, anatomicContextName, anatomicRegion, anatomicRegionModifier
-  QStringList entryComponents = serializedEntry.split("|");
+  QStringList entryComponents = serializedEntry.split("~");
   if (entryComponents.count() != 7)
     {
     return false;
