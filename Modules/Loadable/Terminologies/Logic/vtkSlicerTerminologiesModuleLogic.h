@@ -71,6 +71,9 @@ public:
   /// \param filePath File containing the terminology to load
   /// \return Success flag
   bool LoadTerminologyFromSegmentDescriptorFile(std::string contextName, std::string filePath);
+  /// Load anatomic context dictionary from segmentation descriptor JSON file into \sa LoadedAnatomicContexts.
+  /// See also \sa LoadTerminologyFromSegmentDescriptorFile
+  bool LoadAnatomicContextFromSegmentDescriptorFile(std::string contextName, std::string filePath);
 
   /// Get context names of loaded terminologies
   void GetLoadedTerminologyNames(std::vector<std::string> &terminologyNames);
@@ -160,7 +163,6 @@ protected:
   virtual ~vtkSlicerTerminologiesModuleLogic();
 
   virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
-  virtual void OnMRMLSceneEndClose();
 
   /// Load default terminology dictionaries from JSON into \sa LoadedTerminologies
   void LoadDefaultTerminologies();

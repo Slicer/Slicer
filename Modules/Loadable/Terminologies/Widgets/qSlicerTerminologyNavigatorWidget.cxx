@@ -167,6 +167,8 @@ void qSlicerTerminologyNavigatorWidgetPrivate::init()
   QObject::connect(this->SearchBox_Type, SIGNAL(textChanged(QString)),
     q, SLOT(onTypeSearchTextChanged(QString)) );
 
+  QObject::connect(this->ComboBox_AnatomicContext, SIGNAL(currentIndexChanged(int)),
+    q, SLOT(onAnatomicContextSelectionChanged(int)) );
   QObject::connect(this->tableWidget_AnatomicRegion, SIGNAL(itemClicked(QTableWidgetItem*)),
     q, SLOT(onRegionClicked(QTableWidgetItem*)) );
   QObject::connect(this->ComboBox_AnatomicRegionModifier, SIGNAL(currentIndexChanged(int)),
@@ -680,20 +682,21 @@ QString qSlicerTerminologyNavigatorWidget::serializeTerminologyEntry(vtkSlicerTe
 
 //-----------------------------------------------------------------------------
 QString qSlicerTerminologyNavigatorWidget::serializeTerminologyEntry(
-  QString contextName,
+  QString terminologyContextName,
   QString categoryValue, QString categorySchemeDesignator, QString categoryMeaning,
   QString typeValue, QString typeSchemeDesignator, QString typeMeaning,
   QString modifierValue, QString modifierSchemeDesignator, QString modifierMeaning,
+  QString anatomicContextName,
   QString regionValue, QString regionSchemeDesignator, QString regionMeaning,
   QString regionModifierValue, QString regionModifierSchemeDesignator, QString regionModifierMeaning )
 {
   QString serializedEntry;
-  serializedEntry += contextName + "|";
+  serializedEntry += terminologyContextName + "|";
   serializedEntry += categorySchemeDesignator + "^" + categoryValue + "^" + categoryMeaning + "|";
   serializedEntry += typeSchemeDesignator + "^" + typeValue + "^" + typeMeaning + "|";
   serializedEntry += modifierSchemeDesignator + "^" + modifierValue + "^" + modifierMeaning + "|";
 
-  serializedEntry += "|"; // Assume there is only one anatomic context, do not pass anything for anatomic context name
+  serializedEntry += anatomicContextName + "|";
   serializedEntry += regionSchemeDesignator + "^" + regionValue + "^" + regionMeaning + "|";
   serializedEntry += regionModifierSchemeDesignator + "^" + regionModifierValue + "^" + regionModifierMeaning;
 
@@ -1735,4 +1738,7 @@ void qSlicerTerminologyNavigatorWidget::onLogicModified()
 
   this->populateTerminologyComboBox();
   d->resetCurrentCategory();
+
+  this->populateAnatomicContextComboBox();
+  d->resetCurrentRegion();
 }

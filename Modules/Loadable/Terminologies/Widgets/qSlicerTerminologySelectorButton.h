@@ -30,13 +30,8 @@
 
 class qSlicerTerminologySelectorButtonPrivate;
 
-//TODO:
-/// \ingroup Widgets
-///
-/// qSlicerTerminologySelectorButton is a QPushButton that refers to a color. The color
-/// and the name of the color (i.e. &#35;FFFFFF) are displayed on the button.
-/// When clicked, a color dialog pops up to select a new color
-/// for the QPushButton.
+/// \brief Button that opens terminology selector dialog
+/// \ingroup SlicerRt_QtModules_Terminologies_Widgets
 class Q_SLICER_MODULE_TERMINOLOGIES_WIDGETS_EXPORT qSlicerTerminologySelectorButton : public QPushButton
 {
   Q_OBJECT
@@ -45,12 +40,7 @@ class Q_SLICER_MODULE_TERMINOLOGIES_WIDGETS_EXPORT qSlicerTerminologySelectorBut
   Q_PROPERTY(QColor color READ color WRITE setColor)
 
 public:
-  //TODO:
-  /// The text will be shown on the button if
-  /// displayColorName is false, otherwise the color name is shown.
-  /// \sa setColor, QPushButton::setText
   explicit qSlicerTerminologySelectorButton(QWidget* parent=NULL);
-
   virtual ~qSlicerTerminologySelectorButton();
 
   /// Current selected terminology

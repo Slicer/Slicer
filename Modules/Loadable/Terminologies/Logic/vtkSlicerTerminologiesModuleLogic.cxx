@@ -36,9 +36,11 @@
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>
 #include <vtkObjectFactory.h>
-#include <vtkIntArray.h> //TODO: Scene events?
 #include <vtkStringArray.h>
 #include <vtkVariant.h>
+
+// STD includes
+#include <algorithm>
 
 // JSON includes (requires Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT)
 #include <json/json.h>
@@ -109,6 +111,9 @@ public:
   /// Convert a segmentation descriptor Json structure to a terminology context one
   /// \return Terminology context Json structure, Null Json value on failure
   Json::Value ConvertSegmentationDescriptorToTerminologyContext(Json::Value descriptorRoot, std::string contextName);
+  /// Convert a segmentation descriptor Json structure to an anatomic context one
+  /// \return Anatomic context Json structure, Null Json value on failure
+  Json::Value ConvertSegmentationDescriptorToAnatomicContext(Json::Value descriptorRoot, std::string contextName);
   /// Copy basic identifier members from an identifier object into a Json object
   /// \return The code object with the identifiers set
   Json::Value GetJsonCodeFromIdentifier(Json::Value code, CodeIdentifier idenfifier);
@@ -442,16 +447,13 @@ Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetTypeModifierInTer
 //---------------------------------------------------------------------------
 Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::GetAnatomicContextRootByName(std::string anatomicContextName)
 {
-  //TODO: For now it is assumed that there is one anatomic context and it is used at all times
-  return this->LoadedAnatomicContexts.begin()->second;
+  TerminologyMap::iterator anIt = this->LoadedAnatomicContexts.find(anatomicContextName);
+  if (anIt != this->LoadedAnatomicContexts.end())
+    {
+    return anIt->second;
+    }
 
-  //TerminologyMap::iterator anIt = this->LoadedAnatomicContexts.find(anatomicContextName);
-  //if (anIt != this->LoadedAnatomicContexts.end())
-  //  {
-  //  return anIt->second;
-  //  }
-
-  //return Json::Value();
+  return Json::Value();
 }
 
 //---------------------------------------------------------------------------
@@ -585,6 +587,7 @@ Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationD
     }
 
   // Parse segment attributes
+  bool entryAdded = false;
   Json::ArrayIndex index = 0;
   while (segmentAttributesArray.isValidIndex(index))
     {
@@ -593,16 +596,12 @@ Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationD
       {
       continue;
       }
-    //TODO: If innerList contains the segments for a segmentation and segmentAttributes contain the segmentations, then this needs to be changed
-    //     "The reason for the inner list is that we have one single schema both for input and output. When we provide input metafile,
-    //     we can have multiple input files, and each file can have multiple labels, that is why we need to have list of lists"
+    // Note: "The reason for the inner list is that we have one single schema both for input and output. When we provide input metafile,
+    //       we can have multiple input files, and each file can have multiple labels, that is why we need to have list of lists"
     segmentAttributes = segmentAttributes[0]; // Enter "innerList"
     Json::Value segmentCategory = segmentAttributes["SegmentedPropertyCategoryCodeSequence"];
     Json::Value segmentType = segmentAttributes["SegmentedPropertyTypeCodeSequence"];
     Json::Value segmentTypeModifier = segmentAttributes["SegmentedPropertyTypeModifierCodeSequence"];
-    // We assume there is only one anatomic context and it is already loaded //TODO: Is this correct?
-    //Json::Value segmentRegion = segmentAttributes["AnatomicRegionCodeSequence"];
-    //Json::Value segmentRegionModifier = segmentAttributes["AnatomicRegionModifierCodeSequence"];
     Json::Value segmentRecommendedDisplayRGBValue = segmentAttributes["recommendedDisplayRGBValue"];
     if (!segmentCategory.isObject() || !segmentType.isObject())
       {
@@ -689,14 +688,130 @@ Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationD
       categoryArray[foundCategoryIndex] = category;
       }
 
+    entryAdded = true;
     ++index;
     }
 
   // Set objects back to terminology Json object
-  segmentationCodes["Category"] = categoryArray;
-  terminologyRoot["SegmentationCodes"] = segmentationCodes;
+  if (entryAdded)
+    {
+    segmentationCodes["Category"] = categoryArray;
+    terminologyRoot["SegmentationCodes"] = segmentationCodes;
 
-  return terminologyRoot;
+    return terminologyRoot;
+    }
+
+  return Json::Value(); // Return invalid if no entry was added from descriptor
+}
+
+//---------------------------------------------------------------------------
+Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescriptorToAnatomicContext(Json::Value descriptorRoot, std::string contextName)
+{
+  if (descriptorRoot.isNull() || contextName.empty())
+    {
+    return Json::Value();
+    }
+
+  // Get segment attributes
+  Json::Value segmentAttributesArray = descriptorRoot["segmentAttributes"];
+  if (!segmentAttributesArray.isArray())
+    {
+    vtkGenericWarningMacro("ConvertSegmentationDescriptorToAnatomicContext: Invalid segmentAttributes member");
+    return Json::Value();
+    }
+
+  // Use terminology with context name if exists
+  Json::Value anatomicContextRoot = this->GetAnatomicContextRootByName(contextName);
+  Json::Value anatomicCodes;
+  Json::Value regionArray = Json::Value(Json::arrayValue);
+  if (!anatomicContextRoot.isNull())
+    {
+    anatomicCodes = anatomicContextRoot["AnatomicCodes"];
+    regionArray = this->GetRegionArrayInAnatomicContext(contextName);
+    }
+  else
+    {
+    anatomicContextRoot["AnatomicContextName"] = contextName;
+    }
+
+  // Parse segment attributes
+  bool entryAdded = false;
+  Json::ArrayIndex index = 0;
+  while (segmentAttributesArray.isValidIndex(index))
+    {
+    Json::Value segmentAttributes = segmentAttributesArray[index];
+    if (!segmentAttributes.isArray())
+      {
+      continue;
+      }
+    // Note: "The reason for the inner list is that we have one single schema both for input and output. When we provide input metafile,
+    //       we can have multiple input files, and each file can have multiple labels, that is why we need to have list of lists"
+    segmentAttributes = segmentAttributes[0]; // Enter "innerList"
+    Json::Value segmentRegion = segmentAttributes["AnatomicRegionCodeSequence"];
+    Json::Value segmentRegionModifier = segmentAttributes["AnatomicRegionModifierCodeSequence"];
+    if (!segmentRegion.isObject())
+      {
+      // Anatomic context is optional in the descriptor file
+      continue;
+      }
+
+    // Get region modifier array if region already exists, create empty otherwise
+    vtkSlicerTerminologiesModuleLogic::CodeIdentifier regionId(
+      segmentRegion["CodingSchemeDesignator"].asString(), segmentRegion["CodeValue"].asString(), segmentRegion["CodeMeaning"].asString() );
+    int foundRegionIndex = -1;
+    Json::Value region = this->GetCodeInArray(regionId, regionArray, foundRegionIndex);
+    Json::Value regionModifierArray = Json::Value(Json::arrayValue);
+    if (!region.isNull())
+      {
+      regionModifierArray = region["Modifier"];
+      }
+
+    // Add modifier if specified in descriptor and does not yet exist in anatomic context
+    if (segmentRegionModifier.isObject())
+      {
+      vtkSlicerTerminologiesModuleLogic::CodeIdentifier regionModifierId(
+        segmentRegionModifier["CodingSchemeDesignator"].asString(), segmentRegionModifier["CodeValue"].asString(), segmentRegionModifier["CodeMeaning"].asString() );
+      int foundRegionModifierIndex = -1;
+      Json::Value regionModifier = this->GetCodeInArray(regionModifierId, regionModifierArray, foundRegionModifierIndex);
+      // Modifier already exists, nothing to do
+      if (regionModifier.isObject())
+        {
+        continue;
+        }
+
+      // Create and populate modifier
+      regionModifier = this->GetJsonCodeFromIdentifier(regionModifier, regionModifierId);
+
+      // Set modifier to region
+      regionModifierArray.append(regionModifier);
+      region["Modifier"] = regionModifierArray;
+      }
+
+    // Add region if has not been added yet, overwrite otherwise
+    region = this->GetJsonCodeFromIdentifier(region, regionId);
+    if (foundRegionIndex == -1)
+      {
+      regionArray.append(region);
+      }
+    else
+      {
+      regionArray[foundRegionIndex] = region;
+      }
+
+    entryAdded = true;
+    ++index;
+    }
+
+  // Set objects back to anatomic context Json object
+  if (entryAdded)
+    {
+    anatomicCodes["AnatomicRegion"] = regionArray;
+    anatomicContextRoot["AnatomicCodes"] = anatomicCodes;
+
+    return anatomicContextRoot;
+    }
+
+  return Json::Value(); // Return invalid if no entry was added from descriptor
 }
 
 //---------------------------------------------------------------------------
@@ -734,10 +849,6 @@ void vtkSlicerTerminologiesModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
 //---------------------------------------------------------------------------
 void vtkSlicerTerminologiesModuleLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
-  vtkSmartPointer<vtkIntArray> events = vtkSmartPointer<vtkIntArray>::New();
-  events->InsertNextValue(vtkMRMLScene::EndCloseEvent); //TODO: Needed?
-  this->SetAndObserveMRMLSceneEvents(newScene, events.GetPointer());
-
   // Load default terminologies and anatomical contexts
   // Note: Do it here not in the constructor so that the module shared directory is properly initialized
   bool wasModifying = this->GetDisableModifiedEvent();
@@ -745,16 +856,6 @@ void vtkSlicerTerminologiesModuleLogic::SetMRMLSceneInternal(vtkMRMLScene* newSc
   this->LoadDefaultTerminologies();
   this->LoadDefaultAnatomicContexts();
   this->SetDisableModifiedEvent(wasModifying);
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerTerminologiesModuleLogic::OnMRMLSceneEndClose() //TODO: Needed?
-{
-  if (!this->GetMRMLScene())
-    {
-    vtkErrorMacro("OnMRMLSceneEndClose: Invalid MRML scene!");
-    return;
-    }
 }
 
 //---------------------------------------------------------------------------
@@ -852,11 +953,43 @@ std::string vtkSlicerTerminologiesModuleLogic::LoadAnatomicContextFromFile(std::
     return "";
     }
 
-  // Store terminology
+  // Store anatomic context
   this->Internal->LoadedAnatomicContexts[contextName] = anatomicContextRoot;
 
   vtkInfoMacro("Anatomic context named '" << contextName << "' successfully loaded from file " << filePath);
   return contextName;
+}
+
+//---------------------------------------------------------------------------
+bool vtkSlicerTerminologiesModuleLogic::LoadAnatomicContextFromSegmentDescriptorFile(std::string contextName, std::string filePath)
+{
+  std::ifstream descriptorStream(filePath.c_str(), std::ios_base::binary);
+  Json::Value descriptorRoot;
+
+  // Load JSON file
+  try
+    {
+    descriptorStream >> descriptorRoot;
+    }
+  catch (std::exception &e)
+    {
+    vtkErrorMacro("LoadAnatomicContextFromSegmentDescriptorFile: Failed to load descriptor file '" << filePath << "' - exception: " << e.what());
+    return false;
+    }
+
+  Json::Value anatomicContextRoot = this->Internal->ConvertSegmentationDescriptorToAnatomicContext(descriptorRoot, contextName);
+  if (anatomicContextRoot.isNull())
+    {
+    // Anatomic context is optional in descriptor file
+    return false;
+    }
+
+  // Store anatomic context
+  this->Internal->LoadedAnatomicContexts[contextName] = anatomicContextRoot;
+
+  vtkInfoMacro("Anatomic context named '" << contextName << "' successfully loaded from file " << filePath);
+  this->Modified();
+  return true;
 }
 
 //---------------------------------------------------------------------------

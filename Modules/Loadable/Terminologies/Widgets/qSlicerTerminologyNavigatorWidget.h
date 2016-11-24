@@ -88,10 +88,12 @@ public:
   /// Assemble terminology string from terminology codes
   /// Note: The order of the attributes are inconsistent with the codes used in this class for compatibility reasons
   ///       (to vtkMRMLColorLogic::AddTermToTerminology)
-  Q_INVOKABLE static QString serializeTerminologyEntry( QString contextName,
+  Q_INVOKABLE static QString serializeTerminologyEntry(
+    QString terminologyContextName,
     QString categoryValue, QString categorySchemeDesignator, QString categoryMeaning,
     QString typeValue, QString typeSchemeDesignator, QString typeMeaning,
     QString modifierValue, QString modifierSchemeDesignator, QString modifierMeaning,
+    QString anatomicContextName,
     QString regionValue, QString regionSchemeDesignator, QString regionMeaning,
     QString regionModifierValue, QString regionModifierSchemeDesignator, QString regionModifierMeaning );
 
