@@ -1,39 +1,87 @@
 {
-	"extensions": [{
-		"name": "LongitudinalPETCT",
-		"repository": "https://github.com/QIICR/LongitudinalPETCT",
-    "typeDescription": "PET Images",
-		"tagValues": {
-			"Modality": ["PT"]
-		}
-	}, {
-		"name": "PETDICOMExtension",
-		"repository": "https://github.com/QIICR/Slicer-PETDICOMExtension.git",
-    "typeDescription": "PET Images and real world value mappings",
-		"tagValues": {
-			"Modality": ["PT", "RWVM"]
-		}
-	}, {
-		"name": "Reporting",
-		"repository": "https://github.com/QIICR/Reporting.git",
-    "typeDescription": "Segmentation Objects",
-		"tagValues": {
-			"Modality": ["SEG"]
-		}
-	}, {
-		"name": "SlicerHeart",
-		"repository": "https://github.com/SlicerHeart/SlicerHeart.git",
-    "typeDescription": "4D Ultrasound",
-		"tagValues": {
-			"SOPClassUID": ["1.2.840.113543.6.6.1.3.10002"]
-		}
-	}, {
-		"name": "SlicerRT",
-		"repository": "https://subversion.assembla.com/svn/slicerrt/trunk/SlicerRt/src",
-    "typeDescription": "Radiation therapy data",
-		"tagValues": {
-			"Modality": ["RTDOSE", "RTSTRUCT", "RTPLAN", "RTIMAGE"],
-			"SOPClassUID": ["1.2.840.10008.5.1.4.1.1.66.1", "1.2.840.10008.5.1.4.1.1.66.2", "1.2.840.10008.5.1.4.1.1.66.3"]
-		}
-	}]
+  "extensions": [
+    {
+      "name": "LongitudinalPETCT",
+      "repository": "https://github.com/QIICR/LongitudinalPETCT",
+      "typeDescription": "PET Images",
+      "tagValues": {
+        "Modality": [
+          "PT"
+        ]
+      }
+    },
+    {
+      "name": "PETDICOMExtension",
+      "repository": "https://github.com/QIICR/Slicer-PETDICOMExtension.git",
+      "typeDescription": "PET Images and real world value mappings",
+      "tagValues": {
+        "Modality": [
+          "PT",
+          "RWVM"
+        ]
+      }
+    },
+    {
+      "name": "QuantitativeReporting",
+      "repository": "https://github.com/QIICR/QuantitativeReporting.git",
+      "typeDescription": "Segmentation Objects",
+      "tagValues": {
+        "Modality": [
+          "SEG"
+        ]
+      }
+    },
+		{
+			"name": "QuantitativeReporting",
+			"repository": "https://github.com/QIICR/QuantitativeReporting.git",
+			"typeDescription": "Parametric Map Objects",
+			"tagValues": {
+				"SOPClassUID": [
+					"1.2.840.10008.5.1.4.1.1.30"
+				]
+			}
+		},
+		{
+			"name": "QuantitativeReporting",
+			"repository": "https://github.com/QIICR/QuantitativeReporting.git",
+			"typeDescription": "Structured Report Objects",
+			"tagValues": {
+				"Modality": [
+					"SR"
+				],
+				"SOPClassUID": [
+					"1.2.840.10008.5.1.4.1.1.88.22",
+					"1.2.840.10008.5.1.4.1.1.88.33"
+				]
+			}
+		},
+    {
+      "name": "SlicerHeart",
+      "repository": "https://github.com/SlicerHeart/SlicerHeart.git",
+      "typeDescription": "4D Ultrasound",
+      "tagValues": {
+        "SOPClassUID": [
+          "1.2.840.113543.6.6.1.3.10002"
+        ]
+      }
+    },
+    {
+      "name": "SlicerRT",
+      "repository": "https://subversion.assembla.com/svn/slicerrt/trunk/SlicerRt/src",
+      "typeDescription": "Radiation therapy data",
+      "tagValues": {
+        "Modality": [
+          "RTDOSE",
+          "RTSTRUCT",
+          "RTPLAN",
+          "RTIMAGE"
+        ],
+        "SOPClassUID": [
+          "1.2.840.10008.5.1.4.1.1.66.1",
+          "1.2.840.10008.5.1.4.1.1.66.2",
+          "1.2.840.10008.5.1.4.1.1.66.3"
+        ]
+      }
+    }
+  ]
 }
