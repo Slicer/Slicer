@@ -594,6 +594,7 @@ Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationD
     Json::Value segmentAttributes = segmentAttributesArray[index];
     if (!segmentAttributes.isArray())
       {
+      ++index;
       continue;
       }
     // Note: "The reason for the inner list is that we have one single schema both for input and output. When we provide input metafile,
@@ -606,6 +607,7 @@ Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationD
     if (!segmentCategory.isObject() || !segmentType.isObject())
       {
       vtkGenericWarningMacro("ConvertSegmentationDescriptorToTerminologyContext: Invalid segment terminology entry at index " << index);
+      ++index;
       continue;
       }
 
@@ -621,6 +623,7 @@ Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationD
       if (!typeArray.isArray())
         {
         vtkGenericWarningMacro("ConvertSegmentationDescriptorToTerminologyContext: Failed to find Type array in category '" << categoryId.CodeMeaning);
+        ++index;
         continue;
         }
       }
@@ -646,6 +649,7 @@ Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationD
       // Modifier already exists, nothing to do
       if (typeModifier.isObject())
         {
+        ++index;
         continue;
         }
 
@@ -742,6 +746,7 @@ Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationD
     Json::Value segmentAttributes = segmentAttributesArray[index];
     if (!segmentAttributes.isArray())
       {
+      ++index;
       continue;
       }
     // Note: "The reason for the inner list is that we have one single schema both for input and output. When we provide input metafile,
@@ -752,6 +757,7 @@ Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationD
     if (!segmentRegion.isObject())
       {
       // Anatomic context is optional in the descriptor file
+      ++index;
       continue;
       }
 
@@ -776,6 +782,7 @@ Json::Value vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationD
       // Modifier already exists, nothing to do
       if (regionModifier.isObject())
         {
+        ++index;
         continue;
         }
 
