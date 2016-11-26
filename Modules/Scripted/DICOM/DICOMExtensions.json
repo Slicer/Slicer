@@ -31,30 +31,30 @@
         ]
       }
     },
-		{
-			"name": "QuantitativeReporting",
-			"repository": "https://github.com/QIICR/QuantitativeReporting.git",
-			"typeDescription": "Parametric Map Objects",
-			"tagValues": {
-				"SOPClassUID": [
-					"1.2.840.10008.5.1.4.1.1.30"
-				]
-			}
-		},
-		{
-			"name": "QuantitativeReporting",
-			"repository": "https://github.com/QIICR/QuantitativeReporting.git",
-			"typeDescription": "Structured Report Objects",
-			"tagValues": {
-				"Modality": [
-					"SR"
-				],
-				"SOPClassUID": [
-					"1.2.840.10008.5.1.4.1.1.88.22",
-					"1.2.840.10008.5.1.4.1.1.88.33"
-				]
-			}
-		},
+    {
+      "name": "QuantitativeReporting",
+      "repository": "https://github.com/QIICR/QuantitativeReporting.git",
+      "typeDescription": "Parametric Map Objects",
+      "tagValues": {
+        "SOPClassUID": [
+          "1.2.840.10008.5.1.4.1.1.30"
+        ]
+      }
+    },
+    {
+      "name": "QuantitativeReporting",
+      "repository": "https://github.com/QIICR/QuantitativeReporting.git",
+      "typeDescription": "Structured Report Objects",
+      "tagValues": {
+        "Modality": [
+          "SR"
+        ],
+        "SOPClassUID": [
+          "1.2.840.10008.5.1.4.1.1.88.22",
+          "1.2.840.10008.5.1.4.1.1.88.33"
+        ]
+      }
+    },
     {
       "name": "SlicerHeart",
       "repository": "https://github.com/SlicerHeart/SlicerHeart.git",
