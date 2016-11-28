@@ -4,14 +4,16 @@
 
 #include "vtkWriter.h"
 
-#include "vtkMatrix4x4.h"
 #include "vtkDoubleArray.h"
+#include "vtkMatrix4x4.h"
+#include "vtkSmartPointer.h"
 #include "teem/nrrd.h"
 
 #include "vtkTeemConfigure.h"
 
 class vtkImageData;
 class AttributeMapType;
+class AxisInfoMapType;
 
 /// \brief Writes PNG files.
 ///
@@ -66,6 +68,11 @@ public:
   /// file on write
   void SetAttribute(const std::string& name, const std::string& value);
 
+  /// Method to set label for each axis
+  void SetAxisLabel(unsigned int axis, const char* label);
+
+  /// Method to set unit for each axis
+  void SetAxisUnit(unsigned int axis, const char* unit);
 
 protected:
   vtkNRRDWriter();
@@ -83,16 +90,18 @@ protected:
 
   char *FileName;
 
-  vtkDoubleArray *BValues;
-  vtkDoubleArray *DiffusionGradients;
+  vtkDoubleArray* BValues;
+  vtkDoubleArray* DiffusionGradients;
 
-  vtkMatrix4x4 *IJKToRASMatrix;
-  vtkMatrix4x4 *MeasurementFrameMatrix;
+  vtkMatrix4x4* IJKToRASMatrix;
+  vtkMatrix4x4* MeasurementFrameMatrix;
 
   int UseCompression;
   int FileType;
 
   AttributeMapType *Attributes;
+  AxisInfoMapType *AxisLabels;
+  AxisInfoMapType *AxisUnits;
 
 private:
   vtkNRRDWriter(const vtkNRRDWriter&);  /// Not implemented.

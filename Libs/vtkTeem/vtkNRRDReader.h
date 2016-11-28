@@ -81,6 +81,12 @@ public:
   /// Get a value given a key in the header
   const char* GetHeaderValue(const char *key);
 
+  /// Get label for specified axis
+  const char* GetAxisLabel(unsigned int axis);
+
+  /// Get unit for specified axis
+  const char* GetAxisUnit(unsigned int axis);
+
   virtual void PrintSelf(ostream& os, vtkIndent indent);
 
   ///  is the given file name a NRRD file?
@@ -248,6 +254,9 @@ protected:
 
   std::map <std::string, std::string> HeaderKeyValue;
   std::string HeaderKeys; // buffer for returning key list
+
+  std::map<unsigned int, std::string> AxisLabels;
+  std::map<unsigned int, std::string> AxisUnits;
 
   virtual void ExecuteInformation();
   virtual void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo);

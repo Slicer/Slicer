@@ -10,6 +10,7 @@
 #include <vtkVersion.h>
 
 class AttributeMapType: public std::map<std::string, std::string> {};
+class AxisInfoMapType : public std::map<unsigned int, std::string> {};
 
 vtkStandardNewMacro(vtkNRRDWriter);
 
@@ -26,36 +27,24 @@ vtkNRRDWriter::vtkNRRDWriter()
   this->FileType = VTK_BINARY;
   this->WriteErrorOff();
   this->Attributes = new AttributeMapType;
+  this->AxisLabels = new AxisInfoMapType;
+  this->AxisUnits = new AxisInfoMapType;
 }
 
 //----------------------------------------------------------------------------
 vtkNRRDWriter::~vtkNRRDWriter()
 {
-  if ( this->FileName )
-    {
-    delete [] this->FileName;
-    }
-
-  if (this->DiffusionGradients)
-    {
-    this->DiffusionGradients->Delete();
-    }
-  if (this->BValues)
-    {
-    this->BValues->Delete();
-    }
-  if (this->IJKToRASMatrix)
-    {
-    this->IJKToRASMatrix->Delete();
-    }
-  if (this->MeasurementFrameMatrix)
-    {
-    this->MeasurementFrameMatrix->Delete();
-    }
-  if (this->Attributes)
-    {
-    delete this->Attributes;
-    }
+  this->SetFileName(NULL);
+  this->SetDiffusionGradients(NULL);
+  this->SetBValues(NULL);
+  this->SetIJKToRASMatrix(NULL);
+  this->SetMeasurementFrameMatrix(NULL);
+  delete this->Attributes;
+  this->Attributes = NULL;
+  delete this->AxisLabels;
+  this->AxisLabels = NULL;
+  delete this->AxisUnits;
+  this->AxisUnits = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -262,6 +251,32 @@ void vtkNRRDWriter::WriteData()
   nrrdAxisInfoSet_nva(nrrd, nrrdAxisInfoSpaceDirection, spaceDir);
   nrrd->space = nrrdSpaceRightAnteriorSuperior;
 
+  if (!this->AxisLabels->empty())
+    {
+    const char* labels[NRRD_DIM_MAX] = { 0 };
+    for (unsigned int axi = 0; axi < NRRD_DIM_MAX; axi++)
+      {
+      if (this->AxisLabels->find(axi) != this->AxisLabels->end())
+        {
+        labels[axi] = (*this->AxisLabels)[axi].c_str();
+        }
+      }
+    nrrdAxisInfoSet_nva(nrrd, nrrdAxisInfoLabel, labels);
+    }
+
+  if (!this->AxisUnits->empty())
+    {
+    const char* units[NRRD_DIM_MAX] = { 0 };
+    for (unsigned int axi = 0; axi < NRRD_DIM_MAX; axi++)
+      {
+      if (this->AxisUnits->find(axi) != this->AxisUnits->end())
+        {
+        units[axi] = (*this->AxisUnits)[axi].c_str();
+        }
+      }
+    nrrdAxisInfoSet_nva(nrrd, nrrdAxisInfoUnits, units);
+    }
+
   // Write out attributes, diffusion information and the measurement frame.
   //
 
@@ -382,4 +397,36 @@ void vtkNRRDWriter::SetAttribute(const std::string& name, const std::string& val
     }
 
   (*this->Attributes)[name] = value;
+}
+
+void vtkNRRDWriter::SetAxisLabel(unsigned int axis, const char* label)
+{
+  if (!this->AxisLabels)
+    {
+    return;
+    }
+  if (label)
+    {
+    (*this->AxisLabels)[axis] = label;
+    }
+  else
+    {
+    this->AxisLabels->erase(axis);
+    }
+}
+
+void vtkNRRDWriter::SetAxisUnit(unsigned int axis, const char* unit)
+{
+  if (!this->AxisUnits)
+    {
+    return;
+    }
+  if (unit)
+    {
+    (*this->AxisUnits)[axis] = unit;
+    }
+  else
+    {
+    this->AxisLabels->erase(axis);
+    }
 }

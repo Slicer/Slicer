@@ -130,6 +130,26 @@ const char* vtkNRRDReader::GetHeaderValue(const char *key)
 }
 
 //----------------------------------------------------------------------------
+const char* vtkNRRDReader::GetAxisLabel(unsigned int axis)
+{
+  if (this->AxisLabels.find(axis) == this->AxisLabels.end())
+    {
+    return NULL;
+    }
+  return this->AxisLabels[axis].c_str();
+}
+
+//----------------------------------------------------------------------------
+const char* vtkNRRDReader::GetAxisUnit(unsigned int axis)
+{
+  if (this->AxisUnits.find(axis) == this->AxisUnits.end())
+    {
+    return NULL;
+    }
+  return this->AxisUnits[axis].c_str();
+}
+
+//----------------------------------------------------------------------------
 int vtkNRRDReader::CanReadFile(const char* filename)
 {
   // Check the extension first to avoid opening files that do not
@@ -571,6 +591,28 @@ void vtkNRRDReader::ExecuteInformation()
     HeaderKeyValue[std::string(key)] = std::string(val);
     free(key);  // key and val point to malloc'd data!!
     free(val);
+    }
+
+  const char* labels[NRRD_DIM_MAX] = { 0 };
+  nrrdAxisInfoGet_nva(nrrd, nrrdAxisInfoLabel, labels);
+  this->AxisLabels.clear();
+  for (unsigned int axi = 0; axi < NRRD_DIM_MAX; axi++)
+    {
+    if (labels[axi] != NULL)
+      {
+      this->AxisLabels[axi] = labels[axi];
+      }
+    }
+
+  const char* units[NRRD_DIM_MAX] = { 0 };
+  nrrdAxisInfoGet_nva(nrrd, nrrdAxisInfoUnits, units);
+  this->AxisUnits.clear();
+  for (unsigned int axi = 0; axi < NRRD_DIM_MAX; axi++)
+    {
+    if (units[axi] != NULL)
+      {
+      this->AxisUnits[axi] = units[axi];
+      }
     }
 
   if (this->nrrd->space)
