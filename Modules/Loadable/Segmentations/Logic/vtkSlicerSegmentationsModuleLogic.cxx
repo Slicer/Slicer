@@ -53,6 +53,7 @@
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkImageMathematics.h>
 #include <vtkImageConstantPad.h>
+#include <vtkLookupTable.h>
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -333,8 +334,8 @@ bool vtkSlicerSegmentationsModuleLogic::CreateLabelmapVolumeFromOrientedImageDat
       labelmapVolumeDisplayNode = vtkSmartPointer<vtkMRMLLabelMapVolumeDisplayNode>::New();
       labelmapVolumeNode->GetScene()->AddNode(labelmapVolumeDisplayNode);
       labelmapVolumeNode->SetAndObserveDisplayNodeID(labelmapVolumeDisplayNode->GetID());
+      labelmapVolumeDisplayNode->SetDefaultColorMap();
       }
-    labelmapVolumeDisplayNode->SetDefaultColorMap();
     }
 
   // Make sure merged labelmap extents starts at zeros for compatibility reasons
@@ -816,7 +817,7 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
     return false;
     }
 
-  // Transform merged labelmap to reference geometry coordiante system
+  // Transform merged labelmap to reference geometry coordinate system
   vtkSmartPointer<vtkOrientedImageData> mergedImage_Reference;
   if (referenceGeometryToSegmentationTransform)
     {
@@ -839,13 +840,51 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
     return false;
     }
 
-  // Set segmentation's color table to labelmap so that the labels appear in the same color
-  if (labelmapNode->GetDisplayNode())
+  // Create/update color table to labelmap so that the labels appear in the same color
+  if (!labelmapNode->GetDisplayNode())
     {
-    if (segmentationNode->GetDisplayNode() && segmentationNode->GetDisplayNode()->GetColorNode())
-      {
-      labelmapNode->GetDisplayNode()->SetAndObserveColorNodeID(segmentationNode->GetDisplayNode()->GetColorNodeID());
-      }
+    labelmapNode->CreateDefaultDisplayNodes();
+    }
+  if (!segmentationNode->GetDisplayNode())
+    {
+    segmentationNode->CreateDefaultDisplayNodes();
+    }
+  if (!labelmapNode->GetDisplayNode()->GetColorNode() || labelmapNode->GetDisplayNode()->GetColorNode()->GetType() != vtkMRMLColorNode::User)
+    {
+    // Create new color table node if labelmap node doesn't have a color node or if the existing one is not user type
+    vtkSmartPointer<vtkMRMLColorTableNode> newColorTable = vtkSmartPointer<vtkMRMLColorTableNode>::New();
+    std::string colorTableNodeName(labelmapNode->GetName());
+    colorTableNodeName.append("_ColorTable");
+    newColorTable->SetName(colorTableNodeName.c_str());
+    newColorTable->SetTypeToUser();
+    newColorTable->NamesInitialisedOn();
+    newColorTable->SetAttribute("Category", "Segmentations");
+    labelmapNode->GetScene()->AddNode(newColorTable);
+    labelmapNode->GetDisplayNode()->SetAndObserveColorNodeID(newColorTable->GetID());
+    }
+  // Copy segment colors to color table node
+  vtkMRMLColorTableNode* colorTableNode = vtkMRMLColorTableNode::SafeDownCast(
+    labelmapNode->GetDisplayNode()->GetColorNode() ); // Always valid, as it was created just above if was missing
+  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(
+    segmentationNode->GetDisplayNode() );
+  std::vector<std::string> exportedSegmentIDs;
+  if (segmentIDs.empty())
+    {
+    segmentationNode->GetSegmentation()->GetSegmentIDs(exportedSegmentIDs);
+    }
+  else
+    {
+    exportedSegmentIDs = segmentIDs;
+    }
+  colorTableNode->SetNumberOfColors(exportedSegmentIDs.size() + 1);
+  colorTableNode->GetLookupTable()->SetNumberOfTableValues(exportedSegmentIDs.size() + 1);
+  colorTableNode->SetColor(0, "Background", 0.0, 0.0, 0.0);
+  short colorIndex = 1;
+  for (std::vector<std::string>::iterator segmentIt = exportedSegmentIDs.begin(); segmentIt != exportedSegmentIDs.end(); ++segmentIt, ++colorIndex)
+    {
+    const char* segmentName = segmentationNode->GetSegmentation()->GetSegment(*segmentIt)->GetName();
+    vtkVector3d color = displayNode->GetSegmentColor(*segmentIt);
+    colorTableNode->SetColor(colorIndex, segmentName, color.GetX(), color.GetY(), color.GetZ());
     }
 
   return true;
