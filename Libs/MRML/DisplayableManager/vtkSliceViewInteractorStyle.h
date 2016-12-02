@@ -80,7 +80,8 @@ public:
     Zoom,
     Rotate, /* Rotate not currently used */
     Blend, /* fg to bg, labelmap to bg */
-    AdjustWindowLevel
+    AdjustWindowLevelBackground,
+    AdjustWindowLevelForeground
     };
   vtkGetMacro(ActionState, int);
   vtkSetMacro(ActionState, int);
@@ -189,6 +190,10 @@ protected:
   ~vtkSliceViewInteractorStyle();
 
   int GetMouseInteractionMode();
+
+  /// Returns true if mouse is inside the selected layer volume.
+  /// Use background flag to choose between foreground/background layer.
+  bool IsMouseInsideVolume(bool background);
 
   int ActionState;
 

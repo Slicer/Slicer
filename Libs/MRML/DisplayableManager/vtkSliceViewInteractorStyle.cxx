@@ -20,12 +20,15 @@
 #include "vtkMRMLCrosshairNode.h"
 #include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLSliceLayerLogic.h"
 #include "vtkMRMLSliceLogic.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLSliceCompositeNode.h"
 #include "vtkMRMLVolumeNode.h"
 
 // VTK includes
+#include "vtkGeneralTransform.h"
+#include "vtkImageData.h"
 #include "vtkRenderWindowInteractor.h"
 #include "vtkRenderWindow.h"
 #include "vtkRenderer.h"
@@ -288,13 +291,13 @@ void vtkSliceViewInteractorStyle::OnLeftButtonDown()
     }
   else
     {
-    // Oonly adjust window/level in the default mouse mode.
+    // Only adjust window/level in the default mouse mode.
     // Without this window/level could be changed accidentally while in place mode
     // and accidentally dragging the mouse while placing a new markup.
     // (in the future it may make sense to add a special mouse mode for window/level)
     if (this->GetMouseInteractionMode() == vtkMRMLInteractionNode::ViewTransform)
       {
-      this->StartAdjustWindowLevel();  
+      this->StartAdjustWindowLevel();
       }
     }
   this->SetActionStartWindow(this->GetInteractor()->GetEventPosition());
@@ -383,7 +386,8 @@ void vtkSliceViewInteractorStyle::OnMouseMove()
         }
       }
       break;
-    case vtkSliceViewInteractorStyle::AdjustWindowLevel:
+    case vtkSliceViewInteractorStyle::AdjustWindowLevelBackground:
+    case vtkSliceViewInteractorStyle::AdjustWindowLevelForeground:
       {
       int startX = this->GetActionStartWindow()[0];
       int startY = this->GetActionStartWindow()[1];
@@ -396,7 +400,14 @@ void vtkSliceViewInteractorStyle::OnMouseMove()
       double newWindow = this->GetActionStartVolumeWindow() + (gain * deltaX);
       if (newWindow < 0) newWindow = 0;
       double newLevel = this->GetActionStartVolumeLevel() + (gain * deltaY);
-      this->SliceLogic->SetBackgroundWindowLevel(newWindow, newLevel);
+      if (this->GetActionState() == vtkSliceViewInteractorStyle::AdjustWindowLevelBackground)
+        {
+        this->SliceLogic->SetBackgroundWindowLevel(newWindow, newLevel);
+        }
+      else
+        {
+        this->SliceLogic->SetForegroundWindowLevel(newWindow, newLevel);
+        }
       }
       break;
     default:
@@ -561,15 +572,81 @@ void vtkSliceViewInteractorStyle::EndBlend()
 }
 
 //----------------------------------------------------------------------------
+bool vtkSliceViewInteractorStyle::IsMouseInsideVolume(bool background)
+{
+  vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
+  if (!sliceNode)
+    {
+    return false;
+    }
+  vtkMRMLSliceLayerLogic* layerLogic = background ?
+    this->SliceLogic->GetBackgroundLayer() : this->SliceLogic->GetForegroundLayer();
+  if (!layerLogic)
+    {
+    return false;
+    }
+  vtkMRMLVolumeNode* volumeNode = layerLogic->GetVolumeNode();
+  if (!volumeNode || !volumeNode->GetImageData())
+    {
+    return false;
+    }
+  int *pos = this->GetInteractor()->GetEventPosition();
+  double xyz[3] = { 0 };
+  vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(this->GetInteractor(), sliceNode, pos[0], pos[1], xyz);
+  vtkGeneralTransform* xyToBackgroundIJK = layerLogic->GetXYToIJKTransform();
+  double mousePositionIJK[3] = { 0 };
+  xyToBackgroundIJK->TransformPoint(xyz, mousePositionIJK);
+  int volumeExtent[6] = { 0 };
+  volumeNode->GetImageData()->GetExtent(volumeExtent);
+  for (int i = 0; i < 3; i++)
+    {
+    if (mousePositionIJK[i]<volumeExtent[i * 2] || mousePositionIJK[i]>volumeExtent[i * 2 + 1])
+      {
+      return false;
+      }
+    }
+  return true;
+}
+
+//----------------------------------------------------------------------------
 void vtkSliceViewInteractorStyle::StartAdjustWindowLevel()
 {
-  this->SetActionState(this->AdjustWindowLevel);
+  vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
+  if (!sliceNode)
+    {
+    return;
+    }
+  vtkMRMLSliceCompositeNode *sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
+  if (!sliceCompositeNode)
+    {
+    return;
+    }
+
+  // By default adjust background volume, if available
+  bool adjustForeground = (sliceCompositeNode->GetBackgroundVolumeID() == NULL);
+  // If both foreground and background volumes are visible then choose adjustment of
+  // foreground volume, if foreground volume is visible in current mouse position
+  if (sliceCompositeNode->GetBackgroundVolumeID() && sliceCompositeNode->GetForegroundVolumeID())
+    {
+    adjustForeground = (sliceCompositeNode->GetForegroundOpacity() > 0.0)
+      && this->IsMouseInsideVolume(true)   // inside background (used as mask for displaying foreground)
+      && this->IsMouseInsideVolume(false); // inside foreground
+    }
+
   double window = 0.0;
   double level = 0.0;
   double rangeLow = 0.0;
   double rangeHigh = 0.0;
-  this->SliceLogic->GetBackgroundWindowLevelAndRange(window, level,
-                                                     rangeLow, rangeHigh);
+  if (adjustForeground)
+    {
+    this->SetActionState(this->AdjustWindowLevelForeground);
+    this->SliceLogic->GetForegroundWindowLevelAndRange(window, level, rangeLow, rangeHigh);
+    }
+  else
+    {
+    this->SetActionState(this->AdjustWindowLevelBackground);
+    this->SliceLogic->GetBackgroundWindowLevelAndRange(window, level, rangeLow, rangeHigh);
+    }
   this->SetActionStartVolumeWindow(window);
   this->SetActionStartVolumeLevel(level);
   this->SetActionStartVolumeRangeLow(rangeLow);
