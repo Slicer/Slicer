@@ -307,10 +307,7 @@ void vtkSegment::SetTag(std::string tag, std::string value)
     }
 
   this->Tags[tag] = value;
-  if (emitModified)
-    {
-    this->Modified();
-    }
+  this->Modified();
 }
 
 //---------------------------------------------------------------------------
@@ -318,7 +315,7 @@ void vtkSegment::SetTag(std::string tag, int value)
 {
   std::stringstream ss;
   ss << value;
-  this->SetTag(tag, ss.str(), emitModified);
+  this->SetTag(tag, ss.str());
 }
 
 //---------------------------------------------------------------------------
