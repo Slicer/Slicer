@@ -284,11 +284,11 @@ QString qSlicerSubjectHierarchySegmentsPlugin::tooltip(vtkMRMLSubjectHierarchyNo
     tooltipString = tooltipString.left(tooltipString.length()-2).append(")");
     }
 
-  // Default color
-  double defaultColor[3] = {0.0,0.0,0.0};
-  segment->GetDefaultColor(defaultColor);
-  tooltipString.append( QString(" (Default color: %1,%2,%3)").arg(
-    (int)(defaultColor[0]*255)).arg((int)(defaultColor[1]*255)).arg((int)(defaultColor[2]*255)) );
+  // Color
+  double color[3] = {0.0,0.0,0.0};
+  segment->GetColor(color);
+  tooltipString.append( QString(" (Color: %1,%2,%3)").arg(
+    (int)(color[0]*255)).arg((int)(color[1]*255)).arg((int)(color[2]*255)) );
 
   // Tags
   std::map<std::string,std::string> tags;

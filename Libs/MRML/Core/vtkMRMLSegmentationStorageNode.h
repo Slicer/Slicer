@@ -140,8 +140,8 @@ protected:
   static std::string GetImageExtentAsString(int extent[6]);
   static void GetImageExtentFromString(int extent[6], std::string extentValue);
 
-  static std::string GetSegmentDefaultColorAsString(vtkMRMLSegmentationNode* segmentationNode, const std::string& segmentId);
-  static void GetSegmentDefaultColorFromString(double defaultColor[3], std::string defaultColorValue);
+  static std::string GetSegmentColorAsString(vtkMRMLSegmentationNode* segmentationNode, const std::string& segmentId);
+  static void GetSegmentColorFromString(double color[3], std::string colorString);
 
 protected:
   vtkMRMLSegmentationStorageNode();

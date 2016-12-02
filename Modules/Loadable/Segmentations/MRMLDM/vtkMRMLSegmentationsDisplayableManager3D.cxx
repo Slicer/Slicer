@@ -29,7 +29,6 @@
 #include <vtkEventBroker.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLViewNode.h>
-#include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLTransformNode.h>
 
 // VTK includes
@@ -473,6 +472,10 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayNodePip
     pipeline->ModelWarper->SetTransform(pipeline->NodeToWorld);
     pipeline->InputPolyData->ShallowCopy(polyData);
 
+    // Get displayed color (if no override is defined then use the color from the segment)
+    double color[3] = {vtkSegment::SEGMENT_COLOR_INVALID[0], vtkSegment::SEGMENT_COLOR_INVALID[1], vtkSegment::SEGMENT_COLOR_INVALID[2]};
+    displayNode->GetSegmentColor(pipelineIt->first, color);
+
     // Update pipeline actor
     pipeline->Actor->GetProperty()->SetRepresentation(displayNode->GetRepresentation());
     pipeline->Actor->GetProperty()->SetPointSize(displayNode->GetPointSize());
@@ -483,7 +486,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayNodePip
     pipeline->Actor->GetProperty()->SetFrontfaceCulling(displayNode->GetFrontfaceCulling());
     pipeline->Actor->GetProperty()->SetBackfaceCulling(displayNode->GetBackfaceCulling());
 
-    pipeline->Actor->GetProperty()->SetColor(properties.Color[0], properties.Color[1], properties.Color[2]);
+    pipeline->Actor->GetProperty()->SetColor(color[0], color[1], color[2]);
     pipeline->Actor->GetProperty()->SetOpacity(properties.Opacity3D * displayNode->GetOpacity3D());
 
     if (displayNode->GetSelected())

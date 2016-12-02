@@ -22,9 +22,7 @@
 #include "vtkMRMLSegmentationsDisplayableManager2D.h"
 
 // MRML includes
-#include <vtkMRMLProceduralColorNode.h>
 #include <vtkMRMLScene.h>
-#include <vtkMRMLSliceCompositeNode.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLSegmentationDisplayNode.h>
 #include <vtkMRMLSegmentationNode.h>
@@ -747,6 +745,10 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
       continue;
       }
 
+    // Get displayed color (if no override is defined then use the color from the segment)
+    double color[3] = {vtkSegment::SEGMENT_COLOR_INVALID[0], vtkSegment::SEGMENT_COLOR_INVALID[1], vtkSegment::SEGMENT_COLOR_INVALID[2]};
+    displayNode->GetSegmentColor(pipelineIt->first, color);
+
     // If shown representation is poly data
     if (polyData)
       {
@@ -809,12 +811,12 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
 
       // Update pipeline actors
       pipeline->PolyDataOutlineActor->SetVisibility(segmentOutlineVisible);
-      pipeline->PolyDataOutlineActor->GetProperty()->SetColor(properties.Color[0], properties.Color[1], properties.Color[2]);
+      pipeline->PolyDataOutlineActor->GetProperty()->SetColor(color);
       pipeline->PolyDataOutlineActor->GetProperty()->SetOpacity(properties.Opacity2DOutline * displayNode->GetOpacity2DOutline() * displayNode->GetOpacity());
       pipeline->PolyDataOutlineActor->GetProperty()->SetLineWidth(displayNode->GetSliceIntersectionThickness());
       pipeline->PolyDataOutlineActor->SetPosition(0,0);
       pipeline->PolyDataFillActor->SetVisibility(segmentFillVisible);
-      pipeline->PolyDataFillActor->GetProperty()->SetColor(properties.Color[0], properties.Color[1], properties.Color[2]);
+      pipeline->PolyDataFillActor->GetProperty()->SetColor(color[0], color[1], color[2]);
       pipeline->PolyDataFillActor->GetProperty()->SetOpacity(properties.Opacity2DFill * displayNode->GetOpacity2DFill() * displayNode->GetOpacity());
       pipeline->PolyDataFillActor->SetPosition(0,0);
       }
@@ -839,7 +841,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
 
       // Set segment color
       pipeline->LookupTableOutline->SetTableValue(1,
-        properties.Color[0], properties.Color[1], properties.Color[2], properties.Opacity2DOutline * displayNode->GetOpacity2DOutline() * displayNode->GetOpacity());
+        color[0], color[1], color[2], properties.Opacity2DOutline * displayNode->GetOpacity2DOutline() * displayNode->GetOpacity());
       pipeline->LookupTableFill->SetNumberOfTableValues(2);
       pipeline->LookupTableFill->SetRampToLinear();
       pipeline->LookupTableFill->SetTableRange(0, 1);
@@ -852,7 +854,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
         }
 
       double hsv[3] = {0,0,0};
-      vtkMath::RGBToHSV(properties.Color, hsv);
+      vtkMath::RGBToHSV(color, hsv);
       pipeline->LookupTableFill->SetHueRange(hsv[0], hsv[0]);
       pipeline->LookupTableFill->SetSaturationRange(hsv[1], hsv[1]);
       pipeline->LookupTableFill->SetValueRange(hsv[2], hsv[2]);
@@ -1444,12 +1446,13 @@ std::string vtkMRMLSegmentationsDisplayableManager2D::GetDataProbeInfoStringForP
       if (segment)
         {
         // Add color indicator
-        vtkVector3d segmentColor = displayNode->GetSegmentColor(*segmentIt);
+        double color[3] = {vtkSegment::SEGMENT_COLOR_INVALID[0], vtkSegment::SEGMENT_COLOR_INVALID[1], vtkSegment::SEGMENT_COLOR_INVALID[2]};
+        displayNode->GetSegmentColor(*segmentIt, color);
         std::stringstream colorStream;
         colorStream << "#" << std::hex << std::setfill('0')
-            << std::setw(2) << (int)(segmentColor.GetX() * 255.0)
-            << std::setw(2) << (int)(segmentColor.GetY() * 255.0)
-            << std::setw(2) << (int)(segmentColor.GetZ() * 255.0);
+            << std::setw(2) << (int)(color[0] * 255.0)
+            << std::setw(2) << (int)(color[1] * 255.0)
+            << std::setw(2) << (int)(color[2] * 255.0);
         segmentsInfoStr.append("<font color=\"" + colorStream.str() + "\">&#x25cf;</font>");
 
         segmentsInfoStr.append(segment->GetName() ? segment->GetName() : "");

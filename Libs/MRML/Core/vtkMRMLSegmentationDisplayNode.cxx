@@ -49,13 +49,16 @@
 #include <sstream>
 
 //----------------------------------------------------------------------------
+const double vtkMRMLSegmentationDisplayNode::SEGMENT_COLOR_NO_OVERRIDE = -1.0;
+
+//----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLSegmentationDisplayNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLSegmentationDisplayNode::vtkMRMLSegmentationDisplayNode()
   : PreferredDisplayRepresentationName2D(NULL)
   , PreferredDisplayRepresentationName3D(NULL)
-  , NumberOfAddedSegments(0)
+  , NumberOfGeneratedColors(0)
   , SegmentListUpdateTime(0)
   , SegmentListUpdateSource(0)
   , Visibility3D(true)
@@ -104,9 +107,9 @@ void vtkMRMLSegmentationDisplayNode::WriteXML(ostream& of, int nIndent)
     propIt != this->SegmentationDisplayProperties.end(); ++propIt)
     {
     of << vtkMRMLNode::URLEncodeString(propIt->first.c_str())
-      << " ColorR:" << propIt->second.Color[0]
-      << " ColorG:" << propIt->second.Color[1]
-      << " ColorB:" << propIt->second.Color[2]
+      << " OverrideColorR:" << propIt->second.OverrideColor[0]
+      << " OverrideColorG:" << propIt->second.OverrideColor[1]
+      << " OverrideColorB:" << propIt->second.OverrideColor[2]
       << " Visible:" << (propIt->second.Visible ? "true" : "false")
       << " Visible3D:" << (propIt->second.Visible3D ? "true" : "false")
       << " Visible2DFill:" << (propIt->second.Visible2DFill ? "true" : "false")
@@ -169,12 +172,12 @@ void vtkMRMLSegmentationDisplayNode::ReadXMLAttributes(const char** atts)
       }
     else if (!strcmp(attName, "SegmentationDisplayProperties"))
       {
-      // attValue: "Segment_0 ColorR:0.2 ColorG:0.501961 ... Opacity2DOutline:1|Segment_1 ColorR:1 ColorG:0.8...|Segment_2 ColorR:1 ColorG:1...|"
+      // attValue: "Segment_0 OverrideColorR:-1 OverrideColorG:-1 ... Opacity2DOutline:1|Segment_1 OverrideColorR:1 OverrideColorG:0.8...|"
       std::stringstream segmentsDisplayProperties(attValue); // properties of all segments
       std::string segmentDisplayPropertiesString; // properties of a single segment
       while (std::getline(segmentsDisplayProperties, segmentDisplayPropertiesString, '|'))
         {
-        // segmentDisplayPropertiesString: "Segment_0 ColorR:0.2 ColorG:0.501961 ... Opacity2DOutline:1"
+        // segmentDisplayPropertiesString: "Segment_0 OverrideColorR:0.2 OverrideColorG:0.501961 ... Opacity2DOutline:1"
         std::stringstream segmentDisplayProperties(segmentDisplayPropertiesString);
         std::string id;
         segmentDisplayProperties >> id;
@@ -182,7 +185,7 @@ void vtkMRMLSegmentationDisplayNode::ReadXMLAttributes(const char** atts)
         std::string segmentDisplayPropertyString; // properties of a single segment
         while (std::getline(segmentDisplayProperties, segmentDisplayPropertyString, ' '))
           {
-          // segmentDisplayPropertyString: "ColorR:0.2"
+          // segmentDisplayPropertyString: "OverrideColorR:0.2"
           if (segmentDisplayPropertyString.empty())
             {
             // multiple spaces between properties, just get the next item
@@ -195,11 +198,11 @@ void vtkMRMLSegmentationDisplayNode::ReadXMLAttributes(const char** atts)
             vtkErrorMacro("Invalid property found in attribue of "<<(this->ID?this->ID:"(unknown)")<<" node: "<<segmentDisplayPropertyString);
             continue;
             }
-          std::string propertyName = segmentDisplayPropertyString.substr(0, colonIndex); // "ColorR"
+          std::string propertyName = segmentDisplayPropertyString.substr(0, colonIndex); // "OverrideColorR"
           std::stringstream propertyValue(segmentDisplayPropertyString.substr(colonIndex + 1)); // "0.2"
-          if (propertyName=="ColorR") { propertyValue >> props.Color[0]; }
-          else if (propertyName=="ColorG") { propertyValue >> props.Color[1]; }
-          else if (propertyName=="ColorB") { propertyValue >> props.Color[2]; }
+          if (propertyName=="OverrideColorR") { propertyValue >> props.OverrideColor[0]; }
+          else if (propertyName=="OverrideColorG") { propertyValue >> props.OverrideColor[1]; }
+          else if (propertyName=="OverrideColorB") { propertyValue >> props.OverrideColor[2]; }
           else if (propertyName=="Opacity3D") { propertyValue >> props.Opacity3D; }
           else if (propertyName=="Opacity2DFill") { propertyValue >> props.Opacity2DFill; }
           else if (propertyName=="Opacity2DOutline") { propertyValue >> props.Opacity2DOutline; }
@@ -269,8 +272,8 @@ void vtkMRMLSegmentationDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   for (SegmentDisplayPropertiesMap::iterator propIt = this->SegmentationDisplayProperties.begin();
     propIt != this->SegmentationDisplayProperties.end(); ++propIt)
     {
-    os << indent << "   SegmentID=" << propIt->first << ", Color=("
-       << propIt->second.Color[0] << "," << propIt->second.Color[1] << "," << propIt->second.Color[2]
+    os << indent << "   SegmentID=" << propIt->first << ", OverrideColor=("
+       << propIt->second.OverrideColor[0] << "," << propIt->second.OverrideColor[1] << "," << propIt->second.OverrideColor[2]
        << "), Visible=" << (propIt->second.Visible ? "true" : "false")
        << ", Visible3D=" << (propIt->second.Visible3D ? "true" : "false") << ", Visible2DFill=" << (propIt->second.Visible2DFill ? "true" : "false") << ", Visible2DOutline=" << (propIt->second.Visible2DOutline ? "true" : "false")
        << ", Opacity3D=" << propIt->second.Opacity3D << ", Opacity2DFill=" << propIt->second.Opacity2DFill << ", Opacity2DOutline=" << propIt->second.Opacity2DOutline << "\n";
@@ -304,9 +307,9 @@ void vtkMRMLSegmentationDisplayNode::SetSegmentDisplayProperties(std::string seg
     {
     // If not found then add
     SegmentDisplayProperties newPropertiesEntry;
-    newPropertiesEntry.Color[0] = properties.Color[0];
-    newPropertiesEntry.Color[1] = properties.Color[1];
-    newPropertiesEntry.Color[2] = properties.Color[2];
+    newPropertiesEntry.OverrideColor[0] = properties.OverrideColor[0];
+    newPropertiesEntry.OverrideColor[1] = properties.OverrideColor[1];
+    newPropertiesEntry.OverrideColor[2] = properties.OverrideColor[2];
     newPropertiesEntry.Visible = properties.Visible;
     newPropertiesEntry.Visible3D = properties.Visible3D;
     newPropertiesEntry.Visible2DFill = properties.Visible2DFill;
@@ -322,9 +325,9 @@ void vtkMRMLSegmentationDisplayNode::SetSegmentDisplayProperties(std::string seg
     // If found then replace values
     for (int i=0; i<3; i++)
       {
-      if (propsIt->second.Color[i] != properties.Color[i])
+      if (propsIt->second.OverrideColor[i] != properties.OverrideColor[i])
         {
-        propsIt->second.Color[i] = properties.Color[i];
+        propsIt->second.OverrideColor[i] = properties.OverrideColor[i];
         modified = true;
         }
       }
@@ -365,19 +368,6 @@ void vtkMRMLSegmentationDisplayNode::SetSegmentDisplayProperties(std::string seg
       }
     }
 
-  // Save cached value of color
-  // TODO: remove this when terminology infrastructure is in place
-  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(this->GetDisplayableNode());
-  if (segmentationNode)
-    {
-    vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
-    vtkSegment* segment = segmentation->GetSegment(segmentId);
-    if (segment)
-      {
-      segment->SetDefaultColorWithoutModifiedEvent(properties.Color);
-      }
-    }
-
   if (modified)
     {
     this->Modified();
@@ -387,39 +377,112 @@ void vtkMRMLSegmentationDisplayNode::SetSegmentDisplayProperties(std::string seg
 //---------------------------------------------------------------------------
 vtkVector3d vtkMRMLSegmentationDisplayNode::GetSegmentColor(std::string segmentID)
 {
+  double color[3] = {vtkSegment::SEGMENT_COLOR_INVALID[0], vtkSegment::SEGMENT_COLOR_INVALID[1], vtkSegment::SEGMENT_COLOR_INVALID[2]};
+  this->GetSegmentColor(segmentID, color);
+
+  vtkVector3d colorVtk(color[0], color[1], color[2]);
+  return colorVtk;
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLSegmentationDisplayNode::GetSegmentColor(std::string segmentID, double* color)
+{
+  if (!color)
+    {
+    vtkErrorMacro("GetSegmentColor: Invalid output color array");
+    return false;
+    }
+
+  // Invalidate color
+  color[0] = vtkSegment::SEGMENT_COLOR_INVALID[0];
+  color[1] = vtkSegment::SEGMENT_COLOR_INVALID[1];
+  color[2] = vtkSegment::SEGMENT_COLOR_INVALID[2];
+
+  // Get display properties and return override color if set
+  this->UpdateSegmentList();
+  SegmentDisplayPropertiesMap::iterator propsIt = this->SegmentationDisplayProperties.find(segmentID);
+  if ( propsIt != this->SegmentationDisplayProperties.end()
+    && propsIt->second.OverrideColor[0] >= 0.0 && propsIt->second.OverrideColor[1] >= 0.0 && propsIt->second.OverrideColor[2] >= 0.0 )
+    {
+    // If found and overridden, then return the override color
+    color[0] = propsIt->second.OverrideColor[0];
+    color[1] = propsIt->second.OverrideColor[1];
+    color[2] = propsIt->second.OverrideColor[2];
+    return true;
+    }
+
+  // Get segment
+  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(this->GetDisplayableNode());
+  if (!segmentationNode || !segmentationNode->GetSegmentation())
+    {
+    vtkErrorMacro("GetSegmentColor: No valid segmentation node associated to this display node");
+    return false;
+    }
+  vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
+  vtkSegment* segment = segmentation->GetSegment(segmentID);
+  if (!segment)
+    {
+    vtkErrorMacro("GetSegmentColor: segment not found by id " << segmentID);
+    return false;
+    }
+
+  // Get color from segment
+  segment->GetColor(color);
+
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLSegmentationDisplayNode::GetSegmentColor(std::string segmentID, double &r, double &g, double &b)
+{
+  double color[3] = {vtkSegment::SEGMENT_COLOR_INVALID[0], vtkSegment::SEGMENT_COLOR_INVALID[1], vtkSegment::SEGMENT_COLOR_INVALID[2]};
+  if (!this->GetSegmentColor(segmentID, color))
+    {
+    return false;
+    }
+
+  r = color[0];
+  g = color[1];
+  b = color[2];
+  return true;
+}
+
+//---------------------------------------------------------------------------
+vtkVector3d vtkMRMLSegmentationDisplayNode::GetSegmentOverrideColor(std::string segmentID)
+{
   this->UpdateSegmentList();
   SegmentDisplayPropertiesMap::iterator propsIt = this->SegmentationDisplayProperties.find(segmentID);
   if (propsIt == this->SegmentationDisplayProperties.end())
     {
-    vtkErrorMacro("GetSegmentColor: No display properties found for segment with ID " << segmentID);
-    vtkVector3d color(vtkSegment::SEGMENT_COLOR_VALUE_INVALID[0], vtkSegment::SEGMENT_COLOR_VALUE_INVALID[1], vtkSegment::SEGMENT_COLOR_VALUE_INVALID[2]);
+    vtkErrorMacro("GetSegmentOverrideColor: No display properties found for segment with ID " << segmentID);
+    vtkVector3d color(SEGMENT_COLOR_NO_OVERRIDE, SEGMENT_COLOR_NO_OVERRIDE, SEGMENT_COLOR_NO_OVERRIDE);
     return color;
     }
 
-  vtkVector3d color(propsIt->second.Color[0], propsIt->second.Color[1], propsIt->second.Color[2]);
+  vtkVector3d color(propsIt->second.OverrideColor[0], propsIt->second.OverrideColor[1], propsIt->second.OverrideColor[2]);
   return color;
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationDisplayNode::SetSegmentColor(std::string segmentID, double r, double g, double b)
+void vtkMRMLSegmentationDisplayNode::SetSegmentOverrideColor(std::string segmentID, double r, double g, double b)
 {
-  // Set color in display properties
+  // Set override color in display properties
   SegmentDisplayProperties properties;
   this->GetSegmentDisplayProperties(segmentID, properties);
-  properties.Color[0] = r;
-  properties.Color[1] = g;
-  properties.Color[2] = b;
+  properties.OverrideColor[0] = r;
+  properties.OverrideColor[1] = g;
+  properties.OverrideColor[2] = b;
   this->SetSegmentDisplayProperties(segmentID, properties);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationDisplayNode::SetSegmentColor(std::string segmentID, vtkVector3d color)
+void vtkMRMLSegmentationDisplayNode::SetSegmentOverrideColor(std::string segmentID, vtkVector3d overrideColor)
 {
   SegmentDisplayProperties properties;
   this->GetSegmentDisplayProperties(segmentID, properties);
-  properties.Color[0] = color.GetX();
-  properties.Color[1] = color.GetY();
-  properties.Color[2] = color.GetZ();
+  properties.OverrideColor[0] = overrideColor.GetX();
+  properties.OverrideColor[1] = overrideColor.GetY();
+  properties.OverrideColor[2] = overrideColor.GetZ();
   this->SetSegmentDisplayProperties(segmentID, properties);
 }
 
@@ -697,25 +760,26 @@ void vtkMRMLSegmentationDisplayNode::SetSegmentDisplayPropertiesToDefault(const 
 
   int wasModifyingDisplayNode = this->StartModify();
 
-  // Set segment color for merged labelmap
-  double defaultColor[3] = { 0.0, 0.0, 0.0 };
-  segment->GetDefaultColor(defaultColor);
+  // Set segment color to a default if invalid (empty)
+  double color[3] = { 0.0, 0.0, 0.0 };
+  segment->GetColor(color);
   // Generate color if default color is the default gray
-  this->NumberOfAddedSegments += 1;
-  bool generateNewDefaultColor =
-    (defaultColor[0] == vtkSegment::SEGMENT_COLOR_VALUE_INVALID[0]
-    && defaultColor[1] == vtkSegment::SEGMENT_COLOR_VALUE_INVALID[1]
-    && defaultColor[2] == vtkSegment::SEGMENT_COLOR_VALUE_INVALID[2]);
-  if (generateNewDefaultColor)
+  bool generateNewColor = ( color[0] == vtkSegment::SEGMENT_COLOR_INVALID[0]
+                         && color[1] == vtkSegment::SEGMENT_COLOR_INVALID[1]
+                         && color[2] == vtkSegment::SEGMENT_COLOR_INVALID[2] );
+  if (generateNewColor)
     {
-    this->GenerateSegmentColor(defaultColor);
+    this->GenerateSegmentColor(color);
+
+    // Set color to segment (no override is specified by default, so segment color is used)
+    segment->SetColor(color);
     }
 
   // Add entry in segment display properties
   vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
-  properties.Color[0] = defaultColor[0];
-  properties.Color[1] = defaultColor[1];
-  properties.Color[2] = defaultColor[2];
+  properties.OverrideColor[0] = SEGMENT_COLOR_NO_OVERRIDE; // Override color stays invalid. In this case the color stored in the segment is shown
+  properties.OverrideColor[1] = SEGMENT_COLOR_NO_OVERRIDE;
+  properties.OverrideColor[2] = SEGMENT_COLOR_NO_OVERRIDE;
   properties.Visible = true;
   properties.Visible3D = true;
   properties.Visible2DFill = true;
@@ -744,7 +808,7 @@ void vtkMRMLSegmentationDisplayNode::RemoveSegmentDisplayProperties(std::string 
 void vtkMRMLSegmentationDisplayNode::ClearSegmentDisplayProperties()
 {
   this->SegmentationDisplayProperties.clear();
-  this->NumberOfAddedSegments = 0;
+  this->NumberOfGeneratedColors = 0;
   this->Modified();
 }
 
@@ -861,7 +925,7 @@ void vtkMRMLSegmentationDisplayNode::GenerateSegmentColor(double color[3])
   // vtkMRMLSegmentationNode::AddSegmentDisplayProperties every time a new segment display
   // properties entry is added
   double currentColor[4] = {0.0, 0.0, 0.0, 0.0};
-  labelsColorNode->GetColor(this->NumberOfAddedSegments, currentColor);
+  labelsColorNode->GetColor(++this->NumberOfGeneratedColors, currentColor);
   color[0] = currentColor[0];
   color[1] = currentColor[1];
   color[2] = currentColor[2];

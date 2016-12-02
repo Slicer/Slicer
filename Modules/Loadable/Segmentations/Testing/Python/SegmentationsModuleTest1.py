@@ -135,16 +135,12 @@ class SegmentationsModuleTest1(unittest.TestCase):
 
     self.sphereSegment = vtkSegmentationCore.vtkSegment()
     self.sphereSegment.SetName(self.sphereSegmentName)
-    self.sphereSegment.SetDefaultColor(0.0,0.0,1.0)
+    self.sphereSegment.SetColor(0.0,0.0,1.0)
     self.sphereSegment.AddRepresentation(self.closedSurfaceReprName, spherePolyData)
 
     # Add segment to segmentation
     self.inputSegmentationNode.GetSegmentation().AddSegment(self.sphereSegment)
     self.assertEqual(self.inputSegmentationNode.GetSegmentation().GetNumberOfSegments(), 3)
-    sphereColor = displayNode.GetSegmentColor(self.sphereSegmentName)
-    self.assertEqual(int(sphereColor[0]*100), 0)
-    self.assertEqual(int(sphereColor[1]*100), 0)
-    self.assertEqual(int(sphereColor[2]*100), 100)
 
     # Check merged labelmap
     mergedLabelmap = vtkSegmentationCore.vtkOrientedImageData()
@@ -185,8 +181,6 @@ class SegmentationsModuleTest1(unittest.TestCase):
     # Remove segment from segmentation
     self.inputSegmentationNode.GetSegmentation().RemoveSegment(self.sphereSegmentName)
     self.assertEqual(self.inputSegmentationNode.GetSegmentation().GetNumberOfSegments(), 2)
-    sphereColor = displayNode.GetSegmentColor(self.sphereSegmentName)
-    self.assertTrue(sphereColor[0] == 0.5 and sphereColor[1] == 0.5 and sphereColor[2] == 0.5)
 
   #------------------------------------------------------------------------------
   def TestSection_2_MergeLabelmapWithDifferentGeometries(self):

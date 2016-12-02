@@ -318,9 +318,9 @@ public:
   /// Add empty segment containing empty instances of the contained representations
   /// \param segmentId ID of added segment. If empty then a default ID will be generated \sa GenerateUniqueSegmentId
   /// \param segmentName name of added segment. If empty then the segmentId will be used as name.
-  /// \param defaultColor of added segment. If not specified then empty then vtkSegment::SEGMENT_COLOR_VALUE_INVALID is used.
+  /// \param color of added segment. If not specified then empty then vtkSegment::SEGMENT_COLOR_INVALID is used.
   /// \return ID of the added segment. Empty on failure
-  std::string AddEmptySegment(std::string segmentId="", std::string segmentName="", double defaultColor[3]=NULL);
+  std::string AddEmptySegment(std::string segmentId="", std::string segmentName="", double color[3]=NULL);
 
   /// Get all possible conversions between the master representation and a specified target representation
   void GetPossibleConversions(const std::string& targetRepresentationName,

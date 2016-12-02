@@ -47,7 +47,7 @@ class vtkSegmentationCore_EXPORT vtkSegment : public vtkObject
   typedef std::map<std::string, vtkSmartPointer<vtkDataObject> > RepresentationMap;
 
 public:
-  static const double SEGMENT_COLOR_VALUE_INVALID[4];
+  static const double SEGMENT_COLOR_INVALID[3];
 
   static const char* GetTerminologyEntryTagName();
 
@@ -121,14 +121,8 @@ public:
   vtkGetStringMacro(Name);
   vtkSetStringMacro(Name);
 
-  vtkGetVector3Macro(DefaultColor, double);
-  vtkSetVector3Macro(DefaultColor, double);
-
-  /// Set default color without triggering modified event.
-  /// This is a temporary hack for allowing changing default color
-  /// when color in display node is changed.
-  /// TODO: remove this when terminology infrastructure is in place.
-  void SetDefaultColorWithoutModifiedEvent(double color[3]);
+  vtkGetVector3Macro(Color, double);
+  vtkSetVector3Macro(Color, double);
 
 protected:
   vtkSegment();
@@ -143,10 +137,10 @@ protected:
   /// This is the default identifier of the segment within segmentation, so needs to be unique within a segmentation
   char* Name;
 
-  /// Default color
-  /// Called default because this is only used initially indicating the original color of the segment,
-  /// but then copies are made for display and this member variable has no effect on it afterwards.
-  double DefaultColor[3];
+  /// Color
+  /// The actual color the segment is shown in. Can be overridden in the display node to allow displaying segment in
+  /// selected views in a different color
+  double Color[3];
 
   /// Tags (for grouping and selection)
   std::map<std::string,std::string> Tags;

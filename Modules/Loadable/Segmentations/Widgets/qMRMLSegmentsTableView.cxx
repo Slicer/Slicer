@@ -409,7 +409,9 @@ void qMRMLSegmentsTableView::populateSegmentTable()
 
     // Terminology / color
     QTableWidgetItem* colorItem = new QTableWidgetItem();
-    QColor color = QColor::fromRgbF(properties.Color[0], properties.Color[1], properties.Color[2]);
+    double colorArray[3] = {vtkSegment::SEGMENT_COLOR_INVALID[0], vtkSegment::SEGMENT_COLOR_INVALID[1], vtkSegment::SEGMENT_COLOR_INVALID[2]};
+    displayNode->GetSegmentColor(segmentId.toLatin1().constData(), colorArray);
+    QColor color = QColor::fromRgbF(colorArray[0], colorArray[1], colorArray[2]);
     colorItem->setData(Qt::DecorationRole, color);
     colorItem->setData(Qt::WhatsThisRole, d->getTerminologyUserDataForSegment(segment));
     colorItem->setData(IDRole, segmentId);
@@ -514,7 +516,9 @@ void qMRMLSegmentsTableView::updateWidgetFromMRML()
       colorItem->setData(Qt::WhatsThisRole, d->getTerminologyUserDataForSegment(segment));
       colorItem->setToolTip(qMRMLSegmentsTableView::terminologyTooltipForSegment(segment));
       // Set color
-      QColor color = QColor::fromRgbF(properties.Color[0], properties.Color[1], properties.Color[2]);
+      double colorArray[3] = {vtkSegment::SEGMENT_COLOR_INVALID[0], vtkSegment::SEGMENT_COLOR_INVALID[1], vtkSegment::SEGMENT_COLOR_INVALID[2]};
+      displayNode->GetSegmentColor(*segmentIdIt, colorArray);
+      QColor color = QColor::fromRgbF(colorArray[0], colorArray[1], colorArray[2]);
       colorItem->setData(Qt::DecorationRole, color);
       }
 
@@ -588,22 +592,22 @@ void qMRMLSegmentsTableView::onSegmentTableItemChanged(QTableWidgetItem* changed
     // Color / terminology changed
     if (changedItem->column() == d->columnIndex("Color"))
       {
-      QColor color = changedItem->data(Qt::DecorationRole).value<QColor>();
-      QColor oldColor = QColor::fromRgbF(properties.Color[0], properties.Color[1], properties.Color[2]);
-      if (oldColor != color)
-        {
-        properties.Color[0] = color.redF();
-        properties.Color[1] = color.greenF();
-        properties.Color[2] = color.blueF();
-        displayPropertyChanged = true;
-        }
-
       vtkSegment* segment = d->SegmentationNode->GetSegmentation()->GetSegment(segmentId.toLatin1().constData());
       if (!segment)
         {
         qCritical() << Q_FUNC_INFO << ": Segment with ID '" << segmentId << "' not found in segmentation node " << d->SegmentationNode->GetName();
         return;
         }
+
+      QColor color = changedItem->data(Qt::DecorationRole).value<QColor>();
+      double* oldColorArray = segment->GetColor();
+      QColor oldColor = QColor::fromRgbF(oldColorArray[0], oldColorArray[1], oldColorArray[2]);
+      if (oldColor != color)
+        {
+        segment->SetColor(color.redF(), color.greenF(), color.blueF());
+        displayPropertyChanged = true;
+        }
+
       // Set terminology information to segment as tag
       QString terminologyString = changedItem->data(Qt::WhatsThisRole).toString();
       segment->SetTag(vtkSegment::GetTerminologyEntryTagName(), terminologyString.toLatin1().constData());

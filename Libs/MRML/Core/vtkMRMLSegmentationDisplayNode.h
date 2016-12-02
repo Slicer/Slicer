@@ -41,12 +41,14 @@ class VTK_MRML_EXPORT vtkMRMLSegmentationDisplayNode : public vtkMRMLDisplayNode
 {
 public:
   // Define constants
+  static const double SEGMENT_COLOR_NO_OVERRIDE;
 
   /// Display properties per segment
   struct SegmentDisplayProperties
     {
-    /// Displayed segment color (may be different than default color stored in segment)
-    double Color[3];
+    /// Override segment color
+    /// By default it's invalid (-1,-1,-1), and only valid if different than color stored in segment. Its purpose is to enable showing per-view colors
+    double OverrideColor[3];
     /// Visibility
     bool Visible; // Turns visibility on/off in general. Useful for allowing the user to show/hide a segment without changing any detailed visibility options.
     bool Visible3D;
@@ -67,9 +69,9 @@ public:
     , Opacity2DFill(1.0) // Default is 1, because these are relative values. Half transparency is default for the whole segmentation
     , Opacity2DOutline(1.0)
       {
-      Color[0] = 1.0;
-      Color[1] = 0.0;
-      Color[2] = 0.0;
+      OverrideColor[0] = SEGMENT_COLOR_NO_OVERRIDE;
+      OverrideColor[1] = SEGMENT_COLOR_NO_OVERRIDE;
+      OverrideColor[2] = SEGMENT_COLOR_NO_OVERRIDE;
       }
 
     // Automatically generated operator= and copy constructor work
@@ -156,7 +158,7 @@ public:
   /// \return Success flag
   bool CalculateAutoOpacitiesForSegments();
 
-  /// Generate new color for an added segment. Uses \sa NumberOfAddedSegments to get the color
+  /// Generate new color for an added segment. Uses \sa NumberOfGeneratedColors to get the color
   /// for the new segment from default label color table
   void GenerateSegmentColor(double color[3]);
   /// Python compatibility function for \sa GenerateSegmentColor
@@ -181,12 +183,20 @@ public:
 // Convenience and python compatibility functions
 public:
   /// Get segment color by segment ID. Convenience function for python compatibility.
-  /// \return Segment color if segment found, otherwise the pre-defined invalid color
+  /// \return Segment color not overridden, otherwise the override color
   vtkVector3d GetSegmentColor(std::string segmentID);
-  /// Set segment color by segment ID
-  void SetSegmentColor(std::string segmentID, double r, double g, double b);
-  /// Set segment color by segment ID
-  void SetSegmentColor(std::string segmentID, vtkVector3d color);
+  /// Get segment color by segment ID. If overridden then the override color is returned
+  bool GetSegmentColor(std::string segmentID, double* color);
+  /// Get segment color by segment ID. If overridden then the override color is returned
+  bool GetSegmentColor(std::string segmentID, double &r, double &g, double &b);
+
+  /// Get segment override color by segment ID. Convenience function for python compatibility.
+  /// \return Override color if segment found and color overridden, otherwise the invalid override color (-1,-1,-1)
+  vtkVector3d GetSegmentOverrideColor(std::string segmentID);
+  /// Set segment override color by segment ID
+  void SetSegmentOverrideColor(std::string segmentID, double r, double g, double b);
+  /// Set segment override color by segment ID
+  void SetSegmentOverrideColor(std::string segmentID, vtkVector3d overrideColor);
 
   /// Get overall segment visibility by segment ID. Convenience function for python compatibility.
   /// \return Segment visibility if segment found, otherwise false
@@ -277,7 +287,7 @@ protected:
 
   /// Number of segments ever added to the segmentation belonging to this display node.
   /// Used to generate new color for new segments, taken into account removed segments too.
-  unsigned int NumberOfAddedSegments;
+  unsigned int NumberOfGeneratedColors;
 
   /// For checking if cached segment list in SegmentationDisplayProperties has to be updated
   vtkMTimeType SegmentListUpdateTime;

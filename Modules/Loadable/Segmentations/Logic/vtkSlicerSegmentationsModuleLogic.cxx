@@ -234,24 +234,24 @@ vtkMRMLSegmentationNode* vtkSlicerSegmentationsModuleLogic::GetSegmentationNodeF
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLSegmentationNode* vtkSlicerSegmentationsModuleLogic::LoadSegmentationFromFile(const char* filename)
+vtkMRMLSegmentationNode* vtkSlicerSegmentationsModuleLogic::LoadSegmentationFromFile(const char* fileName)
 {
-  if (this->GetMRMLScene() == NULL || filename == NULL)
+  if (this->GetMRMLScene() == NULL || fileName == NULL)
     {
     return NULL;
     }
   vtkSmartPointer<vtkMRMLSegmentationNode> segmentationNode = vtkSmartPointer<vtkMRMLSegmentationNode>::New();
   vtkSmartPointer<vtkMRMLSegmentationStorageNode> storageNode = vtkSmartPointer<vtkMRMLSegmentationStorageNode>::New();
-  storageNode->SetFileName(filename);
+  storageNode->SetFileName(fileName);
 
   // Check to see which node can read this type of file
-  if (!storageNode->SupportedFileType(filename))
+  if (!storageNode->SupportedFileType(fileName))
     {
     vtkErrorMacro("LoadSegmentationFromFile: Segmentation storage node unable to load segmentation file.");
     return NULL;
     }
 
-  std::string baseName = vtksys::SystemTools::GetFilenameWithoutExtension(filename);
+  std::string baseName = vtksys::SystemTools::GetFilenameWithoutExtension(fileName);
   std::string uname( this->GetMRMLScene()->GetUniqueNameByString(baseName.c_str()));
   segmentationNode->SetName(uname.c_str());
   std::string storageUName = uname + "_Storage";
@@ -269,7 +269,7 @@ vtkMRMLSegmentationNode* vtkSlicerSegmentationsModuleLogic::LoadSegmentationFrom
   int success = storageNode->ReadData(segmentationNode);
   if (success != 1)
     {
-    vtkErrorMacro("LoadSegmentationFromFile: Error reading " << filename);
+    vtkErrorMacro("LoadSegmentationFromFile: Error reading " << fileName);
     this->GetMRMLScene()->RemoveNode(segmentationNode);
     return NULL;
     }
@@ -461,9 +461,9 @@ vtkSegment* vtkSlicerSegmentationsModuleLogic::CreateSegmentFromLabelmapVolumeNo
   segment->SetName(labelmapVolumeNode->GetName());
 
   // Set segment color
-  double color[4] = { vtkSegment::SEGMENT_COLOR_VALUE_INVALID[0],
-                      vtkSegment::SEGMENT_COLOR_VALUE_INVALID[1],
-                      vtkSegment::SEGMENT_COLOR_VALUE_INVALID[2], 1.0 };
+  double color[4] = { vtkSegment::SEGMENT_COLOR_INVALID[0],
+                      vtkSegment::SEGMENT_COLOR_INVALID[1],
+                      vtkSegment::SEGMENT_COLOR_INVALID[2], 1.0 };
   vtkMRMLColorTableNode* colorNode = NULL;
   if (labelmapVolumeNode->GetDisplayNode())
     {
@@ -473,7 +473,7 @@ vtkSegment* vtkSlicerSegmentationsModuleLogic::CreateSegmentFromLabelmapVolumeNo
       colorNode->GetColor(label, color);
       }
     }
-  segment->SetDefaultColor(color[0], color[1], color[2]);
+  segment->SetColor(color[0], color[1], color[2]);
 
   // Create oriented image data from labelmap
   vtkSmartPointer<vtkOrientedImageData> orientedImageData = vtkSmartPointer<vtkOrientedImageData>::Take(
@@ -521,9 +521,9 @@ vtkSegment* vtkSlicerSegmentationsModuleLogic::CreateSegmentFromModelNode(vtkMRM
     return NULL;
     }
 
-  double color[3] = { vtkSegment::SEGMENT_COLOR_VALUE_INVALID[0],
-                      vtkSegment::SEGMENT_COLOR_VALUE_INVALID[1],
-                      vtkSegment::SEGMENT_COLOR_VALUE_INVALID[2] };
+  double color[3] = { vtkSegment::SEGMENT_COLOR_INVALID[0],
+                      vtkSegment::SEGMENT_COLOR_INVALID[1],
+                      vtkSegment::SEGMENT_COLOR_INVALID[2] };
 
   // Create oriented image data from labelmap volume node
   vtkSegment* segment = vtkSegment::New();
@@ -534,7 +534,7 @@ vtkSegment* vtkSlicerSegmentationsModuleLogic::CreateSegmentFromModelNode(vtkMRM
   if (modelDisplayNode)
     {
     modelDisplayNode->GetColor(color);
-    segment->SetDefaultColor(color);
+    segment->SetColor(color);
     }
 
   // Make a copy of the model's poly data to set it in the segment
@@ -728,9 +728,7 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentToRepresentationNode(vtkSeg
       }
     if (segmentationDisplayNode && modelDisplayNode)
       {
-      vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
-      segmentationDisplayNode->GetSegmentDisplayProperties(segmentId, properties);
-      modelDisplayNode->SetColor(properties.Color);
+      modelDisplayNode->SetColor(segment->GetColor());
       }
 
     // Set segmentation's parent transform to exported node
@@ -873,9 +871,9 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
     segmentationNode->GetSegmentation()->GetSegmentIDs(exportedSegmentIDs);
     }
   else
-    {
+      {
     exportedSegmentIDs = segmentIDs;
-    }
+      }
   colorTableNode->SetNumberOfColors(exportedSegmentIDs.size() + 1);
   colorTableNode->GetLookupTable()->SetNumberOfTableValues(exportedSegmentIDs.size() + 1);
   colorTableNode->SetColor(0, "Background", 0.0, 0.0, 0.0);
@@ -992,16 +990,16 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkMRML
     vtkSmartPointer<vtkSegment> segment = vtkSmartPointer<vtkSegment>::New();
 
     // Set segment color
-    double color[4] = { vtkSegment::SEGMENT_COLOR_VALUE_INVALID[0],
-                        vtkSegment::SEGMENT_COLOR_VALUE_INVALID[1],
-                        vtkSegment::SEGMENT_COLOR_VALUE_INVALID[2], 1.0 };
+    double color[4] = { vtkSegment::SEGMENT_COLOR_INVALID[0],
+                        vtkSegment::SEGMENT_COLOR_INVALID[1],
+                        vtkSegment::SEGMENT_COLOR_INVALID[2], 1.0 };
     const char* labelName = NULL;
     if (colorNode)
       {
       labelName = colorNode->GetColorName(label);
       colorNode->GetColor(label, color);
       }
-    segment->SetDefaultColor(color[0], color[1], color[2]);
+    segment->SetColor(color[0], color[1], color[2]);
 
     // If there is only one label, then the (only) segment name will be the labelmap name
     if (labelValues->GetNumberOfValues() == 1)
