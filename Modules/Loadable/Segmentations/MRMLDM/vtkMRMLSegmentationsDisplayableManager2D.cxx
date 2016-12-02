@@ -1204,7 +1204,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::ProcessMRMLNodesEvents(vtkObject*
     else if ( (event == vtkMRMLDisplayableNode::TransformModifiedEvent)
            || (event == vtkMRMLTransformableNode::TransformModifiedEvent)
            || (event == vtkSegmentation::RepresentationModified)
-           || (event == vtkSegmentation::SegmentModified))
+           || (event == vtkSegmentation::SegmentModified) )
       {
       this->Internal->UpdateDisplayableTransforms(displayableNode);
       this->RequestRender();

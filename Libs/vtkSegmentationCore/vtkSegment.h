@@ -94,12 +94,9 @@ public:
   void RemoveAllRepresentations(std::string exceptionRepresentationName="");
 
   /// Set/add tag
-  /// \param emitModified Flag determining whether modified event is emitted. As usually tags are
-  ///   used to store metadata that do not trigger display or other changes (so default is false),
-  ///   modified event is not necessary. For the cases it is, the flag can be set to true.
-  void SetTag(std::string tag, std::string value, bool emitModified=false);
+  void SetTag(std::string tag, std::string value);
   /// Set/add integer tag
-  void SetTag(std::string tag, int value, bool emitModified=false);
+  void SetTag(std::string tag, int value);
 
   /// Remove tag
   void RemoveTag(std::string tag);

@@ -98,9 +98,6 @@ public:
   // segmentation display node,  the display node may emit modification events.
   // We make sure these events do not interrupt the update process by setting
   // IsUpdatingWidgetFromMRML to true when an update is already in progress.
-  // TODO: When terminology infrastructure is in place then segmentation display
-  // node should not invoke modification events on Get...() method calls and then
-  // this flag can probably be removed.
   bool IsUpdatingWidgetFromMRML;
 
 private:
@@ -252,8 +249,8 @@ void qMRMLSegmentsTableView::setSegmentationNode(vtkMRMLNode* node)
                  this, SLOT( populateSegmentTable() ) );
   qvtkReconnect( d->SegmentationNode, segmentationNode, vtkSegmentation::SegmentModified,
                  this, SLOT( updateWidgetFromMRML() ) );
-  qvtkReconnect(d->SegmentationNode, segmentationNode, vtkSegmentation::SegmentsOrderModified,
-                 this, SLOT(populateSegmentTable()));
+  qvtkReconnect( d->SegmentationNode, segmentationNode, vtkSegmentation::SegmentsOrderModified,
+                 this, SLOT( populateSegmentTable() ) );
 
   d->SegmentationNode = segmentationNode;
   this->populateSegmentTable();
@@ -409,8 +406,7 @@ void qMRMLSegmentsTableView::populateSegmentTable()
 
     // Terminology / color
     QTableWidgetItem* colorItem = new QTableWidgetItem();
-    double colorArray[3] = {vtkSegment::SEGMENT_COLOR_INVALID[0], vtkSegment::SEGMENT_COLOR_INVALID[1], vtkSegment::SEGMENT_COLOR_INVALID[2]};
-    displayNode->GetSegmentColor(segmentId.toLatin1().constData(), colorArray);
+    double* colorArray = segment->GetColor();
     QColor color = QColor::fromRgbF(colorArray[0], colorArray[1], colorArray[2]);
     colorItem->setData(Qt::DecorationRole, color);
     colorItem->setData(Qt::WhatsThisRole, d->getTerminologyUserDataForSegment(segment));
@@ -444,11 +440,13 @@ void qMRMLSegmentsTableView::updateWidgetFromMRML()
     {
     return;
     }
+  d->IsUpdatingWidgetFromMRML = true;
 
   if ( !d->SegmentationNode
     || d->SegmentsTable->rowCount() != d->SegmentationNode->GetSegmentation()->GetNumberOfSegments() )
     {
     this->populateSegmentTable();
+    d->IsUpdatingWidgetFromMRML = false;
     return;
     }
   // Get segmentation display node
@@ -516,8 +514,7 @@ void qMRMLSegmentsTableView::updateWidgetFromMRML()
       colorItem->setData(Qt::WhatsThisRole, d->getTerminologyUserDataForSegment(segment));
       colorItem->setToolTip(qMRMLSegmentsTableView::terminologyTooltipForSegment(segment));
       // Set color
-      double colorArray[3] = {vtkSegment::SEGMENT_COLOR_INVALID[0], vtkSegment::SEGMENT_COLOR_INVALID[1], vtkSegment::SEGMENT_COLOR_INVALID[2]};
-      displayNode->GetSegmentColor(*segmentIdIt, colorArray);
+      double* colorArray = segment->GetColor();
       QColor color = QColor::fromRgbF(colorArray[0], colorArray[1], colorArray[2]);
       colorItem->setData(Qt::DecorationRole, color);
       }
@@ -531,6 +528,7 @@ void qMRMLSegmentsTableView::updateWidgetFromMRML()
       //opacityItem->setData(Qt::EditRole, properties.Opacity3D); // for qMRMLDoubleSpinBoxDelegate
       }
     }
+  d->IsUpdatingWidgetFromMRML = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -551,6 +549,10 @@ void qMRMLSegmentsTableView::onSegmentTableItemChanged(QTableWidgetItem* changed
 
   d->setMessage(QString());
 
+  if (d->IsUpdatingWidgetFromMRML)
+    {
+    return;
+    }
   if (!changedItem || !d->SegmentationNode)
     {
     return;
@@ -605,7 +607,6 @@ void qMRMLSegmentsTableView::onSegmentTableItemChanged(QTableWidgetItem* changed
       if (oldColor != color)
         {
         segment->SetColor(color.redF(), color.greenF(), color.blueF());
-        displayPropertyChanged = true;
         }
 
       // Set terminology information to segment as tag

@@ -299,8 +299,13 @@ void vtkSegment::GetContainedRepresentationNames(std::vector<std::string>& repre
 }
 
 //---------------------------------------------------------------------------
-void vtkSegment::SetTag(std::string tag, std::string value, bool emitModified/*=false*/)
+void vtkSegment::SetTag(std::string tag, std::string value)
 {
+  if (this->HasTag(tag) && !this->Tags[tag].compare(value))
+    {
+    return;
+    }
+
   this->Tags[tag] = value;
   if (emitModified)
     {
@@ -309,7 +314,7 @@ void vtkSegment::SetTag(std::string tag, std::string value, bool emitModified/*=
 }
 
 //---------------------------------------------------------------------------
-void vtkSegment::SetTag(std::string tag, int value, bool emitModified/*=false*/)
+void vtkSegment::SetTag(std::string tag, int value)
 {
   std::stringstream ss;
   ss << value;
