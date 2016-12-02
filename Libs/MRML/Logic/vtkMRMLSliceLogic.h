@@ -105,6 +105,9 @@ public:
   void GetBackgroundWindowLevelAndRange(double& window, double& level,
                                       double& rangeLow, double& rangeHigh);
 
+  ///
+  /// Helper to set the foreground layer Window/Level
+  void SetForegroundWindowLevel(double window, double level);
 
   ///
   /// Helper to aget the foreground layer Window/Level
@@ -374,6 +377,10 @@ protected:
                                                           const char* layoutName);
   static vtkMRMLSliceNode* GetSliceNode(vtkMRMLScene* scene,
     const char* layoutName);
+
+  ///
+  /// Helper to set Window/Level in any layer
+  void SetWindowLevel(double window, double level, int layer);
 
   bool                        AddingSliceModelNodes;
   bool                        Initialized;

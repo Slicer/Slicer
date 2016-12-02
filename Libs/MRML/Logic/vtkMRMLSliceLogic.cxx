@@ -705,11 +705,10 @@ void vtkMRMLSliceLogic::SetLabelLayer(vtkMRMLSliceLayerLogic *labelLayer)
 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic
-::SetBackgroundWindowLevel(double newWindow, double newLevel)
+::SetWindowLevel(double newWindow, double newLevel, int layer)
 {
   vtkMRMLScalarVolumeNode* volumeNode =
-    vtkMRMLScalarVolumeNode::SafeDownCast( this->GetLayerVolumeNode (0) );
-    // 0 is background layer, defined in this::GetLayerVolumeNode
+    vtkMRMLScalarVolumeNode::SafeDownCast( this->GetLayerVolumeNode (layer) );
   vtkMRMLScalarVolumeDisplayNode* volumeDisplayNode =
     volumeNode ? volumeNode->GetScalarVolumeDisplayNode() : 0;
   if (!volumeDisplayNode)
@@ -721,6 +720,22 @@ void vtkMRMLSliceLogic
   volumeDisplayNode->SetWindowLevel(newWindow, newLevel);
   volumeDisplayNode->EndModify(disabledModify);
   this->Modified();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic
+::SetBackgroundWindowLevel(double newWindow, double newLevel)
+{
+  // 0 is background layer, defined in this::GetLayerVolumeNode
+  SetWindowLevel(newWindow, newLevel, 0);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic
+::SetForegroundWindowLevel(double newWindow, double newLevel)
+{
+  // 1 is foreground layer, defined in this::GetLayerVolumeNode
+  SetWindowLevel(newWindow, newLevel, 1);
 }
 
 //----------------------------------------------------------------------------
