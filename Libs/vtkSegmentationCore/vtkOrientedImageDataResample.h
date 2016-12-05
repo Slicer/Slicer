@@ -65,7 +65,7 @@ public:
   ///          to be outside the reference extent, then it is padded. Disabled by default.
   /// \param inputImageTransform If specified then inputImage will be transformed with inputImageTransform before resampled into referenceImage.
   /// \return Success flag
-  static bool ResampleOrientedImageToReferenceOrientedImage(vtkOrientedImageData* inputImage, vtkOrientedImageData* referenceImage, vtkOrientedImageData* outputImage, bool linearInterpolation=false, bool padImage=false, vtkAbstractTransform* inputImageTransform=NULL);
+  static bool ResampleOrientedImageToReferenceOrientedImage(vtkOrientedImageData* inputImage, vtkOrientedImageData* referenceImage, vtkOrientedImageData* outputImage, bool linearInterpolation=false, bool padImage=false, vtkAbstractTransform* inputImageTransform=NULL, double backgroundValue=0);
 
   /// Transform an oriented image data using a transform that can be linear or non-linear.
   /// Linear: simply multiply the geometry matrix with the applied matrix, extent stays the same
@@ -75,7 +75,7 @@ public:
   /// \param geometryOnly Only the geometry of the image is changed according to the transform if this flag is turned on.
   ///          This flag only has an effect if the transform is non-linear, in which case only the extent is changed. Off by default
   /// \param alwaysResample If on, then image data will be resampled even if the applied transform is linear
-  static void TransformOrientedImage(vtkOrientedImageData* image, vtkAbstractTransform* transform, bool geometryOnly=false, bool alwaysResample=false);
+  static void TransformOrientedImage(vtkOrientedImageData* image, vtkAbstractTransform* transform, bool geometryOnly=false, bool alwaysResample=false, bool linearInterpolation=false, double backgroundColor[4]=NULL);
 
   /// Combines the inputImage and imageToAppend into a new image by max/min operation. The extent will be the union of the two images.
   /// Extent can be specified to restrict imageToAppend's extent to a smaller region.

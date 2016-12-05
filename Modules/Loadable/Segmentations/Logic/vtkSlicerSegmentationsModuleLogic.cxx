@@ -32,6 +32,8 @@
 #include "vtkSegmentationConverterFactory.h"
 #include "vtkBinaryLabelmapToClosedSurfaceConversionRule.h"
 #include "vtkClosedSurfaceToBinaryLabelmapConversionRule.h"
+#include "vtkClosedSurfaceToFractionalLabelmapConversionRule.h"
+#include "vtkFractionalLabelmapToClosedSurfaceConversionRule.h"
 
 // Subject Hierarchy includes
 #include <vtkMRMLSubjectHierarchyNode.h>
@@ -123,6 +125,10 @@ void vtkSlicerSegmentationsModuleLogic::RegisterNodes()
     vtkSmartPointer<vtkBinaryLabelmapToClosedSurfaceConversionRule>::New() );
   vtkSegmentationConverterFactory::GetInstance()->RegisterConverterRule(
     vtkSmartPointer<vtkClosedSurfaceToBinaryLabelmapConversionRule>::New() );
+  vtkSegmentationConverterFactory::GetInstance()->RegisterConverterRule(
+    vtkSmartPointer<vtkClosedSurfaceToFractionalLabelmapConversionRule>::New() );
+  vtkSegmentationConverterFactory::GetInstance()->RegisterConverterRule(
+    vtkSmartPointer<vtkFractionalLabelmapToClosedSurfaceConversionRule>::New() );
 }
 
 //---------------------------------------------------------------------------
@@ -871,9 +877,9 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
     segmentationNode->GetSegmentation()->GetSegmentIDs(exportedSegmentIDs);
     }
   else
-      {
+    {
     exportedSegmentIDs = segmentIDs;
-      }
+    }
   colorTableNode->SetNumberOfColors(exportedSegmentIDs.size() + 1);
   colorTableNode->GetLookupTable()->SetNumberOfTableValues(exportedSegmentIDs.size() + 1);
   colorTableNode->SetColor(0, "Background", 0.0, 0.0, 0.0);
@@ -1170,7 +1176,7 @@ vtkDataObject* vtkSlicerSegmentationsModuleLogic::CreateRepresentationForOneSegm
 }
 
 //-----------------------------------------------------------------------------
-bool vtkSlicerSegmentationsModuleLogic::ApplyParentTransformToOrientedImageData(vtkMRMLTransformableNode* transformableNode, vtkOrientedImageData* orientedImageData)
+bool vtkSlicerSegmentationsModuleLogic::ApplyParentTransformToOrientedImageData(vtkMRMLTransformableNode* transformableNode, vtkOrientedImageData* orientedImageData, bool linearInterpolation/*=false*/, double backgroundColor[4]/*=NULL*/)
 {
   if (!transformableNode || !orientedImageData)
     {
@@ -1189,7 +1195,7 @@ bool vtkSlicerSegmentationsModuleLogic::ApplyParentTransformToOrientedImageData(
 
   // Transform oriented image data
   parentTransformNode->GetTransformToWorld(nodeToWorldTransform);
-  vtkOrientedImageDataResample::TransformOrientedImage(orientedImageData, nodeToWorldTransform);
+  vtkOrientedImageDataResample::TransformOrientedImage(orientedImageData, nodeToWorldTransform, false, false, linearInterpolation, backgroundColor);
 
   return true;
 }

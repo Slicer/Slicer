@@ -241,21 +241,13 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkDataObject* sour
 }
 
 //----------------------------------------------------------------------------
-bool vtkBinaryLabelmapToClosedSurfaceConversionRule::IsLabelmapPaddingNecessary(vtkImageData* binaryLabelMap)
+template<class ImageScalarType>
+void IsLabelmapPaddingNecessaryGeneric(vtkImageData* binaryLabelMap, bool &paddingNecessary)
 {
   if (!binaryLabelMap)
     {
-    return false;
-    }
-
-  // Only support the following scalar types
-  int inputImageScalarType = binaryLabelMap->GetScalarType();
-  if ( inputImageScalarType != VTK_UNSIGNED_CHAR
-    && inputImageScalarType != VTK_UNSIGNED_SHORT
-    && inputImageScalarType != VTK_SHORT )
-    {
-    vtkErrorWithObjectMacro(binaryLabelMap, "IsLabelmapPaddingNecessary: Image scalar type must be unsigned char, unsighed short, or short!");
-    return false;
+    paddingNecessary = false;
+    return;
     }
 
   // Check if there are non-zero voxels in the labelmap
@@ -263,10 +255,8 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::IsLabelmapPaddingNecessary(
   binaryLabelMap->GetExtent(extent);
   int dimensions[3] = {0, 0, 0};
   binaryLabelMap->GetDimensions(dimensions);
-  // Handle three scalar types
-  unsigned char* imagePtrUChar = (unsigned char*)binaryLabelMap->GetScalarPointerForExtent(extent);
-  unsigned short* imagePtrUShort = (unsigned short*)binaryLabelMap->GetScalarPointerForExtent(extent);
-  short* imagePtrShort = (short*)binaryLabelMap->GetScalarPointerForExtent(extent);
+
+  ImageScalarType* imagePtr = (ImageScalarType*)binaryLabelMap->GetScalarPointerForExtent(extent);
 
   for (int i=0; i<dimensions[0]; ++i)
     {
@@ -280,26 +270,38 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::IsLabelmapPaddingNecessary(
           continue;
           }
         int voxelValue = 0;
-        if (inputImageScalarType == VTK_UNSIGNED_CHAR)
-          {
-          voxelValue = (*(imagePtrUChar + i + j*dimensions[0] + k*dimensions[0]*dimensions[1]));
-          }
-        else if (inputImageScalarType == VTK_UNSIGNED_SHORT)
-          {
-          voxelValue = (*(imagePtrUShort + i + j*dimensions[0] + k*dimensions[0]*dimensions[1]));
-          }
-        else if (inputImageScalarType == VTK_SHORT)
-          {
-          voxelValue = (*(imagePtrShort + i + j*dimensions[0] + k*dimensions[0]*dimensions[1]));
-          }
+        voxelValue = (*(imagePtr + i + j*dimensions[0] + k*dimensions[0]*dimensions[1]));
 
         if (voxelValue != 0)
           {
-          return true;
+          paddingNecessary = true;
+          return;
           }
         }
       }
     }
 
-  return false;
+  paddingNecessary = false;
+  return;
+}
+
+//----------------------------------------------------------------------------
+bool vtkBinaryLabelmapToClosedSurfaceConversionRule::IsLabelmapPaddingNecessary(vtkImageData* binaryLabelMap)
+{
+  if (!binaryLabelMap)
+    {
+    return false;
+    }
+
+  bool paddingNecessary = false;
+
+  switch (binaryLabelMap->GetScalarType())
+    {
+    vtkTemplateMacro(IsLabelmapPaddingNecessaryGeneric<VTK_TT>( binaryLabelMap, paddingNecessary ));
+    default:
+      vtkErrorWithObjectMacro(binaryLabelMap, "IsLabelmapPaddingNecessary: Unknown image scalar type!");
+      return false;
+    }
+
+  return paddingNecessary;
 }

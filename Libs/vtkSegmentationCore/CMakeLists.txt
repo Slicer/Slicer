@@ -55,6 +55,12 @@ set(vtkSegmentationCore_SRCS
   vtkClosedSurfaceToBinaryLabelmapConversionRule.h
   vtkCalculateOversamplingFactor.cxx
   vtkCalculateOversamplingFactor.h
+  vtkClosedSurfaceToFractionalLabelmapConversionRule.h
+  vtkClosedSurfaceToFractionalLabelmapConversionRule.cxx
+  vtkFractionalLabelmapToClosedSurfaceConversionRule.h
+  vtkFractionalLabelmapToClosedSurfaceConversionRule.cxx
+  vtkPolyDataToFractionalLabelmapFilter.h
+  vtkPolyDataToFractionalLabelmapFilter.cxx
   )
 
 # Abstract/pure virtual classes

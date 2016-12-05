@@ -20,7 +20,7 @@
 
 // SegmentationCore includes
 #include "vtkOrientedImageDataResample.h"
-
+#include "vtkSegmentationConverter.h"
 #include "vtkOrientedImageData.h"
 
 // VTK includes
@@ -229,7 +229,7 @@ vtkOrientedImageDataResample::~vtkOrientedImageDataResample()
 }
 
 //-----------------------------------------------------------------------------
-bool vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(vtkOrientedImageData* inputImage, vtkOrientedImageData* referenceImage, vtkOrientedImageData* outputImage, bool linearInterpolation/*=false*/, bool padImage/*=false*/, vtkAbstractTransform* inputImageTransform/*=NULL*/)
+bool vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(vtkOrientedImageData* inputImage, vtkOrientedImageData* referenceImage, vtkOrientedImageData* outputImage, bool linearInterpolation/*=false*/, bool padImage/*=false*/, vtkAbstractTransform* inputImageTransform/*=NULL*/, double backgroundValue/*=0*/)
 {
   if (!inputImage || !referenceImage || !outputImage)
     {
@@ -286,6 +286,7 @@ bool vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage
         }
       vtkSmartPointer<vtkImageConstantPad> padder = vtkSmartPointer<vtkImageConstantPad>::New();
       padder->SetInputData(inputImage);
+      padder->SetConstant(backgroundValue);
       padder->SetOutputWholeExtent(unionExtent);
       padder->Update();
       outputImage->ShallowCopy(padder->GetOutput());
@@ -360,7 +361,7 @@ bool vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage
   resliceFilter->SetOutputSpacing(1, 1, 1);
   resliceFilter->SetOutputExtent(unionExtent);
   resliceFilter->SetOutputScalarType(inputImage->GetScalarType());
-
+  resliceFilter->SetBackgroundLevel(backgroundValue);
   resliceFilter->SetResliceTransform(referenceImageToInputImageTransform);
 
   // Set interpolation mode
@@ -1106,7 +1107,9 @@ void vtkOrientedImageDataResample::TransformOrientedImage(
     vtkOrientedImageData* image,
     vtkAbstractTransform* transform,
     bool geometryOnly/*=false*/,
-    bool alwaysResample/*=false*/)
+    bool alwaysResample/*=false*/,
+    bool linearInterpolation/*=false*/,
+    double backgroundColor[4]/*=NULL*/)
 {
   if (!image || !transform)
     {
@@ -1184,9 +1187,22 @@ void vtkOrientedImageDataResample::TransformOrientedImage(
     // Perform resampling
     vtkNew<vtkImageReslice> reslice;
     reslice->SetInputData(identityInputImage);
-    // reslice->SetInterpolationModeToLinear(); //TODO: Use this option for fractional labelmaps
-    reslice->SetInterpolationModeToNearestNeighbor();
-    reslice->SetBackgroundColor(0, 0, 0, 0);
+    if (linearInterpolation)
+      {
+      reslice->SetInterpolationModeToLinear();
+      }
+    else
+      {
+      reslice->SetInterpolationModeToNearestNeighbor();
+      }
+    if (backgroundColor)
+      {
+        reslice->SetBackgroundColor(backgroundColor);
+      }
+    else
+      {
+        reslice->SetBackgroundColor(0, 0, 0, 0);
+      }
     reslice->AutoCropOutputOff();
     reslice->SetOptimization(1);
     reslice->SetOutputOrigin(0, 0, 0);

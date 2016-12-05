@@ -66,6 +66,11 @@ public:
   /// Contains serialized matrix and extent
   static const std::string GetReferenceImageGeometryParameterName() { return "Reference image geometry"; };
 
+  /// Field names for 2D display parameters
+  static const char* GetScalarRangeFieldName() {return "ScalarRange";};
+  static const char* GetThresholdValueFieldName() {return "ThresholdValue";};
+  static const char* GetInterpolationTypeFieldName() {return "InterpolationType";};
+
 public:
   static vtkSegmentationConverter* New();
   vtkTypeMacro(vtkSegmentationConverter, vtkObject);

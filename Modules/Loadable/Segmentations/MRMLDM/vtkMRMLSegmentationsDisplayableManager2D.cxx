@@ -832,7 +832,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
       double minimumValue = 0.0;
       double maximumValue = 1.0;
       vtkDoubleArray* scalarRange = vtkDoubleArray::SafeDownCast(
-        imageData->GetFieldData()->GetAbstractArray(vtkMRMLSegmentationsDisplayableManager2D::GetScalarRangeFieldName()));
+        imageData->GetFieldData()->GetAbstractArray(vtkSegmentationConverter::GetScalarRangeFieldName()));
       if (scalarRange && scalarRange->GetNumberOfValues() == 2)
         {
         minimumValue = scalarRange->GetValue(0);
@@ -895,7 +895,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
       // Default to nearest neighbor interpolation otherwise
       pipeline->Reslice->SetInterpolationModeToNearestNeighbor();
       vtkIntArray* interpolationType = vtkIntArray::SafeDownCast(
-        imageData->GetFieldData()->GetAbstractArray(vtkMRMLSegmentationsDisplayableManager2D::GetInterpolationTypeFieldName()));
+        imageData->GetFieldData()->GetAbstractArray(vtkSegmentationConverter::GetInterpolationTypeFieldName()));
       if (interpolationType && interpolationType->GetNumberOfValues() == 1)
         {
         pipeline->Reslice->SetInterpolationMode(interpolationType->GetValue(0));
@@ -914,7 +914,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
 
       // If ThresholdValue is not specified, then do not perform thresholding
       vtkDoubleArray* thresholdValue = vtkDoubleArray::SafeDownCast(
-        imageData->GetFieldData()->GetAbstractArray(vtkMRMLSegmentationsDisplayableManager2D::GetThresholdValueFieldName()));
+        imageData->GetFieldData()->GetAbstractArray(vtkSegmentationConverter::GetThresholdValueFieldName()));
       if (thresholdValue && thresholdValue->GetNumberOfValues() == 1)
         {
         pipeline->ImageThreshold->ThresholdByLower(thresholdValue->GetValue(0));
@@ -1204,7 +1204,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::ProcessMRMLNodesEvents(vtkObject*
     else if ( (event == vtkMRMLDisplayableNode::TransformModifiedEvent)
            || (event == vtkMRMLTransformableNode::TransformModifiedEvent)
            || (event == vtkSegmentation::RepresentationModified)
-           || (event == vtkSegmentation::SegmentModified) )
+           || (event == vtkSegmentation::SegmentModified))
       {
       this->Internal->UpdateDisplayableTransforms(displayableNode);
       this->RequestRender();
@@ -1331,6 +1331,8 @@ std::string vtkMRMLSegmentationsDisplayableManager2D::GetDataProbeInfoStringForP
 
     // For all pipelines (pipeline per segment)
     std::set<std::string> segmentIDsAtPosition;
+    std::map<std::string, double> valueForSegment;
+
     for (vtkInternal::PipelineMapType::iterator pipelineIt=displayNodeIt->second.begin(); pipelineIt!=displayNodeIt->second.end(); ++pipelineIt)
       {
       const vtkInternal::Pipeline* pipeline = pipelineIt->second;
@@ -1380,9 +1382,26 @@ std::string vtkMRMLSegmentationsDisplayableManager2D::GetDataProbeInfoStringForP
           }
         double voxelValue = imageData->GetScalarComponentAsDouble(
           ijk[0], ijk[1], ijk[2], 0);
-        if (voxelValue > 0.0)
+
+        vtkDoubleArray* scalarRange = vtkDoubleArray::SafeDownCast(
+          imageData->GetFieldData()->GetAbstractArray(vtkSegmentationConverter::GetScalarRangeFieldName()));
+
+        double minimumValue = 0.0;
+        double maximumValue = 1.0;
+        if (scalarRange && scalarRange->GetNumberOfValues() == 2)
+        {
+          minimumValue = scalarRange->GetValue(0);
+          maximumValue = scalarRange->GetValue(1);
+        }
+        if (voxelValue > minimumValue)
           {
           segmentIDsAtPosition.insert(pipelineIt->first);
+
+          if (shownRepresenatationName == vtkSegmentationConverter::GetSegmentationFractionalLabelmapRepresentationName())
+            {
+            valueForSegment.insert(std::make_pair(pipelineIt->first, voxelValue));
+            }
+
           }
         }
       else if (polyData)
@@ -1456,6 +1475,31 @@ std::string vtkMRMLSegmentationsDisplayableManager2D::GetDataProbeInfoStringForP
         segmentsInfoStr.append("<font color=\"" + colorStream.str() + "\">&#x25cf;</font>");
 
         segmentsInfoStr.append(segment->GetName() ? segment->GetName() : "");
+
+        // If the segmentation representation is a fractional labelmap then display the fill percentage
+        if (shownRepresenatationName == vtkSegmentationConverter::GetSegmentationFractionalLabelmapRepresentationName())
+          {
+
+          // Get the minimum and maximum scalar values from the fractional labelmap (default to 0.0 and 1.0)
+          vtkOrientedImageData* imageData = vtkOrientedImageData::SafeDownCast(
+            segment->GetRepresentation(shownRepresenatationName));
+          vtkDoubleArray* scalarRange = vtkDoubleArray::SafeDownCast(
+            imageData->GetFieldData()->GetAbstractArray(vtkSegmentationConverter::GetScalarRangeFieldName()));
+          double minimumValue = 0.0;
+          double maximumValue = 1.0;
+          if (scalarRange && scalarRange->GetNumberOfValues() == 2)
+          {
+            minimumValue = scalarRange->GetValue(0);
+            maximumValue = scalarRange->GetValue(1);
+          }
+
+          // Calculate the voxel fill percent based on the maximum and minimum values.
+          double segmentVoxelFillPercent = 100*(valueForSegment[*segmentIt]-minimumValue)/(maximumValue-minimumValue);
+          std::stringstream percentStream;
+          percentStream << " " << std::fixed << std::setprecision(1) << segmentVoxelFillPercent << "%";
+          segmentsInfoStr.append(percentStream.str());
+          }
+
         segmentsInfoStr.append(" ");
         }
       }

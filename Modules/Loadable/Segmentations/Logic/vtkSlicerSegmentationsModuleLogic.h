@@ -163,7 +163,7 @@ public:
   /// Apply the parent transform of a node to an oriented image data.
   /// Useful if we want to get a labelmap representation of a segmentation in the proper geometry for processing.
   /// \return Success flag
-  static bool ApplyParentTransformToOrientedImageData(vtkMRMLTransformableNode* transformableNode, vtkOrientedImageData* orientedImageData);
+  static bool ApplyParentTransformToOrientedImageData(vtkMRMLTransformableNode* transformableNode, vtkOrientedImageData* orientedImageData, bool linearInterpolation=false, double backgroundColor[4]=NULL);
 
   /// Apply the parent transform of a node to a poly data.
   /// Useful if we want to get a surface or contours representation of a segmentation in the proper geometry for processing.
