@@ -57,8 +57,8 @@ the segments table will have priority."""
 
   def setupOptionsFrame(self):
     self.methodSelectorComboBox = qt.QComboBox()
-    self.methodSelectorComboBox.addItem("Fill between parallel slices", MORPHOLOGICAL_SLICE_INTERPOLATION)
     self.methodSelectorComboBox.addItem("Grow from seeds", GROWCUT)
+    self.methodSelectorComboBox.addItem("Fill between parallel slices", MORPHOLOGICAL_SLICE_INTERPOLATION)
     self.methodSelectorComboBox.setToolTip("""<html>Auto-complete methods:<ul style="margin: 0">
 <li><b>Fill between slices:</b> Perform complete segmentation on selected slices using any editor effect.
 The complete segmentation will be created by interpolating segmentations on slices that were skipped.</li>
@@ -128,7 +128,7 @@ a complete segmentation, taking into account the master volume content. Minimum 
     return slicer.util.mainWindow().cursor
 
   def setMRMLDefaults(self):
-    self.scriptedEffect.setParameterDefault("AutoCompleteMethod", MORPHOLOGICAL_SLICE_INTERPOLATION)
+    self.scriptedEffect.setParameterDefault("AutoCompleteMethod", GROWCUT)
     self.scriptedEffect.setParameterDefault("AutoUpdate", "1")
 
   def onSegmentationModified(self, caller, event):
@@ -423,8 +423,9 @@ a complete segmentation, taking into account the master volume content. Minimum 
       if not newSegment:
         newSegment = vtkSegmentationCore.vtkSegment()
         newSegment.SetName(segment.GetName())
+        color = segmentationNode.GetSegmentation().GetSegment(segmentID).GetColor()
+        newSegment.SetColor(color)
         previewNode.GetSegmentation().AddSegment(newSegment, segmentID)
-        previewNode.GetDisplayNode().SetSegmentColor(segmentID, segmentationNode.GetDisplayNode().GetSegmentColor(segmentID))
       slicer.vtkSlicerSegmentationsModuleLogic.SetBinaryLabelmapToSegment(newSegmentLabelmap, previewNode, segmentID)
 
     self.updateGUIFromMRML()

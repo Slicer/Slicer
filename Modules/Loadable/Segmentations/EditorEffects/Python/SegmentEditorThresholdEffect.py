@@ -222,9 +222,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
       logging.error("preview: Invalid segmentation display node!")
       color = [0.5,0.5,0.5]
     segmentID = self.scriptedEffect.parameterSetNode().GetSelectedSegmentID()
-    colorVtk = displayNode.GetSegmentColor(segmentID)
-    color = [colorVtk.GetX(), colorVtk.GetY(), colorVtk.GetZ()]
-    r,g,b = color
+    r,g,b = segmentationNode.GetSegmentation().GetSegment(segmentID).GetColor()
 
     # Set values to pipelines
     for sliceWidget in self.previewPipelines:
