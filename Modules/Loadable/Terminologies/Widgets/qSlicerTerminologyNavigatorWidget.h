@@ -104,7 +104,7 @@ public:
   Q_INVOKABLE static bool deserializeTerminologyEntry(QString serializedEntry, vtkSlicerTerminologyEntry* entry);
 
   /// Get recommended color from type (or type modifier if any) of the given terminology entry
-  static QColor recommendedColorFromTerminology(vtkSlicerTerminologyEntry* entry);
+  Q_INVOKABLE static QColor recommendedColorFromTerminology(vtkSlicerTerminologyEntry* entry);
 
 public slots:
   /// Show/hide anatomic region section section
