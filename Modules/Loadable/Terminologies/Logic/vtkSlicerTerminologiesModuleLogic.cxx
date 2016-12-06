@@ -856,6 +856,8 @@ void vtkSlicerTerminologiesModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
 //---------------------------------------------------------------------------
 void vtkSlicerTerminologiesModuleLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
+  Superclass::SetMRMLSceneInternal(newScene);
+
   // Load default terminologies and anatomical contexts
   // Note: Do it here not in the constructor so that the module shared directory is properly initialized
   bool wasModifying = this->GetDisableModifiedEvent();
