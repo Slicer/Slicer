@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __qMRMLSliceInformationWidget_p_h
-#define __qMRMLSliceInformationWidget_p_h
+#ifndef __qMRMLThreeDViewInformationWidget_p_h
+#define __qMRMLThreeDViewInformationWidget_p_h
 
 //
 //  W A R N I N G
@@ -37,16 +37,12 @@
 #include <ctkVTKObject.h>
 
 // qMRML includes
-#include "qMRMLSliceInformationWidget.h"
-#include "ui_qMRMLSliceInformationWidget.h"
-
-// MRMLLogic includes
-#include <vtkMRMLSliceLogic.h>
+#include "qMRMLThreeDViewInformationWidget.h"
+#include "ui_qMRMLThreeDViewInformationWidget.h"
 
 /// VTK includes
 #include <vtkSmartPointer.h>
 #include <vtkWeakPointer.h>
-#include <vtkImageData.h>
 
 class QAction;
 class ctkVTKSliceView;
@@ -54,29 +50,26 @@ class vtkMRMLSliceNode;
 class vtkObject;
 
 //-----------------------------------------------------------------------------
-class qMRMLSliceInformationWidgetPrivate: public QObject,
-                                   public Ui_qMRMLSliceInformationWidget
+class qMRMLThreeDViewInformationWidgetPrivate: public QObject,
+                                   public Ui_qMRMLThreeDViewInformationWidget
 {
   Q_OBJECT
   QVTK_OBJECT
-  Q_DECLARE_PUBLIC(qMRMLSliceInformationWidget);
+  Q_DECLARE_PUBLIC(qMRMLThreeDViewInformationWidget);
 protected:
-  qMRMLSliceInformationWidget* const q_ptr;
+  qMRMLThreeDViewInformationWidget* const q_ptr;
 public:
-  qMRMLSliceInformationWidgetPrivate(qMRMLSliceInformationWidget& object);
-  ~qMRMLSliceInformationWidgetPrivate();
+  qMRMLThreeDViewInformationWidgetPrivate(qMRMLThreeDViewInformationWidget& object);
+  ~qMRMLThreeDViewInformationWidgetPrivate();
 
   void setupUi(qMRMLWidget* widget);
 
 public slots:
-  /// Update widget state using the associated MRML slice node
-  void updateWidgetFromMRMLSliceNode();
-
-
+  /// Update widget state using the associated MRML node
+  void updateWidgetFromMRMLViewNode();
 
 public:
-  vtkWeakPointer<vtkMRMLSliceNode>    MRMLSliceNode;
-  QButtonGroup*                       SliceSpacingModeGroup;
+  vtkWeakPointer<vtkMRMLViewNode> MRMLViewNode;
 
 };
 

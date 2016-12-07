@@ -2601,32 +2601,16 @@ void vtkSlicerAnnotationModuleLogic::JumpSlicesToAnnotationCoordinate(const char
     return;
     }
 
-  vtkMRMLNode *mrmlNode = this->GetMRMLScene()->GetNthNodeByClass(0,"vtkMRMLSliceNode");
-  if (!mrmlNode)
+  this->GetMRMLScene()->SaveStateForUndo();
+  // TODO for now only consider the first control point
+  double *rasCoordinates = controlpointsNode->GetControlPointCoordinates(0);
+  if (rasCoordinates)
     {
-    vtkErrorMacro("JumpSlicesToAnnotationCoordinate: could not get first slice node from scene");
-    return;
-    }
-  vtkMRMLSliceNode *sliceNode = vtkMRMLSliceNode::SafeDownCast(mrmlNode);
-  if (sliceNode)
-    {
-    this->GetMRMLScene()->SaveStateForUndo();
-    // TODO for now only consider the first control point
-    double *rasCoordinates = controlpointsNode->GetControlPointCoordinates(0);
-    if (rasCoordinates)
-      {
-      double r = rasCoordinates[0];
-      double a = rasCoordinates[1];
-      double s = rasCoordinates[2];
+    double r = rasCoordinates[0];
+    double a = rasCoordinates[1];
+    double s = rasCoordinates[2];
 
-      sliceNode->JumpAllSlices(r,a,s);
-      // JumpAllSlices jumps all the other slices, not self, so JumpSlice on
-      // this node as well
-      sliceNode->JumpSlice(r,a,s);
-      }
-
-//    annotationNode->RestoreView();
-
+    vtkMRMLSliceNode::JumpAllSlices(this->GetMRMLScene(), NULL, r, a, s);
     }
 }
 

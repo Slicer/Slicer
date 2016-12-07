@@ -516,7 +516,7 @@ int vtkSlicerMarkupsLogic::AddFiducial(double r, double a, double s)
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerMarkupsLogic::JumpSlicesToLocation(double x, double y, double z, bool centered)
+void vtkSlicerMarkupsLogic::JumpSlicesToLocation(double x, double y, double z, bool centered, int viewGroup /* =-1 */)
 {
   if (!this->GetMRMLScene())
     {
@@ -526,34 +526,12 @@ void vtkSlicerMarkupsLogic::JumpSlicesToLocation(double x, double y, double z, b
 
   // save the whole state as iterating over all slice nodes
   this->GetMRMLScene()->SaveStateForUndo();
-
-  // jump all the slice nodes in the scene
-  int numSliceNodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceNode");
-  for (int n = 0; n < numSliceNodes; ++n)
-    {
-    vtkMRMLNode *mrmlNode = this->GetMRMLScene()->GetNthNodeByClass(n,"vtkMRMLSliceNode");
-    if (!mrmlNode)
-      {
-      vtkErrorMacro("JumpSlicesToLocation: could not get slice node " << n << " from scene");
-      return;
-      }
-    vtkMRMLSliceNode *sliceNode = vtkMRMLSliceNode::SafeDownCast(mrmlNode);
-    if (sliceNode)
-      {
-      if (centered)
-        {
-        sliceNode->JumpSliceByCentering(x,y,z);
-        }
-      else
-        {
-        sliceNode->JumpSliceByOffsetting(x,y,z);
-        }
-      }
-    }
+  int jumpMode = centered ? vtkMRMLSliceNode::CenteredJumpSlice: vtkMRMLSliceNode::OffsetJumpSlice;
+  vtkMRMLSliceNode::JumpAllSlices(this->GetMRMLScene(), x, y, z, jumpMode, viewGroup);
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerMarkupsLogic::JumpSlicesToNthPointInMarkup(const char *id, int n, bool centered)
+void vtkSlicerMarkupsLogic::JumpSlicesToNthPointInMarkup(const char *id, int n, bool centered, int viewGroup /* =-1 */)
 {
   if (!id)
     {
@@ -576,7 +554,7 @@ void vtkSlicerMarkupsLogic::JumpSlicesToNthPointInMarkup(const char *id, int n, 
     double point[4];
     // get the first point for now
     markup->GetMarkupPointWorld(n, 0, point);
-    this->JumpSlicesToLocation(point[0], point[1], point[2], centered);
+    this->JumpSlicesToLocation(point[0], point[1], point[2], centered, viewGroup);
     }
 }
 

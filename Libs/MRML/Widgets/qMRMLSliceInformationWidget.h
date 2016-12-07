@@ -71,6 +71,9 @@ public slots:
   /// Set widget visible.
   void setWidgetVisible(bool visible);
 
+  /// Set view group
+  void setViewGroup(int viewGroup);
+
   /// Set lightbox layout row count
   void setLightboxLayoutRows(int rowCount);
 

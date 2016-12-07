@@ -79,6 +79,8 @@ set(${KIT}_SRCS
   qMRMLSpinBoxPlugin.h
   qMRMLTableViewPlugin.cxx
   qMRMLTableViewPlugin.h
+  qMRMLThreeDViewInformationWidgetPlugin.cxx
+  qMRMLThreeDViewInformationWidgetPlugin.h
   qMRMLThreeDViewPlugin.cxx
   qMRMLThreeDViewPlugin.h
   qMRMLTransformSlidersPlugin.cxx
@@ -131,6 +133,7 @@ set(${KIT}_MOC_SRCS
   qMRMLSliderWidgetPlugin.h
   qMRMLSpinBoxPlugin.h
   qMRMLTableViewPlugin.h
+  qMRMLThreeDViewInformationWidgetPlugin.h
   qMRMLThreeDViewPlugin.h
   qMRMLTransformSlidersPlugin.h
   qMRMLTreeViewPlugin.h

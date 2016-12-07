@@ -54,6 +54,7 @@
 #include "qMRMLSliceWidgetPlugin.h"
 #include "qMRMLSliderWidgetPlugin.h"
 #include "qMRMLSpinBoxPlugin.h"
+#include "qMRMLThreeDViewInformationWidgetPlugin.h"
 #include "qMRMLThreeDViewPlugin.h"
 #include "qMRMLTransformSlidersPlugin.h"
 #include "qMRMLTreeViewPlugin.h"
@@ -108,6 +109,7 @@ public:
             << new qMRMLSliderWidgetPlugin
             << new qMRMLSpinBoxPlugin
             << new qMRMLTableViewPlugin
+            << new qMRMLThreeDViewInformationWidgetPlugin
             << new qMRMLThreeDViewPlugin
             << new qMRMLTransformSlidersPlugin
             << new qMRMLTreeViewPlugin

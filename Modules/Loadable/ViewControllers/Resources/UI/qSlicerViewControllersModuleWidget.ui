@@ -31,12 +31,12 @@
     </widget>
    </item>
    <item>
-    <widget class="ctkCollapsibleButton" name="SliceInformationCollapsibleButton">
+    <widget class="ctkCollapsibleButton" name="AdvancedCollapsibleButton">
      <property name="enabled">
       <bool>true</bool>
      </property>
      <property name="text">
-      <string>Slice Information</string>
+      <string>Advanced</string>
      </property>
      <property name="collapsed">
       <bool>false</bool>
@@ -48,7 +48,7 @@
          <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
         </property>
         <item row="0" column="1">
-         <widget class="qMRMLNodeComboBox" name="MRMLSliceNodeComboBox">
+         <widget class="qMRMLNodeComboBox" name="MRMLViewNodeComboBox">
           <property name="enabled">
            <bool>true</bool>
           </property>
@@ -58,6 +58,7 @@
           <property name="nodeTypes">
            <stringlist>
             <string>vtkMRMLSliceNode</string>
+            <string>vtkMRMLViewNode</string>
            </stringlist>
           </property>
           <property name="showHidden">
@@ -74,7 +75,7 @@
         <item row="0" column="0">
          <widget class="QLabel" name="label">
           <property name="text">
-           <string>Slice Node:</string>
+           <string>View Node:</string>
           </property>
          </widget>
         </item>
@@ -82,6 +83,9 @@
       </item>
       <item>
        <widget class="qMRMLSliceInformationWidget" name="MRMLSliceInformationWidget"/>
+      </item>
+      <item>
+       <widget class="qMRMLThreeDViewInformationWidget" name="MRMLThreeDViewInformationWidget"/>
       </item>
      </layout>
     </widget>
@@ -114,6 +118,11 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>qMRMLThreeDViewInformationWidget</class>
+   <extends>qMRMLWidget</extends>
+   <header>qMRMLThreeDViewInformationWidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>qMRMLWidget</class>
    <extends>QWidget</extends>
    <header>qMRMLWidget.h</header>
@@ -137,7 +146,7 @@
   <connection>
    <sender>qSlicerViewControllersModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>MRMLSliceNodeComboBox</receiver>
+   <receiver>MRMLViewNodeComboBox</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -167,7 +176,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>MRMLSliceNodeComboBox</sender>
+   <sender>MRMLViewNodeComboBox</sender>
    <signal>currentNodeChanged(vtkMRMLNode*)</signal>
    <receiver>MRMLSliceInformationWidget</receiver>
    <slot>setMRMLSliceNode(vtkMRMLNode*)</slot>
@@ -179,6 +188,38 @@
     <hint type="destinationlabel">
      <x>130</x>
      <y>489</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerViewControllersModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>MRMLThreeDViewInformationWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>259</x>
+     <y>279</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>259</x>
+     <y>454</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MRMLViewNodeComboBox</sender>
+   <signal>currentNodeChanged(vtkMRMLNode*)</signal>
+   <receiver>MRMLThreeDViewInformationWidget</receiver>
+   <slot>setMRMLViewNode(vtkMRMLNode*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>289</x>
+     <y>145</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>259</x>
+     <y>454</y>
     </hint>
    </hints>
   </connection>

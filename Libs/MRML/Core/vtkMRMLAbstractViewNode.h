@@ -71,6 +71,20 @@ public:
   inline const char *GetLayoutName();
 
   ///
+  /// An optional identifier to link groups of views. Views that have matching
+  /// ViewGroup value are in the same group.
+  /// ViewGroup is used for restricting scope of:
+  /// \li Linked slice view property changes (is slices are linked, a property change
+  ///     will only change views in the same group)
+  /// \li Crosshair jump to slice (if crosshair is moved with shift+mousemove and slice
+  ///     jump is enabled, only those slices will be moved that are in the same group as
+  ///     the view where the mouse was)
+  /// \li Slice intersection display (slice intersections will only shown of those slices
+  ///     that are in the same group)
+  vtkSetMacro(ViewGroup, int);
+  vtkGetMacro(ViewGroup, int);
+
+  ///
   /// Label for the view. Usually a 1 character label, e.g. R, 1, 2, etc.
   /// \sa SetLayoutName()
   vtkSetStringMacro(LayoutLabel);
@@ -218,6 +232,10 @@ protected:
 
   vtkMRMLAbstractViewNode(const vtkMRMLAbstractViewNode&);
   void operator=(const vtkMRMLAbstractViewNode&);
+
+  ///
+  /// Views with the same ViewGroup value are in the same group.
+  int ViewGroup;
 
   ///
   /// Label to show for the view (shortcut for the name)

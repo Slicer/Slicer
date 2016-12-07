@@ -27,6 +27,7 @@
 #include "vtkMRMLLogicWin32Header.h"
 
 class vtkMRMLColorLogic;
+class vtkMRMLModelDisplayNode;
 class vtkMRMLSliceNode;
 class vtkMRMLSliceLogic;
 class vtkMRMLModelHierarchyLogic;
@@ -62,6 +63,8 @@ public:
   vtkCollection* GetSliceLogics()const;
   vtkMRMLSliceLogic* GetSliceLogic(vtkMRMLSliceNode* sliceNode) const;
   vtkMRMLSliceLogic* GetSliceLogicByLayoutName(const char* layoutName) const;
+  /// Get slice logic from slice model display node
+  vtkMRMLSliceLogic* GetSliceLogicByModelDisplayNode(vtkMRMLModelDisplayNode* displayNode) const;
 
   /// Get ModelHierarchyLogic
   vtkMRMLModelHierarchyLogic* GetModelHierarchyLogic() const;

@@ -62,6 +62,7 @@ public:
 public:
   bool EnterPlaceModeOnNodeChange;
   bool JumpToSliceEnabled;
+  int ViewGroup;
 
   vtkWeakPointer<vtkSlicerMarkupsLogic> MarkupsLogic;
   vtkWeakPointer<vtkMRMLMarkupsNode> CurrentMarkupsNode;
@@ -72,6 +73,7 @@ qSlicerSimpleMarkupsWidgetPrivate::qSlicerSimpleMarkupsWidgetPrivate( qSlicerSim
   : q_ptr(&object)
   , EnterPlaceModeOnNodeChange(true)
   , JumpToSliceEnabled(false)
+  , ViewGroup(-1)
 {
 }
 
@@ -284,6 +286,20 @@ QColor qSlicerSimpleMarkupsWidget::nodeColor() const
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerSimpleMarkupsWidget::setViewGroup(int newViewGroup)
+{
+  Q_D(qSlicerSimpleMarkupsWidget);
+  d->ViewGroup = newViewGroup;
+}
+
+//-----------------------------------------------------------------------------
+int qSlicerSimpleMarkupsWidget::viewGroup() const
+{
+  Q_D(const qSlicerSimpleMarkupsWidget);
+  return d->ViewGroup;
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerSimpleMarkupsWidget::highlightNthFiducial(int n)
 {
   Q_D(qSlicerSimpleMarkupsWidget);
@@ -424,7 +440,7 @@ void qSlicerSimpleMarkupsWidget::onMarkupsFiducialTableContextMenu(const QPoint&
 
   if ( selectedAction == jumpAction )
     {
-    d->MarkupsLogic->JumpSlicesToNthPointInMarkup( this->currentNode()->GetID(), currentFiducial, true /* centered */ );
+    d->MarkupsLogic->JumpSlicesToNthPointInMarkup(this->currentNode()->GetID(), currentFiducial, true /* centered */, d->ViewGroup);
     }
 
   this->updateWidget();
@@ -448,7 +464,7 @@ void qSlicerSimpleMarkupsWidget::onMarkupsFiducialSelected(int row, int column)
       qCritical("qSlicerSimpleMarkupsWidget::onMarkupsFiducialSelected failed: Cannot jump, markups module logic is invalid");
       return;
       }
-    d->MarkupsLogic->JumpSlicesToNthPointInMarkup(currentMarkupsFiducialNode->GetID(), row, true /* centered */);
+    d->MarkupsLogic->JumpSlicesToNthPointInMarkup(currentMarkupsFiducialNode->GetID(), row, true /* centered */, d->ViewGroup);
     }
 
   emit currentMarkupsFiducialSelectionChanged(row);

@@ -322,24 +322,27 @@ const char* threeOverThreeView =
   " <item>"
   "  <layout type=\"horizontal\">"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Slice4\">"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red+\">"
   "     <property name=\"orientation\" action=\"default\">Axial</property>"
-  "     <property name=\"viewlabel\" action=\"default\">4</property>"
-  "     <property name=\"viewcolor\" action=\"default\">#8C8C8C</property>"
+  "     <property name=\"viewlabel\" action=\"default\">R+</property>"
+  "     <property name=\"viewcolor\" action=\"default\">#f9a99f</property>"
+  "     <property name=\"viewgroup\" action=\"default\">1</property>"
   "    </view>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Slice5\">"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow+\">"
   "     <property name=\"orientation\" action=\"default\">Sagittal</property>"
-  "     <property name=\"viewlabel\" action=\"default\">5</property>"
-  "     <property name=\"viewcolor\" action=\"default\">#8C8C8C</property>"
+  "     <property name=\"viewlabel\" action=\"default\">Y+</property>"
+  "     <property name=\"viewcolor\" action=\"default\">#f6e9a2</property>"
+  "     <property name=\"viewgroup\" action=\"default\">1</property>"
   "    </view>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Slice6\">"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Green+\">"
   "     <property name=\"orientation\" action=\"default\">Coronal</property>"
-  "     <property name=\"viewlabel\" action=\"default\">6</property>"
-  "     <property name=\"viewcolor\" action=\"default\">#8C8C8C</property>"
+  "     <property name=\"viewlabel\" action=\"default\">G+</property>"
+  "     <property name=\"viewcolor\" action=\"default\">#c6e0b8</property>"
+  "     <property name=\"viewgroup\" action=\"default\">1</property>"
   "    </view>"
   "   </item>"
   "  </layout>"
@@ -381,29 +384,33 @@ const char* fourOverFourView =
   " <item>"
   "  <layout type=\"horizontal\">"
   "   <item>"
-  "    <view class=\"vtkMRMLViewNode\" singletontag=\"2\" type=\"secondary\">"
-  "     <property name=\"viewlabel\" action=\"default\">2</property>"
+  "    <view class=\"vtkMRMLViewNode\" singletontag=\"1+\" type=\"secondary\">"
+  "     <property name=\"viewlabel\" action=\"default\">1+</property>"
+  "     <property name=\"viewgroup\" action=\"default\">1</property>"
   "    </view>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Slice4\">"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red+\">"
   "     <property name=\"orientation\" action=\"default\">Axial</property>"
-  "     <property name=\"viewlabel\" action=\"default\">4</property>"
-  "     <property name=\"viewcolor\" action=\"default\">#8C8C8C</property>"
+  "     <property name=\"viewlabel\" action=\"default\">R+</property>"
+  "     <property name=\"viewcolor\" action=\"default\">#f9a99f</property>"
+  "     <property name=\"viewgroup\" action=\"default\">1</property>"
   "    </view>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Slice5\">"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow+\">"
   "     <property name=\"orientation\" action=\"default\">Sagittal</property>"
-  "     <property name=\"viewlabel\" action=\"default\">5</property>"
-  "     <property name=\"viewcolor\" action=\"default\">#8C8C8C</property>"
+  "     <property name=\"viewlabel\" action=\"default\">Y+</property>"
+  "     <property name=\"viewcolor\" action=\"default\">#f6e9a2</property>"
+  "     <property name=\"viewgroup\" action=\"default\">1</property>"
   "    </view>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Slice6\">"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Green+\">"
   "     <property name=\"orientation\" action=\"default\">Coronal</property>"
-  "     <property name=\"viewlabel\" action=\"default\">6</property>"
-  "     <property name=\"viewcolor\" action=\"default\">#8C8C8C</property>"
+  "     <property name=\"viewlabel\" action=\"default\">G+</property>"
+  "     <property name=\"viewcolor\" action=\"default\">#c6e0b8</property>"
+  "     <property name=\"viewgroup\" action=\"default\">1</property>"
   "    </view>"
   "   </item>"
   "  </layout>"
@@ -1518,6 +1525,21 @@ void vtkMRMLLayoutLogic::ApplyProperty(const ViewProperty& property, vtkMRMLNode
       return;
       }
     sliceNode->SetOrientation(value.c_str());
+    }
+  // ViewGroup
+  if (name == std::string("viewgroup"))
+    {
+    vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(view);
+    if (!viewNode)
+      {
+      vtkWarningMacro("Invalid view group property.");
+      return;
+      }
+    std::stringstream ss;
+    int n;
+    ss << value;
+    ss >> n;
+    viewNode->SetViewGroup(n);
     }
   // LayoutLabel
   if (name == std::string("viewlabel"))

@@ -358,12 +358,20 @@ public:
   /// and JumpAllSlices use the JumpMode to determine how to jump.
   void JumpSlice(double r, double a, double s);
   void JumpAllSlices(double r, double a, double s);
+  /// Jump all slices in the scene.
+  /// viewGroup can be used to jump only slice views that are in a specific group.
+  /// By default viewGroup is set to -1, which means that all slice views are jumped.
+  /// If a non-NULL exclude pointer is specified then position of that slice node will not be changed.
+  /// If jumpMode is set to vtkMRMLSliceNode::DefaultJumpSlice then jump mode set in the slice node will be used.
+  /// specified in the slice node will be used.
+  static void JumpAllSlices(vtkMRMLScene* scene, double r, double a, double s,
+    int jumpMode = vtkMRMLSliceNode::DefaultJumpSlice, int viewGroup = -1, vtkMRMLSliceNode* exclude = NULL);
   void JumpSliceByOffsetting(double r, double a, double s);
   void JumpSliceByOffsetting(int k, double r, double a, double s);
   void JumpSliceByCentering(double r, double a, double s);
 
   /// Enum to specify the method of jumping slices
-  enum {CenteredJumpSlice=0, OffsetJumpSlice};
+  enum {DefaultJumpSlice=-1, CenteredJumpSlice=0, OffsetJumpSlice};
 
   ///
   /// Control how JumpSlice operates. CenteredJumpMode puts the

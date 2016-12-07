@@ -1606,18 +1606,49 @@ void vtkMRMLSliceNode::JumpSliceByOffsetting(int k, double r, double a, double s
   //this->ActiveSlice = oldActiveSlice;
 }
 
+//----------------------------------------------------------------------------
 void vtkMRMLSliceNode::JumpAllSlices(double r, double a, double s)
 {
-  vtkMRMLSliceNode *node= NULL;
-  vtkMRMLScene *scene = this->GetScene();
+  vtkMRMLSliceNode::JumpAllSlices(this->GetScene(), r, a, s, vtkMRMLSliceNode::DefaultJumpSlice, this->GetViewGroup(), this);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceNode::JumpAllSlices(vtkMRMLScene* scene, double r, double a, double s,
+  int jumpMode /* =vtkMRMLSliceNode::DefaultJumpSlice */, int viewGroup /* =-1 */, vtkMRMLSliceNode* exclude /*=NULL*/)
+{
+  if (!scene)
+    {
+    return;
+    }
+
   int nnodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceNode");
   for (int n=0; n<nnodes; n++)
     {
-    node = vtkMRMLSliceNode::SafeDownCast (
-          scene->GetNthNodeByClass(n, "vtkMRMLSliceNode"));
-    if ( node != NULL && node != this )
+    vtkMRMLSliceNode *node = vtkMRMLSliceNode::SafeDownCast(
+      scene->GetNthNodeByClass(n, "vtkMRMLSliceNode"));
+    if (node == NULL || node == exclude)
+      {
+      continue;
+      }
+    if (viewGroup >= 0 && viewGroup != node->GetViewGroup())
+      {
+      continue;
+      }
+    if (jumpMode == vtkMRMLSliceNode::DefaultJumpSlice)
       {
       node->JumpSlice(r, a, s);
+      }
+    else if (jumpMode == CenteredJumpSlice)
+      {
+      node->JumpSliceByCentering(r, a, s);
+      }
+    else if (jumpMode == OffsetJumpSlice)
+      {
+      node->JumpSliceByOffsetting(r, a, s);
+      }
+    else
+      {
+      vtkGenericWarningMacro("vtkMRMLSliceNode::JumpAllSlices failed: invalid jump mode " << jumpMode);
       }
     }
 }

@@ -191,6 +191,9 @@ set(MRMLWidgets_SRCS
   qMRMLThreeDViewControllerWidget.cxx
   qMRMLThreeDViewControllerWidget.h
   qMRMLThreeDViewControllerWidget_p.h
+  qMRMLThreeDViewInformationWidget.cxx
+  qMRMLThreeDViewInformationWidget.h
+  qMRMLThreeDViewInformationWidget_p.h
   qMRMLThreeDWidget.cxx
   qMRMLThreeDWidget.h
   qMRMLTransformSliders.cxx
@@ -294,6 +297,8 @@ set(MRMLWidgets_MOC_SRCS
   qMRMLThreeDView.h
   qMRMLThreeDView_p.h
   qMRMLThreeDViewControllerWidget.h
+  qMRMLThreeDViewInformationWidget.h
+  qMRMLThreeDViewInformationWidget_p.h
   qMRMLThreeDWidget.h
   qMRMLTransformSliders.h
   qMRMLTreeView.h
@@ -329,13 +334,14 @@ set(MRMLWidgets_UI_SRCS
   Resources/UI/qMRMLSliceWidget.ui
   Resources/UI/qMRMLTableViewControllerWidget.ui
   Resources/UI/qMRMLThreeDViewControllerWidget.ui
+  Resources/UI/qMRMLThreeDViewInformationWidget.ui
   Resources/UI/qMRMLTransformSliders.ui
   Resources/UI/qMRMLVolumeInfoWidget.ui
   Resources/UI/qMRMLVolumeThresholdWidget.ui
   Resources/UI/qMRMLWindowLevelWidget.ui
   )
 
-configure_file(Resources/jqPlot.qrc.in ${qMRMLWidgets_BINARY_DIR}/Resources/jqPlot.qrc) 
+configure_file(Resources/jqPlot.qrc.in ${qMRMLWidgets_BINARY_DIR}/Resources/jqPlot.qrc)
 set(MRMLWidgets_QRC_SRCS
   Resources/qMRMLWidgets.qrc
   ${qMRMLWidgets_BINARY_DIR}/Resources/jqPlot.qrc

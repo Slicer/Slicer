@@ -44,6 +44,7 @@ qSlicerSimpleMarkupsWidget : public qSlicerWidget
   Q_PROPERTY(bool optionsVisible READ optionsVisible WRITE setOptionsVisible)
   Q_PROPERTY(QColor nodeColor READ nodeColor WRITE setNodeColor)
   Q_PROPERTY(QColor defaultNodeColor READ defaultNodeColor WRITE setDefaultNodeColor)
+  Q_PROPERTY(int viewGroup READ viewGroup WRITE setViewGroup)
 
 public:
   typedef qSlicerWidget Superclass;
@@ -69,6 +70,7 @@ public:
   bool enterPlaceModeOnNodeChange() const;
 
   /// If enabled then the fiducial will be shown in all slice views when a fiducial is selected
+  /// /sa setViewGroup
   bool jumpToSliceEnabled() const;
 
   /// Show/hide the markup node selector widget.
@@ -82,6 +84,13 @@ public:
 
   /// Get the default node color that is applied to newly created nodes.
   QColor defaultNodeColor() const;
+
+  /// Set views where slice positions will be updated on jump to slice.
+  /// If it is set to -1 (by default it is) then all slices will be jumped.
+  void setViewGroup(int newViewGroup);
+
+  /// Get view group where slice positions will be updated.
+  int viewGroup()const;
 
 public slots:
 

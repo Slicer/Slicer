@@ -193,7 +193,11 @@ void qSlicerViewControllersModuleWidget::setup()
 {
   Q_D(qSlicerViewControllersModuleWidget);
   d->setupUi(this);
-  d->SliceInformationCollapsibleButton->setCollapsed(true);
+
+  connect(d->MRMLViewNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+    this, SLOT(onAdvancedViewNodeChanged(vtkMRMLNode*)));
+
+  d->AdvancedCollapsibleButton->setCollapsed(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -387,3 +391,11 @@ void qSlicerViewControllersModuleWidget::onLayoutChanged(int)
     }
 }
 
+// --------------------------------------------------------------------------
+void qSlicerViewControllersModuleWidget::onAdvancedViewNodeChanged(vtkMRMLNode* viewNode)
+{
+  Q_D(qSlicerViewControllersModuleWidget);
+  // Only show widget corresponding to selected view node type
+  d->MRMLSliceInformationWidget->setVisible(vtkMRMLSliceNode::SafeDownCast(viewNode) != 0);
+  d->MRMLThreeDViewInformationWidget->setVisible(vtkMRMLViewNode::SafeDownCast(viewNode) != 0);
+}

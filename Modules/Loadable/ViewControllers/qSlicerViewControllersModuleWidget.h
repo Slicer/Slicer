@@ -50,6 +50,9 @@ public slots:
   void onNodeRemovedEvent(vtkObject* scene, vtkObject* node);
   void onLayoutChanged(int);
 
+protected slots:
+  void onAdvancedViewNodeChanged(vtkMRMLNode*);
+
 protected:
   virtual void setup();
 

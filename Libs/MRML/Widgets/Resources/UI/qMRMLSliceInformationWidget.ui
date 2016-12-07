@@ -37,14 +37,14 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="2" column="0">
     <widget class="QLabel" name="label_3">
      <property name="text">
       <string>Orientation:</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
+   <item row="2" column="1">
     <widget class="QComboBox" name="SliceOrientationSelector">
      <property name="toolTip">
       <string>Slice orientation (Axial, Sagittal, Coronal, Reformat)</string>
@@ -71,14 +71,14 @@
      </item>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <widget class="QLabel" name="label_4">
      <property name="text">
       <string>Slice visible:</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="3" column="1">
     <widget class="QToolButton" name="SliceVisibilityToggle">
      <property name="toolTip">
       <string>Toggle the visibility of the slice in the 3D scene</string>
@@ -105,14 +105,14 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0">
+   <item row="4" column="0">
     <widget class="QLabel" name="label_5">
      <property name="text">
       <string>Widget visible:</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="1">
+   <item row="4" column="1">
     <widget class="QToolButton" name="WidgetVisibilityToggle">
      <property name="toolTip">
       <string>Toggle the visibility of the reformat widget in the 3D scene</string>
@@ -139,7 +139,7 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
+   <item row="5" column="0">
     <widget class="QLabel" name="label_6">
      <property name="toolTip">
       <string>Dimension of the slice.</string>
@@ -149,7 +149,7 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="1">
+   <item row="5" column="1">
     <widget class="ctkCoordinatesWidget" name="DimensionWidget">
      <property name="enabled">
       <bool>false</bool>
@@ -165,7 +165,27 @@
      </property>
     </widget>
    </item>
-   <item row="7" column="0">
+   <item row="6" column="0">
+    <widget class="QLabel" name="label_7">
+     <property name="toolTip">
+      <string>Field of view of slice</string>
+     </property>
+     <property name="text">
+      <string>Field of view:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="ctkCoordinatesWidget" name="FieldOfViewWidget">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="minimum">
+      <double>0.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0">
     <widget class="QLabel" name="label_8">
      <property name="toolTip">
       <string>Layout of the lightbox (rows, columns)</string>
@@ -175,7 +195,7 @@
      </property>
     </widget>
    </item>
-   <item row="7" column="1">
+   <item row="8" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout_5">
      <item>
       <widget class="QSpinBox" name="LightboxLayoutRowsSpinBox">
@@ -205,7 +225,7 @@
      </item>
     </layout>
    </item>
-   <item row="8" column="0">
+   <item row="9" column="0">
     <widget class="QLabel" name="label_9">
      <property name="toolTip">
       <string>Slice spacing may be set automatically or manually by the user or context</string>
@@ -215,7 +235,7 @@
      </property>
     </widget>
    </item>
-   <item row="8" column="1">
+   <item row="9" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <property name="spacing">
       <number>0</number>
@@ -239,14 +259,14 @@
      </item>
     </layout>
    </item>
-   <item row="9" column="0">
+   <item row="10" column="0">
     <widget class="QLabel" name="label_10">
      <property name="text">
       <string>Manual spacing:</string>
      </property>
     </widget>
    </item>
-   <item row="9" column="1">
+   <item row="10" column="1">
     <widget class="ctkDoubleSpinBox" name="PrescribedSpacingSpinBox">
      <property name="enabled">
       <bool>false</bool>
@@ -262,23 +282,17 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="1">
-    <widget class="ctkCoordinatesWidget" name="FieldOfViewWidget">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="minimum">
-      <double>0.000000000000000</double>
+   <item row="7" column="0">
+    <widget class="QLabel" name="label_11">
+     <property name="text">
+      <string>View group:</string>
      </property>
     </widget>
    </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="label_7">
+   <item row="7" column="1">
+    <widget class="QSpinBox" name="ViewGroupSpinBox">
      <property name="toolTip">
-      <string>Field of view of slice</string>
-     </property>
-     <property name="text">
-      <string>Field of view:</string>
+      <string>Navigation and linked properties are synchronized in views that has the same group index.</string>
      </property>
     </widget>
    </item>

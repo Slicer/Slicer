@@ -261,14 +261,37 @@ GetSliceLogicByLayoutName(const char* layoutName) const
       {
       if ( !strcmp( logic->GetSliceNode()->GetLayoutName(), layoutName) )
         {
-        break;
+        return logic;
         }
       }
-
-    logic = 0;
     }
 
-  return logic;
+  return 0;
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLSliceLogic* vtkMRMLApplicationLogic::
+GetSliceLogicByModelDisplayNode(vtkMRMLModelDisplayNode* displayNode) const
+{
+  if (!displayNode || !this->Internal->SliceLogics)
+    {
+    return 0;
+    }
+
+  vtkMRMLSliceLogic* logic = 0;
+  vtkCollectionSimpleIterator it;
+  vtkCollection* logics = this->Internal->SliceLogics;
+
+  for (logics->InitTraversal(it);
+    (logic = vtkMRMLSliceLogic::SafeDownCast(logics->GetNextItemAsObject(it)));)
+    {
+    if (logic->GetSliceModelDisplayNode() == displayNode)
+      {
+      return logic;
+      }
+    }
+
+  return 0;
 }
 
 //---------------------------------------------------------------------------
