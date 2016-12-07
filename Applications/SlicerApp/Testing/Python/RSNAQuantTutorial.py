@@ -250,46 +250,6 @@ class RSNAQuantTutorialTest(unittest.TestCase):
     layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalView)
     slicer.mrmlScene.Clear(0)
 
-  def clickAndDrag(self,widget,button='Left',start=(10,10),end=(10,40),steps=20,modifiers=[]):
-    """Send synthetic mouse events to the specified widget (qMRMLSliceWidget or qMRMLThreeDView)
-    button : "Left", "Middle", "Right", or "None"
-    start, end : window coordinates for action
-    steps : number of steps to move in
-    modifiers : list containing zero or more of "Shift" or "Control"
-    """
-    style = widget.interactorStyle()
-    interactor = style.GetInteractor()
-    if button == 'Left':
-      down = style.OnLeftButtonDown
-      up = style.OnLeftButtonUp
-    elif button == 'Right':
-      down = style.OnRightButtonDown
-      up = style.OnRightButtonUp
-    elif button == 'Middle':
-      down = style.OnMiddleButtonDown
-      up = style.OnMiddleButtonUp
-    elif button == 'None' or not button:
-      down = lambda : None
-      up = lambda : None
-    else:
-      raise Exception("Bad button - should be Left or Right, not %s" % button)
-    if 'Shift' in modifiers:
-      interactor.SetShiftKey(1)
-    if 'Control' in modifiers:
-      interactor.SetControlKey(1)
-    interactor.SetEventPosition(*start)
-    down()
-    for step in xrange(steps):
-      frac = float(step)/steps
-      x = int(start[0] + frac*(end[0]-start[0]))
-      y = int(start[1] + frac*(end[1]-start[1]))
-      interactor.SetEventPosition(x,y)
-      style.OnMouseMove()
-    up()
-    interactor.SetShiftKey(0)
-    interactor.SetControlKey(0)
-
-
   def runTest(self):
     """Run as few or as many tests as needed here.
     """
@@ -415,7 +375,7 @@ class RSNAQuantTutorialTest(unittest.TestCase):
           break
 
       threeDView.resetFocalPoint()
-      self.clickAndDrag(threeDView,button='Right')
+      slicer.util.clickAndDrag(threeDView,button='Right')
       redWidget.sliceController().setSliceVisible(True)
       yellowWidget.sliceController().setSliceVisible(True)
       self.takeScreenshot('PETCT-ConfigureView','Configure View',-1)
@@ -536,10 +496,10 @@ class RSNAQuantTutorialTest(unittest.TestCase):
       changeTracker.workflow.goForward()
       self.takeScreenshot('ChangeTracker-GoForward','Go Forward',-1)
 
-      self.clickAndDrag(redWidget,button='Right')
+      slicer.util.clickAndDrag(redWidget,button='Right')
       self.takeScreenshot('ChangeTracker-Zoom','Inspect - zoom',-1)
 
-      self.clickAndDrag(redWidget,button='Middle')
+      slicer.util.clickAndDrag(redWidget,button='Middle')
       self.takeScreenshot('ChangeTracker-Pan','Inspect - pan',-1)
 
       for offset in xrange(-20,20,2):
@@ -556,7 +516,7 @@ class RSNAQuantTutorialTest(unittest.TestCase):
       layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalWidescreenView)
       self.takeScreenshot('ChangeTracker-ConventionalWidescreen','Select the viewing mode Conventional Widescreen',-1)
 
-      self.clickAndDrag(redWidget,button='Right')
+      slicer.util.clickAndDrag(redWidget,button='Right')
       self.takeScreenshot('ChangeTracker-ZoomVOI','Zoom',-1)
 
       layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutFourUpView)
@@ -592,10 +552,10 @@ class RSNAQuantTutorialTest(unittest.TestCase):
         style.OnMouseMove()
 
       self.delayDisplay('Zoom')
-      self.clickAndDrag(compareWidget,button='Right')
+      slicer.util.clickAndDrag(compareWidget,button='Right')
 
       self.delayDisplay('Pan')
-      self.clickAndDrag(compareWidget,button='Middle')
+      slicer.util.clickAndDrag(compareWidget,button='Middle')
 
       self.delayDisplay('Inspect - scroll')
       compareController = redWidget.sliceController()

@@ -228,55 +228,11 @@ class ScriptedLoadableModuleLogic():
 
   def clickAndDrag(self,widget,button='Left',start=(10,10),end=(10,40),steps=20,modifiers=[]):
     """
-    Send synthetic mouse events to the specified widget (qMRMLSliceWidget or qMRMLThreeDView)
-    button : "Left", "Middle", "Right", or "None"
-    start, end : window coordinates for action
-    steps : number of steps to move in
-    modifiers : list containing zero or more of "Shift" or "Control"
-
-    Hint: for generating test data you can use this snippet of code:
-
-layoutManager = slicer.app.layoutManager()
-threeDView = layoutManager.threeDWidget(0).threeDView()
-style = threeDView.interactorStyle()
-interactor = style.GetInteractor()
-def onClick(caller,event):
-    print(interactor.GetEventPosition())
-
-interactor.AddObserver(vtk.vtkCommand.LeftButtonPressEvent, onClick)
-
+    Send synthetic mouse events to the specified widget (qMRMLSliceWidget or qMRMLThreeDView).
+    It is recommended to directly use slicer.util.clickAndDrag function.
+    This method is only kept for backward compatibility and may be removed in the future.
     """
-    style = widget.interactorStyle()
-    interactor = style.GetInteractor()
-    if button == 'Left':
-      down = interactor.LeftButtonPressEvent
-      up = interactor.LeftButtonReleaseEvent
-    elif button == 'Right':
-      down = interactor.RightButtonPressEvent
-      up = interactor.RightButtonReleaseEvent
-    elif button == 'Middle':
-      down = interactor.MiddleButtonPressEvent
-      up = interactor.MiddleButtonReleaseEvent
-    elif button == 'None' or not button:
-      down = lambda : None
-      up = lambda : None
-    else:
-      raise Exception("Bad button - should be Left or Right, not %s" % button)
-    if 'Shift' in modifiers:
-      interactor.SetShiftKey(1)
-    if 'Control' in modifiers:
-      interactor.SetControlKey(1)
-    interactor.SetEventPosition(*start)
-    down()
-    for step in xrange(steps):
-      frac = float(step)/steps
-      x = int(start[0] + frac*(end[0]-start[0]))
-      y = int(start[1] + frac*(end[1]-start[1]))
-      interactor.SetEventPosition(x,y)
-      interactor.MouseMoveEvent()
-    up()
-    interactor.SetShiftKey(0)
-    interactor.SetControlKey(0)
+    slicer.util.clickAndDrag(widget,button=button,start=start,end=end,steps=steps,modifiers=modifiers)
 
 class ScriptedLoadableModuleTest(unittest.TestCase):
   """

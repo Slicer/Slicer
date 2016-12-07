@@ -162,46 +162,6 @@ class slicerCloseCrashBug2590Test(unittest.TestCase):
     layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalView)
     slicer.mrmlScene.Clear(0)
 
-  def clickAndDrag(self,widget,button='Left',start=(10,10),end=(10,40),steps=20,modifiers=[]):
-    """Send synthetic mouse events to the specified widget (qMRMLSliceWidget or qMRMLThreeDView)
-    button : "Left", "Middle", "Right", or "None"
-    start, end : window coordinates for action
-    steps : number of steps to move in
-    modifiers : list containing zero or more of "Shift" or "Control"
-    """
-    style = widget.interactorStyle()
-    interator = style.GetInteractor()
-    if button == 'Left':
-      down = style.OnLeftButtonDown
-      up = style.OnLeftButtonUp
-    elif button == 'Right':
-      down = style.OnRightButtonDown
-      up = style.OnRightButtonUp
-    elif button == 'Middle':
-      down = style.OnMiddleButtonDown
-      up = style.OnMiddleButtonUp
-    elif button == 'None' or not button:
-      down = lambda : None
-      up = lambda : None
-    else:
-      raise Exception("Bad button - should be Left or Right, not %s" % button)
-    if 'Shift' in modifiers:
-      interator.SetShiftKey(1)
-    if 'Control' in modifiers:
-      interator.SetControlKey(1)
-    interator.SetEventPosition(*start)
-    down()
-    for step in xrange(steps):
-      frac = float(step)/steps
-      x = int(start[0] + frac*(end[0]-start[0]))
-      y = int(start[1] + frac*(end[1]-start[1]))
-      interator.SetEventPosition(x,y)
-      style.OnMouseMove()
-    up()
-    interator.SetShiftKey(0)
-    interator.SetControlKey(0)
-
-
   def runTest(self):
     """Run as few or as many tests as needed here.
     """
@@ -256,10 +216,10 @@ class slicerCloseCrashBug2590Test(unittest.TestCase):
       changeTracker.workflow.goForward()
 
       self.delayDisplay('Inspect - zoom')
-      self.clickAndDrag(redWidget,button='Right')
+      slicer.util.clickAndDrag(redWidget,button='Right')
 
       self.delayDisplay('Inspect - pan')
-      self.clickAndDrag(redWidget,button='Middle')
+      slicer.util.clickAndDrag(redWidget,button='Middle')
 
       self.delayDisplay('Inspect - scroll')
       for offset in xrange(-20,20,2):
@@ -300,10 +260,10 @@ class slicerCloseCrashBug2590Test(unittest.TestCase):
         style.OnMouseMove()
 
       self.delayDisplay('Zoom')
-      self.clickAndDrag(compareWidget,button='Right')
+      slicer.util.clickAndDrag(compareWidget,button='Right')
 
       self.delayDisplay('Pan')
-      self.clickAndDrag(compareWidget,button='Middle')
+      slicer.util.clickAndDrag(compareWidget,button='Middle')
 
       self.delayDisplay('Inspect - scroll')
       compareController = redWidget.sliceController()

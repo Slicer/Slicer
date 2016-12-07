@@ -259,46 +259,6 @@ class RSNAVisTutorialTest(unittest.TestCase):
     layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalView)
     slicer.mrmlScene.Clear(0)
 
-  def clickAndDrag(self,widget,button='Left',start=(10,10),end=(10,40),steps=20,modifiers=[]):
-    """Send synthetic mouse events to the specified widget (qMRMLSliceWidget or qMRMLThreeDView)
-    button : "Left", "Middle", "Right", or "None"
-    start, end : window coordinates for action
-    steps : number of steps to move in
-    modifiers : list containing zero or more of "Shift" or "Control"
-    """
-    style = widget.interactorStyle()
-    interator = style.GetInteractor()
-    if button == 'Left':
-      down = style.OnLeftButtonDown
-      up = style.OnLeftButtonUp
-    elif button == 'Right':
-      down = style.OnRightButtonDown
-      up = style.OnRightButtonUp
-    elif button == 'Middle':
-      down = style.OnMiddleButtonDown
-      up = style.OnMiddleButtonUp
-    elif button == 'None' or not button:
-      down = lambda : None
-      up = lambda : None
-    else:
-      raise Exception("Bad button - should be Left or Right, not %s" % button)
-    if 'Shift' in modifiers:
-      interator.SetShiftKey(1)
-    if 'Control' in modifiers:
-      interator.SetControlKey(1)
-    interator.SetEventPosition(*start)
-    down()
-    for step in xrange(steps):
-      frac = float(step)/steps
-      x = int(start[0] + frac*(end[0]-start[0]))
-      y = int(start[1] + frac*(end[1]-start[1]))
-      interator.SetEventPosition(x,y)
-      style.OnMouseMove()
-    up()
-    interator.SetShiftKey(0)
-    interator.SetControlKey(0)
-
-
   def runTest(self):
     """Run as few or as many tests as needed here.
     """
@@ -366,8 +326,8 @@ class RSNAVisTutorialTest(unittest.TestCase):
 
       layoutManager = slicer.app.layoutManager()
       redWidget = layoutManager.sliceWidget('Red')
-      self.clickAndDrag(redWidget,start=(10,10),end=(10,40))
-      self.clickAndDrag(redWidget,start=(10,10),end=(40,10))
+      slicer.util.clickAndDrag(redWidget,start=(10,10),end=(10,40))
+      slicer.util.clickAndDrag(redWidget,start=(10,10),end=(40,10))
 
       self.takeScreenshot('LoadingADICOMVolume-WL','Changed level and window',-1)
 
@@ -375,11 +335,11 @@ class RSNAVisTutorialTest(unittest.TestCase):
       redWidget.sliceController().setSliceVisible(True);
       self.takeScreenshot('LoadingADICOMVolume-LinkView','Linked and visible',-1)
 
-      self.clickAndDrag(redWidget,button='Right',start=(10,10),end=(10,40))
+      slicer.util.clickAndDrag(redWidget,button='Right',start=(10,10),end=(10,40))
       self.takeScreenshot('LoadingADICOMVolume-Zoom','Zoom',-1)
 
       threeDView = layoutManager.threeDWidget(0).threeDView()
-      self.clickAndDrag(threeDView)
+      slicer.util.clickAndDrag(threeDView)
       self.takeScreenshot('LoadingADICOMVolume-Rotate','Rotate',-1)
 
       threeDView.resetFocalPoint()
@@ -413,7 +373,7 @@ class RSNAVisTutorialTest(unittest.TestCase):
       self.takeScreenshot('VolumeRendering-SlicesOff','Turn off visibility of slices in 3D',-1)
 
       threeDView = layoutManager.threeDWidget(0).threeDView()
-      self.clickAndDrag(threeDView)
+      slicer.util.clickAndDrag(threeDView)
       self.takeScreenshot('VolumeRendering-RotateVolumeRendering','Rotate volume rendered image',-1)
 
       volumeRenderingNode.SetVisibility(0)
@@ -486,7 +446,7 @@ class RSNAVisTutorialTest(unittest.TestCase):
       redWidget.sliceController().setSliceVisible(True);
       self.takeScreenshot('Head-ModelsAndSliceModel','Models and Slice Model',-1)
 
-      self.clickAndDrag(threeDView)
+      slicer.util.clickAndDrag(threeDView)
       self.takeScreenshot('Head-Rotate','Rotate',-1)
 
       redController.setSliceVisible(True);
@@ -540,11 +500,11 @@ class RSNAVisTutorialTest(unittest.TestCase):
       self.takeScreenshot('Head-HideWhiteMatter','Turn off white matter',-1)
 
       self.delayDisplay('Rotate')
-      self.clickAndDrag(threeDView)
+      slicer.util.clickAndDrag(threeDView)
 
       self.delayDisplay('Zoom')
       threeDView = layoutManager.threeDWidget(0).threeDView()
-      self.clickAndDrag(threeDView,button='Right')
+      slicer.util.clickAndDrag(threeDView,button='Right')
       self.takeScreenshot('Head-Zoom','Zoom',-1)
 
       self.delayDisplay('Test passed!')
@@ -598,7 +558,7 @@ class RSNAVisTutorialTest(unittest.TestCase):
 
       segmentII = slicer.util.getNode('LiverSegment_II')
       segmentII.GetDisplayNode().SetVisibility(0)
-      self.clickAndDrag(threeDView,start=(10,200),end=(10,10))
+      slicer.util.clickAndDrag(threeDView,start=(10,200),end=(10,10))
       self.takeScreenshot('Liver-SegmentII','Segment II invisible',-1)
 
       segmentII.GetDisplayNode().SetVisibility(1)

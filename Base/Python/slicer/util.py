@@ -830,3 +830,59 @@ def settingsValue(key, default, converter=lambda v: v, settings=None):
   import qt
   settings = qt.QSettings() if settings is None else settings
   return converter(settings.value(key)) if settings.contains(key) else default
+
+def clickAndDrag(widget,button='Left',start=(10,10),end=(10,40),steps=20,modifiers=[]):
+  """
+  Send synthetic mouse events to the specified widget (qMRMLSliceWidget or qMRMLThreeDView)
+  button : "Left", "Middle", "Right", or "None"
+  start, end : window coordinates for action
+  steps : number of steps to move in, if <2 then mouse jumps to the end position
+  modifiers : list containing zero or more of "Shift" or "Control"
+
+  Hint: for generating test data you can use this snippet of code:
+
+layoutManager = slicer.app.layoutManager()
+threeDView = layoutManager.threeDWidget(0).threeDView()
+style = threeDView.interactorStyle()
+interactor = style.GetInteractor()
+def onClick(caller,event):
+    print(interactor.GetEventPosition())
+
+interactor.AddObserver(vtk.vtkCommand.LeftButtonPressEvent, onClick)
+
+  """
+  style = widget.interactorStyle()
+  interactor = style.GetInteractor()
+  if button == 'Left':
+    down = interactor.LeftButtonPressEvent
+    up = interactor.LeftButtonReleaseEvent
+  elif button == 'Right':
+    down = interactor.RightButtonPressEvent
+    up = interactor.RightButtonReleaseEvent
+  elif button == 'Middle':
+    down = interactor.MiddleButtonPressEvent
+    up = interactor.MiddleButtonReleaseEvent
+  elif button == 'None' or not button:
+    down = lambda : None
+    up = lambda : None
+  else:
+    raise Exception("Bad button - should be Left or Right, not %s" % button)
+  if 'Shift' in modifiers:
+    interactor.SetShiftKey(1)
+  if 'Control' in modifiers:
+    interactor.SetControlKey(1)
+  interactor.SetEventPosition(*start)
+  down()
+  if (steps<2):
+    interactor.SetEventPosition(end[0], end[1])
+    interactor.MouseMoveEvent()
+  else:
+    for step in xrange(steps):
+      frac = float(step)/(steps-1)
+      x = int(start[0] + frac*(end[0]-start[0]))
+      y = int(start[1] + frac*(end[1]-start[1]))
+      interactor.SetEventPosition(x,y)
+      interactor.MouseMoveEvent()
+  up()
+  interactor.SetShiftKey(0)
+  interactor.SetControlKey(0)
