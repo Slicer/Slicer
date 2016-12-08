@@ -361,8 +361,7 @@ void qSlicerSegmentEditorPaintEffectPrivate::paintApply(qMRMLWidget* viewWidget)
     vtkNew<vtkTransform> worldToModifierLabelmapIjkTransform;
 
     vtkNew<vtkMatrix4x4> segmentationToSegmentationIjkTransformMatrix;
-    modifierLabelmap->GetImageToWorldMatrix(segmentationToSegmentationIjkTransformMatrix.GetPointer());
-    segmentationToSegmentationIjkTransformMatrix->Invert();
+    modifierLabelmap->GetWorldToImageMatrix(segmentationToSegmentationIjkTransformMatrix.GetPointer());
     worldToModifierLabelmapIjkTransform->Concatenate(segmentationToSegmentationIjkTransformMatrix.GetPointer());
 
     vtkNew<vtkMatrix4x4> worldToSegmentationTransformMatrix;
