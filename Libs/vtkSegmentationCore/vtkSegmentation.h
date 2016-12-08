@@ -225,14 +225,14 @@ public:
   int GetNumberOfSegments() const;
 
   /// Request segment by index
-  vtkSegment* GetNthSegment(int index) const;
+  vtkSegment* GetNthSegment(unsigned int index) const;
 
   /// Get n-th segment ID. Return with "" if no segment is found by that index.
-  std::string GetNthSegmentID(int index) const;
+  std::string GetNthSegmentID(unsigned int index) const;
 
   /// Changes segment order. Segment order may be used for display and generating merged labelmaps.
   /// \return True if segment index has changed successfully (or the index has already been set).
-  bool SetSegmentIndex(const std::string& segmentId, int newIndex);
+  bool SetSegmentIndex(const std::string& segmentId, unsigned int newIndex);
 
   /// Find segment ID by segment instance
   /// Returns empty string if segment is not found.

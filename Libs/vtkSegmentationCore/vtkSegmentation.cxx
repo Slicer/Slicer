@@ -609,9 +609,9 @@ int vtkSegmentation::GetNumberOfSegments() const
 }
 
 //---------------------------------------------------------------------------
-vtkSegment* vtkSegmentation::GetNthSegment(int index) const
+vtkSegment* vtkSegmentation::GetNthSegment(unsigned int index) const
 {
-  if (index < 0 || index >= this->SegmentIds.size())
+  if (index >= this->SegmentIds.size())
     {
     return NULL;
     }
@@ -626,9 +626,9 @@ vtkSegment* vtkSegmentation::GetNthSegment(int index) const
 }
 
 //---------------------------------------------------------------------------
-std::string vtkSegmentation::GetNthSegmentID(int index) const
+std::string vtkSegmentation::GetNthSegmentID(unsigned int index) const
 {
-  if (index < 0 || index >= this->SegmentIds.size())
+  if (index >= this->SegmentIds.size())
     {
     return "";
     }
@@ -636,9 +636,9 @@ std::string vtkSegmentation::GetNthSegmentID(int index) const
 }
 
 //---------------------------------------------------------------------------
-bool vtkSegmentation::SetSegmentIndex(const std::string& segmentId, int newIndex)
+bool vtkSegmentation::SetSegmentIndex(const std::string& segmentId, unsigned int newIndex)
 {
-  if (newIndex < 0 || newIndex >= this->SegmentIds.size())
+  if (newIndex >= this->SegmentIds.size())
     {
     vtkErrorMacro("vtkSegmentation::SetSegmentIndex failed: index " << newIndex
       << " is out of range [0," << this->SegmentIds.size()-1 << "]");

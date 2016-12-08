@@ -76,10 +76,10 @@ public:
 
   /// Limits how many states may be stored.
   /// If the number of stored states exceed the limit then the oldest state is removed.
-  void SetMaximumNumberOfStates(int maximumNumberOfStates);
+  void SetMaximumNumberOfStates(unsigned int maximumNumberOfStates);
 
   /// Get the limit of how many states may be stored.
-  vtkGetMacro(MaximumNumberOfStates, int);
+  vtkGetMacro(MaximumNumberOfStates, unsigned int);
 
 protected:
   /// Callback function called when the segmentation has been modified.
@@ -93,7 +93,7 @@ protected:
   void RemoveAllObsoleteStates();
 
   /// Restores a state defined by stateIndex.
-  bool RestoreState(int stateIndex);
+  bool RestoreState(unsigned int stateIndex);
 
 protected:
   vtkSegmentationHistory();
@@ -115,12 +115,12 @@ protected:  /// Container type for segments. Maps segment IDs to segment objects
   vtkSegmentation* Segmentation;
   vtkCallbackCommand* SegmentationModifiedCallbackCommand;
   std::deque<SegmentationState> SegmentationStates;
-  int MaximumNumberOfStates;
+  unsigned int MaximumNumberOfStates;
 
   // Index of the state in SegmentationStates that was restored last.
   // If index == size of states then it means that the segmentation has changed
   // since the last restored state.
-  int LastRestoredState;
+  unsigned int LastRestoredState;
 
   bool RestoreStateInProgress;
 };

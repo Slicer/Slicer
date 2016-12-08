@@ -126,7 +126,7 @@ void MergeImageGeneric2(
         {
         for (vtkIdType idxX = 0; idxX <= maxX; idxX++)
           {
-          if (*modifierImagePtr > *baseImagePtr)
+          if (static_cast<BaseImageScalarType>(*modifierImagePtr) > *baseImagePtr)
             {
             *baseImagePtr = *modifierImagePtr;
             baseImageModified = true;
@@ -149,7 +149,7 @@ void MergeImageGeneric2(
         {
         for (vtkIdType idxX = 0; idxX <= maxX; idxX++)
           {
-          if (*modifierImagePtr < *baseImagePtr)
+          if (static_cast<BaseImageScalarType>(*modifierImagePtr) < *baseImagePtr)
             {
             *baseImagePtr = *modifierImagePtr;
             baseImageModified = true;
@@ -173,7 +173,7 @@ void MergeImageGeneric2(
         {
         for (vtkIdType idxX = 0; idxX <= maxX; idxX++)
           {
-          if (*modifierImagePtr > maskThreshold)
+          if (static_cast<int>(*modifierImagePtr) > maskThreshold)
             {
             *baseImagePtr = fillValueBaseImageType;
             baseImageModified = true;

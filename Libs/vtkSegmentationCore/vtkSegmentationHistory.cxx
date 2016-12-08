@@ -240,7 +240,7 @@ bool vtkSegmentationHistory::RestoreNextState()
 }
 
 //---------------------------------------------------------------------------
-bool vtkSegmentationHistory::RestoreState(int stateIndex)
+bool vtkSegmentationHistory::RestoreState(unsigned int stateIndex)
 {
   this->RestoreStateInProgress = true;
 
@@ -336,7 +336,7 @@ void vtkSegmentationHistory::RemoveAllObsoleteStates()
 }
 
 //---------------------------------------------------------------------------
-void vtkSegmentationHistory::SetMaximumNumberOfStates(int maximumNumberOfStates)
+void vtkSegmentationHistory::SetMaximumNumberOfStates(unsigned int maximumNumberOfStates)
 {
   if (maximumNumberOfStates == this->MaximumNumberOfStates)
     {
