@@ -390,7 +390,8 @@ void qMRMLSegmentationConversionParametersWidget::applyConversion()
 
   // Perform conversion using selected path and chosen conversion parameters
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
-  if (!d->SegmentationNode->GetSegmentation()->CreateRepresentation(d->TargetRepresentationName.toLatin1().constData(), this->selectedPath(), this->conversionParameters()))
+  if (!d->SegmentationNode->GetSegmentation()->CreateRepresentation(
+        this->selectedPath(), this->conversionParameters()))
   {
     QString message = QString("Failed to convert %1 to %2!").arg(d->SegmentationNode->GetName()).arg(d->TargetRepresentationName);
     QMessageBox::warning(NULL, tr("Conversion failed"), message);

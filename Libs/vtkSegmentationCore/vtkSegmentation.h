@@ -298,8 +298,7 @@ public:
   /// Conversion starts from the master representation, and all representations along the
   /// path get overwritten.
   /// \return true on success
-  bool CreateRepresentation(const std::string& targetRepresentationName,
-                            vtkSegmentationConverter::ConversionPathType path,
+  bool CreateRepresentation(vtkSegmentationConverter::ConversionPathType path,
                             vtkSegmentationConverterRule::ConversionParameterListType parameters);
 
   /// Removes a representation from all segments if present

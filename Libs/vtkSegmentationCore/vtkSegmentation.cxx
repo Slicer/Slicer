@@ -954,8 +954,7 @@ bool vtkSegmentation::CreateRepresentation(const std::string& targetRepresentati
 }
 
 //---------------------------------------------------------------------------
-bool vtkSegmentation::CreateRepresentation(const std::string& targetRepresentationName,
-                                           vtkSegmentationConverter::ConversionPathType path,
+bool vtkSegmentation::CreateRepresentation(vtkSegmentationConverter::ConversionPathType path,
                                            vtkSegmentationConverterRule::ConversionParameterListType parameters)
 {
   if (!this->Converter)
