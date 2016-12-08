@@ -105,14 +105,14 @@ qSlicerSegmentEditorAbstractEffectPrivate::~qSlicerSegmentEditorAbstractEffectPr
 //----------------------------------------------------------------------------
 qSlicerSegmentEditorAbstractEffect::qSlicerSegmentEditorAbstractEffect(QObject* parent)
  : Superclass(parent)
- , d_ptr(new qSlicerSegmentEditorAbstractEffectPrivate(*this))
  , m_Name(QString())
  , m_Active(false)
  , m_PerSegment(true)
- , m_FillValue(1.0)
- , m_EraseValue(0.0)
  , m_ShowEffectCursorInSliceView(true)
  , m_ShowEffectCursorInThreeDView(false)
+ , m_FillValue(1.0)
+ , m_EraseValue(0.0)
+ , d_ptr(new qSlicerSegmentEditorAbstractEffectPrivate(*this))
 {
 }
 
