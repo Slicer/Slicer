@@ -38,9 +38,19 @@ class UtilTest(ScriptedLoadableModule):
 #
 
 class UtilTestWidget(ScriptedLoadableModuleWidget):
+  def __init__(self):
+    ScriptedLoadableModuleWidget.__init__(self)
+    self.Widget = None
 
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
+
+    moduleName = 'UtilTest'
+    scriptedModulesPath = os.path.dirname(slicer.util.modulePath(moduleName))
+    path = os.path.join(scriptedModulesPath, 'Resources', 'UI', moduleName + '.ui')
+
+    self.Widget = slicer.util.loadUI(path)
+    self.layout.addWidget(self.Widget)
 
 #
 # UtilTestLogic
@@ -66,6 +76,8 @@ class UtilTestTest(ScriptedLoadableModuleTest):
     """
     self.setUp()
     self.test_setSliceViewerLayers()
+    self.test_loadUI()
+    self.test_findChild()
 
   def test_setSliceViewerLayers(self):
     self.delayDisplay('Testing slicer.util.setSliceViewerLayers')
@@ -129,3 +141,47 @@ class UtilTestTest(ScriptedLoadableModuleTest):
     self.assertEqual(redSliceCompositeNode.GetLabelOpacity(), 1.0)
 
     self.delayDisplay('Testing slicer.util.setSliceViewerLayers passed !')
+
+  def test_loadUI(self):
+    # Try to load a UI that does not exist and catch exception
+    caughtException = False
+    try:
+      slicer.util.loadUI('does/not/exists.ui')
+    except RuntimeError:
+      caughtException = True
+    self.assertTrue(caughtException)
+
+    # Correct path
+    utilWidget = UtilTestWidget()
+    caughtException = False
+    try:
+      utilWidget.setup()
+    except RuntimeError:
+      caughtException = True
+    self.assertFalse(caughtException)
+
+  def test_findChild(self):
+    utilWidget = UtilTestWidget()
+
+    # Try with nothing (widget isn't setup)
+    caughtException = False
+    try:
+      slicer.util.findChild(utilWidget.Widget, 'UtilTest_Label')
+    except RuntimeError:
+      caughtException = True
+    self.assertTrue(caughtException)
+
+    utilWidget.setup()
+
+    # Try to get a widget that exists
+    label = slicer.util.findChild(utilWidget.Widget, 'UtilTest_Label')
+    self.assertIsNotNone(label, qt.QLabel)
+    self.assertEqual(label.text, 'My custom UI')
+
+    # Try to get a widget that does not exists
+    caughtException = False
+    try:
+      slicer.util.findChild(utilWidget.Widget, 'Unexistant_Label')
+    except RuntimeError:
+      caughtException = True
+    self.assertTrue(caughtException)

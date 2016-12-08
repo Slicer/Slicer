@@ -203,6 +203,37 @@ def findChildren(widget=None, name="", text="", title="", className=""):
       children.append(p)
   return children
 
+def findChild(widget, name):
+  """
+  Convenience method to access a widget by its ``name``.
+  A ``RuntimeError`` exception is raised if the widget with the
+  given ``name`` does not exist.
+  """
+  errorMessage = "Widget named " + str(name) + " does not exists."
+  child = None
+  try:
+    child = findChildren(widget, name=name)[0]
+    if not child:
+      raise RuntimeError(errorMessage)
+  except IndexError:
+    raise RuntimeError(errorMessage)
+  return child
+
+def loadUI(path):
+  """ Load UI file ``path`` and return the corresponding widget.
+  Raises a ``RuntimeError`` exception if the UI file is not found or if no
+  widget was instantiated.
+  """
+  import qt
+  qfile = qt.QFile(path)
+  qfile.open(qt.QFile.ReadOnly)
+  loader = qt.QUiLoader()
+  widget = loader.load(qfile)
+  if not widget:
+    errorMessage = "Could not load UI file: " + str(path) + "\n\n"
+    raise RuntimeError(errorMessage)
+  return widget
+
 def setSliceViewerLayers(background=None, foreground=None, label=None,
                          foregroundOpacity=None, labelOpacity=None):
   """ Set the slice views with the given nodes.

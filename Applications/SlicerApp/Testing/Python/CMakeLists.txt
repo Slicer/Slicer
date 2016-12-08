@@ -354,6 +354,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
 
   set(KIT_PYTHON_RESOURCES
     Resources/UI/ScenePerformance.ui
+    Resources/UI/UtilTest.ui
     )
 
   ctkMacroCompilePythonScript(
