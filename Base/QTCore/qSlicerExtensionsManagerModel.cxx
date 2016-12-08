@@ -203,6 +203,10 @@ public:
 #endif
   static bool validateExtensionMetadata(const ExtensionMetadataType &extensionMetadata);
 
+  static QStringList isExtensionCompatible(
+      const ExtensionMetadataType& metadata, const QString& slicerRevision,
+      const QString& slicerOs, const QString& slicerArch);
+
   void saveExtensionDescription(const QString& extensionDescriptionFile, const ExtensionMetadataType &allExtensionMetadata);
 
   qSlicerExtensionsManagerModel::ExtensionMetadataType retrieveExtensionMetadata(
@@ -750,6 +754,42 @@ bool qSlicerExtensionsManagerModelPrivate::validateExtensionMetadata(
     valid = valid && !extensionMetadata.value(key).toString().isEmpty();
     }
   return valid;
+}
+
+// --------------------------------------------------------------------------
+QStringList qSlicerExtensionsManagerModelPrivate::isExtensionCompatible(
+    const ExtensionMetadataType& metadata, const QString& slicerRevision,
+    const QString& slicerOs, const QString& slicerArch)
+{
+  if (slicerRevision.isEmpty())
+    {
+    return QStringList() << QObject::tr("slicerRevision is not specified");
+    }
+  if (slicerOs.isEmpty())
+    {
+    return QStringList() << QObject::tr("slicerOs is not specified");
+    }
+  if (slicerArch.isEmpty())
+    {
+    return QStringList() << QObject::tr("slicerArch is not specified");
+    }
+  QStringList reasons;
+  QString extensionSlicerRevision = metadata.value("slicer_revision").toString();
+  if (slicerRevision != extensionSlicerRevision)
+    {
+    reasons << QObject::tr("extensionSlicerRevision [%1] is different from slicerRevision [%2]").arg(extensionSlicerRevision).arg(slicerRevision);
+    }
+  QString extensionArch = metadata.value("arch").toString();
+  if (slicerArch != extensionArch)
+    {
+    reasons << QObject::tr("extensionArch [%1] is different from slicerArch [%2]").arg(extensionArch).arg(slicerArch);
+    }
+  QString extensionOs = metadata.value("os").toString();
+  if (slicerOs != extensionOs)
+    {
+    reasons << QObject::tr("extensionOs [%1] is different from slicerOs [%2]").arg(extensionOs).arg(slicerOs);
+    }
+  return reasons;
 }
 
 // --------------------------------------------------------------------------
@@ -2079,36 +2119,9 @@ QStringList qSlicerExtensionsManagerModel::isExtensionCompatible(
     {
     return QStringList() << tr("extensionName is not specified");
     }
-  if (slicerRevision.isEmpty())
-    {
-    return QStringList() << tr("slicerRevision is not specified");
-    }
-  if (slicerOs.isEmpty())
-    {
-    return QStringList() << tr("slicerOs is not specified");
-    }
-  if (slicerArch.isEmpty())
-    {
-    return QStringList() << tr("slicerArch is not specified");
-    }
-  QStringList reasons;
   ExtensionMetadataType metadata = this->extensionMetadata(extensionName);
-  QString extensionSlicerRevision = metadata.value("slicer_revision").toString();
-  if (slicerRevision != extensionSlicerRevision)
-    {
-    reasons << tr("extensionSlicerRevision [%1] is different from slicerRevision [%2]").arg(extensionSlicerRevision).arg(slicerRevision);
-    }
-  QString extensionArch = metadata.value("arch").toString();
-  if (slicerArch != extensionArch)
-    {
-    reasons << tr("extensionArch [%1] is different from slicerArch [%2]").arg(extensionArch).arg(slicerArch);
-    }
-  QString extensionOs = metadata.value("os").toString();
-  if (slicerOs != extensionOs)
-    {
-    reasons << tr("extensionOs [%1] is different from slicerOs [%2]").arg(extensionOs).arg(slicerOs);
-    }
-  return reasons;
+  return qSlicerExtensionsManagerModelPrivate::isExtensionCompatible(
+        metadata, slicerRevision, slicerOs, slicerArch);
 }
 
 // --------------------------------------------------------------------------
