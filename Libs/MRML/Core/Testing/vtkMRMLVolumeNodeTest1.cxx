@@ -21,6 +21,9 @@
 #include <vtkObjectFactory.h>
 #include <vtkPolyData.h>
 
+// STD includes
+#include <list>
+
 //----------------------------------------------------------------------------
 class vtkMRMLVolumeNodeTestHelper1 : public vtkMRMLVolumeNode
 {
@@ -62,6 +65,39 @@ int vtkMRMLVolumeNodeTest1(int , char * [])
     return EXIT_FAILURE;
     }
   std::cout << "Computed scan order from identity matrix: " << (scanOrder ? scanOrder : "null") << std::endl;
+
+  // IJKToRAS <-> Scan Order
+  double spacing[3] = {1.0, 1.0, 1.0};
+  int dimensions[3] = {2, 2, 2};
+  std::vector<std::string> scanOrders;
+  scanOrders.push_back("IS");
+  scanOrders.push_back("SI");
+  scanOrders.push_back("RL");
+  scanOrders.push_back("LR");
+  scanOrders.push_back("PA");
+  scanOrders.push_back("AP");
+  for(std::vector<std::string>::iterator it = scanOrders.begin();
+      it != scanOrders.end();
+      ++it)
+    {
+    ijkToRAS->Identity();
+    vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(
+          (*it).c_str(), spacing, dimensions, /* centerImage= */ false,
+          ijkToRAS.GetPointer());
+
+    const char* computedScanOrder =
+        vtkMRMLVolumeNode::ComputeScanOrderFromIJKToRAS(ijkToRAS.GetPointer());
+
+    if (!computedScanOrder ||
+        strcmp(computedScanOrder, "") == 0 ||
+        *it != computedScanOrder)
+      {
+      std::cerr << "Failed to compute scan order from '" << *it << "' IJKToRAS matrix: '"
+                << (computedScanOrder ? computedScanOrder : "null") << "'"
+                << std::endl;
+      return EXIT_FAILURE;
+      }
+    }
 
   // IJKToRASDirections
   double dirs[3][3];
