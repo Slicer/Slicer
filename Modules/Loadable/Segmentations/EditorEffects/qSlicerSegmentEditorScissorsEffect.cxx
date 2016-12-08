@@ -377,7 +377,9 @@ void qSlicerSegmentEditorScissorsEffectPrivate::updateGlyphWithNewPosition(Sciss
         for (int i = 0; i < numberOfPoints; i++)
           {
           double angle = 2.0 * vtkMath::Pi() * i / double(numberOfPoints);
-          points->SetPoint(i, this->DragStartPosition[0] + radius * sin(angle), this->DragStartPosition[1] + radius * cos(angle), 0.0);
+          position[0] = this->DragStartPosition[0] + radius * sin(angle);
+          position[1] = this->DragStartPosition[1] + radius * cos(angle);
+          points->SetPoint(i, position);
           }
         points->Modified();
         break;
