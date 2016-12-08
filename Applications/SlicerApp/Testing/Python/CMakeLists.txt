@@ -298,6 +298,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
   slicer_add_python_unittest(SCRIPT RSNAQuantTutorial.py)
   slicer_add_python_unittest(SCRIPT slicerCloseCrashBug2590.py)
   slicer_add_python_unittest(SCRIPT SlicerOrientationSelectorTest.py)
+  slicer_add_python_unittest(SCRIPT UtilTest.py)
   slicer_add_python_unittest(SCRIPT ViewControllersSliceInterpolationBug1926.py)
   slicer_add_python_unittest(SCRIPT RSNA2012ProstateDemo.py)
   slicer_add_python_unittest(SCRIPT JRC2013Vis.py)
@@ -328,6 +329,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
     SubjectHierarchyCorePluginsSelfTest.py
     TwoCLIsInARowTest.py
     TwoCLIsInParallelTest.py
+    UtilTest.py
     )
 
   if(Slicer_BUILD_CLI_SUPPORT)

@@ -203,6 +203,36 @@ def findChildren(widget=None, name="", text="", title="", className=""):
       children.append(p)
   return children
 
+def setSliceViewerLayers(background=None, foreground=None, label=None,
+                         foregroundOpacity=None, labelOpacity=None):
+  """ Set the slice views with the given nodes.
+  :param background: node or node ID to be used for the background layer
+  :param foreground: node or node ID to be used for the foreground layer
+  :param label: node or node ID to be used for the label layer
+  :param foregroundOpacity: opacity of the foreground layer
+  :param labelOpacity: opacity of the label layer
+  """
+  import slicer
+  def _nodeID(nodeOrID):
+    nodeID = nodeOrID
+    if isinstance(nodeOrID, slicer.vtkMRMLNode):
+      nodeID = nodeOrID.GetID()
+    return nodeID
+
+  num = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSliceCompositeNode')
+  for i in range(num):
+      sliceViewer = slicer.mrmlScene.GetNthNodeByClass(i, 'vtkMRMLSliceCompositeNode')
+      if background is not None:
+          sliceViewer.SetBackgroundVolumeID(_nodeID(background))
+      if foreground is not None:
+          sliceViewer.SetForegroundVolumeID(_nodeID(foreground))
+      if foregroundOpacity is not None:
+          sliceViewer.SetForegroundOpacity(foregroundOpacity)
+      if label is not None:
+          sliceViewer.SetLabelVolumeID(_nodeID(label))
+      if labelOpacity is not None:
+          sliceViewer.SetLabelOpacity(labelOpacity)
+
 #
 # IO
 #
