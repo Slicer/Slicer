@@ -161,7 +161,7 @@ public:
   /// \brief Check if \a extensionName is compatible with the system identified
   /// by \a slicerRevision, \a slicerOs and \a slicerArch.
   /// @return Return the reasons justifying the incompatibility or an empty list if the extension
-  /// is compatibile.
+  /// is compatible.
   Q_INVOKABLE QStringList isExtensionCompatible(const QString& extensionName, const QString& slicerRevision,
                                                 const QString& slicerOs, const QString& slicerArch) const;
 
@@ -230,7 +230,7 @@ public slots:
   void setExtensionEnabled(const QString& extensionName, bool value);
 
   /// \brief Download and install \a extensionId
-  /// The \a extensionId correponds to the identifier used on the extension server itself.
+  /// The \a extensionId corresponds to the identifier used on the extension server itself.
   /// \sa installExtension, scheduleExtensionForUninstall, uninstallScheduledExtensions
   bool downloadAndInstallExtension(const QString& extensionId);
 
