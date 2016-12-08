@@ -262,17 +262,17 @@ void vtkMRMLSegmentationNode::OnMasterRepresentationModified()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationNode::OnSegmentAdded(const char* segmentId)
+void vtkMRMLSegmentationNode::OnSegmentAdded(const char* vtkNotUsed(segmentId))
 {
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationNode::OnSegmentRemoved(const char* segmentId)
+void vtkMRMLSegmentationNode::OnSegmentRemoved(const char* vtkNotUsed(segmentId))
 {
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationNode::OnSegmentModified(const char* segmentId)
+void vtkMRMLSegmentationNode::OnSegmentModified(const char* vtkNotUsed(segmentId))
 {
 }
 
