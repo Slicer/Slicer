@@ -81,7 +81,6 @@ qMRMLLayoutViewFactoryPrivate::qMRMLLayoutViewFactoryPrivate(qMRMLLayoutViewFact
 void qMRMLLayoutViewFactoryPrivate::init()
 {
   Q_Q(qMRMLLayoutViewFactory);
-  q->setUseCachedViews(false);
 }
 
 //------------------------------------------------------------------------------
