@@ -1,28 +1,5 @@
 set(proj python-pydicom)
 
-#------------------------------------------------------------------------------
-#
-# cmake -DSOURCE_DIR:PATH=/path/to/${proj} -DPATCH_${proj}:BOOL=ON -P /path/to/External_${proj}.cmake
-#
-if(PATCH_${proj})
-  # See issue #3763
-  cmake_minimum_required(VERSION 2.8.9)
-  set(_file ${SOURCE_DIR}/setup.py)
-
-  message(STATUS "Computing offset for ${_file}")
-  file(STRINGS ${_file} _lines LIMIT_COUNT 3)
-  string(LENGTH "${_lines}" _offset)
-
-  message(STATUS "Reading  ${_file} using offset: ${_offset}")
-  file(READ ${_file} _content OFFSET ${_offset})
-
-  message(STATUS "Writting ${_file}")
-  file(WRITE ${_file} ${_content})
-
-  return()
-endif()
-
-#------------------------------------------------------------------------------
 # Set dependency list
 set(${proj}_DEPENDENCIES python python-setuptools)
 
