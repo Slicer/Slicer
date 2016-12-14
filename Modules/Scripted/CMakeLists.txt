@@ -31,6 +31,7 @@ if(Slicer_BUILD_DICOM_SUPPORT)
     DICOM
     DICOMLib
     DICOMPlugins
+    DICOMPatcher
     )
 endif()
 foreach(module ${modules})
