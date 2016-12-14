@@ -36,6 +36,9 @@ public:
   vtkTypeMacro(vtkSlicerTerminologyType, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  /// Reset state of object
+  virtual void Initialize();
+
   /// Copy one type into another
   virtual void Copy(vtkSlicerTerminologyType* aType);
 

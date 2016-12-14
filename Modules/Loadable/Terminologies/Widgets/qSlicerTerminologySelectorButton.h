@@ -24,9 +24,11 @@
 // Qt includes
 #include <QPushButton>
 
-#include <vtkSlicerTerminologyEntry.h>
-
+// Terminologies includes
 #include "qSlicerTerminologiesModuleWidgetsExport.h"
+
+#include "qSlicerTerminologyNavigatorWidget.h"
+#include "vtkSlicerTerminologyEntry.h"
 
 class qSlicerTerminologySelectorButtonPrivate;
 
@@ -36,42 +38,26 @@ class Q_SLICER_MODULE_TERMINOLOGIES_WIDGETS_EXPORT qSlicerTerminologySelectorBut
 {
   Q_OBJECT
 
-  Q_PROPERTY(vtkSlicerTerminologyEntry* terminologyEntry READ terminologyEntry WRITE setTerminologyEntry NOTIFY terminologyChanged USER true)
-  Q_PROPERTY(QColor color READ color WRITE setColor)
-
 public:
   explicit qSlicerTerminologySelectorButton(QWidget* parent=NULL);
   virtual ~qSlicerTerminologySelectorButton();
 
-  /// Current selected terminology
-  vtkSlicerTerminologyEntry* terminologyEntry();
-
-  /// Current color
-  QColor color();
+  /// Get selected terminology and other metadata (name, color, auto-generated flags) into given info bundle object
+  void terminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo);
 
 public slots:
-  /// Set a new current color without opening a dialog
-  void setTerminologyEntry(vtkSlicerTerminologyEntry* newTerminology, bool modifiedEvent=true);
+  /// Set terminology and other metadata (name, color, auto-generated flags)
+  void setTerminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo);
 
-  /// Set color
-  void setColor(QColor color);
-
-  /// Opens a color dialog to select a new current color.
-  /// If the CTK color dialog (\a UseCTKColorDialog) is used, then the color
-  /// name is also set if the user selects a named color.
-  /// \sa ctkColorDialog, color, colorName
+  /// Opens a terminology dialog to select a new terminology.
   void changeTerminology();
 
 signals:
-  /// terminologyChanged is fired anytime a new color is set. Programmatically or
-  /// by the user when choosing a color from the color dialog
   void terminologyChanged();
-
-  // Invoked when the shown dialog is canceled
   void canceled();
 
 protected slots:
-  void onToggled(bool change = true);
+  void onToggled(bool toggled=true);
 
 protected:
   virtual void paintEvent(QPaintEvent* event);

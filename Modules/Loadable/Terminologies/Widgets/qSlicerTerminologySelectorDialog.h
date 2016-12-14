@@ -29,10 +29,10 @@
 // Terminologies includes
 #include "qSlicerTerminologiesModuleWidgetsExport.h"
 
-class qSlicerTerminologySelectorDialogPrivate;
+#include "qSlicerTerminologyNavigatorWidget.h"
 
+class qSlicerTerminologySelectorDialogPrivate;
 class vtkSlicerTerminologyEntry;
-class QColor;
 
 /// \brief Qt dialog for selecting a terminology entry
 /// \ingroup SlicerRt_QtModules_Terminologies_Widgets
@@ -43,15 +43,21 @@ public:
 
 public:
   typedef QObject Superclass;
-  qSlicerTerminologySelectorDialog(vtkSlicerTerminologyEntry* initialTerminology, QColor initialColor, QObject* parent = NULL);
+  qSlicerTerminologySelectorDialog(
+    qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &initialTerminologyInfo, QObject* parent = NULL );
   virtual ~qSlicerTerminologySelectorDialog();
 
 public:
   /// Convenience function to start dialog, initialized with a terminology entry
   /// \param terminology Initial terminology shown by the dialog. The selected terminology is set to this as well.
-  /// \param color Initial color shown by the dialog. Selected color (only if custom) is set to this as well.
+  /// \param name Initial name shown by the dialog. Selected name (only if custom) is set to this as well after closing
+  /// \param color Initial color shown by the dialog. Selected color (only if custom) is set to this as well after closing
   /// \return Success flag
-  static bool getTerminology(vtkSlicerTerminologyEntry* terminology, QColor &color, QObject* parent);
+  static bool getTerminology(
+    qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo, QObject* parent );
+
+  /// Get selected terminology and other metadata (name, color, auto-generated flags) into given info bundle object
+  void terminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo);
 
   /// Show dialog
   /// \param nodeToSelect Node is selected in the tree if given
@@ -60,9 +66,6 @@ public:
 
   /// Python compatibility function for showing dialog (calls \a exec)
   Q_INVOKABLE bool execDialog() { return this->exec(); };
-
-  /// Get color
-  QColor color();
 
 protected slots:
   void setSelectButtonEnabled(bool);

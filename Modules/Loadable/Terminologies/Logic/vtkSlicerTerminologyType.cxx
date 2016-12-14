@@ -50,6 +50,21 @@ vtkSlicerTerminologyType::~vtkSlicerTerminologyType()
 }
 
 //----------------------------------------------------------------------------
+void vtkSlicerTerminologyType::Initialize()
+{
+  this->RecommendedDisplayRGBValue[0] = this->RecommendedDisplayRGBValue[1] = this->RecommendedDisplayRGBValue[2] = 127;
+  this->CodeMeaning = NULL;
+  this->CodingScheme = NULL;
+  this->SlicerLabel = NULL;
+  this->SNOMEDCTConceptID = NULL;
+  this->UMLSConceptUID = NULL;
+  this->Cid = NULL;
+  this->CodeValue = NULL;
+  this->ContextGroupName = NULL;
+  this->HasModifiers = false;
+}
+
+//----------------------------------------------------------------------------
 void vtkSlicerTerminologyType::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);

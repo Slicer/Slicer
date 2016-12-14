@@ -909,10 +909,10 @@ void vtkMRMLSegmentationDisplayNode::GenerateSegmentColor(double color[3])
     return;
     }
 
-  // Get default labels color table
-  vtkMRMLColorTableNode* labelsColorNode = vtkMRMLColorTableNode::SafeDownCast(
-    this->Scene->GetNodeByID("vtkMRMLColorTableNodeLabels") );
-  if (!labelsColorNode)
+  // Get default generic anatomy color table
+  vtkMRMLColorTableNode* genericAnatomyColorNode = vtkMRMLColorTableNode::SafeDownCast(
+    this->Scene->GetNodeByID("vtkMRMLColorTableNodeFileGenericAnatomyColors.txt") );
+  if (!genericAnatomyColorNode)
     {
     // Generate random color if default color table is not available (such as in logic tests)
     color[0] = rand() * 1.0 / RAND_MAX;
@@ -925,7 +925,7 @@ void vtkMRMLSegmentationDisplayNode::GenerateSegmentColor(double color[3])
   // vtkMRMLSegmentationNode::AddSegmentDisplayProperties every time a new segment display
   // properties entry is added
   double currentColor[4] = {0.0, 0.0, 0.0, 0.0};
-  labelsColorNode->GetColor(++this->NumberOfGeneratedColors, currentColor);
+  genericAnatomyColorNode->GetColor(++this->NumberOfGeneratedColors, currentColor);
   color[0] = currentColor[0];
   color[1] = currentColor[1];
   color[2] = currentColor[2];

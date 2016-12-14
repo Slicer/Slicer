@@ -25,6 +25,7 @@
 
 // VTK includes
 #include <vtkObjectFactory.h>
+#include <vtkSmartPointer.h>
 
 //------------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerTerminologyEntry);
@@ -33,21 +34,40 @@ vtkStandardNewMacro(vtkSlicerTerminologyEntry);
 vtkSlicerTerminologyEntry::vtkSlicerTerminologyEntry()
 {
   this->TerminologyContextName = NULL;
+
   this->CategoryObject = NULL;
+  vtkSmartPointer<vtkSlicerTerminologyCategory> category = vtkSmartPointer<vtkSlicerTerminologyCategory>::New();
+  this->SetCategoryObject(category);
+
   this->TypeObject = NULL;
+  vtkSmartPointer<vtkSlicerTerminologyType> type = vtkSmartPointer<vtkSlicerTerminologyType>::New();
+  this->SetTypeObject(type);
+
   this->TypeModifierObject = NULL;
+  vtkSmartPointer<vtkSlicerTerminologyType> typeModifier = vtkSmartPointer<vtkSlicerTerminologyType>::New();
+  this->SetTypeModifierObject(typeModifier);
 
   this->AnatomicContextName = NULL;
+
   this->AnatomicRegionObject = NULL;
+  vtkSmartPointer<vtkSlicerTerminologyType> anatomicRegion = vtkSmartPointer<vtkSlicerTerminologyType>::New();
+  this->SetAnatomicRegionObject(anatomicRegion);
+
   this->AnatomicRegionModifierObject = NULL;
+  vtkSmartPointer<vtkSlicerTerminologyType> anatomicRegionModifier = vtkSmartPointer<vtkSlicerTerminologyType>::New();
+  this->SetAnatomicRegionModifierObject(anatomicRegionModifier);
 }
 
 //----------------------------------------------------------------------------
 vtkSlicerTerminologyEntry::~vtkSlicerTerminologyEntry()
 {
+  this->SetTerminologyContextName(NULL);
+
   this->SetCategoryObject(NULL);
   this->SetTypeObject(NULL);
   this->SetTypeModifierObject(NULL);
+
+  this->SetAnatomicContextName(NULL);
 
   this->SetAnatomicRegionObject(NULL);
   this->SetAnatomicRegionModifierObject(NULL);
@@ -107,4 +127,34 @@ void vtkSlicerTerminologyEntry::PrintSelf(ostream& os, vtkIndent indent)
     {
     os << indent.GetNextIndent() << "NULL\n";
     }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerTerminologyEntry::Copy(vtkSlicerTerminologyEntry* aEntry)
+{
+  if (!aEntry)
+    {
+    return;
+    }
+
+  if (!aEntry->GetCategoryObject() || !aEntry->GetTypeObject() || !aEntry->GetTypeModifierObject()
+    || !aEntry->GetAnatomicRegionObject() || !aEntry->GetAnatomicRegionModifierObject() )
+    {
+    vtkErrorMacro("Copy: Invalid terminology entry given");
+    // Invalidate whole terminology entry
+    this->SetTerminologyContextName(NULL);
+    this->SetAnatomicContextName(NULL);
+    return;
+    }
+
+  this->SetTerminologyContextName(aEntry->GetTerminologyContextName());
+
+  this->CategoryObject->Copy(aEntry->GetCategoryObject());
+  this->TypeObject->Copy(aEntry->GetTypeObject());
+  this->TypeModifierObject->Copy(aEntry->GetTypeModifierObject());
+
+  this->SetAnatomicContextName(aEntry->GetAnatomicContextName());
+
+  this->AnatomicRegionObject->Copy(aEntry->GetAnatomicRegionObject());
+  this->AnatomicRegionModifierObject->Copy(aEntry->GetAnatomicRegionModifierObject());
 }

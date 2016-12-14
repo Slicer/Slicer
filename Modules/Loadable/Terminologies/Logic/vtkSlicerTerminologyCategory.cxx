@@ -48,6 +48,19 @@ vtkSlicerTerminologyCategory::~vtkSlicerTerminologyCategory()
 }
 
 //----------------------------------------------------------------------------
+void vtkSlicerTerminologyCategory::Initialize()
+{
+  this->CodeMeaning = NULL;
+  this->CodingScheme = NULL;
+  this->SNOMEDCTConceptID = NULL;
+  this->UMLSConceptUID = NULL;
+  this->Cid = NULL;
+  this->CodeValue = NULL;
+  this->ContextGroupName = NULL;
+  this->ShowAnatomy = false;
+}
+
+//----------------------------------------------------------------------------
 void vtkSlicerTerminologyCategory::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);

@@ -49,9 +49,9 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentsTableView : publ
 
   enum SegmentTableItemDataRole
     {
-    /// Unique ID of the item. For nodes, it is the node ID.
+    /// Unique ID of the item (segment ID)
     IDRole = Qt::UserRole + 1,
-    /// Integer that contains the visibility property of a node.
+    /// Integer that contains the visibility property of a segment.
     /// It is closely related to the item icon.
     VisibilityRole
     };

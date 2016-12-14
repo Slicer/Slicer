@@ -31,7 +31,7 @@ set(${KIT}_UI_SRCS
   )
 
 set(${KIT}_RESOURCES
-  # Resources/${KIT}.qrc
+  Resources/${KIT}.qrc
   )
 
 set(${KIT}_TARGET_LIBRARIES

@@ -23,11 +23,7 @@
 // Terminologies includes
 #include "qSlicerTerminologySelectorDialog.h"
 
-#include "qSlicerTerminologyNavigatorWidget.h"
 #include "vtkSlicerTerminologyEntry.h"
-
-// VTK includes
-#include <vtkWeakPointer.h>
 
 // Qt includes
 #include <QDialog>
@@ -53,17 +49,14 @@ private:
   QPushButton* SelectButton;
   QPushButton* CancelButton;
 
-  /// Terminology entry object into which the selection is set
-  vtkWeakPointer<vtkSlicerTerminologyEntry> TerminologyEntry;
-  /// Selected color
-  QColor Color;
+  /// Terminology and other metadata (name, color, auto-generated flags) into which the selection is set
+  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle TerminologyInfo;
 };
 
 //-----------------------------------------------------------------------------
 qSlicerTerminologySelectorDialogPrivate::qSlicerTerminologySelectorDialogPrivate(qSlicerTerminologySelectorDialog& object)
   : q_ptr(&object)
 {
-  this->TerminologyEntry = NULL;
 }
 
 //-----------------------------------------------------------------------------
@@ -107,13 +100,13 @@ void qSlicerTerminologySelectorDialogPrivate::init()
 // qSlicerTerminologySelectorDialog methods
 
 //-----------------------------------------------------------------------------
-qSlicerTerminologySelectorDialog::qSlicerTerminologySelectorDialog(vtkSlicerTerminologyEntry* initialTerminology, QColor initialColor, QObject* parent)
+qSlicerTerminologySelectorDialog::qSlicerTerminologySelectorDialog(
+  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &initialTerminologyInfo, QObject* parent)
   : QObject(parent)
   , d_ptr(new qSlicerTerminologySelectorDialogPrivate(*this))
 {
   Q_D(qSlicerTerminologySelectorDialog);
-  d->TerminologyEntry = initialTerminology;
-  d->Color = initialColor;
+  d->TerminologyInfo = initialTerminologyInfo;
 
   d->init();
 }
@@ -129,8 +122,7 @@ bool qSlicerTerminologySelectorDialog::exec()
   Q_D(qSlicerTerminologySelectorDialog);
 
   // Initialize dialog
-  d->NavigatorWidget->setTerminologyEntry(d->TerminologyEntry);
-  d->NavigatorWidget->setColor(d->Color);
+  d->NavigatorWidget->setTerminologyInfo(d->TerminologyInfo);
 
   // Show dialog
   bool result = false;
@@ -140,44 +132,27 @@ bool qSlicerTerminologySelectorDialog::exec()
     }
 
   // Save selection after clean exit
-  result = d->NavigatorWidget->terminologyEntry(d->TerminologyEntry);
-  d->Color = d->NavigatorWidget->customColor(); // Invalid if color has not been changed by the user from the recommended one from terminology
-
-  return result;
+  d->NavigatorWidget->terminologyInfo(d->TerminologyInfo);
+  return true;
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerTerminologySelectorDialog::getTerminology(vtkSlicerTerminologyEntry* terminology, QColor &color, QObject* parent)
+bool qSlicerTerminologySelectorDialog::getTerminology(
+  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo, QObject* parent)
 {
-  if (!terminology)
-    {
-    qCritical() << Q_FUNC_INFO << ": Invalid terminology argument";
-    return false;
-    }
-
   // Open terminology dialog and store result
-  qSlicerTerminologySelectorDialog dialog(terminology, color, parent);
+  qSlicerTerminologySelectorDialog dialog(terminologyInfo, parent);
   bool result = dialog.exec();
-
-  // Set color to output color argument
-  if (dialog.color().isValid())
-    {
-    color.setRgb(dialog.color().rgb());
-    }
-  else
-    {
-    //TODO: Throws error message, but haven't found a better way to invalidate existing color object yet
-    color.setRgb(-1,-1,-1); // Make it invalid, indicating that no custom color was set
-    }
-
+  dialog.terminologyInfo(terminologyInfo);
   return result;
 }
 
 //-----------------------------------------------------------------------------
-QColor qSlicerTerminologySelectorDialog::color()
+void qSlicerTerminologySelectorDialog::terminologyInfo(
+  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo )
 {
   Q_D(qSlicerTerminologySelectorDialog);
-  return d->Color;
+  terminologyInfo = d->TerminologyInfo;
 }
 
 //-----------------------------------------------------------------------------

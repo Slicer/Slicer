@@ -40,26 +40,29 @@ public:
   vtkTypeMacro(vtkSlicerTerminologyEntry, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  /// Copy one entry into another
+  virtual void Copy(vtkSlicerTerminologyEntry* aEntry);
+
 public:
   vtkGetStringMacro(TerminologyContextName);
   vtkSetStringMacro(TerminologyContextName);
 
   vtkGetObjectMacro(CategoryObject, vtkSlicerTerminologyCategory);
-  vtkSetObjectMacro(CategoryObject, vtkSlicerTerminologyCategory);
-
   vtkGetObjectMacro(TypeObject, vtkSlicerTerminologyType);
-  vtkSetObjectMacro(TypeObject, vtkSlicerTerminologyType);
-
   vtkGetObjectMacro(TypeModifierObject, vtkSlicerTerminologyType);
-  vtkSetObjectMacro(TypeModifierObject, vtkSlicerTerminologyType);
 
   vtkGetStringMacro(AnatomicContextName);
   vtkSetStringMacro(AnatomicContextName);
 
   vtkGetObjectMacro(AnatomicRegionObject, vtkSlicerTerminologyType);
-  vtkSetObjectMacro(AnatomicRegionObject, vtkSlicerTerminologyType);
-
   vtkGetObjectMacro(AnatomicRegionModifierObject, vtkSlicerTerminologyType);
+
+protected:
+  vtkSetObjectMacro(CategoryObject, vtkSlicerTerminologyCategory);
+  vtkSetObjectMacro(TypeObject, vtkSlicerTerminologyType);
+  vtkSetObjectMacro(TypeModifierObject, vtkSlicerTerminologyType);
+
+  vtkSetObjectMacro(AnatomicRegionObject, vtkSlicerTerminologyType);
   vtkSetObjectMacro(AnatomicRegionModifierObject, vtkSlicerTerminologyType);
 
 protected:
