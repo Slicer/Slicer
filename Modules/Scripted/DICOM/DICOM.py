@@ -158,6 +158,35 @@ class DICOMWidget:
   Slicer module that creates the Qt GUI for interacting with DICOM
   """
 
+  detailWidgetClasses = [DICOMLib.DICOMDetailsWindow, DICOMLib.DICOMDetailsDialog, DICOMLib.DICOMDetailsDock]
+
+  @staticmethod
+  def getSavedDICOMDetailsWidgetType(default="window"):
+    widgetType = settingsValue('DICOM/BrowserWidgetType', default)
+    widgetClass = DICOMWidget.getDetailsWidgetClassForType(widgetType)
+    if not widgetClass:
+      qt.QSettings().setValue('DICOM/BrowserWidgetType', widgetType)
+      widgetClass = DICOMWidget.getDetailsWidgetClassForType(default)
+    return widgetClass
+
+  @staticmethod
+  def setDICOMDetailsWidgetType(widgetType):
+    if not widgetType in DICOMWidget.getAvailableWidgetTypes():
+      raise ValueError("Widget type '%s' for DICOMDetails does not exist" % widgetType)
+    else:
+      qt.QSettings().setValue('DICOM/BrowserWidgetType', widgetType)
+
+  @staticmethod
+  def getAvailableWidgetTypes():
+    return [c.widgetType for c in DICOMWidget.detailWidgetClasses]
+
+  @staticmethod
+  def getDetailsWidgetClassForType(widgetType):
+    try:
+      return DICOMWidget.detailWidgetClasses[DICOMWidget.getAvailableWidgetTypes().index(widgetType)]
+    except (KeyError, ValueError):
+      return None
+
   def __init__(self, parent=None):
     self.testingServer = None
 
@@ -184,7 +213,7 @@ class DICOMWidget:
     globals()['d'] = self
 
   def enter(self):
-    self.detailsPopup.open()
+    self.onOpenDetailsPopup()
 
   def exit(self):
     if not self.detailsPopup.browserPersistent:
@@ -234,7 +263,7 @@ class DICOMWidget:
 
     self.runListenerAtStart = qt.QCheckBox("Start Listener when Slicer Starts")
     self.localFrame.layout().addWidget(self.runListenerAtStart)
-    self.runListenerAtStart.checked =  settingsValue('DICOM/RunListenerAtStart', False, converter=toBool)
+    self.runListenerAtStart.checked = settingsValue('DICOM/RunListenerAtStart', False, converter=toBool)
     self.runListenerAtStart.connect('clicked()', self.onRunListenerAtStart)
 
     # the Database frame (home of the ctkDICOM widget)
@@ -243,7 +272,7 @@ class DICOMWidget:
     self.dicomFrame.setText("DICOM Database and Networking")
     self.layout.addWidget(self.dicomFrame)
 
-    self.detailsPopup = DICOMLib.DICOMDetailsPopup()
+    self.detailsPopup = self.getSavedDICOMDetailsWidgetType()()
 
     # XXX Slicer 4.5 - Remove these. Here only for backward compatibility.
     self.dicomBrowser = self.detailsPopup.dicomBrowser
@@ -252,14 +281,14 @@ class DICOMWidget:
     # connect to the 'Show DICOM Browser' button
     self.showBrowserButton = qt.QPushButton('Show DICOM Browser')
     self.dicomFrame.layout().addWidget(self.showBrowserButton)
-    self.showBrowserButton.connect('clicked()', self.detailsPopup.open)
+    self.showBrowserButton.connect('clicked()', self.onOpenDetailsPopup)
 
     # connect to the main window's dicom button
     mw = slicer.util.mainWindow()
     if mw:
       try:
         action = slicer.util.findChildren(mw,name='LoadDICOMAction')[0]
-        action.connect('triggered()',self.detailsPopup.open)
+        action.connect('triggered()',self.onOpenDetailsPopup)
       except IndexError:
         logging.error('Could not connect to the main window DICOM button')
 
@@ -282,6 +311,11 @@ class DICOMWidget:
 
     # Add spacer to layout
     self.layout.addStretch(1)
+
+  def onOpenDetailsPopup(self):
+    if not isinstance(self.detailsPopup, self.getSavedDICOMDetailsWidgetType()):
+      self.detailsPopup = self.getSavedDICOMDetailsWidgetType()()
+    self.detailsPopup.open()
 
   def onDatabaseChanged(self):
     """Use this because to update the view in response to things
