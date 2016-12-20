@@ -299,6 +299,18 @@ def loadAnnotationFiducial(filename, returnNode=False):
   properties['fiducial'] = 1
   return loadNodeFromFile(filename, filetype, properties, returnNode)
 
+def loadAnnotationRuler(filename, returnNode=False):
+  filetype = 'AnnotationFile'
+  properties = {}
+  properties['ruler'] = 1
+  return loadNodeFromFile(filename, filetype, properties, returnNode)
+
+def loadAnnotationROI(filename, returnNode=False):
+  filetype = 'AnnotationFile'
+  properties = {}
+  properties['roi'] = 1
+  return loadNodeFromFile(filename, filetype, properties, returnNode)
+
 def loadMarkupsFiducialList(filename, returnNode=False):
   filetype = 'MarkupsFiducials'
   properties = {}
