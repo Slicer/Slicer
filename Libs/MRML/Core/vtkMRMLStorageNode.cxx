@@ -995,6 +995,7 @@ std::string vtkMRMLStorageNode::GetSupportedFileExtension(const char* fileName /
     }
 
   const int extCount = supportedFileExtensions->GetNumberOfValues();
+  bool wildcardMatchEnabled = false;
   for (int extIt = 0; extIt < extCount; ++extIt)
     {
     std::string ext = vtksys::SystemTools::LowerCase(supportedFileExtensions->GetValue(extIt));
@@ -1009,19 +1010,28 @@ std::string vtkMRMLStorageNode::GetSupportedFileExtension(const char* fileName /
       }
     else
       {
-      // extension is *, match last extension
-      foundExt = vtksys::SystemTools::GetFilenameExtension(fileNameStr); // include everything after the first . (. included)
-      if (ext.empty())
-        {
-        foundExt = ".";
-        }
+      wildcardMatchEnabled = true;
       }
     if (foundExt.size() > longestFoundExtension.size())
       {
       longestFoundExtension = foundExt;
       }
     }
-
+  // If any specific extension is matched then use that (ignore wildcard;
+  // this allows using dots in the filename).
+  if (!longestFoundExtension.empty())
+  {
+    return longestFoundExtension;
+  }
+  if (wildcardMatchEnabled)
+  {
+    // extension is *, match last extension
+    std::string longestFoundExtension = vtksys::SystemTools::GetFilenameExtension(fileNameStr); // include everything after the first . (. included)
+    if (longestFoundExtension.empty())
+    {
+      longestFoundExtension = ".";
+    }
+  }
   return longestFoundExtension;
 }
 

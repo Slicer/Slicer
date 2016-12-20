@@ -70,11 +70,13 @@ int qSlicerCoreIOManagerTest1(int argc, char * argv [])
   QStringList testFileNames;
   testFileNames << "MRHead.nrrd" << "brain.nii.gz" << "brain.1.nii.gz"
                 << "brain.thisisafailurecase" << "brain" << "model.vtp.gz"
+                << "sometransform_version2.0_some.h5"
                 << "model.1.vtk" << "color.table.txt.ctbl"
                 << "something.seg.nrrd" << "some.more.seg.seg.nrrd" << "some.less.nrrd";
   QStringList storageNodeClassNames;
   storageNodeClassNames << "vtkMRMLScalarVolumeNode" << "vtkMRMLScalarVolumeNode" << "vtkMRMLScalarVolumeNode"
     << "vtkMRMLScalarVolumeNode" << "vtkMRMLScalarVolumeNode" << "vtkMRMLModelNode"
+    << "vtkMRMLTransformNode"
     << "vtkMRMLModelNode" << "vtkMRMLColorTableNode"
     << "vtkMRMLSegmentationNode" << "vtkMRMLSegmentationNode" << "vtkMRMLSegmentationNode";
   QStringList expectedExtensions;
@@ -82,6 +84,7 @@ int qSlicerCoreIOManagerTest1(int argc, char * argv [])
   // known Slicer ext, same with no suffix, and the vtp.gz one
   expectedExtensions << ".nrrd" << ".nii.gz" << ".nii.gz"
                      << "." << "." << "."
+                     << ".h5"
                      << ".vtk" << ".ctbl"
                      << ".seg.nrrd" << ".seg.nrrd" << ".nrrd";
 
