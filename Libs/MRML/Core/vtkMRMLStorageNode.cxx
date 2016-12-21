@@ -1026,7 +1026,7 @@ std::string vtkMRMLStorageNode::GetSupportedFileExtension(const char* fileName /
   if (wildcardMatchEnabled)
   {
     // extension is *, match last extension
-    std::string longestFoundExtension = vtksys::SystemTools::GetFilenameExtension(fileNameStr); // include everything after the first . (. included)
+    longestFoundExtension = vtksys::SystemTools::GetFilenameExtension(fileNameStr); // include everything after the first . (. included)
     if (longestFoundExtension.empty())
     {
       longestFoundExtension = ".";
