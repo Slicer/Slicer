@@ -202,7 +202,7 @@ class SliceLinkLogicTest(unittest.TestCase):
     logic = SliceLinkLogicLogic()
     self.assertIsNotNone( logic.hasImageData(volumeNode) )
 
-    eps = 1e-2
+    eps = 0.02 # on high-DPI screens FOV difference can be up to 1.25%, so set the tolerance to 2%
     print('eps = ' + str(eps) + '\n')
 
     # Change to a CompareView

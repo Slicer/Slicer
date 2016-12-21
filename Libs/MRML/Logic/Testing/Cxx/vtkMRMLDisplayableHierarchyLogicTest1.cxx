@@ -32,19 +32,23 @@ int vtkMRMLDisplayableHierarchyLogicTest1(int , char * [] )
   displayableHierarchyLogic->SetMRMLScene(scene.GetPointer());
 
   // test null pointers
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   char *id = displayableHierarchyLogic->AddDisplayableHierarchyNodeForNode(NULL);
   if (id != NULL)
     {
     std::cerr << "AddDisplayableHierarchyNodeForNode did not return null for a null node" << std::endl;
     return EXIT_FAILURE;
     }
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
 
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   bool flag =  displayableHierarchyLogic->AddChildToParent(NULL, NULL);
   if (flag != false)
     {
     std::cerr << "AddChildToParent did not fail for null nodes" << std::endl;
     return EXIT_FAILURE;
     }
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   // make a couple of nodes
   vtkMRMLModelNode *m1 = vtkMRMLModelNode::New();

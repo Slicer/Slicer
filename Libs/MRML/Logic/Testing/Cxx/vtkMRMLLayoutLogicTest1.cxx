@@ -15,6 +15,10 @@
 int vtkMRMLLayoutLogicTest1(int , char * [] )
 {
   vtkNew<vtkMRMLScene> scene;
+
+  // Add default slice orientation presets
+  vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(scene.GetPointer());
+
   vtkNew<vtkMRMLLayoutLogic> layoutLogic;
   layoutLogic->SetMRMLScene(scene.GetPointer());
   vtkMRMLLayoutNode* layoutNode = layoutLogic->GetLayoutNode();

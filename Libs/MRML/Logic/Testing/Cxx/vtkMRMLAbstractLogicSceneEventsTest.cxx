@@ -28,6 +28,7 @@
 
 // VTK includes
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
 
 // STD includes
 #include <iostream>
@@ -39,7 +40,7 @@ class vtkMRMLTestLogic: public vtkMRMLAbstractLogic
 {
 public:
   vtkTypeMacro(vtkMRMLTestLogic, vtkMRMLAbstractLogic);
-  static vtkMRMLTestLogic *New(){return new vtkMRMLTestLogic;}
+  static vtkMRMLTestLogic *New();
 
   virtual void SetMRMLSceneInternal(vtkMRMLScene* scene);
   virtual void UnobserveMRMLScene();
@@ -74,6 +75,8 @@ protected:
   vtkMRMLTestLogic(){}
   virtual ~vtkMRMLTestLogic(){}
 };
+
+vtkStandardNewMacro(vtkMRMLTestLogic);
 
 //---------------------------------------------------------------------------
 void vtkMRMLTestLogic::SetMRMLSceneInternal(vtkMRMLScene* scene)
@@ -223,7 +226,7 @@ int vtkMRMLAbstractLogicSceneEventsTest(
   int vtkNotUsed(argc), char * vtkNotUsed(argv)[] )
 {
   vtkNew<vtkMRMLScene> scene;
-  vtkNew<vtkMRMLTestLogic> testLogic;
+  vtkMRMLTestLogic* testLogic = vtkMRMLTestLogic::New();
 
   //---------------------------------------------------------------------------
   // SetMRMLScene
@@ -413,6 +416,8 @@ int vtkMRMLAbstractLogicSceneEventsTest(
   //---------------------------------------------------------------------------
   scene->AddNode(modelNode.GetPointer());
   scene->AddNode(volumeNode.GetPointer());
+
+  testLogic->Delete();
 
   return EXIT_SUCCESS;
 }

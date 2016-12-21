@@ -33,6 +33,10 @@ int vtkMRMLSliceLogicTest1(int , char * [] )
   EXERCISE_BASIC_OBJECT_METHODS(logic.GetPointer());
 
   vtkNew<vtkMRMLScene> scene;
+
+  // Add default slice orientation presets
+  vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(scene.GetPointer());
+
   logic->SetName("Green");
   logic->SetMRMLScene(scene.GetPointer());
 
