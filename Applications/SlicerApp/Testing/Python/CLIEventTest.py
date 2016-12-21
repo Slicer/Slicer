@@ -128,6 +128,10 @@ class CLIEventTestTest(ScriptedLoadableModuleTest):
       expectedEvents.append(cli.Scheduled)
     expectedEvents.append(cli.Completed)
 
+    # Ignore cli.Running event (it may or may not be fired)
+    if cli.Running in logic.StatusEvents:
+      logic.StatusEvents.remove(cli.Running)
+
     self.assertEqual(logic.StatusEvents, expectedEvents)
     self.delayDisplay('Testing normal execution Passed')
 
