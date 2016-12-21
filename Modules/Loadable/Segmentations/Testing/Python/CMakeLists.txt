@@ -1,6 +1,7 @@
 #-----------------------------------------------------------------------------
 set(EXTENSION_TEST_PYTHON_SCRIPTS
   SegmentationsModuleTest1.py
+  SegmentationWidgetsTest1.py
   )
 
 set(EXTENSION_TEST_PYTHON_RESOURCES
@@ -16,12 +17,14 @@ else()
   set(MODULE_BUILD_DIR "${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}")
 endif()
 
-slicer_add_python_unittest(
-  SCRIPT SegmentationsModuleTest1.py
-  SLICER_ARGS --disable-cli-modules
-              --no-main-window
-              --additional-module-paths
-                ${MODULE_BUILD_DIR}
-                ${CMAKE_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}
-  TESTNAME_PREFIX nomainwindow_
-  )
+foreach(scriptName ${EXTENSION_TEST_PYTHON_SCRIPTS})
+  slicer_add_python_unittest(
+    SCRIPT ${scriptName}
+    SLICER_ARGS --disable-cli-modules
+                --no-main-window
+                --additional-module-paths
+                  ${MODULE_BUILD_DIR}
+                  ${CMAKE_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}
+    TESTNAME_PREFIX nomainwindow_
+    )
+endforeach()

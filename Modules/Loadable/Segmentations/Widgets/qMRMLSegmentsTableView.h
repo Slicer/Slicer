@@ -36,6 +36,7 @@
 class vtkMRMLNode;
 class vtkSegment;
 class qMRMLSegmentsTableViewPrivate;
+class QStringList;
 class QTableWidget;
 class QTableWidgetItem;
 class QItemSelection;
@@ -95,6 +96,14 @@ public:
   bool colorColumnVisible();
   bool opacityColumnVisible();
   bool readOnly();
+
+  /// Segments that have their ID listed in hideSegments are
+  /// not shown in the table.
+  Q_INVOKABLE void setHideSegments(const QStringList& segmentIDs);
+  Q_INVOKABLE QStringList hideSegments()const;
+
+  /// Return list of visible segment IDs
+  Q_INVOKABLE QStringList displayedSegmentIDs()const;
 
 public slots:
   /// Set segmentation MRML node
