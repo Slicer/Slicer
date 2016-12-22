@@ -203,6 +203,12 @@ void vtkMRMLSegmentationDisplayNode::ReadXMLAttributes(const char** atts)
           if (propertyName=="OverrideColorR") { propertyValue >> props.OverrideColor[0]; }
           else if (propertyName=="OverrideColorG") { propertyValue >> props.OverrideColor[1]; }
           else if (propertyName=="OverrideColorB") { propertyValue >> props.OverrideColor[2]; }
+
+          // for backward compatibility
+          else if (propertyName == "ColorR") { propertyValue >> props.OverrideColor[0]; }
+          else if (propertyName == "ColorG") { propertyValue >> props.OverrideColor[1]; }
+          else if (propertyName == "ColorB") { propertyValue >> props.OverrideColor[2]; }
+
           else if (propertyName=="Opacity3D") { propertyValue >> props.Opacity3D; }
           else if (propertyName=="Opacity2DFill") { propertyValue >> props.Opacity2DFill; }
           else if (propertyName=="Opacity2DOutline") { propertyValue >> props.Opacity2DOutline; }
