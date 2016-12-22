@@ -64,7 +64,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
     segmentID = self.scriptedEffect.parameterSetNode().GetSelectedSegmentID()
     displayNode = segmentationNode.GetDisplayNode()
-    if displayNode is not None:
+    if (displayNode is not None) and (segmentID is not None):
       displayNode.SetSegmentOpacity2DFill(segmentID, self.segment2DFillOpacity)
       displayNode.SetSegmentOpacity2DOutline(segmentID, self.segment2DOutlineOpacity)
 
