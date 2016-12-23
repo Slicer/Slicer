@@ -79,15 +79,18 @@ void vtkMRMLSceneViewNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLSceneViewNode::WriteNodeBodyXML(ostream& of, int nIndent)
 {
+  if (!this->SnapshotScene)
+    {
+    return;
+    }
+
   // first make sure that the scene view scene is to be saved relative to the same place as the main scene
   this->SnapshotScene->SetRootDirectory(this->GetScene()->GetRootDirectory());
   this->SetAbsentStorageFileNames();
 
-  vtkMRMLNode * node = NULL;
-  int n;
-  for (n=0; n < this->SnapshotScene->GetNodes()->GetNumberOfItems(); n++)
+  for (int n=0; n < this->SnapshotScene->GetNodes()->GetNumberOfItems(); n++)
     {
-    node = (vtkMRMLNode*)this->SnapshotScene->GetNodes()->GetItemAsObject(n);
+    vtkMRMLNode* node = (vtkMRMLNode*)this->SnapshotScene->GetNodes()->GetItemAsObject(n);
     if (node && !node->IsA("vtkMRMLSceneViewNode") && node->GetSaveWithScene())
       {
       vtkIndent vindent(nIndent+1);
@@ -838,5 +841,9 @@ bool vtkMRMLSceneViewNode::IncludeNodeInSceneView(vtkMRMLNode *node)
 
 void vtkMRMLSceneViewNode::SetSceneViewRootDir( const char* name)
 {
+  if (!this->SnapshotScene)
+    {
+    return;
+    }
   this->SnapshotScene->SetRootDirectory(name);
 }

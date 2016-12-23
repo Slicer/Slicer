@@ -1102,7 +1102,10 @@ void qSlicerSaveDataDialogPrivate::setSceneRootDirectory(const QString& dir)
     {
     vtkMRMLNode* node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLSceneViewNode");
     vtkMRMLSceneViewNode *snode = vtkMRMLSceneViewNode::SafeDownCast(node);
-    snode->GetStoredScene()->SetRootDirectory(this->MRMLScene->GetRootDirectory());
+    if (snode && snode->GetStoredScene())
+      {
+      snode->GetStoredScene()->SetRootDirectory(this->MRMLScene->GetRootDirectory());
+      }
     }
 }
 
