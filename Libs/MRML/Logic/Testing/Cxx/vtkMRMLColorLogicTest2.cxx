@@ -48,53 +48,35 @@ public:
     return this->RemoveLeadAndTrailSpaces(inputText);
     }
 
-  bool test_ParseTerm(int lineNumber, std::string inputText, StandardTerm& term, bool expectedReturnValue,
+  bool test_ParseTerm(std::string inputText, StandardTerm& term, bool expectedReturnValue,
                       const char * expectedCode, const char * expectedScheme, const char * expectedMeaning)
     {
     std::string inputTextCopy = inputText;
+    // errors are logged when invalid terms are parsed, ignore these and just check for returned values
+    if (!expectedReturnValue)
+      {
+      TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_BEGIN();
+      }
     bool retVal = this->ParseTerm(inputText, term);
+    if (!expectedReturnValue)
+      {
+      TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_END();
+      }
+    CHECK_BOOL(retVal, expectedReturnValue);
 
-    if (!retVal && !expectedReturnValue)
+    if (retVal)
       {
-      // Expected to fail parsing this string, test passes
-      return true;
-      }
-    if (retVal && !expectedReturnValue)
-      {
-      // expected to fail but succeeded, test fails
-      std::cerr << lineNumber
-                << ": test_ParseTerm: failed to not parse invalid string "
-                << inputText
-                << std::endl;
-      return false;
-      }
-    if (!retVal && expectedReturnValue)
-      {
-      // expected to parse it, but failed, test fails
-      std::cerr << lineNumber
-                << ": test_ParseTerm: failed to parse string "
-                << inputText
-                << std::endl;
-      return false;
-      }
-    // the string parsed as expected, now check that the term is as expected
+      // the string parsed as expected, now check that the term is as expected
 
-    // the parsing shouldn't alter the input string
-    if (!CheckString(lineNumber, "test_ParseTerm input string unchanged",
-                     inputText.c_str(), inputTextCopy.c_str()))
-      {
-      return false;
+      // the parsing shouldn't alter the input string
+      CHECK_STD_STRING(inputText, inputTextCopy);
+
+      CHECK_STD_STRING(term.CodeValue, expectedCode);
+      CHECK_STD_STRING(term.CodingSchemeDesignator, expectedScheme);
+      CHECK_STD_STRING(term.CodeMeaning, expectedMeaning);
       }
-    if (!CheckString(lineNumber, "CodeValue",
-                     term.CodeValue.c_str(), expectedCode)
-        || !CheckString(lineNumber, "CodingSchemeDesignator",
-                        term.CodingSchemeDesignator.c_str(), expectedScheme)
-        || !CheckString(lineNumber, "CodeMeaning",
-                        term.CodeMeaning.c_str(), expectedMeaning))
-      {
-      return false;
-      }
-    return true;
+
+    return EXIT_SUCCESS;
     }
 
 protected:
@@ -110,22 +92,16 @@ namespace
 {
 
 //----------------------------------------------------------------------------
-bool TestRemoveLeadAndTrailSpaces();
-bool TestParseTerm();
+int TestRemoveLeadAndTrailSpaces();
+int TestParseTerm();
 }
 
 //----------------------------------------------------------------------------
 int vtkMRMLColorLogicTest2(int vtkNotUsed(argc), char * vtkNotUsed(argv) [])
 {
-  bool res = true;
-  res = TestRemoveLeadAndTrailSpaces() && res;
-  // TODO: There are parsing errors that seem to be real errors, but instead of
-  // fixing it we just ignore them because terminology management will be removed
-  // from Color module completely.
-  TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_BEGIN();
-  res = TestParseTerm() && res;
-  TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_END();
-  return res ? EXIT_SUCCESS : EXIT_FAILURE;
+  CHECK_EXIT_SUCCESS(TestRemoveLeadAndTrailSpaces());
+  CHECK_EXIT_SUCCESS(TestParseTerm());
+  return EXIT_SUCCESS;
 }
 
 namespace
@@ -133,118 +109,58 @@ namespace
 //----------------------------------------------------------------------------
 // RemoveLeadAndTrailSpaces
 //----------------------------------------------------------------------------
-bool TestRemoveLeadAndTrailSpaces()
+int TestRemoveLeadAndTrailSpaces()
 {
   vtkNew<vtkMRMLTestColorLogic> colorLogic;
 
-  if (!CheckString(__LINE__, "test_RemoveLeadAndTrailSpaces",
-                   colorLogic->test_RemoveLeadAndTrailSpaces("").c_str(), "")
-      || !CheckString(__LINE__, "test_RemoveLeadAndTrailSpaces",
-                      colorLogic->test_RemoveLeadAndTrailSpaces(" ").c_str(), "")
-      || !CheckString(__LINE__, "test_RemoveLeadAndTrailSpaces",
-                      colorLogic->test_RemoveLeadAndTrailSpaces("  ").c_str(), "")
-      || !CheckString(__LINE__, "test_RemoveLeadAndTrailSpaces",
-                      colorLogic->test_RemoveLeadAndTrailSpaces("   ").c_str(), "")
-      || !CheckString(__LINE__, "test_RemoveLeadAndTrailSpaces",
-                      colorLogic->test_RemoveLeadAndTrailSpaces("1").c_str(), "1")
-      || !CheckString(__LINE__, "test_RemoveLeadAndTrailSpaces",
-                      colorLogic->test_RemoveLeadAndTrailSpaces("a").c_str(), "a")
-      || !CheckString(__LINE__, "test_RemoveLeadAndTrailSpaces",
-                      colorLogic->test_RemoveLeadAndTrailSpaces(" a").c_str(), "a")
-      || !CheckString(__LINE__, "test_RemoveLeadAndTrailSpaces",
-                      colorLogic->test_RemoveLeadAndTrailSpaces("a ").c_str(), "a")
-      || !CheckString(__LINE__, "test_RemoveLeadAndTrailSpaces",
-                      colorLogic->test_RemoveLeadAndTrailSpaces("  testing string 1  ").c_str(),
-                      "testing string 1"))
-    {
-    return false;
-    }
+  CHECK_STD_STRING(colorLogic->test_RemoveLeadAndTrailSpaces(""), "");
+  CHECK_STD_STRING(colorLogic->test_RemoveLeadAndTrailSpaces(" "), "");
+  CHECK_STD_STRING(colorLogic->test_RemoveLeadAndTrailSpaces("  "), "");
+  CHECK_STD_STRING(colorLogic->test_RemoveLeadAndTrailSpaces("   "), "");
+  CHECK_STD_STRING(colorLogic->test_RemoveLeadAndTrailSpaces("1"), "1");
+  CHECK_STD_STRING(colorLogic->test_RemoveLeadAndTrailSpaces("a"), "a");
+  CHECK_STD_STRING(colorLogic->test_RemoveLeadAndTrailSpaces(" a"), "a");
+  CHECK_STD_STRING(colorLogic->test_RemoveLeadAndTrailSpaces("a "), "a");
+  CHECK_STD_STRING(colorLogic->test_RemoveLeadAndTrailSpaces("  testing string 1  "), "testing string 1");
 
-  std::string sampleStringIn1 = "(T-D0050;SRT;Tissue)";
-  std::string sampleStringIn2 = " (T-D0050;SRT;Tissue) ";
-  std::string sampleStringIn3 = "(T-D0050;SRT;Tissue) ";
-  std::string sampleStringIn4 = " (T-D0050;SRT;Tissue)";
-  std::string sampleStringOut = "(T-D0050;SRT;Tissue)";
-  if (!CheckString(__LINE__, "test_RemoveLeadAndTrailSpaces",
-                   colorLogic->test_RemoveLeadAndTrailSpaces(sampleStringIn1).c_str(),
-                   sampleStringOut.c_str())
-      || !CheckString(__LINE__, "test_RemoveLeadAndTrailSpaces",
-                      colorLogic->test_RemoveLeadAndTrailSpaces(sampleStringIn2).c_str(),
-                      sampleStringOut.c_str())
-      || !CheckString(__LINE__, "test_RemoveLeadAndTrailSpaces",
-                      colorLogic->test_RemoveLeadAndTrailSpaces(sampleStringIn3).c_str(),
-                      sampleStringOut.c_str())
-      || !CheckString(__LINE__, "test_RemoveLeadAndTrailSpaces",
-                      colorLogic->test_RemoveLeadAndTrailSpaces(sampleStringIn4).c_str(),
-                      sampleStringOut.c_str()))
-    {
-    return false;
-    }
+  CHECK_STD_STRING(colorLogic->test_RemoveLeadAndTrailSpaces("(T-D0050;SRT;Tissue)"), "(T-D0050;SRT;Tissue)");
+  CHECK_STD_STRING(colorLogic->test_RemoveLeadAndTrailSpaces(" (T-D0050;SRT;Tissue) "), "(T-D0050;SRT;Tissue)");
+  CHECK_STD_STRING(colorLogic->test_RemoveLeadAndTrailSpaces("(T-D0050;SRT;Tissue) "), "(T-D0050;SRT;Tissue)");
+  CHECK_STD_STRING(colorLogic->test_RemoveLeadAndTrailSpaces(" (T-D0050;SRT;Tissue)"), "(T-D0050;SRT;Tissue)");
 
-  return true;
+  return EXIT_SUCCESS;
 }
 
 
 //----------------------------------------------------------------------------
 // ParseTerm
 //----------------------------------------------------------------------------
-bool TestParseTerm()
+int TestParseTerm()
 {
   vtkNew<vtkMRMLTestColorLogic> colorLogic;
-
-  std::string str = "(T-D0050;SRT;Tissue)";
   vtkMRMLColorLogic::StandardTerm term;
-  // the parsing shouldn't change the input string
-  if (!colorLogic->test_ParseTerm(__LINE__, str, term, true, "T-D0050", "SRT", "Tissue"))
-    {
-    return false;
-    }
 
-  str = "(M-01000;SRT;Morphologically Altered Structure)";
-  if (!colorLogic->test_ParseTerm(__LINE__, str, term, true,
-                                  "M-01000", "SRT", "Morphologically Altered Structure"))
-    {
-    return false;
-    }
+  // valid strings
+  CHECK_EXIT_SUCCESS(colorLogic->test_ParseTerm("(T-D0050;SRT;Tissue)", term, true, "T-D0050", "SRT", "Tissue"));
+  CHECK_EXIT_SUCCESS(colorLogic->test_ParseTerm("(M-01000;SRT;Morphologically Altered Structure)", term, true,
+    "M-01000", "SRT", "Morphologically Altered Structure"));
 
   // invalid strings with the expected flag false will return true
   // empty string
-  str = "";
-  if (!colorLogic->test_ParseTerm(__LINE__, str, term, false, "", "", ""))
-    {
-    return false;
-    }
+  CHECK_EXIT_SUCCESS(colorLogic->test_ParseTerm("", term, false, "", "", ""));
+
   // too short a term string
-  str = "(M;S;B)";
-  if (!colorLogic->test_ParseTerm(__LINE__, str, term, false, "", "", ""))
-    {
-    return false;
-    }
+  CHECK_EXIT_SUCCESS(colorLogic->test_ParseTerm("(M;S;B)", term, false, "", "", ""));
 
   // test missing brackets
-  str = "M-01000;SRT;Morphologically Altered Structure";
-  if (!colorLogic->test_ParseTerm(__LINE__, str, term, false, "", "", ""))
-    {
-    return false;
-    }
+  CHECK_EXIT_SUCCESS(colorLogic->test_ParseTerm("M-01000;SRT;Morphologically Altered Structure", term, false, "", "", ""));
 
   // test with missing semi colons
-  str = "(M-01000;SRT Morphologically Altered Structure)";
-  if (!colorLogic->test_ParseTerm(__LINE__, str, term, false, "", "", ""))
-    {
-    return false;
-    }
-  str = "(M-01000 SRT;Morphologically Altered Structure)";
-  if (!colorLogic->test_ParseTerm(__LINE__, str, term, false, "", "", ""))
-    {
-    return false;
-    }
-  str = "(M-01000 SRT Morphologically Altered Structure)";
-  if (!colorLogic->test_ParseTerm(__LINE__, str, term, false, "", "", ""))
-    {
-    return false;
-    }
-  return true;
+  CHECK_EXIT_SUCCESS(colorLogic->test_ParseTerm("(M-01000;SRT Morphologically Altered Structure)", term, false, "", "", ""));
+  CHECK_EXIT_SUCCESS(colorLogic->test_ParseTerm("(M-01000 SRT;Morphologically Altered Structure)", term, false, "", "", ""));
+  CHECK_EXIT_SUCCESS(colorLogic->test_ParseTerm("(M-01000 SRT Morphologically Altered Structure)", term, false, "", "", ""));
+
+  return EXIT_SUCCESS;
 }
 
 }
