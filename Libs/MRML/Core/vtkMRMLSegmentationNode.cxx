@@ -121,6 +121,11 @@ void vtkMRMLSegmentationNode::Copy(vtkMRMLNode *anode)
 
   Superclass::Copy(anode);
 
+  // Remove all display and storage node IDs to make sure they are not shared
+  // with the source node.
+  this->RemoveAllDisplayNodeIDs();
+  this->RemoveNodeReferenceIDs(this->GetStorageNodeReferenceRole());
+
   if (otherNode->Segmentation)
     {
     if (!this->Segmentation)
@@ -130,6 +135,13 @@ void vtkMRMLSegmentationNode::Copy(vtkMRMLNode *anode)
       }
     // Deep copy segmentation (containing the same segments from two segmentations is unstable)
     this->Segmentation->DeepCopy(otherNode->GetSegmentation());
+    this->CreateDefaultDisplayNodes();
+    vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(this->GetDisplayNode());
+    vtkMRMLSegmentationDisplayNode* sourceDisplayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(otherNode->GetDisplayNode());
+    if (displayNode != NULL && sourceDisplayNode != NULL)
+      {
+      displayNode->Copy(sourceDisplayNode);
+      }
     }
   else
     {
