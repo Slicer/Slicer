@@ -14,6 +14,7 @@ set(SegmentEditorEffects_PYTHON_SCRIPTS
   SegmentEditorLogicalEffect
   SegmentEditorAutoCompleteEffect
   SegmentEditorIdentifyIslandsEffect
+  SegmentEditorFloodFillingEffect
   SegmentEditorLevelTracingEffect
   SegmentEditorSmoothingEffect
   SegmentEditorThresholdEffect
@@ -25,6 +26,7 @@ set(SegmentEditorEffects_PYTHON_RESOURCES
   Resources/Icons/Logical.png
   Resources/Icons/AutoComplete.png
   Resources/Icons/IdentifyIslands.png
+  Resources/Icons/FloodFilling.png
   Resources/Icons/LevelTracing.png
   Resources/Icons/Smoothing.png
   Resources/Icons/Threshold.png

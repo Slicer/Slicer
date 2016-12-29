@@ -342,7 +342,7 @@ void qMRMLSegmentEditorWidgetPrivate::init()
   // Define default effect order
   this->DefaultEffectOrder
     // Local painting
-    << "Paint" << "Draw" << "Erase" << "LevelTracing" << "Auto-complete"
+    << "Paint" << "Draw" << "Erase" << "Flood filling" << "LevelTracing" << "Auto-complete"
     // Global processing
     << "Threshold" << "Margin" << "Smoothing"
     // Global splitting, merging

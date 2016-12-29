@@ -17,6 +17,7 @@ effectNames = [
   "SegmentEditorSmoothingEffect",
   "SegmentEditorAutoCompleteEffect",
   "SegmentEditorDrawEffect",
+  "SegmentEditorFloodFillingEffect",
   "SegmentEditorLevelTracingEffect",
   "SegmentEditorMarginEffect",
   "SegmentEditorLogicalEffect",
