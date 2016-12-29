@@ -345,6 +345,8 @@ void qSlicerSegmentEditorPaintEffectPrivate::paintApply(qMRMLWidget* viewWidget)
 
   q->saveStateForUndo();
 
+  QList<int> updateExtentList;
+
   if (q->integerParameter("BrushPixelMode"))
     {
     this->paintPixels(viewWidget, this->PaintCoordinates_World);
@@ -385,6 +387,7 @@ void qSlicerSegmentEditorPaintEffectPrivate::paintApply(qMRMLWidget* viewWidget)
     brushPositioner->SetOutputOrigin(modifierLabelmap->GetOrigin());
 
     vtkIdType numberOfPoints = this->PaintCoordinates_World->GetNumberOfPoints();
+    int updateExtent[6] = { 0, -1, 0, -1, 0, -1 };
     for (int pointIndex = 0; pointIndex < numberOfPoints; pointIndex++)
       {
       double* shiftDouble = paintCoordinates_Ijk->GetPoint(pointIndex);
@@ -394,16 +397,38 @@ void qSlicerSegmentEditorPaintEffectPrivate::paintApply(qMRMLWidget* viewWidget)
       vtkNew<vtkOrientedImageData> orientedBrushPositionerOutput;
       orientedBrushPositionerOutput->ShallowCopy(brushPositioner->GetOutput());
       orientedBrushPositionerOutput->CopyDirections(modifierLabelmap);
+      if (pointIndex == 0)
+        {
+        orientedBrushPositionerOutput->GetExtent(updateExtent);
+        }
+      else
+        {
+        int* brushExtent = orientedBrushPositionerOutput->GetExtent();
+        for (int i = 0; i < 3; i++)
+          {
+          if (brushExtent[i * 2] < updateExtent[i * 2])
+            {
+            updateExtent[i * 2] = brushExtent[i * 2];
+            }
+          if (brushExtent[i * 2 + 1] > updateExtent[i * 2 + 1])
+            {
+            updateExtent[i * 2 + 1] = brushExtent[i * 2 + 1];
+            }
+          }
+        }
       vtkOrientedImageDataResample::ModifyImage(modifierLabelmap, orientedBrushPositionerOutput.GetPointer(), vtkOrientedImageDataResample::OPERATION_MAXIMUM);
       }
     modifierLabelmap->Modified();
+    for (int i = 0; i < 6; i++)
+      {
+      updateExtentList << updateExtent[i];
+      }
     }
   this->PaintCoordinates_World->Reset();
 
   // Notify editor about changes
   qSlicerSegmentEditorAbstractEffect::ModificationMode modificationMode = (q->m_Erase ? qSlicerSegmentEditorAbstractEffect::ModificationModeRemove : qSlicerSegmentEditorAbstractEffect::ModificationModeAdd);
-  //TODO: it would be nice to compute paint extent and pass it to make the painting operation faster
-  q->modifySelectedSegmentByLabelmap(modifierLabelmap, modificationMode);
+  q->modifySelectedSegmentByLabelmap(modifierLabelmap, modificationMode, updateExtentList);
 }
 
 //-----------------------------------------------------------------------------
