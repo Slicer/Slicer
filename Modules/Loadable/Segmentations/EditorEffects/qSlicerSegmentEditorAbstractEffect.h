@@ -69,6 +69,14 @@ public:
   /// \sa perSegment(), \sa setPerSegment
   Q_PROPERTY(bool perSegment READ perSegment WRITE setPerSegment)
 
+  /// Show effect cursor in slice view. If false then default arrow cursor will be shown.
+  /// True by default.
+  Q_PROPERTY(bool showEffectCursorInSliceView READ showEffectCursorInSliceView WRITE setShowEffectCursorInSliceView)
+
+  /// Show effect cursor in slice view. If false then default arrow cursor will be shown.
+  /// False by default.
+  Q_PROPERTY(bool showEffectCursorInThreeDView READ showEffectCursorInThreeDView WRITE setShowEffectCursorInThreeDView)
+
 public:
   typedef QObject Superclass;
   qSlicerSegmentEditorAbstractEffect(QObject* parent = NULL);
@@ -305,8 +313,11 @@ public:
 
   Q_INVOKABLE vtkOrientedImageData* referenceGeometryImage();
 
-  Q_INVOKABLE bool showEffectCursorInSliceView();
-  Q_INVOKABLE bool showEffectCursorInThreeDView();
+  void setShowEffectCursorInSliceView(bool show);
+  void setShowEffectCursorInThreeDView(bool show);
+
+  bool showEffectCursorInSliceView();
+  bool showEffectCursorInThreeDView();
 
   /// Get image data of master volume aligned with the modifier labelmap.
   /// \return Pointer to the image data

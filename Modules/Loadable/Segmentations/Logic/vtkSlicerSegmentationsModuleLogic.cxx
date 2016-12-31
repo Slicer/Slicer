@@ -1123,7 +1123,7 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkOrie
 
     // Set segment name
     std::stringstream ss;
-    ss << (baseSegmentName.empty() ? "Label" : baseSegmentName) << "_" << label;
+    ss << (baseSegmentName.empty() ? "Label" : baseSegmentName) << "_" << labelIndex+1;
     segment->SetName(ss.str().c_str());
 
     // Add oriented image data as binary labelmap representation

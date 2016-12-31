@@ -1280,8 +1280,20 @@ bool qSlicerSegmentEditorAbstractEffect::showEffectCursorInSliceView()
   return m_ShowEffectCursorInSliceView;
 }
 
+//-----------------------------------------------------------------------------
+void qSlicerSegmentEditorAbstractEffect::setShowEffectCursorInSliceView(bool show)
+{
+  this->m_ShowEffectCursorInSliceView = show;
+}
+
 //----------------------------------------------------------------------------
 bool qSlicerSegmentEditorAbstractEffect::showEffectCursorInThreeDView()
 {
   return m_ShowEffectCursorInThreeDView;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSegmentEditorAbstractEffect::setShowEffectCursorInThreeDView(bool show)
+{
+  this->m_ShowEffectCursorInThreeDView = show;
 }

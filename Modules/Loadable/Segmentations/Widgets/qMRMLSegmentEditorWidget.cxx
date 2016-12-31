@@ -346,7 +346,7 @@ void qMRMLSegmentEditorWidgetPrivate::init()
     // Global processing
     << "Threshold" << "Margin" << "Smoothing"
     // Global splitting, merging
-    << "Scissors" << "IdentifyIslands"  << "Logical operators";
+    << "Scissors" << "Islands"  << "Logical operators";
 
   // Instantiate and expose effects
   this->initializeEffects();

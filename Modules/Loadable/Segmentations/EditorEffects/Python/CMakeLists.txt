@@ -8,13 +8,11 @@ configure_file(
 set(SegmentEditorEffects_PYTHON_SCRIPTS
   AbstractScriptedSegmentEditorEffect
   AbstractScriptedSegmentEditorLabelEffect
-  AbstractScriptedSegmentEditorIslandEffect
   SegmentEditorMarginEffect
   SegmentEditorDrawEffect
   SegmentEditorLogicalEffect
   SegmentEditorAutoCompleteEffect
-  SegmentEditorIdentifyIslandsEffect
-  SegmentEditorFloodFillingEffect
+  SegmentEditorIslandsEffect
   SegmentEditorLevelTracingEffect
   SegmentEditorSmoothingEffect
   SegmentEditorThresholdEffect
@@ -25,12 +23,10 @@ set(SegmentEditorEffects_PYTHON_RESOURCES
   Resources/Icons/Draw.png
   Resources/Icons/Logical.png
   Resources/Icons/AutoComplete.png
-  Resources/Icons/IdentifyIslands.png
-  Resources/Icons/FloodFilling.png
+  Resources/Icons/Islands.png
   Resources/Icons/LevelTracing.png
   Resources/Icons/Smoothing.png
   Resources/Icons/Threshold.png
-  Resources/Icons/SaveIsland.png
   )
 
 ctkMacroCompilePythonScript(

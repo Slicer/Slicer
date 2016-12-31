@@ -1,6 +1,5 @@
 from AbstractScriptedSegmentEditorEffect import *
 from AbstractScriptedSegmentEditorLabelEffect import *
-from AbstractScriptedSegmentEditorIslandEffect import *
 
 # Add effect name to the list of scripted segment editor effects.
 # SegmentEditor module will instantiate the effect class and register
@@ -17,11 +16,10 @@ effectNames = [
   "SegmentEditorSmoothingEffect",
   "SegmentEditorAutoCompleteEffect",
   "SegmentEditorDrawEffect",
-  "SegmentEditorFloodFillingEffect",
   "SegmentEditorLevelTracingEffect",
   "SegmentEditorMarginEffect",
   "SegmentEditorLogicalEffect",
-  "SegmentEditorIdentifyIslandsEffect"
+  "SegmentEditorIslandsEffect"
   ]
 for effectName in effectNames:
   try:

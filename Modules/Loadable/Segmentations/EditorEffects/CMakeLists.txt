@@ -23,8 +23,6 @@ set(${KIT}_SRCS
   qSlicerSegmentEditorAbstractLabelEffect.cxx
   qSlicerSegmentEditorAbstractLabelEffect.h
   qSlicerSegmentEditorAbstractLabelEffect_p.h
-  qSlicerSegmentEditorAbstractIslandEffect.cxx
-  qSlicerSegmentEditorAbstractIslandEffect.h
   qSlicerSegmentEditorPaintEffect.cxx
   qSlicerSegmentEditorPaintEffect.h
   qSlicerSegmentEditorPaintEffect_p.h
@@ -36,8 +34,6 @@ set(${KIT}_SRCS
   qSlicerSegmentEditorScriptedEffect.h
   qSlicerSegmentEditorScriptedLabelEffect.cxx
   qSlicerSegmentEditorScriptedLabelEffect.h
-  qSlicerSegmentEditorScriptedIslandEffect.cxx
-  qSlicerSegmentEditorScriptedIslandEffect.h
   )
 
 set(${KIT}_MOC_SRCS
@@ -46,14 +42,12 @@ set(${KIT}_MOC_SRCS
   qSlicerSegmentEditorAbstractEffect_p.h
   qSlicerSegmentEditorAbstractLabelEffect.h
   qSlicerSegmentEditorAbstractLabelEffect_p.h
-  qSlicerSegmentEditorAbstractIslandEffect.h
   qSlicerSegmentEditorPaintEffect.h
   qSlicerSegmentEditorPaintEffect_p.h
   qSlicerSegmentEditorEraseEffect.h
   qSlicerSegmentEditorScissorsEffect.h
   qSlicerSegmentEditorScriptedEffect.h
   qSlicerSegmentEditorScriptedLabelEffect.h
-  qSlicerSegmentEditorScriptedIslandEffect.h
   )
 
 set(${KIT}_UI_SRCS
