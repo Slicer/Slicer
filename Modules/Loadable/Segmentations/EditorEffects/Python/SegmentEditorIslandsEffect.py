@@ -138,7 +138,7 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
     # find the pixel that corresponds to the background
     islandMath = vtkITK.vtkITKIslandMath()
     islandMath.SetInputConnection(castIn.GetOutputPort())
-    islandMath.SetFullyConnected(True)
+    islandMath.SetFullyConnected(False)
     islandMath.SetMinimumSize(minimumSize)
     islandMath.Update()
 
