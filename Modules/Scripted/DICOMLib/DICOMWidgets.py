@@ -491,18 +491,22 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
         But, if the application is in testing mode, just pick a temp directory.
     """
     if slicer.app.commandOptions().testingEnabled:
-      databaseDirectory = os.path.join(slicer.app.temporaryPath, 'tempDICOMDatbase')
+      databaseDirectory = os.path.join(slicer.app.temporaryPath, 'tempDICOMDatabase')
     else:
       databaseDirectory = self.settings.value('DatabaseDirectory')
-      if not databaseDirectory:
-        documentsLocation = qt.QDesktopServices.DocumentsLocation
-        documents = qt.QDesktopServices.storageLocation(documentsLocation)
-        databaseDirectory = os.path.join(documents, "SlicerDICOMDatabase")
-        message = "DICOM Database will be stored in\n\n{}\n\nUse the Local Database button in " \
-                  "the DICOM Browser to pick a different location.".format(databaseDirectory)
-        slicer.util.infoDisplay(message, windowTitle='DICOM')
+      documentsLocation = qt.QDesktopServices.DocumentsLocation
+      documents = qt.QDesktopServices.storageLocation(documentsLocation)
+      defaultDatabaseDirectory = os.path.join(documents, "SlicerDICOMDatabase")
+      message = "DICOM Database will be stored in\n\n{}\n\nUse the Local Database button in " \
+                "the DICOM Browser to pick a different location.".format(defaultDatabaseDirectory)
     if not os.path.exists(databaseDirectory):
-      os.mkdir(databaseDirectory)
+      try:
+        os.mkdir(databaseDirectory)
+      except OSError:
+        databaseDirectory = defaultDatabaseDirectory
+        if not os.path.exists(databaseDirectory):
+          os.mkdir(databaseDirectory)
+        slicer.util.infoDisplay(message, windowTitle='DICOM')
     self.onDatabaseDirectoryChanged(databaseDirectory)
 
   def onTableDensityComboBox(self, state):
