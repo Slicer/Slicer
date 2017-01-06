@@ -494,18 +494,17 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
       databaseDirectory = os.path.join(slicer.app.temporaryPath, 'tempDICOMDatabase')
     else:
       databaseDirectory = self.settings.value('DatabaseDirectory')
-      documentsLocation = qt.QDesktopServices.DocumentsLocation
-      documents = qt.QDesktopServices.storageLocation(documentsLocation)
-      defaultDatabaseDirectory = os.path.join(documents, "SlicerDICOMDatabase")
-      message = "DICOM Database will be stored in\n\n{}\n\nUse the Local Database button in " \
-                "the DICOM Browser to pick a different location.".format(defaultDatabaseDirectory)
     if not os.path.exists(databaseDirectory):
       try:
-        os.mkdir(databaseDirectory)
+        os.makedirs(databaseDirectory)
       except OSError:
-        databaseDirectory = defaultDatabaseDirectory
+        documentsLocation = qt.QDesktopServices.DocumentsLocation
+        documents = qt.QDesktopServices.storageLocation(documentsLocation)
+        databaseDirectory = os.path.join(documents, "SlicerDICOMDatabase")
         if not os.path.exists(databaseDirectory):
-          os.mkdir(databaseDirectory)
+          os.makedirs(databaseDirectory)
+        message = "DICOM Database will be stored in\n\n{}\n\nUse the Local Database button in " \
+                "the DICOM Browser to pick a different location.".format(databaseDirectory)
         slicer.util.infoDisplay(message, windowTitle='DICOM')
     self.onDatabaseDirectoryChanged(databaseDirectory)
 
