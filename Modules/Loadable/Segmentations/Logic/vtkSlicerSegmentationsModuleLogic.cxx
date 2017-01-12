@@ -882,7 +882,7 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
     }
   colorTableNode->SetNumberOfColors(exportedSegmentIDs.size() + 1);
   colorTableNode->GetLookupTable()->SetNumberOfTableValues(exportedSegmentIDs.size() + 1);
-  colorTableNode->SetColor(0, "Background", 0.0, 0.0, 0.0);
+  colorTableNode->SetColor(0, "Background", 0.0, 0.0, 0.0, 0.0);
   short colorIndex = 1;
   for (std::vector<std::string>::iterator segmentIt = exportedSegmentIDs.begin(); segmentIt != exportedSegmentIDs.end(); ++segmentIt, ++colorIndex)
     {
