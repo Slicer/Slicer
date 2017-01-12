@@ -60,11 +60,11 @@ the segments table will have priority."""
     self.methodSelectorComboBox.addItem("Grow from seeds", GROWCUT)
     self.methodSelectorComboBox.addItem("Fill between parallel slices", MORPHOLOGICAL_SLICE_INTERPOLATION)
     self.methodSelectorComboBox.setToolTip("""<html>Auto-complete methods:<ul style="margin: 0">
-<li><b>Fill between slices:</b> Perform complete segmentation on selected slices using any editor effect.
-The complete segmentation will be created by interpolating segmentations on slices that were skipped.</li>
-<li><b>Expand segments:</b> Create segments using any editor effect: one segment inside
+<li><b>Grow from seeds:</b> Create segments using any editor effect: one segment inside
 each each region that should belong to a separate segment. Segments will be expanded to create
 a complete segmentation, taking into account the master volume content. Minimum two segments are required.
+<li><b>Fill between parallel slices:</b> Perform complete segmentation on selected slices using any editor effect.
+The complete segmentation will be created by interpolating segmentations on slices that were skipped.</li>
 (see http://insight-journal.org/browse/publication/977)</li>
 </ul></html>""")
     self.scriptedEffect.addLabeledOptionsWidget("Method:", self.methodSelectorComboBox)
