@@ -40,21 +40,12 @@ class vtkMRMLScalarVolumeNode;
 /// \brief MRML node containing segmentations
 /// \ingroup Segmentations
 ///
-/// Segmentation node is a subclass of the LabelMapVolume node, and contains a segmentation object
-/// \sa vtkSegmentation that manages a list of segmented structures (segments). Each segment can
-/// contain multiple data representations for the same structure, which are automatically converted
-/// on request using the cheapest conversion path.
+/// Segmentation node stores a set of segments (also known as contours or segmented regions).
+/// Segments may overlap and may be stored in various representations (binary labelmap image,
+/// closed surface mesh, fractional labelmap image, etc). Segments can be stored in multiple data
+/// representations to facilitate visualization and processing.
 ///
-/// The volume contained by the labelmap is the "merged labelmap" of the whole segmentation, which
-/// is generated on request when the segmentation is displayed as a labelmap volume in the slice
-/// views. Although the scalar type of the binary labelmap representations in the segments that are
-/// used for the merged labelmap is unsigned char, the scalar type of the merged labelmap is short.
-/// When merging, the finest resolution found in the segment binary labelmaps is used, and the segments
-/// are "painted" on this merge image one by one, in the order of the segments contained. This may
-/// result in missing information if segments overlap. Merged labelmap is a compatibility feature that
-/// may be removed in the future due to the more advanced 2D displayable manager that can handle
-/// transparency, overlapping, multiple representation types, and display multiple segmentations at the
-/// same time.
+/// Storage and automatic conversion between representations are providedby \sa vtkSegmentation object.
 ///
 class VTK_MRML_EXPORT vtkMRMLSegmentationNode : public vtkMRMLDisplayableNode
 {
