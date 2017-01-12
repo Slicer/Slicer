@@ -23,6 +23,7 @@
 // MRML includes
 #include "vtkMRMLDisplayableManagerWin32Header.h"
 
+class vtkMRMLSegmentationDisplayNode;
 class vtkMRMLSliceLogic;
 
 /// \brief Provides customizable interaction routines.
@@ -86,52 +87,6 @@ public:
   vtkGetMacro(ActionState, int);
   vtkSetMacro(ActionState, int);
 
-  /// state of things when the current action started
-  /// - ras is mouse pointer in patient space
-  /// - fov is the slice node field of view
-  /// - window is mouse pointer with respect to the whole viewer
-  /// - xyz is mouse pointer with respect to the light box view (z is which light box viewer)
-  /// - foreground opacity of the slice composite node
-  /// - label opacity of the slice label opacity
-  vtkGetVector3Macro(ActionStartRAS, double);
-  vtkSetVector3Macro(ActionStartRAS, double);
-  vtkGetVector3Macro(ActionStartFOV, double);
-  vtkSetVector3Macro(ActionStartFOV, double);
-  vtkGetVector2Macro(ActionStartWindow, int);
-  vtkSetVector2Macro(ActionStartWindow, int);
-  vtkGetVector2Macro(LastActionWindow, int);
-  vtkSetVector2Macro(LastActionWindow, int);
-
-  vtkGetMacro(ActionStartForegroundOpacity, double);
-  vtkSetMacro(ActionStartForegroundOpacity, double);
-  vtkGetMacro(ActionStartLabelOpacity, double);
-  vtkSetMacro(ActionStartLabelOpacity, double);
-
-  /// what was the state of the Window/Level when the action started
-  vtkGetMacro(ActionStartVolumeWindow, double);
-  vtkSetMacro(ActionStartVolumeWindow, double);
-  vtkGetMacro(ActionStartVolumeLevel, double);
-  vtkSetMacro(ActionStartVolumeLevel, double);
-
-  /// what was the state of the Scalar Range when the action started
-  vtkGetMacro(ActionStartVolumeRangeLow, double);
-  vtkSetMacro(ActionStartVolumeRangeLow, double);
-  vtkGetMacro(ActionStartVolumeRangeHigh, double);
-  vtkSetMacro(ActionStartVolumeRangeHigh, double);
-
-  /// what was the state of the slice node when the action started
-  vtkGetObjectMacro(ActionStartSliceToRAS, vtkMatrix4x4);
-  vtkGetObjectMacro(ActionStartXYToRAS, vtkMatrix4x4);
-  /// an internal scratch matrix for calculations without
-  /// the overhead of re-allocating the object
-  vtkGetObjectMacro(ScratchMatrix, vtkMatrix4x4);
-
-  /// State for label/foreground opacity toggles
-  vtkSetMacro(LastLabelOpacity, double);
-  vtkGetMacro(LastLabelOpacity, double);
-  vtkSetMacro(LastForegroundOpacity, double);
-  vtkGetMacro(LastForegroundOpacity, double);
-
   /// Helper routines
 
   /// check for prescribed spacing, otherwise return best spacing amount
@@ -158,12 +113,6 @@ public:
   void StartAdjustWindowLevel();
   void EndAdjustWindowLevel();
 
-  /// Get the RAS coordinates of the interactor's EventPosition
-  /// with respect to the current poked renderer (taking into
-  /// account the lightbox)
-  void GetEventRAS(double ras[4]);
-  void GetEventRASWithRespectToEventStart(double ras[4]);
-
   /// Convert event coordinates (with respect to viewport) into
   /// xyz coordinates, where z is the slice number of the lightbox
   /// and xy is the offset within the lightbox view.  The xyz coordinates
@@ -176,6 +125,8 @@ public:
   void SetSliceLogic(vtkMRMLSliceLogic* SliceLogic);
   vtkGetObjectMacro(SliceLogic, vtkMRMLSliceLogic);
 
+  vtkMRMLSegmentationDisplayNode* GetVisibleSegmentationDisplayNode();
+
   ///
   /// Change the displayed volume in the selected layer by moving
   /// in a loop trough the volumes available in the scene.
@@ -183,6 +134,9 @@ public:
   ///  - direction: positive or negative (wraps through volumes in scene)
   void CycleVolumeLayer(int layer, int direction);
 
+  /// Get/Set labelmap or segmentation opacity
+  void SetLabelOpacity(double opacity);
+  double GetLabelOpacity();
 
 protected:
 
@@ -196,25 +150,15 @@ protected:
   bool IsMouseInsideVolume(bool background);
 
   int ActionState;
+  int StartActionEventPosition[2];
+  double StartActionFOV[3];
+  double VolumeScalarRange[2];
+  vtkMRMLSegmentationDisplayNode* StartActionSegmentationDisplayNode;
 
-  double ActionStartRAS[3];
-  double ActionStartFOV[3];
-  int ActionStartWindow[2];
-  int LastActionWindow[2];
-
-  double ActionStartForegroundOpacity;
-  double ActionStartLabelOpacity;
-  double ActionStartVolumeWindow;
-  double ActionStartVolumeLevel;
-  double ActionStartVolumeRangeLow;
-  double ActionStartVolumeRangeHigh;
-
-  vtkMatrix4x4 *ActionStartSliceToRAS;
-  vtkMatrix4x4 *ActionStartXYToRAS;
-  vtkMatrix4x4 *ScratchMatrix;
-
-  double LastLabelOpacity;
+  int LastEventPosition[2];
   double LastForegroundOpacity;
+  double LastLabelOpacity;
+  double LastVolumeWindowLevel[2];
 
   vtkMRMLSliceLogic *SliceLogic;
 
