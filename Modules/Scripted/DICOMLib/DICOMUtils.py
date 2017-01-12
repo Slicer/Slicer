@@ -34,17 +34,26 @@ def loadPatientByUID(patientUID):
   if not hasattr(slicer,'dicomDatabase') or not hasattr(slicer.modules,'dicom'):
     logging.error('DICOM module or database cannot be accessed!')
     return
-  dicomWidget = slicer.modules.dicom.widgetRepresentation().self()
 
   # Select all series in selected patient
   studies = slicer.dicomDatabase.studiesForPatient(patientUID)
   series = [slicer.dicomDatabase.seriesForStudy(study) for study in studies]
-  seriesUIDs = [uid for uidList in series for uid in uidList]
+  return loadSeriesByUID([uid for uidList in series for uid in uidList])
+
+#------------------------------------------------------------------------------
+# Load multiple series by UID from DICOM database
+def loadSeriesByUID(seriesUIDs):
+  if not hasattr(slicer,'dicomDatabase') or not hasattr(slicer.modules,'dicom'):
+    logging.error('DICOM module or database cannot be accessed!')
+    return
+  dicomWidget = slicer.modules.dicom.widgetRepresentation().self()
+  
   dicomWidget.detailsPopup.offerLoadables(seriesUIDs, 'SeriesUIDList')
   dicomWidget.detailsPopup.examineForLoading()
 
   # Load selected data
   dicomWidget.detailsPopup.loadCheckedLoadables()
+
 
 #------------------------------------------------------------------------------
 # Load patient by patient name from DICOM database
