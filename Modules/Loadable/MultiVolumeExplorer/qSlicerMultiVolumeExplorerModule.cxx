@@ -18,7 +18,6 @@
 // Qt includes
 #include <QFileInfo>
 #include <QScopedPointer>
-#include <QtPlugin>
 
 // Slicer includes
 #include <vtkSlicerVolumesLogic.h>
@@ -37,7 +36,11 @@
 #include <vtkSlicerConfigure.h>
 
 //-----------------------------------------------------------------------------
+#include <QtGlobal>
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+#include <QtPlugin>
 Q_EXPORT_PLUGIN2(qSlicerMultiVolumeExplorerModule, qSlicerMultiVolumeExplorerModule);
+#endif
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_ExtensionTemplate
