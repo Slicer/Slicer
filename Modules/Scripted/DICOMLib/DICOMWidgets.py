@@ -483,7 +483,7 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
         if 'SOPClassUID' in tagValues:
           for sopClassUID in tagValues['SOPClassUID']:
             if sopClassUID in sopClassUIDs:
-              extensionsToOffer.add(extension)
+              extensionsToOffer.append(extension)
     return extensionsToOffer
 
   def promptForDatabaseDirectory(self):
