@@ -62,6 +62,13 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
       " Fixes errors caused by file path containins special characters or being too long.")
     parametersFormLayout.addRow("Normalize file names", self.normalizeFileNamesCheckBox)
 
+    self.forceSamePatientNameIdInEachDirectoryCheckBox = qt.QCheckBox()
+    self.forceSamePatientNameIdInEachDirectoryCheckBox.checked = False
+    self.forceSamePatientNameIdInEachDirectoryCheckBox.setToolTip("Generate patient name and ID from the first file in a directory"
+      " and force all other files in the same directory to have the same patient name and ID."
+      " Enable this option if a separate patient directory is created for each patched file.")
+    parametersFormLayout.addRow("Force same patient name and ID in each directory", self.forceSamePatientNameIdInEachDirectoryCheckBox)
+
     self.generateMissingIdsCheckBox = qt.QCheckBox()
     self.generateMissingIdsCheckBox.checked = True
     self.generateMissingIdsCheckBox.setToolTip("Generate missing patient, study, series IDs. It is assumed that"
@@ -89,15 +96,23 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
     parametersFormLayout.addRow(self.patchButton)
 
     #
-    # Patch Button
+    # Import Button
     #
     self.importButton = qt.QPushButton("Import")
     self.importButton.toolTip = "Import DICOM files in output directory into Slicer DICOM database"
     parametersFormLayout.addRow(self.importButton)
 
+    #
+    # Switch to DICOM module Button
+    #
+    self.switchToDICOMModuleButton = qt.QPushButton("Go to DICOM module")
+    self.switchToDICOMModuleButton.toolTip = "Open DICOM module where imported data can be loaded into the scene"
+    parametersFormLayout.addRow(self.switchToDICOMModuleButton)
+
     # connections
     self.patchButton.connect('clicked(bool)', self.onPatchButton)
     self.importButton.connect('clicked(bool)', self.onImportButton)
+    self.switchToDICOMModuleButton.connect('clicked(bool)', self.onSwitchToDICOMModuleButton)
 
     self.statusLabel = qt.QPlainTextEdit()
     self.statusLabel.setTextInteractionFlags(qt.Qt.TextSelectableByMouse)
@@ -124,9 +139,12 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
       self.statusLabel.plainText = ''
 
       self.logic.clearRules()
+      if self.forceSamePatientNameIdInEachDirectoryCheckBox.checked:
+        self.logic.addRule("ForceSamePatientNameIdInEachDirectory")
       if self.generateMissingIdsCheckBox.checked:
         self.logic.addRule("GenerateMissingIDs")
       self.logic.addRule("RemoveDICOMDIR")
+      self.logic.addRule("FixPrivateMediaStorageSOPClassUID")
       if self.generateImagePositionFromSliceThicknessCheckBox.checked:
         self.logic.addRule("AddMissingSliceSpacingToMultiframe")
       if self.anonymizeDicomCheckBox.checked:
@@ -152,6 +170,9 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
       traceback.print_exc()
     slicer.app.restoreOverrideCursor();
 
+  def onSwitchToDICOMModuleButton(self):
+    mainWindow = slicer.util.mainWindow()
+    mainWindow.moduleSelector().selectModule('DICOM')
 
   def addLog(self, text):
     """Append text to log window
@@ -184,6 +205,31 @@ class DICOMPatcherRule(object):
 #
 #
 #
+
+class ForceSamePatientNameIdInEachDirectory(DICOMPatcherRule):
+  def __init__(self):
+    self.requiredTags = ['PatientName', 'PatientID']
+    self.eachFileIsSeparateSeries = False
+  def processStart(self, inputRootDir, outputRootDir):
+    self.patientIndex = 0
+  def processDirectory(self, currentSubDir):
+    self.firstFileInDirectory = True
+    self.patientIndex += 1
+  def processDataSet(self, ds):
+    import dicom
+    if self.firstFileInDirectory:
+      # Get patient name and ID and save it
+      self.firstFileInDirectory = False
+      if ds.PatientName == '':
+        ds.PatientName = "Unspecified Patient " + str(patientIndex)
+      if ds.PatientID == '':
+        ds.PatientID = dicom.UID.generate_uid(None)
+      self.patientName = ds.PatientName
+      self.patientID = ds.PatientID
+    else:
+      # Set teh same patient name and ID as the first file in the directory
+      ds.PatientName = self.patientName
+      ds.PatientID = self.patientID
 
 class GenerateMissingIDs(DICOMPatcherRule):
   def __init__(self):
@@ -243,6 +289,25 @@ class RemoveDICOMDIR(DICOMPatcherRule):
     self.addLog('DICOMDIR file is ignored (its contents may be inconsistent with the contents of the indexed DICOM files, therefore it is safer not to use it)')
     return True
 
+#
+#
+#
+
+class FixPrivateMediaStorageSOPClassUID(DICOMPatcherRule):
+  def processDataSet(self, ds):
+    # DCMTK uses a specific UID for if storage SOP class UID is not specified.
+    # GDCM refuses to load images with a private SOP class UID, so we change it to CT storage
+    # (as that is the most commonly used imaging modality).
+    # We could make things nicer by allowing the user to specify a modality.
+    import dicom
+    DCMTKPrivateMediaStorageSOPClassUID = "1.2.276.0.7230010.3.1.0.1"
+    CTImageStorageSOPClassUID = "1.2.840.10008.5.1.4.1.1.2"
+    if not hasattr(ds.file_meta, 'MediaStorageSOPClassUID') or ds.file_meta.MediaStorageSOPClassUID == DCMTKPrivateMediaStorageSOPClassUID:
+      self.addLog("DCMTK private MediaStorageSOPClassUID found. Replace it with CT media storage SOP class UID.")
+      ds.file_meta.MediaStorageSOPClassUID = CTImageStorageSOPClassUID
+
+    if hasattr(ds, 'SOPClassUID') and ds.SOPClassUID == DCMTKPrivateMediaStorageSOPClassUID:
+      ds.SOPClassUID = CTImageStorageSOPClassUID
 #
 #
 #
@@ -442,8 +507,7 @@ class DICOMPatcherLogic(ScriptedLoadableModuleLogic):
     """
     Since CTK (rightly) requires certain basic information [1] before it can import
     data files that purport to be dicom, this code patches the files in a directory
-    with some needed fields.  Apparently it is possible to export files from the
-    Philips PMS QLAB system with these fields missing.
+    with some needed fields.
 
     Calling this function with a directory path will make a patched copy of each file.
     Importing the old files to CTK should still fail, but the new ones should work.
@@ -595,6 +659,7 @@ class DICOMPatcherTest(ScriptedLoadableModuleTest):
     logic = DICOMPatcherLogic()
     logic.addRule("GenerateMissingIDs")
     logic.addRule("RemoveDICOMDIR")
+    logic.addRule("FixPrivateMediaStorageSOPClassUID")
     logic.addRule("AddMissingSliceSpacingToMultiframe")
     logic.addRule("Anonymize")
     logic.addRule("NormalizeFileNames")
@@ -612,6 +677,8 @@ class DICOMPatcherTest(ScriptedLoadableModuleTest):
       self.assertEqual(subFolders, expectedWalk[step][0])
       self.assertEqual(files, expectedWalk[step][1])
       step += 1
+
+    # TODO: test rule ForceSamePatientNameIdInEachDirectory
 
     self.delayDisplay("Clean up")
 
