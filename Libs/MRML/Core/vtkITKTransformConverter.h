@@ -348,6 +348,12 @@ bool vtkITKTransformConverter::SetVTKBSplineParametersFromITKGeneric(
     {
     return false;
     }
+  if (warpTransformItk->GetOutputSpaceDimension() != VTKDimension)
+    {
+    vtkErrorWithObjectMacro(loggerObject, "Unsupported number of dimensions in BSpline transform file (expected = "
+      << VTKDimension << ", actual = " << warpTransformItk->GetOutputSpaceDimension() << ")");
+    return false;
+    }
   bsplineItk = static_cast< BSplineTransformType* >( warpTransformItk.GetPointer() );
 
   // now get the fixed parameters and map them to the vtk analogs
@@ -856,6 +862,12 @@ bool vtkITKTransformConverter::SetVTKOrientedGridTransformFromITK(vtkObject* log
     vtkErrorWithObjectMacro(loggerObject, "Cannot set VTK oriented grid transform from ITK: the input transform is NULL");
     return false;
     }
+  if (transformItk_LPS->GetOutputSpaceDimension() != VTKDimension)
+    {
+    vtkErrorWithObjectMacro(loggerObject, "Unsupported number of dimensions in oriented grid transform file (expected = "
+      << VTKDimension << ", actual = " << transformItk_LPS->GetOutputSpaceDimension() << ")");
+    return false;
+    }
 
   std::string transformItkClassName = transformItk_LPS->GetNameOfClass();
 
@@ -1101,6 +1113,13 @@ bool vtkITKTransformConverter::SetVTKThinPlateSplineTransformFromITK(vtkObject* 
   if (!transformItk_LPS)
     {
     vtkErrorWithObjectMacro(loggerObject, "Cannot set VTK thin-plate spline transform from ITK: the input transform is NULL");
+    return false;
+    }
+
+  if (transformItk_LPS->GetOutputSpaceDimension() != VTKDimension)
+    {
+    vtkErrorWithObjectMacro(loggerObject, "Unsupported number of dimensions in thin-plate spline transform file (expected = "
+      << VTKDimension << ", actual = " << transformItk_LPS->GetOutputSpaceDimension() << ")");
     return false;
     }
 
