@@ -62,6 +62,11 @@ public:
 
   /// Flag to trigger or not the StatusModifiedEvent
   mutable bool InvokeStatusModifiedEvent;
+
+  /// Output messages of last execution (printed to stdout)
+  std::string OutputText;
+  /// Error messages of last execution (printed to stderr)
+  std::string ErrorText;
 };
 
 ModuleDescriptionMap vtkMRMLCommandLineModuleNode::vtkInternal::RegisteredModules;
@@ -1018,5 +1023,45 @@ void vtkMRMLCommandLineModuleNode::Modified()
   if (invokeStatusModifiedEvent)
     {
     this->InvokeEvent(vtkMRMLCommandLineModuleNode::StatusModifiedEvent);
+    }
+}
+
+//----------------------------------------------------------------------------
+const std::string vtkMRMLCommandLineModuleNode::GetErrorText() const
+{
+  return this->Internal->ErrorText;
+}
+
+//----------------------------------------------------------------------------
+const std::string vtkMRMLCommandLineModuleNode::GetOutputText() const
+{
+  return this->Internal->OutputText;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLCommandLineModuleNode::SetErrorText(const std::string& text, bool modify)
+{
+  if (this->Internal->ErrorText == text)
+    {
+    return;
+    }
+  this->Internal->ErrorText = text;
+  if (modify)
+    {
+    this->Modified();
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLCommandLineModuleNode::SetOutputText(const std::string& text, bool modify)
+{
+  if (this->Internal->OutputText == text)
+    {
+    return;
+    }
+  this->Internal->OutputText = text;
+  if (modify)
+    {
+    this->Modified();
     }
 }

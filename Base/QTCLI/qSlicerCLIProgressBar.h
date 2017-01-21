@@ -105,6 +105,9 @@ protected slots:
   /// Update the ui base on the command line module node
   void updateUiFromCommandLineModuleNode(vtkObject* commandLineModuleNode);
 
+  /// Update the ui base on the command line module node
+  void showDetails(bool show);
+
 protected:
 
   QScopedPointer<qSlicerCLIProgressBarPrivate> d_ptr;

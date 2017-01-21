@@ -831,6 +831,8 @@ void vtkSlicerCLIModuleLogic::Apply ( vtkMRMLCommandLineModuleNode* node, bool u
     }
   else
     {
+    node->SetOutputText("", false);
+    node->SetErrorText("", false);
     node->SetStatus(vtkMRMLCommandLineModuleNode::Scheduled);
     }
 }
@@ -941,6 +943,8 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
   if (node0->GetStatus() == vtkMRMLCommandLineModuleNode::Cancelling ||
       node0->GetStatus() == vtkMRMLCommandLineModuleNode::Cancelled)
     {
+    node0->SetOutputText("", false);
+    node0->SetErrorText("", false);
     node0->SetStatus(vtkMRMLCommandLineModuleNode::Cancelled, false);
     this->GetApplicationLogic()->RequestModified( node0 );
     return;
@@ -1818,9 +1822,11 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
         }
       else
         {
-        vtkErrorMacro("No value assigned to \""
-                      << (*iit).second.GetLabel().c_str() << "\"");
-
+        std::string errorText = "No value assigned to \""
+          + (*iit).second.GetLabel() + "\"";
+        vtkErrorMacro(<< errorText.c_str());
+        node0->SetOutputText("", false);
+        node0->SetErrorText(errorText, false);
         node0->SetStatus(vtkMRMLCommandLineModuleNode::Idle, false);
         this->GetApplicationLogic()->RequestModified( node0 );
         return;
@@ -1829,7 +1835,10 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     else if ((*iit).second.GetTag() == "point"
              || (*iit).second.GetTag() == "region")
       {
-      vtkErrorMacro("Fiducials and ROIs are not currently supported as index arguments to modules.");
+      std::string errorText = "Fiducials and ROIs are not currently supported as index arguments to modules.";
+      vtkErrorMacro(<< errorText.c_str());
+      node0->SetOutputText("", false);
+      node0->SetErrorText(errorText, false);
       node0->SetStatus(vtkMRMLCommandLineModuleNode::Idle, false);
       this->GetApplicationLogic()->RequestModified( node0 );
       return;
@@ -1877,11 +1886,12 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
         }
       else
         {
-        vtkErrorMacro("No " << (*iit).second.GetChannel().c_str()
-                      << " data assigned to \""
-                      << (*iit).second.GetLabel().c_str() << "\"");
-
-        node0->SetStatus(vtkMRMLCommandLineModuleNode::Idle, false);
+        std::string errorText = "No " + (*iit).second.GetChannel()
+          + " data assigned to \"" + (*iit).second.GetLabel() + "\"";
+        vtkErrorMacro(<< errorText.c_str());
+        node0->SetOutputText("", false);
+        node0->SetErrorText(errorText, false);
+        node0->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
         this->GetApplicationLogic()->RequestModified( node0 );
         return;
         }
@@ -1914,6 +1924,8 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
   //
   //
   node0->GetModuleDescription().GetProcessInformation()->Initialize();
+  node0->SetOutputText("", false);
+  node0->SetErrorText("", false);
   node0->SetStatus(vtkMRMLCommandLineModuleNode::Running, false);
   this->GetApplicationLogic()->RequestModified( node0 );
   if (commandType == CommandLineModule)
@@ -2140,12 +2152,15 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
       // vtkSlicerApplication::GetInstance()->InformationMessage
       qDebug() << stdoutbuffer.c_str();
       }
+    node0->SetOutputText(stdoutbuffer, false);
+
     if (stderrbuffer.size() > 0)
       {
       std::string tmp(" standard error:\n\n");
       stderrbuffer.insert(0, node0->GetModuleDescription().GetTitle()+tmp);
       vtkErrorMacro( << stderrbuffer.c_str() );
       }
+    node0->SetErrorText(stderrbuffer, false);
 
     // check the exit state / error state of the process
     if (node0->GetStatus() == vtkMRMLCommandLineModuleNode::Cancelling)
@@ -2274,6 +2289,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
         // vtkSlicerApplication::GetInstance()->InformationMessage
         qDebug() << (tmp + coutstringstream.str()).c_str();
         }
+      node0->SetOutputText(coutstringstream.str(), false);
       if (cerrstringstream.str().size() > 0)
         {
         std::string tmp(" standard error:\n\n");
@@ -2281,6 +2297,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
 
         vtkErrorMacro( << (tmp + cerrstringstream.str()).c_str() );
         }
+      node0->SetErrorText(cerrstringstream.str(), false);
 
       if (this->Internal->RedirectModuleStreams)
         {

@@ -119,6 +119,16 @@ public:
   /// \sa GetStatus(), IsBusy()
   const char* GetStatusString() const;
 
+  /// Set output messages generated during latest execution.
+  void SetOutputText(const std::string& text, bool modify = true);
+  /// Set output messages generated during latest execution.
+  const std::string GetOutputText() const;
+
+  /// Set error messages generated during latest execution.
+  void SetErrorText(const std::string& text, bool modify = true);
+  /// Get error messages generated during latest execution.
+  const std::string GetErrorText() const;
+
   /// Return true if the module is in a busy state: Scheduled, Running,
   /// Cancelling, Completing.
   /// \sa SetStatus(), GetStatus(), BusyMask, Cancel()
