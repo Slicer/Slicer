@@ -55,7 +55,10 @@ vtkStandardNewMacro(vtkSlicerTerminologiesModuleLogic);
 class vtkSlicerTerminologiesModuleLogic::vtkInternal
 {
 public:
-  typedef std::map<std::string, rapidjson::Document> TerminologyMap;
+  // rapidjson document object cannot be stored in an STL map (there are build errors
+  // on linux and mac), therefore we store a simple pointer and create/delete
+  // the document object manually
+  typedef std::map<std::string, rapidjson::Document* > TerminologyMap;
   vtkInternal(vtkSlicerTerminologiesModuleLogic* external);
   ~vtkInternal();
 
@@ -121,6 +124,16 @@ public:
   /// \return The code object with the identifiers set
   rapidjson::Value& GetJsonCodeFromIdentifier(rapidjson::Value& code, CodeIdentifier idenfifier, rapidjson::Document::AllocatorType& allocator);
 
+  // Utility function for safe (memory-leak-free) setting of a document pointer in map
+  static void SetDocumentInTerminologyMap(TerminologyMap& terminologyMap, const std::string& name, rapidjson::Document* doc)
+    {
+    if (terminologyMap.find(name) != terminologyMap.end())
+      {
+      delete terminologyMap[name];
+      }
+    terminologyMap[name] = doc;
+    }
+
 public:
   /// Loaded terminologies. Key is the context name, value is the root item.
   TerminologyMap LoadedTerminologies;
@@ -144,6 +157,16 @@ vtkSlicerTerminologiesModuleLogic::vtkInternal::vtkInternal(vtkSlicerTerminologi
 //---------------------------------------------------------------------------
 vtkSlicerTerminologiesModuleLogic::vtkInternal::~vtkInternal()
 {
+  for (TerminologyMap::iterator termIt = this->LoadedTerminologies.begin();
+    termIt != this->LoadedTerminologies.end(); ++termIt)
+    {
+    delete termIt->second;
+    }
+  for (TerminologyMap::iterator anIt = this->LoadedAnatomicContexts.begin();
+    anIt != this->LoadedAnatomicContexts.end(); ++anIt)
+    {
+    delete anIt->second;
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -184,7 +207,7 @@ rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetTerminology
   TerminologyMap::iterator termIt = this->LoadedTerminologies.find(terminologyName);
   if (termIt != this->LoadedTerminologies.end())
     {
-    return termIt->second;
+    return *(termIt->second);
     }
 
   return JSON_EMPTY_VALUE;
@@ -247,14 +270,14 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::PopulateTerminologyCategory
     return false;
     }
 
-  rapidjson::Value::MemberIterator& codeMeaning = categoryObject.FindMember("CodeMeaning");             // e.g. "Tissue" (mandatory)
-  rapidjson::Value::MemberIterator& codingScheme = categoryObject.FindMember("CodingSchemeDesignator"); // e.g. "SRT" (mandatory)
-  rapidjson::Value::MemberIterator& SNOMEDCTConceptID = categoryObject.FindMember("SNOMEDCTConceptID"); // e.g. "85756007"
-  rapidjson::Value::MemberIterator& UMLSConceptUID = categoryObject.FindMember("UMLSConceptUID");       // e.g. "C0040300"
-  rapidjson::Value::MemberIterator& cid = categoryObject.FindMember("cid");                             // e.g. "7051"
-  rapidjson::Value::MemberIterator& codeValue = categoryObject.FindMember("CodeValue");                 // e.g. "T-D0050" (mandatory)
-  rapidjson::Value::MemberIterator& contextGroupName = categoryObject.FindMember("contextGroupName");   // e.g. "Segmentation Property Categories"
-  rapidjson::Value::MemberIterator& showAnatomy = categoryObject.FindMember("showAnatomy");
+  rapidjson::Value::MemberIterator codeMeaning = categoryObject.FindMember("CodeMeaning");             // e.g. "Tissue" (mandatory)
+  rapidjson::Value::MemberIterator codingScheme = categoryObject.FindMember("CodingSchemeDesignator"); // e.g. "SRT" (mandatory)
+  rapidjson::Value::MemberIterator SNOMEDCTConceptID = categoryObject.FindMember("SNOMEDCTConceptID"); // e.g. "85756007"
+  rapidjson::Value::MemberIterator UMLSConceptUID = categoryObject.FindMember("UMLSConceptUID");       // e.g. "C0040300"
+  rapidjson::Value::MemberIterator cid = categoryObject.FindMember("cid");                             // e.g. "7051"
+  rapidjson::Value::MemberIterator codeValue = categoryObject.FindMember("CodeValue");                 // e.g. "T-D0050" (mandatory)
+  rapidjson::Value::MemberIterator contextGroupName = categoryObject.FindMember("contextGroupName");   // e.g. "Segmentation Property Categories"
+  rapidjson::Value::MemberIterator showAnatomy = categoryObject.FindMember("showAnatomy");
   if (codingScheme == categoryObject.MemberEnd() || codeValue == categoryObject.MemberEnd() || codeMeaning == categoryObject.MemberEnd())
     {
     vtkGenericWarningMacro("PopulateTerminologyCategoryFromJson: Unable to access mandatory category member");
@@ -469,7 +492,7 @@ rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetAnatomicCon
   TerminologyMap::iterator anIt = this->LoadedAnatomicContexts.find(anatomicContextName);
   if (anIt != this->LoadedAnatomicContexts.end())
     {
-    return anIt->second;
+    return *(anIt->second);
     }
 
   return JSON_EMPTY_VALUE;
@@ -901,7 +924,7 @@ std::string vtkSlicerTerminologiesModuleLogic::LoadTerminologyFromFile(std::stri
 {
   std::string contextName;
 
-  rapidjson::Document terminologyRoot;
+  rapidjson::Document* terminologyRoot = new rapidjson::Document;
 
   FILE *fp = fopen(filePath.c_str(), "r");
   if (!fp)
@@ -911,14 +934,15 @@ std::string vtkSlicerTerminologiesModuleLogic::LoadTerminologyFromFile(std::stri
     }
   char buffer[4096];
   rapidjson::FileReadStream fs(fp, buffer, sizeof(buffer));
-  if (terminologyRoot.ParseStream(fs).HasParseError())
+  if (terminologyRoot->ParseStream(fs).HasParseError())
     {
     vtkErrorMacro("LoadTerminologyFromFile: Failed to load terminology from file '" << filePath);
     return "";
     }
 
-  contextName = terminologyRoot["SegmentationCategoryTypeContextName"].GetString();
-  this->Internal->LoadedTerminologies[contextName].Swap(terminologyRoot);
+  contextName = (*terminologyRoot)["SegmentationCategoryTypeContextName"].GetString();
+  vtkSlicerTerminologiesModuleLogic::vtkInternal::SetDocumentInTerminologyMap(
+    this->Internal->LoadedTerminologies, contextName, terminologyRoot);
 
   vtkInfoMacro("Terminology named '" << contextName << "' successfully loaded from file " << filePath);
   this->Modified();
@@ -928,7 +952,7 @@ std::string vtkSlicerTerminologiesModuleLogic::LoadTerminologyFromFile(std::stri
 //---------------------------------------------------------------------------
 bool vtkSlicerTerminologiesModuleLogic::LoadTerminologyFromSegmentDescriptorFile(std::string contextName, std::string filePath)
 {
-  rapidjson::Document descriptorDoc;
+  rapidjson::Document* descriptorDoc = new rapidjson::Document;
 
   FILE *fp = fopen(filePath.c_str(), "r");
   if (!fp)
@@ -939,16 +963,17 @@ bool vtkSlicerTerminologiesModuleLogic::LoadTerminologyFromSegmentDescriptorFile
 
   char buffer[4096];
   rapidjson::FileReadStream fs(fp, buffer, sizeof(buffer));
-  if (descriptorDoc.ParseStream(fs).HasParseError())
+  if (descriptorDoc->ParseStream(fs).HasParseError())
     {
     vtkErrorMacro("LoadTerminologyFromSegmentDescriptorFile: Failed to load terminology from file '" << filePath);
     return "";
     }
 
   // Store terminology
-  this->Internal->LoadedTerminologies[contextName].Swap(descriptorDoc);
+  vtkSlicerTerminologiesModuleLogic::vtkInternal::SetDocumentInTerminologyMap(
+    this->Internal->LoadedTerminologies, contextName, descriptorDoc);
 
-  rapidjson::Value& terminologyRoot = this->Internal->ConvertSegmentationDescriptorToTerminologyContext(descriptorDoc, contextName);
+  rapidjson::Value& terminologyRoot = this->Internal->ConvertSegmentationDescriptorToTerminologyContext(*descriptorDoc, contextName);
   if (terminologyRoot.IsNull())
     {
     vtkErrorMacro("LoadTerminologyFromSegmentDescriptorFile: Failed to parse descriptor file '" << filePath);
@@ -980,7 +1005,7 @@ void vtkSlicerTerminologiesModuleLogic::LoadDefaultTerminologies()
 std::string vtkSlicerTerminologiesModuleLogic::LoadAnatomicContextFromFile(std::string filePath)
 {
   std::string contextName;
-  rapidjson::Document anatomicContextRoot;
+  rapidjson::Document* anatomicContextRoot = new rapidjson::Document;
 
   FILE *fp = fopen(filePath.c_str(), "r");
   if (!fp)
@@ -991,15 +1016,16 @@ std::string vtkSlicerTerminologiesModuleLogic::LoadAnatomicContextFromFile(std::
 
   char buffer[4096];
   rapidjson::FileReadStream fs(fp, buffer, sizeof(buffer));
-  if (anatomicContextRoot.ParseStream(fs).HasParseError())
+  if (anatomicContextRoot->ParseStream(fs).HasParseError())
     {
     vtkErrorMacro("LoadAnatomicContextFromFile: Failed to load terminology from file '" << filePath);
     return "";
     }
 
   // Store anatomic context
-  contextName = anatomicContextRoot["AnatomicContextName"].GetString();
-  this->Internal->LoadedAnatomicContexts[contextName].Swap(anatomicContextRoot);
+  contextName = (*anatomicContextRoot)["AnatomicContextName"].GetString();
+  vtkSlicerTerminologiesModuleLogic::vtkInternal::SetDocumentInTerminologyMap(
+    this->Internal->LoadedAnatomicContexts, contextName, anatomicContextRoot);
 
   vtkInfoMacro("Anatomic context named '" << contextName << "' successfully loaded from file " << filePath);
   return contextName;
@@ -1008,7 +1034,7 @@ std::string vtkSlicerTerminologiesModuleLogic::LoadAnatomicContextFromFile(std::
 //---------------------------------------------------------------------------
 bool vtkSlicerTerminologiesModuleLogic::LoadAnatomicContextFromSegmentDescriptorFile(std::string contextName, std::string filePath)
 {
-  rapidjson::Document descriptorDoc;
+  rapidjson::Document* descriptorDoc = new rapidjson::Document;
 
   FILE *fp = fopen(filePath.c_str(), "r");
   if (!fp)
@@ -1018,13 +1044,13 @@ bool vtkSlicerTerminologiesModuleLogic::LoadAnatomicContextFromSegmentDescriptor
     }
   char buffer[4096];
   rapidjson::FileReadStream fs(fp, buffer, sizeof(buffer));
-  if (descriptorDoc.ParseStream(fs).HasParseError())
+  if (descriptorDoc->ParseStream(fs).HasParseError())
     {
     vtkErrorMacro("LoadAnatomicContextFromSegmentDescriptorFile: Failed to load terminology from file '" << filePath);
     return "";
     }
 
-  rapidjson::Value& anatomicContextRoot = this->Internal->ConvertSegmentationDescriptorToAnatomicContext(descriptorDoc, contextName);
+  rapidjson::Value& anatomicContextRoot = this->Internal->ConvertSegmentationDescriptorToAnatomicContext(*descriptorDoc, contextName);
   if (anatomicContextRoot.IsNull())
     {
     // Anatomic context is optional in descriptor file
@@ -1032,7 +1058,8 @@ bool vtkSlicerTerminologiesModuleLogic::LoadAnatomicContextFromSegmentDescriptor
     }
 
   // Store anatomic context
-  this->Internal->LoadedAnatomicContexts[contextName].Swap(descriptorDoc);
+  vtkSlicerTerminologiesModuleLogic::vtkInternal::SetDocumentInTerminologyMap(
+    this->Internal->LoadedAnatomicContexts, contextName, descriptorDoc);
 
   vtkInfoMacro("Anatomic context named '" << contextName << "' successfully loaded from file " << filePath);
   this->Modified();
