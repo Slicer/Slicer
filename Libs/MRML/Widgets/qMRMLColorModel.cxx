@@ -204,7 +204,7 @@ QStandardItem* qMRMLColorModel::itemFromColor(int color, int column)const
     {
     return 0;
     }
-  QModelIndexList indexes = this->match(QModelIndex(), qMRMLColorModel::ColorEntryRole,
+  QModelIndexList indexes = this->match(this->index(0,0), qMRMLColorModel::ColorEntryRole,
                                       color, 1,
                                       Qt::MatchExactly | Qt::MatchRecursive);
   while (indexes.size())
@@ -222,7 +222,7 @@ QStandardItem* qMRMLColorModel::itemFromColor(int color, int column)const
 //------------------------------------------------------------------------------
 QModelIndexList qMRMLColorModel::indexes(int color)const
 {
-  return this->match(QModelIndex(), qMRMLColorModel::ColorEntryRole, color, -1,
+  return this->match(this->index(0,0), qMRMLColorModel::ColorEntryRole, color, -1,
                      Qt::MatchExactly | Qt::MatchRecursive);
 }
 
@@ -248,6 +248,17 @@ QString qMRMLColorModel::nameFromColor(int entry)const
     return QString();
     }
   return QString(d->MRMLColorNode->GetColorName(entry));
+}
+
+//------------------------------------------------------------------------------
+int qMRMLColorModel::colorFromName(const QString& name)const
+{
+  Q_D(const qMRMLColorModel);
+  if (d->MRMLColorNode == 0)
+    {
+    return -1;
+    }
+  return d->MRMLColorNode->GetColorIndexByName(name.toLatin1());
 }
 
 //------------------------------------------------------------------------------

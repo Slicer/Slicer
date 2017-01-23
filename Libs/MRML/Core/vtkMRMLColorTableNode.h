@@ -217,11 +217,6 @@ public:
   virtual void Reset(vtkMRMLNode* defaultNode);
 
   ///
-  /// return the index associated with this color name, which can then be used
-  /// to get the colour. Returns -1 on failure.
-  int GetColorIndexByName(const char *name);
-
-  ///
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 

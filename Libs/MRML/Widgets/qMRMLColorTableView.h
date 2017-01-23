@@ -40,6 +40,9 @@ class vtkMRMLNode;
 class QMRML_WIDGETS_EXPORT qMRMLColorTableView : public QTableView
 {
   Q_OBJECT
+  /// This property show/hides the colors whose name are (none).
+  /// false by default.
+  /// \sa showOnlyNamedColors(), setShowOnlyNamedColors()
   Q_PROPERTY(bool showOnlyNamedColors READ showOnlyNamedColors WRITE setShowOnlyNamedColors)
 public:
   qMRMLColorTableView(QWidget *parent=0);
@@ -48,6 +51,13 @@ public:
   vtkMRMLColorNode* mrmlColorNode()const;
   qMRMLColorModel* colorModel()const;
   QSortFilterProxyModel* sortFilterProxyModel()const;
+
+  /// Return the row of the color with name \a colorName.
+  /// \sa rowFromColorIndex()
+  int rowFromColorName(const QString& colorName)const;
+  /// Return the row of the color of index \a colorIndex.
+  /// \sa rowFromColorIndex()
+  int rowFromColorIndex(int colorIndex)const;
 
   bool showOnlyNamedColors()const;
 

@@ -142,3 +142,22 @@ bool qMRMLColorTableView::showOnlyNamedColors()const
 {
   return this->sortFilterProxyModel()->filterRegExp().isEmpty();
 }
+
+//------------------------------------------------------------------------------
+int qMRMLColorTableView::rowFromColorName(const QString& colorName)const
+{
+  int index = this->colorModel()->colorFromName(colorName);
+  return this->rowFromColorIndex(index);
+}
+
+//------------------------------------------------------------------------------
+int qMRMLColorTableView::rowFromColorIndex(int colorIndex)const
+{
+  QModelIndexList indexes = this->colorModel()->indexes(colorIndex);
+  if (indexes.isEmpty())
+    {
+    return -1;
+    }
+  QModelIndex sortedIndex = this->sortFilterProxyModel()->mapFromSource(indexes[0]);
+  return sortedIndex.row();
+}

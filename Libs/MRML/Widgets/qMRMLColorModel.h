@@ -86,10 +86,14 @@ public:
   void setLabelInColorColumn(bool enable);
   bool isLabelInColorColumn()const;
 
-  /// Return the vtkMRMLNode associated to the node index.
-  /// -1 if the node index is not a MRML node (i.e. vtkMRMLScene, extra item...)
-  inline int colorFromIndex(const QModelIndex &nodeIndex)const;
-  int colorFromItem(QStandardItem* nodeItem)const;
+  /// Return the color entry associated to the index.
+  /// -1 if the index is not in the model.
+  /// \sa colorFromItem(), nameFromColor(), colorFromName()
+  inline int colorFromIndex(const QModelIndex &index)const;
+  /// Return the color entry associated to the item.
+  /// -1 if the item is not in the model.
+  /// \sa colorFromIndex(), nameFromColor(), colorFromName()
+  int colorFromItem(QStandardItem* item)const;
 
   QStandardItem* itemFromColor(int color, int column = 0)const;
   QModelIndexList indexes(int color)const;
@@ -99,7 +103,11 @@ public:
   QColor qcolorFromColor(int color)const;
 
   /// Return the name of the color \a colorEntry
+  /// \sa colorFromName(), colorFromIndex(), colorFromItem()
   QString nameFromColor(int colorEntry)const;
+  /// Return the color entry of the first color with name \a name.
+  /// \sa nameFromColor(), colorFromIndex(), colorFromItem()
+  int colorFromName(const QString& name)const;
 
   /// Overload the header data method for the veritical header
   /// so that can return the color index rather than the row

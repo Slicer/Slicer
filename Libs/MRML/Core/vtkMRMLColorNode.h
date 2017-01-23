@@ -110,9 +110,14 @@ public:
       TypeModifiedEvent = 20002
     };
 
-  ///
-  /// Get the 0th based nth name of this colour
+  /// Get name of a color from its index (index is 0-based)
+  /// \sa GetColorIndexByName()
   const char *GetColorName(int ind);
+
+  /// Return the index associated with this color name, which can then be used
+  /// to get the colour. Returns -1 on failure.
+  /// \sa GetColorName()
+  int GetColorIndexByName(const char *name);
 
   /// Get the 0'th based \a colorIndex'th name of this color, replacing all
   /// file name sensitive color name characters with safer character(s).
