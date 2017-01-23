@@ -173,14 +173,14 @@ protected:
 
 protected slots:
   void onTerminologySelectionChanged(int);
-  void onCategoryClicked(QTableWidgetItem*);
-  void onTypeClicked(QTableWidgetItem*);
+  void onCategorySelected(QTableWidgetItem*,QTableWidgetItem*);
+  void onTypeSelected(QTableWidgetItem*,QTableWidgetItem*);
   void onTypeModifierSelectionChanged(int);
   void onCategorySearchTextChanged(QString);
   void onTypeSearchTextChanged(QString);
 
   void onAnatomicContextSelectionChanged(int);
-  void onRegionClicked(QTableWidgetItem*);
+  void onRegionSelected(QTableWidgetItem*,QTableWidgetItem*);
   void onRegionModifierSelectionChanged(int);
   void onRegionSearchTextChanged(QString);
 
