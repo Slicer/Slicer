@@ -336,9 +336,9 @@ vtkSliceViewInteractorStyle* qMRMLSliceView::sliceViewInteractorStyle()const
 }
 
 // --------------------------------------------------------------------------
-QList<double> qMRMLSliceView::convertDeviceToXYZ(const QList<int>& xy)
+QList<double> qMRMLSliceView::convertDeviceToXYZ(const QList<int>& xy)const
 {
-  Q_D(qMRMLSliceView);
+  Q_D(const qMRMLSliceView);
 
   // Grab a displayable manager that is derived from
   // AbstractSliceViewDisplayableManager, like the CrosshairDisplayableManager
@@ -361,9 +361,9 @@ QList<double> qMRMLSliceView::convertDeviceToXYZ(const QList<int>& xy)
 }
 
 // --------------------------------------------------------------------------
-QList<double> qMRMLSliceView::convertRASToXYZ(const QList<double>& ras)
+QList<double> qMRMLSliceView::convertRASToXYZ(const QList<double>& ras)const
 {
-  Q_D(qMRMLSliceView);
+  Q_D(const qMRMLSliceView);
 
   // Grab a displayable manager that is derived from
   // AbstractSliceViewDisplayableManager, like the CrosshairDisplayableManager
@@ -387,9 +387,9 @@ QList<double> qMRMLSliceView::convertRASToXYZ(const QList<double>& ras)
 }
 
 // --------------------------------------------------------------------------
-QList<double> qMRMLSliceView::convertXYZToRAS(const QList<double>& xyz)
+QList<double> qMRMLSliceView::convertXYZToRAS(const QList<double>& xyz)const
 {
-  Q_D(qMRMLSliceView);
+  Q_D(const qMRMLSliceView);
 
   // Grab a displayable manager that is derived from
   // AbstractSliceViewDisplayableManager, like the CrosshairDisplayableManager
