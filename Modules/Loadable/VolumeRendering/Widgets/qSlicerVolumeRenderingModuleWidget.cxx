@@ -239,15 +239,11 @@ vtkMRMLVolumeRenderingDisplayNode* qSlicerVolumeRenderingModuleWidgetPrivate
   q->mrmlScene()->AddNode(displayNode);
   displayNode->Delete();
 
-  vtkMRMLVolumePropertyNode *propNode = NULL;
-  vtkMRMLAnnotationROINode  *roiNode = NULL;
-
   int wasModifying = displayNode->StartModify();
   // Init the volume rendering without the threshold info
   // of the Volumes module...
   displayNode->SetIgnoreVolumeDisplayNodeThreshold(1);
-  logic->UpdateDisplayNodeFromVolumeNode(displayNode, volumeNode,
-                                         &propNode, &roiNode);
+  logic->UpdateDisplayNodeFromVolumeNode(displayNode, volumeNode);
   // ... but then apply the user settings.
   displayNode->SetIgnoreVolumeDisplayNodeThreshold(
     this->IgnoreVolumesThresholdCheckBox->isChecked());
