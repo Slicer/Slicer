@@ -65,6 +65,17 @@ public:
   /// Returns the interactor style of the view
   //vtkInteractorObserver* interactorStyle()const;
 
+  /// Methods to rotate/reset the camera,
+  /// Can defined a view axis by its index (from 0 to 5)
+  /// or its label (defined in vtkMRMLViewNode::AxisLabels)
+  /// to rotate to the axis ranged in that order:
+  /// -X, +X, -Y, +Y, -Z, +Z
+  Q_INVOKABLE void rotateToViewAxis(unsigned int axisId);
+  Q_INVOKABLE void rotateToViewAxis(const std::string& axisLabel);
+  Q_INVOKABLE void resetCamera(bool resetRotation = true,
+                               bool resetTranslation = true,
+                               bool resetDistance = true);
+
 public slots:
 
   /// Set the MRML \a scene that should be listened for events
