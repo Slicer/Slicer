@@ -28,7 +28,7 @@ if(NOT DEFINED OpenIGTLink_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${git_protocol}://github.com/openigtlink/OpenIGTLink.git"
-    GIT_TAG "323b8c0059f94eef122abd5d72530e25f0825a88"
+    GIT_TAG "4e8a35918a8ddedf5496801777697ad67bec4d8f"
     SOURCE_DIR OpenIGTLink
     BINARY_DIR OpenIGTLink-build
     CMAKE_CACHE_ARGS
