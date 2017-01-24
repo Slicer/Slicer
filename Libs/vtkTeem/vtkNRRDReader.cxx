@@ -723,9 +723,9 @@ void vtkNRRDReader::AllocatePointData(vtkImageData *out, vtkInformation* outInfo
     && pd->GetReferenceCount() == 1)
     {
     pd->SetNumberOfComponents(this->GetNumberOfComponents());
-    pd->SetNumberOfTuples((extent[1] - extent[0] + 1)*
-      (extent[3] - extent[2] + 1)*
-      (extent[5] - extent[4] + 1));
+    pd->SetNumberOfTuples(vtkIdType(extent[1] - extent[0] + 1)*
+      vtkIdType(extent[3] - extent[2] + 1)*
+      vtkIdType(extent[5] - extent[4] + 1));
     // Since the execute method will be modifying the scalars
     // directly.
     pd->Modified();
@@ -776,9 +776,9 @@ void vtkNRRDReader::AllocatePointData(vtkImageData *out, vtkInformation* outInfo
   pd->SetNumberOfComponents(this->GetNumberOfComponents());
 
   // allocate enough memory
-  pd->SetNumberOfTuples((extent[1] - extent[0] + 1)*
-    (extent[3] - extent[2] + 1)*
-    (extent[5] - extent[4] + 1));
+  pd->SetNumberOfTuples(vtkIdType(extent[1] - extent[0] + 1)*
+    vtkIdType(extent[3] - extent[2] + 1)*
+    vtkIdType(extent[5] - extent[4] + 1));
 
   switch (this->PointDataType)
     {
