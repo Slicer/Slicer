@@ -1456,21 +1456,15 @@ void vtkMRMLSliceLogic::GetVolumeSliceDimensions(vtkMRMLVolumeNode *volumeNode, 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::GetVolumeSliceBounds(vtkMRMLVolumeNode *volumeNode, double sliceBounds[6])
 {
-  sliceBounds[0] = sliceBounds[1] = 0.0;
-  sliceBounds[2] = sliceBounds[3] = 0.0;
-  sliceBounds[4] = sliceBounds[5] = 0.0;
-
   vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
 
-  if ( !sliceNode )
+  if (sliceNode == NULL || volumeNode == NULL)
     {
+    sliceBounds[0] = sliceBounds[1] = 0.0;
+    sliceBounds[2] = sliceBounds[3] = 0.0;
+    sliceBounds[4] = sliceBounds[5] = 0.0;
     return;
     }
-
-  double rasDimensions[3], rasCenter[3];
-
-  this->GetVolumeRASBox(volumeNode, rasDimensions, rasCenter);
-
   //
   // figure out how big that volume is on this particular slice plane
   //
@@ -1481,49 +1475,7 @@ void vtkMRMLSliceLogic::GetVolumeSliceBounds(vtkMRMLVolumeNode *volumeNode, doub
   rasToSlice->SetElement(2, 3, 0.0);
   rasToSlice->Invert();
 
-  double minBounds[3], maxBounds[3];
-  double rasCorner[4], sliceCorner[4];
-  int i,j,k;
-
-  for ( i=0; i<3; i++)
-    {
-    minBounds[i] = 1.0e10;
-    maxBounds[i] = -1.0e10;
-    }
-  for ( i=-1; i<=1; i=i+2)
-    {
-    for ( j=-1; j<=1; j=j+2)
-      {
-      for ( k=-1; k<=1; k=k+2)
-        {
-        rasCorner[0] = rasCenter[0] + i * rasDimensions[0] / 2.;
-        rasCorner[1] = rasCenter[1] + j * rasDimensions[1] / 2.;
-        rasCorner[2] = rasCenter[2] + k * rasDimensions[2] / 2.;
-        rasCorner[3] = 1.;
-
-        rasToSlice->MultiplyPoint( rasCorner, sliceCorner );
-
-        for (int n=0; n<3; n++) {
-          if (sliceCorner[n] < minBounds[n])
-            {
-            minBounds[n] = sliceCorner[n];
-            }
-          if (sliceCorner[n] > maxBounds[n])
-            {
-            maxBounds[n] = sliceCorner[n];
-            }
-          }
-        }
-      }
-    }
-
-  // ignore homogeneous coordinate
-  sliceBounds[0] = minBounds[0];
-  sliceBounds[1] = maxBounds[0];
-  sliceBounds[2] = minBounds[1];
-  sliceBounds[3] = maxBounds[1];
-  sliceBounds[4] = minBounds[2];
-  sliceBounds[5] = maxBounds[2];
+  volumeNode->GetSliceBounds(sliceBounds, rasToSlice.GetPointer());
 }
 
 //----------------------------------------------------------------------------

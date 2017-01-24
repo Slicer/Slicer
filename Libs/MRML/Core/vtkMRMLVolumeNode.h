@@ -137,8 +137,16 @@ public:
   void SetIJKToRASMatrix(vtkMatrix4x4* mat);
   void SetRASToIJKMatrix(vtkMatrix4x4* mat);
 
+  ///
   /// Get bounding box in global RAS the form (xmin,xmax, ymin,ymax, zmin,zmax).
+  /// \sa GetSliceBounds(), GetIJKToRASMatrix(), vtkMRMLSliceLogic::GetVolumeSliceBounds()
   virtual void GetRASBounds(double bounds[6]);
+
+  ///
+  /// Get bounding box in slice form (xmin,xmax, ymin,ymax, zmin,zmax).
+  /// If not rasToSlice is passed, then it returns the bounds in global RAS form.
+  /// \sa GetRASBounds()
+  void GetSliceBounds(double bounds[6], vtkMatrix4x4* rasToSlice);
 
   ///
   /// Associated display MRML node
