@@ -259,12 +259,18 @@ class ExtensionWizardWidget:
     try:
       repo = SlicerWizard.Utilities.getRepo(path)
 
-      if repo is None:
-        xd = SlicerWizard.ExtensionDescription(sourcedir=path)
+      xd = None
+      if repo:
+        try:
+          xd = SlicerWizard.ExtensionDescription(repo=repo)
+          path = SlicerWizard.Utilities.localRoot(repo)
+        except:
+          # Failed to determine repository path automatically (git is not installed, etc.)
+          # Continue with assuming that the user selected the top-level directory of the extension.
+          pass
 
-      else:
-        xd = SlicerWizard.ExtensionDescription(repo=repo)
-        path = SlicerWizard.Utilities.localRoot(repo)
+      if not xd:
+        xd = SlicerWizard.ExtensionDescription(sourcedir=path)
 
       xp = SlicerWizard.ExtensionProject(path)
 

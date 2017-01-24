@@ -46,7 +46,9 @@ class ModuleInfo(object):
         result += ModuleInfo.findModules(entry, depth - 1)
 
     for entry in filter(os.path.isfile, entries):
-      if entry.endswith(".py"):
+      # __init__.py is not a module but an embedded Python library
+      # that a module will load.
+      if entry.endswith(".py") and not entry.endswith("__init__.py"):
         result.append(ModuleInfo(entry))
 
     return result

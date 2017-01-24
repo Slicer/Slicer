@@ -58,7 +58,7 @@ class CreateComponentDialog(object):
     if self.showDestination:
       dest = self.destination
       if not len(dest) or not os.path.exists(dest):
-        slicer.util.errorDisplay(u"Destination must be an existing directory." % self._typetc,
+        slicer.util.errorDisplay(u"Destination must be an existing directory.",
                                  windowTitle=u"Cannot create %s" % self._typelc, parent=self.dialog)
         return
 
