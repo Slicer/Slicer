@@ -288,7 +288,7 @@ void qMRMLThreeDView::rotateToViewAxis(const std::string& axisLabel)
     return;
     }
 
-  for (unsigned int i = 0; i < vtkMRMLAbstractViewNode::AxisLabelsCount; ++i)
+  for (int i = 0; i < vtkMRMLAbstractViewNode::AxisLabelsCount; ++i)
     {
     if (axisLabel == std::string(d->MRMLViewNode->GetAxisLabel(i)))
       {

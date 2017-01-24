@@ -389,7 +389,7 @@ int vtkMRMLColorNode::GetColorIndexByName(const char *name)
     }
 
   std::string strName = name;
-  for (unsigned int i = 0; i < this->GetNumberOfColors(); ++i)
+  for (int i = 0; i < this->GetNumberOfColors(); ++i)
     {
     if (strName == this->GetColorName(i))
       {
