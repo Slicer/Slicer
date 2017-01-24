@@ -46,6 +46,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
 #include <vtkGeneralTransform.h>
+#include <vtkTransformFilter.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkWeakPointer.h>
 #include <vtkPointLocator.h>
@@ -72,7 +73,7 @@ public:
     vtkSmartPointer<vtkGeneralTransform> NodeToWorld;
     vtkSmartPointer<vtkTransform> TransformToSlice;
     vtkSmartPointer<vtkTransformPolyDataFilter> Transformer;
-    vtkSmartPointer<vtkTransformPolyDataFilter> ModelWarper;
+    vtkSmartPointer<vtkTransformFilter> ModelWarper;
     vtkSmartPointer<vtkPlane> Plane;
     vtkSmartPointer<vtkCutter> Cutter;
     vtkSmartPointer<vtkProp> Actor;
@@ -335,7 +336,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
   pipeline->TransformToSlice = vtkSmartPointer<vtkTransform>::New();
   pipeline->NodeToWorld = vtkSmartPointer<vtkGeneralTransform>::New();
   pipeline->Transformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-  pipeline->ModelWarper = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  pipeline->ModelWarper = vtkSmartPointer<vtkTransformFilter>::New();
   pipeline->Plane = vtkSmartPointer<vtkPlane>::New();
 
   // Set up pipeline
@@ -381,7 +382,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
 void vtkMRMLModelSliceDisplayableManager::vtkInternal
 ::UpdateDisplayNodePipeline(vtkMRMLDisplayNode* displayNode, const Pipeline* pipeline)
 {
-  // Sets visibility, set pipeline polydata input, update color
+  // Sets visibility, set pipeline mesh input, update color
   //   calculate and set pipeline transforms.
 
   if (!pipeline)
@@ -406,43 +407,43 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
     return;
     }
 
-  vtkPolyData* polyData = modelDisplayNode->GetOutputPolyData();
-  if (!polyData)
+  vtkPointSet* pointSet = modelDisplayNode->GetOutputMesh();
+  if (!pointSet)
     {
     pipeline->Actor->SetVisibility(false);
     return;
     }
 
   // Need this to update bounds of the locator, to avoid crash in the cutter
-  modelDisplayNode->GetOutputPolyDataConnection()->GetProducer()->Update();
+  modelDisplayNode->GetOutputMeshConnection()->GetProducer()->Update();
 
-  if (!polyData->GetPoints() || polyData->GetNumberOfPoints() == 0)
+  if (!pointSet->GetPoints() || pointSet->GetNumberOfPoints() == 0)
     {
     // there are no points, so there is nothing to cut
     pipeline->Actor->SetVisibility(false);
     return;
     }
 
-  pipeline->ModelWarper->SetInputData(polyData);
+  pipeline->ModelWarper->SetInputData(pointSet); //why here? +connection?
   pipeline->ModelWarper->SetTransform(pipeline->NodeToWorld);
 
   //  Set Plane Transform
   this->SetSlicePlaneFromMatrix(this->SliceXYToRAS, pipeline->Plane);
   pipeline->Plane->Modified();
 
-  //  Set PolyData Transform
+  //  Set Poly Data Transform
   vtkNew<vtkMatrix4x4> rasToSliceXY;
   vtkMatrix4x4::Invert(this->SliceXYToRAS, rasToSliceXY.GetPointer());
   pipeline->TransformToSlice->SetMatrix(rasToSliceXY.GetPointer());
 
   // optimization for slice to slice intersections which are 1 quad polydatas
   // no need for 50^3 default locator divisons
-  if (polyData->GetPoints() != NULL && polyData->GetNumberOfPoints() <= 4)
+  if (pointSet->GetPoints() != NULL && pointSet->GetNumberOfPoints() <= 4)
     {
     vtkNew<vtkPointLocator> locator;
-    double *bounds = polyData->GetBounds();
+    double *bounds = pointSet->GetBounds();
     locator->SetDivisions(2,2,2);
-    locator->InitPointInsertion(polyData->GetPoints(), bounds);
+    locator->InitPointInsertion(pointSet->GetPoints(), bounds);
     pipeline->Cutter->SetLocator(locator.GetPointer());
     }
 

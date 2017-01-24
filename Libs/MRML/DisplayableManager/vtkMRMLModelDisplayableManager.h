@@ -23,18 +23,20 @@
 #include "vtkMRMLModelHierarchyLogic.h"
 
 // MRML includes
+#include <vtkMRMLModelNode.h>
 class vtkMRMLClipModelsNode;
 class vtkMRMLDisplayNode;
 class vtkMRMLDisplayableNode;
 class vtkMRMLModelHierarchyLogic;
 class vtkMRMLModelHierarchyNode;
-class vtkMRMLModelNode;
 class vtkMRMLSelectionNode;
+class vtkMRMLTransformNode;
 
 // VTK includes
 #include "vtkRenderWindow.h"
 class vtkActor;
 class vtkActorText;
+class vtkAlgorithm;
 class vtkBoundingBox;
 class vtkCellArray;
 class vtkCellPicker;
@@ -172,7 +174,7 @@ protected:
 
   void UpdateModelsFromMRML();
   void UpdateModel(vtkMRMLDisplayableNode *model);
-  void UpdateModelPolyData(vtkMRMLDisplayableNode *model);
+  void UpdateModelMesh(vtkMRMLDisplayableNode *model);
   void UpdateModifiedModel(vtkMRMLDisplayableNode *model);
 
   void SetModelDisplayProperty(vtkMRMLDisplayableNode *model);
@@ -185,7 +187,8 @@ protected:
 
   /// Returns not null if modified
   int UpdateClipSlicesFromMRML();
-  vtkClipPolyData* CreateTransformedClipper(vtkMRMLDisplayableNode *model);
+  vtkAlgorithm *CreateTransformedClipper(vtkMRMLTransformNode *tnode,
+                                         vtkMRMLModelNode::MeshTypeHint type);
 
   void AddHierarchyObservers();
   void RemoveHierarchyObservers(int clearCache);

@@ -20,7 +20,9 @@ Version:   $Revision: 1.3 $
 #include <vtkCommand.h>
 #include <vtkObjectFactory.h>
 #include <vtkPassThrough.h>
+#include <vtkPointSet.h>
 #include <vtkPolyData.h>
+#include <vtkUnstructuredGrid.h>
 #include <vtkVersion.h>
 
 //----------------------------------------------------------------------------
@@ -35,9 +37,6 @@ vtkMRMLModelDisplayNode::vtkMRMLModelDisplayNode()
   // the default behavior for models is to use the scalar range of the data
   // to reset the display scalar range, so use the Data flag
   this->SetScalarRangeFlag(vtkMRMLDisplayNode::UseDataScalarRange);
-
-  // Be careful, virtualization doesn't work in constructors
-  this->UpdatePolyDataPipeline();
 }
 
 //-----------------------------------------------------------------------------
@@ -56,61 +55,99 @@ void vtkMRMLModelDisplayNode::ProcessMRMLEvents(vtkObject *caller,
 
   if (event == vtkCommand::ModifiedEvent)
     {
-    this->UpdatePolyDataPipeline();
+    this->UpdateMeshPipeline();
     }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayNode
+::SetInputMeshConnection(vtkAlgorithmOutput* meshConnection)
+{
+  if (this->GetInputMeshConnection() == meshConnection)
+    {
+    return;
+    }
+  this->SetInputToMeshPipeline(meshConnection);
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayNode
 ::SetInputPolyDataConnection(vtkAlgorithmOutput* polyDataConnection)
 {
-  if (this->GetInputPolyDataConnection() == polyDataConnection)
-    {
-    return;
-    }
-  this->SetInputToPolyDataPipeline(polyDataConnection);
-  this->Modified();
+  // Wrapping `SetInputMeshConnection` for backward compatibility
+  this->SetInputMeshConnection(polyDataConnection);
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayNode
-::SetInputToPolyDataPipeline(vtkAlgorithmOutput* polyDataConnection)
+::SetInputToMeshPipeline(vtkAlgorithmOutput* meshConnection)
 {
-  this->PassThrough->SetInputConnection(polyDataConnection);
-  this->AssignAttribute->SetInputConnection(polyDataConnection);
+  this->PassThrough->SetInputConnection(meshConnection);
+  this->AssignAttribute->SetInputConnection(meshConnection);
+
+  this->Modified();
+}
+
+//---------------------------------------------------------------------------
+vtkPointSet* vtkMRMLModelDisplayNode::GetInputMesh()
+{
+  return vtkPointSet::SafeDownCast(this->AssignAttribute->GetInput());
 }
 
 //---------------------------------------------------------------------------
 vtkPolyData* vtkMRMLModelDisplayNode::GetInputPolyData()
 {
-  return vtkPolyData::SafeDownCast(this->AssignAttribute->GetInput());
+  return vtkPolyData::SafeDownCast(this->GetInputMesh());
 }
 
 //---------------------------------------------------------------------------
-vtkAlgorithmOutput* vtkMRMLModelDisplayNode::GetInputPolyDataConnection()
+vtkUnstructuredGrid* vtkMRMLModelDisplayNode::GetInputUnstructuredGrid()
+{
+  return vtkUnstructuredGrid::SafeDownCast(this->GetInputMesh());
+}
+
+//---------------------------------------------------------------------------
+vtkAlgorithmOutput* vtkMRMLModelDisplayNode::GetInputMeshConnection()
 {
   return this->AssignAttribute->GetNumberOfInputConnections(0) ?
     this->AssignAttribute->GetInputConnection(0,0) : 0;
 }
 
 //---------------------------------------------------------------------------
-vtkPolyData* vtkMRMLModelDisplayNode::GetOutputPolyData()
+vtkAlgorithmOutput* vtkMRMLModelDisplayNode::GetInputPolyDataConnection()
 {
-  if (!this->GetOutputPolyDataConnection())
-    {
-    return 0;
-    }
-  if (!this->GetInputPolyData())
-    {
-    return 0;
-    }
-  return vtkPolyData::SafeDownCast(
-    this->GetOutputPolyDataConnection()->GetProducer()->GetOutputDataObject(
-      this->GetOutputPolyDataConnection()->GetIndex()));
+  // Wrapping `GetInputMeshConnection` for backward compatibility
+  return this->GetInputMeshConnection();
 }
 
 //---------------------------------------------------------------------------
-vtkAlgorithmOutput* vtkMRMLModelDisplayNode::GetOutputPolyDataConnection()
+vtkPointSet* vtkMRMLModelDisplayNode::GetOutputMesh()
+{
+  if (!this->GetInputMeshConnection())
+    {
+    return NULL;
+    }
+
+  vtkAlgorithmOutput* outputConnection = this->GetOutputMeshConnection();
+  vtkAlgorithm* producer =  outputConnection? outputConnection->GetProducer() : 0;
+  return vtkPointSet::SafeDownCast(
+    producer ? producer->GetOutputDataObject(outputConnection->GetIndex()) : 0);
+}
+
+//---------------------------------------------------------------------------
+vtkPolyData* vtkMRMLModelDisplayNode::GetOutputPolyData()
+{
+  return vtkPolyData::SafeDownCast(this->GetOutputMesh());
+}
+
+//---------------------------------------------------------------------------
+vtkUnstructuredGrid* vtkMRMLModelDisplayNode::GetOutputUnstructuredGrid()
+{
+  return vtkUnstructuredGrid::SafeDownCast(this->GetOutputMesh());
+}
+
+//---------------------------------------------------------------------------
+vtkAlgorithmOutput* vtkMRMLModelDisplayNode::GetOutputMeshConnection()
 {
   if (this->GetActiveScalarName())
     {
@@ -120,6 +157,14 @@ vtkAlgorithmOutput* vtkMRMLModelDisplayNode::GetOutputPolyDataConnection()
     {
     return this->PassThrough->GetOutputPort();
     }
+}
+
+//---------------------------------------------------------------------------
+vtkAlgorithmOutput* vtkMRMLModelDisplayNode::GetOutputPolyDataConnection()
+{
+  vtkWarningMacro("vtkMRMLModelDisplayNode::GetOutputPolyDataConnection is "
+                  << "deprecated. Favor GetOutputMeshConnection().");
+  return this->GetOutputMeshConnection();
 }
 
 //---------------------------------------------------------------------------
@@ -135,7 +180,7 @@ void vtkMRMLModelDisplayNode::SetActiveScalarName(const char *scalarName)
     }
   int wasModifying = this->StartModify();
   this->Superclass::SetActiveScalarName(scalarName);
-  this->UpdatePolyDataPipeline();
+  this->UpdateMeshPipeline();
   this->EndModify(wasModifying);
 }
 
@@ -148,24 +193,24 @@ void vtkMRMLModelDisplayNode::SetActiveAttributeLocation(int location)
     }
   int wasModifying = this->StartModify();
   this->Superclass::SetActiveAttributeLocation(location);
-  this->UpdatePolyDataPipeline();
+  this->UpdateMeshPipeline();
   this->EndModify(wasModifying);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayNode::UpdatePolyDataPipeline()
+void vtkMRMLModelDisplayNode::UpdateMeshPipeline()
 {
   this->AssignAttribute->Assign(
     this->GetActiveScalarName(),
     this->GetActiveScalarName() ? vtkDataSetAttributes::SCALARS : -1,
     this->GetActiveAttributeLocation());
-  if (this->GetOutputPolyData())
+  if (this->GetOutputMesh())
     {
-    this->GetOutputPolyDataConnection()->GetProducer()->Update();
+    this->GetOutputMeshConnection()->GetProducer()->Update();
     if (this->GetAutoScalarRange())
       {
-      vtkDebugMacro("UpdatePolyDataPipeline: Auto flag is on, resetting scalar range!");
-      this->SetScalarRange(this->GetOutputPolyData()->GetScalarRange());
+      vtkDebugMacro("UpdateMeshPipeline: Auto flag is on, resetting scalar range!");
+      this->SetScalarRange(this->GetOutputMesh()->GetScalarRange());
       }
     }
 }

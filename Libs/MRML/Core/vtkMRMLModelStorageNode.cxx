@@ -41,8 +41,11 @@
 #include <vtkTriangleFilter.h>
 #include <vtkUnstructuredGrid.h>
 #include <vtkUnstructuredGridReader.h>
+#include <vtkUnstructuredGridWriter.h>
 #include <vtkXMLPolyDataReader.h>
 #include <vtkXMLPolyDataWriter.h>
+#include <vtkXMLUnstructuredGridReader.h>
+#include <vtkXMLUnstructuredGridWriter.h>
 #include <vtkVersion.h>
 
 // ITK includes
@@ -146,38 +149,39 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       }
     else if (extension == std::string(".vtk"))
       {
-      vtkPolyData* output = 0;
       vtkNew<vtkPolyDataReader> reader;
       reader->SetFileName(fullName.c_str());
       vtkNew<vtkUnstructuredGridReader> unstructuredGridReader;
-      vtkNew<vtkDataSetSurfaceFilter> surfaceFilter;
-
       unstructuredGridReader->SetFileName(fullName.c_str());
+
       if (reader->IsFilePolyData())
         {
         reader->Update();
-        output = reader->GetOutput();
+        reader->ReadAllScalarsOn();
+        reader->ReadAllVectorsOn();
+        reader->ReadAllNormalsOn();
+        reader->ReadAllTensorsOn();
+        reader->ReadAllColorScalarsOn();
+        reader->ReadAllTCoordsOn();
+        reader->ReadAllFieldsOn();
+        modelNode->SetPolyDataConnection(reader->GetOutputPort());
         }
       else if (unstructuredGridReader->IsFileUnstructuredGrid())
         {
+        unstructuredGridReader->ReadAllScalarsOn();
+        unstructuredGridReader->ReadAllVectorsOn();
+        unstructuredGridReader->ReadAllNormalsOn();
+        unstructuredGridReader->ReadAllTensorsOn();
+        unstructuredGridReader->ReadAllColorScalarsOn();
+        unstructuredGridReader->ReadAllTCoordsOn();
+        unstructuredGridReader->ReadAllFieldsOn();
         unstructuredGridReader->Update();
-        surfaceFilter->SetInputConnection(unstructuredGridReader->GetOutputPort());
-        surfaceFilter->Update();
-        output = reader->GetOutput();
+        modelNode->SetUnstructuredGridConnection(unstructuredGridReader->GetOutputPort());
         }
       else
         {
         vtkErrorMacro("File " << fullName.c_str()
                       << " is not recognized as polydata nor as an unstructured grid.");
-        }
-      if (output == 0)
-        {
-        vtkErrorMacro("Unable to read file " << fullName.c_str());
-        result = 0;
-        }
-      else
-        {
-        modelNode->SetPolyDataConnection(reader->GetOutputPort());
         }
       }
     else if (extension == std::string(".vtp"))
@@ -186,6 +190,13 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       reader->SetFileName(fullName.c_str());
       reader->Update();
       modelNode->SetPolyDataConnection(reader->GetOutputPort());
+      }
+    else if (extension == std::string(".vtu"))
+      {
+      vtkNew<vtkXMLUnstructuredGridReader> reader;
+      reader->SetFileName(fullName.c_str());
+      reader->Update();
+      modelNode->SetUnstructuredGridConnection(reader->GetOutputPort());
       }
     else if (extension == std::string(".stl"))
       {
@@ -280,19 +291,19 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     result = 0;
     }
 
-  if (modelNode->GetPolyData() != NULL)
+  if (modelNode->GetMesh() != NULL)
     {
     // is there an active scalar array?
     if (modelNode->GetDisplayNode())
       {
-      double *scalarRange =  modelNode->GetPolyData()->GetScalarRange();
+      double *scalarRange =  modelNode->GetMesh()->GetScalarRange();
       if (scalarRange)
         {
         vtkDebugMacro("ReadDataInternal: setting scalar range " << scalarRange[0] << ", " << scalarRange[1]);
         modelNode->GetDisplayNode()->SetScalarRange(scalarRange);
         }
       }
-    //modelNode->GetPolyData()->Modified();
+    //modelNode->GetMesh()->Modified();
     }
   return result;
 }
@@ -312,12 +323,47 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
 
   int result = 1;
-  if (extension == ".vtk")
+  if (extension == ".vtk" &&
+      (modelNode->GetMeshType() == vtkMRMLModelNode::PolyDataMeshType))
     {
     vtkNew<vtkPolyDataWriter> writer;
     writer->SetFileName(fullName.c_str());
     writer->SetFileType(this->GetUseCompression() ? VTK_BINARY : VTK_ASCII );
     writer->SetInputConnection( modelNode->GetPolyDataConnection() );
+    try
+      {
+      writer->Write();
+      }
+    catch (...)
+      {
+      result = 0;
+      }
+    }
+  else if (extension == ".vtk" &&
+           (modelNode->GetMeshType() == vtkMRMLModelNode::UnstructuredGridMeshType))
+    {
+    vtkNew<vtkUnstructuredGridWriter> writer;
+    writer->SetFileName(fullName.c_str());
+    writer->SetFileType(this->GetUseCompression() ? VTK_BINARY : VTK_ASCII );
+    writer->SetInputConnection( modelNode->GetMeshConnection() );
+    try
+      {
+      writer->Write();
+      }
+    catch (...)
+      {
+      result = 0;
+      }
+    }
+  else if (extension == ".vtu")
+    {
+    vtkNew<vtkXMLUnstructuredGridWriter> writer;
+    writer->SetFileName(fullName.c_str());
+    writer->SetCompressorType(
+      this->GetUseCompression() ? vtkXMLWriter::ZLIB : vtkXMLWriter::NONE);
+    writer->SetDataMode(
+      this->GetUseCompression() ? vtkXMLWriter::Appended : vtkXMLWriter::Ascii);
+    writer->SetInputConnection( modelNode->GetMeshConnection() );
     try
       {
       writer->Write();
@@ -428,7 +474,9 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 void vtkMRMLModelStorageNode::InitializeSupportedReadFileTypes()
 {
   this->SupportedReadFileTypes->InsertNextValue("Poly Data (.vtk)");
-  this->SupportedReadFileTypes->InsertNextValue("Poly Data (.vtp)");
+  this->SupportedReadFileTypes->InsertNextValue("XML Poly Data (.vtp)");
+  this->SupportedReadFileTypes->InsertNextValue("Unstructured Grid (.vtk)");
+  this->SupportedReadFileTypes->InsertNextValue("XML Unstructured Grid (.vtu)");
   this->SupportedReadFileTypes->InsertNextValue("vtkXMLPolyDataReader (.g)");
   this->SupportedReadFileTypes->InsertNextValue("BYU (.byu)");
   this->SupportedReadFileTypes->InsertNextValue("vtkXMLPolyDataReader (.meta)");
@@ -440,13 +488,48 @@ void vtkMRMLModelStorageNode::InitializeSupportedReadFileTypes()
 //----------------------------------------------------------------------------
 void vtkMRMLModelStorageNode::InitializeSupportedWriteFileTypes()
 {
-  // Look at WriteData(), .g and .meta are not being written even though
-  // SupportedFileType() says they are supported
-  this->SupportedWriteFileTypes->InsertNextValue("Poly Data (.vtk)");
-  this->SupportedWriteFileTypes->InsertNextValue("XML Poly Data (.vtp)");
-  //this->SupportedWriteFileTypes->InsertNextValue("vtkXMLPolyDataReader (.g)");
-  //this->SupportedWriteFileTypes->InsertNextValue("vtkXMLPolyDataReader (.meta)");
-  this->SupportedWriteFileTypes->InsertNextValue("STL (.stl)");
-  this->SupportedWriteFileTypes->InsertNextValue("PLY (.ply)");
-  this->SupportedWriteFileTypes->InsertNextValue("Wavefront OBJ (.obj)");
+  vtkMRMLModelNode* modelNode = this->GetAssociatedDataNode();
+  if (!modelNode || modelNode->GetMeshType() == vtkMRMLModelNode::PolyDataMeshType)
+    {
+    this->SupportedWriteFileTypes->InsertNextValue("Poly Data (.vtk)");
+    this->SupportedWriteFileTypes->InsertNextValue("XML Poly Data (.vtp)");
+    // Look at WriteData(), .g and .meta are not being written even though
+    // SupportedFileType() says they are supported
+    //this->SupportedWriteFileTypes->InsertNextValue("vtkXMLPolyDataReader (.g)");
+    //this->SupportedWriteFileTypes->InsertNextValue("vtkXMLPolyDataReader (.meta)");
+    this->SupportedWriteFileTypes->InsertNextValue("STL (.stl)");
+    this->SupportedWriteFileTypes->InsertNextValue("PLY (.ply)");
+    this->SupportedWriteFileTypes->InsertNextValue("Wavefront OBJ (.obj)");
+    }
+  if (!modelNode || modelNode->GetMeshType() == vtkMRMLModelNode::UnstructuredGridMeshType)
+    {
+    this->SupportedWriteFileTypes->InsertNextValue("Unstructured Grid (.vtk)");
+    this->SupportedWriteFileTypes->InsertNextValue("XML Unstructured Grid (.vtu)");
+    }
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLModelNode* vtkMRMLModelStorageNode::GetAssociatedDataNode()
+{
+  if (!this->GetScene())
+    {
+    return NULL;
+    }
+
+  std::vector<vtkMRMLNode*> nodes;
+  unsigned int numberOfNodes = this->GetScene()->GetNodesByClass("vtkMRMLModelNode", nodes);
+  for (unsigned int nodeIndex=0; nodeIndex<numberOfNodes; nodeIndex++)
+    {
+    vtkMRMLModelNode* node = vtkMRMLModelNode::SafeDownCast(nodes[nodeIndex]);
+    if (node)
+      {
+      const char* storageNodeID = node->GetStorageNodeID();
+      if (storageNodeID && !strcmp(storageNodeID, this->ID))
+        {
+        return vtkMRMLModelNode::SafeDownCast(node);
+        }
+      }
+    }
+
+  return NULL;
 }

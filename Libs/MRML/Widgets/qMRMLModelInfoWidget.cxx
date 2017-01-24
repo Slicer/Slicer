@@ -30,10 +30,12 @@
 
 // VTK includes
 #include <vtkCellData.h>
+#include <vtkGeometryFilter.h>
 #include <vtkMassProperties.h>
 #include <vtkPointData.h>
 #include <vtkSmartPointer.h>
 #include <vtkTriangleFilter.h>
+#include <vtkUnstructuredGrid.h>
 #include <vtkVersion.h>
 
 //------------------------------------------------------------------------------
@@ -50,6 +52,7 @@ public:
 
   vtkMRMLModelNode* MRMLModelNode;
   vtkSmartPointer<vtkTriangleFilter> TriangleFilter;
+  vtkSmartPointer<vtkGeometryFilter> GeometryFilter;
   vtkSmartPointer<vtkMassProperties> MassProperties;
 };
 
@@ -58,10 +61,10 @@ qMRMLModelInfoWidgetPrivate::qMRMLModelInfoWidgetPrivate(qMRMLModelInfoWidget& o
   : q_ptr(&object)
 {
   this->MRMLModelNode = 0;
+  this->GeometryFilter = vtkSmartPointer<vtkGeometryFilter>::New();
   this->TriangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
   this->TriangleFilter->SetPassLines(0);
   this->MassProperties = vtkSmartPointer<vtkMassProperties>::New();
-  this->MassProperties->SetInputConnection( this->TriangleFilter->GetOutputPort() );
 }
 
 //------------------------------------------------------------------------------
@@ -133,12 +136,23 @@ void qMRMLModelInfoWidget::updateWidgetFromMRML()
     // so if the widget is not visible then do not update
     return;
   }
-  vtkPolyData *poly = d->MRMLModelNode ? d->MRMLModelNode->GetPolyData() : 0;
-  if (poly)
+  vtkPointSet *mesh = d->MRMLModelNode ? d->MRMLModelNode->GetMesh() : 0;
+  if (mesh)
     {
-    d->TriangleFilter->SetInputData(poly);
-    d->TriangleFilter->Update();
-    if (d->TriangleFilter->GetOutput()->GetNumberOfCells() > 0)
+    vtkPolyDataAlgorithm* filter;
+    vtkPolyData* poly = vtkPolyData::SafeDownCast(mesh);
+    if (poly)
+      {
+      filter = d->TriangleFilter;
+      }
+    else
+      {
+      filter = d->GeometryFilter;
+      }
+    d->MassProperties->SetInputConnection( filter->GetOutputPort() );
+    filter->SetInputData(mesh);
+    filter->Update();
+    if (filter->GetOutput()->GetNumberOfCells() > 0)
       {
       d->SurfaceAreaDoubleSpinBox->setValue(d->MassProperties->GetSurfaceArea());
       d->VolumeAreaDoubleSpinBox->setValue(d->MassProperties->GetVolume());
@@ -149,15 +163,27 @@ void qMRMLModelInfoWidget::updateWidgetFromMRML()
       d->VolumeAreaDoubleSpinBox->setValue(0);
       }
 
-    d->NumberOfPointsSpinBox->setValue(poly->GetNumberOfPoints());
-    d->NumberOfCellsSpinBox->setValue(poly->GetNumberOfCells());
-    d->NumberOfVertsValueLabel->setText(QString::number(poly->GetNumberOfVerts()));
-    d->NumberOfLinesValueLabel->setText(QString::number(poly->GetNumberOfLines()));
-    d->NumberOfPolysValueLabel->setText(QString::number(poly->GetNumberOfPolys()));
-    d->NumberOfStripsValueLabel->setText(QString::number(poly->GetNumberOfStrips()));
-    d->MaxCellSizeValueLabel->setText(QString::number(poly->GetMaxCellSize()));
-    d->NumberOfPointsScalarsSpinBox->setValue(poly->GetPointData()->GetNumberOfComponents());
-    d->NumberOfCellsScalarsSpinBox->setValue(poly->GetCellData()->GetNumberOfComponents());
+    d->NumberOfPointsSpinBox->setValue(mesh->GetNumberOfPoints());
+    d->NumberOfCellsSpinBox->setValue(mesh->GetNumberOfCells());
+    if (poly)
+      {
+      d->MeshTypeLineEdit->setText("Surface Mesh (vtkPolyData)");
+      d->NumberOfVertsValueLabel->setText(QString::number(poly->GetNumberOfVerts()));
+      d->NumberOfLinesValueLabel->setText(QString::number(poly->GetNumberOfLines()));
+      d->NumberOfPolysValueLabel->setText(QString::number(poly->GetNumberOfPolys()));
+      d->NumberOfStripsValueLabel->setText(QString::number(poly->GetNumberOfStrips()));
+      }
+    else
+      {
+      d->MeshTypeLineEdit->setText("Volumetric Mesh (vtkUnstructuredGrid)");
+      d->NumberOfVertsValueLabel->setText("0");
+      d->NumberOfLinesValueLabel->setText("0");
+      d->NumberOfPolysValueLabel->setText("0");
+      d->NumberOfStripsValueLabel->setText("0");
+      }
+    d->MaxCellSizeValueLabel->setText(QString::number(mesh->GetMaxCellSize()));
+    d->NumberOfPointsScalarsSpinBox->setValue(mesh->GetPointData()->GetNumberOfComponents());
+    d->NumberOfCellsScalarsSpinBox->setValue(mesh->GetCellData()->GetNumberOfComponents());
     }
   else
     {

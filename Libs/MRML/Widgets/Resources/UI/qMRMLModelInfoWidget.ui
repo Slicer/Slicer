@@ -18,13 +18,27 @@
     <number>0</number>
    </property>
    <item row="0" column="0">
+    <widget class="QLabel" name="MeshTypeLabel">
+     <property name="text">
+      <string>Mesh Type:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="MeshTypeLineEdit">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
     <widget class="QLabel" name="SurfaceAreaLabel">
      <property name="text">
       <string>Surface Area:</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
+   <item row="1" column="1">
     <widget class="ctkDoubleSpinBox" name="SurfaceAreaDoubleSpinBox">
      <property name="enabled">
       <bool>false</bool>
@@ -37,14 +51,14 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="2" column="0">
     <widget class="QLabel" name="VolumeAreaLabel">
      <property name="text">
       <string>Volume:</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
+   <item row="2" column="1">
     <widget class="ctkDoubleSpinBox" name="VolumeAreaDoubleSpinBox">
      <property name="enabled">
       <bool>false</bool>
@@ -57,14 +71,14 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <widget class="QLabel" name="NumberOfPointsLabel">
      <property name="text">
       <string>Number of Points:</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="3" column="1">
     <widget class="QSpinBox" name="NumberOfPointsSpinBox">
      <property name="enabled">
       <bool>false</bool>
@@ -74,14 +88,14 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
+   <item row="5" column="0">
     <widget class="QLabel" name="NumberOfPointsScalarsLabel">
      <property name="text">
       <string>Number of Points Scalars:</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="1">
+   <item row="5" column="1">
     <widget class="QSpinBox" name="NumberOfPointsScalarsSpinBox">
      <property name="enabled">
       <bool>false</bool>
@@ -91,14 +105,14 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="0">
+   <item row="6" column="0">
     <widget class="QLabel" name="NumberOfCellsScalarsLabel">
      <property name="text">
       <string>Number of Cells Scalars:</string>
      </property>
     </widget>
    </item>
-   <item row="5" column="1">
+   <item row="6" column="1">
     <widget class="QSpinBox" name="NumberOfCellsScalarsSpinBox">
      <property name="enabled">
       <bool>false</bool>
@@ -108,21 +122,21 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="0">
+   <item row="7" column="0">
     <widget class="QLabel" name="FileNameLabel">
      <property name="text">
       <string>Filename:</string>
      </property>
     </widget>
    </item>
-   <item row="6" column="1">
+   <item row="7" column="1">
     <widget class="QLineEdit" name="FileNameLineEdit">
      <property name="readOnly">
       <bool>true</bool>
      </property>
     </widget>
    </item>
-   <item row="3" column="1">
+   <item row="4" column="1">
     <layout class="QVBoxLayout" name="verticalLayout">
      <property name="spacing">
       <number>0</number>
@@ -255,7 +269,7 @@
      </item>
     </layout>
    </item>
-   <item row="3" column="0">
+   <item row="4" column="0">
     <widget class="QLabel" name="NumberOfCellsLabel">
      <property name="text">
       <string>Number of Cells:</string>

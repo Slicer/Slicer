@@ -17,6 +17,8 @@
 
 #include "vtkMRMLStorageNode.h"
 
+class vtkMRMLModelNode;
+
 /// \brief MRML node for model storage on disk.
 ///
 /// Storage nodes has methods to read/write vtkPolyData to/from disk.
@@ -47,6 +49,9 @@ protected:
 
   /// Initialize all the supported write file types
   virtual void InitializeSupportedWriteFileTypes();
+
+  /// Get data node that is associated with this storage node
+  vtkMRMLModelNode* GetAssociatedDataNode();
 
   /// Read data and set it in the referenced node
   virtual int ReadDataInternal(vtkMRMLNode *refNode);

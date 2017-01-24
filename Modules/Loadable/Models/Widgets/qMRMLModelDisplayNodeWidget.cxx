@@ -546,7 +546,7 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
 
   wasBlocking = d->ActiveScalarComboBox->blockSignals(true);
   d->ActiveScalarComboBox->setDataSet(
-    d->MRMLModelDisplayNode->GetInputPolyData());
+    d->MRMLModelDisplayNode->GetInputMesh());
   d->ActiveScalarComboBox->blockSignals(wasBlocking);
   if (d->ActiveScalarComboBox->currentArrayName() !=
       d->MRMLModelDisplayNode->GetActiveScalarName())
@@ -559,9 +559,9 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
   if (!d->ActiveScalarComboBox->currentArrayName().isEmpty())
     {
     vtkPointData *pointData = NULL;
-    if (d->MRMLModelDisplayNode->GetInputPolyData())
+    if (d->MRMLModelDisplayNode->GetInputMesh())
       {
-      pointData = d->MRMLModelDisplayNode->GetInputPolyData()->GetPointData();
+      pointData = d->MRMLModelDisplayNode->GetInputMesh()->GetPointData();
       }
     if (pointData &&
         pointData->GetArray(d->MRMLModelDisplayNode->GetActiveScalarName()))
