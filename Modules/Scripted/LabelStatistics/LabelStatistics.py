@@ -444,8 +444,8 @@ class LabelStatisticsLogic(ScriptedLoadableModuleLogic):
       col.SetName(k)
     for i in self.labelStats["Labels"]:
       rowIndex = table.AddEmptyRow()
+      columnIndex = 0
       if colorNode:
-        columnIndex = 0
         table.SetCellText(rowIndex, columnIndex, colorNode.GetColorName(i))
         columnIndex += 1
       # Add other values
