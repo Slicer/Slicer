@@ -105,7 +105,7 @@ QString qSlicerModelsModule::helpText()const
 //-----------------------------------------------------------------------------
 QString qSlicerModelsModule::acknowledgementText()const
 {
-  return "This work was was partially funded by NIH grant 3P41RR013218-12S1";
+  return "This work was partially funded by NIH grants 3P41RR013218-12S1 and R01CA184354.";
 }
 
 //-----------------------------------------------------------------------------
@@ -115,6 +115,7 @@ QStringList qSlicerModelsModule::contributors()const
   moduleContributors << QString("Julien Finet (Kitware)");
   moduleContributors << QString("Alex Yarmakovich (Isomics)");
   moduleContributors << QString("Nicole Aucoin (SPL, BWH)");
+  moduleContributors << QString("Alexis Girault (Kitware)");
   return moduleContributors;
 }
 
