@@ -26,8 +26,8 @@
 #include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLModelHierarchyNode.h>
 #include <vtkMRMLModelNode.h>
-#include <vtkMRMLProceduralColorNode.h>
 #include <vtkMRMLClipModelsNode.h>
+#include <vtkMRMLColorNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLViewNode.h>
@@ -1532,59 +1532,14 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
           {
           if (mrmlDisplayNode->GetColorNode() != 0)
             {
-            vtkMRMLProceduralColorNode* proceduralColorNode =
-              vtkMRMLProceduralColorNode::SafeDownCast(mrmlDisplayNode->GetColorNode());
-            // FreeSurfer procedural color nodes are a special case, they're
-            // color tables that have been defined procedurally, so the nodes
-            // don't have valid color transfer functions (ctf is non null, but
-            // aren't initialized)
-            if (proceduralColorNode &&
-                proceduralColorNode->GetColorTransferFunction() != 0 &&
-                !proceduralColorNode->IsA("vtkMRMLFreeSurferProceduralColorNode"))
-              {
-              if (0)
-                {
-                // setting the range on a color transfer function will not work
-                // so stub out this code and copy into a look up table
-                vtkNew<vtkColorTransferFunction> ctf;
-                ctf->DeepCopy(proceduralColorNode->GetColorTransferFunction());
-                actor->GetMapper()->SetLookupTable(ctf.GetPointer());
-                }
-              else
-                {
-                // since setting the range is a no-op on color transfer functions,
-                // copy into a color look up table with, for now 256 entries
-                const int numEntries = 256;
-                vtkColorTransferFunction *ctf = NULL;
-                ctf = proceduralColorNode->GetColorTransferFunction();
-                double *ctfRange = ctf->GetRange();
-                double bareTable[numEntries*3];
-                ctf->GetTable(ctfRange[0], ctfRange[1], numEntries, bareTable);
-                vtkDebugMacro("Changing a color xfer function to a lut, range used = " << ctfRange[0] << ", " << ctfRange[1]);
-                vtkNew<vtkLookupTable> lut;
-                lut->SetNumberOfTableValues(numEntries);
-                for (vtkIdType i = 0; i < numEntries; ++i)
-                  {
-                  int baseIndex = i * 3;
-                  lut->SetTableValue(i,
-                                     bareTable[baseIndex],
-                                     bareTable[baseIndex + 1],
-                                     bareTable[baseIndex + 2],
-                                     1.0);
-                  }
-                actor->GetMapper()->SetLookupTable(lut.GetPointer());
-                }
-              }
-            else if (mrmlDisplayNode->GetColorNode()->GetLookupTable() != 0)
-              {
-              // \tbd: Could slow down if done too often
-              // copy lut so that they are not shared between the mappers
-              // vtk sets scalar range on lut while rendering
-              // that may cause performance problem if lut's are shared
-              vtkNew<vtkLookupTable> lut;
-              lut->DeepCopy( mrmlDisplayNode->GetColorNode()->GetLookupTable());
-              actor->GetMapper()->SetLookupTable(lut.GetPointer());
-              }
+            // \tbd: Could slow down if done too often
+            // copy lut so that they are not shared between the mappers
+            // vtk sets scalar range on lut while rendering
+            // that may cause performance problem if lut's are shared
+            vtkNew<vtkLookupTable> lut;
+            lut->DeepCopy( mrmlDisplayNode->GetColorNode()->GetLookupTable());
+            actor->GetMapper()->SetLookupTable(lut.GetPointer());
+
             // the mapper uses the lookup table scalar range so that
             // it doesn't reset the table range from it's own scalar
             // range value. An alternate implementation is to do the
@@ -1661,16 +1616,9 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
               {
               // tbd: may not be required due to the deep copy
               double *lutRange = NULL;
-              // make the exception for the freesurfer nodes
-              if (proceduralColorNode &&
-                  proceduralColorNode->GetColorTransferFunction() != 0 &&
-                  !proceduralColorNode->IsA("vtkMRMLFreeSurferProceduralColorNode"))
+              if (lut.GetPointer())
                 {
-                lutRange =  proceduralColorNode->GetColorTransferFunction()->GetRange();
-                }
-              else if (modelDisplayNode->GetColorNode()->GetLookupTable() != 0)
-                {
-                lutRange = modelDisplayNode->GetColorNode()->GetLookupTable()->GetRange();
+                lutRange = lut->GetRange();
                 }
               if (lutRange &&
                   (lutRange[0] != mapperTableRange[0] ||

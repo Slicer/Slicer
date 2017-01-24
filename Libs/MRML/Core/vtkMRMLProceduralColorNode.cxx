@@ -20,6 +20,7 @@ Version:   $Revision: 1.0 $
 #include <vtkColorTransferFunction.h>
 #include <vtkCommand.h>
 #include <vtkEventBroker.h>
+#include <vtkLookupTable.h>
 #include <vtkObjectFactory.h>
 
 // STD includes
@@ -36,12 +37,16 @@ vtkMRMLProceduralColorNode::vtkMRMLProceduralColorNode()
   vtkColorTransferFunction* ctf=vtkColorTransferFunction::New();
   this->SetAndObserveColorTransferFunction(ctf);
   ctf->Delete();
+
+  this->ConvertedCTFtoLUT = vtkLookupTable::New();
+  this->NumberOfTableValues = 256;
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLProceduralColorNode::~vtkMRMLProceduralColorNode()
 {
   this->SetAndObserveColorTransferFunction(NULL);
+  this->ConvertedCTFtoLUT->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -126,6 +131,38 @@ void vtkMRMLProceduralColorNode::ProcessMRMLEvents ( vtkObject *caller,
     Modified();
     }
   return;
+}
+
+//-----------------------------------------------------------
+vtkLookupTable* vtkMRMLProceduralColorNode::GetLookupTable()
+{
+  this->ConvertedCTFtoLUT->SetNumberOfTableValues(0);
+
+  // since setting the range is a no-op on color transfer functions,
+  // copy into a color look up table with NumberOfTableValues entries
+  vtkColorTransferFunction *ctf = this->GetColorTransferFunction();
+  double *ctfRange = ctf->GetRange();
+  double bareTable[this->NumberOfTableValues*3];
+  ctf->GetTable(ctfRange[0], ctfRange[1],
+                this->NumberOfTableValues, bareTable);
+
+  vtkDebugMacro("Changing a color xfer function to a lut, range used = "
+                << ctfRange[0] << ", " << ctfRange[1]
+                << " (" << this->NumberOfTableValues << " colors)");
+
+  // Fill in values in lut
+  this->ConvertedCTFtoLUT->SetTableRange(ctfRange);
+  this->ConvertedCTFtoLUT->SetNumberOfTableValues(this->NumberOfTableValues);
+  for (vtkIdType i = 0; i < this->NumberOfTableValues; ++i)
+    {
+    int baseIndex = i * 3;
+    this->ConvertedCTFtoLUT->SetTableValue(i,
+                                           bareTable[baseIndex],
+                                           bareTable[baseIndex + 1],
+                                           bareTable[baseIndex + 2],
+                                           1.0);
+    }
+  return this->ConvertedCTFtoLUT;
 }
 
 //-----------------------------------------------------------

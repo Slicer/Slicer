@@ -36,6 +36,7 @@
 #include <vtkAlgorithmOutput.h>
 #include <vtkCallbackCommand.h>
 #include <vtkEventBroker.h>
+#include <vtkLookupTable.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
@@ -453,7 +454,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
     actor->GetMapper());
   mapper->SetInputConnection( pipeline->Transformer->GetOutputPort() );
   mapper->SetLookupTable( displayNode->GetColorNode() ?
-                          displayNode->GetColorNode()->GetScalarsToColors() : 0);
+                          displayNode->GetColorNode()->GetLookupTable() : 0);
   mapper->SetScalarRange(modelDisplayNode->GetScalarRange());
   actor->SetPosition(0,0);
   vtkProperty2D* actorProperties = actor->GetProperty();
