@@ -176,9 +176,6 @@ set(MRMLCore_SRCS
   vtkMRMLTransformDisplayNode.cxx
   vtkMRMLTransformableNode.cxx
   vtkMRMLUnitNode.cxx
-  vtkMRMLUnstructuredGridDisplayNode.cxx
-  vtkMRMLUnstructuredGridNode.cxx
-  vtkMRMLUnstructuredGridStorageNode.cxx
   vtkMRMLVectorVolumeDisplayNode.cxx
   vtkMRMLViewNode.cxx
   vtkMRMLVolumeArchetypeStorageNode.cxx

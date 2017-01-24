@@ -91,9 +91,6 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLTransformStorageNodeTest1.cxx
   vtkMRMLTransformableNodeTest1.cxx
   vtkMRMLUnitNodeTest1.cxx
-  vtkMRMLUnstructuredGridDisplayNodeTest1.cxx
-  vtkMRMLUnstructuredGridNodeTest1.cxx
-  vtkMRMLUnstructuredGridStorageNodeTest1.cxx
   vtkMRMLVectorVolumeDisplayNodeTest1.cxx
   vtkMRMLVectorVolumeNodeTest1.cxx
   vtkMRMLViewNodeTest1.cxx

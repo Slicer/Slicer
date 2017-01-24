@@ -56,9 +56,6 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLTableViewNode.h"
 #include "vtkMRMLTransformDisplayNode.h"
 #include "vtkMRMLTransformStorageNode.h"
-#include "vtkMRMLUnstructuredGridDisplayNode.h"
-#include "vtkMRMLUnstructuredGridNode.h"
-#include "vtkMRMLUnstructuredGridStorageNode.h"
 #include "vtkMRMLVectorVolumeDisplayNode.h"
 #include "vtkMRMLViewNode.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
@@ -199,9 +196,6 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLDisplayableHierarchyNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLModelHierarchyNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLSnapshotClipNode >::New() );
-  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLUnstructuredGridNode >::New() );
-  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLUnstructuredGridDisplayNode >::New() );
-  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLUnstructuredGridStorageNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLColorTableNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLColorTableStorageNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLProceduralColorNode >::New() );
