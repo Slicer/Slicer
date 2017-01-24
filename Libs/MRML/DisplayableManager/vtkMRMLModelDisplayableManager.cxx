@@ -1731,34 +1731,35 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
             } // Color node
           } // scalar visibility
 
-        actor->GetProperty()->SetRepresentation(modelDisplayNode->GetRepresentation());
-        actor->GetProperty()->SetPointSize(modelDisplayNode->GetPointSize());
-        actor->GetProperty()->SetLineWidth(modelDisplayNode->GetLineWidth());
-        actor->GetProperty()->SetLighting(modelDisplayNode->GetLighting());
-        actor->GetProperty()->SetInterpolation(modelDisplayNode->GetInterpolation());
-        actor->GetProperty()->SetShading(modelDisplayNode->GetShading());
-        actor->GetProperty()->SetFrontfaceCulling(modelDisplayNode->GetFrontfaceCulling());
-        actor->GetProperty()->SetBackfaceCulling(modelDisplayNode->GetBackfaceCulling());
+        vtkProperty* actorProperties = actor->GetProperty();
+        actorProperties->SetRepresentation(modelDisplayNode->GetRepresentation());
+        actorProperties->SetPointSize(modelDisplayNode->GetPointSize());
+        actorProperties->SetLineWidth(modelDisplayNode->GetLineWidth());
+        actorProperties->SetLighting(modelDisplayNode->GetLighting());
+        actorProperties->SetInterpolation(modelDisplayNode->GetInterpolation());
+        actorProperties->SetShading(modelDisplayNode->GetShading());
+        actorProperties->SetFrontfaceCulling(modelDisplayNode->GetFrontfaceCulling());
+        actorProperties->SetBackfaceCulling(modelDisplayNode->GetBackfaceCulling());
 
         if (modelDisplayNode->GetSelected())
           {
           vtkDebugMacro("Model display node " << modelDisplayNode->GetName() << " is selected...");
-          actor->GetProperty()->SetColor(modelDisplayNode->GetSelectedColor());
-          actor->GetProperty()->SetAmbient(modelDisplayNode->GetSelectedAmbient());
-          actor->GetProperty()->SetSpecular(modelDisplayNode->GetSelectedSpecular());
+          actorProperties->SetColor(modelDisplayNode->GetSelectedColor());
+          actorProperties->SetAmbient(modelDisplayNode->GetSelectedAmbient());
+          actorProperties->SetSpecular(modelDisplayNode->GetSelectedSpecular());
           }
         else
           {
           //vtkWarningMacro("Model display node " << modelDisplayNode->GetName() << " is not selected...");
-          actor->GetProperty()->SetColor(modelDisplayNode->GetColor());
-          actor->GetProperty()->SetAmbient(modelDisplayNode->GetAmbient());
-          actor->GetProperty()->SetSpecular(modelDisplayNode->GetSpecular());
+          actorProperties->SetColor(modelDisplayNode->GetColor());
+          actorProperties->SetAmbient(modelDisplayNode->GetAmbient());
+          actorProperties->SetSpecular(modelDisplayNode->GetSpecular());
           }
-        actor->GetProperty()->SetOpacity(modelDisplayNode->GetOpacity());
-        actor->GetProperty()->SetDiffuse(modelDisplayNode->GetDiffuse());
-        actor->GetProperty()->SetSpecularPower(modelDisplayNode->GetPower());
-        actor->GetProperty()->SetEdgeVisibility(modelDisplayNode->GetEdgeVisibility());
-        actor->GetProperty()->SetEdgeColor(modelDisplayNode->GetEdgeColor());
+        actorProperties->SetOpacity(modelDisplayNode->GetOpacity());
+        actorProperties->SetDiffuse(modelDisplayNode->GetDiffuse());
+        actorProperties->SetSpecularPower(modelDisplayNode->GetPower());
+        actorProperties->SetEdgeVisibility(modelDisplayNode->GetEdgeVisibility());
+        actorProperties->SetEdgeColor(modelDisplayNode->GetEdgeColor());
         if (modelDisplayNode->GetTextureImageDataConnection() != 0)
           {
           if (actor->GetTexture() == 0)
@@ -1769,13 +1770,13 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
             }
           actor->GetTexture()->SetInputConnection(modelDisplayNode->GetTextureImageDataConnection());
           actor->GetTexture()->SetInterpolate(modelDisplayNode->GetInterpolateTexture());
-          actor->GetProperty()->SetColor(1., 1., 1.);
+          actorProperties->SetColor(1., 1., 1.);
 
           // Force actors to be treated as opaque. Otherwise, transparent
           // elements in the texture cause the actor to be treated as
           // translucent, i.e. rendered without writing to the depth buffer.
           // See http://www.na-mic.org/Bug/view.php?id=4253.
-          if (actor->GetProperty()->GetOpacity() == 1.0)
+          if (actorProperties->GetOpacity() == 1.0)
             {
             actor->ForceOpaqueOn();
             }
