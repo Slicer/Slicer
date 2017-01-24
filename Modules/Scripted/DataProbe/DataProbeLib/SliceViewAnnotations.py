@@ -150,8 +150,8 @@ class SliceAnnotations(VTKObservationMixin):
     self.annotationsAmountGroupBox = find(window,'annotationsAmountGroupBox')[0]
 
     self.scalarBarCollapsibleButton = find(window,'scalarBarCollapsibleButton')[0]
-    self.scalarBarEnalbeCheckBox = find(window,'scalarBarEnableCheckBox')[0]
-    self.scalarBarEnalbeCheckBox.checked = self.scalarBarEnabled
+    self.scalarBarEnableCheckBox = find(window,'scalarBarEnableCheckBox')[0]
+    self.scalarBarEnableCheckBox.checked = self.scalarBarEnabled
     self.scalarBarLayerSelectionGroupBox = find(window,'scalarBarLayerSelectionGroupBox')[0]
 
     self.backgroundRadioButton = find(window, 'backgroundRadioButton')[0]
@@ -178,7 +178,7 @@ class SliceAnnotations(VTKObservationMixin):
 
     self.backgroundPersistenceCheckBox.connect('clicked()', self.onBackgroundLayerPersistenceCheckBox)
 
-    self.scalarBarEnalbeCheckBox.connect('clicked()', self.onScalarBarCheckBox)
+    self.scalarBarEnableCheckBox.connect('clicked()', self.onScalarBarCheckBox)
     self.backgroundRadioButton.connect('clicked()',self.onLayerSelectionRadioButton)
     self.foregroundRadioButton.connect('clicked()',self.onLayerSelectionRadioButton)
     self.rangeLabelFormatLineEdit.connect('editingFinished()',self.onRangeLabelFormatLineEdit)
@@ -194,11 +194,11 @@ class SliceAnnotations(VTKObservationMixin):
   def onSliceViewAnnotationsCheckBox(self):
     if self.sliceViewAnnotationsCheckBox.checked:
       self.sliceViewAnnotationsEnabled = 1
-      self.scalarBarEnalbeCheckBox.checked = self.scalarBarEnabledLastStatus
+      self.scalarBarEnableCheckBox.checked = self.scalarBarEnabledLastStatus
       self.scalarBarEnabled = self.scalarBarEnabledLastStatus
     else:
       self.scalarBarEnabledLastStatus = self.scalarBarEnabled
-      self.scalarBarEnalbeCheckBox.checked = False
+      self.scalarBarEnableCheckBox.checked = False
       self.sliceViewAnnotationsEnabled = 0
       self.scalarBarEnabled = 0
     settings = qt.QSettings()
@@ -224,11 +224,11 @@ class SliceAnnotations(VTKObservationMixin):
     self.updateSliceViewFromGUI()
 
   def onScalarBarCheckBox(self):
-    if self.scalarBarEnalbeCheckBox.checked:
+    if self.scalarBarEnableCheckBox.checked:
       self.topRightCheckBox.enabled = False
     else:
       self.topRightCheckBox.enabled = True
-    self.scalarBarEnabled = int(self.scalarBarEnalbeCheckBox.checked)
+    self.scalarBarEnabled = int(self.scalarBarEnableCheckBox.checked)
     settings = qt.QSettings()
     settings.setValue('DataProbe/sliceViewAnnotations.scalarBarEnabled',
         self.scalarBarEnabled)
@@ -240,7 +240,7 @@ class SliceAnnotations(VTKObservationMixin):
     self.bottomLeft = int(self.bottomLeftCheckBox.checked)
 
     if self.topRight:
-      self.scalarBarEnalbeCheckBox.checked = False
+      self.scalarBarEnableCheckBox.checked = False
 
     self.updateSliceViewFromGUI()
 
@@ -290,7 +290,7 @@ class SliceAnnotations(VTKObservationMixin):
     self.fontFamily = 'Times'
     self.backgroundDICOMAnnotationsPersistence = 0
     self.backgroundPersistenceCheckBox.checked = False
-    self.scalarBarEnalbeCheckBox.checked = False
+    self.scalarBarEnableCheckBox.checked = False
     self.scalarBarEnabled = 0
     self.rangeLabelFormat = '%G'
     self.rangeLabelFormatLineEdit.text = '%G'
