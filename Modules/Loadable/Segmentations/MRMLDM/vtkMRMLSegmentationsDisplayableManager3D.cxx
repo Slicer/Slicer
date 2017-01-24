@@ -310,7 +310,8 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::AddDisplayNode(vtkMR
 
 //---------------------------------------------------------------------------
 vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::Pipeline*
-vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::CreateSegmentPipeline(std::string segmentID)
+vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::CreateSegmentPipeline(
+    std::string vtkNotUsed(segmentID))
 {
   Pipeline* pipeline = new Pipeline();
 

@@ -656,7 +656,6 @@ QMimeData* qMRMLSceneModel::mimeData(const QModelIndexList& indexes)const
     {
     return 0;
     }
-  QModelIndex parent = indexes[0].parent();
   QModelIndexList allColumnsIndexes;
   foreach(const QModelIndex& index, indexes)
     {

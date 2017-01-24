@@ -152,7 +152,9 @@ void vtkImageGrowCutSegment::vtkInternal::Reset()
 
 //-----------------------------------------------------------------------------
 template<typename IntensityPixelType, typename LabelPixelType>
-bool vtkImageGrowCutSegment::vtkInternal::InitializationAHP(vtkImageData *intensityVolume, vtkImageData *seedLabelVolume)
+bool vtkImageGrowCutSegment::vtkInternal::InitializationAHP(
+    vtkImageData *vtkNotUsed(intensityVolume),
+    vtkImageData *seedLabelVolume)
 {
   m_Heap = new FibHeap;
   long dimXYZ = m_DimX * m_DimY * m_DimZ;
@@ -161,7 +163,6 @@ bool vtkImageGrowCutSegment::vtkInternal::InitializationAHP(vtkImageData *intens
     vtkGenericWarningMacro("Memory allocation failed. Dimensions: " << m_DimX << "x" << m_DimY << "x" << m_DimZ);
     return false;
     }
-  IntensityPixelType* imSrc = static_cast<IntensityPixelType*>(intensityVolume->GetScalarPointer());
   LabelPixelType* seedLabelVolumePtr = static_cast<LabelPixelType*>(seedLabelVolume->GetScalarPointer());
 
   if (!m_bSegInitialized)
@@ -248,9 +249,7 @@ bool vtkImageGrowCutSegment::vtkInternal::InitializationAHP(vtkImageData *intens
     {
     // Already initialized
     LabelPixelType* resultLabelVolumePtr = static_cast<LabelPixelType*>(m_ResultLabelVolume->GetScalarPointer());
-    LabelPixelType* resultLabelVolumePrePtr = static_cast<LabelPixelType*>(m_ResultLabelVolumePre->GetScalarPointer());
     DistancePixelType* distanceVolumePtr = static_cast<DistancePixelType*>(m_DistanceVolume->GetScalarPointer());
-    DistancePixelType* distanceVolumePrePtr = static_cast<DistancePixelType*>(m_DistanceVolumePre->GetScalarPointer());
 
     for (long index = 0; index < dimXYZ; index++)
       {
@@ -281,7 +280,9 @@ bool vtkImageGrowCutSegment::vtkInternal::InitializationAHP(vtkImageData *intens
 
 //-----------------------------------------------------------------------------
 template<typename IntensityPixelType, typename LabelPixelType>
-void vtkImageGrowCutSegment::vtkInternal::DijkstraBasedClassificationAHP(vtkImageData *intensityVolume, vtkImageData *seedLabelVolume)
+void vtkImageGrowCutSegment::vtkInternal::DijkstraBasedClassificationAHP(
+    vtkImageData *intensityVolume,
+    vtkImageData *vtkNotUsed(seedLabelVolume))
 {
   LabelPixelType* resultLabelVolumePtr = static_cast<LabelPixelType*>(m_ResultLabelVolume->GetScalarPointer());
   IntensityPixelType* imSrc = static_cast<IntensityPixelType*>(intensityVolume->GetScalarPointer());

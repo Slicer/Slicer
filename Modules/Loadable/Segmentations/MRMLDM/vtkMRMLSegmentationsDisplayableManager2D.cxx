@@ -1387,11 +1387,9 @@ std::string vtkMRMLSegmentationsDisplayableManager2D::GetDataProbeInfoStringForP
           imageData->GetFieldData()->GetAbstractArray(vtkSegmentationConverter::GetScalarRangeFieldName()));
 
         double minimumValue = 0.0;
-        double maximumValue = 1.0;
         if (scalarRange && scalarRange->GetNumberOfValues() == 2)
         {
           minimumValue = scalarRange->GetValue(0);
-          maximumValue = scalarRange->GetValue(1);
         }
         if (voxelValue > minimumValue)
           {

@@ -158,6 +158,7 @@ void qMRMLSortFilterProxyModel::removeAttribute(const QString& nodeType,
 QVariant qMRMLSortFilterProxyModel::attributeFilter(const QString& nodeType,
                                                     const QString& attributeName) const
 {
+  Q_UNUSED(attributeName);
   Q_D(const qMRMLSortFilterProxyModel);
   return d->Attributes.value(nodeType).second;
 }

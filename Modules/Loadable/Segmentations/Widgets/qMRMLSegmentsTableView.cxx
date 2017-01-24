@@ -1062,7 +1062,6 @@ void qMRMLSegmentsTableView::showOnlySelectedSegments()
 
   // Hide all segments except the selected ones
   int disabledModify = displayNode->StartModify();
-  vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
   QStringList displayedSegmentIDs = this->displayedSegmentIDs();
   foreach(QString segmentId, displayedSegmentIDs)
   {
