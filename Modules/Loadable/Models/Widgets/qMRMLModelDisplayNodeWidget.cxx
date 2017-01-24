@@ -92,6 +92,14 @@ void qMRMLModelDisplayNodeWidgetPrivate::init()
   QObject::connect(this->DisplayedScalarRangeWidget, SIGNAL(valuesChanged(double,double)),
                    q, SLOT(setScalarsDisplayRange(double,double)));
 
+  // Thresholding
+  this->ThresholdCheckBox->setChecked(false);
+  this->ThresholdRangeWidget->setEnabled(false);
+  QObject::connect(this->ThresholdCheckBox, SIGNAL(toggled(bool)),
+                   q, SLOT(setTresholdEnabled(bool)));
+  QObject::connect(this->ThresholdRangeWidget, SIGNAL(valuesChanged(double,double)),
+                   q, SLOT(setThresholdRange(double,double)));
+
   // update range mode
   q->setScalarRangeMode(qMRMLModelDisplayNodeWidget::Data); // former auto
 
@@ -270,7 +278,7 @@ void qMRMLModelDisplayNodeWidget::setScalarRangeMode(ControlMode scalarRangeMode
 {
   Q_D(qMRMLModelDisplayNodeWidget);
 
-  if (!d->MRMLModelDisplayNode)
+  if (!d->MRMLModelDisplayNode.GetPointer())
     {
     return;
     }
@@ -374,6 +382,42 @@ void qMRMLModelDisplayNodeWidget::setScalarsDisplayRange(double min, double max)
     qvtkBlock(d->MRMLModelDisplayNode, vtkCommand::ModifiedEvent, this);
     d->MRMLModelDisplayNode->SetScalarRange(min, max);
     qvtkUnblock(d->MRMLModelDisplayNode, vtkCommand::ModifiedEvent, this);
+    d->ThresholdRangeWidget->setRange(min,max);
+    d->ThresholdRangeWidget->setValues(min,max);
+    }
+}
+
+//------------------------------------------------------------------------------
+void qMRMLModelDisplayNodeWidget::setTresholdEnabled(bool b)
+{
+  Q_D(qMRMLModelDisplayNodeWidget);
+  if (!d->MRMLModelDisplayNode.GetPointer())
+    {
+    return;
+    }
+
+  qvtkBlock(d->MRMLModelDisplayNode, vtkCommand::ModifiedEvent, this);
+  d->MRMLModelDisplayNode->SetThresholdEnabled(b);
+  qvtkUnblock(d->MRMLModelDisplayNode, vtkCommand::ModifiedEvent, this);
+
+  d->ThresholdRangeWidget->setEnabled(b);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLModelDisplayNodeWidget::setThresholdRange(double min, double max)
+{
+  Q_D(qMRMLModelDisplayNodeWidget);
+  if (!d->MRMLModelDisplayNode.GetPointer())
+    {
+    return;
+    }
+  double oldMin = d->MRMLModelDisplayNode->GetThresholdMin();
+  double oldMax = d->MRMLModelDisplayNode->GetThresholdMax();
+  if (oldMin != min || oldMax != max)
+    {
+    qvtkBlock(d->MRMLModelDisplayNode, vtkCommand::ModifiedEvent, this);
+    d->MRMLModelDisplayNode->SetThresholdRange(min, max);
+    qvtkUnblock(d->MRMLModelDisplayNode, vtkCommand::ModifiedEvent, this);
     }
 }
 
@@ -448,7 +492,7 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
     }
   else
     {
-    precision == 1;
+    precision = 1;
     }
   wasBlocking = d->DisplayedScalarRangeWidget->blockSignals(true);
   d->DisplayedScalarRangeWidget->setRange(newMin, newMax);
@@ -456,6 +500,17 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
   d->DisplayedScalarRangeWidget->setDecimals(decimals);
   d->DisplayedScalarRangeWidget->setSingleStep(precision);
   d->DisplayedScalarRangeWidget->blockSignals(wasBlocking);
+
+  //wasBlocking = d->ThresholdRangeWidget->blockSignals(true);
+  d->ThresholdRangeWidget->setRange(displayRange[0] - precision, displayRange[1] + precision);
+  d->ThresholdRangeWidget->setValues(displayRange[0] - precision, displayRange[1] + precision);
+  d->ThresholdRangeWidget->setDecimals(decimals);
+  d->ThresholdRangeWidget->setSingleStep(precision);
+  //d->ThresholdRangeWidget->blockSignals(wasBlocking);
+
+  wasBlocking = d->ThresholdCheckBox->blockSignals(true);
+  d->ThresholdCheckBox->setChecked(d->MRMLModelDisplayNode->GetThresholdEnabled());
+  d->ThresholdCheckBox->blockSignals(wasBlocking);
 
   wasBlocking = d->DisplayedScalarRangeModeComboBox->blockSignals(true);
   switch (d->MRMLModelDisplayNode->GetScalarRangeFlag())

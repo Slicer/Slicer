@@ -22,6 +22,7 @@
 class vtkAlgorithm;
 class vtkAlgorithmOutput;
 class vtkAssignAttribute;
+class vtkThreshold;
 class vtkPassThrough;
 class vtkPointSet;
 class vtkPolyData;
@@ -93,6 +94,27 @@ public:
   /// \sa SetActiveScalarName()
   virtual void SetScalarRangeFlag(int flag);
 
+  /// Set whether to threshold the model display node.
+  /// \sa ThresholdEnabled, GetThresholdEnabled()
+  vtkSetMacro(ThresholdEnabled,bool);
+  vtkBooleanMacro(ThresholdEnabled,bool);
+
+  /// Get whether to threshold the model display node.
+  /// \sa ThresholdEnabled, SetThresholdEnabled(), ThresholdEnabledOn(),
+  /// ThresholdEnabledOff()
+  vtkGetMacro(ThresholdEnabled,bool);
+
+  /// Set the threshold range of the model display node.
+  /// \sa GetThresholdMin(), GetTresholdMax()
+  void SetThresholdRange(double min, double max);
+  void SetThresholdRange(double range[2]);
+
+  /// Get the threshold range of the model display node.
+  /// \sa SetThresholdRange()
+  void GetThresholdRange(double range[2]);
+  double GetThresholdMin();
+  double GetThresholdMax();
+
 protected:
   vtkMRMLModelDisplayNode();
   ~vtkMRMLModelDisplayNode();
@@ -123,6 +145,18 @@ protected:
   /// null.
   /// \sa AssignAttribute
   vtkPassThrough* PassThrough;
+
+  /// Filters that thresholds the output mesh from
+  /// the AssignAttribute filter when the Threshold
+  /// option is set to true based on its scalar values.
+  /// \sa AssignAttribute, ThresholdEnabled
+  vtkThreshold* ThresholdFilter;
+
+  /// Indicated whether to threshold the output mesh
+  /// of the display model node based on its active
+  /// scalar values.
+  /// \sa ThresholdFilter
+  bool ThresholdEnabled;
 };
 
 #endif

@@ -100,6 +100,8 @@ public slots:
   void setScalarsColorNode(vtkMRMLNode*);
   void setScalarsColorNode(vtkMRMLColorNode*);
   void setScalarsDisplayRange(double min, double max);
+  void setTresholdEnabled(bool b);
+  void setThresholdRange(double min, double max);
 
   /// Set Auto/Manual mode
   void setScalarRangeMode(int scalarRangeMode);
