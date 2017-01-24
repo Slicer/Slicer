@@ -450,18 +450,45 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
 
   // Update pipeline actor
   vtkActor2D* actor = vtkActor2D::SafeDownCast(pipeline->Actor);
-  vtkPolyDataMapper2D* mapper = vtkPolyDataMapper2D::SafeDownCast(
-    actor->GetMapper());
-  mapper->SetInputConnection( pipeline->Transformer->GetOutputPort() );
-  mapper->SetLookupTable( displayNode->GetColorNode() ?
-                          displayNode->GetColorNode()->GetLookupTable() : 0);
-  mapper->SetScalarRange(modelDisplayNode->GetScalarRange());
-  actor->SetPosition(0,0);
-  vtkProperty2D* actorProperties = actor->GetProperty();
-  actorProperties->SetColor(displayNode->GetColor() );
-  actorProperties->SetLineWidth(displayNode->GetSliceIntersectionThickness() );
+  vtkPolyDataMapper2D* mapper = vtkPolyDataMapper2D::SafeDownCast(actor->GetMapper());
 
-  pipeline->Actor->SetVisibility(true);
+  if (mapper)
+    {
+    mapper->SetInputConnection( pipeline->Transformer->GetOutputPort() );
+    mapper->SetScalarVisibility(modelDisplayNode->GetScalarVisibility());
+    if (mapper->GetScalarVisibility())
+      {
+      // The renderer uses the lookup table scalar range to
+      // render colors. By default, UseLookupTableScalarRange
+      // is set to false and SetScalarRange can be used on the
+      // mapper to map scalars into the lookup table. When set
+      // to true, SetScalarRange has no effect and it is necessary
+      // to force the scalarRange on the lookup table manually.
+      // Whichever way is used, the look up table range needs
+      // to be changed to render the correct scalar values, thus
+      // one lookup table can not be shared by multiple mappers
+      // if any of those mappers needs to map using its scalar
+      // values range. It is therefore necessary to make a copy
+      // of the colorNode vtkLookupTable in order not to impact
+      // that lookup table original range.
+      vtkLookupTable* dNodeLUT = modelDisplayNode->GetColorNode() ?
+                                 modelDisplayNode->GetColorNode()->GetLookupTable() : NULL;
+      vtkNew<vtkLookupTable> lut;
+      lut->DeepCopy(dNodeLUT);
+      mapper->SetLookupTable(lut.GetPointer());
+
+      // Set scalar range
+      mapper->SetScalarRange(modelDisplayNode->GetScalarRange());
+      }
+    }
+
+  vtkProperty2D* actorProperties = actor->GetProperty();
+  actorProperties->SetColor(displayNode->GetColor());
+  actorProperties->SetLineWidth(displayNode->GetSliceIntersectionThickness());
+  actorProperties->SetOpacity(displayNode->GetOpacity());
+
+  actor->SetPosition(0,0);
+  actor->SetVisibility(true);
 }
 
 //---------------------------------------------------------------------------

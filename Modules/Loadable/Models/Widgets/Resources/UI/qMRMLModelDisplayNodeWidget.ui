@@ -54,155 +54,62 @@
        <widget class="ctkVTKDataSetArrayComboBox" name="ActiveScalarComboBox"/>
       </item>
       <item row="2" column="0">
-       <widget class="QLabel" name="ScalarsRangeLabel">
-        <property name="text">
-         <string>Active Scalar Range:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QLabel" name="ActiveScalarRangeLabel">
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
        <widget class="QLabel" name="ScalarsColorTableLabel">
         <property name="text">
          <string>Color Table:</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="1">
+      <item row="2" column="1">
        <widget class="qMRMLColorTableComboBox" name="ScalarsColorNodeComboBox"/>
       </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="ScalarsScalarRangeFlagLabel">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="toolTip">
-         <string>Select which scalar range to use: Display Scalar Range, Color Table range, range in the scalar data array, range of the data type of the scalar array</string>
-        </property>
+      <item row="3" column="0">
+       <widget class="QLabel" name="ScalarRangeModeLabel">
         <property name="text">
-         <string>Scalar Range Type:</string>
+         <string>Scalar Range Mode:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QComboBox" name="DisplayedScalarRangeModeComboBox">
+        <property name="toolTip">
+         <string>Set the scalar range mode flag. Data (auto) updates the Display Scalar Range from the scalar range of the data.</string>
+        </property>
+        <item>
+         <property name="text">
+          <string>Active scalar (auto)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Color table (LUT)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Data type</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Manual</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="DisplayedScalarRangeLabel">
+        <property name="text">
+         <string>Displayed Range:</string>
         </property>
        </widget>
       </item>
       <item row="4" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QRadioButton" name="ScalarsRangeFlagDataRadioButton">
-          <property name="toolTip">
-           <string>Use the min/max of the overlay data for the scalar range </string>
-          </property>
-          <property name="text">
-           <string>Data</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="ScalarsRangeFlagLUTRadioButton">
-          <property name="toolTip">
-           <string>Use the scalar range from the associated color node</string>
-          </property>
-          <property name="text">
-           <string>LUT</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="ScalarsRangeFlagDisplayRadioButton">
-          <property name="toolTip">
-           <string>Use the Display Scalar Range</string>
-          </property>
-          <property name="text">
-           <string>Display</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="ScalarsRangeFlagDataTypeRadioButton">
-          <property name="toolTip">
-           <string>Use the min/max of the data type of the scalar array for the range</string>
-          </property>
-          <property name="text">
-           <string>Data Type</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="8" column="0">
-       <widget class="QLabel" name="ScalarsScalarRangeLabel">
-        <property name="text">
-         <string>Display Scalar Range:</string>
+       <widget class="qMRMLRangeWidget" name="DisplayedScalarRangeWidget">
+        <property name="toolTip">
+         <string>Set the display scalar range, used when the Display option is selected.</string>
         </property>
        </widget>
-      </item>
-      <item row="8" column="1">
-       <layout class="QGridLayout" name="ScalarsDisplayScalarRangeGridLayout" columnstretch="0,1,0,0">
-        <item row="0" column="0">
-         <widget class="ctkDoubleSpinBox" name="ScalarsDisplayScalarRangeMinDoubleSpinBox">
-          <property name="toolTip">
-           <string>Low value of Display Scalar Range</string>
-          </property>
-          <property name="prefix">
-           <string>Min:</string>
-          </property>
-          <property name="decimalsOption">
-           <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QComboBox" name="ScalarsDisplayScalarRangeAutoManualComboBox">
-          <property name="toolTip">
-           <string>Set the auto scalar range flag. Auto updates the Display Scalar Range from the scalar range of the data.</string>
-          </property>
-          <item>
-           <property name="text">
-            <string>Auto</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Manual</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <widget class="ctkDoubleSpinBox" name="ScalarsDisplayScalarRangeMaxDoubleSpinBox">
-          <property name="toolTip">
-           <string>High value of Display Scalar Range</string>
-          </property>
-          <property name="prefix">
-           <string>Max:</string>
-          </property>
-          <property name="decimalsOption">
-           <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0" colspan="3">
-         <widget class="ctkDoubleRangeSlider" name="ScalarsDisplayScalarRangeDoubleRangeSlider">
-          <property name="toolTip">
-           <string>Set the display scalar range, used when the Display option is selected.</string>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-       </layout>
       </item>
      </layout>
     </widget>
@@ -237,9 +144,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ctkDoubleRangeSlider</class>
+   <class>qMRMLRangeWidget</class>
    <extends>QWidget</extends>
-   <header>ctkDoubleRangeSlider.h</header>
+   <header>qMRMLRangeWidget.h</header>
   </customwidget>
   <customwidget>
    <class>ctkDoubleSpinBox</class>

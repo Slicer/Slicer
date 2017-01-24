@@ -36,7 +36,7 @@
 // VTK includes
 #include <vtkDataArray.h>
 #include <vtkPointData.h>
-#include <vtkPolyData.h>
+#include <vtkPointSet.h>
 #include <vtkSmartPointer.h>
 
 //------------------------------------------------------------------------------
@@ -52,9 +52,6 @@ protected:
 public:
   qMRMLModelDisplayNodeWidgetPrivate(qMRMLModelDisplayNodeWidget& object);
   void init();
-
-  virtual bool blockSignals(bool block);
-  virtual void setRange(double min, double max);
 
   vtkSmartPointer<vtkMRMLModelDisplayNode> MRMLModelDisplayNode;
   vtkSmartPointer<vtkMRMLNode>  ModelOrHierarchyNode;
@@ -78,7 +75,8 @@ void qMRMLModelDisplayNodeWidgetPrivate::init()
   // The root cause of the problem is that if none option is not enabled then the combobox
   // automatically selects the first array, which triggers a data set change, which removes all arrays,
   // which triggers a widget update, etc. - until stack overflow occurs.
-  this->ActiveScalarComboBox->setNoneEnabled(true);
+  //this->ActiveScalarComboBox->setNoneEnabled(true);
+
 
   QObject::connect(this->ScalarsVisibilityCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(setScalarsVisibility(bool)));
@@ -88,63 +86,22 @@ void qMRMLModelDisplayNodeWidgetPrivate::init()
                    SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                    q, SLOT(setScalarsColorNode(vtkMRMLNode*)));
 
-  // make a radio button group for the scalar range flag options
-  QButtonGroup* rangeFlagGroup = new QButtonGroup(q);
-  rangeFlagGroup->addButton(this->ScalarsRangeFlagLUTRadioButton);
-  rangeFlagGroup->addButton(this->ScalarsRangeFlagDisplayRadioButton);
-  rangeFlagGroup->addButton(this->ScalarsRangeFlagDataRadioButton);
-  rangeFlagGroup->addButton(this->ScalarsRangeFlagDataTypeRadioButton);
-  // radio button group signals
-  QObject::connect(this->ScalarsRangeFlagLUTRadioButton, SIGNAL(toggled(bool)),
-    q, SLOT(setScalarsScalarRangeFlag()));
-  QObject::connect(this->ScalarsRangeFlagDisplayRadioButton, SIGNAL(toggled(bool)),
-    q, SLOT(setScalarsScalarRangeFlag()));
-  QObject::connect(this->ScalarsRangeFlagDataRadioButton, SIGNAL(toggled(bool)),
-    q, SLOT(setScalarsScalarRangeFlag()));
-  QObject::connect(this->ScalarsRangeFlagDataTypeRadioButton, SIGNAL(toggled(bool)),
-    q, SLOT(setScalarsScalarRangeFlag()));
-
-  // auto/manual scalar range
-  q->setAutoScalarRange(qMRMLModelDisplayNodeWidget::Auto);
   // scalar range
-  QObject::connect(this->ScalarsDisplayScalarRangeDoubleRangeSlider,
-//                   SIGNAL(valuesChanged(double,double)),
-                   SIGNAL(positionsChanged(double,double)),
+  QObject::connect(this->DisplayedScalarRangeModeComboBox, SIGNAL(currentIndexChanged(int)),
+                   q, SLOT(setScalarRangeMode(int)));
+  QObject::connect(this->DisplayedScalarRangeWidget, SIGNAL(valuesChanged(double,double)),
                    q, SLOT(setScalarsDisplayRange(double,double)));
-  QObject::connect(this->ScalarsDisplayScalarRangeMinDoubleSpinBox,
-                   SIGNAL(valueChanged(double)),
-                   q, SLOT(setMinimumValue(double)));
-  QObject::connect(this->ScalarsDisplayScalarRangeMaxDoubleSpinBox,
-                   SIGNAL(valueChanged(double)),
-                   q, SLOT(setMaximumValue(double)));
 
-  QObject::connect(this->ScalarsDisplayScalarRangeAutoManualComboBox, SIGNAL(currentIndexChanged(int)),
-                   q, SLOT(setAutoScalarRange(int)));
+  // update range mode
+  q->setScalarRangeMode(qMRMLModelDisplayNodeWidget::Data); // former auto
 
-  //QObject::connect(this->ScalarsDisplayScalarRangeDoubleRangeSlider,
-  //                 SIGNAL(positionsChanged(double,double)),
-  //                 q, SLOT(setScalarsDisplayRange(double,double)));
-  q->setEnabled(this->MRMLModelDisplayNode.GetPointer() != 0);
+  if (this->MRMLModelDisplayNode.GetPointer())
+  {
+    q->setEnabled(true);
+    q->setMRMLModelDisplayNode(this->MRMLModelDisplayNode);
+  }
 
   this->MRMLDisplayNodeWidget->setSelectedVisible(false);
-}
-
-//------------------------------------------------------------------------------
-bool qMRMLModelDisplayNodeWidgetPrivate::blockSignals(bool block)
-{
-  bool res = this->Superclass::blockSignals(block);
-  this->ScalarsDisplayScalarRangeDoubleRangeSlider->blockSignals(block);
-  this->ScalarsDisplayScalarRangeMinDoubleSpinBox->blockSignals(block);
-  this->ScalarsDisplayScalarRangeMaxDoubleSpinBox->blockSignals(block);
-  return res;
-}
-
-//------------------------------------------------------------------------------
-void qMRMLModelDisplayNodeWidgetPrivate::setRange(double min, double max)
-{
-  this->ScalarsDisplayScalarRangeDoubleRangeSlider->setRange(min, max);
-  this->ScalarsDisplayScalarRangeMinDoubleSpinBox->setRange(min, max);
-  this->ScalarsDisplayScalarRangeMaxDoubleSpinBox->setRange(min, max);
 }
 
 //------------------------------------------------------------------------------
@@ -240,6 +197,7 @@ void qMRMLModelDisplayNodeWidget::setScalarsVisibility(bool visible)
     {
     return;
     }
+
   d->MRMLModelDisplayNode->SetScalarVisibility(visible);
 }
 
@@ -258,6 +216,7 @@ void qMRMLModelDisplayNodeWidget::setActiveScalarName(const QString& arrayName)
     {
     return;
     }
+
   d->MRMLModelDisplayNode->SetActiveScalarName(arrayName.toLatin1());
 
   // if there's no color node set for a non empty array name, use a default
@@ -265,8 +224,10 @@ void qMRMLModelDisplayNodeWidget::setActiveScalarName(const QString& arrayName)
       d->MRMLModelDisplayNode->GetColorNodeID() == NULL)
     {
     const char *colorNodeID = "vtkMRMLColorTableNodeRainbow";
+
     d->MRMLModelDisplayNode->SetAndObserveColorNodeID(colorNodeID);
     }
+
 }
 
 //------------------------------------------------------------------------------
@@ -292,6 +253,7 @@ void qMRMLModelDisplayNodeWidget::setScalarsColorNode(vtkMRMLColorNode* colorNod
     {
     return;
     }
+
   d->MRMLModelDisplayNode->SetAndObserveColorNodeID(colorNode ? colorNode->GetID() : NULL);
 }
 
@@ -303,36 +265,8 @@ vtkMRMLColorNode* qMRMLModelDisplayNodeWidget::scalarsColorNode()const
     d->ScalarsColorNodeComboBox->currentNode());
 }
 
-//------------------------------------------------------------------------------
-void qMRMLModelDisplayNodeWidget::setScalarsScalarRangeFlag()
-{
-  Q_D(qMRMLModelDisplayNodeWidget);
-  if (!d->MRMLModelDisplayNode.GetPointer())
-    {
-    return;
-    }
-  int flag = 0;
-  if (d->ScalarsRangeFlagLUTRadioButton->isChecked())
-    {
-    flag = vtkMRMLModelDisplayNode::UseColorNodeScalarRange;
-    }
-  else if (d->ScalarsRangeFlagDisplayRadioButton->isChecked())
-    {
-    flag = vtkMRMLModelDisplayNode::UseDisplayNodeScalarRange;
-    }
-  else if (d->ScalarsRangeFlagDataRadioButton->isChecked())
-    {
-    flag = vtkMRMLModelDisplayNode::UseDataScalarRange;
-    }
-  else if (d->ScalarsRangeFlagDataTypeRadioButton->isChecked())
-    {
-    flag = vtkMRMLModelDisplayNode::UseDataTypeScalarRange;
-    }
-  d->MRMLModelDisplayNode->SetScalarRangeFlag(flag);
-}
-
 // --------------------------------------------------------------------------
-void qMRMLModelDisplayNodeWidget::setAutoScalarRange(ControlMode autoScalarRange)
+void qMRMLModelDisplayNodeWidget::setScalarRangeMode(ControlMode scalarRangeMode)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
 
@@ -340,47 +274,63 @@ void qMRMLModelDisplayNodeWidget::setAutoScalarRange(ControlMode autoScalarRange
     {
     return;
     }
-  int oldAuto = d->MRMLModelDisplayNode->GetAutoScalarRange();
 
-  //int disabledModify = this->MRMLModelDisplayNode->StartModify();
-  d->MRMLModelDisplayNode->SetAutoScalarRange(
-    autoScalarRange == qMRMLModelDisplayNodeWidget::Auto ? 1 : 0);
-  //this->MRMLModelDisplayNode->EndModify(disabledModify);
+  int flag = d->MRMLModelDisplayNode->GetScalarRangeFlag();
+  switch (scalarRangeMode)
+    {
+    case qMRMLModelDisplayNodeWidget::Data :
+      if(flag == vtkMRMLDisplayNode::UseDataScalarRange)
+        {
+        return;
+        }
+      d->DisplayedScalarRangeWidget->setEnabled(false);
+      d->MRMLModelDisplayNode->SetScalarRangeFlag(vtkMRMLDisplayNode::UseDataScalarRange);
+      break;
+    case qMRMLModelDisplayNodeWidget::LUT :
+      if(flag == vtkMRMLDisplayNode::UseColorNodeScalarRange)
+        {
+        return;
+        }
+      d->DisplayedScalarRangeWidget->setEnabled(false);
+      d->MRMLModelDisplayNode->SetScalarRangeFlag(vtkMRMLDisplayNode::UseColorNodeScalarRange);
+      break;
+    case qMRMLModelDisplayNodeWidget::DataType :
+      if(flag == vtkMRMLDisplayNode::UseDataTypeScalarRange)
+        {
+        return;
+        }
+      d->DisplayedScalarRangeWidget->setEnabled(false);
+      d->MRMLModelDisplayNode->SetScalarRangeFlag(vtkMRMLDisplayNode::UseDataTypeScalarRange);
+      break;
+    case qMRMLModelDisplayNodeWidget::Manual :
+      if(flag == vtkMRMLDisplayNode::UseManualScalarRange)
+        {
+        return;
+        }
+      d->DisplayedScalarRangeWidget->setEnabled(true);
+      d->MRMLModelDisplayNode->SetScalarRangeFlag(vtkMRMLDisplayNode::UseManualScalarRange);
+      break;
+    }
 
-  if (autoScalarRange == qMRMLModelDisplayNodeWidget::Auto)
-    {
-    // disable the range slider and min max spin boxes as the display
-    // node scalar range will get updated from the data automatically
-    d->ScalarsDisplayScalarRangeDoubleRangeSlider->setEnabled(false);
-    d->ScalarsDisplayScalarRangeMinDoubleSpinBox->setEnabled(false);
-    d->ScalarsDisplayScalarRangeMaxDoubleSpinBox->setEnabled(false);
-    }
-  else
-    {
-    // make sure the slider and spin boxes are enabled
-    d->ScalarsDisplayScalarRangeDoubleRangeSlider->setEnabled(true);
-    d->ScalarsDisplayScalarRangeMinDoubleSpinBox->setEnabled(true);
-    d->ScalarsDisplayScalarRangeMaxDoubleSpinBox->setEnabled(true);
-    }
-
-  if (autoScalarRange != oldAuto)
-    {
-    emit this->autoScalarRangeValueChanged(
-      autoScalarRange == qMRMLModelDisplayNodeWidget::Auto ?
-        qMRMLModelDisplayNodeWidget::Auto : qMRMLModelDisplayNodeWidget::Manual);
-    }
+  emit this->scalarRangeModeValueChanged(scalarRangeMode);
 }
 
 // --------------------------------------------------------------------------
-void qMRMLModelDisplayNodeWidget::setAutoScalarRange(int autoScalarRange)
+void qMRMLModelDisplayNodeWidget::setScalarRangeMode(int scalarRangeMode)
 {
-  switch(autoScalarRange)
+  switch(scalarRangeMode)
     {
-    case qMRMLModelDisplayNodeWidget::Auto:
-      this->setAutoScalarRange(qMRMLModelDisplayNodeWidget::Auto);
+    case 0:
+      this->setScalarRangeMode(qMRMLModelDisplayNodeWidget::Data);
       break;
-    case qMRMLModelDisplayNodeWidget::Manual:
-      this->setAutoScalarRange(qMRMLModelDisplayNodeWidget::Manual);
+    case 1:
+      this->setScalarRangeMode(qMRMLModelDisplayNodeWidget::LUT);
+      break;
+    case 2:
+      this->setScalarRangeMode(qMRMLModelDisplayNodeWidget::DataType);
+      break;
+    case 3:
+      this->setScalarRangeMode(qMRMLModelDisplayNodeWidget::Manual);
       break;
     default:
       break;
@@ -388,19 +338,26 @@ void qMRMLModelDisplayNodeWidget::setAutoScalarRange(int autoScalarRange)
 }
 
 // --------------------------------------------------------------------------
-qMRMLModelDisplayNodeWidget::ControlMode qMRMLModelDisplayNodeWidget::autoScalarRange() const
+qMRMLModelDisplayNodeWidget::ControlMode qMRMLModelDisplayNodeWidget::scalarRangeMode() const
 {
   Q_D(const qMRMLModelDisplayNodeWidget);
-  switch (d->ScalarsDisplayScalarRangeAutoManualComboBox->currentIndex())
+  switch( d->DisplayedScalarRangeModeComboBox->currentIndex() )
     {
-    case qMRMLModelDisplayNodeWidget::Auto:
-      return qMRMLModelDisplayNodeWidget::Auto;
+    case 0:
+      return qMRMLModelDisplayNodeWidget::Data;
       break;
-    case qMRMLModelDisplayNodeWidget::Manual:
+    case 1:
+      return qMRMLModelDisplayNodeWidget::LUT;
+      break;
+    case 2:
+      return qMRMLModelDisplayNodeWidget::DataType;
+      break;
+    case 3:
       return qMRMLModelDisplayNodeWidget::Manual;
       break;
+    default:
+      break;
     }
-  return qMRMLModelDisplayNodeWidget::Manual;
 }
 
 //------------------------------------------------------------------------------
@@ -412,10 +369,11 @@ void qMRMLModelDisplayNodeWidget::setScalarsDisplayRange(double min, double max)
     return;
     }
   double *range = d->MRMLModelDisplayNode->GetScalarRange();
-  if (range[0] != min ||
-      range[1] != max)
+  if (range[0] != min || range[1] != max)
     {
+    qvtkBlock(d->MRMLModelDisplayNode, vtkCommand::ModifiedEvent, this);
     d->MRMLModelDisplayNode->SetScalarRange(min, max);
+    qvtkUnblock(d->MRMLModelDisplayNode, vtkCommand::ModifiedEvent, this);
     }
 }
 
@@ -424,8 +382,7 @@ double qMRMLModelDisplayNodeWidget::minimumValue() const
 {
   Q_D(const qMRMLModelDisplayNodeWidget);
 
-  double min = d->ScalarsDisplayScalarRangeDoubleRangeSlider->minimumValue();
-  return min;
+  return d->DisplayedScalarRangeWidget->minimumValue();
 }
 
 // --------------------------------------------------------------------------
@@ -433,25 +390,30 @@ double qMRMLModelDisplayNodeWidget::maximumValue() const
 {
   Q_D(const qMRMLModelDisplayNodeWidget);
 
-  double max = d->ScalarsDisplayScalarRangeDoubleRangeSlider->maximumValue();
-  return max;
+  return d->DisplayedScalarRangeWidget->maximumValue();
 }
 
 // --------------------------------------------------------------------------
 void qMRMLModelDisplayNodeWidget::setMinimumValue(double min)
 {
-  this->setScalarsDisplayRange(min, this->maximumValue());
+  Q_D(const qMRMLModelDisplayNodeWidget);
+
+  d->DisplayedScalarRangeWidget->setMinimumValue(min);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLModelDisplayNodeWidget::setMaximumValue(double max)
 {
-  this->setScalarsDisplayRange(this->minimumValue(), max);
+  Q_D(const qMRMLModelDisplayNodeWidget);
+
+  d->DisplayedScalarRangeWidget->setMaximumValue(max);
 }
 
 //------------------------------------------------------------------------------
 void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
 {
+  bool wasBlocking;
+
   Q_D(qMRMLModelDisplayNodeWidget);
   this->setEnabled(d->MRMLModelDisplayNode.GetPointer() != 0);
   if (!d->MRMLModelDisplayNode.GetPointer())
@@ -461,138 +423,88 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
   if (d->ScalarsVisibilityCheckBox->isChecked() !=
       (bool)d->MRMLModelDisplayNode->GetScalarVisibility())
     {
+    wasBlocking = d->ScalarsVisibilityCheckBox->blockSignals(true);
     d->ScalarsVisibilityCheckBox->setChecked(
       d->MRMLModelDisplayNode->GetScalarVisibility());
-    }
-  // update the scalar range flag radio buttons
-  int scalarRangeFlag = d->MRMLModelDisplayNode->GetScalarRangeFlag();
-  if (scalarRangeFlag == vtkMRMLDisplayNode::UseColorNodeScalarRange)
-    {
-    d->ScalarsRangeFlagLUTRadioButton->setChecked(true);
-    }
-  else if (scalarRangeFlag == vtkMRMLDisplayNode::UseDisplayNodeScalarRange)
-    {
-    d->ScalarsRangeFlagDisplayRadioButton->setChecked(true);
-    }
-  else if (scalarRangeFlag == vtkMRMLDisplayNode::UseDataScalarRange)
-    {
-    d->ScalarsRangeFlagDataRadioButton->setChecked(true);
-    }
-  else if (scalarRangeFlag == vtkMRMLDisplayNode::UseDataTypeScalarRange)
-    {
-    d->ScalarsRangeFlagDataTypeRadioButton->setChecked(true);
+    d->ScalarsVisibilityCheckBox->blockSignals(wasBlocking);
     }
 
-  double widgetRangeMin = d->ScalarsDisplayScalarRangeDoubleRangeSlider->minimum();
-  double widgetRangeMax = d->ScalarsDisplayScalarRangeDoubleRangeSlider->maximum();
-  double low = d->ScalarsDisplayScalarRangeDoubleRangeSlider->minimumValue();
-  double high = d->ScalarsDisplayScalarRangeDoubleRangeSlider->maximumValue();
+  // Update scalar values, range, decimals and single step
   double *displayRange =  d->MRMLModelDisplayNode->GetScalarRange();
-  // check if need to update the range of the widgets to accomodate the display node scalar range
-  if (displayRange[0] < widgetRangeMin ||
-      displayRange[1] > widgetRangeMax)
+  double precision = (displayRange[1] - displayRange[0])/100.0;
+  double newMin;
+  double newMax;
+  int decimals = 0;
+  if (precision != 0.0)
     {
-    double newMin = widgetRangeMin;
-    double newMax = widgetRangeMax;
-    if (displayRange[0] < widgetRangeMin)
+    newMin = (floor(displayRange[0]/precision) - 20 ) * precision;
+    newMax = (ceil(displayRange[1]/precision) + 20 ) * precision;
+    while (precision <= 1.0)
       {
-      newMin = floor(displayRange[0] - 1.0);
+      precision *= 10.0;
+      decimals++;
       }
-    if (displayRange[1] > widgetRangeMax)
-      {
-      newMax = ceil(displayRange[1] + 1.0);
-      }
-    d->setRange(newMin, newMax);
+    precision = pow(10.0, -decimals);
     }
-
-  // We block here to prevent the widgets to call setScalarRange which could
-  // change the AutoScalarRange from Auto into Manual.
-  bool wasBlocking = d->blockSignals(true);
-  if (low  != displayRange[0] ||
-      high != displayRange[1])
+  else
     {
-    d->ScalarsDisplayScalarRangeDoubleRangeSlider->setValues(displayRange[0],
-                                                             displayRange[1]);
+    precision == 1;
     }
-  d->ScalarsDisplayScalarRangeMinDoubleSpinBox->setValue(displayRange[0]);
-  d->ScalarsDisplayScalarRangeMaxDoubleSpinBox->setValue(displayRange[1]);
+  wasBlocking = d->DisplayedScalarRangeWidget->blockSignals(true);
+  d->DisplayedScalarRangeWidget->setRange(newMin, newMax);
+  d->DisplayedScalarRangeWidget->setValues(displayRange[0], displayRange[1]);
+  d->DisplayedScalarRangeWidget->setDecimals(decimals);
+  d->DisplayedScalarRangeWidget->setSingleStep(precision);
+  d->DisplayedScalarRangeWidget->blockSignals(wasBlocking);
 
-  d->blockSignals(wasBlocking);
-
-  switch (d->MRMLModelDisplayNode->GetAutoScalarRange())
+  wasBlocking = d->DisplayedScalarRangeModeComboBox->blockSignals(true);
+  switch (d->MRMLModelDisplayNode->GetScalarRangeFlag())
     {
-    case 1:
-      d->ScalarsDisplayScalarRangeAutoManualComboBox->setCurrentIndex(qMRMLModelDisplayNodeWidget::Auto);
-      if (scalarRangeFlag == vtkMRMLDisplayNode::UseDataScalarRange)
-        {
-        // disable user setting of the scalar range as it will be automatically over written
-        d->ScalarsDisplayScalarRangeDoubleRangeSlider->setEnabled(false);
-        d->ScalarsDisplayScalarRangeMinDoubleSpinBox->setEnabled(false);
-        d->ScalarsDisplayScalarRangeMaxDoubleSpinBox->setEnabled(false);
-        }
+    case vtkMRMLDisplayNode::UseDataScalarRange :
+      d->DisplayedScalarRangeWidget->setEnabled(false);
+      d->DisplayedScalarRangeModeComboBox->setCurrentIndex(qMRMLModelDisplayNodeWidget::Data);
       break;
-    case 0:
-      if (d->ScalarsDisplayScalarRangeAutoManualComboBox->currentIndex() ==
-          qMRMLModelDisplayNodeWidget::Auto)
-        {
-        d->ScalarsDisplayScalarRangeAutoManualComboBox->setCurrentIndex(qMRMLModelDisplayNodeWidget::Manual);
-        // enable user setting of scalar range
-        d->ScalarsDisplayScalarRangeDoubleRangeSlider->setEnabled(true);
-        d->ScalarsDisplayScalarRangeMinDoubleSpinBox->setEnabled(true);
-        d->ScalarsDisplayScalarRangeMaxDoubleSpinBox->setEnabled(true);
-        }
+    case vtkMRMLDisplayNode::UseColorNodeScalarRange :
+      d->DisplayedScalarRangeWidget->setEnabled(false);
+      d->DisplayedScalarRangeModeComboBox->setCurrentIndex(qMRMLModelDisplayNodeWidget::LUT);
+      break;
+    case vtkMRMLDisplayNode::UseDataTypeScalarRange :
+      d->DisplayedScalarRangeWidget->setEnabled(false);
+      d->DisplayedScalarRangeModeComboBox->setCurrentIndex(qMRMLModelDisplayNodeWidget::DataType);
+      break;
+    case vtkMRMLDisplayNode::UseManualScalarRange :
+      d->DisplayedScalarRangeWidget->setEnabled(true);
+      d->DisplayedScalarRangeModeComboBox->setCurrentIndex(qMRMLModelDisplayNodeWidget::Manual);
       break;
     }
+  d->DisplayedScalarRangeModeComboBox->blockSignals(wasBlocking);
 
   wasBlocking = d->ActiveScalarComboBox->blockSignals(true);
-  d->ActiveScalarComboBox->setDataSet(
-    d->MRMLModelDisplayNode->GetInputMesh());
+  d->ActiveScalarComboBox->setDataSet(d->MRMLModelDisplayNode->GetInputMesh());
   d->ActiveScalarComboBox->blockSignals(wasBlocking);
+
   if (d->ActiveScalarComboBox->currentArrayName() !=
       d->MRMLModelDisplayNode->GetActiveScalarName())
     {
     d->ActiveScalarComboBox->setCurrentArray(
       d->MRMLModelDisplayNode->GetActiveScalarName());
     }
-  // set the scalar range info
-  QString scalarRangeString;
-  if (!d->ActiveScalarComboBox->currentArrayName().isEmpty())
-    {
-    vtkPointData *pointData = NULL;
-    if (d->MRMLModelDisplayNode->GetInputMesh())
-      {
-      pointData = d->MRMLModelDisplayNode->GetInputMesh()->GetPointData();
-      }
-    if (pointData &&
-        pointData->GetArray(d->MRMLModelDisplayNode->GetActiveScalarName()))
-      {
-      double *range = pointData->GetArray(
-        d->MRMLModelDisplayNode->GetActiveScalarName())->GetRange();
-      if (range)
-        {
-        scalarRangeString = QString::number(range[0]) +
-          QString(", ") +
-          QString::number(range[1]);
-        }
-      }
-    }
-  d->ActiveScalarRangeLabel->setText(scalarRangeString);
+  d->ActiveScalarComboBox->blockSignals(wasBlocking);
 
-  if (d->MRMLModelDisplayNode)
+  wasBlocking = d->ScalarsColorNodeComboBox->blockSignals(true);
+  if (d->ScalarsColorNodeComboBox->mrmlScene() !=
+      d->MRMLModelDisplayNode->GetScene())
     {
-    if (d->ScalarsColorNodeComboBox->mrmlScene() !=
-        d->MRMLModelDisplayNode->GetScene())
-      {
-      d->ScalarsColorNodeComboBox->setMRMLScene(
-        d->MRMLModelDisplayNode->GetScene());
-      }
-    if (d->ScalarsColorNodeComboBox->currentNodeID() !=
-        d->MRMLModelDisplayNode->GetColorNodeID())
-      {
-      d->ScalarsColorNodeComboBox->setCurrentNodeID(
-        d->MRMLModelDisplayNode->GetColorNodeID());
-      }
+    d->ScalarsColorNodeComboBox->setMRMLScene(
+      d->MRMLModelDisplayNode->GetScene());
     }
+  if (d->ScalarsColorNodeComboBox->currentNodeID() !=
+      d->MRMLModelDisplayNode->GetColorNodeID())
+    {
+    d->ScalarsColorNodeComboBox->setCurrentNodeID(
+      d->MRMLModelDisplayNode->GetColorNodeID());
+    }
+  d->ScalarsColorNodeComboBox->blockSignals(wasBlocking);
 }
 
 //------------------------------------------------------------------------------

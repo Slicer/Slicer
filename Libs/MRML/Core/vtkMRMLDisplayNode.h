@@ -60,19 +60,23 @@ public:
   /// node, this setting determines if the display node, color node, or ?
   /// determine the mapping range between the data and the colors used to
   /// display it. Not all are currently supported.
+  /// UseDataScalarRange - use the current min/max of the active data (former auto)
   /// UseColorNodeScalarRange - use the range from the associated color node
-  /// UseDisplayNodeScalarRange - use the ScalarRange from this display node
-  /// UseDataScalarRange - use the current min/max of the data
   /// UseDataTypeScalarRange - use the min/max of the numerical type of the
   /// data, for example minimum integer to maximum integer
+  /// UseManualScalarRange - use user defined values
   /// \sa ScalarRangeFlag, GetScalarRangeFlag(), SetScalarRangeFlag(),
-  /// SetScalarRange(), GetScalarRange()
+  /// SetScalarRange(), GetScalarRange(), GetScalarRangeFlagTypeAsString()
   typedef enum {
-    UseColorNodeScalarRange = 0,
-    UseDisplayNodeScalarRange,
+    UseManualScalarRange = 0,
     UseDataScalarRange,
-    UseDataTypeScalarRange
+    UseColorNodeScalarRange,
+    UseDataTypeScalarRange,
   } ScalarRangeFlagType;
+
+  /// Convert between scalar range flag type id and string
+  /// \sa ScalarRangeFlag
+  const char* GetScalarRangeFlagTypeAsString(int flag);
 
   /// Returns the first displayable node that is associated to this display node
   /// \sa vtkMRMLDisplayableNode
@@ -339,16 +343,20 @@ public:
   vtkBooleanMacro(TensorVisibility, int);
 
   /// Set the auto scalar range flag of the display node.
-  /// \sa AutoScalarRange, GetAutoScalarRange(), AutoScalarRangeOn(),
+  /// \deprecated
+  /// \sa SetScalarRangeFlag(), GetAutoScalarRange(), AutoScalarRangeOn(),
   /// AutoScalarRangeOff()
-  vtkSetMacro(AutoScalarRange, int);
+  void SetAutoScalarRange(int b);
   /// Get the auto scalar range flag of the display node.
-  /// \sa AutoScalarRange, SetAutoScalarRange(), AutoScalarRangeOn(),
+  /// \deprecated
+  /// \sa GetScalarRangeFlag(), SetAutoScalarRange(), AutoScalarRangeOn(),
   /// AutoScalarRangeOff()
-  vtkGetMacro(AutoScalarRange, int);
+  int GetAutoScalarRange();
   /// Set the auto scalar range flag of the display node.
-  /// \sa AutoScalarRange, SetAutoScalarRange(), GetAutoScalarRange()
-  vtkBooleanMacro(AutoScalarRange, int);
+  /// \deprecated
+  /// \sa SetScalarRangeFlag(), SetAutoScalarRange(), GetAutoScalarRange()
+  void AutoScalarRangeOn();
+  void AutoScalarRangeOff();
 
   /// Set the scalar range of the display node.
   /// \sa ScalarRange, GetScalarRange()
@@ -638,13 +646,6 @@ protected:
   /// TensorVisibilityOff(),
   /// Visibility, ScalarVisibility, VectorVisibility
   int TensorVisibility;
-  /// Indicates whether to use scalar range from polydata or the one specidied
-  /// by ScalarRange.
-  /// Auto (1) by default.
-  /// \sa SetAutoScalarRange(), GetAutoScalarRange(), AutoScalarRangeOn(),
-  /// AutoScalarRangeOff(),
-  /// ScalarRange
-  int AutoScalarRange;
   /// Indicates whether to use interpolate texture.
   /// Don't interpolate (0) by default.
   /// \sa SetInterpolateTexture(), GetInterpolateTexture(), InterpolateTextureOn(),
@@ -656,7 +657,7 @@ protected:
   /// by colorName.
   /// [0, 100] by default.
   /// \sa SetScalarRange(), GetScalarRange(),
-  /// AutoScalarRange
+  /// ScalarRangeFlag
   double ScalarRange[2];
 
   /// Model's color in the format [r,g,b].

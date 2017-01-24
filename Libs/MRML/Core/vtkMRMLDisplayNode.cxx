@@ -65,8 +65,7 @@ vtkMRMLDisplayNode::vtkMRMLDisplayNode()
   this->VectorVisibility = 0;
   this->TensorVisibility = 0;
   this->InterpolateTexture = 0;
-  this->ScalarRangeFlag = this->UseColorNodeScalarRange;
-  this->AutoScalarRange = 1;
+  this->ScalarRangeFlag = vtkMRMLDisplayNode::UseDataScalarRange;
 
   // Arrays
   this->ScalarRange[0] = 0;
@@ -163,9 +162,7 @@ void vtkMRMLDisplayNode::WriteXML(ostream& of, int nIndent)
 
   of << indent << " interpolateTexture=\"" << (this->InterpolateTexture ? "true" : "false") << "\"";
 
-  of << indent << " scalarRangeFlag=\"" << this->ScalarRangeFlag << "\"";
-
-  of << indent << " autoScalarRange=\"" << (this->AutoScalarRange ? "true" : "false") << "\"";
+  of << indent << " scalarRangeFlag=\"" << this->GetScalarRangeFlagTypeAsString(this->ScalarRangeFlag) << "\"";
 
   of << indent << " scalarRange=\"" << this->ScalarRange[0] << " "
      << this->ScalarRange[1] << "\"";
@@ -495,11 +492,11 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
       {
       if (!strcmp(attValue,"true"))
         {
-        this->AutoScalarRange = 1;
+        this->SetScalarRangeFlag(vtkMRMLDisplayNode::UseDataScalarRange);
         }
       else
         {
-        this->AutoScalarRange = 0;
+        this->SetScalarRangeFlag(vtkMRMLDisplayNode::UseManualScalarRange);
         }
       }
     else if (!strcmp(attName, "colorNodeID") ||
@@ -558,7 +555,6 @@ void vtkMRMLDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetTensorVisibility(node->TensorVisibility);
   this->SetInterpolateTexture(node->InterpolateTexture);
   this->SetScalarRangeFlag(node->ScalarRangeFlag);
-  this->SetAutoScalarRange(node->AutoScalarRange);
   this->SetBackfaceCulling(node->BackfaceCulling);
   this->SetClipping(node->Clipping);
   this->SetSliceIntersectionVisibility(node->SliceIntersectionVisibility);
@@ -598,7 +594,6 @@ void vtkMRMLDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "TensorVisibility:  " << this->TensorVisibility << "\n";
   os << indent << "InterpolateTexture:" << this->InterpolateTexture << "\n";
   os << indent << "ScalarRangeFlag:   " << this->ScalarRangeFlag << "\n";
-  os << indent << "AutoScalarRange:   " << this->AutoScalarRange << "\n";
   os << indent << "BackfaceCulling:   " << this->BackfaceCulling << "\n";
   os << indent << "Clipping:          " << this->Clipping << "\n";
   os << indent << "SliceIntersectionVisibility: " << this->SliceIntersectionVisibility << "\n";
@@ -953,4 +948,51 @@ bool vtkMRMLDisplayNode::GetVisibility(const char* viewNodeID)
   bool res = this->GetVisibility() != 0;
   res = res && this->IsDisplayableInView(viewNodeID);
   return res;
+}
+
+//-------------------------------------------------------
+void vtkMRMLDisplayNode::SetAutoScalarRange(int b)
+{
+  if(b)
+    {
+    this->AutoScalarRangeOn();
+    }
+  else
+    {
+    this->AutoScalarRangeOff();
+    }
+}
+
+//-------------------------------------------------------
+int vtkMRMLDisplayNode::GetAutoScalarRange()
+{
+  return (this->GetScalarRangeFlag() == vtkMRMLDisplayNode::UseDataScalarRange);
+}
+
+//-------------------------------------------------------
+void vtkMRMLDisplayNode::AutoScalarRangeOn()
+{
+  this->SetScalarRangeFlag(vtkMRMLDisplayNode::UseDataScalarRange);
+}
+
+//-------------------------------------------------------
+void vtkMRMLDisplayNode::AutoScalarRangeOff()
+{
+  this->SetScalarRangeFlag(vtkMRMLDisplayNode::UseManualScalarRange);
+}
+
+//-------------------------------------------------------
+const char* vtkMRMLDisplayNode
+::GetScalarRangeFlagTypeAsString(int flag)
+{
+  switch (flag)
+    {
+    case UseManualScalarRange: return "UseManual";
+    case UseDataScalarRange: return "UseData";
+    case UseColorNodeScalarRange: return "UseColorNode";
+    case UseDataTypeScalarRange: return "UseDataType";
+    default:
+      // invalid id
+      return "";
+    }
 }

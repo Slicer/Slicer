@@ -89,8 +89,9 @@ public:
   /// \sa SetActiveScalarName()
   virtual void SetActiveAttributeLocation(int location);
 
-  /// Update the pipeline based on this node attributes
-  virtual void UpdateMeshPipeline();
+  /// Reimplemented to update scalar range accordingly
+  /// \sa SetActiveScalarName()
+  virtual void SetScalarRangeFlag(int flag);
 
 protected:
   vtkMRMLModelDisplayNode();
@@ -104,6 +105,13 @@ protected:
 
   /// To be reimplemented in subclasses if the input of the pipeline changes
   virtual void SetInputToMeshPipeline(vtkAlgorithmOutput* meshConnection);
+
+  /// Update the AssignAttribute filter based on
+  /// its ActiveScalarName and its ActiveAttributeLocation
+  virtual void UpdateAssignedAttribute();
+
+  /// Update the ScalarRange based on the ScalarRangeFlag
+  virtual void UpdateScalarRange();
 
   /// Filter that changes the active scalar of the input mesh
   /// using the ActiveScalarName and ActiveAttributeLocation properties.

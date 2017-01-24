@@ -13,13 +13,16 @@ Version:   $Revision: 1.3 $
 =========================================================================auto=*/
 // MRML includes
 #include "vtkMRMLModelDisplayNode.h"
+#include "vtkMRMLColorNode.h"
 
 // VTK includes
 #include <vtkAlgorithmOutput.h>
 #include <vtkAssignAttribute.h>
 #include <vtkCommand.h>
+#include <vtkLookupTable.h>
 #include <vtkObjectFactory.h>
 #include <vtkPassThrough.h>
+#include <vtkPointData.h>
 #include <vtkPointSet.h>
 #include <vtkPolyData.h>
 #include <vtkUnstructuredGrid.h>
@@ -55,7 +58,7 @@ void vtkMRMLModelDisplayNode::ProcessMRMLEvents(vtkObject *caller,
 
   if (event == vtkCommand::ModifiedEvent)
     {
-    this->UpdateMeshPipeline();
+    this->UpdateScalarRange();
     }
 }
 
@@ -180,7 +183,7 @@ void vtkMRMLModelDisplayNode::SetActiveScalarName(const char *scalarName)
     }
   int wasModifying = this->StartModify();
   this->Superclass::SetActiveScalarName(scalarName);
-  this->UpdateMeshPipeline();
+  this->UpdateAssignedAttribute();
   this->EndModify(wasModifying);
 }
 
@@ -193,24 +196,89 @@ void vtkMRMLModelDisplayNode::SetActiveAttributeLocation(int location)
     }
   int wasModifying = this->StartModify();
   this->Superclass::SetActiveAttributeLocation(location);
-  this->UpdateMeshPipeline();
+  this->UpdateAssignedAttribute();
   this->EndModify(wasModifying);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayNode::UpdateMeshPipeline()
+void vtkMRMLModelDisplayNode::SetScalarRangeFlag(int flag)
+{
+  if (flag == this->ScalarRangeFlag)
+    {
+    return;
+    }
+  int wasModifying = this->StartModify();
+  this->Superclass::SetScalarRangeFlag(flag);
+  this->UpdateScalarRange();
+  this->EndModify(wasModifying);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayNode::UpdateAssignedAttribute()
 {
   this->AssignAttribute->Assign(
     this->GetActiveScalarName(),
     this->GetActiveScalarName() ? vtkDataSetAttributes::SCALARS : -1,
     this->GetActiveAttributeLocation());
-  if (this->GetOutputMesh())
+
+  if (!this->GetInputMesh())
     {
-    this->GetOutputMeshConnection()->GetProducer()->Update();
-    if (this->GetAutoScalarRange())
+    return;
+    }
+
+  this->AssignAttribute->Update();
+
+  if (this->GetScalarRangeFlag() != vtkMRMLDisplayNode::UseManualScalarRange)
+    {
+    this->UpdateScalarRange();
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayNode::UpdateScalarRange()
+{
+  if (!this->GetInputMesh())
+    {
+    return;
+    }
+
+  int flag = this->GetScalarRangeFlag();
+  if (flag == vtkMRMLDisplayNode::UseDataScalarRange)
+    {
+    if (this->GetActiveScalarName())
       {
-      vtkDebugMacro("UpdateMeshPipeline: Auto flag is on, resetting scalar range!");
       this->SetScalarRange(this->GetOutputMesh()->GetScalarRange());
+      }
+    }
+  else if (flag == vtkMRMLDisplayNode::UseColorNodeScalarRange)
+    {
+    if (!this->GetColorNode())
+      {
+      vtkWarningMacro("Can not use color node scalar range since model "
+                      << "display node does not have a color node.");
+      }
+    else if (vtkLookupTable* lut = this->GetColorNode()->GetLookupTable())
+      {
+      this->SetScalarRange(lut->GetRange());
+      }
+    else
+      {
+      vtkWarningMacro("Can not use color node scalar range since model "
+                      << "display node color node does not have a lookup table.");
+      }
+    }
+  else if (flag == vtkMRMLDisplayNode::UseDataTypeScalarRange)
+    {
+    vtkPointData* pData = this->GetOutputMesh()->GetPointData();
+    vtkDataArray *dataArray = pData ? pData->GetArray(this->GetActiveScalarName()) : NULL;
+    if (dataArray)
+      {
+      this->SetScalarRange(dataArray->GetDataTypeMin(), dataArray->GetDataTypeMax());
+      }
+    else
+      {
+      vtkWarningMacro("Can not use data type scalar range since the model display node's"
+                      << "mesh does not have an active scalar array.");
       }
     }
 }
