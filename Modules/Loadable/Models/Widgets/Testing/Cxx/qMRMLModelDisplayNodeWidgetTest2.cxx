@@ -64,7 +64,7 @@ int qMRMLModelDisplayNodeWidgetTest2( int argc, char * argv [] )
   //modelDisplayNodeWidget.setMRMLModelDisplayNode(modelDisplayNode);
   //modelDisplayNodeWidget.show();
   ctkVTKDataSetArrayComboBox dataSetModel;
-  dataSetModel.setDataSet(modelDisplayNode->GetInputPolyData());
+  dataSetModel.setDataSet(modelDisplayNode->GetInputMesh());
 
   if (argc < 3 || QString(argv[2]) != "-I" )
     {

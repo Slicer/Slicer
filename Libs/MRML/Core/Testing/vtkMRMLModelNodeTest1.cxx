@@ -18,16 +18,19 @@
 #include <vtkDataSetAttributes.h>
 #include <vtkPolyData.h>
 #include <vtkSphereSource.h>
+#include <vtkUnstructuredGrid.h>
 
 //---------------------------------------------------------------------------
 int ExerciseBasicMethods();
 int TestActiveScalars();
+int TestGetSetMesh();
 
 //---------------------------------------------------------------------------
 int vtkMRMLModelNodeTest1(int , char * [] )
 {
   CHECK_EXIT_SUCCESS(ExerciseBasicMethods());
   CHECK_EXIT_SUCCESS(TestActiveScalars());
+  CHECK_EXIT_SUCCESS(TestGetSetMesh());
   return EXIT_SUCCESS;
 }
 
@@ -64,6 +67,86 @@ int TestActiveScalars()
   name = node1->GetActiveCellScalarName(vtkDataSetAttributes::SCALARS);
   std::cout << "Active cell scalars name = " << (name == NULL ? "null" : name) << std::endl;
   node1->RemoveScalars("testingArray");
+
+  return EXIT_SUCCESS;
+}
+
+//---------------------------------------------------------------------------
+int TestGetSetMesh()
+{
+  vtkNew<vtkUnstructuredGrid> ug;
+  vtkNew<vtkPolyData> poly;
+
+  vtkNew<vtkMRMLModelNode> node1;
+  CHECK_NULL(node1->GetMesh());
+  CHECK_NULL(node1->GetMeshConnection());
+  CHECK_NULL(node1->GetPolyData());
+  CHECK_NULL(node1->GetPolyDataConnection());
+  CHECK_NULL(node1->GetUnstructuredGrid());
+  CHECK_NULL(node1->GetUnstructuredGridConnection());
+
+  // backward compatible but deprecated
+  node1->SetAndObservePolyData(poly.GetPointer());
+  CHECK_INT(node1->GetMeshType(), vtkMRMLModelNode::PolyDataMeshType)
+  CHECK_NOT_NULL(node1->GetMesh());
+  CHECK_NOT_NULL(node1->GetMeshConnection());
+  CHECK_NOT_NULL(node1->GetPolyData());
+  CHECK_NOT_NULL(node1->GetPolyDataConnection());
+  CHECK_NULL(node1->GetUnstructuredGrid());
+  CHECK_NULL(node1->GetUnstructuredGridConnection());
+  CHECK_POINTER(node1->GetMeshConnection(), node1->GetPolyDataConnection());
+  CHECK_POINTER(node1->GetPolyData(), poly.GetPointer());
+  CHECK_POINTER(vtkPolyData::SafeDownCast(node1->GetMesh()), poly.GetPointer());
+
+  // set unstructured grid
+  node1->SetAndObserveMesh(ug.GetPointer());
+  CHECK_INT(node1->GetMeshType(), vtkMRMLModelNode::UnstructuredGridMeshType)
+  CHECK_NOT_NULL(node1->GetMesh());
+  CHECK_NOT_NULL(node1->GetMeshConnection());
+  CHECK_NULL(node1->GetPolyData());
+  CHECK_NULL(node1->GetPolyDataConnection());
+  CHECK_NOT_NULL(node1->GetUnstructuredGrid());
+  CHECK_NOT_NULL(node1->GetUnstructuredGridConnection());
+  CHECK_POINTER(node1->GetMeshConnection(), node1->GetUnstructuredGridConnection());
+  CHECK_POINTER(node1->GetUnstructuredGrid(), ug.GetPointer());
+  CHECK_POINTER(vtkUnstructuredGrid::SafeDownCast(node1->GetMesh()), ug.GetPointer());
+
+  // set poly data
+  node1->SetAndObserveMesh(poly.GetPointer());
+  CHECK_INT(node1->GetMeshType(), vtkMRMLModelNode::PolyDataMeshType)
+  CHECK_NOT_NULL(node1->GetMesh());
+  CHECK_NOT_NULL(node1->GetMeshConnection());
+  CHECK_NOT_NULL(node1->GetPolyData());
+  CHECK_NOT_NULL(node1->GetPolyDataConnection());
+  CHECK_NULL(node1->GetUnstructuredGrid());
+  CHECK_NULL(node1->GetUnstructuredGridConnection());
+  CHECK_POINTER(node1->GetMeshConnection(), node1->GetPolyDataConnection());
+  CHECK_POINTER(node1->GetPolyData(), poly.GetPointer());
+  CHECK_POINTER(vtkPolyData::SafeDownCast(node1->GetMesh()), poly.GetPointer());
+
+  // copy poly data
+  vtkNew<vtkMRMLModelNode> node2;
+  node2->SetAndObserveMesh(ug.GetPointer());
+  node2->Copy(node1.GetPointer());
+  CHECK_INT(node2->GetMeshType(), vtkMRMLModelNode::PolyDataMeshType)
+  CHECK_NOT_NULL(node2->GetMesh());
+  CHECK_NOT_NULL(node2->GetMeshConnection());
+  CHECK_NOT_NULL(node2->GetPolyData());
+  CHECK_NOT_NULL(node2->GetPolyDataConnection());
+  CHECK_NULL(node2->GetUnstructuredGrid());
+  CHECK_NULL(node2->GetUnstructuredGridConnection());
+  CHECK_POINTER(node2->GetMeshConnection(), node2->GetPolyDataConnection());
+  CHECK_POINTER(node2->GetPolyData(), poly.GetPointer());
+  CHECK_POINTER(vtkPolyData::SafeDownCast(node2->GetMesh()), poly.GetPointer());
+
+  // unset mesh
+  node2->SetAndObserveMesh(NULL);
+  CHECK_NULL(node2->GetMesh());
+  CHECK_NULL(node2->GetMeshConnection());
+  CHECK_NULL(node2->GetPolyData());
+  CHECK_NULL(node2->GetPolyDataConnection());
+  CHECK_NULL(node2->GetUnstructuredGrid());
+  CHECK_NULL(node2->GetUnstructuredGridConnection());
 
   return EXIT_SUCCESS;
 }

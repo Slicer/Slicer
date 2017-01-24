@@ -15,13 +15,18 @@
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLScene.h"
 
-#include <vtkCleanPolyData.h>
 #include <vtkCylinderSource.h>
+#include <vtkGeometryFilter.h>
 #include <vtkNew.h>
 #include <vtkTriangleFilter.h>
+#include <vtkUnstructuredGrid.h>
+#include <vtkVoxel.h>
 
-int TestReadWriteData(const char* tempDir);
+//---------------------------------------------------------------------------
+int TestReadWriteData(vtkMRMLScene* scene, const char* extension, vtkPointSet*mesh);
+void CreateVoxelMeshes(vtkUnstructuredGrid* ug, vtkPolyData* poly);
 
+//---------------------------------------------------------------------------
 int vtkMRMLModelStorageNodeTest1(int argc, char * argv[] )
 {
   if (argc != 2)
@@ -33,69 +38,63 @@ int vtkMRMLModelStorageNodeTest1(int argc, char * argv[] )
   vtkNew<vtkMRMLModelStorageNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
+  vtkNew<vtkMRMLScene> scene;
   const char* tempDir = argv[1];
-  CHECK_EXIT_SUCCESS(TestReadWriteData(tempDir));
+  scene->SetRootDirectory(tempDir);
+
+  vtkNew<vtkUnstructuredGrid> ug;
+  vtkNew<vtkPolyData> poly;
+  CreateVoxelMeshes(ug.GetPointer(), poly.GetPointer());
+  CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".vtk", ug.GetPointer()));
+  CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".vtu", ug.GetPointer()));
+  CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".vtk", poly.GetPointer()));
+  CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".vtp", poly.GetPointer()));
+  CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".stl", poly.GetPointer()));
+  CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".ply", poly.GetPointer()));
+  CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".obj", poly.GetPointer()));
 
   return EXIT_SUCCESS;
 }
 
-int TestReadWriteData(const char* tempDir)
+//---------------------------------------------------------------------------
+int TestReadWriteData(vtkMRMLScene* scene, const char *extension, vtkPointSet *mesh)
 {
-  std::string sceneFileName = std::string(tempDir) + "/vtkMRMLModelStorageNodeTest1.mrml";
-  std::string modelFileNameBase = std::string(tempDir) + "/vtkMRMLModelNodeTest1";
-  std::vector< std::string > modelFileNameExtensions;
-  modelFileNameExtensions.push_back(".vtk");
-  modelFileNameExtensions.push_back(".vtp");
-  modelFileNameExtensions.push_back(".stl");
-  modelFileNameExtensions.push_back(".ply");
-  modelFileNameExtensions.push_back(".obj");
+  std::string fileName = std::string(scene->GetRootDirectory()) +
+                         std::string("/vtkMRMLModelNodeTest1") +
+                         std::string(extension);
 
-  // Generate test polydata (triangle mesh without coincident points)
-  vtkNew<vtkCylinderSource> cylinderSource;
-  vtkNew<vtkTriangleFilter> triangulator;
-  triangulator->SetInputConnection(cylinderSource->GetOutputPort());
-  vtkNew<vtkCleanPolyData> cleaner;
-  cleaner->PointMergingOn();
-  cleaner->SetInputConnection(triangulator->GetOutputPort());
-  cleaner->Update();
-  // Validate test polydata
-  int numberOfPoints = cleaner->GetOutput()->GetNumberOfPoints();
-  int numberOfCells = cleaner->GetOutput()->GetNumberOfCells();
+  int numberOfPoints = mesh->GetNumberOfPoints();
   CHECK_BOOL(numberOfPoints > 0, true);
-  CHECK_BOOL(numberOfCells > 0, true);
 
-  // Create test scene
-  vtkNew<vtkMRMLScene> scene;
-  scene->SetRootDirectory(tempDir);
   // Add model node
   vtkNew<vtkMRMLModelNode> modelNode;
-  modelNode->SetPolyDataConnection(cleaner->GetOutputPort());
+  modelNode->SetAndObserveMesh(mesh);
+  CHECK_NOT_NULL(modelNode->GetMesh());
   CHECK_NOT_NULL(scene->AddNode(modelNode.GetPointer()));
+
+  bool isPoly = (modelNode->GetMeshType() == vtkMRMLModelNode::PolyDataMeshType);
+  std::cout << "Testing " << extension << " for "
+            <<  (isPoly ? "polydata" : "unstructured grid")
+            << " mesh." << std::endl;
+
   // Add storage node
   modelNode->AddDefaultStorageNode();
   vtkMRMLStorageNode* storageNode = modelNode->GetStorageNode();
   CHECK_NOT_NULL(storageNode);
+  storageNode->SetFileName(fileName.c_str());
 
-  // Test writing and re-reading of test polydata
-  for (std::vector< std::string >::iterator modelFileNameExtensionIt = modelFileNameExtensions.begin();
-    modelFileNameExtensionIt != modelFileNameExtensions.end(); ++modelFileNameExtensionIt)
-    {
-    std::cout << "Testing " << (*modelFileNameExtensionIt) << "\n";
-    std::string fileName = modelFileNameBase + (*modelFileNameExtensionIt);
-    storageNode->SetFileName(fileName.c_str());
-    // Test writing
-    CHECK_BOOL(storageNode->WriteData(modelNode.GetPointer()), true);
-    // Clear data from model node
-    modelNode->SetAndObservePolyData(NULL);
-    // Test reading
-    CHECK_BOOL(storageNode->ReadData(modelNode.GetPointer()), true);
-    vtkNew<vtkCleanPolyData> cleaner2;
-    cleaner2->PointMergingOn();
-    cleaner2->SetInputConnection(modelNode->GetPolyDataConnection());
-    cleaner2->Update();
-    CHECK_INT(cleaner2->GetOutput()->GetNumberOfPoints(), numberOfPoints);
-    CHECK_INT(cleaner2->GetOutput()->GetNumberOfCells(), numberOfCells);
-    }
+  // Test writing
+  CHECK_BOOL(storageNode->WriteData(modelNode.GetPointer()), true);
+
+  // Clear data from model node
+  modelNode->SetAndObservePolyData(NULL);
+  CHECK_NULL(modelNode->GetMesh());
+
+  // Test reading
+  CHECK_BOOL(storageNode->ReadData(modelNode.GetPointer()), true);
+  vtkPointSet* mesh2 = modelNode->GetMesh();
+  CHECK_NOT_NULL(mesh2);
+  CHECK_INT(mesh2->GetNumberOfPoints(), numberOfPoints);
 
   return EXIT_SUCCESS;
 }
