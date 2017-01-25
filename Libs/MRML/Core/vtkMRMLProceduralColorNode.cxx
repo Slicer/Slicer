@@ -142,9 +142,12 @@ vtkLookupTable* vtkMRMLProceduralColorNode::GetLookupTable()
   // copy into a color look up table with NumberOfTableValues entries
   vtkColorTransferFunction *ctf = this->GetColorTransferFunction();
   double *ctfRange = ctf->GetRange();
-  double bareTable[this->NumberOfTableValues*3];
-  ctf->GetTable(ctfRange[0], ctfRange[1],
-                this->NumberOfTableValues, bareTable);
+  std::vector<double> bareTable(this->NumberOfTableValues*3);
+  if (this->NumberOfTableValues > 0)
+    {
+    ctf->GetTable(ctfRange[0], ctfRange[1],
+      this->NumberOfTableValues, &(bareTable[0]));
+    }
 
   vtkDebugMacro("Changing a color xfer function to a lut, range used = "
                 << ctfRange[0] << ", " << ctfRange[1]
