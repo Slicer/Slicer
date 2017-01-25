@@ -1,6 +1,7 @@
 import os, copy
 import qt
 import vtk
+import logging
 from ctk import ctkDICOMObjectListWidget, ctkDICOMDatabase, ctkDICOMIndexer, ctkDICOMBrowser, ctkPopupWidget, ctkExpandButton
 import slicer
 from slicer.util import VTKObservationMixin
@@ -837,7 +838,16 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
         if loadable.selected:
           progress.labelText = '\nLoading %s' % loadable.name
           slicer.app.processEvents()
-          if not plugin.load(loadable):
+          loadSuccess = True
+          try:
+            loadSuccess = plugin.load(loadable)
+          except:
+            loadSuccess = False
+            import traceback
+            logging.error("DICOM plugin failed to load '"
+              + loadable.name + "' as a '" + plugin.loadType + "'.\n"
+              + traceback.format_exc())
+          if not loadSuccess:
             loadingResult = '%s\nCould not load: %s as a %s' % (loadingResult, loadable.name, plugin.loadType)
           step += 1
           progress.setValue(step)
