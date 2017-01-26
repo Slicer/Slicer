@@ -1353,6 +1353,12 @@ void qSlicerTerminologyNavigatorWidget::onCategorySelected(QTableWidgetItem* cur
   Q_UNUSED(previousItem)
   Q_D(qSlicerTerminologyNavigatorWidget);
 
+  if (!currentItem)
+    {
+    // Happens when clearing the table
+    return;
+    }
+
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
 
   // Get current category object
