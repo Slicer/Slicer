@@ -125,6 +125,8 @@ public:
   /// \return Success flag
   bool ConvertSegmentationDescriptorToAnatomicContext(rapidjson::Document& descriptorDoc, rapidjson::Document& convertedDoc, std::string contextName);
   /// Copy basic identifier members from an identifier object into a Json object
+  /// Note: Allocator specifies the owner of the created object, so it is important to set the allocator
+  ///       of the document where the object will be added
   /// \param code Json object into which the code information is added a members
   void GetJsonCodeFromIdentifier(rapidjson::Value& code, CodeIdentifier idenfifier, rapidjson::Document::AllocatorType& allocator);
 
@@ -133,8 +135,15 @@ public:
     {
     if (terminologyMap.find(name) != terminologyMap.end())
       {
+      if (doc == terminologyMap[name])
+        {
+        // The two objects are the same, there is nothing to do
+        return;
+        }
+      // Make sure the previous document object is deleted
       delete terminologyMap[name];
       }
+    // Set new document object
     terminologyMap[name] = doc;
     }
 
@@ -628,7 +637,7 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
   if (convertedDoc.IsObject() && convertedDoc.HasMember("SegmentationCodes"))
     {
     segmentationCodes = convertedDoc["SegmentationCodes"];
-    categoryArray = this->GetCategoryArrayInTerminology(contextName);
+    categoryArray = segmentationCodes["Category"];
     }
   else
     {
@@ -776,7 +785,16 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
   // Set objects back to terminology Json object
   if (entryAdded)
     {
+    if (segmentationCodes.HasMember("Category"))
+      {
+      segmentationCodes.RemoveMember("Category");
+      }
     segmentationCodes.AddMember("Category", categoryArray, allocator);
+
+    if (convertedDoc.HasMember("SegmentationCodes"))
+      {
+      convertedDoc.RemoveMember("SegmentationCodes");
+      }
     convertedDoc.AddMember("SegmentationCodes", segmentationCodes, allocator);
 
     return true;
@@ -810,7 +828,7 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
   if (convertedDoc.IsObject() && convertedDoc.HasMember("AnatomicCodes"))
     {
     anatomicCodes = convertedDoc["AnatomicCodes"];
-    regionArray = this->GetRegionArrayInAnatomicContext(contextName);
+    regionArray = anatomicCodes["AnatomicRegion"];
     }
   else
     {
@@ -907,7 +925,16 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
   // Set objects back to anatomic context Json object
   if (entryAdded)
     {
+    if (anatomicCodes.HasMember("AnatomicRegion"))
+      {
+      anatomicCodes.RemoveMember("AnatomicRegion");
+      }
     anatomicCodes.AddMember("AnatomicRegion", regionArray, allocator);
+
+    if (convertedDoc.HasMember("AnatomicCodes"))
+      {
+      convertedDoc.RemoveMember("AnatomicCodes");
+      }
     convertedDoc.AddMember("AnatomicCodes", anatomicCodes, allocator);
 
     return true;
