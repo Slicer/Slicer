@@ -1,9 +1,0 @@
-<MRML>
-<UnstructuredGrid
- id="vtkMRMLUnstructuredGridNode1" name="PentaHexa.vtk"  hideFromEditors="false" storageNodeRef="vtkMRMLUnstructuredGridStorageNode1" displayNodeRef="vtkMRMLUnstructuredGridDisplayNode1" ></UnstructuredGrid>
-<UnstructuredGridStorage
- id="vtkMRMLUnstructuredGridStorageNode1" name=""  hideFromEditors="true" fileName="TestData/PentaHexa.vtk" ></UnstructuredGridStorage>
-<UnstructuredGridDisplay
- id="vtkMRMLUnstructuredGridDisplayNode1" name=""  hideFromEditors="true"
- shrinkFactor="0.8" color="0.7 0.1 0.7" ambient="0" diffuse="1" specular="0" power="1" opacity="1" visibility="true" clipping="false" backfaceCulling="true" scalarVisibility="false" vectorVisibility="false" tensorVisibility="false" scalarRange="0 100"></UnstructuredGridDisplay>
-</MRML>

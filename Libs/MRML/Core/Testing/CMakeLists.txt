@@ -201,9 +201,6 @@ simple_test( vtkMRMLTransformDisplayNodeTest1 )
 simple_test( vtkMRMLTransformNodeTest1 )
 simple_test( vtkMRMLTransformStorageNodeTest1 )
 simple_test( vtkMRMLUnitNodeTest1 )
-simple_test( vtkMRMLUnstructuredGridDisplayNodeTest1 )
-simple_test( vtkMRMLUnstructuredGridNodeTest1 )
-simple_test( vtkMRMLUnstructuredGridStorageNodeTest1 )
 simple_test( vtkMRMLVectorVolumeDisplayNodeTest1 )
 simple_test( vtkMRMLVectorVolumeNodeTest1 )
 simple_test( vtkMRMLViewNodeTest1 )
@@ -233,7 +230,7 @@ set( ScenesToTest
   multi_display.mrml
   name.mrml
   SlicePipeline.mrml
-  unstruct_grid.mrml
+  volumetric_mesh.mrml
   vol_and_cube_camera.mrml
   vol_and_cube.mrml
   vol.mrml
