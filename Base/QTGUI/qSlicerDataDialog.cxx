@@ -84,6 +84,26 @@ qSlicerDataDialogPrivate::qSlicerDataDialogPrivate(QWidget* _parent)
 
   // Authorize Drops action from outside
   this->setAcceptDrops(true);
+
+  // Set up button focus default action:
+  // * Space bar: clicks the button where the focus is on (e.g., if a user added data from
+  //   file and wants to add another data from file then he should press space bar)
+  // * Enter key: loads the selected data (unless cancel button has the focus, that case
+  //   enter key cancels loading). It is important that after add data button was clicked
+  //   and add data button has the focus enter key still loads selected data instead of
+  //   opening the add data window. This allows the user to load data then just hit Enter
+  //   key to load data.
+
+  // All buttons have strong focus, so after clicking/tabbing on them hitting space bar
+  // clicks them. However, we need to prevent all push-buttons (other than OK and Cancel)
+  // to become default buttons.
+  // Default button is the one that is clicked when user hits Enter key.
+  resetButton->setAutoDefault(false);
+  resetButton->setDefault(false);
+  this->AddDirectoryButton->setDefault(false);
+  this->AddDirectoryButton->setAutoDefault(false);
+  this->AddFilesButton->setDefault(false);
+  this->AddFilesButton->setAutoDefault(false);
 }
 
 //-----------------------------------------------------------------------------
