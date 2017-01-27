@@ -123,7 +123,6 @@ int TestThreshold(vtkPointSet* mesh)
   mdNode->SetActiveScalarName(VOXEL_ARRAY_NAME);
   mdNode->ScalarVisibilityOn(); // needs visibility on to threshold
   mdNode->ThresholdEnabledOn();
-  vtkPointSet* tMesh = mdNode->GetOutputMesh(); // thresholded mesh
 
   double tRange[2];
   double mdRange[2];
@@ -133,26 +132,26 @@ int TestThreshold(vtkPointSet* mesh)
   // once a point is outside of the threshold range, the
   // whole cell is removed.
   mdNode->SetThresholdRange(-2, 12);
-  tMesh->GetScalarRange(tRange);
+  mdNode->GetOutputMesh()->GetScalarRange(tRange);
   CHECK_DOUBLE(tRange[0], mdRange[0]);
   CHECK_DOUBLE(tRange[1], mdRange[1]);
-  CHECK_DOUBLE(tMesh->GetNumberOfCells(), mesh->GetNumberOfCells());
+  CHECK_DOUBLE(mdNode->GetOutputMesh()->GetNumberOfCells(), mesh->GetNumberOfCells());
 
   mdNode->SetThresholdRange(2, 9);
-  tMesh->GetScalarRange(tRange);
+  mdNode->GetOutputMesh()->GetScalarRange(tRange);
   CHECK_BOOL(tRange[0] > mdRange[0], true);
-  CHECK_BOOL(tMesh->GetNumberOfCells() < mesh->GetNumberOfCells(), true);
+  CHECK_BOOL(mdNode->GetOutputMesh()->GetNumberOfCells() < mesh->GetNumberOfCells(), true);
 
   mdNode->SetThresholdRange(-2, 5);
-  tMesh->GetScalarRange(tRange);
+  mdNode->GetOutputMesh()->GetScalarRange(tRange);
   CHECK_BOOL(tRange[1] < mdRange[1], true);
-  CHECK_BOOL(tMesh->GetNumberOfCells() < mesh->GetNumberOfCells(), true);
+  CHECK_BOOL(mdNode->GetOutputMesh()->GetNumberOfCells() < mesh->GetNumberOfCells(), true);
 
   mdNode->SetThresholdRange(3, 4);
-  tMesh->GetScalarRange(tRange);
+  mdNode->GetOutputMesh()->GetScalarRange(tRange);
   CHECK_BOOL(tRange[0] > mdRange[0], true);
   CHECK_BOOL(tRange[1] < mdRange[1], true);
-  CHECK_BOOL(tMesh->GetNumberOfCells() < mesh->GetNumberOfCells(), true);
+  CHECK_BOOL(mdNode->GetOutputMesh()->GetNumberOfCells() < mesh->GetNumberOfCells(), true);
 
   mdNode->ThresholdEnabledOff();
   CHECK_DOUBLE(mdNode->GetOutputMesh()->GetNumberOfCells(), mesh->GetNumberOfCells());

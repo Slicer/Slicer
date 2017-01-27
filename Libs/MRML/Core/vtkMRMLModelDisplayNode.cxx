@@ -138,6 +138,7 @@ vtkPointSet* vtkMRMLModelDisplayNode::GetOutputMesh()
 
   vtkAlgorithmOutput* outputConnection = this->GetOutputMeshConnection();
   vtkAlgorithm* producer =  outputConnection? outputConnection->GetProducer() : 0;
+  producer->Update();
   return vtkPointSet::SafeDownCast(
     producer ? producer->GetOutputDataObject(outputConnection->GetIndex()) : 0);
 }
@@ -186,14 +187,10 @@ void vtkMRMLModelDisplayNode::SetThresholdRange(double min, double max)
 {
   vtkMTimeType mtime = this->ThresholdFilter->GetMTime();
   this->ThresholdFilter->ThresholdBetween(min, max);
-  if (mtime >= this->ThresholdFilter->GetMTime())
+  if (this->ThresholdFilter->GetMTime() > mtime)
     {
-    return;
+    this->Modified();
     }
-
-  this->ThresholdFilter->Update();
-
-  this->Modified();
 }
 
 //---------------------------------------------------------------------------
@@ -272,13 +269,6 @@ void vtkMRMLModelDisplayNode::UpdateAssignedAttribute()
     this->GetActiveScalarName() ? vtkDataSetAttributes::SCALARS : -1,
     this->GetActiveAttributeLocation());
 
-  if (!this->GetInputMesh())
-    {
-    return;
-    }
-
-  this->AssignAttribute->Update();
-
   if (this->GetScalarRangeFlag() != vtkMRMLDisplayNode::UseManualScalarRange)
     {
     this->UpdateScalarRange();
@@ -298,8 +288,22 @@ void vtkMRMLModelDisplayNode::UpdateScalarRange()
     {
     if (this->GetActiveScalarName())
       {
-      this->SetScalarRange(vtkPointSet::SafeDownCast(
-        this->AssignAttribute->GetOutput())->GetScalarRange());
+      // Use output of AssignAttribute instead of this->GetOutputMesh()
+      // since the data scalar range should not be retrieved from a
+      // thresholded mesh even when thresholding is enabled.
+      // Need to call Update() since we need to use GetOutput() on the
+      // AssignAttribuet filter to retrieve its output mesh scalar range.
+      this->AssignAttribute->Update();
+      vtkPointSet* mesh = vtkPointSet::SafeDownCast(this->AssignAttribute->GetOutput());
+      if (mesh)
+        {
+        this->SetScalarRange(mesh->GetScalarRange());
+        }
+      else
+        {
+        vtkErrorMacro("Can not use data scalar range: the output of the "
+                      << "AssignAttribute filter is not a valid vtkPointSet.");
+        }
       }
     }
   else if (flag == vtkMRMLDisplayNode::UseColorNodeScalarRange)
