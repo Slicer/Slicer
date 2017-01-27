@@ -115,11 +115,15 @@ public:
   rapidjson::Value& GetRegionModifierInRegion(std::string anatomicContextName, CodeIdentifier regionId, CodeIdentifier modifierId);
 
   /// Convert a segmentation descriptor Json structure to a terminology context one
-  /// \return Terminology context Json structure, Null Json value on failure
-  rapidjson::Value& ConvertSegmentationDescriptorToTerminologyContext(rapidjson::Document& descriptorDoc, std::string contextName);
+  /// \param descriptorDoc Input segmentation descriptor json document
+  /// \param convertedDoc Output terminology context json document
+  /// \return Success flag
+  bool ConvertSegmentationDescriptorToTerminologyContext(rapidjson::Document& descriptorDoc, rapidjson::Document& convertedDoc, std::string contextName);
   /// Convert a segmentation descriptor Json structure to an anatomic context one
-  /// \return Anatomic context Json structure, Null Json value on failure
-  rapidjson::Value& ConvertSegmentationDescriptorToAnatomicContext(rapidjson::Document& descriptorDoc, std::string contextName);
+  /// \param descriptorDoc Input segmentation descriptor json document
+  /// \param convertedDoc Output anatomic context json document
+  /// \return Success flag
+  bool ConvertSegmentationDescriptorToAnatomicContext(rapidjson::Document& descriptorDoc, rapidjson::Document& convertedDoc, std::string contextName);
   /// Copy basic identifier members from an identifier object into a Json object
   /// \param code Json object into which the code information is added a members
   void GetJsonCodeFromIdentifier(rapidjson::Value& code, CodeIdentifier idenfifier, rapidjson::Document::AllocatorType& allocator);
@@ -599,12 +603,12 @@ rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetRegionModif
 }
 
 //---------------------------------------------------------------------------
-rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescriptorToTerminologyContext(
-  rapidjson::Document& descriptorDoc, std::string contextName)
+bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescriptorToTerminologyContext(
+  rapidjson::Document& descriptorDoc, rapidjson::Document& convertedDoc, std::string contextName )
 {
   if (!descriptorDoc.IsObject() || contextName.empty())
     {
-    return JSON_EMPTY_VALUE;
+    return false;
     }
 
   // Get segment attributes
@@ -612,26 +616,25 @@ rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegment
   if (!segmentAttributesArray.IsArray())
     {
     vtkGenericWarningMacro("ConvertSegmentationDescriptorToTerminologyContext: Invalid segmentAttributes member");
-    return JSON_EMPTY_VALUE;
+    return false;
     }
 
-  rapidjson::Document::AllocatorType& allocator = descriptorDoc.GetAllocator();
+  rapidjson::Document::AllocatorType& allocator = convertedDoc.GetAllocator();
 
   // Use terminology with context name if exists
-  rapidjson::Value terminologyRoot(this->GetTerminologyRootByName(contextName), allocator);
   rapidjson::Value segmentationCodes;
   rapidjson::Value categoryArray;
 
-  if (!terminologyRoot.IsNull() && terminologyRoot.HasMember("SegmentationCodes"))
+  if (convertedDoc.IsObject() && convertedDoc.HasMember("SegmentationCodes"))
     {
-    segmentationCodes = terminologyRoot["SegmentationCodes"];
+    segmentationCodes = convertedDoc["SegmentationCodes"];
     categoryArray = this->GetCategoryArrayInTerminology(contextName);
     }
   else
     {
     // If terminology was not found in the map, then initialize it and its members
-    terminologyRoot.SetObject();
-    terminologyRoot.AddMember("SegmentationCategoryTypeContextName", rapidjson::StringRef(contextName.c_str()), allocator);
+    convertedDoc.SetObject();
+    convertedDoc.AddMember("SegmentationCategoryTypeContextName", rapidjson::StringRef(contextName.c_str()), allocator);
     segmentationCodes.SetObject();
     categoryArray.SetArray();
     }
@@ -774,21 +777,21 @@ rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegment
   if (entryAdded)
     {
     segmentationCodes.AddMember("Category", categoryArray, allocator);
-    terminologyRoot.AddMember("SegmentationCodes", segmentationCodes, allocator);
+    convertedDoc.AddMember("SegmentationCodes", segmentationCodes, allocator);
 
-    return terminologyRoot;
+    return true;
     }
 
-  return JSON_EMPTY_VALUE; // Return invalid if no entry was added from descriptor
+  return false;
 }
 
 //---------------------------------------------------------------------------
-rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescriptorToAnatomicContext(
-  rapidjson::Document& descriptorDoc, std::string contextName)
+bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescriptorToAnatomicContext(
+  rapidjson::Document& descriptorDoc, rapidjson::Document& convertedDoc, std::string contextName)
 {
   if (!descriptorDoc.IsObject() || contextName.empty())
     {
-    return JSON_EMPTY_VALUE;
+    return false;
     }
 
   // Get segment attributes
@@ -796,25 +799,24 @@ rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegment
   if (!segmentAttributesArray.IsArray())
     {
     vtkGenericWarningMacro("ConvertSegmentationDescriptorToAnatomicContext: Invalid segmentAttributes member");
-    return JSON_EMPTY_VALUE;
+    return false;
     }
 
-  rapidjson::Document::AllocatorType& allocator = descriptorDoc.GetAllocator();
+  rapidjson::Document::AllocatorType& allocator = convertedDoc.GetAllocator();
 
   // Use terminology with context name if exists
-  rapidjson::Value anatomicContextRoot(this->GetAnatomicContextRootByName(contextName), allocator);
   rapidjson::Value anatomicCodes;
   rapidjson::Value regionArray;
-  if (!anatomicContextRoot.IsNull() && anatomicContextRoot.HasMember("AnatomicCodes"))
+  if (convertedDoc.IsObject() && convertedDoc.HasMember("AnatomicCodes"))
     {
-    anatomicCodes = anatomicContextRoot["AnatomicCodes"];
+    anatomicCodes = convertedDoc["AnatomicCodes"];
     regionArray = this->GetRegionArrayInAnatomicContext(contextName);
     }
   else
     {
     // If anatomic context was not found in the map, then initialize it and its members
-    anatomicContextRoot.SetObject();
-    anatomicContextRoot.AddMember("AnatomicContextName", rapidjson::StringRef(contextName.c_str()), allocator);
+    convertedDoc.SetObject();
+    convertedDoc.AddMember("AnatomicContextName", rapidjson::StringRef(contextName.c_str()), allocator);
     anatomicCodes.SetObject();
     regionArray.SetArray();
     }
@@ -906,12 +908,12 @@ rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegment
   if (entryAdded)
     {
     anatomicCodes.AddMember("AnatomicRegion", regionArray, allocator);
-    anatomicContextRoot.AddMember("AnatomicCodes", anatomicCodes, allocator);
+    convertedDoc.AddMember("AnatomicCodes", anatomicCodes, allocator);
 
-    return anatomicContextRoot;
+    return true;
     }
 
-  return JSON_EMPTY_VALUE; // Return invalid if no entry was added from descriptor
+  return false;
 }
 
 //---------------------------------------------------------------------------
@@ -994,8 +996,6 @@ std::string vtkSlicerTerminologiesModuleLogic::LoadTerminologyFromFile(std::stri
 //---------------------------------------------------------------------------
 bool vtkSlicerTerminologiesModuleLogic::LoadTerminologyFromSegmentDescriptorFile(std::string contextName, std::string filePath)
 {
-  rapidjson::Document* descriptorDoc = new rapidjson::Document;
-
   FILE *fp = fopen(filePath.c_str(), "r");
   if (!fp)
     {
@@ -1003,30 +1003,37 @@ bool vtkSlicerTerminologiesModuleLogic::LoadTerminologyFromSegmentDescriptorFile
     return false;
     }
 
+  rapidjson::Document descriptorDoc;
   char buffer[4096];
   rapidjson::FileReadStream fs(fp, buffer, sizeof(buffer));
-  if (descriptorDoc->ParseStream(fs).HasParseError())
+  if (descriptorDoc.ParseStream(fs).HasParseError())
     {
     vtkErrorMacro("LoadTerminologyFromSegmentDescriptorFile: Failed to load terminology from file '" << filePath);
     return false;
     }
 
   // Convert the loaded descriptor json file into terminology dictionary context json format
-  //TODO: The allocator of descriptorDoc is used to create the structure that is later set to loadedDoc, and this is why descriptorDoc cannot be deleted.
-  //      Need to create and pass loadedDoc so that its allocator can be used
-  rapidjson::Value& terminologyRoot = this->Internal->ConvertSegmentationDescriptorToTerminologyContext(*descriptorDoc, contextName);
-  if (terminologyRoot.IsNull())
+  rapidjson::Document* convertedDoc = NULL;
+  vtkInternal::TerminologyMap::iterator termIt = this->Internal->LoadedTerminologies.find(contextName);
+  if (termIt != this->Internal->LoadedTerminologies.end() && termIt->second != NULL)
+    {
+    convertedDoc = termIt->second;
+    }
+  else
+    {
+    convertedDoc = new rapidjson::Document;
+    }
+
+  bool success = this->Internal->ConvertSegmentationDescriptorToTerminologyContext(descriptorDoc, *convertedDoc, contextName);
+  if (!success)
     {
     vtkErrorMacro("LoadTerminologyFromSegmentDescriptorFile: Failed to parse descriptor file '" << filePath);
     return false;
     }
 
   // Store terminology
-  rapidjson::Document* loadedDoc = new rapidjson::Document;
-  loadedDoc->SetObject();
-  loadedDoc->AddMember("SegmentationCodes", terminologyRoot["SegmentationCodes"], loadedDoc->GetAllocator());
   vtkSlicerTerminologiesModuleLogic::vtkInternal::SetDocumentInTerminologyMap(
-    this->Internal->LoadedTerminologies, contextName, loadedDoc );
+    this->Internal->LoadedTerminologies, contextName, convertedDoc );
 
   vtkInfoMacro("Terminology named '" << contextName << "' successfully loaded from file " << filePath);
   this->Modified();
@@ -1082,8 +1089,6 @@ std::string vtkSlicerTerminologiesModuleLogic::LoadAnatomicContextFromFile(std::
 //---------------------------------------------------------------------------
 bool vtkSlicerTerminologiesModuleLogic::LoadAnatomicContextFromSegmentDescriptorFile(std::string contextName, std::string filePath)
 {
-  rapidjson::Document* descriptorDoc = new rapidjson::Document;
-
   FILE *fp = fopen(filePath.c_str(), "r");
   if (!fp)
     {
@@ -1091,30 +1096,37 @@ bool vtkSlicerTerminologiesModuleLogic::LoadAnatomicContextFromSegmentDescriptor
     return false;
     }
 
+  rapidjson::Document descriptorDoc;
   char buffer[4096];
   rapidjson::FileReadStream fs(fp, buffer, sizeof(buffer));
-  if (descriptorDoc->ParseStream(fs).HasParseError())
+  if (descriptorDoc.ParseStream(fs).HasParseError())
     {
     vtkErrorMacro("LoadAnatomicContextFromSegmentDescriptorFile: Failed to load terminology from file '" << filePath);
     return false;
     }
 
   // Convert the loaded descriptor json file into anatomic context json format
-  //TODO: The allocator of descriptorDoc is used to create the structure that is later set to loadedDoc, and this is why descriptorDoc cannot be deleted.
-  //      Need to create and pass loadedDoc so that its allocator can be used
-  rapidjson::Value& anatomicContextRoot = this->Internal->ConvertSegmentationDescriptorToAnatomicContext(*descriptorDoc, contextName);
-  if (anatomicContextRoot.IsNull())
+  rapidjson::Document* convertedDoc = NULL;
+  vtkInternal::TerminologyMap::iterator anIt = this->Internal->LoadedAnatomicContexts.find(contextName);
+  if (anIt != this->Internal->LoadedAnatomicContexts.end() && anIt->second != NULL)
+    {
+    convertedDoc = anIt->second;
+    }
+  else
+    {
+    convertedDoc = new rapidjson::Document;
+    }
+
+  bool success = this->Internal->ConvertSegmentationDescriptorToAnatomicContext(descriptorDoc, *convertedDoc, contextName);
+  if (!success)
     {
     // Anatomic context is optional in descriptor file
     return false;
     }
 
   // Store anatomic context
-  rapidjson::Document* loadedDoc = new rapidjson::Document;
-  loadedDoc->SetObject();
-  loadedDoc->AddMember("AnatomicCodes", anatomicContextRoot["AnatomicCodes"], loadedDoc->GetAllocator());
   vtkSlicerTerminologiesModuleLogic::vtkInternal::SetDocumentInTerminologyMap(
-    this->Internal->LoadedAnatomicContexts, contextName, loadedDoc );
+    this->Internal->LoadedAnatomicContexts, contextName, convertedDoc );
 
   vtkInfoMacro("Anatomic context named '" << contextName << "' successfully loaded from file " << filePath);
   this->Modified();
