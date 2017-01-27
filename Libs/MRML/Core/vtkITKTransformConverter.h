@@ -1208,7 +1208,8 @@ bool vtkITKTransformConverter::SetITKThinPlateSplineTransformFromVTK(vtkObject* 
 
   if (transformVtk_RAS->GetBasis()!=VTK_RBF_R)
     {
-    vtkErrorWithObjectMacro(loggerObject, "Cannot set ITK thin-plate spline transform from VTK: basis function must be R");
+    vtkErrorWithObjectMacro(loggerObject, "Cannot set ITK thin-plate spline transform from VTK: basis function must be R."
+      " Call SetBasisToR() method of the vtkThinPlateSplineTransform object before attempting to write it to file.");
     return false;
     }
 
