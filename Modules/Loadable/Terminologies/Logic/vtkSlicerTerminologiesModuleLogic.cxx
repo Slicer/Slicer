@@ -739,7 +739,7 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
       typeModifierArray.PushBack(typeModifier, allocator);
       if (type.HasMember("Modifier"))
         {
-        type.RemoveMember("Modifier");
+        type.EraseMember("Modifier");
         }
       type.AddMember("Modifier", typeModifierArray, allocator);
       }
@@ -763,7 +763,7 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
     // Set type array category
     if (category.HasMember("Type"))
       {
-      category.RemoveMember("Type");
+      category.EraseMember("Type");
       }
     category.AddMember("Type", typeArray, allocator);
 
@@ -787,13 +787,13 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
     {
     if (segmentationCodes.HasMember("Category"))
       {
-      segmentationCodes.RemoveMember("Category");
+      segmentationCodes.EraseMember("Category");
       }
     segmentationCodes.AddMember("Category", categoryArray, allocator);
 
     if (convertedDoc.HasMember("SegmentationCodes"))
       {
-      convertedDoc.RemoveMember("SegmentationCodes");
+      convertedDoc.EraseMember("SegmentationCodes");
       }
     convertedDoc.AddMember("SegmentationCodes", segmentationCodes, allocator);
 
@@ -902,7 +902,7 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
       regionModifierArray.PushBack(regionModifier, allocator);
       if (region.HasMember("Modifier"))
         {
-        region.RemoveMember("Modifier");
+        region.EraseMember("Modifier");
         }
       region.AddMember("Modifier", regionModifierArray, allocator);
       }
@@ -927,13 +927,13 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
     {
     if (anatomicCodes.HasMember("AnatomicRegion"))
       {
-      anatomicCodes.RemoveMember("AnatomicRegion");
+      anatomicCodes.EraseMember("AnatomicRegion");
       }
     anatomicCodes.AddMember("AnatomicRegion", regionArray, allocator);
 
     if (convertedDoc.HasMember("AnatomicCodes"))
       {
-      convertedDoc.RemoveMember("AnatomicCodes");
+      convertedDoc.EraseMember("AnatomicCodes");
       }
     convertedDoc.AddMember("AnatomicCodes", anatomicCodes, allocator);
 
