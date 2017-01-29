@@ -207,9 +207,17 @@ vtkPointSet *vtkMRMLModelNode::GetMesh()
 {
   vtkAlgorithm* producer = this->MeshConnection ?
     this->MeshConnection->GetProducer() : 0;
+
+  if (!producer)
+    {
+    vtkErrorMacro("Could not retrieve mesh connection producer.")
+    return NULL;
+    }
+
+  producer->Update();
+
   return vtkPointSet::SafeDownCast(
-    producer ? producer->GetOutputDataObject(
-      this->MeshConnection->GetIndex()) : 0);
+    producer->GetOutputDataObject(this->MeshConnection->GetIndex()));
 }
 
 //---------------------------------------------------------------------------
@@ -223,10 +231,7 @@ vtkPolyData* vtkMRMLModelNode::GetPolyData()
                     << "the MeshType was set to UnstructuredGridMeshType. This "
                     << "could happen if the pipeline input was wrongfully set "
                     << "with SetUnstructuredGridConnection() instead of "
-                    << "SetPolyDataConnection(). Resetting MeshType to "
-                    << "PolyDataMeshType.");
-    this->MeshType = vtkMRMLModelNode::PolyDataMeshType;
-    this->Modified();
+                    << "SetPolyDataConnection().");
     }
   else if (!poly && this->MeshType == vtkMRMLModelNode::PolyDataMeshType &&
            vtkUnstructuredGrid::SafeDownCast(mesh))
@@ -236,10 +241,7 @@ vtkPolyData* vtkMRMLModelNode::GetPolyData()
                     << "the MeshType was set to PolyDataMeshType. This "
                     << "could happen if the pipeline input was wrongfully set "
                     << "with SetPolyDataConnection() instead of "
-                    << "SetUnstructuredGridConnection(). Resetting MeshType to "
-                    << "UnstructuredGridMeshType.");
-    this->MeshType = vtkMRMLModelNode::UnstructuredGridMeshType;
-    this->Modified();
+                    << "SetUnstructuredGridConnection().");
     }
   return poly;
 }
@@ -255,10 +257,7 @@ vtkUnstructuredGrid* vtkMRMLModelNode::GetUnstructuredGrid()
                     << "while the MeshType was set to PolyDataMeshType. This "
                     << "could happen if the pipeline input was wrongfully set "
                     << "with SetPolyDataConnection() instead of "
-                    << "SetUnstructuredGridConnection(). Resetting MeshType to "
-                    << "UnstructuredGridMeshType.");
-    this->MeshType = vtkMRMLModelNode::UnstructuredGridMeshType;
-    this->Modified();
+                    << "SetUnstructuredGridConnection().");
     }
   else if (!ug && this->MeshType == vtkMRMLModelNode::UnstructuredGridMeshType &&
            vtkPolyData::SafeDownCast(mesh))
@@ -268,10 +267,7 @@ vtkUnstructuredGrid* vtkMRMLModelNode::GetUnstructuredGrid()
                     << "the MeshType was set to UnstructuredGridMeshType. This "
                     << "could happen if the pipeline input was wrongfully set "
                     << "with SetUnstructuredGridConnection() instead of "
-                    << "SetPolyDataConnection(). Resetting MeshType to "
-                    << "PolyDataMeshType.");
-    this->MeshType = vtkMRMLModelNode::PolyDataMeshType;
-    this->Modified();
+                    << "SetPolyDataConnection().");
     }
   return ug;
 }
@@ -702,7 +698,24 @@ void vtkMRMLModelNode::ApplyTransform(vtkAbstractTransform* transform)
   transformFilter->SetInputConnection(this->MeshConnection);
   transformFilter->SetTransform(transform);
 
-  this->SetMeshConnection(transformFilter->GetOutputPort());
+  bool isInPipeline = !vtkTrivialProducer::SafeDownCast(
+     this->MeshConnection ? this->MeshConnection->GetProducer() : 0);
+
+  // If mesh was set through pipeline (SetMeshConnection), append
+  // transform filter to that pipeline
+  if (isInPipeline)
+    {
+    this->SetMeshConnection(transformFilter->GetOutputPort());
+    }
+  // Else, if mesh was set as data object (SetAndObserveMesh: uses
+  // vtkTrivialProducer to produce the mesh connection), apply the
+  // transformation to the data object directly
+  else
+    {
+    transformFilter->Update();
+    vtkPointSet * mesh = this->GetMesh();
+    mesh->DeepCopy(transformFilter->GetOutput());
+    }
   transformFilter->Delete();
 }
 
