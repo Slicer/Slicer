@@ -429,7 +429,7 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::PopulateTerminologyTypeFrom
       type->SetRecommendedDisplayRGBValue(
         (unsigned char)recommendedDisplayRGBValue->value[0].GetInt(),
         (unsigned char)recommendedDisplayRGBValue->value[1].GetInt(),
-        (unsigned char)recommendedDisplayRGBValue->value[2].GetInt());
+        (unsigned char)recommendedDisplayRGBValue->value[2].GetInt() );
       }
     else
       {
@@ -703,9 +703,12 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
     int foundTypeIndex = -1;
     rapidjson::Value type(this->GetCodeInArray(typeId, typeArray, foundTypeIndex), allocator);
     rapidjson::Value typeModifierArray;
-    if (type.IsObject() && type.HasMember("Modifier"))
+    if (type.IsObject())
       {
-      typeModifierArray = type["Modifier"];
+      if (type.HasMember("Modifier"))
+        {
+        typeModifierArray = type["Modifier"];
+        }
       }
     else
       {
@@ -714,6 +717,19 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
       typeModifierArray.SetArray();
       }
 
+    // Make a copy of the recommended color array so that it's allocated using the allocator of
+    // convertedDoc and not descriptorDoc (which will be deleted soon after exiting this function)
+    if (!segmentRecommendedDisplayRGBValue.IsArray() || segmentRecommendedDisplayRGBValue.Size() != 3 || !segmentRecommendedDisplayRGBValue[0].IsInt())
+      {
+      vtkGenericWarningMacro("ConvertSegmentationDescriptorToTerminologyContext: Invalid recommended color in type '" << typeId.CodeMeaning);
+      ++index;
+      continue;
+      }
+    rapidjson::Value recommendedDisplayRGBValueArray(rapidjson::kArrayType);
+    recommendedDisplayRGBValueArray.PushBack(segmentRecommendedDisplayRGBValue[0].GetInt(), allocator);
+    recommendedDisplayRGBValueArray.PushBack(segmentRecommendedDisplayRGBValue[1].GetInt(), allocator);
+    recommendedDisplayRGBValueArray.PushBack(segmentRecommendedDisplayRGBValue[2].GetInt(), allocator);
+    
     // Add modifier if specified in descriptor and does not yet exist in terminology
     if (segmentAttributes.HasMember("SegmentedPropertyTypeModifierCodeSequence"))
       {
@@ -733,7 +749,11 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
 
       // Create and populate modifier
       this->GetJsonCodeFromIdentifier(typeModifier, typeModifierId, allocator);
-      typeModifier.AddMember("recommendedDisplayRGBValue", segmentRecommendedDisplayRGBValue, allocator); // Add color to type modifier
+      if (typeModifier.HasMember("recommendedDisplayRGBValue"))
+        {
+        typeModifier.EraseMember("recommendedDisplayRGBValue");
+        }
+      typeModifier.AddMember("recommendedDisplayRGBValue", recommendedDisplayRGBValueArray, allocator); // Add color to type modifier
 
       // Set modifier to type
       typeModifierArray.PushBack(typeModifier, allocator);
@@ -746,7 +766,11 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
     else
       {
       // Add color to type if there is no modifier
-      type.AddMember("recommendedDisplayRGBValue", segmentRecommendedDisplayRGBValue, allocator);
+      if (type.HasMember("recommendedDisplayRGBValue"))
+        {
+        type.EraseMember("recommendedDisplayRGBValue");
+        }
+      type.AddMember("recommendedDisplayRGBValue", recommendedDisplayRGBValueArray, allocator);
       }
 
     // Add type if has not been added yet
@@ -867,9 +891,12 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
     int foundRegionIndex = -1;
     rapidjson::Value region(this->GetCodeInArray(regionId, regionArray, foundRegionIndex), allocator);
     rapidjson::Value regionModifierArray;
-    if (region.IsObject() && region.HasMember("Modifier"))
+    if (region.IsObject())
       {
-      regionModifierArray = region["Modifier"];
+      if (region.HasMember("Modifier"))
+        {
+        regionModifierArray = region["Modifier"];
+        }
       }
     else
       {
