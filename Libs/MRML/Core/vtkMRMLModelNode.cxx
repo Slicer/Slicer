@@ -205,8 +205,12 @@ void vtkMRMLModelNode::SetAndObservePolyData(vtkPolyData *polyData)
 //---------------------------------------------------------------------------
 vtkPointSet *vtkMRMLModelNode::GetMesh()
 {
-  vtkAlgorithm* producer = this->MeshConnection ?
-    this->MeshConnection->GetProducer() : 0;
+  if (!this->MeshConnection)
+    {
+    return NULL;
+    }
+
+  vtkAlgorithm* producer = this->MeshConnection->GetProducer();
 
   if (!producer)
     {
