@@ -34,6 +34,24 @@ bool CheckInt(int line, const std::string& description,
 }
 
 //----------------------------------------------------------------------------
+bool CheckDoubleTolerance(int line, const std::string& description,
+  double current, double expected, double tolerance)
+{
+  if (fabs(current - expected) > tolerance)
+    {
+    std::cerr << "\nLine " << line << " - " << description.c_str()
+      << " :  CheckDoubleTolerance failed"
+      << "\n\tcurrent:  " << current
+      << "\n\texpected: " << expected
+      << "\n\tdifference: " << current-expected
+      << "\n\ttolerance: " << tolerance
+      << std::endl;
+    return false;
+    }
+  return true;
+}
+
+//----------------------------------------------------------------------------
 bool CheckNotNull(int line, const std::string& description,
                   const void* pointer)
 {

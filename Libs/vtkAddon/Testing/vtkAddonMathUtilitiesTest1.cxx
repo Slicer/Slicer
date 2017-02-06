@@ -26,6 +26,7 @@
 #include <vtkMatrix3x3.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
+#include <vtkTransform.h>
 
 
 using namespace vtkAddonTestingUtilities;
@@ -36,19 +37,25 @@ int AreMatrixEqual_4x4_3x3_Test();
 int AreMatrixEqual_3x3_4x4_Test();
 int AreMatrixEqual_3x3_3x3_Test();
 int GetOrientationMatrixTest();
+int SetOrientationMatrixTest();
+int NormalizeColumnsTest();
+int NormalizeOrientationMatrixColumnsTest();
 int ToString_Test();
 int FromString_Test();
 
 //----------------------------------------------------------------------------
 int vtkAddonMathUtilitiesTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
-  CHECK_INT(AreMatrixEqual_4x4_4x4_Test(), EXIT_SUCCESS);
-  CHECK_INT(AreMatrixEqual_4x4_3x3_Test(), EXIT_SUCCESS);
-  CHECK_INT(AreMatrixEqual_3x3_4x4_Test(), EXIT_SUCCESS);
-  CHECK_INT(AreMatrixEqual_3x3_3x3_Test(), EXIT_SUCCESS);
-  CHECK_INT(GetOrientationMatrixTest(), EXIT_SUCCESS);
-  CHECK_INT(ToString_Test(), EXIT_SUCCESS);
-  CHECK_INT(FromString_Test(), EXIT_SUCCESS);
+  CHECK_EXIT_SUCCESS(AreMatrixEqual_4x4_4x4_Test());
+  CHECK_EXIT_SUCCESS(AreMatrixEqual_4x4_3x3_Test());
+  CHECK_EXIT_SUCCESS(AreMatrixEqual_3x3_4x4_Test());
+  CHECK_EXIT_SUCCESS(AreMatrixEqual_3x3_3x3_Test());
+  CHECK_EXIT_SUCCESS(GetOrientationMatrixTest());
+  CHECK_EXIT_SUCCESS(SetOrientationMatrixTest());
+  CHECK_EXIT_SUCCESS(NormalizeColumnsTest());
+  CHECK_EXIT_SUCCESS(NormalizeOrientationMatrixColumnsTest());
+  CHECK_EXIT_SUCCESS(ToString_Test());
+  CHECK_EXIT_SUCCESS(FromString_Test());
   return EXIT_SUCCESS;
 }
 
@@ -148,6 +155,145 @@ int GetOrientationMatrixTest()
   return EXIT_SUCCESS;
 }
 
+//----------------------------------------------------------------------------
+int SetOrientationMatrixTest()
+{
+  // Fill m44 matrix
+  vtkNew<vtkMatrix4x4> m44;
+  for (int ii = 0; ii < 4; ii++)
+    {
+    for (int jj = 0; jj < 4; jj++)
+      {
+      m44->SetElement(ii, jj, (1 + ii)*(1 + jj));
+      }
+    }
+
+  // Fill m33 matrix (with different values compared to m44)
+  vtkNew<vtkMatrix3x3> m33;
+  for (int ii = 0; ii < 3; ii++)
+    {
+    for (int jj = 0; jj < 3; jj++)
+      {
+      m33->SetElement(ii, jj, 10 * m44->GetElement(ii, jj));
+      }
+    }
+
+  // Save original m44 matrix
+  vtkNew<vtkMatrix4x4> m44Original;
+  m44Original->DeepCopy(m44.GetPointer());
+
+  // Update m44 matrix orientation part
+  vtkAddonMathUtilities::SetOrientationMatrix(m33.GetPointer(), m44.GetPointer());
+
+  // Check if correct parts are modified
+  for (int ii = 0; ii < 4; ii++)
+    {
+    for (int jj = 0; jj < 4; jj++)
+      {
+      if (ii < 3 && jj < 3)
+        {
+        // orientation part, must match m33
+        CHECK_DOUBLE(m44->GetElement(ii, jj), m33->GetElement(ii, jj));
+        }
+      else
+        {
+        // non-orientation part, must match original m44
+        CHECK_DOUBLE(m44->GetElement(ii, jj), m44Original->GetElement(ii, jj));
+        }
+      }
+    }
+
+  return EXIT_SUCCESS;
+}
+
+//----------------------------------------------------------------------------
+int NormalizeColumnsTest()
+{
+  vtkNew<vtkTransform> transform;
+  transform->RotateX(20);
+  transform->RotateY(30);
+  transform->RotateZ(40);
+  transform->Translate(5, 10, 15);
+  double scale[3] = { 3.5, 0.7, 6.2 };
+  transform->Scale(scale);
+
+  vtkNew<vtkMatrix4x4> m44;
+  transform->GetMatrix(m44.GetPointer());
+
+  vtkNew<vtkMatrix3x3> m;
+  vtkAddonMathUtilities::GetOrientationMatrix(m44.GetPointer(), m.GetPointer());
+
+  vtkNew<vtkMatrix3x3> mNormalized;
+  vtkAddonMathUtilities::GetOrientationMatrix(m44.GetPointer(), mNormalized.GetPointer());
+
+  double computedScale[3] = { 0 };
+  vtkAddonMathUtilities::NormalizeColumns(mNormalized.GetPointer(), computedScale);
+
+  // Check normalization and scale computation
+  for (int col = 0; col < 3; col++)
+    {
+    CHECK_DOUBLE(scale[col], computedScale[col]);
+    double columnNorm = sqrt(mNormalized->GetElement(0, col)*mNormalized->GetElement(0, col) +
+      mNormalized->GetElement(1, col)*mNormalized->GetElement(1, col) +
+      mNormalized->GetElement(2, col)*mNormalized->GetElement(2, col));
+    CHECK_DOUBLE_TOLERANCE(columnNorm, 1.0, 1e-6);
+    CHECK_DOUBLE_TOLERANCE(mNormalized->GetElement(0, col) * scale[col], m->GetElement(0, col), 1e-6);
+    }
+
+  return EXIT_SUCCESS;
+}
+
+//----------------------------------------------------------------------------
+int NormalizeOrientationMatrixColumnsTest()
+{
+  vtkNew<vtkTransform> transform;
+  transform->RotateX(20);
+  transform->RotateY(30);
+  transform->RotateZ(40);
+  transform->Translate(5, 10, 15);
+  double scale[3] = { 3.5, 0.7, 6.2 };
+  transform->Scale(scale);
+
+  vtkNew<vtkMatrix4x4> m;
+  transform->GetMatrix(m.GetPointer());
+
+  vtkNew<vtkMatrix4x4> mNormalized;
+  transform->GetMatrix(mNormalized.GetPointer());
+
+  double computedScale[3] = { 0 };
+  vtkAddonMathUtilities::NormalizeOrientationMatrixColumns(mNormalized.GetPointer(), computedScale);
+
+  // Check normalization and scale computation
+  for (int col = 0; col < 3; col++)
+  {
+    CHECK_DOUBLE(scale[col], computedScale[col]);
+    double columnNorm = sqrt(mNormalized->GetElement(0, col)*mNormalized->GetElement(0, col) +
+      mNormalized->GetElement(1, col)*mNormalized->GetElement(1, col) +
+      mNormalized->GetElement(2, col)*mNormalized->GetElement(2, col));
+    CHECK_DOUBLE_TOLERANCE(columnNorm, 1.0, 1e-6);
+    CHECK_DOUBLE_TOLERANCE(mNormalized->GetElement(0, col) * scale[col], m->GetElement(0, col), 1e-6);
+  }
+
+  // Check if other parts are not modified
+  for (int ii = 0; ii < 4; ii++)
+  {
+    for (int jj = 0; jj < 4; jj++)
+    {
+      if (ii < 3 && jj < 3)
+      {
+        // orientation part, already checked
+        continue;
+      }
+      else
+      {
+        // non-orientation part, must match original
+        CHECK_DOUBLE(mNormalized->GetElement(ii, jj), m->GetElement(ii, jj));
+      }
+    }
+  }
+
+  return EXIT_SUCCESS;
+}
 //----------------------------------------------------------------------------
 int ToString_Test()
 {

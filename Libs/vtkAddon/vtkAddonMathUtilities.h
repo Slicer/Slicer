@@ -53,6 +53,16 @@ public:
   /// matrix.
   static void GetOrientationMatrix(vtkMatrix4x4* source, vtkMatrix3x3* dest);
 
+  /// Update orientation vectors of \a dest matrix with values from \a source
+  /// matrix.
+  static void SetOrientationMatrix(vtkMatrix3x3* source, vtkMatrix4x4* dest);
+
+  /// Normalizes columns of m matrix in-place and return original column norms in scale vector
+  static void NormalizeColumns(vtkMatrix3x3 *m, double scale[3]);
+
+  /// Normalizes columns of top-left 3x3 corner of m matrix in-place and return original column norms in scale vector
+  static void NormalizeOrientationMatrixColumns(vtkMatrix4x4 *m, double scale[3]);
+
   /// Convert a matrix to a string in row-major order
   static std::string ToString(const vtkMatrix4x4* mat, const std::string delimiter = " ", const std::string rowDelimiter = "");
 

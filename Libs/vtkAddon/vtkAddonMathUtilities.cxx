@@ -42,7 +42,7 @@ vtkAddonMathUtilities::~vtkAddonMathUtilities()
 //----------------------------------------------------------------------------
 void vtkAddonMathUtilities::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);  
+  this->Superclass::PrintSelf(os,indent);
 }
 
 //----------------------------------------------------------------------------
@@ -120,6 +120,69 @@ void vtkAddonMathUtilities::GetOrientationMatrix(vtkMatrix4x4* source,
     for (int jj = 0; jj < 3; ++jj)
       {
       dest->SetElement(ii, jj, source->GetElement(ii, jj));
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkAddonMathUtilities::SetOrientationMatrix(vtkMatrix3x3* source,
+                                                 vtkMatrix4x4* dest)
+{
+  if (!source || !dest)
+    {
+    return;
+    }
+  for (int ii = 0; ii < 3; ++ii)
+    {
+    for (int jj = 0; jj < 3; ++jj)
+      {
+      dest->SetElement(ii, jj, source->GetElement(ii, jj));
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkAddonMathUtilities::NormalizeColumns(vtkMatrix3x3 *m, double scale[3])
+{
+  if (!m)
+    {
+    return;
+    }
+  for (int col = 0; col < 3; col++)
+    {
+    double len = 0;
+    for (int row = 0; row < 3; row++)
+      {
+      len += m->GetElement(row, col) * m->GetElement(row, col);
+      }
+    len = sqrt(len);
+    scale[col] = len;
+    for (int row = 0; row < 3; row++)
+      {
+      m->SetElement(row, col,  m->GetElement(row, col)/len);
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkAddonMathUtilities::NormalizeOrientationMatrixColumns(vtkMatrix4x4 *m, double scale[3])
+{
+  if (!m)
+    {
+    return;
+    }
+  for (int col = 0; col < 3; col++)
+    {
+    double len = 0;
+    for (int row = 0; row < 3; row++)
+      {
+      len += m->GetElement(row, col) * m->GetElement(row, col);
+      }
+    len = sqrt(len);
+    scale[col] = len;
+    for (int row = 0; row < 3; row++)
+      {
+      m->SetElement(row, col,  m->GetElement(row, col)/len);
       }
     }
 }

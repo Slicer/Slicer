@@ -96,6 +96,15 @@
     } \
   }
 
+/// Verifies if actual double value is the same as expected, within the specified tolerance
+#define CHECK_DOUBLE_TOLERANCE(actual, expected, tolerance) \
+    { \
+  if (!vtkAddonTestingUtilities::CheckDoubleTolerance(__LINE__,#actual " != " #expected " (tolerance: " #tolerance ")", (actual), (expected), (tolerance))) \
+      { \
+    return EXIT_FAILURE; \
+      } \
+    }
+
 /// Verifies if actual int value is the same as expected
 #define CHECK_INT(actual, expected) \
   { \

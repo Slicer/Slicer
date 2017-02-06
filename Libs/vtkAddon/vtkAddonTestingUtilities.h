@@ -47,6 +47,10 @@ bool CheckInt(int line, const std::string& description,
               int current, int expected);
 
 VTK_ADDON_EXPORT
+bool CheckDoubleTolerance(int line, const std::string& description,
+                          double current, double expected, double tolerance);
+
+VTK_ADDON_EXPORT
 bool CheckNotNull(int line, const std::string& description,
                   const void* pointer);
 
