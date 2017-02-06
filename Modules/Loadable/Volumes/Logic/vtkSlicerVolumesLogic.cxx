@@ -1199,20 +1199,28 @@ vtkSlicerVolumesLogic::CloneVolume(vtkMRMLVolumeNode *volumeNode, const char *na
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode*
 vtkSlicerVolumesLogic::
-CloneVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, const char *name, bool cloneImageData/*=true*/)
+CloneVolume(vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, const char *name, bool cloneImageData/*=true*/)
+{
+  return vtkMRMLScalarVolumeNode::SafeDownCast(vtkSlicerVolumesLogic::CloneVolumeGeneric(scene, volumeNode, name, cloneImageData));
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLVolumeNode*
+vtkSlicerVolumesLogic::
+CloneVolumeGeneric (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, const char *name, bool cloneImageData/*=true*/)
 {
   if ( scene == NULL || volumeNode == NULL )
     {
-    // no valid object is available, so we cannot log error
+    vtkGenericWarningMacro("vtkSlicerVolumesLogic::CloneVolumeGeneric failed: invalid scene or input volume node");
     return NULL;
     }
 
   // clone the volume node
-  vtkSmartPointer<vtkMRMLScalarVolumeNode> clonedVolumeNode;
-  clonedVolumeNode.TakeReference((vtkMRMLScalarVolumeNode*)scene->CreateNodeByClass(volumeNode->GetClassName()));
+  vtkSmartPointer<vtkMRMLVolumeNode> clonedVolumeNode;
+  clonedVolumeNode.TakeReference(vtkMRMLVolumeNode::SafeDownCast(scene->CreateNodeByClass(volumeNode->GetClassName())));
   if ( !clonedVolumeNode.GetPointer() )
     {
-    vtkErrorWithObjectMacro(volumeNode, "Could not clone volume!");
+    vtkErrorWithObjectMacro(volumeNode, "Could not clone volume");
     return NULL;
     }
   clonedVolumeNode->CopyWithScene(volumeNode);
