@@ -39,7 +39,7 @@
   <parameters>
     <label>Transform Parameters</label>
     <description><![CDATA[Parameters used to transform the input image into the output image]]></description>
-    <transform fileExtensions=".mat">
+    <transform fileExtensions=".h5">
       <name>transformationFile</name>
       <label>Transform Node</label>
       <flag>-f</flag>
