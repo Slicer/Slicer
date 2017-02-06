@@ -1332,8 +1332,9 @@ itk::Object::Pointer vtkITKTransformConverter::CreateITKTransformFromVTK(vtkObje
   vtkMRMLTransformNode::FlattenGeneralTransform(transformList.GetPointer(), transformVtk);
   if (transformList->GetNumberOfItems()==0)
     {
-    vtkErrorWithObjectMacro(loggerObject, "CreateITKTransformFromVTK failed: invalid VTK transform");
-    return 0;
+    // no transformation means identity transform
+    vtkNew<vtkTransform> identity;
+    transformList->AddItem(identity.GetPointer());
     }
 
   itk::Object::Pointer primaryTransformItk;
