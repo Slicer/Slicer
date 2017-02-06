@@ -931,7 +931,6 @@ void vtkMRMLVolumeNode::GetSliceBounds(double bounds[6], vtkMatrix4x4* rasToSlic
     {
     vtkNew<vtkGeneralTransform> worldTransform;
     worldTransform->Identity();
-    //transformNode->GetTransformFromWorld(worldTransform);
     transformNode->GetTransformToWorld(worldTransform.GetPointer());
     transform->Concatenate(worldTransform.GetPointer());
     }
@@ -958,7 +957,7 @@ void vtkMRMLVolumeNode::GetSliceBounds(double bounds[6], vtkMatrix4x4* rasToSlic
       for ( k=0; k<2; k++)
         {
         doubleDimensions[0] = i*(dimensions[0]) - 0.5;
-        doubleDimensions[1] = j*(dimensions[1]) - 0.5 ;
+        doubleDimensions[1] = j*(dimensions[1]) - 0.5;
         doubleDimensions[2] = k*(dimensions[2]) - 0.5;
         doubleDimensions[3] = 1;
         rasHDimensions = transform->TransformDoublePoint( doubleDimensions);
