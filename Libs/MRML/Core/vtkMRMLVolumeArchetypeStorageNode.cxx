@@ -75,14 +75,11 @@ void vtkMRMLVolumeArchetypeStorageNode::WriteXML(ostream& of, int nIndent)
   }
   {
   std::stringstream ss;
-  ss << this->SingleFile;
-  of << indent << " singleFile=\"" << ss.str() << "\"";
-  }
-  {
-  std::stringstream ss;
   ss << this->UseOrientationFromFile;
   of << indent << " UseOrientationFromFile=\"" << ss.str() << "\"";
   }
+  // SingleFile attribute is not written to file. GetNumberOfFileNames()
+  // is used to determine if reader should read from single/multiple files.
 }
 
 //----------------------------------------------------------------------------
@@ -104,12 +101,6 @@ void vtkMRMLVolumeArchetypeStorageNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >> this->CenterImage;
       }
-    if (!strcmp(attName, "singleFile"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->SingleFile;
-      }
     if (!strcmp(attName, "UseOrientationFromFile"))
       {
       std::stringstream ss;
@@ -117,6 +108,12 @@ void vtkMRMLVolumeArchetypeStorageNode::ReadXMLAttributes(const char** atts)
       ss >> this->UseOrientationFromFile;
       }
     }
+
+  // SingleFile attribute used to be read from the scene, but often
+  // its value was inconsistent with GetNumberOfFileNames() for color volumes.
+  // We now initialize SingleFile based on GetNumberOfFileNames(), ignoring
+  // any singleFile attribute that may be found in the XML stream.
+  this->SingleFile = (this->GetNumberOfFileNames() <= 1);
 
   this->EndModify(disabledModify);
 }
