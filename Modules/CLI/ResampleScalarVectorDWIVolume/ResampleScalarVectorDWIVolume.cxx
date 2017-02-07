@@ -280,7 +280,7 @@ void InitializeThinPlateSplineTransform(itk::Transform<double, 3, 3>::Pointer tr
     CompositeTransformType* compositeTransform = static_cast<CompositeTransformType*>(transform.GetPointer());
     for (unsigned int i = 0; i < compositeTransform->GetNumberOfTransforms(); ++i)
       {
-      InitializeThinPlateSpliteTransform(compositeTransform->GetNthTransform(i));
+      InitializeThinPlateSplineTransform(compositeTransform->GetNthTransform(i));
       }
     }
 }
