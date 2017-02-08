@@ -324,3 +324,8 @@ void vtkMRMLDisplayableNode::GetRASBounds(double bounds[6])
   vtkMath::UninitializeBounds(bounds);
 }
 
+//---------------------------------------------------------------------------
+void vtkMRMLDisplayableNode::GetBounds(double bounds[6])
+{
+  vtkMath::UninitializeBounds(bounds);
+}

@@ -130,7 +130,7 @@ class VTK_SLICER_TRANSFORMS_MODULE_LOGIC_EXPORT vtkSlicerTransformLogic : public
   static bool GetTransformedPointSamplesAsVectorImage(vtkImageData* outputVectorImage, vtkMRMLTransformNode* inputTransformNode,
     vtkMatrix4x4* ijkToRAS, bool transformToWorld = true);
 
-  /// Return the list of node that are transformed by the given node.
+  /// Return the list of nodes that are transformed by the given node.
   /// If recursive is True, this be recursively called on any transform node
   /// that might be transformed by the given node. Otherwise, only the
   /// nodes immediately transformed by the given transform are returned.
@@ -138,6 +138,22 @@ class VTK_SLICER_TRANSFORMS_MODULE_LOGIC_EXPORT vtkSlicerTransformLogic : public
     vtkMRMLScene* scene, vtkMRMLTransformNode* transformNode,
     std::vector<vtkMRMLDisplayableNode*>& transformedNodes,
     bool recursive=true);
+
+  /// Return the RAS bounding box around the list of given nodes
+  /// using GetRASBounds. Only the nodes with a valid bounding box are taken
+  /// into account.
+  /// \sa GetNodesBounds()
+  static void GetNodesRASBounds(
+    const std::vector<vtkMRMLDisplayableNode*>& nodes,
+    double bounds[6]);
+
+  /// Return the bounding box around the list of given nodes
+  /// using GetBounds. Only the nodes with a valid bounding box
+  /// are taken into account.
+  /// \sa GetNodesRASBounds()
+  static void GetNodesBounds(
+    const std::vector<vtkMRMLDisplayableNode*>& nodes,
+    double bounds[6]);
 
   enum TransformKind
   {

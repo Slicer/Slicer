@@ -22,6 +22,7 @@
 #include "vtkMRMLScene.h"
 
 // VTK includes
+#include <vtkBoundingBox.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 
@@ -273,4 +274,46 @@ void vtkMRMLMarkupsFiducialNode::SetNthFiducialWorldCoordinates(int n, double co
 void vtkMRMLMarkupsFiducialNode::GetNthFiducialWorldCoordinates(int n, double coords[4])
 {
   this->GetMarkupPointWorld(n, 0, coords);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsFiducialNode::GetRASBounds(double bounds[6])
+{
+  vtkBoundingBox box;
+  box.GetBounds(bounds);
+
+  int numberOfMarkups = this->GetNumberOfMarkups();
+  if (numberOfMarkups == 0)
+    {
+    return;
+    }
+  double markup_RAS[4] = { 0, 0, 0, 1 };
+
+  for (int i = 0; i < numberOfMarkups; i++)
+    {
+    this->GetNthFiducialWorldCoordinates(i, markup_RAS);
+    box.AddPoint(markup_RAS);
+    }
+  box.GetBounds(bounds);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsFiducialNode::GetBounds(double bounds[6])
+{
+   vtkBoundingBox box;
+  box.GetBounds(bounds);
+
+  int numberOfMarkups = this->GetNumberOfMarkups();
+  if (numberOfMarkups == 0)
+    {
+    return;
+    }
+  double markupPos[4] = { 0, 0, 0 };
+
+  for (int i = 0; i < numberOfMarkups; i++)
+    {
+    this->GetNthFiducialPosition(i, markupPos);
+    box.AddPoint(markupPos);
+    }
+  box.GetBounds(bounds);
 }

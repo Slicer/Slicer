@@ -902,8 +902,20 @@ void vtkMRMLVolumeNode::GetRASBounds(double bounds[6])
 //---------------------------------------------------------------------------
 void vtkMRMLVolumeNode::GetSliceBounds(double bounds[6], vtkMatrix4x4* rasToSlice)
 {
-  Superclass::GetRASBounds(bounds);
+  vtkMRMLVolumeNode::GetBoundsInternal(bounds, rasToSlice, true);
+}
 
+//---------------------------------------------------------------------------
+void vtkMRMLVolumeNode::GetBounds(double bounds[6])
+{
+  vtkMRMLVolumeNode::GetBoundsInternal(bounds, NULL, false);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLVolumeNode::GetBoundsInternal(double bounds[6],
+                                          vtkMatrix4x4* rasToSlice,
+                                          bool useTransform)
+{
   vtkImageData *volumeImage;
   if (! (volumeImage = this->GetImageData()) )
     {
@@ -927,7 +939,7 @@ void vtkMRMLVolumeNode::GetSliceBounds(double bounds[6], vtkMatrix4x4* rasToSlic
 
   vtkMRMLTransformNode *transformNode = this->GetParentTransformNode();
 
-  if ( transformNode )
+  if ( useTransform && transformNode )
     {
     vtkNew<vtkGeneralTransform> worldTransform;
     worldTransform->Identity();
@@ -975,7 +987,7 @@ void vtkMRMLVolumeNode::GetSliceBounds(double bounds[6], vtkMatrix4x4* rasToSlic
       }
     }
 
-   for ( i=0; i<3; i++)
+  for ( i=0; i<3; i++)
     {
     bounds[2*i]   = minBounds[i];
     bounds[2*i+1] = maxBounds[i];

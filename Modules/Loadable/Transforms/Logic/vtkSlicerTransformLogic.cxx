@@ -33,6 +33,7 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 #include <vtkAppendPolyData.h>
 #include <vtkCollection.h>
 #include <vtkArrowSource.h>
+#include <vtkBoundingBox.h>
 #include <vtkConeSource.h>
 #include <vtkContourFilter.h>
 #include <vtkCellArray.h>
@@ -1497,6 +1498,47 @@ void vtkSlicerTransformLogic::GetTransformedNodes(
         {
         vtkSlicerTransformLogic::GetTransformedNodes(
           scene, childTransformNode, transformedNodes, recursive);
+        }
       }
     }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerTransformLogic::GetNodesRASBounds(
+  const std::vector<vtkMRMLDisplayableNode*>& nodes,
+  double bounds[6])
+{
+  vtkBoundingBox box;
+  for (size_t i = 0; i < nodes.size(); ++i)
+    {
+    double nodeBounds[6];
+    nodes[i]->GetRASBounds(nodeBounds);
+    if (nodeBounds[0] <= nodeBounds[1] ||
+        nodeBounds[2] <= nodeBounds[3] ||
+        nodeBounds[4] <= nodeBounds[5])
+      {
+      box.AddBounds(nodeBounds);
+      }
+    }
+  box.GetBounds(bounds);
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerTransformLogic::GetNodesBounds(
+  const std::vector<vtkMRMLDisplayableNode*>& nodes,
+  double bounds[6])
+{
+  vtkBoundingBox box;
+  for (size_t i = 0; i < nodes.size(); ++i)
+    {
+    double nodeBounds[6];
+    nodes[i]->GetBounds(nodeBounds);
+    if (nodeBounds[0] <= nodeBounds[1] ||
+        nodeBounds[2] <= nodeBounds[3] ||
+        nodeBounds[4] <= nodeBounds[5])
+      {
+      box.AddBounds(nodeBounds);
+      }
+    }
+  box.GetBounds(bounds);
 }

@@ -341,8 +341,6 @@ public:
   /// scene. Returns false if n out of bounds, true on success.
   bool ResetNthMarkupID(int n);
 
-  void GetRASBounds(double bounds[6]);
-
 protected:
   vtkMRMLMarkupsNode();
   ~vtkMRMLMarkupsNode();

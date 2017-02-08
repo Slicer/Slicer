@@ -1279,29 +1279,3 @@ std::string vtkMRMLMarkupsNode::ReplaceListNameInMarkupLabelFormat()
     }
   return newFormatString;
 }
-
-//---------------------------------------------------------------------------
-void vtkMRMLMarkupsNode::GetRASBounds(double bounds[6])
-{
-  vtkMath::UninitializeBounds(bounds);
-  int numberOfMarkups = this->GetNumberOfMarkups();
-  if (numberOfMarkups == 0)
-  {
-    return;
-  }
-  double markup_RAS[4] = { 0, 0, 0, 1 };
-  this->GetMarkupPointWorld(0, 0, markup_RAS);
-  bounds[0] = bounds[1] = markup_RAS[0];
-  bounds[2] = bounds[3] = markup_RAS[1];
-  bounds[4] = bounds[5] = markup_RAS[2];
-  for (int i = 1; i < numberOfMarkups; i++)
-  {
-    this->GetMarkupPointWorld(i, 0, markup_RAS);
-    if (markup_RAS[0] < bounds[0]) { bounds[0] = markup_RAS[0]; }
-    if (markup_RAS[0] > bounds[1]) { bounds[1] = markup_RAS[0]; }
-    if (markup_RAS[1] < bounds[2]) { bounds[2] = markup_RAS[1]; }
-    if (markup_RAS[1] > bounds[3]) { bounds[3] = markup_RAS[1]; }
-    if (markup_RAS[2] < bounds[4]) { bounds[4] = markup_RAS[2]; }
-    if (markup_RAS[2] > bounds[5]) { bounds[5] = markup_RAS[2]; }
-  }
-}

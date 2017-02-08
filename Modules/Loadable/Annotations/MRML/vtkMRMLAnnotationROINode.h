@@ -150,10 +150,16 @@ public:
   vtkGetStringMacro(VolumeNodeID);
   vtkSetStringMacro(VolumeNodeID);
 
-  /// Get bounding box in global RAS the form (xmin,xmax, ymin,ymax, zmin,zmax).
+  /// Get bounding box in global RAS form (xmin,xmax, ymin,ymax, zmin,zmax).
   /// The deafult implementation in the model node would not work correctly, as the polydata
   /// in this class is used for storing the centerpoint position and radius.
+  /// \sa GetBounds()
   virtual void GetRASBounds(double bounds[6]);
+
+  /// Get bounding box in global RAS form (xmin,xmax, ymin,ymax, zmin,zmax).
+  /// This method always returns the bounds of the untransformed object.
+  /// \sa GetRASBounds()
+  virtual void GetBounds(double bounds[6]);
 
   enum
   {

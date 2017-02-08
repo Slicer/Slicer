@@ -38,6 +38,7 @@
 #include <vtkMRMLScalarVolumeNode.h>
 
 // VTK includes
+#include <vtkBoundingBox.h>
 #include <vtkCallbackCommand.h>
 #include <vtkGeneralTransform.h>
 #include <vtkHomogeneousTransform.h>
@@ -455,13 +456,35 @@ bool vtkMRMLSegmentationNode::CanApplyNonLinearTransforms() const
 //---------------------------------------------------------------------------
 void vtkMRMLSegmentationNode::GetRASBounds(double bounds[6])
 {
+  this->GetBounds(bounds);
+
+  vtkMRMLTransformNode* transform = NULL;
+  if (this->Scene)
+    {
+    transform = vtkMRMLTransformNode::SafeDownCast(
+      this->Scene->GetNodeByID(this->GetTransformNodeID()));
+    }
+
+  if (transform)
+    {
+    vtkBoundingBox box;
+    box.AddPoint(
+      transform->GetTransformToParent()->TransformDoublePoint(bounds[0], bounds[2], bounds[4]));
+    box.AddPoint(
+      transform->GetTransformToParent()->TransformDoublePoint(bounds[1], bounds[3], bounds[5]));
+    box.GetBounds(bounds);
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLSegmentationNode::GetBounds(double bounds[6])
+{
   vtkOrientedImageData::UninitializeBounds(bounds);
   if (this->Segmentation)
     {
     this->Segmentation->GetBounds(bounds);
     }
 }
-
 
 //---------------------------------------------------------------------------
 bool vtkMRMLSegmentationNode::GenerateMergedLabelmap(

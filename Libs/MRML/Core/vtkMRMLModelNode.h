@@ -213,8 +213,16 @@ public:
                        int showOverlayPositive, int showOverlayNegative,
                        int reverseOverlay);
 
-  /// Get bounding box in global RAS the form (xmin,xmax, ymin,ymax, zmin,zmax).
+  /// Get bounding box in global RAS form (xmin,xmax, ymin,ymax, zmin,zmax).
+  /// This method returns the bounds of the object with any transforms that may
+  /// be applied to it.
+  /// \sa GetBounds()
   virtual void GetRASBounds(double bounds[6]);
+
+  /// Get bounding box in global RAS form (xmin,xmax, ymin,ymax, zmin,zmax).
+  /// This method always returns the bounds of the untransformed object.
+  /// \sa GetRASBounds()
+  virtual void GetBounds(double bounds[6]);
 
   /// Transforms bounds from the local coordinate system to the RAS (world)
   /// coordinate system. Only the corner points are used for determining the

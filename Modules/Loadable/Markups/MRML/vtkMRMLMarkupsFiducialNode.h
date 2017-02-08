@@ -120,6 +120,9 @@ public:
   /// Get world coordinates on nth fiducial
   void GetNthFiducialWorldCoordinates(int n, double coords[4]);
 
+  virtual void GetRASBounds(double bounds[6]);
+  virtual void GetBounds(double bounds[6]);
+
 protected:
   vtkMRMLMarkupsFiducialNode();
   ~vtkMRMLMarkupsFiducialNode();

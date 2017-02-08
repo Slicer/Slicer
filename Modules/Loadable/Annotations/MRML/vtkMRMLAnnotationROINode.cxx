@@ -637,10 +637,9 @@ void vtkMRMLAnnotationROINode::GetTransformedPlanes(vtkPlanes *planes)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationROINode::GetRASBounds(double bounds[6])
+void vtkMRMLAnnotationROINode::GetBounds(double bounds[6])
 {
-  double bounds_Local[6]={0};
-  vtkMath::UninitializeBounds(bounds_Local);
+  vtkMath::UninitializeBounds(bounds);
   if (this->GetPolyData() == NULL)
     {
     return;
@@ -655,12 +654,17 @@ void vtkMRMLAnnotationROINode::GetRASBounds(double bounds[6])
     {
     return;
     }
-  bounds_Local[0]=centerPoint[0]-radius[0];
-  bounds_Local[1]=centerPoint[0]+radius[0];
-  bounds_Local[2]=centerPoint[1]-radius[1];
-  bounds_Local[3]=centerPoint[1]+radius[1];
-  bounds_Local[4]=centerPoint[2]-radius[2];
-  bounds_Local[5]=centerPoint[2]+radius[2];
+  bounds[0]=centerPoint[0]-radius[0];
+  bounds[1]=centerPoint[0]+radius[0];
+  bounds[2]=centerPoint[1]-radius[1];
+  bounds[3]=centerPoint[1]+radius[1];
+  bounds[4]=centerPoint[2]-radius[2];
+  bounds[5]=centerPoint[2]+radius[2];
+}
 
-  this->TransformBoundsToRAS(bounds_Local, bounds);
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationROINode::GetRASBounds(double bounds[6])
+{
+  this->GetBounds(bounds);
+  this->TransformBoundsToRAS(bounds, bounds);
 }
