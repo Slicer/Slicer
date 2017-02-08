@@ -28,7 +28,7 @@ if(NOT DEFINED OpenIGTLink_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${git_protocol}://github.com/openigtlink/OpenIGTLink.git"
-    GIT_TAG "4e8a35918a8ddedf5496801777697ad67bec4d8f"
+    GIT_TAG "77d82776f2d895c7fba8028ac8daaab3bec8cfd2"
     SOURCE_DIR OpenIGTLink
     BINARY_DIR OpenIGTLink-build
     CMAKE_CACHE_ARGS
@@ -40,6 +40,7 @@ if(NOT DEFINED OpenIGTLink_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DBUILD_TESTING:BOOL=OFF
       -DBUILD_SHARED_LIBS:BOOL=ON
       -DOpenIGTLink_PROTOCOL_VERSION_2:BOOL=ON
+      -DOpenIGTLink_PROTOCOL_VERSION_3:BOOL=ON
     INSTALL_COMMAND ""
     DEPENDS
       ${${proj}_DEPENDENCIES}
