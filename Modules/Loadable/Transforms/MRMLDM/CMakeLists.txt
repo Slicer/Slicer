@@ -15,6 +15,7 @@ set(${KIT}_INCLUDE_DIRECTORIES
 set(displayable_manager_SRCS
   vtkMRML${MODULE_NAME}DisplayableManager2D.cxx
   vtkMRML${MODULE_NAME}DisplayableManager3D.cxx
+  vtkMRMLLinear${MODULE_NAME}DisplayableManager3D.cxx
   )
 
 VTK_MAKE_INSTANTIATOR3("${MODULE_NAME}Instantiator"

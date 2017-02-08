@@ -88,6 +88,12 @@ vtkMRMLTransformDisplayNode::vtkMRMLTransformDisplayNode()
     this->ContourLevelsMm.push_back(level);
     }
 
+  this->EditorVisibility = false;
+  this->EditorSliceIntersectionVisibility = false;
+  this->EditorTranslationEnabled = true;
+  this->EditorRotationEnabled = true;
+  this->EditorScalingEnabled = true;
+
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkCommand::ModifiedEvent);
   events->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
@@ -128,6 +134,12 @@ void vtkMRMLTransformDisplayNode::WriteXML(ostream& of, int nIndent)
   of << indent << " ContourResolutionMm=\""<< this->ContourResolutionMm << "\"";
   of << indent << " ContourLevelsMm=\"" << this->GetContourLevelsMmAsString() << "\"";
   of << indent << " ContourOpacity=\""<< this->ContourOpacity << "\"";
+
+  of << indent << " EditorVisibility=\""<< this->EditorVisibility << "\"";
+  of << indent << " EditorSliceIntersectionVisibility=\""<< this->EditorSliceIntersectionVisibility << "\"";
+  of << indent << " EditorTranslationEnabled=\""<< this->EditorTranslationEnabled << "\"";
+  of << indent << " EditorRotationEnabled=\"" << this->EditorRotationEnabled << "\"";
+  of << indent << " EditorScalingEnabled=\""<< this->EditorScalingEnabled << "\"";
 }
 
 
@@ -185,6 +197,11 @@ void vtkMRMLTransformDisplayNode::ReadXMLAttributes(const char** atts)
       SetContourLevelsMmFromString(attValue);
       continue;
       }
+    READ_FROM_ATT(EditorVisibility);
+    READ_FROM_ATT(EditorSliceIntersectionVisibility);
+    READ_FROM_ATT(EditorTranslationEnabled);
+    READ_FROM_ATT(EditorRotationEnabled);
+    READ_FROM_ATT(EditorScalingEnabled);
     }
 
   this->Modified();
@@ -225,6 +242,12 @@ void vtkMRMLTransformDisplayNode::Copy(vtkMRMLNode *anode)
   this->ContourOpacity = node->ContourOpacity;
   this->ContourLevelsMm = node->ContourLevelsMm;
 
+  this->EditorVisibility = node->EditorVisibility;
+  this->EditorSliceIntersectionVisibility = node->EditorSliceIntersectionVisibility;
+  this->EditorTranslationEnabled = node->EditorTranslationEnabled;
+  this->EditorRotationEnabled = node->EditorRotationEnabled;
+  this->EditorScalingEnabled = node->EditorScalingEnabled;
+
   this->EndModify(disabledModify);
 }
 
@@ -253,6 +276,11 @@ void vtkMRMLTransformDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "ContourOpacity = " << this->ContourOpacity << "\n";
   os << indent << "ContourLevelsMm = " << GetContourLevelsMmAsString() << "\n";
 
+  os << indent << " EditorVisibility=\""<< this->EditorVisibility << "\n";
+  os << indent << " EditorSliceIntersectionVisibility=\""<< this->EditorSliceIntersectionVisibility << "\n";
+  os << indent << " EditorTranslationEnabled=\""<< this->EditorTranslationEnabled << "\n";
+  os << indent << " EditorRotationEnabled=\"" << this->EditorRotationEnabled << "\n";
+  os << indent << " EditorScalingEnabled=\""<< this->EditorScalingEnabled << "\n";
 }
 
 //---------------------------------------------------------------------------
@@ -564,4 +592,10 @@ void vtkMRMLTransformDisplayNode::SetColorMap(vtkColorTransferFunction* newColor
     vtkErrorMacro("vtkMRMLTransformDisplayNode::SetColorMap failed: could not create default color node");
     }
   this->EndModify(oldModified);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformDisplayNode::UpdateEditorBounds()
+{
+  this->InvokeEvent(vtkMRMLTransformDisplayNode::TransformUpdateEditorBoundsEvent);
 }
