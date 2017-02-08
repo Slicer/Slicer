@@ -27,7 +27,11 @@
 // MRMLLogic includes
 #include <vtkMRMLAbstractLogic.h>
 
+// STD includes
+#include <vector>
+
 // MRML includes
+class vtkMRMLDisplayableNode;
 class vtkMRMLMarkupsFiducialNode;
 class vtkMRMLScalarVolumeNode;
 class vtkMRMLScene;
@@ -125,6 +129,15 @@ class VTK_SLICER_TRANSFORMS_MODULE_LOGIC_EXPORT vtkSlicerTransformLogic : public
   /// Returns true on success.
   static bool GetTransformedPointSamplesAsVectorImage(vtkImageData* outputVectorImage, vtkMRMLTransformNode* inputTransformNode,
     vtkMatrix4x4* ijkToRAS, bool transformToWorld = true);
+
+  /// Return the list of node that are transformed by the given node.
+  /// If recursive is True, this be recursively called on any transform node
+  /// that might be transformed by the given node. Otherwise, only the
+  /// nodes immediately transformed by the given transform are returned.
+  static void GetTransformedNodes(
+    vtkMRMLScene* scene, vtkMRMLTransformNode* transformNode,
+    std::vector<vtkMRMLDisplayableNode*>& transformedNodes,
+    bool recursive=true);
 
   enum TransformKind
   {

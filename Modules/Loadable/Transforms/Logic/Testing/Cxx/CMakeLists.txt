@@ -1,8 +1,10 @@
 set(KIT ${PROJECT_NAME})
 
+set(DATA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Data)
 #-----------------------------------------------------------------------------
 set(KIT_TEST_SRCS
   vtkSlicerTransformLogicTest1.cxx
+  vtkSlicerTransformLogicTest2.cxx
   )
 
 #-----------------------------------------------------------------------------
@@ -14,4 +16,5 @@ slicerMacroConfigureModuleCxxTestDriver(
   )
 
 #-----------------------------------------------------------------------------
-simple_test( vtkSlicerTransformLogicTest1 ${CMAKE_CURRENT_SOURCE_DIR}/affineTransform.txt)
+simple_test( vtkSlicerTransformLogicTest1 ${DATA_DIR}/affineTransform.txt)
+simple_test( vtkSlicerTransformLogicTest2 ${DATA_DIR}/cube.vtk)

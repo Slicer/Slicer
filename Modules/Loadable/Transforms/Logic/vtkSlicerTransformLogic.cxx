@@ -1468,3 +1468,35 @@ void vtkSlicerTransformLogic::GetMarkupsAsPoints(vtkMRMLMarkupsFiducialNode* mar
     samplePoints_RAS->SetPoint(fiducialIndex, fiducialPosition_RAS);
     }
 }
+
+//----------------------------------------------------------------------------
+void vtkSlicerTransformLogic::GetTransformedNodes(
+  vtkMRMLScene* scene, vtkMRMLTransformNode* transformNode,
+  std::vector<vtkMRMLDisplayableNode*>& transformedNodes,
+  bool recursive)
+{
+  if (!scene || !transformNode || !transformNode->GetID())
+    {
+    return;
+    }
+
+  std::vector<vtkMRMLNode*> nodes;
+  scene->GetNodesByClass("vtkMRMLDisplayableNode", nodes);
+  for (size_t i = 0; i < nodes.size(); ++i)
+    {
+    vtkMRMLDisplayableNode* node =
+      vtkMRMLDisplayableNode::SafeDownCast(nodes[i]);
+    if (node->GetTransformNodeID() &&
+      strcmp(transformNode->GetID(), node->GetTransformNodeID()) == 0)
+      {
+      transformedNodes.push_back(node);
+
+      vtkMRMLTransformNode* childTransformNode =
+        vtkMRMLTransformNode::SafeDownCast(node);
+      if (recursive && childTransformNode)
+        {
+        vtkSlicerTransformLogic::GetTransformedNodes(
+          scene, childTransformNode, transformedNodes, recursive);
+      }
+    }
+}
