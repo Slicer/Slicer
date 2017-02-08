@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>314</width>
-    <height>675</height>
+    <width>795</width>
+    <height>878</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,268 +22,14 @@
   <property name="windowTitle">
    <string>qMRMLTransformDisplayNodeWidget</string>
   </property>
+  <property name="toolTip">
+   <string>Whether the transform widget can be translated.</string>
+  </property>
   <layout class="QGridLayout" name="gridLayout_6">
    <property name="margin">
     <number>4</number>
    </property>
-   <item row="4" column="0">
-    <widget class="QPushButton" name="GlyphToggle">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>60</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="focusPolicy">
-      <enum>Qt::StrongFocus</enum>
-     </property>
-     <property name="toolTip">
-      <string>Visualize transform using glyphs</string>
-     </property>
-     <property name="statusTip">
-      <string/>
-     </property>
-     <property name="layoutDirection">
-      <enum>Qt::LeftToRight</enum>
-     </property>
-     <property name="autoFillBackground">
-      <bool>false</bool>
-     </property>
-     <property name="inputMethodHints">
-      <set>Qt::ImhNone</set>
-     </property>
-     <property name="text">
-      <string>Glyph</string>
-     </property>
-     <property name="icon">
-      <iconset resource="../qSlicerTransformsModuleWidgets.qrc">
-       <normaloff>:/Icons/GlyphIcon.png</normaloff>:/Icons/GlyphIcon.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>48</width>
-       <height>48</height>
-      </size>
-     </property>
-     <property name="shortcut">
-      <string notr="true"/>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-     <property name="autoExclusive">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="1">
-    <widget class="QPushButton" name="GridToggle">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>60</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="toolTip">
-      <string>Visualize transform using a warped grid</string>
-     </property>
-     <property name="text">
-      <string>Grid</string>
-     </property>
-     <property name="icon">
-      <iconset resource="../qSlicerTransformsModuleWidgets.qrc">
-       <normaloff>:/Icons/GridIcon.png</normaloff>:/Icons/GridIcon.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>48</width>
-       <height>48</height>
-      </size>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-     <property name="autoExclusive">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="2">
-    <widget class="QPushButton" name="ContourToggle">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>60</height>
-      </size>
-     </property>
-     <property name="toolTip">
-      <string>Visualize transform by isoline/isosurface contours of the displacement magnitude</string>
-     </property>
-     <property name="text">
-      <string>Contour</string>
-     </property>
-     <property name="icon">
-      <iconset resource="../qSlicerTransformsModuleWidgets.qrc">
-       <normaloff>:/Icons/ContourIcon.png</normaloff>:/Icons/ContourIcon.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>48</width>
-       <height>48</height>
-      </size>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-     <property name="autoExclusive">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QCheckBox" name="Visible2dCheckBox">
-     <property name="toolTip">
-      <string>Show transform in the slice views</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Visible in slice view:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label_4">
-     <property name="text">
-      <string>Visible in 3D view:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1" colspan="2">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QCheckBox" name="Visible3dCheckBox">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-         <horstretch>1</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="toolTip">
-        <string>Show transform in the 3D views</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="RegionLabel">
-       <property name="toolTip">
-        <string>Reference image for visualizing transform nodes (will only use size, orientation and position)</string>
-       </property>
-       <property name="text">
-        <string>Region:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="qMRMLNodeComboBox" name="RegionNodeComboBox">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-         <horstretch>9</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="toolTip">
-        <string>Region for visualizing transform nodes (will only use size, orientation and position)</string>
-       </property>
-       <property name="nodeTypes">
-        <stringlist>
-         <string>vtkMRMLSliceNode</string>
-         <string>vtkMRMLModelNode</string>
-         <string>vtkMRMLVolumeNode</string>
-        </stringlist>
-       </property>
-       <property name="baseName">
-        <string/>
-       </property>
-       <property name="noneEnabled">
-        <bool>true</bool>
-       </property>
-       <property name="addEnabled">
-        <bool>false</bool>
-       </property>
-       <property name="removeEnabled">
-        <bool>true</bool>
-       </property>
-       <property name="editEnabled">
-        <bool>true</bool>
-       </property>
-       <property name="renameEnabled">
-        <bool>true</bool>
-       </property>
-       <property name="noneDisplay">
-        <string>Select a node</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="8" column="1">
+   <item row="5" column="1">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -296,226 +42,359 @@
      </property>
     </spacer>
    </item>
-   <item row="6" column="0" colspan="3">
-    <widget class="ctkCollapsibleGroupBox" name="AdvancedParameters">
+   <item row="1" column="0" colspan="3">
+    <widget class="ctkCollapsibleGroupBox" name="VisualizationCollapsibleGroupBox">
      <property name="title">
-      <string>Advanced</string>
+      <string>Visualization</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
-      <item>
-       <widget class="QFrame" name="GlyphOptions">
-        <property name="frameShape">
-         <enum>QFrame::NoFrame</enum>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Visible in slice view:</string>
         </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QCheckBox" name="Visible2dCheckBox">
+        <property name="toolTip">
+         <string>Show transform in the slice views</string>
         </property>
-        <layout class="QGridLayout" name="gridLayout_4">
-         <item row="1" column="0">
-          <widget class="QLabel" name="GlyphSpacingLabel">
-           <property name="toolTip">
-            <string>Distance between the glyph points</string>
-           </property>
-           <property name="text">
-            <string>Spacing:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="label">
-           <property name="toolTip">
-            <string>Percentage of displacement usef for setting the glyph size. 100% means the glyph size equals the actual displacement.</string>
-           </property>
-           <property name="text">
-            <string>Scale factor:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="label_10">
-           <property name="toolTip">
-            <string>Glyphs are shown if the displacement magnitude is within this range</string>
-           </property>
-           <property name="text">
-            <string>Visible range:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1" colspan="2">
-          <widget class="qMRMLSliderWidget" name="GlyphSpacingMm">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="toolTip">
-            <string>Distance between the glyph points</string>
-           </property>
-           <property name="decimals">
-            <number>0</number>
-           </property>
-           <property name="singleStep">
-            <double>0.500000000000000</double>
-           </property>
-           <property name="pageStep">
-            <double>25.000000000000000</double>
-           </property>
-           <property name="minimum">
-            <double>1.000000000000000</double>
-           </property>
-           <property name="maximum">
-            <double>100.000000000000000</double>
-           </property>
-           <property name="value">
-            <double>10.000000000000000</double>
-           </property>
-           <property name="quantity">
-            <string>length</string>
-           </property>
-           <property name="unitAwareProperties">
-            <set>qMRMLSliderWidget::Precision|qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Scaling|qMRMLSliderWidget::Suffix</set>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1" colspan="2">
-          <widget class="qMRMLRangeWidget" name="GlyphDisplayRangeMm">
-           <property name="toolTip">
-            <string>Only those glyphs are shown that have displacement magnitude within this range</string>
-           </property>
-           <property name="singleStep">
-            <double>0.100000000000000</double>
-           </property>
-           <property name="maximum">
-            <double>100.000000000000000</double>
-           </property>
-           <property name="maximumValue">
-            <double>100.000000000000000</double>
-           </property>
-           <property name="suffix">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Visible in 3D view:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QCheckBox" name="Visible3dCheckBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Show transform in the 3D views</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="RegionLabel">
+          <property name="toolTip">
+           <string>Reference image for visualizing transform nodes (will only use size, orientation and position)</string>
+          </property>
+          <property name="text">
+           <string>Region:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="qMRMLNodeComboBox" name="RegionNodeComboBox">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+            <horstretch>9</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Region for visualizing transform nodes (will only use size, orientation and position)</string>
+          </property>
+          <property name="nodeTypes">
+           <stringlist>
+            <string>vtkMRMLSliceNode</string>
+            <string>vtkMRMLModelNode</string>
+            <string>vtkMRMLVolumeNode</string>
+           </stringlist>
+          </property>
+          <property name="baseName">
+           <string/>
+          </property>
+          <property name="noneEnabled">
+           <bool>true</bool>
+          </property>
+          <property name="addEnabled">
+           <bool>false</bool>
+          </property>
+          <property name="removeEnabled">
+           <bool>true</bool>
+          </property>
+          <property name="editEnabled">
+           <bool>true</bool>
+          </property>
+          <property name="renameEnabled">
+           <bool>true</bool>
+          </property>
+          <property name="noneDisplay">
+           <string>Select a node</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="2" column="0" colspan="2">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QPushButton" name="GlyphToggle">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>60</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::StrongFocus</enum>
+          </property>
+          <property name="toolTip">
+           <string>Visualize transform using glyphs</string>
+          </property>
+          <property name="statusTip">
+           <string/>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="inputMethodHints">
+           <set>Qt::ImhNone</set>
+          </property>
+          <property name="text">
+           <string>Glyph</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../qSlicerTransformsModuleWidgets.qrc">
+            <normaloff>:/Icons/GlyphIcon.png</normaloff>:/Icons/GlyphIcon.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>48</width>
+            <height>48</height>
+           </size>
+          </property>
+          <property name="shortcut">
+           <string notr="true"/>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="GridToggle">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>60</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Visualize transform using a warped grid</string>
+          </property>
+          <property name="text">
+           <string>Grid</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../qSlicerTransformsModuleWidgets.qrc">
+            <normaloff>:/Icons/GridIcon.png</normaloff>:/Icons/GridIcon.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>48</width>
+            <height>48</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="ContourToggle">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>60</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Visualize transform by isoline/isosurface contours of the displacement magnitude</string>
+          </property>
+          <property name="text">
+           <string>Contour</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../qSlicerTransformsModuleWidgets.qrc">
+            <normaloff>:/Icons/ContourIcon.png</normaloff>:/Icons/ContourIcon.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>48</width>
+            <height>48</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="3" column="0" colspan="2">
+       <widget class="ctkCollapsibleGroupBox" name="ColorsSection">
+        <property name="title">
+         <string>Colors</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="ctkVTKScalarsToColorsWidget" name="ColorMapWidget">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="toolTip">
-            <string>Choose a glyph type to use</string>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>80</height>
+            </size>
            </property>
-           <property name="text">
-            <string>Glyph type:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1" colspan="2">
-          <widget class="ctkComboBox" name="GlyphTypeComboBox">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="toolTip">
-            <string>Choose a glyph type to use</string>
-           </property>
-           <property name="defaultText">
-            <string/>
-           </property>
-           <item>
-            <property name="text">
-             <string>Arrow</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Cone</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Sphere</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-         <item row="2" column="1" colspan="2">
-          <widget class="qMRMLSliderWidget" name="GlyphScalePercent">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="toolTip">
-            <string>Percentage of displacement used for setting the glyph size. 100% means the glyph size equals the actual displacement. Does not affect coloring and visible range.</string>
-           </property>
-           <property name="decimals">
-            <number>0</number>
-           </property>
-           <property name="singleStep">
-            <double>1.000000000000000</double>
-           </property>
-           <property name="pageStep">
-            <double>10.000000000000000</double>
-           </property>
-           <property name="maximum">
-            <double>1000.000000000000000</double>
-           </property>
-           <property name="value">
-            <double>100.000000000000000</double>
-           </property>
-           <property name="suffix">
-            <string>%</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="0" colspan="3">
-          <widget class="ctkCollapsibleGroupBox" name="GlyphSourceOptions">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="title">
-            <string>3D glyph settings</string>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-           <property name="checked">
+           <property name="verticalSliderVisible">
             <bool>false</bool>
            </property>
-           <property name="collapsed">
-            <bool>true</bool>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="4" column="0" colspan="2">
+       <widget class="ctkCollapsibleGroupBox" name="AdvancedParameters">
+        <property name="title">
+         <string>Advanced</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="QFrame" name="GlyphOptions">
+           <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
            </property>
-           <layout class="QGridLayout" name="gridLayout_5">
-            <property name="margin">
-             <number>4</number>
-            </property>
-            <property name="spacing">
-             <number>4</number>
-            </property>
-            <item row="0" column="0">
-             <widget class="QLabel" name="GlyphDiameterMmLabel">
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_4">
+            <item row="1" column="0">
+             <widget class="QLabel" name="GlyphSpacingLabel">
               <property name="toolTip">
-               <string>Adjust radius of base of arrow tip</string>
+               <string>Distance between the glyph points</string>
               </property>
               <property name="text">
-               <string>Diameter:</string>
+               <string>Spacing:</string>
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
-             <widget class="qMRMLSliderWidget" name="GlyphDiameterMm">
+            <item row="2" column="0">
+             <widget class="QLabel" name="label">
               <property name="toolTip">
-               <string>Base diameter of the widget</string>
+               <string>Percentage of displacement usef for setting the glyph size. 100% means the glyph size equals the actual displacement.</string>
+              </property>
+              <property name="text">
+               <string>Scale factor:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_10">
+              <property name="toolTip">
+               <string>Glyphs are shown if the displacement magnitude is within this range</string>
+              </property>
+              <property name="text">
+               <string>Visible range:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" colspan="2">
+             <widget class="qMRMLSliderWidget" name="GlyphSpacingMm">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Distance between the glyph points</string>
               </property>
               <property name="decimals">
                <number>0</number>
@@ -524,10 +403,493 @@
                <double>0.500000000000000</double>
               </property>
               <property name="pageStep">
-               <double>2.000000000000000</double>
+               <double>25.000000000000000</double>
+              </property>
+              <property name="minimum">
+               <double>1.000000000000000</double>
               </property>
               <property name="maximum">
-               <double>15.000000000000000</double>
+               <double>100.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>10.000000000000000</double>
+              </property>
+              <property name="quantity">
+               <string>length</string>
+              </property>
+              <property name="unitAwareProperties">
+               <set>qMRMLSliderWidget::Precision|qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Scaling|qMRMLSliderWidget::Suffix</set>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1" colspan="2">
+             <widget class="qMRMLRangeWidget" name="GlyphDisplayRangeMm">
+              <property name="toolTip">
+               <string>Only those glyphs are shown that have displacement magnitude within this range</string>
+              </property>
+              <property name="singleStep">
+               <double>0.100000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>100.000000000000000</double>
+              </property>
+              <property name="maximumValue">
+               <double>100.000000000000000</double>
+              </property>
+              <property name="suffix">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="label_2">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Choose a glyph type to use</string>
+              </property>
+              <property name="text">
+               <string>Glyph type:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1" colspan="2">
+             <widget class="ctkComboBox" name="GlyphTypeComboBox">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Choose a glyph type to use</string>
+              </property>
+              <property name="defaultText">
+               <string/>
+              </property>
+              <item>
+               <property name="text">
+                <string>Arrow</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Cone</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Sphere</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="2" column="1" colspan="2">
+             <widget class="qMRMLSliderWidget" name="GlyphScalePercent">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Percentage of displacement used for setting the glyph size. 100% means the glyph size equals the actual displacement. Does not affect coloring and visible range.</string>
+              </property>
+              <property name="decimals">
+               <number>0</number>
+              </property>
+              <property name="singleStep">
+               <double>1.000000000000000</double>
+              </property>
+              <property name="pageStep">
+               <double>10.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>1000.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>100.000000000000000</double>
+              </property>
+              <property name="suffix">
+               <string>%</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0" colspan="3">
+             <widget class="ctkCollapsibleGroupBox" name="GlyphSourceOptions">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="title">
+               <string>3D glyph settings</string>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+              <property name="collapsed">
+               <bool>true</bool>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_5">
+               <property name="margin">
+                <number>4</number>
+               </property>
+               <property name="spacing">
+                <number>4</number>
+               </property>
+               <item row="0" column="0">
+                <widget class="QLabel" name="GlyphDiameterMmLabel">
+                 <property name="toolTip">
+                  <string>Adjust radius of base of arrow tip</string>
+                 </property>
+                 <property name="text">
+                  <string>Diameter:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="qMRMLSliderWidget" name="GlyphDiameterMm">
+                 <property name="toolTip">
+                  <string>Base diameter of the widget</string>
+                 </property>
+                 <property name="decimals">
+                  <number>0</number>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.500000000000000</double>
+                 </property>
+                 <property name="pageStep">
+                  <double>2.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>15.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>5.000000000000000</double>
+                 </property>
+                 <property name="quantity">
+                  <string>length</string>
+                 </property>
+                 <property name="unitAwareProperties">
+                  <set>qMRMLSliderWidget::Precision|qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Scaling|qMRMLSliderWidget::Suffix</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="GlyphShaftDiameterLabel">
+                 <property name="toolTip">
+                  <string>Adjust radius of arrow shaft</string>
+                 </property>
+                 <property name="text">
+                  <string>Shaft diameter:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="ctkSliderWidget" name="GlyphShaftDiameterPercent">
+                 <property name="toolTip">
+                  <string>Diameter of the arrow shaft relative to the base diameter</string>
+                 </property>
+                 <property name="singleStep">
+                  <double>1.000000000000000</double>
+                 </property>
+                 <property name="pageStep">
+                  <double>10.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>100.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>20.000000000000000</double>
+                 </property>
+                 <property name="suffix">
+                  <string>%</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="GlyphTipLengthLabel">
+                 <property name="toolTip">
+                  <string>Adjust how much of the tip the arrow will consist of as a decimal percentage</string>
+                 </property>
+                 <property name="text">
+                  <string>Tip length:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="ctkSliderWidget" name="GlyphTipLengthPercent">
+                 <property name="toolTip">
+                  <string>Length of the arrow tip  as percentage of displacement</string>
+                 </property>
+                 <property name="decimals">
+                  <number>0</number>
+                 </property>
+                 <property name="singleStep">
+                  <double>1.000000000000000</double>
+                 </property>
+                 <property name="pageStep">
+                  <double>10.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>100.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>30.000000000000000</double>
+                 </property>
+                 <property name="suffix">
+                  <string>%</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0">
+                <widget class="QLabel" name="GlyphResolutionLabel">
+                 <property name="toolTip">
+                  <string>Adjust resolution of the glyph (higher value generates smoother curved lines but visualization may be slower)</string>
+                 </property>
+                 <property name="text">
+                  <string>Resolution:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="ctkSliderWidget" name="GlyphResolution">
+                 <property name="toolTip">
+                  <string>Adjust resolution of arrow (lower is less detailed but rendered faster)</string>
+                 </property>
+                 <property name="decimals">
+                  <number>0</number>
+                 </property>
+                 <property name="singleStep">
+                  <double>1.000000000000000</double>
+                 </property>
+                 <property name="pageStep">
+                  <double>1.000000000000000</double>
+                 </property>
+                 <property name="minimum">
+                  <double>4.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>50.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>6.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="GlyphPointsLabel">
+              <property name="text">
+               <string>Source points:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1" colspan="2">
+             <widget class="qMRMLNodeComboBox" name="GlyphPointsNodeComboBox">
+              <property name="toolTip">
+               <string>Markups node that defines glyph starting positions. If specified then 3D view 'Region' is ignored.</string>
+              </property>
+              <property name="nodeTypes">
+               <stringlist>
+                <string>vtkMRMLMarkupsFiducialNode</string>
+               </stringlist>
+              </property>
+              <property name="noneEnabled">
+               <bool>true</bool>
+              </property>
+              <property name="addEnabled">
+               <bool>false</bool>
+              </property>
+              <property name="renameEnabled">
+               <bool>true</bool>
+              </property>
+              <property name="noneDisplay">
+               <string>Entire region</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QFrame" name="GridOptions">
+           <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_3">
+            <item row="0" column="0">
+             <widget class="QLabel" name="GridSpacingLabel">
+              <property name="toolTip">
+               <string>Distance between the gridlines</string>
+              </property>
+              <property name="text">
+               <string>Spacing:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="qMRMLSliderWidget" name="GridSpacingMm">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Distance between the gridlines</string>
+              </property>
+              <property name="decimals">
+               <number>1</number>
+              </property>
+              <property name="singleStep">
+               <double>0.500000000000000</double>
+              </property>
+              <property name="pageStep">
+               <double>25.000000000000000</double>
+              </property>
+              <property name="minimum">
+               <double>1.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>100.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>10.000000000000000</double>
+              </property>
+              <property name="quantity">
+               <string>length</string>
+              </property>
+              <property name="unitAwareProperties">
+               <set>qMRMLSliderWidget::Precision|qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Scaling|qMRMLSliderWidget::Suffix</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="GridScaleLabel">
+              <property name="toolTip">
+               <string>Percentage of displacement applied to the gridpoints. 100% means that the grid is deformed with the actual displacement.</string>
+              </property>
+              <property name="text">
+               <string>Scale factor:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="ctkSliderWidget" name="GridScalePercent">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Percentage of displacement applied to the gridpoints. 100% means that the grid is deformed with the actual displacement.</string>
+              </property>
+              <property name="decimals">
+               <number>1</number>
+              </property>
+              <property name="singleStep">
+               <double>1.000000000000000</double>
+              </property>
+              <property name="pageStep">
+               <double>10.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>1000.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>100.000000000000000</double>
+              </property>
+              <property name="suffix">
+               <string>%</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="GridLineDiameterLabel">
+              <property name="toolTip">
+               <string>Thickness of the gridlines in the 3D view</string>
+              </property>
+              <property name="text">
+               <string>3D gridline diameter:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="qMRMLSliderWidget" name="GridLineDiameterMm">
+              <property name="toolTip">
+               <string>Thickness of the gridlines in the 3D view</string>
+              </property>
+              <property name="decimals">
+               <number>1</number>
+              </property>
+              <property name="singleStep">
+               <double>0.500000000000000</double>
+              </property>
+              <property name="pageStep">
+               <double>1.000000000000000</double>
+              </property>
+              <property name="minimum">
+               <double>0.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>10.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>1.000000000000000</double>
+              </property>
+              <property name="quantity">
+               <string>length</string>
+              </property>
+              <property name="unitAwareProperties">
+               <set>qMRMLSliderWidget::Precision|qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Scaling|qMRMLSliderWidget::Suffix</set>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="label_7">
+              <property name="toolTip">
+               <string>Distance between sample points along the gridlines. Lower values result in gridlines that follow more closely the actual displacement vectors, but require more computation time.</string>
+              </property>
+              <property name="text">
+               <string>Resolution:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="qMRMLSliderWidget" name="GridResolutionMm">
+              <property name="toolTip">
+               <string>Distance between sample points along the gridlines. Lower values result in gridlines that follow more closely the actual displacement vectors, but require more computation time.</string>
+              </property>
+              <property name="decimals">
+               <number>1</number>
+              </property>
+              <property name="singleStep">
+               <double>0.500000000000000</double>
+              </property>
+              <property name="pageStep">
+               <double>1.000000000000000</double>
+              </property>
+              <property name="minimum">
+               <double>1.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>20.000000000000000</double>
               </property>
               <property name="value">
                <double>5.000000000000000</double>
@@ -540,459 +902,144 @@
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="GlyphShaftDiameterLabel">
-              <property name="toolTip">
-               <string>Adjust radius of arrow shaft</string>
-              </property>
-              <property name="text">
-               <string>Shaft diameter:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="ctkSliderWidget" name="GlyphShaftDiameterPercent">
-              <property name="toolTip">
-               <string>Diameter of the arrow shaft relative to the base diameter</string>
-              </property>
-              <property name="singleStep">
-               <double>1.000000000000000</double>
-              </property>
-              <property name="pageStep">
-               <double>10.000000000000000</double>
-              </property>
-              <property name="maximum">
-               <double>100.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>20.000000000000000</double>
-              </property>
-              <property name="suffix">
-               <string>%</string>
-              </property>
-             </widget>
-            </item>
             <item row="2" column="0">
-             <widget class="QLabel" name="GlyphTipLengthLabel">
+             <widget class="QLabel" name="label_8">
               <property name="toolTip">
-               <string>Adjust how much of the tip the arrow will consist of as a decimal percentage</string>
+               <string>Show non-warped grid in the slice view</string>
               </property>
               <property name="text">
-               <string>Tip length:</string>
+               <string>Show original grid:</string>
               </property>
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="ctkSliderWidget" name="GlyphTipLengthPercent">
+             <widget class="ctkCheckBox" name="GridShowNonWarped">
               <property name="toolTip">
-               <string>Length of the arrow tip  as percentage of displacement</string>
-              </property>
-              <property name="decimals">
-               <number>0</number>
-              </property>
-              <property name="singleStep">
-               <double>1.000000000000000</double>
-              </property>
-              <property name="pageStep">
-               <double>10.000000000000000</double>
-              </property>
-              <property name="maximum">
-               <double>100.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>30.000000000000000</double>
-              </property>
-              <property name="suffix">
-               <string>%</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="GlyphResolutionLabel">
-              <property name="toolTip">
-               <string>Adjust resolution of the glyph (higher value generates smoother curved lines but visualization may be slower)</string>
-              </property>
-              <property name="text">
-               <string>Resolution:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <widget class="ctkSliderWidget" name="GlyphResolution">
-              <property name="toolTip">
-               <string>Adjust resolution of arrow (lower is less detailed but rendered faster)</string>
-              </property>
-              <property name="decimals">
-               <number>0</number>
-              </property>
-              <property name="singleStep">
-               <double>1.000000000000000</double>
-              </property>
-              <property name="pageStep">
-               <double>1.000000000000000</double>
-              </property>
-              <property name="minimum">
-               <double>4.000000000000000</double>
-              </property>
-              <property name="maximum">
-               <double>50.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>6.000000000000000</double>
+               <string>Show non-warped grid in the slice view</string>
               </property>
              </widget>
             </item>
            </layout>
           </widget>
          </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="GlyphPointsLabel">
-           <property name="text">
-            <string>Source points:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1" colspan="2">
-          <widget class="qMRMLNodeComboBox" name="GlyphPointsNodeComboBox">
-           <property name="toolTip">
-            <string>Markups node that defines glyph starting positions. If specified then 3D view 'Region' is ignored.</string>
-           </property>
-           <property name="nodeTypes">
-            <stringlist>
-             <string>vtkMRMLMarkupsFiducialNode</string>
-            </stringlist>
-           </property>
-           <property name="noneEnabled">
+         <item>
+          <widget class="QFrame" name="ContourOptions">
+           <property name="enabled">
             <bool>true</bool>
            </property>
-           <property name="addEnabled">
-            <bool>false</bool>
-           </property>
-           <property name="renameEnabled">
-            <bool>true</bool>
-           </property>
-           <property name="noneDisplay">
-            <string>Entire region</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="QFrame" name="GridOptions">
-        <property name="frameShape">
-         <enum>QFrame::NoFrame</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_3">
-         <item row="0" column="0">
-          <widget class="QLabel" name="GridSpacingLabel">
-           <property name="toolTip">
-            <string>Distance between the gridlines</string>
-           </property>
-           <property name="text">
-            <string>Spacing:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="qMRMLSliderWidget" name="GridSpacingMm">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="toolTip">
-            <string>Distance between the gridlines</string>
-           </property>
-           <property name="decimals">
-            <number>1</number>
-           </property>
-           <property name="singleStep">
-            <double>0.500000000000000</double>
-           </property>
-           <property name="pageStep">
-            <double>25.000000000000000</double>
-           </property>
-           <property name="minimum">
-            <double>1.000000000000000</double>
-           </property>
-           <property name="maximum">
-            <double>100.000000000000000</double>
-           </property>
-           <property name="value">
-            <double>10.000000000000000</double>
-           </property>
-           <property name="quantity">
-            <string>length</string>
-           </property>
-           <property name="unitAwareProperties">
-            <set>qMRMLSliderWidget::Precision|qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Scaling|qMRMLSliderWidget::Suffix</set>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="GridScaleLabel">
-           <property name="toolTip">
-            <string>Percentage of displacement applied to the gridpoints. 100% means that the grid is deformed with the actual displacement.</string>
-           </property>
-           <property name="text">
-            <string>Scale factor:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="ctkSliderWidget" name="GridScalePercent">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="toolTip">
-            <string>Percentage of displacement applied to the gridpoints. 100% means that the grid is deformed with the actual displacement.</string>
-           </property>
-           <property name="decimals">
-            <number>1</number>
-           </property>
-           <property name="singleStep">
-            <double>1.000000000000000</double>
-           </property>
-           <property name="pageStep">
-            <double>10.000000000000000</double>
-           </property>
-           <property name="maximum">
-            <double>1000.000000000000000</double>
-           </property>
-           <property name="value">
-            <double>100.000000000000000</double>
-           </property>
-           <property name="suffix">
-            <string>%</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="GridLineDiameterLabel">
-           <property name="toolTip">
-            <string>Thickness of the gridlines in the 3D view</string>
-           </property>
-           <property name="text">
-            <string>3D gridline diameter:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="qMRMLSliderWidget" name="GridLineDiameterMm">
-           <property name="toolTip">
-            <string>Thickness of the gridlines in the 3D view</string>
-           </property>
-           <property name="decimals">
-            <number>1</number>
-           </property>
-           <property name="singleStep">
-            <double>0.500000000000000</double>
-           </property>
-           <property name="pageStep">
-            <double>1.000000000000000</double>
-           </property>
-           <property name="minimum">
-            <double>0.000000000000000</double>
-           </property>
-           <property name="maximum">
-            <double>10.000000000000000</double>
-           </property>
-           <property name="value">
-            <double>1.000000000000000</double>
-           </property>
-           <property name="quantity">
-            <string>length</string>
-           </property>
-           <property name="unitAwareProperties">
-            <set>qMRMLSliderWidget::Precision|qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Scaling|qMRMLSliderWidget::Suffix</set>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="label_7">
-           <property name="toolTip">
-            <string>Distance between sample points along the gridlines. Lower values result in gridlines that follow more closely the actual displacement vectors, but require more computation time.</string>
-           </property>
-           <property name="text">
-            <string>Resolution:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="qMRMLSliderWidget" name="GridResolutionMm">
-           <property name="toolTip">
-            <string>Distance between sample points along the gridlines. Lower values result in gridlines that follow more closely the actual displacement vectors, but require more computation time.</string>
-           </property>
-           <property name="decimals">
-            <number>1</number>
-           </property>
-           <property name="singleStep">
-            <double>0.500000000000000</double>
-           </property>
-           <property name="pageStep">
-            <double>1.000000000000000</double>
-           </property>
-           <property name="minimum">
-            <double>1.000000000000000</double>
-           </property>
-           <property name="maximum">
-            <double>20.000000000000000</double>
-           </property>
-           <property name="value">
-            <double>5.000000000000000</double>
-           </property>
-           <property name="quantity">
-            <string>length</string>
-           </property>
-           <property name="unitAwareProperties">
-            <set>qMRMLSliderWidget::Precision|qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Scaling|qMRMLSliderWidget::Suffix</set>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="label_8">
-           <property name="toolTip">
-            <string>Show non-warped grid in the slice view</string>
-           </property>
-           <property name="text">
-            <string>Show original grid:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="ctkCheckBox" name="GridShowNonWarped">
-           <property name="toolTip">
-            <string>Show non-warped grid in the slice view</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="QFrame" name="ContourOptions">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="frameShape">
-         <enum>QFrame::NoFrame</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
-        <layout class="QGridLayout" name="gridLayout">
-         <item row="0" column="0">
-          <widget class="QLabel" name="ContourLevelsLabel">
-           <property name="toolTip">
-            <string>Values defining the isolines and isosurfaces to contour. Values are separated by spaces.</string>
-           </property>
-           <property name="text">
-            <string>Levels (mm):</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLineEdit" name="ContourLevelsMm">
-           <property name="toolTip">
-            <string>Values defining the isolines and isosurfaces to contour. Values are separated by spaces.</string>
-           </property>
-           <property name="inputMethodHints">
-            <set>Qt::ImhNone</set>
-           </property>
-           <property name="inputMask">
-            <string/>
-           </property>
-           <property name="text">
-            <string>1 2 3 4</string>
-           </property>
-           <property name="maxLength">
-            <number>100</number>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="ContourDecimationLabel">
-           <property name="toolTip">
-            <string>Sampling distance for discretizing the displacement field. Lower values result in more accurate contours, but require more computation time.</string>
-           </property>
-           <property name="text">
-            <string>Resolution:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="qMRMLSliderWidget" name="ContourResolutionMm">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="toolTip">
-            <string>Sampling distance for discretizing the displacement field. Lower values result in more accurate contours, but require more computation time.</string>
-           </property>
-           <property name="decimals">
-            <number>1</number>
-           </property>
-           <property name="singleStep">
-            <double>0.500000000000000</double>
-           </property>
-           <property name="pageStep">
-            <double>1.000000000000000</double>
-           </property>
-           <property name="minimum">
-            <double>0.100000000000000</double>
-           </property>
-           <property name="maximum">
-            <double>20.000000000000000</double>
-           </property>
-           <property name="value">
-            <double>5.000000000000000</double>
-           </property>
-           <property name="quantity">
-            <string>length</string>
-           </property>
-           <property name="unitAwareProperties">
-            <set>qMRMLSliderWidget::Precision|qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Scaling|qMRMLSliderWidget::Suffix</set>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="label_5">
-           <property name="toolTip">
-            <string>Opacity of the contour isosurfaces in the 3D view</string>
-           </property>
-           <property name="text">
-            <string>3D opacity:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="ctkSliderWidget" name="ContourOpacityPercent">
-           <property name="toolTip">
-            <string>Opacity of the contour isosurfaces in the 3D view</string>
-           </property>
-           <property name="decimals">
-            <number>0</number>
-           </property>
-           <property name="maximum">
-            <double>100.000000000000000</double>
-           </property>
-           <property name="value">
-            <double>100.000000000000000</double>
-           </property>
-           <property name="suffix">
-            <string>%</string>
-           </property>
+           <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="0" column="0">
+             <widget class="QLabel" name="ContourLevelsLabel">
+              <property name="toolTip">
+               <string>Values defining the isolines and isosurfaces to contour. Values are separated by spaces.</string>
+              </property>
+              <property name="text">
+               <string>Levels (mm):</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="ContourLevelsMm">
+              <property name="toolTip">
+               <string>Values defining the isolines and isosurfaces to contour. Values are separated by spaces.</string>
+              </property>
+              <property name="inputMethodHints">
+               <set>Qt::ImhNone</set>
+              </property>
+              <property name="inputMask">
+               <string/>
+              </property>
+              <property name="text">
+               <string>1 2 3 4</string>
+              </property>
+              <property name="maxLength">
+               <number>100</number>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="ContourDecimationLabel">
+              <property name="toolTip">
+               <string>Sampling distance for discretizing the displacement field. Lower values result in more accurate contours, but require more computation time.</string>
+              </property>
+              <property name="text">
+               <string>Resolution:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="qMRMLSliderWidget" name="ContourResolutionMm">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Sampling distance for discretizing the displacement field. Lower values result in more accurate contours, but require more computation time.</string>
+              </property>
+              <property name="decimals">
+               <number>1</number>
+              </property>
+              <property name="singleStep">
+               <double>0.500000000000000</double>
+              </property>
+              <property name="pageStep">
+               <double>1.000000000000000</double>
+              </property>
+              <property name="minimum">
+               <double>0.100000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>20.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>5.000000000000000</double>
+              </property>
+              <property name="quantity">
+               <string>length</string>
+              </property>
+              <property name="unitAwareProperties">
+               <set>qMRMLSliderWidget::Precision|qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Scaling|qMRMLSliderWidget::Suffix</set>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_5">
+              <property name="toolTip">
+               <string>Opacity of the contour isosurfaces in the 3D view</string>
+              </property>
+              <property name="text">
+               <string>3D opacity:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="ctkSliderWidget" name="ContourOpacityPercent">
+              <property name="toolTip">
+               <string>Opacity of the contour isosurfaces in the 3D view</string>
+              </property>
+              <property name="decimals">
+               <number>0</number>
+              </property>
+              <property name="maximum">
+               <double>100.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>100.000000000000000</double>
+              </property>
+              <property name="suffix">
+               <string>%</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </widget>
          </item>
         </layout>
@@ -1001,31 +1048,130 @@
      </layout>
     </widget>
    </item>
-   <item row="5" column="0" colspan="3">
-    <widget class="ctkCollapsibleGroupBox" name="ColorsSection">
+   <item row="0" column="0" colspan="3">
+    <widget class="ctkCollapsibleGroupBox" name="InteractionCollapsibleGroupBox">
      <property name="title">
-      <string>Colors</string>
+      <string>Interaction</string>
      </property>
-     <property name="checked">
-      <bool>false</bool>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="ctkVTKScalarsToColorsWidget" name="ColorMapWidget">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
+     <layout class="QFormLayout" name="formLayout">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+      </property>
+      <item row="2" column="0" colspan="2">
+       <widget class="ctkCollapsibleGroupBox" name="CollapsibleGroupBox">
+        <property name="title">
+         <string>Advanced</string>
         </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>80</height>
-         </size>
+        <property name="collapsed">
+         <bool>true</bool>
         </property>
-        <property name="verticalSliderVisible">
-         <bool>false</bool>
+        <layout class="QFormLayout" name="formLayout_2">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_6">
+           <property name="text">
+            <string>Translation enabled</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QCheckBox" name="InteractiveTranslationCheckBox">
+           <property name="toolTip">
+            <string>Whether the transform widget can be scaled.</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_9">
+           <property name="text">
+            <string>Rotation enabled</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QCheckBox" name="InteractiveRotationCheckBox">
+           <property name="toolTip">
+            <string>A</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_11">
+           <property name="text">
+            <string>Scaling enabled</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QCheckBox" name="InteractiveScalingCheckBox">
+           <property name="toolTip">
+            <string>Whether the transform widget can be rotated.</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QCheckBox" name="InteractionVisibleCheckBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Show/Hide the transform widget in the 3D view.</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="UpdateBoundsPushButton">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Update the bounds of the transform widget.&lt;/p&gt;&lt;p&gt;The transform will update its bounds to match the bounding box of all the nodes under it (if any).&lt;/p&gt;&lt;p&gt;Otherwise, the widget will resize itself to the default interaction size.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Update bounds</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_12">
+        <property name="text">
+         <string>Visible in 3D view</string>
         </property>
        </widget>
       </item>

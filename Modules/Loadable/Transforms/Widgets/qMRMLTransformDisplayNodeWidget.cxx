@@ -107,6 +107,14 @@ void qMRMLTransformDisplayNodeWidgetPrivate
 
   this->AdvancedParameters->setCollapsed(true);
 
+  // Interaction panel
+  QObject::connect(this->InteractionVisibleCheckBox, SIGNAL(toggled(bool)), q, SLOT(setEditorVisibility(bool)));
+  QObject::connect(this->InteractiveTranslationCheckBox, SIGNAL(toggled(bool)), q, SLOT(setEditorTranslationEnabled(bool)));
+  QObject::connect(this->InteractiveRotationCheckBox, SIGNAL(toggled(bool)), q, SLOT(setEditorRotationEnabled(bool)));
+  QObject::connect(this->InteractiveScalingCheckBox, SIGNAL(toggled(bool)), q, SLOT(setEditorScalingEnabled(bool)));
+  QObject::connect(this->UpdateBoundsPushButton, SIGNAL(clicked()), q, SLOT(updateEditorBounds()));
+
+  // Visualization panel
   // by default the glyph option is selected, so hide the parameter sets for the other options
   this->GlyphOptions->show();
   this->ContourOptions->hide();
@@ -267,6 +275,9 @@ void qMRMLTransformDisplayNodeWidget
       this->colorUpdateRange();
      }
    }
+
+  // Interaction
+  d->InteractionVisibleCheckBox->setChecked(d->TransformDisplayNode->GetEditorVisibility());
 }
 
 //-----------------------------------------------------------------------------
@@ -552,6 +563,50 @@ void qMRMLTransformDisplayNodeWidget::setContourVisualizationMode(bool activate)
 }
 
 //-----------------------------------------------------------------------------
+void qMRMLTransformDisplayNodeWidget::setEditorVisibility(bool enabled)
+{
+  Q_D(qMRMLTransformDisplayNodeWidget);
+  if (!d->TransformDisplayNode)
+    {
+    return;
+    }
+  d->TransformDisplayNode->SetEditorVisibility(enabled);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLTransformDisplayNodeWidget::setEditorTranslationEnabled(bool enabled)
+{
+  Q_D(qMRMLTransformDisplayNodeWidget);
+  if (!d->TransformDisplayNode)
+    {
+    return;
+    }
+  d->TransformDisplayNode->SetEditorTranslationEnabled(enabled);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLTransformDisplayNodeWidget::setEditorRotationEnabled(bool enabled)
+{
+  Q_D(qMRMLTransformDisplayNodeWidget);
+  if (!d->TransformDisplayNode)
+    {
+    return;
+    }
+  d->TransformDisplayNode->SetEditorRotationEnabled(enabled);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLTransformDisplayNodeWidget::setEditorScalingEnabled(bool enabled)
+{
+  Q_D(qMRMLTransformDisplayNodeWidget);
+  if (!d->TransformDisplayNode)
+    {
+    return;
+    }
+  d->TransformDisplayNode->SetEditorScalingEnabled(enabled);
+}
+
+//-----------------------------------------------------------------------------
 void qMRMLTransformDisplayNodeWidget::setVisible2d(bool visible)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
@@ -629,4 +684,15 @@ void qMRMLTransformDisplayNodeWidget::onColorModifiedEvent()
     return;
     }
   d->TransformDisplayNode->SetColorMap(d->ColorTransferFunction);
+}
+
+// ----------------------------------------------------------------------------
+void qMRMLTransformDisplayNodeWidget::updateEditorBounds()
+{
+  Q_D(qMRMLTransformDisplayNodeWidget);
+  if (!d->TransformDisplayNode)
+    {
+    return;
+    }
+  d->TransformDisplayNode->UpdateEditorBounds();
 }

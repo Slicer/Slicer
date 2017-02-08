@@ -87,6 +87,12 @@ public slots:
   void setContourResolutionMm(double resolutionMm);
   void setContourOpacityPercent(double opacity);
 
+  void setEditorVisibility(bool enabled);
+  void setEditorTranslationEnabled(bool enabled);
+  void setEditorRotationEnabled(bool enabled);
+  void setEditorScalingEnabled(bool enabled);
+  void updateEditorBounds();
+
   void setColorTableNode(vtkMRMLNode* colorTableNode);
 
   void colorUpdateRange();
