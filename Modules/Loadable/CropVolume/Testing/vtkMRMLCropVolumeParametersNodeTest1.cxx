@@ -24,7 +24,6 @@ int vtkMRMLCropVolumeParametersNodeTest1(int , char * [] )
   TEST_SET_GET_STRING(node1.GetPointer(), OutputVolumeNodeID);
   TEST_SET_GET_STRING(node1.GetPointer(), ROINodeID);
 
-  TEST_SET_GET_BOOLEAN(node1.GetPointer(), ROIVisibility);
   TEST_SET_GET_BOOLEAN(node1.GetPointer(), VoxelBased);
   TEST_SET_GET_INT_RANGE(node1.GetPointer(), InterpolationMode, 1, 4);
   TEST_SET_GET_BOOLEAN(node1.GetPointer(), IsotropicResampling);

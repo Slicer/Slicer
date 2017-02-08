@@ -33,6 +33,34 @@ class vtkMatrix4x4;
 #include "vtkSlicerCropVolumeModuleLogicExport.h"
 class vtkMRMLCropVolumeParametersNode;
 
+
+/// \class vtkSlicerCropVolumeLogic
+/// \brief Crop a volume to the specified region of interest.
+///
+/// This class implements cropping and resampling of a volume.
+/// Two main use cases:
+///
+/// 1. Reduce size (both extent and resolution) of a large volume.
+/// Size reduction is useful, as it reduces memory need and makes
+/// visualization and processing faster.
+///
+/// 2. Increase resolution of a specific region.
+/// Increasing resolution (decreasing voxel size) is useful for
+/// segmentation and visualization of fine details.
+///
+/// If interpolation is disabled then only the extent of the volume
+/// is decreased. Cropping without resampling is very fast and needs
+/// almost no extra memory.
+///
+/// If interpolation is enabled, then both the size and resolution
+/// of the volume can be changed.
+///
+/// Limitations:
+/// * Region of interes (ROI) node cannot be under non-linear transform
+/// * Cropped output volume node cannot be under non-linear transform
+/// * If interpolation is disabled: input volume node cannot be under non-linear transform
+///   and ROI node must be aligned with the input volume
+///
 /// \ingroup Slicer_QtModules_CropVolume
 class VTK_SLICER_CROPVOLUME_MODULE_LOGIC_EXPORT vtkSlicerCropVolumeLogic
   : public vtkSlicerModuleLogic
@@ -49,23 +77,36 @@ public:
   void SetResampleLogic(vtkSlicerCLIModuleLogic* logic);
   vtkSlicerCLIModuleLogic* GetResampleLogic();
 
+  /// Crop input volume using the specified ROI node.
   int Apply(vtkMRMLCropVolumeParametersNode*);
 
-  void CropVoxelBased(vtkMRMLAnnotationROINode* roi, vtkMRMLVolumeNode* inputVolume, vtkMRMLVolumeNode* outputNode);
+  /// Perform non-interpolated (voxel-based) cropping.
+  static int CropVoxelBased(vtkMRMLAnnotationROINode* roi, vtkMRMLVolumeNode* inputVolume, vtkMRMLVolumeNode* outputNode);
+
+  /// Compute non-interpolated (voxel-based) cropping output volume geometry (without actually cropping the image).
+  static bool GetVoxelBasedCropOutputExtent(vtkMRMLAnnotationROINode* roi, vtkMRMLVolumeNode* inputVolume, int outputExtent[6]);
+
+  /// Perform interpolated cropping.
+  int CropInterpolated(vtkMRMLAnnotationROINode* roi, vtkMRMLVolumeNode* inputVolume, vtkMRMLVolumeNode* outputNode,
+    bool isotropicResampling, double spacingScale, int interpolationMode);
+
+  /// Computes output volume geometry for interpolated cropping (without actually cropping the image).
+  static bool GetInterpolatedCropOutputGeometry(vtkMRMLAnnotationROINode* roi, vtkMRMLVolumeNode* inputVolume,
+    bool isotropicResampling, double spacingScale, int outputExtent[6], double outputSpacing[3]);
+
+  /// Sets ROI to fit to input volume.
+  /// If ROI is under a non-linear transform then the ROI transform will be reset to RAS.
+  static bool FitROIToInputVolume(vtkMRMLCropVolumeParametersNode* parametersNode);
+
+  static void SnapROIToVoxelGrid(vtkMRMLCropVolumeParametersNode* parametersNode);
+
+  static bool IsROIAlignedWithInputVolume(vtkMRMLCropVolumeParametersNode* parametersNode);
 
   virtual void RegisterNodes();
-
-  static bool IsVolumeTiltedInRAS(vtkMRMLVolumeNode* inputVolume, vtkMatrix4x4* rotation);
-  static bool ComputeIJKToRASRotationOnlyMatrix(vtkMRMLVolumeNode* inputVolume, vtkMatrix4x4* outputMatrix);
-
-  void SnapROIToVoxelGrid(vtkMRMLAnnotationROINode* inputROI, vtkMRMLVolumeNode* inputVolume);
-
 
 protected:
   vtkSlicerCropVolumeLogic();
   virtual ~vtkSlicerCropVolumeLogic();
-
-  static bool ComputeOrientationMatrixFromScanOrder(const char *order, vtkMatrix4x4 *outputMatrix);
 
 private:
   vtkSlicerCropVolumeLogic(const vtkSlicerCropVolumeLogic&); // Not implemented

@@ -173,6 +173,8 @@ class CropVolumeSelfTestTest(unittest.TestCase):
     # test clearing the scene and running a second time
     slicer.mrmlScene.Clear(0)
     # the module will re-add the removed parameters node
+    mainWindow.moduleSelector().selectModule('Transforms')
+    mainWindow.moduleSelector().selectModule('CropVolume')
     cropVolumeNode = slicer.mrmlScene.GetNodeByID('vtkMRMLCropVolumeParametersNode1')
     vol = self.downloadMRHead()
     roi = slicer.vtkMRMLAnnotationROINode()
