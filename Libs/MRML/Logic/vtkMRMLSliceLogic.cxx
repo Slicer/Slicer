@@ -49,6 +49,8 @@
 #include <vtkTransform.h>
 #include <vtkVersion.h>
 
+#include <vtkAddonMathUtilities.h>
+
 // STD includes
 
 //----------------------------------------------------------------------------
@@ -1504,10 +1506,9 @@ double *vtkMRMLSliceLogic::GetVolumeSliceSpacing(vtkMRMLVolumeNode *volumeNode)
     return (pspacing);
     }
 
-  vtkNew<vtkMatrix4x4> ijkToRAS;
-  vtkNew<vtkMatrix4x4> rasToSlice;
-  vtkNew<vtkMatrix4x4> ijkToSlice;
+  // Compute IJK to slice transform
 
+  vtkNew<vtkMatrix4x4> ijkToRAS;
   volumeNode->GetIJKToRASMatrix(ijkToRAS.GetPointer());
 
   // Apply the transform, if it exists
@@ -1523,18 +1524,14 @@ double *vtkMRMLSliceLogic::GetVolumeSliceSpacing(vtkMRMLVolumeNode *volumeNode)
       }
     }
 
-  rasToSlice->DeepCopy(sliceNode->GetSliceToRAS());
-  rasToSlice->Invert();
+  vtkNew<vtkMatrix4x4> rasToSlice;
+  vtkMatrix4x4::Invert(sliceNode->GetSliceToRAS(), rasToSlice.GetPointer());
 
+  vtkNew<vtkMatrix4x4> ijkToSlice;
   ijkToSlice->Multiply4x4(rasToSlice.GetPointer(), ijkToRAS.GetPointer(), ijkToSlice.GetPointer());
 
-  double invector[4] = {1., 1., 1., 0.};
-  double spacing[4];
-  ijkToSlice->MultiplyPoint(invector, spacing);
-  for (int i = 0; i < 3; ++i)
-    {
-    this->SliceSpacing[i] = fabs(spacing[i]);
-    }
+  // Slice spacing is the size of one voxel (length of IJK coordinate system axes) in the slice coordinate system
+  vtkAddonMathUtilities::NormalizeOrientationMatrixColumns(ijkToSlice.GetPointer(), this->SliceSpacing);
 
   return (this->SliceSpacing);
 }
