@@ -106,7 +106,7 @@ void vtkMRMLModelNode::ProcessMRMLEvents ( vtkObject *caller,
       event ==  vtkCommand::ModifiedEvent)
     {
     this->StorableModifiedTime.Modified();
-    this->InvokeEvent(vtkMRMLModelNode::MeshModifiedEvent, NULL);
+    this->InvokeCustomModifiedEvent(vtkMRMLModelNode::MeshModifiedEvent, NULL);
     }
 }
 
@@ -310,7 +310,7 @@ void vtkMRMLModelNode
 
   this->StorableModifiedTime.Modified();
   this->Modified();
-  this->InvokeEvent( vtkMRMLModelNode::MeshModifiedEvent , this);
+  this->InvokeCustomModifiedEvent( vtkMRMLModelNode::MeshModifiedEvent , this);
 }
 
 //---------------------------------------------------------------------------

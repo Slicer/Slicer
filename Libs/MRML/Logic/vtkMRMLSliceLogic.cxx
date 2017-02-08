@@ -543,8 +543,11 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
     vtkPlaneSource* plane = vtkPlaneSource::SafeDownCast(
       this->SliceModelNode->GetPolyDataConnection()->GetProducer());
 
+    int wasModified = this->SliceModelNode->StartModify();
+
     textureToRAS->MultiplyPoint(inPt, outPt);
     plane->SetOrigin(outPt3);
+
     inPt[0] = dims[0];
     textureToRAS->MultiplyPoint(inPt, outPt);
     plane->SetPoint1(outPt3);
@@ -554,6 +557,7 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
     textureToRAS->MultiplyPoint(inPt, outPt);
     plane->SetPoint2(outPt3);
 
+    this->SliceModelNode->EndModify(wasModified);
 
     this->UpdatePipeline();
     /// \tbd Ideally it should not be fired if the output polydata is not
