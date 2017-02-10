@@ -51,7 +51,7 @@ class SegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEditorEffect):
     return qt.QIcon()
 
   def helpText(self):
-    return """Create a complete segmentation from a partial segmentation from partial segmentation \
+    return """Create a complete segmentation from a partial segmentation \
 created using other effects. Masking settings are bypassed. If segments overlap, segment higher in \
 the segments table will have priority."""
 
