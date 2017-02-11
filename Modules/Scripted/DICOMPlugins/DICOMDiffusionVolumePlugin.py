@@ -88,9 +88,13 @@ class DICOMDiffusionVolumePluginClass(DICOMPlugin):
     for vendor in self.diffusionTags:
       matchesVendor = True
       for tag in self.diffusionTags[vendor]:
-        value = slicer.dicomDatabase.fileValue(files[0], tag)
-        hasTag = value != ""
-        matchesVendor &= hasTag
+        # Check the first three files because some tags may
+        # not be present in the b0 image (e.g. for Siemens)
+        for i in xrange(0, 3 if (len(files) > 2) else len(files)):
+          value = slicer.dicomDatabase.fileValue(files[i], tag)
+          hasTag = value != ""
+          if hasTag:
+            matchesVendor &= hasTag
       if matchesVendor:
         validDWI = True
         vendorName = vendor
@@ -101,9 +105,9 @@ class DICOMDiffusionVolumePluginClass(DICOMPlugin):
       loadable = DICOMLoadable()
       loadable.files = files
       loadable.name = name + ' - as DWI Volume'
-      loadable.selected = False
+      loadable.selected = True
       loadable.tooltip = "Appears to be DWI from vendor %s" % vendorName
-      loadable.confidence = 0.75
+      loadable.confidence = 0.4
       loadables = [loadable]
     return loadables
 
