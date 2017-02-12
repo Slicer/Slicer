@@ -772,18 +772,38 @@ void qSlicerVolumeRenderingModuleWidget::resetOffset()
 void qSlicerVolumeRenderingModuleWidget::updatePresetSliderRange()
 {
   Q_D(qSlicerVolumeRenderingModuleWidget);
-  if (!d->VolumePropertyNodeWidget->volumeProperty())
+  if (!d->VolumePropertyNodeWidget->volumeProperty()
+    || !this->mrmlVolumeNode() || !this->mrmlVolumeNode()->GetImageData())
     {
     return;
     }
-  double extent[4];
+
+  double* volumeScalarRange = this->mrmlVolumeNode()->GetImageData()->GetScalarRange();
+  double volumeScalarWidth = volumeScalarRange[1] - volumeScalarRange[0];
+
+  double extent[4] = { 0 };
   d->VolumePropertyNodeWidget->chartsExtent(extent);
-  double width = extent[1] - extent[0];
+  double transferFunctionWidth = extent[1] - extent[0];
+
+  if (volumeScalarWidth <= 0.0 && transferFunctionWidth <= 0.0)
+    {
+    return;
+    }
+
+  if (volumeScalarWidth <= 0.0)
+    {
+    volumeScalarWidth = transferFunctionWidth;
+    }
+  else if (transferFunctionWidth <= 0.0)
+    {
+    transferFunctionWidth = volumeScalarWidth;
+    }
+
   bool wasBlocking = d->PresetOffsetSlider->blockSignals(true);
   d->PresetOffsetSlider->setSingleStep(
-    width ? ctk::closestPowerOfTen(width) / 100. : 0.1);
+    ctk::closestPowerOfTen(std::min(volumeScalarWidth, transferFunctionWidth)/500.0));
   d->PresetOffsetSlider->setPageStep(d->PresetOffsetSlider->singleStep());
-  d->PresetOffsetSlider->setRange(-width, width);
+  d->PresetOffsetSlider->setRange(-std::max(volumeScalarWidth, transferFunctionWidth), std::max(volumeScalarWidth, transferFunctionWidth));
   d->PresetOffsetSlider->blockSignals(wasBlocking);
 }
 
