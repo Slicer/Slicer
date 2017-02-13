@@ -122,7 +122,7 @@ if(Slicer_BUILD_DICOM_SUPPORT AND Slicer_USE_PYTHONQT_WITH_OPENSSL)
 endif()
 
 if(Slicer_USE_PYTHONQT AND Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
-  list(APPEND Slicer_DEPENDENCIES python-GitPython python-chardet)
+  list(APPEND Slicer_DEPENDENCIES python-GitPython python-chardet python-couchdb)
   if(Slicer_USE_PYTHONQT_WITH_OPENSSL OR Slicer_USE_SYSTEM_python)
     # python-PyGithub requires SSL support in Python
     list(APPEND Slicer_DEPENDENCIES python-PyGithub)
