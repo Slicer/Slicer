@@ -414,10 +414,8 @@ void qSlicerCropVolumeModuleWidget::setInputVolume(vtkMRMLNode* volumeNode)
 
   if (!d->ParametersNode.GetPointer())
     {
-    if (volumeNode != NULL)
-      {
-      qWarning() << Q_FUNC_INFO << ": invalid parameter node";
-      }
+    // setInputVolume may be triggered by calling setScene on InputVolumeComboBox
+    // before ParametersNodeComboBox is initialized, so don't log a warning here
     return;
     }
 
