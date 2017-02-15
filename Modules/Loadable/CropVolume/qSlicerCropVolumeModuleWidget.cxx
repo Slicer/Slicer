@@ -54,7 +54,8 @@ public:
 
   vtkSlicerCropVolumeLogic* logic() const;
 
-  QString checkVolumesROIAlignment(bool fixProblems);
+  /// Return true if inputs are correct, cropping may be enabled
+  bool checkInputs(bool& autoFixAvailable, QString& message, bool autoFixProblems);
 
   vtkWeakPointer<vtkMRMLCropVolumeParametersNode> ParametersNode;
   vtkWeakPointer<vtkMRMLVolumeNode> InputVolumeNode;
@@ -82,13 +83,29 @@ vtkSlicerCropVolumeLogic* qSlicerCropVolumeModuleWidgetPrivate::logic() const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCropVolumeModuleWidgetPrivate::checkVolumesROIAlignment(bool fixProblems)
+bool qSlicerCropVolumeModuleWidgetPrivate::checkInputs(bool& autoFixAvailable, QString& message, bool autoFixProblems)
 {
+  message.clear();
+  autoFixAvailable = false;
+
   if (this->ParametersNode == NULL)
     {
-    return QString();
+    message = QObject::tr("Select or create a new parameter node.");
+    autoFixAvailable = true;
+    if (autoFixProblems)
+      {
+      this->ParametersNodeComboBox->addNode();
+      }
+    return false;
     }
 
+  if (this->ParametersNode->GetInputVolumeNode() == NULL)
+    {
+    message = QObject::tr("Select an input volume.");
+    return false;
+    }
+
+  bool roiExists = true;
   bool inputVolumeTransformValid = true;
   bool roiTransformValid = true;
   bool outputVolumeTransformValid = true;
@@ -101,8 +118,13 @@ QString qSlicerCropVolumeModuleWidgetPrivate::checkVolumesROIAlignment(bool fixP
       && !this->ParametersNode->GetROINode()->GetParentTransformNode()->IsTransformToWorldLinear())
       {
       roiTransformValid = false;
-      problemsDescription << QObject::tr("ROI is under a non-linear tansform.");
+      problemsDescription << QObject::tr("Input ROI is under a non-linear tansform.");
       }
+    }
+  else
+    {
+    roiExists = false;
+    problemsDescription << QObject::tr("Select or create a new input ROI.");
     }
   if (this->ParametersNode->GetOutputVolumeNode()
     && this->ParametersNode->GetOutputVolumeNode()->GetParentTransformNode()
@@ -123,16 +145,24 @@ QString qSlicerCropVolumeModuleWidgetPrivate::checkVolumesROIAlignment(bool fixP
       problemsDescription << QObject::tr("Interpolation is disabled and input volume is under a non-linear tansform");
       }
     // Only report ROI errors, if ROI is valid (avoid overloading the user with too much info)
-    if (roiTransformValid && !vtkSlicerCropVolumeLogic::IsROIAlignedWithInputVolume(this->ParametersNode))
+    if (roiExists && roiTransformValid && !vtkSlicerCropVolumeLogic::IsROIAlignedWithInputVolume(this->ParametersNode))
       {
       roiTransformValid = false;
-      problemsDescription += QObject::tr("Interpolation is disabled and ROI is not aligned with input volume axes.");
+      problemsDescription += QObject::tr("Interpolation is disabled and input ROI is not aligned with input volume axes.");
       }
     }
 
-  if (!fixProblems || problemsDescription.isEmpty())
+  if (!autoFixProblems || problemsDescription.isEmpty())
     {
-    return problemsDescription.join(" ");
+    // nothing to fix or fix is not requested
+    autoFixAvailable = !problemsDescription.isEmpty();
+    message = problemsDescription.join(" ");
+    return problemsDescription.isEmpty();
+    }
+
+  if (!roiExists)
+    {
+    this->InputROIComboBox->addNode();
     }
 
   // Non-interpolated cropping problem
@@ -159,7 +189,8 @@ QString qSlicerCropVolumeModuleWidgetPrivate::checkVolumesROIAlignment(bool fixP
     this->ParametersNode->GetOutputVolumeNode()->SetAndObserveTransformNodeID(newParentTransformNodeID);
     }
 
-  return problemsDescription.join(" ");
+  message = problemsDescription.join(" ");
+  return problemsDescription.isEmpty();
 }
 //-----------------------------------------------------------------------------
 // qSlicerCropVolumeModuleWidget methods
@@ -227,9 +258,9 @@ void qSlicerCropVolumeModuleWidget::setup()
     SIGNAL(clicked(bool)),
     SLOT(onVolumeInformationSectionClicked(bool)));
 
-  d->AlignmentErrorLabel->setVisible(false);
-  d->AlignmentErrorFixButton->setVisible(false);
-  connect(d->AlignmentErrorFixButton, SIGNAL(clicked()),
+  d->InputErrorLabel->setVisible(false);
+  d->InputErrorFixButton->setVisible(false);
+  connect(d->InputErrorFixButton, SIGNAL(clicked()),
     this, SLOT(onFixAlignment()));
 
   connect(d->CropButton, SIGNAL(clicked()),
@@ -370,7 +401,9 @@ void qSlicerCropVolumeModuleWidget::onApply()
 void qSlicerCropVolumeModuleWidget::onFixAlignment()
 {
   Q_D(qSlicerCropVolumeModuleWidget);
-  d->checkVolumesROIAlignment(true);
+  bool autoFixAvailable = false;
+  QString errorMessages;
+  d->checkInputs(autoFixAvailable, errorMessages, true /* auto-fix problems */ );
   this->updateWidgetFromMRML();
 }
 
@@ -546,19 +579,20 @@ void qSlicerCropVolumeModuleWidget::updateWidgetFromMRML()
     return;
     }
 
-  QString alignmentErrorMessage = d->checkVolumesROIAlignment(false);
-  if (alignmentErrorMessage.isEmpty())
+  QString inputCheckErrorMessage;
+  bool autoFixAvailable = false;
+  if (d->checkInputs(autoFixAvailable, inputCheckErrorMessage, false))
     {
-    d->AlignmentErrorLabel->setVisible(false);
-    d->AlignmentErrorFixButton->setVisible(false);
+    d->InputErrorLabel->setVisible(false);
+    d->InputErrorFixButton->setVisible(false);
     }
   else
     {
-    alignmentErrorMessage.prepend("<span style = \"color:#FF0000;\">");
-    alignmentErrorMessage.append("</span>");
-    d->AlignmentErrorLabel->setText(alignmentErrorMessage);
-    d->AlignmentErrorLabel->setVisible(true);
-    d->AlignmentErrorFixButton->setVisible(true);
+    inputCheckErrorMessage.prepend("<span style = \"color:#FF0000;\">");
+    inputCheckErrorMessage.append("</span>");
+    d->InputErrorLabel->setText(inputCheckErrorMessage);
+    d->InputErrorLabel->setVisible(true);
+    d->InputErrorFixButton->setVisible(autoFixAvailable);
     }
 
   if (!d->ParametersNode)
@@ -581,7 +615,7 @@ void qSlicerCropVolumeModuleWidget::updateWidgetFromMRML()
     return;
     }
 
-  d->CropButton->setEnabled(alignmentErrorMessage.isEmpty());
+  d->CropButton->setEnabled(inputCheckErrorMessage.isEmpty());
 
   d->InputVolumeComboBox->setCurrentNode(d->ParametersNode->GetInputVolumeNode());
   d->InputROIComboBox->setCurrentNode(d->ParametersNode->GetROINode());

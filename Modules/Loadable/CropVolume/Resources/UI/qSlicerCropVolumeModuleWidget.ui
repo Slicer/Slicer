@@ -165,6 +165,9 @@
         <property name="renameEnabled">
          <bool>true</bool>
         </property>
+        <property name="noneDisplay">
+         <string>Select region of interest</string>
+        </property>
        </widget>
       </item>
       <item row="2" column="1">
@@ -593,7 +596,7 @@
       <number>4</number>
      </property>
      <item>
-      <widget class="ctkFittedTextBrowser" name="AlignmentErrorLabel">
+      <widget class="ctkFittedTextBrowser" name="InputErrorLabel">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
          <horstretch>1</horstretch>
@@ -609,7 +612,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="AlignmentErrorFixButton">
+      <widget class="QPushButton" name="InputErrorFixButton">
        <property name="text">
         <string>Fix</string>
        </property>
