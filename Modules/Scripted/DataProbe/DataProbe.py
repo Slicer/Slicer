@@ -284,11 +284,12 @@ class DataProbeInfoWidget(object):
         self.imageLabel.setPixmap(pixmap)
         self.onShowImage(self.showImage)
 
-    sceneName = slicer.mrmlScene.GetURL()
-    if sceneName != "":
-      self.frame.parent().text = "Data Probe: %s" % self.fitName(sceneName,nameSize=2*self.nameSize)
-    else:
-      self.frame.parent().text = "Data Probe"
+    if hasattr(self.frame.parent(), 'text'):
+      sceneName = slicer.mrmlScene.GetURL()
+      if sceneName != "":
+        self.frame.parent().text = "Data Probe: %s" % self.fitName(sceneName,nameSize=2*self.nameSize)
+      else:
+        self.frame.parent().text = "Data Probe"
 
   def generateViewDescription(self, xyz, ras, sliceNode, sliceLogic):
 
