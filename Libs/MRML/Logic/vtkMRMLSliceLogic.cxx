@@ -1510,33 +1510,43 @@ double *vtkMRMLSliceLogic::GetVolumeSliceSpacing(vtkMRMLVolumeNode *volumeNode)
     return (pspacing);
     }
 
-  // Compute IJK to slice transform
+  // Compute slice spacing as the diameter of an ellipsoid that has the same diameters as a volume voxel.
+  // If the slice axis direction is aligned exactly with a voxel axis then the spacing equals voxel size along that axis.
+  // If the slice axis is not aligned with any voxel axis then it'll be smoothly interpolated.
 
-  vtkNew<vtkMatrix4x4> ijkToRAS;
-  volumeNode->GetIJKToRASMatrix(ijkToRAS.GetPointer());
+  vtkNew<vtkMatrix4x4> ijkToWorld;
+  volumeNode->GetIJKToRASMatrix(ijkToWorld.GetPointer());
 
-  // Apply the transform, if it exists
+  // Apply transform to the volume axes, if the volume is transformed with a linear transform
   vtkMRMLTransformNode *transformNode = volumeNode->GetParentTransformNode();
-  if ( transformNode != 0 )
+  if ( transformNode != 0 &&  transformNode->IsTransformToWorldLinear() )
     {
-    if ( transformNode->IsTransformToWorldLinear() )
-      {
-      vtkNew<vtkMatrix4x4> rasToRAS;
-      transformNode->GetMatrixTransformToWorld( rasToRAS.GetPointer() );
-      rasToRAS->Invert();
-      vtkMatrix4x4::Multiply4x4(rasToRAS.GetPointer(), ijkToRAS.GetPointer(), ijkToRAS.GetPointer());
-      }
+    vtkNew<vtkMatrix4x4> volumeRASToWorld;
+    transformNode->GetMatrixTransformToWorld(volumeRASToWorld.GetPointer());
+    //rasToRAS->Invert();
+    vtkMatrix4x4::Multiply4x4(volumeRASToWorld.GetPointer(), ijkToWorld.GetPointer(), ijkToWorld.GetPointer());
     }
 
-  vtkNew<vtkMatrix4x4> rasToSlice;
-  vtkMatrix4x4::Invert(sliceNode->GetSliceToRAS(), rasToSlice.GetPointer());
+  vtkNew<vtkMatrix4x4> worldToIJK;
+  vtkMatrix4x4::Invert(ijkToWorld.GetPointer(), worldToIJK.GetPointer());
 
-  vtkNew<vtkMatrix4x4> ijkToSlice;
-  ijkToSlice->Multiply4x4(rasToSlice.GetPointer(), ijkToRAS.GetPointer(), ijkToSlice.GetPointer());
+  vtkNew<vtkMatrix4x4> sliceToIJK;
+  vtkMatrix4x4::Multiply4x4(worldToIJK.GetPointer(), sliceNode->GetSliceToRAS(), sliceToIJK.GetPointer());
 
-  // Slice spacing is the size of one voxel (length of IJK coordinate system axes) in the slice coordinate system
-  vtkAddonMathUtilities::NormalizeOrientationMatrixColumns(ijkToSlice.GetPointer(), this->SliceSpacing);
+  // Make the slice spacing 1 voxel
+  double scale[3] = {1.0};
+  vtkAddonMathUtilities::NormalizeOrientationMatrixColumns(sliceToIJK.GetPointer(), scale);
 
+  // Convert spacing value from voxel to physical (mm)
+  double* volumeSpacing = volumeNode->GetSpacing();
+  for (int i = 0; i < 3; i++)
+    {
+    sliceToIJK->SetElement(0, i, sliceToIJK->GetElement(0, i) * volumeSpacing[0]);
+    sliceToIJK->SetElement(1, i, sliceToIJK->GetElement(1, i) * volumeSpacing[1]);
+    sliceToIJK->SetElement(2, i, sliceToIJK->GetElement(2, i) * volumeSpacing[2]);
+    }
+
+  vtkAddonMathUtilities::NormalizeOrientationMatrixColumns(sliceToIJK.GetPointer(), this->SliceSpacing);
   return (this->SliceSpacing);
 }
 
