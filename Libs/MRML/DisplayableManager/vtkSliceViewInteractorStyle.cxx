@@ -377,6 +377,47 @@ void vtkSliceViewInteractorStyle::OnLeftButtonUp()
 }
 
 //----------------------------------------------------------------------------
+void vtkSliceViewInteractorStyle::ScaleZoom(double zoomScaleFactor)
+{
+  // the factor operation is so 'z' isn't changed and the
+  // slider can still move through the full range
+  if (zoomScaleFactor <= 0)
+    {
+    vtkWarningMacro("vtkSliceViewInteractorStyle::ScaleZoom: invalid zoom scale factor (" << zoomScaleFactor);
+    return;
+    }
+  vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
+
+  // Get distance of event position from slice center
+  int eventPosition[2] = { 0 };
+  this->GetInteractor()->GetEventPosition(eventPosition[0], eventPosition[1]);
+  int* windowSize = this->GetInteractor()->GetRenderWindow()->GetSize();
+  vtkMatrix4x4* xyToSlice = sliceNode->GetXYToSlice();
+  double evenPositionDistanceFromOrigin[2] =
+    {
+    (eventPosition[0] - windowSize[0] / 2) * xyToSlice->GetElement(0, 0),
+    (eventPosition[1] - windowSize[1] / 2) * xyToSlice->GetElement(1, 1)
+    };
+
+  // Adjust field of view
+  double fov[3] = { 1.0 };
+  sliceNode->GetFieldOfView(fov);
+  fov[0] *= zoomScaleFactor;
+  fov[1] *= zoomScaleFactor;
+  sliceNode->SetFieldOfView(fov[0], fov[1], fov[2]);
+
+  // Keep the mouse position at the same place on screen
+  double sliceOrigin[3] = { 0 };
+  sliceNode->GetXYZOrigin(sliceOrigin);
+  sliceNode->SetSliceOrigin(
+    sliceOrigin[0] + evenPositionDistanceFromOrigin[0] * (1.0 - zoomScaleFactor),
+    sliceOrigin[1] + evenPositionDistanceFromOrigin[1] * (1.0 - zoomScaleFactor),
+    sliceOrigin[2]);
+
+  sliceNode->UpdateMatrices();
+}
+
+//----------------------------------------------------------------------------
 void vtkSliceViewInteractorStyle::OnMouseMove()
 {
   vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
@@ -515,14 +556,28 @@ void vtkSliceViewInteractorStyle::OnMouseMove()
 //----------------------------------------------------------------------------
 void vtkSliceViewInteractorStyle::OnMouseWheelForward()
 {
-  this->IncrementSlice();
+  if (this->Interactor->GetControlKey())
+    {
+    this->ScaleZoom(0.8);
+    }
+  else// if (!this->Interactor->GetShiftKey())
+    {
+    this->IncrementSlice();
+    }
   this->Superclass::OnMouseWheelForward();
 }
 
 //----------------------------------------------------------------------------
 void vtkSliceViewInteractorStyle::OnMouseWheelBackward()
 {
-  this->DecrementSlice();
+  if (this->Interactor->GetControlKey())
+    {
+    this->ScaleZoom(1.2);
+    }
+  else// if (!this->Interactor->GetShiftKey())
+    {
+    this->DecrementSlice();
+    }
   this->Superclass::OnMouseWheelBackward();
 }
 

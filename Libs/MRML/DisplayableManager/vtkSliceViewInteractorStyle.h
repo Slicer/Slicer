@@ -97,6 +97,9 @@ public:
   void IncrementSlice();
   void DecrementSlice();
   void MoveSlice(double delta);
+  /// Adjust zoom factor. If zoomScaleFactor>1 then view is zoomed in,
+  /// if 0<zoomScaleFactor<1 then view is zoomed out.
+  void ScaleZoom(double zoomScaleFactor);
 
   /// Collect some boilerplate management steps so they can be used
   /// in more than one place
