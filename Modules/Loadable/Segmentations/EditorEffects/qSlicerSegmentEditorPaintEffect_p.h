@@ -44,6 +44,7 @@
 #include <vtkSphereSource.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
+#include <vtkWeakPointer.h>
 
 // Qt includes
 #include <QObject>
@@ -56,7 +57,7 @@ class QPoint;
 class QIcon;
 class QFrame;
 class QCheckBox;
-class QPushButton;
+class QToolButton;
 class qMRMLSliceWidget;
 class qMRMLSpinBox;
 class vtkActor2D;
@@ -109,15 +110,18 @@ protected:
   void paintPixel(qMRMLWidget* viewWidget, double brushPosition_World[3]);
   void paintPixels(qMRMLWidget* viewWidget, vtkPoints* pixelPositions);
 
-  /// Scale brush radius and save it in parameter node
-  void scaleRadius(double scaleFactor);
+  /// Scale brush diameter and save it in parameter node
+  void scaleDiameter(double scaleFactor);
 
-  double GetSliceSpacing(qMRMLSliceWidget* sliceWidget);
+  // Compute absolute size (in mm) from relative size (percentage of screen height)
+  void updateAbsoluteBrushDiameter();
+
+  bool brushPositionInWorld(qMRMLWidget* viewWidget, int brushPositionInView[2], double brushPosition_World[3]);
 
 public slots:
-  void onRadiusUnitsClicked();
-  void onQuickRadiusButtonClicked();
-  void onRadiusValueChanged(double);
+  void onDiameterUnitsClicked();
+  void onQuickDiameterButtonClicked();
+  void onDiameterValueChanged(double);
 
 public:
   QIcon PaintIcon;
@@ -144,10 +148,14 @@ public:
   bool DelayedPaint;
   bool IsPainting;
 
-  QFrame* BrushRadiusFrame;
-  qMRMLSpinBox* BrushRadiusSpinBox;
-  ctkDoubleSlider* BrushRadiusSlider;
-  QPushButton* BrushRadiusUnitsToggle;
+  // Observed view node
+  qMRMLWidget* ActiveViewWidget;
+  int ActiveViewLastInteractionPosition[2];
+
+  QFrame* BrushDiameterFrame;
+  qMRMLSpinBox* BrushDiameterSpinBox;
+  ctkDoubleSlider* BrushDiameterSlider;
+  QToolButton* BrushDiameterRelativeToggle;
   QCheckBox* BrushSphereCheckbox;
   QCheckBox* ColorSmudgeCheckbox;
   QCheckBox* BrushPixelModeCheckbox;
