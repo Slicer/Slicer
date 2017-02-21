@@ -21,50 +21,50 @@
 // Segmentations includes
 #include "vtkSlicerSegmentationsModuleLogic.h"
 
-#include "vtkMRMLSegmentationNode.h"
-#include "vtkMRMLSegmentationDisplayNode.h"
-#include "vtkMRMLSegmentationStorageNode.h"
-#include "vtkMRMLSegmentEditorNode.h"
-
 // SegmentationCore includes
-#include "vtkOrientedImageData.h"
-#include "vtkOrientedImageDataResample.h"
-#include "vtkSegmentationConverterFactory.h"
 #include "vtkBinaryLabelmapToClosedSurfaceConversionRule.h"
 #include "vtkClosedSurfaceToBinaryLabelmapConversionRule.h"
 #include "vtkClosedSurfaceToFractionalLabelmapConversionRule.h"
 #include "vtkFractionalLabelmapToClosedSurfaceConversionRule.h"
+#include "vtkOrientedImageData.h"
+#include "vtkOrientedImageDataResample.h"
+#include "vtkSegmentationConverterFactory.h"
 
 // Subject Hierarchy includes
 #include <vtkMRMLSubjectHierarchyNode.h>
 
 // VTK includes
+#include <vtkCallbackCommand.h>
+#include <vtkDataObject.h>
+#include <vtkGeneralTransform.h>
+#include <vtkImageAccumulate.h>
+#include <vtkImageConstantPad.h>
+#include <vtkImageMathematics.h>
+#include <vtkImageThreshold.h>
+#include <vtkLookupTable.h>
+#include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
-#include <vtkTrivialProducer.h>
-#include <vtkMatrix4x4.h>
-#include <vtkCallbackCommand.h>
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
-#include <vtkImageAccumulate.h>
-#include <vtkImageThreshold.h>
-#include <vtkDataObject.h>
+#include <vtkStringArray.h>
 #include <vtkTransform.h>
-#include <vtksys/SystemTools.hxx>
-#include <vtkGeneralTransform.h>
 #include <vtkTransformPolyDataFilter.h>
-#include <vtkImageMathematics.h>
-#include <vtkImageConstantPad.h>
-#include <vtkLookupTable.h>
+#include <vtkTrivialProducer.h>
+#include <vtksys/SystemTools.hxx>
 
 // MRML includes
-#include <vtkMRMLScene.h>
 #include <vtkEventBroker.h>
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLLabelMapVolumeNode.h>
 #include <vtkMRMLLabelMapVolumeDisplayNode.h>
-#include <vtkMRMLModelNode.h>
 #include <vtkMRMLModelDisplayNode.h>
+#include <vtkMRMLModelNode.h>
+#include <vtkMRMLScene.h>
+#include "vtkMRMLSegmentationNode.h"
+#include "vtkMRMLSegmentationDisplayNode.h"
+#include "vtkMRMLSegmentationStorageNode.h"
+#include "vtkMRMLSegmentEditorNode.h"
 #include <vtkMRMLTransformNode.h>
 
 // STD includes
@@ -892,6 +892,23 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
     }
 
   return true;
+}
+
+//-----------------------------------------------------------------------------
+bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode,
+  vtkStringArray* segmentIds, vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode /*=NULL*/)
+{
+  std::vector<std::string> segmentIdsVector;
+  if (segmentIds == NULL)
+    {
+    vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode failed: invalid segmentIDs");
+    return false;
+    }
+  for (int segmentIndex = 0; segmentIndex < segmentIds->GetNumberOfValues(); ++segmentIndex)
+    {
+    segmentIdsVector.push_back(segmentIds->GetValue(segmentIndex));
+    }
+  return vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(segmentationNode, segmentIdsVector, labelmapNode, referenceVolumeNode);
 }
 
 //-----------------------------------------------------------------------------
