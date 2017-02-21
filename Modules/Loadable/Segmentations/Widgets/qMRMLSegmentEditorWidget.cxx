@@ -79,7 +79,9 @@
 #include <QDebug>
 #include <QPushButton>
 #include <QButtonGroup>
+#include <QMainWindow>
 #include <QMessageBox>
+#include <QShortcut>
 #include <QVBoxLayout>
 
 // CTK includes
@@ -215,6 +217,8 @@ public:
   /// If reference geometry changes compared to this value then we notify effects and
   /// set this value to the current value. This allows notifying effects when there is a change.
   std::string LastNotifiedReferenceImageGeometry;
+
+  QList< QShortcut* > KeyboardShortcuts;
 };
 
 //-----------------------------------------------------------------------------
@@ -362,7 +366,6 @@ void qMRMLSegmentEditorWidgetPrivate::initializeEffects()
   foreach (QAbstractButton* button, effectButtons)
     {
     this->EffectButtonGroup.removeButton(button);
-    //button->setVisible(false);
     button->deleteLater();
     }
 
@@ -1967,6 +1970,28 @@ qSlicerSegmentEditorAbstractEffect* qMRMLSegmentEditorWidget::effectByName(QStri
 }
 
 //---------------------------------------------------------------------------
+int qMRMLSegmentEditorWidget::effectCount()
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  return d->EffectButtonGroup.buttons().count();
+}
+
+//---------------------------------------------------------------------------
+qSlicerSegmentEditorAbstractEffect* qMRMLSegmentEditorWidget::effectByIndex(int index)
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  QList<QAbstractButton *> effectButtons = d->EffectButtonGroup.buttons();
+  if (index < 0 || index >= effectButtons.count())
+    {
+    return NULL;
+    }
+  QAbstractButton* effectButton = effectButtons[index];
+  qSlicerSegmentEditorAbstractEffect* effect = qobject_cast<qSlicerSegmentEditorAbstractEffect*>(
+    effectButton->property("Effect").value<QObject*>());
+  return effect;
+}
+
+//---------------------------------------------------------------------------
 void qMRMLSegmentEditorWidget::setupViewObservations()
 {
   Q_D(qMRMLSegmentEditorWidget);
@@ -2316,17 +2341,17 @@ bool qMRMLSegmentEditorWidget::readOnly() const
 void qMRMLSegmentEditorWidget::setReadOnly(bool aReadOnly)
 {
   Q_D(qMRMLSegmentEditorWidget);
-  
+
   d->AddSegmentButton->setEnabled(!aReadOnly);
   d->RemoveSegmentButton->setEnabled(!aReadOnly);
   d->CreateSurfaceButton->setEnabled(!aReadOnly);
-  
+
   d->EffectsGroupBox->setEnabled(!aReadOnly);
   d->UndoButton->setEnabled(!aReadOnly);
   d->RedoButton->setEnabled(!aReadOnly);
   d->OptionsGroupBox->setEnabled(!aReadOnly);
   d->MaskingGroupBox->setEnabled(!aReadOnly);
-  
+
   d->SegmentsTableView->setReadOnly(aReadOnly);
 }
 
@@ -2354,4 +2379,173 @@ void qMRMLSegmentEditorWidget::onSegmentationHistoryChanged()
   Q_D(qMRMLSegmentEditorWidget);
   d->UndoButton->setEnabled(d->SegmentationHistory->IsRestorePreviousStateAvailable());
   d->RedoButton->setEnabled(d->SegmentationHistory->IsRestoreNextStateAvailable());
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::installKeyboardShortcuts(QWidget* parent /*=NULL*/)
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  this->uninstallKeyboardShortcuts();
+
+  if (parent == NULL)
+    {
+    parent = qSlicerApplication::application()->mainWindow();
+    }
+
+  // Keys 1, 2, ..., 9, 0 => toggle activation of effect 1..10
+  for (int effectIndex = 1; effectIndex <= 10; effectIndex++)
+    {
+    QShortcut* s = new QShortcut(QKeySequence(QString::number(effectIndex % 10)), parent);
+    d->KeyboardShortcuts.push_back(s);
+    s->setProperty("effectIndex", effectIndex);
+    QObject::connect(s, SIGNAL(activated()), this, SLOT(onSelectEffectShortcut()));
+    }
+
+  // Escape => deactivate active effect
+  QShortcut* deactivateEffectShortcut = new QShortcut(QKeySequence(Qt::Key_Escape), parent);
+  d->KeyboardShortcuts.push_back(deactivateEffectShortcut);
+  deactivateEffectShortcut->setProperty("effectIndex", 0);
+  QObject::connect(deactivateEffectShortcut, SIGNAL(activated()), this, SLOT(onSelectEffectShortcut()));
+
+  // z, y => undo, redo
+  QShortcut* undoShortcut = new QShortcut(QKeySequence(Qt::Key_Z), parent);
+  d->KeyboardShortcuts.push_back(undoShortcut);
+  QObject::connect(undoShortcut, SIGNAL(activated()), this, SLOT(undo()));
+  QShortcut* redoShortcut = new QShortcut(QKeySequence(Qt::Key_Y), parent);
+  d->KeyboardShortcuts.push_back(redoShortcut);
+  QObject::connect(redoShortcut, SIGNAL(activated()), this, SLOT(redo()));
+
+  // Keys qw/*,.<> => select previous, next segment
+  Qt::Key prevNexSegmentKeys[] =
+    {
+    Qt::Key_Q, Qt::Key_W, // near effect selector numbers on a regular keyboard
+    Qt::Key_Slash, Qt::Key_Asterisk, // available on the numpad
+    Qt::Key_Comma, Qt::Key_Period, // commonly used in other applications
+    Qt::Key_Greater, Qt::Key_Less, // commonly used in other applications
+    Qt::Key_unknown // add shortcuts above, this must be the last line
+    };
+  for (int keyIndex = 0; prevNexSegmentKeys[keyIndex] != Qt::Key_unknown; keyIndex++)
+    {
+    QShortcut* prevShortcut = new QShortcut(QKeySequence(prevNexSegmentKeys[keyIndex]), parent);
+    d->KeyboardShortcuts.push_back(prevShortcut);
+    prevShortcut->setProperty("segmentIndexOffset", -1);
+    QObject::connect(prevShortcut, SIGNAL(activated()), this, SLOT(onSelectSegmentShortcut()));
+    keyIndex++;
+    QShortcut* nextShortcut = new QShortcut(QKeySequence(prevNexSegmentKeys[keyIndex]), parent);
+    d->KeyboardShortcuts.push_back(nextShortcut);
+    nextShortcut->setProperty("segmentIndexOffset", +1);
+    QObject::connect(nextShortcut, SIGNAL(activated()), this, SLOT(onSelectSegmentShortcut()));
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::uninstallKeyboardShortcuts()
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  foreach(QShortcut* shortcut, d->KeyboardShortcuts)
+    {
+    shortcut->disconnect(SIGNAL(activated()));
+    shortcut->setParent(NULL);
+    delete shortcut;
+    }
+  d->KeyboardShortcuts.clear();
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::onSelectEffectShortcut()
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  QShortcut* shortcut = qobject_cast<QShortcut*>(sender());
+  if (shortcut == NULL)
+    {
+    return;
+    }
+  int selectedEffectIndex = shortcut->property("effectIndex").toInt();
+  qSlicerSegmentEditorAbstractEffect* selectedEffect = this->effectByIndex(selectedEffectIndex);
+  qSlicerSegmentEditorAbstractEffect* activeEffect = this->activeEffect();
+  if (selectedEffect == activeEffect)
+    {
+    // effect is already active => deactivate it
+    selectedEffect = NULL;
+    }
+  this->setActiveEffect(selectedEffect);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::onSelectSegmentShortcut()
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  QShortcut* shortcut = qobject_cast<QShortcut*>(sender());
+  if (shortcut == NULL)
+    {
+    return;
+    }
+  int segmentIndexOffset = shortcut->property("segmentIndexOffset").toInt();
+
+  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(this->segmentationNode());
+  if (segmentationNode == NULL || segmentationNode->GetDisplayNode() == NULL)
+    {
+    return;
+    }
+  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
+  if (displayNode == NULL)
+    {
+    return;
+    }
+  std::vector<std::string> segmentIDs;
+  displayNode->GetVisibleSegmentIDs(segmentIDs);
+  QString currentSegmentID = this->currentSegmentID();
+  for (int segmentIndex = 0; segmentIndex < segmentIDs.size(); segmentIndex++)
+    {
+    std::string segmentID = segmentIDs[segmentIndex];
+    if (currentSegmentID == segmentID.c_str())
+      {
+      // this is the current segment, determine which one is the previous/next and select that
+      int newSegmentIndex = (segmentIndex + segmentIndexOffset) % segmentIDs.size(); // wrap around
+      this->setCurrentSegmentID(segmentIDs[newSegmentIndex].c_str());
+      return;
+      }
+    }
+}
+
+
+//---------------------------------------------------------------------------
+bool qMRMLSegmentEditorWidget::turnOffLightboxes()
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+  if (!layoutManager)
+    {
+    // application is closing
+    return false;
+    }
+  vtkCollection* sliceLogics = layoutManager->mrmlSliceLogics();
+  if (!sliceLogics)
+    {
+    return false;
+    }
+
+  bool lightboxFound = false;
+  vtkObject* object = NULL;
+  vtkCollectionSimpleIterator it;
+  for (sliceLogics->InitTraversal(it); (object = sliceLogics->GetNextItemAsObject(it));)
+    {
+    vtkMRMLSliceLogic* sliceLogic = vtkMRMLSliceLogic::SafeDownCast(object);
+    if (!sliceLogic)
+      {
+      continue;
+      }
+    vtkMRMLSliceNode* sliceNode = sliceLogic->GetSliceNode();
+    if (!sliceNode)
+      {
+      continue;
+      }
+    if (sliceNode->GetLayoutGridRows() != 1 || sliceNode->GetLayoutGridColumns() != 1)
+      {
+      lightboxFound = true;
+      sliceNode->SetLayoutGrid(1, 1);
+      }
+    }
+
+  return lightboxFound;
 }

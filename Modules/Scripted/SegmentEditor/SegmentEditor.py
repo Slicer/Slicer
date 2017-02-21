@@ -101,8 +101,12 @@ class SegmentEditorWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
   def enter(self):
     """Runs whenever the module is reopened
     """
-    self.turnOffLightboxes()
-    self.installShortcutKeys()
+    if self.editor.turnOffLightboxes():
+      slicer.util.warningDisplay('Segment Editor is not compatible with slice viewers in light box mode.'
+        'Views are being reset.', windowTitle='Segment Editor')
+
+    # Allow switching between effects and selected segment using keyboard shortcuts
+    self.editor.installKeyboardShortcuts()
 
     # Set parameter set node if absent
     self.selectParameterNode()
@@ -121,7 +125,7 @@ class SegmentEditorWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
   def exit(self):
     self.editor.setActiveEffect(None)
-    self.removeShortcutKeys()
+    self.editor.uninstallKeyboardShortcuts()
     self.editor.removeViewObservations()
 
   def onSceneStartClose(self, caller, event):
@@ -141,88 +145,6 @@ class SegmentEditorWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
   def cleanup(self):
     self.removeObservers()
-
-  def switchSegment(self, segmentIndexOffset = 1):
-    """Select previous/next visible segment"""
-    currentSegmentId = self.editor.currentSegmentID()
-    visibleSegmentIds = vtk.vtkStringArray()
-    self.editor.segmentationNode().GetDisplayNode().GetVisibleSegmentIDs(visibleSegmentIds)
-    for segmentIndex in range(visibleSegmentIds.GetNumberOfValues()):
-      segmentId = visibleSegmentIds.GetValue(segmentIndex)
-      if segmentId == currentSegmentId:
-        newSegmentIndex = segmentIndex + segmentIndexOffset
-        if newSegmentIndex>=0 and newSegmentIndex<visibleSegmentIds.GetNumberOfValues():
-          newSegmentId = visibleSegmentIds.GetValue(newSegmentIndex)
-          self.editor.setCurrentSegmentID(newSegmentId)
-        return
-
-  def installShortcutKeys(self):
-    """Turn on editor-wide shortcuts.  These are active independent
-    of the currently selected effect."""
-    #TODO: Deal with commented out shortcuts
-    Key_Escape = 0x01000000 # not in PythonQt
-    Key_Space = 0x20 # not in PythonQt
-    self.shortcuts = []
-    keysAndCallbacks = (
-      ('z', self.editor.undo),
-      ('y', self.editor.redo),
-      ('h', self.toggleCrosshair),
-      (Key_Escape, lambda : self.editor.setActiveEffect(None)),
-      ('0', lambda : self.editor.setActiveEffect(None)),
-      ('1', lambda : self.editor.setActiveEffect(self.editor.effectByName('Paint'))),
-      ('2', lambda : self.editor.setActiveEffect(self.editor.effectByName('Draw'))),
-      ('3', lambda : self.editor.setActiveEffect(self.editor.effectByName('Erase'))),
-      ('4', lambda : self.editor.setActiveEffect(self.editor.effectByName('LevelTracing'))),
-      ('5', lambda : self.editor.setActiveEffect(self.editor.effectByName('Auto-complete'))),
-      ('6', lambda : self.editor.setActiveEffect(self.editor.effectByName('Threshold'))),
-      ('q', lambda : self.switchSegment(-1)), # near effect selector numbers on a regular keyboard
-      ('w', lambda : self.switchSegment(+1)), # near effect selector numbers on a regular keyboard
-      ('/', lambda : self.switchSegment(-1)), # available on the numpad
-      ('*', lambda : self.switchSegment(+1)), # available on the numpad
-      (',', lambda : self.switchSegment(-1)), # commonly used in other applications
-      ('.', lambda : self.switchSegment(+1)), # commonly used in other applications
-      ('<', lambda : self.switchSegment(-1)), # commonly used in other applications
-      ('>', lambda : self.switchSegment(+1)), # commonly used in other applications
-      )
-    for key,callback in keysAndCallbacks:
-      shortcut = qt.QShortcut(slicer.util.mainWindow())
-      shortcut.setKey( qt.QKeySequence(key) )
-      shortcut.connect( 'activated()', callback )
-      self.shortcuts.append(shortcut)
-
-  def removeShortcutKeys(self):
-    for shortcut in self.shortcuts:
-      shortcut.disconnect('activated()')
-      shortcut.setParent(None)
-    self.shortcuts = []
-
-  def turnOffLightboxes(self):
-    """Since the editor effects can't be used in lightbox mode,
-    be sure to turn these off and warn the user about it"""
-    warned = False
-    layoutManager = slicer.app.layoutManager()
-    if layoutManager is not None:
-      sliceLogics = layoutManager.mrmlSliceLogics()
-      for i in xrange(sliceLogics.GetNumberOfItems()):
-        sliceLogic = sliceLogics.GetItemAsObject(i)
-        if sliceLogic:
-          sliceNode = sliceLogic.GetSliceNode()
-          if sliceNode.GetLayoutGridRows() != 1 or sliceNode.GetLayoutGridColumns() != 1:
-            if not warned:
-              slicer.util.warningDisplay('The Segment Editor module is not compatible with slice viewers in light box mode.\n'
-                                         'Views are being reset.', windowTitle='Segment Editor')
-              warned = True
-            sliceNode.SetLayoutGrid(1,1)
-
-  def toggleCrosshair(self):
-    # Turn on or off the crosshair and enable navigation mode
-    # by manipulating the scene's singleton crosshair node.
-    crosshairNode = slicer.util.getNode('vtkMRMLCrosshairNode*')
-    if crosshairNode:
-      if crosshairNode.GetCrosshairMode() == 0:
-        crosshairNode.SetCrosshairMode(1)
-      else:
-        crosshairNode.SetCrosshairMode(0)
 
 class SegmentEditorTest(ScriptedLoadableModuleTest):
   """

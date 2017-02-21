@@ -99,6 +99,14 @@ public:
   /// \return The effect instance if exists, NULL otherwise
   Q_INVOKABLE qSlicerSegmentEditorAbstractEffect* effectByName(QString name);
 
+  /// Get number of effects
+  /// \return Number of effects shown in the widget
+  Q_INVOKABLE int effectCount();
+
+  /// Get n-th effect. n>=0 and n<effectCount().
+  /// \return The effect instance if exists, NULL otherwise
+  Q_INVOKABLE qSlicerSegmentEditorAbstractEffect* effectByIndex(int index);
+
   /// Create observations between slice view interactor and the widget.
   /// The captured events are propagated to the active effect if any.
   /// NOTE: This method should be called from the enter function of the
@@ -126,29 +134,29 @@ public slots:
   virtual void setMRMLScene(vtkMRMLScene* newScene);
 
   /// Set the segment editor parameter set node
-  Q_INVOKABLE void setMRMLSegmentEditorNode(vtkMRMLSegmentEditorNode* newSegmentEditorNode);
+  void setMRMLSegmentEditorNode(vtkMRMLSegmentEditorNode* newSegmentEditorNode);
 
   /// Update widget state from the MRML scene
   virtual void updateWidgetFromMRML();
 
   /// Set segmentation MRML node
-  Q_INVOKABLE void setSegmentationNode(vtkMRMLNode* node);
+  void setSegmentationNode(vtkMRMLNode* node);
   /// Set segmentation MRML node by its ID
-  Q_INVOKABLE void setSegmentationNodeID(const QString& nodeID);
+  void setSegmentationNodeID(const QString& nodeID);
   /// Set master volume MRML node
-  Q_INVOKABLE void setMasterVolumeNode(vtkMRMLNode* node);
+  void setMasterVolumeNode(vtkMRMLNode* node);
   /// Set master volume MRML node by its ID
-  Q_INVOKABLE void setMasterVolumeNodeID(const QString& nodeID);
+  void setMasterVolumeNodeID(const QString& nodeID);
 
   /// Set active effect by name
-  Q_INVOKABLE void setActiveEffectByName(QString effectName);
+  void setActiveEffectByName(QString effectName);
 
   /// Save current segmentation before performing an edit operation
   /// to allow reverting to the current state by using undo
   void saveStateForUndo();
 
   /// Update modifierLabelmap, maskLabelmap, or alignedMasterVolumeNode
-  Q_INVOKABLE void updateVolume(void* volumePtr, bool& success);
+  void updateVolume(void* volumePtr, bool& success);
 
   /// Show/hide the segmentation node selector widget.
   void setSegmentationNodeSelectorVisible(bool);
@@ -167,6 +175,19 @@ public slots:
   /// Restores next saved state of the segmentation
   void redo();
 
+  /// Install keyboard shortcuts to allow quick selection of effects and segments.
+  /// If parent is not specified then the main window will be used as parent.
+  /// Previous keyboard shortcuts will be uninstalled.
+  void installKeyboardShortcuts(QWidget* parent = NULL);
+
+  /// Uninstall previously installed keyboard shortcuts.
+  void uninstallKeyboardShortcuts();
+
+  /// Convenience method to turn off lightbox view in all slice viewers.
+  /// Segment editor is not compatible with lightbox view layouts.
+  /// Returns true if there were lightbox views.
+  bool turnOffLightboxes();
+
 protected slots:
   /// Handles changing of current segmentation MRML node
   Q_INVOKABLE void onSegmentationNodeChanged(vtkMRMLNode* node);
@@ -175,8 +196,14 @@ protected slots:
   /// Handles segment selection changes
   void onSegmentSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 
-  /// Activate/deactivate effect on clicking its button
+  /// Activate effect on clicking its button
   void onEffectButtonClicked(QAbstractButton* button);
+
+  /// Effect selection shortcut is activated
+  void onSelectEffectShortcut();
+
+  /// Segment selection shortcut is activated
+  void onSelectSegmentShortcut();
 
   /// Add empty segment
   void onAddSegment();
