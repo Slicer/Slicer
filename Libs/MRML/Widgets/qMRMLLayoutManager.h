@@ -148,6 +148,7 @@ public:
   Q_INVOKABLE qMRMLTableWidget* tableWidget(int id)const;
 
   /// Return the up-to-date list of vtkMRMLSliceLogics associated to the slice views.
+  /// The returned collection object is owned by the layout manager.
   Q_INVOKABLE vtkCollection* mrmlSliceLogics()const;
 
   Q_INVOKABLE void setMRMLColorLogic(vtkMRMLColorLogic* colorLogic);
