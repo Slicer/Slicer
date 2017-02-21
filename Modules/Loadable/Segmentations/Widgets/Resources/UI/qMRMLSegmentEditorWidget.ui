@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>396</width>
-    <height>449</height>
+    <height>592</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -163,7 +163,6 @@
        <property name="title">
         <string>Effects</string>
        </property>
-       <zorder>AddSegmentButton</zorder>
       </widget>
      </item>
      <item>
@@ -234,7 +233,7 @@
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
+       <verstretch>1</verstretch>
       </sizepolicy>
      </property>
      <property name="title">
