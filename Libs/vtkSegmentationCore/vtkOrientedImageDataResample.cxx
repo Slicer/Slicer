@@ -25,6 +25,7 @@
 
 // VTK includes
 #include <vtkAppendPolyData.h>
+#include <vtkBoundingBox.h>
 #include <vtkGeneralTransform.h>
 #include <vtkImageReslice.h>
 #include <vtkImageConstantPad.h>
@@ -736,18 +737,19 @@ void vtkOrientedImageDataResample::TransformExtent(const int inputExtent[6], vtk
 //----------------------------------------------------------------------------
 void vtkOrientedImageDataResample::TransformBounds(const double inputBounds[6], vtkAbstractTransform* inputToOutputTransform, double outputBounds[6])
 {
+  vtkMath::UninitializeBounds(outputBounds);
   if (!inputToOutputTransform)
     {
     return;
     }
+  if (inputBounds[0] > inputBounds[1] || inputBounds[2] > inputBounds[3] || inputBounds[4] > inputBounds[5])
+    {
+    // invalid input bounds, do not attempt to transform it
+    return;
+    }
 
   // Apply transform on all eight corners and determine output extent based on these transformed corners
-  outputBounds[0] = VTK_DOUBLE_MAX;
-  outputBounds[1] = VTK_DOUBLE_MIN;
-  outputBounds[2] = VTK_DOUBLE_MAX;
-  outputBounds[3] = VTK_DOUBLE_MIN;
-  outputBounds[4] = VTK_DOUBLE_MAX;
-  outputBounds[5] = VTK_DOUBLE_MIN;
+  vtkBoundingBox outputBoundingBox;
   double outputBoxCorner[3];
   for (int i = 0; i<2; ++i)
     {
@@ -757,47 +759,32 @@ void vtkOrientedImageDataResample::TransformBounds(const double inputBounds[6], 
         {
         double inputBoxCorner[3] = { inputBounds[i], inputBounds[2 + j], inputBounds[4 + k] };
         inputToOutputTransform->TransformPoint(inputBoxCorner, outputBoxCorner);
-        if (outputBoxCorner[0] < outputBounds[0])
-          {
-          outputBounds[0] = outputBoxCorner[0];
-          }
-        if (outputBoxCorner[0] > outputBounds[1])
-          {
-          outputBounds[1] = outputBoxCorner[0];
-          }
-        if (outputBoxCorner[1] < outputBounds[2])
-          {
-          outputBounds[2] = outputBoxCorner[1];
-          }
-        if (outputBoxCorner[1] > outputBounds[3])
-          {
-          outputBounds[3] = outputBoxCorner[1];
-          }
-        if (outputBoxCorner[2] < outputBounds[4])
-          {
-          outputBounds[4] = outputBoxCorner[2];
-          }
-        if (outputBoxCorner[2] > outputBounds[5])
-          {
-          outputBounds[5] = outputBoxCorner[2];
-          }
+        outputBoundingBox.AddPoint(outputBoxCorner);
         }
       }
     }
+  outputBoundingBox.GetBounds(outputBounds);
 }
 
 //----------------------------------------------------------------------------
 void vtkOrientedImageDataResample::TransformOrientedImageDataBounds(vtkOrientedImageData* image, vtkAbstractTransform* transform, double transformedBounds[6])
 {
+  vtkMath::UninitializeBounds(transformedBounds);
   if (!image || !transform)
     {
+    return;
+    }
+
+  int* imageExtentCenter = image->GetExtent();
+  if (imageExtentCenter[0] > imageExtentCenter[1] || imageExtentCenter[2] > imageExtentCenter[3] || imageExtentCenter[4] > imageExtentCenter[5])
+    {
+    // empty image, return invalid bounds
     return;
     }
 
   // Get input image properties
   vtkSmartPointer<vtkMatrix4x4> imageToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
   image->GetImageToWorldMatrix(imageToWorldMatrix);
-  int* imageExtentCenter = image->GetExtent();
   // Add 0.5 to image extents to contain voxel corners
   double imageExtent[6] =
     {

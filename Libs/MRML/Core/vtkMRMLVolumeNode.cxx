@@ -21,6 +21,7 @@ Version:   $Revision: 1.14 $
 // VTK includes
 #include <vtkAlgorithmOutput.h>
 #include <vtkAppendPolyData.h>
+#include <vtkBoundingBox.h>
 #include <vtkCallbackCommand.h>
 #include <vtkEventForwarderCommand.h>
 #include <vtkGeneralTransform.h>
@@ -916,8 +917,9 @@ void vtkMRMLVolumeNode::GetBoundsInternal(double bounds[6],
                                           vtkMatrix4x4* rasToSlice,
                                           bool useTransform)
 {
-  vtkImageData *volumeImage;
-  if (! (volumeImage = this->GetImageData()) )
+  vtkMath::UninitializeBounds(bounds);
+  vtkImageData *volumeImage = this->GetImageData();
+  if (!volumeImage)
     {
     return;
     }
@@ -947,51 +949,29 @@ void vtkMRMLVolumeNode::GetBoundsInternal(double bounds[6],
     transform->Concatenate(worldTransform.GetPointer());
     }
   if (rasToSlice)
-  {
+    {
     transform->Concatenate(rasToSlice);
-  }
-
-  int dimensions[3];
-  int i,j,k;
-  volumeImage->GetDimensions(dimensions);
-  double doubleDimensions[4], *rasHDimensions;
-  double minBounds[3], maxBounds[3];
-
-  for ( i=0; i<3; i++)
-    {
-    minBounds[i] = 1.0e10;
-    maxBounds[i] = -1.0e10;
     }
-  for ( i=0; i<2; i++)
+
+  int dimensions[3] = { 0 };
+  volumeImage->GetDimensions(dimensions);
+  double doubleDimensions[4] = { 0, 0, 0, 1 };
+  vtkBoundingBox boundingBox;
+  for (int i=0; i<2; i++)
     {
-    for ( j=0; j<2; j++)
+    for (int j=0; j<2; j++)
       {
-      for ( k=0; k<2; k++)
+      for (int k=0; k<2; k++)
         {
         doubleDimensions[0] = i*(dimensions[0]) - 0.5;
         doubleDimensions[1] = j*(dimensions[1]) - 0.5;
         doubleDimensions[2] = k*(dimensions[2]) - 0.5;
-        doubleDimensions[3] = 1;
-        rasHDimensions = transform->TransformDoublePoint( doubleDimensions);
-        for (int n=0; n<3; n++) {
-          if (rasHDimensions[n] < minBounds[n])
-            {
-            minBounds[n] = rasHDimensions[n];
-            }
-          if (rasHDimensions[n] > maxBounds[n])
-            {
-            maxBounds[n] = rasHDimensions[n];
-            }
-          }
+        double* rasHDimensions = transform->TransformDoublePoint(doubleDimensions);
+        boundingBox.AddPoint(rasHDimensions);
         }
       }
     }
-
-  for ( i=0; i<3; i++)
-    {
-    bounds[2*i]   = minBounds[i];
-    bounds[2*i+1] = maxBounds[i];
-    }
+  boundingBox.GetBounds(bounds);
 }
 
 //---------------------------------------------------------------------------

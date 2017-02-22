@@ -215,7 +215,7 @@ void vtkSegment::DeepCopyMetadata(vtkSegment* source)
 //---------------------------------------------------------------------------
 void vtkSegment::GetBounds(double bounds[6])
 {
-  vtkOrientedImageData::UninitializeBounds(bounds);
+  vtkMath::UninitializeBounds(bounds);
 
   RepresentationMap::iterator reprIt;
   for (reprIt=this->Representations.begin(); reprIt!=this->Representations.end(); ++reprIt)
@@ -223,10 +223,15 @@ void vtkSegment::GetBounds(double bounds[6])
     vtkDataSet* representationDataSet = vtkDataSet::SafeDownCast(reprIt->second);
     if (representationDataSet)
       {
-      double representationBounds[6] = {0.0,0.0,0.0,0.0,0.0,0.0};
-      vtkOrientedImageData::UninitializeBounds(representationBounds);
+      double representationBounds[6] = { 1, -1, 1, -1, 1, -1 };
       representationDataSet->GetBounds(representationBounds);
-      vtkSegment::ExtendBounds(representationBounds, bounds);
+      if (representationBounds[0]<=representationBounds[1] &&
+        representationBounds[2]<=representationBounds[3] &&
+        representationBounds[4]<=representationBounds[5])
+        {
+        // valid bounds
+        vtkSegment::ExtendBounds(representationBounds, bounds);
+        }
       }
     }
 }

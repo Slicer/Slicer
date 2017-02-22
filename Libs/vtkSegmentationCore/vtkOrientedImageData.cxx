@@ -315,7 +315,7 @@ void vtkOrientedImageData::ComputeBounds()
     return;
     }
 
-  vtkOrientedImageData::UninitializeBounds(this->Bounds);
+  vtkMath::UninitializeBounds(this->Bounds);
 
   // Sanity check
   const int* extent = this->Extent;
@@ -376,11 +376,11 @@ void vtkOrientedImageData::ComputeBounds()
 //---------------------------------------------------------------------------
 bool vtkOrientedImageData::IsEmpty()
 {
-  const int* extent = this->Extent;
   // Empty if extent is uninitialized or otherwise invalid
-  if (extent[0] > extent[1] || extent[2] > extent[3] || extent[4] > extent[5])
-  {
+  if (this->Extent[0] > this->Extent[1] || this->Extent[2] > this->Extent[3] || this->Extent[4] > this->Extent[5])
+    {
+    // empty
     return true;
-  }
+    }
   return false;
 }

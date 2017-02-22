@@ -456,30 +456,26 @@ bool vtkMRMLSegmentationNode::CanApplyNonLinearTransforms() const
 //---------------------------------------------------------------------------
 void vtkMRMLSegmentationNode::GetRASBounds(double bounds[6])
 {
-  this->GetBounds(bounds);
-
-  vtkMRMLTransformNode* transform = NULL;
-  if (this->Scene)
+  if (this->GetParentTransformNode() == NULL)
     {
-    transform = vtkMRMLTransformNode::SafeDownCast(
-      this->Scene->GetNodeByID(this->GetTransformNodeID()));
+    // Segmentation is not transformed
+    this->GetBounds(bounds);
     }
-
-  if (transform)
+  else
     {
-    vtkBoundingBox box;
-    box.AddPoint(
-      transform->GetTransformToParent()->TransformDoublePoint(bounds[0], bounds[2], bounds[4]));
-    box.AddPoint(
-      transform->GetTransformToParent()->TransformDoublePoint(bounds[1], bounds[3], bounds[5]));
-    box.GetBounds(bounds);
+    // Segmentation is transformed
+    vtkNew<vtkGeneralTransform> segmentationToRASTransform;
+    vtkMRMLTransformNode::GetTransformBetweenNodes(this->GetParentTransformNode(), NULL, segmentationToRASTransform.GetPointer());
+    double bounds_Segmentation[6] = { 1, -1, 1, -1, 1, -1 };
+    this->GetBounds(bounds_Segmentation);
+    vtkOrientedImageDataResample::TransformBounds(bounds_Segmentation, segmentationToRASTransform.GetPointer(), bounds);
     }
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLSegmentationNode::GetBounds(double bounds[6])
 {
-  vtkOrientedImageData::UninitializeBounds(bounds);
+  vtkMath::UninitializeBounds(bounds);
   if (this->Segmentation)
     {
     this->Segmentation->GetBounds(bounds);
