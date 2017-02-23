@@ -803,6 +803,15 @@ void qSlicerSegmentEditorPaintEffectPrivate::updateBrushes()
 void qSlicerSegmentEditorPaintEffectPrivate::clearBrushPipelines()
 {
   Q_Q(qSlicerSegmentEditorPaintEffect);
+
+  // On exiting Slicer, this method (triggered by deactivation of the effect when exiting the
+  // module containing the segment editor widget) may be called after the layout was destroyed
+  if (!qSlicerApplication::application() || !qSlicerApplication::application()->layoutManager())
+    {
+    this->BrushPipelines.clear();
+    return;
+    }
+
   QMapIterator<qMRMLWidget*, BrushPipeline*> it(this->BrushPipelines);
   while (it.hasNext())
     {
