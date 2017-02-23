@@ -230,6 +230,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
     # Update flythrough variables
     self.camera = self.camera
     self.transform = model.transform
+    self.pathPlaneNormal = model.planeNormal
     self.path = result.path
 
     # Enable / Disable flythrough button
@@ -282,6 +283,26 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
       toParent.SetElement(0 ,3, p[0])
       toParent.SetElement(1, 3, p[1])
       toParent.SetElement(2, 3, p[2])
+
+      # Set up transform orientation component so that
+      # Z axis is aligned with view direction and
+      # Y vector is aligned with the curve's plane normal.
+      # This can be used for example to show a reformatted slice
+      # using with SlicerIGT extension's VolumeResliceDriver module.
+      import numpy as np
+      zVec = (foc-p)/np.linalg.norm(foc-p)
+      yVec = self.pathPlaneNormal
+      xVec = np.cross(yVec, zVec)
+      toParent.SetElement(0, 0, xVec[0])
+      toParent.SetElement(1, 0, xVec[1])
+      toParent.SetElement(2, 0, xVec[2])
+      toParent.SetElement(0, 1, yVec[0])
+      toParent.SetElement(1, 1, yVec[1])
+      toParent.SetElement(2, 1, yVec[2])
+      toParent.SetElement(0, 2, zVec[0])
+      toParent.SetElement(1, 2, zVec[1])
+      toParent.SetElement(2, 2, zVec[2])
+
       self.transform.SetMatrixTransformToParent(toParent)
 
 
@@ -456,6 +477,10 @@ class EndoscopyPathModel:
       linesIDArray.SetTuple1( 0, linesIDArray.GetNumberOfTuples() - 1 )
       lines.SetNumberOfCells(1)
 
+    import vtk.util.numpy_support as VN
+    pointsArray = VN.vtk_to_numpy(points.GetData())
+    self.planePosition, self.planeNormal = self.planeFit(pointsArray.T)
+
     # Create model node
     model = slicer.vtkMRMLModelNode()
     model.SetScene(scene)
@@ -499,3 +524,23 @@ class EndoscopyPathModel:
     cursor.SetAndObserveTransformNodeID(transform.GetID())
 
     self.transform = transform
+
+  # source: http://stackoverflow.com/questions/12299540/plane-fitting-to-4-or-more-xyz-points
+  def planeFit(self, points):
+    """
+    p, n = planeFit(points)
+
+    Given an array, points, of shape (d,...)
+    representing points in d-dimensional space,
+    fit an d-dimensional plane to the points.
+    Return a point, p, on the plane (the point-cloud centroid),
+    and the normal, n.
+    """
+    import numpy as np
+    from numpy.linalg import svd
+    points = np.reshape(points, (np.shape(points)[0], -1)) # Collapse trialing dimensions
+    assert points.shape[0] <= points.shape[1], "There are only {} points in {} dimensions.".format(points.shape[1], points.shape[0])
+    ctr = points.mean(axis=1)
+    x = points - ctr[:,np.newaxis]
+    M = np.dot(x, x.T) # Could also use np.cov(x) here.
+    return ctr, svd(M)[0][:,-1]
