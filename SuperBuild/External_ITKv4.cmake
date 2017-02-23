@@ -32,7 +32,8 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(ITKv4_REPOSITORY ${git_protocol}://github.com/Slicer/ITK.git)
   # ITK release v4.11.0 from 2017.01.22 with
   # * Slicer patches for CMP0042
-  set(ITKv4_GIT_TAG 71e441d7ffe525d022ea6e7e3bc35bcc7877ba0d) # slicer-v4.11.0-2017-01-22
+  # * Revert "BUG: Binary include directory added only if enabled shared" (ITK-3529)
+  set(ITKv4_GIT_TAG 0e5b94cfa61f02c7f3e1a06aa119fc77ad721406) # slicer-v4.11.0-2017-01-22
 
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 
