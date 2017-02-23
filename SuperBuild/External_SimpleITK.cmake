@@ -34,7 +34,7 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" Packaging/s
 ")
 
   set(SimpleITK_REPOSITORY ${git_protocol}://itk.org/SimpleITK.git)
-  set(SimpleITK_GIT_TAG aeada7ab36535041933f2fa7bfe6209e2205984f ) # 0.11.0.dev110
+  set(SimpleITK_GIT_TAG v1.0rc1)
 
   set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
   set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
@@ -81,13 +81,8 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" Packaging/s
       -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
       -DBUILD_TESTING:BOOL=OFF
       -DBUILD_DOXYGEN:BOOL=OFF
+      -DWRAP_DEFAULT:BOOL=OFF
       -DWRAP_PYTHON:BOOL=ON
-      -DWRAP_TCL:BOOL=OFF
-      -DWRAP_JAVA:BOOL=OFF
-      -DWRAP_RUBY:BOOL=OFF
-      -DWRAP_LUA:BOOL=OFF
-      -DWRAP_CSHARP:BOOL=OFF
-      -DWRAP_R:BOOL=OFF
       -DSimpleITK_BUILD_DISTRIBUTE:BOOL=ON # Shorten version and install path removing -g{GIT-HASH} suffix.
       -DExternalData_OBJECT_STORES:PATH=${ExternalData_OBJECT_STORES}
     #
