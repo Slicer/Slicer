@@ -15,7 +15,7 @@ class SlicerBoundsTest(ScriptedLoadableModule):
 
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
-    self.parent.title = "Test transform interaction)"
+    self.parent.title = "BoundsTest"
     self.parent.categories = ["Testing.TestCases"]
     self.parent.dependencies = []
     self.parent.contributors = ["Johan Andruejol (Kitware Inc)"]
@@ -65,6 +65,7 @@ class SlicerBoundsTestTest(ScriptedLoadableModuleTest):
     self.test_Segmentation()
     self.test_Markup()
     self.test_ROI()
+    self.delayDisplay('Test completed.')
 
   def test_Volume(self):
     """ Test the GetRASBounds & GetBounds method on a volume.
@@ -189,7 +190,7 @@ class SlicerBoundsTestTest(ScriptedLoadableModuleTest):
     transformNode.ApplyTransform(transform)
 
     segmentationNode.SetAndObserveTransformNodeID(transformNode.GetID())
-    transformedBounds = [-200.70776329131795, 479.54290966330126, -723.6172978253361, 996.0765602877555, -2171.2883672792996, 2141.1537548033725]
+    transformedBounds = [-687.4653523284665, 966.3004987004498, -741.50842882335, 1013.9676912857693, -2173.06971199151, 2142.935099515583]
     segmentationNode.GetRASBounds(bounds)
     self.assertListAlmostEquals(bounds, transformedBounds)
 

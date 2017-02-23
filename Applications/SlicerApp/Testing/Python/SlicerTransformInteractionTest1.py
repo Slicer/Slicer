@@ -17,7 +17,7 @@ class SlicerTransformInteractionTest1(ScriptedLoadableModule):
 
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
-    self.parent.title = "Test transform interaction)"
+    self.parent.title = "TransformInteractionTest"
     self.parent.categories = ["Testing.TestCases"]
     self.parent.dependencies = []
     self.parent.contributors = ["Johan Andruejol (Kitware Inc)"]
