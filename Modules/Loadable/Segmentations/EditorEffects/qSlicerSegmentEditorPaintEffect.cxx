@@ -806,29 +806,32 @@ void qSlicerSegmentEditorPaintEffectPrivate::clearBrushPipelines()
 
   // On exiting Slicer, this method (triggered by deactivation of the effect when exiting the
   // module containing the segment editor widget) may be called after the layout was destroyed
+  bool removeActors = true;
   if (!qSlicerApplication::application() || !qSlicerApplication::application()->layoutManager())
     {
-    this->BrushPipelines.clear();
-    return;
+    removeActors = false;
     }
 
   QMapIterator<qMRMLWidget*, BrushPipeline*> it(this->BrushPipelines);
   while (it.hasNext())
     {
     it.next();
-    qMRMLWidget* viewWidget = it.key();
     BrushPipeline* brushPipeline = it.value();
-    BrushPipeline2D* pipeline2D = dynamic_cast<BrushPipeline2D*>(brushPipeline);
-    BrushPipeline3D* pipeline3D = dynamic_cast<BrushPipeline3D*>(brushPipeline);
-    if (pipeline2D)
+    if (removeActors)
       {
-      q->removeActor2D(viewWidget, pipeline2D->BrushActor);
-      q->removeActor2D(viewWidget, pipeline2D->FeedbackActor);
-      }
-    else if (pipeline3D)
-      {
-      q->removeActor3D(viewWidget, pipeline3D->BrushActor);
-      q->removeActor3D(viewWidget, pipeline3D->FeedbackActor);
+      qMRMLWidget* viewWidget = it.key();
+      BrushPipeline2D* pipeline2D = dynamic_cast<BrushPipeline2D*>(brushPipeline);
+      BrushPipeline3D* pipeline3D = dynamic_cast<BrushPipeline3D*>(brushPipeline);
+      if (pipeline2D)
+        {
+        q->removeActor2D(viewWidget, pipeline2D->BrushActor);
+        q->removeActor2D(viewWidget, pipeline2D->FeedbackActor);
+        }
+      else if (pipeline3D)
+        {
+        q->removeActor3D(viewWidget, pipeline3D->BrushActor);
+        q->removeActor3D(viewWidget, pipeline3D->FeedbackActor);
+        }
       }
     delete brushPipeline;
     }
