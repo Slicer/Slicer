@@ -61,13 +61,14 @@ qMRMLTreeViewEventPlayer::qMRMLTreeViewEventPlayer(QObject *parent)
 bool qMRMLTreeViewEventPlayer::playEvent(QObject *Object,
                                     const QString &Command,
                                     const QString &Arguments,
+                                    int EventType,
                                     bool &Error)
 {
   if(Command != "currentNodeRenamed" && Command != "currentNodeDeleted" &&
      Command != "editNodeRequested" && Command != "decorationClicked" &&
      Command != "reParentByDragnDrop")
     {
-    return this->Superclass::playEvent(Object, Command, Arguments, Error);
+    return this->Superclass::playEvent(Object, Command, Arguments, EventType, Error);
     }
     
   if(qMRMLTreeView* const treeView =

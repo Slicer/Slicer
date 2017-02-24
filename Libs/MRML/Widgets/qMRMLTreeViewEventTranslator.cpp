@@ -49,6 +49,7 @@ qMRMLTreeViewEventTranslator::qMRMLTreeViewEventTranslator(QObject *parent)
 // ----------------------------------------------------------------------------
 bool qMRMLTreeViewEventTranslator::translateEvent(QObject *Object,
                                              QEvent *Event,
+                                             int EventType,
                                              bool &Error)
 {
   Q_UNUSED(Error);
@@ -152,10 +153,10 @@ bool qMRMLTreeViewEventTranslator::translateEvent(QObject *Object,
       connect(treeView->sceneModel(), SIGNAL(aboutToReparentByDragAndDrop(vtkMRMLNode*,vtkMRMLNode*)),
               this, SLOT(onAboutToReparentByDnD(vtkMRMLNode*,vtkMRMLNode*)));
       }
-    return this->Superclass::translateEvent(Object, Event, Error);
+    return this->Superclass::translateEvent(Object, Event, EventType, Error);
     }
 
-  return this->Superclass::translateEvent(Object, Event, Error);
+  return this->Superclass::translateEvent(Object, Event, EventType, Error);
 }
 
 // ----------------------------------------------------------------------------

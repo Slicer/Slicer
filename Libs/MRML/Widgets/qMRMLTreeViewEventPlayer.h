@@ -39,7 +39,7 @@ public:
   typedef pqTreeViewEventPlayer Superclass;
   qMRMLTreeViewEventPlayer(QObject* parent = 0);
 
-  bool playEvent(QObject *Object, const QString &Command, const QString &Arguments, bool &Error);
+  virtual bool playEvent(QObject *Object, const QString &Command, const QString &Arguments, int EventType, bool &Error);
 
 private:
   qMRMLTreeViewEventPlayer(const qMRMLTreeViewEventPlayer&); // NOT implemented
