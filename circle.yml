@@ -17,6 +17,6 @@ dependencies:
 
 test:
   override:
-    - "echo 'Notice: CircleCI does not build changes to Slicer dependencies' && if git diff --name-only master | grep -q SuperBuild > /dev/null; then false; fi"
+    - "echo 'Notice: CircleCI does not build changes to Slicer dependencies' && if git diff --name-only master | grep -q SuperBuild > /dev/null; then echo 'Please create a Pull Request on https://github.com/thewtex/SlicerDocker according to the Update section of the project README.'; false; fi"
     - docker run -e "BUILD_TOOL_FLAGS=-j5" --name slicer -v ~/Slicer:/usr/src/Slicer slicer/slicer-dependencies
     - docker cp slicer:$(docker cp slicer:/usr/src/Slicer-build/Slicer-build/PACKAGE_FILE.txt - | tar xO) $CIRCLE_ARTIFACTS
