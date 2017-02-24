@@ -34,7 +34,8 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   # * Slicer patches for CMP0042
   # * Revert "BUG: Binary include directory added only if enabled shared" (ITK-3529)
   # * Revert "BUG: Include installed modules in ITK_MODULES_ENABLED" (ITK-3529)
-  set(ITKv4_GIT_TAG 3f7ce934c6540abad1c7822c6e4c5699107ad541) # slicer-v4.11.0-2017-01-22
+  # * COMP: Add missing headers in OpenCVImageBridge
+  set(ITKv4_GIT_TAG 1619816e48b327c4c486b76aef0c229af65b92b2) # slicer-v4.11.0-2017-01-22
 
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 
