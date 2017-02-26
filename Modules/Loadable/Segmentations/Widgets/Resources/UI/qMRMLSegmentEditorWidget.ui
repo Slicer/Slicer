@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>396</width>
-    <height>592</height>
+    <height>599</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,7 +15,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
-    <number>2</number>
+    <number>4</number>
    </property>
    <property name="margin">
     <number>0</number>
@@ -143,6 +143,21 @@
       <set>Qt::Vertical</set>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>8</number>
+      </property>
       <item>
        <widget class="qMRMLSegmentsTableView" name="SegmentsTableView">
         <property name="sizePolicy">
@@ -157,76 +172,14 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QGroupBox" name="EffectsGroupBox">
-       <property name="title">
-        <string>Effects</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <property name="spacing">
-        <number>2</number>
-       </property>
-       <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>0</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QToolButton" name="UndoButton">
-         <property name="toolTip">
-          <string>Undo last operation</string>
-         </property>
-         <property name="text">
-          <string>...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-           <normaloff>:/Icons/Medium/SlicerUndo.png</normaloff>:/Icons/Medium/SlicerUndo.png</iconset>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QToolButton" name="RedoButton">
-         <property name="toolTip">
-          <string>Redo last operation</string>
-         </property>
-         <property name="text">
-          <string>...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-           <normaloff>:/Icons/Medium/SlicerRedo.png</normaloff>:/Icons/Medium/SlicerRedo.png</iconset>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>0</width>
-           <height>10</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </item>
-    </layout>
+    <widget class="QGroupBox" name="EffectsGroupBox">
+     <property name="title">
+      <string>Effects</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QGroupBox" name="OptionsGroupBox">
@@ -244,8 +197,24 @@
        <number>4</number>
       </property>
       <property name="spacing">
-       <number>4</number>
+       <number>0</number>
       </property>
+      <item row="0" column="0">
+       <widget class="ctkFittedTextBrowser" name="label_EffectHelp">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+          <horstretch>1</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Plain</enum>
+        </property>
+       </widget>
+      </item>
       <item row="1" column="0" colspan="2">
        <widget class="QFrame" name="EffectsOptionsFrame">
         <property name="sizePolicy">
@@ -262,23 +231,40 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="0" colspan="2">
-       <widget class="QLabel" name="label_EffectHelp">
-        <property name="font">
-         <font>
-          <italic>true</italic>
-         </font>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
      </layout>
     </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <widget class="QPushButton" name="UndoButton">
+       <property name="toolTip">
+        <string>Undo last editing operation</string>
+       </property>
+       <property name="text">
+        <string>Undo</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+         <normaloff>:/Icons/Medium/SlicerUndo.png</normaloff>:/Icons/Medium/SlicerUndo.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="RedoButton">
+       <property name="toolTip">
+        <string>Redo last editing operation</string>
+       </property>
+       <property name="text">
+        <string>Redo</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+         <normaloff>:/Icons/Medium/SlicerRedo.png</normaloff>:/Icons/Medium/SlicerRedo.png</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="ctkCollapsibleGroupBox" name="MaskingGroupBox">
@@ -396,6 +382,11 @@
    <extends>QFrame</extends>
    <header>ctkExpandableWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkFittedTextBrowser</class>
+   <extends>QTextBrowser</extends>
+   <header>ctkFittedTextBrowser.h</header>
   </customwidget>
   <customwidget>
    <class>ctkRangeWidget</class>

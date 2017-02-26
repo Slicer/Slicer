@@ -39,7 +39,8 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     return qt.QIcon()
 
   def helpText(self):
-    return "Set segment based on master volume intensity range. All previous contents of the segment is overwritten on Apply."
+    return """Set segment based on master volume intensity range. \
+ All previous contents of the segment is overwritten on Apply."""
 
   def activate(self):
     # Save segment opacity and set it to zero
@@ -82,13 +83,13 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     self.thresholdSlider.singleStep = 0.01
     self.scriptedEffect.addOptionsWidget(self.thresholdSlider)
 
-    self.useForPaintButton = qt.QPushButton("Use For Paint")
-    self.useForPaintButton.setToolTip("Transfer the current threshold settings to be used for labeling operations such as Paint and Draw.")
+    self.useForPaintButton = qt.QPushButton("Use for masking")
+    self.useForPaintButton.setToolTip("Use specified intensity range for masking and switch to Paint effect.")
     self.scriptedEffect.addOptionsWidget(self.useForPaintButton)
 
     self.applyButton = qt.QPushButton("Apply")
     self.applyButton.objectName = self.__class__.__name__ + 'Apply'
-    self.applyButton.setToolTip("Apply current threshold settings to the label map.")
+    self.applyButton.setToolTip("Fill selected segment in regions that are in the specified intensity range.")
     self.scriptedEffect.addOptionsWidget(self.applyButton)
 
     self.useForPaintButton.connect('clicked()', self.onUseForPaint)

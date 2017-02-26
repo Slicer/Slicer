@@ -73,6 +73,9 @@ public slots:
   /// Update parameter set node from user interface
   virtual void updateMRMLFromGUI();
 
+  virtual void setOperation(int operationIndex);
+  virtual void setShape(int shapeIndex);
+
 protected:
   QScopedPointer<qSlicerSegmentEditorScissorsEffectPrivate> d_ptr;
 

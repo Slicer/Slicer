@@ -27,8 +27,12 @@
 
 // Qt includes
 #include <QApplication>
+#include <QButtonGroup>
 #include <QDebug>
 #include <QComboBox>
+#include <QGridLayout>
+#include <QVBoxLayout>
+#include <QRadioButton>
 
 // VTK includes
 #include <vtkActor2D.h>
@@ -179,8 +183,18 @@ public:
 
   QMap<qMRMLWidget*, ScissorsPipeline*> ScissorsPipelines;
 
-  QComboBox* OperationSelectorComboBox;
-  QComboBox* ShapeSelectorComboBox;
+  QRadioButton* eraseInsideRadioButton;
+  QRadioButton* eraseOutsideRadioButton;
+  QRadioButton* fillInsideRadioButton;
+  QRadioButton* fillOutsideRadioButton;
+  QGridLayout* operationLayout;
+  QButtonGroup* operationGroup;
+
+  QRadioButton* freeFormRadioButton;
+  QRadioButton* circleRadioButton;
+  QRadioButton* rectangleRadioButton;
+  QVBoxLayout* shapeLayout;
+  QButtonGroup* shapeGroup;
 };
 
 //-----------------------------------------------------------------------------
@@ -865,7 +879,7 @@ QString qSlicerSegmentEditorScissorsEffectPrivate::ConvertShapeToString(int shap
 //-----------------------------------------------------------------------------
 int qSlicerSegmentEditorScissorsEffectPrivate::ConvertOperationFromString(const QString& operationStr)
 {
-  for (int i = 0; i < Shape_Last; i++)
+  for (int i = 0; i < Operation_Last; i++)
     {
     if (operationStr == ConvertOperationToString(i))
       {
@@ -947,21 +961,47 @@ void qSlicerSegmentEditorScissorsEffect::setupOptionsFrame()
   // Setup widgets corresponding to the parent class of this effect
   Superclass::setupOptionsFrame();
 
-  d->OperationSelectorComboBox = new QComboBox();
-  d->OperationSelectorComboBox->addItem("Erase inside", d->ConvertOperationToString(qSlicerSegmentEditorScissorsEffectPrivate::OperationEraseInside));
-  d->OperationSelectorComboBox->addItem("Erase outside", d->ConvertOperationToString(qSlicerSegmentEditorScissorsEffectPrivate::OperationEraseOutside));
-  d->OperationSelectorComboBox->addItem("Fill inside", d->ConvertOperationToString(qSlicerSegmentEditorScissorsEffectPrivate::OperationFillInside));
-  d->OperationSelectorComboBox->addItem("Fill outside", d->ConvertOperationToString(qSlicerSegmentEditorScissorsEffectPrivate::OperationFillOutside));
-  this->addLabeledOptionsWidget("Operation:", d->OperationSelectorComboBox);
+  d->eraseInsideRadioButton = new QRadioButton("Erase inside");
+  d->eraseOutsideRadioButton = new QRadioButton("Erase outside");
+  d->fillInsideRadioButton = new QRadioButton("Fill inside");
+  d->fillOutsideRadioButton = new QRadioButton("Fill outside");
 
-  d->ShapeSelectorComboBox = new QComboBox();
-  d->ShapeSelectorComboBox->addItem("Free-form", d->ConvertShapeToString(qSlicerSegmentEditorScissorsEffectPrivate::ShapeFreeForm));
-  d->ShapeSelectorComboBox->addItem("Circle", d->ConvertShapeToString(qSlicerSegmentEditorScissorsEffectPrivate::ShapeCircle));
-  d->ShapeSelectorComboBox->addItem("Rectangle", d->ConvertShapeToString(qSlicerSegmentEditorScissorsEffectPrivate::ShapeRectangle));
-  this->addLabeledOptionsWidget("Shape:", d->ShapeSelectorComboBox);
+  d->operationLayout = new QGridLayout();
+  d->operationLayout->addWidget(d->eraseInsideRadioButton, 0, 0);
+  d->operationLayout->addWidget(d->eraseOutsideRadioButton, 1, 0);
+  d->operationLayout->addWidget(d->fillInsideRadioButton, 0, 1);
+  d->operationLayout->addWidget(d->fillOutsideRadioButton, 1, 1);
 
-  QObject::connect(d->OperationSelectorComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateMRMLFromGUI()));
-  QObject::connect(d->ShapeSelectorComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateMRMLFromGUI()));
+  this->addLabeledOptionsWidget("Operation:", d->operationLayout);
+
+  d->operationGroup = new QButtonGroup();
+  d->operationGroup->setExclusive(true);
+  d->operationGroup->addButton(d->eraseInsideRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::OperationEraseInside);
+  d->operationGroup->addButton(d->eraseOutsideRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::OperationEraseOutside);
+  d->operationGroup->addButton(d->fillInsideRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::OperationFillInside);
+  d->operationGroup->addButton(d->fillOutsideRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::OperationFillOutside);
+
+  QObject::connect(d->operationGroup, SIGNAL(buttonClicked(int)), this, SLOT(setOperation(int)));
+
+
+  d->freeFormRadioButton = new QRadioButton("Free-form");
+  d->circleRadioButton= new QRadioButton("Circle");
+  d->rectangleRadioButton= new QRadioButton("Rectangle");
+
+  d->shapeLayout = new QVBoxLayout();
+  d->shapeLayout->addWidget(d->freeFormRadioButton);
+  d->shapeLayout->addWidget(d->circleRadioButton);
+  d->shapeLayout->addWidget(d->rectangleRadioButton);
+
+  this->addLabeledOptionsWidget("Shape:", d->shapeLayout);
+
+  d->shapeGroup = new QButtonGroup();
+  d->shapeGroup->setExclusive(true);
+  d->shapeGroup->addButton(d->freeFormRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::ShapeFreeForm);
+  d->shapeGroup->addButton(d->circleRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::ShapeCircle);
+  d->shapeGroup->addButton(d->rectangleRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::ShapeRectangle);
+
+  QObject::connect(d->shapeGroup, SIGNAL(buttonClicked(int)), this, SLOT(setShape(int)));
 }
 
 //-----------------------------------------------------------------------------
@@ -991,15 +1031,35 @@ void qSlicerSegmentEditorScissorsEffect::updateGUIFromMRML()
     return;
     }
 
-  int operationIndex = d->OperationSelectorComboBox->findData(QString(this->parameter("Operation")));
-  bool wasBlocked = d->OperationSelectorComboBox->blockSignals(true);
-  d->OperationSelectorComboBox->setCurrentIndex(operationIndex);
-  d->OperationSelectorComboBox->blockSignals(wasBlocked);
+  int operationIndex = d->ConvertOperationFromString(QString(this->parameter("Operation")));
+  if (d->operationGroup->button(operationIndex))
+    {
+    bool wasBlocked = d->operationGroup->blockSignals(true);
+    d->operationGroup->button(operationIndex)->setChecked(true);
+    d->operationGroup->blockSignals(wasBlocked);
+    }
 
-  int shapeIndex = d->ShapeSelectorComboBox->findData(QString(this->parameter("Shape")));
-  wasBlocked = d->ShapeSelectorComboBox->blockSignals(true);
-  d->ShapeSelectorComboBox->setCurrentIndex(shapeIndex);
-  d->ShapeSelectorComboBox->blockSignals(wasBlocked);
+  int shapeIndex = d->ConvertShapeFromString(QString(this->parameter("Shape")));
+  if (d->shapeGroup->button(shapeIndex))
+    {
+    bool wasBlocked = d->shapeGroup->blockSignals(true);
+    d->shapeGroup->button(shapeIndex)->setChecked(true);
+    d->shapeGroup->blockSignals(wasBlocked);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSegmentEditorScissorsEffect::setOperation(int operationIndex)
+{
+  Q_D(qSlicerSegmentEditorScissorsEffect);
+  this->setParameter("Operation", d->ConvertOperationToString(operationIndex));
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSegmentEditorScissorsEffect::setShape(int shapeIndex)
+{
+  Q_D(qSlicerSegmentEditorScissorsEffect);
+  this->setParameter("Shape", d->ConvertShapeToString(shapeIndex));
 }
 
 //-----------------------------------------------------------------------------
@@ -1009,8 +1069,9 @@ void qSlicerSegmentEditorScissorsEffect::updateMRMLFromGUI()
 
   Superclass::updateMRMLFromGUI();
 
-  QString operation = d->OperationSelectorComboBox->itemData(d->OperationSelectorComboBox->currentIndex()).toString();
-  QString shape = d->ShapeSelectorComboBox->itemData(d->ShapeSelectorComboBox->currentIndex()).toString();
+  //QString operation = d->OperationSelectorComboBox->itemData(d->OperationSelectorComboBox->currentIndex()).toString();
+  QString operation = d->ConvertOperationToString(d->operationGroup->checkedId());
+  QString shape = d->ConvertShapeToString(d->shapeGroup->checkedId());
   this->setParameter("Operation", operation.toLatin1().constData());
   this->setParameter("Shape", shape.toLatin1().constData());
 }

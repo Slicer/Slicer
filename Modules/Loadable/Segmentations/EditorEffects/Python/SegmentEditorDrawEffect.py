@@ -26,7 +26,11 @@ class SegmentEditorDrawEffect(AbstractScriptedSegmentEditorLabelEffect):
     return qt.QIcon()
 
   def helpText(self):
-    return "Draw segment outline in slice viewers.\nLeft click: add point.\nLeft Drag: add multiple points.\nx: delete last point.\na or Enter: apply outline."
+    return """Draw segment outline in slice viewers.
+Left click: add point.
+Left Drag: add multiple points.
+x: delete last point.
+a or Enter: apply outline."""
 
   def deactivate(self):
     # Clear draw pipelines

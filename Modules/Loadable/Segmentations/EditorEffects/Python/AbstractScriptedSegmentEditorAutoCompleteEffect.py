@@ -1,26 +1,37 @@
 import os
-import vtk, qt, ctk, slicer
-import logging
-from SegmentEditorEffects import *
+import vtk, qt, ctk, slicer, logging
+from AbstractScriptedSegmentEditorEffect import *
 
-class SegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEditorEffect):
+__all__ = ['AbstractScriptedSegmentEditorAutoCompleteEffect']
+
+#
+# Abstract class of python scripted segment editor auto-complete effects
+#
+# Auto-complete effects are a subtype of general effects that allow preview
+# and refinement of segmentation results before accepting them.
+#
+
+class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEditorEffect):
   """ AutoCompleteEffect is an effect that can create a full segmentation
       from a partial segmentation (not all slices are segmented or only
       part of the target structures are painted).
   """
 
   def __init__(self, scriptedEffect):
-    scriptedEffect.name = 'Auto-complete'
     # Indicates that effect does not operate on one segment, but the whole segmentation.
     # This means that while this effect is active, no segment can be selected
     scriptedEffect.perSegment = False
     AbstractScriptedSegmentEditorEffect.__init__(self, scriptedEffect)
+
+    self.minimumNumberOfSegments = 1
+    self.clippedMasterImageDataRequired = False
+
     # Stores merged labelmap image geometry (voxel data is not allocated)
     self.mergedLabelmapGeometryImage = None
     self.selectedSegmentIds = None
     self.selectedSegmentModifiedTimes = {} # map from segment ID to ModifiedTime
     self.clippedMasterImageData = None
-    self.growCutFilter = None
+
     # Observation for auto-update
     self.observedSegmentation = None
     self.segmentationNodeObserverTags = []
@@ -38,37 +49,7 @@ class SegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEditorEffect):
     self.delayedAutoUpdateTimer.stop()
     self.observeSegmentation(False)
 
-  def clone(self):
-    import qSlicerSegmentationsEditorEffectsPythonQt as effects
-    clonedEffect = effects.qSlicerSegmentEditorScriptedEffect(None)
-    clonedEffect.setPythonSource(__file__.replace('\\','/'))
-    return clonedEffect
-
-  def icon(self):
-    iconPath = os.path.join(os.path.dirname(__file__), 'Resources/Icons/AutoComplete.png')
-    if os.path.exists(iconPath):
-      return qt.QIcon(iconPath)
-    return qt.QIcon()
-
-  def helpText(self):
-    return """Create a complete segmentation from a partial segmentation \
-created using other effects. Masking settings are bypassed. If segments overlap, segment higher in \
-the segments table will have priority."""
-
   def setupOptionsFrame(self):
-    self.methodSelectorComboBox = qt.QComboBox()
-    self.methodSelectorComboBox.addItem("Grow from seeds", GROWCUT)
-    self.methodSelectorComboBox.addItem("Fill between parallel slices", MORPHOLOGICAL_SLICE_INTERPOLATION)
-    self.methodSelectorComboBox.setToolTip("""<html>Auto-complete methods:<ul style="margin: 0">
-<li><b>Grow from seeds:</b> Create segments using any editor effect: one segment inside
-each each region that should belong to a separate segment. Segments will be expanded to create
-a complete segmentation, taking into account the master volume content. Minimum two segments are required.
-<li><b>Fill between parallel slices:</b> Perform complete segmentation on selected slices using any editor effect.
-The complete segmentation will be created by interpolating segmentations on slices that were skipped.</li>
-(see http://insight-journal.org/browse/publication/977)</li>
-</ul></html>""")
-    self.scriptedEffect.addLabeledOptionsWidget("Method:", self.methodSelectorComboBox)
-
     self.autoUpdateCheckBox = qt.QCheckBox("Auto-update")
     self.autoUpdateCheckBox.setToolTip("Auto-update results preview when input segments change.")
     self.autoUpdateCheckBox.setChecked(True)
@@ -116,7 +97,6 @@ The complete segmentation will be created by interpolating segmentations on slic
     finishFrame.addWidget(self.applyButton)
     self.scriptedEffect.addOptionsWidget(finishFrame)
 
-    self.methodSelectorComboBox.connect("currentIndexChanged(int)", self.updateMRMLFromGUI)
     self.previewButton.connect('clicked()', self.onPreview)
     self.cancelButton.connect('clicked()', self.onCancel)
     self.applyButton.connect('clicked()', self.onApply)
@@ -128,7 +108,6 @@ The complete segmentation will be created by interpolating segmentations on slic
     return slicer.util.mainWindow().cursor
 
   def setMRMLDefaults(self):
-    self.scriptedEffect.setParameterDefault("AutoCompleteMethod", GROWCUT)
     self.scriptedEffect.setParameterDefault("AutoUpdate", "1")
 
   def onSegmentationModified(self, caller, event):
@@ -191,15 +170,17 @@ The complete segmentation will be created by interpolating segmentations on slic
       for eventId in observedEvents:
         self.segmentationNodeObserverTags.append(self.observedSegmentation.AddObserver(eventId, self.onSegmentationModified))
 
-  def updateGUIFromMRML(self):
-    methodIndex = self.methodSelectorComboBox.findData(self.scriptedEffect.parameter("AutoCompleteMethod"))
-    wasBlocked = self.methodSelectorComboBox.blockSignals(True)
-    self.methodSelectorComboBox.setCurrentIndex(methodIndex)
-    self.methodSelectorComboBox.blockSignals(wasBlocked)
-
+  def getPreviewNode(self):
     previewNode = self.scriptedEffect.parameterSetNode().GetNodeReference(ResultPreviewNodeReferenceRole)
+    if previewNode and self.scriptedEffect.parameter("SegmentationResultPreviewOwnerEffect") != self.scriptedEffect.name:
+      # another effect owns this preview node
+      return None
+    return previewNode
 
-    self.methodSelectorComboBox.setEnabled(previewNode is None)
+  def updateGUIFromMRML(self):
+
+    previewNode = self.getPreviewNode()
+
     self.cancelButton.setEnabled(previewNode is not None)
     self.applyButton.setEnabled(previewNode is not None)
 
@@ -223,12 +204,8 @@ The complete segmentation will be created by interpolating segmentations on slic
     self.autoUpdateCheckBox.blockSignals(wasBlocked)
 
   def updateMRMLFromGUI(self):
-    methodIndex = self.methodSelectorComboBox.currentIndex
-    method = self.methodSelectorComboBox.itemData(methodIndex)
-    self.scriptedEffect.setParameter("AutoCompleteMethod", method)
-
     segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
-    previewNode = self.scriptedEffect.parameterSetNode().GetNodeReference(ResultPreviewNodeReferenceRole)
+    previewNode = self.getPreviewNode()
     if previewNode:
       self.setPreviewOpacity(self.previewOpacitySlider.value)
 
@@ -236,7 +213,7 @@ The complete segmentation will be created by interpolating segmentations on slic
     self.scriptedEffect.setParameter("AutoUpdate", autoUpdate)
 
   def onPreview(self):
-    slicer.util.showStatusMessage("Running auto-complete...", 2000)
+    slicer.util.showStatusMessage("Running {0} auto-complete...".format(self.scriptedEffect.name), 2000)
     try:
       # This can be a long operation - indicate it to the user
       qt.QApplication.setOverrideCursor(qt.Qt.WaitCursor)
@@ -251,13 +228,13 @@ The complete segmentation will be created by interpolating segmentations on slic
     if previewNode:
       self.scriptedEffect.parameterSetNode().SetNodeReferenceID(ResultPreviewNodeReferenceRole, None)
       slicer.mrmlScene.RemoveNode(previewNode)
+      self.scriptedEffect.setCommonParameter("SegmentationResultPreviewOwnerEffect", "")
     segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
     segmentationNode.GetDisplayNode().SetOpacity(1.0)
     self.mergedLabelmapGeometryImage = None
     self.selectedSegmentIds = None
     self.selectedSegmentModifiedTimes = {}
     self.clippedMasterImageData = None
-    self.growCutFilter = None
     self.updateGUIFromMRML()
 
   def onCancel(self):
@@ -269,7 +246,7 @@ The complete segmentation will be created by interpolating segmentations on slic
 
     import vtkSegmentationCorePython as vtkSegmentationCore
     segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
-    previewNode = self.scriptedEffect.parameterSetNode().GetNodeReference(ResultPreviewNodeReferenceRole)
+    previewNode = self.getPreviewNode()
 
     self.scriptedEffect.saveStateForUndo()
 
@@ -288,7 +265,7 @@ The complete segmentation will be created by interpolating segmentations on slic
   def setPreviewOpacity(self, opacity):
     segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
     segmentationNode.GetDisplayNode().SetOpacity(1.0-opacity)
-    previewNode = self.scriptedEffect.parameterSetNode().GetNodeReference(ResultPreviewNodeReferenceRole)
+    previewNode = self.getPreviewNode()
     if previewNode:
       previewNode.GetDisplayNode().SetOpacity(opacity)
 
@@ -298,7 +275,7 @@ The complete segmentation will be created by interpolating segmentations on slic
     self.previewOpacitySlider.blockSignals(wasBlocked)
 
   def getPreviewOpacity(self):
-    previewNode = self.scriptedEffect.parameterSetNode().GetNodeReference(ResultPreviewNodeReferenceRole)
+    previewNode = self.getPreviewNode()
     return previewNode.GetDisplayNode().GetOpacity() if previewNode else 0.6 # default opacity for preview
 
   def preview(self):
@@ -309,18 +286,15 @@ The complete segmentation will be created by interpolating segmentations on slic
     # Get segmentation
     segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
 
-    method = self.scriptedEffect.parameter("AutoCompleteMethod")
-
-    previewNode = self.scriptedEffect.parameterSetNode().GetNodeReference(ResultPreviewNodeReferenceRole)
+    previewNode = self.getPreviewNode()
     if not previewNode or not self.mergedLabelmapGeometryImage \
-      or (method == GROWCUT and not self.clippedMasterImageData):
+      or (self.clippedMasterImageDataRequired and not self.clippedMasterImageData):
       self.reset()
       # Compute merged labelmap extent (effective extent slightly expanded)
       self.selectedSegmentIds = vtk.vtkStringArray()
       segmentationNode.GetDisplayNode().GetVisibleSegmentIDs(self.selectedSegmentIds)
-      minimumNumberOfSegments = 2 if method == GROWCUT else 1
-      if self.selectedSegmentIds.GetNumberOfValues() < minimumNumberOfSegments:
-        logging.info("Auto-complete operation skipped: at least {0} visible segments are required".format(minimumNumberOfSegments))
+      if self.selectedSegmentIds.GetNumberOfValues() < self.minimumNumberOfSegments:
+        logging.info("Auto-complete operation skipped: at least {0} visible segments are required".format(self.minimumNumberOfSegments))
         return
       if not self.mergedLabelmapGeometryImage:
         self.mergedLabelmapGeometryImage = vtkSegmentationCore.vtkOrientedImageData()
@@ -351,9 +325,10 @@ The complete segmentation will be created by interpolating segmentations on slic
       if segmentationNode.GetParentTransformNode():
         previewNode.SetAndObserveTransformNodeID(segmentationNode.GetParentTransformNode().GetID())
       self.scriptedEffect.parameterSetNode().SetNodeReferenceID(ResultPreviewNodeReferenceRole, previewNode.GetID())
+      self.scriptedEffect.setCommonParameter("SegmentationResultPreviewOwnerEffect", self.scriptedEffect.name)
       self.setPreviewOpacity(0.6)
 
-      if method == GROWCUT:
+      if self.clippedMasterImageDataRequired:
         self.clippedMasterImageData = vtkSegmentationCore.vtkOrientedImageData()
         masterImageClipper = vtk.vtkImageConstantPad()
         masterImageClipper.SetInputData(masterImageData)
@@ -368,34 +343,9 @@ The complete segmentation will be created by interpolating segmentations on slic
     segmentationNode.GenerateMergedLabelmapForAllSegments(mergedImage,
       vtkSegmentationCore.vtkSegmentation.EXTENT_UNION_OF_EFFECTIVE_SEGMENTS, self.mergedLabelmapGeometryImage, self.selectedSegmentIds)
 
-    # Make a zero-valued volume for the output
     outputLabelmap = vtkSegmentationCore.vtkOrientedImageData()
 
-    if method == MORPHOLOGICAL_SLICE_INTERPOLATION:
-        import vtkITK
-        interpolator = vtkITK.vtkITKMorphologicalContourInterpolator()
-        interpolator.SetInputData(mergedImage)
-        interpolator.Update()
-        outputLabelmap.DeepCopy(interpolator.GetOutput())
-
-    elif method == GROWCUT:
-
-      import vtkSlicerSegmentationsModuleLogicPython as vtkSlicerSegmentationsModuleLogic
-      # if self.growCutFilter exists but previewNode is empty then probably the scene was closed
-      # while in preview mode
-      if self.growCutFilter:
-        self.growCutFilter.SetSeedLabelVolume(mergedImage)
-        self.growCutFilter.Update()
-      else:
-        self.growCutFilter = vtkSlicerSegmentationsModuleLogic.vtkImageGrowCutSegment()
-        self.growCutFilter.SetIntensityVolume(self.clippedMasterImageData)
-        self.growCutFilter.SetSeedLabelVolume(mergedImage)
-        self.growCutFilter.Update()
-
-      outputLabelmap.DeepCopy( self.growCutFilter.GetOutput() )
-    else:
-      logging.error("Invalid auto-complete method {0}".format(smoothingMethod))
-      return
+    self.computePreviewLabelmap(mergedImage, outputLabelmap)
 
     # Write output segmentation results in segments
     for index in xrange(self.selectedSegmentIds.GetNumberOfValues()):
@@ -430,8 +380,4 @@ The complete segmentation will be created by interpolating segmentations on slic
 
     self.updateGUIFromMRML()
 
-
-MORPHOLOGICAL_SLICE_INTERPOLATION = 'MORPHOLOGICAL_SLICE_INTERPOLATION'
-GROWCUT = 'GROWCUT'
-
-ResultPreviewNodeReferenceRole = "AutoCompleteSegmentationResultPreview"
+ResultPreviewNodeReferenceRole = "SegmentationResultPreview"

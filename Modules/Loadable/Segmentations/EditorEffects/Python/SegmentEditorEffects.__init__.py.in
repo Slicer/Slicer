@@ -1,5 +1,6 @@
 from AbstractScriptedSegmentEditorEffect import *
 from AbstractScriptedSegmentEditorLabelEffect import *
+from AbstractScriptedSegmentEditorAutoCompleteEffect import *
 
 # Add effect name to the list of scripted segment editor effects.
 # SegmentEditor module will instantiate the effect class and register
@@ -14,7 +15,8 @@ import traceback
 effectNames = [
   "SegmentEditorThresholdEffect",
   "SegmentEditorSmoothingEffect",
-  "SegmentEditorAutoCompleteEffect",
+  "SegmentEditorGrowFromSeedsEffect",
+  "SegmentEditorFillBetweenSlicesEffect",
   "SegmentEditorDrawEffect",
   "SegmentEditorLevelTracingEffect",
   "SegmentEditorMarginEffect",

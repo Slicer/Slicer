@@ -94,6 +94,9 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
     segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
     if not segmentationNode:
       return ""
+    if not self.scriptedEffect.parameterDefined("ModifierSegmentID"):
+      # Avoid logging warning
+      return ""
     modifierSegmentIDs = self.scriptedEffect.parameter("ModifierSegmentID").split(';')
     if not modifierSegmentIDs:
       return ""

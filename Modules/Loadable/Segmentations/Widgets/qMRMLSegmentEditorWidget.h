@@ -64,6 +64,7 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentEditorWidget : pu
   Q_PROPERTY(bool undoEnabled READ undoEnabled WRITE setUndoEnabled)
   Q_PROPERTY(int maximumNumberOfUndoStates READ maximumNumberOfUndoStates WRITE setMaximumNumberOfUndoStates)
   Q_PROPERTY(bool readOnly READ readOnly WRITE setReadOnly)
+  Q_PROPERTY(Qt::ToolButtonStyle effectButtonStyle READ effectButtonStyle WRITE setEffectButtonStyle)
 
 public:
   typedef qMRMLWidget Superclass;
@@ -129,6 +130,10 @@ public:
   /// Get whether widget is read-only
   bool readOnly() const;
 
+  /// Get appearance of effect buttons. Showing text may make it easier
+  /// to find an effect but uses more space.
+  Qt::ToolButtonStyle effectButtonStyle() const;
+
 public slots:
   /// Set the MRML \a scene associated with the widget
   virtual void setMRMLScene(vtkMRMLScene* newScene);
@@ -187,6 +192,10 @@ public slots:
   /// Segment editor is not compatible with lightbox view layouts.
   /// Returns true if there were lightbox views.
   bool turnOffLightboxes();
+
+  /// Set appearance of effect buttons. Showing text may make it easier
+  /// to find an effect but uses more space.
+  void setEffectButtonStyle(Qt::ToolButtonStyle toolButtonStyle);
 
 protected slots:
   /// Handles changing of current segmentation MRML node

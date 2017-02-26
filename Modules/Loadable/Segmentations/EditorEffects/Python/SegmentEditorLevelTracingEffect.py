@@ -10,7 +10,7 @@ class SegmentEditorLevelTracingEffect(AbstractScriptedSegmentEditorLabelEffect):
   """
 
   def __init__(self, scriptedEffect):
-    scriptedEffect.name = 'LevelTracing'
+    scriptedEffect.name = 'Level tracing'
     AbstractScriptedSegmentEditorLabelEffect.__init__(self, scriptedEffect)
 
     # Effect-specific members
@@ -29,7 +29,10 @@ class SegmentEditorLevelTracingEffect(AbstractScriptedSegmentEditorLabelEffect):
     return qt.QIcon()
 
   def helpText(self):
-    return "Add uniform intensity region to selected segment.\nAs you move the mouse, the current background voxel is used to find a closed path that follows the same intensity value back to the starting point within the current slice.  Pressing the left mouse button fills the the path according to the current labeling rules."
+    return """Add uniform intensity region to selected segment.
+As you move the mouse, the current background voxel is used to find a closed path that \
+follows the same intensity value back to the starting point within the current slice. \
+Pressing the left mouse button fills the the path according to the current labeling rules."""
 
   def deactivate(self):
     # Clear draw pipelines

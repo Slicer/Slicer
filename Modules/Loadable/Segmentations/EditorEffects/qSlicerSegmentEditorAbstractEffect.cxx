@@ -648,6 +648,11 @@ QWidget* qSlicerSegmentEditorAbstractEffect::addLabeledOptionsWidget(QString lab
 {
   Q_D(qSlicerSegmentEditorAbstractEffect);
   QLabel* labelWidget = new QLabel(label);
+  if (dynamic_cast<QHBoxLayout*>(newOptionsWidget) == NULL)
+    {
+    // for multiline layouts, align label to the top
+    labelWidget->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    }
   this->optionsLayout()->addRow(labelWidget, newOptionsWidget);
   return labelWidget;
 }

@@ -77,7 +77,7 @@
 
 // Qt includes
 #include <QDebug>
-#include <QPushButton>
+#include <QToolButton>
 #include <QButtonGroup>
 #include <QMainWindow>
 #include <QMessageBox>
@@ -219,6 +219,8 @@ public:
   std::string LastNotifiedReferenceImageGeometry;
 
   QList< QShortcut* > KeyboardShortcuts;
+
+  Qt::ToolButtonStyle EffectButtonStyle;
 };
 
 //-----------------------------------------------------------------------------
@@ -234,6 +236,7 @@ qMRMLSegmentEditorWidgetPrivate::qMRMLSegmentEditorWidgetPrivate(qMRMLSegmentEdi
   , AlignedMasterVolumeUpdateMasterVolumeNodeTransform(NULL)
   , AlignedMasterVolumeUpdateSegmentationNodeTransform(NULL)
   , MaskModeComboBoxFixedItemsCount(0)
+  , EffectButtonStyle(Qt::ToolButtonTextUnderIcon)
 {
   this->AlignedMasterVolume = vtkOrientedImageData::New();
   this->ModifierLabelmap = vtkOrientedImageData::New();
@@ -346,7 +349,7 @@ void qMRMLSegmentEditorWidgetPrivate::init()
   // Define default effect order
   this->DefaultEffectOrder
     // Local painting
-    << "Paint" << "Draw" << "Erase" << "Flood filling" << "LevelTracing" << "Auto-complete"
+    << "Paint" << "Draw" << "Erase" << "Flood filling" << "Level tracing" << "Grow from seeds" << "Fill between slices"
     // Global processing
     << "Threshold" << "Margin" << "Smoothing"
     // Global splitting, merging
@@ -378,6 +381,9 @@ void qMRMLSegmentEditorWidgetPrivate::initializeEffects()
   ctkFlowLayout* effectsGroupLayout = new ctkFlowLayout();
   effectsGroupLayout->setContentsMargins(4,4,4,4);
   effectsGroupLayout->setSpacing(4);
+  effectsGroupLayout->setAlignItems(false);
+  effectsGroupLayout->setAlignment(Qt::AlignJustify);
+  effectsGroupLayout->setPreferredExpandingDirections(Qt::Vertical);
   this->EffectsGroupBox->setLayout(effectsGroupLayout);
 
   // Initialize effects specified in default ordering
@@ -406,28 +412,29 @@ void qMRMLSegmentEditorWidgetPrivate::initializeEffect(qSlicerSegmentEditorAbstr
   if (!effect)
     {
     // NULL effect (used for deactivating all effects)
-    QPushButton* effectButton = new QPushButton(this->EffectsGroupBox);
+    QToolButton* effectButton = new QToolButton(this->EffectsGroupBox);
     effectButton->setObjectName(NULL_EFFECT_NAME);
     effectButton->setCheckable(true);
     effectButton->setIcon(QIcon(":Icons/NullEffect.png"));
+    effectButton->setText("None");
     effectButton->setToolTip("No editing");
-    effectButton->setMaximumWidth(31);
+    effectButton->setToolButtonStyle(this->EffectButtonStyle);
     effectButton->setProperty("Effect", QVariant::fromValue<QObject*>(NULL));
+    effectButton->setSizePolicy(QSizePolicy::MinimumExpanding, effectButton->sizePolicy().verticalPolicy());
     this->EffectButtonGroup.addButton(effectButton);
     this->EffectsGroupBox->layout()->addWidget(effectButton);
-    this->EffectsGroupBox->layout()->addItem(
-      new QSpacerItem(3, 0, QSizePolicy::Fixed,
-      QSizePolicy::MinimumExpanding));
     return;
     }
 
   // Create button for activating effect
-  QPushButton* effectButton = new QPushButton(this->EffectsGroupBox);
+  QToolButton* effectButton = new QToolButton(this->EffectsGroupBox);
   effectButton->setObjectName(effect->name());
   effectButton->setCheckable(true);
+  effectButton->setToolButtonStyle(this->EffectButtonStyle);
   effectButton->setIcon(effect->icon());
+  effectButton->setText(effect->name());
   effectButton->setToolTip(effect->name());
-  effectButton->setMaximumWidth(31);
+  effectButton->setSizePolicy(QSizePolicy::MinimumExpanding, effectButton->sizePolicy().verticalPolicy());
   effectButton->setProperty("Effect", QVariant::fromValue<QObject*>(effect));
 
   this->EffectButtonGroup.addButton(effectButton);
@@ -2508,7 +2515,6 @@ void qMRMLSegmentEditorWidget::onSelectSegmentShortcut()
     }
 }
 
-
 //---------------------------------------------------------------------------
 bool qMRMLSegmentEditorWidget::turnOffLightboxes()
 {
@@ -2548,4 +2554,28 @@ bool qMRMLSegmentEditorWidget::turnOffLightboxes()
     }
 
   return lightboxFound;
+}
+
+//---------------------------------------------------------------------------
+Qt::ToolButtonStyle qMRMLSegmentEditorWidget::effectButtonStyle() const
+{
+  Q_D(const qMRMLSegmentEditorWidget);
+  return d->EffectButtonStyle;
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::setEffectButtonStyle(Qt::ToolButtonStyle toolButtonStyle)
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  if (d->EffectButtonStyle == toolButtonStyle)
+    {
+    return;
+    }
+  d->EffectButtonStyle = toolButtonStyle;
+  QList<QAbstractButton*> effectButtons = d->EffectButtonGroup.buttons();
+  foreach(QAbstractButton* button, effectButtons)
+    {
+    QToolButton* toolButton = dynamic_cast<QToolButton*>(button);
+    toolButton->setToolButtonStyle(d->EffectButtonStyle);
+    }
 }
