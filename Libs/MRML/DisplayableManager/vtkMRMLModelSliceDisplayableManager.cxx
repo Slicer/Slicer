@@ -485,6 +485,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
   vtkProperty2D* actorProperties = actor->GetProperty();
   actorProperties->SetColor(displayNode->GetColor());
   actorProperties->SetLineWidth(displayNode->GetSliceIntersectionThickness());
+  actorProperties->SetOpacity(displayNode->GetSliceIntersectionOpacity());
 
   // Opacity of the slice intersection is intentionally not set by
   // actorProperties->SetOpacity(displayNode->GetOpacity()),

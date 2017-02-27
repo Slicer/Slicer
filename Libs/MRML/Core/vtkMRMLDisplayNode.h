@@ -175,6 +175,13 @@ public:
   /// \sa Opacity, SetOpacity()
   vtkGetMacro(Opacity, double);
 
+  /// Set the slice intersection opacity coef of the display node.
+  /// \sa SliceIntersectionOpacity, GetSliceIntersectionOpacity()
+  vtkSetMacro(SliceIntersectionOpacity, double);
+  /// Get the slice intersection opacity coef of the display node.
+  /// \sa SliceIntersectionOpacity, SetSliceIntersectionOpacity()
+  vtkGetMacro(SliceIntersectionOpacity, double);
+
   /// Set the ambient coef of the display node.
   /// \sa Ambient, GetAmbient()
   vtkSetMacro(Ambient, double);
@@ -515,6 +522,11 @@ protected:
   /// \sa SetOpacity(), GetOpacity(),
   /// Color, Visibility, Clipping
   double Opacity;
+  /// Opacity of the slice intersections expressed as a number from 0 to 1.
+  /// Opaque (1.) by default.
+  /// \sa SetSliceIntersectionOpacity(), GetSliceIntersectionOpacity(),
+  /// Color, Visibility, Clipping
+  double SliceIntersectionOpacity;
   /// Ambient of the surface expressed as a number from 0 to 1.
   /// 0. by default.
   /// \sa SetAmbient(), GetAmbient(),

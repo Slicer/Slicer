@@ -49,6 +49,7 @@ public:
   bool clipping()const;
   bool sliceIntersectionVisible()const;
   int sliceIntersectionThickness()const;
+  double sliceIntersectionOpacity()const;
 
 public slots:
   /// Set the volume node to display
@@ -64,6 +65,7 @@ public slots:
   void setClipping(bool);
   void setSliceIntersectionVisible(bool);
   void setSliceIntersectionThickness(int);
+  void setSliceIntersectionOpacity(double);
 
   /// Make checkboxes visible or invisible, for use with display nodes that don't
   /// need to control visibility, selected, clipping, slice intersection
@@ -73,6 +75,7 @@ public slots:
   void setClippingVisible(bool);
   void setSliceIntersectionVisibleVisible(bool);
   void setSliceIntersectionThicknessVisible(bool);
+  void setSliceIntersectionOpacityVisible(bool);
 
 protected slots:
   void updateWidgetFromMRML();

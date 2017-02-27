@@ -72,6 +72,8 @@ void qMRMLDisplayNodeWidgetPrivate::init()
                    q, SLOT(setSliceIntersectionVisible(bool)));
   QObject::connect(this->SliceIntersectionThicknessSpinBox, SIGNAL(valueChanged(int)),
                    q, SLOT(setSliceIntersectionThickness(int)));
+  QObject::connect(this->SliceIntersectionOpacitySlider, SIGNAL(valueChanged(double)),
+                   q, SLOT(setSliceIntersectionOpacity(double)));
 
   this->PropertyWidget->setProperty(this->Property);
   q->qvtkConnect(this->Property, vtkCommand::ModifiedEvent,
@@ -252,6 +254,31 @@ void qMRMLDisplayNodeWidget::setSliceIntersectionThicknessVisible(bool visible)
 }
 
 //------------------------------------------------------------------------------
+void qMRMLDisplayNodeWidget::setSliceIntersectionOpacity(double opacity)
+{
+  Q_D(qMRMLDisplayNodeWidget);
+  if (!d->MRMLDisplayNode.GetPointer())
+    {
+    return;
+    }
+  d->MRMLDisplayNode->SetSliceIntersectionOpacity(opacity);
+}
+
+//------------------------------------------------------------------------------
+double qMRMLDisplayNodeWidget::sliceIntersectionOpacity()const
+{
+  Q_D(const qMRMLDisplayNodeWidget);
+  return d->SliceIntersectionOpacitySlider->value();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLDisplayNodeWidget::setSliceIntersectionOpacityVisible(bool visible)
+{
+  Q_D(qMRMLDisplayNodeWidget);
+  d->SliceIntersectionOpacitySlider->setVisible(visible);
+}
+
+//------------------------------------------------------------------------------
 void qMRMLDisplayNodeWidget::updateWidgetFromMRML()
 {
   Q_D(qMRMLDisplayNodeWidget);
@@ -269,6 +296,8 @@ void qMRMLDisplayNodeWidget::updateWidgetFromMRML()
     d->MRMLDisplayNode->GetSliceIntersectionVisibility());
   d->SliceIntersectionThicknessSpinBox->setValue(
     d->MRMLDisplayNode->GetSliceIntersectionThickness());
+  d->SliceIntersectionOpacitySlider->setValue(
+    d->MRMLDisplayNode->GetSliceIntersectionOpacity());
 
   // While updating Property, its state is unstable.
   qvtkBlock(d->Property, vtkCommand::ModifiedEvent, this);

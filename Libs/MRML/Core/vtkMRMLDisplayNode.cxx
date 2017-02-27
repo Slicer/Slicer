@@ -40,6 +40,7 @@ vtkMRMLDisplayNode::vtkMRMLDisplayNode()
   this->HideFromEditors = 1;
 
   this->Opacity = 1.0;
+  this->SliceIntersectionOpacity = 1.0;
   this->Ambient = 0.0;
   this->Diffuse = 1.0;
   this->Specular = 0;
@@ -135,6 +136,7 @@ void vtkMRMLDisplayNode::WriteXML(ostream& of, int nIndent)
   of << indent << " power=\"" << this->Power << "\"";
 
   of << indent << " opacity=\"" << this->Opacity << "\"";
+  of << indent << " sliceIntersectionOpacity=\"" << this->SliceIntersectionOpacity << "\"";
 
   of << indent << " pointSize=\"" << this->PointSize << "\"";
   of << indent << " lineWidth=\"" << this->LineWidth << "\"";
@@ -321,6 +323,12 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
       std::stringstream ss;
       ss << attValue;
       ss >> Opacity;
+      }
+    else if (!strcmp(attName, "sliceIntersectionOpacity"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> SliceIntersectionOpacity;
       }
     else if (!strcmp(attName, "pointSize"))
       {
@@ -545,6 +553,7 @@ void vtkMRMLDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetSelectedAmbient(node->SelectedAmbient);
   this->SetSelectedSpecular(node->SelectedSpecular);
   this->SetOpacity(node->Opacity);
+  this->SetSliceIntersectionOpacity(node->SliceIntersectionOpacity);
   this->SetAmbient(node->Ambient);
   this->SetDiffuse(node->Diffuse);
   this->SetSpecular(node->Specular);
@@ -584,6 +593,7 @@ void vtkMRMLDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "SelectedAmbient:   " << this->SelectedAmbient << "\n";
   os << indent << "SelectedSpecular:  " << this->SelectedSpecular << "\n";
   os << indent << "Opacity:           " << this->Opacity << "\n";
+  os << indent << "SliceIntersectionOpacity:           " << this->SliceIntersectionOpacity << "\n";
   os << indent << "Ambient:           " << this->Ambient << "\n";
   os << indent << "Diffuse:           " << this->Diffuse << "\n";
   os << indent << "Specular:          " << this->Specular << "\n";
