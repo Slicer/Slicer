@@ -190,6 +190,19 @@
      </property>
     </widget>
    </item>
+   <item row="4" column="0">
+    <widget class="QCheckBox" name="WholeCellClippingCheckBox">
+      <property name="checked">
+        <bool>false</bool>
+      </property>
+      <property name="text">
+      <string>Keep only whole cells when clipping</string>
+     </property>
+     <property name="toolTip">
+      <string>Keep only whole cells when clipping</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <resources>

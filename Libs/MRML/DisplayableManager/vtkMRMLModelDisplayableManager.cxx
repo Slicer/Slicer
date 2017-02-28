@@ -42,6 +42,8 @@
 #include <vtkAssignAttribute.h>
 #include <vtkCellArray.h>
 #include <vtkExtractGeometry.h>
+#include <vtkExtractPolyDataGeometry.h>
+#include <vtkClipDataSet.h>
 #include <vtkClipPolyData.h>
 #include <vtkColorTransferFunction.h>
 #include <vtkDataSetAttributes.h>
@@ -113,6 +115,7 @@ public:
   int                     RedSliceClipState;
   int                     YellowSliceClipState;
   int                     GreenSliceClipState;
+  int                     ClippingMethod;
   bool                    ClippingOn;
 
   bool                         ModelHierarchiesPresent;
@@ -177,6 +180,7 @@ void vtkMRMLModelDisplayableManager::vtkInternal::CreateClipSlices()
   this->RedSliceClipState = vtkMRMLClipModelsNode::ClipOff;
   this->YellowSliceClipState = vtkMRMLClipModelsNode::ClipOff;
   this->GreenSliceClipState = vtkMRMLClipModelsNode::ClipOff;
+  this->ClippingMethod = vtkMRMLClipModelsNode::Straight;
 
   this->ClippingOn = false;
 }
@@ -242,8 +246,8 @@ void vtkMRMLModelDisplayableManager::PrintSelf ( ostream& os, vtkIndent indent )
   os << indent << "RedSliceClipState = " << this->Internal->RedSliceClipState << "\n";
   os << indent << "YellowSliceClipState = " << this->Internal->YellowSliceClipState << "\n";
   os << indent << "GreenSliceClipState = " << this->Internal->GreenSliceClipState << "\n";
+  os << indent << "ClippingMethod = " << this->Internal->ClippingMethod << "\n";
   os << indent << "ClippingOn = " << (this->Internal->ClippingOn ? "true" : "false") << "\n";
-
   os << indent << "ModelHierarchiesPresent = " << this->Internal->ModelHierarchiesPresent << "\n";
 
   os << indent << "PickedNodeID = " << this->Internal->PickedNodeID.c_str() << "\n";
@@ -319,7 +323,7 @@ int vtkMRMLModelDisplayableManager::UpdateClipSlicesFromMRML()
   int nnodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLSliceNode", snodes);
   for (int n=0; n<nnodes; n++)
     {
-      vtkMRMLSliceNode *node = vtkMRMLSliceNode::SafeDownCast (snodes[n]);
+    vtkMRMLSliceNode *node = vtkMRMLSliceNode::SafeDownCast (snodes[n]);
     // TODO use perhaps SliceLogic to get the name instead of "Red" etc.
     if (!strcmp(node->GetLayoutName(), "Red"))
       {
@@ -417,6 +421,12 @@ int vtkMRMLModelDisplayableManager::UpdateClipSlicesFromMRML()
     this->Internal->YellowSliceClipState = this->Internal->ClipModelsNode->GetYellowSliceClipState();
     }
 
+  if (this->Internal->ClipModelsNode->GetClippingMethod() != this->Internal->ClippingMethod)
+    {
+    modifiedState = 1;
+    this->Internal->ClippingMethod = this->Internal->ClipModelsNode->GetClippingMethod();
+    }
+
   // compute clipping on/off
   if (this->Internal->ClipModelsNode->GetRedSliceClipState() == vtkMRMLClipModelsNode::ClipOff &&
       this->Internal->ClipModelsNode->GetGreenSliceClipState() == vtkMRMLClipModelsNode::ClipOff &&
@@ -492,11 +502,11 @@ void vtkMRMLModelDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller,
       vtkMRMLDisplayableNode::SafeDownCast(caller);
     switch (event)
       {
-       case vtkMRMLDisplayableNode::DisplayModifiedEvent:
+      case vtkMRMLDisplayableNode::DisplayModifiedEvent:
          // don't go any further if the modified display node is not a model
-         if (!this->IsModelDisplayable(displayableNode) &&
-             !this->IsModelDisplayable(
-               reinterpret_cast<vtkMRMLDisplayNode*>(callData)))
+        if (!this->IsModelDisplayable(displayableNode) &&
+            !this->IsModelDisplayable(
+              reinterpret_cast<vtkMRMLDisplayNode*>(callData)))
           {
           requestRender = false;
           break;
@@ -870,7 +880,7 @@ void vtkMRMLModelDisplayableManager::UpdateModelsFromMRML()
         }
       this->UpdateModifiedModel(model);
       }
-    } // end while
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -1314,8 +1324,8 @@ void vtkMRMLModelDisplayableManager::RemoveModelProps()
         }
       else
         {
-        if ((clipIter->second && !this->Internal->ClippingOn) ||
-            (this->Internal->ClippingOn && clipIter->second != clipModel))
+
+        if (clipIter->second  || (this->Internal->ClippingOn && clipIter->second != clipModel))
           {
           this->GetRenderer()->RemoveViewProp(iter->second);
           removedIDs.push_back(iter->first);
@@ -1655,11 +1665,11 @@ const char* vtkMRMLModelDisplayableManager
     {
     if (modelNode->GetMesh())
       {
-     vtkAlgorithmOutput *meshConnection = modelNode->GetMeshConnection();
-     if (meshConnection != NULL)
-       {
-       meshConnection->GetProducer()->Update();
-       }
+      vtkAlgorithmOutput *meshConnection = modelNode->GetMeshConnection();
+      if (meshConnection != NULL)
+        {
+        meshConnection->GetProducer()->Update();
+        }
       }
     activeScalarName =
       modelNode->GetActiveCellScalarName(vtkDataSetAttributes::SCALARS);
@@ -1985,11 +1995,12 @@ vtkAlgorithm* vtkMRMLModelDisplayableManager
 {
   vtkNew<vtkMatrix4x4> transformToWorld;
   transformToWorld->Identity();
+  vtkSmartPointer<vtkImplicitBoolean> slicePlanes;
   if (tnode != 0 && tnode->IsTransformToWorldLinear())
     {
+    slicePlanes = vtkSmartPointer<vtkImplicitBoolean>::New();
     tnode->GetMatrixTransformToWorld(transformToWorld.GetPointer());
 
-    vtkNew<vtkImplicitBoolean> slicePlanes;
 
     if (this->Internal->ClipType == vtkMRMLClipModelsNode::ClipIntersection)
       {
@@ -2041,36 +2052,49 @@ vtkAlgorithm* vtkMRMLModelDisplayableManager
     vtkMatrix4x4::Multiply4x4(transformToWorld.GetPointer(), sliceMatrix, mat.GetPointer());
     planeDirection = (this->Internal->YellowSliceClipState == vtkMRMLClipModelsNode::ClipNegativeSpace) ? -1 : 1;
     this->SetClipPlaneFromMatrix(mat.GetPointer(), planeDirection, yellowSlicePlane.GetPointer());
-
-    if (type == vtkMRMLModelNode::UnstructuredGridMeshType)
+    }
+  else
+    {
+    slicePlanes = this->Internal->SlicePlanes;
+    }
+  if (type == vtkMRMLModelNode::UnstructuredGridMeshType)
+    {
+    if (this->Internal->ClippingMethod == vtkMRMLClipModelsNode::Straight)
       {
-      vtkExtractGeometry* clipper = vtkExtractGeometry::New();
-      //clipper->SetValue(0.0);
-      clipper->SetImplicitFunction(slicePlanes.GetPointer());
+      vtkClipDataSet* clipper = vtkClipDataSet::New();
+      clipper->SetClipFunction(slicePlanes);
       return clipper;
       }
     else
       {
-      vtkClipPolyData* clipper = vtkClipPolyData::New();
-      clipper->SetValue(0.0);
-      clipper->SetClipFunction(slicePlanes.GetPointer());
+      vtkExtractGeometry* clipper = vtkExtractGeometry::New();
+      clipper->SetImplicitFunction(slicePlanes);
+      clipper->ExtractInsideOff();
+      if (this->Internal->ClippingMethod == vtkMRMLClipModelsNode::WholeCellsWithBoundary)
+        {
+        clipper->ExtractBoundaryCellsOn();
+        }
       return clipper;
       }
     }
   else
     {
-    if (type == vtkMRMLModelNode::UnstructuredGridMeshType)
+    if (this->Internal->ClippingMethod == vtkMRMLClipModelsNode::Straight)
       {
-      vtkExtractGeometry* clipper = vtkExtractGeometry::New();
-      //clipper->SetValue(0.0);
-      clipper->SetImplicitFunction(this->Internal->SlicePlanes);
+      vtkClipPolyData* clipper = vtkClipPolyData::New();
+      clipper->SetValue(0.0);
+      clipper->SetClipFunction(slicePlanes);
       return clipper;
       }
     else
       {
-      vtkClipPolyData* clipper = vtkClipPolyData::New();
-      clipper->SetValue(0.0);
-      clipper->SetClipFunction(this->Internal->SlicePlanes);
+      vtkExtractPolyDataGeometry* clipper = vtkExtractPolyDataGeometry::New();
+      clipper->SetImplicitFunction(slicePlanes);
+      clipper->ExtractInsideOff();
+      if (this->Internal->ClippingMethod == vtkMRMLClipModelsNode::WholeCellsWithBoundary)
+        {
+        clipper->ExtractBoundaryCellsOn();
+        }
       return clipper;
       }
     }
