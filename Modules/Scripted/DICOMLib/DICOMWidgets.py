@@ -809,6 +809,17 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
       self.referencesDialog.close()
       self.referencesDialog = None
 
+    warningsInLoadables = False
+    for plugin in self.loadablesByPlugin:
+      for loadable in self.loadablesByPlugin[plugin]:
+        if loadable.warning != "":
+          warningsInLoadables = True
+
+    if warningsInLoadables and not self.advancedView:
+      warning = "Warnings detected during load.  Examine data in Advanced mode for details.  Load anyway?"
+      if not slicer.util.confirmOkCancelDisplay(warning):
+        return
+
     loadableCount = 0
     for plugin in self.loadablesByPlugin:
       for loadable in self.loadablesByPlugin[plugin]:
@@ -827,6 +838,11 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
         loadedNodeIDs.append(node.GetID())
 
     self.addObserver(slicer.mrmlScene, slicer.vtkMRMLScene.NodeAddedEvent, onNodeAdded)
+
+    for plugin in self.loadablesByPlugin:
+      for loadable in self.loadablesByPlugin[plugin]:
+        if progress.wasCanceled:
+          break
 
     for plugin in self.loadablesByPlugin:
       for loadable in self.loadablesByPlugin[plugin]:
