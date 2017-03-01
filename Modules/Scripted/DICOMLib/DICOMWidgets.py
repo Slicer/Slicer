@@ -417,12 +417,22 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
       else:
         pluralOrNot = "s are"
       message = "The following data type%s in your database:\n\n" % pluralOrNot
+      displayedTypeDescriptions = []
       for extension in extensionsToOffer:
-        message += '  ' + extension['typeDescription'] + '\n'
+        typeDescription = extension['typeDescription']
+        if not typeDescription in displayedTypeDescriptions:
+          # only display each data type only once
+          message += '  ' + typeDescription + '\n'
+          displayedTypeDescriptions.append(typeDescription)
       message += "\nThe following extension%s not installed, but may help you work with this data:\n\n" % pluralOrNot
+      displayedExtensionNames = []
       for extension in extensionsToOffer:
-        message += '  ' + extension['name'] + '\n'
-      message += "\n\nYou can install extensions using the Extension Manager option from the View menu."
+        extensionName = extension['name']
+        if not extensionName in displayedExtensionNames:
+          # only display each extension name only once
+          message += '  ' + extensionName + '\n'
+          displayedExtensionNames.append(extensionName)
+      message += "\nYou can install extensions using the Extension Manager option from the View menu."
       slicer.util.infoDisplay(message, windowTitle='DICOM')
 
   def checkForExtensions(self):
