@@ -132,7 +132,7 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
 
     castIn = vtk.vtkImageCast()
     castIn.SetInputData(selectedSegmentLabelmap)
-    castIn.SetOutputScalarTypeToUnsignedLong()
+    castIn.SetOutputScalarTypeToUnsignedInt()
 
     # Identify the islands in the inverted volume and
     # find the pixel that corresponds to the background

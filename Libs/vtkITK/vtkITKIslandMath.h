@@ -14,6 +14,9 @@
 #include "vtkSimpleImageToImageFilter.h"
 
 /// \brief ITK-based utilities for manipulating connected regions in label maps.
+/// Limitation: The filter does not work correctly with input volume that has
+/// unsigned long scalar type on Linux and MacOSX.
+///
 class VTK_ITK_EXPORT vtkITKIslandMath : public vtkSimpleImageToImageFilter
 {
  public:
