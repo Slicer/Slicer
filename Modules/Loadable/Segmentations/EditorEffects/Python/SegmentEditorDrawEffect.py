@@ -39,12 +39,7 @@ a or Enter: apply outline."""
     self.drawPipelines = {}
 
   def setupOptionsFrame(self):
-    self.applyButton = qt.QPushButton("Apply")
-    self.applyButton.objectName = self.__class__.__name__ + 'Apply'
-    self.applyButton.setToolTip("Apply current outline.\nUse the 'a' or 'Enter' hotkey to apply in slice window")
-    self.scriptedEffect.addOptionsWidget(self.applyButton)
-
-    self.applyButton.connect('clicked()', self.onApply)
+    pass
 
   def processInteractionEvents(self, callerInteractor, eventId, viewWidget):
     abortEvent = False
@@ -100,6 +95,7 @@ a or Enter: apply outline."""
       # Get draw pipeline for current slice
       pipeline = self.pipelineForWidget(viewWidget)
       if pipeline is None:
+        logging.error('processViewNodeEvents: Invalid pipeline')
         return
 
       # Make sure all points are on the current slice plane.
@@ -112,13 +108,7 @@ a or Enter: apply outline."""
         if offset > 0.01:
           lineMode = "dashed"
       pipeline.setLineMode(lineMode)
-
-    pipeline.positionActors()
-
-  def onApply(self):
-    for sliceWidget in self.drawPipelines:
-      pipeline = self.drawPipelines[sliceWidget]
-      pipeline.apply()
+      pipeline.positionActors()
 
   def pipelineForWidget(self, sliceWidget):
     if sliceWidget in self.drawPipelines:
@@ -130,7 +120,7 @@ a or Enter: apply outline."""
     # Add actor
     renderer = self.scriptedEffect.renderer(sliceWidget)
     if renderer is None:
-      logging.error("setupPreviewDisplay: Failed to get renderer!")
+      logging.error("pipelineForWidget: Failed to get renderer!")
       return None
     self.scriptedEffect.addActor2D(sliceWidget, pipeline.actor)
 
