@@ -366,6 +366,7 @@ qMRMLModelDisplayNodeWidget::ControlMode qMRMLModelDisplayNodeWidget::scalarRang
     default:
       break;
     }
+  return qMRMLModelDisplayNodeWidget::Data;
 }
 
 //------------------------------------------------------------------------------
