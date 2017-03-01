@@ -39,6 +39,11 @@
 #include <QDebug>
 #include <QTableWidgetItem>
 #include <QColor>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QFile>
+#include <QFileInfo>
+#include <QDir>
 
 //-----------------------------------------------------------------------------
 // TerminologyInfoBundle methods
@@ -256,6 +261,10 @@ void qSlicerTerminologyNavigatorWidgetPrivate::init()
   // Use the CTK color picker
   ctkColorPickerButton::ColorDialogOptions options = ctkColorPickerButton::UseCTKColorDialog;
   this->ColorPickerButton_RecommendedRGB->setDialogOptions(options);
+
+  // Setup load button
+  QObject::connect(this->pushButton_LoadTerminology, SIGNAL(clicked()),
+    q, SLOT(onLoadTerminologyClicked()) );
 
   // Populate terminology combobox with the loaded terminologies
   q->populateTerminologyComboBox();
@@ -1618,6 +1627,72 @@ void qSlicerTerminologyNavigatorWidget::onResetColorClicked()
 {
   Q_D(qSlicerTerminologyNavigatorWidget);
   d->setRecommendedColorFromCurrentTerminology();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTerminologyNavigatorWidget::onLoadTerminologyClicked()
+{
+  Q_D(qSlicerTerminologyNavigatorWidget);
+  const QString& terminologyFileName =
+    QFileDialog::getOpenFileName( this, "Select terminology json file...", QString(),
+      "Json files (*.json);; All files (*)" );
+  if (!terminologyFileName.isEmpty())
+    {
+    vtkSlicerTerminologiesModuleLogic* logic = d->terminologyLogic();
+    if (!logic)
+      {
+      qCritical() << Q_FUNC_INFO << ": Invalid terminology logic";
+      return;
+      }
+    QString loadedContextName = logic->LoadTerminologyFromFile(terminologyFileName.toLatin1().constData()).c_str();
+    if (!loadedContextName.isEmpty())
+      {
+      QMessageBox::information(this, "Load succeeded",
+        QString("Loading terminology context named %1 succeeded").arg(loadedContextName) );
+
+      // Make sure the file can be copied to the settings folder
+      QDir settingsFolder(logic->GetUserTerminologiesPath());
+      if (!settingsFolder.exists())
+        {
+        settingsFolder.mkpath(logic->GetUserTerminologiesPath());
+        }
+      if (!settingsFolder.exists())
+        {
+        qCritical() << Q_FUNC_INFO << ": Settings folder '" << settingsFolder.absolutePath() << "' does not exist. Copying terminology file failed.";
+        return;
+        }
+      QString fileNameOnly = QFileInfo(terminologyFileName).fileName();
+      QString targetFilePath = settingsFolder.absoluteFilePath(fileNameOnly);
+
+      // Check if there is a file with the same name in the settings folder and ask the user in that case
+      if (QFile::exists(targetFilePath))
+        {
+        QString message = QString(tr("There is a terminology file with name '%1' in the stored terminologies.\n\n"
+          "Do you wish to update the stored terminology file with the just loaded one?")).arg(fileNameOnly);
+        QMessageBox::StandardButton answer =
+          QMessageBox::question(NULL, tr("Terminology file exists"), message,
+          QMessageBox::Yes | QMessageBox::No, QMessageBox::No );
+        if (answer == QMessageBox::No)
+          {
+          return;
+          }
+        else
+          {
+          // Remove file before copying (copy function does not overwrite)
+          settingsFolder.remove(fileNameOnly);
+          }
+        }
+
+      // Copy file to settings folder for automatic loading on startup
+      QFile terminologyFile(terminologyFileName);
+      terminologyFile.copy(targetFilePath);
+      }
+    else
+      {
+      QMessageBox::critical(this, "Load failed",
+        QString("Loading terminology from file %1 failed!\nSee error log for details").arg(terminologyFileName) );
+      }
+    }
 }
 
 //-----------------------------------------------------------------------------

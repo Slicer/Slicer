@@ -158,6 +158,10 @@ public:
   /// Convert terminology type object to code identifier
   static CodeIdentifier CodeIdentifierFromTerminologyType(vtkSlicerTerminologyType* type);
 
+public:
+  vtkGetStringMacro(UserTerminologiesPath);
+  vtkSetStringMacro(UserTerminologiesPath);
+
 protected:
   vtkSlicerTerminologiesModuleLogic();
   virtual ~vtkSlicerTerminologiesModuleLogic();
@@ -168,6 +172,12 @@ protected:
   void LoadDefaultTerminologies();
   /// Load default anatomic context dictionaries from JSON into \sa LoadedAnatomicContexts
   void LoadDefaultAnatomicContexts();
+  /// Load terminologies from the user settings directory \sa UserTerminologiesPath
+  void LoadUserTerminologies();
+
+protected:
+  /// The path from which the json files are automatically loaded on startup
+  char* UserTerminologiesPath;
 
 private:
   vtkSlicerTerminologiesModuleLogic(const vtkSlicerTerminologiesModuleLogic&); // Not implemented

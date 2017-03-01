@@ -189,6 +189,8 @@ protected slots:
   void onColorChanged(QColor);
   void onResetColorClicked();
 
+  void onLoadTerminologyClicked();
+
   void onLogicModified();
 
 signals:

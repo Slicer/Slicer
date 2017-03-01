@@ -28,6 +28,7 @@
 // Qt includes
 #include <QDebug> 
 #include <QtPlugin>
+#include <QDir>
 
 // Slicer includes
 #include <qSlicerCoreApplication.h>
@@ -117,5 +118,15 @@ qSlicerAbstractModuleRepresentation * qSlicerTerminologiesModule::createWidgetRe
 //-----------------------------------------------------------------------------
 vtkMRMLAbstractLogic* qSlicerTerminologiesModule::createLogic()
 {
-  return vtkSlicerTerminologiesModuleLogic::New();
+  // Determine the settings folder path
+  QDir settingsDir(qSlicerCoreApplication::application()->slicerUserSettingsFilePath());
+  settingsDir.cdUp(); // Remove Slicer.ini from the path
+  QString settingsDirPath = settingsDir.absolutePath();
+  settingsDirPath.append("/Terminologies");
+
+  // Setup logic
+  vtkSlicerTerminologiesModuleLogic* logic = vtkSlicerTerminologiesModuleLogic::New();
+  logic->SetUserTerminologiesPath(settingsDirPath.toLatin1().constData());
+
+  return logic;
 }
