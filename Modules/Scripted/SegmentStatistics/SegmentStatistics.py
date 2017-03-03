@@ -387,15 +387,18 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
     # Header
     csv = '"' + '","'.join(keys) + '"'
     # Rows
-    for i in self.statistics["Labels"]:
-      csv += str(self.statistics[i,keys[0]])
-      for k in keys[1:]:
-        csv += "," + str(self.statistics[i,k])
+    for segmentID in self.statistics["SegmentIDs"]:
+      csv += "\n" + str(self.statistics[segmentID,keys[0]])
+      for key in keys[1:]:
+        if self.statistics.has_key((segmentID, key)):
+          csv += "," + str(self.statistics[segmentID,key])
+        else:
+          csv += ","
     return csv
 
   def exportToCSVFile(self, fileName, nonEmptyKeysOnly = True):
     fp = open(fileName, "w")
-    fp.write(self.statisticsAsCSV(nonEmptyKeysOnly))
+    fp.write(self.exportToString(nonEmptyKeysOnly))
     fp.close()
 
 class SegmentStatisticsTest(ScriptedLoadableModuleTest):
@@ -422,30 +425,57 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
     """
 
     self.delayDisplay("Starting test_SegmentStatisticsBasic")
-    #
-    # first, get some data
-    #
+
+    import vtkSegmentationCorePython as vtkSegmentationCore
+    import vtkSlicerSegmentationsModuleLogicPython as vtkSlicerSegmentationsModuleLogic
     import SampleData
+    from SegmentStatistics import SegmentStatisticsLogic
+
+    self.delayDisplay("Load master volume")
+
     sampleDataLogic = SampleData.SampleDataLogic()
-    mrHead = sampleDataLogic.downloadMRHead()
-    ctChest = sampleDataLogic.downloadCTChest()
-    self.delayDisplay('Two data sets loaded')
+    masterVolumeNode = sampleDataLogic.downloadMRBrainTumor1()
 
-    volumesLogic = slicer.modules.volumes.logic()
+    self.delayDisplay("Create segmentation containing a few spheres")
 
-    mrHeadLabel = volumesLogic.CreateAndAddLabelVolume( slicer.mrmlScene, mrHead, "mrHead-label" )
+    segmentationNode = slicer.vtkMRMLSegmentationNode()
+    slicer.mrmlScene.AddNode(segmentationNode)
+    segmentationNode.CreateDefaultDisplayNodes()
+    segmentationNode.SetReferenceImageGeometryParameterFromVolumeNode(masterVolumeNode)
 
-    warnings = volumesLogic.CheckForLabelVolumeValidity(ctChest, mrHeadLabel)
+    # Geometry for each segment is defined by: radius, posX, posY, posZ
+    segmentGeometries = [[10, -6,30,28], [20, 0,65,32], [15, 1, -14, 30], [12, 0, 28, -7], [5, 0,30,64], [12, 31, 33, 27], [17, -42, 30, 27]]
+    for segmentGeometry in segmentGeometries:
+      sphereSource = vtk.vtkSphereSource()
+      sphereSource.SetRadius(segmentGeometry[0])
+      sphereSource.SetCenter(segmentGeometry[1], segmentGeometry[2], segmentGeometry[3])
+      sphereSource.Update()
+      segment = vtkSegmentationCore.vtkSegment()
+      segment.SetName(segmentationNode.GetSegmentation().GenerateUniqueSegmentID("Test"))
+      segment.AddRepresentation(vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationClosedSurfaceRepresentationName(), sphereSource.GetOutput())
+      segmentationNode.GetSegmentation().AddSegment(segment)
 
-    self.delayDisplay("Warnings for mismatch:\n%s" % warnings)
+    self.delayDisplay("Compute statistics")
 
-    self.assertNotEqual( warnings, "" )
+    segStatLogic = SegmentStatisticsLogic()
+    segStatLogic.computeStatistics(segmentationNode, masterVolumeNode)
 
-    warnings = volumesLogic.CheckForLabelVolumeValidity(mrHead, mrHeadLabel)
+    self.delayDisplay("Check a few numerical results")
+    self.assertEqual( segStatLogic.statistics["Test_2","LM voxel count"], 9807)
+    self.assertEqual( segStatLogic.statistics["Test_4","GS voxel count"], 380)
 
-    self.delayDisplay("Warnings for match:\n%s" % warnings)
+    self.delayDisplay("Export results to table")
+    resultsTableNode = slicer.vtkMRMLTableNode()
+    slicer.mrmlScene.AddNode(resultsTableNode)
+    segStatLogic.exportToTable(resultsTableNode)
+    segStatLogic.showTable(resultsTableNode)
 
-    self.assertEqual( warnings, "" )
+    self.delayDisplay("Export results to string")
+    logging.info(segStatLogic.exportToString())
+
+    outputFilename = slicer.app.temporaryPath + '/SegmentStatisticsTestOutput.csv'
+    self.delayDisplay("Export results to CSV file: "+outputFilename)
+    segStatLogic.exportToCSVFile(outputFilename)
 
     self.delayDisplay('test_SegmentStatisticsBasic passed!')
 
