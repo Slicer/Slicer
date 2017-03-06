@@ -86,10 +86,6 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
     self.scriptedEffect.setParameterDefault("ModifierSegmentID", "")
     self.scriptedEffect.setParameterDefault("BypassMasking", 1)
 
-  def activate(self):
-    # TODO: is this needed? probably it should be called for all effects on activation
-    self.updateGUIFromMRML()
-
   def modifierSegmentID(self):
     segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
     if not segmentationNode:

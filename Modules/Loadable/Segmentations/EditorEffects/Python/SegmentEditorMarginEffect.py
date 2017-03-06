@@ -104,6 +104,15 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
       self.kernelSizePixel.text = "{0}x{1}x{2} pixels".format(abs(kernelSizePixel[0]), abs(kernelSizePixel[1]), abs(kernelSizePixel[2]))
       self.applyButton.setEnabled(True)
 
+    selectedSegmentLabelmap = self.scriptedEffect.selectedSegmentLabelmap()
+    if selectedSegmentLabelmap:
+      import math
+      selectedSegmentLabelmapSpacing = selectedSegmentLabelmap.GetSpacing()
+      singleStep = min(selectedSegmentLabelmapSpacing)
+      # round to power of 10 (for example: 0.2 -> 0.1; 0.09 -> 0.01) to show "nice" values
+      singleStep = pow(10,math.floor(math.log(singleStep)/math.log(10)))
+      self.marginSizeMmSpinBox.singleStep = singleStep
+
   def growOperationToggled(self, toggled):
     if toggled:
       self.scriptedEffect.setParameter("MarginSizeMm", self.marginSizeMmSpinBox.value)

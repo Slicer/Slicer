@@ -26,12 +26,6 @@ class SegmentEditorSmoothingEffect(AbstractScriptedSegmentEditorEffect):
   def helpText(self):
     return "Smooth selected segment by removing extrusions and filling small holes."
 
-  def activate(self):
-    self.updateGUIFromMRML()
-
-  def deactivate(self):
-    pass
-
   def setupOptionsFrame(self):
 
     self.methodSelectorComboBox = qt.QComboBox()
@@ -148,6 +142,16 @@ class SegmentEditorSmoothingEffect(AbstractScriptedSegmentEditorEffect):
     self.jointTaubinSmoothingFactorSlider.blockSignals(wasBlocked)
 
     self.updateParameterWidgetsVisibility()
+
+    selectedSegmentLabelmap = self.scriptedEffect.selectedSegmentLabelmap()
+    if selectedSegmentLabelmap:
+      import math
+      selectedSegmentLabelmapSpacing = selectedSegmentLabelmap.GetSpacing()
+      singleStep = min(selectedSegmentLabelmapSpacing)
+      # round to power of 10 (for example: 0.2 -> 0.1; 0.09 -> 0.01) to show "nice" values
+      singleStep = pow(10,math.floor(math.log(singleStep)/math.log(10)))
+      self.kernelSizeMmSpinBox.singleStep = singleStep
+      self.gaussianStandardDeviationMmSpinBox.singleStep = singleStep
 
   def updateMRMLFromGUI(self):
     methodIndex = self.methodSelectorComboBox.currentIndex
