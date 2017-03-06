@@ -28,6 +28,7 @@
 // STD includes
 #include <deque>
 #include <map>
+#include <vector>
 
 #include "vtkSegmentationCoreConfigure.h"
 
@@ -110,6 +111,7 @@ protected:  /// Container type for segments. Maps segment IDs to segment objects
   struct SegmentationState
     {
     SegmentsMap Segments;
+    std::vector<std::string> SegmentIds; // order of segments
     };
 
   vtkSegmentation* Segmentation;

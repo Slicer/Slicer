@@ -192,8 +192,9 @@ public:
   ///   present in the existing segments of the segmentation (because we expect all segments
   ///   in a segmentation to contain the same types of representations).
   /// \param segment the segment to observe
+  /// \param insertBeforeSegmentId if specified then the segment is inserted before insertBeforeSegmentId
   /// \return Success flag
-  bool AddSegment(vtkSegment* segment, std::string segmentId="");
+  bool AddSegment(vtkSegment* segment, std::string segmentId = "", std::string insertBeforeSegmentId = "");
 
   /// Generate unique segment ID. If argument is empty then a new ID will be generated in the form "Segment_",
   /// where N is the number of segments. If argument is unique it is returned unchanged. If there is a segment
@@ -230,9 +231,21 @@ public:
   /// Get n-th segment ID. Return with "" if no segment is found by that index.
   std::string GetNthSegmentID(unsigned int index) const;
 
+  /// Get index of segment in the SegmentID list.
+  /// Returns -1 if the segment ID is not in the SegmentID list.
+  /// \sa GetSegmentIDs
+  int GetSegmentIndex(const std::string& segmentId);
+
   /// Changes segment order. Segment order may be used for display and generating merged labelmaps.
   /// \return True if segment index has changed successfully (or the index has already been set).
+  /// \sa ReorderSegments
   bool SetSegmentIndex(const std::string& segmentId, unsigned int newIndex);
+
+  /// Reorder segment IDs so that the list of segment IDs are moved from their current position
+  /// and inserted after the specified segment.
+  /// If insertBeforeSegmentId is empty then segments are moved to the end of the segment list.
+  /// \sa SetSegmentIndex
+  void ReorderSegments(std::vector<std::string> segmentIdsToMove, std::string insertBeforeSegmentId = "");
 
   /// Find segment ID by segment instance
   /// Returns empty string if segment is not found.

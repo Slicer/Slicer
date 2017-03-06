@@ -307,7 +307,7 @@ std::string vtkSegmentation::GenerateUniqueSegmentID(std::string id)
 }
 
 //---------------------------------------------------------------------------
-bool vtkSegmentation::AddSegment(vtkSegment* segment, std::string segmentId/*=""*/)
+bool vtkSegmentation::AddSegment(vtkSegment* segment, std::string segmentId/*=""*/, std::string insertBeforeSegmentId/*=""*/)
 {
   if (!segment)
     {
@@ -444,7 +444,15 @@ bool vtkSegmentation::AddSegment(vtkSegment* segment, std::string segmentId/*=""
     key = this->GenerateUniqueSegmentID(key);
     }
   this->Segments[key] = segment;
-  this->SegmentIds.push_back(key);
+  if (insertBeforeSegmentId.empty())
+    {
+    this->SegmentIds.push_back(key);
+    }
+  else
+    {
+    std::deque< std::string >::iterator insertionPosition = std::find(this->SegmentIds.begin(), this->SegmentIds.end(), insertBeforeSegmentId);
+    this->SegmentIds.insert(insertionPosition, key);
+    }
 
   // Add observation of master representation in new segment
   vtkDataObject* masterRepresentation = segment->GetRepresentation(this->MasterRepresentationName);
@@ -639,6 +647,17 @@ std::string vtkSegmentation::GetNthSegmentID(unsigned int index) const
 }
 
 //---------------------------------------------------------------------------
+int vtkSegmentation::GetSegmentIndex(const std::string& segmentId)
+{
+  std::deque< std::string >::iterator foundIt = std::find(this->SegmentIds.begin(), this->SegmentIds.end(), segmentId);
+  if (foundIt == this->SegmentIds.end())
+    {
+    return -1;
+    }
+  return foundIt - this->SegmentIds.begin();
+}
+
+//---------------------------------------------------------------------------
 bool vtkSegmentation::SetSegmentIndex(const std::string& segmentId, unsigned int newIndex)
 {
   if (newIndex >= this->SegmentIds.size())
@@ -657,6 +676,69 @@ bool vtkSegmentation::SetSegmentIndex(const std::string& segmentId, unsigned int
   this->Modified();
   this->InvokeEvent(vtkSegmentation::SegmentsOrderModified);
   return true;
+}
+
+//---------------------------------------------------------------------------
+void vtkSegmentation::ReorderSegments(std::vector<std::string> segmentIdsToMove, std::string insertBeforeSegmentId /* ="" */)
+{
+  if (segmentIdsToMove.empty())
+    {
+    return;
+    }
+
+  // Remove all segmentIdsToMove from the segment ID list
+  for (std::deque< std::string >::iterator segmentIdIt = this->SegmentIds.begin(); segmentIdIt != this->SegmentIds.end();
+    /*upon deletion the increment is done already, so don't increment here*/)
+    {
+      std::string t = *segmentIdIt;
+      std::vector<std::string>::iterator foundSegmentIdToMove = std::find(segmentIdsToMove.begin(), segmentIdsToMove.end(), t);
+    if (foundSegmentIdToMove != segmentIdsToMove.end())
+      {
+      // this segment gets a new position, so remove it from current position
+      // ### Slicer 4.4: Simplify this logic when adding support for C++11 accross all supported platform/compilers
+      std::deque< std::string >::iterator segmentIdItToRemove = segmentIdIt;
+      ++segmentIdIt;
+      this->SegmentIds.erase(segmentIdItToRemove);
+      if (this->SegmentIds.empty())
+        {
+        // iterators are invalidated if the last element is deleted
+        break;
+        }
+      }
+    else
+      {
+      ++segmentIdIt;
+      }
+    }
+
+  // Find insert position
+  std::deque< std::string >::iterator insertPosition = this->SegmentIds.end();
+  if (!insertBeforeSegmentId.empty())
+    {
+    insertPosition = std::find(this->SegmentIds.begin(), this->SegmentIds.end(), insertBeforeSegmentId);
+    }
+  bool pushBack = (insertPosition == this->SegmentIds.end());
+
+  // Add segments at the insert position
+  for (std::vector<std::string>::const_iterator segmentIdsToMoveIt = segmentIdsToMove.begin();
+    segmentIdsToMoveIt != segmentIdsToMove.end(); ++segmentIdsToMoveIt)
+    {
+    if (this->Segments.find(*segmentIdsToMoveIt) == this->Segments.end())
+      {
+      // segment not found, ignore it
+      continue;
+      }
+    if (pushBack)
+      {
+      this->SegmentIds.push_back(*segmentIdsToMoveIt);
+      }
+    else
+      {
+      this->SegmentIds.insert(insertPosition, *segmentIdsToMoveIt);
+      }
+    }
+  this->Modified();
+  this->InvokeEvent(vtkSegmentation::SegmentsOrderModified);
 }
 
 //---------------------------------------------------------------------------

@@ -919,7 +919,8 @@ bool vtkSlicerSegmentationsModuleLogic::ExportAllSegmentsToLabelmapNode(vtkMRMLS
 }
 
 //-----------------------------------------------------------------------------
-bool vtkSlicerSegmentationsModuleLogic::ImportModelToSegmentationNode(vtkMRMLModelNode* modelNode, vtkMRMLSegmentationNode* segmentationNode)
+bool vtkSlicerSegmentationsModuleLogic::ImportModelToSegmentationNode(vtkMRMLModelNode* modelNode,
+  vtkMRMLSegmentationNode* segmentationNode, std::string insertBeforeSegmentId/*=""*/)
 {
   if (!segmentationNode)
     {
@@ -928,7 +929,7 @@ bool vtkSlicerSegmentationsModuleLogic::ImportModelToSegmentationNode(vtkMRMLMod
     }
   if (!modelNode || !modelNode->GetPolyData())
     {
-    vtkErrorWithObjectMacro(segmentationNode, "ImportLabelmapToSegmentationNode: Invalid model node");
+    vtkErrorWithObjectMacro(segmentationNode, "ImportModelToSegmentationNode: Invalid model node");
     return false;
     }
   vtkSmartPointer<vtkSegment> segment = vtkSmartPointer<vtkSegment>::Take(
@@ -938,13 +939,14 @@ bool vtkSlicerSegmentationsModuleLogic::ImportModelToSegmentationNode(vtkMRMLMod
     return false;
     }
   // Add segment to current segmentation
-  segmentationNode->GetSegmentation()->AddSegment(segment);
+  segmentationNode->GetSegmentation()->AddSegment(segment, "", insertBeforeSegmentId);
   segmentationNode->CreateDefaultDisplayNodes();
   return true;
 }
 
 //-----------------------------------------------------------------------------
-bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLSegmentationNode* segmentationNode)
+bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkMRMLLabelMapVolumeNode* labelmapNode,
+  vtkMRMLSegmentationNode* segmentationNode, std::string insertBeforeSegmentId/*=""*/)
 {
   if (!segmentationNode)
     {
@@ -1061,7 +1063,7 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkMRML
       vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName(),
       labelOrientedImageData );
 
-    segmentationNode->GetSegmentation()->AddSegment(segment);
+    segmentationNode->GetSegmentation()->AddSegment(segment, "", insertBeforeSegmentId);
     } // for each label
 
   segmentationNode->CreateDefaultDisplayNodes();
@@ -1070,7 +1072,8 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkMRML
 }
 
 //-----------------------------------------------------------------------------
-bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkOrientedImageData* labelmapImage, vtkMRMLSegmentationNode* segmentationNode, std::string baseSegmentName/*=""*/)
+bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkOrientedImageData* labelmapImage,
+  vtkMRMLSegmentationNode* segmentationNode, std::string baseSegmentName/*=""*/, std::string insertBeforeSegmentId/*=""*/)
 {
   if (!segmentationNode)
     {
@@ -1148,7 +1151,7 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkOrie
       vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName(),
       labelOrientedImageData );
 
-    segmentationNode->GetSegmentation()->AddSegment(segment);
+    segmentationNode->GetSegmentation()->AddSegment(segment, "", insertBeforeSegmentId);
     } // for each label
 
   segmentationNode->CreateDefaultDisplayNodes();

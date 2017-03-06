@@ -118,6 +118,7 @@ bool vtkSegmentationHistory::SaveState()
 
   std::vector<std::string> segmentIDs;
   this->Segmentation->GetSegmentIDs(segmentIDs);
+  newSegmentationState.SegmentIds = segmentIDs;
   for (std::vector<std::string>::iterator segmentIDIt = segmentIDs.begin(); segmentIDIt != segmentIDs.end(); ++segmentIDIt)
     {
     vtkSegment* segment = this->Segmentation->GetSegment(*segmentIDIt);
@@ -277,6 +278,8 @@ bool vtkSegmentationHistory::RestoreState(unsigned int stateIndex)
       }
     this->Segmentation->RemoveSegment(*segmentIDIt);
     }
+
+  this->Segmentation->ReorderSegments(restoredState.SegmentIds);
 
   this->LastRestoredState = stateIndex;
 
