@@ -196,9 +196,11 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
       # Import multi-label labelmap to segmentation
       segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
       selectedSegmentID = self.scriptedEffect.parameterSetNode().GetSelectedSegmentID()
+      selectedSegmentIndex = segmentationNode.GetSegmentation().GetSegmentIndex(selectedSegmentID)
+      insertBeforeSegmentID = segmentationNode.GetSegmentation().GetNthSegmentID(selectedSegmentIndex + 1)
       selectedSegmentName = segmentationNode.GetSegmentation().GetSegment(selectedSegmentID).GetName()
       slicer.vtkSlicerSegmentationsModuleLogic.ImportLabelmapToSegmentationNode( \
-        multiLabelImage, segmentationNode, selectedSegmentName+" -" )
+        multiLabelImage, segmentationNode, selectedSegmentName+" -", insertBeforeSegmentID )
 
     self.scriptedEffect.modifySelectedSegmentByLabelmap(largestIslandImage, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet)
 
