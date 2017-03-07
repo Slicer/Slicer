@@ -74,6 +74,8 @@ public:
   bool ShowRootItem;
   vtkIdType RootItemID;
 
+  bool ContextMenuEnabled;
+
   QMenu* NodeMenu;
   QAction* RenameAction;
   QAction* DeleteAction;
@@ -105,6 +107,7 @@ qMRMLSubjectHierarchyTreeViewPrivate::qMRMLSubjectHierarchyTreeViewPrivate(qMRML
   , SortFilterModel(NULL)
   , ShowRootItem(true)
   , RootItemID(vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  , ContextMenuEnabled(true)
   , RenameAction(NULL)
   , DeleteAction(NULL)
   , EditAction(NULL)
@@ -136,10 +139,6 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init()
                     q, SLOT(onSelectionChanged(QItemSelection,QItemSelection)) );
   this->SortFilterModel->setParent(q);
   this->SortFilterModel->setSourceModel(this->Model);
-
-  //TODO: this would be desirable to set, but results in showing the scrollbar, which makes
-  //      subject hierarchy much less usable (because there will be two scrollbars)
-  //q->setUniformRowHeights(false);
 
   // Set up headers
   q->header()->setStretchLastSection(false);
@@ -356,6 +355,18 @@ qMRMLSubjectHierarchyModel* qMRMLSubjectHierarchyTreeView::model()const
 }
 
 //--------------------------------------------------------------------------
+int qMRMLSubjectHierarchyTreeView::displayedItemCount()const
+{
+  Q_D(const qMRMLSubjectHierarchyTreeView);
+  int count = this->sortFilterProxyModel()->acceptedItemCount(this->rootItem());
+  if (d->ShowRootItem)
+    {
+    count++;
+    }
+  return count;
+}
+
+//--------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeView::setShowRootItem(bool show)
 {
   Q_D(qMRMLSubjectHierarchyTreeView);
@@ -384,18 +395,27 @@ void qMRMLSubjectHierarchyTreeView::setRootItem(vtkIdType rootItemID)
     return;
     }
 
+  qMRMLSubjectHierarchyModel* sceneModel = qobject_cast<qMRMLSubjectHierarchyModel*>(this->model());
+
   // Reset item in unaffiliated filter (that hides all siblings and their children)
   this->sortFilterProxyModel()->setHideItemsUnaffiliatedWithItemID(vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID);
 
   QModelIndex treeRootIndex;
   if (rootItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
-    qMRMLSubjectHierarchyModel* sceneModel = qobject_cast<qMRMLSubjectHierarchyModel*>(this->model());
     treeRootIndex = sceneModel->invisibleRootItem()->index();
     }
-  if (rootItemID == d->SubjectHierarchyNode->GetSceneItemID())
+  else if (rootItemID == d->SubjectHierarchyNode->GetSceneItemID())
     {
-    treeRootIndex = this->sortFilterProxyModel()->subjectHierarchySceneIndex();
+    if (d->ShowRootItem)
+      {
+      // Scene is a special item, so it needs to be shown, then the invisible root item needs to be root
+      treeRootIndex = sceneModel->invisibleRootItem()->index();
+      }
+    else
+      {
+      treeRootIndex = this->sortFilterProxyModel()->subjectHierarchySceneIndex();
+      }
     }
   else
     {
@@ -424,10 +444,18 @@ vtkIdType qMRMLSubjectHierarchyTreeView::rootItem()const
   Q_D(const qMRMLSubjectHierarchyTreeView);
 
   vtkIdType treeRootItemID = this->sortFilterProxyModel()->subjectHierarchyItemFromIndex(this->rootIndex());
-  if ( d->ShowRootItem && this->mrmlScene()
-    && this->sortFilterProxyModel()->hideItemsUnaffiliatedWithItemID() != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (d->ShowRootItem)
     {
-    treeRootItemID = this->sortFilterProxyModel()->hideItemsUnaffiliatedWithItemID();
+    if (d->RootItemID == d->SubjectHierarchyNode->GetSceneItemID())
+      {
+      // Scene is a special item, so it needs to be shown, then the invisible root item needs to be root.
+      // So in that case no checks are performed
+      return d->RootItemID;
+      }
+    else if (this->sortFilterProxyModel()->hideItemsUnaffiliatedWithItemID() != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+      {
+      treeRootItemID = this->sortFilterProxyModel()->hideItemsUnaffiliatedWithItemID();
+      }
     }
   // Check if stored root item ID matches the actual root item in the tree view
   if (d->RootItemID != treeRootItemID)
@@ -458,6 +486,34 @@ void qMRMLSubjectHierarchyTreeView::setHighlightReferencedItems(bool highlightOn
 {
   Q_D(qMRMLSubjectHierarchyTreeView);
   d->HighlightReferencedItems = highlightOn;
+}
+
+//--------------------------------------------------------------------------
+bool qMRMLSubjectHierarchyTreeView::contextMenuEnabled()const
+{
+  Q_D(const qMRMLSubjectHierarchyTreeView);
+  return d->ContextMenuEnabled;
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::setContextMenuEnabled(bool enabled)
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  d->ContextMenuEnabled = enabled;
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::setAttributeFilter(const QString& attributeName, const QVariant& attributeValue/*=QVariant()*/)
+{
+  this->sortFilterProxyModel()->setAttributeNameFilter(attributeName);
+  this->sortFilterProxyModel()->setAttributeValueFilter(attributeValue.toString());
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::removeAttributeFilter()
+{
+  this->sortFilterProxyModel()->setAttributeNameFilter(QString());
+  this->sortFilterProxyModel()->setAttributeValueFilter(QString());
 }
 
 //------------------------------------------------------------------------------
@@ -556,6 +612,11 @@ void qMRMLSubjectHierarchyTreeView::mousePressEvent(QMouseEvent* e)
   // Not the right button clicked, handle events the default way
   if (e->button() == Qt::RightButton)
     {
+    if (!d->ContextMenuEnabled)
+      {
+      return;
+      }
+
     QModelIndex index = this->indexAt(e->pos()); // Get the index of the current column
     vtkIdType itemID = this->sortFilterProxyModel()->subjectHierarchyItemFromIndex(index);
 

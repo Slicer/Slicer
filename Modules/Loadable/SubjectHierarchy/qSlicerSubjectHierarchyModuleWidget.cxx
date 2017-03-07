@@ -157,6 +157,17 @@ void qSlicerSubjectHierarchyModuleWidget::setup()
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyModuleWidget::setMRMLScene(vtkMRMLScene* scene)
+{
+  Q_D(qSlicerSubjectHierarchyModuleWidget);
+
+  Superclass::setMRMLScene(scene);
+
+  // Set tree root item to be the new scene
+  d->SubjectHierarchyTreeView->setRootItem(d->SubjectHierarchyTreeView->subjectHierarchyNode()->GetSceneItemID());
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyModuleWidget::setMRMLIDsVisible(bool visible)
 {
   Q_D(qSlicerSubjectHierarchyModuleWidget);

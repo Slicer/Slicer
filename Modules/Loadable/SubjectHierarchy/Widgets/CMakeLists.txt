@@ -24,6 +24,8 @@ set(${KIT}_SRCS
   qMRMLSortFilterSubjectHierarchyProxyModel.h
   qMRMLSubjectHierarchyTreeView.cxx
   qMRMLSubjectHierarchyTreeView.h
+  qMRMLSubjectHierarchyComboBox.cxx
+  qMRMLSubjectHierarchyComboBox.h
   qSlicerSubjectHierarchyPluginLogic.cxx
   qSlicerSubjectHierarchyPluginLogic.h
   qSlicerSubjectHierarchyAbstractPlugin.cxx
@@ -59,6 +61,7 @@ set(${KIT}_MOC_SRCS
   qSlicerSubjectHierarchyFolderPlugin.h
   qMRMLTransformItemDelegate.h
   qMRMLSubjectHierarchyTreeView.h
+  qMRMLSubjectHierarchyComboBox.h
   qMRMLSubjectHierarchyModel.h
   qMRMLSortFilterSubjectHierarchyProxyModel.h
   )

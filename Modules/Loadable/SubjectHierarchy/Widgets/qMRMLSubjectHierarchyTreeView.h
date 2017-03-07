@@ -53,6 +53,8 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyTreeV
   ///   Referenced SOP instance UIDs (in attribute named vtkMRMLSubjectHierarchyConstants::GetDICOMReferencedInstanceUIDsAttributeName())
   ///   -> SH item instance UIDs (serialized string lists in subject hierarchy UID vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName())
   Q_PROPERTY(bool highlightReferencedItems READ highlightReferencedItems WRITE setHighlightReferencedItems)
+  /// Flag determining whether context menu is enabled
+  Q_PROPERTY(bool contextMenuEnabled READ contextMenuEnabled WRITE setContextMenuEnabled)
 
 public:
   typedef QTreeView Superclass;
@@ -60,11 +62,11 @@ public:
   virtual ~qMRMLSubjectHierarchyTreeView();
 
 public:
-  vtkMRMLScene* mrmlScene()const;
-  vtkMRMLSubjectHierarchyNode* subjectHierarchyNode()const;
+  Q_INVOKABLE vtkMRMLScene* mrmlScene()const;
+  Q_INVOKABLE vtkMRMLSubjectHierarchyNode* subjectHierarchyNode()const;
 
-  vtkIdType currentItem()const;
-  vtkIdType rootItem()const;
+  Q_INVOKABLE vtkIdType currentItem()const;
+  Q_INVOKABLE vtkIdType rootItem()const;
 
   void setShowRootItem(bool show);
   bool showRootItem()const;
@@ -72,8 +74,22 @@ public:
   bool highlightReferencedItems()const;
   void setHighlightReferencedItems(bool highlightOn);
 
+  bool contextMenuEnabled()const;
+  void setContextMenuEnabled(bool enabled);
+
+  /// Set attribute filter that allows showing only items that have the specified attribute and their parents.
+  /// \param attributeName Name of the attribute by which the items are filtered
+  /// \param attributeValue Value of the specified attribute that needs to match this given value in order
+  ///   for it to be shown. If empty, then existence of the attribute is enough to show. Empty by default
+  Q_INVOKABLE void setAttributeFilter(const QString& attributeName, const QVariant& attributeValue=QVariant());
+  /// Remove item attribute filtering \sa setAttribute
+  Q_INVOKABLE void removeAttributeFilter();
+
   Q_INVOKABLE qMRMLSortFilterSubjectHierarchyProxyModel* sortFilterProxyModel()const;
   Q_INVOKABLE qMRMLSubjectHierarchyModel* model()const;
+
+  /// Determine the number of shown items
+  Q_INVOKABLE int displayedItemCount()const;
 
   virtual bool clickDecoration(const QModelIndex& index);
 
@@ -139,7 +155,6 @@ public slots:
   virtual void setMultiSelection(bool multiSelectionOn);
 
 signals:
-  /// Note: vtkMRMLSubjectHierarchyNode namespace needed in order to be able to make connection
   void currentItemChanged(vtkIdType);
 
 protected slots:
@@ -166,6 +181,7 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qMRMLSubjectHierarchyTreeView);
   Q_DISABLE_COPY(qMRMLSubjectHierarchyTreeView);
+  friend class qMRMLSubjectHierarchyComboBox;
 };
 
 #endif

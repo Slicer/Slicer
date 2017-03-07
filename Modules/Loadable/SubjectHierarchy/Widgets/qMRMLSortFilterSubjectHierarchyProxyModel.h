@@ -31,6 +31,7 @@
 
 // CTK includes
 #include <ctkVTKObject.h>
+#include <ctkPimpl.h>
 
 class qMRMLSortFilterSubjectHierarchyProxyModelPrivate;
 class vtkMRMLSubjectHierarchyNode;
@@ -43,10 +44,16 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSortFilterSubjectHier
   Q_OBJECT
   QVTK_OBJECT
 
-  /// Search string showing only items that contain the string in their names. Empty by default
+  /// Filter to show only items that contain the string in their names. Empty by default
   Q_PROPERTY(QString nameFilter READ nameFilter WRITE setNameFilter)
+  /// Filter to show only items that contain an attribute with this name. Empty by default
+  Q_PROPERTY(QString attributeNameFilter READ attributeNameFilter WRITE setAttributeNameFilter)
+  /// Filter to show only items that contain an attribute with \sa attributeNameFilter (must be set)
+  /// with this value. If empty, then existence of the attribute is enough to show
+  /// Exact match is required. Empty by default
+  Q_PROPERTY(QString attributeValueFilter READ attributeValueFilter WRITE setAttributeValueFilter)
   /// This property controls whether items unaffiliated with a given subject hierarchy item are hidden or not.
-  /// All the nodes are visible (invalid item ID - vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID) by default.
+  /// All the nodes are visible (invalid item ID - vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID) by default
   Q_PROPERTY(vtkIdType hideItemsUnaffiliatedWithItemID READ hideItemsUnaffiliatedWithItemID WRITE setHideItemsUnaffiliatedWithItemID)
 
 public:
@@ -57,8 +64,12 @@ public:
   Q_INVOKABLE vtkMRMLSubjectHierarchyNode* subjectHierarchyNode()const;
   Q_INVOKABLE vtkMRMLScene* mrmlScene()const;
 
-  QString nameFilter();
+  QString nameFilter()const;
   void setNameFilter(QString filter);
+  QString attributeNameFilter()const;
+  void setAttributeNameFilter(QString filter);
+  QString attributeValueFilter()const;
+  void setAttributeValueFilter(QString filter);
 
   vtkIdType hideItemsUnaffiliatedWithItemID();
   void setHideItemsUnaffiliatedWithItemID(vtkIdType itemID);
@@ -71,6 +82,10 @@ public:
 
   /// Retrieve an index for a given a subject hierarchy item ID
   Q_INVOKABLE QModelIndex indexFromSubjectHierarchyItem(vtkIdType itemID, int column=0)const;
+
+  /// Determine the number of accepted (shown) items
+  /// \param rootItemID Ancestor item of branch in which the accepted items are counted
+  Q_INVOKABLE int acceptedItemCount(vtkIdType rootItemID)const;
 
 protected:
   /// Returns true if the item in the row indicated by the given sourceRow and

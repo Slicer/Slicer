@@ -57,9 +57,6 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyModel
   /// A value of -1 hides it. First column (0) by default.
   /// If no property is set in a column, nothing is displayed.
   Q_PROPERTY (int nameColumn READ nameColumn WRITE setNameColumn)
-  /// Control in which column the data MRML node IDs are displayed (Qt::DisplayRole).
-  /// A value of -1 hides it. Hidden by default (value of -1)
-  Q_PROPERTY (int idColumn READ idColumn WRITE setIDColumn)
   /// Control in which column data MRML node visibility are displayed (Qt::DecorationRole).
   /// A value of -1 hides it. Hidden by default (value of -1).
   Q_PROPERTY (int visibilityColumn READ visibilityColumn WRITE setVisibilityColumn)
@@ -68,6 +65,9 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyModel
   /// the current transform is selected. The user can change the transform using the combobox.
   /// A value of -1 (default) hides the column
   Q_PROPERTY (int transformColumn READ transformColumn WRITE setTransformColumn)
+  /// Control in which column the data MRML node IDs are displayed (Qt::DisplayRole).
+  /// A value of -1 hides it. Hidden by default (value of -1)
+  Q_PROPERTY (int idColumn READ idColumn WRITE setIDColumn)
 
 public:
   typedef QStandardItemModel Superclass;
@@ -90,14 +90,14 @@ public:
   int nameColumn()const;
   void setNameColumn(int column);
 
-  int idColumn()const;
-  void setIDColumn(int column);
-
   int visibilityColumn()const;
   void setVisibilityColumn(int column);
 
   int transformColumn()const;
   void setTransformColumn(int column);
+
+  int idColumn()const;
+  void setIDColumn(int column);
 
   virtual Qt::DropActions supportedDropActions()const;
   virtual QMimeData* mimeData(const QModelIndexList& indexes)const;

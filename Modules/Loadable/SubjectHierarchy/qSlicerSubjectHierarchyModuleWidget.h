@@ -47,6 +47,9 @@ public:
   Q_INVOKABLE qSlicerSubjectHierarchyPluginLogic* pluginLogic();
   Q_INVOKABLE void setPluginLogic(qSlicerSubjectHierarchyPluginLogic* pluginLogic);
 
+public slots:
+  virtual void setMRMLScene(vtkMRMLScene* scene);
+
 protected slots:
   /// Show or hide MRML IDs
   void setMRMLIDsVisible(bool visible);
