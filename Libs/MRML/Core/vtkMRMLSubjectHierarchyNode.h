@@ -294,6 +294,9 @@ public:
   /// Generate unique item name
   std::string GenerateUniqueItemName(std::string name);
 
+  /// Get number of items under the scene, excluding the scene
+  int GetNumberOfItems();
+
   /// Print subject hierarchy item info on stream
   void PrintItem(vtkIdType itemID, ostream& os, vtkIndent indent);
 

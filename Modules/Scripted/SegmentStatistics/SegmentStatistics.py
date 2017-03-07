@@ -3,7 +3,6 @@ import unittest
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 import logging
-from SubjectHierarchyPlugins import SegmentStatisticsSubjectHierarchyPlugin
 
 #
 # SegmentStatistics
@@ -39,8 +38,9 @@ Supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.
 
   def setup(self):
     # Register subject hierarchy plugin
+    import SubjectHierarchyPlugins
     scriptedPlugin = slicer.qSlicerSubjectHierarchyScriptedPlugin(None)
-    scriptedPlugin.setPythonSource(SegmentStatisticsSubjectHierarchyPlugin.filePath)
+    scriptedPlugin.setPythonSource(SubjectHierarchyPlugins.SegmentStatisticsSubjectHierarchyPlugin.filePath)
 
 #
 # SegmentStatisticsWidget
@@ -520,6 +520,14 @@ class SegmentStatisticsSlicelet(Slicelet):
 
   def __init__(self):
     super(SegmentStatisticsSlicelet,self).__init__(SegmentStatisticsWidget)
+
+#
+# Class for avoiding python error that is caused by the method SegmentStatistics::setup
+# http://www.na-mic.org/Bug/view.php?id=3871
+#
+class SegmentStatisticsFileWriter:
+  def __init__(self, parent):
+    pass
 
 
 if __name__ == "__main__":

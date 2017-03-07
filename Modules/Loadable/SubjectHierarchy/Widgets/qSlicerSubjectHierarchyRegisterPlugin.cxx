@@ -69,6 +69,7 @@ public:
 public:
   QAction* RegisterThisAction;
   QAction* RegisterToAction;
+  QAction* CancelAction;
   QSharedPointer<QMenu> RegistrationMethodsSubMenu;
 };
 
@@ -78,9 +79,10 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyRegisterPluginPrivate::qSlicerSubjectHierarchyRegisterPluginPrivate(qSlicerSubjectHierarchyRegisterPlugin& object)
 : q_ptr(&object)
+, RegisterThisAction(NULL)
+, RegisterToAction(NULL)
+, CancelAction(NULL)
 {
-  this->RegisterThisAction = NULL;
-  this->RegisterToAction = NULL;
 }
 
 //-----------------------------------------------------------------------------
@@ -105,14 +107,15 @@ void qSlicerSubjectHierarchyRegisterPluginPrivate::init()
 {
   Q_Q(qSlicerSubjectHierarchyRegisterPlugin);
 
+  // Initial action
   this->RegisterThisAction = new QAction("Register this...",q);
   this->RegisterThisAction->setToolTip(tr("Select volume as moving image for registration. "
                                           "Second volume can be selected from context menu after the first one has been set."));
   QObject::connect(this->RegisterThisAction, SIGNAL(triggered()), q, SLOT(registerCurrentItemTo()));
 
+  // Actions for the registration methods
   this->RegisterToAction = new QAction("Register * to this using...",q);
 
-  // Actions for the registration methods
   this->RegistrationMethodsSubMenu = QSharedPointer<QMenu>(new QMenu());
   this->RegisterToAction->setMenu(this->RegistrationMethodsSubMenu.data());
 
@@ -127,6 +130,11 @@ void qSlicerSubjectHierarchyRegisterPluginPrivate::init()
   QAction* interactiveLandmarkAction = new QAction("Interactive landmark registration",q);
   QObject::connect(interactiveLandmarkAction, SIGNAL(triggered()), q, SLOT(registerInteractiveLandmark()));
   this->RegistrationMethodsSubMenu->addAction(interactiveLandmarkAction);
+
+  // Cancel action
+  this->CancelAction = new QAction("Cancel registration (or right-click another volume to start registration)",q);
+  this->CancelAction->setToolTip(tr("Right-click another volume to select second volume and start registration"));
+  QObject::connect(this->CancelAction, SIGNAL(triggered()), q, SLOT(cancel()));
 }
 
 //-----------------------------------------------------------------------------
@@ -140,7 +148,7 @@ QList<QAction*> qSlicerSubjectHierarchyRegisterPlugin::itemContextMenuActions()c
   Q_D(const qSlicerSubjectHierarchyRegisterPlugin);
 
   QList<QAction*> actions;
-  actions << d->RegisterThisAction << d->RegisterToAction;
+  actions << d->RegisterThisAction << d->RegisterToAction << d->CancelAction;
   return actions;
 }
 
@@ -177,6 +185,11 @@ void qSlicerSubjectHierarchyRegisterPlugin::showContextMenuActionsForItem(vtkIdT
     else if (currentItemID != this->m_RegisterFromItem)
       {
       d->RegisterToAction->setVisible(true);
+      }
+    // Show cancel action if 'from' item is saved, and the same item is selected
+    else
+      {
+      d->CancelAction->setVisible(true);
       }
     }
 }
@@ -441,6 +454,13 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerInteractiveLandmark()
       }
     }
 
+  // Reset saved 'from' item
+  this->m_RegisterFromItem = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyRegisterPlugin::cancel()
+{
   // Reset saved 'from' item
   this->m_RegisterFromItem = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
 }

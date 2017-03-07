@@ -76,6 +76,9 @@ protected slots:
   /// input items, offer a best guess parameter set based on modalities etc.)
   void registerInteractiveLandmark();
 
+  /// Cancel registration (un-select first volume)
+  void cancel();
+
 protected:
   vtkIdType m_RegisterFromItem;
 

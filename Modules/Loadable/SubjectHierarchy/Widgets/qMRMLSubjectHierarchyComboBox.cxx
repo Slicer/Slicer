@@ -137,7 +137,6 @@ void qMRMLSubjectHierarchyComboBox::setMRMLScene(vtkMRMLScene* scene)
 
   // Set tree root item to be the new scene, and disable showing it
   d->TreeView->setRootItem(d->TreeView->subjectHierarchyNode()->GetSceneItemID());
-  d->TreeView->setShowRootItem(false);
 }
 
 //------------------------------------------------------------------------------

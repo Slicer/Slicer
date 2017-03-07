@@ -46,6 +46,10 @@
 #include <vtkMRMLScene.h>
 #include <vtkMRMLNode.h>
 
+// VTK includes
+#include <vtkCallbackCommand.h>
+#include <vtkSmartPointer.h>
+
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_SubjectHierarchy
 class qSlicerSubjectHierarchyModuleWidgetPrivate: public Ui_qSlicerSubjectHierarchyModule
@@ -60,6 +64,9 @@ public:
 public:
   /// Subject hierarchy plugin logic
   qSlicerSubjectHierarchyPluginLogic* PluginLogic;
+
+  /// Callback object to get notified about item modified events
+  vtkSmartPointer<vtkCallbackCommand> CallBack;
 };
 
 //-----------------------------------------------------------------------------
@@ -70,6 +77,9 @@ qSlicerSubjectHierarchyModuleWidgetPrivate::qSlicerSubjectHierarchyModuleWidgetP
   : q_ptr(&object)
   , PluginLogic(NULL)
 {
+  this->CallBack = vtkSmartPointer<vtkCallbackCommand>::New();
+  this->CallBack->SetClientData(q_ptr);
+  this->CallBack->SetCallback(qSlicerSubjectHierarchyModuleWidget::onSubjectHierarchyItemEvent);
 }
 
 //-----------------------------------------------------------------------------
@@ -231,10 +241,74 @@ void qSlicerSubjectHierarchyModuleWidget::setInfoLabelFromSubjectHierarchyItem(v
     std::stringstream infoStream;
     shNode->PrintItem(itemID, infoStream, vtkIndent(0));
     d->SubjectHierarchyItemInfoLabel->setText(QLatin1String(infoStream.str().c_str()));
+
+    // Connect node for updating info label
+    if (!shNode->HasObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent, d->CallBack))
+      {
+      shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent, d->CallBack, -10.0);
+      }
     }
   else
     {
     d->SubjectHierarchyItemInfoLabel->setText("No item selected");
+    }
+
+  // Store item ID in the label object
+  d->SubjectHierarchyItemInfoLabel->setProperty("itemID", itemID);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyModuleWidget::onSubjectHierarchyItemEvent(
+  vtkObject* caller, unsigned long event, void* clientData, void* callData )
+{
+  vtkMRMLSubjectHierarchyNode* shNode = reinterpret_cast<vtkMRMLSubjectHierarchyNode*>(caller);
+  qSlicerSubjectHierarchyModuleWidget* widget = reinterpret_cast<qSlicerSubjectHierarchyModuleWidget*>(clientData);
+  if (!widget || !shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid event parameters";
+    return;
+    }
+
+  // Get item ID
+  vtkIdType itemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+  if (callData)
+    {
+    vtkIdType* itemIdPtr = reinterpret_cast<vtkIdType*>(callData);
+    if (itemIdPtr)
+      {
+      itemID = *itemIdPtr;
+      }
+    }
+
+  switch (event)
+    {
+    case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent:
+      widget->onSubjectHierarchyItemModified(itemID);
+      break;
+    }
+}
+
+//------------------------------------------------------------------------------
+void qSlicerSubjectHierarchyModuleWidget::onSubjectHierarchyItemModified(vtkIdType itemID)
+{
+  Q_D(qSlicerSubjectHierarchyModuleWidget);
+
+  // Get displayed item's ID from label object
+  vtkIdType displayedItemID = d->SubjectHierarchyItemInfoLabel->property("itemID").toLongLong();
+
+  // Update label if the displayed item is the one that changed
+  if (displayedItemID == itemID && displayedItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    vtkMRMLSubjectHierarchyNode* shNode = d->SubjectHierarchyTreeView->subjectHierarchyNode();
+    if (!shNode)
+      {
+      qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
+      return;
+      }
+
+    std::stringstream infoStream;
+    shNode->PrintItem(itemID, infoStream, vtkIndent(0));
+    d->SubjectHierarchyItemInfoLabel->setText(QLatin1String(infoStream.str().c_str()));
     }
 }
 

@@ -1,4 +1,3 @@
-import os
 import vtk, qt, ctk, slicer
 import logging
 from AbstractScriptedSubjectHierarchyPlugin import *
@@ -57,7 +56,8 @@ class SegmentStatisticsSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPl
     return ""
 
   def icon(self, itemID):
-    # As this plugin cannot own any items, it doesn't have an icon either
+    # As this plugin cannot own any items, it doesn't have an icon eitherimport os
+    # import os
     # iconPath = os.path.join(os.path.dirname(__file__), 'Resources/Icons/MyIcon.png')
     # if self.canOwnSubjectHierarchyItem(itemID) > 0.0 and os.path.exists(iconPath):
       # return qt.QIcon(iconPath)

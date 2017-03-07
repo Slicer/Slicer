@@ -3,7 +3,6 @@ import unittest
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import VTKObservationMixin
-from SubjectHierarchyPlugins import SegmentEditorSubjectHierarchyPlugin
 
 #
 # SegmentEditor
@@ -29,8 +28,9 @@ and Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO)
 
   def setup(self):
     # Register subject hierarchy plugin
+    import SubjectHierarchyPlugins
     scriptedPlugin = slicer.qSlicerSubjectHierarchyScriptedPlugin(None)
-    scriptedPlugin.setPythonSource(SegmentEditorSubjectHierarchyPlugin.filePath)
+    scriptedPlugin.setPythonSource(SubjectHierarchyPlugins.SegmentEditorSubjectHierarchyPlugin.filePath)
 
 #
 # SegmentEditorWidget
@@ -173,3 +173,11 @@ class SegmentEditorTest(ScriptedLoadableModuleTest):
     """
     self.delayDisplay("Starting the test")
     self.delayDisplay('Test passed!')
+
+#
+# Class for avoiding python error that is caused by the method SegmentEditor::setup
+# http://www.na-mic.org/Bug/view.php?id=3871
+#
+class SegmentEditorFileWriter:
+  def __init__(self, parent):
+    pass

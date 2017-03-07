@@ -173,7 +173,6 @@ protected slots:
   virtual void onMRMLSceneClosed(vtkMRMLScene* scene);
   virtual void onMRMLSceneStartBatchProcess(vtkMRMLScene* scene);
   virtual void onMRMLSceneEndBatchProcess(vtkMRMLScene* scene);
-  virtual void onSubjectHierarchyNodeModified();
   virtual void onSubjectHierarchyNodeRemoved();
 
   virtual void onItemChanged(QStandardItem* item);

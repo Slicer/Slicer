@@ -1,4 +1,3 @@
-import os
 import vtk, qt, ctk, slicer
 import logging
 from AbstractScriptedSubjectHierarchyPlugin import *
@@ -52,6 +51,7 @@ class AnnotationsSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin):
     return ""
 
   def icon(self, itemID):
+    import os
     pluginHandlerSingleton = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
     shNode = pluginHandlerSingleton.subjectHierarchyNode()
     associatedNode = shNode.GetItemDataNode(itemID);

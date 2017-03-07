@@ -1,4 +1,3 @@
-import os
 import vtk, qt, ctk, slicer
 import logging
 from AbstractScriptedSubjectHierarchyPlugin import *
@@ -19,7 +18,7 @@ class SegmentEditorSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin
     scriptedPlugin.name = 'SegmentEditor'
     AbstractScriptedSubjectHierarchyPlugin.__init__(self, scriptedPlugin)
 
-    self.segmentEditorAction = qt.QAction("Segment this using segment editor", scriptedPlugin)
+    self.segmentEditorAction = qt.QAction("Segment this...", scriptedPlugin)
     self.segmentEditorAction.connect("triggered()", self.onSegment)
 
   def canAddNodeToSubjectHierarchy(self, node, parentItemID):
@@ -58,6 +57,7 @@ class SegmentEditorSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin
 
   def icon(self, itemID):
     # As this plugin cannot own any items, it doesn't have an icon either
+    # import os
     # iconPath = os.path.join(os.path.dirname(__file__), 'Resources/Icons/MyIcon.png')
     # if self.canOwnSubjectHierarchyItem(itemID) > 0.0 and os.path.exists(iconPath):
       # return qt.QIcon(iconPath)

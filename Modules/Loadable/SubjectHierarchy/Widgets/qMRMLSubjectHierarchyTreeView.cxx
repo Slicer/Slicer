@@ -105,7 +105,7 @@ qMRMLSubjectHierarchyTreeViewPrivate::qMRMLSubjectHierarchyTreeViewPrivate(qMRML
   : q_ptr(&object)
   , Model(NULL)
   , SortFilterModel(NULL)
-  , ShowRootItem(true)
+  , ShowRootItem(false)
   , RootItemID(vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   , ContextMenuEnabled(true)
   , RenameAction(NULL)

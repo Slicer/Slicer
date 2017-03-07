@@ -247,8 +247,7 @@ void qSlicerSubjectHierarchyFolderPlugin::showContextMenuActionsForItem(vtkIdTyp
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyFolderPlugin::editProperties(vtkIdType itemID)
 {
-  //TODO: Go to Models, select model hierarchy node
-  Q_UNUSED(itemID);
+  qSlicerSubjectHierarchyPluginHandler::instance()->defaultPlugin()->editProperties(itemID);
 }
 
 //---------------------------------------------------------------------------

@@ -45,8 +45,8 @@
 
 //----------------------------------------------------------------------------
 const vtkIdType vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID = VTK_UNSIGNED_LONG_MAX;
-const std::string vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_SEPARATOR = std::string(";");
-const std::string vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_NAME_VALUE_SEPARATOR = std::string(":");
+const std::string vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_SEPARATOR = std::string("|");
+const std::string vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_NAME_VALUE_SEPARATOR = std::string("^");
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLSubjectHierarchyNode);
@@ -288,7 +288,7 @@ vtkIdType vtkSubjectHierarchyItem::AddToTree(
   if (vtkSubjectHierarchyItem::NextSubjectHierarchyItemID == VTK_UNSIGNED_LONG_MAX)
     {
     // There is a negligible chance that it reaches maximum, report error in that case
-    vtkErrorMacro("AddItemToTree: Next subject hierarchy item ID reached its maximum value! Item is not added to the tree");
+    vtkErrorMacro("AddToTree: Next subject hierarchy item ID reached its maximum value! Item is not added to the tree");
     return vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
     }
 
@@ -308,7 +308,7 @@ vtkIdType vtkSubjectHierarchyItem::AddToTree(
             || (!name.compare("UnresolvedItems") && !level.compare("UnresolvedItems")) ) )
     {
     // Only the scene item or the unresolved items parent can have NULL parent
-    vtkErrorMacro("AddItemToTree: Invalid parent of non-scene item to add");
+    vtkErrorMacro("AddToTree: Invalid parent of non-scene item to add");
     }
 
   this->InvokeEvent(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAddedEvent, this);
@@ -325,7 +325,7 @@ vtkIdType vtkSubjectHierarchyItem::AddToTree(
   if (vtkSubjectHierarchyItem::NextSubjectHierarchyItemID == VTK_UNSIGNED_LONG_MAX)
     {
     // There is a negligible chance that it reaches maximum, but if it happens then report error
-    vtkErrorMacro("AddItemToTree: Next subject hierarchy item ID reached its maximum value! Item is not added to the tree");
+    vtkErrorMacro("AddToTree: Next subject hierarchy item ID reached its maximum value! Item is not added to the tree");
     return vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
     }
 
@@ -343,7 +343,7 @@ vtkIdType vtkSubjectHierarchyItem::AddToTree(
     }
   else
     {
-    vtkErrorMacro("AddItemToTree: Invalid parent of non-scene item to add");
+    vtkErrorMacro("AddToTree: Invalid parent of non-scene item to add");
     }
 
   this->InvokeEvent(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAddedEvent, this);
@@ -589,7 +589,7 @@ void vtkSubjectHierarchyItem::DeepCopy(vtkSubjectHierarchyItem* item)
   // Skip copying ID. Duplicate IDs potentially cause problems
   // Usually copying is related to scene or scene view operations, so the copied items will end up
   // in UnresolvedItems and need to be resolved. Otherwise they need to be added to the tree
-  // explicitly using AddItemToTree
+  // explicitly using AddToTree
   this->DataNode = item->DataNode;
   this->Name = item->Name;
   this->Level = item->Level;
@@ -949,6 +949,7 @@ bool vtkSubjectHierarchyItem::Move(vtkSubjectHierarchyItem* beforeItem)
     return false;
     }
   this->Parent->Children.insert(beforeIt, thisPointer);
+  this->Parent->Modified();
 
   return true;
 }
@@ -1433,6 +1434,14 @@ bool vtkMRMLSubjectHierarchyNode::vtkInternal::ResolveUnresolvedItems()
         {
         idMap[item->TemporaryID] = item->AddToTree(parentItem, item->Name, item->Level);
         }
+      // Create observations for added item
+      item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAddedEvent, this->External->ItemEventCallbackCommand);
+      item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAboutToBeRemovedEvent, this->External->ItemEventCallbackCommand);
+      item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemRemovedEvent, this->External->ItemEventCallbackCommand);
+      item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemUIDAddedEvent, this->External->ItemEventCallbackCommand);
+      item->AddObserver(vtkCommand::ModifiedEvent, this->External->ItemEventCallbackCommand);
+
+      // Clear temporary ID now that it is resolved
       item->TemporaryID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
 
       // Item successfully resolved and added. Remove it from unresolved items and restart search for resolvable item
@@ -2033,10 +2042,7 @@ void vtkMRMLSubjectHierarchyNode::SetItemParent(vtkIdType itemID, vtkIdType pare
     }
 
   // Perform reparenting
-  if (item->Reparent(parentItem))
-    {
-    //this->Modified(); //TODO: Needed? SH node modified event should be used for updating the whole view (every item)
-    }
+  item->Reparent(parentItem);
 }
 
 //----------------------------------------------------------------------------
@@ -2109,12 +2115,7 @@ bool vtkMRMLSubjectHierarchyNode::ReparentItemByDataNode(vtkIdType itemID, vtkMR
     }
 
   // Perform reparenting
-  if (item->Reparent(newParentItem))
-    {
-    //this->Modified(); //TODO: Needed? SH node modified event should be used for updating the whole view (every item)
-    return true;
-    }
-  return false;
+  return item->Reparent(newParentItem);
 }
 
 //----------------------------------------------------------------------------
@@ -2243,7 +2244,6 @@ void vtkMRMLSubjectHierarchyNode::SetDisplayVisibilityForBranch(vtkIdType itemID
     }
   if (this->Scene->IsBatchProcessing())
     {
-    //vtkDebugMacro("SetDisplayVisibilityForBranch: Batch processing is on, returning");
     return;
     }
 
@@ -2252,7 +2252,7 @@ void vtkMRMLSubjectHierarchyNode::SetDisplayVisibilityForBranch(vtkIdType itemID
   this->GetDataNodesInBranch(itemID, childDisplayableNodes.GetPointer(), "vtkMRMLDisplayableNode");
 
   childDisplayableNodes->InitTraversal();
-  std::set<vtkMRMLSubjectHierarchyNode*> parentNodes;
+  std::set<vtkIdType> parentItems;
   for (int childNodeIndex = 0;
        childNodeIndex < childDisplayableNodes->GetNumberOfItems();
        ++childNodeIndex)
@@ -2269,7 +2269,9 @@ void vtkMRMLSubjectHierarchyNode::SetDisplayVisibilityForBranch(vtkIdType itemID
         }
 
       // Set display visibility
+      this->Internal->EventsDisabled = true; // Prevent the views from updating before all the display nodes are modified
       displayableNode->SetDisplayVisibility(visible);
+      this->Internal->EventsDisabled = false;
 
       // Set slice intersection visibility through display node
       displayNode = displayableNode->GetDisplayNode();
@@ -2278,10 +2280,28 @@ void vtkMRMLSubjectHierarchyNode::SetDisplayVisibilityForBranch(vtkIdType itemID
         displayNode->SetSliceIntersectionVisibility(visible);
         }
       displayableNode->Modified();
+
+      // Collect all parents
+      vtkIdType itemForDisplayableNode = this->GetItemByDataNode(displayableNode);
+      if (itemForDisplayableNode == INVALID_ITEM_ID)
+        {
+        vtkErrorMacro("SetDisplayVisibilityForBranch: Failed to find subject hierarchy item for node " << displayableNode->GetName())
+        continue;
+        }
+      this->ItemModified(itemID);
+      vtkIdType parentItemID = itemID;
+      while ( (parentItemID = this->GetItemParent(parentItemID)) != this->Internal->SceneItemID ) // The double parentheses avoids a Linux build warning
+        {
+        parentItems.insert(parentItemID);
+        }
       }
     }
 
-  this->Modified();
+  // Invoke modified event for all parent items so that their icons are refreshed in the view
+  for (std::set<vtkIdType>::iterator parentIt = parentItems.begin(); parentIt != parentItems.end(); ++ parentIt)
+    {
+    this->ItemModified((*parentIt));
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -2607,6 +2627,14 @@ std::string vtkMRMLSubjectHierarchyNode::GenerateUniqueItemName(std::string name
 }
 
 //---------------------------------------------------------------------------
+int vtkMRMLSubjectHierarchyNode::GetNumberOfItems()
+{
+  std::vector<vtkIdType> allItems;
+  this->Internal->SceneItem->GetAllChildren(allItems);
+  return allItems.size();
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLSubjectHierarchyNode::ItemEventCallback(vtkObject* caller, unsigned long eid, void* clientData, void* callData)
 {
   vtkMRMLSubjectHierarchyNode* self = reinterpret_cast<vtkMRMLSubjectHierarchyNode*>(clientData);
@@ -2629,6 +2657,7 @@ void vtkMRMLSubjectHierarchyNode::ItemEventCallback(vtkObject* caller, unsigned 
         {
         // Invoke event of same type with item ID
         self->InvokeCustomModifiedEvent(eid, (void*)&item->ID);
+        self->Modified(); // Indicate that the content of the subject hierarchy node has changed, so it needs to be saved
         }
       }
       break;
@@ -2640,6 +2669,7 @@ void vtkMRMLSubjectHierarchyNode::ItemEventCallback(vtkObject* caller, unsigned 
         {
         // Propagate item modified event
         self->InvokeCustomModifiedEvent(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent, (void*)&item->ID);
+        self->Modified(); // Indicate that the content of the subject hierarchy node has changed, so it needs to be saved
         }
       else if (dataNode)
         {

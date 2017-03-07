@@ -28,6 +28,8 @@
 
 #include "qSlicerSubjectHierarchyModuleExport.h"
 
+#include <ctkVTKObject.h>
+
 class qSlicerSubjectHierarchyModuleWidgetPrivate;
 class qMRMLSubjectHierarchyModel;
 class qSlicerSubjectHierarchyPluginLogic;
@@ -38,6 +40,7 @@ class Q_SLICER_QTMODULES_SUBJECTHIERARCHY_EXPORT qSlicerSubjectHierarchyModuleWi
   public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
+  QVTK_OBJECT
 
 public:
   typedef qSlicerAbstractModuleWidget Superclass;
@@ -61,10 +64,15 @@ protected slots:
   void setDataNodeFromSubjectHierarchyItem(vtkIdType itemID);
   /// Set subject hierarchy item information to the label
   void setInfoLabelFromSubjectHierarchyItem(vtkIdType itemID);
+  /// Handle subject hierarchy item modified event (update item info label if needed)
+  void onSubjectHierarchyItemModified(vtkIdType itemID);
 
 public:
   /// Assessor function for subject hierarchy model (for python)
   Q_INVOKABLE qMRMLSubjectHierarchyModel* subjectHierarchySceneModel()const;
+
+protected:
+  static void onSubjectHierarchyItemEvent(vtkObject* caller, unsigned long event, void* clientData, void* callData);
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyModuleWidgetPrivate> d_ptr;
