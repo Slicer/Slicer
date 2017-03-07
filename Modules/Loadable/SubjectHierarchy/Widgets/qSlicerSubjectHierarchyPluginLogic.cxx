@@ -42,10 +42,6 @@
 #include <QDebug>
 #include <QString>
 #include <QSettings>
-#include <QMessageBox>
-
-// MRML includes
-#include <vtkMRMLScene.h>
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_SubjectHierarchy
@@ -186,6 +182,16 @@ void qSlicerSubjectHierarchyPluginLogic::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyPluginLogic::observeNode(vtkMRMLNode* node)
+{
+  qSlicerSubjectHierarchyFolderPlugin* folderPlugin = qobject_cast<qSlicerSubjectHierarchyFolderPlugin*>(
+    qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Folder") );
+
+  // Observe HierarchyModifiedEvent so that we can update subject hierarchy based on the other type of hierarchy the node is in
+  qvtkConnect( node, vtkMRMLNode::HierarchyModifiedEvent, folderPlugin, SLOT( onDataNodeAssociatedToHierarchyNode(vtkObject*) ) );
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyPluginLogic::onNodeAdded(vtkObject* sceneObject, vtkObject* nodeObject)
 {
   Q_D(qSlicerSubjectHierarchyPluginLogic);
@@ -207,9 +213,6 @@ void qSlicerSubjectHierarchyPluginLogic::onNodeAdded(vtkObject* sceneObject, vtk
   else
     {
     vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(nodeObject);
-
-    // Observe HierarchyModifiedEvent so that we can update subject hierarchy based on the other type of hierarchy the node is in
-    qvtkConnect( node, vtkMRMLNode::HierarchyModifiedEvent, this, SLOT( onMRMLNodeHierarchyModified(vtkObject*) ) );
 
     // Add subject hierarchy node for the added data node
     // Don't add to subject hierarchy automatically one-by-one if importing scene, because the SH nodes may be stored in the scene and loaded
@@ -250,8 +253,15 @@ void qSlicerSubjectHierarchyPluginLogic::onNodeAdded(vtkObject* sceneObject, vtk
       bool successfullyAddedByPlugin = selectedPlugin->addNodeToSubjectHierarchy(node, shNode->GetSceneItemID());
       if (!successfullyAddedByPlugin)
         {
-        qWarning() << Q_FUNC_INFO << ": Failed to add node " << node->GetName() <<
+        // Should never happen! If a plugin answers positively to the canOwn question (condition of
+        // reaching this point), then it has to be able to add it.
+        qCritical() << Q_FUNC_INFO << ": Failed to add node " << node->GetName() <<
           " through plugin '" << selectedPlugin->name().toLatin1().constData() << "'";
+        }
+      // Make observations if adding was successful
+      else
+        {
+        this->observeNode(node);
         }
       }
     }
@@ -335,40 +345,6 @@ void qSlicerSubjectHierarchyPluginLogic::onSceneCloseEnded(vtkObject* sceneObjec
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyPluginLogic::onMRMLNodeHierarchyModified(vtkObject* nodeObject)
-{
-  vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(nodeObject);
-  if (!node || node->IsA("vtkMRMLHierarchyNode"))
-    // Only handle this event for non-hierarchy nodes, as the same event is fired for both
-    // hierarchy and associated nodes, and also on other occasions, not just associations.
-    {
-    return;
-    }
-  vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(node->GetScene());
-  if (!scene)
-    {
-    return;
-    }
-
-  //TODO: Use this function if real-time updating of SH is needed based on model hierarchy changes
-  //  (one problem with it is what happens when the user moved the model in SH before that? That operation will be lost)
-
-  //// Look for hierarchy nodes that are associated to the node in question
-  //std::vector<vtkMRMLNode*> hierarchyNodes;
-  //std::vector<vtkMRMLHierarchyNode*> associatedHierarchyNodes;
-  //scene->GetNodesByClass("vtkMRMLHierarchyNode", hierarchyNodes);
-  //for (std::vector<vtkMRMLNode*>::iterator hierarchyNodeIt = hierarchyNodes.begin(); hierarchyNodeIt != hierarchyNodes.end(); ++hierarchyNodeIt)
-  //  {
-  //  vtkMRMLHierarchyNode* hierarchyNode = vtkMRMLHierarchyNode::SafeDownCast(*hierarchyNodeIt);
-  //  if ( hierarchyNode && hierarchyNode->GetAssociatedNodeID()
-  //    && !strcmp(hierarchyNode->GetAssociatedNodeID(), node->GetID()) )
-  //    {
-  //    associatedHierarchyNodes.push_back(hierarchyNode);
-  //    }
-  //  }
-}
-
-//-----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyPluginLogic::addSupportedDataNodesToSubjectHierarchy()
 {
   // Get subject hierarchy node
@@ -381,13 +357,13 @@ void qSlicerSubjectHierarchyPluginLogic::addSupportedDataNodesToSubjectHierarchy
     }
 
   // Traverse all storable nodes in the scene (those contain data that can be saved with the scene)
-//TODO:
-  // and all model hierarchy nodes
-  std::vector<vtkMRMLNode*> storableNodes;
-  scene->GetNodesByClass("vtkMRMLStorableNode", storableNodes);
-  for (std::vector<vtkMRMLNode*>::iterator storableNodeIt = storableNodes.begin(); storableNodeIt != storableNodes.end(); ++storableNodeIt)
+  // and all hierarchy nodes (that specify hierarchy for certain types of data nodes and may be mirrored by the plugins of those data node types)
+  std::vector<vtkMRMLNode*> supportedNodes;
+  scene->GetNodesByClass("vtkMRMLStorableNode", supportedNodes);
+  scene->GetNodesByClass("vtkMRMLHierarchyNode", supportedNodes);
+  for (std::vector<vtkMRMLNode*>::iterator nodeIt = supportedNodes.begin(); nodeIt != supportedNodes.end(); ++nodeIt)
     {
-    vtkMRMLNode* node = (*storableNodeIt);
+    vtkMRMLNode* node = (*nodeIt);
     // Do not add into subject hierarchy if hidden, excluded, or already added
     if ( node->GetHideFromEditors()
       || node->GetAttribute(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyExcludeFromTreeAttributeName().c_str())
@@ -416,6 +392,20 @@ void qSlicerSubjectHierarchyPluginLogic::addSupportedDataNodesToSubjectHierarchy
         qCritical() << Q_FUNC_INFO << ": Failed to add node " << node->GetName()
           << " through plugin '" << selectedPlugin->name().toLatin1().constData() << "'";
         }
+      // Make observations if adding was successful
+      else
+        {
+        this->observeNode(node);
+        }
       }
+    }
+
+  // Resolve hierarchies for data nodes that have been added to the subject hierarchy by their
+  // most confident owner plugin, but are associated to hierarchy nodes in the scene
+  qSlicerSubjectHierarchyFolderPlugin* folderPlugin = qobject_cast<qSlicerSubjectHierarchyFolderPlugin*>(
+    qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Folder") );
+  if (!folderPlugin->resolveHierarchies())
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to resolve hierarchies";
     }
 }

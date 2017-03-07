@@ -27,7 +27,6 @@
 #include "qSlicerObject.h"
 
 // CTK includes
-#include <ctkPimpl.h>
 #include <ctkVTKObject.h>
 
 // Qt includes
@@ -85,6 +84,9 @@ public:
   void setAutoDeleteSubjectHierarchyChildren(bool flag);
 
 protected:
+  /// Add observations for node that was added to subject hierarchy
+  void observeNode(vtkMRMLNode* node);
+
   /// Add supported nodes to subject hierarchy.
   /// This method is called if auto-creation is enabled and a supported node is added to the
   /// scene, or if the user answers yes to the question that pops up upon entering subject
@@ -103,10 +105,6 @@ protected slots:
   void onSceneImportEnded(vtkObject* sceneObject);
   /// Called when scene end is finished. Hierarchy is cleared in that case.
   void onSceneCloseEnded(vtkObject* sceneObject);
-
-  /// Called when hierarchy modified event is invoked for a data node
-  /// This method ensures that model hierarchy changes are reflected in the subject hierarchy as well
-  void onMRMLNodeHierarchyModified(vtkObject* nodeObject);
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyPluginLogicPrivate> d_ptr; 

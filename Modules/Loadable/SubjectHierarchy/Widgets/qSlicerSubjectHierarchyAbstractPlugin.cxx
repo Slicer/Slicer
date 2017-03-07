@@ -176,6 +176,7 @@ bool qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy(
     level = vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries();
     }
 
+  // Create subject hierarchy item with added node
   vtkIdType addedItemID = shNode->CreateItem(parentItemID, nodeToAdd, level);
   if (addedItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
