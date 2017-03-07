@@ -33,7 +33,7 @@
 #include <vtkMRMLScene.h>
 #include <vtkMRMLTransformNode.h>
 #include <vtkMRMLStorageNode.h>
-#include <vtkMRMLSubjectHierarchyConstants.h>
+#include <vtkMRMLSubjectHierarchyNode.h>
 #include <vtkMRMLScalarVolumeNode.h>
 
 // VTK includes
@@ -290,7 +290,7 @@ void vtkMRMLSegmentationNode::OnSegmentModified(const char* vtkNotUsed(segmentId
 
 //---------------------------------------------------------------------------
 void vtkMRMLSegmentationNode::OnSubjectHierarchyUIDAdded(
-  vtkMRMLSubjectHierarchyNode* shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemWithNewUID )
+  vtkMRMLSubjectHierarchyNode* shNode, vtkIdType itemWithNewUID )
 {
   if (!shNode || !this->Segmentation || itemWithNewUID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
@@ -318,7 +318,7 @@ void vtkMRMLSegmentationNode::OnSubjectHierarchyUIDAdded(
     }
 
   // Get associated subject hierarchy item
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID segmentationShItemID = shNode->GetItemByDataNode(this);
+  vtkIdType segmentationShItemID = shNode->GetItemByDataNode(this);
   if (segmentationShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     // If segmentation is not in subject hierarchy, then we cannot find its DICOM references
@@ -648,8 +648,7 @@ bool vtkMRMLSegmentationNode::GenerateMergedLabelmapForAllSegments(vtkOrientedIm
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID
-vtkMRMLSegmentationNode::GetSegmentSubjectHierarchyItem(std::string segmentID, vtkMRMLSubjectHierarchyNode* shNode)
+vtkIdType vtkMRMLSegmentationNode::GetSegmentSubjectHierarchyItem(std::string segmentID, vtkMRMLSubjectHierarchyNode* shNode)
 {
   if (!shNode)
     {
@@ -657,21 +656,20 @@ vtkMRMLSegmentationNode::GetSegmentSubjectHierarchyItem(std::string segmentID, v
     return vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
     }
 
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID segmentationSubjectHierarchyItemID =
-    shNode->GetItemByDataNode(this);
-  if (segmentationSubjectHierarchyItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  vtkIdType segmentationvtkIdType = shNode->GetItemByDataNode(this);
+  if (segmentationvtkIdType == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     return vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
     }
 
   // Find child item of segmentation subject hierarchy item that has the requested segment ID
-  std::vector<vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID> segmentationChildItemIDs;
-  shNode->GetItemChildren(segmentationSubjectHierarchyItemID, segmentationChildItemIDs, false);
+  std::vector<vtkIdType> segmentationChildItemIDs;
+  shNode->GetItemChildren(segmentationvtkIdType, segmentationChildItemIDs, false);
 
-  std::vector<vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID>::iterator childIt;
+  std::vector<vtkIdType>::iterator childIt;
   for (childIt=segmentationChildItemIDs.begin(); childIt!=segmentationChildItemIDs.end(); ++childIt)
     {
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID childItemID = (*childIt);
+    vtkIdType childItemID = (*childIt);
     std::string childSegmentID = shNode->GetItemAttribute(childItemID, vtkMRMLSegmentationNode::GetSegmentIDAttributeName());
     if (!childSegmentID.empty() && !childSegmentID.compare(segmentID))
       {

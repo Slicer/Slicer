@@ -171,8 +171,7 @@ void vtkSlicerSegmentationsModuleLogic::OnSubjectHierarchyUIDAdded(vtkObject* ca
 {
   vtkSlicerSegmentationsModuleLogic* self = reinterpret_cast<vtkSlicerSegmentationsModuleLogic*>(clientData);
   vtkMRMLSubjectHierarchyNode* shNode = reinterpret_cast<vtkMRMLSubjectHierarchyNode*>(caller);
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID* itemWithNewUID =
-    reinterpret_cast<vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID*>(callData);
+  vtkIdType* itemWithNewUID = reinterpret_cast<vtkIdType*>(callData);
   if (!self || !shNode || itemWithNewUID)
     {
     return;
@@ -583,7 +582,7 @@ vtkSegment* vtkSlicerSegmentationsModuleLogic::CreateSegmentFromModelNode(vtkMRM
 
 //-----------------------------------------------------------------------------
 vtkMRMLSegmentationNode* vtkSlicerSegmentationsModuleLogic::GetSegmentationNodeForSegmentSubjectHierarchyItem(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID segmentShItemID, vtkMRMLScene* scene )
+  vtkIdType segmentShItemID, vtkMRMLScene* scene )
 {
   if (!scene)
     {
@@ -603,7 +602,7 @@ vtkMRMLSegmentationNode* vtkSlicerSegmentationsModuleLogic::GetSegmentationNodeF
     return NULL;
     }
 
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID parentShItem = shNode->GetItemParent(segmentShItemID);
+  vtkIdType parentShItem = shNode->GetItemParent(segmentShItemID);
   if (parentShItem == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     vtkErrorWithObjectMacro(scene, "vtkSlicerSegmentationsModuleLogic::GetSegmentationNodeForSegmentSubjectHierarchyItem:"
@@ -623,8 +622,7 @@ vtkMRMLSegmentationNode* vtkSlicerSegmentationsModuleLogic::GetSegmentationNodeF
 }
 
 //-----------------------------------------------------------------------------
-vtkSegment* vtkSlicerSegmentationsModuleLogic::GetSegmentForSegmentSubjectHierarchyItem(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID segmentShItemID, vtkMRMLScene* scene )
+vtkSegment* vtkSlicerSegmentationsModuleLogic::GetSegmentForSegmentSubjectHierarchyItem(vtkIdType segmentShItemID, vtkMRMLScene* scene)
 {
   if (!scene)
     {

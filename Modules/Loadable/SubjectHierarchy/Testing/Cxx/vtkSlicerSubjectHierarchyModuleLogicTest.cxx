@@ -33,6 +33,7 @@
 
 // MRML includes
 #include "vtkMRMLScene.h"
+#include <vtkMRMLSubjectHierarchyNode.h>
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLModelHierarchyNode.h"
@@ -116,7 +117,7 @@ namespace
                 << std::endl;
       return false;
       }
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID sceneItemID = shNode->GetSceneItemID();
+    vtkIdType sceneItemID = shNode->GetSceneItemID();
     if (sceneItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
       {
       std::cerr << "Line " << __LINE__ << " - Problem with PopulateScene\n"
@@ -126,15 +127,15 @@ namespace
       }
 
     // Create subject and studies
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID patientItemID = shNode->CreateItem(
+    vtkIdType patientItemID = shNode->CreateItem(
       sceneItemID, NULL, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient(), "Patient" );
     shNode->SetItemUID(patientItemID, UID_NAME, PATIENT_UID_VALUE);
 
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID study1ItemID = shNode->CreateItem(
+    vtkIdType study1ItemID = shNode->CreateItem(
       patientItemID, NULL, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy(), "Study1" );
     shNode->SetItemUID(study1ItemID, UID_NAME, STUDY1_UID_VALUE);
 
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID study2ItemID = shNode->CreateItem(
+    vtkIdType study2ItemID = shNode->CreateItem(
       patientItemID, NULL, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy(), "Study2" );
     shNode->SetItemUID(study2ItemID, UID_NAME, STUDY2_UID_VALUE);
     shNode->SetItemAttribute(study2ItemID, STUDY_ATTRIBUTE_NAME, STUDY_ATTRIBUTE_VALUE);
@@ -148,7 +149,7 @@ namespace
     scene->AddNode(volume1DisplayNode.GetPointer());
     volume1Node->SetAndObserveDisplayNodeID(volume1DisplayNode->GetID());
 
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID volume1SeriesItemID = shNode->CreateItem(
+    vtkIdType volume1SeriesItemID = shNode->CreateItem(
       study1ItemID, volume1Node.GetPointer(), vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries() );
     shNode->SetItemUID(volume1SeriesItemID, UID_NAME, VOLUME1_UID_VALUE);
 
@@ -161,7 +162,7 @@ namespace
     scene->AddNode(model1DisplayNode.GetPointer());
     model1Node->SetAndObserveDisplayNodeID(model1DisplayNode->GetID());
 
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID model1SeriesItemID = shNode->CreateItem(
+    vtkIdType model1SeriesItemID = shNode->CreateItem(
       study1ItemID, model1Node.GetPointer(), vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries() );
     shNode->SetItemUID(model1SeriesItemID, UID_NAME, MODEL1_UID_VALUE);
 
@@ -174,7 +175,7 @@ namespace
     scene->AddNode(volume2DisplayNode.GetPointer());
     volume2Node->SetAndObserveDisplayNodeID(volume2DisplayNode->GetID());
 
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID volume2SeriesItemID = shNode->CreateItem(
+    vtkIdType volume2SeriesItemID = shNode->CreateItem(
       study2ItemID, volume2Node.GetPointer(), vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries() );
     shNode->SetItemUID(volume2SeriesItemID, UID_NAME, VOLUME2_UID_VALUE);
 
@@ -192,7 +193,7 @@ namespace
     model21ModelHierarchyNode->SetDisplayableNodeID(model21Node->GetID());
     scene->AddNode(model21ModelHierarchyNode.GetPointer());
 
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID model21SeriesItemID = shNode->CreateItem(
+    vtkIdType model21SeriesItemID = shNode->CreateItem(
       study2ItemID, model21Node.GetPointer(), vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries() );
     shNode->SetItemUID(model21SeriesItemID, UID_NAME, MODEL21_UID_VALUE);
 
@@ -210,7 +211,7 @@ namespace
     model22ModelHierarchyNode->SetDisplayableNodeID(model22Node->GetID());
     scene->AddNode(model22ModelHierarchyNode.GetPointer());
 
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID model22SeriesItemID = shNode->CreateItem(
+    vtkIdType model22SeriesItemID = shNode->CreateItem(
       study2ItemID, model22Node.GetPointer(), vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries() );
     shNode->SetItemUID(model22SeriesItemID, UID_NAME, MODEL22_UID_VALUE);
 
@@ -307,8 +308,7 @@ namespace
       }
 
     // Get item by UID
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID patientItemID =
-      shNode->GetItemByUID(UID_NAME, PATIENT_UID_VALUE);
+    vtkIdType patientItemID = shNode->GetItemByUID(UID_NAME, PATIENT_UID_VALUE);
     if (patientItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
       {
       std::cerr << "Failed to get subject by UID" << std::endl;
@@ -340,8 +340,7 @@ namespace
       }
 
     // Get volume item for testing association
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID volume1ShItemID =
-      shNode->GetItemByUID(UID_NAME, VOLUME1_UID_VALUE);
+    vtkIdType volume1ShItemID = shNode->GetItemByUID(UID_NAME, VOLUME1_UID_VALUE);
     if (volume1ShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
       {
       std::cerr << "Failed to get volume by UID" << std::endl;
@@ -358,7 +357,7 @@ namespace
       }
 
     // Get associated subject hierarchy item
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID volume1ShItemIdTest = shNode->GetItemByDataNode(volume1Node);
+    vtkIdType volume1ShItemIdTest = shNode->GetItemByDataNode(volume1Node);
     if (volume1ShItemIdTest != volume1ShItemID)
       {
       std::cerr << "Failed to get associated subject hierarchy item for volume" << std::endl;
@@ -384,11 +383,11 @@ namespace
       }
 
     // Get nodes used in this test case
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID patientShItemID = shNode->GetItemByUID(UID_NAME, PATIENT_UID_VALUE);
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID study1ShItemID = shNode->GetItemByUID(UID_NAME, STUDY1_UID_VALUE);
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID volume1ShItemID = shNode->GetItemByUID(UID_NAME, VOLUME1_UID_VALUE);
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID volume2ShItemID = shNode->GetItemByUID(UID_NAME, VOLUME2_UID_VALUE);
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID model21ShItemID = shNode->GetItemByUID(UID_NAME, MODEL21_UID_VALUE);
+    vtkIdType patientShItemID = shNode->GetItemByUID(UID_NAME, PATIENT_UID_VALUE);
+    vtkIdType study1ShItemID = shNode->GetItemByUID(UID_NAME, STUDY1_UID_VALUE);
+    vtkIdType volume1ShItemID = shNode->GetItemByUID(UID_NAME, VOLUME1_UID_VALUE);
+    vtkIdType volume2ShItemID = shNode->GetItemByUID(UID_NAME, VOLUME2_UID_VALUE);
+    vtkIdType model21ShItemID = shNode->GetItemByUID(UID_NAME, MODEL21_UID_VALUE);
     if ( patientShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID || study1ShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
       || volume1ShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID || volume2ShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
       || model21ShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )
@@ -398,8 +397,7 @@ namespace
       }
 
     // AreItemsInSameBranch utility method in logic class
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID commonAncestorItemID =
-      vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+    vtkIdType commonAncestorItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
 
     commonAncestorItemID = vtkSlicerSubjectHierarchyModuleLogic::AreItemsInSameBranch(
       shNode, volume1ShItemID, volume2ShItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy());
@@ -428,8 +426,7 @@ namespace
       }
 
     // GetItemChildWithName utility method in node class
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID foundChildItemID =
-      vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+    vtkIdType foundChildItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
 
     foundChildItemID = shNode->GetItemChildWithName(shNode->GetSceneItemID(), shNode->GetItemName(patientShItemID));
     if ( foundChildItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
@@ -501,7 +498,7 @@ namespace
       }
 
     // GetItemAncestorAtLevel utility method in node class
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID ancestorAtStudyLevel =
+    vtkIdType ancestorAtStudyLevel =
       shNode->GetItemAncestorAtLevel(volume1ShItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy());
     if ( ancestorAtStudyLevel == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
       || shNode->GetItemLevel(ancestorAtStudyLevel).compare(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy()) )
@@ -510,7 +507,7 @@ namespace
       return false;
       }
 
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID ancestorAtPatientLevel =
+    vtkIdType ancestorAtPatientLevel =
       shNode->GetItemAncestorAtLevel(volume1ShItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient());
     if ( ancestorAtPatientLevel == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
       || shNode->GetItemLevel(ancestorAtPatientLevel).compare(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient()) )
@@ -535,13 +532,12 @@ namespace
 
     // Create series item to insert
     const char* seriesUid = "NEW_SERIES";
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID seriesItemID = shNode->CreateItem(
+    vtkIdType seriesItemID = shNode->CreateItem(
       shNode->GetSceneItemID(), NULL, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries(), "Series" );
     shNode->SetItemUID(seriesItemID, UID_NAME, seriesUid);
 
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID insertedSeriesItemID =
-      vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy(
-        shNode, PATIENT_UID_VALUE, STUDY1_UID_VALUE, seriesUid );
+    vtkIdType insertedSeriesItemID = vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy(
+      shNode, PATIENT_UID_VALUE, STUDY1_UID_VALUE, seriesUid );
     if (insertedSeriesItemID != seriesItemID)
       {
       std::cerr << "Failed to insert DICOM series item" << std::endl;
@@ -549,10 +545,8 @@ namespace
       }
 
     // Check newly created study and patient items
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID patientShItemID =
-      shNode->GetItemByUID(UID_NAME, PATIENT_UID_VALUE);
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID studyShItemID =
-      shNode->GetItemByUID(UID_NAME, STUDY1_UID_VALUE);
+    vtkIdType patientShItemID = shNode->GetItemByUID(UID_NAME, PATIENT_UID_VALUE);
+    vtkIdType studyShItemID = shNode->GetItemByUID(UID_NAME, STUDY1_UID_VALUE);
     if ( patientShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
       || studyShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )
       {
@@ -587,17 +581,16 @@ namespace
 
     // Create series item to insert
     const char* seriesUid = "NEW_SERIES";
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID seriesItemID = shNode->CreateItem(
+    vtkIdType seriesItemID = shNode->CreateItem(
       shNode->GetSceneItemID(), NULL, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries(), "Series" );
     shNode->SetItemUID(seriesItemID, UID_NAME, seriesUid);
 
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID insertedSeriesItemID =
+    vtkIdType insertedSeriesItemID =
       vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy(
         shNode, PATIENT_UID_VALUE, STUDY1_UID_VALUE, seriesUid );
 
     // Check if series was inserted under the desired study
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID studyShItemID =
-      shNode->GetItemByUID(UID_NAME, STUDY1_UID_VALUE);
+    vtkIdType studyShItemID = shNode->GetItemByUID(UID_NAME, STUDY1_UID_VALUE);
     if (studyShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
       {
       std::cerr << "Study item not found" << std::endl;
@@ -633,14 +626,14 @@ namespace
       }
 
     // Get items used in this test case
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID patientShItemID = shNode->GetItemByUID(UID_NAME, PATIENT_UID_VALUE);
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID study1ShItemID = shNode->GetItemByUID(UID_NAME, STUDY1_UID_VALUE);
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID study2ShItemID = shNode->GetItemByUID(UID_NAME, STUDY2_UID_VALUE);
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID volume1ShItemID = shNode->GetItemByUID(UID_NAME, VOLUME1_UID_VALUE);
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID model1ShItemID = shNode->GetItemByUID(UID_NAME, MODEL1_UID_VALUE);
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID volume2ShItemID = shNode->GetItemByUID(UID_NAME, VOLUME2_UID_VALUE);
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID model21ShItemID = shNode->GetItemByUID(UID_NAME, MODEL21_UID_VALUE);
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID model22ShItemID = shNode->GetItemByUID(UID_NAME, MODEL22_UID_VALUE);
+    vtkIdType patientShItemID = shNode->GetItemByUID(UID_NAME, PATIENT_UID_VALUE);
+    vtkIdType study1ShItemID = shNode->GetItemByUID(UID_NAME, STUDY1_UID_VALUE);
+    vtkIdType study2ShItemID = shNode->GetItemByUID(UID_NAME, STUDY2_UID_VALUE);
+    vtkIdType volume1ShItemID = shNode->GetItemByUID(UID_NAME, VOLUME1_UID_VALUE);
+    vtkIdType model1ShItemID = shNode->GetItemByUID(UID_NAME, MODEL1_UID_VALUE);
+    vtkIdType volume2ShItemID = shNode->GetItemByUID(UID_NAME, VOLUME2_UID_VALUE);
+    vtkIdType model21ShItemID = shNode->GetItemByUID(UID_NAME, MODEL21_UID_VALUE);
+    vtkIdType model22ShItemID = shNode->GetItemByUID(UID_NAME, MODEL22_UID_VALUE);
     if ( patientShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID || study1ShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
       || study2ShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID || volume1ShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
       || model1ShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID || volume2ShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
@@ -742,9 +735,9 @@ namespace
       }
 
     // Get items used in this test case
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID study2ShItemID = shNode->GetItemByUID(UID_NAME, STUDY2_UID_VALUE);
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID model21ShItemID = shNode->GetItemByUID(UID_NAME, MODEL21_UID_VALUE);
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID model22ShItemID = shNode->GetItemByUID(UID_NAME, MODEL22_UID_VALUE);
+    vtkIdType study2ShItemID = shNode->GetItemByUID(UID_NAME, STUDY2_UID_VALUE);
+    vtkIdType model21ShItemID = shNode->GetItemByUID(UID_NAME, MODEL21_UID_VALUE);
+    vtkIdType model22ShItemID = shNode->GetItemByUID(UID_NAME, MODEL22_UID_VALUE);
     if ( study2ShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
       || model21ShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID || model22ShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )
       {

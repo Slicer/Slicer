@@ -23,6 +23,9 @@
 // DICOMLib includes
 #include "vtkSlicerDICOMExportable.h"
 
+// MRML includes
+#include <vtkMRMLSubjectHierarchyNode.h>
+
 // VTK includes
 #include <vtkObjectFactory.h>
 

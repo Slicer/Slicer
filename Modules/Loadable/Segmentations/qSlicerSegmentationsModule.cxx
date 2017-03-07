@@ -229,9 +229,9 @@ void qSlicerSegmentationsModule::onNodeAdded(vtkObject* sceneObject, vtkObject* 
   if (subjectHierarchyNode)
     {
     qvtkConnect( subjectHierarchyNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent,
-      segmentationsPlugin, SLOT( onSubjectHierarchyItemModified(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID) ) );
+      segmentationsPlugin, SLOT( onSubjectHierarchyItemModified(vtkIdType) ) );
     qvtkConnect( subjectHierarchyNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAboutToBeRemovedEvent,
-      segmentationsPlugin, SLOT( onSubjectHierarchyItemRemoved(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID) ) );
+      segmentationsPlugin, SLOT( onSubjectHierarchyItemRemoved(vtkIdType) ) );
     }
 }
 

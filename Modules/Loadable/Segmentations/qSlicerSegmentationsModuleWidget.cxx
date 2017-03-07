@@ -776,7 +776,7 @@ bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
       qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
       return false;
       }
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID currentSegmentationShItemID = shNode->GetItemByDataNode(currentSegmentationNode);
+    vtkIdType currentSegmentationShItemID = shNode->GetItemByDataNode(currentSegmentationNode);
     if (currentSegmentationShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
       {
       qCritical() << Q_FUNC_INFO << ": Failed to find subject hierarchy item for segmentation node " << currentSegmentationNode->GetName();
@@ -822,7 +822,7 @@ bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
       QApplication::restoreOverrideCursor();
 
       // Add representation node into the same subject hierarchy branch as the segmentation
-      vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID otherRepresentationShItemID = shNode->GetItemByDataNode(modelNode);
+      vtkIdType otherRepresentationShItemID = shNode->GetItemByDataNode(modelNode);
       if (otherRepresentationShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
         {
         qCritical() << Q_FUNC_INFO << ": Failed to find subject hierarchy item for node " << otherRepresentationNode->GetName();

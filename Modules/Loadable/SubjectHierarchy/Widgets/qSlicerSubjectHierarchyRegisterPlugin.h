@@ -54,7 +54,7 @@ public:
 
   /// Show context menu actions valid for a given subject hierarchy item.
   /// \param itemID Subject Hierarchy item to show the context menu items for
-  virtual void showContextMenuActionsForItem(SubjectHierarchyItemID itemID);
+  virtual void showContextMenuActionsForItem(vtkIdType itemID);
 
 protected slots:
   /// Start registration process by selecting the current node as the 'from' node.
@@ -78,7 +78,7 @@ protected slots:
   void registerInteractiveLandmark();
 
 protected:
-  SubjectHierarchyItemID m_RegisterFromItem;
+  vtkIdType m_RegisterFromItem;
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyRegisterPluginPrivate> d_ptr;

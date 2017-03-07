@@ -22,7 +22,6 @@
 
 // SubjectHierarchy includes
 #include <vtkSlicerSubjectHierarchyModuleLogic.h>
-#include <vtkMRMLSubjectHierarchyConstants.h>
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -31,6 +30,7 @@
 #include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLStorageNode.h>
 #include <vtkMRMLHierarchyNode.h>
+#include <vtkMRMLSubjectHierarchyNode.h>
 
 // VTK includes
 #include <vtkNew.h>
@@ -77,6 +77,7 @@ void vtkSlicerSubjectHierarchyModuleLogic::RegisterNodes()
     return;
     }
 
+  // Register node class. This call increments next subject hierarchy item ID
   this->GetMRMLScene()->RegisterNodeClass(vtkSmartPointer<vtkMRMLSubjectHierarchyNode>::New());
 }
 
@@ -93,7 +94,7 @@ void vtkSlicerSubjectHierarchyModuleLogic::UpdateFromMRMLScene()
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy(
+vtkIdType vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy(
   vtkMRMLSubjectHierarchyNode* shNode, const char* patientId, const char* studyInstanceUID, const char* seriesInstanceUID )
 {
   if ( !shNode || patientId || !studyInstanceUID || !seriesInstanceUID )
@@ -102,16 +103,16 @@ vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID vtkSlicerSubjectHierarchyMod
     return vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
     }
 
-  SubjectHierarchyItemID patientItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
-  SubjectHierarchyItemID studyItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
-  std::vector<SubjectHierarchyItemID> seriesItemIDs;
+  vtkIdType patientItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+  vtkIdType studyItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+  std::vector<vtkIdType> seriesItemIDs;
 
   // Find referenced items
-  std::vector<SubjectHierarchyItemID> allItemIDs;
+  std::vector<vtkIdType> allItemIDs;
   shNode->GetItemChildren(shNode->GetSceneItemID(), allItemIDs, true);
-  for (std::vector<SubjectHierarchyItemID>::iterator itemIt=allItemIDs.begin(); itemIt!=allItemIDs.end(); ++itemIt)
+  for (std::vector<vtkIdType>::iterator itemIt=allItemIDs.begin(); itemIt!=allItemIDs.end(); ++itemIt)
     {
-    SubjectHierarchyItemID currentItemID = (*itemIt);
+    vtkIdType currentItemID = (*itemIt);
     std::string nodeDicomUIDStr = shNode->GetItemUID(currentItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMUIDName());
     const char* nodeDicomUID = nodeDicomUIDStr.c_str();
     if (!nodeDicomUID)
@@ -162,9 +163,9 @@ vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID vtkSlicerSubjectHierarchyMod
   // for example if a series contains instances that load to different node types that cannot
   // be simply added under one series folder node. This can happen if for one type the node
   // corresponds to the series, but in the other to the instances.
-  for (std::vector<SubjectHierarchyItemID>::iterator seriesIt = seriesItemIDs.begin(); seriesIt != seriesItemIDs.end(); ++seriesIt)
+  for (std::vector<vtkIdType>::iterator seriesIt = seriesItemIDs.begin(); seriesIt != seriesItemIDs.end(); ++seriesIt)
   {
-    SubjectHierarchyItemID currentSeriesID = (*seriesIt);
+    vtkIdType currentSeriesID = (*seriesIt);
     shNode->SetItemParent(currentSeriesID, studyItemID);
   }
 
@@ -179,9 +180,8 @@ vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID vtkSlicerSubjectHierarchyMod
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID vtkSlicerSubjectHierarchyModuleLogic::AreItemsInSameBranch(
-    vtkMRMLSubjectHierarchyNode* shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID item1, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID item2,
-    const char* lowestCommonLevel )
+vtkIdType vtkSlicerSubjectHierarchyModuleLogic::AreItemsInSameBranch(
+    vtkMRMLSubjectHierarchyNode* shNode, vtkIdType item1, vtkIdType item2, const char* lowestCommonLevel )
 {
   if (!shNode)
     {
@@ -200,7 +200,7 @@ vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID vtkSlicerSubjectHierarchyMod
     }
 
   // Walk the hierarchy up until we reach the lowest common level
-  SubjectHierarchyItemID ancestor1 = item1;
+  vtkIdType ancestor1 = item1;
   while (true)
     {
     ancestor1 = shNode->GetItemParent(ancestor1);
@@ -222,7 +222,7 @@ vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID vtkSlicerSubjectHierarchyMod
       }
     }
 
-  SubjectHierarchyItemID ancestor2 = item2;
+  vtkIdType ancestor2 = item2;
   while (true)
     {
     ancestor2 = shNode->GetItemParent(ancestor2);
@@ -248,8 +248,7 @@ vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID vtkSlicerSubjectHierarchyMod
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID vtkSlicerSubjectHierarchyModuleLogic::AreNodesInSameBranch(
-  vtkMRMLNode* node1, vtkMRMLNode* node2, const char* lowestCommonLevel )
+vtkIdType vtkSlicerSubjectHierarchyModuleLogic::AreNodesInSameBranch(vtkMRMLNode* node1, vtkMRMLNode* node2, const char* lowestCommonLevel)
 {
   if (!node1 || !node2 || !node1->GetScene() || node1->GetScene() != node2->GetScene())
     {
@@ -258,8 +257,8 @@ vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID vtkSlicerSubjectHierarchyMod
     }
 
   vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(node1->GetScene());
-  SubjectHierarchyItemID item1 = shNode->GetItemByDataNode(node1);
-  SubjectHierarchyItemID item2 = shNode->GetItemByDataNode(node2);
+  vtkIdType item1 = shNode->GetItemByDataNode(node1);
+  vtkIdType item2 = shNode->GetItemByDataNode(node2);
 
   return vtkSlicerSubjectHierarchyModuleLogic::AreItemsInSameBranch(shNode, item1, item2, lowestCommonLevel);
 }
@@ -298,7 +297,7 @@ bool vtkSlicerSubjectHierarchyModuleLogic::IsStudyTag(std::string tagName)
 
 //---------------------------------------------------------------------------
 void vtkSlicerSubjectHierarchyModuleLogic::TransformBranch(
-  vtkMRMLSubjectHierarchyNode* shNode, SubjectHierarchyItemID itemID, vtkMRMLTransformNode* transformNode, bool hardenExistingTransforms/*=true*/)
+  vtkMRMLSubjectHierarchyNode* shNode, vtkIdType itemID, vtkMRMLTransformNode* transformNode, bool hardenExistingTransforms/*=true*/)
 {
   if (!shNode)
     {
@@ -307,11 +306,11 @@ void vtkSlicerSubjectHierarchyModuleLogic::TransformBranch(
     }
 
   // Get all associated data nodes from children nodes (and itself)
-  std::vector<SubjectHierarchyItemID> childIDs;
+  std::vector<vtkIdType> childIDs;
   shNode->GetItemChildren(itemID, childIDs, true);
   childIDs.push_back(itemID);
 
-  for (std::vector<SubjectHierarchyItemID>::iterator childIt=childIDs.begin(); childIt!=childIDs.end(); ++childIt)
+  for (std::vector<vtkIdType>::iterator childIt=childIDs.begin(); childIt!=childIDs.end(); ++childIt)
     {
     vtkMRMLTransformableNode* transformableNode = vtkMRMLTransformableNode::SafeDownCast(
       shNode->GetItemDataNode(*childIt) );
@@ -351,8 +350,7 @@ void vtkSlicerSubjectHierarchyModuleLogic::TransformBranch(
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerSubjectHierarchyModuleLogic::HardenTransformOnBranch(
-  vtkMRMLSubjectHierarchyNode* shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)
+void vtkSlicerSubjectHierarchyModuleLogic::HardenTransformOnBranch(vtkMRMLSubjectHierarchyNode* shNode, vtkIdType itemID)
 {
   if (!shNode)
     {
@@ -361,11 +359,11 @@ void vtkSlicerSubjectHierarchyModuleLogic::HardenTransformOnBranch(
     }
 
   // Get all associated data nodes from children nodes (and itself)
-  std::vector<SubjectHierarchyItemID> childIDs;
+  std::vector<vtkIdType> childIDs;
   shNode->GetItemChildren(itemID, childIDs, true);
   childIDs.push_back(itemID);
 
-  for (std::vector<SubjectHierarchyItemID>::iterator childIt=childIDs.begin(); childIt!=childIDs.end(); ++childIt)
+  for (std::vector<vtkIdType>::iterator childIt=childIDs.begin(); childIt!=childIDs.end(); ++childIt)
     {
     vtkMRMLTransformableNode* transformableNode = vtkMRMLTransformableNode::SafeDownCast(
       shNode->GetItemDataNode(*childIt) );
@@ -381,8 +379,8 @@ void vtkSlicerSubjectHierarchyModuleLogic::HardenTransformOnBranch(
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID vtkSlicerSubjectHierarchyModuleLogic::CloneSubjectHierarchyItem(
-  vtkMRMLSubjectHierarchyNode* shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID, const char* name/*=NULL*/)
+vtkIdType vtkSlicerSubjectHierarchyModuleLogic::CloneSubjectHierarchyItem(
+  vtkMRMLSubjectHierarchyNode* shNode, vtkIdType itemID, const char* name/*=NULL*/)
 {
   if (!shNode)
     {
@@ -397,7 +395,7 @@ vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID vtkSlicerSubjectHierarchyMod
     return vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
     }
 
-  SubjectHierarchyItemID clonedShItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+  vtkIdType clonedShItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
   vtkMRMLNode* associatedDataNode = shNode->GetItemDataNode(itemID);
   if (associatedDataNode)
     {

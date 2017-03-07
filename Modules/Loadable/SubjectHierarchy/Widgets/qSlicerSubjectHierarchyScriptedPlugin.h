@@ -90,7 +90,7 @@ public:
   /// \param item Item to handle in the subject hierarchy tree
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
   ///   item, and 1 means that the plugin is the only one that can handle the item (by node type or identifier attribute)
-  virtual double canOwnSubjectHierarchyItem(SubjectHierarchyItemID itemID)const;
+  virtual double canOwnSubjectHierarchyItem(vtkIdType itemID)const;
 
   /// Get role that the plugin assigns to the subject hierarchy item.
   ///   Each plugin should provide only one role.
@@ -101,27 +101,27 @@ public:
 
   /// Get icon of an owned subject hierarchy item
   /// \return Icon to set, NULL if nothing to set
-  virtual QIcon icon(SubjectHierarchyItemID itemID);
+  virtual QIcon icon(vtkIdType itemID);
 
   /// Get visibility icon for a visibility state
   virtual QIcon visibilityIcon(int visible);
 
   /// Open module belonging to item and set inputs in opened module
-  virtual void editProperties(SubjectHierarchyItemID itemID);
+  virtual void editProperties(vtkIdType itemID);
 
   /// Generate displayed name for the owned subject hierarchy item corresponding to its role.
   /// The default implementation returns the associated data node's name if any, otherwise the item name
-  virtual QString displayedItemName(SubjectHierarchyItemID itemID)const;
+  virtual QString displayedItemName(vtkIdType itemID)const;
 
   /// Generate tooltip for a owned subject hierarchy item
-  virtual QString tooltip(SubjectHierarchyItemID itemID)const;
+  virtual QString tooltip(vtkIdType itemID)const;
 
   /// Set display visibility of a owned subject hierarchy item
-  virtual void setDisplayVisibility(SubjectHierarchyItemID itemID, int visible);
+  virtual void setDisplayVisibility(vtkIdType itemID, int visible);
 
   /// Get display visibility of a owned subject hierarchy item
   /// \return Display visibility (0: hidden, 1: shown, 2: partially shown)
-  virtual int getDisplayVisibility(SubjectHierarchyItemID itemID)const;
+  virtual int getDisplayVisibility(vtkIdType itemID)const;
 
 // Function related virtual methods
 public:
@@ -135,7 +135,7 @@ public:
 
   /// Show context menu actions valid for a given subject hierarchy item.
   /// \param itemID Subject Hierarchy item to show the context menu items for
-  virtual void showContextMenuActionsForItem(SubjectHierarchyItemID itemID);
+  virtual void showContextMenuActionsForItem(vtkIdType itemID);
 
 // Parenting related virtual methods with default implementation
 public:
@@ -150,7 +150,7 @@ public:
   ///   node, and 1 means that the plugin is the only one that can handle the node (by node type or identifier attribute)
   virtual double canAddNodeToSubjectHierarchy(
     vtkMRMLNode* node,
-    SubjectHierarchyItemID parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )const;
+    vtkIdType parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )const;
 
   /// Determines if a subject hierarchy item can be reparented in the hierarchy using the current plugin,
   /// and gets a confidence value for the reparented item.
@@ -160,11 +160,11 @@ public:
   /// \param parentItemID Prospective parent of the item to reparent.
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
   ///   item, and 1 means that the plugin is the only one that can handle the item
-  virtual double canReparentItemInsideSubjectHierarchy(SubjectHierarchyItemID itemID, SubjectHierarchyItemID parentItemID)const;
+  virtual double canReparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID)const;
 
   /// Reparent an item that was already in the subject hierarchy under a new parent.
   /// \return True if reparented successfully, false otherwise
-  virtual bool reparentItemInsideSubjectHierarchy(SubjectHierarchyItemID itemID, SubjectHierarchyItemID parentItemID);
+  virtual bool reparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID);
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyScriptedPluginPrivate> d_ptr;

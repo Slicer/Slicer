@@ -56,7 +56,7 @@ public:
 
   /// Show context menu actions valid for  given subject hierarchy node.
   /// \param node Subject Hierarchy node to show the context menu items for. If NULL, then shows menu items for the scene
-  virtual void showContextMenuActionsForItem(SubjectHierarchyItemID itemID);
+  virtual void showContextMenuActionsForItem(vtkIdType itemID);
 
 protected slots:
   /// Clone currently selected subject hierarchy entry and associated data node

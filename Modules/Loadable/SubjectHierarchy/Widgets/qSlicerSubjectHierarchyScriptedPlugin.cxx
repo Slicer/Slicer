@@ -223,8 +223,7 @@ void qSlicerSubjectHierarchyScriptedPlugin::setName(QString name)
 }
 
 //-----------------------------------------------------------------------------
-double qSlicerSubjectHierarchyScriptedPlugin::canOwnSubjectHierarchyItem(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)const
+double qSlicerSubjectHierarchyScriptedPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
   PyObject* arguments = PyTuple_New(1);
@@ -292,8 +291,7 @@ const QString qSlicerSubjectHierarchyScriptedPlugin::helpText()const
 }
 
 //---------------------------------------------------------------------------
-QIcon qSlicerSubjectHierarchyScriptedPlugin::icon(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)
+QIcon qSlicerSubjectHierarchyScriptedPlugin::icon(vtkIdType itemID)
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
   PyObject* arguments = PyTuple_New(1);
@@ -339,8 +337,7 @@ QIcon qSlicerSubjectHierarchyScriptedPlugin::visibilityIcon(int visible)
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyScriptedPlugin::editProperties(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)
+void qSlicerSubjectHierarchyScriptedPlugin::editProperties(vtkIdType itemID)
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
   PyObject* arguments = PyTuple_New(1);
@@ -409,8 +406,7 @@ QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::sceneContextMenuActions()
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyScriptedPlugin::showContextMenuActionsForItem(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)
+void qSlicerSubjectHierarchyScriptedPlugin::showContextMenuActionsForItem(vtkIdType itemID)
 {
   Q_D(qSlicerSubjectHierarchyScriptedPlugin);
 
@@ -431,7 +427,7 @@ void qSlicerSubjectHierarchyScriptedPlugin::showContextMenuActionsForItem(
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyScriptedPlugin::canAddNodeToSubjectHierarchy(
   vtkMRMLNode* node,
-  SubjectHierarchyItemID parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
+  vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
   PyObject* arguments = PyTuple_New(2);
@@ -457,8 +453,8 @@ double qSlicerSubjectHierarchyScriptedPlugin::canAddNodeToSubjectHierarchy(
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyScriptedPlugin::canReparentItemInsideSubjectHierarchy(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID,
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID parentItemID)const
+  vtkIdType itemID,
+  vtkIdType parentItemID)const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
   PyObject* arguments = PyTuple_New(2);
@@ -484,8 +480,8 @@ double qSlicerSubjectHierarchyScriptedPlugin::canReparentItemInsideSubjectHierar
 
 //---------------------------------------------------------------------------
 bool qSlicerSubjectHierarchyScriptedPlugin::reparentItemInsideSubjectHierarchy(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID,
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID parentItemID)
+  vtkIdType itemID,
+  vtkIdType parentItemID)
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
   PyObject* arguments = PyTuple_New(2);
@@ -510,8 +506,7 @@ bool qSlicerSubjectHierarchyScriptedPlugin::reparentItemInsideSubjectHierarchy(
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSubjectHierarchyScriptedPlugin::displayedItemName(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)const
+QString qSlicerSubjectHierarchyScriptedPlugin::displayedItemName(vtkIdType itemID)const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
   PyObject* arguments = PyTuple_New(1);
@@ -535,8 +530,7 @@ QString qSlicerSubjectHierarchyScriptedPlugin::displayedItemName(
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSubjectHierarchyScriptedPlugin::tooltip(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)const
+QString qSlicerSubjectHierarchyScriptedPlugin::tooltip(vtkIdType itemID)const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
   PyObject* arguments = PyTuple_New(1);
@@ -560,8 +554,7 @@ QString qSlicerSubjectHierarchyScriptedPlugin::tooltip(
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyScriptedPlugin::setDisplayVisibility(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID, int visible)
+void qSlicerSubjectHierarchyScriptedPlugin::setDisplayVisibility(vtkIdType itemID, int visible)
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
   PyObject* arguments = PyTuple_New(2);
@@ -577,8 +570,7 @@ void qSlicerSubjectHierarchyScriptedPlugin::setDisplayVisibility(
 }
 
 //-----------------------------------------------------------------------------
-int qSlicerSubjectHierarchyScriptedPlugin::getDisplayVisibility(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)const
+int qSlicerSubjectHierarchyScriptedPlugin::getDisplayVisibility(vtkIdType itemID)const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
   PyObject* arguments = PyTuple_New(1);

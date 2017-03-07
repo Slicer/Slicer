@@ -145,8 +145,7 @@ QList<QAction*> qSlicerSubjectHierarchyRegisterPlugin::itemContextMenuActions()c
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyRegisterPlugin::showContextMenuActionsForItem(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)
+void qSlicerSubjectHierarchyRegisterPlugin::showContextMenuActionsForItem(vtkIdType itemID)
 {
   Q_D(qSlicerSubjectHierarchyRegisterPlugin);
   this->hideAllContextMenuActions();
@@ -161,8 +160,7 @@ void qSlicerSubjectHierarchyRegisterPlugin::showContextMenuActionsForItem(
   if (qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes")->canOwnSubjectHierarchyItem(itemID))
     {
     // Get current node
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID currentItemID =
-      qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+    vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
     if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
       {
       qCritical() << Q_FUNC_INFO << ": Invalid current node!";
@@ -195,8 +193,7 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerCurrentNodeTo()
     return;
     }
 
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID currentItemID =
-    qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid current node!";
@@ -219,8 +216,7 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedRigid()
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
     }
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID currentItemID =
-    qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid current node!";
@@ -302,8 +298,7 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedBSpline()
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
     }
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID currentItemID =
-    qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid current node!";
@@ -384,8 +379,7 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerInteractiveLandmark()
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
     }
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID currentItemID =
-    qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid current item!";

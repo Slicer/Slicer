@@ -30,13 +30,12 @@
 #include <ctkPimpl.h>
 #include <ctkVTKObject.h>
 
-// MRML includes
-#include <vtkMRMLSubjectHierarchyNode.h>
-
 // SubjectHierarchy includes
 #include "qSlicerSubjectHierarchyModuleWidgetsExport.h"
 
 class qMRMLSubjectHierarchyModelPrivate;
+class vtkMRMLSubjectHierarchyNode;
+class vtkMRMLScene;
 
 /// TODO:
 class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyModel : public QStandardItemModel
@@ -63,8 +62,6 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyModel
   /// A value of -1 (default) hides the column
   Q_PROPERTY (int transformColumn READ transformColumn WRITE setTransformColumn)
 
-  typedef vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID SubjectHierarchyItemID;
-
 public:
   typedef QStandardItemModel Superclass;
   qMRMLSubjectHierarchyModel(QObject *parent=0);
@@ -72,7 +69,7 @@ public:
 
   enum ItemDataRole
     {
-    /// Unique ID of the item, typed SubjectHierarchyItemID (unsigned long)
+    /// Unique ID of the item, typed vtkIdType
     SubjectHierarchyItemIDRole = Qt::UserRole + 1,
     /// Integer that contains the visibility property of an item.
     /// It is closely related to the item icon.
@@ -109,28 +106,28 @@ public:
   QStandardItem* subjectHierarchySceneItem()const;
   /// Invalid until a valid scene is set
   QModelIndex subjectHierarchySceneIndex()const;
-  virtual bool canBeAChild(SubjectHierarchyItemID itemID)const;
-  virtual bool canBeAParent(SubjectHierarchyItemID itemID)const;
+  virtual bool canBeAChild(vtkIdType itemID)const;
+  virtual bool canBeAParent(vtkIdType itemID)const;
 
-  SubjectHierarchyItemID subjectHierarchyItemFromIndex(const QModelIndex &index)const;
-  SubjectHierarchyItemID subjectHierarchyItemFromItem(QStandardItem* item)const;
-  QModelIndex indexFromSubjectHierarchyItem(SubjectHierarchyItemID itemID, int column=0)const;
-  QStandardItem* itemFromSubjectHierarchyItem(SubjectHierarchyItemID itemID, int column=0)const;
+  vtkIdType subjectHierarchyItemFromIndex(const QModelIndex &index)const;
+  vtkIdType subjectHierarchyItemFromItem(QStandardItem* item)const;
+  QModelIndex indexFromSubjectHierarchyItem(vtkIdType itemID, int column=0)const;
+  QStandardItem* itemFromSubjectHierarchyItem(vtkIdType itemID, int column=0)const;
   // Return all the QModelIndexes (all the columns) for a given subject hierarchy item
-  QModelIndexList indexes(SubjectHierarchyItemID itemID)const;
+  QModelIndexList indexes(vtkIdType itemID)const;
 
-  virtual SubjectHierarchyItemID parentSubjectHierarchyItem(SubjectHierarchyItemID itemID)const;
+  virtual vtkIdType parentSubjectHierarchyItem(vtkIdType itemID)const;
   /// Returns the row model index relative to its parent independently of any filtering or proxy model
   /// Must be reimplemented in derived classes
-  virtual int subjectHierarchyItemIndex(SubjectHierarchyItemID itemID)const;
+  virtual int subjectHierarchyItemIndex(vtkIdType itemID)const;
   /// Insert/move node in subject hierarchy under new parent
-  virtual bool reparent(SubjectHierarchyItemID itemID, SubjectHierarchyItemID newParentID);
+  virtual bool reparent(vtkIdType itemID, vtkIdType newParentID);
   /// Utility method that returns true if \a child has \a parent as ancestor (parent, grandparent, etc.)
   /// \sa isAffiliatedItem()
-  bool isAncestorItem(SubjectHierarchyItemID child, SubjectHierarchyItemID ancestor)const;
+  bool isAncestorItem(vtkIdType child, vtkIdType ancestor)const;
   /// Utility method that returns true if 2 nodes are child/parent (or any ancestor) for each other
   /// \sa isAncestorItem()
-  bool isAffiliatedItem(SubjectHierarchyItemID itemA, SubjectHierarchyItemID itemB)const;
+  bool isAffiliatedItem(vtkIdType itemA, vtkIdType itemB)const;
 
 public slots:
   /// Remove transforms from nodes in branch of current item
@@ -140,10 +137,10 @@ public slots:
   void onHardenTransformOnBranchOfCurrentItem();
 
 protected slots:
-  virtual void onSubjectHierarchyItemAdded(SubjectHierarchyItemID itemID);
-  virtual void onSubjectHierarchyItemAboutToBeRemoved(SubjectHierarchyItemID itemID);
-  virtual void onSubjectHierarchyItemRemoved(SubjectHierarchyItemID itemID);
-  virtual void onSubjectHierarchyItemModified(SubjectHierarchyItemID itemID);
+  virtual void onSubjectHierarchyItemAdded(vtkIdType itemID);
+  virtual void onSubjectHierarchyItemAboutToBeRemoved(vtkIdType itemID);
+  virtual void onSubjectHierarchyItemRemoved(vtkIdType itemID);
+  virtual void onSubjectHierarchyItemModified(vtkIdType itemID);
 
   virtual void onMRMLSceneImported(vtkMRMLScene* scene);
   virtual void onMRMLSceneClosed(vtkMRMLScene* scene);
@@ -163,13 +160,15 @@ protected slots:
 
 signals:
   /// This signal is sent when a user is about to reparent an item by drag and drop
-  void aboutToReparentByDragAndDrop(SubjectHierarchyItemID itemID, SubjectHierarchyItemID newParentID);
+  void aboutToReparentByDragAndDrop(vtkIdType itemID, vtkIdType newParentID);
   ///  This signal is sent after a user dragged and dropped an item in the tree view
-  void reparentedByDragAndDrop(SubjectHierarchyItemID itemID, SubjectHierarchyItemID newParentID);
+  void reparentedByDragAndDrop(vtkIdType itemID, vtkIdType newParentID);
   /// This signal is sent when the whole subject hierarchy is about to be updated
   void subjectHierarchyAboutToBeUpdated();
   /// This signal is sent after the whole subject hierarchy is updated
   void subjectHierarchyUpdated();
+  /// Triggers invalidating the sort filter proxy model
+  void invalidateFilter();
 
 protected:
   qMRMLSubjectHierarchyModel(qMRMLSubjectHierarchyModelPrivate* pimpl, QObject *parent=0);
@@ -178,22 +177,22 @@ protected:
   virtual void setSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* shNode);
 
   virtual void updateFromSubjectHierarchy();
-  virtual QStandardItem* insertSubjectHierarchyItem(SubjectHierarchyItemID itemID);
-  virtual QStandardItem* insertSubjectHierarchyItem(SubjectHierarchyItemID itemID, QStandardItem* parent, int row=-1);
+  virtual QStandardItem* insertSubjectHierarchyItem(vtkIdType itemID);
+  virtual QStandardItem* insertSubjectHierarchyItem(vtkIdType itemID, QStandardItem* parent, int row=-1);
 
-  virtual QFlags<Qt::ItemFlag> subjectHierarchyItemFlags(SubjectHierarchyItemID itemID, int column)const;
+  virtual QFlags<Qt::ItemFlag> subjectHierarchyItemFlags(vtkIdType itemID, int column)const;
 
   virtual void updateItemFromSubjectHierarchyItem(
-    QStandardItem* item, SubjectHierarchyItemID shItemID, int column );
+    QStandardItem* item, vtkIdType shItemID, int column );
   virtual void updateItemDataFromSubjectHierarchyItem(
-    QStandardItem* item, SubjectHierarchyItemID shItemID, int column );
+    QStandardItem* item, vtkIdType shItemID, int column );
   virtual void updateSubjectHierarchyItemFromItem(
-    SubjectHierarchyItemID shItemID, QStandardItem* item );
+    vtkIdType shItemID, QStandardItem* item );
   virtual void updateSubjectHierarchyItemFromItemData(
-    SubjectHierarchyItemID shItemID, QStandardItem* item );
+    vtkIdType shItemID, QStandardItem* item );
 
   /// Update the model items associated with the subject hierarchy item
-  void updateModelItems(SubjectHierarchyItemID itemID);
+  void updateModelItems(vtkIdType itemID);
 
   static void onEvent(vtkObject* caller, unsigned long event, void* clientData, void* callData);
 

@@ -128,7 +128,7 @@ qSlicerSubjectHierarchyLabelMapsPlugin::~qSlicerSubjectHierarchyLabelMapsPlugin(
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyLabelMapsPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, SubjectHierarchyItemID parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
+  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
 {
   Q_UNUSED(parentItemID);
   if (!node)
@@ -145,8 +145,7 @@ double qSlicerSubjectHierarchyLabelMapsPlugin::canAddNodeToSubjectHierarchy(
 }
 
 //---------------------------------------------------------------------------
-double qSlicerSubjectHierarchyLabelMapsPlugin::canOwnSubjectHierarchyItem(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)const
+double qSlicerSubjectHierarchyLabelMapsPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
@@ -177,7 +176,7 @@ const QString qSlicerSubjectHierarchyLabelMapsPlugin::roleForPlugin()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSubjectHierarchyLabelMapsPlugin::tooltip(SubjectHierarchyItemID itemID)const
+QString qSlicerSubjectHierarchyLabelMapsPlugin::tooltip(vtkIdType itemID)const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
@@ -215,8 +214,7 @@ QString qSlicerSubjectHierarchyLabelMapsPlugin::tooltip(SubjectHierarchyItemID i
 }
 
 //---------------------------------------------------------------------------
-QIcon qSlicerSubjectHierarchyLabelMapsPlugin::icon(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)
+QIcon qSlicerSubjectHierarchyLabelMapsPlugin::icon(vtkIdType itemID)
 {
   Q_D(qSlicerSubjectHierarchyLabelMapsPlugin);
 
@@ -252,8 +250,7 @@ QIcon qSlicerSubjectHierarchyLabelMapsPlugin::visibilityIcon(int visible)
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyLabelMapsPlugin::setDisplayVisibility(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID, int visible)
+void qSlicerSubjectHierarchyLabelMapsPlugin::setDisplayVisibility(vtkIdType itemID, int visible)
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
@@ -281,7 +278,7 @@ void qSlicerSubjectHierarchyLabelMapsPlugin::setDisplayVisibility(
 }
 
 //-----------------------------------------------------------------------------
-int qSlicerSubjectHierarchyLabelMapsPlugin::getDisplayVisibility(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)const
+int qSlicerSubjectHierarchyLabelMapsPlugin::getDisplayVisibility(vtkIdType itemID)const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
@@ -441,8 +438,7 @@ QList<QAction*> qSlicerSubjectHierarchyLabelMapsPlugin::itemContextMenuActions()
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyLabelMapsPlugin::showContextMenuActionsForItem(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)
+void qSlicerSubjectHierarchyLabelMapsPlugin::showContextMenuActionsForItem(vtkIdType itemID)
 {
   Q_D(qSlicerSubjectHierarchyLabelMapsPlugin);
   this->hideAllContextMenuActions();

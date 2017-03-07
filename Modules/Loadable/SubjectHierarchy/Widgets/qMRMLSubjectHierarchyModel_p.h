@@ -59,8 +59,6 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyModel
 {
   Q_DECLARE_PUBLIC(qMRMLSubjectHierarchyModel);
 
-  typedef vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID SubjectHierarchyItemID;
-
 protected:
   qMRMLSubjectHierarchyModel* const q_ptr;
 public:
@@ -68,7 +66,7 @@ public:
   virtual ~qMRMLSubjectHierarchyModelPrivate();
   void init();
 
-  QModelIndexList indexes(const vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)const;
+  QModelIndexList indexes(const vtkIdType itemID)const;
 
   //TODO: Needed?
   //void listenNodeModifiedEvent();
@@ -77,11 +75,11 @@ public:
 
   /// This method is called by qMRMLSubjectHierarchyModel::updateFromSubjectHierarchy() to speed up
   /// the loading. By explicitly specifying the \a index, it skips item lookup within their parents
-  /// happening in qMRMLSubjectHierarchyModel::subjectHierarchyItemIndex(SubjectHierarchyItemID).
-  virtual QStandardItem* insertSubjectHierarchyItem(SubjectHierarchyItemID itemID, int index);
+  /// happening in qMRMLSubjectHierarchyModel::subjectHierarchyItemIndex(vtkIdType).
+  virtual QStandardItem* insertSubjectHierarchyItem(vtkIdType itemID, int index);
 
   /// Convenience function to get name for subject hierarchy item
-  QString subjectHierarchyItemName(SubjectHierarchyItemID itemID);
+  QString subjectHierarchyItemName(vtkIdType itemID);
 
 public:
   vtkSmartPointer<vtkCallbackCommand> CallBack;
@@ -109,7 +107,7 @@ public:
   vtkWeakPointer<vtkMRMLScene> MRMLScene;
 
   mutable QSet<QStandardItem*>  DraggedItems;
-  mutable QList<vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID> DraggedSubjectHierarchyItems;
+  mutable QList<vtkIdType> DraggedSubjectHierarchyItems;
   bool DelayedItemChangedInvoked;
 
   // Keep a list of QStandardItem instead of subject hierarchy item because they are likely to be
@@ -120,7 +118,7 @@ public:
   // It just stores the result of the latest lookup by \sa indexFromSubjectHierarchyItem,
   // not guaranteed to contain up-to-date information, should be just used as a search hint.
   // If the item cannot be found at the given index then we need to browse through all model items.
-  mutable QMap<vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID, QPersistentModelIndex> RowCache;
+  mutable QMap<vtkIdType, QPersistentModelIndex> RowCache;
 };
 
 #endif

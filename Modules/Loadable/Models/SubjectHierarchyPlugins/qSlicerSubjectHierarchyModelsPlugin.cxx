@@ -97,7 +97,7 @@ qSlicerSubjectHierarchyModelsPlugin::~qSlicerSubjectHierarchyModelsPlugin()
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyModelsPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, SubjectHierarchyItemID parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
+  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
 {
   Q_UNUSED(parentItemID);
   if (!node)
@@ -114,8 +114,7 @@ double qSlicerSubjectHierarchyModelsPlugin::canAddNodeToSubjectHierarchy(
 }
 
 //---------------------------------------------------------------------------
-double qSlicerSubjectHierarchyModelsPlugin::canOwnSubjectHierarchyItem(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)const
+double qSlicerSubjectHierarchyModelsPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
@@ -146,8 +145,7 @@ const QString qSlicerSubjectHierarchyModelsPlugin::roleForPlugin()const
 }
 
 //---------------------------------------------------------------------------
-QIcon qSlicerSubjectHierarchyModelsPlugin::icon(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)
+QIcon qSlicerSubjectHierarchyModelsPlugin::icon(vtkIdType itemID)
 {
   Q_D(qSlicerSubjectHierarchyModelsPlugin);
 
@@ -174,7 +172,7 @@ QIcon qSlicerSubjectHierarchyModelsPlugin::visibilityIcon(int visible)
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSubjectHierarchyModelsPlugin::tooltip(SubjectHierarchyItemID itemID)const
+QString qSlicerSubjectHierarchyModelsPlugin::tooltip(vtkIdType itemID)const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {

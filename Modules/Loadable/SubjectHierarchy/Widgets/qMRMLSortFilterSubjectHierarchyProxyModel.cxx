@@ -24,7 +24,6 @@
 
 // MRML include
 #include "vtkMRMLSubjectHierarchyNode.h"
-#include "vtkMRMLSubjectHierarchyConstants.h"
 
 // Subject Hierarchy includes
 #include "qSlicerSubjectHierarchyPluginHandler.h"
@@ -45,7 +44,7 @@ public:
   qMRMLSortFilterSubjectHierarchyProxyModelPrivate();
 
   QString NameFilter;
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID HideItemsUnaffiliatedWithItemID;
+  vtkIdType HideItemsUnaffiliatedWithItemID;
 };
 
 // -----------------------------------------------------------------------------
@@ -63,6 +62,13 @@ qMRMLSortFilterSubjectHierarchyProxyModel::qMRMLSortFilterSubjectHierarchyProxyM
  : QSortFilterProxyModel(vparent)
  , d_ptr(new qMRMLSortFilterSubjectHierarchyProxyModelPrivate)
 {
+  // For speed issue, we might want to disable the dynamic sorting however
+  // when having source models using QStandardItemModel, drag&drop is handled
+  // in 2 steps, first a new row is created (which automatically calls
+  // filterAcceptsRow() that returns false) and then set the row with the
+  // correct values (which doesn't call filterAcceptsRow() on the up to date
+  // value unless DynamicSortFilter is true).
+  this->setDynamicSortFilter(true);
 }
 
 //------------------------------------------------------------------------------
@@ -108,16 +114,14 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setNameFilter(QString filter)
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID
-qMRMLSortFilterSubjectHierarchyProxyModel::hideItemsUnaffiliatedWithItemID()
+vtkIdType qMRMLSortFilterSubjectHierarchyProxyModel::hideItemsUnaffiliatedWithItemID()
 {
   Q_D(qMRMLSortFilterSubjectHierarchyProxyModel);
   return d->HideItemsUnaffiliatedWithItemID;
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSortFilterSubjectHierarchyProxyModel::setHideItemsUnaffiliatedWithItemID(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)
+void qMRMLSortFilterSubjectHierarchyProxyModel::setHideItemsUnaffiliatedWithItemID(vtkIdType itemID)
 {
   Q_D(qMRMLSortFilterSubjectHierarchyProxyModel);
   d->HideItemsUnaffiliatedWithItemID = itemID;
@@ -131,16 +135,14 @@ QModelIndex qMRMLSortFilterSubjectHierarchyProxyModel::subjectHierarchySceneInde
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID
-qMRMLSortFilterSubjectHierarchyProxyModel::subjectHierarchyItemFromIndex(const QModelIndex& index)const
+vtkIdType qMRMLSortFilterSubjectHierarchyProxyModel::subjectHierarchyItemFromIndex(const QModelIndex& index)const
 {
   qMRMLSubjectHierarchyModel* sceneModel = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
   return sceneModel->subjectHierarchyItemFromIndex( this->mapToSource(index) );
 }
 
 //-----------------------------------------------------------------------------
-QModelIndex qMRMLSortFilterSubjectHierarchyProxyModel::indexFromSubjectHierarchyItem(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID, int column)const
+QModelIndex qMRMLSortFilterSubjectHierarchyProxyModel::indexFromSubjectHierarchyItem(vtkIdType itemID, int column)const
 {
   qMRMLSubjectHierarchyModel* sceneModel = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
   return this->mapFromSource(sceneModel->indexFromSubjectHierarchyItem(itemID, column));
@@ -181,13 +183,12 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsRow(int sourceRow, 
     return false;
     }
   qMRMLSubjectHierarchyModel* model = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID = model->subjectHierarchyItemFromItem(item);
+  vtkIdType itemID = model->subjectHierarchyItemFromItem(item);
   return this->filterAcceptsItem(itemID);
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID )const
+bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType itemID )const
 {
   Q_D(const qMRMLSortFilterSubjectHierarchyProxyModel);
 

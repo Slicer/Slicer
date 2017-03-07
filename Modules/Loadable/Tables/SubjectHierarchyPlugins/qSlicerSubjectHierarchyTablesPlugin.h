@@ -60,7 +60,7 @@ public:
   ///   node, and 1 means that the plugin is the only one that can handle the node (by node type or identifier attribute)
   virtual double canAddNodeToSubjectHierarchy(
     vtkMRMLNode* node,
-    SubjectHierarchyItemID parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )const;
+    vtkIdType parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )const;
 
   /// Determines if the actual plugin can handle a subject hierarchy item. The plugin with
   /// the highest confidence number will "own" the item in the subject hierarchy (set icon, tooltip,
@@ -68,7 +68,7 @@ public:
   /// \param item Item to handle in the subject hierarchy tree
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
   ///   item, and 1 means that the plugin is the only one that can handle the item (by node type or identifier attribute)
-  virtual double canOwnSubjectHierarchyItem(SubjectHierarchyItemID itemID)const;
+  virtual double canOwnSubjectHierarchyItem(vtkIdType itemID)const;
 
   /// Get role that the plugin assigns to the subject hierarchy item.
   ///   Each plugin should provide only one role.
@@ -76,17 +76,17 @@ public:
 
   /// Get icon of an owned subject hierarchy item
   /// \return Icon to set, empty icon if nothing to set
-  virtual QIcon icon(SubjectHierarchyItemID itemID);
+  virtual QIcon icon(vtkIdType itemID);
 
   /// Get visibility icon for a visibility state
   virtual QIcon visibilityIcon(int visible);
 
   /// Set display visibility of a owned subject hierarchy item
-  virtual void setDisplayVisibility(SubjectHierarchyItemID itemID, int visible);
+  virtual void setDisplayVisibility(vtkIdType itemID, int visible);
 
   /// Get display visibility of a owned subject hierarchy item
   /// \return Display visibility (0: hidden, 1: shown, 2: partially shown)
-  virtual int getDisplayVisibility(SubjectHierarchyItemID itemID)const;
+  virtual int getDisplayVisibility(vtkIdType itemID)const;
 
 protected:
   /// Return the table view node object from the layout

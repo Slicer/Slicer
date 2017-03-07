@@ -156,13 +156,13 @@ qSlicerSubjectHierarchyAbstractPlugin* qSlicerSubjectHierarchyPluginLogic::subje
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID qSlicerSubjectHierarchyPluginLogic::currentSubjectHierarchyItem()const
+vtkIdType qSlicerSubjectHierarchyPluginLogic::currentSubjectHierarchyItem()const
 {
   return qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyPluginLogic::setCurrentSubjectHierarchyItem(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)
+void qSlicerSubjectHierarchyPluginLogic::setCurrentSubjectHierarchyItem(vtkIdType itemID)
 {
   qSlicerSubjectHierarchyPluginHandler::instance()->setCurrentItem(itemID);
 }
@@ -284,7 +284,7 @@ void qSlicerSubjectHierarchyPluginLogic::onNodeAboutToBeRemoved(vtkObject* scene
     }
 
   // Remove associated subject hierarchy item if any
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID = shNode->GetItemByDataNode(dataNode);
+  vtkIdType itemID = shNode->GetItemByDataNode(dataNode);
   if (itemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     shNode->RemoveItem(itemID, false, false);

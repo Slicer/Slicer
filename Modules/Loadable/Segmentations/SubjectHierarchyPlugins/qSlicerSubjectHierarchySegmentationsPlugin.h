@@ -48,12 +48,10 @@ public:
   ///   Default value is invalid. In that case the parent will be ignored, the confidence numbers are got based on the to-be child node alone.
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
   ///   node, and 1 means that the plugin is the only one that can handle the node (by node type or identifier attribute)
-  virtual double canAddNodeToSubjectHierarchy(
-    vtkMRMLNode* node,
-    SubjectHierarchyItemID parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )const;
+  virtual double canAddNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )const;
 
   /// Creates subject hierarchy item using default method and updates all segments
-  virtual bool addNodeToSubjectHierarchy(vtkMRMLNode* node, SubjectHierarchyItemID parentItemID, std::string level="");
+  virtual bool addNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID, std::string level="");
 
   /// Determines if the actual plugin can handle a subject hierarchy item. The plugin with
   /// the highest confidence number will "own" the item in the subject hierarchy (set icon, tooltip,
@@ -61,38 +59,38 @@ public:
   /// \param item Item to handle in the subject hierarchy tree
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
   ///   item, and 1 means that the plugin is the only one that can handle the item (by node type or identifier attribute)
-  virtual double canOwnSubjectHierarchyItem(SubjectHierarchyItemID itemID)const;
+  virtual double canOwnSubjectHierarchyItem(vtkIdType itemID)const;
 
   /// Get role that the plugin assigns to the subject hierarchy node.
   ///   Each plugin should provide only one role.
   Q_INVOKABLE virtual const QString roleForPlugin()const;
 
   /// Generate tooltip for a owned subject hierarchy item
-  virtual QString tooltip(SubjectHierarchyItemID itemID)const;
+  virtual QString tooltip(vtkIdType itemID)const;
 
   /// Get help text for plugin to be added in subject hierarchy module widget help box
   virtual const QString helpText()const;
 
   /// Get icon of an owned subject hierarchy item
   /// \return Icon to set, empty icon if nothing to set
-  virtual QIcon icon(SubjectHierarchyItemID itemID);
+  virtual QIcon icon(vtkIdType itemID);
 
   /// Get visibility icon for a visibility state
   virtual QIcon visibilityIcon(int visible);
 
   /// Set display visibility of a owned subject hierarchy item
-  virtual void setDisplayVisibility(SubjectHierarchyItemID itemID, int visible);
+  virtual void setDisplayVisibility(vtkIdType itemID, int visible);
 
   /// Get display visibility of a owned subject hierarchy item
   /// \return Display visibility (0: hidden, 1: shown, 2: partially shown)
-  virtual int getDisplayVisibility(SubjectHierarchyItemID itemID)const;
+  virtual int getDisplayVisibility(vtkIdType itemID)const;
 
   /// Get item context menu item actions to add to tree view
   virtual QList<QAction*> itemContextMenuActions()const;
 
   /// Show context menu actions valid for a given subject hierarchy item.
   /// \param itemID Subject Hierarchy item to show the context menu items for
-  virtual void showContextMenuActionsForItem(SubjectHierarchyItemID itemID);
+  virtual void showContextMenuActionsForItem(vtkIdType itemID);
 
 public slots:
   /// Called when segment is added in an observed segmentation node
@@ -109,11 +107,11 @@ public slots:
 
   /// Called when a subject hierarchy item is modified.
   /// Renames segment if the modified item belongs to a segment
-  void onSubjectHierarchyItemModified(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID);
+  void onSubjectHierarchyItemModified(vtkIdType itemID);
 
   /// Called when a subject hierarchy item is about to be removed.
   /// Removes segment from parent segmentation if the removed item belongs to a segment
-  void onSubjectHierarchyItemAboutToBeRemoved(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID);
+  void onSubjectHierarchyItemAboutToBeRemoved(vtkIdType itemID);
 
 protected slots:
   /// Create binary labelmap representation

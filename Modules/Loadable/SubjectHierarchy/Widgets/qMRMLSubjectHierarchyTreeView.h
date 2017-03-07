@@ -29,15 +29,14 @@
 // CTK includes
 #include <ctkVTKObject.h>
 
-// MRML includes
-#include <vtkMRMLSubjectHierarchyNode.h>
-
 // SubjectHierarchy includes
 #include "qSlicerSubjectHierarchyModuleWidgetsExport.h"
 
 class qMRMLSubjectHierarchyTreeViewPrivate;
 class qMRMLSortFilterSubjectHierarchyProxyModel;
 class qMRMLSubjectHierarchyModel;
+class vtkMRMLSubjectHierarchyNode;
+class vtkMRMLScene;
 
 /// \ingroup Slicer_QtModules_SubjectHierarchy
 class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyTreeView : public QTreeView
@@ -60,14 +59,12 @@ public:
   qMRMLSubjectHierarchyTreeView(QWidget *parent=0);
   virtual ~qMRMLSubjectHierarchyTreeView();
 
-  typedef vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID SubjectHierarchyItemID;
-
 public:
   vtkMRMLScene* mrmlScene()const;
   vtkMRMLSubjectHierarchyNode* subjectHierarchyNode()const;
 
-  SubjectHierarchyItemID currentItem()const;
-  SubjectHierarchyItemID rootItem()const;
+  vtkIdType currentItem()const;
+  vtkIdType rootItem()const;
 
   void setShowRootItem(bool show);
   bool showRootItem()const;
@@ -87,8 +84,10 @@ protected:
   /// Toggle visibility
   virtual void toggleVisibility(const QModelIndex& index);
 
-  /// Populate context menu for current subject hierarchy item
-  virtual void populateContextMenuForCurrentItem();
+  /// Populate context menu for given subject hierarchy item
+  /// Usually one of the current ones, but if right-clicked on the empty area, then the scene.
+  /// The current items are queried in the function anyway, in case of multi-selection
+  virtual void populateContextMenuForItem(vtkIdType itemID);
 
   /// Reimplemented to increase performance
   virtual void updateGeometries();
@@ -100,17 +99,17 @@ protected:
 
   /// Apply highlight for subject hierarchy items referenced by argument items by DICOM
   /// \sa highlightReferencedItems
-  void applyReferenceHighlightForItems(QList<SubjectHierarchyItemID> itemIDs);
+  void applyReferenceHighlightForItems(QList<vtkIdType> itemIDs);
 
 public slots:
   /// Set MRML scene
   virtual void setMRMLScene(vtkMRMLScene* scene);
 
   /// Set current (=selected) subject hierarchy item
-  virtual void setCurrentItem(SubjectHierarchyItemID itemID);
+  virtual void setCurrentItem(vtkIdType itemID);
 
   /// Set subject hierarchy item to be the root in the shown tree
-  virtual void setRootItem(SubjectHierarchyItemID itemID);
+  virtual void setRootItem(vtkIdType itemID);
 
   /// Rename currently selected one item by popping up a dialog
   void renameCurrentItem();
@@ -120,7 +119,8 @@ public slots:
   virtual void editCurrentItem();
 
   /// Handle expand item requests in the subject hierarchy tree
-  virtual void expandItem(SubjectHierarchyItemID itemID);
+  /// Note: vtkMRMLSubjectHierarchyNode namespace needed in order to be able to make connection
+  virtual void expandItem(vtkIdType itemID);
 
   /// Handle manual selection of a plugin as the new owner of a subject hierarchy node
   virtual void selectPluginForCurrentItem();
@@ -135,7 +135,8 @@ public slots:
   virtual void setMultiSelection(bool multiSelectionOn);
 
 signals:
-  void currentItemChanged(SubjectHierarchyItemID);
+  /// Note: vtkMRMLSubjectHierarchyNode namespace needed in order to be able to make connection
+  void currentItemChanged(vtkIdType);
 
 protected slots:
   virtual void onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
@@ -144,6 +145,9 @@ protected slots:
 
   /// Expand tree to depth specified by the clicked context menu action
   virtual void expandToDepthFromContextMenu();
+
+protected:
+  QScopedPointer<qMRMLSubjectHierarchyTreeViewPrivate> d_ptr;
 
 private:
   Q_DECLARE_PRIVATE(qMRMLSubjectHierarchyTreeView);

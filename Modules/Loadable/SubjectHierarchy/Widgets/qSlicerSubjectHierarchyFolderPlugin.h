@@ -54,7 +54,7 @@ public:
   /// \param item Item to handle in the subject hierarchy tree
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
   ///   item, and 1 means that the plugin is the only one that can handle the item (by node type or identifier attribute)
-  virtual double canOwnSubjectHierarchyItem(SubjectHierarchyItemID itemID)const;
+  virtual double canOwnSubjectHierarchyItem(vtkIdType itemID)const;
 
   /// Get role that the plugin assigns to the subject hierarchy item.
   ///   Each plugin should provide only one role.
@@ -62,13 +62,13 @@ public:
 
   /// Get icon of an owned subject hierarchy item
   /// \return Icon to set, NULL if nothing to set
-  virtual QIcon icon(SubjectHierarchyItemID itemID);
+  virtual QIcon icon(vtkIdType itemID);
 
   /// Get visibility icon for a visibility state
   virtual QIcon visibilityIcon(int visible);
 
   /// Open module belonging to item and set inputs in opened module
-  virtual void editProperties(SubjectHierarchyItemID itemID);
+  virtual void editProperties(vtkIdType itemID);
 
   /// Get item context menu item actions to add to tree view
   virtual QList<QAction*> itemContextMenuActions()const;
@@ -80,12 +80,12 @@ public:
 
   /// Show context menu actions valid for a given subject hierarchy item.
   /// \param itemID Subject Hierarchy item to show the context menu items for
-  virtual void showContextMenuActionsForItem(SubjectHierarchyItemID itemID);
+  virtual void showContextMenuActionsForItem(vtkIdType itemID);
 
 public:
   /// Create folder under specified item
   /// \param parentNode Parent item for folder to create
-  SubjectHierarchyItemID createFolderUnderItem(SubjectHierarchyItemID parentItemID);
+  vtkIdType createFolderUnderItem(vtkIdType parentItemID);
 
 protected slots:
   /// Create folder node under the scene

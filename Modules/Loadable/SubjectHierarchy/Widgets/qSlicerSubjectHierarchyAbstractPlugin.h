@@ -30,14 +30,10 @@
 #include <QIcon>
 
 // MRML includes
-#include "vtkMRMLSubjectHierarchyNode.h"
-#include "vtkMRMLSubjectHierarchyConstants.h"
+#include <vtkMRMLSubjectHierarchyNode.h>
 
 #include "qSlicerSubjectHierarchyModuleWidgetsExport.h"
 
-class vtkObject;
-class vtkMRMLNode;
-class vtkMRMLSubjectHierarchyNode;
 class QStandardItem;
 class QAction;
 class qSlicerAbstractModuleWidget;
@@ -77,8 +73,6 @@ public:
   qSlicerSubjectHierarchyAbstractPlugin(QObject* parent = NULL);
   virtual ~qSlicerSubjectHierarchyAbstractPlugin();
 
-  typedef vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID SubjectHierarchyItemID;
-
 // Role-related virtual methods
 // If the subclass plugin does not offer a role, these do not need to be overridden
 public:
@@ -88,7 +82,7 @@ public:
   /// \param item Item to handle in the subject hierarchy tree
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
   ///   item, and 1 means that the plugin is the only one that can handle the item (by node type or identifier attribute)
-  Q_INVOKABLE virtual double canOwnSubjectHierarchyItem(SubjectHierarchyItemID itemID)const;
+  Q_INVOKABLE virtual double canOwnSubjectHierarchyItem(vtkIdType itemID)const;
 
   /// Get role that the plugin assigns to the subject hierarchy item.
   ///   Each plugin should provide only one role.
@@ -99,27 +93,27 @@ public:
 
   /// Get icon of an owned subject hierarchy item
   /// \return Icon to set, empty icon if nothing to set
-  virtual QIcon icon(SubjectHierarchyItemID itemID);
+  virtual QIcon icon(vtkIdType itemID);
 
   /// Get visibility icon for a visibility state
   Q_INVOKABLE virtual QIcon visibilityIcon(int visible);
 
   /// Open module belonging to item and set inputs in opened module
-  Q_INVOKABLE virtual void editProperties(SubjectHierarchyItemID itemID);
+  Q_INVOKABLE virtual void editProperties(vtkIdType itemID);
 
   /// Generate displayed name for the owned subject hierarchy item corresponding to its role.
   /// The default implementation returns the associated data node's name if any, otherwise the item name
-  virtual QString displayedItemName(SubjectHierarchyItemID itemID)const;
+  virtual QString displayedItemName(vtkIdType itemID)const;
 
   /// Generate tooltip for a owned subject hierarchy item
-  Q_INVOKABLE virtual QString tooltip(SubjectHierarchyItemID itemID)const;
+  Q_INVOKABLE virtual QString tooltip(vtkIdType itemID)const;
 
   /// Set display visibility of a owned subject hierarchy item
-  Q_INVOKABLE virtual void setDisplayVisibility(SubjectHierarchyItemID itemID, int visible);
+  Q_INVOKABLE virtual void setDisplayVisibility(vtkIdType itemID, int visible);
 
   /// Get display visibility of a owned subject hierarchy item
   /// \return Display visibility (0: hidden, 1: shown, 2: partially shown)
-  Q_INVOKABLE virtual int getDisplayVisibility(SubjectHierarchyItemID itemID)const;
+  Q_INVOKABLE virtual int getDisplayVisibility(vtkIdType itemID)const;
 
 // Function related virtual methods
 public:
@@ -133,7 +127,7 @@ public:
 
   /// Show context menu actions valid for a given subject hierarchy item.
   /// \param itemID Subject Hierarchy item to show the context menu items for
-  Q_INVOKABLE virtual void showContextMenuActionsForItem(SubjectHierarchyItemID itemID) { Q_UNUSED(itemID); };
+  Q_INVOKABLE virtual void showContextMenuActionsForItem(vtkIdType itemID) { Q_UNUSED(itemID); };
 
 // Parenting related virtual methods with default implementation
 public:
@@ -147,8 +141,7 @@ public:
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
   ///   node, and 1 means that the plugin is the only one that can handle the node (by node type or identifier attribute)
   virtual double canAddNodeToSubjectHierarchy(
-    vtkMRMLNode* node,
-    SubjectHierarchyItemID parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )const;
+    vtkMRMLNode* node, vtkIdType parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )const;
 
   /// Add a node to subject hierarchy under a specified parent node. This is basically a convenience function to
   /// call vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyItem
@@ -156,7 +149,7 @@ public:
   /// \param parentItemID Parent item of the added node
   /// \param level Level of the added node in subject hierarchy, none be default
   /// \return True if added successfully, false otherwise
-  virtual bool addNodeToSubjectHierarchy(vtkMRMLNode* node, SubjectHierarchyItemID parentItemID, std::string level="");
+  virtual bool addNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID, std::string level="");
 
   /// Determines if a subject hierarchy item can be reparented in the hierarchy using the current plugin,
   /// and gets a confidence value for the reparented item.
@@ -166,16 +159,16 @@ public:
   /// \param parentItemID Prospective parent of the item to reparent.
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
   ///   item, and 1 means that the plugin is the only one that can handle the item
-  virtual double canReparentItemInsideSubjectHierarchy(SubjectHierarchyItemID itemID, SubjectHierarchyItemID parentItemID)const;
+  virtual double canReparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID)const;
 
   /// Reparent an item that was already in the subject hierarchy under a new parent.
   /// \return True if reparented successfully, false otherwise
-  virtual bool reparentItemInsideSubjectHierarchy(SubjectHierarchyItemID itemID, SubjectHierarchyItemID parentItemID);
+  virtual bool reparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID);
 
 // Utility functions
 public:
   /// Determines if the item is owned by this plugin
-  Q_INVOKABLE bool isThisPluginOwnerOfItem(SubjectHierarchyItemID itemID)const;
+  Q_INVOKABLE bool isThisPluginOwnerOfItem(vtkIdType itemID)const;
 
   /// Switch to module with given name
   /// \return Widget representation of the module if found, NULL otherwise
@@ -191,7 +184,8 @@ public:
 
 signals:
   /// Signal requesting expanding of the subject hierarchy tree item belonging to an item
-  void requestExpandItem(SubjectHierarchyItemID itemID);
+  /// Note: vtkMRMLSubjectHierarchyNode namespace needed in order to be able to make connection
+  void requestExpandItem(vtkIdType itemID);
 
   /// Signal requesting invalidating the filter model for the tree view
   /// (e.g. when an item is added or removed by the plugin)

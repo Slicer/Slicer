@@ -114,7 +114,7 @@ qSlicerSubjectHierarchySegmentationsPlugin::~qSlicerSubjectHierarchySegmentation
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchySegmentationsPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, SubjectHierarchyItemID parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
+  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
 {
   Q_UNUSED(parentItemID);
   if (!node)
@@ -131,8 +131,8 @@ double qSlicerSubjectHierarchySegmentationsPlugin::canAddNodeToSubjectHierarchy(
 }
 
 //----------------------------------------------------------------------------
-bool qSlicerSubjectHierarchySegmentationsPlugin::addNodeToSubjectHierarchy(vtkMRMLNode* nodeToAdd,
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID parentItemID, std::string level/*=""*/)
+bool qSlicerSubjectHierarchySegmentationsPlugin::addNodeToSubjectHierarchy(
+  vtkMRMLNode* nodeToAdd, vtkIdType parentItemID, std::string level/*=""*/)
 {
   if (!qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy(nodeToAdd, parentItemID, level))
     {
@@ -149,8 +149,7 @@ bool qSlicerSubjectHierarchySegmentationsPlugin::addNodeToSubjectHierarchy(vtkMR
 }
 
 //---------------------------------------------------------------------------
-double qSlicerSubjectHierarchySegmentationsPlugin::canOwnSubjectHierarchyItem(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)const
+double qSlicerSubjectHierarchySegmentationsPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
@@ -184,8 +183,7 @@ const QString qSlicerSubjectHierarchySegmentationsPlugin::roleForPlugin()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSubjectHierarchySegmentationsPlugin::tooltip(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)const
+QString qSlicerSubjectHierarchySegmentationsPlugin::tooltip(vtkIdType itemID)const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
@@ -248,7 +246,7 @@ const QString qSlicerSubjectHierarchySegmentationsPlugin::helpText()const
 }
 
 //---------------------------------------------------------------------------
-QIcon qSlicerSubjectHierarchySegmentationsPlugin::icon(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)
+QIcon qSlicerSubjectHierarchySegmentationsPlugin::icon(vtkIdType itemID)
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
@@ -276,8 +274,7 @@ QIcon qSlicerSubjectHierarchySegmentationsPlugin::visibilityIcon(int visible)
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchySegmentationsPlugin::setDisplayVisibility(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID, int visible)
+void qSlicerSubjectHierarchySegmentationsPlugin::setDisplayVisibility(vtkIdType itemID, int visible)
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
@@ -301,15 +298,15 @@ void qSlicerSubjectHierarchySegmentationsPlugin::setDisplayVisibility(
   segmentationNode->SetDisplayVisibility(visible);
 
   // Trigger updating subject hierarchy visibility icon by calling modified on the segmentation SH node and all its parents
-  std::set<vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID> parentItems;
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID parentItem = shNode->GetItemByDataNode(segmentationNode);
+  std::set<vtkIdType> parentItems;
+  vtkIdType parentItem = shNode->GetItemByDataNode(segmentationNode);
   do
     {
     parentItems.insert(parentItem);
     }
   while ( (parentItem = shNode->GetItemParent(parentItem) ) != shNode->GetSceneItemID() ); // The double parentheses avoids a Linux build warning
 
-  std::set<vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID>::iterator parentsIt;
+  std::set<vtkIdType>::iterator parentsIt;
   for (parentsIt=parentItems.begin(); parentsIt!=parentItems.end(); ++parentsIt)
     {
 //TODO: Remove section if works without it. Invoke item modified items if not
@@ -318,8 +315,7 @@ void qSlicerSubjectHierarchySegmentationsPlugin::setDisplayVisibility(
 }
 
 //-----------------------------------------------------------------------------
-int qSlicerSubjectHierarchySegmentationsPlugin::getDisplayVisibility(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)const
+int qSlicerSubjectHierarchySegmentationsPlugin::getDisplayVisibility(vtkIdType itemID)const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
@@ -354,8 +350,7 @@ QList<QAction*> qSlicerSubjectHierarchySegmentationsPlugin::itemContextMenuActio
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchySegmentationsPlugin::showContextMenuActionsForItem(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)
+void qSlicerSubjectHierarchySegmentationsPlugin::showContextMenuActionsForItem(vtkIdType itemID)
 {
   Q_D(qSlicerSubjectHierarchySegmentationsPlugin);
   this->hideAllContextMenuActions();
@@ -398,8 +393,7 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSegmentAdded(vtkObject* calle
     }
 
   // Get associated subject hierarchy node
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID segmentationShItemID =
-    shNode->GetItemByDataNode(segmentationNode);
+  vtkIdType segmentationShItemID = shNode->GetItemByDataNode(segmentationNode);
   if (segmentationShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy item for segmentation node " << segmentationNode->GetName();
@@ -422,7 +416,7 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSegmentAdded(vtkObject* calle
     }
 
   // Add the segment in subject hierarchy to allow individual handling (e.g. visibility)
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID segmentShItemID = shNode->CreateItem(
+  vtkIdType segmentShItemID = shNode->CreateItem(
     segmentationShItemID, NULL, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSubseries(), segment->GetName() );
   shNode->SetItemAttribute(segmentShItemID, vtkMRMLSegmentationNode::GetSegmentIDAttributeName(), segmentId);
 }
@@ -444,8 +438,7 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSegmentRemoved(vtkObject* cal
     }
 
   // Get associated subject hierarchy item
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID segmentationShItemID =
-    shNode->GetItemByDataNode(segmentationNode);
+  vtkIdType segmentationShItemID = shNode->GetItemByDataNode(segmentationNode);
   if (segmentationShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     qCritical() << Q_FUNC_INFO << ": Subject hierarchy item cannot be found for segmentation node "
@@ -463,9 +456,9 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSegmentRemoved(vtkObject* cal
     }
 
   // Find subject hierarchy item for segment
-  std::vector<vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID> segmentShItemIDs;
+  std::vector<vtkIdType> segmentShItemIDs;
   shNode->GetItemChildren(segmentationShItemID, segmentShItemIDs);
-  std::vector<vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID>::iterator segmentIt;
+  std::vector<vtkIdType>::iterator segmentIt;
   for (segmentIt = segmentShItemIDs.begin(); segmentIt != segmentShItemIDs.end(); ++segmentIt)
     {
     std::string currentSegmentId = shNode->GetItemAttribute(*segmentIt, vtkMRMLSegmentationNode::GetSegmentIDAttributeName());
@@ -502,8 +495,7 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSegmentModified(vtkObject* ca
     }
 
   // Get associated subject hierarchy item
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID segmentationShItemID =
-    shNode->GetItemByDataNode(segmentationNode);
+  vtkIdType segmentationShItemID = shNode->GetItemByDataNode(segmentationNode);
   if (segmentationShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     qCritical() << Q_FUNC_INFO << ": Unable to find subject hierarchy item for segmentation node "
@@ -528,10 +520,10 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSegmentModified(vtkObject* ca
     }
 
   // Find subject hierarchy item for segment
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID segmentShItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
-  std::vector<vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID> segmentShItemIDs;
+  vtkIdType segmentShItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+  std::vector<vtkIdType> segmentShItemIDs;
   shNode->GetItemChildren(segmentationShItemID, segmentShItemIDs);
-  std::vector<vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID>::iterator segmentIt;
+  std::vector<vtkIdType>::iterator segmentIt;
   for (segmentIt = segmentShItemIDs.begin(); segmentIt != segmentShItemIDs.end(); ++segmentIt)
     {
     std::string currentSegmentId = shNode->GetItemAttribute(*segmentIt, vtkMRMLSegmentationNode::GetSegmentIDAttributeName());
@@ -550,8 +542,7 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSegmentModified(vtkObject* ca
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchySegmentationsPlugin::onSubjectHierarchyItemModified(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID )
+void qSlicerSubjectHierarchySegmentationsPlugin::onSubjectHierarchyItemModified(vtkIdType itemID)
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
@@ -575,8 +566,7 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSubjectHierarchyItemModified(
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchySegmentationsPlugin::onSubjectHierarchyItemAboutToBeRemoved(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID )
+void qSlicerSubjectHierarchySegmentationsPlugin::onSubjectHierarchyItemAboutToBeRemoved(vtkIdType itemID)
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
@@ -597,7 +587,7 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSubjectHierarchyItemAboutToBe
     std::string segmentId = shNode->GetItemAttribute(itemID, vtkMRMLSegmentationNode::GetSegmentIDAttributeName());
 
     // Rely only on ID because the removed node is not in the scene any more
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID parentItemID = shNode->GetItemParent(itemID);
+    vtkIdType parentItemID = shNode->GetItemParent(itemID);
     if (parentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
       {
       return;
@@ -619,8 +609,7 @@ void qSlicerSubjectHierarchySegmentationsPlugin::createBinaryLabelmapRepresentat
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
     }
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID currentItemID =
-    qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid current item!";
@@ -631,7 +620,7 @@ void qSlicerSubjectHierarchySegmentationsPlugin::createBinaryLabelmapRepresentat
   // Segmentations plugin provides the functionality for segments too, see if it is a segment
   if (!segmentationNode)
     {
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID parentItemID = shNode->GetItemParent(currentItemID);
+    vtkIdType parentItemID = shNode->GetItemParent(currentItemID);
     if (parentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
       {
       return;
@@ -659,8 +648,7 @@ void qSlicerSubjectHierarchySegmentationsPlugin::createClosedSurfaceRepresentati
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
     }
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID currentItemID =
-    qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid current item!";
@@ -671,7 +659,7 @@ void qSlicerSubjectHierarchySegmentationsPlugin::createClosedSurfaceRepresentati
   // Segmentations plugin provides the functionality for segments too, see if it is a segment
   if (!segmentationNode)
     {
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID parentItemID = shNode->GetItemParent(currentItemID);
+    vtkIdType parentItemID = shNode->GetItemParent(currentItemID);
     if (parentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
       {
       return;
@@ -707,8 +695,7 @@ void qSlicerSubjectHierarchySegmentationsPlugin::updateAllSegmentsFromMRML(vtkMR
     }
 
   // Get associated subject hierarchy item
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID segmentationShItemID =
-    shNode->GetItemByDataNode(segmentationNode);
+  vtkIdType segmentationShItemID = shNode->GetItemByDataNode(segmentationNode);
   if (segmentationShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     qCritical() << Q_FUNC_INFO << ": Unable to find subject hierarchy item for segmentation node "
@@ -727,9 +714,9 @@ void qSlicerSubjectHierarchySegmentationsPlugin::updateAllSegmentsFromMRML(vtkMR
   segmentationNode->GetSegmentation()->GetSegmentIDs(segmentIDsToBeAddedToSh);
 
   // Segment modify/remove
-  std::vector<vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID> segmentShItemIDs;
+  std::vector<vtkIdType> segmentShItemIDs;
   shNode->GetItemChildren(segmentationShItemID, segmentShItemIDs);
-  std::vector<vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID>::iterator segmentIt;
+  std::vector<vtkIdType>::iterator segmentIt;
   for (segmentIt = segmentShItemIDs.begin(); segmentIt != segmentShItemIDs.end(); ++segmentIt)
     {
     std::string segmentId = shNode->GetItemAttribute(*segmentIt, vtkMRMLSegmentationNode::GetSegmentIDAttributeName());

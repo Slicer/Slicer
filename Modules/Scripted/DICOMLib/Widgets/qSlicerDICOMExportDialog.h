@@ -47,18 +47,16 @@ public:
   qSlicerDICOMExportDialog(QObject* parent = NULL);
   virtual ~qSlicerDICOMExportDialog();
 
-  typedef vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID SubjectHierarchyItemID;
-
 public:
   /// Show dialog
   /// \param nodeToSelect Node is selected in the tree if given
-  virtual bool exec(SubjectHierarchyItemID itemToSelect=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID);
+  virtual bool exec(vtkIdType itemToSelect=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID);
 
   /// Set MRML scene
   Q_INVOKABLE void setMRMLScene(vtkMRMLScene* scene);
 
   /// Python compatibility function for showing dialog (calls \a exec)
-  Q_INVOKABLE bool execDialog(SubjectHierarchyItemID itemToSelect=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  Q_INVOKABLE bool execDialog(vtkIdType itemToSelect=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     { return this->exec(itemToSelect); };
 
   /// Show DICOM browser and update database to show new items
@@ -72,7 +70,7 @@ protected slots:
   void onExportSeriesRadioButtonToggled(bool);
 
   /// Triggers examining item when selection changes
-  void onCurrentItemChanged(SubjectHierarchyItemID itemID);
+  void onCurrentItemChanged(vtkIdType itemID);
 
   /// Show exportables returned by the plugins for selected node
   void examineSelectedItem();

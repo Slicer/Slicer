@@ -32,10 +32,9 @@
 // CTK includes
 #include <ctkVTKObject.h>
 
-// MRML includes
-#include <vtkMRMLSubjectHierarchyNode.h>
-
 class qMRMLSortFilterSubjectHierarchyProxyModelPrivate;
+class vtkMRMLSubjectHierarchyNode;
+class vtkMRMLScene;
 class QStandardItem;
 
 /// \ingroup Slicer_QtModules_SubjectHierarchy
@@ -48,14 +47,12 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSortFilterSubjectHier
   Q_PROPERTY(QString nameFilter READ nameFilter WRITE setNameFilter)
   /// This property controls whether items unaffiliated with a given subject hierarchy item are hidden or not.
   /// All the nodes are visible (invalid item ID - vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID) by default.
-  Q_PROPERTY(SubjectHierarchyItemID hideItemsUnaffiliatedWithItemID READ hideItemsUnaffiliatedWithItemID WRITE setHideItemsUnaffiliatedWithItemID)
+  Q_PROPERTY(vtkIdType hideItemsUnaffiliatedWithItemID READ hideItemsUnaffiliatedWithItemID WRITE setHideItemsUnaffiliatedWithItemID)
 
 public:
   typedef QSortFilterProxyModel Superclass;
   qMRMLSortFilterSubjectHierarchyProxyModel(QObject *parent=0);
   virtual ~qMRMLSortFilterSubjectHierarchyProxyModel();
-
-  typedef vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID SubjectHierarchyItemID;
 
   Q_INVOKABLE vtkMRMLSubjectHierarchyNode* subjectHierarchyNode()const;
   Q_INVOKABLE vtkMRMLScene* mrmlScene()const;
@@ -63,17 +60,17 @@ public:
   QString nameFilter();
   void setNameFilter(QString filter);
 
-  SubjectHierarchyItemID hideItemsUnaffiliatedWithItemID();
-  void setHideItemsUnaffiliatedWithItemID(SubjectHierarchyItemID itemID);
+  vtkIdType hideItemsUnaffiliatedWithItemID();
+  void setHideItemsUnaffiliatedWithItemID(vtkIdType itemID);
 
   /// Retrieve the index of the MRML scene (the root item) in the subject hierarchy tree
   Q_INVOKABLE QModelIndex subjectHierarchySceneIndex()const;
 
   /// Retrieve the associated subject hierarchy item ID from a model index
-  Q_INVOKABLE SubjectHierarchyItemID subjectHierarchyItemFromIndex(const QModelIndex& index)const;
+  Q_INVOKABLE vtkIdType subjectHierarchyItemFromIndex(const QModelIndex& index)const;
 
   /// Retrieve an index for a given a subject hierarchy item ID
-  Q_INVOKABLE QModelIndex indexFromSubjectHierarchyItem(SubjectHierarchyItemID itemID, int column=0)const;
+  Q_INVOKABLE QModelIndex indexFromSubjectHierarchyItem(vtkIdType itemID, int column=0)const;
 
 protected:
   /// Returns true if the item in the row indicated by the given sourceRow and
@@ -82,7 +79,7 @@ protected:
   virtual bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent)const;
 
   /// Filters items to decide which to display in the view
-  virtual bool filterAcceptsItem(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)const;
+  virtual bool filterAcceptsItem(vtkIdType itemID)const;
 
   QStandardItem* sourceItem(const QModelIndex& index)const;
 

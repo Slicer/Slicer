@@ -54,8 +54,6 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyPlu
 {
   Q_OBJECT
 
-  typedef vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID SubjectHierarchyItemID;
-
 public:
   /// Instance getter for the singleton class
   /// \return Instance object
@@ -74,19 +72,19 @@ public:
   vtkMRMLScene* mrmlScene()const;
 
   /// Set current subject hierarchy item (single selection only)
-  void setCurrentItem(SubjectHierarchyItemID itemID);
+  void setCurrentItem(vtkIdType itemID);
 
   /// Get current subject hierarchy item (single selection only).
   /// This function is called from the plugins when exposing and performing the supported actions. As the plugin actions are not
   /// aggregated on multi-selection, this function is never called from plugins in that case (and thus NULL is returned).
   /// \return Current item if only one is selected, otherwise INVALID_ITEM_ID
-  Q_INVOKABLE SubjectHierarchyItemID currentItem();
+  Q_INVOKABLE vtkIdType currentItem();
 
   /// Set current subject hierarchy items in case of multi-selection
-  void setCurrentItems(QList<SubjectHierarchyItemID> items);
+  void setCurrentItems(QList<vtkIdType> items);
 
   /// Get current subject hierarchy items in case of multi-selection
-  Q_INVOKABLE QList<SubjectHierarchyItemID> currentItems();
+  Q_INVOKABLE QList<vtkIdType> currentItems();
 
 public:
   /// Register a plugin
@@ -114,7 +112,7 @@ public:
   /// \return The most suitable plugins if found, empty list otherwise
   QList<qSlicerSubjectHierarchyAbstractPlugin*> pluginsForAddingNodeToSubjectHierarchy(
     vtkMRMLNode* node,
-    SubjectHierarchyItemID parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID );
+    vtkIdType parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID );
 
   /// Returns the plugin that can handle an item the best for reparenting it inside the subject hierarchy
   /// The best plugins are found based on the confidence numbers they return for the inputs.
@@ -122,22 +120,22 @@ public:
   /// \param parentItemID Prospective parent of the item to reparent.
   /// \return The most suitable plugins if found, empty list otherwise
   QList<qSlicerSubjectHierarchyAbstractPlugin*> pluginsForReparentingItemInSubjectHierarchy(
-    SubjectHierarchyItemID itemID, SubjectHierarchyItemID parentItemID );
+    vtkIdType itemID, vtkIdType parentItemID );
 
   /// Find plugin that is most suitable to own a subject hierarchy item.
   /// This method does not set it to the item!
   /// The best plugins are found based on the confidence numbers they return for the inputs.
   /// \param item Item to be owned
-  qSlicerSubjectHierarchyAbstractPlugin* findOwnerPluginForSubjectHierarchyItem(SubjectHierarchyItemID itemID);
+  qSlicerSubjectHierarchyAbstractPlugin* findOwnerPluginForSubjectHierarchyItem(vtkIdType itemID);
 
   /// Find and set plugin that is most suitable to own a subject hierarchy item
   /// The best plugins are found based on the confidence numbers they return for the inputs.
   /// \param item Item to be owned
-  qSlicerSubjectHierarchyAbstractPlugin* findAndSetOwnerPluginForSubjectHierarchyItem(SubjectHierarchyItemID itemID);
+  qSlicerSubjectHierarchyAbstractPlugin* findAndSetOwnerPluginForSubjectHierarchyItem(vtkIdType itemID);
 
   /// Get plugin owning a certain subject hierarchy item.
   /// This function doesn't try to find a suitable plugin, it just returns the one already assigned.
-  Q_INVOKABLE qSlicerSubjectHierarchyAbstractPlugin* getOwnerPluginForSubjectHierarchyItem(SubjectHierarchyItemID itemID);
+  Q_INVOKABLE qSlicerSubjectHierarchyAbstractPlugin* getOwnerPluginForSubjectHierarchyItem(vtkIdType itemID);
 
   /// Used when multiple plugins are found with the same confidence number for an item.
   /// Pops up a simple dialog asking to choose one plugin from a list.
@@ -161,7 +159,7 @@ protected:
 
   /// Current subject hierarchy item(s)
   /// (selected items in the tree view e.g. for context menu request)
-  QList<SubjectHierarchyItemID> m_CurrentItems;
+  QList<vtkIdType> m_CurrentItems;
 
   /// Subject hierarchy node
   vtkWeakPointer<vtkMRMLSubjectHierarchyNode> m_SubjectHierarchyNode;

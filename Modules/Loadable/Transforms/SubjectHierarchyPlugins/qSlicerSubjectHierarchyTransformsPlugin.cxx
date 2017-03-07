@@ -112,7 +112,7 @@ qSlicerSubjectHierarchyTransformsPlugin::~qSlicerSubjectHierarchyTransformsPlugi
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyTransformsPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, SubjectHierarchyItemID parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
+  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
 {
   Q_UNUSED(parentItemID);
   if (!node)
@@ -129,8 +129,7 @@ double qSlicerSubjectHierarchyTransformsPlugin::canAddNodeToSubjectHierarchy(
 }
 
 //---------------------------------------------------------------------------
-double qSlicerSubjectHierarchyTransformsPlugin::canOwnSubjectHierarchyItem(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)const
+double qSlicerSubjectHierarchyTransformsPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
@@ -161,7 +160,7 @@ const QString qSlicerSubjectHierarchyTransformsPlugin::roleForPlugin()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSubjectHierarchyTransformsPlugin::tooltip(SubjectHierarchyItemID itemID)const
+QString qSlicerSubjectHierarchyTransformsPlugin::tooltip(vtkIdType itemID)const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
@@ -190,8 +189,7 @@ QString qSlicerSubjectHierarchyTransformsPlugin::tooltip(SubjectHierarchyItemID 
 }
 
 //---------------------------------------------------------------------------
-QIcon qSlicerSubjectHierarchyTransformsPlugin::icon(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)
+QIcon qSlicerSubjectHierarchyTransformsPlugin::icon(vtkIdType itemID)
 {
   Q_D(qSlicerSubjectHierarchyTransformsPlugin);
 
@@ -229,8 +227,7 @@ QList<QAction*> qSlicerSubjectHierarchyTransformsPlugin::itemContextMenuActions(
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyTransformsPlugin::showContextMenuActionsForItem(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)
+void qSlicerSubjectHierarchyTransformsPlugin::showContextMenuActionsForItem(vtkIdType itemID)
 {
   Q_D(qSlicerSubjectHierarchyTransformsPlugin);
   this->hideAllContextMenuActions();
@@ -267,8 +264,7 @@ void qSlicerSubjectHierarchyTransformsPlugin::invert()
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
     }
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID currentItemID =
-    qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid current item!";
@@ -292,8 +288,7 @@ void qSlicerSubjectHierarchyTransformsPlugin::identity()
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
     }
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID currentItemID =
-    qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid current item!";

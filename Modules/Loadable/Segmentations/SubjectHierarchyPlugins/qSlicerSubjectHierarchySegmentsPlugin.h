@@ -50,11 +50,11 @@ public:
   /// \param parentItemID Prospective parent of the item to reparent.
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
   ///   item, and 1 means that the plugin is the only one that can handle the item
-  virtual double canReparentItemInsideSubjectHierarchy(SubjectHierarchyItemID itemID, SubjectHierarchyItemID parentItemID)const;
+  virtual double canReparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID)const;
 
   /// Reparent an item that was already in the subject hierarchy under a new parent.
   /// \return True if reparented successfully, false otherwise
-  virtual bool reparentItemInsideSubjectHierarchy(SubjectHierarchyItemID itemID, SubjectHierarchyItemID parentItemID);
+  virtual bool reparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID);
 
   /// Determines if the actual plugin can handle a subject hierarchy item. The plugin with
   /// the highest confidence number will "own" the item in the subject hierarchy (set icon, tooltip,
@@ -62,7 +62,7 @@ public:
   /// \param item Item to handle in the subject hierarchy tree
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
   ///   item, and 1 means that the plugin is the only one that can handle the item (by node type or identifier attribute)
-  virtual double canOwnSubjectHierarchyItem(SubjectHierarchyItemID itemID)const;
+  virtual double canOwnSubjectHierarchyItem(vtkIdType itemID)const;
 
   /// Get role that the plugin assigns to the subject hierarchy item.
   ///   Each plugin should provide only one role.
@@ -73,30 +73,30 @@ public:
 
   /// Get icon of an owned subject hierarchy item
   /// \return Icon to set, empty icon if nothing to set
-  virtual QIcon icon(SubjectHierarchyItemID itemID);
+  virtual QIcon icon(vtkIdType itemID);
 
   /// Get visibility icon for a visibility state
   virtual QIcon visibilityIcon(int visible);
 
   /// Open module belonging to item and set inputs in opened module
-  virtual void editProperties(SubjectHierarchyItemID itemID);
+  virtual void editProperties(vtkIdType itemID);
 
   /// Generate tooltip for a owned subject hierarchy item
-  virtual QString tooltip(SubjectHierarchyItemID itemID)const;
+  virtual QString tooltip(vtkIdType itemID)const;
 
   /// Set display visibility of a owned subject hierarchy item
-  virtual void setDisplayVisibility(SubjectHierarchyItemID itemID, int visible);
+  virtual void setDisplayVisibility(vtkIdType itemID, int visible);
 
   /// Get display visibility of a owned subject hierarchy item
   /// \return Display visibility (0: hidden, 1: shown, 2: partially shown)
-  virtual int getDisplayVisibility(SubjectHierarchyItemID itemID)const;
+  virtual int getDisplayVisibility(vtkIdType itemID)const;
 
   /// Get item context menu item actions to add to tree view
   virtual QList<QAction*> itemContextMenuActions()const;
 
   /// Show context menu actions valid for a given subject hierarchy item.
   /// \param itemID Subject Hierarchy item to show the context menu items for
-  virtual void showContextMenuActionsForItem(SubjectHierarchyItemID itemID);
+  virtual void showContextMenuActionsForItem(vtkIdType itemID);
 
 protected slots:
   /// Show only selected segment, hide all others in segmentation

@@ -110,8 +110,7 @@ QList<QAction*> qSlicerSubjectHierarchyParseLocalDataPlugin::sceneContextMenuAct
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyParseLocalDataPlugin::showContextMenuActionsForItem(
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)
+void qSlicerSubjectHierarchyParseLocalDataPlugin::showContextMenuActionsForItem(vtkIdType itemID)
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
@@ -152,7 +151,7 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
 {
   QList<QStringList> loadedFilePaths;
   QList<vtkMRMLStorableNode*> loadedNodes;
-  QList<vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID> subjectHierarchyItemIDs;
+  QList<vtkIdType> vtkIdTypes;
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
   if (!scene)
     {
@@ -174,8 +173,7 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
     vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(nextObject);
     if ( storableNode && storableNode->GetStorageNode() && !storableNode->GetHideFromEditors() )
       {
-      vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID shItemID =
-        shNode->GetItemByDataNode(storableNode);
+      vtkIdType shItemID = shNode->GetItemByDataNode(storableNode);
       if (shItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
         {
         qCritical() << Q_FUNC_INFO << ": Data node " << storableNode->GetName() << " is not in subject hierarchy!";
@@ -193,7 +191,7 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
         QString filePath(storageNode->GetFileName());
         loadedFilePaths << filePath.split('/', QString::SkipEmptyParts);
         loadedNodes << storableNode;
-        subjectHierarchyItemIDs << shItemID;
+        vtkIdTypes << shItemID;
         }
       }
     }
@@ -241,15 +239,14 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
   while (firstComponentMatch);
 
   // Create hierarchy
-  QList<vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID> createdItemIDs;
+  QList<vtkIdType> createdItemIDs;
   for (int nodeIndex=0; nodeIndex<loadedNodes.count(); ++nodeIndex)
     {
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID parentItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+    vtkIdType parentItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
     for (int componentIndex=0; componentIndex<loadedFilePaths[nodeIndex].count(); ++componentIndex)
       {
       QString currentComponent = loadedFilePaths[nodeIndex][componentIndex];
-      vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID =
-        shNode->GetItemChildWithName(parentItemID, currentComponent.toLatin1().constData());
+      vtkIdType itemID = shNode->GetItemChildWithName(parentItemID, currentComponent.toLatin1().constData());
       // If hierarchy node already created
       if (itemID)
         {
@@ -268,7 +265,7 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
       // Leaf node (file name) and not top-level
       else if (parentItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
         {
-        shNode->SetItemParent(subjectHierarchyItemIDs[nodeIndex], parentItemID);
+        shNode->SetItemParent(vtkIdTypes[nodeIndex], parentItemID);
         }
       }
     //TODO: remove if works
@@ -276,7 +273,7 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
     }
 
   // Expand generated branches
-  foreach(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID createdItemID, createdItemIDs)
+  foreach(vtkIdType createdItemID, createdItemIDs)
     {
     emit requestExpandItem(createdItemID);
     }

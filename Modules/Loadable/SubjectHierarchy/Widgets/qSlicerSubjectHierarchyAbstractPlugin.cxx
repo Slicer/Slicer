@@ -37,6 +37,7 @@
 
 // MRML includes
 #include <vtkMRMLScene.h>
+#include <vtkMRMLSubjectHierarchyNode.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>
@@ -71,7 +72,7 @@ void qSlicerSubjectHierarchyAbstractPlugin::setName(QString name)
 }
 
 //---------------------------------------------------------------------------
-double qSlicerSubjectHierarchyAbstractPlugin::canOwnSubjectHierarchyItem(SubjectHierarchyItemID itemID)const
+double qSlicerSubjectHierarchyAbstractPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
 {
   Q_UNUSED(itemID);
 
@@ -94,7 +95,7 @@ const QString qSlicerSubjectHierarchyAbstractPlugin::helpText()const
 }
 
 //---------------------------------------------------------------------------
-QIcon qSlicerSubjectHierarchyAbstractPlugin::icon(SubjectHierarchyItemID itemID)
+QIcon qSlicerSubjectHierarchyAbstractPlugin::icon(vtkIdType itemID)
 {
   Q_UNUSED(itemID);
 
@@ -114,7 +115,7 @@ QIcon qSlicerSubjectHierarchyAbstractPlugin::visibilityIcon(int visible)
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyAbstractPlugin::editProperties(SubjectHierarchyItemID itemID)
+void qSlicerSubjectHierarchyAbstractPlugin::editProperties(vtkIdType itemID)
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
@@ -139,7 +140,7 @@ QList<QAction*> qSlicerSubjectHierarchyAbstractPlugin::sceneContextMenuActions()
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyAbstractPlugin::canAddNodeToSubjectHierarchy(vtkMRMLNode* node,
-  SubjectHierarchyItemID parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
+  vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
 {
   Q_UNUSED(node);
   Q_UNUSED(parentItemID);
@@ -150,7 +151,7 @@ double qSlicerSubjectHierarchyAbstractPlugin::canAddNodeToSubjectHierarchy(vtkMR
 
 //----------------------------------------------------------------------------
 bool qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy(
-  vtkMRMLNode* nodeToAdd, SubjectHierarchyItemID parentItemID, std::string level/*=""*/)
+  vtkMRMLNode* nodeToAdd, vtkIdType parentItemID, std::string level/*=""*/)
 {
   if (!nodeToAdd)
     {
@@ -175,20 +176,21 @@ bool qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy(
     level = vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries();
     }
 
-  SubjectHierarchyItemID addedItemID = shNode->CreateItem(parentItemID, nodeToAdd, level);
+  vtkIdType addedItemID = shNode->CreateItem(parentItemID, nodeToAdd, level);
   if (addedItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     qCritical() << Q_FUNC_INFO << ": Failed to add subject hierarchy item for data node " << nodeToAdd->GetName();
     return false;
     }
 
+  // Set owner plugin to make sure the plugin that adds the item is the owner
+  shNode->SetItemOwnerPluginName(addedItemID, this->m_Name.toLatin1().constData());
+
   return true;
 }
 
 //----------------------------------------------------------------------------
-double qSlicerSubjectHierarchyAbstractPlugin::canReparentItemInsideSubjectHierarchy(
-  SubjectHierarchyItemID itemID,
-  SubjectHierarchyItemID parentItemID )const
+double qSlicerSubjectHierarchyAbstractPlugin::canReparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID)const
 {
   Q_UNUSED(itemID);
   Q_UNUSED(parentItemID);
@@ -199,9 +201,7 @@ double qSlicerSubjectHierarchyAbstractPlugin::canReparentItemInsideSubjectHierar
 }
 
 //---------------------------------------------------------------------------
-bool qSlicerSubjectHierarchyAbstractPlugin::reparentItemInsideSubjectHierarchy(
-  SubjectHierarchyItemID itemID,
-  SubjectHierarchyItemID parentItemID )
+bool qSlicerSubjectHierarchyAbstractPlugin::reparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID)
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
@@ -215,7 +215,7 @@ bool qSlicerSubjectHierarchyAbstractPlugin::reparentItemInsideSubjectHierarchy(
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSubjectHierarchyAbstractPlugin::displayedItemName(SubjectHierarchyItemID itemID)const
+QString qSlicerSubjectHierarchyAbstractPlugin::displayedItemName(vtkIdType itemID)const
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
@@ -228,7 +228,7 @@ QString qSlicerSubjectHierarchyAbstractPlugin::displayedItemName(SubjectHierarch
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSubjectHierarchyAbstractPlugin::tooltip(SubjectHierarchyItemID itemID)const
+QString qSlicerSubjectHierarchyAbstractPlugin::tooltip(vtkIdType itemID)const
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
@@ -260,7 +260,7 @@ QString qSlicerSubjectHierarchyAbstractPlugin::tooltip(SubjectHierarchyItemID it
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyAbstractPlugin::setDisplayVisibility(SubjectHierarchyItemID itemID, int visible)
+void qSlicerSubjectHierarchyAbstractPlugin::setDisplayVisibility(vtkIdType itemID, int visible)
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
@@ -274,7 +274,7 @@ void qSlicerSubjectHierarchyAbstractPlugin::setDisplayVisibility(SubjectHierarch
 }
 
 //-----------------------------------------------------------------------------
-int qSlicerSubjectHierarchyAbstractPlugin::getDisplayVisibility(SubjectHierarchyItemID itemID)const
+int qSlicerSubjectHierarchyAbstractPlugin::getDisplayVisibility(vtkIdType itemID)const
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
@@ -287,7 +287,7 @@ int qSlicerSubjectHierarchyAbstractPlugin::getDisplayVisibility(SubjectHierarchy
 }
 
 //--------------------------------------------------------------------------
-bool qSlicerSubjectHierarchyAbstractPlugin::isThisPluginOwnerOfItem(SubjectHierarchyItemID itemID)const
+bool qSlicerSubjectHierarchyAbstractPlugin::isThisPluginOwnerOfItem(vtkIdType itemID)const
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)

@@ -314,10 +314,10 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
   exportables.clear();
 
   // Check if the exportables are in the same study
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID studyItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+  vtkIdType studyItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
   foreach (qSlicerDICOMExportable* exportable, d->Exportables)
     {
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID seriesItemID = exportable->subjectHierarchyItemID();
+    vtkIdType seriesItemID = exportable->subjectHierarchyItemID();
     if ( seriesItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
       || shNode->IsItemLevel(seriesItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries()) )
       {
@@ -326,7 +326,7 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
       continue;
       }
 
-      vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID parentItemID = shNode->GetItemParent(seriesItemID);
+      vtkIdType parentItemID = shNode->GetItemParent(seriesItemID);
       if (studyItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
         {
         studyItemID = parentItemID;
@@ -342,7 +342,7 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
   // Populate patient section
 
   // Get patient item
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID patientItemID = shNode->GetItemParent(studyItemID);
+  vtkIdType patientItemID = shNode->GetItemParent(studyItemID);
   if (patientItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     QString error("No patient item found!");
@@ -449,7 +449,7 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
   foreach (qSlicerDICOMExportable* exportable, d->Exportables)
     {
     // Get exportable series item
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID seriesItemID = exportable->subjectHierarchyItemID();
+    vtkIdType seriesItemID = exportable->subjectHierarchyItemID();
 
     // Add header row for new series
     unsigned int row = d->TagsTable->rowCount();
@@ -536,7 +536,7 @@ void qSlicerDICOMTagEditorWidget::commitChangesToNodes()
     }
 
   std::string dicomAttributePrefix = vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix();
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID studyItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+  vtkIdType studyItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
 
   // Commit changes to series
   for (int row=d->topSeriesHeaderRow(); row<d->TagsTable->rowCount(); ++row)
@@ -548,7 +548,7 @@ void qSlicerDICOMTagEditorWidget::commitChangesToNodes()
       }
 
     // Get subject hierarchy series item from exportable
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID seriesItemID = exportable->subjectHierarchyItemID();
+    vtkIdType seriesItemID = exportable->subjectHierarchyItemID();
 
     // Save study item if not set yet
     if (studyItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
@@ -578,7 +578,7 @@ void qSlicerDICOMTagEditorWidget::commitChangesToNodes()
     }
 
   // Commit changes to patient
-  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID patientItemID = shNode->GetItemParent(studyItemID);
+  vtkIdType patientItemID = shNode->GetItemParent(studyItemID);
   if (patientItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     qCritical() << Q_FUNC_INFO << ": Failed to get patient item";

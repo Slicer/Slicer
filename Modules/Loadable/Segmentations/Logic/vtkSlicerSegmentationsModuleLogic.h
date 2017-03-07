@@ -114,12 +114,10 @@ public:
   static vtkSegment* CreateSegmentFromModelNode(vtkMRMLModelNode* modelNode, vtkMRMLSegmentationNode* segmentationNode=NULL);
 
   /// Utility function for getting the segmentation node for a segment subject hierarchy item
-  static vtkMRMLSegmentationNode* GetSegmentationNodeForSegmentSubjectHierarchyItem(
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID segmentShItemID, vtkMRMLScene* scene );
+  static vtkMRMLSegmentationNode* GetSegmentationNodeForSegmentSubjectHierarchyItem(vtkIdType segmentShItemID, vtkMRMLScene* scene);
 
   /// Utility function for getting the segment object for a segment subject hierarchy item
-  static vtkSegment* GetSegmentForSegmentSubjectHierarchyItem(
-    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID segmentShItemID, vtkMRMLScene* scene );
+  static vtkSegment* GetSegmentForSegmentSubjectHierarchyItem(vtkIdType segmentShItemID, vtkMRMLScene* scene);
 
   /// Export segment to representation MRML node.
   /// 1. If representation node is a labelmap node, then the binary labelmap representation of the

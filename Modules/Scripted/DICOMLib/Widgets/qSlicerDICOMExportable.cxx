@@ -39,7 +39,6 @@ public:
   /// Extra information the user sees on mouse over of the export option
   QString Tooltip;
   /// ID of the subject hierarchy item to be exported
-  //TODO: vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID cannot be used in a Q_PROPERTY
   vtkIdType SubjectHierarchyItemID;
   /// Class of the plugin that created this exportable
   QString PluginClass;

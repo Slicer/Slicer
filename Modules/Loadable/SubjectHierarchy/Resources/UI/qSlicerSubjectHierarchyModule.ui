@@ -127,14 +127,6 @@
    <header>qMRMLNodeAttributeTableWidget.h</header>
   </customwidget>
   <customwidget>
-   <class>qMRMLTreeView</class>
-   <extends>QTreeView</extends>
-   <header>qMRMLTreeView.h</header>
-   <slots>
-    <slot>setSceneModel(int)</slot>
-   </slots>
-  </customwidget>
-  <customwidget>
    <class>qSlicerWidget</class>
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
@@ -142,7 +134,7 @@
   </customwidget>
   <customwidget>
    <class>qMRMLSubjectHierarchyTreeView</class>
-   <extends>qMRMLTreeView</extends>
+   <extends>QTreeView</extends>
    <header>qMRMLSubjectHierarchyTreeView.h</header>
   </customwidget>
   <customwidget>
