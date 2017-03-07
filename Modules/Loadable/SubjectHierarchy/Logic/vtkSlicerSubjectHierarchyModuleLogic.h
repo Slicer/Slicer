@@ -100,6 +100,9 @@ public:
   static vtkIdType CloneSubjectHierarchyItem(
     vtkMRMLSubjectHierarchyNode* shNode, vtkIdType itemID, const char* name=NULL );
 
+  /// Convenience function to get subject hierarchy node from the logic
+  vtkMRMLSubjectHierarchyNode* GetSubjectHierarchyNode();
+
 protected:
   /// Called each time a new scene is set
   virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);

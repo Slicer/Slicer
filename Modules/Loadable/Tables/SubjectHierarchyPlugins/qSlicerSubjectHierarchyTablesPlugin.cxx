@@ -251,7 +251,7 @@ void qSlicerSubjectHierarchyTablesPlugin::setDisplayVisibility(vtkIdType itemID,
       if (tableItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
         {
         tableViewNode->SetTableNodeID(NULL);
-        //currentTableShNode->Modified(); //TODO:
+        shNode->ItemModified(tableItemID);
         }
       }
 
@@ -265,7 +265,7 @@ void qSlicerSubjectHierarchyTablesPlugin::setDisplayVisibility(vtkIdType itemID,
     }
 
   // Trigger icon update
-  // node->Modified(); //TODO:
+  shNode->ItemModified(itemID);
 }
 
 //-----------------------------------------------------------------------------

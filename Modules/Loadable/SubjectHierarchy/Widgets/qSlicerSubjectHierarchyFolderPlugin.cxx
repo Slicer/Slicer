@@ -263,7 +263,7 @@ vtkIdType qSlicerSubjectHierarchyFolderPlugin::createFolderUnderItem(vtkIdType p
     + vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder();
   name = shNode->GenerateUniqueItemName(name);
   vtkIdType childItemID = shNode->CreateItem(
-    parentItemID, NULL, vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder(), name );
+    parentItemID, name, vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder() );
   emit requestExpandItem(childItemID);
 
   return childItemID;

@@ -3,6 +3,7 @@ import unittest
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import VTKObservationMixin
+from SubjectHierarchyPlugins import SegmentEditorSubjectHierarchyPlugin
 
 #
 # SegmentEditor
@@ -13,7 +14,7 @@ class SegmentEditor(ScriptedLoadableModule):
     import string
     self.parent.title = "Segment Editor"
     self.parent.categories = ["", "Segmentation"]
-    self.parent.dependencies = ["Segmentations"]
+    self.parent.dependencies = ["Segmentations", "SubjectHierarchy"]
     self.parent.contributors = ["Csaba Pinter (Queen's University), Andras Lasso (Queen's University)"]
     self.parent.helpText = """
 This module allows editing segmentation objects by directly drawing and using segmentaiton tools on the contained segments.
@@ -25,6 +26,11 @@ so for example the closed surface can be visualized as edited in the 3D view.
 This work is part of SparKit project, funded by Cancer Care Ontario (CCO)'s ACRU program
 and Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO).
 """
+
+  def setup(self):
+    # Register subject hierarchy plugin
+    scriptedPlugin = slicer.qSlicerSubjectHierarchyScriptedPlugin(None)
+    scriptedPlugin.setPythonSource(SegmentEditorSubjectHierarchyPlugin.filePath)
 
 #
 # SegmentEditorWidget

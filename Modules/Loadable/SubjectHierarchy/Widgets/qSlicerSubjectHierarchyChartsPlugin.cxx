@@ -243,8 +243,12 @@ void qSlicerSubjectHierarchyChartsPlugin::setDisplayVisibility(vtkIdType itemID,
     if ( chartViewNode->GetChartNodeID()
       && strcmp(chartViewNode->GetChartNodeID(), associatedChartNode->GetID()) )
       {
-      chartViewNode->SetChartNodeID(NULL);
-      associatedChartNode->Modified(); //TODO: Does this trigger SH item update? We need to do that
+      vtkIdType chartItemID = shNode->GetItemByDataNode(scene->GetNodeByID(chartViewNode->GetChartNodeID()));
+      if (chartItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+        {
+        chartViewNode->SetChartNodeID(NULL);
+        shNode->ItemModified(chartItemID);
+        }
       }
 
     // Select chart to show
@@ -257,7 +261,7 @@ void qSlicerSubjectHierarchyChartsPlugin::setDisplayVisibility(vtkIdType itemID,
     }
 
   // Trigger icon update
-  //node->Modified(); //TODO:
+  shNode->ItemModified(itemID);
 }
 
 //-----------------------------------------------------------------------------

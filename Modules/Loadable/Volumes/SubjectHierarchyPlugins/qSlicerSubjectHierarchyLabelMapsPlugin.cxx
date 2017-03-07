@@ -372,12 +372,17 @@ void qSlicerSubjectHierarchyLabelMapsPlugin::showLabelMap(vtkMRMLScalarVolumeNod
   qSlicerCoreApplication::application()->applicationLogic()->PropagateVolumeSelection();
 
   // Get subject hierarchy item for the volume node and have the scene model updated
-//TODO:
-  //vtkMRMLSubjectHierarchyNode* subjectHierarchyNode = vtkMRMLSubjectHierarchyNode::GetAssociatedSubjectHierarchyNode(labelMapNode);
-  //if (subjectHierarchyNode)
-  //  {
-  //  subjectHierarchyNode->Modified();
-  //  }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+  vtkIdType volumeItemID = shNode->GetItemByDataNode(node);
+  if (volumeItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    shNode->ItemModified(volumeItemID);
+    }
 }
 
 //---------------------------------------------------------------------------

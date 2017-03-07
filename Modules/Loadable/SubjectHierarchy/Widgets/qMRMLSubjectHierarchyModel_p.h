@@ -70,8 +70,6 @@ public:
 
   //TODO: Needed?
   //void listenNodeModifiedEvent();
-  //TODO: Remove and replace calls with its content
-  void reparentItems(QList<QStandardItem*>& children, int newIndex, QStandardItem* newParent);
 
   /// This method is called by qMRMLSubjectHierarchyModel::updateFromSubjectHierarchy() to speed up
   /// the loading. By explicitly specifying the \a index, it skips item lookup within their parents

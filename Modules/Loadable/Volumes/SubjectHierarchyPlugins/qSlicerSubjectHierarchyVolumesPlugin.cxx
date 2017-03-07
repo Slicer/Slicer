@@ -420,7 +420,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolume(vtkMRMLScalarVolumeNode* n
   vtkIdType volumeItemID = shNode->GetItemByDataNode(volumeNode);
   if (volumeItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
-    //subjectHierarchyNode->Modified(); //TODO:
+    shNode->ItemModified(volumeItemID);
     }
 }
 
@@ -643,14 +643,10 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumesInBranch()
 
   qSlicerCoreApplication::application()->applicationLogic()->PropagateVolumeSelection();
 
-  // Update scene model for subject hierarchy nodes just hidden
-  //TODO:
-  //for (std::set<vtkMRMLSubjectHierarchyNode*>::iterator volumeShNodeIt = subjectHierarchyItemsToUpdate.begin();
-  //  volumeShNodeIt != subjectHierarchyItemsToUpdate.end(); ++volumeShNodeIt)
-  //  {
-  //  if (*volumeShNodeIt)
-  //    {
-  //    (*volumeShNodeIt)->Modified();
-  //    }
-  //  }
+  // Update scene model for subject hierarchy nodes that were just made hidden
+  for ( std::set<vtkIdType>::iterator volumeItemIt = subjectHierarchyItemsToUpdate.begin();
+       volumeItemIt != subjectHierarchyItemsToUpdate.end(); ++volumeItemIt )
+   {
+   shNode->ItemModified(*volumeItemIt);
+   }
 }

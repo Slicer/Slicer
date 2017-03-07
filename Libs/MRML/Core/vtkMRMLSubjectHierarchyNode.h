@@ -84,6 +84,8 @@ public:
 
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
+  /// Write this node's body to a MRML file in XML format.
+  virtual void WriteNodeBodyXML(ostream& of, int indent);
 
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
@@ -153,17 +155,25 @@ public:
 
 // Hierarchy related methods
 public:
-  /// Create subject hierarchy item in the hierarchy under a specified parent. If the item existed then use that and
-  /// set it up with the supplied parameters. Used mostly for creating hierarchy items (folder, patient, study, etc.)
+  /// Create subject hierarchy item in the hierarchy under a specified parent.
+  /// Used for creating hierarchy items (folder, patient, study, etc.)
+  /// \param parentItemID Parent item under which the created item is inserted. If top-level then use \sa GetSceneItemID
+  /// \param name Name of the item. Only used if there is no data node associated
+  /// \param level Level string of the created item (\sa vtkMRMLSubjectHierarchyConstants)
+  /// \return ID of the item in the hierarchy that was assigned automatically when adding
+  vtkIdType CreateItem( vtkIdType parentItemID,
+                        std::string name,
+                        std::string level=vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder() );
+  /// Create subject hierarchy item for a data node.
+  /// NOTE: This method is only for internal use and should not be needed!
   /// \param parentItemID Parent item under which the created item is inserted. If top-level then use \sa GetSceneItemID
   /// \param dataNode Associated data MRML node
   /// \param level Level string of the created item (\sa vtkMRMLSubjectHierarchyConstants)
-  /// \param name Name of the item. Only used if there is no data node associated (in which case the name of that MRML node is used)
   /// \return ID of the item in the hierarchy that was assigned automatically when adding
   vtkIdType CreateItem( vtkIdType parentItemID,
                         vtkMRMLNode* dataNode=NULL,
-                        std::string level=vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder(),
-                        std::string name="" );
+                        std::string level=vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries() );
+
   /// Remove subject hierarchy item or branch from the tree
   /// \param itemID Item to remove
   /// \param removeDataNode Flag determining whether to remove associated data node from the scene if any. On by default
@@ -181,8 +191,11 @@ public:
   /// \return Parent item ID, INVALID_ITEM_ID if there is no parent
   vtkIdType GetItemParent(vtkIdType itemID);
   /// Get position of item under its parent
-  /// \return Position of item under its parent. -1 on failure.
+  /// \return Position of item under its parent. -1 on failure
   int GetItemPositionUnderParent(vtkIdType itemID);
+  /// Get item under parent by position
+  /// \return ID of item found in given position. Invalid if no item found at that position
+  vtkIdType GetItemByPositionUnderParent(vtkIdType parentItemID, int position);
 
   /// Get IDs of the children of a subject hierarchy item
   /// \param childIDs Output vector containing the children. It will not contain the given item itself.
@@ -218,7 +231,7 @@ public:
   /// \return The first subject hierarchy item ID to which the given node is associated to.
   vtkIdType GetItemByDataNode(vtkMRMLNode* dataNode);
 
-  /// Get child subject hierarchy item with specific name
+  /// Get direct child subject hierarchy item with specific name (not recursive)
   /// \param parent Parent subject hierarchy item to start from
   /// \param name Name to find
   /// \return Child node whose name without postfix is the same as the given attribute
@@ -277,6 +290,9 @@ public:
 
   /// Generate unique item name
   std::string GenerateUniqueItemName(std::string name);
+
+  /// Print subject hierarchy item info on stream
+  void PrintItem(vtkIdType itemID, ostream& os, vtkIndent indent);
 
 protected:
   /// Callback function for all events from the subject hierarchy items

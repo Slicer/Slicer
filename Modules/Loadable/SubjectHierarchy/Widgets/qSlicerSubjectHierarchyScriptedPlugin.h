@@ -42,7 +42,7 @@ class qSlicerAbstractModuleWidget;
 
 /// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
 ///    In Widgets, not Plugins because the paths and libs need to be exported to extensions
-/// \brief Scripted abstract plugin for handling Subject Hierarchy nodes
+/// \brief Scripted abstract plugin for handling subject hierarchy items or providing actions for items
 ///
 /// This class provides an interface to plugins implemented in python.
 /// USAGE: Subclass AbstractScriptedSubjectHierarchyPlugin in SubjectHierarchyPlugins subfolder
@@ -50,13 +50,13 @@ class qSlicerAbstractModuleWidget;
 ///   setup method of module widget) and setting python source to implemented plugin subclass.
 ///   Example can be found here: https://subversion.assembla.com/svn/slicerrt/trunk/VolumeClip/src
 ///
-/// Note about confidence values (\sa canAddNodeToSubjectHierarchy \sa canReparentNodeInsideSubjectHierarchy \sa canOwnSubjectHierarchyNode):
+/// Note about confidence values (\sa canAddNodeToSubjectHierarchy \sa canReparentItemInsideSubjectHierarchy \sa canOwnSubjectHierarchyItem):
 /// The confidence value is a floating point number between 0.0 and 1.0. Meaning of some typical values:
-/// 0.0 = The plugin cannot handle the node in question at all
-/// 0.3 = It is likely that other plugins will be able to handle the node in question better (typical value for plugins for generic types, such as Volumes)
-/// 0.5 = The plugin has equal chance to handle this node as others (an example can be color table node)
-/// 0.7 = The plugin is likely be the only one that can handle the node in question, but there is a chance that other plugins can do that too
-/// 1.0 = The node in question can only be handled by the plugin (by node type or identifier attribute)
+/// 0.0 = The plugin cannot handle the item in question at all
+/// 0.3 = It is likely that other plugins will be able to handle the item in question better (typical value for plugins for generic types, such as Volumes)
+/// 0.5 = The plugin has equal chance to handle this item as others (an example can be color table node)
+/// 0.7 = The plugin is likely be the only one that can handle the item in question, but there is a chance that other plugins can do that too
+/// 1.0 = The item in question can only be handled by the plugin (by node type or identifier attribute)
 ///
 class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyScriptedPlugin
   : public qSlicerSubjectHierarchyAbstractPlugin
@@ -125,7 +125,7 @@ public:
 
 // Function related virtual methods
 public:
-  /// Get node context menu item actions to add to tree view
+  /// Get item context menu item actions to add to tree view
   virtual QList<QAction*> itemContextMenuActions()const;
 
   /// Get scene context menu item actions to add to tree view

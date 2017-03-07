@@ -243,17 +243,6 @@ QString qSlicerSubjectHierarchyAbstractPlugin::tooltip(vtkIdType itemID)const
   if (dataNode)
     {
     tooltipString.append(dataNode->GetNodeTagName());
-    tooltipString.append(" (");
-    }
-
-  tooltipString.append("Level:");
-  tooltipString.append(shNode->GetItemLevel(itemID).c_str());
-  tooltipString.append(" Plugin:");
-  tooltipString.append(shNode->GetItemOwnerPluginName(itemID).c_str());
-
-  if (dataNode)
-    {
-    tooltipString.append(")");
     }
 
   return tooltipString;

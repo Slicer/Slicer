@@ -304,7 +304,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
     if volumeNode:
       #
-      # create Subject Hierarchy nodes for the loaded series
+      # create subject hierarchy items for the loaded series
       #
       self.addSeriesInSubjectHierarchy(loadable,volumeNode)
 
@@ -350,20 +350,22 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
     return volumeNode
 
-  def examineForExport(self,node):
+  def examineForExport(self,subjectHierarchyItemID):
     """Return a list of DICOMExportable instances that describe the
     available techniques that this plugin offers to convert MRML
     data into DICOM data
     """
     # cannot export if there is no data node or the data node is not a volume
-    if node.GetAssociatedNode() is None or not node.GetAssociatedNode().IsA('vtkMRMLScalarVolumeNode'):
+    shn = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
+    dataNode = shn.GetItemDataNode(subjectHierarchyItemID)
+    if dataNode is None or not dataNode.IsA('vtkMRMLScalarVolumeNode'):
       return []
 
     # Define basic properties of the exportable
     exportable = slicer.qSlicerDICOMExportable()
     exportable.name = self.loadType
     exportable.tooltip = "Creates a series of DICOM files from scalar volumes"
-    exportable.nodeID = node.GetID()
+    exportable.itemID = subjectHierarchyItemID
     exportable.pluginClass = self.__module__
     exportable.confidence = 0.5 # There could be more specialized volume types
 
@@ -377,6 +379,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     return [exportable]
 
   def export(self,exportables):
+    #TODO re-implement: Subject hierarchy items instead of nodes
     for exportable in exportables:
       # Get node to export
       node = slicer.mrmlScene.GetNodeByID(exportable.nodeID)

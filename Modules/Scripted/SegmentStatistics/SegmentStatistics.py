@@ -3,6 +3,7 @@ import unittest
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 import logging
+from SubjectHierarchyPlugins import SegmentStatisticsSubjectHierarchyPlugin
 
 #
 # SegmentStatistics
@@ -18,7 +19,7 @@ class SegmentStatistics(ScriptedLoadableModule):
     ScriptedLoadableModule.__init__(self, parent)
     self.parent.title = "Segment Statistics"
     self.parent.categories = ["Quantification"]
-    self.parent.dependencies = []
+    self.parent.dependencies = ["SubjectHierarchy"]
     self.parent.contributors = ["Andras Lasso (PerkLab), Steve Pieper (Isomics)"]
     self.parent.helpText = """
 Use this module to calculate counts and volumes for segments plus statistics on the grayscale background volume.
@@ -35,6 +36,11 @@ Requires segment closed surface representation.
     self.parent.acknowledgementText = """
 Supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details.
 """
+
+  def setup(self):
+    # Register subject hierarchy plugin
+    scriptedPlugin = slicer.qSlicerSubjectHierarchyScriptedPlugin(None)
+    scriptedPlugin.setPythonSource(SegmentStatisticsSubjectHierarchyPlugin.filePath)
 
 #
 # SegmentStatisticsWidget

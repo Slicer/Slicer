@@ -118,9 +118,13 @@ public slots:
   /// Edit properties of current item
   virtual void editCurrentItem();
 
-  /// Handle expand item requests in the subject hierarchy tree
-  /// Note: vtkMRMLSubjectHierarchyNode namespace needed in order to be able to make connection
+  /// Handle expand item requests in the subject hierarchy tree. Expands branch
   virtual void expandItem(vtkIdType itemID);
+  /// Handle collapse item requests in the subject hierarchy tree. Collapses branch
+  virtual void collapseItem(vtkIdType itemID);
+
+  /// Select items in the subject hierarchy tree
+  virtual void selectItems(QList<vtkIdType> itemIDs);
 
   /// Handle manual selection of a plugin as the new owner of a subject hierarchy node
   virtual void selectPluginForCurrentItem();
@@ -141,10 +145,17 @@ signals:
 protected slots:
   virtual void onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 
+  /// Updates subject hierarchy item expanded property when item is expanded
   virtual void onItemExpanded(const QModelIndex &expandedItemIndex);
+  /// Updates subject hierarchy item expanded property when item is collapsed
+  virtual void onItemCollapsed(const QModelIndex &collapsedItemIndex);
 
   /// Expand tree to depth specified by the clicked context menu action
   virtual void expandToDepthFromContextMenu();
+
+  /// Update root item to restore view
+  /// (e.g. after tree was updated in the model from the subject hierarchy)
+  virtual void updateRootItem();
 
 protected:
   QScopedPointer<qMRMLSubjectHierarchyTreeViewPrivate> d_ptr;

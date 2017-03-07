@@ -128,15 +128,15 @@ namespace
 
     // Create subject and studies
     vtkIdType patientItemID = shNode->CreateItem(
-      sceneItemID, NULL, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient(), "Patient" );
+      sceneItemID, "Patient", vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient() );
     shNode->SetItemUID(patientItemID, UID_NAME, PATIENT_UID_VALUE);
 
     vtkIdType study1ItemID = shNode->CreateItem(
-      patientItemID, NULL, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy(), "Study1" );
+      patientItemID, "Study1", vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy() );
     shNode->SetItemUID(study1ItemID, UID_NAME, STUDY1_UID_VALUE);
 
     vtkIdType study2ItemID = shNode->CreateItem(
-      patientItemID, NULL, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy(), "Study2" );
+      patientItemID, "Study2", vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy() );
     shNode->SetItemUID(study2ItemID, UID_NAME, STUDY2_UID_VALUE);
     shNode->SetItemAttribute(study2ItemID, STUDY_ATTRIBUTE_NAME, STUDY_ATTRIBUTE_VALUE);
 
@@ -533,7 +533,7 @@ namespace
     // Create series item to insert
     const char* seriesUid = "NEW_SERIES";
     vtkIdType seriesItemID = shNode->CreateItem(
-      shNode->GetSceneItemID(), NULL, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries(), "Series" );
+      shNode->GetSceneItemID(), "Series", vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries() );
     shNode->SetItemUID(seriesItemID, UID_NAME, seriesUid);
 
     vtkIdType insertedSeriesItemID = vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy(
@@ -582,7 +582,7 @@ namespace
     // Create series item to insert
     const char* seriesUid = "NEW_SERIES";
     vtkIdType seriesItemID = shNode->CreateItem(
-      shNode->GetSceneItemID(), NULL, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries(), "Series" );
+      shNode->GetSceneItemID(), "Series", vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries() );
     shNode->SetItemUID(seriesItemID, UID_NAME, seriesUid);
 
     vtkIdType insertedSeriesItemID =

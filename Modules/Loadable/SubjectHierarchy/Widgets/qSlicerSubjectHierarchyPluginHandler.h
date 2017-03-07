@@ -65,14 +65,14 @@ public:
   /// Set subject hierarchy node
   void setSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* shNode);
   /// Get subject hierarchy node
-  vtkMRMLSubjectHierarchyNode* subjectHierarchyNode()const;
+  Q_INVOKABLE vtkMRMLSubjectHierarchyNode* subjectHierarchyNode()const;
   /// Set MRML scene
   void setMRMLScene(vtkMRMLScene* scene);
   /// Get MRML scene
-  vtkMRMLScene* mrmlScene()const;
+  Q_INVOKABLE vtkMRMLScene* mrmlScene()const;
 
   /// Set current subject hierarchy item (single selection only)
-  void setCurrentItem(vtkIdType itemID);
+  Q_INVOKABLE void setCurrentItem(vtkIdType itemID);
 
   /// Get current subject hierarchy item (single selection only).
   /// This function is called from the plugins when exposing and performing the supported actions. As the plugin actions are not
@@ -81,7 +81,7 @@ public:
   Q_INVOKABLE vtkIdType currentItem();
 
   /// Set current subject hierarchy items in case of multi-selection
-  void setCurrentItems(QList<vtkIdType> items);
+  Q_INVOKABLE void setCurrentItems(QList<vtkIdType> items);
 
   /// Get current subject hierarchy items in case of multi-selection
   Q_INVOKABLE QList<vtkIdType> currentItems();

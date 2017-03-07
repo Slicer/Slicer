@@ -1,5 +1,5 @@
 import slicer
-
+import logging
 
 #########################################################
 #
@@ -122,10 +122,10 @@ class DICOMPlugin(object):
     """
     return True
 
-  def examineForExport(self,node):
+  def examineForExport(self,subjectHierarchyItemID):
     """Return a list of DICOMExportable instances that describe the
     available techniques that this plugin offers to convert MRML
-    data into DICOM data
+    data associated to a subject hierarchy item into DICOM data
     Virtual: should be overridden by the subclass
     """
     return []
@@ -182,27 +182,33 @@ class DICOMPlugin(object):
     try:
       slicer.vtkSlicerSubjectHierarchyModuleLogic
     except AttributeError:
-      import sys
-      sys.stderr.write('Unable to create SubjectHierarchy nodes: SubjectHierarchy module not found!')
+      logging.error('Unable to create subject hierarchy: Subject Hierarchy module logic not found')
       return
 
     # Validate dataNode argument
     if dataNode is None or not dataNode.IsA('vtkMRMLNode'):
       import sys
-      sys.stderr.write('Unable to create SubjectHierarchy nodes: invalid data node provided!')
+      logging.error('Unable to create subject hierarchy items: invalid data node provided')
       return
 
     # Get first file to access DICOM tags from it
     firstFile = loadable.files[0]
 
-    # Set up subject hierarchy node
-    seriesNode = slicer.vtkMRMLSubjectHierarchyNode.CreateSubjectHierarchyNode(slicer.mrmlScene, None, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelSeries(), slicer.util.toVTKString(loadable.name), dataNode)
+    # Get subject hierarchy node and basic IDs
+    shn = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
+    sceneItemID = shn.GetSceneItemID()
+    invalidItemID = slicer.vtkMRMLSubjectHierarchyNode.GetInvalidItemID()
 
-    # Specify details of series node
+    # Set up subject hierarchy item
+    seriesItemID = shn.CreateItem(sceneItemID, dataNode, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelSeries())
+
+    # Specify details of series item
     seriesInstanceUid = slicer.dicomDatabase.fileValue(firstFile,tags['seriesInstanceUID'])
-    seriesNode.AddUID(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), seriesInstanceUid)
-    seriesNode.SetAttribute(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMSeriesModalityAttributeName(), slicer.dicomDatabase.fileValue(firstFile, tags['seriesModality']))
-    seriesNode.SetAttribute(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMSeriesNumberAttributeName(), slicer.dicomDatabase.fileValue(firstFile, tags['seriesNumber']))
+    shn.SetItemUID(seriesItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), seriesInstanceUid)
+    shn.SetItemAttribute( seriesItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMSeriesModalityAttributeName(),
+                          slicer.dicomDatabase.fileValue(firstFile, tags['seriesModality']) )
+    shn.SetItemAttribute( seriesItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMSeriesNumberAttributeName(),
+                          slicer.dicomDatabase.fileValue(firstFile, tags['seriesNumber']) )
     # Set instance UIDs
     instanceUIDs = ""
     for file in loadable.files:
@@ -211,7 +217,7 @@ class DICOMPlugin(object):
         uid = "Unknown"
       instanceUIDs += uid + " "
     instanceUIDs = instanceUIDs[:-1]  # strip last space
-    seriesNode.AddUID(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMInstanceUIDName(), instanceUIDs)
+    shn.SetItemUID(seriesItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMInstanceUIDName(), instanceUIDs)
     
     # Set referenced instance UIDs from loadable to series
     referencedInstanceUIDs = ""
@@ -219,43 +225,56 @@ class DICOMPlugin(object):
       for instanceUID in loadable.referencedInstanceUIDs:
         referencedInstanceUIDs += instanceUID + " "
     referencedInstanceUIDs = referencedInstanceUIDs[:-1]  # strip last space
-    seriesNode.SetAttribute(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMReferencedInstanceUIDsAttributeName(), referencedInstanceUIDs)
+    shn.SetItemAttribute( seriesItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMReferencedInstanceUIDsAttributeName(),
+                          referencedInstanceUIDs )
 
-    # Add series node to hierarchy under the right study and patient nodes. If they are present then used, if not, then created
+    # Add series item to hierarchy under the right study and patient items. If they are present then used, if not, then created
     patientId = slicer.dicomDatabase.fileValue(firstFile,tags['patientID'])
-    patientNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNodeByUID(slicer.mrmlScene, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), patientId)
+    patientItemID = shn.GetItemByUID(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), patientId)
     studyInstanceUid = slicer.dicomDatabase.fileValue(firstFile,tags['studyInstanceUID'])
     studyId = slicer.dicomDatabase.fileValue(firstFile,tags['studyID'])
-    studyNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNodeByUID(slicer.mrmlScene, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), studyInstanceUid)
-    slicer.vtkSlicerSubjectHierarchyModuleLogic.InsertDicomSeriesInHierarchy(slicer.mrmlScene, patientId, studyInstanceUid, seriesInstanceUid)
+    studyItemID = shn.GetItemByUID(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), studyInstanceUid)
+    slicer.vtkSlicerSubjectHierarchyModuleLogic.InsertDicomSeriesInHierarchy(shn, patientId, studyInstanceUid, seriesInstanceUid)
 
-    if patientNode is None:
-      patientNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNodeByUID(slicer.mrmlScene, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), patientId)
-      if patientNode is not None:
+    if patientItemID == invalidItemID:
+      patientItemID = shn.GetItemByUID(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), patientId)
+      if patientItemID != invalidItemID:
         # Add attributes for DICOM tags
         patientName = slicer.util.toVTKString(slicer.dicomDatabase.fileValue(firstFile,tags['patientName']))
         if patientName == '':
           patientName = 'No name'
-        patientNode.SetAttribute(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientNameAttributeName(),patientName)
-        patientNode.SetAttribute(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientIDAttributeName(),slicer.dicomDatabase.fileValue(firstFile, tags['patientID']))
-        patientNode.SetAttribute(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientSexAttributeName(),slicer.dicomDatabase.fileValue(firstFile, tags['patientSex']))
-        patientNode.SetAttribute(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientBirthDateAttributeName(),slicer.dicomDatabase.fileValue(firstFile, tags['patientBirthDate']))
-        patientNode.SetAttribute(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientCommentsAttributeName(),slicer.dicomDatabase.fileValue(firstFile, tags['patientComments']))
-        # Set node name
-        patientNode.SetName(patientName)
 
-    if studyNode is None:
-      studyNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNodeByUID(slicer.mrmlScene, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), studyInstanceUid)
-      if studyNode is not None:
+        shn.SetItemAttribute( patientItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientNameAttributeName(),
+                              patientName )
+        shn.SetItemAttribute( patientItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientIDAttributeName(),
+                              slicer.dicomDatabase.fileValue(firstFile, tags['patientID']) )
+        shn.SetItemAttribute( patientItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientSexAttributeName(),
+                              slicer.dicomDatabase.fileValue(firstFile, tags['patientSex']) )
+        shn.SetItemAttribute( patientItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientBirthDateAttributeName(),
+                              slicer.dicomDatabase.fileValue(firstFile, tags['patientBirthDate']) )
+        shn.SetItemAttribute( patientItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientCommentsAttributeName(),
+                              slicer.dicomDatabase.fileValue(firstFile, tags['patientComments']) )
+        # Set item name
+        shn.SetItemName(patientItemID, patientName)
+
+    if studyItemID == invalidItemID:
+      studyItemID = shn.GetItemByUID(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), studyInstanceUid)
+      if studyItemID != invalidItemID:
         # Add attributes for DICOM tags
         studyDescription = slicer.util.toVTKString(slicer.dicomDatabase.fileValue(firstFile,tags['studyDescription']))
         if studyDescription == '':
           studyDescription = 'No study description'
-        studyNode.SetAttribute(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDescriptionAttributeName(),studyDescription)
+
+        shn.SetItemAttribute( studyItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDescriptionAttributeName(),
+                              studyDescription )
         studyDate = slicer.util.toVTKString(slicer.dicomDatabase.fileValue(firstFile,tags['studyDate']))
-        studyNode.SetAttribute(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyInstanceUIDTagName(),studyInstanceUid)
-        studyNode.SetAttribute(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyIDTagName(),studyId)
-        studyNode.SetAttribute(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDateAttributeName(),studyDate)
-        studyNode.SetAttribute(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyTimeAttributeName(),slicer.dicomDatabase.fileValue(firstFile, tags['studyTime']))
-        # Set node name
-        studyNode.SetName(studyDescription + ' (' + studyDate + ')')
+        shn.SetItemAttribute( studyItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyInstanceUIDTagName(),
+                              studyInstanceUid )
+        shn.SetItemAttribute( studyItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyIDTagName(),
+                              studyId )
+        shn.SetItemAttribute( studyItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDateAttributeName(),
+                              studyDate )
+        shn.SetItemAttribute( studyItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyTimeAttributeName(),
+                              slicer.dicomDatabase.fileValue(firstFile, tags['studyTime']) )
+        # Set item name
+        shn.SetItemName(studyItemID, studyDescription + ' (' + studyDate + ')')

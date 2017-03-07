@@ -469,6 +469,10 @@ void qSlicerSubjectHierarchyPluginHandler::onSubjectHierarchyNodeEvent(
     qCritical() << Q_FUNC_INFO << ": Invalid event parameters";
     return;
     }
+  if (!shNode->GetScene())
+    {
+    return;
+    }
 
   // Get item ID
   vtkIdType itemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
@@ -481,14 +485,14 @@ void qSlicerSubjectHierarchyPluginHandler::onSubjectHierarchyNodeEvent(
       }
     }
 
-  if ( event == vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAddedEvent && !pluginHandler->mrmlScene()->IsImporting() )
+  if ( event == vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAddedEvent && !shNode->GetScene()->IsImporting() )
     {
     // Find plugin for added subject hierarchy item and "claim" it
     pluginHandler->findAndSetOwnerPluginForSubjectHierarchyItem(itemID);
     }
-  else if ( event == vtkCommand::DeleteEvent && !pluginHandler->mrmlScene()->IsClosing() )
+  else if ( event == vtkCommand::DeleteEvent && !shNode->GetScene()->IsClosing() )
     {
     pluginHandler->setSubjectHierarchyNode(
-      vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(pluginHandler->mrmlScene()) );
+      vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(shNode->GetScene()) );
     }
 }

@@ -64,7 +64,7 @@ public:
   /// Set value to -1 to disable fixed row height (this is the default)
   void setFixedRowHeight(int height);
 
-  // We make initStyleOption public so it can be used by qMRMLTreeView
+  // We make initStyleOption public so it can be used by the tree view
   using QStyledItemDelegate::initStyleOption;
 
 signals:

@@ -265,18 +265,21 @@ public:
                        void * vtkNotUsed(callData))
   {
     vtkMRMLNode *nd = this->CLIModuleLogic->GetMRMLScene()->GetNodeByID(this->ReferenceNodeID.c_str());
+    vtkMRMLNode *ond = this->CLIModuleLogic->GetMRMLScene()->GetNodeByID(this->OutputNodeID.c_str());
     vtkMRMLSubjectHierarchyNode *shnd = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(this->CLIModuleLogic->GetMRMLScene());
     vtkIdType shItemID = shnd->GetItemByDataNode(nd);
+    vtkIdType outShItemID = shnd->GetItemByDataNode(ond);
 
-    if (shItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    if ( shItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
+      || outShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )
     {
-      vtkMRMLNode *ond = this->CLIModuleLogic->GetMRMLScene()->GetNodeByID(this->OutputNodeID.c_str());
-      vtkIdType parentItemID = shnd->GetItemParent(shItemID);
-
-      // This function call only creates a new subject hierarchy item if it does not yet exist.
-      // Otherwise only change properties, in this case the parent.
-      shnd->CreateItem(parentItemID, ond, shnd->GetItemLevel(shItemID));
+      vtkGenericWarningMacro("CLI: No subject hierarchy item found for input node " << nd->GetName() << " or output node " << ond->GetName());
+      return;
     }
+
+    vtkIdType parentItemID = shnd->GetItemParent(shItemID);
+    shnd->SetItemParent(outShItemID, parentItemID);
+    shnd->SetItemLevel(outShItemID, shnd->GetItemLevel(shItemID));
   }
 
   void SetCLIModuleLogic(vtkSlicerCLIModuleLogic* logic)

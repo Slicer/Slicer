@@ -33,7 +33,6 @@
 #include "qSlicerSubjectHierarchyChartsPlugin.h"
 #include "qSlicerSubjectHierarchyParseLocalDataPlugin.h"
 #include "qSlicerSubjectHierarchyRegisterPlugin.h"
-#include "qSlicerSubjectHierarchySegmentPlugin.h"
 #include "qSlicerSubjectHierarchyFolderPlugin.h"
 
 // SlicerQt includes
@@ -73,6 +72,9 @@ qSlicerSubjectHierarchyPluginLogicPrivate::qSlicerSubjectHierarchyPluginLogicPri
   : q_ptr(&object)
   , AutoDeleteSubjectHierarchyChildren(false)
 {
+  // Register vtkIdType for use in python for subject hierarchy item IDs
+  qRegisterMetaType<vtkIdType>("vtkIdType");
+  //qRegisterMetaType<QList<vtkIdType> >("QList<vtkIdType>"); //TODO: Allows returning it but cannot be used (e.g. pluginHandler->currentItems())
 }
 
 //-----------------------------------------------------------------------------
@@ -131,8 +133,6 @@ void qSlicerSubjectHierarchyPluginLogic::registerCorePlugins()
     new qSlicerSubjectHierarchyChartsPlugin());
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
     new qSlicerSubjectHierarchyRegisterPlugin());
-  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
-    new qSlicerSubjectHierarchySegmentPlugin());
 }
 
 //-----------------------------------------------------------------------------

@@ -28,9 +28,6 @@
 
 #include "qSlicerSubjectHierarchyModuleExport.h"
 
-// MRML includes
-#include "vtkMRMLSubjectHierarchyNode.h"
-
 class qSlicerSubjectHierarchyModuleWidgetPrivate;
 class qMRMLSubjectHierarchyModel;
 class qSlicerSubjectHierarchyPluginLogic;
@@ -65,7 +62,9 @@ protected slots:
   void setTransformsVisible(bool visible);
 
   /// Set data node associated to the selected subject hierarchy item to the data node inspector
-  void setDataNodeFromSubjectHierarchyItem(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID);
+  void setDataNodeFromSubjectHierarchyItem(vtkIdType itemID);
+  /// Set subject hierarchy item information to the label
+  void setInfoLabelFromSubjectHierarchyItem(vtkIdType itemID);
 
 public:
   /// Assessor function for subject hierarchy model (for python)

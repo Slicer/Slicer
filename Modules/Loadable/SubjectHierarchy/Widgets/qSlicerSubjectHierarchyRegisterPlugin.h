@@ -29,7 +29,6 @@
 #include "qSlicerSubjectHierarchyModuleWidgetsExport.h"
 
 class qSlicerSubjectHierarchyRegisterPluginPrivate;
-class vtkMRMLScalarVolumeNode;
 
 // Due to some reason the Python wrapping of this class fails, therefore
 // put everything between BTX/ETX to exclude from wrapping.
@@ -57,24 +56,24 @@ public:
   virtual void showContextMenuActionsForItem(vtkIdType itemID);
 
 protected slots:
-  /// Start registration process by selecting the current node as the 'from' node.
-  /// Saves node in \sa m_RegisterFromItem and shows "Register * to this using..."
+  /// Start registration process by selecting the current item as the 'from' item.
+  /// Saves item in \sa m_RegisterFromItem and shows "Register * to this using..."
   /// context menu option offering the possible registration methods,
-  void registerCurrentNodeTo();
+  void registerCurrentItemTo();
 
-  /// Register saved 'from' node to current node using image based rigid registration.
+  /// Register saved 'from' item to current item using image based rigid registration.
   /// (Switch to registration module corresponding to selected method, set chosen
-  /// input nodes, offer a best guess parameter set based on modalities etc.)
+  /// input items, offer a best guess parameter set based on modalities etc.)
   void registerImageBasedRigid();
 
-  /// Register saved 'from' node to current node using image based BSpline registration
+  /// Register saved 'from' item to current item using image based BSpline registration
   /// (Switch to registration module corresponding to selected method, set chosen
-  /// input nodes, offer a best guess parameter set based on modalities etc.)
+  /// input items, offer a best guess parameter set based on modalities etc.)
   void registerImageBasedBSpline();
 
-  /// Register saved 'from' node to current node using interactive landmark registration
+  /// Register saved 'from' item to current item using interactive landmark registration
   /// (Switch to registration module corresponding to selected method, set chosen
-  /// input nodes, offer a best guess parameter set based on modalities etc.)
+  /// input items, offer a best guess parameter set based on modalities etc.)
   void registerInteractiveLandmark();
 
 protected:

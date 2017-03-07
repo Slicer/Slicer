@@ -423,8 +423,7 @@ void qSlicerSubjectHierarchySegmentsPlugin::setDisplayVisibility(vtkIdType itemI
   displayNode->SetSegmentVisibility(segmentId, (bool)visible);
 
   // Trigger update of visibility icon
-  //TODO:
-  //node->Modified();
+  shNode->ItemModified(itemID);
 }
 
 //-----------------------------------------------------------------------------

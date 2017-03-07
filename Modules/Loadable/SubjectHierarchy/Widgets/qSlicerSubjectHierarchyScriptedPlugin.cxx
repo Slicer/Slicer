@@ -49,7 +49,7 @@ public:
   virtual ~qSlicerSubjectHierarchyScriptedPluginPrivate();
 
   enum {
-    CanOwnSubjectHierarchyNodeMethod = 0,
+    CanOwnSubjectHierarchyItemMethod = 0,
     RoleForPluginMethod,
     HelpTextMethod,
     IconMethod,
@@ -79,7 +79,7 @@ public:
 qSlicerSubjectHierarchyScriptedPluginPrivate::qSlicerSubjectHierarchyScriptedPluginPrivate()
 {
   // Role-related methods
-  this->PythonCppAPI.declareMethod(Self::CanOwnSubjectHierarchyNodeMethod, "canOwnSubjectHierarchyNode");
+  this->PythonCppAPI.declareMethod(Self::CanOwnSubjectHierarchyItemMethod, "canOwnSubjectHierarchyItem");
   this->PythonCppAPI.declareMethod(Self::RoleForPluginMethod, "roleForPlugin");
   this->PythonCppAPI.declareMethod(Self::HelpTextMethod, "helpText");
   this->PythonCppAPI.declareMethod(Self::IconMethod, "icon");
@@ -228,7 +228,7 @@ double qSlicerSubjectHierarchyScriptedPlugin::canOwnSubjectHierarchyItem(vtkIdTy
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
   PyObject* arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
-  PyObject* result = d->PythonCppAPI.callMethod(d->CanOwnSubjectHierarchyNodeMethod, arguments);
+  PyObject* result = d->PythonCppAPI.callMethod(d->CanOwnSubjectHierarchyItemMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
     {
@@ -239,7 +239,7 @@ double qSlicerSubjectHierarchyScriptedPlugin::canOwnSubjectHierarchyItem(vtkIdTy
   // Parse result
   if (!PyFloat_Check(result))
     {
-    qWarning() << d->PythonSource << ": " << Q_FUNC_INFO << ": Function 'canOwnSubjectHierarchyNode' is expected to return a floating point number!";
+    qWarning() << d->PythonSource << ": " << Q_FUNC_INFO << ": Function 'canOwnSubjectHierarchyItem' is expected to return a floating point number!";
     return this->Superclass::canOwnSubjectHierarchyItem(itemID);
     }
 

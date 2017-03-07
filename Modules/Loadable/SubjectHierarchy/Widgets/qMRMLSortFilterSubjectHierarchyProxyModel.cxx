@@ -109,6 +109,10 @@ QString qMRMLSortFilterSubjectHierarchyProxyModel::nameFilter()
 void qMRMLSortFilterSubjectHierarchyProxyModel::setNameFilter(QString filter)
 {
   Q_D(qMRMLSortFilterSubjectHierarchyProxyModel);
+  if (d->NameFilter == filter)
+    {
+    return;
+    }
   d->NameFilter = filter;
   this->invalidateFilter();
 }
@@ -124,7 +128,12 @@ vtkIdType qMRMLSortFilterSubjectHierarchyProxyModel::hideItemsUnaffiliatedWithIt
 void qMRMLSortFilterSubjectHierarchyProxyModel::setHideItemsUnaffiliatedWithItemID(vtkIdType itemID)
 {
   Q_D(qMRMLSortFilterSubjectHierarchyProxyModel);
+  if (d->HideItemsUnaffiliatedWithItemID == itemID)
+    {
+    return;
+    }
   d->HideItemsUnaffiliatedWithItemID = itemID;
+  this->invalidateFilter();
 }
 
 //-----------------------------------------------------------------------------
@@ -188,7 +197,7 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsRow(int sourceRow, 
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType itemID )const
+bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType itemID)const
 {
   Q_D(const qMRMLSortFilterSubjectHierarchyProxyModel);
 
@@ -200,6 +209,17 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType item
   if (!shNode)
     {
     return true;
+    }
+
+  // Handle hiding unaffiliated item
+  // Used when the root item needs to be shown in the tree but not its siblings or other branches in the tree
+  if (d->HideItemsUnaffiliatedWithItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    qMRMLSubjectHierarchyModel* model = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
+    if (!model->isAffiliatedItem(itemID, d->HideItemsUnaffiliatedWithItemID))
+      {
+      return false;
+      }
     }
 
   // Filtering by data node properties
