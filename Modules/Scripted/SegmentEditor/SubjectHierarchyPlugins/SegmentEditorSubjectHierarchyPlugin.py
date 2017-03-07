@@ -6,7 +6,7 @@ from AbstractScriptedSubjectHierarchyPlugin import *
 class SegmentEditorSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin):
   """ Scripted subject hierarchy plugin for the Segment Editor module.
 
-      This is mainly an example for scripted plugins.
+      This is also an example for scripted plugins, so includes all possible methods.
       The methods that are not needed (i.e. the default implementation in
       qSlicerSubjectHierarchyAbstractPlugin is satisfactory) can simply be
       omitted in plugins created based on this one.
@@ -22,13 +22,20 @@ class SegmentEditorSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin
     self.segmentEditorAction = qt.QAction("Segment this using segment editor", scriptedPlugin)
     self.segmentEditorAction.connect("triggered()", self.onSegment)
 
+  def canAddNodeToSubjectHierarchy(self, node, parentItemID):
+    # This plugin cannot own any items (it's not a role but a function plugin),
+    # but the it can be decided the following way:
+    # if node is not None and node.IsA("vtkMRMLMyNode"):
+    #   return 1.0
+    return 0.0
+
   def canOwnSubjectHierarchyItem(self, itemID):
     # This plugin cannot own any items (it's not a role but a function plugin),
     # but the it can be decided the following way:
     # pluginHandlerSingleton = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
     # shNode = pluginHandlerSingleton.subjectHierarchyNode()
-    # associatedNode = shNode.GetItemDataNode(itemID);
-    # if associatedNode is not None and associatedNode.IsA("vtkMRMLMyNode"))
+    # associatedNode = shNode.GetItemDataNode(itemID)
+    # if associatedNode is not None and associatedNode.IsA("vtkMRMLMyNode"):
     #   return 1.0
     return 0.0
 
@@ -72,7 +79,7 @@ class SegmentEditorSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin
     pluginHandlerSingleton = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
     currentItemID = pluginHandlerSingleton.currentItem()
     if currentItemID == slicer.vtkMRMLSubjectHierarchyNode.GetInvalidItemID():
-      logging.error("Invalid current node!")
+      logging.error("Invalid current item")
 
     shNode = pluginHandlerSingleton.subjectHierarchyNode()
     volumeNode = shNode.GetItemDataNode(currentItemID)
@@ -97,11 +104,11 @@ class SegmentEditorSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin
       # Get current item
       currentItemID = pluginHandlerSingleton.currentItem()
       if currentItemID == slicer.vtkMRMLSubjectHierarchyNode.GetInvalidItemID():
-        logging.error("Invalid current node!")
+        logging.error("Invalid current item")
         return
       self.segmentEditorAction.visible = True
 
-  def tooltip(self, node):
+  def tooltip(self, itemID):
     # As this plugin cannot own any items, it doesn't provide tooltip either
     return ""
 

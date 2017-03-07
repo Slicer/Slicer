@@ -28,6 +28,7 @@ public:
   virtual QString helpText()const;
   virtual QString acknowledgementText()const;
   virtual QStringList contributors()const;
+  virtual QStringList dependencies() const;
 
   /// Return the icon of the Annotation module.
   virtual QIcon icon()const;
