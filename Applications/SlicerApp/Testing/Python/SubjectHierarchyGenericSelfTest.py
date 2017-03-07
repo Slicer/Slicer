@@ -95,9 +95,12 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     self.section_LoadDicomData()
     self.section_SaveScene()
     self.section_AddNodeToSubjectHierarchy()
+    self.section_CLI()
     self.section_CreateSecondBranch()
     self.section_ReparentNodeInSubjectHierarchy()
     self.section_LoadScene()
+
+    logging.info('Test finished')
 
 
   # ------------------------------------------------------------------------------
@@ -243,7 +246,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     # Create sample labelmap and model and add them in subject hierarchy
     self.sampleLabelmapNode = self.createSampleLabelmapVolumeNode(ctVolumeNode, self.sampleLabelmapName, 2)
     sampleModelColor = [0.0, 1.0, 0.0]
-    self.sampleModelNode = self.createSampleModelVolume(self.sampleModelName, sampleModelColor, ctVolumeNode)
+    self.sampleModelNode = self.createSampleModelNode(self.sampleModelName, sampleModelColor, ctVolumeNode)
 
     # Get subject hierarchy scene model and node
     shWidget = slicer.modules.subjecthierarchy.widgetRepresentation()
@@ -286,6 +289,34 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     retVal2 = shSceneModel.reparent(self.sampleModelShItemID, self.studyItemID)
     self.assertTrue(retVal2)
     qt.QApplication.processEvents()
+
+  # ------------------------------------------------------------------------------
+  def section_CLI(self):
+    self.delayDisplay("Test command-line interface",self.delayMs)
+
+    shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
+    self.assertIsNotNone( shNode )
+
+    # Get CT volume
+    ctVolumeNode = shNode.GetItemDataNode(self.ctVolumeShItemID)
+    self.assertIsNotNone( ctVolumeNode )
+
+    # Create output volume
+    resampledVolumeNode = slicer.vtkMRMLScalarVolumeNode()
+    resampledVolumeNode.SetName(ctVolumeNode.GetName() + '_Resampled_10x10x10mm')
+    slicer.mrmlScene.AddNode(resampledVolumeNode)
+
+    # Resample
+    resampleParameters = { 'outputPixelSpacing':'24.5,24.5,11.5', 'interpolationType':'lanczos',
+      'InputVolume':ctVolumeNode.GetID(), 'OutputVolume':resampledVolumeNode.GetID() }
+    slicer.cli.run(slicer.modules.resamplescalarvolume, None, resampleParameters, wait_for_completion=True)
+    qt.QApplication.processEvents()
+    # self.delayDisplay("Wait for CLI logic to add result to same branch",self.delayMs)
+
+    # Check if output is also under the same study node
+    resampledVolumeItemID = shNode.GetItemByDataNode(resampledVolumeNode)
+    self.assertNotEqual( resampledVolumeItemID, self.invalidItemID )
+    self.assertEqual( shNode.GetItemParent(resampledVolumeItemID), self.studyItemID )
 
   # ------------------------------------------------------------------------------
   def section_CreateSecondBranch(self):
@@ -348,7 +379,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     slicer.util.loadScene(self.sceneFileName)
 
     # Check number of nodes in the scene
-    self.assertEqual( slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLScalarVolumeNode'), 3 )
+    self.assertEqual( slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLScalarVolumeNode'), 4 )
     self.assertEqual( slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLModelNode'), 4 ) # Including the three slice view models
     self.assertEqual( slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSubjectHierarchyNode'), 1 )
 
@@ -416,7 +447,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
 
   #------------------------------------------------------------------------------
   # Create sphere model at the centre of an input volume
-  def createSampleModelVolume(self, name, color, volumeNode=None):
+  def createSampleModelNode(self, name, color, volumeNode=None):
     if volumeNode:
       self.assertTrue( volumeNode.IsA('vtkMRMLScalarVolumeNode') )
       bounds = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]

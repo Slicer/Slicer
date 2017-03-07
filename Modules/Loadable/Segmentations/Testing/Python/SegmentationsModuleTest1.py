@@ -22,17 +22,18 @@ class SegmentationsModuleTest1(unittest.TestCase):
     # Check for modules
     self.assertIsNotNone( slicer.modules.segmentations )
 
-    self.TestSection_00_SetupPathsAndNames()
-    self.TestSection_01_RetrieveInputData()
-    self.TestSection_02_LoadInputData()
-    self.TestSection_1_AddRemoveSegment()
-    self.TestSection_2_MergeLabelmapWithDifferentGeometries()
-    self.TestSection_3_ImportExportSegment()
+    self.TestSection_SetupPathsAndNames()
+    self.TestSection_RetrieveInputData()
+    self.TestSection_LoadInputData()
+    self.TestSection_AddRemoveSegment()
+    self.TestSection_MergeLabelmapWithDifferentGeometries()
+    self.TestSection_ImportExportSegment()
+    self.TestSection_SubjectHierarchy()
 
     logging.info('Test finished')
 
   #------------------------------------------------------------------------------
-  def TestSection_00_SetupPathsAndNames(self):
+  def TestSection_SetupPathsAndNames(self):
     # Set up paths used for this test
     self.segmentationsModuleTestDir = slicer.app.temporaryPath + '/SegmentationsModuleTest'
     if not os.access(self.segmentationsModuleTestDir, os.F_OK):
@@ -49,6 +50,8 @@ class SegmentationsModuleTest1(unittest.TestCase):
     self.expectedNumOfFilesInDataDir = 2
     self.expectedNumOfFilesInDataSegDir = 2
     self.inputSegmentationNode = None
+    self.bodySegmentName = 'Body_Contour'
+    self.tumorSegmentName = 'Tumor_Contour'
     self.secondSegmentationNode = None
     self.sphereSegment = None
     self.sphereSegmentName = 'Sphere'
@@ -56,7 +59,7 @@ class SegmentationsModuleTest1(unittest.TestCase):
     self.binaryLabelmapReprName = vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName()
 
   #------------------------------------------------------------------------------
-  def TestSection_01_RetrieveInputData(self):
+  def TestSection_RetrieveInputData(self):
     try:
       import urllib
       downloads = (
@@ -93,7 +96,7 @@ class SegmentationsModuleTest1(unittest.TestCase):
       logging.error('Test caused exception!\n' + str(e))
 
   #------------------------------------------------------------------------------
-  def TestSection_02_LoadInputData(self):
+  def TestSection_LoadInputData(self):
     # Load into Slicer
     ctLoadSuccess = slicer.util.loadVolume(self.dataDir + '/TinyPatient_CT.nrrd')
     self.assertTrue( ctLoadSuccess )
@@ -106,20 +109,20 @@ class SegmentationsModuleTest1(unittest.TestCase):
     self.inputSegmentationNode.GetSegmentation().SetMasterRepresentationName(self.closedSurfaceReprName)
 
   #------------------------------------------------------------------------------
-  def TestSection_1_AddRemoveSegment(self):
+  def TestSection_AddRemoveSegment(self):
     # Add/remove segment from segmentation (check display properties, color table, etc.)
-    logging.info('Test section 1: Add/remove segment')
+    logging.info('Test section: Add/remove segment')
 
     # Get baseline values
     displayNode = self.inputSegmentationNode.GetDisplayNode()
     self.assertIsNotNone(displayNode)
     # If segments are not found then the returned color is the pre-defined invalid color
-    bodyColor = self.inputSegmentationNode.GetSegmentation().GetSegment('Body_Contour').GetColor()
+    bodyColor = self.inputSegmentationNode.GetSegmentation().GetSegment(self.bodySegmentName).GetColor()
     logging.info("bodyColor: {0}".format(bodyColor))
     self.assertEqual(int(bodyColor[0]*100), 33)
     self.assertEqual(int(bodyColor[1]*100), 66)
     self.assertEqual(int(bodyColor[2]*100), 0)
-    tumorColor = self.inputSegmentationNode.GetSegmentation().GetSegment('Tumor_Contour').GetColor()
+    tumorColor = self.inputSegmentationNode.GetSegmentation().GetSegment(self.tumorSegmentName).GetColor()
     logging.info("tumorColor: {0}".format(tumorColor))
     self.assertEqual(int(tumorColor[0]*100), 100)
     self.assertEqual(int(tumorColor[1]*100), 0)
@@ -183,9 +186,9 @@ class SegmentationsModuleTest1(unittest.TestCase):
     self.assertEqual(self.inputSegmentationNode.GetSegmentation().GetNumberOfSegments(), 2)
 
   #------------------------------------------------------------------------------
-  def TestSection_2_MergeLabelmapWithDifferentGeometries(self):
+  def TestSection_MergeLabelmapWithDifferentGeometries(self):
     # Merge labelmap when segments containing labelmaps with different geometries (both same directions, different directions)
-    logging.info('Test section 2: Merge labelmap with different geometries')
+    logging.info('Test section: Merge labelmap with different geometries')
 
     self.assertIsNotNone(self.sphereSegment)
     self.sphereSegment.RemoveRepresentation(self.binaryLabelmapReprName)
@@ -241,16 +244,16 @@ class SegmentationsModuleTest1(unittest.TestCase):
     self.assertEqual(imageStatResult.GetScalarComponentAsDouble(4,0,0,0), 0)  # Built from color table and color four is removed in previous test section
 
   #------------------------------------------------------------------------------
-  def TestSection_3_ImportExportSegment(self):
+  def TestSection_ImportExportSegment(self):
     # Import/export, both one label and all labels
-    logging.info('Test section 3: Import/export segment')
+    logging.info('Test section: Import/export segment')
 
     # Export single segment to model node
     bodyModelNode = slicer.vtkMRMLModelNode()
     bodyModelNode.SetName('BodyModel')
     slicer.mrmlScene.AddNode(bodyModelNode)
 
-    bodySegment = self.inputSegmentationNode.GetSegmentation().GetSegment('Body_Contour')
+    bodySegment = self.inputSegmentationNode.GetSegmentation().GetSegment(self.bodySegmentName)
     result = slicer.vtkSlicerSegmentationsModuleLogic.ExportSegmentToRepresentationNode(bodySegment, bodyModelNode)
     self.assertTrue(result)
     self.assertIsNotNone(bodyModelNode.GetPolyData())
@@ -323,7 +326,7 @@ class SegmentationsModuleTest1(unittest.TestCase):
     # Should not import multi-label labelmap to segment
     nullSegment = slicer.vtkSlicerSegmentationsModuleLogic.CreateSegmentFromLabelmapVolumeNode(allSegmentsLabelmapNode)
     self.assertIsNone(nullSegment)
-    logging.info('(This error message tests an impossible scenario, it is supposed to appear)')
+    logging.info('(This error message is a result of testing an impossible scenario, it is supposed to appear)')
     # Make labelmap single-label and import again
     threshold = vtk.vtkImageThreshold()
     threshold.SetInValue(0)
@@ -343,7 +346,7 @@ class SegmentationsModuleTest1(unittest.TestCase):
     self.assertIsNotNone(labelSegment.GetRepresentation(self.binaryLabelmapReprName))
 
     # Import/export with transforms
-    logging.info('Test section 4/2: Import/export with transforms')
+    logging.info('Test subsection: Import/export with transforms')
 
     # Create transform node that will be used to transform the tested nodes
     bodyModelTransformNode = slicer.vtkMRMLLinearTransformNode()
@@ -359,7 +362,7 @@ class SegmentationsModuleTest1(unittest.TestCase):
     bodyModelNodeTransformed = slicer.vtkMRMLModelNode()
     bodyModelNodeTransformed.SetName('BodyModelTransformed')
     slicer.mrmlScene.AddNode(bodyModelNodeTransformed)
-    bodySegment = self.inputSegmentationNode.GetSegmentation().GetSegment('Body_Contour')
+    bodySegment = self.inputSegmentationNode.GetSegmentation().GetSegment(self.bodySegmentName)
     result = slicer.vtkSlicerSegmentationsModuleLogic.ExportSegmentToRepresentationNode(bodySegment, bodyModelNodeTransformed)
     self.assertTrue(result)
     self.assertIsNotNone(bodyModelNodeTransformed.GetParentTransformNode())
@@ -404,3 +407,50 @@ class SegmentationsModuleTest1(unittest.TestCase):
     slicer.mrmlScene.RemoveNode(bodyModelNodeTransformed)
     slicer.mrmlScene.RemoveNode(bodyLabelmapNodeTransformed)
     slicer.mrmlScene.RemoveNode(modelTransformedImportSegmentationNode)
+
+  #------------------------------------------------------------------------------
+  def TestSection_SubjectHierarchy(self):
+    # Subject hierarchy plugin: item creation, removal, renaming
+    logging.info('Test section: Subject hierarchy')
+
+    shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
+    self.assertIsNotNone( shNode )
+    invalidItemID = slicer.vtkMRMLSubjectHierarchyNode.GetInvalidItemID()
+
+    # Check if subject hierarchy items have been created
+    segmentationShItemID = shNode.GetItemByDataNode(self.inputSegmentationNode)
+    self.assertNotEqual( segmentationShItemID, invalidItemID )
+
+    bodyItemID = shNode.GetItemChildWithName(segmentationShItemID, self.bodySegmentName)
+    self.assertNotEqual( bodyItemID, invalidItemID )
+    tumorItemID  = shNode.GetItemChildWithName(segmentationShItemID, self.tumorSegmentName)
+    self.assertNotEqual( tumorItemID, invalidItemID )
+    sphereItemID  = shNode.GetItemChildWithName(segmentationShItemID, self.sphereSegmentName)
+    self.assertNotEqual( sphereItemID, invalidItemID )
+
+    # Rename segment
+    bodySegment = self.inputSegmentationNode.GetSegmentation().GetSegment(self.bodySegmentName)
+    bodySegment.SetName('Body')
+    qt.QApplication.processEvents()
+    self.assertEqual( shNode.GetItemName(bodyItemID), 'Body')
+
+    tumorSegment = self.inputSegmentationNode.GetSegmentation().GetSegment(self.tumorSegmentName)
+    shNode.SetItemName(tumorItemID, 'Tumor')
+    qt.QApplication.processEvents()
+    self.assertEqual( tumorSegment.GetName(), 'Tumor')
+
+    # Remove segment
+    self.inputSegmentationNode.GetSegmentation().RemoveSegment(bodySegment)
+    qt.QApplication.processEvents()
+    logging.info('(The error messages below are results of testing invalidity of objects, they are supposed to appear)')
+    self.assertEqual( shNode.GetItemChildWithName(segmentationShItemID, 'Body'), invalidItemID )
+    self.assertEqual( self.inputSegmentationNode.GetSegmentation().GetNumberOfSegments(), 2 )
+
+    shNode.RemoveItem(tumorItemID)
+    qt.QApplication.processEvents()
+    self.assertEqual( self.inputSegmentationNode.GetSegmentation().GetNumberOfSegments(), 1 )
+
+    # Remove segmentation
+    slicer.mrmlScene.RemoveNode(self.inputSegmentationNode)
+    self.assertEqual( shNode.GetItemName(segmentationShItemID), '')
+    self.assertEqual( shNode.GetItemName(sphereItemID), '')

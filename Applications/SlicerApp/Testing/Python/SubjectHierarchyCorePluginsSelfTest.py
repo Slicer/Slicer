@@ -115,15 +115,17 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
     markupsNode.SetName(self.sampleMarkupName)
     fiducialPosition = [100.0, 0.0, 0.0]
     markupsNode.AddFiducialFromArray(fiducialPosition)
+    markupsShItemID = shNode.GetItemByDataNode(markupsNode)
+    self.assertNotEqual( markupsShItemID, self.invalidItemID )
+    self.assertEqual( shNode.GetItemOwnerPluginName(markupsShItemID), 'Markups' )
 
     # Create patient and study
     patientItemID = shNode.CreateItem(shNode.GetSceneItemID(), 'Patient', slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelPatient())
     self.studyItemID = shNode.CreateItem(patientItemID, 'Study', slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelStudy())
 
     # Add markups under study
-    markupsShItemID = shNode.CreateItem(self.studyItemID, markupsNode)
-
-    self.assertNotEqual( markupsShItemID, self.invalidItemID )
+    markupsShItemID2 = shNode.CreateItem(self.studyItemID, markupsNode)
+    self.assertEqual( markupsShItemID, markupsShItemID2 )
     self.assertEqual( shNode.GetItemParent(markupsShItemID), self.studyItemID )
     self.assertEqual( shNode.GetItemOwnerPluginName(markupsShItemID), 'Markups' )
 
@@ -138,11 +140,13 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
     chartNode = slicer.vtkMRMLChartNode()
     slicer.mrmlScene.AddNode(chartNode)
     chartNode.SetName(self.sampleChartName)
+    chartShItemID = shNode.GetItemByDataNode(chartNode)
+    self.assertNotEqual( chartShItemID, self.invalidItemID )
+    self.assertEqual( shNode.GetItemOwnerPluginName(chartShItemID), 'Charts' )
 
     # Add chart under study
-    chartShItemID = shNode.CreateItem(self.studyItemID, chartNode)
-
-    self.assertNotEqual( chartShItemID, self.invalidItemID )
+    chartShItemID2 = shNode.CreateItem(self.studyItemID, chartNode)
+    self.assertEqual( chartShItemID, chartShItemID2 )
     self.assertEqual( shNode.GetItemParent(chartShItemID), self.studyItemID )
     self.assertEqual( shNode.GetItemOwnerPluginName(chartShItemID), 'Charts' )
 
