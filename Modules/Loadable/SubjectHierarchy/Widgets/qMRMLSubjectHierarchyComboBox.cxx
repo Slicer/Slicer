@@ -224,6 +224,13 @@ void qMRMLSubjectHierarchyComboBox::removeAttributeFilter()
 }
 
 //--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyComboBox::setLevelFilter(QString &levelFilter)
+{
+  Q_D(qMRMLSubjectHierarchyComboBox);
+  d->TreeView->setLevelFilter(levelFilter);
+}
+
+//--------------------------------------------------------------------------
 int qMRMLSubjectHierarchyComboBox::maximumNumberOfShownItems()const
 {
   Q_D(const qMRMLSubjectHierarchyComboBox);

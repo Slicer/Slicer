@@ -55,6 +55,9 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSortFilterSubjectHier
   /// This property controls whether items unaffiliated with a given subject hierarchy item are hidden or not.
   /// All the nodes are visible (invalid item ID - vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID) by default
   Q_PROPERTY(vtkIdType hideItemsUnaffiliatedWithItemID READ hideItemsUnaffiliatedWithItemID WRITE setHideItemsUnaffiliatedWithItemID)
+  /// Filter to show only items of a certain level (and their parents). If empty, then show all
+  /// Exact match is required. Empty by default
+  Q_PROPERTY(QString levelFilter READ levelFilter WRITE setLevelFilter)
 
 public:
   typedef QSortFilterProxyModel Superclass;
@@ -70,6 +73,8 @@ public:
   void setAttributeNameFilter(QString filter);
   QString attributeValueFilter()const;
   void setAttributeValueFilter(QString filter);
+  QString levelFilter()const;
+  void setLevelFilter(QString filter);
 
   vtkIdType hideItemsUnaffiliatedWithItemID();
   void setHideItemsUnaffiliatedWithItemID(vtkIdType itemID);

@@ -85,6 +85,9 @@ public:
   /// Remove item attribute filtering \sa setAttribute
   Q_INVOKABLE void removeAttributeFilter();
 
+  /// Set level filter that allows showing only items at a specified level and their parents. Show all items if empty
+  Q_INVOKABLE void setLevelFilter(QString &levelFilter);
+
   Q_INVOKABLE qMRMLSortFilterSubjectHierarchyProxyModel* sortFilterProxyModel()const;
   Q_INVOKABLE qMRMLSubjectHierarchyModel* model()const;
 

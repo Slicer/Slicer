@@ -54,10 +54,6 @@ public:
   qSlicerSubjectHierarchyPluginLogicPrivate(qSlicerSubjectHierarchyPluginLogic& object);
   ~qSlicerSubjectHierarchyPluginLogicPrivate();
   void loadApplicationSettings();
-public:
-  /// Flag determining whether subject hierarchy children nodes are automatically
-  /// deleted upon deleting a parent subject hierarchy node.
-  bool AutoDeleteSubjectHierarchyChildren;
 };
 
 //-----------------------------------------------------------------------------
@@ -66,7 +62,6 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyPluginLogicPrivate::qSlicerSubjectHierarchyPluginLogicPrivate(qSlicerSubjectHierarchyPluginLogic& object)
   : q_ptr(&object)
-  , AutoDeleteSubjectHierarchyChildren(false)
 {
   // Register vtkIdType for use in python for subject hierarchy item IDs
   qRegisterMetaType<vtkIdType>("vtkIdType");
@@ -91,7 +86,8 @@ void qSlicerSubjectHierarchyPluginLogicPrivate::loadApplicationSettings()
     {
     if (settings->contains("SubjectHierarchy/AutoDeleteSubjectHierarchyChildren"))
       {
-      this->AutoDeleteSubjectHierarchyChildren = (settings->value("SubjectHierarchy/AutoDeleteSubjectHierarchyChildren").toString().compare("true") == 0);
+      qSlicerSubjectHierarchyPluginHandler::instance()->setAutoDeleteSubjectHierarchyChildren(
+        settings->value("SubjectHierarchy/AutoDeleteSubjectHierarchyChildren").toString().compare("true") == 0 );
       }
     }
 }
@@ -129,20 +125,6 @@ void qSlicerSubjectHierarchyPluginLogic::registerCorePlugins()
     new qSlicerSubjectHierarchyChartsPlugin());
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
     new qSlicerSubjectHierarchyRegisterPlugin());
-}
-
-//-----------------------------------------------------------------------------
-bool qSlicerSubjectHierarchyPluginLogic::autoDeleteSubjectHierarchyChildren()const
-{
-  Q_D(const qSlicerSubjectHierarchyPluginLogic);
-  return d->AutoDeleteSubjectHierarchyChildren;
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyPluginLogic::setAutoDeleteSubjectHierarchyChildren(bool flag)
-{
-  Q_D(qSlicerSubjectHierarchyPluginLogic);
-  d->AutoDeleteSubjectHierarchyChildren = flag;
 }
 
 //-----------------------------------------------------------------------------

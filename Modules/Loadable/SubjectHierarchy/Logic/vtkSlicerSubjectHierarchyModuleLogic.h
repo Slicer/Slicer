@@ -110,9 +110,6 @@ protected:
   /// Called every time the scene has been significantly changed.
   virtual void UpdateFromMRMLScene();
 
-  /// Register custom node type
-  virtual void RegisterNodes();
-
 protected:
   vtkSlicerSubjectHierarchyModuleLogic();
   virtual ~vtkSlicerSubjectHierarchyModuleLogic();

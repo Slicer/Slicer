@@ -46,12 +46,16 @@ public:
   QString NameFilter;
   QString AttributeNameFilter;
   QString AttributeValueFilter;
+  QString LevelFilter;
   vtkIdType HideItemsUnaffiliatedWithItemID;
 };
 
 // -----------------------------------------------------------------------------
 qMRMLSortFilterSubjectHierarchyProxyModelPrivate::qMRMLSortFilterSubjectHierarchyProxyModelPrivate()
   : NameFilter(QString())
+  , AttributeNameFilter(QString())
+  , AttributeValueFilter(QString())
+  , LevelFilter(QString())
   , HideItemsUnaffiliatedWithItemID(vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
 {
 }
@@ -63,6 +67,7 @@ qMRMLSortFilterSubjectHierarchyProxyModelPrivate::qMRMLSortFilterSubjectHierarch
 CTK_GET_CPP(qMRMLSortFilterSubjectHierarchyProxyModel, QString, nameFilter, NameFilter);
 CTK_GET_CPP(qMRMLSortFilterSubjectHierarchyProxyModel, QString, attributeNameFilter, AttributeNameFilter);
 CTK_GET_CPP(qMRMLSortFilterSubjectHierarchyProxyModel, QString, attributeValueFilter, AttributeValueFilter);
+CTK_GET_CPP(qMRMLSortFilterSubjectHierarchyProxyModel, QString, levelFilter, LevelFilter);
 
 //------------------------------------------------------------------------------
 qMRMLSortFilterSubjectHierarchyProxyModel::qMRMLSortFilterSubjectHierarchyProxyModel(QObject *vparent)
@@ -138,6 +143,18 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setAttributeValueFilter(QString 
     return;
     }
   d->AttributeValueFilter = filter;
+  this->invalidateFilter();
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSortFilterSubjectHierarchyProxyModel::setLevelFilter(QString filter)
+{
+  Q_D(qMRMLSortFilterSubjectHierarchyProxyModel);
+  if (d->LevelFilter == filter)
+    {
+    return;
+    }
+  d->LevelFilter = filter;
   this->invalidateFilter();
 }
 
@@ -288,6 +305,17 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType item
     if (dataNode->GetAttribute(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyExcludeFromTreeAttributeName().c_str()))
       {
       return false;
+      }
+    }
+
+  // Filter by level
+  if (!d->LevelFilter.isEmpty())
+    {
+    std::string levelFilterStr(d->LevelFilter.toLatin1().constData());
+    if (!shNode->IsItemLevel(itemID, levelFilterStr))
+      {
+      // If level was requested but different, then only show if any of its children are shown
+      onlyAcceptIfAnyChildIsAccepted = true;
       }
     }
 

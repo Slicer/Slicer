@@ -50,12 +50,6 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyPlu
   Q_OBJECT
   QVTK_OBJECT
 
-  /// Flag determining whether children of subject hierarchy nodes are automatically
-  /// deleted upon deleting a parent subject hierarchy node.
-  /// By default, a pop-up question asking the user to confirm the deletion of
-  /// children nodes will be shown.
-  Q_PROPERTY (bool autoDeleteSubjectHierarchyChildren READ autoDeleteSubjectHierarchyChildren WRITE setAutoDeleteSubjectHierarchyChildren)
-
 public:
   typedef QObject Superclass;
   qSlicerSubjectHierarchyPluginLogic(QWidget *parent=0);
@@ -79,9 +73,6 @@ public:
   /// Note: Registering plugins provided by other modules is the responsibility
   ///   of the module!
   void registerCorePlugins();
-
-  bool autoDeleteSubjectHierarchyChildren()const;
-  void setAutoDeleteSubjectHierarchyChildren(bool flag);
 
 protected:
   /// Add observations for node that was added to subject hierarchy

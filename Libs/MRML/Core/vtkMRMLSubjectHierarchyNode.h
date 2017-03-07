@@ -118,7 +118,7 @@ public:
   /// Get level for a subject hierarchy item
   std::string GetItemLevel(vtkIdType itemID);
   /// Set owner plugin name (role) for a subject hierarchy item
-  void SetItemOwnerPluginName(vtkIdType itemID, std::string owherPluginName);
+  void SetItemOwnerPluginName(vtkIdType itemID, std::string ownerPluginName);
   /// Get owner plugin name (role) for a subject hierarchy item
   std::string GetItemOwnerPluginName(vtkIdType itemID);
   /// Set expanded flag for a subject hierarchy item (only for internal use, do not set explicitly)
@@ -173,7 +173,7 @@ public:
   /// \param level Level string of the created item (\sa vtkMRMLSubjectHierarchyConstants)
   /// \return ID of the item in the hierarchy that was assigned automatically when adding
   vtkIdType CreateItem( vtkIdType parentItemID,
-                        vtkMRMLNode* dataNode=NULL,
+                        vtkMRMLNode* dataNode,
                         std::string level=vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries() );
 
   /// Remove subject hierarchy item or branch from the tree
@@ -181,6 +181,11 @@ public:
   /// \param removeDataNode Flag determining whether to remove associated data node from the scene if any. On by default
   /// \param recursive Flag determining whether to remove children recursively (the whole branch). On by default
   bool RemoveItem(vtkIdType itemID, bool removeDataNode=true, bool recursive=true);
+  /// Remove child items of a subject hierarchy item
+  /// \param itemID Parent of items to remove
+  /// \param removeDataNodes Flag determining whether to remove associated data nodes from the scene if any. On by default
+  /// \param recursive Flag determining whether to remove children recursively, or just the direct children. On by default
+  bool RemoveItemChildren(vtkIdType itemID, bool removeDataNodes=true, bool recursive=true);
   /// Remove all items from hierarchy
   /// \param removeDataNode Flag determining whether to remove associated data node from the scene if any. False by default,
   ///   because as opposed to the method \sa RemoveItem that is usually initiated by the user, this method is
@@ -204,6 +209,8 @@ public:
   ///   The order of the items is depth-first, in a way that the child of an item in the vector always comes after the item.
   /// \param recursive If false then collect direct children, if true then the whole branch. False by default
   void GetItemChildren(vtkIdType itemID, std::vector<vtkIdType>& childIDs, bool recursive=false);
+  /// Python accessibility function to get children of a subject hierarchy item
+  void GetItemChildren(vtkIdType itemID, vtkIdList* childIDs, bool recursive=false);
 
   /// Set new parent to a subject hierarchy item under item associated to specified data node
   /// \return Success flag
@@ -301,6 +308,10 @@ public:
 
   /// Get number of items under the scene, excluding the scene
   int GetNumberOfItems();
+
+  /// Get number of children for an item
+  /// \param recursive If true, then get total number of items in the branch, only direct children otherwise. False by default
+  int GetNumberOfItemChildren(vtkIdType itemID, bool recursive=false);
 
   /// Print subject hierarchy item info on stream
   void PrintItem(vtkIdType itemID, ostream& os, vtkIndent indent);

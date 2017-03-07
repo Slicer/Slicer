@@ -35,6 +35,6 @@ ctkMacroCompilePythonScript(
   TARGET_NAME SegmentEditorEffects
   SCRIPTS "${SegmentEditorEffects_PYTHON_SCRIPTS}"
   RESOURCES "${SegmentEditorEffects_PYTHON_RESOURCES}"
-  DESTINATION_DIR ${CMAKE_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}/SegmentEditorEffects
+  DESTINATION_DIR ${Slicer_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}/SegmentEditorEffects
   INSTALL_DIR ${Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR}/SegmentEditorEffects
   )

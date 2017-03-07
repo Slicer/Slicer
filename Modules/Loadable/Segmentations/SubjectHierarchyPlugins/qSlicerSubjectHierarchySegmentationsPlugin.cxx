@@ -309,11 +309,10 @@ void qSlicerSubjectHierarchySegmentationsPlugin::setDisplayVisibility(vtkIdType 
     }
   while ( (parentItem = shNode->GetItemParent(parentItem) ) != shNode->GetSceneItemID() ); // The double parentheses avoids a Linux build warning
 
-  std::set<vtkIdType>::iterator parentsIt;
-  for (parentsIt=parentItems.begin(); parentsIt!=parentItems.end(); ++parentsIt)
+  std::set<vtkIdType>::iterator parentIt;
+  for (parentIt=parentItems.begin(); parentIt!=parentItems.end(); ++parentIt)
     {
-//TODO: Remove section if works without it. Invoke item modified items if not
-    //(*parentsIt)->Modified();
+    shNode->ItemModified(*parentIt);
     }
 }
 

@@ -371,7 +371,10 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolume(vtkMRMLScalarVolumeNode* n
       // Show volume that has been background in foreground
       vtkMRMLScalarVolumeNode* originalActiveVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(
         scene->GetNodeByID(selectionNode->GetActiveVolumeID()) );
-      selectionNode->SetSecondaryVolumeID(originalActiveVolumeNode->GetID());
+      if (originalActiveVolumeNode)
+        {
+        selectionNode->SetSecondaryVolumeID(originalActiveVolumeNode->GetID());
+        }
 
       // Show new volume as background
       selectionNode->SetActiveVolumeID(volumeNode->GetID());

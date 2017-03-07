@@ -54,6 +54,12 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyPlu
 {
   Q_OBJECT
 
+  /// Flag determining whether children of subject hierarchy nodes are automatically
+  /// deleted upon deleting a parent subject hierarchy node.
+  /// By default, a pop-up question asking the user to confirm the deletion of
+  /// children nodes will be shown.
+  Q_PROPERTY (bool autoDeleteSubjectHierarchyChildren READ autoDeleteSubjectHierarchyChildren WRITE setAutoDeleteSubjectHierarchyChildren)
+
 public:
   /// Instance getter for the singleton class
   /// \return Instance object
@@ -85,6 +91,9 @@ public:
 
   /// Get current subject hierarchy items in case of multi-selection
   Q_INVOKABLE QList<vtkIdType> currentItems();
+
+  Q_INVOKABLE bool autoDeleteSubjectHierarchyChildren()const;
+  Q_INVOKABLE void setAutoDeleteSubjectHierarchyChildren(bool flag);
 
 public:
   /// Register a plugin
@@ -168,6 +177,10 @@ protected:
 
   /// Callback handling deletion of the subject hierarchy node
   vtkSmartPointer<vtkCallbackCommand> m_CallBack;
+
+  /// Flag determining whether subject hierarchy children nodes are automatically
+  /// deleted upon deleting a parent subject hierarchy node.
+  bool m_AutoDeleteSubjectHierarchyChildren;
 
 public:
   /// Private constructor made public to enable python wrapping

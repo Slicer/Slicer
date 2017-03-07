@@ -96,6 +96,7 @@ qSlicerSubjectHierarchyPluginHandler::qSlicerSubjectHierarchyPluginHandler(QObje
   : QObject(parent)
   , m_MRMLScene(NULL)
   , m_SubjectHierarchyNode(NULL)
+  , m_AutoDeleteSubjectHierarchyChildren(false)
 {
   this->m_CurrentItems.clear();
 
@@ -456,6 +457,18 @@ void qSlicerSubjectHierarchyPluginHandler::setCurrentItems(QList<vtkIdType> item
 QList<vtkIdType> qSlicerSubjectHierarchyPluginHandler::currentItems()
 {
   return this->m_CurrentItems;
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerSubjectHierarchyPluginHandler::autoDeleteSubjectHierarchyChildren()const
+{
+  return this->m_AutoDeleteSubjectHierarchyChildren;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyPluginHandler::setAutoDeleteSubjectHierarchyChildren(bool flag)
+{
+  this->m_AutoDeleteSubjectHierarchyChildren = flag;
 }
 
 //-----------------------------------------------------------------------------

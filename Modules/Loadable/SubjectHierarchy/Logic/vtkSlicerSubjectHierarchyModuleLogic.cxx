@@ -68,19 +68,6 @@ void vtkSlicerSubjectHierarchyModuleLogic::SetMRMLSceneInternal(vtkMRMLScene * n
   this->SetAndObserveMRMLSceneEvents(newScene, events.GetPointer());
 }
 
-//-----------------------------------------------------------------------------
-void vtkSlicerSubjectHierarchyModuleLogic::RegisterNodes()
-{
-  if (!this->GetMRMLScene())
-    {
-    vtkErrorMacro("RegisterNodes: Invalid MRML scene!");
-    return;
-    }
-
-  // Register node class. This call increments next subject hierarchy item ID
-  this->GetMRMLScene()->RegisterNodeClass(vtkSmartPointer<vtkMRMLSubjectHierarchyNode>::New());
-}
-
 //---------------------------------------------------------------------------
 void vtkSlicerSubjectHierarchyModuleLogic::UpdateFromMRMLScene()
 {

@@ -65,7 +65,7 @@ qMRMLSubjectHierarchyModelPrivate::qMRMLSubjectHierarchyModelPrivate(qMRMLSubjec
 
   this->DelayedItemChangedInvoked = false;
 
-  qRegisterMetaType<QStandardItem*>("QStandardItem*"); //TODO: Needed?
+  qRegisterMetaType<QStandardItem*>("QStandardItem*");
 }
 
 //------------------------------------------------------------------------------
@@ -563,8 +563,6 @@ bool qMRMLSubjectHierarchyModel::reparent(vtkIdType itemID, vtkIdType newParentI
   bool successfullyReparentedByPlugin = selectedPlugin->reparentItemInsideSubjectHierarchy(itemID, newParentID);
   if (!successfullyReparentedByPlugin)
     {
-    //subjectHierarchyNode->SetParentNodeID( subjectHierarchyNode->GetParentNodeID() ); //TODO: Anything like this needed?
-
     qCritical() << Q_FUNC_INFO << ": Failed to reparent item "
       << d->SubjectHierarchyNode->GetItemName(itemID).c_str() << " through plugin '"
       << selectedPlugin->name().toLatin1().constData() << "'";

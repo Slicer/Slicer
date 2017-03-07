@@ -27,6 +27,8 @@
 #include <QMenu>
 #include <QMouseEvent>
 #include <QInputDialog>
+#include <QMessageBox>
+#include <QSettings>
 #include <QDebug>
 
 // SlicerQt includes
@@ -516,6 +518,12 @@ void qMRMLSubjectHierarchyTreeView::removeAttributeFilter()
   this->sortFilterProxyModel()->setAttributeValueFilter(QString());
 }
 
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::setLevelFilter(QString &levelFilter)
+{
+  this->sortFilterProxyModel()->setLevelFilter(levelFilter);
+}
+
 //------------------------------------------------------------------------------
 bool qMRMLSubjectHierarchyTreeView::clickDecoration(const QModelIndex& index)
 {
@@ -843,17 +851,8 @@ void qMRMLSubjectHierarchyTreeView::selectPluginForCurrentItem()
   qSlicerSubjectHierarchyAbstractPlugin* mostSuitablePluginByConfidenceNumbers =
     qSlicerSubjectHierarchyPluginHandler::instance()->findOwnerPluginForSubjectHierarchyItem(currentItemID);
 
-  // Set owner plugin auto search flag to false if the user manually selected a plugin other
-  // than the most suitable one by confidence numbers
-  //TODO: No auto search flag any more. Remove if doesn't cause problems
-  //bool mostSuitablePluginByConfidenceNumbersSelected =
-  //  !mostSuitablePluginByConfidenceNumbers->name().compare(selectedPluginName);
-  //currentNode->SetOwnerPluginAutoSearch(mostSuitablePluginByConfidenceNumbersSelected);
-
   // Set new owner plugin
   d->SubjectHierarchyNode->SetItemOwnerPluginName(currentItemID, selectedPluginName.toLatin1().constData());
-  //qDebug() << Q_FUNC_INFO << ": Owner plugin of subject hierarchy node '"
-  //  << currentNode->GetName() << "' has been manually changed to '" << d->SelectPluginActionGroup->checkedAction()->data().toString() << "'";
 }
 
 //--------------------------------------------------------------------------
@@ -963,13 +962,40 @@ void qMRMLSubjectHierarchyTreeView::deleteSelectedItems()
     return;
     }
 
+  // Remove each selected item
   QList<vtkIdType> currentItemIDs = qSlicerSubjectHierarchyPluginHandler::instance()->currentItems();
   foreach (vtkIdType itemID, currentItemIDs)
     {
-    // Remove the subject hierarchy item and all its children
-    //TODO: Ask the user whether to delete all children (snippet on the bottom of this file)
-    // If it has an associated data node then remove that too
-    if (!d->SubjectHierarchyNode->RemoveItem(itemID))
+    // Ask the user whether to delete all the item's children
+    bool deleteChildren = false;
+    QMessageBox::StandardButton answer = QMessageBox::Yes;
+    if (!qSlicerSubjectHierarchyPluginHandler::instance()->autoDeleteSubjectHierarchyChildren())
+      {
+      answer =
+        QMessageBox::question(NULL, tr("Delete subject hierarchy branch?"),
+        tr("The deleted subject hierarchy item has children. "
+            "Do you want to remove those too?\n\n"
+            "If you choose yes, the whole branch will be deleted, including all children.\n"
+            "If you choose Yes to All, this question never appears again, and all subject hierarchy children "
+            "are automatically deleted. This can be later changed in Application Settings."),
+        QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll,
+        QMessageBox::No);
+      }
+    // Delete branch if the user chose yes
+    if (answer == QMessageBox::Yes || answer == QMessageBox::YesToAll)
+      {
+      deleteChildren = true;
+      }
+    // Save auto-creation flag in settings
+    if (answer == QMessageBox::YesToAll)
+      {
+      qSlicerSubjectHierarchyPluginHandler::instance()->setAutoDeleteSubjectHierarchyChildren(true);
+      QSettings *settings = qSlicerApplication::application()->settingsDialog()->settings();
+      settings->setValue("SubjectHierarchy/AutoDeleteSubjectHierarchyChildren", "true");
+      }
+
+    // Remove item (and if requested its children) and its associated data node if any
+    if (!d->SubjectHierarchyNode->RemoveItem(itemID, true, deleteChildren))
       {
       qWarning() << Q_FUNC_INFO << ": Failed to remove subject hierarchy item (ID:"
         << itemID << ", name:" << d->SubjectHierarchyNode->GetItemName(itemID).c_str() << ")";
@@ -1068,36 +1094,3 @@ void qMRMLSubjectHierarchyTreeView::onSceneCloseEnded(vtkObject* sceneObject)
   // scene close removed the pseudo-singleton subject hierarchy node), and set it to the tree view
   this->setSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(scene));
 }
-
-//TODO: Snippet for asking whether whole branch is to be deleted
-  //QMessageBox::StandardButton answer = QMessageBox::Yes;
-  //if (!d->AutoDeleteSubjectHierarchyChildren)
-  //  {
-  //  answer =
-  //    QMessageBox::question(NULL, tr("Delete subject hierarchy branch?"),
-  //    tr("The deleted subject hierarchy node has children. "
-  //        "Do you want to remove those too?\n\n"
-  //        "If you choose yes, the whole branch will be deleted, including all children.\n"
-  //        "If you choose Yes to All, this question never appears again, and all subject hierarchy children "
-  //        "are automatically deleted. This can be later changed in Application Settings."),
-  //    QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll,
-  //    QMessageBox::No);
-  //  }
-  //// Delete branch if the user chose yes
-  //if (answer == QMessageBox::Yes || answer == QMessageBox::YesToAll)
-  //  {
-  //  d->DeleteBranchInProgress = true;
-  //  for (std::vector<vtkMRMLHierarchyNode*>::iterator childIt = nonVirtualChildNodes.begin();
-  //    childIt != nonVirtualChildNodes.end(); ++childIt)
-  //    {
-  //    scene->RemoveNode(*childIt);
-  //    }
-  //  d->DeleteBranchInProgress = false;
-  //  }
-  //// Save auto-creation flag in settings
-  //if (answer == QMessageBox::YesToAll)
-  //  {
-  //  d->AutoDeleteSubjectHierarchyChildren = true;
-  //  QSettings *settings = qSlicerApplication::application()->settingsDialog()->settings();
-  //  settings->setValue("SubjectHierarchy/AutoDeleteSubjectHierarchyChildren", "true");
-  //  }

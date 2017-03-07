@@ -584,8 +584,7 @@ void qSlicerSubjectHierarchySegmentsPlugin::showOnlyCurrentSegment()
     // Set visibility
     displayNode->SetSegmentVisibility(segmentId, visible);
     // Trigger update of visibility icon
-    //TODO:
-    //segmentShNode->Modified();
+    shNode->ItemModified(segmentItemID);
     }
 }
 
@@ -638,7 +637,6 @@ void qSlicerSubjectHierarchySegmentsPlugin::showAllSegments()
     // Set visibility
     displayNode->SetSegmentVisibility(segmentId, true);
     // Trigger update of visibility icon
-    //TODO:
-    //segmentShNode->Modified();
+    shNode->ItemModified(segmentItemID);
     }
 }

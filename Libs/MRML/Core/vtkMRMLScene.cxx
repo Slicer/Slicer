@@ -51,6 +51,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLSliceCompositeNode.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLSnapshotClipNode.h"
+#include "vtkMRMLSubjectHierarchyNode.h"
 #include "vtkMRMLTableNode.h"
 #include "vtkMRMLTableStorageNode.h"
 #include "vtkMRMLTableViewNode.h"
@@ -214,6 +215,7 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLTableNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLTableStorageNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLTableViewNode >::New() );
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLSubjectHierarchyNode>::New()); // Increments next subject hierarchy item ID
 }
 
 //------------------------------------------------------------------------------

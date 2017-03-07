@@ -84,9 +84,27 @@ class SegmentEditorSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin
     shNode = pluginHandlerSingleton.subjectHierarchyNode()
     volumeNode = shNode.GetItemDataNode(currentItemID)
 
+    # Switch to Segment Editor module
     pluginHandlerSingleton.pluginByName('Default').switchToModule('SegmentEditor')
     editorWidget = slicer.modules.segmenteditor.widgetRepresentation().self()
+
+    # Create new segmentation only if there is no segmentation node, or the current segmentation is not empty
+    # (switching to the module will create an empty segmentation if there is none in the scene, but not otherwise)
+    segmentationNode = editorWidget.parameterSetNode.GetSegmentationNode()
+    import vtkSegmentationCorePython as vtkSegmentationCore
+    if segmentationNode is None or segmentationNode.GetSegmentation().GetNumberOfSegments() > 0:
+      segmentationNode = slicer.vtkMRMLSegmentationNode()
+      slicer.mrmlScene.AddNode(segmentationNode)
+      editorWidget.parameterSetNode.SetAndObserveSegmentationNode(segmentationNode)
+    # Name segmentation node based on the volume
+    segmentationNode.SetName(volumeNode.GetName() + '_Segmentation')
+
+    # Set master volume
     editorWidget.parameterSetNode.SetAndObserveMasterVolumeNode(volumeNode)
+
+    # Place segmentation under the master volume in subject hierarchy
+    segmentationShItemID = shNode.GetItemByDataNode(segmentationNode)
+    shNode.SetItemParent(segmentationShItemID, currentItemID)
 
   def sceneContextMenuActions(self):
     return []

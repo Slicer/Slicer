@@ -242,13 +242,13 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
   QList<vtkIdType> createdItemIDs;
   for (int nodeIndex=0; nodeIndex<loadedNodes.count(); ++nodeIndex)
     {
-    vtkIdType parentItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+    vtkIdType parentItemID = shNode->GetSceneItemID(); // Start from the scene
     for (int componentIndex=0; componentIndex<loadedFilePaths[nodeIndex].count(); ++componentIndex)
       {
       QString currentComponent = loadedFilePaths[nodeIndex][componentIndex];
       vtkIdType itemID = shNode->GetItemChildWithName(parentItemID, currentComponent.toLatin1().constData());
       // If hierarchy node already created
-      if (itemID)
+      if (itemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
         {
         parentItemID = itemID;
         }
@@ -268,8 +268,7 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
         shNode->SetItemParent(vtkIdTypes[nodeIndex], parentItemID);
         }
       }
-    //TODO: remove if works
-    //parent->Modified(); // Have the subject hierarchy node update its items in the tree
+    shNode->ItemModified(parentItemID); // Update subject hierarchy items in the tree
     }
 
   // Expand generated branches
@@ -277,7 +276,4 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
     {
     emit requestExpandItem(createdItemID);
     }
-
-  // Trigger filter updating so that original data nodes disappear from the tree
-  //emit requestInvalidateFilter(); //TODO: remove if works
 }

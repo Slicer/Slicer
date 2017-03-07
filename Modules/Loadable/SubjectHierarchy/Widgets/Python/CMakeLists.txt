@@ -12,6 +12,6 @@ ctkMacroCompilePythonScript(
   TARGET_NAME SubjectHierarchyWidgets
   SCRIPTS "${SubjectHierarchyWidgets_PYTHON_SCRIPTS}"
   RESOURCES "${SubjectHierarchyWidgets_PYTHON_RESOURCES}"
-  DESTINATION_DIR ${CMAKE_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}/SubjectHierarchyPlugins
-  INSTALL_DIR ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR}/SubjectHierarchyPlugins
+  DESTINATION_DIR ${Slicer_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}/SubjectHierarchyPlugins
+  INSTALL_DIR ${Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR}/SubjectHierarchyPlugins
   )
