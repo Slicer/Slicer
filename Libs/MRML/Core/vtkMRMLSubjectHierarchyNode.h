@@ -241,6 +241,12 @@ public:
   /// \param childClass Name of the class we are looking for. NULL returns associated data nodes of any kind
   void GetDataNodesInBranch(vtkIdType itemID, vtkCollection* dataNodeCollection, const char* childClass=NULL);
 
+  /// Get data node associated to the parent of the item associated to a data node.
+  /// \param recursive Flag determining whether only the direct parent is considered (false), or
+  ///   also further up in the tree (true). Default is false
+  /// \return Data node associated to the parent of the given data node's item
+  vtkMRMLNode* GetParentDataNode(vtkMRMLNode* dataNode, bool recursive=false);
+
 // Utility functions
 public:
   /// Set subject hierarchy branch visibility

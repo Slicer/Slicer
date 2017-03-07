@@ -2212,6 +2212,27 @@ void vtkMRMLSubjectHierarchyNode::GetDataNodesInBranch(vtkIdType itemID, vtkColl
 }
 
 //---------------------------------------------------------------------------
+vtkMRMLNode* vtkMRMLSubjectHierarchyNode::GetParentDataNode(vtkMRMLNode* dataNode, bool recursive/*=false*/)
+{
+  vtkIdType itemID = this->GetItemByDataNode(dataNode);
+  if (itemID == INVALID_ITEM_ID)
+    {
+    vtkErrorMacro("GetParentDataNode: Given data node (" << (dataNode ? dataNode->GetName() : "NULL")
+      << ") cannot be found in subject hierarchy");
+    return NULL;
+    }
+
+  vtkIdType parentItemID = this->GetItemParent(itemID);
+  vtkMRMLNode* parentDataNode = this->GetItemDataNode(parentItemID);
+  while (recursive && parentItemID != INVALID_ITEM_ID && parentDataNode == NULL)
+    {
+    parentItemID = this->GetItemParent(parentItemID);
+    parentDataNode = this->GetItemDataNode(parentItemID);
+    }
+  return parentDataNode;
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLSubjectHierarchyNode::SetDisplayVisibilityForBranch(vtkIdType itemID, int visible)
 {
   if (visible != 0 && visible != 1)
