@@ -171,9 +171,6 @@ public:
   /// Determines if the node is owned by this plugin
   Q_INVOKABLE bool isThisPluginOwnerOfNode(vtkMRMLSubjectHierarchyNode* node)const;
 
-  /// Emit owner plugin changed signal
-  Q_INVOKABLE void emitOwnerPluginChanged(vtkObject* node, void* callData);
-
   /// Switch to module with given name
   /// \return Widget representation of the module if found, NULL otherwise
   Q_INVOKABLE static qSlicerAbstractModuleWidget* switchToModule(QString moduleName);
@@ -193,11 +190,6 @@ signals:
   /// Signal requesting invalidating the filter model for the tree view
   /// (e.g. when a node is added or removed by the plugin)
   void requestInvalidateFilter()const;
-
-  /// Signal that is emitted when a node changes owner plugin
-  /// \param node Subject hierarchy node changing owner plugin
-  /// \param callData Name of the old plugin (the name of the new plugin can be get from the node)
-  void ownerPluginChanged(vtkObject* node, void* callData);
 
 protected:
   /// Hide all context menu actions offered by the plugin.

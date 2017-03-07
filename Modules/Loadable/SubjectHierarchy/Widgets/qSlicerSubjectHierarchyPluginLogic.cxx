@@ -261,10 +261,6 @@ void qSlicerSubjectHierarchyPluginLogic::onNodeAdded(vtkObject* sceneObject, vtk
   // If subject hierarchy node, take care of owner plugins and auto-assignment of it when node is changed
   if (subjectHierarchyNode)
     {
-    // Keep 'owner plugin changed' connections up-to date (reconnect to the new plugin)
-    qvtkConnect( subjectHierarchyNode, vtkMRMLSubjectHierarchyNode::OwnerPluginChangedEvent,
-      qSlicerSubjectHierarchyPluginHandler::instance(), SLOT( reconnectOwnerPluginChanged(vtkObject*,void*) ) );
-
     // Find plugin for current subject hierarchy node and "claim" it
     if (!scene->IsImporting())
       {

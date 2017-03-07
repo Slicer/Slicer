@@ -20,9 +20,9 @@
 
 ==============================================================================*/
 
-// .NAME vtkMRMLSubjectHierarchyNode - MRML node to represent subject hierarchy of DICOM objects
+// .NAME vtkMRMLSubjectHierarchyNode
 // .SECTION Description
-// N/A
+// MRML node to represent subject hierarchy non-leaf nodes
 //
 
 #ifndef __vtkMRMLSubjectHierarchyNode_h
@@ -37,9 +37,10 @@
 class vtkMRMLTransformNode;
 
 /// \ingroup Slicer_MRML_Core
-/// \brief MRML node to represent a subject hierarchy object
+/// \brief MRML node to represent a subject hierarchy non-leaf node
 ///   Separate node type has the advantage of identifying itself faster (type vs string comparison)
-///   and providing utility functions within the class
+///   and providing utility functions within the class.
+///   Leaf nodes that are associated to data are represented by generic vtkMRMLNode objects
 class VTK_MRML_EXPORT vtkMRMLSubjectHierarchyNode : public vtkMRMLHierarchyNode
 {
 public:

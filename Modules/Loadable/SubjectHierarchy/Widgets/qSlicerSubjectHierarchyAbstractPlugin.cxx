@@ -260,12 +260,6 @@ int qSlicerSubjectHierarchyAbstractPlugin::getDisplayVisibility(vtkMRMLSubjectHi
 }
 
 //--------------------------------------------------------------------------
-void qSlicerSubjectHierarchyAbstractPlugin::emitOwnerPluginChanged(vtkObject* node, void* callData)
-{
-  emit ownerPluginChanged(node, callData);
-}
-
-//--------------------------------------------------------------------------
 bool qSlicerSubjectHierarchyAbstractPlugin::isThisPluginOwnerOfNode(vtkMRMLSubjectHierarchyNode* node)const
 {
   if (!node)

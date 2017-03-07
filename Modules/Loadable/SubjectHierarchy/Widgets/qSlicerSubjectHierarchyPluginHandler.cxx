@@ -387,27 +387,3 @@ QList<vtkMRMLSubjectHierarchyNode*> qSlicerSubjectHierarchyPluginHandler::curren
 {
   return this->m_CurrentNodes;
 }
-
-//------------------------------------------------------------------------------
-void qSlicerSubjectHierarchyPluginHandler::reconnectOwnerPluginChanged(vtkObject* node, void* callData)
-{
-  char* oldPluginName = reinterpret_cast<char*>(callData);
-  vtkMRMLSubjectHierarchyNode* subjectHierarchyNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(node);
-  if (!subjectHierarchyNode)
-    {
-    qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy node!";
-    return;
-    }
-
-  qSlicerSubjectHierarchyAbstractPlugin* oldPlugin = this->pluginByName(oldPluginName);
-  if (oldPlugin)
-    {
-    // Let the old plugin perform clean-up actions if necessary
-    // Note: qvtkConnect did not work, thus the manual emit. The connection was not established again after disconnect.
-    oldPlugin->emitOwnerPluginChanged(node, callData);
-    }
-
-  // Let the new plugin perform steps on claiming the node if necessary
-  qSlicerSubjectHierarchyAbstractPlugin* newPlugin = this->pluginByName(subjectHierarchyNode->GetOwnerPluginName());
-  newPlugin->emitOwnerPluginChanged(node, callData);
-}

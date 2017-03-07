@@ -134,13 +134,6 @@ public:
   /// \return Plugin chosen by the user
   qSlicerSubjectHierarchyAbstractPlugin* selectPluginFromDialog(QString textToDisplay, QList<qSlicerSubjectHierarchyAbstractPlugin*> candidatePlugins);
 
-protected slots:
-  /// Reconnect 'owner plugin changed' signal to the new owner plugin.
-  /// When the owner plugin is changed, both the old and the new plugins have the chance to
-  /// take actions (e.g. the new plugin can force a level) by connecting a locally defined
-  /// slot to the \sa ownerPluginChanged signal.
-  void reconnectOwnerPluginChanged(vtkObject* node, void* callData);
-
 protected:
   /// List of registered plugin instances
   QList<qSlicerSubjectHierarchyAbstractPlugin*> m_RegisteredPlugins;
