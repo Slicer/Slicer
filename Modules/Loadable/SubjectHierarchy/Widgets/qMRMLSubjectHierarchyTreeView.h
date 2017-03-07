@@ -157,6 +157,9 @@ protected slots:
   /// (e.g. after tree was updated in the model from the subject hierarchy)
   virtual void updateRootItem();
 
+  /// Called when scene end is finished. Hierarchy is cleared in that case.
+  void onSceneCloseEnded(vtkObject* sceneObject);
+
 protected:
   QScopedPointer<qMRMLSubjectHierarchyTreeViewPrivate> d_ptr;
 

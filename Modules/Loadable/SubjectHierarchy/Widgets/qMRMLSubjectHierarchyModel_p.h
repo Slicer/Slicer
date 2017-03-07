@@ -66,11 +66,6 @@ public:
   virtual ~qMRMLSubjectHierarchyModelPrivate();
   void init();
 
-  QModelIndexList indexes(const vtkIdType itemID)const;
-
-  //TODO: Needed?
-  //void listenNodeModifiedEvent();
-
   /// This method is called by qMRMLSubjectHierarchyModel::updateFromSubjectHierarchy() to speed up
   /// the loading. By explicitly specifying the \a index, it skips item lookup within their parents
   /// happening in qMRMLSubjectHierarchyModel::subjectHierarchyItemIndex(vtkIdType).
@@ -81,10 +76,6 @@ public:
 
 public:
   vtkSmartPointer<vtkCallbackCommand> CallBack;
-  //TODO: Needed?
-  //qMRMLSubjectHierarchyModel::NodeTypes ListenNodeModifiedEvent;
-  //TODO: Needed?
-  //bool LazyUpdate;
   int PendingItemModified;
 
   int NameColumn;

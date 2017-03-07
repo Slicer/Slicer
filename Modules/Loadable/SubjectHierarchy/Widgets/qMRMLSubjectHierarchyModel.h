@@ -37,7 +37,14 @@ class qMRMLSubjectHierarchyModelPrivate;
 class vtkMRMLSubjectHierarchyNode;
 class vtkMRMLScene;
 
-/// TODO:
+/// \brief Item model for subject hierarchy
+///
+/// It is associated to the pseudo-singleton subject hierarchy node, and it creates one model item
+/// for each subject hierarchy item. It handles reparenting, reordering, etc.
+/// The whole model is regenerated when the Modified event is invoked on the subject hierarchy node,
+/// but only the individual items are updated when per-item events are invoked (such as
+/// vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent)
+///
 class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyModel : public QStandardItemModel
 {
   Q_OBJECT
@@ -116,20 +123,20 @@ public:
   // Return all the QModelIndexes (all the columns) for a given subject hierarchy item
   QModelIndexList indexes(vtkIdType itemID)const;
 
-  virtual vtkIdType parentSubjectHierarchyItem(vtkIdType itemID)const;
+  Q_INVOKABLE virtual vtkIdType parentSubjectHierarchyItem(vtkIdType itemID)const;
   /// Returns the row model index relative to its parent independently of any filtering or proxy model
   /// Must be reimplemented in derived classes
-  virtual int subjectHierarchyItemIndex(vtkIdType itemID)const;
+  Q_INVOKABLE virtual int subjectHierarchyItemIndex(vtkIdType itemID)const;
   /// Insert/move item in subject hierarchy under new parent
-  virtual bool reparent(vtkIdType itemID, vtkIdType newParentID);
+  Q_INVOKABLE virtual bool reparent(vtkIdType itemID, vtkIdType newParentID);
   /// Move item in subject hierarchy branch to a new row (re-order)
-  virtual bool qMRMLSubjectHierarchyModel::moveToRow(vtkIdType itemID, int newRow);
+  Q_INVOKABLE virtual bool moveToRow(vtkIdType itemID, int newRow);
   /// Utility method that returns true if \a child has \a parent as ancestor (parent, grandparent, etc.)
   /// \sa isAffiliatedItem()
-  bool isAncestorItem(vtkIdType child, vtkIdType ancestor)const;
+  Q_INVOKABLE bool isAncestorItem(vtkIdType child, vtkIdType ancestor)const;
   /// Utility method that returns true if 2 nodes are child/parent (or any ancestor) for each other
   /// \sa isAncestorItem()
-  bool isAffiliatedItem(vtkIdType itemA, vtkIdType itemB)const;
+  Q_INVOKABLE bool isAffiliatedItem(vtkIdType itemA, vtkIdType itemB)const;
 
 signals:
   /// This signal is sent when a user is about to reparent an item by drag and drop
@@ -170,8 +177,6 @@ protected slots:
   virtual void onSubjectHierarchyNodeRemoved();
 
   virtual void onItemChanged(QStandardItem* item);
-
-  //TODO: Needed?
   virtual void delayedItemChanged();
 
   /// Recompute the number of columns in the model. Called when a [some]Column property is set.

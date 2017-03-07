@@ -112,33 +112,6 @@ void qMRMLSubjectHierarchyModelPrivate::init()
 }
 
 //------------------------------------------------------------------------------
-QModelIndexList qMRMLSubjectHierarchyModelPrivate::indexes(const vtkIdType itemID)const
-{
-  Q_Q(const qMRMLSubjectHierarchyModel);
-  QModelIndex scene = q->subjectHierarchySceneIndex();
-  if (scene == QModelIndex())
-    {
-    return QModelIndexList();
-    }
-  // QAbstractItemModel::match doesn't browse through columns, we need to do it manually
-  QModelIndexList shItemIndexes = q->match(
-    scene, qMRMLSubjectHierarchyModel::SubjectHierarchyItemIDRole, QVariant(qlonglong(itemID)), 1, Qt::MatchExactly | Qt::MatchRecursive);
-  if (shItemIndexes.size() != 1)
-    {
-    return QModelIndexList(); // If 0 it's empty, if >1 it's invalid (one item for each UID)
-    }
-  // Add the QModelIndexes from the other columns
-  const int row = shItemIndexes[0].row();
-  QModelIndex shItemParentIndex = shItemIndexes[0].parent();
-  const int sceneColumnCount = q->columnCount(shItemParentIndex);
-  for (int col=1; col<sceneColumnCount; ++col)
-    {
-    shItemIndexes << q->index(row, col, shItemParentIndex);
-    }
-  return shItemIndexes;
-}
-
-//------------------------------------------------------------------------------
 QString qMRMLSubjectHierarchyModelPrivate::subjectHierarchyItemName(vtkIdType itemID)
 {
   if (!this->SubjectHierarchyNode)
@@ -419,9 +392,27 @@ QModelIndex qMRMLSubjectHierarchyModel::indexFromSubjectHierarchyItem(vtkIdType 
 //------------------------------------------------------------------------------
 QModelIndexList qMRMLSubjectHierarchyModel::indexes(vtkIdType itemID)const
 {
-  Q_D(const qMRMLSubjectHierarchyModel);
-  //TODO: Can we simply move the private method here?
-  return d->indexes(itemID);
+  QModelIndex scene = this->subjectHierarchySceneIndex();
+  if (scene == QModelIndex())
+    {
+    return QModelIndexList();
+    }
+  // QAbstractItemModel::match doesn't browse through columns, we need to do it manually
+  QModelIndexList shItemIndexes = this->match(
+    scene, qMRMLSubjectHierarchyModel::SubjectHierarchyItemIDRole, QVariant(qlonglong(itemID)), 1, Qt::MatchExactly | Qt::MatchRecursive);
+  if (shItemIndexes.size() != 1)
+    {
+    return QModelIndexList(); // If 0 it's empty, if >1 it's invalid (one item for each UID)
+    }
+  // Add the QModelIndexes from the other columns
+  const int row = shItemIndexes[0].row();
+  QModelIndex shItemParentIndex = shItemIndexes[0].parent();
+  const int sceneColumnCount = this->columnCount(shItemParentIndex);
+  for (int col=1; col<sceneColumnCount; ++col)
+    {
+    shItemIndexes << this->index(row, col, shItemParentIndex);
+    }
+  return shItemIndexes;
 }
 
 //------------------------------------------------------------------------------
@@ -1148,7 +1139,7 @@ void qMRMLSubjectHierarchyModel::updateModelItems(vtkIdType itemID)
     return;
     }
 
-  QModelIndexList itemIndexes = d->indexes(itemID);
+  QModelIndexList itemIndexes = this->indexes(itemID);
   if (!itemIndexes.count())
     {
     // Can happen while the item is added, the plugin handler sets the owner plugin, which triggers

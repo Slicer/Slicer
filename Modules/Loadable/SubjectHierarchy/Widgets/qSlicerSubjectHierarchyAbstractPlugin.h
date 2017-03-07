@@ -143,8 +143,8 @@ public:
   virtual double canAddNodeToSubjectHierarchy(
     vtkMRMLNode* node, vtkIdType parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )const;
 
-  /// Add a node to subject hierarchy under a specified parent node. This is basically a convenience function to
-  /// call vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyItem
+  /// Add a node to subject hierarchy under a specified parent. This is basically a convenience function to
+  /// call \sa vtkMRMLSubjectHierarchyNode::CreateItem
   /// \param node Node to add to subject hierarchy
   /// \param parentItemID Parent item of the added node
   /// \param level Level of the added node in subject hierarchy, none be default

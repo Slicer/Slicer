@@ -107,11 +107,11 @@ public slots:
 
   /// Called when a subject hierarchy item is modified.
   /// Renames segment if the modified item belongs to a segment
-  void onSubjectHierarchyItemModified(vtkIdType itemID);
+  void onSubjectHierarchyItemModified(vtkObject* caller, void* callData);
 
   /// Called when a subject hierarchy item is about to be removed.
   /// Removes segment from parent segmentation if the removed item belongs to a segment
-  void onSubjectHierarchyItemAboutToBeRemoved(vtkIdType itemID);
+  void onSubjectHierarchyItemAboutToBeRemoved(vtkObject* caller, void* callData);
 
 protected slots:
   /// Create binary labelmap representation

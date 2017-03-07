@@ -57,6 +57,8 @@ public:
   QAction* CreateRepresentationAction;
   QAction* CreateBinaryLabelmapAction;
   QAction* CreateClosedSurfaceAction;
+
+  bool SegmentSubjectHierarchyItemRemovalInProgress;
 };
 
 //-----------------------------------------------------------------------------
@@ -66,10 +68,11 @@ public:
 qSlicerSubjectHierarchySegmentationsPluginPrivate::qSlicerSubjectHierarchySegmentationsPluginPrivate(qSlicerSubjectHierarchySegmentationsPlugin& object)
 : q_ptr(&object)
 , SegmentationIcon(QIcon(":Icons/Segmentation.png"))
+, CreateRepresentationAction(NULL)
+, CreateBinaryLabelmapAction(NULL)
+, CreateClosedSurfaceAction(NULL)
+, SegmentSubjectHierarchyItemRemovalInProgress(false)
 {
-  this->CreateRepresentationAction = NULL;
-  this->CreateBinaryLabelmapAction = NULL;
-  this->CreateClosedSurfaceAction = NULL;
 }
 
 //------------------------------------------------------------------------------
@@ -426,6 +429,13 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSegmentAdded(vtkObject* calle
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchySegmentationsPlugin::onSegmentRemoved(vtkObject* caller, void* callData)
 {
+  // Do nothing if subject hierarchy item removal is already in progress
+  Q_D(qSlicerSubjectHierarchySegmentationsPlugin);
+  if (d->SegmentSubjectHierarchyItemRemovalInProgress)
+    {
+    return;
+    }
+
   // Get segmentation node
   vtkMRMLSegmentationNode* segmentationNode = reinterpret_cast<vtkMRMLSegmentationNode*>(caller);
   if (!segmentationNode)
@@ -536,6 +546,13 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSegmentModified(vtkObject* ca
       }
     }
 
+  if (segmentShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    // Segment name and color is set for new segments before adding them to the segmentation.
+    // In that case the subject hierarchy item does not exist yet for the segment
+    return;
+    }
+
   // Rename segment subject hierarchy item if segment name is different (i.e. has just been renamed)
   if (shNode->GetItemName(segmentShItemID).compare(segment->GetName()))
     {
@@ -544,13 +561,24 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSegmentModified(vtkObject* ca
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchySegmentationsPlugin::onSubjectHierarchyItemModified(vtkIdType itemID)
+void qSlicerSubjectHierarchySegmentationsPlugin::onSubjectHierarchyItemModified(vtkObject* caller, void* callData)
 {
-  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  vtkMRMLSubjectHierarchyNode* shNode = reinterpret_cast<vtkMRMLSubjectHierarchyNode*>(caller);
   if (!shNode)
     {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
+    }
+
+  // Get item ID
+  vtkIdType itemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+  if (callData)
+    {
+    vtkIdType* itemIdPtr = reinterpret_cast<vtkIdType*>(callData);
+    if (itemIdPtr)
+      {
+      itemID = *itemIdPtr;
+      }
     }
 
   if (shNode->HasItemAttribute(itemID, vtkMRMLSegmentationNode::GetSegmentIDAttributeName()))
@@ -568,9 +596,11 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSubjectHierarchyItemModified(
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchySegmentationsPlugin::onSubjectHierarchyItemAboutToBeRemoved(vtkIdType itemID)
+void qSlicerSubjectHierarchySegmentationsPlugin::onSubjectHierarchyItemAboutToBeRemoved(vtkObject* caller, void* callData)
 {
-  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  Q_D(qSlicerSubjectHierarchySegmentationsPlugin);
+
+  vtkMRMLSubjectHierarchyNode* shNode = reinterpret_cast<vtkMRMLSubjectHierarchyNode*>(caller);
   if (!shNode)
     {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
@@ -579,6 +609,17 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSubjectHierarchyItemAboutToBe
   if (!shNode->GetScene() || shNode->GetScene()->IsClosing())
     {
     return;
+    }
+
+  // Get item ID
+  vtkIdType itemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+  if (callData)
+    {
+    vtkIdType* itemIdPtr = reinterpret_cast<vtkIdType*>(callData);
+    if (itemIdPtr)
+      {
+      itemID = *itemIdPtr;
+      }
     }
 
   // If a segment subject hierarchy item was removed then remove segment from its segmentation
@@ -597,7 +638,9 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSubjectHierarchyItemAboutToBe
     vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(shNode->GetItemDataNode(parentItemID));
     if (segmentationNode && segmentationNode->GetSegmentation()->GetSegment(segmentId))
       {
+      d->SegmentSubjectHierarchyItemRemovalInProgress = true;
       segmentationNode->GetSegmentation()->RemoveSegment(segmentId);
+      d->SegmentSubjectHierarchyItemRemovalInProgress = false;
       }
     }
 }

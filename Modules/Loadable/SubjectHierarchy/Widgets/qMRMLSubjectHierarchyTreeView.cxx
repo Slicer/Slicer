@@ -136,13 +136,6 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init()
                     q, SLOT(onSelectionChanged(QItemSelection,QItemSelection)) );
   this->SortFilterModel->setParent(q);
   this->SortFilterModel->setSourceModel(this->Model);
-  //TODO: Needed?
-  // Resize the view if new rows are added/removed
-  //QObject::connect( this->SortFilterModel, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)),
-  //                  q, SLOT(onNumberOfVisibleIndexChanged()) );
-  //QObject::connect( this->SortFilterModel, SIGNAL(rowsInserted(QModelIndex,int,int)),
-  //                  q, SLOT(onNumberOfVisibleIndexChanged()) );
-  //q->onNumberOfVisibleIndexChanged();
 
   //TODO: this would be desirable to set, but results in showing the scrollbar, which makes
   //      subject hierarchy much less usable (because there will be two scrollbars)
@@ -322,6 +315,9 @@ vtkMRMLScene* qMRMLSubjectHierarchyTreeView::mrmlScene()const
 void qMRMLSubjectHierarchyTreeView::setMRMLScene(vtkMRMLScene* scene)
 {
   this->setSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(scene));
+
+  // Connect scene close ended event so that subject hierarchy can be cleared
+  qvtkReconnect( scene, vtkMRMLScene::EndCloseEvent, this, SLOT( onSceneCloseEnded(vtkObject*) ) );
 }
 
 //------------------------------------------------------------------------------
@@ -479,11 +475,6 @@ bool qMRMLSubjectHierarchyTreeView::clickDecoration(const QModelIndex& index)
     result = true;
     }
 
-  //TODO: Used by event translator, which seems to only be used for QtTesting test cases
-  //if (result)
-  //  {
-  //  emit decorationClicked(index);
-  //  }
   return result;
 }
 
@@ -1001,6 +992,20 @@ void qMRMLSubjectHierarchyTreeView::setMultiSelection(bool multiSelectionOn)
     {
     this->setSelectionMode(QAbstractItemView::SingleSelection);
     }
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::onSceneCloseEnded(vtkObject* sceneObject)
+{
+  vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sceneObject);
+  if (!scene)
+    {
+    return;
+    }
+
+  // Get new subject hierarchy node (or if not created yet then trigger creating it, because
+  // scene close removed the pseudo-singleton subject hierarchy node), and set it to the tree view
+  this->setSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(scene));
 }
 
 //TODO: Snippet for asking whether whole branch is to be deleted

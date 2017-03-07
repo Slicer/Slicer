@@ -115,39 +115,6 @@ void qSlicerSubjectHierarchyModuleWidget::setPluginLogic(qSlicerSubjectHierarchy
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyModuleWidget::enter()
-{
-  this->onEnter();
-  this->Superclass::enter();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyModuleWidget::exit()
-{
-  this->Superclass::exit();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyModuleWidget::onEnter()
-{
-  if (!this->mrmlScene())
-    {
-    return;
-    }
-
-  Q_D(qSlicerSubjectHierarchyModuleWidget);
-
-  //TODO: Remove
-  //d->SubjectHierarchyTreeView->setMRMLScene(this->mrmlScene());
-
-  //TODO:
-  //this->updateWidgetFromMRML();
-
-  //TODO: Similar call for importing model hierarchy?
-  //this->pluginLogic()->checkSupportedNodesInScene();
-}
-
-//-----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyModuleWidget::setup()
 {
   Q_D(qSlicerSubjectHierarchyModuleWidget);
@@ -187,16 +154,6 @@ void qSlicerSubjectHierarchyModuleWidget::setup()
     }
   aggregatedHelpText.append(QString("</body></html>"));
   d->label_Help->setToolTip(aggregatedHelpText);
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyModuleWidget::updateWidgetFromMRML()
-{
-  Q_D(qSlicerSubjectHierarchyModuleWidget);
-
-  //TODO:
-  // Expand to depth 4
-  //d->SubjectHierarchyTreeView->expandToDepth(4);
 }
 
 //-----------------------------------------------------------------------------

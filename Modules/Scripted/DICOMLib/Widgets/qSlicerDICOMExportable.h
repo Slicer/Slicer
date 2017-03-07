@@ -50,7 +50,7 @@ class Q_SLICER_MODULE_DICOMLIB_WIDGETS_EXPORT qSlicerDICOMExportable : public QO
   /// Extra information the user sees on mouse over of the export option
   Q_PROPERTY(QString tooltip READ tooltip WRITE setTooltip)
   /// ID of the subject hierarchy item to be exported
-  Q_PROPERTY(vtkIdType SubjectHierarchyItemID READ subjectHierarchyItemID WRITE setSubjectHierarchyItemID)
+  Q_PROPERTY(vtkIdType subjectHierarchyItemID READ subjectHierarchyItemID WRITE setSubjectHierarchyItemID)
   /// Class of the plugin that created this exportable
   Q_PROPERTY(QString pluginClass READ pluginClass WRITE setPluginClass)
   /// Target directory to export this exportable

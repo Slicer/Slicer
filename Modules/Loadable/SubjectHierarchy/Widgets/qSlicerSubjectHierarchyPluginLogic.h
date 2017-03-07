@@ -89,7 +89,7 @@ protected:
   /// This method is called if auto-creation is enabled and a supported node is added to the
   /// scene, or if the user answers yes to the question that pops up upon entering subject
   /// hierarchy module if supported nodes are found that are not in the hierarchy.
-  void addSupportedNodesToSubjectHierarchy();
+  void addSupportedDataNodesToSubjectHierarchy();
 
 protected slots:
   /// Called when a node is added to the scene so that a plugin can claim it

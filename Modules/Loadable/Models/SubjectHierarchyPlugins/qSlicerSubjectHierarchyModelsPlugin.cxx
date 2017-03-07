@@ -39,7 +39,6 @@
 #include <QDebug>
 #include <QStandardItem>
 #include <QAction>
-#include <QLineEdit>
 
 // SlicerQt includes
 #include "qSlicerAbstractModuleWidget.h"

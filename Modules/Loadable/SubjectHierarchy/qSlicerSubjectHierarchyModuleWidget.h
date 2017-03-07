@@ -44,15 +44,8 @@ public:
   qSlicerSubjectHierarchyModuleWidget(QWidget *parent=0);
   virtual ~qSlicerSubjectHierarchyModuleWidget();
 
-  virtual void enter();
-  virtual void exit();
-
   Q_INVOKABLE qSlicerSubjectHierarchyPluginLogic* pluginLogic();
   Q_INVOKABLE void setPluginLogic(qSlicerSubjectHierarchyPluginLogic* pluginLogic);
-
-public slots:
-  /// Update widget GUI from parameter node
-  void updateWidgetFromMRML();
 
 protected slots:
   /// Show or hide MRML IDs

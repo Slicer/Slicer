@@ -1206,7 +1206,7 @@ vtkMRMLNode*  vtkMRMLScene::AddNode(vtkMRMLNode *n)
     return NULL;
     }
 #ifndef NDEBUG
-  // Since calling IsNodePresent is costly, a "developper hint" is printed only
+  // Since calling IsNodePresent is costly, a "developer hint" is printed only
   // if build as debug. We can't exit here as the release would then be
   // different from debug.
   // The caller should make sure the node has not been added yet.

@@ -319,7 +319,7 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
     {
     vtkIdType seriesItemID = exportable->subjectHierarchyItemID();
     if ( seriesItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
-      || shNode->IsItemLevel(seriesItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries()) )
+      || !shNode->IsItemLevel(seriesItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries()) )
       {
       qCritical() << Q_FUNC_INFO << ": Exportable '" << exportable->name() << QString("' points to invalid series item '%1 (name:%2, level:%3)'").arg(
         seriesItemID).arg(shNode->GetItemName(seriesItemID).c_str()).arg(shNode->GetItemLevel(seriesItemID).c_str());
@@ -331,12 +331,18 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
         {
         studyItemID = parentItemID;
         }
+      if (studyItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+        {
+        QString error("No study found");
+        qCritical() << Q_FUNC_INFO << ": " << error;
+        return error;
+        }
       else if (studyItemID != parentItemID)
-      {
-      QString error("Exportables are not in the same study!");
-      qCritical() << Q_FUNC_INFO << ": " << error;
-      return error;
-      }
+        {
+        QString error("Exportables are not in the same study");
+        qCritical() << Q_FUNC_INFO << ": " << error;
+        return error;
+        }
     }
 
   // Populate patient section
@@ -345,7 +351,7 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
   vtkIdType patientItemID = shNode->GetItemParent(studyItemID);
   if (patientItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
-    QString error("No patient item found!");
+    QString error("No patient found");
     qCritical() << Q_FUNC_INFO << ": " << error;
     return error;
     }

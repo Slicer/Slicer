@@ -131,6 +131,13 @@ void qSlicerSegmentationsModule::setMRMLScene(vtkMRMLScene* scene)
   qvtkReconnect( this->mrmlScene(), scene, vtkMRMLScene::NodeAddedEvent, this, SLOT( onNodeAdded(vtkObject*,vtkObject*) ) );
 
   Superclass::setMRMLScene(scene);
+
+  // Subject hierarchy is instantiated before Segmentations, so need to connect to existing the quasi-singleton subject hierarchy node
+  vtkCollection* shNodeCollection = scene->GetNodesByClass("vtkMRMLSubjectHierarchyNode");
+  vtkMRMLSubjectHierarchyNode*  subjectHierarchyNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(
+    shNodeCollection->GetItemAsObject(0) );
+  shNodeCollection->Delete();
+  this->onNodeAdded(scene, subjectHierarchyNode);
 }
 
 //-----------------------------------------------------------------------------
@@ -229,9 +236,9 @@ void qSlicerSegmentationsModule::onNodeAdded(vtkObject* sceneObject, vtkObject* 
   if (subjectHierarchyNode)
     {
     qvtkConnect( subjectHierarchyNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent,
-      segmentationsPlugin, SLOT( onSubjectHierarchyItemModified(vtkIdType) ) );
+      segmentationsPlugin, SLOT( onSubjectHierarchyItemModified(vtkObject*,void*) ) );
     qvtkConnect( subjectHierarchyNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAboutToBeRemovedEvent,
-      segmentationsPlugin, SLOT( onSubjectHierarchyItemRemoved(vtkIdType) ) );
+      segmentationsPlugin, SLOT( onSubjectHierarchyItemAboutToBeRemoved(vtkObject*,void*) ) );
     }
 }
 

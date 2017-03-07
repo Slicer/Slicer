@@ -79,11 +79,8 @@ public:
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  /// Read node attributes from XML file
-  virtual void ReadXMLAttributes(const char** atts);
-
-  /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent);
+  /// Read item from XML
+  virtual void ReadItemFromXML(const char** atts);
   /// Write this node's body to a MRML file in XML format.
   virtual void WriteNodeBodyXML(ostream& of, int indent);
 
