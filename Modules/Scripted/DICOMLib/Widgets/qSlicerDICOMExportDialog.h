@@ -29,10 +29,11 @@
 // DICOMLib includes
 #include "qSlicerDICOMLibModuleWidgetsExport.h"
 
+// MRML includes
+#include "vtkMRMLSubjectHierarchyNode.h"
+
 class qSlicerDICOMExportDialogPrivate;
 class vtkMRMLScene;
-class vtkMRMLSubjectHierarchyNode;
-class vtkMRMLNode;
 class QItemSelection;
 
 /// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
@@ -46,32 +47,35 @@ public:
   qSlicerDICOMExportDialog(QObject* parent = NULL);
   virtual ~qSlicerDICOMExportDialog();
 
+  typedef vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID SubjectHierarchyItemID;
+
 public:
   /// Show dialog
   /// \param nodeToSelect Node is selected in the tree if given
-  virtual bool exec(vtkMRMLSubjectHierarchyNode* nodeToSelect=NULL);
+  virtual bool exec(SubjectHierarchyItemID itemToSelect=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID);
 
   /// Set MRML scene
   Q_INVOKABLE void setMRMLScene(vtkMRMLScene* scene);
 
   /// Python compatibility function for showing dialog (calls \a exec)
-  Q_INVOKABLE bool execDialog(vtkMRMLSubjectHierarchyNode* nodeToSelect=NULL) { return this->exec(nodeToSelect); };
+  Q_INVOKABLE bool execDialog(SubjectHierarchyItemID itemToSelect=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    { return this->exec(itemToSelect); };
 
   /// Show DICOM browser and update database to show new items
   Q_INVOKABLE void showUpdatedDICOMBrowser();
 
 protected slots:
   /// Select node that was passed with \sa exec() in subject hierarchy tree
-  void selectNode();
+  void selectItem();
 
   /// Handles change of export series or entire scene radio button selection
   void onExportSeriesRadioButtonToggled(bool);
 
-  /// Triggers examining node when selection changes
-  void onCurrentNodeChanged(vtkMRMLNode*);
+  /// Triggers examining item when selection changes
+  void onCurrentItemChanged(SubjectHierarchyItemID itemID);
 
   /// Show exportables returned by the plugins for selected node
-  void examineSelectedNode();
+  void examineSelectedItem();
 
   /// Populates DICOM tags based on selection
   void onExportableSelectedAtRow(int);

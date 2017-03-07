@@ -114,11 +114,11 @@ void qSlicerSubjectHierarchySegmentPluginPrivate::init()
   this->SegmentWithMenuAction->setMenu(this->SegmentWithMenu.data());
 
   QAction* segmentEditorAction = new QAction("Segment Editor",q);
-  QObject::connect(segmentEditorAction, SIGNAL(triggered()), q, SLOT(segmentCurrentNodeWithSegmentEditor()));
+  QObject::connect(segmentEditorAction, SIGNAL(triggered()), q, SLOT(segmentCurrentItemWithSegmentEditor()));
   this->SegmentWithMenu->addAction(segmentEditorAction);
 
   QAction* editorAction = new QAction("Editor (obsolete)",q);
-  QObject::connect(editorAction, SIGNAL(triggered()), q, SLOT(segmentCurrentNodeWithEditor()));
+  QObject::connect(editorAction, SIGNAL(triggered()), q, SLOT(segmentCurrentItemWithEditor()));
   this->SegmentWithMenu->addAction(editorAction);
 }
 
@@ -128,7 +128,7 @@ qSlicerSubjectHierarchySegmentPlugin::~qSlicerSubjectHierarchySegmentPlugin()
 }
 
 //---------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchySegmentPlugin::nodeContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchySegmentPlugin::itemContextMenuActions()const
 {
   Q_D(const qSlicerSubjectHierarchySegmentPlugin);
 
@@ -138,24 +138,26 @@ QList<QAction*> qSlicerSubjectHierarchySegmentPlugin::nodeContextMenuActions()co
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchySegmentPlugin::showContextMenuActionsForNode(vtkMRMLSubjectHierarchyNode* node)
+void qSlicerSubjectHierarchySegmentPlugin::showContextMenuActionsForItem(
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)
 {
   Q_D(qSlicerSubjectHierarchySegmentPlugin);
   this->hideAllContextMenuActions();
 
-  if (!node)
+  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     // There are no scene actions in this plugin
     return;
     }
 
   // Volume but not LabelMap
-  if ( qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes")->canOwnSubjectHierarchyNode(node)
-    && !qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("LabelMaps")->canOwnSubjectHierarchyNode(node) )
+  if ( qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes")->canOwnSubjectHierarchyItem(itemID)
+    && !qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("LabelMaps")->canOwnSubjectHierarchyItem(itemID) )
     {
     // Get current node
-    vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
-    if (!currentNode)
+    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID currentItemID =
+      qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+    if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
       {
       qCritical() << Q_FUNC_INFO << ": Invalid current node!";
       return;
@@ -174,16 +176,28 @@ QMenu* qSlicerSubjectHierarchySegmentPlugin::segmentWithMenu()
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchySegmentPlugin::segmentCurrentNodeWithSegmentEditor()
+void qSlicerSubjectHierarchySegmentPlugin::segmentCurrentItemWithSegmentEditor()
 {
-  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
-  vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
-  if (!scene || !currentNode || !currentNode->GetAssociatedNode())
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
     {
-    qCritical() << Q_FUNC_INFO << ": Invalid current node or scene!";
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
     }
-  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(currentNode->GetAssociatedNode());
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID currentItemID =
+    qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid current node!";
+    return;
+    }
+  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
+  if (!scene)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
+    return;
+    }
+  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(shNode->GetItemDataNode(currentItemID));
   if (!volumeNode)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid volume node to segment!";
@@ -203,7 +217,7 @@ void qSlicerSubjectHierarchySegmentPlugin::segmentCurrentNodeWithSegmentEditor()
       "masterNode = slicer.mrmlScene.GetNodeByID(%1)"
       "editorWidget = slicer.modules.segmenteditor.widgetRepresentation().self()"
       "editorWidget.parameterSetNode.SetAndObserveMasterVolumeNode(masterNode)" )
-      .arg(currentNode->GetAssociatedNode()->GetID()) );
+      .arg(shNode->GetItemDataNode(currentItemID)->GetID()) );
     }
 #else
   qDebug() << Q_FUNC_INFO << ": Segment Editor module is not available";
@@ -211,16 +225,28 @@ void qSlicerSubjectHierarchySegmentPlugin::segmentCurrentNodeWithSegmentEditor()
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchySegmentPlugin::segmentCurrentNodeWithEditor()
+void qSlicerSubjectHierarchySegmentPlugin::segmentCurrentItemWithEditor()
 {
-  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
-  vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
-  if (!scene || !currentNode || !currentNode->GetAssociatedNode())
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
     {
-    qCritical() << Q_FUNC_INFO << ": Invalid current node or scene!";
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
     }
-  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(currentNode->GetAssociatedNode());
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID currentItemID =
+    qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid current node!";
+    return;
+    }
+  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
+  if (!scene)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
+    return;
+    }
+  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(shNode->GetItemDataNode(currentItemID));
   if (!volumeNode)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid volume node to segment!";
@@ -294,7 +320,7 @@ void qSlicerSubjectHierarchySegmentPlugin::segmentCurrentNodeWithEditor()
       "editorWidget = slicer.modules.editor.widgetRepresentation().self()"
       "editorWidget.setMasterNode(masterNode)"
       "editorWidget.setMergeNode(mergeNode)" )
-      .arg(currentNode->GetAssociatedNode()->GetID()).arg(labelNode->GetID()) );
+      .arg(shNode->GetItemDataNode(currentItemID)->GetID()).arg(labelNode->GetID()) );
     }
 #else
   qDebug() << Q_FUNC_INFO << ": Editor module is not available to edit label map" << labelNode->GetName();

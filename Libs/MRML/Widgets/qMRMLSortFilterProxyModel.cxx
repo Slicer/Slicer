@@ -89,10 +89,7 @@ QStandardItem* qMRMLSortFilterProxyModel::sourceItem(const QModelIndex& sourceIn
     //Q_ASSERT(sceneModel);
     return NULL;
     }
-  else
-    {
   return sourceIndex.isValid() ? sceneModel->itemFromIndex(sourceIndex) : sceneModel->invisibleRootItem();
-    }
 }
 
 //-----------------------------------------------------------------------------

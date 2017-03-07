@@ -29,8 +29,6 @@
 #include "qSlicerSubjectHierarchyModuleWidgetsExport.h"
 
 class qSlicerSubjectHierarchyFolderPluginPrivate;
-class vtkMRMLNode;
-class vtkMRMLSubjectHierarchyNode;
 
 // Due to some reason the Python wrapping of this class fails, therefore
 // put everything between BTX/ETX to exclude from wrapping.
@@ -50,46 +48,44 @@ public:
   virtual ~qSlicerSubjectHierarchyFolderPlugin();
 
 public:
-  /// Determines if the actual plugin can handle a subject hierarchy node. The plugin with
-  /// the highest confidence number will "own" the node in the subject hierarchy (set icon, tooltip,
+  /// Determines if the actual plugin can handle a subject hierarchy item. The plugin with
+  /// the highest confidence number will "own" the item in the subject hierarchy (set icon, tooltip,
   /// set context menu etc.)
-  /// \param node Note to handle in the subject hierarchy tree
+  /// \param item Item to handle in the subject hierarchy tree
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
-  ///   node, and 1 means that the plugin is the only one that can handle the node (by node type or identifier attribute)
-  virtual double canOwnSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* node)const;
+  ///   item, and 1 means that the plugin is the only one that can handle the item (by node type or identifier attribute)
+  virtual double canOwnSubjectHierarchyItem(SubjectHierarchyItemID itemID)const;
 
-  /// Get role that the plugin assigns to the subject hierarchy node.
+  /// Get role that the plugin assigns to the subject hierarchy item.
   ///   Each plugin should provide only one role.
   Q_INVOKABLE virtual const QString roleForPlugin()const;
 
-  /// Get icon of an owned subject hierarchy node
+  /// Get icon of an owned subject hierarchy item
   /// \return Icon to set, NULL if nothing to set
-  virtual QIcon icon(vtkMRMLSubjectHierarchyNode* node);
+  virtual QIcon icon(SubjectHierarchyItemID itemID);
 
   /// Get visibility icon for a visibility state
   virtual QIcon visibilityIcon(int visible);
 
-  /// Open module belonging to node and set inputs in opened module
-  virtual void editProperties(vtkMRMLSubjectHierarchyNode* node);
+  /// Open module belonging to item and set inputs in opened module
+  virtual void editProperties(SubjectHierarchyItemID itemID);
 
-  /// Get node context menu item actions to add to tree view
-  /// Separate method is needed for the scene, as its actions are set to the
-  /// tree by a different method \sa sceneContextMenuActions
-  Q_INVOKABLE virtual QList<QAction*> nodeContextMenuActions()const;
+  /// Get item context menu item actions to add to tree view
+  virtual QList<QAction*> itemContextMenuActions()const;
 
   /// Get scene context menu item actions to add to tree view
   /// Separate method is needed for the scene, as its actions are set to the
-  /// tree by a different method \sa nodeContextMenuActions
+  /// tree by a different method \sa itemContextMenuActions
   virtual QList<QAction*> sceneContextMenuActions()const;
 
-  /// Show context menu actions valid for  given subject hierarchy node.
-  /// \param node Subject Hierarchy node to show the context menu items for. If NULL, then shows menu items for the scene
-  virtual void showContextMenuActionsForNode(vtkMRMLSubjectHierarchyNode* node);
+  /// Show context menu actions valid for a given subject hierarchy item.
+  /// \param itemID Subject Hierarchy item to show the context menu items for
+  virtual void showContextMenuActionsForItem(SubjectHierarchyItemID itemID);
 
 public:
-  /// Create folder under specified node
-  /// \param parentNode Parent node for folder to create. NULL if top-level (right under the scene)
-  vtkMRMLSubjectHierarchyNode* createFolderUnderNode(vtkMRMLSubjectHierarchyNode* parentNode);
+  /// Create folder under specified item
+  /// \param parentNode Parent item for folder to create
+  SubjectHierarchyItemID createFolderUnderItem(SubjectHierarchyItemID parentItemID);
 
 protected slots:
   /// Create folder node under the scene

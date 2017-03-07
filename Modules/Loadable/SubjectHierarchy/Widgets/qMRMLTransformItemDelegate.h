@@ -68,8 +68,8 @@ public:
   using QStyledItemDelegate::initStyleOption;
 
 signals:
-  void removeTransformsFromBranchOfCurrentNode();
-  void hardenTransformOnBranchOfCurrentNode();
+  void removeTransformsFromBranchOfCurrentItem();
+  void hardenTransformOnBranchOfCurrentItem();
 
 protected slots:
   void commitAndClose();

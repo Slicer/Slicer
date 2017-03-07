@@ -124,7 +124,7 @@ public:
 
   vtkMRMLScene* mrmlScene()const;
 
-  /// Return a pointer to the current node (not necessarilly selected),
+  /// Return a pointer to the current node (not necessarily selected),
   /// 0 if no node is current
   /// \sa QItemSelectionModel::currentIndex(), QItemSelectionModel::selectedIndexes()
   vtkMRMLNode* currentNode()const;

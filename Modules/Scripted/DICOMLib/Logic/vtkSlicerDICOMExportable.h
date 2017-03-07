@@ -31,6 +31,9 @@
 #include <map>
 #include <string>
 
+// MRML includes
+#include <vtkMRMLSubjectHierarchyNode.h>
+
 #include "vtkSlicerDICOMLibModuleLogicExport.h"
 
 /// VTK implementation of \sa qSlicerDICOMExportable
@@ -48,8 +51,8 @@ public:
   vtkGetStringMacro(Tooltip);
   vtkSetStringMacro(Tooltip);
 
-  vtkGetStringMacro(NodeID);
-  vtkSetStringMacro(NodeID);
+  vtkGetMacro(SubjectHierarchyItemID, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID);
+  vtkSetMacro(SubjectHierarchyItemID, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID);
 
   vtkGetStringMacro(PluginClass);
   vtkSetStringMacro(PluginClass);
@@ -78,8 +81,8 @@ protected:
   /// Extra information the user sees on mouse over of the export option
   char* Tooltip;
 
-  /// ID of MRML node to be exported
-  char* NodeID;
+  /// ID of the subject hierarchy item to be exported
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID SubjectHierarchyItemID;
 
   /// Class of the plugin that created this exportable
   char* PluginClass;

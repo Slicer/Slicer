@@ -148,7 +148,7 @@ void vtkMRMLSegmentationStorageNode::InitializeSupportedWriteFileTypes()
   bool masterIsPolyData = true;
   if (segmentationNode)
     {
-    // restrict write file types to those that are suitable for current master representaton
+    // restrict write file types to those that are suitable for current master representation
     masterIsImage = segmentationNode->GetSegmentation()->IsMasterRepresentationImageData();
     masterIsPolyData = segmentationNode->GetSegmentation()->IsMasterRepresentationPolyData();
     if (!masterIsImage && !masterIsPolyData)

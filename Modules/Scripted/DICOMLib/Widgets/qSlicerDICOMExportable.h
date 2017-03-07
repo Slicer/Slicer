@@ -28,16 +28,19 @@
 #include <QStringList>
 #include <QMap>
 
+// MRML includes
+//#include <vtkMRMLSubjectHierarchyNode.h>
+#include <vtkType.h> //TODO: vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID cannot be used in a Q_PROPERTY
+
 // DICOMLib includes
 #include "qSlicerDICOMLibModuleWidgetsExport.h"
 
 class qSlicerDICOMExportablePrivate;
-class vtkMRMLSubjectHierarchyNode;
 class vtkSlicerDICOMExportable;
 
-/// Container class for things that can be loaded from DICOM files into Slicer.
-/// Each plugin returns a list of instances from its evaluate method and accepts
-/// a list of these in its load method corresponding to the things the user has
+/// Container class for data that can be exported to DICOM files from Slicer.
+/// Each plugin returns a list of instances from its examineForExport method and accepts
+/// a list of these in its export method corresponding to the things the user has
 /// selected for loading
 class Q_SLICER_MODULE_DICOMLIB_WIDGETS_EXPORT qSlicerDICOMExportable : public QObject
 {
@@ -47,8 +50,9 @@ class Q_SLICER_MODULE_DICOMLIB_WIDGETS_EXPORT qSlicerDICOMExportable : public QO
   Q_PROPERTY(QString name READ name WRITE setName)
   /// Extra information the user sees on mouse over of the export option
   Q_PROPERTY(QString tooltip READ tooltip WRITE setTooltip)
-  /// ID of MRML node to be exported
-  Q_PROPERTY(QString nodeID READ nodeID WRITE setNodeID)
+  /// ID of the subject hierarchy item to be exported
+  //TODO: vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID cannot be used in a Q_PROPERTY
+  Q_PROPERTY(vtkIdType subjectHierarchyItemID READ subjectHierarchyItemID WRITE setSubjectHierarchyItemID)
   /// Class of the plugin that created this exportable
   Q_PROPERTY(QString pluginClass READ pluginClass WRITE setPluginClass)
   /// Target directory to export this exportable
@@ -76,8 +80,8 @@ public:
   virtual QString tooltip()const;
   void setTooltip(const QString& newTooltip);
 
-  virtual QString nodeID()const;
-  void setNodeID(const QString& newNodeID);
+  virtual vtkIdType subjectHierarchyItemID()const;
+  void setSubjectHierarchyItemID(const vtkIdType& newItemID);
 
   virtual QString directory()const;
   void setDirectory(const QString& newDirectory);

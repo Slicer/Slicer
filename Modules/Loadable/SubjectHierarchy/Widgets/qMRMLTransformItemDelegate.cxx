@@ -35,7 +35,7 @@
 #include "qMRMLNodeComboBox.h"
 
 // Subject hierarchy widgets includes
-#include "qMRMLSceneSubjectHierarchyModel.h"
+#include "qMRMLSubjectHierarchyModel.h"
 #include "qMRMLTransformItemDelegate.h"
 
 //------------------------------------------------------------------------------
@@ -46,10 +46,10 @@ qMRMLTransformItemDelegate::qMRMLTransformItemDelegate(QObject *parent)
   this->FixedRowHeight = -1;
 
   this->RemoveTransformAction = new QAction("Remove transforms from branch", this);
-  connect(this->RemoveTransformAction, SIGNAL(triggered()), this, SIGNAL(removeTransformsFromBranchOfCurrentNode()));
+  connect(this->RemoveTransformAction, SIGNAL(triggered()), this, SIGNAL(removeTransformsFromBranchOfCurrentItem()));
 
   this->HardenAction = new QAction("Harden transform on branch", this);
-  connect(this->HardenAction, SIGNAL(triggered()), this, SIGNAL(hardenTransformOnBranchOfCurrentNode()));
+  connect(this->HardenAction, SIGNAL(triggered()), this, SIGNAL(hardenTransformOnBranchOfCurrentItem()));
 }
 
 //------------------------------------------------------------------------------
@@ -109,7 +109,7 @@ void qMRMLTransformItemDelegate::setEditorData(QWidget *editor,
 {
   if (this->isTransform(index))
     {
-    QString transformNodeID = index.data(qMRMLSceneSubjectHierarchyModel::TransformIDRole).toString();
+    QString transformNodeID = index.data(qMRMLSubjectHierarchyModel::TransformIDRole).toString();
     qMRMLNodeComboBox* transformNodeCombobox = qobject_cast<qMRMLNodeComboBox*>(editor);
     if (!transformNodeCombobox)
       {
@@ -139,7 +139,7 @@ void qMRMLTransformItemDelegate::setModelData(QWidget *editor, QAbstractItemMode
       return;
       }
     QString transformNodeID = transformNodeCombobox->currentNodeID();
-    model->setData(index, transformNodeID, qMRMLSceneSubjectHierarchyModel::TransformIDRole);
+    model->setData(index, transformNodeID, qMRMLSubjectHierarchyModel::TransformIDRole);
     }
   else
     {

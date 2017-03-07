@@ -113,11 +113,13 @@ public:
   ///   object! For example using vtkSmartPointer<vtkSegment>::Take
   static vtkSegment* CreateSegmentFromModelNode(vtkMRMLModelNode* modelNode, vtkMRMLSegmentationNode* segmentationNode=NULL);
 
-  /// Utility function for getting the segmentation node for a segment subject hierarchy node
-  static vtkMRMLSegmentationNode* GetSegmentationNodeForSegmentSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* segmentShNode);
+  /// Utility function for getting the segmentation node for a segment subject hierarchy item
+  static vtkMRMLSegmentationNode* GetSegmentationNodeForSegmentSubjectHierarchyItem(
+    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID segmentShItemID, vtkMRMLScene* scene );
 
-  /// Utility function for getting the segment object for a segment subject hierarchy node
-  static vtkSegment* GetSegmentForSegmentSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* segmentShNode);
+  /// Utility function for getting the segment object for a segment subject hierarchy item
+  static vtkSegment* GetSegmentForSegmentSubjectHierarchyItem(
+    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID segmentShItemID, vtkMRMLScene* scene );
 
   /// Export segment to representation MRML node.
   /// 1. If representation node is a labelmap node, then the binary labelmap representation of the

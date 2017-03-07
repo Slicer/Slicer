@@ -33,7 +33,6 @@
 
 class vtkMRMLNode;
 class vtkMRMLScene;
-class QAction;
 
 class qMRMLSceneModelPrivate;
 
@@ -51,7 +50,7 @@ class qMRMLSceneModelPrivate;
 ///    |- my_volume.nrrd  vtkMRMLScalarVolumeNode1
 ///    |- Add new node
 /// \endverbatim
-/// More columns can be added by setting the column index of the differen
+/// More columns can be added by setting the column index of the different
 /// columns: name, id, checkable, visibility, toolTip, extraItem and the ones
 /// defined in subclasses.
 /// Subclasses must reimplement maxColumnId if they add new column properties
@@ -69,7 +68,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneModel : public QStandardItemModel
   /// OnlyVisibleNodes by default
   Q_PROPERTY (NodeTypes listenNodeModifiedEvent READ listenNodeModifiedEvent WRITE setListenNodeModifiedEvent)
 
-  /// Control wether the model actively listens to the scene.
+  /// Control whether the model actively listens to the scene.
   /// If LazyUpdate is true, the model ignores added node events when the
   /// scene is importing/restoring, but synchronize with the scene once its
   /// imported/restored.
@@ -187,14 +186,13 @@ public:
   virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action,
                             int row, int column, const QModelIndex &parent);
 
-  /// Returns the parent node of the scene, 0 otherwise (the parent is the
-  /// scene).
+  /// Returns the parent node of the node, 0 otherwise (the parent is the scene).
   /// Must be reimplemented in derived classes. If reimplemented, you might
   /// have to reimplement nodeIndex() as well.
   /// Returns 0 by default.
   /// \sa nodeIndex(), canBeAChild(), canBeAParent()
   virtual vtkMRMLNode* parentNode(vtkMRMLNode* node)const;
-  /// Returns the row model index relative to its parent node indepentently of
+  /// Returns the row model index relative to its parent node independently of
   /// any filtering or proxy model.
   /// Must be reimplemented in derived classes
   virtual int          nodeIndex(vtkMRMLNode* node)const;
@@ -247,12 +245,12 @@ protected slots:
   /// Needs maxColumnId() to be reimplemented in subclasses
   void updateColumnCount();
 
-signals :
+signals:
   /// This signal is sent when a user is about to reparent a Node by
   /// a drag and drop
   void aboutToReparentByDragAndDrop(vtkMRMLNode* node, vtkMRMLNode* newParent);
 
-  ///  This signal is sent after a user draged and droped a Node in the
+  ///  This signal is sent after a user dragged and dropped a Node in the
   /// qMRMLTreeView
   void reparentedByDragAndDrop(vtkMRMLNode* node, vtkMRMLNode* newParent);
 
@@ -263,7 +261,6 @@ signals :
   void sceneUpdated();
 
 protected:
-
   qMRMLSceneModel(qMRMLSceneModelPrivate* pimpl, QObject *parent=0);
 
   virtual void updateScene();

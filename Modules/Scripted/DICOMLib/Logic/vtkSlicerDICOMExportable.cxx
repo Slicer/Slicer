@@ -36,7 +36,7 @@ vtkSlicerDICOMExportable::vtkSlicerDICOMExportable()
   this->SetName("Unknown exporter");
   this->Tooltip = NULL;
   this->SetTooltip("Creates a DICOM file from the selected data");
-  this->NodeID = NULL;
+  this->SubjectHierarchyItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
   this->PluginClass = NULL;
   this->Directory = NULL;
   this->Confidence = 0.0;
@@ -55,7 +55,7 @@ void vtkSlicerDICOMExportable::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent << "Name:   " << (this->Name?this->Name:"NULL") << "\n";
   os << indent << "Tooltip:   " << (this->Tooltip?this->Tooltip:"NULL") << "\n";
-  os << indent << "NodeID:   " << (this->NodeID?this->NodeID:"NULL") << "\n";
+  os << indent << "SubjectHierarchyItemID:   " << this->SubjectHierarchyItemID << "\n";
   os << indent << "PluginClass:   " << (this->PluginClass?this->PluginClass:"NULL") << "\n";
   os << indent << "Directory:   " << (this->Directory?this->Directory:"NULL") << "\n";
   os << indent << "Confidence:   " << this->Confidence << "\n";

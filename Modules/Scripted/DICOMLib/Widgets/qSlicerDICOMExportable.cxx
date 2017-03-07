@@ -38,8 +38,9 @@ public:
   QString Name;
   /// Extra information the user sees on mouse over of the export option
   QString Tooltip;
-  /// ID of MRML node to be exported
-  QString NodeID;
+  /// ID of the subject hierarchy item to be exported
+  //TODO: vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID cannot be used in a Q_PROPERTY
+  vtkIdType SubjectHierarchyItemID;
   /// Class of the plugin that created this exportable
   QString PluginClass;
   /// Target directory to export this exportable
@@ -97,8 +98,8 @@ CTK_SET_CPP(qSlicerDICOMExportable, const QString&, setTooltip, Tooltip)
 CTK_GET_CPP(qSlicerDICOMExportable, QString, tooltip, Tooltip)
 
 //-----------------------------------------------------------------------------
-CTK_SET_CPP(qSlicerDICOMExportable, const QString&, setNodeID, NodeID)
-CTK_GET_CPP(qSlicerDICOMExportable, QString, nodeID, NodeID)
+CTK_SET_CPP(qSlicerDICOMExportable, const vtkIdType&, setSubjectHierarchyItemID, SubjectHierarchyItemID)
+CTK_GET_CPP(qSlicerDICOMExportable, vtkIdType, subjectHierarchyItemID, SubjectHierarchyItemID)
 
 //-----------------------------------------------------------------------------
 CTK_SET_CPP(qSlicerDICOMExportable, const QString&, setPluginClass, PluginClass)
@@ -151,7 +152,7 @@ void qSlicerDICOMExportable::copyToVtkExportable(vtkSlicerDICOMExportable* vtkEx
 
   vtkExportable->SetName(d->Name.toLatin1().constData());
   vtkExportable->SetTooltip(d->Tooltip.toLatin1().constData());
-  vtkExportable->SetNodeID(d->NodeID.toLatin1().constData());
+  vtkExportable->SetSubjectHierarchyItemID(d->SubjectHierarchyItemID);
   vtkExportable->SetPluginClass(d->PluginClass.toLatin1().constData());
   vtkExportable->SetDirectory(d->Directory.toLatin1().constData());
   vtkExportable->SetConfidence(d->Confidence);
@@ -176,7 +177,7 @@ void qSlicerDICOMExportable::copyFromVtkExportable(vtkSlicerDICOMExportable* vtk
 
   d->Name = QString(vtkExportable->GetName());
   d->Tooltip = QString(vtkExportable->GetTooltip());
-  d->NodeID = QString(vtkExportable->GetNodeID());
+  d->SubjectHierarchyItemID = vtkExportable->GetSubjectHierarchyItemID();
   d->PluginClass = QString(vtkExportable->GetPluginClass());
   d->Directory = QString(vtkExportable->GetDirectory());
   d->Confidence = vtkExportable->GetConfidence();

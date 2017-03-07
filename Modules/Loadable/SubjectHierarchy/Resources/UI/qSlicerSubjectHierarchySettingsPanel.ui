@@ -6,51 +6,34 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>751</width>
-    <height>128</height>
+    <width>398</width>
+    <height>83</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Developer</string>
   </property>
   <layout class="QFormLayout" name="formLayout">
+   <property name="fieldGrowthPolicy">
+    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+   </property>
    <item row="0" column="0">
-    <widget class="QLabel" name="AutoCreateSubjectHierarchyEnabledLabel">
-     <property name="text">
-      <string>Automatically create subject hierarchy:</string>
-     </property>
+    <widget class="QLabel" name="AutoDeleteSubjectHierarchyChildrenEnabledLabel">
      <property name="toolTip">
-      <string>Automatically create subject hierarchy for nodes added to the scene. If enabled, then the data loaded into Slicer will be organized in the Subject hierarchy module. If disabled, then the module cannot be used. Keeping it disabled might be beneficial if a huge number of nodes are loaded into the scene (>10000), or if alternative, non-core hierarchies are used.</string>
+      <string>Delete whole branch under the deleted item from subject hierarchy.</string>
+     </property>
+     <property name="text">
+      <string>Automatically delete subject hierarchy children:</string>
      </property>
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QCheckBox" name="AutoCreateSubjectHierarchyEnabledCheckBox">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="toolTip">
-      <string>Automatically create subject hierarchy for nodes added to the scene. If enabled, then the data loaded into Slicer will be organized in the Subject hierarchy module. If disabled, then the module cannot be used. Keeping it disabled might be beneficial if a huge number of nodes are loaded into the scene (>10000), or if alternative, non-core hierarchies are used.</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="AutoDeleteSubjectHierarchyChildrenEnabledLabel">
-     <property name="text">
-      <string>Automatically delete subject hierarchy children:</string>
-     </property>
-     <property name="toolTip">
-      <string>Automatically delete subject hierarchy children for nodes removed from the scene.</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
     <widget class="QCheckBox" name="AutoDeleteSubjectHierarchyChildrenEnabledCheckBox">
-     <property name="text">
-      <string/>
-     </property>
      <property name="toolTip">
       <string>Automatically delete subject hierarchy children for nodes removed from the scene.</string>
+     </property>
+     <property name="text">
+      <string/>
      </property>
     </widget>
    </item>

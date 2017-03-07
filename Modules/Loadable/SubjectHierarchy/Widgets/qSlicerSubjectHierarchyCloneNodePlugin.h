@@ -29,9 +29,6 @@
 #include "qSlicerSubjectHierarchyModuleWidgetsExport.h"
 
 class qSlicerSubjectHierarchyCloneNodePluginPrivate;
-class vtkMRMLNode;
-class vtkMRMLScalarVolumeNode;
-class vtkMRMLSubjectHierarchyNode;
 
 // Due to some reason the Python wrapping of this class fails, therefore
 // put everything between BTX/ETX to exclude from wrapping.
@@ -54,16 +51,16 @@ public:
   Q_INVOKABLE static const QString getCloneNodeNamePostfix();
 
 public:
-  /// Get node context menu item actions to add to tree view
-  Q_INVOKABLE virtual QList<QAction*> nodeContextMenuActions()const;
+  /// Get item context menu item actions to add to tree view
+  virtual QList<QAction*> itemContextMenuActions()const;
 
   /// Show context menu actions valid for  given subject hierarchy node.
   /// \param node Subject Hierarchy node to show the context menu items for. If NULL, then shows menu items for the scene
-  virtual void showContextMenuActionsForNode(vtkMRMLSubjectHierarchyNode* node);
+  virtual void showContextMenuActionsForItem(SubjectHierarchyItemID itemID);
 
 protected slots:
   /// Clone currently selected subject hierarchy entry and associated data node
-  void cloneCurrentNode();
+  void cloneCurrentItem();
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyCloneNodePluginPrivate> d_ptr;

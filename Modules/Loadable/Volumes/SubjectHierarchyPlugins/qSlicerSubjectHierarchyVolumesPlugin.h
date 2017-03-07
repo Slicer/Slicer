@@ -29,9 +29,7 @@
 #include "qSlicerVolumesSubjectHierarchyPluginsExport.h"
 
 class qSlicerSubjectHierarchyVolumesPluginPrivate;
-class vtkMRMLNode;
 class vtkMRMLScalarVolumeNode;
-class vtkMRMLSubjectHierarchyNode;
 
 // Due to some reason the Python wrapping of this class fails, therefore
 // put everything between BTX/ETX to exclude from wrapping.
@@ -51,50 +49,52 @@ public:
   virtual ~qSlicerSubjectHierarchyVolumesPlugin();
 
 public:
-  /// Determines if a non subject hierarchy node can be placed in the hierarchy, and gets a confidence
-  ///   value for a certain MRML node (usually the type and possibly attributes are checked)
-  /// \param nodeToAdd Node to be added to the hierarchy
-  /// \param parent Prospective parent of the node to add.
-  ///   Default value is NULL. In that case the parent will be ignored, the confidence numbers are got based on the to-be child node alone.
-  /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
-  ///   node, and 1 means that the plugin is the only one that can handle the node (by type or identifier attribute)
-  virtual double canAddNodeToSubjectHierarchy(vtkMRMLNode* nodeToAdd, vtkMRMLSubjectHierarchyNode* parent=NULL)const;
-
-  /// Determines if the actual plugin can handle a subject hierarchy node. The plugin with
-  /// the highest confidence number will "own" the node in the subject hierarchy (set icon, tooltip,
-  /// set context menu etc.)
-  /// \param node Note to handle in the subject hierarchy tree
+  /// Determines if a data node can be placed in the hierarchy using the actual plugin,
+  /// and gets a confidence value for a certain MRML node (usually the type and possibly attributes are checked).
+  /// \param node Node to be added to the hierarchy
+  /// \param parentItemID Prospective parent of the node to add.
+  ///   Default value is invalid. In that case the parent will be ignored, the confidence numbers are got based on the to-be child node alone.
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
   ///   node, and 1 means that the plugin is the only one that can handle the node (by node type or identifier attribute)
-  virtual double canOwnSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* node)const;
+  virtual double canAddNodeToSubjectHierarchy(
+    vtkMRMLNode* node,
+    SubjectHierarchyItemID parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )const;
 
-  /// Get role that the plugin assigns to the subject hierarchy node.
+  /// Determines if the actual plugin can handle a subject hierarchy item. The plugin with
+  /// the highest confidence number will "own" the item in the subject hierarchy (set icon, tooltip,
+  /// set context menu etc.)
+  /// \param item Item to handle in the subject hierarchy tree
+  /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
+  ///   item, and 1 means that the plugin is the only one that can handle the item (by node type or identifier attribute)
+  virtual double canOwnSubjectHierarchyItem(SubjectHierarchyItemID itemID)const;
+
+  /// Get role that the plugin assigns to the subject hierarchy item.
   ///   Each plugin should provide only one role.
   Q_INVOKABLE virtual const QString roleForPlugin()const;
 
-  /// Get icon of an owned subject hierarchy node
-  /// \return Icon to set, NULL if nothing to set
-  virtual QIcon icon(vtkMRMLSubjectHierarchyNode* node);
+  /// Get icon of an owned subject hierarchy item
+  /// \return Icon to set, empty icon if nothing to set
+  virtual QIcon icon(SubjectHierarchyItemID itemID);
 
   /// Get visibility icon for a visibility state
   virtual QIcon visibilityIcon(int visible);
 
-  /// Generate tooltip for a owned subject hierarchy node
-  virtual QString tooltip(vtkMRMLSubjectHierarchyNode* node)const;
+  /// Generate tooltip for a owned subject hierarchy item
+  virtual QString tooltip(SubjectHierarchyItemID itemID)const;
 
-  /// Set display visibility of a owned subject hierarchy node
-  virtual void setDisplayVisibility(vtkMRMLSubjectHierarchyNode* node, int visible);
+  /// Set display visibility of a owned subject hierarchy item
+  virtual void setDisplayVisibility(SubjectHierarchyItemID itemID, int visible);
 
-  /// Get display visibility of a owned subject hierarchy node
+  /// Get display visibility of a owned subject hierarchy item
   /// \return Display visibility (0: hidden, 1: shown, 2: partially shown)
-  virtual int getDisplayVisibility(vtkMRMLSubjectHierarchyNode* node)const;
+  virtual int getDisplayVisibility(SubjectHierarchyItemID itemID)const;
 
-  /// Get node context menu item actions to add to tree view
-  Q_INVOKABLE virtual QList<QAction*> nodeContextMenuActions()const;
+  /// Get item context menu item actions to add to tree view
+  virtual QList<QAction*> itemContextMenuActions()const;
 
-  /// Show context menu actions valid for  given subject hierarchy node.
-  /// \param node Subject Hierarchy node to show the context menu items for. If NULL, then shows menu items for the scene
-  virtual void showContextMenuActionsForNode(vtkMRMLSubjectHierarchyNode* node);
+  /// Show context menu actions valid for a given subject hierarchy item.
+  /// \param itemID Subject Hierarchy item to show the context menu items for
+  virtual void showContextMenuActionsForItem(SubjectHierarchyItemID itemID);
 
 protected:
   /// Show volume in slice viewers. The argument node becomes the background, and the previous

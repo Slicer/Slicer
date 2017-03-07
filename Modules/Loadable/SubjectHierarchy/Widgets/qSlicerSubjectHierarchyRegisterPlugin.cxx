@@ -20,10 +20,6 @@
 
 ==============================================================================*/
 
-// SubjectHierarchy MRML includes
-#include "vtkMRMLSubjectHierarchyNode.h"
-#include "vtkMRMLSubjectHierarchyConstants.h"
-
 // SubjectHierarchy Plugins includes
 #include "qSlicerSubjectHierarchyPluginHandler.h"
 #include "qSlicerSubjectHierarchyRegisterPlugin.h"
@@ -33,7 +29,6 @@
 #include "qSlicerApplication.h"
 
 // MRML includes
-#include <vtkMRMLNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLLinearTransformNode.h>
@@ -96,7 +91,7 @@ qSlicerSubjectHierarchyRegisterPluginPrivate::~qSlicerSubjectHierarchyRegisterPl
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyRegisterPlugin::qSlicerSubjectHierarchyRegisterPlugin(QObject* parent)
  : Superclass(parent)
- , m_RegisterFromNode(NULL)
+ , m_RegisterFromItem(vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
  , d_ptr( new qSlicerSubjectHierarchyRegisterPluginPrivate(*this) )
 {
   this->m_Name = QString("Register");
@@ -140,7 +135,7 @@ qSlicerSubjectHierarchyRegisterPlugin::~qSlicerSubjectHierarchyRegisterPlugin()
 }
 
 //---------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyRegisterPlugin::nodeContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyRegisterPlugin::itemContextMenuActions()const
 {
   Q_D(const qSlicerSubjectHierarchyRegisterPlugin);
 
@@ -150,36 +145,38 @@ QList<QAction*> qSlicerSubjectHierarchyRegisterPlugin::nodeContextMenuActions()c
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyRegisterPlugin::showContextMenuActionsForNode(vtkMRMLSubjectHierarchyNode* node)
+void qSlicerSubjectHierarchyRegisterPlugin::showContextMenuActionsForItem(
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)
 {
   Q_D(qSlicerSubjectHierarchyRegisterPlugin);
   this->hideAllContextMenuActions();
 
-  if (!node)
+  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     // There are no scene actions in this plugin
     return;
     }
 
   // Volume
-  if (qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes")->canOwnSubjectHierarchyNode(node))
+  if (qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes")->canOwnSubjectHierarchyItem(itemID))
     {
     // Get current node
-    vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
-    if (!currentNode)
+    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID currentItemID =
+      qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+    if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
       {
       qCritical() << Q_FUNC_INFO << ": Invalid current node!";
       return;
       }
 
     // Show 'Register this' action if there is no 'from' node saved
-    if (!this->m_RegisterFromNode)
+    if (!this->m_RegisterFromItem)
       {
       d->RegisterThisAction->setVisible(true);
       }
     // Show 'Register to' action if 'from' node is saved, and another one is selected
     // (does not make sense to register a volume to itself)
-    else if (currentNode != this->m_RegisterFromNode)
+    else if (currentItemID != this->m_RegisterFromItem)
       {
       d->RegisterToAction->setVisible(true);
       }
@@ -191,40 +188,59 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerCurrentNodeTo()
 {
   Q_D(qSlicerSubjectHierarchyRegisterPlugin);
 
-  vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
-  if (!currentNode)
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID currentItemID =
+    qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid current node!";
     return;
     }
 
   // Save selected node as 'from' node
-  this->m_RegisterFromNode = currentNode;
+  this->m_RegisterFromItem = currentItemID;
 
-  d->RegisterToAction->setText( QString("Register %1 to this using...").arg(
-    currentNode->GetAssociatedNode()->GetName() ) );
+  d->RegisterToAction->setText( QString("Register %1 to this using...").arg(shNode->GetItemName(currentItemID).c_str()) );
 }
 
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedRigid()
 {
 #ifdef Slicer_BUILD_CLI_SUPPORT
-  vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
-  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
-  if (!currentNode || !scene)
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
     {
-    qCritical() << Q_FUNC_INFO << ": Invalid current node or MRML scene!";
-    this->m_RegisterFromNode = NULL;
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID currentItemID =
+    qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid current node!";
+    return;
+    }
+  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
+  if (!scene)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
+    this->m_RegisterFromItem = NULL;
     return;
     }
 
   // Get volume nodes from selected subject hierarchy nodes
-  vtkMRMLNode* registerFromVolumeNode = this->m_RegisterFromNode->GetAssociatedNode();
-  vtkMRMLNode* registerToVolumeNode = currentNode->GetAssociatedNode();
+  vtkMRMLNode* registerFromVolumeNode = shNode->GetItemDataNode(this->m_RegisterFromItem);
+  vtkMRMLNode* registerToVolumeNode = shNode->GetItemDataNode(currentItemID);
   if (!registerFromVolumeNode || !registerToVolumeNode)
     {
     qCritical() << Q_FUNC_INFO << ": Unable to get input volume nodes from the selected subject hierarchy nodes!";
-    this->m_RegisterFromNode = NULL;
+    this->m_RegisterFromItem = NULL;
     return;
     }
 
@@ -269,7 +285,7 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedRigid()
     }
 
   // Reset saved 'from' node
-  this->m_RegisterFromNode = NULL;
+  this->m_RegisterFromItem = NULL;
 
 #else
   qWarning() << Q_FUNC_INFO << ": This operation cannot be performed with CLI disabled";
@@ -280,22 +296,34 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedRigid()
 void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedBSpline()
 {
 #ifdef Slicer_BUILD_CLI_SUPPORT
-  vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
-  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
-  if (!currentNode || !scene)
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
     {
-    qCritical() << Q_FUNC_INFO << ": Invalid current node or MRML scene!";
-    this->m_RegisterFromNode = NULL;
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID currentItemID =
+    qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid current node!";
+    return;
+    }
+  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
+  if (!scene)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
+    this->m_RegisterFromItem = NULL;
     return;
     }
 
   // Get volume nodes from selected subject hierarchy nodes
-  vtkMRMLNode* registerFromVolumeNode = this->m_RegisterFromNode->GetAssociatedNode();
-  vtkMRMLNode* registerToVolumeNode = currentNode->GetAssociatedNode();
+  vtkMRMLNode* registerFromVolumeNode = shNode->GetItemDataNode(this->m_RegisterFromItem);
+  vtkMRMLNode* registerToVolumeNode = shNode->GetItemDataNode(currentItemID);
   if (!registerFromVolumeNode || !registerToVolumeNode)
     {
     qCritical() << Q_FUNC_INFO << ": Unable to get input volume nodes from the selected subject hierarchy nodes!";
-    this->m_RegisterFromNode = NULL;
+    this->m_RegisterFromItem = NULL;
     return;
     }
 
@@ -340,7 +368,7 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedBSpline()
     }
 
   // Reset saved 'from' node
-  this->m_RegisterFromNode = NULL;
+  this->m_RegisterFromItem = NULL;
 
 #else
   qWarning() << Q_FUNC_INFO << ": This operation cannot be performed with CLI disabled";
@@ -350,22 +378,34 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedBSpline()
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyRegisterPlugin::registerInteractiveLandmark()
 {
-  vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
-  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
-  if (!currentNode || !scene)
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
     {
-    qCritical() << Q_FUNC_INFO << ": Invalid current node or MRML scene!";
-    this->m_RegisterFromNode = NULL;
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID currentItemID =
+    qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid current item!";
+    return;
+    }
+  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
+  if (!scene)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
+    this->m_RegisterFromItem = NULL;
     return;
     }
 
   // Get volume nodes from selected subject hierarchy nodes
-  vtkMRMLNode* registerFromVolumeNode = this->m_RegisterFromNode->GetAssociatedNode();
-  vtkMRMLNode* registerToVolumeNode = currentNode->GetAssociatedNode();
+  vtkMRMLNode* registerFromVolumeNode = shNode->GetItemDataNode(this->m_RegisterFromItem);
+  vtkMRMLNode* registerToVolumeNode = shNode->GetItemDataNode(currentItemID);
   if (!registerFromVolumeNode || !registerToVolumeNode)
     {
     qCritical() << Q_FUNC_INFO << ": Unable to get input volume nodes from the selected subject hierarchy nodes!";
-    this->m_RegisterFromNode = NULL;
+    this->m_RegisterFromItem = NULL;
     return;
     }
 
@@ -408,5 +448,5 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerInteractiveLandmark()
     }
 
   // Reset saved 'from' node
-  this->m_RegisterFromNode = NULL;
+  this->m_RegisterFromItem = NULL;
 }

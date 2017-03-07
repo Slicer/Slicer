@@ -26,15 +26,21 @@
 // SubjectHierarchy includes
 #include "qSlicerSubjectHierarchyModuleWidgetsExport.h"
 
+// MRML includes
+#include <vtkMRMLScene.h>
+#include <vtkMRMLSubjectHierarchyNode.h>
+
+// VTK includes
+#include <vtkSmartPointer.h>
+#include <vtkWeakPointer.h>
+
 // Qt includes
 #include <QObject>
 #include <QList>
 #include <QString>
 
-class vtkObject;
-class vtkMRMLNode;
-class vtkMRMLSubjectHierarchyNode;
 class vtkMRMLScene;
+class vtkCallbackCommand;
 class qSlicerSubjectHierarchyAbstractPlugin;
 class qSlicerSubjectHierarchyDefaultPlugin;
 class qSlicerSubjectHierarchyPluginHandlerCleanup;
@@ -48,6 +54,8 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyPlu
 {
   Q_OBJECT
 
+  typedef vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID SubjectHierarchyItemID;
+
 public:
   /// Instance getter for the singleton class
   /// \return Instance object
@@ -56,26 +64,29 @@ public:
   /// Allows cleanup of the singleton at application exit
   static void setInstance(qSlicerSubjectHierarchyPluginHandler* instance);
 
+  /// Set subject hierarchy node
+  void setSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* shNode);
+  /// Get subject hierarchy node
+  vtkMRMLSubjectHierarchyNode* subjectHierarchyNode()const;
   /// Set MRML scene
-  void setScene(vtkMRMLScene* scene);
-
+  void setMRMLScene(vtkMRMLScene* scene);
   /// Get MRML scene
-  vtkMRMLScene* scene();
+  vtkMRMLScene* mrmlScene()const;
 
-  /// Set current subject hierarchy node (single selection only)
-  void setCurrentNode(vtkMRMLSubjectHierarchyNode* node);
+  /// Set current subject hierarchy item (single selection only)
+  void setCurrentItem(SubjectHierarchyItemID itemID);
 
-  /// Get current subject hierarchy node (single selection only).
+  /// Get current subject hierarchy item (single selection only).
   /// This function is called from the plugins when exposing and performing the supported actions. As the plugin actions are not
   /// aggregated on multi-selection, this function is never called from plugins in that case (and thus NULL is returned).
-  /// \return Current node if only one is selected, otherwise NULL
-  Q_INVOKABLE vtkMRMLSubjectHierarchyNode* currentNode();
+  /// \return Current item if only one is selected, otherwise INVALID_ITEM_ID
+  Q_INVOKABLE SubjectHierarchyItemID currentItem();
 
-  /// Set current subject hierarchy nodes in case of multi-selection
-  void setCurrentNodes(QList<vtkMRMLSubjectHierarchyNode*> nodes);
+  /// Set current subject hierarchy items in case of multi-selection
+  void setCurrentItems(QList<SubjectHierarchyItemID> items);
 
-  /// Get current subject hierarchy nodes in case of multi-selection
-  Q_INVOKABLE QList<vtkMRMLSubjectHierarchyNode*> currentNodes();
+  /// Get current subject hierarchy items in case of multi-selection
+  Q_INVOKABLE QList<SubjectHierarchyItemID> currentItems();
 
 public:
   /// Register a plugin
@@ -98,41 +109,47 @@ public:
   /// Returns the plugin that can handle a node the best for adding it from outside to inside the subject hierarchy
   /// The best plugins are found based on the confidence numbers they return for the inputs.
   /// \param node Node to be added to the hierarchy
-  /// \param parent Prospective parent of the node to add.
-  ///   Default value is NULL. In that case the parent will be ignored, the confidence numbers are got based on the to-be child node alone.
+  /// \param parentItemID Prospective parent of the node to add.
+  ///   Default value is invalid. In that case the parent will be ignored, the confidence numbers are got based on the to-be child node alone.
   /// \return The most suitable plugins if found, empty list otherwise
-  QList<qSlicerSubjectHierarchyAbstractPlugin*> pluginsForAddingToSubjectHierarchyForNode(vtkMRMLNode* node, vtkMRMLSubjectHierarchyNode* parent=NULL);
+  QList<qSlicerSubjectHierarchyAbstractPlugin*> pluginsForAddingNodeToSubjectHierarchy(
+    vtkMRMLNode* node,
+    SubjectHierarchyItemID parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID );
 
-  /// Returns the plugin that can handle a node the best for reparenting it inside the subject hierarchy
+  /// Returns the plugin that can handle an item the best for reparenting it inside the subject hierarchy
   /// The best plugins are found based on the confidence numbers they return for the inputs.
-  /// \param node Node to be reparented in the hierarchy
-  /// \param parent Prospective parent of the node to reparent.
+  /// \param itemID Item to be reparented in the hierarchy
+  /// \param parentItemID Prospective parent of the item to reparent.
   /// \return The most suitable plugins if found, empty list otherwise
-  QList<qSlicerSubjectHierarchyAbstractPlugin*> pluginsForReparentingInsideSubjectHierarchyForNode(vtkMRMLSubjectHierarchyNode* node,
-                                                                                                   vtkMRMLSubjectHierarchyNode* parent);
+  QList<qSlicerSubjectHierarchyAbstractPlugin*> pluginsForReparentingItemInSubjectHierarchy(
+    SubjectHierarchyItemID itemID, SubjectHierarchyItemID parentItemID );
 
-  /// Find plugin that is most suitable to own a subject hierarchy node.
-  /// This method does not set it to the node!
+  /// Find plugin that is most suitable to own a subject hierarchy item.
+  /// This method does not set it to the item!
   /// The best plugins are found based on the confidence numbers they return for the inputs.
-  /// \param node Node to be owned
-  qSlicerSubjectHierarchyAbstractPlugin* findOwnerPluginForSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* node);
+  /// \param item Item to be owned
+  qSlicerSubjectHierarchyAbstractPlugin* findOwnerPluginForSubjectHierarchyItem(SubjectHierarchyItemID itemID);
 
-  /// Find and set plugin that is most suitable to own a subject hierarchy node
+  /// Find and set plugin that is most suitable to own a subject hierarchy item
   /// The best plugins are found based on the confidence numbers they return for the inputs.
-  /// \param node Node to be owned
-  qSlicerSubjectHierarchyAbstractPlugin* findAndSetOwnerPluginForSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* node);
+  /// \param item Item to be owned
+  qSlicerSubjectHierarchyAbstractPlugin* findAndSetOwnerPluginForSubjectHierarchyItem(SubjectHierarchyItemID itemID);
 
-  /// Get plugin owning a certain subject hierarchy node.
+  /// Get plugin owning a certain subject hierarchy item.
   /// This function doesn't try to find a suitable plugin, it just returns the one already assigned.
-  Q_INVOKABLE qSlicerSubjectHierarchyAbstractPlugin* getOwnerPluginForSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* node);
+  Q_INVOKABLE qSlicerSubjectHierarchyAbstractPlugin* getOwnerPluginForSubjectHierarchyItem(SubjectHierarchyItemID itemID);
 
-  /// Used when multiple plugins are found with the same confidence number for a node.
+  /// Used when multiple plugins are found with the same confidence number for an item.
   /// Pops up a simple dialog asking to choose one plugin from a list.
   /// Note: This should happen very rarely. If happens frequently, then confidence numbers returned by plugins need review.
-  /// \param textToDisplay Text assembled by the caller displaying the reason and basis (nodes) of the choice
+  /// \param textToDisplay Text assembled by the caller displaying the reason and basis (items) of the choice
   /// \param candidatePlugins List of plugins to choose from
   /// \return Plugin chosen by the user
   qSlicerSubjectHierarchyAbstractPlugin* selectPluginFromDialog(QString textToDisplay, QList<qSlicerSubjectHierarchyAbstractPlugin*> candidatePlugins);
+
+protected:
+  /// Handle subject hierarchy node events
+  static void onSubjectHierarchyNodeEvent(vtkObject* caller, unsigned long event, void* clientData, void* callData);
 
 protected:
   /// List of registered plugin instances
@@ -142,12 +159,17 @@ protected:
   /// (the default plugin instance cannot be in the registered list, as then it would never be returned)
   qSlicerSubjectHierarchyDefaultPlugin* m_DefaultPlugin;
 
-  /// Current subject hierarchy node(s)
-  /// (selected nodes in the tree view e.g. for context menu request)
-  QList<vtkMRMLSubjectHierarchyNode*> m_CurrentNodes;
+  /// Current subject hierarchy item(s)
+  /// (selected items in the tree view e.g. for context menu request)
+  QList<SubjectHierarchyItemID> m_CurrentItems;
 
-  /// MRML scene
-  vtkMRMLScene* m_Scene;
+  /// Subject hierarchy node
+  vtkWeakPointer<vtkMRMLSubjectHierarchyNode> m_SubjectHierarchyNode;
+  /// MRML scene (to get new subject hierarchy node if the stored one is deleted)
+  vtkWeakPointer<vtkMRMLScene> m_MRMLScene;
+
+  /// Callback handling deletion of the subject hierarchy node
+  vtkSmartPointer<vtkCallbackCommand> m_CallBack;
 
 public:
   /// Private constructor made public to enable python wrapping

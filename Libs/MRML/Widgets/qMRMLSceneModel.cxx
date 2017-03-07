@@ -678,7 +678,7 @@ bool qMRMLSceneModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
   Q_D(qMRMLSceneModel);
   Q_UNUSED(column);
   // We want to do drag&drop only into the first item of a line (and not on a
-  // randomn column.
+  // random column.
   bool res = this->Superclass::dropMimeData(
     data, action, row, 0, parent.sibling(parent.row(), 0));
   d->DraggedNodes.clear();
@@ -724,7 +724,7 @@ void qMRMLSceneModel::updateScene()
       sceneOtherColumn->setFlags(0);
       sceneItems << sceneOtherColumn;
       }
-    // We need to set the colum count in case there extra items,
+    // We need to set the column count in case there extra items,
     // they need to know how many columns the scene item has.
     sceneItem->setColumnCount(this->columnCount());
     this->insertRow(preSceneItemCount, sceneItems);
@@ -1049,7 +1049,7 @@ void qMRMLSceneModel::updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item)
   // Don't do the following if the row is not complete (reparenting an
   // incomplete row might lead to errors). (if there is no child yet for a given
   // column, it will get there next time updateNodeFromItem is called).
-  // updateNodeFromItem() is called for every item drag&dropped (we insure that
+  // updateNodeFromItem() is called for every item drag&dropped (we ensure that
   // all the indexes of the row are reparented when entering the d&d function
   for (int i = 0; i < columnCount; ++i)
     {
@@ -1418,13 +1418,13 @@ void qMRMLSceneModel::updateNodeItems(vtkMRMLNode* node, const QString& nodeUID)
 
     this->updateItemFromNode(item, node, item->column());
     // maybe the item has been reparented, then we need to rescan the
-    // indexes again as may are wrong.
+    // indexes again as they may be wrong.
     if (item->row() != oldRow || item->parent() != oldParent)
       {
       int oldSize = nodeIndexes.size();
       nodeIndexes = this->indexes(node);
       int newSize = nodeIndexes.size();
-      //the number of columns shouldn't change
+      // the number of columns shouldn't change
       Q_ASSERT(oldSize == newSize);
       Q_UNUSED(oldSize);
       Q_UNUSED(newSize);

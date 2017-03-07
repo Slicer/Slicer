@@ -21,7 +21,6 @@
 ==============================================================================*/
 
 // SubjectHierarchy MRML includes
-#include "vtkMRMLSubjectHierarchyConstants.h"
 #include "vtkMRMLSubjectHierarchyNode.h"
 
 // SubjectHierarchy Plugins includes
@@ -89,16 +88,16 @@ void qSlicerSubjectHierarchyDICOMPluginPrivate::init()
   Q_Q(qSlicerSubjectHierarchyDICOMPlugin);
 
   this->CreatePatientAction = new QAction("Create new subject",q);
-  QObject::connect(this->CreatePatientAction, SIGNAL(triggered()), q, SLOT(createPatientNode()));
+  QObject::connect(this->CreatePatientAction, SIGNAL(triggered()), q, SLOT(createPatientItem()));
 
   this->CreateStudyAction = new QAction("Create child study",q);
-  QObject::connect(this->CreateStudyAction, SIGNAL(triggered()), q, SLOT(createChildStudyUnderCurrentNode()));
+  QObject::connect(this->CreateStudyAction, SIGNAL(triggered()), q, SLOT(createChildStudyUnderCurrentItem()));
 
   this->ConvertFolderToPatientAction = new QAction("Convert folder to subject",q);
-  QObject::connect(this->ConvertFolderToPatientAction, SIGNAL(triggered()), q, SLOT(convertCurrentNodeToPatient()));
+  QObject::connect(this->ConvertFolderToPatientAction, SIGNAL(triggered()), q, SLOT(convertCurrentItemToPatient()));
 
   this->ConvertFolderToStudyAction = new QAction("Convert folder to study",q);
-  QObject::connect(this->ConvertFolderToStudyAction, SIGNAL(triggered()), q, SLOT(convertCurrentNodeToStudy()));
+  QObject::connect(this->ConvertFolderToStudyAction, SIGNAL(triggered()), q, SLOT(convertCurrentItemToStudy()));
 
   this->OpenDICOMExportDialogAction = new QAction("Export to DICOM...",q);
   QObject::connect(this->OpenDICOMExportDialogAction, SIGNAL(triggered()), q, SLOT(openDICOMExportDialog()));
@@ -126,21 +125,28 @@ qSlicerSubjectHierarchyDICOMPlugin::~qSlicerSubjectHierarchyDICOMPlugin()
 }
 
 //---------------------------------------------------------------------------
-double qSlicerSubjectHierarchyDICOMPlugin::canOwnSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* node)const
+double qSlicerSubjectHierarchyDICOMPlugin::canOwnSubjectHierarchyItem(
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)const
 {
-  if (!node)
+  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
-    qCritical() << "qSlicerSubjectHierarchyDICOMPlugin::canOwnSubjectHierarchyNode: Input node is NULL!";
+    qCritical() << Q_FUNC_INFO << ": Invalid input item";
+    return 0.0;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return 0.0;
     }
 
   // Patient level
-  if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient()))
+  if (shNode->IsItemLevel(itemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient()))
     {
     return 0.7;
     }
   // Study level (so that creation of a generic series is possible)
-  if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy()))
+  if (shNode->IsItemLevel(itemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy()))
     {
     return 0.3;
     }
@@ -151,21 +157,29 @@ double qSlicerSubjectHierarchyDICOMPlugin::canOwnSubjectHierarchyNode(vtkMRMLSub
 //---------------------------------------------------------------------------
 const QString qSlicerSubjectHierarchyDICOMPlugin::roleForPlugin()const
 {
-  // Get current node to determine tole
-  vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
-  if (!currentNode)
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
     {
-    qCritical() << "qSlicerSubjectHierarchyDICOMPlugin::roleForPlugin: Invalid current node!";
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return "Error!";
+    }
+
+  // Get current item to determine tole
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID currentItemID =
+    qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid current item!";
     return "Error!";
     }
 
   // Patient level
-  if (currentNode->IsLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient()))
+  if (shNode->IsItemLevel(currentItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient()))
     {
     return "Subject"; // Show the role Subject to the user, while internally it is used for the patient notation defined in DICOM
     }
   // Study level (so that creation of a generic series is possible)
-  if (currentNode->IsLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy()))
+  if (shNode->IsItemLevel(currentItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy()))
     {
     return "Study";
     }
@@ -201,28 +215,34 @@ const QString qSlicerSubjectHierarchyDICOMPlugin::helpText()const
 }
 
 //---------------------------------------------------------------------------
-QIcon qSlicerSubjectHierarchyDICOMPlugin::icon(vtkMRMLSubjectHierarchyNode* node)
+QIcon qSlicerSubjectHierarchyDICOMPlugin::icon(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)
 {
-  if (!node)
+  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
-    qCritical() << "qSlicerSubjectHierarchyDICOMPlugin::icon: NULL node given!";
+    qCritical() << Q_FUNC_INFO << ": Invalid input item";
+    return QIcon();
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return QIcon();
     }
 
   Q_D(qSlicerSubjectHierarchyDICOMPlugin);
 
   // Patient icon
-  if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient()))
+  if (shNode->IsItemLevel(itemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient()))
     {
     return d->PatientIcon;
     }
   // Study icon
-  if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy()))
+  if (shNode->IsItemLevel(itemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy()))
     {
     return d->StudyIcon;
     }
 
-  // Node unknown by plugin
+  // Item unknown by plugin
   return QIcon();
 }
 
@@ -234,7 +254,7 @@ QIcon qSlicerSubjectHierarchyDICOMPlugin::visibilityIcon(int visible)
 }
 
 //---------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyDICOMPlugin::nodeContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyDICOMPlugin::itemContextMenuActions()const
 {
   Q_D(const qSlicerSubjectHierarchyDICOMPlugin);
 
@@ -254,31 +274,39 @@ QList<QAction*> qSlicerSubjectHierarchyDICOMPlugin::sceneContextMenuActions()con
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyDICOMPlugin::showContextMenuActionsForNode(vtkMRMLSubjectHierarchyNode* node)
+void qSlicerSubjectHierarchyDICOMPlugin::showContextMenuActionsForItem(
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)
 {
   Q_D(qSlicerSubjectHierarchyDICOMPlugin);
   this->hideAllContextMenuActions();
 
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+
   // Scene
-  if (!node)
+  if (itemID == shNode->GetSceneItemID())
     {
     d->CreatePatientAction->setVisible(true);
     return;
     }
 
   // Patient
-  if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient()))
+  if (shNode->IsItemLevel(itemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient()))
     {
     d->CreateStudyAction->setVisible(true);
     }
   // Folder
-  else if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder()))
+  else if (shNode->IsItemLevel(itemID, vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder()))
     {
     d->ConvertFolderToPatientAction->setVisible(true);
     d->ConvertFolderToStudyAction->setVisible(true);
     }
   // Study
-  else if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy()))
+  else if (shNode->IsItemLevel(itemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy()))
     {
     //if (this->canBeExported(node)) //TODO:
       {
@@ -286,7 +314,7 @@ void qSlicerSubjectHierarchyDICOMPlugin::showContextMenuActionsForNode(vtkMRMLSu
       }
     }
   // Series
-  else if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries()))
+  else if (shNode->IsItemLevel(itemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries()))
     {
     //if (this->canBeExported(node)) //TODO:
       {
@@ -296,89 +324,120 @@ void qSlicerSubjectHierarchyDICOMPlugin::showContextMenuActionsForNode(vtkMRMLSu
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyDICOMPlugin::editProperties(vtkMRMLSubjectHierarchyNode* node)
+void qSlicerSubjectHierarchyDICOMPlugin::editProperties(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)
 {
-  Q_UNUSED(node);
+  Q_UNUSED(itemID);
   //TODO: Show DICOM tag editor?
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyDICOMPlugin::createPatientNode()
+void qSlicerSubjectHierarchyDICOMPlugin::createPatientItem()
 {
-  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
-  if (!scene)
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
     {
-    qCritical() << "qSlicerSubjectHierarchyDICOMPlugin::createPatientNode: Invalid MRML scene!";
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
     }
 
   // It is called Subject to the user, while internally it is used for the patient notation defined in DICOM
-  std::string nodeName = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNewNodeNamePrefix() + "Subject";
-  nodeName = scene->GenerateUniqueName(nodeName);
-  // Create patient subject hierarchy node
-  vtkMRMLSubjectHierarchyNode* childSubjectHierarchyNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
-    scene, NULL, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient(), nodeName.c_str());
-  emit requestExpandNode(childSubjectHierarchyNode);
+  std::string name = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNewNodeNamePrefix() + "Subject";
+  name = shNode->GenerateUniqueItemName(name);
+
+  // Create patient subject hierarchy item
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID patientItemID =
+    shNode->CreateItem(shNode->GetSceneItemID(), NULL, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient(), name);
+
+  emit requestExpandItem(patientItemID);
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyDICOMPlugin::createChildStudyUnderCurrentNode()
+void qSlicerSubjectHierarchyDICOMPlugin::createChildStudyUnderCurrentItem()
 {
-  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
-  vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
-  if (!scene || !currentNode)
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
     {
-    qCritical() << "qSlicerSubjectHierarchyDICOMPlugin::createPatientNode: Invalid MRML scene or current node!";
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID currentItemID =
+    qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid current item!";
     return;
     }
 
-  std::string nodeName = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNewNodeNamePrefix() + vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy();
-  nodeName = scene->GenerateUniqueName(nodeName);
-  // Create patient subject hierarchy node
-  vtkMRMLSubjectHierarchyNode* childSubjectHierarchyNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
-    scene, currentNode, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy(), nodeName.c_str());
-  emit requestExpandNode(childSubjectHierarchyNode);
+  std::string name = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNewNodeNamePrefix() + vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy();
+  name = shNode->GenerateUniqueItemName(name);
+
+  // Create study subject hierarchy item
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID studyItemID =
+    shNode->CreateItem(currentItemID, NULL, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy(), name);
+
+  emit requestExpandItem(studyItemID);
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyDICOMPlugin::convertCurrentNodeToPatient()
+void qSlicerSubjectHierarchyDICOMPlugin::convertCurrentItemToPatient()
 {
-  vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
-  if ( !currentNode)
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
     {
-    qCritical() << "qSlicerSubjectHierarchyDICOMPlugin::convertCurrentNodeToPatient: Invalid current node!";
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID currentItemID =
+    qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid current item!";
     return;
     }
 
-  currentNode->SetLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient());
+  shNode->SetItemLevel(currentItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient());
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyDICOMPlugin::convertCurrentNodeToStudy()
+void qSlicerSubjectHierarchyDICOMPlugin::convertCurrentItemToStudy()
 {
-  vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
-  if ( !currentNode)
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
     {
-    qCritical() << "qSlicerSubjectHierarchyDICOMPlugin::convertCurrentNodeToPatient: Invalid current node!";
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID currentItemID =
+    qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid current item!";
     return;
     }
 
-  currentNode->SetLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy());
+  shNode->SetItemLevel(currentItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy());
 }
 
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyDICOMPlugin::openDICOMExportDialog()
 {
-  vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
-  if (!currentNode)
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
     {
-    qCritical() << "qSlicerSubjectHierarchyDICOMPlugin::openDICOMExportDialog: Invalid current node!";
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID currentItemID =
+    qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid current item!";
     return;
     }
 
   qSlicerDICOMExportDialog* exportDialog = new qSlicerDICOMExportDialog(NULL);
-  exportDialog->setMRMLScene(qSlicerSubjectHierarchyPluginHandler::instance()->scene());
-  exportDialog->exec(currentNode);
+  exportDialog->setMRMLScene(qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene());
+  exportDialog->exec(currentItemID);
 
   delete exportDialog;
 }

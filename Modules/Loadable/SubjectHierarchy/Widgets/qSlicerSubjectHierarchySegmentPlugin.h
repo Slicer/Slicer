@@ -29,8 +29,6 @@
 #include "qSlicerSubjectHierarchyModuleWidgetsExport.h"
 
 class qSlicerSubjectHierarchySegmentPluginPrivate;
-class vtkMRMLNode;
-class vtkMRMLSubjectHierarchyNode;
 class QMenu;
 
 // Due to some reason the Python wrapping of this class fails, therefore
@@ -51,22 +49,22 @@ public:
   virtual ~qSlicerSubjectHierarchySegmentPlugin();
 
 public:
-  /// Get node context menu item actions to add to tree view
-  Q_INVOKABLE virtual QList<QAction*> nodeContextMenuActions()const;
+  /// Get item context menu item actions to add to tree view
+  virtual QList<QAction*> itemContextMenuActions()const;
 
-  /// Show context menu actions valid for  given subject hierarchy node.
-  /// \param node Subject Hierarchy node to show the context menu items for. If NULL, then shows menu items for the scene
-  virtual void showContextMenuActionsForNode(vtkMRMLSubjectHierarchyNode* node);
+  /// Show context menu actions valid for a given subject hierarchy item.
+  /// \param itemID Subject Hierarchy item to show the context menu items for
+  virtual void showContextMenuActionsForItem(SubjectHierarchyItemID itemID);
 
   /// Return "Segment with..." menu to allow other segment plugins to add actions under this menu
   QMenu* segmentWithMenu();
 
 protected slots:
   /// Switches to Segment Editor and sets current volume node as master volume
-  void segmentCurrentNodeWithSegmentEditor();
+  void segmentCurrentItemWithSegmentEditor();
 
   /// Switches to Editor and sets current volume node as master volume
-  void segmentCurrentNodeWithEditor();
+  void segmentCurrentItemWithEditor();
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchySegmentPluginPrivate> d_ptr;

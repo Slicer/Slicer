@@ -768,8 +768,22 @@ bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
         }
       existingModelNamesToModels[modelNode->GetName()] = modelNode;
       }
+
+    // Get subject hierarchy item for segmentation node
+    vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(currentSegmentationNode->GetScene());
+    if (!shNode)
+      {
+      qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+      return false;
+      }
+    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID currentSegmentationShItemID = shNode->GetItemByDataNode(currentSegmentationNode);
+    if (currentSegmentationShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+      {
+      qCritical() << Q_FUNC_INFO << ": Failed to find subject hierarchy item for segmentation node " << currentSegmentationNode->GetName();
+      return false;
+      }
+
     // Export each segment into a model
-    vtkMRMLSubjectHierarchyNode* currentSegmentationShNode = vtkMRMLSubjectHierarchyNode::GetAssociatedSubjectHierarchyNode(currentSegmentationNode);
     QString errorMessage;
     for (std::vector<std::string>::iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
       {
@@ -806,12 +820,15 @@ bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
         errorMessage.append(modelNode->GetName());
         }
       QApplication::restoreOverrideCursor();
+
       // Add representation node into the same subject hierarchy branch as the segmentation
-      vtkMRMLSubjectHierarchyNode* otherRepresentationShNode = vtkMRMLSubjectHierarchyNode::GetAssociatedSubjectHierarchyNode(modelNode);
-      if (otherRepresentationShNode && currentSegmentationShNode->GetParentNodeID())
+      vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID otherRepresentationShItemID = shNode->GetItemByDataNode(modelNode);
+      if (otherRepresentationShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
         {
-        otherRepresentationShNode->SetParentNodeID(currentSegmentationShNode->GetParentNodeID());
+        qCritical() << Q_FUNC_INFO << ": Failed to find subject hierarchy item for node " << otherRepresentationNode->GetName();
+        continue;
         }
+      shNode->SetItemParent(otherRepresentationShItemID, shNode->GetItemParent(currentSegmentationShItemID));
       }
     if (!errorMessage.isEmpty())
       {

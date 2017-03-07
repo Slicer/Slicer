@@ -20,10 +20,6 @@
 
 ==============================================================================*/
 
-// SubjectHierarchy MRML includes
-#include "vtkMRMLSubjectHierarchyNode.h"
-#include "vtkMRMLSubjectHierarchyConstants.h"
-
 // SubjectHierarchy Plugins includes
 #include "qSlicerSubjectHierarchyPluginHandler.h"
 #include "qSlicerSubjectHierarchyVolumesPlugin.h"
@@ -34,7 +30,6 @@
 #include "vtkSlicerApplicationLogic.h"
 
 // MRML includes
-#include <vtkMRMLNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLSelectionNode.h>
@@ -125,12 +120,13 @@ qSlicerSubjectHierarchyVolumesPlugin::~qSlicerSubjectHierarchyVolumesPlugin()
 }
 
 //----------------------------------------------------------------------------
-double qSlicerSubjectHierarchyVolumesPlugin::canAddNodeToSubjectHierarchy(vtkMRMLNode* node, vtkMRMLSubjectHierarchyNode* parent/*=NULL*/)const
+double qSlicerSubjectHierarchyVolumesPlugin::canAddNodeToSubjectHierarchy(
+  vtkMRMLNode* node, SubjectHierarchyItemID parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
 {
-  Q_UNUSED(parent);
+  Q_UNUSED(parentItemID);
   if (!node)
     {
-    qCritical() << "qSlicerSubjectHierarchyVolumesPlugin::canAddNodeToSubjectHierarchy: Input node is NULL!";
+    qCritical() << Q_FUNC_INFO << ": Input node is NULL!";
     return 0.0;
     }
   else if (node->IsA("vtkMRMLScalarVolumeNode"))
@@ -142,16 +138,23 @@ double qSlicerSubjectHierarchyVolumesPlugin::canAddNodeToSubjectHierarchy(vtkMRM
 }
 
 //---------------------------------------------------------------------------
-double qSlicerSubjectHierarchyVolumesPlugin::canOwnSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* node)const
+double qSlicerSubjectHierarchyVolumesPlugin::canOwnSubjectHierarchyItem(
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)const
 {
-  if (!node)
+  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
-    qCritical() << "qSlicerSubjectHierarchyVolumesPlugin::canOwnSubjectHierarchyNode: Input node is NULL!";
+    qCritical() << Q_FUNC_INFO << ": Invalid input item";
+    return 0.0;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return 0.0;
     }
 
   // Volume
-  vtkMRMLNode* associatedNode = node->GetAssociatedNode();
+  vtkMRMLNode* associatedNode = shNode->GetItemDataNode(itemID);
   if (associatedNode && associatedNode->IsA("vtkMRMLScalarVolumeNode"))
     {
     return 0.5; // There are other plugins that can handle special volume nodes better, thus the relatively low value
@@ -167,18 +170,24 @@ const QString qSlicerSubjectHierarchyVolumesPlugin::roleForPlugin()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSubjectHierarchyVolumesPlugin::tooltip(vtkMRMLSubjectHierarchyNode* node)const
+QString qSlicerSubjectHierarchyVolumesPlugin::tooltip(SubjectHierarchyItemID itemID)const
 {
-  if (!node)
+  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
-    qCritical() << "qSlicerSubjectHierarchyVolumesPlugin::tooltip: Subject hierarchy node is NULL!";
+    qCritical() << Q_FUNC_INFO << ": Invalid input item";
     return QString("Invalid!");
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return QString("Error!");
     }
 
   // Get basic tooltip from abstract plugin
-  QString tooltipString = Superclass::tooltip(node);
+  QString tooltipString = Superclass::tooltip(itemID);
 
-  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(node->GetAssociatedNode());
+  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   vtkImageData* imageData = (volumeNode ? volumeNode->GetImageData() : NULL);
   if (volumeNode && imageData)
     {
@@ -199,23 +208,24 @@ QString qSlicerSubjectHierarchyVolumesPlugin::tooltip(vtkMRMLSubjectHierarchyNod
 }
 
 //---------------------------------------------------------------------------
-QIcon qSlicerSubjectHierarchyVolumesPlugin::icon(vtkMRMLSubjectHierarchyNode* node)
+QIcon qSlicerSubjectHierarchyVolumesPlugin::icon(
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)
 {
   Q_D(qSlicerSubjectHierarchyVolumesPlugin);
 
-  if (!node)
+  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
-    qCritical() << "qSlicerSubjectHierarchyVolumesPlugin::icon: NULL node given!";
+    qCritical() << Q_FUNC_INFO << ": Invalid input item";
     return QIcon();
     }
 
   // Volume
-  if (this->canOwnSubjectHierarchyNode(node))
+  if (this->canOwnSubjectHierarchyItem(itemID))
     {
     return d->VolumeIcon;
     }
 
-  // Node unknown by plugin
+  // Item unknown by plugin
   return QIcon();
 }
 
@@ -235,15 +245,22 @@ QIcon qSlicerSubjectHierarchyVolumesPlugin::visibilityIcon(int visible)
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyVolumesPlugin::setDisplayVisibility(vtkMRMLSubjectHierarchyNode* node, int visible)
+void qSlicerSubjectHierarchyVolumesPlugin::setDisplayVisibility(
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID, int visible)
 {
-  if (!node)
+  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
-    qCritical() << "qSlicerSubjectHierarchyVolumesPlugin::setDisplayVisibility: NULL node!";
+    qCritical() << Q_FUNC_INFO << ": Invalid input item";
+    return;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
     }
 
-  vtkMRMLScalarVolumeNode* associatedVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(node->GetAssociatedNode());
+  vtkMRMLScalarVolumeNode* associatedVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   // Volume
   if (associatedVolumeNode)
     {
@@ -252,21 +269,27 @@ void qSlicerSubjectHierarchyVolumesPlugin::setDisplayVisibility(vtkMRMLSubjectHi
   // Default
   else
     {
-    qSlicerSubjectHierarchyPluginHandler::instance()->defaultPlugin()->setDisplayVisibility(node, visible);
+    qSlicerSubjectHierarchyPluginHandler::instance()->defaultPlugin()->setDisplayVisibility(itemID, visible);
     }
 }
 
 //-----------------------------------------------------------------------------
-int qSlicerSubjectHierarchyVolumesPlugin::getDisplayVisibility(vtkMRMLSubjectHierarchyNode* node)const
+int qSlicerSubjectHierarchyVolumesPlugin::getDisplayVisibility(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)const
 {
-  if (!node)
+  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
-    qCritical() << "qSlicerSubjectHierarchyVolumesPlugin::getDisplayVisibility: NULL node!";
+    qCritical() << Q_FUNC_INFO << ": Invalid input item";
+    return -1;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return -1;
     }
 
   // Sanity checks for volume
-  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(node->GetAssociatedNode());
+  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   if (!volumeNode)
     {
     return -1;
@@ -274,7 +297,7 @@ int qSlicerSubjectHierarchyVolumesPlugin::getDisplayVisibility(vtkMRMLSubjectHie
   vtkMRMLSelectionNode* selectionNode = qSlicerCoreApplication::application()->applicationLogic()->GetSelectionNode();
   if (!selectionNode)
     {
-    qCritical() << "qSlicerSubjectHierarchyVolumesPlugin::getDisplayVisibility: Unable to get selection node to show volume node " << node->GetName();
+    qCritical() << Q_FUNC_INFO << ": Unable to get selection node to show volume node " << volumeNode->GetName();
     return -1;
     }
 
@@ -298,19 +321,19 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolume(vtkMRMLScalarVolumeNode* n
 {
   if (!node)
     {
-    qCritical() << "qSlicerSubjectHierarchyVolumesPlugin::showVolume: NULL node!";
+    qCritical() << Q_FUNC_INFO << ": NULL node!";
     return;
     }
-  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
+  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
   if (!scene)
     {
-    qCritical() << "qSlicerSubjectHierarchyVolumesPlugin::showVolume: Invalid MRML scene!";
+    qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
     return;
     }
   vtkMRMLSelectionNode* selectionNode = qSlicerCoreApplication::application()->applicationLogic()->GetSelectionNode();
   if (!selectionNode)
     {
-    qCritical() << "qSlicerSubjectHierarchyVolumesPlugin::showVolume: Unable to get selection node to show volume node " << node->GetName();
+    qCritical() << Q_FUNC_INFO << ": Unable to get selection node to show volume node " << node->GetName();
     return;
     }
 
@@ -318,7 +341,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolume(vtkMRMLScalarVolumeNode* n
   vtkMRMLScalarVolumeNode* volumeNode = NULL;
   if ((volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(node)) == NULL)
     {
-    qCritical() << "qSlicerSubjectHierarchyVolumesPlugin::showVolume: Node to show node is not a volume node: " << node->GetName();
+    qCritical() << Q_FUNC_INFO << ": Node to show node is not a volume node: " << node->GetName();
     return;
     }
 
@@ -390,11 +413,17 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolume(vtkMRMLScalarVolumeNode* n
     qSlicerCoreApplication::application()->applicationLogic()->PropagateVolumeSelection();
     }
 
-  // Get subject hierarchy node for the volume node and have the scene model updated
-  vtkMRMLSubjectHierarchyNode* subjectHierarchyNode = vtkMRMLSubjectHierarchyNode::GetAssociatedSubjectHierarchyNode(volumeNode);
-  if (subjectHierarchyNode)
+  // Get subject hierarchy item for the volume node and have the scene model updated
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
     {
-    subjectHierarchyNode->Modified();
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID volumeItemID = shNode->GetItemByDataNode(volumeNode);
+  if (volumeItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    //subjectHierarchyNode->Modified(); //TODO:
     }
 }
 
@@ -404,7 +433,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::updateSelectionNodeBasedOnCurrentVolu
   vtkMRMLSelectionNode* selectionNode = qSlicerCoreApplication::application()->applicationLogic()->GetSelectionNode();
   if (!selectionNode)
     {
-    qCritical() << "qSlicerSubjectHierarchyVolumesPlugin::updateSelectionNodeBasedOnCurrentVolumesVisibility: Unable to get selection node";
+    qCritical() << Q_FUNC_INFO << ": Unable to get selection node";
     return;
     }
 
@@ -428,14 +457,18 @@ std::string qSlicerSubjectHierarchyVolumesPlugin::getSelectedBackgroundVolumeNod
   vtkMRMLSelectionNode* selectionNode = qSlicerCoreApplication::application()->applicationLogic()->GetSelectionNode();
   if (!selectionNode)
     {
-    qCritical() << "qSlicerSubjectHierarchyVolumesPlugin::getSelectedBackgroundVolumeNodeID: Unable to get selection node";
+    qCritical() << Q_FUNC_INFO << ": Unable to get selection node";
+    return selectedBackgroundVolumeID;
+    }
+  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
+  if (!scene)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
     return selectedBackgroundVolumeID;
     }
 
-  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
   vtkMRMLSliceCompositeNode* compositeNode = NULL;
   const int numberOfCompositeNodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
-
   for (int i=0; i<numberOfCompositeNodes; i++)
     {
     compositeNode = vtkMRMLSliceCompositeNode::SafeDownCast ( scene->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
@@ -458,14 +491,18 @@ std::string qSlicerSubjectHierarchyVolumesPlugin::getSelectedForegroundVolumeNod
   vtkMRMLSelectionNode* selectionNode = qSlicerCoreApplication::application()->applicationLogic()->GetSelectionNode();
   if (!selectionNode)
     {
-    qCritical() << "qSlicerSubjectHierarchyVolumesPlugin::getSelectedForegroundVolumeNodeID: Unable to get selection node";
+    qCritical() << Q_FUNC_INFO << ": Unable to get selection node";
+    return selectedForegroundVolumeID;
+    }
+  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
+  if (!scene)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
     return selectedForegroundVolumeID;
     }
 
-  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
   vtkMRMLSliceCompositeNode* compositeNode = NULL;
   const int numberOfCompositeNodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
-
   for (int i=0; i<numberOfCompositeNodes; i++)
     {
     compositeNode = vtkMRMLSliceCompositeNode::SafeDownCast ( scene->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
@@ -480,7 +517,7 @@ std::string qSlicerSubjectHierarchyVolumesPlugin::getSelectedForegroundVolumeNod
 }
 
 //---------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyVolumesPlugin::nodeContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyVolumesPlugin::itemContextMenuActions()const
 {
   Q_D(const qSlicerSubjectHierarchyVolumesPlugin);
 
@@ -490,27 +527,34 @@ QList<QAction*> qSlicerSubjectHierarchyVolumesPlugin::nodeContextMenuActions()co
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyVolumesPlugin::showContextMenuActionsForNode(vtkMRMLSubjectHierarchyNode* node)
+void qSlicerSubjectHierarchyVolumesPlugin::showContextMenuActionsForItem(
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)
 {
   Q_D(qSlicerSubjectHierarchyVolumesPlugin);
   this->hideAllContextMenuActions();
 
-  if (!node)
+  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
-    // There are no scene actions in this plugin
+    qCritical() << Q_FUNC_INFO << ": Invalid input item";
+    return;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
     }
 
   // Volume
-  if (this->canOwnSubjectHierarchyNode(node))
+  if (this->canOwnSubjectHierarchyItem(itemID))
     {
     // No scalar volume context menu
     }
 
   // Folders (Patient, Study, Folder)
-  if ( node->IsLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient())
-    || node->IsLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy())
-    || node->IsLevel(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder()) )
+  if ( shNode->IsItemLevel(itemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient())
+    || shNode->IsItemLevel(itemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy())
+    || shNode->IsItemLevel(itemID, vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder()) )
     {
     d->ShowVolumesInBranchAction->setVisible(true);
     }
@@ -522,40 +566,57 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumesInBranch()
   vtkMRMLSelectionNode* selectionNode = qSlicerCoreApplication::application()->applicationLogic()->GetSelectionNode();
   if (!selectionNode)
     {
-    qCritical() << "qSlicerSubjectHierarchyVolumesPlugin::showVolumesInBranch: Unable to get selection node";
+    qCritical() << Q_FUNC_INFO << ": Unable to get selection node";
+    return;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
+  if (!scene)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
+    return;
+    }
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID currentItemID =
+    qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid current item!";
     return;
     }
 
-  std::set<vtkMRMLSubjectHierarchyNode*> subjectHierarchyNodesToUpdate;
-  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
+  std::set<vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID> subjectHierarchyItemsToUpdate;
 
-  // Collect subject hierarchy nodes of currently shown volumes to be able to update them in the scene model
-  vtkMRMLSubjectHierarchyNode* activeVolumeShNode = vtkMRMLSubjectHierarchyNode::GetAssociatedSubjectHierarchyNode(
-    scene->GetNodeByID(selectionNode->GetActiveVolumeID()) );
-  subjectHierarchyNodesToUpdate.insert(activeVolumeShNode);
-  vtkMRMLSubjectHierarchyNode* secondaryVolumeShNode = vtkMRMLSubjectHierarchyNode::GetAssociatedSubjectHierarchyNode(
-    scene->GetNodeByID(selectionNode->GetSecondaryVolumeID()) );
-  subjectHierarchyNodesToUpdate.insert(secondaryVolumeShNode);
+  // Collect subject hierarchy items of currently shown volumes to be able to update them in the scene model
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID activeVolumeShItemID =
+    shNode->GetItemByDataNode( scene->GetNodeByID(selectionNode->GetActiveVolumeID()) );
+  subjectHierarchyItemsToUpdate.insert(activeVolumeShItemID);
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID secondaryVolumeShItemID =
+    shNode->GetItemByDataNode( scene->GetNodeByID(selectionNode->GetSecondaryVolumeID()) );
+  subjectHierarchyItemsToUpdate.insert(secondaryVolumeShItemID);
 
   // Hide all volumes before showing the ones from the study
   selectionNode->SetActiveVolumeID(NULL);
   selectionNode->SetSecondaryVolumeID(NULL);
 
   // Show volumes in study
-  vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
   vtkSmartPointer<vtkCollection> childVolumeNodes = vtkSmartPointer<vtkCollection>::New();
-  vtkMRMLSubjectHierarchyNode::SafeDownCast(currentNode)->GetAssociatedChildrenNodes(childVolumeNodes, "vtkMRMLScalarVolumeNode");
+  shNode->GetDataNodesInBranch(currentItemID, childVolumeNodes, "vtkMRMLScalarVolumeNode");
   childVolumeNodes->InitTraversal();
   for (int i=0; i<childVolumeNodes->GetNumberOfItems(); ++i)
     {
     vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(childVolumeNodes->GetItemAsObject(i));
     if (volumeNode)
       {
-      // Get subject hierarchy node for the volume node
-      vtkMRMLSubjectHierarchyNode* volumeSubjectHierarchyNode = vtkMRMLSubjectHierarchyNode::GetAssociatedSubjectHierarchyNode(volumeNode);
-      if (!volumeSubjectHierarchyNode)
+      // Get subject hierarchy item for the volume node
+      vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID volumeShItemID = shNode->GetItemByDataNode(volumeNode);
+      if (volumeShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
         {
-        qCritical() << "qSlicerSubjectHierarchyVolumesPlugin::showVolumesInBranch: Unable to get subject hierarchy node!";
+        qCritical() << Q_FUNC_INFO << ": Unable to get subject hierarchy item";
         continue;
         }
 
@@ -563,12 +624,12 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumesInBranch()
       if (!selectionNode->GetActiveVolumeID())
         {
         selectionNode->SetActiveVolumeID(volumeNode->GetID());
-        subjectHierarchyNodesToUpdate.insert(volumeSubjectHierarchyNode);
+        subjectHierarchyItemsToUpdate.insert(volumeShItemID);
         }
       else if (!selectionNode->GetSecondaryVolumeID())
         {
         selectionNode->SetSecondaryVolumeID(volumeNode->GetID());
-        subjectHierarchyNodesToUpdate.insert(volumeSubjectHierarchyNode);
+        subjectHierarchyItemsToUpdate.insert(volumeShItemID);
 
         // Make sure the secondary volume is shown in a semi-transparent way
         vtkMRMLSliceCompositeNode* compositeNode = NULL;
@@ -588,13 +649,13 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumesInBranch()
   qSlicerCoreApplication::application()->applicationLogic()->PropagateVolumeSelection();
 
   // Update scene model for subject hierarchy nodes just hidden
-  for (std::set<vtkMRMLSubjectHierarchyNode*>::iterator volumeShNodeIt = subjectHierarchyNodesToUpdate.begin();
-    volumeShNodeIt != subjectHierarchyNodesToUpdate.end(); ++volumeShNodeIt)
-    {
-    if (*volumeShNodeIt)
-      {
-      (*volumeShNodeIt)->Modified();
-      }
-    }
-
+  //TODO:
+  //for (std::set<vtkMRMLSubjectHierarchyNode*>::iterator volumeShNodeIt = subjectHierarchyItemsToUpdate.begin();
+  //  volumeShNodeIt != subjectHierarchyItemsToUpdate.end(); ++volumeShNodeIt)
+  //  {
+  //  if (*volumeShNodeIt)
+  //    {
+  //    (*volumeShNodeIt)->Modified();
+  //    }
+  //  }
 }

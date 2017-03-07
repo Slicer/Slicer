@@ -110,17 +110,25 @@ QList<QAction*> qSlicerSubjectHierarchyParseLocalDataPlugin::sceneContextMenuAct
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyParseLocalDataPlugin::showContextMenuActionsForNode(vtkMRMLSubjectHierarchyNode* node)
+void qSlicerSubjectHierarchyParseLocalDataPlugin::showContextMenuActionsForItem(
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)
 {
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+
   Q_D(qSlicerSubjectHierarchyParseLocalDataPlugin);
   this->hideAllContextMenuActions();
 
   // Scene
-  if (!node)
+  if (itemID == shNode->GetSceneItemID())
     {
     // Only show create hierarchy from loaded local directory structure if there are possible nodes to use
     // That is to have nodes in the scene with storage nodes with valid file names outside subject hierarchy
-    vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
+    vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
     vtkSmartPointer<vtkCollection> storableNodes = vtkSmartPointer<vtkCollection>::Take( scene->GetNodesByClass("vtkMRMLStorableNode") );
     vtkObject* nextObject = NULL;
     for (storableNodes->InitTraversal(); (nextObject = storableNodes->GetNextItemAsObject()); )
@@ -129,7 +137,7 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::showContextMenuActionsForNode(
       if ( storableNode && storableNode->GetStorageNode() && !storableNode->GetHideFromEditors() )
         {
         QList<qSlicerSubjectHierarchyAbstractPlugin*> foundPlugins =
-          qSlicerSubjectHierarchyPluginHandler::instance()->pluginsForAddingToSubjectHierarchyForNode(storableNode);
+          qSlicerSubjectHierarchyPluginHandler::instance()->pluginsForAddingNodeToSubjectHierarchy(storableNode);
         if (!foundPlugins.empty())
           {
           d->CreateHierarchyFromLoadedLocalDirectoriesAction->setVisible(true);
@@ -144,8 +152,19 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
 {
   QList<QStringList> loadedFilePaths;
   QList<vtkMRMLStorableNode*> loadedNodes;
-  QList<vtkMRMLSubjectHierarchyNode*> subjectHierarchyNodes;
-  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
+  QList<vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID> subjectHierarchyItemIDs;
+  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
+  if (!scene)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
+    return;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
 
   // Get all file paths from the storable nodes into the list
   vtkSmartPointer<vtkCollection> storableNodes = vtkSmartPointer<vtkCollection>::Take( scene->GetNodesByClass("vtkMRMLStorableNode") );
@@ -155,9 +174,15 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
     vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(nextObject);
     if ( storableNode && storableNode->GetStorageNode() && !storableNode->GetHideFromEditors() )
       {
-      vtkMRMLSubjectHierarchyNode* subjectHierarchyNode = vtkMRMLSubjectHierarchyNode::GetAssociatedSubjectHierarchyNode(storableNode);
+      vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID shItemID =
+        shNode->GetItemByDataNode(storableNode);
+      if (shItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+        {
+        qCritical() << Q_FUNC_INFO << ": Data node " << storableNode->GetName() << " is not in subject hierarchy!";
+        continue;
+        }
       // Exclude nodes that are already in a hierarchy (have parent). Sanity check for valid subject hierarchy node
-      if (!subjectHierarchyNode || subjectHierarchyNode->GetParentNodeID())
+      if (shNode->GetItemParent(shItemID) != shNode->GetSceneItemID())
         {
         continue;
         }
@@ -168,7 +193,7 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
         QString filePath(storageNode->GetFileName());
         loadedFilePaths << filePath.split('/', QString::SkipEmptyParts);
         loadedNodes << storableNode;
-        subjectHierarchyNodes << subjectHierarchyNode;
+        subjectHierarchyItemIDs << shItemID;
         }
       }
     }
@@ -216,18 +241,19 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
   while (firstComponentMatch);
 
   // Create hierarchy
-  QList<vtkMRMLSubjectHierarchyNode*> createdNodes;
+  QList<vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID> createdItemIDs;
   for (int nodeIndex=0; nodeIndex<loadedNodes.count(); ++nodeIndex)
     {
-    vtkMRMLSubjectHierarchyNode* parent = NULL;
+    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID parentItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
     for (int componentIndex=0; componentIndex<loadedFilePaths[nodeIndex].count(); ++componentIndex)
       {
       QString currentComponent = loadedFilePaths[nodeIndex][componentIndex];
-      vtkMRMLSubjectHierarchyNode* foundNode = vtkMRMLSubjectHierarchyNode::GetChildWithName(parent, currentComponent.toLatin1().constData(), scene);
+      vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID =
+        shNode->GetItemChildWithName(parentItemID, currentComponent.toLatin1().constData());
       // If hierarchy node already created
-      if (foundNode)
+      if (itemID)
         {
-        parent = foundNode;
+        parentItemID = itemID;
         }
       // If hierarchy node not yet created, create it (not the last component -> folder name not file)
       else if (componentIndex < loadedFilePaths[nodeIndex].count()-1)
@@ -235,23 +261,24 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
         // Create parent node if not found for path component
         qSlicerSubjectHierarchyFolderPlugin* folderPlugin = qobject_cast<qSlicerSubjectHierarchyFolderPlugin*>(
           qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Folder") );
-        parent = folderPlugin->createFolderUnderNode(parent);
-        parent->SetName(currentComponent.toLatin1().constData());
-        createdNodes << parent;
+        parentItemID = folderPlugin->createFolderUnderItem(parentItemID);
+        shNode->SetItemName(parentItemID, currentComponent.toLatin1().constData());
+        createdItemIDs << parentItemID;
         }
       // Leaf node (file name) and not top-level
-      else if (parent)
+      else if (parentItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
         {
-        subjectHierarchyNodes[nodeIndex]->SetParentNodeID(parent->GetID());
+        shNode->SetItemParent(subjectHierarchyItemIDs[nodeIndex], parentItemID);
         }
       }
-    //parent->Modified(); // Have the subject hierarchy node update its items in the tree //TODO: remove if works
+    //TODO: remove if works
+    //parent->Modified(); // Have the subject hierarchy node update its items in the tree
     }
 
   // Expand generated branches
-  foreach(vtkMRMLSubjectHierarchyNode* createdNode, createdNodes)
+  foreach(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID createdItemID, createdItemIDs)
     {
-    emit requestExpandNode(createdNode);
+    emit requestExpandItem(createdItemID);
     }
 
   // Trigger filter updating so that original data nodes disappear from the tree

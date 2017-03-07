@@ -28,10 +28,11 @@
 
 #include "qSlicerSubjectHierarchyModuleExport.h"
 
-class vtkMRMLNode;
-class vtkMRMLSubjectHierarchyNode;
+// MRML includes
+#include "vtkMRMLSubjectHierarchyNode.h"
+
 class qSlicerSubjectHierarchyModuleWidgetPrivate;
-class qMRMLSceneSubjectHierarchyModel;
+class qMRMLSubjectHierarchyModel;
 class qSlicerSubjectHierarchyPluginLogic;
 class qSlicerSubjectHierarchyAbstractPlugin;
 
@@ -63,12 +64,12 @@ protected slots:
   /// Show or hide transforms
   void setTransformsVisible(bool visible);
 
-  /// Set data node associated to the selected subject hierarchy node to the data node inspector
-  void setDataNodeFromSubjectHierarchyNode(vtkMRMLNode* node);
+  /// Set data node associated to the selected subject hierarchy item to the data node inspector
+  void setDataNodeFromSubjectHierarchyItem(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID);
 
 public:
-  /// Assessor function for subject hierarchy scene model (for python)
-  Q_INVOKABLE qMRMLSceneSubjectHierarchyModel* subjectHierarchySceneModel()const;
+  /// Assessor function for subject hierarchy model (for python)
+  Q_INVOKABLE qMRMLSubjectHierarchyModel* subjectHierarchySceneModel()const;
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyModuleWidgetPrivate> d_ptr;

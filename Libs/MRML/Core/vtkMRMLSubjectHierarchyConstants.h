@@ -39,8 +39,6 @@ public:
   //----------------------------------------------------------------------------
 
   // Subject hierarchy constants
-  static const std::string GetSubjectHierarchyNodeNamePostfix()
-    { return "_SubjectHierarchy"; };
   static const std::string GetSubjectHierarchyAttributePrefix()
     { return "SubjectHierarchy."; };
   static const std::string GetSubjectHierarchyExcludeFromTreeAttributeName()

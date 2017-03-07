@@ -106,16 +106,23 @@ qSlicerSubjectHierarchyFolderPlugin::~qSlicerSubjectHierarchyFolderPlugin()
 }
 
 //---------------------------------------------------------------------------
-double qSlicerSubjectHierarchyFolderPlugin::canOwnSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* node)const
+double qSlicerSubjectHierarchyFolderPlugin::canOwnSubjectHierarchyItem(
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)const
 {
-  if (!node)
+  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
-    qCritical() << Q_FUNC_INFO << ": Input node is NULL!";
+    qCritical() << Q_FUNC_INFO << ": Input item is invalid!";
+    return 0.0;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return 0.0;
     }
 
   // Folder
-  if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder()))
+  if (shNode->IsItemLevel(itemID, vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder()))
     {
     return 1.0;
     }
@@ -127,15 +134,22 @@ double qSlicerSubjectHierarchyFolderPlugin::canOwnSubjectHierarchyNode(vtkMRMLSu
 const QString qSlicerSubjectHierarchyFolderPlugin::roleForPlugin()const
 {
   // Get current node to determine role
-  vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
-  if (!currentNode)
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID currentItemID =
+    qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid current node!";
     return "Error!";
     }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return "Error!";
+    }
 
   // Folder level
-  if (currentNode->IsLevel(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder()))
+  if (shNode->IsItemLevel(currentItemID, vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder()))
     {
     return "Folder";
     }
@@ -144,23 +158,29 @@ const QString qSlicerSubjectHierarchyFolderPlugin::roleForPlugin()const
 }
 
 //---------------------------------------------------------------------------
-QIcon qSlicerSubjectHierarchyFolderPlugin::icon(vtkMRMLSubjectHierarchyNode* node)
+QIcon qSlicerSubjectHierarchyFolderPlugin::icon(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)
 {
-  if (!node)
+  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
-    qCritical() << Q_FUNC_INFO << ": NULL node given!";
+    qCritical() << Q_FUNC_INFO << ": Input item is invalid!";
+    return QIcon();
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return QIcon();
     }
 
   Q_D(qSlicerSubjectHierarchyFolderPlugin);
 
   // Subject and Folder icon
-  if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder()))
+  if (shNode->IsItemLevel(itemID, vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder()))
     {
     return d->FolderIcon;
     }
 
-  // Node unknown by plugin
+  // Item unknown by plugin
   return QIcon();
 }
 
@@ -172,7 +192,7 @@ QIcon qSlicerSubjectHierarchyFolderPlugin::visibilityIcon(int visible)
 }
 
 //---------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyFolderPlugin::nodeContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyFolderPlugin::itemContextMenuActions()const
 {
   Q_D(const qSlicerSubjectHierarchyFolderPlugin);
 
@@ -192,66 +212,89 @@ QList<QAction*> qSlicerSubjectHierarchyFolderPlugin::sceneContextMenuActions()co
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyFolderPlugin::showContextMenuActionsForNode(vtkMRMLSubjectHierarchyNode* node)
+void qSlicerSubjectHierarchyFolderPlugin::showContextMenuActionsForItem(
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)
 {
   Q_D(qSlicerSubjectHierarchyFolderPlugin);
   this->hideAllContextMenuActions();
 
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+
   // Scene
-  if (!node)
+  if (itemID == shNode->GetSceneItemID())
     {
     d->CreateFolderUnderSceneAction->setVisible(true);
     return;
     }
 
   // Folder can be created under any node
-  if (node)
+  if (itemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     d->CreateFolderUnderNodeAction->setVisible(true);
     }
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyFolderPlugin::editProperties(vtkMRMLSubjectHierarchyNode* node)
+void qSlicerSubjectHierarchyFolderPlugin::editProperties(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)
 {
-  Q_UNUSED(node);
+  Q_UNUSED(itemID);
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLSubjectHierarchyNode* qSlicerSubjectHierarchyFolderPlugin::createFolderUnderNode(vtkMRMLSubjectHierarchyNode* parentNode)
+vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID qSlicerSubjectHierarchyFolderPlugin::createFolderUnderItem(
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID parentItemID)
 {
-  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
+  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
   if (!scene)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
-    return NULL;
+    return vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
     }
 
   // Create folder subject hierarchy node
   std::string nodeName = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNewNodeNamePrefix() + vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder();
   nodeName = scene->GenerateUniqueName(nodeName);
-  vtkMRMLSubjectHierarchyNode* childSubjectHierarchyNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
-    scene, parentNode, vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder(), nodeName.c_str());
-  emit requestExpandNode(childSubjectHierarchyNode);
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID childItemID = shNode->CreateItem(
+    parentItemID, NULL, vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder(), nodeName );
+  emit requestExpandItem(childItemID);
 
-  return childSubjectHierarchyNode;
+  return childItemID;
 }
 
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyFolderPlugin::createFolderUnderScene()
 {
-  this->createFolderUnderNode(NULL);
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+
+  this->createFolderUnderItem(shNode->GetSceneItemID());
 }
 
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyFolderPlugin::createFolderUnderCurrentNode()
 {
-  vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
-  if (!currentNode)
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID currentItemID =
+    qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid current node!";
     return;
     }
 
-  this->createFolderUnderNode(currentNode);
+  this->createFolderUnderItem(currentItemID);
 }

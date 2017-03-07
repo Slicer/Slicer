@@ -33,7 +33,6 @@
 #include <vtkMRMLScene.h>
 #include <vtkMRMLTransformNode.h>
 #include <vtkMRMLStorageNode.h>
-#include <vtkMRMLSubjectHierarchyNode.h>
 #include <vtkMRMLSubjectHierarchyConstants.h>
 #include <vtkMRMLScalarVolumeNode.h>
 
@@ -290,9 +289,10 @@ void vtkMRMLSegmentationNode::OnSegmentModified(const char* vtkNotUsed(segmentId
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationNode::OnSubjectHierarchyUIDAdded(vtkMRMLSubjectHierarchyNode* shNodeWithNewUID)
+void vtkMRMLSegmentationNode::OnSubjectHierarchyUIDAdded(
+  vtkMRMLSubjectHierarchyNode* shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemWithNewUID )
 {
-  if (!shNodeWithNewUID || !this->Segmentation)
+  if (!shNode || !this->Segmentation || itemWithNewUID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     return;
     }
@@ -301,27 +301,34 @@ void vtkMRMLSegmentationNode::OnSubjectHierarchyUIDAdded(vtkMRMLSubjectHierarchy
     {
     return;
     }
+  // If the new UID is empty string, then do not look for the segmentation's referenced UID in its UID list
+  std::string itemUidValueStr = shNode->GetItemUID(itemWithNewUID, vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName());
+  if (itemUidValueStr.empty())
+    {
+    return;
+    }
 
-  // Get associated volume node from subject hierarchy node with new UID
-  vtkMRMLScalarVolumeNode* referencedVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(shNodeWithNewUID->GetAssociatedNode());
+  // Get volume node from subject hierarchy item with new UID
+  vtkMRMLScalarVolumeNode* referencedVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(
+    shNode->GetItemDataNode(itemWithNewUID) );
   if (!referencedVolumeNode)
     {
     // If associated node is not a volume, then return
     return;
     }
 
-  // Get associated subject hierarchy node
-  vtkMRMLSubjectHierarchyNode* segmentationShNode = vtkMRMLSubjectHierarchyNode::GetAssociatedSubjectHierarchyNode(this);
-  if (!segmentationShNode)
+  // Get associated subject hierarchy item
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID segmentationShItemID = shNode->GetItemByDataNode(this);
+  if (segmentationShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     // If segmentation is not in subject hierarchy, then we cannot find its DICOM references
     return;
     }
 
   // Get DICOM references from segmentation subject hierarchy node
-  const char* referencedInstanceUIDsAttribute = segmentationShNode->GetAttribute(
-    vtkMRMLSubjectHierarchyConstants::GetDICOMReferencedInstanceUIDsAttributeName().c_str());
-  if (!referencedInstanceUIDsAttribute)
+  std::string referencedInstanceUIDsAttribute = shNode->GetItemAttribute(
+    segmentationShItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMReferencedInstanceUIDsAttributeName() );
+  if (referencedInstanceUIDsAttribute.empty())
     {
     // No references
     return;
@@ -334,16 +341,10 @@ void vtkMRMLSegmentationNode::OnSubjectHierarchyUIDAdded(vtkMRMLSubjectHierarchy
   bool referencedVolumeFound = false;
   bool warningLogged = false;
   std::vector<std::string>::iterator uidIt;
-  std::string nodeUidValueStr = shNodeWithNewUID->GetUID(vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName());
-  if (nodeUidValueStr.empty())
-    {
-    // If the new UID is empty string, then do not look further
-    return;
-    }
   for (uidIt = referencedSopInstanceUids.begin(); uidIt != referencedSopInstanceUids.end(); ++uidIt)
     {
     // If we find the instance UID, then we set the geometry
-    if (nodeUidValueStr.find(*uidIt) != std::string::npos)
+    if (itemUidValueStr.find(*uidIt) != std::string::npos)
       {
       // Only set the reference once, but check all UIDs
       if (!referencedVolumeFound)
@@ -647,28 +648,38 @@ bool vtkMRMLSegmentationNode::GenerateMergedLabelmapForAllSegments(vtkOrientedIm
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLSubjectHierarchyNode* vtkMRMLSegmentationNode::GetSegmentSubjectHierarchyNode(std::string segmentID)
+vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID
+vtkMRMLSegmentationNode::GetSegmentSubjectHierarchyItem(std::string segmentID, vtkMRMLSubjectHierarchyNode* shNode)
 {
-  vtkMRMLSubjectHierarchyNode* segmentationSubjectHierarchyNode =
-    vtkMRMLSubjectHierarchyNode::GetAssociatedSubjectHierarchyNode(this);
-  if (!segmentationSubjectHierarchyNode)
+  if (!shNode)
     {
-    return NULL;
+    vtkErrorMacro("GetSegmentSubjectHierarchyItem: Invalid subject hierarchy");
+    return vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
     }
 
-  // Find child node of segmentation subject hierarchy node that has the requested segment ID
-  std::vector<vtkMRMLHierarchyNode*> children = segmentationSubjectHierarchyNode->GetChildrenNodes();
-  for (std::vector<vtkMRMLHierarchyNode*>::iterator childIt=children.begin(); childIt!=children.end(); ++childIt)
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID segmentationSubjectHierarchyItemID =
+    shNode->GetItemByDataNode(this);
+  if (segmentationSubjectHierarchyItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
-    vtkMRMLSubjectHierarchyNode* childNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(*childIt);
-    if ( childNode && childNode->GetAttribute(vtkMRMLSegmentationNode::GetSegmentIDAttributeName())
-      && !segmentID.compare(childNode->GetAttribute(vtkMRMLSegmentationNode::GetSegmentIDAttributeName())) )
+    return vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+    }
+
+  // Find child item of segmentation subject hierarchy item that has the requested segment ID
+  std::vector<vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID> segmentationChildItemIDs;
+  shNode->GetItemChildren(segmentationSubjectHierarchyItemID, segmentationChildItemIDs, false);
+
+  std::vector<vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID>::iterator childIt;
+  for (childIt=segmentationChildItemIDs.begin(); childIt!=segmentationChildItemIDs.end(); ++childIt)
+    {
+    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID childItemID = (*childIt);
+    std::string childSegmentID = shNode->GetItemAttribute(childItemID, vtkMRMLSegmentationNode::GetSegmentIDAttributeName());
+    if (!childSegmentID.empty() && !childSegmentID.compare(segmentID))
       {
-      return childNode;
+      return childItemID;
       }
     }
 
-  return NULL;
+  return vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
 }
 
 //---------------------------------------------------------------------------

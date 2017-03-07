@@ -51,7 +51,6 @@ public:
 public slots:
 
 protected slots:
-  void enableAutoCreateSubjectHierarchy(bool value);
   void enableAutoDeleteSubjectHierarchyChildren(bool value);
 
 protected:

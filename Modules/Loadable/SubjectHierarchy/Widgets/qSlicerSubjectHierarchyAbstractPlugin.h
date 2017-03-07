@@ -29,7 +29,8 @@
 #include <QStringList>
 #include <QIcon>
 
-// SubjectHierarchy includes
+// MRML includes
+#include "vtkMRMLSubjectHierarchyNode.h"
 #include "vtkMRMLSubjectHierarchyConstants.h"
 
 #include "qSlicerSubjectHierarchyModuleWidgetsExport.h"
@@ -43,13 +44,14 @@ class qSlicerAbstractModuleWidget;
 
 /// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
 ///    In Widgets, not Plugins because the paths and libs need to be exported to extensions
-/// \brief Abstract plugin for handling Subject Hierarchy nodes
+/// \brief Abstract plugin for handling Subject Hierarchy items
 ///
 /// This class provides an interface and some default implementations for the common operations on
-/// subject hierarchy nodes. To exercise the default implementations, a Default plugin \sa qSlicerSubjectHierarchyDefaultPlugin
+/// subject hierarchy items. To exercise the default implementations, a Default plugin \sa qSlicerSubjectHierarchyDefaultPlugin
 /// has to be created.
 ///
-/// Note about confidence values (\sa canAddNodeToSubjectHierarchy \sa canReparentNodeInsideSubjectHierarchy \sa canOwnSubjectHierarchyNode):
+/// Note about confidence values (\sa canAddNodeToSubjectHierarchy, \sa canReparentItemInsideSubjectHierarchy,
+///   \sa canOwnSubjectHierarchyItem - in case of the latter two the node mentioned below is the data node associated to the item):
 /// The confidence value is a floating point number between 0.0 and 1.0. Meaning of some typical values:
 /// 0.0 = The plugin cannot handle the node in question at all
 /// 0.3 = It is likely that other plugins will be able to handle the node in question better (typical value for plugins for generic types, such as Volumes)
@@ -75,101 +77,105 @@ public:
   qSlicerSubjectHierarchyAbstractPlugin(QObject* parent = NULL);
   virtual ~qSlicerSubjectHierarchyAbstractPlugin();
 
+  typedef vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID SubjectHierarchyItemID;
+
 // Role-related virtual methods
 // If the subclass plugin does not offer a role, these do not need to be overridden
 public:
-  /// Determines if the actual plugin can handle a subject hierarchy node. The plugin with
-  /// the highest confidence number will "own" the node in the subject hierarchy (set icon, tooltip,
+  /// Determines if the actual plugin can handle a subject hierarchy item. The plugin with
+  /// the highest confidence number will "own" the item in the subject hierarchy (set icon, tooltip,
   /// set context menu etc.)
-  /// \param node Note to handle in the subject hierarchy tree
+  /// \param item Item to handle in the subject hierarchy tree
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
-  ///   node, and 1 means that the plugin is the only one that can handle the node (by node type or identifier attribute)
-  Q_INVOKABLE virtual double canOwnSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* node)const;
+  ///   item, and 1 means that the plugin is the only one that can handle the item (by node type or identifier attribute)
+  Q_INVOKABLE virtual double canOwnSubjectHierarchyItem(SubjectHierarchyItemID itemID)const;
 
-  /// Get role that the plugin assigns to the subject hierarchy node.
+  /// Get role that the plugin assigns to the subject hierarchy item.
   ///   Each plugin should provide only one role.
   Q_INVOKABLE virtual const QString roleForPlugin()const;
 
   /// Get help text for plugin to be added in subject hierarchy module widget help box
   virtual const QString helpText()const;
 
-  /// Get icon of an owned subject hierarchy node
-  /// \return Icon to set, NULL if nothing to set
-  virtual QIcon icon(vtkMRMLSubjectHierarchyNode* node);
+  /// Get icon of an owned subject hierarchy item
+  /// \return Icon to set, empty icon if nothing to set
+  virtual QIcon icon(SubjectHierarchyItemID itemID);
 
   /// Get visibility icon for a visibility state
   Q_INVOKABLE virtual QIcon visibilityIcon(int visible);
 
-  /// Open module belonging to node and set inputs in opened module
-  Q_INVOKABLE virtual void editProperties(vtkMRMLSubjectHierarchyNode* node);
+  /// Open module belonging to item and set inputs in opened module
+  Q_INVOKABLE virtual void editProperties(SubjectHierarchyItemID itemID);
 
-  /// Generate displayed name for the owned subject hierarchy node corresponding to its role.
-  /// The default implementation removes the '_SubjectHierarchy' ending from the node's name.
-  virtual QString displayedNodeName(vtkMRMLSubjectHierarchyNode* node)const;
+  /// Generate displayed name for the owned subject hierarchy item corresponding to its role.
+  /// The default implementation returns the associated data node's name if any, otherwise the item name
+  virtual QString displayedItemName(SubjectHierarchyItemID itemID)const;
 
-  /// Generate tooltip for a owned subject hierarchy node
-  Q_INVOKABLE virtual QString tooltip(vtkMRMLSubjectHierarchyNode* node)const;
+  /// Generate tooltip for a owned subject hierarchy item
+  Q_INVOKABLE virtual QString tooltip(SubjectHierarchyItemID itemID)const;
 
-  /// Set display visibility of a owned subject hierarchy node
-  Q_INVOKABLE virtual void setDisplayVisibility(vtkMRMLSubjectHierarchyNode* node, int visible);
+  /// Set display visibility of a owned subject hierarchy item
+  Q_INVOKABLE virtual void setDisplayVisibility(SubjectHierarchyItemID itemID, int visible);
 
-  /// Get display visibility of a owned subject hierarchy node
+  /// Get display visibility of a owned subject hierarchy item
   /// \return Display visibility (0: hidden, 1: shown, 2: partially shown)
-  Q_INVOKABLE virtual int getDisplayVisibility(vtkMRMLSubjectHierarchyNode* node)const;
+  Q_INVOKABLE virtual int getDisplayVisibility(SubjectHierarchyItemID itemID)const;
 
 // Function related virtual methods
 public:
-  /// Get node context menu item actions to add to tree view
-  Q_INVOKABLE virtual QList<QAction*> nodeContextMenuActions()const;
+  /// Get item context menu item actions to add to tree view
+  Q_INVOKABLE virtual QList<QAction*> itemContextMenuActions()const;
 
-  /// Get scene context menu item actions to add to tree view
+  /// Get scene context menu item actions to add to tree view. Also provides actions for right-click on empty area
   /// Separate method is needed for the scene, as its actions are set to the
-  /// tree by a different method \sa nodeContextMenuActions
+  /// tree by a different method \sa itemContextMenuActions
   Q_INVOKABLE virtual QList<QAction*> sceneContextMenuActions()const;
 
-  /// Show context menu actions valid for  given subject hierarchy node.
-  /// \param node Subject Hierarchy node to show the context menu items for. If NULL, then shows menu items for the scene
-  Q_INVOKABLE virtual void showContextMenuActionsForNode(vtkMRMLSubjectHierarchyNode* node) { Q_UNUSED(node); };
+  /// Show context menu actions valid for a given subject hierarchy item.
+  /// \param itemID Subject Hierarchy item to show the context menu items for
+  Q_INVOKABLE virtual void showContextMenuActionsForItem(SubjectHierarchyItemID itemID) { Q_UNUSED(itemID); };
 
 // Parenting related virtual methods with default implementation
 public:
-  /// Determines if a non subject hierarchy node can be placed in the hierarchy using the actual plugin,
+  /// Determines if a data node can be placed in the hierarchy using the actual plugin,
   /// and gets a confidence value for a certain MRML node (usually the type and possibly attributes are checked).
   /// Most plugins do not perform steps additional to the default, so the default implementation returns a 0
   /// confidence value, which can be overridden in plugins that do handle special cases.
   /// \param node Node to be added to the hierarchy
-  /// \param parent Prospective parent of the node to add.
-  ///   Default value is NULL. In that case the parent will be ignored, the confidence numbers are got based on the to-be child node alone.
+  /// \param parentItemID Prospective parent of the node to add.
+  ///   Default value is invalid. In that case the parent will be ignored, the confidence numbers are got based on the to-be child node alone.
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
   ///   node, and 1 means that the plugin is the only one that can handle the node (by node type or identifier attribute)
-  virtual double canAddNodeToSubjectHierarchy(vtkMRMLNode* node , vtkMRMLSubjectHierarchyNode* parent=NULL)const;
+  virtual double canAddNodeToSubjectHierarchy(
+    vtkMRMLNode* node,
+    SubjectHierarchyItemID parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )const;
 
   /// Add a node to subject hierarchy under a specified parent node. This is basically a convenience function to
-  /// call vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode
+  /// call vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyItem
   /// \param node Node to add to subject hierarchy
-  /// \param parent Parent node of the added node
+  /// \param parentItemID Parent item of the added node
   /// \param level Level of the added node in subject hierarchy, none be default
   /// \return True if added successfully, false otherwise
-  virtual bool addNodeToSubjectHierarchy(vtkMRMLNode* node, vtkMRMLSubjectHierarchyNode* parent, const char* level=NULL);
+  virtual bool addNodeToSubjectHierarchy(vtkMRMLNode* node, SubjectHierarchyItemID parentItemID, std::string level="");
 
-  /// Determines if a subject hierarchy node can be reparented in the hierarchy using the actual plugin,
-  /// and gets a confidence value for a certain MRML node (usually the type and possibly attributes are checked).
+  /// Determines if a subject hierarchy item can be reparented in the hierarchy using the current plugin,
+  /// and gets a confidence value for the reparented item.
   /// Most plugins do not perform steps additional to the default, so the default implementation returns a 0
   /// confidence value, which can be overridden in plugins that do handle special cases.
-  /// \param node Node to be reparented in the hierarchy
-  /// \param parent Prospective parent of the node to reparent.
+  /// \param itemID Item to be reparented in the hierarchy
+  /// \param parentItemID Prospective parent of the item to reparent.
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
-  ///   node, and 1 means that the plugin is the only one that can handle the node (by node type or identifier attribute)
-  virtual double canReparentNodeInsideSubjectHierarchy(vtkMRMLSubjectHierarchyNode* node, vtkMRMLSubjectHierarchyNode* parent)const;
+  ///   item, and 1 means that the plugin is the only one that can handle the item
+  virtual double canReparentItemInsideSubjectHierarchy(SubjectHierarchyItemID itemID, SubjectHierarchyItemID parentItemID)const;
 
-  /// Reparent a node that was already in the subject hierarchy under a new parent.
+  /// Reparent an item that was already in the subject hierarchy under a new parent.
   /// \return True if reparented successfully, false otherwise
-  virtual bool reparentNodeInsideSubjectHierarchy(vtkMRMLSubjectHierarchyNode* node, vtkMRMLSubjectHierarchyNode* parent);
+  virtual bool reparentItemInsideSubjectHierarchy(SubjectHierarchyItemID itemID, SubjectHierarchyItemID parentItemID);
 
 // Utility functions
 public:
-  /// Determines if the node is owned by this plugin
-  Q_INVOKABLE bool isThisPluginOwnerOfNode(vtkMRMLSubjectHierarchyNode* node)const;
+  /// Determines if the item is owned by this plugin
+  Q_INVOKABLE bool isThisPluginOwnerOfItem(SubjectHierarchyItemID itemID)const;
 
   /// Switch to module with given name
   /// \return Widget representation of the module if found, NULL otherwise
@@ -184,16 +190,16 @@ public:
   virtual void setName(QString name);
 
 signals:
-  /// Signal requesting expanding of the subject hierarchy tree item belonging to a node
-  void requestExpandNode(vtkMRMLSubjectHierarchyNode* node);
+  /// Signal requesting expanding of the subject hierarchy tree item belonging to an item
+  void requestExpandItem(SubjectHierarchyItemID itemID);
 
   /// Signal requesting invalidating the filter model for the tree view
-  /// (e.g. when a node is added or removed by the plugin)
+  /// (e.g. when an item is added or removed by the plugin)
   void requestInvalidateFilter()const;
 
 protected:
   /// Hide all context menu actions offered by the plugin.
-  /// This method must be called as a first step in \sa showContextMenuActionsForNode
+  /// This method must be called as a first step in \sa showContextMenuActionsForItem
   /// before showing the actions that apply to the current situation. Calling this method
   /// prevents programming errors made in case plugin actions change.
   void hideAllContextMenuActions()const;

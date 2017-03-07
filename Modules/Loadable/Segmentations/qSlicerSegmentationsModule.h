@@ -83,13 +83,6 @@ protected slots:
   /// subject hierarchy node creation for each segment to allow per-segment actions in SH.
   void onNodeAdded(vtkObject* scene, vtkObject* nodeObject);
 
-  /// Called when a node is removed from the scene so that the segment subject hierarchy
-  /// nodes are removed too
-  void onNodeRemoved(vtkObject* scene, vtkObject* nodeObject);
-
-  /// Called when subject hierarchy node is modified. Renames segment if subject hierarchy node has been renamed
-  void onSubjectHierarchyNodeModified(vtkObject*);
-
 protected:
   QScopedPointer<qSlicerSegmentationsModulePrivate> d_ptr;
 

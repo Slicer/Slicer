@@ -32,8 +32,6 @@
 #include "qSlicerSubjectHierarchyModuleWidgetsExport.h"
 
 class qSlicerSubjectHierarchyDefaultPluginPrivate;
-class vtkMRMLNode;
-class vtkMRMLSubjectHierarchyNode;
 class QIcon;
 
 /// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets

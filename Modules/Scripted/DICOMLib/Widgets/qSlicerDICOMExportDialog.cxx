@@ -20,19 +20,18 @@
 
 ==============================================================================*/
 
-// SubjectHierarchy_Widgets includes
+// DICOMLib includes
 #include "qSlicerDICOMExportDialog.h"
 #include "ui_qSlicerDICOMExportDialog.h"
 
-#include "qMRMLSubjectHierarchyTreeView.h"
-#include "qMRMLSceneSubjectHierarchyModel.h"
-
-// SubjectHierarchy includes
-#include "vtkMRMLSubjectHierarchyNode.h"
-#include "vtkMRMLSubjectHierarchyConstants.h"
-
-// DICOMLib includes
 #include "qSlicerDICOMExportable.h"
+
+// Subject Hierarchy Widgets includes
+#include "qMRMLSubjectHierarchyTreeView.h"
+#include "qMRMLSubjectHierarchyModel.h"
+
+// MRML includes
+#include "vtkMRMLSubjectHierarchyConstants.h"
 
 // Qt includes
 #include <QDialog>
@@ -82,7 +81,7 @@ public:
   void init();
 private:
   vtkMRMLScene* Scene;
-  vtkMRMLSubjectHierarchyNode* NodeToSelect;
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID ItemToSelect;
   qSlicerDICOMExportable* SelectedExportable;
 };
 
@@ -90,7 +89,7 @@ private:
 qSlicerDICOMExportDialogPrivate::qSlicerDICOMExportDialogPrivate(qSlicerDICOMExportDialog& object)
   : q_ptr(&object)
   , Scene(NULL)
-  , NodeToSelect(NULL)
+  , ItemToSelect(vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   , SelectedExportable(NULL)
 {
 }
@@ -105,11 +104,10 @@ void qSlicerDICOMExportDialogPrivate::init()
 {
   Q_Q(qSlicerDICOMExportDialog);
 
-  qMRMLSceneSubjectHierarchyModel* sceneModel = (qMRMLSceneSubjectHierarchyModel*)this->SubjectHierarchyTreeView->sceneModel();
+  qMRMLSubjectHierarchyModel* sceneModel = (qMRMLSubjectHierarchyModel*)this->SubjectHierarchyTreeView->model();
 
   // Set up tree view
   this->SubjectHierarchyTreeView->setMRMLScene(this->Scene);
-  this->SubjectHierarchyTreeView->setShowScene(false);
   this->SubjectHierarchyTreeView->expandToDepth(4);
   this->SubjectHierarchyTreeView->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
   this->SubjectHierarchyTreeView->hideColumn(sceneModel->idColumn());
@@ -123,10 +121,14 @@ void qSlicerDICOMExportDialogPrivate::init()
   this->DirectoryButton_OutputFolder->setDirectory(qSlicerApplication::application()->dicomDatabase()->databaseDirectory());
 
   // Make connections
-  connect(this->SubjectHierarchyTreeView, SIGNAL(currentNodeChanged(vtkMRMLNode*)), q, SLOT(onCurrentNodeChanged(vtkMRMLNode*)));
-  connect(this->ExportablesListWidget, SIGNAL(currentRowChanged(int)), q, SLOT(onExportableSelectedAtRow(int)));
-  connect(this->ExportButton, SIGNAL(clicked()), q, SLOT(onExport()));
-  connect(this->ExportSeriesRadioButton, SIGNAL(toggled(bool)), q, SLOT(onExportSeriesRadioButtonToggled(bool)) );
+  connect(this->SubjectHierarchyTreeView, SIGNAL(currentItemChanged(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID)),
+    q, SLOT(onCurrentItemChanged(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID)));
+  connect(this->ExportablesListWidget, SIGNAL(currentRowChanged(int)),
+    q, SLOT(onExportableSelectedAtRow(int)));
+  connect(this->ExportButton, SIGNAL(clicked()),
+    q, SLOT(onExport()));
+  connect(this->ExportSeriesRadioButton, SIGNAL(toggled(bool)),
+    q, SLOT(onExportSeriesRadioButtonToggled(bool)) );
 }
 
 //-----------------------------------------------------------------------------
@@ -147,7 +149,8 @@ qSlicerDICOMExportDialog::~qSlicerDICOMExportDialog()
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerDICOMExportDialog::exec(vtkMRMLSubjectHierarchyNode* nodeToSelect/*=NULL*/)
+bool qSlicerDICOMExportDialog::exec(
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemToSelect/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)
 {
   Q_D(qSlicerDICOMExportDialog);
 
@@ -155,8 +158,8 @@ bool qSlicerDICOMExportDialog::exec(vtkMRMLSubjectHierarchyNode* nodeToSelect/*=
   d->init();
 
   // Make selection if requested
-  d->NodeToSelect = nodeToSelect;
-  QTimer::singleShot(0, this, SLOT( selectNode() ) );
+  d->ItemToSelect = itemToSelect;
+  QTimer::singleShot(0, this, SLOT( selectItem() ) );
 
   // Show dialog
   bool result = false;
@@ -179,40 +182,46 @@ void qSlicerDICOMExportDialog::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerDICOMExportDialog::selectNode()
+void qSlicerDICOMExportDialog::selectItem()
 {
   Q_D(qSlicerDICOMExportDialog);
-  if (!d->NodeToSelect)
+  if (!d->ItemToSelect)
     {
     return;
     }
-  d->SubjectHierarchyTreeView->setCurrentNode(d->NodeToSelect);
+  d->SubjectHierarchyTreeView->setCurrentItem(d->ItemToSelect);
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerDICOMExportDialog::onCurrentNodeChanged(vtkMRMLNode* node)
+void qSlicerDICOMExportDialog::onCurrentItemChanged(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)
 {
-  Q_UNUSED(node)
+  Q_UNUSED(itemID)
   Q_D(qSlicerDICOMExportDialog);
 
   // Clear error label
   d->ErrorLabel->setText(QString());
 
   // Get exportables from DICOM plugins
-  this->examineSelectedNode();
+  this->examineSelectedItem();
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerDICOMExportDialog::examineSelectedNode()
+void qSlicerDICOMExportDialog::examineSelectedItem()
 {
   Q_D(qSlicerDICOMExportDialog);
 
-  // Get current node (single-selection)
-  vtkMRMLSubjectHierarchyNode* currentNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(
-    d->SubjectHierarchyTreeView->currentNode() );
-  if (!currentNode)
+  // Get current item (single-selection)
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID currentItemID =
+    d->SubjectHierarchyTreeView->currentItem();
+  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
-    qCritical() << "qSlicerDICOMExportDialog::examineSelectedNode: Unable to get current subject hierarchy node!";
+    qCritical() << Q_FUNC_INFO << ": Unable to get current subject hierarchy item";
+    return;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = d->SubjectHierarchyTreeView->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to get subject hierarchy node";
     return;
     }
 
@@ -220,34 +229,31 @@ void qSlicerDICOMExportDialog::examineSelectedNode()
   d->ExportablesListWidget->clear();
   d->DICOMTagEditorWidget->clear();
 
-  // Get child series nodes if selected node is study
-  QList<vtkMRMLSubjectHierarchyNode*> selectedSeriesNodes;
-  if (currentNode->IsLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy()))
+  // Get child series items if selected node is study
+  QList<vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID> selectedSeriesItemIDs;
+  if (shNode->IsItemLevel(currentItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy()))
     {
-    std::vector<vtkMRMLHierarchyNode*> childrenNodes = currentNode->GetChildrenNodes();
-    for ( std::vector<vtkMRMLHierarchyNode*>::iterator childIt = childrenNodes.begin();
-      childIt != childrenNodes.end(); ++childIt)
+    std::vector<vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID> childItemIDs;
+    shNode->GetItemChildren(currentItemID, childItemIDs);
+    std::vector<vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID>::iterator childIt;
+    for (childIt = childItemIDs.begin(); childIt != childItemIDs.end(); ++childIt)
       {
-      vtkMRMLSubjectHierarchyNode* subjectHierarchySeriesNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(*childIt);
-      if (subjectHierarchySeriesNode)
-        {
-        selectedSeriesNodes.append(subjectHierarchySeriesNode);
-        }
+      selectedSeriesItemIDs.append(*childIt);
       }
     }
-  else if (currentNode->IsLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries()))
+  else if (shNode->IsItemLevel(currentItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries()))
     {
-    selectedSeriesNodes.append(currentNode);
+    selectedSeriesItemIDs.append(currentItemID);
     }
   else
     {
-    qCritical() << "qSlicerDICOMExportDialog::examineSelectedNode: Can only export series or study!";
+    qCritical() << Q_FUNC_INFO << ": Can only export series or study";
     return;
     }
 
   // Get exportables from DICOM plugins for selection
   QMap<QString,QList<qSlicerDICOMExportable*> > exportablesByPlugin;
-  foreach (vtkMRMLSubjectHierarchyNode* selectedSeriesNode, selectedSeriesNodes)
+  foreach (vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID selectedSeriesItemID, selectedSeriesItemIDs)
     {
     PythonQt::init();
     PythonQtObjectPtr context = PythonQt::self()->getMainModule();
@@ -255,11 +261,10 @@ void qSlicerDICOMExportDialog::examineSelectedNode()
     // a list is returned for convenient concatenation (without type check etc.)
     context.evalScript( QString(
       "exportables = []\n"
-      "selectedNode = slicer.mrmlScene.GetNodeByID('%1')\n"
       "for pluginClass in slicer.modules.dicomPlugins:\n"
       "  plugin = slicer.modules.dicomPlugins[pluginClass]()\n"
-      "  exportables.extend(plugin.examineForExport(selectedNode))\n" )
-      .arg(selectedSeriesNode->GetID()) );
+      "  exportables.extend(plugin.examineForExport(%1))\n" )
+      .arg(selectedSeriesItemID) );
 
     // Extract resulting exportables from python
     QVariantList exportablesVariantList = context.getVariable("exportables").toList();
@@ -271,7 +276,7 @@ void qSlicerDICOMExportDialog::examineSelectedNode()
         exportableVariant.value<QObject*>() );
       if (!exportable)
         {
-        qCritical() << "qSlicerDICOMExportDialog::examineSelectedNode: Invalid exportable returned by DICOM plugin for " << currentNode->GetNameWithoutPostfix().c_str();
+        qCritical() << Q_FUNC_INFO << ": Invalid exportable returned by DICOM plugin for " << shNode->GetItemName(currentItemID).c_str();
         continue;
         }
       exportable->setParent(this); // Take ownership to prevent destruction
@@ -357,7 +362,7 @@ void qSlicerDICOMExportDialog::onExportableSelectedAtRow(int row)
     if (!exportable)
       {
       QString errorMessage("Unable to extract exportable");
-      qCritical() << "qSlicerDICOMExportDialog::onExportableSelectedAtRow: " << errorMessage;
+      qCritical() << Q_FUNC_INFO << ": " << errorMessage;
       d->ErrorLabel->setText(errorMessage);
       return;
       }

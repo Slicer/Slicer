@@ -129,8 +129,6 @@ void qSlicerSegmentationsModule::setMRMLScene(vtkMRMLScene* scene)
 {
   // Connect scene node added event to make connections enabling per-segment subject hierarchy actions
   qvtkReconnect( this->mrmlScene(), scene, vtkMRMLScene::NodeAddedEvent, this, SLOT( onNodeAdded(vtkObject*,vtkObject*) ) );
-  // Connect scene node removed event so that the per-segment subject hierarchy nodes are removed too
-  qvtkReconnect( this->mrmlScene(), scene, vtkMRMLScene::NodeRemovedEvent, this, SLOT( onNodeRemoved(vtkObject*,vtkObject*) ) );
 
   Superclass::setMRMLScene(scene);
 }
@@ -167,7 +165,7 @@ void qSlicerSegmentationsModule::setup()
   // (otherwise it would be the responsibility of the module that embeds the segment editor widget)
   PythonQt::init();
   PythonQtObjectPtr context = PythonQt::self()->getMainModule();
-  context.evalScript(QString(
+  context.evalScript( QString(
     "from SegmentEditorEffects import * \n"
     "import qSlicerSegmentationsEditorEffectsPythonQt as effects \n"
     "import traceback \n"
@@ -181,7 +179,7 @@ void qSlicerSegmentationsModule::setup()
     "    exec(\"{0}Instance = effects.qSlicerSegmentEditorScriptedEffect(None);{0}Instance.setPythonSource({0}.__file__.replace('\\\\\\\\','/'));{0}Instance.self().register()\".format(effectName)) \n"
     "  except Exception as e: \n"
     "    logging.error(traceback.format_exc()) \n"
-    ));
+    ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -205,14 +203,19 @@ void qSlicerSegmentationsModule::onNodeAdded(vtkObject* sceneObject, vtkObject* 
     return;
     }
 
+  // Get segmentations subject hierarchy plugin
+  qSlicerSubjectHierarchySegmentationsPlugin* segmentationsPlugin = qobject_cast<qSlicerSubjectHierarchySegmentationsPlugin*>(
+    qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Segmentations") );
+  if (!segmentationsPlugin)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access segmentations subject hierarchy plugin";
+    return;
+    }
+
   // Connect segment added and removed events to plugin to update subject hierarchy accordingly
   vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(nodeObject);
   if (segmentationNode)
     {
-    // Get segmentations subject hierarchy plugin
-    qSlicerSubjectHierarchySegmentationsPlugin* segmentationsPlugin = qobject_cast<qSlicerSubjectHierarchySegmentationsPlugin*>(
-      qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Segmentations") );
-
     qvtkConnect( segmentationNode, vtkSegmentation::SegmentAdded,
       segmentationsPlugin, SLOT( onSegmentAdded(vtkObject*,void*) ) );
     qvtkConnect( segmentationNode, vtkSegmentation::SegmentRemoved,
@@ -221,122 +224,14 @@ void qSlicerSegmentationsModule::onNodeAdded(vtkObject* sceneObject, vtkObject* 
       segmentationsPlugin, SLOT( onSegmentModified(vtkObject*,void*) ) );
     }
 
-  // Connect subject hierarchy modified event to handle renaming segments
+  // Connect subject hierarchy modified event to handle renaming segments from subject hierarchy
   vtkMRMLSubjectHierarchyNode* subjectHierarchyNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(nodeObject);
   if (subjectHierarchyNode)
     {
-    qvtkConnect( subjectHierarchyNode, vtkCommand::ModifiedEvent,
-      this, SLOT( onSubjectHierarchyNodeModified(vtkObject*) ) );
-    }
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerSegmentationsModule::onNodeRemoved(vtkObject* sceneObject, vtkObject* nodeObject)
-{
-  vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sceneObject);
-  if (!scene)
-    {
-    return;
-    }
-
-  // Do nothing if scene is closing
-  if (scene->IsClosing())
-    {
-    return;
-    }
-
-  vtkMRMLSubjectHierarchyNode* removedShNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(nodeObject);
-  if (!removedShNode)
-    {
-    return;
-    }
-
-  // If a segment SH node was removed then remove segment from its segmentation
-  if (removedShNode->GetAttribute(vtkMRMLSegmentationNode::GetSegmentIDAttributeName()))
-    {
-    std::string segmentId = removedShNode->GetAttribute(vtkMRMLSegmentationNode::GetSegmentIDAttributeName());
-
-    // Rely only on ID because the removed node is not in the scene any more
-    vtkMRMLSubjectHierarchyNode* segmentationShNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(
-      scene->GetNodeByID(removedShNode->GetParentNodeID()) );
-    if (!segmentationShNode)
-      {
-      // Happens if segmentation SH is removed, and segment SH nodes are removed from the other branch of this function
-      return;
-      }
-    vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(
-      segmentationShNode->GetAssociatedNode() );
-    if (segmentationNode)
-      {
-      // Segment might have been removed first, and subject hierarchy second, in which case we should not try to remove segment again
-      if (segmentationNode->GetSegmentation()->GetSegment(segmentId))
-        {
-        segmentationNode->GetSegmentation()->RemoveSegment(segmentId);
-        }
-      }
-    }
-  // If a segmentation SH node was removed then remove its virtual branch containing the segment SH nodes
-  // (the SegmentRemoved event is not hit any more as the segmentation object was already removed)
-  else if (removedShNode->GetOwnerPluginName() && !strcmp(removedShNode->GetOwnerPluginName(), "Segmentations"))
-    {
-    // Collect a list of segment subject hierarchy nodes that are children of the node removed
-    std::vector<vtkMRMLSubjectHierarchyNode*> segmentShNodesToRemove;
-    scene->InitTraversal();
-    vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(
-      scene->GetNextNodeByClass("vtkMRMLSubjectHierarchyNode") );
-    while (shNode != NULL)
-      {
-      // Rely only on IDs because the removed node is not in the scene any more
-      if (shNode->GetParentNodeID() && !strcmp(shNode->GetParentNodeID(), removedShNode->GetID()))
-        {
-        segmentShNodesToRemove.push_back(shNode);
-        }
-      shNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(scene->GetNextNodeByClass("vtkMRMLSubjectHierarchyNode"));
-      }
-
-    // Now remove the collected nodes. Batch process is only used if many nodes will be removed
-    // because entering/exiting batch processing is a very expensive operation (the display flickers,
-    // lots of things are recomputed), so it should be only done if we save time by skipping many small updates.
-    int toRemove = segmentShNodesToRemove.size();
-    bool useBatchMode = toRemove > 10; // Switch to batch mode if more than 10 nodes to remove
-    int progress = 0;
-    if (useBatchMode)
-      {
-      scene->StartState(vtkMRMLScene::BatchProcessState, toRemove);
-      }
-      std::vector<vtkMRMLSubjectHierarchyNode*>::const_iterator nodeIterator;
-      nodeIterator = segmentShNodesToRemove.begin();
-      while (nodeIterator != segmentShNodesToRemove.end())
-        {
-        scene->RemoveNode(*nodeIterator);
-        if (useBatchMode)
-          {
-          scene->ProgressState(vtkMRMLScene::BatchProcessState, ++progress);
-          }
-        ++nodeIterator;
-        }
-    if (useBatchMode)
-      {
-      scene->EndState(vtkMRMLScene::BatchProcessState);
-      }
-    }
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerSegmentationsModule::onSubjectHierarchyNodeModified(vtkObject* nodeObject)
-{
-  vtkMRMLSubjectHierarchyNode* subjectHierarchyNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(nodeObject);
-  if (subjectHierarchyNode && subjectHierarchyNode->GetAttribute(vtkMRMLSegmentationNode::GetSegmentIDAttributeName()))
-    {
-    // If segment name is different than subject hierarchy node name (without postfix) then rename segment
-    vtkSegment* segment = vtkSlicerSegmentationsModuleLogic::GetSegmentForSegmentSubjectHierarchyNode(subjectHierarchyNode);
-    if (segment && segment->GetName())
-      {
-      if (strcmp(segment->GetName(), subjectHierarchyNode->GetNameWithoutPostfix().c_str()))
-        {
-        segment->SetName(subjectHierarchyNode->GetNameWithoutPostfix().c_str());
-        }
-      }
+    qvtkConnect( subjectHierarchyNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent,
+      segmentationsPlugin, SLOT( onSubjectHierarchyItemModified(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID) ) );
+    qvtkConnect( subjectHierarchyNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAboutToBeRemovedEvent,
+      segmentationsPlugin, SLOT( onSubjectHierarchyItemRemoved(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID) ) );
     }
 }
 

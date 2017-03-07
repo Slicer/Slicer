@@ -61,20 +61,14 @@ void qSlicerSubjectHierarchySettingsPanelPrivate::init()
   this->setupUi(q);
 
   // Default values
-  this->AutoCreateSubjectHierarchyEnabledCheckBox->setChecked(false);
   this->AutoDeleteSubjectHierarchyChildrenEnabledCheckBox->setChecked(false);
 
   // Register settings
-  q->registerProperty("SubjectHierarchy/AutoCreateSubjectHierarchy", this->AutoCreateSubjectHierarchyEnabledCheckBox,
-                      "checked", SIGNAL(toggled(bool)),
-                      "Enable/disable automatic subject hierarchy creation", ctkSettingsPanel::OptionRequireRestart);
   q->registerProperty("SubjectHierarchy/AutoDeleteSubjectHierarchyChildren", this->AutoDeleteSubjectHierarchyChildrenEnabledCheckBox,
                       "checked", SIGNAL(toggled(bool)),
                       "Enable/disable automatic subject hierarchy children deletion", ctkSettingsPanel::OptionRequireRestart);
 
   // Actions to propagate to the application when settings are changed
-  QObject::connect(this->AutoCreateSubjectHierarchyEnabledCheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(enableAutoCreateSubjectHierarchy(bool)));
   QObject::connect(this->AutoDeleteSubjectHierarchyChildrenEnabledCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(enableAutoDeleteSubjectHierarchyChildren(bool)));
 
@@ -95,12 +89,6 @@ qSlicerSubjectHierarchySettingsPanel::qSlicerSubjectHierarchySettingsPanel(QWidg
 // --------------------------------------------------------------------------
 qSlicerSubjectHierarchySettingsPanel::~qSlicerSubjectHierarchySettingsPanel()
 {
-}
-
-// --------------------------------------------------------------------------
-void qSlicerSubjectHierarchySettingsPanel::enableAutoCreateSubjectHierarchy(bool value)
-{
-  Q_UNUSED(value);
 }
 
 // --------------------------------------------------------------------------

@@ -22,7 +22,7 @@
 
 // SubjectHierarchy includes
 #include "qSlicerSubjectHierarchyScriptedPlugin.h"
-#include "vtkMRMLSubjectHierarchyNode.h"
+#include "qSlicerSubjectHierarchyPluginHandler.h"
 
 // Qt includes
 #include <QDebug>
@@ -35,9 +35,6 @@
 // PythonQt includes
 #include <PythonQt.h>
 #include <PythonQtConversion.h>
-
-// MRML includes
-#include <vtkMRMLScene.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>
@@ -58,16 +55,16 @@ public:
     IconMethod,
     VisibilityIconMethod,
     EditPropertiesMethod,
-    DisplayedNodeNameMethod,
+    DisplayedItemNameMethod,
     TooltipMethod,
     SetDisplayVisibilityMethod,
     GetDisplayVisibilityMethod,
-    NodeContextMenuActionsMethod,
+    ItemContextMenuActionsMethod,
     SceneContextMenuActionsMethod,
-    ShowContextMenuActionsForNodeMethod,
+    ShowContextMenuActionsForItemMethod,
     CanAddNodeToSubjectHierarchyMethod,
-    CanReparentNodeInsideSubjectHierarchyMethod,
-    ReparentNodeInsideSubjectHierarchyMethod
+    CanReparentItemInsideSubjectHierarchyMethod,
+    ReparentItemInsideSubjectHierarchyMethod
     };
 
   mutable qSlicerPythonCppAPI PythonCppAPI;
@@ -88,18 +85,18 @@ qSlicerSubjectHierarchyScriptedPluginPrivate::qSlicerSubjectHierarchyScriptedPlu
   this->PythonCppAPI.declareMethod(Self::IconMethod, "icon");
   this->PythonCppAPI.declareMethod(Self::VisibilityIconMethod, "visibilityIcon");
   this->PythonCppAPI.declareMethod(Self::EditPropertiesMethod, "editProperties");
-  this->PythonCppAPI.declareMethod(Self::DisplayedNodeNameMethod, "displayedNodeName");
+  this->PythonCppAPI.declareMethod(Self::DisplayedItemNameMethod, "displayedItemName");
   this->PythonCppAPI.declareMethod(Self::TooltipMethod, "tooltip");
   this->PythonCppAPI.declareMethod(Self::SetDisplayVisibilityMethod, "setDisplayVisibility");
   this->PythonCppAPI.declareMethod(Self::GetDisplayVisibilityMethod, "getDisplayVisibility");
   // Function related methods
-  this->PythonCppAPI.declareMethod(Self::NodeContextMenuActionsMethod, "nodeContextMenuActions");
+  this->PythonCppAPI.declareMethod(Self::ItemContextMenuActionsMethod, "itemContextMenuActions");
   this->PythonCppAPI.declareMethod(Self::SceneContextMenuActionsMethod, "sceneContextMenuActions");
-  this->PythonCppAPI.declareMethod(Self::ShowContextMenuActionsForNodeMethod, "showContextMenuActionsForNode");
+  this->PythonCppAPI.declareMethod(Self::ShowContextMenuActionsForItemMethod, "showContextMenuActionsForItem");
   // Parenting related methods (with default implementation)
   this->PythonCppAPI.declareMethod(Self::CanAddNodeToSubjectHierarchyMethod, "canAddNodeToSubjectHierarchy");
-  this->PythonCppAPI.declareMethod(Self::CanReparentNodeInsideSubjectHierarchyMethod, "canReparentNodeInsideSubjectHierarchy");
-  this->PythonCppAPI.declareMethod(Self::ReparentNodeInsideSubjectHierarchyMethod, "reparentNodeInsideSubjectHierarchy");
+  this->PythonCppAPI.declareMethod(Self::CanReparentItemInsideSubjectHierarchyMethod, "canReparentItemInsideSubjectHierarchy");
+  this->PythonCppAPI.declareMethod(Self::ReparentItemInsideSubjectHierarchyMethod, "reparentItemInsideSubjectHierarchy");
 }
 
 //-----------------------------------------------------------------------------
@@ -226,24 +223,25 @@ void qSlicerSubjectHierarchyScriptedPlugin::setName(QString name)
 }
 
 //-----------------------------------------------------------------------------
-double qSlicerSubjectHierarchyScriptedPlugin::canOwnSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* node)const
+double qSlicerSubjectHierarchyScriptedPlugin::canOwnSubjectHierarchyItem(
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
   PyObject* arguments = PyTuple_New(1);
-  PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(node));
+  PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
   PyObject* result = d->PythonCppAPI.callMethod(d->CanOwnSubjectHierarchyNodeMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
     {
     // Method call failed (probably an omitted function), call default implementation
-    return this->Superclass::canOwnSubjectHierarchyNode(node);
+    return this->Superclass::canOwnSubjectHierarchyItem(itemID);
     }
 
   // Parse result
   if (!PyFloat_Check(result))
     {
     qWarning() << d->PythonSource << ": " << Q_FUNC_INFO << ": Function 'canOwnSubjectHierarchyNode' is expected to return a floating point number!";
-    return this->Superclass::canOwnSubjectHierarchyNode(node);
+    return this->Superclass::canOwnSubjectHierarchyItem(itemID);
     }
 
   return PyFloat_AsDouble(result);
@@ -294,24 +292,25 @@ const QString qSlicerSubjectHierarchyScriptedPlugin::helpText()const
 }
 
 //---------------------------------------------------------------------------
-QIcon qSlicerSubjectHierarchyScriptedPlugin::icon(vtkMRMLSubjectHierarchyNode* node)
+QIcon qSlicerSubjectHierarchyScriptedPlugin::icon(
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
   PyObject* arguments = PyTuple_New(1);
-  PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(node));
+  PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
   PyObject* result = d->PythonCppAPI.callMethod(d->IconMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
     {
     // Method call failed (probably an omitted function), call default implementation
-    return this->Superclass::icon(node);
+    return this->Superclass::icon(itemID);
     }
 
   // Parse result
   QVariant resultVariant = PythonQtConv::PyObjToQVariant(result, QVariant::Icon);
   if (resultVariant.isNull())
     {
-    return this->Superclass::icon(node);
+    return this->Superclass::icon(itemID);
     }
   return resultVariant.value<QIcon>();
 }
@@ -340,36 +339,37 @@ QIcon qSlicerSubjectHierarchyScriptedPlugin::visibilityIcon(int visible)
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyScriptedPlugin::editProperties(vtkMRMLSubjectHierarchyNode* node)
+void qSlicerSubjectHierarchyScriptedPlugin::editProperties(
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
   PyObject* arguments = PyTuple_New(1);
-  PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(node));
+  PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
   PyObject* result = d->PythonCppAPI.callMethod(d->EditPropertiesMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
     {
     // Method call failed (probably an omitted function), call default implementation
-    this->Superclass::editProperties(node);
+    this->Superclass::editProperties(itemID);
     }
 }
 
 //-----------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::nodeContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::itemContextMenuActions()const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
-  PyObject* result = d->PythonCppAPI.callMethod(d->NodeContextMenuActionsMethod);
+  PyObject* result = d->PythonCppAPI.callMethod(d->ItemContextMenuActionsMethod);
   if (!result)
     {
     // Method call failed (probably an omitted function), call default implementation
-    return this->Superclass::nodeContextMenuActions();
+    return this->Superclass::itemContextMenuActions();
     }
 
   // Parse result
   QVariant resultVariant = PythonQtConv::PyObjToQVariant(result, QVariant::List);
   if (resultVariant.isNull())
     {
-    return this->Superclass::nodeContextMenuActions();
+    return this->Superclass::itemContextMenuActions();
     }
   QList<QVariant> resultVariantList = resultVariant.toList();
   QList<QAction*> actionList;
@@ -409,185 +409,193 @@ QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::sceneContextMenuActions()
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyScriptedPlugin::showContextMenuActionsForNode(vtkMRMLSubjectHierarchyNode* node)
+void qSlicerSubjectHierarchyScriptedPlugin::showContextMenuActionsForItem(
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)
 {
   Q_D(qSlicerSubjectHierarchyScriptedPlugin);
 
-  // Hide all actions before showing them based on node
+  // Hide all actions before showing them based on item
   this->hideAllContextMenuActions();
 
   PyObject* arguments = PyTuple_New(1);
-  PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(node));
-  PyObject* result = d->PythonCppAPI.callMethod(d->ShowContextMenuActionsForNodeMethod, arguments);
+  PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
+  PyObject* result = d->PythonCppAPI.callMethod(d->ShowContextMenuActionsForItemMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
     {
     // Method call failed (probably an omitted function), call default implementation
-    this->Superclass::showContextMenuActionsForNode(node);
+    this->Superclass::showContextMenuActionsForItem(itemID);
     }
 }
 
 //----------------------------------------------------------------------------
-double qSlicerSubjectHierarchyScriptedPlugin::canAddNodeToSubjectHierarchy(vtkMRMLNode* node,
-                                                                           vtkMRMLSubjectHierarchyNode* parent/*=NULL*/)const
+double qSlicerSubjectHierarchyScriptedPlugin::canAddNodeToSubjectHierarchy(
+  vtkMRMLNode* node,
+  SubjectHierarchyItemID parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
   PyObject* arguments = PyTuple_New(2);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(node));
-  PyTuple_SET_ITEM(arguments, 1, vtkPythonUtil::GetObjectFromPointer(parent));
+  PyTuple_SET_ITEM(arguments, 1, PyLong_FromLongLong(parentItemID));
   PyObject* result = d->PythonCppAPI.callMethod(d->CanAddNodeToSubjectHierarchyMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
     {
     // Method call failed (probably an omitted function), call default implementation
-    return this->Superclass::canAddNodeToSubjectHierarchy(node, parent);
+    return this->Superclass::canAddNodeToSubjectHierarchy(node, parentItemID);
     }
 
   // Parse result
   if (!PyFloat_Check(result))
     {
     qWarning() << d->PythonSource << ": " << Q_FUNC_INFO << ": Function 'canAddNodeToSubjectHierarchy' is expected to return a floating point number!";
-    return this->Superclass::canAddNodeToSubjectHierarchy(node, parent);
+    return this->Superclass::canAddNodeToSubjectHierarchy(node, parentItemID);
     }
 
   return PyFloat_AsDouble(result);
 }
 
 //----------------------------------------------------------------------------
-double qSlicerSubjectHierarchyScriptedPlugin::canReparentNodeInsideSubjectHierarchy(vtkMRMLSubjectHierarchyNode* node,
-                                                                                    vtkMRMLSubjectHierarchyNode* parent)const
+double qSlicerSubjectHierarchyScriptedPlugin::canReparentItemInsideSubjectHierarchy(
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID,
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID parentItemID)const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
   PyObject* arguments = PyTuple_New(2);
-  PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(node));
-  PyTuple_SET_ITEM(arguments, 1, vtkPythonUtil::GetObjectFromPointer(parent));
-  PyObject* result = d->PythonCppAPI.callMethod(d->CanReparentNodeInsideSubjectHierarchyMethod, arguments);
+  PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
+  PyTuple_SET_ITEM(arguments, 1, PyLong_FromLongLong(parentItemID));
+  PyObject* result = d->PythonCppAPI.callMethod(d->CanReparentItemInsideSubjectHierarchyMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
     {
     // Method call failed (probably an omitted function), call default implementation
-    return this->Superclass::canReparentNodeInsideSubjectHierarchy(node, parent);
+    return this->Superclass::canReparentItemInsideSubjectHierarchy(itemID, parentItemID);
     }
 
   // Parse result
   if (!PyFloat_Check(result))
     {
-    qWarning() << d->PythonSource << ": " << Q_FUNC_INFO << ": Function 'canReparentNodeInsideSubjectHierarchy' is expected to return a floating point number!";
-    return this->Superclass::canReparentNodeInsideSubjectHierarchy(node, parent);
+    qWarning() << d->PythonSource << ": " << Q_FUNC_INFO << ": Function 'canReparentItemInsideSubjectHierarchy' is expected to return a floating point number!";
+    return this->Superclass::canReparentItemInsideSubjectHierarchy(itemID, parentItemID);
     }
 
   return PyFloat_AsDouble(result);
 }
 
 //---------------------------------------------------------------------------
-bool qSlicerSubjectHierarchyScriptedPlugin::reparentNodeInsideSubjectHierarchy(vtkMRMLSubjectHierarchyNode* nodeToReparent,
-                                                                               vtkMRMLSubjectHierarchyNode* parentNode)
+bool qSlicerSubjectHierarchyScriptedPlugin::reparentItemInsideSubjectHierarchy(
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID,
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID parentItemID)
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
   PyObject* arguments = PyTuple_New(2);
-  PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(nodeToReparent));
-  PyTuple_SET_ITEM(arguments, 1, vtkPythonUtil::GetObjectFromPointer(parentNode));
-  PyObject* result = d->PythonCppAPI.callMethod(d->ReparentNodeInsideSubjectHierarchyMethod, arguments);
+  PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
+  PyTuple_SET_ITEM(arguments, 1, PyLong_FromLongLong(parentItemID));
+  PyObject* result = d->PythonCppAPI.callMethod(d->ReparentItemInsideSubjectHierarchyMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
     {
     // Method call failed (probably an omitted function), call default implementation
-    return this->Superclass::reparentNodeInsideSubjectHierarchy(nodeToReparent, parentNode);
+    return this->Superclass::reparentItemInsideSubjectHierarchy(itemID, parentItemID);
     }
 
   // Parse result
   if (!PyBool_Check(result))
     {
-    qWarning() << d->PythonSource << ": " << Q_FUNC_INFO << ": Function 'reparentNodeInsideSubjectHierarchy' is expected to return a boolean!";
-    return this->Superclass::reparentNodeInsideSubjectHierarchy(nodeToReparent, parentNode);
+    qWarning() << d->PythonSource << ": " << Q_FUNC_INFO << ": Function 'reparentItemInsideSubjectHierarchy' is expected to return a boolean!";
+    return this->Superclass::reparentItemInsideSubjectHierarchy(itemID, parentItemID);
     }
 
   return result == Py_True;
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSubjectHierarchyScriptedPlugin::displayedNodeName(vtkMRMLSubjectHierarchyNode* node)const
+QString qSlicerSubjectHierarchyScriptedPlugin::displayedItemName(
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
   PyObject* arguments = PyTuple_New(1);
-  PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(node));
-  PyObject* result = d->PythonCppAPI.callMethod(d->DisplayedNodeNameMethod, arguments);
+  PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
+  PyObject* result = d->PythonCppAPI.callMethod(d->DisplayedItemNameMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
     {
     // Method call failed (probably an omitted function), call default implementation
-    return this->Superclass::displayedNodeName(node);
+    return this->Superclass::displayedItemName(itemID);
     }
 
   // Parse result
   if (!PyString_Check(result))
     {
-    qWarning() << d->PythonSource << ": " << Q_FUNC_INFO << ": Function 'displayedNodeName' is expected to return a string!";
-    return this->Superclass::displayedNodeName(node);
+    qWarning() << d->PythonSource << ": " << Q_FUNC_INFO << ": Function 'displayedItemName' is expected to return a string!";
+    return this->Superclass::displayedItemName(itemID);
     }
 
   return PyString_AsString(result);
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSubjectHierarchyScriptedPlugin::tooltip(vtkMRMLSubjectHierarchyNode* node)const
+QString qSlicerSubjectHierarchyScriptedPlugin::tooltip(
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
   PyObject* arguments = PyTuple_New(1);
-  PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(node));
+  PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
   PyObject* result = d->PythonCppAPI.callMethod(d->TooltipMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
     {
     // Method call failed (probably an omitted function), call default implementation
-    return this->Superclass::tooltip(node);
+    return this->Superclass::tooltip(itemID);
     }
 
   // Parse result
   if (!PyString_Check(result))
     {
     qWarning() << d->PythonSource << ": " << Q_FUNC_INFO << ": Function 'tooltip' is expected to return a string!";
-    return this->Superclass::tooltip(node);
+    return this->Superclass::tooltip(itemID);
     }
 
   return PyString_AsString(result);
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyScriptedPlugin::setDisplayVisibility(vtkMRMLSubjectHierarchyNode* node, int visible)
+void qSlicerSubjectHierarchyScriptedPlugin::setDisplayVisibility(
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID, int visible)
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
   PyObject* arguments = PyTuple_New(2);
-  PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(node));
+  PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
   PyTuple_SET_ITEM(arguments, 1, PyInt_FromLong(visible));
   PyObject* result = d->PythonCppAPI.callMethod(d->SetDisplayVisibilityMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
     {
     // Method call failed (probably an omitted function), call default implementation
-    this->Superclass::setDisplayVisibility(node, visible);
+    this->Superclass::setDisplayVisibility(itemID, visible);
     }
 }
 
 //-----------------------------------------------------------------------------
-int qSlicerSubjectHierarchyScriptedPlugin::getDisplayVisibility(vtkMRMLSubjectHierarchyNode* node)const
+int qSlicerSubjectHierarchyScriptedPlugin::getDisplayVisibility(
+  vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemID itemID)const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
   PyObject* arguments = PyTuple_New(1);
-  PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(node));
+  PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
   PyObject* result = d->PythonCppAPI.callMethod(d->GetDisplayVisibilityMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
     {
     // Method call failed (probably an omitted function), call default implementation
-    return this->Superclass::getDisplayVisibility(node);
+    return this->Superclass::getDisplayVisibility(itemID);
     }
 
   // Parse result
   if (!PyInt_Check(result))
     {
     qWarning() << d->PythonSource << ": " << Q_FUNC_INFO << ": Function 'getDisplayVisibility' is expected to return an integer!";
-    return this->Superclass::getDisplayVisibility(node);
+    return this->Superclass::getDisplayVisibility(itemID);
     }
 
   return (int)PyInt_AsLong(result);
