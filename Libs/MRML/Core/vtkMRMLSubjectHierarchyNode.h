@@ -61,6 +61,9 @@ public:
   static const std::string SUBJECTHIERARCHY_SEPARATOR;
   static const std::string SUBJECTHIERARCHY_NAME_VALUE_SEPARATOR;
 
+  // Attribute name to identify subject hierarchy 2.0 nodes in scene MRML files
+  static const std::string SUBJECTHIERARCHY_VERSION_ATTRIBUTE_NAME;
+
   enum
   {
     SubjectHierarchyItemAddedEvent = 62000,
@@ -81,6 +84,8 @@ public:
 
   /// Read item from XML
   virtual void ReadItemFromXML(const char** atts);
+  /// Write this node's information to a MRML file in XML format.
+  virtual void WriteXML(ostream& of, int indent);
   /// Write this node's body to a MRML file in XML format.
   virtual void WriteNodeBodyXML(ostream& of, int indent);
 

@@ -18,6 +18,7 @@ Version:   $Revision: 1.8 $
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLSubjectHierarchyNode.h"
+#include "vtkMRMLSubjectHierarchyLegacyNode.h"
 #include "vtkMRMLSceneViewNode.h"
 #include "vtkTagTable.h"
 
@@ -168,6 +169,28 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
       // replace the current node with the new one
       node->Delete();
       node=newTypeLabelMapNode;
+      }
+    }
+
+  // Replace old-style subject hierarchy nodes (vtkMRMLSubjectHierarchy nodes without the version
+  // attribute) with legacy node type that is handled by the hierarchy
+  if (node->IsA("vtkMRMLSubjectHierarchyNode"))
+    {
+    const char* shVersionAttr = node->GetAttribute(
+      vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_VERSION_ATTRIBUTE_NAME.c_str() );
+    bool isOldShNode = shVersionAttr ? (atoi(shVersionAttr)<2) : true;
+    if (isOldShNode)
+      {
+      // create a copy of the node of the correct class
+      vtkMRMLSubjectHierarchyLegacyNode* legacyShNode = vtkMRMLSubjectHierarchyLegacyNode::New(); // Type is not registered
+      // Set scene and read attributes manually, because CopyWithScene does not work due to vtkMRMLSubjectHierarchy node not
+      // being child class of vtkMRMLHierarchyNode, and copying non-existent node references results in invalid memory access
+      legacyShNode->SetScene(this->GetMRMLScene());
+      legacyShNode->ReadXMLAttributes(atts);
+      legacyShNode->HideFromEditorsOff(); // disable hide from editors so that the nodes can be added to subject hierarchy
+      // replace the current node with the new one
+      node->Delete();
+      node=legacyShNode;
       }
     }
 

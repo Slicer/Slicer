@@ -308,13 +308,14 @@ double qSlicerSubjectHierarchyFolderPlugin::canAddNodeToSubjectHierarchy(
   vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
 {
   Q_UNUSED(parentItemID);
-  vtkMRMLHierarchyNode* hierarchyNode = vtkMRMLHierarchyNode::SafeDownCast(node);
   if (!node)
     {
     qCritical() << Q_FUNC_INFO << ": Input node is NULL";
     return 0.0;
     }
-  else if (hierarchyNode && (!hierarchyNode->GetAssociatedNodeID() || !strcmp(hierarchyNode->GetAssociatedNodeID(), "")))
+
+  vtkMRMLHierarchyNode* hierarchyNode = vtkMRMLHierarchyNode::SafeDownCast(node);
+  if (hierarchyNode && (!hierarchyNode->GetAssociatedNodeID() || !strcmp(hierarchyNode->GetAssociatedNodeID(), "")))
     {
     // Node is a hierarchy and it has no associated data node
     // (which usually means it's an intermediate node with children)
@@ -553,12 +554,12 @@ bool qSlicerSubjectHierarchyFolderPlugin::resolveHierarchyForItem(vtkIdType item
     }
 
   // See if a data node is associated to the parent hierarchy node.
-  // It should not be, as in node hierarchies the parent nodes must not be associated to a data node.
+  // It should not happen, as in node hierarchies the parent nodes must not be associated to a data node.
   // In any case, get the subject hierarchy item for that
   associatedParentDataNode = parentHierarchyNode->GetAssociatedNode();
   if (associatedParentDataNode)
     {
-    qWarning() << Q_FUNC_INFO << ": Parent hierarchy node has an associated data node, which should not be, as in "
+    qDebug() << Q_FUNC_INFO << ": Parent hierarchy node has an associated data node, which should not happen, as in "
       << "node hierarchies the parent nodes must not be associated to a data node";
     parentItemID = shNode->GetItemByDataNode(associatedParentDataNode);
     }

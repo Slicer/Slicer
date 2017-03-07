@@ -47,6 +47,7 @@
 const vtkIdType vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID = VTK_UNSIGNED_LONG_MAX;
 const std::string vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_SEPARATOR = std::string("|");
 const std::string vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_NAME_VALUE_SEPARATOR = std::string("^");
+const std::string vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_VERSION_ATTRIBUTE_NAME = std::string("SubjectHierarchyVersion");
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLSubjectHierarchyNode);
@@ -1541,6 +1542,15 @@ void vtkMRMLSubjectHierarchyNode::ReadItemFromXML(const char** atts)
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLSubjectHierarchyNode::WriteXML(ostream& of, int nIndent)
+{
+  // Add attribute to unambiguously identify subject hierarchy 2.0 node in scene MRML files
+  this->SetAttribute(SUBJECTHIERARCHY_VERSION_ATTRIBUTE_NAME.c_str(), "2");
+
+  Superclass::WriteXML(of,nIndent);
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLSubjectHierarchyNode::WriteNodeBodyXML(ostream& of, int indent)
 {
   if (this->Internal->SceneItem)
@@ -1556,9 +1566,12 @@ void vtkMRMLSubjectHierarchyNode::Copy(vtkMRMLNode *anode)
   int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLSubjectHierarchyNode *node = (vtkMRMLSubjectHierarchyNode*)anode;
 
-  vtkErrorMacro("Copy: Not implemented - subject hierarchy node should not be copied");
+  vtkMRMLSubjectHierarchyNode* otherNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(anode);
+  if (otherNode)
+    {
+    vtkErrorMacro("Copy: Not implemented - subject hierarchy node should not be copied");
+    }
 
   this->EndModify(disabledModify);
 }

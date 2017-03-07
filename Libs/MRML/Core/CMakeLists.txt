@@ -167,6 +167,8 @@ set(MRMLCore_SRCS
   vtkMRMLSubjectHierarchyConstants.h
   vtkMRMLSubjectHierarchyNode.cxx
   vtkMRMLSubjectHierarchyNode.h
+  vtkMRMLSubjectHierarchyLegacyNode.cxx
+  vtkMRMLSubjectHierarchyLegacyNode.h
   vtkMRMLTableNode.cxx
   vtkMRMLTableStorageNode.cxx
   vtkMRMLTableSQLiteStorageNode.cxx
