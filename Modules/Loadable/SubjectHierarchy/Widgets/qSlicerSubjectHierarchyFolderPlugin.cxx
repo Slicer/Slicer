@@ -404,7 +404,7 @@ double qSlicerSubjectHierarchyFolderPlugin::canReparentItemInsideSubjectHierarch
 
   // Reparent items with associated data nodes that have an associated hierarchy node
   vtkMRMLNode* associatedNode = shNode->GetItemDataNode(itemID);
-  if (vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(shNode->GetScene(), associatedNode->GetID()))
+  if (associatedNode && vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(shNode->GetScene(), associatedNode->GetID()))
     {
     return 0.9;
     }
