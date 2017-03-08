@@ -305,6 +305,8 @@ void vtkMRMLNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   os << indent << "ID: " <<
     (this->ID ? this->ID : "(none)") << "\n";
+  os << indent << "Class: " <<
+    (this->GetClassName() ? this->GetClassName() : "(none)") << "\n";
 
   // vtkObject's PrintSelf prints a long list of registered events, which
   // is too long and not useful, therefore we don't call vtkObject::PrintSelf
