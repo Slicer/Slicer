@@ -22,7 +22,7 @@
 #include "vtkIntArray.h"
 
 class vtkMRMLScene;
-
+class vtkStringArray;
 
 // VTK includes
 #include <vtkObject.h>
@@ -300,6 +300,9 @@ public:
 
   /// Get all attribute names.
   std::vector< std::string > GetAttributeNames();
+
+  /// Get all attribute names. Python-wrappable version.
+  void GetAttributeNames(vtkStringArray* attributeNames);
 
   /// Describes if the node is hidden.
   vtkGetMacro(HideFromEditors, int);

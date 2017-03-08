@@ -20,6 +20,7 @@ Version:   $Revision: 1.11 $
 #include <vtkCallbackCommand.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
+#include <vtkStringArray.h>
 
 // VTKSYS includes
 #include <vtksys/SystemTools.hxx>
@@ -914,6 +915,21 @@ std::vector< std::string > vtkMRMLNode::GetAttributeNames()
     attributeNamesVector.push_back(iter->first);
     }
   return attributeNamesVector;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLNode::GetAttributeNames(vtkStringArray* attributeNames)
+{
+  if (attributeNames == NULL)
+    {
+    vtkErrorMacro("vtkMRMLNode::GetAttributeNames: attributeNames is invalid");
+    return;
+    }
+  attributeNames->Reset();
+  for (AttributesType::iterator iter = this->Attributes.begin(); iter != this->Attributes.end(); ++iter)
+    {
+    attributeNames->InsertNextValue(iter->first);
+    }
 }
 
 //----------------------------------------------------------------------------
