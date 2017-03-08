@@ -364,7 +364,7 @@ void vtkSubjectHierarchyItem::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Name";
   if (this->DataNode.GetPointer())
     {
-    os << indent << " (from DataNode): " << (this->DataNode->GetName() ? this->DataNode->GetName() : "(none)");
+    os << " (from DataNode): " << (this->DataNode->GetName() ? this->DataNode->GetName() : "(none)") << "\n";
     }
   else
     {
