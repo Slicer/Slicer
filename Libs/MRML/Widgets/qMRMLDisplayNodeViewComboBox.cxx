@@ -42,12 +42,14 @@ public:
   qMRMLDisplayNodeViewComboBoxPrivate(qMRMLDisplayNodeViewComboBox& object);
   void init();
   vtkSmartPointer<vtkMRMLDisplayNode> MRMLDisplayNode;
+  bool IsUpdatingWidgetFromMRML;
 };
 
 // -----------------------------------------------------------------------------
 qMRMLDisplayNodeViewComboBoxPrivate
 ::qMRMLDisplayNodeViewComboBoxPrivate(qMRMLDisplayNodeViewComboBox& object)
   : q_ptr(&object)
+  , IsUpdatingWidgetFromMRML(false)
 {
 }
 
@@ -118,6 +120,9 @@ void qMRMLDisplayNodeViewComboBox::updateWidgetFromMRML()
     {
     return;
     }
+  bool oldUpdating = d->IsUpdatingWidgetFromMRML;
+  d->IsUpdatingWidgetFromMRML = true;
+
   bool wasBlocking = this->blockSignals(true);
   bool modified = false;
   for (int i = 0; i < this->nodeCount(); ++i)
@@ -142,6 +147,7 @@ void qMRMLDisplayNodeViewComboBox::updateWidgetFromMRML()
     {
     emit checkedNodesChanged();
     }
+  d->IsUpdatingWidgetFromMRML = oldUpdating;
 }
 
 // --------------------------------------------------------------------------
@@ -149,6 +155,10 @@ void qMRMLDisplayNodeViewComboBox::updateMRMLFromWidget()
 {
   Q_D(qMRMLDisplayNodeViewComboBox);
   if (!d->MRMLDisplayNode)
+    {
+    return;
+    }
+  if (d->IsUpdatingWidgetFromMRML)
     {
     return;
     }
