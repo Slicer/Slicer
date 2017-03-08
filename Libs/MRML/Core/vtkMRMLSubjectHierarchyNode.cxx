@@ -361,8 +361,15 @@ void vtkSubjectHierarchyItem::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "ID: " << this->ID << "\n";
 
   os << indent << "DataNode: " << (this->DataNode.GetPointer() ? this->DataNode->GetID() : "(none)") << "\n";
-  os << indent << "Name: " <<
-    ( this->DataNode.GetPointer() ? std::string(this->DataNode->GetName()) + " (from data node)" : this->Name ) << "\n";
+  os << indent << "Name";
+  if (this->DataNode.GetPointer())
+    {
+    os << indent << " (from DataNode): " << (this->DataNode->GetName() ? this->DataNode->GetName() : "(none)");
+    }
+  else
+    {
+    os << ": " << this->Name << "\n";
+    }
 
   os << indent << "Parent: " << (this->Parent ? this->Parent->ID : vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID) << "\n";
   os << indent << "Children: ";
