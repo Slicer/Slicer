@@ -174,7 +174,10 @@ void qSlicerSubjectHierarchyModuleWidget::setMRMLScene(vtkMRMLScene* scene)
   Superclass::setMRMLScene(scene);
 
   // Set tree root item to be the new scene
-  d->SubjectHierarchyTreeView->setRootItem(d->SubjectHierarchyTreeView->subjectHierarchyNode()->GetSceneItemID());
+  if (scene)
+    {
+    d->SubjectHierarchyTreeView->setRootItem(d->SubjectHierarchyTreeView->subjectHierarchyNode()->GetSceneItemID());
+    }
 }
 
 //-----------------------------------------------------------------------------

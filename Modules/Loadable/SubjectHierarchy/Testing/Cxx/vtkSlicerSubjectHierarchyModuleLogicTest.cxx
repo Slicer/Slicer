@@ -401,7 +401,7 @@ namespace
 
     commonAncestorItemID = vtkSlicerSubjectHierarchyModuleLogic::AreItemsInSameBranch(
       shNode, volume1ShItemID, volume2ShItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy());
-    if (commonAncestorItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    if (commonAncestorItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
       {
       std::cerr << "Common parent check failed (volume1 and volume2 are not in the same study)" << std::endl;
       return false;
