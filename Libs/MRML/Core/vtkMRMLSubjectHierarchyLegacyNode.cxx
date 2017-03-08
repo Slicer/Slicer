@@ -86,7 +86,7 @@ void vtkMRMLSubjectHierarchyLegacyNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 const char* vtkMRMLSubjectHierarchyLegacyNode::GetNodeTagName()
 {
-  return "SubjectHierarchy";
+  return "SubjectHierarchyLegacy";
 }
 
 //----------------------------------------------------------------------------
