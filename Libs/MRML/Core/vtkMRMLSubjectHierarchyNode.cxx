@@ -1920,6 +1920,21 @@ void vtkMRMLSubjectHierarchyNode::ItemModified(vtkIdType itemID)
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLSubjectHierarchyNode::RequestOwnerPluginSearch(vtkIdType itemID)
+{
+  // Not used, but we need to make sure that the item exists
+  vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
+  if (!item)
+    {
+    vtkErrorMacro("RequestOwnerPluginSearch: Failed to find subject hierarchy item by ID " << itemID);
+    return;
+    }
+
+  // Invoke the node event directly, thus saving an extra callback round
+  this->InvokeCustomModifiedEvent(SubjectHierarchyItemOwnerPluginSearchRequested, (void*)&itemID);
+}
+
+//---------------------------------------------------------------------------
 vtkIdType vtkMRMLSubjectHierarchyNode::CreateItem(
   vtkIdType parentItemID,
   std::string name,
@@ -1943,7 +1958,12 @@ vtkIdType vtkMRMLSubjectHierarchyNode::CreateItem(
   item->AddObserver(vtkCommand::ModifiedEvent, this->ItemEventCallbackCommand);
 
   // Add item to the tree
-  return item->AddToTree(parentItem, name, level);
+  vtkIdType itemID = item->AddToTree(parentItem, name, level);
+
+  // Request owner plugin search (it may depend on the parent etc.)
+  this->RequestOwnerPluginSearch(itemID);
+
+  return itemID;
 }
 
 //---------------------------------------------------------------------------
@@ -2018,6 +2038,9 @@ vtkIdType vtkMRMLSubjectHierarchyNode::CreateItem(
     // Add item to the tree
     itemID = item->AddToTree(parentItem, dataNode, level);
     }
+
+  // Request owner plugin search (it may depend on the parent, data node etc.)
+  this->RequestOwnerPluginSearch(itemID);
 
   return itemID;
 }
@@ -2784,6 +2807,7 @@ void vtkMRMLSubjectHierarchyNode::ItemEventCallback(vtkObject* caller, unsigned 
     case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAboutToBeRemovedEvent:
     case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemRemovedEvent:
     case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemUIDAddedEvent:
+    case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemOwnerPluginSearchRequested:
       {
       // Get item from call data
       vtkSubjectHierarchyItem* item = reinterpret_cast<vtkSubjectHierarchyItem*>(callData);

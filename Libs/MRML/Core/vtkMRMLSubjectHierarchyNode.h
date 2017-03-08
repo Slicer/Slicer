@@ -70,9 +70,13 @@ public:
     SubjectHierarchyItemAboutToBeRemovedEvent,
     SubjectHierarchyItemRemovedEvent,
     SubjectHierarchyItemModifiedEvent,
-    /// Event fired when UID is added to subject hierarchy item. Useful when using UIDs
+    /// Event invoked when UID is added to subject hierarchy item. Useful when using UIDs
     /// to find related nodes, and the nodes are loaded sequentially in unspecified order.
-    SubjectHierarchyItemUIDAddedEvent
+    SubjectHierarchyItemUIDAddedEvent,
+    /// Event invoked when a subject hierarchy item or its data node changed in a way that
+    /// will influence the best owner plugin. Typically invoked by \sa RequestOwnerPluginSearch
+    /// after setting an attribute indicating a desired role for the item
+    SubjectHierarchyItemOwnerPluginSearchRequested
   };
 
 public:
@@ -151,6 +155,10 @@ public:
   /// Invoke item modified event (that triggers per-item update in the views). Useful if a property of the item
   /// changes that does not originate in the subject hierarchy item (such as visibility or transform of data node)
   void ItemModified(vtkIdType itemID);
+
+  /// Invoke SubjectHierarchyItemOwnerPluginSearchRequested event for the item, which results in a search for owner plugin.
+  /// Typically called after setting an attribute indicating a desired role for the item.
+  void RequestOwnerPluginSearch(vtkIdType itemID);
 
   /// Python accessor for the invalid ID
   static const vtkIdType GetInvalidItemID() { return INVALID_ITEM_ID; };

@@ -394,6 +394,7 @@ void qSlicerSubjectHierarchyPluginHandler::setSubjectHierarchyNode(vtkMRMLSubjec
   if (shNode)
     {
     shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAddedEvent, m_CallBack);
+    shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemOwnerPluginSearchRequested, m_CallBack);
     shNode->AddObserver(vtkCommand::DeleteEvent, m_CallBack);
     }
 }
@@ -498,7 +499,9 @@ void qSlicerSubjectHierarchyPluginHandler::onSubjectHierarchyNodeEvent(
       }
     }
 
-  if ( event == vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAddedEvent && !shNode->GetScene()->IsImporting() )
+  if ( ( event == vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAddedEvent
+      || event == vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemOwnerPluginSearchRequested )
+      && !shNode->GetScene()->IsImporting() )
     {
     // Find plugin for added subject hierarchy item and "claim" it
     pluginHandler->findAndSetOwnerPluginForSubjectHierarchyItem(itemID);
