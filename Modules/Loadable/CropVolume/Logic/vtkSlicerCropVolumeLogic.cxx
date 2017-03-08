@@ -190,6 +190,12 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
       vtkErrorMacro("CropVolume: failed to create output volume");
       return -2;
       }
+    vtkMRMLTransformNode *outputTransform = outputVolume->GetParentTransformNode();
+    if (outputTransform && !outputTransform->IsTransformToWorldLinear())
+      {
+      // Output node must not be under non-linear transform
+      outputVolume->SetAndObserveTransformNodeID(NULL);
+      }
     }
 
   int errorCode = 0;
@@ -202,13 +208,8 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
     errorCode = this->CropInterpolated(inputROI, inputVolume, outputVolume,
       pnode->GetIsotropicResampling(), pnode->GetSpacingScalingConst(), pnode->GetInterpolationMode());
     }
-  if (errorCode != 0)
-    {
-    return errorCode;
-    }
-  // no errors
   pnode->SetOutputVolumeNodeID(outputVolume->GetID());
-  return 0;
+  return errorCode;
 }
 
 //----------------------------------------------------------------------------
