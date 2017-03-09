@@ -172,7 +172,7 @@ void vtkSlicerSegmentationsModuleLogic::OnSubjectHierarchyUIDAdded(vtkObject* ca
   vtkSlicerSegmentationsModuleLogic* self = reinterpret_cast<vtkSlicerSegmentationsModuleLogic*>(clientData);
   vtkMRMLSubjectHierarchyNode* shNode = reinterpret_cast<vtkMRMLSubjectHierarchyNode*>(caller);
   vtkIdType* itemWithNewUID = reinterpret_cast<vtkIdType*>(callData);
-  if (!self || !shNode || itemWithNewUID)
+  if (!self || !shNode || !itemWithNewUID)
     {
     return;
     }

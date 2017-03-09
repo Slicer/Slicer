@@ -741,7 +741,7 @@ vtkSubjectHierarchyItem* vtkSubjectHierarchyItem::FindChildByUIDList(std::string
       }
     if (recursive)
       {
-      vtkSubjectHierarchyItem* foundItemInBranch = currentItem->FindChildByUID(uidName, uidValue);
+      vtkSubjectHierarchyItem* foundItemInBranch = currentItem->FindChildByUIDList(uidName, uidValue);
       if (foundItemInBranch)
         {
         return foundItemInBranch;
