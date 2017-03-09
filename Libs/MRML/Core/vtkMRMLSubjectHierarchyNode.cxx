@@ -218,7 +218,7 @@ public:
   /// Reparent children of the item to the item's parent.
   /// Called right before deleting the item so that its children do not become orphans thus lost to the hierarchy
   void ReparentChildrenToParent();
-  /// Remove all direct children. Do not delete data nodes from the scene. Used in destructor
+  /// Remove all children. Do not delete data nodes from the scene. Used in destructor, and for deleting virtual branches
   void RemoveAllChildren();
   /// Remove all observers from item and its data node if any
   //void RemoveAllObservers(); //TODO: Needed? (the callback object belongs to the SH node so introduction of a new member would be needed)
@@ -1125,13 +1125,24 @@ void vtkSubjectHierarchyItem::ReparentChildrenToParent()
 void vtkSubjectHierarchyItem::RemoveAllChildren()
 {
   std::vector<vtkIdType> childIDs;
-  this->GetDirectChildren(childIDs);
-
-  std::vector<vtkIdType>::iterator childIt;
-  for (childIt=childIDs.begin(); childIt!=childIDs.end(); ++childIt)
+  this->GetAllChildren(childIDs);
+  while (childIDs.size())
     {
-    this->RemoveChild(*childIt);
-    }
+    // Remove first leaf item found
+    std::vector<vtkIdType>::iterator childIt;
+    for (childIt=childIDs.begin(); childIt!=childIDs.end(); ++childIt)
+      {
+      vtkSubjectHierarchyItem* currentItem = this->FindChildByID(*childIt);
+      if (!currentItem->HasChildren())
+        {
+        // Remove leaf item
+        currentItem->Parent->RemoveChild(*childIt);
+        // Remove ID of deleted item from list and keep deleting until empty
+        childIDs.erase(childIt);
+        break;
+        }
+      }
+    } // While there are children to delete
 }
 
 //---------------------------------------------------------------------------
@@ -1494,6 +1505,7 @@ bool vtkMRMLSubjectHierarchyNode::vtkInternal::ResolveUnresolvedItems()
       item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAboutToBeRemovedEvent, this->External->ItemEventCallbackCommand);
       item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemRemovedEvent, this->External->ItemEventCallbackCommand);
       item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemUIDAddedEvent, this->External->ItemEventCallbackCommand);
+      item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemOwnerPluginSearchRequested, this->External->ItemEventCallbackCommand);
       item->AddObserver(vtkCommand::ModifiedEvent, this->External->ItemEventCallbackCommand);
 
       // Clear temporary ID now that it is resolved
@@ -1534,11 +1546,12 @@ vtkMRMLSubjectHierarchyNode::vtkMRMLSubjectHierarchyNode()
 //----------------------------------------------------------------------------
 vtkMRMLSubjectHierarchyNode::~vtkMRMLSubjectHierarchyNode()
 {
+  // Clean up observation
+  this->Internal->SceneItem->RemoveAllObservers();
+  this->ItemEventCallbackCommand->SetClientData(NULL);
+
   delete this->Internal;
   this->Internal = NULL;
-
-  // Make sure this callback cannot call this object
-  this->ItemEventCallbackCommand->SetClientData(NULL);
 }
 
 //----------------------------------------------------------------------------
@@ -1958,6 +1971,7 @@ vtkIdType vtkMRMLSubjectHierarchyNode::CreateItem(
   item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAboutToBeRemovedEvent, this->ItemEventCallbackCommand);
   item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemRemovedEvent, this->ItemEventCallbackCommand);
   item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemUIDAddedEvent, this->ItemEventCallbackCommand);
+  item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemOwnerPluginSearchRequested, this->ItemEventCallbackCommand);
   item->AddObserver(vtkCommand::ModifiedEvent, this->ItemEventCallbackCommand);
 
   // Add item to the tree
@@ -2028,6 +2042,7 @@ vtkIdType vtkMRMLSubjectHierarchyNode::CreateItem(
     item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAboutToBeRemovedEvent, this->ItemEventCallbackCommand);
     item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemRemovedEvent, this->ItemEventCallbackCommand);
     item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemUIDAddedEvent, this->ItemEventCallbackCommand);
+    item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemOwnerPluginSearchRequested, this->ItemEventCallbackCommand);
     item->AddObserver(vtkCommand::ModifiedEvent, this->ItemEventCallbackCommand);
 
     // Observe data node events
@@ -2092,7 +2107,7 @@ bool vtkMRMLSubjectHierarchyNode::RemoveItem(vtkIdType itemID, bool removeDataNo
           break;
           }
         }
-      }
+      } // While there are children to delete
     }
 
   // Remove data node of given item from scene if requested. In that case removing the item explicitly
