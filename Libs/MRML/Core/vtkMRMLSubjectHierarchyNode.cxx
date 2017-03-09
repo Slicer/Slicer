@@ -1111,14 +1111,24 @@ void vtkSubjectHierarchyItem::ReparentChildrenToParent()
     vtkSubjectHierarchyItem::ChildVector::iterator childIt;
     for (childIt=this->Children.begin(); childIt!=this->Children.end(); ++childIt)
       {
+      vtkSubjectHierarchyItem* childItem = (*childIt);
       if (childIt->GetPointer()->ID == (*childIDIt))
         {
-        childIt->GetPointer()->Parent = this->Parent;
-        this->Parent->Children.push_back(*childIt);
+        // Prevent deletion of the item from memory until the events are processed
+        vtkSmartPointer<vtkSubjectHierarchyItem> childSmartPointer = childItem;
+        // Remove child from this item
+        this->Children.erase(childIt);
+        // Add child item to this item's parent
+        childItem->Parent = this->Parent;
+        this->Parent->Children.push_back(childSmartPointer);
+        childItem->Modified();
         break;
         }
       }
     }
+
+  this->Parent->Modified();
+  this->Modified();
 }
 
 //---------------------------------------------------------------------------
