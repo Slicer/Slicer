@@ -211,7 +211,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
 
         self.assertEqual( len( slicer.util.getNodes('vtkMRMLScalarVolumeNode*') ),  numOfScalarVolumeNodesBeforeLoad + 1 )
         self.assertEqual( len( slicer.util.getNodes('vtkMRMLSubjectHierarchyNode*') ), 1 )
-      
+
     except Exception, e:
       import traceback
       traceback.print_exc()
@@ -310,8 +310,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     resampleParameters = { 'outputPixelSpacing':'24.5,24.5,11.5', 'interpolationType':'lanczos',
       'InputVolume':ctVolumeNode.GetID(), 'OutputVolume':resampledVolumeNode.GetID() }
     slicer.cli.run(slicer.modules.resamplescalarvolume, None, resampleParameters, wait_for_completion=True)
-    qt.QApplication.processEvents()
-    # self.delayDisplay("Wait for CLI logic to add result to same branch",self.delayMs)
+    self.delayDisplay("Wait for CLI logic to add result to same branch",self.delayMs)
 
     # Check if output is also under the same study node
     resampledVolumeItemID = shNode.GetItemByDataNode(resampledVolumeNode)
