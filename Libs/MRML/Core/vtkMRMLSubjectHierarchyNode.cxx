@@ -1193,6 +1193,7 @@ void vtkSubjectHierarchyItem::SetAttribute(std::string attributeName, std::strin
     return; // Attribute to set is same as original value, nothing to do
     }
   this->Attributes[attributeName] = attributeValue;
+  this->InvokeEvent(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemOwnerPluginSearchRequested, this);
   this->Modified();
 }
 
@@ -1208,6 +1209,8 @@ bool vtkSubjectHierarchyItem::RemoveAttribute(std::string attributeName)
   if (this->Attributes.find(attributeName) != this->Attributes.end())
     {
     this->Attributes.erase(attributeName);
+    this->InvokeEvent(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemOwnerPluginSearchRequested, this);
+    this->Modified();
     return true;
     }
   return false;
