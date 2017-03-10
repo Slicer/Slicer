@@ -543,7 +543,7 @@ void vtkSubjectHierarchyItem::WriteXML(ostream& of, int nIndent)
   // Start item element
   of << "\n" << indent << "<SubjectHierarchyItem";
 
-  // Write item attributes
+  // Write item properties
   of << " id=\"" << this->ID << "\"";
 
   if (this->DataNode.GetPointer())
@@ -577,7 +577,7 @@ void vtkSubjectHierarchyItem::WriteXML(ostream& of, int nIndent)
     of << "\"";
     }
 
-  if (this->UIDs.size() > 0)
+  if (this->Attributes.size() > 0)
     {
     of << " attributes=\"";
     for (std::map<std::string, std::string>::iterator attIt = this->Attributes.begin(); attIt != this->Attributes.end(); ++attIt)
