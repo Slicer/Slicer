@@ -106,6 +106,10 @@ public:
   /// The ID is resolved to pointer after import ends, and this member is set to INVALID_ITEM_ID.
   vtkIdType TemporaryParentItemID;
 
+  /// Item cache to speed up lookup by ID that needs to be performed many times.
+  /// It can be static as the item IDs are unique in one application session.
+  static std::map<vtkIdType, vtkSubjectHierarchyItem*> ItemCache;
+
 // Get/set functions
 public:
   /// Add item to tree under parent, specifying basic properties
@@ -253,6 +257,8 @@ vtkStandardNewMacro(vtkSubjectHierarchyItem);
 
 vtkIdType vtkSubjectHierarchyItem::NextSubjectHierarchyItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID + 1;
 
+std::map<vtkIdType, vtkSubjectHierarchyItem*> vtkSubjectHierarchyItem::ItemCache = std::map<vtkIdType, vtkSubjectHierarchyItem*>();
+
 //---------------------------------------------------------------------------
 // vtkSubjectHierarchyItem methods
 
@@ -304,9 +310,13 @@ vtkIdType vtkSubjectHierarchyItem::AddToTree(
   this->Parent = parent;
   if (parent)
     {
+    // Add under parent
     vtkSmartPointer<vtkSubjectHierarchyItem> childPointer(this);
     this->Parent->Children.push_back(childPointer);
     this->Parent->Modified(); //TODO: Needed?
+
+    // Add to cache
+    vtkSubjectHierarchyItem::ItemCache[this->ID] = this;
     }
   else if (! ( (!name.compare("Scene") && !level.compare("Scene"))
             || (!name.compare("UnresolvedItems") && !level.compare("UnresolvedItems")) ) )
@@ -341,9 +351,13 @@ vtkIdType vtkSubjectHierarchyItem::AddToTree(
   this->Parent = parent;
   if (parent)
     {
+    // Add under parent
     vtkSmartPointer<vtkSubjectHierarchyItem> childPointer(this);
     this->Parent->Children.push_back(childPointer);
     this->Parent->Modified(); //TODO: Needed?
+
+    // Add to cache
+    vtkSubjectHierarchyItem::ItemCache[this->ID] = this;
     }
   else
     {
@@ -649,6 +663,24 @@ bool vtkSubjectHierarchyItem::IsVirtualBranchParent()
 //---------------------------------------------------------------------------
 vtkSubjectHierarchyItem* vtkSubjectHierarchyItem::FindChildByID(vtkIdType itemID, bool recursive/*=true*/)
 {
+  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    // No need to look up item ID if it is the invalid ID
+    return NULL;
+    }
+  
+  // Try to find item in cache
+  std::map<vtkIdType, vtkSubjectHierarchyItem*>::iterator itemIt = vtkSubjectHierarchyItem::ItemCache.find(itemID);
+  if (itemIt != vtkSubjectHierarchyItem::ItemCache.end())
+    {
+    return itemIt->second;
+    }
+  else
+    {
+    vtkWarningMacro("FindChildByID: Item cache does not contain requested ID " << itemID);
+    }
+
+  // On failure to look up in cache (should not happen), traverse tree to find item
   ChildVector::iterator childIt;
   for (childIt=this->Children.begin(); childIt!=this->Children.end(); ++childIt)
     {
@@ -1045,6 +1077,9 @@ bool vtkSubjectHierarchyItem::RemoveChild(vtkSubjectHierarchyItem* item)
   // Reparent children to parent node (to avoid them becoming orphans and thus lost to the hierarchy)
   removedItem->ReparentChildrenToParent();
 
+  // Remove from cache
+  vtkSubjectHierarchyItem::ItemCache.erase(removedItem->ID);
+
   // Invoke events
   this->InvokeEvent(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemRemovedEvent, item);
   this->Modified();
@@ -1085,6 +1120,9 @@ bool vtkSubjectHierarchyItem::RemoveChild(vtkIdType itemID)
 
   // Reparent children to parent node (to avoid them becoming orphans and thus lost to the hierarchy)
   removedItem->ReparentChildrenToParent();
+
+  // Remove from cache
+  vtkSubjectHierarchyItem::ItemCache.erase(removedItem->ID);
 
   // Invoke events
   this->InvokeEvent(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemRemovedEvent, removedItem.GetPointer());
@@ -1142,8 +1180,14 @@ void vtkSubjectHierarchyItem::RemoveAllChildren()
     std::vector<vtkIdType>::iterator childIt;
     for (childIt=childIDs.begin(); childIt!=childIDs.end(); ++childIt)
       {
+      if ((*childIt) == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+        {
+        // This can happen when UnresolvedItems are deleted. In that case the items will automatically deconstruct
+        childIDs.erase(childIt);
+        break;
+        }
       vtkSubjectHierarchyItem* currentItem = this->FindChildByID(*childIt);
-      if (!currentItem->HasChildren())
+      if (currentItem && !currentItem->HasChildren())
         {
         // Remove leaf item
         currentItem->Parent->RemoveChild(*childIt);
@@ -2847,6 +2891,7 @@ void vtkMRMLSubjectHierarchyNode::ItemEventCallback(vtkObject* caller, unsigned 
         }
       }
       break;
+
     case vtkCommand::ModifiedEvent:
       {
       vtkSubjectHierarchyItem* item = vtkSubjectHierarchyItem::SafeDownCast(caller);
@@ -2868,6 +2913,7 @@ void vtkMRMLSubjectHierarchyNode::ItemEventCallback(vtkObject* caller, unsigned 
         }
       }
       break;
+
     case vtkMRMLTransformableNode::TransformModifiedEvent:
     case vtkMRMLDisplayableNode::DisplayModifiedEvent:
       {
