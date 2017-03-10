@@ -188,7 +188,7 @@ void vtkSegmentation::PrintSelf(ostream& os, vtkIndent indent)
 //---------------------------------------------------------------------------
 void vtkSegmentation::GetBounds(double bounds[6])
 {
-  vtkMath::UninitializeBounds(bounds);
+  vtkOrientedImageData::UninitializeBounds(bounds);
 
   if (this->Segments.empty())
     {
@@ -201,9 +201,9 @@ void vtkSegmentation::GetBounds(double bounds[6])
 
     vtkSegment* segment = it->second;
     segment->GetBounds(segmentBounds);
-    if (segmentBounds[0]<=segmentBounds[1] &&
-      segmentBounds[2]<=segmentBounds[3] &&
-      segmentBounds[4]<=segmentBounds[5])
+    if ( segmentBounds[0]<=segmentBounds[1] &&
+         segmentBounds[2]<=segmentBounds[3] &&
+         segmentBounds[4]<=segmentBounds[5] )
       {
       // valid bounds
       vtkSegment::ExtendBounds(segmentBounds, bounds);
