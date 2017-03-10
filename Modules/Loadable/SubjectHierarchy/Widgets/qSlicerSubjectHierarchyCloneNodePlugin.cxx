@@ -121,8 +121,7 @@ void qSlicerSubjectHierarchyCloneNodePlugin::showContextMenuActionsForItem(vtkId
     return;
     }
 
-  if ( itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
-    || itemID == shNode->GetSceneItemID() )
+  if (!itemID || itemID == shNode->GetSceneItemID())
     {
     // There are no scene actions in this plugin
     return;
@@ -150,7 +149,7 @@ void qSlicerSubjectHierarchyCloneNodePlugin::cloneCurrentItem()
     }
 
   vtkIdType clonedItemID = vtkSlicerSubjectHierarchyModuleLogic::CloneSubjectHierarchyItem(shNode, currentItemID);
-  if (clonedItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!clonedItemID)
     {
     qCritical() << Q_FUNC_INFO << ": Failed to clone subject hierarchy item (ID:"
         << currentItemID << ", name:" << shNode->GetItemName(currentItemID).c_str() << ")";

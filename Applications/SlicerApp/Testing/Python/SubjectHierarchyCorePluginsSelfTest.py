@@ -116,7 +116,7 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
     fiducialPosition = [100.0, 0.0, 0.0]
     markupsNode.AddFiducialFromArray(fiducialPosition)
     markupsShItemID = shNode.GetItemByDataNode(markupsNode)
-    self.assertNotEqual( markupsShItemID, self.invalidItemID )
+    self.assertIsNotNone( markupsShItemID )
     self.assertEqual( shNode.GetItemOwnerPluginName(markupsShItemID), 'Markups' )
 
     # Create patient and study
@@ -141,7 +141,7 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
     slicer.mrmlScene.AddNode(chartNode)
     chartNode.SetName(self.sampleChartName)
     chartShItemID = shNode.GetItemByDataNode(chartNode)
-    self.assertNotEqual( chartShItemID, self.invalidItemID )
+    self.assertIsNotNone( chartShItemID )
     self.assertEqual( shNode.GetItemOwnerPluginName(chartShItemID), 'Charts' )
 
     # Add chart under study
@@ -160,7 +160,7 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
     markupsNode = slicer.util.getNode(self.sampleMarkupName)
     markupsShItemID = shNode.GetItemByDataNode(markupsNode)
 
-    self.assertNotEqual( markupsShItemID, self.invalidItemID )
+    self.assertIsNotNone( markupsShItemID )
     self.assertIsNotNone( shNode.GetItemDataNode(markupsShItemID) )
 
     # Add storage node for markups node to test cloning those
@@ -189,7 +189,7 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
     clonedMarkupsNode = slicer.util.getNode(clonedMarkupsName)
     self.assertIsNotNone( clonedMarkupsNode )
     clonedMarkupsShItemID = shNode.GetItemChildWithName(self.studyItemID, clonedMarkupsName)
-    self.assertNotEqual( clonedMarkupsShItemID, self.invalidItemID )
+    self.assertIsNotNone( clonedMarkupsShItemID )
     self.assertIsNotNone( clonedMarkupsNode.GetDisplayNode() )
     self.assertIsNotNone( clonedMarkupsNode.GetStorageNode() )
 

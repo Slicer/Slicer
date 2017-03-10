@@ -403,7 +403,7 @@ void qMRMLSubjectHierarchyTreeView::setRootItem(vtkIdType rootItemID)
   this->sortFilterProxyModel()->setHideItemsUnaffiliatedWithItemID(vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID);
 
   QModelIndex treeRootIndex;
-  if (rootItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!rootItemID)
     {
     treeRootIndex = sceneModel->invisibleRootItem()->index();
     }
@@ -454,7 +454,7 @@ vtkIdType qMRMLSubjectHierarchyTreeView::rootItem()const
       // So in that case no checks are performed
       return d->RootItemID;
       }
-    else if (this->sortFilterProxyModel()->hideItemsUnaffiliatedWithItemID() != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    else if (this->sortFilterProxyModel()->hideItemsUnaffiliatedWithItemID())
       {
       treeRootItemID = this->sortFilterProxyModel()->hideItemsUnaffiliatedWithItemID();
       }
@@ -547,7 +547,7 @@ void qMRMLSubjectHierarchyTreeView::toggleVisibility(const QModelIndex& index)
 {
   Q_D(qMRMLSubjectHierarchyTreeView);
   vtkIdType itemID = d->SortFilterModel->subjectHierarchyItemFromIndex(index);
-  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!itemID)
     {
     return;
     }
@@ -595,7 +595,7 @@ void qMRMLSubjectHierarchyTreeView::mousePressEvent(QMouseEvent* e)
       continue;
       }
     vtkIdType itemID = this->sortFilterProxyModel()->subjectHierarchyItemFromIndex(index);
-    if (itemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    if (itemID)
       {
       selectedShItems << itemID;
       }
@@ -632,7 +632,7 @@ void qMRMLSubjectHierarchyTreeView::mousePressEvent(QMouseEvent* e)
     this->populateContextMenuForItem(itemID);
 
     // Show context menu
-    if (itemID == d->SubjectHierarchyNode->GetSceneItemID() || itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    if (!itemID || itemID == d->SubjectHierarchyNode->GetSceneItemID())
       {
       d->SceneMenu->exec(e->globalPos());
       }
@@ -694,7 +694,7 @@ void qMRMLSubjectHierarchyTreeView::onItemExpanded(const QModelIndex &expandedIt
     }
 
   vtkIdType expandedShItemID = d->SortFilterModel->subjectHierarchyItemFromIndex(expandedItemIndex);
-  if (expandedShItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (expandedShItemID)
     {
     d->SubjectHierarchyNode->SetItemExpanded(expandedShItemID, true);
     }
@@ -710,7 +710,7 @@ void qMRMLSubjectHierarchyTreeView::onItemCollapsed(const QModelIndex &collapsed
     }
 
   vtkIdType collapsedShItemID = d->SortFilterModel->subjectHierarchyItemFromIndex(collapsedItemIndex);
-  if (collapsedShItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (collapsedShItemID)
     {
     d->SubjectHierarchyNode->SetItemExpanded(collapsedShItemID, false);
     }
@@ -732,7 +732,7 @@ void qMRMLSubjectHierarchyTreeView::populateContextMenuForItem(vtkIdType itemID)
   // Show multi-selection context menu if there are more than one selected items,
   // and right-click didn't happen on the scene or the empty area
   if ( currentItemIDs.size() > 1
-    && itemID != d->SubjectHierarchyNode->GetSceneItemID() && itemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )
+    && itemID && itemID != d->SubjectHierarchyNode->GetSceneItemID() )
     {
     // Multi-selection: only show delete action
     d->EditAction->setVisible(false);
@@ -751,15 +751,13 @@ void qMRMLSubjectHierarchyTreeView::populateContextMenuForItem(vtkIdType itemID)
   // Single selection
   vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   // If clicked item is the scene or the empty area, then show scene menu regardless the selection
-  if ( itemID == d->SubjectHierarchyNode->GetSceneItemID()
-    || itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )
+  if (!itemID || itemID == d->SubjectHierarchyNode->GetSceneItemID())
     {
-      currentItemID = d->SubjectHierarchyNode->GetSceneItemID();
+    currentItemID = d->SubjectHierarchyNode->GetSceneItemID();
     }
 
   // Do not show certain actions for the scene or empty area
-  if ( currentItemID == d->SubjectHierarchyNode->GetSceneItemID()
-    || currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )
+  if (!currentItemID || currentItemID == d->SubjectHierarchyNode->GetSceneItemID())
     {
     d->EditAction->setVisible(false);
     d->SelectPluginSubMenu->menuAction()->setVisible(false);
@@ -781,7 +779,7 @@ void qMRMLSubjectHierarchyTreeView::populateContextMenuForItem(vtkIdType itemID)
 void qMRMLSubjectHierarchyTreeView::expandItem(vtkIdType itemID)
 {
   Q_D(qMRMLSubjectHierarchyTreeView);
-  if (itemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (itemID)
     {
     QModelIndex itemIndex = d->SortFilterModel->indexFromSubjectHierarchyItem(itemID);
     if (itemIndex.isValid())
@@ -795,7 +793,7 @@ void qMRMLSubjectHierarchyTreeView::expandItem(vtkIdType itemID)
 void qMRMLSubjectHierarchyTreeView::collapseItem(vtkIdType itemID)
 {
   Q_D(qMRMLSubjectHierarchyTreeView);
-  if (itemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (itemID)
     {
     QModelIndex itemIndex = d->SortFilterModel->indexFromSubjectHierarchyItem(itemID);
     if (itemIndex.isValid())
@@ -830,7 +828,7 @@ void qMRMLSubjectHierarchyTreeView::selectPluginForCurrentItem()
     return;
     }
   vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
-  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!currentItemID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid current item for manually selecting role!";
     return;
@@ -865,7 +863,7 @@ void qMRMLSubjectHierarchyTreeView::updateSelectPluginActions()
     return;
     }
   vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
-  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!currentItemID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid current item!";
     return;
@@ -911,7 +909,7 @@ void qMRMLSubjectHierarchyTreeView::renameCurrentItem()
     }
 
   vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
-  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!currentItemID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid current item!";
     return;
@@ -941,7 +939,7 @@ void qMRMLSubjectHierarchyTreeView::editCurrentItem()
     }
 
   vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
-  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!currentItemID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid current item!";
     return;

@@ -123,7 +123,7 @@ double qSlicerSubjectHierarchyChartsPlugin::canAddNodeToSubjectHierarchy(
 //---------------------------------------------------------------------------
 double qSlicerSubjectHierarchyChartsPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
 {
-  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!itemID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
     return 0.0;
@@ -154,7 +154,7 @@ const QString qSlicerSubjectHierarchyChartsPlugin::roleForPlugin()const
 //---------------------------------------------------------------------------
 QIcon qSlicerSubjectHierarchyChartsPlugin::icon(vtkIdType itemID)
 {
-  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!itemID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
     return QIcon();
@@ -189,7 +189,7 @@ QIcon qSlicerSubjectHierarchyChartsPlugin::visibilityIcon(int visible)
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyChartsPlugin::setDisplayVisibility(vtkIdType itemID, int visible)
 {
-  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!itemID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
     return;
@@ -244,7 +244,7 @@ void qSlicerSubjectHierarchyChartsPlugin::setDisplayVisibility(vtkIdType itemID,
       && strcmp(chartViewNode->GetChartNodeID(), associatedChartNode->GetID()) )
       {
       vtkIdType chartItemID = shNode->GetItemByDataNode(scene->GetNodeByID(chartViewNode->GetChartNodeID()));
-      if (chartItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+      if (chartItemID)
         {
         chartViewNode->SetChartNodeID(NULL);
         shNode->ItemModified(chartItemID);
@@ -267,7 +267,7 @@ void qSlicerSubjectHierarchyChartsPlugin::setDisplayVisibility(vtkIdType itemID,
 //-----------------------------------------------------------------------------
 int qSlicerSubjectHierarchyChartsPlugin::getDisplayVisibility(vtkIdType itemID)const
 {
-  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!itemID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
     return -1;

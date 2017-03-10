@@ -130,7 +130,7 @@ vtkIdType vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy(
     }
 
   // Create patient and study nodes if they do not exist yet
-  if (patientItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!patientItemID)
     {
     // This temporary name is updated with correct one specified in the DICOM plugin after calling this function
     std::string name = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNewNodeNamePrefix()
@@ -143,7 +143,7 @@ vtkIdType vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy(
     shNode->SetItemOwnerPluginName(patientItemID, "DICOM");
     }
 
-  if (studyItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!studyItemID)
     {
     // This temporary name is updated with correct one specified in the DICOM plugin after calling this function
     std::string name = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNewNodeNamePrefix()
@@ -185,7 +185,7 @@ vtkIdType vtkSlicerSubjectHierarchyModuleLogic::AreItemsInSameBranch(
     vtkGenericWarningMacro("vtkSlicerSubjectHierarchyModuleLogic::AreItemsInSameBranch: Invalid subject hierarchy node given");
     return vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
     }
-  if (item1 == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID || item2 == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!item1 || !item2)
     {
     vtkErrorWithObjectMacro(shNode, "vtkSlicerSubjectHierarchyModuleLogic::AreItemsInSameBranch: Invalid input items");
     return vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
@@ -201,7 +201,7 @@ vtkIdType vtkSlicerSubjectHierarchyModuleLogic::AreItemsInSameBranch(
   while (true)
     {
     ancestor1 = shNode->GetItemParent(ancestor1);
-    if (ancestor1 == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID || ancestor1 == shNode->GetSceneItemID())
+    if (!ancestor1 || ancestor1 == shNode->GetSceneItemID())
       {
       vtkDebugWithObjectMacro(shNode, "Item ('" << shNode->GetItemName(item1) << "') has no ancestor with level '" << lowestCommonLevel << "'");
       ancestor1 = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
@@ -223,7 +223,7 @@ vtkIdType vtkSlicerSubjectHierarchyModuleLogic::AreItemsInSameBranch(
   while (true)
     {
     ancestor2 = shNode->GetItemParent(ancestor2);
-    if (ancestor2 == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID || ancestor2 == shNode->GetSceneItemID())
+    if (!ancestor2 || ancestor2 == shNode->GetSceneItemID())
       {
       vtkDebugWithObjectMacro(shNode, "Item ('" << shNode->GetItemName(item2) << "') has no ancestor with level '" << lowestCommonLevel << "'");
       ancestor2 = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;

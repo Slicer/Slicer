@@ -174,7 +174,7 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
     if ( storableNode && storableNode->GetStorageNode() && !storableNode->GetHideFromEditors() )
       {
       vtkIdType shItemID = shNode->GetItemByDataNode(storableNode);
-      if (shItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+      if (!shItemID)
         {
         qCritical() << Q_FUNC_INFO << ": Data node " << storableNode->GetName() << " is not in subject hierarchy!";
         continue;
@@ -248,7 +248,7 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
       QString currentComponent = loadedFilePaths[nodeIndex][componentIndex];
       vtkIdType itemID = shNode->GetItemChildWithName(parentItemID, currentComponent.toLatin1().constData());
       // If hierarchy node already created
-      if (itemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+      if (itemID)
         {
         parentItemID = itemID;
         }
@@ -263,7 +263,7 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
         createdItemIDs << parentItemID;
         }
       // Leaf node (file name) and not top-level
-      else if (parentItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+      else if (parentItemID)
         {
         shNode->SetItemParent(vtkIdTypes[nodeIndex], parentItemID);
         }

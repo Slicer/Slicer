@@ -158,7 +158,7 @@ void qSlicerSubjectHierarchyRegisterPlugin::showContextMenuActionsForItem(vtkIdT
   Q_D(qSlicerSubjectHierarchyRegisterPlugin);
   this->hideAllContextMenuActions();
 
-  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!itemID)
     {
     // There are no scene actions in this plugin
     return;
@@ -169,14 +169,14 @@ void qSlicerSubjectHierarchyRegisterPlugin::showContextMenuActionsForItem(vtkIdT
     {
     // Get current item
     vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
-    if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    if (!currentItemID)
       {
       qCritical() << Q_FUNC_INFO << ": Invalid current item";
       return;
       }
 
     // Show 'Register this' action if there is no 'from' item saved
-    if (this->m_RegisterFromItem == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    if (!this->m_RegisterFromItem)
       {
       d->RegisterThisAction->setVisible(true);
       }
@@ -207,7 +207,7 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerCurrentItemTo()
     }
 
   vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
-  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!currentItemID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid current item";
     return;
@@ -230,7 +230,7 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedRigid()
     return;
     }
   vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
-  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!currentItemID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid current item";
     return;
@@ -312,7 +312,7 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedBSpline()
     return;
     }
   vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
-  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!currentItemID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid current item";
     return;
@@ -393,7 +393,7 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerInteractiveLandmark()
     return;
     }
   vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
-  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!currentItemID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid current item";
     return;

@@ -415,18 +415,17 @@ class SegmentationsModuleTest1(unittest.TestCase):
 
     shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
     self.assertIsNotNone( shNode )
-    invalidItemID = slicer.vtkMRMLSubjectHierarchyNode.GetInvalidItemID()
 
     # Check if subject hierarchy items have been created
     segmentationShItemID = shNode.GetItemByDataNode(self.inputSegmentationNode)
-    self.assertNotEqual( segmentationShItemID, invalidItemID )
+    self.assertIsNotNone( segmentationShItemID )
 
     bodyItemID = shNode.GetItemChildWithName(segmentationShItemID, self.bodySegmentName)
-    self.assertNotEqual( bodyItemID, invalidItemID )
+    self.assertIsNotNone( bodyItemID )
     tumorItemID  = shNode.GetItemChildWithName(segmentationShItemID, self.tumorSegmentName)
-    self.assertNotEqual( tumorItemID, invalidItemID )
+    self.assertIsNotNone( tumorItemID )
     sphereItemID  = shNode.GetItemChildWithName(segmentationShItemID, self.sphereSegmentName)
-    self.assertNotEqual( sphereItemID, invalidItemID )
+    self.assertIsNotNone( sphereItemID )
 
     # Rename segment
     bodySegment = self.inputSegmentationNode.GetSegmentation().GetSegment(self.bodySegmentName)
@@ -443,7 +442,7 @@ class SegmentationsModuleTest1(unittest.TestCase):
     self.inputSegmentationNode.GetSegmentation().RemoveSegment(bodySegment)
     qt.QApplication.processEvents()
     logging.info('(The error messages below are results of testing invalidity of objects, they are supposed to appear)')
-    self.assertEqual( shNode.GetItemChildWithName(segmentationShItemID, 'Body'), invalidItemID )
+    self.assertIsNone( shNode.GetItemChildWithName(segmentationShItemID, 'Body') )
     self.assertEqual( self.inputSegmentationNode.GetSegmentation().GetNumberOfSegments(), 2 )
 
     shNode.RemoveItem(tumorItemID)

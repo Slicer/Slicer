@@ -44,7 +44,7 @@
 #include <algorithm>
 
 //----------------------------------------------------------------------------
-const vtkIdType vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID = VTK_UNSIGNED_LONG_MAX;
+const vtkIdType vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID = 0;
 const std::string vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_SEPARATOR = std::string("|");
 const std::string vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_NAME_VALUE_SEPARATOR = std::string("^");
 const std::string vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_VERSION_ATTRIBUTE_NAME = std::string("SubjectHierarchyVersion");
@@ -251,7 +251,7 @@ private:
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSubjectHierarchyItem);
 
-vtkIdType vtkSubjectHierarchyItem::NextSubjectHierarchyItemID = 0;
+vtkIdType vtkSubjectHierarchyItem::NextSubjectHierarchyItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID + 1;
 
 //---------------------------------------------------------------------------
 // vtkSubjectHierarchyItem methods

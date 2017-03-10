@@ -197,7 +197,6 @@ class DICOMPlugin(object):
     # Get subject hierarchy node and basic IDs
     shn = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
     sceneItemID = shn.GetSceneItemID()
-    invalidItemID = slicer.vtkMRMLSubjectHierarchyNode.GetInvalidItemID()
 
     # Set up subject hierarchy item
     seriesItemID = shn.CreateItem(sceneItemID, dataNode, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelSeries())
@@ -236,9 +235,9 @@ class DICOMPlugin(object):
     studyItemID = shn.GetItemByUID(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), studyInstanceUid)
     slicer.vtkSlicerSubjectHierarchyModuleLogic.InsertDicomSeriesInHierarchy(shn, patientId, studyInstanceUid, seriesInstanceUid)
 
-    if patientItemID == invalidItemID:
+    if not patientItemID:
       patientItemID = shn.GetItemByUID(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), patientId)
-      if patientItemID != invalidItemID:
+      if patientItemID:
         # Add attributes for DICOM tags
         patientName = slicer.util.toVTKString(slicer.dicomDatabase.fileValue(firstFile,tags['patientName']))
         if patientName == '':
@@ -257,9 +256,9 @@ class DICOMPlugin(object):
         # Set item name
         shn.SetItemName(patientItemID, patientName)
 
-    if studyItemID == invalidItemID:
+    if not studyItemID:
       studyItemID = shn.GetItemByUID(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), studyInstanceUid)
-      if studyItemID != invalidItemID:
+      if studyItemID:
         # Add attributes for DICOM tags
         studyDescription = slicer.util.toVTKString(slicer.dicomDatabase.fileValue(firstFile,tags['studyDescription']))
         if studyDescription == '':

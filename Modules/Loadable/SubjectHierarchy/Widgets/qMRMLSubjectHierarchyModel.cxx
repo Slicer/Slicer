@@ -136,7 +136,7 @@ QStandardItem* qMRMLSubjectHierarchyModelPrivate::insertSubjectHierarchyItem(vtk
   QStandardItem* parentItem = q->itemFromSubjectHierarchyItem(parentItemID);
   if (!parentItem)
     {
-    if (parentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    if (!parentItemID)
       {
       qCritical() << Q_FUNC_INFO << ": Unable to get parent for subject hierarchy item with ID " << itemID;
       return NULL;
@@ -335,7 +335,7 @@ QModelIndex qMRMLSubjectHierarchyModel::indexFromSubjectHierarchyItem(vtkIdType 
   Q_D(const qMRMLSubjectHierarchyModel);
 
   QModelIndex itemIndex;
-  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!itemID)
     {
     return itemIndex;
     }
@@ -448,7 +448,7 @@ bool qMRMLSubjectHierarchyModel::canBeAChild(vtkIdType itemID)const
     return false;
     }
   // Only the root and invalid item cannot be child
-  return (itemID != d->SubjectHierarchyNode->GetSceneItemID() && itemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID);
+  return (itemID && itemID != d->SubjectHierarchyNode->GetSceneItemID());
 }
 
 //------------------------------------------------------------------------------
@@ -461,7 +461,7 @@ bool qMRMLSubjectHierarchyModel::canBeAParent(vtkIdType itemID)const
     return false;
     }
   // Only invalid item cannot be parent
-  return (itemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID);
+  return (bool)itemID;
 }
 
 //------------------------------------------------------------------------------
@@ -493,8 +493,7 @@ bool qMRMLSubjectHierarchyModel::isAffiliatedItem(vtkIdType itemA, vtkIdType ite
 //------------------------------------------------------------------------------
 bool qMRMLSubjectHierarchyModel::reparent(vtkIdType itemID, vtkIdType newParentID)
 {
-  if ( itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID || newParentID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
-    || newParentID == itemID )
+  if (!itemID || !newParentID || newParentID == itemID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid input";
     return false;
@@ -582,15 +581,14 @@ bool qMRMLSubjectHierarchyModel::moveToRow(vtkIdType itemID, int newRow)
     return false;
     }
 
-  if ( itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
-    || itemID == d->SubjectHierarchyNode->GetSceneItemID() )
+  if (!itemID || itemID == d->SubjectHierarchyNode->GetSceneItemID())
     {
     qCritical() << Q_FUNC_INFO << ": Invalid input item ID";
     return false;
     }
 
   vtkIdType parentItemID = this->parentSubjectHierarchyItem(itemID);
-  if (parentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!parentItemID)
     {
     qCritical() << Q_FUNC_INFO << ": No parent found for item " << itemID;
     return false;
@@ -791,7 +789,7 @@ QFlags<Qt::ItemFlag> qMRMLSubjectHierarchyModel::subjectHierarchyItemFlags(vtkId
     }
   // Along the same logic, drop is not enabled to children nodes in virtual branches
   vtkIdType parentItemID = d->SubjectHierarchyNode->GetItemParent(itemID);
-  if ( parentItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
+  if (parentItemID
     && d->SubjectHierarchyNode->HasItemAttribute(
          parentItemID, vtkMRMLSubjectHierarchyConstants::GetVirtualBranchSubjectHierarchyNodeAttributeName()) )
     {
@@ -1524,7 +1522,7 @@ void qMRMLSubjectHierarchyModel::onHardenTransformOnBranchOfCurrentItem()
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
 
   vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
-  if (currentItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (currentItemID)
     {
     vtkSlicerSubjectHierarchyModuleLogic::HardenTransformOnBranch(d->SubjectHierarchyNode, currentItemID);
     }
@@ -1537,7 +1535,7 @@ void qMRMLSubjectHierarchyModel::onRemoveTransformsFromBranchOfCurrentItem()
 {
   Q_D(const qMRMLSubjectHierarchyModel);
   vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
-  if (currentItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (currentItemID)
     {
     vtkSlicerSubjectHierarchyModuleLogic::TransformBranch(d->SubjectHierarchyNode, currentItemID, NULL, false);
     }

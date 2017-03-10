@@ -108,7 +108,7 @@ qSlicerSubjectHierarchyFolderPlugin::~qSlicerSubjectHierarchyFolderPlugin()
 //---------------------------------------------------------------------------
 double qSlicerSubjectHierarchyFolderPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
 {
-  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!itemID)
     {
     qCritical() << Q_FUNC_INFO << ": Input item is invalid!";
     return 0.0;
@@ -142,7 +142,7 @@ const QString qSlicerSubjectHierarchyFolderPlugin::roleForPlugin()const
 {
   // Get current node to determine role
   vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
-  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!currentItemID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid current node!";
     return "Error!";
@@ -166,7 +166,7 @@ const QString qSlicerSubjectHierarchyFolderPlugin::roleForPlugin()const
 //---------------------------------------------------------------------------
 QIcon qSlicerSubjectHierarchyFolderPlugin::icon(vtkIdType itemID)
 {
-  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!itemID)
     {
     qCritical() << Q_FUNC_INFO << ": Input item is invalid!";
     return QIcon();
@@ -238,7 +238,7 @@ void qSlicerSubjectHierarchyFolderPlugin::showContextMenuActionsForItem(vtkIdTyp
     }
 
   // Folder can be created under any node
-  if (itemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (itemID)
     {
     d->CreateFolderUnderNodeAction->setVisible(true);
     }
@@ -294,7 +294,7 @@ void qSlicerSubjectHierarchyFolderPlugin::createFolderUnderScene()
 void qSlicerSubjectHierarchyFolderPlugin::createFolderUnderCurrentNode()
 {
   vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
-  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!currentItemID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid current node!";
     return;
@@ -341,7 +341,7 @@ bool qSlicerSubjectHierarchyFolderPlugin::addNodeToSubjectHierarchy(
     }
 
   // If parent is invalid, then add it under the scene
-  if (parentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!parentItemID)
     {
     parentItemID = shNode->GetSceneItemID();
     }
@@ -365,7 +365,7 @@ bool qSlicerSubjectHierarchyFolderPlugin::addNodeToSubjectHierarchy(
 
   // Create subject hierarchy item with added hierarchy node
   vtkIdType addedItemID = shNode->CreateItem(parentItemID, nodeToAdd, level);
-  if (addedItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!addedItemID)
     {
     qCritical() << Q_FUNC_INFO << ": Failed to add subject hierarchy item for hierarchy node " << nodeToAdd->GetName();
     return false;
@@ -390,7 +390,7 @@ double qSlicerSubjectHierarchyFolderPlugin::canReparentItemInsideSubjectHierarch
   // corresponding hierarchy will be reparented under the scene
   Q_UNUSED(parentItemID);
 
-  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!itemID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
     return 0.0;
@@ -422,7 +422,7 @@ double qSlicerSubjectHierarchyFolderPlugin::canReparentItemInsideSubjectHierarch
 //---------------------------------------------------------------------------
 bool qSlicerSubjectHierarchyFolderPlugin::reparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID)
 {
-  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!itemID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
     return false;
@@ -471,7 +471,7 @@ bool qSlicerSubjectHierarchyFolderPlugin::reparentItemInsideSubjectHierarchy(vtk
 //---------------------------------------------------------------------------
 vtkMRMLHierarchyNode* qSlicerSubjectHierarchyFolderPlugin::hierarchyNodeForItem(vtkIdType itemID)
 {
-  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!itemID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
     return false;
@@ -523,7 +523,7 @@ vtkIdType qSlicerSubjectHierarchyFolderPlugin::itemForHierarchyNode(vtkMRMLHiera
 //---------------------------------------------------------------------------
 bool qSlicerSubjectHierarchyFolderPlugin::resolveHierarchyForItem(vtkIdType itemID)
 {
-  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!itemID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
     return false;
@@ -569,7 +569,7 @@ bool qSlicerSubjectHierarchyFolderPlugin::resolveHierarchyForItem(vtkIdType item
     }
 
   // Parent hierarchy node was not in subject hierarchy, need to add it
-  if (parentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!parentItemID)
     {
     if (associatedParentDataNode)
       {
@@ -615,7 +615,7 @@ bool qSlicerSubjectHierarchyFolderPlugin::resolveHierarchies()
     // Get subject hierarchy item for hierarchy node
     vtkMRMLHierarchyNode* hierarchyNode = vtkMRMLHierarchyNode::SafeDownCast(*nodeIt);
     vtkIdType itemID = this->itemForHierarchyNode(hierarchyNode);
-    if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    if (!itemID)
       {
       qCritical() << Q_FUNC_INFO << ": Unable to find subject hierarchy item for hierarchy node "
         << (hierarchyNode ? hierarchyNode->GetName() : "NULL");
@@ -632,7 +632,7 @@ bool qSlicerSubjectHierarchyFolderPlugin::resolveHierarchies()
     else
       {
       parentItemID = this->itemForHierarchyNode(parentHierarchyNode);
-      if (parentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+      if (!parentItemID)
         {
         qCritical() << Q_FUNC_INFO << ": Unable to find subject hierarchy item for parent hierarchy node "
           << parentHierarchyNode->GetName();
@@ -699,7 +699,7 @@ void qSlicerSubjectHierarchyFolderPlugin::onDataNodeAssociatedToHierarchyNode(vt
 
   // Get item for hierarchy node (and not for data node, hence not calling itemForHierarchyNode)
   vtkIdType hierarchyItemID = shNode->GetItemByDataNode(hierarchyNode);
-  if (hierarchyItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (hierarchyItemID)
     {
     // If there is a separate item for the hierarchy node then remove it, as it is now represented
     // by the associated data node in subject hierarchy

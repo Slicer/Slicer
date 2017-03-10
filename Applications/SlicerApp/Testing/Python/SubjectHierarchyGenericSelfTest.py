@@ -259,24 +259,24 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     # Get and check subject hierarchy items for the data nodes
     self.ctVolumeShItemID = shNode.GetItemByDataNode(ctVolumeNode)
     self.ctVolumeOriginalName = shNode.GetItemName(self.ctVolumeShItemID)
-    self.assertNotEqual( self.ctVolumeShItemID, self.invalidItemID )
+    self.assertIsNotNone( self.ctVolumeShItemID )
 
     self.sampleLabelmapShItemID = shNode.GetItemByDataNode(self.sampleLabelmapNode)
-    self.assertNotEqual( self.sampleLabelmapShItemID, self.invalidItemID )
+    self.assertIsNotNone( self.sampleLabelmapShItemID )
     self.assertEqual( shNode.GetItemOwnerPluginName(self.sampleLabelmapShItemID), 'LabelMaps' )
 
     self.sampleModelShItemID = shNode.GetItemByDataNode(self.sampleModelNode)
-    self.assertNotEqual( self.sampleModelShItemID, self.invalidItemID )
+    self.assertIsNotNone( self.sampleModelShItemID )
     self.assertEqual( shNode.GetItemOwnerPluginName(self.sampleModelShItemID), 'Models' )
 
     # Save item IDs for scene load testing
     self.studyItemID = shNode.GetItemParent(self.ctVolumeShItemID)
     self.studyOriginalName = shNode.GetItemName(self.studyItemID)
-    self.assertNotEqual( self.studyItemID, self.invalidItemID )
+    self.assertIsNotNone( self.studyItemID )
 
     self.patientItemID = shNode.GetItemParent(self.studyItemID)
     self.patientOriginalName = shNode.GetItemName(self.patientItemID)
-    self.assertNotEqual( self.patientItemID, self.invalidItemID )
+    self.assertIsNotNone( self.patientItemID )
 
     # Verify DICOM levels
     self.assertEqual( shNode.GetItemLevel(self.patientItemID), slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelPatient() )
@@ -314,7 +314,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
 
     # Check if output is also under the same study node
     resampledVolumeItemID = shNode.GetItemByDataNode(resampledVolumeNode)
-    self.assertNotEqual( resampledVolumeItemID, self.invalidItemID )
+    self.assertIsNotNone( resampledVolumeItemID )
     self.assertEqual( shNode.GetItemParent(resampledVolumeItemID), self.studyItemID )
 
   # ------------------------------------------------------------------------------
@@ -394,11 +394,11 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     self.assertEqual( shNode.GetItemChildWithName(self.study2ItemID, self.ctVolumeNewName), self.ctVolumeShItemID )
 
     loadedPatientItemID = shNode.GetItemChildWithName(shNode.GetSceneItemID(), self.patientOriginalName)
-    self.assertNotEqual( loadedPatientItemID, self.invalidItemID )
+    self.assertIsNotNone( loadedPatientItemID )
     loadedStudyItemID = shNode.GetItemChildWithName(loadedPatientItemID, self.studyOriginalName)
-    self.assertNotEqual( loadedStudyItemID, self.invalidItemID )
+    self.assertIsNotNone( loadedStudyItemID )
     loadedCtVolumeShItemID = shNode.GetItemChildWithName(loadedStudyItemID, self.ctVolumeOriginalName)
-    self.assertNotEqual( loadedCtVolumeShItemID, self.invalidItemID )
+    self.assertIsNotNone( loadedCtVolumeShItemID )
 
     # Print subject hierarchy after the test
     logging.info(shNode)

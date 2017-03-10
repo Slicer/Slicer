@@ -265,7 +265,7 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType item
 {
   Q_D(const qMRMLSortFilterSubjectHierarchyProxyModel);
 
-  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!itemID)
     {
     return true;
     }
@@ -283,7 +283,7 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType item
 
   // Handle hiding unaffiliated item
   // Used when the root item needs to be shown in the tree but not its siblings or other branches in the tree
-  if (d->HideItemsUnaffiliatedWithItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (d->HideItemsUnaffiliatedWithItemID)
     {
     if (!model->isAffiliatedItem(itemID, d->HideItemsUnaffiliatedWithItemID))
       {

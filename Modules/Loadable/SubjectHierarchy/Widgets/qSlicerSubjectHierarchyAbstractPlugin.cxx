@@ -166,7 +166,7 @@ bool qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy(
     }
 
   // If parent is invalid, then add it under the scene
-  if (parentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!parentItemID)
     {
     parentItemID = shNode->GetSceneItemID();
     }
@@ -178,7 +178,7 @@ bool qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy(
 
   // Create subject hierarchy item with added node
   vtkIdType addedItemID = shNode->CreateItem(parentItemID, nodeToAdd, level);
-  if (addedItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (!addedItemID)
     {
     qCritical() << Q_FUNC_INFO << ": Failed to add subject hierarchy item for data node " << nodeToAdd->GetName();
     return false;

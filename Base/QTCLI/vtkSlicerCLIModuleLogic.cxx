@@ -270,8 +270,7 @@ public:
     vtkIdType shItemID = shnd->GetItemByDataNode(nd);
     vtkIdType outShItemID = shnd->GetItemByDataNode(ond);
 
-    if ( shItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
-      || outShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )
+    if (!shItemID || !outShItemID)
     {
       vtkGenericWarningMacro("CLI: No subject hierarchy item found for input node " << nd->GetName() << " or output node " << ond->GetName());
       return;

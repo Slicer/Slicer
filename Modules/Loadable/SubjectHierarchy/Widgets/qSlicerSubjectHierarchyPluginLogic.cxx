@@ -277,7 +277,7 @@ void qSlicerSubjectHierarchyPluginLogic::onNodeAboutToBeRemoved(vtkObject* scene
 
   // Remove associated subject hierarchy item if any
   vtkIdType itemID = shNode->GetItemByDataNode(dataNode);
-  if (itemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (itemID)
     {
     shNode->RemoveItem(itemID, false, false);
     }
@@ -349,7 +349,7 @@ void qSlicerSubjectHierarchyPluginLogic::addSupportedDataNodesToSubjectHierarchy
     // Do not add into subject hierarchy if hidden, excluded, or already added
     if ( node->GetHideFromEditors()
       || node->GetAttribute(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyExcludeFromTreeAttributeName().c_str())
-      || shNode->GetItemByDataNode(node) != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )
+      || shNode->GetItemByDataNode(node) )
       {
       continue;
       }

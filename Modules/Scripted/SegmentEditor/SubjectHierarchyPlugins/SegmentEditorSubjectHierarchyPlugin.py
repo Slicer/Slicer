@@ -78,7 +78,7 @@ class SegmentEditorSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin
   def onSegment(self):
     pluginHandlerSingleton = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
     currentItemID = pluginHandlerSingleton.currentItem()
-    if currentItemID == slicer.vtkMRMLSubjectHierarchyNode.GetInvalidItemID():
+    if not currentItemID:
       logging.error("Invalid current item")
 
     shNode = pluginHandlerSingleton.subjectHierarchyNode()
@@ -111,7 +111,7 @@ class SegmentEditorSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin
 
   def showContextMenuActionsForItem(self, itemID):
     # Scene
-    if itemID == slicer.vtkMRMLSubjectHierarchyNode.GetInvalidItemID():
+    if not itemID:
       # No scene context menu actions in this plugin
       return
 
@@ -121,7 +121,7 @@ class SegmentEditorSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin
          and not pluginHandlerSingleton.pluginByName('LabelMaps').canOwnSubjectHierarchyItem(itemID) ):
       # Get current item
       currentItemID = pluginHandlerSingleton.currentItem()
-      if currentItemID == slicer.vtkMRMLSubjectHierarchyNode.GetInvalidItemID():
+      if not currentItemID:
         logging.error("Invalid current item")
         return
       self.segmentEditorAction.visible = True

@@ -404,12 +404,12 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
       # Get study and patient items
       studyItemID = shNode.GetItemParent(exportable.subjectHierarchyItemID)
-      if studyItemID == slicer.vtkMRMLSubjectHierarchyNode.GetInvalidItemID():
+      if not studyItemID:
         error = "Unable to get study for series '" + volumeNode.GetName() + "'"
         logging.error(error)
         return error
       patientItemID = shNode.GetItemParent(studyItemID)
-      if patientItemID == slicer.vtkMRMLSubjectHierarchyNode.GetInvalidItemID():
+      if not patientItemID:
         error = "Unable to get patient for series '" + volumeNode.GetName() + "'"
         logging.error(error)
         return error

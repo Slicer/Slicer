@@ -175,7 +175,7 @@ public:
                         std::string name,
                         std::string level=vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder() );
   /// Create subject hierarchy item for a data node.
-  /// NOTE: This method is only for internal use and should not be needed!
+  /// Can be used to add nodes that were not added automatically (e.g. HideFromEditors was on, or exclude attribute was set)
   /// \param parentItemID Parent item under which the created item is inserted. If top-level then use \sa GetSceneItemID
   /// \param dataNode Associated data MRML node
   /// \param level Level string of the created item (\sa vtkMRMLSubjectHierarchyConstants)
