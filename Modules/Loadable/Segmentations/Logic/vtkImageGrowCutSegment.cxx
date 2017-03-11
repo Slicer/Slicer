@@ -552,12 +552,15 @@ int vtkImageGrowCutSegment::RequestInformation(
   return 1;
 }
 
+//-----------------------------------------------------------------------------
 void vtkImageGrowCutSegment::Reset()
 {
   this->Internal->Reset();
 }
 
+//-----------------------------------------------------------------------------
 void vtkImageGrowCutSegment::PrintSelf(ostream &os, vtkIndent indent)
 {
-  std::cout << "This function has been found" << std::endl;
+  // XXX Implement this function
+  this->Superclass::PrintSelf(os, indent);
 }
