@@ -126,7 +126,7 @@ vtkIdType vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy(
     vtkErrorWithObjectMacro(shNode,
       "vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy: Subject hierarchy item with DICOM UID '"
       << seriesInstanceUID << "' cannot be found!");
-    return NULL;
+    return 0;
     }
 
   // Create patient and study nodes if they do not exist yet
