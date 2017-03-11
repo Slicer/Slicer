@@ -71,11 +71,6 @@ public:
   /// For image data bound is computed for the voxel corner points (not voxel center points).
   virtual void GetBounds(double bounds[6]);
 
-  /// Utility function to get extended bounds
-  /// \param partialBounds New bounds with which the globalBounds will be extended if necessary
-  /// \param globalBounds Global bounds to be extended with partialBounds
-  static void ExtendBounds(double partialBounds[6], double globalBounds[6]);
-
   /// Get representation of a given type. This class is not responsible for conversion, only storage!
   /// \param name Representation name. Default representation names can be queried from \sa vtkSegmentationConverter,
   ///   for example by calling vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()

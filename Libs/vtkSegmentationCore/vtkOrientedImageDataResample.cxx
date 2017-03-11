@@ -737,7 +737,7 @@ void vtkOrientedImageDataResample::TransformExtent(const int inputExtent[6], vtk
 //----------------------------------------------------------------------------
 void vtkOrientedImageDataResample::TransformBounds(const double inputBounds[6], vtkAbstractTransform* inputToOutputTransform, double outputBounds[6])
 {
-  vtkOrientedImageData::UninitializeBounds(outputBounds);
+  vtkMath::UninitializeBounds(outputBounds);
   if (!inputToOutputTransform)
     {
     return;
@@ -769,7 +769,7 @@ void vtkOrientedImageDataResample::TransformBounds(const double inputBounds[6], 
 //----------------------------------------------------------------------------
 void vtkOrientedImageDataResample::TransformOrientedImageDataBounds(vtkOrientedImageData* image, vtkAbstractTransform* transform, double transformedBounds[6])
 {
-  vtkOrientedImageData::UninitializeBounds(transformedBounds);
+  vtkMath::UninitializeBounds(transformedBounds);
   if (!image || !transform)
     {
     return;

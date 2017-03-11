@@ -29,6 +29,7 @@
 #include "vtkCalculateOversamplingFactor.h"
 
 // VTK includes
+#include <vtkBoundingBox.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkMath.h>
@@ -188,27 +189,23 @@ void vtkSegmentation::PrintSelf(ostream& os, vtkIndent indent)
 //---------------------------------------------------------------------------
 void vtkSegmentation::GetBounds(double bounds[6])
 {
-  vtkOrientedImageData::UninitializeBounds(bounds);
+  vtkMath::UninitializeBounds(bounds);
 
   if (this->Segments.empty())
     {
     return;
     }
 
+  vtkBoundingBox boundingBox;
   for (SegmentMap::iterator it = this->Segments.begin(); it != this->Segments.end(); ++it)
     {
     double segmentBounds[6] = { 1, -1, 1, -1, 1, -1 };
 
     vtkSegment* segment = it->second;
     segment->GetBounds(segmentBounds);
-    if ( segmentBounds[0]<=segmentBounds[1] &&
-         segmentBounds[2]<=segmentBounds[3] &&
-         segmentBounds[4]<=segmentBounds[5] )
-      {
-      // valid bounds
-      vtkSegment::ExtendBounds(segmentBounds, bounds);
-      }
+    boundingBox.AddBounds(segmentBounds);
     }
+  boundingBox.GetBounds(bounds);
 }
 
 //---------------------------------------------------------------------------

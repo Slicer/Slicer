@@ -26,6 +26,7 @@
 #include "vtkOrientedImageDataResample.h"
 
 // VTK includes
+#include <vtkBoundingBox.h>
 #include <vtkImageData.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
@@ -215,7 +216,7 @@ void vtkSegment::DeepCopyMetadata(vtkSegment* source)
 //---------------------------------------------------------------------------
 void vtkSegment::GetBounds(double bounds[6])
 {
-  vtkOrientedImageData::UninitializeBounds(bounds);
+  vtkBoundingBox boundingBox;
 
   RepresentationMap::iterator reprIt;
   for (reprIt=this->Representations.begin(); reprIt!=this->Representations.end(); ++reprIt)
@@ -225,15 +226,10 @@ void vtkSegment::GetBounds(double bounds[6])
       {
       double representationBounds[6] = { 1, -1, 1, -1, 1, -1 };
       representationDataSet->GetBounds(representationBounds);
-      if ( representationBounds[0]<=representationBounds[1] &&
-           representationBounds[2]<=representationBounds[3] &&
-           representationBounds[4]<=representationBounds[5] )
-        {
-        // valid bounds
-        vtkSegment::ExtendBounds(representationBounds, bounds);
-        }
+      boundingBox.AddBounds(representationBounds);
       }
     }
+  boundingBox.GetBounds(bounds);
 }
 
 //---------------------------------------------------------------------------
@@ -361,35 +357,4 @@ bool vtkSegment::HasTag(std::string tag)
 void vtkSegment::GetTags(std::map<std::string,std::string> &tags)
 {
   tags = this->Tags;
-}
-
-//---------------------------------------------------------------------------
-// Global RAS in the form (Xmin, Xmax, Ymin, Ymax, Zmin, Zmax)
-void vtkSegment::ExtendBounds(double partialBounds[6], double globalBounds[6])
-{
-  if (partialBounds[0] < globalBounds[0] )
-    {
-    globalBounds[0] = partialBounds[0];
-    }
-  if (partialBounds[2] < globalBounds[2] )
-    {
-    globalBounds[2] = partialBounds[2];
-    }
-  if (partialBounds[4] < globalBounds[4] )
-    {
-    globalBounds[4] = partialBounds[4];
-    }
-
-  if (partialBounds[1] > globalBounds[1] )
-    {
-    globalBounds[1] = partialBounds[1];
-    }
-  if (partialBounds[3] > globalBounds[3] )
-    {
-    globalBounds[3] = partialBounds[3];
-    }
-  if (partialBounds[5] > globalBounds[5] )
-    {
-    globalBounds[5] = partialBounds[5];
-    }
 }
