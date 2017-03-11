@@ -19,7 +19,7 @@
 ################################################################################
 
 
-macro(SLICER_ADD_PYTHON_TEST)
+macro(slicer_add_python_test)
   set(options)
   set(oneValueArgs TESTNAME_PREFIX SCRIPT)
   set(multiValueArgs SLICER_ARGS SCRIPT_ARGS)
@@ -39,7 +39,7 @@ macro(SLICER_ADD_PYTHON_TEST)
   set_property(TEST py_${MY_TESTNAME_PREFIX}${test_name} PROPERTY RUN_SERIAL TRUE)
 endmacro()
 
-macro(SLICER_ADD_PYTHON_UNITTEST)
+macro(slicer_add_python_unittest)
   set(options)
   set(oneValueArgs TESTNAME_PREFIX SCRIPT)
   set(multiValueArgs SLICER_ARGS)

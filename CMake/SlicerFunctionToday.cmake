@@ -6,7 +6,7 @@
 #
 
 
-function(TODAY RESULT_VAR)
+function(today RESULT_VAR)
 
   set(today_date)
   if(WIN32)
@@ -34,5 +34,5 @@ function(TODAY RESULT_VAR)
     set(today_date "0000-00-00")
   endif(WIN32)
   set(${RESULT_VAR} ${today_date} PARENT_SCOPE)
-endfunction(TODAY)
+endfunction()
 

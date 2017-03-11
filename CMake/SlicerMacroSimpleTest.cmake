@@ -19,7 +19,7 @@
 #! \sa http://www.cmake.org/cmake/help/cmake-2-8-docs.html#variable:PROJECT_NAME
 #!
 #! \ingroup CMakeUtilities
-macro(SIMPLE_TEST testname)
+macro(simple_test testname)
 
   if("${KIT}" STREQUAL "")
     set(KIT ${CLP})
