@@ -161,7 +161,7 @@ public:
   void RequestOwnerPluginSearch(vtkIdType itemID);
 
   /// Python accessor for the invalid ID
-  static const vtkIdType GetInvalidItemID() { return INVALID_ITEM_ID; };
+  static vtkIdType GetInvalidItemID() { return INVALID_ITEM_ID; }
 
 // Hierarchy related methods
 public:
