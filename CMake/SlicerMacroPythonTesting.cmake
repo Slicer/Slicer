@@ -18,6 +18,12 @@
 #
 ################################################################################
 
+set(UNITTEST_LIB_PATHS
+  "--additional-module-paths"
+  ${CMAKE_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}
+  ${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_LIB_DIR}
+  ${CMAKE_BINARY_DIR}/${Slicer_QTLOADBLEMODULES_LIB_DIR}
+  )
 
 macro(slicer_add_python_test)
   set(options)
@@ -33,7 +39,9 @@ macro(slicer_add_python_test)
     COMMAND ${Slicer_LAUNCHER_EXECUTABLE}
     --no-splash
     --testing
-    ${Slicer_ADDITIONAL_LAUNCHER_SETTINGS} ${MY_SLICER_ARGS}
+    ${Slicer_ADDITIONAL_LAUNCHER_SETTINGS}
+    ${UNITTEST_LIB_PATHS}
+    ${MY_SLICER_ARGS}
     --python-script ${MY_SCRIPT} ${MY_SCRIPT_ARGS}
     )
   set_property(TEST py_${MY_TESTNAME_PREFIX}${test_name} PROPERTY RUN_SERIAL TRUE)
@@ -55,8 +63,9 @@ macro(slicer_add_python_unittest)
     --no-splash
     --testing
     ${Slicer_ADDITIONAL_LAUNCHER_SETTINGS}
-    --python-code "import slicer.testing\\; slicer.testing.runUnitTest(['${CMAKE_CURRENT_BINARY_DIR}', '${_script_source_dir}'], '${test_name}')"
     ${MY_SLICER_ARGS}
+    ${UNITTEST_LIB_PATHS}
+    --python-code "import slicer.testing\\; slicer.testing.runUnitTest(['${CMAKE_CURRENT_BINARY_DIR}', '${_script_source_dir}'], '${test_name}')"
     )
   set_property(TEST py_${MY_TESTNAME_PREFIX}${test_name} PROPERTY RUN_SERIAL TRUE)
 endmacro()

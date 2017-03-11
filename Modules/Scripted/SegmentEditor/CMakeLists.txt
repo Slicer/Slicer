@@ -37,6 +37,5 @@ slicer_add_python_unittest(
   # TODO: slicer_add_python_unittest should take care of adding the additional module paths
   SLICER_ARGS
     --disable-cli-modules
-    --additional-module-paths ${MODULE_BUILD_DIR} ${CMAKE_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}
   )
 
