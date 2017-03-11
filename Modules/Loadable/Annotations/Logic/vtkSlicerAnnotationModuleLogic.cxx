@@ -2610,7 +2610,7 @@ void vtkSlicerAnnotationModuleLogic::JumpSlicesToAnnotationCoordinate(const char
     double a = rasCoordinates[1];
     double s = rasCoordinates[2];
 
-    vtkMRMLSliceNode::JumpAllSlices(this->GetMRMLScene(), NULL, r, a, s);
+    vtkMRMLSliceNode::JumpAllSlices(this->GetMRMLScene(), r, a, s);
     }
 }
 
