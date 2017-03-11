@@ -2502,7 +2502,7 @@ void qMRMLSegmentEditorWidget::onSelectSegmentShortcut()
   std::vector<std::string> segmentIDs;
   displayNode->GetVisibleSegmentIDs(segmentIDs);
   QString currentSegmentID = this->currentSegmentID();
-  for (int segmentIndex = 0; segmentIndex < segmentIDs.size(); segmentIndex++)
+  for (unsigned int segmentIndex = 0; segmentIndex < segmentIDs.size(); segmentIndex++)
     {
     std::string segmentID = segmentIDs[segmentIndex];
     if (currentSegmentID == segmentID.c_str())
