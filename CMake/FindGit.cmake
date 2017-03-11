@@ -81,8 +81,10 @@ find_program(GIT_EXECUTABLE ${git_names}
     "C:/Program Files/Git/bin"
     "C:/Program Files (x86)/Git/bin"
   DOC "git command line client")
-# XXX Comment to workaround https://gitlab.kitware.com/cmake/cmake/issues/15448
-# mark_as_advanced(GIT_EXECUTABLE)
+mark_as_advanced(GIT_EXECUTABLE)
+# XXX Explicitly define a CACHE variable to workaround https://gitlab.kitware.com/cmake/cmake/issues/15448
+#     It fixes https://www.na-mic.org/Bug/view.php?id=4311
+set(GIT_EXECUTABLE ${GIT_EXECUTABLE} CACHE FILEPATH "Git command line client")
 
 if(GIT_EXECUTABLE)
   execute_process(COMMAND ${GIT_EXECUTABLE} --version
