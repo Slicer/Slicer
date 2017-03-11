@@ -267,8 +267,8 @@ vtkSubjectHierarchyItem::vtkSubjectHierarchyItem()
   : ID(vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   , DataNode(NULL)
   , Name("")
-  , Level(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder())
   , Parent(NULL)
+  , Level(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder())
   , OwnerPluginName("")
   , Expanded(true)
   , TemporaryID(vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
@@ -1414,8 +1414,8 @@ private:
 
 //---------------------------------------------------------------------------
 vtkMRMLSubjectHierarchyNode::vtkInternal::vtkInternal(vtkMRMLSubjectHierarchyNode* external)
-: External(external)
-, EventsDisabled(false)
+: EventsDisabled(false)
+, External(external)
 {
   // Create scene item
   this->SceneItem = vtkSubjectHierarchyItem::New();
