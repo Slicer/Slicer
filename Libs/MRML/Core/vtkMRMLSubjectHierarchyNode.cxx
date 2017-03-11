@@ -2005,6 +2005,17 @@ void vtkMRMLSubjectHierarchyNode::RequestOwnerPluginSearch(vtkIdType itemID)
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLSubjectHierarchyNode::RequestOwnerPluginSearch(vtkMRMLNode* dataNode)
+{
+  vtkIdType itemID = this->GetItemByDataNode(dataNode);
+  if (itemID == this->GetInvalidItemID())
+    {
+    itemID = this->CreateItem(this->GetSceneItemID(), dataNode);
+    }
+  this->RequestOwnerPluginSearch(itemID);
+}
+
+//---------------------------------------------------------------------------
 vtkIdType vtkMRMLSubjectHierarchyNode::CreateItem(
   vtkIdType parentItemID,
   std::string name,

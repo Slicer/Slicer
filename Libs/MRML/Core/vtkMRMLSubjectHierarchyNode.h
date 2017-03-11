@@ -159,6 +159,10 @@ public:
   /// Invoke SubjectHierarchyItemOwnerPluginSearchRequested event for the item, which results in a search for owner plugin.
   /// Typically called after setting an attribute indicating a desired role for the item.
   void RequestOwnerPluginSearch(vtkIdType itemID);
+  /// Invoke SubjectHierarchyItemOwnerPluginSearchRequested event for a node in the scene, which results in a search for owner plugin.
+  /// If the data node is not in the subject hierarchy yet then it will be added.
+  /// Typically called after setting an attribute indicating a desired role for the item.
+  void RequestOwnerPluginSearch(vtkMRMLNode* dataNode);
 
   /// Python accessor for the invalid ID
   static vtkIdType GetInvalidItemID() { return INVALID_ITEM_ID; }
