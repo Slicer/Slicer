@@ -94,8 +94,8 @@ void qSlicerSubjectHierarchyPluginHandler::setInstance(qSlicerSubjectHierarchyPl
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyPluginHandler::qSlicerSubjectHierarchyPluginHandler(QObject* parent)
   : QObject(parent)
-  , m_MRMLScene(NULL)
   , m_SubjectHierarchyNode(NULL)
+  , m_MRMLScene(NULL)
   , m_AutoDeleteSubjectHierarchyChildren(false)
 {
   this->m_CurrentItems.clear();
