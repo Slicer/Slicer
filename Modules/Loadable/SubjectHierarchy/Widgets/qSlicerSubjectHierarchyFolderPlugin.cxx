@@ -474,13 +474,13 @@ vtkMRMLHierarchyNode* qSlicerSubjectHierarchyFolderPlugin::hierarchyNodeForItem(
   if (!itemID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
-    return false;
+    return 0;
     }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
     {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
-    return false;
+    return 0;
     }
 
   // Get hierarchy node associated to the item
