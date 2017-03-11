@@ -570,7 +570,6 @@ void qSlicerSegmentEditorPaintEffectPrivate::onQuickDiameterButtonClicked()
 {
   Q_Q(qSlicerSegmentEditorPaintEffect);
 
-  vtkOrientedImageData* modifierLabelmap = q->modifierLabelmap();
   QToolButton* senderButton = dynamic_cast<QToolButton*>(sender());
   int diameter = senderButton->property("BrushDiameter").toInt();
 
