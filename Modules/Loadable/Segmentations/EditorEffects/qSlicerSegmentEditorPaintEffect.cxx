@@ -218,6 +218,7 @@ qSlicerSegmentEditorPaintEffectPrivate::qSlicerSegmentEditorPaintEffectPrivate(q
   : q_ptr(&object)
   , DelayedPaint(true)
   , IsPainting(false)
+  , ActiveViewWidget(NULL)
   , BrushDiameterFrame(NULL)
   , BrushDiameterSpinBox(NULL)
   , BrushDiameterSlider(NULL)
@@ -225,7 +226,6 @@ qSlicerSegmentEditorPaintEffectPrivate::qSlicerSegmentEditorPaintEffectPrivate(q
   , BrushSphereCheckbox(NULL)
   , ColorSmudgeCheckbox(NULL)
   , BrushPixelModeCheckbox(NULL)
-  , ActiveViewWidget(NULL)
 {
   this->PaintCoordinates_World = vtkSmartPointer<vtkPoints>::New();
   this->FeedbackPointsPolyData = vtkSmartPointer<vtkPolyData>::New();
