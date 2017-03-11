@@ -442,8 +442,8 @@ class SegmentationsModuleTest1(unittest.TestCase):
     self.inputSegmentationNode.GetSegmentation().RemoveSegment(bodySegment)
     qt.QApplication.processEvents()
     logging.info('(The error messages below are results of testing invalidity of objects, they are supposed to appear)')
-    self.assertIsNone( shNode.GetItemChildWithName(segmentationShItemID, 'Body') )
-    self.assertEqual( self.inputSegmentationNode.GetSegmentation().GetNumberOfSegments(), 2 )
+    self.assertEqual( shNode.GetItemChildWithName(segmentationShItemID, 'Body'), 0)
+    self.assertEqual( self.inputSegmentationNode.GetSegmentation().GetNumberOfSegments(), 2)
 
     shNode.RemoveItem(tumorItemID)
     qt.QApplication.processEvents()
