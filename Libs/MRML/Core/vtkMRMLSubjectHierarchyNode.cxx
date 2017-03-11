@@ -295,7 +295,7 @@ vtkIdType vtkSubjectHierarchyItem::AddToTree(
 {
   this->ID = vtkSubjectHierarchyItem::NextSubjectHierarchyItemID;
   vtkSubjectHierarchyItem::NextSubjectHierarchyItemID++;
-  if (vtkSubjectHierarchyItem::NextSubjectHierarchyItemID == VTK_UNSIGNED_LONG_MAX)
+  if (vtkSubjectHierarchyItem::NextSubjectHierarchyItemID == static_cast<vtkIdType>(VTK_UNSIGNED_LONG_MAX))
     {
     // There is a negligible chance that it reaches maximum, report error in that case
     vtkErrorMacro("AddToTree: Next subject hierarchy item ID reached its maximum value! Item is not added to the tree");
@@ -336,7 +336,7 @@ vtkIdType vtkSubjectHierarchyItem::AddToTree(
 {
   this->ID = vtkSubjectHierarchyItem::NextSubjectHierarchyItemID;
   vtkSubjectHierarchyItem::NextSubjectHierarchyItemID++;
-  if (vtkSubjectHierarchyItem::NextSubjectHierarchyItemID == VTK_UNSIGNED_LONG_MAX)
+  if (vtkSubjectHierarchyItem::NextSubjectHierarchyItemID == static_cast<vtkIdType>(VTK_UNSIGNED_LONG_MAX))
     {
     // There is a negligible chance that it reaches maximum, but if it happens then report error
     vtkErrorMacro("AddToTree: Next subject hierarchy item ID reached its maximum value! Item is not added to the tree");
