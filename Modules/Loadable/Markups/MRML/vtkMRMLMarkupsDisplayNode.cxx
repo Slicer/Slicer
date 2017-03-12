@@ -100,12 +100,10 @@ void vtkMRMLMarkupsDisplayNode::WriteXML(ostream& of, int nIndent)
 
   of << " sliceProjection=\"" << this->SliceProjection << "\"";
 
-  if (this->SliceProjectionColor)
-    {
-    of << " sliceProjectionColor=\"" << this->SliceProjectionColor[0] << " "
-       << this->SliceProjectionColor[1] << " "
-       << this->SliceProjectionColor[2] << "\"";
-    }
+  of << " sliceProjectionColor=\"" << this->SliceProjectionColor[0] << " "
+     << this->SliceProjectionColor[1] << " "
+     << this->SliceProjectionColor[2] << "\"";
+
   of << " sliceProjectionOpacity=\"" << this->SliceProjectionOpacity << "\"";
 }
 
