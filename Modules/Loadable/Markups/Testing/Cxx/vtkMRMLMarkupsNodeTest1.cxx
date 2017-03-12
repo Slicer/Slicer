@@ -81,6 +81,21 @@ int vtkMRMLMarkupsNodeTest1(int , char * [] )
     return EXIT_FAILURE;
     }
 
+  node1->SetText(0, "string a");
+  node1->SetText(1, "string b");
+  node1->SetText(2, "string c");
+
+  int expectedNumberOfTexts = 3;
+  CHECK_INT(node1->GetNumberOfTexts(), expectedNumberOfTexts);
+
+  node1->DeleteText(0);
+
+  expectedNumberOfTexts = 2;
+  CHECK_INT(node1->GetNumberOfTexts(), expectedNumberOfTexts);
+
+  CHECK_STD_STRING(node1->GetText(0), "string b");
+  CHECK_STD_STRING(node1->GetText(1), "string c");
+
   std::cout << "Removing all markups" << std::endl;
   node1->RemoveAllMarkups();
 
