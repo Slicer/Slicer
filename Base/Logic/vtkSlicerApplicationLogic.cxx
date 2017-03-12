@@ -428,7 +428,7 @@ vtkSlicerApplicationLogic
 
   pid = getpid();
   ret = setpriority(which, pid, priority);
-  ret = ret; // dummy code to use the return value and avoid a compiler warning
+  (void)ret; // unused variable
 #endif
 
   // pull out the reference to the appLogic
@@ -510,7 +510,7 @@ vtkSlicerApplicationLogic
 
   pid = getpid();
   ret = setpriority(which, pid, priority);
-  ret = ret; // dummy code to use the return value and avoid a compiler warning
+  (void)ret; // unused variable
 #endif
 
   // pull out the reference to the appLogic
