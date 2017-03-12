@@ -123,7 +123,7 @@
          <string>Slice Intersections Opacity:</string>
         </property>
         <property name="buddy">
-         <cstring>SliceIntersectionOpacity</cstring>
+         <cstring>SliceIntersectionOpacitySlider</cstring>
         </property>
        </widget>
       </item>
