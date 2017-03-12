@@ -231,7 +231,6 @@ void qSlicerUnitsSettingsPanelPrivate
 // ---------------------------------------------------------------------------
 void qSlicerUnitsSettingsPanelPrivate::resize(bool showall)
 {
-  Q_Q(qSlicerUnitsSettingsPanel);
   if(showall)
     {
     this->scrollArea->setMinimumSize(QSize(0, 700));

@@ -36,7 +36,6 @@ qMRMLLayoutWidget::qMRMLLayoutWidget(QWidget* widget)
   : Superclass(widget)
   , d_ptr(new qMRMLLayoutWidgetPrivate)
 {
-  Q_D(qMRMLLayoutWidget);
   this->setLayoutManager(new qMRMLLayoutManager);
 }
 

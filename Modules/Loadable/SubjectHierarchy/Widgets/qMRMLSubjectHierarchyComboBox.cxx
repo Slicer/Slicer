@@ -311,8 +311,6 @@ void qMRMLSubjectHierarchyComboBox::showPopup()
 //------------------------------------------------------------------------------
 void qMRMLSubjectHierarchyComboBox::mousePressEvent(QMouseEvent* e)
 {
-  Q_D(qMRMLSubjectHierarchyComboBox);
-
   // Disable context menu altogether
   if (e->button() == Qt::RightButton)
     {

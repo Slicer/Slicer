@@ -319,7 +319,6 @@ void qMRMLLayoutViewFactory::beginSetupLayout()
 // --------------------------------------------------------------------------
 void qMRMLLayoutViewFactory::onNodeAdded(vtkObject* scene, vtkObject* node)
 {
-  Q_D(qMRMLLayoutViewFactory);
   vtkMRMLScene* mrmlScene = vtkMRMLScene::SafeDownCast(scene);
   if (!mrmlScene || mrmlScene->IsBatchProcessing())
     {
@@ -339,7 +338,6 @@ void qMRMLLayoutViewFactory::onNodeAdded(vtkObject* scene, vtkObject* node)
 // --------------------------------------------------------------------------
 void qMRMLLayoutViewFactory::onNodeRemoved(vtkObject* scene, vtkObject* node)
 {
-  Q_D(qMRMLLayoutViewFactory);
   Q_UNUSED(scene);
   vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(node);
   if (viewNode)
@@ -401,7 +399,6 @@ void qMRMLLayoutViewFactory::onViewNodeRemoved(vtkMRMLAbstractViewNode* node)
 // --------------------------------------------------------------------------
 void qMRMLLayoutViewFactory::onViewNodeModified(vtkMRMLAbstractViewNode* node)
 {
-  Q_D(qMRMLLayoutViewFactory);
   this->viewWidget(node)->setVisible(node->IsViewVisibleInLayout());
 }
 
@@ -483,7 +480,6 @@ vtkMRMLAbstractViewNode* qMRMLLayoutViewFactory::activeViewNode()const
 // --------------------------------------------------------------------------
 vtkRenderer* qMRMLLayoutViewFactory::activeRenderer()const
 {
-  Q_D(const qMRMLLayoutViewFactory);
   QWidget* activeViewWidget = this->viewWidget(this->activeViewNode());
   if (!activeViewWidget)
     {
@@ -572,7 +568,6 @@ QList<QWidget*> qMRMLLayoutViewFactory::createViewsFromXML(QDomElement viewEleme
 //------------------------------------------------------------------------------
 void qMRMLLayoutViewFactory::setupView(QDomElement viewElement, QWidget*view)
 {
-  Q_D(qMRMLLayoutViewFactory);
   this->Superclass::setupView(viewElement, view);
   vtkMRMLAbstractViewNode* viewNode = this->viewNode(view);
   Q_ASSERT(viewNode);

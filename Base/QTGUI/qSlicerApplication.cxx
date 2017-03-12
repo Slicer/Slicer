@@ -574,7 +574,6 @@ void qSlicerApplication::confirmRestart(QString reason)
 //-----------------------------------------------------------------------------
 QString qSlicerApplication::nodeModule(vtkMRMLNode* node)const
 {
-  Q_D(const qSlicerApplication);
   QString mostSuitableModuleName = "Data";
   double mostSuitableModuleConfidence = 0.0;
 

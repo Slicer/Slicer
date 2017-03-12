@@ -52,7 +52,7 @@ public:
   virtual void Copy(vtkMRMLNode *node);
 
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "CropVolumeParameters";};
+  virtual const char* GetNodeTagName() {return "CropVolumeParameters";}
 
   /// Set volume node to be cropped
   void SetInputVolumeNodeID(const char *nodeID);

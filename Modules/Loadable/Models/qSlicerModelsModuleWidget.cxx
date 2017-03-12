@@ -489,8 +489,6 @@ void qSlicerModelsModuleWidget::onDisplayClassChanged(int index)
 //-----------------------------------------------------------------------------
 vtkMRMLSelectionNode* qSlicerModelsModuleWidget::getSelectionNode()
 {
-  Q_D(qSlicerModelsModuleWidget);
-
   vtkMRMLSelectionNode* selectionNode = 0;
   if (this->mrmlScene())
     {

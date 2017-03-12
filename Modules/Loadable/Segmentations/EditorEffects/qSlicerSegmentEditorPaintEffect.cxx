@@ -489,7 +489,6 @@ void qSlicerSegmentEditorPaintEffectPrivate::updateBrushStencil(qMRMLWidget* vie
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorPaintEffectPrivate::paintPixel(qMRMLWidget* viewWidget, double pixelPosition_World[3])
 {
-  Q_Q(qSlicerSegmentEditorPaintEffect);
   vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
   points->InsertNextPoint(pixelPosition_World);
   this->paintPixels(viewWidget, points);
@@ -500,7 +499,6 @@ void qSlicerSegmentEditorPaintEffectPrivate::paintPixels(
     qMRMLWidget* viewWidget,
     vtkPoints* pixelPositions)
 {
-  Q_Q(qSlicerSegmentEditorPaintEffect);
   Q_UNUSED(viewWidget);
 
   if (!pixelPositions)
@@ -568,8 +566,6 @@ void qSlicerSegmentEditorPaintEffectPrivate::onDiameterUnitsClicked()
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorPaintEffectPrivate::onQuickDiameterButtonClicked()
 {
-  Q_Q(qSlicerSegmentEditorPaintEffect);
-
   QToolButton* senderButton = dynamic_cast<QToolButton*>(sender());
   int diameter = senderButton->property("BrushDiameter").toInt();
 
@@ -891,8 +887,6 @@ void qSlicerSegmentEditorPaintEffect::deactivate()
 //---------------------------------------------------------------------------
 bool qSlicerSegmentEditorPaintEffectPrivate::brushPositionInWorld(qMRMLWidget* viewWidget, int brushPositionInView[2], double brushPosition_World[3])
 {
-  Q_Q(qSlicerSegmentEditorPaintEffect);
-
   // This effect only supports interactions in the 2D slice views currently
   qMRMLSliceWidget* sliceWidget = qobject_cast<qMRMLSliceWidget*>(viewWidget);
   qMRMLThreeDWidget* threeDWidget = qobject_cast<qMRMLThreeDWidget*>(viewWidget);

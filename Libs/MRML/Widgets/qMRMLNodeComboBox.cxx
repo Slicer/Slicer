@@ -605,7 +605,6 @@ vtkMRMLNode* qMRMLNodeComboBox::addNode(QString nodeType)
 // --------------------------------------------------------------------------
 vtkMRMLNode* qMRMLNodeComboBox::addNode()
 {
-  Q_D(qMRMLNodeComboBox);
   if (this->nodeTypes().isEmpty())
     {
     return NULL;
@@ -644,7 +643,6 @@ void qMRMLNodeComboBox::editCurrentNode()
 // --------------------------------------------------------------------------
 void qMRMLNodeComboBox::renameCurrentNode()
 {
-  Q_D(qMRMLNodeComboBox);
   vtkMRMLNode* node = this->currentNode();
   if (!node)
     {

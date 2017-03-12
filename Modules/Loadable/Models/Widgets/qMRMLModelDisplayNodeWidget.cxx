@@ -566,7 +566,6 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
 //------------------------------------------------------------------------------
 vtkMRMLSelectionNode* qMRMLModelDisplayNodeWidget::getSelectionNode(vtkMRMLScene *mrmlScene)
 {
-  Q_D(qMRMLModelDisplayNodeWidget);
   vtkMRMLSelectionNode* selectionNode = 0;
   if (mrmlScene)
     {
@@ -575,4 +574,3 @@ vtkMRMLSelectionNode* qMRMLModelDisplayNodeWidget::getSelectionNode(vtkMRMLScene
     }
   return selectionNode;
 }
-

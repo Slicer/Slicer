@@ -176,8 +176,6 @@ void qSlicerSubjectHierarchyPluginLogic::observeNode(vtkMRMLNode* node)
 //-----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyPluginLogic::onNodeAdded(vtkObject* sceneObject, vtkObject* nodeObject)
 {
-  Q_D(qSlicerSubjectHierarchyPluginLogic);
-
   vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sceneObject);
   if (!scene)
     {
@@ -258,8 +256,6 @@ void qSlicerSubjectHierarchyPluginLogic::onNodeAboutToBeRemoved(vtkObject* scene
     // Do nothing if scene is closing
     return;
     }
-
-  Q_D(qSlicerSubjectHierarchyPluginLogic);
 
   vtkMRMLNode* dataNode = vtkMRMLNode::SafeDownCast(nodeObject);
   if (!dataNode || dataNode->IsA("vtkMRMLSubjectHierarchyNode"))

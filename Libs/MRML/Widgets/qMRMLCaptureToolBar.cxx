@@ -133,8 +133,6 @@ void qMRMLCaptureToolBarPrivate::init()
 // --------------------------------------------------------------------------
 void qMRMLCaptureToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
 {
-  Q_Q(qMRMLCaptureToolBar);
-
   if (newScene == this->MRMLScene)
     {
     return;

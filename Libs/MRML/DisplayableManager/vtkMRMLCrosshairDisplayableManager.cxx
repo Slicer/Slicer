@@ -483,10 +483,9 @@ void vtkMRMLCrosshairDisplayableManager::UnobserveMRMLScene()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCrosshairDisplayableManager::OnMRMLNodeModified(vtkMRMLNode* node)
+void vtkMRMLCrosshairDisplayableManager::OnMRMLNodeModified(
+    vtkMRMLNode* vtkNotUsed(node))
 {
-  //std::cout << "Crosshair node modified: " << caller << ", " << this->Internal->CrosshairNode << std::endl;
-
   // update the properties and style of the crosshair
   bool builtCrosshair = false;
   if (this->Internal->DidCrosshairPropertyChange())

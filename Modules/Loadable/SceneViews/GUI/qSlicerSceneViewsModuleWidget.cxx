@@ -557,7 +557,6 @@ bool qSlicerSceneViewsModuleWidget::setEditedNode(vtkMRMLNode* node,
                                                   QString role /* = QString()*/,
                                                   QString context /* = QString()*/)
 {
-  Q_D(qSlicerSceneViewsModuleWidget);
   Q_UNUSED(role);
   Q_UNUSED(context);
   if (vtkMRMLSceneViewNode::SafeDownCast(node))

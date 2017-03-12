@@ -845,7 +845,6 @@ int qMRMLLayoutManager::chartViewCount()const
 //------------------------------------------------------------------------------
 int qMRMLLayoutManager::tableViewCount()const
 {
-  Q_D(const qMRMLLayoutManager);
   return this->mrmlViewFactory("vtkMRMLTableViewNode")->viewCount();
 }
 
@@ -866,7 +865,6 @@ qMRMLChartWidget* qMRMLLayoutManager::chartWidget(int id)const
 //------------------------------------------------------------------------------
 qMRMLTableWidget* qMRMLLayoutManager::tableWidget(int id)const
 {
-  Q_D(const qMRMLLayoutManager);
   return qobject_cast<qMRMLTableWidget*>(
     this->mrmlViewFactory("vtkMRMLTableViewNode")->viewWidget(id));
 }
@@ -977,7 +975,6 @@ vtkMRMLChartViewNode* qMRMLLayoutManager::activeMRMLChartViewNode()const
 //------------------------------------------------------------------------------
 vtkMRMLTableViewNode* qMRMLLayoutManager::activeMRMLTableViewNode()const
 {
-  Q_D(const qMRMLLayoutManager);
   return vtkMRMLTableViewNode::SafeDownCast(
     this->mrmlViewFactory("vtkMRMLTableViewNode")->activeViewNode());
 }
@@ -997,7 +994,6 @@ vtkRenderer* qMRMLLayoutManager::activeChartRenderer()const
 //------------------------------------------------------------------------------
 vtkRenderer* qMRMLLayoutManager::activeTableRenderer()const
 {
-  Q_D(const qMRMLLayoutManager);
   return this->mrmlViewFactory("vtkMRMLTableViewNode")->activeRenderer();
 }
 

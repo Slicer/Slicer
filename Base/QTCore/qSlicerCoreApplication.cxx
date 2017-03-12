@@ -1097,7 +1097,6 @@ QString qSlicerCoreApplication::slicerHome() const
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::defaultScenePath() const
 {
-  Q_D(const qSlicerCoreApplication);
   QSettings* appSettings = this->userSettings();
   Q_ASSERT(appSettings);
   QString defaultScenePath = appSettings->value("DefaultScenePath", QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation)).toString();

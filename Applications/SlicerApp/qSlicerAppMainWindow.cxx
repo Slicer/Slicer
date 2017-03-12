@@ -750,14 +750,12 @@ qSlicerModuleSelectorToolBar* qSlicerAppMainWindow::moduleSelector()const
 //---------------------------------------------------------------------------
 ctkPythonConsole* qSlicerAppMainWindow::pythonConsole()const
 {
-  Q_D(const qSlicerAppMainWindow);
   return qSlicerCoreApplication::application()->pythonConsole();
 }
 
 //---------------------------------------------------------------------------
 void qSlicerAppMainWindow::onPythonConsoleUserInput(const QString& cmd)
 {
-  Q_D(qSlicerAppMainWindow);
   if (!cmd.isEmpty())
     {
     qDebug("Python console user input: %s", qPrintable(cmd));

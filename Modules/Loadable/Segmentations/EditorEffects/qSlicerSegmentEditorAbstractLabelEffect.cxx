@@ -94,13 +94,11 @@ void qSlicerSegmentEditorAbstractLabelEffect::referenceGeometryChanged()
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorAbstractLabelEffect::masterVolumeNodeChanged()
 {
-  Q_D(qSlicerSegmentEditorAbstractLabelEffect);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorAbstractLabelEffect::setupOptionsFrame()
 {
-  Q_D(qSlicerSegmentEditorAbstractLabelEffect);
 }
 
 //-----------------------------------------------------------------------------
@@ -111,7 +109,6 @@ void qSlicerSegmentEditorAbstractLabelEffect::setMRMLDefaults()
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorAbstractLabelEffect::updateGUIFromMRML()
 {
-  Q_D(qSlicerSegmentEditorAbstractLabelEffect);
   if (!this->active())
     {
     // updateGUIFromMRML is called when the effect is activated
@@ -122,7 +119,6 @@ void qSlicerSegmentEditorAbstractLabelEffect::updateGUIFromMRML()
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorAbstractLabelEffect::updateMRMLFromGUI()
 {
-  Q_D(qSlicerSegmentEditorAbstractLabelEffect);
 }
 
 //-----------------------------------------------------------------------------

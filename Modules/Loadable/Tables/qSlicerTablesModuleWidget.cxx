@@ -85,7 +85,6 @@ vtkSlicerTablesLogic* qSlicerTablesModuleWidgetPrivate::logic()const
 //-----------------------------------------------------------------------------
 vtkTable* qSlicerTablesModuleWidgetPrivate::table()const
 {
-  Q_Q(const qSlicerTablesModuleWidget);
   if (this->MRMLTableNode.GetPointer()==NULL)
     {
     return NULL;

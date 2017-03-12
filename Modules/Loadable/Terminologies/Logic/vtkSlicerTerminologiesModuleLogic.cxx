@@ -61,7 +61,7 @@ public:
   // on linux and mac), therefore we store a simple pointer and create/delete
   // the document object manually
   typedef std::map<std::string, rapidjson::Document* > TerminologyMap;
-  vtkInternal(vtkSlicerTerminologiesModuleLogic* external);
+  vtkInternal();
   ~vtkInternal();
 
   /// Utility function to get code in Json array
@@ -155,17 +155,13 @@ public:
 
   /// Loaded anatomical region contexts. Key is the context name, value is the root item.
   TerminologyMap LoadedAnatomicContexts;
-
-private:
-  vtkSlicerTerminologiesModuleLogic* External;
 };
 
 //---------------------------------------------------------------------------
 // vtkInternal methods
 
 //---------------------------------------------------------------------------
-vtkSlicerTerminologiesModuleLogic::vtkInternal::vtkInternal(vtkSlicerTerminologiesModuleLogic* external)
-: External(external)
+vtkSlicerTerminologiesModuleLogic::vtkInternal::vtkInternal()
 {
 }
 
@@ -989,7 +985,7 @@ void vtkSlicerTerminologiesModuleLogic::vtkInternal::GetJsonCodeFromIdentifier(
 vtkSlicerTerminologiesModuleLogic::vtkSlicerTerminologiesModuleLogic()
   : UserTerminologiesPath(NULL)
 {
-  this->Internal = new vtkInternal(this);
+  this->Internal = new vtkInternal();
 }
 
 //----------------------------------------------------------------------------

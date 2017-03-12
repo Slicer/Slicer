@@ -713,7 +713,6 @@ void qSlicerCropVolumeModuleWidget::updateVolumeInfo()
 //------------------------------------------------------------------------------
 void qSlicerCropVolumeModuleWidget::onVolumeInformationSectionClicked(bool isOpen)
 {
-  Q_D(qSlicerCropVolumeModuleWidget);
   if (isOpen)
   {
     this->updateVolumeInfo();

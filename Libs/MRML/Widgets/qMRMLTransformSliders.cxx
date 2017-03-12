@@ -238,8 +238,6 @@ void qMRMLTransformSliders::onMRMLTransformNodeModified(vtkObject* caller)
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::updateRangeFromTransform(vtkMRMLTransformNode* transformNode)
 {
-  Q_D(qMRMLTransformSliders);
-
   vtkNew<vtkTransform> transform;
   qMRMLUtils::getTransformInCoordinateSystem(transformNode,
       this->coordinateReference() == qMRMLTransformSliders::GLOBAL, transform.GetPointer());

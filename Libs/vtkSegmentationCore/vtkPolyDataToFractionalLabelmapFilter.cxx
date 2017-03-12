@@ -370,7 +370,7 @@ vtkOrientedImageData* vtkPolyDataToFractionalLabelmapFilter::AllocateOutputData(
 
 //----------------------------------------------------------------------------
 int vtkPolyDataToFractionalLabelmapFilter::RequestData(
-  vtkInformation *request,
+  vtkInformation *vtkNotUsed(request),
   vtkInformationVector **inputVector,
   vtkInformationVector *outputVector)
 {
@@ -880,8 +880,6 @@ void vtkPolyDataToFractionalLabelmapFilter::PolyDataCutter(
   vtkPolyData *input, vtkPolyData *output, double z)
 {
   vtkPoints *points = input->GetPoints();
-  vtkCellArray *inputPolys = input->GetPolys();
-  vtkCellArray *inputStrips = input->GetStrips();
   vtkPoints *newPoints = vtkPoints::New();
   newPoints->SetDataType(points->GetDataType());
   newPoints->Allocate(333);
@@ -907,7 +905,6 @@ void vtkPolyDataToFractionalLabelmapFilter::PolyDataCutter(
 
 
   vtkIdType loc = 0;
-  vtkCellArray *cellArray = inputPolys;
   for (vtkIdType cellId = 0; cellId < numCells; cellId++)
     {
 
