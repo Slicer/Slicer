@@ -21,6 +21,7 @@
 
 macro(slicerMacroBuildAppLibrary)
   set(options
+    WRAP_PYTHONQT
     )
   set(oneValueArgs
     NAME
