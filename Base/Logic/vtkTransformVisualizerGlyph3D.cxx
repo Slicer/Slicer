@@ -39,7 +39,7 @@
 
 static const int ARRAY_INDEX_SCALARS=0;
 static const int ARRAY_INDEX_VECTORS=1;
-static const int ARRAY_INDEX_NORMALS=2;
+// static const int ARRAY_INDEX_NORMALS=2; // unused
 static const int ARRAY_INDEX_COLORS=3;
 
 vtkStandardNewMacro(vtkTransformVisualizerGlyph3D);
