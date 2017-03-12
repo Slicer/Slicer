@@ -46,12 +46,10 @@ void vtkMRMLAnnotationLineDisplayNode::WriteXML(ostream& of, int nIndent)
   of << " maxTicks=\"" << this->MaxTicks << "\"";
   of << " sliceProjection=\"" << this->SliceProjection << "\"";
 
-  if (this->ProjectedColor)
-    {
-    of << indent << " projectedColor=\"" << this->ProjectedColor[0] << " "
-      << this->ProjectedColor[1] << " "
-      << this->ProjectedColor[2] << "\"";
-    }
+  of << indent << " projectedColor=\"" << this->ProjectedColor[0] << " "
+     << this->ProjectedColor[1] << " "
+     << this->ProjectedColor[2] << "\"";
+
   of << " projectedOpacity=\"" << this->ProjectedOpacity << "\"";
   of << " underLineThickness=\"" << this->UnderLineThickness << "\"";
   of << " overLineThickness=\"" << this->OverLineThickness << "\"";
