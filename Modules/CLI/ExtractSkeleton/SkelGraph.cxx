@@ -328,7 +328,7 @@ void SkelGraph::Extract_skel_graph(unsigned char *orig_image, int orig_dim[3])
                   }
                 }
               }
-            delete elems; elems = NULL;
+            delete [] elems; elems = NULL;
             }   // else
           delete neighbors; neighbors = NULL;
           } // while (! branch_done)
