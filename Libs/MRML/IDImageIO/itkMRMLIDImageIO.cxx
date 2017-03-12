@@ -105,7 +105,7 @@ MRMLIDImageIO
       }
 
     // now pull off the scene
-    vtkMRMLScene *scene;
+    vtkMRMLScene *scene = NULL;
     hloc = fname.find("#", loc);
     if (hloc == std::string::npos)
       {
