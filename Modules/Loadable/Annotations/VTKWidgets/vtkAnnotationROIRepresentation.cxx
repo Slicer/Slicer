@@ -1373,17 +1373,11 @@ void vtkAnnotationROIRepresentation::PrintSelf(ostream& os, vtkIndent indent)
      << "(" << bounds[2] << "," << bounds[3] << ") "
      << "(" << bounds[4] << "," << bounds[5] << ")\n";
 
-  if ( this->HandleProperties )
+  for(int i=0;i<NUMBER_HANDLES;i++)
     {
-      for(int i=0;i<NUMBER_HANDLES;i++)
-        {
-        os << indent << "Handle Property: " <<i<< this->HandleProperties[i] << "\n";
-        }
+    os << indent << "Handle Property: " <<i<< this->HandleProperties[i] << "\n";
     }
-  else
-    {
-    os << indent << "Handle Properties: (none)\n";
-    }
+
   if ( this->SelectedHandleProperty )
     {
     os << indent << "Selected Handle Property: "
