@@ -318,7 +318,7 @@ void qMRMLSubjectHierarchyComboBox::mousePressEvent(QMouseEvent* e)
     }
 
   // Perform default mouse press event (make selections etc.)
-  Superclass::mousePressEvent(e);
+  this->Superclass::mousePressEvent(e);
 }
 
 //------------------------------------------------------------------------------

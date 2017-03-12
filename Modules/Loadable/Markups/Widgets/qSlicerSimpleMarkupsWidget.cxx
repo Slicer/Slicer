@@ -592,7 +592,7 @@ void qSlicerSimpleMarkupsWidget::updateWidget()
 //------------------------------------------------------------------------------
 void qSlicerSimpleMarkupsWidget::setMRMLScene(vtkMRMLScene* scene)
 {
-  Superclass::setMRMLScene(scene);
+  this->Superclass::setMRMLScene(scene);
   this->updateWidget();
 }
 

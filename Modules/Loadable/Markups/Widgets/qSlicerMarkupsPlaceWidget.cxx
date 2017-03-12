@@ -251,7 +251,7 @@ void qSlicerMarkupsPlaceWidget::setCurrentNodeActive(bool active)
       }
     return;
     }
-  bool wasActive = currentNodeActive();
+  bool wasActive = this->currentNodeActive();
   if (wasActive!=active)
     {
     if (active)
@@ -270,7 +270,7 @@ void qSlicerMarkupsPlaceWidget::setCurrentNodeActive(bool active)
 bool qSlicerMarkupsPlaceWidget::placeModeEnabled() const
 {
   Q_D(const qSlicerMarkupsPlaceWidget);
-  if (!currentNodeActive())
+  if (!this->currentNodeActive())
     {
     return false;
     }
@@ -297,7 +297,7 @@ void qSlicerMarkupsPlaceWidget::setPlaceModeEnabled(bool placeEnable)
       }
     return;
     }
-  bool wasActive = currentNodeActive();
+  bool wasActive = this->currentNodeActive();
   if ( placeEnable )
     {
     // activate and set place mode
@@ -434,7 +434,7 @@ void qSlicerMarkupsPlaceWidget::setMRMLScene(vtkMRMLScene* scene)
 {
   Q_D(qSlicerMarkupsPlaceWidget);
 
-  Superclass::setMRMLScene(scene);
+  this->Superclass::setMRMLScene(scene);
 
   vtkMRMLSelectionNode* selectionNode = NULL;
   vtkMRMLInteractionNode *interactionNode = NULL;
@@ -449,14 +449,14 @@ void qSlicerMarkupsPlaceWidget::setMRMLScene(vtkMRMLScene* scene)
   this->qvtkReconnect(d->InteractionNode, interactionNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidget()));
   d->SelectionNode = selectionNode;
   d->InteractionNode = interactionNode;
-  updateWidget();
+  this->updateWidget();
 }
 
 //------------------------------------------------------------------------------
 void qSlicerMarkupsPlaceWidget::onPlacePersistent(bool enable)
 {
-  setPlaceModeEnabled(enable);
-  setPlaceModePersistency(enable);
+  this->setPlaceModeEnabled(enable);
+  this->setPlaceModePersistency(enable);
 }
 
 //-----------------------------------------------------------------------------
@@ -475,15 +475,15 @@ void qSlicerMarkupsPlaceWidget::setPlaceMultipleMarkups(PlaceMultipleMarkupsType
     {
     d->PlaceButton->setMenu(d->PlaceMultipleMarkups == ShowPlaceMultipleMarkupsOption ? d->PlaceMenu : NULL);
     }
-  if (placeModeEnabled())
+  if (this->placeModeEnabled())
     {
     if (d->PlaceMultipleMarkups == ForcePlaceSingleMarkup)
       {
-      setPlaceModePersistency(false);
+      this->setPlaceModePersistency(false);
       }
     else if (d->PlaceMultipleMarkups == ForcePlaceMultipleMarkups)
       {
-      setPlaceModePersistency(true);
+      this->setPlaceModePersistency(true);
       }
     }
 }
