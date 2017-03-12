@@ -36,6 +36,7 @@
 #include "itkUnaryFunctorImageFilter.h"
 #include <algorithm>
 #include <climits>
+#include <cmath>
 #include <queue>
 #include <utility>
 #include <vector>
@@ -453,7 +454,7 @@ MorphologicalContourInterpolator< TImage >
     {
     IdentifierType iS = CardSymDifference( seq[x], iMask );
     IdentifierType jS = CardSymDifference( seq[x], jMask );
-    IdentifierType xScore = iS >= jS ? iS - jS : jS - iS; // abs(iS-jS)
+    IdentifierType xScore = iS >= jS ? iS - jS : jS - iS; // std::abs(iS-jS)
     if ( xScore < min )
       {
       min = xScore;
@@ -859,7 +860,7 @@ MorphologicalContourInterpolator< TImage >
     } // iterator destroyed here
 
   // recurse if needed
-  if ( abs( i - j ) > 2 )
+  if ( std::abs( i - j ) > 2 )
     {
     PixelList regionIDs;
     regionIDs.push_back( 1 );
@@ -870,8 +871,8 @@ MorphologicalContourInterpolator< TImage >
       ( j > reqRegion.GetIndex( axis ) + IndexValueType( reqRegion.GetSize( axis ) ) ? +1 : 0 );
     int mReq = mid < reqRegion.GetIndex( axis ) ? -1 :
       ( mid > reqRegion.GetIndex( axis ) + IndexValueType( reqRegion.GetSize( axis ) ) ? +1 : 0 );
-    bool first = abs( i - mid ) > 1 && abs( iReq + mReq ) <= 1; // i-mid?
-    bool second = abs( j - mid ) > 1 && abs( jReq + mReq ) <= 1; // j-mid?
+    bool first = std::abs( i - mid ) > 1 && std::abs( iReq + mReq ) <= 1; // i-mid?
+    bool second = std::abs( j - mid ) > 1 && std::abs( jReq + mReq ) <= 1; // j-mid?
 
     if ( first )
       {
@@ -1589,7 +1590,7 @@ MorphologicalContourInterpolator< TImage >
           ( *next > reqRegion.GetIndex( axis ) + IndexValueType( reqRegion.GetSize( axis ) ) ? +1 : 0 );
 
         if ( *prev + 1 < *next // only if they are not adjacent slices
-             && abs(iReq + jReq) <= 1 ) // and not out of the requested region
+             && std::abs(iReq + jReq) <= 1 ) // and not out of the requested region
         // unless they are on opposite ends
           {
           SegmentBetweenTwo< TImage > s;
