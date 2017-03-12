@@ -356,7 +356,7 @@ vtkOrientedImageData* vtkPolyDataToFractionalLabelmapFilter::AllocateOutputData(
   if (!fractionalLabelMapVoxelsPointer)
     {
     vtkErrorMacro("Convert: Failed to allocate memory for output labelmap image!");
-    return false;
+    return NULL;
     }
   else
     {
