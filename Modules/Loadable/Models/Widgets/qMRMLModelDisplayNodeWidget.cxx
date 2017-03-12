@@ -477,8 +477,8 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
   // Update scalar values, range, decimals and single step
   double *displayRange =  d->MRMLModelDisplayNode->GetScalarRange();
   double precision = (displayRange[1] - displayRange[0])/100.0;
-  double newMin;
-  double newMax;
+  double newMin = displayRange[0];
+  double newMax = displayRange[1];
   int decimals = 0;
   if (precision != 0.0)
     {
