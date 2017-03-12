@@ -473,7 +473,7 @@ int vtkSlicerCropVolumeLogic::CropInterpolated(vtkMRMLAnnotationROINode* roi, vt
 
   // contains axis directions, in unconventional indexing (column, row)
   // so that it can be conveniently normalized
-  double outputDirectionColRow[3][3] = { 0 };
+  double outputDirectionColRow[3][3] = {{ 0 }};
   for (int column = 0; column < 3; column++)
     {
     for (int row = 0; row < 3; row++)
