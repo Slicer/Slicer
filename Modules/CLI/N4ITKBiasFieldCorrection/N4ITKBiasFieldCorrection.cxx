@@ -169,8 +169,6 @@ int main(int argc, char* * argv)
     inputImage->GetLargestPossibleRegion().GetIndex();
   ImageType::SizeType inputImageSize =
     inputImage->GetLargestPossibleRegion().GetSize();
-  ImageType::IndexType maskImageIndex =
-    maskImage->GetLargestPossibleRegion().GetIndex();
 
   ImageType::PointType newOrigin = inputImage->GetOrigin();
 
