@@ -451,8 +451,10 @@ bool qSlicerSubjectHierarchyFolderPlugin::reparentItemInsideSubjectHierarchy(vtk
   // corresponding hierarchy will be reparented under the scene
   if (!parentHierarchyNode)
     {
-    qWarning() << Q_FUNC_INFO << ": No hierarchy node associated to subject hierarchy item " << parentItemID << "("
-      << shNode->GetItemName(parentItemID).c_str() << "). Reparenting hierarchy node under the scene";
+    qWarning() << Q_FUNC_INFO << ": No (non-subject) hierarchy node is associated to subject hierarchy item " << parentItemID
+      << "(" << shNode->GetItemName(parentItemID).c_str() << "), so keeping subject and non-subject hierarchies in sync is"
+      "not possible for this node. Reparenting non-subject hierarchy node under the scene (but can be added back to the other"
+      "hierarchy in the module of the other hierarchy, or if reparented under such a hierarchy node in subject hierarchy";
 
     // Reparent item normally
     shNode->SetItemParent(itemID, parentItemID);
@@ -559,8 +561,9 @@ bool qSlicerSubjectHierarchyFolderPlugin::resolveHierarchyForItem(vtkIdType item
   associatedParentDataNode = parentHierarchyNode->GetAssociatedNode();
   if (associatedParentDataNode)
     {
-    qDebug() << Q_FUNC_INFO << ": Parent hierarchy node has an associated data node, which should not happen, as in "
-      << "node hierarchies the parent nodes must not be associated to a data node";
+    qDebug() << Q_FUNC_INFO << ": Parent (non-subject) hierarchy node" << parentHierarchyNode->GetName()
+      << "has an associated data node (" << associatedParentDataNode->GetName() << "), which is not a"
+      << "typical scenario, as only leaf nodes are supposed to be able to associated to data nodes";
     parentItemID = shNode->GetItemByDataNode(associatedParentDataNode);
     }
   else
