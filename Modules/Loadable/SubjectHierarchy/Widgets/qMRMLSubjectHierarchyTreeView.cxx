@@ -845,10 +845,6 @@ void qMRMLSubjectHierarchyTreeView::selectPluginForCurrentItem()
     return;
     }
 
-  // Check if the user is setting the plugin that would otherwise be chosen automatically
-  qSlicerSubjectHierarchyAbstractPlugin* mostSuitablePluginByConfidenceNumbers =
-    qSlicerSubjectHierarchyPluginHandler::instance()->findOwnerPluginForSubjectHierarchyItem(currentItemID);
-
   // Set new owner plugin
   d->SubjectHierarchyNode->SetItemOwnerPluginName(currentItemID, selectedPluginName.toLatin1().constData());
 }
