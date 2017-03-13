@@ -1,4 +1,6 @@
 
+#ifndef itkTimeSeriesDatabase_txx
+#define itkTimeSeriesDatabase_txx
 
 #include <itkTimeSeriesDatabase.h>
 #include <itkImageRegionConstIterator.h>
@@ -47,8 +49,6 @@ bool TimeSeriesDatabase<TPixel>::CalculateIntersection ( Size<3> BlockIndex,
   }
   return IsFullBlock;
 }
-
-
 
 template <class TPixel>
 bool TimeSeriesDatabase<TPixel>::IsOpen () const
@@ -362,9 +362,9 @@ void TimeSeriesDatabase<TPixel>::CreateFromFileArchetype ( const char* TSDFilena
   ArchetypeSeriesFileNames::Pointer fit = itk::ArchetypeSeriesFileNames::New();
   fit->SetArchetype ( fileNameCollapsed );
 
-  typedef Image<TPixel,3> ImageType;
+  typedef Image<TPixel,3>            ImageType;
   typedef ImageFileReader<ImageType> ReaderType;
-  ImageRegion<3> region;
+  ImageRegion<3>                     region;
 
   // Load the first image's size
   candidateFiles = fit->GetFileNames();
@@ -573,8 +573,6 @@ void TimeSeriesDatabase<TPixel>::SetCacheSizeInMiB ( float sz )
   this->m_Cache.set_maxsize ( blocks );
 }
 
-
-
 template <class TPixel>
 TimeSeriesDatabase<TPixel>::TimeSeriesDatabase () : m_Cache ( 1024 ){
   this->m_Dimensions.SetSize ( 4 );
@@ -585,7 +583,6 @@ template <class TPixel>
 TimeSeriesDatabase<TPixel>::~TimeSeriesDatabase () {
   // m_Cache.statistics ( std::cout );
 }
-
 
 template <class TPixel>
 void
@@ -616,5 +613,6 @@ TimeSeriesDatabase<TPixel>
   this->m_Cache.statistics ( os );
 }
 
-
 }
+
+#endif

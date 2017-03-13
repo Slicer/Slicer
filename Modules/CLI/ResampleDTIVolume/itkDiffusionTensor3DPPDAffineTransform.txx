@@ -33,7 +33,7 @@ DiffusionTensor3DPPDAffineTransform<TData>
     itkExceptionMacro(<< "Transform matrix is not invertible" );
     }
   this->ComputeOffset();
-  this->latestTime = Object::GetMTime();
+  this->m_LatestTime = Object::GetMTime();
 }
 
 template <class TData>
@@ -43,10 +43,10 @@ DiffusionTensor3DPPDAffineTransform<TData>
 {
   InternalTensorDataType internalTensor = tensor;
 
-  if( this->latestTime < Object::GetMTime() )
+  if( this->m_LatestTime < Object::GetMTime() )
     {
     this->m_Lock->Lock();
-    if( this->latestTime < Object::GetMTime() )
+    if( this->m_LatestTime < Object::GetMTime() )
       {
       PreCompute();
       }

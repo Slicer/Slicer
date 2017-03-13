@@ -59,8 +59,8 @@ class MRMLIDImageIO_EXPORT MRMLIDImageIO : public ImageIOBase
 {
 public:
   /** Standard class typedefs. */
-  typedef MRMLIDImageIO            Self;
-  typedef ImageIOBase  Superclass;
+  typedef MRMLIDImageIO       Self;
+  typedef ImageIOBase         Superclass;
   typedef SmartPointer<Self>  Pointer;
 
   /** Method for creation through the object factory. */
@@ -133,14 +133,13 @@ private:
   bool IsAVolumeNode(const char*);
   vtkMRMLVolumeNode* FileNameToVolumeNodePtr(const char*);
 
-  std::string Scheme;
-  std::string Authority;
-  std::string SceneID;
-  std::string NodeID;
+  std::string m_Scheme;
+  std::string m_Authority;
+  std::string m_SceneID;
+  std::string m_NodeID;
 
 };
 
 
 } /// end namespace itk
 #endif /// itkMRMLIDImageIO_h
-

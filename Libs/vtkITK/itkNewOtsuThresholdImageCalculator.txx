@@ -14,8 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef _itkNewOtsuThresholdImageCalculator_txx
-#define _itkNewOtsuThresholdImageCalculator_txx
+#ifndef itkNewOtsuThresholdImageCalculator_txx
+#define itkNewOtsuThresholdImageCalculator_txx
 
 #include "itkNewOtsuThresholdImageCalculator.h"
 #include "itkImageRegionConstIteratorWithIndex.h"

@@ -45,10 +45,12 @@ public:
   typedef SmartPointer<Self>                        Pointer;
   typedef SmartPointer<const Self>                  ConstPointer;
   typedef typename TensorDataType::RealValueType    TensorRealType;
+
   typedef ImageFunction<Image<DiffusionTensor3D<TData>, 3>,
                         DiffusionTensor3D<TData>,
                         TCoordRep
                         > Superclass;
+
   typedef typename Superclass::ContinuousIndexType ContinuousIndexType;
   typedef typename Superclass::IndexType           IndexType;
 
@@ -103,7 +105,7 @@ public:
 //  itkGetMacro( DefaultPixelValue , TensorRealType ) ;
 protected:
   DiffusionTensor3DInterpolateImageFunction();
-  unsigned long latestTime;
+  unsigned long m_LatestTime;
 //  TensorRealType m_DefaultPixelValue ;
 //  TensorDataType m_DefaultPixel ;
 };

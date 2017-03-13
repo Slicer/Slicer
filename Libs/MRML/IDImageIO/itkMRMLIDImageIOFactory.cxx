@@ -46,4 +46,3 @@ MRMLIDImageIOFactory::GetDescription() const
 }
 
 } // end namespace itk
-

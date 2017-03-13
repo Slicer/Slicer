@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __ImageToImageRegistrationHelper_txx
-#define __ImageToImageRegistrationHelper_txx
+#ifndef itkImageToImageRegistrationHelper_txx
+#define itkImageToImageRegistrationHelper_txx
 
 #include "itkImageToImageRegistrationHelper.h"
 
@@ -1491,6 +1491,6 @@ ImageToImageRegistrationHelper<TImage>
 
 }
 
-};
+}
 
 #endif

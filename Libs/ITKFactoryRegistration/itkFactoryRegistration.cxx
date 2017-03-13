@@ -12,4 +12,3 @@ void itk::itkFactoryRegistration(void)
 {
   return;
 }
-

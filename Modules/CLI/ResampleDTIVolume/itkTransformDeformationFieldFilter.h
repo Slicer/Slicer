@@ -25,10 +25,12 @@ class TransformDeformationFieldFilter
 public:
   typedef TInput  InputDataType;
   typedef TOutput OutputDataType;
+
   typedef ImageToImageFilter
   <Image<itk::Vector<InputDataType, NDimensions>, NDimensions>,
    Image<itk::Vector<OutputDataType, NDimensions>, NDimensions> >
   Superclass;
+
   typedef itk::Vector<InputDataType, NDimensions>        InputDeformationPixelType;
   typedef Image<InputDeformationPixelType, NDimensions>  InputDeformationFieldType;
   typedef itk::Vector<OutputDataType, NDimensions>       OutputDeformationPixelType;

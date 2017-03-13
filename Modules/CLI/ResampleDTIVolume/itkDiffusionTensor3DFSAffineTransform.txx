@@ -67,7 +67,7 @@ DiffusionTensor3DFSAffineTransform<TData>
   this->m_Transform = RotationMatrixTranspose * this->m_MeasurementFrame;
 
   this->ComputeOffset();
-  this->latestTime = Object::GetMTime();
+  this->m_LatestTime = Object::GetMTime();
 }
 
 template <class TData>

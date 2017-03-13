@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __RigidImageToImageRegistrationMethod_h
-#define __RigidImageToImageRegistrationMethod_h
+#ifndef itkRigidImageToImageRegistrationMethod_h
+#define itkRigidImageToImageRegistrationMethod_h
 
 #include "itkImage.h"
 #include "itkAffineTransform.h"

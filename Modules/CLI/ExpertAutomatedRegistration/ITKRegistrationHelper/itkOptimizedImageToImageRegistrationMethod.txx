@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __OptimizedImageToImageRegistrationMethod_txx
-#define __OptimizedImageToImageRegistrationMethod_txx
+#ifndef itkOptimizedImageToImageRegistrationMethod_txx
+#define itkOptimizedImageToImageRegistrationMethod_txx
 
 #include "itkOptimizedImageToImageRegistrationMethod.h"
 
@@ -125,10 +125,10 @@ protected:
     m_Iteration = 0;
     m_UpdateInterval = 1;
     m_DontShowParameters = false;
-  };
+  }
   ~ImageRegistrationViewer()
   {
-  };
+  }
 
 };
 
@@ -713,6 +713,6 @@ OptimizedImageToImageRegistrationMethod<TImage>
     }
 }
 
-};
+}
 
 #endif

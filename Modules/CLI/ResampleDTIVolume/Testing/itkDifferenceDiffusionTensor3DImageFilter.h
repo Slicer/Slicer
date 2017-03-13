@@ -132,8 +132,8 @@ protected:
 
   Array<AccumulateType> m_ThreadDifferenceSum;
   Array<unsigned long>  m_ThreadNumberOfPixels;
-  MatrixType            measurementFrameValid;
-  MatrixType            measurementFrameTest;
+  MatrixType            m_MeasurementFrameValid;
+  MatrixType            m_MeasurementFrameTest;
 private:
   DifferenceDiffusionTensor3DImageFilter(const Self &); // purposely not implemented
   void operator=(const Self &);                         // purposely not implemented

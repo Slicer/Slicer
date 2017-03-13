@@ -58,8 +58,8 @@ public:
   void SetAffineTransformType(typename AffineTransform::Pointer transform);
 protected:
   DiffusionTensor3DNonRigidTransform();
-  unsigned long      latestTime;
-  typename TransformType::Pointer m_Transform;
+  unsigned long                     m_LatestTime;
+  typename TransformType::Pointer   m_Transform;
   typename AffineTransform::Pointer m_Affine;
 };
 

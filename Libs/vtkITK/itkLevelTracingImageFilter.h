@@ -9,7 +9,7 @@
 namespace itk
 {
 
-/** /class LevelTracingImageFilter
+/** \class LevelTracingImageFilter
  * \brief Trace a level curve/surface given a seed point on the level curve/surface.
  *
  * LevelTracingImageFilter traces a level curve (or surface) from a
@@ -31,10 +31,10 @@ class LevelTracingImageFilter:public ImageToImageFilter<TInputImage,TOutputImage
 {
 public:
   /** Standard class typedefs. */
-  typedef LevelTracingImageFilter Self;
+  typedef LevelTracingImageFilter                      Self;
   typedef ImageToImageFilter<TInputImage,TOutputImage> Superclass;
-  typedef SmartPointer<Self> Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  typedef SmartPointer<Self>                           Pointer;
+  typedef SmartPointer<const Self>                     ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -45,22 +45,22 @@ public:
 
   /** Image related typedefs. */
   itkStaticConstMacro(ImageDimension, unsigned int,
-                      TInputImage::ImageDimension ) ;
+                      TInputImage::ImageDimension);
 
-  typedef TInputImage InputImageType;
-  typedef typename InputImageType::Pointer InputImagePointer;
+  typedef TInputImage                           InputImageType;
+  typedef typename InputImageType::Pointer      InputImagePointer;
   typedef typename InputImageType::ConstPointer InputImageConstPointer;
-  typedef typename InputImageType::RegionType InputImageRegionType;
-  typedef typename InputImageType::PixelType InputImagePixelType;
-  typedef typename InputImageType::IndexType IndexType;
-  typedef typename InputImageType::SizeType SizeType;
+  typedef typename InputImageType::RegionType   InputImageRegionType;
+  typedef typename InputImageType::PixelType    InputImagePixelType;
+  typedef typename InputImageType::IndexType    IndexType;
+  typedef typename InputImageType::SizeType     SizeType;
 
-  typedef TOutputImage OutputImageType;
-  typedef typename OutputImageType::Pointer OutputImagePointer;
+  typedef TOutputImage                         OutputImageType;
+  typedef typename OutputImageType::Pointer    OutputImagePointer;
   typedef typename OutputImageType::RegionType OutputImageRegionType;
-  typedef typename OutputImageType::PixelType OutputImagePixelType;
+  typedef typename OutputImageType::PixelType  OutputImagePixelType;
 
-  typedef ChainCodePath<ImageDimension> ChainCodePathType;
+  typedef ChainCodePath<ImageDimension>       ChainCodePathType;
   typedef typename ChainCodePathType::Pointer ChainCodePathPointer;
 
   typedef typename ChainCodePathType::OffsetType OffsetType;
@@ -118,9 +118,10 @@ private:
   LevelTracingImageFilter(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
 
-  IndexType m_Seed;
-  InputImagePixelType m_Max, m_Min;
-  bool m_MovedSeed;
+  IndexType           m_Seed;
+  InputImagePixelType m_Max;
+  InputImagePixelType m_Min;
+  bool                m_MovedSeed;
 
 };
 

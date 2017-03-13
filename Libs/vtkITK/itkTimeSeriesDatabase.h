@@ -18,8 +18,8 @@
 namespace itk
 {
 
-/*
- * TimeSeriesDatabase transforms a series of images stored on disk into a high performance database
+/** \class TimeSeriesDatabase
+ * \brief TimeSeriesDatabase transforms a series of images stored on disk into a high performance database
  *
  * The main idea behind TimeSeriesDatabase is to have a representation of a 4 dimensional dataset that
  * is larger than main memory, but may still be accessed in a rapid manner.  Though not strictly
@@ -28,11 +28,11 @@ namespace itk
 template <class TPixel> class TimeSeriesDatabase : public ImageSource<Image<TPixel,3> > {
 public:
 
-  typedef TimeSeriesDatabase Self;
+  typedef TimeSeriesDatabase            Self;
   typedef ImageSource<Image<TPixel,3> > Superclass;
-  typedef SmartPointer<Self> Pointer;
-  typedef SmartPointer<const Self>  ConstPointer;
-  typedef WeakPointer<const Self>  ConstWeakPointer;
+  typedef SmartPointer<Self>            Pointer;
+  typedef SmartPointer<const Self>      ConstPointer;
+  typedef WeakPointer<const Self>       ConstWeakPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -40,11 +40,11 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(TimeSeriesDatabase, ImageSource);
 
-  typedef Image<TPixel, 3> OutputImageType;
+  typedef Image<TPixel, 3>                  OutputImageType;
   typedef typename OutputImageType::Pointer OutputImageTypePointer;
-  typedef Image<TPixel, 2> OutputSliceType;
+  typedef Image<TPixel, 2>                  OutputSliceType;
   typedef typename OutputSliceType::Pointer OutputSliceTypePointer;
-  typedef Array<TPixel> ArrayType;
+  typedef Array<TPixel>                     ArrayType;
 
   /** Connect to an existing TimeSeriesDatabase file on disk
    * The idea behind the Connect method is to associate this
@@ -106,13 +106,15 @@ protected:
   TimeSeriesDatabase();
   ~TimeSeriesDatabase();
   virtual void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
+
   Array<unsigned int> m_Dimensions;
   Array<unsigned int> m_BlocksPerImage;
 
-  typename OutputImageType::SpacingType m_OutputSpacing;
-  typename OutputImageType::RegionType m_OutputRegion;
-  typename OutputImageType::PointType m_OutputOrigin;
+  typename OutputImageType::SpacingType   m_OutputSpacing;
+  typename OutputImageType::RegionType    m_OutputRegion;
+  typename OutputImageType::PointType     m_OutputOrigin;
   typename OutputImageType::DirectionType m_OutputDirection;
+
   typedef itk::TimeSeriesDatabaseHelper::counted_ptr<std::fstream> StreamPtr;
 
   static std::streampos CalculatePosition ( unsigned long index, unsigned long BlocksPerFile );
@@ -130,12 +132,13 @@ protected:
 
   /// How many pixels are in the last block?
   Array<unsigned int> m_PixelRemainder;
-  std::string m_Filename;
+
+  std::string  m_Filename;
   unsigned int m_CurrentImage;
 
-  std::vector<StreamPtr> m_DatabaseFiles;
+  std::vector<StreamPtr>   m_DatabaseFiles;
   std::vector<std::string> m_DatabaseFileNames;
-  unsigned long m_BlocksPerFile;
+  unsigned long            m_BlocksPerFile;
 
   /// our cache
   struct CacheBlock

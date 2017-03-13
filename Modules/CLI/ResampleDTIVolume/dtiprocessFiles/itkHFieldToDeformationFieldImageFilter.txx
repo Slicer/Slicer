@@ -17,6 +17,9 @@
 
 =========================================================================*/
 
+#ifndef itkHFieldToDeformationFieldImageFilter_txx
+#define itkHFieldToDeformationFieldImageFilter_txx
+
 #include <itkImageRegionConstIteratorWithIndex.h>
 #include <itkImageRegionIterator.h>
 
@@ -84,3 +87,5 @@ HFieldToDeformationFieldImageFilter<TInputImage, TOutputImage>::ComputeDisplacem
 }
 
 } // namespace itk
+
+#endif

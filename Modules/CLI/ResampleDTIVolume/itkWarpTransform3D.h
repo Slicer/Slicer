@@ -96,13 +96,13 @@ protected:
    * SetDeformationField() to set the transform.*/
   virtual void  SetParameters(const ParametersType &) ITK_OVERRIDE
   {
-  };
+  }
   /**This is a dummy function. This class does not allow to set the
    * transform fixed parameters through this function. Use
    * SetDeformationField() to set the transform */
   virtual void  SetFixedParameters(const ParametersType &) ITK_OVERRIDE
   {
-  };
+  }
 
   WarpTransform3D();
   void operator=(const Self &); // purposely not implemented

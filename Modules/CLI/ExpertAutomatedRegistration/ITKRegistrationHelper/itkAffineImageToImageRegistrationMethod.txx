@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __AffineImageToImageRegistrationMethod_txx
-#define __AffineImageToImageRegistrationMethod_txx
+#ifndef itkAffineImageToImageRegistrationMethod_txx
+#define itkAffineImageToImageRegistrationMethod_txx
 
 #include "itkAffineImageToImageRegistrationMethod.h"
 
@@ -138,6 +138,6 @@ AffineImageToImageRegistrationMethod<TImage>
   Superclass::PrintSelf(os, indent);
 }
 
-};
+}
 
 #endif

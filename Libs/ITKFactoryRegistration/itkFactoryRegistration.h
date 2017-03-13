@@ -12,4 +12,3 @@ ITKFactoryRegistration_EXPORT void itkFactoryRegistration(void);
 }
 
 #endif
-

@@ -86,7 +86,9 @@ public:
 
 private:
   DiffusionTensor3DWrite();
+
   typename DiffusionImageType::Pointer m_Input;
+
   unsigned int   m_NumberOfThreads;
   DictionaryType m_MetaDataDictionary;
 };

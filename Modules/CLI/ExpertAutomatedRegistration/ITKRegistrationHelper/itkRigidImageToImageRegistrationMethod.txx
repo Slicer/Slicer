@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __RigidImageToImageRegistrationMethod_txx
-#define __RigidImageToImageRegistrationMethod_txx
+#ifndef itkRigidImageToImageRegistrationMethod_txx
+#define itkRigidImageToImageRegistrationMethod_txx
 
 #include "itkRigidImageToImageRegistrationMethod.h"
 #include "vnl/vnl_inverse.h"
@@ -198,6 +198,6 @@ RigidImageToImageRegistrationMethod<TImage>
   this->Superclass::PrintSelf(os, indent);
 }
 
-};
+}
 
 #endif

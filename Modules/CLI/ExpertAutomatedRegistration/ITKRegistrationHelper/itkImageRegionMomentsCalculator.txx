@@ -14,8 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef _itkImageRegionMomentsCalculator_txx
-#define _itkImageRegionMomentsCalculator_txx
+#ifndef itkImageRegionMomentsCalculator_txx
+#define itkImageRegionMomentsCalculator_txx
 #include "itkImageRegionMomentsCalculator.h"
 
 #include "vnl/algo/vnl_real_eigensystem.h"

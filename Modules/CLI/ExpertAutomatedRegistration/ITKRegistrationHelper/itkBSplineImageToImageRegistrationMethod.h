@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __BSplineImageToImageRegistrationMethod_h
-#define __BSplineImageToImageRegistrationMethod_h
+#ifndef itkBSplineImageToImageRegistrationMethod_h
+#define itkBSplineImageToImageRegistrationMethod_h
 
 #include "itkImage.h"
 #include "itkBSplineDeformableTransform.h"

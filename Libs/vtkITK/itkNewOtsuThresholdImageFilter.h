@@ -44,10 +44,10 @@ class NewOtsuThresholdImageFilter :
 {
 public:
   /** Standard Self typedef */
-  typedef NewOtsuThresholdImageFilter Self;
+  typedef NewOtsuThresholdImageFilter                   Self;
   typedef ImageToImageFilter<TInputImage,TOutputImage>  Superclass;
-  typedef SmartPointer<Self>        Pointer;
-  typedef SmartPointer<const Self>  ConstPointer;
+  typedef SmartPointer<Self>                            Pointer;
+  typedef SmartPointer<const Self>                      ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -57,25 +57,25 @@ public:
 
   /** Image pixel value typedef. */
   typedef typename TInputImage::PixelType   InputPixelType;
-  typedef typename TOutputImage::PixelType   OutputPixelType;
+  typedef typename TOutputImage::PixelType  OutputPixelType;
 
   /** Image related typedefs. */
-  typedef typename TInputImage::Pointer InputImagePointer;
-  typedef typename TOutputImage::Pointer OutputImagePointer;
+  typedef typename TInputImage::Pointer     InputImagePointer;
+  typedef typename TOutputImage::Pointer    OutputImagePointer;
 
-  typedef typename TInputImage::SizeType  InputSizeType;
-  typedef typename TInputImage::IndexType  InputIndexType;
-  typedef typename TInputImage::RegionType InputImageRegionType;
-  typedef typename TOutputImage::SizeType  OutputSizeType;
+  typedef typename TInputImage::SizeType    InputSizeType;
+  typedef typename TInputImage::IndexType   InputIndexType;
+  typedef typename TInputImage::RegionType  InputImageRegionType;
+  typedef typename TOutputImage::SizeType   OutputSizeType;
   typedef typename TOutputImage::IndexType  OutputIndexType;
   typedef typename TOutputImage::RegionType OutputImageRegionType;
 
 
   /** Image related typedefs. */
   itkStaticConstMacro(InputImageDimension, unsigned int,
-                      TInputImage::ImageDimension ) ;
+                      TInputImage::ImageDimension );
   itkStaticConstMacro(OutputImageDimension, unsigned int,
-                      TOutputImage::ImageDimension ) ;
+                      TOutputImage::ImageDimension );
 
   /** Set the "outside" pixel value. The default value
    * NumericTraits<OutputPixelType>::ZeroValue(). */
@@ -105,7 +105,7 @@ public:
 
 protected:
   NewOtsuThresholdImageFilter();
-  ~NewOtsuThresholdImageFilter(){};
+  ~NewOtsuThresholdImageFilter(){}
   void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
   void GenerateInputRequestedRegion() ITK_OVERRIDE;
@@ -119,8 +119,8 @@ private:
   OutputPixelType     m_InsideValue;
   OutputPixelType     m_OutsideValue;
   unsigned long       m_NumberOfHistogramBins;
-  double             m_Omega;
-} ; /// end of class
+  double              m_Omega;
+}; /// end of class
 
 } /// end namespace itk
 

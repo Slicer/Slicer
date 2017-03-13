@@ -14,8 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef _itkAnisotropicSimilarity3DTransform_txx
-#define _itkAnisotropicSimilarity3DTransform_txx
+#ifndef itkAnisotropicSimilarity3DTransform_txx
+#define itkAnisotropicSimilarity3DTransform_txx
 
 #include "itkAnisotropicSimilarity3DTransform.h"
 #include "vnl/vnl_math.h"

@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __OptimizedImageToImageRegistrationMethod_h
-#define __OptimizedImageToImageRegistrationMethod_h
+#ifndef itkOptimizedImageToImageRegistrationMethod_h
+#define itkOptimizedImageToImageRegistrationMethod_h
 
 #include "itkImage.h"
 

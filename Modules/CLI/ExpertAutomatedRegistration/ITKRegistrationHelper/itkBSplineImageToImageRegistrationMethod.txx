@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __BSplineImageToImageRegistrationMethod_txx
-#define __BSplineImageToImageRegistrationMethod_txx
+#ifndef itkBSplineImageToImageRegistrationMethod_txx
+#define itkBSplineImageToImageRegistrationMethod_txx
 
 #include "itkBSplineImageToImageRegistrationMethod.h"
 
@@ -110,10 +110,10 @@ protected:
     m_Iteration = 0;
     m_UpdateInterval = 1;
     m_DontShowParameters = false;
-  };
+  }
   ~BSplineImageRegistrationViewer()
   {
-  };
+  }
 
 };
 
@@ -179,7 +179,7 @@ BSplineImageToImageRegistrationMethod<TImage>
   gridDirection    = this->GetFixedImage()->GetDirection();
   for( unsigned int i = 0; i < ImageDimension; i++ )
     {
-    gridSpacing[i] *=  static_cast<double>(fixedImageSize[i] - 1)
+    gridSpacing[i] *= static_cast<double>(fixedImageSize[i] - 1)
       / static_cast<double>(gridSizeOnImage[i] - 1);
     }
 
@@ -818,12 +818,11 @@ BSplineImageToImageRegistrationMethod<TImage>
 
   int parameterCounter = 0;
 
-  typedef typename BSplineTransformType::ImageType ParametersImageType;
-  typedef ResampleImageFilter<ParametersImageType, ParametersImageType>
-  ResamplerType;
-  typedef BSplineResampleImageFunction<ParametersImageType, double>
-  FunctionType;
-  typedef IdentityTransform<double, ImageDimension> IdentityTransformType;
+  typedef typename BSplineTransformType::ImageType                      ParametersImageType;
+  typedef ResampleImageFilter<ParametersImageType, ParametersImageType> ResamplerType;
+  typedef BSplineResampleImageFunction<ParametersImageType, double>     FunctionType;
+  typedef IdentityTransform<double, ImageDimension>                     IdentityTransformType;
+
   for( unsigned int k = 0; k < ImageDimension; k++ )
     {
     typename ResamplerType::Pointer upsampler = ResamplerType::New();
@@ -941,6 +940,6 @@ BSplineImageToImageRegistrationMethod<TImage>
   Superclass::PrintSelf(os, indent);
 }
 
-};
+}
 
 #endif

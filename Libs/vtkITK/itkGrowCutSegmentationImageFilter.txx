@@ -1,5 +1,5 @@
-#ifndef _itkGrowCutSegmentationImageFilter_txx_
-#define _itkGrowCutSegmentationImageFilter_txx_
+#ifndef itkGrowCutSegmentationImageFilter_txx
+#define itkGrowCutSegmentationImageFilter_txx
 
 
 #include "itkGrowCutSegmentationImageFilter.h"
@@ -316,7 +316,6 @@ ComputeLabelVolumes(TOutputImage *outputImage, std::vector< unsigned > &volumes,
 }
 
 
-
 template<class TInputImage, class TOutputImage, class TWeightPixelType>
 bool GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>::
 InitializeStateImage( OutputImageType *stateImage)
@@ -336,8 +335,8 @@ InitializeStateImage( OutputImageType *stateImage)
                                                 stateImage->GetBufferedRegion());
 
   for (unsigned i = 0; i < labelImage->GetImageDimension(); i++){
-  m_roiStart[i] = 0;
-  m_roiEnd[i] = 0;
+  m_RoiStart[i] = 0;
+  m_RoiEnd[i] = 0;
   }
 
   bool foundLabels = false;
@@ -352,21 +351,21 @@ InitializeStateImage( OutputImageType *stateImage)
 
       if(!setStart)
         {
-        m_roiStart = idx;
-        m_roiEnd = idx;
+        m_RoiStart = idx;
+        m_RoiEnd = idx;
         setStart = true;
         }
       else
         {
         for (unsigned i = 0; i < labelImage->GetImageDimension(); i++)
           {
-          if(idx[i] <= m_roiStart[i])
+          if(idx[i] <= m_RoiStart[i])
             {
-            m_roiStart[i] = idx[i];
+            m_RoiStart[i] = idx[i];
             }
-          if(idx[i] >= m_roiEnd[i])
+          if(idx[i] >= m_RoiEnd[i])
             {
-            m_roiEnd[i] = idx[i];
+            m_RoiEnd[i] = idx[i];
             }
           }
         }
@@ -383,9 +382,9 @@ InitializeStateImage( OutputImageType *stateImage)
    (midROI[i]+m_ObjectRadius) : lsize[i]-1; //m_roiEnd[i];
       */
 
-    m_roiStart[i] = (m_roiStart[i] - m_ObjectRadius >= 0)? (m_roiStart[i] - m_ObjectRadius) : 0;
-    m_roiEnd[i] = (static_cast<unsigned int>(m_roiEnd[i] + m_ObjectRadius) < lsize[i]) ?
-      (m_roiEnd[i] + m_ObjectRadius) : lsize[i]-1;
+    m_RoiStart[i] = (m_RoiStart[i] - m_ObjectRadius >= 0)? (m_RoiStart[i] - m_ObjectRadius) : 0;
+    m_RoiEnd[i] = (static_cast<unsigned int>(m_RoiEnd[i] + m_ObjectRadius) < lsize[i]) ?
+      (m_RoiEnd[i] + m_ObjectRadius) : lsize[i]-1;
     }
 
   if(!foundLabels)
@@ -478,8 +477,6 @@ MaskSegmentedImageByWeight( float confThresh)
 
   //return (numInPixels > numOutPixels);
 }
-
-
 
 
 template <class TInputImage, class TOutputImage, class TWeightPixelType>
@@ -621,15 +618,15 @@ GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
   for (unsigned n = 0; n < ndims; n++)
     {
     //prevUnlabeledPix *= (m_roiEnd[n]-m_roiStart[n]);
-    totalROIVolume *= (m_roiEnd[n]-m_roiStart[n]);
+    totalROIVolume *= (m_RoiEnd[n]-m_RoiStart[n]);
 
     if(n == 0)
       {
-      maxRadius = m_roiEnd[n]-m_roiStart[n];
+      maxRadius = m_RoiEnd[n]-m_RoiStart[n];
       }
-    else if(maxRadius < (m_roiEnd[n]-m_roiStart[n]))
+    else if(maxRadius < (m_RoiEnd[n]-m_RoiStart[n]))
       {
-      maxRadius = m_roiEnd[n]-m_roiStart[n];
+      maxRadius = m_RoiEnd[n]-m_RoiStart[n];
       }
     }
 
@@ -673,7 +670,9 @@ GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
     unsigned relUnlabeled = (unlabeled*100)/totalROIVolume;
     unsigned relSaturated = ((currSaturatedPix+currLocallySaturatedPix)*100)/totalROIVolume;
 
-    // unsigned permodified = (currModified > prevModifiedPix) ? ((currModified-prevModifiedPix)*100)/(std::max(static_cast<unsigned int>(1), std::max(currModified, prevModifiedPix))) : ((prevModifiedPix - currModified)*100)/(std::max(static_cast<unsigned int>(1), std::max(currModified, prevModifiedPix)));
+    // unsigned permodified = (currModified > prevModifiedPix) ?
+    //  ((currModified-prevModifiedPix)*100)/(std::max(static_cast<unsigned int>(1), std::max(currModified, prevModifiedPix))) :
+    //  ((prevModifiedPix - currModified)*100)/(std::max(static_cast<unsigned int>(1), std::max(currModified, prevModifiedPix)));
 
     converged = (prevModifiedPix == currModified) ||
       (relUnlabeled < threshUnchanged && relSaturated > threshSaturation);
@@ -716,7 +715,7 @@ GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 
 
   this->UpdateProgress(1.0);
-  m_WeightImage = singleIteration->GetUpdatedStrengthImage() ;
+  m_WeightImage = singleIteration->GetUpdatedStrengthImage();
   m_LabelImage = singleIteration->GetOutput();
 
   this->MaskSegmentedImageByWeight(m_ConfThresh);
@@ -750,7 +749,6 @@ GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
   //   " : "<<difftime(end, start)<<" secs"<<std::endl;
 
 }
-
 
 
 template <class TInputImage, class TOutputImage, class TWeightPixelType>
@@ -801,13 +799,13 @@ void GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 
   for (unsigned d = 0; d < Dimension; d++)
     {
-    unsigned long int x = m_roiEnd[d]-m_roiStart[d]+1; // > 0 ? m_roiEnd[d]-m_roiStart[d] : 0;
-    iIndex[d] = m_roiStart[d] > regionStart[d] ? m_roiStart[d] : regionStart[d];
+    unsigned long int x = m_RoiEnd[d]-m_RoiStart[d]+1; // > 0 ? m_roiEnd[d]-m_roiStart[d] : 0;
+    iIndex[d] = m_RoiStart[d] > regionStart[d] ? m_RoiStart[d] : regionStart[d];
     iSize[d] = x < regionSize[d] ? (x > 0 ? x : 1) : regionSize[d];
 
     }
 
-  typedef typename InputImageType::RegionType InputRegionType;
+  typedef typename InputImageType::RegionType  InputRegionType;
   typedef typename OutputImageType::RegionType OutputRegionType;
   typedef typename WeightImageType::RegionType WeightRegionType;
 
@@ -824,12 +822,12 @@ void GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
   weight.SetSize( iSize);
 
   typedef ConstNeighborhoodIterator<InputImageType> InputIteratorType;
-  typedef typename InputIteratorType::RadiusType InputRadiusType;
+  typedef typename InputIteratorType::RadiusType    InputRadiusType;
 
-  typedef NeighborhoodIterator<OutputImageType> LabelIteratorType;
+  typedef NeighborhoodIterator<OutputImageType>  LabelIteratorType;
   typedef typename LabelIteratorType::RadiusType LabelRadiusType;
 
-  typedef NeighborhoodIterator<WeightImageType> WeightIteratorType;
+  typedef NeighborhoodIterator<WeightImageType>   WeightIteratorType;
   typedef typename WeightIteratorType::RadiusType WeightRadiusType;
 
 
@@ -1084,8 +1082,6 @@ GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 
     }
 }
-
-
 
 }//namespace itk
 

@@ -24,7 +24,8 @@
 namespace itk
 {
 
-/** \brief AnisotropicSimilarity3DTransform of a vector space (e.g. space
+/** \class AnisotropicSimilarity3DTransform
+ * \brief AnisotropicSimilarity3DTransform of a vector space (e.g. space
  * coordinates)
  *
  * This transform applies a rotation, translation and anisotropic scaling
@@ -81,10 +82,12 @@ public:
   typedef typename Superclass::OutputVectorType    OutputVectorType;
   typedef typename Superclass::InputVnlVectorType  InputVnlVectorType;
   typedef typename Superclass::OutputVnlVectorType OutputVnlVectorType;
+
   typedef typename Superclass::InputCovariantVectorType
   InputCovariantVectorType;
   typedef typename Superclass::OutputCovariantVectorType
   OutputCovariantVectorType;
+
   typedef typename Superclass::MatrixType        MatrixType;
   typedef typename Superclass::InverseMatrixType InverseMatrixType;
   typedef typename Superclass::CenterType        CenterType;

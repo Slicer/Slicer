@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<Description>
+<LineLength>200</LineLength>
+<DeclarationOrder>0,1,2</DeclarationOrder>
+<Typedefs>[A-Z]</Typedefs>
+<InternalVariables>m_[A-Z]</InternalVariables>
+<SemicolonSpace>0</SemicolonSpace>
+<EndOfFileNewLine>1</EndOfFileNewLine>
+<Tabs>1</Tabs>
+<Spaces>3</Spaces>
+<Comments>/**, *, */,true</Comments>
+<Namespace>itk</Namespace>
+<NameOfClass>[NameOfClass],itk</NameOfClass>
+<IfNDefDefine>[NameOfClass]_[Extension]</IfNDefDefine>
+<EmptyLines>2</EmptyLines>
+<Template>[TNVCF]</Template>
+<Operator>1,1</Operator>
+</Description>

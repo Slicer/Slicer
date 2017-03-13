@@ -38,7 +38,7 @@ public:
     m_ProcessInformation = inf;
     m_Fraction = fraction;
     m_Start = start;
-  };
+  }
 
 protected:
 
@@ -192,6 +192,7 @@ virtual void EndFilter()
 
 
   ModuleProcessInformation *m_ProcessInformation;
+
   double m_Fraction;
   double m_Start;
 };

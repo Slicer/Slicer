@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef itkTestMainDTI_h
-#define itkTestMainDTI_h
+#ifndef itkTestMainExtended_h
+#define itkTestMainExtended_h
 
 // This file is used to create TestDriver executables
 // These executables are able to register a function pointer to a string name

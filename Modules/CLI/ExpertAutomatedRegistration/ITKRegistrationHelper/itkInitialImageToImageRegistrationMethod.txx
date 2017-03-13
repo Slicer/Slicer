@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __InitialImageToImageRegistrationMethod_txx
-#define __InitialImageToImageRegistrationMethod_txx
+#ifndef itkInitialImageToImageRegistrationMethod_txx
+#define itkInitialImageToImageRegistrationMethod_txx
 
 #include "itkInitialImageToImageRegistrationMethod.h"
 
@@ -396,6 +396,6 @@ InitialImageToImageRegistrationMethod<TImage>
   os << indent << "Use Landmarks = " << this->m_UseLandmarks << std::endl;
 }
 
-};
+}
 
 #endif

@@ -32,10 +32,10 @@ namespace itk {
 MRMLIDImageIO
 ::MRMLIDImageIO()
 {
-  this->Scheme = "";
-  this->Authority = "";
-  this->SceneID = "";
-  this->NodeID = "";
+  this->m_Scheme = "";
+  this->m_Authority = "";
+  this->m_SceneID = "";
+  this->m_NodeID = "";
 }
 
 //----------------------------------------------------------------------------
@@ -77,17 +77,17 @@ MRMLIDImageIO
   std::string fname = filename;
   std::string::size_type loc, hloc;
 
-  this->Authority = "";
-  this->SceneID = "";
-  this->NodeID = "";
+  this->m_Authority = "";
+  this->m_SceneID = "";
+  this->m_NodeID = "";
 
   // check that the filename starts with the slicer3 scheme
   loc = fname.find("slicer:");
   if (loc != std::string::npos && (loc == 0))
     {
-    this->Scheme = std::string(fname.begin(),
+    this->m_Scheme = std::string(fname.begin(),
                                fname.begin() + std::string("slicer").size());
-    loc = this->Scheme.size() + 1; // skip the colon
+    loc = this->m_Scheme.size() + 1; // skip the colon
 
     // now check whether we have a local or remote resource
     if (std::string(fname.begin()+loc,
@@ -100,7 +100,7 @@ MRMLIDImageIO
         // no hostname specified
         return 0;
         }
-      this->Authority = std::string(fname.begin()+loc+2, fname.begin()+hloc);
+      this->m_Authority = std::string(fname.begin()+loc+2, fname.begin()+hloc);
       loc = hloc+1; // skip the slash
       }
 
@@ -114,9 +114,9 @@ MRMLIDImageIO
       }
     if (hloc >= loc)
       {
-      this->SceneID = std::string(fname.begin()+loc, fname.begin()+hloc);
+      this->m_SceneID = std::string(fname.begin()+loc, fname.begin()+hloc);
 
-      sscanf(this->SceneID.c_str(), "%p", &scene);
+      sscanf(this->m_SceneID.c_str(), "%p", &scene);
 
       if (!scene)
         {
@@ -126,17 +126,17 @@ MRMLIDImageIO
       }
     else
       {
-      this->SceneID = "";
+      this->m_SceneID = "";
       }
     loc = hloc+1;   // skip the hash
 
     // now pull off the node
-    this->NodeID = std::string(fname.begin()+loc, fname.end());
+    this->m_NodeID = std::string(fname.begin()+loc, fname.end());
 
     // so far so good.  now lookup the node in the scene and see if we
     // can cast down to a MRMLVolumeNode
     //
-    vtkMRMLNode *node = scene->GetNodeByID(this->NodeID.c_str());
+    vtkMRMLNode *node = scene->GetNodeByID(this->m_NodeID.c_str());
 
     if (node)
       {
@@ -706,10 +706,10 @@ MRMLIDImageIO
 {
   Superclass::PrintSelf(os, indent);
 
-  os << indent << "Scheme: " << this->Scheme << std::endl;
-  os << indent << "Authority: " << this->Authority << std::endl;
-  os << indent << "SceneID: " << this->SceneID << std::endl;
-  os << indent << "NodeID: " << this->NodeID << std::endl;
+  os << indent << "Scheme: " << this->m_Scheme << std::endl;
+  os << indent << "Authority: " << this->m_Authority << std::endl;
+  os << indent << "SceneID: " << this->m_SceneID << std::endl;
+  os << indent << "NodeID: " << this->m_NodeID << std::endl;
 }
 
 //----------------------------------------------------------------------------

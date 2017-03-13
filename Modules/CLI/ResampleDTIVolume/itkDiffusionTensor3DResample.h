@@ -42,10 +42,11 @@ class DiffusionTensor3DResample
 public:
   typedef TInput  InputDataType;
   typedef TOutput OutputDataType;
+
   typedef ImageToImageFilter
   <Image<DiffusionTensor3D<TInput>, 3>,
-   Image<DiffusionTensor3D<TOutput>, 3> >
-  Superclass;
+   Image<DiffusionTensor3D<TOutput>, 3> > Superclass;
+
   typedef DiffusionTensor3D<InputDataType>                         InputTensorDataType;
   typedef Image<InputTensorDataType, 3>                            InputImageType;
   typedef DiffusionTensor3D<OutputDataType>                        OutputTensorDataType;
@@ -103,14 +104,14 @@ protected:
   void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
 private:
-  typename InterpolatorType::Pointer m_Interpolator;
-  typename TransformType::Pointer m_Transform;
-  typename OutputImageType::PointType m_OutputOrigin;
-  typename OutputImageType::SpacingType m_OutputSpacing;
-  typename OutputImageType::SizeType m_OutputSize;
+  typename InterpolatorType::Pointer      m_Interpolator;
+  typename TransformType::Pointer         m_Transform;
+  typename OutputImageType::PointType     m_OutputOrigin;
+  typename OutputImageType::SpacingType   m_OutputSpacing;
+  typename OutputImageType::SizeType      m_OutputSize;
   typename OutputImageType::DirectionType m_OutputDirection;
-  OutputDataType       m_DefaultPixelValue;
-  OutputTensorDataType m_DefaultTensor;
+  OutputDataType                          m_DefaultPixelValue;
+  OutputTensorDataType                    m_DefaultTensor;
 };
 
 } // end namespace itk

@@ -65,13 +65,15 @@ public:
 
   // /Set Number Of Threads
   itkSetMacro( NumberOfThreads, unsigned int);
-  itkGetMacro( HasMeasurementFrame , bool ) ;
+  itkGetMacro( HasMeasurementFrame , bool );
 private:
   DiffusionTensor3DRead();
+
   typename FileReaderType::Pointer m_Reader;
+
   MatrixType   m_MeasurementFrame;
   unsigned int m_NumberOfThreads;
-  bool m_HasMeasurementFrame ;
+  bool         m_HasMeasurementFrame;
 };
 
 } // end namespace itk

@@ -1,3 +1,7 @@
+
+#ifndef itkWarpTransform3D_txx
+#define itkWarpTransform3D_txx
+
 #include "itkWarpTransform3D.h"
 
 namespace itk
@@ -125,3 +129,5 @@ WarpTransform3D<FieldData>
 }
 
 } // end of namespace
+
+#endif

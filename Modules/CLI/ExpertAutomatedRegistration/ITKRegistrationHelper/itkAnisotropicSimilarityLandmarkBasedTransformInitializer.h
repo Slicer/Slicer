@@ -28,7 +28,8 @@
 namespace itk
 {
 
-/** \brief AnisotropicSimilarityLandmarkBasedTransformInitializer is a helper class intended to
+/** \class AnisotropicSimilarityLandmarkBasedTransformInitializer
+ * \brief AnisotropicSimilarityLandmarkBasedTransformInitializer is a helper class intended to
  * The class computes the transform that aligns the fixed and moving images
  * given a set of landmarks. The class is templated over the Transform type.
  *    The transform computed gives the best fit transform that maps the fixed
@@ -123,7 +124,7 @@ public:
   typedef Point<double, itkGetStaticConstMacro(ImageDimension)> LandmarkPointType;
   typedef std::vector<LandmarkPointType>                        LandmarkPointContainer;
   typedef typename
-  LandmarkPointContainer::const_iterator        PointsContainerConstIterator;
+  LandmarkPointContainer::const_iterator         PointsContainerConstIterator;
   typedef typename TransformType::ParametersType ParametersType;
   typedef typename ParametersType::ValueType     ParameterValueType;
 
@@ -151,7 +152,7 @@ protected:
   AnisotropicSimilarityLandmarkBasedTransformInitializer();
   ~AnisotropicSimilarityLandmarkBasedTransformInitializer()
   {
-  };
+  }
 
   void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 

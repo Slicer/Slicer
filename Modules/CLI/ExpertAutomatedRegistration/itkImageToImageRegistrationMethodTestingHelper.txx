@@ -12,8 +12,8 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-#ifndef __ImageToImageRegistrationMethodTestingHelper_txx
-#define __ImageToImageRegistrationMethodTestingHelper_txx
+#ifndef itkImageToImageRegistrationMethodTestingHelper_txx
+#define itkImageToImageRegistrationMethodTestingHelper_txx
 
 #include "itkImageToImageRegistrationMethodTestingHelper.h"
 

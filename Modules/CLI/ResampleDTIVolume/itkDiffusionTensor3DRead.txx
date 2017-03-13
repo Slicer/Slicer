@@ -25,7 +25,7 @@ DiffusionTensor3DRead<TData>
 {
   m_MeasurementFrame.SetIdentity();
   m_NumberOfThreads = 0;
-  m_HasMeasurementFrame = false ; 
+  m_HasMeasurementFrame = false;
 }
 
 template <class TData>
@@ -76,7 +76,7 @@ DiffusionTensor3DRead<TData>
               m_MeasurementFrame[i][j] = tagvalue.at( j ).at( i );
               }
             }
-          m_HasMeasurementFrame = true ;
+          m_HasMeasurementFrame = true;
           }
         }
       // get the space orientation

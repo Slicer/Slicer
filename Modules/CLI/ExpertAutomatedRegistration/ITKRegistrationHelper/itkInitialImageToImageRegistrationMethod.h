@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __InitialImageToImageRegistrationMethod_h
-#define __InitialImageToImageRegistrationMethod_h
+#ifndef itkInitialImageToImageRegistrationMethod_h
+#define itkInitialImageToImageRegistrationMethod_h
 
 #include "itkImage.h"
 #include "itkCommand.h"

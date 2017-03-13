@@ -1,5 +1,5 @@
-#ifndef itkLevelTracingImageFilter_txx_
-#define itkLevelTracingImageFilter_txx_
+#ifndef itkLevelTracingImageFilter_txx
+#define itkLevelTracingImageFilter_txx
 
 #include "itkLevelTracingImageFilter.h"
 #include "itkFloodFilledImageFunctionConditionalIterator.h"
@@ -12,13 +12,17 @@
 namespace itk
 {
 
+/** \class LevelTracingImageFunction
+ * \brief LevelTracingImageFunction used in LevelTracingImageFilter.
+ *
+ */
 template <class TInputImage, class TCoordRep = float>
 class LevelTracingImageFunction :
     public ImageFunction<TInputImage,bool,TCoordRep>
 {
 public:
   /** Standard class typedefs. */
-  typedef LevelTracingImageFunction              Self;
+  typedef LevelTracingImageFunction                 Self;
   typedef ImageFunction<TInputImage,bool,TCoordRep> Superclass;
   typedef SmartPointer<Self>                        Pointer;
   typedef SmartPointer<const Self>                  ConstPointer;
@@ -49,7 +53,6 @@ public:
 
   /** ContinuousIndex typedef support. */
   typedef typename Superclass::ContinuousIndexType ContinuousIndexType;
-
 
 
   /** BinaryThreshold the image at a point position
@@ -147,14 +150,14 @@ protected:
     {
       m_Threshold = NumericTraits<PixelType>::min();
       m_Radius.Fill(1);
-    } ;
-  ~LevelTracingImageFunction(){};
+    }
+  ~LevelTracingImageFunction(){}
 
 private:
   LevelTracingImageFunction( const Self& ); //purposely not implemented
   void operator=( const Self& ); //purposely not implemented
 
-  PixelType m_Threshold;
+  PixelType     m_Threshold;
   InputSizeType m_Radius;
 };
 

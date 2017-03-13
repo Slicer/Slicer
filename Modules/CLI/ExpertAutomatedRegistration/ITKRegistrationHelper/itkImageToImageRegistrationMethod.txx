@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __ImageToImageRegistrationMethod_txx
-#define __ImageToImageRegistrationMethod_txx
+#ifndef itkImageToImageRegistrationMethod_txx
+#define itkImageToImageRegistrationMethod_txx
 
 #include "itkImageToImageRegistrationMethod.h"
 
@@ -322,6 +322,6 @@ ImageToImageRegistrationMethod<TImage>
 
 }
 
-};
+}
 
 #endif

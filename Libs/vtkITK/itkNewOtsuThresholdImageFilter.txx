@@ -14,8 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef _itkNewOtsuThresholdImageFilter_txx
-#define _itkNewOtsuThresholdImageFilter_txx
+#ifndef itkNewOtsuThresholdImageFilter_txx
+#define itkNewOtsuThresholdImageFilter_txx
 #include "itkNewOtsuThresholdImageFilter.h"
 
 #include "itkBinaryThresholdImageFilter.h"
@@ -95,4 +95,5 @@ NewOtsuThresholdImageFilter<TInputImage,TOutputImage>
 
 
 }// end namespace itk
+
 #endif
