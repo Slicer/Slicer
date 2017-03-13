@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __itkAnisotropicSimilarityLandmarkBasedTransformInitializer_txx
-#define __itkAnisotropicSimilarityLandmarkBasedTransformInitializer_txx
+#ifndef itkAnisotropicSimilarityLandmarkBasedTransformInitializer_txx
+#define itkAnisotropicSimilarityLandmarkBasedTransformInitializer_txx
 
 #include "itkAnisotropicSimilarityLandmarkBasedTransformInitializer.h"
 #include "itkMatrix.h"
@@ -613,4 +613,4 @@ AnisotropicSimilarityLandmarkBasedTransformInitializer<TTransform, TFixedImage, 
 
 }  // namespace itk
 
-#endif /* __itkAnisotropicSimilarityLandmarkBasedTransformInitializer_txx */
+#endif /* itkAnisotropicSimilarityLandmarkBasedTransformInitializer_txx */
