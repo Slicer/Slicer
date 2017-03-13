@@ -424,17 +424,6 @@ bool hasPath(const QStringList& paths, const QString& pathToCheck)
 }
 
 // --------------------------------------------------------------------------
-QStringList appendToPathList(const QStringList& paths, const QString& pathToAppend, bool shouldExist = true)
-{
-  QStringList updatedPaths(paths);
-  if (!hasPath(paths, pathToAppend) && shouldExist ? QDir(pathToAppend).exists() : true)
-    {
-    updatedPaths << pathToAppend;
-    }
-  return updatedPaths;
-}
-
-// --------------------------------------------------------------------------
 QStringList appendToPathList(const QStringList& paths, const QStringList& pathsToAppend, bool shouldExist = true)
 {
   QStringList updatedPaths(paths);
