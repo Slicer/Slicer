@@ -1600,6 +1600,7 @@ void qSlicerTerminologyNavigatorWidget::onTypeSearchTextChanged(QString search)
 //-----------------------------------------------------------------------------
 void qSlicerTerminologyNavigatorWidget::onNameChanged(QString name)
 {
+  Q_UNUSED(name);
   Q_D(qSlicerTerminologyNavigatorWidget);
 
   // Set as manual
@@ -1616,6 +1617,7 @@ void qSlicerTerminologyNavigatorWidget::onResetNameClicked()
 //-----------------------------------------------------------------------------
 void qSlicerTerminologyNavigatorWidget::onColorChanged(QColor color)
 {
+  Q_UNUSED(color);
   Q_D(qSlicerTerminologyNavigatorWidget);
 
   // Set as manual
