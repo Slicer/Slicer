@@ -352,7 +352,8 @@ void qSlicerSubjectHierarchyPluginLogic::addSupportedDataNodesToSubjectHierarchy
 
     // If there is a plugin that can add the data node to subject hierarchy, then add
     QList<qSlicerSubjectHierarchyAbstractPlugin*> foundPlugins =
-      qSlicerSubjectHierarchyPluginHandler::instance()->pluginsForAddingNodeToSubjectHierarchy(node, NULL);
+      qSlicerSubjectHierarchyPluginHandler::instance()->pluginsForAddingNodeToSubjectHierarchy(
+          node, vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID);
     qSlicerSubjectHierarchyAbstractPlugin* selectedPlugin = NULL;
     if (foundPlugins.size() > 0)
       {
