@@ -527,7 +527,7 @@ int  vtkMRMLAnnotationNode::DeleteText(int id)
       return -1;
     }
 
-  for (int i = id; id < n-1; i++ )
+  for (int i = id; i < n-1; i++ )
     {
       this->TextList->SetValue(i,this->GetText(i+1));
     }
