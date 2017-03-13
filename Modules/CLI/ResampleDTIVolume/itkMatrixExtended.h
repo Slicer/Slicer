@@ -11,8 +11,8 @@
   See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
 ==========================================================================*/
-#ifndef __itkMatrixExtended_h
-#define __itkMatrixExtended_h
+#ifndef itkMatrixExtended_h
+#define itkMatrixExtended_h
 
 #include "itkMatrix.h"
 

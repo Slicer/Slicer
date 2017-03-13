@@ -1,5 +1,5 @@
-#ifndef __itkWarpTransform3D_h
-#define __itkWarpTransform3D_h
+#ifndef itkWarpTransform3D_h
+#define itkWarpTransform3D_h
 
 #include <itkTransform.h>
 #include "dtiprocessFiles/dtitypes.h"

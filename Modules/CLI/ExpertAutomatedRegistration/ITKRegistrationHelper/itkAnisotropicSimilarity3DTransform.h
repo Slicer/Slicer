@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __itkAnisotropicSimilarity3DTransform_h
-#define __itkAnisotropicSimilarity3DTransform_h
+#ifndef itkAnisotropicSimilarity3DTransform_h
+#define itkAnisotropicSimilarity3DTransform_h
 
 #include <iostream>
 #include "itkVersorRigid3DTransform.h"
@@ -158,4 +158,4 @@ private:
 #include "itkAnisotropicSimilarity3DTransform.txx"
 #endif
 
-#endif /* __itkAnisotropicSimilarity3DTransform_h */
+#endif /* itkAnisotropicSimilarity3DTransform_h */

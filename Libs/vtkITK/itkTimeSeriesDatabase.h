@@ -1,6 +1,6 @@
 
-#ifndef __itkTimeSeriesDatabase_h
-#define __itkTimeSeriesDatabase_h
+#ifndef itkTimeSeriesDatabase_h
+#define itkTimeSeriesDatabase_h
 
 #include <itkImage.h>
 #include <itkArray.h>

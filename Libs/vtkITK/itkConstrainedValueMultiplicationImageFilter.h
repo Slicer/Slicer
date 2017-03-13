@@ -14,8 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __itkConstrainedValueMultiplicationImageFilter_h
-#define __itkConstrainedValueMultiplicationImageFilter_h
+#ifndef itkConstrainedValueMultiplicationImageFilter_h
+#define itkConstrainedValueMultiplicationImageFilter_h
 
 #include "itkBinaryFunctorImageFilter.h"
 #include "itkNumericTraits.h"

@@ -1,5 +1,5 @@
-#ifndef __itkTimeSeriesDatabaseHelper_h
-#define __itkTimeSeriesDatabaseHelper_h
+#ifndef itkTimeSeriesDatabaseHelper_h
+#define itkTimeSeriesDatabaseHelper_h
 #include <list>
 #include <iostream>
 #include <map>

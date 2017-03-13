@@ -1,6 +1,6 @@
 
-#ifndef __itkNewOtsuThresholdImageCalculator_h
-#define __itkNewOtsuThresholdImageCalculator_h
+#ifndef itkNewOtsuThresholdImageCalculator_h
+#define itkNewOtsuThresholdImageCalculator_h
 
 #include "itkObject.h"
 #include "itkObjectFactory.h"

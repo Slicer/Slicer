@@ -1,5 +1,5 @@
-#ifndef __itkTransformDeformationFieldFilter_h
-#define __itkTransformDeformationFieldFilter_h
+#ifndef itkTransformDeformationFieldFilter_h
+#define itkTransformDeformationFieldFilter_h
 
 #include <itkObject.h>
 #include <itkImageToImageFilter.h>

@@ -11,8 +11,8 @@
   See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
 ==========================================================================*/
-#ifndef __itkDiffusionTensor3DPPDAffineTransform_h
-#define __itkDiffusionTensor3DPPDAffineTransform_h
+#ifndef itkDiffusionTensor3DPPDAffineTransform_h
+#define itkDiffusionTensor3DPPDAffineTransform_h
 
 #include "itkDiffusionTensor3DAffineTransform.h"
 #include <vnl/vnl_vector.h>

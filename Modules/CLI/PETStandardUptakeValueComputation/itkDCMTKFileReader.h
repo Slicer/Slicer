@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDCMTKFileReader_h
-#define __itkDCMTKFileReader_h
+#ifndef itkDCMTKFileReader_h
+#define itkDCMTKFileReader_h
 
 // XXX # Workaround bug in packaging of DCMTK 3.6.0 on Debian.
 //     # See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=637687
@@ -374,4 +374,4 @@ private:
 extern bool CompareDCMTKFileReaders(DCMTKFileReader *a, DCMTKFileReader *b);
 }
 
-#endif // __itkDCMTKFileReader_h
+#endif // itkDCMTKFileReader_h

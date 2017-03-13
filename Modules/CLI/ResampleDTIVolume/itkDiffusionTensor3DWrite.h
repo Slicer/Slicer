@@ -11,8 +11,8 @@
   See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
 ==========================================================================*/
-#ifndef __itkDiffusionTensor3DWrite_h
-#define __itkDiffusionTensor3DWrite_h
+#ifndef itkDiffusionTensor3DWrite_h
+#define itkDiffusionTensor3DWrite_h
 
 #include <itkObject.h>
 #include <itkMetaDataObject.h>

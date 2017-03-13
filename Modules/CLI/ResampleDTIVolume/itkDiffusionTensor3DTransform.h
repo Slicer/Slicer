@@ -11,8 +11,8 @@
   See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
 ==========================================================================*/
-#ifndef __itkDiffusionTensor3DTransform_h
-#define __itkDiffusionTensor3DTransform_h
+#ifndef itkDiffusionTensor3DTransform_h
+#define itkDiffusionTensor3DTransform_h
 
 #include <itkObject.h>
 #include "itkDiffusionTensor3DExtended.h"

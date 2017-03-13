@@ -1,5 +1,5 @@
-#ifndef __itkPluginUtilities_h
-#define __itkPluginUtilities_h
+#ifndef itkPluginUtilities_h
+#define itkPluginUtilities_h
 
 // ITK includes
 #include <itkContinuousIndex.h>

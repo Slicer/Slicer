@@ -16,8 +16,8 @@
 /// The itkMRMLIDIOWin32Header captures some system differences between Unix
 /// and Windows operating systems.
 
-#ifndef __itkMRMLIDIOWin32Header_h
-#define __itkMRMLIDIOWin32Header_h
+#ifndef itkMRMLIDIOWin32Header_h
+#define itkMRMLIDIOWin32Header_h
 
 #include <itkMRMLIDImageIOConfigure.h>
 

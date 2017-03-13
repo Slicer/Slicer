@@ -11,8 +11,8 @@
   See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
 ==========================================================================*/
-#ifndef __itkDiffusionTensor3DResample_h
-#define __itkDiffusionTensor3DResample_h
+#ifndef itkDiffusionTensor3DResample_h
+#define itkDiffusionTensor3DResample_h
 
 #include <itkObject.h>
 #include <itkImageToImageFilter.h>

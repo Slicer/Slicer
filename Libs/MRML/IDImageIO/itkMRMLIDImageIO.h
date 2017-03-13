@@ -12,8 +12,8 @@
 
 =========================================================================auto=*/
 
-#ifndef __itkMRMLIDImageIO_h
-#define __itkMRMLIDImageIO_h
+#ifndef itkMRMLIDImageIO_h
+#define itkMRMLIDImageIO_h
 
 #ifdef _MSC_VER
 #pragma warning ( disable : 4786 )
@@ -142,5 +142,5 @@ private:
 
 
 } /// end namespace itk
-#endif /// __itkMRMLIDImageIO_h
+#endif /// itkMRMLIDImageIO_h
 

@@ -8,8 +8,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __itkPluginFilterWatcher_h
-#define __itkPluginFilterWatcher_h
+#ifndef itkPluginFilterWatcher_h
+#define itkPluginFilterWatcher_h
 
 // ModuleDescriptionParser includes
 #include <ModuleProcessInformation.h>

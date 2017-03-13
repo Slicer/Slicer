@@ -1,5 +1,5 @@
-#ifndef __itkLevelTracingImageFilter_h
-#define __itkLevelTracingImageFilter_h
+#ifndef itkLevelTracingImageFilter_h
+#define itkLevelTracingImageFilter_h
 
 #include "itkImage.h"
 #include "itkImageToImageFilter.h"

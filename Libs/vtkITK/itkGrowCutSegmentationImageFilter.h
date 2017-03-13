@@ -1,5 +1,5 @@
-#ifndef __itkGrowCutSegmentationImageFilter_h
-#define __itkGrowCutSegmentationImageFilter_h
+#ifndef itkGrowCutSegmentationImageFilter_h
+#define itkGrowCutSegmentationImageFilter_h
 
 #include "itkImage.h"
 #include "itkImageToImageFilter.h"

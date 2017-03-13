@@ -14,8 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __itkImageRegionMomentsCalculator_h
-#define __itkImageRegionMomentsCalculator_h
+#ifndef itkImageRegionMomentsCalculator_h
+#define itkImageRegionMomentsCalculator_h
 
 #include "itkAffineTransform.h"
 #include "itkMacro.h"
@@ -252,4 +252,4 @@ private:
 #include "itkImageRegionMomentsCalculator.txx"
 #endif
 
-#endif /* __itkImageRegionMomentsCalculator_h */
+#endif /* itkImageRegionMomentsCalculator_h */

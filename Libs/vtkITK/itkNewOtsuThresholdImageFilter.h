@@ -14,8 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __itkNewOtsuThresholdImageFilter_h
-#define __itkNewOtsuThresholdImageFilter_h
+#ifndef itkNewOtsuThresholdImageFilter_h
+#define itkNewOtsuThresholdImageFilter_h
 
 #include "itkImageToImageFilter.h"
 #include "itkFixedArray.h"

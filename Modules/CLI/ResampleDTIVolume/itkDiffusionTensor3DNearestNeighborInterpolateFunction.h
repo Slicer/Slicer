@@ -11,8 +11,8 @@
   See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
 ==========================================================================*/
-#ifndef __itkDiffusionTensor3DNearestNeighborInterpolateFunction_h
-#define __itkDiffusionTensor3DNearestNeighborInterpolateFunction_h
+#ifndef itkDiffusionTensor3DNearestNeighborInterpolateFunction_h
+#define itkDiffusionTensor3DNearestNeighborInterpolateFunction_h
 
 #include "itkDiffusionTensor3DInterpolateImageFunction.h"
 

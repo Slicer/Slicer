@@ -1,5 +1,5 @@
-#ifndef __itkMRMLIDIOPlugin_h
-#define __itkMRMLIDIOPlugin_h
+#ifndef itkMRMLIDIOPlugin_h
+#define itkMRMLIDIOPlugin_h
 
 #include "itkObjectFactoryBase.h"
 

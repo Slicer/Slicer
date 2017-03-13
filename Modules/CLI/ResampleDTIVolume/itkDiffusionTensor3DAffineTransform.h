@@ -11,8 +11,8 @@
   See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
 ==========================================================================*/
-#ifndef __itkDiffusionTensor3DAffineTransform_h
-#define __itkDiffusionTensor3DAffineTransform_h
+#ifndef itkDiffusionTensor3DAffineTransform_h
+#define itkDiffusionTensor3DAffineTransform_h
 
 #include "itkDiffusionTensor3DMatrix3x3Transform.h"
 #include <itkAffineTransform.h>

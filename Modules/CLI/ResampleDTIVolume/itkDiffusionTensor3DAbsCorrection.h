@@ -11,8 +11,8 @@
   See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
 ==========================================================================*/
-#ifndef __itkDiffusionTensor3DAbsCorrectionFilter_h
-#define __itkDiffusionTensor3DAbsCorrectionFilter_h
+#ifndef itkDiffusionTensor3DAbsCorrectionFilter_h
+#define itkDiffusionTensor3DAbsCorrectionFilter_h
 
 #include "itkUnaryFunctorImageFilter.h"
 #include "vnl/vnl_math.h"

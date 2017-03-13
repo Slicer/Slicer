@@ -14,8 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __itkMRMLIDImageIOFactory_h
-#define __itkMRMLIDImageIOFactory_h
+#ifndef itkMRMLIDImageIOFactory_h
+#define itkMRMLIDImageIOFactory_h
 
 #include "itkObjectFactoryBase.h"
 #include "itkImageIOBase.h"
