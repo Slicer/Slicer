@@ -548,7 +548,16 @@ void vtkSubjectHierarchyItem::WriteXML(ostream& of, int nIndent)
 
   if (this->DataNode.GetPointer())
     {
-    of << " dataNode=\"" << this->DataNode->GetID() << "\"";
+    if (this->DataNode.GetPointer()->GetSaveWithScene())
+      {
+      of << " dataNode=\"" << this->DataNode->GetID() << "\"";
+      }
+    else
+      {
+      // Node is not saved with the scene, but may still have children, attributes, etc.
+      // so write it to the scene but without data node ID.
+      of << " name=\"" << (this->DataNode->GetName() ? this->DataNode->GetName() : "") << "\"";
+      }
     }
   else
     {
@@ -1538,7 +1547,7 @@ bool vtkMRMLSubjectHierarchyNode::vtkInternal::ResolveUnresolvedItems()
           }
         if (!dataNode)
           {
-          vtkErrorWithObjectMacro(this->External, "ResolveUnresolvedItems: Unable to find data node with ID " << newDataNodeID);
+          vtkErrorWithObjectMacro(this->External, "ResolveUnresolvedItems: Unable to find data node with ID " << (newDataNodeID ? newDataNodeID : "(NULL)"));
           }
         // Resolve data node pointer
         item->DataNode = dataNode;
