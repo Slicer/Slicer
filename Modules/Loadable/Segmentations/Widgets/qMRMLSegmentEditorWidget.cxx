@@ -88,7 +88,7 @@
 #include <ctkFlowLayout.h>
 
 static const int BINARY_LABELMAP_SCALAR_TYPE = VTK_UNSIGNED_CHAR;
-static const unsigned char BINARY_LABELMAP_VOXEL_FULL = 1;
+// static const unsigned char BINARY_LABELMAP_VOXEL_FULL = 1; // unused
 static const unsigned char BINARY_LABELMAP_VOXEL_EMPTY = 0;
 
 static const char NULL_EFFECT_NAME[] = "NULL";
