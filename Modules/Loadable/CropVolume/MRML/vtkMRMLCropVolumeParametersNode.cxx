@@ -32,7 +32,6 @@ static const char* OutputVolumeNodeReferenceMRMLAttributeName = "outputVolumeNod
 static const char* ROINodeReferenceRole = "roi";
 static const char* ROINodeReferenceMRMLAttributeName = "ROINodeID";
 static const char* ROIAlignmentTransformNodeReferenceRole = "roiAlignmentTransform";
-static const char* ROIAlignmentTransformNodeReferenceMRMLAttributeName = "ROIAlignmentTransformNodeID";
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLCropVolumeParametersNode);
