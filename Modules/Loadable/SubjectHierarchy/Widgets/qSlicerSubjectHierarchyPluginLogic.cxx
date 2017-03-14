@@ -334,11 +334,10 @@ void qSlicerSubjectHierarchyPluginLogic::addSupportedDataNodesToSubjectHierarchy
     return;
     }
 
-  // Traverse all storable nodes in the scene (those contain data that can be saved with the scene)
+  // Traverse all nodes in the scene (those contain data that can be saved with the scene)
   // and all hierarchy nodes (that specify hierarchy for certain types of data nodes and may be mirrored by the plugins of those data node types)
   std::vector<vtkMRMLNode*> supportedNodes;
-  scene->GetNodesByClass("vtkMRMLStorableNode", supportedNodes);
-  scene->GetNodesByClass("vtkMRMLHierarchyNode", supportedNodes);
+  scene->GetNodesByClass("vtkMRMLNode", supportedNodes);
   for (std::vector<vtkMRMLNode*>::iterator nodeIt = supportedNodes.begin(); nodeIt != supportedNodes.end(); ++nodeIt)
     {
     vtkMRMLNode* node = (*nodeIt);
