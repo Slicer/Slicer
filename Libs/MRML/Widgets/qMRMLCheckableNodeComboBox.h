@@ -26,7 +26,11 @@
 
 class qMRMLCheckableNodeComboBoxPrivate;
 
+/// This class provides the ability to select(check) multiple nodes at a time
+/// instead of one (qMRMLNodeComboBox). Nodes are left untouched, the selection
+/// information only resides in the combobox.
 /// Nodes are unchecked by default.
+/// \sa qMRMLNodeComboBox
 class QMRML_WIDGETS_EXPORT qMRMLCheckableNodeComboBox
   : public qMRMLNodeComboBox
 {

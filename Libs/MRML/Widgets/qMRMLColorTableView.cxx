@@ -57,15 +57,15 @@ void qMRMLColorTableViewPrivate::init()
 
   qMRMLColorModel* colorModel = new qMRMLColorModel(q);
   QSortFilterProxyModel* sortFilterModel = new QSortFilterProxyModel(q);
-  sortFilterModel->setFilterKeyColumn(qMRMLColorModel::LabelColumn);
+  sortFilterModel->setFilterKeyColumn(colorModel->labelColumn());
   sortFilterModel->setSourceModel(colorModel);
   q->setModel(sortFilterModel);
 
   q->setSelectionBehavior(QAbstractItemView::SelectRows);
   q->horizontalHeader()->setStretchLastSection(false);
-  q->horizontalHeader()->setResizeMode(qMRMLColorModel::ColorColumn, QHeaderView::ResizeToContents);
-  q->horizontalHeader()->setResizeMode(qMRMLColorModel::LabelColumn, QHeaderView::Stretch);
-  q->horizontalHeader()->setResizeMode(qMRMLColorModel::OpacityColumn, QHeaderView::ResizeToContents);
+  q->horizontalHeader()->setResizeMode(colorModel->colorColumn(), QHeaderView::ResizeToContents);
+  q->horizontalHeader()->setResizeMode(colorModel->labelColumn(), QHeaderView::Stretch);
+  q->horizontalHeader()->setResizeMode(colorModel->opacityColumn(), QHeaderView::ResizeToContents);
 
   q->setItemDelegate(new qMRMLItemDelegate(q));
 }

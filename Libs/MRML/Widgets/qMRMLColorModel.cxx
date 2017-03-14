@@ -39,7 +39,10 @@ qMRMLColorModelPrivate::qMRMLColorModelPrivate(qMRMLColorModel& object)
 {
   this->CallBack = vtkSmartPointer<vtkCallbackCommand>::New();
   this->NoneEnabled = false;
-  this->LabelInColor = false;
+  this->ColorColumn = 0;
+  this->LabelColumn = 1;
+  this->OpacityColumn = 2;
+  this->CheckableColumn = -1;
 }
 
 //------------------------------------------------------------------------------
@@ -57,18 +60,46 @@ void qMRMLColorModelPrivate::init()
   Q_Q(qMRMLColorModel);
   this->CallBack->SetClientData(q);
   this->CallBack->SetCallback(qMRMLColorModel::onMRMLNodeEvent);
-  q->setColumnCount(3);
-  if (this->LabelInColor)
+  this->updateColumnCount();
+  QStringList headerLabels;
+  for (int i = 0; i <= this->maxColumnId(); ++i)
     {
-    q->setHorizontalHeaderLabels(QStringList() << "Color" << "Label" << "Opacity");
+    headerLabels << "";
     }
-  else
+  if (q->colorColumn() != -1)
     {
-    q->setHorizontalHeaderLabels(QStringList() << "" << "Label" << "Opacity");
+    headerLabels[q->colorColumn()] = "Color";
+    }
+  if (q->labelColumn() != -1)
+    {
+    headerLabels[q->labelColumn()] = "Label";
+    }
+  if (q->opacityColumn() != -1)
+    {
+    headerLabels[q->opacityColumn()] = "Opacity";
     }
   QObject::connect(q, SIGNAL(itemChanged(QStandardItem*)),
                    q, SLOT(onItemChanged(QStandardItem*)),
                    Qt::UniqueConnection);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLColorModelPrivate::updateColumnCount()
+{
+  Q_Q(qMRMLColorModel);
+  const int max = this->maxColumnId();
+  q->setColumnCount(max + 1);
+}
+
+//------------------------------------------------------------------------------
+int qMRMLColorModelPrivate::maxColumnId()const
+{
+  int maxId = 0; // informations (scene, node uid... ) are stored in the 1st column
+  maxId = qMax(maxId, this->ColorColumn);
+  maxId = qMax(maxId, this->LabelColumn);
+  maxId = qMax(maxId, this->OpacityColumn);
+  maxId = qMax(maxId, this->CheckableColumn);
+  return maxId;
 }
 
 //------------------------------------------------------------------------------
@@ -161,23 +192,65 @@ bool qMRMLColorModel::noneEnabled()const
 }
 
 //------------------------------------------------------------------------------
-void qMRMLColorModel::setLabelInColorColumn(bool enable)
+int qMRMLColorModel::colorColumn()const
 {
-  Q_D(qMRMLColorModel);
-  if (d->LabelInColor == enable)
-    {
-    return;
-    }
-  d->LabelInColor = enable;
-  this->updateNode();
+  Q_D(const qMRMLColorModel);
+  return d->ColorColumn;
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLColorModel::isLabelInColorColumn()const
+void qMRMLColorModel::setColorColumn(int column)
+{
+  Q_D(qMRMLColorModel);
+  d->ColorColumn = column;
+  d->updateColumnCount();
+}
+
+//------------------------------------------------------------------------------
+int qMRMLColorModel::labelColumn()const
 {
   Q_D(const qMRMLColorModel);
-  return d->LabelInColor;
+  return d->LabelColumn;
 }
+
+//------------------------------------------------------------------------------
+void qMRMLColorModel::setLabelColumn(int column)
+{
+  Q_D(qMRMLColorModel);
+  d->LabelColumn = column;
+  d->updateColumnCount();
+}
+
+//------------------------------------------------------------------------------
+int qMRMLColorModel::opacityColumn()const
+{
+  Q_D(const qMRMLColorModel);
+  return d->OpacityColumn;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLColorModel::setOpacityColumn(int column)
+{
+  Q_D(qMRMLColorModel);
+  d->OpacityColumn = column;
+  d->updateColumnCount();
+}
+
+//------------------------------------------------------------------------------
+int qMRMLColorModel::checkableColumn()const
+{
+  Q_D(const qMRMLColorModel);
+  return d->CheckableColumn;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLColorModel::setCheckableColumn(int column)
+{
+  Q_D(qMRMLColorModel);
+  d->CheckableColumn = column;
+  d->updateColumnCount();
+}
+
 
 //------------------------------------------------------------------------------
 int qMRMLColorModel::colorFromItem(QStandardItem* colorItem)const
@@ -308,93 +381,87 @@ void qMRMLColorModel::updateItemFromColor(QStandardItem* item, int color, int co
     }
   item->setData(color, qMRMLColorModel::ColorEntryRole);
   double rgba[4] = {0.,0.,0.,1.};
-  bool validColor = d->MRMLColorNode->GetColor(color, rgba);
+
   QString colorName = d->MRMLColorNode->GetNamesInitialised() ?
     d->MRMLColorNode->GetColorName(color) : "";
-  switch (column)
+  if (column == d->ColorColumn)
     {
-    case qMRMLColorModel::ColorColumn:
-    default:
+    QPixmap pixmap;
+    const bool validColor = d->MRMLColorNode->GetColor(color, rgba);
+    if (validColor)
       {
-      QPixmap pixmap;
-      if (validColor)
-        {
-        // It works to set just a QColor but if the model gets into a QComboBox,
-        // the currently selected item doesn't get a decoration.
-        // TODO: Cache the pixmap as it is expensive to compute and it is done
-        // for ALL the colors of the node anytime a color is changed.
-        pixmap = qMRMLUtils::createColorPixmap(
-          qApp->style(), QColor::fromRgbF(rgba[0], rgba[1], rgba[2]));
-        item->setData(pixmap, Qt::DecorationRole);
-        item->setData(QColor::fromRgbF(rgba[0], rgba[1], rgba[2]), qMRMLColorModel::ColorRole);
-        }
-      else
-        {
-        item->setData(QVariant(), Qt::DecorationRole);
-        item->setData(QColor(), qMRMLColorModel::ColorRole);
-        }
-      if (d->LabelInColor)
-        {
-        item->setText(colorName);
-        item->setData(QVariant(),Qt::SizeHintRole);
-        }
-      else
-        {
-        item->setText(QString());
-        item->setData((validColor ? pixmap.size() : QVariant()),Qt::SizeHintRole);
-        }
-      item->setToolTip(colorName);
-      break;
+      // It works to set just a QColor but if the model gets into a QComboBox,
+      // the currently selected item doesn't get a decoration.
+      // TODO: Cache the pixmap as it is expensive to compute and it is done
+      // for ALL the colors of the node anytime a color is changed.
+      pixmap = qMRMLUtils::createColorPixmap(
+        qApp->style(), QColor::fromRgbF(rgba[0], rgba[1], rgba[2]));
+      item->setData(pixmap, Qt::DecorationRole);
+      item->setData(QColor::fromRgbF(rgba[0], rgba[1], rgba[2]), qMRMLColorModel::ColorRole);
       }
-    case qMRMLColorModel::LabelColumn:
-      item->setText(colorName);
-      // check for terminology
-      if (this->mrmlColorLogic() &&
-          this->mrmlColorLogic()->TerminologyExists(d->MRMLColorNode->GetName()))
+    else
+      {
+      item->setData(QVariant(), Qt::DecorationRole);
+      item->setData(QColor(), qMRMLColorModel::ColorRole);
+      }
+    item->setData(validColor && column != d->LabelColumn ?
+      pixmap.size() : QVariant(), Qt::SizeHintRole);
+    item->setToolTip(colorName);
+    }
+  if (column == d->LabelColumn)
+    {
+    item->setText(colorName);
+    // check for terminology
+    if (this->mrmlColorLogic() &&
+        this->mrmlColorLogic()->TerminologyExists(d->MRMLColorNode->GetName()))
+      {
+      const char *lutName = d->MRMLColorNode->GetName();
+      std::string category = this->mrmlColorLogic()->GetSegmentedPropertyCategoryCodeMeaning(color, lutName);
+      std::string type = this->mrmlColorLogic()->GetSegmentedPropertyTypeCodeMeaning(color, lutName);
+      std::string typeMod = this->mrmlColorLogic()->GetSegmentedPropertyTypeModifierCodeMeaning(color, lutName);
+      std::string region = this->mrmlColorLogic()->GetAnatomicRegionCodeMeaning(color, lutName);
+      std::string regionMod = this->mrmlColorLogic()->GetAnatomicRegionModifierCodeMeaning(color, lutName);
+      QString terminology = QString("Terminology:");
+      // only show the not empty terminology terms
+      if (!category.empty())
         {
-        const char *lutName = d->MRMLColorNode->GetName();
-        std::string category = this->mrmlColorLogic()->GetSegmentedPropertyCategoryCodeMeaning(color, lutName);
-        std::string type = this->mrmlColorLogic()->GetSegmentedPropertyTypeCodeMeaning(color, lutName);
-        std::string typeMod = this->mrmlColorLogic()->GetSegmentedPropertyTypeModifierCodeMeaning(color, lutName);
-        std::string region = this->mrmlColorLogic()->GetAnatomicRegionCodeMeaning(color, lutName);
-        std::string regionMod = this->mrmlColorLogic()->GetAnatomicRegionModifierCodeMeaning(color, lutName);
-        QString terminology = QString("Terminology:");
-        // only show the not empty terminology terms
-        if (!category.empty())
-          {
-          terminology = terminology + QString("\nSegmentedPropertyCategory: %1").arg(category.c_str());
-          }
-        if (!type.empty())
-          {
-          terminology = terminology + QString("\nSegmentedPropertyType: %1").arg(type.c_str());
-          }
-        if (!typeMod.empty())
-          {
-          terminology = terminology + QString("\nSegmentedPropertyTypeModifier: %1").arg(typeMod.c_str());
-          }
-        if (!region.empty())
-          {
-          terminology = terminology + QString("\nAnatomicRegion: %1").arg(region.c_str());
-          }
-        if (!regionMod.empty())
-          {
-          terminology = terminology + QString("\nAnatomicRegionModifier: %1").arg(regionMod.c_str());
-          }
-        // check if no terminology was found and use an empty tool tip
-        if (!terminology.compare("Terminology:"))
-          {
-          terminology = QString("");
-          }
-        item->setToolTip(terminology);
+        terminology = terminology + QString("\nSegmentedPropertyCategory: %1").arg(category.c_str());
         }
-      else
+      if (!type.empty())
         {
-        item->setToolTip("");
+        terminology = terminology + QString("\nSegmentedPropertyType: %1").arg(type.c_str());
         }
-      break;
-    case qMRMLColorModel::OpacityColumn:
-      item->setData(QString::number(rgba[3],'f',2), Qt::DisplayRole);
-      break;
+      if (!typeMod.empty())
+        {
+        terminology = terminology + QString("\nSegmentedPropertyTypeModifier: %1").arg(typeMod.c_str());
+        }
+      if (!region.empty())
+        {
+        terminology = terminology + QString("\nAnatomicRegion: %1").arg(region.c_str());
+        }
+      if (!regionMod.empty())
+        {
+        terminology = terminology + QString("\nAnatomicRegionModifier: %1").arg(regionMod.c_str());
+        }
+      // check if no terminology was found and use an empty tool tip
+      if (!terminology.compare("Terminology:"))
+        {
+        terminology = QString("");
+        }
+      item->setToolTip(terminology);
+      }
+    else
+      {
+      item->setToolTip("");
+      }
+    }
+  if (column == d->OpacityColumn)
+    {
+    item->setData(QString::number(rgba[3],'f',2), Qt::DisplayRole);
+    }
+  if (column == d->CheckableColumn)
+    {
+    item->setCheckable(true);
     }
 }
 
@@ -407,22 +474,18 @@ void qMRMLColorModel::updateColorFromItem(int color, QStandardItem* item)
     {
     return;
     }
-  switch(item->column())
+  if (item->column() == d->ColorColumn)
     {
-    case qMRMLColorModel::ColorColumn:
-      {
-      QColor rgba(item->data(qMRMLColorModel::ColorRole).value<QColor>());
-      colorTableNode->SetColor(color, rgba.redF(), rgba.greenF(), rgba.blueF(), rgba.alphaF());
-      break;
-      }
-    case qMRMLColorModel::LabelColumn:
-      colorTableNode->SetColorName(color, item->text().toLatin1());
-      break;
-    case qMRMLColorModel::OpacityColumn:
-      colorTableNode->SetOpacity(color, item->data(Qt::DisplayRole).toDouble());
-      break;
-    default:
-      break;
+    QColor rgba(item->data(qMRMLColorModel::ColorRole).value<QColor>());
+    colorTableNode->SetColor(color, rgba.redF(), rgba.greenF(), rgba.blueF());
+    }
+  else if (item->column() == d->LabelColumn)
+    {
+    colorTableNode->SetColorName(color, item->text().toLatin1());
+    }
+  else if (item->column() == d->OpacityColumn)
+    {
+    colorTableNode->SetOpacity(color, item->data(Qt::DisplayRole).toDouble());
     }
 }
 
