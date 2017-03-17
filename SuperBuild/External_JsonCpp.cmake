@@ -32,7 +32,7 @@ if(NOT DEFINED ${proj}_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${git_protocol}://github.com/Slicer/jsoncpp.git"
-    GIT_TAG "f4afa75f64f2174971b1bfd482136fcf9db643ed" # slicer-v0.10.6-2016-04-22
+    GIT_TAG "73b8e172d6615251ef851d883ef02f163e7075b2" # slicer-v0.10.6-2016-04-22
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     CMAKE_CACHE_ARGS
