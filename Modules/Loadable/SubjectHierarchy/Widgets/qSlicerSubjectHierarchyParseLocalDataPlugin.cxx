@@ -128,15 +128,15 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::showContextMenuActionsForItem(
     // Only show create hierarchy from loaded local directory structure if there are possible nodes to use
     // That is to have nodes in the scene with storage nodes with valid file names outside subject hierarchy
     vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
-    vtkSmartPointer<vtkCollection> dataNodes = vtkSmartPointer<vtkCollection>::Take( scene->GetNodesByClass("vtkMRMLNode") );
+    vtkSmartPointer<vtkCollection> storableNodes = vtkSmartPointer<vtkCollection>::Take( scene->GetNodesByClass("vtkMRMLStorableNode") );
     vtkObject* nextObject = NULL;
-    for (dataNodes->InitTraversal(); (nextObject = dataNodes->GetNextItemAsObject());)
+    for (storableNodes->InitTraversal(); (nextObject = storableNodes->GetNextItemAsObject()); )
       {
-      vtkMRMLNode* dataNode = vtkMRMLNode::SafeDownCast(nextObject);
-      if (dataNode && !dataNode->GetHideFromEditors())
+      vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(nextObject);
+      if ( storableNode && storableNode->GetStorageNode() && !storableNode->GetHideFromEditors() )
         {
         QList<qSlicerSubjectHierarchyAbstractPlugin*> foundPlugins =
-          qSlicerSubjectHierarchyPluginHandler::instance()->pluginsForAddingNodeToSubjectHierarchy(dataNode);
+          qSlicerSubjectHierarchyPluginHandler::instance()->pluginsForAddingNodeToSubjectHierarchy(storableNode);
         if (!foundPlugins.empty())
           {
           d->CreateHierarchyFromLoadedLocalDirectoriesAction->setVisible(true);
