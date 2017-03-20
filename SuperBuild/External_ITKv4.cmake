@@ -29,13 +29,22 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       set(git_protocol "git")
   endif()
 
-  set(ITKv4_REPOSITORY ${git_protocol}://github.com/Slicer/ITK.git)
+  ExternalProject_SetIfNotDefined(
+    ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
+    "${git_protocol}://github.com/Slicer/ITK.git"
+    QUIET
+    )
+
   # ITK release v4.11.0 from 2017.01.22 with
   # * Slicer patches for CMP0042
   # * Revert "BUG: Binary include directory added only if enabled shared" (ITK-3529)
   # * Revert "BUG: Include installed modules in ITK_MODULES_ENABLED" (ITK-3529)
   # * COMP: Add missing headers in OpenCVImageBridge
-  set(ITKv4_GIT_TAG 1619816e48b327c4c486b76aef0c229af65b92b2) # slicer-v4.11.0-2017-01-22
+  ExternalProject_SetIfNotDefined(
+    ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
+    "1619816e48b327c4c486b76aef0c229af65b92b2" # slicer-v4.11.0-2017-01-22
+    QUIET
+    )
 
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 
@@ -73,8 +82,8 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    GIT_REPOSITORY ${ITKv4_REPOSITORY}
-    GIT_TAG ${ITKv4_GIT_TAG}
+    GIT_REPOSITORY "${${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY}"
+    GIT_TAG "${${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG}"
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
     CMAKE_CACHE_ARGS
