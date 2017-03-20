@@ -19,6 +19,7 @@
 
 #include "vtkMRML.h"
 #include "vtkMRMLModelDisplayNode.h"
+#include "vtkPolyData.h"
 
 class vtkTransform;
 class vtkTransformPolyDataFilter;
@@ -85,13 +86,13 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
   /// The output is connected as the input of the slice transform.
   /// It must be reimplemented in subclasses.
   /// \sa GetOutputPolyData(), GetSliceOutputPort()
-  virtual vtkAlgorithmOutput* GetOutputPolyDataConnection();
+  virtual vtkAlgorithmOutput* GetOutputMeshConnection();
 
   /// Return the glyph polydata for the input slice image.
   /// This is the polydata to use in a 3D view.
   /// Reimplemented to by-pass the check on the input polydata.
   /// \sa GetSliceOutputPolyData(), GetOutputPolyDataConnection()
-  virtual vtkPolyData* GetOutputPolyData();
+  virtual vtkPolyData* GetOutputMesh();
 
   /// Return the glyph polyData transfomed to slice XY.
   /// This is the polydata to use in a 2D slice.
@@ -100,7 +101,7 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
 
   ///
   /// Update the pipeline based on this node attributes
-  virtual void UpdatePolyDataPipeline();
+  virtual void UpdateAssignedAttribute();
 
   ///
   /// Set imageData of a volume slice. This is used as the input of the display

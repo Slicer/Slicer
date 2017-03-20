@@ -165,29 +165,29 @@ void vtkMRMLGlyphableVolumeSliceDisplayNode
 }
 
 //---------------------------------------------------------------------------
-vtkPolyData* vtkMRMLGlyphableVolumeSliceDisplayNode::GetOutputPolyData()
+vtkPolyData* vtkMRMLGlyphableVolumeSliceDisplayNode::GetOutputMesh()
 {
   // Don't check input polydata as it is not used, but the image data instead.
-  if (!this->GetOutputPolyDataConnection())
+  if (!this->GetOutputMeshConnection())
     {
     return 0;
     }
   return vtkPolyData::SafeDownCast(
-    this->GetOutputPolyDataConnection()->GetProducer()->GetOutputDataObject(
-      this->GetOutputPolyDataConnection()->GetIndex()));
+    this->GetOutputMeshConnection()->GetProducer()->GetOutputDataObject(
+      this->GetOutputMeshConnection()->GetIndex()));
 }
 //----------------------------------------------------------------------------
 vtkAlgorithmOutput* vtkMRMLGlyphableVolumeSliceDisplayNode
-::GetOutputPolyDataConnection()
+::GetOutputMeshConnection()
 {
   return 0;
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLGlyphableVolumeSliceDisplayNode::UpdatePolyDataPipeline()
+void vtkMRMLGlyphableVolumeSliceDisplayNode::UpdateAssignedAttribute()
 {
   this->SliceToXYTransformer->SetInputConnection(
-    this->GetOutputPolyDataConnection());
+    this->GetOutputMeshConnection());
 }
 
 //---------------------------------------------------------------------------
@@ -229,9 +229,3 @@ void vtkMRMLGlyphableVolumeSliceDisplayNode::UpdateReferences()
 {
   Superclass::UpdateReferences();
 }
-
-
-
-
-
-

@@ -541,7 +541,7 @@ bool vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::IsVisible(
   vtkMRMLDisplayNode* displayNode)
 {
   return displayNode->GetVisibility() &&
-    displayNode->GetScalarVisibility();
+         displayNode->GetScalarVisibility();
 }
 
 //---------------------------------------------------------------------------
