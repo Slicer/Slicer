@@ -1039,7 +1039,7 @@ void vtkMRMLModelDisplayableManager
     vtkAlgorithm *clipper = 0;
     if(actor)
       {
-      vtkMRMLModelNode::MeshTypeHint meshType = modelNode->GetMeshType();
+      vtkMRMLModelNode::MeshTypeHint meshType = modelNode ? modelNode->GetMeshType() : vtkMRMLModelNode::PolyDataMeshType;
       if (this->Internal->ClippingOn && modelDisplayNode != 0 && clipping)
         {
         clipper = this->CreateTransformedClipper(modelNode->GetParentTransformNode(), meshType);
