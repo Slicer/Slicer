@@ -32,7 +32,7 @@ class DMRIInstall(ScriptedLoadableModule):
     # Hide this module if SlicerDMRI is already installed
     model = slicer.app.extensionsManagerModel()
     if model.isExtensionInstalled("SlicerDMRI"):
-      return
+      parent.hidden = True
 
     ScriptedLoadableModule.__init__(self, parent)
 
