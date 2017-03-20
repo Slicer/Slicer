@@ -126,7 +126,7 @@ void qSlicerDataModuleWidget::setup()
   // Filter on all the columns
   d->MRMLTreeView->sortFilterProxyModel()->setFilterKeyColumn(-1);
   connect(d->FilterLineEdit, SIGNAL(textChanged(QString)),
-          d->MRMLTreeView->sortFilterProxyModel(), SLOT(setFilterFixedString(QString)));
+          d->MRMLTreeView->sortFilterProxyModel(), SLOT(setFilterWildcard(QString)));
 
   // Hide the IDs by default
   d->DisplayMRMLIDsCheckBox->setChecked(false);
