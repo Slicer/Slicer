@@ -58,6 +58,9 @@ if(NOT DEFINED zlib_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
+
+  ExternalProject_GenerateProjectDescription_Step(${proj})
+
   set(zlib_DIR ${EP_INSTALL_DIR})
   set(ZLIB_ROOT ${zlib_DIR})
   set(ZLIB_INCLUDE_DIR ${zlib_DIR}/include)

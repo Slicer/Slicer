@@ -284,6 +284,10 @@ this version of visual studio [${MSVC_VERSION}]. You could either:
     ExternalProject_Message(${proj} "SSL_EAY_RELEASE:${SSL_EAY_RELEASE}")
   endif()
 
+  ExternalProject_GenerateProjectDescription_Step(${proj}
+    VERSION ${OPENSSL_DOWNLOAD_VERSION}
+    )
+
   #-----------------------------------------------------------------------------
   # Launcher setting specific to build tree
 

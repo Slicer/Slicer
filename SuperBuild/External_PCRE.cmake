@@ -48,13 +48,19 @@ ExternalProject_Execute(${proj} \"configure\" sh ${pcre_source_dir}/configure
     --prefix=${pcre_install_dir} --disable-shared)
 ")
 
+  set(_version "8.38")
+
   ExternalProject_add(PCRE
     ${${proj}_EP_ARGS}
-    URL http://slicer.kitware.com/midas3/download/item/263369/pcre-8.38.tar.gz
+    URL http://slicer.kitware.com/midas3/download/item/263369/pcre-${_version}.tar.gz
     URL_MD5 8a353fe1450216b6655dfcf3561716d9
     UPDATE_COMMAND "" # Disable update
     CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${_configure_script}
     DEPENDS
       ${${proj}_DEPENDENCIES}
+    )
+
+  ExternalProject_GenerateProjectDescription_Step(${proj}
+    VERSION ${_version}
     )
 endif()

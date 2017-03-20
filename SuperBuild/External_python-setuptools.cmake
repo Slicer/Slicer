@@ -48,6 +48,10 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py in
       ${${proj}_DEPENDENCIES}
     )
 
+  ExternalProject_GenerateProjectDescription_Step(${proj}
+    SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
+    )
+
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()

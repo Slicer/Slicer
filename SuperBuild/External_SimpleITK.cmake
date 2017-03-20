@@ -62,6 +62,11 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" Packaging/s
     BUILD_COMMAND ""
     )
 
+  ExternalProject_GenerateProjectDescription_Step(SimpleITK-download
+    SOURCE_DIR ${EP_SOURCE_DIR}
+    NAME ${proj}
+    )
+
   ExternalProject_add(SimpleITK
     ${${proj}_EP_ARGS}
     SOURCE_DIR ${EP_SOURCE_DIR}/SuperBuild

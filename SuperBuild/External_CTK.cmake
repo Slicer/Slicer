@@ -106,6 +106,9 @@ if(NOT DEFINED CTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
+
+  ExternalProject_GenerateProjectDescription_Step(${proj})
+
   set(CTK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
   #-----------------------------------------------------------------------------

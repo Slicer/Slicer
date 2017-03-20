@@ -49,6 +49,11 @@ if(Slicer_USE_CTKAPPLAUNCHER)
       DEPENDS
         ${${proj}_DEPENDENCIES}
       )
+
+    ExternalProject_GenerateProjectDescription_Step(${proj}
+      VERSION ${launcher_version}
+      )
+
     set(CTKAPPLAUNCHER_DIR ${CMAKE_BINARY_DIR}/${proj})
 
   else()

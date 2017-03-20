@@ -58,6 +58,8 @@ if(NOT DEFINED OpenIGTLink_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       ${${proj}_DEPENDENCIES}
     )
 
+  ExternalProject_GenerateProjectDescription_Step(${proj})
+
   set(OpenIGTLink_DIR ${CMAKE_BINARY_DIR}/OpenIGTLink-build)
 
   #-----------------------------------------------------------------------------

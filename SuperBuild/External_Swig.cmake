@@ -91,4 +91,8 @@ ExternalProject_Execute(${proj} \"configure\" sh ${swig_source_dir}/configure
     set(SWIG_EXECUTABLE ${swig_install_dir}/bin/swig)
     set(Swig_DEPEND Swig)
   endif()
+
+  ExternalProject_GenerateProjectDescription_Step(${proj}
+    VERSION ${SWIG_TARGET_VERSION}
+    )
 endif()

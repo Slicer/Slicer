@@ -84,13 +84,14 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
-
   if(APPLE)
     ExternalProject_Add_Step(${proj} fix_rpath
       COMMAND install_name_tool -id ${CMAKE_BINARY_DIR}/${proj}-install/lib/libarchive.12.dylib ${CMAKE_BINARY_DIR}/${proj}-install/lib/libarchive.12.dylib
       DEPENDEES install
       )
   endif()
+
+  ExternalProject_GenerateProjectDescription_Step(${proj})
 
   set(LibArchive_DIR ${CMAKE_BINARY_DIR}/LibArchive-install)
 

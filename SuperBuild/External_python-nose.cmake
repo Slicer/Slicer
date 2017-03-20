@@ -16,9 +16,11 @@ endif()
 
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
+  set(_version "1.3.7")
+
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    URL "https://pypi.python.org/packages/source/n/nose/nose-1.3.7.tar.gz"
+    URL "https://pypi.python.org/packages/source/n/nose/nose-${_version}.tar.gz"
     URL_MD5 "4d3ad0ff07b61373d2cefc89c5d0b20b"
     SOURCE_DIR ${proj}
     BUILD_IN_SOURCE 1
@@ -27,6 +29,10 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     INSTALL_COMMAND ${PYTHON_EXECUTABLE} setup.py install
     DEPENDS
       ${${proj}_DEPENDENCIES}
+    )
+
+  ExternalProject_GenerateProjectDescription_Step(${proj}
+    VERSION ${_version}
     )
 
 else()

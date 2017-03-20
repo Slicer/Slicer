@@ -42,6 +42,11 @@ if(NOT DEFINED CTKResEdit_EXECUTABLE)
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
+
+  ExternalProject_GenerateProjectDescription_Step(${proj}
+    VERSION ${CTKResEdit_VERSION}
+    )
+
   set(CTKResEdit_EXECUTABLE ${CMAKE_BINARY_DIR}/${proj}/bin/CTKResEdit.exe)
 
 else()

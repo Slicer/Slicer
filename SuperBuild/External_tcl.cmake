@@ -181,6 +181,10 @@ ExternalProject_Execute(${proj} \"install\" make install)
       ${${proj}_DEPENDENCIES}
     )
 
+  ExternalProject_GenerateProjectDescription_Step(${proj}
+    VERSION ${TCL_TK_VERSION_DOT}
+    )
+
   #-----------------------------------------------------------------------------
   # Since fixup_bundle expects the library to be writable, let's add an extra step
   # to make sure it's the case.

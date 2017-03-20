@@ -53,6 +53,8 @@ if(NOT DEFINED qRestAPI_DIR)
       ${${proj}_DEPENDENCIES}
     )
 
+  ExternalProject_GenerateProjectDescription_Step(${proj})
+
   set(qRestAPI_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
 else()

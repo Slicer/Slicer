@@ -88,6 +88,8 @@ if(NOT DEFINED Teem_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       ${${proj}_DEPENDENCIES}
     )
 
+  ExternalProject_GenerateProjectDescription_Step(${proj})
+
   set(Teem_DIR ${CMAKE_BINARY_DIR}/teem-build)
 
   #-----------------------------------------------------------------------------
