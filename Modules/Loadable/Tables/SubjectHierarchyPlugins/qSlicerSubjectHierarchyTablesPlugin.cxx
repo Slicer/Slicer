@@ -327,7 +327,6 @@ vtkMRMLTableViewNode* qSlicerSubjectHierarchyTablesPlugin::getTableViewNode()con
   vtkMRMLTableViewNode* tableViewNode = vtkMRMLTableViewNode::SafeDownCast( tableViewNodes->GetNextItemAsObject() );
   if (!tableViewNode)
     {
-    qCritical("qSlicerSubjectHierarchyTablesPlugin::getTableViewNode: Unable to get table view node");
     return NULL;
     }
 

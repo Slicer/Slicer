@@ -331,7 +331,6 @@ vtkMRMLChartViewNode* qSlicerSubjectHierarchyChartsPlugin::getChartViewNode()con
   vtkMRMLChartViewNode* chartViewNode = vtkMRMLChartViewNode::SafeDownCast( chartViewNodes->GetNextItemAsObject() );
   if (!chartViewNode)
     {
-    qCritical() << Q_FUNC_INFO << ": Unable to get chart view node!";
     return NULL;
     }
 
