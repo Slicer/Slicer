@@ -301,7 +301,7 @@ void qSlicerUnitsSettingsPanel::setQuantities(const QStringList& newQuantities)
 
   foreach(QString newQuantity, newQuantities)
     {
-    if (d->Quantities.contains(newQuantity))
+    if (!d->Quantities.contains(newQuantity))
       {
       d->addQuantity(newQuantity);
       }
