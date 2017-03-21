@@ -490,6 +490,8 @@ vtkIdType vtkSlicerSubjectHierarchyModuleLogic::CloneSubjectHierarchyItem(
     clonedShItemID = shNode->GetItemByDataNode(clonedDataNode);
     shNode->SetItemParent(clonedShItemID, shNode->GetItemParent(itemID));
 
+    // Make sure the most suitable plugin owns the item (it may depend on attributes set by Copy, and place in branch)
+    shNode->RequestOwnerPluginSearch(clonedShItemID);
     // Trigger update by invoking the modified event for the subject hierarchy item
     shNode->ItemModified(clonedShItemID);
     }
