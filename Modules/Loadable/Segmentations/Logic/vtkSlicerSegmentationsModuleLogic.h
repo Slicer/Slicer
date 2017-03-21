@@ -72,12 +72,23 @@ public:
   /// Load segmentation from file
   vtkMRMLSegmentationNode* LoadSegmentationFromFile(const char* filename);
 
-  /// Create labelmap volume MRML node from oriented image data
+  /// Create labelmap volume MRML node from oriented image data.
+  /// Creates a display node if a display node does not exist. Shifts image extent to start from zero.
+  /// Image is shallow-copied (voxel array is not duplicated).
   /// \param orientedImageData Oriented image data to create labelmap from
-  /// \param labelmapVolumeNode Labelmap volume to be populated with the oriented image data. The volume node needs to exist
-  ///   and be added to the MRML scene
+  /// \param labelmapVolumeNode Labelmap volume to be populated with the oriented image data. The volume node must exist and be added to the MRML scene.
   /// \return Success flag
   static bool CreateLabelmapVolumeFromOrientedImageData(vtkOrientedImageData* orientedImageData, vtkMRMLLabelMapVolumeNode* labelmapVolumeNode);
+
+  /// Create volume MRML node from oriented image data. Display node is not created.
+  /// \param orientedImageData Oriented image data to create volume node from
+  /// \param scalarVolumeNode Volume to be populated with the oriented image data.
+  /// \param shallowCopy If true then voxel array is not duplicated.
+  /// \param shiftImageDataExtentToZeroStart: Adjust image origin to make image extents start from zero. May be necessary for compatibility with some algorithms
+  ///        that assumes image extent start from 0.
+  /// \return Success flag
+  static bool CopyOrientedImageDataToVolumeNode(vtkOrientedImageData* orientedImageData,
+    vtkMRMLVolumeNode* volumeNode, bool shallowCopy = true, bool shiftImageDataExtentToZeroStart = true);
 
   /// Create oriented image data from a volume node
   /// \param outputParentTransformNode Specifies the parent transform node where the created image data can be placed.
@@ -149,7 +160,8 @@ public:
 
   /// Import all labels from a labelmap node to a segmentation node, each label to a separate segment.
   /// The colors of the new segments are set from the color table corresponding to the labelmap volume.
-  static bool ImportLabelmapToSegmentationNode(vtkMRMLLabelMapVolumeNode* labelmapNode,
+  /// \param insertBeforeSegmentId New segments will be inserted before this segment.
+  static bool ImportLabelmapToSegmentationNode( vtkMRMLLabelMapVolumeNode* labelmapNode,
     vtkMRMLSegmentationNode* segmentationNode, std::string insertBeforeSegmentId = "");
 
   /// Import all labels from a labelmap image to a segmentation node, each label to a separate segment
@@ -159,6 +171,11 @@ public:
   /// \param baseSegmentName Prefix for the names of the new segments. Empty by default, in which case the prefix will be "Label"
   static bool ImportLabelmapToSegmentationNode(vtkOrientedImageData* labelmapImage, vtkMRMLSegmentationNode* segmentationNode,
     std::string baseSegmentName = "", std::string insertBeforeSegmentId = "");
+
+  /// Update segmentation from segments in a labelmap node.
+  /// \param updatedSegmentIDs Defines how label values 1..N are mapped to segment IDs (0..N-1).
+  static bool ImportLabelmapToSegmentationNode(vtkMRMLLabelMapVolumeNode* labelmapNode,
+    vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* updatedSegmentIDs);
 
   /// Import model into the segmentation as a segment.
   static bool ImportModelToSegmentationNode(vtkMRMLModelNode* modelNode, vtkMRMLSegmentationNode* segmentationNode, std::string insertBeforeSegmentId = "");

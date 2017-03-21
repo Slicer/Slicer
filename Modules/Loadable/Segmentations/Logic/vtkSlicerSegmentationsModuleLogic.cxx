@@ -303,29 +303,14 @@ vtkMRMLSegmentationNode* vtkSlicerSegmentationsModuleLogic::LoadSegmentationFrom
 }
 
 //-----------------------------------------------------------------------------
-bool vtkSlicerSegmentationsModuleLogic::CreateLabelmapVolumeFromOrientedImageData(vtkOrientedImageData* orientedImageData, vtkMRMLLabelMapVolumeNode* labelmapVolumeNode)
+bool vtkSlicerSegmentationsModuleLogic::CreateLabelmapVolumeFromOrientedImageData(
+  vtkOrientedImageData* orientedImageData, vtkMRMLLabelMapVolumeNode* labelmapVolumeNode)
 {
-  if (!orientedImageData)
+  if (!vtkSlicerSegmentationsModuleLogic::CopyOrientedImageDataToVolumeNode(orientedImageData, labelmapVolumeNode, true, true))
     {
-    vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::CreateLabelmapVolumeFromOrientedImageData: Invalid input image data");
+    vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::CreateLabelmapVolumeFromOrientedImageData: failed to copy into volume node");
     return false;
     }
-  if (!labelmapVolumeNode)
-    {
-    vtkErrorWithObjectMacro(orientedImageData, "CreateLabelmapVolumeFromOrientedImageData: Invalid labelmap volume node");
-    return false;
-    }
-
-  // Create an identity (zero origin, unit spacing, identity orientation) vtkImageData that can be stored in vtkMRMLVolumeNode
-  vtkSmartPointer<vtkImageData> identityImageData = vtkSmartPointer<vtkImageData>::New();
-  identityImageData->ShallowCopy(orientedImageData);
-  identityImageData->SetOrigin(0,0,0);
-  identityImageData->SetSpacing(1,1,1);
-  labelmapVolumeNode->SetAndObserveImageData(identityImageData);
-
-  vtkSmartPointer<vtkMatrix4x4> labelmapImageToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
-  orientedImageData->GetImageToWorldMatrix(labelmapImageToWorldMatrix);
-  labelmapVolumeNode->SetIJKToRASMatrix(labelmapImageToWorldMatrix);
 
   // Create default display node if it does not have one
   if (labelmapVolumeNode->GetScene())
@@ -341,8 +326,46 @@ bool vtkSlicerSegmentationsModuleLogic::CreateLabelmapVolumeFromOrientedImageDat
       }
     }
 
-  // Make sure merged labelmap extents starts at zeros for compatibility reasons
-  labelmapVolumeNode->ShiftImageDataExtentToZeroStart();
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+bool vtkSlicerSegmentationsModuleLogic::CopyOrientedImageDataToVolumeNode(
+  vtkOrientedImageData* orientedImageData, vtkMRMLVolumeNode* volumeNode, bool shallowCopy /*=true*/, bool shiftImageDataExtentToZeroStart /*=true*/)
+{
+  if (!orientedImageData)
+    {
+    vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::CopyOrientedImageDataToVolumeNode: Invalid input image data");
+    return false;
+    }
+  if (!volumeNode)
+    {
+    vtkErrorWithObjectMacro(orientedImageData, "CopyOrientedImageDataToVolumeNode: Invalid input volume node");
+    return false;
+    }
+
+  // Create an identity (zero origin, unit spacing, identity orientation) vtkImageData that can be stored in vtkMRMLVolumeNode
+  vtkSmartPointer<vtkImageData> identityImageData = vtkSmartPointer<vtkImageData>::New();
+  if (shallowCopy)
+    {
+    identityImageData->ShallowCopy(orientedImageData);
+    }
+  else
+    {
+    identityImageData->DeepCopy(orientedImageData);
+    }
+  identityImageData->SetOrigin(0,0,0);
+  identityImageData->SetSpacing(1,1,1);
+  volumeNode->SetAndObserveImageData(identityImageData);
+
+  vtkSmartPointer<vtkMatrix4x4> labelmapImageToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  orientedImageData->GetImageToWorldMatrix(labelmapImageToWorldMatrix);
+  volumeNode->SetIJKToRASMatrix(labelmapImageToWorldMatrix);
+
+  if (shiftImageDataExtentToZeroStart)
+    {
+    volumeNode->ShiftImageDataExtentToZeroStart();
+    }
 
   return true;
 }
@@ -1179,6 +1202,88 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkOrie
     } // for each label
 
   segmentationNode->CreateDefaultDisplayNodes();
+  segmentationNode->EndModify(segmentationNodeWasModified);
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(
+  vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* updatedSegmentIDs)
+{
+  if (!segmentationNode && !segmentationNode->GetSegmentation())
+  {
+    vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode: Invalid segmentation node");
+    return false;
+  }
+  if (!labelmapNode || !labelmapNode->GetImageData())
+  {
+    vtkErrorWithObjectMacro(segmentationNode, "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode: Invalid labelmap volume node!");
+    return false;
+  }
+  if (!updatedSegmentIDs)
+  {
+    vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode: Invalid updatedSegmentIDs");
+    return false;
+  }
+
+  // If master representation is not binary labelmap, then cannot add
+  // (this should have been done by the UI classes, notifying the users about hazards of changing the master representation)
+  if (segmentationNode->GetSegmentation()->GetMasterRepresentationName() != vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName())
+  {
+    vtkErrorWithObjectMacro(segmentationNode, "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode:"
+      "Master representation of the target segmentation node "
+      << (segmentationNode->GetName() ? segmentationNode->GetName() : "NULL") << " is not binary labelmap!");
+    return false;
+  }
+
+  // Get labelmap geometry
+  vtkSmartPointer<vtkMatrix4x4> labelmapIjkToRasMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  labelmapNode->GetIJKToRASMatrix(labelmapIjkToRasMatrix);
+
+  vtkSmartPointer<vtkImageThreshold> threshold = vtkSmartPointer<vtkImageThreshold>::New();
+  threshold->SetInputConnection(labelmapNode->GetImageDataConnection());
+  threshold->SetInValue(1);
+  threshold->SetOutValue(0);
+  threshold->ReplaceInOn();
+  threshold->ReplaceOutOn();
+  threshold->SetOutputScalarType(labelmapNode->GetImageData()->GetScalarType());
+
+  int segmentationNodeWasModified = segmentationNode->StartModify();
+  for (int segmentIndex = 0; segmentIndex < updatedSegmentIDs->GetNumberOfValues(); ++segmentIndex)
+  {
+    std::string segmentId = updatedSegmentIDs->GetValue(segmentIndex);
+    if (segmentId.empty())
+    {
+      continue;
+    }
+    vtkSegment* segment = segmentationNode->GetSegmentation()->GetSegment(segmentId);
+    if (!segment)
+    {
+      continue;
+    }
+
+    int label = segmentIndex + 1;
+    threshold->ThresholdBetween(label, label);
+    threshold->Update();
+
+    // Create oriented image data for label
+    vtkSmartPointer<vtkOrientedImageData> labelOrientedImageData = vtkSmartPointer<vtkOrientedImageData>::New();
+    labelOrientedImageData->ShallowCopy(threshold->GetOutput());
+    labelOrientedImageData->SetGeometryFromImageToWorldMatrix(labelmapIjkToRasMatrix);
+
+    // Apply parent transforms if any
+    if (labelmapNode->GetParentTransformNode() || segmentationNode->GetParentTransformNode())
+    {
+      vtkSmartPointer<vtkGeneralTransform> labelmapToSegmentationTransform = vtkSmartPointer<vtkGeneralTransform>::New();
+      vtkSlicerSegmentationsModuleLogic::GetTransformBetweenRepresentationAndSegmentation(labelmapNode, segmentationNode, labelmapToSegmentationTransform);
+      vtkOrientedImageDataResample::TransformOrientedImage(labelOrientedImageData, labelmapToSegmentationTransform);
+    }
+
+    // Update segment
+    vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(labelOrientedImageData, segmentationNode, segmentId);
+
+  } // for each label
+
   segmentationNode->EndModify(segmentationNodeWasModified);
   return true;
 }
