@@ -23,3 +23,6 @@ tags
 
 # Ignore pyc files ...
 *.pyc
+
+# Documentation
+Docs/_build
