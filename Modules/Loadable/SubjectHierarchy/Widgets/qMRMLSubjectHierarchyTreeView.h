@@ -108,9 +108,6 @@ protected:
   /// The current items are queried in the function anyway, in case of multi-selection
   virtual void populateContextMenuForItem(vtkIdType itemID);
 
-  /// Reimplemented to increase performance
-  virtual void updateGeometries();
-
   /// Handle mouse press event (facilitates timely update of context menu)
   virtual void mousePressEvent(QMouseEvent* event);
   /// Handle mouse release event

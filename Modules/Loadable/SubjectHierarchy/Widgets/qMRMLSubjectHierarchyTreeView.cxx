@@ -559,18 +559,6 @@ void qMRMLSubjectHierarchyTreeView::toggleVisibility(const QModelIndex& index)
   ownerPlugin->setDisplayVisibility(itemID, visible);
 }
 
-//--------------------------------------------------------------------------
-void qMRMLSubjectHierarchyTreeView::updateGeometries()
-{
-  // Don't update the geometries if it's not visible on screen
-  // UpdateGeometries is for tree child widgets geometry
-  if (!this->isVisible())
-    {
-    return;
-    }
-  this->QTreeView::updateGeometries();
-}
-
 //------------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeView::mousePressEvent(QMouseEvent* e)
 {
