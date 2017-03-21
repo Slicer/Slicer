@@ -61,7 +61,7 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
   void ReadXMLAttributes(const char** atts);
   void WriteXML(ostream& of, int indent);
-  void DeepCopy(vtkSubjectHierarchyItem* item);
+  void DeepCopy(vtkSubjectHierarchyItem* item, bool copyChildren=true);
 
   typedef std::vector<vtkSmartPointer<vtkSubjectHierarchyItem> > ChildVector;
 
@@ -443,6 +443,7 @@ void vtkSubjectHierarchyItem::ReadXMLAttributes(const char** atts)
         continue;
         }
 
+      this->DataNode = NULL;
       this->TemporaryDataNodeID = std::string(attValue);
       }
     if (!strcmp(attName, "name"))
@@ -458,6 +459,7 @@ void vtkSubjectHierarchyItem::ReadXMLAttributes(const char** atts)
       }
     if (!strcmp(attName, "parent"))
       {
+      this->Parent = NULL;
       this->TemporaryParentItemID = vtkVariant(attValue).ToLongLong();
       }
     if (!strcmp(attName, "level"))
@@ -544,7 +546,7 @@ void vtkSubjectHierarchyItem::WriteXML(ostream& of, int nIndent)
   of << "\n" << indent << "<SubjectHierarchyItem";
 
   // Write item properties
-  of << " id=\"" << this->ID << "\"";
+  of << " id=\"" << (this->ID ? this->ID : this->TemporaryID) << "\"";
 
   if (this->DataNode.GetPointer())
     {
@@ -559,6 +561,10 @@ void vtkSubjectHierarchyItem::WriteXML(ostream& of, int nIndent)
       of << " name=\"" << (this->DataNode->GetName() ? this->DataNode->GetName() : "") << "\"";
       }
     }
+  else if (!this->TemporaryDataNodeID.empty())
+    {
+    of << " dataNode=\"" << this->TemporaryDataNodeID << "\"";
+    }
   else
     {
     of << " name=\"" << this->Name << "\"";
@@ -567,7 +573,15 @@ void vtkSubjectHierarchyItem::WriteXML(ostream& of, int nIndent)
   //TODO: Storing the parent is necessary if we want to avoid adding extra features to vtkMRMLParser.
   //      A more generic mechanism that passes the non-node child elements to the containing node for parsing
   //      could make this unnecessary
-  of << " parent=\"" << (this->Parent ? this->Parent->ID : vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID) << "\"";
+  if (this->TemporaryParentItemID)
+    {
+    // If there is temporary parent, then write that (happens in case of scene views)
+    of << " parent=\"" << this->TemporaryParentItemID << "\"";
+    }
+  else
+    {
+    of << " parent=\"" << (this->Parent ? this->Parent->ID : vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID) << "\"";
+    }
 
   of << " level=\"" << this->Level << "\"";
 
@@ -613,36 +627,64 @@ void vtkSubjectHierarchyItem::WriteXML(ostream& of, int nIndent)
 }
 
 //---------------------------------------------------------------------------
-void vtkSubjectHierarchyItem::DeepCopy(vtkSubjectHierarchyItem* item)
+void vtkSubjectHierarchyItem::DeepCopy(vtkSubjectHierarchyItem* item, bool copyChildren/*=true*/)
 {
   if (!item)
     {
     return;
     }
 
-  // Skip copying ID. Duplicate IDs potentially cause problems
-  // Usually copying is related to scene or scene view operations, so the copied items will end up
+  // Skip copying ID and data node and parent item pointers. Duplicate IDs potentially cause problems
+  // Copying is strictly related to scene or scene view operations, so the copied items will end up
   // in UnresolvedItems and need to be resolved. Otherwise they need to be added to the tree
   // explicitly using AddToTree
-  this->DataNode = item->DataNode;
   this->Name = item->Name;
   this->Level = item->Level;
   this->OwnerPluginName = item->OwnerPluginName;
   this->Expanded = item->Expanded;
   this->UIDs = item->UIDs;
   this->Attributes = item->Attributes;
-  this->TemporaryID = item->TemporaryID;
-  this->TemporaryDataNodeID = item->TemporaryDataNodeID;
-  this->TemporaryParentItemID = item->TemporaryParentItemID;
 
-  // Deep copy all children
-  ChildVector::iterator childIt;
-  for (childIt=item->Children.begin(); childIt!=item->Children.end(); ++childIt)
+  // Copy temporary members if they are valid, otherwise save from live members
+  if (item->TemporaryID)
     {
-    vtkSmartPointer<vtkSubjectHierarchyItem> copiedChildItem = vtkSmartPointer<vtkSubjectHierarchyItem>::New();
-    copiedChildItem->DeepCopy(childIt->GetPointer());
-    this->Children.push_back(copiedChildItem);
-    copiedChildItem->Parent = this;
+    this->TemporaryID = item->TemporaryID;
+    }
+  else
+    {
+    this->TemporaryID = item->ID;
+    }
+  if (!item->TemporaryDataNodeID.empty())
+    {
+    this->TemporaryDataNodeID = item->TemporaryDataNodeID;
+    }
+  else
+    {
+    this->TemporaryDataNodeID = std::string(item->DataNode ? item->DataNode->GetID() : "");
+    }
+  if (item->TemporaryParentItemID)
+    {
+    this->TemporaryParentItemID = item->TemporaryParentItemID;
+    }
+  else
+    {
+    this->TemporaryParentItemID = (item->Parent ? item->Parent->ID : vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID);
+    }
+
+  // Deep copy all children if requested
+  if (copyChildren)
+    {
+    // Remove all children first
+    this->RemoveAllChildren();
+
+    ChildVector::iterator childIt;
+    for (childIt=item->Children.begin(); childIt!=item->Children.end(); ++childIt)
+      {
+      vtkSmartPointer<vtkSubjectHierarchyItem> copiedChildItem = vtkSmartPointer<vtkSubjectHierarchyItem>::New();
+      copiedChildItem->DeepCopy(childIt->GetPointer(), true);
+      this->Children.push_back(copiedChildItem);
+      copiedChildItem->Parent = this;
+      }
     }
 }
 
@@ -1398,6 +1440,9 @@ public:
   /// \return Success flag
   bool ResolveUnresolvedItems();
 
+  /// Copy all items from another subject hierarchy nodes to the unresolved list of this node
+  void CopyAsUnresolved(vtkMRMLSubjectHierarchyNode* otherShNode);
+
 public:
   /// Scene subject hierarchy item. This is the ancestor of all subject hierarchy items in the tree
   vtkSubjectHierarchyItem* SceneItem;
@@ -1491,6 +1536,11 @@ bool vtkMRMLSubjectHierarchyNode::vtkInternal::ResolveUnresolvedItems()
       this->UnresolvedItems->Children.erase(itemIt);
       break; // There is only one scene item
       }
+    }
+  if (!unresolvedSceneItemID)
+    {
+    vtkErrorWithObjectMacro(this->External, "ResolveUnresolvedItems: Failed to find scene item among unresolved items");
+    return false;
     }
 
   // Mapping unresolved temporary IDs to new resolved IDs
@@ -1590,6 +1640,34 @@ bool vtkMRMLSubjectHierarchyNode::vtkInternal::ResolveUnresolvedItems()
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLSubjectHierarchyNode::vtkInternal::CopyAsUnresolved(vtkMRMLSubjectHierarchyNode* otherShNode)
+{
+  if (!otherShNode)
+    {
+    return;
+    }
+
+  // Get all children under the scene item in the other subject hierarchy node
+  std::vector<vtkIdType> otherItemIDs;
+  otherShNode->Internal->SceneItem->GetAllChildren(otherItemIDs);
+  // Add the scene item itself, as it is needed to resolve the unresolved items
+  otherItemIDs.push_back(otherShNode->Internal->SceneItemID);
+
+  // Add each item to the unresolved flat list
+  std::vector<vtkIdType>::iterator otherItemIt;
+  for (otherItemIt=otherItemIDs.begin(); otherItemIt!=otherItemIDs.end(); ++otherItemIt)
+    {
+    vtkSubjectHierarchyItem* currentOtherItem =
+      ( ((*otherItemIt) == otherShNode->Internal->SceneItemID) ? otherShNode->Internal->SceneItem
+        : otherShNode->Internal->SceneItem->FindChildByID(*otherItemIt) );
+    vtkSmartPointer<vtkSubjectHierarchyItem> copiedItem = vtkSmartPointer<vtkSubjectHierarchyItem>::New();
+    copiedItem->DeepCopy(currentOtherItem, false); // Do not copy children, only properties
+    this->UnresolvedItems->Children.push_back(copiedItem);
+    copiedItem->Parent = this->UnresolvedItems;
+    }
+}
+
+//----------------------------------------------------------------------------
 // vtkMRMLSubjectHierarchyNode members
 //----------------------------------------------------------------------------
 vtkMRMLSubjectHierarchyNode::vtkMRMLSubjectHierarchyNode()
@@ -1666,7 +1744,7 @@ void vtkMRMLSubjectHierarchyNode::ReadItemFromXML(const char** atts)
   // Add item to the unresolved items.
   // These items will be resolved (item ID, parent and children item pointers, data node ID and pointer)
   // after scene import, and moved to the proper position in the tree contained by the already existing
-  // singleton subject hierarchy node in MergeSubjectHierarchyNode
+  // singleton subject hierarchy node in vtkInternal::ResolveUnresolvedItems
   this->Internal->UnresolvedItems->Children.push_back(item);
   item->Parent = this->Internal->UnresolvedItems;
 }
@@ -1688,6 +1766,11 @@ void vtkMRMLSubjectHierarchyNode::WriteNodeBodyXML(ostream& of, int indent)
     // Have the scene item write the whole tree
     this->Internal->SceneItem->WriteXML(of, indent+2);
     }
+  if (this->Internal->UnresolvedItems && this->Internal->UnresolvedItems->Children.size())
+    {
+    // Write unresolved items
+    this->Internal->UnresolvedItems->WriteXML(of, indent+2);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -1697,10 +1780,30 @@ void vtkMRMLSubjectHierarchyNode::Copy(vtkMRMLNode *anode)
 
   Superclass::Copy(anode);
 
-  vtkMRMLSubjectHierarchyNode* otherNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(anode);
-  if (otherNode)
+  // IMPORTANT! Subject hierarchy nodes should not be copied!
+  // The only valid case when it is copied, is when a Scene View node stores or restores the hierarchy.
+
+  vtkMRMLSubjectHierarchyNode* otherShNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(anode);
+
+  // 1. Scene is restoring -> Copy unresolved items into this subject hierarchy
+  //                          (resolve in plugin logic when restoring finished)
+  if (this->GetScene() && this->GetScene()->IsRestoring())
     {
-    vtkErrorMacro("Copy: Not implemented - subject hierarchy node should not be copied");
+    // Prevent events from being invoked from this subject hierarchy node
+    bool wereEventsDisabled = this->Internal->EventsDisabled;
+    this->Internal->EventsDisabled = true;
+    // Remove all items. The items from the other node will replace each item in this node
+    // after resolving them after restoring finished
+    this->Internal->SceneItem->RemoveAllChildren();
+    // Copy all unresolved items from the other subject hierarchy node into this node
+    this->Internal->UnresolvedItems->DeepCopy(otherShNode->Internal->UnresolvedItems);
+    // Unblock events
+    this->Internal->EventsDisabled = wereEventsDisabled;
+    }
+  // 2. Scene is being stored -> Copy all items into the unresolved item list
+  else
+    {
+    this->Internal->CopyAsUnresolved(otherShNode);
     }
 
   this->EndModify(disabledModify);
@@ -2496,9 +2599,10 @@ void vtkMRMLSubjectHierarchyNode::SetDisplayVisibilityForBranch(vtkIdType itemID
         }
 
       // Set display visibility
+      bool wereEventsDisabled = this->Internal->EventsDisabled;
       this->Internal->EventsDisabled = true; // Prevent the views from updating before all the display nodes are modified
       displayableNode->SetDisplayVisibility(visible);
-      this->Internal->EventsDisabled = false;
+      this->Internal->EventsDisabled = wereEventsDisabled;
 
       // Set slice intersection visibility through display node
       displayNode = displayableNode->GetDisplayNode();
@@ -2763,47 +2867,6 @@ std::vector<vtkIdType> vtkMRMLSubjectHierarchyNode::GetItemsReferencedFromItemBy
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLSubjectHierarchyNode::MergeSubjectHierarchy(vtkMRMLSubjectHierarchyNode* otherShNode)
-{
-  if (!otherShNode)
-    {
-    vtkErrorMacro("MergeSubjectHierarchy: Invalid subject hierarchy node to merge");
-    return false;
-    }
-  vtkMRMLScene* scene = this->GetScene();
-  if (!scene || scene != otherShNode->GetScene())
-    {
-    vtkErrorMacro("MergeSubjectHierarchy: MRML scene mismatch");
-    return false;
-    }
-
-  // Prevent events from being invoked from both subject hierarchy nodes
-  this->Internal->EventsDisabled = true;
-  otherShNode->Internal->EventsDisabled = true;
-
-  // Copy all unresolved items from the merged subject hierarchy node into this node
-  this->Internal->UnresolvedItems->DeepCopy(otherShNode->Internal->UnresolvedItems);
-
-  // Remove merged subject hierarchy node from the scene
-  scene->RemoveNode(otherShNode);
-
-  // Resolve all unresolved items
-  if (!this->Internal->ResolveUnresolvedItems())
-    {
-    // The node will probably be invalid, so it needs to be completely re-built. It is done in
-    // the GetSubjectHierarchyNode function
-    vtkErrorMacro("MergeSubjectHierarchy: Failed to resolve unresolved subject hierarchy items");
-    return false;
-    }
-
-  // Trigger re-building the trees in the views
-  this->Internal->EventsDisabled = false;
-  this->Modified();
-
-  return true;
-}
-
-//---------------------------------------------------------------------------
 std::string vtkMRMLSubjectHierarchyNode::GenerateUniqueItemName(std::string name)
 {
   std::vector<vtkIdType> foundItemIDs;
@@ -2980,9 +3043,9 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNod
     scene->GetNextNodeByClass("vtkMRMLSubjectHierarchyNode"));
   if (scene->GetNumberOfNodesByClass("vtkMRMLSubjectHierarchyNode") == 1)
     {
-    // Resolve unresolved items. There are unresolved items after importing a scene
+    // Resolve unresolved items. There are unresolved items after importing or restoring a scene
     // (do not perform this consolidation operation while the scene is processing)
-    if ( !(scene->IsBatchProcessing() || scene->IsImporting() || scene->IsClosing())
+    if ( !(scene->IsBatchProcessing() || scene->IsImporting() || scene->IsRestoring() || scene->IsClosing())
       && !firstShNode->Internal->ResolveUnresolvedItems() )
       {
       //TODO: The node will probably be invalid, so it needs to be completely re-built
@@ -3008,14 +3071,29 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNod
     vtkMRMLSubjectHierarchyNode* currentShNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(node);
     if (currentShNode)
       {
-      if (!firstShNode->MergeSubjectHierarchy(currentShNode))
+      // Prevent events from being invoked from both subject hierarchy nodes
+      bool wereEventsDisabled = firstShNode->Internal->EventsDisabled;
+      firstShNode->Internal->EventsDisabled = true;
+
+      // Copy all unresolved items from the merged subject hierarchy node into first node
+      firstShNode->Internal->UnresolvedItems->DeepCopy(currentShNode->Internal->UnresolvedItems);
+
+      // Remove merged subject hierarchy node from the scene
+      scene->RemoveNode(currentShNode);
+
+      // Resolve all unresolved items
+      if (!firstShNode->Internal->ResolveUnresolvedItems())
         {
         //TODO: The returned node will probably be invalid, so it needs to be completely re-built
-        //      (e.g. by removing all the subject hierarchy nodes from the scene and when adding a
-        //      new one, calling addSupportedDataNodesToSubjectHierarchy in the plugin logic)
+        // (e.g. by removing all the subject hierarchy nodes from the scene and when adding a
+        // new one, calling addSupportedDataNodesToSubjectHierarchy in the plugin logic)
         vtkErrorWithObjectMacro(scene, "vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode: Failed to merge subject hierarchy nodes");
         return firstShNode;
         }
+
+      // Trigger re-building the trees in the views
+      firstShNode->Internal->EventsDisabled = wereEventsDisabled;
+      firstShNode->Modified();
       }
     }
   // Return the first (and now only) subject hierarchy node into which the others were merged

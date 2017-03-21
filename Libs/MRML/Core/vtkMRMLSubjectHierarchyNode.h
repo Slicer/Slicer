@@ -49,9 +49,6 @@ class vtkMRMLTransformNode;
 ///   information for the contained nodes, and represent the non-leaf nodes of the tree. Accessor functions
 ///   can be used to get/set the properties of the individual items.
 ///
-///   The node's Modified event triggers re-building the views from scratch, while the per-item events
-///   are used for more granular updates.
-///
 class VTK_MRML_EXPORT vtkMRMLSubjectHierarchyNode : public vtkMRMLNode
 {
 public:
@@ -309,11 +306,6 @@ public:
   /// the attribute of this item containing the referenced SOP instance UIDs
   /// \sa vtkMRMLSubjectHierarchyConstants::GetDICOMReferencedInstanceUIDsAttributeName()
   std::vector<vtkIdType> GetItemsReferencedFromItemByDICOM(vtkIdType itemID);
-
-  /// Merge given subject hierarchy into this one. Should not be called manually, as it is automatically handled by the logic
-  /// \param otherShNode Subject hierarchy node to merge into this one. It is removed after merging.
-  /// \return Success flag
-  bool MergeSubjectHierarchy(vtkMRMLSubjectHierarchyNode* otherShNode);
 
   /// Generate unique item name
   std::string GenerateUniqueItemName(std::string name);

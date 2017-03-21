@@ -104,22 +104,22 @@ int vtkMRMLSceneTest1(int , char * [] )
   // Test GetFirstNode
   //---------------------------------------------------------------------------
 
-  vtkMRMLNode * node1 =
-      scene1->AddNode(vtkSmartPointer<vtkMRMLCustomNode>::New());
+  vtkMRMLNode* node1 =
+    scene1->AddNode(vtkSmartPointer<vtkMRMLCustomNode>::New());
   node1->SetName("Node");
   node1->SetHideFromEditors(0);
 
-  vtkMRMLNode * node2 =
-      scene1->AddNode(vtkSmartPointer<vtkMRMLAnotherCustomNode>::New());
+  vtkMRMLNode* node2 =
+    scene1->AddNode(vtkSmartPointer<vtkMRMLAnotherCustomNode>::New());
   node2->SetName("NodeWithSuffix");
   node2->SetHideFromEditors(0);
 
-  vtkMRMLNode * node3 =
-      scene1->AddNode(vtkSmartPointer<vtkMRMLAnotherCustomNode>::New());
+  vtkMRMLNode* node3 =
+    scene1->AddNode(vtkSmartPointer<vtkMRMLAnotherCustomNode>::New());
   node3->SetName("Node");
   node3->SetHideFromEditors(1);
 
-  vtkMRMLNode * node4 =
+  vtkMRMLNode* node4 =
       scene1->AddNode(vtkSmartPointer<vtkMRMLCustomNode>::New());
   node4->SetName("NodeWithSuffix");
   node4->SetHideFromEditors(1);
@@ -363,6 +363,72 @@ int vtkMRMLSceneTest1(int , char * [] )
                 << std::endl;
       return EXIT_FAILURE;
       }
+  }
+
+  // Verify content of ReferencedIDChanges map
+  {
+    // Make sure IDs of nodes coming from private scenes are not stored in
+    // the referenced ID changes map. It caused problems with AddArchetypeVoume,
+    // because the volume (and related) nodes are tested in private scenes, they
+    // have IDs when adding to the main scene, and the last node ID was stored
+    // incorrectly as a changed ID
+    vtkNew<vtkMRMLScene> privateScene;
+    vtkMRMLCustomNode* nodeFromPrivateScene = vtkMRMLCustomNode::New();
+    privateScene->AddNode(nodeFromPrivateScene);
+    nodeFromPrivateScene->SetName("NodeFromPrivateScene");
+    // Copy to std::string because pointer becomes invalid when adding to other scene
+    std::string nodeInPrivateSceneID(nodeFromPrivateScene->GetID());
+    privateScene->Clear(0);
+
+    scene1->AddNode(nodeFromPrivateScene);
+    const char* nodeAddedFromPrivateSceneID = nodeFromPrivateScene->GetID();
+    const char* changedIDFromPrivateScene =
+      scene1->GetChangedID(nodeInPrivateSceneID.c_str());
+    if ( changedIDFromPrivateScene
+      || nodeInPrivateSceneID.empty() || !nodeAddedFromPrivateSceneID ||
+      !nodeInPrivateSceneID.compare(nodeAddedFromPrivateSceneID) )
+      {
+      std::cerr << "Line " << __LINE__ << " - Problem with GetChangedID()\n"
+                << "  nodeFromPrivateSceneID: " << nodeInPrivateSceneID << "\n"
+                << "  changedIDFromPrivateScene: " <<
+                (changedIDFromPrivateScene?changedIDFromPrivateScene:"NULL") << "\n"
+                << "  nodeAddedFromPrivateSceneID: " <<
+                (nodeAddedFromPrivateSceneID?nodeAddedFromPrivateSceneID:"NULL")
+                << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    // Check that IDs from imported scenes are indeed stored as changed if in
+    // conflict with the main scene
+    vtkNew<vtkMRMLScene> importedScene;
+    vtkMRMLNode* importedNode =
+      importedScene->AddNode(vtkSmartPointer<vtkMRMLCustomNode>::New());
+    importedNode->SetName("ImportedNode");
+    importedScene->SetSaveToXMLString(1);
+    importedScene->Commit();
+    std::string sceneXMLString = importedScene->GetSceneXMLString();
+    const char* importedNodeID = importedNode->GetID();
+
+    scene1->RegisterNodeClass(vtkSmartPointer<vtkMRMLCustomNode>::New());
+    scene1->SetLoadFromXMLString(1);
+    scene1->SetSceneXMLString(sceneXMLString);
+    scene1->Import();
+    const char* changedIDFromImportedScene =
+      scene1->GetChangedID(importedNodeID);
+    if ( !importedNodeID || !changedIDFromImportedScene ||
+      !strcmp(changedIDFromImportedScene, importedNodeID) )
+      {
+      std::cerr << "Line " << __LINE__ << " - Problem with GetChangedID()\n"
+                << "  importedNodeID: " <<
+                (importedNodeID?importedNodeID:"NULL") << "\n"
+                << "  changedIDFromImportedScene: " <<
+                (changedIDFromImportedScene?changedIDFromImportedScene:"NULL")
+                << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    // Needed to make sure the node is present after clearing the private scene
+    nodeFromPrivateScene->Delete();
   }
 
   return EXIT_SUCCESS;

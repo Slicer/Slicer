@@ -369,6 +369,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::ProcessMRMLEvents ( vtkObject
     vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(caller);
   if (propertiesNode != NULL &&
       this->DiffusionTensorDisplayPropertiesNodeID != NULL &&
+      propertiesNode->GetID() != NULL &&
       strcmp(this->DiffusionTensorDisplayPropertiesNodeID,
              propertiesNode->GetID()) == 0 &&
       event ==  vtkCommand::ModifiedEvent)

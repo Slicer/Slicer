@@ -594,7 +594,7 @@ void vtkMRMLSceneViewNode::RestoreScene(bool removeNodes)
         if (snode)
           {
           snode->SetScene(this->Scene);
-          // to prevent copying of default info if not stored in sanpshot
+          // to prevent copying of default info if not stored in snapshot
           snode->CopyWithSingleModifiedEvent(node);
           // to prevent reading data on UpdateScene()
           snode->SetAddToSceneNoModify(0);

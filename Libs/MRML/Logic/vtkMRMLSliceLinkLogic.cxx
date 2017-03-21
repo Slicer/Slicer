@@ -163,9 +163,9 @@ void vtkMRMLSliceLinkLogic::OnMRMLNodeModified(vtkMRMLNode* node)
 {
   // Update from SliceNode
   vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
-  if (sliceNode && !this->GetMRMLScene()->IsBatchProcessing())
+  if ( sliceNode && sliceNode->GetID()
+    && this->GetMRMLScene() && !this->GetMRMLScene()->IsBatchProcessing() )
     {
-
     SliceNodeStatusMap::iterator it = this->SliceNodeInteractionStatus.find(sliceNode->GetID());
     // if this is not the node that we are interacting with, short circuit
 
@@ -219,7 +219,7 @@ void vtkMRMLSliceLinkLogic::OnMRMLNodeModified(vtkMRMLNode* node)
   // Update from SliceCompositeNode
   vtkMRMLSliceCompositeNode* compositeNode
     = vtkMRMLSliceCompositeNode::SafeDownCast(node);
-  if (compositeNode && !this->GetMRMLScene()->IsBatchProcessing())
+  if (compositeNode && this->GetMRMLScene() && !this->GetMRMLScene()->IsBatchProcessing())
     {
 
     // if this is not the node that we are interacting with, short circuit

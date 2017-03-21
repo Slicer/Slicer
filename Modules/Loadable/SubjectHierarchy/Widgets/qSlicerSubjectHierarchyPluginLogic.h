@@ -85,17 +85,20 @@ protected:
   void addSupportedDataNodesToSubjectHierarchy();
 
 protected slots:
-  /// Called when a node is added to the scene so that a plugin can claim it
+  /// Called when a node is added to the scene so that a plugin can create an item for it
   void onNodeAdded(vtkObject* scene, vtkObject* nodeObject);
   /// Called when a node is removed to the scene so that the associated
-  /// subject hierarchy node can be deleted too
+  /// subject hierarchy item can be deleted too
   void onNodeAboutToBeRemoved(vtkObject* scene, vtkObject* nodeObject);
   /// Called when scene import is finished.
-  /// Subject hierarchy nodes are created for supported data nodes if they have not
+  /// Subject hierarchy items are created for supported data nodes if they have not
   /// been imported with the scene (backwards compatibility for older scenes)
   void onSceneImportEnded(vtkObject* sceneObject);
-  /// Called when scene end is finished. Hierarchy is cleared in that case.
+  /// Called when scene import is finished. Hierarchy is cleared in that case.
   void onSceneCloseEnded(vtkObject* sceneObject);
+  /// Called when scene restore is finished. As the restored node contains only unresolved
+  /// items, they need to be resolved when restoring ended
+  void onSceneRestoreEnded(vtkObject* sceneObject);
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyPluginLogicPrivate> d_ptr; 

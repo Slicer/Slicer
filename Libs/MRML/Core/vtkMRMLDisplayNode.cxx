@@ -804,7 +804,7 @@ void vtkMRMLDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
 
   vtkMRMLColorNode* cnode = vtkMRMLColorNode::SafeDownCast(caller);
   if (cnode != NULL &&
-      this->ColorNodeID != NULL &&
+      this->ColorNodeID != NULL && cnode->GetID() != NULL &&
       strcmp(this->ColorNodeID, cnode->GetID()) == 0 &&
       event ==  vtkCommand::ModifiedEvent)
     {

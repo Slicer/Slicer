@@ -50,7 +50,7 @@ public:
 
   int NumberOfSingletonNodes;
 
-  // List of node that should be updated when NodeAddedEvent is catched
+  // List of node that should be updated when NodeAddedEvent is caught
   std::vector<std::string> NodeAddedClassNames;
 
   virtual void ResetNumberOfEvents()
@@ -64,7 +64,7 @@ public:
     {
     vtkMRMLCoreTestingUtilities::vtkMRMLNodeCallback::Execute(caller, eid, calldata);
 
-    // Let's return if an error already occured
+    // Let's return if an error already occurred
     if (this->CheckStatus() == EXIT_FAILURE)
       {
       return;

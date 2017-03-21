@@ -846,10 +846,10 @@ int vtkMRMLScene::Import()
     }
 #ifdef MRMLSCENE_VERBOSE
   timer->StopTimer();
-  std::cerr<<"vtkMRMLScene::Import()::AddNodes:" << addNodesTimer->GetElapsedTime() << "\n";
-  std::cerr<< "vtkMRMLScene::Import()::UpdateScene" << updateSceneTimer->GetElapsedTime() << "\n";
-  std::cerr<<"vtkMRMLScene::Import()::SceneImported:" << importingTimer->GetElapsedTime() << "\n";
-  std::cerr<<"vtkMRMLScene::Import():" << timer->GetElapsedTime() << "\n";
+  std::cerr << "vtkMRMLScene::Import()::AddNodes:" << addNodesTimer->GetElapsedTime() << std::endl;
+  std::cerr << "vtkMRMLScene::Import()::UpdateScene" << updateSceneTimer->GetElapsedTime() << std::endl;
+  std::cerr << "vtkMRMLScene::Import()::SceneImported:" << importingTimer->GetElapsedTime() << std::endl;
+  std::cerr << "vtkMRMLScene::Import():" << timer->GetElapsedTime() << std::endl;
   addNodesTimer->Delete();
   updateSceneTimer->Delete();
   importingTimer->Delete();
@@ -1098,7 +1098,7 @@ inline bool IsNodeWithoutName(vtkMRMLNode* node)
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
+vtkMRMLNode* vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
 {
   if (!n)
     {
@@ -1137,7 +1137,8 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
       // their references.
       std::string newId(sn->GetID());
       std::string oldId(n->GetID() ? n->GetID() : sn->GetID());
-      if (oldId != newId)
+      if ( (this->IsImporting() || this->IsRestoring())
+        && (oldId != newId && n->GetID()) )
         {
         this->ReferencedIDChanges[oldId] = newId;
         }
@@ -1158,11 +1159,7 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
   // the node must be updated with the new ID.
   if (IsNodeWithoutID(n) || this->GetNodeByID(n->GetID()) != NULL)
     {
-    std::string oldID;
-    if (n->GetID())
-      {
-      oldID = n->GetID();
-      }
+    std::string oldID(n->GetID() ? n->GetID() : "");
     n->SetID(this->GenerateUniqueID(n).c_str());
     if (n->GetScene())
       {
@@ -1171,8 +1168,9 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
       }
 
     vtkDebugMacro("AddNodeNoNotify: got unique id for new " << n->GetClassName() << " node: " << n->GetID() << endl);
-    std::string newID(n->GetID());
-    if (oldID != newID)
+    std::string newID(n->GetID() ? n->GetID() : "");
+    if ( (this->IsImporting() || this->IsRestoring())
+      && (oldID != newID && !oldID.empty()) )
       {
       this->ReferencedIDChanges[oldID] = newID;
       }
@@ -1196,7 +1194,7 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLNode*  vtkMRMLScene::AddNode(vtkMRMLNode *n)
+vtkMRMLNode* vtkMRMLScene::AddNode(vtkMRMLNode *n)
 {
   if (!n)
     {
@@ -1372,7 +1370,7 @@ void vtkMRMLScene::RemoveReferencedNodeID(const char *id, vtkMRMLNode *referenci
     }
   if (referencingNode->GetID()==NULL)
     {
-    // invalid referencinc node id
+    // invalid referencing node id
     return;
     }
   referenceIt->second.erase(referencingNode->GetID());
@@ -1924,7 +1922,7 @@ vtkMRMLNode* vtkMRMLScene::InsertAfterNode(vtkMRMLNode *item, vtkMRMLNode *n)
     vtkDebugMacro("InsertAfterNode: item index = " << itemIndex-1 << ", inserting after index = " << index);
     this->Nodes->vtkCollection::InsertItem(index, (vtkObject *)n);
     }
-  // cache the node so the whole scene cache stays up-todate
+  // cache the node so the whole scene cache stays up-to-date
   this->AddNodeID(n);
 
   n->SetDisableModifiedEvent(modifyStatus);
