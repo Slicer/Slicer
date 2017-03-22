@@ -14,7 +14,7 @@ __all__ = [
   ]
 
 #
-# This defines the hooks to be come an editor effect.
+# This defines the hooks to become an editor effect.
 #
 
 #

@@ -9,7 +9,7 @@ from EditorLib import LabelEffect
 #
 # The Editor Extension itself.
 #
-# This needs to define the hooks to be come an editor effect.
+# This needs to define the hooks to become an editor effect.
 #
 
 #
