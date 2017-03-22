@@ -211,14 +211,44 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="ctkComboBox" name="ComboBox_AnatomicContext">
-           <property name="sizeAdjustPolicy">
-            <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <property name="spacing">
+            <number>4</number>
            </property>
-           <property name="defaultText">
-            <string>Select anatomic region context...</string>
-           </property>
-          </widget>
+           <item>
+            <widget class="ctkComboBox" name="ComboBox_AnatomicContext">
+             <property name="sizeAdjustPolicy">
+              <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+             </property>
+             <property name="defaultText">
+              <string>Select anatomic region context...</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_LoadAnatomicContext">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+               <normaloff>:/Icons/Small/SlicerAddData.png</normaloff>:/Icons/Small/SlicerAddData.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>21</width>
+               <height>21</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
          <item>
           <widget class="ctkSearchBox" name="SearchBox_AnatomicRegion">
@@ -271,6 +301,9 @@
       </item>
       <item row="0" column="0" colspan="3">
        <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <property name="spacing">
+         <number>4</number>
+        </property>
         <item>
          <widget class="ctkComboBox" name="ComboBox_Terminology">
           <property name="sizeAdjustPolicy">

@@ -51,9 +51,9 @@ install(
   DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME} COMPONENT Runtime)
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/../Resources/AnatomicRegionModifier-Master.json
-  ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME}/AnatomicRegionModifier-Master.json
+  ${CMAKE_CURRENT_SOURCE_DIR}/../Resources/AnatomicRegionAndModifier-DICOM-Master.json
+  ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME}/AnatomicRegionAndModifier-DICOM-Master.json
   COPYONLY)
 install(
-  FILES ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME}/AnatomicRegionModifier-Master.json
+  FILES ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME}/AnatomicRegionAndModifier-DICOM-Master.json
   DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME} COMPONENT Runtime)

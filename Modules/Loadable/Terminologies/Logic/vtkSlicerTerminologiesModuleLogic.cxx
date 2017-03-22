@@ -49,6 +49,8 @@
 #include "rapidjson/filereadstream.h"
 
 static rapidjson::Value JSON_EMPTY_VALUE;
+static std::string ANATOMIC_CONTEXT_SCHEMA = "https://raw.githubusercontent.com/qiicr/dcmqi/master/doc/anatomic-context-schema.json#";
+static std::string TERMINOLOGY_CONTEXT_SCHEMA = "https://raw.githubusercontent.com/qiicr/dcmqi/master/doc/segment-context-schema.json#";
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerTerminologiesModuleLogic);
@@ -58,7 +60,7 @@ class vtkSlicerTerminologiesModuleLogic::vtkInternal
 {
 public:
   // rapidjson document object cannot be stored in an STL map (there are build errors
-  // on linux and mac), therefore we store a simple pointer and create/delete
+  // on Linux and Mac), therefore we store a simple pointer and create/delete
   // the document object manually
   typedef std::map<std::string, rapidjson::Document* > TerminologyMap;
   vtkInternal();
@@ -983,7 +985,7 @@ void vtkSlicerTerminologiesModuleLogic::vtkInternal::GetJsonCodeFromIdentifier(
 
 //----------------------------------------------------------------------------
 vtkSlicerTerminologiesModuleLogic::vtkSlicerTerminologiesModuleLogic()
-  : UserTerminologiesPath(NULL)
+  : UserContextsPath(NULL)
 {
   this->Internal = new vtkInternal();
 }
@@ -994,7 +996,7 @@ vtkSlicerTerminologiesModuleLogic::~vtkSlicerTerminologiesModuleLogic()
   delete this->Internal;
   this->Internal = NULL;
 
-  this->SetUserTerminologiesPath(NULL);
+  this->SetUserContextsPath(NULL);
 }
 
 //----------------------------------------------------------------------------
@@ -1014,15 +1016,70 @@ void vtkSlicerTerminologiesModuleLogic::SetMRMLSceneInternal(vtkMRMLScene* newSc
   this->SetDisableModifiedEvent(true);
   this->LoadDefaultTerminologies();
   this->LoadDefaultAnatomicContexts();
-  this->LoadUserTerminologies();
+  this->LoadUserContexts();
   this->SetDisableModifiedEvent(wasModifying);
+}
+
+//---------------------------------------------------------------------------
+bool vtkSlicerTerminologiesModuleLogic::LoadContextFromFile(std::string filePath)
+{
+  rapidjson::Document* jsonRoot = new rapidjson::Document;
+
+  FILE *fp = fopen(filePath.c_str(), "r");
+  if (!fp)
+    {
+    vtkErrorMacro("LoadContextFromFile: Failed to load context from file '" << filePath);
+    return false;
+    }
+  char buffer[4096];
+  rapidjson::FileReadStream fs(fp, buffer, sizeof(buffer));
+  if (jsonRoot->ParseStream(fs).HasParseError())
+    {
+    vtkErrorMacro("LoadContextFromFile: Failed to load context from file '" << filePath);
+    fclose(fp);
+    return false;
+    }
+
+  // Load document based on schema
+  rapidjson::Value::MemberIterator schemaIt = jsonRoot->FindMember("@schema");
+  if (schemaIt == jsonRoot->MemberEnd())
+    {
+    vtkErrorMacro("LoadContextFromFile: File " << filePath << " does not contain schema information");
+    fclose(fp);
+    return false;
+    }
+  std::string schema = (*jsonRoot)["@schema"].GetString();
+  if (!schema.compare(TERMINOLOGY_CONTEXT_SCHEMA))
+    {
+    // Store terminology
+    std::string contextName = (*jsonRoot)["SegmentationCategoryTypeContextName"].GetString();
+    vtkSlicerTerminologiesModuleLogic::vtkInternal::SetDocumentInTerminologyMap(
+      this->Internal->LoadedTerminologies, contextName, jsonRoot);
+    vtkDebugMacro("Terminology named '" << contextName << "' successfully loaded from file " << filePath);
+    }
+  else if (!schema.compare(ANATOMIC_CONTEXT_SCHEMA))
+    {
+    // Store anatomic context
+    std::string contextName = (*jsonRoot)["AnatomicContextName"].GetString();
+    vtkSlicerTerminologiesModuleLogic::vtkInternal::SetDocumentInTerminologyMap(
+      this->Internal->LoadedAnatomicContexts, contextName, jsonRoot);
+    vtkDebugMacro("Anatomic context named '" << contextName << "' successfully loaded from file " << filePath);
+    }
+  else
+    {
+    vtkErrorMacro("LoadContextFromFile: File " << filePath << " is neither a terminology nor anatomic context file according to its schema");
+    fclose(fp);
+    return false;
+    }
+
+  fclose(fp);
+  this->Modified();
+  return true;
 }
 
 //---------------------------------------------------------------------------
 std::string vtkSlicerTerminologiesModuleLogic::LoadTerminologyFromFile(std::string filePath)
 {
-  std::string contextName;
-
   rapidjson::Document* terminologyRoot = new rapidjson::Document;
 
   FILE *fp = fopen(filePath.c_str(), "r");
@@ -1040,12 +1097,29 @@ std::string vtkSlicerTerminologiesModuleLogic::LoadTerminologyFromFile(std::stri
     return "";
     }
 
+  // Check schema
+  rapidjson::Value::MemberIterator schemaIt = terminologyRoot->FindMember("@schema");
+  if (schemaIt == terminologyRoot->MemberEnd())
+    {
+    vtkErrorMacro("LoadTerminologyFromFile: File " << filePath << " does not contain schema information");
+    fclose(fp);
+    return "";
+    }
+  std::string schema = (*terminologyRoot)["@schema"].GetString();
+  if (schema.compare(TERMINOLOGY_CONTEXT_SCHEMA))
+    {
+    vtkErrorMacro("LoadTerminologyFromFile: File " << filePath << " is not a terminology context file according to its schema");
+    fclose(fp);
+    return "";
+    }
+
   // Store terminology
-  contextName = (*terminologyRoot)["SegmentationCategoryTypeContextName"].GetString();
+  std::string contextName = (*terminologyRoot)["SegmentationCategoryTypeContextName"].GetString();
   vtkSlicerTerminologiesModuleLogic::vtkInternal::SetDocumentInTerminologyMap(
     this->Internal->LoadedTerminologies, contextName, terminologyRoot);
+
+  vtkDebugMacro("Terminology named '" << contextName << "' successfully loaded from file " << filePath);
   fclose(fp);
-  vtkInfoMacro("Terminology named '" << contextName << "' successfully loaded from file " << filePath);
   this->Modified();
   return contextName;
 }
@@ -1094,8 +1168,8 @@ bool vtkSlicerTerminologiesModuleLogic::LoadTerminologyFromSegmentDescriptorFile
   vtkSlicerTerminologiesModuleLogic::vtkInternal::SetDocumentInTerminologyMap(
     this->Internal->LoadedTerminologies, contextName, convertedDoc );
 
+  vtkDebugMacro("Terminology named '" << contextName << "' successfully loaded from file " << filePath);
   fclose(fp);
-  vtkInfoMacro("Terminology named '" << contextName << "' successfully loaded from file " << filePath);
   this->Modified();
   return true;
 }
@@ -1119,13 +1193,12 @@ void vtkSlicerTerminologiesModuleLogic::LoadDefaultTerminologies()
 //---------------------------------------------------------------------------
 std::string vtkSlicerTerminologiesModuleLogic::LoadAnatomicContextFromFile(std::string filePath)
 {
-  std::string contextName;
   rapidjson::Document* anatomicContextRoot = new rapidjson::Document;
 
   FILE *fp = fopen(filePath.c_str(), "r");
   if (!fp)
     {
-    vtkErrorMacro("LoadAnatomicContextFromFile: Failed to load terminology from file '" << filePath);
+    vtkErrorMacro("LoadAnatomicContextFromFile: Failed to load anatomic context from file " << filePath);
     return "";
     }
 
@@ -1133,18 +1206,35 @@ std::string vtkSlicerTerminologiesModuleLogic::LoadAnatomicContextFromFile(std::
   rapidjson::FileReadStream fs(fp, buffer, sizeof(buffer));
   if (anatomicContextRoot->ParseStream(fs).HasParseError())
     {
-    vtkErrorMacro("LoadAnatomicContextFromFile: Failed to load terminology from file '" << filePath);
+    vtkErrorMacro("LoadAnatomicContextFromFile: Failed to load anatomic context from file " << filePath);
+    fclose(fp);
+    return "";
+    }
+
+  // Check schema
+  rapidjson::Value::MemberIterator schemaIt = anatomicContextRoot->FindMember("@schema");
+  if (schemaIt == anatomicContextRoot->MemberEnd())
+    {
+    vtkErrorMacro("LoadAnatomicContextFromFile: File " << filePath << " does not contain schema information");
+    fclose(fp);
+    return "";
+    }
+  std::string schema = (*anatomicContextRoot)["@schema"].GetString();
+  if (schema.compare(ANATOMIC_CONTEXT_SCHEMA))
+    {
+    vtkErrorMacro("LoadAnatomicContextFromFile: File " << filePath << " is not an anatomic context file according to its schema");
     fclose(fp);
     return "";
     }
 
   // Store anatomic context
-  contextName = (*anatomicContextRoot)["AnatomicContextName"].GetString();
+  std::string contextName = (*anatomicContextRoot)["AnatomicContextName"].GetString();
   vtkSlicerTerminologiesModuleLogic::vtkInternal::SetDocumentInTerminologyMap(
     this->Internal->LoadedAnatomicContexts, contextName, anatomicContextRoot);
 
+  vtkDebugMacro("Anatomic context named '" << contextName << "' successfully loaded from file " << filePath);
   fclose(fp);
-  vtkInfoMacro("Anatomic context named '" << contextName << "' successfully loaded from file " << filePath);
+  this->Modified();
   return contextName;
 }
 
@@ -1192,8 +1282,8 @@ bool vtkSlicerTerminologiesModuleLogic::LoadAnatomicContextFromSegmentDescriptor
   vtkSlicerTerminologiesModuleLogic::vtkInternal::SetDocumentInTerminologyMap(
     this->Internal->LoadedAnatomicContexts, contextName, convertedDoc );
 
+  vtkDebugMacro("Anatomic context named '" << contextName << "' successfully loaded from file " << filePath);
   fclose(fp);
-  vtkInfoMacro("Anatomic context named '" << contextName << "' successfully loaded from file " << filePath);
   this->Modified();
   return true;
 }
@@ -1202,31 +1292,30 @@ bool vtkSlicerTerminologiesModuleLogic::LoadAnatomicContextFromSegmentDescriptor
 void vtkSlicerTerminologiesModuleLogic::LoadDefaultAnatomicContexts()
 {
   std::string success("");
-  success = this->LoadAnatomicContextFromFile(this->GetModuleShareDirectory() + "/AnatomicRegionModifier-Master.json");
+  success = this->LoadAnatomicContextFromFile(this->GetModuleShareDirectory() + "/AnatomicRegionAndModifier-DICOM-Master.json");
   if (success.empty())
     {
-    vtkErrorMacro("LoadDefaultAnatomicContexts: Failed to load anatomical region context 'AnatomicRegionModifier-Master'");
+    vtkErrorMacro("LoadDefaultAnatomicContexts: Failed to load anatomical region context 'AnatomicRegionAndModifier-DICOM-Master'");
     }
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerTerminologiesModuleLogic::LoadUserTerminologies()
+void vtkSlicerTerminologiesModuleLogic::LoadUserContexts()
 {
-  if (!this->UserTerminologiesPath)
+  if (!this->UserContextsPath)
     {
-    vtkErrorMacro("LoadUserTerminologies: User settings directory '"
-      << (this->UserTerminologiesPath ? this->UserTerminologiesPath : "None") << "' does not exist");
+    vtkErrorMacro("LoadUserContexts: User settings directory '"
+      << (this->UserContextsPath ? this->UserContextsPath : "None") << "' does not exist");
     return;
     }
-  if (!vtksys::SystemTools::FileExists(this->UserTerminologiesPath, false))
+  if (!vtksys::SystemTools::FileExists(this->UserContextsPath, false))
     {
     return;
     }
 
   // Try to load all json files in the user settings directory
   vtkSmartPointer<vtkDirectory> userSettingsDir = vtkSmartPointer<vtkDirectory>::New();
-  userSettingsDir->Open(this->UserTerminologiesPath);
-  //vtkSmartPointer<vtkStringArray> files = vtkSmartPointer<vtkStringArray>::Take(userSettingsDir->GetFiles());
+  userSettingsDir->Open(this->UserContextsPath);
   vtkStringArray* files = userSettingsDir->GetFiles();
   for (int index=0; index<files->GetNumberOfValues(); ++index)
     {
@@ -1240,11 +1329,10 @@ void vtkSlicerTerminologiesModuleLogic::LoadUserTerminologies()
       }
 
     // Try loading file
-    std::string jsonFilePath = std::string(this->UserTerminologiesPath) + "/" + fileName;
-    std::string success = this->LoadTerminologyFromFile(jsonFilePath);
-    if (success.empty())
+    std::string jsonFilePath = std::string(this->UserContextsPath) + "/" + fileName;
+    if (!this->LoadContextFromFile(jsonFilePath))
       {
-      vtkErrorMacro("LoadUserTerminologies: Failed to load terminology from file " << files->GetValue(index));
+      vtkErrorMacro("LoadUserContexts: Failed to load terminology from file " << files->GetValue(index));
       }
     }
 }

@@ -47,7 +47,7 @@
   </customwidget>
   <customwidget>
    <class>qSlicerTerminologyNavigatorWidget</class>
-   <extends>QWidget</extends>
+   <extends>qMRMLWidget</extends>
    <header>qSlicerTerminologyNavigatorWidget.h</header>
   </customwidget>
  </customwidgets>

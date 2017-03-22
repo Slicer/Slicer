@@ -58,6 +58,12 @@ public:
       std::string CodeMeaning; // Human readable name (not required for ID)
     };
 
+  /// Load terminology or anatomic context from JSON file.
+  /// Note: Separate generic loader function was created so that the file does not need to be loaded twice in case
+  ///       the type of the context in the JSON file is not known
+  /// \param filePath File containing the context to load
+  /// \return Success flag
+  bool LoadContextFromFile(std::string filePath);
   /// Load terminology dictionary from JSON terminology context file into \sa LoadedTerminologies.
   /// \param filePath File containing the terminology to load
   /// \return Context name (SegmentationCategoryTypeContextName) of the loaded terminology. Empty string on failure.
@@ -159,8 +165,8 @@ public:
   static CodeIdentifier CodeIdentifierFromTerminologyType(vtkSlicerTerminologyType* type);
 
 public:
-  vtkGetStringMacro(UserTerminologiesPath);
-  vtkSetStringMacro(UserTerminologiesPath);
+  vtkGetStringMacro(UserContextsPath);
+  vtkSetStringMacro(UserContextsPath);
 
 protected:
   vtkSlicerTerminologiesModuleLogic();
@@ -172,12 +178,12 @@ protected:
   void LoadDefaultTerminologies();
   /// Load default anatomic context dictionaries from JSON into \sa LoadedAnatomicContexts
   void LoadDefaultAnatomicContexts();
-  /// Load terminologies from the user settings directory \sa UserTerminologiesPath
-  void LoadUserTerminologies();
+  /// Load terminologies and anatomic contexts from the user settings directory \sa UserContextsPath
+  void LoadUserContexts();
 
 protected:
   /// The path from which the json files are automatically loaded on startup
-  char* UserTerminologiesPath;
+  char* UserContextsPath;
 
 private:
   vtkSlicerTerminologiesModuleLogic(const vtkSlicerTerminologiesModuleLogic&); // Not implemented

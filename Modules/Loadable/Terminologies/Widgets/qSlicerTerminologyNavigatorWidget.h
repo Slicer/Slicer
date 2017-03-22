@@ -171,6 +171,9 @@ protected:
   /// Populate region modifier combobox based on current selection
   void populateRegionModifierComboBox();
 
+  /// Copy terminology or anatomic context file to user folder
+  void copyContextToUserDirectory(QString filePath);
+
 protected slots:
   void onTerminologySelectionChanged(int);
   void onCategorySelected(QTableWidgetItem*,QTableWidgetItem*);
@@ -190,6 +193,7 @@ protected slots:
   void onResetColorClicked();
 
   void onLoadTerminologyClicked();
+  void onLoadAnatomicContextClicked();
 
   void onLogicModified();
 

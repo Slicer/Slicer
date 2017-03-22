@@ -126,7 +126,7 @@ vtkMRMLAbstractLogic* qSlicerTerminologiesModule::createLogic()
 
   // Setup logic
   vtkSlicerTerminologiesModuleLogic* logic = vtkSlicerTerminologiesModuleLogic::New();
-  logic->SetUserTerminologiesPath(settingsDirPath.toLatin1().constData());
+  logic->SetUserContextsPath(settingsDirPath.toLatin1().constData());
 
   return logic;
 }

@@ -1,5 +1,6 @@
 {
   "AnatomicContextName": "Anatomic codes - DICOM master list",
+  "@schema": "https://raw.githubusercontent.com/qiicr/dcmqi/master/doc/anatomic-context-schema.json#",
   "AnatomicCodes": {
     "AnatomicRegion": [
       {

@@ -262,9 +262,11 @@ void qSlicerTerminologyNavigatorWidgetPrivate::init()
   ctkColorPickerButton::ColorDialogOptions options = ctkColorPickerButton::UseCTKColorDialog;
   this->ColorPickerButton_RecommendedRGB->setDialogOptions(options);
 
-  // Setup load button
+  // Setup load buttons
   QObject::connect(this->pushButton_LoadTerminology, SIGNAL(clicked()),
     q, SLOT(onLoadTerminologyClicked()) );
+  QObject::connect(this->pushButton_LoadAnatomicContext, SIGNAL(clicked()),
+    q, SLOT(onLoadAnatomicContextClicked()) );
 
   // Populate terminology combobox with the loaded terminologies
   q->populateTerminologyComboBox();
@@ -1652,42 +1654,7 @@ void qSlicerTerminologyNavigatorWidget::onLoadTerminologyClicked()
       QMessageBox::information(this, "Load succeeded",
         QString("Loading terminology context named %1 succeeded").arg(loadedContextName) );
 
-      // Make sure the file can be copied to the settings folder
-      QDir settingsFolder(logic->GetUserTerminologiesPath());
-      if (!settingsFolder.exists())
-        {
-        settingsFolder.mkpath(logic->GetUserTerminologiesPath());
-        }
-      if (!settingsFolder.exists())
-        {
-        qCritical() << Q_FUNC_INFO << ": Settings folder '" << settingsFolder.absolutePath() << "' does not exist. Copying terminology file failed.";
-        return;
-        }
-      QString fileNameOnly = QFileInfo(terminologyFileName).fileName();
-      QString targetFilePath = settingsFolder.absoluteFilePath(fileNameOnly);
-
-      // Check if there is a file with the same name in the settings folder and ask the user in that case
-      if (QFile::exists(targetFilePath))
-        {
-        QString message = QString(tr("There is a terminology file with name '%1' in the stored terminologies.\n\n"
-          "Do you wish to update the stored terminology file with the just loaded one?")).arg(fileNameOnly);
-        QMessageBox::StandardButton answer =
-          QMessageBox::question(NULL, tr("Terminology file exists"), message,
-          QMessageBox::Yes | QMessageBox::No, QMessageBox::No );
-        if (answer == QMessageBox::No)
-          {
-          return;
-          }
-        else
-          {
-          // Remove file before copying (copy function does not overwrite)
-          settingsFolder.remove(fileNameOnly);
-          }
-        }
-
-      // Copy file to settings folder for automatic loading on startup
-      QFile terminologyFile(terminologyFileName);
-      terminologyFile.copy(targetFilePath);
+      this->copyContextToUserDirectory(terminologyFileName);
       }
     else
       {
@@ -1695,6 +1662,86 @@ void qSlicerTerminologyNavigatorWidget::onLoadTerminologyClicked()
         QString("Loading terminology from file %1 failed!\nSee error log for details").arg(terminologyFileName) );
       }
     }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTerminologyNavigatorWidget::onLoadAnatomicContextClicked()
+{
+  Q_D(qSlicerTerminologyNavigatorWidget);
+  const QString& anatomicContextFileName =
+    QFileDialog::getOpenFileName( this, "Select anatomic context json file...", QString(),
+      "Json files (*.json);; All files (*)" );
+  if (!anatomicContextFileName.isEmpty())
+    {
+    vtkSlicerTerminologiesModuleLogic* logic = d->terminologyLogic();
+    if (!logic)
+      {
+      qCritical() << Q_FUNC_INFO << ": Invalid terminology logic";
+      return;
+      }
+    QString loadedContextName = logic->LoadAnatomicContextFromFile(anatomicContextFileName.toLatin1().constData()).c_str();
+    if (!loadedContextName.isEmpty())
+      {
+      QMessageBox::information(this, "Load succeeded",
+        QString("Loading anatomic context named %1 succeeded").arg(loadedContextName) );
+
+      this->copyContextToUserDirectory(anatomicContextFileName);
+      }
+    else
+      {
+      QMessageBox::critical(this, "Load failed",
+        QString("Loading terminology from file %1 failed!\nSee error log for details").arg(anatomicContextFileName) );
+      }
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTerminologyNavigatorWidget::copyContextToUserDirectory(QString filePath)
+{
+  Q_D(qSlicerTerminologyNavigatorWidget);
+  vtkSlicerTerminologiesModuleLogic* logic = d->terminologyLogic();
+  if (!logic)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid terminology logic";
+    return;
+    }
+
+  // Make sure the file can be copied to the settings folder
+  QDir settingsFolder(logic->GetUserContextsPath());
+  if (!settingsFolder.exists())
+    {
+    settingsFolder.mkpath(logic->GetUserContextsPath());
+    }
+  if (!settingsFolder.exists())
+    {
+    qCritical() << Q_FUNC_INFO << ": Settings folder '" << settingsFolder.absolutePath() << "' does not exist. Copying context file failed.";
+    return;
+    }
+  QString fileNameOnly = QFileInfo(filePath).fileName();
+  QString targetFilePath = settingsFolder.absoluteFilePath(fileNameOnly);
+
+  // Check if there is a file with the same name in the settings folder and ask the user in that case
+  if (QFile::exists(targetFilePath))
+    {
+    QString message = QString(tr("There is a file with name '%1' in the stored contexts.\n\n"
+      "Do you wish to update the stored context file with the just loaded one?")).arg(fileNameOnly);
+    QMessageBox::StandardButton answer =
+      QMessageBox::question(NULL, tr("Context file exists"), message,
+      QMessageBox::Yes | QMessageBox::No, QMessageBox::No );
+    if (answer == QMessageBox::No)
+      {
+      return;
+      }
+    else
+      {
+      // Remove file before copying (copy function does not overwrite)
+      settingsFolder.remove(fileNameOnly);
+      }
+    }
+
+  // Copy file to settings folder for automatic loading on startup
+  QFile file(filePath);
+  file.copy(targetFilePath);
 }
 
 //-----------------------------------------------------------------------------
@@ -1715,17 +1762,6 @@ void qSlicerTerminologyNavigatorWidget::populateAnatomicContextComboBox()
   for (std::vector<std::string>::iterator anIt=anatomicRegionContextNames.begin(); anIt!=anatomicRegionContextNames.end(); ++anIt)
     {
     d->ComboBox_AnatomicContext->addItem(anIt->c_str());
-    }
-
-  // Hide anatomic context combobox if there is only one option
-  if (d->ComboBox_AnatomicContext->count() == 1)
-    {
-    this->onAnatomicContextSelectionChanged(0);
-    d->ComboBox_AnatomicContext->setVisible(false);
-    }
-  else if (d->ComboBox_AnatomicContext->count() > 1)
-    {
-    d->ComboBox_AnatomicContext->setVisible(true);
     }
 }
 
