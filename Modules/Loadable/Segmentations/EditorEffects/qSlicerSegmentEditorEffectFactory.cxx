@@ -130,18 +130,37 @@ bool qSlicerSegmentEditorEffectFactory::registerEffect(qSlicerSegmentEditorAbstr
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSegmentEditorEffectFactory::copyEffects(QList<qSlicerSegmentEditorAbstractEffect*>& effects)
+QList<qSlicerSegmentEditorAbstractEffect*> qSlicerSegmentEditorEffectFactory::copyEffects(QList<qSlicerSegmentEditorAbstractEffect*>& effects)
 {
-  effects.clear();
+  QList<qSlicerSegmentEditorAbstractEffect*> copiedEffects;
   foreach(qSlicerSegmentEditorAbstractEffect* effect, m_RegisteredEffects)
-  {
+    {
+    // If effect is added already then skip it
+    bool effectAlreadyAdded = false;
+    foreach(qSlicerSegmentEditorAbstractEffect* existingEffect, effects)
+      {
+      if (existingEffect->name() == effect->name())
+        {
+        // already in the list
+        effectAlreadyAdded = true;
+        break;
+        }
+      }
+    if (effectAlreadyAdded)
+      {
+      continue;
+      }
+
+    // Effect not in the list yet, clone it and add it
     qSlicerSegmentEditorAbstractEffect* clonedEffect = effect->clone();
     if (!clonedEffect)
-    {
+      {
       // make sure we don't put a NULL pointer in the effect list
       qCritical() << Q_FUNC_INFO << " failed to clone effect: " << effect->name();
       continue;
-    }
+      }
     effects << clonedEffect;
-  }
+    copiedEffects << clonedEffect;
+    }
+  return copiedEffects;
 }

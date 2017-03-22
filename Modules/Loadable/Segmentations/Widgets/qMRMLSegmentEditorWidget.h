@@ -65,6 +65,7 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentEditorWidget : pu
   Q_PROPERTY(int maximumNumberOfUndoStates READ maximumNumberOfUndoStates WRITE setMaximumNumberOfUndoStates)
   Q_PROPERTY(bool readOnly READ readOnly WRITE setReadOnly)
   Q_PROPERTY(Qt::ToolButtonStyle effectButtonStyle READ effectButtonStyle WRITE setEffectButtonStyle)
+  Q_PROPERTY(bool unorderedEffectsVisible READ unorderedEffectsVisible WRITE setUnorderedEffectsVisible)
 
 public:
   typedef qMRMLWidget Superclass;
@@ -100,11 +101,32 @@ public:
   /// \return The effect instance if exists, NULL otherwise
   Q_INVOKABLE qSlicerSegmentEditorAbstractEffect* effectByName(QString name);
 
-  /// Get number of effects
+  /// Get list of all registered effect names that can be displayed in the widget.
+  Q_INVOKABLE QStringList availableEffectNames();
+
+  /// Request displaying effects in the specified order.
+  /// Effects that are not listed will be hidden if \sa unorderedEffectsVisible is false.
+  Q_INVOKABLE void setEffectNameOrder(const QStringList& effectNames);
+
+  /// Get requested order of effects.
+  /// Actually displayed effects can be retrieved by using \sa effectCount and \sa effectByIndex.
+  /// \return List of effect names to be shown in the widget.
+  Q_INVOKABLE QStringList effectNameOrder() const;
+
+  /// Show/hide effect names that are not listed in \sa effectNameOrder().
+  /// True by default to make effects registered by extensions show up by default.
+  /// This can be used to simplify the editor widget to show only a limited number of effects.
+  void setUnorderedEffectsVisible(bool visible);
+
+  /// Get visibility status of effect names that are not listed in effectNameOrder().
+  /// \sa setEffectNameOrder
+  bool unorderedEffectsVisible() const;
+
+  /// Get number of displayed effects
   /// \return Number of effects shown in the widget
   Q_INVOKABLE int effectCount();
 
-  /// Get n-th effect. n>=0 and n<effectCount().
+  /// Get n-th effect shown in the widget. n>=0 and n<effectCount().
   /// \return The effect instance if exists, NULL otherwise
   Q_INVOKABLE qSlicerSegmentEditorAbstractEffect* effectByIndex(int index);
 

@@ -56,8 +56,10 @@ public:
   /// Get list of registered effects
   Q_INVOKABLE QList<qSlicerSegmentEditorAbstractEffect*> registeredEffects() { return m_RegisteredEffects; };
 
-  /// Copy list of registered effects to the container in a segment editor widget
-  Q_INVOKABLE void copyEffects(QList<qSlicerSegmentEditorAbstractEffect*>& effects);
+  /// Copy list of registered effects to the container in a segment editor widget.
+  /// Effects that are already in the list (have the same name) will not be modified.
+  /// \return List of added effects (does not include effects that were already in the effects argument).
+  Q_INVOKABLE QList<qSlicerSegmentEditorAbstractEffect*> copyEffects(QList<qSlicerSegmentEditorAbstractEffect*>& effects);
 
 protected:
   /// List of registered effect instances

@@ -130,10 +130,8 @@ public:
   ~qMRMLSegmentEditorWidgetPrivate();
   void init();
 
-  /// Create local effect clones for per-editor effect handling and create effect buttons
-  void initializeEffects();
-  /// Initialize an effect. Called from \sa initializeEffects
-  void initializeEffect(qSlicerSegmentEditorAbstractEffect* effect);
+  /// Update list of effect buttons
+  void updateEffectList();
 
   /// Simple mechanism to let the effects know that default modifier labelmap has changed
   void notifyEffectsOfReferenceGeometryChange(const std::string& geometry);
@@ -180,8 +178,9 @@ public:
 
   vtkWeakPointer<vtkMRMLScalarVolumeNode> MasterVolumeNode;
 
-  /// Default effect ordering
-  QStringList DefaultEffectOrder;
+  /// Ordering of effects
+  QStringList EffectNameOrder;
+  bool UnorderedEffectsVisible;
 
   /// List of registered effect instances
   QList<qSlicerSegmentEditorAbstractEffect*> RegisteredEffects;
@@ -244,6 +243,16 @@ qMRMLSegmentEditorWidgetPrivate::qMRMLSegmentEditorWidgetPrivate(qMRMLSegmentEdi
   this->SelectedSegmentLabelmap = vtkOrientedImageData::New();
   this->ReferenceGeometryImage = vtkOrientedImageData::New();
   this->SegmentationHistory = vtkSmartPointer<vtkSegmentationHistory>::New();
+
+  // Define default effect order
+  this->EffectNameOrder
+    // Local painting
+    << "Paint" << "Draw" << "Erase" << "Flood filling" << "Level tracing" << "Grow from seeds" << "Fill between slices"
+    // Global processing
+    << "Threshold" << "Margin" << "Smoothing"
+    // Global splitting, merging
+    << "Scissors" << "Islands" << "Logical operators";
+  this->UnorderedEffectsVisible = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -346,23 +355,51 @@ void qMRMLSegmentEditorWidgetPrivate::init()
   layout->setContentsMargins(0, 0, 0, 0);
   layout->setSpacing(0);
 
-  // Define default effect order
-  this->DefaultEffectOrder
-    // Local painting
-    << "Paint" << "Draw" << "Erase" << "Flood filling" << "Level tracing" << "Grow from seeds" << "Fill between slices"
-    // Global processing
-    << "Threshold" << "Margin" << "Smoothing"
-    // Global splitting, merging
-    << "Scissors" << "Islands"  << "Logical operators";
-
   // Instantiate and expose effects
-  this->initializeEffects();
+
+  // Setup effect button group layout
+  ctkFlowLayout* effectsGroupLayout = new ctkFlowLayout();
+  effectsGroupLayout->setContentsMargins(4, 4, 4, 4);
+  effectsGroupLayout->setSpacing(4);
+  effectsGroupLayout->setAlignItems(false);
+  effectsGroupLayout->setAlignment(Qt::AlignJustify);
+  effectsGroupLayout->setPreferredExpandingDirections(Qt::Vertical);
+  this->EffectsGroupBox->setLayout(effectsGroupLayout);
+
+  // Update effect buttons
+  this->updateEffectList();
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSegmentEditorWidgetPrivate::initializeEffects()
+void qMRMLSegmentEditorWidgetPrivate::updateEffectList()
 {
   Q_Q(qMRMLSegmentEditorWidget);
+
+  // Create local copy of factory effects, so that
+  // - Effects can have different parameters
+  // - Segment editors can have different active effects
+  QList<qSlicerSegmentEditorAbstractEffect*> addedEffects = qSlicerSegmentEditorEffectFactory::instance()->copyEffects(this->RegisteredEffects);
+
+  // Set up effect connections and options frame for all newly added effects
+  foreach(qSlicerSegmentEditorAbstractEffect* effect, addedEffects)
+    {
+    // Connect callbacks that allow effects to send requests to the editor widget without
+    // introducing a direct dependency of the effect on the widget.
+    effect->setCallbackSlots(q,
+      SLOT(setActiveEffectByName(QString)),
+      SLOT(updateVolume(void*, bool&)),
+      SLOT(saveStateForUndo()));
+
+    effect->setVolumes(this->AlignedMasterVolume, this->ModifierLabelmap, this->MaskLabelmap, this->SelectedSegmentLabelmap, this->ReferenceGeometryImage);
+
+    // Add effect options frame to the options widget and hide them
+    effect->setupOptionsFrame();
+    QFrame* effectOptionsFrame = effect->optionsFrame();
+    effectOptionsFrame->setVisible(false);
+    this->EffectsOptionsFrame->layout()->addWidget(effectOptionsFrame);
+    }
+
+  // Update button list
 
   // Deactivate possible previous buttons
   QList<QAbstractButton*> effectButtons = this->EffectButtonGroup.buttons();
@@ -372,88 +409,60 @@ void qMRMLSegmentEditorWidgetPrivate::initializeEffects()
     button->deleteLater();
     }
 
-  // Create local copy of factory effects, so that
-  // - Effects can have different parameters
-  // - Segment editors can have different active effects
-  qSlicerSegmentEditorEffectFactory::instance()->copyEffects(this->RegisteredEffects);
-
-  // Setup layout
-  ctkFlowLayout* effectsGroupLayout = new ctkFlowLayout();
-  effectsGroupLayout->setContentsMargins(4,4,4,4);
-  effectsGroupLayout->setSpacing(4);
-  effectsGroupLayout->setAlignItems(false);
-  effectsGroupLayout->setAlignment(Qt::AlignJustify);
-  effectsGroupLayout->setPreferredExpandingDirections(Qt::Vertical);
-  this->EffectsGroupBox->setLayout(effectsGroupLayout);
-
   // Initialize effects specified in default ordering
-  this->initializeEffect(NULL); // add NULL effect (arrow button to deactivate all effects)
-  QList<qSlicerSegmentEditorAbstractEffect*> registeredEffectsCopy = this->RegisteredEffects;
-  foreach (QString effectName, this->DefaultEffectOrder)
+
+  QLayout* effectsGroupLayout = this->EffectsGroupBox->layout();
+
+  // Add NULL effect (arrow button to deactivate all effects)
+  QToolButton* effectButton = new QToolButton(this->EffectsGroupBox);
+  effectButton->setObjectName(NULL_EFFECT_NAME);
+  effectButton->setCheckable(true);
+  effectButton->setIcon(QIcon(":Icons/NullEffect.png"));
+  effectButton->setText("None");
+  effectButton->setToolTip("No editing");
+  effectButton->setToolButtonStyle(this->EffectButtonStyle);
+  effectButton->setProperty("Effect", QVariant::fromValue<QObject*>(NULL));
+  effectButton->setSizePolicy(QSizePolicy::MinimumExpanding, effectButton->sizePolicy().verticalPolicy());
+  this->EffectButtonGroup.addButton(effectButton);
+  this->EffectsGroupBox->layout()->addWidget(effectButton);
+
+
+  QList<qSlicerSegmentEditorAbstractEffect*> displayedEffects; // list of effect buttons to be displayed
+  QList<qSlicerSegmentEditorAbstractEffect*> unorderedEffects = this->RegisteredEffects;
+
+  // Add effects in the requested order
+  foreach(QString effectName, this->EffectNameOrder)
     {
     qSlicerSegmentEditorAbstractEffect* effect = q->effectByName(effectName);
     if (effect)
       {
-      this->initializeEffect(effect);
-      registeredEffectsCopy.removeOne(effect);
+      displayedEffects << effect;
+      unorderedEffects.removeOne(effect);
       }
     }
-  // Initialize the rest of the effects
-  foreach (qSlicerSegmentEditorAbstractEffect* effect, registeredEffectsCopy)
+  // Add unordered effects
+  if (this->UnorderedEffectsVisible)
     {
-    this->initializeEffect(effect);
+    displayedEffects << unorderedEffects;
     }
-}
 
-//-----------------------------------------------------------------------------
-void qMRMLSegmentEditorWidgetPrivate::initializeEffect(qSlicerSegmentEditorAbstractEffect* effect)
-{
-  Q_Q(qMRMLSegmentEditorWidget);
-  if (!effect)
+  // Create buttons
+  foreach(qSlicerSegmentEditorAbstractEffect* effect, displayedEffects)
     {
-    // NULL effect (used for deactivating all effects)
     QToolButton* effectButton = new QToolButton(this->EffectsGroupBox);
-    effectButton->setObjectName(NULL_EFFECT_NAME);
+    effectButton->setObjectName(effect->name());
     effectButton->setCheckable(true);
-    effectButton->setIcon(QIcon(":Icons/NullEffect.png"));
-    effectButton->setText("None");
-    effectButton->setToolTip("No editing");
     effectButton->setToolButtonStyle(this->EffectButtonStyle);
-    effectButton->setProperty("Effect", QVariant::fromValue<QObject*>(NULL));
+    effectButton->setIcon(effect->icon());
+    effectButton->setText(effect->name());
+    effectButton->setToolTip(effect->name());
     effectButton->setSizePolicy(QSizePolicy::MinimumExpanding, effectButton->sizePolicy().verticalPolicy());
+    effectButton->setProperty("Effect", QVariant::fromValue<QObject*>(effect));
+
     this->EffectButtonGroup.addButton(effectButton);
     this->EffectsGroupBox->layout()->addWidget(effectButton);
-    return;
     }
 
-  // Create button for activating effect
-  QToolButton* effectButton = new QToolButton(this->EffectsGroupBox);
-  effectButton->setObjectName(effect->name());
-  effectButton->setCheckable(true);
-  effectButton->setToolButtonStyle(this->EffectButtonStyle);
-  effectButton->setIcon(effect->icon());
-  effectButton->setText(effect->name());
-  effectButton->setToolTip(effect->name());
-  effectButton->setSizePolicy(QSizePolicy::MinimumExpanding, effectButton->sizePolicy().verticalPolicy());
-  effectButton->setProperty("Effect", QVariant::fromValue<QObject*>(effect));
-
-  this->EffectButtonGroup.addButton(effectButton);
-  this->EffectsGroupBox->layout()->addWidget(effectButton);
-
-  // Connect callbacks that allow effects to send requests to the editor widget without
-  // introducing a direct dependency of the effect on the widget.
-  effect->setCallbackSlots(q,
-    SLOT(setActiveEffectByName(QString)),
-    SLOT(updateVolume(void*,bool&)),
-    SLOT(saveStateForUndo()));
-
-  effect->setVolumes(this->AlignedMasterVolume, this->ModifierLabelmap, this->MaskLabelmap, this->SelectedSegmentLabelmap, this->ReferenceGeometryImage);
-
-  // Add effect options frame to the options widget and hide them
-  effect->setupOptionsFrame();
-  QFrame* effectOptionsFrame = effect->optionsFrame();
-  effectOptionsFrame->setVisible(false);
-  this->EffectsOptionsFrame->layout()->addWidget(effectOptionsFrame);
 }
 
 //-----------------------------------------------------------------------------
@@ -1962,6 +1971,58 @@ qSlicerSegmentEditorAbstractEffect* qMRMLSegmentEditorWidget::effectByName(QStri
     }
 
   return NULL;
+}
+
+//------------------------------------------------------------------------------
+QStringList qMRMLSegmentEditorWidget::effectNameOrder() const
+{
+  Q_D(const qMRMLSegmentEditorWidget);
+  return d->EffectNameOrder;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::setEffectNameOrder(const QStringList& effectNames)
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  if (effectNames == d->EffectNameOrder)
+    {
+    // no change
+    return;
+    }
+  d->EffectNameOrder = effectNames;
+  d->updateEffectList();
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLSegmentEditorWidget::unorderedEffectsVisible() const
+{
+  Q_D(const qMRMLSegmentEditorWidget);
+  return d->UnorderedEffectsVisible;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::setUnorderedEffectsVisible(bool visible)
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  if (visible == d->UnorderedEffectsVisible)
+    {
+    // no change
+    return;
+    }
+  d->UnorderedEffectsVisible = visible;
+  d->updateEffectList();
+}
+
+//---------------------------------------------------------------------------
+QStringList qMRMLSegmentEditorWidget::availableEffectNames()
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  QStringList availableEffectNames;
+  foreach(qSlicerSegmentEditorAbstractEffect* effect, d->RegisteredEffects)
+    {
+    availableEffectNames << effect->name();
+    }
+  return availableEffectNames;
 }
 
 //---------------------------------------------------------------------------
