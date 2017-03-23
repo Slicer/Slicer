@@ -20,15 +20,15 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerSubjectHierarchyVolumesPlugin_h
-#define __qSlicerSubjectHierarchyVolumesPlugin_h
+#ifndef __qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin_h
+#define __qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin_h
 
 // SubjectHierarchy includes
 #include "qSlicerSubjectHierarchyAbstractPlugin.h"
 
 #include "qSlicerVolumesSubjectHierarchyPluginsExport.h"
 
-class qSlicerSubjectHierarchyVolumesPluginPrivate;
+class qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate;
 class vtkMRMLScalarVolumeNode;
 
 // Due to some reason the Python wrapping of this class fails, therefore
@@ -38,15 +38,15 @@ class vtkMRMLScalarVolumeNode;
 //BTX
 
 /// \ingroup Slicer_QtModules_SubjectHierarchy_Plugins
-class Q_SLICER_VOLUMES_SUBJECT_HIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyVolumesPlugin : public qSlicerSubjectHierarchyAbstractPlugin
+class Q_SLICER_VOLUMES_SUBJECT_HIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin : public qSlicerSubjectHierarchyAbstractPlugin
 {
 public:
   Q_OBJECT
 
 public:
   typedef qSlicerSubjectHierarchyAbstractPlugin Superclass;
-  qSlicerSubjectHierarchyVolumesPlugin(QObject* parent = NULL);
-  virtual ~qSlicerSubjectHierarchyVolumesPlugin();
+  qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin(QObject* parent = NULL);
+  virtual ~qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin();
 
 public:
   /// Determines if a data node can be placed in the hierarchy using the actual plugin,
@@ -96,33 +96,28 @@ public:
   /// \param itemID Subject Hierarchy item to show the context menu items for
   virtual void showContextMenuActionsForItem(vtkIdType itemID);
 
-public:
-  /// Show volume in slice viewers. The argument node becomes the background
-  /// instead of any existing background volume shown.
-  void showVolume(vtkMRMLScalarVolumeNode* node, int visible=1);
-
 protected:
+  /// Show volume in slice viewers. The argument node becomes the background, and the previous
+  /// background becomes the foreground with 50% transparency.
+  void showLabelMap(vtkMRMLScalarVolumeNode* node, int visible=1);
+
   /// Update selection node based on current volumes visibility (if the selection is different in the slice viewers, then the first one is set)
   /// TODO: This is a workaround (http://www.na-mic.org/Bug/view.php?id=3551)
-  void updateSelectionNodeBasedOnCurrentVolumesVisibility()const;
-  /// Determine background volume selection (if the selection is different in the slice viewers, then the first one is set)
+  void updateSelectionNodeBasedOnCurrentLabelMapVisibility()const;
+  /// Determine labelmap selection (if the selection is different in the slice viewers, then the first one is set)
   /// TODO: This is a workaround (http://www.na-mic.org/Bug/view.php?id=3551)
-  std::string getSelectedBackgroundVolumeNodeID()const;
-  /// Determine foreground volume selection (if the selection is different in the slice viewers, then the first one is set)
-  /// TODO: This is a workaround (http://www.na-mic.org/Bug/view.php?id=3551)
-  std::string getSelectedForegroundVolumeNodeID()const;
+  std::string getSelectedLabelmapVolumeNodeID()const;
 
 protected slots:
-  /// Show volumes in study. The first two scalar volumes are shown if there are more.
-  /// Hides other volumes if there are less in the current study.
-  void showVolumesInBranch();
+  void onTractographyLabelMapSeeding();
+  void onTractographyInteractiveSeeding();
 
 protected:
-  QScopedPointer<qSlicerSubjectHierarchyVolumesPluginPrivate> d_ptr;
+  QScopedPointer<qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerSubjectHierarchyVolumesPlugin);
-  Q_DISABLE_COPY(qSlicerSubjectHierarchyVolumesPlugin);
+  Q_DECLARE_PRIVATE(qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin);
+  Q_DISABLE_COPY(qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin);
 };
 
 //ETX

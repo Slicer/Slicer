@@ -47,15 +47,6 @@
 #include <QStandardItem>
 #include <QAction>
 
-// SlicerQt includes
-#include "qSlicerAbstractModuleWidget.h"
-
-// MRML widgets includes
-#include "qMRMLNodeComboBox.h"
-
-// STD includes
-#include <set>
-
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_SubjectHierarchy_Plugins
 class qSlicerSubjectHierarchyVolumesPluginPrivate: public QObject

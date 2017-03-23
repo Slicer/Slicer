@@ -17,11 +17,14 @@ set(${KIT}_SRCS
   qSlicerSubjectHierarchyVolumesPlugin.h
   qSlicerSubjectHierarchyLabelMapsPlugin.cxx
   qSlicerSubjectHierarchyLabelMapsPlugin.h
+  qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin.cxx
+  qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin.h
   )
 
 set(${KIT}_MOC_SRCS
   qSlicerSubjectHierarchyVolumesPlugin.h
   qSlicerSubjectHierarchyLabelMapsPlugin.h
+  qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin.h
   )
 
 set(${KIT}_UI_SRCS

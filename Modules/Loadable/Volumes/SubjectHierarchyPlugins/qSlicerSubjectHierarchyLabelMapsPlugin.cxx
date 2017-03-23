@@ -52,15 +52,6 @@
 #include <QStandardItem>
 #include <QAction>
 
-// SlicerQt includes
-#include "qSlicerAbstractModuleWidget.h"
-
-// MRML widgets includes
-#include "qMRMLNodeComboBox.h"
-
-// STD includes
-#include <set>
-
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_SubjectHierarchy_Plugins
 class qSlicerSubjectHierarchyLabelMapsPluginPrivate: public QObject
@@ -74,8 +65,6 @@ public:
   void init();
 public:
   QIcon LabelmapIcon;
-  QIcon VolumeVisibilityOffIcon;
-  QIcon VolumeVisibilityOnIcon;
 
   QAction* ToggleLabelmapOutlineDisplayAction;
 };
@@ -88,8 +77,6 @@ qSlicerSubjectHierarchyLabelMapsPluginPrivate::qSlicerSubjectHierarchyLabelMapsP
 : q_ptr(&object)
 {
   this->LabelmapIcon = QIcon(":Icons/Labelmap.png");
-  this->VolumeVisibilityOffIcon = QIcon(":Icons/VolumeVisibilityOff.png");
-  this->VolumeVisibilityOnIcon = QIcon(":Icons/VolumeVisibilityOn.png");
 
   this->ToggleLabelmapOutlineDisplayAction = NULL;
 }
@@ -159,7 +146,7 @@ double qSlicerSubjectHierarchyLabelMapsPlugin::canOwnSubjectHierarchyItem(vtkIdT
     return 0.0;
     }
 
-  // Volume
+  // Labelmap volume
   vtkMRMLNode* associatedNode = shNode->GetItemDataNode(itemID);
   if (associatedNode && associatedNode->IsA("vtkMRMLLabelMapVolumeNode"))
     {
@@ -178,39 +165,7 @@ const QString qSlicerSubjectHierarchyLabelMapsPlugin::roleForPlugin()const
 //-----------------------------------------------------------------------------
 QString qSlicerSubjectHierarchyLabelMapsPlugin::tooltip(vtkIdType itemID)const
 {
-  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
-    qCritical() << Q_FUNC_INFO << ": Invalid input item";
-    return QString("Invalid!");
-    }
-  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
-  if (!shNode)
-    {
-    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
-    return QString("Error!");
-    }
-
-  // Get basic tooltip from abstract plugin
-  QString tooltipString = Superclass::tooltip(itemID);
-
-  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(shNode->GetItemDataNode(itemID));
-  vtkImageData* imageData = (volumeNode ? volumeNode->GetImageData() : NULL);
-  if (volumeNode && imageData)
-    {
-    int dimensions[3] = {0,0,0};
-    imageData->GetDimensions(dimensions);
-    double spacing[3] = {0.0,0.0,0.0};
-    volumeNode->GetSpacing(spacing);
-    tooltipString.append( QString(" (Dimensions: %1x%2x%3  Spacing: %4mm x %5mm x %6mm)")
-      .arg(dimensions[0]).arg(dimensions[1]).arg(dimensions[2])
-      .arg(spacing[0],0,'g',3).arg(spacing[1],0,'g',3).arg(spacing[2],0,'g',3) );
-    }
-  else
-    {
-    tooltipString.append(" !Invalid volume!");
-    }
-
-  return tooltipString;
+  return qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes")->tooltip(itemID);
 }
 
 //---------------------------------------------------------------------------
@@ -237,16 +192,7 @@ QIcon qSlicerSubjectHierarchyLabelMapsPlugin::icon(vtkIdType itemID)
 //---------------------------------------------------------------------------
 QIcon qSlicerSubjectHierarchyLabelMapsPlugin::visibilityIcon(int visible)
 {
-  Q_D(qSlicerSubjectHierarchyLabelMapsPlugin);
-
-  if (visible == 1)
-    {
-    return d->VolumeVisibilityOnIcon;
-    }
-  else
-    {
-    return d->VolumeVisibilityOffIcon;
-    }
+  return qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes")->visibilityIcon(visible);
 }
 
 //---------------------------------------------------------------------------
@@ -265,7 +211,7 @@ void qSlicerSubjectHierarchyLabelMapsPlugin::setDisplayVisibility(vtkIdType item
     }
 
   vtkMRMLLabelMapVolumeNode* associatedLabelMapNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(shNode->GetItemDataNode(itemID));
-  // Volume
+  // Labelmap volume
   if (associatedLabelMapNode)
     {
     this->showLabelMap(associatedLabelMapNode, visible);

@@ -45,6 +45,7 @@
 #include "qSlicerSubjectHierarchyPluginHandler.h"
 #include "qSlicerSubjectHierarchyVolumesPlugin.h"
 #include "qSlicerSubjectHierarchyLabelMapsPlugin.h"
+#include "qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin.h"
 
 
 //-----------------------------------------------------------------------------
@@ -155,6 +156,7 @@ void qSlicerVolumesModule::setup()
   // Register Subject Hierarchy core plugins
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyVolumesPlugin());
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyLabelMapsPlugin());
+  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin());
 }
 
 //-----------------------------------------------------------------------------
