@@ -36,6 +36,9 @@ and the Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCA
 VIEW_SLICE = 'slice'
 VIEW_3D = '3d'
 
+AXIS_YAW = 0
+AXIS_PITCH = 1
+
 class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
   """Uses ScriptedLoadableModuleWidget base class, available at:
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
@@ -97,7 +100,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.sliceEndOffsetSliderWidget.setToolTip("End slice sweep offset.")
     inputFormLayout.addRow(self.sliceEndOffsetSliderLabel, self.sliceEndOffsetSliderWidget)
 
-    # 3D start rotation
+    # 3D rotation range
     self.rotationSliderLabel = qt.QLabel("Rotation range:")
     self.rotationSliderWidget = ctk.ctkRangeWidget()
     self.rotationSliderWidget.singleStep = 5
@@ -107,6 +110,15 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.rotationSliderWidget.maximumValue = 180
     self.rotationSliderWidget.setToolTip("View rotation range, relative to current view orientation.")
     inputFormLayout.addRow(self.rotationSliderLabel, self.rotationSliderWidget)
+
+    # 3D rotation axis
+    self.rotationAxisLabel = qt.QLabel("Rotation axis:")
+    self.rotationAxisWidget = ctk.ctkRangeWidget()
+    self.rotationAxisWidget = qt.QComboBox()
+    self.rotationAxisWidget.addItem("Yaw", AXIS_YAW)
+    self.rotationAxisWidget.addItem("Pitch", AXIS_PITCH)
+    inputFormLayout.addRow(self.rotationAxisLabel, self.rotationAxisWidget)
+
 
     # Sequence browser node selector
     self.sequenceBrowserNodeSelectorLabel = qt.QLabel("Sequence:")
@@ -356,6 +368,8 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     # 3D rotation
     self.rotationSliderLabel.visible = (self.animationMode == "3D rotation")
     self.rotationSliderWidget.visible = (self.animationMode == "3D rotation")
+    self.rotationAxisLabel.visible = (self.animationMode == "3D rotation")
+    self.rotationAxisWidget.visible = (self.animationMode == "3D rotation")
 
     # Sequence
     self.sequenceBrowserNodeSelectorLabel.visible = (self.animationMode == "sequence")
@@ -440,7 +454,9 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
         self.logic.captureSliceFade(viewNode, numberOfSteps, outputDir, imageFileNamePattern)
       elif self.animationModeWidget.currentText == "3D rotation":
         self.logic.capture3dViewRotation(viewNode, self.rotationSliderWidget.minimumValue,
-          self.rotationSliderWidget.maximumValue, numberOfSteps, outputDir, imageFileNamePattern)
+          self.rotationSliderWidget.maximumValue, numberOfSteps,
+          self.rotationAxisWidget.itemData(self.rotationAxisWidget.currentIndex),
+          outputDir, imageFileNamePattern)
       elif self.animationModeWidget.currentText == "sequence":
         self.logic.captureSequence(viewNode, self.sequenceBrowserNodeSelectorWidget.currentNode(),
           self.sequenceStartItemIndexWidget.value, self.sequenceEndItemIndexWidget.value,
@@ -733,8 +749,8 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
     compositeNode.SetForegroundOpacity(originalForegroundOpacity)
 
-  def capture3dViewRotation(self, viewNode, startRotation, endRotation, numberOfImages, outputDir,
-                        outputFilenamePattern):
+  def capture3dViewRotation(self, viewNode, startRotation, endRotation, numberOfImages, rotationAxis,
+    outputDir, outputFilenamePattern):
     """
     Acquire a set of screenshots of the 3D view while rotating it.
     """
@@ -747,28 +763,46 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
     # Save original orientation and go to start orientation
     originalPitchRollYawIncrement = renderView.pitchRollYawIncrement
-    originalYawDirection = renderView.yawDirection
+    originalDirection = renderView.pitchDirection
     renderView.setPitchRollYawIncrement(-startRotation)
-    renderView.yawDirection = renderView.YawLeft
-    renderView.yaw()
+    if rotationAxis == AXIS_YAW:
+      renderView.yawDirection = renderView.YawRight
+      renderView.yaw()
+    else:
+      renderView.pitchDirection = renderView.PitchDown
+      renderView.pitch()
 
     # Rotate step-by-step
     rotationStepSize = (endRotation - startRotation) / (numberOfImages - 1)
     renderView.setPitchRollYawIncrement(rotationStepSize)
-    renderView.yawDirection = renderView.YawRight
+    if rotationAxis == AXIS_YAW:
+      renderView.yawDirection = renderView.YawLeft
+    else:
+      renderView.pitchDirection = renderView.PitchUp
     for offsetIndex in range(numberOfImages):
       filename = filePathPattern % offsetIndex
       self.addLog("Write " + filename)
       self.captureImageFromView(renderView, filename)
-      renderView.yaw()
+      if rotationAxis == AXIS_YAW:
+        renderView.yaw()
+      else:
+        renderView.pitch()
 
     # Restore original orientation and rotation step size & direction
-    renderView.yawDirection = renderView.YawLeft
-    renderView.yaw()
-    renderView.setPitchRollYawIncrement(endRotation)
-    renderView.yaw()
-    renderView.setPitchRollYawIncrement(originalPitchRollYawIncrement)
-    renderView.yawDirection = originalYawDirection
+    if rotationAxis == AXIS_YAW:
+      renderView.yawDirection = renderView.YawRight
+      renderView.yaw()
+      renderView.setPitchRollYawIncrement(endRotation)
+      renderView.yaw()
+      renderView.setPitchRollYawIncrement(originalPitchRollYawIncrement)
+      renderView.yawDirection = originalDirection
+    else:
+      renderView.pitchDirection = renderView.PitchDown
+      renderView.pitch()
+      renderView.setPitchRollYawIncrement(endRotation)
+      renderView.pitch()
+      renderView.setPitchRollYawIncrement(originalPitchRollYawIncrement)
+      renderView.pitchDirection = originalDirection
 
   def captureSequence(self, viewNode, sequenceBrowserNode, sequenceStartIndex,
                         sequenceEndIndex, numberOfImages, outputDir, outputFilenamePattern):
