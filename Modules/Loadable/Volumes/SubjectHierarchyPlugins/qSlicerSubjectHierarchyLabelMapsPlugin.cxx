@@ -27,6 +27,7 @@
 // SubjectHierarchy Plugins includes
 #include "qSlicerSubjectHierarchyPluginHandler.h"
 #include "qSlicerSubjectHierarchyLabelMapsPlugin.h"
+#include "qSlicerSubjectHierarchyVolumesPlugin.h"
 #include "qSlicerSubjectHierarchyDefaultPlugin.h"
 
 // Slicer includes
@@ -214,7 +215,23 @@ void qSlicerSubjectHierarchyLabelMapsPlugin::setDisplayVisibility(vtkIdType item
   // Labelmap volume
   if (associatedLabelMapNode)
     {
-    this->showLabelMap(associatedLabelMapNode, visible);
+    if (visible)
+      {
+      // If visibility is on, then show the labelmap in the label layer of all slice views
+      this->showLabelMapInAllViews(associatedLabelMapNode);
+      }
+    else
+      {
+      // If visibility is off, then hide the labelmap from all slice views
+      qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin = qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(
+        qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes") );
+      if (!volumesPlugin)
+        {
+        qCritical() << Q_FUNC_INFO << ": Failed to access Volumes subject hierarchy plugin";
+        return;
+        }
+      volumesPlugin->hideVolumeFromAllViews(associatedLabelMapNode);
+      }
     }
   // Default
   else
@@ -237,25 +254,26 @@ int qSlicerSubjectHierarchyLabelMapsPlugin::getDisplayVisibility(vtkIdType itemI
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return -1;
     }
+  qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin = qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(
+    qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes") );
+  if (!volumesPlugin)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access Volumes subject hierarchy plugin";
+    return -1;
+    }
 
-  // Sanity checks for volume
+  // Sanity checks for labelmap
   vtkMRMLLabelMapVolumeNode* labelMapNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   if (!labelMapNode)
     {
     return -1;
     }
-  vtkMRMLSelectionNode* selectionNode = qSlicerCoreApplication::application()->applicationLogic()->GetSelectionNode();
-  if (!selectionNode)
-    {
-    qCritical() << Q_FUNC_INFO << ": Unable to get selection node to show volume node " << labelMapNode->GetName();
-    return -1;
-    }
 
-  /// Update selection node based on current volumes visibility (if the selection is different in the slice viewers, then the first one is set)
-  /// TODO: This is a workaround (http://www.na-mic.org/Bug/view.php?id=3551)
-  this->updateSelectionNodeBasedOnCurrentLabelMapVisibility();
+  // Collect all volumes that are shown in any slice views in any layers
+  QSet<vtkIdType> shownVolumeItemIDs;
 
-  if ( selectionNode->GetActiveLabelVolumeID() && !strcmp(selectionNode->GetActiveLabelVolumeID(), labelMapNode->GetID()) )
+  volumesPlugin->collectShownVolumes(shownVolumeItemIDs);
+  if (shownVolumeItemIDs.contains(itemID))
     {
     return 1;
     }
@@ -266,116 +284,17 @@ int qSlicerSubjectHierarchyLabelMapsPlugin::getDisplayVisibility(vtkIdType itemI
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyLabelMapsPlugin::showLabelMap(vtkMRMLScalarVolumeNode* node, int visible/*=1*/)
+void qSlicerSubjectHierarchyLabelMapsPlugin::showLabelMapInAllViews(vtkMRMLLabelMapVolumeNode* node)
 {
-  if (!node)
+  qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin = qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(
+    qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes") );
+  if (!volumesPlugin)
     {
-    qCritical() << Q_FUNC_INFO << ": NULL node!";
-    return;
-    }
-  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
-  if (!scene)
-    {
-    qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
-    return;
-    }
-  vtkMRMLSelectionNode* selectionNode = qSlicerCoreApplication::application()->applicationLogic()->GetSelectionNode();
-  if (!selectionNode)
-    {
-    qCritical() << Q_FUNC_INFO << ": Unable to get selection node to show volume node " << node->GetName();
+    qCritical() << Q_FUNC_INFO << ": Failed to access Volumes subject hierarchy plugin";
     return;
     }
 
-  // Get volume node
-  vtkMRMLLabelMapVolumeNode* labelMapNode = NULL;
-  if ((labelMapNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(node)) == NULL)
-    {
-    qCritical() << Q_FUNC_INFO << ": Node to show node is not a label map node: " << node->GetName();
-    return;
-    }
-
-  /// Update selection node based on current volumes visibility (if the selection is different in the slice viewers, then the first one is set)
-  /// TODO: This is a workaround (http://www.na-mic.org/Bug/view.php?id=3551)
-  this->updateSelectionNodeBasedOnCurrentLabelMapVisibility();
-
-  // Show
-  if (visible)
-    {
-    if (selectionNode->GetActiveLabelVolumeID() && strlen(selectionNode->GetActiveLabelVolumeID()))
-      {
-      // Needed so that visibility icon is updated (could be done in a faster way, but there is no noticeable overhead)
-      vtkMRMLLabelMapVolumeNode* originalLabelmapNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(
-        scene->GetNodeByID(selectionNode->GetActiveLabelVolumeID()) );
-      this->showLabelMap(originalLabelmapNode, 0);
-      }
-    selectionNode->SetActiveLabelVolumeID(labelMapNode->GetID());
-    }
-  // Hide
-  else
-    {
-    selectionNode->SetActiveLabelVolumeID(NULL);
-    }
-  qSlicerCoreApplication::application()->applicationLogic()->PropagateVolumeSelection();
-
-  // Get subject hierarchy item for the volume node and have the scene model updated
-  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
-  if (!shNode)
-    {
-    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
-    return;
-    }
-  vtkIdType volumeItemID = shNode->GetItemByDataNode(node);
-  if (volumeItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
-    shNode->ItemModified(volumeItemID);
-    }
-}
-
-//---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyLabelMapsPlugin::updateSelectionNodeBasedOnCurrentLabelMapVisibility()const
-{
-  vtkMRMLSelectionNode* selectionNode = qSlicerCoreApplication::application()->applicationLogic()->GetSelectionNode();
-  if (!selectionNode)
-    {
-    qCritical() << Q_FUNC_INFO << ": Unable to get selection node";
-    return;
-    }
-
-  // TODO: This is a workaround (http://www.na-mic.org/Bug/view.php?id=3551)
-
-  // Determine labelmap selection (if the selection is different in the slice viewers, then the first one is set)
-  std::string selectedLabelmapID = this->getSelectedLabelmapVolumeNodeID();
-  selectionNode->SetActiveLabelVolumeID(selectedLabelmapID.c_str());
-}
-
-//---------------------------------------------------------------------------
-std::string qSlicerSubjectHierarchyLabelMapsPlugin::getSelectedLabelmapVolumeNodeID()const
-{
-  // TODO: This method is a workaround (http://www.na-mic.org/Bug/view.php?id=3551)
-  std::string selectedLabelmapID("");
-
-  vtkMRMLSelectionNode* selectionNode = qSlicerCoreApplication::application()->applicationLogic()->GetSelectionNode();
-  if (!selectionNode)
-    {
-    qCritical() << Q_FUNC_INFO << ": Unable to get selection node";
-    return selectedLabelmapID;
-    }
-
-  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
-  vtkMRMLSliceCompositeNode* compositeNode = NULL;
-  const int numberOfCompositeNodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
-
-  for (int i=0; i<numberOfCompositeNodes; i++)
-    {
-    compositeNode = vtkMRMLSliceCompositeNode::SafeDownCast ( scene->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
-    if (compositeNode && compositeNode->GetLabelVolumeID() && selectedLabelmapID.empty())
-      {
-      selectedLabelmapID = std::string(compositeNode->GetLabelVolumeID());
-      break;
-      }
-    }
-
-  return selectedLabelmapID;
+  volumesPlugin->showVolumeInAllViews(node, vtkMRMLApplicationLogic::LabelLayer);
 }
 
 //---------------------------------------------------------------------------

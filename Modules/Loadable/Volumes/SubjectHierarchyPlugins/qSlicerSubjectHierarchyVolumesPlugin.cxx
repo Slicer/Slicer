@@ -26,7 +26,8 @@
 #include "qSlicerSubjectHierarchyDefaultPlugin.h"
 
 // Slicer includes
-#include "qSlicerCoreApplication.h"
+#include "qSlicerApplication.h"
+#include "qSlicerLayoutManager.h" 
 #include "vtkSlicerApplicationLogic.h"
 
 // MRML includes
@@ -46,6 +47,7 @@
 #include <QDebug>
 #include <QStandardItem>
 #include <QAction>
+#include <QTimer>
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_SubjectHierarchy_Plugins
@@ -58,6 +60,7 @@ public:
   qSlicerSubjectHierarchyVolumesPluginPrivate(qSlicerSubjectHierarchyVolumesPlugin& object);
   ~qSlicerSubjectHierarchyVolumesPluginPrivate();
   void init();
+
 public:
   QIcon VolumeIcon;
   QIcon VolumeVisibilityOffIcon;
@@ -100,6 +103,11 @@ qSlicerSubjectHierarchyVolumesPlugin::qSlicerSubjectHierarchyVolumesPlugin(QObje
 void qSlicerSubjectHierarchyVolumesPluginPrivate::init()
 {
   Q_Q(qSlicerSubjectHierarchyVolumesPlugin);
+
+  // Connect layout changes to slot so that volume visibility icons are correctly updated
+  QObject::connect(qSlicerApplication::application()->layoutManager(), SIGNAL(layoutChanged(int)), q, SLOT(onLayoutChanged(int)));
+  // Make sure initial connections are made even before a layout change
+  QTimer::singleShot(0, q, SLOT(onLayoutChanged()));
 
   this->ShowVolumesInBranchAction = new QAction("Show volumes in branch",q);
   QObject::connect(this->ShowVolumesInBranchAction, SIGNAL(triggered()), q, SLOT(showVolumesInBranch()));
@@ -248,11 +256,20 @@ void qSlicerSubjectHierarchyVolumesPlugin::setDisplayVisibility(vtkIdType itemID
     return;
     }
 
-  vtkMRMLScalarVolumeNode* associatedVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   // Volume
+  vtkMRMLScalarVolumeNode* associatedVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   if (associatedVolumeNode)
     {
-    this->showVolume(associatedVolumeNode, visible);
+    if (visible)
+      {
+      // If visibility is on, then show the volume in the background of all slice views
+      this->showVolumeInAllViews(associatedVolumeNode, vtkMRMLApplicationLogic::BackgroundLayer);
+      }
+    else
+      {
+      // If visibility is off, then hide the volume from all layers of all slice views
+      this->hideVolumeFromAllViews(associatedVolumeNode);
+      }
     }
   // Default
   else
@@ -282,19 +299,12 @@ int qSlicerSubjectHierarchyVolumesPlugin::getDisplayVisibility(vtkIdType itemID)
     {
     return -1;
     }
-  vtkMRMLSelectionNode* selectionNode = qSlicerCoreApplication::application()->applicationLogic()->GetSelectionNode();
-  if (!selectionNode)
-    {
-    qCritical() << Q_FUNC_INFO << ": Unable to get selection node to show volume node " << volumeNode->GetName();
-    return -1;
-    }
 
-  /// Update selection node based on current volumes visibility (if the selection is different in the slice viewers, then the first one is set)
-  /// TODO: This is a workaround (http://www.na-mic.org/Bug/view.php?id=3551)
-  this->updateSelectionNodeBasedOnCurrentVolumesVisibility();
+  // Collect all volumes that are shown in any slice views in any layers
+  QSet<vtkIdType> shownVolumeItemIDs;
+  this->collectShownVolumes(shownVolumeItemIDs);
 
-  if ( ( selectionNode->GetActiveVolumeID() && !strcmp(volumeNode->GetID(), selectionNode->GetActiveVolumeID()) )
-    || ( selectionNode->GetSecondaryVolumeID() && !strcmp(volumeNode->GetID(), selectionNode->GetSecondaryVolumeID()) ) )
+  if (shownVolumeItemIDs.contains(itemID))
     {
     return 1;
     }
@@ -305,7 +315,8 @@ int qSlicerSubjectHierarchyVolumesPlugin::getDisplayVisibility(vtkIdType itemID)
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyVolumesPlugin::showVolume(vtkMRMLScalarVolumeNode* node, int visible/*=1*/)
+void qSlicerSubjectHierarchyVolumesPlugin::showVolumeInAllViews(
+  vtkMRMLScalarVolumeNode* node, int layer/*=vtkMRMLApplicationLogic::BackgroundLayer*/ )
 {
   if (!node)
     {
@@ -318,90 +329,82 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolume(vtkMRMLScalarVolumeNode* n
     qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
     return;
     }
-  vtkMRMLSelectionNode* selectionNode = qSlicerCoreApplication::application()->applicationLogic()->GetSelectionNode();
-  if (!selectionNode)
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
     {
-    qCritical() << Q_FUNC_INFO << ": Unable to get selection node to show volume node " << node->GetName();
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
     }
 
-  // Get volume node
-  vtkMRMLScalarVolumeNode* volumeNode = NULL;
-  if ((volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(node)) == NULL)
+  // Collect currently shown volumes from the given layers so that their visibility icons can be updated after
+  // showing the specified volume
+  QSet<vtkIdType> subjectHierarchyItemsToUpdate;
+  this->collectShownVolumes(subjectHierarchyItemsToUpdate, layer);
+  subjectHierarchyItemsToUpdate.insert(shNode->GetItemByDataNode(node));
+
+  vtkMRMLSliceCompositeNode* compositeNode = NULL;
+  int numberOfCompositeNodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
+  for (int i=0; i<numberOfCompositeNodes; i++)
     {
-    qCritical() << Q_FUNC_INFO << ": Node to show node is not a volume node: " << node->GetName();
+    compositeNode = vtkMRMLSliceCompositeNode::SafeDownCast(scene->GetNthNodeByClass(i, "vtkMRMLSliceCompositeNode"));
+    if (layer & vtkMRMLApplicationLogic::BackgroundLayer)
+      {
+      compositeNode->SetBackgroundVolumeID(node->GetID());
+      }
+    else if (layer & vtkMRMLApplicationLogic::ForegroundLayer)
+      {
+      compositeNode->SetForegroundVolumeID(node->GetID());
+      }
+    else if (layer & vtkMRMLApplicationLogic::LabelLayer)
+      {
+      compositeNode->SetLabelVolumeID(node->GetID());
+      }
+    }
+
+  // Update scene model for subject hierarchy nodes that were just shown
+  for ( QSet<vtkIdType>::iterator volumeItemIt = subjectHierarchyItemsToUpdate.begin();
+       volumeItemIt != subjectHierarchyItemsToUpdate.end(); ++volumeItemIt )
+   {
+   shNode->ItemModified(*volumeItemIt);
+   }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyVolumesPlugin::hideVolumeFromAllViews(vtkMRMLScalarVolumeNode* node)
+{
+  if (!node || !node->GetID())
+    {
+    qCritical() << Q_FUNC_INFO << ": NULL node!";
+    return;
+    }
+  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
+  if (!scene)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
     return;
     }
 
-  /// Update selection node based on current volumes visibility (if the selection is different in the slice viewers, then the first one is set)
-  /// TODO: This is a workaround (http://www.na-mic.org/Bug/view.php?id=3551)
-  this->updateSelectionNodeBasedOnCurrentVolumesVisibility();
-
-  // Show
-  if (visible)
+  char* volumeNodeID = node->GetID();
+  vtkMRMLSliceCompositeNode* compositeNode = NULL;
+  int numberOfCompositeNodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
+  for (int i=0; i<numberOfCompositeNodes; i++)
     {
-    // If background is empty, show volume there
-    if (!selectionNode->GetActiveVolumeID() || !strlen(selectionNode->GetActiveVolumeID()))
+    compositeNode = vtkMRMLSliceCompositeNode::SafeDownCast(scene->GetNthNodeByClass(i, "vtkMRMLSliceCompositeNode"));
+    char* backgroundVolumeID = compositeNode->GetBackgroundVolumeID();
+    char* foregroundVolumeID = compositeNode->GetForegroundVolumeID();
+    char* labelVolumeID = compositeNode->GetLabelVolumeID();
+    if (backgroundVolumeID && !strcmp(backgroundVolumeID, volumeNodeID))
       {
-      selectionNode->SetActiveVolumeID(volumeNode->GetID());
+      compositeNode->SetBackgroundVolumeID(NULL);
       }
-    // If foreground is empty, show volume there
-    else if (!selectionNode->GetSecondaryVolumeID() || !strlen(selectionNode->GetSecondaryVolumeID()))
+    if (foregroundVolumeID && !strcmp(foregroundVolumeID, volumeNodeID))
       {
-      selectionNode->SetSecondaryVolumeID(volumeNode->GetID());
+      compositeNode->SetForegroundVolumeID(NULL);
       }
-    // If both foreground and background are occupied, then bump background to foreground and show new volume in background
-    else
+    if (labelVolumeID && !strcmp(labelVolumeID, volumeNodeID))
       {
-      // Hide volume that has been foreground
-      // Needed so that visibility icon is updated (could be done in a faster way, but there is no noticeable overhead)
-      vtkMRMLScalarVolumeNode* originalSecondaryVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(
-        scene->GetNodeByID(selectionNode->GetSecondaryVolumeID()) );
-      this->showVolume(originalSecondaryVolumeNode, 0);
-
-      // Show volume that has been background in foreground
-      vtkMRMLScalarVolumeNode* originalActiveVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(
-        scene->GetNodeByID(selectionNode->GetActiveVolumeID()) );
-      if (originalActiveVolumeNode)
-        {
-        selectionNode->SetSecondaryVolumeID(originalActiveVolumeNode->GetID());
-        }
-
-      // Show new volume as background
-      selectionNode->SetActiveVolumeID(volumeNode->GetID());
+      compositeNode->SetLabelVolumeID(NULL);
       }
-
-    // Set selection in slice views
-    qSlicerCoreApplication::application()->applicationLogic()->PropagateVolumeSelection();
-
-    // Make sure the secondary volume is shown in a semi-transparent way
-    if (selectionNode->GetSecondaryVolumeID() && strlen(selectionNode->GetSecondaryVolumeID()))
-      {
-      vtkMRMLSliceCompositeNode* compositeNode = NULL;
-      int numberOfCompositeNodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
-      for (int i=0; i<numberOfCompositeNodes; i++)
-        {
-        compositeNode = vtkMRMLSliceCompositeNode::SafeDownCast ( scene->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
-        if (compositeNode && compositeNode->GetForegroundOpacity() == 0.0)
-          {
-          compositeNode->SetForegroundOpacity(0.5);
-          }
-        }
-      }
-    }
-  // Hide
-  else
-    {
-    if ( selectionNode->GetActiveVolumeID() && !strcmp(volumeNode->GetID(), selectionNode->GetActiveVolumeID()) )
-      {
-      selectionNode->SetActiveVolumeID(NULL);
-      }
-    else if ( selectionNode->GetSecondaryVolumeID() && !strcmp(volumeNode->GetID(), selectionNode->GetSecondaryVolumeID()) )
-      {
-      selectionNode->SetSecondaryVolumeID(NULL);
-      }
-    // Set selection in slice views
-    qSlicerCoreApplication::application()->applicationLogic()->PropagateVolumeSelection();
     }
 
   // Get subject hierarchy item for the volume node and have the scene model updated
@@ -411,100 +414,53 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolume(vtkMRMLScalarVolumeNode* n
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
     }
-  vtkIdType volumeItemID = shNode->GetItemByDataNode(volumeNode);
-  if (volumeItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  vtkIdType volumeItemID = shNode->GetItemByDataNode(node);
+  if (volumeItemID)
     {
     shNode->ItemModified(volumeItemID);
     }
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyVolumesPlugin::updateSelectionNodeBasedOnCurrentVolumesVisibility()const
+void qSlicerSubjectHierarchyVolumesPlugin::collectShownVolumes( QSet<vtkIdType>& shownVolumeItemIDs,
+  int layer/*=vtkMRMLApplicationLogic::BackgroundLayer | vtkMRMLApplicationLogic::ForegroundLayer | vtkMRMLApplicationLogic::LabelLayer*/ )const
 {
-  vtkMRMLSelectionNode* selectionNode = qSlicerCoreApplication::application()->applicationLogic()->GetSelectionNode();
-  if (!selectionNode)
+  shownVolumeItemIDs.clear();
+
+  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
+  if (!scene)
     {
-    qCritical() << Q_FUNC_INFO << ": Unable to get selection node";
+    qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
+    return;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
     }
 
-  // TODO: This is a workaround (http://www.na-mic.org/Bug/view.php?id=3551)
-
-  // Determine background volume selection (if the selection is different in the slice viewers, then the first one is set)
-  std::string selectedBackgroundVolumeID = this->getSelectedBackgroundVolumeNodeID();
-  selectionNode->SetActiveVolumeID(selectedBackgroundVolumeID.c_str());
-
-  // Determine foreground volume selection (if the selection is different in the slice viewers, then the first one is set)
-  std::string selectedForegroundVolumeID = this->getSelectedForegroundVolumeNodeID();
-  selectionNode->SetSecondaryVolumeID(selectedForegroundVolumeID.c_str());
-}
-
-//---------------------------------------------------------------------------
-std::string qSlicerSubjectHierarchyVolumesPlugin::getSelectedBackgroundVolumeNodeID()const
-{
-  // TODO: This method is a workaround (http://www.na-mic.org/Bug/view.php?id=3551)
-  std::string selectedBackgroundVolumeID("");
-
-  vtkMRMLSelectionNode* selectionNode = qSlicerCoreApplication::application()->applicationLogic()->GetSelectionNode();
-  if (!selectionNode)
-    {
-    qCritical() << Q_FUNC_INFO << ": Unable to get selection node";
-    return selectedBackgroundVolumeID;
-    }
-  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
-  if (!scene)
-    {
-    qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
-    return selectedBackgroundVolumeID;
-    }
-
   vtkMRMLSliceCompositeNode* compositeNode = NULL;
   const int numberOfCompositeNodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
   for (int i=0; i<numberOfCompositeNodes; i++)
     {
     compositeNode = vtkMRMLSliceCompositeNode::SafeDownCast ( scene->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
-    if (compositeNode && compositeNode->GetBackgroundVolumeID() && selectedBackgroundVolumeID.empty())
+    if (layer & vtkMRMLApplicationLogic::BackgroundLayer && compositeNode->GetBackgroundVolumeID())
       {
-      selectedBackgroundVolumeID = std::string(compositeNode->GetBackgroundVolumeID());
-      break;
+      shownVolumeItemIDs.insert(shNode->GetItemByDataNode(
+        scene->GetNodeByID(compositeNode->GetBackgroundVolumeID())) );
+      }
+    if (layer & vtkMRMLApplicationLogic::ForegroundLayer && compositeNode->GetForegroundVolumeID())
+      {
+      shownVolumeItemIDs.insert(shNode->GetItemByDataNode(
+        scene->GetNodeByID(compositeNode->GetForegroundVolumeID())) );
+      }
+    if (layer & vtkMRMLApplicationLogic::LabelLayer && compositeNode->GetLabelVolumeID())
+      {
+      shownVolumeItemIDs.insert(shNode->GetItemByDataNode(
+        scene->GetNodeByID(compositeNode->GetLabelVolumeID())) );
       }
     }
-
-  return selectedBackgroundVolumeID;
-}
-
-//---------------------------------------------------------------------------
-std::string qSlicerSubjectHierarchyVolumesPlugin::getSelectedForegroundVolumeNodeID()const
-{
-  // TODO: This method is a workaround (http://www.na-mic.org/Bug/view.php?id=3551)
-  std::string selectedForegroundVolumeID("");
-
-  vtkMRMLSelectionNode* selectionNode = qSlicerCoreApplication::application()->applicationLogic()->GetSelectionNode();
-  if (!selectionNode)
-    {
-    qCritical() << Q_FUNC_INFO << ": Unable to get selection node";
-    return selectedForegroundVolumeID;
-    }
-  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
-  if (!scene)
-    {
-    qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
-    return selectedForegroundVolumeID;
-    }
-
-  vtkMRMLSliceCompositeNode* compositeNode = NULL;
-  const int numberOfCompositeNodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
-  for (int i=0; i<numberOfCompositeNodes; i++)
-    {
-    compositeNode = vtkMRMLSliceCompositeNode::SafeDownCast ( scene->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
-    if (compositeNode && compositeNode->GetForegroundVolumeID() && selectedForegroundVolumeID.empty())
-      {
-      selectedForegroundVolumeID = std::string(compositeNode->GetForegroundVolumeID());
-      break;
-      }
-    }
-
-  return selectedForegroundVolumeID;
 }
 
 //---------------------------------------------------------------------------
@@ -578,21 +534,20 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumesInBranch()
     return;
     }
 
-  std::set<vtkIdType> subjectHierarchyItemsToUpdate;
+  // First, hide all volumes from all views, so that only the volumes from the selected branch are shown
+  QSet<vtkIdType> subjectHierarchyItemsToUpdate;
+  this->collectShownVolumes(subjectHierarchyItemsToUpdate, vtkMRMLApplicationLogic::BackgroundLayer);
+  for ( QSet<vtkIdType>::iterator volumeItemIt = subjectHierarchyItemsToUpdate.begin();
+       volumeItemIt != subjectHierarchyItemsToUpdate.end(); ++volumeItemIt )
+   {
+   this->hideVolumeFromAllViews(vtkMRMLScalarVolumeNode::SafeDownCast(shNode->GetItemDataNode(*volumeItemIt)));
+   }
 
-  // Collect subject hierarchy items of currently shown volumes to be able to update them in the scene model
-  vtkIdType activeVolumeShItemID =
-    shNode->GetItemByDataNode( scene->GetNodeByID(selectionNode->GetActiveVolumeID()) );
-  subjectHierarchyItemsToUpdate.insert(activeVolumeShItemID);
-  vtkIdType secondaryVolumeShItemID =
-    shNode->GetItemByDataNode( scene->GetNodeByID(selectionNode->GetSecondaryVolumeID()) );
-  subjectHierarchyItemsToUpdate.insert(secondaryVolumeShItemID);
-
-  // Hide all volumes before showing the ones from the study
+  // Deselect all volumes before showing the ones from the branch
   selectionNode->SetActiveVolumeID(NULL);
   selectionNode->SetSecondaryVolumeID(NULL);
 
-  // Show volumes in study
+  // Show volumes in branch
   vtkSmartPointer<vtkCollection> childVolumeNodes = vtkSmartPointer<vtkCollection>::New();
   shNode->GetDataNodesInBranch(currentItemID, childVolumeNodes, "vtkMRMLScalarVolumeNode");
   childVolumeNodes->InitTraversal();
@@ -609,16 +564,16 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumesInBranch()
         continue;
         }
 
-      // Show first two volume in study only
+      // Show first two volume in branch only
       if (!selectionNode->GetActiveVolumeID())
         {
         selectionNode->SetActiveVolumeID(volumeNode->GetID());
-        subjectHierarchyItemsToUpdate.insert(volumeShItemID);
+        this->showVolumeInAllViews(volumeNode, vtkMRMLApplicationLogic::BackgroundLayer);
         }
       else if (!selectionNode->GetSecondaryVolumeID())
         {
         selectionNode->SetSecondaryVolumeID(volumeNode->GetID());
-        subjectHierarchyItemsToUpdate.insert(volumeShItemID);
+        this->showVolumeInAllViews(volumeNode, vtkMRMLApplicationLogic::ForegroundLayer);
 
         // Make sure the secondary volume is shown in a semi-transparent way
         vtkMRMLSliceCompositeNode* compositeNode = NULL;
@@ -634,13 +589,56 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumesInBranch()
         }
       }
     }
+}
 
-  qSlicerCoreApplication::application()->applicationLogic()->PropagateVolumeSelection();
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyVolumesPlugin::onLayoutChanged(int layout)
+{
+  Q_UNUSED(layout);
 
-  // Update scene model for subject hierarchy nodes that were just made hidden
-  for ( std::set<vtkIdType>::iterator volumeItemIt = subjectHierarchyItemsToUpdate.begin();
-       volumeItemIt != subjectHierarchyItemsToUpdate.end(); ++volumeItemIt )
-   {
-   shNode->ItemModified(*volumeItemIt);
-   }
+  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
+  if (!scene)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
+    return;
+    }
+
+  // Connect Modified event of each composite node to the plugin, so that visibility icons are
+  // updated when volumes are shown/hidden from outside subject hierarchy
+  vtkMRMLSliceCompositeNode* compositeNode = NULL;
+  int numberOfCompositeNodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
+  for (int i=0; i<numberOfCompositeNodes; i++)
+    {
+    compositeNode = vtkMRMLSliceCompositeNode::SafeDownCast(scene->GetNthNodeByClass(i, "vtkMRMLSliceCompositeNode"));
+    qvtkReconnect(compositeNode, vtkCommand::ModifiedEvent, this, SLOT(onSliceCompositeNodeModified()));
+    }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyVolumesPlugin::onSliceCompositeNodeModified()
+{
+  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
+  if (!scene)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
+    return;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+
+  vtkMRMLScalarVolumeNode* volumeNode = NULL;
+  int numberOfVolumeNodes = scene->GetNumberOfNodesByClass("vtkMRMLScalarVolumeNode");
+  for (int i=0; i<numberOfVolumeNodes; i++)
+    {
+    volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(scene->GetNthNodeByClass(i, "vtkMRMLScalarVolumeNode"));
+    vtkIdType volumeItemID = shNode->GetItemByDataNode(volumeNode);
+    if (volumeItemID)
+      {
+      shNode->ItemModified(volumeItemID);
+      }
+    }
 }

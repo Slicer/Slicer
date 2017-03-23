@@ -28,6 +28,12 @@
 
 #include "qSlicerVolumesSubjectHierarchyPluginsExport.h"
 
+// Slicer includes
+#include "vtkMRMLApplicationLogic.h"
+
+// CTK includes
+#include <ctkVTKObject.h>
+
 class qSlicerSubjectHierarchyVolumesPluginPrivate;
 class vtkMRMLScalarVolumeNode;
 
@@ -42,6 +48,7 @@ class Q_SLICER_VOLUMES_SUBJECT_HIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyV
 {
 public:
   Q_OBJECT
+  QVTK_OBJECT
 
 public:
   typedef qSlicerSubjectHierarchyAbstractPlugin Superclass;
@@ -97,25 +104,33 @@ public:
   virtual void showContextMenuActionsForItem(vtkIdType itemID);
 
 public:
-  /// Show volume in slice viewers. The argument node becomes the background
-  /// instead of any existing background volume shown.
-  void showVolume(vtkMRMLScalarVolumeNode* node, int visible=1);
+  /// Show volume in all slice views. The argument node replaces any volume shown on the specified layer
+  /// \param node Volume node to show
+  /// \param layer Layer to show volume on. Only one layer can be specified. By default it's the background layer
+  void showVolumeInAllViews(vtkMRMLScalarVolumeNode* node, int layer=vtkMRMLApplicationLogic::BackgroundLayer);
 
-protected:
-  /// Update selection node based on current volumes visibility (if the selection is different in the slice viewers, then the first one is set)
-  /// TODO: This is a workaround (http://www.na-mic.org/Bug/view.php?id=3551)
-  void updateSelectionNodeBasedOnCurrentVolumesVisibility()const;
-  /// Determine background volume selection (if the selection is different in the slice viewers, then the first one is set)
-  /// TODO: This is a workaround (http://www.na-mic.org/Bug/view.php?id=3551)
-  std::string getSelectedBackgroundVolumeNodeID()const;
-  /// Determine foreground volume selection (if the selection is different in the slice viewers, then the first one is set)
-  /// TODO: This is a workaround (http://www.na-mic.org/Bug/view.php?id=3551)
-  std::string getSelectedForegroundVolumeNodeID()const;
+  /// Hide given volume from all layers of all slice views
+  void hideVolumeFromAllViews(vtkMRMLScalarVolumeNode* node);
+
+  /// Collect subject hierarchy item IDs of all volumes that are shown in any slice view
+  /// \param shownVolumeItemIDs Output argument for subject hierarchy item IDs of shown volumes
+  /// \param layer Layer(s) from which the shown volumes are collected. By default it's all layers
+  void collectShownVolumes( QSet<vtkIdType>& shownVolumeItemIDs,
+    int layer=vtkMRMLApplicationLogic::BackgroundLayer | vtkMRMLApplicationLogic::ForegroundLayer | vtkMRMLApplicationLogic::LabelLayer )const;
 
 protected slots:
   /// Show volumes in study. The first two scalar volumes are shown if there are more.
   /// Hides other volumes if there are less in the current study.
   void showVolumesInBranch();
+
+  /// Re-connect slice composite node events so that visibility icons are updated when volumes
+  /// are shown/hidden from outside subject hierarchy
+  void onLayoutChanged(int layout);
+
+  /// Trigger updating all volume visibility icons when composite node changes
+  /// Note: Update all and not just the volumes in the composite node, because it is impossible
+  ///       to know after a Modified event if a volume was hidden in the process
+  void onSliceCompositeNodeModified();
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyVolumesPluginPrivate> d_ptr;

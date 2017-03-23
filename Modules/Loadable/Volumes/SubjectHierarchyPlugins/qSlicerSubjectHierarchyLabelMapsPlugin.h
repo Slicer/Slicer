@@ -29,7 +29,7 @@
 #include "qSlicerVolumesSubjectHierarchyPluginsExport.h"
 
 class qSlicerSubjectHierarchyLabelMapsPluginPrivate;
-class vtkMRMLScalarVolumeNode;
+class vtkMRMLLabelMapVolumeNode;
 
 // Due to some reason the Python wrapping of this class fails, therefore
 // put everything between BTX/ETX to exclude from wrapping.
@@ -97,17 +97,8 @@ public:
   virtual void showContextMenuActionsForItem(vtkIdType itemID);
 
 public:
-  /// Show volume in slice viewers. The argument node becomes the background, and the previous
-  /// background becomes the foreground with 50% transparency.
-  void showLabelMap(vtkMRMLScalarVolumeNode* node, int visible=1);
-
-protected:
-  /// Update selection node based on current volumes visibility (if the selection is different in the slice viewers, then the first one is set)
-  /// TODO: This is a workaround (http://www.na-mic.org/Bug/view.php?id=3551)
-  void updateSelectionNodeBasedOnCurrentLabelMapVisibility()const;
-  /// Determine labelmap selection (if the selection is different in the slice viewers, then the first one is set)
-  /// TODO: This is a workaround (http://www.na-mic.org/Bug/view.php?id=3551)
-  std::string getSelectedLabelmapVolumeNodeID()const;
+  /// Show labelmap in all slice views. The argument node replaces any labelmap shown on the label layer
+  void showLabelMapInAllViews(vtkMRMLLabelMapVolumeNode* node);
 
 protected slots:
   /// Toggle between labelmap outline display in the slice views
