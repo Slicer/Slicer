@@ -28,6 +28,7 @@
 #include <vtkMRMLScene.h>
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLSegmentationNode.h>
+#include <vtkMRMLSubjectHierarchyNode.h>
 
 // SegmentationCore includes
 #include "vtkSegmentation.h"
@@ -307,6 +308,7 @@ bool vtkMRMLSegmentationDisplayNode::GetSegmentDisplayProperties(std::string seg
 void vtkMRMLSegmentationDisplayNode::SetSegmentDisplayProperties(std::string segmentId, SegmentDisplayProperties &properties)
 {
   this->UpdateSegmentList();
+
   SegmentDisplayPropertiesMap::iterator propsIt = this->SegmentationDisplayProperties.find(segmentId);
   bool modified = false;
   if (propsIt == this->SegmentationDisplayProperties.end())
@@ -377,6 +379,22 @@ void vtkMRMLSegmentationDisplayNode::SetSegmentDisplayProperties(std::string seg
   if (modified)
     {
     this->Modified();
+    }
+
+  // Invoke modified for segment subject hierarchy item
+  // (it is a virtual item, so not directly associated to the segment object)
+  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(this->GetDisplayableNode());
+  if (segmentationNode)
+    {
+    vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(this->Scene);
+    if (shNode)
+      {
+      vtkIdType segmentItemID = segmentationNode->GetSegmentSubjectHierarchyItem(segmentId, shNode);
+      if (segmentItemID)
+        {
+        shNode->ItemModified(segmentItemID);
+        }
+      }
     }
 }
 

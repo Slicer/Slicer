@@ -2644,14 +2644,6 @@ int vtkMRMLSubjectHierarchyNode::GetDisplayVisibilityForBranch(vtkIdType itemID)
   vtkNew<vtkCollection> childDisplayableNodes;
   this->GetDataNodesInBranch(itemID, childDisplayableNodes.GetPointer(), "vtkMRMLDisplayableNode");
 
-  // Add associated displayable node for the parent item too
-  vtkMRMLDisplayableNode* associatedDisplayableDataNode = vtkMRMLDisplayableNode::SafeDownCast(
-    this->GetItemDataNode(itemID));
-  if (associatedDisplayableDataNode)
-    {
-    childDisplayableNodes->AddItem(associatedDisplayableDataNode);
-    }
-
   // Determine visibility state based on all displayable nodes involved
   childDisplayableNodes->InitTraversal();
   for (int childNodeIndex=0; childNodeIndex<childDisplayableNodes->GetNumberOfItems(); ++childNodeIndex)
@@ -2660,20 +2652,12 @@ int vtkMRMLSubjectHierarchyNode::GetDisplayVisibilityForBranch(vtkIdType itemID)
       childDisplayableNodes->GetItemAsObject(childNodeIndex) );
     // Omit volume nodes from the process (they are displayed differently than every other type)
     // TODO: This is not very elegant or safe, it would be better to distinguish between visibility modes, or overhaul the visibility features completely
-    if ( displayableNode
-      && ( !displayableNode->IsA("vtkMRMLVolumeNode")
-        || !strcmp(displayableNode->GetClassName(), "vtkMRMLSegmentationNode") ) )
+    if (displayableNode && !displayableNode->IsA("vtkMRMLVolumeNode"))
       {
       // If we set visibility
       if (visible == -1)
         {
         visible = displayableNode->GetDisplayVisibility();
-
-        // We expect only 0 or 1 from leaf nodes
-        if (visible == 2)
-          {
-          vtkWarningMacro("GetDisplayVisibilityForBranch: Unexpected visibility value for node " << displayableNode->GetName());
-          }
         }
       // If the current node visibility does not match the found visibility, then set partial visibility
       else if (displayableNode->GetDisplayVisibility() != visible)
