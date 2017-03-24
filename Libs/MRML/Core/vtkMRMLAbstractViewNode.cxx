@@ -75,43 +75,41 @@ void vtkMRMLAbstractViewNode::WriteXML(ostream& of, int nIndent)
 
   this->Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
   if (this->GetLayoutLabel())
     {
-    of << indent << " layoutLabel=\"" << this->GetLayoutLabel() << "\"";
+    of << " layoutLabel=\"" << this->GetLayoutLabel() << "\"";
     }
   if (this->GetLayoutName())
     {
-    of << indent << " layoutName=\"" << this->GetLayoutName() << "\"";
+    of << " layoutName=\"" << this->GetLayoutName() << "\"";
     }
   if (this->GetViewGroup() > 0)
     {
-    of << indent << " viewGroup=\"" << this->GetViewGroup() << "\"";
+    of << " viewGroup=\"" << this->GetViewGroup() << "\"";
     }
 
-  of << indent << " active=\"" << (this->Active ? "true" : "false") << "\"";
-  of << indent << " visibility=\"" << (this->Visibility ? "true" : "false") << "\"";
+  of << " active=\"" << (this->Active ? "true" : "false") << "\"";
+  of << " visibility=\"" << (this->Visibility ? "true" : "false") << "\"";
 
   // background color
-  of << indent << " backgroundColor=\"" << this->BackgroundColor[0] << " "
+  of << " backgroundColor=\"" << this->BackgroundColor[0] << " "
      << this->BackgroundColor[1] << " " << this->BackgroundColor[2] << "\"";
 
-  of << indent << " backgroundColor2=\"" << this->BackgroundColor2[0] << " "
+  of << " backgroundColor2=\"" << this->BackgroundColor2[0] << " "
      << this->BackgroundColor2[1] << " " << this->BackgroundColor2[2] << "\"";
 
   if (this->OrientationMarkerEnabled)
     {
-    of << indent << " orientationMarkerType=\"" << this->GetOrientationMarkerTypeAsString(this->OrientationMarkerType) << "\"";
-    of << indent << " orientationMarkerSize=\"" << this->GetOrientationMarkerSizeAsString(this->OrientationMarkerSize) << "\"";
+    of << " orientationMarkerType=\"" << this->GetOrientationMarkerTypeAsString(this->OrientationMarkerType) << "\"";
+    of << " orientationMarkerSize=\"" << this->GetOrientationMarkerSizeAsString(this->OrientationMarkerSize) << "\"";
     }
 
   if (this->RulerEnabled)
     {
-    of << indent << " rulerType=\"" << this->GetRulerTypeAsString(this->RulerType) << "\"";
+    of << " rulerType=\"" << this->GetRulerTypeAsString(this->RulerType) << "\"";
     }
 
-  of << indent << " AxisLabels=\"";
+  of << " AxisLabels=\"";
   for (int i=0; i<vtkMRMLAbstractViewNode::AxisLabelsCount; i++)
     {
     of << (i>0?";":"") << this->GetAxisLabel(i);

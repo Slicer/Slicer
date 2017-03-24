@@ -76,11 +76,8 @@ vtkMRMLChartNode::~vtkMRMLChartNode()
 //----------------------------------------------------------------------------
 void vtkMRMLChartNode::WriteXML(ostream& of, int nIndent)
 {
-
   // Start by having the superclass write its information
   Superclass::WriteXML(of, nIndent);
-
-  vtkIndent indent(nIndent);
 
   // Write all the IDs
   of << " arrays=\"";
@@ -114,7 +111,6 @@ void vtkMRMLChartNode::WriteXML(ostream& of, int nIndent)
       }
     }
   of << "\"";
-
 }
 
 

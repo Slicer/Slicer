@@ -64,10 +64,8 @@ void vtkMRMLMarkupsNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of,nIndent);
 
-  vtkIndent indent(nIndent);
-
-  of << indent << " locked=\"" << this->Locked << "\"";
-  of << indent << " markupLabelFormat=\"" << this->MarkupLabelFormat.c_str() << "\"";
+  of << " locked=\"" << this->Locked << "\"";
+  of << " markupLabelFormat=\"" << this->MarkupLabelFormat.c_str() << "\"";
 
   int textLength = this->TextList->GetNumberOfValues();
 

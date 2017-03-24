@@ -66,7 +66,6 @@ void vtkMRMLVolumePropertyNode::WriteXML(ostream& of, int nIndent)
   // Write all attributes not equal to their defaults
   this->Superclass::WriteXML(of, nIndent);
 
-  //vtkIndent indent(nIndent);
   of << " interpolation=\"" <<this->VolumeProperty->GetInterpolationType()<< "\"";
   of << " shade=\"" <<this->VolumeProperty->GetShade()<< "\"";
   of << " diffuse=\"" <<this->VolumeProperty->GetDiffuse()<< "\"";

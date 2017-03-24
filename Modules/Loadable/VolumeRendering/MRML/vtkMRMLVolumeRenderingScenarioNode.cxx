@@ -66,7 +66,7 @@ void vtkMRMLVolumeRenderingScenarioNode::WriteXML(ostream& of, int nIndent)
 
   vtkIndent indent(nIndent);
 
-  of << indent << " parametersNodeID=\"" << (this->ParametersNodeID ? this->ParametersNodeID : "NULL") << "\"";
+  of << " parametersNodeID=\"" << (this->ParametersNodeID ? this->ParametersNodeID : "NULL") << "\"";
 
 }
 

@@ -51,27 +51,25 @@ void vtkMRMLAnnotationRulerNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
-  of << indent << " rulerDistanceAnnotationFormat=\"";
+  of << " rulerDistanceAnnotationFormat=\"";
   if (this->DistanceAnnotationFormat)
     {
-      of << this->DistanceAnnotationFormat << "\"";
+    of << this->DistanceAnnotationFormat << "\"";
     }
   else
     {
-      of << "\"";
+    of << "\"";
     }
 
   if (this->ModelID1)
     {
-    of << indent << " modelID1=\"" << this->ModelID1 << "\"";
+    of << " modelID1=\"" << this->ModelID1 << "\"";
     }
   if (this->ModelID2)
     {
-    of << indent << " modelID2=\"" << this->ModelID2 << "\"";
+    of << " modelID2=\"" << this->ModelID2 << "\"";
     }
-  of << indent << " distanceMeasurement=\"" << this->GetDistanceMeasurement() << "\"";
+  of << " distanceMeasurement=\"" << this->GetDistanceMeasurement() << "\"";
 }
 
 

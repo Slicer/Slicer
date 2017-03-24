@@ -111,35 +111,34 @@ vtkMRMLTransformDisplayNode::~vtkMRMLTransformDisplayNode()
 void vtkMRMLTransformDisplayNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
-  vtkIndent indent(nIndent);
 
-  of << indent << " VisualizationMode=\""<< ConvertVisualizationModeToString(this->VisualizationMode) << "\"";
+  of << " VisualizationMode=\""<< ConvertVisualizationModeToString(this->VisualizationMode) << "\"";
 
-  of << indent << " GlyphSpacingMm=\""<< this->GlyphSpacingMm << "\"";
-  of << indent << " GlyphScalePercent=\""<< this->GlyphScalePercent << "\"";
-  of << indent << " GlyphDisplayRangeMaxMm=\""<< this->GlyphDisplayRangeMaxMm << "\"";
-  of << indent << " GlyphDisplayRangeMinMm=\""<< this->GlyphDisplayRangeMinMm << "\"";
-  of << indent << " GlyphType=\""<< ConvertGlyphTypeToString(this->GlyphType) << "\"";
-  of << indent << " GlyphTipLengthPercent=\"" << this->GlyphTipLengthPercent << "\"";
-  of << indent << " GlyphDiameterMm=\""<< this->GlyphDiameterMm << "\"";
-  of << indent << " GlyphShaftDiameterPercent=\"" << this->GlyphShaftDiameterPercent << "\"";
-  of << indent << " GlyphResolution=\"" << this->GlyphResolution << "\"";
+  of << " GlyphSpacingMm=\""<< this->GlyphSpacingMm << "\"";
+  of << " GlyphScalePercent=\""<< this->GlyphScalePercent << "\"";
+  of << " GlyphDisplayRangeMaxMm=\""<< this->GlyphDisplayRangeMaxMm << "\"";
+  of << " GlyphDisplayRangeMinMm=\""<< this->GlyphDisplayRangeMinMm << "\"";
+  of << " GlyphType=\""<< ConvertGlyphTypeToString(this->GlyphType) << "\"";
+  of << " GlyphTipLengthPercent=\"" << this->GlyphTipLengthPercent << "\"";
+  of << " GlyphDiameterMm=\""<< this->GlyphDiameterMm << "\"";
+  of << " GlyphShaftDiameterPercent=\"" << this->GlyphShaftDiameterPercent << "\"";
+  of << " GlyphResolution=\"" << this->GlyphResolution << "\"";
 
-  of << indent << " GridScalePercent=\""<< this->GridScalePercent << "\"";
-  of << indent << " GridSpacingMm=\""<< this->GridSpacingMm << "\"";
-  of << indent << " GridLineDiameterMm=\""<< this->GridLineDiameterMm << "\"";
-  of << indent << " GridResolutionMm=\""<< this->GridResolutionMm << "\"";
-  of << indent << " GridShowNonWarped=\""<< this->GridShowNonWarped << "\"";
+  of << " GridScalePercent=\""<< this->GridScalePercent << "\"";
+  of << " GridSpacingMm=\""<< this->GridSpacingMm << "\"";
+  of << " GridLineDiameterMm=\""<< this->GridLineDiameterMm << "\"";
+  of << " GridResolutionMm=\""<< this->GridResolutionMm << "\"";
+  of << " GridShowNonWarped=\""<< this->GridShowNonWarped << "\"";
 
-  of << indent << " ContourResolutionMm=\""<< this->ContourResolutionMm << "\"";
-  of << indent << " ContourLevelsMm=\"" << this->GetContourLevelsMmAsString() << "\"";
-  of << indent << " ContourOpacity=\""<< this->ContourOpacity << "\"";
+  of << " ContourResolutionMm=\""<< this->ContourResolutionMm << "\"";
+  of << " ContourLevelsMm=\"" << this->GetContourLevelsMmAsString() << "\"";
+  of << " ContourOpacity=\""<< this->ContourOpacity << "\"";
 
-  of << indent << " EditorVisibility=\""<< this->EditorVisibility << "\"";
-  of << indent << " EditorSliceIntersectionVisibility=\""<< this->EditorSliceIntersectionVisibility << "\"";
-  of << indent << " EditorTranslationEnabled=\""<< this->EditorTranslationEnabled << "\"";
-  of << indent << " EditorRotationEnabled=\"" << this->EditorRotationEnabled << "\"";
-  of << indent << " EditorScalingEnabled=\""<< this->EditorScalingEnabled << "\"";
+  of << " EditorVisibility=\""<< this->EditorVisibility << "\"";
+  of << " EditorSliceIntersectionVisibility=\""<< this->EditorSliceIntersectionVisibility << "\"";
+  of << " EditorTranslationEnabled=\""<< this->EditorTranslationEnabled << "\"";
+  of << " EditorRotationEnabled=\"" << this->EditorRotationEnabled << "\"";
+  of << " EditorScalingEnabled=\""<< this->EditorScalingEnabled << "\"";
 }
 
 

@@ -106,9 +106,7 @@ vtkSegmentation::~vtkSegmentation()
 //----------------------------------------------------------------------------
 void vtkSegmentation::WriteXML(ostream& of, int nIndent)
 {
-  vtkIndent indent(nIndent);
-
-  of << indent << " MasterRepresentationName=\"" << this->MasterRepresentationName << "\"";
+  of << " MasterRepresentationName=\"" << this->MasterRepresentationName << "\"";
 
   // Note: Segment info is not written as it is managed by the storage node instead.
 }

@@ -73,29 +73,26 @@ void vtkMRMLROINode::WriteXML(ostream& of, int nIndent)
   // Write all attributes not equal to their defaults
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
   if (this->VolumeNodeID != NULL)
     {
-    of << indent << " volumeNodeID=\"" << this->VolumeNodeID << "\"";
+    of << " volumeNodeID=\"" << this->VolumeNodeID << "\"";
     }
   if (this->LabelText != NULL)
     {
-    of << indent << " labelText=\"" << this->LabelText << "\"";
+    of << " labelText=\"" << this->LabelText << "\"";
     }
 
-  of << indent << " xyz=\""
+  of << " xyz=\""
     << this->XYZ[0] << " " << this->XYZ[1] << " " << this->XYZ[2] << "\"";
 
-  of << indent << " radiusXYZ=\""
+  of << " radiusXYZ=\""
     << this->RadiusXYZ[0] << " " << this->RadiusXYZ[1] << " " << this->RadiusXYZ[2] << "\"";
 
-  of << indent << " insideOut=\"" << (this->InsideOut ? "true" : "false") << "\"";
+  of << " insideOut=\"" << (this->InsideOut ? "true" : "false") << "\"";
 
-  of << indent << " visibility=\"" << (this->Visibility ? "true" : "false") << "\"";
+  of << " visibility=\"" << (this->Visibility ? "true" : "false") << "\"";
 
-  of << indent << " interactiveMode=\"" << (this->InteractiveMode ? "true" : "false") << "\"";
-
+  of << " interactiveMode=\"" << (this->InteractiveMode ? "true" : "false") << "\"";
 
   return;
 }

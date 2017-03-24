@@ -143,41 +143,40 @@ void vtkMRMLVolumeHeaderlessStorageNode::SetFileScalarTypeAsString(const char* t
 void vtkMRMLVolumeHeaderlessStorageNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
-  vtkIndent indent(nIndent);
   {
   std::stringstream ss;
   ss << this->CenterImage;
-  of << indent << " centerImage=\"" << ss.str() << "\"";
+  of << " centerImage=\"" << ss.str() << "\"";
   }
   {
-  of << indent << " fileDimensions=\"" << this->FileDimensions[0] << " "
+  of << " fileDimensions=\"" << this->FileDimensions[0] << " "
     << this->FileDimensions[1] << " "
     << this->FileDimensions[2] << "\"";
   }
   {
-  of << indent << " fileSpacing=\"" << this->FileSpacing[0] << " "
+  of << " fileSpacing=\"" << this->FileSpacing[0] << " "
     << this->FileSpacing[1] << " "
     << this->FileSpacing[2] << "\"";
   }
   {
   std::stringstream ss;
   ss << this->FileLittleEndian;
-  of << indent << " fileLittleEndian=\"" << ss.str() << "\"";
+  of << " fileLittleEndian=\"" << ss.str() << "\"";
   }
   {
   std::stringstream ss;
   ss << this->FileScalarType;
-  of << indent << " fileScalarType=\"" << ss.str() << "\"";
+  of << " fileScalarType=\"" << ss.str() << "\"";
   }
   {
   std::stringstream ss;
   ss << this->FileScanOrder;
-  of << indent << " fileScanOrder=\"" << ss.str() << "\"";
+  of << " fileScanOrder=\"" << ss.str() << "\"";
   }
   {
   std::stringstream ss;
   ss << this->FileNumberOfScalarComponents;
-  of << indent << " fileNumberOfScalarComponents=\"" << ss.str() << "\"";
+  of << " fileNumberOfScalarComponents=\"" << ss.str() << "\"";
   }
 }
 

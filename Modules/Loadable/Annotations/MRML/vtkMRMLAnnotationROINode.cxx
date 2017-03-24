@@ -86,31 +86,28 @@ void vtkMRMLAnnotationROINode::WriteXML(ostream& of, int nIndent)
   // Write all attributes not equal to their defaults
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
   if (this->VolumeNodeID != NULL)
     {
-    of << indent << " volumeNodeID=\"" << this->VolumeNodeID << "\"";
+    of << " volumeNodeID=\"" << this->VolumeNodeID << "\"";
     }
   if (this->LabelText != NULL)
     {
-    of << indent << " labelText=\"" << this->LabelText << "\"";
+    of << " labelText=\"" << this->LabelText << "\"";
     }
 
   // we do not have to write out the coordinates since the controlPointNode does that
-  /*of << indent << " xyz=\""
+  /*of << " xyz=\""
     << XYZ[0] << " " << XYZ[1] << " " << XYZ[2] << "\"";
 
-  of << indent << " radiusXYZ=\""
+  of << " radiusXYZ=\""
     << RadiusXYZ[0] << " " << RadiusXYZ[1] << " " << RadiusXYZ[2] << "\"";
   */
 
-  of << indent << " insideOut=\"" << (this->InsideOut ? "true" : "false") << "\"";
+  of << " insideOut=\"" << (this->InsideOut ? "true" : "false") << "\"";
 
-  //of << indent << " visibility=\"" << (this->Visibility ? "true" : "false") << "\"";
+  //of << " visibility=\"" << (this->Visibility ? "true" : "false") << "\"";
 
-  of << indent << " interactiveMode=\"" << (this->InteractiveMode ? "true" : "false") << "\"";
-
+  of << " interactiveMode=\"" << (this->InteractiveMode ? "true" : "false") << "\"";
 }
 
 

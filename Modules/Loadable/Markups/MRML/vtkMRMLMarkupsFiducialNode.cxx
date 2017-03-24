@@ -50,9 +50,7 @@ void vtkMRMLMarkupsFiducialNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of,nIndent);
 
-  vtkIndent indent(nIndent);
-
-  //of << indent << " locked=\"" << this->Locked << "\"";
+  //of << " locked=\"" << this->Locked << "\"";
 }
 
 //----------------------------------------------------------------------------

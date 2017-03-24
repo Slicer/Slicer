@@ -79,30 +79,28 @@ void vtkMRMLCameraNode::WriteXML(ostream& of, int nIndent)
 
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
   double *position = this->GetPosition();
-  of << indent << " position=\"" << position[0] << " "
+  of << " position=\"" << position[0] << " "
     << position[1] << " "
     << position[2] << "\"";
 
   double *focalPoint = this->GetFocalPoint();
-  of << indent << " focalPoint=\"" << focalPoint[0] << " "
+  of << " focalPoint=\"" << focalPoint[0] << " "
     << focalPoint[1] << " "
     << focalPoint[2] << "\"";
 
   double *viewUp = this->GetViewUp();
-    of << indent << " viewUp=\"" << viewUp[0] << " "
+    of << " viewUp=\"" << viewUp[0] << " "
       << viewUp[1] << " "
       << viewUp[2] << "\"";
 
-  of << indent << " parallelProjection=\"" << (this->GetParallelProjection() ? "true" : "false") << "\"";
+  of << " parallelProjection=\"" << (this->GetParallelProjection() ? "true" : "false") << "\"";
 
-  of << indent << " parallelScale=\"" << this->GetParallelScale() << "\"";
+  of << " parallelScale=\"" << this->GetParallelScale() << "\"";
 
   if (this->GetActiveTag())
     {
-    of << indent << " activetag=\"" << this->GetActiveTag() << "\"";
+    of << " activetag=\"" << this->GetActiveTag() << "\"";
     }
 
   if (this->GetAppliedTransform())
@@ -123,9 +121,8 @@ void vtkMRMLCameraNode::WriteXML(ostream& of, int nIndent)
         ss << " ";
         }
       }
-    of << indent << " appliedTransform=\"" << ss.str() << "\"";
+    of << " appliedTransform=\"" << ss.str() << "\"";
     }
-
 }
 
 //----------------------------------------------------------------------------

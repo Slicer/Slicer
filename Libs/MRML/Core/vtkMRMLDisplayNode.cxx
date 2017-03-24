@@ -111,72 +111,70 @@ void vtkMRMLDisplayNode::WriteXML(ostream& of, int nIndent)
 
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
-  of << indent << " color=\"" << this->Color[0] << " "
+  of << " color=\"" << this->Color[0] << " "
     << this->Color[1] << " "
     << this->Color[2] << "\"";
 
-  of << indent << " edgeColor=\"" << this->EdgeColor[0] << " "
+  of << " edgeColor=\"" << this->EdgeColor[0] << " "
     << this->EdgeColor[1] << " " << this->EdgeColor[2] << "\"";
-  of << indent << " selectedColor=\"" << this->SelectedColor[0] << " "
+  of << " selectedColor=\"" << this->SelectedColor[0] << " "
     << this->SelectedColor[1] << " "
     << this->SelectedColor[2] << "\"";
 
-  of << indent << " selectedAmbient=\"" << this->SelectedAmbient << "\"";
+  of << " selectedAmbient=\"" << this->SelectedAmbient << "\"";
 
-  of << indent << " ambient=\"" << this->Ambient << "\"";
+  of << " ambient=\"" << this->Ambient << "\"";
 
-  of << indent << " diffuse=\"" << this->Diffuse << "\"";
+  of << " diffuse=\"" << this->Diffuse << "\"";
 
-  of << indent << " selectedSpecular=\"" << this->SelectedSpecular << "\"";
+  of << " selectedSpecular=\"" << this->SelectedSpecular << "\"";
 
-  of << indent << " specular=\"" << this->Specular << "\"";
+  of << " specular=\"" << this->Specular << "\"";
 
-  of << indent << " power=\"" << this->Power << "\"";
+  of << " power=\"" << this->Power << "\"";
 
-  of << indent << " opacity=\"" << this->Opacity << "\"";
-  of << indent << " sliceIntersectionOpacity=\"" << this->SliceIntersectionOpacity << "\"";
+  of << " opacity=\"" << this->Opacity << "\"";
+  of << " sliceIntersectionOpacity=\"" << this->SliceIntersectionOpacity << "\"";
 
-  of << indent << " pointSize=\"" << this->PointSize << "\"";
-  of << indent << " lineWidth=\"" << this->LineWidth << "\"";
-  of << indent << " representation=\"" << this->Representation << "\"";
-  of << indent << " lighting=\"" << (this->Lighting? "true" : "false") << "\"";
-  of << indent << " interpolation=\"" << this->Interpolation << "\"";
-  of << indent << " shading=\"" << (this->Shading? "true" : "false") << "\"";
+  of << " pointSize=\"" << this->PointSize << "\"";
+  of << " lineWidth=\"" << this->LineWidth << "\"";
+  of << " representation=\"" << this->Representation << "\"";
+  of << " lighting=\"" << (this->Lighting? "true" : "false") << "\"";
+  of << " interpolation=\"" << this->Interpolation << "\"";
+  of << " shading=\"" << (this->Shading? "true" : "false") << "\"";
 
-  of << indent << " visibility=\"" << (this->Visibility ? "true" : "false") << "\"";
-  of << indent << " edgeVisibility=\"" << (this->EdgeVisibility? "true" : "false") << "\"";
-  of << indent << " clipping=\"" << (this->Clipping ? "true" : "false") << "\"";
+  of << " visibility=\"" << (this->Visibility ? "true" : "false") << "\"";
+  of << " edgeVisibility=\"" << (this->EdgeVisibility? "true" : "false") << "\"";
+  of << " clipping=\"" << (this->Clipping ? "true" : "false") << "\"";
 
-  of << indent << " sliceIntersectionVisibility=\"" << (this->SliceIntersectionVisibility ? "true" : "false") << "\"";
+  of << " sliceIntersectionVisibility=\"" << (this->SliceIntersectionVisibility ? "true" : "false") << "\"";
 
-  of << indent << " sliceIntersectionThickness=\"" << this->SliceIntersectionThickness << "\"";
+  of << " sliceIntersectionThickness=\"" << this->SliceIntersectionThickness << "\"";
 
-  of << indent << " frontfaceCulling=\"" << (this->FrontfaceCulling ? "true" : "false") << "\"";
-  of << indent << " backfaceCulling=\"" << (this->BackfaceCulling ? "true" : "false") << "\"";
+  of << " frontfaceCulling=\"" << (this->FrontfaceCulling ? "true" : "false") << "\"";
+  of << " backfaceCulling=\"" << (this->BackfaceCulling ? "true" : "false") << "\"";
 
-  of << indent << " scalarVisibility=\"" << (this->ScalarVisibility ? "true" : "false") << "\"";
+  of << " scalarVisibility=\"" << (this->ScalarVisibility ? "true" : "false") << "\"";
 
-  of << indent << " vectorVisibility=\"" << (this->VectorVisibility ? "true" : "false") << "\"";
+  of << " vectorVisibility=\"" << (this->VectorVisibility ? "true" : "false") << "\"";
 
-  of << indent << " tensorVisibility=\"" << (this->TensorVisibility ? "true" : "false") << "\"";
+  of << " tensorVisibility=\"" << (this->TensorVisibility ? "true" : "false") << "\"";
 
-  of << indent << " interpolateTexture=\"" << (this->InterpolateTexture ? "true" : "false") << "\"";
+  of << " interpolateTexture=\"" << (this->InterpolateTexture ? "true" : "false") << "\"";
 
-  of << indent << " scalarRangeFlag=\"" << this->GetScalarRangeFlagTypeAsString(this->ScalarRangeFlag) << "\"";
+  of << " scalarRangeFlag=\"" << this->GetScalarRangeFlagTypeAsString(this->ScalarRangeFlag) << "\"";
 
-  of << indent << " scalarRange=\"" << this->ScalarRange[0] << " "
+  of << " scalarRange=\"" << this->ScalarRange[0] << " "
      << this->ScalarRange[1] << "\"";
 
   if (this->ColorNodeID != NULL)
     {
-    of << indent << " colorNodeID=\"" << this->ColorNodeID << "\"";
+    of << " colorNodeID=\"" << this->ColorNodeID << "\"";
     }
 
   if (this->ActiveScalarName != NULL)
     {
-    of << indent << " activeScalarName=\"" << this->ActiveScalarName << "\"";
+    of << " activeScalarName=\"" << this->ActiveScalarName << "\"";
     }
 
   std::stringstream ss;
@@ -191,7 +189,7 @@ void vtkMRMLDisplayNode::WriteXML(ostream& of, int nIndent)
     }
   if (this->ViewNodeIDs.size() > 0)
     {
-    of << indent << " viewNodeRef=\"" << ss.str().c_str() << "\"";
+    of << " viewNodeRef=\"" << ss.str().c_str() << "\"";
     }
 
   of << " ";

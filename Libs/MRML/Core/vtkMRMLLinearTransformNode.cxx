@@ -43,8 +43,6 @@ void vtkMRMLLinearTransformNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
   if (this->IsLinear())
     {
     // Only write the matrix to the scene if the object stores a linear transform
@@ -67,7 +65,7 @@ void vtkMRMLLinearTransformNode::WriteXML(ostream& of, int nIndent)
         ss << " ";
         }
       }
-    of << indent << " matrixTransformToParent=\"" << ss.str() << "\"";
+    of << " matrixTransformToParent=\"" << ss.str() << "\"";
     }
 }
 

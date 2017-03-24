@@ -75,18 +75,14 @@ void vtkMRMLGlyphableVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
   if (this->GlyphColorNodeID != NULL)
     {
-    of << indent << " glyphColorNodeRef=\"" << this->GlyphColorNodeID << "\"";
+    of << " glyphColorNodeRef=\"" << this->GlyphColorNodeID << "\"";
     }
 
   std::stringstream ss;
   ss << this->VisualizationMode;
-  of << indent << " visualizationMode=\"" << ss.str() << "\"";
-
-
+  of << " visualizationMode=\"" << ss.str() << "\"";
 }
 
 //----------------------------------------------------------------------------

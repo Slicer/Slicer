@@ -28,7 +28,6 @@
 #include <vtkMRMLScene.h>
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLSegmentationNode.h>
-#include <vtkMRMLSubjectHierarchyNode.h>
 
 // SegmentationCore includes
 #include "vtkSegmentation.h"
@@ -87,23 +86,22 @@ vtkMRMLSegmentationDisplayNode::~vtkMRMLSegmentationDisplayNode()
 void vtkMRMLSegmentationDisplayNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
-  vtkIndent indent(nIndent);
 
-  of << indent << " PreferredDisplayRepresentationName2D=\""
+  of << " PreferredDisplayRepresentationName2D=\""
     << (this->PreferredDisplayRepresentationName2D ? this->PreferredDisplayRepresentationName2D : "NULL") << "\"";
-  of << indent << " PreferredDisplayRepresentationName3D=\""
+  of << " PreferredDisplayRepresentationName3D=\""
     << (this->PreferredDisplayRepresentationName3D ? this->PreferredDisplayRepresentationName3D : "NULL") << "\"";
 
-  of << indent << " Visibility3D=\"" << (this->Visibility3D ? "true" : "false") << "\"";
-  of << indent << " Visibility2DFill=\"" << (this->Visibility2DFill ? "true" : "false") << "\"";
-  of << indent << " Visibility2DOutline=\"" << (this->Visibility2DOutline ? "true" : "false") << "\"";
-  of << indent << " Opacity3D=\"" << this->Opacity3D << "\"";
-  of << indent << " Opacity2DFill=\"" << this->Opacity2DFill << "\"";
-  of << indent << " Opacity2DOutline=\"" << this->Opacity2DOutline << "\"";
+  of << " Visibility3D=\"" << (this->Visibility3D ? "true" : "false") << "\"";
+  of << " Visibility2DFill=\"" << (this->Visibility2DFill ? "true" : "false") << "\"";
+  of << " Visibility2DOutline=\"" << (this->Visibility2DOutline ? "true" : "false") << "\"";
+  of << " Opacity3D=\"" << this->Opacity3D << "\"";
+  of << " Opacity2DFill=\"" << this->Opacity2DFill << "\"";
+  of << " Opacity2DOutline=\"" << this->Opacity2DOutline << "\"";
 
   this->UpdateSegmentList();
 
-  of << indent << " SegmentationDisplayProperties=\"";
+  of << " SegmentationDisplayProperties=\"";
   for (SegmentDisplayPropertiesMap::iterator propIt = this->SegmentationDisplayProperties.begin();
     propIt != this->SegmentationDisplayProperties.end(); ++propIt)
     {
@@ -308,7 +306,6 @@ bool vtkMRMLSegmentationDisplayNode::GetSegmentDisplayProperties(std::string seg
 void vtkMRMLSegmentationDisplayNode::SetSegmentDisplayProperties(std::string segmentId, SegmentDisplayProperties &properties)
 {
   this->UpdateSegmentList();
-
   SegmentDisplayPropertiesMap::iterator propsIt = this->SegmentationDisplayProperties.find(segmentId);
   bool modified = false;
   if (propsIt == this->SegmentationDisplayProperties.end())
@@ -379,22 +376,6 @@ void vtkMRMLSegmentationDisplayNode::SetSegmentDisplayProperties(std::string seg
   if (modified)
     {
     this->Modified();
-    }
-
-  // Invoke modified for segment subject hierarchy item
-  // (it is a virtual item, so not directly associated to the segment object)
-  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(this->GetDisplayableNode());
-  if (segmentationNode)
-    {
-    vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(this->Scene);
-    if (shNode)
-      {
-      vtkIdType segmentItemID = segmentationNode->GetSegmentSubjectHierarchyItem(segmentId, shNode);
-      if (segmentItemID)
-        {
-        shNode->ItemModified(segmentItemID);
-        }
-      }
     }
 }
 

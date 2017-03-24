@@ -70,14 +70,13 @@ void vtkMRMLUnitNode::WriteXML(ostream& of, int nIndent)
   // Write all attributes not equal to their defaults
   this->Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-  of << indent << " Quantity=\""
+  of << " Quantity=\""
     << (this->GetQuantity() ? this->GetQuantity() : "") << "\"";
-  of << indent << " Prefix=\"" << (this->Prefix ? this->Prefix : "") << "\"";
-  of << indent << " Suffix=\"" << (this->Suffix ? this->Suffix : "") << "\"";
-  of << indent << " Precision=\"" << this->Precision << "\"";
-  of << indent << " MinimumValue=\"" << this->MinimumValue << "\"";
-  of << indent << " MaximumValue=\"" << this->MaximumValue << "\"";
+  of << " Prefix=\"" << (this->Prefix ? this->Prefix : "") << "\"";
+  of << " Suffix=\"" << (this->Suffix ? this->Suffix : "") << "\"";
+  of << " Precision=\"" << this->Precision << "\"";
+  of << " MinimumValue=\"" << this->MinimumValue << "\"";
+  of << " MaximumValue=\"" << this->MaximumValue << "\"";
 }
 
 namespace

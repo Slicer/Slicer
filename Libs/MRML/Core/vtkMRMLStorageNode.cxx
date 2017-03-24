@@ -108,7 +108,6 @@ vtkMRMLStorageNode::~vtkMRMLStorageNode()
 void vtkMRMLStorageNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
-  vtkIndent indent(nIndent);
 
   if (this->FileName != NULL)
     {
@@ -119,7 +118,7 @@ void vtkMRMLStorageNode::WriteXML(ostream& of, int nIndent)
       name = vtksys::SystemTools::RelativePath(this->GetScene()->GetRootDirectory(), this->FileName);
       }
 
-    of << indent << " fileName=\"" << vtkMRMLNode::URLEncodeString(name.c_str()) << "\"";
+    of << " fileName=\"" << vtkMRMLNode::URLEncodeString(name.c_str()) << "\"";
 
     // if there is a file list, add the archetype to it. add file will check
     // that it's not already there. currently needed for reading in multi
@@ -156,7 +155,7 @@ void vtkMRMLStorageNode::WriteXML(ostream& of, int nIndent)
       name = vtksys::SystemTools::RelativePath(this->GetScene()->GetRootDirectory(), this->GetNthFileName(i));
       }
 
-    of << indent << " fileListMember" << i << "=\"" << vtkMRMLNode::URLEncodeString(name.c_str()) << "\"";
+    of << " fileListMember" << i << "=\"" << vtkMRMLNode::URLEncodeString(name.c_str()) << "\"";
     if (this->GetScene() && this->IsFilePathRelative(this->GetNthFileName(i)))
       {
       // go back to absolute
@@ -175,24 +174,24 @@ void vtkMRMLStorageNode::WriteXML(ostream& of, int nIndent)
 
   if (this->URI != NULL)
     {
-    of << indent << " uri=\"" << vtkMRMLNode::URLEncodeString(this->URI) << "\"";
+    of << " uri=\"" << vtkMRMLNode::URLEncodeString(this->URI) << "\"";
     }
   for (int i = 0; i < this->GetNumberOfURIs(); i++)
     {
-    of << indent << " uriListMember" << i << "=\"" << vtkMRMLNode::URLEncodeString(this->GetNthURI(i)) << "\"";
+    of << " uriListMember" << i << "=\"" << vtkMRMLNode::URLEncodeString(this->GetNthURI(i)) << "\"";
     }
 
   std::stringstream ss;
   ss << this->UseCompression;
-  of << indent << " useCompression=\"" << ss.str() << "\"";
+  of << " useCompression=\"" << ss.str() << "\"";
 
   if (this->GetDefaultWriteFileExtension() != NULL)
     {
-    of << indent << " defaultWriteFileExtension=\"" << this->GetDefaultWriteFileExtension() << "\"";
+    of << " defaultWriteFileExtension=\"" << this->GetDefaultWriteFileExtension() << "\"";
     }
 
-  of << indent << " readState=\"" << this->ReadState <<  "\"";
-  of << indent << " writeState=\"" << this->WriteState <<  "\"";
+  of << " readState=\"" << this->ReadState <<  "\"";
+  of << " writeState=\"" << this->WriteState <<  "\"";
 }
 
 //----------------------------------------------------------------------------

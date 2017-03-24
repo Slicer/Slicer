@@ -49,7 +49,6 @@ void vtkMRMLTensorVolumeNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
   std::stringstream ss;
   for(int i=0; i<3; i++)
     {
@@ -62,9 +61,9 @@ void vtkMRMLTensorVolumeNode::WriteXML(ostream& of, int nIndent)
         }
       }
     }
-    of << indent << " measurementFrame=\"" << ss.str() << "\"";
+  of << " measurementFrame=\"" << ss.str() << "\"";
 
-   of << indent << " order=\"" << Order << "\"";
+  of << " order=\"" << Order << "\"";
 }
 
 //----------------------------------------------------------------------------

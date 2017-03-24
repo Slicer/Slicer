@@ -38,59 +38,57 @@ void vtkMRMLAnnotationControlPointsNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLHierarchyNode *hnode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(this->GetScene(), this->GetID());
 
   if (hnode &&
-      hnode->GetParentNodeID())
-    {
-    vtkWarningMacro("WriteXML: node " << this->GetName() << " is in a hierarchy, " << hnode->GetName() << ", assuming that it wrote it out already");
-    return;
-    }
+  hnode->GetParentNodeID())
+  {
+  vtkWarningMacro("WriteXML: node " << this->GetName() << " is in a hierarchy, " << hnode->GetName() << ", assuming that it wrote it out already");
+  return;
+  }
   */
   // cout << "vtkMRMLAnnotationControlPointsNode::WriteXML start" << endl;
   Superclass::WriteXML(of, nIndent);
-
-  vtkIndent indent(nIndent);
 
   if (this->GetPoints())
     {
     vtkPoints *points = this->GetPoints();
     int n = points->GetNumberOfPoints();
 
-      of << indent << " ctrlPtsCoord=\"";
-      for (int i = 0; i < n; i++ )
-    {
+    of << " ctrlPtsCoord=\"";
+    for (int i = 0; i < n; i++)
+      {
       double* ptr = points->GetPoint(i);
-      of << ptr[0] << " "<<  ptr[1] << " "<<  ptr[2] ;
+      of << ptr[0] << " "<<  ptr[1] << " "<<  ptr[2];
       if (i < n-1)
         {
-          of << "|";
+        of << "|";
         }
-    }
-      of << "\"";
+      }
+    of << "\"";
 
 
-      for (int j = NUM_TEXT_ATTRIBUTE_TYPES ; j < NUM_CP_ATTRIBUTE_TYPES; j ++)
-    {
-      of << indent << " " <<this->GetAttributeTypesEnumAsString(j)<<"=\"";
-      for (int i = 0; i < n-1; i++ )
+    for (int j = NUM_TEXT_ATTRIBUTE_TYPES; j < NUM_CP_ATTRIBUTE_TYPES; j++)
+      {
+      of << " " <<this->GetAttributeTypesEnumAsString(j)<<"=\"";
+      for (int i = 0; i < n-1; i++)
         {
-          of << this->GetAnnotationAttribute(i,j) << " " ;
+        of << this->GetAnnotationAttribute(i, j) << " ";
         }
       if (n)
         {
-          of << this->GetAnnotationAttribute(n-1,j);
+        of << this->GetAnnotationAttribute(n-1, j);
         }
       of << "\"";
-    }
+      }
     }
   else
     {
-      of << indent << " ctrlPtsCoord=\"\"";
-      for (int j = NUM_TEXT_ATTRIBUTE_TYPES ; j < NUM_CP_ATTRIBUTE_TYPES; j ++)
-    {
-      of << indent << " " << this->GetAttributeTypesEnumAsString(j) << "=\"\"";
-    }
+    of << " ctrlPtsCoord=\"\"";
+    for (int j = NUM_TEXT_ATTRIBUTE_TYPES; j < NUM_CP_ATTRIBUTE_TYPES; j++)
+      {
+      of << " " << this->GetAttributeTypesEnumAsString(j) << "=\"\"";
+      }
     }
 
-  of << indent << " ctrlPtsNumberingScheme=\"" << this->NumberingScheme << "\"";
+  of << " ctrlPtsNumberingScheme=\"" << this->NumberingScheme << "\"";
 }
 
 //----------------------------------------------------------------------------

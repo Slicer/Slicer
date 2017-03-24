@@ -75,61 +75,59 @@ void vtkMRMLSliceCompositeNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
-  of << indent << " backgroundVolumeID=\"" <<
+  of << " backgroundVolumeID=\"" <<
    (this->BackgroundVolumeID ? this->BackgroundVolumeID : "") << "\"";
-  of << indent << " foregroundVolumeID=\"" <<
+  of << " foregroundVolumeID=\"" <<
    (this->ForegroundVolumeID ? this->ForegroundVolumeID : "") << "\"";
-  of << indent << " labelVolumeID=\"" <<
+  of << " labelVolumeID=\"" <<
    (this->LabelVolumeID ? this->LabelVolumeID : "") << "\"";
 
-  of << indent << " compositing=\"" << this->Compositing << "\"";
-  of << indent << " foregroundOpacity=\"" << this->ForegroundOpacity << "\"";
-  of << indent << " labelOpacity=\"" << this->LabelOpacity << "\"";
-  of << indent << " linkedControl=\"" << this->LinkedControl << "\"";
-  of << indent << " fiducialVisibility=\"" << this->FiducialVisibility << "\"";
-  of << indent << " fiducialLabelVisibility=\"" << this->FiducialLabelVisibility << "\"";
-  of << indent << " sliceIntersectionVisibility=\"" << this->SliceIntersectionVisibility << "\"";
+  of << " compositing=\"" << this->Compositing << "\"";
+  of << " foregroundOpacity=\"" << this->ForegroundOpacity << "\"";
+  of << " labelOpacity=\"" << this->LabelOpacity << "\"";
+  of << " linkedControl=\"" << this->LinkedControl << "\"";
+  of << " fiducialVisibility=\"" << this->FiducialVisibility << "\"";
+  of << " fiducialLabelVisibility=\"" << this->FiducialLabelVisibility << "\"";
+  of << " sliceIntersectionVisibility=\"" << this->SliceIntersectionVisibility << "\"";
   if (this->GetLayoutName() != NULL)
     {
-    of << indent << " layoutName=\"" << this->GetLayoutName() << "\"";
+    of << " layoutName=\"" << this->GetLayoutName() << "\"";
     }
 
   if ( this->AnnotationSpace == vtkMRMLSliceCompositeNode::XYZ)
     {
-    of << indent << " annotationSpace=\"" << "xyz" << "\"";
+    of << " annotationSpace=\"" << "xyz" << "\"";
     }
   else if ( this->AnnotationSpace == vtkMRMLSliceCompositeNode::IJK)
     {
-    of << indent << " annotationSpace=\"" << "ijk" << "\"";
+    of << " annotationSpace=\"" << "ijk" << "\"";
     }
   else if ( this->AnnotationSpace == vtkMRMLSliceCompositeNode::RAS)
     {
-    of << indent << " annotationSpace=\"" << "RAS" << "\"";
+    of << " annotationSpace=\"" << "RAS" << "\"";
     }
   else if ( this->AnnotationSpace == vtkMRMLSliceCompositeNode::IJKAndRAS)
     {
-    of << indent << " annotationSpace=\"" << "IJKAndRAS" << "\"";
+    of << " annotationSpace=\"" << "IJKAndRAS" << "\"";
     }
 
   if ( this->AnnotationMode == vtkMRMLSliceCompositeNode::NoAnnotation )
     {
-    of << indent << " annotationMode=\"" << "NoAnnotation" << "\"";
+    of << " annotationMode=\"" << "NoAnnotation" << "\"";
     }
   else if ( this->AnnotationMode == vtkMRMLSliceCompositeNode::All )
     {
-    of << indent << " annotationMode=\"" << "All" << "\"";
+    of << " annotationMode=\"" << "All" << "\"";
     }
   if ( this->AnnotationMode == vtkMRMLSliceCompositeNode::LabelValuesOnly )
     {
-    of << indent << " annotationMode=\"" << "LabelValuesOnly" << "\"";
+    of << " annotationMode=\"" << "LabelValuesOnly" << "\"";
     }
   if ( this->AnnotationMode == vtkMRMLSliceCompositeNode::LabelAndVoxelValuesOnly )
     {
-    of << indent << " annotationMode=\"" << "LabelAndVoxelValuesOnly" << "\"";
+    of << " annotationMode=\"" << "LabelAndVoxelValuesOnly" << "\"";
     }
-  of << indent << " doPropagateVolumeSelection=\"" << (int)this->DoPropagateVolumeSelection << "\"";
+  of << " doPropagateVolumeSelection=\"" << (int)this->DoPropagateVolumeSelection << "\"";
 }
 
 //-----------------------------------------------------------

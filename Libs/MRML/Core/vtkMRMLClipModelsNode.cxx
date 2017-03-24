@@ -48,16 +48,14 @@ void vtkMRMLClipModelsNode::WriteXML(ostream& of, int nIndent)
 
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
+  of << " clipType=\"" << this->ClipType << "\"";
 
-  of << indent << " clipType=\"" << this->ClipType << "\"";
-
-  of << indent << " redSliceClipState=\"" << this->RedSliceClipState << "\"";
-  of << indent << " yellowSliceClipState=\"" << this->YellowSliceClipState << "\"";
-  of << indent << " greenSliceClipState=\"" << this->GreenSliceClipState << "\"";
+  of << " redSliceClipState=\"" << this->RedSliceClipState << "\"";
+  of << " yellowSliceClipState=\"" << this->YellowSliceClipState << "\"";
+  of << " greenSliceClipState=\"" << this->GreenSliceClipState << "\"";
   if (this->ClippingMethod != vtkMRMLClipModelsNode::Straight)
     {
-    of << indent << " clippingMethod=\"" << (this->GetClippingMethodAsString(this->ClippingMethod)) << "\"";
+    of << " clippingMethod=\"" << (this->GetClippingMethodAsString(this->ClippingMethod)) << "\"";
     }
 }
 

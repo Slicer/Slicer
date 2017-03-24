@@ -71,7 +71,6 @@ vtkMRMLTransformNode::~vtkMRMLTransformNode()
 //----------------------------------------------------------------------------
 void vtkMRMLTransformNode::WriteXML(ostream& of, int nIndent)
 {
-  vtkIndent indent(nIndent);
   Superclass::WriteXML(of, nIndent);
 }
 
@@ -330,7 +329,6 @@ void vtkMRMLTransformNode::PrintSelf(ostream& os, vtkIndent indent)
       concatenatedTransform->PrintSelf(os, indent.GetNextIndent().GetNextIndent());
       }
     }
-
 }
 
 //----------------------------------------------------------------------------

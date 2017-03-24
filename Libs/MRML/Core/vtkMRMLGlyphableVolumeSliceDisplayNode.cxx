@@ -66,15 +66,11 @@ vtkMRMLGlyphableVolumeSliceDisplayNode::~vtkMRMLGlyphableVolumeSliceDisplayNode(
 //----------------------------------------------------------------------------
 void vtkMRMLGlyphableVolumeSliceDisplayNode::WriteXML(ostream& of, int nIndent)
 {
-
   // Write all attributes not equal to their defaults
 
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
-  of << indent << " colorMode =\"" << this->ColorMode << "\"";
-
+  of << " colorMode =\"" << this->ColorMode << "\"";
 }
 
 

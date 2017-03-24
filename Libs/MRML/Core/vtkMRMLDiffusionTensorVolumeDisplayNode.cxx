@@ -89,10 +89,7 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
 {
   this->Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
-  of << indent << " scalarInvariant=\"" << this->ScalarInvariant << "\"";
-
+  of << " scalarInvariant=\"" << this->ScalarInvariant << "\"";
 }
 
 //----------------------------------------------------------------------------

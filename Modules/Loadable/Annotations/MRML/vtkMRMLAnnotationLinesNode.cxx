@@ -32,57 +32,54 @@ void vtkMRMLAnnotationLinesNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
   int n = this->GetNumberOfLines();
   if (n)
     {
     vtkCellArray *lines = this->GetLines();
     lines->InitTraversal();
-    of << indent << "linePtsID=\"" ;
-    for (int i = 0; i < n; i++ )
+    of << "linePtsID=\"";
+    for (int i = 0; i < n; i++)
       {
       vtkIdType npts = 0;
       vtkIdType *pts = NULL;
       lines->GetNextCell(npts, pts);
-      for (int j= 0; j < npts ; j++)
+      for (int j= 0; j < npts; j++)
         {
-          of << pts[j];
-          if (j<  npts -1)
-        {
-          of << " " ;
-        }
+        of << pts[j];
+        if (j<  npts -1)
+          {
+          of << " ";
+          }
         }
       if (i < n-1)
         {
-          of << "|" ;
+        of << "|";
         }
-    }
-      of << "\"";
+      }
+    of << "\"";
 
-
-      for (int j = NUM_CP_ATTRIBUTE_TYPES ; j < NUM_LINE_ATTRIBUTE_TYPES; j ++)
-    {
-      of << indent << " " << this->GetAttributeTypesEnumAsString(j)<<"=\"";
-      for (int i = 0; i < n -1 ; i++ )
+    for (int j = NUM_CP_ATTRIBUTE_TYPES; j < NUM_LINE_ATTRIBUTE_TYPES; j++)
+      {
+      of << " " << this->GetAttributeTypesEnumAsString(j)<<"=\"";
+      for (int i = 0; i < n -1; i++)
         {
-          of << this->GetAnnotationAttribute(i,j) << " " ;
+        of << this->GetAnnotationAttribute(i, j) << " ";
         }
       if (n)
         {
-          of << this->GetAnnotationAttribute(n-1,j) ;
+        of << this->GetAnnotationAttribute(n-1, j);
         }
 
       of << "\"";
-    }
+      }
     }
   else
     {
-      of << indent << "linePtsID=\"\"" ;
-      for (int j = NUM_CP_ATTRIBUTE_TYPES ; j < NUM_LINE_ATTRIBUTE_TYPES; j ++)
-    {
-      of << indent << " " << this->GetAttributeTypesEnumAsString(j) << "=\"\"";
-    }
+    of << "linePtsID=\"\"";
+    for (int j = NUM_CP_ATTRIBUTE_TYPES; j < NUM_LINE_ATTRIBUTE_TYPES; j++)
+      {
+      of << " " << this->GetAttributeTypesEnumAsString(j) << "=\"\"";
+      }
     }
 }
 
@@ -102,44 +99,44 @@ void vtkMRMLAnnotationLinesNode::ReadXMLAttributes(const char** atts)
     std::string attValue(*(atts++));
     if (!strcmp(attName, "linePtsID"))
       {
-    std::string valStr(attValue);
-    std::replace(valStr.begin(), valStr.end(), '|', ' ');
+      std::string valStr(attValue);
+      std::replace(valStr.begin(), valStr.end(), '|', ' ');
 
-    std::stringstream ss;
-    ss << valStr;
-    int d;
-    std::vector<int> tmpVec;
-    while (ss >> d)
+      std::stringstream ss;
+      ss << valStr;
+      int d;
+      std::vector<int> tmpVec;
+      while (ss >> d)
         {
-      tmpVec.push_back(d);
+        tmpVec.push_back(d);
         }
 
-    for (int i = 0; i < int(tmpVec.size()); i += 2)
-      {
-        this->AddLine(tmpVec[i],tmpVec[i + 1],0,0);
-      }
+      for (int i = 0; i < int(tmpVec.size()); i += 2)
+        {
+        this->AddLine(tmpVec[i], tmpVec[i + 1], 0, 0);
+        }
 
       }
     else
       {
-    int j = NUM_CP_ATTRIBUTE_TYPES;
-    while (j <  NUM_LINE_ATTRIBUTE_TYPES)
-      {
+      int j = NUM_CP_ATTRIBUTE_TYPES;
+      while (j <  NUM_LINE_ATTRIBUTE_TYPES)
+        {
         if (!strcmp(attName, this->GetAttributeTypesEnumAsString(j)))
           {
-        std::stringstream ss;
-        ss << attValue;
-        double value;
-        vtkIdType id = 0;
-        while (ss >> value)
-          {
-            this->SetAnnotationAttribute(id,j, value);
-            id ++;
-          }
-        j = NUM_LINE_ATTRIBUTE_TYPES;
+          std::stringstream ss;
+          ss << attValue;
+          double value;
+          vtkIdType id = 0;
+          while (ss >> value)
+            {
+            this->SetAnnotationAttribute(id, j, value);
+            id++;
+            }
+          j = NUM_LINE_ATTRIBUTE_TYPES;
           }
         j++;
-      }
+        }
       }
     }
   this->EndModify(disabledModify);
@@ -152,9 +149,7 @@ void vtkMRMLAnnotationLinesNode::UpdateScene(vtkMRMLScene *scene)
 
   // Nothing to do at this point  bc vtkMRMLAnnotationLineDisplayNode is subclass of vtkMRMLModelDisplayNode
   // => will be taken care of by vtkMRMLModelDisplayNode
-
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationLinesNode::Copy(vtkMRMLNode *anode)

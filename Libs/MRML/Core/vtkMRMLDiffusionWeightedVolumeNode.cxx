@@ -66,7 +66,6 @@ void vtkMRMLDiffusionWeightedVolumeNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
   std::stringstream ss;
   for(int i=0; i<3; i++)
     {
@@ -79,7 +78,7 @@ void vtkMRMLDiffusionWeightedVolumeNode::WriteXML(ostream& of, int nIndent)
         }
       }
     }
-    of << indent << " measurementFrameMatrix=\"" << ss.str() << "\"";
+    of << " measurementFrameMatrix=\"" << ss.str() << "\"";
 
   ss.clear();
 
@@ -91,7 +90,7 @@ void vtkMRMLDiffusionWeightedVolumeNode::WriteXML(ostream& of, int nIndent)
       }
     }
 
-  of << indent << " gradients=\"" << ss.str() << "\"";
+  of << " gradients=\"" << ss.str() << "\"";
 
   ss.clear();
 
@@ -99,8 +98,7 @@ void vtkMRMLDiffusionWeightedVolumeNode::WriteXML(ostream& of, int nIndent)
     {
     ss << this->BValues->GetValue(g) << " ";
     }
-  of << indent << " bValues=\"" << ss.str() << "\"";
-
+  of << " bValues=\"" << ss.str() << "\"";
 }
 
 //----------------------------------------------------------------------------

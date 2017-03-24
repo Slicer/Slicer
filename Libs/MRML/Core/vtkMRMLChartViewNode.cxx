@@ -53,8 +53,6 @@ void vtkMRMLChartViewNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
   if (this->ChartNodeID)
     {
     of << " chart=\"" << this->ChartNodeID << "\"";

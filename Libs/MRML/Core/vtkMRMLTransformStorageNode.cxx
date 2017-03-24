@@ -50,8 +50,8 @@ vtkMRMLTransformStorageNode::~vtkMRMLTransformStorageNode()
 void vtkMRMLTransformStorageNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
-  vtkIndent indent(nIndent);
-  of << indent << " preferITKv3CompatibleTransforms=\"" << (this->PreferITKv3CompatibleTransforms ? "true" : "false") << "\"";
+
+  of << " preferITKv3CompatibleTransforms=\"" << (this->PreferITKv3CompatibleTransforms ? "true" : "false") << "\"";
 }
 
 //----------------------------------------------------------------------------

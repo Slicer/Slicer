@@ -115,7 +115,6 @@ void vtkMRMLSegmentationStorageNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLSegmentationStorageNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
-  vtkIndent indent(nIndent);
 }
 
 //----------------------------------------------------------------------------

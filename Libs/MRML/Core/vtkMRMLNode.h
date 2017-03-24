@@ -152,7 +152,7 @@ public:
   ///
   /// \note
   /// Subclasses should implement this method.
-  /// Call this method in the subclass impementation.
+  /// Call this method in the subclass implementation.
   virtual void ReadXMLAttributes(const char** atts);
 
   /// \brief The method should remove all pointers and observations to all nodes
@@ -185,6 +185,7 @@ public:
   /// \note
   /// Subclasses should implement this method.
   /// Call this method in the subclass implementation.
+  /// \param indent Deprecated argument that is kept for API backward-compatibility
   virtual void WriteXML(ostream& of, int indent);
 
   /// Write this node's body to a MRML file in XML format.
@@ -334,11 +335,6 @@ public:
   /// Name of this node, to be set by the user
   vtkSetStringMacro(Name);
   vtkGetStringMacro(Name);
-
-
-  /// \brief Node's effect on indentation when displaying the
-  /// contents of a MRML file. (0, +1, -1)
-  vtkGetMacro(Indent, int);
 
   /// ID use by other nodes to reference this node in XML.
   //vtkSetStringMacro(ID);
@@ -781,8 +777,6 @@ protected:
   vtkMRMLNode(const vtkMRMLNode&);
   void operator=(const vtkMRMLNode&);
 
-  vtkSetMacro(Indent, int);
-
   /// a shared set of functions that call the
   /// virtual ProcessMRMLEvents
   static void MRMLCallback( vtkObject *caller,
@@ -881,7 +875,6 @@ protected:
   char *Description;
   char *Name;
   char *ID;
-  int Indent;
   int HideFromEditors;
   int Selectable;
   int Selected;

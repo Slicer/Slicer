@@ -121,8 +121,6 @@ void vtkMRMLStorableNode::WriteXML(ostream& of, int nIndent)
 
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
   std::stringstream ss;
 
   //---write any user tags.
@@ -147,10 +145,9 @@ void vtkMRMLStorableNode::WriteXML(ostream& of, int nIndent)
       }
     if ( ss.str().c_str()!= NULL )
       {
-      of << indent << " userTags=\"" << ss.str().c_str() << "\"";
+      of << " userTags=\"" << ss.str().c_str() << "\"";
       }
     }
-
 }
 
 

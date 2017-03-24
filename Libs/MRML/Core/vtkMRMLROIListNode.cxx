@@ -19,7 +19,6 @@ vtkMRMLNodeNewMacro(vtkMRMLROIListNode);
 vtkMRMLROIListNode::vtkMRMLROIListNode()
 {
   this->ROIList = vtkCollection::New();
-  this->Indent = 1;
   this->TextScale = 4.5;
   this->Visibility = 1;
   this->Color[0]=0.4; this->Color[1]=1.0; this->Color[2]=1.0;
@@ -64,10 +63,9 @@ vtkMRMLROIListNode::~vtkMRMLROIListNode()
 void vtkMRMLROIListNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
-  vtkIndent indent(nIndent);
 
-  of << indent <<" TextScale=\"" << this->TextScale << "\"";
-  of << indent <<" Visibility=\"" << this->Visibility << "\"";
+  of <<" TextScale=\"" << this->TextScale << "\"";
+  of <<" Visibility=\"" << this->Visibility << "\"";
 
   of << " color=\"" << this->Color[0] << " " <<
     this->Color[1] << " " <<

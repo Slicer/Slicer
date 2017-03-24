@@ -181,18 +181,15 @@ void vtkMRMLVolumeRenderingDisplayNode::WriteXML(ostream& of, int nIndent)
 {
   this->Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
-  of << indent << " volumeNodeID=\"" << (this->VolumeNodeID ? this->VolumeNodeID : "NULL") << "\"";
-  of << indent << " croppingEnabled=\""<< this->CroppingEnabled << "\"";
-  of << indent << " ROINodeID=\"" << (this->ROINodeID ? this->ROINodeID : "NULL") << "\"";
-  of << indent << " volumePropertyNodeID=\"" << (this->VolumePropertyNodeID ? this->VolumePropertyNodeID : "NULL") << "\"";
-  of << indent << " threshold=\"" << this->Threshold[0] << " " << this->Threshold[1] << "\"";
-  //of << indent << " useThreshold=\"" << this->UseThreshold << "\"";
-  of << indent << " followVolumeDisplayNode=\"" << this->FollowVolumeDisplayNode << "\"";
-  of << indent << " ignoreVolumeDisplayNodeThreshold=\"" << this->IgnoreVolumeDisplayNodeThreshold << "\"";
-  of << indent << " useSingleVolumeProperty=\"" << this->UseSingleVolumeProperty << "\"";
-  of << indent << " windowLevel=\"" << this->WindowLevel[0] << " " << this->WindowLevel[1] << "\"";
+  of << " volumeNodeID=\"" << (this->VolumeNodeID ? this->VolumeNodeID : "NULL") << "\"";
+  of << " croppingEnabled=\""<< this->CroppingEnabled << "\"";
+  of << " ROINodeID=\"" << (this->ROINodeID ? this->ROINodeID : "NULL") << "\"";
+  of << " volumePropertyNodeID=\"" << (this->VolumePropertyNodeID ? this->VolumePropertyNodeID : "NULL") << "\"";
+  of << " threshold=\"" << this->Threshold[0] << " " << this->Threshold[1] << "\"";
+  of << " followVolumeDisplayNode=\"" << this->FollowVolumeDisplayNode << "\"";
+  of << " ignoreVolumeDisplayNodeThreshold=\"" << this->IgnoreVolumeDisplayNodeThreshold << "\"";
+  of << " useSingleVolumeProperty=\"" << this->UseSingleVolumeProperty << "\"";
+  of << " windowLevel=\"" << this->WindowLevel[0] << " " << this->WindowLevel[1] << "\"";
 }
 
 //----------------------------------------------------------------------------

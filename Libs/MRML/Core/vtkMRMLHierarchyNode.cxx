@@ -85,18 +85,16 @@ void vtkMRMLHierarchyNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
   if (this->ParentNodeIDReference != NULL)
     {
-    of << indent << " parentNodeRef=\"" << this->ParentNodeIDReference << "\"";
+    of << " parentNodeRef=\"" << this->ParentNodeIDReference << "\"";
     }
   if (this->AssociatedNodeIDReference != NULL)
     {
-    of << indent << " associatedNodeRef=\"" << this->AssociatedNodeIDReference << "\"";
+    of << " associatedNodeRef=\"" << this->AssociatedNodeIDReference << "\"";
     }
-  of << indent << " sortingValue=\"" << this->SortingValue << "\"";
-  of << indent << " allowMultipleChildren=\"" << (this->AllowMultipleChildren ? "true" : "false") << "\"";
+  of << " sortingValue=\"" << this->SortingValue << "\"";
+  of << " allowMultipleChildren=\"" << (this->AllowMultipleChildren ? "true" : "false") << "\"";
 }
 
 //----------------------------------------------------------------------------

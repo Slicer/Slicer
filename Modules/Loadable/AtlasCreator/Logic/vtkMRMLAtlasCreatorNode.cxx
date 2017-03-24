@@ -154,8 +154,6 @@ void vtkMRMLAtlasCreatorNode::WriteXML(ostream& of, int nIndent)
 
   // Write all MRML node attributes into output stream
 
-  vtkIndent indent(nIndent);
-
   if (this->OriginalImagesFilePathList != 0)
     {
     of << " OriginalImagesFilePathList =\"" << this->OriginalImagesFilePathList << "\"";

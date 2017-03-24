@@ -67,9 +67,7 @@ void vtkMRMLCPURayCastVolumeRenderingDisplayNode::WriteXML(ostream& of, int nInd
 {
   this->Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
-  of << indent << " raycastTechnique=\"" << this->RaycastTechnique << "\"";
+  of << " raycastTechnique=\"" << this->RaycastTechnique << "\"";
 }
 
 //----------------------------------------------------------------------------

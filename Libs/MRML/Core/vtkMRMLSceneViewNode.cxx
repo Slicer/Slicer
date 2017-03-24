@@ -66,14 +66,12 @@ void vtkMRMLSceneViewNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
-  of << indent << " screenshotType=\"" << this->GetScreenShotType() << "\"";
+  of << " screenshotType=\"" << this->GetScreenShotType() << "\"";
 
   vtkStdString description = this->GetSceneViewDescription();
   vtksys::SystemTools::ReplaceString(description,"\n","[br]");
 
-  of << indent << " sceneViewDescription=\"" << description << "\"";
+  of << " sceneViewDescription=\"" << description << "\"";
 }
 
 //----------------------------------------------------------------------------

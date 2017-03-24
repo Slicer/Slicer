@@ -66,8 +66,6 @@ void vtkMRMLFreeSurferProceduralColorNode::WriteXML(ostream& of, int nIndent)
 
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
   // only print out the look up table if ?
   if (this->LookupTable != NULL)
     {

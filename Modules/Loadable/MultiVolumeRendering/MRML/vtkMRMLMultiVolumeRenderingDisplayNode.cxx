@@ -285,35 +285,33 @@ void vtkMRMLMultiVolumeRenderingDisplayNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
+  of << " bgVolumeNodeID=\"" << (this->BgVolumeNodeID ? this->BgVolumeNodeID : "NULL") << "\"";
+  of << " fgVolumeNodeID=\"" << (this->FgVolumeNodeID ? this->FgVolumeNodeID : "NULL") << "\"";
+  of << " labelmapVolumeNodeID=\"" << (this->LabelmapVolumeNodeID ? this->LabelmapVolumeNodeID : "NULL") << "\"";
 
-  of << indent << " bgVolumeNodeID=\"" << (this->BgVolumeNodeID ? this->BgVolumeNodeID : "NULL") << "\"";
-  of << indent << " fgVolumeNodeID=\"" << (this->FgVolumeNodeID ? this->FgVolumeNodeID : "NULL") << "\"";
-  of << indent << " labelmapVolumeNodeID=\"" << (this->LabelmapVolumeNodeID ? this->LabelmapVolumeNodeID : "NULL") << "\"";
+  of << " bgCroppingEnabled=\""<< this->BgCroppingEnabled << "\"";
+  of << " fgCroppingEnabled=\""<< this->FgCroppingEnabled << "\"";
+  of << " labelmapCroppingEnabled=\""<< this->LabelmapCroppingEnabled << "\"";
 
-  of << indent << " bgCroppingEnabled=\""<< this->BgCroppingEnabled << "\"";
-  of << indent << " fgCroppingEnabled=\""<< this->FgCroppingEnabled << "\"";
-  of << indent << " labelmapCroppingEnabled=\""<< this->LabelmapCroppingEnabled << "\"";
+  of << " bgROINodeID=\"" << (this->BgROINodeID ? this->BgROINodeID : "NULL") << "\"";
+  of << " fgROINodeID=\"" << (this->FgROINodeID ? this->FgROINodeID : "NULL") << "\"";
+  of << " labelmapROINodeID=\"" << (this->LabelmapROINodeID ? this->LabelmapROINodeID : "NULL") << "\"";
 
-  of << indent << " bgROINodeID=\"" << (this->BgROINodeID ? this->BgROINodeID : "NULL") << "\"";
-  of << indent << " fgROINodeID=\"" << (this->FgROINodeID ? this->FgROINodeID : "NULL") << "\"";
-  of << indent << " labelmapROINodeID=\"" << (this->LabelmapROINodeID ? this->LabelmapROINodeID : "NULL") << "\"";
+  of << " bgVolumePropertyNodeID=\"" << (this->BgVolumePropertyNodeID ? this->BgVolumePropertyNodeID : "NULL") << "\"";
+  of << " fgVolumePropertyNodeID=\"" << (this->FgVolumePropertyNodeID ? this->FgVolumePropertyNodeID : "NULL") << "\"";
 
-  of << indent << " bgVolumePropertyNodeID=\"" << (this->BgVolumePropertyNodeID ? this->BgVolumePropertyNodeID : "NULL") << "\"";
-  of << indent << " fgVolumePropertyNodeID=\"" << (this->FgVolumePropertyNodeID ? this->FgVolumePropertyNodeID : "NULL") << "\"";
+  of << " bgRaycastTechnique=\"" << this->BgRaycastTechnique << "\"";
+  of << " fgRaycastTechnique=\"" << this->FgRaycastTechnique << "\"";
 
-  of << indent << " bgRaycastTechnique=\"" << this->BgRaycastTechnique << "\"";
-  of << indent << " fgRaycastTechnique=\"" << this->FgRaycastTechnique << "\"";
+  of << " multiVolumeFusionMethod=\"" << this->MultiVolumeFusionMethod << "\"";
 
-  of << indent << " multiVolumeFusionMethod=\"" << this->MultiVolumeFusionMethod << "\"";
+  of << " bgFgRatio=\"" << this->BgFgRatio << "\"";
 
-  of << indent << " bgFgRatio=\"" << this->BgFgRatio << "\"";
+  of << " bgFollowVolumeDisplayNode=\"" << this->BgFollowVolumeDisplayNode << "\"";
+  of << " bgIgnoreVolumeDisplayNodeThreshold=\"" << this->BgIgnoreVolumeDisplayNodeThreshold << "\"";
 
-  of << indent << " bgFollowVolumeDisplayNode=\"" << this->BgFollowVolumeDisplayNode << "\"";
-  of << indent << " bgIgnoreVolumeDisplayNodeThreshold=\"" << this->BgIgnoreVolumeDisplayNodeThreshold << "\"";
-
-  of << indent << " fgFollowVolumeDisplayNode=\"" << this->FgFollowVolumeDisplayNode << "\"";
-  of << indent << " fgIgnoreVolumeDisplayNodeThreshold=\"" << this->FgIgnoreVolumeDisplayNodeThreshold << "\"";
+  of << " fgFollowVolumeDisplayNode=\"" << this->FgFollowVolumeDisplayNode << "\"";
+  of << " fgIgnoreVolumeDisplayNodeThreshold=\"" << this->FgIgnoreVolumeDisplayNodeThreshold << "\"";
 }
 
 //----------------------------------------------------------------------------

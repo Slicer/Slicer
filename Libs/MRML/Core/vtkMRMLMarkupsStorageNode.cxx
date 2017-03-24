@@ -74,9 +74,7 @@ void vtkMRMLMarkupsStorageNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of,nIndent);
 
-  vtkIndent indent(nIndent);
-
-  of << indent << " coordinateSystem=\"" << this->CoordinateSystem << "\"";
+  of << " coordinateSystem=\"" << this->CoordinateSystem << "\"";
 }
 
 //----------------------------------------------------------------------------

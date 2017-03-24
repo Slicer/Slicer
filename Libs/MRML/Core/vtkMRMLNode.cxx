@@ -35,9 +35,6 @@ vtkMRMLNode::vtkMRMLNode()
 {
   this->ID = NULL;
 
-  // By default nodes have no effect on indentation
-  this->Indent = 0;
-
   // Strings
   this->Description = NULL;
 
@@ -328,7 +325,6 @@ void vtkMRMLNode::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent << "Selectable: " << this->Selectable << "\n";
   os << indent << "Selected: " << this->Selected << "\n";
-  os << indent << "Indent:      " << this->Indent << "\n";
 
   if (!this->Attributes.empty())
     {
@@ -521,31 +517,32 @@ void vtkMRMLNode::ParseReferencesAttribute(const char *attValue,
 void vtkMRMLNode::WriteXML(ostream& of, int nIndent)
 {
   vtkIndent indent(nIndent);
+  of << indent;
   if (this->ID != NULL)
     {
-    of << indent << " id=\"" << this->ID << "\"";
+    of << " id=\"" << this->ID << "\"";
     }
   if (this->Name != NULL)
     {
-    of << indent << " name=\"" << this->Name << "\"";
+    of << " name=\"" << this->Name << "\"";
     }
   if (this->Description != NULL)
     {
-    of << indent << " description=\"" << this->Description << "\"";
+    of << " description=\"" << this->Description << "\"";
     }
-  of << indent << " hideFromEditors=\"" << (this->HideFromEditors ? "true" : "false") << "\"";
+  of << " hideFromEditors=\"" << (this->HideFromEditors ? "true" : "false") << "\"";
 
-  of << indent << " selectable=\"" << (this->Selectable ? "true" : "false") << "\"";
-  of << indent << " selected=\"" << (this->Selected ? "true" : "false") << "\"";
+  of << " selectable=\"" << (this->Selectable ? "true" : "false") << "\"";
+  of << " selected=\"" << (this->Selected ? "true" : "false") << "\"";
 
   if (this->SingletonTag)
     {
-    of << indent << " singletonTag=\"" << this->SingletonTag << "\"";
+    of << " singletonTag=\"" << this->SingletonTag << "\"";
     }
 
   if (this->Attributes.size())
     {
-    of << indent << " attributes=\"";
+    of << " attributes=\"";
     AttributesType::const_iterator it;
     AttributesType::const_iterator begin = this->Attributes.begin();
     AttributesType::const_iterator end = this->Attributes.end();
@@ -598,15 +595,15 @@ void vtkMRMLNode::WriteXML(ostream& of, int nIndent)
       {
       if (referenceMRMLAttributeName.length() > 0)
         {
-        of << indent << " " << referenceMRMLAttributeName << "=\"" << ss.str().c_str() << "\"";
+        of << " " << referenceMRMLAttributeName << "=\"" << ss.str().c_str() << "\"";
         }
       ssRef << ";";
       }
-    }//for (it = this->NodeReferences.begin(); it != this->NodeReferences.end(); it++)
+    }
 
     if (!(ssRef.str().empty()))
       {
-      of << indent << " " << "references=\"" << ssRef.str().c_str() << "\"";
+      of << " " << "references=\"" << ssRef.str().c_str() << "\"";
       }
 }
 

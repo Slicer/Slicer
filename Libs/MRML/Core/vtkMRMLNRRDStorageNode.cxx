@@ -51,12 +51,10 @@ vtkMRMLNRRDStorageNode::~vtkMRMLNRRDStorageNode()
 void vtkMRMLNRRDStorageNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
-  vtkIndent indent(nIndent);
 
   std::stringstream ss;
   ss << this->CenterImage;
-  of << indent << " centerImage=\"" << ss.str() << "\"";
-
+  of << " centerImage=\"" << ss.str() << "\"";
 }
 
 //----------------------------------------------------------------------------

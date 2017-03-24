@@ -140,44 +140,41 @@ void vtkMRMLInteractionNode::WriteXML(ostream& of, int nIndent)
 
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
   if ( this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place )
     {
-    of << indent << " currentInteractionMode=\"" << "Place" << "\"";
+    of << " currentInteractionMode=\"" << "Place" << "\"";
     }
   else if ( this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::ViewTransform )
     {
-    of << indent << " currentInteractionMode=\"" << "ViewTransform" << "\"";
+    of << " currentInteractionMode=\"" << "ViewTransform" << "\"";
     }
 //  else if ( this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::SelectRegion )
 //    {
-//    of << indent << " currentInteractionMode=\"" << "SelectRegion" << "\"";
+//    of << " currentInteractionMode=\"" << "SelectRegion" << "\"";
 //    }
 //  else if ( this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::LassoRegion )
 //    {
-//    of << indent << " currentInteractionMode=\"" << "LassoRegion" << "\"";
+//    of << " currentInteractionMode=\"" << "LassoRegion" << "\"";
 //    }
 
-  of << indent << " placeModePersistence=\"" << (this->PlaceModePersistence ? "true" : "false") << "\"";
+  of << " placeModePersistence=\"" << (this->PlaceModePersistence ? "true" : "false") << "\"";
 
   if ( this->GetLastInteractionMode() == vtkMRMLInteractionNode::Place )
     {
-    of << indent << " lastInteractionMode=\"" << "Place" << "\"";
+    of << " lastInteractionMode=\"" << "Place" << "\"";
     }
   else if ( this->GetLastInteractionMode() == vtkMRMLInteractionNode::ViewTransform )
     {
-    of << indent << " lastInteractionMode=\"" << "ViewTransform" << "\"";
+    of << " lastInteractionMode=\"" << "ViewTransform" << "\"";
     }
 //  else if ( this->GetLastInteractionMode() == vtkMRMLInteractionNode::SelectRegion )
 //    {
-//    of << indent << " lastInteractionMode=\"" << "SelectRegion" << "\"";
+//    of << " lastInteractionMode=\"" << "SelectRegion" << "\"";
 //    }
 //  else if ( this->GetLastInteractionMode() == vtkMRMLInteractionNode::LassoRegion )
 //    {
-//    of << indent << " lastInteractionMode=\"" << "LassoRegion" << "\"";
+//    of << " lastInteractionMode=\"" << "LassoRegion" << "\"";
 //    }
-
 }
 
 //----------------------------------------------------------------------------

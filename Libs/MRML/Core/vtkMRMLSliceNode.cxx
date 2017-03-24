@@ -866,47 +866,45 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
 
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
-  of << indent << " fieldOfView=\"" <<
+  of << " fieldOfView=\"" <<
         this->FieldOfView[0] << " " <<
         this->FieldOfView[1] << " " <<
         this->FieldOfView[2] << "\"";
 
-  of << indent << " dimensions=\"" <<
+  of << " dimensions=\"" <<
         this->Dimensions[0] << " " <<
         this->Dimensions[1] << " " <<
         this->Dimensions[2] << "\"";
 
-  of << indent << " xyzOrigin=\"" <<
+  of << " xyzOrigin=\"" <<
         this->XYZOrigin[0] << " " <<
         this->XYZOrigin[1] << " " <<
         this->XYZOrigin[2] << "\"";
 
-  of << indent << " sliceResolutionMode=\"" << this->SliceResolutionMode << "\"";
+  of << " sliceResolutionMode=\"" << this->SliceResolutionMode << "\"";
 
-  of << indent << " uvwExtents=\"" <<
+  of << " uvwExtents=\"" <<
         this->UVWExtents[0] << " " <<
         this->UVWExtents[1] << " " <<
         this->UVWExtents[2] << "\"";
 
-  of << indent << " uvwDimensions=\"" <<
+  of << " uvwDimensions=\"" <<
         this->UVWDimensions[0] << " " <<
         this->UVWDimensions[1] << " " <<
         this->UVWDimensions[2] << "\"";
 
-  of << indent << " uvwOrigin=\"" <<
+  of << " uvwOrigin=\"" <<
         this->UVWOrigin[0] << " " <<
         this->UVWOrigin[1] << " " <<
         this->UVWOrigin[2] << "\"";
 
 
-  of << indent << " activeSlice=\"" << this->ActiveSlice << "\"";
+  of << " activeSlice=\"" << this->ActiveSlice << "\"";
 
-  of << indent << " layoutGridRows=\"" <<
+  of << " layoutGridRows=\"" <<
         this->LayoutGridRows << "\"";
 
-  of << indent << " layoutGridColumns=\"" <<
+  of << " layoutGridColumns=\"" <<
         this->LayoutGridColumns << "\"";
 
   std::stringstream ss;
@@ -922,7 +920,7 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
         }
       }
     }
-  of << indent << " sliceToRAS=\"" << ss.str().c_str() << "\"";
+  of << " sliceToRAS=\"" << ss.str().c_str() << "\"";
 
   std::vector< OrientationPresetType >::iterator it;
   for (it = this->OrientationMatrices.begin(); it != this->OrientationMatrices.end(); ++it)
@@ -940,22 +938,22 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
           }
         }
       }
-      of << indent << " orientationMatrix"<< this->URLEncodeString(it->first.c_str()) <<"=\"" << ss.str().c_str() << "\"";
+      of << " orientationMatrix"<< this->URLEncodeString(it->first.c_str()) <<"=\"" << ss.str().c_str() << "\"";
     }
 
-  of << indent << " layoutColor=\"" << this->LayoutColor[0] << " "
+  of << " layoutColor=\"" << this->LayoutColor[0] << " "
      << this->LayoutColor[1] << " " << this->LayoutColor[2] << "\"";
-  of << indent << " orientation=\"" << this->GetOrientation() << "\"";
+  of << " orientation=\"" << this->GetOrientation() << "\"";
   if (this->OrientationReference)
     {
-    of << indent << " orientationReference=\"" << this->OrientationReference << "\"";
+    of << " orientationReference=\"" << this->OrientationReference << "\"";
     }
-  of << indent << " jumpMode=\"" << this->JumpMode << "\"";
-  of << indent << " sliceVisibility=\"" << (this->SliceVisible ? "true" : "false") << "\"";
-  of << indent << " widgetVisibility=\"" << (this->WidgetVisible ? "true" : "false") << "\"";
-  of << indent << " useLabelOutline=\"" << (this->UseLabelOutline ? "true" : "false") << "\"";
-  of << indent << " sliceSpacingMode=\"" << this->SliceSpacingMode << "\"";
-  of << indent << " prescribedSliceSpacing=\""
+  of << " jumpMode=\"" << this->JumpMode << "\"";
+  of << " sliceVisibility=\"" << (this->SliceVisible ? "true" : "false") << "\"";
+  of << " widgetVisibility=\"" << (this->WidgetVisible ? "true" : "false") << "\"";
+  of << " useLabelOutline=\"" << (this->UseLabelOutline ? "true" : "false") << "\"";
+  of << " sliceSpacingMode=\"" << this->SliceSpacingMode << "\"";
+  of << " prescribedSliceSpacing=\""
      << this->PrescribedSliceSpacing[0] << " "
      << this->PrescribedSliceSpacing[1] << " "
      << this->PrescribedSliceSpacing[2] << "\"";
@@ -971,9 +969,8 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
     }
   if (this->ThreeDViewIDs.size() > 0)
     {
-    of << indent << " threeDViewNodeRef=\"" << ss.str().c_str() << "\"";
+    of << " threeDViewNodeRef=\"" << ss.str().c_str() << "\"";
     }
-
 }
 
 //----------------------------------------------------------------------------

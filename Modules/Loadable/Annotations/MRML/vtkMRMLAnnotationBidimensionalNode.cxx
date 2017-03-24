@@ -75,26 +75,24 @@ void vtkMRMLAnnotationBidimensionalNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
-  of << indent << "AnnotationFormat=\"";
+  of << "AnnotationFormat=\"";
   if (this->AnnotationFormat)
     {
-      of << this->AnnotationFormat << "\"";
+    of << this->AnnotationFormat << "\"";
     }
   else
     {
-      of << "\"";
+    of << "\"";
     }
-  of << indent << "Resolution=\""<< this->Resolution << "\"";
+  of << "Resolution=\""<< this->Resolution << "\"";
 
   if (this->measurement1)
     {
-    of << indent << "measurement1=\"" << this->measurement1 << "\"";
+    of << "measurement1=\"" << this->measurement1 << "\"";
     }
   if (this->measurement2)
     {
-    of << indent << "measurement2=\"" << this->measurement2 << "\"";
+    of << "measurement2=\"" << this->measurement2 << "\"";
     }
 }
 

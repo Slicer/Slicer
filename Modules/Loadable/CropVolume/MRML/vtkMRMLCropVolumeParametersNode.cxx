@@ -121,12 +121,10 @@ void vtkMRMLCropVolumeParametersNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
-  of << indent << " voxelBased=\"" << (this->VoxelBased ? "true" : "false") << "\"";
-  of << indent << " interpolationMode=\"" << this->InterpolationMode << "\"";
-  of << indent << " isotropicResampling=\"" << (this->IsotropicResampling ? "true" : "false") << "\"";
-  of << indent << " spaceScalingConst=\"" << this->SpacingScalingConst << "\"";
+  of << " voxelBased=\"" << (this->VoxelBased ? "true" : "false") << "\"";
+  of << " interpolationMode=\"" << this->InterpolationMode << "\"";
+  of << " isotropicResampling=\"" << (this->IsotropicResampling ? "true" : "false") << "\"";
+  of << " spaceScalingConst=\"" << this->SpacingScalingConst << "\"";
 }
 
 //----------------------------------------------------------------------------

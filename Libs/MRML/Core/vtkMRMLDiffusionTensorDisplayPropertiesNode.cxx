@@ -85,21 +85,19 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::WriteXML(ostream& of, int nInd
 
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
-  of << indent << " glyphGeometry=\"" << this->GlyphGeometry << "\"";
-  of << indent << " colorGlyphBy=\"" << this->ColorGlyphBy << "\"";
-  of << indent << " glyphScaleFactor=\"" << this->GlyphScaleFactor << "\"";
-  of << indent << " glyphEigenvector=\"" << this->GlyphEigenvector << "\"";
-  of << indent << " glyphExtractEigenvalues=\"" << this->GlyphExtractEigenvalues << "\"";
-  of << indent << " lineGlyphResolution=\"" << this->LineGlyphResolution << "\"";
-  of << indent << " tubeGlyphRadius=\"" << this->TubeGlyphRadius << "\"";
-  of << indent << " tubeGlyphNumberOfSides=\"" << this->TubeGlyphNumberOfSides << "\"";
-  of << indent << " ellipsoidGlyphThetaResolution=\"" << this->EllipsoidGlyphThetaResolution << "\"";
-  of << indent << " ellipsoidGlyphPhiResolution=\"" << this->EllipsoidGlyphPhiResolution << "\"";
-  of << indent << " superquadricGlyphGamma=\"" << this->SuperquadricGlyphGamma << "\"";
-  of << indent << " superquadricGlyphThetaResolution=\"" << this->SuperquadricGlyphThetaResolution << "\"";
-  of << indent << " superquadricGlyphPhiResolution=\"" << this->SuperquadricGlyphPhiResolution << "\"";
+  of << " glyphGeometry=\"" << this->GlyphGeometry << "\"";
+  of << " colorGlyphBy=\"" << this->ColorGlyphBy << "\"";
+  of << " glyphScaleFactor=\"" << this->GlyphScaleFactor << "\"";
+  of << " glyphEigenvector=\"" << this->GlyphEigenvector << "\"";
+  of << " glyphExtractEigenvalues=\"" << this->GlyphExtractEigenvalues << "\"";
+  of << " lineGlyphResolution=\"" << this->LineGlyphResolution << "\"";
+  of << " tubeGlyphRadius=\"" << this->TubeGlyphRadius << "\"";
+  of << " tubeGlyphNumberOfSides=\"" << this->TubeGlyphNumberOfSides << "\"";
+  of << " ellipsoidGlyphThetaResolution=\"" << this->EllipsoidGlyphThetaResolution << "\"";
+  of << " ellipsoidGlyphPhiResolution=\"" << this->EllipsoidGlyphPhiResolution << "\"";
+  of << " superquadricGlyphGamma=\"" << this->SuperquadricGlyphGamma << "\"";
+  of << " superquadricGlyphThetaResolution=\"" << this->SuperquadricGlyphThetaResolution << "\"";
+  of << " superquadricGlyphPhiResolution=\"" << this->SuperquadricGlyphPhiResolution << "\"";
 }
 
 //----------------------------------------------------------------------------

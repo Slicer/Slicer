@@ -54,8 +54,6 @@ void vtkMRMLColorTableNode::WriteXML(ostream& of, int nIndent)
 
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
   // only print out the look up table size so that the table can be
   // initialized properly
   if (this->LookupTable != NULL)

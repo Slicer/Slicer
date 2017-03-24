@@ -76,119 +76,116 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
 
   this->Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
-  of << indent << " fieldOfView=\"" << this->GetFieldOfView() << "\"";
-  of << indent << " letterSize=\"" << this->GetLetterSize() << "\"";
-  of << indent << " boxVisible=\"" << (this->BoxVisible ? "true" : "false") << "\"";
-  of << indent << " fiducialsVisible=\"" << (this->FiducialsVisible ? "true" : "false") << "\"";
-  of << indent << " fiducialLabelsVisible=\"" << (this->FiducialLabelsVisible ? "true" : "false") << "\"";
-  of << indent << " axisLabelsVisible=\"" << (this->AxisLabelsVisible ? "true" : "false") << "\"";
-  of << indent << " axisLabelsCameraDependent=\"" << (this->AxisLabelsCameraDependent ? "true" : "false") << "\"";
+  of << " fieldOfView=\"" << this->GetFieldOfView() << "\"";
+  of << " letterSize=\"" << this->GetLetterSize() << "\"";
+  of << " boxVisible=\"" << (this->BoxVisible ? "true" : "false") << "\"";
+  of << " fiducialsVisible=\"" << (this->FiducialsVisible ? "true" : "false") << "\"";
+  of << " fiducialLabelsVisible=\"" << (this->FiducialLabelsVisible ? "true" : "false") << "\"";
+  of << " axisLabelsVisible=\"" << (this->AxisLabelsVisible ? "true" : "false") << "\"";
+  of << " axisLabelsCameraDependent=\"" << (this->AxisLabelsCameraDependent ? "true" : "false") << "\"";
 
   // spin or rock?
   if ( this->GetAnimationMode() == vtkMRMLViewNode::Off )
     {
-    of << indent << " animationMode=\"" << "Off" << "\"";
+    of << " animationMode=\"" << "Off" << "\"";
     }
   else if ( this->GetAnimationMode() == vtkMRMLViewNode::Spin )
     {
-    of << indent << " animationMode=\"" << "Spin" << "\"";
+    of << " animationMode=\"" << "Spin" << "\"";
     }
   else if ( this->GetAnimationMode() == vtkMRMLViewNode::Rock )
     {
-    of << indent << " animationMode=\"" << "Rock" << "\"";
+    of << " animationMode=\"" << "Rock" << "\"";
     }
 
   if ( this->GetViewAxisMode() == vtkMRMLViewNode::LookFrom )
     {
-    of << indent << " viewAxisMode=\"" << "LookFrom" << "\"";
+    of << " viewAxisMode=\"" << "LookFrom" << "\"";
     }
   else if ( this->GetViewAxisMode() == vtkMRMLViewNode::RotateAround )
     {
-    of << indent << " viewAxisMode=\"" << "RotateAround" << "\"";
+    of << " viewAxisMode=\"" << "RotateAround" << "\"";
     }
 
   // configure spin
-  of << indent << " spinDegrees=\"" << this->GetSpinDegrees() << "\"";
-  of << indent << " spinMs=\"" << this->GetAnimationMs() << "\"";
+  of << " spinDegrees=\"" << this->GetSpinDegrees() << "\"";
+  of << " spinMs=\"" << this->GetAnimationMs() << "\"";
   if ( this->GetSpinDirection() == vtkMRMLViewNode::PitchUp )
     {
-    of << indent << " spinDirection=\"" << "PitchUp" << "\"";
+    of << " spinDirection=\"" << "PitchUp" << "\"";
     }
   else if ( this->GetSpinDirection() == vtkMRMLViewNode::PitchDown )
     {
-    of << indent << " spinDirection=\"" << "PitchDown" << "\"";
+    of << " spinDirection=\"" << "PitchDown" << "\"";
     }
   else if ( this->GetSpinDirection() == vtkMRMLViewNode::RollLeft )
     {
-    of << indent << " spinDirection=\"" << "RollLeft" << "\"";
+    of << " spinDirection=\"" << "RollLeft" << "\"";
     }
   else if ( this->GetSpinDirection() == vtkMRMLViewNode::RollRight )
     {
-    of << indent << " spinDirection=\"" << "RollRight" << "\"";
+    of << " spinDirection=\"" << "RollRight" << "\"";
     }
   else if ( this->GetSpinDirection() == vtkMRMLViewNode::YawLeft )
     {
-    of << indent << " spinDirection=\"" << "YawLeft" << "\"";
+    of << " spinDirection=\"" << "YawLeft" << "\"";
     }
   else if ( this->GetSpinDirection() == vtkMRMLViewNode::YawRight )
     {
-    of << indent << " spinDirection=\"" << "YawRight" << "\"";
+    of << " spinDirection=\"" << "YawRight" << "\"";
     }
 
-  of << indent << " rotateDegrees=\"" << this->GetRotateDegrees() << "\"";
+  of << " rotateDegrees=\"" << this->GetRotateDegrees() << "\"";
 
   // configure rock
-  of << indent << " rockLength=\"" << this->GetRockLength() << "\"";
-  of << indent << " rockCount=\"" << this->GetRockCount() << "\"";
+  of << " rockLength=\"" << this->GetRockLength() << "\"";
+  of << " rockCount=\"" << this->GetRockCount() << "\"";
 
   // configure stereo
   if ( this->GetStereoType() == vtkMRMLViewNode::NoStereo )
     {
-    of << indent << " stereoType=\"" << "NoStereo" << "\"";
+    of << " stereoType=\"" << "NoStereo" << "\"";
     }
   else if ( this->GetStereoType() == vtkMRMLViewNode::RedBlue )
     {
-    of << indent << " stereoType=\"" << "RedBlue" << "\"";
+    of << " stereoType=\"" << "RedBlue" << "\"";
     }
   else if ( this->GetStereoType() == vtkMRMLViewNode::Anaglyph )
     {
-    of << indent << " stereoType=\"" << "Anaglyph" << "\"";
+    of << " stereoType=\"" << "Anaglyph" << "\"";
     }
   else if ( this->GetStereoType() == vtkMRMLViewNode::QuadBuffer )
     {
-    of << indent << " stereoType=\"" << "QuadBuffer" << "\"";
+    of << " stereoType=\"" << "QuadBuffer" << "\"";
     }
   else if ( this->GetStereoType() == vtkMRMLViewNode::Interlaced )
     {
-    of << indent << " stereoType=\"" << "Interlaced" << "\"";
+    of << " stereoType=\"" << "Interlaced" << "\"";
     }
   else if ( this->GetStereoType() == vtkMRMLViewNode::UserDefined_1 )
     {
-    of << indent << " stereoType=\"" << "UserDefined_1" << "\"";
+    of << " stereoType=\"" << "UserDefined_1" << "\"";
     }
   else if ( this->GetStereoType() == vtkMRMLViewNode::UserDefined_2 )
     {
-    of << indent << " stereoType=\"" << "UserDefined_2" << "\"";
+    of << " stereoType=\"" << "UserDefined_2" << "\"";
     }
   else if ( this->GetStereoType() == vtkMRMLViewNode::UserDefined_3 )
     {
-    of << indent << " stereoType=\"" << "UserDefined_3" << "\"";
+    of << " stereoType=\"" << "UserDefined_3" << "\"";
     }
 
   // configure render mode
   if (this->GetRenderMode() == vtkMRMLViewNode::Perspective )
     {
-    of << indent << " renderMode=\"" << "Perspective" << "\"";
+    of << " renderMode=\"" << "Perspective" << "\"";
     }
   else if ( this->GetRenderMode() == vtkMRMLViewNode::Orthographic )
     {
-    of << indent << " renderMode=\"" << "Orthographic" << "\"";
+    of << " renderMode=\"" << "Orthographic" << "\"";
     }
 
-  of << indent << " useDepthPeeling=\"" << this->GetUseDepthPeeling() << "\"";
-
+  of << " useDepthPeeling=\"" << this->GetUseDepthPeeling() << "\"";
 }
 
 //----------------------------------------------------------------------------

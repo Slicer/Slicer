@@ -215,47 +215,45 @@ void vtkMRMLScalarVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
   {
   std::stringstream ss;
   ss << this->GetWindow();
-  of << indent << " window=\"" << ss.str() << "\"";
+  of << " window=\"" << ss.str() << "\"";
   }
   {
   std::stringstream ss;
   ss << this->GetLevel();
-  of << indent << " level=\"" << ss.str() << "\"";
+  of << " level=\"" << ss.str() << "\"";
   }
   {
   std::stringstream ss;
   ss << this->GetUpperThreshold();
-  of << indent << " upperThreshold=\"" << ss.str() << "\"";
+  of << " upperThreshold=\"" << ss.str() << "\"";
   }
   {
   std::stringstream ss;
   ss << this->GetLowerThreshold();
-  of << indent << " lowerThreshold=\"" << ss.str() << "\"";
+  of << " lowerThreshold=\"" << ss.str() << "\"";
   }
   {
   std::stringstream ss;
   ss << this->Interpolate;
-  of << indent << " interpolate=\"" << ss.str() << "\"";
+  of << " interpolate=\"" << ss.str() << "\"";
   }
   {
   std::stringstream ss;
   ss << this->AutoWindowLevel;
-  of << indent << " autoWindowLevel=\"" << ss.str() << "\"";
+  of << " autoWindowLevel=\"" << ss.str() << "\"";
   }
   {
   std::stringstream ss;
   ss << this->ApplyThreshold;
-  of << indent << " applyThreshold=\"" << ss.str() << "\"";
+  of << " applyThreshold=\"" << ss.str() << "\"";
   }
   {
   std::stringstream ss;
   ss << this->AutoThreshold;
-  of << indent << " autoThreshold=\"" << ss.str() << "\"";
+  of << " autoThreshold=\"" << ss.str() << "\"";
   }
   if (this->WindowLevelPresets.size() > 0)
     {
@@ -265,7 +263,7 @@ void vtkMRMLScalarVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
       ss << this->WindowLevelPresets[p].Window;
       ss << "|";
       ss << this->WindowLevelPresets[p].Level;
-      of << indent << " windowLevelPreset" << p << "=\"" << ss.str() << "\"";
+      of << " windowLevelPreset" << p << "=\"" << ss.str() << "\"";
       }
     }
 }

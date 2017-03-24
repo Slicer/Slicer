@@ -38,17 +38,14 @@ void vtkMRMLAnnotationSnapshotNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
-  of << indent << " screenshotType=\"" << this->GetScreenShotType() << "\"";
+  of << " screenshotType=\"" << this->GetScreenShotType() << "\"";
 
   vtkStdString description = this->GetSnapshotDescription();
   vtksys::SystemTools::ReplaceString(description,"\n","[br]");
 
-  of << indent << " snapshotDescription=\"" << description << "\"";
+  of << " snapshotDescription=\"" << description << "\"";
 
-  of << indent << " scaleFactor=\"" << this->GetScaleFactor() << "\"";
-
+  of << " scaleFactor=\"" << this->GetScaleFactor() << "\"";
 }
 
 

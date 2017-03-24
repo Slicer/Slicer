@@ -67,16 +67,15 @@ vtkMRMLVolumeArchetypeStorageNode::~vtkMRMLVolumeArchetypeStorageNode()
 void vtkMRMLVolumeArchetypeStorageNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
-  vtkIndent indent(nIndent);
   {
   std::stringstream ss;
   ss << this->CenterImage;
-  of << indent << " centerImage=\"" << ss.str() << "\"";
+  of << " centerImage=\"" << ss.str() << "\"";
   }
   {
   std::stringstream ss;
   ss << this->UseOrientationFromFile;
-  of << indent << " UseOrientationFromFile=\"" << ss.str() << "\"";
+  of << " UseOrientationFromFile=\"" << ss.str() << "\"";
   }
   // SingleFile attribute is not written to file. GetNumberOfFileNames()
   // is used to determine if reader should read from single/multiple files.

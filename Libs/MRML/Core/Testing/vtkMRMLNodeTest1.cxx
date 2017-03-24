@@ -246,7 +246,7 @@ void vtkMRMLNodeTestHelper1::WriteXML(ostream& of, int nIndent)
   vtkIndent indent(nIndent);
   if (this->OtherNodeID != NULL)
     {
-    of << indent << " OtherNodeRef=\"" << this->OtherNodeID << "\"";
+    of << " OtherNodeRef=\"" << this->OtherNodeID << "\"";
     }
 }
 
@@ -290,10 +290,9 @@ void vtkMRMLStorageNodeTestHelper::SetSceneReferences()
 void vtkMRMLStorageNodeTestHelper::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
-  vtkIndent indent(nIndent);
   if (this->OtherNodeID != NULL)
     {
-    of << indent << " OtherNodeRef=\"" << this->OtherNodeID << "\"";
+    of << " OtherNodeRef=\"" << this->OtherNodeID << "\"";
     }
 }
 

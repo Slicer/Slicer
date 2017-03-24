@@ -51,8 +51,6 @@ void vtkMRMLSnapshotClipNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
   vtkMRMLSceneViewNode * node = NULL;
   std::stringstream ss;
   int n;
@@ -65,8 +63,7 @@ void vtkMRMLSnapshotClipNode::WriteXML(ostream& of, int nIndent)
       ss << " ";
       }
     }
-    of << indent << " sceneSnapshotIDs=\"" << ss.str().c_str() << "\"";
-
+    of << " sceneSnapshotIDs=\"" << ss.str().c_str() << "\"";
 }
 
 //----------------------------------------------------------------------------

@@ -83,8 +83,6 @@ void vtkMRMLVolumeNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
   std::stringstream ss;
   for(int i=0; i<3; i++)
     {
@@ -97,12 +95,12 @@ void vtkMRMLVolumeNode::WriteXML(ostream& of, int nIndent)
         }
       }
     }
-    of << indent << " ijkToRASDirections=\"" << ss.str() << "\"";
+  of << " ijkToRASDirections=\"" << ss.str() << "\"";
 
-  of << indent << " spacing=\""
+  of << " spacing=\""
     << this->Spacing[0] << " " << this->Spacing[1] << " " << this->Spacing[2] << "\"";
 
-  of << indent << " origin=\""
+  of << " origin=\""
     << this->Origin[0] << " " << this->Origin[1] << " " << this->Origin[2] << "\"";
 }
 

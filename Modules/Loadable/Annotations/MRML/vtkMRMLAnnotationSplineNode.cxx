@@ -80,9 +80,7 @@ void vtkMRMLAnnotationSplineNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
-  of << indent << " rulerDistanceAnnotationFormat=\"";
+  of << " rulerDistanceAnnotationFormat=\"";
   if (this->DistanceAnnotationFormat)
     {
       of << this->DistanceAnnotationFormat << "\"";
@@ -91,9 +89,7 @@ void vtkMRMLAnnotationSplineNode::WriteXML(ostream& of, int nIndent)
     {
       of << "\"";
     }
-  of << indent << " rulerResolution=\""<< this->Resolution << "\"";
-
-
+  of << " rulerResolution=\""<< this->Resolution << "\"";
 }
 
 

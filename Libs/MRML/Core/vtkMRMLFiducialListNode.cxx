@@ -86,7 +86,6 @@ void vtkMRMLFiducialListNode::WriteXML(ostream& of, int nIndent)
 
   // rest is saved in the storage node file, but it needs to be here as well
   // due to the way the scene snapshots are handled (storage nodes are not re-read)
-  vtkIndent indent(nIndent);
 
   of << " symbolScale=\"" << this->SymbolScale << "\"";
   of << " symbolType=\"" << this->GlyphType << "\"";

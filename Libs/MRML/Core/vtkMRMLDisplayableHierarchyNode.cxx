@@ -52,14 +52,12 @@ void vtkMRMLDisplayableHierarchyNode::WriteXML(ostream& of, int nIndent)
 
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
   if (this->DisplayNodeID != NULL)
     {
-    of << indent << " displayNodeID=\"" << this->DisplayNodeID << "\"";
+    of << " displayNodeID=\"" << this->DisplayNodeID << "\"";
     }
 
-  of << indent << " expanded=\"" << (this->Expanded ? "true" : "false") << "\"";
+  of << " expanded=\"" << (this->Expanded ? "true" : "false") << "\"";
 }
 
 //----------------------------------------------------------------------------

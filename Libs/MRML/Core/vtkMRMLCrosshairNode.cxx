@@ -55,63 +55,61 @@ void vtkMRMLCrosshairNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
   if ( this->CrosshairMode == vtkMRMLCrosshairNode::NoCrosshair )
     {
-    of << indent << " crosshairMode=\"" << "NoCrosshair" << "\"";
+    of << " crosshairMode=\"" << "NoCrosshair" << "\"";
     }
   else if ( this->CrosshairMode == vtkMRMLCrosshairNode::ShowBasic )
     {
-    of << indent << " crosshairMode=\"" << "ShowBasic" << "\"";
+    of << " crosshairMode=\"" << "ShowBasic" << "\"";
     }
   else if ( this->CrosshairMode == vtkMRMLCrosshairNode::ShowIntersection )
     {
-    of << indent << " crosshairMode=\"" << "ShowIntersection" << "\"";
+    of << " crosshairMode=\"" << "ShowIntersection" << "\"";
     }
   else if ( this->CrosshairMode == vtkMRMLCrosshairNode::ShowHashmarks )
     {
-    of << indent << " crosshairMode=\"" << "ShowHashmarks" << "\"";
+    of << " crosshairMode=\"" << "ShowHashmarks" << "\"";
     }
   else if ( this->CrosshairMode == vtkMRMLCrosshairNode::ShowAll )
     {
-    of << indent << " crosshairMode=\"" << "ShowAll" << "\"";
+    of << " crosshairMode=\"" << "ShowAll" << "\"";
     }
   else if ( this->CrosshairMode == vtkMRMLCrosshairNode::ShowSmallBasic )
     {
-    of << indent << " crosshairMode=\"" << "ShowSmallBasic" << "\"";
+    of << " crosshairMode=\"" << "ShowSmallBasic" << "\"";
     }
   else if ( this->CrosshairMode == vtkMRMLCrosshairNode::ShowSmallIntersection )
     {
-    of << indent << " crosshairMode=\"" << "ShowSmallIntersection" << "\"";
+    of << " crosshairMode=\"" << "ShowSmallIntersection" << "\"";
     }
 
-  of << indent << " navigation=\"" << (this->Navigation ? "true" : "false") << "\"";
+  of << " navigation=\"" << (this->Navigation ? "true" : "false") << "\"";
 
   if ( this->CrosshairBehavior == vtkMRMLCrosshairNode::JumpSlice
     || this->CrosshairBehavior == vtkMRMLCrosshairNode::Normal )
     {
-    of << indent << " crosshairBehavior=\"" << "JumpSlice" << "\"";
+    of << " crosshairBehavior=\"" << "JumpSlice" << "\"";
     }
   else if (this->CrosshairBehavior == vtkMRMLCrosshairNode::NoAction)
     {
-    of << indent << " crosshairBehavior=\"" << "NoAction" << "\"";
+    of << " crosshairBehavior=\"" << "NoAction" << "\"";
     }
 
   if ( this->CrosshairThickness == vtkMRMLCrosshairNode::Fine )
     {
-    of << indent << " crosshairThickness=\"" << "Fine" << "\"";
+    of << " crosshairThickness=\"" << "Fine" << "\"";
     }
   else if ( this->CrosshairThickness == vtkMRMLCrosshairNode::Medium )
     {
-    of << indent << " crosshairThickness=\"" << "Medium" << "\"";
+    of << " crosshairThickness=\"" << "Medium" << "\"";
     }
   else if ( this->CrosshairThickness == vtkMRMLCrosshairNode::Thick )
     {
-    of << indent << " crosshairThickness=\"" << "Thick" << "\"";
+    of << " crosshairThickness=\"" << "Thick" << "\"";
     }
 
-  of << indent <<  " crosshairRAS=\"" << this->CrosshairRAS[0] << " "
+  of <<  " crosshairRAS=\"" << this->CrosshairRAS[0] << " "
      << this->CrosshairRAS[1] << " " << this->CrosshairRAS[2] << "\"";
 }
 

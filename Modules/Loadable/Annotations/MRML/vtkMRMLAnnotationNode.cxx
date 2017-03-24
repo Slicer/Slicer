@@ -60,35 +60,34 @@ void vtkMRMLAnnotationNode::WriteXML(ostream& of, int nIndent)
   // vtkMRMLDisplayableNode::WriteXML(of,nIndent);
   Superclass::WriteXML(of,nIndent);
 
-  vtkIndent indent(nIndent);
-
-  of << indent << " referenceNodeID=\"" << (this->ReferenceNodeID ? this->GetReferenceNodeID() : "None") << "\"";
-  of << indent << " locked=\"" << this->Locked << "\"";
+  of << " referenceNodeID=\"" << (this->ReferenceNodeID ? this->GetReferenceNodeID() : "None") << "\"";
+  of << " locked=\"" << this->Locked << "\"";
 
   int textLength = this->TextList->GetNumberOfValues();
-  of << indent << " textList=\"";
+  of << " textList=\"";
 
   if (textLength)
     {
-      for (int i = 0 ; i < textLength - 1; i++) {
-    of << this->TextList->GetValue(i) << "|";
+    for (int i = 0 ; i < textLength - 1; i++)
+      {
+      of << this->TextList->GetValue(i) << "|";
       }
-      of <<  this->TextList->GetValue(textLength -1);
+    of <<  this->TextList->GetValue(textLength -1);
     }
   of << "\"";
 
   for (int j = 0 ; j < NUM_TEXT_ATTRIBUTE_TYPES; j ++)
     {
-      of << indent << " " << this->GetAttributeTypesEnumAsString(j) << "=\"";
-      if (textLength && this->GetPolyData() && this->GetPolyData()->GetPointData())
-    {
+    of << " " << this->GetAttributeTypesEnumAsString(j) << "=\"";
+    if (textLength && this->GetPolyData() && this->GetPolyData()->GetPointData())
+      {
       for (int i = 0 ; i < textLength - 1; i++)
         {
-          of << this->GetAnnotationAttribute(i,j) << " " ;
+        of << this->GetAnnotationAttribute(i,j) << " " ;
         }
       of << this->GetAnnotationAttribute(textLength - 1,j);
-    }
-      of << "\"";
+      }
+    of << "\"";
     }
 }
 

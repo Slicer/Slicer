@@ -65,10 +65,9 @@ void vtkMRMLTableNode::WriteXML(ostream& of, int nIndent)
 {
   // Start by having the superclass write its information
   Superclass::WriteXML(of, nIndent);
-  vtkIndent indent(nIndent);
-  of << indent << " locked=\"" << (this->GetLocked() ? "true" : "false") << "\"";
-  of << indent << " useFirstColumnAsRowHeader=\"" << (this->GetUseFirstColumnAsRowHeader() ? "true" : "false") << "\"";
-  of << indent << " useColumnNameAsColumnHeader=\"" << (this->GetUseColumnNameAsColumnHeader() ? "true" : "false") << "\"";
+  of << " locked=\"" << (this->GetLocked() ? "true" : "false") << "\"";
+  of << " useFirstColumnAsRowHeader=\"" << (this->GetUseFirstColumnAsRowHeader() ? "true" : "false") << "\"";
+  of << " useColumnNameAsColumnHeader=\"" << (this->GetUseColumnNameAsColumnHeader() ? "true" : "false") << "\"";
 }
 
 

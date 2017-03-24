@@ -62,24 +62,23 @@ void vtkMRMLLayoutNode::WriteXML(ostream& of, int nIndent)
   // order here.
 
   Superclass::WriteXML(of, nIndent);
-  vtkIndent indent(nIndent);
 
-  of << indent << " currentViewArrangement=\"" << this->ViewArrangement << "\"";
-  of << indent << " guiPanelVisibility=\"" << this->GUIPanelVisibility << "\"";
-  of << indent << " bottomPanelVisibility =\"" << this->BottomPanelVisibility << "\"";
-  of << indent << " guiPanelLR=\"" << this->GUIPanelLR << "\"";
-  of << indent << " collapseSliceControllers=\"" << this->CollapseSliceControllers << "\"" << std::endl;
-  of << indent << " numberOfCompareViewRows=\"" << this->NumberOfCompareViewRows << "\"";
-  of << indent << " numberOfCompareViewColumns=\"" << this->NumberOfCompareViewColumns << "\"";
-  of << indent << " numberOfLightboxRows=\"" << this->NumberOfCompareViewLightboxRows << "\"";
-  of << indent << " numberOfLightboxColumns=\"" << this->NumberOfCompareViewLightboxColumns << "\"";
-  of << indent << " mainPanelSize=\"" << this->MainPanelSize << "\"";
-  of << indent << " secondaryPanelSize=\"" << this->SecondaryPanelSize << "\"";
+  of << " currentViewArrangement=\"" << this->ViewArrangement << "\"";
+  of << " guiPanelVisibility=\"" << this->GUIPanelVisibility << "\"";
+  of << " bottomPanelVisibility =\"" << this->BottomPanelVisibility << "\"";
+  of << " guiPanelLR=\"" << this->GUIPanelLR << "\"";
+  of << " collapseSliceControllers=\"" << this->CollapseSliceControllers << "\"" << std::endl;
+  of << " numberOfCompareViewRows=\"" << this->NumberOfCompareViewRows << "\"";
+  of << " numberOfCompareViewColumns=\"" << this->NumberOfCompareViewColumns << "\"";
+  of << " numberOfLightboxRows=\"" << this->NumberOfCompareViewLightboxRows << "\"";
+  of << " numberOfLightboxColumns=\"" << this->NumberOfCompareViewLightboxColumns << "\"";
+  of << " mainPanelSize=\"" << this->MainPanelSize << "\"";
+  of << " secondaryPanelSize=\"" << this->SecondaryPanelSize << "\"";
   if (this->SelectedModule != NULL)
     {
-    of << indent << " selectedModule=\"" << (this->SelectedModule != NULL ? this->SelectedModule : "") << "\"";
+    of << " selectedModule=\"" << (this->SelectedModule != NULL ? this->SelectedModule : "") << "\"";
     }
-  //of << indent << " layout=\"" << this->CurrentLayoutDescription << "\"";
+  //of << " layout=\"" << this->CurrentLayoutDescription << "\"";
 }
 
 

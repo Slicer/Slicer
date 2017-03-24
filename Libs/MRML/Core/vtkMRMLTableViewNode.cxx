@@ -63,8 +63,7 @@ const char* vtkMRMLTableViewNode::GetNodeTagName()
 void vtkMRMLTableViewNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
-  vtkIndent indent(nIndent);
-  of << indent << " doPropagateTableSelection=\"" << (int)this->DoPropagateTableSelection << "\"";
+  of << " doPropagateTableSelection=\"" << (int)this->DoPropagateTableSelection << "\"";
 }
 
 //----------------------------------------------------------------------------

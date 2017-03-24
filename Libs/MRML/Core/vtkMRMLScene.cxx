@@ -979,7 +979,7 @@ int vtkMRMLScene::Commit(const char* url)
       }
     }
 
-  int indent=0, deltaIndent;
+  int indent=0;
 
     // this event is being detected by GUI to provide feedback during load
     // of data. But,
@@ -1040,12 +1040,6 @@ int vtkMRMLScene::Commit(const char* url)
       continue;
       }
 
-    deltaIndent = node->GetIndent();
-    if ( deltaIndent < 0 )
-      {
-      indent -=2;
-      }
-
     vtkIndent vindent(indent);
     *os << vindent << "<" << node->GetNodeTagName() << "\n";
 
@@ -1057,11 +1051,6 @@ int vtkMRMLScene::Commit(const char* url)
     *os << vindent << ">";
     node->WriteNodeBodyXML(*os, indent);
     *os << "</" << node->GetNodeTagName() << ">\n";
-
-    if ( deltaIndent > 0 )
-      {
-      indent += 2;
-      }
     }
 
   *os << "</MRML>\n";

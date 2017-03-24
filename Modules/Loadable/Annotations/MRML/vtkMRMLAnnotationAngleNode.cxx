@@ -119,32 +119,29 @@ void vtkMRMLAnnotationAngleNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
-  of << indent << " labelFormat=\"";
+  of << " labelFormat=\"";
   if (this->LabelFormat)
     {
-      of << this->LabelFormat << "\"";
+    of << this->LabelFormat << "\"";
     }
   else
     {
-      of << "\"";
+    of << "\"";
     }
-  of << indent << " angleResolution=\""<< this->Resolution << "\"";
+  of << " angleResolution=\""<< this->Resolution << "\"";
 
   if (this->ModelID1)
     {
-    of << indent << " modelID1=\"" << this->ModelID1 << "\"";
+    of << " modelID1=\"" << this->ModelID1 << "\"";
     }
   if (this->ModelID2)
     {
-    of << indent << " modelID2=\"" << this->ModelID2 << "\"";
+    of << " modelID2=\"" << this->ModelID2 << "\"";
     }
   if (this->ModelIDCenter)
     {
-    of << indent << " modelIDCenter=\"" << this->ModelIDCenter << "\"";
+    of << " modelIDCenter=\"" << this->ModelIDCenter << "\"";
     }
-
 }
 
 

@@ -60,8 +60,6 @@ vtkMRMLAnnotationTextDisplayNode::WriteXML(ostream& of, int nIndent)
 
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
   of << " textScale=\"" << this->TextScale << "\"";
   of << " useLineWrap=\"" << (this->UseLineWrap ? "true" : "false") << "\"";
   of << " maxCharactersPerLine=\"" << this->MaxCharactersPerLine<< "\"";

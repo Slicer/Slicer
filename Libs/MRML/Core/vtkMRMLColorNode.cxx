@@ -67,8 +67,6 @@ void vtkMRMLColorNode::WriteXML(ostream& of, int nIndent)
 
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
   of << " type=\"" << this->GetType() << "\"";
 
   if (this->FileName != NULL)

@@ -65,19 +65,18 @@ void vtkMRMLDiffusionImageVolumeNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
   std::stringstream ss;
   if (this->BaselineNodeID != NULL)
     {
-    of << indent << " baselineNodeRef=\"" << this->BaselineNodeID << "\"";
+    of << " baselineNodeRef=\"" << this->BaselineNodeID << "\"";
     }
   if (this->DiffusionWeightedNodeID != NULL)
     {
-    of << indent << " diffusionWeightedNodeRef=\"" << this->DiffusionWeightedNodeID << "\"";
+    of << " diffusionWeightedNodeRef=\"" << this->DiffusionWeightedNodeID << "\"";
     }
   if (this->MaskNodeID != NULL)
     {
-    of << indent << " maskNodeRef=\"" << this->MaskNodeID << "\"";
+    of << " maskNodeRef=\"" << this->MaskNodeID << "\"";
     }
 
 }
