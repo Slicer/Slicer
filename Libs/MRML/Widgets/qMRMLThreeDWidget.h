@@ -50,10 +50,10 @@ public:
   virtual ~qMRMLThreeDWidget();
 
   /// Get slice controller
-  qMRMLThreeDViewControllerWidget* threeDController()const;
+  Q_INVOKABLE qMRMLThreeDViewControllerWidget* threeDController()const;
 
   /// Get the 3D View node observed by view.
-  vtkMRMLViewNode* mrmlViewNode()const;
+  Q_INVOKABLE vtkMRMLViewNode* mrmlViewNode()const;
 
   /// Get a reference to the underlying ThreeD View
   /// Becareful if you change the threeDView, you might
@@ -61,19 +61,19 @@ public:
   Q_INVOKABLE qMRMLThreeDView* threeDView()const;
 
   /// \sa qMRMLThreeDView::addDisplayableManager
-  void addDisplayableManager(const QString& displayableManager);
+  Q_INVOKABLE void addDisplayableManager(const QString& displayableManager);
   Q_INVOKABLE void getDisplayableManagers(vtkCollection *displayableManagers);
 
   /// \sa qMRMLThreeDViewControllerWidget::viewLabel()
   /// \sa setiewLabel()
-  QString viewLabel()const;
+  Q_INVOKABLE QString viewLabel()const;
 
   /// \sa qMRMLThreeDViewControllerWidget::viewLabel()
   /// \sa viewLabel()
-  void setViewLabel(const QString& newViewLabel);
+  Q_INVOKABLE void setViewLabel(const QString& newViewLabel);
 
   /// \sa qMRMLThreeDViewControllerWidget::setQuadBufferStereoSupportEnabled
-  void setQuadBufferStereoSupportEnabled(bool value);
+  Q_INVOKABLE void setQuadBufferStereoSupportEnabled(bool value);
 
 public slots:
   /// Set the current \a viewNode to observe
