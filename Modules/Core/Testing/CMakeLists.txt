@@ -24,6 +24,7 @@ set(LIBRARY_NAME ${PROJECT_NAME})
 add_executable(${KIT}CxxTests ${Tests})
 target_link_libraries(${KIT}CxxTests ${KIT})
 set_target_properties(${KIT}CxxTests PROPERTIES LABELS ${KIT})
+set_target_properties(${KIT}CxxTests PROPERTIES FOLDER "Core-Base")
 
 foreach(testname ${KIT_TEST_NAMES})
   simple_test( ${testname} )
