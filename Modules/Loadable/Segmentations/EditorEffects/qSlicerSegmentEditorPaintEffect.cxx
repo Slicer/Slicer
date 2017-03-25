@@ -1201,21 +1201,27 @@ void qSlicerSegmentEditorPaintEffect::setupOptionsFrame()
   d->BrushDiameterSlider->setOrientation(Qt::Horizontal);
   this->addOptionsWidget(d->BrushDiameterSlider);
 
+  // Create options frame for this effect
+  QHBoxLayout* hbox = new QHBoxLayout();
+
   d->BrushSphereCheckbox = new QCheckBox("Sphere brush");
   d->BrushSphereCheckbox->setToolTip("Use a 3D spherical brush rather than a 2D circular brush.");
-  this->addOptionsWidget(d->BrushSphereCheckbox);
+  hbox->addWidget(d->BrushSphereCheckbox);
 
   d->ColorSmudgeCheckbox = new QCheckBox("Color smudge");
-  //TODO: Smudge is not yet implemented. It is now a more complex function,
-  //  as it involves switching segment instead of simply changing label color.
+  //TODO: Implement this effect option
   //d->ColorSmudgeCheckbox->setToolTip("Set the label number automatically by sampling the pixel location where the brush stroke starts.");
-  d->ColorSmudgeCheckbox->setToolTip("Smudge function is not yet implemented!");
+  d->ColorSmudgeCheckbox->setToolTip("Not implemented yet");
   d->ColorSmudgeCheckbox->setEnabled(false);
-  this->addOptionsWidget(d->ColorSmudgeCheckbox);
+  hbox->addWidget(d->ColorSmudgeCheckbox);
 
   d->BrushPixelModeCheckbox = new QCheckBox("Pixel mode");
-  d->BrushPixelModeCheckbox->setToolTip("Paint exactly the pixel under the cursor, ignoring the diameter, threshold, and paint over.");
-  this->addOptionsWidget(d->BrushPixelModeCheckbox);
+  //TODO: Implement this effect option
+  //d->BrushPixelModeCheckbox->setToolTip("Paint exactly the pixel under the cursor, ignoring the diameter, threshold, and paint over.");
+  d->BrushPixelModeCheckbox->setToolTip("Not implemented yet");
+  d->BrushPixelModeCheckbox->setEnabled(false);  hbox->addWidget(d->BrushPixelModeCheckbox);
+
+  this->addOptionsWidget(hbox);
 
   QObject::connect(d->BrushDiameterRelativeToggle, SIGNAL(clicked()), d, SLOT(onDiameterUnitsClicked()));
   QObject::connect(d->BrushSphereCheckbox, SIGNAL(clicked()), this, SLOT(updateMRMLFromGUI()));

@@ -368,6 +368,10 @@ void qMRMLSegmentEditorWidgetPrivate::init()
 
   // Update effect buttons
   this->updateEffectList();
+
+  this->OptionsGroupBox->setTitle("");
+  this->label_EffectHelp->setText("");
+  this->MaskingGroupBox->hide();
 }
 
 //-----------------------------------------------------------------------------
@@ -1377,12 +1381,14 @@ void qMRMLSegmentEditorWidget::updateWidgetFromEffect()
     d->OptionsGroupBox->setTitle(activeEffect->name());
     //d->OptionsGroupBox->setToolTip(activeEffect->helpText());
     d->label_EffectHelp->setText(activeEffect->helpText());
+    d->MaskingGroupBox->show();
     }
   else
     {
     d->OptionsGroupBox->setTitle("");
     //d->OptionsGroupBox->setToolTip("No effect is selected");
-    d->label_EffectHelp->setText("No effect is selected");
+    d->label_EffectHelp->setText("");
+    d->MaskingGroupBox->hide();
 
     this->removeViewObservations();
     }
