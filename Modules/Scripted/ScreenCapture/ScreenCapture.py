@@ -53,6 +53,10 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.animationMode = None
     self.createdOutputFile = None
 
+    self.snapshotIndex = 0 # this counter is used for determining file names for single-image snapshots
+    self.snapshotOutputDir = None
+    self.snapshotFileNamePattern = None
+
     # Instantiate and connect widgets ...
 
     #
@@ -160,12 +164,23 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     # Number of steps value
     self.numberOfStepsSliderWidget = ctk.ctkSliderWidget()
     self.numberOfStepsSliderWidget.singleStep = 10
-    self.numberOfStepsSliderWidget.minimum = 2
+    self.numberOfStepsSliderWidget.minimum = 1
     self.numberOfStepsSliderWidget.maximum = 600
     self.numberOfStepsSliderWidget.value = 31
     self.numberOfStepsSliderWidget.decimals = 0
     self.numberOfStepsSliderWidget.setToolTip("Number of images extracted between start and stop positions.")
-    outputFormLayout.addRow("Number of images:", self.numberOfStepsSliderWidget)
+
+    # Single step toggle button
+    self.singleStepButton = qt.QToolButton()
+    self.singleStepButton.setText("single")
+    self.singleStepButton.setCheckable(True)
+    self.singleStepButton.toolTip = "Capture a single image of current state only.\n" + \
+      "New filename is generated for each captured image (no files are overwritten)."
+
+    hbox = qt.QHBoxLayout()
+    hbox.addWidget(self.singleStepButton)
+    hbox.addWidget(self.numberOfStepsSliderWidget)
+    outputFormLayout.addRow("Number of images:", hbox)
 
     # Output directory selector
     self.outputDirSelector = ctk.ctkPathLineEdit()
@@ -286,6 +301,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.videoExportCheckBox.connect('toggled(bool)', self.videoLengthSliderWidget, 'setEnabled(bool)')
     self.videoExportCheckBox.connect('toggled(bool)', self.videoFormatWidget, 'setEnabled(bool)')
     self.videoFormatWidget.connect("currentIndexChanged(int)", self.updateVideoFormat)
+    self.singleStepButton.connect('toggled(bool)', self.numberOfStepsSliderWidget, 'setDisabled(bool)')
 
     self.updateVideoFormat(0)
     self.updateViewOptions()
@@ -424,6 +440,11 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     videoOutputRequested = self.videoExportCheckBox.checked
     viewNode = self.viewNodeSelector.currentNode()
     numberOfSteps = int(self.numberOfStepsSliderWidget.value)
+    if self.singleStepButton.checked:
+      numberOfSteps = 1
+    if numberOfSteps < 2:
+      # If a single image is selected
+      videoOutputRequested = False
     outputDir = self.outputDirSelector.currentPath
 
     self.videoExportFfmpegWarning.setVisible(False)
@@ -455,7 +476,14 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     if captureAllViews:
       self.logic.showViewControllers(False)
     try:
-      if self.animationModeWidget.currentText == "slice sweep":
+      if numberOfSteps < 2:
+        if imageFileNamePattern != self.snapshotFileNamePattern or outputDir != self.snapshotOutputDir:
+          self.snapshotIndex = 0
+        [filename, self.snapshotIndex] = self.logic.getNextAvailableFileName(outputDir, imageFileNamePattern, self.snapshotIndex)
+        view = None if captureAllViews else self.logic.viewFromNode(viewNode)
+        self.logic.captureImageFromView(view, filename)
+        self.logic.addLog("Write "+filename)
+      elif self.animationModeWidget.currentText == "slice sweep":
         self.logic.captureSliceSweep(viewNode, self.sliceStartOffsetSliderWidget.value,
           self.sliceEndOffsetSliderWidget.value, numberOfSteps, outputDir, imageFileNamePattern, captureAllViews = captureAllViews)
       elif self.animationModeWidget.currentText == "slice fade":
@@ -666,6 +694,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
   def captureImageFromView(self, view, filename):
 
+    slicer.app.processEvents()
     if view:
       view.forceRender()
     else:
@@ -923,6 +952,22 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
       filename = filePathPattern % imageIndex
       logging.debug("Delete temporary file " + filename)
       os.remove(filename)
+
+  def getNextAvailableFileName(self, outputDir, outputFilenamePattern, snapshotIndex):
+    """
+    Find a file index that does not overwrite any existing file.
+    """
+    if not os.path.exists(outputDir):
+      os.makedirs(outputDir)
+    filePathPattern = os.path.join(outputDir,outputFilenamePattern)
+    filename = None
+    while True:
+      filename = filePathPattern % snapshotIndex
+      if not os.path.exists(filename):
+        # found an available file name
+        break
+      snapshotIndex += 1
+    return [filename, snapshotIndex]
 
 class ScreenCaptureTest(ScriptedLoadableModuleTest):
   """
