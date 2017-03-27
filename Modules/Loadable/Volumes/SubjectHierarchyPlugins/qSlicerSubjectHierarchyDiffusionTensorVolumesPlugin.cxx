@@ -297,17 +297,21 @@ void qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::showContextMenuActions
       qSlicerApplication::application()->moduleManager()->module("TractographyInteractiveSeeding");
     d->TractographyInteractiveSeedingAction->setVisible(tractographyInteractiveSeedingModule);
 
-    //TODO: Add when CLI support for segmentations is added
-    //qSlicerAbstractCoreModule* tractographyLabelMapSeedingModule =
-    //  qSlicerApplication::application()->moduleManager()->module("TractographyLabelMapSeeding");
-    //d->TractographyLabelMapSeedingAction->setVisible(tractographyLabelMapSeedingModule);
+    qSlicerAbstractCoreModule* tractographyLabelMapSeedingModule =
+      qSlicerApplication::application()->moduleManager()->module("TractographyLabelMapSeeding");
+    d->TractographyLabelMapSeedingAction->setVisible(tractographyLabelMapSeedingModule);
     }
 }
 
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::onTractographyLabelMapSeeding()
 {
-  //TODO: Add when CLI support for segmentations is added
+#ifdef Slicer_BUILD_CLI_SUPPORT
+  //TODO: Select inputs too
+  qSlicerAbstractModuleWidget* moduleWidget = qSlicerSubjectHierarchyAbstractPlugin::switchToModule("TractographyLabelMapSeeding");
+#else
+  qWarning() << Q_FUNC_INFO << ": This operation cannot be performed with CLI disabled";
+#endif
 }
 
 //---------------------------------------------------------------------------

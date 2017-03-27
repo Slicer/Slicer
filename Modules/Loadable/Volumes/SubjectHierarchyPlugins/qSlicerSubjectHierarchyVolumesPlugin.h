@@ -125,6 +125,8 @@ protected slots:
 
   /// Re-connect slice composite node events so that visibility icons are updated when volumes
   /// are shown/hidden from outside subject hierarchy
+  void onLayoutChanged();
+  /// Variant of \sa onLayoutChanged so that it can be connected to the event which has the layout as parameter
   void onLayoutChanged(int layout);
 
   /// Trigger updating all volume visibility icons when composite node changes

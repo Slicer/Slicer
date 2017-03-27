@@ -693,6 +693,7 @@ void qSlicerSubjectHierarchySegmentationsPlugin::exportToBinaryLabelmap()
     segmentationNode->GetScene()->AddNode(newNode));
   newLabelmapNode->CreateDefaultDisplayNodes();
   std::string exportedNodeName = std::string(segmentationNode->GetName()) + "-label";
+  exportedNodeName = segmentationNode->GetScene()->GetUniqueNameByString(exportedNodeName.c_str());
   newLabelmapNode->SetName(exportedNodeName.c_str());
 
   // Get visible segments
@@ -777,6 +778,7 @@ void qSlicerSubjectHierarchySegmentationsPlugin::exportToClosedSurface()
   vtkMRMLModelHierarchyNode* newParentModelHierarchyNode = vtkMRMLModelHierarchyNode::SafeDownCast(
     segmentationNode->GetScene()->AddNode(newNode));
   std::string exportedNodeName = std::string(segmentationNode->GetName()) + "-models";
+  exportedNodeName = segmentationNode->GetScene()->GetUniqueNameByString(exportedNodeName.c_str());
   newParentModelHierarchyNode->SetName(exportedNodeName.c_str());
 
   // Get visible segments

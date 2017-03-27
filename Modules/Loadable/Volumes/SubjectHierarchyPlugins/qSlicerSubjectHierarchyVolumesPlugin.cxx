@@ -595,7 +595,12 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumesInBranch()
 void qSlicerSubjectHierarchyVolumesPlugin::onLayoutChanged(int layout)
 {
   Q_UNUSED(layout);
+  this->onLayoutChanged();
+}
 
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyVolumesPlugin::onLayoutChanged()
+{
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
   if (!scene)
     {
