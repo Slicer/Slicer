@@ -1281,7 +1281,7 @@ bool vtkSegmentation::CopySegmentFromSegmentation(vtkSegmentation* fromSegmentat
     }
 
   // If source segmentation contains reference image geometry conversion parameter,
-  // but target segmentation does not, then, then copy that parameter from the source segmentation
+  // but target segmentation does not, then copy that parameter from the source segmentation
   // TODO: Do this with all parameters? (so those which have non-default values are replaced)
   std::string referenceImageGeometryParameter = this->GetConversionParameter(vtkSegmentationConverter::GetReferenceImageGeometryParameterName());
   std::string fromReferenceImageGeometryParameter = fromSegmentation->GetConversionParameter(vtkSegmentationConverter::GetReferenceImageGeometryParameterName());

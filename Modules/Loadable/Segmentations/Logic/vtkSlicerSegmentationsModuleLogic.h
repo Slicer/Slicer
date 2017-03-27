@@ -262,9 +262,6 @@ protected:
   /// Handle MRML node added events
   virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
 
-  /// Handle MRML node removed events
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
-
 protected:
   vtkSlicerSegmentationsModuleLogic();
   virtual ~vtkSlicerSegmentationsModuleLogic();

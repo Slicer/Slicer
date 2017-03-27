@@ -105,6 +105,14 @@ void vtkSlicerSegmentationsModuleLogic::SetMRMLSceneInternal(vtkMRMLScene* newSc
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
   this->SetAndObserveMRMLSceneEvents(newScene, events.GetPointer());
+
+  // Observe subject hierarchy UID events
+  vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(newScene);
+  if (shNode)
+    {
+    vtkEventBroker::GetInstance()->AddObservation(
+      shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemUIDAddedEvent, this, this->SubjectHierarchyUIDCallbackCommand );
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -143,22 +151,6 @@ void vtkSlicerSegmentationsModuleLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
   if (node->IsA("vtkMRMLSubjectHierarchyNode"))
     {
     vtkEventBroker::GetInstance()->AddObservation(
-      node, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemUIDAddedEvent, this, this->SubjectHierarchyUIDCallbackCommand );
-    }
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerSegmentationsModuleLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
-{
-  if (!node || !this->GetMRMLScene())
-    {
-    vtkErrorMacro("OnMRMLSceneNodeRemoved: Invalid MRML scene or input node!");
-    return;
-    }
-
-  if (node->IsA("vtkMRMLSegmentationNode"))
-    {
-    vtkEventBroker::GetInstance()->RemoveObservations(
       node, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemUIDAddedEvent, this, this->SubjectHierarchyUIDCallbackCommand );
     }
 }

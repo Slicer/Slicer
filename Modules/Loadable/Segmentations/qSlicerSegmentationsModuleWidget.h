@@ -116,6 +116,9 @@ protected slots:
   /// Callback function for selection changes in the main segment table view
   void onSegmentSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 
+  /// Populate master volume label and combobox for export
+  void onSegmentationNodeReferenceChanged();
+
   void onAddSegment();
   void onEditSelectedSegment();
   void onRemoveSelectedSegments();

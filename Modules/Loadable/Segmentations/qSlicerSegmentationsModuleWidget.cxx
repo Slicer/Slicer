@@ -210,6 +210,9 @@ void qSlicerSegmentationsModuleWidget::updateWidgetFromMRML()
 
   // Update segment handler button states based on segment selection
   this->onSegmentSelectionChanged(QItemSelection(),QItemSelection());
+
+  // Update master volume label and combobox for export
+  this->onSegmentationNodeReferenceChanged();
 }
 
 //-----------------------------------------------------------------------------
@@ -341,9 +344,11 @@ void qSlicerSegmentationsModuleWidget::onSegmentationNodeChanged(vtkMRMLNode* no
     segmentationNode->CreateDefaultDisplayNodes();
     }
 
-  qvtkReconnect(d->SegmentationNode, segmentationNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
-  qvtkReconnect(d->SegmentationNode, segmentationNode, vtkMRMLDisplayableNode::DisplayModifiedEvent, this, SLOT(updateWidgetFromMRML()));
-  qvtkReconnect(d->SegmentationNode, segmentationNode, vtkSegmentation::MasterRepresentationModified, this, SLOT(updateWidgetFromMRML()));
+  qvtkReconnect( d->SegmentationNode, segmentationNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()) );
+  qvtkReconnect( d->SegmentationNode, segmentationNode, vtkMRMLDisplayableNode::DisplayModifiedEvent, this, SLOT(updateWidgetFromMRML()) );
+  qvtkReconnect( d->SegmentationNode, segmentationNode, vtkSegmentation::MasterRepresentationModified, this, SLOT(updateWidgetFromMRML()) );
+  qvtkReconnect( d->SegmentationNode, segmentationNode, vtkMRMLNode::ReferenceAddedEvent, this, SLOT(onSegmentationNodeReferenceChanged()) );
+  qvtkReconnect( d->SegmentationNode, segmentationNode, vtkMRMLNode::ReferenceModifiedEvent, this, SLOT(onSegmentationNodeReferenceChanged()) );
 
   d->SegmentationNode = segmentationNode;
   d->SegmentationDisplayNodeWidget->setSegmentationNode(segmentationNode);
@@ -1076,4 +1081,30 @@ bool qSlicerSegmentationsModuleWidget::setEditedNode(
     return true;
     }
   return false;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSegmentationsModuleWidget::onSegmentationNodeReferenceChanged()
+{
+  Q_D(qSlicerSegmentationsModuleWidget);
+
+  if ( !d->SegmentationNode
+    || !d->SegmentationNode->GetNodeReference(vtkMRMLSegmentationNode::GetReferenceImageGeometryReferenceRole().c_str()) )
+    {
+    d->label_MasterVolumeText->setVisible(false);
+    d->label_MasterVolumeName->setVisible(false);
+    d->MRMLNodeComboBox_ExportLabelmapReferenceVolume->setCurrentNode(NULL);
+    return;
+    }
+
+  // Get reference volume node
+  vtkMRMLNode* referenceVolumeNode = d->SegmentationNode->GetNodeReference(
+    vtkMRMLSegmentationNode::GetReferenceImageGeometryReferenceRole().c_str() );
+
+  // If there is a reference volume, then show labels
+  d->label_MasterVolumeText->setVisible(true);
+  d->label_MasterVolumeName->setVisible(true);
+  d->label_MasterVolumeName->setText(referenceVolumeNode->GetName());
+
+  d->MRMLNodeComboBox_ExportLabelmapReferenceVolume->setCurrentNode(referenceVolumeNode);
 }
