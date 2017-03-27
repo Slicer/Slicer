@@ -110,6 +110,12 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
     self.observerTags = []
     self.logic = SampleDataLogic(self.logMessage)
 
+    numberOfColumns = 3
+    iconPath = os.path.join(os.path.dirname(__file__).replace('\\','/'), 'Resources','Icons')
+    desktop = qt.QDesktopWidget()
+    mainScreenSize = desktop.availableGeometry(desktop.primaryScreen)
+    iconSize = qt.QSize(mainScreenSize.width()/15,mainScreenSize.height()/10)
+
     categories = slicer.modules.sampleDataSources.keys()
     categories.sort()
     if 'BuiltIn' in categories:
@@ -120,14 +126,37 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
       self.layout.addWidget(frame)
       frame.title = category
       frame.name = '%sCollapsibleGroupBox' % category
-      layout = qt.QVBoxLayout(frame)
+      layout = qt.QGridLayout(frame)
+      columnIndex = 0
+      rowIndex = 0
       for source in slicer.modules.sampleDataSources[category]:
         name = source.sampleName
         if not name:
           name = source.nodeNames[0]
-        b = qt.QPushButton('Download %s' % name)
+
+        b = qt.QToolButton()
+        b.setText(name)
+
+        # Look for thumbnail image with the name of any node name with .png extension
+        for nodeName in source.nodeNames:
+          if not nodeName:
+            continue
+          thumbnailImage = os.path.join(iconPath, nodeName+'.png')
+          if os.path.exists(thumbnailImage):
+            b.setIcon(qt.QIcon(thumbnailImage))
+            break
+        b.setIconSize(iconSize)
+        b.setToolButtonStyle(qt.Qt.ToolButtonTextUnderIcon)
+        qSize = qt.QSizePolicy()
+        qSize.setHorizontalPolicy(qt.QSizePolicy.Expanding)
+        b.setSizePolicy(qSize)
+
         b.name = '%sPushButton' % name
-        layout.addWidget(b)
+        layout.addWidget(b, rowIndex, columnIndex)
+        columnIndex += 1
+        if columnIndex==numberOfColumns:
+          rowIndex += 1
+          columnIndex = 0
         if source.customDownloader:
           b.connect('clicked()', source.customDownloader)
         else:
@@ -181,7 +210,7 @@ class SampleDataLogic:
             'http://slicer.kitware.com/midas3/download/?items=2010,1', ),
           ('DTIVolume.raw.gz', 'DTIVolume.nhdr'), (None, 'DTIVolume')),
         ('DWIVolume', ('http://slicer.kitware.com/midas3/download/?items=2142,1', 'http://slicer.kitware.com/midas3/download/?items=2141,1'), ('dwi.raw.gz', 'dwi.nhdr'), (None, 'dwi')),
-        ('CTA abdomen (Panoramix)', 'http://slicer.kitware.com/midas3/download/?items=9073,1', 'Panoramix-cropped.nrrd', 'Panoramix-cropped'),
+        ('CTA abdomen\n(Panoramix)', 'http://slicer.kitware.com/midas3/download/?items=9073,1', 'Panoramix-cropped.nrrd', 'Panoramix-cropped'),
         ('CBCTDentalSurgery',
           ('http://slicer.kitware.com/midas3/download/item/94510/Greyscale_presurg.gipl.gz',
             'http://slicer.kitware.com/midas3/download/item/94509/Greyscale_postsurg.gipl.gz',),
