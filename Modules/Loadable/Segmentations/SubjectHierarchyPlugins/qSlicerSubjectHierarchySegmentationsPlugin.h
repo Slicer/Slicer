@@ -114,11 +114,11 @@ public slots:
   void onSubjectHierarchyItemAboutToBeRemoved(vtkObject* caller, void* callData);
 
 protected slots:
-  /// Create binary labelmap representation
-  void createBinaryLabelmapRepresentation();
+  /// Export to binary labelmap
+  void exportToBinaryLabelmap();
 
-  /// Create closed surface representation
-  void createClosedSurfaceRepresentation();
+  /// Export to closed surface
+  void exportToClosedSurface();
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchySegmentationsPluginPrivate> d_ptr;

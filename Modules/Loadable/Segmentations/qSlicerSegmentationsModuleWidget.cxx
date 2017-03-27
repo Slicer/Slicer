@@ -692,6 +692,12 @@ bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
     qWarning() << Q_FUNC_INFO << ": No segmentation selected!";
     return false;
     }
+  vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(currentSegmentationNode->GetScene());
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return false;
+    }
 
   // If existing node was not selected then create a new one that we will export into
   vtkMRMLNode* otherRepresentationNode = d->MRMLNodeComboBox_ImportExportNode->currentNode();
@@ -727,12 +733,12 @@ bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
   std::vector<std::string> segmentIDs;
   if (d->ComboBox_ExportedSegments->currentIndex() == 0)
     {
-    // all segments
+    // All segments
     currentSegmentationNode->GetSegmentation()->GetSegmentIDs(segmentIDs);
     }
   else
     {
-    // visible segments
+    // Visible segments
     vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(currentSegmentationNode->GetDisplayNode());
     displayNode->GetVisibleSegmentIDs(segmentIDs);
     }
@@ -775,12 +781,6 @@ bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
       }
 
     // Get subject hierarchy item for segmentation node
-    vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(currentSegmentationNode->GetScene());
-    if (!shNode)
-      {
-      qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
-      return false;
-      }
     vtkIdType currentSegmentationShItemID = shNode->GetItemByDataNode(currentSegmentationNode);
     if (currentSegmentationShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
       {
@@ -810,10 +810,11 @@ bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
         // Add to model hierarchy
         vtkNew<vtkMRMLModelHierarchyNode> newModelHierarchyNode;
         newModelHierarchyNode->SetHideFromEditors(true);
+        modelHierarchyNode->GetScene()->AddNode(newModelHierarchyNode.GetPointer());
         newModelHierarchyNode->SetAssociatedNodeID(modelNode->GetID());
         newModelHierarchyNode->SetParentNodeID(modelHierarchyNode->GetID());
-        modelHierarchyNode->GetScene()->AddNode(newModelHierarchyNode.GetPointer());
         }
+
       QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
       if (!vtkSlicerSegmentationsModuleLogic::ExportSegmentToRepresentationNode(segment, modelNode))
         {
@@ -825,15 +826,6 @@ bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
         errorMessage.append(modelNode->GetName());
         }
       QApplication::restoreOverrideCursor();
-
-      // Add representation node into the same subject hierarchy branch as the segmentation
-      vtkIdType otherRepresentationShItemID = shNode->GetItemByDataNode(modelNode);
-      if (otherRepresentationShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-        {
-        qCritical() << Q_FUNC_INFO << ": Failed to find subject hierarchy item for node " << otherRepresentationNode->GetName();
-        continue;
-        }
-      shNode->SetItemParent(otherRepresentationShItemID, shNode->GetItemParent(currentSegmentationShItemID));
       }
     if (!errorMessage.isEmpty())
       {
@@ -842,6 +834,10 @@ bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
       return false;
       }
     }
+
+  // Move exported representation under same parent as segmentation
+  shNode->SetItemParent( shNode->GetItemByDataNode(otherRepresentationNode),
+    shNode->GetItemParent(shNode->GetItemByDataNode(currentSegmentationNode)) );
 
   return true;
 }
@@ -1050,9 +1046,9 @@ void qSlicerSegmentationsModuleWidget::onMRMLSceneEndRestoreEvent()
 void qSlicerSegmentationsModuleWidget::onMRMLSceneEndBatchProcessEvent()
 {
   if (!this->mrmlScene())
-      {
+    {
     return;
-      }
+    }
   this->updateWidgetFromMRML();
 }
 
@@ -1060,9 +1056,9 @@ void qSlicerSegmentationsModuleWidget::onMRMLSceneEndBatchProcessEvent()
 void qSlicerSegmentationsModuleWidget::onMRMLSceneEndCloseEvent()
 {
   if (!this->mrmlScene() || this->mrmlScene()->IsBatchProcessing())
-      {
+    {
     return;
-      }
+    }
   this->updateWidgetFromMRML();
 }
 
@@ -1091,8 +1087,8 @@ void qSlicerSegmentationsModuleWidget::onSegmentationNodeReferenceChanged()
   if ( !d->SegmentationNode
     || !d->SegmentationNode->GetNodeReference(vtkMRMLSegmentationNode::GetReferenceImageGeometryReferenceRole().c_str()) )
     {
-    d->label_MasterVolumeText->setVisible(false);
-    d->label_MasterVolumeName->setVisible(false);
+    d->label_ReferenceVolumeText->setVisible(false);
+    d->label_ReferenceVolumeName->setVisible(false);
     d->MRMLNodeComboBox_ExportLabelmapReferenceVolume->setCurrentNode(NULL);
     return;
     }
@@ -1102,9 +1098,9 @@ void qSlicerSegmentationsModuleWidget::onSegmentationNodeReferenceChanged()
     vtkMRMLSegmentationNode::GetReferenceImageGeometryReferenceRole().c_str() );
 
   // If there is a reference volume, then show labels
-  d->label_MasterVolumeText->setVisible(true);
-  d->label_MasterVolumeName->setVisible(true);
-  d->label_MasterVolumeName->setText(referenceVolumeNode->GetName());
+  d->label_ReferenceVolumeText->setVisible(true);
+  d->label_ReferenceVolumeName->setVisible(true);
+  d->label_ReferenceVolumeName->setText(referenceVolumeNode->GetName());
 
   d->MRMLNodeComboBox_ExportLabelmapReferenceVolume->setCurrentNode(referenceVolumeNode);
 }

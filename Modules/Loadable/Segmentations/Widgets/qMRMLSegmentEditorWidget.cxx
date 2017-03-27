@@ -914,7 +914,7 @@ void qMRMLSegmentEditorWidget::updateWidgetFromMRML()
   updateWidgetFromMasterVolumeNode();
 
   // Disable adding new segments until master volume is set (or reference geometry is specified for the segmentation).
-  // This forces the user to select a master volume before start addding segments.
+  // This forces the user to select a master volume before start adding segments.
   vtkMRMLSegmentationNode* segmentationNode = d->ParameterSetNode->GetSegmentationNode();
   bool enableAddSegments = (segmentationNode!=NULL) && ((d->MasterVolumeNode != NULL) || (!d->referenceImageGeometry().empty()));
   d->AddSegmentButton->setEnabled(enableAddSegments);
