@@ -179,7 +179,7 @@ void vtkSlicerUnitsLogic::AddDefaultsUnits()
   node->SetSaveWithScene(false);
   this->SetDefaultUnit(node->GetQuantity(), node->GetID());
 
-  node = this->AddUnitNode("ApplicationIntensity", "intensity", "", "W/m\xB2", 3);
+  node = this->AddUnitNode("ApplicationIntensity", "intensity", "", "W/m^2", 3);
   node->SetSaveWithScene(false);
   this->SetDefaultUnit(node->GetQuantity(), node->GetID());
 }
