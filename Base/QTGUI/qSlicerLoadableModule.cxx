@@ -150,8 +150,8 @@ void qSlicerLoadableModule::setup()
 {
 #ifndef QT_NO_DEBUG
   Q_D(qSlicerLoadableModule);
-#endif
   Q_ASSERT(d != 0);
+#endif
 
 #ifdef Slicer_USE_PYTHONQT
   qSlicerCoreApplication * app = qSlicerCoreApplication::application();
