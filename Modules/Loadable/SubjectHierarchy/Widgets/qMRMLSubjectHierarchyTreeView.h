@@ -100,18 +100,20 @@ protected:
   /// Set the subject hierarchy node found in the given scene. Called only internally.
   virtual void setSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* shNode);
 
-  /// Toggle visibility
+  /// Toggle visibility for model index
   virtual void toggleVisibility(const QModelIndex& index);
+  /// Toggle visibility for given subject hierarchy item
+  void toggleSubjectHierarchyItemVisibility(vtkIdType itemID);
 
   /// Populate context menu for given subject hierarchy item
   /// Usually one of the current ones, but if right-clicked on the empty area, then the scene.
   /// The current items are queried in the function anyway, in case of multi-selection
   virtual void populateContextMenuForItem(vtkIdType itemID);
 
-  /// Handle mouse press event (facilitates timely update of context menu)
-  virtual void mousePressEvent(QMouseEvent* event);
   /// Handle mouse release event
   virtual void mouseReleaseEvent(QMouseEvent* event);
+  /// Handle key press event
+  virtual void keyPressEvent(QKeyEvent* event);
 
   /// Apply highlight for subject hierarchy items referenced by argument items by DICOM
   /// \sa highlightReferencedItems

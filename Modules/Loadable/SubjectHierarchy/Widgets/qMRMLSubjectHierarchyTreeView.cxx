@@ -26,6 +26,7 @@
 #include <QActionGroup>
 #include <QMenu>
 #include <QMouseEvent>
+#include <QKeyEvent>
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QSettings>
@@ -552,15 +553,37 @@ void qMRMLSubjectHierarchyTreeView::toggleVisibility(const QModelIndex& index)
     return;
     }
 
+  this->toggleSubjectHierarchyItemVisibility(itemID);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::toggleSubjectHierarchyItemVisibility(vtkIdType itemID)
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  if (!d->SubjectHierarchyNode)
+    {
+    return;
+    }
+  if (!itemID)
+    {
+    return;
+    }
+
   qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin =
     qSlicerSubjectHierarchyPluginHandler::instance()->getOwnerPluginForSubjectHierarchyItem(itemID);
+  if (!ownerPlugin)
+    {
+    qCritical() << Q_FUNC_INFO << ": Subject hierarchy item " << itemID << " (named "
+      << d->SubjectHierarchyNode->GetItemName(itemID).c_str() << ") is not owned by any plugin";
+    return;
+    }
 
   int visible = (ownerPlugin->getDisplayVisibility(itemID) > 0 ? 0 : 1);
   ownerPlugin->setDisplayVisibility(itemID, visible);
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSubjectHierarchyTreeView::mousePressEvent(QMouseEvent* e)
+void qMRMLSubjectHierarchyTreeView::mouseReleaseEvent(QMouseEvent* e)
 {
   Q_D(qMRMLSubjectHierarchyTreeView);
   if (!d->SubjectHierarchyNode)
@@ -568,45 +591,23 @@ void qMRMLSubjectHierarchyTreeView::mousePressEvent(QMouseEvent* e)
     return;
     }
 
-  // Perform default mouse press event (make selections etc.)
-  this->QTreeView::mousePressEvent(e);
-
-  // Collect selected subject hierarchy items
-  //TODO: Move to selection changed?
-  QList<vtkIdType> selectedShItems;
-  QList<QModelIndex> selectedIndices = this->selectedIndexes();
-  foreach(QModelIndex index, selectedIndices)
+  if (e->button() == Qt::LeftButton)
     {
-    // Only consider the first column to avoid duplicates
-    if (index.column() != 0)
+    // Get the index of the current column
+    QModelIndex index = this->indexAt(e->pos());
+    QStyleOptionViewItemV4 opt = this->viewOptions();
+    opt.rect = this->visualRect(index);
+    qobject_cast<qMRMLItemDelegate*>(this->itemDelegate())->initStyleOption(&opt,index);
+    QRect decorationElement = this->style()->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, this);
+    if (decorationElement.contains(e->pos()))
       {
-      continue;
-      }
-    vtkIdType itemID = this->sortFilterProxyModel()->subjectHierarchyItemFromIndex(index);
-    if (itemID)
-      {
-      selectedShItems << itemID;
+      if (this->clickDecoration(index))
+        {
+        return;
+        }
       }
     }
-  // If no item was selected, then the scene is considered to be selected
-  if (selectedShItems.count() == 0)
-    {
-    selectedShItems << d->SubjectHierarchyNode->GetSceneItemID();
-    }
-
-  // Set current item(s) to plugin handler
-  qSlicerSubjectHierarchyPluginHandler::instance()->setCurrentItems(selectedShItems);
-
-  // Highlight items referenced by DICOM in case of single-selection
-  //   Referenced SOP instance UIDs (in attribute named vtkMRMLSubjectHierarchyConstants::GetDICOMReferencedInstanceUIDsAttributeName())
-  //   -> SH item instance UIDs (serialized string lists in subject hierarchy UID vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName())
-  if (this->highlightReferencedItems())
-    {
-    this->applyReferenceHighlightForItems(selectedShItems);
-    }
-
-  // Not the right button clicked, handle events the default way
-  if (e->button() == Qt::RightButton)
+  else if (e->button() == Qt::RightButton)
     {
     if (!d->ContextMenuEnabled)
       {
@@ -629,34 +630,30 @@ void qMRMLSubjectHierarchyTreeView::mousePressEvent(QMouseEvent* e)
       d->NodeMenu->exec(e->globalPos());
       }
     }
-}
-
-//------------------------------------------------------------------------------
-void qMRMLSubjectHierarchyTreeView::mouseReleaseEvent(QMouseEvent* e)
-{
-  if (e->button() == Qt::LeftButton)
-    {
-    // Get the index of the current column
-    QModelIndex index = this->indexAt(e->pos());
-    QStyleOptionViewItemV4 opt = this->viewOptions();
-    opt.rect = this->visualRect(index);
-    qobject_cast<qMRMLItemDelegate*>(this->itemDelegate())->initStyleOption(&opt,index);
-    QRect decorationElement = this->style()->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, this);
-    if (decorationElement.contains(e->pos()))
-      {
-      if (this->clickDecoration(index))
-        {
-        return;
-        }
-      }
-    }
 
   this->QTreeView::mouseReleaseEvent(e);
 }
 
 //------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::keyPressEvent(QKeyEvent* e)
+{
+  if (e->key() == Qt::Key_Space)
+    {
+    // Show/hide current item(s) using space
+    QList<vtkIdType> currentItemIDs = qSlicerSubjectHierarchyPluginHandler::instance()->currentItems();
+    foreach (vtkIdType itemID, currentItemIDs)
+      {
+      this->toggleSubjectHierarchyItemVisibility(itemID);
+      }
+    }
+
+  this->QTreeView::keyPressEvent(e);
+}
+
+//------------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeView::onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
+  Q_UNUSED(selected);
   Q_UNUSED(deselected);
   Q_D(qMRMLSubjectHierarchyTreeView);
   if (!d->SortFilterModel)
@@ -664,10 +661,45 @@ void qMRMLSubjectHierarchyTreeView::onSelectionChanged(const QItemSelection& sel
     return;
     }
 
-  vtkIdType newCurrentItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
-  if (selected.indexes().count() > 0)
+  // Collect selected subject hierarchy items
+  QList<vtkIdType> selectedShItems;
+  QList<QModelIndex> selectedIndices = this->selectedIndexes();
+  foreach(QModelIndex index, selectedIndices)
     {
-    newCurrentItemID = d->SortFilterModel->subjectHierarchyItemFromIndex(selected.indexes()[0]);
+    // Only consider the first column to avoid duplicates
+    if (index.column() != 0)
+      {
+      continue;
+      }
+    vtkIdType itemID = this->sortFilterProxyModel()->subjectHierarchyItemFromIndex(index);
+    if (itemID)
+      {
+      selectedShItems << itemID;
+      }
+    }
+
+  // If no item was selected, then the scene is considered to be selected
+  if (selectedShItems.count() == 0)
+    {
+    selectedShItems << d->SubjectHierarchyNode->GetSceneItemID();
+    }
+
+  // Set current item(s) to plugin handler
+  qSlicerSubjectHierarchyPluginHandler::instance()->setCurrentItems(selectedShItems);
+
+  // Highlight items referenced by DICOM in case of single-selection
+  //   Referenced SOP instance UIDs (in attribute named vtkMRMLSubjectHierarchyConstants::GetDICOMReferencedInstanceUIDsAttributeName())
+  //   -> SH item instance UIDs (serialized string lists in subject hierarchy UID vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName())
+  if (this->highlightReferencedItems())
+    {
+    this->applyReferenceHighlightForItems(selectedShItems);
+    }
+
+  // Emit current item changed signal
+  vtkIdType newCurrentItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+  if (selectedIndices.count() > 0)
+    {
+    newCurrentItemID = d->SortFilterModel->subjectHierarchyItemFromIndex(selectedIndices[0]);
     }
   emit currentItemChanged(newCurrentItemID);
 }
