@@ -53,22 +53,32 @@ set(_extension_template_generator_commands )
 
 # Add custom command re-generating an extension template
 macro(_append_extension_template_generator_commands module_type)
-  set(extension_name ${module_type}ExtensionTemplate)
-  set(module_name ${module_type}ModuleTemplate)
-  set(extension_dir ${_template_dir}/Testing/${extension_name})
-  set(description_file ${_template_dir}/${extension_name}.s4ext)
-
   set(wizard_module_type ${module_type})
   if("${module_type}" STREQUAL "ScriptedLoadable")
     set(wizard_module_type "Scripted")
   endif()
 
+  set(extension_name ${module_type}ExtensionTemplate)
+  set(module_name ${module_type}ModuleTemplate)
+  set(additional_wizard_args)
+  if("${module_type}" STREQUAL "ScriptedEditorEffect")
+    set(extension_name "EditorExtensionTemplate")
+    set(module_name "EditorEffectTemplate")
+    set(additional_wizard_args
+      --templateKey ${module_type}=TemplateKeyEffect
+      )
+  endif()
+
+  set(extension_dir ${_template_dir}/Testing/${extension_name})
+  set(description_file ${_template_dir}/${extension_name}.s4ext)
+
   list(APPEND _extension_template_generator_commands
     COMMAND ${CMAKE_COMMAND} -E remove -f ${description_file}
     COMMAND ${CMAKE_COMMAND} -E remove_directory ${extension_dir}
     COMMAND ${Slicer_BINARY_DIR}/bin/slicerExtensionWizard
-      --addModule ${wizard_module_type}:${module_type}ModuleTemplate
-      --create ${module_type}ExtensionTemplate
+      --addModule ${wizard_module_type}:${module_name}
+      --create ${extension_name}
+      ${additional_wizard_args}
       ${_template_dir}/Testing
     COMMAND ${CMAKE_COMMAND}
       -DDESCRIPTION_FILE:FILEPATH=${description_file}
@@ -84,6 +94,7 @@ endmacro()
 foreach(type IN ITEMS
     CLI
     Loadable
+    ScriptedEditorEffect
     ScriptedLoadable
     ScriptedSegmentEditorEffect
     )
