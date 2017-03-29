@@ -331,8 +331,15 @@ vtkIdType qMRMLSubjectHierarchyTreeView::currentItem()const
 //------------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeView::setCurrentItem(vtkIdType itemID)
 {
-  qSlicerSubjectHierarchyPluginHandler::instance()->setCurrentItem(itemID);
-  emit currentItemChanged(itemID);
+  Q_D(const qMRMLSubjectHierarchyTreeView);
+  if (!d->SortFilterModel)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid data model";
+    return;
+    }
+
+  QModelIndex itemIndex = d->SortFilterModel->indexFromSubjectHierarchyItem(itemID);
+  this->selectionModel()->select(itemIndex, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
 }
 
 //--------------------------------------------------------------------------

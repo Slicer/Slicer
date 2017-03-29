@@ -120,7 +120,8 @@ public:
   vtkIdType subjectHierarchyItemFromItem(QStandardItem* item)const;
   QModelIndex indexFromSubjectHierarchyItem(vtkIdType itemID, int column=0)const;
   QStandardItem* itemFromSubjectHierarchyItem(vtkIdType itemID, int column=0)const;
-  // Return all the QModelIndexes (all the columns) for a given subject hierarchy item
+
+  /// Return all the QModelIndexes (all the columns) for a given subject hierarchy item
   QModelIndexList indexes(vtkIdType itemID)const;
 
   Q_INVOKABLE virtual vtkIdType parentSubjectHierarchyItem(vtkIdType itemID)const;
