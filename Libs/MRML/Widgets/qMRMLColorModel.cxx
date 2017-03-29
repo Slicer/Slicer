@@ -78,6 +78,7 @@ void qMRMLColorModelPrivate::init()
     {
     headerLabels[q->opacityColumn()] = "Opacity";
     }
+  q->setHorizontalHeaderLabels(headerLabels);
   QObject::connect(q, SIGNAL(itemChanged(QStandardItem*)),
                    q, SLOT(onItemChanged(QStandardItem*)),
                    Qt::UniqueConnection);
