@@ -983,7 +983,8 @@ void qMRMLSubjectHierarchyTreeView::deleteSelectedItems()
     // Ask the user whether to delete all the item's children
     bool deleteChildren = false;
     QMessageBox::StandardButton answer = QMessageBox::Yes;
-    if (!qSlicerSubjectHierarchyPluginHandler::instance()->autoDeleteSubjectHierarchyChildren())
+    if ( currentItemIDs.count() > 1
+      && !qSlicerSubjectHierarchyPluginHandler::instance()->autoDeleteSubjectHierarchyChildren() )
       {
       answer =
         QMessageBox::question(NULL, tr("Delete subject hierarchy branch?"),
