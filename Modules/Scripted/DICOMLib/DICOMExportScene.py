@@ -7,6 +7,8 @@ import qt
 import vtk
 import ctk
 import slicer
+import logging
+from slicer.util import settingsValue, toBool
 
 import DICOMLib
 
@@ -37,15 +39,22 @@ class DICOMExportScene(object):
 
   def progress(self,string):
     # TODO: make this a callback for a gui progress dialog
-    print(string)
+    logging.info(string)
 
   def export(self):
+    # Perform export
     success = self.createDICOMFileForScene()
-    if success:
+
+    # Get flag from application settings whether exported data needs to be imported
+    importExportedData = settingsValue('DICOM/ImportExportedDataset', False, converter=toBool)
+    if success and importExportedData:
       self.addFilesToDatabase()
     return success
 
   def getFirstFileInDatabase(self):
+    if not slicer.dicomDatabase:
+      logging.error('No DICOM database is set')
+      return
     for patient in slicer.dicomDatabase.patients():
       studies = slicer.dicomDatabase.studiesForPatient(patient)
       if len(studies) == 0:
@@ -132,8 +141,8 @@ class DICOMExportScene(object):
       self.getFirstFileInDatabase()
       # if there is still no reference file, then there are no files in the database, cannot continue
       if not self.referenceFile:
-        print('ERROR: No reference file! DICOM database is empty.')
-        return
+        logging.error('No reference file! DICOM database is empty')
+        return False
     args = ['--print-all', '--write-pixel', self.dicomDirectory, self.referenceFile]
     dump = DICOMLib.DICOMCommand('dcmdump', args).start()
 
@@ -152,7 +161,7 @@ class DICOMExportScene(object):
 
     dump = str(dump) + candygram
 
-    print('dumping to: %s/dump.dcm' % self.dicomDirectory, 'w')
+    logging.debug('dumping to: %s/dump.dcm' % self.dicomDirectory, 'w')
     fp = open('%s/dump.dcm' % self.dicomDirectory, 'w')
     fp.write(dump)
     fp.close()
@@ -178,6 +187,9 @@ class DICOMExportScene(object):
     return True
 
   def addFilesToDatabase(self):
+    if not slicer.dicomDatabase:
+      slicer.util.warningDisplay("No DICOM database is set, so the (otherwise successfully) exported dataset cannot be imported back")
+      return
     self.progress('Adding to DICOM Database...')
     indexer = ctk.ctkDICOMIndexer()
     destinationDir = os.path.dirname(slicer.dicomDatabase.databaseFilename)
@@ -187,4 +199,3 @@ class DICOMExportScene(object):
       files = glob.glob('%s/*' % self.dicomDirectory)
     for file in files:
       indexer.addFile( slicer.dicomDatabase, file, destinationDir )
-      slicer.util.showStatusMessage("Loaded: %s" % file, 1000)

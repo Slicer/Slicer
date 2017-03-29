@@ -87,7 +87,7 @@ void qSlicerSubjectHierarchyPluginLogicPrivate::loadApplicationSettings()
     if (settings->contains("SubjectHierarchy/AutoDeleteSubjectHierarchyChildren"))
       {
       qSlicerSubjectHierarchyPluginHandler::instance()->setAutoDeleteSubjectHierarchyChildren(
-        settings->value("SubjectHierarchy/AutoDeleteSubjectHierarchyChildren").toString().compare("true") == 0 );
+        settings->value("SubjectHierarchy/AutoDeleteSubjectHierarchyChildren").toBool() == true );
       }
     }
 }

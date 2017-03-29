@@ -63,8 +63,9 @@ public:
   Q_INVOKABLE void showUpdatedDICOMBrowser();
 
 protected slots:
-  /// Select node that was passed with \sa exec() in subject hierarchy tree
-  void selectItem();
+  /// Make selections in the shown dialog, including select the item that was
+  /// passed with \sa exec() in subject hierarchy tree
+  void setupDialog();
 
   /// Handles change of export series or entire scene radio button selection
   void onExportSeriesRadioButtonToggled(bool);
@@ -75,11 +76,14 @@ protected slots:
   /// Show exportables returned by the plugins for selected node
   void examineSelectedItem();
 
-  /// Populates DICOM tags based on selection
+  /// Populate DICOM tags based on selection
   void onExportableSelectedAtRow(int);
 
-  /// Calls export series or entire scene based on radio button selection
+  /// Call export series or entire scene based on radio button selection
   void onExport();
+
+  /// Handles import exported dataset checkbox toggles
+  void onImportExportedDatasetCheckBoxToggled(bool);
 
 protected:
   /// Export selected node based on the selected exportable

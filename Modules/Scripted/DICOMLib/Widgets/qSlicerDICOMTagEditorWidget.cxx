@@ -525,7 +525,7 @@ QList<qSlicerDICOMExportable*> qSlicerDICOMTagEditorWidget::exportables()const
 }
 
 //------------------------------------------------------------------------------
-void qSlicerDICOMTagEditorWidget::commitChangesToNodes()
+void qSlicerDICOMTagEditorWidget::commitChangesToItems()
 {
   Q_D(qSlicerDICOMTagEditorWidget);
 

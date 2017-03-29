@@ -64,8 +64,8 @@ public:
   /// Clear exportables and tables
   void clear();
 
-  /// Write edited tags into the MRML node attributes
-  void commitChangesToNodes();
+  /// Write edited tags into the subject hierarchy item attributes
+  void commitChangesToItems();
 
 public slots:
   /// Set MRML scene

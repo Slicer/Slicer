@@ -41,6 +41,8 @@
 #include <QListWidgetItem>
 #include <QDateTime>
 #include <QTimer>
+#include <QSettings>
+#include <QMessageBox>
 
 // PythonQt includes
 #include "PythonQt.h"
@@ -49,7 +51,7 @@
 #include <vtkMRMLScene.h>
 
 // SlicerApp includes
-#include "qSlicerApplication.h"
+#include <qSlicerApplication.h>
 
 // CTK includes
 // XXX Avoid  warning: "HAVE_XXXX" redefined
@@ -104,9 +106,8 @@ void qSlicerDICOMExportDialogPrivate::init()
 {
   Q_Q(qSlicerDICOMExportDialog);
 
-  qMRMLSubjectHierarchyModel* sceneModel = (qMRMLSubjectHierarchyModel*)this->SubjectHierarchyTreeView->model();
-
   // Set up tree view
+  qMRMLSubjectHierarchyModel* sceneModel = (qMRMLSubjectHierarchyModel*)this->SubjectHierarchyTreeView->model();
   this->SubjectHierarchyTreeView->setMRMLScene(this->Scene);
   this->SubjectHierarchyTreeView->expandToDepth(4);
   this->SubjectHierarchyTreeView->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
@@ -118,7 +119,10 @@ void qSlicerDICOMExportDialogPrivate::init()
   this->ErrorLabel->setText(QString());
 
   // Set Slicer DICOM database folder as default output folder
-  this->DirectoryButton_OutputFolder->setDirectory(qSlicerApplication::application()->dicomDatabase()->databaseDirectory());
+  if (qSlicerApplication::application()->dicomDatabase())
+    {
+    this->DirectoryButton_OutputFolder->setDirectory(qSlicerApplication::application()->dicomDatabase()->databaseDirectory());
+    }
 
   // Make connections
   connect(this->SubjectHierarchyTreeView, SIGNAL(currentItemChanged(vtkIdType)),
@@ -129,6 +133,8 @@ void qSlicerDICOMExportDialogPrivate::init()
     q, SLOT(onExport()));
   connect(this->ExportSeriesRadioButton, SIGNAL(toggled(bool)),
     q, SLOT(onExportSeriesRadioButtonToggled(bool)) );
+  connect(this->ImportExportedDatasetCheckBox, SIGNAL(toggled(bool)),
+    q, SLOT(onImportExportedDatasetCheckBoxToggled(bool)) );
 }
 
 //-----------------------------------------------------------------------------
@@ -158,19 +164,16 @@ bool qSlicerDICOMExportDialog::exec(vtkIdType itemToSelect/*=vtkMRMLSubjectHiera
 
   // Make selection if requested
   d->ItemToSelect = itemToSelect;
-  QTimer::singleShot(0, this, SLOT( selectItem() ) );
+  QTimer::singleShot(0, this, SLOT( setupDialog() ) );
 
   // Show dialog
-  bool result = false;
   if (d->exec() != QDialog::Accepted)
     {
-    return result;
+    return false;
     }
 
   // Perform actions after clean exit
-  result = true;
-
-  return result;
+  return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -181,14 +184,23 @@ void qSlicerDICOMExportDialog::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerDICOMExportDialog::selectItem()
+void qSlicerDICOMExportDialog::setupDialog()
 {
   Q_D(qSlicerDICOMExportDialog);
-  if (!d->ItemToSelect)
+
+  // Select item marked to select
+  if (d->ItemToSelect)
     {
-    return;
+    d->SubjectHierarchyTreeView->setCurrentItem(d->ItemToSelect);
     }
-  d->SubjectHierarchyTreeView->setCurrentItem(d->ItemToSelect);
+
+  // Set checkbox state from application settings
+  QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
+  if (settings->contains("DICOM/ImportExportedDataset"))
+    {
+    bool importExportedDataset = settings->value("DICOM/ImportExportedDataset").toBool();
+    d->ImportExportedDatasetCheckBox->setChecked(importExportedDataset);
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -423,8 +435,22 @@ void qSlicerDICOMExportDialog::onExport()
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerDICOMExportDialog::onImportExportedDatasetCheckBoxToggled(bool on)
+{
+  // Write checkbox state into application settings so that it is remembered across sessions
+  QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
+  settings->setValue("DICOM/ImportExportedDataset", on);
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerDICOMExportDialog::showUpdatedDICOMBrowser()
 {
+  if (!qSlicerApplication::application()->dicomDatabase())
+    {
+    qCritical() << Q_FUNC_INFO << ": No DICOM database is set";
+    return;
+    }
+
   // Show DICOM browser and update DICOM database
   // (no direct function for it, so re-set the folder)
   PythonQt::init();
@@ -461,7 +487,7 @@ void qSlicerDICOMExportDialog::exportSeries()
   // parents after successful export if user requested it
   if (d->SaveTagsCheckBox->isChecked())
     {
-    d->DICOMTagEditorWidget->commitChangesToNodes();
+    d->DICOMTagEditorWidget->commitChangesToItems();
     }
 
   if (d->DICOMTagEditorWidget->exportables().isEmpty())
@@ -507,17 +533,25 @@ void qSlicerDICOMExportDialog::exportSeries()
     return;
     }
 
-  // Add exported files to DICOM database
-  ctkDICOMIndexer* indexer = new ctkDICOMIndexer();
-  ctkDICOMDatabase* dicomDatabase = qSlicerApplication::application()->dicomDatabase();
-  QString destinationFolderPath("");
-  if (isDicomDatabaseFolder)
+  // Import exported files to DICOM database if requested
+  if (d->ImportExportedDatasetCheckBox->isChecked())
     {
-    // If we export to the DICOM database folder, then we need a non-empty destination path
-    destinationFolderPath = qSlicerApplication::application()->dicomDatabase()->databaseDirectory();
+    ctkDICOMIndexer* indexer = new ctkDICOMIndexer();
+    ctkDICOMDatabase* dicomDatabase = qSlicerApplication::application()->dicomDatabase();
+    if (!dicomDatabase)
+      {
+      d->ErrorLabel->setText("No DICOM database is set, so the data (that was successfully exported) cannot be imported back");
+      return;
+      }
+    QString destinationFolderPath("");
+    if (isDicomDatabaseFolder)
+      {
+      // If we export to the DICOM database folder, then we need a non-empty destination path
+      destinationFolderPath = dicomDatabase->databaseDirectory();
+      }
+    indexer->addDirectory(*dicomDatabase, outputFolder.absolutePath(), destinationFolderPath);
+    delete indexer;
     }
-  indexer->addDirectory(*dicomDatabase, outputFolder.absolutePath(), destinationFolderPath);
-  delete indexer;
 
   // Remove temporary DICOM folder if exported to the DICOM database folder
   if (isDicomDatabaseFolder)
@@ -531,8 +565,18 @@ void qSlicerDICOMExportDialog::exportSeries()
     outputFolder.rmdir(tempSubDirName);
     }
 
-  // Show and update DICOM browser to indicate success
-  this->showUpdatedDICOMBrowser();
+  // Indicate success
+  if (d->ImportExportedDatasetCheckBox->isChecked())
+    {
+    // Show and update DICOM browser if it was requested
+    this->showUpdatedDICOMBrowser();
+    }
+  else
+    {
+    QString message = QString("DICOM dataset successfully exported to %1%2").arg(
+      isDicomDatabaseFolder ? "the DICOM database folder " : "").arg(outputFolder.absolutePath());
+    QMessageBox::information(NULL, tr("Export successful"), message);
+    }
 
   // Close the export dialog after successful export
   d->done(0);
@@ -548,13 +592,33 @@ void qSlicerDICOMExportDialog::exportEntireScene()
   PythonQt::init();
   PythonQtObjectPtr exportContext = PythonQt::self()->getMainModule();
   exportContext.evalScript( QString(
+    "import DICOMLib\n"
     "exporter = DICOMLib.DICOMExportScene()\n"
-    "exporter.export()\n") );
+    "success = exporter.export()\n") );
+  bool success = exportContext.getVariable("success").toBool();
 
   QApplication::restoreOverrideCursor();
 
-  // Show and update DICOM browser to indicate success
-  this->showUpdatedDICOMBrowser();
+  if (success)
+    {
+    // Indicate success
+    if (d->ImportExportedDatasetCheckBox->isChecked())
+      {
+      // Show and update DICOM browser if it was requested
+      this->showUpdatedDICOMBrowser();
+      }
+    else
+      {
+      QString message = QString("Scene successfully exported as DICOM to %1/dicomExport").arg(
+        qSlicerApplication::application()->temporaryPath());
+      QMessageBox::information(NULL, tr("Export successful"), message);
+      }
+    }
+  else
+    {
+    d->ErrorLabel->setText("Failed to export scene to DICOM. See log for errors");
+    return;
+    }
 
   // Close the export dialog after successful export
   d->done(0);

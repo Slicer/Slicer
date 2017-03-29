@@ -205,113 +205,130 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_6">
-     <property name="leftMargin">
-      <number>4</number>
-     </property>
-     <property name="rightMargin">
-      <number>4</number>
-     </property>
-     <item>
-      <widget class="QLabel" name="ErrorLabel">
-       <property name="palette">
-        <palette>
-         <active>
-          <colorrole role="WindowText">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>212</red>
-             <green>26</green>
-             <blue>1</blue>
-            </color>
-           </brush>
-          </colorrole>
-         </active>
-         <inactive>
-          <colorrole role="WindowText">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>212</red>
-             <green>26</green>
-             <blue>1</blue>
-            </color>
-           </brush>
-          </colorrole>
-         </inactive>
-         <disabled>
-          <colorrole role="WindowText">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>120</red>
-             <green>120</green>
-             <blue>120</blue>
-            </color>
-           </brush>
-          </colorrole>
-         </disabled>
-        </palette>
+    <layout class="QGridLayout" name="gridLayout_6">
+     <item row="0" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <property name="leftMargin">
+        <number>4</number>
        </property>
-       <property name="font">
-        <font>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
+       <property name="rightMargin">
+        <number>4</number>
        </property>
-       <property name="text">
-        <string>Error messages</string>
-       </property>
-      </widget>
+       <item>
+        <widget class="QLabel" name="ErrorLabel">
+         <property name="palette">
+          <palette>
+           <active>
+            <colorrole role="WindowText">
+             <brush brushstyle="SolidPattern">
+              <color alpha="255">
+               <red>212</red>
+               <green>26</green>
+               <blue>1</blue>
+              </color>
+             </brush>
+            </colorrole>
+           </active>
+           <inactive>
+            <colorrole role="WindowText">
+             <brush brushstyle="SolidPattern">
+              <color alpha="255">
+               <red>212</red>
+               <green>26</green>
+               <blue>1</blue>
+              </color>
+             </brush>
+            </colorrole>
+           </inactive>
+           <disabled>
+            <colorrole role="WindowText">
+             <brush brushstyle="SolidPattern">
+              <color alpha="255">
+               <red>120</red>
+               <green>120</green>
+               <blue>120</blue>
+              </color>
+             </brush>
+            </colorrole>
+           </disabled>
+          </palette>
+         </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Error messages</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
      </item>
-     <item>
-      <spacer name="horizontalSpacer_3">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+     <item row="1" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <property name="leftMargin">
+        <number>4</number>
        </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
+       <property name="rightMargin">
+        <number>4</number>
        </property>
-      </spacer>
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="toolTip">
+          <string>Choose folder where the selected node is exported to DICOM. Leave unchanged to add it to the Slicer DICOM database folder</string>
+         </property>
+         <property name="text">
+          <string>Output folder:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="ctkDirectoryButton" name="DirectoryButton_OutputFolder">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>Choose folder where the selected node is exported to DICOM. Leave unchanged to add it to the Slicer DICOM database folder</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
-     <item>
+     <item row="0" column="1">
       <widget class="QCheckBox" name="SaveTagsCheckBox">
+       <property name="toolTip">
+        <string>If checked, the manually edited tags will be saved back to the subject hierarhcy items too</string>
+       </property>
        <property name="text">
         <string>Save tags on export</string>
        </property>
       </widget>
      </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <property name="leftMargin">
-      <number>4</number>
-     </property>
-     <property name="rightMargin">
-      <number>4</number>
-     </property>
-     <item>
-      <widget class="QLabel" name="label">
+     <item row="1" column="1">
+      <widget class="QCheckBox" name="ImportExportedDatasetCheckBox">
        <property name="toolTip">
-        <string>Choose folder where the selected node is exported to DICOM. Leave unchanged to add it to the Slicer DICOM database folder</string>
+        <string>If checked, the dataset that is exported will be imported back to the DICOM database after export finished</string>
        </property>
        <property name="text">
-        <string>Output folder:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="ctkDirectoryButton" name="DirectoryButton_OutputFolder">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="toolTip">
-        <string>Choose folder where the selected node is exported to DICOM. Leave unchanged to add it to the Slicer DICOM database folder</string>
+        <string>Import exported data</string>
        </property>
       </widget>
      </item>
@@ -358,18 +375,13 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qMRMLTreeView</class>
-   <extends>QTreeView</extends>
-   <header>qMRMLTreeView.h</header>
-  </customwidget>
-  <customwidget>
    <class>qSlicerDICOMTagEditorWidget</class>
    <extends>QWidget</extends>
    <header>qSlicerDICOMTagEditorWidget.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLSubjectHierarchyTreeView</class>
-   <extends>qMRMLTreeView</extends>
+   <extends>QTreeView</extends>
    <header>qMRMLSubjectHierarchyTreeView.h</header>
   </customwidget>
   <customwidget>

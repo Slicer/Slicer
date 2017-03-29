@@ -38,8 +38,6 @@
 #include "qSlicerApplication.h"
 
 // Qt includes
-#include <QSettings>
-#include <QMessageBox>
 #include <QDebug>
 
 // MRML includes

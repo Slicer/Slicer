@@ -193,7 +193,7 @@ bool qSlicerSubjectHierarchySegmentsPlugin::reparentItemInsideSubjectHierarchy(v
     if (fromSegmentationNode->GetSegmentation()->GetMasterRepresentationName() == toSegmentationNode->GetSegmentation()->GetMasterRepresentationName())
       {
       QString message = QString("Segment ID of the moved segment (%1) might exist in the target segmentation.\nPlease check the error window for details.").arg(segmentId.c_str());
-      QMessageBox::information(NULL, tr("Failed to move segment between segmentations"), message);
+      QMessageBox::warning(NULL, tr("Failed to move segment between segmentations"), message);
       return false;
       }
 
