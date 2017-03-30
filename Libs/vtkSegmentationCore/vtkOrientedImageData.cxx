@@ -21,6 +21,7 @@
 #include "vtkOrientedImageData.h"
 
 // VTK includes
+#include <vtkBoundingBox.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkMatrix4x4.h>
@@ -315,15 +316,14 @@ void vtkOrientedImageData::ComputeBounds()
     return;
     }
 
-  vtkMath::UninitializeBounds(this->Bounds);
-
   // Sanity check
   const int* extent = this->Extent;
   if ( extent[0] > extent[1] ||
        extent[2] > extent[3] ||
        extent[4] > extent[5] )
     {
-    // Return with uninitialized bounds
+    // Image is empty, indicated by uninitialized bounds
+    vtkMath::UninitializeBounds(this->Bounds);
     return;
     }
 
@@ -331,6 +331,7 @@ void vtkOrientedImageData::ComputeBounds()
   vtkNew<vtkMatrix4x4> geometryMatrix;
   this->GetImageToWorldMatrix(geometryMatrix.GetPointer());
 
+  vtkBoundingBox boundingBox;
   for (int xSide=0; xSide<2; ++xSide)
     {
     for (int ySide=0; ySide<2; ++ySide)
@@ -355,21 +356,12 @@ void vtkOrientedImageData::ComputeBounds()
         geometryMatrix->MultiplyPoint(cornerPointIJK, cornerPointWorld);
 
         // Determine bounds based on current corner point
-        for (int axis=0; axis<3; ++axis)
-          {
-          if (cornerPointWorld[axis] < this->Bounds[axis*2])
-            {
-            this->Bounds[axis*2] = cornerPointWorld[axis];
-            }
-          if (cornerPointWorld[axis] > this->Bounds[axis*2+1])
-            {
-            this->Bounds[axis*2+1] = cornerPointWorld[axis];
-            }
-          }
+        boundingBox.AddPoint(cornerPointWorld);
         }
       }
     }
 
+  boundingBox.GetBounds(this->Bounds);
   this->ComputeTime.Modified();
 }
 
