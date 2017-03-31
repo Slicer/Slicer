@@ -270,15 +270,12 @@ public:
     vtkIdType shItemID = shnd->GetItemByDataNode(nd);
     vtkIdType outShItemID = shnd->GetItemByDataNode(ond);
 
-    if (!shItemID || !outShItemID)
+    if (shItemID && outShItemID)
     {
-      vtkGenericWarningMacro("CLI: No subject hierarchy item found for input node " << nd->GetName() << " or output node " << ond->GetName());
-      return;
+      vtkIdType parentItemID = shnd->GetItemParent(shItemID);
+      shnd->SetItemParent(outShItemID, parentItemID);
+      shnd->SetItemLevel(outShItemID, shnd->GetItemLevel(shItemID));
     }
-
-    vtkIdType parentItemID = shnd->GetItemParent(shItemID);
-    shnd->SetItemParent(outShItemID, parentItemID);
-    shnd->SetItemLevel(outShItemID, shnd->GetItemLevel(shItemID));
   }
 
   void SetCLIModuleLogic(vtkSlicerCLIModuleLogic* logic)
