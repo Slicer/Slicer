@@ -95,7 +95,6 @@ public:
   /// MRML scene (to get new subject hierarchy node if the stored one is deleted)
   vtkWeakPointer<vtkMRMLScene> MRMLScene;
 
-  mutable QSet<QStandardItem*>  DraggedItems;
   mutable QList<vtkIdType> DraggedSubjectHierarchyItems;
   bool DelayedItemChangedInvoked;
 

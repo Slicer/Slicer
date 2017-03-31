@@ -132,6 +132,9 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="contextMenuEnabled">
+              <bool>false</bool>
+             </property>
             </widget>
            </item>
           </layout>

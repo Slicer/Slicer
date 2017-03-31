@@ -618,10 +618,14 @@ QMimeData* qMRMLSubjectHierarchyModel::mimeData(const QModelIndexList& indexes)c
       {
       allColumnsIndexes << this->index(index.row(), column, parent);
       }
-    d->DraggedSubjectHierarchyItems << this->subjectHierarchyItemFromIndex(index);
+    if (index.column() == 0) // Prevent duplicate IDs
+      {
+      d->DraggedSubjectHierarchyItems << this->subjectHierarchyItemFromIndex(index);
+      }
     }
-  // Remove duplicates
+  // Remove duplicates (mixes up order of items)
   allColumnsIndexes = allColumnsIndexes.toSet().toList();
+
   return this->QStandardItemModel::mimeData(allColumnsIndexes);
 }
 
@@ -635,7 +639,6 @@ bool qMRMLSubjectHierarchyModel::dropMimeData( const QMimeData *data, Qt::DropAc
   // random column.
   bool res = this->Superclass::dropMimeData(
     data, action, row, 0, parent.sibling(parent.row(), 0));
-  d->DraggedSubjectHierarchyItems.clear();
   return res;
 }
 
@@ -1371,16 +1374,12 @@ void qMRMLSubjectHierarchyModel::onItemChanged(QStandardItem* item)
   // random, it could be the item in column 1 then the item in column 0
   if (d->DraggedSubjectHierarchyItems.count())
     {
-    if (item->column() == 0)
+    // Item changed will be triggered multiple times in course of the drag&drop event. Setting this flag
+    // makes sure the final onItemChanged with the collected DraggedSubjectHierarchyItems is called only once.
+    if (!d->DelayedItemChangedInvoked)
       {
-      d->DraggedItems.insert(item);
-      }
-    if (d->DraggedItems.count() > 0 && !d->DelayedItemChangedInvoked)
-      {
-      // Item changed will be triggered multiple times in course of the drag&drop event. Setting this flag
-      // makes sure the final onItemChanged with the collected DraggedItems is called only once.
       d->DelayedItemChangedInvoked = true;
-      QTimer::singleShot(100, this, SLOT(delayedItemChanged()));
+      QTimer::singleShot(50, this, SLOT(delayedItemChanged()));
       }
     return;
     }
@@ -1394,18 +1393,18 @@ void qMRMLSubjectHierarchyModel::delayedItemChanged()
   Q_D(qMRMLSubjectHierarchyModel);
 
   // Update each dropped item
-  QList<vtkIdType> draggedItemIDs;
-  foreach(QStandardItem* item, d->DraggedItems)
+  foreach(vtkIdType draggedShItemID, d->DraggedSubjectHierarchyItems)
     {
-    draggedItemIDs << this->subjectHierarchyItemFromItem(item);
-    this->onItemChanged(item);
+    QModelIndex parentIndex = this->indexFromSubjectHierarchyItem(draggedShItemID).parent();
+    this->updateSubjectHierarchyItemFromItem(
+      draggedShItemID, this->itemFromSubjectHierarchyItem(draggedShItemID) );
     }
 
   // Re-select dropped items
-  emit requestSelectItems(draggedItemIDs);
+  emit requestSelectItems(d->DraggedSubjectHierarchyItems);
 
   // Reset state
-  d->DraggedItems.clear();
+  d->DraggedSubjectHierarchyItems.clear();
   d->DelayedItemChangedInvoked = false;
 }
 

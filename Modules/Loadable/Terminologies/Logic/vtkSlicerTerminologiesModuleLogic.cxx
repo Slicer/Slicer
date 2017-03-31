@@ -1085,14 +1085,14 @@ std::string vtkSlicerTerminologiesModuleLogic::LoadTerminologyFromFile(std::stri
   FILE *fp = fopen(filePath.c_str(), "r");
   if (!fp)
     {
-    vtkErrorMacro("LoadTerminologyFromFile: Failed to load terminology from file '" << filePath);
+    vtkErrorMacro("LoadTerminologyFromFile: Failed to load terminology from file '" << filePath << "'");
     return "";
     }
   char buffer[4096];
   rapidjson::FileReadStream fs(fp, buffer, sizeof(buffer));
   if (terminologyRoot->ParseStream(fs).HasParseError())
     {
-    vtkErrorMacro("LoadTerminologyFromFile: Failed to load terminology from file '" << filePath);
+    vtkErrorMacro("LoadTerminologyFromFile: Failed to load terminology from file '" << filePath << "'");
     fclose(fp);
     return "";
     }

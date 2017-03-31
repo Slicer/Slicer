@@ -385,7 +385,9 @@ void vtkSubjectHierarchyItem::PrintSelf(ostream& os, vtkIndent indent)
     os << ": " << this->Name << "\n";
     }
 
-  os << indent << "Parent: " << (this->Parent ? this->Parent->ID : vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID) << "\n";
+  os << indent << "Parent: "
+    << (this->Parent ? this->Parent->ID : vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    << (this->Parent && !this->Parent->Parent ? " (scene)" : "") << "\n";
   os << indent << "Children: ";
   for (ChildVector::iterator childIt=this->Children.begin(); childIt!=this->Children.end(); ++childIt)
     {
