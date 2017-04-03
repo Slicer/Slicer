@@ -314,7 +314,7 @@ QString qSlicerSubjectHierarchySegmentsPlugin::tooltip(vtkIdType itemID)const
   // Representations
   std::vector<std::string> containedRepresentationNames;
   segment->GetContainedRepresentationNames(containedRepresentationNames);
-  tooltipString.append( QString(" (Representations: ") );
+  tooltipString.append( QString("Segment (Representations: ") );
   if (containedRepresentationNames.empty())
     {
     tooltipString.append( QString("None!)") );

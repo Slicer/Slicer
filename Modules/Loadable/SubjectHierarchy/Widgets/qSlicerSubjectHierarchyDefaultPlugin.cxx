@@ -118,7 +118,7 @@ const QString qSlicerSubjectHierarchyDefaultPlugin::helpText()const
     "</p>"
     "<p style=\" margin-top:0px; margin-bottom:11px; margin-left:26px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
     "<span style=\" font-family:'sans-serif'; font-size:9pt; color:#000000;\">"
-    "Right-click on the item and select 'Rename'"
+    "Double-click the item name, or right-click the item and select 'Rename'"
     "</span>"
     "</p>"
     "<p style=\" margin-top:4px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
@@ -128,7 +128,7 @@ const QString qSlicerSubjectHierarchyDefaultPlugin::helpText()const
     "</p>"
     "<p style=\" margin-top:0px; margin-bottom:11px; margin-left:26px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
     "<span style=\" font-size:8pt;\">"
-    "Make sure the transform column is shown using the 'Display transforms' checkbox. "
+    "Make sure the transform column is shown using the 'Transforms' checkbox. "
     "To transform a branch, double click on the cell in the transform column of the row in question, and choose a transform."
     "</span>"
     "</p>");
