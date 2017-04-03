@@ -110,8 +110,8 @@ protected:
   /// The current items are queried in the function anyway, in case of multi-selection
   virtual void populateContextMenuForItem(vtkIdType itemID);
 
-  /// Handle mouse release event
-  virtual void mouseReleaseEvent(QMouseEvent* event);
+  /// Handle mouse press event
+  virtual void mousePressEvent(QMouseEvent* event);
   /// Handle key press event
   virtual void keyPressEvent(QKeyEvent* event);
 

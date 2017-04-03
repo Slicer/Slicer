@@ -590,13 +590,16 @@ void qMRMLSubjectHierarchyTreeView::toggleSubjectHierarchyItemVisibility(vtkIdTy
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSubjectHierarchyTreeView::mouseReleaseEvent(QMouseEvent* e)
+void qMRMLSubjectHierarchyTreeView::mousePressEvent(QMouseEvent* e)
 {
   Q_D(qMRMLSubjectHierarchyTreeView);
   if (!d->SubjectHierarchyNode)
     {
     return;
     }
+
+  // Perform default mouse press event (make selections etc.)
+  this->QTreeView::mousePressEvent(e);
 
   if (e->button() == Qt::LeftButton)
     {
@@ -637,8 +640,6 @@ void qMRMLSubjectHierarchyTreeView::mouseReleaseEvent(QMouseEvent* e)
       d->NodeMenu->exec(e->globalPos());
       }
     }
-
-  this->QTreeView::mouseReleaseEvent(e);
 }
 
 //------------------------------------------------------------------------------
