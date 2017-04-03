@@ -51,7 +51,7 @@ public:
   virtual double canAddNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )const;
 
   /// Creates subject hierarchy item using default method and updates all segments
-  virtual bool addNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID, std::string level="");
+  virtual bool addNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID);
 
   /// Determines if the actual plugin can handle a subject hierarchy item. The plugin with
   /// the highest confidence number will "own" the item in the subject hierarchy (set icon, tooltip,

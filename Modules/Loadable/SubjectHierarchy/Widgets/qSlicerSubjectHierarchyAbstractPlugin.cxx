@@ -150,8 +150,7 @@ double qSlicerSubjectHierarchyAbstractPlugin::canAddNodeToSubjectHierarchy(vtkMR
 }
 
 //----------------------------------------------------------------------------
-bool qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy(
-  vtkMRMLNode* nodeToAdd, vtkIdType parentItemID, std::string level/*=""*/)
+bool qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy(vtkMRMLNode* nodeToAdd, vtkIdType parentItemID)
 {
   if (!nodeToAdd)
     {
@@ -170,14 +169,9 @@ bool qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy(
     {
     parentItemID = shNode->GetSceneItemID();
     }
-  // If level is undefined, then add as series
-  if (level.empty())
-    {
-    level = vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries();
-    }
 
   // Create subject hierarchy item with added node
-  vtkIdType addedItemID = shNode->CreateItem(parentItemID, nodeToAdd, level);
+  vtkIdType addedItemID = shNode->CreateItem(parentItemID, nodeToAdd);
   if (!addedItemID)
     {
     qCritical() << Q_FUNC_INFO << ": Failed to add subject hierarchy item for data node " << nodeToAdd->GetName();

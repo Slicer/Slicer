@@ -147,9 +147,8 @@ public:
   /// call \sa vtkMRMLSubjectHierarchyNode::CreateItem
   /// \param node Node to add to subject hierarchy
   /// \param parentItemID Parent item of the added node
-  /// \param level Level of the added node in subject hierarchy, none be default
   /// \return True if added successfully, false otherwise
-  virtual bool addNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID, std::string level="");
+  virtual bool addNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID);
 
   /// Determines if a subject hierarchy item can be reparented in the hierarchy using the current plugin,
   /// and gets a confidence value for the reparented item.

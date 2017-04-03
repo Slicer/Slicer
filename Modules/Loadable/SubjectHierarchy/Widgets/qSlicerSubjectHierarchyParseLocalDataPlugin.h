@@ -60,7 +60,7 @@ public:
 protected slots:
   /// Create subject hierarchy from loaded local directories.
   /// Organizes all items in subject hierarchy that have storable data nodes and has a valid storage node with a file
-  /// name (meaning it has been loaded from local disk). Creates patient/study/series/subseries hierarchies according to the
+  /// name (meaning it has been loaded from local disk). Creates patient/study/series hierarchies according to the
   /// paths of the loaded files, ignoring the part that is identical (if everything has been loaded from the same directory,
   /// then only creates subject hierarchy nodes for the directories within that directory).
   void createHierarchyFromLoadedDirectoryStructure();

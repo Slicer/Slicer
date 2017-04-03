@@ -65,7 +65,7 @@ public:
 protected slots:
   /// Make selections in the shown dialog, including select the item that was
   /// passed with \sa exec() in subject hierarchy tree
-  void setupDialog();
+  void makeDialogSelections();
 
   /// Handles change of export series or entire scene radio button selection
   void onExportSeriesRadioButtonToggled(bool);

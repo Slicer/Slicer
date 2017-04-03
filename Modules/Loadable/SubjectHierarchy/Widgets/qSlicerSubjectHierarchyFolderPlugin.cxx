@@ -267,11 +267,10 @@ vtkIdType qSlicerSubjectHierarchyFolderPlugin::createFolderUnderItem(vtkIdType p
     }
 
   // Create folder subject hierarchy node
-  std::string name = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNewNodeNamePrefix()
+  std::string name = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNewItemNamePrefix()
     + vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder();
   name = shNode->GenerateUniqueItemName(name);
-  vtkIdType childItemID = shNode->CreateItem(
-    parentItemID, name, vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder() );
+  vtkIdType childItemID = shNode->CreateFolderItem(parentItemID, name);
   emit requestExpandItem(childItemID);
 
   return childItemID;
@@ -325,8 +324,7 @@ double qSlicerSubjectHierarchyFolderPlugin::canAddNodeToSubjectHierarchy(
 }
 
 //----------------------------------------------------------------------------
-bool qSlicerSubjectHierarchyFolderPlugin::addNodeToSubjectHierarchy(
-  vtkMRMLNode* nodeToAdd, vtkIdType parentItemID, std::string level/*=""*/)
+bool qSlicerSubjectHierarchyFolderPlugin::addNodeToSubjectHierarchy(vtkMRMLNode* nodeToAdd, vtkIdType parentItemID)
 {
   if (!nodeToAdd)
     {
@@ -360,16 +358,16 @@ bool qSlicerSubjectHierarchyFolderPlugin::addNodeToSubjectHierarchy(
     return false;
     }
 
-  // Level will be folder no matter what is given
-  level = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder();
-
   // Create subject hierarchy item with added hierarchy node
-  vtkIdType addedItemID = shNode->CreateItem(parentItemID, nodeToAdd, level);
+  vtkIdType addedItemID = shNode->CreateItem(parentItemID, nodeToAdd);
   if (!addedItemID)
     {
     qCritical() << Q_FUNC_INFO << ": Failed to add subject hierarchy item for hierarchy node " << nodeToAdd->GetName();
     return false;
     }
+
+  // Set level to folder. It is only possible for hierarchy-type data nodes that are added strictly only from the folder plugin
+  shNode->SetItemLevel(addedItemID, vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder());
 
   // Observe vtkMRMLHierarchyNode::ChildNodeAddedEvent so that we can reparent subject hierarchy items according to node hierarchy
   qvtkConnect( hierarchyNode, vtkMRMLHierarchyNode::ChildNodeAddedEvent, this, SLOT( onHierarchyNodeChildNodeAdded(vtkObject*,vtkObject*) ) );

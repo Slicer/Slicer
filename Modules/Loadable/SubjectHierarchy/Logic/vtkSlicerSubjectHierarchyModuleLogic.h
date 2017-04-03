@@ -63,14 +63,14 @@ public:
   /// \param lowestCommonLevel Lowest level on which they have to share an ancestor
   /// \return The common parent if the two items share a parent  on the specified level, INVALID_ITEM_ID otherwise
   static vtkIdType AreItemsInSameBranch(
-    vtkMRMLSubjectHierarchyNode* shNode, vtkIdType item1, vtkIdType item2, const char* lowestCommonLevel );
+    vtkMRMLSubjectHierarchyNode* shNode, vtkIdType item1, vtkIdType item2, std::string lowestCommonLevel );
   /// Determine if two data nodes are in the same branch in subject hierarchy (share the same parent)
   /// \param node1 First node to check. Can be subject hierarchy node or a node associated with one
   /// \param node2 Second node to check
   /// \param lowestCommonLevel Lowest level on which they have to share an ancestor
   /// \return The common parent if the two nodes share a parent on the specified level, INVALID_ITEM_ID otherwise
   static vtkIdType AreNodesInSameBranch(
-    vtkMRMLNode* node1, vtkMRMLNode* node2, const char* lowestCommonLevel );
+    vtkMRMLNode* node1, vtkMRMLNode* node2, std::string lowestCommonLevel );
 
   /// Determine if a tag name is a patient tag (not attribute, but tag - without prefix!)
   static bool IsPatientTag(std::string tagName);

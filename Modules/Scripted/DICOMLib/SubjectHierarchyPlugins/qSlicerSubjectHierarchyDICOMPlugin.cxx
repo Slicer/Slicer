@@ -88,7 +88,7 @@ void qSlicerSubjectHierarchyDICOMPluginPrivate::init()
   Q_Q(qSlicerSubjectHierarchyDICOMPlugin);
 
   this->CreatePatientAction = new QAction("Create new subject",q);
-  QObject::connect(this->CreatePatientAction, SIGNAL(triggered()), q, SLOT(createPatientItem()));
+  QObject::connect(this->CreatePatientAction, SIGNAL(triggered()), q, SLOT(createSubjectItem()));
 
   this->CreateStudyAction = new QAction("Create child study",q);
   QObject::connect(this->CreateStudyAction, SIGNAL(triggered()), q, SLOT(createChildStudyUnderCurrentItem()));
@@ -310,8 +310,8 @@ void qSlicerSubjectHierarchyDICOMPlugin::showContextMenuActionsForItem(vtkIdType
       d->OpenDICOMExportDialogAction->setVisible(true);
       }
     }
-  // Series
-  else if (shNode->IsItemLevel(itemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries()))
+  // Data node (Series)
+  else if (shNode->GetItemDataNode(itemID))
     {
     //if (this->canBeExported(node)) //TODO:
       {
@@ -328,7 +328,7 @@ void qSlicerSubjectHierarchyDICOMPlugin::editProperties(vtkIdType itemID)
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyDICOMPlugin::createPatientItem()
+void qSlicerSubjectHierarchyDICOMPlugin::createSubjectItem()
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
@@ -338,12 +338,11 @@ void qSlicerSubjectHierarchyDICOMPlugin::createPatientItem()
     }
 
   // It is called Subject to the user, while internally it is used for the patient notation defined in DICOM
-  std::string name = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNewNodeNamePrefix() + "Subject";
+  std::string name = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNewItemNamePrefix() + "Subject";
   name = shNode->GenerateUniqueItemName(name);
 
   // Create patient subject hierarchy item
-  vtkIdType patientItemID =
-    shNode->CreateItem(shNode->GetSceneItemID(), name, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient());
+  vtkIdType patientItemID = shNode->CreateSubjectItem(shNode->GetSceneItemID(), name);
 
   emit requestExpandItem(patientItemID);
 }
@@ -364,12 +363,11 @@ void qSlicerSubjectHierarchyDICOMPlugin::createChildStudyUnderCurrentItem()
     return;
     }
 
-  std::string name = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNewNodeNamePrefix() + vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy();
+  std::string name = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNewItemNamePrefix() + vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy();
   name = shNode->GenerateUniqueItemName(name);
 
   // Create study subject hierarchy item
-  vtkIdType studyItemID =
-    shNode->CreateItem(currentItemID, name, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy());
+  vtkIdType studyItemID = shNode->CreateStudyItem(currentItemID, name);
 
   emit requestExpandItem(studyItemID);
 }
@@ -392,8 +390,6 @@ void qSlicerSubjectHierarchyDICOMPlugin::convertCurrentItemToPatient()
 
   // Set level to patient to indicate new role
   shNode->SetItemLevel(currentItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient());
-  // Set plugin for the new item (automatically selects the DICOM plugin based on confidence values)
-  qSlicerSubjectHierarchyPluginHandler::instance()->findAndSetOwnerPluginForSubjectHierarchyItem(currentItemID);
 }
 
 //---------------------------------------------------------------------------
@@ -414,8 +410,6 @@ void qSlicerSubjectHierarchyDICOMPlugin::convertCurrentItemToStudy()
 
   // Set level to patient to indicate new role
   shNode->SetItemLevel(currentItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy());
-  // Set plugin for the new item (automatically selects the DICOM plugin based on confidence values)
-  qSlicerSubjectHierarchyPluginHandler::instance()->findAndSetOwnerPluginForSubjectHierarchyItem(currentItemID);
 }
 
 //---------------------------------------------------------------------------

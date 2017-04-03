@@ -133,12 +133,11 @@ vtkIdType vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy(
   if (!patientItemID)
     {
     // This temporary name is updated with correct one specified in the DICOM plugin after calling this function
-    std::string name = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNewNodeNamePrefix()
+    std::string name = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNewItemNamePrefix()
       + vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient();
     name = shNode->GenerateUniqueItemName(name);
 
-    patientItemID = shNode->CreateItem(
-      shNode->GetSceneItemID(), name, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient() );
+    patientItemID = shNode->CreateSubjectItem(shNode->GetSceneItemID(), name);
     shNode->SetItemUID(patientItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMUIDName(), patientId);
     shNode->SetItemOwnerPluginName(patientItemID, "DICOM");
     }
@@ -146,12 +145,11 @@ vtkIdType vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy(
   if (!studyItemID)
     {
     // This temporary name is updated with correct one specified in the DICOM plugin after calling this function
-    std::string name = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNewNodeNamePrefix()
+    std::string name = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNewItemNamePrefix()
       + vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy();
     name = shNode->GenerateUniqueItemName(name);
 
-    studyItemID = shNode->CreateItem(
-      patientItemID, name, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy() );
+    studyItemID = shNode->CreateStudyItem(patientItemID, name);
     shNode->SetItemUID(studyItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMUIDName(), studyInstanceUID);
     shNode->SetItemOwnerPluginName(studyItemID, "DICOM");
     }
@@ -178,7 +176,7 @@ vtkIdType vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy(
 
 //---------------------------------------------------------------------------
 vtkIdType vtkSlicerSubjectHierarchyModuleLogic::AreItemsInSameBranch(
-    vtkMRMLSubjectHierarchyNode* shNode, vtkIdType item1, vtkIdType item2, const char* lowestCommonLevel )
+    vtkMRMLSubjectHierarchyNode* shNode, vtkIdType item1, vtkIdType item2, std::string lowestCommonLevel )
 {
   if (!shNode)
     {
@@ -190,7 +188,7 @@ vtkIdType vtkSlicerSubjectHierarchyModuleLogic::AreItemsInSameBranch(
     vtkErrorWithObjectMacro(shNode, "vtkSlicerSubjectHierarchyModuleLogic::AreItemsInSameBranch: Invalid input items");
     return vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
     }
-  if (!lowestCommonLevel)
+  if (lowestCommonLevel.empty())
     {
     vtkErrorWithObjectMacro(shNode, "vtkSlicerSubjectHierarchyModuleLogic::AreItemsInSameBranch: Invalid lowest common level");
     return vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
@@ -245,7 +243,7 @@ vtkIdType vtkSlicerSubjectHierarchyModuleLogic::AreItemsInSameBranch(
 }
 
 //---------------------------------------------------------------------------
-vtkIdType vtkSlicerSubjectHierarchyModuleLogic::AreNodesInSameBranch(vtkMRMLNode* node1, vtkMRMLNode* node2, const char* lowestCommonLevel)
+vtkIdType vtkSlicerSubjectHierarchyModuleLogic::AreNodesInSameBranch(vtkMRMLNode* node1, vtkMRMLNode* node2, std::string lowestCommonLevel)
 {
   if (!node1 || !node2 || !node1->GetScene() || node1->GetScene() != node2->GetScene())
     {
@@ -498,7 +496,7 @@ vtkIdType vtkSlicerSubjectHierarchyModuleLogic::CloneSubjectHierarchyItem(
   else // No associated node
     {
     std::string clonedItemName = ( name ? std::string(name) : std::string(shNode->GetItemName(itemID)) + std::string(CLONED_NODE_NAME_POSTFIX) );
-    clonedShItemID = shNode->CreateItem(shNode->GetItemParent(itemID), clonedItemName, shNode->GetItemLevel(itemID));
+    clonedShItemID = shNode->CreateHierarchyItem(shNode->GetItemParent(itemID), clonedItemName, shNode->GetItemLevel(itemID));
     }
 
   return clonedShItemID;

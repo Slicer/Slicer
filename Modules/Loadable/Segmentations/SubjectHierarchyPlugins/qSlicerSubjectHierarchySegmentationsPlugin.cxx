@@ -134,10 +134,9 @@ double qSlicerSubjectHierarchySegmentationsPlugin::canAddNodeToSubjectHierarchy(
 }
 
 //----------------------------------------------------------------------------
-bool qSlicerSubjectHierarchySegmentationsPlugin::addNodeToSubjectHierarchy(
-  vtkMRMLNode* nodeToAdd, vtkIdType parentItemID, std::string level/*=""*/)
+bool qSlicerSubjectHierarchySegmentationsPlugin::addNodeToSubjectHierarchy(vtkMRMLNode* nodeToAdd, vtkIdType parentItemID)
 {
-  if (!qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy(nodeToAdd, parentItemID, level))
+  if (!qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy(nodeToAdd, parentItemID))
     {
     return false;
     }
@@ -172,7 +171,7 @@ double qSlicerSubjectHierarchySegmentationsPlugin::canOwnSubjectHierarchyItem(vt
     {
     // Make sure the segmentation subject hierarchy item indicates its virtual branch
     shNode->SetItemAttribute(itemID,
-      vtkMRMLSubjectHierarchyConstants::GetVirtualBranchSubjectHierarchyNodeAttributeName().c_str(), "1");
+      vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyVirtualBranchAttributeName().c_str(), "1");
     return 0.9;
     }
 
@@ -419,8 +418,8 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSegmentAdded(vtkObject* calle
     }
 
   // Add the segment in subject hierarchy to allow individual handling (e.g. visibility)
-  vtkIdType segmentShItemID = shNode->CreateItem(
-    segmentationShItemID, segment->GetName(), vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSubseries() );
+  vtkIdType segmentShItemID = shNode->CreateHierarchyItem(
+    segmentationShItemID, segment->GetName(), vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyVirtualBranchAttributeName());
   shNode->SetItemAttribute(segmentShItemID, vtkMRMLSegmentationNode::GetSegmentIDAttributeName(), segmentId);
   // Set plugin for the new item (automatically selects the segment plugin based on confidence values)
   qSlicerSubjectHierarchyPluginHandler::instance()->findAndSetOwnerPluginForSubjectHierarchyItem(segmentShItemID);

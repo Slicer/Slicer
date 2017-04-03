@@ -114,9 +114,9 @@ public:
   /// Get name for a subject hierarchy item
   /// \return Name of the associated data node if any, otherwise the name of the item
   std::string GetItemName(vtkIdType itemID);
-  /// Set level for a subject hierarchy item
+  /// Convenience function to set level attribute for a subject hierarchy item
   void SetItemLevel(vtkIdType itemID, std::string level);
-  /// Get level for a subject hierarchy item
+  /// Convenience function to get level attribute for a subject hierarchy item
   std::string GetItemLevel(vtkIdType itemID);
   /// Set owner plugin name (role) for a subject hierarchy item
   void SetItemOwnerPluginName(vtkIdType itemID, std::string ownerPluginName);
@@ -166,24 +166,34 @@ public:
 
 // Hierarchy related methods
 public:
-  /// Create subject hierarchy item in the hierarchy under a specified parent.
-  /// Used for creating hierarchy items (folder, patient, study, etc.)
-  /// \param parentItemID Parent item under which the created item is inserted. If top-level then use \sa GetSceneItemID
-  /// \param name Name of the item. Only used if there is no data node associated
-  /// \param level Level string of the created item (\sa vtkMRMLSubjectHierarchyConstants)
-  /// \return ID of the item in the hierarchy that was assigned automatically when adding
-  vtkIdType CreateItem( vtkIdType parentItemID,
-                        std::string name,
-                        std::string level=vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder() );
   /// Create subject hierarchy item for a data node.
   /// Can be used to add nodes that were not added automatically (e.g. HideFromEditors was on, or exclude attribute was set)
   /// \param parentItemID Parent item under which the created item is inserted. If top-level then use \sa GetSceneItemID
   /// \param dataNode Associated data MRML node
-  /// \param level Level string of the created item (\sa vtkMRMLSubjectHierarchyConstants)
   /// \return ID of the item in the hierarchy that was assigned automatically when adding
-  vtkIdType CreateItem( vtkIdType parentItemID,
-                        vtkMRMLNode* dataNode,
-                        std::string level=vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries() );
+  vtkIdType CreateItem(vtkIdType parentItemID, vtkMRMLNode* dataNode);
+  /// Generic function to create hierarchy items of given level. Convenience functions are available for frequently used levels
+  /// \sa CreateSubjectItem, \sa CreateStudyItem, \sa CreateFolderItem
+  /// \param parentItemID Parent item under which the created item is inserted. If top-level then use \sa GetSceneItemID
+  /// \param name Name of the item. Only used if there is no data node associated
+  /// \param level Level of the hierarchy item. It will be stored as attribute (\sa vtkMRMLSubjectHierarchyConstants)
+  /// \return ID of the item in the hierarchy that was assigned automatically when adding
+  vtkIdType CreateHierarchyItem(vtkIdType parentItemID, std::string name, std::string level);
+  /// Convenience function to create subject item in the hierarchy under a specified parent.
+  /// \param parentItemID Parent item under which the created item is inserted. If top-level then use \sa GetSceneItemID
+  /// \param name Name of the item. Only used if there is no data node associated
+  /// \return ID of the item in the hierarchy that was assigned automatically when adding
+  vtkIdType CreateSubjectItem(vtkIdType parentItemID, std::string name);
+  /// Convenience function to create study item in the hierarchy under a specified parent.
+  /// \param parentItemID Parent item under which the created item is inserted
+  /// \param name Name of the item. Only used if there is no data node associated
+  /// \return ID of the item in the hierarchy that was assigned automatically when adding
+  vtkIdType CreateStudyItem(vtkIdType parentItemID, std::string name);
+  /// Convenience function to create folder item in the hierarchy under a specified parent.
+  /// \param parentItemID Parent item folder which the created item is inserted. If top-level then use \sa GetSceneItemID
+  /// \param name Name of the item. Only used if there is no data node associated
+  /// \return ID of the item in the hierarchy that was assigned automatically when adding
+  vtkIdType CreateFolderItem(vtkIdType parentItemID, std::string name);
 
   /// Remove subject hierarchy item or branch from the tree
   /// \param itemID Item to remove

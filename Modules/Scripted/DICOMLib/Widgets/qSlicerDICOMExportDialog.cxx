@@ -164,7 +164,7 @@ bool qSlicerDICOMExportDialog::exec(vtkIdType itemToSelect/*=vtkMRMLSubjectHiera
 
   // Make selection if requested
   d->ItemToSelect = itemToSelect;
-  QTimer::singleShot(0, this, SLOT( setupDialog() ) );
+  QTimer::singleShot(0, this, SLOT( makeDialogSelections() ) );
 
   // Show dialog
   if (d->exec() != QDialog::Accepted)
@@ -184,7 +184,7 @@ void qSlicerDICOMExportDialog::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerDICOMExportDialog::setupDialog()
+void qSlicerDICOMExportDialog::makeDialogSelections()
 {
   Q_D(qSlicerDICOMExportDialog);
 
@@ -251,13 +251,13 @@ void qSlicerDICOMExportDialog::examineSelectedItem()
       selectedSeriesItemIDs.append(*childIt);
       }
     }
-  else if (shNode->IsItemLevel(currentItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries()))
+  else if (shNode->GetItemDataNode(currentItemID))
     {
     selectedSeriesItemIDs.append(currentItemID);
     }
   else
     {
-    qCritical() << Q_FUNC_INFO << ": Can only export series or study";
+    qCritical() << Q_FUNC_INFO << ": Can only export data node or study item";
     return;
     }
 

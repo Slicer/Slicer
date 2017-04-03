@@ -318,11 +318,9 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
   foreach (qSlicerDICOMExportable* exportable, d->Exportables)
     {
     vtkIdType seriesItemID = exportable->subjectHierarchyItemID();
-    if ( seriesItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
-      || !shNode->IsItemLevel(seriesItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries()) )
+    if (seriesItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
       {
-      qCritical() << Q_FUNC_INFO << ": Exportable '" << exportable->name() << QString("' points to invalid series item '%1 (name:%2, level:%3)'").arg(
-        seriesItemID).arg(shNode->GetItemName(seriesItemID).c_str()).arg(shNode->GetItemLevel(seriesItemID).c_str());
+      qCritical() << Q_FUNC_INFO << ": Exportable '" << exportable->name() << QString("' points to invalid item");
       continue;
       }
 
@@ -379,13 +377,19 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
   patientItemAttributeNames = shNode->GetItemAttributeNames(patientItemID);
   // Create a row in table widget for each tag and populate exportables with patient tags
   // (all tags are acquired from the exportable on export)
-  for (std::vector<std::string>::iterator it = patientItemAttributeNames.begin();
-    it != patientItemAttributeNames.end(); ++it)
+  for (std::vector<std::string>::iterator it = patientItemAttributeNames.begin(); it != patientItemAttributeNames.end(); ++it)
     {
     std::string attributeName = (*it);
+    if (attributeName.size() < vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix().size())
+      {
+      continue;
+      }
+
+    // Get attribute prefix from attribute name, and tag name (attribute name after prefix) and value
     std::string attributePrefix = attributeName.substr(0, vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix().size());
     QString tagName(attributeName.substr(vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix().size()).c_str());
     QString tagValue(shNode->GetItemAttribute(patientItemID, attributeName).c_str());
+
     // If DICOM tag attribute (i.e. has the prefix), then add to the table and exportable
     if (!attributePrefix.compare(vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix()))
       {
@@ -411,8 +415,7 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
   // Add missing study tags with empty values to study item so that they are displayed in the table
   std::vector<std::string> studyItemAttributeNames = shNode->GetItemAttributeNames(studyItemID);
   std::vector<std::string> studyTagNames = vtkMRMLSubjectHierarchyConstants::GetDICOMStudyTagNames();
-  for ( std::vector<std::string>::iterator studyTagIt = studyTagNames.begin();
-    studyTagIt != studyTagNames.end(); ++studyTagIt )
+  for (std::vector<std::string>::iterator studyTagIt = studyTagNames.begin(); studyTagIt != studyTagNames.end(); ++studyTagIt)
     {
     std::string tagAttributeName = vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix() + (*studyTagIt);
     if (std::find(studyItemAttributeNames.begin(), studyItemAttributeNames.end(), tagAttributeName) == studyItemAttributeNames.end())
@@ -420,14 +423,20 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
       shNode->SetItemAttribute(studyItemID, tagAttributeName, "");
       }
     }
+
   // Get attribute names again in case some were missing
   studyItemAttributeNames = shNode->GetItemAttributeNames(studyItemID);
   // Create a row in table widget for each tag and populate exportables with study tags
   // (all tags are acquired from the exportable on export)
-  for (std::vector<std::string>::iterator it = studyItemAttributeNames.begin();
-    it != studyItemAttributeNames.end(); ++it)
+  for (std::vector<std::string>::iterator it = studyItemAttributeNames.begin(); it != studyItemAttributeNames.end(); ++it)
     {
     std::string attributeName = (*it);
+    if (attributeName.size() < vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix().size())
+      {
+      continue;
+      }
+
+    // Get attribute prefix from attribute name, and tag name (attribute name after prefix) and value
     std::string attributePrefix = attributeName.substr(0, vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix().size());
     QString tagName(attributeName.substr(vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix().size()).c_str());
     QString tagValue(shNode->GetItemAttribute(studyItemID, attributeName).c_str());

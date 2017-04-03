@@ -548,9 +548,9 @@ bool qMRMLSubjectHierarchyModel::reparent(vtkIdType itemID, vtkIdType newParentI
   // then abort reparenting (it means that the actual owner plugin cannot reparent its own virtual item, so it then
   // cannot be reparented).
   if ( ( ( !d->SubjectHierarchyNode->GetItemAttribute(newParentID,
-             vtkMRMLSubjectHierarchyConstants::GetVirtualBranchSubjectHierarchyNodeAttributeName().c_str()).empty() )
+             vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyVirtualBranchAttributeName().c_str()).empty() )
       || ( !d->SubjectHierarchyNode->GetItemAttribute(oldParentID,
-             vtkMRMLSubjectHierarchyConstants::GetVirtualBranchSubjectHierarchyNodeAttributeName().c_str()).empty() ) )
+             vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyVirtualBranchAttributeName().c_str()).empty() ) )
     && selectedPlugin == qSlicerSubjectHierarchyPluginHandler::instance()->defaultPlugin() )
   {
     qCritical() << Q_FUNC_INFO << ": Failed to reparent virtual item "
@@ -786,7 +786,7 @@ QFlags<Qt::ItemFlag> qMRMLSubjectHierarchyModel::subjectHierarchyItemFlags(vtkId
   // (a virtual branch is a branch where the children items do not correspond to actual MRML data nodes,
   // but to implicit items contained by the parent MRML node, e.g. in case of Markups or Segmentations)
   if ( d->SubjectHierarchyNode->HasItemAttribute( itemID,
-    vtkMRMLSubjectHierarchyConstants::GetVirtualBranchSubjectHierarchyNodeAttributeName()) )
+    vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyVirtualBranchAttributeName()) )
     {
     flags |= Qt::ItemIsDropEnabled;
     }
@@ -794,7 +794,7 @@ QFlags<Qt::ItemFlag> qMRMLSubjectHierarchyModel::subjectHierarchyItemFlags(vtkId
   vtkIdType parentItemID = d->SubjectHierarchyNode->GetItemParent(itemID);
   if (parentItemID
     && d->SubjectHierarchyNode->HasItemAttribute(
-         parentItemID, vtkMRMLSubjectHierarchyConstants::GetVirtualBranchSubjectHierarchyNodeAttributeName()) )
+         parentItemID, vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyVirtualBranchAttributeName()) )
     {
     flags &= ~Qt::ItemIsDropEnabled;
     }

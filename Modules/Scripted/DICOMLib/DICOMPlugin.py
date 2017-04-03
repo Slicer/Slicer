@@ -199,7 +199,7 @@ class DICOMPlugin(object):
     sceneItemID = shn.GetSceneItemID()
 
     # Set up subject hierarchy item
-    seriesItemID = shn.CreateItem(sceneItemID, dataNode, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelSeries())
+    seriesItemID = shn.CreateItem(sceneItemID, dataNode)
 
     # Specify details of series item
     seriesInstanceUid = slicer.dicomDatabase.fileValue(firstFile,tags['seriesInstanceUID'])

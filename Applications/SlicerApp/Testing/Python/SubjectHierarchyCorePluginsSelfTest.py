@@ -120,8 +120,8 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
     self.assertEqual( shNode.GetItemOwnerPluginName(markupsShItemID), 'Markups' )
 
     # Create patient and study
-    patientItemID = shNode.CreateItem(shNode.GetSceneItemID(), 'Patient', slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelPatient())
-    self.studyItemID = shNode.CreateItem(patientItemID, 'Study', slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelStudy())
+    patientItemID = shNode.CreateSubjectItem(shNode.GetSceneItemID(), 'Patient')
+    self.studyItemID = shNode.CreateStudyItem(patientItemID, 'Study')
 
     # Add markups under study
     markupsShItemID2 = shNode.CreateItem(self.studyItemID, markupsNode)

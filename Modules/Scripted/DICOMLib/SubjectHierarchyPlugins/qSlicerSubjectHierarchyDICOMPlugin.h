@@ -87,7 +87,7 @@ public:
 
 protected slots:
   /// Create patient item
-  void createPatientItem();
+  void createSubjectItem();
 
   /// Create study item under current item (must be patient)
   void createChildStudyUnderCurrentItem();

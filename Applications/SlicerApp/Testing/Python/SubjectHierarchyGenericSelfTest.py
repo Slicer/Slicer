@@ -281,7 +281,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     # Verify DICOM levels
     self.assertEqual( shNode.GetItemLevel(self.patientItemID), slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelPatient() )
     self.assertEqual( shNode.GetItemLevel(self.studyItemID), slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelStudy() )
-    self.assertEqual( shNode.GetItemLevel(self.ctVolumeShItemID), slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelSeries() )
+    self.assertEqual( shNode.GetItemLevel(self.ctVolumeShItemID), "" )
 
     # Add model and labelmap to the created study
     retVal1 = shSceneModel.reparent(self.sampleLabelmapShItemID, self.studyItemID)
@@ -325,9 +325,9 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     self.assertIsNotNone( shNode )
 
     # Create second patient, study, and a folder
-    self.patient2ItemID = shNode.CreateItem(shNode.GetSceneItemID(), self.patient2Name, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelPatient())
-    self.study2ItemID = shNode.CreateItem(self.patient2ItemID, self.study2Name, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelStudy())
-    self.folderItemID = shNode.CreateItem(self.study2ItemID, self.folderName, slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyLevelFolder())
+    self.patient2ItemID = shNode.CreateSubjectItem(shNode.GetSceneItemID(), self.patient2Name)
+    self.study2ItemID = shNode.CreateStudyItem(self.patient2ItemID, self.study2Name)
+    self.folderItemID = shNode.CreateFolderItem(self.study2ItemID, self.folderName)
 
     # Check if the items have the right parents
     self.assertEqual( shNode.GetItemParent(self.patient2ItemID), shNode.GetSceneItemID() )

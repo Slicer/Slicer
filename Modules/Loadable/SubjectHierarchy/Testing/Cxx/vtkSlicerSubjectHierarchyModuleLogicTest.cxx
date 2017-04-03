@@ -127,16 +127,13 @@ namespace
       }
 
     // Create subject and studies
-    vtkIdType patientItemID = shNode->CreateItem(
-      sceneItemID, "Patient", vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient() );
+    vtkIdType patientItemID = shNode->CreateSubjectItem(sceneItemID, "Patient");
     shNode->SetItemUID(patientItemID, UID_NAME, PATIENT_UID_VALUE);
 
-    vtkIdType study1ItemID = shNode->CreateItem(
-      patientItemID, "Study1", vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy() );
+    vtkIdType study1ItemID = shNode->CreateStudyItem(patientItemID, "Study1");
     shNode->SetItemUID(study1ItemID, UID_NAME, STUDY1_UID_VALUE);
 
-    vtkIdType study2ItemID = shNode->CreateItem(
-      patientItemID, "Study2", vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy() );
+    vtkIdType study2ItemID = shNode->CreateStudyItem(patientItemID, "Study2");
     shNode->SetItemUID(study2ItemID, UID_NAME, STUDY2_UID_VALUE);
     shNode->SetItemAttribute(study2ItemID, STUDY_ATTRIBUTE_NAME, STUDY_ATTRIBUTE_VALUE);
 
@@ -149,8 +146,7 @@ namespace
     scene->AddNode(volume1DisplayNode.GetPointer());
     volume1Node->SetAndObserveDisplayNodeID(volume1DisplayNode->GetID());
 
-    vtkIdType volume1SeriesItemID = shNode->CreateItem(
-      study1ItemID, volume1Node.GetPointer(), vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries() );
+    vtkIdType volume1SeriesItemID = shNode->CreateItem(study1ItemID, volume1Node.GetPointer());
     shNode->SetItemUID(volume1SeriesItemID, UID_NAME, VOLUME1_UID_VALUE);
 
     // Create model1 series in study 1
@@ -162,8 +158,7 @@ namespace
     scene->AddNode(model1DisplayNode.GetPointer());
     model1Node->SetAndObserveDisplayNodeID(model1DisplayNode->GetID());
 
-    vtkIdType model1SeriesItemID = shNode->CreateItem(
-      study1ItemID, model1Node.GetPointer(), vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries() );
+    vtkIdType model1SeriesItemID = shNode->CreateItem(study1ItemID, model1Node.GetPointer());
     shNode->SetItemUID(model1SeriesItemID, UID_NAME, MODEL1_UID_VALUE);
 
     // Create volume series in study 2
@@ -175,8 +170,7 @@ namespace
     scene->AddNode(volume2DisplayNode.GetPointer());
     volume2Node->SetAndObserveDisplayNodeID(volume2DisplayNode->GetID());
 
-    vtkIdType volume2SeriesItemID = shNode->CreateItem(
-      study2ItemID, volume2Node.GetPointer(), vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries() );
+    vtkIdType volume2SeriesItemID = shNode->CreateItem(study2ItemID, volume2Node.GetPointer());
     shNode->SetItemUID(volume2SeriesItemID, UID_NAME, VOLUME2_UID_VALUE);
 
     // Create model21 series in study 2 with nested association
@@ -193,8 +187,7 @@ namespace
     model21ModelHierarchyNode->SetDisplayableNodeID(model21Node->GetID());
     scene->AddNode(model21ModelHierarchyNode.GetPointer());
 
-    vtkIdType model21SeriesItemID = shNode->CreateItem(
-      study2ItemID, model21Node.GetPointer(), vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries() );
+    vtkIdType model21SeriesItemID = shNode->CreateItem(study2ItemID, model21Node.GetPointer());
     shNode->SetItemUID(model21SeriesItemID, UID_NAME, MODEL21_UID_VALUE);
 
     // Create model22 series in study 2 with nested association
@@ -211,8 +204,7 @@ namespace
     model22ModelHierarchyNode->SetDisplayableNodeID(model22Node->GetID());
     scene->AddNode(model22ModelHierarchyNode.GetPointer());
 
-    vtkIdType model22SeriesItemID = shNode->CreateItem(
-      study2ItemID, model22Node.GetPointer(), vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries() );
+    vtkIdType model22SeriesItemID = shNode->CreateItem(study2ItemID, model22Node.GetPointer());
     shNode->SetItemUID(model22SeriesItemID, UID_NAME, MODEL22_UID_VALUE);
 
     int currentNodeCount = scene->GetNumberOfNodes();
@@ -532,8 +524,7 @@ namespace
 
     // Create series item to insert
     const char* seriesUid = "NEW_SERIES";
-    vtkIdType seriesItemID = shNode->CreateItem(
-      shNode->GetSceneItemID(), "Series", vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries() );
+    vtkIdType seriesItemID = shNode->CreateHierarchyItem(shNode->GetSceneItemID(), "Series", "Series");
     shNode->SetItemUID(seriesItemID, UID_NAME, seriesUid);
 
     vtkIdType insertedSeriesItemID = vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy(
@@ -581,8 +572,7 @@ namespace
 
     // Create series item to insert
     const char* seriesUid = "NEW_SERIES";
-    vtkIdType seriesItemID = shNode->CreateItem(
-      shNode->GetSceneItemID(), "Series", vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries() );
+    vtkIdType seriesItemID = shNode->CreateHierarchyItem(shNode->GetSceneItemID(), "Series", "Series");
     shNode->SetItemUID(seriesItemID, UID_NAME, seriesUid);
 
     vtkIdType insertedSeriesItemID =

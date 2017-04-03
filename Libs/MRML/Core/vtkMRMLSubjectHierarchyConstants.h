@@ -38,31 +38,28 @@ public:
   // Constant strings (std::string types for easy concatenation)
   //----------------------------------------------------------------------------
 
-  // Subject hierarchy constants
+  // Data node subject hierarchy attribute
   static const std::string GetSubjectHierarchyAttributePrefix()
     { return "SubjectHierarchy."; };
   static const std::string GetSubjectHierarchyExcludeFromTreeAttributeName()
     { return vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyAttributePrefix() + "ExcludeFromPotentialNodesList"; };
-  static const std::string GetHighlightedSubjectHierarchyNodeAttributeName()
-    { return vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyAttributePrefix() + "Highlighted"; };
-  static const std::string GetVirtualBranchSubjectHierarchyNodeAttributeName()
-    { return vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyAttributePrefix() + "VirtualBranch"; };
-  static const std::string GetSubjectHierarchyNewNodeNamePrefix()
+
+  // Subject hierarchy item attributes
+  static const std::string GetSubjectHierarchyVirtualBranchAttributeName()
+    { return "VirtualBranch"; };
+  static const std::string GetSubjectHierarchyLevelAttributeName()
+    { return "Level"; };
+  static const std::string GetSubjectHierarchyNewItemNamePrefix()
     { return "New"; };
 
   // Non-DICOM levels
   static const char* GetSubjectHierarchyLevelFolder()
     { return "Folder"; };
-
   // DICOM levels
-  static const char* GetDICOMLevelPatient()
+  static const std::string GetDICOMLevelPatient()
     { return "Patient"; };
-  static const char* GetDICOMLevelStudy()
+  static const std::string GetDICOMLevelStudy()
     { return "Study"; };
-  static const char* GetDICOMLevelSeries()
-    { return "Series"; };
-  static const char* GetDICOMLevelSubseries()
-    { return "Subseries"; };
 
   // DICOM attributes
   static const char* GetDICOMUIDName()
