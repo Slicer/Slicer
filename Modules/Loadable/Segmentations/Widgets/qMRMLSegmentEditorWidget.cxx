@@ -312,9 +312,9 @@ void qMRMLSegmentEditorWidgetPrivate::init()
   this->OverwriteModeComboBox->addItem(QObject::tr("None"), vtkMRMLSegmentEditorNode::OverwriteNone);
 
   // Make connections
-  QObject::connect( this->MRMLNodeComboBox_Segmentation, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+  QObject::connect( this->SegmentationNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
     q, SLOT(onSegmentationNodeChanged(vtkMRMLNode*)) );
-  QObject::connect( this->MRMLNodeComboBox_MasterVolume, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+  QObject::connect( this->MasterVolumeNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
     q, SLOT(onMasterVolumeNodeChanged(vtkMRMLNode*)) );
   QObject::connect( this->SegmentsTableView, SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
     q, SLOT(onSegmentSelectionChanged(QItemSelection,QItemSelection)) );
@@ -369,8 +369,9 @@ void qMRMLSegmentEditorWidgetPrivate::init()
   // Update effect buttons
   this->updateEffectList();
 
+  this->OptionsGroupBox->hide();
   this->OptionsGroupBox->setTitle("");
-  this->label_EffectHelp->setText("");
+  this->EffectHelpBrowser->setText("");
   this->MaskingGroupBox->hide();
 }
 
@@ -1095,9 +1096,9 @@ void qMRMLSegmentEditorWidget::updateWidgetFromSegmentationNode()
     qvtkReconnect(d->SegmentationNode, segmentationNode, vtkSegmentation::SegmentRemoved, this, SLOT(onSegmentAddedRemoved()));
     d->SegmentationNode = segmentationNode;
 
-    bool wasBlocked = d->MRMLNodeComboBox_Segmentation->blockSignals(true);
-    d->MRMLNodeComboBox_Segmentation->setCurrentNode(d->SegmentationNode);
-    d->MRMLNodeComboBox_Segmentation->blockSignals(wasBlocked);
+    bool wasBlocked = d->SegmentationNodeComboBox->blockSignals(true);
+    d->SegmentationNodeComboBox->setCurrentNode(d->SegmentationNode);
+    d->SegmentationNodeComboBox->blockSignals(wasBlocked);
 
     wasBlocked = d->SegmentsTableView->blockSignals(true);
     d->SegmentsTableView->setSegmentationNode(d->SegmentationNode);
@@ -1106,7 +1107,7 @@ void qMRMLSegmentEditorWidget::updateWidgetFromSegmentationNode()
     d->EffectsGroupBox->setEnabled(d->SegmentationNode != NULL);
     d->MaskingGroupBox->setEnabled(d->SegmentationNode != NULL);
     d->EffectsOptionsFrame->setEnabled(d->SegmentationNode != NULL);
-    d->MRMLNodeComboBox_MasterVolume->setEnabled(segmentationNode != NULL);
+    d->MasterVolumeNodeComboBox->setEnabled(segmentationNode != NULL);
 
     if (segmentationNode)
       {
@@ -1114,7 +1115,7 @@ void qMRMLSegmentEditorWidget::updateWidgetFromSegmentationNode()
       vtkMRMLNode* referenceVolumeNode = segmentationNode->GetNodeReference(
         vtkMRMLSegmentationNode::GetReferenceImageGeometryReferenceRole().c_str());
       // Make sure the master volume selection is performed fully before proceeding
-      d->MRMLNodeComboBox_MasterVolume->setCurrentNode(referenceVolumeNode);
+      d->MasterVolumeNodeComboBox->setCurrentNode(referenceVolumeNode);
 
       // Make sure there is a display node and get it
       segmentationNode->CreateDefaultDisplayNodes();
@@ -1281,9 +1282,9 @@ void qMRMLSegmentEditorWidget::updateWidgetFromMasterVolumeNode()
   qvtkReconnect(d->MasterVolumeNode, masterVolumeNode, vtkMRMLVolumeNode::ImageDataModifiedEvent, this, SLOT(onMasterVolumeImageDataModified()));
   d->MasterVolumeNode = masterVolumeNode;
 
-  bool wasBlocked = d->MRMLNodeComboBox_MasterVolume->blockSignals(true);
-  d->MRMLNodeComboBox_MasterVolume->setCurrentNode(d->MasterVolumeNode);
-  d->MRMLNodeComboBox_MasterVolume->blockSignals(wasBlocked);
+  bool wasBlocked = d->MasterVolumeNodeComboBox->blockSignals(true);
+  d->MasterVolumeNodeComboBox->setCurrentNode(d->MasterVolumeNode);
+  d->MasterVolumeNodeComboBox->blockSignals(wasBlocked);
 
   this->onMasterVolumeImageDataModified();
 }
@@ -1378,16 +1379,16 @@ void qMRMLSegmentEditorWidget::updateWidgetFromEffect()
     // Activate newly selected effect
     activeEffect->activate();
     activeEffect->updateGUIFromMRML();
+    d->OptionsGroupBox->show();
     d->OptionsGroupBox->setTitle(activeEffect->name());
-    //d->OptionsGroupBox->setToolTip(activeEffect->helpText());
-    d->label_EffectHelp->setText(activeEffect->helpText());
+    d->EffectHelpBrowser->setCollapsibleText(activeEffect->helpText());
     d->MaskingGroupBox->show();
     }
   else
     {
+    d->OptionsGroupBox->hide();
     d->OptionsGroupBox->setTitle("");
-    //d->OptionsGroupBox->setToolTip("No effect is selected");
-    d->label_EffectHelp->setText("");
+    d->EffectHelpBrowser->setText("");
     d->MaskingGroupBox->hide();
 
     this->removeViewObservations();
@@ -1501,28 +1502,28 @@ void qMRMLSegmentEditorWidget::initializeParameterSetNode()
 void qMRMLSegmentEditorWidget::setSegmentationNode(vtkMRMLNode* node)
 {
   Q_D(qMRMLSegmentEditorWidget);
-  d->MRMLNodeComboBox_Segmentation->setCurrentNode(node);
+  d->SegmentationNodeComboBox->setCurrentNode(node);
 }
 
 //-----------------------------------------------------------------------------
 vtkMRMLNode* qMRMLSegmentEditorWidget::segmentationNode()const
 {
   Q_D(const qMRMLSegmentEditorWidget);
-  return d->MRMLNodeComboBox_Segmentation->currentNode();
+  return d->SegmentationNodeComboBox->currentNode();
 }
 
 //------------------------------------------------------------------------------
 void qMRMLSegmentEditorWidget::setSegmentationNodeID(const QString& nodeID)
 {
   Q_D(qMRMLSegmentEditorWidget);
-  d->MRMLNodeComboBox_Segmentation->setCurrentNodeID(nodeID);
+  d->SegmentationNodeComboBox->setCurrentNodeID(nodeID);
 }
 
 //------------------------------------------------------------------------------
 QString qMRMLSegmentEditorWidget::segmentationNodeID()const
 {
   Q_D(const qMRMLSegmentEditorWidget);
-  return d->MRMLNodeComboBox_Segmentation->currentNodeID();
+  return d->SegmentationNodeComboBox->currentNodeID();
 }
 
 //-----------------------------------------------------------------------------
@@ -1544,38 +1545,38 @@ QString qMRMLSegmentEditorWidget::currentSegmentID()const
 void qMRMLSegmentEditorWidget::setMasterVolumeNode(vtkMRMLNode* node)
 {
   Q_D(qMRMLSegmentEditorWidget);
-  if (node && !d->MRMLNodeComboBox_MasterVolume->isEnabled())
+  if (node && !d->MasterVolumeNodeComboBox->isEnabled())
     {
     qCritical() << Q_FUNC_INFO << ": Cannot set master volume until segmentation is selected!";
     return;
     }
-  d->MRMLNodeComboBox_MasterVolume->setCurrentNode(node);
+  d->MasterVolumeNodeComboBox->setCurrentNode(node);
 }
 
 //-----------------------------------------------------------------------------
 vtkMRMLNode* qMRMLSegmentEditorWidget::masterVolumeNode()const
 {
   Q_D(const qMRMLSegmentEditorWidget);
-  return d->MRMLNodeComboBox_MasterVolume->currentNode();
+  return d->MasterVolumeNodeComboBox->currentNode();
 }
 
 //------------------------------------------------------------------------------
 void qMRMLSegmentEditorWidget::setMasterVolumeNodeID(const QString& nodeID)
 {
   Q_D(qMRMLSegmentEditorWidget);
-  if (!d->MRMLNodeComboBox_MasterVolume->isEnabled())
+  if (!d->MasterVolumeNodeComboBox->isEnabled())
     {
     qCritical() << Q_FUNC_INFO << ": Cannot set master volume until segmentation is selected!";
     return;
     }
-  d->MRMLNodeComboBox_MasterVolume->setCurrentNodeID(nodeID);
+  d->MasterVolumeNodeComboBox->setCurrentNodeID(nodeID);
 }
 
 //------------------------------------------------------------------------------
 QString qMRMLSegmentEditorWidget::masterVolumeNodeID()const
 {
   Q_D(const qMRMLSegmentEditorWidget);
-  return d->MRMLNodeComboBox_MasterVolume->currentNodeID();
+  return d->MasterVolumeNodeComboBox->currentNodeID();
 }
 
 //-----------------------------------------------------------------------------
@@ -1585,9 +1586,9 @@ void qMRMLSegmentEditorWidget::onSegmentationNodeChanged(vtkMRMLNode* node)
 
   if (!d->ParameterSetNode)
     {
-    d->MRMLNodeComboBox_Segmentation->blockSignals(true);
-    d->MRMLNodeComboBox_Segmentation->setCurrentNode(NULL);
-    d->MRMLNodeComboBox_Segmentation->blockSignals(false);
+    d->SegmentationNodeComboBox->blockSignals(true);
+    d->SegmentationNodeComboBox->setCurrentNode(NULL);
+    d->SegmentationNodeComboBox->blockSignals(false);
 
     qCritical() << Q_FUNC_INFO << ": Invalid segment editor parameter set node";
     return;
@@ -1662,9 +1663,9 @@ void qMRMLSegmentEditorWidget::onMasterVolumeNodeChanged(vtkMRMLNode* node)
 
   if (!d->ParameterSetNode)
     {
-    d->MRMLNodeComboBox_MasterVolume->blockSignals(true);
-    d->MRMLNodeComboBox_MasterVolume->setCurrentNode(NULL);
-    d->MRMLNodeComboBox_MasterVolume->blockSignals(false);
+    d->MasterVolumeNodeComboBox->blockSignals(true);
+    d->MasterVolumeNodeComboBox->setCurrentNode(NULL);
+    d->MasterVolumeNodeComboBox->blockSignals(false);
 
     qCritical() << Q_FUNC_INFO << ": Invalid segment editor parameter set node";
     return;
@@ -2333,30 +2334,30 @@ void qMRMLSegmentEditorWidget::onOverwriteModeChanged(int index)
 bool qMRMLSegmentEditorWidget::segmentationNodeSelectorVisible() const
 {
   Q_D(const qMRMLSegmentEditorWidget);
-  return d->MRMLNodeComboBox_Segmentation->isVisible();
+  return d->SegmentationNodeComboBox->isVisible();
 }
 
 //-----------------------------------------------------------------------------
 void qMRMLSegmentEditorWidget::setSegmentationNodeSelectorVisible(bool visible)
 {
   Q_D(qMRMLSegmentEditorWidget);
-  d->MRMLNodeComboBox_Segmentation->setVisible(visible);
-  d->label_Segmentation->setVisible(visible);
+  d->SegmentationNodeComboBox->setVisible(visible);
+  d->SegmentationNodeLabel->setVisible(visible);
 }
 
 //-----------------------------------------------------------------------------
 bool qMRMLSegmentEditorWidget::masterVolumeNodeSelectorVisible() const
 {
   Q_D(const qMRMLSegmentEditorWidget);
-  return d->MRMLNodeComboBox_MasterVolume->isVisible();
+  return d->MasterVolumeNodeComboBox->isVisible();
 }
 
 //-----------------------------------------------------------------------------
 void qMRMLSegmentEditorWidget::setMasterVolumeNodeSelectorVisible(bool visible)
 {
   Q_D(qMRMLSegmentEditorWidget);
-  d->MRMLNodeComboBox_MasterVolume->setVisible(visible);
-  d->label_MasterVolume->setVisible(visible);
+  d->MasterVolumeNodeComboBox->setVisible(visible);
+  d->MasterVolumeNodeLabel->setVisible(visible);
 }
 
 //-----------------------------------------------------------------------------
