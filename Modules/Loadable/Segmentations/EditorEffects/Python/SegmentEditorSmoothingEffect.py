@@ -24,7 +24,15 @@ class SegmentEditorSmoothingEffect(AbstractScriptedSegmentEditorEffect):
     return qt.QIcon()
 
   def helpText(self):
-    return "Smooth selected segment by removing extrusions and filling small holes."
+    return """<html>Make segment boundaries smoother<br> by removing extrusions and filling small holes. Available methods:<p>
+<ul style="margin: 0">
+<li><b>Median:</b> removes small details while keeps smooth contours mostly unchanged. Applied to selected segment only.</li>
+<li><b>Opening:</b> removes extrusions smaller than the specified kernel size. Applied to selected segment only.</li>
+<li><b>Closing:</b> fills sharp corners and holes smaller than the specified kernel size. Applied to selected segment only.</li>
+<li><b>Gaussian:</b> smoothes all contours, tends to shrink the segment. Applied to selected segment only.</li>
+<li><b>Joint smoothing:</b> smoothes multiple segments at once, preserving watertight interface between them. Masking settings are bypassed.
+If segments overlap, segment higher in the segments table will have priority. <b>Applied to all visible segments.</b></li>
+</ul><p></html>"""
 
   def setupOptionsFrame(self):
 
@@ -34,13 +42,6 @@ class SegmentEditorSmoothingEffect(AbstractScriptedSegmentEditorEffect):
     self.methodSelectorComboBox.addItem("Closing (fill holes)", MORPHOLOGICAL_CLOSING)
     self.methodSelectorComboBox.addItem("Gaussian", GAUSSIAN)
     self.methodSelectorComboBox.addItem("Joint smoothing", JOINT_TAUBIN)
-    self.methodSelectorComboBox.setToolTip("""<html>Smoothing methods:<ul style="margin: 0">
-<li><b>Median:</b> removes small details while keeps smooth contours mostly unchanged.</li>
-<li><b>Opening:</b> removes extrusions smaller than the specified kernel size.</li>
-<li><b>Closing:</b> fills sharp corners and holes smaller than the specified kernel size.</li>
-<li><b>Gaussian:</b> smoothes all contours, tends to shrink the segment.</li>
-<li><b>Joint smoothing:</b> smoothes all visible segments at once. It requires segments to be non-overlapping. Bypasses masking settings.</li>
-</ul></html>""")
     self.scriptedEffect.addLabeledOptionsWidget("Smoothing method:", self.methodSelectorComboBox)
 
     self.kernelSizeMmSpinBox = slicer.qMRMLSpinBox()

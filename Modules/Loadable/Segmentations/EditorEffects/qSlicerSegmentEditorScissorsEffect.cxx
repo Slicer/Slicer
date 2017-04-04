@@ -950,7 +950,13 @@ QIcon qSlicerSegmentEditorScissorsEffect::icon()
 //---------------------------------------------------------------------------
 QString const qSlicerSegmentEditorScissorsEffect::helpText()const
 {
-  return QString("Cut through the entire segment from the current viewpoint.\nLeft-click and drag to sweep out an outline, release the button when ready.");
+  return "<html>Cut through the entire segment from the current viewpoint<br>."
+    "<p><ul style=\"margin: 0\">"
+    "<li><b>Left-button drag-and-drop:</b> sweep out an outline.</li>"
+    "<li><b>Esc:</b> cancel.</li>"
+    "</ul><p>"
+    "Editing is available both in slice and 3D views. In slice view cutting will be applied to all slices."
+    "<p></html>";
 }
 
 //-----------------------------------------------------------------------------

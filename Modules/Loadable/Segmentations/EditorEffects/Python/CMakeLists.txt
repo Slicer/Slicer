@@ -24,7 +24,8 @@ set(SegmentEditorEffects_PYTHON_RESOURCES
   Resources/Icons/Margin.png
   Resources/Icons/Draw.png
   Resources/Icons/Logical.png
-  Resources/Icons/AutoComplete.png
+  Resources/Icons/GrowFromSeeds.png
+  Resources/Icons/FillBetweenSlices.png
   Resources/Icons/Islands.png
   Resources/Icons/LevelTracing.png
   Resources/Icons/Smoothing.png

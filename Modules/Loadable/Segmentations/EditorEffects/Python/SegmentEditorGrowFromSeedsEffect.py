@@ -23,16 +23,28 @@ class SegmentEditorGrowFromSeedsEffect(AbstractScriptedSegmentEditorAutoComplete
     return clonedEffect
 
   def icon(self):
-    iconPath = os.path.join(os.path.dirname(__file__), 'Resources/Icons/AutoComplete.png')
+    iconPath = os.path.join(os.path.dirname(__file__), 'Resources/Icons/GrowFromSeeds.png')
     if os.path.exists(iconPath):
       return qt.QIcon(iconPath)
     return qt.QIcon()
 
   def helpText(self):
-    return """Create a complete segmentation by growing from existing segmentation. \
-Paint in each region that should belong to a separate segment. Segments will be expanded to create \
-a complete segmentation, taking into account the master volume content. Minimum two segments are required. \
-Masking settings are bypassed. If segments overlap, segment higher in the segments table will have priority."""
+    return """<html>Growing segments to create complete segmentation<br>.
+Location, size, and shape of initial segments and content of master volume are taken into account.
+Final segment boundaries will be placed where master volume brightness changes abruptly. Instructions:<p>
+<ul style="margin: 0">
+<li>Use Paint or other offects to draw seeds in each region that should belong to a separate segment.
+Paint each seed with a different segment. Minimum two segments are required.</li>
+<li>Click <dfn>Initialize</dfn> to compute preview of full segmentation.</li>
+<li>Browse through image slices. If previewed segmentation result is not correct then switch to
+Paint or other effects and add more seeds in the misclassified region. Full segmentation will be
+updated automatically within a few seconds</li>
+<li>Click <dfn>Apply</dfn> to update segmentation with the previewed result.</li>
+</ul><p>
+Masking settings are bypassed. If segments overlap, segment higher in the segments table will have priority.
+The effect uses <a href="https://www.spl.harvard.edu/publications/item/view/2761">fast grow-cut method</a>.
+<p></html>"""
+
 
   def reset(self):
     self.growCutFilter = None

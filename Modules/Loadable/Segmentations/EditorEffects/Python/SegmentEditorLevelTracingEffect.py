@@ -29,10 +29,12 @@ class SegmentEditorLevelTracingEffect(AbstractScriptedSegmentEditorLabelEffect):
     return qt.QIcon()
 
   def helpText(self):
-    return """Add uniform intensity region to selected segment.
-As you move the mouse, the current background voxel is used to find a closed path that \
-follows the same intensity value back to the starting point within the current slice. \
-Pressing the left mouse button fills the the path according to the current labeling rules."""
+    return """<html>Add uniform intensity region to selected segment<br>.
+<p><ul style="margin: 0">
+<li><b>Mouse move:</b> current background voxel is used to find a closed path that
+follows the same intensity value back to the starting point within the current slice.</li>
+<li><b>Left-click:</b> add the previewed region to the current segment.</li>
+</ul><p></html>"""
 
   def deactivate(self):
     # Clear draw pipelines

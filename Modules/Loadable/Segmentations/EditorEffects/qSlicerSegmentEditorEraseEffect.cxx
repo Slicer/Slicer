@@ -75,7 +75,14 @@ QIcon qSlicerSegmentEditorEraseEffect::icon()
 //---------------------------------------------------------------------------
 QString const qSlicerSegmentEditorEraseEffect::helpText()const
 {
-  return QString("Left-click and drag in slice or 3D viewers to erase from current segment with a round brush.");
+  return "<html>Erase fom current segment with a round brush<br>."
+    "<p><ul style=\"margin: 0\">"
+    "<li><b>Left-button drag-and-drop:</b> erase from segment around the mouse pointer.</li>"
+    "<li><b>Shift + mouse wheel</b> or <b>+/- keys:</b> adjust brush size.</li>"
+    "<li><b>Ctrl + mouse wheel:</b> slice view zoom in/out.</li>"
+    "</ul><p>"
+    "Editing is available both in slice and 3D views."
+    "<p></html>";
 }
 
 //-----------------------------------------------------------------------------

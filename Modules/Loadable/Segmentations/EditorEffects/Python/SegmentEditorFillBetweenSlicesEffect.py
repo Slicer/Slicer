@@ -20,16 +20,22 @@ class SegmentEditorFillBetweenSlicesEffect(AbstractScriptedSegmentEditorAutoComp
     return clonedEffect
 
   def icon(self):
-    iconPath = os.path.join(os.path.dirname(__file__), 'Resources/Icons/AutoComplete.png')
+    iconPath = os.path.join(os.path.dirname(__file__), 'Resources/Icons/FillBetweenSlices.png')
     if os.path.exists(iconPath):
       return qt.QIcon(iconPath)
     return qt.QIcon()
 
   def helpText(self):
-    return """Create complete segmentation on selected slices using any editor effect. \
-The complete segmentation will be created by interpolating segmentations on slices that were skipped. \
-Masking settings are bypassed. If segments overlap, segment higher in the segments table will have priority. \
-See http://insight-journal.org/browse/publication/977 for more details."""
+    return """<html>Interpolate segmentation between slices<br>. Instructions:
+<p><ul>
+<li>Create complete segmentation on selected slices using any editor effect.
+Segmentation will only expanded if a slice is segmented but none of the direct neighbors are segmented, therefore
+do not use sphere brush with Paint effect and always leave at least one empty slice between segmented slices.</li>
+<li>The complete segmentation will be created by interpolating segmentations in empty slices.</li>
+</ul><p>
+Masking settings are bypassed. If segments overlap, segment higher in the segments table will have priority.
+The effect uses  <a href="http://insight-journal.org/browse/publication/977">morphological contour interpolation method</a>.
+<p></html>"""
 
   def computePreviewLabelmap(self, mergedImage, outputLabelmap):
     import vtkITK

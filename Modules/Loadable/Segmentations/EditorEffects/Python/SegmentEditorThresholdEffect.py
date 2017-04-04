@@ -39,8 +39,11 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     return qt.QIcon()
 
   def helpText(self):
-    return """Set segment based on master volume intensity range. \
- All previous contents of the segment is overwritten on Apply."""
+    return """<html>Fill segment based on master volume intensity range<br>. Options:<p>
+<ul style="margin: 0">
+<li><b>Use for masking:</b> set the selected intensity range as <dfn>Editable intensity range</dfn> and switch to Paint effect.</li>
+<li><b>Apply:</b> set the previewed segmentation in the selected segment. Previous contents of the segment is overwritten.</li>
+</ul><p></html>"""
 
   def activate(self):
     # Save segment opacity and set it to zero

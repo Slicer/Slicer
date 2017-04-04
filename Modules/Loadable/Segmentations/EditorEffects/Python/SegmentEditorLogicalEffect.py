@@ -25,7 +25,18 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
     return qt.QIcon()
 
   def helpText(self):
-    return "Apply logical operators on a segment or combine it with other segments."
+    return """<html>Apply logical operators or combine segments<br>. Available operations:<p>
+<ul style="margin: 0">
+<li><b>Copy:</b> replace the selected segment by the modifier segment.</li>
+<li><b>Add:</b> add modifier segment to current segment.</li>
+<li><b>Subtract:</b> subtract region of modifier segment from the selected segment.</li>
+<li><b>Intersect:</b> only keeps those regions in the select segment that are common with the modifier segment.</li>
+<li><b>Invert:</b> inverts selected segment.</li>
+<li><b>Clear:</b> clears selected segment.</li>
+<li><b>Fill:</b> completely fills selected segment.</li>
+</ul><p>
+<b>Selected segment:</b> segment selected in the segment list - above. <b>Modifier segment:</b> segment chosen in segment list in effect options - below.
+<p></html>"""
 
   def setupOptionsFrame(self):
 
@@ -37,14 +48,7 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
     self.methodSelectorComboBox.addItem("Invert", LOGICAL_INVERT)
     self.methodSelectorComboBox.addItem("Clear", LOGICAL_CLEAR)
     self.methodSelectorComboBox.addItem("Fill", LOGICAL_FILL)
-    self.methodSelectorComboBox.setToolTip('<html>Available operations:<ul style="margin: 0">'
-      '<li><b>Replace by segment:</b> replace the selected segment by the modifier segment.</li>'
-      '<li><b>Add segment:</b> add modifier segment to current segment.</li>'
-      '<li><b>Subtract segment:</b> subtract region of modifier segment from the selected segment.</li>'
-      '<li><b>Intersection with segment:</b> only keeps those regions in the select segment that are common with the modifier segment.</li>'
-      '<li><b>Invert:</b> inverts selected segment.</li>'
-      '<li><b>Clear:</b> clears selected segment.</li>'
-      '<li><b>Fill:</b> completely fills selected segment.</li>')
+    self.methodSelectorComboBox.setToolTip('Click <dfn>Show details</dfn> link above for description of operations.')
 
     self.bypassMaskingCheckBox = qt.QCheckBox("Bypass masking")
     self.bypassMaskingCheckBox.setToolTip("Ignore all masking options and only modify the selected segment.")
