@@ -104,7 +104,7 @@ class SegmentEditorSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin
 
     # Place segmentation under the master volume in subject hierarchy
     segmentationShItemID = shNode.GetItemByDataNode(segmentationNode)
-    shNode.SetItemParent(segmentationShItemID, currentItemID)
+    shNode.SetItemParent(segmentationShItemID, shNode.GetItemParent(currentItemID))
 
   def sceneContextMenuActions(self):
     return []

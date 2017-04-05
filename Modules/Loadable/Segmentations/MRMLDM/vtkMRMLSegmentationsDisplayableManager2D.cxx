@@ -1058,6 +1058,10 @@ bool vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::IsSegmentVisibleInCu
 
   double segmentBounds_Segment[6] = { 0 };
   vtkSegment* segment = segmentation->GetSegment(segmentID);
+  if (!segment)
+    {
+    return false;
+    }
   segment->GetBounds(segmentBounds_Segment);
 
   vtkSmartPointer<vtkGeneralTransform> segmentationToSliceTransform = vtkSmartPointer<vtkGeneralTransform>::New();
