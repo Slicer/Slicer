@@ -67,6 +67,7 @@ public:
     SubjectHierarchyItemAboutToBeRemovedEvent,
     SubjectHierarchyItemRemovedEvent,
     SubjectHierarchyItemModifiedEvent,
+    SubjectHierarchyItemResolvedEvent,
     /// Event invoked when UID is added to subject hierarchy item. Useful when using UIDs
     /// to find related nodes, and the nodes are loaded sequentially in unspecified order.
     SubjectHierarchyItemUIDAddedEvent,
@@ -167,7 +168,7 @@ public:
 // Hierarchy related methods
 public:
   /// Create subject hierarchy item for a data node.
-  /// Can be used to add nodes that were not added automatically (e.g. HideFromEditors was on, or exclude attribute was set)
+  /// Can be used to add nodes that were not added automatically (e.g. private scene, HideFromEditors on, or exclude attribute set)
   /// \param parentItemID Parent item under which the created item is inserted. If top-level then use \sa GetSceneItemID
   /// \param dataNode Associated data MRML node
   /// \return ID of the item in the hierarchy that was assigned automatically when adding

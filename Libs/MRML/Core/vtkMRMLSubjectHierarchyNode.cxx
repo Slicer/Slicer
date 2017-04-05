@@ -1439,6 +1439,8 @@ public:
 
   /// Flag determining whether to skip processing any events. Used only internally
   bool EventsDisabled;
+  /// Flag indicating whether resolving unresolved items is underway (after scene import or restore)
+  bool IsResolving;
 
 private:
   vtkMRMLSubjectHierarchyNode* External;
@@ -1450,6 +1452,7 @@ private:
 //---------------------------------------------------------------------------
 vtkMRMLSubjectHierarchyNode::vtkInternal::vtkInternal(vtkMRMLSubjectHierarchyNode* external)
 : EventsDisabled(false)
+, IsResolving(false)
 , External(external)
 {
   // Create scene item
@@ -1506,6 +1509,9 @@ bool vtkMRMLSubjectHierarchyNode::vtkInternal::ResolveUnresolvedItems()
     return false;
     }
 
+  // Indicate that resolving unresolved items is underway
+  this->IsResolving = true;
+
   // Find unresolved scene item so that later the top-level items can be found and added under the actual scene item instead
   vtkIdType unresolvedSceneItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
   for ( vtkSubjectHierarchyItem::ChildVector::iterator itemIt=this->UnresolvedItems->Children.begin();
@@ -1521,6 +1527,7 @@ bool vtkMRMLSubjectHierarchyNode::vtkInternal::ResolveUnresolvedItems()
   if (!unresolvedSceneItemID)
     {
     vtkErrorWithObjectMacro(this->External, "ResolveUnresolvedItems: Failed to find scene item among unresolved items");
+    this->IsResolving = false;
     return false;
     }
 
@@ -1585,6 +1592,9 @@ bool vtkMRMLSubjectHierarchyNode::vtkInternal::ResolveUnresolvedItems()
         item->TemporaryDataNodeID = std::string();
         }
 
+      // Add observer for item added event to allow SubjectHierarchyItemResolvedEvent to be invoked from the node
+      item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAddedEvent, this->External->ItemEventCallbackCommand);
+
       // Add item to tree
       if (dataNode)
         {
@@ -1594,8 +1604,8 @@ bool vtkMRMLSubjectHierarchyNode::vtkInternal::ResolveUnresolvedItems()
         {
         idMap[item->TemporaryID] = item->AddToTree(parentItem, item->Name, item->GetAttribute(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelAttributeName()));
         }
-      // Create observations for added item
-      item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAddedEvent, this->External->ItemEventCallbackCommand);
+
+      // Create remaining observations for added item
       item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAboutToBeRemovedEvent, this->External->ItemEventCallbackCommand);
       item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemRemovedEvent, this->External->ItemEventCallbackCommand);
       item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemUIDAddedEvent, this->External->ItemEventCallbackCommand);
@@ -1613,9 +1623,13 @@ bool vtkMRMLSubjectHierarchyNode::vtkInternal::ResolveUnresolvedItems()
       if (++breakerCounter >= 1.0e6)
         {
         vtkErrorWithObjectMacro(this->External, "ResolveUnresolvedItems: Potential hang detected, return");
+        this->IsResolving = false;
         return false;
         }
     }
+
+  // Indicate end of resolving
+  this->IsResolving = false;
 
   return true;
 }
@@ -2939,8 +2953,16 @@ void vtkMRMLSubjectHierarchyNode::ItemEventCallback(vtkObject* caller, unsigned 
       vtkSubjectHierarchyItem* item = reinterpret_cast<vtkSubjectHierarchyItem*>(callData);
       if (item)
         {
+        // Invoke resolved item event it item was added during resolving unresolved items
+        if (eid == vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAddedEvent && self->Internal->IsResolving)
+          {
+          self->InvokeCustomModifiedEvent(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemResolvedEvent, (void*)&item->ID);
+          }
         // Invoke event of same type with item ID
-        self->InvokeCustomModifiedEvent(eid, (void*)&item->ID);
+        else
+          {
+          self->InvokeCustomModifiedEvent(eid, (void*)&item->ID);
+          }
         self->Modified(); // Indicate that the content of the subject hierarchy node has changed, so it needs to be saved
         }
       }
@@ -3052,7 +3074,10 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNod
       // Remove merged subject hierarchy node from the scene
       scene->RemoveNode(currentShNode);
 
-      // Resolve all unresolved items
+      // Re-enable events
+      firstShNode->Internal->EventsDisabled = wereEventsDisabled;
+
+      // Resolve all unresolved items (only SubjectHierarchyItemResolvedEvent is invoked from the node in the process)
       if (!firstShNode->Internal->ResolveUnresolvedItems())
         {
         //TODO: The returned node will probably be invalid, so it needs to be completely re-built
@@ -3061,10 +3086,6 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNod
         vtkErrorWithObjectMacro(scene, "vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode: Failed to merge subject hierarchy nodes");
         return firstShNode;
         }
-
-      // Trigger re-building the trees in the views
-      firstShNode->Internal->EventsDisabled = wereEventsDisabled;
-      firstShNode->Modified();
       }
     }
   // Return the first (and now only) subject hierarchy node into which the others were merged
