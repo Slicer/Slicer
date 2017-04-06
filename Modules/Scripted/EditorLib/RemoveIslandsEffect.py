@@ -256,7 +256,7 @@ class RemoveIslandsEffectLogic(IslandEffect.IslandEffectLogic):
     labelImage.DeepCopy( self.getScopedLabelInput() )
     label = self.editUtil.getLabel()
 
-    slicer.modules.EditorWidget.toolsBox.undoRedo.saveState()
+    self.undoRedo.saveState()
 
     self.removeIslandsMorphologyDecruft(labelImage,0,label)
     self.getScopedLabelOutput().DeepCopy(labelImage)
