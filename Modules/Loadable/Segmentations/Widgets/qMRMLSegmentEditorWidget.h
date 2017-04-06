@@ -29,6 +29,9 @@
 // MRMLWidgets includes
 #include "qMRMLWidget.h"
 
+// Qt includes
+#include <QVariant>
+
 // CTK includes
 #include <ctkVTKObject.h>
 
@@ -88,7 +91,6 @@ public:
 
   /// Get segment ID of selected segment
   Q_INVOKABLE QString currentSegmentID()const;
-  Q_INVOKABLE void setCurrentSegmentID(const QString segmentID);
 
   /// Return active effect if selected, NULL otherwise
   /// \sa m_ActiveEffect, setActiveEffect()
@@ -156,6 +158,26 @@ public:
   /// to find an effect but uses more space.
   Qt::ToolButtonStyle effectButtonStyle() const;
 
+  /// Add node type attribute that filter the segmentation nodes to display.
+  /// \sa qMRMLNodeComboBox::addAttribute
+  Q_INVOKABLE void segmentationNodeSelectorAddAttribute(const QString& nodeType,
+    const QString& attributeName,
+    const QVariant& attributeValue = QVariant());
+  /// Remove node type attribute filtering the displayed segmentation nodes.
+  /// \sa qMRMLNodeComboBox::addAttribute
+  Q_INVOKABLE void segmentationNodeSelectorRemoveAttribute(const QString& nodeType,
+    const QString& attributeName);
+
+  /// Add node type attribute that filter the master volume nodes to display.
+  /// \sa qMRMLNodeComboBox::addAttribute
+  Q_INVOKABLE void masterVolumeNodeSelectorAddAttribute(const QString& nodeType,
+    const QString& attributeName,
+    const QVariant& attributeValue = QVariant());
+  /// Remove node type attribute filtering the displayed master volume nodes.
+  /// \sa qMRMLNodeComboBox::addAttribute
+  Q_INVOKABLE void masterVolumeNodeSelectorRemoveAttribute(const QString& nodeType,
+    const QString& attributeName);
+
 public slots:
   /// Set the MRML \a scene associated with the widget
   virtual void setMRMLScene(vtkMRMLScene* newScene);
@@ -174,6 +196,9 @@ public slots:
   void setMasterVolumeNode(vtkMRMLNode* node);
   /// Set master volume MRML node by its ID
   void setMasterVolumeNodeID(const QString& nodeID);
+
+  /// Set selected segment by its ID
+  void setCurrentSegmentID(const QString segmentID);
 
   /// Set active effect by name
   void setActiveEffectByName(QString effectName);
@@ -219,9 +244,13 @@ public slots:
   /// to find an effect but uses more space.
   void setEffectButtonStyle(Qt::ToolButtonStyle toolButtonStyle);
 
+signals:
+  /// Emitted if different segment is selected in the segment list.
+  void currentSegmentIDChanged(const QString&);
+
 protected slots:
   /// Handles changing of current segmentation MRML node
-  Q_INVOKABLE void onSegmentationNodeChanged(vtkMRMLNode* node);
+  void onSegmentationNodeChanged(vtkMRMLNode* node);
   /// Handles changing of the current master volume MRML node
   void onMasterVolumeNodeChanged(vtkMRMLNode* node);
   /// Handles segment selection changes

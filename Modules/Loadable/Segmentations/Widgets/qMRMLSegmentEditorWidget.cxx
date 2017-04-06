@@ -1644,6 +1644,8 @@ void qMRMLSegmentEditorWidget::onSegmentSelectionChanged(const QItemSelection &s
 
   // Only enable remove button if a segment is selected
   d->RemoveSegmentButton->setEnabled(!selectedSegmentID.isEmpty());
+
+  emit currentSegmentIDChanged(selectedSegmentID);
 }
 
 //-----------------------------------------------------------------------------
@@ -2631,4 +2633,36 @@ void qMRMLSegmentEditorWidget::setEffectButtonStyle(Qt::ToolButtonStyle toolButt
     QToolButton* toolButton = dynamic_cast<QToolButton*>(button);
     toolButton->setToolButtonStyle(d->EffectButtonStyle);
     }
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::segmentationNodeSelectorAddAttribute(const QString& nodeType,
+  const QString& attributeName, const QVariant& attributeValue/*=QVariant()*/)
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  d->SegmentationNodeComboBox->addAttribute(nodeType, attributeName, attributeValue);
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::segmentationNodeSelectorRemoveAttribute(const QString& nodeType,
+  const QString& attributeName)
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  d->SegmentationNodeComboBox->removeAttribute(nodeType, attributeName);
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::masterVolumeNodeSelectorAddAttribute(const QString& nodeType,
+  const QString& attributeName, const QVariant& attributeValue/*=QVariant()*/)
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  d->MasterVolumeNodeComboBox->addAttribute(nodeType, attributeName, attributeValue);
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::masterVolumeNodeSelectorRemoveAttribute(const QString& nodeType,
+  const QString& attributeName)
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  d->MasterVolumeNodeComboBox->removeAttribute(nodeType, attributeName);
 }
