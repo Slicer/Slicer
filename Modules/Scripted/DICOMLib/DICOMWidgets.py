@@ -433,7 +433,7 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
           message += '  ' + extensionName + '\n'
           displayedExtensionNames.append(extensionName)
       message += "\nYou can install extensions using the Extension Manager option from the View menu."
-      slicer.util.infoDisplay(message, windowTitle='DICOM')
+      slicer.util.infoDisplay(message, parent=self, windowTitle='DICOM')
 
   def checkForExtensions(self):
     """Check to see if there
@@ -516,7 +516,7 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
           os.makedirs(databaseDirectory)
         message = "DICOM Database will be stored in\n\n{}\n\nUse the Local Database button in " \
                 "the DICOM Browser to pick a different location.".format(databaseDirectory)
-        slicer.util.infoDisplay(message, windowTitle='DICOM')
+        slicer.util.infoDisplay(message, parent=self, windowTitle='DICOM')
     self.onDatabaseDirectoryChanged(databaseDirectory)
 
   def onTableDensityComboBox(self, state):
