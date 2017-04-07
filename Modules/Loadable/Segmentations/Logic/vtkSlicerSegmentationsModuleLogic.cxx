@@ -1203,20 +1203,57 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(
   vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* updatedSegmentIDs)
 {
   if (!segmentationNode && !segmentationNode->GetSegmentation())
-  {
+    {
     vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode: Invalid segmentation node");
     return false;
-  }
+    }
   if (!labelmapNode || !labelmapNode->GetImageData())
-  {
+    {
     vtkErrorWithObjectMacro(segmentationNode, "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode: Invalid labelmap volume node!");
     return false;
-  }
+    }
+
+  // Get oriented image data from labelmap volume node
+  vtkOrientedImageData* labelOrientedImageData = vtkOrientedImageData::New();
+  labelOrientedImageData->vtkImageData::ShallowCopy(labelmapNode->GetImageData());
+  vtkNew<vtkMatrix4x4> ijkToRasMatrix;
+  labelmapNode->GetIJKToRASMatrix(ijkToRasMatrix.GetPointer());
+  labelOrientedImageData->SetGeometryFromImageToWorldMatrix(ijkToRasMatrix.GetPointer());
+
+  // Apply transforms if segmentation and labelmap are not in the same coordinate system
+  vtkSmartPointer<vtkGeneralTransform> labelmapToSegmentationTransform;
+  if (labelmapNode->GetParentTransformNode() != segmentationNode->GetParentTransformNode())
+    {
+    labelmapToSegmentationTransform = vtkSmartPointer<vtkGeneralTransform>::New();
+    vtkSlicerSegmentationsModuleLogic::GetTransformBetweenRepresentationAndSegmentation(labelmapNode, segmentationNode, labelmapToSegmentationTransform);
+    vtkOrientedImageDataResample::TransformOrientedImage(labelOrientedImageData, labelmapToSegmentationTransform);
+    }
+
+  return vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(
+    labelOrientedImageData, segmentationNode, updatedSegmentIDs,
+    labelmapToSegmentationTransform);
+}
+
+//-----------------------------------------------------------------------------
+bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(
+  vtkOrientedImageData* labelmapImage, vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* updatedSegmentIDs,
+  vtkGeneralTransform* labelmapToSegmentationTransform /*=NULL*/)
+{
+  if (!segmentationNode && !segmentationNode->GetSegmentation())
+    {
+    vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode: Invalid segmentation node");
+    return false;
+    }
+  if (!labelmapImage)
+    {
+    vtkErrorWithObjectMacro(segmentationNode, "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode: Invalid labelmap volume");
+    return false;
+    }
   if (!updatedSegmentIDs)
-  {
+    {
     vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode: Invalid updatedSegmentIDs");
     return false;
-  }
+    }
 
   // If master representation is not binary labelmap, then cannot add
   // (this should have been done by the UI classes, notifying the users about hazards of changing the master representation)
@@ -1230,15 +1267,15 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(
 
   // Get labelmap geometry
   vtkSmartPointer<vtkMatrix4x4> labelmapIjkToRasMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
-  labelmapNode->GetIJKToRASMatrix(labelmapIjkToRasMatrix);
+  labelmapImage->GetImageToWorldMatrix(labelmapIjkToRasMatrix);
 
   vtkSmartPointer<vtkImageThreshold> threshold = vtkSmartPointer<vtkImageThreshold>::New();
-  threshold->SetInputConnection(labelmapNode->GetImageDataConnection());
+  threshold->SetInputData(labelmapImage);
   threshold->SetInValue(1);
   threshold->SetOutValue(0);
   threshold->ReplaceInOn();
   threshold->ReplaceOutOn();
-  threshold->SetOutputScalarType(labelmapNode->GetImageData()->GetScalarType());
+  threshold->SetOutputScalarType(labelmapImage->GetScalarType());
 
   int segmentationNodeWasModified = segmentationNode->StartModify();
   for (int segmentIndex = 0; segmentIndex < updatedSegmentIDs->GetNumberOfValues(); ++segmentIndex)
@@ -1264,12 +1301,10 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(
     labelOrientedImageData->SetGeometryFromImageToWorldMatrix(labelmapIjkToRasMatrix);
 
     // Apply parent transforms if any
-    if (labelmapNode->GetParentTransformNode() || segmentationNode->GetParentTransformNode())
-    {
-      vtkSmartPointer<vtkGeneralTransform> labelmapToSegmentationTransform = vtkSmartPointer<vtkGeneralTransform>::New();
-      vtkSlicerSegmentationsModuleLogic::GetTransformBetweenRepresentationAndSegmentation(labelmapNode, segmentationNode, labelmapToSegmentationTransform);
+    if (labelmapToSegmentationTransform)
+      {
       vtkOrientedImageDataResample::TransformOrientedImage(labelOrientedImageData, labelmapToSegmentationTransform);
-    }
+      }
 
     // Update segment
     vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(labelOrientedImageData, segmentationNode, segmentId);
@@ -1468,6 +1503,20 @@ bool vtkSlicerSegmentationsModuleLogic::GetSegmentBinaryLabelmapRepresentation(v
 
   return vtkSlicerSegmentationsModuleLogic::GetSegmentRepresentation(segmentationNode, segmentID,
     vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName(), imageData, applyParentTransform );
+}
+
+//-----------------------------------------------------------------------------
+bool vtkSlicerSegmentationsModuleLogic::GetSegmentClosedSurfaceRepresentation(vtkMRMLSegmentationNode* segmentationNode,
+  std::string segmentID, vtkPolyData* polyData, bool applyParentTransform/*=true*/)
+{
+  if (!segmentationNode || segmentID.empty() || !polyData)
+    {
+    vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::GetSegmentBinaryLabelmapRepresentation: Invalid inputs!");
+    return false;
+    }
+
+  return vtkSlicerSegmentationsModuleLogic::GetSegmentRepresentation(segmentationNode, segmentID,
+    vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName(), polyData, applyParentTransform);
 }
 
 //-----------------------------------------------------------------------------

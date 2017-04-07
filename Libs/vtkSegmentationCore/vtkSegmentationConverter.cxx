@@ -202,6 +202,7 @@ bool vtkSegmentationConverter::DeserializeImageGeometry(
 {
   if (!orientedImageData)
     {
+    vtkGenericWarningMacro("DeserializeImageGeometry failed: invalid orientedImageData");
     return false;
     }
 

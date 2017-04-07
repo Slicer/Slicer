@@ -180,6 +180,11 @@ public:
   void DetermineCommonLabelmapExtent(int commonGeometryExtent[6], vtkOrientedImageData* commonGeometryImage,
     vtkStringArray* segmentIds, bool computeEffectiveExtent=false, bool addPadding=false);
 
+  /// Updates image geometry (origin, spacing, axis directions, extents) based on labelmaps stored in the segmentation.
+  /// Does not allocate memory (to allow just retrieving geometry information without using memory).
+  bool SetImageGeometryFromCommonLabelmapGeometry(vtkOrientedImageData* imageData, vtkStringArray* segmentIDs = NULL,
+    int extentComputationMode = vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS);
+
 // Segment related methods
 
   /// Add a segment to this segmentation, do necessary conversions, and observe underlying

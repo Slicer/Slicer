@@ -36,6 +36,7 @@ class vtkCallbackCommand;
 class vtkMRMLScene;
 class vtkMRMLSubjectHierarchyNode;
 class vtkMRMLScalarVolumeNode;
+class vtkPolyData;
 
 /// \brief MRML node containing segmentations
 /// \ingroup Segmentations
@@ -137,7 +138,8 @@ public:
   /// The last argument specifying the list of segments to be included is omitted, which means that
   /// all the segments will be merged.
   /// \sa GenerateMergedLabelmap
-  virtual bool GenerateMergedLabelmapForAllSegments(vtkOrientedImageData* mergedImageData, int extentComputationMode,
+  virtual bool GenerateMergedLabelmapForAllSegments(vtkOrientedImageData* mergedImageData,
+    int extentComputationMode = vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS,
     vtkOrientedImageData* mergedLabelmapGeometry = NULL, vtkStringArray* segmentIDs = NULL);
 
   /// Expose reference identifier to get the volume node defining the reference image geometry if any
@@ -149,6 +151,53 @@ public:
   vtkGetObjectMacro(Segmentation, vtkSegmentation);
   /// Set and observe segmentation object
   void SetAndObserveSegmentation(vtkSegmentation* segmentation);
+
+  // Convenience functions for commonly needed features
+
+  /// Change master representation. All other representations are automatically computed
+  /// from the master representation.
+  virtual bool SetMasterRepresentationToBinaryLabelmap();
+  /// Change master representation. All other representations are automatically computed
+  /// from the master representation.
+  virtual bool SetMasterRepresentationToClosedSurface();
+
+  /// Generate binary labelmap representation for all segments.
+  virtual bool CreateBinaryLabelmapRepresentation();
+
+  /// Remove binary labelmap representation for all segments.
+  virtual void RemoveBinaryLabelmapRepresentation();
+
+  /// Get a segment as binary labelmap.
+  /// If representation does not exist yet then call CreateBinaryLabelmapRepresentation() before.
+  /// If binary labelmap is the master representation then the returned object can be modified, and
+  /// all other representations will be automatically udated.
+  virtual vtkOrientedImageData* GetBinaryLabelmapRepresentation(const std::string segmentId);
+
+  /// Generate closed surface representation for all segments.
+  /// Useful for 3D visualization.
+  virtual bool CreateClosedSurfaceRepresentation();
+
+  /// Remove closed surface representation for all segments.
+  virtual void RemoveClosedSurfaceRepresentation();
+
+  /// Get a segment as binary labelmap.
+  /// If representation does not exist yet then call CreateClosedSurfaceRepresentation() before.
+  /// If closed surface is the master representation then the returned object can be modified, and
+  /// all other representations will be automatically udated.
+  virtual vtkPolyData* GetClosedSurfaceRepresentation(const std::string segmentId);
+
+  /// Add new segment from a closed surface.
+  /// \return Segment ID of the new segment. Empty string if an error occurred.
+  virtual std::string AddSegmentFromClosedSurfaceRepresentation(vtkPolyData* polyData,
+    std::string segmentName = "", double color[3] = NULL, std::string segmentId = "");
+
+  /// Add new segment from a binary labelmap.
+  /// \return Segment ID of the new segment. Empty string if an error occurred.
+  std::string AddSegmentFromBinaryLabelmapRepresentation(vtkOrientedImageData* imageData,
+    std::string segmentName = "", double color[3] = NULL, std::string segmentId = "");
+
+  /// Delete segnent from segmentation.
+  void RemoveSegment(const std::string& segmentID);
 
 protected:
   /// Set segmentation object

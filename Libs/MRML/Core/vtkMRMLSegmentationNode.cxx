@@ -710,3 +710,168 @@ void vtkMRMLSegmentationNode::SetReferenceImageGeometryParameterFromVolumeNode(v
   this->SetNodeReferenceID(
     vtkMRMLSegmentationNode::GetReferenceImageGeometryReferenceRole().c_str(), volumeNode->GetID() );
 }
+
+//---------------------------------------------------------------------------
+std::string vtkMRMLSegmentationNode::AddSegmentFromClosedSurfaceRepresentation(vtkPolyData* polyData,
+  std::string segmentName/* ="" */, double color[3] /* =NULL */, std::string segmentId/* ="" */)
+{
+  if (!this->Segmentation)
+    {
+    vtkErrorMacro("AddSegmentFromClosedSurfaceRepresentation: Invalid segmentation");
+    return "";
+    }
+  vtkNew<vtkSegment> newSegment;
+  if (!segmentName.empty())
+    {
+    newSegment->SetName(segmentName.c_str());
+    }
+  if (color!=NULL)
+    {
+    newSegment->SetColor(color);
+    }
+  newSegment->AddRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName(), polyData);
+  if (!this->Segmentation->AddSegment(newSegment.GetPointer()))
+    {
+    return "";
+    }
+  return this->Segmentation->GetSegmentIdBySegment(newSegment.GetPointer());
+}
+
+//---------------------------------------------------------------------------
+std::string vtkMRMLSegmentationNode::AddSegmentFromBinaryLabelmapRepresentation(vtkOrientedImageData* imageData,
+  std::string segmentName/* ="" */, double color[3] /* =NULL */, std::string segmentId/* ="" */)
+{
+  if (!this->Segmentation)
+    {
+    vtkErrorMacro("AddSegmentFromBinaryLabelmapRepresentation: Invalid segmentation");
+    return "";
+    }
+  vtkNew<vtkSegment> newSegment;
+  if (!segmentName.empty())
+    {
+    newSegment->SetName(segmentName.c_str());
+    }
+  if (color != NULL)
+    {
+    newSegment->SetColor(color);
+    }
+  newSegment->AddRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName(), imageData);
+  if (!this->Segmentation->AddSegment(newSegment.GetPointer()))
+    {
+    return "";
+    }
+  return this->Segmentation->GetSegmentIdBySegment(newSegment.GetPointer());
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLSegmentationNode::RemoveSegment(const std::string& segmentID)
+{
+  if (!this->Segmentation)
+    {
+    vtkErrorMacro("RemoveSegment: Invalid segmentation");
+    return;
+    }
+  this->Segmentation->RemoveSegment(segmentID);
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLSegmentationNode::CreateBinaryLabelmapRepresentation()
+{
+  if (!this->Segmentation)
+    {
+    vtkErrorMacro("CreateBinaryLabelmapRepresentation: Invalid segmentation");
+    return false;
+    }
+  return this->Segmentation->CreateRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLSegmentationNode::RemoveBinaryLabelmapRepresentation()
+{
+  if (!this->Segmentation)
+    {
+    vtkErrorMacro("RemoveBinaryLabelmapRepresentation: Invalid segmentation");
+    return;
+    }
+  this->Segmentation->RemoveRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
+}
+
+//---------------------------------------------------------------------------
+vtkOrientedImageData* vtkMRMLSegmentationNode::GetBinaryLabelmapRepresentation(const std::string segmentId)
+{
+  if (!this->Segmentation)
+    {
+    vtkErrorMacro("GetBinaryLabelmapRepresentation: Invalid segmentation");
+    return NULL;
+    }
+  vtkSegment* segment = this->Segmentation->GetSegment(segmentId);
+  if (!segment)
+    {
+    vtkErrorMacro("GetBinaryLabelmapRepresentation: Invalid segment");
+    return NULL;
+    }
+  return vtkOrientedImageData::SafeDownCast(segment->GetRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()));
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLSegmentationNode::CreateClosedSurfaceRepresentation()
+{
+  if (!this->Segmentation)
+    {
+    vtkErrorMacro("CreateClosedSurfaceRepresentation: Invalid segmentation");
+    return false;
+    }
+  return this->Segmentation->CreateRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLSegmentationNode::RemoveClosedSurfaceRepresentation()
+{
+  if (!this->Segmentation)
+    {
+    vtkErrorMacro("RemoveClosedSurfaceRepresentation: Invalid segmentation");
+    return;
+    }
+  this->Segmentation->RemoveRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
+}
+
+//---------------------------------------------------------------------------
+vtkPolyData* vtkMRMLSegmentationNode::GetClosedSurfaceRepresentation(const std::string segmentId)
+{
+  if (!this->Segmentation)
+    {
+    vtkErrorMacro("GetClosedSurfaceRepresentation: Invalid segmentation");
+    return NULL;
+    }
+  vtkSegment* segment = this->Segmentation->GetSegment(segmentId);
+  if (!segment)
+    {
+    vtkErrorMacro("GetClosedSurfaceRepresentation: Invalid segment");
+    return NULL;
+    }
+  return vtkPolyData::SafeDownCast(segment->GetRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName()));
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLSegmentationNode::SetMasterRepresentationToBinaryLabelmap()
+{
+  if (!this->Segmentation)
+    {
+    vtkErrorMacro("SetMasterRepresentationToBinaryLabelmap: Invalid segmentation");
+    return false;
+    }
+  this->Segmentation->SetMasterRepresentationName(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLSegmentationNode::SetMasterRepresentationToClosedSurface()
+{
+  if (!this->Segmentation)
+    {
+    vtkErrorMacro("SetMasterRepresentationToClosedSurface: Invalid segmentation");
+    return false;
+    }
+  this->Segmentation->SetMasterRepresentationName(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
+  return true;
+}

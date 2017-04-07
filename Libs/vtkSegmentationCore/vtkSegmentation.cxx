@@ -1528,6 +1528,14 @@ void vtkSegmentation::DetermineCommonLabelmapExtent(int commonGeometryExtent[6],
 }
 
 //----------------------------------------------------------------------------
+bool vtkSegmentation::SetImageGeometryFromCommonLabelmapGeometry(vtkOrientedImageData* imageData, vtkStringArray* segmentIDs /*=NULL*/,
+  int extentComputationMode /*=vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS*/)
+{
+  std::string commonGeometryString = this->DetermineCommonLabelmapGeometry(extentComputationMode, segmentIDs);
+  return vtkSegmentationConverter::DeserializeImageGeometry(commonGeometryString, imageData, false /* do not allocate scalars */);
+}
+
+//----------------------------------------------------------------------------
 bool vtkSegmentation::ConvertSingleSegment(std::string segmentId, std::string targetRepresentationName)
 {
   vtkSegment* segment = this->GetSegment(segmentId);

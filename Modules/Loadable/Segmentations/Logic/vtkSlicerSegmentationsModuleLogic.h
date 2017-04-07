@@ -177,6 +177,11 @@ public:
   static bool ImportLabelmapToSegmentationNode(vtkMRMLLabelMapVolumeNode* labelmapNode,
     vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* updatedSegmentIDs);
 
+  /// Update segmentation from segments in a labelmap node.
+  /// \param updatedSegmentIDs Defines how label values 1..N are mapped to segment IDs (0..N-1).
+  static bool ImportLabelmapToSegmentationNode(vtkOrientedImageData* labelmapImage,
+    vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* updatedSegmentIDs, vtkGeneralTransform* labelmapToSegmentationTransform = NULL);
+
   /// Import model into the segmentation as a segment.
   static bool ImportModelToSegmentationNode(vtkMRMLModelNode* modelNode, vtkMRMLSegmentationNode* segmentationNode, std::string insertBeforeSegmentId = "");
 
@@ -223,7 +228,6 @@ public:
   /// A duplicate of the oriented image data is copied into the argument image data, with the segmentation's parent transform
   /// applied if requested (on by default).
   /// The oriented image data can be used directly for processing, or to create a labelmap volume using \sa CreateLabelmapVolumeFromOrientedImageData.
-  /// Further useful functions can be found in segmentations logic (this class).
   /// \param segmentationNode Input segmentation node containing the segment to extract
   /// \param segmentID Segment identifier of the segment to extract
   /// \param imageData Output oriented image data into which the segment binary labelmap is copied
@@ -231,6 +235,18 @@ public:
   ///   If on, then the oriented image data is in RAS, otherwise in the segmentation node's coordinate frame. On by default
   /// \return Success flag
   static bool GetSegmentBinaryLabelmapRepresentation(vtkMRMLSegmentationNode* segmentationNode, std::string segmentID, vtkOrientedImageData* imageData, bool applyParentTransform=true);
+
+  /// Convenience function to get closed surface representation of a segment in a segmentation. Uses \sa GetSegmentRepresentation
+  /// A duplicate of the closed surface data is copied into the argument image data, with the segmentation's parent transform
+  /// applied if requested (on by default).
+  /// \param segmentationNode Input segmentation node containing the segment to extract
+  /// \param segmentID Segment identifier of the segment to extract
+  /// \param polyData Output polydata into which the segment polydata is copied
+  /// \param applyParentTransform Flag determining whether to apply parent transform of the segmentation node.
+  ///   If on, then the oriented image data is in RAS, otherwise in the segmentation node's coordinate frame. On by default
+  /// \return Success flag
+  static bool GetSegmentClosedSurfaceRepresentation(vtkMRMLSegmentationNode* segmentationNode,
+    std::string segmentID, vtkPolyData* polyData, bool applyParentTransform = true);
 
   /// Set a labelmap image as binary labelmap representation into the segment defined by the segmentation node and segment ID.
   /// Master representation must be binary labelmap! Master representation changed event is disabled to prevent deletion of all
