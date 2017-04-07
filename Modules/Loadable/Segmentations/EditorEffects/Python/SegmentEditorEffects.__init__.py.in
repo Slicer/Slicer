@@ -2,17 +2,22 @@ from AbstractScriptedSegmentEditorEffect import *
 from AbstractScriptedSegmentEditorLabelEffect import *
 from AbstractScriptedSegmentEditorAutoCompleteEffect import *
 
-# Add effect name to the list of scripted segment editor effects.
-# SegmentEditor module will instantiate the effect class and register
-# in the effect factory.
-try:
-  slicer.modules.segmenteditorscriptedeffectnames
-except AttributeError:
-  slicer.modules.segmenteditorscriptedeffectnames=[]
+from SegmentEditorThresholdEffect import *
+from SegmentEditorSmoothingEffect import *
+from SegmentEditorGrowFromSeedsEffect import *
+from SegmentEditorFillBetweenSlicesEffect import *
+from SegmentEditorDrawEffect import *
+from SegmentEditorLevelTracingEffect import *
+from SegmentEditorMarginEffect import *
+from SegmentEditorLogicalEffect import *
+from SegmentEditorIslandsEffect import *
 
+from SegmentEditorEffects import *
+
+import logging
 import importlib
 import traceback
-effectNames = [
+editorEffectNames = [
   "SegmentEditorThresholdEffect",
   "SegmentEditorSmoothingEffect",
   "SegmentEditorGrowFromSeedsEffect",
@@ -23,9 +28,18 @@ effectNames = [
   "SegmentEditorLogicalEffect",
   "SegmentEditorIslandsEffect"
   ]
-for effectName in effectNames:
-  try:
-    m=importlib.import_module("SegmentEditorEffects."+effectName)
-    slicer.modules.segmenteditorscriptedeffectnames.extend([effectName])
-  except Exception as e:
-    logging.error(traceback.format_exc())
+
+def registerEffects():
+  import SegmentEditorEffects
+  import traceback
+  import logging
+  effectsPath = SegmentEditorEffects.__path__[0].replace('\\','/')
+  import qSlicerSegmentationsEditorEffectsPythonQt as qSlicerSegmentationsEditorEffects
+  for editorEffectName in SegmentEditorEffects.editorEffectNames:
+    try:
+      instance = qSlicerSegmentationsEditorEffects.qSlicerSegmentEditorScriptedEffect(None)
+      effectFilename = effectsPath+'/'+editorEffectName+'.py'
+      instance.setPythonSource(effectFilename)
+      instance.self().register()
+    except Exception as e:
+      logging.error(traceback.format_exc())

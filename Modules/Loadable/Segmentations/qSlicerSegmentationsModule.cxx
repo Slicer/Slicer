@@ -172,21 +172,7 @@ void qSlicerSegmentationsModule::setup()
   // (otherwise it would be the responsibility of the module that embeds the segment editor widget)
   PythonQt::init();
   PythonQtObjectPtr context = PythonQt::self()->getMainModule();
-  context.evalScript( QString(
-    "from SegmentEditorEffects import * \n"
-    "import qSlicerSegmentationsEditorEffectsPythonQt as effects \n"
-    "import traceback \n"
-    "import logging \n"
-    "try: \n"
-    "  slicer.modules.segmenteditorscriptedeffectnames \n"
-    "except AttributeError: \n"
-    "  slicer.modules.segmenteditorscriptedeffectnames=[] \n"
-    "for effectName in slicer.modules.segmenteditorscriptedeffectnames: \n"
-    "  try: \n"
-    "    exec(\"{0}Instance = effects.qSlicerSegmentEditorScriptedEffect(None);{0}Instance.setPythonSource({0}.__file__.replace('\\\\\\\\','/'));{0}Instance.self().register()\".format(effectName)) \n"
-    "  except Exception as e: \n"
-    "    logging.error(traceback.format_exc()) \n"
-    ) );
+  context.evalScript(QString("import SegmentEditorEffects; SegmentEditorEffects.registerEffects()"));
 }
 
 //-----------------------------------------------------------------------------

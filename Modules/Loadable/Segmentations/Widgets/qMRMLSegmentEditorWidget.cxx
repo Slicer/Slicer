@@ -247,7 +247,7 @@ qMRMLSegmentEditorWidgetPrivate::qMRMLSegmentEditorWidgetPrivate(qMRMLSegmentEdi
   // Define default effect order
   this->EffectNameOrder
     // Local painting
-    << "Paint" << "Draw" << "Erase" << "Flood filling" << "Level tracing" << "Grow from seeds" << "Fill between slices"
+    << "Paint" << "Draw" << "Erase" << "Level tracing" << "Grow from seeds" << "Fill between slices"
     // Global processing
     << "Threshold" << "Margin" << "Smoothing"
     // Global splitting, merging

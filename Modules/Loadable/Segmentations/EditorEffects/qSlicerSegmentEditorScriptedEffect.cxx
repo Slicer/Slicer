@@ -25,10 +25,12 @@
 
 // Qt includes
 #include <QDebug>
+#include <QDir>
 #include <QFileInfo>
 
 // SlicerQt includes
 #include "qSlicerScriptedUtils_p.h"
+#include "qSlicerUtils.h"
 
 // PythonQt includes
 #include <PythonQt.h>
@@ -138,12 +140,14 @@ bool qSlicerSegmentEditorScriptedEffect::setPythonSource(const QString newPython
     return false;
     }
 
-  // Extract moduleName from the provided filename
-  QString moduleName = QFileInfo(newPythonSource).baseName();
+  // Use parent directory name as module name
+  QDir sourceDir(newPythonSource);
+  sourceDir.cdUp();
+  QString moduleName = sourceDir.dirName();
 
-  // In case the effect is within the main module file
-  QString className = moduleName;
-  if (!moduleName.endsWith("Effect"))
+  // Use filename as class name
+  QString className = QFileInfo(newPythonSource).baseName();
+  if (!className.endsWith("Effect"))
     {
     className.append("Effect");
     }
@@ -197,9 +201,9 @@ bool qSlicerSegmentEditorScriptedEffect::setPythonSource(const QString newPython
   d->PythonSource = newPythonSource;
 
   if (!qSlicerScriptedUtils::setModuleAttribute(
-        "slicer", className, self))
+        "slicer", moduleName, self))
     {
-    qCritical() << "Failed to set" << ("slicer." + className);
+    qCritical() << "Failed to set" << ("slicer." + moduleName);
     }
 
   return true;
