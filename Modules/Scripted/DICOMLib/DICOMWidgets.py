@@ -815,6 +815,7 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
           if loadable.selected:
             if children[loadableCnt + 2].checked:
               self.loadablesByPlugin[plugin].append(loadable)
+            loadableCnt += 1
 
       self.referencesDialog.close()
       self.referencesDialog = None
