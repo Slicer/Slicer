@@ -586,8 +586,21 @@ void vtkMRMLDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 
   Superclass::PrintSelf(os,indent);
 
-  os << indent << "Color:             " << this->Color << "\n";
-  os << indent << "SelectedColor:     " << this->SelectedColor << "\n";
+  os << indent << "Color:             ";
+  for (idx = 0; idx < 3; ++idx)
+    {
+    os << this->Color[idx] << ((idx == 2) ? "\n" : ", ");
+    }
+  os << indent << "SelectedColor:     ";
+  for (idx = 0; idx < 3; ++idx)
+    {
+    os << this->SelectedColor[idx] << ((idx == 2) ? "\n" : ", ");
+    }
+  os << indent << "EdgeColor:         ";
+  for (idx = 0; idx < 3; ++idx)
+    {
+    os << this->EdgeColor[idx] << ((idx == 2) ? "\n" : ", ");
+    }
   os << indent << "SelectedAmbient:   " << this->SelectedAmbient << "\n";
   os << indent << "SelectedSpecular:  " << this->SelectedSpecular << "\n";
   os << indent << "Opacity:           " << this->Opacity << "\n";
