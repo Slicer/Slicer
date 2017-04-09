@@ -304,7 +304,7 @@ protected:
 
   void updateWidgetFromSegmentationNode();
   void updateWidgetFromMasterVolumeNode();
-  void updateWidgetFromEffect();
+  void updateEffectsSectionFromMRML();
 
   /// Switches the master representation to binary labelmap. If the master representation
   /// cannot be set to binary labelmap (e.g., the user does not allow it) then false is returned.

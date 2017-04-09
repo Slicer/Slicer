@@ -144,7 +144,7 @@ public:
   void selectFirstSegment();
 
   /// Enable or disable effects and their options based on input selection
-  void updateEffectsEnabled();
+  void updateEffectsEnabledFromMRML();
 
   /// Set cursor for effect. If effect is NULL then the cursor is reset to default.
   void setEffectCursor(qSlicerSegmentEditorAbstractEffect* effect);
@@ -177,6 +177,10 @@ public:
   vtkSmartPointer<vtkSegmentationHistory> SegmentationHistory;
 
   vtkWeakPointer<vtkMRMLScalarVolumeNode> MasterVolumeNode;
+
+  /// Lock widget to make segmentation read-only.
+  // In the future locked state may be read from the Segmentation node.
+  bool Locked;
 
   /// Ordering of effects
   QStringList EffectNameOrder;
@@ -236,6 +240,7 @@ qMRMLSegmentEditorWidgetPrivate::qMRMLSegmentEditorWidgetPrivate(qMRMLSegmentEdi
   , AlignedMasterVolumeUpdateSegmentationNodeTransform(NULL)
   , MaskModeComboBoxFixedItemsCount(0)
   , EffectButtonStyle(Qt::ToolButtonTextUnderIcon)
+  , Locked(false)
 {
   this->AlignedMasterVolume = vtkOrientedImageData::New();
   this->ModifierLabelmap = vtkOrientedImageData::New();
@@ -809,39 +814,6 @@ void qMRMLSegmentEditorWidgetPrivate::selectFirstSegment()
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSegmentEditorWidgetPrivate::updateEffectsEnabled()
-{
-  if (!this->ParameterSetNode)
-    {
-    qCritical() << Q_FUNC_INFO << ": Invalid segment editor parameter set node";
-    return;
-    }
-
-  // Disable effect selection and options altogether if no master volume is selected
-  bool masterVolumeSelected = this->ParameterSetNode->GetMasterVolumeNode();
-  this->EffectsGroupBox->setEnabled(masterVolumeSelected);
-  this->OptionsGroupBox->setEnabled(masterVolumeSelected);
-
-  // Enable only non-per-segment effects if no segment is selected, otherwise enable all effects
-  vtkMRMLSegmentationNode* segmentationNode = this->ParameterSetNode->GetSegmentationNode();
-  bool segmentAvailable = segmentationNode && (segmentationNode->GetSegmentation()->GetNumberOfSegments() > 0);
-  QString selectedSegmentID(this->ParameterSetNode->GetSelectedSegmentID());
-  bool segmentSelected = !selectedSegmentID.isEmpty();
-  QList<QAbstractButton*> effectButtons = this->EffectButtonGroup.buttons();
-  foreach (QAbstractButton* effectButton, effectButtons)
-    {
-    qSlicerSegmentEditorAbstractEffect* effect = qobject_cast<qSlicerSegmentEditorAbstractEffect*>(
-      effectButton->property("Effect").value<QObject*>() );
-    if (!effect)
-      {
-      // NULL effect
-      continue;
-      }
-    effectButton->setEnabled(segmentAvailable && (segmentSelected || !effect->perSegment()));
-    }
-}
-
-//-----------------------------------------------------------------------------
 void qMRMLSegmentEditorWidgetPrivate::setEffectCursor(qSlicerSegmentEditorAbstractEffect* effect)
 {
   qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
@@ -914,16 +886,30 @@ void qMRMLSegmentEditorWidget::updateWidgetFromMRML()
   updateWidgetFromSegmentationNode();
   updateWidgetFromMasterVolumeNode();
 
+  d->EffectsGroupBox->setEnabled(d->SegmentationNode != NULL);
+  d->MaskingGroupBox->setEnabled(d->SegmentationNode != NULL);
+  d->EffectsOptionsFrame->setEnabled(d->SegmentationNode != NULL);
+  d->MasterVolumeNodeComboBox->setEnabled(d->SegmentationNode != NULL);
+
+  QString selectedSegmentID;
+  if (d->ParameterSetNode->GetSelectedSegmentID())
+    {
+    selectedSegmentID = QString(d->ParameterSetNode->GetSelectedSegmentID());
+    }
+
   // Disable adding new segments until master volume is set (or reference geometry is specified for the segmentation).
   // This forces the user to select a master volume before start adding segments.
   vtkMRMLSegmentationNode* segmentationNode = d->ParameterSetNode->GetSegmentationNode();
-  bool enableAddSegments = (segmentationNode!=NULL) && ((d->MasterVolumeNode != NULL) || (!d->referenceImageGeometry().empty()));
+  bool enableAddSegments = (segmentationNode != NULL) && (!d->Locked) && ((d->MasterVolumeNode != NULL) || (!d->referenceImageGeometry().empty()));
   d->AddSegmentButton->setEnabled(enableAddSegments);
 
-  // Segments list section
+  // Only enable remove button if a segment is selected
+  d->RemoveSegmentButton->setEnabled(!selectedSegmentID.isEmpty() && (!d->Locked));
 
-  const char* selectedSegmentID = d->ParameterSetNode->GetSelectedSegmentID();
-  if (selectedSegmentID)
+  d->CreateSurfaceButton->setEnabled(!d->Locked);
+
+  // Segments list section
+  if (!selectedSegmentID.isEmpty())
     {
     if (segmentationNode)
       {
@@ -936,6 +922,15 @@ void qMRMLSegmentEditorWidget::updateWidgetFromMRML()
     {
     d->SegmentsTableView->clearSelection();
     }
+  d->SegmentsTableView->setReadOnly(d->Locked);
+
+  // Effects section (list and options)
+  updateEffectsSectionFromMRML();
+
+  // Undo/redo section
+
+  d->UndoButton->setEnabled(!d->Locked);
+  d->RedoButton->setEnabled(!d->Locked);
 
   // Masking section
 
@@ -981,10 +976,6 @@ void qMRMLSegmentEditorWidget::updateWidgetFromMRML()
 
   // Segmentation object might have been replaced, update selected segment
   onSegmentAddedRemoved();
-
-  // Effects section
-
-  updateWidgetFromEffect();
 
   d->ParameterSetNode->EndModify(wasModified);
 }
@@ -1103,11 +1094,6 @@ void qMRMLSegmentEditorWidget::updateWidgetFromSegmentationNode()
     wasBlocked = d->SegmentsTableView->blockSignals(true);
     d->SegmentsTableView->setSegmentationNode(d->SegmentationNode);
     d->SegmentsTableView->blockSignals(wasBlocked);
-
-    d->EffectsGroupBox->setEnabled(d->SegmentationNode != NULL);
-    d->MaskingGroupBox->setEnabled(d->SegmentationNode != NULL);
-    d->EffectsOptionsFrame->setEnabled(d->SegmentationNode != NULL);
-    d->MasterVolumeNodeComboBox->setEnabled(segmentationNode != NULL);
 
     if (segmentationNode)
       {
@@ -1335,7 +1321,7 @@ void qMRMLSegmentEditorWidget::setActiveEffect(qSlicerSegmentEditorAbstractEffec
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSegmentEditorWidget::updateWidgetFromEffect()
+void qMRMLSegmentEditorWidget::updateEffectsSectionFromMRML()
 {
   Q_D(qMRMLSegmentEditorWidget);
 
@@ -1348,8 +1334,34 @@ void qMRMLSegmentEditorWidget::updateWidgetFromEffect()
   // Disable editing if no master volume node is set:
   // master volume determines the extent of editing, so even though the segmentation is valid
   // without a master volume, editing is not possible until it is selected.
-  d->updateEffectsEnabled();
 
+  // Disable effect selection and options altogether if no master volume is selected
+  bool effectsOverallEnabled = (d->ParameterSetNode->GetMasterVolumeNode() != NULL) && (!d->Locked);
+  d->EffectsGroupBox->setEnabled(effectsOverallEnabled);
+  d->OptionsGroupBox->setEnabled(effectsOverallEnabled);
+
+  // Enable only non-per-segment effects if no segment is selected, otherwise enable all effects
+  if (effectsOverallEnabled)
+    {
+    vtkMRMLSegmentationNode* segmentationNode = d->ParameterSetNode->GetSegmentationNode();
+    bool segmentAvailable = segmentationNode && (segmentationNode->GetSegmentation()->GetNumberOfSegments() > 0);
+    QString selectedSegmentID(d->ParameterSetNode->GetSelectedSegmentID());
+    bool segmentSelected = !selectedSegmentID.isEmpty();
+    QList<QAbstractButton*> effectButtons = d->EffectButtonGroup.buttons();
+    foreach(QAbstractButton* effectButton, effectButtons)
+      {
+      qSlicerSegmentEditorAbstractEffect* effect = qobject_cast<qSlicerSegmentEditorAbstractEffect*>(
+        effectButton->property("Effect").value<QObject*>());
+      if (!effect)
+        {
+        // NULL effect
+        continue;
+        }
+      effectButton->setEnabled(segmentAvailable && (segmentSelected || !effect->perSegment()));
+      }
+    }
+
+  // Update effect options
   const char* activeEffectName = d->ParameterSetNode->GetActiveEffectName();
   qSlicerSegmentEditorAbstractEffect* activeEffect = this->effectByName(activeEffectName); // newly selected effect
   if (activeEffect == d->ActiveEffect)
@@ -1612,7 +1624,6 @@ void qMRMLSegmentEditorWidget::onSegmentSelectionChanged(const QItemSelection &s
     }
 
   QStringList selectedSegmentIDs = d->SegmentsTableView->selectedSegmentIDs();
-  d->RemoveSegmentButton->setEnabled(selectedSegmentIDs.count() > 0);
 
   // If selection did not change, then return
   QString currentSegmentID(d->ParameterSetNode->GetSelectedSegmentID());
@@ -1640,10 +1651,7 @@ void qMRMLSegmentEditorWidget::onSegmentSelectionChanged(const QItemSelection &s
     }
 
   // Disable editing if no segment is selected
-  d->updateEffectsEnabled();
-
-  // Only enable remove button if a segment is selected
-  d->RemoveSegmentButton->setEnabled(!selectedSegmentID.isEmpty());
+  this->updateWidgetFromMRML();
 
   emit currentSegmentIDChanged(selectedSegmentID);
 }
@@ -1871,7 +1879,8 @@ void qMRMLSegmentEditorWidget::onSegmentAddedRemoved()
   if (segmentationNode)
     {
     // Enable button if there is at least one segment in the segmentation
-    d->CreateSurfaceButton->setEnabled(segmentationNode->GetSegmentation()->GetNumberOfSegments()>0
+    d->CreateSurfaceButton->setEnabled(!d->Locked
+      && segmentationNode->GetSegmentation()->GetNumberOfSegments()>0
       && segmentationNode->GetSegmentation()->GetMasterRepresentationName() !=
       vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
 
@@ -2399,25 +2408,19 @@ void qMRMLSegmentEditorWidget::setMaximumNumberOfUndoStates(int maxNumberOfState
 bool qMRMLSegmentEditorWidget::readOnly() const
 {
   Q_D(const qMRMLSegmentEditorWidget);
-  return d->SegmentsTableView->readOnly();
+  return d->Locked;
 }
 
 //------------------------------------------------------------------------------
 void qMRMLSegmentEditorWidget::setReadOnly(bool aReadOnly)
 {
   Q_D(qMRMLSegmentEditorWidget);
-
-  d->AddSegmentButton->setEnabled(!aReadOnly);
-  d->RemoveSegmentButton->setEnabled(!aReadOnly);
-  d->CreateSurfaceButton->setEnabled(!aReadOnly);
-
-  d->EffectsGroupBox->setEnabled(!aReadOnly);
-  d->UndoButton->setEnabled(!aReadOnly);
-  d->RedoButton->setEnabled(!aReadOnly);
-  d->OptionsGroupBox->setEnabled(!aReadOnly);
-  d->MaskingGroupBox->setEnabled(!aReadOnly);
-
-  d->SegmentsTableView->setReadOnly(aReadOnly);
+  d->Locked = aReadOnly;
+  if (aReadOnly)
+    {
+    setActiveEffect(NULL);
+    }
+  this->updateWidgetFromMRML();
 }
 
 //-----------------------------------------------------------------------------
@@ -2519,8 +2522,9 @@ void qMRMLSegmentEditorWidget::uninstallKeyboardShortcuts()
 //-----------------------------------------------------------------------------
 void qMRMLSegmentEditorWidget::onSelectEffectShortcut()
 {
+  Q_D(qMRMLSegmentEditorWidget);
   QShortcut* shortcut = qobject_cast<QShortcut*>(sender());
-  if (shortcut == NULL)
+  if (shortcut == NULL || d->Locked)
     {
     return;
     }
