@@ -105,9 +105,12 @@ void qSlicerSubjectHierarchyVolumesPluginPrivate::init()
   Q_Q(qSlicerSubjectHierarchyVolumesPlugin);
 
   // Connect layout changes to slot so that volume visibility icons are correctly updated
-  QObject::connect(qSlicerApplication::application()->layoutManager(), SIGNAL(layoutChanged(int)), q, SLOT(onLayoutChanged(int)));
-  // Make sure initial connections are made even before a layout change
-  QTimer::singleShot(0, q, SLOT(onLayoutChanged()));
+  if (qSlicerApplication::application()->layoutManager())
+    {
+    QObject::connect(qSlicerApplication::application()->layoutManager(), SIGNAL(layoutChanged(int)), q, SLOT(onLayoutChanged(int)));
+    // Make sure initial connections are made even before a layout change
+    QTimer::singleShot(0, q, SLOT(onLayoutChanged()));
+    }
 
   this->ShowVolumesInBranchAction = new QAction("Show volumes in branch",q);
   QObject::connect(this->ShowVolumesInBranchAction, SIGNAL(triggered()), q, SLOT(showVolumesInBranch()));

@@ -197,13 +197,19 @@ qSlicerDICOMExportable* qSlicerDICOMTagEditorWidgetPrivate::exportableForRowInde
 
   unsigned int foundSeriesHeaderRowIndex = 0; // 0 is invalid value as it is the patient header
   QList<unsigned int> headerRowIndices = this->SeriesTagsHeaderRows.keys();
+  if (headerRowIndices.contains(row))
+    {
+    // If row is a header, then return NULL without logging error
+    return NULL;
+    }
+
   // Iterate through the series header indices from the bottom up
   for (int headerRowIndexIndex = headerRowIndices.size()-1; headerRowIndexIndex >= 0 ; --headerRowIndexIndex)
     {
     // If edited row is greater than the current header index, but smaller than the
     // previous ones, and it is not a header, then we found the series section
     unsigned int currentHeaderRowIndex = headerRowIndices[headerRowIndexIndex];
-    if (row > currentHeaderRowIndex && !headerRowIndices.contains(row))
+    if (row > currentHeaderRowIndex)
       {
       foundSeriesHeaderRowIndex = currentHeaderRowIndex;
       break;
@@ -641,4 +647,7 @@ void qSlicerDICOMTagEditorWidget::tagsTableCellChanged(int row, int column)
     // Set tag in exportable
     exportable->setTag(d->TagsTable->item(row,0)->text(), d->TagsTable->item(row,1)->text());
     }
+
+  // Emit signal outside so that changes can be used immediately if needed
+  emit tagEdited();
 }

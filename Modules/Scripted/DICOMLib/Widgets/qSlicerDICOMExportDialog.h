@@ -79,10 +79,16 @@ protected slots:
   /// Populate DICOM tags based on selection
   void onExportableSelectedAtRow(int);
 
+  /// Save tags into subject hierarchy items
+  void onTagEdited();
+
   /// Call export series or entire scene based on radio button selection
   void onExport();
 
-  /// Handles import exported dataset checkbox toggles
+  /// Handle save tags checkbox toggles
+  void onSaveTagsCheckBoxToggled(bool);
+
+  /// Handle import exported dataset checkbox toggles
   void onImportExportedDatasetCheckBoxToggled(bool);
 
 protected:

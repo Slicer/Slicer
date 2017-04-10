@@ -129,10 +129,14 @@ void qSlicerDICOMExportDialogPrivate::init()
     q, SLOT(onCurrentItemChanged(vtkIdType)));
   connect(this->ExportablesListWidget, SIGNAL(currentRowChanged(int)),
     q, SLOT(onExportableSelectedAtRow(int)));
+  connect(this->DICOMTagEditorWidget, SIGNAL(tagEdited()),
+    q, SLOT(onTagEdited()));
   connect(this->ExportButton, SIGNAL(clicked()),
     q, SLOT(onExport()));
   connect(this->ExportSeriesRadioButton, SIGNAL(toggled(bool)),
     q, SLOT(onExportSeriesRadioButtonToggled(bool)) );
+  connect(this->SaveTagsCheckBox, SIGNAL(toggled(bool)),
+    q, SLOT(onSaveTagsCheckBoxToggled(bool)) );
   connect(this->ImportExportedDatasetCheckBox, SIGNAL(toggled(bool)),
     q, SLOT(onImportExportedDatasetCheckBoxToggled(bool)) );
 }
@@ -389,6 +393,18 @@ void qSlicerDICOMExportDialog::onExportableSelectedAtRow(int row)
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerDICOMExportDialog::onTagEdited()
+{
+  Q_D(qSlicerDICOMExportDialog);
+
+  // Commit changes to exported series item(s) and their study and patient parents
+  if (d->SaveTagsCheckBox->isChecked())
+    {
+    d->DICOMTagEditorWidget->commitChangesToItems();
+    }
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerDICOMExportDialog::onExportSeriesRadioButtonToggled(bool seriesOn)
 {
   Q_D(qSlicerDICOMExportDialog);
@@ -431,6 +447,18 @@ void qSlicerDICOMExportDialog::onExport()
   else
     {
     this->exportEntireScene();
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerDICOMExportDialog::onSaveTagsCheckBoxToggled(bool on)
+{
+  Q_D(qSlicerDICOMExportDialog);
+
+  if (on)
+    {
+    // Commit changes to exported series item(s) and their study and patient parents
+    d->DICOMTagEditorWidget->commitChangesToItems();
     }
 }
 
@@ -483,7 +511,7 @@ void qSlicerDICOMExportDialog::exportSeries()
     outputFolder.cd(tempSubDirName);
     }
 
-  // Commit changes to exported series node and their study and patient
+  // Commit changes to exported series item(s) and their study and patient
   // parents after successful export if user requested it
   if (d->SaveTagsCheckBox->isChecked())
     {

@@ -67,6 +67,10 @@ public:
   /// Write edited tags into the subject hierarchy item attributes
   void commitChangesToItems();
 
+signals:
+  /// Signal emitted each time a tag was edited by the user
+  void tagEdited();
+
 public slots:
   /// Set MRML scene
   virtual void setMRMLScene(vtkMRMLScene* scene);

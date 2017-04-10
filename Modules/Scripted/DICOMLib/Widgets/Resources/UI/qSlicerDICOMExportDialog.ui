@@ -318,10 +318,14 @@
      <item row="0" column="1">
       <widget class="QCheckBox" name="SaveTagsCheckBox">
        <property name="toolTip">
-        <string>If checked, the manually edited tags will be saved back to the subject hierarhcy items too</string>
+        <string>If checked, the manually edited tags will be saved back to the subject hierarhcy items.
+By saving the tags, they are preserved for the next export, and can be saved with the scene.</string>
        </property>
        <property name="text">
-        <string>Save tags on export</string>
+        <string>Save tags to scene</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
