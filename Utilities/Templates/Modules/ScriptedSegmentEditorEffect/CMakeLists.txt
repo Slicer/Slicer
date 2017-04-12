@@ -5,10 +5,12 @@ set(MODULE_NAME SegmentEditorTemplateKey)
 #-----------------------------------------------------------------------------
 set(MODULE_PYTHON_SCRIPTS
   ${MODULE_NAME}.py
+  ${MODULE_NAME}Lib/__init__.py
+  ${MODULE_NAME}Lib/SegmentEditorEffect.py
   )
 
 set(MODULE_PYTHON_RESOURCES
-  Resources/Icons/${MODULE_NAME}.png
+  ${MODULE_NAME}Lib/SegmentEditorEffect.png
   )
 
 #-----------------------------------------------------------------------------
@@ -18,8 +20,6 @@ slicerMacroBuildScriptedModule(
   RESOURCES ${MODULE_PYTHON_RESOURCES}
   WITH_GENERIC_TESTS
   )
-
-add_subdirectory(EditorEffects)
 
 #-----------------------------------------------------------------------------
 if(BUILD_TESTING)
