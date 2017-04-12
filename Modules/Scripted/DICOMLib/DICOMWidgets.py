@@ -772,31 +772,8 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
 
     self.referencesDialog = None
     if loadEnabled:
-      self.referencesDialog = qt.QDialog(self)
-      self.referencesDialog.modal = True
-      layout = qt.QFormLayout()
-      layout.setSpacing(9)
-      self.referencesDialog.setLayout(layout)
-      windowTitle = "Referenced datasets found"
-      self.referencesDialog.setWindowTitle(windowTitle)
-      fm = qt.QFontMetrics(qt.QApplication.font(self.referencesDialog))
-      self.referencesDialog.setMinimumWidth(fm.width(windowTitle) + 50)
-      label = qt.QLabel("The loaded DICOM objects contain references to other "
-                        "datasets you did not select for loading. Please confirm if you would "
-                        "like to load the following referenced datasets.")
-      label.wordWrap = True
-      layout.addRow(label)
-      for plugin in self.referencedLoadables:
-        for loadable in self.referencedLoadables[plugin]:
-          if loadable.selected:
-            cb = qt.QCheckBox(loadable.name, self.referencesDialog)
-            cb.checked = True
-            layout.addRow(cb)
-      okButton = qt.QPushButton('Proceed')
-      okButton.connect("clicked()", self.proceedWithReferencedLoadablesSelection)
-      layout.addRow(okButton)
-      self.referencesDialog.show()
-      self.referencesDialog.adjustSize()
+      self.referencesDialog = DICOMReferencesDialog(self, loadables=self.referencedLoadables,
+                                                    callback=self.proceedWithReferencedLoadablesSelection)
     else:
       self.proceedWithReferencedLoadablesSelection()
 
@@ -859,11 +836,6 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
       for loadable in self.loadablesByPlugin[plugin]:
         if progress.wasCanceled:
           break
-
-    for plugin in self.loadablesByPlugin:
-      for loadable in self.loadablesByPlugin[plugin]:
-        if progress.wasCanceled:
-          break
         slicer.app.processEvents()
         progress.setValue(step)
         slicer.app.processEvents()
@@ -909,6 +881,60 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
   def onLoadingFinished(self):
     if not self.browserPersistent:
       self.close()
+
+
+class DICOMReferencesDialog(qt.QDialog):
+
+  WINDOW_TITLE = "Referenced datasets found"
+  WINDOW_TEXT = "The loaded DICOM objects contain references to other datasets you did not select for loading. Please " \
+                "confirm if you would like to load the following referenced datasets."
+
+  def __init__(self, parent, loadables, callback):
+    super(DICOMReferencesDialog, self).__init__(parent)
+    self.loadables = loadables
+    self.callback = callback
+    self.setup()
+    self.setupConnections()
+    self.show()
+
+  def setup(self):
+    self._setBasicProperties()
+    self._addTextLabel()
+    self._addLoadableCheckboxes()
+    self._addButton()
+
+  def _setBasicProperties(self):
+    self.setLayout(qt.QFormLayout())
+    self.layout().setSpacing(9)
+    self.setWindowTitle(self.WINDOW_TITLE)
+    self.modal = True
+    fm = qt.QFontMetrics(qt.QApplication.font(self))
+    self.setMinimumWidth(fm.width(self.WINDOW_TITLE) + 50)
+
+  def _addTextLabel(self):
+    label = qt.QLabel(self.WINDOW_TEXT)
+    label.wordWrap = True
+    self.layout().addRow(label)
+
+  def _addLoadableCheckboxes(self):
+    for plugin in self.loadables:
+      for loadable in self.loadables[plugin]:
+        if loadable.selected:
+          cb = qt.QCheckBox(loadable.name, self)
+          cb.checked = True
+          self.layout().addRow(cb)
+
+  def _addButton(self):
+    self.okButton = qt.QPushButton('Proceed')
+    self.layout().addRow(self.okButton)
+
+  def setupConnections(self):
+    if self.callback:
+      self.okButton.connect("clicked()", self.callback)
+
+  def show(self):
+    qt.QDialog.show(self)
+    self.adjustSize()
 
 
 class DICOMDetailsDialog(DICOMDetailsBase, qt.QDialog):
