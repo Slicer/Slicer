@@ -772,8 +772,9 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
 
     self.referencesDialog = None
     if loadEnabled:
-      self.referencesDialog = DICOMReferencesDialog(self, loadables=self.referencedLoadables,
-                                                    callback=self.proceedWithReferencedLoadablesSelection)
+      self.referencesDialog = DICOMReferencesDialog(self, loadables=self.referencedLoadables)
+      if self.referencesDialog.exec_() == qt.QMessageBox.Ok:
+        self.proceedWithReferencedLoadablesSelection()
     else:
       self.proceedWithReferencedLoadablesSelection()
 
@@ -785,16 +786,10 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
     # that reference should be loaded, add it to the self.loadablesByPlugin
     # dictionary
     if self.referencesDialog:
-      children = self.referencesDialog.children()
-      loadableCnt = 0
       for plugin in self.referencedLoadables:
-        for loadable in self.referencedLoadables[plugin]:
-          if loadable.selected:
-            if children[loadableCnt + 2].checked:
-              self.loadablesByPlugin[plugin].append(loadable)
-            loadableCnt += 1
-
-      self.referencesDialog.close()
+        for loadable in [l for l in self.referencedLoadables[plugin] if l.selected]:
+          if self.referencesDialog.checkboxes[loadable].checked:
+            self.loadablesByPlugin[plugin].append(loadable)
       self.referencesDialog = None
 
     warningsInLoadableWithConfidence = 0.0
@@ -883,58 +878,48 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
       self.close()
 
 
-class DICOMReferencesDialog(qt.QDialog):
+class DICOMReferencesDialog(qt.QMessageBox):
 
   WINDOW_TITLE = "Referenced datasets found"
   WINDOW_TEXT = "The loaded DICOM objects contain references to other datasets you did not select for loading. Please " \
                 "confirm if you would like to load the following referenced datasets."
 
-  def __init__(self, parent, loadables, callback):
+  def __init__(self, parent, loadables):
     super(DICOMReferencesDialog, self).__init__(parent)
     self.loadables = loadables
-    self.callback = callback
+    self.checkboxes = dict()
     self.setup()
-    self.setupConnections()
-    self.show()
 
   def setup(self):
     self._setBasicProperties()
     self._addTextLabel()
     self._addLoadableCheckboxes()
-    self._addButton()
+    self.okButton = self.addButton(self.Ok)
+    self.cancelButton = self.addButton(self.Cancel)
+    self.layout().addWidget(self.okButton, 2, 0, 1, 1)
+    self.layout().addWidget(self.cancelButton, 2, 1, 1, 1)
 
   def _setBasicProperties(self):
-    self.setLayout(qt.QFormLayout())
     self.layout().setSpacing(9)
     self.setWindowTitle(self.WINDOW_TITLE)
-    self.modal = True
     fm = qt.QFontMetrics(qt.QApplication.font(self))
-    self.setMinimumWidth(fm.width(self.WINDOW_TITLE) + 50)
+    self.setStyleSheet("QWidget{min-width: " + str(fm.width(self.WINDOW_TITLE)) + "px;}")
 
   def _addTextLabel(self):
     label = qt.QLabel(self.WINDOW_TEXT)
     label.wordWrap = True
-    self.layout().addRow(label)
+    self.layout().addWidget(label, 0, 0, 1, 2)
 
   def _addLoadableCheckboxes(self):
+    self.checkBoxGroupBox = qt.QGroupBox("References")
+    self.checkBoxGroupBox.setLayout(qt.QFormLayout())
     for plugin in self.loadables:
-      for loadable in self.loadables[plugin]:
-        if loadable.selected:
-          cb = qt.QCheckBox(loadable.name, self)
-          cb.checked = True
-          self.layout().addRow(cb)
-
-  def _addButton(self):
-    self.okButton = qt.QPushButton('Proceed')
-    self.layout().addRow(self.okButton)
-
-  def setupConnections(self):
-    if self.callback:
-      self.okButton.connect("clicked()", self.callback)
-
-  def show(self):
-    qt.QDialog.show(self)
-    self.adjustSize()
+      for loadable in [l for l in self.loadables[plugin] if l.selected]:
+        cb = qt.QCheckBox(loadable.name, self)
+        cb.checked = True
+        self.checkboxes[loadable] = cb
+        self.checkBoxGroupBox.layout().addWidget(cb)
+    self.layout().addWidget(self.checkBoxGroupBox, 1, 0, 1, 2)
 
 
 class DICOMDetailsDialog(DICOMDetailsBase, qt.QDialog):
