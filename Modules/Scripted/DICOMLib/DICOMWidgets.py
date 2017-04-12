@@ -788,29 +788,11 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
       self.proceedWithReferencedLoadablesSelection()
 
   def proceedWithReferencedLoadablesSelection(self):
-    warningsInLoadableWithConfidence = 0.0
-    maximumConfidence = 0.0
-    for plugin in self.loadablesByPlugin:
-      for loadable in self.loadablesByPlugin[plugin]:
-        if loadable.warning != "":
-          logging.warning('Warning in DICOM plugin ' + plugin.loadType + ' when examining loadable ' + loadable.name + ': ' + loadable.warning)
-          if warningsInLoadableWithConfidence < loadable.confidence:
-            warningsInLoadableWithConfidence = loadable.confidence
-        if maximumConfidence < loadable.confidence:
-          maximumConfidence = loadable.confidence
+    if not self.warnUserIfLoadableWarningsAndProceed():
+      return
 
-    if warningsInLoadableWithConfidence == maximumConfidence and not self.advancedView:
-      warning = "Warnings detected during load.  Examine data in Advanced mode for details.  Load anyway?"
-      if not slicer.util.confirmOkCancelDisplay(warning):
-        return
-
-    loadableCount = 0
-    for plugin in self.loadablesByPlugin:
-      for loadable in self.loadablesByPlugin[plugin]:
-        if loadable.selected:
-          loadableCount += 1
-    progress = slicer.util.createProgressDialog(parent=self, value=0, maximum=loadableCount)
-    step = 0
+    selectedLoadables = self.getAllSelectedLoadables()
+    progress = slicer.util.createProgressDialog(parent=self, value=0, maximum=len(selectedLoadables))
     loadingResult = ''
 
     loadedNodeIDs = []
@@ -821,41 +803,37 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
       if isinstance(node, slicer.vtkMRMLVolumeNode):
         loadedNodeIDs.append(node.GetID())
 
+    def updateProgress(value=None, text=None):
+      if value:
+        progress.setValue(step)
+      if text:
+        progress.labelText = text
+      slicer.app.processEvents()
+
     self.addObserver(slicer.mrmlScene, slicer.vtkMRMLScene.NodeAddedEvent, onNodeAdded)
 
-    for plugin in self.loadablesByPlugin:
-      for loadable in self.loadablesByPlugin[plugin]:
-        if progress.wasCanceled:
-          break
-        slicer.app.processEvents()
-        progress.setValue(step)
-        slicer.app.processEvents()
-        if loadable.selected:
-          progress.labelText = '\nLoading %s' % loadable.name
-          slicer.app.processEvents()
-          loadSuccess = True
-          try:
-            loadSuccess = plugin.load(loadable)
-          except:
-            loadSuccess = False
-            import traceback
-            logging.error("DICOM plugin failed to load '"
-              + loadable.name + "' as a '" + plugin.loadType + "'.\n"
-              + traceback.format_exc())
-          if not loadSuccess:
-            loadingResult = '%s\nCould not load: %s as a %s' % (loadingResult, loadable.name, plugin.loadType)
-          step += 1
-          progress.setValue(step)
-          slicer.app.processEvents()
-        try:
-          for derivedItem in loadable.derivedItems:
-            indexer = ctkDICOMIndexer()
-            progress.labelText = '\nIndexing %s' % derivedItem
-            slicer.app.processEvents()
-            indexer.addFile(slicer.dicomDatabase, derivedItem)
-        except AttributeError:
-          # no derived items or some other attribute error
-          pass
+    for step, (loadable, plugin) in enumerate(selectedLoadables.iteritems(), start=1):
+      if progress.wasCanceled:
+        break
+      updateProgress(value=step, text='\nLoading %s' % loadable.name)
+      try:
+        loadSuccess = plugin.load(loadable)
+      except:
+        loadSuccess = False
+        import traceback
+        logging.error("DICOM plugin failed to load '"
+          + loadable.name + "' as a '" + plugin.loadType + "'.\n"
+          + traceback.format_exc())
+      if not loadSuccess:
+        loadingResult = '%s\nCould not load: %s as a %s' % (loadingResult, loadable.name, plugin.loadType)
+      try:
+        for derivedItem in loadable.derivedItems:
+          indexer = ctkDICOMIndexer()
+          updateProgress(text='\nIndexing %s' % derivedItem)
+          indexer.addFile(slicer.dicomDatabase, derivedItem)
+      except AttributeError:
+        # no derived items or some other attribute error
+        pass
 
     self.removeObserver(slicer.mrmlScene, slicer.vtkMRMLScene.NodeAddedEvent, onNodeAdded)
 
@@ -868,6 +846,32 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
       slicer.util.warningDisplay(loadingResult, windowTitle='DICOM loading')
 
     self.onLoadingFinished()
+
+  def warnUserIfLoadableWarningsAndProceed(self):
+    warningsInLoadableWithConfidence = 0.0
+    maximumConfidence = 0.0
+    for plugin in self.loadablesByPlugin:
+      for loadable in self.loadablesByPlugin[plugin]:
+        if loadable.warning != "":
+          logging.warning('Warning in DICOM plugin ' + plugin.loadType + ' when examining loadable ' + loadable.name +
+                          ': ' + loadable.warning)
+          if warningsInLoadableWithConfidence < loadable.confidence:
+            warningsInLoadableWithConfidence = loadable.confidence
+        if maximumConfidence < loadable.confidence:
+          maximumConfidence = loadable.confidence
+    if warningsInLoadableWithConfidence == maximumConfidence and not self.advancedView:
+      warning = "Warnings detected during load.  Examine data in Advanced mode for details.  Load anyway?"
+      if not slicer.util.confirmOkCancelDisplay(warning):
+        return False
+    return True
+
+  def getAllSelectedLoadables(self):
+    loadables = {}
+    for plugin in self.loadablesByPlugin:
+      for loadable in self.loadablesByPlugin[plugin]:
+        if loadable.selected:
+          loadables[loadable] = plugin
+    return loadables
 
   def onLoadingFinished(self):
     if not self.browserPersistent:
