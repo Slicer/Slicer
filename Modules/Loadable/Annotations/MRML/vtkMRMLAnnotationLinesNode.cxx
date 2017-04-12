@@ -37,7 +37,7 @@ void vtkMRMLAnnotationLinesNode::WriteXML(ostream& of, int nIndent)
     {
     vtkCellArray *lines = this->GetLines();
     lines->InitTraversal();
-    of << "linePtsID=\"";
+    of << " linePtsID=\"";
     for (int i = 0; i < n; i++)
       {
       vtkIdType npts = 0;
@@ -75,7 +75,7 @@ void vtkMRMLAnnotationLinesNode::WriteXML(ostream& of, int nIndent)
     }
   else
     {
-    of << "linePtsID=\"\"";
+    of << " linePtsID=\"\"";
     for (int j = NUM_CP_ATTRIBUTE_TYPES; j < NUM_LINE_ATTRIBUTE_TYPES; j++)
       {
       of << " " << this->GetAttributeTypesEnumAsString(j) << "=\"\"";
