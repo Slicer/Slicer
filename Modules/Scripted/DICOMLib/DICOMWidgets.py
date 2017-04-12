@@ -685,13 +685,12 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
     if missingFileCount == allFileCount:
       return
 
-    nDicomPlugins = len(slicer.modules.dicomPlugins)
-    progress = slicer.util.createProgressDialog(parent=self, value=0, maximum=nDicomPlugins)
-    step = 0
+    plugins = self.pluginSelector.selectedPlugins()
 
     loadEnabled = False
-    plugins = self.pluginSelector.selectedPlugins()
-    for pluginClass in plugins:
+    progress = slicer.util.createProgressDialog(parent=self, value=0, maximum=len(plugins))
+
+    for step, pluginClass in enumerate(plugins):
       if not self.pluginInstances.has_key(pluginClass):
         self.pluginInstances[pluginClass] = slicer.modules.dicomPlugins[pluginClass]()
       plugin = self.pluginInstances[pluginClass]
@@ -714,7 +713,6 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
         slicer.util.warningDisplay("Warning: Plugin failed: %s\n\nSee python console for error message." % pluginClass,
                                    windowTitle="DICOM", parent=self)
         print "DICOM Plugin failed: %s" % str(e)
-      step += 1
 
     progress.close()
 
@@ -770,28 +768,26 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
     if len(referencedFileLists):
       (self.referencedLoadables, loadEnabled) = self.getLoadablesFromFileLists(referencedFileLists)
 
-    self.referencesDialog = None
     if loadEnabled:
-      self.referencesDialog = DICOMReferencesDialog(self, loadables=self.referencedLoadables)
-      if self.referencesDialog.exec_() == qt.QMessageBox.Ok:
-        self.proceedWithReferencedLoadablesSelection()
+      self.showReferenceDialogAndProceed()
     else:
       self.proceedWithReferencedLoadablesSelection()
 
     return
 
-  def proceedWithReferencedLoadablesSelection(self):
-    # each check box corresponds to a referenced loadable
-    # that was selected by examine; if the user confirmed
-    # that reference should be loaded, add it to the self.loadablesByPlugin
-    # dictionary
-    if self.referencesDialog:
+  def showReferenceDialogAndProceed(self):
+    referencesDialog = DICOMReferencesDialog(self, loadables=self.referencedLoadables)
+    if referencesDialog.exec_() == qt.QMessageBox.Ok:
+      # each check box corresponds to a referenced loadable that was selected by examine;
+      # if the user confirmed that reference should be loaded, add it to the self.loadablesByPlugin dictionary
       for plugin in self.referencedLoadables:
         for loadable in [l for l in self.referencedLoadables[plugin] if l.selected]:
-          if self.referencesDialog.checkboxes[loadable].checked:
+          if referencesDialog.checkboxes[loadable].checked:
             self.loadablesByPlugin[plugin].append(loadable)
-      self.referencesDialog = None
+        self.loadablesByPlugin[plugin] = list(set(self.loadablesByPlugin[plugin]))
+      self.proceedWithReferencedLoadablesSelection()
 
+  def proceedWithReferencedLoadablesSelection(self):
     warningsInLoadableWithConfidence = 0.0
     maximumConfidence = 0.0
     for plugin in self.loadablesByPlugin:
