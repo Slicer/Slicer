@@ -138,6 +138,12 @@ QList<QAction*> qSlicerSubjectHierarchyAbstractPlugin::sceneContextMenuActions()
   return QList<QAction*>();
 }
 
+//-----------------------------------------------------------------------------
+QList<QAction*> qSlicerSubjectHierarchyAbstractPlugin::visibilityContextMenuActions()const
+{
+  return QList<QAction*>();
+}
+
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyAbstractPlugin::canAddNodeToSubjectHierarchy(vtkMRMLNode* node,
   vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
@@ -309,6 +315,7 @@ void qSlicerSubjectHierarchyAbstractPlugin::hideAllContextMenuActions()const
   QList<QAction*> allActions;
   allActions << this->sceneContextMenuActions();
   allActions << this->itemContextMenuActions();
+  allActions << this->visibilityContextMenuActions();
 
   foreach (QAction* action, allActions)
     {

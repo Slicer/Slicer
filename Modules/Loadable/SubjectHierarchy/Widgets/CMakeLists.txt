@@ -5,8 +5,8 @@ set(KIT ${PROJECT_NAME})
 set(${KIT}_EXPORT_DIRECTIVE "Q_SLICER_MODULE_${MODULE_NAME_UPPER}_WIDGETS_EXPORT")
 
 set(${KIT}_INCLUDE_DIRECTORIES
-  ${MRMLCore_INCLUDE_DIRS}
   ${vtkSlicerSubjectHierarchyModuleLogic_INCLUDE_DIRS}
+  ${MRMLCore_INCLUDE_DIRS}
   )
 if(Slicer_BUILD_CLI_SUPPORT)
   list(APPEND ${KIT}_INCLUDE_DIRECTORIES
@@ -72,16 +72,13 @@ set(${KIT}_UI_SRCS
 set(${KIT}_RESOURCES
   Resources/${KIT}.qrc
   )
-
+ 
 #-----------------------------------------------------------------------------
 set_source_files_properties( qSlicerSubjectHierarchyAbstractPlugin.h WRAP_EXCLUDE )
 
 set(${KIT}_TARGET_LIBRARIES
   vtkSlicer${MODULE_NAME}ModuleLogic
   MRMLCore
-  MRMLLogic
-  qMRMLWidgets
-  ${QT_LIBRARIES}
   )
 if(Slicer_BUILD_CLI_SUPPORT)
   list(APPEND ${KIT}_TARGET_LIBRARIES

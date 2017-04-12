@@ -7,11 +7,10 @@ set(${KIT}_EXPORT_DIRECTIVE "Q_SLICER_${MODULE_NAME_UPPER}_EFFECTS_EXPORT")
 set(${KIT}_INCLUDE_DIRECTORIES
   ${vtkSlicerSegmentationsModuleMRML_INCLUDE_DIRS}
   ${vtkSlicerSegmentationsModuleLogic_INCLUDE_DIRS}
-  ${MRMLCore_INCLUDE_DIRS}
+  ${Slicer_Base_INCLUDE_DIRS}
   ${qMRMLWidgets_INCLUDE_DIRS}
   ${MRMLLogic_INCLUDE_DIRS}
-  ${Slicer_Base_INCLUDE_DIRS}
-  ${vtkSegmentationCore_INCLUDE_DIRS}
+  ${MRMLCore_INCLUDE_DIRS}
   )
 
 set(${KIT}_SRCS
@@ -61,9 +60,9 @@ set(${KIT}_RESOURCES
 set(${KIT}_TARGET_LIBRARIES
   vtkSlicerSegmentationsModuleMRML
   vtkSlicerSegmentationsModuleLogic
-  MRMLCore
-  MRMLLogic
   qMRMLWidgets
+  MRMLLogic
+  MRMLCore
   )
 
 #-----------------------------------------------------------------------------

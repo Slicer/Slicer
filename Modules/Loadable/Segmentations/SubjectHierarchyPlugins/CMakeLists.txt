@@ -9,11 +9,10 @@ set(${KIT}_INCLUDE_DIRECTORIES
   ${vtkSlicerSegmentationsModuleLogic_INCLUDE_DIRS}
   ${qSlicerSegmentationsModule_INCLUDE_DIRS}
   ${qSlicerSubjectHierarchyModuleWidgets_INCLUDE_DIRS}
+  ${vtkSlicerSubjectHierarchyModuleLogic_INCLUDE_DIRS}
   ${qMRMLWidgets_INCLUDE_DIRS}
-  ${Slicer_Base_INCLUDE_DIRS}
-  ${MRMLCore_INCLUDE_DIRS}
   ${MRMLLogic_INCLUDE_DIRS}
-  ${vtkSegmentationCore_INCLUDE_DIRS}
+  ${MRMLCore_INCLUDE_DIRS}
   )
 
 set(${KIT}_SRCS
@@ -39,9 +38,10 @@ set(${KIT}_TARGET_LIBRARIES
   vtkSlicerSegmentationsModuleMRML
   vtkSlicerSegmentationsModuleLogic
   qSlicerSubjectHierarchyModuleWidgets
+  vtkSlicerSubjectHierarchyModuleLogic
   qMRMLWidgets
-  MRMLCore
   MRMLLogic
+  MRMLCore
   )
 
 #-----------------------------------------------------------------------------

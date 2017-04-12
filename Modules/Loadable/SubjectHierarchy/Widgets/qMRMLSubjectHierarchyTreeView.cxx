@@ -88,6 +88,7 @@ public:
   QActionGroup* SelectPluginActionGroup;
   QAction* ExpandToDepthAction;
   QMenu* SceneMenu;
+  QMenu* VisibilityMenu;
 
   qMRMLTransformItemDelegate* TransformItemDelegate;
 
@@ -118,6 +119,7 @@ qMRMLSubjectHierarchyTreeViewPrivate::qMRMLSubjectHierarchyTreeViewPrivate(qMRML
   , SelectPluginActionGroup(NULL)
   , ExpandToDepthAction(NULL)
   , SceneMenu(NULL)
+  , VisibilityMenu(NULL)
   , TransformItemDelegate(NULL)
   , SubjectHierarchyNode(NULL)
   , HighlightReferencedItems(true)
@@ -171,6 +173,9 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init()
 
   this->SceneMenu = new QMenu(q);
   this->SceneMenu->setObjectName("sceneMenuTreeView");
+
+  this->VisibilityMenu = new QMenu(q);
+  this->VisibilityMenu->setObjectName("visibilityMenuTreeView");
 
   // Set item delegate (that creates widgets for certain types of data)
   this->TransformItemDelegate = new qMRMLTransformItemDelegate(q);
@@ -232,6 +237,12 @@ void qMRMLSubjectHierarchyTreeViewPrivate::setupActions()
     foreach (QAction* action, plugin->sceneContextMenuActions())
       {
       this->SceneMenu->addAction(action);
+      }
+
+    // Add visibility context menu actions
+    foreach (QAction* action, plugin->visibilityContextMenuActions())
+      {
+      this->VisibilityMenu->addAction(action);
       }
 
     // Connect plugin events to be handled by the tree view
@@ -533,37 +544,6 @@ void qMRMLSubjectHierarchyTreeView::setLevelFilter(QString &levelFilter)
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSubjectHierarchyTreeView::clickDecoration(const QModelIndex& index)
-{
-  bool result = false;
-  QModelIndex sourceIndex = this->sortFilterProxyModel()->mapToSource(index);
-  if (!(sourceIndex.flags() & Qt::ItemIsEnabled))
-    {
-    result = false;
-    }
-  else if (sourceIndex.column() == this->model()->visibilityColumn())
-    {
-    this->toggleVisibility(index);
-    result = true;
-    }
-
-  return result;
-}
-
-//------------------------------------------------------------------------------
-void qMRMLSubjectHierarchyTreeView::toggleVisibility(const QModelIndex& index)
-{
-  Q_D(qMRMLSubjectHierarchyTreeView);
-  vtkIdType itemID = d->SortFilterModel->subjectHierarchyItemFromIndex(index);
-  if (!itemID)
-    {
-    return;
-    }
-
-  this->toggleSubjectHierarchyItemVisibility(itemID);
-}
-
-//------------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeView::toggleSubjectHierarchyItemVisibility(vtkIdType itemID)
 {
   Q_D(qMRMLSubjectHierarchyTreeView);
@@ -590,6 +570,57 @@ void qMRMLSubjectHierarchyTreeView::toggleSubjectHierarchyItemVisibility(vtkIdTy
 }
 
 //------------------------------------------------------------------------------
+bool qMRMLSubjectHierarchyTreeView::clickDecoration(QMouseEvent* e)
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+
+  QModelIndex index = this->indexAt(e->pos());
+  QStyleOptionViewItemV4 opt = this->viewOptions();
+  opt.rect = this->visualRect(index);
+  qobject_cast<qMRMLItemDelegate*>(this->itemDelegate())->initStyleOption(&opt,index);
+  QRect decorationElement = this->style()->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, this);
+  if (!decorationElement.contains(e->pos()))
+    {
+    // Mouse event is not within an item decoration
+    return false;
+    }
+
+  QModelIndex sourceIndex = this->sortFilterProxyModel()->mapToSource(index);
+  if (!(sourceIndex.flags() & Qt::ItemIsEnabled))
+    {
+    // Item is disabled
+    return false;
+    }
+
+  // Visibility column
+  if (sourceIndex.column() == this->model()->visibilityColumn())
+    {
+    vtkIdType itemID = d->SortFilterModel->subjectHierarchyItemFromIndex(index);
+    if (!itemID)
+      {
+      // Valid item is needed for visibility actions
+      return false;
+      }
+
+    if (e->button() == Qt::LeftButton)
+      {
+      // Toggle simple visibility
+      this->toggleSubjectHierarchyItemVisibility(itemID);
+      }
+    else if (e->button() == Qt::RightButton)
+      {
+      // Populate then show visibility context menu
+      this->populateVisibilityContextMenuForItem(itemID);
+      d->VisibilityMenu->exec(e->globalPos());
+      }
+
+    return true;
+    }
+
+  return false;
+}
+
+//------------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeView::mousePressEvent(QMouseEvent* e)
 {
   Q_D(qMRMLSubjectHierarchyTreeView);
@@ -603,31 +634,31 @@ void qMRMLSubjectHierarchyTreeView::mousePressEvent(QMouseEvent* e)
 
   if (e->button() == Qt::LeftButton)
     {
-    // Get the index of the current column
-    QModelIndex index = this->indexAt(e->pos());
-    QStyleOptionViewItemV4 opt = this->viewOptions();
-    opt.rect = this->visualRect(index);
-    qobject_cast<qMRMLItemDelegate*>(this->itemDelegate())->initStyleOption(&opt,index);
-    QRect decorationElement = this->style()->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, this);
-    if (decorationElement.contains(e->pos()))
+    // Custom left button action for item decorations (i.e. icon): simple visibility toggle
+    if (this->clickDecoration(e))
       {
-      if (this->clickDecoration(index))
-        {
-        return;
-        }
+      return;
       }
     }
   else if (e->button() == Qt::RightButton)
     {
     if (!d->ContextMenuEnabled)
       {
+      // Context menu not enabled, do not process further
       return;
       }
 
-    QModelIndex index = this->indexAt(e->pos()); // Get the index of the current column
+    // Custom right button actions for item decorations (i.e. icon): visibility context menu
+    if (this->clickDecoration(e))
+      {
+      return;
+      }
+
+    // Get subject hierarchy item at mouse click position
+    QModelIndex index = this->indexAt(e->pos());
     vtkIdType itemID = this->sortFilterProxyModel()->subjectHierarchyItemFromIndex(index);
 
-    // Make sure the shown context menu is up-to-date
+    // Populate context menu for the current item
     this->populateContextMenuForItem(itemID);
 
     // Show context menu
@@ -800,6 +831,30 @@ void qMRMLSubjectHierarchyTreeView::populateContextMenuForItem(vtkIdType itemID)
   foreach (qSlicerSubjectHierarchyAbstractPlugin* plugin, qSlicerSubjectHierarchyPluginHandler::instance()->allPlugins())
     {
     plugin->showContextMenuActionsForItem(currentItemID);
+    }
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::populateVisibilityContextMenuForItem(vtkIdType itemID)
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+
+  if (!d->SubjectHierarchyNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
+    return;
+    }
+  if (!itemID || itemID == d->SubjectHierarchyNode->GetSceneItemID())
+    {
+    qWarning() << Q_FUNC_INFO << ": Invalid subject hierarchy item for visibility context menu: " << itemID;
+    return;
+    }
+
+  // Hide all plugin context menu items
+  foreach(qSlicerSubjectHierarchyAbstractPlugin* plugin, qSlicerSubjectHierarchyPluginHandler::instance()->allPlugins())
+    {
+    plugin->hideAllContextMenuActions();
+    plugin->showVisibilityContextMenuActionsForItem(itemID);
     }
 }
 

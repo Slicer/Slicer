@@ -94,26 +94,29 @@ public:
   /// Determine the number of shown items
   Q_INVOKABLE int displayedItemCount()const;
 
-  virtual bool clickDecoration(const QModelIndex& index);
-
 protected:
   /// Set the subject hierarchy node found in the given scene. Called only internally.
   virtual void setSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* shNode);
 
-  /// Toggle visibility for model index
-  virtual void toggleVisibility(const QModelIndex& index);
   /// Toggle visibility for given subject hierarchy item
   void toggleSubjectHierarchyItemVisibility(vtkIdType itemID);
 
-  /// Populate context menu for given subject hierarchy item
-  /// Usually one of the current ones, but if right-clicked on the empty area, then the scene.
-  /// The current items are queried in the function anyway, in case of multi-selection
+  /// Populate general context menu for given subject hierarchy item
+  /// \param itemID Subject hierarchy item ID of the item to show context menu for. It is only used
+  ///   to determine whether empty area or scene was clicked. If not, then use the current items
+  ///   vector so that multi-selection can also be handled.
   virtual void populateContextMenuForItem(vtkIdType itemID);
+  /// Populate visibility context menu for given subject hierarchy item
+  virtual void populateVisibilityContextMenuForItem(vtkIdType itemID);
 
+  /// Handles clicks on the decoration of items (i.e. icon). In visibility column this means either toggle
+  /// visibility or show visibility context menu.
+  /// \return True if decoration of an enabled item was indeed clicked (and event handled). False otherwise
+  virtual bool clickDecoration(QMouseEvent* e);
   /// Handle mouse press event
-  virtual void mousePressEvent(QMouseEvent* event);
+  virtual void mousePressEvent(QMouseEvent* e);
   /// Handle key press event
-  virtual void keyPressEvent(QKeyEvent* event);
+  virtual void keyPressEvent(QKeyEvent* e);
 
   /// Apply highlight for subject hierarchy items referenced by argument items by DICOM
   /// \sa highlightReferencedItems

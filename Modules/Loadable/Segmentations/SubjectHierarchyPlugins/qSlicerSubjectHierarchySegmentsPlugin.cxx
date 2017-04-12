@@ -478,7 +478,7 @@ int qSlicerSubjectHierarchySegmentsPlugin::getDisplayVisibility(vtkIdType itemID
 }
 
 //---------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchySegmentsPlugin::itemContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchySegmentsPlugin::visibilityContextMenuActions()const
 {
   Q_D(const qSlicerSubjectHierarchySegmentsPlugin);
 
@@ -488,7 +488,7 @@ QList<QAction*> qSlicerSubjectHierarchySegmentsPlugin::itemContextMenuActions()c
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchySegmentsPlugin::showContextMenuActionsForItem(vtkIdType itemID)
+void qSlicerSubjectHierarchySegmentsPlugin::showVisibilityContextMenuActionsForItem(vtkIdType itemID)
 {
   Q_D(const qSlicerSubjectHierarchySegmentsPlugin);
   this->hideAllContextMenuActions();

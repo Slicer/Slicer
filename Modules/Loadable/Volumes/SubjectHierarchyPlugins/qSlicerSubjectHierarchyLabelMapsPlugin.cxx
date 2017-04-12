@@ -298,7 +298,7 @@ void qSlicerSubjectHierarchyLabelMapsPlugin::showLabelMapInAllViews(vtkMRMLLabel
 }
 
 //---------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyLabelMapsPlugin::itemContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyLabelMapsPlugin::visibilityContextMenuActions()const
 {
   Q_D(const qSlicerSubjectHierarchyLabelMapsPlugin);
 
@@ -308,14 +308,13 @@ QList<QAction*> qSlicerSubjectHierarchyLabelMapsPlugin::itemContextMenuActions()
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyLabelMapsPlugin::showContextMenuActionsForItem(vtkIdType itemID)
+void qSlicerSubjectHierarchyLabelMapsPlugin::showVisibilityContextMenuActionsForItem(vtkIdType itemID)
 {
   Q_D(qSlicerSubjectHierarchyLabelMapsPlugin);
   this->hideAllContextMenuActions();
 
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
-    // There are no scene actions in this plugin
     return;
     }
 

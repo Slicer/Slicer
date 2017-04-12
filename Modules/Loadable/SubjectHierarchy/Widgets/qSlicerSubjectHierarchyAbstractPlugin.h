@@ -117,10 +117,12 @@ public:
 
 // Function related virtual methods
 public:
-  /// Get item context menu item actions to add to tree view
+  /// Get item context menu item actions to add to tree view.
+  /// These item context menu actions can be shown in the implementations of \sa showContextMenuActionsForItem
   Q_INVOKABLE virtual QList<QAction*> itemContextMenuActions()const;
 
   /// Get scene context menu item actions to add to tree view. Also provides actions for right-click on empty area
+  /// These context menu actions are shown for the scene in the implementations of \sa showContextMenuActionsForItem
   /// Separate method is needed for the scene, as its actions are set to the
   /// tree by a different method \sa itemContextMenuActions
   Q_INVOKABLE virtual QList<QAction*> sceneContextMenuActions()const;
@@ -128,6 +130,14 @@ public:
   /// Show context menu actions valid for a given subject hierarchy item.
   /// \param itemID Subject Hierarchy item to show the context menu items for
   Q_INVOKABLE virtual void showContextMenuActionsForItem(vtkIdType itemID) { Q_UNUSED(itemID); };
+
+  /// Get visibility context menu item actions to add to tree view.
+  /// These item visibility context menu actions can be shown in the implementations of \sa showVisibilityContextMenuActionsForItem
+  Q_INVOKABLE virtual QList<QAction*> visibilityContextMenuActions()const;
+
+  /// Show visibility context menu actions valid for a given subject hierarchy item.
+  /// \param itemID Subject Hierarchy item to show the visibility context menu items for
+  Q_INVOKABLE virtual void showVisibilityContextMenuActionsForItem(vtkIdType itemID) { Q_UNUSED(itemID); };
 
 // Parenting related virtual methods with default implementation
 public:

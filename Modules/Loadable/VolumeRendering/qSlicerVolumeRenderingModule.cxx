@@ -37,6 +37,10 @@
 #include "qSlicerVolumeRenderingSettingsPanel.h"
 #include "VolumeRenderingInstantiator.h"
 
+// SubjectHierarchy Plugins includes
+#include "qSlicerSubjectHierarchyPluginHandler.h"
+#include "qSlicerSubjectHierarchyVolumeRenderingPlugin.h"
+
 //-----------------------------------------------------------------------------
 Q_EXPORT_PLUGIN2(qSlicerVolumeRenderingModule, qSlicerVolumeRenderingModule);
 
@@ -150,6 +154,10 @@ void qSlicerVolumeRenderingModule::setup()
   coreIOManager->registerIO(new qSlicerNodeWriter(
     "Transfer Function", QString("TransferFunctionFile"),
     QStringList() << "vtkMRMLVolumePropertyNode", true, this));
+
+  // Register Subject Hierarchy core plugins
+  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
+    new qSlicerSubjectHierarchyVolumeRenderingPlugin() );
 }
 
 //-----------------------------------------------------------------------------
