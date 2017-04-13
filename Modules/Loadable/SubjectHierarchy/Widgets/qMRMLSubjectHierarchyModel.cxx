@@ -767,6 +767,12 @@ QFlags<Qt::ItemFlag> qMRMLSubjectHierarchyModel::subjectHierarchyItemFlags(vtkId
 
   QFlags<Qt::ItemFlag> flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 
+  if (!d->SubjectHierarchyNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
+    return flags;
+    }
+
   // Name and transform columns are editable
   if (column == this->nameColumn() || column == this->transformColumn())
     {

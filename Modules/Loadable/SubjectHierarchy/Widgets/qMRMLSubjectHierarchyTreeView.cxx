@@ -463,6 +463,11 @@ void qMRMLSubjectHierarchyTreeView::setRootItem(vtkIdType rootItemID)
 vtkIdType qMRMLSubjectHierarchyTreeView::rootItem()const
 {
   Q_D(const qMRMLSubjectHierarchyTreeView);
+  if (!d->SubjectHierarchyNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
+    return vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+    }
 
   vtkIdType treeRootItemID = this->sortFilterProxyModel()->subjectHierarchyItemFromIndex(this->rootIndex());
   if (d->ShowRootItem)
@@ -695,7 +700,7 @@ void qMRMLSubjectHierarchyTreeView::onSelectionChanged(const QItemSelection& sel
   Q_UNUSED(selected);
   Q_UNUSED(deselected);
   Q_D(qMRMLSubjectHierarchyTreeView);
-  if (!d->SortFilterModel)
+  if (!d->SortFilterModel || !d->SubjectHierarchyNode)
     {
     return;
     }
@@ -1004,7 +1009,6 @@ void qMRMLSubjectHierarchyTreeView::renameCurrentItem()
     return;
     }
   d->SubjectHierarchyNode->SetItemName(currentItemID, newName.toLatin1().constData());
-  //emit currentNodeRenamed(newName);
 }
 
 //--------------------------------------------------------------------------

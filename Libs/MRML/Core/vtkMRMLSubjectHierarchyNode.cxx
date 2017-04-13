@@ -1526,6 +1526,20 @@ bool vtkMRMLSubjectHierarchyNode::vtkInternal::ResolveUnresolvedItems()
     }
   if (!unresolvedSceneItemID)
     {
+    // For backwards-compatibility reasons, in case of scenes with Level member instead of attribute
+    for ( vtkSubjectHierarchyItem::ChildVector::iterator itemIt=this->UnresolvedItems->Children.begin();
+          itemIt!=this->UnresolvedItems->Children.end(); ++itemIt )
+      {
+      if (!itemIt->GetPointer()->Name.compare("Scene") && itemIt->GetPointer()->OwnerPluginName.empty())
+        {
+        unresolvedSceneItemID = itemIt->GetPointer()->TemporaryID;
+        this->UnresolvedItems->Children.erase(itemIt);
+        break; // There is only one scene item
+        }
+      }
+    }
+  if (!unresolvedSceneItemID)
+    {
     vtkErrorWithObjectMacro(this->External, "ResolveUnresolvedItems: Failed to find scene item among unresolved items");
     this->IsResolving = false;
     return false;

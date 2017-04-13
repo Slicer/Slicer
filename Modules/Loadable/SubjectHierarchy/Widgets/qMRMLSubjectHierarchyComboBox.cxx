@@ -135,8 +135,15 @@ void qMRMLSubjectHierarchyComboBox::setMRMLScene(vtkMRMLScene* scene)
   Q_D(const qMRMLSubjectHierarchyComboBox);
   d->TreeView->setMRMLScene(scene);
 
+  vtkMRMLSubjectHierarchyNode* shNode = d->TreeView->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
+    return;
+    }
+
   // Set tree root item to be the new scene, and disable showing it
-  d->TreeView->setRootItem(d->TreeView->subjectHierarchyNode()->GetSceneItemID());
+  d->TreeView->setRootItem(shNode->GetSceneItemID());
 }
 
 //------------------------------------------------------------------------------

@@ -171,10 +171,17 @@ void qSlicerSubjectHierarchyModuleWidget::setMRMLScene(vtkMRMLScene* scene)
 
   Superclass::setMRMLScene(scene);
 
+  vtkMRMLSubjectHierarchyNode* shNode = d->SubjectHierarchyTreeView->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
+    return;
+    }
+
   // Set tree root item to be the new scene
   if (scene)
     {
-    d->SubjectHierarchyTreeView->setRootItem(d->SubjectHierarchyTreeView->subjectHierarchyNode()->GetSceneItemID());
+    d->SubjectHierarchyTreeView->setRootItem(shNode->GetSceneItemID());
     }
 }
 
