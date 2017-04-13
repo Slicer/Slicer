@@ -491,7 +491,6 @@ QList<QAction*> qSlicerSubjectHierarchySegmentsPlugin::visibilityContextMenuActi
 void qSlicerSubjectHierarchySegmentsPlugin::showVisibilityContextMenuActionsForItem(vtkIdType itemID)
 {
   Q_D(const qSlicerSubjectHierarchySegmentsPlugin);
-  this->hideAllContextMenuActions();
 
   qSlicerSubjectHierarchySegmentationsPlugin* segmentationsPlugin = qobject_cast<qSlicerSubjectHierarchySegmentationsPlugin*>(
     qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Segmentations") );

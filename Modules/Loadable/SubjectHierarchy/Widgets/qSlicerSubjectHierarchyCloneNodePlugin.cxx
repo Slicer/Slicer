@@ -112,7 +112,6 @@ QList<QAction*> qSlicerSubjectHierarchyCloneNodePlugin::itemContextMenuActions()
 void qSlicerSubjectHierarchyCloneNodePlugin::showContextMenuActionsForItem(vtkIdType itemID)
 {
   Q_D(qSlicerSubjectHierarchyCloneNodePlugin);
-  this->hideAllContextMenuActions();
 
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)

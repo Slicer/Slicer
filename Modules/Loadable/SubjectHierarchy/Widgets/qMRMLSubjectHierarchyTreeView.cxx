@@ -835,6 +835,7 @@ void qMRMLSubjectHierarchyTreeView::populateContextMenuForItem(vtkIdType itemID)
   // Have all plugins show context menu items for current item
   foreach (qSlicerSubjectHierarchyAbstractPlugin* plugin, qSlicerSubjectHierarchyPluginHandler::instance()->allPlugins())
     {
+    plugin->hideAllContextMenuActions();
     plugin->showContextMenuActionsForItem(currentItemID);
     }
 }
@@ -1072,7 +1073,7 @@ void qMRMLSubjectHierarchyTreeView::deleteSelectedItems()
     if (answer == QMessageBox::YesToAll)
       {
       qSlicerSubjectHierarchyPluginHandler::instance()->setAutoDeleteSubjectHierarchyChildren(true);
-      QSettings *settings = qSlicerApplication::application()->settingsDialog()->settings();
+      QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
       settings->setValue("SubjectHierarchy/AutoDeleteSubjectHierarchyChildren", "true");
       }
 

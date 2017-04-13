@@ -113,7 +113,6 @@ QList<QAction*> qSlicerSubjectHierarchyVolumeRenderingPlugin::visibilityContextM
 void qSlicerSubjectHierarchyVolumeRenderingPlugin::showVisibilityContextMenuActionsForItem(vtkIdType itemID)
 {
   Q_D(qSlicerSubjectHierarchyVolumeRenderingPlugin);
-  this->hideAllContextMenuActions();
 
   if (!itemID)
     {

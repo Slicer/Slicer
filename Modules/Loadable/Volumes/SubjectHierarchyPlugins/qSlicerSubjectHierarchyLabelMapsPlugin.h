@@ -102,8 +102,8 @@ public:
   void showLabelMapInAllViews(vtkMRMLLabelMapVolumeNode* node);
 
 protected slots:
-  /// Toggle between labelmap outline display in the slice views
-  void toggleLabelmapOutlineDisplay(bool checked);
+  /// Toggle labelmap outline visibility in the slice views
+  void toggle2DOutlineVisibility(bool checked);
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyLabelMapsPluginPrivate> d_ptr;

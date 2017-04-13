@@ -480,7 +480,6 @@ QList<QAction*> qSlicerSubjectHierarchyVolumesPlugin::itemContextMenuActions()co
 void qSlicerSubjectHierarchyVolumesPlugin::showContextMenuActionsForItem(vtkIdType itemID)
 {
   Q_D(qSlicerSubjectHierarchyVolumesPlugin);
-  this->hideAllContextMenuActions();
 
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
@@ -634,7 +633,10 @@ void qSlicerSubjectHierarchyVolumesPlugin::onSliceCompositeNodeModified()
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
     {
-    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    if (!scene->IsClosing() && !scene->IsRestoring())
+      {
+      qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+      }
     return;
     }
 

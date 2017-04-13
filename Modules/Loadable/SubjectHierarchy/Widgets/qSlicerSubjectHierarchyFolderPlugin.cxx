@@ -221,7 +221,6 @@ QList<QAction*> qSlicerSubjectHierarchyFolderPlugin::sceneContextMenuActions()co
 void qSlicerSubjectHierarchyFolderPlugin::showContextMenuActionsForItem(vtkIdType itemID)
 {
   Q_D(qSlicerSubjectHierarchyFolderPlugin);
-  this->hideAllContextMenuActions();
 
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)

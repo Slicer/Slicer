@@ -410,9 +410,6 @@ void qSlicerSubjectHierarchyScriptedPlugin::showContextMenuActionsForItem(vtkIdT
 {
   Q_D(qSlicerSubjectHierarchyScriptedPlugin);
 
-  // Hide all actions before showing them based on item
-  this->hideAllContextMenuActions();
-
   PyObject* arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
   PyObject* result = d->PythonCppAPI.callMethod(d->ShowContextMenuActionsForItemMethod, arguments);

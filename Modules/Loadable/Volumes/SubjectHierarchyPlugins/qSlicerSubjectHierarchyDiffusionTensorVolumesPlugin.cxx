@@ -274,7 +274,6 @@ QList<QAction*> qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::itemContext
 void qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::showContextMenuActionsForItem(vtkIdType itemID)
 {
   Q_D(qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin);
-  this->hideAllContextMenuActions();
 
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {

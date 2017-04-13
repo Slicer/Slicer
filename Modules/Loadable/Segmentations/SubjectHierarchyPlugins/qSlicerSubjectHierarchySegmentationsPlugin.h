@@ -92,6 +92,14 @@ public:
   /// \param itemID Subject Hierarchy item to show the context menu items for
   virtual void showContextMenuActionsForItem(vtkIdType itemID);
 
+  /// Get visibility context menu item actions to add to tree view.
+  /// These item visibility context menu actions can be shown in the implementations of \sa showVisibilityContextMenuActionsForItem
+  virtual QList<QAction*> visibilityContextMenuActions()const;
+
+  /// Show visibility context menu actions valid for a given subject hierarchy item.
+  /// \param itemID Subject Hierarchy item to show the visibility context menu items for
+  virtual void showVisibilityContextMenuActionsForItem(vtkIdType itemID);
+
 public slots:
   /// Called when segment is added in an observed segmentation node
   /// Adds per-segment subject hierarchy node
@@ -119,6 +127,15 @@ protected slots:
 
   /// Export to closed surface
   void exportToClosedSurface();
+
+  /// Toggle 2D fill visibility for the current segmentation
+  void toggle2DFillVisibility(bool);
+
+  /// Toggle 2D outline visibility for the current segmentation
+  void toggle2DOutlineVisibility(bool);
+
+  /// Toggle 3D visibility for the current segmentation
+  void toggle3DVisibility(bool);
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchySegmentationsPluginPrivate> d_ptr;

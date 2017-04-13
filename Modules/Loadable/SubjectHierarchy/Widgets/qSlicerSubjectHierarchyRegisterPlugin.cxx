@@ -156,7 +156,6 @@ QList<QAction*> qSlicerSubjectHierarchyRegisterPlugin::itemContextMenuActions()c
 void qSlicerSubjectHierarchyRegisterPlugin::showContextMenuActionsForItem(vtkIdType itemID)
 {
   Q_D(qSlicerSubjectHierarchyRegisterPlugin);
-  this->hideAllContextMenuActions();
 
   if (!itemID)
     {

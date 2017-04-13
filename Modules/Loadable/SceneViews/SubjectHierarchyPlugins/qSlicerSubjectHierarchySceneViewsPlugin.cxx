@@ -185,7 +185,6 @@ QList<QAction*> qSlicerSubjectHierarchySceneViewsPlugin::itemContextMenuActions(
 void qSlicerSubjectHierarchySceneViewsPlugin::showContextMenuActionsForItem(vtkIdType itemID)
 {
   Q_D(qSlicerSubjectHierarchySceneViewsPlugin);
-  this->hideAllContextMenuActions();
 
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {

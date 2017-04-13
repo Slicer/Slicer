@@ -67,7 +67,7 @@ public:
 public:
   QIcon LabelmapIcon;
 
-  QAction* ToggleLabelmapOutlineDisplayAction;
+  QAction* ToggleOutlineVisibilityAction;
 };
 
 //-----------------------------------------------------------------------------
@@ -79,7 +79,7 @@ qSlicerSubjectHierarchyLabelMapsPluginPrivate::qSlicerSubjectHierarchyLabelMapsP
 {
   this->LabelmapIcon = QIcon(":Icons/Labelmap.png");
 
-  this->ToggleLabelmapOutlineDisplayAction = NULL;
+  this->ToggleOutlineVisibilityAction = NULL;
 }
 
 //-----------------------------------------------------------------------------
@@ -103,10 +103,10 @@ void qSlicerSubjectHierarchyLabelMapsPluginPrivate::init()
 {
   Q_Q(qSlicerSubjectHierarchyLabelMapsPlugin);
 
-  this->ToggleLabelmapOutlineDisplayAction = new QAction("Toggle labelmap outline display",q);
-  QObject::connect(this->ToggleLabelmapOutlineDisplayAction, SIGNAL(toggled(bool)), q, SLOT(toggleLabelmapOutlineDisplay(bool)));
-  this->ToggleLabelmapOutlineDisplayAction->setCheckable(true);
-  this->ToggleLabelmapOutlineDisplayAction->setChecked(false);
+  this->ToggleOutlineVisibilityAction = new QAction("Toggle 2D outline visibility",q);
+  QObject::connect(this->ToggleOutlineVisibilityAction, SIGNAL(toggled(bool)), q, SLOT(toggle2DOutlineVisibility(bool)));
+  this->ToggleOutlineVisibilityAction->setCheckable(true);
+  this->ToggleOutlineVisibilityAction->setChecked(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -303,7 +303,7 @@ QList<QAction*> qSlicerSubjectHierarchyLabelMapsPlugin::visibilityContextMenuAct
   Q_D(const qSlicerSubjectHierarchyLabelMapsPlugin);
 
   QList<QAction*> actions;
-  actions << d->ToggleLabelmapOutlineDisplayAction;
+  actions << d->ToggleOutlineVisibilityAction;
   return actions;
 }
 
@@ -311,7 +311,6 @@ QList<QAction*> qSlicerSubjectHierarchyLabelMapsPlugin::visibilityContextMenuAct
 void qSlicerSubjectHierarchyLabelMapsPlugin::showVisibilityContextMenuActionsForItem(vtkIdType itemID)
 {
   Q_D(qSlicerSubjectHierarchyLabelMapsPlugin);
-  this->hideAllContextMenuActions();
 
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
@@ -326,16 +325,16 @@ void qSlicerSubjectHierarchyLabelMapsPlugin::showVisibilityContextMenuActionsFor
     // Determine current state of the toggle labelmap outline checkbox (from the first slice view)
     vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast ( scene->GetNthNodeByClass( 0, "vtkMRMLSliceNode" ) );
     int useLabelOutline = sliceNode->GetUseLabelOutline();
-    d->ToggleLabelmapOutlineDisplayAction->blockSignals(true);
-    d->ToggleLabelmapOutlineDisplayAction->setChecked(useLabelOutline);
-    d->ToggleLabelmapOutlineDisplayAction->blockSignals(false);
+    d->ToggleOutlineVisibilityAction->blockSignals(true);
+    d->ToggleOutlineVisibilityAction->setChecked(useLabelOutline);
+    d->ToggleOutlineVisibilityAction->blockSignals(false);
 
-    d->ToggleLabelmapOutlineDisplayAction->setVisible(true);
+    d->ToggleOutlineVisibilityAction->setVisible(true);
     }
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyLabelMapsPlugin::toggleLabelmapOutlineDisplay(bool checked)
+void qSlicerSubjectHierarchyLabelMapsPlugin::toggle2DOutlineVisibility(bool checked)
 {
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
   vtkMRMLSliceNode* sliceNode = NULL;

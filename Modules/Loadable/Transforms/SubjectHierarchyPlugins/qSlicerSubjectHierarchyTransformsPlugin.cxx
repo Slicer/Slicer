@@ -230,7 +230,6 @@ QList<QAction*> qSlicerSubjectHierarchyTransformsPlugin::itemContextMenuActions(
 void qSlicerSubjectHierarchyTransformsPlugin::showContextMenuActionsForItem(vtkIdType itemID)
 {
   Q_D(qSlicerSubjectHierarchyTransformsPlugin);
-  this->hideAllContextMenuActions();
 
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {

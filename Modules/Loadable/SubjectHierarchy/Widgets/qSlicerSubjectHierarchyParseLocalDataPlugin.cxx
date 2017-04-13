@@ -120,7 +120,6 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::showContextMenuActionsForItem(
     }
 
   Q_D(qSlicerSubjectHierarchyParseLocalDataPlugin);
-  this->hideAllContextMenuActions();
 
   // Scene
   if (itemID == shNode->GetSceneItemID())
