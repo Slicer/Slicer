@@ -4,7 +4,15 @@ image analysis.
 3D Slicer is natively designed to be available on multiple platforms, 
 including Windows, Linux and Mac Os X. 
 
-For more information, please see:
+Build instructions for all platforms are available on the Slicer wiki:
+
+                      https://www.slicer.org/wiki/Documentation/Nightly/Developers/Build_Instructions
+
+For Slicer community announcements and support, visit:
+
+                      https://discourse.slicer.org
+
+For documentation, tutorials, and more information, please see:
 
                       http://www.slicer.org
 
