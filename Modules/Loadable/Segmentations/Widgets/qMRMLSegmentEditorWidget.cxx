@@ -1142,6 +1142,8 @@ void qMRMLSegmentEditorWidget::updateWidgetFromSegmentationNode()
         qCritical() << Q_FUNC_INFO << ": Unable to get selection node to show segmentation node " << segmentationNode->GetName();
         }
       }
+
+    emit segmentationNodeChanged(d->SegmentationNode);
     }
 
   d->SegmentationHistory->SetSegmentation(d->SegmentationNode ? d->SegmentationNode->GetSegmentation() : NULL);
@@ -1273,6 +1275,8 @@ void qMRMLSegmentEditorWidget::updateWidgetFromMasterVolumeNode()
   d->MasterVolumeNodeComboBox->blockSignals(wasBlocked);
 
   this->onMasterVolumeImageDataModified();
+
+  emit masterVolumeNodeChanged(d->MasterVolumeNode);
 }
 
 //-----------------------------------------------------------------------------

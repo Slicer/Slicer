@@ -39,11 +39,13 @@
 #include <cstdlib>
 
 class vtkMRMLNode;
+class vtkMRMLSegmentationNode;
 class vtkMRMLSegmentEditorNode;
+class vtkMRMLVolumeNode;
 class vtkObject;
-class qMRMLSegmentEditorWidgetPrivate;
 class QItemSelection;
 class QAbstractButton;
+class qMRMLSegmentEditorWidgetPrivate;
 class qSlicerSegmentEditorAbstractEffect;
 
 /// \brief Qt widget for editing a segment from a segmentation using Editor effects.
@@ -247,6 +249,14 @@ public slots:
 signals:
   /// Emitted if different segment is selected in the segment list.
   void currentSegmentIDChanged(const QString&);
+
+  /// Emitted when the user selects a different master volume
+  /// (or any time master volume selection is changed in the segment editor parameter node).
+  void masterVolumeNodeChanged(vtkMRMLVolumeNode*);
+
+  /// Emitted when the user selects a different segmentation node
+  /// (or any time segmentation node selection is changed in the segment editor parameter node).
+  void segmentationNodeChanged(vtkMRMLSegmentationNode*);
 
 protected slots:
   /// Handles changing of current segmentation MRML node
