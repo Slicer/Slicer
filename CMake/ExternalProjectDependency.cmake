@@ -343,7 +343,14 @@ function(_sb_get_external_project_arguments proj varname)
     list(APPEND _ep_arguments CMAKE_GENERATOR_PLATFORM ${_sb_CMAKE_GENERATOR_PLATFORM})
   endif()
   list(APPEND _ep_arguments CMAKE_GENERATOR_TOOLSET ${_sb_CMAKE_GENERATOR_TOOLSET})
-
+  if(CMAKE_VERSION VERSION_GREATER "3.3")
+    # USES_TERMINAL_* options were introduced in CMake 3.4
+    foreach(step IN ITEMS DOWNLOAD UPDATE CONFIGURE BUILD TEST INSTALL)
+      list(APPEND _ep_arguments
+        USES_TERMINAL_${step}
+        )
+    endforeach()
+  endif()
   set(${varname} ${_ep_arguments} PARENT_SCOPE)
 endfunction()
 
