@@ -159,6 +159,11 @@ public slots:
   /// Set multi-selection
   virtual void setMultiSelection(bool multiSelectionOn);
 
+  /// Show hint to user about context menus
+  /// \param visibility True if visibility context menu hint is to be shown, false for general context menu. False by default
+  /// \return Flag indicating whether hint could be shown (i.e. there was an item in the tree is displayable)
+  bool showContextMenuHint(bool visibility=false);
+
 signals:
   void currentItemChanged(vtkIdType);
 

@@ -31,6 +31,8 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QDebug>
+#include <QToolTip>
+#include <QBuffer>
 
 // SlicerQt includes
 #include "qSlicerApplication.h"
@@ -46,9 +48,11 @@
 
 #include "qSlicerSubjectHierarchyPluginHandler.h"
 #include "qSlicerSubjectHierarchyAbstractPlugin.h"
+#include "qSlicerSubjectHierarchyDefaultPlugin.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
+#include <vtkMRMLScalarVolumeNode.h>
 
 // qMRML includes
 #include "qMRMLItemDelegate.h"
@@ -803,7 +807,7 @@ void qMRMLSubjectHierarchyTreeView::populateContextMenuForItem(vtkIdType itemID)
     d->RenameAction->setVisible(false);
     d->SelectPluginSubMenu->menuAction()->setVisible(false);
 
-    // Hide all plugin context menu items
+    // Hide all plugin context menu actions
     foreach(qSlicerSubjectHierarchyAbstractPlugin* plugin, qSlicerSubjectHierarchyPluginHandler::instance()->allPlugins())
       {
       plugin->hideAllContextMenuActions();
@@ -832,7 +836,7 @@ void qMRMLSubjectHierarchyTreeView::populateContextMenuForItem(vtkIdType itemID)
     d->SelectPluginSubMenu->menuAction()->setVisible(true);
     }
 
-  // Have all plugins show context menu items for current item
+  // Have all plugins show context menu actions for current item
   foreach (qSlicerSubjectHierarchyAbstractPlugin* plugin, qSlicerSubjectHierarchyPluginHandler::instance()->allPlugins())
     {
     plugin->hideAllContextMenuActions();
@@ -856,7 +860,11 @@ void qMRMLSubjectHierarchyTreeView::populateVisibilityContextMenuForItem(vtkIdTy
     return;
     }
 
-  // Hide all plugin context menu items
+  // Add default visibility context menu actions
+  qSlicerSubjectHierarchyPluginHandler::instance()->defaultPlugin()->hideAllContextMenuActions();
+  qSlicerSubjectHierarchyPluginHandler::instance()->defaultPlugin()->showVisibilityContextMenuActionsForItem(itemID);
+
+  // Have all plugins show visibility context menu actions
   foreach(qSlicerSubjectHierarchyAbstractPlugin* plugin, qSlicerSubjectHierarchyPluginHandler::instance()->allPlugins())
     {
     plugin->hideAllContextMenuActions();
@@ -1176,4 +1184,82 @@ void qMRMLSubjectHierarchyTreeView::onSceneCloseEnded(vtkObject* sceneObject)
   // Get new subject hierarchy node (or if not created yet then trigger creating it, because
   // scene close removed the pseudo-singleton subject hierarchy node), and set it to the tree view
   this->setSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(scene));
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLSubjectHierarchyTreeView::showContextMenuHint(bool visibility/*=false*/)
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  if (!d->SubjectHierarchyNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
+    return false;
+    }
+
+  // Get current item
+  vtkIdType itemID = this->currentItem();
+  if (!itemID || d->SubjectHierarchyNode->GetDisplayVisibilityForBranch(itemID) == -1)
+    {
+    // If current item is not displayable, then find first displayable leaf item
+    itemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+    std::vector<vtkIdType> childItems;
+    d->SubjectHierarchyNode->GetItemChildren(d->SubjectHierarchyNode->GetSceneItemID(), childItems, true);
+    for (std::vector<vtkIdType>::iterator childIt=childItems.begin(); childIt!=childItems.end(); ++childIt)
+      {
+      std::vector<vtkIdType> currentChildItems;
+      d->SubjectHierarchyNode->GetItemChildren(*childIt, currentChildItems);
+      if ( (currentChildItems.empty() || d->SubjectHierarchyNode->IsItemVirtualBranchParent(*childIt)) // Leaf
+        && ( d->SubjectHierarchyNode->GetDisplayVisibilityForBranch(*childIt) != -1 // Displayable
+          || vtkMRMLScalarVolumeNode::SafeDownCast(d->SubjectHierarchyNode->GetItemDataNode(*childIt)) ) ) // Volume
+        {
+        itemID = (*childIt);
+        break;
+        }
+      }
+    }
+  if (!itemID)
+    {
+    // No displayable item in subject hierarchy
+    return false;
+    }
+
+  // Create information icon
+  QIcon icon = QApplication::style()->standardIcon(QStyle::SP_MessageBoxInformation);
+  QPixmap pixmap = icon.pixmap(32,32);
+  QByteArray data;
+  QBuffer buffer(&data);
+  pixmap.save(&buffer, "PNG", 100);
+  QString iconHtml = QString("<img src='data:image/png;base64, %0'>").arg(QString(data.toBase64()));
+
+  if (!visibility)
+    {
+    // Get name cell position
+    QModelIndex nameIndex = this->sortFilterProxyModel()->indexFromSubjectHierarchyItem(
+      itemID, this->model()->nameColumn() );
+    QRect nameRect = this->visualRect(nameIndex);
+
+    // Show name tooltip
+    QString nameTooltip = QString(
+      "<div align=\"left\" style=\"font-size:10pt;\"><!--&uarr;<br/>-->Right-click an item<br/>to access additional<br/>options</div><br/>")
+      + iconHtml;
+    QToolTip::showText(
+      this->mapToGlobal( QPoint( nameRect.x() + nameRect.width()/6, nameRect.y() + nameRect.height() ) ),
+      nameTooltip );
+    }
+  else
+    {
+    // Get visibility cell position
+    QModelIndex visibilityIndex = this->sortFilterProxyModel()->indexFromSubjectHierarchyItem(
+      itemID, this->model()->visibilityColumn() );
+    QRect visibilityRect = this->visualRect(visibilityIndex);
+
+    // Show visibility tooltip
+    QString visibilityTooltip = QString(
+      "<div align=\"left\" style=\"font-size:10pt;\"><!--&uarr;<br/>-->Right-click the visibility<br/>button of an item to<br/>access additional<br/>visibility options</div><br/>")
+      + iconHtml;
+    QToolTip::showText( this->mapToGlobal( QPoint( visibilityRect.x() + visibilityRect.width()/2, visibilityRect.y() + visibilityRect.height() ) ),
+      visibilityTooltip );
+    }
+ 
+  return true;
 }

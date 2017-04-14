@@ -38,6 +38,7 @@
 #include "qSlicerApplication.h"
 
 // Qt includes
+#include <QSettings>
 #include <QDebug>
 
 // MRML includes
@@ -120,6 +121,25 @@ void qSlicerSubjectHierarchyModuleWidget::setPluginLogic(qSlicerSubjectHierarchy
 {
   Q_D(qSlicerSubjectHierarchyModuleWidget);
   d->PluginLogic = pluginLogic;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyModuleWidget::enter()
+{
+  Q_D(qSlicerSubjectHierarchyModuleWidget);
+
+  // Show hint to user about context menus if has not been shown before
+  QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
+  if ( !settings->contains("SubjectHierarchy/ContextMenusHintShown")
+    || settings->value("SubjectHierarchy/ContextMenusHintShown").toInt() < 2 )
+    {
+    if (d->SubjectHierarchyTreeView->showContextMenuHint(settings->contains("SubjectHierarchy/ContextMenusHintShown")))
+      {
+      settings->setValue("SubjectHierarchy/ContextMenusHintShown", settings->value("SubjectHierarchy/ContextMenusHintShown").toInt() + 1);
+      }
+    }
+
+  this->Superclass::enter();
 }
 
 //-----------------------------------------------------------------------------

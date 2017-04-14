@@ -2699,6 +2699,19 @@ bool vtkMRMLSubjectHierarchyNode::IsItemLevel(vtkIdType itemID, std::string leve
 }
 
 //---------------------------------------------------------------------------
+bool vtkMRMLSubjectHierarchyNode::IsItemVirtualBranchParent(vtkIdType itemID)
+{
+  vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
+  if (!item)
+    {
+    vtkErrorMacro("IsItemVirtualBranchParent: Failed to find subject hierarchy item by ID " << itemID);
+    return false;
+    }
+
+  return item->IsVirtualBranchParent();
+}
+
+//---------------------------------------------------------------------------
 std::string vtkMRMLSubjectHierarchyNode::GetAttributeFromItemAncestor(vtkIdType itemID, std::string attributeName, std::string level)
 {
   vtkSubjectHierarchyItem* item = this->Internal->SceneItem->FindChildByID(itemID);

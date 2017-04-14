@@ -285,13 +285,18 @@ public:
   void SetDisplayVisibilityForBranch(vtkIdType itemID, int visible);
 
   /// Get subject hierarchy branch visibility
-  /// \return Visibility value (0:Hidden, 1:Visible, 2:PartiallyVisible)
+  /// \return Visibility value (0:Hidden, 1:Visible, 2:PartiallyVisible, -1:NotDisplayable)
   int GetDisplayVisibilityForBranch(vtkIdType itemID);
 
   /// Determine if an item is of a certain level
   /// \param level Level to check
   /// \return True if the item is of the specified level, false otherwise
   bool IsItemLevel(vtkIdType itemID, std::string level);
+
+  /// Determine whether a given item is the parent of a virtual branch
+  /// (Items in virtual branches are invalid without the parent item, as they represent the item's data node's content, so
+  /// they are removed automatically when the parent item of the virtual branch is removed)
+  bool IsItemVirtualBranchParent(vtkIdType itemID);
 
   /// Get attribute value for a item from an upper level in the subject hierarchy
   /// \param attributeName Name of the requested attribute

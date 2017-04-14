@@ -47,6 +47,8 @@ public:
   qSlicerSubjectHierarchyModuleWidget(QWidget *parent=0);
   virtual ~qSlicerSubjectHierarchyModuleWidget();
 
+  virtual void enter();
+
   Q_INVOKABLE qSlicerSubjectHierarchyPluginLogic* pluginLogic();
   Q_INVOKABLE void setPluginLogic(qSlicerSubjectHierarchyPluginLogic* pluginLogic);
 
