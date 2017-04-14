@@ -1110,15 +1110,17 @@ void qMRMLSegmentEditorWidget::updateWidgetFromSegmentationNode()
       // Remember whether closed surface is present so that it can be re-converted later if necessary
       bool closedSurfacePresent = segmentationNode->GetSegmentation()->ContainsRepresentation(
         vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
+      bool binaryLabelmapPresent = d->SegmentationNode->GetSegmentation()->ContainsRepresentation(
+        vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
       // Show closed surface in 3D if present
-      if (closedSurfacePresent)
+      if (displayNode && closedSurfacePresent)
         {
         displayNode->SetPreferredDisplayRepresentationName3D(
           vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
         }
 
       // Show binary labelmap in 2D
-      if (displayNode)
+      if (displayNode && binaryLabelmapPresent)
         {
         displayNode->SetPreferredDisplayRepresentationName2D(
           vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
@@ -1851,8 +1853,13 @@ void qMRMLSegmentEditorWidget::onCreateSurfaceToggled(bool on)
       displayNode->SetPreferredDisplayRepresentationName3D(
         vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName() );
       // But keep binary labelmap for 2D
-      displayNode->SetPreferredDisplayRepresentationName2D(
-        vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName() );
+      bool binaryLabelmapPresent = segmentationNode->GetSegmentation()->ContainsRepresentation(
+        vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
+      if (binaryLabelmapPresent)
+        {
+        displayNode->SetPreferredDisplayRepresentationName2D(
+          vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName() );
+        }
       }
     }
   // If unchecked, then remove representation (but only if it's not the master representation)
