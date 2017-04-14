@@ -83,22 +83,6 @@ qSlicerSubjectHierarchyVolumesPluginPrivate::qSlicerSubjectHierarchyVolumesPlugi
   this->ShowVolumesInBranchAction = NULL;
 }
 
-//-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyVolumesPluginPrivate::~qSlicerSubjectHierarchyVolumesPluginPrivate()
-{
-}
-
-//-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyVolumesPlugin::qSlicerSubjectHierarchyVolumesPlugin(QObject* parent)
- : Superclass(parent)
- , d_ptr( new qSlicerSubjectHierarchyVolumesPluginPrivate(*this) )
-{
-  this->m_Name = QString("Volumes");
-
-  Q_D(qSlicerSubjectHierarchyVolumesPlugin);
-  d->init();
-}
-
 //------------------------------------------------------------------------------
 void qSlicerSubjectHierarchyVolumesPluginPrivate::init()
 {
@@ -114,6 +98,25 @@ void qSlicerSubjectHierarchyVolumesPluginPrivate::init()
 
   this->ShowVolumesInBranchAction = new QAction("Show volumes in branch",q);
   QObject::connect(this->ShowVolumesInBranchAction, SIGNAL(triggered()), q, SLOT(showVolumesInBranch()));
+}
+
+//-----------------------------------------------------------------------------
+qSlicerSubjectHierarchyVolumesPluginPrivate::~qSlicerSubjectHierarchyVolumesPluginPrivate()
+{
+}
+
+//-----------------------------------------------------------------------------
+// qSlicerSubjectHierarchyVolumesPlugin methods
+
+//-----------------------------------------------------------------------------
+qSlicerSubjectHierarchyVolumesPlugin::qSlicerSubjectHierarchyVolumesPlugin(QObject* parent)
+ : Superclass(parent)
+ , d_ptr( new qSlicerSubjectHierarchyVolumesPluginPrivate(*this) )
+{
+  this->m_Name = QString("Volumes");
+
+  Q_D(qSlicerSubjectHierarchyVolumesPlugin);
+  d->init();
 }
 
 //-----------------------------------------------------------------------------

@@ -121,6 +121,9 @@ qSlicerSubjectHierarchySegmentationsPluginPrivate::~qSlicerSubjectHierarchySegme
 }
 
 //-----------------------------------------------------------------------------
+// qSlicerSubjectHierarchySegmentationsPlugin methods
+
+//-----------------------------------------------------------------------------
 qSlicerSubjectHierarchySegmentationsPlugin::qSlicerSubjectHierarchySegmentationsPlugin(QObject* parent)
  : Superclass(parent)
  , d_ptr( new qSlicerSubjectHierarchySegmentationsPluginPrivate(*this) )
@@ -418,6 +421,7 @@ void qSlicerSubjectHierarchySegmentationsPlugin::showVisibilityContextMenuAction
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
     }
+
   // Segmentation
   if (this->canOwnSubjectHierarchyItem(itemID))
     {

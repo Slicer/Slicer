@@ -67,10 +67,23 @@ qSlicerSubjectHierarchyCloneNodePluginPrivate::qSlicerSubjectHierarchyCloneNodeP
   this->CloneItemAction = NULL;
 }
 
+//------------------------------------------------------------------------------
+void qSlicerSubjectHierarchyCloneNodePluginPrivate::init()
+{
+  Q_Q(qSlicerSubjectHierarchyCloneNodePlugin);
+
+  this->CloneItemAction = new QAction("Clone",q);
+  this->CloneItemAction->setToolTip("Clone this item and its data node if any along with display and storage options");
+  QObject::connect(this->CloneItemAction, SIGNAL(triggered()), q, SLOT(cloneCurrentItem()));
+}
+
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyCloneNodePluginPrivate::~qSlicerSubjectHierarchyCloneNodePluginPrivate()
 {
 }
+
+//-----------------------------------------------------------------------------
+// qSlicerSubjectHierarchyCloneNodePlugin methods
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyCloneNodePlugin::qSlicerSubjectHierarchyCloneNodePlugin(QObject* parent)
@@ -81,16 +94,6 @@ qSlicerSubjectHierarchyCloneNodePlugin::qSlicerSubjectHierarchyCloneNodePlugin(Q
 
   Q_D(qSlicerSubjectHierarchyCloneNodePlugin);
   d->init();
-}
-
-//------------------------------------------------------------------------------
-void qSlicerSubjectHierarchyCloneNodePluginPrivate::init()
-{
-  Q_Q(qSlicerSubjectHierarchyCloneNodePlugin);
-
-  this->CloneItemAction = new QAction("Clone",q);
-  this->CloneItemAction->setToolTip("Clone this item and its data node if any along with display and storage options");
-  QObject::connect(this->CloneItemAction, SIGNAL(triggered()), q, SLOT(cloneCurrentItem()));
 }
 
 //-----------------------------------------------------------------------------

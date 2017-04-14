@@ -73,10 +73,18 @@ qSlicerSubjectHierarchyMarkupsPluginPrivate::qSlicerSubjectHierarchyMarkupsPlugi
   this->MarkupIcon = QIcon(":Icons/Markup.png");
 }
 
+//------------------------------------------------------------------------------
+void qSlicerSubjectHierarchyMarkupsPluginPrivate::init()
+{
+}
+
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyMarkupsPluginPrivate::~qSlicerSubjectHierarchyMarkupsPluginPrivate()
 {
 }
+
+//-----------------------------------------------------------------------------
+// qSlicerSubjectHierarchyMarkupsPlugin methods
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyMarkupsPlugin::qSlicerSubjectHierarchyMarkupsPlugin(QObject* parent)
@@ -87,11 +95,6 @@ qSlicerSubjectHierarchyMarkupsPlugin::qSlicerSubjectHierarchyMarkupsPlugin(QObje
 
   Q_D(qSlicerSubjectHierarchyMarkupsPlugin);
   d->init();
-}
-
-//------------------------------------------------------------------------------
-void qSlicerSubjectHierarchyMarkupsPluginPrivate::init()
-{
 }
 
 //-----------------------------------------------------------------------------

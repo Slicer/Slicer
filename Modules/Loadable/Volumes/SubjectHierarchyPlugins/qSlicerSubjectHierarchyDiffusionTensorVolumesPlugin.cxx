@@ -85,10 +85,24 @@ qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate::qSlicerSubjectHierar
   this->TractographyInteractiveSeedingAction = NULL;
 }
 
+//------------------------------------------------------------------------------
+void qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate::init()
+{
+  Q_Q(qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin);
+
+  this->TractographyLabelMapSeedingAction = new QAction("Tractography labelmap seeding...",q);
+  QObject::connect(this->TractographyLabelMapSeedingAction, SIGNAL(triggered()), q, SLOT(onTractographyLabelMapSeeding()));
+  this->TractographyInteractiveSeedingAction = new QAction("Tractography interactive seeding...",q);
+  QObject::connect(this->TractographyInteractiveSeedingAction, SIGNAL(triggered()), q, SLOT(onTractographyInteractiveSeeding()));
+}
+
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate::~qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate()
 {
 }
+
+//-----------------------------------------------------------------------------
+// qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin methods
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin(QObject* parent)
@@ -99,17 +113,6 @@ qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::qSlicerSubjectHierarchyDiff
 
   Q_D(qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin);
   d->init();
-}
-
-//------------------------------------------------------------------------------
-void qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate::init()
-{
-  Q_Q(qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin);
-
-  this->TractographyLabelMapSeedingAction = new QAction("Tractography labelmap seeding...",q);
-  QObject::connect(this->TractographyLabelMapSeedingAction, SIGNAL(triggered()), q, SLOT(onTractographyLabelMapSeeding()));
-  this->TractographyInteractiveSeedingAction = new QAction("Tractography interactive seeding...",q);
-  QObject::connect(this->TractographyInteractiveSeedingAction, SIGNAL(triggered()), q, SLOT(onTractographyInteractiveSeeding()));
 }
 
 //-----------------------------------------------------------------------------

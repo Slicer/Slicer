@@ -70,9 +70,27 @@ public:
   /// Get visibility icon for a visibility state
   virtual QIcon visibilityIcon(int visible);
 
+  /// Get visibility context menu item actions to add to tree view.
+  /// These item visibility context menu actions can be shown in the implementations of \sa showVisibilityContextMenuActionsForItem
+  virtual QList<QAction*> visibilityContextMenuActions()const;
+
+  /// Show visibility context menu actions valid for a given subject hierarchy item.
+  /// \param itemID Subject Hierarchy item to show the visibility context menu items for
+  virtual void showVisibilityContextMenuActionsForItem(vtkIdType itemID);
+
 public:
   /// Set default visibility icons owned by the scene model so that the default plugin can set them
   void setDefaultVisibilityIcons(QIcon visibleIcon, QIcon hiddenIcon, QIcon partiallyVisibleIcon);
+
+public slots:
+  /// Toggle visibility for current item
+  void toggleVisibility();
+
+  /// Show all direct children of current item
+  void showAllChildren();
+
+  /// Hide all direct children of current item
+  void hideAllChildren();
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyDefaultPluginPrivate> d_ptr;

@@ -90,6 +90,9 @@ qSlicerSubjectHierarchyFolderPluginPrivate::~qSlicerSubjectHierarchyFolderPlugin
 }
 
 //-----------------------------------------------------------------------------
+// qSlicerSubjectHierarchyFolderPlugin methods
+
+//-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyFolderPlugin::qSlicerSubjectHierarchyFolderPlugin(QObject* parent)
  : Superclass(parent)
  , d_ptr( new qSlicerSubjectHierarchyFolderPluginPrivate(*this) )

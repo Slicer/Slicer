@@ -81,10 +81,18 @@ qSlicerSubjectHierarchyTablesPluginPrivate::qSlicerSubjectHierarchyTablesPluginP
   this->TableIcon = QIcon(":Icons/Table.png");
 }
 
+//------------------------------------------------------------------------------
+void qSlicerSubjectHierarchyTablesPluginPrivate::init()
+{
+}
+
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyTablesPluginPrivate::~qSlicerSubjectHierarchyTablesPluginPrivate()
 {
 }
+
+//-----------------------------------------------------------------------------
+// qSlicerSubjectHierarchyTablesPlugin methods
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyTablesPlugin::qSlicerSubjectHierarchyTablesPlugin(QObject* parent)
@@ -95,11 +103,6 @@ qSlicerSubjectHierarchyTablesPlugin::qSlicerSubjectHierarchyTablesPlugin(QObject
 
   Q_D(qSlicerSubjectHierarchyTablesPlugin);
   d->init();
-}
-
-//------------------------------------------------------------------------------
-void qSlicerSubjectHierarchyTablesPluginPrivate::init()
-{
 }
 
 //-----------------------------------------------------------------------------

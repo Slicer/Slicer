@@ -84,6 +84,9 @@ qSlicerSubjectHierarchyParseLocalDataPluginPrivate::~qSlicerSubjectHierarchyPars
 }
 
 //-----------------------------------------------------------------------------
+// qSlicerSubjectHierarchyParseLocalDataPlugin methods
+
+//-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyParseLocalDataPlugin::qSlicerSubjectHierarchyParseLocalDataPlugin(QObject* parent)
  : Superclass(parent)
  , d_ptr( new qSlicerSubjectHierarchyParseLocalDataPluginPrivate(*this) )

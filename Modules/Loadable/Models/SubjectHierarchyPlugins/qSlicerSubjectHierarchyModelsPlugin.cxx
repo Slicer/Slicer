@@ -68,10 +68,18 @@ qSlicerSubjectHierarchyModelsPluginPrivate::qSlicerSubjectHierarchyModelsPluginP
   this->ModelIcon = QIcon(":Icons/Model.png");
 }
 
+//------------------------------------------------------------------------------
+void qSlicerSubjectHierarchyModelsPluginPrivate::init()
+{
+}
+
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyModelsPluginPrivate::~qSlicerSubjectHierarchyModelsPluginPrivate()
 {
 }
+
+//-----------------------------------------------------------------------------
+// qSlicerSubjectHierarchyModelsPlugin methods
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyModelsPlugin::qSlicerSubjectHierarchyModelsPlugin(QObject* parent)
@@ -82,11 +90,6 @@ qSlicerSubjectHierarchyModelsPlugin::qSlicerSubjectHierarchyModelsPlugin(QObject
 
   Q_D(qSlicerSubjectHierarchyModelsPlugin);
   d->init();
-}
-
-//------------------------------------------------------------------------------
-void qSlicerSubjectHierarchyModelsPluginPrivate::init()
-{
 }
 
 //-----------------------------------------------------------------------------

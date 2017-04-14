@@ -68,10 +68,23 @@ qSlicerSubjectHierarchyVolumeRenderingPluginPrivate::qSlicerSubjectHierarchyVolu
 {
 }
 
+//------------------------------------------------------------------------------
+void qSlicerSubjectHierarchyVolumeRenderingPluginPrivate::init()
+{
+  Q_Q(qSlicerSubjectHierarchyVolumeRenderingPlugin);
+
+  this->ShowVolumeRenderingAction = new QAction("Show volume rendering...",q);
+  this->ShowVolumeRenderingAction->setToolTip(tr("Switch to Volume Rendering module and set up rendering"));
+  QObject::connect(this->ShowVolumeRenderingAction, SIGNAL(triggered()), q, SLOT(showVolumeRenderingForCurrentItem()));
+}
+
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyVolumeRenderingPluginPrivate::~qSlicerSubjectHierarchyVolumeRenderingPluginPrivate()
 {
 }
+
+//-----------------------------------------------------------------------------
+// qSlicerSubjectHierarchyVolumeRenderingPlugin methods
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyVolumeRenderingPlugin::qSlicerSubjectHierarchyVolumeRenderingPlugin(QObject* parent)
@@ -82,16 +95,6 @@ qSlicerSubjectHierarchyVolumeRenderingPlugin::qSlicerSubjectHierarchyVolumeRende
 
   Q_D(qSlicerSubjectHierarchyVolumeRenderingPlugin);
   d->init();
-}
-
-//------------------------------------------------------------------------------
-void qSlicerSubjectHierarchyVolumeRenderingPluginPrivate::init()
-{
-  Q_Q(qSlicerSubjectHierarchyVolumeRenderingPlugin);
-
-  this->ShowVolumeRenderingAction = new QAction("Show volume rendering...",q);
-  this->ShowVolumeRenderingAction->setToolTip(tr("Switch to Volume Rendering module and set up rendering"));
-  QObject::connect(this->ShowVolumeRenderingAction, SIGNAL(triggered()), q, SLOT(showVolumeRenderingForCurrentItem()));
 }
 
 //-----------------------------------------------------------------------------

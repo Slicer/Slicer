@@ -31,6 +31,7 @@
 // Qt includes
 #include <QDebug>
 #include <QIcon>
+#include <QAction>
 
 // VTK includes
 #include <vtkObjectFactory.h>
@@ -46,12 +47,17 @@ protected:
 public:
   qSlicerSubjectHierarchyDefaultPluginPrivate(qSlicerSubjectHierarchyDefaultPlugin& object);
   ~qSlicerSubjectHierarchyDefaultPluginPrivate();
+  void init();
 public:
   QIcon UnknownIcon;
 
   QIcon VisibleIcon;
   QIcon HiddenIcon;
   QIcon PartiallyVisibleIcon;
+
+  QAction* ToggleVisibilityAction;
+  QAction* ShowAllChildrenAction;
+  QAction* HideAllChildrenAction;
 };
 
 //-----------------------------------------------------------------------------
@@ -60,6 +66,9 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyDefaultPluginPrivate::qSlicerSubjectHierarchyDefaultPluginPrivate(qSlicerSubjectHierarchyDefaultPlugin& object)
 : q_ptr(&object)
+, ToggleVisibilityAction(NULL)
+, ShowAllChildrenAction(NULL)
+, HideAllChildrenAction(NULL)
 {
   this->UnknownIcon = QIcon(":Icons/Unknown.png");
 }
@@ -69,12 +78,33 @@ qSlicerSubjectHierarchyDefaultPluginPrivate::~qSlicerSubjectHierarchyDefaultPlug
 {
 }
 
+//------------------------------------------------------------------------------
+void qSlicerSubjectHierarchyDefaultPluginPrivate::init()
+{
+  Q_Q(qSlicerSubjectHierarchyAbstractPlugin);
+
+  this->ToggleVisibilityAction = new QAction("Toggle visibility",q);
+  QObject::connect(this->ToggleVisibilityAction, SIGNAL(triggered()), q, SLOT(toggleVisibility()));
+
+  this->ShowAllChildrenAction = new QAction("Show all children",q);
+  QObject::connect(this->ShowAllChildrenAction, SIGNAL(triggered()), q, SLOT(showAllChildren()));
+
+  this->HideAllChildrenAction = new QAction("Hide all children",q);
+  QObject::connect(this->HideAllChildrenAction, SIGNAL(triggered()), q, SLOT(hideAllChildren()));
+  }
+
+//-----------------------------------------------------------------------------
+// qSlicerSubjectHierarchyDefaultPlugin methods
+
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyDefaultPlugin::qSlicerSubjectHierarchyDefaultPlugin(QObject* parent)
  : Superclass(parent)
  , d_ptr( new qSlicerSubjectHierarchyDefaultPluginPrivate(*this) )
 {
   this->m_Name = QString("Default");
+
+  Q_D(qSlicerSubjectHierarchyDefaultPlugin);
+  d->init();
 }
 
 //-----------------------------------------------------------------------------
@@ -169,4 +199,106 @@ QIcon qSlicerSubjectHierarchyDefaultPlugin::visibilityIcon(int visible)
   default:
     return QIcon();
     }
+}
+
+//-----------------------------------------------------------------------------
+QList<QAction*> qSlicerSubjectHierarchyDefaultPlugin::visibilityContextMenuActions()const
+{
+  Q_D(const qSlicerSubjectHierarchyDefaultPlugin);
+
+  QList<QAction*> actions;
+  actions << d->ToggleVisibilityAction << d->ShowAllChildrenAction << d->HideAllChildrenAction;
+  return actions;
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyDefaultPlugin::showVisibilityContextMenuActionsForItem(vtkIdType itemID)
+{
+  Q_D(qSlicerSubjectHierarchyDefaultPlugin);
+
+  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    return;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+
+  // Toggle visibility is visible for every item
+  d->ToggleVisibilityAction->setVisible(true);
+
+  // Show child-related actions only if there are children to the item
+  std::vector<vtkIdType> childItems;
+  shNode->GetItemChildren(itemID, childItems);
+  d->ShowAllChildrenAction->setVisible(childItems.size());
+  d->HideAllChildrenAction->setVisible(childItems.size());
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyDefaultPlugin::toggleVisibility()
+{
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid current item!";
+    return;
+    }
+  qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin =
+    qSlicerSubjectHierarchyPluginHandler::instance()->getOwnerPluginForSubjectHierarchyItem(currentItemID);
+  if (!ownerPlugin)
+    {
+    qCritical() << Q_FUNC_INFO << ": Subject hierarchy item " << currentItemID << " (named " << shNode->GetItemName(currentItemID).c_str() << ") is not owned by any plugin";
+    return;
+    }
+
+  // Toggle current item visibility
+  int visible = (ownerPlugin->getDisplayVisibility(currentItemID) > 0 ? 0 : 1);
+  ownerPlugin->setDisplayVisibility(currentItemID, visible);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyDefaultPlugin::showAllChildren()
+{
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid current item!";
+    return;
+    }
+
+  shNode->SetDisplayVisibilityForBranch(currentItemID, 1);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyDefaultPlugin::hideAllChildren()
+{
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid current item!";
+    return;
+    }
+
+  shNode->SetDisplayVisibilityForBranch(currentItemID, 0);
 }

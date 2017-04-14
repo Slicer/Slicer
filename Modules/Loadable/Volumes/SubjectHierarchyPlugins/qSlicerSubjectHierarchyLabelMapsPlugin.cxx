@@ -82,10 +82,24 @@ qSlicerSubjectHierarchyLabelMapsPluginPrivate::qSlicerSubjectHierarchyLabelMapsP
   this->ToggleOutlineVisibilityAction = NULL;
 }
 
+//------------------------------------------------------------------------------
+void qSlicerSubjectHierarchyLabelMapsPluginPrivate::init()
+{
+  Q_Q(qSlicerSubjectHierarchyLabelMapsPlugin);
+
+  this->ToggleOutlineVisibilityAction = new QAction("Toggle 2D outline visibility",q);
+  QObject::connect(this->ToggleOutlineVisibilityAction, SIGNAL(toggled(bool)), q, SLOT(toggle2DOutlineVisibility(bool)));
+  this->ToggleOutlineVisibilityAction->setCheckable(true);
+  this->ToggleOutlineVisibilityAction->setChecked(false);
+}
+
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyLabelMapsPluginPrivate::~qSlicerSubjectHierarchyLabelMapsPluginPrivate()
 {
 }
+
+//-----------------------------------------------------------------------------
+// qSlicerSubjectHierarchyLabelMapsPlugin methods
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyLabelMapsPlugin::qSlicerSubjectHierarchyLabelMapsPlugin(QObject* parent)
@@ -96,17 +110,6 @@ qSlicerSubjectHierarchyLabelMapsPlugin::qSlicerSubjectHierarchyLabelMapsPlugin(Q
 
   Q_D(qSlicerSubjectHierarchyLabelMapsPlugin);
   d->init();
-}
-
-//------------------------------------------------------------------------------
-void qSlicerSubjectHierarchyLabelMapsPluginPrivate::init()
-{
-  Q_Q(qSlicerSubjectHierarchyLabelMapsPlugin);
-
-  this->ToggleOutlineVisibilityAction = new QAction("Toggle 2D outline visibility",q);
-  QObject::connect(this->ToggleOutlineVisibilityAction, SIGNAL(toggled(bool)), q, SLOT(toggle2DOutlineVisibility(bool)));
-  this->ToggleOutlineVisibilityAction->setCheckable(true);
-  this->ToggleOutlineVisibilityAction->setChecked(false);
 }
 
 //-----------------------------------------------------------------------------

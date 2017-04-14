@@ -85,23 +85,6 @@ qSlicerSubjectHierarchyRegisterPluginPrivate::qSlicerSubjectHierarchyRegisterPlu
 {
 }
 
-//-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyRegisterPluginPrivate::~qSlicerSubjectHierarchyRegisterPluginPrivate()
-{
-}
-
-//-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyRegisterPlugin::qSlicerSubjectHierarchyRegisterPlugin(QObject* parent)
- : Superclass(parent)
- , m_RegisterFromItem(vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
- , d_ptr( new qSlicerSubjectHierarchyRegisterPluginPrivate(*this) )
-{
-  this->m_Name = QString("Register");
-
-  Q_D(qSlicerSubjectHierarchyRegisterPlugin);
-  d->init();
-}
-
 //------------------------------------------------------------------------------
 void qSlicerSubjectHierarchyRegisterPluginPrivate::init()
 {
@@ -135,6 +118,26 @@ void qSlicerSubjectHierarchyRegisterPluginPrivate::init()
   this->CancelAction = new QAction("Cancel registration (or right-click another volume to start registration)",q);
   this->CancelAction->setToolTip(tr("Right-click another volume to select second volume and start registration"));
   QObject::connect(this->CancelAction, SIGNAL(triggered()), q, SLOT(cancel()));
+}
+
+//-----------------------------------------------------------------------------
+qSlicerSubjectHierarchyRegisterPluginPrivate::~qSlicerSubjectHierarchyRegisterPluginPrivate()
+{
+}
+
+//-----------------------------------------------------------------------------
+// qSlicerSubjectHierarchyRegisterPlugin methods
+
+//-----------------------------------------------------------------------------
+qSlicerSubjectHierarchyRegisterPlugin::qSlicerSubjectHierarchyRegisterPlugin(QObject* parent)
+ : Superclass(parent)
+ , m_RegisterFromItem(vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+ , d_ptr( new qSlicerSubjectHierarchyRegisterPluginPrivate(*this) )
+{
+  this->m_Name = QString("Register");
+
+  Q_D(qSlicerSubjectHierarchyRegisterPlugin);
+  d->init();
 }
 
 //-----------------------------------------------------------------------------

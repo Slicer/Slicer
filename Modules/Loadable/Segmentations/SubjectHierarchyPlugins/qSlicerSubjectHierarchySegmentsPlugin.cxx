@@ -98,6 +98,9 @@ qSlicerSubjectHierarchySegmentsPluginPrivate::~qSlicerSubjectHierarchySegmentsPl
 }
 
 //-----------------------------------------------------------------------------
+// qSlicerSubjectHierarchySegmentsPlugin methods
+
+//-----------------------------------------------------------------------------
 qSlicerSubjectHierarchySegmentsPlugin::qSlicerSubjectHierarchySegmentsPlugin(QObject* parent)
  : Superclass(parent)
  , d_ptr( new qSlicerSubjectHierarchySegmentsPluginPrivate(*this) )

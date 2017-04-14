@@ -109,6 +109,9 @@ qSlicerSubjectHierarchyDICOMPluginPrivate::~qSlicerSubjectHierarchyDICOMPluginPr
 }
 
 //-----------------------------------------------------------------------------
+// qSlicerSubjectHierarchyDICOMPlugin methods
+
+//-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyDICOMPlugin::qSlicerSubjectHierarchyDICOMPlugin(QObject* parent)
  : Superclass(parent)
  , d_ptr( new qSlicerSubjectHierarchyDICOMPluginPrivate(*this) )

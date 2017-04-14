@@ -75,10 +75,18 @@ qSlicerSubjectHierarchyChartsPluginPrivate::qSlicerSubjectHierarchyChartsPluginP
   this->HiddenIcon = QIcon(":Icons/VisibleOff.png");
 }
 
+//------------------------------------------------------------------------------
+void qSlicerSubjectHierarchyChartsPluginPrivate::init()
+{
+}
+
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyChartsPluginPrivate::~qSlicerSubjectHierarchyChartsPluginPrivate()
 {
 }
+
+//-----------------------------------------------------------------------------
+// qSlicerSubjectHierarchyChartsPlugin methods
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyChartsPlugin::qSlicerSubjectHierarchyChartsPlugin(QObject* parent)
@@ -89,11 +97,6 @@ qSlicerSubjectHierarchyChartsPlugin::qSlicerSubjectHierarchyChartsPlugin(QObject
 
   Q_D(qSlicerSubjectHierarchyChartsPlugin);
   d->init();
-}
-
-//------------------------------------------------------------------------------
-void qSlicerSubjectHierarchyChartsPluginPrivate::init()
-{
 }
 
 //-----------------------------------------------------------------------------

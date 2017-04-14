@@ -71,10 +71,22 @@ qSlicerSubjectHierarchySceneViewsPluginPrivate::qSlicerSubjectHierarchySceneView
   this->RestoreSceneViewAction = NULL;
 }
 
+//------------------------------------------------------------------------------
+void qSlicerSubjectHierarchySceneViewsPluginPrivate::init()
+{
+  Q_Q(qSlicerSubjectHierarchySceneViewsPlugin);
+
+  this->RestoreSceneViewAction = new QAction("Restore scene view",q);
+  QObject::connect(this->RestoreSceneViewAction, SIGNAL(triggered()), q, SLOT(restoreCurrentSceneView()));
+}
+
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchySceneViewsPluginPrivate::~qSlicerSubjectHierarchySceneViewsPluginPrivate()
 {
 }
+
+//-----------------------------------------------------------------------------
+// qSlicerSubjectHierarchySceneViewsPlugin methods
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchySceneViewsPlugin::qSlicerSubjectHierarchySceneViewsPlugin(QObject* parent)
@@ -85,15 +97,6 @@ qSlicerSubjectHierarchySceneViewsPlugin::qSlicerSubjectHierarchySceneViewsPlugin
 
   Q_D(qSlicerSubjectHierarchySceneViewsPlugin);
   d->init();
-}
-
-//------------------------------------------------------------------------------
-void qSlicerSubjectHierarchySceneViewsPluginPrivate::init()
-{
-  Q_Q(qSlicerSubjectHierarchySceneViewsPlugin);
-
-  this->RestoreSceneViewAction = new QAction("Restore scene view",q);
-  QObject::connect(this->RestoreSceneViewAction, SIGNAL(triggered()), q, SLOT(restoreCurrentSceneView()));
 }
 
 //-----------------------------------------------------------------------------

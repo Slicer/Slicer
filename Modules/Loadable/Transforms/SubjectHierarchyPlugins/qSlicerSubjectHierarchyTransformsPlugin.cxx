@@ -77,22 +77,6 @@ qSlicerSubjectHierarchyTransformsPluginPrivate::qSlicerSubjectHierarchyTransform
   this->IdentityAction = NULL;
 }
 
-//-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyTransformsPluginPrivate::~qSlicerSubjectHierarchyTransformsPluginPrivate()
-{
-}
-
-//-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyTransformsPlugin::qSlicerSubjectHierarchyTransformsPlugin(QObject* parent)
- : Superclass(parent)
- , d_ptr( new qSlicerSubjectHierarchyTransformsPluginPrivate(*this) )
-{
-  this->m_Name = QString("Transforms");
-
-  Q_D(qSlicerSubjectHierarchyTransformsPlugin);
-  d->init();
-}
-
 //------------------------------------------------------------------------------
 void qSlicerSubjectHierarchyTransformsPluginPrivate::init()
 {
@@ -103,6 +87,25 @@ void qSlicerSubjectHierarchyTransformsPluginPrivate::init()
 
   this->IdentityAction = new QAction("Reset transform to identity",q);
   QObject::connect(this->IdentityAction, SIGNAL(triggered()), q, SLOT(identity()));
+}
+
+//-----------------------------------------------------------------------------
+qSlicerSubjectHierarchyTransformsPluginPrivate::~qSlicerSubjectHierarchyTransformsPluginPrivate()
+{
+}
+
+//-----------------------------------------------------------------------------
+// qSlicerSubjectHierarchyTransformsPlugin methods
+
+//-----------------------------------------------------------------------------
+qSlicerSubjectHierarchyTransformsPlugin::qSlicerSubjectHierarchyTransformsPlugin(QObject* parent)
+ : Superclass(parent)
+ , d_ptr( new qSlicerSubjectHierarchyTransformsPluginPrivate(*this) )
+{
+  this->m_Name = QString("Transforms");
+
+  Q_D(qSlicerSubjectHierarchyTransformsPlugin);
+  d->init();
 }
 
 //-----------------------------------------------------------------------------
