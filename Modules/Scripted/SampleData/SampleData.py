@@ -219,6 +219,7 @@ class SampleDataLogic:
           ('http://slicer.kitware.com/midas3/download/item/142475/Case10-MR.nrrd',
             'http://slicer.kitware.com/midas3/download/item/142476/case10_US_resampled.nrrd',),
           ('Case10-MR.nrrd', 'case10_US_resampled.nrrd'), ('MRProstate', 'USProstate')),
+        ('CTBrain', 'http://slicer.kitware.com/midas3/download/?items=284192,1', 'CT-brain.nrrd', 'CTBrain'),
         )
 
     if not slicer.modules.sampleDataSources.has_key('BuiltIn'):

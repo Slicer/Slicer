@@ -20,6 +20,7 @@ set(MODULE_PYTHON_RESOURCES
   Resources/Icons/MRProstate.png
   Resources/Icons/Panoramix-cropped.png
   Resources/Icons/PreDentalSurgery.png
+  Resources/Icons/CTBrain.png
   )
 
 #-----------------------------------------------------------------------------
