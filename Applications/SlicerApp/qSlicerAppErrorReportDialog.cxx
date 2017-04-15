@@ -49,7 +49,7 @@ qSlicerAppErrorReportDialog::qSlicerAppErrorReportDialog(QWidget* parentWidget)
   d->setupUi(this);
 
   QString instructionsText = d->InstructionsLabel->text();
-  QString appNameVersionPlatform = QString("%1 %2 / %3").arg(
+  QString appNameVersionPlatform = QString("%1 %2 %3").arg(
     qSlicerApplication::application()->applicationName()).arg(
     qSlicerApplication::application()->applicationVersion()).arg(
     qSlicerApplication::application()->platform());
