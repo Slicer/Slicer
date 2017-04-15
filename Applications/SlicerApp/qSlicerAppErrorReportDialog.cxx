@@ -49,8 +49,11 @@ qSlicerAppErrorReportDialog::qSlicerAppErrorReportDialog(QWidget* parentWidget)
   d->setupUi(this);
 
   QString instructionsText = d->InstructionsLabel->text();
-  instructionsText.replace(QString("[platform]"), QUrl::toPercentEncoding(qSlicerApplication::application()->platform()));
-  instructionsText.replace(QString("[appversion]"), QUrl::toPercentEncoding(qSlicerApplication::application()->applicationVersion()));
+  QString appNameVersionPlatform = QString("%1 %2 / %3").arg(
+    qSlicerApplication::application()->applicationName()).arg(
+    qSlicerApplication::application()->applicationVersion()).arg(
+    qSlicerApplication::application()->platform());
+  instructionsText.replace(QString("[appname-version-platform]"), QUrl::toPercentEncoding(appNameVersionPlatform));
   d->InstructionsLabel->setText(instructionsText);
 
   QStringList logFilePaths = qSlicerApplication::application()->recentLogFiles();
