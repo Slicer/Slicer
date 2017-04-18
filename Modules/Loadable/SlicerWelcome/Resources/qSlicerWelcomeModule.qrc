@@ -52,6 +52,7 @@
     <file>Images/WelcomeROIWidgetWithArrow-Original.png</file>
     <file>Images/WelcomeDistanceWidgetWithArrow-Original.png</file>
     <file>Images/WelcomeFiducialWithArrow-Original.png</file>
+    <file>Images/WelcomeSubjectHierarchy.png</file>
     <file>HTML/Acknowledgment.html</file>
   </qresource>
 </RCC>
