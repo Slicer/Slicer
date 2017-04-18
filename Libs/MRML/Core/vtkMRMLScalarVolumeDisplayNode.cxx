@@ -796,7 +796,7 @@ void vtkMRMLScalarVolumeDisplayNode::CalculateAutoLevels()
 
     window = max-min;
     level = 0.5*(max+min);
-    lower = this->GetLevel();
+    lower = level;
     upper = range[1];
     }
   else
