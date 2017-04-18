@@ -147,6 +147,8 @@ void vtkITKArchetypeImageSeriesVectorReaderSeries::ExecuteDataWithInformation(vt
       {
       vtkErrorMacro(<< "Exception from vtkITK MegaMacro: " << e << "\n");
       }
+
+    this->SetMetaDataScalarRangeToPointDataInfo(data);
     }
 }
 

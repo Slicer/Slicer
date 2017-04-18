@@ -23,6 +23,7 @@ Version:   $Revision$
 class vtkMatrix4x4;
 
 // ITK includes
+#include "itkImageIOBase.h"
 #include "itkMetaDataDictionary.h"
 #include "itkSpatialOrientation.h"
 
@@ -792,6 +793,12 @@ protected:
 
   int          OutputScalarType;
   unsigned int NumberOfComponents;
+
+  std::vector<double> MetaDataScalarRangeMinima;
+  std::vector<double> MetaDataScalarRangeMaxima;
+  void GetScalarRangeMetaDataKeys(itk::ImageIOBase::Pointer imageIO,
+                                  std::string range_keys[2]);
+  void SetMetaDataScalarRangeToPointDataInfo(vtkImageData* data);
 
   double DefaultDataSpacing[3];
   double DefaultDataOrigin[3];

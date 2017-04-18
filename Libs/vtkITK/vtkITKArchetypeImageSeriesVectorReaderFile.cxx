@@ -126,6 +126,8 @@ void vtkITKArchetypeImageSeriesVectorReaderFile::ExecuteDataWithInformation(vtkD
     default:
         vtkErrorMacro(<< "UpdateFromFile: Unknown data type " << this->OutputScalarType);
       }
+
+    this->SetMetaDataScalarRangeToPointDataInfo(data);
     }
   else
     {

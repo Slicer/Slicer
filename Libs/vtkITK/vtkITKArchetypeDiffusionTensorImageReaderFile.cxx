@@ -147,6 +147,7 @@ int vtkITKArchetypeDiffusionTensorImageReaderFile::RequestData(
   data->SetOrigin(0, 0, 0);
   data->SetSpacing(1, 1, 1);
   data->SetExtent(extent);
+  this->SetMetaDataScalarRangeToPointDataInfo(data);
   vtkNew<vtkFloatArray> tensors;
   tensors->SetName("ArchetypeReader");
 

@@ -84,6 +84,7 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
   data->AllocateScalars(outInfo);
   data->SetExtent(outInfo->Get(
     vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()));
+  this->SetMetaDataScalarRangeToPointDataInfo(data);
 
 /// SCALAR MACRO
 #define vtkITKExecuteDataFromSeries(typeN, type) \

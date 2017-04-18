@@ -16,18 +16,24 @@
 #include "vtkITKArchetypeImageSeriesReader.h"
 
 // VTK includes
+#include <vtkDataArray.h>
 #include <vtkImageData.h>
 #include <vtkMath.h>
 #include <vtkMatrix4x4.h>
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
+#include <vtkNew.h>
 #include <vtkObjectFactory.h>
+#include <vtkPointData.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
 
 // ITK includes
+#include <itkNiftiImageIO.h>
+#include <itkNrrdImageIO.h>
 #include <itkMetaDataDictionary.h>
 #include <itkMetaDataObjectBase.h>
 #include <itkMetaDataObject.h>
+#include <itkMetaImageIO.h>
 #include <itkTimeProbe.h>
 
 // STD includes
@@ -811,7 +817,8 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
 
 
   vtkDataObject::SetPointDataActiveScalarInfo(outInfo,
-                                              scalarType, numberOfComponents);
+                                              scalarType,
+                                              numberOfComponents);
 
   // Copy the MetaDataDictionary from the ITK layer to the VTK layer
   if (imageIO.GetPointer() != NULL)
@@ -823,7 +830,111 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
     this->Dictionary = itk::MetaDataDictionary();
     }
   ParseDictionary();
+
+  // Store the meta data scalar range if it exists
+  std::string range_keys[2];
+  this->GetScalarRangeMetaDataKeys(imageIO, range_keys);
+  std::string min_str;
+  std::string max_str;
+  bool hasMin = itk::ExposeMetaData<std::string>(this->Dictionary, range_keys[0], min_str);
+  bool hasMax = itk::ExposeMetaData<std::string>(this->Dictionary, range_keys[1], max_str);
+  if (hasMin && hasMax)
+    {
+    this->MetaDataScalarRangeMinima.clear();
+    this->MetaDataScalarRangeMaxima.clear();
+    double value = 0.0;
+    std::istringstream min_sstr(min_str);
+    while (min_sstr >> value)
+      {
+      this->MetaDataScalarRangeMinima.push_back(value);
+      }
+    std::istringstream max_sstr(max_str);
+    while (max_sstr >> value)
+      {
+      this->MetaDataScalarRangeMaxima.push_back(value);
+      }
+    }
+
   return 1;
+}
+
+//----------------------------------------------------------------------------
+void vtkITKArchetypeImageSeriesReader::GetScalarRangeMetaDataKeys(itk::ImageIOBase::Pointer imageIO,
+                                                                  std::string range_keys[2])
+{
+    if (dynamic_cast<itk::NrrdImageIO*>(imageIO.GetPointer()))
+      {
+      // http://teem.sourceforge.net/nrrd/format.html#min
+      range_keys[0] = "min";
+      range_keys[1] = "max";
+      }
+    else if (dynamic_cast<itk::NiftiImageIO*>(imageIO.GetPointer()))
+      {
+      // https://nifti.nimh.nih.gov/nifti-1/documentation/nifti1fields/nifti1fields_pages/cal_maxmin.html
+      range_keys[0] = "cal_min";
+      range_keys[1] = "cal_max";
+      }
+    else if (dynamic_cast<itk::MetaImageIO*>(imageIO.GetPointer()))
+      {
+      // https://itk.org/Wiki/MetaIO/Documentation#Tags_Added_by_MetaImage
+      range_keys[0] = "ElementMin";
+      range_keys[1] = "ElementMax";
+      }
+}
+
+//----------------------------------------------------------------------------
+void vtkITKArchetypeImageSeriesReader::SetMetaDataScalarRangeToPointDataInfo( vtkImageData* data )
+{
+    if (data == NULL)
+      {
+      vtkWarningMacro("No image data specified, can't set scalar range information.")
+      return;
+      }
+
+    // If no metadata scalar range found
+    if (this->MetaDataScalarRangeMinima.empty() ||
+       this->MetaDataScalarRangeMaxima.empty())
+      {
+      return;
+      }
+
+    // If metadata scalar range not consistent
+    int nbrOfComponents = data->GetNumberOfScalarComponents();
+    if (nbrOfComponents != this->MetaDataScalarRangeMinima.size() ||
+        nbrOfComponents != this->MetaDataScalarRangeMaxima.size())
+      {
+      vtkWarningMacro("Mismatch between image data and meta data number of scalar components, ignoring metada scalar range.");
+      return;
+      }
+
+    // Check that scalar info exists
+    vtkDataArray* scalars = data->GetPointData()->GetScalars();
+    vtkInformation* scalarInfo = scalars ? scalars->GetInformation() : NULL;
+    if (scalarInfo == NULL)
+      {
+      return;
+      }
+
+    // Write meta data scalar range in scalars information
+    vtkNew<vtkInformationVector> rangeInfoVector;
+    rangeInfoVector->SetNumberOfInformationObjects(nbrOfComponents);
+    double scalarRange[2];
+    bool scalarRangeIsValid = false; // all values should not be equal to 0
+    for (unsigned int i = 0; i < nbrOfComponents; ++i)
+      {
+      scalarRange[0] = this->MetaDataScalarRangeMinima[i];
+      scalarRange[1] = this->MetaDataScalarRangeMaxima[i];
+      rangeInfoVector->GetInformationObject(i)->Set(vtkDataArray::COMPONENT_RANGE(), scalarRange, 2);
+      if (scalarRange[0] != 0.0 || scalarRange[1] != 0.0)
+        {
+        scalarRangeIsValid = true;
+        }
+      }
+
+    if (scalarRangeIsValid)
+      {
+      scalarInfo->Set(vtkAbstractArray::PER_COMPONENT(), rangeInfoVector.Get());
+      }
 }
 
 //----------------------------------------------------------------------------
