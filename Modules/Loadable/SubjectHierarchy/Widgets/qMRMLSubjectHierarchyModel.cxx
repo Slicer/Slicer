@@ -1108,7 +1108,7 @@ void qMRMLSubjectHierarchyModel::updateSubjectHierarchyItemFromItemData(vtkIdTyp
       return;
       }
 
-    // Ask the user if any child node in the tree is transformed with a transform different from the chosen one
+    // Ask the user if any child node in the branch is transformed with a transform different from the chosen one
     bool hardenExistingTransforms = true;
     if (d->SubjectHierarchyNode->IsAnyNodeInBranchTransformed(shItemID))
       {

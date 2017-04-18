@@ -48,6 +48,20 @@ public:
   virtual ~qSlicerSubjectHierarchyTransformsPlugin();
 
 public:
+  /// Determines if a subject hierarchy item can be reparented in the hierarchy using the current plugin,
+  /// and gets a confidence value for the reparented item.
+  /// Most plugins do not perform steps additional to the default, so the default implementation returns a 0
+  /// confidence value, which can be overridden in plugins that do handle special cases.
+  /// \param itemID Item to be reparented in the hierarchy
+  /// \param parentItemID Prospective parent of the item to reparent.
+  /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
+  ///   item, and 1 means that the plugin is the only one that can handle the item
+  virtual double canReparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID)const;
+
+  /// Reparent an item that was already in the subject hierarchy under a new parent.
+  /// \return True if reparented successfully, false otherwise
+  virtual bool reparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID);
+
   /// Determines if a data node can be placed in the hierarchy using the actual plugin,
   /// and gets a confidence value for a certain MRML node (usually the type and possibly attributes are checked).
   /// \param node Node to be added to the hierarchy

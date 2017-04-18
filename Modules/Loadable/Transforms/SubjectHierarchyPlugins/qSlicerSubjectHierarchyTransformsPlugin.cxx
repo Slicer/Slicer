@@ -25,9 +25,13 @@
 #include "qSlicerSubjectHierarchyTransformsPlugin.h"
 #include "qSlicerSubjectHierarchyDefaultPlugin.h"
 
+// Subject Hierarchy includes
+#include <vtkSlicerSubjectHierarchyModuleLogic.h>
+
 // MRML includes
 #include <vtkMRMLScene.h>
 #include <vtkMRMLTransformNode.h>
+#include <vtkMRMLTransformableNode.h>
 
 // VTK includes
 #include <vtkObjectFactory.h>
@@ -39,6 +43,7 @@
 #include <QDebug>
 #include <QStandardItem>
 #include <QAction>
+#include <QMessageBox>
 
 // SlicerQt includes
 #include "qSlicerAbstractModuleWidget.h"
@@ -111,6 +116,80 @@ qSlicerSubjectHierarchyTransformsPlugin::qSlicerSubjectHierarchyTransformsPlugin
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyTransformsPlugin::~qSlicerSubjectHierarchyTransformsPlugin()
 {
+}
+
+//----------------------------------------------------------------------------
+double qSlicerSubjectHierarchyTransformsPlugin::canReparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID)const
+{
+  if (!itemID || !parentItemID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid input item";
+    return 0.0;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return 0.0;
+    }
+
+  vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(shNode->GetItemDataNode(parentItemID));
+  if (transformNode)
+    {
+    // If parent item is transform then can reparent
+    return 1.0;
+    }
+
+  return 0.0;
+}
+
+//---------------------------------------------------------------------------
+bool qSlicerSubjectHierarchyTransformsPlugin::reparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID)
+{
+  if (!itemID || !parentItemID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid input item";
+    return false;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return false;
+    }
+
+  vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(shNode->GetItemDataNode(parentItemID));
+  if (!transformNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access transform node from parent item " << parentItemID;
+    return false;
+    }
+
+  // Ask the user if any child node in the branch is transformed with a transform different from the chosen one
+  bool hardenExistingTransforms = true;
+  if (shNode->IsAnyNodeInBranchTransformed(itemID))
+    {
+    QMessageBox::StandardButton answer =
+      QMessageBox::question(NULL, tr("Some nodes in the branch are already transformed"),
+      tr("Do you want to harden all already applied transforms before setting the new one?\n\n"
+      "  Note: If you choose no, then the applied transform will simply be replaced."),
+      QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel,
+      QMessageBox::Yes);
+    if (answer == QMessageBox::No)
+      {
+      hardenExistingTransforms = false;
+      }
+    else if (answer == QMessageBox::Cancel)
+      {
+      return false;
+      }
+    }
+
+  // Transform all items in branch
+  vtkSlicerSubjectHierarchyModuleLogic::TransformBranch(shNode, itemID, transformNode, hardenExistingTransforms);
+
+  // Actual reparenting will never happen, only setting of the transform
+  return false;
 }
 
 //----------------------------------------------------------------------------

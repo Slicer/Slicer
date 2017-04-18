@@ -2598,9 +2598,7 @@ void vtkMRMLSubjectHierarchyNode::SetDisplayVisibilityForBranch(vtkIdType itemID
 
   childDisplayableNodes->InitTraversal();
   std::set<vtkIdType> parentItems;
-  for (int childNodeIndex = 0;
-       childNodeIndex < childDisplayableNodes->GetNumberOfItems();
-       ++childNodeIndex)
+  for (int childNodeIndex = 0; childNodeIndex < childDisplayableNodes->GetNumberOfItems(); ++childNodeIndex)
     {
     vtkMRMLDisplayableNode* displayableNode =
       vtkMRMLDisplayableNode::SafeDownCast(childDisplayableNodes->GetItemAsObject(childNodeIndex));
