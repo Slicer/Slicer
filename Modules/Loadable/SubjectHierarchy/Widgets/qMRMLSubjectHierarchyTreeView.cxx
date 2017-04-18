@@ -82,6 +82,7 @@ public:
   vtkIdType RootItemID;
 
   bool ContextMenuEnabled;
+  bool EditActionVisible;
 
   QMenu* NodeMenu;
   QAction* RenameAction;
@@ -116,6 +117,7 @@ qMRMLSubjectHierarchyTreeViewPrivate::qMRMLSubjectHierarchyTreeViewPrivate(qMRML
   , ShowRootItem(false)
   , RootItemID(vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   , ContextMenuEnabled(true)
+  , EditActionVisible(true)
   , RenameAction(NULL)
   , DeleteAction(NULL)
   , EditAction(NULL)
@@ -533,6 +535,20 @@ void qMRMLSubjectHierarchyTreeView::setContextMenuEnabled(bool enabled)
 }
 
 //--------------------------------------------------------------------------
+bool qMRMLSubjectHierarchyTreeView::editMenuActionVisible()const
+{
+  Q_D(const qMRMLSubjectHierarchyTreeView);
+  return d->EditActionVisible;
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::setEditMenuActionVisible(bool visible)
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  d->EditActionVisible = visible;
+}
+
+//--------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeView::setAttributeFilter(const QString& attributeName, const QVariant& attributeValue/*=QVariant()*/)
 {
   this->sortFilterProxyModel()->setAttributeNameFilter(attributeName);
@@ -832,7 +848,7 @@ void qMRMLSubjectHierarchyTreeView::populateContextMenuForItem(vtkIdType itemID)
     }
   else
     {
-    d->EditAction->setVisible(true);
+    d->EditAction->setVisible(d->EditActionVisible);
     d->SelectPluginSubMenu->menuAction()->setVisible(true);
     }
 

@@ -55,6 +55,8 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyTreeV
   Q_PROPERTY(bool highlightReferencedItems READ highlightReferencedItems WRITE setHighlightReferencedItems)
   /// Flag determining whether context menu is enabled
   Q_PROPERTY(bool contextMenuEnabled READ contextMenuEnabled WRITE setContextMenuEnabled)
+  /// This property controls whether the Edit properties context menu action is visible. Visible by default
+  Q_PROPERTY(bool editMenuActionVisible READ editMenuActionVisible WRITE setEditMenuActionVisible)
 
 public:
   typedef QTreeView Superclass;
@@ -76,6 +78,9 @@ public:
 
   bool contextMenuEnabled()const;
   void setContextMenuEnabled(bool enabled);
+
+  bool editMenuActionVisible()const;
+  void setEditMenuActionVisible(bool visible);
 
   /// Set attribute filter that allows showing only items that have the specified attribute and their parents.
   /// \param attributeName Name of the attribute by which the items are filtered
