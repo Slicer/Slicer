@@ -189,6 +189,7 @@ void qSlicerScalarVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode
                              volumeNode->GetImageData()->GetPointData() ?
                              volumeNode->GetImageData()->GetPointData()->GetScalars() :
                              0);
+  d->Histogram->setNumberOfBins(1000);
   d->Histogram->build();
   this->setEnabled(volumeNode != 0);
 
