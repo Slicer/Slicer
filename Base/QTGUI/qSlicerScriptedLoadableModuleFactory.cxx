@@ -43,6 +43,24 @@
 //----------------------------------------------------------------------------
 bool ctkFactoryScriptedItem::load()
 {
+#ifdef Slicer_USE_PYTHONQT
+  if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
+    {
+    // By convention, if the module is not embedded, "<MODULEPATH>" will be appended to PYTHONPATH
+    if (!qSlicerCoreApplication::application()->isEmbeddedModule(this->path()))
+      {
+      QDir modulePathWithoutIntDir = QFileInfo(this->path()).dir();
+      QString intDir = qSlicerCoreApplication::application()->intDir();
+      if (intDir ==  modulePathWithoutIntDir.dirName())
+        {
+        modulePathWithoutIntDir.cdUp();
+        }
+      qSlicerCorePythonManager * pythonManager = qSlicerCoreApplication::application()->corePythonManager();
+      pythonManager->appendPythonPaths(QStringList() << modulePathWithoutIntDir.absolutePath());
+      }
+    }
+#endif
+
   return true;
 }
 
@@ -58,24 +76,6 @@ qSlicerAbstractCoreModule* ctkFactoryScriptedItem::instanciator()
   qSlicerCoreApplication * app = qSlicerCoreApplication::application();
   module->setInstalled(qSlicerUtils::isPluginInstalled(this->path(), app->slicerHome()));
   module->setBuiltIn(qSlicerUtils::isPluginBuiltIn(this->path(), app->slicerHome()));
-
-#ifdef Slicer_USE_PYTHONQT
-  if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
-    {
-    // By convention, if the module is not embedded, "<MODULEPATH>" will be appended to PYTHONPATH
-    if (!qSlicerCoreApplication::application()->isEmbeddedModule(module->path()))
-      {
-      QDir modulePathWithoutIntDir = QFileInfo(module->path()).dir();
-      QString intDir = qSlicerCoreApplication::application()->intDir();
-      if (intDir ==  modulePathWithoutIntDir.dirName())
-        {
-        modulePathWithoutIntDir.cdUp();
-        }
-      qSlicerCorePythonManager * pythonManager = qSlicerCoreApplication::application()->corePythonManager();
-      pythonManager->appendPythonPaths(QStringList() << modulePathWithoutIntDir.absolutePath());
-      }
-    }
-#endif
 
   bool ret = module->setPythonSource(this->path());
   if (!ret)
