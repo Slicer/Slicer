@@ -68,7 +68,7 @@ vtkIntArray* vtkTopologicalHierarchy::GetOutputLevels()
 //----------------------------------------------------------------------------
 bool vtkTopologicalHierarchy::Contains(vtkPolyData* polyOut, vtkPolyData* polyIn)
 {
-  if (!polyOut || !polyOut)
+  if (!polyIn || !polyOut)
     {
     vtkErrorMacro("Contains: Empty input parameters!");
     return false;
