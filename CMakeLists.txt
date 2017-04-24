@@ -987,6 +987,7 @@ configure_file(
   ${Slicer_SOURCE_DIR}/CMake/SlicerConfigVersion.cmake.in
   ${Slicer_BINARY_DIR}/SlicerConfigVersion.cmake @ONLY)
 
+set(Slicer_EXTENSION_GENERATE_CONFIG ${Slicer_SOURCE_DIR}/CMake/SlicerExtensionGenerateConfig.cmake)
 set(Slicer_EXTENSION_CPACK ${Slicer_SOURCE_DIR}/CMake/SlicerExtensionCPack.cmake)
 
 

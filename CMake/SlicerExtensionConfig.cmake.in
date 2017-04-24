@@ -1,0 +1,41 @@
+#
+# This file makes available modules implemented in this extension to other extensions.
+#
+
+@EXTENSION_SOURCE_DIR_CONFIG@
+
+@EXTENSION_CUSTOM_CONFIG@
+
+# --------------------------------------------------------------------------
+# Include directories
+
+# Extension include directories for module
+@EXTENSION_INCLUDE_MODULE_DIRS_CONFIG@
+
+# Extension include directories for module logic
+@EXTENSION_INCLUDE_MODULE_LOGIC_DIRS_CONFIG@
+
+# Extension include directories for module mrml
+@EXTENSION_INCLUDE_MODULE_MRML_DIRS_CONFIG@
+
+# Extension include directories for module Widget
+@EXTENSION_INCLUDE_MODULE_WIDGET_DIRS_CONFIG@
+
+# Extension Module logic include file directories.
+set(@EXTENSION_NAME@_ModuleLogic_INCLUDE_DIRS "@EXTENSION_ModuleLogic_INCLUDE_DIRS_CONFIG@"
+  CACHE INTERNAL "Extension Module logic includes" FORCE)
+
+# Extension Module MRML include file directories.
+set(@EXTENSION_NAME@_ModuleMRML_INCLUDE_DIRS "@EXTENSION_ModuleMRML_INCLUDE_DIRS_CONFIG@"
+  CACHE INTERNAL "Extension Module MRML includes" FORCE)
+
+# Extension Module Widgets include file directories.
+set(@EXTENSION_NAME@_ModuleWidgets_INCLUDE_DIRS "@EXTENSION_ModuleWidgets_INCLUDE_DIRS_CONFIG@"
+  CACHE INTERNAL "Extension Module widgets includes" FORCE)
+
+# --------------------------------------------------------------------------
+# Target definitions
+
+if(EXISTS "@EXTENSION_TARGETS_FILE@")
+  include("@EXTENSION_TARGETS_FILE@")
+endif()
