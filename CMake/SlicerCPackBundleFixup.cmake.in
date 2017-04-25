@@ -145,7 +145,7 @@ function(fixup_bundle_with_plugins app)
     endif()
   endforeach()
 
-  set(candiates_pattern
+  set(candidates_pattern
     "${app_dir}/Contents/@Slicer_ITKFACTORIES_DIR@/*Plugin.dylib"
     "${app_dir}/Contents/@Slicer_QtPlugins_DIR@/designer/*Plugins.so"
     "${app_dir}/Contents/@Slicer_QtPlugins_DIR@/designer/*.dylib"
@@ -161,19 +161,19 @@ function(fixup_bundle_with_plugins app)
 
   set(Slicer_BUILD_QTLOADABLEMODULES "@Slicer_BUILD_QTLOADABLEMODULES@")
   if(Slicer_BUILD_QTLOADABLEMODULES)
-    list(APPEND candiates_pattern
+    list(APPEND candidates_pattern
       "${app_dir}/Contents/@Slicer_QTLOADABLEMODULES_LIB_DIR@/libq*Module${suffix}"
       "${app_dir}/Contents/@Slicer_QTLOADABLEMODULES_LIB_DIR@/*Python.so"
       )
     if(Slicer_USE_PYTHONQT)
-      list(APPEND candiates_pattern
+      list(APPEND candidates_pattern
         "${app_dir}/Contents/@Slicer_QTLOADABLEMODULES_LIB_DIR@/qSlicer*PythonQt.so"
         )
     endif()
   endif()
 
   if(Slicer_USE_PYTHONQT)
-    list(APPEND candiates_pattern
+    list(APPEND candidates_pattern
       "${app_dir}/Contents/@Slicer_LIB_DIR@/*Python.so"
       "${app_dir}/Contents/@Slicer_LIB_DIR@/*PythonQt.so"
       # Since both core python and numpy module have no dependency beside of
@@ -185,7 +185,7 @@ function(fixup_bundle_with_plugins app)
 
   set(Slicer_USE_PYTHONQT_WITH_OPENSSL "@Slicer_USE_PYTHONQT_WITH_OPENSSL@")
   if(Slicer_USE_PYTHONQT_WITH_OPENSSL)
-    list(APPEND candiates_pattern
+    list(APPEND candidates_pattern
       "${app_dir}/Contents/lib/Python/${PYTHON_STDLIB_SUBDIR}/lib-dynload/_hashlib.so"
       "${app_dir}/Contents/lib/Python/${PYTHON_STDLIB_SUBDIR}/lib-dynload/_ssl.so"
       )
@@ -193,7 +193,7 @@ function(fixup_bundle_with_plugins app)
 
   set(Slicer_USE_PYTHONQT_WITH_TCL "@Slicer_USE_PYTHONQT_WITH_TCL@")
   if(Slicer_USE_PYTHONQT_WITH_TCL)
-    list(APPEND candiates_pattern
+    list(APPEND candidates_pattern
       "${app_dir}/Contents/lib/Python/${PYTHON_STDLIB_SUBDIR}/lib-dynload/_tkinter.so"
       "${app_dir}/Contents/lib/TclTk/lib/lib*${suffix}"
       )
@@ -201,13 +201,13 @@ function(fixup_bundle_with_plugins app)
 
   set(Slicer_USE_SimpleITK "@Slicer_USE_SimpleITK@")
   if(Slicer_USE_SimpleITK)
-    list(APPEND candiates_pattern
+    list(APPEND candidates_pattern
       "${app_dir}/Contents/lib/Python/${PYTHON_SITE_PACKAGES_SUBDIR}/SimpleITK*/_SimpleITK.so"
       )
   endif()
 
   set(libs "")
-  file(GLOB_RECURSE candidates ${candiates_pattern})
+  file(GLOB_RECURSE candidates ${candidates_pattern})
   foreach(lib ${candidates})
     if(NOT lib MATCHES "(_debug|d[0-9])${suffix}$")
       set(libs ${libs} "${lib}")

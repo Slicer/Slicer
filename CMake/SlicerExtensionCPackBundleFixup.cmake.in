@@ -287,26 +287,26 @@ function(fixup_slicer_extension)
   set(suffix "@CMAKE_SHARED_LIBRARY_SUFFIX@")
   set(exepath "${ext_dir}/Contents/MacOS")
 
-  set(candiates_pattern
+  set(candidates_pattern
     )
 
   set(Slicer_USE_PYTHONQT "@Slicer_USE_PYTHONQT@")
 
   set(Slicer_BUILD_QTLOADABLEMODULES "@Slicer_BUILD_QTLOADABLEMODULES@")
   if(Slicer_BUILD_QTLOADABLEMODULES)
-    list(APPEND candiates_pattern
+    list(APPEND candidates_pattern
       "${ext_dir}/Contents/@Slicer_BUNDLE_EXTENSIONS_LOCATION@@Slicer_QTLOADABLEMODULES_LIB_DIR@/libq*Module${suffix}"
       "${ext_dir}/Contents/@Slicer_BUNDLE_EXTENSIONS_LOCATION@@Slicer_QTLOADABLEMODULES_LIB_DIR@/*Python.so"
       )
     if(Slicer_USE_PYTHONQT)
-      list(APPEND candiates_pattern
+      list(APPEND candidates_pattern
         "${ext_dir}/Contents/@Slicer_BUNDLE_EXTENSIONS_LOCATION@@Slicer_QTLOADABLEMODULES_LIB_DIR@/qSlicer*PythonQt.so"
         )
     endif()
   endif()
 
   set(libs "")
-  file(GLOB_RECURSE candidates ${candiates_pattern})
+  file(GLOB_RECURSE candidates ${candidates_pattern})
   foreach(lib ${candidates})
     if(NOT lib MATCHES "(_debug|d[0-9])${suffix}$")
       set(libs ${libs} "${lib}")
