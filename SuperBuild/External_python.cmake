@@ -284,6 +284,11 @@ mark_as_superbuild(
   )
 
 mark_as_superbuild(
+  VARS ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj}
+  LABELS "USE_SYSTEM"
+  )
+
+mark_as_superbuild(
   VARS
     PYTHON_EXECUTABLE:FILEPATH
     PYTHON_INCLUDE_DIR:PATH

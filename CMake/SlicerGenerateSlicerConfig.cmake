@@ -150,6 +150,15 @@ if(Slicer_USE_PYTHONQT)
   list(APPEND Slicer_EXTERNAL_PROJECTS_NO_USEFILE_CONFIG PythonLibs PythonInterp)
 endif()
 
+# Configure Slicer_USE_SYSTEM_* variables
+set(Slicer_EP_USE_SYSTEM_VARS_CONFIG "")
+foreach(varname ${Slicer_EP_LABEL_USE_SYSTEM})
+  set(Slicer_EP_USE_SYSTEM_VARS_CONFIG
+    "${Slicer_EP_USE_SYSTEM_VARS_CONFIG}
+set(Slicer_USE_SYSTEM_${varname} \"${Slicer_USE_SYSTEM_${varname}}\")"
+    )
+endforeach()
+
 if(Slicer_BUILD_CLI_SUPPORT)
   set(SlicerExecutionModel_CLI_LIBRARY_WRAPPER_CXX_CONFIG ${SlicerExecutionModel_CLI_LIBRARY_WRAPPER_CXX})
   set(SlicerExecutionModel_EXTRA_INCLUDE_DIRECTORIES_CONFIG ${SlicerExecutionModel_EXTRA_INCLUDE_DIRECTORIES})
