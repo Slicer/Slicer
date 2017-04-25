@@ -154,6 +154,10 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   # Mac - teem/src/nrrd/superset.c:433: warning: format '%d' expects type 'int', but argument 6 has type 'ptrdiff_t'
   "teem.src.nrrd.superset.c.*warning"
 
+  # Python
+  "dist.py.*UserWarning.*Unknown distribution option.*"
+  "dist.py.*UserWarning.*Normalizing.*"
+
   # Python - Windows
   "Modules.zlib.gzio"
   "Modules._ctypes.libffi_msvc.ffi.*warning C4018"
