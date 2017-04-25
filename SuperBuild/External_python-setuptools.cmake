@@ -33,6 +33,9 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   file(WRITE ${_install_script}
 "include(\"${_env_script}\")
 set(${proj}_WORKING_DIR \"${CMAKE_BINARY_DIR}/${proj}\")
+# If any, remove lock file
+set(lock_file \"${python_DIR}/${PYTHON_SITE_PACKAGES_SUBDIR}/easy-install.pth.lock\")
+file(REMOVE \${lock_file})
 ExternalProject_Execute(${proj} \"bootstrap\" \"${PYTHON_EXECUTABLE}\" bootstrap.py)
 ExternalProject_Execute(${proj} \"easy_install\" \"${PYTHON_EXECUTABLE}\" setup.py easy_install --always-unzip .)
 ")
