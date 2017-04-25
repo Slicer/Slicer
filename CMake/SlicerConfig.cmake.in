@@ -296,9 +296,9 @@ endif()
 
 # ThirdParty: Corresponds to superbuild projects built
 # in Slicer extension.
-set(Slicer_THIRDPARTY_BIN_DIR ${Slicer_BIN_DIR})
-set(Slicer_THIRDPARTY_LIB_DIR ${Slicer_LIB_DIR})
-set(Slicer_THIRDPARTY_SHARE_DIR  ${Slicer_SHARE_DIR})
+set(Slicer_THIRDPARTY_BIN_DIR "@Slicer_THIRDPARTY_BIN_DIR@")
+set(Slicer_THIRDPARTY_LIB_DIR "@Slicer_THIRDPARTY_LIB_DIR@")
+set(Slicer_THIRDPARTY_SHARE_DIR  "@Slicer_THIRDPARTY_SHARE_DIR@")
 
 # Python stdlib and site-package sub-directories
 set(PYTHON_STDLIB_SUBDIR "@PYTHON_STDLIB_SUBDIR@")

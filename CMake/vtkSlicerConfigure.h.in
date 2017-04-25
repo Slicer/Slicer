@@ -100,6 +100,11 @@
 #  define Slicer_QTSCRIPTEDMODULES_SHARE_DIR "@Slicer_QTSCRIPTEDMODULES_SHARE_DIR@"
 #endif //Slicer_USE_PYTHONQT
 
+// ThirdParty: Corresponds to superbuild projects built
+// in Slicer extension.
+#define Slicer_THIRDPARTY_BIN_DIR "@Slicer_THIRDPARTY_BIN_DIR@"
+#define Slicer_THIRDPARTY_LIB_DIR "@Slicer_THIRDPARTY_LIB_DIR@"
+
 #cmakedefine Slicer_USE_PYTHONQT_WITH_TCL
 #ifdef Slicer_USE_PYTHONQT_WITH_TCL
 #  define Slicer_TCL_TK_VERSION_DOT "@TCL_TK_VERSION_DOT@"
