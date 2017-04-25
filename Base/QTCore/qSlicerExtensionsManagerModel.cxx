@@ -728,6 +728,7 @@ QStringList qSlicerExtensionsManagerModelPrivate::extensionPythonPaths(const QSt
   return appendToPathList(QStringList(), QStringList()
                           << path + "/" + QString(Slicer_QTSCRIPTEDMODULES_LIB_DIR).replace(Slicer_VERSION, this->SlicerVersion)
                           << path + "/" + QString(Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR).replace(Slicer_VERSION, this->SlicerVersion)
+                          << path + "/" + QString(PYTHON_SITE_PACKAGES_SUBDIR)
                           );
 }
 #endif
