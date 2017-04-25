@@ -71,6 +71,11 @@ if(NOT TARGET ConfigureAdditionalLauncherSettings AND _configure_additional_laun
       )
   endif()
 
+  # External projects - library paths
+  foreach(varname IN LISTS ${SUPERBUILD_TOPLEVEL_PROJECT}_EP_LABEL_LIBRARY_PATHS_LAUNCHER_BUILD)
+    list(APPEND EXTENSION_LIBRARY_PATHS_BUILD ${${varname}})
+  endforeach()
+
   #-----------------------------------------------------------------------------
   # PATHS
   #-----------------------------------------------------------------------------
@@ -86,12 +91,25 @@ if(NOT TARGET ConfigureAdditionalLauncherSettings AND _configure_additional_laun
       )
   endif()
 
+  # External projects - paths
+  foreach(varname IN LISTS ${SUPERBUILD_TOPLEVEL_PROJECT}_EP_LABEL_PATHS_LAUNCHER_BUILD)
+    list(APPEND EXTENSION_PATHS_BUILD ${${varname}})
+  endforeach()
+
   #-----------------------------------------------------------------------------
   # ENVVARS
   #-----------------------------------------------------------------------------
-  set(EXTENSION_ENVVARS_BUILD
-    "PYTHONPATH"
-    )
+
+  set(EXTENSION_LAUNCHER_SETTINGS_ENVVARS)
+
+  # External projects - environment variables
+  foreach(varname IN LISTS ${SUPERBUILD_TOPLEVEL_PROJECT}_EP_LABEL_ENVVARS_LAUNCHER_BUILD)
+    list(APPEND EXTENSION_LAUNCHER_SETTINGS_ENVVARS ${${varname}})
+  endforeach()
+
+  #-----------------------------------------------------------------------------
+  # PATH ENVVARS
+  #-----------------------------------------------------------------------------
 
   set(EXTENSION_PYTHONPATH_BUILD
     ${CMAKE_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}
@@ -104,6 +122,15 @@ if(NOT TARGET ConfigureAdditionalLauncherSettings AND _configure_additional_laun
       ${EXTENSION_SUPERBUILD_BINARY_DIR}/${Slicer_THIRDPARTY_LIB_DIR}/\${CMAKE_CFG_INTDIR}
       )
   endif()
+
+  # External projects - pythonpath
+  foreach(varname IN LISTS ${SUPERBUILD_TOPLEVEL_PROJECT}_EP_LABEL_PYTHONPATH_LAUNCHER_BUILD)
+    list(APPEND EXTENSION_PYTHONPATH_BUILD ${${varname}})
+  endforeach()
+
+  set(EXTENSION_PATH_ENVVARS_BUILD
+    "PYTHONPATH"
+    )
 
   #-----------------------------------------------------------------------------
   #-----------------------------------------------------------------------------
@@ -122,11 +149,19 @@ if(NOT TARGET ConfigureAdditionalLauncherSettings AND _configure_additional_laun
     "${EXTENSION_PATHS_BUILD}" "path" EXTENSION_LAUNCHER_SETTINGS_PATHS)
 
   # env. variables
-  set(EXTENSION_LAUNCHER_SETTINGS_ADDITIONAL_PATHS)
+  set(EXTENSION_LAUNCHER_SETTINGS_ENVVARS)
   foreach(envvar ${EXTENSION_ENVVARS_BUILD})
+    set(EXTENSION_LAUNCHER_SETTINGS_ENVVARS "${EXTENSION_LAUNCHER_SETTINGS_ENVVARS}${envvar}\n")
+  endforeach()
+
+  # paths env. variables
+  string(REPLACE ";" "," EXTENSION_LAUNCHER_SETTINGS_PATH_ENVVARS "${EXTENSION_PATH_ENVVARS_BUILD}")
+
+  set(EXTENSION_LAUNCHER_SETTINGS_ADDITIONAL_PATH_ENVVARS)
+  foreach(envvar ${EXTENSION_PATH_ENVVARS_BUILD})
     set(cmake_varname EXTENSION_${envvar}_BUILD)
     ctkAppLauncherListToQtSettingsArray("${${cmake_varname}}" "path" _extension_paths_${envvar})
-    set(EXTENSION_LAUNCHER_SETTINGS_ADDITIONAL_PATHS "${EXTENSION_LAUNCHER_SETTINGS_ADDITIONAL_PATHS}
+    set(EXTENSION_LAUNCHER_SETTINGS_ADDITIONAL_PATH_ENVVARS "${EXTENSION_LAUNCHER_SETTINGS_ADDITIONAL_PATH_ENVVARS}
 
 [${envvar}]
 ${_extension_paths_${envvar}}")
@@ -137,13 +172,19 @@ ${_extension_paths_${envvar}}")
   file(WRITE ${_additional_settings_configure_script}
   "
   file(WRITE ${Slicer_ADDITIONAL_LAUNCHER_SETTINGS_FILE}
-\"[LibraryPaths]
+\"[General]
+additionalPathVariables=${EXTENSION_LAUNCHER_SETTINGS_PATH_ENVVARS}
+
+[LibraryPaths]
 ${EXTENSION_LAUNCHER_SETTINGS_LIBRARY_PATHS}
 
 [Paths]
 ${EXTENSION_LAUNCHER_SETTINGS_PATHS}
 
-${EXTENSION_LAUNCHER_SETTINGS_ADDITIONAL_PATHS}
+[EnvironmentVariables]
+${EXTENSION_LAUNCHER_SETTINGS_ENVVARS}
+
+${EXTENSION_LAUNCHER_SETTINGS_ADDITIONAL_PATH_ENVVARS}
 \")
 ")
 
