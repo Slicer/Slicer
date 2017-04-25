@@ -60,6 +60,10 @@ if(Slicer_USE_CTKAPPLAUNCHER)
     ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
   endif()
 
-  mark_as_superbuild(CTKAPPLAUNCHER_DIR:PATH)
+  mark_as_superbuild(
+    VARS
+      CTKAPPLAUNCHER_DIR:PATH
+    LABELS "FIND_PACKAGE"
+    )
 
 endif()

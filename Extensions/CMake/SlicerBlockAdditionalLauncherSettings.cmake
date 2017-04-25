@@ -18,43 +18,102 @@ if(NOT TARGET ConfigureAdditionalLauncherSettings)
   list(FIND SEM_LAUNCH_COMMAND "--launch" launch_index)
   list(INSERT SEM_LAUNCH_COMMAND ${launch_index} ${Slicer_ADDITIONAL_LAUNCHER_SETTINGS})
 
-  # Configure script
+  include(${CTKAPPLAUNCHER_DIR}/CMake/ctkAppLauncher.cmake)
 
-  # Third party libraries may live at the superbuild top level, add them to
-  # the paths lists and adjust the number of paths size, otherwise just use
-  # the local paths
-  if (DEFINED EXTENSION_SUPERBUILD_BINARY_DIR)
-    set(THIRD_PARTY_LIBRARYPATHS "3\\\\path=${EXTENSION_SUPERBUILD_BINARY_DIR}/${Slicer_THIRDPARTY_LIB_DIR}/\${CMAKE_CFG_INTDIR}
-size=3")
-    set(THIRD_PARTY_BINPATHS "3\\\\path=${EXTENSION_SUPERBUILD_BINARY_DIR}/${Slicer_THIRDPARTY_BIN_DIR}/\${CMAKE_CFG_INTDIR}
-size=3")
-    set(THIRD_PARTY_PYTHONPATHS "4\\\\path=${EXTENSION_SUPERBUILD_BINARY_DIR}/${Slicer_THIRDPARTY_LIB_DIR}/\${CMAKE_CFG_INTDIR}
-size=4")
-  else()
-    set(THIRD_PARTY_LIBRARYPATHS "size=2")
-    set(THIRD_PARTY_BINPATHS "size=2")
-    set(THIRD_PARTY_PYTHONPATHS "size=3")
+  #-----------------------------------------------------------------------------
+  #-----------------------------------------------------------------------------
+  # Settings specific to the build tree.
+  #-----------------------------------------------------------------------------
+  #-----------------------------------------------------------------------------
+
+  #-----------------------------------------------------------------------------
+  # LIBRARY_PATHS
+  #-----------------------------------------------------------------------------
+  set(EXTENSION_LIBRARY_PATHS_BUILD
+    ${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_LIB_DIR}/\${CMAKE_CFG_INTDIR}
+    ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}/\${CMAKE_CFG_INTDIR}
+    )
+
+  # Third party libraries may live at the superbuild top level.
+  if(DEFINED EXTENSION_SUPERBUILD_BINARY_DIR)
+    list(APPEND EXTENSION_LIBRARY_PATHS_BUILD
+      ${EXTENSION_SUPERBUILD_BINARY_DIR}/${Slicer_THIRDPARTY_LIB_DIR}/\${CMAKE_CFG_INTDIR}
+      )
   endif()
 
+  #-----------------------------------------------------------------------------
+  # PATHS
+  #-----------------------------------------------------------------------------
+  set(EXTENSION_PATHS_BUILD
+    ${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_BIN_DIR}/\${CMAKE_CFG_INTDIR}
+    ${CMAKE_BINARY_DIR}/${Slicer_THIRDPARTY_BIN_DIR}/\${CMAKE_CFG_INTDIR}
+    )
+
+  # Third party libraries may live at the superbuild top level.
+  if(DEFINED EXTENSION_SUPERBUILD_BINARY_DIR)
+    list(APPEND EXTENSION_PATHS_BUILD
+      ${EXTENSION_SUPERBUILD_BINARY_DIR}/${Slicer_THIRDPARTY_BIN_DIR}/\${CMAKE_CFG_INTDIR}
+      )
+  endif()
+
+  #-----------------------------------------------------------------------------
+  # ENVVARS
+  #-----------------------------------------------------------------------------
+  set(EXTENSION_ENVVARS_BUILD
+    "PYTHONPATH"
+    )
+
+  set(EXTENSION_PYTHONPATH_BUILD
+    ${CMAKE_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}
+    ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}/\${CMAKE_CFG_INTDIR}
+    ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR}
+    )
+  # Third party libraries may live at the superbuild top level.
+  if(DEFINED EXTENSION_SUPERBUILD_BINARY_DIR)
+    list(APPEND EXTENSION_PYTHONPATH_BUILD
+      ${EXTENSION_SUPERBUILD_BINARY_DIR}/${Slicer_THIRDPARTY_LIB_DIR}/\${CMAKE_CFG_INTDIR}
+      )
+  endif()
+
+  #-----------------------------------------------------------------------------
+  #-----------------------------------------------------------------------------
+  # Generate script allowing to configure AdditionalLauncherSettings.ini at build time
+  #-----------------------------------------------------------------------------
+  #-----------------------------------------------------------------------------
+
+  # library paths
+  set(EXTENSION_LAUNCHER_SETTINGS_LIBRARY_PATHS)
+  ctkAppLauncherListToQtSettingsArray(
+    "${EXTENSION_LIBRARY_PATHS_BUILD}" "path" EXTENSION_LAUNCHER_SETTINGS_LIBRARY_PATHS)
+
+  # paths
+  set(EXTENSION_LAUNCHER_SETTINGS_PATHS)
+  ctkAppLauncherListToQtSettingsArray(
+    "${EXTENSION_PATHS_BUILD}" "path" EXTENSION_LAUNCHER_SETTINGS_PATHS)
+
+  # env. variables
+  set(EXTENSION_LAUNCHER_SETTINGS_ADDITIONAL_PATHS)
+  foreach(envvar ${EXTENSION_ENVVARS_BUILD})
+    set(cmake_varname EXTENSION_${envvar}_BUILD)
+    ctkAppLauncherListToQtSettingsArray("${${cmake_varname}}" "path" _extension_paths_${envvar})
+    set(EXTENSION_LAUNCHER_SETTINGS_ADDITIONAL_PATHS "${EXTENSION_LAUNCHER_SETTINGS_ADDITIONAL_PATHS}
+
+[${envvar}]
+${_extension_paths_${envvar}}")
+  endforeach()
+
+  # Write script
   set(_additional_settings_configure_script ${CMAKE_CURRENT_BINARY_DIR}/AdditionalLauncherSettings-configure.cmake)
   file(WRITE ${_additional_settings_configure_script}
   "
   file(WRITE ${Slicer_ADDITIONAL_LAUNCHER_SETTINGS_FILE}
 \"[LibraryPaths]
-1\\\\path=${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_LIB_DIR}/\${CMAKE_CFG_INTDIR}
-2\\\\path=${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}/\${CMAKE_CFG_INTDIR}
-${THIRD_PARTY_LIBRARYPATHS}
+${EXTENSION_LAUNCHER_SETTINGS_LIBRARY_PATHS}
 
 [Paths]
-1\\\\path=${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_BIN_DIR}/\${CMAKE_CFG_INTDIR}
-2\\\\path=${CMAKE_BINARY_DIR}/${Slicer_THIRDPARTY_BIN_DIR}/\${CMAKE_CFG_INTDIR}
-${THIRD_PARTY_BINPATHS}
+${EXTENSION_LAUNCHER_SETTINGS_PATHS}
 
-[PYTHONPATH]
-1\\\\path=${CMAKE_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}
-2\\\\path=${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}/\${CMAKE_CFG_INTDIR}
-3\\\\path=${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR}
-${THIRD_PARTY_PYTHONPATHS}
+${EXTENSION_LAUNCHER_SETTINGS_ADDITIONAL_PATHS}
 \")
 ")
 
