@@ -64,7 +64,7 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
     endif()
     # Python extensions
     if(item MATCHES "lib-dynload/[^/]+\\.so$")
-      set(path "@fixup_path@/lib/Python/lib/python2.7/lib-dynload")
+      set(path "@fixup_path@/lib/Python/${PYTHON_STDLIB_SUBDIR}/lib-dynload")
     endif()
   endif()
 
@@ -84,7 +84,7 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
   if(Slicer_USE_SimpleITK)
     if (item MATCHES  "site-packages/(SimpleITK.*)/_SimpleITK\\.so" )
       # CMAKE_MATCH_1 is the over complicated egg path
-      set(python_sys_site_path "@fixup_path@/lib/Python/lib/python2.7/site-packages")
+      set(python_sys_site_path "@fixup_path@/lib/Python/${PYTHON_SITE_PACKAGES_SUBDIR}")
       set(path "${python_sys_site_path}/${CMAKE_MATCH_1}/")
     endif()
   endif()
@@ -178,23 +178,23 @@ function(fixup_bundle_with_plugins app)
       "${app_dir}/Contents/@Slicer_LIB_DIR@/*PythonQt.so"
       # Since both core python and numpy module have no dependency beside of
       # system library, there is no need to fix them.
-      # "${app_dir}/Contents/lib/Python/lib/python2.7/site-packages/*.so"
-      #"${app_dir}/Contents/lib/Python/lib/python2.7/lib-dynload/*.so"
+      # "${app_dir}/Contents/lib/Python/${PYTHON_SITE_PACKAGES_SUBDIR}/*.so"
+      #"${app_dir}/Contents/lib/Python/${PYTHON_STDLIB_SUBDIR}/lib-dynload/*.so"
       )
   endif()
 
   set(Slicer_USE_PYTHONQT_WITH_OPENSSL "@Slicer_USE_PYTHONQT_WITH_OPENSSL@")
   if(Slicer_USE_PYTHONQT_WITH_OPENSSL)
     list(APPEND candiates_pattern
-      "${app_dir}/Contents/lib/Python/lib/python2.7/lib-dynload/_hashlib.so"
-      "${app_dir}/Contents/lib/Python/lib/python2.7/lib-dynload/_ssl.so"
+      "${app_dir}/Contents/lib/Python/${PYTHON_STDLIB_SUBDIR}/lib-dynload/_hashlib.so"
+      "${app_dir}/Contents/lib/Python/${PYTHON_STDLIB_SUBDIR}/lib-dynload/_ssl.so"
       )
   endif()
 
   set(Slicer_USE_PYTHONQT_WITH_TCL "@Slicer_USE_PYTHONQT_WITH_TCL@")
   if(Slicer_USE_PYTHONQT_WITH_TCL)
     list(APPEND candiates_pattern
-      "${app_dir}/Contents/lib/Python/lib/python2.7/lib-dynload/_tkinter.so"
+      "${app_dir}/Contents/lib/Python/${PYTHON_STDLIB_SUBDIR}/lib-dynload/_tkinter.so"
       "${app_dir}/Contents/lib/TclTk/lib/lib*${suffix}"
       )
   endif()
@@ -202,7 +202,7 @@ function(fixup_bundle_with_plugins app)
   set(Slicer_USE_SimpleITK "@Slicer_USE_SimpleITK@")
   if(Slicer_USE_SimpleITK)
     list(APPEND candiates_pattern
-      "${app_dir}/Contents/lib/Python/lib/python2.7/site-packages/SimpleITK*/_SimpleITK.so"
+      "${app_dir}/Contents/lib/Python/${PYTHON_SITE_PACKAGES_SUBDIR}/SimpleITK*/_SimpleITK.so"
       )
   endif()
 

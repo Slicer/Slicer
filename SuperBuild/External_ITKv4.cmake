@@ -60,6 +60,11 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   if(Slicer_BUILD_ITKPython)
 
+    # Sanity checks
+    if("${PYTHON_SITE_PACKAGES_SUBDIR}" STREQUAL "")
+      message(FATAL_ERROR "PYTHON_SITE_PACKAGES_SUBDIR CMake variable is expected to be set")
+    endif()
+
     # Custom name for the components associated with ITK
     # wrapping install rules enabling Slicer to optionally
     # package ITK Wrapping in Slicer installer by simply
@@ -67,7 +72,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     set(Slicer_WRAP_ITK_INSTALL_COMPONENT_IDENTIFIER "Wrapping")
     mark_as_superbuild(Slicer_WRAP_ITK_INSTALL_COMPONENT_IDENTIFIER:STRING)
 
-    set(PY_SITE_PACKAGES_PATH lib/Python/${pythonpath_subdir}/site-packages)
+    set(PY_SITE_PACKAGES_PATH lib/Python/${PYTHON_SITE_PACKAGES_SUBDIR})
 
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
       -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}

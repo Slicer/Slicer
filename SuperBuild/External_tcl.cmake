@@ -208,6 +208,17 @@ ExternalProject_Execute(${proj} \"install\" make install)
   set(Slicer_TCL_DIR ${tcl_build})
 
   #-----------------------------------------------------------------------------
+  # Sanity checks
+
+  foreach(varname IN ITEMS
+      PYTHON_STDLIB_SUBDIR
+      )
+    if("${${varname}}" STREQUAL "")
+      message(FATAL_ERROR "${varname} CMake variable is expected to be set")
+    endif()
+  endforeach()
+
+  #-----------------------------------------------------------------------------
   # Launcher setting specific to build tree
 
   # library paths
@@ -224,14 +235,10 @@ ExternalProject_Execute(${proj} \"install\" make install)
     )
 
   set(_pythonhome ${CMAKE_BINARY_DIR}/python-install)
-  set(pythonpath_subdir lib/python2.7)
-  if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    set(pythonpath_subdir Lib)
-  endif()
 
   # pythonpath
   set(${proj}_PYTHONPATH_LAUNCHER_BUILD
-    ${_pythonhome}/${pythonpath_subdir}/lib-tk
+    ${_pythonhome}/${PYTHON_STDLIB_SUBDIR}/lib-tk
     )
   mark_as_superbuild(
     VARS ${proj}_PYTHONPATH_LAUNCHER_BUILD
@@ -265,7 +272,7 @@ ExternalProject_Execute(${proj} \"install\" make install)
 
   # pythonpath
   set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
-    <APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/lib-tk
+    <APPLAUNCHER_DIR>/lib/Python/${PYTHON_STDLIB_SUBDIR}/lib-tk
     )
   mark_as_superbuild(
     VARS ${proj}_PYTHONPATH_LAUNCHER_INSTALLED

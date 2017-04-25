@@ -300,6 +300,10 @@ set(Slicer_THIRDPARTY_BIN_DIR ${Slicer_BIN_DIR})
 set(Slicer_THIRDPARTY_LIB_DIR ${Slicer_LIB_DIR})
 set(Slicer_THIRDPARTY_SHARE_DIR  ${Slicer_SHARE_DIR})
 
+# Python stdlib and site-package sub-directories
+set(PYTHON_STDLIB_SUBDIR "@PYTHON_STDLIB_SUBDIR@")
+set(PYTHON_SITE_PACKAGES_SUBDIR "@PYTHON_SITE_PACKAGES_SUBDIR@")
+
 # Slicer install root
 set(Slicer_INSTALL_ROOT "@Slicer_INSTALL_ROOT@")
 

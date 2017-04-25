@@ -17,6 +17,18 @@ if(PYTHON_ENABLE_SSL)
   list(APPEND ${proj}_DEPENDENCIES OpenSSL)
 endif()
 
+# Python stdlib and site-packages directories
+# Note: These variables are set before the call to "ExternalProject_Include_Dependencies"
+#       to ensure they are defined during the first time this file is included
+#       by ExternalProjectDependency module.
+#       That way, the variable are available in External_tcl.cmake despite the fact
+#       the "tcl" project does NOT directly depend on "python".
+set(PYTHON_STDLIB_SUBDIR lib/python2.7)
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  set(PYTHON_STDLIB_SUBDIR Lib)
+endif()
+set(PYTHON_SITE_PACKAGES_SUBDIR ${PYTHON_STDLIB_SUBDIR}/site-packages)
+
 # Include dependent projects if any
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
@@ -207,17 +219,10 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
     LABELS "PATHS_LAUNCHER_BUILD"
     )
 
-  # pythonpath
-  set(_pythonhome ${CMAKE_BINARY_DIR}/python-install)
-  set(pythonpath_subdir lib/python2.7)
-  if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    set(pythonpath_subdir Lib)
-  endif()
-
   set(${proj}_PYTHONPATH_LAUNCHER_BUILD
-    ${_pythonhome}/${pythonpath_subdir}
-    ${_pythonhome}/${pythonpath_subdir}/lib-dynload
-    ${_pythonhome}/${pythonpath_subdir}/site-packages
+    ${python_DIR}/${PYTHON_STDLIB_SUBDIR}
+    ${python_DIR}/${PYTHON_STDLIB_SUBDIR}/lib-dynload
+    ${python_DIR}/${PYTHON_SITE_PACKAGES_SUBDIR}
     )
   mark_as_superbuild(
     VARS ${proj}_PYTHONPATH_LAUNCHER_BUILD
@@ -249,9 +254,9 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
 
   # pythonpath
   set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
-    <APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}
-    <APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/lib-dynload
-    <APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages
+    <APPLAUNCHER_DIR>/lib/Python/${PYTHON_STDLIB_SUBDIR}
+    <APPLAUNCHER_DIR>/lib/Python/${PYTHON_STDLIB_SUBDIR}/lib-dynload
+    <APPLAUNCHER_DIR>/lib/Python/${PYTHON_SITE_PACKAGES_SUBDIR}
     )
   mark_as_superbuild(
     VARS ${proj}_PYTHONPATH_LAUNCHER_INSTALLED
@@ -271,6 +276,12 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
+
+mark_as_superbuild(
+  VARS
+    PYTHON_STDLIB_SUBDIR:STRING
+    PYTHON_SITE_PACKAGES_SUBDIR:STRING
+  )
 
 mark_as_superbuild(
   VARS

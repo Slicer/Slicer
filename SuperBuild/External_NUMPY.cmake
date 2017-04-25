@@ -89,17 +89,23 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py in
     )
 
   #-----------------------------------------------------------------------------
+  # Sanity checks
+
+  foreach(varname IN ITEMS
+      python_DIR
+      PYTHON_SITE_PACKAGES_SUBDIR
+      )
+    if("${${varname}}" STREQUAL "")
+      message(FATAL_ERROR "${varname} CMake variable is expected to be set")
+    endif()
+  endforeach()
+
+  #-----------------------------------------------------------------------------
   # Launcher setting specific to build tree
 
-  set(_pythonhome ${CMAKE_BINARY_DIR}/python-install)
-  set(pythonpath_subdir lib/python2.7)
-  if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    set(pythonpath_subdir Lib)
-  endif()
-
   set(${proj}_LIBRARY_PATHS_LAUNCHER_BUILD
-    ${_pythonhome}/${pythonpath_subdir}/site-packages/numpy/core
-    ${_pythonhome}/${pythonpath_subdir}/site-packages/numpy/lib
+    ${python_DIR}/${PYTHON_SITE_PACKAGES_SUBDIR}/numpy/core
+    ${python_DIR}/${PYTHON_SITE_PACKAGES_SUBDIR}/numpy/lib
     )
   mark_as_superbuild(
     VARS ${proj}_LIBRARY_PATHS_LAUNCHER_BUILD
@@ -110,8 +116,8 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py in
   # Launcher setting specific to install tree
 
   set(${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED
-    <APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages/numpy/core
-    <APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages/numpy/lib
+    <APPLAUNCHER_DIR>/lib/Python/${PYTHON_SITE_PACKAGES_SUBDIR}/numpy/core
+    <APPLAUNCHER_DIR>/lib/Python/${PYTHON_SITE_PACKAGES_SUBDIR}/numpy/lib
     )
   mark_as_superbuild(
     VARS ${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED

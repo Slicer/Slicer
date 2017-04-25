@@ -3,15 +3,16 @@
 # -------------------------------------------------------------------------
 if(Slicer_USE_PYTHONQT)
 
-  set(python_lib_subdir /Lib/)
-  if(UNIX)
-    set(python_lib_subdir /lib/python2.7/)
-  endif()
+  # Sanity checks
+  foreach(varname IN ITEMS Slicer_SUPERBUILD_DIR PYTHON_STDLIB_SUBDIR)
+    if("${${varname}}" STREQUAL "")
+      message(FATAL_ERROR "${varname} CMake variable is expected to be set")
+    endif()
+  endforeach()
 
-  get_filename_component(SUPER_BUILD_DIR "${Slicer_BINARY_DIR}" PATH)
-  set(PYTHON_DIR "${SUPER_BUILD_DIR}/python-install")
-  if(NOT EXISTS "${PYTHON_DIR}${python_lib_subdir}")
-    message(STATUS "Skipping generation of python install rules - Unexistant directory PYTHON_DIR:${PYTHON_DIR}${python_lib_subdir}")
+  set(PYTHON_DIR "${Slicer_SUPERBUILD_DIR}/python-install")
+  if(NOT EXISTS "${PYTHON_DIR}/${PYTHON_STDLIB_SUBDIR}")
+    message(STATUS "Skipping generation of python install rules - Unexistant directory PYTHON_DIR:${PYTHON_DIR}/${PYTHON_STDLIB_SUBDIR}")
     return()
   endif()
 
@@ -25,8 +26,8 @@ if(Slicer_USE_PYTHONQT)
   endif()
 
   install(
-    DIRECTORY "${PYTHON_DIR}${python_lib_subdir}"
-    DESTINATION ${Slicer_INSTALL_ROOT}lib/Python${python_lib_subdir}
+    DIRECTORY "${PYTHON_DIR}/${PYTHON_STDLIB_SUBDIR}/"
+    DESTINATION "${Slicer_INSTALL_ROOT}lib/Python/${PYTHON_STDLIB_SUBDIR}/"
     COMPONENT Runtime
     USE_SOURCE_PERMISSIONS
     REGEX "lib2to3/" EXCLUDE

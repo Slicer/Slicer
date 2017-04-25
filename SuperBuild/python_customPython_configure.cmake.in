@@ -28,12 +28,6 @@ set(Slicer_SHARE_DIR "@Slicer_SHARE_DIR@")
 set(Slicer_SOURCE_DIR "@Slicer_SOURCE_DIR@")
 set(Slicer_BINARY_DIR "@Slicer_BINARY_DIR@")
 
-set(python_version_dot "2.7")
-set(pythonpath_subdir lib/python${python_version_dot})
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-  set(pythonpath_subdir Lib)
-endif()
-
 #-----------------------------------------------------------------------------
 # Copy and rename launcher
 #-----------------------------------------------------------------------------
@@ -83,9 +77,9 @@ endif()
 _listToQtSettingsArray("${_library_paths_build}" "path" SETTINGS_PYTHONLAUNCHER_LIBRARY_PATHS)
 
 set(_pythonpath_paths_build
-  "${PYTHONHOME}/${pythonpath_subdir}"
-  "${PYTHONHOME}/${pythonpath_subdir}/lib-dynload"
-  "${PYTHONHOME}/${pythonpath_subdir}/site-packages"
+  "${PYTHONHOME}/${PYTHON_STDLIB_SUBDIR}"
+  "${PYTHONHOME}/${PYTHON_STDLIB_SUBDIR}/lib-dynload"
+  "${PYTHONHOME}/${PYTHON_SITE_PACKAGES_SUBDIR}"
   )
 _listToQtSettingsArray("${_pythonpath_paths_build}" "path" SETTINGS_PYTHONLAUNCHER_PYTHONPATH_PATHS)
 
@@ -133,9 +127,9 @@ set(_library_paths_installed
 _listToQtSettingsArray("${_library_paths_installed}" "path" SETTINGS_PYTHONLAUNCHER_LIBRARY_PATHS)
 
 set(_pythonpath_paths_installed
-  "${PYTHONHOME}/lib/Python/${pythonpath_subdir}"
-  "${PYTHONHOME}/lib/Python/${pythonpath_subdir}/lib-dynload"
-  "${PYTHONHOME}/lib/Python/${pythonpath_subdir}/site-packages"
+  "${PYTHONHOME}/lib/Python/${PYTHON_STDLIB_SUBDIR}"
+  "${PYTHONHOME}/lib/Python/${PYTHON_STDLIB_SUBDIR}/lib-dynload"
+  "${PYTHONHOME}/lib/Python/${PYTHON_SITE_PACKAGES_SUBDIR}"
   "<APPLAUNCHER_DIR>/../${Slicer_BIN_DIR}/Python"
   )
 _listToQtSettingsArray("${_pythonpath_paths_installed}" "path" SETTINGS_PYTHONLAUNCHER_PYTHONPATH_PATHS)
