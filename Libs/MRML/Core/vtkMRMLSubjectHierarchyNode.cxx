@@ -2269,6 +2269,7 @@ bool vtkMRMLSubjectHierarchyNode::RemoveItem(vtkIdType itemID, bool removeDataNo
   // Start with the leaf nodes so that triggered updates are faster (no reparenting done after deleting intermediate items)
   if (recursive || item->IsVirtualBranchParent())
     {
+    std::vector<vtkIdType> virtualItemIDs; // List of virtual item IDs that do not need to be explicitly deleted
     std::vector<vtkIdType> childIDs;
     item->GetAllChildren(childIDs);
     while (childIDs.size())
@@ -2278,9 +2279,32 @@ bool vtkMRMLSubjectHierarchyNode::RemoveItem(vtkIdType itemID, bool removeDataNo
       std::vector<vtkIdType>::iterator childIt;
       for (childIt=childIDs.begin(); childIt!=childIDs.end(); ++childIt)
         {
+        // Skip if virtual item, because its data node and subject hierarchy item was already deleted
+        if (std::find(virtualItemIDs.begin(), virtualItemIDs.end(), (*childIt)) != virtualItemIDs.end())
+          {
+          childIDs.erase(childIt);
+          break;
+          }
+
+        // Get item by ID and delete it if leaf or virtual branch parent
         vtkSubjectHierarchyItem* currentItem = this->Internal->SceneItem->FindChildByID(*childIt);
+        if (!currentItem)
+          {
+          // Already deleted item ID was in the list
+          vtkErrorMacro("RemoveItem: Failed to find subject hierarchy item by ID " << (*childIt));
+          childIDs.erase(childIt);
+          break;
+          }
         if ( !currentItem->HasChildren() || currentItem->IsVirtualBranchParent() )
           {
+          // Mark child item IDs in case it is a virtual branch parent, because those items do not need to be explicitly deleted
+          if (currentItem->IsVirtualBranchParent())
+            {
+            std::vector<vtkIdType> currentVirtualItemIDs;
+            currentItem->GetDirectChildren(currentVirtualItemIDs);
+            virtualItemIDs.insert(virtualItemIDs.end(), currentVirtualItemIDs.begin(), currentVirtualItemIDs.end());
+            }
+
           // Remove data node from scene if requested.. In that case removing the item explicitly
           // is not necessary because removing the node triggers removing the item automatically
           if (removeDataNode && currentItem->DataNode && this->Scene)
