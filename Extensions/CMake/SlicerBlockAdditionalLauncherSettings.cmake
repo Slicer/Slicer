@@ -6,7 +6,37 @@
 # the "additional launcher settings" at build time will be generated.
 #
 
-if(NOT TARGET ConfigureAdditionalLauncherSettings)
+# Is the extension/module using SuperBuild ?
+set(_use_superbuild 0)
+if(DEFINED EXTENSION_BUILD_SUBDIRECTORY AND NOT "${EXTENSION_BUILD_SUBDIRECTORY}" STREQUAL ".")
+  set(_use_superbuild 1)
+endif()
+
+# Is the top-level project being configured ?
+set(_configuring_top_level_project 1)
+if(_use_superbuild AND DEFINED ${EXTENSION_NAME}_SUPERBUILD AND NOT "${${EXTENSION_NAME}_SUPERBUILD}")
+  set(_configuring_top_level_project 0)
+endif()
+
+# Configure additional launcher settings ?
+if(NOT _use_superbuild)
+  set(_msg_status "yes")
+  set(_configure_additional_launcher_settings 1)
+else()
+  if(_configuring_top_level_project)
+    set(_msg_status "no (because configuring top-level project)")
+    set(_configure_additional_launcher_settings 0)
+  else()
+    set(_msg_status "yes (because configuring ${EXTENSION_BUILD_SUBDIRECTORY})")
+    set(_configure_additional_launcher_settings 1)
+  endif()
+endif()
+
+set(_msg "Adding ConfigureAdditionalLauncherSettings target")
+message(STATUS "${_msg}")
+message(STATUS "${_msg} - ${_msg_status}")
+
+if(NOT TARGET ConfigureAdditionalLauncherSettings AND _configure_additional_launcher_settings)
 
   set(Slicer_ADDITIONAL_LAUNCHER_SETTINGS_FILE ${CMAKE_CURRENT_BINARY_DIR}/AdditionalLauncherSettings.ini)
   set(Slicer_ADDITIONAL_LAUNCHER_SETTINGS "--launcher-additional-settings" ${Slicer_ADDITIONAL_LAUNCHER_SETTINGS_FILE})
