@@ -1,7 +1,7 @@
 set(proj python-setuptools)
 
 # Set dependency list
-set(${proj}_DEPENDENCIES python)
+set(${proj}_DEPENDENCIES python python-packaging python-six python-appdirs)
 
 # Include dependent projects if any
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
@@ -28,17 +28,21 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   ExternalProject_Write_SetPythonSetupEnv_Commands(${_env_script} APPEND)
 
   # install step
+  # - we use "easy_install" only to allow installing with "--always-unzip"
   set(_install_script ${CMAKE_BINARY_DIR}/${proj}_install_step.cmake)
   file(WRITE ${_install_script}
 "include(\"${_env_script}\")
 set(${proj}_WORKING_DIR \"${CMAKE_BINARY_DIR}/${proj}\")
-ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py install)
+ExternalProject_Execute(${proj} \"bootstrap\" \"${PYTHON_EXECUTABLE}\" bootstrap.py)
+ExternalProject_Execute(${proj} \"easy_install\" \"${PYTHON_EXECUTABLE}\" setup.py easy_install --always-unzip .)
 ")
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
+    # slicer-v35.0.1
+    # - include patch to support parallel build
     GIT_REPOSITORY "${git_protocol}://github.com/Slicer/setuptools.git"
-    GIT_TAG "ca727b48c1d6477cb691db77e22435f99c032457"
+    GIT_TAG "2bea6fc523f0cf58dacab21c723f105c3652ecff"
     SOURCE_DIR ${proj}
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ""

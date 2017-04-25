@@ -37,21 +37,11 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
 
   set(python_SOURCE_DIR "${CMAKE_BINARY_DIR}/Python-2.7.11")
 
-  set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
-  if(MSVC)
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
-      PATCH_COMMAND ${CMAKE_COMMAND}
-        -DPYTHON_SRC_DIR:PATH=${python_SOURCE_DIR}
-        -P ${CMAKE_CURRENT_LIST_DIR}/${proj}_patch.cmake
-      )
-  endif()
-
   ExternalProject_Add(python-source
     URL "https://www.python.org/ftp/python/2.7.11/Python-2.7.11.tgz"
     URL_MD5 "6b6076ec9e93f05dd63e47eb9c15728b"
     DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
     SOURCE_DIR ${python_SOURCE_DIR}
-    ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
