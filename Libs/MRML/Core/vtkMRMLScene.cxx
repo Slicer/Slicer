@@ -1233,6 +1233,12 @@ vtkMRMLNode* vtkMRMLScene::AddNode(vtkMRMLNode *n)
     {
     vtkWarningMacro("vtkMRMLScene::AddNode: Adding of a new node is not notified");
     }
+  // Convert all node reference IDs to pointers and add observers
+  // (only do that if not importing, because during import node IDs are not final yet).
+  if (!this->IsImporting())
+    {
+    node->UpdateNodeReferences();
+    }
   this->Modified();
 #ifdef MRMLSCENE_VERBOSE
   timer->StopTimer();

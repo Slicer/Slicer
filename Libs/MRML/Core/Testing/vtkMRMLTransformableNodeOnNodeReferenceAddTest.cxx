@@ -30,10 +30,13 @@
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>
 
+#include "vtkMRMLCoreTestingMacros.h"
+
 namespace
 {
 
-void populateScene(vtkMRMLScene* scene);
+void populateScene_nodeRefAfterAddNode(vtkMRMLScene* scene);
+void populateScene_nodeRefBeforeAddNode(vtkMRMLScene* scene);
 int testScene(vtkMRMLScene* scene);
 
 } // end of anonymous namespace
@@ -41,34 +44,28 @@ int testScene(vtkMRMLScene* scene);
 //---------------------------------------------------------------------------
 int vtkMRMLTransformableNodeOnNodeReferenceAddTest(int , char * [] )
 {
+  // Test with a freshly created scene (node reference added _after_ node added to the scene)
   vtkNew<vtkMRMLScene> scene;
-  populateScene(scene.GetPointer());
+  populateScene_nodeRefAfterAddNode(scene.GetPointer());
+  CHECK_EXIT_SUCCESS(testScene(scene.GetPointer()));
 
-  // Test with a freshly created scene
-  if (testScene(scene.GetPointer())!=EXIT_SUCCESS)
-  {
-    std::cerr << "vtkMRMLTransformableNode::OnNodeReferenceAdded failed on original scene." << std::endl;
-    return EXIT_FAILURE;
-  }
+  // Test with a freshly created scene (node reference added _before_ node added to the scene)
+  vtkNew<vtkMRMLScene> scene1;
+  populateScene_nodeRefBeforeAddNode(scene1.GetPointer());
+  CHECK_EXIT_SUCCESS(testScene(scene1.GetPointer()));
 
-
+  // Test with a loaded scene
+  // Write scene to XML
   scene->SetSaveToXMLString(1);
   scene->Commit();
   std::string xmlScene = scene->GetSceneXMLString();
   std::cout << xmlScene << std::endl;
-
-  // Test with a loaded scene
+  // Load scene from XML
   vtkNew<vtkMRMLScene> scene2;
-
   scene2->SetLoadFromXMLString(1);
   scene2->SetSceneXMLString(xmlScene);
   scene2->Import();
-
-  if (testScene(scene2.GetPointer())!=EXIT_SUCCESS)
-  {
-    std::cerr << "vtkMRMLTransformableNode::OnNodeReferenceAdded failed on saved scene." << std::endl;
-    return EXIT_FAILURE;
-  }
+  CHECK_EXIT_SUCCESS(testScene(scene2.GetPointer()));
 
   return EXIT_SUCCESS;
 }
@@ -77,15 +74,29 @@ namespace
 {
 
 //---------------------------------------------------------------------------
-void populateScene(vtkMRMLScene* scene)
+void populateScene_nodeRefAfterAddNode(vtkMRMLScene* scene)
 {
-  vtkNew<vtkMRMLScalarVolumeNode> transformableableNode;
-  scene->AddNode(transformableableNode.GetPointer());
-
   vtkNew<vtkMRMLLinearTransformNode> transformNode;
   scene->AddNode(transformNode.GetPointer());
 
+  // Test add reference after add node
+  vtkNew<vtkMRMLScalarVolumeNode> transformableableNode;
+  scene->AddNode(transformableableNode.GetPointer());
   transformableableNode->SetAndObserveTransformNodeID(transformNode->GetID());
+}
+
+//---------------------------------------------------------------------------
+void populateScene_nodeRefBeforeAddNode(vtkMRMLScene* scene)
+{
+  vtkNew<vtkMRMLLinearTransformNode> transformNode;
+  scene->AddNode(transformNode.GetPointer());
+
+  // Test add reference before add node
+  // (Node references should be fully functional, even if the node reference is set
+  // before the node was added to the scene.)
+  vtkNew<vtkMRMLScalarVolumeNode> transformableableNode;
+  transformableableNode->SetAndObserveTransformNodeID(transformNode->GetID());
+  scene->AddNode(transformableableNode.GetPointer());
 }
 
 int testScene(vtkMRMLScene* scene)
@@ -93,29 +104,15 @@ int testScene(vtkMRMLScene* scene)
   // Check transform node IDs
   vtkMRMLNode* transformNode =
     scene->GetNthNodeByClass(0, "vtkMRMLLinearTransformNode");
-  if (!transformNode || strcmp(transformNode->GetID(), "vtkMRMLLinearTransformNode1") != 0)
-    {
-    std::cerr << __LINE__ << ": import failed." << std::endl
-              << "    transform node ID is " << transformNode->GetID()
-              << " instead of vtkMRMLLinearTransformNode1." << std::endl;
-
-    return EXIT_FAILURE;
-    }
+  CHECK_NOT_NULL(transformNode);
+  CHECK_STRING(transformNode->GetID(), "vtkMRMLLinearTransformNode1");
 
   // Check references
-  vtkMRMLTransformableNode* trnsformableNode =
-    vtkMRMLTransformableNode::SafeDownCast(scene->GetNthNodeByClass(0, "vtkMRMLTransformableNode"));
+  vtkMRMLTransformableNode* transformableNode =
+    vtkMRMLTransformableNode::SafeDownCast(scene->GetNthNodeByClass(0, "vtkMRMLScalarVolumeNode"));
 
-  if (strcmp(trnsformableNode->GetTransformNodeID(),
-             transformNode->GetID()) != 0)
-    {
-    std::cerr << __LINE__ << ": import failed." << std::endl
-              << "    Transformable node references are not updated. "
-              << "Transform node ID reference is "
-              << trnsformableNode->GetTransformNodeID()
-              << " instead of " << transformNode->GetID() << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_NOT_NULL(transformableNode);
+  CHECK_STRING(transformableNode->GetTransformNodeID(), transformNode->GetID());
 
   // Test vtkMRMLTransformableNode::OnNodeReferenceAdded()
   vtkMRMLLinearTransformNode* linearTransformNode = vtkMRMLLinearTransformNode::SafeDownCast(scene->GetNthNodeByClass(0, "vtkMRMLLinearTransformNode"));
@@ -124,18 +121,9 @@ int testScene(vtkMRMLScene* scene)
   volumeNode->AddObserver(vtkCommand::AnyEvent, callback.GetPointer());
 
   linearTransformNode->GetTransformToParent()->Modified();
-  if (!callback->GetErrorString().empty() ||
-      callback->GetNumberOfModified() != 0 ||
-      callback->GetNumberOfEvents(vtkMRMLTransformNode::TransformModifiedEvent) != 1)
-    {
-    std::cerr << "vtkMRMLTransformableNode::OnNodeReferenceAdded failed."
-              << callback->GetErrorString().c_str() << " "
-              << "Number of ModifiedEvent: " << callback->GetNumberOfModified() << " "
-              << "Number of TransformModifiedEvent: "
-              << callback->GetNumberOfEvents(vtkMRMLTransformableNode::TransformModifiedEvent)
-              << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_STD_STRING(callback->GetErrorString(), "");
+  CHECK_INT(callback->GetNumberOfModified(), 0);
+  CHECK_INT(callback->GetNumberOfEvents(vtkMRMLTransformNode::TransformModifiedEvent), 1);
   callback->ResetNumberOfEvents();
 
   return EXIT_SUCCESS;
