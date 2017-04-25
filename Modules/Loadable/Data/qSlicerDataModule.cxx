@@ -74,7 +74,7 @@ qSlicerDataModule::~qSlicerDataModule()
 //-----------------------------------------------------------------------------
 QIcon qSlicerDataModule::icon()const
 {
-  return QIcon(":/Icons/Data.png");
+  return QIcon(":/Icons/SubjectHierarchy.png");
 }
 
 //-----------------------------------------------------------------------------

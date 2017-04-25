@@ -27,31 +27,61 @@
 
 class vtkMRMLNode;
 class qSlicerDataModuleWidgetPrivate;
-class QTableWidgetItem;
+class qMRMLSubjectHierarchyModel;
 
 class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerDataModuleWidget :
   public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
 public:
+  typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerDataModuleWidget(QWidget *parentWidget = 0);
   virtual ~qSlicerDataModuleWidget();
 
+  virtual void enter();
+
+  enum
+    {
+    TabIndexSubjectHierarchy = 0,
+    TabIndexTransformHierarchy,
+    TabIndexAllNodes
+    };
+
 public slots:
-
-  void setMRMLIDsVisible(bool visible);
-
   /// Reimplemented for internal reasons
   virtual void setMRMLScene(vtkMRMLScene* scene);
 
+  /// Change visibility of the MRML node ID columns
+  void setMRMLIDsVisible(bool visible);
+
+  /// Show or hide transforms
+  void setTransformsVisible(bool visible);
+
+  /// Set data node associated to the selected subject hierarchy item to the data node inspector
+  void setDataNodeFromSubjectHierarchyItem(vtkIdType itemID);
+  /// Set subject hierarchy item information to the label
+  void setInfoLabelFromSubjectHierarchyItem(vtkIdType itemID);
+  /// Handle subject hierarchy item modified event (update item info label if needed)
+  void onSubjectHierarchyItemModified(vtkIdType itemID);
+
+  /// Insert new transform node
+  void insertTransformNode();
+  /// Harden transform on current node
+  void hardenTransformOnCurrentNode();
+
+public:
+  /// Assessor function for subject hierarchy model (for python)
+  Q_INVOKABLE qMRMLSubjectHierarchyModel* subjectHierarchySceneModel()const;
+
+protected:
+  static void onSubjectHierarchyItemEvent(vtkObject* caller, unsigned long event, void* clientData, void* callData);
+
 protected slots:
   void onCurrentNodeChanged(vtkMRMLNode* newCurrentNode);
-  void onSceneModelChanged(const QString& modelType);
+  void onCurrentTabChanged(int tabIndex);
+  void onHelpButtonClicked();
 
-public slots:
-  void insertTransformNode();
-  void hardenTransformOnCurrentNode();
-  void printObject();
+  void showContextMenuHint();
 
 protected:
   virtual void setup();

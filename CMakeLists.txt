@@ -439,7 +439,7 @@ mark_as_superbuild(Slicer_DEFAULT_HOME_MODULE)
 message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} default home module [${Slicer_DEFAULT_HOME_MODULE}]")
 
 if(NOT DEFINED Slicer_DEFAULT_FAVORITE_MODULES)
-  set(Slicer_DEFAULT_FAVORITE_MODULES "SubjectHierarchy, Volumes, Models, Transforms, Markups, Editor, SegmentEditor"
+  set(Slicer_DEFAULT_FAVORITE_MODULES "Data, Volumes, Models, Transforms, Markups, Editor, SegmentEditor"
       CACHE STRING "Name of the modules shown on the toolbar by default (comma-separated list)")
 endif()
 mark_as_advanced(Slicer_DEFAULT_FAVORITE_MODULES)

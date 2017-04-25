@@ -68,13 +68,9 @@ public:
   Q_INVOKABLE vtkMRMLScene* mrmlScene()const;
 
   QString nameFilter()const;
-  void setNameFilter(QString filter);
   QString attributeNameFilter()const;
-  void setAttributeNameFilter(QString filter);
   QString attributeValueFilter()const;
-  void setAttributeValueFilter(QString filter);
   QString levelFilter()const;
-  void setLevelFilter(QString filter);
 
   vtkIdType hideItemsUnaffiliatedWithItemID();
   void setHideItemsUnaffiliatedWithItemID(vtkIdType itemID);
@@ -91,6 +87,12 @@ public:
   /// Determine the number of accepted (shown) items
   /// \param rootItemID Ancestor item of branch in which the accepted items are counted
   Q_INVOKABLE int acceptedItemCount(vtkIdType rootItemID)const;
+
+public slots:
+  void setNameFilter(QString filter);
+  void setAttributeNameFilter(QString filter);
+  void setAttributeValueFilter(QString filter);
+  void setLevelFilter(QString filter);
 
 protected:
   /// Returns true if the item in the row indicated by the given sourceRow and

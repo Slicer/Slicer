@@ -73,6 +73,8 @@ qMRMLSortFilterProxyModel::qMRMLSortFilterProxyModel(QObject *vparent)
   // correct values (which doesn't call filterAcceptsRow() on the up to date
   // value unless DynamicSortFilter is true).
   this->setDynamicSortFilter(true);
+
+  this->setFilterCaseSensitivity(Qt::CaseInsensitive);
 }
 
 //------------------------------------------------------------------------------

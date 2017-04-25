@@ -50,6 +50,7 @@ public slots:
   bool loadDicomData();
   void editApplicationSettings();
   bool presentTutorials();
+  bool exploreLoadedData();
 
 protected:
   virtual void setup();

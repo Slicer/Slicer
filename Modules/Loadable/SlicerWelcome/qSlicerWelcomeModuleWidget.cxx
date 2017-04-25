@@ -216,6 +216,8 @@ void qSlicerWelcomeModuleWidget::setup()
           this, SLOT (loadRemoteSampleData()));
   connect(d->EditApplicationSettingsButton, SIGNAL(clicked()),
           this, SLOT (editApplicationSettings()));
+  connect(d->ExploreLoadedDataPushButton, SIGNAL(clicked()),
+          this, SLOT (exploreLoadedData()));
 
 #ifndef Slicer_BUILD_DICOM_SUPPORT
   d->LoadDicomDataButton->setDisabled(true);
@@ -271,4 +273,11 @@ bool qSlicerWelcomeModuleWidget::presentTutorials()
       .arg(Slicer_VERSION_MAJOR)
       .arg(Slicer_VERSION_MINOR)));
   return true;
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerWelcomeModuleWidget::exploreLoadedData()
+{
+  Q_D(qSlicerWelcomeModuleWidget);
+  return d->selectModule("Data");
 }
