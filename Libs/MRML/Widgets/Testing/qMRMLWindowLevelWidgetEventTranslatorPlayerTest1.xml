@@ -250,32 +250,32 @@
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/LevelSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="-16"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/LevelSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="-26"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/AutoManualComboBox" command="set_string" arguments="Manual Min/Max"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="264"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="274"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="284"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="294"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="304"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="314"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="304"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="294"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="284"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="274"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="264"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="254"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="244"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="234"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="224"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="214"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="204"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MinSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="-296"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MinSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="-286"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MinSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="-276"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MinSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="-266"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MinSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="-276"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MinSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="-286"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MinSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="-296"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MinSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="-306"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MinSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="-316"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/0ctkQDoubleSpinBox0" command="set_double" arguments="264"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/0ctkQDoubleSpinBox0" command="set_double" arguments="274"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/0ctkQDoubleSpinBox0" command="set_double" arguments="284"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/0ctkQDoubleSpinBox0" command="set_double" arguments="294"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/0ctkQDoubleSpinBox0" command="set_double" arguments="304"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/0ctkQDoubleSpinBox0" command="set_double" arguments="314"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/0ctkQDoubleSpinBox0" command="set_double" arguments="304"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/0ctkQDoubleSpinBox0" command="set_double" arguments="294"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/0ctkQDoubleSpinBox0" command="set_double" arguments="284"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/0ctkQDoubleSpinBox0" command="set_double" arguments="274"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/0ctkQDoubleSpinBox0" command="set_double" arguments="264"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/0ctkQDoubleSpinBox0" command="set_double" arguments="254"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/0ctkQDoubleSpinBox0" command="set_double" arguments="244"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/0ctkQDoubleSpinBox0" command="set_double" arguments="234"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/0ctkQDoubleSpinBox0" command="set_double" arguments="224"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/0ctkQDoubleSpinBox0" command="set_double" arguments="214"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MaxSpinBox/0ctkQDoubleSpinBox0" command="set_double" arguments="204"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MinSpinBox/0ctkQDoubleSpinBox0" command="set_double" arguments="-296"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MinSpinBox/0ctkQDoubleSpinBox0" command="set_double" arguments="-286"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MinSpinBox/0ctkQDoubleSpinBox0" command="set_double" arguments="-276"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MinSpinBox/0ctkQDoubleSpinBox0" command="set_double" arguments="-266"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MinSpinBox/0ctkQDoubleSpinBox0" command="set_double" arguments="-276"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MinSpinBox/0ctkQDoubleSpinBox0" command="set_double" arguments="-286"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MinSpinBox/0ctkQDoubleSpinBox0" command="set_double" arguments="-296"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MinSpinBox/0ctkQDoubleSpinBox0" command="set_double" arguments="-306"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/MinSpinBox/0ctkQDoubleSpinBox0" command="set_double" arguments="-316"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/WindowLevelRangeSlider" command="set_min_double" arguments="-326"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/WindowLevelRangeSlider" command="set_max_double" arguments="194"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/WindowLevelRangeSlider" command="set_min_double" arguments="-336"/>
