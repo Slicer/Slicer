@@ -47,11 +47,11 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
    OR NOT DEFINED PYTHON_LIBRARY
    OR NOT DEFINED PYTHON_EXECUTABLE) AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  set(python_SOURCE_DIR "${CMAKE_BINARY_DIR}/Python-2.7.11")
+  set(python_SOURCE_DIR "${CMAKE_BINARY_DIR}/Python-2.7.13")
 
   ExternalProject_Add(python-source
-    URL "https://www.python.org/ftp/python/2.7.11/Python-2.7.11.tgz"
-    URL_MD5 "6b6076ec9e93f05dd63e47eb9c15728b"
+    URL "https://www.python.org/ftp/python/2.7.13/Python-2.7.13.tgz"
+    URL_MD5 "17add4bf0ad0ec2f08e0cae6d205c700"
     DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
     SOURCE_DIR ${python_SOURCE_DIR}
     CONFIGURE_COMMAND ""
