@@ -5,6 +5,10 @@ additionalPathVariables=PYTHONPATH
 [Application]
 path=<APPLAUNCHER_DIR>/python@PYTHON_EXE_SUFFIX_CONFIG@@CMAKE_EXECUTABLE_SUFFIX@
 
+[Paths]
+1\path=<APPLAUNCHER_DIR>
+size=1
+
 [LibraryPaths]
 @SETTINGS_PYTHONLAUNCHER_LIBRARY_PATHS@
 
