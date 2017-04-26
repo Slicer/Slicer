@@ -21,7 +21,6 @@
 // Slicer includes
 #include "vtkImageGradientMagnitude.h"
 #include "vtkMRMLVolumeRenderingDisplayableManager.h"
-#include "vtkSlicerFixedPointVolumeRayCastMapper.h"
 #include "vtkSlicerVolumeRenderingLogic.h"
 
 #include "vtkMRMLCPURayCastVolumeRenderingDisplayNode.h"

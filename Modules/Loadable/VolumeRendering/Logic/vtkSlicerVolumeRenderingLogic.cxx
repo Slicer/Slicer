@@ -50,6 +50,7 @@
 #include <vtkVolumeProperty.h>
 
 #if defined(Slicer_VTK_RENDERING_USE_OpenGL_BACKEND)
+#include <vtkOpenGLExtensionManager.h>
 #include <vtkgl.h>
 #endif
 

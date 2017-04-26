@@ -7,8 +7,6 @@ set(${KIT}_EXPORT_DIRECTIVE "VTK_SLICER_${MODULE_NAME_UPPER}_MODULE_LOGIC_EXPORT
 set(${KIT}_INCLUDE_DIRECTORIES
   ${vtkSlicer${MODULE_NAME}ModuleMRML_SOURCE_DIR}
   ${vtkSlicer${MODULE_NAME}ModuleMRML_BINARY_DIR}
-  ${VolumeRenderingReplacements_SOURCE_DIR}
-  ${VolumeRenderingReplacements_BINARY_DIR}
   )
 
 set(${KIT}_SRCS
@@ -18,9 +16,15 @@ set(${KIT}_SRCS
 
 set(${KIT}_TARGET_LIBRARIES
   vtkSlicer${MODULE_NAME}ModuleMRML
-  VolumeRenderingReplacements
   vtkSlicerAnnotationsModuleMRML
   )
+
+if(Slicer_VTK_RENDERING_USE_OpenGL_BACKEND)
+  find_package(OpenGL REQUIRED)
+  list(APPEND ${KIT}_TARGET_LIBRARIES
+    ${OPENGL_LIBRARIES}
+    )
+endif()
 
 #-----------------------------------------------------------------------------
 SlicerMacroBuildModuleLogic(
