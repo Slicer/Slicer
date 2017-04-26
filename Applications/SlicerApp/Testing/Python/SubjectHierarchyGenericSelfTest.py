@@ -249,10 +249,12 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     self.sampleModelNode = self.createSampleModelNode(self.sampleModelName, sampleModelColor, ctVolumeNode)
 
     # Get subject hierarchy scene model and node
-    shWidget = slicer.modules.subjecthierarchy.widgetRepresentation()
-    self.assertIsNotNone( shWidget )
-    shSceneModel = shWidget.subjectHierarchySceneModel()
-    self.assertIsNotNone( shSceneModel )
+    dataWidget = slicer.modules.data.widgetRepresentation()
+    self.assertIsNotNone( dataWidget )
+    shTreeView = slicer.util.findChild(dataWidget, name='SubjectHierarchyTreeView')
+    self.assertIsNotNone( shTreeView )
+    shModel = shTreeView.model()
+    self.assertIsNotNone( shModel )
     shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
     self.assertIsNotNone( shNode )
 
@@ -284,9 +286,9 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     self.assertEqual( shNode.GetItemLevel(self.ctVolumeShItemID), "" )
 
     # Add model and labelmap to the created study
-    retVal1 = shSceneModel.reparent(self.sampleLabelmapShItemID, self.studyItemID)
+    retVal1 = shModel.reparent(self.sampleLabelmapShItemID, self.studyItemID)
     self.assertTrue(retVal1)
-    retVal2 = shSceneModel.reparent(self.sampleModelShItemID, self.studyItemID)
+    retVal2 = shModel.reparent(self.sampleModelShItemID, self.studyItemID)
     self.assertTrue(retVal2)
     qt.QApplication.processEvents()
 
@@ -342,13 +344,15 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     self.assertIsNotNone( shNode )
 
     # Get subject hierarchy scene model
-    shWidget = slicer.modules.subjecthierarchy.widgetRepresentation()
-    self.assertIsNotNone( shWidget )
-    shSceneModel = shWidget.subjectHierarchySceneModel()
-    self.assertIsNotNone( shSceneModel )
+    dataWidget = slicer.modules.data.widgetRepresentation()
+    self.assertIsNotNone( dataWidget )
+    shTreeView = slicer.util.findChild(dataWidget, name='SubjectHierarchyTreeView')
+    self.assertIsNotNone( shTreeView )
+    shModel = shTreeView.model()
+    self.assertIsNotNone( shModel )
 
     # Reparent using the item model
-    shSceneModel.reparent(self.sampleLabelmapShItemID, self.studyItemID)
+    shModel.reparent(self.sampleLabelmapShItemID, self.studyItemID)
     self.assertEqual( shNode.GetItemParent(self.sampleLabelmapShItemID), self.studyItemID )
     self.assertEqual( shNode.GetItemOwnerPluginName(self.sampleLabelmapShItemID), 'LabelMaps' )
 
