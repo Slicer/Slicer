@@ -79,7 +79,7 @@
          <item>
           <widget class="QCheckBox" name="SubjectHierarchyDisplayTransformsCheckBox">
            <property name="text">
-            <string>Transforms</string>
+            <string>Show transforms</string>
            </property>
            <property name="checked">
             <bool>true</bool>
@@ -89,7 +89,7 @@
          <item>
           <widget class="QCheckBox" name="SubjectHierarchyDisplayDataNodeIDsCheckBox">
            <property name="text">
-            <string>Data node ID's</string>
+            <string>Show MRML ID's</string>
            </property>
           </widget>
          </item>

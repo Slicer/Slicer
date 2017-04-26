@@ -138,7 +138,7 @@ void qSlicerDataModuleWidget::setup()
   // Subject hierarchy tab
 
   // Make connections for the checkboxes and buttons
-  connect( d->SubjectHierarchyDisplayTransformsCheckBox, SIGNAL(toggled(bool)),
+  connect( d->SubjectHierarchyDisplayDataNodeIDsCheckBox, SIGNAL(toggled(bool)),
            this, SLOT(setMRMLIDsVisible(bool)) );
   connect( d->SubjectHierarchyDisplayTransformsCheckBox, SIGNAL(toggled(bool)),
            this, SLOT(setTransformsVisible(bool)) );
@@ -255,7 +255,7 @@ void qSlicerDataModuleWidget::setMRMLScene(vtkMRMLScene* scene)
 
   Superclass::setMRMLScene(scene);
 
-  this->setMRMLIDsVisible(d->TransformDisplayMRMLIDsCheckBox->isChecked());
+  this->setMRMLIDsVisible(d->SubjectHierarchyDisplayDataNodeIDsCheckBox->isChecked());
   this->setTransformsVisible(d->SubjectHierarchyDisplayTransformsCheckBox->isChecked());
 }
 
@@ -288,9 +288,9 @@ void qSlicerDataModuleWidget::setMRMLIDsVisible(bool visible)
   d->SubjectHierarchyDisplayDataNodeIDsCheckBox->setChecked(visible);
   d->SubjectHierarchyDisplayDataNodeIDsCheckBox->blockSignals(wereSignalsBlocked);
 
-  wereSignalsBlocked = d->SubjectHierarchyDisplayTransformsCheckBox->blockSignals(true);
-  d->SubjectHierarchyDisplayTransformsCheckBox->setChecked(visible);
-  d->SubjectHierarchyDisplayTransformsCheckBox->blockSignals(wereSignalsBlocked);
+  wereSignalsBlocked = d->TransformDisplayMRMLIDsCheckBox->blockSignals(true);
+  d->TransformDisplayMRMLIDsCheckBox->setChecked(visible);
+  d->TransformDisplayMRMLIDsCheckBox->blockSignals(wereSignalsBlocked);
 
   wereSignalsBlocked = d->AllNodesDisplayMRMLIDsCheckBox->blockSignals(true);
   d->AllNodesDisplayMRMLIDsCheckBox->setChecked(visible);
