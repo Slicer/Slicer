@@ -1042,6 +1042,6 @@ class ScreenCaptureTest(ScriptedLoadableModuleTest):
     self.delayDisplay("Testing 3D view rotation")
     viewNode = slicer.util.getNode('vtkMRMLViewNode1')
     self.assertIsNotNone(viewNode)
-    self.logic.capture3dViewRotation(viewNode, -180, 180, self.numberOfImages, self.tempDir, self.imageFileNamePattern)
+    self.logic.capture3dViewRotation(viewNode, -180, 180, self.numberOfImages, AXIS_YAW, self.tempDir, self.imageFileNamePattern)
     self.verifyAndDeleteWrittenFiles()
     self.delayDisplay('Testing 3D view rotation completed successfully')
