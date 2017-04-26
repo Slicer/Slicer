@@ -1235,7 +1235,7 @@ vtkMRMLNode* vtkMRMLScene::AddNode(vtkMRMLNode *n)
     }
   // Convert all node reference IDs to pointers and add observers
   // (only do that if not importing, because during import node IDs are not final yet).
-  if (!this->IsImporting())
+  if (!this->IsImporting() && !this->IsRestoring())
     {
     node->UpdateNodeReferences();
     }

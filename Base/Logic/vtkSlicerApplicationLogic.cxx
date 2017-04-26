@@ -1073,15 +1073,12 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
   tit = req.GetTargetNodes().begin();
   sit = req.GetSourceNodes().begin();
 
-  this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
+  this->GetMRMLScene()->StartState(vtkMRMLScene::ImportState);
 
   while (sit != req.GetSourceNodes().end())
     {
-    vtkMRMLNode *source;
-    vtkMRMLNode *target;
-
-    source = miniscene->GetNodeByID( (*sit).c_str() );
-    target = this->GetMRMLScene()->GetNodeByID( (*tit).c_str() );
+    vtkMRMLNode *source = miniscene->GetNodeByID((*sit).c_str());
+    vtkMRMLNode *target = this->GetMRMLScene()->GetNodeByID( (*tit).c_str() );
 
     if (source && target)
       {
@@ -1260,7 +1257,7 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
     ++tit;
     }
 
-  this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
+  this->GetMRMLScene()->EndState(vtkMRMLScene::ImportState);
 
   // Delete the file if requested
   if (req.GetDeleteFile())
