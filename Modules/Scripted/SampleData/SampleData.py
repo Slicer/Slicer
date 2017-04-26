@@ -301,7 +301,7 @@ class SampleDataLogic:
     return self.downloadSample('dwi')[0]
 
   def downloadAbdominalCTVolume(self):
-    return self.downloadSample('CTA abdomen (Panoramix)')[0]
+    return self.downloadSample('CTA abdomen\n(Panoramix)')[0]
 
   def downloadDentalSurgery(self):
     # returns list since that's what earlier method did
