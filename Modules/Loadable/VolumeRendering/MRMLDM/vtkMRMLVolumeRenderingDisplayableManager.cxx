@@ -643,27 +643,6 @@ void vtkMRMLVolumeRenderingDisplayableManager::UpdateClipping(
 
   vtkNew<vtkPlanes> planes;
   vspNode->GetROINode()->GetTransformedPlanes(planes.GetPointer());
-  if ( planes->GetTransform() )
-    {
-    double zero[3] = {0,0,0};
-    double translation[3];
-    planes->GetTransform()->TransformPoint(zero, translation);
-
-    // apply the translation to the planes
-
-    int numPlanes = planes->GetNumberOfPlanes();
-    vtkPoints *points = planes->GetPoints();
-    for (int i=0; i<numPlanes && i<6; i++)
-      {
-      vtkPlane *plane = planes->GetPlane(i);
-      double origin[3];
-      plane->GetOrigin(origin);
-      points->GetData()->SetTuple3(i,
-                                   origin[0]-translation[0],
-                                   origin[1]-translation[1],
-                                   origin[2]-translation[2]);
-      }
-    }
   volumeMapper->SetClippingPlanes(planes.GetPointer());
 }
 

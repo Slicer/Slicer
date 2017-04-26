@@ -15,6 +15,7 @@
 #include <vtkMath.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
+#include <vtkVectorOperators.h>
 #include <vtkPlanes.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
@@ -265,6 +266,10 @@ void vtkMRMLAnnotationROINode::ProcessMRMLEvents ( vtkObject *caller,
                                            void *callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
+  if (event == vtkMRMLTransformableNode::TransformModifiedEvent)
+    {
+    this->Modified();
+    }
 
   // Not necessary bc vtkMRMLAnnotationDisplayNode is subclass of vtkMRMLModelDisplayNode
   // => will be taken care of  in vtkMRMLModelNode
@@ -524,11 +529,7 @@ void vtkMRMLAnnotationROINode::ApplyTransform(vtkAbstractTransform* transform)
   vtkErrorMacro("vtkMRMLAnnotationROINode::ApplyTransform is only supported for linear transforms");
 }
 
-#define AVERAGE_ABC(a,b,c) \
-  c[0] = (a[0] + b[0])/2.0; \
-  c[1] = (a[1] + b[1])/2.0; \
-  c[2] = (a[2] + b[2])/2.0;
-
+//---------------------------------------------------------------------------
 void vtkMRMLAnnotationROINode::GetTransformedPlanes(vtkPlanes *planes)
 {
   double bounds[6];
@@ -545,92 +546,117 @@ void vtkMRMLAnnotationROINode::GetTransformedPlanes(vtkPlanes *planes)
     bounds[2*i  ] = XYZ[i] - RadiusXYZ[i];
     bounds[2*i+1] = XYZ[i] + RadiusXYZ[i];
     }
-  vtkSmartPointer<vtkPoints> boxPoints = vtkSmartPointer<vtkPoints>::Take(vtkPoints::New(VTK_DOUBLE));
+  vtkSmartPointer<vtkPoints> boxPoints =
+      vtkSmartPointer<vtkPoints>::Take(vtkPoints::New(VTK_DOUBLE));
   boxPoints->SetNumberOfPoints(8);
 
-  boxPoints->SetPoint(0, bounds[0], bounds[2], bounds[4]);
-  boxPoints->SetPoint(1, bounds[1], bounds[2], bounds[4]);
+  boxPoints->SetPoint(0, bounds[0], bounds[2], bounds[4]); // origin
+  boxPoints->SetPoint(1, bounds[1], bounds[2], bounds[4]); // x axis
   boxPoints->SetPoint(2, bounds[1], bounds[3], bounds[4]);
-  boxPoints->SetPoint(3, bounds[0], bounds[3], bounds[4]);
-  boxPoints->SetPoint(4, bounds[0], bounds[2], bounds[5]);
+  boxPoints->SetPoint(3, bounds[0], bounds[3], bounds[4]); // y axis
+  boxPoints->SetPoint(4, bounds[0], bounds[2], bounds[5]); // z axis
   boxPoints->SetPoint(5, bounds[1], bounds[2], bounds[5]);
   boxPoints->SetPoint(6, bounds[1], bounds[3], bounds[5]);
   boxPoints->SetPoint(7, bounds[0], bounds[3], bounds[5]);
+
+
+  vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
+  if (tnode != NULL)
+    {
+    vtkNew<vtkGeneralTransform> transform;
+    tnode->GetTransformToWorld(transform.GetPointer());
+
+    for(unsigned int idx = 0; idx < 8; ++idx)
+      {
+      double oldPoint[3] = {0., 0., 0.};
+      boxPoints->GetPoint(idx, oldPoint);
+
+      double newPoint[3] = {0., 0., 0.};
+      transform->TransformPoint(oldPoint, newPoint);
+      boxPoints->SetPoint(idx, newPoint);
+      }
+  }
 
   vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::Take(vtkPoints::New(VTK_DOUBLE));
   points->SetNumberOfPoints(6);
 
   double *pts =
      static_cast<vtkDoubleArray *>(boxPoints->GetData())->GetPointer(0);
-  double *p0 = pts;
-  double *p1 = pts + 3*1;
-  double *p2 = pts + 3*2;
-  double *p3 = pts + 3*3;
-  //double *p4 = pts + 3*4;
-  double *p5 = pts + 3*5;
-  double *p6 = pts + 3*6;
-  double *p7 = pts + 3*7;
-  double x[3];
 
-  AVERAGE_ABC(p0,p7,x);
-  points->SetPoint(0, x);
-  AVERAGE_ABC(p1,p6,x);
-  points->SetPoint(1, x);
-  AVERAGE_ABC(p0,p5,x);
-  points->SetPoint(2, x);
-  AVERAGE_ABC(p2,p7,x);
-  points->SetPoint(3, x);
-  AVERAGE_ABC(p1,p3,x);
-  points->SetPoint(4, x);
-  AVERAGE_ABC(p5,p7,x);
-  points->SetPoint(5, x);
+  // these 3 planes contain pts[0]
+  points->SetPoint(0, pts);
+  points->SetPoint(1, pts);
+  points->SetPoint(2, pts);
+  // these 3 planes contain pts[6]
+  points->SetPoint(3, pts + 3 * 6);
+  points->SetPoint(4, pts + 3 * 6);
+  points->SetPoint(5, pts + 3 * 6);
 
   planes->SetPoints(points);
 
+  double factor = (this->InsideOut ? -1.0 : 1.0);
 
+  // compute normals
   vtkNew<vtkDoubleArray> normals;
   normals->SetNumberOfComponents(3);
   normals->SetNumberOfTuples(6);
 
-  p0 = pts;
-  double *px = pts + 3*1;
-  double *py = pts + 3*3;
-  double *pz = pts + 3*4;
+  vtkVector3d origin;
+  vtkVector3d pointU;
+  vtkVector3d pointV;
+  vtkVector3d normal;
 
-  double N[6][3];
-  for (i=0; i<3; i++)
-    {
-    N[0][i] = p0[i] - px[i];
-    N[2][i] = p0[i] - py[i];
-    N[4][i] = p0[i] - pz[i];
-    }
-  vtkMath::Normalize(N[0]);
-  vtkMath::Normalize(N[2]);
-  vtkMath::Normalize(N[4]);
-  for (i=0; i<3; i++)
-    {
-    N[1][i] = -N[0][i];
-    N[3][i] = -N[2][i];
-    N[5][i] = -N[4][i];
-    }
+  double * p0 = pts;
+  origin.Set(p0[0], p0[1], p0[2]);
 
-  double factor = (this->InsideOut ? -1.0 : 1.0);
+  // x plane
+  double * p1 = pts + 3 * 4; // z offset
+  double * p2 = pts + 3 * 3; // y offset
+  pointU.Set(p1[0], p1[1], p1[2]);
+  pointV.Set(p2[0], p2[1], p2[2]);
+  pointU = pointU - origin;
+  pointV = pointV - origin;
+  normal = pointU.Cross(pointV);
+  normal.Normalize();
+  normals->SetTuple3(
+        0, factor*normal[0], factor*normal[1], factor*normal[2]);
+  normal = normal * -1;
+  normals->SetTuple3(
+        3, factor*normal[0], factor*normal[1], factor*normal[2]);
 
-  for (i=0; i<6; i++)
-    {
-    normals->SetTuple3(i, factor*N[i][0], factor*N[i][1], factor*N[i][2]);
-    }
+  // y plane
+  p1 = pts + 3 * 1; // x offset
+  p2 = pts + 3 * 4; // z offset
+  pointU.Set(p1[0], p1[1], p1[2]);
+  pointV.Set(p2[0], p2[1], p2[2]);
+  pointU = pointU - origin;
+  pointV = pointV - origin;
+  normal = pointU.Cross(pointV);
+  normal.Normalize();
+  normals->SetTuple3(
+        1, factor*normal[0], factor*normal[1], factor*normal[2]);
+  normal = normal * -1;
+  normals->SetTuple3(
+        4, factor*normal[0], factor*normal[1], factor*normal[2]);
+
+  // z plane
+  p1 = pts + 3 * 3; // y offset
+  p2 = pts + 3 * 1; // x offset
+  pointU.Set(p1[0], p1[1], p1[2]);
+  pointV.Set(p2[0], p2[1], p2[2]);
+  pointU = pointU - origin;
+  pointV = pointV - origin;
+  normal = pointU.Cross(pointV);
+  normal.Normalize();
+  normals->SetTuple3(
+        2, factor*normal[0], factor*normal[1], factor*normal[2]);
+  normal = normal * -1;
+  normals->SetTuple3(
+        5, factor*normal[0], factor*normal[1], factor*normal[2]);
+
   planes->SetNormals(normals.GetPointer());
 
-  vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
-  if (tnode != NULL)
-    {
-    vtkNew<vtkGeneralTransform> transform;
-    tnode->GetTransformFromWorld(transform.GetPointer());
-    planes->SetTransform(transform.GetPointer());
-  }
   planes->Modified();
-
 }
 
 //---------------------------------------------------------------------------
