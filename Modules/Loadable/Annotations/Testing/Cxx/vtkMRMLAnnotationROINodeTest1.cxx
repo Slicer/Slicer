@@ -4,6 +4,12 @@
 #include <vtkMRMLCoreTestingMacros.h>
 #include <vtkMRMLCoreTestingUtilities.h>
 #include <vtkMRMLScene.h>
+#include <vtkMRMLTransformNode.h>
+
+// VTK includes
+#include <vtkPlane.h>
+#include <vtkPlanes.h>
+#include <vtkTransform.h>
 
 /* this test has been adopted from vtkMRMLAnnotationAngleTest1 by
  * Andrey Fedorov to demonstrate some of the problems observed with the ROI
@@ -11,6 +17,9 @@
  */
 
 using namespace vtkMRMLCoreTestingUtilities;
+
+//----------------------------------------------------------------------------
+int TestGetTransformedPlanes(vtkMRMLScene* scene, vtkMRMLAnnotationROINode* node);
 
 //----------------------------------------------------------------------------
 int vtkMRMLAnnotationROINodeTest1(int , char * [] )
@@ -74,6 +83,172 @@ int vtkMRMLAnnotationROINodeTest1(int , char * [] )
   node2->EndModify(wasModified);
 
   CHECK_INT(spy->GetNumberOfEvents(vtkCommand::ModifiedEvent), 1);
+
+  CHECK_EXIT_SUCCESS(TestGetTransformedPlanes(mrmlScene, node2));
+
+  return EXIT_SUCCESS;
+}
+
+//----------------------------------------------------------------------------
+int TestGetTransformedPlanes(vtkMRMLScene* scene, vtkMRMLAnnotationROINode* node)
+{
+  vtkNew<vtkPlanes> planes;
+  node->GetTransformedPlanes(planes.GetPointer());
+  CHECK_INT(planes->GetNumberOfPlanes(), 6);
+
+  double* planeOrigin = 0;
+  double* planeNormal = 0;
+
+  // Without transform
+
+  // plane 0
+  planeOrigin = planes->GetPlane(0)->GetOrigin();
+  CHECK_DOUBLE(planeOrigin[0], -97);
+  CHECK_DOUBLE(planeOrigin[1], -205);
+  CHECK_DOUBLE(planeOrigin[2], 10);
+
+  planeNormal = planes->GetPlane(0)->GetNormal();
+  CHECK_DOUBLE(planeNormal[0], 1);
+  CHECK_DOUBLE(planeNormal[1], 0);
+  CHECK_DOUBLE(planeNormal[2], 0);
+
+  // plane 1
+  planeOrigin = planes->GetPlane(1)->GetOrigin();
+  CHECK_DOUBLE(planeOrigin[0], -97);
+  CHECK_DOUBLE(planeOrigin[1], -205);
+  CHECK_DOUBLE(planeOrigin[2], 10);
+
+  planeNormal = planes->GetPlane(1)->GetNormal();
+  CHECK_DOUBLE(planeNormal[0], 0);
+  CHECK_DOUBLE(planeNormal[1], 1);
+  CHECK_DOUBLE(planeNormal[2], 0);
+
+  // plane 2
+  planeOrigin = planes->GetPlane(2)->GetOrigin();
+  CHECK_DOUBLE(planeOrigin[0], -97);
+  CHECK_DOUBLE(planeOrigin[1], -205);
+  CHECK_DOUBLE(planeOrigin[2], 10);
+
+  planeNormal = planes->GetPlane(2)->GetNormal();
+  CHECK_DOUBLE(planeNormal[0], 0);
+  CHECK_DOUBLE(planeNormal[1], 0);
+  CHECK_DOUBLE(planeNormal[2], -1);
+
+  // plane 3
+  planeOrigin = planes->GetPlane(3)->GetOrigin();
+  CHECK_DOUBLE(planeOrigin[0], 103);
+  CHECK_DOUBLE(planeOrigin[1], 195);
+  CHECK_DOUBLE(planeOrigin[2], -10);
+
+  planeNormal = planes->GetPlane(3)->GetNormal();
+  CHECK_DOUBLE(planeNormal[0], -1);
+  CHECK_DOUBLE(planeNormal[1], 0);
+  CHECK_DOUBLE(planeNormal[2], 0);
+
+  // plane 4
+  planeOrigin = planes->GetPlane(4)->GetOrigin();
+  CHECK_DOUBLE(planeOrigin[0], 103);
+  CHECK_DOUBLE(planeOrigin[1], 195);
+  CHECK_DOUBLE(planeOrigin[2], -10);
+
+  planeNormal = planes->GetPlane(4)->GetNormal();
+  CHECK_DOUBLE(planeNormal[0], 0);
+  CHECK_DOUBLE(planeNormal[1], -1);
+  CHECK_DOUBLE(planeNormal[2], 0);
+
+  // plane 5
+  planeOrigin = planes->GetPlane(5)->GetOrigin();
+  CHECK_DOUBLE(planeOrigin[0], 103);
+  CHECK_DOUBLE(planeOrigin[1], 195);
+  CHECK_DOUBLE(planeOrigin[2], -10);
+
+  planeNormal = planes->GetPlane(5)->GetNormal();
+  CHECK_DOUBLE(planeNormal[0], 0);
+  CHECK_DOUBLE(planeNormal[1], 0);
+  CHECK_DOUBLE(planeNormal[2], 1);
+
+  // With transform (translation + rotation)
+  vtkNew<vtkMRMLTransformNode> transform;
+  vtkNew<vtkTransform> tr;
+  tr->Translate(5, 10, 20);
+  tr->RotateX(30);
+  tr->RotateY(15);
+  tr->RotateZ(5);
+  vtkNew<vtkMatrix4x4> matrix;
+  tr->GetMatrix(matrix.GetPointer());
+  transform->SetMatrixTransformToParent(matrix.GetPointer());
+
+  scene->AddNode(transform.GetPointer());
+  node->SetAndObserveTransformNodeID(transform->GetID());
+
+  node->GetTransformedPlanes(planes.GetPointer());
+  CHECK_INT(planes->GetNumberOfPlanes(), 6);
+
+  // plane 0
+  planeOrigin = planes->GetPlane(0)->GetOrigin();
+  CHECK_DOUBLE_TOLERANCE(planeOrigin[0], -68.492, 1e-3);
+  CHECK_DOUBLE_TOLERANCE(planeOrigin[1], -189.204, 1e-3);
+  CHECK_DOUBLE_TOLERANCE(planeOrigin[2], -60.3174, 1e-3);
+
+  planeNormal = planes->GetPlane(0)->GetNormal();
+  CHECK_DOUBLE_TOLERANCE(planeNormal[0], 0.96225, 1e-3);
+  CHECK_DOUBLE_TOLERANCE(planeNormal[1], 0.204396, 1e-3);
+  CHECK_DOUBLE_TOLERANCE(planeNormal[2], -0.179713, 1e-3);
+
+  // plane 1
+  planeOrigin = planes->GetPlane(1)->GetOrigin();
+  CHECK_DOUBLE_TOLERANCE(planeOrigin[0], -68.492, 1e-3);
+  CHECK_DOUBLE_TOLERANCE(planeOrigin[1], -189.204, 1e-3);
+  CHECK_DOUBLE_TOLERANCE(planeOrigin[2], -60.3174, 1e-3);
+
+  planeNormal = planes->GetPlane(1)->GetNormal();
+  CHECK_DOUBLE_TOLERANCE(planeNormal[0], -0.084186, 1e-3);
+  CHECK_DOUBLE_TOLERANCE(planeNormal[1], 0.851451, 1e-3);
+  CHECK_DOUBLE_TOLERANCE(planeNormal[2], 0.517633, 1e-3);
+
+  // plane 2
+  planeOrigin = planes->GetPlane(2)->GetOrigin();
+  CHECK_DOUBLE_TOLERANCE(planeOrigin[0], -68.492, 1e-3);
+  CHECK_DOUBLE_TOLERANCE(planeOrigin[1], -189.204, 1e-3);
+  CHECK_DOUBLE_TOLERANCE(planeOrigin[2], -60.3174, 1e-3);
+
+  planeNormal = planes->GetPlane(2)->GetNormal();
+  CHECK_DOUBLE_TOLERANCE(planeNormal[0], -0.258819, 1e-3);
+  CHECK_DOUBLE_TOLERANCE(planeNormal[1], 0.482963, 1e-3);
+  CHECK_DOUBLE_TOLERANCE(planeNormal[2], -0.836516, 1e-3);
+
+  // plane 3
+  planeOrigin = planes->GetPlane(3)->GetOrigin();
+  CHECK_DOUBLE_TOLERANCE(planeOrigin[0], 85.1073, 1e-3);
+  CHECK_DOUBLE_TOLERANCE(planeOrigin[1], 201.915, 1e-3);
+  CHECK_DOUBLE_TOLERANCE(planeOrigin[2], 94.0628, 1e-3);
+
+  planeNormal = planes->GetPlane(3)->GetNormal();
+  CHECK_DOUBLE_TOLERANCE(planeNormal[0], -0.96225, 1e-3);
+  CHECK_DOUBLE_TOLERANCE(planeNormal[1], -0.204396, 1e-3);
+  CHECK_DOUBLE_TOLERANCE(planeNormal[2], 0.179713, 1e-3);
+
+  // plane 4
+  planeOrigin = planes->GetPlane(4)->GetOrigin();
+  CHECK_DOUBLE_TOLERANCE(planeOrigin[0], 85.1073, 1e-3);
+  CHECK_DOUBLE_TOLERANCE(planeOrigin[1], 201.915, 1e-3);
+  CHECK_DOUBLE_TOLERANCE(planeOrigin[2], 94.0628, 1e-3);
+
+  planeNormal = planes->GetPlane(4)->GetNormal();
+  CHECK_DOUBLE_TOLERANCE(planeNormal[0], 0.084186, 1e-3);
+  CHECK_DOUBLE_TOLERANCE(planeNormal[1], -0.851451, 1e-3);
+  CHECK_DOUBLE_TOLERANCE(planeNormal[2], -0.517633, 1e-3);
+
+  // plane 5
+  planeOrigin = planes->GetPlane(5)->GetOrigin();
+  CHECK_DOUBLE_TOLERANCE(planeOrigin[0], 85.1073, 1e-3);
+  CHECK_DOUBLE_TOLERANCE(planeOrigin[1], 201.915, 1e-3);
+  CHECK_DOUBLE_TOLERANCE(planeOrigin[2], 94.0628, 1e-3);
+
+  planeNormal = planes->GetPlane(5)->GetNormal();
+  CHECK_DOUBLE_TOLERANCE(planeNormal[0], 0.258819, 1e-3);
+  CHECK_DOUBLE_TOLERANCE(planeNormal[1], -0.482963, 1e-3);
+  CHECK_DOUBLE_TOLERANCE(planeNormal[2], 0.836516, 1e-3);
 
   return EXIT_SUCCESS;
 }
