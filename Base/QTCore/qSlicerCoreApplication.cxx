@@ -1400,7 +1400,7 @@ QString qSlicerCoreApplication::acknowledgment()const
     "(NA-MIC), funded by the National Institutes of Health through the NIH "
     "Roadmap for Medical Research, Grant U54 EB005149. Information on the "
     "National Centers for Biomedical Computing can be obtained from "
-    "<a href=\"https://commonfund.nih.gov/bioinformatics">https://commonfund.nih.gov/bioinformatics</a>.<br /><br />");
+    "<a href=\"https://commonfund.nih.gov/bioinformatics\">https://commonfund.nih.gov/bioinformatics</a>.<br /><br />");
   return acknowledgmentText;
 }
 
