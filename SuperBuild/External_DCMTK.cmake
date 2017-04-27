@@ -41,7 +41,7 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    "DCMTK-3.6.1_20161102"
+    "d8ed091cda2b815226eafe41f5b4fe3bd22f8d5d"
     QUIET
     )
 
