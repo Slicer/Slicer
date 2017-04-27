@@ -38,9 +38,9 @@ class UtilTest(ScriptedLoadableModule):
 #
 
 class UtilTestWidget(ScriptedLoadableModuleWidget):
-  def __init__(self):
-    ScriptedLoadableModuleWidget.__init__(self)
+  def __init__(self, parent = None):
     self.Widget = None
+    ScriptedLoadableModuleWidget.__init__(self, parent)
 
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
@@ -91,15 +91,25 @@ class UtilTestTest(ScriptedLoadableModuleTest):
     self.assertIsNone(redSliceCompositeNode.GetForegroundVolumeID())
     self.assertIsNone(redSliceCompositeNode.GetLabelVolumeID())
 
-    backgroundNode = slicer.mrmlScene.AddNode(slicer.vtkMRMLScalarVolumeNode())
+    import SampleData
+    sampleDataLogic = SampleData.SampleDataLogic()
+
+    backgroundNode = sampleDataLogic.downloadMRHead()
     backgroundNode.SetName('Background')
-    foregroundNode = slicer.mrmlScene.AddNode(slicer.vtkMRMLScalarVolumeNode())
+    foregroundNode = sampleDataLogic.downloadMRHead()
     foregroundNode.SetName('Foreground')
-    labelmapNode = slicer.mrmlScene.AddNode(slicer.vtkMRMLScalarVolumeNode())
-    labelmapNode.SetName('Labelmap')
+
+    volumesLogic = slicer.modules.volumes.logic()
+    labelmapNode = volumesLogic.CreateAndAddLabelVolume( slicer.mrmlScene, backgroundNode, 'Labelmap' )
+
+    thresholder = vtk.vtkImageThreshold()
+    thresholder.SetInputData(backgroundNode.GetImageData())
+    thresholder.ThresholdByLower(80)
+    thresholder.Update()
+    labelmapNode.SetAndObserveImageData(thresholder.GetOutput())
 
     # Try with nothing
-    slicer.util.setSliceViewerLayers()
+    slicer.util.setSliceViewerLayers(background = None, foreground = None, label = None)
     self.assertIsNone(redSliceCompositeNode.GetBackgroundVolumeID())
     self.assertIsNone(redSliceCompositeNode.GetForegroundVolumeID())
     self.assertIsNone(redSliceCompositeNode.GetLabelVolumeID())
@@ -119,12 +129,11 @@ class UtilTestTest(ScriptedLoadableModuleTest):
     self.assertEqual(redSliceCompositeNode.GetLabelOpacity(), 0.1)
 
     # Try to reset
-    otherBackgroundNode = slicer.mrmlScene.AddNode(slicer.vtkMRMLScalarVolumeNode())
+    otherBackgroundNode = sampleDataLogic.downloadMRHead()
     otherBackgroundNode.SetName('OtherBackground')
-    otherForegroundNode = slicer.mrmlScene.AddNode(slicer.vtkMRMLScalarVolumeNode())
+    otherForegroundNode = sampleDataLogic.downloadMRHead()
     otherForegroundNode.SetName('OtherForeground')
-    otherLabelmapNode = slicer.mrmlScene.AddNode(slicer.vtkMRMLScalarVolumeNode())
-    otherLabelmapNode.SetName('OtherLabelmap')
+    otherLabelmapNode = volumesLogic.CreateAndAddLabelVolume( slicer.mrmlScene, backgroundNode, 'OtherLabelmap' )
 
     # Try with node id's
     slicer.util.setSliceViewerLayers(
@@ -140,7 +149,7 @@ class UtilTestTest(ScriptedLoadableModuleTest):
     self.assertEqual(redSliceCompositeNode.GetForegroundOpacity(), 0.0)
     self.assertEqual(redSliceCompositeNode.GetLabelOpacity(), 1.0)
 
-    self.delayDisplay('Testing slicer.util.setSliceViewerLayers passed !')
+    self.delayDisplay('Testing slicer.util.setSliceViewerLayers passed')
 
   def test_loadUI(self):
     # Try to load a UI that does not exist and catch exception
@@ -153,25 +162,15 @@ class UtilTestTest(ScriptedLoadableModuleTest):
 
     # Correct path
     utilWidget = UtilTestWidget()
-    caughtException = False
-    try:
-      utilWidget.setup()
-    except RuntimeError:
-      caughtException = True
-    self.assertFalse(caughtException)
+
+    # Try to get a widget that exists
+    label = slicer.util.findChild(utilWidget.parent, 'UtilTest_Label')
+    self.assertIsNotNone(label, qt.QLabel)
+    self.assertEqual(label.text, 'My custom UI')
 
   def test_findChild(self):
+    # Create a top-level widget (parent is not specified)
     utilWidget = UtilTestWidget()
-
-    # Try with nothing (widget isn't setup)
-    caughtException = False
-    try:
-      slicer.util.findChild(utilWidget.Widget, 'UtilTest_Label')
-    except RuntimeError:
-      caughtException = True
-    self.assertTrue(caughtException)
-
-    utilWidget.setup()
 
     # Try to get a widget that exists
     label = slicer.util.findChild(utilWidget.Widget, 'UtilTest_Label')

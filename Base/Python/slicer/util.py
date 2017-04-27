@@ -226,6 +226,9 @@ def loadUI(path):
   """
   import qt
   qfile = qt.QFile(path)
+  if not qfile.exists():
+    errorMessage = "Could not load UI file: file not found " + str(path) + "\n\n"
+    raise RuntimeError(errorMessage)
   qfile.open(qt.QFile.ReadOnly)
   loader = qt.QUiLoader()
   widget = loader.load(qfile)
@@ -234,9 +237,10 @@ def loadUI(path):
     raise RuntimeError(errorMessage)
   return widget
 
-def setSliceViewerLayers(background=None, foreground=None, label=None,
+def setSliceViewerLayers(background='keep-current', foreground='keep-current', label='keep-current',
                          foregroundOpacity=None, labelOpacity=None):
   """ Set the slice views with the given nodes.
+  If node ID is not specified (or value is 'keep-current') then the layer will not be modified.
   :param background: node or node ID to be used for the background layer
   :param foreground: node or node ID to be used for the foreground layer
   :param label: node or node ID to be used for the label layer
@@ -253,13 +257,13 @@ def setSliceViewerLayers(background=None, foreground=None, label=None,
   num = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSliceCompositeNode')
   for i in range(num):
       sliceViewer = slicer.mrmlScene.GetNthNodeByClass(i, 'vtkMRMLSliceCompositeNode')
-      if background is not None:
+      if background is not 'keep-current':
           sliceViewer.SetBackgroundVolumeID(_nodeID(background))
-      if foreground is not None:
+      if foreground is not 'keep-current':
           sliceViewer.SetForegroundVolumeID(_nodeID(foreground))
       if foregroundOpacity is not None:
           sliceViewer.SetForegroundOpacity(foregroundOpacity)
-      if label is not None:
+      if label is not 'keep-current':
           sliceViewer.SetLabelVolumeID(_nodeID(label))
       if labelOpacity is not None:
           sliceViewer.SetLabelOpacity(labelOpacity)
