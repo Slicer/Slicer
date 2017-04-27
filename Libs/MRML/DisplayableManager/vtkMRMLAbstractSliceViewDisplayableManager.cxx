@@ -96,7 +96,7 @@ void vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(
   int numberOfRows = sliceNode->GetLayoutGridRows();
 
   float tempX = x / windowWidth;
-  float tempY = (windowHeight - y) / windowHeight;
+  float tempY = (windowHeight - 1 - y) / windowHeight;
 
   float z = floor(tempY*numberOfRows)*numberOfColumns + floor(tempX*numberOfColumns);
 

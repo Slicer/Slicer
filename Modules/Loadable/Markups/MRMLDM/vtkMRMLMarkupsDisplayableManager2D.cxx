@@ -1172,17 +1172,6 @@ void vtkMRMLMarkupsDisplayableManager2D::GetDisplayToWorldCoordinates(double x, 
 
   // we will get the transformation matrix to convert display coordinates to RAS
 
-//    double windowWidth = this->GetInteractor()->GetRenderWindow()->GetSize()[0];
-//    double windowHeight = this->GetInteractor()->GetRenderWindow()->GetSize()[1];
-
-//    int numberOfColumns = this->GetMRMLSliceNode()->GetLayoutGridColumns();
-//    int numberOfRows = this->GetMRMLSliceNode()->GetLayoutGridRows();
-
-//    float tempX = x / windowWidth;
-//    float tempY = (windowHeight - y) / windowHeight;
-
-//    float z = floor(tempY*numberOfRows)*numberOfColumns + floor(tempX*numberOfColumns);
-
   vtkRenderer* pokedRenderer = this->GetInteractor()->FindPokedRenderer(x,y);
 
   vtkMatrix4x4 * xyToRasMatrix = this->GetMRMLSliceNode()->GetXYToRAS();
@@ -1260,25 +1249,13 @@ void vtkMRMLMarkupsDisplayableManager2D::GetDisplayToViewportCoordinates(double 
     vtkErrorMacro("GetDisplayToViewportCoordinates: No interactor!");
     return;
     }
-  double windowWidth = this->GetInteractor()->GetRenderWindow()->GetSize()[0];
-  double windowHeight = this->GetInteractor()->GetRenderWindow()->GetSize()[1];
-
-  int numberOfColumns = this->GetMRMLSliceNode()->GetLayoutGridColumns();
-  int numberOfRows = this->GetMRMLSliceNode()->GetLayoutGridRows();
-
-  float tempX = x / windowWidth;
-  float tempY = (windowHeight - y) / windowHeight;
-
-  float z = floor(tempY*numberOfRows)*numberOfColumns + floor(tempX*numberOfColumns);
-
-  vtkRenderer* pokedRenderer = this->GetInteractor()->FindPokedRenderer(x,y);
 
   double displayCoordinates[4];
-  displayCoordinates[0] = x - pokedRenderer->GetOrigin()[0];
-  displayCoordinates[1] = y - pokedRenderer->GetOrigin()[1];
-  displayCoordinates[2] = z;
+  this->ConvertDeviceToXYZ(x, y, displayCoordinates);
   displayCoordinates[3] = 1;
 
+  double windowWidth = this->GetInteractor()->GetRenderWindow()->GetSize()[0];
+  double windowHeight = this->GetInteractor()->GetRenderWindow()->GetSize()[1];
   if (windowWidth != 0.0)
     {
     viewportCoordinates[0] = displayCoordinates[0]/windowWidth;
