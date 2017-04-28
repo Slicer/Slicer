@@ -31,7 +31,9 @@ set(expected_existing_vars
   Slicer_CMAKE_DIR
   Slicer_DIR
   Slicer_EXTENSIONS_CMAKE_DIR
-  Subversion_SVN_EXECUTABLE
+  # Since new extension generated from the SuperBuild template
+  # do not require SVN, we do not require it.
+  # Subversion_SVN_EXECUTABLE
   )
 foreach(var ${expected_existing_vars})
   if(NOT EXISTS "${${var}}")

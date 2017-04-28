@@ -50,6 +50,10 @@
 #  <var-prefix>_WC_LAST_CHANGED_REV - revision of last commit
 #  <var-prefix>_WC_INFO
 #
+# If source directory is not a SVN, GIT or CVS, the macro will return early
+# displaying an warning message:
+#
+#   -- Skipping repository info extraction: directory [/path/to/src] is not a GIT, SVN or CVS checkout
 
 macro(SlicerMacroExtractRepositoryInfo)
   include(CMakeParseArguments)
@@ -83,6 +87,13 @@ macro(SlicerMacroExtractRepositoryInfo)
   # Clear GIT specific variables
   set(${wc_info_prefix}_WC_REVISION_NAME "NA")
   set(${wc_info_prefix}_WC_REVISION_HASH "NA")
+
+  if(NOT EXISTS ${MY_SOURCE_DIR}/.git
+      AND NOT EXISTS ${MY_SOURCE_DIR}/.svn
+      AND NOT EXISTS ${MY_SOURCE_DIR}/CVS)
+    message(AUTHOR_WARNING "Skipping repository info extraction: directory [${MY_SOURCE_DIR}] is not a GIT, SVN or CVS checkout")
+    return()
+  endif()
 
   find_package(Git REQUIRED)
 
