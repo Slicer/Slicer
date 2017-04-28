@@ -99,7 +99,7 @@ void qMRMLMarkupsFiducialProjectionPropertyWidget
 {
   Q_D(qMRMLMarkupsFiducialProjectionPropertyWidget);
   vtkMRMLMarkupsDisplayNode* displayNode
-    = fiducialNode->GetMarkupsDisplayNode();
+    = fiducialNode ? fiducialNode->GetMarkupsDisplayNode() : NULL;
 
   qvtkReconnect(d->FiducialDisplayNode, displayNode, vtkCommand::ModifiedEvent,
                 this, SLOT(updateWidgetFromDisplayNode()));
