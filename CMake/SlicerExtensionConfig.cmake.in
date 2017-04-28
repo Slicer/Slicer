@@ -4,6 +4,8 @@
 
 @EXTENSION_SOURCE_DIR_CONFIG@
 
+@EXTENSION_ADDITIONAL_LAUNCHER_SETTINGS_FILE_CONTENT_CONFIG@
+
 @EXTENSION_CUSTOM_CONFIG@
 
 # --------------------------------------------------------------------------

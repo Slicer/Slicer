@@ -38,6 +38,15 @@ message(STATUS "${_msg} - ${_msg_status}")
 
 if(NOT TARGET ConfigureAdditionalLauncherSettings AND _configure_additional_launcher_settings)
 
+  # Load additional paths variables from extensions that we depend on.
+  if (EXTENSION_DEPENDS)
+    # When no extension dependencies are specified, "NA" value may be listed.
+    list(REMOVE_ITEM EXTENSION_DEPENDS "NA")
+    foreach(dep ${EXTENSION_DEPENDS})
+      find_package(${dep} REQUIRED)
+    endforeach()
+  endif()
+
   set(Slicer_ADDITIONAL_LAUNCHER_SETTINGS_FILE ${CMAKE_CURRENT_BINARY_DIR}/AdditionalLauncherSettings.ini)
   set(Slicer_ADDITIONAL_LAUNCHER_SETTINGS "--launcher-additional-settings" ${Slicer_ADDITIONAL_LAUNCHER_SETTINGS_FILE})
 
@@ -76,6 +85,12 @@ if(NOT TARGET ConfigureAdditionalLauncherSettings AND _configure_additional_laun
     list(APPEND EXTENSION_LIBRARY_PATHS_BUILD ${${varname}})
   endforeach()
 
+  # Extension dependencies - library paths
+  foreach(dep ${EXTENSION_DEPENDS})
+    string(REPLACE "\$(Configuration)" "\${CMAKE_CFG_INTDIR}" path "${${dep}_LIBRARY_PATHS_LAUNCHER_BUILD}")
+    list(APPEND EXTENSION_LIBRARY_PATHS_BUILD ${path})
+  endforeach()
+
   #-----------------------------------------------------------------------------
   # PATHS
   #-----------------------------------------------------------------------------
@@ -96,6 +111,12 @@ if(NOT TARGET ConfigureAdditionalLauncherSettings AND _configure_additional_laun
     list(APPEND EXTENSION_PATHS_BUILD ${${varname}})
   endforeach()
 
+  # Extension dependencies - paths
+  foreach(dep ${EXTENSION_DEPENDS})
+    string(REPLACE "\$(Configuration)" "\${CMAKE_CFG_INTDIR}" path "${${dep}_PATHS_LAUNCHER_BUILD}")
+    list(APPEND EXTENSION_PATHS_BUILD ${path})
+  endforeach()
+
   #-----------------------------------------------------------------------------
   # ENVVARS
   #-----------------------------------------------------------------------------
@@ -105,6 +126,12 @@ if(NOT TARGET ConfigureAdditionalLauncherSettings AND _configure_additional_laun
   # External projects - environment variables
   foreach(varname IN LISTS ${SUPERBUILD_TOPLEVEL_PROJECT}_EP_LABEL_ENVVARS_LAUNCHER_BUILD)
     list(APPEND EXTENSION_LAUNCHER_SETTINGS_ENVVARS ${${varname}})
+  endforeach()
+
+  # Extension dependencies - environment variables
+  foreach(dep ${EXTENSION_DEPENDS})
+    string(REPLACE "\$(Configuration)" "\${CMAKE_CFG_INTDIR}" path "${${dep}_ENVVARS_LAUNCHER_BUILD}")
+    list(APPEND EXTENSION_LAUNCHER_SETTINGS_ENVVARS ${path})
   endforeach()
 
   #-----------------------------------------------------------------------------
@@ -126,6 +153,12 @@ if(NOT TARGET ConfigureAdditionalLauncherSettings AND _configure_additional_laun
   # External projects - pythonpath
   foreach(varname IN LISTS ${SUPERBUILD_TOPLEVEL_PROJECT}_EP_LABEL_PYTHONPATH_LAUNCHER_BUILD)
     list(APPEND EXTENSION_PYTHONPATH_BUILD ${${varname}})
+  endforeach()
+
+  # Extension dependencies - pythonpath
+  foreach(dep ${EXTENSION_DEPENDS})
+    string(REPLACE "\$(Configuration)" "\${CMAKE_CFG_INTDIR}" path "${${dep}_PYTHONPATH_LAUNCHER_BUILD}")
+    list(APPEND EXTENSION_PYTHONPATH_BUILD ${path})
   endforeach()
 
   set(EXTENSION_PATH_ENVVARS_BUILD
@@ -170,8 +203,7 @@ ${_extension_paths_${envvar}}")
   # Write script
   set(_additional_settings_configure_script ${CMAKE_CURRENT_BINARY_DIR}/AdditionalLauncherSettings-configure.cmake)
   file(WRITE ${_additional_settings_configure_script}
-  "
-  file(WRITE ${Slicer_ADDITIONAL_LAUNCHER_SETTINGS_FILE}
+  "file(WRITE ${Slicer_ADDITIONAL_LAUNCHER_SETTINGS_FILE}
 \"[General]
 additionalPathVariables=${EXTENSION_LAUNCHER_SETTINGS_PATH_ENVVARS}
 
@@ -204,5 +236,5 @@ ${EXTENSION_LAUNCHER_SETTINGS_ADDITIONAL_PATH_ENVVARS}
     DEPENDS
       ${Slicer_ADDITIONAL_LAUNCHER_SETTINGS_FILE}
     )
-    
+
 endif()
