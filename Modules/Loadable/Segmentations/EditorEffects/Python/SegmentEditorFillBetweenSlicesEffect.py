@@ -31,9 +31,10 @@ class SegmentEditorFillBetweenSlicesEffect(AbstractScriptedSegmentEditorAutoComp
 <li>Create complete segmentation on selected slices using any editor effect.
 Segmentation will only expanded if a slice is segmented but none of the direct neighbors are segmented, therefore
 do not use sphere brush with Paint effect and always leave at least one empty slice between segmented slices.</li>
+<li>All visible segments will be interpolated, not just the selected segment.</li>
 <li>The complete segmentation will be created by interpolating segmentations in empty slices.</li>
 </ul><p>
-Masking settings are bypassed. If segments overlap, segment higher in the segments table will have priority.
+Masking settings are ignored. If segments overlap, segment higher in the segments table will have priority.
 The effect uses  <a href="http://insight-journal.org/browse/publication/977">morphological contour interpolation method</a>.
 <p></html>"""
 
