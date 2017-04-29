@@ -40,10 +40,14 @@ if(NOT TARGET ConfigureAdditionalLauncherSettings AND _configure_additional_laun
 
   # Load additional paths variables from extensions that we depend on.
   if (EXTENSION_DEPENDS)
-    # When no extension dependencies are specified, "NA" value may be listed.
-    list(REMOVE_ITEM EXTENSION_DEPENDS "NA")
     foreach(dep ${EXTENSION_DEPENDS})
-      find_package(${dep} REQUIRED)
+      # When no extension dependencies are specified, "NA" value may be listed, it should be ignored.
+      if (NOT "${dep}" STREQUAL "NA")
+        find_package(${dep} QUIET)
+        if (NOT ${dep}_FOUND)
+          MESSAGE(WARNING "Dependent extension ${dep} cannot be found by CMake find_package(), therefore paths variables cannot be imported from this extension. The problem can be resolved by generating ${dep}Config.cmake by adding include(\${Slicer_EXTENSION_GENERATE_CONFIG}) to the top-level CMakeLists.txt of the dependent exension.")
+        endif()
+      endif()
     endforeach()
   endif()
 
