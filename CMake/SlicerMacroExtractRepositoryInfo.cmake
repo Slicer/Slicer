@@ -91,53 +91,56 @@ macro(SlicerMacroExtractRepositoryInfo)
   if(NOT EXISTS ${MY_SOURCE_DIR}/.git
       AND NOT EXISTS ${MY_SOURCE_DIR}/.svn
       AND NOT EXISTS ${MY_SOURCE_DIR}/CVS)
+
     message(AUTHOR_WARNING "Skipping repository info extraction: directory [${MY_SOURCE_DIR}] is not a GIT, SVN or CVS checkout")
-    return()
-  endif()
-
-  find_package(Git REQUIRED)
-
-  # Is <SOURCE_DIR> a git working copy ?
-  execute_process(COMMAND ${GIT_EXECUTABLE} rev-list -n 1 HEAD
-    WORKING_DIRECTORY ${MY_SOURCE_DIR}
-    RESULT_VARIABLE GIT_result
-    OUTPUT_QUIET
-    ERROR_QUIET)
-
-  if(${GIT_result} EQUAL 0)
-
-    set(${wc_info_prefix}_WC_TYPE git)
-    GIT_WC_INFO(${MY_SOURCE_DIR} ${wc_info_prefix})
-    if(${wc_info_prefix}_WC_GITSVN)
-      set(${wc_info_prefix}_WC_TYPE svn)
-    endif()
 
   else()
+  
+    find_package(Git REQUIRED)
 
-    find_package(Subversion REQUIRED)
-
-    # Is <SOURCE_DIR> a svn working copy ?
-    execute_process(COMMAND ${Subversion_SVN_EXECUTABLE} info
+    # Is <SOURCE_DIR> a git working copy ?
+    execute_process(COMMAND ${GIT_EXECUTABLE} rev-list -n 1 HEAD
       WORKING_DIRECTORY ${MY_SOURCE_DIR}
-      RESULT_VARIABLE Subversion_result
+      RESULT_VARIABLE GIT_result
       OUTPUT_QUIET
       ERROR_QUIET)
 
-    if(${Subversion_result} EQUAL 0)
+    if(${GIT_result} EQUAL 0)
 
-      set(${wc_info_prefix}_WC_TYPE svn)
-      Subversion_WC_INFO(${MY_SOURCE_DIR} ${wc_info_prefix})
-
+      set(${wc_info_prefix}_WC_TYPE git)
+      GIT_WC_INFO(${MY_SOURCE_DIR} ${wc_info_prefix})
+      if(${wc_info_prefix}_WC_GITSVN)
+        set(${wc_info_prefix}_WC_TYPE svn)
+      endif()
+   
     else()
 
-      # Is <SOURCE_DIR> a CVS working copy ?
-      if(EXISTS ${MY_SOURCE_DIR}/CVS)
+      find_package(Subversion REQUIRED)
 
-        message(AUTHOR_WARNING "CVS info extraction *NOT* implemented !")
+      # Is <SOURCE_DIR> a svn working copy ?
+      execute_process(COMMAND ${Subversion_SVN_EXECUTABLE} info
+        WORKING_DIRECTORY ${MY_SOURCE_DIR}
+        RESULT_VARIABLE Subversion_result
+        OUTPUT_QUIET
+        ERROR_QUIET)
 
+      if(${Subversion_result} EQUAL 0)
+
+        set(${wc_info_prefix}_WC_TYPE svn)
+        Subversion_WC_INFO(${MY_SOURCE_DIR} ${wc_info_prefix})
+
+      else()
+
+        # Is <SOURCE_DIR> a CVS working copy ?
+        if(EXISTS ${MY_SOURCE_DIR}/CVS)
+
+          message(AUTHOR_WARNING "CVS info extraction *NOT* implemented !")
+
+        endif()
       endif()
     endif()
   endif()
+
 endmacro()
 
 
