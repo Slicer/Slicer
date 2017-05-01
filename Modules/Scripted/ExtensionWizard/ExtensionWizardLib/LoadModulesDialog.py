@@ -81,7 +81,7 @@ class LoadModulesDialog(object):
 
     # If developer mode is already enabled then don't even show the option
     settings = qt.QSettings()
-    developerModeAlreadyEnabled = settings.value('Developer/DeveloperMode').lower() == 'true'
+    developerModeAlreadyEnabled = slicer.util.settingsValue('Developer/DeveloperMode', False, lambda v: v.lower()=='true')
     if developerModeAlreadyEnabled:
       self.ui.enableDeveloperMode.visible = False
       self.ui.enableDeveloperMode.checked = False
