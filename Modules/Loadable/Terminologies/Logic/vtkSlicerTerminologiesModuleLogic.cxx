@@ -746,6 +746,10 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
         ++index;
         continue;
         }
+      else
+        {
+        typeModifier.SetObject();
+        }
 
       // Create and populate modifier
       this->GetJsonCodeFromIdentifier(typeModifier, typeModifierId, allocator);
