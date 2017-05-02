@@ -13,6 +13,10 @@ if(COMMAND CMAKE_POLICY)
 endif()
 
 #-----------------------------------------------------------------------------
+set(PYTHON_STDLIB_SUBDIR "@PYTHON_STDLIB_SUBDIR@")
+set(PYTHON_SITE_PACKAGES_SUBDIR "@PYTHON_SITE_PACKAGES_SUBDIR@")
+
+#-----------------------------------------------------------------------------
 # gp_log_message - Convenient function allowing to both display and log a message.
 # Log file: $ENV{DESTDIR}/../complete-bundles-log.txt
 #-----------------------------------------------------------------------------
