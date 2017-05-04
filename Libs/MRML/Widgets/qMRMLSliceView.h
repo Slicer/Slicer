@@ -59,7 +59,7 @@ public:
   /// vtkMRMLVolumeGlyphSliceDisplayableManager and
   /// vtkMRMLCrosshairDisplayableManager are registered.
   /// \sa getDisplayableManagers
-  void addDisplayableManager(const QString& displayableManager);
+  Q_INVOKABLE void addDisplayableManager(const QString& displayableManager);
   /// Get the displayable managers registered in this view
   /// \sa addDisplayableManager
   Q_INVOKABLE void getDisplayableManagers(vtkCollection *displayableManagers);
@@ -68,7 +68,7 @@ public:
   Q_INVOKABLE vtkMRMLSliceNode* mrmlSliceNode()const;
 
   /// Returns the interactor style of the view
-  vtkSliceViewInteractorStyle* sliceViewInteractorStyle()const;
+  Q_INVOKABLE vtkSliceViewInteractorStyle* sliceViewInteractorStyle()const;
 
   /// Convert device coordinates to XYZ coordinates. The x and y
   /// components of the return value are the positions within a

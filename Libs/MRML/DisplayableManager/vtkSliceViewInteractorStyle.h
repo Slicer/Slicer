@@ -77,15 +77,31 @@ public:
   enum
     {
     None = 0,
-    Translate,
-    Zoom,
-    Rotate, /* Rotate not currently used */
-    Blend, /* fg to bg, labelmap to bg */
-    AdjustWindowLevelBackground,
-    AdjustWindowLevelForeground
+    Translate = 1,
+    Zoom = 2,
+    Rotate = 4, /* Rotate not currently used */
+    Blend = 8, /* fg to bg, labelmap to bg */
+    AdjustWindowLevelBackground = 16,
+    AdjustWindowLevelForeground = 32,
+    BrowseSlice = 64,
+    ShowSlice = 128,
+    AdjustLightbox = 256,
+    SelectVolume = 512,
+    SetCursorPosition = 1024, /* adjust cursor position in crosshair node as mouse is moved */
+    AllActionsMask = Translate | Zoom | Rotate | Blend | AdjustWindowLevelBackground | AdjustWindowLevelForeground
+      | BrowseSlice | ShowSlice | AdjustLightbox | SelectVolume | SetCursorPosition
     };
   vtkGetMacro(ActionState, int);
   vtkSetMacro(ActionState, int);
+
+  /// Enable/disable the specified action (Translate, Zoom, Blend, etc.).
+  /// Multiple actions can be specifed by providing the sum of action ids.
+  /// Set the value to AllActionsMask to enable/disable all actions.
+  /// All actions are enabled by default.
+  void SetActionEnabled(int actionsMask, bool enable = true);
+  /// Returns true if the specified action is allowed.
+  /// If multiple actions are specified, the return value is true if all actions are enabled.
+  bool GetActionEnabled(int actionsMask);
 
   /// Helper routines
 
@@ -153,6 +169,8 @@ protected:
   bool IsMouseInsideVolume(bool background);
 
   int ActionState;
+  int ActionsEnabled;
+
   int StartActionEventPosition[2];
   double StartActionFOV[3];
   double VolumeScalarRange[2];
