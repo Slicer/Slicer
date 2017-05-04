@@ -1241,7 +1241,7 @@ std::string vtkSegmentation::AddEmptySegment(std::string segmentId/*=""*/, std::
     }
 
   // Add segment
-  if (!this->AddSegment(segment))
+  if (!this->AddSegment(segment, segmentId))
     {
     return "";
     }
