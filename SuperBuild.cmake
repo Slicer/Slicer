@@ -184,7 +184,7 @@ list(APPEND Slicer_REMOTE_DEPENDENCIES jqPlot)
 
 Slicer_Remote_Add(OpenIGTLinkIF
   GIT_REPOSITORY ${git_protocol}://github.com/openigtlink/OpenIGTLinkIF.git
-  GIT_TAG bfe21de98dec2942b5077b7c910a2d1cb3d12008
+  GIT_TAG bd4d34f17cdf5d8fcd29ffb84e1a7eab88737513
   OPTION_NAME Slicer_BUILD_OpenIGTLinkIF
   OPTION_DEPENDS "Slicer_BUILD_QTLOADABLEMODULES;Slicer_USE_OpenIGTLink"
   LABELS REMOTE_MODULE
