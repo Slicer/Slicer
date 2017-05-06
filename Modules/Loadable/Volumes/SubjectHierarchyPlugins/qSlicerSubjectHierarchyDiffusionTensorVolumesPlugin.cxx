@@ -189,6 +189,7 @@ QString qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::tooltip(vtkIdType i
 
   // Additional DTI-related information
   vtkMRMLDiffusionTensorVolumeNode* dtiVolumeNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+  Q_UNUSED(dtiVolumeNode);
   //vtkImageData* imageData = (dtiVolumeNode ? dtiVolumeNode->GetImageData() : NULL);
   //if (dtiVolumeNode && imageData)
   //  {
@@ -284,8 +285,6 @@ void qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::showContextMenuActions
     return;
     }
 
-  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
-
   // DTI volume
   if (this->canOwnSubjectHierarchyItem(itemID))
     {
@@ -311,6 +310,7 @@ void qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::onTractographyLabelMap
 #ifdef Slicer_BUILD_CLI_SUPPORT
   //TODO: Select inputs too
   qSlicerAbstractModuleWidget* moduleWidget = qSlicerSubjectHierarchyAbstractPlugin::switchToModule("TractographyLabelMapSeeding");
+  Q_UNUSED(moduleWidget);
 #else
   qWarning() << Q_FUNC_INFO << ": This operation cannot be performed with CLI disabled";
 #endif
