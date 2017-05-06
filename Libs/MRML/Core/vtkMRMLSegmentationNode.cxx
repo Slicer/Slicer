@@ -713,7 +713,8 @@ void vtkMRMLSegmentationNode::SetReferenceImageGeometryParameterFromVolumeNode(v
 
 //---------------------------------------------------------------------------
 std::string vtkMRMLSegmentationNode::AddSegmentFromClosedSurfaceRepresentation(vtkPolyData* polyData,
-  std::string segmentName/* ="" */, double color[3] /* =NULL */, std::string segmentId/* ="" */)
+  std::string segmentName/* ="" */, double color[3] /* =NULL */,
+  std::string vtkNotUsed(segmentId)/* ="" */)
 {
   if (!this->Segmentation)
     {
@@ -739,7 +740,8 @@ std::string vtkMRMLSegmentationNode::AddSegmentFromClosedSurfaceRepresentation(v
 
 //---------------------------------------------------------------------------
 std::string vtkMRMLSegmentationNode::AddSegmentFromBinaryLabelmapRepresentation(vtkOrientedImageData* imageData,
-  std::string segmentName/* ="" */, double color[3] /* =NULL */, std::string segmentId/* ="" */)
+  std::string segmentName/* ="" */, double color[3] /* =NULL */,
+  std::string vtkNotUsed(segmentId)/* ="" */)
 {
   if (!this->Segmentation)
     {
