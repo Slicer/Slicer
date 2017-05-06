@@ -408,11 +408,11 @@ ArchetypeVolumeNodeSet LabelMapVolumeNodeSetFactory(std::string& volumeName, vtk
   vtkNew<vtkMRMLLabelMapVolumeNode> scalarNode;
   scalarNode->SetName(volumeName.c_str());
   nodeSet.Scene->AddNode(scalarNode.GetPointer());
-
-  vtkNew<vtkMRMLLabelMapVolumeDisplayNode> lmdisplayNode;
-  nodeSet.Scene->AddNode(lmdisplayNode.GetPointer());
+  vtkSmartPointer<vtkMRMLLabelMapVolumeDisplayNode> lmdisplayNode =
+    vtkSmartPointer<vtkMRMLLabelMapVolumeDisplayNode>::Take(
+       vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(nodeSet.Scene->CreateNodeByClass("vtkMRMLLabelMapVolumeDisplayNode")));
+  nodeSet.Scene->AddNode(lmdisplayNode);
   scalarNode->SetAndObserveDisplayNodeID(lmdisplayNode->GetID());
-
   vtkNew<vtkMRMLVolumeArchetypeStorageNode> storageNode;
   storageNode->SetCenterImage(options & vtkSlicerVolumesLogic::CenterImage);
   storageNode->SetUseOrientationFromFile(!((options & vtkSlicerVolumesLogic::DiscardOrientation) != 0));
@@ -421,7 +421,7 @@ ArchetypeVolumeNodeSet LabelMapVolumeNodeSetFactory(std::string& volumeName, vtk
   scalarNode->SetAndObserveStorageNodeID(storageNode->GetID());
 
   nodeSet.StorageNode = storageNode.GetPointer();
-  nodeSet.DisplayNode = lmdisplayNode.GetPointer();
+  nodeSet.DisplayNode = lmdisplayNode;
   nodeSet.Node = scalarNode.GetPointer();
 
   nodeSet.LabelMap = true;
@@ -658,6 +658,8 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (
 
   // set up a mini scene to avoid adding and removing nodes from the main scene
   vtkNew<vtkMRMLScene> testScene;
+  // associate default nodes with mini scene
+  this->GetMRMLScene()->CopyDefaultNodesToScene(testScene.GetPointer());
   // set it up for remote io, the constructor creates a cache and data io manager
   vtkSmartPointer<vtkMRMLRemoteIOLogic> remoteIOLogic;
   remoteIOLogic = vtkSmartPointer<vtkMRMLRemoteIOLogic>::New();
