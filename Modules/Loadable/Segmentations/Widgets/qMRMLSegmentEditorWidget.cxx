@@ -229,6 +229,7 @@ public:
 //-----------------------------------------------------------------------------
 qMRMLSegmentEditorWidgetPrivate::qMRMLSegmentEditorWidgetPrivate(qMRMLSegmentEditorWidget& object)
   : q_ptr(&object)
+  , Locked(false)
   , ActiveEffect(NULL)
   , AlignedMasterVolume(NULL)
   , ModifierLabelmap(NULL)
@@ -240,7 +241,6 @@ qMRMLSegmentEditorWidgetPrivate::qMRMLSegmentEditorWidgetPrivate(qMRMLSegmentEdi
   , AlignedMasterVolumeUpdateSegmentationNodeTransform(NULL)
   , MaskModeComboBoxFixedItemsCount(0)
   , EffectButtonStyle(Qt::ToolButtonTextUnderIcon)
-  , Locked(false)
 {
   this->AlignedMasterVolume = vtkOrientedImageData::New();
   this->ModifierLabelmap = vtkOrientedImageData::New();
@@ -418,10 +418,6 @@ void qMRMLSegmentEditorWidgetPrivate::updateEffectList()
     this->EffectButtonGroup.removeButton(button);
     button->deleteLater();
     }
-
-  // Initialize effects specified in default ordering
-
-  QLayout* effectsGroupLayout = this->EffectsGroupBox->layout();
 
   // Add NULL effect (arrow button to deactivate all effects)
   QToolButton* effectButton = new QToolButton(this->EffectsGroupBox);
