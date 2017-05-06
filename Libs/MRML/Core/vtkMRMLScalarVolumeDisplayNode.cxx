@@ -799,7 +799,7 @@ void vtkMRMLScalarVolumeDisplayNode::CalculateAutoLevels()
     this->Accumulate->SetInputData(imageDataScalar);
     int extent[6] = {0, 999, 0, 0, 0, 0};
     this->Accumulate->SetComponentExtent(extent);
-    double origin[3] = {minInt, 0, 0};
+    double origin[3] = {static_cast<double>(minInt), 0.0, 0.0};
     this->Accumulate->SetComponentOrigin(origin);
     double spacing[3] = {(maxInt-minInt)/1000.0, 1.0, 1.0};
     this->Accumulate->SetComponentSpacing(spacing);
