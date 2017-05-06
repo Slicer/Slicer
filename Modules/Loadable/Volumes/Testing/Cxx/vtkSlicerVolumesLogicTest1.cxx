@@ -82,6 +82,18 @@ int vtkSlicerVolumesLogicTest1( int argc, char * argv[] )
 
   vtkMRMLLabelMapVolumeNode * labelMapVolume = TestLabelMapVolumeLoading(volumeName, logic.GetPointer());
   CHECK_NOT_NULL(labelMapVolume);
+  CHECK_INT(labelMapVolume->GetDisplayNode()->GetSliceIntersectionThickness(), 3);
+
+  // Add default node
+  vtkNew<vtkMRMLLabelMapVolumeDisplayNode> defaultDisplayNode;
+  defaultDisplayNode->SetSliceIntersectionThickness(1);
+  scene->AddDefaultNode(defaultDisplayNode.GetPointer());
+
+  // Check that node attribute is initialized considering the default node
+  labelMapVolume = TestLabelMapVolumeLoading(volumeName, logic.GetPointer());
+    CHECK_NOT_NULL(labelMapVolume);
+    CHECK_INT(labelMapVolume->GetDisplayNode()->GetSliceIntersectionThickness(), 1);
+
 
   CHECK_EXIT_SUCCESS(TestCheckForLabelVolumeValidity(scalarVolume, labelMapVolume, logic.GetPointer()));
 

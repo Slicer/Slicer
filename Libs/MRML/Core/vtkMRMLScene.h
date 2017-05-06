@@ -99,7 +99,17 @@ public:
   /// Reset all nodes to their constructor's state
   void ResetNodes();
 
-  /// Create node with a given class
+  /// \brief Create node with a given class
+  ///
+  /// This method ensures the new node properties are
+  /// initialized using the associated default node if any.
+  ///
+  /// \note A default node is associated with an other node if
+  /// it belongs to the class hierarchy of that node.
+  ///
+  /// \warning This method does NOT add the new node to the scene.
+  ///
+  /// \sa AddDefaultNode()
   vtkMRMLNode* CreateNodeByClass(const char* className);
 
   /// \brief Register a node class to the scene so that the scene can later
@@ -161,6 +171,23 @@ public:
   /// added but its properties are copied (c.f. vtkMRMLNode::CopyWithScene())
   /// into the already existing singleton node. That node is then returned.
   vtkMRMLNode* AddNode(vtkMRMLNode *nodeToAdd);
+
+  /// \brief Instantiate and add a node to the scene.
+  ///
+  /// This is the preferred way to create and add a new node to
+  /// the scene. It ensures that the new node properties are initialized
+  /// considering its default nodes.
+  ///
+  /// The method calls CreateNodeByClass(), vtkMRMLNode::SetName() and AddNode().
+  ///
+  /// \note Instead of calling SetName() after creating the node, prefer
+  /// passing \a nodeBaseName, indeed the method AddNode() ensures that the
+  /// final node name is unique in the scene by appending a suffix if needed.
+  ///
+  /// \sa CreateNodeByClass(), vtkMRMLNode::SetName(), AddNode()
+  /// \sa AddDefaultNode()
+  /// \sa GenerateUniqueName()
+  vtkMRMLNode* AddNewNodeByClass(std::string className, std::string nodeBaseName = "");
 
   /// Add a copy of a node to the scene.
   vtkMRMLNode* CopyNode(vtkMRMLNode *n);

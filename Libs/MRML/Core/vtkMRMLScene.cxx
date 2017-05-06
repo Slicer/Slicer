@@ -1250,6 +1250,24 @@ vtkMRMLNode* vtkMRMLScene::AddNode(vtkMRMLNode *n)
 }
 
 //------------------------------------------------------------------------------
+vtkMRMLNode* vtkMRMLScene::AddNewNodeByClass(
+    std::string className, std::string nodeBaseName /* = "" */)
+{
+  if (className.empty())
+    {
+    vtkErrorMacro("AddNewNodeByClass: className is an emptry string");
+    return NULL;
+    }
+  vtkSmartPointer<vtkMRMLNode> nodeToAdd =
+      vtkSmartPointer<vtkMRMLNode>::Take(this->CreateNodeByClass(className.c_str()));
+  if (!nodeBaseName.empty())
+    {
+    nodeToAdd->SetName(nodeBaseName.c_str());
+    }
+  return this->AddNode(nodeToAdd);
+}
+
+//------------------------------------------------------------------------------
 void vtkMRMLScene::NodeAdded(vtkMRMLNode *n)
 {
   this->InvokeEvent(this->NodeAddedEvent, n);

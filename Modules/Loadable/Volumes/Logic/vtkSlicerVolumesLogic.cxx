@@ -291,22 +291,24 @@ ArchetypeVolumeNodeSet DiffusionWeightedVolumeNodeSetFactory(std::string& volume
   ArchetypeVolumeNodeSet nodeSet(scene);
 
   // set up the dwi node's support nodes
-  vtkNew<vtkMRMLDiffusionWeightedVolumeDisplayNode> dwdisplayNode;
-  nodeSet.Scene->AddNode(dwdisplayNode.GetPointer());
+  vtkMRMLDiffusionWeightedVolumeDisplayNode* dwdisplayNode =
+      vtkMRMLDiffusionWeightedVolumeDisplayNode::SafeDownCast(
+        nodeSet.Scene->AddNewNodeByClass("vtkMRMLDiffusionWeightedVolumeDisplayNode"));
 
-  vtkNew<vtkMRMLDiffusionWeightedVolumeNode> dwiNode;
-  dwiNode->SetName(volumeName.c_str());
-  nodeSet.Scene->AddNode(dwiNode.GetPointer());
+  vtkMRMLDiffusionWeightedVolumeNode* dwiNode =
+      vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(
+        nodeSet.Scene->AddNewNodeByClass("vtkMRMLDiffusionWeightedVolumeNode", volumeName));
   dwiNode->SetAndObserveDisplayNodeID(dwdisplayNode->GetID());
 
-  vtkNew<vtkMRMLNRRDStorageNode> storageNode;
+  vtkMRMLNRRDStorageNode* storageNode =
+      vtkMRMLNRRDStorageNode::SafeDownCast(
+        nodeSet.Scene->AddNewNodeByClass("vtkMRMLNRRDStorageNode"));
   storageNode->SetCenterImage(options & vtkSlicerVolumesLogic::CenterImage);
-  nodeSet.Scene->AddNode(storageNode.GetPointer());
   dwiNode->SetAndObserveStorageNodeID(storageNode->GetID());
 
-  nodeSet.StorageNode = storageNode.GetPointer();
-  nodeSet.DisplayNode = dwdisplayNode.GetPointer();
-  nodeSet.Node = dwiNode.GetPointer();
+  nodeSet.StorageNode = storageNode;
+  nodeSet.DisplayNode = dwdisplayNode;
+  nodeSet.Node = dwiNode;
 
   return nodeSet;
 }
@@ -317,30 +319,37 @@ ArchetypeVolumeNodeSet DiffusionTensorVolumeNodeSetFactory(std::string& volumeNa
   ArchetypeVolumeNodeSet nodeSet(scene);
 
   // set up the tensor node's support nodes
-  vtkNew<vtkMRMLDiffusionTensorVolumeDisplayNode> dtdisplayNode;
+  vtkMRMLDiffusionTensorVolumeDisplayNode* dtdisplayNode =
+      vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(
+        nodeSet.Scene->AddNewNodeByClass("vtkMRMLDiffusionTensorVolumeDisplayNode"));
   // jvm - are these the default settings anyway?
+  int wasModifying = dtdisplayNode->StartModify();
   dtdisplayNode->SetWindow(0);
   dtdisplayNode->SetLevel(0);
   dtdisplayNode->SetUpperThreshold(0);
   dtdisplayNode->SetLowerThreshold(0);
   dtdisplayNode->SetAutoWindowLevel(1);
-  nodeSet.Scene->AddNode(dtdisplayNode.GetPointer());
+  dtdisplayNode->EndModify(wasModifying);
 
-  vtkNew<vtkMRMLDiffusionTensorVolumeNode> tensorNode;
-  tensorNode->SetName(volumeName.c_str());
-  nodeSet.Scene->AddNode(tensorNode.GetPointer());
+  vtkMRMLDiffusionTensorVolumeNode* tensorNode =
+      vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(
+        nodeSet.Scene->AddNewNodeByClass("vtkMRMLDiffusionTensorVolumeNode", volumeName));
   tensorNode->SetAndObserveDisplayNodeID(dtdisplayNode->GetID());
 
-  vtkNew<vtkMRMLVolumeArchetypeStorageNode> storageNode;
+  vtkMRMLVolumeArchetypeStorageNode* storageNode =
+      vtkMRMLVolumeArchetypeStorageNode::SafeDownCast(
+        nodeSet.Scene->AddNewNodeByClass("vtkMRMLVolumeArchetypeStorageNode"));
+  wasModifying = storageNode->StartModify();
   storageNode->SetCenterImage(options & vtkSlicerVolumesLogic::CenterImage);
   storageNode->SetUseOrientationFromFile(!((options & vtkSlicerVolumesLogic::DiscardOrientation) != 0));
   storageNode->SetSingleFile(options & vtkSlicerVolumesLogic::SingleFile);
-  nodeSet.Scene->AddNode(storageNode.GetPointer());
+  storageNode->EndModify(wasModifying);
+
   tensorNode->SetAndObserveStorageNodeID(storageNode->GetID());
 
-  nodeSet.StorageNode = storageNode.GetPointer();
-  nodeSet.DisplayNode = dtdisplayNode.GetPointer();
-  nodeSet.Node = tensorNode.GetPointer();
+  nodeSet.StorageNode = storageNode;
+  nodeSet.DisplayNode = dtdisplayNode;
+  nodeSet.Node = tensorNode;
 
   return nodeSet;
 }
@@ -351,22 +360,24 @@ ArchetypeVolumeNodeSet NRRDVectorVolumeNodeSetFactory(std::string& volumeName, v
   ArchetypeVolumeNodeSet nodeSet(scene);
 
   // set up the vector node's support nodes
-  vtkNew<vtkMRMLVectorVolumeDisplayNode> vdisplayNode;
-  nodeSet.Scene->AddNode(vdisplayNode.GetPointer());
+  vtkMRMLVectorVolumeDisplayNode* vdisplayNode =
+      vtkMRMLVectorVolumeDisplayNode::SafeDownCast(
+        nodeSet.Scene->AddNewNodeByClass("vtkMRMLVectorVolumeDisplayNode"));
 
-  vtkNew<vtkMRMLVectorVolumeNode> vectorNode;
-  vectorNode->SetName(volumeName.c_str());
-  nodeSet.Scene->AddNode(vectorNode.GetPointer());
+  vtkMRMLVectorVolumeNode* vectorNode =
+      vtkMRMLVectorVolumeNode::SafeDownCast(
+        nodeSet.Scene->AddNewNodeByClass("vtkMRMLVectorVolumeNode", volumeName));
   vectorNode->SetAndObserveDisplayNodeID(vdisplayNode->GetID());
 
-  vtkNew<vtkMRMLNRRDStorageNode> storageNode;
+  vtkMRMLNRRDStorageNode* storageNode =
+      vtkMRMLNRRDStorageNode::SafeDownCast(
+        nodeSet.Scene->AddNewNodeByClass("vtkMRMLNRRDStorageNode"));
   storageNode->SetCenterImage(options & vtkSlicerVolumesLogic::CenterImage);
-  nodeSet.Scene->AddNode(storageNode.GetPointer());
   vectorNode->SetAndObserveStorageNodeID(storageNode->GetID());
 
-  nodeSet.StorageNode = storageNode.GetPointer();
-  nodeSet.DisplayNode = vdisplayNode.GetPointer();
-  nodeSet.Node = vectorNode.GetPointer();
+  nodeSet.StorageNode = storageNode;
+  nodeSet.DisplayNode = vdisplayNode;
+  nodeSet.Node = vectorNode;
 
   return nodeSet;
 }
@@ -377,24 +388,28 @@ ArchetypeVolumeNodeSet ArchetypeVectorVolumeNodeSetFactory(std::string& volumeNa
   ArchetypeVolumeNodeSet nodeSet(scene);
 
   // set up the vector node's support nodes
-  vtkNew<vtkMRMLVectorVolumeDisplayNode> vdisplayNode;
-  nodeSet.Scene->AddNode(vdisplayNode.GetPointer());
+  vtkMRMLVectorVolumeDisplayNode* vdisplayNode =
+      vtkMRMLVectorVolumeDisplayNode::SafeDownCast(
+        nodeSet.Scene->AddNewNodeByClass("vtkMRMLVectorVolumeDisplayNode"));
 
-  vtkNew<vtkMRMLVectorVolumeNode> vectorNode;
-  vectorNode->SetName(volumeName.c_str());
-  nodeSet.Scene->AddNode(vectorNode.GetPointer());
+  vtkMRMLVectorVolumeNode* vectorNode =
+      vtkMRMLVectorVolumeNode::SafeDownCast(
+        nodeSet.Scene->AddNewNodeByClass("vtkMRMLVectorVolumeNode", volumeName));
   vectorNode->SetAndObserveDisplayNodeID(vdisplayNode->GetID());
 
-  vtkNew<vtkMRMLVolumeArchetypeStorageNode> storageNode;
+  vtkMRMLVolumeArchetypeStorageNode* storageNode =
+      vtkMRMLVolumeArchetypeStorageNode::SafeDownCast(
+        nodeSet.Scene->AddNewNodeByClass("vtkMRMLVolumeArchetypeStorageNode"));
+  int wasModifying = storageNode->StartModify();
   storageNode->SetCenterImage(options & vtkSlicerVolumesLogic::CenterImage);
   storageNode->SetUseOrientationFromFile(!((options & vtkSlicerVolumesLogic::DiscardOrientation) != 0));
   storageNode->SetSingleFile(options & vtkSlicerVolumesLogic::SingleFile);
-  nodeSet.Scene->AddNode(storageNode.GetPointer());
+  storageNode->EndModify(wasModifying);
   vectorNode->SetAndObserveStorageNodeID(storageNode->GetID());
 
-  nodeSet.StorageNode = storageNode.GetPointer();
-  nodeSet.DisplayNode = vdisplayNode.GetPointer();
-  nodeSet.Node = vectorNode.GetPointer();
+  nodeSet.StorageNode = storageNode;
+  nodeSet.DisplayNode = vdisplayNode;
+  nodeSet.Node = vectorNode;
 
   return nodeSet;
 }
@@ -405,24 +420,28 @@ ArchetypeVolumeNodeSet LabelMapVolumeNodeSetFactory(std::string& volumeName, vtk
   ArchetypeVolumeNodeSet nodeSet(scene);
 
   // set up the scalar node's support nodes
-  vtkNew<vtkMRMLLabelMapVolumeNode> scalarNode;
-  scalarNode->SetName(volumeName.c_str());
-  nodeSet.Scene->AddNode(scalarNode.GetPointer());
-  vtkSmartPointer<vtkMRMLLabelMapVolumeDisplayNode> lmdisplayNode =
-    vtkSmartPointer<vtkMRMLLabelMapVolumeDisplayNode>::Take(
-       vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(nodeSet.Scene->CreateNodeByClass("vtkMRMLLabelMapVolumeDisplayNode")));
-  nodeSet.Scene->AddNode(lmdisplayNode);
+  vtkMRMLLabelMapVolumeDisplayNode* lmdisplayNode =
+      vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(
+        nodeSet.Scene->AddNewNodeByClass("vtkMRMLLabelMapVolumeDisplayNode"));
+
+  vtkMRMLLabelMapVolumeNode* scalarNode =
+      vtkMRMLLabelMapVolumeNode::SafeDownCast(
+        nodeSet.Scene->AddNewNodeByClass("vtkMRMLLabelMapVolumeNode", volumeName));
   scalarNode->SetAndObserveDisplayNodeID(lmdisplayNode->GetID());
-  vtkNew<vtkMRMLVolumeArchetypeStorageNode> storageNode;
+
+  vtkMRMLVolumeArchetypeStorageNode* storageNode =
+      vtkMRMLVolumeArchetypeStorageNode::SafeDownCast(
+        nodeSet.Scene->AddNewNodeByClass("vtkMRMLVolumeArchetypeStorageNode"));
+  int wasModifying = storageNode->StartModify();
   storageNode->SetCenterImage(options & vtkSlicerVolumesLogic::CenterImage);
   storageNode->SetUseOrientationFromFile(!((options & vtkSlicerVolumesLogic::DiscardOrientation) != 0));
   storageNode->SetSingleFile(options & vtkSlicerVolumesLogic::SingleFile);
-  nodeSet.Scene->AddNode(storageNode.GetPointer());
+  storageNode->EndModify(wasModifying);
   scalarNode->SetAndObserveStorageNodeID(storageNode->GetID());
 
-  nodeSet.StorageNode = storageNode.GetPointer();
+  nodeSet.StorageNode = storageNode;
   nodeSet.DisplayNode = lmdisplayNode;
-  nodeSet.Node = scalarNode.GetPointer();
+  nodeSet.Node = scalarNode;
 
   nodeSet.LabelMap = true;
 
@@ -435,24 +454,28 @@ ArchetypeVolumeNodeSet ScalarVolumeNodeSetFactory(std::string& volumeName, vtkMR
   ArchetypeVolumeNodeSet nodeSet(scene);
 
   // set up the scalar node's support nodes
-  vtkNew<vtkMRMLScalarVolumeNode> scalarNode;
-  scalarNode->SetName(volumeName.c_str());
-  nodeSet.Scene->AddNode(scalarNode.GetPointer());
+  vtkMRMLScalarVolumeDisplayNode* sdisplayNode =
+      vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
+        nodeSet.Scene->AddNewNodeByClass("vtkMRMLScalarVolumeDisplayNode"));
 
-  vtkNew<vtkMRMLScalarVolumeDisplayNode> sdisplayNode;
-  nodeSet.Scene->AddNode(sdisplayNode.GetPointer());
+  vtkMRMLScalarVolumeNode* scalarNode =
+      vtkMRMLScalarVolumeNode::SafeDownCast(
+        nodeSet.Scene->AddNewNodeByClass("vtkMRMLScalarVolumeNode", volumeName));
   scalarNode->SetAndObserveDisplayNodeID(sdisplayNode->GetID());
 
-  vtkNew<vtkMRMLVolumeArchetypeStorageNode> storageNode;
+  vtkMRMLVolumeArchetypeStorageNode* storageNode =
+      vtkMRMLVolumeArchetypeStorageNode::SafeDownCast(
+        nodeSet.Scene->AddNewNodeByClass("vtkMRMLVolumeArchetypeStorageNode"));
+  int wasModifying = storageNode->StartModify();
   storageNode->SetCenterImage(options & vtkSlicerVolumesLogic::CenterImage);
   storageNode->SetUseOrientationFromFile(!((options & vtkSlicerVolumesLogic::DiscardOrientation) != 0));
   storageNode->SetSingleFile(options & vtkSlicerVolumesLogic::SingleFile);
-  nodeSet.Scene->AddNode(storageNode.GetPointer());
+  storageNode->EndModify(wasModifying);
   scalarNode->SetAndObserveStorageNodeID(storageNode->GetID());
 
-  nodeSet.StorageNode = storageNode.GetPointer();
-  nodeSet.DisplayNode = sdisplayNode.GetPointer();
-  nodeSet.Node = scalarNode.GetPointer();
+  nodeSet.StorageNode = storageNode;
+  nodeSet.DisplayNode = sdisplayNode;
+  nodeSet.Node = scalarNode;
 
   return nodeSet;
 }
