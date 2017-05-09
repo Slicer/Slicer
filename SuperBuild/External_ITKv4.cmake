@@ -35,14 +35,11 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     QUIET
     )
 
-  # ITK release v4.11.0 from 2017.01.22 with
+  # ITK release v4.12.0rc1 from 2017.05.09 with
   # * Slicer patches for CMP0042
-  # * Revert "BUG: Binary include directory added only if enabled shared" (ITK-3529)
-  # * Revert "BUG: Include installed modules in ITK_MODULES_ENABLED" (ITK-3529)
-  # * COMP: Add missing headers in OpenCVImageBridge
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    "1619816e48b327c4c486b76aef0c229af65b92b2" # slicer-v4.11.0-2017-01-22
+    "9c91cb64e76634fe2c58e0b40f316af953fb4e61" # slicer-v4.12.0-2017-05-09-2d63918
     QUIET
     )
 
