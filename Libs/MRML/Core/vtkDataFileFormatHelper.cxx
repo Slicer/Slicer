@@ -55,6 +55,7 @@ ITKImageFileFormat FileFormatTable[] =
   {"MGHImageIO", "Uncompressed FreeSurfer pixel data in binary", "MGH", ".mgh"},
   {"MGHImageIO", "Gzip Compressed FreeSurfer pixel data in binary", "MGH", ".mgz"},
   {"MGHImageIO", "Gzip Compressed FreeSurfer pixel data in binary", "MGH", ".mgh.gz"},
+  {"MINCImageIO", "MINC2 binary pixel data using HDF5 with optional internal zlib compression", "MINC2", ".mnc"},
   {"MRCImageIO", "Cryo-electron tomography and molecular imaging", "MRC", ".mrc"},
   {"MRCImageIO", "Cryo-electron tomography and molecular imaging", "MRC", ".rec"},
   {"NiftiImageIO", "Header information in binary", "NifTI", ".nia"},

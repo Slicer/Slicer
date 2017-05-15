@@ -246,6 +246,14 @@ slicer_add_python_unittest(
   TESTNAME_PREFIX nomainwindow_
   )
 
+## Test reading MINC file format types.
+slicer_add_python_unittest(
+  SCRIPT ${Slicer_SOURCE_DIR}/Base/Python/slicer/tests/test_slicer_minc.py
+  SLICER_ARGS --no-main-window --disable-cli-modules --disable-scripted-loadable-modules
+              DATA{${INPUT}/pd_z-_float_xyz.mnc}
+  TESTNAME_PREFIX nomainwindow_
+  )
+
 slicer_add_python_unittest(
   SCRIPT ${Slicer_SOURCE_DIR}/Base/Python/slicer/tests/test_slicer_util_VTKObservationMixin.py
   SLICER_ARGS --no-main-window --disable-modules

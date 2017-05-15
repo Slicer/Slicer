@@ -28,6 +28,7 @@ set(ITK_IO_MODULES_USED
   ITKIOTransformInsightLegacy
   ITKIOTransformMatlab
   MGHIO
+  ITKIOMINC
   )
 if(Slicer_BUILD_DICOM_SUPPORT)
   list(APPEND ITK_IO_MODULES_USED ITKIODCMTK)
