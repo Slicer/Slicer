@@ -237,9 +237,9 @@ class ExtensionWizard(object):
 
       branch = r.active_branch
       if branch.name != "master":
-        logging.warning("You are currently on the '%s' branch." % branch,
+        logging.warning("You are currently on the '%s' branch. "
                         "It is strongly recommended to publish"
-                        " the 'master' branch.")
+                        " the 'master' branch." % branch)
         if not inquire("Continue anyway"):
           die("canceled at user request")
 
