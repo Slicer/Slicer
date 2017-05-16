@@ -1396,6 +1396,7 @@ void qMRMLSegmentEditorWidget::updateEffectsSectionFromMRML()
     d->OptionsGroupBox->show();
     d->OptionsGroupBox->setTitle(activeEffect->name());
     this->updateGeometry();
+    this->layout()->update();
     d->EffectHelpBrowser->setCollapsibleText(activeEffect->helpText());
     d->MaskingGroupBox->show();
     }
