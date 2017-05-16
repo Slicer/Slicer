@@ -269,7 +269,9 @@ protected slots:
   /// Activate effect on clicking its button
   void onEffectButtonClicked(QAbstractButton* button);
 
-  /// Effect selection shortcut is activated
+  /// Effect selection shortcut is activated.
+  /// 0 means deselect active effect.
+  /// -1 toggles between no effect/last active effect.
   void onSelectEffectShortcut();
 
   /// Segment selection shortcut is activated

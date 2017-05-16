@@ -191,6 +191,9 @@ public:
 
   /// Active effect
   qSlicerSegmentEditorAbstractEffect* ActiveEffect;
+  /// Last active effect
+  /// Stored to allow quick toggling between no effect/last active effect.
+  qSlicerSegmentEditorAbstractEffect* LastActiveEffect;
 
   /// Structure containing necessary objects for each slice and 3D view handling interactions
   QVector<SegmentEditorEventObservation> EventObservations;
@@ -231,6 +234,7 @@ qMRMLSegmentEditorWidgetPrivate::qMRMLSegmentEditorWidgetPrivate(qMRMLSegmentEdi
   : q_ptr(&object)
   , Locked(false)
   , ActiveEffect(NULL)
+  , LastActiveEffect(NULL)
   , AlignedMasterVolume(NULL)
   , ModifierLabelmap(NULL)
   , SelectedSegmentLabelmap(NULL)
@@ -1433,6 +1437,7 @@ void qMRMLSegmentEditorWidget::updateEffectsSectionFromMRML()
   d->setEffectCursor(activeEffect);
 
   // Set active effect
+  d->LastActiveEffect = d->ActiveEffect;
   d->ActiveEffect = activeEffect;
 }
 
@@ -2478,11 +2483,26 @@ void qMRMLSegmentEditorWidget::installKeyboardShortcuts(QWidget* parent /*=NULL*
     QObject::connect(s, SIGNAL(activated()), this, SLOT(onSelectEffectShortcut()));
     }
 
+  // Keys Shift + 1, 2, ..., 9, 0 => toggle activation of effect 1..10
+  for (int effectIndex = 1; effectIndex <= 10; effectIndex++)
+    {
+    QShortcut* s = new QShortcut(QKeySequence("Shift+"+QString::number(effectIndex % 10)), parent);
+    d->KeyboardShortcuts.push_back(s);
+    s->setProperty("effectIndex", effectIndex+10);
+    QObject::connect(s, SIGNAL(activated()), this, SLOT(onSelectEffectShortcut()));
+    }
+
   // Escape => deactivate active effect
   QShortcut* deactivateEffectShortcut = new QShortcut(QKeySequence(Qt::Key_Escape), parent);
   d->KeyboardShortcuts.push_back(deactivateEffectShortcut);
   deactivateEffectShortcut->setProperty("effectIndex", 0);
   QObject::connect(deactivateEffectShortcut, SIGNAL(activated()), this, SLOT(onSelectEffectShortcut()));
+
+  // Space => activate/deactivate last effect
+  QShortcut* toggleActiveEffectShortcut = new QShortcut(QKeySequence(Qt::Key_Space), parent);
+  d->KeyboardShortcuts.push_back(toggleActiveEffectShortcut);
+  toggleActiveEffectShortcut->setProperty("effectIndex", -1);
+  QObject::connect(toggleActiveEffectShortcut, SIGNAL(activated()), this, SLOT(onSelectEffectShortcut()));
 
   // z, y => undo, redo
   QShortcut* undoShortcut = new QShortcut(QKeySequence(Qt::Key_Z), parent);
@@ -2537,15 +2557,22 @@ void qMRMLSegmentEditorWidget::onSelectEffectShortcut()
     {
     return;
     }
-  int selectedEffectIndex = shortcut->property("effectIndex").toInt();
-  qSlicerSegmentEditorAbstractEffect* selectedEffect = this->effectByIndex(selectedEffectIndex);
   qSlicerSegmentEditorAbstractEffect* activeEffect = this->activeEffect();
-  if (selectedEffect == activeEffect)
+  int selectedEffectIndex = shortcut->property("effectIndex").toInt();
+  if (selectedEffectIndex >= 0)
     {
-    // effect is already active => deactivate it
-    selectedEffect = NULL;
+    qSlicerSegmentEditorAbstractEffect* selectedEffect = this->effectByIndex(selectedEffectIndex);
+    if (selectedEffect == activeEffect)
+      {
+      // effect is already active => deactivate it
+      selectedEffect = NULL;
+      }
+    this->setActiveEffect(selectedEffect);
     }
-  this->setActiveEffect(selectedEffect);
+  else
+    {
+    this->setActiveEffect(d->LastActiveEffect);
+    }
 }
 
 //-----------------------------------------------------------------------------
