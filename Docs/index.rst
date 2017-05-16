@@ -29,6 +29,7 @@ Welcome to 3D Slicer's documentation!
    :maxdepth: 2
    :caption: Developer Guide:
 
+   developer_guide/api
    developer_guide/contributing
    developer_guide/authors
 
