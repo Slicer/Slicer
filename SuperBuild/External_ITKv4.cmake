@@ -37,9 +37,10 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   # ITK release v4.12.0rc1 from 2017.05.09 with
   # * Slicer patches for CMP0042
+  # * MINC patch to support building using redhat devtoolset 2
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    "9c91cb64e76634fe2c58e0b40f316af953fb4e61" # slicer-v4.12.0-2017-05-09-2d63918
+    "3cc1a24d456ba41abff3e8508765f8f8d71bfcab" # slicer-v4.12.0-2017-05-09-2d63918
     QUIET
     )
 
