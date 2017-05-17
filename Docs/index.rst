@@ -16,11 +16,12 @@ Welcome to 3D Slicer's documentation!
    user_guide/commercial_use
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: User Guide:
 
    user_guide/user_interface
    user_guide/data_loading_and_saving
+   user_guide/modules
    user_guide/extensions_manager
    user_guide/settings
 
