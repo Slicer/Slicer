@@ -338,8 +338,10 @@ void qMRMLSegmentEditorWidgetPrivate::init()
   QObject::connect( this->MasterVolumeIntensityMaskRangeWidget, SIGNAL(valuesChanged(double,double)), q, SLOT(onMasterVolumeIntensityMaskRangeChanged(double,double)));
   QObject::connect( this->OverwriteModeComboBox, SIGNAL(currentIndexChanged(int)), q, SLOT(onOverwriteModeChanged(int)));
 
-  QObject::connect( this->UndoButton, SIGNAL(clicked()), q, SLOT(undo()));
-  QObject::connect( this->RedoButton, SIGNAL(clicked()), q, SLOT(redo()));
+  QObject::connect( this->UndoButton, SIGNAL(clicked()), q, SLOT(undo()) );
+  QObject::connect( this->RedoButton, SIGNAL(clicked()), q, SLOT(redo()) );
+
+  QObject::connect( this->EffectHelpBrowser, SIGNAL(anchorClicked(QUrl)), q, SLOT(anchorClicked(QUrl)), Qt::QueuedConnection );
 
   q->qvtkConnect(this->SegmentationHistory, vtkCommand::ModifiedEvent,
     q, SLOT(onSegmentationHistoryChanged()));
@@ -850,6 +852,92 @@ void qMRMLSegmentEditorWidgetPrivate::setEffectCursor(qSlicerSegmentEditorAbstra
 }
 
 //-----------------------------------------------------------------------------
+std::string qMRMLSegmentEditorWidgetPrivate::getReferenceImageGeometryFromSegmentation(vtkSegmentation* segmentation)
+{
+  if (!segmentation)
+    {
+    return "";
+    }
+
+  // If "reference image geometry" conversion parameter is set then use that
+  std::string referenceImageGeometry = segmentation->GetConversionParameter(vtkSegmentationConverter::GetReferenceImageGeometryParameterName());
+  if (!referenceImageGeometry.empty())
+    {
+    // Extend reference image geometry to contain all segments (needed for example for properly handling imported segments
+    // that do not fit into the reference image geometry)
+    vtkSmartPointer<vtkOrientedImageData> commonGeometryImage = vtkSmartPointer<vtkOrientedImageData>::New();
+    vtkSegmentationConverter::DeserializeImageGeometry(referenceImageGeometry, commonGeometryImage, false);
+    // Determine extent that contains all segments
+    int commonSegmentExtent[6] = { 0, -1, 0, -1, 0, -1 };
+    segmentation->DetermineCommonLabelmapExtent(commonSegmentExtent, commonGeometryImage);
+    if (commonSegmentExtent[0] <= commonSegmentExtent[1]
+      && commonSegmentExtent[2] <= commonSegmentExtent[3]
+      && commonSegmentExtent[4] <= commonSegmentExtent[5])
+      {
+      // Expand commonGeometryExtent as needed to contain commonSegmentExtent
+      int commonGeometryExtent[6] = { 0, -1, 0, -1, 0, -1 };
+      commonGeometryImage->GetExtent(commonGeometryExtent);
+      for (int i = 0; i < 3; i++)
+        {
+        commonGeometryExtent[i * 2] = std::min(commonSegmentExtent[i * 2], commonGeometryExtent[i * 2]);
+        commonGeometryExtent[i * 2 + 1] = std::max(commonSegmentExtent[i * 2 + 1], commonGeometryExtent[i * 2 + 1]);
+        }
+      commonGeometryImage->SetExtent(commonGeometryExtent);
+      referenceImageGeometry = vtkSegmentationConverter::SerializeImageGeometry(commonGeometryImage);
+      }
+
+    // TODO: Use oversampling (if it's 'A' then ignore and changed to 1)
+    return referenceImageGeometry;
+    }
+  if (segmentation->ContainsRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()))
+    {
+    // If no reference image geometry is specified but there are labels already then determine geometry from that
+    referenceImageGeometry = segmentation->DetermineCommonLabelmapGeometry();
+    return referenceImageGeometry;
+    }
+  return "";
+}
+
+//-----------------------------------------------------------------------------
+std::string qMRMLSegmentEditorWidgetPrivate::referenceImageGeometry()
+{
+  if (!this->ParameterSetNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid segment editor parameter set node";
+    notifyEffectsOfReferenceGeometryChange("");
+    return "";
+    }
+
+  vtkMRMLSegmentationNode* segmentationNode = this->ParameterSetNode->GetSegmentationNode();
+  vtkSegmentation* segmentation = segmentationNode ? segmentationNode->GetSegmentation() : NULL;
+  if (!segmentationNode || !segmentation)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid segmentation";
+    notifyEffectsOfReferenceGeometryChange("");
+    return "";
+    }
+
+  std::string referenceImageGeometry;
+  referenceImageGeometry = this->getReferenceImageGeometryFromSegmentation(segmentation);
+  if (referenceImageGeometry.empty())
+    {
+    // If no reference image geometry could be determined then use the master volume's geometry
+    vtkMRMLScalarVolumeNode* masterVolumeNode = this->ParameterSetNode->GetMasterVolumeNode();
+    if (!masterVolumeNode)
+      {
+      // cannot determine reference geometry
+      return "";
+      }
+    // Update the referenceImageGeometry parameter for next time
+    segmentationNode->SetReferenceImageGeometryParameterFromVolumeNode(masterVolumeNode);
+    // Update extents to include all existing segments
+    referenceImageGeometry = this->getReferenceImageGeometryFromSegmentation(segmentation);
+    }
+  notifyEffectsOfReferenceGeometryChange(referenceImageGeometry);
+  return referenceImageGeometry;
+}
+
+//-----------------------------------------------------------------------------
 // qMRMLSegmentEditorWidget methods
 
 //-----------------------------------------------------------------------------
@@ -1156,92 +1244,6 @@ void qMRMLSegmentEditorWidget::updateWidgetFromSegmentationNode()
 }
 
 //-----------------------------------------------------------------------------
-std::string qMRMLSegmentEditorWidgetPrivate::getReferenceImageGeometryFromSegmentation(vtkSegmentation* segmentation)
-{
-  if (!segmentation)
-    {
-    return "";
-    }
-
-  // If "reference image geometry" conversion parameter is set then use that
-  std::string referenceImageGeometry = segmentation->GetConversionParameter(vtkSegmentationConverter::GetReferenceImageGeometryParameterName());
-  if (!referenceImageGeometry.empty())
-    {
-    // Extend reference image geometry to contain all segments (needed for example for properly handling imported segments
-    // that do not fit into the reference image geometry)
-    vtkSmartPointer<vtkOrientedImageData> commonGeometryImage = vtkSmartPointer<vtkOrientedImageData>::New();
-    vtkSegmentationConverter::DeserializeImageGeometry(referenceImageGeometry, commonGeometryImage, false);
-    // Determine extent that contains all segments
-    int commonSegmentExtent[6] = { 0, -1, 0, -1, 0, -1 };
-    segmentation->DetermineCommonLabelmapExtent(commonSegmentExtent, commonGeometryImage);
-    if (commonSegmentExtent[0] <= commonSegmentExtent[1]
-      && commonSegmentExtent[2] <= commonSegmentExtent[3]
-      && commonSegmentExtent[4] <= commonSegmentExtent[5])
-      {
-      // Expand commonGeometryExtent as needed to contain commonSegmentExtent
-      int commonGeometryExtent[6] = { 0, -1, 0, -1, 0, -1 };
-      commonGeometryImage->GetExtent(commonGeometryExtent);
-      for (int i = 0; i < 3; i++)
-        {
-        commonGeometryExtent[i * 2] = std::min(commonSegmentExtent[i * 2], commonGeometryExtent[i * 2]);
-        commonGeometryExtent[i * 2 + 1] = std::max(commonSegmentExtent[i * 2 + 1], commonGeometryExtent[i * 2 + 1]);
-        }
-      commonGeometryImage->SetExtent(commonGeometryExtent);
-      referenceImageGeometry = vtkSegmentationConverter::SerializeImageGeometry(commonGeometryImage);
-      }
-
-    // TODO: Use oversampling (if it's 'A' then ignore and changed to 1)
-    return referenceImageGeometry;
-    }
-  if (segmentation->ContainsRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()))
-    {
-    // If no reference image geometry is specified but there are labels already then determine geometry from that
-    referenceImageGeometry = segmentation->DetermineCommonLabelmapGeometry();
-    return referenceImageGeometry;
-    }
-  return "";
-}
-
-//-----------------------------------------------------------------------------
-std::string qMRMLSegmentEditorWidgetPrivate::referenceImageGeometry()
-{
-  if (!this->ParameterSetNode)
-    {
-    qCritical() << Q_FUNC_INFO << ": Invalid segment editor parameter set node";
-    notifyEffectsOfReferenceGeometryChange("");
-    return "";
-    }
-
-  vtkMRMLSegmentationNode* segmentationNode = this->ParameterSetNode->GetSegmentationNode();
-  vtkSegmentation* segmentation = segmentationNode ? segmentationNode->GetSegmentation() : NULL;
-  if (!segmentationNode || !segmentation)
-    {
-    qCritical() << Q_FUNC_INFO << ": Invalid segmentation";
-    notifyEffectsOfReferenceGeometryChange("");
-    return "";
-    }
-
-  std::string referenceImageGeometry;
-  referenceImageGeometry = this->getReferenceImageGeometryFromSegmentation(segmentation);
-  if (referenceImageGeometry.empty())
-    {
-    // If no reference image geometry could be determined then use the master volume's geometry
-    vtkMRMLScalarVolumeNode* masterVolumeNode = this->ParameterSetNode->GetMasterVolumeNode();
-    if (!masterVolumeNode)
-      {
-      // cannot determine reference geometry
-      return "";
-      }
-    // Update the referenceImageGeometry parameter for next time
-    segmentationNode->SetReferenceImageGeometryParameterFromVolumeNode(masterVolumeNode);
-    // Update extents to include all existing segments
-    referenceImageGeometry = this->getReferenceImageGeometryFromSegmentation(segmentation);
-    }
-  notifyEffectsOfReferenceGeometryChange(referenceImageGeometry);
-  return referenceImageGeometry;
-}
-
-//-----------------------------------------------------------------------------
 void qMRMLSegmentEditorWidget::updateWidgetFromMasterVolumeNode()
 {
   Q_D(qMRMLSegmentEditorWidget);
@@ -1396,13 +1398,17 @@ void qMRMLSegmentEditorWidget::updateEffectsSectionFromMRML()
 
     // Activate newly selected effect
     activeEffect->activate();
-    activeEffect->updateGUIFromMRML();
     d->OptionsGroupBox->show();
     d->OptionsGroupBox->setTitle(activeEffect->name());
-    this->updateGeometry();
-    this->layout()->update();
     d->EffectHelpBrowser->setCollapsibleText(activeEffect->helpText());
     d->MaskingGroupBox->show();
+
+    // Perform updates to prevent layout collapse
+    d->EffectHelpBrowser->setMinimumHeight(d->EffectHelpBrowser->sizeHint().height());
+    d->EffectHelpBrowser->layout()->update();
+    activeEffect->optionsFrame()->setMinimumHeight(activeEffect->optionsFrame()->sizeHint().height());
+    activeEffect->optionsLayout()->activate();
+    this->setMinimumHeight(this->sizeHint().height());
     }
   else
     {
@@ -2705,4 +2711,35 @@ void qMRMLSegmentEditorWidget::masterVolumeNodeSelectorRemoveAttribute(const QSt
 {
   Q_D(qMRMLSegmentEditorWidget);
   d->MasterVolumeNodeComboBox->removeAttribute(nodeType, attributeName);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::anchorClicked(const QUrl &url)
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  if (url.path().isEmpty())
+    {
+    this->updateEffectLayouts();
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::updateEffectLayouts()
+{
+  Q_D(qMRMLSegmentEditorWidget);
+
+  if (d->ActiveEffect)
+    {
+    d->EffectHelpBrowser->setMinimumHeight(d->EffectHelpBrowser->sizeHint().height());
+    d->EffectHelpBrowser->layout()->update();
+    d->ActiveEffect->optionsFrame()->setMinimumHeight(d->ActiveEffect->optionsFrame()->sizeHint().height());
+    d->ActiveEffect->optionsLayout()->activate();
+    }
+  else
+    {
+    d->OptionsGroupBox->setMinimumHeight(d->OptionsGroupBox->sizeHint().height());
+    d->OptionsGroupBox->layout()->activate();
+    }
+
+  this->setMinimumHeight(this->sizeHint().height());
 }

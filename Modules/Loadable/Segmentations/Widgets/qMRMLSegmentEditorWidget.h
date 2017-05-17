@@ -246,6 +246,9 @@ public slots:
   /// to find an effect but uses more space.
   void setEffectButtonStyle(Qt::ToolButtonStyle toolButtonStyle);
 
+  /// Perform updates to prevent layout collapse 
+  void updateEffectLayouts();
+
 signals:
   /// Emitted if different segment is selected in the segment list.
   void currentSegmentIDChanged(const QString&);
@@ -304,11 +307,14 @@ protected slots:
   /// Clean up when scene is closed
   void onMRMLSceneEndCloseEvent();
 
-  /// Sets default parameters in parameter set node (after setting or closing scene)
+  /// Set default parameters in parameter set node (after setting or closing scene)
   void initializeParameterSetNode();
 
-  /// Updates GUI if segmentation history is changed (e.g., undo/redo button states)
+  /// Update GUI if segmentation history is changed (e.g., undo/redo button states)
   void onSegmentationHistoryChanged();
+
+  /// Update layout after expanding/collapsing the help text browser
+  void anchorClicked(const QUrl &url);
 
 protected:
   /// Callback function invoked when interaction happens
