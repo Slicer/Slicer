@@ -209,11 +209,18 @@ class MultiVolumeImporterWidget:
       print('Single frame dataset - not reading as multivolume!')
       return
 
+    # convert seconds data to milliseconds, which is expected by pkModeling.cxx line 81
+    if dicomTagUnitsAttr == 's':
+      frameIdMultiplier = 1000.0
+      dicomTagUnitsAttr = 'ms'
+    else:
+      frameIdMultiplier = 1.0
+
     volumeLabels.SetNumberOfTuples(nFrames)
     volumeLabels.SetNumberOfComponents(1)
     volumeLabels.Allocate(nFrames)
     for i in range(nFrames):
-      frameId = self.__veInitial.value+self.__veStep.value*i
+      frameId = frameIdMultiplier*(self.__veInitial.value+self.__veStep.value*i)
       volumeLabels.SetComponent(i, 0, frameId)
       frameLabelsAttr += str(frameId)+','
     frameLabelsAttr = frameLabelsAttr[:-1]
