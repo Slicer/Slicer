@@ -340,6 +340,23 @@ if(WIN32)
 endif()
 
 #------------------------------------------------------------------------------
+# Slicer_EXTENSION_SOURCE_DIRS
+#------------------------------------------------------------------------------
+
+#
+# Configuring Slicer using
+#
+#   cmake -DSlicer_EXTENSION_SOURCE_DIRS:STRING=/path/to/ExtensionA;/path/to/ExtensionB [...] /path/to/source/Slicer
+#
+# will ensure the source of each extensions are *built* by Slicer. This is done
+# as part of the Slicer inner build by adding each directory in the top-level CMakeLists.txt.
+#
+# Note that using 'Slicer_Remote_Add' specifying the label 'REMOTE_EXTENSION' (see above)
+# will checkout the extension sources and append the corresponding source directory to
+# the variable Slicer_EXTENSION_SOURCE_DIRS.
+#
+
+#------------------------------------------------------------------------------
 # Slicer_EXTENSION_INSTALL_DIRS
 #------------------------------------------------------------------------------
 
