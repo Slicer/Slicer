@@ -641,6 +641,12 @@ set(ExternalData_OBJECT_STORES "${ExternalData_OBJECT_STORES_DEFAULT}")
 message(STATUS "Setting ExternalData_OBJECT_STORES to '${ExternalData_OBJECT_STORES}'")
 
 #-----------------------------------------------------------------------------
+# Get operating system, architecture and bitness
+#-----------------------------------------------------------------------------
+SlicerMacroGetOperatingSystemArchitectureBitness(VAR_PREFIX Slicer)
+message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} for [${Slicer_OS}-${Slicer_ARCHITECTURE}]")
+
+#-----------------------------------------------------------------------------
 # Superbuild script
 #-----------------------------------------------------------------------------
 if(Slicer_SUPERBUILD)
@@ -694,12 +700,6 @@ set(Slicer_Base_INCLUDE_DIRS CACHE INTERNAL "Slicer Base includes" FORCE)
 set(Slicer_ModuleLogic_INCLUDE_DIRS CACHE INTERNAL "Slicer Module logic includes" FORCE)
 set(Slicer_ModuleMRML_INCLUDE_DIRS CACHE INTERNAL "Slicer Module MRML includes" FORCE)
 set(Slicer_ModuleWidgets_INCLUDE_DIRS CACHE INTERNAL "Slicer Module Widgets includes" FORCE)
-
-#-----------------------------------------------------------------------------
-# Get operating system, architecture and bitness
-#-----------------------------------------------------------------------------
-SlicerMacroGetOperatingSystemArchitectureBitness(VAR_PREFIX Slicer)
-message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} for [${Slicer_OS}-${Slicer_ARCHITECTURE}]")
 
 #-----------------------------------------------------------------------------
 # ExternalData configuration for test data
