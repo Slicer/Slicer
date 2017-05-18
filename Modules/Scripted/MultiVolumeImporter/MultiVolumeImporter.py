@@ -267,12 +267,12 @@ class MultiVolumeImporterWidget:
     mvNode.SetAttribute('MultiVolume.FrameIdentifyingDICOMTagUnits',dicomTagUnitsAttr)
 
     if dicomTagNameAttr == 'TriggerTime' or dicomTagNameAttr == 'AcquisitionTime':
-      if teTag != '':
-        mvNode.SetAttribute('MultiVolume.DICOM.EchoTime',teTag)
-      if trTag != '':
-        mvNode.SetAttribute('MultiVolume.DICOM.RepetitionTime',trTag)
-      if faTag != '':
-        mvNode.SetAttribute('MultiVolume.DICOM.FlipAngle',faTag)
+      if teAttr != '':
+        mvNode.SetAttribute('MultiVolume.DICOM.EchoTime',teAttr)
+      if trAttr != '':
+        mvNode.SetAttribute('MultiVolume.DICOM.RepetitionTime',trAttr)
+      if faAttr != '':
+        mvNode.SetAttribute('MultiVolume.DICOM.FlipAngle',faAttr)
 
     mvNode.SetName(str(nFrames)+' frames MultiVolume')
     Helper.SetBgFgVolumes(mvNode.GetID(),None)
