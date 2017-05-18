@@ -144,7 +144,7 @@ endfunction()
 
 
 #
-# Testing - cmake -DTEST_<TESTNAME>:BOOL=ON -P MIDASAPIUploadExtensionTest.cmake
+# Testing - cmake -DTEST_<TESTNAME>:BOOL=ON -P MIDASAPIUploadExtension.cmake
 #
 
 #
