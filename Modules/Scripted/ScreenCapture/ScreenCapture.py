@@ -614,35 +614,53 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
           return True
     return False
 
-  def ffmpegDownload(self):
-    if os.name == 'nt':
-      url = 'https://ffmpeg.zeranoe.com/builds/win64/shared/ffmpeg-20160927-92de2c2-win64-shared.zip'
-    else:
-      # TODO: implement downloading for Linux/MacOS?
+  def unzipFfmpeg(self, filePath, ffmpegTargetDirectory):
+    if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
+      logging.info('ffmpeg package is not found at ' + filePath)
       return False
 
+    logging.info('Unzipping ffmpeg package ' + filePath)
+    qt.QDir().mkpath(ffmpegTargetDirectory)
+    slicer.app.applicationLogic().Unzip(filePath, ffmpegTargetDirectory)
+    success = self.findFfmpegInDirectory(ffmpegTargetDirectory)
+    return success
+
+  def ffmpegDownload(self):
+    ffmpegTargetDirectory = self.getDownloadedFfmpegDirectory()
+    filePath = slicer.app.temporaryPath + '/ffmpeg-package.zip'
+    success = self.unzipFfmpeg(filePath, ffmpegTargetDirectory)
+    if success:
+      # there was a valid downloaded package already
+      return True
+
+    # List of mirror sites to attempt download ffmpeg pre-built binaries from
+    urls = []
+    if os.name == 'nt':
+      urls.append('http://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-3.2.4-win64-static.zip')
+    else:
+      # TODO: implement downloading for Linux/MacOS?
+      pass
+
+    success = False
     qt.QApplication.setOverrideCursor(qt.Qt.WaitCursor)
-    success = True
-    try:
-      ffmpegTargetDirectory = self.getDownloadedFfmpegDirectory()
-      import urllib
-      filePath = slicer.app.temporaryPath + '/ffmpeg-package.zip'
 
-      for i in range(2): # try download&unzip twice, second time force download
-        if not os.path.exists(filePath) or os.stat(filePath).st_size == 0\
-          or i==1: # force download
-          logging.info('Requesting download ffmpeg from %s...\n' % url)
-          urllib.urlretrieve(url, filePath)
+    for url in urls:
 
-        logging.info('Unzipping ffmpeg')
-        qt.QDir().mkpath(ffmpegTargetDirectory)
-        slicer.app.applicationLogic().Unzip(filePath, ffmpegTargetDirectory)
-        success = self.findFfmpegInDirectory(ffmpegTargetDirectory)
-        if success:
-          break
+      success = True
+      try:
+        logging.info('Requesting download ffmpeg from %s...' % url)
+        import urllib2
+        req = urllib2.Request(url, headers={ 'User-Agent': 'Mozilla/5.0' })
+        data = urllib2.urlopen(req).read()
+        with open(filePath, "wb") as f:
+          f.write(data)
 
-    except:
-      success = False
+        success = self.unzipFfmpeg(filePath, ffmpegTargetDirectory)
+      except:
+        success = False
+
+      if success:
+        break
 
     qt.QApplication.restoreOverrideCursor()
     return success
