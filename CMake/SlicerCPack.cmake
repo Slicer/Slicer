@@ -37,6 +37,8 @@ if(Slicer_BUILD_DICOM_SUPPORT AND NOT Slicer_USE_SYSTEM_DCMTK)
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallDCMTKApps.cmake)
 endif()
 
+include(${Slicer_CMAKE_DIR}/SlicerBlockInstallExtensionPackages.cmake)
+
 set(CPACK_INSTALL_CMAKE_PROJECTS)
 
 # Install CTK Apps and Plugins (PythonQt modules, QtDesigner plugins ...)

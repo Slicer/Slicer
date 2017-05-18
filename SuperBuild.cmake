@@ -339,6 +339,20 @@ if(WIN32)
   list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS -DSlicer_SKIP_ROOT_DIR_MAX_LENGTH_CHECK:BOOL=ON)
 endif()
 
+#------------------------------------------------------------------------------
+# Slicer_EXTENSION_INSTALL_DIRS
+#------------------------------------------------------------------------------
+
+#
+# Configuring Slicer using
+#
+#   cmake -DSlicer_EXTENSION_INSTALL_DIRS:STRING=/path/to/ExtensionA-install-tree;/path/to/ExtensionB-install-tree [...] /path/to/source/Slicer
+#
+# will ensure the content of each extensions install directories are *packaged*
+# with Slicer.
+#
+# Corresponding install rules are found in "CMake/SlicerBlockInstallExtensionPackages.cmake"
+#
 
 #------------------------------------------------------------------------------
 # Configure and build Slicer
@@ -371,6 +385,7 @@ ExternalProject_Add(${proj}
     -D${Slicer_MAIN_PROJECT_APPLICATION_NAME}_VERSION_RC:STRING=${${Slicer_MAIN_PROJECT_APPLICATION_NAME}_VERSION_RC}
     -DSlicer_APPLICATIONS_DIR:PATH=${Slicer_APPLICATIONS_DIR}
     -DSlicer_EXTENSION_SOURCE_DIRS:STRING=${Slicer_EXTENSION_SOURCE_DIRS}
+    -DSlicer_EXTENSION_INSTALL_DIRS:STRING=${Slicer_EXTENSION_INSTALL_DIRS}
     -DExternalData_OBJECT_STORES:PATH=${ExternalData_OBJECT_STORES}
     ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
   INSTALL_COMMAND ""
