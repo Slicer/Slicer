@@ -692,12 +692,6 @@ bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
     qWarning() << Q_FUNC_INFO << ": No segmentation selected!";
     return false;
     }
-  vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(currentSegmentationNode->GetScene());
-  if (!shNode)
-    {
-    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
-    return false;
-    }
 
   // If existing node was not selected then create a new one that we will export into
   vtkMRMLNode* otherRepresentationNode = d->MRMLNodeComboBox_ImportExportNode->currentNode();
@@ -780,14 +774,6 @@ bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
       existingModelNamesToModels[modelNode->GetName()] = modelNode;
       }
 
-    // Get subject hierarchy item for segmentation node
-    vtkIdType currentSegmentationShItemID = shNode->GetItemByDataNode(currentSegmentationNode);
-    if (currentSegmentationShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-      {
-      qCritical() << Q_FUNC_INFO << ": Failed to find subject hierarchy item for segmentation node " << currentSegmentationNode->GetName();
-      return false;
-      }
-
     // Export each segment into a model
     QString errorMessage;
     for (std::vector<std::string>::iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
@@ -836,8 +822,16 @@ bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
     }
 
   // Move exported representation under same parent as segmentation
-  shNode->SetItemParent( shNode->GetItemByDataNode(otherRepresentationNode),
-    shNode->GetItemParent(shNode->GetItemByDataNode(currentSegmentationNode)) );
+  vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(currentSegmentationNode->GetScene());
+  if (shNode)
+    {
+    shNode->SetItemParent(shNode->GetItemByDataNode(otherRepresentationNode),
+      shNode->GetItemParent(shNode->GetItemByDataNode(currentSegmentationNode)));
+    }
+  else
+    {
+    qWarning() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    }
 
   return true;
 }
