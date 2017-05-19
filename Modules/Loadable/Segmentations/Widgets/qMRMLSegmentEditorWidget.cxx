@@ -2514,9 +2514,16 @@ void qMRMLSegmentEditorWidget::installKeyboardShortcuts(QWidget* parent /*=NULL*
   QShortcut* undoShortcut = new QShortcut(QKeySequence(Qt::Key_Z), parent);
   d->KeyboardShortcuts.push_back(undoShortcut);
   QObject::connect(undoShortcut, SIGNAL(activated()), this, SLOT(undo()));
+  QShortcut* undoShortcut2 = new QShortcut(QKeySequence::Undo, parent);
+  d->KeyboardShortcuts.push_back(undoShortcut2);
+  QObject::connect(undoShortcut2, SIGNAL(activated()), this, SLOT(undo()));
+
   QShortcut* redoShortcut = new QShortcut(QKeySequence(Qt::Key_Y), parent);
   d->KeyboardShortcuts.push_back(redoShortcut);
   QObject::connect(redoShortcut, SIGNAL(activated()), this, SLOT(redo()));
+  QShortcut* redoShortcut2 = new QShortcut(QKeySequence::Redo, parent);
+  d->KeyboardShortcuts.push_back(redoShortcut2);
+  QObject::connect(redoShortcut2, SIGNAL(activated()), this, SLOT(redo()));
 
   // Keys qw/*,.<> => select previous, next segment
   Qt::Key prevNexSegmentKeys[] =
