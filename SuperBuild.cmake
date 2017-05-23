@@ -93,7 +93,15 @@ set(ITK_EXTERNAL_NAME ITKv4)
 
 set(VTK_EXTERNAL_NAME VTKv7)
 
-set(Slicer_DEPENDENCIES curl teem ${VTK_EXTERNAL_NAME} ${ITK_EXTERNAL_NAME} CTK LibArchive RapidJSON)
+set(Slicer_DEPENDENCIES
+  curl
+  teem
+  ${VTK_EXTERNAL_NAME}
+  ${ITK_EXTERNAL_NAME}
+  CTK
+  LibArchive
+  RapidJSON
+  )
 
 set(CURL_ENABLE_SSL ${Slicer_USE_PYTHONQT_WITH_OPENSSL})
 
