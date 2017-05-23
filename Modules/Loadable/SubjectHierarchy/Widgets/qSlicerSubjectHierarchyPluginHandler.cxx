@@ -483,10 +483,6 @@ void qSlicerSubjectHierarchyPluginHandler::onSubjectHierarchyNodeEvent(
     qCritical() << Q_FUNC_INFO << ": Invalid event parameters";
     return;
     }
-  if (!shNode->GetScene())
-    {
-    return;
-    }
 
   // Get item ID
   vtkIdType itemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
@@ -501,14 +497,17 @@ void qSlicerSubjectHierarchyPluginHandler::onSubjectHierarchyNodeEvent(
 
   if ( ( event == vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAddedEvent
       || event == vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemOwnerPluginSearchRequested )
-      && !shNode->GetScene()->IsImporting() )
+      && shNode->GetScene() && !shNode->GetScene()->IsImporting() )
     {
     // Find plugin for added subject hierarchy item and "claim" it
     pluginHandler->findAndSetOwnerPluginForSubjectHierarchyItem(itemID);
     }
-  else if ( event == vtkCommand::DeleteEvent && !shNode->GetScene()->IsClosing() )
+  else if ( event == vtkCommand::DeleteEvent
+    && (!shNode->GetScene() || !shNode->GetScene()->IsClosing()) )
     {
-    pluginHandler->setSubjectHierarchyNode(
-      vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(shNode->GetScene()) );
+    // Create and set new subject hierarchy node to plugin handler if node was just removed.
+    // In that case the node will not contain a scene, so need to get it from the plugin handler.
+    vtkMRMLScene* scene = (shNode->GetScene() ? shNode->GetScene() : pluginHandler->mrmlScene());
+    pluginHandler->setSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(scene));
     }
 }

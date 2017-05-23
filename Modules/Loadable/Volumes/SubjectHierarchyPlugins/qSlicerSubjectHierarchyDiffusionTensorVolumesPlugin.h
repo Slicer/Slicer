@@ -96,18 +96,6 @@ public:
   /// \param itemID Subject Hierarchy item to show the context menu items for
   virtual void showContextMenuActionsForItem(vtkIdType itemID);
 
-protected:
-  /// Show volume in slice viewers. The argument node becomes the background, and the previous
-  /// background becomes the foreground with 50% transparency.
-  void showLabelMap(vtkMRMLScalarVolumeNode* node, int visible=1);
-
-  /// Update selection node based on current volumes visibility (if the selection is different in the slice viewers, then the first one is set)
-  /// TODO: This is a workaround (http://www.na-mic.org/Bug/view.php?id=3551)
-  void updateSelectionNodeBasedOnCurrentLabelMapVisibility()const;
-  /// Determine labelmap selection (if the selection is different in the slice viewers, then the first one is set)
-  /// TODO: This is a workaround (http://www.na-mic.org/Bug/view.php?id=3551)
-  std::string getSelectedLabelmapVolumeNodeID()const;
-
 protected slots:
   void onTractographyLabelMapSeeding();
   void onTractographyInteractiveSeeding();

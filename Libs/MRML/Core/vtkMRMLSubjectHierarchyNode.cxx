@@ -1549,7 +1549,7 @@ bool vtkMRMLSubjectHierarchyNode::vtkInternal::ResolveUnresolvedItems()
   std::map<vtkIdType,vtkIdType> idMap;
 
   // Resolve each item and add it to its proper place in the tree under the scene
-  int breakerCounter = 0; // Safety counter that allows gracefully recovering from a potential hang
+  int numberOfUnresolvedItems = this->UnresolvedItems->Children.size(); // Safeguard for checking if an item is resolved in each iteration
   while (this->UnresolvedItems->Children.size())
     {
     // Resolve first item whose parent is the scene or an already resolved item
@@ -1634,12 +1634,15 @@ bool vtkMRMLSubjectHierarchyNode::vtkInternal::ResolveUnresolvedItems()
       break;
       }
 
-      if (++breakerCounter >= 1.0e6)
-        {
-        vtkErrorWithObjectMacro(this->External, "ResolveUnresolvedItems: Potential hang detected, return");
-        this->IsResolving = false;
-        return false;
-        }
+    // Make sure that an item was resolved in this iteration. If the number of unresolved items after the iteration is the same
+    // as before that, then none of the unresolved items left in the list can be resolved, which means fatal error
+    if (numberOfUnresolvedItems == this->UnresolvedItems->Children.size())
+      {
+      vtkErrorWithObjectMacro(this->External, "ResolveUnresolvedItems: Failed to process " << numberOfUnresolvedItems << " unresolved items");
+      this->IsResolving = false;
+      return false;
+      }
+    numberOfUnresolvedItems = this->UnresolvedItems->Children.size();
     }
 
   // Indicate end of resolving
@@ -3090,9 +3093,10 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNod
     if ( !(scene->IsBatchProcessing() || scene->IsImporting() || scene->IsRestoring() || scene->IsClosing())
       && !firstShNode->Internal->ResolveUnresolvedItems() )
       {
-      //TODO: The node will probably be invalid, so it needs to be completely re-built
-      vtkErrorWithObjectMacro(scene,
-        "vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode: Failed to resolve unresolved subject hierarchy items");
+      // Remove invalid subject hierarchy node so that it can be rebuilt from scratch
+      scene->RemoveNode(firstShNode);
+      vtkErrorWithObjectMacro( scene,
+        "vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode: Failed to resolve unresolved subject hierarchy items, re-building subject hierarchy from scratch" );
       return NULL;
       }
 
@@ -3129,10 +3133,15 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNod
       // Resolve all unresolved items (only SubjectHierarchyItemResolvedEvent is invoked from the node in the process)
       if (!firstShNode->Internal->ResolveUnresolvedItems())
         {
-        //TODO: The returned node will probably be invalid, so it needs to be completely re-built
-        // (e.g. by removing all the subject hierarchy nodes from the scene and when adding a
-        // new one, calling addSupportedDataNodesToSubjectHierarchy in the plugin logic)
-        vtkErrorWithObjectMacro(scene, "vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode: Failed to merge subject hierarchy nodes");
+        // Remove invalid subject hierarchy node so that it can be rebuilt from scratch
+        std::vector<vtkMRMLNode*> shNodes;
+        scene->GetNodesByClass("vtkMRMLSubjectHierarchyNode", shNodes);
+        for (std::vector<vtkMRMLNode*>::iterator shIt=shNodes.begin(); shIt!=shNodes.end(); ++shIt)
+          {
+          scene->RemoveNode(*shIt);
+          }
+        vtkErrorWithObjectMacro( scene,
+          "vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode: Failed to merge subject hierarchy nodes, re-building subject hierarchy from scratch" );
         return firstShNode;
         }
       }
