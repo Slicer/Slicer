@@ -565,31 +565,48 @@ macro(slicerMacroBuildApplication)
       include(SlicerBlockCTKAppLauncherSettings)
 
       ctkAppLauncherConfigure(
+        # Executable target associated with the launcher
         TARGET ${slicerapp_target}
+        # Location of the launcher settings in the install tree
         APPLICATION_INSTALL_SUBDIR ${Slicer_INSTALL_BIN_DIR}
+        # Info allowing to retrieve the Slicer extension settings
         APPLICATION_NAME ${SLICERAPP_APPLICATION_NAME}
         APPLICATION_REVISION ${Slicer_WC_REVISION}
         ORGANIZATION_DOMAIN ${Slicer_ORGANIZATION_DOMAIN}
         ORGANIZATION_NAME ${Slicer_ORGANIZATION_NAME}
         USER_ADDITIONAL_SETTINGS_FILEBASENAME ${SLICER_REVISION_SPECIFIC_USER_SETTINGS_FILEBASENAME}
+        # Splash screen
         SPLASH_IMAGE_PATH ${SLICERAPP_LAUNCHER_SPLASHSCREEN_FILE}
         SPLASH_IMAGE_INSTALL_SUBDIR ${Slicer_INSTALL_BIN_DIR}
         SPLASHSCREEN_HIDE_DELAY_MS 3000
+        # Slicer arguments triggering display of launcher help
         HELP_SHORT_ARG "-h"
         HELP_LONG_ARG "--help"
+        # Slicer arguments that should NOT be associated with the spash screeb
         NOSPLASH_ARGS "--no-splash,--help,--version,--home,--program-path,--no-main-window,--settings-path,--temporary-path"
+        # Extra application associated with the launcher
         EXTRA_APPLICATION_TO_LAUNCH_BUILD ${extraApplicationToLaunchListForBuildTree}
         EXTRA_APPLICATION_TO_LAUNCH_INSTALLED ${extraApplicationToLaunchListForInstallTree}
+        # Location of the launcher settings in the build tree
         DESTINATION_DIR ${Slicer_BINARY_DIR}
+        # Launcher settings specific to build tree
         LIBRARY_PATHS_BUILD "${SLICER_LIBRARY_PATHS_BUILD}"
         PATHS_BUILD "${SLICER_PATHS_BUILD}"
         ENVVARS_BUILD "${SLICER_ENVVARS_BUILD}"
+        # Launcher settings specific to install tree
         LIBRARY_PATHS_INSTALLED "${SLICER_LIBRARY_PATHS_INSTALLED}"
         PATHS_INSTALLED "${SLICER_PATHS_INSTALLED}"
         ENVVARS_INSTALLED "${SLICER_ENVVARS_INSTALLED}"
+        # The ADDITIONAL_PATH_ENVVARS_(BUILD_INSTALLED) variables contains names of
+        # environment variables expected to be associated with a list of paths.
+        # Examples of such variables are PYTHONPATH, QT_PLUGIN_PATH, ...
+        # For each "ADDITIONAL_PATH_ENVVARS", the "ctkAppLauncherConfigure" macro
+        # will look for variables named <ADDITIONAL_PATH_ENVVARS_PREFIX>_<ADDITIONAL_PATH_ENVVAR>_(BUILD|INSTALLED)
+        # listing paths.
+        # For example: SLICER_PYTHONPATH_BUILD, SLICER_PYTHONPATH_INSTALLED
+        ADDITIONAL_PATH_ENVVARS_PREFIX SLICER_
         ADDITIONAL_PATH_ENVVARS_BUILD "${SLICER_ADDITIONAL_PATH_ENVVARS_BUILD}"
         ADDITIONAL_PATH_ENVVARS_INSTALLED "${SLICER_ADDITIONAL_PATH_ENVVARS_INSTALLED}"
-        ADDITIONAL_PATH_ENVVARS_PREFIX SLICER_
         )
 
       # Folder

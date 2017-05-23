@@ -137,6 +137,8 @@ endforeach()
 #-----------------------------------------------------------------------------
 # PATH ENVVARS
 #-----------------------------------------------------------------------------
+
+# QT_PLUGIN_PATH
 set(SLICER_QT_PLUGIN_PATH_BUILD
   "<APPLAUNCHER_DIR>/bin"
   "${CTK_DIR}/CTK-build/bin"
@@ -153,6 +155,7 @@ set(SLICER_ADDITIONAL_PATH_ENVVARS_BUILD
 #       Please note that the environment variable is SLICER_HOME,
 #       CMake refers to the variable as Slicer_HOME, and the tcl variable is SlicerHome.
 
+# PYTHONPATH
 if(Slicer_USE_PYTHONQT)
 
   set(SLICER_PYTHONPATH_BUILD
@@ -243,6 +246,8 @@ endforeach()
 #-----------------------------------------------------------------------------
 # PATH ENVVARS
 #-----------------------------------------------------------------------------
+
+# QT_PLUGIN_PATH
 set(SLICER_QT_PLUGIN_PATH_INSTALLED
   "<APPLAUNCHER_DIR>/${Slicer_INSTALL_QtPlugins_DIR}"
   )
@@ -250,6 +255,7 @@ set(SLICER_ADDITIONAL_PATH_ENVVARS_INSTALLED
   "QT_PLUGIN_PATH"
   )
 
+# PYTHONPATH
 if(Slicer_USE_PYTHONQT)
   set(SLICER_PYTHONPATH_INSTALLED
     "<APPLAUNCHER_DIR>/${Slicer_INSTALL_LIB_DIR}"
