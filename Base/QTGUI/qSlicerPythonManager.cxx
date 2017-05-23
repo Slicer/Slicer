@@ -37,15 +37,6 @@ qSlicerPythonManager::~qSlicerPythonManager()
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerPythonManager::pythonPaths()
-{
-  QStringList paths;
-  paths << Superclass::pythonPaths();
-
-  return paths;
-}
-
-//-----------------------------------------------------------------------------
 void qSlicerPythonManager::preInitialization()
 {
   Superclass::preInitialization();
