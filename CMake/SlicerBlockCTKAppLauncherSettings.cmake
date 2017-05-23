@@ -122,6 +122,7 @@ endforeach()
 #-----------------------------------------------------------------------------
 set(SLICER_ENVVARS_BUILD
   "SLICER_HOME=${Slicer_BINARY_DIR}" # See note below
+  "ITK_AUTOLOAD_PATH=<APPLAUNCHER_DIR>/${Slicer_ITKFACTORIES_DIR}/<CMAKE_CFG_INTDIR>"
   )
 if(Slicer_USE_PYTHONQT_WITH_OPENSSL)
   list(APPEND SLICER_ENVVARS_BUILD
@@ -166,6 +167,12 @@ if(Slicer_USE_PYTHONQT)
     list(APPEND SLICER_PYTHONPATH_BUILD
       "<APPLAUNCHER_DIR>/${Slicer_QTLOADABLEMODULES_LIB_DIR}/<CMAKE_CFG_INTDIR>"
       "<APPLAUNCHER_DIR>/${Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR}"
+      )
+  endif()
+
+  if(Slicer_USE_PYTHONQT)
+    list(APPEND SLICER_PYTHONPATH_BUILD
+      "<APPLAUNCHER_DIR>/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}"
       )
   endif()
 
@@ -231,6 +238,7 @@ set(SLICER_ENVVARS_INSTALLED
   # SLICER_HOME might already be set on the machine, overwrite it because it
   # could have unwanted side effects
   "SLICER_HOME=<APPLAUNCHER_DIR>"
+  "ITK_AUTOLOAD_PATH=<APPLAUNCHER_DIR>/${Slicer_ITKFACTORIES_DIR}"
   )
 if(Slicer_USE_PYTHONQT_WITH_OPENSSL)
   list(APPEND SLICER_ENVVARS_INSTALLED
