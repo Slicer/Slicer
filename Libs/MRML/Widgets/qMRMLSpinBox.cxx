@@ -219,7 +219,7 @@ void qMRMLSpinBox::updateWidgetFromUnitNode()
         {
         this->setMinimum(unitNode->GetMinimumValue());
         }
-      if (d->Flags.testFlag(qMRMLSpinBox::MinimumValue))
+      if (d->Flags.testFlag(qMRMLSpinBox::MaximumValue))
         {
         this->setMaximum(unitNode->GetMaximumValue());
         }
