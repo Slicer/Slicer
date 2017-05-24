@@ -156,12 +156,12 @@ void qSlicerSegmentEditorAbstractEffect::activate()
 {
   Q_D(qSlicerSegmentEditorAbstractEffect);
 
-  this->updateGUIFromMRML();
-
   // Show options frame
   d->OptionsFrame->setVisible(true);
 
   this->m_Active = true;
+
+  this->updateGUIFromMRML();
 }
 
 //-----------------------------------------------------------------------------

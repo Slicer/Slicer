@@ -31,7 +31,7 @@
 #include <QDebug>
 #include <QComboBox>
 #include <QGridLayout>
-#include <QVBoxLayout>
+#include <QLabel>
 #include <QRadioButton>
 
 // VTK includes
@@ -63,6 +63,7 @@
 #include <vtkMRMLTransformNode.h>
 #include <vtkEventBroker.h>
 #include "qMRMLSliceView.h"
+#include "qMRMLSpinBox.h"
 #include "qMRMLThreeDView.h"
 
 // Slicer includes
@@ -141,6 +142,15 @@ public:
     Operation_Last // must be the last item
     };
 
+  enum
+    {
+    SliceCutModeUnlimited,
+    SliceCutModePositive,
+    SliceCutModeNegative,
+    SliceCutModeSymmetric,
+    SliceCutMode_Last // must be the last item
+    };
+
   /// Draw outline glyph
   void createGlyph(ScissorsPipeline* pipeline, const vtkVector2i& eventPosition);
   /// Update outline glyph based on positions
@@ -154,9 +164,11 @@ public:
   void paintApply(qMRMLWidget* viewWidget);
 
   static int ConvertShapeFromString(const QString& shapeStr);
+  static int ConvertOperationFromString(const QString& operationStr);
+  static int ConvertSliceCutModeFromString(const QString& sliceCutModeStr);
   static QString ConvertShapeToString(int shape);
   static QString ConvertOperationToString(int operation);
-  static int ConvertOperationFromString(const QString& operationStr);
+  static QString ConvertSliceCutModeToString(int operation);
 
   bool operationErase();
   bool operationInside();
@@ -183,18 +195,26 @@ public:
 
   QMap<qMRMLWidget*, ScissorsPipeline*> ScissorsPipelines;
 
+  QGridLayout*  gridLayout;
+
   QRadioButton* eraseInsideRadioButton;
   QRadioButton* eraseOutsideRadioButton;
   QRadioButton* fillInsideRadioButton;
   QRadioButton* fillOutsideRadioButton;
-  QGridLayout* operationLayout;
   QButtonGroup* operationGroup;
 
   QRadioButton* freeFormRadioButton;
   QRadioButton* circleRadioButton;
   QRadioButton* rectangleRadioButton;
-  QVBoxLayout* shapeLayout;
   QButtonGroup* shapeGroup;
+
+  QRadioButton* unlimitedRadioButton;
+  QRadioButton* positiveRadioButton;
+  QRadioButton* negativeRadioButton;
+  QRadioButton* symmetricRadioButton;
+  QButtonGroup* sliceCutModeGroup;
+
+  qMRMLSpinBox* sliceCutDepthSpinBox;
 };
 
 //-----------------------------------------------------------------------------
@@ -498,6 +518,23 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
     double segmentationBounds_SliceXY[6] = { 0, -1, 0, -1, 0, -1 };
     vtkOrientedImageDataResample::TransformOrientedImageDataBounds(modifierLabelmap, segmentationToSliceXYTransform.GetPointer(), segmentationBounds_SliceXY);
     // Extend bounds by half slice to make sure the boundaries are included
+    double sliceCutDepthMm = q->doubleParameter("SliceCutDepthMm");
+    switch (this->ConvertSliceCutModeFromString(q->parameter("SliceCutMode")))
+      {
+      case SliceCutModePositive:
+        segmentationBounds_SliceXY[4] = 0;
+        break;
+      case SliceCutModeNegative:
+        segmentationBounds_SliceXY[5] = 0;
+        break;
+      case SliceCutModeSymmetric:
+        segmentationBounds_SliceXY[4] = -sliceCutDepthMm / 2.0;
+        segmentationBounds_SliceXY[5] = sliceCutDepthMm / 2.0;
+        break;
+      default:
+        // unlimited
+        break;
+      }
     if (segmentationBounds_SliceXY[4] < segmentationBounds_SliceXY[5])
       {
       segmentationBounds_SliceXY[4] -= 0.5;
@@ -508,7 +545,6 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
       segmentationBounds_SliceXY[4] += 0.5;
       segmentationBounds_SliceXY[5] -= 0.5;
       }
-
     for (int pointIndex = 0; pointIndex < numberOfPoints; pointIndex++)
       {
       double pointXY[4] = { 0., 0., 0., 1. };
@@ -903,6 +939,32 @@ QString qSlicerSegmentEditorScissorsEffectPrivate::ConvertOperationToString(int 
 }
 
 //-----------------------------------------------------------------------------
+int qSlicerSegmentEditorScissorsEffectPrivate::ConvertSliceCutModeFromString(const QString& sliceCutModeStr)
+{
+  for (int i = 0; i < SliceCutMode_Last; i++)
+    {
+    if (sliceCutModeStr == ConvertSliceCutModeToString(i))
+      {
+      return i;
+      }
+    }
+  return -1;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerSegmentEditorScissorsEffectPrivate::ConvertSliceCutModeToString(int operation)
+{
+  switch (operation)
+    {
+    case SliceCutModeUnlimited: return "Unlimited";
+    case SliceCutModePositive: return "Positive";
+    case SliceCutModeNegative: return "Negative";
+    case SliceCutModeSymmetric: return "Symmetric";
+    default: return "";
+    }
+}
+
+//-----------------------------------------------------------------------------
 bool qSlicerSegmentEditorScissorsEffectPrivate::operationInside()
 {
   Q_Q(qSlicerSegmentEditorScissorsEffect);
@@ -967,18 +1029,21 @@ void qSlicerSegmentEditorScissorsEffect::setupOptionsFrame()
   // Setup widgets corresponding to the parent class of this effect
   Superclass::setupOptionsFrame();
 
+  // Operation
+
+  d->gridLayout = new QGridLayout();
+  d->gridLayout->setAlignment(Qt::AlignLeft);
+
   d->eraseInsideRadioButton = new QRadioButton("Erase inside");
   d->eraseOutsideRadioButton = new QRadioButton("Erase outside");
   d->fillInsideRadioButton = new QRadioButton("Fill inside");
   d->fillOutsideRadioButton = new QRadioButton("Fill outside");
 
-  d->operationLayout = new QGridLayout();
-  d->operationLayout->addWidget(d->eraseInsideRadioButton, 0, 0);
-  d->operationLayout->addWidget(d->eraseOutsideRadioButton, 1, 0);
-  d->operationLayout->addWidget(d->fillInsideRadioButton, 0, 1);
-  d->operationLayout->addWidget(d->fillOutsideRadioButton, 1, 1);
-
-  this->addLabeledOptionsWidget("Operation:", d->operationLayout);
+  d->gridLayout->addWidget(new QLabel("Operation:"), 0, 0);
+  d->gridLayout->addWidget(d->eraseInsideRadioButton, 0, 1);
+  d->gridLayout->addWidget(d->eraseOutsideRadioButton, 0, 2);
+  d->gridLayout->addWidget(d->fillInsideRadioButton, 0, 3);
+  d->gridLayout->addWidget(d->fillOutsideRadioButton, 0, 4);
 
   d->operationGroup = new QButtonGroup();
   d->operationGroup->setExclusive(true);
@@ -989,17 +1054,16 @@ void qSlicerSegmentEditorScissorsEffect::setupOptionsFrame()
 
   QObject::connect(d->operationGroup, SIGNAL(buttonClicked(int)), this, SLOT(setOperation(int)));
 
+  // Shape
 
   d->freeFormRadioButton = new QRadioButton("Free-form");
   d->circleRadioButton= new QRadioButton("Circle");
   d->rectangleRadioButton= new QRadioButton("Rectangle");
 
-  d->shapeLayout = new QVBoxLayout();
-  d->shapeLayout->addWidget(d->freeFormRadioButton);
-  d->shapeLayout->addWidget(d->circleRadioButton);
-  d->shapeLayout->addWidget(d->rectangleRadioButton);
-
-  this->addLabeledOptionsWidget("Shape:", d->shapeLayout);
+  d->gridLayout->addWidget(new QLabel("Shape:"), 1, 0);
+  d->gridLayout->addWidget(d->freeFormRadioButton, 1, 1);
+  d->gridLayout->addWidget(d->circleRadioButton, 1, 2);
+  d->gridLayout->addWidget(d->rectangleRadioButton, 1, 3);
 
   d->shapeGroup = new QButtonGroup();
   d->shapeGroup->setExclusive(true);
@@ -1008,6 +1072,46 @@ void qSlicerSegmentEditorScissorsEffect::setupOptionsFrame()
   d->shapeGroup->addButton(d->rectangleRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::ShapeRectangle);
 
   QObject::connect(d->shapeGroup, SIGNAL(buttonClicked(int)), this, SLOT(setShape(int)));
+
+  // Slice cut mode
+
+  d->unlimitedRadioButton = new QRadioButton(tr("Unlimited"));
+  d->unlimitedRadioButton->setToolTip(tr("Cut through the entire segmentation. Only used for slice views."));
+  d->positiveRadioButton = new QRadioButton(tr("Positive"));
+  d->positiveRadioButton->setToolTip(tr("Only positive side of the slice plane is included in cut region. Only used for slice views."));
+  d->negativeRadioButton = new QRadioButton(tr("Negative"));
+  d->negativeRadioButton->setToolTip(tr("Only negative side of the slice plane is included in cut region. Only used for slice views."));
+  d->symmetricRadioButton = new QRadioButton(tr("Symmetric"));
+  d->symmetricRadioButton->setToolTip(tr("Cut region is limited to the specified thickness around the slice plane. Only used for slice views."));
+
+  d->sliceCutDepthSpinBox = new qMRMLSpinBox();
+  d->sliceCutDepthSpinBox->setToolTip(tr("Thickness of the cut region. 0 means that only the current slice is included. Only used for slice views."));
+  d->sliceCutDepthSpinBox->setQuantity("length"); // scene is not available yet
+  d->sliceCutDepthSpinBox->setUnitAwareProperties(qMRMLSpinBox::Prefix | qMRMLSpinBox::Suffix | qMRMLSpinBox::Precision | qMRMLSpinBox::MaximumValue);
+  d->sliceCutDepthSpinBox->setMinimum(0);
+  d->sliceCutDepthSpinBox->setValue(0);
+  d->sliceCutDepthSpinBox->setEnabled(false);
+
+  QLabel* sliceCutModeLabel = new QLabel(tr("Slice cut:"));
+  sliceCutModeLabel->setToolTip(tr("Restrict cut region in slice views."));
+  d->gridLayout->addWidget(sliceCutModeLabel, 2, 0);
+  d->gridLayout->addWidget(d->unlimitedRadioButton, 2, 1);
+  d->gridLayout->addWidget(d->positiveRadioButton, 2, 2);
+  d->gridLayout->addWidget(d->negativeRadioButton, 2, 3);
+  d->gridLayout->addWidget(d->symmetricRadioButton, 2, 4);
+  d->gridLayout->addWidget(d->sliceCutDepthSpinBox, 2, 5);
+
+  this->addOptionsWidget(d->gridLayout);
+
+  d->sliceCutModeGroup = new QButtonGroup();
+  d->sliceCutModeGroup->setExclusive(true);
+  d->sliceCutModeGroup->addButton(d->unlimitedRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::SliceCutModeUnlimited);
+  d->sliceCutModeGroup->addButton(d->positiveRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::SliceCutModePositive);
+  d->sliceCutModeGroup->addButton(d->negativeRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::SliceCutModeNegative);
+  d->sliceCutModeGroup->addButton(d->symmetricRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::SliceCutModeSymmetric);
+
+  QObject::connect(d->sliceCutModeGroup, SIGNAL(buttonClicked(int)), this, SLOT(setSliceCutMode(int)));
+  QObject::connect(d->sliceCutDepthSpinBox, SIGNAL(valueChanged(double)), this, SLOT(onSliceCutDepthChanged(double)));
 }
 
 //-----------------------------------------------------------------------------
@@ -1017,6 +1121,8 @@ void qSlicerSegmentEditorScissorsEffect::setMRMLDefaults()
   Superclass::setMRMLDefaults();
   this->setParameterDefault("Operation", d->ConvertOperationToString(qSlicerSegmentEditorScissorsEffectPrivate::OperationEraseInside));
   this->setParameterDefault("Shape", d->ConvertShapeToString(qSlicerSegmentEditorScissorsEffectPrivate::ShapeFreeForm));
+  this->setParameterDefault("SliceCutMode", d->ConvertSliceCutModeToString(qSlicerSegmentEditorScissorsEffectPrivate::SliceCutModeUnlimited));
+  this->setParameterDefault("SliceCutDepthMm", 0);
 }
 
 //-----------------------------------------------------------------------------
@@ -1052,6 +1158,20 @@ void qSlicerSegmentEditorScissorsEffect::updateGUIFromMRML()
     d->shapeGroup->button(shapeIndex)->setChecked(true);
     d->shapeGroup->blockSignals(wasBlocked);
     }
+
+  int sliceCutModeIndex = d->ConvertSliceCutModeFromString(QString(this->parameter("SliceCutMode")));
+  if (d->sliceCutModeGroup->button(sliceCutModeIndex))
+    {
+    bool wasBlocked = d->sliceCutModeGroup->blockSignals(true);
+    d->sliceCutModeGroup->button(sliceCutModeIndex)->setChecked(true);
+    d->sliceCutModeGroup->blockSignals(wasBlocked);
+    }
+
+  bool wasBlocked = d->sliceCutDepthSpinBox->blockSignals(true);
+  d->sliceCutDepthSpinBox->setMRMLScene(this->scene());
+  d->sliceCutDepthSpinBox->setValue(this->doubleParameter("SliceCutDepthMm"));
+  d->sliceCutDepthSpinBox->setEnabled(sliceCutModeIndex == qSlicerSegmentEditorScissorsEffectPrivate::SliceCutModeSymmetric);
+  d->sliceCutDepthSpinBox->blockSignals(wasBlocked);
 }
 
 //-----------------------------------------------------------------------------
@@ -1069,17 +1189,33 @@ void qSlicerSegmentEditorScissorsEffect::setShape(int shapeIndex)
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerSegmentEditorScissorsEffect::setSliceCutMode(int sliceCutModeIndex)
+{
+  Q_D(qSlicerSegmentEditorScissorsEffect);
+  this->setParameter("SliceCutMode", d->ConvertSliceCutModeToString(sliceCutModeIndex));
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSegmentEditorScissorsEffect::onSliceCutDepthChanged(double value)
+{
+  Q_D(qSlicerSegmentEditorScissorsEffect);
+  this->setParameter("SliceCutDepthMm", value);
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerSegmentEditorScissorsEffect::updateMRMLFromGUI()
 {
   Q_D(qSlicerSegmentEditorScissorsEffect);
 
   Superclass::updateMRMLFromGUI();
 
-  //QString operation = d->OperationSelectorComboBox->itemData(d->OperationSelectorComboBox->currentIndex()).toString();
   QString operation = d->ConvertOperationToString(d->operationGroup->checkedId());
   QString shape = d->ConvertShapeToString(d->shapeGroup->checkedId());
+  QString sliceCutMode = d->ConvertSliceCutModeToString(d->sliceCutModeGroup->checkedId());
   this->setParameter("Operation", operation.toLatin1().constData());
   this->setParameter("Shape", shape.toLatin1().constData());
+  this->setParameter("SliceCutMode", sliceCutMode.toLatin1().constData());
+  this->setParameter("SliceCutDepthMm", d->sliceCutDepthSpinBox->value());
 }
 
 //-----------------------------------------------------------------------------

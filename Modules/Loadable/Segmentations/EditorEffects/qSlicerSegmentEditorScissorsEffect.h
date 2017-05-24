@@ -75,6 +75,8 @@ public slots:
 
   virtual void setOperation(int operationIndex);
   virtual void setShape(int shapeIndex);
+  virtual void setSliceCutMode(int sliceCutModeIndex);
+  virtual void onSliceCutDepthChanged(double value);
 
 protected:
   QScopedPointer<qSlicerSegmentEditorScissorsEffectPrivate> d_ptr;
