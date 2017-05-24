@@ -899,7 +899,7 @@ void vtkITKArchetypeImageSeriesReader::SetMetaDataScalarRangeToPointDataInfo( vt
       }
 
     // If metadata scalar range not consistent
-    int nbrOfComponents = data->GetNumberOfScalarComponents();
+    unsigned int nbrOfComponents = data->GetNumberOfScalarComponents();
     if (nbrOfComponents != this->MetaDataScalarRangeMinima.size() ||
         nbrOfComponents != this->MetaDataScalarRangeMaxima.size())
       {
