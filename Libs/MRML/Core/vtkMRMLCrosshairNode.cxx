@@ -31,7 +31,7 @@ vtkMRMLCrosshairNode::vtkMRMLCrosshairNode()
   this->HideFromEditors = 1;
 
   this->CrosshairMode = vtkMRMLCrosshairNode::NoCrosshair;
-  this->CrosshairBehavior = vtkMRMLCrosshairNode::JumpSlice;
+  this->CrosshairBehavior = vtkMRMLCrosshairNode::OffsetJumpSlice;
   this->CrosshairThickness = vtkMRMLCrosshairNode::Fine;
   this->Navigation = 0;
   this->CrosshairRAS[0] = this->CrosshairRAS[1] = this->CrosshairRAS[2] = 0.0;
@@ -86,10 +86,13 @@ void vtkMRMLCrosshairNode::WriteXML(ostream& of, int nIndent)
 
   of << " navigation=\"" << (this->Navigation ? "true" : "false") << "\"";
 
-  if ( this->CrosshairBehavior == vtkMRMLCrosshairNode::JumpSlice
-    || this->CrosshairBehavior == vtkMRMLCrosshairNode::Normal )
+  if ( this->CrosshairBehavior == vtkMRMLCrosshairNode::OffsetJumpSlice )
     {
-    of << " crosshairBehavior=\"" << "JumpSlice" << "\"";
+    of << " crosshairBehavior=\"" << "OffsetJumpSlice" << "\"";
+    }
+  else if (this->CrosshairBehavior == vtkMRMLCrosshairNode::CenteredJumpSlice)
+    {
+    of << " crosshairBehavior=\"" << "CenteredJumpSlice" << "\"";
     }
   else if (this->CrosshairBehavior == vtkMRMLCrosshairNode::NoAction)
     {
@@ -174,12 +177,17 @@ void vtkMRMLCrosshairNode::ReadXMLAttributes(const char** atts)
       }
     else if (!strcmp (attName, "crosshairBehavior" ))
       {
-      if ( !strcmp (attValue, "JumpSlice")
+      if ( !strcmp (attValue, "OffsetJumpSlice")
+        || !strcmp(attValue, "JumpSlice")
         || !strcmp(attValue, "Normal"))
         {
-        this->SetCrosshairBehavior ( vtkMRMLCrosshairNode::JumpSlice);
+        this->SetCrosshairBehavior(vtkMRMLCrosshairNode::OffsetJumpSlice);
         }
-      else if ( !strcmp (attValue, "NoAction"))
+      if (!strcmp (attValue, "CenteredJumpSlice"))
+        {
+        this->SetCrosshairBehavior(vtkMRMLCrosshairNode::CenteredJumpSlice);
+        }
+      else if (!strcmp (attValue, "NoAction"))
         {
         this->SetCrosshairBehavior(vtkMRMLCrosshairNode::NoAction);
         }

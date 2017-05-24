@@ -547,9 +547,16 @@ void vtkSliceViewInteractorStyle::OnMouseMove()
           if (crosshairNode->GetCursorPositionRAS(cursorPositionRAS))
             {
             crosshairNode->SetCrosshairRAS(cursorPositionRAS);
-            if (crosshairNode->GetCrosshairBehavior() == vtkMRMLCrosshairNode::JumpSlice)
+            if (crosshairNode->GetCrosshairBehavior() != vtkMRMLCrosshairNode::NoAction)
               {
-              sliceNode->JumpAllSlices(cursorPositionRAS[0], cursorPositionRAS[1], cursorPositionRAS[2]);
+              int viewJumpSliceMode = vtkMRMLSliceNode::OffsetJumpSlice;
+              if (crosshairNode->GetCrosshairBehavior() == vtkMRMLCrosshairNode::CenteredJumpSlice)
+                {
+                viewJumpSliceMode = vtkMRMLSliceNode::CenteredJumpSlice;
+                }
+              sliceNode->JumpAllSlices(sliceNode->GetScene(),
+                cursorPositionRAS[0], cursorPositionRAS[1], cursorPositionRAS[2],
+                viewJumpSliceMode, sliceNode->GetViewGroup(), sliceNode);
               }
             }
           }

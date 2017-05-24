@@ -238,7 +238,7 @@ void vtkThreeDViewInteractorStyle::OnMouseMove()
             // Computing pick position in 3D is expensive,
             // therefore we only update the cursor position if shift key is pressed
             crosshairNode->SetCursorPositionRAS(pickedRAS);
-            if (crosshairNode->GetCrosshairBehavior() == vtkMRMLCrosshairNode::JumpSlice)
+            if (crosshairNode->GetCrosshairBehavior() != vtkMRMLCrosshairNode::NoAction)
               {
               // Try to get view group of the 3D view and jump only those slices.
               int viewGroup = -1; // jump all by default
@@ -250,7 +250,12 @@ void vtkThreeDViewInteractorStyle::OnMouseMove()
                   viewGroup = viewNode->GetViewGroup();
                   }
                 }
-              vtkMRMLSliceNode::JumpAllSlices(scene, pickedRAS[0], pickedRAS[1], pickedRAS[2], -1, viewGroup);
+              int viewJumpSliceMode = vtkMRMLSliceNode::OffsetJumpSlice;
+              if (crosshairNode->GetCrosshairBehavior() == vtkMRMLCrosshairNode::CenteredJumpSlice)
+                {
+                viewJumpSliceMode = vtkMRMLSliceNode::CenteredJumpSlice;
+                }
+              vtkMRMLSliceNode::JumpAllSlices(scene, pickedRAS[0], pickedRAS[1], pickedRAS[2], viewJumpSliceMode, viewGroup);
               }
             }
           }

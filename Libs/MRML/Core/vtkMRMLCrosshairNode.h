@@ -142,12 +142,13 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
       Thick
     };
   /// Behavior when crosshair position is changed.
-  /// "Normal" mode is deprecated. Use JumpSlice (default) or NoAction instead.
   enum
     {
-      Normal = 0, // Deprecated
-      JumpSlice = 0,
-      NoAction = 1
+      NoAction = 0,
+      OffsetJumpSlice = 1,
+      CenteredJumpSlice = 2,
+      Normal = 1,   // Deprecated
+      JumpSlice = 1 // Deprecated
     };
 
 protected:
