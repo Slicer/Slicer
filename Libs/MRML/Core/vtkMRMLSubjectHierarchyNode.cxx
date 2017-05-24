@@ -1549,7 +1549,7 @@ bool vtkMRMLSubjectHierarchyNode::vtkInternal::ResolveUnresolvedItems()
   std::map<vtkIdType,vtkIdType> idMap;
 
   // Resolve each item and add it to its proper place in the tree under the scene
-  int numberOfUnresolvedItems = this->UnresolvedItems->Children.size(); // Safeguard for checking if an item is resolved in each iteration
+  unsigned int numberOfUnresolvedItems = this->UnresolvedItems->Children.size(); // Safeguard for checking if an item is resolved in each iteration
   while (this->UnresolvedItems->Children.size())
     {
     // Resolve first item whose parent is the scene or an already resolved item
