@@ -104,7 +104,7 @@ vtkSegmentation::~vtkSegmentation()
 }
 
 //----------------------------------------------------------------------------
-void vtkSegmentation::WriteXML(ostream& of, int nIndent)
+void vtkSegmentation::WriteXML(ostream& of, int vtkNotUsed(nIndent))
 {
   of << " MasterRepresentationName=\"" << this->MasterRepresentationName << "\"";
 

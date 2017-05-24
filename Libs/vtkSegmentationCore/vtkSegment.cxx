@@ -126,7 +126,7 @@ void vtkSegment::ReadXMLAttributes(const char** vtkNotUsed(atts))
 }
 
 //---------------------------------------------------------------------------
-void vtkSegment::WriteXML(ostream& of, int nIndent)
+void vtkSegment::WriteXML(ostream& of, int vtkNotUsed(nIndent))
 {
   // Note: Segment info is written by the storage node, this function is not called
 
