@@ -85,12 +85,14 @@ public:
   void SetOutputImageToWorldMatrix(vtkMatrix4x4* imageToWorldMatrix);
   void GetOutputImageToWorldMatrix(vtkMatrix4x4* imageToWorldMatrix);
 
+  using Superclass::GetOutputOrigin;
   double* GetOutputOrigin();
   void GetOutputOrigin(double origin[3]);
 
   void SetOutputOrigin(double origin[3]);
   void SetOutputOrigin(double x, double y, double z);
 
+  using Superclass::GetOutputSpacing;
   double* GetOutputSpacing();
   void GetOutputSpacing(double spacing[3]);
 
