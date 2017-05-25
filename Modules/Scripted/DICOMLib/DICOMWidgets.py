@@ -930,7 +930,10 @@ class DICOMDetailsDialog(DICOMDetailsBase, qt.QDialog):
     DICOMDetailsBase.__init__(self, dicomBrowser)
     qt.QDialog.__init__(self, slicer.util.mainWindow() if parent == "mainWindow" else parent)
     self.modal = True
-    self.setWindowFlags(qt.Qt.WindowMaximizeButtonHint | qt.Qt.Window)
+    self.setWindowFlags(
+            qt.Qt.WindowMaximizeButtonHint |
+            qt.Qt.WindowCloseButtonHint |
+            qt.Qt.Window)
     self.setup()
 
   def open(self):
@@ -1402,7 +1405,10 @@ class DICOMHeaderPopup(qt.QDialog, SizePositionSettingsMixin):
 
   def __init__(self, parent=None):
     qt.QDialog.__init__(self, parent)
-    self.setWindowFlags(qt.Qt.WindowMaximizeButtonHint | qt.Qt.Window)
+    self.setWindowFlags(
+            qt.Qt.WindowMaximizeButtonHint |
+            qt.Qt.WindowCloseButtonHint |
+            qt.Qt.Window)
     self.modal = True
     self.settings = qt.QSettings()
     self.objectName = 'HeaderPopup'
