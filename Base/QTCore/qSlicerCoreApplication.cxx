@@ -625,6 +625,24 @@ QString qSlicerCoreApplicationPrivate::defaultExtensionsInstallPathForMacOSX()co
 #endif
 
 //-----------------------------------------------------------------------------
+bool qSlicerCoreApplicationPrivate::isUsingLauncher()const
+{
+  Q_Q(const qSlicerCoreApplication);
+  if (!q->isInstalled())
+    {
+    return true;
+    }
+  else
+    {
+#ifdef Q_OS_MAC
+    return false
+#else
+    return true;
+#endif
+    }
+}
+
+//-----------------------------------------------------------------------------
 bool qSlicerCoreApplicationPrivate::createDirectory(const QString& path, const QString& description) const
 {
   if (path.isEmpty())
@@ -763,12 +781,14 @@ int qSlicerCoreApplication::returnCode()const
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
 {
+  Q_D(qSlicerCoreApplication);
+
   qSlicerCoreCommandOptions* options = this->coreCommandOptions();
   Q_ASSERT(options);
 
   if (options->displayHelpAndExit())
     {
-    if (this->launcherSettingsFilePath().isEmpty())
+    if(!d->isUsingLauncher())
       {
       std::cout << "Usage\n"
                 << "  " << qPrintable(this->applicationName()) << " [options]\n\n"
@@ -1125,12 +1145,11 @@ QString qSlicerCoreApplication::temporaryPath() const
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::launcherExecutableFilePath()const
 {
-#ifdef Q_OS_MAC
-  if (this->isInstalled())
+  Q_D(const qSlicerCoreApplication);
+  if (!d->isUsingLauncher())
     {
     return QString();
     }
-#endif
   return this->slicerHome() + "/Slicer" + qSlicerUtils::executableExtension();
 }
 

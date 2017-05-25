@@ -110,6 +110,18 @@ public:
   QString defaultExtensionsInstallPathForMacOSX()const;
 #endif
 
+  /// \brief Return true if application was started using CTKAppLauncher
+  ///
+  /// Value is currently hardcoded:
+  ///
+  ///         | Build tree | Install tree
+  /// --------| -----------|---------------
+  /// Linux   |  true      |  true
+  /// MacOSX  |  true      |  false
+  /// Windows |  true      |  true
+  ///
+  bool isUsingLauncher()const;
+
   /// Convenient function used to create a \a path.
   /// If it fails, print an error message using given \a description
   bool createDirectory(const QString& path, const QString& description) const;
