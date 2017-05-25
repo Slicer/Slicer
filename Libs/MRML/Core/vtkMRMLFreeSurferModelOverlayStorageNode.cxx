@@ -445,6 +445,12 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadDataInternal(vtkMRMLNode *refN
               }
             endBracketIndex = colorString.find( "}", startBracketIndex);
             }
+          lutNode->SetNamesInitialised(true);
+
+          // Set color node as the file name, including extension (.annot)
+          std::string lutNodeName = vtksys::SystemTools::GetFilenameName(fullName);
+          lutNode->SetName(lutNodeName.c_str());
+
           if (!errorCondition)
             {
             this->Scene->AddNode(lutNode);
