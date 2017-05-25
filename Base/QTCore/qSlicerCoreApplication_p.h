@@ -80,9 +80,6 @@ public:
   /// Given the program name, should return Slicer Home Directory
   QString discoverSlicerHomeDirectory();
 
-  /// Set environment variable
-  void setEnvironmentVariable(const QString& key, const QString& value);
-
 #ifdef Slicer_USE_PYTHONQT
   void setPythonOsEnviron(const QString& key, const QString& value);
 #endif
@@ -163,10 +160,6 @@ public:
 #endif
 
   QProcessEnvironment                         Environment;
-
-#if defined(Slicer_USE_PYTHONQT) && defined(Q_WS_WIN)
-  QHash<QString, QString>                     EnvironmentVariablesCache;
-#endif
 
 #ifdef Slicer_BUILD_DICOM_SUPPORT
   /// Application-wide database instance

@@ -206,7 +206,7 @@ void qSlicerCoreApplicationPrivate::init()
   this->parseArguments();
 
   this->SlicerHome = this->discoverSlicerHomeDirectory();
-  this->setEnvironmentVariable("SLICER_HOME", this->SlicerHome);
+  q->setEnvironmentVariable("SLICER_HOME", this->SlicerHome);
 
 #ifdef Slicer_USE_PYTHONQT_WITH_OPENSSL
   if (!QSslSocket::supportsSsl())
@@ -220,7 +220,7 @@ void qSlicerCoreApplicationPrivate::init()
 # ifdef Q_OS_MAC
   if (this->isInstalled(this->SlicerHome))
     {
-    this->setEnvironmentVariable(
+    q->setEnvironmentVariable(
           "SSL_CERT_FILE",
           this->SlicerHome + "/" Slicer_SHARE_DIR "/Slicer.crt");
     }
@@ -229,10 +229,10 @@ void qSlicerCoreApplicationPrivate::init()
 
   // Add 'SLICER_SHARE_DIR' to the environment so that Tcl scripts can reference
   // their dependencies.
-  this->setEnvironmentVariable("SLICER_SHARE_DIR", Slicer_SHARE_DIR);
+  q->setEnvironmentVariable("SLICER_SHARE_DIR", Slicer_SHARE_DIR);
 
   this->ITKFactoriesDir = this->discoverITKFactoriesDirectory();
-  this->setEnvironmentVariable("ITK_AUTOLOAD_PATH", this->ITKFactoriesDir);
+  q->setEnvironmentVariable("ITK_AUTOLOAD_PATH", this->ITKFactoriesDir);
   this->setPythonEnvironmentVariables();
   this->setTclEnvironmentVariables();
 
@@ -305,11 +305,6 @@ void qSlicerCoreApplicationPrivate::init()
       q->connect(q->corePythonManager(), SIGNAL(systemExitExceptionRaised(int)),
                  q, SLOT(terminate(int)));
       }
-# ifdef Q_WS_WIN
-    // HACK - Since on windows setting an environment variable using putenv doesn't propagate
-    // to the environment initialized in python, let's make sure 'os.environ' is updated.
-    this->updatePythonOsEnviron();
-# endif
     }
 #endif
 
@@ -441,18 +436,6 @@ QString qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCoreApplicationPrivate::setEnvironmentVariable(const QString& key, const QString& value)
-{
-  Q_Q(qSlicerCoreApplication);
-  q->setEnvironmentVariable(key, value);
-
-#if defined(Slicer_USE_PYTHONQT) && defined(Q_WS_WIN)
-  // Cache environment variable
-  this->EnvironmentVariablesCache[key] = value;
-#endif
-}
-
-//-----------------------------------------------------------------------------
 #ifdef Slicer_USE_PYTHONQT
 void qSlicerCoreApplicationPrivate::setPythonOsEnviron(const QString& key, const QString& value)
 {
@@ -563,29 +546,18 @@ void qSlicerCoreApplicationPrivate::setPythonEnvironmentVariables()
     else
       {
       qSlicerCoreApplication * app = qSlicerCoreApplication::application();
-      this->setEnvironmentVariable("PYTHONHOME", app->slicerHome() + "/lib/Python");
+      q->setEnvironmentVariable("PYTHONHOME", app->slicerHome() + "/lib/Python");
       }
     }
 
   // Set PYTHONPATH if not already done
   if (this->Environment.value("PYTHONPATH").isEmpty())
     {
-    this->setEnvironmentVariable(
+    q->setEnvironmentVariable(
           "PYTHONPATH", qSlicerCorePythonManager().pythonPaths().join(":"));
     }
 #endif
 }
-
-//-----------------------------------------------------------------------------
-#if defined(Slicer_USE_PYTHONQT) && defined(Q_WS_WIN)
-void qSlicerCoreApplicationPrivate::updatePythonOsEnviron()
-{
-  foreach(const QString& key, this->EnvironmentVariablesCache.keys())
-    {
-    this->setPythonOsEnviron(key, this->EnvironmentVariablesCache.value(key));
-    }
-}
-#endif
 
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplicationPrivate::setTclEnvironmentVariables()
@@ -601,7 +573,7 @@ void qSlicerCoreApplicationPrivate::setTclEnvironmentVariables()
       }
     else
       {
-      this->setEnvironmentVariable(
+      q->setEnvironmentVariable(
             "TCL_LIBRARY", app->slicerHome() + "/lib/TclTk/lib/tcl" Slicer_TCL_TK_VERSION_DOT);
       }
     }
@@ -613,7 +585,7 @@ void qSlicerCoreApplicationPrivate::setTclEnvironmentVariables()
       }
     else
       {
-      this->setEnvironmentVariable(
+      q->setEnvironmentVariable(
             "TK_LIBRARY", app->slicerHome() + "/lib/TclTk/lib/tk" Slicer_TCL_TK_VERSION_DOT);
       }
     }
@@ -628,7 +600,7 @@ void qSlicerCoreApplicationPrivate::setTclEnvironmentVariables()
       QStringList tclLibPaths;
       tclLibPaths << app->slicerHome() + "/lib/TclTk/lib/itcl" Slicer_INCR_TCL_VERSION_DOT;
       tclLibPaths << app->slicerHome() + "/lib/TclTk/lib/itk" Slicer_INCR_TCL_VERSION_DOT;
-      this->setEnvironmentVariable("TCLLIBPATH", tclLibPaths.join(" "));
+      q->setEnvironmentVariable("TCLLIBPATH", tclLibPaths.join(" "));
       }
     }
 #endif
