@@ -93,7 +93,7 @@ Sublicense ("Software License").
    downloading and/or using, reproducing, modifying, displaying and/or
    distributing the Software and the institution or entity which
    employs or is otherwise affiliated with such individual in
-   connection therewith. The Brigham and Women?s Hospital,
+   connection therewith. The Brigham and Women's Hospital,
    Inc. ("Brigham") hereby grants you, with right to sublicense, with
    respect to Brigham's rights in the software, and data, if any,
    which is the subject of this Software License (collectively, the
