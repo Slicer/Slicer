@@ -111,6 +111,11 @@ qSlicerSubjectHierarchyPluginHandler::qSlicerSubjectHierarchyPluginHandler(QObje
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyPluginHandler::~qSlicerSubjectHierarchyPluginHandler()
 {
+  if (m_SubjectHierarchyNode)
+    {
+    m_SubjectHierarchyNode->RemoveObserver(m_CallBack);
+    }
+
   QList<qSlicerSubjectHierarchyAbstractPlugin*>::iterator pluginIt;
   for (pluginIt = this->m_RegisteredPlugins.begin(); pluginIt != this->m_RegisteredPlugins.end(); ++pluginIt)
     {
