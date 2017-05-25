@@ -195,14 +195,25 @@ endif()
 #-----------------------------------------------------------------------------
 #-----------------------------------------------------------------------------
 
+# Note(s):
+#
+#  Do not use Slicer_INSTALL_* variables
+#  -------------------------------------
+#
+#  Indeed, on MacOSX, since Slicer_INSTALL_* variables already includes
+#  Slicer_BUNDLE_LOCATION (<appname>.app/Contents) they can *NOT*
+#  be used to reference paths from <APPLAUNCHER_DIR> which is itself
+#  set to /path/to/<appname>.app/Contents.
+#
+
 #-----------------------------------------------------------------------------
 # LIBRARY_PATHS
 #-----------------------------------------------------------------------------
 set(SLICER_LIBRARY_PATHS_INSTALLED
-  <APPLAUNCHER_DIR>/${Slicer_INSTALL_BIN_DIR}
-  <APPLAUNCHER_DIR>/${Slicer_INSTALL_LIB_DIR}
-  <APPLAUNCHER_DIR>/${Slicer_INSTALL_CLIMODULES_LIB_DIR}
-  <APPLAUNCHER_DIR>/${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR}
+  <APPLAUNCHER_DIR>/${Slicer_BIN_DIR}
+  <APPLAUNCHER_DIR>/${Slicer_LIB_DIR}
+  <APPLAUNCHER_DIR>/${Slicer_CLIMODULES_LIB_DIR}
+  <APPLAUNCHER_DIR>/${Slicer_QTLOADABLEMODULES_LIB_DIR}
   )
 
 # The following lines allow Slicer to load a CLI module extension that depends
@@ -221,9 +232,9 @@ endforeach()
 # PATHS
 #-----------------------------------------------------------------------------
 set(SLICER_PATHS_INSTALLED
-  <APPLAUNCHER_DIR>/${Slicer_INSTALL_BIN_DIR}
-  <APPLAUNCHER_DIR>/${Slicer_INSTALL_CLIMODULES_BIN_DIR}
-  <APPLAUNCHER_DIR>/${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR}
+  <APPLAUNCHER_DIR>/${Slicer_BIN_DIR}
+  <APPLAUNCHER_DIR>/${Slicer_CLIMODULES_BIN_DIR}
+  <APPLAUNCHER_DIR>/${Slicer_QTLOADABLEMODULES_BIN_DIR}
   )
 
 # External projects - paths
@@ -257,7 +268,7 @@ endforeach()
 
 # QT_PLUGIN_PATH
 set(SLICER_QT_PLUGIN_PATH_INSTALLED
-  "<APPLAUNCHER_DIR>/${Slicer_INSTALL_QtPlugins_DIR}"
+  "<APPLAUNCHER_DIR>/${Slicer_QtPlugins_DIR}"
   )
 set(SLICER_ADDITIONAL_PATH_ENVVARS_INSTALLED
   "QT_PLUGIN_PATH"
@@ -266,9 +277,9 @@ set(SLICER_ADDITIONAL_PATH_ENVVARS_INSTALLED
 # PYTHONPATH
 if(Slicer_USE_PYTHONQT)
   set(SLICER_PYTHONPATH_INSTALLED
-    "<APPLAUNCHER_DIR>/${Slicer_INSTALL_LIB_DIR}"
-    "<APPLAUNCHER_DIR>/${Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR}"
-    "<APPLAUNCHER_DIR>/${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR}"
+    "<APPLAUNCHER_DIR>/${Slicer_LIB_DIR}"
+    "<APPLAUNCHER_DIR>/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}"
+    "<APPLAUNCHER_DIR>/${Slicer_QTLOADABLEMODULES_LIB_DIR}"
     "<APPLAUNCHER_DIR>/lib/vtkTeem"
     "<APPLAUNCHER_DIR>/bin/Python"
     "<APPLAUNCHER_DIR>/${Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR}"

@@ -95,6 +95,7 @@ set(VTK_EXTERNAL_NAME VTKv7)
 
 set(Slicer_DEPENDENCIES
   curl
+  CTKAppLauncherLib
   teem
   ${VTK_EXTERNAL_NAME}
   ${ITK_EXTERNAL_NAME}

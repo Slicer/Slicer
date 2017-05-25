@@ -186,7 +186,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
   # pythonpath
   set(${proj}_PYTHONPATH_LAUNCHER_BUILD
     ${VTK_DIR}/Wrapping/Python
-    ${VTK_DIR}/lib/<CMAKE_CFG_INTDIR>
+    ${VTK_DIR}/${_library_output_subdir}/<CMAKE_CFG_INTDIR>
     )
   mark_as_superbuild(
     VARS ${proj}_PYTHONPATH_LAUNCHER_BUILD

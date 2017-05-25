@@ -97,15 +97,6 @@ public:
   /// \sa QCoreApplication::applicationDirPath
   QString discoverSlicerBinDirectory();
 
-  /// Set 'ITKFactoriesDir' variable using 'ITK_AUTOLOAD_PATH' environment variable
-  QString discoverITKFactoriesDirectory();
-
-  /// Set PYTHONHOME and PYTHONPATH environment variables is not already set.
-  void setPythonEnvironmentVariables();
-
-  /// Set TCL_LIBRARY, TK_LIBRARY and TCLLIBPATH environment variable is not already set.
-  void setTclEnvironmentVariables();
-
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   QString defaultExtensionsInstallPathForMacOSX()const;
 #endif
@@ -139,7 +130,6 @@ public:
   vtkSmartPointer<vtkDataIOManagerLogic>      DataIOManagerLogic;
 
   QString                                     SlicerHome;
-  QString                                     ITKFactoriesDir;
   /// On windows platform, after the method 'discoverSlicerBinDirectory' has been called,
   /// IntDir should be set to either Debug,
   /// Release, RelWithDebInfo, MinSizeRel or any other custom build type.

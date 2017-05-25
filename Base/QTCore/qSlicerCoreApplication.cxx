@@ -92,6 +92,9 @@
 #endif
 #include <vtkMRMLScene.h>
 
+// CTKLauncherLib includes
+#include <ctkAppLauncherSettings.h>
+
 // VTK includes
 #include <vtkNew.h>
 #include <vtksys/SystemTools.hxx>
@@ -208,6 +211,39 @@ void qSlicerCoreApplicationPrivate::init()
   this->SlicerHome = this->discoverSlicerHomeDirectory();
   q->setEnvironmentVariable("SLICER_HOME", this->SlicerHome);
 
+  ctkAppLauncherSettings appLauncherSettings;
+  appLauncherSettings.setLauncherName(q->applicationName());
+  appLauncherSettings.setLauncherDir(this->SlicerHome);
+  if (!appLauncherSettings.readSettings(q->launcherSettingsFilePath()))
+    {
+    qCritical() << "Failed to read launcher settings" << q->launcherSettingsFilePath();
+    }
+
+  // Regular environment variables
+  QHash<QString, QString> envVars = appLauncherSettings.envVars();
+  foreach(const QString& key, envVars.keys())
+    {
+    q->setEnvironmentVariable(key, envVars.value(key));
+    }
+  // Path environment variables (includes PATH and/or (DY)LD_LIBRARY_PATH)
+  QHash<QString, QStringList> pathsEnvVars = appLauncherSettings.pathsEnvVars();
+  foreach(const QString& key, pathsEnvVars.keys())
+    {
+    QString value = pathsEnvVars.value(key).join(appLauncherSettings.pathSep());
+    if (this->Environment.contains(key))
+      {
+      if (!this->Environment.value(key).contains(value))
+        {
+        value = QString("%1%2%3").arg(value, appLauncherSettings.pathSep(), this->Environment.value(key));
+        q->setEnvironmentVariable(key, value);
+        }
+      }
+    else
+      {
+      q->setEnvironmentVariable(key, value);
+      }
+    }
+
 #ifdef Slicer_USE_PYTHONQT_WITH_OPENSSL
   if (!QSslSocket::supportsSsl())
     {
@@ -217,24 +253,11 @@ void qSlicerCoreApplicationPrivate::init()
     {
     qWarning() << "[SSL] Failed to load Slicer.crt";
     }
-# ifdef Q_OS_MAC
-  if (this->isInstalled(this->SlicerHome))
-    {
-    q->setEnvironmentVariable(
-          "SSL_CERT_FILE",
-          this->SlicerHome + "/" Slicer_SHARE_DIR "/Slicer.crt");
-    }
-# endif
 #endif
 
   // Add 'SLICER_SHARE_DIR' to the environment so that Tcl scripts can reference
   // their dependencies.
   q->setEnvironmentVariable("SLICER_SHARE_DIR", Slicer_SHARE_DIR);
-
-  this->ITKFactoriesDir = this->discoverITKFactoriesDirectory();
-  q->setEnvironmentVariable("ITK_AUTOLOAD_PATH", this->ITKFactoriesDir);
-  this->setPythonEnvironmentVariables();
-  this->setTclEnvironmentVariables();
 
   // Load default settings if any.
   if (q->defaultSettings())
@@ -398,9 +421,9 @@ bool qSlicerCoreApplicationPrivate::isInstalled(const QString& slicerHome)const
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory()
 {
-  // Since some standalone executable (i.e EMSegmentCommandLine) can create
+  // Since some standalone executables (i.e EMSegmentCommandLine) can create
   // an instance of qSlicer(Core)Application so that the environment and the
-  // python manager are properly initialized. This executable will have
+  // python manager are properly initialized. These executables will have
   // to set SLICER_HOME. If not, the current directory associated with that
   // executable will be considered and initialization code expecting SLICER_HOME
   // to be properly set will fail.
@@ -515,97 +538,6 @@ QString qSlicerCoreApplicationPrivate::discoverSlicerBinDirectory()
   return slicerBin;
 }
 
-//-----------------------------------------------------------------------------
-QString qSlicerCoreApplicationPrivate::discoverITKFactoriesDirectory()
-{
-  QDir itkFactoriesDir(this->SlicerHome);
-  itkFactoriesDir.cd(Slicer_ITKFACTORIES_DIR);
-  if (!this->IntDir.isEmpty())
-    {
-    itkFactoriesDir.cd(this->IntDir);
-    }
-  if (!itkFactoriesDir.exists())
-    {
-    qWarning() << "ITK_AUTOLOAD_PATH doesn't exists:"<< this->ITKFactoriesDir;
-    }
-  return itkFactoriesDir.absolutePath();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerCoreApplicationPrivate::setPythonEnvironmentVariables()
-{
-#ifdef Slicer_USE_PYTHONQT
-  Q_Q(qSlicerCoreApplication);
-  // Set PYTHONHOME if not already done
-  if (this->Environment.value("PYTHONHOME").isEmpty())
-    {
-    if (!q->isInstalled())
-      {
-      // TODO
-      }
-    else
-      {
-      qSlicerCoreApplication * app = qSlicerCoreApplication::application();
-      q->setEnvironmentVariable("PYTHONHOME", app->slicerHome() + "/lib/Python");
-      }
-    }
-
-  // Set PYTHONPATH if not already done
-  if (this->Environment.value("PYTHONPATH").isEmpty())
-    {
-    q->setEnvironmentVariable(
-          "PYTHONPATH", qSlicerCorePythonManager().pythonPaths().join(":"));
-    }
-#endif
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerCoreApplicationPrivate::setTclEnvironmentVariables()
-{
-#ifdef Slicer_USE_PYTHONQT_WITH_TCL
-  Q_Q(qSlicerCoreApplication);
-  qSlicerCoreApplication * app = qSlicerCoreApplication::application();
-  if (this->Environment.value("TCL_LIBRARY").isEmpty())
-    {
-    if (!q->isInstalled())
-      {
-      // TODO
-      }
-    else
-      {
-      q->setEnvironmentVariable(
-            "TCL_LIBRARY", app->slicerHome() + "/lib/TclTk/lib/tcl" Slicer_TCL_TK_VERSION_DOT);
-      }
-    }
-  if (this->Environment.value("TK_LIBRARY").isEmpty())
-    {
-    if (!q->isInstalled())
-      {
-      // TODO
-      }
-    else
-      {
-      q->setEnvironmentVariable(
-            "TK_LIBRARY", app->slicerHome() + "/lib/TclTk/lib/tk" Slicer_TCL_TK_VERSION_DOT);
-      }
-    }
-  if (this->Environment.value("TCLLIBPATH").isEmpty())
-    {
-    if (!q->isInstalled())
-      {
-      // TODO
-      }
-    else
-      {
-      QStringList tclLibPaths;
-      tclLibPaths << app->slicerHome() + "/lib/TclTk/lib/itcl" Slicer_INCR_TCL_VERSION_DOT;
-      tclLibPaths << app->slicerHome() + "/lib/TclTk/lib/itk" Slicer_INCR_TCL_VERSION_DOT;
-      q->setEnvironmentVariable("TCLLIBPATH", tclLibPaths.join(" "));
-      }
-    }
-#endif
-}
-
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplicationPrivate::defaultExtensionsInstallPathForMacOSX()const
@@ -635,7 +567,7 @@ bool qSlicerCoreApplicationPrivate::isUsingLauncher()const
   else
     {
 #ifdef Q_OS_MAC
-    return false
+    return false;
 #else
     return true;
 #endif
@@ -1158,11 +1090,7 @@ QString qSlicerCoreApplication::launcherSettingsFilePath()const
 {
   if (this->isInstalled())
     {
-#ifdef Q_OS_MAC
-    return QString();
-#else
     return this->slicerHome() + "/" Slicer_BIN_DIR "/" + this->applicationName() + "LauncherSettings.ini";
-#endif
     }
   else
     {

@@ -40,6 +40,11 @@ if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
 endif()
 
 #
+# CTKAppLauncherLib
+#
+find_package(CTKAppLauncherLib REQUIRED)
+
+#
 # See CMake/SlicerMacroBuildBaseQtLibrary.cmake for details
 #
 
@@ -163,6 +168,7 @@ endif()
 set(KIT_target_libraries
   SlicerBaseLogic
   MRMLDisplayableManager
+  ${CTKAppLauncherLib_LIBRARIES}
   CTKCore
   CTKImageProcessingITKCore
   CTKVisualizationVTKCore

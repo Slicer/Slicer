@@ -568,7 +568,7 @@ macro(slicerMacroBuildApplication)
         # Executable target associated with the launcher
         TARGET ${slicerapp_target}
         # Location of the launcher settings in the install tree
-        APPLICATION_INSTALL_SUBDIR ${Slicer_INSTALL_BIN_DIR}
+        APPLICATION_INSTALL_SUBDIR ${Slicer_BIN_DIR}
         # Info allowing to retrieve the Slicer extension settings
         APPLICATION_NAME ${SLICERAPP_APPLICATION_NAME}
         APPLICATION_REVISION ${Slicer_WC_REVISION}
@@ -577,7 +577,7 @@ macro(slicerMacroBuildApplication)
         USER_ADDITIONAL_SETTINGS_FILEBASENAME ${SLICER_REVISION_SPECIFIC_USER_SETTINGS_FILEBASENAME}
         # Splash screen
         SPLASH_IMAGE_PATH ${SLICERAPP_LAUNCHER_SPLASHSCREEN_FILE}
-        SPLASH_IMAGE_INSTALL_SUBDIR ${Slicer_INSTALL_BIN_DIR}
+        SPLASH_IMAGE_INSTALL_SUBDIR ${Slicer_BIN_DIR}
         SPLASHSCREEN_HIDE_DELAY_MS 3000
         # Slicer arguments triggering display of launcher help
         HELP_SHORT_ARG "-h"
@@ -656,13 +656,21 @@ macro(slicerMacroBuildApplication)
           DESTINATION ${Slicer_INSTALL_BIN_DIR}
           COMPONENT Runtime
           )
-        install(
-          FILES "${Slicer_BINARY_DIR}/${SLICERAPP_APPLICATION_NAME}LauncherSettingsToInstall.ini"
-          DESTINATION ${Slicer_INSTALL_BIN_DIR}
-          RENAME ${SLICERAPP_APPLICATION_NAME}LauncherSettings.ini
-          COMPONENT Runtime
-          )
       endif()
+
+      #
+      # On MacOSX, the installed launcher settings are *only* read directly by the
+      # qSlicerCoreApplication using the LauncherLib.
+      #
+      # On Linux and Windows, the installed launcher settings are first read by the
+      # installed launcher, and then read using the LauncherLib.
+      #
+      install(
+        FILES "${Slicer_BINARY_DIR}/${SLICERAPP_APPLICATION_NAME}LauncherSettingsToInstall.ini"
+        DESTINATION ${Slicer_INSTALL_BIN_DIR}
+        RENAME ${SLICERAPP_APPLICATION_NAME}LauncherSettings.ini
+        COMPONENT Runtime
+        )
 
       if(WIN32)
         # Create target to update launcher icon
