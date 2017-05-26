@@ -339,8 +339,6 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
     FiducialLayoutSwitchBug1914.py
     SubjectHierarchyGenericSelfTest.py
     SubjectHierarchyCorePluginsSelfTest.py
-    TwoCLIsInARowTest.py
-    TwoCLIsInParallelTest.py
     UtilTest.py
     )
 
@@ -348,12 +346,6 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
     slicer_add_python_unittest(SCRIPT CLIEventTest.py SLICER_ARGS --no-main-window)
     slicer_add_python_unittest(SCRIPT TwoCLIsInARowTest.py)
     slicer_add_python_unittest(SCRIPT TwoCLIsInParallelTest.py)
-
-    list(APPEND KIT_PYTHON_SCRIPTS
-      CLIEventTest.py
-      TwoCLIsInARowTest.py
-      TwoCLIsInParallelTest.py
-      )
 
     if(Slicer_BUILD_BRAINSTOOLS)
       slicer_add_python_unittest(SCRIPT BRAINSFitRigidRegistrationCrashIssue4139.py)
