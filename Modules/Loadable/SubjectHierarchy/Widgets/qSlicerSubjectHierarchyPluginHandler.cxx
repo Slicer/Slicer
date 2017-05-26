@@ -394,10 +394,11 @@ void qSlicerSubjectHierarchyPluginHandler::setSubjectHierarchyNode(vtkMRMLSubjec
     }
 
   m_SubjectHierarchyNode = shNode;
-  this->setMRMLScene(shNode->GetScene());
 
   if (shNode)
     {
+    this->setMRMLScene(shNode->GetScene());
+    
     shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAddedEvent, m_CallBack);
     shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemOwnerPluginSearchRequested, m_CallBack);
     shNode->AddObserver(vtkCommand::DeleteEvent, m_CallBack);
