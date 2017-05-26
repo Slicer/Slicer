@@ -34,6 +34,7 @@
 
 // SubjectHierarchy Plugins includes
 #include "qSlicerSubjectHierarchyPluginLogic.h"
+#include "qSlicerSubjectHierarchyPluginHandler.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -145,6 +146,8 @@ vtkMRMLAbstractLogic* qSlicerSubjectHierarchyModule::createLogic()
 
   // Create plugin logic
   d->PluginLogic = new qSlicerSubjectHierarchyPluginLogic();
+  // Set plugin logic to plugin handler
+  qSlicerSubjectHierarchyPluginHandler::instance()->setPluginLogic(d->PluginLogic);
 
   return logic;
 }

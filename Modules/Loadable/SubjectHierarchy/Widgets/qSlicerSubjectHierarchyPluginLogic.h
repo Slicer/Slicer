@@ -87,9 +87,12 @@ protected:
 protected slots:
   /// Called when a node is added to the scene so that a plugin can create an item for it
   void onNodeAdded(vtkObject* scene, vtkObject* nodeObject);
-  /// Called when a node is removed to the scene so that the associated
+  /// Called when a node is removed from the scene so that the associated
   /// subject hierarchy item can be deleted too
   void onNodeAboutToBeRemoved(vtkObject* scene, vtkObject* nodeObject);
+  /// Called when a node is removed from the scene so if the subject hierarchy node is
+  /// removed, it is re-created and the hierarchy rebuilt
+  void onNodeRemoved(vtkObject* scene, vtkObject* nodeObject);
   /// Called when scene import is finished.
   /// Subject hierarchy items are created for supported data nodes if they have not
   /// been imported with the scene (backwards compatibility for older scenes)

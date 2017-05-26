@@ -300,7 +300,6 @@ vtkIdType vtkSubjectHierarchyItem::AddToTree(vtkSubjectHierarchyItem* parent, vt
     // Add under parent
     vtkSmartPointer<vtkSubjectHierarchyItem> childPointer(this);
     this->Parent->Children.push_back(childPointer);
-    this->Parent->Modified(); //TODO: Needed?
 
     // Add to cache
     vtkSubjectHierarchyItem::ItemCache[this->ID] = this;
@@ -338,7 +337,6 @@ vtkIdType vtkSubjectHierarchyItem::AddToTree(vtkSubjectHierarchyItem* parent, st
     // Add under parent
     vtkSmartPointer<vtkSubjectHierarchyItem> childPointer(this);
     this->Parent->Children.push_back(childPointer);
-    this->Parent->Modified(); //TODO: Needed?
 
     // Add to cache
     vtkSubjectHierarchyItem::ItemCache[this->ID] = this;
@@ -1250,7 +1248,7 @@ void vtkSubjectHierarchyItem::SetUID(std::string uidName, std::string uidValue)
     if (this->UIDs[uidName].compare(uidValue))
       {
       vtkWarningMacro( "SetUID: UID with name '" << uidName << "' already exists in subject hierarchy item '" << this->GetName()
-        << "' with value '" << this->UIDs[uidName] << "'. Replacing it with value '" << uidValue << "'!" );
+        << "' with value '" << this->UIDs[uidName] << "'. Replacing it with value '" << uidValue << "'" );
       }
     else
       {
@@ -1347,7 +1345,7 @@ std::string vtkSubjectHierarchyItem::GetAttributeFromAncestor(std::string attrib
 {
   if (attributeName.empty())
     {
-    vtkErrorMacro("GetAttributeFromAncestor: Empty attribute name!");
+    vtkErrorMacro("GetAttributeFromAncestor: Empty attribute name");
     return std::string();
     }
 
@@ -2512,7 +2510,7 @@ vtkIdType vtkMRMLSubjectHierarchyNode::GetItemByUID(const char* uidName, const c
 {
   if (!uidName || !uidValue)
     {
-    vtkErrorMacro("GetSubjectHierarchyNodeByUID: Invalid UID name or value!");
+    vtkErrorMacro("GetSubjectHierarchyNodeByUID: Invalid UID name or value");
     return INVALID_ITEM_ID;
     }
   vtkSubjectHierarchyItem* item = this->Internal->SceneItem->FindChildByUID(uidName, uidValue);
@@ -2524,7 +2522,7 @@ vtkIdType vtkMRMLSubjectHierarchyNode::GetItemByUIDList(const char* uidName, con
 {
   if (!uidName || !uidValue)
     {
-    vtkErrorMacro("GetSubjectHierarchyItemByUIDList: Invalid UID name or value!");
+    vtkErrorMacro("GetSubjectHierarchyItemByUIDList: Invalid UID name or value");
     return INVALID_ITEM_ID;
     }
   vtkSubjectHierarchyItem* item = this->Internal->SceneItem->FindChildByUIDList(uidName, uidValue);
@@ -2536,7 +2534,7 @@ vtkIdType vtkMRMLSubjectHierarchyNode::GetItemByDataNode(vtkMRMLNode* dataNode)
 {
   if (!dataNode)
     {
-    vtkErrorMacro("GetSubjectHierarchyItemByDataNode: Invalid data node to find!");
+    vtkErrorMacro("GetItemByDataNode: Invalid data node to find");
     return INVALID_ITEM_ID;
     }
 

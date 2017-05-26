@@ -35,6 +35,7 @@
 
 class qMRMLSubjectHierarchyModelPrivate;
 class vtkMRMLSubjectHierarchyNode;
+class vtkMRMLNode;
 class vtkMRMLScene;
 
 /// \brief Item model for subject hierarchy
@@ -174,7 +175,7 @@ protected slots:
   virtual void onMRMLSceneClosed(vtkMRMLScene* scene);
   virtual void onMRMLSceneStartBatchProcess(vtkMRMLScene* scene);
   virtual void onMRMLSceneEndBatchProcess(vtkMRMLScene* scene);
-  virtual void onSubjectHierarchyNodeRemoved();
+  virtual void onMRMLNodeRemoved(vtkMRMLNode* node);
 
   virtual void onItemChanged(QStandardItem* item);
   virtual void delayedItemChanged();

@@ -205,6 +205,7 @@ void qMRMLSubjectHierarchyModel::setMRMLScene(vtkMRMLScene* scene)
     scene->AddObserver(vtkMRMLScene::EndImportEvent, d->CallBack);
     scene->AddObserver(vtkMRMLScene::StartBatchProcessEvent, d->CallBack);
     scene->AddObserver(vtkMRMLScene::EndBatchProcessEvent, d->CallBack);
+    scene->AddObserver(vtkMRMLScene::NodeRemovedEvent, d->CallBack);
     }
   else
     {
@@ -1194,7 +1195,7 @@ void qMRMLSubjectHierarchyModel::onEvent(
     return;
     }
 
-  // Get item ID
+  // Get item ID for subject hierarchy node events
   vtkIdType itemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
   if (callData)
     {
@@ -1204,6 +1205,9 @@ void qMRMLSubjectHierarchyModel::onEvent(
       itemID = *itemIdPtr;
       }
     }
+
+  // Get node for scene events
+  vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*>(callData);
 
   switch (event)
     {
@@ -1231,8 +1235,8 @@ void qMRMLSubjectHierarchyModel::onEvent(
     case vtkMRMLScene::EndBatchProcessEvent:
       sceneModel->onMRMLSceneEndBatchProcess(scene);
       break;
-    case vtkCommand::DeleteEvent:
-      sceneModel->onSubjectHierarchyNodeRemoved();
+    case vtkMRMLScene::NodeRemovedEvent:
+      sceneModel->onMRMLNodeRemoved(node);
       break;
     }
 }
@@ -1349,7 +1353,7 @@ void qMRMLSubjectHierarchyModel::onMRMLSceneEndBatchProcess(vtkMRMLScene* scene)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSubjectHierarchyModel::onSubjectHierarchyNodeRemoved()
+void qMRMLSubjectHierarchyModel::onMRMLNodeRemoved(vtkMRMLNode* node)
 {
   Q_D(qMRMLSubjectHierarchyModel);
   if (d->MRMLScene->IsClosing())
@@ -1357,14 +1361,17 @@ void qMRMLSubjectHierarchyModel::onSubjectHierarchyNodeRemoved()
     return;
     }
 
-  // Make sure there is one subject hierarchy node in the scene, and it is used by the model
-  vtkMRMLSubjectHierarchyNode* newSubjectHierarchyNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(d->MRMLScene);
-  if (!newSubjectHierarchyNode)
+  if (node->IsA("vtkMRMLSubjectHierarchyNode"))
     {
-    qCritical() << Q_FUNC_INFO << ": No subject hierarchy node could be retrieved from the scene";
-    }
+    // Make sure there is one subject hierarchy node in the scene, and it is used by the model
+    vtkMRMLSubjectHierarchyNode* newSubjectHierarchyNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(d->MRMLScene);
+    if (!newSubjectHierarchyNode)
+      {
+      qCritical() << Q_FUNC_INFO << ": No subject hierarchy node could be retrieved from the scene";
+      }
 
-  this->setSubjectHierarchyNode(newSubjectHierarchyNode);
+    this->setSubjectHierarchyNode(newSubjectHierarchyNode);
+    }
 }
 
 //------------------------------------------------------------------------------

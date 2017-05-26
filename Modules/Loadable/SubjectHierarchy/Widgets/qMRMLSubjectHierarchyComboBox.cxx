@@ -340,6 +340,12 @@ void qMRMLSubjectHierarchyComboBox::updateComboBoxTitleAndIcon(vtkIdType selecte
     this->setDefaultIcon(QIcon());
     return;
     }
+  if (!selectedShItemID)
+    {
+    this->setDefaultText("Select subject hierarchy item");
+    this->setDefaultIcon(QIcon());
+    return;
+    }
 
   // Assemble title for selected item
   QString titleText(shNode->GetItemName(selectedShItemID).c_str());

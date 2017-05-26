@@ -41,6 +41,7 @@
 
 class vtkMRMLScene;
 class vtkCallbackCommand;
+class qSlicerSubjectHierarchyPluginLogic;
 class qSlicerSubjectHierarchyAbstractPlugin;
 class qSlicerSubjectHierarchyDefaultPlugin;
 class qSlicerSubjectHierarchyPluginHandlerCleanup;
@@ -76,6 +77,11 @@ public:
   void setMRMLScene(vtkMRMLScene* scene);
   /// Get MRML scene
   Q_INVOKABLE vtkMRMLScene* mrmlScene()const;
+
+  /// Get plugin logic
+  Q_INVOKABLE qSlicerSubjectHierarchyPluginLogic* pluginLogic();
+  /// Set plugin logic
+  Q_INVOKABLE void setPluginLogic(qSlicerSubjectHierarchyPluginLogic* pluginLogic);
 
   /// Set current subject hierarchy item (single selection only)
   Q_INVOKABLE void setCurrentItem(vtkIdType itemID);
@@ -174,6 +180,9 @@ protected:
   vtkWeakPointer<vtkMRMLSubjectHierarchyNode> m_SubjectHierarchyNode;
   /// MRML scene (to get new subject hierarchy node if the stored one is deleted)
   vtkWeakPointer<vtkMRMLScene> m_MRMLScene;
+
+  /// Plugin logic
+  qSlicerSubjectHierarchyPluginLogic* m_PluginLogic;
 
   /// Callback handling deletion of the subject hierarchy node
   vtkSmartPointer<vtkCallbackCommand> m_CallBack;
