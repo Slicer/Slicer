@@ -60,7 +60,7 @@ void vtkSlicerTablesLogic::PrintSelf(ostream& os, vtkIndent indent)
 
 //----------------------------------------------------------------------------
 vtkMRMLTableNode* vtkSlicerTablesLogic
-::AddTable(const char* fileName, const char* name)
+::AddTable(const char* fileName, const char* name /*=NULL*/, bool findSchema /*=true*/, const char* password /*=0*/)
 {
   if (!this->GetMRMLScene())
     {
@@ -93,7 +93,7 @@ vtkMRMLTableNode* vtkSlicerTablesLogic
     vtkSmartPointer<vtkSQLiteDatabase> database = vtkSmartPointer<vtkSQLiteDatabase>::Take(
                    vtkSQLiteDatabase::SafeDownCast( vtkSQLiteDatabase::CreateFromURL(dbname.c_str())));
 
-    if (!database->Open(name?name:"", vtkSQLiteDatabase::USE_EXISTING))
+    if (!database->Open(password?password:"", vtkSQLiteDatabase::USE_EXISTING))
       {
       vtkErrorMacro("Failed to read tables from " << fileName);
       return 0;
@@ -132,6 +132,7 @@ vtkMRMLTableNode* vtkSlicerTablesLogic
     // Storage node
     vtkNew<vtkMRMLTableStorageNode> tableStorageNode;
     tableStorageNode->SetFileName(fileName);
+    tableStorageNode->SetAutoFindSchema(findSchema);
     this->GetMRMLScene()->AddNode(tableStorageNode.GetPointer());
 
     vtkNew<vtkMRMLTableNode> tableNode1;

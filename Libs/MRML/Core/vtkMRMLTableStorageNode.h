@@ -25,6 +25,8 @@
 
 #include "vtkMRMLStorageNode.h"
 
+class vtkMRMLTableNode;
+
 /// \brief MRML node for handling Table node storage
 ///
 /// vtkMRMLTableStorageNode allows reading/writing of table node from
@@ -53,6 +55,19 @@ public:
   /// Return true if the node can be read in
   virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode);
 
+  /// Get/Set schema file name, which contain description of data type of each column
+  virtual void SetSchemaFileName(const char* schemaFileName);
+  virtual std::string GetSchemaFileName();
+
+  /// Finds schema file corresponding to a table file.
+  std::string FindSchemaFileName(const char* fileName);
+
+  /// If enabled and schema filename is not specified then when the data is read,
+  /// an attempt will be made to find and load a schema file.
+  vtkSetMacro(AutoFindSchema, bool);
+  vtkGetMacro(AutoFindSchema, bool);
+  vtkBooleanMacro(AutoFindSchema, bool);
+
 protected:
   vtkMRMLTableStorageNode();
   ~vtkMRMLTableStorageNode();
@@ -71,6 +86,17 @@ protected:
   /// Write data from a  referenced node. Returns 0 on failure.
   virtual int WriteDataInternal(vtkMRMLNode *refNode);
 
+  std::string GenerateSchemaFileName(const char* fileName);
+
+  virtual std::string GetFieldDelimiterCharacters(std::string filename);
+
+  bool ReadSchema(std::string filename, vtkMRMLTableNode* tableNode);
+  bool ReadTable(std::string filename, vtkMRMLTableNode* tableNode);
+
+  bool WriteTable(std::string filename, vtkMRMLTableNode* tableNode);
+  bool WriteSchema(std::string filename, vtkMRMLTableNode* tableNode);
+
+  bool AutoFindSchema;
 };
 
 #endif

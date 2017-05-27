@@ -78,6 +78,7 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
 
     self.section_SetupPathsAndNames()
     self.section_CreateTable()
+    self.section_TableProperties()
     self.section_TableWidgetButtons()
     self.section_CliTableInputOutput()
     self.delayDisplay("Test passed",self.delayMs)
@@ -110,6 +111,20 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
     self.assertTrue( table is not None )
     self.assertTrue( table.GetNumberOfRows() == 4 )
     self.assertTrue( table.GetNumberOfColumns() == 1 )
+
+  # ------------------------------------------------------------------------------
+  def section_TableProperties(self):
+    self.delayDisplay("Table properties",self.delayMs)
+
+    tableNode = slicer.util.getNode(self.sampleTableName)
+    self.assertTrue( tableNode is not None )
+
+    tableNode.SetColumnLongName("Column 1", "First column")
+    tableNode.SetColumnUnitLabel("Column 1", "mm")
+    tableNode.SetColumnDescription("Column 1", "This a long description of the first column")
+
+    tableNode.SetColumnUnitLabel("Column 2", "{SUVbw}g/ml")
+    tableNode.SetColumnDescription("Column 2", "Second column")
 
   # ------------------------------------------------------------------------------
   def section_TableWidgetButtons(self):
@@ -215,7 +230,7 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
 
     # Check if first and second column content is the same
     for rowIndex in range(5):
-      self.assertTrue( tableModel.data(tableModel.index(rowIndex,0)) == tableModel.data(tableModel.index(rowIndex,1)) )
+      self.assertEqual( tableModel.data(tableModel.index(rowIndex,0)), tableModel.data(tableModel.index(rowIndex,1)) )
 
 
   # ------------------------------------------------------------------------------

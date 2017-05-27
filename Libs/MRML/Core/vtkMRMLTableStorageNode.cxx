@@ -42,6 +42,7 @@ vtkMRMLNodeNewMacro(vtkMRMLTableStorageNode);
 vtkMRMLTableStorageNode::vtkMRMLTableStorageNode()
 {
   this->DefaultWriteFileExtension = "tsv";
+  this->AutoFindSchema = true;
 }
 
 //----------------------------------------------------------------------------
@@ -85,88 +86,24 @@ int vtkMRMLTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     return 0;
     }
 
-  vtkNew<vtkDelimitedTextReader> reader;
-  reader->SetFileName(fullName.c_str());
-  reader->SetHaveHeaders(true);
-  // Make sure string delimiter characters are removed (somebody may have written a tsv with string delimiters)
-  reader->SetUseStringDelimiter(true);
-  // File contents is preserved better if we don't try to detect numeric columns
-  reader->DetectNumericColumnsOff();
+  if (this->GetSchemaFileName().empty() && this->AutoFindSchema)
+    {
+    this->SetSchemaFileName(this->FindSchemaFileName(fullName.c_str()).c_str());
+    }
+  if (!this->GetSchemaFileName().empty())
+    {
+    if (!this->ReadSchema(this->GetSchemaFileName(), tableNode))
+      {
+      vtkErrorMacro("ReadData: failed to read table schema from '" << this->GetSchemaFileName() << "'");
+      return 0;
+      }
+    }
 
-  // Compute file prefix
-  std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
-  vtkDebugMacro("ReadData: extension = " << extension);
-  if ( extension == std::string(".tsv") || extension == std::string(".txt"))
+  if (!this->ReadTable(fullName, tableNode))
     {
-    reader->SetFieldDelimiterCharacters("\t");
-    }
-  else if ( extension == std::string(".csv") )
-    {
-    reader->SetFieldDelimiterCharacters(",");
-    }
-  else
-    {
-    vtkErrorMacro("ReadData: failed to read table file: " << fullName << " - file extension not supported: " << extension );
+    vtkErrorMacro("ReadData: failed to read table from '" << fullName << "'");
     return 0;
     }
-
-  // Read table
-  vtkTable* rawTable = NULL;
-  try
-    {
-    reader->Update();
-    rawTable = reader->GetOutput();
-    }
-  catch (...)
-    {
-    vtkErrorMacro("ReadData: failed to read table file: " << fullName);
-    return 0;
-    }
-
-  // Parse type specifiers and change column types accordingly
-  // NOTE: In the future it may be necessary to specify not just type but also display,
-  //       e.g. color and position data have the same type, but displayed differently
-  vtkSmartPointer<vtkTable> table = vtkSmartPointer<vtkTable>::New();
-  for (int col=0; col<rawTable->GetNumberOfColumns(); ++col)
-    {
-    vtkAbstractArray* column = rawTable->GetColumn(col);
-    if (!column->GetName())
-      {
-      vtkWarningMacro("ReadData: empty column name in file: " << fullName << ", skipping column!");
-      continue;
-      }
-
-    // Get type specifier
-    std::string columnName(column->GetName());
-    std::string cleanColumnName(columnName);
-    std::string typeSpecifier("");
-    size_t bracketOpenPosition = columnName.find("[");
-    size_t bracketClosePosition = columnName.find("]");
-    if (bracketOpenPosition != std::string::npos && bracketOpenPosition < bracketClosePosition)
-      {
-      typeSpecifier = columnName.substr(bracketOpenPosition+1, bracketClosePosition-bracketOpenPosition-1);
-      cleanColumnName = columnName.substr(0, bracketOpenPosition);
-      }
-
-    // Missing or empty type: default string column
-    if (typeSpecifier.empty())
-      {
-      table->AddColumn(column);
-      }
-    // Bool type: copy contents into bit array
-    else if (!typeSpecifier.compare("type=bool"))
-      {
-      vtkSmartPointer<vtkBitArray> boolColumn = vtkSmartPointer<vtkBitArray>::New();
-      boolColumn->SetName(cleanColumnName.c_str());
-      boolColumn->SetNumberOfTuples(column->GetNumberOfTuples());
-      for (int row=0; row<column->GetNumberOfTuples(); ++row)
-        {
-        boolColumn->SetVariantValue(row, column->GetVariantValue(row));
-        }
-      table->AddColumn(boolColumn);
-      }
-    }
-  tableNode->SetAndObserveTable(table);
 
   vtkDebugMacro("ReadData: successfully read table from file: " << fullName);
   return 1;
@@ -194,56 +131,47 @@ int vtkMRMLTableStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     return 0;
     }
 
-  // Add type specifiers to column names in a temporary copy of the table
-  // NOTE: In the future it may be necessary to specify not just type but also display,
-  //       e.g. color and position data have the same type, but displayed differently
-  vtkSmartPointer<vtkTable> tableCopy = vtkSmartPointer<vtkTable>::New();
-  tableCopy->DeepCopy(tableNode->GetTable());
-  for (int col=0; col<tableCopy->GetNumberOfColumns(); ++col)
+  if (!this->WriteTable(fullName, tableNode))
     {
-    vtkAbstractArray* column = tableCopy->GetColumn(col);
+    vtkErrorMacro("WriteData: failed to write table node " << refNode->GetID() << " to file " << fullName);
+    return 0;
+    }
+  vtkDebugMacro("WriteData: successfully wrote table to file: " << fullName);
 
-    // Boolean type
-    if (vtkBitArray::SafeDownCast(column))
+  // Only write a schema file if some table properties are specified
+  bool needToWriteSchema = (!this->GetSchemaFileName().empty()) || (tableNode->GetSchema() != NULL);
+  if (!needToWriteSchema && tableNode->GetTable() != NULL)
+    {
+    // Make sure we create a schema file if there is any non-string column type
+    vtkTable* table = tableNode->GetTable();
+    for (int col = 0; col < table->GetNumberOfColumns(); ++col)
       {
-      std::string columnName(column->GetName() ? column->GetName() : "?");
-      columnName.append("[type=bool]");
-      column->SetName(columnName.c_str());
+      vtkAbstractArray* column = table->GetColumn(col);
+      if (column == NULL)
+        {
+        // invalid column
+        continue;
+        }
+      if (column->GetDataType() != VTK_STRING)
+        {
+        needToWriteSchema = true;
+        break;
+        }
       }
     }
-  
-  // Write table to file
-  vtkNew<vtkDelimitedTextWriter> writer;
-  writer->SetFileName(fullName.c_str());
-  writer->SetInputData(tableCopy);
 
-  std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
-  if (extension == ".tsv" || extension == ".txt")
+  if (needToWriteSchema)
     {
-    writer->SetFieldDelimiter("\t");
-    writer->SetUseStringDelimiter(false); // otherwise it would write each value in double-quotes
-    }
-  else if (extension == ".csv")
-    {
-    writer->SetFieldDelimiter(",");
-    writer->SetUseStringDelimiter(true); // it causes writing each value in double-quotes but allows using commas in the string
-    }
-  else
-    {
-    vtkErrorMacro("WriteData: failed to write file: " << fullName << " - file extension not supported: " << extension );
-    return 0;
-    }
-  try
-    {
-    writer->Write();
-    }
-  catch (...)
-    {
-    vtkErrorMacro("WriteData: failed to write file: " << fullName );
-    return 0;
+    std::string schemaFileName = this->GenerateSchemaFileName(fullName.c_str());
+    this->SetSchemaFileName(schemaFileName.c_str());
+    if (!this->WriteSchema(schemaFileName, tableNode))
+      {
+      vtkErrorMacro("WriteData: failed to write table node " << refNode->GetID() << " schema  to file " << schemaFileName);
+      return 0;
+      }
+    vtkDebugMacro("WriteData: successfully wrote schema to file: " << schemaFileName);
     }
 
-  vtkDebugMacro("WriteData: successfully wrote table to file: " << fullName);
   return 1;
 }
 
@@ -261,4 +189,339 @@ void vtkMRMLTableStorageNode::InitializeSupportedWriteFileTypes()
   this->SupportedWriteFileTypes->InsertNextValue("Tab-separated values (.tsv)");
   this->SupportedWriteFileTypes->InsertNextValue("Comma-separated values (.csv)");
   this->SupportedWriteFileTypes->InsertNextValue("Text (.txt)");
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTableStorageNode::SetSchemaFileName(const char* schemaFileName)
+{
+  this->ResetFileNameList();
+  this->AddFileName(schemaFileName);
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLTableStorageNode::GetSchemaFileName()
+{
+  const char* schemaFileNamePtr = this->GetNthFileName(0);
+  return (schemaFileNamePtr ? schemaFileNamePtr : "");
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLTableStorageNode::FindSchemaFileName(const char* filePath)
+{
+  std::string expectedSchemaFileName = this->GenerateSchemaFileName(filePath);
+  if (!vtksys::SystemTools::FileExists(expectedSchemaFileName))
+    {
+    // schema file not found
+    return "";
+    }
+  return expectedSchemaFileName;
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLTableStorageNode::GenerateSchemaFileName(const char* filePath)
+{
+  std::string filePathStd = (filePath ? filePath : "");
+  if (filePathStd.empty())
+    {
+    // If filePath is not specified then use current filename
+    filePathStd = (this->GetFileName() ? this->GetFileName() : "");
+    }
+  if (filePathStd.empty())
+    {
+    return "";
+    }
+  std::string fileName = vtksys::SystemTools::GetFilenameName(filePathStd);
+  std::string extension = this->GetSupportedFileExtension(fileName.c_str());
+
+  if (fileName.length() < extension.length() ||
+    fileName.compare(fileName.length() - extension.length(), extension.length(), extension) != 0)
+    {
+    // extension not matched to the end of filename
+    return "";
+    }
+
+  // Insert .schema before file extension (something.csv => something.schema.csv)
+  filePathStd.insert(filePathStd.length() - extension.length(), + ".schema");
+
+  return filePathStd;
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLTableStorageNode::GetFieldDelimiterCharacters(std::string filename)
+{
+  std::string lowercaseFileExt = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(filename);
+  std::string fieldDelimiterCharacters;
+  if (lowercaseFileExt == std::string(".tsv") || lowercaseFileExt == std::string(".txt"))
+    {
+    fieldDelimiterCharacters = "\t";
+    }
+  else if (lowercaseFileExt == std::string(".csv"))
+    {
+    fieldDelimiterCharacters = ",";
+    }
+  else
+    {
+    vtkErrorMacro("Cannot determine field delimiter character from file extension: " << lowercaseFileExt);
+    }
+  return fieldDelimiterCharacters;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLTableStorageNode::ReadSchema(std::string filename, vtkMRMLTableNode* tableNode)
+{
+  if (filename.empty())
+    {
+    vtkErrorMacro("vtkMRMLTableStorageNode::ReadSchema failed: filename not specified");
+    return false;
+    }
+
+  if (vtksys::SystemTools::FileExists(filename) == false)
+    {
+    vtkErrorMacro("vtkMRMLTableStorageNode::ReadSchema failed: schema file '" << filename << "' not found.");
+    return false;
+    }
+
+  vtkNew<vtkDelimitedTextReader> reader;
+  reader->SetFileName(filename.c_str());
+  reader->SetHaveHeaders(true);
+  reader->SetFieldDelimiterCharacters(this->GetFieldDelimiterCharacters(filename).c_str());
+  // Make sure string delimiter characters are removed (somebody may have written a tsv with string delimiters)
+  reader->SetUseStringDelimiter(true);
+  // File contents is preserved better if we don't try to detect numeric columns
+  reader->DetectNumericColumnsOff();
+
+  // Read table
+  vtkTable* schemaTable = NULL;
+  try
+    {
+    reader->Update();
+    schemaTable = reader->GetOutput();
+    }
+  catch (...)
+    {
+    vtkErrorMacro("vtkMRMLTableStorageNode::ReadSchema failed from file: " << filename);
+    return false;
+    }
+
+  vtkStringArray* columnNameArray = vtkStringArray::SafeDownCast(schemaTable->GetColumnByName("name"));
+  if (columnNameArray == NULL)
+    {
+    vtkErrorMacro("vtkMRMLTableStorageNode::ReadSchema failed from file: " << filename <<". Column 'name' is not found in schema.");
+    return false;
+    }
+
+  tableNode->SetAndObserveSchema(schemaTable);
+
+  return true;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLTableStorageNode::ReadTable(std::string filename, vtkMRMLTableNode* tableNode)
+{
+  vtkNew<vtkDelimitedTextReader> reader;
+  reader->SetFileName(filename.c_str());
+  reader->SetHaveHeaders(true);
+  reader->SetFieldDelimiterCharacters(this->GetFieldDelimiterCharacters(filename).c_str());
+  // Make sure string delimiter characters are removed (somebody may have written a tsv with string delimiters)
+  reader->SetUseStringDelimiter(true);
+  // File contents is preserved better if we don't try to detect numeric columns
+  reader->DetectNumericColumnsOff();
+
+  // Read table
+  vtkTable* rawTable = NULL;
+  try
+    {
+    reader->Update();
+    rawTable = reader->GetOutput();
+    }
+  catch (...)
+    {
+    vtkErrorMacro("ReadData: failed to read table file: " << filename);
+    return 0;
+    }
+
+  vtkSmartPointer<vtkTable> table = vtkSmartPointer<vtkTable>::New();
+  for (int col = 0; col < rawTable->GetNumberOfColumns(); ++col)
+    {
+    vtkStringArray* column = vtkStringArray::SafeDownCast(rawTable->GetColumn(col));
+    if (column == NULL)
+      {
+      // invalid column
+      continue;
+      }
+    if (!column->GetName())
+      {
+      vtkWarningMacro("ReadData: empty column name in file: " << filename << ", skipping column!");
+      continue;
+      }
+
+    std::string columnName = column->GetName();
+    int valueTypeId = tableNode->GetColumnValueTypeFromSchema(columnName);
+    if (valueTypeId == VTK_VOID)
+      {
+      // schema is not defined or no valid column type is defined for column
+      valueTypeId = VTK_STRING;
+      }
+    if (valueTypeId == VTK_STRING)
+      {
+      column->SetName(columnName.c_str());
+      table->AddColumn(column);
+      }
+    else
+      {
+      vtkSmartPointer<vtkDataArray> typedColumn = vtkSmartPointer<vtkDataArray>::Take(vtkDataArray::CreateDataArray(valueTypeId));
+      typedColumn->SetName(columnName.c_str());
+      vtkIdType numberOfTuples = column->GetNumberOfTuples();
+      typedColumn->SetNumberOfTuples(numberOfTuples);
+
+      // Initialize with default value
+      std::string defaultValueStr = tableNode->GetColumnProperty(columnName, "defaultValue");
+      if (typedColumn->IsNumeric())
+        {
+        // numeric arrays can be initialized in one batch
+        double defaultValue = 0.0;
+        if (!defaultValueStr.empty())
+          {
+          defaultValue = vtkVariant(defaultValueStr).ToDouble();
+          }
+        typedColumn->FillComponent(0, defaultValue);
+        }
+      else
+        {
+        vtkVariant defaultValue(defaultValueStr);
+        for (vtkIdType row = 0; row < numberOfTuples; ++row)
+          {
+          typedColumn->SetVariantValue(row, defaultValue);
+          }
+        }
+
+      // Set values
+      for (vtkIdType row = 0; row < numberOfTuples; ++row)
+        {
+        if (column->GetValue(row).empty())
+          {
+          // empty cell, leave the default value
+          continue;
+          }
+        typedColumn->SetVariantValue(row, column->GetVariantValue(row));
+        }
+
+      table->AddColumn(typedColumn);
+      }
+    }
+  tableNode->SetAndObserveTable(table);
+  return true;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLTableStorageNode::WriteTable(std::string filename, vtkMRMLTableNode* tableNode)
+{
+  vtkNew<vtkDelimitedTextWriter> writer;
+  writer->SetFileName(filename.c_str());
+  writer->SetInputData(tableNode->GetTable());
+
+  std::string delimiter = this->GetFieldDelimiterCharacters(filename);
+  writer->SetFieldDelimiter(delimiter.c_str());
+
+  // SetUseStringDelimiter(true) causes writing each value in double-quotes, which is not very nice,
+  // but if the delimiter character is the comma then we have to use this mode, as commas occur in
+  // string values quite often.
+  writer->SetUseStringDelimiter(delimiter==",");
+
+  try
+    {
+    writer->Write();
+    }
+  catch (...)
+    {
+    vtkErrorMacro("WriteData: failed to write file: " << filename);
+    return false;
+    }
+
+  return true;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLTableStorageNode::WriteSchema(std::string filename, vtkMRMLTableNode* tableNode)
+{
+  vtkNew<vtkTable> schemaTable;
+
+  // Create a copy, as it is nice if writing to file has a side effect of modifying some
+  // data in the node
+  if (tableNode->GetSchema())
+    {
+    schemaTable->DeepCopy(tableNode->GetSchema());
+    }
+
+  vtkStringArray* columnNameArray = vtkStringArray::SafeDownCast(schemaTable->GetColumnByName("name"));
+  if (columnNameArray == NULL)
+    {
+    vtkNew<vtkStringArray> newArray;
+    newArray->SetName("name");
+    newArray->SetNumberOfValues(schemaTable->GetNumberOfRows());
+    schemaTable->AddColumn(newArray.GetPointer());
+    columnNameArray = newArray.GetPointer();
+    }
+
+  vtkStringArray* columnTypeArray = vtkStringArray::SafeDownCast(schemaTable->GetColumnByName("type"));
+  if (columnTypeArray == NULL)
+    {
+    vtkNew<vtkStringArray> newArray;
+    newArray->SetName("type");
+    newArray->SetNumberOfValues(schemaTable->GetNumberOfRows());
+    schemaTable->AddColumn(newArray.GetPointer());
+    columnTypeArray = newArray.GetPointer();
+    }
+
+  // Add column type to schema
+  vtkTable* table = tableNode->GetTable();
+  if (table != NULL)
+    {
+    for (int col = 0; col < table->GetNumberOfColumns(); ++col)
+      {
+      vtkAbstractArray* column = table->GetColumn(col);
+      if (column == NULL)
+        {
+        // invalid column
+        continue;
+        }
+      if (!column->GetName())
+        {
+        vtkWarningMacro("ReadData: empty column name in file: " << filename << ", skipping column!");
+        continue;
+        }
+
+      vtkIdType schemaRowIndex = columnNameArray->LookupValue(column->GetName());
+      if (schemaRowIndex < 0)
+        {
+        schemaRowIndex = schemaTable->InsertNextBlankRow();
+        columnNameArray->SetValue(schemaRowIndex, column->GetName());
+        }
+      columnTypeArray->SetValue(schemaRowIndex, vtkImageScalarTypeNameMacro(column->GetDataType()));
+      }
+    }
+
+  vtkNew<vtkDelimitedTextWriter> writer;
+  writer->SetFileName(filename.c_str());
+  writer->SetInputData(schemaTable.GetPointer());
+
+  std::string delimiter = this->GetFieldDelimiterCharacters(filename);
+  writer->SetFieldDelimiter(delimiter.c_str());
+
+  // SetUseStringDelimiter(true) causes writing each value in double-quotes, which is not very nice,
+  // but if the delimiter character is the comma then we have to use this mode, as commas occur in
+  // string values quite often.
+  writer->SetUseStringDelimiter(delimiter == ",");
+
+  try
+    {
+    writer->Write();
+    }
+  catch (...)
+    {
+    vtkErrorMacro("WriteData: failed to write file: " << filename);
+    return false;
+    }
+
+  return true;
 }

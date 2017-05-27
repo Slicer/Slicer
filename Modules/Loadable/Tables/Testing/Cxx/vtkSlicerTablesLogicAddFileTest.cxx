@@ -30,39 +30,47 @@
 // VTK includes
 #include <vtkNew.h>
 #include <vtkPolyData.h>
+#include <vtkTable.h>
 
 #include "vtkTestingOutputWindow.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 //-----------------------------------------------------------------------------
-bool testAddInvalidFile(const char* filePath);
-bool testAddFile(const char* filePath);
+int testAddInvalidFile(const char* filePath);
+int testAddFile(const char* filePath);
 
 //-----------------------------------------------------------------------------
 int vtkSlicerTablesLogicAddFileTest( int argc, char * argv[] )
 {
   bool res = true;
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  res = testAddInvalidFile(0) && res;
+  CHECK_EXIT_SUCCESS(testAddInvalidFile(0));
   TESTING_OUTPUT_ASSERT_ERRORS_END();
+
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  res = testAddInvalidFile("") && res;
+  CHECK_EXIT_SUCCESS(testAddInvalidFile(""));
   TESTING_OUTPUT_ASSERT_ERRORS_END();
+
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  res = testAddInvalidFile("non existing file.badextension") && res;
+  CHECK_EXIT_SUCCESS(testAddInvalidFile("non existing file.badextension"));
   TESTING_OUTPUT_ASSERT_ERRORS_END();
+
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  res = testAddInvalidFile("non existing file.vtk") && res;
+  CHECK_EXIT_SUCCESS(testAddInvalidFile("non existing file.vtk"));
   TESTING_OUTPUT_ASSERT_ERRORS_END();
+
   if (argc > 1)
     {
-    res = testAddFile(argv[1]) && res;
+    CHECK_EXIT_SUCCESS(testAddFile(argv[1]));
     }
   return res ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 //-----------------------------------------------------------------------------
-bool testAddInvalidFile(const char * filePath)
+int testAddInvalidFile(const char * filePath)
 {
+  std::cout << "Test loading of invalid file: " << (filePath ? filePath : "(none)") << ". Errors are expected.";
+
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkSlicerTablesLogic> tablesLogic;
   tablesLogic->SetMRMLScene(scene.GetPointer());
@@ -70,52 +78,49 @@ bool testAddInvalidFile(const char * filePath)
   int nodeCount = scene->GetNumberOfNodes();
   vtkMRMLTableNode* table = tablesLogic->AddTable(filePath);
 
-  if (table != 0 ||
-      scene->GetNumberOfNodes() != nodeCount)
-    {
-    std::cerr << "Line " << __LINE__
-              << ": Adding an invalid file ("<< (filePath ? filePath : 0)
-              << ") shall not add nodes in scene. "
-              << scene->GetNumberOfNodes() << " vs " << nodeCount
-              << std::endl;
-    return false;
-    }
+  CHECK_NULL(table);
+  CHECK_INT(scene->GetNumberOfNodes(), nodeCount);
 
-  return true;
+  return EXIT_SUCCESS;
 }
 
 //-----------------------------------------------------------------------------
-bool testAddFile(const char * filePath)
+int testAddFile(const char * filePath)
 {
   vtkNew<vtkSlicerTablesLogic> tablesLogic;
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  vtkMRMLTableNode* table = tablesLogic->AddTable(filePath);
+  vtkMRMLTableNode* tableNode = tablesLogic->AddTable(filePath);
   TESTING_OUTPUT_ASSERT_ERRORS_END();
-  if (table != 0)
-    {
-    std::cerr << "Line " << __LINE__
-              << ": File can't be loaded if no scene is set."
-              << std::endl;
-    return false;
-    }
+
+  // File can't be loaded if no scene is set
+  CHECK_NULL(tableNode);
 
   vtkNew<vtkMRMLScene> scene;
   tablesLogic->SetMRMLScene(scene.GetPointer());
+
   int nodeCount = scene->GetNumberOfNodes();
-  table = tablesLogic->AddTable(filePath);
+  tableNode = tablesLogic->AddTable(filePath);
 
-  if (table == 0 ||
-      scene->GetNumberOfNodes() != nodeCount + 2)
-    {
-    std::cerr << "Adding an table should create 2 nodes" << std::endl;
-    return false;
-    }
+  CHECK_NOT_NULL(tableNode);
+  // Adding an table should create a table node and a storage node
+  CHECK_INT(scene->GetNumberOfNodes(), nodeCount + 2);
+  CHECK_BOOL(tableNode->GetNumberOfRows() > 0, true);
+  CHECK_BOOL(tableNode->GetNumberOfColumns() > 0, true);
 
-  if (table->GetNumberOfRows()==0 || table->GetNumberOfColumns()==0)
-    {
-    std::cerr << "Table is empty" << std::endl;
-    return false;
-    }
+  vtkTable* table = tableNode->GetTable();
 
-  return true;
+  CHECK_NOT_NULL(table->GetColumnByName("TestBool"));
+  CHECK_NOT_NULL(table->GetColumnByName("TestString"));
+  CHECK_NOT_NULL(table->GetColumnByName("TestInt"));
+  CHECK_NOT_NULL(table->GetColumnByName("TestDouble"));
+  CHECK_NOT_NULL(table->GetColumnByName("TestFloat"));
+
+  CHECK_INT(table->GetColumnByName("TestBool")->GetDataType(), VTK_BIT);
+  CHECK_INT(table->GetColumnByName("TestString")->GetDataType(), VTK_STRING);
+  CHECK_INT(table->GetColumnByName("TestInt")->GetDataType(), VTK_INT);
+  CHECK_INT(table->GetColumnByName("TestDouble")->GetDataType(), VTK_DOUBLE);
+  CHECK_INT(table->GetColumnByName("TestFloat")->GetDataType(), VTK_FLOAT);
+
+  std::cout << "Test passed." << std::endl;
+  return EXIT_SUCCESS;
 }

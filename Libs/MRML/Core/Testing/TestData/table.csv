@@ -1,5 +1,11 @@
-label,intVal,decVal
-apple,3,3.1
-orange,4,9.5
-plum,5,7.2
-grape,1,1.06
+Segment,TestBool,TestString,TestInt,TestDouble,TestFloat,SUV
+first,0,one,-1,0.1,0.1,-111
+second,1,two,0,-0.1,-0.1,3.5658
+1,2,three,1,-0.2,-0.2,1.82384
+2,3,,1.5,0.123456789,0.123456789,3.38252
+3,1,some,2.5,1.23E+19,1.23E+19,3.68391
+4,1,some more,5,2.00E+06,2.00E+06,2.52307
+5,0,ok,6,123,123,3.28074
+some,some,some,some,some,some,some
+empty,,,,,,
+last,1,1,1,1,1,1

@@ -36,10 +36,6 @@ int vtkMRMLTableNodeTest1(int , char * [] )
 
   vtkNew<vtkMRMLTableNode> node2;
 
-  vtkSmartPointer<vtkTest::ErrorObserver> errorWarningObserver = vtkSmartPointer<vtkTest::ErrorObserver>::New();
-  node2->AddObserver(vtkCommand::WarningEvent, errorWarningObserver);
-  node2->AddObserver(vtkCommand::ErrorEvent, errorWarningObserver);
-
   vtkTable* table = node2->GetTable();
   CHECK_NOT_NULL(table);
 
@@ -58,7 +54,7 @@ int vtkMRMLTableNodeTest1(int , char * [] )
 
   CHECK_BOOL(node2->RemoveColumn(1), true);
   CHECK_INT(table->GetNumberOfColumns(), 1);
-  
+
   CHECK_NOT_NULL(node2->AddColumn());
   CHECK_NOT_NULL(node2->AddColumn());
   CHECK_NOT_NULL(node2->AddColumn());
@@ -107,26 +103,27 @@ int vtkMRMLTableNodeTest1(int , char * [] )
   // Test GetCellText
 
   CHECK_INT(newLongArray->GetNumberOfTuples(), table->GetNumberOfRows());
+
   CHECK_STD_STRING(node2->GetCellText(2,2), "something3");
 
-  CHECK_BOOL(errorWarningObserver->GetError(), false);
-  CHECK_BOOL(errorWarningObserver->GetWarning(), false);
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
+  CHECK_STD_STRING(node2->GetCellText(20,2), "");
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
 
-  CHECK_STD_STRING(node2->GetCellText(20,2), ""); // error log is expected
-  CHECK_BOOL(errorWarningObserver->GetError(), true);
-  errorWarningObserver->Clear();
-
-  CHECK_STD_STRING(node2->GetCellText(20,2), ""); // error log is expected
-  CHECK_BOOL(errorWarningObserver->GetError(), true);
-  errorWarningObserver->Clear();
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
+  CHECK_STD_STRING(node2->GetCellText(20,2), "");
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   CHECK_BOOL(node2->SetCellText(2,2,"ModifiedText"), true);
   CHECK_STD_STRING(node2->GetCellText(2,2), "ModifiedText");
 
   // Test SetCellText
-
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   CHECK_BOOL(node2->SetCellText(20,2,"invalid"), false);
-  CHECK_BOOL(node2->SetCellText(2,20,"invalid"), false);
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
+  CHECK_BOOL(node2->SetCellText(2, 20, "invalid"), false);
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   // Verify that Copy method creates a true independent copy
   vtkSmartPointer< vtkMRMLTableNode > node2copy = vtkSmartPointer< vtkMRMLTableNode >::New();
@@ -138,6 +135,41 @@ int vtkMRMLTableNodeTest1(int , char * [] )
   // (if there was a shallow copy only, the original table would have been changed, too)
   CHECK_BOOL(node2copy->SetCellText(0,0,"someModifiedText"), true);
   CHECK_STD_STRING_DIFFERENT(node2->GetCellText(0,0), node2copy->GetCellText(0,0));
+
+  // Test table column properties
+
+  // Set properties
+  node2->SetColumnProperty(0, "MyProp", "MyPropValue");
+  CHECK_STD_STRING(node2->GetColumnProperty(0, "MyProp"), "MyPropValue");
+  node2->SetColumnProperty("Column 2", "MyProp", "MyPropValue2");
+  CHECK_STD_STRING(node2->GetColumnProperty("Column 2", "MyProp"), "MyPropValue2");
+  node2->SetColumnProperty("Column 2", "MyProp B", "MyPropValue222");
+  CHECK_STD_STRING(node2->GetColumnProperty("Column 2", "MyProp B"), "MyPropValue222");
+
+  vtkNew<vtkStringArray> propertyNames;
+  node2->GetAllColumnPropertyNames(propertyNames.GetPointer());
+  CHECK_INT(propertyNames->GetNumberOfValues(), 2);
+
+  // Test if table properties are preserved if column is renamed
+  node2->RenameColumn(node2->GetColumnIndex("Column 2"), "Column 2 renamed");
+  CHECK_STD_STRING(node2->GetColumnProperty("Column 2", "MyProp"), "");
+  CHECK_STD_STRING(node2->GetColumnProperty("Column 2 renamed", "MyProp"), "MyPropValue2");
+
+  // Test if table properties are deleted if column i s deleted
+  node2->RemoveColumn(node2->GetColumnIndex("Column 2 renamed"));
+  CHECK_STD_STRING(node2->GetColumnProperty("Column 2 renamed", "MyProp"), "");
+
+  // Get properties
+  // non-existing property name
+  CHECK_STD_STRING(node2->GetColumnProperty(0, "nonexisting"), "");
+  CHECK_STD_STRING(node2->GetColumnProperty(0, ""), "");
+  // reserved property name
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
+  CHECK_STD_STRING(node2->GetColumnProperty(0, "name"), "");
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
+  CHECK_STD_STRING(node2->GetColumnProperty(0, "type"), "");
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   std::cout << "vtkMRMLTableNodeTest1 completed successfully" << std::endl;
   return EXIT_SUCCESS;

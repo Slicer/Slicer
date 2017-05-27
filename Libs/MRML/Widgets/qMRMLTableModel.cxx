@@ -37,6 +37,8 @@
 #include <vtkTable.h>
 #include <vtkBitArray.h>
 
+static int UserRoleValueType = Qt::UserRole + 1;
+
 //------------------------------------------------------------------------------
 // qMRMLTableModelPrivate
 //------------------------------------------------------------------------------
@@ -52,6 +54,9 @@ public:
 
   // Returns Excel-style column names from index (A, B, C, ..., Z, AA, AB, AC, ..., AZ, AAA, AAB, ...)
   static QString columnNameFromIndex(int index);
+
+  // Generate tooltip text
+  QString columnTooltipText(int tableCol);
 
   vtkSmartPointer<vtkCallbackCommand> CallBack;
   vtkSmartPointer<vtkMRMLTableNode>   MRMLTableNode;
@@ -85,7 +90,6 @@ void qMRMLTableModelPrivate::init()
   QObject::connect(q, SIGNAL(itemChanged(QStandardItem*)), q, SLOT(onItemChanged(QStandardItem*)), Qt::UniqueConnection);
 }
 
-
 //------------------------------------------------------------------------------
 QString qMRMLTableModelPrivate::columnNameFromIndex(int index)
 {
@@ -97,6 +101,44 @@ QString qMRMLTableModelPrivate::columnNameFromIndex(int index)
     index = index/26 - 1;
   };
   return returnValue;
+}
+
+//------------------------------------------------------------------------------
+QString qMRMLTableModelPrivate::columnTooltipText(int tableCol)
+{
+  Q_Q(qMRMLTableModel);
+  vtkMRMLTableNode* tableNode = q->mrmlTableNode();
+  if (tableNode == NULL)
+    {
+    return QString();
+    }
+
+  std::string columnName = tableNode->GetColumnName(tableCol);
+  QString longName = QString(tableNode->GetColumnLongName(columnName).c_str());
+  QString description = QString(tableNode->GetColumnDescription(columnName).c_str());
+  QString unitLabel = QString(tableNode->GetColumnUnitLabel(columnName).c_str());
+
+  QStringList textLines;
+
+  // Long name
+  if (!longName.isEmpty())
+    {
+    textLines << QString("<b>") + longName + QString("</b>");
+    }
+
+  // Unit
+  if (!unitLabel.isEmpty())
+    {
+    textLines << QString("Unit: ") + unitLabel;
+    }
+
+  // Description
+  if (!description.isEmpty())
+    {
+    textLines << QString("<i>") + description + QString("</i>");
+    }
+
+  return textLines.join("<p>");
 }
 
 //------------------------------------------------------------------------------
@@ -213,11 +255,11 @@ void qMRMLTableModel::updateModelFromMRML()
       QStandardItem* existingItem = NULL;
       if (d->Transposed)
         {
-        existingItem = this->item(modelCol, static_cast<int>(modelRow));
+        existingItem = this->item(modelCol, modelRow);
         }
       else
         {
-        existingItem = this->item(static_cast<int>(modelRow), modelCol);
+        existingItem = this->item(modelRow, modelCol);
         }
       QStandardItem* item = existingItem;
       // Create item if did not exist
@@ -245,7 +287,7 @@ void qMRMLTableModel::updateModelFromMRML()
         if (vtkBitArray::SafeDownCast(columnArray))
           {
           // Boolean values indicated by a column of vtkBitArray type are displayed as checkboxes
-          item->setData(vtkMRMLTableNode::BoolType, Qt::WhatsThisRole);
+          item->setData(VTK_BIT, UserRoleValueType);
           item->setCheckable(true);
           item->setCheckState(variant.ToInt() ? Qt::Checked : Qt::Unchecked);
           item->setText(QString()); // No text is supposed to be in the cell
@@ -281,11 +323,11 @@ void qMRMLTableModel::updateModelFromMRML()
         {
         if (d->Transposed)
           {
-          setItem(modelCol, static_cast<int>(modelRow), item);
+          setItem(modelCol, modelRow, item);
           }
         else
           {
-          setItem(static_cast<int>(modelRow), modelCol, item);
+          setItem(modelRow, modelCol, item);
           }
         }
       }
@@ -310,7 +352,28 @@ void qMRMLTableModel::updateModelFromMRML()
       {
       rowLabel = QString::number(modelRow+1);
       }
-    setHeaderData(static_cast<int>(modelRow), d->Transposed ? Qt::Horizontal : Qt::Vertical, rowLabel);
+    setHeaderData(modelRow, d->Transposed ? Qt::Horizontal : Qt::Vertical, rowLabel);
+    }
+
+  // Add tooltip text
+  for (vtkIdType tableCol = tableColOffset; tableCol < numberOfTableColumns; ++tableCol)
+    {
+    int modelCol = static_cast<int>(tableCol - tableColOffset);
+    QString tooltipText = d->columnTooltipText(tableCol);
+    for (vtkIdType tableRow = tableRowOffset; tableRow < numberOfTableRows; ++tableRow)
+      {
+      int modelRow = static_cast<int>(tableRow - tableRowOffset);
+      QStandardItem* existingItem = NULL;
+      if (d->Transposed)
+        {
+        existingItem = this->item(modelCol, modelRow);
+        }
+      else
+        {
+        existingItem = this->item(modelRow, modelCol);
+        }
+      existingItem->setToolTip(tooltipText);
+      }
     }
 
   QObject::connect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onItemChanged(QStandardItem*)), Qt::UniqueConnection);
@@ -344,8 +407,8 @@ void qMRMLTableModel::updateMRMLFromModel(QStandardItem* item)
   if (tableRow>=0)
     {
     // Get item value according to type
-    int type = item->data(Qt::WhatsThisRole).toInt();
-    if (type == vtkMRMLTableNode::BoolType)
+    int type = item->data(UserRoleValueType).toInt();
+    if (type == VTK_BIT)
       {
       // Cell bool value changed
       int checked = item->checkState();
@@ -394,8 +457,7 @@ void qMRMLTableModel::updateMRMLFromModel(QStandardItem* item)
       QString valueBefore = QString::fromStdString(column->GetName()?column->GetName():"");
       if (valueBefore!=item->text())
         {
-        column->SetName(item->text().toLatin1().constData());
-        table->Modified();
+        tableNode->RenameColumn(tableCol, item->text().toLatin1().constData());
         }
       }
     }
@@ -540,7 +602,7 @@ int qMRMLTableModel::removeSelectionFromMRML(QModelIndexList selection, bool rem
                 qCritical("qMRMLTableModel::updateMRMLFromModel failed: column %d is invalid", columnIndex);
                 continue;
                 }
-              column->SetName(table->GetValue(0,columnIndex).ToString());
+              d->MRMLTableNode->RenameColumn(columnIndex, table->GetValue(0,columnIndex).ToString());
             }
           d->MRMLTableNode->RemoveRow(0);
           }
