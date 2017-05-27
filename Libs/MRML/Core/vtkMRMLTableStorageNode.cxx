@@ -303,10 +303,10 @@ bool vtkMRMLTableStorageNode::ReadSchema(std::string filename, vtkMRMLTableNode*
     return false;
     }
 
-  vtkStringArray* columnNameArray = vtkStringArray::SafeDownCast(schemaTable->GetColumnByName("name"));
+  vtkStringArray* columnNameArray = vtkStringArray::SafeDownCast(schemaTable->GetColumnByName("columnName"));
   if (columnNameArray == NULL)
     {
-    vtkErrorMacro("vtkMRMLTableStorageNode::ReadSchema failed from file: " << filename <<". Column 'name' is not found in schema.");
+    vtkErrorMacro("vtkMRMLTableStorageNode::ReadSchema failed from file: " << filename <<". Required 'columnName' column is not found in schema.");
     return false;
     }
 
@@ -336,7 +336,7 @@ bool vtkMRMLTableStorageNode::ReadTable(std::string filename, vtkMRMLTableNode* 
     }
   catch (...)
     {
-    vtkErrorMacro("ReadData: failed to read table file: " << filename);
+    vtkErrorMacro("vtkMRMLTableStorageNode::ReadTable: failed to read table file: " << filename);
     return 0;
     }
 
@@ -351,7 +351,7 @@ bool vtkMRMLTableStorageNode::ReadTable(std::string filename, vtkMRMLTableNode* 
       }
     if (!column->GetName())
       {
-      vtkWarningMacro("ReadData: empty column name in file: " << filename << ", skipping column!");
+      vtkWarningMacro("vtkMRMLTableStorageNode::ReadTable: empty column name in file: " << filename << ", skipping column");
       continue;
       }
 
@@ -434,7 +434,7 @@ bool vtkMRMLTableStorageNode::WriteTable(std::string filename, vtkMRMLTableNode*
     }
   catch (...)
     {
-    vtkErrorMacro("WriteData: failed to write file: " << filename);
+    vtkErrorMacro("vtkMRMLTableStorageNode::WriteTable: failed to write file: " << filename);
     return false;
     }
 
@@ -453,11 +453,11 @@ bool vtkMRMLTableStorageNode::WriteSchema(std::string filename, vtkMRMLTableNode
     schemaTable->DeepCopy(tableNode->GetSchema());
     }
 
-  vtkStringArray* columnNameArray = vtkStringArray::SafeDownCast(schemaTable->GetColumnByName("name"));
+  vtkStringArray* columnNameArray = vtkStringArray::SafeDownCast(schemaTable->GetColumnByName("columnName"));
   if (columnNameArray == NULL)
     {
     vtkNew<vtkStringArray> newArray;
-    newArray->SetName("name");
+    newArray->SetName("columnName");
     newArray->SetNumberOfValues(schemaTable->GetNumberOfRows());
     schemaTable->AddColumn(newArray.GetPointer());
     columnNameArray = newArray.GetPointer();
@@ -487,7 +487,7 @@ bool vtkMRMLTableStorageNode::WriteSchema(std::string filename, vtkMRMLTableNode
         }
       if (!column->GetName())
         {
-        vtkWarningMacro("ReadData: empty column name in file: " << filename << ", skipping column!");
+        vtkWarningMacro("vtkMRMLTableStorageNode::WriteSchema: empty column name in file: " << filename << ", skipping column");
         continue;
         }
 
@@ -519,7 +519,7 @@ bool vtkMRMLTableStorageNode::WriteSchema(std::string filename, vtkMRMLTableNode
     }
   catch (...)
     {
-    vtkErrorMacro("WriteData: failed to write file: " << filename);
+    vtkErrorMacro("vtkMRMLTableStorageNode::WriteSchema: failed to write file: " << filename);
     return false;
     }
 

@@ -312,7 +312,15 @@ void qMRMLTableView::copySelection()
         {
         textToCopy.append('\t');
         }
-      textToCopy.append(mrmlModel->item(rowIndex,columnIndex)->text());
+      QStandardItem *item = mrmlModel->item(rowIndex, columnIndex);
+      if (item->isCheckable())
+        {
+        textToCopy.append(item->checkState() == Qt::Checked ? "1" : "0");
+        }
+      else
+        {
+        textToCopy.append(item->text());
+        }
       }
     }
 
@@ -401,7 +409,14 @@ void qMRMLTableView::pasteSelection()
       QStandardItem* item = mrmlModel->item(rowIndex,columnIndex);
       if (item != NULL)
         {
-        item->setText(cell);
+        if (item->isCheckable())
+          {
+          item->setCheckState(cell.toInt() == 0 ? Qt::Unchecked : Qt::Checked);
+          }
+        else
+          {
+          item->setText(cell);
+          }
         }
       else
         {

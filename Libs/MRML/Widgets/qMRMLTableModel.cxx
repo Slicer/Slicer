@@ -135,7 +135,7 @@ QString qMRMLTableModelPrivate::columnTooltipText(int tableCol)
   // Description
   if (!description.isEmpty())
     {
-    textLines << QString("<i>") + description + QString("</i>");
+    textLines << description;
     }
 
   return textLines.join("<p>");
@@ -208,7 +208,7 @@ void qMRMLTableModel::updateModelFromMRML()
     return;
     }
 
-  bool locked = tableNode->GetLocked();
+  bool tableLocked = tableNode->GetLocked();
   bool labelInFirstTableColumn = tableNode->GetUseFirstColumnAsRowHeader();
   bool useColumnNameAsColumnHeader = tableNode->GetUseColumnNameAsColumnHeader();
 
@@ -267,6 +267,7 @@ void qMRMLTableModel::updateModelFromMRML()
         {
         item = new QStandardItem();
         }
+      bool itemLocked = tableLocked;
 
       // Items in first row use bold font, the others regular
       if (tableRow>=0)
@@ -291,6 +292,7 @@ void qMRMLTableModel::updateModelFromMRML()
           item->setCheckable(true);
           item->setCheckState(variant.ToInt() ? Qt::Checked : Qt::Unchecked);
           item->setText(QString()); // No text is supposed to be in the cell
+          itemLocked = true;
           }
         // Default display as text
         else
@@ -307,7 +309,7 @@ void qMRMLTableModel::updateModelFromMRML()
         }
 
       // Handle locked flag
-      if (locked)
+      if (itemLocked)
         {
         // Item is view-only, clear the ItemIsEditable flag
         item->setFlags(item->flags() & (~Qt::ItemIsEditable));

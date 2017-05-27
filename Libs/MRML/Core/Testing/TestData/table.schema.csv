@@ -1,7 +1,7 @@
-name,type,defaultValue,longName,description,unitLabel,unitCodeValue,unitCodingSchemeDesignator,unitCodeMeaning
-TestString,string,not used,String column for testing,it is a string value,,,,
-TestBool,bit,1,Bool column for testing,it is a Boolean value by default true,,,,
-TestInt,int,-5,Int column for testing,it is an int value,,,,
-TestDouble,double,0,Double column for testing,,,,,
-TestFloat,float,1.00E+06,Float column for testing,,,,,
-SUV,double,nan,Standardized Uptake Value body weight,,,{SUVbw}g/ml,UCUM,Standardized Uptake Value body weight
+columnName,type,defaultValue,longName,description,unitLabel,unitCodeValue,unitCodingSchemeDesignator,unitCodeMeaning
+TestString,string,not used,String column for testing,Description <b>can</b> use html for formatting,,,,
+TestBool,bit,1,Bool column for testing,It is a Boolean value by default <i>true</i>,,,,
+TestInt,int,,Int column for testing,Descripton can contain comma but then all values in the table must be written between quotation marks,,,,
+TestDouble,double,0,Double column for testing,Default value is 0,mm,,,
+TestFloat,float,1.00E+06,Float column for testing,Default value is a big number,sec,,,
+SUV,double,nan,Standardized Uptake Value body weight,,g/ml,{SUVbw}g/ml,UCUM,Standardized Uptake Value body weight

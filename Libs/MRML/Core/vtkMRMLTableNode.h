@@ -88,12 +88,12 @@ public:
   /// Set schema table
   ///
   /// Each row of the schema table contains description of a data table column. Columns of the schema table:
-  /// - name: name of the data table column (required)
+  /// - columnName: name of the data table column that properties are defined for (required)
   /// - type: data type of the column. Supported types: string, double, float, int, unsigned int, bit,
   ///   short, unsigned short, long, unsigned long, char, signed char, unsigned char, long long, unsigned long long
   ///   __int64, unsigned __int64, idtype. Default: string.
   /// - defaultValue: value to be used when a value is not specified
-  /// - longName: full human-readable name of the column (used instead/in addition to name when there are no space constraints)
+  /// - longName: full human-readable name of the column
   /// - description: human-readable detailed description of the column
   /// - unitLabel: simple unit label
   /// - unitCodeMeaning: standard unit definition. Example: Standardized Uptake Value body weight.
@@ -200,8 +200,8 @@ public:
 
   ///
   /// Set a full human-readable name of a column.
-  /// When there is no space constraings, the full name of the column is displayed
-  /// instead/in addition to the regular column name.
+  /// When there is no space constraings, the full name of the column may` displayed
+  /// instead/in addition to columnName to identify a column.
   void SetColumnLongName(const std::string& columnName, const std::string& description);
   std::string GetColumnLongName(const std::string& columnName);
 
@@ -217,7 +217,7 @@ public:
 
   ///
   /// Get a column property.
-  /// Reserved property names: name (stores associated column name), type (actual type is specified by table array column type).
+  /// Property names reserved for internal use: columnName, type.
   /// \sa SetAndObserveSchema, GetColumnValueTypeFromSchema
   std::string GetColumnProperty(const std::string& columnName, const std::string& propertyName);
   std::string GetColumnProperty(int columnIndex, const std::string& propertyName);
@@ -229,14 +229,14 @@ public:
 
   ///
   /// Set a column property value.
-  /// Reserved property names: name (stores associated column name), type (actual type is specified by table array column type).
+  /// Property names reserved for internal use: columnName, type.
   /// \sa SetAndObserveSchema, GetColumnValueTypeFromSchema
   void SetColumnProperty(const std::string& columnName, const std::string& propertyName, const std::string& propertyValue);
   void SetColumnProperty(int columnIndex, const std::string& propertyName, const std::string& propertyValue);
 
   ///
   /// Set a column property value.
-  /// Reserved property names: name (stores associated column name), type (actual type is specified by table array column type).
+  /// Property names reserved for internal use: columnName, type.
   /// \sa SetAndObserveSchema()
   void RemoveColumnProperty(const std::string& propertyName);
 

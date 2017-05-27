@@ -165,7 +165,7 @@ int vtkMRMLTableNodeTest1(int , char * [] )
   CHECK_STD_STRING(node2->GetColumnProperty(0, ""), "");
   // reserved property name
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  CHECK_STD_STRING(node2->GetColumnProperty(0, "name"), "");
+  CHECK_STD_STRING(node2->GetColumnProperty(0, "columnName"), "");
   TESTING_OUTPUT_ASSERT_ERRORS_END();
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   CHECK_STD_STRING(node2->GetColumnProperty(0, "type"), "");

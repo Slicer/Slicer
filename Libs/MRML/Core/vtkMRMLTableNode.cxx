@@ -38,7 +38,7 @@
 #include <sstream>
 
 // Reserved property names
-static const char SCHEMA_COLUMN_NAME[] = "name";
+static const char SCHEMA_COLUMN_NAME[] = "columnName";
 static const char SCHEMA_COLUMN_TYPE[] = "type";
 static const char SCHEMA_COLUMN_DEFAULT_VALUE[] = "defaultValue";
 static const char SCHEMA_COLUMN_LONG_NAME[] = "longName";
@@ -417,7 +417,7 @@ void vtkMRMLTableNode::CopyAllColumnProperties(const std::string& sourceColumnNa
     {
     vtkStringArray* column = vtkStringArray::SafeDownCast(this->Schema->GetColumn(schemaColumnIndex));
     if (column == NULL || column->GetName() == NULL // invalid column
-      || !std::string(column->GetName()).compare(SCHEMA_COLUMN_NAME)) // column name column
+      || !std::string(column->GetName()).compare(SCHEMA_COLUMN_NAME)) // columnName column
       {
       continue;
       }
