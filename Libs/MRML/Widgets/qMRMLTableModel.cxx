@@ -267,7 +267,6 @@ void qMRMLTableModel::updateModelFromMRML()
         {
         item = new QStandardItem();
         }
-      bool itemLocked = tableLocked;
 
       // Items in first row use bold font, the others regular
       if (tableRow>=0)
@@ -292,7 +291,6 @@ void qMRMLTableModel::updateModelFromMRML()
           item->setCheckable(true);
           item->setCheckState(variant.ToInt() ? Qt::Checked : Qt::Unchecked);
           item->setText(QString()); // No text is supposed to be in the cell
-          itemLocked = true;
           }
         // Default display as text
         else
@@ -309,15 +307,33 @@ void qMRMLTableModel::updateModelFromMRML()
         }
 
       // Handle locked flag
-      if (itemLocked)
+      if (item->isCheckable())
         {
-        // Item is view-only, clear the ItemIsEditable flag
+        if (tableLocked)
+          {
+          // Item is view-only, clear the ItemIsUserCheckable flag
+          item->setFlags(item->flags() & (~Qt::ItemIsUserCheckable));
+          }
+        else
+          {
+          // Item is editable, set the ItemIsUserCheckable flag
+          item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+          }
+        // Item text is empty and should not be editable
         item->setFlags(item->flags() & (~Qt::ItemIsEditable));
         }
       else
         {
-        // Item is editable, set the ItemIsEditable flag
-        item->setFlags(item->flags() | Qt::ItemIsEditable);
+        if (tableLocked)
+          {
+          // Item is view-only, clear the ItemIsEditable flag
+          item->setFlags(item->flags() & (~Qt::ItemIsEditable));
+          }
+        else
+          {
+          // Item is editable, set the ItemIsEditable flag
+          item->setFlags(item->flags() | Qt::ItemIsEditable);
+          }
         }
 
       // Add item if just created
