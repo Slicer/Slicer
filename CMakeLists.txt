@@ -16,6 +16,7 @@ endforeach()
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake" ${CMAKE_MODULE_PATH})
 include(ExternalProject)
 include(ExternalProjectDependency)
+include(ExternalProjectDependencyForPython)
 include(ExternalProjectGenerateProjectDescription)
 
 #-----------------------------------------------------------------------------
