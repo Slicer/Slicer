@@ -105,6 +105,7 @@
     <addaction name="WindowToolBarsMenu"/>
     <addaction name="LayoutMenu"/>
     <addaction name="WindowToolbarsResetToDefaultAction"/>
+    <addaction name="ModuleHomeAction"/>
     <addaction name="separator"/>
     <addaction name="WindowErrorLogAction"/>
     <addaction name="separator"/>

@@ -910,6 +910,12 @@ void qSlicerAppMainWindow::on_EditRedoAction_triggered()
 }
 
 //---------------------------------------------------------------------------
+void qSlicerAppMainWindow::on_ModuleHomeAction_triggered()
+{
+  this->setHomeModuleCurrent();
+}
+
+//---------------------------------------------------------------------------
 void qSlicerAppMainWindow::setLayout(int layout)
 {
   qSlicerApplication::application()->layoutManager()->setLayout(layout);
