@@ -18,6 +18,7 @@
 
 // VTK includes
 #include <vtkCallbackCommand.h>
+#include <vtkCollection.h>
 #include <vtkXMLDataParser.h>
 
 // STD includes
@@ -354,12 +355,13 @@ int vtkMRMLSceneTest2(int argc, char * argv [] )
   std::cout << collection->GetNumberOfItems() << std::endl;
 
   std::cout << "List of Node Names in this Scene" << std::endl;
-  scene->InitTraversal();
-  vtkMRMLNode * nodePtr = scene->GetNextNode();
-  while( nodePtr != 0 )
+  vtkCollectionSimpleIterator it;
+  vtkMRMLNode* node = NULL;
+  vtkCollection *nodes = scene->GetNodes();
+  for (nodes->InitTraversal(it);
+    (node = vtkMRMLNode::SafeDownCast(nodes->GetNextItemAsObject(it)));)
     {
-    std::cout << " " << nodePtr->GetName() << std::endl;
-    nodePtr = scene->GetNextNode();
+    std::cout << " " << node->GetName() << std::endl;
     }
 #endif
 

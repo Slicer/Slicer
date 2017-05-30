@@ -242,21 +242,25 @@ void vtkMRMLMarkupsDisplayableManager2D::UpdateFromMRML()
     {
     return;
     }
+
+  std::vector<vtkMRMLNode*> nodes;
+  this->GetMRMLScene()->GetNodesByClass(this->Focus, nodes);
+
   // check if there are any of these nodes in the scene
-  if (this->GetMRMLScene()->GetNumberOfNodesByClass(this->Focus) < 1)
+  if (nodes.size() < 1)
     {
     return;
     }
-  // loop over the nodes for which this manager provides widgets
-  this->GetMRMLScene()->InitTraversal();
-  vtkMRMLNode *node = this->GetMRMLScene()->GetNextNodeByClass(this->Focus);
+
   // turn off update from mrml requested, as we're doing it now, and create
   // widget requests a render which checks this flag before calling update
   // from mrml again
   this->SetUpdateFromMRMLRequested(0);
-  while (node != NULL)
+
+  // loop over the nodes for which this manager provides widgets
+  for (std::vector< vtkMRMLNode* >::iterator nodeIt = nodes.begin(); nodeIt != nodes.end(); ++nodeIt)
     {
-    vtkMRMLMarkupsNode *markupsNode = vtkMRMLMarkupsNode::SafeDownCast(node);
+    vtkMRMLMarkupsNode *markupsNode = vtkMRMLMarkupsNode::SafeDownCast(*nodeIt);
     if (markupsNode)
       {
       // do we  have a widget for it?
@@ -275,7 +279,6 @@ void vtkMRMLMarkupsDisplayableManager2D::UpdateFromMRML()
           }
         }
       }
-    node = this->GetMRMLScene()->GetNextNodeByClass(this->Focus);
     }
   // set up observers on all the nodes
 //  this->SetAndObserveNodes();

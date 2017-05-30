@@ -216,11 +216,7 @@ void qSlicerSubjectHierarchyChartsPlugin::setDisplayVisibility(vtkIdType itemID,
     }
 
   // Get layout node
-  vtkSmartPointer<vtkCollection> layoutNodes =
-    vtkSmartPointer<vtkCollection>::Take( scene->GetNodesByClass("vtkMRMLLayoutNode") );
-  layoutNodes->InitTraversal();
-  vtkObject* layoutNodeVtkObject = layoutNodes->GetNextItemAsObject();
-  vtkMRMLLayoutNode* layoutNode = vtkMRMLLayoutNode::SafeDownCast(layoutNodeVtkObject);
+  vtkMRMLLayoutNode* layoutNode = vtkMRMLLayoutNode::SafeDownCast(scene->GetFirstNodeByClass("vtkMRMLLayoutNode"));
   if (!layoutNode)
     {
     qCritical() << Q_FUNC_INFO << ": Unable to get layout node!";
@@ -328,10 +324,7 @@ vtkMRMLChartViewNode* qSlicerSubjectHierarchyChartsPlugin::getChartViewNode()con
     return NULL;
     }
 
-  vtkSmartPointer<vtkCollection> chartViewNodes =
-    vtkSmartPointer<vtkCollection>::Take( scene->GetNodesByClass("vtkMRMLChartViewNode") );
-  chartViewNodes->InitTraversal();
-  vtkMRMLChartViewNode* chartViewNode = vtkMRMLChartViewNode::SafeDownCast( chartViewNodes->GetNextItemAsObject() );
+  vtkMRMLChartViewNode* chartViewNode = vtkMRMLChartViewNode::SafeDownCast(scene->GetFirstNodeByClass("vtkMRMLChartViewNode"));
   if (!chartViewNode)
     {
     return NULL;

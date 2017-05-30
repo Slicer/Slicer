@@ -100,10 +100,10 @@ int vtkMRMLSceneViewNodeImportSceneTest(int vtkNotUsed(argc),
 
   // Check scene node IDs
   vtkMRMLNode* displayNode =
-    scene2->GetNthNodeByClass(0, "vtkMRMLScalarVolumeDisplayNode");
+    scene2->GetFirstNodeByClass("vtkMRMLScalarVolumeDisplayNode");
   vtkMRMLNode* displayNode2 = scene2->GetNthNodeByClass(1, "vtkMRMLScalarVolumeDisplayNode");
   vtkMRMLSceneViewNode* sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(
-    scene2->GetNthNodeByClass(0, "vtkMRMLSceneViewNode"));
+    scene2->GetFirstNodeByClass("vtkMRMLSceneViewNode"));
 
   CHECK_NOT_NULL(displayNode);
   CHECK_NOT_NULL(displayNode2);
@@ -114,10 +114,9 @@ int vtkMRMLSceneViewNodeImportSceneTest(int vtkNotUsed(argc),
 
   // Check sceneViewNode node IDs.
   vtkMRMLNode* sceneViewDisplayNode =
-    sceneViewNode->GetStoredScene()->GetNthNodeByClass(0, "vtkMRMLScalarVolumeDisplayNode");
+    sceneViewNode->GetStoredScene()->GetFirstNodeByClass("vtkMRMLScalarVolumeDisplayNode");
   vtkMRMLDisplayableNode* sceneViewDisplayableNode = vtkMRMLDisplayableNode::SafeDownCast(
-    sceneViewNode->GetStoredScene()->GetNthNodeByClass(
-      0, "vtkMRMLScalarVolumeNode"));
+    sceneViewNode->GetStoredScene()->GetFirstNodeByClass("vtkMRMLScalarVolumeNode"));
 
   CHECK_INT(sceneViewNode->GetStoredScene()->GetNumberOfNodes(), 3);
   CHECK_NOT_NULL(sceneViewDisplayNode);

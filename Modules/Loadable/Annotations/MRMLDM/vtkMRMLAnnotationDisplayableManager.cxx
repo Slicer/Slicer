@@ -292,16 +292,18 @@ void vtkMRMLAnnotationDisplayableManager::UpdateFromMRML()
     {
     return;
     }
-  // loop over the nodes for which this manager provides widgets
-  this->GetMRMLScene()->InitTraversal();
-  vtkMRMLNode *node = this->GetMRMLScene()->GetNextNodeByClass(this->m_Focus);
+
   // turn off update from mrml requested, as we're doing it now, and create
   // widget requests a render which checks this flag before calling update
   // from mrml again
   this->SetUpdateFromMRMLRequested(0);
-  while (node != NULL)
+
+  // loop over the nodes for which this manager provides widgets
+  std::vector<vtkMRMLNode*> nodes;
+  this->GetMRMLScene()->GetNodesByClass(this->m_Focus, nodes);
+  for (std::vector< vtkMRMLNode* >::iterator nodeIt = nodes.begin(); nodeIt != nodes.end(); ++nodeIt)
     {
-    vtkMRMLAnnotationNode *annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
+    vtkMRMLAnnotationNode *annotationNode = vtkMRMLAnnotationNode::SafeDownCast(*nodeIt);
     if (annotationNode)
       {
       // do we  have a widget for it?
@@ -315,7 +317,6 @@ void vtkMRMLAnnotationDisplayableManager::UpdateFromMRML()
           }
         }
       }
-    node = this->GetMRMLScene()->GetNextNodeByClass(this->m_Focus);
     }
   // set up observers on all the nodes
 //  this->SetAndObserveNodes();

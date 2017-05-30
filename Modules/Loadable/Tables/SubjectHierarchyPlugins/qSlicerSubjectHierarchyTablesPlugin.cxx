@@ -213,11 +213,7 @@ void qSlicerSubjectHierarchyTablesPlugin::setDisplayVisibility(vtkIdType itemID,
     }
 
   // Get layout node
-  vtkSmartPointer<vtkCollection> layoutNodes =
-    vtkSmartPointer<vtkCollection>::Take( scene->GetNodesByClass("vtkMRMLLayoutNode") );
-  layoutNodes->InitTraversal();
-  vtkObject* layoutNodeVtkObject = layoutNodes->GetNextItemAsObject();
-  vtkMRMLLayoutNode* layoutNode = vtkMRMLLayoutNode::SafeDownCast(layoutNodeVtkObject);
+  vtkMRMLLayoutNode* layoutNode = vtkMRMLLayoutNode::SafeDownCast(scene->GetFirstNodeByClass("vtkMRMLLayoutNode"));
   if (!layoutNode)
     {
     qCritical("qSlicerSubjectHierarchyTablesPlugin::getTableViewNode: Unable to get layout node");
@@ -324,10 +320,7 @@ vtkMRMLTableViewNode* qSlicerSubjectHierarchyTablesPlugin::getTableViewNode()con
     return NULL;
     }
 
-  vtkSmartPointer<vtkCollection> tableViewNodes =
-    vtkSmartPointer<vtkCollection>::Take( scene->GetNodesByClass("vtkMRMLTableViewNode") );
-  tableViewNodes->InitTraversal();
-  vtkMRMLTableViewNode* tableViewNode = vtkMRMLTableViewNode::SafeDownCast( tableViewNodes->GetNextItemAsObject() );
+  vtkMRMLTableViewNode* tableViewNode = vtkMRMLTableViewNode::SafeDownCast(scene->GetFirstNodeByClass("vtkMRMLTableViewNode"));
   if (!tableViewNode)
     {
     return NULL;

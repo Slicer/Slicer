@@ -206,13 +206,31 @@ public:
   /// Returns its position in the list.
   int IsNodePresent(vtkMRMLNode *n);
 
-  /// Initialize a traversal (not reentrant!)
+  /// This method is deprecated, kept for backward compatibility but it will be
+  /// removed in the future.
+  /// The problem is that it changes the node collection's internal iterator,
+  /// which may cause unintended side effects in caller functions that also
+  /// use the node collection's internal iterator.
+  /// Use other methods instead (GetNodes(), GetNodesByClass(), etc.)
+  /// or traverse collection returned by GetNodes() using a collection iterator.
   void InitTraversal();
 
-  /// Get next node in the scene.
+  /// This method is deprecated, kept for backward compatibility but it will be
+  /// removed in the future.
+  /// The problem is that it changes the node collection's internal iterator,
+  /// which may cause unintended side effects in caller functions that also
+  /// use the node collection's internal iterator.
+  /// Use other methods instead (GetNodes(), GetNodesByClass(), etc.)
+  /// or traverse collection returned by GetNodes() using a collection iterator.
   vtkMRMLNode *GetNextNode();
 
-  /// Get next node of the class in the scene.
+  /// This method is deprecated, kept for backward compatibility but it will be
+  /// removed in the future.
+  /// The problem is that it changes the node collection's internal iterator,
+  /// which may cause unintended side effects in caller functions that also
+  /// use the node collection's internal iterator.
+  /// Use other methods instead (GetNodes(), GetNodesByClass(), etc.)
+  /// or traverse collection returned by GetNodes() using a collection iterator.
   vtkMRMLNode *GetNextNodeByClass(const char* className);
 
   /// Get nodes having the specified name
@@ -248,8 +266,10 @@ public:
   /// Get n-th node in the scene
   vtkMRMLNode* GetNthNode(int n);
 
-  /// Get n-th node of a specified class  in the scene
+  /// Get n-th node of a specified class in the scene
   vtkMRMLNode* GetNthNodeByClass(int n, const char* className );
+  /// Convenience function for getting 0-th node of a specified class in the scene
+  vtkMRMLNode* GetFirstNodeByClass(const char* className);
 
   /// Get number of nodes of a specified class in the scene
   int GetNumberOfNodesByClass(const char* className);

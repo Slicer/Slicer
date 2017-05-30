@@ -156,7 +156,6 @@ void PopulateScene(vtkMRMLScene* scene, int numberOfLevels)
 //---------------------------------------------------------------------------
 vtkMRMLModelNode* GetModelNode(vtkMRMLScene* scene, int level)
 {
-  scene->InitTraversal();
   return vtkMRMLModelNode::SafeDownCast(
     scene->GetNthNodeByClass(level, "vtkMRMLModelNode"));
 }
@@ -164,7 +163,6 @@ vtkMRMLModelNode* GetModelNode(vtkMRMLScene* scene, int level)
 //---------------------------------------------------------------------------
 vtkMRMLDisplayableHierarchyNode* GetHierarchyNode(vtkMRMLScene* scene, int level)
 {
-  scene->InitTraversal();
   return vtkMRMLDisplayableHierarchyNode::SafeDownCast(
     scene->GetNthNodeByClass(2*level + 1, "vtkMRMLDisplayableHierarchyNode"));
 }
@@ -172,7 +170,6 @@ vtkMRMLDisplayableHierarchyNode* GetHierarchyNode(vtkMRMLScene* scene, int level
 //---------------------------------------------------------------------------
 vtkMRMLDisplayableHierarchyNode* GetModelHierarchyNode(vtkMRMLScene* scene, int level)
 {
-  scene->InitTraversal();
   return vtkMRMLDisplayableHierarchyNode::SafeDownCast(
     scene->GetNthNodeByClass(2*level, "vtkMRMLDisplayableHierarchyNode"));
 }

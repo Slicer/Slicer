@@ -89,7 +89,7 @@ int vtkMRMLAnnotationLinesNodeTest1(int , char * [] )
 
   CHECK_INT(mrmlScene2->GetNumberOfNodesByClass("vtkMRMLAnnotationLinesNode"),1);
 
-  vtkMRMLAnnotationLinesNode *node3 = dynamic_cast < vtkMRMLAnnotationLinesNode *> (mrmlScene2->GetNthNodeByClass(0,"vtkMRMLAnnotationLinesNode"));
+  vtkMRMLAnnotationLinesNode *node3 = vtkMRMLAnnotationLinesNode::SafeDownCast(mrmlScene->GetFirstNodeByClass("vtkMRMLAnnotationLinesNode"));
   CHECK_NOT_NULL(node3);
 
   vtkIndent ind;

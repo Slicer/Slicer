@@ -105,7 +105,7 @@ int vtkMRMLAnnotationAngleNodeTest1(int , char * [] )
     return EXIT_FAILURE;
     }
 
-  vtkMRMLAnnotationAngleNode *node3 = dynamic_cast < vtkMRMLAnnotationAngleNode *> (mrmlScene->GetNthNodeByClass(0,"vtkMRMLAnnotationAngleNode"));
+  vtkMRMLAnnotationAngleNode *node3 = vtkMRMLAnnotationAngleNode::SafeDownCast(mrmlScene->GetFirstNodeByClass("vtkMRMLAnnotationAngleNode"));
   if (!node3)
       {
     std::cerr << "Error in ReadXML() or WriteXML(): could not find vtkMRMLAnnotationAngleNode" << std::endl;

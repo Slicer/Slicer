@@ -70,7 +70,8 @@ int vtkMRMLAnnotationControlPointsNodeTest1(int , char * [] )
 
   CHECK_INT(mrmlScene2->GetNumberOfNodesByClass("vtkMRMLAnnotationControlPointsNode"),1);
 
-  vtkMRMLAnnotationControlPointsNode *node3 = dynamic_cast < vtkMRMLAnnotationControlPointsNode *> (mrmlScene2->GetNthNodeByClass(0,"vtkMRMLAnnotationControlPointsNode"));
+  vtkMRMLAnnotationControlPointsNode *node3 = vtkMRMLAnnotationControlPointsNode::SafeDownCast(
+    mrmlScene->GetFirstNodeByClass("vtkMRMLAnnotationControlPointsNode"));
   CHECK_NOT_NULL(node3);
 
   vtkIndent ind;

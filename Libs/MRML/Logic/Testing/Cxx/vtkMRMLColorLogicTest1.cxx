@@ -98,12 +98,12 @@ bool TestNodeIDs()
   vtkNew<vtkMRMLColorLogic> colorLogic;
   colorLogic->SetMRMLScene(scene.GetPointer());
 
-  vtkMRMLNode* node= 0;
-  scene->InitTraversal();
-  while ( (node = scene->GetNextNodeByClass("vtkMRMLColorTableNode")) )
+  std::vector<vtkMRMLNode*> nodes;
+  scene->GetNodesByClass("vtkMRMLColorTableNode", nodes);
+  for (std::vector< vtkMRMLNode* >::iterator nodeIt = nodes.begin(); nodeIt != nodes.end(); ++nodeIt)
     {
     vtkMRMLColorTableNode* colorNode =
-      vtkMRMLColorTableNode::SafeDownCast(node);
+      vtkMRMLColorTableNode::SafeDownCast(*nodeIt);
     const char* nodeID =
       vtkMRMLColorLogic::GetColorTableNodeID(colorNode->GetType());
     if (strcmp(colorNode->GetID(), nodeID) != 0)
@@ -114,11 +114,12 @@ bool TestNodeIDs()
       return false;
       }
     }
-  scene->InitTraversal();
-  while ( (node = scene->GetNextNodeByClass("vtkMRMLPETProceduralColorNode")) )
+
+  scene->GetNodesByClass("vtkMRMLPETProceduralColorNode", nodes);
+  for (std::vector< vtkMRMLNode* >::iterator nodeIt = nodes.begin(); nodeIt != nodes.end(); ++nodeIt)
     {
     vtkMRMLPETProceduralColorNode* colorNode =
-      vtkMRMLPETProceduralColorNode::SafeDownCast(node);
+      vtkMRMLPETProceduralColorNode::SafeDownCast(*nodeIt);
     const char* nodeID =
       vtkMRMLColorLogic::GetPETColorNodeID(colorNode->GetType());
     if (strcmp(colorNode->GetID(), nodeID) != 0)
@@ -129,11 +130,12 @@ bool TestNodeIDs()
       return false;
       }
     }
-  scene->InitTraversal();
-  while ( (node = scene->GetNextNodeByClass("vtkMRMLdGEMRICProceduralColorNode")) )
+
+  scene->GetNodesByClass("vtkMRMLdGEMRICProceduralColorNode", nodes);
+  for (std::vector< vtkMRMLNode* >::iterator nodeIt = nodes.begin(); nodeIt != nodes.end(); ++nodeIt)
     {
     vtkMRMLdGEMRICProceduralColorNode* colorNode =
-      vtkMRMLdGEMRICProceduralColorNode::SafeDownCast(node);
+      vtkMRMLdGEMRICProceduralColorNode::SafeDownCast(*nodeIt);
     const char* nodeID =
       vtkMRMLColorLogic::GetdGEMRICColorNodeID(colorNode->GetType());
     if (strcmp(colorNode->GetID(), nodeID) != 0)

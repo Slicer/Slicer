@@ -49,9 +49,8 @@ int qMRMLModelDisplayNodeWidgetTest2( int argc, char * argv [] )
   scene->SetURL(argv[1]);
   scene->Connect();
 
-  scene->InitTraversal();
   vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(
-    scene->GetNextNodeByClass("vtkMRMLModelDisplayNode"));
+    scene->GetFirstNodeByClass("vtkMRMLModelDisplayNode"));
 
   if (!modelDisplayNode)
     {

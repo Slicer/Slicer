@@ -98,11 +98,12 @@ void qSlicerAnnotationModuleReportDialog::setAnnotations(vtkCollection* collecti
 
   this->m_Annotations = vtkCollection::New();
 
-  collection->InitTraversal();
-
-  for(int i=0; i<collection->GetNumberOfItems(); ++i)
+  vtkObject *obj = NULL;
+  vtkCollectionSimpleIterator it;
+  for (collection->InitTraversal(it);
+    (obj = collection->GetNextItemAsObject(it));)
     {
-    this->m_Annotations->AddItem(collection->GetItemAsObject(i));
+    this->m_Annotations->AddItem(obj);
     }
 }
 
@@ -149,9 +150,6 @@ QString qSlicerAnnotationModuleReportDialog::generateReport()
 
   html.append("<tr><td class='heading'><b>Type</b></td><td class='heading'><b>Value</b></td><td class='heading'><b>Text<b></td></tr>\n");
 
-  // now run through the annotations
-  this->m_Annotations->InitTraversal();
-
   this->m_Html = QString("");
 
   vtkMRMLAnnotationHierarchyNode *toplevelNode = NULL;
@@ -176,13 +174,12 @@ QString qSlicerAnnotationModuleReportDialog::generateReport()
 //---------------------------------------------------------------------------
 bool qSlicerAnnotationModuleReportDialog::isAnnotationSelected(const char* mrmlId)
 {
-  this->m_Annotations->InitTraversal();
-
-  for (int i=0; i<this->m_Annotations->GetNumberOfItems(); ++i)
+  vtkMRMLNode *node = NULL;
+  vtkCollectionSimpleIterator it;
+  for (this->m_Annotations->InitTraversal(it);
+    (node = vtkMRMLNode::SafeDownCast(this->m_Annotations->GetNextItemAsObject(it)));)
     {
-    vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(this->m_Annotations->GetItemAsObject(i));
-
-    if (!strcmp(mrmlId,node->GetID()))
+    if (node != NULL && !strcmp(mrmlId, node->GetID()))
       {
       // we found it
       return true;
@@ -198,14 +195,15 @@ void qSlicerAnnotationModuleReportDialog::generateReportRecursive(int level, vtk
   vtkCollection* children = vtkCollection::New();
   currentHierarchy->GetDirectChildren(children);
 
-  children->InitTraversal();
 
-  for(int i=0; i<children->GetNumberOfItems(); ++i)
+  vtkMRMLNode *node = NULL;
+  vtkCollectionSimpleIterator it;
+  for (this->m_Annotations->InitTraversal(it);
+    (node = vtkMRMLNode::SafeDownCast(this->m_Annotations->GetNextItemAsObject(it)));)
     {
     // loop through all children
 
-    vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(children->GetItemAsObject(i));
-
+    vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
     if (annotationNode)
       {
       // this child is an annotationNode
@@ -221,8 +219,7 @@ void qSlicerAnnotationModuleReportDialog::generateReportRecursive(int level, vtk
 
       } // annotationNode
 
-    vtkMRMLAnnotationHierarchyNode* hierarchyNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(children->GetItemAsObject(i));
-
+    vtkMRMLAnnotationHierarchyNode* hierarchyNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(node);
     if (hierarchyNode)
       {
       // this child is a user created hierarchyNode
@@ -336,13 +333,14 @@ bool qSlicerAnnotationModuleReportDialog::saveReport()
     report.replace(QString(":/Icons/"), imgshortdir.append("/"));
     report.replace(tempPath, imgshortdir.append("/"));
 
-    this->m_Annotations->InitTraversal();
-
     // now save all graphics
-    for (int i=0; i<this->m_Annotations->GetNumberOfItems(); ++i)
+    vtkMRMLNode *node = NULL;
+    vtkCollectionSimpleIterator it;
+    for (this->m_Annotations->InitTraversal(it);
+      (node = vtkMRMLNode::SafeDownCast(this->m_Annotations->GetNextItemAsObject(it)));)
       {
-      vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(this->m_Annotations->GetItemAsObject(i));
-      vtkMRMLAnnotationHierarchyNode* hierarchyNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(this->m_Annotations->GetItemAsObject(i));
+      vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
+      vtkMRMLAnnotationHierarchyNode* hierarchyNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(node);
 
       if (annotationNode)
         {

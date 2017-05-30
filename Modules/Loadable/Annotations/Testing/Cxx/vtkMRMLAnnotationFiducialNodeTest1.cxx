@@ -66,7 +66,7 @@ int vtkMRMLAnnotationFiducialNodeTest1(int , char * [] )
 
   CHECK_INT(mrmlScene2->GetNumberOfNodesByClass("vtkMRMLAnnotationFiducialNode"),1);
 
-  vtkMRMLAnnotationFiducialNode *node3 = dynamic_cast < vtkMRMLAnnotationFiducialNode *> (mrmlScene2->GetNthNodeByClass(0,"vtkMRMLAnnotationFiducialNode"));
+  vtkMRMLAnnotationFiducialNode *node3 = vtkMRMLAnnotationFiducialNode::SafeDownCast(mrmlScene->GetFirstNodeByClass("vtkMRMLAnnotationFiducialNode"));
   CHECK_NOT_NULL(node3);
 
   std::stringstream initialAnnotation, afterAnnotation;

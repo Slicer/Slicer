@@ -64,9 +64,8 @@ int qSlicerModelsModuleWidgetTestScene( int argc, char * argv[] )
 
   qMRMLThreeDWidget view;
   view.setMRMLScene(scene.GetPointer());
-  scene->InitTraversal();
   view.setMRMLViewNode(vtkMRMLViewNode::SafeDownCast(
-    scene->GetNextNodeByClass("vtkMRMLViewNode")));
+    scene->GetFirstNodeByClass("vtkMRMLViewNode")));
   view.show();
 
   if (argc < 3 || QString(argv[2]) != "-I")

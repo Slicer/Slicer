@@ -1,15 +1,11 @@
 import slicer
 import math
 
-lns = slicer.mrmlScene.GetNodesByClass('vtkMRMLLayoutNode')
-lns.InitTraversal()
-ln = lns.GetNextItemAsObject()
+ln = slicer.mrmlScene.GetFirstNodesByClass('vtkMRMLLayoutNode')
 print ln.GetID()
 ln.SetViewArrangement(24)
 
-cvns = slicer.mrmlScene.GetNodesByClass('vtkMRMLChartViewNode')
-cvns.InitTraversal()
-cvn = cvns.GetNextItemAsObject()
+cvn = slicer.mrmlScene.GetFirstNodesByClass('vtkMRMLChartViewNode')
 print cvn.GetID()
 
 dn = slicer.mrmlScene.AddNode(slicer.vtkMRMLDoubleArrayNode())

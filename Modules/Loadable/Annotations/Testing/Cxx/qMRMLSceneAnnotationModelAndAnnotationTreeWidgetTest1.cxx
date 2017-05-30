@@ -85,7 +85,7 @@ int qMRMLSceneAnnotationModelAndAnnotationTreeViewTest1(int argc, char * argv []
 
   std::cout << "Measurement in rulerNode: " << rulerNode->GetDistanceMeasurement() << std::endl;
 /*
-  QModelIndex index = view->d_func()->SceneModel->indexFromNode(sceneFactory.mrmlScene()->GetNthNodeByClass(0,"vtkMRMLAnnotationRulerNode"));
+  QModelIndex index = view->d_func()->SceneModel->indexFromNode(sceneFactory.mrmlScene()->GetFirstNodeByClass("vtkMRMLAnnotationRulerNode"));
 
   qMRMLAbstractItemHelper* helper = view->d_func()->SceneModel->itemFromIndex(index);
   std::cout << helper->data(Qt::DisplayRole) << std::endl;

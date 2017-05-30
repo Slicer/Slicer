@@ -75,8 +75,7 @@ int qMRMLWindowLevelWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
   applicationLogic->SetMRMLScene(scene.GetPointer());
   scene->SetURL(argv[2]);
   scene->Connect();
-  scene->InitTraversal();
-  vtkMRMLNode* node = scene->GetNextNodeByClass("vtkMRMLScalarVolumeNode");
+  vtkMRMLNode* node = scene->GetFirstNodeByClass("vtkMRMLScalarVolumeNode");
   vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(node);
 
   qMRMLWindowLevelWidget windowLevel;

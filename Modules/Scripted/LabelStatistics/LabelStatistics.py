@@ -375,16 +375,10 @@ class LabelStatisticsLogic(ScriptedLoadableModuleLogic):
   def createStatsChart(self, labelNode, valueToPlot, ignoreZero=False):
     """Make a MRML chart of the current stats
     """
-    layoutNodes = slicer.mrmlScene.GetNodesByClass('vtkMRMLLayoutNode')
-    layoutNodes.SetReferenceCount(layoutNodes.GetReferenceCount()-1)
-    layoutNodes.InitTraversal()
-    layoutNode = layoutNodes.GetNextItemAsObject()
+    layoutNode = slicer.mrmlScene.GetFirstNodeByClass('vtkMRMLLayoutNode')
     layoutNode.SetViewArrangement(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalQuantitativeView)
 
-    chartViewNodes = slicer.mrmlScene.GetNodesByClass('vtkMRMLChartViewNode')
-    chartViewNodes.SetReferenceCount(chartViewNodes.GetReferenceCount()-1)
-    chartViewNodes.InitTraversal()
-    chartViewNode = chartViewNodes.GetNextItemAsObject()
+    chartViewNode = slicer.mrmlScene.GetFirstNodeByClass('vtkMRMLChartViewNode')
 
     arrayNode = slicer.mrmlScene.AddNode(slicer.vtkMRMLDoubleArrayNode())
     array = arrayNode.GetArray()

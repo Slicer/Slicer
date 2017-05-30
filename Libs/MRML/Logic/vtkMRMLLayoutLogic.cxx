@@ -1109,9 +1109,8 @@ void vtkMRMLLayoutLogic::UpdateLayoutNode()
     this->UpdateFromLayoutNode();
     return;
     }
-  this->GetMRMLScene()->InitTraversal();
   vtkMRMLLayoutNode* sceneLayoutNode = vtkMRMLLayoutNode::SafeDownCast(
-    this->GetMRMLScene()->GetNextNodeByClass("vtkMRMLLayoutNode"));
+    this->GetMRMLScene()->GetFirstNodeByClass("vtkMRMLLayoutNode"));
   if (sceneLayoutNode)
     {
     this->SetLayoutNode(sceneLayoutNode);

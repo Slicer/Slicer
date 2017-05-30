@@ -198,7 +198,7 @@ void vtkMRMLCameraNode::ReadXMLAttributes(const char** atts)
       if (!this->GetActiveTag() && this->Scene)
         {
         vtkMRMLViewNode *vnode = vtkMRMLViewNode::SafeDownCast(
-          this->Scene->GetNthNodeByClass(0, "vtkMRMLViewNode"));
+          this->Scene->GetFirstNodeByClass("vtkMRMLViewNode"));
         if (vnode)
         {
           this->SetActiveTag(vnode->GetID());

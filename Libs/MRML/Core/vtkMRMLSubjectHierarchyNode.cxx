@@ -3069,7 +3069,10 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNod
     vtkGenericWarningMacro("vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode: Invalid scene given");
     return NULL;
     }
-  if (scene->GetNumberOfNodesByClass("vtkMRMLSubjectHierarchyNode") == 0)
+  std::vector<vtkMRMLNode*> shNodes;
+  scene->GetNodesByClass("vtkMRMLSubjectHierarchyNode", shNodes);
+
+  if (shNodes.size() == 0)
     {
     vtkSmartPointer<vtkMRMLSubjectHierarchyNode> newShNode = vtkSmartPointer<vtkMRMLSubjectHierarchyNode>::New();
     newShNode->SetName("SubjectHierarchy");
@@ -3081,14 +3084,14 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNod
     }
 
   // Return subject hierarchy node if there is only one
-  scene->InitTraversal();
-  vtkMRMLSubjectHierarchyNode* firstShNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(
-    scene->GetNextNodeByClass("vtkMRMLSubjectHierarchyNode"));
-  if (scene->GetNumberOfNodesByClass("vtkMRMLSubjectHierarchyNode") == 1)
+
+  vtkMRMLSubjectHierarchyNode* firstShNode = NULL;
+  firstShNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(shNodes[0]);
+  if (shNodes.size() == 1)
     {
     // Resolve unresolved items. There are unresolved items after importing or restoring a scene
     // (do not perform this consolidation operation while the scene is processing)
-    if ( !(scene->IsBatchProcessing() || scene->IsImporting() || scene->IsRestoring() || scene->IsClosing())
+    if (!(scene->IsBatchProcessing() || scene->IsImporting() || scene->IsRestoring() || scene->IsClosing() || firstShNode == NULL)
       && !firstShNode->Internal->ResolveUnresolvedItems() )
       {
       // Remove invalid subject hierarchy node so that it can be rebuilt from scratch
@@ -3110,38 +3113,39 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNod
     }
 
   // Merge subject hierarchy nodes into the first one found
-  for (vtkMRMLNode* node=NULL; (node=scene->GetNextNodeByClass("vtkMRMLSubjectHierarchyNode"));)
+  for (std::vector< vtkMRMLNode* >::iterator shNodeIt = shNodes.begin() + 1; shNodeIt != shNodes.end(); ++shNodeIt)
     {
-    vtkMRMLSubjectHierarchyNode* currentShNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(node);
-    if (currentShNode)
+    vtkMRMLSubjectHierarchyNode* currentShNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(*shNodeIt);
+    if (currentShNode == NULL)
       {
-      // Prevent events from being invoked from both subject hierarchy nodes
-      bool wereEventsDisabled = firstShNode->Internal->EventsDisabled;
-      firstShNode->Internal->EventsDisabled = true;
+      continue;
+      }
+    // Prevent events from being invoked from both subject hierarchy nodes
+    bool wereEventsDisabled = firstShNode->Internal->EventsDisabled;
+    firstShNode->Internal->EventsDisabled = true;
 
-      // Copy all unresolved items from the merged subject hierarchy node into first node
-      firstShNode->Internal->UnresolvedItems->DeepCopy(currentShNode->Internal->UnresolvedItems);
+    // Copy all unresolved items from the merged subject hierarchy node into first node
+    firstShNode->Internal->UnresolvedItems->DeepCopy(currentShNode->Internal->UnresolvedItems);
 
-      // Remove merged subject hierarchy node from the scene
-      scene->RemoveNode(currentShNode);
+    // Remove merged subject hierarchy node from the scene
+    scene->RemoveNode(currentShNode);
 
-      // Re-enable events
-      firstShNode->Internal->EventsDisabled = wereEventsDisabled;
+    // Re-enable events
+    firstShNode->Internal->EventsDisabled = wereEventsDisabled;
 
-      // Resolve all unresolved items (only SubjectHierarchyItemResolvedEvent is invoked from the node in the process)
-      if (!firstShNode->Internal->ResolveUnresolvedItems())
+    // Resolve all unresolved items (only SubjectHierarchyItemResolvedEvent is invoked from the node in the process)
+    if (!firstShNode->Internal->ResolveUnresolvedItems())
+      {
+      // Remove invalid subject hierarchy node so that it can be rebuilt from scratch
+      std::vector<vtkMRMLNode*> shNodesToDelete;
+      scene->GetNodesByClass("vtkMRMLSubjectHierarchyNode", shNodesToDelete);
+      for (std::vector<vtkMRMLNode*>::iterator shNodeToDeleteIt = shNodesToDelete.begin(); shNodeToDeleteIt != shNodesToDelete.end(); ++shNodeToDeleteIt)
         {
-        // Remove invalid subject hierarchy node so that it can be rebuilt from scratch
-        std::vector<vtkMRMLNode*> shNodes;
-        scene->GetNodesByClass("vtkMRMLSubjectHierarchyNode", shNodes);
-        for (std::vector<vtkMRMLNode*>::iterator shIt=shNodes.begin(); shIt!=shNodes.end(); ++shIt)
-          {
-          scene->RemoveNode(*shIt);
-          }
-        vtkErrorWithObjectMacro( scene,
-          "vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode: Failed to merge subject hierarchy nodes, re-building subject hierarchy from scratch" );
-        return firstShNode;
+        scene->RemoveNode(*shNodeToDeleteIt);
         }
+      vtkErrorWithObjectMacro( scene,
+        "vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode: Failed to merge subject hierarchy nodes, re-building subject hierarchy from scratch" );
+      return firstShNode;
       }
     }
   // Return the first (and now only) subject hierarchy node into which the others were merged

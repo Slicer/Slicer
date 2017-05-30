@@ -332,7 +332,7 @@ void qSlicerCropVolumeModuleWidget::enter()
     // If none is selected then select the first one.
     if (d->ParametersNodeComboBox->currentNode() == NULL)
       {
-      d->ParametersNodeComboBox->setCurrentNode(scene->GetNthNodeByClass(0, "vtkMRMLCropVolumeParametersNode"));
+      d->ParametersNodeComboBox->setCurrentNode(scene->GetFirstNodeByClass("vtkMRMLCropVolumeParametersNode"));
       }
     }
 

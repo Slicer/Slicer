@@ -1225,16 +1225,13 @@ void qSlicerSlicer2SceneReaderPrivate::importColorNode(NodeType& node)
   //foreach {r g b} $n(diffuseColor) {}
   QStringList rgb = node["diffuseColor"].split(' ');
   //$::slicer3::MRMLScene InitTraversal
-  q->mrmlScene()->InitTraversal();
-  //set ndnodes [$::slicer3::MRMLScene GetNumberOfNodesByClass vtkMRMLModelDisplayNode]
-  int ndnodes = q->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLModelDisplayNode");
-  //for {set i 0} {$i < $ndnodes} {incr i} {
-  for (int i = 0; i < ndnodes; ++i)
+  std::vector<vtkMRMLNode*> nodes;
+  q->mrmlScene()->GetNodesByClass("vtkMRMLModelDisplayNode", nodes);
+  for (std::vector< vtkMRMLNode* >::iterator nodeIt = nodes.begin(); nodeIt != nodes.end(); ++nodeIt)
     {
     //set dnode [$::slicer3::MRMLScene GetNthNodeByClass $i vtkMRMLModelDisplayNode]
     vtkMRMLModelDisplayNode* dnode =
-      vtkMRMLModelDisplayNode::SafeDownCast(
-        q->mrmlScene()->GetNthNodeByClass(i, "vtkMRMLModelDisplayNode"));
+      vtkMRMLModelDisplayNode::SafeDownCast(*nodeIt);
     // set cid [$dnode GetAttribute colorid]
     QString cid = dnode->GetAttribute("colorid");
     //if {$id == $cid} {

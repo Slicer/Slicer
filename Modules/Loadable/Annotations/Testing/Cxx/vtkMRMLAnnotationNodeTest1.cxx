@@ -125,12 +125,12 @@ int vtkMRMLAnnotationNodeTest1(int , char * [] )
     return EXIT_FAILURE;
     }
 
-  vtkMRMLAnnotationNode *node3 = dynamic_cast < vtkMRMLAnnotationNode *> (mrmlScene->GetNthNodeByClass(0,"vtkMRMLAnnotationNode"));
+  vtkMRMLAnnotationNode *node3 = vtkMRMLAnnotationNode::SafeDownCast(mrmlScene->GetFirstNodeByClass("vtkMRMLAnnotationNode"));
   if (!node3)
-      {
+    {
     std::cerr << "Error in ReadXML() or WriteXML()" << std::endl;
     return EXIT_FAILURE;
-      }
+    }
 
   vtkIndent ind;
   std::stringstream initialAnnotation, afterAnnotation;

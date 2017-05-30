@@ -303,7 +303,7 @@ int vtkMRMLModelDisplayableManager::UpdateClipSlicesFromMRML()
     }
 
   // update ClipModels node
-  vtkMRMLClipModelsNode *clipNode = vtkMRMLClipModelsNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLClipModelsNode"));
+  vtkMRMLClipModelsNode *clipNode = vtkMRMLClipModelsNode::SafeDownCast(this->GetMRMLScene()->GetFirstNodeByClass("vtkMRMLClipModelsNode"));
   if (clipNode != this->Internal->ClipModelsNode)
     {
     vtkSetAndObserveMRMLNodeMacro(this->Internal->ClipModelsNode, clipNode);

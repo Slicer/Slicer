@@ -149,7 +149,7 @@ void vtkMRMLCameraDisplayableManager::OnMRMLSceneEndRestore()
   if (!camera_node)
     {
     camera_node = vtkMRMLCameraNode::SafeDownCast(
-        this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLCameraNode"));
+        this->GetMRMLScene()->GetFirstNodeByClass("vtkMRMLCameraNode"));
     if (camera_node)
       {
       camera_node->SetActiveTag(this->GetMRMLViewNode()->GetID());

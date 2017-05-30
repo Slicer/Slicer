@@ -92,11 +92,10 @@ int vtkMRMLSceneAddSingletonTest(int vtkNotUsed(argc), char * vtkNotUsed(argv) [
 
   vtkMRMLSceneViewNode* sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(
     tempScene->GetFirstNodeByName("sceneView"));
-  sceneViewNode->GetStoredScene()->InitTraversal();
 
   // Test singleton loading/restoring.
   vtkMRMLNode* restoredSingleton1 =
-    sceneViewNode->GetStoredScene()->GetNextNodeByClass("vtkMRMLModelNode");
+    sceneViewNode->GetStoredScene()->GetNthNodeByClass(0, "vtkMRMLModelNode");
   restoredSingleton1->SetSingletonTag("Singleton");
   restoredSingleton1->SetAddToScene(1);
   addedNode = scene->AddNode(restoredSingleton1);
@@ -110,7 +109,7 @@ int vtkMRMLSceneAddSingletonTest(int vtkNotUsed(argc), char * vtkNotUsed(argv) [
   // Test compatibility with Slicer 3 scenes.
   std::string singleton1ID = singleton1->GetID();
   restoredSingleton1 =
-    sceneViewNode->GetStoredScene()->GetNextNodeByClass("vtkMRMLModelNode");
+    sceneViewNode->GetStoredScene()->GetNthNodeByClass(1, "vtkMRMLModelNode");
   restoredSingleton1->SetSingletonTag("Singleton");
   restoredSingleton1->SetAddToScene(1);
   addedNode = scene->AddNode(restoredSingleton1);
@@ -126,7 +125,7 @@ int vtkMRMLSceneAddSingletonTest(int vtkNotUsed(argc), char * vtkNotUsed(argv) [
   // Test odd node ID. There is no reason why it could happen, but there is no
   // reason why it shouldn't be supported.
   restoredSingleton1 =
-    sceneViewNode->GetStoredScene()->GetNextNodeByClass("vtkMRMLModelNode");
+    sceneViewNode->GetStoredScene()->GetNthNodeByClass(2, "vtkMRMLModelNode");
   restoredSingleton1->SetSingletonTag("Singleton");
   restoredSingleton1->SetAddToScene(1);
   addedNode = scene->AddNode(restoredSingleton1);

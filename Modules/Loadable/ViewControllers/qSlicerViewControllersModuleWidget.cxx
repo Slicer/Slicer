@@ -222,20 +222,22 @@ void qSlicerViewControllersModuleWidget::setMRMLScene(vtkMRMLScene *newScene)
 
   // Search the scene for the available view nodes and create a
   // Controller and connect it up
-  newScene->InitTraversal();
-  for (vtkMRMLNode *sn = NULL; (sn=newScene->GetNextNodeByClass("vtkMRMLSliceNode"));)
+  std::vector<vtkMRMLNode*> sliceNodes;
+  newScene->GetNodesByClass("vtkMRMLSliceNode", sliceNodes);
+  for (std::vector< vtkMRMLNode* >::iterator sliceNodeIt = sliceNodes.begin(); sliceNodeIt != sliceNodes.end(); ++sliceNodeIt)
     {
-    vtkMRMLSliceNode *snode = vtkMRMLSliceNode::SafeDownCast(sn);
+    vtkMRMLSliceNode *snode = vtkMRMLSliceNode::SafeDownCast(*sliceNodeIt);
     if (snode)
       {
       d->createController(snode, layoutManager);
       }
     }
 
-  newScene->InitTraversal();
-  for (vtkMRMLNode *sn = NULL; (sn=newScene->GetNextNodeByClass("vtkMRMLViewNode"));)
+  std::vector<vtkMRMLNode*> threeDNodes;
+  newScene->GetNodesByClass("vtkMRMLViewNode", threeDNodes);
+  for (std::vector< vtkMRMLNode* >::iterator threeDNodeIt = threeDNodes.begin(); threeDNodeIt != threeDNodes.end(); ++threeDNodeIt)
     {
-    vtkMRMLViewNode *vnode = vtkMRMLViewNode::SafeDownCast(sn);
+    vtkMRMLViewNode *vnode = vtkMRMLViewNode::SafeDownCast(*threeDNodeIt);
     if (vnode)
       {
       d->createController(vnode, layoutManager);
@@ -358,7 +360,6 @@ void qSlicerViewControllersModuleWidget::onLayoutChanged(int)
 
   vtkMRMLLayoutLogic *layoutLogic = layoutManager->layoutLogic();
   vtkCollection *visibleViews = layoutLogic->GetViewNodes();
-  vtkObject *v;
 
   // hide Controllers for Nodes not currently visible in
   // the layout
@@ -375,7 +376,10 @@ void qSlicerViewControllersModuleWidget::onLayoutChanged(int)
 
   // show Controllers for Nodes not currently being managed
   // by this widget
-  for (visibleViews->InitTraversal(); (v = visibleViews->GetNextItemAsObject());)
+  vtkObject *v = NULL;
+  vtkCollectionSimpleIterator it;
+  for (visibleViews->InitTraversal(it);
+    (v = visibleViews->GetNextItemAsObject(it));)
     {
     vtkMRMLNode *vn = vtkMRMLNode::SafeDownCast(v);
     if (vn)

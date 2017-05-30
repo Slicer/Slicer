@@ -51,12 +51,12 @@ int qSlicerColorsModuleWidgetTest1(int argc, char * argv [] )
   qSlicerColorsModuleWidget* colorsWidget =
     dynamic_cast<qSlicerColorsModuleWidget*>(colorsModule.widgetRepresentation());
   colorsWidget->show();
-  scene->InitTraversal();
-  vtkMRMLNode* node = scene->GetNextNodeByClass("vtkMRMLColorNode");
-  while (node)
+
+  std::vector< vtkMRMLNode* > nodes;
+  scene->GetNodesByClass("vtkMRMLColorNode", nodes);
+  for (std::vector< vtkMRMLNode* >::iterator nodeIt = nodes.begin(); nodeIt != nodes.end(); ++nodeIt)
     {
-    colorsWidget->setCurrentColorNode(node);
-    node = scene->GetNextNodeByClass("vtkMRMLColorNode");
+    colorsWidget->setCurrentColorNode(*nodeIt);
     }
 
   // colorsWidget->show();

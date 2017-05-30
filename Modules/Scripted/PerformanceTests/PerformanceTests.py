@@ -169,18 +169,14 @@ class PerformanceTestsWidget:
 
   def chartTest(self):
     import math,random
-    lns = slicer.mrmlScene.GetNodesByClass('vtkMRMLLayoutNode')
-    lns.InitTraversal()
-    ln = lns.GetNextItemAsObject()
+    ln = slicer.mrmlScene.GetFirstNodeByClass('vtkMRMLLayoutNode')
     ln.SetViewArrangement(24)
 
     chartView = findChildren(className='qMRMLChartView')[0]
     print(chartView.connect("dataMouseOver(const char *,int,double,double)", self.chartMouseOverCallback))
     print(chartView.connect("dataPointClicked(const char *,int,double,double)", self.chartCallback))
 
-    cvns = slicer.mrmlScene.GetNodesByClass('vtkMRMLChartViewNode')
-    cvns.InitTraversal()
-    cvn = cvns.GetNextItemAsObject()
+    cvn = slicer.mrmlScene.GetFirstNodeByClass('vtkMRMLChartViewNode')
 
     dn = slicer.mrmlScene.AddNode(slicer.vtkMRMLDoubleArrayNode())
     a = dn.GetArray()

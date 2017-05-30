@@ -109,7 +109,7 @@ int readWrite()
 
   vtkMRMLVolumePropertyNode* propertyNode2 =
     vtkMRMLVolumePropertyNode::SafeDownCast(
-      scene2->GetNthNodeByClass(0, "vtkMRMLVolumePropertyNode"));
+    scene2->GetFirstNodeByClass("vtkMRMLVolumePropertyNode"));
   CHECK_NOT_NULL(propertyNode2);
 
   vtkPiecewiseFunction* scalarOpacity2 = propertyNode2->GetScalarOpacity();

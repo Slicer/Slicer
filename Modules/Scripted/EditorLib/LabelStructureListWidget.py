@@ -194,16 +194,17 @@ class LabelStructureListWidget(qt.QWidget):
     volumes of the current master"""
     volumeNodes = []
     masterName = self.master.GetName()
-    slicer.mrmlScene.InitTraversal()
-    vNode = slicer.mrmlScene.GetNextNodeByClass( "vtkMRMLScalarVolumeNode" )
     self.row = 0
-    while vNode:
+    nodes = slicer.mrmlScene.GetNodesByClass("vtkMRMLScalarVolumeNode")
+    for index in range(nodes.GetNumberOfItems()):
+      vNode = nodes.GetItemAsObject(index)
+
       vName = vNode.GetName()
       # match something like "CT-lung-label1"
       fnmatchExp = "%s-*%s*" % (masterName, self.mergeVolumePostfix)
       if fnmatch.fnmatchcase(vName,fnmatchExp):
         volumeNodes.append(vNode)
-      vNode = slicer.mrmlScene.GetNextNodeByClass( "vtkMRMLScalarVolumeNode" )
+
     return volumeNodes
 
   #---------------------------------------------------------------------------

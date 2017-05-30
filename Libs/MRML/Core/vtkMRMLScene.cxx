@@ -334,18 +334,19 @@ void vtkMRMLScene::Clear(int removeSingletons)
 //------------------------------------------------------------------------------
 void vtkMRMLScene::RemoveAllNodes(bool removeSingletons)
 {
-  this->InitTraversal();
+
   // Store the node ids because a module may decide to delete some helper nodes
   // when a node is deleted
   std::deque< std::string > removeNodeIds;
-  vtkMRMLNode *node = this->GetNextNode();
-  while(node)
+  vtkMRMLNode *node = NULL;
+  vtkCollectionSimpleIterator it;
+  for (this->Nodes->InitTraversal(it);
+    (node = (vtkMRMLNode*)this->Nodes->GetNextItemAsObject(it));)
     {
     if (removeSingletons || node->GetSingletonTag() == NULL)
       {
       removeNodeIds.push_back(node->GetID());
       }
-    node = this->GetNextNode();
     }
   for(std::deque< std::string >::iterator nodeIt=removeNodeIds.begin(); nodeIt!=removeNodeIds.end(); ++nodeIt)
     {
@@ -361,14 +362,13 @@ void vtkMRMLScene::RemoveAllNodes(bool removeSingletons)
 //------------------------------------------------------------------------------
 void vtkMRMLScene::ResetNodes()
 {
-  vtkMRMLNode *node;
   std::vector <vtkMRMLNode *> nodes;
-  this->InitTraversal();
-  node = this->GetNextNode();
-  while(node)
+  vtkMRMLNode *node = NULL;
+  vtkCollectionSimpleIterator it;
+  for (this->Nodes->InitTraversal(it);
+    (node = (vtkMRMLNode*)this->Nodes->GetNextItemAsObject(it));)
     {
     nodes.push_back(node);
-    node = this->GetNextNode();
     }
   for(unsigned int i=0; i<nodes.size(); i++)
     {
@@ -1484,12 +1484,14 @@ int vtkMRMLScene::IsNodePresent(vtkMRMLNode *n)
 //------------------------------------------------------------------------------
 void vtkMRMLScene::InitTraversal()
 {
+  vtkWarningMacro("Usage of vtkMRMLScene::InitTraversal() is unsafe.")
   this->Nodes->InitTraversal();
 }
 
 //------------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLScene::GetNextNode()
 {
+  vtkWarningMacro("Usage of vtkMRMLScene::GetNextNode() is unsafe.")
   return vtkMRMLNode::SafeDownCast(this->Nodes->GetNextItemAsObject());
 }
 
@@ -1524,6 +1526,7 @@ int vtkMRMLScene::GetNumberOfNodesByClass(const char *className)
 //------------------------------------------------------------------------------
 int vtkMRMLScene::GetNodesByClass(const char *className, std::vector<vtkMRMLNode *> &nodes)
 {
+  nodes.clear();
   if (className == NULL)
     {
     vtkErrorMacro("GetNodesByClass: class name is null.");
@@ -1584,6 +1587,7 @@ std::list< std::string > vtkMRMLScene::GetNodeClassesList()
 //------------------------------------------------------------------------------
 vtkMRMLNode *vtkMRMLScene::GetNextNodeByClass(const char *className)
 {
+  vtkWarningMacro("Usage of vtkMRMLScene::GetNextNodeByClass(const char *) is unsafe.")
   if (!className)
     {
     vtkErrorMacro("GetNextNodeByClass: class name is null.");
@@ -1711,6 +1715,12 @@ vtkMRMLNode* vtkMRMLScene::GetNthNodeByClass(int n, const char *className)
       }
     }
   return NULL;
+}
+
+//------------------------------------------------------------------------------
+vtkMRMLNode* vtkMRMLScene::GetFirstNodeByClass(const char *className)
+{
+  return this->GetNthNodeByClass(0, className);
 }
 
 //------------------------------------------------------------------------------
@@ -3228,10 +3238,10 @@ void vtkMRMLScene
   //
   // copy over nodes from the current scene to the new scene
   //
-  nodes->InitTraversal();
-  vtkObject* currentObject = NULL;
-  while ((currentObject = nodes->GetNextItemAsObject()) &&
-         (currentObject != NULL))
+  vtkMRMLNode *currentObject = NULL;
+  vtkCollectionSimpleIterator it;
+  for (nodes->InitTraversal(it);
+    (currentObject = (vtkMRMLNode*)nodes->GetNextItemAsObject(it));)
     {
     vtkMRMLNode* n = vtkMRMLNode::SafeDownCast(currentObject);
     if (n == NULL)

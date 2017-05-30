@@ -101,7 +101,7 @@ int vtkMRMLAnnotationRulerNodeTest1(int , char * [] )
 
   CHECK_INT(mrmlScene2->GetNumberOfNodesByClass("vtkMRMLAnnotationRulerNode"),1);
 
-  vtkMRMLAnnotationRulerNode *node3 = dynamic_cast < vtkMRMLAnnotationRulerNode *> (mrmlScene2->GetNthNodeByClass(0,"vtkMRMLAnnotationRulerNode"));
+  vtkMRMLAnnotationRulerNode *node3 = vtkMRMLAnnotationRulerNode::SafeDownCast(mrmlScene->GetFirstNodeByClass("vtkMRMLAnnotationRulerNode"));
   CHECK_NOT_NULL(node3);
 
   std::stringstream initialAnnotation, afterAnnotation;
