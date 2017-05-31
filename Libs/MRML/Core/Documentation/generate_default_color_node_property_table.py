@@ -22,6 +22,7 @@ documentation of vtkMRMLColorLogic::AddDefaultColorNodes()
 """
 
 nodes = slicer.mrmlScene.GetNodesByClass("vtkMRMLColorNode")
+nodes.UnRegister(slicer.mrmlScene)
 
 template = "/// | {family} | {category} | {_type} | {node_name} | {singleton_tag} | {node_id} |"
 

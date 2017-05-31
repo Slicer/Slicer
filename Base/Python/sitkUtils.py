@@ -60,6 +60,8 @@ def removeOldMRMLNode(node):
     """
     scene = slicer.mrmlScene
     collection = scene.GetNodesByClassByName(node.GetClassName(), node.GetName())
+    collection.UnRegister(scene)
+
     if collection.GetNumberOfItems() == 1:
         oldNode = collection.GetItemAsObject(0)
         scene.RemoveNode(oldNode)
@@ -126,6 +128,7 @@ def PushToSlicer(sitkimage, NodeName, compositeView=0, overwrite=False):
         newDisplayNode = CreateNewDisplayNode(NodeName)
     else:
         nodeCollection = scene.GetNodesByClassByName('vtkMRMLScalarVolumeDisplayNode', NodeName + '_Display')
+        nodeCollection.UnRegister(scene)
         count = nodeCollection.GetNumberOfItems()
         if count == 0:
             newDisplayNode = CreateNewDisplayNode(NodeName)

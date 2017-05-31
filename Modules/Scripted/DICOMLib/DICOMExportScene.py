@@ -109,6 +109,7 @@ class DICOMExportScene(object):
     #add storage node for each storable node in the scene, add file name if file name doesn't exist
     # TODO: this could be moved to appLogic.SaveSceneToSlicerDataBundleDirectory
     lnodes = slicer.mrmlScene.GetNodesByClass("vtkMRMLLinearTransformNode")
+    lnodes.UnRegister(slicer.mrmlScene)
     lnum = lnodes.GetNumberOfItems()
     for itemNum in xrange(lnum):
       print(itemNum)

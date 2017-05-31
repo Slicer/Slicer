@@ -196,6 +196,7 @@ class LabelStructureListWidget(qt.QWidget):
     masterName = self.master.GetName()
     self.row = 0
     nodes = slicer.mrmlScene.GetNodesByClass("vtkMRMLScalarVolumeNode")
+    nodes.UnRegister(slicer.mrmlScene)
     for index in range(nodes.GetNumberOfItems()):
       vNode = nodes.GetItemAsObject(index)
 
