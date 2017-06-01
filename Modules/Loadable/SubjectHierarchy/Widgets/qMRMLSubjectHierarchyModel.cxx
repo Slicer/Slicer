@@ -254,7 +254,6 @@ void qMRMLSubjectHierarchyModel::setSubjectHierarchyNode(vtkMRMLSubjectHierarchy
     shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAboutToBeRemovedEvent, d->CallBack, +10.0);
     shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemRemovedEvent, d->CallBack, -10.0);
     shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent, d->CallBack, -10.0);
-    shNode->AddObserver(vtkCommand::DeleteEvent, d->CallBack, -10.0);
     }
 }
 

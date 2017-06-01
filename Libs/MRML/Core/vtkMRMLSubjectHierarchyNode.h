@@ -67,14 +67,17 @@ public:
     SubjectHierarchyItemAboutToBeRemovedEvent,
     SubjectHierarchyItemRemovedEvent,
     SubjectHierarchyItemModifiedEvent,
-    SubjectHierarchyItemResolvedEvent,
     /// Event invoked when UID is added to subject hierarchy item. Useful when using UIDs
     /// to find related nodes, and the nodes are loaded sequentially in unspecified order.
     SubjectHierarchyItemUIDAddedEvent,
     /// Event invoked when a subject hierarchy item or its data node changed in a way that
     /// will influence the best owner plugin. Typically invoked by \sa RequestOwnerPluginSearch
     /// after setting an attribute indicating a desired role for the item
-    SubjectHierarchyItemOwnerPluginSearchRequested
+    SubjectHierarchyItemOwnerPluginSearchRequested,
+    /// Event invoked when item resolving starts (e.g. after scene import)
+    SubjectHierarchyStartResolveEvent,
+    /// Event invoked when item resolving finished (e.g. after scene import)
+    SubjectHierarchyEndResolveEvent
   };
 
 public:
