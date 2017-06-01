@@ -862,62 +862,54 @@ bool qSlicerSegmentationsModuleWidget::importToCurrentSegmentation()
 
   if (labelmapNode)
     {
-    if (this->updateMasterRepresentationInSegmentation(currentSegmentationNode->GetSegmentation(),
-      vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()))
+    QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+    bool success = vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(labelmapNode, currentSegmentationNode);
+    QApplication::restoreOverrideCursor();
+    if (!success)
       {
-      QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
-      bool success = vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(labelmapNode, currentSegmentationNode);
-      QApplication::restoreOverrideCursor();
-      if (!success)
-        {
-        QString message = QString("Failed to copy labels from labelmap volume node %1!").arg(labelmapNode->GetName());
-        qCritical() << Q_FUNC_INFO << ": " << message;
-        QMessageBox::warning(NULL, tr("Failed to import from labelmap volume"), message);
-        return false;
-        }
+      QString message = QString("Failed to copy labels from labelmap volume node %1!").arg(labelmapNode->GetName());
+      qCritical() << Q_FUNC_INFO << ": " << message;
+      QMessageBox::warning(NULL, tr("Failed to import from labelmap volume"), message);
+      return false;
       }
     }
   else if (modelNode || modelHierarchyNode)
     {
     QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
-    if (this->updateMasterRepresentationInSegmentation(currentSegmentationNode->GetSegmentation(),
-      vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName()))
+    vtkNew<vtkCollection> modelNodes;
+    if (modelNode)
       {
-      vtkNew<vtkCollection> modelNodes;
-      if (modelNode)
+      modelNodes->AddItem(modelNode);
+      }
+    else if (modelHierarchyNode)
+      {
+      modelHierarchyNode->GetChildrenModelNodes(modelNodes.GetPointer());
+      }
+    QString errorMessage;
+    vtkObject* object = NULL;
+    vtkCollectionSimpleIterator it;
+    for (modelNodes->InitTraversal(it); (object = modelNodes->GetNextItemAsObject(it));)
+      {
+      modelNode = vtkMRMLModelNode::SafeDownCast(object);
+      if (!modelNode)
         {
-        modelNodes->AddItem(modelNode);
+        continue;
         }
-      else if (modelHierarchyNode)
+      // TODO: look up segment with matching name and overwrite that
+      if (!vtkSlicerSegmentationsModuleLogic::ImportModelToSegmentationNode(modelNode, currentSegmentationNode))
         {
-        modelHierarchyNode->GetChildrenModelNodes(modelNodes.GetPointer());
-        }
-      QString errorMessage;
-      vtkObject* object = NULL;
-      vtkCollectionSimpleIterator it;
-      for (modelNodes->InitTraversal(it); (object = modelNodes->GetNextItemAsObject(it));)
-        {
-        modelNode = vtkMRMLModelNode::SafeDownCast(object);
-        if (!modelNode)
+        if (errorMessage.isEmpty())
           {
-          continue;
+          errorMessage = tr("Failed to copy polydata from model node:");
           }
-        // TODO: look up segment with matching name and overwrite that
-        if (!vtkSlicerSegmentationsModuleLogic::ImportModelToSegmentationNode(modelNode, currentSegmentationNode))
-          {
-          if (errorMessage.isEmpty())
-            {
-            errorMessage = tr("Failed to copy polydata from model node:");
-            }
-          errorMessage.append(" ");
-          errorMessage.append(QString(modelNode->GetName() ? modelNode->GetName() : "(unknown)"));
-          }
+        errorMessage.append(" ");
+        errorMessage.append(QString(modelNode->GetName() ? modelNode->GetName() : "(unknown)"));
         }
-      if (!errorMessage.isEmpty())
-        {
-        qCritical() << Q_FUNC_INFO << ": " << errorMessage;
-        QMessageBox::warning(NULL, tr("Failed to import model node"), errorMessage);
-        }
+      }
+    if (!errorMessage.isEmpty())
+      {
+      qCritical() << Q_FUNC_INFO << ": " << errorMessage;
+      QMessageBox::warning(NULL, tr("Failed to import model node"), errorMessage);
       }
     QApplication::restoreOverrideCursor();
     }
@@ -954,75 +946,7 @@ void qSlicerSegmentationsModuleWidget::onMoveToCurrentSegmentation()
   this->copySegmentsBetweenSegmentations(false, true);
 }
 
-//-----------------------------------------------------------------------------
-bool qSlicerSegmentationsModuleWidget::updateMasterRepresentationInSegmentation(vtkSegmentation* segmentation, QString representation)
-{
-  if (!segmentation || representation.isEmpty())
-    {
-    return false;
-    }
-  std::string newMasterRepresentation(representation.toLatin1().constData());
 
-  // Set master representation to the added one if segmentation is empty or master representation is undefined
-  if (segmentation->GetNumberOfSegments() == 0)
-    {
-    segmentation->SetMasterRepresentationName(newMasterRepresentation);
-    return true;
-    }
-
-  // No action is necessary if segmentation is non-empty and the master representation matches the contained one in segment
-  if (segmentation->GetMasterRepresentationName() == newMasterRepresentation)
-    {
-    return true;
-    }
-
-  // Get segmentation node for segmentation
-  vtkMRMLScene* scene = this->mrmlScene();
-  if (!scene)
-    {
-    return false;
-    }
-  vtkMRMLSegmentationNode* segmentationNode = vtkSlicerSegmentationsModuleLogic::GetSegmentationNodeForSegmentation(scene, segmentation);
-  if (!segmentationNode)
-    {
-    return false;
-    }
-
-  // Ask the user if master was different but not empty
-  QString message = QString("Segment is to be added in segmentation '%1' that contains a representation (%2) different than the master representation in the segmentation (%3). "
-    "The master representation need to be changed so that the segment can be added. This might result in unwanted data loss.\n\n"
-    "Do you wish to change the master representation to %2?")
-    .arg(segmentationNode->GetName()).arg(newMasterRepresentation.c_str())
-    .arg(segmentation->GetMasterRepresentationName().c_str());
-  QMessageBox::StandardButton answer =
-    QMessageBox::question(NULL, tr("Master representation is needed to be changed to add segment"), message,
-    QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
-  if (answer == QMessageBox::No)
-    {
-    return false;
-    }
-
-  // Make sure the new master representation exists before setting it
-  if (!segmentation->CreateRepresentation(newMasterRepresentation.c_str()))
-    {
-    std::vector<std::string> containedRepresentationNamesInSegmentation;
-    segmentation->GetContainedRepresentationNames(containedRepresentationNamesInSegmentation);
-    if (containedRepresentationNamesInSegmentation.empty())
-      {
-      qCritical() << Q_FUNC_INFO << ": Master representation cannot be created in segmentation as it does not contain any representations!";
-      return false;
-      }
-
-    std::string firstContainedRepresentation = (*containedRepresentationNamesInSegmentation.begin());
-    qCritical() << Q_FUNC_INFO << ": Master representation cannot be created in segmentation! Setting master to the first representation found: " << firstContainedRepresentation.c_str();
-    segmentation->SetMasterRepresentationName(newMasterRepresentation.c_str());
-    return false;
-    }
-
-  // Set master representation to the added one if user agreed
-  segmentation->SetMasterRepresentationName(newMasterRepresentation.c_str());
-  return true;
-}
 
 //-----------------------------------------------------------------------------
 void qSlicerSegmentationsModuleWidget::onMRMLSceneEndImportEvent()

@@ -409,7 +409,7 @@
    <item>
     <widget class="ctkCollapsibleButton" name="CollapsibleButton_ImportExportSegment">
      <property name="text">
-      <string>Export/import segments</string>
+      <string>Export/import models and labelmaps</string>
      </property>
      <property name="collapsed">
       <bool>true</bool>

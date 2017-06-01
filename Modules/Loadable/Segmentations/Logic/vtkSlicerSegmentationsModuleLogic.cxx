@@ -998,15 +998,6 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkMRML
     return false;
     }
 
-  // If master representation is not binary labelmap, then cannot add
-  // (this should have been done by the UI classes, notifying the users about hazards of changing the master representation)
-  if ( segmentationNode->GetSegmentation()->GetMasterRepresentationName() != vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName())
-    {
-    vtkErrorWithObjectMacro(segmentationNode, "ImportLabelmapToSegmentationNode: Master representation of the target segmentation node "
-      << (segmentationNode->GetName()?segmentationNode->GetName():"NULL") << " is not binary labelmap!");
-    return false;
-    }
-
   // Get labelmap geometry
   vtkSmartPointer<vtkMatrix4x4> labelmapIjkToRasMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
   labelmapNode->GetIJKToRASMatrix(labelmapIjkToRasMatrix);
@@ -1024,9 +1015,6 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkMRML
 
   vtkNew<vtkIntArray> labelValues;
   vtkSlicerSegmentationsModuleLogic::GetAllLabelValues(labelValues.GetPointer(), labelmapNode->GetImageData());
-
-  // Set master representation to binary labelmap
-  segmentationNode->GetSegmentation()->SetMasterRepresentationName(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
 
   vtkSmartPointer<vtkImageThreshold> threshold = vtkSmartPointer<vtkImageThreshold>::New();
   threshold->SetInputConnection(labelmapNode->GetImageDataConnection());
@@ -1125,15 +1113,6 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkOrie
     return false;
     }
 
-  // If master representation is not binary labelmap, then cannot add
-  // (this should have been done by the UI classes, notifying the users about hazards of changing the master representation)
-  if (segmentationNode->GetSegmentation()->GetMasterRepresentationName() != vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName())
-    {
-    vtkErrorWithObjectMacro(segmentationNode, "ImportLabelmapToSegmentationNode: Master representation of the target segmentation node "
-      << (segmentationNode->GetName()?segmentationNode->GetName():"NULL") << " is not binary labelmap!");
-    return false;
-    }
-
   // Note: Splitting code ported from EditorLib/HelperBox.py:split
 
   // Split labelmap node into per-label image data
@@ -1143,16 +1122,13 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkOrie
 
   int segmentationNodeWasModified = segmentationNode->StartModify();
 
-  // Set master representation to binary labelmap
-  segmentationNode->GetSegmentation()->SetMasterRepresentationName(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
-
   vtkSmartPointer<vtkImageThreshold> threshold = vtkSmartPointer<vtkImageThreshold>::New();
   threshold->SetInputData(labelmapImage);
   threshold->SetInValue(1);
   threshold->SetOutValue(0);
   threshold->ReplaceInOn();
   threshold->ReplaceOutOn();
-  threshold->SetOutputScalarType(labelmapImage->GetScalarType());
+  threshold->SetOutputScalarType(VTK_UNSIGNED_CHAR);
 
   for (int labelIndex = 0; labelIndex < labelValues->GetNumberOfValues(); ++labelIndex)
   {
