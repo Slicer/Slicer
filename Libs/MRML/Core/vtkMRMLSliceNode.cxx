@@ -1542,11 +1542,13 @@ void vtkMRMLSliceNode::JumpSliceByCentering(double r, double a, double s)
 
   double sliceSpacing = sqrt(vtkMath::Distance2BetweenPoints(p2ras, p1ras));
 
-  if ( r != sr || a != sa || s != ss )
+  if (r != sr || a != sa || s != ss
+    || this->XYZOrigin[0] != 0 || this->XYZOrigin[1] != 0 || this->XYZOrigin[2] != 0)
     {
     sliceToRAS->SetElement( 0, 3, r - this->ActiveSlice*sliceSpacing*sliceToRAS->GetElement(0,2) );
     sliceToRAS->SetElement( 1, 3, a - this->ActiveSlice*sliceSpacing*sliceToRAS->GetElement(1,2));
     sliceToRAS->SetElement( 2, 3, s - this->ActiveSlice*sliceSpacing*sliceToRAS->GetElement(2,2) );
+    this->SetSliceOrigin(0, 0, 0); // move sliceToRAS origin into the center of the slice view
     this->UpdateMatrices();
     }
 }
