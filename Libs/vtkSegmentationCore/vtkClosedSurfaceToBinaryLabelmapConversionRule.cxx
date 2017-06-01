@@ -53,9 +53,17 @@ vtkClosedSurfaceToBinaryLabelmapConversionRule::vtkClosedSurfaceToBinaryLabelmap
   : UseOutputImageDataGeometry(false)
 {
   // Reference image geometry parameter
-  this->ConversionParameters[vtkSegmentationConverter::GetReferenceImageGeometryParameterName()] = std::make_pair("", "Image geometry description string determining the geometry of the labelmap that is created in course of conversion. Can be copied from a volume, using the button.");
+  this->ConversionParameters[vtkSegmentationConverter::GetReferenceImageGeometryParameterName()] = std::make_pair("",
+    "Image geometry description string determining the geometry of the labelmap that is created in course of conversion."
+    " Can be copied from a volume, using the button.");
   // Oversampling factor parameter
-  this->ConversionParameters[GetOversamplingFactorParameterName()] = std::make_pair("1", "Determines the oversampling of the reference image geometry. If it's a number, then all segments are oversampled with the same value (value of 1 means no oversampling). If it has the value \"A\", then automatic oversampling is calculated.");
+  this->ConversionParameters[GetOversamplingFactorParameterName()] = std::make_pair("1",
+    "Determines the oversampling of the reference image geometry. If it's a number, then all segments are oversampled"
+    " with the same value (value of 1 means no oversampling). If it has the value \"A\", then automatic oversampling is calculated.");
+  // Crop to reference geometry parameter
+  this->ConversionParameters[GetCropToReferenceImageGeometryParameterName()] = std::make_pair("0",
+    "Crop the model to the extent of reference geometry. 0 (default) = created labelmap will contain the entire model."
+    " 1 = created labelmap extent will be within reference image extent.");
 }
 
 //----------------------------------------------------------------------------
@@ -290,6 +298,18 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::CalculateOutputGeometry(vtk
   // Apply oversampling if needed
   vtkCalculateOversamplingFactor::ApplyOversamplingOnImageGeometry(geometryImageData, oversamplingFactor);
 
+  int cropToReferenceImageGeometry = 0;
+    {
+    std::string cropToReferenceImageGeometryString = this->ConversionParameters[GetCropToReferenceImageGeometryParameterName()].first;
+    std::stringstream ss;
+    ss << cropToReferenceImageGeometryString;
+    ss >> cropToReferenceImageGeometry;
+    if (ss.fail())
+      {
+      cropToReferenceImageGeometry = 0;
+      }
+    }
+
   // We need to apply inverse of direction matrix to the input poly data
   // so that we can expand the image in its IJK directions
   vtkSmartPointer<vtkMatrix4x4> geometryImageToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
@@ -299,18 +319,18 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::CalculateOutputGeometry(vtk
   inverseImageGeometryTransform->Inverse();
 
   vtkSmartPointer<vtkTransformPolyDataFilter> transformPolyDataFilter =
-  vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+    vtkSmartPointer<vtkTransformPolyDataFilter>::New();
   transformPolyDataFilter->SetInputData(closedSurfacePolyData);
   transformPolyDataFilter->SetTransform(inverseImageGeometryTransform);
   transformPolyDataFilter->Update();
   vtkPolyData* transformedClosedSurfacePolyData = transformPolyDataFilter->GetOutput();
 
   // Compute input closed surface poly data bounds
-  double surfaceBounds[6] = {0,0,0,0,0,0};
+  double surfaceBounds[6] = { 0, 0, 0, 0, 0, 0 };
   transformedClosedSurfacePolyData->GetPoints()->GetBounds(surfaceBounds);
 
   // Expand floating point bounds to extent integers
-  int surfaceExtent[6] = {0,-1,0,-1,0,-1};
+  int surfaceExtent[6] = { 0, -1, 0, -1, 0, -1 };
   surfaceExtent[0] = (int)floor(surfaceBounds[0]);
   surfaceExtent[1] = (int)ceil(surfaceBounds[1]);
   surfaceExtent[2] = (int)floor(surfaceBounds[2]);
@@ -318,8 +338,24 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::CalculateOutputGeometry(vtk
   surfaceExtent[4] = (int)floor(surfaceBounds[4]);
   surfaceExtent[5] = (int)ceil(surfaceBounds[5]);
 
-  // Set effective extent back to the image (less memory needed if the extent only covers the non-zero region)
-  geometryImageData->SetExtent(surfaceExtent);
+  if (cropToReferenceImageGeometry)
+    {
+    // Set effective extent to be maximum as large as the reference extent (less memory needed if the extent only covers the non-zero region)
+    int referenceExtent[6] = { 0, -1, 0, -1, 0, -1 };
+    geometryImageData->GetExtent(referenceExtent);
+    if (surfaceExtent[0] > referenceExtent[0]) { referenceExtent[0] = surfaceExtent[0]; }
+    if (surfaceExtent[1] < referenceExtent[1]) { referenceExtent[1] = surfaceExtent[1]; }
+    if (surfaceExtent[2] > referenceExtent[2]) { referenceExtent[2] = surfaceExtent[2]; }
+    if (surfaceExtent[3] < referenceExtent[3]) { referenceExtent[3] = surfaceExtent[3]; }
+    if (surfaceExtent[4] > referenceExtent[4]) { referenceExtent[4] = surfaceExtent[4]; }
+    if (surfaceExtent[5] < referenceExtent[5]) { referenceExtent[5] = surfaceExtent[5]; }
+    geometryImageData->SetExtent(referenceExtent);
+    }
+  else
+    {
+    // Set effective extent to be just large enough to contain the full surface
+    geometryImageData->SetExtent(surfaceExtent);
+    }
   geometryImageData->AllocateScalars(geometryImageData->GetScalarType(), geometryImageData->GetNumberOfScalarComponents());
 
   return true;

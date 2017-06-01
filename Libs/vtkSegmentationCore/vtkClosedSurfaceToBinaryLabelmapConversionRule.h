@@ -42,6 +42,7 @@ public:
   /// are oversampled with the same value (value of 1 means no oversampling). If it has the value "A",
   /// then automatic oversampling is calculated.
   static const std::string GetOversamplingFactorParameterName() { return "Oversampling factor"; };
+  static const std::string GetCropToReferenceImageGeometryParameterName() { return "Crop to reference image geometry"; };
 
 public:
   static vtkClosedSurfaceToBinaryLabelmapConversionRule* New();
