@@ -35,7 +35,7 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
-    "${git_protocol}://git.dcmtk.org/dcmtk"
+    "${git_protocol}://github.com/commontk/dcmtk"
     QUIET
     )
 
