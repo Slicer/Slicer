@@ -65,6 +65,10 @@ protected:
   /// NOTE: Subclasses should implement this method
   virtual int WriteDataInternal(vtkMRMLNode *refNode);
 
+  bool ReadScalarOverlay(const std::string& fullName, vtkMRMLModelNode* modelNode);
+  bool ReadScalarOverlayAnnot(const std::string& fullName, vtkMRMLModelNode* modelNode);
+  bool ReadScalarOverlayVolume(const std::string& fullName, vtkMRMLModelNode* modelNode);
+
   std::string GetColorNodeIDFromExtension(const std::string& extension);
   std::string GetColorNodeIDFromType(int type);
 };
