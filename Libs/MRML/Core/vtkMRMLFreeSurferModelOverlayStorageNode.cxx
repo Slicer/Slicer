@@ -561,7 +561,6 @@ void vtkMRMLFreeSurferModelOverlayStorageNode::InitializeSupportedReadFileTypes(
   this->SupportedReadFileTypes->InsertNextValue("FreeSurfer Avg. Curvature (.avg_curv)");
   this->SupportedReadFileTypes->InsertNextValue("FreeSurfer Sulcus (.sulc)");
   this->SupportedReadFileTypes->InsertNextValue("FreeSurfer Area (.area)");
-  this->SupportedReadFileTypes->InsertNextValue("FreeSurfer Scalar Overlay (.*)");
 
   this->SupportedReadFileTypes->InsertNextValue("FreeSurfer Annotation (.annot)");
 
