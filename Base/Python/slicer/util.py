@@ -151,8 +151,10 @@ def pythonShell(verbose = True):
 
 def showStatusMessage(message, duration = 0):
   mw = mainWindow(verbose=False)
-  if mw:
-    mw.statusBar().showMessage(message, duration)
+  if not mw or not mw.statusBar:
+    return False
+  mw.statusBar().showMessage(message, duration)
+  return True
 
 def findChildren(widget=None, name="", text="", title="", className=""):
   """ Return a list of child widgets that meet all the given criteria.

@@ -171,6 +171,11 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
     self.layout.addStretch(1)
 
   def logMessage(self,message):
+    # Show message in status bar
+    doc = qt.QTextDocument()
+    doc.setHtml(message)
+    slicer.util.showStatusMessage(doc.toPlainText(),3000)
+    # Show message in log window at the bottom of the module widget
     self.log.insertHtml(message)
     self.log.insertPlainText('\n')
     self.log.ensureCursorVisible()
@@ -198,12 +203,12 @@ class SampleDataLogic:
   def registerBuiltInSampleDataSources(self):
     """Fills in the pre-define sample data sources"""
     sourceArguments = (
-        ('MRHead', 'http://www.slicer.org/w/images/4/43/MR-head.nrrd', 'MR-head.nrrd', 'MRHead'),
-        ('CTChest', 'http://www.slicer.org/w/images/3/31/CT-chest.nrrd', 'CT-chest.nrrd', 'CTChest'),
-        ('CTACardio', 'http://www.slicer.org/w/images/0/00/CTA-cardio.nrrd', 'CTA-cardio.nrrd', 'CTACardio'),
-        ('DTIBrain', 'http://www.slicer.org/w/images/0/01/DTI-Brain.nrrd', 'DTI-Brain.nrrd', 'DTIBrain'),
-        ('MRBrainTumor1', 'http://www.slicer.org/w/images/5/59/RegLib_C01_1.nrrd', 'RegLib_C01_1.nrrd', 'MRBrainTumor1'),
-        ('MRBrainTumor2', 'http://www.slicer.org/w/images/e/e3/RegLib_C01_2.nrrd', 'RegLib_C01_2.nrrd', 'MRBrainTumor2'),
+        ('MRHead', 'http://slicer.kitware.com/midas3/download/item/292308/MR-head.nrrd', 'MR-head.nrrd', 'MRHead'),
+        ('CTChest', 'http://slicer.kitware.com/midas3/download/item/292307/CT-chest.nrrd', 'CT-chest.nrrd', 'CTChest'),
+        ('CTACardio', 'http://slicer.kitware.com/midas3/download/item/292309/CTA-cardio.nrrd', 'CTA-cardio.nrrd', 'CTACardio'),
+        ('DTIBrain', 'http://slicer.kitware.com/midas3/download/item/292310/DTI-brain.nrrd', 'DTI-Brain.nrrd', 'DTIBrain'),
+        ('MRBrainTumor1', 'http://slicer.kitware.com/midas3/download/item/292312/RegLib_C01_1.nrrd', 'RegLib_C01_1.nrrd', 'MRBrainTumor1'),
+        ('MRBrainTumor2', 'http://slicer.kitware.com/midas3/download/item/292313/RegLib_C01_2.nrrd', 'RegLib_C01_2.nrrd', 'MRBrainTumor2'),
         ('BaselineVolume', 'http://slicer.kitware.com/midas3/download/?items=2009,1', 'BaselineVolume.nrrd', 'BaselineVolume'),
         ('DTIVolume',
           ('http://slicer.kitware.com/midas3/download/?items=2011,1',
