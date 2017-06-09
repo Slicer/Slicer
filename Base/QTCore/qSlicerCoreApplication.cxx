@@ -810,7 +810,10 @@ void qSlicerCoreApplication::handleCommandLineArguments()
         qSlicerCoreIOManager* ioManager =this->coreIOManager();
         qSlicerIO::IOFileType fileType = ioManager->fileType(fileName);
         qSlicerIO::IOProperties fileProperties;
-        fileProperties.insert("fileName", fileName);
+        // It is important to use absolute file path, as in the scene relative path
+        // always relative to the .mrml scene file (while the user specified the path
+        // relative to the current working directory)
+        fileProperties.insert("fileName", file.absoluteFilePath());
         ioManager->loadNodes(fileType, fileProperties);
         }
       }
