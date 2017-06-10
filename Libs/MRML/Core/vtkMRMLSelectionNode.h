@@ -96,7 +96,7 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   /// Use SetReferenceActivePlaceNodeClassName if you need the mouse mode tool
   /// bar to update.
   /// \sa GetActivePlaceNodeClassName, SetReferenceActivePlaceNodeClassName
-  void SetActivePlaceNodeClassName(const char* className);
+  vtkSetStringMacro(ActivePlaceNodeClassName);
   /// Set the active placeNode class name and fire the event
   /// ActivePlaceNodeClassNameChangedEvent so that the Mouse mode tool bar
   /// will update.

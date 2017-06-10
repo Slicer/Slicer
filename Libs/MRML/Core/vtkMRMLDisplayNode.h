@@ -416,7 +416,7 @@ public:
 
   /// Set the active scalar name of the display node.
   /// \sa ActiveScalarName, GetActiveScalarName()
-  virtual void SetActiveScalarName(const char *scalarName);
+  vtkSetStringMacro(ActiveScalarName);
   /// Return the name of the currently active scalar field for this model.
   /// \sa ActiveScalarName, SetActiveScalarName()
   vtkGetStringMacro(ActiveScalarName);

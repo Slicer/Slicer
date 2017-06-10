@@ -29,7 +29,6 @@ vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, SecondaryVolumeID);
 vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActiveLabelVolumeID);
 vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActiveFiducialListID);
 vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActivePlaceNodeID);
-vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActivePlaceNodeClassName);
 vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActiveROIListID);
 vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActiveCameraID);
 vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActiveTableID);
@@ -94,11 +93,7 @@ vtkMRMLSelectionNode::~vtkMRMLSelectionNode()
     delete [] this->ActivePlaceNodeID;
     this->ActivePlaceNodeID = NULL;
     }
-  if (this->ActivePlaceNodeClassName)
-    {
-    delete [] this->ActivePlaceNodeClassName;
-    this->ActivePlaceNodeClassName = NULL;
-    }
+  this->SetActivePlaceNodeClassName(NULL);
   if (this->ActiveROIListID)
     {
     delete [] this->ActiveROIListID;
@@ -215,10 +210,6 @@ void vtkMRMLSelectionNode::UpdateReferenceID(const char *oldID, const char *newI
     {
     this->SetActivePlaceNodeID(newID);
     }
-  if (this->ActivePlaceNodeClassName && !strcmp(oldID, this->ActivePlaceNodeClassName))
-    {
-    this->SetActivePlaceNodeClassName(newID);
-    }
   if ( this->ActiveCameraID && !strcmp (oldID, this->ActiveCameraID ))
     {
     this->SetActiveCameraID (newID);
@@ -261,10 +252,6 @@ void vtkMRMLSelectionNode::UpdateReferences()
   if (this->ActivePlaceNodeID != NULL && this->Scene->GetNodeByID(this->ActivePlaceNodeID) == NULL)
     {
     this->SetActivePlaceNodeID(NULL);
-    }
-  if (this->ActivePlaceNodeClassName != NULL && this->Scene->GetNodeByID(this->ActivePlaceNodeClassName) == NULL)
-    {
-    this->SetActivePlaceNodeClassName(NULL);
     }
   if (this->ActiveViewID != NULL && this->Scene->GetNodeByID(this->ActiveViewID) == NULL)
     {
@@ -327,7 +314,6 @@ void vtkMRMLSelectionNode::ReadXMLAttributes(const char** atts)
     if (!strcmp(attName, "activePlaceNodeClassName"))
       {
       this->SetActivePlaceNodeClassName(attValue);
-      //this->Scene->AddReferencedNodeID(this->ActivePlaceNodeClassName, this);
       }
     if (!strcmp (attName, "activeCameraID"))
       {

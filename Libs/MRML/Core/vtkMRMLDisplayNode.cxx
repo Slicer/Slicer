@@ -32,7 +32,6 @@ Version:   $Revision: 1.3 $
 
 //----------------------------------------------------------------------------
 vtkCxxSetReferenceStringMacro(vtkMRMLDisplayNode, ColorNodeID);
-vtkCxxSetReferenceStringMacro(vtkMRMLDisplayNode, ActiveScalarName);
 
 //----------------------------------------------------------------------------
 vtkMRMLDisplayNode::vtkMRMLDisplayNode()
