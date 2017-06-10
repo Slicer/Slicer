@@ -321,6 +321,7 @@ class vtkSlicerCLIModuleLogic::vtkInternal
 public:
   ModuleDescription DefaultModuleDescription;
   int DeleteTemporaryFiles;
+  int AllowInMemoryTransfer;
 
   int RedirectModuleStreams;
 
@@ -422,6 +423,7 @@ vtkSlicerCLIModuleLogic::vtkSlicerCLIModuleLogic()
 
   this->Internal->ProcessesKillLock = itk::MutexLock::New();
   this->Internal->DeleteTemporaryFiles = 1;
+  this->Internal->AllowInMemoryTransfer = 1;
   this->Internal->RedirectModuleStreams = 1;
   this->Internal->RescheduleCallback =
     vtkSmartPointer<vtkSlicerCLIRescheduleCallback>::New();
@@ -507,6 +509,22 @@ void vtkSlicerCLIModuleLogic::SetDeleteTemporaryFiles(int value)
 int vtkSlicerCLIModuleLogic::GetDeleteTemporaryFiles() const
 {
   return this->Internal->DeleteTemporaryFiles;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerCLIModuleLogic::SetAllowInMemoryTransfer(int value)
+{
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting AllowInMemoryTransfer to " << value);
+  if (this->Internal->AllowInMemoryTransfer != value)
+    {
+    this->Internal->AllowInMemoryTransfer = value;
+    }
+}
+
+//----------------------------------------------------------------------------
+int vtkSlicerCLIModuleLogic::GetAllowInMemoryTransfer() const
+{
+  return this->Internal->AllowInMemoryTransfer;
 }
 
 //----------------------------------------------------------------------------
@@ -658,7 +676,9 @@ vtkSlicerCLIModuleLogic
 
   if (tag == "image")
     {
-    if ( commandType == CommandLineModule || type == "dynamic-contrast-enhanced")
+    if ( commandType == CommandLineModule
+         || type == "dynamic-contrast-enhanced"
+         || this->GetAllowInMemoryTransfer() == 0)
       {
       // If running an executable
 
@@ -1155,7 +1175,8 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
       //std::cerr << nd->GetName() << " is " << nd->GetClassName() << std::endl;
 
       // Check if we can transfer the datatype using a direct memory transfer
-      if (std::find(MemoryTransferPossible.begin(), MemoryTransferPossible.end(),
+      if ((this->GetAllowInMemoryTransfer() == 0) ||
+          std::find(MemoryTransferPossible.begin(), MemoryTransferPossible.end(),
                     nd->GetClassName()) == MemoryTransferPossible.end())
         {
         // Cannot use a memory transfer, use a StorageNode

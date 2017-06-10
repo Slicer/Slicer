@@ -76,6 +76,10 @@ public:
   void SetDeleteTemporaryFiles(int value);
   int GetDeleteTemporaryFiles() const;
 
+  // Control use of in-memory data transfer by this specific CLI.
+  void SetAllowInMemoryTransfer(int value);
+  int GetAllowInMemoryTransfer() const;
+
   /// For debugging, control redirection of cout and cerr
   virtual void RedirectModuleStreamsOn();
   virtual void RedirectModuleStreamsOff();
