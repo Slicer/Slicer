@@ -74,6 +74,9 @@ public:
   /// Method to set unit for each axis
   void SetAxisUnit(unsigned int axis, const char* unit);
 
+  /// Utility function to return image as a Nrrd*
+  void* MakeNRRD();
+
 protected:
   vtkNRRDWriter();
   ~vtkNRRDWriter();

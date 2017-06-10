@@ -172,22 +172,9 @@ int vtkNRRDWriter::VTKToNrrdPixelType( const int vtkPixelType )
     }
   }
 
-
-
-//----------------------------------------------------------------------------
-// Writes all the data from the input.
-void vtkNRRDWriter::WriteData()
-{
-  this->WriteErrorOff();
-  if (this->GetFileName() == NULL)
-    {
-    vtkErrorMacro("FileName has not been set. Cannot save file");
-    this->WriteErrorOn();
-    return;
-    }
-
+void* vtkNRRDWriter::MakeNRRD()
+  {
   Nrrd *nrrd = nrrdNew();
-  NrrdIoState *nio = nrrdIoStateNew();
   int kind[NRRD_DIM_MAX];
   size_t size[NRRD_DIM_MAX];
   unsigned int nrrdDim, baseDim, spaceDim;
@@ -243,9 +230,8 @@ void vtkNRRDWriter::WriteData()
                       << this->GetFileName() << ":\n" << err);
     // Free the nrrd struct but don't touch nrrd->data
     nrrd = nrrdNix(nrrd);
-    nio = nrrdIoStateNix(nio);
     this->WriteErrorOn();
-    return;
+    return NULL;
     }
   nrrdAxisInfoSet_nva(nrrd, nrrdAxisInfoKind, kind);
   nrrdAxisInfoSet_nva(nrrd, nrrdAxisInfoSpaceDirection, spaceDir);
@@ -340,6 +326,28 @@ void vtkNRRDWriter::WriteData()
         }
       }
     }
+  return nrrd;
+  }
+
+//----------------------------------------------------------------------------
+// Writes all the data from the input.
+void vtkNRRDWriter::WriteData()
+{
+  this->WriteErrorOff();
+  if (this->GetFileName() == NULL)
+    {
+    vtkErrorMacro("FileName has not been set. Cannot save file");
+    this->WriteErrorOn();
+    return;
+    }
+
+  Nrrd* nrrd = (Nrrd*)this->MakeNRRD();
+  if (nrrd == NULL)
+    {
+    return;
+    }
+
+  NrrdIoState *nio = nrrdIoStateNew();
 
   // set encoding for data: compressed (raw), (uncompressed) raw, or ascii
   if ( this->GetUseCompression() && nrrdEncodingGzip->available() )
