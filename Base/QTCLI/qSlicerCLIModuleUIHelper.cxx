@@ -1068,6 +1068,8 @@ QWidget* qSlicerCLIModuleUIHelper::createTagWidget(const ModuleParameter& module
     {
     QString description = QString::fromStdString(moduleParameter.GetDescription());
     widget->setToolTip(description);
+    QString widgetName = QString::fromStdString(moduleParameter.GetName());
+    widget->setObjectName(widgetName);
     }
 
   return widget;
