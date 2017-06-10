@@ -46,6 +46,7 @@
 // VTK includes
 #include <vtkCollection.h>
 #include <vtkNew.h>
+#include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 
 //--------------------------------------------------------------------------
@@ -409,6 +410,11 @@ void qMRMLThreeDView::resetFocalPoint()
     // Inform the displayable manager that the view is reset, so it can
     // update the box/labels bounds.
     d->MRMLViewNode->InvokeEvent(vtkMRMLViewNode::ResetFocalPointRequestedEvent);
+    }
+
+  if (this->renderer())
+    {
+    this->renderer()->ResetCameraClippingRange();
     }
 }
 
