@@ -2088,6 +2088,7 @@ void qMRMLSliceControllerWidget::rotateSliceToBackground()
       {
       vtkMRMLVolumeNode* backgroundNode = nodeLogic->GetLayerVolumeNode(0);
       node->RotateToVolumePlane(backgroundNode);
+      nodeLogic->SnapSliceOffsetToIJK();
       }
     }
 }
