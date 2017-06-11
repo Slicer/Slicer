@@ -1225,7 +1225,7 @@ void qMRMLSegmentEditorWidget::updateWidgetFromSegmentationNode()
       if (selectionNode)
         {
         selectionNode->SetActiveLabelVolumeID(NULL);
-        qSlicerCoreApplication::application()->applicationLogic()->PropagateVolumeSelection();
+        qSlicerCoreApplication::application()->applicationLogic()->PropagateVolumeSelection(vtkMRMLApplicationLogic::LabelLayer, 0);
         }
       else
         {
@@ -1722,6 +1722,7 @@ void qMRMLSegmentEditorWidget::onMasterVolumeNodeChanged(vtkMRMLNode* node)
         }
       selectionNode->SetActiveVolumeID(volumeNode->GetID());
       selectionNode->SetSecondaryVolumeID(NULL); // Hide foreground volume
+      selectionNode->SetActiveLabelVolumeID(NULL); // Hide label volume
       qSlicerCoreApplication::application()->applicationLogic()->PropagateVolumeSelection();
       }
 
