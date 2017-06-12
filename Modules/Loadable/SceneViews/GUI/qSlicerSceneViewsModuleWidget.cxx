@@ -193,7 +193,8 @@ QString qSlicerSceneViewsModuleWidgetPrivate::htmlFromSceneView(vtkMRMLSceneView
   html += "   <a href=\"Edit " + id + "\">\n";
   if (sceneView->GetScreenShot())
     {
-    html += "    <img src=\"file://" + thumbnailPath + "\" ";
+    QUrl fileUrl = QUrl::fromLocalFile(thumbnailPath);
+    html += "    <img src=\"" + fileUrl.toString() + "\" ";
     html += "style=\"visibility:visible; max-width:200; max-height:none; ";
     html += "display:block; image-rendering:auto; width:auto; height:auto; ";
     html += "margin-left:10px; margin-top:0px; opacity:1;\">\n";
