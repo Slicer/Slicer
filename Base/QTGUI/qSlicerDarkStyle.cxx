@@ -56,7 +56,12 @@ QPalette qSlicerDarkStyle::standardPalette()const
   QBrush windowBrush(windowGradient);
   windowBrush.setColor(QColor("#424244"));
   palette.setBrush(QPalette::Window, windowBrush);
-  palette.setColor(QPalette::Disabled, QPalette::Window, "#222224");
+  windowGradient.setColorAt(0., QColor("#222224"));
+  windowGradient.setColorAt(1., QColor("#222224"));
+  windowBrush = QBrush(windowGradient);
+  windowBrush.setColor(QColor("#222224"));
+  palette.setBrush(QPalette::Disabled, QPalette::Window, windowBrush);
+
   palette.setColor(QPalette::Base, "#525254");
   palette.setColor(QPalette::Disabled, QPalette::Base, "#323234");
 
