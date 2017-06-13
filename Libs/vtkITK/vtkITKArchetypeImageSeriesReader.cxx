@@ -37,6 +37,7 @@
 #include <itkTimeProbe.h>
 
 // STD includes
+#include <algorithm>
 #include <vector>
 
 #include "itkArchetypeSeriesFileNames.h"
@@ -1046,6 +1047,14 @@ void vtkITKArchetypeImageSeriesReader::GroupFiles ( int idxSeriesInstanceUID,
   return;
 }
 
+std::string vtkITKArchetypeImageSeriesReader::GetMetaDataWithoutSpaces(const itk::MetaDataDictionary &dict, const std::string& tag)
+{
+  std::string tagValue;
+  itk::ExposeMetaData<std::string>(dict, tag, tagValue);
+  tagValue.erase(std::remove_if(tagValue.begin(), tagValue.end(), isspace), tagValue.end());
+  return tagValue;
+}
+
 //----------------------------------------------------------------------------
 void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
 {
@@ -1160,9 +1169,13 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
     itk::MetaDataDictionary &dict = gdcmIO->GetMetaDataDictionary();
     std::string tagValue;
 
+    // Use vtkITKArchetypeImageSeriesReader::GetMetaDataWithoutSpaces to remove extra spaces
+    // from the DICOM tag, because extra spaces were found in some DICOM file before/after the
+    // multi-value separator backslashes.
+
     // series instance UID
-    tagValue.clear(); itk::ExposeMetaData<std::string>( dict, "0020|000e", tagValue );
-    if ( tagValue.length() > 0 )
+    tagValue = vtkITKArchetypeImageSeriesReader::GetMetaDataWithoutSpaces(dict, "0020|000e");
+    if (!tagValue.empty())
     {
       int idx = InsertSeriesInstanceUIDs( tagValue.c_str() );
       this->IndexSeriesInstanceUIDs[f] = idx;
@@ -1173,8 +1186,8 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
     }
 
     // content time
-    tagValue.clear(); itk::ExposeMetaData<std::string>( dict, "0008|0033", tagValue );
-    if ( tagValue.length() > 0 )
+    tagValue = vtkITKArchetypeImageSeriesReader::GetMetaDataWithoutSpaces(dict, "0008|0033");
+    if (!tagValue.empty())
     {
       int idx = InsertContentTime( tagValue.c_str() );
       this->IndexContentTime[f] = idx;
@@ -1185,8 +1198,8 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
     }
 
     // trigger time
-    tagValue.clear(); itk::ExposeMetaData<std::string>( dict, "0018|1060", tagValue );
-    if ( tagValue.length() > 0 )
+    tagValue = vtkITKArchetypeImageSeriesReader::GetMetaDataWithoutSpaces(dict, "0018|1060");
+    if (!tagValue.empty())
     {
       int idx = InsertTriggerTime( tagValue.c_str() );
       this->IndexTriggerTime[f] = idx;
@@ -1197,8 +1210,8 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
     }
 
     // echo numbers
-    tagValue.clear(); itk::ExposeMetaData<std::string>( dict, "0018|0086", tagValue );
-    if ( tagValue.length() > 0 )
+    tagValue = vtkITKArchetypeImageSeriesReader::GetMetaDataWithoutSpaces(dict, "0018|0086");
+    if (!tagValue.empty())
     {
       int idx = InsertEchoNumbers( tagValue.c_str() );
       this->IndexEchoNumbers[f] = idx;
@@ -1209,10 +1222,10 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
     }
 
     // diffision gradient orientation
-    tagValue.clear(); itk::ExposeMetaData<std::string>( dict, "0010|9089", tagValue );
-    if ( tagValue.length() > 0 )
+    tagValue = vtkITKArchetypeImageSeriesReader::GetMetaDataWithoutSpaces(dict, "0010|9089");
+    if (!tagValue.empty())
     {
-      float a[3];
+      float a[3] = { -1 };
       sscanf( tagValue.c_str(), "%f\\%f\\%f", a, a+1, a+2 );
       int idx = InsertDiffusionGradientOrientation( a );
       this->IndexDiffusionGradientOrientation[f] = idx;
@@ -1223,10 +1236,10 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
     }
 
     // slice location
-    tagValue.clear(); itk::ExposeMetaData<std::string>( dict, "0020|1041", tagValue );
-    if ( tagValue.length() > 0 )
+    tagValue = vtkITKArchetypeImageSeriesReader::GetMetaDataWithoutSpaces(dict, "0020|1041");
+    if (!tagValue.empty())
     {
-      float a;
+      float a = -1;
       sscanf( tagValue.c_str(), "%f", &a );
       int idx = InsertSliceLocation( a );
       this->IndexSliceLocation[f] = idx;
@@ -1237,10 +1250,10 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
     }
 
     // image orientation patient
-    tagValue.clear(); itk::ExposeMetaData<std::string>( dict, "0020|0037", tagValue );
-    if ( tagValue.length() > 0 )
+    tagValue = vtkITKArchetypeImageSeriesReader::GetMetaDataWithoutSpaces(dict, "0020|0037");
+    if (!tagValue.empty())
     {
-      float a[6];
+      float a[6] = { -1 };
       sscanf( tagValue.c_str(), "%f\\%f\\%f\\%f\\%f\\%f", a, a+1, a+2, a+3, a+4, a+5 );
       int idx = InsertImageOrientationPatient( a );
       this->IndexImageOrientationPatient[f] = idx;
@@ -1250,13 +1263,13 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
       this->IndexImageOrientationPatient[f] = -1;
     }
     // image position patient
-    tagValue.clear(); itk::ExposeMetaData<std::string>( dict, "0020|0032", tagValue );
-    if( tagValue.length() > 0 )
+    tagValue = vtkITKArchetypeImageSeriesReader::GetMetaDataWithoutSpaces(dict, "0020|0032");
+    if (!tagValue.empty())
     {
-        float a[3];
-        sscanf( tagValue.c_str(), "%f\\%f\\%f", a, a+1, a+2 );
-        int idx = InsertImagePositionPatient( a );
-        this->IndexImagePositionPatient[f] = idx;
+      float a[3] = { -1 };
+      sscanf( tagValue.c_str(), "%f\\%f\\%f", a, a+1, a+2 );
+      int idx = InsertImagePositionPatient( a );
+      this->IndexImagePositionPatient[f] = idx;
     }
     else
     {

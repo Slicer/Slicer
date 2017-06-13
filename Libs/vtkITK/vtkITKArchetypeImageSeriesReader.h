@@ -786,6 +786,9 @@ protected:
   vtkITKArchetypeImageSeriesReader();
   ~vtkITKArchetypeImageSeriesReader();
 
+  /// Get MetaData from dictionary, removing all whitespaces from the string.
+  static std::string GetMetaDataWithoutSpaces(const itk::MetaDataDictionary &dict, const std::string& tag);
+
   char *Archetype;
   int SingleFile;
   int UseOrientationFromFile;
