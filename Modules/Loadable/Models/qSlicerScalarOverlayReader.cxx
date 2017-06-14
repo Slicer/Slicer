@@ -105,26 +105,32 @@ bool qSlicerScalarOverlayReader::load(const IOProperties& properties)
   Q_ASSERT(properties.contains("fileName"));
   if (!properties.contains("modelNodeId"))
     {
+    qCritical() << Q_FUNC_INFO << " failed: missing fileName or modelNodeId property";
     return false;
     }
   QString fileName = properties["fileName"].toString();
+
   QString modelNodeId = properties["modelNodeId"].toString();
   vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(
       this->mrmlScene()->GetNodeByID(modelNodeId.toLatin1()));
-  Q_ASSERT(modelNode);
-
-  if (d->ModelsLogic == 0)
+  if (modelNode == NULL)
     {
+    qCritical() << Q_FUNC_INFO << " failed: modelNodeId refers to invalid/non-existent node";
     return false;
     }
 
-  vtkMRMLStorageNode* node =
-    d->ModelsLogic->AddScalar(fileName.toLatin1(), modelNode);
-  QStringList loadedNodes;
-  if (node)
+  if (d->ModelsLogic == 0)
     {
-    loadedNodes << QString(node->GetID());
+    qCritical() << Q_FUNC_INFO << " failed: invalid models module logic";
+    return false;
+    }
+
+  QStringList loadedNodes;
+  bool success = d->ModelsLogic->AddScalar(fileName.toLatin1(), modelNode);
+  if (success)
+    {
+    loadedNodes << QString(modelNodeId);
     }
   this->setLoadedNodes(loadedNodes);
-  return node != 0;
+  return success;
 }

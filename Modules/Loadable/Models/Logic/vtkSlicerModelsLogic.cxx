@@ -317,17 +317,16 @@ void vtkSlicerModelsLogic::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLStorageNode* vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRMLModelNode *modelNode)
+bool vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRMLModelNode *modelNode)
 {
   if (modelNode == NULL ||
       filename == NULL)
     {
     vtkErrorMacro("Model node or file name are null.");
-    return 0;
+    return false;
     }
 
-  vtkMRMLFreeSurferModelOverlayStorageNode *fsmoStorageNode = vtkMRMLFreeSurferModelOverlayStorageNode::New();
-  vtkMRMLStorageNode *storageNode = NULL;
+  vtkNew<vtkMRMLFreeSurferModelOverlayStorageNode> storageNode;
 
   // check for local or remote files
   int useURI = 0; //false ;
@@ -341,21 +340,36 @@ vtkMRMLStorageNode* vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRM
   const char *localFile;
   if (useURI)
     {
-    fsmoStorageNode->SetURI(filename);
+    storageNode->SetURI(filename);
     // add other overlay storage nodes here
     localFile = ((this->GetMRMLScene())->GetCacheManager())->GetFilenameFromURI(filename);
     }
   else
     {
-    fsmoStorageNode->SetFileName(filename);
+    storageNode->SetFileName(filename);
     // add other overlay storage nodes here
     localFile = filename;
     }
 
   // check to see if it can read it
-  if (fsmoStorageNode->SupportedFileType(localFile))
+  if (!storageNode->SupportedFileType(localFile))
     {
-    storageNode = fsmoStorageNode;
+    return false;
+    }
+
+  this->GetMRMLScene()->SaveStateForUndo();
+
+  this->GetMRMLScene()->AddNode(storageNode.GetPointer());
+
+  // now read, since all the id's are set up
+  vtkDebugMacro("AddScalar: calling read data now.");
+  if (this->GetDebug()) { storageNode->DebugOn(); }
+  int retval = storageNode->ReadData(modelNode);
+  if (retval == 0)
+    {
+    vtkErrorMacro("AddScalar: error adding scalar " << filename);
+    this->GetMRMLScene()->RemoveNode(storageNode.GetPointer());
+    return false;
     }
 
   // check to see if the model display node has a colour node already
@@ -374,48 +388,17 @@ vtkMRMLStorageNode* vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRM
       }
     }
 
-  if (storageNode != NULL)
+  //--- tag for informatics and invoke event for anyone who cares.
+  vtkTagTable *tt = modelNode->GetUserTagTable();
+  if ( tt != NULL )
     {
-    this->GetMRMLScene()->SaveStateForUndo();
-    this->GetMRMLScene()->AddNode(storageNode);
-    // now add this as another storage node on the model
-    modelNode->AddAndObserveStorageNodeID(storageNode->GetID());
-
-    // now read, since all the id's are set up
-    vtkDebugMacro("AddScalar: calling read data now.");
-    if (this->GetDebug()) { storageNode->DebugOn(); }
-    int retval = storageNode->ReadData(modelNode);
-    if (retval == 0)
-      {
-      vtkErrorMacro("AddScalar: error adding scalar " << filename);
-      this->GetMRMLScene()->RemoveNode(storageNode);
-      fsmoStorageNode->Delete();
-      return NULL;
-      }
-
-    //--- informatics
-    //--- tag for informatics and invoke event for anyone who cares.
-    vtkTagTable *tt = modelNode->GetUserTagTable();
-    if ( tt != NULL )
-      {
-      if ( storageNode->IsA("vtkMRMLFreeSurferModelOverlayStorageNode"))
-        {
-        modelNode->SetSlicerDataType ( "FreeSurferModelWithOverlay" );
-        tt = modelNode->GetUserTagTable();
-        tt->AddOrUpdateTag ( "SlicerDataType", modelNode->GetSlicerDataType() );
-        }
-      else if ( storageNode-IsA("vtkMRMLFreeSurferModelStorageNode"))
-        {
-        modelNode->SetSlicerDataType ( "FreeSurferModel" );
-        tt = modelNode->GetUserTagTable();
-        tt->AddOrUpdateTag ( "SlicerDataType", modelNode->GetSlicerDataType() );
-        }
-      }
-    //--- end informatics
+    modelNode->SetSlicerDataType ( "FreeSurferModelWithOverlay" );
+    tt = modelNode->GetUserTagTable();
+    tt->AddOrUpdateTag ( "SlicerDataType", modelNode->GetSlicerDataType() );
     }
-  fsmoStorageNode->Delete();
+  this->GetMRMLScene()->RemoveNode(storageNode.GetPointer());
 
-  return storageNode;
+  return true;
 }
 
 //----------------------------------------------------------------------------
