@@ -44,7 +44,7 @@ public:
   qSlicerDiffusionWeightedVolumeDisplayWidgetPrivate(qSlicerDiffusionWeightedVolumeDisplayWidget& object);
   ~qSlicerDiffusionWeightedVolumeDisplayWidgetPrivate();
   void init();
-  vtkMRMLDiffusionWeightedVolumeNode* VolumeNode;
+  vtkWeakPointer<vtkMRMLDiffusionWeightedVolumeNode> VolumeNode;
 };
 
 //-----------------------------------------------------------------------------
@@ -53,7 +53,6 @@ qSlicerDiffusionWeightedVolumeDisplayWidgetPrivate
   qSlicerDiffusionWeightedVolumeDisplayWidget& object)
   : q_ptr(&object)
 {
-  this->VolumeNode = 0;
 }
 
 //-----------------------------------------------------------------------------

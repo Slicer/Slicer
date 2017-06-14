@@ -45,7 +45,7 @@ public:
   ~qSlicerDiffusionTensorVolumeDisplayWidgetPrivate();
   void init();
   void glyphsOnSlicesDisplaySetEnabled(bool enabled);
-  vtkMRMLDiffusionTensorVolumeNode* VolumeNode;
+  vtkWeakPointer<vtkMRMLDiffusionTensorVolumeNode> VolumeNode;
 };
 
 //-----------------------------------------------------------------------------
@@ -54,7 +54,6 @@ qSlicerDiffusionTensorVolumeDisplayWidgetPrivate
   qSlicerDiffusionTensorVolumeDisplayWidget& object)
   : q_ptr(&object)
 {
-  this->VolumeNode = 0;
 }
 
 //-----------------------------------------------------------------------------

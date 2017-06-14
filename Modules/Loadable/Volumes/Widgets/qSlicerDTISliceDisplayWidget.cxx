@@ -45,7 +45,7 @@ public:
   ~qSlicerDTISliceDisplayWidgetPrivate();
   void init();
   void computeScalarBounds(double scalarBounds[2]);
-  vtkMRMLDiffusionTensorVolumeSliceDisplayNode* DisplayNode;
+  vtkWeakPointer<vtkMRMLDiffusionTensorVolumeSliceDisplayNode> DisplayNode;
 };
 
 //-----------------------------------------------------------------------------
@@ -54,7 +54,6 @@ qSlicerDTISliceDisplayWidgetPrivate
   qSlicerDTISliceDisplayWidget& object)
   : q_ptr(&object)
 {
-  this->DisplayNode = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -111,7 +110,7 @@ void qSlicerDTISliceDisplayWidgetPrivate::computeScalarBounds(double scalarBound
     }
   else
     {
-    vtkPolyData* glyphs = this->DisplayNode->GetOutputPolyData();
+    vtkPolyData* glyphs = this->DisplayNode ? this->DisplayNode->GetOutputPolyData() : 0;
     if (glyphs)
       {
       glyphs->GetScalarRange(scalarBounds);
@@ -294,7 +293,10 @@ void qSlicerDTISliceDisplayWidget::setColorMap(vtkMRMLNode* colorNode)
 void qSlicerDTISliceDisplayWidget::setOpacity(double opacity)
 {
   Q_D(qSlicerDTISliceDisplayWidget);
-  Q_ASSERT(d->DisplayNode);
+  if (!d->DisplayNode)
+    {
+    return;
+    }
   d->DisplayNode->SetOpacity(opacity);
 }
 
@@ -302,7 +304,10 @@ void qSlicerDTISliceDisplayWidget::setOpacity(double opacity)
 void qSlicerDTISliceDisplayWidget::setVisibility(bool visible)
 {
   Q_D(qSlicerDTISliceDisplayWidget);
-  Q_ASSERT(d->DisplayNode);
+  if (!d->DisplayNode)
+    {
+    return;
+    }
   d->DisplayNode->SetVisibility(visible);
 }
 
@@ -310,7 +315,10 @@ void qSlicerDTISliceDisplayWidget::setVisibility(bool visible)
 void qSlicerDTISliceDisplayWidget::setManualScalarRange(bool manual)
 {
   Q_D(qSlicerDTISliceDisplayWidget);
-  Q_ASSERT(d->DisplayNode);
+  if (!d->DisplayNode)
+    {
+    return;
+    }
   d->DisplayNode->SetAutoScalarRange(manual ? 0 : 1);
 }
 
@@ -318,14 +326,20 @@ void qSlicerDTISliceDisplayWidget::setManualScalarRange(bool manual)
 void qSlicerDTISliceDisplayWidget::setScalarRange(double min, double max)
 {
   Q_D(qSlicerDTISliceDisplayWidget);
-  Q_ASSERT(d->DisplayNode);
+  if (!d->DisplayNode)
+    {
+    return;
+    }
   d->DisplayNode->SetScalarRange(min, max);
 }
 
 // --------------------------------------------------------------------------
 void qSlicerDTISliceDisplayWidget::setGlyphGeometry(int index)
 {
-  Q_ASSERT(this->displayPropertiesNode());
+  if (!this->displayPropertiesNode())
+    {
+    return;
+    }
   // 0 = Lines
   // 1 = Tubes
   // 2 = Ellipsoids
@@ -336,14 +350,20 @@ void qSlicerDTISliceDisplayWidget::setGlyphGeometry(int index)
 // --------------------------------------------------------------------------
 void qSlicerDTISliceDisplayWidget::setGlyphScaleFactor(double scaleFactor)
 {
-  Q_ASSERT(this->displayPropertiesNode());
+  if (!this->displayPropertiesNode())
+    {
+    return;
+    }
   this->displayPropertiesNode()->SetGlyphScaleFactor(scaleFactor);
 }
 
 // --------------------------------------------------------------------------
 void qSlicerDTISliceDisplayWidget::setGlyphSpacing(double spacing)
 {
-  Q_ASSERT(this->displayPropertiesNode());
+  if (!this->displayPropertiesNode())
+    {
+    return;
+    }
   this->displayPropertiesNode()->SetLineGlyphResolution(spacing);
 }
 
@@ -351,7 +371,10 @@ void qSlicerDTISliceDisplayWidget::setGlyphSpacing(double spacing)
 void qSlicerDTISliceDisplayWidget::setGlyphEigenVector(int index)
 {
   Q_D(qSlicerDTISliceDisplayWidget);
-  Q_ASSERT(this->displayPropertiesNode());
+  if (!this->displayPropertiesNode())
+    {
+    return;
+    }
   int eigenVector = d->LineEigenVectorComboBox->itemData(index).toInt();
   this->displayPropertiesNode()->SetGlyphEigenvector(eigenVector);
 }
