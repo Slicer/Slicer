@@ -75,7 +75,14 @@ void qMRMLLinearTransformSlider::setTypeOfTransform(TransformType _typeOfTransfo
   d->TypeOfTransform = _typeOfTransform;
   if (this->isRotation())
     {
+    this->setUnitAwareProperties(0);
     this->setSuffix(QString::fromLatin1("\xb0")); // "degree" character
+    }
+  else
+    {
+    this->setUnitAwareProperties(
+      qMRMLSliderWidget::Precision | qMRMLSliderWidget::Prefix |
+      qMRMLSliderWidget::Scaling | qMRMLSliderWidget::Suffix);
     }
   this->onMRMLTransformNodeModified(d->MRMLTransformNode);
 }

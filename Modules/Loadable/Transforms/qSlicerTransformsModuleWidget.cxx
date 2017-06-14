@@ -160,6 +160,9 @@ void qSlicerTransformsModuleWidget::setup()
   // Set a static min/max range to let users freely enter values
   d->MatrixWidget->setRange(-1e10, 1e10);
 
+  d->RotationSliders->setSingleStep(0.1);
+  d->RotationSliders->setDecimals(1);
+
   // Transform nodes connection
   this->connect(d->TransformToolButton, SIGNAL(clicked()),
                 SLOT(transformSelectedNodes()));

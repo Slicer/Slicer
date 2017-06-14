@@ -58,12 +58,12 @@ qMRMLTransformSliders::qMRMLTransformSliders(QWidget* slidersParent)
   Q_D(qMRMLTransformSliders);
 
   d->setupUi(this);
-  d->LRSlider->spinBox()->setDecimalsOption(
-    ctkDoubleSpinBox::DecimalsByShortcuts | ctkDoubleSpinBox::DecimalsByKey);
-  d->PASlider->spinBox()->setDecimalsOption(
-    ctkDoubleSpinBox::DecimalsByShortcuts | ctkDoubleSpinBox::DecimalsByKey);
-  d->ISSlider->spinBox()->setDecimalsOption(
-    ctkDoubleSpinBox::DecimalsByShortcuts | ctkDoubleSpinBox::DecimalsByKey);
+
+  ctkDoubleSpinBox::DecimalsOptions decimalsOptions(ctkDoubleSpinBox::DecimalsByShortcuts | ctkDoubleSpinBox::DecimalsByKey |
+    ctkDoubleSpinBox::InsertDecimals | ctkDoubleSpinBox::DecimalsAsMin);
+  d->LRSlider->spinBox()->setDecimalsOption(decimalsOptions);
+  d->PASlider->spinBox()->setDecimalsOption(decimalsOptions);
+  d->ISSlider->spinBox()->setDecimalsOption(decimalsOptions);
   d->LRSlider->setSynchronizeSiblings(ctkSliderWidget::SynchronizeDecimals);
   d->PASlider->setSynchronizeSiblings(ctkSliderWidget::SynchronizeDecimals);
   d->ISSlider->setSynchronizeSiblings(ctkSliderWidget::SynchronizeDecimals);
@@ -472,6 +472,26 @@ void qMRMLTransformSliders::onSliderPositionChanged(double position)
     qobject_cast<qMRMLLinearTransformSlider*>(this->sender());
   Q_ASSERT(slider);
   d->ActiveSliders.push(slider);
+  QWidget* focusWidget = this->focusWidget();
+
+  // If update initiated from spinbox, consider it active, too
+  // (when number of decimals are updated then it may change all the sliders
+  // one by one, but that should not reset the axis that is currently being changed)
+  if (focusWidget)
+    {
+    if (focusWidget->parent() == d->LRSlider->spinBox())
+      {
+      d->ActiveSliders.push(d->LRSlider);
+      }
+    if (focusWidget->parent() == d->PASlider->spinBox())
+      {
+      d->ActiveSliders.push(d->PASlider);
+      }
+    if (focusWidget->parent() == d->ISSlider->spinBox())
+      {
+      d->ActiveSliders.push(d->ISSlider);
+      }
+    }
 
   if (this->typeOfTransform() == qMRMLTransformSliders::ROTATION
     || (this->typeOfTransform() == qMRMLTransformSliders::TRANSLATION && coordinateReference() == LOCAL) )
