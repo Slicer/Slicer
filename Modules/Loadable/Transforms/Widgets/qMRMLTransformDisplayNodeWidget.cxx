@@ -114,6 +114,8 @@ void qMRMLTransformDisplayNodeWidgetPrivate
   QObject::connect(this->InteractiveScalingCheckBox, SIGNAL(toggled(bool)), q, SLOT(setEditorScalingEnabled(bool)));
   QObject::connect(this->UpdateBoundsPushButton, SIGNAL(clicked()), q, SLOT(updateEditorBounds()));
 
+  this->InteractiveAdvancedOptionsFrame->hide();
+
   // Visualization panel
   // by default the glyph option is selected, so hide the parameter sets for the other options
   this->GlyphOptions->show();
@@ -216,6 +218,15 @@ void qMRMLTransformDisplayNodeWidget
     }
 
   // Update widget if different from MRML node
+
+  // Interaction
+
+  d->InteractionVisibleCheckBox->setChecked(d->TransformDisplayNode->GetEditorVisibility());
+  d->InteractiveTranslationCheckBox->setChecked(d->TransformDisplayNode->GetEditorTranslationEnabled());
+  d->InteractiveRotationCheckBox->setChecked(d->TransformDisplayNode->GetEditorRotationEnabled());
+  d->InteractiveScalingCheckBox->setChecked(d->TransformDisplayNode->GetEditorScalingEnabled());
+
+  // Display
 
   d->Visible2dCheckBox->setChecked(d->TransformDisplayNode->GetSliceIntersectionVisibility());
   d->Visible3dCheckBox->setChecked(d->TransformDisplayNode->GetVisibility());

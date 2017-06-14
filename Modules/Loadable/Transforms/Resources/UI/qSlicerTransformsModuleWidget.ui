@@ -302,6 +302,9 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
      <property name="text">
       <string>Apply transform</string>
      </property>
@@ -802,6 +805,54 @@
    <sender>TransformNodeSelector</sender>
    <signal>currentNodeChanged(bool)</signal>
    <receiver>UntransformToolButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>389</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>198</x>
+     <y>1014</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>TransformNodeSelector</sender>
+   <signal>currentNodeChanged(bool)</signal>
+   <receiver>HardenToolButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>389</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>198</x>
+     <y>1014</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>TransformNodeSelector</sender>
+   <signal>currentNodeChanged(bool)</signal>
+   <receiver>TransformableTreeView</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>389</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>198</x>
+     <y>1014</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>TransformNodeSelector</sender>
+   <signal>currentNodeChanged(bool)</signal>
+   <receiver>TransformedTreeView</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">

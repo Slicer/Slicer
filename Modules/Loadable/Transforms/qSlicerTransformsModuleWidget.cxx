@@ -215,6 +215,7 @@ void qSlicerTransformsModuleWidget::setup()
     SIGNAL(currentNodeChanged(vtkMRMLNode*)),
     SLOT(updateConvertButtonState()));
 
+  this->onTransformableSectionClicked(d->TransformedCollapsibleButton->isChecked());
   this->onNodeSelected(0);
   this->updateConvertButtonState();
 }
@@ -283,6 +284,11 @@ void qSlicerTransformsModuleWidget::onNodeSelected(vtkMRMLNode* node)
   this->qvtkReconnect(d->MRMLTransformNode, transformNode,
                       vtkMRMLTransformableNode::TransformModifiedEvent,
                       this, SLOT(onMRMLTransformNodeModified(vtkObject*)));
+
+  if (d->MRMLTransformNode == 0 && transformNode != 0)
+    {
+    d->TransformedCollapsibleButton->setCollapsed(false);
+    }
 
   d->MRMLTransformNode = transformNode;
 

@@ -92,7 +92,7 @@ vtkMRMLTransformDisplayNode::vtkMRMLTransformDisplayNode()
   this->EditorSliceIntersectionVisibility = false;
   this->EditorTranslationEnabled = true;
   this->EditorRotationEnabled = true;
-  this->EditorScalingEnabled = true;
+  this->EditorScalingEnabled = false;
 
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkCommand::ModifiedEvent);

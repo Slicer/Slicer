@@ -42,6 +42,182 @@
      </property>
     </spacer>
    </item>
+   <item row="0" column="0" colspan="3">
+    <widget class="ctkCollapsibleGroupBox" name="InteractionCollapsibleGroupBox">
+     <property name="title">
+      <string>Interaction</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+     <property name="collapsed">
+      <bool>false</bool>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_7">
+      <item row="0" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QCheckBox" name="InteractionVisibleCheckBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Show/Hide the transform widget in the 3D view.</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="UpdateBoundsPushButton">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Update the bounds of the transform widget.&lt;/p&gt;&lt;p&gt;The transform will update its bounds to match the bounding box of all the nodes under it (if any).&lt;/p&gt;&lt;p&gt;Otherwise, the widget will resize itself to the default interaction size.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Update bounds</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="ShowInteractionAdvancedOptionsButton">
+          <property name="text">
+           <string>More options...</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="InteractionVisibleLabel">
+        <property name="text">
+         <string>Visible in 3D view: </string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="2">
+       <widget class="QFrame" name="InteractiveAdvancedOptionsFrame">
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <property name="lineWidth">
+         <number>0</number>
+        </property>
+        <layout class="QFormLayout" name="formLayout">
+         <property name="fieldGrowthPolicy">
+          <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+         </property>
+         <property name="labelAlignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+         <property name="formAlignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+         </property>
+         <property name="leftMargin">
+          <number>12</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="InteractiveTranslationLabel">
+           <property name="text">
+            <string>Enable translation: </string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QCheckBox" name="InteractiveTranslationCheckBox">
+           <property name="toolTip">
+            <string>Enable scaling by manpulating 3D widget (shift +left click and drag the handle at the center of widget face, or left click and drag the center handle)</string>
+           </property>
+           <property name="text">
+            <string>  </string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="InteractiveRotationLabel">
+           <property name="text">
+            <string>Enable rotation: </string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QCheckBox" name="InteractiveRotationCheckBox">
+           <property name="toolTip">
+            <string>Enable translating by manpulating 3D widget (left click and drag anywhere on the widget face)</string>
+           </property>
+           <property name="text">
+            <string>  </string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="InteractiveScalingLabel">
+           <property name="text">
+            <string>Enable scaling: </string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QCheckBox" name="InteractiveScalingCheckBox">
+           <property name="toolTip">
+            <string>Enable scaling by manpulating 3D widget (left click and drag the handle at the center of widget face)</string>
+           </property>
+           <property name="text">
+            <string>  </string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item row="1" column="0" colspan="3">
     <widget class="ctkCollapsibleGroupBox" name="VisualizationCollapsibleGroupBox">
      <property name="title">
@@ -1048,136 +1224,6 @@
      </layout>
     </widget>
    </item>
-   <item row="0" column="0" colspan="3">
-    <widget class="ctkCollapsibleGroupBox" name="InteractionCollapsibleGroupBox">
-     <property name="title">
-      <string>Interaction</string>
-     </property>
-     <layout class="QFormLayout" name="formLayout">
-      <property name="fieldGrowthPolicy">
-       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-      </property>
-      <item row="2" column="0" colspan="2">
-       <widget class="ctkCollapsibleGroupBox" name="CollapsibleGroupBox">
-        <property name="title">
-         <string>Advanced</string>
-        </property>
-        <property name="collapsed">
-         <bool>true</bool>
-        </property>
-        <layout class="QFormLayout" name="formLayout_2">
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_6">
-           <property name="text">
-            <string>Translation enabled</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QCheckBox" name="InteractiveTranslationCheckBox">
-           <property name="toolTip">
-            <string>Whether the transform widget can be scaled.</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_9">
-           <property name="text">
-            <string>Rotation enabled</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QCheckBox" name="InteractiveRotationCheckBox">
-           <property name="toolTip">
-            <string>A</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="label_11">
-           <property name="text">
-            <string>Scaling enabled</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QCheckBox" name="InteractiveScalingCheckBox">
-           <property name="toolTip">
-            <string>Whether the transform widget can be rotated.</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <item>
-         <widget class="QCheckBox" name="InteractionVisibleCheckBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="toolTip">
-           <string>Show/Hide the transform widget in the 3D view.</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="checked">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="UpdateBoundsPushButton">
-          <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Update the bounds of the transform widget.&lt;/p&gt;&lt;p&gt;The transform will update its bounds to match the bounding box of all the nodes under it (if any).&lt;/p&gt;&lt;p&gt;Otherwise, the widget will resize itself to the default interaction size.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
-          <property name="text">
-           <string>Update bounds</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_12">
-        <property name="text">
-         <string>Visible in 3D view</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -1246,12 +1292,12 @@
    <slot>show()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>71</x>
-     <y>110</y>
+     <x>95</x>
+     <y>438</y>
     </hint>
     <hint type="destinationlabel">
-     <x>189</x>
-     <y>319</y>
+     <x>231</x>
+     <y>805</y>
     </hint>
    </hints>
   </connection>
@@ -1262,12 +1308,12 @@
    <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>71</x>
-     <y>110</y>
+     <x>95</x>
+     <y>438</y>
     </hint>
     <hint type="destinationlabel">
-     <x>189</x>
-     <y>460</y>
+     <x>231</x>
+     <y>1060</y>
     </hint>
    </hints>
   </connection>
@@ -1278,12 +1324,12 @@
    <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>71</x>
-     <y>110</y>
+     <x>95</x>
+     <y>438</y>
     </hint>
     <hint type="destinationlabel">
-     <x>189</x>
-     <y>648</y>
+     <x>231</x>
+     <y>1231</y>
     </hint>
    </hints>
   </connection>
@@ -1294,12 +1340,12 @@
    <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>204</x>
-     <y>110</y>
+     <x>481</x>
+     <y>438</y>
     </hint>
     <hint type="destinationlabel">
-     <x>189</x>
-     <y>319</y>
+     <x>231</x>
+     <y>805</y>
     </hint>
    </hints>
   </connection>
@@ -1310,12 +1356,12 @@
    <slot>show()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>204</x>
-     <y>110</y>
+     <x>481</x>
+     <y>438</y>
     </hint>
     <hint type="destinationlabel">
-     <x>189</x>
-     <y>460</y>
+     <x>231</x>
+     <y>1060</y>
     </hint>
    </hints>
   </connection>
@@ -1326,12 +1372,12 @@
    <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>204</x>
-     <y>110</y>
+     <x>481</x>
+     <y>438</y>
     </hint>
     <hint type="destinationlabel">
-     <x>189</x>
-     <y>648</y>
+     <x>231</x>
+     <y>1231</y>
     </hint>
    </hints>
   </connection>
@@ -1342,12 +1388,12 @@
    <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>309</x>
-     <y>110</y>
+     <x>770</x>
+     <y>438</y>
     </hint>
     <hint type="destinationlabel">
-     <x>189</x>
-     <y>319</y>
+     <x>231</x>
+     <y>805</y>
     </hint>
    </hints>
   </connection>
@@ -1358,12 +1404,12 @@
    <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>309</x>
-     <y>110</y>
+     <x>770</x>
+     <y>438</y>
     </hint>
     <hint type="destinationlabel">
-     <x>189</x>
-     <y>460</y>
+     <x>231</x>
+     <y>1060</y>
     </hint>
    </hints>
   </connection>
@@ -1374,12 +1420,12 @@
    <slot>show()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>309</x>
-     <y>110</y>
+     <x>770</x>
+     <y>438</y>
     </hint>
     <hint type="destinationlabel">
-     <x>189</x>
-     <y>648</y>
+     <x>231</x>
+     <y>1231</y>
     </hint>
    </hints>
   </connection>
@@ -1394,8 +1440,8 @@
      <y>450</y>
     </hint>
     <hint type="destinationlabel">
-     <x>308</x>
-     <y>43</y>
+     <x>681</x>
+     <y>364</y>
     </hint>
    </hints>
   </connection>
@@ -1410,8 +1456,8 @@
      <y>648</y>
     </hint>
     <hint type="destinationlabel">
-     <x>223</x>
-     <y>192</y>
+     <x>516</x>
+     <y>633</y>
     </hint>
    </hints>
   </connection>
@@ -1426,8 +1472,8 @@
      <y>613</y>
     </hint>
     <hint type="destinationlabel">
-     <x>245</x>
-     <y>440</y>
+     <x>523</x>
+     <y>920</y>
     </hint>
    </hints>
   </connection>
@@ -1442,8 +1488,8 @@
      <y>610</y>
     </hint>
     <hint type="destinationlabel">
-     <x>216</x>
-     <y>513</y>
+     <x>494</x>
+     <y>1049</y>
     </hint>
    </hints>
   </connection>
@@ -1458,8 +1504,8 @@
      <y>602</y>
     </hint>
     <hint type="destinationlabel">
-     <x>149</x>
-     <y>540</y>
+     <x>427</x>
+     <y>1094</y>
     </hint>
    </hints>
   </connection>
@@ -1474,8 +1520,8 @@
      <y>594</y>
     </hint>
     <hint type="destinationlabel">
-     <x>126</x>
-     <y>607</y>
+     <x>326</x>
+     <y>1220</y>
     </hint>
    </hints>
   </connection>
@@ -1490,8 +1536,8 @@
      <y>663</y>
     </hint>
     <hint type="destinationlabel">
-     <x>183</x>
-     <y>316</y>
+     <x>403</x>
+     <y>844</y>
     </hint>
    </hints>
   </connection>
@@ -1502,12 +1548,12 @@
    <slot>show()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>52</x>
-     <y>80</y>
+     <x>76</x>
+     <y>438</y>
     </hint>
     <hint type="destinationlabel">
-     <x>57</x>
-     <y>191</y>
+     <x>117</x>
+     <y>595</y>
     </hint>
    </hints>
   </connection>
@@ -1518,12 +1564,12 @@
    <slot>show()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>52</x>
-     <y>80</y>
+     <x>76</x>
+     <y>438</y>
     </hint>
     <hint type="destinationlabel">
-     <x>194</x>
-     <y>191</y>
+     <x>487</x>
+     <y>595</y>
     </hint>
    </hints>
   </connection>
@@ -1538,8 +1584,24 @@
      <y>337</y>
     </hint>
     <hint type="destinationlabel">
-     <x>194</x>
-     <y>191</y>
+     <x>487</x>
+     <y>595</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ShowInteractionAdvancedOptionsButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>InteractiveAdvancedOptionsFrame</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>559</x>
+     <y>74</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>768</x>
+     <y>142</y>
     </hint>
    </hints>
   </connection>
