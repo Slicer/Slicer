@@ -456,10 +456,7 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
       sphereSource.SetRadius(segmentGeometry[0])
       sphereSource.SetCenter(segmentGeometry[1], segmentGeometry[2], segmentGeometry[3])
       sphereSource.Update()
-      segment = vtkSegmentationCore.vtkSegment()
-      segment.SetName(segmentationNode.GetSegmentation().GenerateUniqueSegmentID("Test"))
-      segment.AddRepresentation(vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationClosedSurfaceRepresentationName(), sphereSource.GetOutput())
-      segmentationNode.GetSegmentation().AddSegment(segment)
+      segmentationNode.AddSegmentFromClosedSurfaceRepresentation (sphereSource.GetOutput(), segmentationNode.GetSegmentation().GenerateUniqueSegmentID("Test"))
 
     self.delayDisplay("Compute statistics")
 
