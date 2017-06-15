@@ -184,13 +184,21 @@ void qSlicerScalarVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode
   qvtkReconnect(oldVolumeDisplayNode, volumeNode ? volumeNode->GetDisplayNode() :0,
                 vtkCommand::ModifiedEvent,
                 this, SLOT(updateWidgetFromMRML()));
-  d->Histogram->setDataArray(volumeNode &&
-                             volumeNode->GetImageData() &&
-                             volumeNode->GetImageData()->GetPointData() ?
-                             volumeNode->GetImageData()->GetPointData()->GetScalars() :
-                             0);
-  d->Histogram->setNumberOfBins(1000);
-  d->Histogram->build();
+  vtkDataArray* voxelValues = NULL;
+  if (volumeNode && volumeNode->GetImageData() && volumeNode->GetImageData()->GetPointData())
+    {
+    voxelValues = volumeNode->GetImageData()->GetPointData()->GetScalars();
+    }
+  d->Histogram->setDataArray(voxelValues);
+  d->HistogramGroupBox->setVisible(voxelValues != NULL);
+  if (voxelValues)
+    {
+    // Calling build() with an empty volume causes heap corruption
+    // (reported by VS2013 in debug mode), therefore we only build
+    // the histogram if there are voxels (otherwise histogram is hidden).
+    d->Histogram->setNumberOfBins(1000);
+    d->Histogram->build();
+    }
   this->setEnabled(volumeNode != 0);
 
   this->updateWidgetFromMRML();
