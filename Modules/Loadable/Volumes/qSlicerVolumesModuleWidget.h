@@ -49,7 +49,7 @@ protected:
 protected slots:
   void nodeSelectionChanged(vtkMRMLNode*);
   void updateWidgetFromMRML();
-  void convertToLabelmap();
+  void convertVolume();
 
 protected:
   QScopedPointer<qSlicerVolumesModuleWidgetPrivate> d_ptr;

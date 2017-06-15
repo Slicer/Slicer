@@ -90,7 +90,7 @@
        <widget class="qMRMLVolumeInfoWidget" name="MRMLVolumeInfoWidget"/>
       </item>
       <item>
-       <widget class="QFrame" name="ConvertToLabelMapFrame">
+       <widget class="QFrame" name="ConvertVolumeFrame">
         <property name="frameShape">
          <enum>QFrame::NoFrame</enum>
         </property>
@@ -102,7 +102,7 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QLabel" name="label">
+          <widget class="QLabel" name="ConvertVolumeLabel">
            <property name="text">
             <string>Convert to LabelMap:</string>
            </property>
@@ -125,7 +125,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="qMRMLNodeComboBox" name="TargetLabelMapSelector">
+          <widget class="qMRMLNodeComboBox" name="ConvertVolumeTargetSelector">
            <property name="nodeTypes">
             <stringlist>
              <string>vtkMRMLLabelMapVolumeNode</string>
@@ -143,7 +143,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="ConvertToLabelMapButton">
+          <widget class="QPushButton" name="ConvertVolumeButton">
            <property name="text">
             <string>Convert</string>
            </property>
@@ -231,7 +231,7 @@
   <connection>
    <sender>qSlicerVolumesModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>TargetLabelMapSelector</receiver>
+   <receiver>ConvertVolumeTargetSelector</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">

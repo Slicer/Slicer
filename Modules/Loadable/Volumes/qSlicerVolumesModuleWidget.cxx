@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QDebug>
 
 // CTK includes
 //#include <ctkModelTester.h>
@@ -69,11 +70,11 @@ void qSlicerVolumesModuleWidget::setup()
                    this, SLOT(nodeSelectionChanged(vtkMRMLNode*)));
 
   // Set up labelmap conversion
-  d->ConvertToLabelMapFrame->setVisible(false);
-  QObject::connect(d->ConvertToLabelMapButton, SIGNAL(clicked()),
-                   this, SLOT(convertToLabelmap()));
-  QObject::connect(d->TargetLabelMapSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-                   this, SLOT(nodeSelectionChanged(vtkMRMLNode*)));
+  d->ConvertVolumeFrame->setVisible(false);
+  QObject::connect(d->ConvertVolumeButton, SIGNAL(clicked()),
+                   this, SLOT(convertVolume()));
+  /*QObject::connect(d->ConvertVolumeTargetSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+                   this, SLOT(nodeSelectionChanged(vtkMRMLNode*)));*/
 
   //ctkModelTester* tester = new ctkModelTester(this);
   //tester->setModel(d->ActiveVolumeNodeSelector->model());
@@ -95,53 +96,100 @@ void qSlicerVolumesModuleWidget::updateWidgetFromMRML()
     d->ActiveVolumeNodeSelector->currentNode() );
   if (!currentVolumeNode)
     {
-    d->ConvertToLabelMapFrame->setVisible(false);
+    d->ConvertVolumeFrame->setVisible(false);
     return;
     }
 
   // Show convert to labelmap frame only if the exact type is scalar volume
   // (not labelmap, vector, tensor, DTI, etc.)
-  bool labelMapCoversionPossible =
-    !strcmp(currentVolumeNode->GetClassName(), "vtkMRMLScalarVolumeNode");
-  d->ConvertToLabelMapFrame->setVisible(labelMapCoversionPossible);
+  QStringList convertTargetNodeTypes;
+  if (!strcmp(currentVolumeNode->GetClassName(), "vtkMRMLScalarVolumeNode"))
+    {
+    d->ConvertVolumeFrame->setVisible(true);
+    d->ConvertVolumeLabel->setText(tr("Convert to label map:"));
+    convertTargetNodeTypes << "vtkMRMLLabelMapVolumeNode";
+    }
+  else if (!strcmp(currentVolumeNode->GetClassName(), "vtkMRMLLabelMapVolumeNode"))
+    {
+    d->ConvertVolumeFrame->setVisible(true);
+    d->ConvertVolumeLabel->setText(tr("Convert to scalar volume:"));
+    convertTargetNodeTypes << "vtkMRMLScalarVolumeNode";
+    }
+  else
+    {
+    d->ConvertVolumeFrame->setVisible(false);
+    }
 
   // Set base name of target labelmap node
-  d->TargetLabelMapSelector->setBaseName(QString("%1_Label").arg(currentVolumeNode->GetName()));
+  d->ConvertVolumeTargetSelector->setBaseName(QString("%1_Label").arg(currentVolumeNode->GetName()));
+  d->ConvertVolumeTargetSelector->setNodeTypes(convertTargetNodeTypes);
 }
 
 //------------------------------------------------------------------------------
-void qSlicerVolumesModuleWidget::convertToLabelmap()
+void qSlicerVolumesModuleWidget::convertVolume()
 {
   Q_D(qSlicerVolumesModuleWidget);
 
-  vtkMRMLScalarVolumeNode* currentScalarVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(
-    d->ActiveVolumeNodeSelector->currentNode() );
-  vtkMRMLLabelMapVolumeNode* targetLabelMapNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(
-    d->TargetLabelMapSelector->currentNode() );
-  if (!currentScalarVolumeNode)
+  vtkMRMLVolumeNode* currentVolume = vtkMRMLVolumeNode::SafeDownCast(d->ActiveVolumeNodeSelector->currentNode());
+  if (!vtkMRMLScalarVolumeNode::SafeDownCast(currentVolume))
     {
+    qWarning() << Q_FUNC_INFO << " failed: Cannot convert this volume type";
     return;
     }
+  vtkSlicerVolumesLogic* logic = vtkSlicerVolumesLogic::SafeDownCast(this->logic());
+  if (!logic)
+    {
+    qWarning() << Q_FUNC_INFO << " failed: Invalid volumes logic";
+    return;
+    }
+  vtkMRMLLabelMapVolumeNode* currentLabelMapVolumeNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(currentVolume);
 
   // If there is no target labelmap node selected, then perform in-place conversion
-  bool inPlaceConversion = (targetLabelMapNode == NULL);
+  vtkMRMLVolumeNode* targetVolumeNode = vtkMRMLVolumeNode::SafeDownCast(
+    d->ConvertVolumeTargetSelector->currentNode());
+  bool inPlaceConversion = (targetVolumeNode == NULL);
   if (inPlaceConversion)
     {
-    targetLabelMapNode = vtkMRMLLabelMapVolumeNode::New();
-    targetLabelMapNode->SetName(currentScalarVolumeNode->GetName());
-    this->mrmlScene()->AddNode(targetLabelMapNode);
-    targetLabelMapNode->Delete(); // Release ownership to the scene only
+    if (currentLabelMapVolumeNode)
+      {
+      targetVolumeNode = vtkMRMLScalarVolumeNode::New();
+      }
+    else
+      {
+      targetVolumeNode = vtkMRMLLabelMapVolumeNode::New();
+      }
+    targetVolumeNode->SetName(currentVolume->GetName());
+    targetVolumeNode->SetHideFromEditors(currentVolume->GetHideFromEditors());
+    targetVolumeNode->SetSaveWithScene(currentVolume->GetSaveWithScene());
+    targetVolumeNode->SetSelectable(currentVolume->GetSelectable());
+    targetVolumeNode->SetSingletonTag(currentVolume->GetSingletonTag());
+    targetVolumeNode->SetDescription(currentVolume->GetDescription());
+    std::vector< std::string > attributeNames = targetVolumeNode->GetAttributeNames();
+    for (std::vector< std::string >::iterator attributeNameIt = attributeNames.begin();
+      attributeNameIt != attributeNames.end(); ++attributeNameIt)
+      {
+      targetVolumeNode->SetAttribute(attributeNameIt->c_str(), currentVolume->GetAttribute(attributeNameIt->c_str()));
+      }
+    targetVolumeNode->SetDescription(currentVolume->GetDescription());
+    this->mrmlScene()->AddNode(targetVolumeNode);
+    targetVolumeNode->Delete(); // node is now solely owned by the scene
     }
-
-  // Convert current scalar volume to the labelmap node
-  vtkSlicerVolumesLogic* logic = vtkSlicerVolumesLogic::SafeDownCast(this->logic());
-  logic->CreateLabelVolumeFromVolume(this->mrmlScene(), targetLabelMapNode, currentScalarVolumeNode);
+  if (currentLabelMapVolumeNode)
+    {
+    logic->CreateScalarVolumeFromVolume(this->mrmlScene(),
+      vtkMRMLScalarVolumeNode::SafeDownCast(targetVolumeNode), currentVolume);
+    }
+  else
+    {
+    logic->CreateLabelVolumeFromVolume(this->mrmlScene(),
+      vtkMRMLLabelMapVolumeNode::SafeDownCast(targetVolumeNode), currentVolume);
+    }
 
   // In case of in-place conversion select the new labelmap node and delete the scalar volume node
   if (inPlaceConversion)
     {
-    d->ActiveVolumeNodeSelector->setCurrentNode(targetLabelMapNode);
-    this->mrmlScene()->RemoveNode(currentScalarVolumeNode);
+    d->ActiveVolumeNodeSelector->setCurrentNode(targetVolumeNode);
+    this->mrmlScene()->RemoveNode(currentVolume);
     }
 }
 
