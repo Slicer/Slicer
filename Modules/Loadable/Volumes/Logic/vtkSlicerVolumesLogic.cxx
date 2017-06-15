@@ -992,6 +992,7 @@ vtkSlicerVolumesLogic::CreateLabelVolumeFromVolume(vtkMRMLScene *scene,
     // Set the display node to have a label map lookup table
     this->SetAndObserveColorToDisplayNode(displayNode,
       /* labelMap = */ 1, /* filename= */ 0);
+    outputVolume->SetAndObserveDisplayNodeID(displayNode->GetID());
     }
 
   return outputVolume;
