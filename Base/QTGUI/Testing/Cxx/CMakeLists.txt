@@ -1,7 +1,35 @@
 if(BUILD_TESTING)
   # Code specfic to Slicer testing is added here.
   set(KIT ${PROJECT_NAME})
-  set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
+
+
+
+
+  #-----------------------------------------------------------------------------
+  set(${KIT}Testing_ITK_COMPONENTS
+    ITKCommon
+    )
+  find_package(ITK 4.6 COMPONENTS ${${KIT}Testing_ITK_COMPONENTS} REQUIRED)
+  set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # See Libs/ITKFactoryRegistration/CMakeLists.txt
+  list(APPEND ITK_LIBRARIES ITKFactoryRegistration)
+  list(APPEND ITK_INCLUDE_DIRS
+    ${ITKFactoryRegistration_INCLUDE_DIRS}
+    )
+  include(${ITK_USE_FILE})
+
+  #-----------------------------------------------------------------------------
+  set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN  "
+    DEBUG_LEAKS_ENABLE_EXIT_ERROR();
+    TESTING_OUTPUT_INIT();
+    itk::itkFactoryRegistration();
+    ")
+
+  set(CMAKE_TESTDRIVER_AFTER_TESTMAIN  "
+    TESTING_OUTPUT_ASSERT_WARNINGS_ERRORS(0);
+    ")
+
+  set(EXTRA_INCLUDE "vtkMRMLDebugLeaksMacro.h\"\n\#include <itkConfigure.h>\n\#include <itkFactoryRegistration.h>\n\#include \"vtkTestingOutputWindow.h")
+
   include_directories(${CMAKE_CURRENT_BINARY_DIR})
   set(KIT_TEST_SRCS
     qSlicerAbstractModuleTest1.cxx
@@ -30,7 +58,7 @@ if(BUILD_TESTING)
   endif()
   create_test_sourcelist(Tests ${KIT}CxxTests.cxx
     ${KIT_TEST_SRCS}
-    EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
+    EXTRA_INCLUDE ${EXTRA_INCLUDE}
     )
 
   set(KIT_TEST_MOC_SRCS
@@ -66,7 +94,7 @@ if(BUILD_TESTING)
   simple_test( qSlicerMouseModeToolBarTest1 )
   simple_test( qSlicerSaveDataDialogCustomFileWriterTest )
   simple_test( qSlicerWidgetTest1 )
-  simple_test( qSlicerWidgetTest2 )
+  simple_test( qSlicerWidgetTest2 ${CMAKE_SOURCE_DIR}/Libs/MRML/Core/Testing/TestData/fixed.nrrd )
 
   if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   endif()
