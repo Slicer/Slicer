@@ -9,6 +9,7 @@
 #include "vtkMRMLTransformNode.h"
 
 // VTK includes
+#include <vtkBoundingBox.h>
 #include <vtkDoubleArray.h>
 #include <vtkGeneralTransform.h>
 #include <vtkHomogeneousTransform.h>
@@ -472,47 +473,43 @@ void vtkMRMLAnnotationROINode::SetLineColor(double initColor[3])
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationROINode::ApplyTransformMatrix(vtkMatrix4x4* transformMatrix)
 {
-  double (*matrix)[4] = transformMatrix->Element;
+  // Unfortunately, ROI axis cannot be rotated, therefore we determine the new
+  // ROI bounds so that includes all the corner points of the transformed ROI.
 
-  // compute scale
-  double p[] = {0,0,0,0};
-  double p1[] = {1,1,1,0};
-  double p2[4];
-  double *v;
-  double *v1;
-  double v2[4];
-  double scale[3];
+  double center[4] = { 0, 0, 0, 1 }; // 1 at the end: homogeneous coordinate for MultiplyDoublePoint
+  double radius[3] = { 0 };
+  this->GetXYZ(center);
+  this->GetRadiusXYZ(radius);
 
-  v = transformMatrix->MultiplyDoublePoint(p);
-  v1 = transformMatrix->MultiplyDoublePoint(p1);
-
-  int i;
-  for (i=0; i<3; i++)
+  const int numberOfCornerPoints = 8;
+  double cornerPoints_Local[numberOfCornerPoints][4] =
     {
-    p2[i] = p1[i] - p[i];
-    v2[i] = v1[i] - v[i];
-    scale[i] = v2[i]/p2[i];
+    { center[0] - radius[0], center[1] - radius[1], center[2] - radius[2], 1 },
+    { center[0] + radius[0], center[1] - radius[1], center[2] - radius[2], 1 },
+    { center[0] - radius[0], center[1] + radius[1], center[2] - radius[2], 1 },
+    { center[0] + radius[0], center[1] + radius[1], center[2] - radius[2], 1 },
+    { center[0] - radius[0], center[1] - radius[1], center[2] + radius[2], 1 },
+    { center[0] + radius[0], center[1] - radius[1], center[2] + radius[2], 1 },
+    { center[0] - radius[0], center[1] + radius[1], center[2] + radius[2], 1 },
+    { center[0] + radius[0], center[1] + radius[1], center[2] + radius[2], 1 }
+    };
+
+  vtkBoundingBox boundingBox_Transformed;
+  for (int i = 0; i < numberOfCornerPoints; i++)
+    {
+    double* cornerPoint_Transformed = transformMatrix->MultiplyDoublePoint(cornerPoints_Local[i]);
+    boundingBox_Transformed.AddPoint(cornerPoint_Transformed);
     }
+
+  double center_Transformed[3] = { 0 };
+  boundingBox_Transformed.GetCenter(center_Transformed);
+
+  double diameters_Transformed[3] = { 0 };
+  boundingBox_Transformed.GetLengths(diameters_Transformed);
 
   int modify = this->StartModify();
-
-  // first point
-  if (this->GetXYZ(p))
-    {
-    p1[0] = matrix[0][0]*p[0] + matrix[0][1]*p[1] + matrix[0][2]*p[2] + matrix[0][3];
-    p1[1] = matrix[1][0]*p[0] + matrix[1][1]*p[1] + matrix[1][2]*p[2] + matrix[1][3];
-    p1[2] = matrix[2][0]*p[0] + matrix[2][1]*p[1] + matrix[2][2]*p[2] + matrix[2][3];
-    this->SetXYZ(p1);
-    }
-
-  // second point radius, only use scale
-  if (this->GetRadiusXYZ(p))
-    {
-    p[0] *= scale[0];
-    p[1] *= scale[1];
-    p[2] *= scale[2];
-    this->SetRadiusXYZ(p);
-    }
+  this->SetXYZ(center_Transformed);
+  this->SetRadiusXYZ(diameters_Transformed[0] / 2, diameters_Transformed[1] / 2, diameters_Transformed[2] / 2);
   this->EndModify(modify);
 }
 
