@@ -49,7 +49,6 @@ endif()
 
 if(Slicer_BUILD_LEGACY_CLI)
   set(legacy_cli_modules
-    BSplineToDeformationField
     ExpertAutomatedRegistration
     FiducialRegistration
     ResampleScalarVolume
