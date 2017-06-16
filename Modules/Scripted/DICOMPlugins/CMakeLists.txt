@@ -8,12 +8,6 @@ set(MODULE_PYTHON_SCRIPTS
   DICOMSlicerDataBundlePlugin.py
   )
 
-if(Slicer_BUILD_DIFFUSION_SUPPORT)
-  list(APPEND MODULE_PYTHON_SCRIPTS
-    DICOMDiffusionVolumePlugin.py
-    )
-endif()
-
 set(MODULE_PYTHON_RESOURCES
   )
 
