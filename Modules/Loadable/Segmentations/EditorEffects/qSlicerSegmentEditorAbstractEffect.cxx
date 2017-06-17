@@ -22,6 +22,7 @@
 #include "qSlicerSegmentEditorAbstractEffect.h"
 #include "qSlicerSegmentEditorAbstractEffect_p.h"
 
+#include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLSegmentationNode.h"
 #include "vtkMRMLSegmentationDisplayNode.h"
 #include "vtkMRMLSegmentEditorNode.h"
@@ -1286,4 +1287,19 @@ bool qSlicerSegmentEditorAbstractEffect::showEffectCursorInThreeDView()
 void qSlicerSegmentEditorAbstractEffect::setShowEffectCursorInThreeDView(bool show)
 {
   this->m_ShowEffectCursorInThreeDView = show;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSegmentEditorAbstractEffect::interactionNodeChanged(vtkMRMLInteractionNode* interactionNode)
+{
+  if (interactionNode == NULL)
+    {
+    return;
+    }
+  // Deactivate the effect if user switched to markup placement mode
+  // to avoid double effect (e.g., paint & place fiducial at the same time)
+  if (interactionNode->GetCurrentInteractionMode() != vtkMRMLInteractionNode::ViewTransform)
+    {
+    this->selectEffect("");
+    }
 }

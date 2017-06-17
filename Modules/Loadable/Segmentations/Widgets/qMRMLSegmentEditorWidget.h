@@ -269,6 +269,9 @@ protected slots:
   /// Handles segment selection changes
   void onSegmentSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 
+  /// Handles mouse mode changes
+  void onInteractionNodeChanged();
+
   /// Activate effect on clicking its button
   void onEffectButtonClicked(QAbstractButton* button);
 

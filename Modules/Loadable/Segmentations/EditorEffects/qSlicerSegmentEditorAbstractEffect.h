@@ -33,6 +33,7 @@
 class qSlicerSegmentEditorAbstractEffectPrivate;
 
 class vtkActor2D;
+class vtkMRMLInteractionNode;
 class vtkMRMLScene;
 class vtkMRMLSegmentEditorNode;
 class vtkMRMLAbstractViewNode;
@@ -158,6 +159,9 @@ public:
   virtual void masterVolumeNodeChanged() { };
   /// Simple mechanism to let the effects know that the layout has changed
   virtual void layoutChanged() { };
+  /// Let the effect know that the interaction node has changed.
+  /// Default behavior is to deactivate the effect if not in view mode.
+  virtual void interactionNodeChanged(vtkMRMLInteractionNode* interactionNode);
 
 public slots:
   /// Update user interface from parameter set node
