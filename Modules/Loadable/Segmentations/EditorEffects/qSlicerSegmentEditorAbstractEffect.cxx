@@ -1290,7 +1290,7 @@ void qSlicerSegmentEditorAbstractEffect::setShowEffectCursorInThreeDView(bool sh
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorAbstractEffect::interactionNodeChanged(vtkMRMLInteractionNode* interactionNode)
+void qSlicerSegmentEditorAbstractEffect::interactionNodeModified(vtkMRMLInteractionNode* interactionNode)
 {
   if (interactionNode == NULL)
     {

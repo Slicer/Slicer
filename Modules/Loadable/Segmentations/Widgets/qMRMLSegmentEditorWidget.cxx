@@ -1476,7 +1476,7 @@ void qMRMLSegmentEditorWidget::setMRMLScene(vtkMRMLScene* newScene)
     {
     interactionNode = vtkMRMLInteractionNode::SafeDownCast(newScene->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
     }
-  this->qvtkReconnect(d->InteractionNode, interactionNode, vtkCommand::ModifiedEvent, this, SLOT(onInteractionNodeChanged()));
+  this->qvtkReconnect(d->InteractionNode, interactionNode, vtkCommand::ModifiedEvent, this, SLOT(onInteractionNodeModified()));
   d->InteractionNode = interactionNode;
 
   // Update UI
@@ -1494,7 +1494,7 @@ void qMRMLSegmentEditorWidget::onMRMLSceneEndCloseEvent()
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSegmentEditorWidget::onInteractionNodeChanged()
+void qMRMLSegmentEditorWidget::onInteractionNodeModified()
 {
   Q_D(const qMRMLSegmentEditorWidget);
   if (!d->InteractionNode || !d->ActiveEffect)
@@ -1503,7 +1503,7 @@ void qMRMLSegmentEditorWidget::onInteractionNodeChanged()
     }
   // Only notify the active effect about interaction node changes
   // (inactive effects should not interact with the user)
-  d->ActiveEffect->interactionNodeChanged(d->InteractionNode);
+  d->ActiveEffect->interactionNodeModified(d->InteractionNode);
 }
 
 //------------------------------------------------------------------------------

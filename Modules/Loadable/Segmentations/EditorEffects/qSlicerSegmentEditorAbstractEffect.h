@@ -159,9 +159,9 @@ public:
   virtual void masterVolumeNodeChanged() { };
   /// Simple mechanism to let the effects know that the layout has changed
   virtual void layoutChanged() { };
-  /// Let the effect know that the interaction node has changed.
+  /// Let the effect know that the interaction node is modified.
   /// Default behavior is to deactivate the effect if not in view mode.
-  virtual void interactionNodeChanged(vtkMRMLInteractionNode* interactionNode);
+  virtual void interactionNodeModified(vtkMRMLInteractionNode* interactionNode);
 
 public slots:
   /// Update user interface from parameter set node

@@ -113,8 +113,8 @@ public:
   virtual void masterVolumeNodeChanged();
   /// Simple mechanism to let the effects know that the layout has changed
   virtual void layoutChanged();
-  /// Let the effect know that the interaction node has changed
-  virtual void interactionNodeChanged(vtkMRMLInteractionNode* interactionNode);
+  /// Let the effect know that the interaction node is modified
+  virtual void interactionNodeModified(vtkMRMLInteractionNode* interactionNode);
 
 public slots:
   /// Update user interface from parameter set node

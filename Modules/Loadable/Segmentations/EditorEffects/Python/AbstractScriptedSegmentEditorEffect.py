@@ -33,6 +33,9 @@ class AbstractScriptedSegmentEditorEffect():
         class qSlicerSegmentEditorScriptedEffect) using the adaptor accessor:
         > self.scriptedEffect.updateGUIFromMRML()
 
+      3. To prevent deactivation of an effect by clicking place fiducial toolbar button,
+         override interactionNodeModified(self, interactionNode)
+
       An example for a generic effect is the ThresholdEffect
 
   """
@@ -76,9 +79,3 @@ class AbstractScriptedSegmentEditorEffect():
     xyPoint = qt.QPoint(xy[0], xy[1])
     ijkVector = self.scriptedEffect.xyToIjk(xyPoint, viewWidget, image)
     return [int(ijkVector.x()), int(ijkVector.y()), int(ijkVector.z())]
-
-  def interactionNodeChanged(self, interactionNode):
-    # Deactivate the effect if user switched to markup placement mode
-    # to avoid double effect (e.g., paint & place fiducial at the same time)
-    if interactionNode and interactionNode.GetCurrentInteractionMode() != interactionNodeViewTransform:
-      self.scriptedEffect.selectEffect("")
