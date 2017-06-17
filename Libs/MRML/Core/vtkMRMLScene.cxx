@@ -3307,11 +3307,34 @@ const char * vtkMRMLScene::GetErrorMessagePointer()
 bool vtkMRMLScene::GetModifiedSinceRead()
 {
   int hideFromEditors = 0;
+
+  // There is no need to save the scene if it does not have any displayable node.
   bool hasAtLeast1DisplayableNode =
     (this->GetFirstNode(0, "vtkMRMLDisplayableNode", &hideFromEditors) != 0);
-  return this->GetMTime() > this->StoredTime &&
-    // There is no need to save the scene if it just has view nodes
-    hasAtLeast1DisplayableNode;
+  if (!hasAtLeast1DisplayableNode)
+    {
+    return false;
+    }
+
+  vtkMTimeType latestNodeMTime = this->GetMTime();
+  vtkMRMLNode *node;
+  vtkCollectionSimpleIterator it;
+  for (this->Nodes->InitTraversal(it);
+    (node = (vtkMRMLNode*)this->Nodes->GetNextItemAsObject(it));)
+    {
+    if (node->IsA("vtkMRMLAbstractViewNode"))
+      {
+      // We do not consider view node changes as scene change,
+      // because view nodes may change because application window is resized, etc.
+      continue;
+      }
+    if (node->GetMTime() > latestNodeMTime)
+      {
+      latestNodeMTime = node->GetMTime();
+      }
+    }
+
+  return  latestNodeMTime > this->StoredTime;
 }
 
 //-----------------------------------------------------------------------------
