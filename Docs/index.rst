@@ -35,6 +35,12 @@ Welcome to 3D Slicer's documentation!
    developer_guide/authors
 
 
+.. toctree::
+   :hidden:
+
+   user_guide/module_segmenteditor
+
+
 Indices and tables
 ==================
 
