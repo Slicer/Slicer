@@ -42,7 +42,7 @@ To install Slicer, click `here <http://download.slicer.org/>`__.
   Slicer is not updated nightly and is more rigorously tested.
 
 
-Once downloaded, follow the instructions to complete installation.
+Once downloaded, follow the instructions below to complete installation.
 
 
 Further Documentation
@@ -81,7 +81,7 @@ Tutorials
 
 The 3D Slicer documentation has an abundance of tutorials to help you familiarize yourself with the basics of 3D Slicer and with specific modules.
 
-Try the `Welcome Tutorial <https://www.slicer.org/wiki/Documentation/4.6/Training#Slicer_Welcome_Tutorial>`_ and the `Data Loading and 3D Visualization Tutorial <https://www.slicer.org/wiki/Documentation/4.6/Training#Slicer4_Data_Loading_and_3D_Visualization>`_ to learn the basics of using 3D Slicer.
+Try the `Welcome Tutorial <https://www.slicer.org/wiki/Documentation/4.10/Training#Slicer_Welcome_Tutorial>`_ and the `Data Loading and 3D Visualization Tutorial <https://www.slicer.org/wiki/Documentation/4.10/Training#Slicer4_Data_Loading_and_3D_Visualization>`_ to learn the basics of using 3D Slicer.
 
 * To learn about using Slicer for 3D Printing, visit this tutorial.
 * To learn about Neurosurgical Planning with Slicer, visit this tutorial.
