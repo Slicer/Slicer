@@ -86,11 +86,6 @@ public:
   void setMRMLColorNode(vtkMRMLColorNode* node);
   vtkMRMLColorNode* mrmlColorNode()const;
 
-  /// A color logic is needed to access terminology linked with color nodes
-  void setMRMLColorLogic(vtkMRMLColorLogic* colorLogic);
-  vtkMRMLColorLogic* mrmlColorLogic()const;
-
-
   /// Set/Get NoneEnabled flags
   /// An additional item is added into the menu list, where the user can select "None".
   void setNoneEnabled(bool enable);

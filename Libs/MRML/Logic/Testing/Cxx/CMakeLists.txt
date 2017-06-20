@@ -19,7 +19,6 @@ set(CMAKE_TESTDRIVER_AFTER_TESTMAIN "TESTING_OUTPUT_ASSERT_WARNINGS_ERRORS(0);" 
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLAbstractLogicSceneEventsTest.cxx
   vtkMRMLColorLogicTest1.cxx
-  vtkMRMLColorLogicTest2.cxx
   vtkMRMLDisplayableHierarchyLogicTest1.cxx
   vtkMRMLLayoutLogicCompareTest.cxx
   vtkMRMLLayoutLogicTest1.cxx
@@ -49,7 +48,6 @@ endmacro()
 
 simple_test( vtkMRMLAbstractLogicSceneEventsTest )
 simple_test( vtkMRMLColorLogicTest1 )
-simple_test( vtkMRMLColorLogicTest2 )
 simple_test( vtkMRMLDisplayableHierarchyLogicTest1 )
 simple_test( vtkMRMLModelHierarchyLogicTest1 )
 simple_test( vtkMRMLLayoutLogicCompareTest )

@@ -77,60 +77,6 @@ class EditColor(VTKObservationMixin):
     self.colorPatch.setObjectName('ColorPatchButton')
     self.colorFrame.layout().addWidget(self.colorPatch)
 
-    # hidden until needed terminology frames:
-    self.terminologyCollapsibleButton = slicer.qMRMLCollapsibleButton(self.frame)
-    self.terminologyCollapsibleButton.setText('Terminology')
-    self.terminologyCollapsibleButton .setLayout(qt.QVBoxLayout())
-    self.frame.layout().addWidget(self.terminologyCollapsibleButton)
-
-    # Category section:
-    self.terminologyCategoryFrame = qt.QFrame(self.terminologyCollapsibleButton)
-    self.terminologyCategoryFrame.setLayout(qt.QFormLayout())
-    self.terminologyCollapsibleButton.layout().addWidget(self.terminologyCategoryFrame)
-
-    # Category
-    self.terminologyCategory = qt.QLabel(self.terminologyCategoryFrame)
-    self.terminologyCategory.setText("")
-    # for now, read only
-    # self.terminologyCategory.setReadOnly(1);
-    self.terminologyCategoryFrame.layout().addRow("Category:", self.terminologyCategory )
-
-    # Category type:
-    self.terminologyCategoryType = qt.QLabel(self.terminologyCategoryFrame)
-    self.terminologyCategoryType.setText("")
-    # for now, read only
-    # self.terminologyCategoryType.setReadOnly(1);
-    self.terminologyCategoryFrame.layout().addRow("Type:", self.terminologyCategoryType )
-
-    # Category modifier:
-    self.terminologyCategoryModifier = qt.QLabel(self.terminologyCategoryFrame)
-    self.terminologyCategoryModifier.setText("")
-    # for now, read only
-    # self.terminologyCategoryModifier.setReadOnly(1);
-    self.terminologyCategoryFrame.layout().addRow("Modifier:", self.terminologyCategoryModifier )
-
-    # Region section
-    self.terminologyRegionFrame = qt.QFrame(self.terminologyCollapsibleButton)
-    self.terminologyRegionFrame.setLayout(qt.QFormLayout())
-    self.terminologyCollapsibleButton.layout().addWidget(self.terminologyRegionFrame)
-
-    # Region:
-    self.terminologyRegion = qt.QLabel(self.terminologyRegionFrame)
-    self.terminologyRegion.setText("")
-    # for now, read only
-    # self.terminologyRegion.setReadOnly(1);
-    self.terminologyRegionFrame.layout().addRow("Region:", self.terminologyRegion )
-
-    # Region modifier:
-    self.terminologyRegionModifier = qt.QLabel(self.terminologyRegionFrame)
-    self.terminologyRegionModifier.setText("")
-    # for now, read only
-    # self.terminologyRegionModifier.setReadOnly(1);
-    self.terminologyRegionFrame.layout().addRow("Modifier:", self.terminologyRegionModifier )
-
-    # hide the terminology until a LUT with associated terminology is chosen
-    self.hideTerminology(1)
-
     self.updateParameterNode(slicer.mrmlScene, vtk.vtkCommand.ModifiedEvent)
     self.updateGUIFromMRML(self.parameterNode, vtk.vtkCommand.ModifiedEvent)
 
@@ -185,31 +131,6 @@ class EditColor(VTKObservationMixin):
 
     try:
       self.colorSpin.setValue(label)
-      # check to see if there's an associated terminology with this color node
-      if self.colorNode:
-        terminologyName = self.colorNode.GetAttribute("TerminologyName")
-        if terminologyName:
-          colorLogic = slicer.modules.colors.logic()
-          if colorLogic:
-            # enable the terminology widgets
-            self.hideTerminology(0)
-            region = colorLogic.GetAnatomicRegionCodeMeaning(label, terminologyName)
-            regionModifier = colorLogic.GetAnatomicRegionModifierCodeMeaning(label, terminologyName)
-            category = colorLogic.GetSegmentedPropertyCategoryCodeMeaning(label, terminologyName)
-            categoryType = colorLogic.GetSegmentedPropertyTypeCodeMeaning(label, terminologyName)
-            categoryModifier = colorLogic.GetSegmentedPropertyTypeModifierCodeMeaning(label, terminologyName)
-            self.terminologyRegion.setText(region)
-            self.terminologyRegionModifier.setText(regionModifier)
-            self.terminologyCategory.setText(category)
-            self.terminologyCategoryType.setText(categoryType)
-            self.terminologyCategoryModifier.setText(categoryModifier)
-            # if no region information, hide the region panel
-            if region is "" and regionModifier is "":
-              self.terminologyRegionFrame.setHidden(1)
-            else:
-              self.terminologyRegionFrame.setHidden(0)
-        else:
-          self.hideTerminology(1)
 
     except ValueError:
       # TODO: why does the python class still exist if the widget is destroyed?
@@ -228,13 +149,3 @@ class EditColor(VTKObservationMixin):
       self.colorBox = ColorBox.ColorBox(parameterNode=self.parameterNode, parameter=self.parameter, colorNode=self.colorNode)
 
     self.colorBox.show(parameterNode=self.parameterNode, parameter=self.parameter, colorNode=self.colorNode)
-
-  def hideTerminology(self, flag):
-    self.terminologyCollapsibleButton.collapsed = flag
-    if flag == 1:
-      # reset to empty strings when hidden
-      self.terminologyRegion.setText('')
-      self.terminologyRegionModifier.setText('')
-      self.terminologyCategory.setText('')
-      self.terminologyCategoryType.setText('')
-      self.terminologyCategoryModifier.setText('')
