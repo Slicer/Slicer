@@ -192,8 +192,8 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
     return 0;
     }
 
-  // 2d glyphs and text need to be scaled by 1/300 to show up properly in the 2d slice windows
-  this->SetScaleFactor2D(0.0033);
+  // 2d glyphs and text need to be scaled by 1/60 to show up properly in the 2d slice windows
+  this->SetScaleFactor2D(0.01667);
 
   vtkMRMLAnnotationFiducialNode* fiducialNode = vtkMRMLAnnotationFiducialNode::SafeDownCast(node);
 

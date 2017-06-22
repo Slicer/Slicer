@@ -196,6 +196,13 @@ void vtkMRMLRulerDisplayableManager::vtkInternal::SetupMarkerRenderer()
     }
   this->MarkerRenderer->SetLayer(RENDERER_LAYER);
   renderWindow->AddRenderer(this->MarkerRenderer);
+  // Parallel projection is needed to prevent actors from warping/tilting
+  // when they are near the edge of the window.
+  vtkCamera* camera = this->MarkerRenderer->GetActiveCamera();
+  if (camera)
+    {
+    camera->ParallelProjectionOn();
+    }
 
   // In 3D viewers we need to follow the renderer and update the orientation marker accordingly
   vtkMRMLViewNode* threeDViewNode = vtkMRMLViewNode::SafeDownCast(this->External->GetMRMLDisplayableNode());

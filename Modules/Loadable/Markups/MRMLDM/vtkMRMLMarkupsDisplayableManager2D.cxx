@@ -86,7 +86,7 @@ vtkMRMLMarkupsDisplayableManager2D::vtkMRMLMarkupsDisplayableManager2D()
   this->SliceNode = 0;
 
   // by default, multiply the display node scale by this when setting scale on elements in 2d windows
-  this->ScaleFactor2D = 0.00333;
+  this->ScaleFactor2D = 0.01667;
 
   this->LastClickWorldCoordinates[0]=0.0;
   this->LastClickWorldCoordinates[1]=0.0;
