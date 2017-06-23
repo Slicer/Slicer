@@ -313,6 +313,7 @@ class RSNAVisTutorialTest(unittest.TestCase):
       indexer.addDirectory(slicer.dicomDatabase, dicomFilesDirectory, None)
       indexer.waitForImportFinished()
 
+      dicomWidget = slicer.modules.DICOMWidget
       dicomWidget.detailsPopup.open()
 
       # load the data by series UID
