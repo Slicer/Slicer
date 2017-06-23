@@ -190,9 +190,25 @@ void qMRMLTransformSliders::setMRMLTransformNode(vtkMRMLTransformNode* transform
 {
   Q_D(qMRMLTransformSliders);
 
+  if (d->MRMLTransformNode == transformNode)
+    {
+    // no change
+    return;
+    }
+
   this->qvtkReconnect(d->MRMLTransformNode, transformNode,
                       vtkMRMLTransformableNode::TransformModifiedEvent,
                       this, SLOT(onMRMLTransformNodeModified(vtkObject*)));
+
+  bool blocked = d->LRSlider->blockSignals(true);
+  d->LRSlider->reset();
+  d->LRSlider->blockSignals(blocked);
+  blocked = d->PASlider->blockSignals(true);
+  d->PASlider->reset();
+  d->PASlider->blockSignals(blocked);
+  blocked = d->ISSlider->blockSignals(true);
+  d->ISSlider->reset();
+  d->ISSlider->blockSignals(blocked);
 
   this->onMRMLTransformNodeModified(transformNode);
 
