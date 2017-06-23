@@ -517,6 +517,9 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
       }
     else
       {
+      //
+      // more than one file, use series reader
+      //
       itk::OrientImageFilter<ImageType,ImageType>::Pointer orient =
         itk::OrientImageFilter<ImageType,ImageType>::New();
       itk::ImageSeriesReader<ImageType>::Pointer seriesReader =
