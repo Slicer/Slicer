@@ -89,9 +89,6 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         "imageOrientationPatient",
     ]
 
-    # it will be set to true if pixel data is found in any of the files
-    pixelDataAvailable = False
-
     #
     # first, look for subseries within this series
     # - build a list of files for each unique value
