@@ -106,6 +106,12 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
         "name": "Mouse-MR-example-where-GDCM_fails",
         "seriesUID": "1.3.6.1.4.1.9590.100.1.2.366426457713813178933224342280246227461",
         "expectedFailures": ["GDCM", "Archetype"]
+      },
+      { "url": "http://slicer.kitware.com/midas3/download/item/294857/deidentifiedMRHead-dcm-one-series.zip",
+        "fileName": "deidentifiedMRHead-dcm-one-series.zip",
+        "name": "deidentifiedMRHead-dcm-one-series",
+        "seriesUID": "1.3.6.1.4.1.5962.99.1.3814087073.479799962.1489872804257.270.0",
+        "expectedFailures": []
       }
     ]''') 
 
@@ -173,6 +179,8 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
           volumeNode = scalarVolumePlugin.load(loadable,readerApproach)
           if not volumeNode and readerApproach not in dataset['expectedFailures']:
             raise Exception("Expected to be able to read with %s, but couldn't" % readerApproach)
+          if volumeNode and readerApproach in dataset['expectedFailures']:
+            raise Exception("Expected to NOT be able to read with %s, but could!" % readerApproach)
 
         self.delayDisplay('%s Test passed!' % dataset['name'], 200)
       except Exception, e:
