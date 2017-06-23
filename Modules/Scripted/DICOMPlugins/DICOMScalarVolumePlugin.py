@@ -37,6 +37,29 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     self.tags['windowCenter'] = "0028,1050"
     self.tags['windowWidth'] = "0028,1051"
 
+  @staticmethod
+  def readerLibraries():
+    """Available reader implementations.  DCMTK is now default"""
+    return ["DCMTK", "GDCM", "Archetype"]
+
+  @staticmethod
+  def settingsPanelEntry(panel, parent):
+    """Create a settings panel entry for this plugin class.
+    It is added to the DICOM panel of the application settings
+    by the DICOM module.
+    """
+    formLayout = qt.QFormLayout(parent)
+    readersComboBox = qt.QComboBox()
+    for library in DICOMScalarVolumePluginClass.readerLibraries():
+      readersComboBox.addItem(library)
+
+    readersComboBox.toolTip = "Preferred back end.  Archetype was used by default in Slicer before June of 2017.  Change this setting if data that previously loaded stops working (and report an issue)."
+
+    formLayout.addRow("DICOM reader library", readersComboBox)
+
+    panel.registerProperty(
+      "DICOM/ScalarVolume/ReaderLibrary", readersComboBox,
+      "currentIndex", qt.SIGNAL("currentIndexChanged(int)"))
 
   def examineForImport(self,fileLists):
     """ Returns a sorted list of DICOMLoadable instances
@@ -331,6 +354,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     imageChangeInformation.SetOutputOrigin( 0, 0, 0 )
     imageChangeInformation.Update()
 
+    name = slicer.mrmlScene.GenerateUniqueName(slicer.util.toVTKString(name))
+    volumeNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLScalarVolumeNode", name)
     volumeNode.SetAndObserveImageData(imageChangeInformation.GetOutputDataObject(0))
     slicer.vtkMRMLVolumeArchetypeStorageNode.SetMetaDataDictionaryFromReader(volumeNode, reader)
     volumeNode.SetRASToIJKMatrix(reader.GetRasToIjkMatrix())
@@ -405,7 +430,12 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
   def load(self,loadable):
     """Load the select as a scalar volume using DCMTK
     """
-    volumeNode = self.loadFilesWithSeriesReader("DCMTK", loadable.files, loadable.name)
+    readerIndex = slicer.util.settingsValue('DICOM/ScalarVolume/ReaderLibrary', '0', converter=int)
+    readerLibrary = DICOMScalarVolumePluginClass.readerLibraries()[readerIndex]
+    if readerLibrary == "Archetype":
+      volumeNode = self.loadFilesWithArchetype(loadable.files, loadable.name)
+    else:
+      volumeNode = self.loadFilesWithSeriesReader(readerLibrary, loadable.files, loadable.name)
     self.setVolumeNodeProperties(volumeNode, loadable)
     return volumeNode
 

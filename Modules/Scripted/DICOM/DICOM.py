@@ -20,8 +20,10 @@ import DICOMLib
 
 class DICOM(ScriptedLoadableModule):
 
+
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
+
     import string
     self.parent.title = "DICOM"
     self.parent.categories = ["", "Informatics"] # top level module
@@ -67,13 +69,25 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
 
     # Trigger the menu to be added when application has started up
     if not slicer.app.commandOptions().noMainWindow :
-      qt.QTimer.singleShot(0, self.addMenu)
-    # set the dicom pre-cache tags once all plugin classes have been initialized
-    qt.QTimer.singleShot(0, DICOMLib.setDatabasePrecacheTags)
+      qt.QTimer.singleShot(0, self.performPostModuleDiscoveryTasks)
 
   def setup(self):
     pluginHandlerSingleton = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
     pluginHandlerSingleton.registerPlugin(slicer.qSlicerSubjectHierarchyDICOMPlugin())
+
+  def performPostModuleDiscoveryTasks(self):
+    """Since dicom plugins are discovered while they application
+    is initialized, they may be found after the DICOM module
+    itself if initialized.  This method is tied to a singleShot
+    that will be called once the event loop is read to start.
+    """
+    # set the dicom pre-cache tags once all plugin classes have been initialized
+    DICOMLib.setDatabasePrecacheTags()
+    # add to the main app file menu
+    self.addMenu()
+    # add the settings options
+    self.settingsPanel = DICOMSettingsPanel()
+    slicer.app.settingsDialog().addPanel("DICOM", self.settingsPanel)
 
   def addMenu(self):
     """Add an action to the File menu that will go into
@@ -92,6 +106,25 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
     if hasattr(slicer, 'dicomListener'):
       logging.debug('trying to stop listener')
       slicer.dicomListener.stop()
+
+class _ui_DICOMSettingsPanel(object):
+  def __init__(self, parent):
+    vBoxLayout = qt.QVBoxLayout(parent)
+    plugins = slicer.modules.dicomPlugins
+    for pluginName in plugins.keys():
+      if hasattr(plugins[pluginName], 'settingsPanelEntry'):
+        pluginGroupBox = ctk.ctkCollapsibleGroupBox()
+        pluginGroupBox.title = pluginName
+        vBoxLayout.addWidget(pluginGroupBox)
+        plugins[pluginName].settingsPanelEntry(parent, pluginGroupBox)
+    vBoxLayout.addStretch(1)
+
+
+class DICOMSettingsPanel(ctk.ctkSettingsPanel):
+  def __init__(self, *args, **kwargs):
+    ctk.ctkSettingsPanel.__init__(self, *args, **kwargs)
+    self.ui = _ui_DICOMSettingsPanel(self)
+
 
 # XXX Slicer 4.5 - Remove this. Here only for backward compatibility.
 DICOM.setDatabasePrecacheTags = DICOMLib.setDatabasePrecacheTags
