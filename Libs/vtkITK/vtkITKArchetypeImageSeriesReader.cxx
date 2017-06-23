@@ -42,6 +42,7 @@
 #include <vector>
 
 #include "itkArchetypeSeriesFileNames.h"
+#include "itkDCMTKImageIO.h"
 #include "itkOrientImageFilter.h"
 #include "itkImageSeriesReader.h"
 #include "itkGDCMSeriesFileNames.h"
@@ -89,6 +90,7 @@ vtkITKArchetypeImageSeriesReader::vtkITKArchetypeImageSeriesReader()
 
   this->GroupingByTags = false;
   this->IsOnlyFile = false;
+  this->ArchetypeIsDICOM = false;
 
   this->SelectedUID = -1;
   this->SelectedContentTime = -1;
@@ -238,10 +240,18 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
   this->AllFileNames.resize( 0 );
 
   // Some file types require special processing
-  itk::GDCMImageIO::Pointer dicomIO = itk::GDCMImageIO::New();
+  itk::ImageIOBase::Pointer dicomIO;
+  if (this->GetDICOMImageIOApproach() == vtkITKArchetypeImageSeriesReader::DCMTK)
+    {
+    dicomIO = itk::DCMTKImageIO::New();
+    }
+  else
+    {
+    dicomIO = itk::GDCMImageIO::New();
+    }
 
   // Test whether the input file is a DICOM file
-  bool isDicomFile = dicomIO->CanReadFile(this->Archetype);
+  this->ArchetypeIsDICOM = dicomIO->CanReadFile(this->Archetype);
 
   // if user already set up FileNames, we do not try to find candidate files
   if ( this->GetNumberOfFileNames() > 0 )
@@ -268,7 +278,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
   }
   else
   {
-    if ( isDicomFile && !this->GetSingleFile() )
+    if ( this->ArchetypeIsDICOM && !this->GetSingleFile() )
     {
       typedef itk::GDCMSeriesFileNames DICOMNameGeneratorType;
       DICOMNameGeneratorType::Pointer inputImageFileGenerator = DICOMNameGeneratorType::New();
@@ -431,7 +441,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
       itk::ImageFileReader<ImageType>::Pointer imageReader =
         itk::ImageFileReader<ImageType>::New();
       imageReader->SetFileName(this->FileNames[0].c_str());
-      if (isDicomFile)
+      if (this->ArchetypeIsDICOM)
         {
         imageReader->SetImageIO(dicomIO);
         }
@@ -512,7 +522,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
       itk::ImageSeriesReader<ImageType>::Pointer seriesReader =
         itk::ImageSeriesReader<ImageType>::New();
       seriesReader->SetFileNames(this->FileNames);
-      if (isDicomFile)
+      if (this->ArchetypeIsDICOM)
         {
           seriesReader->SetImageIO(dicomIO);
         }

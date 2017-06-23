@@ -28,6 +28,8 @@
 #include <itkImageFileReader.h>
 #include <itkImageSeriesReader.h>
 #include <itkOrientImageFilter.h>
+#include <itkDCMTKImageIO.h>
+#include <itkGDCMImageIO.h>
 
 // GDCM includes
 #include "gdcmDict.h"           /// access to dictionary
@@ -81,6 +83,21 @@ void vtkITKExecuteDataFromSeriesVector(
   reader->SetFileNames(self->GetFileNames());
   reader->ReleaseDataFlagOn();
   reader->GetOutput()->SetVectorLength(3);
+  typedef itk::ImageIOBase ImageIOType;
+  ImageIOType::Pointer imageIO;
+  if (self->GetDICOMImageIOApproach() == vtkITKArchetypeImageSeriesReader::GDCM)
+    {
+    imageIO = itk::GDCMImageIO::New();
+    }
+  else if (self->GetDICOMImageIOApproach() == vtkITKArchetypeImageSeriesReader::DCMTK)
+    {
+    imageIO = itk::DCMTKImageIO::New();
+    }
+  else
+    {
+    vtkErrorWithObjectMacro(self, <<"vtkITKArchetypeImageSeriesVectorReaderSeries: Unsupported DICOMImageIOApproach: " << self->GetDICOMImageIOApproach());
+    itkGenericExceptionMacro("UnrecognizedFileTypeError");
+    }
   if (self->GetUseNativeCoordinateOrientation())
     {
     filter = reader;

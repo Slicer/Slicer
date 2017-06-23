@@ -90,13 +90,7 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
     vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()));
   this->SetMetaDataScalarRangeToPointDataInfo(data);
 
-/// SCALAR MACRO
-#define vtkITKExecuteDataFromSeries(typeN, type) \
-    case typeN: \
-    {\
-      typedef itk::Image<type,3> image##typeN;\
-      typedef itk::ImageSource<image##typeN> FilterType; \
-      FilterType::Pointer filter; \
+#define vtkITKExecuteDataDeclareDICOMImageIO \
       typedef itk::ImageIOBase ImageIOType; \
       ImageIOType::Pointer imageIO; \
       if (this->DICOMImageIOApproach == vtkITKArchetypeImageSeriesReader::GDCM) \
@@ -112,14 +106,26 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
         vtkErrorMacro(<<"vtkITKExecuteDataFromSeries: Unsupported DICOMImageIOApproach: " << this->GetDICOMImageIOApproach()); \
         this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError); \
         return 0; \
-        } \
+        }
+
+/// SCALAR MACRO
+#define vtkITKExecuteDataFromSeries(typeN, type) \
+    case typeN: \
+    {\
+      typedef itk::Image<type,3> image##typeN;\
+      typedef itk::ImageSource<image##typeN> FilterType; \
+      FilterType::Pointer filter; \
       itk::ImageSeriesReader<image##typeN>::Pointer reader##typeN = \
-          itk::ImageSeriesReader<image##typeN>::New(); \
-          reader##typeN->SetImageIO(imageIO); \
-          itk::CStyleCommand::Pointer pcl=itk::CStyleCommand::New(); \
-          pcl->SetCallback((itk::CStyleCommand::FunctionPointer)&ReadProgressCallback); \
-          pcl->SetClientData(this); \
-          reader##typeN->AddObserver(itk::ProgressEvent(),pcl); \
+        itk::ImageSeriesReader<image##typeN>::New(); \
+      vtkITKExecuteDataDeclareDICOMImageIO \
+      if (this->ArchetypeIsDICOM) \
+        { \
+        reader##typeN->SetImageIO(imageIO); \
+        } \
+      itk::CStyleCommand::Pointer pcl=itk::CStyleCommand::New(); \
+      pcl->SetCallback((itk::CStyleCommand::FunctionPointer)&ReadProgressCallback); \
+      pcl->SetClientData(this); \
+      reader##typeN->AddObserver(itk::ProgressEvent(),pcl); \
       reader##typeN->SetFileNames(this->FileNames); \
       reader##typeN->ReleaseDataFlagOn(); \
       if (this->UseNativeCoordinateOrientation) \
@@ -156,6 +162,11 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
       itk::ImageFileReader<image2##typeN>::Pointer reader2##typeN = \
             itk::ImageFileReader<image2##typeN>::New(); \
       reader2##typeN->SetFileName(this->FileNames[0].c_str()); \
+      vtkITKExecuteDataDeclareDICOMImageIO \
+      if (this->ArchetypeIsDICOM) \
+        { \
+        reader2##typeN->SetImageIO(imageIO); \
+        } \
       if (this->UseNativeCoordinateOrientation) \
         { \
         filter = reader2##typeN; \

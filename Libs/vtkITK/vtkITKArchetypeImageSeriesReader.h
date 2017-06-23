@@ -873,6 +873,7 @@ protected:
   std::vector<std::string> AllFileNames;
   bool AnalyzeHeader;
   bool IsOnlyFile;
+  bool ArchetypeIsDICOM;
 
   std::vector<std::string> SeriesInstanceUIDs;
   std::vector<std::string> ContentTime;
