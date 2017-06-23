@@ -1,4 +1,5 @@
 import logging
+import numpy
 import os
 import unittest
 import urllib
@@ -67,11 +68,16 @@ class DICOMReadersLogic(ScriptedLoadableModuleLogic):
   def compareNodes(self,volumeNode1,volumeNode2):
     """
     Given two mrml volume nodes, return true of the numpy arrays have identical data
-    and other metadata matches
+    and other metadata matches.  Returns empty string on match, otherwise
+    a string with a list of differences separated by newlines.
     """
+    volumesLogic = slicer.modules.volumes.logic()
+    comparison = volumesLogic.CompareVolumeGeometry(volumeNode1, volumeNode2)
     a1 = slicer.util.array(volumeNode1.GetID())
     a2 = slicer.util.array(volumeNode2.GetID())
-    return numpy.all(a1 == a2)
+    if not numpy.all(a1 == a2):
+      comparison += "Pixel data mismatch\n"
+    return comparison
 
 
 class DICOMReadersTest(ScriptedLoadableModuleTest):
@@ -173,6 +179,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
         scalarVolumePlugin = slicer.modules.dicomPlugins['DICOMScalarVolumePlugin']()
         readerApproaches = scalarVolumePlugin.readerApproaches()   
         basename = loadable.name
+        volumesByApproach = {}
         for readerApproach in readerApproaches:
           self.delayDisplay('Loading Selection with approach: %s' % readerApproach, 100)
           loadable.name = basename + "-" + readerApproach
@@ -181,8 +188,33 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
             raise Exception("Expected to be able to read with %s, but couldn't" % readerApproach)
           if volumeNode and readerApproach in dataset['expectedFailures']:
             raise Exception("Expected to NOT be able to read with %s, but could!" % readerApproach)
+          if volumeNode:
+            volumesByApproach[readerApproach] = volumeNode
+
+        #
+        # for each approach that loaded as expected, compare the volumes
+        # to ensure they match in terms of pixel data and metadata
+        #
+        failedComparisons = {}
+        approachesThatLoaded = volumesByApproach.keys()
+        print('approachesThatLoaded %s' % approachesThatLoaded)
+        for approachIndex in range(len(approachesThatLoaded)):
+          firstApproach = approachesThatLoaded[approachIndex]
+          firstVolume = volumesByApproach[firstApproach]
+          for secondApproachIndex in range(approachIndex+1,len(approachesThatLoaded)):
+            secondApproach = approachesThatLoaded[secondApproachIndex]
+            secondVolume = volumesByApproach[secondApproach]
+            print('comparing  %s,%s' % (firstApproach, secondApproach))
+            comparison = DICOMReadersLogic().compareNodes(firstVolume,secondVolume)
+            if comparison != "":
+              print('failed: %s', comparison)
+              failedComparisons[firstApproach,secondApproach] = comparison
+
+        if len(failedComparisons.keys()) > 0:
+          raise Exception("Loaded volumes don't match: %s" % failedComparisons)
 
         self.delayDisplay('%s Test passed!' % dataset['name'], 200)
+
       except Exception, e:
         import traceback
         traceback.print_exc()
