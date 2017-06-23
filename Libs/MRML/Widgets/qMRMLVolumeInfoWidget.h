@@ -22,6 +22,9 @@
 #define __qMRMLVolumeInfoWidget_h
 
 
+// Qt includes
+#include <QListWidget>
+
 // CTK includes
 #include <ctkVTKObject.h>
 
@@ -64,6 +67,7 @@ public slots:
   void setScanOrder(int);
   void setNumberOfScalars(int);
   void setScalarType(int);
+  void setWindowLevelFromPreset(QListWidgetItem*);
 
 protected slots:
   void updateWidgetFromMRML();

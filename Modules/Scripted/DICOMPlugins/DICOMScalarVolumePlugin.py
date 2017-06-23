@@ -387,8 +387,10 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         displayNode = volumeNode.GetDisplayNode()
         if displayNode:
           logging.info('Window/level found in DICOM tags (center=' + str(windowCenter) + ', width=' + str(windowWidth) + ') has been applied to volume ' + volumeNode.GetName())
-          displayNode.SetAutoWindowLevel(False)
-          displayNode.SetWindowLevel(windowWidth, windowCenter)
+          displayNode.AddWindowLevelPreset(windowWidth, windowCenter)
+          displayNode.SetWindowLevelFromPreset(0)
+        else:
+          logging.info('No display node: cannot use window/level found in DICOM tags')
       except ValueError:
         pass # DICOM tags cannot be parsed to floating point numbers
 

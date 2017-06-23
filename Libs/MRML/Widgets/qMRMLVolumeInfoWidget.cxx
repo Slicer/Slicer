@@ -105,6 +105,8 @@ void qMRMLVolumeInfoWidgetPrivate::init()
                    q, SLOT(setNumberOfScalars(int)));
   QObject::connect(this->ScalarTypeComboBox, SIGNAL(currentIndexChanged(int)),
                    q, SLOT(setScalarType(int)));
+  QObject::connect(this->WindowLevelPresetsListWidget, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
+                   q, SLOT(setWindowLevelFromPreset(QListWidgetItem*)));
 
   // Window level presets are read-only
   q->setDataTypeEditable(false);
@@ -316,6 +318,7 @@ void qMRMLVolumeInfoWidget::updateWidgetFromMRML()
     }
   d->VolumeTagLabel->setText(volumeType);
 
+  d->WindowLevelPresetsListWidget->clear();
   vtkMRMLScalarVolumeDisplayNode *displayNode =
     scalarNode ? scalarNode->GetScalarVolumeDisplayNode() : 0;
   if (displayNode)
@@ -439,4 +442,17 @@ void qMRMLVolumeInfoWidget::setScalarType(int index)
   vtkInformation* outInfo = tp->GetOutputInformation(0);
   vtkDataObject::SetPointDataActiveScalarInfo(outInfo, type,
     vtkImageData::GetNumberOfScalarComponents(outInfo));
+}
+
+//------------------------------------------------------------------------------
+void qMRMLVolumeInfoWidget::setWindowLevelFromPreset(QListWidgetItem *presetItem)
+{
+  Q_D(qMRMLVolumeInfoWidget);
+  vtkMRMLScalarVolumeNode *scalarNode = vtkMRMLScalarVolumeNode::SafeDownCast( d->VolumeNode );
+  vtkMRMLScalarVolumeDisplayNode *displayNode = scalarNode ? scalarNode->GetScalarVolumeDisplayNode() : 0;
+  if (displayNode == 0)
+    {
+    return;
+    }
+  displayNode->SetWindowLevelFromPreset(d->WindowLevelPresetsListWidget->row(presetItem));
 }
