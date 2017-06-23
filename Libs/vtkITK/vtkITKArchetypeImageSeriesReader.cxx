@@ -65,10 +65,6 @@ vtkITKArchetypeImageSeriesReader::vtkITKArchetypeImageSeriesReader()
   this->FileNameSliceCount = 0;
   this->UseNativeOrigin = true;
 
-  this->UseGDCMImageIO = false; // need to switch to true when this part is used
-                                //   and exposed from DICOM plugin in the
-                                //   layers above
-
   this->OutputScalarType = VTK_FLOAT;
   this->NumberOfComponents = 0;
   this->UseNativeScalarType = 0;
