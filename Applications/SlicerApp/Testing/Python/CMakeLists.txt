@@ -291,6 +291,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
   # add as unit test for use at build/test time
   slicer_add_python_unittest(SCRIPT AtlasTests.py)
   slicer_add_python_unittest(SCRIPT AbdominalAtlasTest.py)
+  slicer_add_python_unittest(SCRIPT DICOMReaders.py)
   slicer_add_python_unittest(SCRIPT KneeAtlasTest.py)
   slicer_add_python_unittest(SCRIPT sceneImport2428.py)
   slicer_add_python_unittest(SCRIPT SlicerMRBMultipleSaveRestoreLoopTest.py)

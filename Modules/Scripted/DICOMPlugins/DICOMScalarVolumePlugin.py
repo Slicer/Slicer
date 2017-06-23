@@ -39,8 +39,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
   @staticmethod
   def readerApproaches():
-    """Available reader implementations.  DCMTK is now default"""
-    return ["DCMTK", "GDCM", "Archetype"]
+    """Available reader implementations.  First entry is initial default"""
+    return ["GDCM with DCMTK fallback", "DCMTK", "GDCM", "Archetype"]
 
   @staticmethod
   def settingsPanelEntry(panel, parent):
@@ -345,8 +345,16 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     elif imageIOName == "DCMTK":
       reader.SetDICOMImageIOApproachToDCMTK()
     else:
-      raise "Invalid imageIOName of %s" % imageIOName
+      raise Exception("Invalid imageIOName of %s" % imageIOName)
+    logging.info("Loading with imageIOName: %s" % imageIOName)
     reader.Update()
+
+    slicer.modules.reader = reader
+    if reader.GetErrorCode() != vtk.vtkErrorCode.NoError:
+      errorStrings = (imageIOName, vtk.vtkErrorCode.GetStringFromErrorCode(reader.GetErrorCode()))
+      logging.error("Could not read scalar volume using %s approach.  Error is: %s" % errorStrings)
+      return
+
 
     imageChangeInformation = vtk.vtkImageChangeInformation()
     imageChangeInformation.SetInputConnection(reader.GetOutputPort())
@@ -427,13 +435,18 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
     return volumeNode
 
-  def load(self,loadable):
-    """Load the select as a scalar volume using DCMTK
+  def load(self,loadable,readerApproach=None):
+    """Load the select as a scalar volume using desired approach
     """
-    readerIndex = slicer.util.settingsValue('DICOM/ScalarVolume/ReaderApproach', '0', converter=int)
-    readerApproach = DICOMScalarVolumePluginClass.readerApproaches()[readerIndex]
+    if not readerApproach:
+      readerIndex = slicer.util.settingsValue('DICOM/ScalarVolume/ReaderApproach', 0, converter=int)
+      readerApproach = DICOMScalarVolumePluginClass.readerApproaches()[readerIndex]
     if readerApproach == "Archetype":
       volumeNode = self.loadFilesWithArchetype(loadable.files, loadable.name)
+    elif readerApproach == "GDCM with DCMTK fallback":
+      volumeNode = self.loadFilesWithSeriesReader("GDCM", loadable.files, loadable.name)
+      if not volumeNode:
+        volumeNode = self.loadFilesWithSeriesReader("DCMTK", loadable.files, loadable.name)
     else:
       volumeNode = self.loadFilesWithSeriesReader(readerApproach, loadable.files, loadable.name)
     self.setVolumeNodeProperties(volumeNode, loadable)
