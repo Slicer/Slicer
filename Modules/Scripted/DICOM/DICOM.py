@@ -76,7 +76,7 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
     pluginHandlerSingleton.registerPlugin(slicer.qSlicerSubjectHierarchyDICOMPlugin())
 
   def performPostModuleDiscoveryTasks(self):
-    """Since dicom plugins are discovered while they application
+    """Since dicom plugins are discovered while the application
     is initialized, they may be found after the DICOM module
     itself if initialized.  This method is tied to a singleShot
     that will be called once the event loop is read to start.
