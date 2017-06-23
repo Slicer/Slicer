@@ -72,10 +72,15 @@ class DICOMReadersLogic(ScriptedLoadableModuleLogic):
     a string with a list of differences separated by newlines.
     """
     volumesLogic = slicer.modules.volumes.logic()
-    comparison = volumesLogic.CompareVolumeGeometry(volumeNode1, volumeNode2)
-    a1 = slicer.util.array(volumeNode1.GetID())
-    a2 = slicer.util.array(volumeNode2.GetID())
-    if not numpy.all(a1 == a2):
+    comparison = ""
+    comparison += volumesLogic.CompareVolumeGeometry(volumeNode1, volumeNode2)
+    image1 = volumeNode1.GetImageData()
+    image2 = volumeNode2.GetImageData()
+    if image1.GetScalarType() != image2.GetScalarType():
+      comparison += "First volume is %s, but second is %s" % (image1.GetScalarTypeAsString(), image2.GetScalarTypeAsString())
+    array1 = slicer.util.array(volumeNode1.GetID())
+    array2 = slicer.util.array(volumeNode2.GetID())
+    if not numpy.all(array1 == array2):
       comparison += "Pixel data mismatch\n"
     return comparison
 
