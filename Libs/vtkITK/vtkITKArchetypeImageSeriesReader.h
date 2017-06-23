@@ -215,6 +215,20 @@ public:
     }
 
   ///
+  /// Use image origin from the file
+  void SetUseGDCMImageIOOn()
+    {
+    UseGDCMImageIO = true;
+    }
+
+  ///
+  /// Use image center as origin
+  void SetUseGDCMImageIOOff()
+    {
+    UseGDCMImageIO = false;
+    }
+
+  ///
   /// Get the file format.  Pixels are this type in the file.
   vtkSetMacro(OutputScalarType, int);
   vtkGetMacro(OutputScalarType, int);
@@ -818,6 +832,9 @@ protected:
   char UseNativeCoordinateOrientation;
   char UseNativeScalarType;
   bool UseNativeOrigin;
+
+  // Use GDCM by default, otherwise use DCMTK
+  bool UseGDCMImageIO;
 
   bool GroupingByTags;
   int SelectedUID;

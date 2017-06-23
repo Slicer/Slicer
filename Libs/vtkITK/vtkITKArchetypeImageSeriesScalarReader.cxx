@@ -30,6 +30,7 @@
 #include <itkOrientImageFilter.h>
 #include <itkImageSeriesReader.h>
 #include <itkDCMTKImageIO.h>
+#include <itkGDCMImageIO.h>
 
 vtkStandardNewMacro(vtkITKArchetypeImageSeriesScalarReader);
 
@@ -94,11 +95,19 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
       typedef itk::Image<type,3> image##typeN;\
       typedef itk::ImageSource<image##typeN> FilterType; \
       FilterType::Pointer filter; \
-      typedef itk::DCMTKImageIO ImageIOType; \
-      ImageIOType::Pointer dcmtkIO = ImageIOType::New(); \
+      typedef itk::ImageIOBase ImageIOType; \
+      ImageIOType::Pointer imageIO; \
+      if (this->UseGDCMImageIO) \
+        { \
+        imageIO = itk::GDCMImageIO::New(); \
+        } \
+      else \
+        { \
+        imageIO = itk::DCMTKImageIO::New(); \
+        } \
       itk::ImageSeriesReader<image##typeN>::Pointer reader##typeN = \
           itk::ImageSeriesReader<image##typeN>::New(); \
-          reader##typeN->SetImageIO(dcmtkIO); \
+          reader##typeN->SetImageIO(imageIO); \
           itk::CStyleCommand::Pointer pcl=itk::CStyleCommand::New(); \
           pcl->SetCallback((itk::CStyleCommand::FunctionPointer)&ReadProgressCallback); \
           pcl->SetClientData(this); \
