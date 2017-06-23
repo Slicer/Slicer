@@ -242,6 +242,11 @@ public:
   vtkGetMacro(SingleFile, int);
 
   ///
+  /// Whether try analyzing the dicom headers
+  vtkSetMacro(AnalyzeHeader, bool);
+  vtkGetMacro(AnalyzeHeader, bool);
+
+  ///
   /// Whether to use orientation from file
   vtkSetMacro(UseOrientationFromFile, int);
   vtkGetMacro(UseOrientationFromFile, int);

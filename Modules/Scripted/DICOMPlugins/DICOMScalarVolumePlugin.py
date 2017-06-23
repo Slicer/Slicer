@@ -337,6 +337,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     for f in files:
       reader.AddFileName(slicer.util.toVTKString(f))
     reader.SetSingleFile(0);
+    reader.SetAnalyzeHeader(0);
     reader.SetOutputScalarTypeToNative()
     reader.SetDesiredCoordinateOrientationToNative()
     reader.SetUseNativeOriginOn()
