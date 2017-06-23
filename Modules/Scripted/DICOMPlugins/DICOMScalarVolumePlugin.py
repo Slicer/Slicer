@@ -40,7 +40,11 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
   @staticmethod
   def readerApproaches():
-    """Available reader implementations.  First entry is initial default"""
+    """Available reader implementations.  First entry is initial default.
+    Note: the settings file stores the index of the user's selected reader
+    approach, so if new approaches are added the should go at the
+    end of the list.
+    """
     return ["GDCM with DCMTK fallback", "DCMTK", "GDCM", "Archetype"]
 
   @staticmethod
