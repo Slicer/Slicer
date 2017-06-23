@@ -400,7 +400,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     }
 
   // Set volume attributes
-  volNode->SetMetaDataDictionary( reader->GetMetaDataDictionary() );
+  vtkMRMLVolumeArchetypeStorageNode::SetMetaDataDictionaryFromReader(volNode, reader);
 
   // Get all the file names from the reader
   if (reader->GetNumberOfFileNames() > 1)
@@ -881,4 +881,13 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
 void vtkMRMLVolumeArchetypeStorageNode::ConfigureForDataExchange()
 {
   this->UseCompressionOff();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeArchetypeStorageNode::SetMetaDataDictionaryFromReader(vtkMRMLVolumeNode *volNode, vtkITKArchetypeImageSeriesReader *reader)
+{
+  if (volNode && reader)
+    {
+    volNode->SetMetaDataDictionary( reader->GetMetaDataDictionary() );
+    }
 }

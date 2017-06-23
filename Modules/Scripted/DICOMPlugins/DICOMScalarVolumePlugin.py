@@ -331,13 +331,9 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     imageChangeInformation.SetOutputOrigin( 0, 0, 0 )
     imageChangeInformation.Update()
 
-    volumeNode = slicer.vtkMRMLScalarVolumeNode()
-    volumeNode.SetName(slicer.util.toVTKString(name))
     volumeNode.SetAndObserveImageData(imageChangeInformation.GetOutputDataObject(0))
-    # volumeNode.SetMetaDataDictionary(reader.GetMetaDataDictionary()) TODO?  Or skip...
+    slicer.vtkMRMLVolumeArchetypeStorageNode.SetMetaDataDictionaryFromReader(volumeNode, reader)
     volumeNode.SetRASToIJKMatrix(reader.GetRasToIjkMatrix())
-
-    slicer.mrmlScene.AddNode(volumeNode)
     volumeNode.CreateDefaultDisplayNodes()
 
     slicer.modules.DICOMInstance.reader = reader

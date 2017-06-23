@@ -19,6 +19,7 @@
 
 class vtkImageData;
 class vtkITKArchetypeImageSeriesReader;
+class vtkMRMLVolumeNode;
 
 /// \brief MRML node for representing a volume storage.
 ///
@@ -81,6 +82,13 @@ public:
   /// opportunity to optimize the storage node's settings, for
   /// instance to turn off compression.
   virtual void ConfigureForDataExchange();
+
+  ///
+  /// Provide a uniform way to populate the volume nodes's itk
+  /// metadatadictionary from the reader.  Since itk::MetaDataDictionary
+  /// is not exposed in python, this method allows it to be set indirectly
+  /// using only wrapped types.
+  static void SetMetaDataDictionaryFromReader(vtkMRMLVolumeNode*, vtkITKArchetypeImageSeriesReader*);
 
 protected:
   vtkMRMLVolumeArchetypeStorageNode();
