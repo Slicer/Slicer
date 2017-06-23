@@ -179,57 +179,65 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
     break
   /// END SCALAR MACRO
 
-  // If there is only one file in the series, just use an image file reader
-  if (this->FileNames.size() == 1)
+  try
     {
-    if (this->GetNumberOfComponents() == 1)
+    // If there is only one file in the series, just use an image file reader
+    if (this->FileNames.size() == 1)
       {
-      switch (this->OutputScalarType)
+      if (this->GetNumberOfComponents() == 1)
         {
-          vtkITKExecuteDataFromFile(VTK_DOUBLE, double);
-          vtkITKExecuteDataFromFile(VTK_FLOAT, float);
-          vtkITKExecuteDataFromFile(VTK_LONG, long);
-          vtkITKExecuteDataFromFile(VTK_UNSIGNED_LONG, unsigned long);
-          vtkITKExecuteDataFromFile(VTK_INT, int);
-          vtkITKExecuteDataFromFile(VTK_UNSIGNED_INT, unsigned int);
-          vtkITKExecuteDataFromFile(VTK_SHORT, short);
-          vtkITKExecuteDataFromFile(VTK_UNSIGNED_SHORT, unsigned short);
-          vtkITKExecuteDataFromFile(VTK_CHAR, char);
-          vtkITKExecuteDataFromFile(VTK_UNSIGNED_CHAR, unsigned char);
-        default:
-          vtkErrorMacro(<< "UpdateFromFile: Unknown data type");
+        switch (this->OutputScalarType)
+          {
+            vtkITKExecuteDataFromFile(VTK_DOUBLE, double);
+            vtkITKExecuteDataFromFile(VTK_FLOAT, float);
+            vtkITKExecuteDataFromFile(VTK_LONG, long);
+            vtkITKExecuteDataFromFile(VTK_UNSIGNED_LONG, unsigned long);
+            vtkITKExecuteDataFromFile(VTK_INT, int);
+            vtkITKExecuteDataFromFile(VTK_UNSIGNED_INT, unsigned int);
+            vtkITKExecuteDataFromFile(VTK_SHORT, short);
+            vtkITKExecuteDataFromFile(VTK_UNSIGNED_SHORT, unsigned short);
+            vtkITKExecuteDataFromFile(VTK_CHAR, char);
+            vtkITKExecuteDataFromFile(VTK_UNSIGNED_CHAR, unsigned char);
+          default:
+            vtkErrorMacro(<< "UpdateFromFile: Unknown data type");
+          }
+        }
+      else
+        {
+          vtkErrorMacro(<< "UpdateFromFile: Unsupported number of components (only 1 allowed): " << this->GetNumberOfComponents());
         }
       }
     else
       {
-        vtkErrorMacro(<< "UpdateFromFile: Unsupported number of components (only 1 allowed): " << this->GetNumberOfComponents());
-      }
-    }
-  else
-    {
-    if (this->GetNumberOfComponents() == 1)
-      {
-      switch (this->OutputScalarType)
+      if (this->GetNumberOfComponents() == 1)
         {
-          vtkITKExecuteDataFromSeries(VTK_DOUBLE, double);
-          vtkITKExecuteDataFromSeries(VTK_FLOAT, float);
-          vtkITKExecuteDataFromSeries(VTK_LONG, long);
-          vtkITKExecuteDataFromSeries(VTK_UNSIGNED_LONG, unsigned long);
-          vtkITKExecuteDataFromSeries(VTK_INT, int);
-          vtkITKExecuteDataFromSeries(VTK_UNSIGNED_INT, unsigned int);
-          vtkITKExecuteDataFromSeries(VTK_SHORT, short);
-          vtkITKExecuteDataFromSeries(VTK_UNSIGNED_SHORT, unsigned short);
-          vtkITKExecuteDataFromSeries(VTK_CHAR, char);
-          vtkITKExecuteDataFromSeries(VTK_UNSIGNED_CHAR, unsigned char);
-        default:
-          vtkErrorMacro(<< "UpdateFromFile: Unknown data type");
+        switch (this->OutputScalarType)
+          {
+            vtkITKExecuteDataFromSeries(VTK_DOUBLE, double);
+            vtkITKExecuteDataFromSeries(VTK_FLOAT, float);
+            vtkITKExecuteDataFromSeries(VTK_LONG, long);
+            vtkITKExecuteDataFromSeries(VTK_UNSIGNED_LONG, unsigned long);
+            vtkITKExecuteDataFromSeries(VTK_INT, int);
+            vtkITKExecuteDataFromSeries(VTK_UNSIGNED_INT, unsigned int);
+            vtkITKExecuteDataFromSeries(VTK_SHORT, short);
+            vtkITKExecuteDataFromSeries(VTK_UNSIGNED_SHORT, unsigned short);
+            vtkITKExecuteDataFromSeries(VTK_CHAR, char);
+            vtkITKExecuteDataFromSeries(VTK_UNSIGNED_CHAR, unsigned char);
+          default:
+            vtkErrorMacro(<< "UpdateFromFile: Unknown data type");
+          }
+        }
+      else
+        {
+          vtkErrorMacro(<<"UpdateFromSeries: Unsupported number of components: 1 != " << this->GetNumberOfComponents());
         }
       }
-    else
-      {
-        vtkErrorMacro(<<"UpdateFromSeries: Unsupported number of components: 1 != " << this->GetNumberOfComponents());
-      }
     }
+    catch (itk::ExceptionObject & e)
+      {
+      vtkErrorMacro(<< "Exception from vtkITK MegaMacro: " << e << "\n");
+      return 0;
+      }
   return 1;
 }
 
