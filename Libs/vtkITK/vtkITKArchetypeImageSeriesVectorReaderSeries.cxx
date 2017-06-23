@@ -19,6 +19,7 @@
 #include <vtkAOSDataArrayTemplate.h>
 #include <vtkCommand.h>
 #include <vtkDataArray.h>
+#include <vtkErrorCode.h>
 #include <vtkImageData.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
@@ -113,6 +114,7 @@ void vtkITKArchetypeImageSeriesVectorReaderSeries::ExecuteDataWithInformation(vt
   if (!this->Superclass::Archetype)
     {
       vtkErrorMacro("An Archetype must be specified.");
+      this->SetErrorCode(vtkErrorCode::NoFileNameError);
       return;
     }
   vtkImageData *data = this->AllocateOutputData(output, outInfo);
@@ -121,6 +123,7 @@ void vtkITKArchetypeImageSeriesVectorReaderSeries::ExecuteDataWithInformation(vt
   if (this->FileNames.size() == 1)
     {
     vtkErrorMacro("ImageSeriesVectorReaderSeries: only one file: " << this->FileNames[0].c_str() << " use the VectorReaderFile instead!");
+    this->SetErrorCode(vtkErrorCode::FileFormatError);
     }
   else
     {
@@ -141,11 +144,13 @@ void vtkITKArchetypeImageSeriesVectorReaderSeries::ExecuteDataWithInformation(vt
         vtkTemplateMacroCase(VTK_UNSIGNED_CHAR, unsigned char, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data));
         default:
           vtkErrorMacro(<< "UpdateFromFile Series: Unknown data type " << this->OutputScalarType);
+          this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
         }
       }
     catch (itk::ExceptionObject & e)
       {
       vtkErrorMacro(<< "Exception from vtkITK MegaMacro: " << e << "\n");
+      this->SetErrorCode(vtkErrorCode::FileFormatError);
       }
 
     this->SetMetaDataScalarRangeToPointDataInfo(data);

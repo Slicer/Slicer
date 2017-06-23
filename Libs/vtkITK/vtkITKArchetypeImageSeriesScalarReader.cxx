@@ -18,6 +18,7 @@
 #include <vtkAOSDataArrayTemplate.h>
 #include <vtkCommand.h>
 #include <vtkDataArray.h>
+#include <vtkErrorCode.h>
 #include <vtkImageData.h>
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
@@ -72,6 +73,7 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
   if (!this->Superclass::Archetype)
     {
       vtkErrorMacro("An Archetype must be specified.");
+      this->SetErrorCode(vtkErrorCode::NoFileNameError);
       return 0;
     }
 
@@ -108,6 +110,7 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
       else \
         { \
         vtkErrorMacro(<<"vtkITKExecuteDataFromSeries: Unsupported DICOMImageIOApproach: " << this->GetDICOMImageIOApproach()); \
+        this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError); \
         return 0; \
         } \
       itk::ImageSeriesReader<image##typeN>::Pointer reader##typeN = \
@@ -200,11 +203,13 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
             vtkITKExecuteDataFromFile(VTK_UNSIGNED_CHAR, unsigned char);
           default:
             vtkErrorMacro(<< "UpdateFromFile: Unknown data type");
+            this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
           }
         }
       else
         {
           vtkErrorMacro(<< "UpdateFromFile: Unsupported number of components (only 1 allowed): " << this->GetNumberOfComponents());
+          this->SetErrorCode(vtkErrorCode::FileFormatError);
         }
       }
     else
@@ -225,17 +230,20 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
             vtkITKExecuteDataFromSeries(VTK_UNSIGNED_CHAR, unsigned char);
           default:
             vtkErrorMacro(<< "UpdateFromFile: Unknown data type");
+            this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
           }
         }
       else
         {
           vtkErrorMacro(<<"UpdateFromSeries: Unsupported number of components: 1 != " << this->GetNumberOfComponents());
+          this->SetErrorCode(vtkErrorCode::FileFormatError);
         }
       }
     }
     catch (itk::ExceptionObject & e)
       {
       vtkErrorMacro(<< "Exception from vtkITK MegaMacro: " << e << "\n");
+      this->SetErrorCode(vtkErrorCode::FileFormatError);
       return 0;
       }
   return 1;

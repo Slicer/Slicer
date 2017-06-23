@@ -19,6 +19,7 @@
 #include <vtkAOSDataArrayTemplate.h>
 #include <vtkCommand.h>
 #include <vtkDataArray.h>
+#include <vtkErrorCode.h>
 #include <vtkImageData.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
@@ -101,6 +102,7 @@ void vtkITKArchetypeImageSeriesVectorReaderFile::ExecuteDataWithInformation(vtkD
     if (!this->Superclass::Archetype)
       {
         vtkErrorMacro("An Archetype must be specified.");
+        this->SetErrorCode(vtkErrorCode::NoFileNameError);
         return;
       }
     vtkImageData *data = this->AllocateOutputData(output, outInfo);
@@ -125,6 +127,7 @@ void vtkITKArchetypeImageSeriesVectorReaderFile::ExecuteDataWithInformation(vtkD
       vtkTemplateMacroCase(VTK_UNSIGNED_CHAR, unsigned char, vtkITKExecuteDataFromFileVector<VTK_TT>(this, data));
     default:
         vtkErrorMacro(<< "UpdateFromFile: Unknown data type " << this->OutputScalarType);
+        this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
       }
 
     this->SetMetaDataScalarRangeToPointDataInfo(data);
@@ -133,6 +136,7 @@ void vtkITKArchetypeImageSeriesVectorReaderFile::ExecuteDataWithInformation(vtkD
     {
     // ERROR - should have used the series reader
     vtkErrorMacro("There is more than one file, use the VectorReaderSeries instead");
+    this->SetErrorCode(vtkErrorCode::FileFormatError);
     }
 }
 

@@ -17,6 +17,7 @@
 
 // VTK includes
 #include <vtkDataArray.h>
+#include <vtkErrorCode.h>
 #include <vtkImageData.h>
 #include <vtkMath.h>
 #include <vtkMatrix4x4.h>
@@ -168,6 +169,7 @@ void vtkITKArchetypeImageSeriesReader::PrintSelf(ostream& os, vtkIndent indent)
     }
   os << ")\n";
 
+  os << indent << "DICOMImageIOApproach: " << this->GetDICOMImageIOApproach();
 }
 
 //----------------------------------------------------------------------------
@@ -228,6 +230,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
     if (!itksys::SystemTools::FileExists (fileNameCollapsed.c_str()))
       {
       vtkErrorMacro( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: Archetype file " << fileNameCollapsed.c_str() << " does not exist.");
+      this->SetErrorCode(vtkErrorCode::FileNotFoundError);
       return 0;
       }
     }
@@ -498,6 +501,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
       if (imageIO.GetPointer() == NULL)
         {
           vtkErrorMacro( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: ImageIO for file " << fileNameCollapsed.c_str() << " does not exist.");
+          this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
           return 0;
         }
       }
@@ -561,6 +565,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
     IjkToLpsMatrix->Delete();
     vtkErrorMacro( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: Cannot open " << fileNameCollapsed.c_str() << ". "
       << "ITK exception info: error in " << e.GetLocation() << ": "<< e.GetDescription());
+    this->SetErrorCode(vtkErrorCode::FileFormatError);
     return 0;
     }
   // Transform from LPS to RAS
@@ -1414,6 +1419,7 @@ int vtkITKArchetypeImageSeriesReader::AssembleVolumeContainingArchetype( )
     {
       vtkErrorMacro("AssembleVolumeContainingArchetype: index archetype "
         << this->IndexArchetype << " is out of bounds 0-" << this->IndexSeriesInstanceUIDs.size());
+      this->SetErrorCode(vtkErrorCode::FileFormatError);
       return 0;
     }
 
