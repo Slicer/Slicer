@@ -215,18 +215,16 @@ public:
     }
 
   ///
-  /// Use image origin from the file
-  void SetUseGDCMImageIOOn()
+  /// Reader to use when reading as a scalar image data
+  enum
     {
-    UseGDCMImageIO = true;
-    }
-
-  ///
-  /// Use image center as origin
-  void SetUseGDCMImageIOOff()
-    {
-    UseGDCMImageIO = false;
-    }
+    GDCM = 0,
+    DCMTK
+    };
+  vtkSetClampMacro(DICOMImageIOApproach, int, vtkITKArchetypeImageSeriesReader::GDCM, vtkITKArchetypeImageSeriesReader::DCMTK);
+  vtkGetMacro(DICOMImageIOApproach, int);
+  void SetDICOMImageIOApproachToGDCM() {this->SetDICOMImageIOApproach(vtkITKArchetypeImageSeriesReader::GDCM);};
+  void SetDICOMImageIOApproachToDCMTK() {this->SetDICOMImageIOApproach(vtkITKArchetypeImageSeriesReader::DCMTK);};
 
   ///
   /// Get the file format.  Pixels are this type in the file.
@@ -833,8 +831,7 @@ protected:
   char UseNativeScalarType;
   bool UseNativeOrigin;
 
-  // Use GDCM by default, otherwise use DCMTK
-  bool UseGDCMImageIO;
+  int DICOMImageIOApproach;
 
   bool GroupingByTags;
   int SelectedUID;

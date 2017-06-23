@@ -65,6 +65,8 @@ vtkITKArchetypeImageSeriesReader::vtkITKArchetypeImageSeriesReader()
   this->FileNameSliceCount = 0;
   this->UseNativeOrigin = true;
 
+  this->SetDICOMImageIOApproachToGDCM();
+
   this->OutputScalarType = VTK_FLOAT;
   this->NumberOfComponents = 0;
   this->UseNativeScalarType = 0;

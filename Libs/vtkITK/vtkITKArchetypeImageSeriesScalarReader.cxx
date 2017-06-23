@@ -97,13 +97,18 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
       FilterType::Pointer filter; \
       typedef itk::ImageIOBase ImageIOType; \
       ImageIOType::Pointer imageIO; \
-      if (this->UseGDCMImageIO) \
+      if (this->DICOMImageIOApproach == vtkITKArchetypeImageSeriesReader::GDCM) \
         { \
         imageIO = itk::GDCMImageIO::New(); \
         } \
-      else \
+      else if (this->DICOMImageIOApproach == vtkITKArchetypeImageSeriesReader::DCMTK) \
         { \
         imageIO = itk::DCMTKImageIO::New(); \
+        } \
+      else \
+        { \
+        vtkErrorMacro(<<"vtkITKExecuteDataFromSeries: Unsupported DICOMImageIOApproach: " << this->GetDICOMImageIOApproach()); \
+        return 0; \
         } \
       itk::ImageSeriesReader<image##typeN>::Pointer reader##typeN = \
           itk::ImageSeriesReader<image##typeN>::New(); \
