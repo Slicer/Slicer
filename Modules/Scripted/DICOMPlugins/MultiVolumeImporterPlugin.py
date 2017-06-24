@@ -528,13 +528,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
       if len(svLoadables) == 0:
         return None
-      for f in svLoadables[0].files:
-        sNode.AddFileName(f)
 
-      sNode.SetFileName(frameFileList[0]) # only used when num files/frame = 1
-      sNode.SetSingleFile(0)
-      frame = slicer.vtkMRMLScalarVolumeNode()
-      sNode.ReadData(frame)
+      frame = scalarVolumePlugin.load(svLoadables[0])
 
       if frame.GetImageData() == None:
         logging.error('Failed to read a multivolume frame!')
