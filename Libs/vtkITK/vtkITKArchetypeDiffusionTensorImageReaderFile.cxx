@@ -88,10 +88,11 @@ void vtkITKExecuteDataFromFileDiffusionTensor3D(
   unsigned int numberOfComponents = reader->GetImageIO()->GetNumberOfComponents();
   if (numberOfComponents != 9 && numberOfComponents != 6)
     {
-    itkGenericExceptionMacro(<< "number of components is: "
-                             << numberOfComponents
-                             << " but expected 6 or 9");
-    return;
+    ::itk::InvalidArgumentError e_(__FILE__, __LINE__);
+    std::ostringstream message;
+    message << "number of components is: " << numberOfComponents << " but expected 6 or 9";
+    e_.SetDescription(message.str());
+    throw e_; /* Explicit naming to work around Intel compiler bug.  */
     }
 
   // pixel type and number of components are correct. OK to read image data
@@ -174,6 +175,16 @@ int vtkITKArchetypeDiffusionTensorImageReaderFile::RequestData(
       vtkErrorMacro("There is more than one file, use the vtkITKArchetypeImageSeriesReader instead");
       this->SetErrorCode(vtkErrorCode::FileFormatError);
       }
+    }
+  catch (itk::InvalidArgumentError & e)
+    {
+    vtkDebugMacro(<< "Could not read file as tensor" << e);
+    this->SetErrorCode(vtkErrorCode::FileFormatError);
+    // return successful read, because this is an expected error when the user
+    // has selected a file that doesn't happen to be a tensor.  So it's a file
+    // format error, but not something that should trigger a VTK pipeline error
+    // (at least not as used in vtkMRMLStorageNodes).
+    return 1;
     }
   catch (itk::ExceptionObject & e)
     {
