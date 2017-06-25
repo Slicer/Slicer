@@ -62,10 +62,10 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     #
     # Input area
     #
-    inputCollapsibleButton = ctk.ctkCollapsibleButton()
-    inputCollapsibleButton.text = "Input"
-    self.layout.addWidget(inputCollapsibleButton)
-    inputFormLayout = qt.QFormLayout(inputCollapsibleButton)
+    self.inputCollapsibleButton = ctk.ctkCollapsibleButton()
+    self.inputCollapsibleButton.text = "Input"
+    self.layout.addWidget(self.inputCollapsibleButton)
+    inputFormLayout = qt.QFormLayout(self.inputCollapsibleButton)
 
     # Input view selector
     self.viewNodeSelector = slicer.qMRMLNodeComboBox()
@@ -156,10 +156,10 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     #
     # Output area
     #
-    outputCollapsibleButton = ctk.ctkCollapsibleButton()
-    outputCollapsibleButton.text = "Output"
-    self.layout.addWidget(outputCollapsibleButton)
-    outputFormLayout = qt.QFormLayout(outputCollapsibleButton)
+    self.outputCollapsibleButton = ctk.ctkCollapsibleButton()
+    self.outputCollapsibleButton.text = "Output"
+    self.layout.addWidget(self.outputCollapsibleButton)
+    outputFormLayout = qt.QFormLayout(self.outputCollapsibleButton)
 
     # Number of steps value
     self.numberOfStepsSliderWidget = ctk.ctkSliderWidget()
@@ -265,7 +265,9 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     advancedFormLayout.addRow("Image file name pattern:", self.fileNamePatternWidget)
 
     # Capture button
-    self.captureButton = qt.QPushButton("Capture")
+    self.captureButtonLabelCapture = "Capture"
+    self.captureButtonLabelCancel = "Cancel"
+    self.captureButton = qt.QPushButton(self.captureButtonLabelCapture)
     self.captureButton.toolTip = "Capture slice sweep to image sequence."
     self.showCreatedOutputFileButton = qt.QPushButton()
     self.showCreatedOutputFileButton.setIcon(qt.QIcon(':Icons/Go.png'))
@@ -275,12 +277,12 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     hbox = qt.QHBoxLayout()
     hbox.addWidget(self.captureButton)
     hbox.addWidget(self.showCreatedOutputFileButton)
-    outputFormLayout.addRow(hbox)
+    self.layout.addLayout(hbox)
 
     self.statusLabel = qt.QPlainTextEdit()
     self.statusLabel.setTextInteractionFlags(qt.Qt.TextSelectableByMouse)
     self.statusLabel.setCenterOnScroll(True)
-    outputFormLayout.addRow(self.statusLabel)
+    self.layout.addWidget(self.statusLabel)
 
     #
     # Add vertical spacer
@@ -429,10 +431,21 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     sequenceBrowserNode = self.sequenceBrowserNodeSelectorWidget.currentNode()
     sequenceBrowserNode.SetSelectedItemNumber(int(index))
 
-  def onSelect(self):
-    self.captureButton.enabled = self.viewNodeSelector.currentNode()
+  def enableInputOutputWidgets(self, enable):
+    self.inputCollapsibleButton.setEnabled(enable)
+    self.outputCollapsibleButton.setEnabled(enable)
 
   def onCaptureButton(self):
+
+    # Disable capture button to prevent multiple clicks
+    self.captureButton.setEnabled(False)
+    self.enableInputOutputWidgets(False)
+    slicer.app.processEvents()
+
+    if self.captureButton.text == self.captureButtonLabelCancel:
+      self.logic.requestCancel()
+      return
+
     self.logic.setFfmpegPath(self.ffmpegPathSelector.currentPath)
 
     self.statusLabel.plainText = ''
@@ -464,6 +477,8 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
         # still not found, user has to specify path manually
         self.videoExportFfmpegWarning.setVisible(True)
         self.advancedCollapsibleButton.collapsed = False
+        self.captureButton.setEnabled(True)
+        self.enableInputOutputWidgets(True)
         return
       self.ffmpegPathSelector.currentPath = self.logic.getFfmpegPath()
 
@@ -471,6 +486,8 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     # existing files in the output directory
     imageFileNamePattern = self.logic.getRandomFilePattern() if videoOutputRequested else self.fileNamePatternWidget.text
 
+    self.captureButton.setEnabled(True)
+    self.captureButton.text = self.captureButtonLabelCancel
     slicer.app.setOverrideCursor(qt.Qt.WaitCursor)
     captureAllViews = self.captureAllViewsCheckBox.checked
     if captureAllViews:
@@ -514,7 +531,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
       self.createdOutputFile = os.path.join(outputDir, self.videoFileNameWidget.text) if videoOutputRequested else outputDir
       self.showCreatedOutputFileButton.enabled = True
     except Exception as e:
-      self.addLog("Unexpected error: {0}".format(e.message))
+      self.addLog("Error: {0}".format(e.message))
       import traceback
       traceback.print_exc()
       self.showCreatedOutputFileButton.enabled = False
@@ -522,6 +539,9 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     if captureAllViews:
       self.logic.showViewControllers(True)
     slicer.app.restoreOverrideCursor()
+    self.captureButton.text = self.captureButtonLabelCapture
+    self.captureButton.setEnabled(True)
+    self.enableInputOutputWidgets(True)
 
 #
 # ScreenCaptureLogic
@@ -539,6 +559,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
   def __init__(self):
     self.logCallback = None
+    self.cancelRequested = False
 
     self.videoFormatPresets = [
       {"name": "H.264",                    "fileExtension": "mp4", "extraVideoOptions": "-codec libx264 -preset slower -pix_fmt yuv420p"},
@@ -548,6 +569,10 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
       {"name": "Animated GIF",             "fileExtension": "gif", "extraVideoOptions": "-filter_complex palettegen,[v]paletteuse"},
       {"name": "Animated GIF (grayscale)", "fileExtension": "gif", "extraVideoOptions": "-vf format=gray"} ]
 
+  def requestCancel(self):
+    logging.info("User requested cancelling of capture")
+    self.cancelRequested = True
+
   def addLog(self, text):
     logging.info(text)
     if self.logCallback:
@@ -556,7 +581,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
   def showViewControllers(self, show):
     lm = slicer.app.layoutManager()
     for viewIndex in range(lm.threeDViewCount):
-      lm.threeDWidget(0).threeDController().setVisible(show)
+      lm.threeDWidget(viewIndex).threeDController().setVisible(show)
     for sliceViewName in lm.sliceViewNames():
       lm.sliceWidget(sliceViewName).sliceController().setVisible(show)
 
@@ -800,6 +825,9 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
       raise ValueError('Invalid view node.')
 
   def captureSliceSweep(self, sliceNode, startSliceOffset, endSliceOffset, numberOfImages, outputDir, outputFilenamePattern, captureAllViews = None):
+
+    self.cancelRequested = False
+
     if not sliceNode.IsMappedInLayout():
       raise ValueError('Selected slice view is not visible in the current layout.')
 
@@ -818,11 +846,17 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
       self.addLog("Write "+filename)
       sliceLogic.SetSliceOffset(startSliceOffset+offsetIndex*offsetStepSize)
       self.captureImageFromView(None if captureAllViews else sliceView, filename)
+      if self.cancelRequested:
+        break
 
     sliceLogic.SetSliceOffset(originalSliceOffset)
+    if self.cancelRequested:
+      raise ValueError('User requested cancel.')
 
   def captureSliceFade(self, sliceNode, numberOfImages, outputDir,
                         outputFilenamePattern, captureAllViews = None):
+
+    self.cancelRequested = False
 
     if not os.path.exists(outputDir):
       os.makedirs(outputDir)
@@ -845,14 +879,21 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
         # fade to start
         compositeNode.SetForegroundOpacity(startForegroundOpacity + (numberOfImages-offsetIndex) * opacityStepSize)
       self.captureImageFromView(None if captureAllViews else sliceView, filename)
+      if self.cancelRequested:
+        break
 
     compositeNode.SetForegroundOpacity(originalForegroundOpacity)
+
+    if self.cancelRequested:
+      raise ValueError('User requested cancel.')
 
   def capture3dViewRotation(self, viewNode, startRotation, endRotation, numberOfImages, rotationAxis,
     outputDir, outputFilenamePattern, captureAllViews = None):
     """
     Acquire a set of screenshots of the 3D view while rotating it.
     """
+
+    self.cancelRequested = False
 
     if not os.path.exists(outputDir):
       os.makedirs(outputDir)
@@ -879,9 +920,10 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
     else:
       renderView.pitchDirection = renderView.PitchUp
     for offsetIndex in range(numberOfImages):
-      filename = filePathPattern % offsetIndex
-      self.addLog("Write " + filename)
-      self.captureImageFromView(None if captureAllViews else renderView, filename)
+      if not self.cancelRequested:
+        filename = filePathPattern % offsetIndex
+        self.addLog("Write " + filename)
+        self.captureImageFromView(None if captureAllViews else renderView, filename)
       if rotationAxis == AXIS_YAW:
         renderView.yaw()
       else:
@@ -903,11 +945,16 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
       renderView.setPitchRollYawIncrement(originalPitchRollYawIncrement)
       renderView.pitchDirection = originalDirection
 
+    if self.cancelRequested:
+      raise ValueError('User requested cancel.')
+
   def captureSequence(self, viewNode, sequenceBrowserNode, sequenceStartIndex,
                         sequenceEndIndex, numberOfImages, outputDir, outputFilenamePattern, captureAllViews = None):
     """
     Acquire a set of screenshots of a view while iterating through a sequence.
     """
+
+    self.cancelRequested = False
 
     if not os.path.exists(outputDir):
       os.makedirs(outputDir)
@@ -922,9 +969,12 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
       filename = filePathPattern % offsetIndex
       self.addLog("Write " + filename)
       self.captureImageFromView(None if captureAllViews else renderView, filename)
+      if self.cancelRequested:
+        break
 
     sequenceBrowserNode.SetSelectedItemNumber(originalSelectedItemNumber)
-
+    if self.cancelRequested:
+      raise ValueError('User requested cancel.')
 
   def createVideo(self, frameRate, extraOptions, outputDir, imageFileNamePattern, videoFileName):
     self.addLog("Export to video...")
