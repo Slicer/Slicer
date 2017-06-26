@@ -1065,7 +1065,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           || (*pit).GetTag() == "transform" || (*pit).GetTag() == "table"
           || (*pit).GetTag() == "measurement" || (*pit).GetTag() == "pointfile")
         {
-        std::string id = (*pit).GetDefault();
+        std::string id = (*pit).GetValue();
 
         // if the parameter is hidden, then deduce its value/id
         if ((*pit).GetHidden() == "true")
@@ -1073,7 +1073,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           id = this->FindHiddenNodeID(node0->GetModuleDescription(), *pit);
 
           // cache the id so we don't have to look for it later
-          (*pit).SetDefault( id );
+          (*pit).SetValue( id );
           }
 
         // only keep track of objects associated with real nodes
@@ -1457,7 +1457,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           {
           // simple parameter, write flag and value
           commandLineAsString.push_back(prefix + flag);
-          commandLineAsString.push_back((*pit).GetDefault());
+          commandLineAsString.push_back((*pit).GetValue());
           continue;
           }
         if ((*pit).GetTag() == "boolean")
@@ -1465,7 +1465,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           // booleans only have a flag (no value) in non-Python modules
           if ( commandType != PythonModule )
             {
-            if ((*pit).GetDefault() == "true")
+            if ((*pit).GetValue() == "true")
               {
               commandLineAsString.push_back(prefix + flag);
               }
@@ -1474,7 +1474,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
             {
             // For Python, if the flag is true or false, specify that
             commandLineAsString.push_back ( prefix + flag );
-            commandLineAsString.push_back ( (*pit).GetDefault() );
+            commandLineAsString.push_back ( (*pit).GetValue() );
             }
           continue;
           }
@@ -1486,10 +1486,10 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
             || (*pit).GetTag() == "string-vector")
           {
           // Only write out the flag if value is not empty
-          if ((*pit).GetDefault() != "")
+          if ((*pit).GetValue() != "")
             {
             commandLineAsString.push_back(prefix + flag);
-            commandLineAsString.push_back((*pit).GetDefault());
+            commandLineAsString.push_back((*pit).GetValue());
             }
           continue;
           }
@@ -1504,13 +1504,13 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           // established earlier
           MRMLIDToFileNameMap::const_iterator id2fn;
 
-          id2fn  = nodesToWrite.find( (*pit).GetDefault() );
+          id2fn  = nodesToWrite.find( (*pit).GetValue() );
           if ((*pit).GetChannel() == "input" && id2fn != nodesToWrite.end())
             {
             fname = (*id2fn).second;
             }
 
-          id2fn  = nodesToReload.find( (*pit).GetDefault() );
+          id2fn  = nodesToReload.find( (*pit).GetValue() );
           if ((*pit).GetChannel() == "output" && id2fn != nodesToReload.end())
             {
             fname = (*id2fn).second;
@@ -1518,7 +1518,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
 
           // check to see if we need to remap to a scene file and node id
           MRMLIDMap::iterator mit
-            = sceneToMiniSceneMap.find((*pit).GetDefault());
+            = sceneToMiniSceneMap.find((*pit).GetValue());
           if (mit != sceneToMiniSceneMap.end())
             {
             // node is being sent inside of a scene, so use the scene
@@ -1553,7 +1553,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
 
           // get the fiducial list node
           vtkMRMLNode *node
-            = this->GetMRMLScene()->GetNodeByID((*pit).GetDefault().c_str());
+            = this->GetMRMLScene()->GetNodeByID((*pit).GetValue().c_str());
           vtkMRMLFiducialListNode *fiducials
             = vtkMRMLFiducialListNode::SafeDownCast(node);
           vtkMRMLDisplayableHierarchyNode *points = vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
@@ -1662,7 +1662,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
             }
           // get the fiducial list node
           vtkMRMLNode *node
-            = this->GetMRMLScene()->GetNodeByID((*pit).GetDefault().c_str());
+            = this->GetMRMLScene()->GetNodeByID((*pit).GetValue().c_str());
           vtkMRMLDisplayableNode *markups = vtkMRMLDisplayableNode::SafeDownCast(node);
           if (markups && markups->IsA("vtkMRMLMarkupsFiducialNode"))
             {
@@ -1701,7 +1701,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
 
           // get the region node
           vtkMRMLNode *node
-            = this->GetMRMLScene()->GetNodeByID((*pit).GetDefault().c_str());
+            = this->GetMRMLScene()->GetNodeByID((*pit).GetValue().c_str());
           vtkMRMLROIListNode *regions = vtkMRMLROIListNode::SafeDownCast(node);
 
           vtkMRMLDisplayableHierarchyNode *points = vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
@@ -1825,7 +1825,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
         && (*iit).second.GetTag() != "double-vector"
         && (*iit).second.GetTag() != "string-vector")
       {
-      commandLineAsString.push_back((*iit).second.GetDefault());
+      commandLineAsString.push_back((*iit).second.GetValue());
       }
     else if ((*iit).second.GetTag() == "file"
              || (*iit).second.GetTag() == "directory"
@@ -1835,9 +1835,9 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
              || (*iit).second.GetTag() == "double-vector"
              || (*iit).second.GetTag() == "string-vector")
       {
-      if ((*iit).second.GetDefault() != "")
+      if ((*iit).second.GetValue() != "")
         {
-        commandLineAsString.push_back((*iit).second.GetDefault());
+        commandLineAsString.push_back((*iit).second.GetValue());
         }
       else
         {
@@ -1873,7 +1873,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
       if ((*iit).second.GetChannel() == "input")
         {
         // Check to make sure the index parameter is set
-        id2fn  = nodesToWrite.find( (*iit).second.GetDefault() );
+        id2fn  = nodesToWrite.find( (*iit).second.GetValue() );
         if (id2fn != nodesToWrite.end())
           {
           fname = (*id2fn).second;
@@ -1882,7 +1882,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
       else if ((*iit).second.GetChannel() == "output")
         {
         // Check to make sure the index parameter is set
-        id2fn  = nodesToReload.find( (*iit).second.GetDefault() );
+        id2fn  = nodesToReload.find( (*iit).second.GetValue() );
         if (id2fn != nodesToReload.end())
           {
           fname = (*id2fn).second;
@@ -1891,7 +1891,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
 
       // check to see if we need to remap to a scene file and node id
       MRMLIDMap::iterator mit
-        = sceneToMiniSceneMap.find((*iit).second.GetDefault());
+        = sceneToMiniSceneMap.find((*iit).second.GetValue());
       if (mit != sceneToMiniSceneMap.end())
         {
         // node is being sent inside of a scene, so use the scene
@@ -2557,7 +2557,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           if (node0->GetModuleDescription().HasParameter((*pit).GetReference()))
             {
             // get the id stored in the parameter referenced
-            std::string reference = node0->GetModuleDescription().GetParameterDefaultValue((*pit).GetReference());
+            std::string reference = node0->GetModuleDescription().GetParameterValue((*pit).GetReference());
             if (reference.size() > 0)
               {
               // "reference" can mean different things based on the parameter type.
@@ -2575,7 +2575,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
                   vtkMRMLTransformableNode *trefNode = vtkMRMLTransformableNode::SafeDownCast(refNode);
                   if (trefNode)
                     {
-                    if ( (*pit).GetDefault() != "" )
+                    if ( (*pit).GetValue() != "" )
                       {
                       // Invoke an event that will cause the scene to be rewired in the main thread.
                       // Pass a callback that performs the specific edit request. Callback is allocated here and
@@ -2583,7 +2583,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
                       vtkSlicerCLIEditTransformHierarchyCallback *callback = vtkSlicerCLIEditTransformHierarchyCallback::New();
                       callback->SetCLIModuleLogic(this);
                       callback->SetNodeID(reference);
-                      callback->SetTransformNodeID((*pit).GetDefault());
+                      callback->SetTransformNodeID((*pit).GetValue());
 
                       this->GetApplicationLogic()->InvokeEventWithDelay(0, this,
                                                                         vtkSlicerCLIModuleLogic::RequestHierarchyEditEvent,
@@ -2596,7 +2596,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
                 else if (((*pit).GetTag() == "image") || ((*pit).GetTag() == "geometry"))
                   {
                   // Placing an image or model in the same position in a hierarchy as the reference
-                  if ( (*pit).GetDefault() != "" )
+                  if ( (*pit).GetValue() != "" )
                     {
                     // Invoke an event that will cause the scene to be rewired in the main thread.
                     // Pass a callback that performs the specific edit request. Callback is allocated here and
@@ -2604,7 +2604,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
                     vtkSlicerCLIEditSubjectHierarchyCallback *callback = vtkSlicerCLIEditSubjectHierarchyCallback::New();
                     callback->SetCLIModuleLogic(this);
                     callback->SetReferenceNodeID(reference);
-                    callback->SetOutputNodeID((*pit).GetDefault());
+                    callback->SetOutputNodeID((*pit).GetValue());
 
                     this->GetApplicationLogic()->InvokeEventWithDelay(0, this,
                                                                       vtkSlicerCLIModuleLogic::RequestHierarchyEditEvent,
@@ -2620,7 +2620,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
                 }
               else
                 {
-                vtkWarningMacro( << "Cannot find referenced node " << (*pit).GetDefault());
+                vtkWarningMacro( << "Cannot find referenced node " << (*pit).GetValue());
                 }
               }
             }
@@ -2735,7 +2735,7 @@ vtkSlicerCLIModuleLogic::FindHiddenNodeID(const ModuleDescription& d,
       std::string reference;
       if (d.HasParameter(p.GetReference()))
         {
-        reference = d.GetParameterDefaultValue(p.GetReference());
+        reference = d.GetParameterValue(p.GetReference());
 
         if (p.GetTag() == "table")
           {
@@ -2810,7 +2810,7 @@ vtkSlicerCLIModuleLogic::FindHiddenNodeID(const ModuleDescription& d,
   else
     {
     // not a hidden node, just return the default
-    id = p.GetDefault();
+    id = p.GetValue();
     }
 
   return id;

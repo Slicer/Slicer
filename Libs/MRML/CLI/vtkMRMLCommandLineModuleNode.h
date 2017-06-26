@@ -273,7 +273,9 @@ public:
   std::string GetParameterDescription(unsigned int group, unsigned int param) const;
   std::string GetParameterChannel(unsigned int group, unsigned int param) const;
   std::string GetParameterIndex(unsigned int group, unsigned int param) const;
+  /// \deprecated Consider using GetParameterValue()
   std::string GetParameterDefault(unsigned int group, unsigned int param) const;
+  std::string GetParameterValue(unsigned int group, unsigned int param) const;
   std::string GetParameterFlag(unsigned int group, unsigned int param) const;
   std::string GetParameterMultiple(unsigned int group, unsigned int param) const;
   std::string GetParameterFileExtensions(unsigned int group, unsigned int param) const;

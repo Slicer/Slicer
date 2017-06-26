@@ -293,7 +293,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createIntegerTagWidget(const ModulePar
     return createStringTagWidget(moduleParameter);
   }
 
-  int value = QString::fromStdString(moduleParameter.GetDefault()).toInt();
+  int value = QString::fromStdString(moduleParameter.GetValue()).toInt();
   int step = 1;
   // Since, ctkDoubleSlider checks that MIN_INT < doubleValue / this->SingleStep < MAX_INT
   // Assuming the singlestep won't be smaller than 0.01, the min/max range set from the helper
@@ -346,7 +346,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createBooleanTagWidget(const ModulePar
     return createStringTagWidget(moduleParameter);
   }
 
-  QString valueAsStr = QString::fromStdString(moduleParameter.GetDefault());
+  QString valueAsStr = QString::fromStdString(moduleParameter.GetValue());
   QCheckBox * widget = new QCheckBox;
   QString _label = QString::fromStdString(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());
@@ -363,7 +363,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createFloatTagWidget(const ModuleParam
     return createStringTagWidget(moduleParameter);
   }
 
-  QString valueAsStr = QString::fromStdString(moduleParameter.GetDefault());
+  QString valueAsStr = QString::fromStdString(moduleParameter.GetValue());
   float value = valueAsStr.toFloat();
   float step = 0.1;
   // Since, ctkDoubleSlider checks that MIN_INT < doubleValue / this->SingleStep < MAX_INT
@@ -443,7 +443,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createDoubleTagWidget(const ModulePara
     return createStringTagWidget(moduleParameter);
   }
 
-  QString valueAsStr = QString::fromStdString(moduleParameter.GetDefault());
+  QString valueAsStr = QString::fromStdString(moduleParameter.GetValue());
   double value = valueAsStr.toDouble();
   double step = 0.1;
   // Since, ctkDoubleSlider checks that MIN_INT < doubleValue / this->SingleStep < MAX_INT
@@ -517,7 +517,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createDoubleTagWidget(const ModulePara
 //-----------------------------------------------------------------------------
 QWidget* qSlicerCLIModuleUIHelperPrivate::createStringTagWidget(const ModuleParameter& moduleParameter)
 {
-  QString valueAsStr = QString::fromStdString(moduleParameter.GetDefault());
+  QString valueAsStr = QString::fromStdString(moduleParameter.GetValue());
   QLineEdit * widget = new QLineEdit;
   QString _label = QString::fromStdString(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());

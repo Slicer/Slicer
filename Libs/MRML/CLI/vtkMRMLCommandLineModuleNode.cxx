@@ -154,7 +154,7 @@ void vtkMRMLCommandLineModuleNode::WriteXML(ostream& of, int nIndent)
       // variable and it was getting over written when used twice before the
       // buffer was flushed.
       of << " " << this->URLEncodeString ( (*pit).GetName().c_str() );
-      of  << "=\"" << this->URLEncodeString ( (*pit).GetDefault().c_str() ) << "\"";
+      of  << "=\"" << this->URLEncodeString ( (*pit).GetValue().c_str() ) << "\"";
       }
     }
 
@@ -252,7 +252,7 @@ void vtkMRMLCommandLineModuleNode::ReadXMLAttributes(const char** atts)
 
     if (this->Internal->ModuleDescriptionObject.HasParameter(attName))
       {
-      this->Internal->ModuleDescriptionObject.SetParameterDefaultValue(sattName.c_str(),sattValue.c_str());
+      this->Internal->ModuleDescriptionObject.SetParameterValue(sattName.c_str(),sattValue.c_str());
       }
     }
   this->EndModify(wasModifying);
@@ -287,7 +287,7 @@ void vtkMRMLCommandLineModuleNode::PrintSelf(ostream& os, vtkIndent indent)
     std::vector<ModuleParameter>::const_iterator pendit = (*pgit).GetParameters().end();
     for (std::vector<ModuleParameter>::const_iterator pit = pbeginit; pit != pendit; ++pit)
       {
-      os << indent << " " << (*pit).GetName() << " = " << (*pit).GetDefault() << "\n";
+      os << indent << " " << (*pit).GetName() << " = " << (*pit).GetValue() << "\n";
       }
     }
 }
@@ -371,7 +371,7 @@ bool vtkMRMLCommandLineModuleNode
 {
   bool isInput = false;
   std::vector<ModuleParameter> parameters =
-    this->Internal->ModuleDescriptionObject.FindParametersWithDefaultValue(
+    this->Internal->ModuleDescriptionObject.FindParametersWithValue(
       value);
   // It is an input if it is not an output.
   std::vector<ModuleParameter>::const_iterator it;
@@ -404,7 +404,7 @@ bool vtkMRMLCommandLineModuleNode
   // specified
   if (value != oldValue)
     {
-    if (!this->Internal->ModuleDescriptionObject.SetParameterDefaultValue(name, value))
+    if (!this->Internal->ModuleDescriptionObject.SetParameterValue(name, value))
       {
 #ifndef NDEBUG
       if (!this->Internal->ModuleDescriptionObject.HasParameter(name))
@@ -460,7 +460,7 @@ bool vtkMRMLCommandLineModuleNode
   // specified
   if (value != this->GetParameterAsString(name))
     {
-    if (!this->Internal->ModuleDescriptionObject.SetParameterDefaultValue(name, value))
+    if (!this->Internal->ModuleDescriptionObject.SetParameterValue(name, value))
       {
 #ifndef NDEBUG
       if (!this->Internal->ModuleDescriptionObject.HasParameter(name))
@@ -521,7 +521,7 @@ bool vtkMRMLCommandLineModuleNode
 //----------------------------------------------------------------------------
 std::string vtkMRMLCommandLineModuleNode::GetParameterAsString(const char *name) const
 {
-  return this->Internal->ModuleDescriptionObject.GetParameterDefaultValue(name);
+  return this->Internal->ModuleDescriptionObject.GetParameterValue(name);
 }
 
 //----------------------------------------------------------------------------
@@ -937,11 +937,17 @@ std::string vtkMRMLCommandLineModuleNode::GetParameterIndex ( unsigned int group
 //----------------------------------------------------------------------------
 std::string vtkMRMLCommandLineModuleNode::GetParameterDefault ( unsigned int group, unsigned int param ) const
 {
+  return this->GetParameterValue(group, param);
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLCommandLineModuleNode::GetParameterValue ( unsigned int group, unsigned int param ) const
+{
   if (!this->IsValidParamId(group, param))
     {
     return std::string();
     }
-  return this->GetModuleDescription().GetParameterGroups()[group].GetParameters()[param].GetDefault();
+  return this->GetModuleDescription().GetParameterGroups()[group].GetParameters()[param].GetValue();
 }
 
 //----------------------------------------------------------------------------
