@@ -18,7 +18,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationTextDisplayNod
 {
  public:
   static vtkMRMLAnnotationTextDisplayNode *New (  );
-  vtkTypeMacro ( vtkMRMLAnnotationTextDisplayNode,vtkMRMLAnnotationDisplayNode )
+  vtkTypeMacro ( vtkMRMLAnnotationTextDisplayNode,vtkMRMLAnnotationDisplayNode );
   void PrintSelf ( ostream& os, vtkIndent indent );
 
   //--------------------------------------------------------------------------
@@ -57,7 +57,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationTextDisplayNod
   // Description:
   // Get/Set for Text scale
   void SetTextScale(double scale);
-  vtkGetMacro(TextScale,double)
+  vtkGetMacro(TextScale,double);
 
   /// Enable/disable using automatic line wrap on text lines that are longer than MaxCharactersPerLine
   vtkSetMacro(UseLineWrap,int);

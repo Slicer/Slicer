@@ -55,7 +55,7 @@ public:
   /// 4: Full layout
   // TODO use an enum for the types
   void SetScreenShotType(int type);
-  vtkGetMacro(ScreenShotType, int)
+  vtkGetMacro(ScreenShotType, int);
 
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
