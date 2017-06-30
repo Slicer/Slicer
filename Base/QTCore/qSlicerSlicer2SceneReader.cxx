@@ -114,14 +114,6 @@ int dataType(QString type)
     {
     return VTK_UNSIGNED_LONG_LONG;
     }
-  else if (type == "__int64")
-    {
-    return VTK___INT64;
-    }
-  else if (type == "unsigned__int64")
-    {
-    return VTK_UNSIGNED___INT64;
-    }
   else if (type == "float")
     {
     return VTK_FLOAT;
