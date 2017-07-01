@@ -204,7 +204,7 @@ void MergeImageGeneric2(
         {
         for (vtkIdType idxX = 0; idxX <= maxX; idxX++)
           {
-          if ((*modifierImagePtr) > maskThreshold)
+          if ((*modifierImagePtr) > maskThresholdModifierType)
             {
             *baseImagePtr = fillValueBaseImageType;
             baseImageModified = true;
