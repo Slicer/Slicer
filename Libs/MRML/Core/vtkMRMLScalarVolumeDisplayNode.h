@@ -69,6 +69,11 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
   //--------------------------------------------------------------------------
 
   ///
+  /// Window/Level cannot be edited through the user interface
+  vtkGetMacro(WindowLevelLocked, bool);
+  vtkSetMacro(WindowLevelLocked, bool);
+
+  ///
   /// Specifies whether windowing and leveling are to be performed automatically
   vtkBooleanMacro(AutoWindowLevel, int);
   vtkGetMacro(AutoWindowLevel, int);
@@ -217,6 +222,7 @@ protected:
 
   /// Booleans
   int Interpolate;
+  bool WindowLevelLocked;
   int AutoWindowLevel;
   int ApplyThreshold;
   int AutoThreshold;

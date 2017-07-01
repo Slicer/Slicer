@@ -50,6 +50,7 @@ vtkMRMLScalarVolumeDisplayNode::vtkMRMLScalarVolumeDisplayNode()
 {
   // Strings
   this->Interpolate = 1;
+  this->WindowLevelLocked = false;
   this->AutoWindowLevel = 1;
   this->AutoThreshold = 0;
   this->ApplyThreshold = 0;
@@ -238,6 +239,7 @@ void vtkMRMLScalarVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
   ss << this->Interpolate;
   of << " interpolate=\"" << ss.str() << "\"";
   }
+  of << " windowLevelLocked=\"" << (this->GetWindowLevelLocked() ? "true" : "false") << "\"";
   {
   std::stringstream ss;
   ss << this->AutoWindowLevel;
@@ -317,6 +319,10 @@ void vtkMRMLScalarVolumeDisplayNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >> this->Interpolate;
       }
+    else if (!strcmp(attName, "windowLevelLocked"))
+      {
+      this->SetWindowLevelLocked(strcmp(attValue, "true") == 0);
+      }
     else if (!strcmp(attName, "autoWindowLevel"))
       {
       std::stringstream ss;
@@ -354,6 +360,7 @@ void vtkMRMLScalarVolumeDisplayNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLScalarVolumeDisplayNode *node = (vtkMRMLScalarVolumeDisplayNode *) anode;
 
+  this->SetWindowLevelLocked(node->GetWindowLevelLocked());
   this->SetAutoWindowLevel( node->GetAutoWindowLevel() );
   this->SetWindowLevel(node->GetWindow(), node->GetLevel());
   this->SetAutoThreshold( node->GetAutoThreshold() ); // don't want to run CalculateAutoLevel
@@ -375,6 +382,7 @@ void vtkMRMLScalarVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 
   Superclass::PrintSelf(os,indent);
 
+  os << indent << "WindowLevelLocked:   " << (this->WindowLevelLocked ? "true" : "false") << "\n";
   os << indent << "AutoWindowLevel:   " << this->AutoWindowLevel << "\n";
   os << indent << "Window:            " << this->GetWindow() << "\n";
   os << indent << "Level:             " << this->GetLevel() << "\n";

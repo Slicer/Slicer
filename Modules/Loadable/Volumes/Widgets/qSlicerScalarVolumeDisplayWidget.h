@@ -55,6 +55,7 @@ protected slots:
   void updateWidgetFromMRML();
   void updateTransferFunction();
   void onPresetButtonClicked();
+  void onLockWindowLevelButtonClicked();
 
 protected:
   void showEvent(QShowEvent * event);

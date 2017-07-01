@@ -19,6 +19,7 @@
 #include "vtkMRMLCrosshairDisplayableManager.h"
 #include "vtkMRMLCrosshairNode.h"
 #include "vtkMRMLInteractionNode.h"
+#include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSegmentationDisplayNode.h"
 #include "vtkMRMLSliceLayerLogic.h"
@@ -761,6 +762,33 @@ bool vtkSliceViewInteractorStyle::IsMouseInsideVolume(bool background)
 }
 
 //----------------------------------------------------------------------------
+bool vtkSliceViewInteractorStyle::VolumeWindowLevelEditable(const char* volumeNodeID)
+{
+  if (!volumeNodeID)
+    {
+    return false;
+    }
+  vtkMRMLScene *scene = this->SliceLogic->GetMRMLScene();
+  if (!scene)
+    {
+    return false;
+    }
+  vtkMRMLVolumeNode* volumeNode =
+    vtkMRMLVolumeNode::SafeDownCast(scene->GetNodeByID(volumeNodeID));
+  if (volumeNode == NULL)
+    {
+    return false;
+    }
+  vtkMRMLScalarVolumeDisplayNode* scalarVolumeDisplayNode =
+    vtkMRMLScalarVolumeDisplayNode::SafeDownCast(volumeNode->GetDisplayNode());
+  if (!scalarVolumeDisplayNode)
+    {
+    return false;
+    }
+  return !scalarVolumeDisplayNode->GetWindowLevelLocked();
+}
+
+//----------------------------------------------------------------------------
 void vtkSliceViewInteractorStyle::StartAdjustWindowLevel()
 {
   vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
@@ -774,25 +802,36 @@ void vtkSliceViewInteractorStyle::StartAdjustWindowLevel()
     return;
     }
 
+  bool foregroundEditable = this->VolumeWindowLevelEditable(sliceCompositeNode->GetForegroundVolumeID())
+    && this->GetActionEnabled(vtkSliceViewInteractorStyle::AdjustWindowLevelForeground);
+  bool backgroundEditable = this->VolumeWindowLevelEditable(sliceCompositeNode->GetBackgroundVolumeID())
+    && this->GetActionEnabled(vtkSliceViewInteractorStyle::AdjustWindowLevelBackground);
+
+  if (!foregroundEditable && !backgroundEditable)
+    {
+    // window/level editing is disabled on both volumes
+    return;
+    }
   // By default adjust background volume, if available
-  bool adjustForeground = (sliceCompositeNode->GetBackgroundVolumeID() == NULL);
+  bool adjustForeground = !backgroundEditable;
+
   // If both foreground and background volumes are visible then choose adjustment of
   // foreground volume, if foreground volume is visible in current mouse position
-  if (sliceCompositeNode->GetBackgroundVolumeID() && sliceCompositeNode->GetForegroundVolumeID())
+  if (foregroundEditable && backgroundEditable)
     {
     adjustForeground = (sliceCompositeNode->GetForegroundOpacity() > 0.0)
       && this->IsMouseInsideVolume(true)   // inside background (used as mask for displaying foreground)
       && this->IsMouseInsideVolume(false); // inside foreground
     }
 
-  if (adjustForeground && this->GetActionEnabled(vtkSliceViewInteractorStyle::AdjustWindowLevelForeground))
+  if (adjustForeground)
     {
     this->SetActionState(this->AdjustWindowLevelForeground);
     this->SliceLogic->GetForegroundWindowLevelAndRange(
       this->LastVolumeWindowLevel[0], this->LastVolumeWindowLevel[1],
       this->VolumeScalarRange[0], this->VolumeScalarRange[1]);
     }
-  else if (this->GetActionEnabled(vtkSliceViewInteractorStyle::AdjustWindowLevelBackground))
+  else
     {
     this->SetActionState(this->AdjustWindowLevelBackground);
     this->SliceLogic->GetBackgroundWindowLevelAndRange(

@@ -168,6 +168,10 @@ protected:
   /// Use background flag to choose between foreground/background layer.
   bool IsMouseInsideVolume(bool background);
 
+  /// Returns true if the volume's window/level values are editable
+  /// on the GUI
+  bool VolumeWindowLevelEditable(const char* volumeNodeID);
+
   int ActionState;
   int ActionsEnabled;
 
