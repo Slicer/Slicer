@@ -509,8 +509,10 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
       d->TagsTable->item(row, 0)->setFlags(Qt::ItemIsEnabled);
 
       // If series item contains tag then use that value
-      std::string tagAttributeValue = shNode->GetItemAttribute(seriesItemID, tagName.toLatin1().constData());
-      if (shNode->HasItemAttribute(seriesItemID, tagName.toLatin1().constData()))
+      std::string tagAttributeName = vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix()
+        + std::string(tagName.toLatin1().constData());
+      std::string tagAttributeValue = shNode->GetItemAttribute(seriesItemID, tagAttributeName);
+      if (shNode->HasItemAttribute(seriesItemID, tagAttributeName))
         {
         d->TagsTable->setItem(row, 1, new QTableWidgetItem(QString(tagAttributeValue.c_str())));
         }
