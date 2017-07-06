@@ -92,6 +92,7 @@ class CLIEventTestTest(ScriptedLoadableModuleTest):
     self.test_CLIStatusEventTestCancel()
     self.test_CLIStatusEventOnErrorTestSynchronous()
     self.test_CLIStatusEventOnErrorTestAsynchronous()
+    self.test_SubjectHierarchyReference()
 
   # Testing a the status event on a normal execution
   def test_CLIStatusEventTestSynchronous(self):
@@ -170,6 +171,10 @@ class CLIEventTestTest(ScriptedLoadableModuleTest):
       expectedEvents.append(cli.Scheduled)
     expectedEvents.append(cli.CompletedWithErrors)
 
+    # Ignore cli.Running event (it may or may not be fired)
+    if cli.Running in logic.StatusEvents:
+      logic.StatusEvents.remove(cli.Running)
+
     self.assertEqual(logic.StatusEvents, expectedEvents)
     self.delayDisplay('Testing bad execution Passed')
 
@@ -203,5 +208,38 @@ class CLIEventTestTest(ScriptedLoadableModuleTest):
       cli.Cancelled,
       ]
 
+    # Ignore cli.Running event (it may or may not be fired)
+    if cli.Running in logic.StatusEvents:
+      logic.StatusEvents.remove(cli.Running)
+
     self.assertEqual(logic.StatusEvents, expectedEvents)
     self.delayDisplay('Testing cancelled execution Passed')
+
+  def test_SubjectHierarchyReference(self):
+    self.delayDisplay('Test that output node moved to referenced node location in subject hierarchy')
+
+    self.delayDisplay('Load input volume')
+    from SampleData import SampleDataLogic
+    inputVolume = SampleDataLogic().downloadMRHead()
+
+    self.delayDisplay('Create subject hierarchy of input volume')
+    shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
+    self.patientItemID = shNode.CreateSubjectItem(shNode.GetSceneItemID(), "John Doe")
+    self.studyItemID = shNode.CreateStudyItem(self.patientItemID, "Some study")
+    self.folderItemID = shNode.CreateFolderItem(self.studyItemID, "Some group")
+    shNode.SetItemParent(shNode.GetItemByDataNode(inputVolume), self.folderItemID)
+
+    outputVolume = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLScalarVolumeNode")
+    # New node is expected to be created in the subject hierarchy root
+    self.assertEqual(shNode.GetItemParent(shNode.GetItemByDataNode(outputVolume)), shNode.GetSceneItemID())
+
+    self.delayDisplay('Run CLI module')
+    cliParams = {'InputVolume': inputVolume.GetID(), 'OutputVolume': outputVolume.GetID(), 'ThresholdValue' : 100, 'ThresholdType' : 'Above'}
+    cliNode = slicer.cli.run(slicer.modules.thresholdscalarvolume, None, cliParams, wait_for_completion=True)
+
+    # After CLI execution is completed, output volume must be in the same folder as the referenced node
+    self.assertEqual(shNode.GetItemParent(shNode.GetItemByDataNode(outputVolume)), shNode.GetItemParent(shNode.GetItemByDataNode(inputVolume)))
+
+    # After pending events are processed, the output volume must be in the same subject hierarchy folder
+    slicer.app.processEvents()
+    self.assertEqual(shNode.GetItemParent(shNode.GetItemByDataNode(outputVolume)), shNode.GetItemParent(shNode.GetItemByDataNode(inputVolume)))

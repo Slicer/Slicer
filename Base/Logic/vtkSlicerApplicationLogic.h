@@ -101,7 +101,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   /// the request failed to be registered.
   /// \todo Fire RequestProcessedEvent when processing Modified requests.
   /// \sa RequestReadData(), RequestWriteData()
-  int RequestModified( vtkObject * );
+  vtkMTimeType RequestModified(vtkObject *);
 
   /// Request that data be read from a file and set it on the referenced
   /// node.  The request will be sent to the main thread which will be
@@ -111,9 +111,24 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   /// the request failed to be registered. When the request is processed,
   /// RequestProcessedEvent is invoked with the request UID as calldata.
   /// \sa RequestReadScene(), RequestWriteData(), RequestModified()
-  int RequestReadData(const char *refNode, const char *filename,
-                       int displayData = false,
-                       int deleteFile=false);
+  vtkMTimeType RequestReadFile(const char *refNode, const char *filename,
+    int displayData = false, int deleteFile = false);
+
+  /// Request setting of parent transform.
+  /// The request will executed on the main thread.
+  /// Return the request UID (monotonically increasing) of the request or 0 if
+  /// the request failed to be registered. When the request is processed,
+  /// RequestProcessedEvent is invoked with the request UID as calldata.
+  /// \sa RequestReadScene(), RequestWriteData(), RequestModified()
+  vtkMTimeType RequestUpdateParentTransform(const std::string &updatedNode, const std::string& parentTransformNode);
+
+  /// Request setting of subject hierarchy location (will have the same parent and same level as sibling node).
+  /// The request will executed on the main thread.
+  /// Return the request UID (monotonically increasing) of the request or 0 if
+  /// the request failed to be registered. When the request is processed,
+  /// RequestProcessedEvent is invoked with the request UID as calldata.
+  /// \sa RequestReadScene(), RequestWriteData(), RequestModified()
+  vtkMTimeType RequestUpdateSubjectHierarchyLocation(const std::string &updatedNode, const std::string& siblingNode);
 
   /// Return the number of items that need to be read from the queue
   /// (this allows code that invokes command line modules to know when
@@ -126,9 +141,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   /// the request failed to be registered.  When the request is processed,
   /// RequestProcessedEvent is invoked with the request UID as calldata.
   /// \sa RequestReadData(), RequestReadScene()
-  int RequestWriteData(const char *refNode, const char *filename,
-                       int displayData = false,
-                       int deleteFile=false);
+  vtkMTimeType RequestWriteData(const char *refNode, const char *filename);
 
   /// Request that a scene be read from a file. Mappings of node IDs in
   /// the file (sourceIDs) to node IDs in the main scene
@@ -140,7 +153,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   /// the request failed to be registered. When the request is processed,
   /// RequestProcessedEvent is invoked with the request UID as calldata.
   /// \sa RequestReadData(), RequestWriteData()
-  int RequestReadScene(const std::string& filename,
+  vtkMTimeType RequestReadScene(const std::string& filename,
                        std::vector<std::string> &targetIDs,
                        std::vector<std::string> &sourceIDs,
                        int displayData = false,
@@ -209,13 +222,6 @@ protected:
 
   /// Networking Task processing loop that is run in a networking thread
   void ProcessNetworkingTasks();
-
-  /// Process a request to read data into a node.  This method is
-  /// called by ProcessReadData() in the application main thread
-  /// because calls to load data will cause a Modified() on a node
-  /// which can force a render.
-  void ProcessReadNodeData( ReadDataRequest &req );
-  void ProcessWriteNodeData( WriteDataRequest &req );
 
   /// Process a request to read data into a scene.  This method is
   /// called by ProcessReadData() in the application main thread

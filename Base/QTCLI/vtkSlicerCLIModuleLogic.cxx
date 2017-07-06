@@ -30,7 +30,6 @@
 #include <vtkMRMLStorageNode.h>
 #include <vtkMRMLModelStorageNode.h>
 #include <vtkMRMLTransformNode.h>
-#include <vtkMRMLSubjectHierarchyNode.h>
 
 // VTK includes
 #include <vtkCallbackCommand.h>
@@ -192,129 +191,6 @@ public:
   ~vtkSlicerCLIOneShotCallbackCallback() {}
 };
 
-//---------------------------------------------------------------------------
-// A callback command to edit the transform hierarchy. This command is configured in the
-// processing thread and then passed to the main gui thread to be executed..
-//
-// Other hierarchies can be edited in this manner by creating callbacks specific to the desired edits
-class vtkSlicerCLIEditTransformHierarchyCallback : public vtkCallbackCommand
-{
-public:
-  static vtkSlicerCLIEditTransformHierarchyCallback *New()
-  {
-    return new vtkSlicerCLIEditTransformHierarchyCallback;
-  }
-  virtual void Execute(vtkObject* vtkNotUsed(caller),
-                       unsigned long vtkNotUsed(eid),
-                       void * vtkNotUsed(callData))
-  {
-    vtkMRMLNode *nd = this->CLIModuleLogic->GetMRMLScene()->GetNodeByID(this->NodeID.c_str());
-    vtkMRMLTransformableNode *tnd = vtkMRMLTransformableNode::SafeDownCast(nd);
-
-    if (tnd)
-    {
-      tnd->SetAndObserveTransformNodeID(this->TransformNodeID.c_str());
-    }
-  }
-
-  void SetCLIModuleLogic(vtkSlicerCLIModuleLogic* logic)
-  {
-    this->CLIModuleLogic = logic;
-  }
-  vtkSlicerCLIModuleLogic* GetCLIModuleLogic()
-  {
-    return this->CLIModuleLogic;
-  }
-
-  void SetTransformNodeID(const std::string& id)
-  {
-    this->TransformNodeID = id;
-  }
-
-  void SetNodeID(const std::string& id)
-  {
-    this->NodeID = id;
-  }
-
-protected:
-  vtkSlicerCLIEditTransformHierarchyCallback()
-  {
-    this->CLIModuleLogic = 0;
-  }
-  ~vtkSlicerCLIEditTransformHierarchyCallback()
-  {
-    this->SetCLIModuleLogic(0);
-  }
-
-  vtkSlicerCLIModuleLogic* CLIModuleLogic;
-  std::string TransformNodeID;
-  std::string NodeID;
-};
-
-//---------------------------------------------------------------------------
-// A callback command to edit the subject hierarchy.
-class vtkSlicerCLIEditSubjectHierarchyCallback : public vtkCallbackCommand
-{
-public:
-  static vtkSlicerCLIEditSubjectHierarchyCallback *New()
-  {
-    return new vtkSlicerCLIEditSubjectHierarchyCallback;
-  }
-  virtual void Execute(vtkObject* vtkNotUsed(caller),
-                       unsigned long vtkNotUsed(eid),
-                       void * vtkNotUsed(callData))
-  {
-    vtkMRMLNode *nd = this->CLIModuleLogic->GetMRMLScene()->GetNodeByID(this->ReferenceNodeID.c_str());
-    vtkMRMLNode *ond = this->CLIModuleLogic->GetMRMLScene()->GetNodeByID(this->OutputNodeID.c_str());
-    vtkMRMLSubjectHierarchyNode *shnd = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(this->CLIModuleLogic->GetMRMLScene());
-    vtkIdType shItemID = shnd->GetItemByDataNode(nd);
-    vtkIdType outShItemID = shnd->GetItemByDataNode(ond);
-
-    if (shItemID && outShItemID)
-    {
-      vtkIdType parentItemID = shnd->GetItemParent(shItemID);
-      shnd->SetItemParent(outShItemID, parentItemID);
-      shnd->SetItemLevel(outShItemID, shnd->GetItemLevel(shItemID));
-    }
-  }
-
-  void SetCLIModuleLogic(vtkSlicerCLIModuleLogic* logic)
-  {
-    this->CLIModuleLogic = logic;
-  }
-  vtkSlicerCLIModuleLogic* GetCLIModuleLogic()
-  {
-    return this->CLIModuleLogic;
-  }
-
-  void SetOutputNodeID(const std::string& id)
-  {
-    this->OutputNodeID = id;
-  }
-
-  void SetReferenceNodeID(const std::string& id)
-  {
-    this->ReferenceNodeID = id;
-  }
-
-protected:
-  vtkSlicerCLIEditSubjectHierarchyCallback()
-  {
-    this->CLIModuleLogic = 0;
-  }
-  ~vtkSlicerCLIEditSubjectHierarchyCallback()
-  {
-    this->SetCLIModuleLogic(0);
-  }
-
-  /// CLI logic
-  vtkSlicerCLIModuleLogic* CLIModuleLogic;
-  /// Node ID of output node to move in the hierarchy
-  std::string OutputNodeID;
-  /// Node ID of reference node specifying where to move output node
-  std::string ReferenceNodeID;
-};
-
 //----------------------------------------------------------------------------
 class vtkSlicerCLIModuleLogic::vtkInternal
 {
@@ -328,7 +204,7 @@ public:
   itk::MutexLock::Pointer ProcessesKillLock;
   std::vector<itksysProcess*> Processes;
 
-  typedef std::vector<std::pair<int, vtkMRMLCommandLineModuleNode*> > RequestType;
+  typedef std::vector<std::pair<vtkMTimeType, vtkMRMLCommandLineModuleNode*> > RequestType;
   struct FindRequest
   {
     FindRequest(vtkMRMLCommandLineModuleNode* node)
@@ -336,21 +212,21 @@ public:
       , LastRequestUID(0)
     {
     }
-    FindRequest(int requestUID)
+    FindRequest(vtkMTimeType requestUID)
       : Node(0)
       , LastRequestUID(requestUID)
     {
     }
-    bool operator()(const std::pair<int, vtkMRMLCommandLineModuleNode*>& p)
+    bool operator()(const std::pair<vtkMTimeType, vtkMRMLCommandLineModuleNode*>& p)
     {
       return (this->Node != 0 && p.second == this->Node) ||
         (this->LastRequestUID != 0 && p.first == this->LastRequestUID);
     }
     vtkMRMLCommandLineModuleNode* Node;
-    int LastRequestUID;
+    vtkMTimeType LastRequestUID;
   };
 
-  void SetLastRequest(vtkMRMLCommandLineModuleNode* node, int requestUID)
+  void SetLastRequest(vtkMRMLCommandLineModuleNode* node, vtkMTimeType requestUID)
   {
     RequestType::iterator it = std::find_if(
       this->LastRequests.begin(), this->LastRequests.end(), FindRequest(node));
@@ -364,7 +240,7 @@ public:
       it->first = requestUID;
       }
   }
-  int GetLastRequest(vtkMRMLCommandLineModuleNode* node)
+  vtkMTimeType GetLastRequest(vtkMRMLCommandLineModuleNode* node)
   {
     RequestType::iterator it = std::find_if(
       this->LastRequests.begin(), this->LastRequests.end(), FindRequest(node));
@@ -2512,8 +2388,8 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
         }
 
         bool deleteFile = this->GetDeleteTemporaryFiles();
-        int requestUID = this->GetApplicationLogic()
-          ->RequestReadData((*id2fn0).first.c_str(), (*id2fn0).second.c_str(),
+        vtkMTimeType requestUID = this->GetApplicationLogic()
+          ->RequestReadFile((*id2fn0).first.c_str(), (*id2fn0).second.c_str(),
                             displayData, deleteFile);
         this->Internal->SetLastRequest(node0, requestUID);
 
@@ -2529,6 +2405,46 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           }
         }
       }
+
+  // if there was a miniscene that needs loading, request it
+  if (miniscene->GetNumberOfNodes() > 0)
+    {
+    // don't load the mini scene if errors were found or the cli was cancelled.
+    if (node0->GetStatus() == vtkMRMLCommandLineModuleNode::Completing)
+      {
+      bool displayData = this->IsCommandLineModuleNodeUpdatingDisplay(node0);
+      bool deleteFile = this->GetDeleteTemporaryFiles();
+
+      // Convert the index map to two vectors so that we can pass it to
+      // a function in a different library (Win32 limitation)
+      std::vector<std::string> keys, values;
+
+      MRMLIDMap::iterator mit;
+      for (mit = sceneToMiniSceneMap.begin(); mit != sceneToMiniSceneMap.end();
+           ++mit)
+        {
+        // only load the nodes that are needed back into the main scene
+        MRMLIDToFileNameMap::iterator rit = nodesToReload.find( (*mit).first );
+
+        if (rit != nodesToReload.end())
+          {
+          keys.push_back( (*mit).first );
+          values.push_back( (*mit).second );
+          }
+        }
+
+      // Place a request to read the miniscene and map any ids as necessary
+      vtkMTimeType requestUID = this->GetApplicationLogic()
+        ->RequestReadScene( minisceneFilename, keys, values,
+                            displayData, deleteFile );
+      this->Internal->SetLastRequest(node0, requestUID);
+      }
+    else // but delete the temporary file.
+      {
+      filesToDelete.insert(minisceneFilename);
+      }
+    }
+
 
     // rewire the mrml scene as directed
     //
@@ -2571,46 +2487,30 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
                 {
                 if ((*pit).GetTag() == "transform")
                   {
+                  std::string transformNodeID = (*pit).GetValue();
                   // is the reference a transformable node?
                   vtkMRMLTransformableNode *trefNode = vtkMRMLTransformableNode::SafeDownCast(refNode);
-                  if (trefNode)
+                  // Multiple transform nodes can refer to the same transformable node (e.g., linear or bspline transform
+                  // can be computed, whichever is computed should transform the moving volume),
+                  // we only want to use the transform that is not None.
+                  if (trefNode != NULL && !transformNodeID.empty())
                     {
-                    if ( (*pit).GetValue() != "" )
-                      {
-                      // Invoke an event that will cause the scene to be rewired in the main thread.
-                      // Pass a callback that performs the specific edit request. Callback is allocated here and
-                      // deleted once it is used.
-                      vtkSlicerCLIEditTransformHierarchyCallback *callback = vtkSlicerCLIEditTransformHierarchyCallback::New();
-                      callback->SetCLIModuleLogic(this);
-                      callback->SetNodeID(reference);
-                      callback->SetTransformNodeID((*pit).GetValue());
-
-                      this->GetApplicationLogic()->InvokeEventWithDelay(0, this,
-                                                                        vtkSlicerCLIModuleLogic::RequestHierarchyEditEvent,
-                                                                        callback);
-
-                      // callback will be get deleted by the vtkSlicerCLIOneShotCallbackCallback observing this event
-                      }
+                    // Place a request to update parent transform based of the referenced node
+                    vtkMTimeType requestUID = this->GetApplicationLogic()
+                      ->RequestUpdateParentTransform(reference, transformNodeID);
+                    this->Internal->SetLastRequest(node0, requestUID);
                     }
                   }
                 else if (((*pit).GetTag() == "image") || ((*pit).GetTag() == "geometry"))
                   {
                   // Placing an image or model in the same position in a hierarchy as the reference
-                  if ( (*pit).GetValue() != "" )
+                  std::string updatedNodeID = (*pit).GetValue();
+                  if (!updatedNodeID.empty())
                     {
-                    // Invoke an event that will cause the scene to be rewired in the main thread.
-                    // Pass a callback that performs the specific edit request. Callback is allocated here and
-                    // deleted once it is used.
-                    vtkSlicerCLIEditSubjectHierarchyCallback *callback = vtkSlicerCLIEditSubjectHierarchyCallback::New();
-                    callback->SetCLIModuleLogic(this);
-                    callback->SetReferenceNodeID(reference);
-                    callback->SetOutputNodeID((*pit).GetValue());
-
-                    this->GetApplicationLogic()->InvokeEventWithDelay(0, this,
-                                                                      vtkSlicerCLIModuleLogic::RequestHierarchyEditEvent,
-                                                                      callback);
-
-                    // callback will be get deleted by the vtkSlicerCLIOneShotCallbackCallback observing this event
+                    // Place a request to update location in the subject hierarchy based of the referenced node
+                    vtkMTimeType requestUID = this->GetApplicationLogic()
+                      ->RequestUpdateSubjectHierarchyLocation(updatedNodeID, reference);
+                    this->Internal->SetLastRequest(node0, requestUID);
                     }
                   }
                 else
@@ -2632,45 +2532,6 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
         } // for pit
       } // for pgit
     } // if status == Completing
-
-  // if there was a miniscene that needs loading, request it
-  if (miniscene->GetNumberOfNodes() > 0)
-    {
-    // don't load the mini scene if errors were found or the cli was cancelled.
-    if (node0->GetStatus() == vtkMRMLCommandLineModuleNode::Completing)
-      {
-      bool displayData = this->IsCommandLineModuleNodeUpdatingDisplay(node0);
-      bool deleteFile = this->GetDeleteTemporaryFiles();
-
-      // Convert the index map to two vectors so that we can pass it to
-      // a function in a different library (Win32 limitation)
-      std::vector<std::string> keys, values;
-
-      MRMLIDMap::iterator mit;
-      for (mit = sceneToMiniSceneMap.begin(); mit != sceneToMiniSceneMap.end();
-           ++mit)
-        {
-        // only load the nodes that are needed back into the main scene
-        MRMLIDToFileNameMap::iterator rit = nodesToReload.find( (*mit).first );
-
-        if (rit != nodesToReload.end())
-          {
-          keys.push_back( (*mit).first );
-          values.push_back( (*mit).second );
-          }
-        }
-
-      // Place a request to read the miniscene and map any ids as necessary
-      int requestUID = this->GetApplicationLogic()
-        ->RequestReadScene( minisceneFilename, keys, values,
-                            displayData, deleteFile );
-      this->Internal->SetLastRequest(node0, requestUID);
-      }
-    else // but delete the temporary file.
-      {
-      filesToDelete.insert(minisceneFilename);
-      }
-    }
 
   // clean up
   //

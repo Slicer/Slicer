@@ -753,7 +753,7 @@ void vtkDataIOManagerLogic::ApplyTransfer( void *clientdata )
         vtkDebugMacro("ApplyTransfer: setting storage node read state to transfer done for uri " << storageNode->GetURI());
         storageNode->SetReadStateTransferDone();
         storageNode->SetDisableModifiedEvent( 0 );
-        this->GetApplicationLogic()->RequestReadData( node->GetID(), dest, 0, 0 );
+        this->GetApplicationLogic()->RequestReadFile( node->GetID(), dest, 0, 0 );
         }
       else
         {

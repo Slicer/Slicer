@@ -49,149 +49,13 @@
 
 #include <queue>
 
+#include "vtkSlicerApplicationLogicRequests.h"
+
 //----------------------------------------------------------------------------
 class ProcessingTaskQueue : public std::queue<vtkSmartPointer<vtkSlicerTask> > {};
 class ModifiedQueue : public std::queue<vtkSmartPointer<vtkObject> > {};
-
-//----------------------------------------------------------------------------
-class DataRequest
-{
-public:
-  DataRequest(const std::string& node, const std::string& filename,
-              int displayData, int deleteFile, int uid = 0)
-  {
-    m_TargetNodes.push_back(node);
-    m_Filename = filename;
-    m_DisplayData = displayData;
-    m_DeleteFile = deleteFile;
-    m_IsScene = false;
-    m_UID = uid;
-  }
-
-  DataRequest(const char *node, const char *filename, int displayData,
-              int deleteFile, int uid = 0)
-  {
-    m_TargetNodes.push_back(node);
-    m_Filename = filename;
-    m_DisplayData = displayData;
-    m_DeleteFile = deleteFile;
-    m_IsScene = false;
-    m_UID = uid;
-  }
-
-  DataRequest(const std::vector<std::string>& targetNodes,
-              const std::vector<std::string>& sourceNodes,
-              const std::string& filename,
-              int displayData, int deleteFile,
-              int uid = 0)
-  {
-    m_TargetNodes = targetNodes;
-    m_SourceNodes = sourceNodes;
-    m_Filename = filename;
-    m_DisplayData = displayData;
-    m_DeleteFile = deleteFile;
-    m_IsScene = true;
-    m_UID = uid;
-  }
-
-  DataRequest()
-    : m_Filename(""), m_DisplayData( false ), m_DeleteFile( false ),
-      m_IsScene( false ), m_UID(0)
-  {
-  }
-
-  const std::string& GetNode() const
-  {
-    static const std::string empty;
-    if (m_TargetNodes.size() > 0)
-      {
-      return m_TargetNodes[0];
-      }
-    return empty;
-  }
-
-  const std::vector<std::string>& GetSourceNodes() const {return m_SourceNodes;}
-  const std::vector<std::string>& GetTargetNodes() const {return m_TargetNodes;}
-  const std::string& GetFilename() const { return m_Filename; }
-  int GetDisplayData() const { return m_DisplayData; }
-  int GetDeleteFile() const { return m_DeleteFile; }
-  int GetIsScene() const { return m_IsScene; }
-  int GetUID()const{return m_UID;}
-
-protected:
-  std::vector<std::string> m_TargetNodes;
-  std::vector<std::string> m_SourceNodes;
-  std::string m_Filename;
-  int m_DisplayData;
-  int m_DeleteFile;
-  bool m_IsScene;
-  int m_UID;
-};
-
-//----------------------------------------------------------------------------
-class ReadDataRequest: public DataRequest
-{
-public:
-  ReadDataRequest(const std::string& node, const std::string& filename,
-                  int displayData, int deleteFile, int uid = 0)
-    : DataRequest( node, filename, displayData, deleteFile, uid)
-  {
-  }
-
-  ReadDataRequest(const char *node, const char *filename, int displayData,
-                  int deleteFile, int uid = 0)
-    : DataRequest(node, filename, displayData, deleteFile, uid)
-  {
-  }
-
-  ReadDataRequest(const std::vector<std::string>& targetNodes,
-                  const std::vector<std::string>& sourceNodes,
-                  const std::string& filename,
-                  int displayData, int deleteFile,
-                  int uid = 0)
-    : DataRequest(targetNodes, sourceNodes, filename,
-                  displayData, deleteFile, uid)
-  {
-  }
-
-  ReadDataRequest()
-  {
-  }
-
-};
-class ReadDataQueue : public std::queue<ReadDataRequest> {} ;
-
-//----------------------------------------------------------------------------
-class WriteDataRequest: public DataRequest
-{
-public:
-  WriteDataRequest(const std::string& node, const std::string& filename,
-                   int displayData, int deleteFile, int uid = 0)
-    : DataRequest( node, filename, displayData, deleteFile, uid)
-  {
-  }
-
-  WriteDataRequest(const char *node, const char *filename, int displayData,
-                   int deleteFile, int uid = 0)
-    : DataRequest(node, filename, displayData, deleteFile, uid)
-  {
-  }
-
-  WriteDataRequest(const std::vector<std::string>& targetNodes,
-                   const std::vector<std::string>& sourceNodes,
-                   const std::string& filename,
-                   int displayData, int deleteFile,
-                   int uid = 0)
-    : DataRequest(targetNodes, sourceNodes, filename,
-                  displayData, deleteFile, uid)
-  {
-  }
-
-  WriteDataRequest()
-  {
-  }
-};
-class WriteDataQueue : public std::queue<WriteDataRequest> {} ;
+class ReadDataQueue : public std::queue<DataRequest*> {};
+class WriteDataQueue : public std::queue<DataRequest*> {};
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerApplicationLogic);
@@ -573,147 +437,154 @@ void vtkSlicerApplicationLogic::ProcessNetworkingTasks()
 //----------------------------------------------------------------------------
 int vtkSlicerApplicationLogic::ScheduleTask( vtkSlicerTask *task )
 {
-  int active;
-
-  // std::cout << "Scheduling a task ";
-
   // only schedule a task if the processing task is up
   this->ProcessingThreadActiveLock->Lock();
-  active = this->ProcessingThreadActive;
+  int active = this->ProcessingThreadActive;
   this->ProcessingThreadActiveLock->Unlock();
-
-  if (active)
+  if (!active)
     {
-    this->ProcessingTaskQueueLock->Lock();
-    (*this->InternalTaskQueue).push( task );
-    //std::cout << (*this->InternalTaskQueue).size() << std::endl;
-    this->ProcessingTaskQueueLock->Unlock();
-
-    return true;
+    return false;
     }
 
-  // could not schedule the task
-  return false;
+  this->ProcessingTaskQueueLock->Lock();
+  (*this->InternalTaskQueue).push( task );
+  this->ProcessingTaskQueueLock->Unlock();
+  return true;
 }
 
 //----------------------------------------------------------------------------
-int vtkSlicerApplicationLogic::RequestModified( vtkObject *obj )
+vtkMTimeType vtkSlicerApplicationLogic::RequestModified(vtkObject *obj)
 {
-  int active;
-
-  //std::cout << "Requesting a modified on " << obj;
-
   // only request a Modified if the Modified queue is up
   this->ModifiedQueueActiveLock->Lock();
-  active = this->ModifiedQueueActive;
+  int active = this->ModifiedQueueActive;
   this->ModifiedQueueActiveLock->Unlock();
-
-  if (active)
+  if (!active)
     {
-    obj->Register(this);
-    this->ModifiedQueueLock->Lock();
-    this->RequestTimeStamp.Modified();
-    int uid = static_cast<int>(this->RequestTimeStamp.GetMTime());
-    (*this->InternalModifiedQueue).push( obj );
-//     std::cout << " [" << (*this->InternalModifiedQueue).size()
-//               << "] " << std::endl;
-    this->ModifiedQueueLock->Unlock();
-    return uid;
+    // could not request the Modified
+    return 0;
     }
 
-  // could not request the Modified
-  return 0;
+  obj->Register(this);
+  this->ModifiedQueueLock->Lock();
+  this->RequestTimeStamp.Modified();
+  vtkMTimeType uid = this->RequestTimeStamp.GetMTime();
+  (*this->InternalModifiedQueue).push(obj);
+  this->ModifiedQueueLock->Unlock();
+  return uid;
 }
 
 //----------------------------------------------------------------------------
-int vtkSlicerApplicationLogic::RequestReadData( const char *refNode, const char *filename, int displayData, int deleteFile )
+vtkMTimeType vtkSlicerApplicationLogic::RequestReadFile(const char *refNode, const char *filename, int displayData, int deleteFile)
 {
-  int active;
-
-  //std::cout << "RequestReadData: Requesting " << filename << " be read into node " << refNode << ", display data = " << (displayData?"true":"false") <<  std::endl;
-
   // only request to read a file if the ReadData queue is up
   this->ReadDataQueueActiveLock->Lock();
-  active = this->ReadDataQueueActive;
+  int active = this->ReadDataQueueActive;
   this->ReadDataQueueActiveLock->Unlock();
+  if (!active)
+  {
+    // could not request the record be added to the queue
+    return 0;
+  }
 
-  if (active)
-    {
-    this->ReadDataQueueLock->Lock();
-    this->RequestTimeStamp.Modified();
-    int uid = static_cast<int>(this->RequestTimeStamp.GetMTime());
-    (*this->InternalReadDataQueue).push(
-      ReadDataRequest(refNode, filename, displayData, deleteFile, uid) );
-//     std::cout << " [" << (*this->InternalReadDataQueue).size()
-//               << "] " << std::endl;
-    this->ReadDataQueueLock->Unlock();
-    return uid;
-    }
-
-  // could not request the record be added to the queue
-  return 0;
+  this->ReadDataQueueLock->Lock();
+  this->RequestTimeStamp.Modified();
+  int uid = this->RequestTimeStamp.GetMTime();
+  (*this->InternalReadDataQueue).push(
+    new ReadDataRequestFile(refNode, filename, displayData, deleteFile, uid));
+  this->ReadDataQueueLock->Unlock();
+  return uid;
 }
 
 //----------------------------------------------------------------------------
-int vtkSlicerApplicationLogic::RequestWriteData( const char *refNode, const char *filename, int displayData, int deleteFile )
+vtkMTimeType vtkSlicerApplicationLogic::RequestUpdateParentTransform(const std::string &refNode, const std::string& parentTransformNode)
 {
-  int active;
+  // only request to read a file if the ReadData queue is up
+  this->ReadDataQueueActiveLock->Lock();
+  int active = this->ReadDataQueueActive;
+  this->ReadDataQueueActiveLock->Unlock();
+  if (!active)
+    {
+    // could not request the record be added to the queue
+    return 0;
+    }
 
-//  std::cout << "Requesting " << filename << " be read from node " << refNode << ", display data = " << (displayData?"true":"false") <<  std::endl;
+  this->ReadDataQueueLock->Lock();
+  this->RequestTimeStamp.Modified();
+  vtkMTimeType uid = this->RequestTimeStamp.GetMTime();
+  (*this->InternalReadDataQueue).push(new ReadDataRequestUpdateParentTransform(refNode, parentTransformNode, uid));
+  this->ReadDataQueueLock->Unlock();
+  return uid;
+}
 
+//----------------------------------------------------------------------------
+vtkMTimeType vtkSlicerApplicationLogic::RequestUpdateSubjectHierarchyLocation(const std::string &updatedNode, const std::string& siblingNode)
+{
+  // only request to read a file if the ReadData queue is up
+  this->ReadDataQueueActiveLock->Lock();
+  int active = this->ReadDataQueueActive;
+  this->ReadDataQueueActiveLock->Unlock();
+  if (!active)
+    {
+    // could not request the record be added to the queue
+    return 0;
+    }
+
+  this->ReadDataQueueLock->Lock();
+  this->RequestTimeStamp.Modified();
+  vtkMTimeType uid = this->RequestTimeStamp.GetMTime();
+  (*this->InternalReadDataQueue).push(new ReadDataRequestUpdateSubjectHierarchyLocation(updatedNode, siblingNode, uid));
+  this->ReadDataQueueLock->Unlock();
+  return uid;
+}
+
+//----------------------------------------------------------------------------
+vtkMTimeType vtkSlicerApplicationLogic::RequestWriteData(const char *refNode, const char *filename)
+{
   // only request to write a file if the WriteData queue is up
   this->WriteDataQueueActiveLock->Lock();
-  active = this->WriteDataQueueActive;
+  int active = this->WriteDataQueueActive;
   this->WriteDataQueueActiveLock->Unlock();
-
-  if (active)
+  if (!active)
     {
-    this->WriteDataQueueLock->Lock();
-    this->RequestTimeStamp.Modified();
-    int uid = static_cast<int>(this->RequestTimeStamp.GetMTime());
-    (*this->InternalWriteDataQueue).push(
-      WriteDataRequest(refNode, filename, displayData, deleteFile, uid) );
-//     std::cout << " [" << (*this->InternalWriteDataQueue).size()
-//               << "] " << std::endl;
-    this->WriteDataQueueLock->Unlock();
-    return uid;
+    // could not request the record be added to the queue
+    return 0;
     }
 
-  // could not request the record be added to the queue
-  return 0;
+  this->WriteDataQueueLock->Lock();
+  this->RequestTimeStamp.Modified();
+  vtkMTimeType uid = this->RequestTimeStamp.GetMTime();
+  (*this->InternalWriteDataQueue).push(
+    new WriteDataRequestFile(refNode, filename, uid) );
+  this->WriteDataQueueLock->Unlock();
+  return uid;
 }
 
 
 //----------------------------------------------------------------------------
-int vtkSlicerApplicationLogic::RequestReadScene(
+vtkMTimeType vtkSlicerApplicationLogic::RequestReadScene(
     const std::string& filename,
     std::vector<std::string> &targetIDs,
     std::vector<std::string> &sourceIDs,
     int displayData, int deleteFile)
 {
-  int active;
-
-//  std::cout << "Requesting scene " << filename << " be read " <<  std::endl;
-
   // only request to read a file if the ReadData queue is up
   this->ReadDataQueueActiveLock->Lock();
-  active = this->ReadDataQueueActive;
+  int active = this->ReadDataQueueActive;
   this->ReadDataQueueActiveLock->Unlock();
-
-  if (active)
+  if (!active)
     {
-    this->ReadDataQueueLock->Lock();
-    this->RequestTimeStamp.Modified();
-    int uid = static_cast<int>(this->RequestTimeStamp.GetMTime());
-    (*this->InternalReadDataQueue).push(
-      ReadDataRequest(targetIDs, sourceIDs, filename, displayData, deleteFile, uid) );
-    this->ReadDataQueueLock->Unlock();
-
-    return uid;
+    // could not request the record be added to the queue
+    return 0;
     }
 
-  // could not request the record be added to the queue
-  return 0;
+  this->ReadDataQueueLock->Lock();
+  this->RequestTimeStamp.Modified();
+  vtkMTimeType uid = this->RequestTimeStamp.GetMTime();
+  (*this->InternalReadDataQueue).push(
+    new ReadDataRequestScene(targetIDs, sourceIDs, filename, displayData, deleteFile, uid));
+  this->ReadDataQueueLock->Unlock();
+  return uid;
 }
 
 //----------------------------------------------------------------------------
@@ -723,7 +594,6 @@ void vtkSlicerApplicationLogic::ProcessModified()
   this->ModifiedQueueActiveLock->Lock();
   int active = this->ModifiedQueueActive;
   this->ModifiedQueueActiveLock->Unlock();
-
   if (!active)
     {
     return;
@@ -769,13 +639,13 @@ void vtkSlicerApplicationLogic::ProcessReadData()
   this->ReadDataQueueActiveLock->Lock();
   int active = this->ReadDataQueueActive;
   this->ReadDataQueueActiveLock->Unlock();
-
   if (!active)
     {
     return;
     }
-  ReadDataRequest req;
+
   // pull an object off the queue
+  DataRequest* req = NULL;
   this->ReadDataQueueLock->Lock();
   if ((*this->InternalReadDataQueue).size() > 0)
     {
@@ -784,26 +654,22 @@ void vtkSlicerApplicationLogic::ProcessReadData()
     }
   this->ReadDataQueueLock->Unlock();
 
-  if (!req.GetNode().empty())
+  vtkMTimeType uid = 0;
+  if (req)
     {
-    if (req.GetIsScene())
-      {
-      this->ProcessReadSceneData(req);
-      }
-    else
-      {
-      this->ProcessReadNodeData(req);
-      }
+    uid = req->GetUID();
+    req->Execute(this);
+    delete req;
     }
 
   int delay = (*this->InternalReadDataQueue).size() > 0 ? 0: 200;
   // schedule the next timer sooner in case there is stuff in the queue
   // otherwise for a while later
   this->InvokeEvent(vtkSlicerApplicationLogic::RequestReadDataEvent, &delay);
-  if (req.GetUID())
+  if (uid)
     {
     this->InvokeEvent(vtkSlicerApplicationLogic::RequestProcessedEvent,
-                      reinterpret_cast<void*>(req.GetUID()));
+                      reinterpret_cast<void*>(uid));
     }
 }
 
@@ -814,508 +680,37 @@ void vtkSlicerApplicationLogic::ProcessWriteData()
   this->WriteDataQueueActiveLock->Lock();
   int active = this->WriteDataQueueActive;
   this->WriteDataQueueActiveLock->Unlock();
-
   if (!active)
     {
     return;
     }
 
-  WriteDataRequest req;
   // pull an object off the queue
+  DataRequest *req = NULL;
   this->WriteDataQueueLock->Lock();
   if ((*this->InternalWriteDataQueue).size() > 0)
     {
     req = (*this->InternalWriteDataQueue).front();
     (*this->InternalWriteDataQueue).pop();
-
     }
   this->WriteDataQueueLock->Unlock();
 
-  if (!req.GetNode().empty())
-    {
-    if (req.GetIsScene())
+  if (req)
+  {
+    vtkMTimeType uid = req->GetUID();
+    req->Execute(this);
+    delete req;
+
+    // schedule the next timer sooner in case there is stuff in the queue
+    // otherwise for a while later
+    int delay = (*this->InternalWriteDataQueue).size() > 0 ? 0 : 200;
+    this->InvokeEvent(vtkSlicerApplicationLogic::RequestWriteDataEvent, &delay);
+    if (uid)
       {
-      this->ProcessWriteSceneData(req);
+      this->InvokeEvent(vtkSlicerApplicationLogic::RequestProcessedEvent,
+        reinterpret_cast<void*>(uid));
       }
-    else
-      {
-      this->ProcessWriteNodeData(req);
-      }
-    }
-  // schedule the next timer sooner in case there is stuff in the queue
-  // otherwise for a while later
-  int delay = (*this->InternalWriteDataQueue).size() > 0 ? 0: 200;
-  this->InvokeEvent(vtkSlicerApplicationLogic::RequestWriteDataEvent, &delay);
-  if (req.GetUID())
-    {
-    this->InvokeEvent(vtkSlicerApplicationLogic::RequestProcessedEvent,
-                      reinterpret_cast<void*>(req.GetUID()));
-    }
-}
-
-//----------------------------------------------------------------------------
-void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
-{
-  // This method needs to read the data into the specific type of node and set up an
-  // appropriate storage and display node.
-
-  vtkMRMLNode *nd = this->GetMRMLScene()->GetNodeByID( req.GetNode().c_str() );
-  vtkDebugMacro("ProcessReadNodeData: read data request node id = " << nd->GetID());
-
-  vtkSmartPointer<vtkMRMLStorageNode> storageNode;
-#ifdef Slicer_BUILD_CLI_SUPPORT
-  vtkMRMLCommandLineModuleNode *clp = vtkMRMLCommandLineModuleNode::SafeDownCast(nd);
-#endif
-
-  bool useURI = this->GetMRMLScene()->GetCacheManager()->IsRemoteReference(req.GetFilename().c_str());
-
-  vtkMRMLStorableNode *storableNode = vtkMRMLStorableNode::SafeDownCast(nd);
-  if (storableNode)
-    {
-    int numStorageNodes = storableNode->GetNumberOfStorageNodes();
-    for (int n = 0; n < numStorageNodes; n++)
-      {
-      vtkMRMLStorageNode *testStorageNode = storableNode->GetNthStorageNode(n);
-      if (testStorageNode)
-        {
-        if (useURI && testStorageNode->GetURI() != NULL)
-          {
-          if (req.GetFilename().compare(testStorageNode->GetURI()) == 0)
-            {
-            // found a storage node for the remote file
-            vtkDebugMacro("ProcessReadNodeData: found a storage node with the right URI: " << testStorageNode->GetURI());
-            storageNode = testStorageNode;
-            break;
-            }
-          }
-        else if (testStorageNode->GetFileName() != NULL &&
-                 req.GetFilename().compare(testStorageNode->GetFileName()) == 0)
-          {
-          // found the right storage node for a local file
-          vtkDebugMacro("ProcessReadNodeData: found a storage node with the right filename: " << testStorageNode->GetFileName());
-          storageNode = testStorageNode;
-          break;
-          }
-        }
-      }
-
-    // if there wasn't already a matching storage node on the node, make one
-    bool createdNewStorageNode = false;
-    if (storageNode.GetPointer() == NULL)
-      {
-      // Read the data into the referenced node
-      if (itksys::SystemTools::FileExists( req.GetFilename().c_str() ))
-        {
-        // file is there on disk
-        storableNode->AddDefaultStorageNode(req.GetFilename().c_str());
-        storageNode = storableNode->GetStorageNode();
-        createdNewStorageNode = (storageNode != NULL);
-        }
-      }
-
-    // Have the storage node read the data into the current node
-    if (storageNode.GetPointer() != NULL)
-      {
-      try
-        {
-        vtkDebugMacro("ProcessReadNodeData: about to call read data, storage node's read state is " << storageNode->GetReadStateAsString());
-        if (useURI)
-          {
-          storageNode->SetURI(req.GetFilename().c_str());
-          vtkDebugMacro("ProcessReadNodeData: calling ReadData on the storage node " << storageNode->GetID() << ", uri = " << storageNode->GetURI());
-          storageNode->ReadData( nd, /*temporary*/true );
-          if (createdNewStorageNode)
-            {
-            storageNode->SetURI(NULL); // clear temporary URI
-            }
-          }
-        else
-          {
-          storageNode->SetFileName( req.GetFilename().c_str() );
-          vtkDebugMacro("ProcessReadNodeData: calling ReadData on the storage node " << storageNode->GetID() << ", filename = " << storageNode->GetFileName());
-          storageNode->ReadData( nd, /*temporary*/true );
-          if (createdNewStorageNode)
-            {
-            storageNode->SetFileName( NULL ); // clear temp file name
-            }
-          }
-        }
-      catch (itk::ExceptionObject& exc)
-        {
-        vtkErrorMacro( "Exception while reading " << req.GetFilename() << ", " << exc );
-        }
-      catch (...)
-        {
-        vtkErrorMacro( "Unknown exception while reading " << req.GetFilename() );
-        }
-      }
-    }
-#ifdef Slicer_BUILD_CLI_SUPPORT
-    // if the node was a CommandLineModule node, then read the file
-    // (no storage node for these, yet)
-    if (clp)
-      {
-      clp->ReadParameterFile(req.GetFilename());
-      }
-#endif
-
-  // Delete the file if requested
-  if (req.GetDeleteFile())
-    {
-    int removed;
-    // is it a shared memory location?
-    if (req.GetFilename().find("slicer:") != std::string::npos)
-      {
-      removed = 1;
-      }
-    else
-      {
-      removed = itksys::SystemTools::RemoveFile( req.GetFilename().c_str() );
-      }
-    if (!removed)
-      {
-      vtkWarningMacro( "Unable to delete temporary file " << req.GetFilename() );
-      }
-    }
-
-
-  // Get the right type of display node. Only create a display node
-  // if one does not exist already
-  //
-  vtkMRMLDisplayableNode *displayableNode =
-    vtkMRMLDisplayableNode::SafeDownCast(nd);
-  if (displayableNode)
-    {
-    // Create a default display node if no display node exists for the node yet.
-    displayableNode->CreateDefaultDisplayNodes();
-    }
-
-  // Cause the any observers to fire (we may have avoided calling
-  // modified on the node)
-  //
-  nd->Modified();
-
-  // If scalar volume, set the volume as the active volume and
-  // propagate selection.
-  //
-  // Models are always displayed when loaded above.
-  //
-  // Tensors? Vectors?
-  if (req.GetDisplayData())
-    {
-    if (vtkMRMLLabelMapVolumeNode::SafeDownCast(nd)!=NULL)
-      {
-      this->GetSelectionNode()->SetActiveLabelVolumeID( req.GetNode().c_str() );
-      this->PropagateVolumeSelection();
-      }
-    else if (vtkMRMLScalarVolumeNode::SafeDownCast(nd)!=NULL)
-      {
-      this->GetSelectionNode()->SetActiveVolumeID( req.GetNode().c_str() );
-      // make sure win/level gets calculated
-      vtkMRMLDisplayNode* displayNode = vtkMRMLScalarVolumeNode::SafeDownCast(nd)->GetDisplayNode();
-      if (displayNode)
-        {
-        displayNode->Modified();
-        }
-      this->PropagateVolumeSelection();
-      }
-    else if (vtkMRMLTableNode::SafeDownCast(nd)!=NULL)
-      {
-      this->GetSelectionNode()->SetActiveTableID( req.GetNode().c_str() );
-      this->PropagateTableSelection();
-      }
-    }
-}
-
-//----------------------------------------------------------------------------
-void vtkSlicerApplicationLogic::ProcessWriteNodeData(WriteDataRequest& vtkNotUsed(req))
-{
-    vtkWarningMacro("ProcessWriteNodeData: we just wrote out, not doing anything here...");
-}
-
-//----------------------------------------------------------------------------
-void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
-{
-  if (req.GetSourceNodes().size() != req.GetTargetNodes().size())
-    {
-    // Can't do ID remapping if the two node lists are different
-    // sizes. Just import the scene. (This is where we would put to
-    // the code to load into a node heirarchy (with a corresponding
-    // change in the conditional above)).
-    this->GetMRMLScene()->SetURL( req.GetFilename().c_str() );
-    this->GetMRMLScene()->Import();
-
-    // Delete the file if requested
-    if (req.GetDeleteFile())
-      {
-      int removed;
-      removed = itksys::SystemTools::RemoveFile( req.GetFilename().c_str() );
-      if (!removed)
-        {
-        std::stringstream information;
-        information << "Unable to delete temporary file "
-                    << req.GetFilename() << std::endl;
-        vtkWarningMacro( << information.str().c_str() );
-        }
-      }
-
-    return;
-    }
-
-  vtkNew<vtkMRMLScene> miniscene;
-  miniscene->SetURL( req.GetFilename().c_str() );
-  miniscene->Import();
-
-  // iterate over the list of nodes specified to read
-  std::vector<std::string>::const_iterator tit;
-  std::vector<std::string>::const_iterator sit;
-
-  tit = req.GetTargetNodes().begin();
-  sit = req.GetSourceNodes().begin();
-
-  this->GetMRMLScene()->StartState(vtkMRMLScene::ImportState);
-
-  while (sit != req.GetSourceNodes().end())
-    {
-    vtkMRMLNode *source = miniscene->GetNodeByID((*sit).c_str());
-    vtkMRMLNode *target = this->GetMRMLScene()->GetNodeByID( (*tit).c_str() );
-
-    if (source && target)
-      {
-      // save old storage info (in case user has custom file name already
-      // defined for this node, don't use the one from the miniscene since it
-      // was only used to read/write the temp area).
-      vtkMRMLStorableNode *storableTarget = vtkMRMLStorableNode::SafeDownCast(target);
-      if ( storableTarget )
-        {
-        const char *oldStorageNodeID = storableTarget->GetStorageNodeID();
-        target->Copy(source);
-        storableTarget->SetAndObserveStorageNodeID(oldStorageNodeID);
-        }
-      else
-        {
-        target->Copy(source);
-        }
-
-      // if the source node is a model hierachy node, then also copy
-      // and remap any child nodes of the target that are not in the
-      // target list (nodes that had no source equivalent before the
-      // module ran).
-      vtkMRMLModelHierarchyNode *smhnd
-        = vtkMRMLModelHierarchyNode::SafeDownCast(source);
-      vtkMRMLModelHierarchyNode *tmhnd
-        = vtkMRMLModelHierarchyNode::SafeDownCast(target);
-      if (smhnd && tmhnd)
-        {
-        // get the model node and display node BEFORE we add nodes to
-        // the target scene
-        vtkMRMLModelNode *smnd = smhnd->GetModelNode();
-        vtkMRMLDisplayNode *sdnd = smhnd->GetDisplayNode();
-
-        // add the model and display referenced by source model hierarchy node
-        if (smnd)
-          {
-          // set the model node to be modified, as it was read from a temp
-          // location
-          //smnd->SetModifiedSinceRead(1);
-          // get display node BEFORE we add nodes to the target scene
-          vtkMRMLDisplayNode *sdnd1 = smnd->GetDisplayNode();
-
-          vtkMRMLNode *tmodel = this->GetMRMLScene()->CopyNode(smnd);
-          vtkMRMLStorableNode::SafeDownCast(tmodel)->SetAndObserveStorageNodeID(NULL);
-          vtkMRMLModelNode *mnd = vtkMRMLModelNode::SafeDownCast( tmodel );
-          tmhnd->SetModelNodeID( mnd->GetID() );
-
-          if (sdnd1)
-            {
-            vtkMRMLNode *tdnd = this->GetMRMLScene()->CopyNode(sdnd1);
-            mnd->SetAndObserveDisplayNodeID( tdnd->GetID() );
-            }
-          }
-
-        if (sdnd)
-          {
-          vtkMRMLNode *dnd = this->GetMRMLScene()->CopyNode(sdnd);
-          tmhnd->SetAndObserveDisplayNodeID( dnd->GetID() );
-          }
-
-        // add any children model hierarchy nodes, rinse, repeat
-        //
-        // keep a map of model hierarchy node ids so that can update the parent node references
-        std::map<std::string, std::string> parentNodeIDMapper;
-        // hopefully the parents will have been read first, but if not
-        // keep a list of model hierarchy nodes that failed to have their parent node reference remapped
-        std::vector<vtkMRMLModelHierarchyNode *> childNodesThatNeedParentsIDsRemapped;
-        for (int n=0;
-             n<miniscene->GetNumberOfNodesByClass("vtkMRMLModelHierarchyNode");
-             n++)
-          {
-          vtkMRMLModelHierarchyNode * mhnd = vtkMRMLModelHierarchyNode
-            ::SafeDownCast(miniscene->GetNthNodeByClass(n,
-                                                "vtkMRMLModelHierarchyNode"));
-          if (mhnd)
-            {
-            // is this model hierarchy node in our source list
-            // already? if so skip it
-            std::vector<std::string>::const_iterator ssit
-              = std::find(req.GetSourceNodes().begin(),
-                          req.GetSourceNodes().end(), mhnd->GetID());
-            if (ssit == req.GetSourceNodes().end())
-              {
-              // not in source list, so we may need to add it,
-              // if it's a child, grandchild etc of the top level node that we're importing
-              if (strcmp(mhnd->GetTopParentNode()->GetID(), smhnd->GetID()) == 0)
-                {
-                // get the model and display node BEFORE we add nodes
-                // to the target scene
-                vtkMRMLModelNode *smnd1 = mhnd->GetModelNode();
-                vtkMRMLDisplayNode *sdnd1 = mhnd->GetDisplayNode();
-
-                vtkMRMLNode *tchild = this->GetMRMLScene()->CopyNode(mhnd);
-                // keep track of any node id change in case other nodes use this as a parent
-                parentNodeIDMapper[std::string(mhnd->GetID())] = std::string(tchild->GetID());
-                vtkMRMLModelHierarchyNode *tcmhd
-                  = vtkMRMLModelHierarchyNode::SafeDownCast( tchild );
-                // check for a parent node id in the mapper (as long as it doesn't already
-                // point to the source node), default to the top level one though
-                std::string parentNodeID = std::string(tmhnd->GetID());
-                if (tcmhd->GetParentNodeID() != NULL &&
-                    strcmp(tcmhd->GetParentNodeID(),smhnd->GetID()) != 0)
-                  {
-                  std::map<std::string,std::string>::iterator pIt = parentNodeIDMapper.find(std::string(tcmhd->GetParentNodeID()));
-                  if (pIt != parentNodeIDMapper.end())
-                    {
-                    parentNodeID = pIt->second;
-                    vtkDebugMacro("Remapped parent node id to " << parentNodeID.c_str());
-                    }
-                  else
-                    {
-                    childNodesThatNeedParentsIDsRemapped.push_back(tcmhd);
-                    }
-                  }
-                tcmhd->SetParentNodeID( parentNodeID.c_str() );
-
-                if (smnd1)
-                  {
-                  // set it as modified
-                  //smnd1->SetModifiedSinceRead(1);
-                  // get display node BEFORE we add nodes to the target scene
-                  vtkMRMLDisplayNode *sdnd2 = smnd1->GetDisplayNode();
-
-                  vtkMRMLNode *tmodel = this->GetMRMLScene()->CopyNode(smnd1);
-                  vtkMRMLStorableNode::SafeDownCast(tmodel)->SetAndObserveStorageNodeID(NULL);
-                  vtkMRMLModelNode *mnd =vtkMRMLModelNode::SafeDownCast(tmodel);
-                  tcmhd->SetModelNodeID( mnd->GetID() );
-
-                  if (sdnd2)
-                    {
-                    vtkMRMLNode *tdnd = this->GetMRMLScene()->CopyNode(sdnd2);
-                    mnd->SetAndObserveDisplayNodeID( tdnd->GetID() );
-                    }
-                  }
-
-                if (sdnd1)
-                  {
-                  vtkMRMLNode *tdnd = this->GetMRMLScene()->CopyNode(sdnd1);
-                  tcmhd->SetAndObserveDisplayNodeID( tdnd->GetID() );
-                  }
-                }
-              }
-            }
-          }
-        if (childNodesThatNeedParentsIDsRemapped.size() > 0)
-          {
-          // iterate through all the imported hierarchies that failed and double check their parent node ids
-          for (unsigned int i = 0; i < childNodesThatNeedParentsIDsRemapped.size(); i++)
-            {
-            std::map<std::string,std::string>::iterator pIt = parentNodeIDMapper.find(childNodesThatNeedParentsIDsRemapped[i]->GetParentNodeID());
-            if (pIt != parentNodeIDMapper.end())
-              {
-              vtkDebugMacro("Remapping child node " << childNodesThatNeedParentsIDsRemapped[i]->GetName() << " parent node id from " << childNodesThatNeedParentsIDsRemapped[i]->GetParentNodeID() << " to " << pIt->second.c_str());
-              childNodesThatNeedParentsIDsRemapped[i]->SetParentNodeID(pIt->second.c_str());
-              }
-            }
-          }
-        }
-      }
-    else if (!source)
-      {
-      std::stringstream information;
-      information << "Node " << (*sit) << " not found in scene file "
-                  << req.GetFilename() << std::endl;
-      vtkWarningMacro( << information.str().c_str() );
-      }
-    else if (!target)
-      {
-      std::stringstream information;
-      information << "Node " << (*tit) << " not found in current scene."
-                  << std::endl;
-      vtkWarningMacro( << information.str().c_str() );
-      }
-
-    ++sit;
-    ++tit;
-    }
-
-  this->GetMRMLScene()->EndState(vtkMRMLScene::ImportState);
-
-  // Delete the file if requested
-  if (req.GetDeleteFile())
-    {
-    int removed;
-    removed = itksys::SystemTools::RemoveFile( req.GetFilename().c_str() );
-    if (!removed)
-      {
-      std::stringstream information;
-      information << "Unable to delete temporary file "
-                  << req.GetFilename() << std::endl;
-      vtkWarningMacro( << information.str().c_str() );
-      }
-    }
-}
-
-//----------------------------------------------------------------------------
-void vtkSlicerApplicationLogic::ProcessWriteSceneData(WriteDataRequest& req)
-{
-  if (req.GetSourceNodes().size() != req.GetTargetNodes().size())
-    {
-    // Can't do ID remapping if the two node lists are different
-    // sizes. Just commit the scene. (This is where we would put to
-    // the code to load into a node heirarchy (with a corresponding
-    // change in the conditional above)).
-    this->GetMRMLScene()->SetURL( req.GetFilename().c_str() );
-    this->GetMRMLScene()->Commit();
-
-    // Delete the file if requested
-    if (req.GetDeleteFile())
-      {
-      int removed;
-      removed = itksys::SystemTools::RemoveFile( req.GetFilename().c_str() );
-      if (!removed)
-        {
-        std::stringstream information;
-        information << "Unable to delete temporary file "
-                    << req.GetFilename() << std::endl;
-        vtkWarningMacro( << information.str().c_str() );
-        }
-      }
-
-    return;
-    }
-
-  // Delete the file if requested
-  if (req.GetDeleteFile())
-    {
-    int removed;
-    removed = itksys::SystemTools::RemoveFile( req.GetFilename().c_str() );
-    if (!removed)
-      {
-      std::stringstream information;
-      information << "Unable to delete temporary file "
-                  << req.GetFilename() << std::endl;
-      vtkWarningMacro( << information.str().c_str() );
-      }
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
