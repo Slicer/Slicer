@@ -50,7 +50,13 @@ public:
 
   ///
   /// Set a reference to transform node
-  void SetAndObserveTransformNodeID(const char *transformNodeID);
+  /// Returns true on success.
+  /// The method will fail if a child transform of a transform node is attempted
+  /// to be set as parent to prevent circular reference.
+  /// If current node or new parent transform node is not added to the scene yet
+  /// then circular reference is not checked and it is the developer's responsibility
+  /// no child transform is set as parent.
+  bool SetAndObserveTransformNodeID(const char *transformNodeID);
 
   ///
   /// Associated transform MRML node

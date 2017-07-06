@@ -23,12 +23,6 @@
 #include <vtkTransform.h>
 #include <vtkAddonMathUtilities.h>
 
-// TODO: Move this fuzzy matrix comparison with configurable tolerance to vtkAddon
-bool MatrixAreEqual(const vtkMatrix4x4 *m1, const vtkMatrix4x4 *m2)
-{
-  return vtkAddonMathUtilities::MatrixAreEqual(m1, m2);
-}
-
 vtkMatrix4x4* CreateTransformMatrix(double translateX, double translateY, double translateZ, double rotateX, double rotateY, double rotateZ)
 {
   vtkNew<vtkTransform> tr;
@@ -93,6 +87,16 @@ int vtkMRMLTransformNodeTest1(int , char * [] )
   qTransform->SetAndObserveTransformNodeID(bTransform->GetID());
   rTransform->SetAndObserveTransformNodeID(qTransform->GetID());
 
+  // Test that child transform cannot be set as parent
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
+  CHECK_BOOL(bTransform->SetAndObserveTransformNodeID(cTransform->GetID()), false);
+  CHECK_BOOL(bTransform->SetAndObserveTransformNodeID(bTransform->GetID()), false);
+  CHECK_BOOL(bTransform->SetAndObserveTransformNodeID(dTransform->GetID()), false);
+  CHECK_BOOL(bTransform->SetAndObserveTransformNodeID(eTransform->GetID()), false);
+  CHECK_BOOL(cTransform->SetAndObserveTransformNodeID(dTransform->GetID()), false);
+  CHECK_BOOL(cTransform->SetAndObserveTransformNodeID(eTransform->GetID()), false);
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
+
   // Pre-compute transform matrices that will be used for testing
   vtkNew<vtkMatrix4x4> c_from_e_mx;
   vtkMatrix4x4::Multiply4x4(c_from_d_mx.GetPointer(), d_from_e_mx.GetPointer(), c_from_e_mx.GetPointer());
@@ -114,48 +118,28 @@ int vtkMRMLTransformNodeTest1(int , char * [] )
 
   // GetMatrixTransformToNode: target node is parent
   eTransform->GetMatrixTransformToNode(cTransform.GetPointer(), test_mx.GetPointer());
-  if (!MatrixAreEqual(c_from_e_mx.GetPointer(), test_mx.GetPointer()))
-    {
-    std::cerr << __LINE__ << " vtkMRMLTransformNodeTest1 failed" << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_BOOL(vtkAddonMathUtilities::MatrixAreEqual(c_from_e_mx.GetPointer(), test_mx.GetPointer()), true);
+
   // GetMatrixTransformToNode: target node is child
   cTransform->GetMatrixTransformToNode(eTransform.GetPointer(), test_mx.GetPointer());
-  if (!MatrixAreEqual(e_from_c_mx.GetPointer(), test_mx.GetPointer()))
-    {
-    std::cerr << __LINE__ << " vtkMRMLTransformNodeTest1 failed" << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_BOOL(vtkAddonMathUtilities::MatrixAreEqual(e_from_c_mx.GetPointer(), test_mx.GetPointer()), true);
+
   // GetMatrixTransformToNode: target node is world
   eTransform->GetMatrixTransformToNode(NULL, test_mx.GetPointer());
-  if (!MatrixAreEqual(w_from_e_mx.GetPointer(), test_mx.GetPointer()))
-    {
-    std::cerr << __LINE__ << " vtkMRMLTransformNodeTest1 failed" << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_BOOL(vtkAddonMathUtilities::MatrixAreEqual(w_from_e_mx.GetPointer(), test_mx.GetPointer()), true);
+
   // GetMatrixTransformToWorld
   eTransform->GetMatrixTransformToWorld(test_mx.GetPointer());
-  if (!MatrixAreEqual(w_from_e_mx.GetPointer(), test_mx.GetPointer()))
-    {
-    std::cerr << __LINE__ << " vtkMRMLTransformNodeTest1 failed" << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_BOOL(vtkAddonMathUtilities::MatrixAreEqual(w_from_e_mx.GetPointer(), test_mx.GetPointer()), true);
 
   // GetMatrixTransformToNode: target node is in different branch
   rTransform->GetMatrixTransformToNode(cTransform.GetPointer(), test_mx.GetPointer());
-  if (!MatrixAreEqual(c_from_r_mx.GetPointer(), test_mx.GetPointer()))
-    {
-    std::cerr << __LINE__ << " vtkMRMLTransformNodeTest1 failed" << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_BOOL(vtkAddonMathUtilities::MatrixAreEqual(c_from_r_mx.GetPointer(), test_mx.GetPointer()), true);
+
   // GetMatrixTransformToNode: target node is the same as the source
   eTransform->GetMatrixTransformToNode(eTransform.GetPointer(), test_mx.GetPointer());
   vtkNew<vtkMatrix4x4> identity;
-  if (!MatrixAreEqual(identity.GetPointer(), test_mx.GetPointer()))
-    {
-    std::cerr << __LINE__ << " vtkMRMLTransformNodeTest1 failed" << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_BOOL(vtkAddonMathUtilities::MatrixAreEqual(identity.GetPointer(), test_mx.GetPointer()), true);
 
   // Test when there is a nonlinear transform above the common parent of two transform nodes.
   // Transform to world is nonlinear but the relative transform is linear.
@@ -173,18 +157,9 @@ int vtkMRMLTransformNodeTest1(int , char * [] )
   //                     |-- rTransform
   //
   rTransform->GetMatrixTransformToNode(cTransform.GetPointer(), test_mx.GetPointer());
-  if (!MatrixAreEqual(c_from_r_mx.GetPointer(), test_mx.GetPointer()))
-    {
-    std::cerr << __LINE__ << " vtkMRMLTransformNodeTest1 failed" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (rTransform->GetFirstCommonParent(dTransform.GetPointer()) != bTransform.GetPointer())
-    {
-    std::cerr << __LINE__ << " vtkMRMLTransformNodeTest1 failed" << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_BOOL(vtkAddonMathUtilities::MatrixAreEqual(c_from_r_mx.GetPointer(), test_mx.GetPointer()), true);
+  CHECK_POINTER(rTransform->GetFirstCommonParent(dTransform.GetPointer()), bTransform.GetPointer());
 
   std::cout << "vtkMRMLTransformNodeTest1 successfully completed" << std::endl;
-
   return EXIT_SUCCESS;
 }

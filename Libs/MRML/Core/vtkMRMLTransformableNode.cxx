@@ -107,17 +107,26 @@ vtkMRMLTransformNode* vtkMRMLTransformableNode::GetParentTransformNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLTransformableNode::SetAndObserveTransformNodeID(const char *transformNodeID)
+bool vtkMRMLTransformableNode::SetAndObserveTransformNodeID(const char *transformNodeID)
 {
-  // Prevent transform cycles
-  vtkMRMLTransformNode* tnode = vtkMRMLTransformNode::SafeDownCast(
-    this->GetScene() != 0 ?this->GetScene()->GetNodeByID(transformNodeID) : 0);
-  if (tnode && tnode->GetParentTransformNode() == this)
+  // Prevent circular reference in transform tree
+  vtkMRMLTransformNode* newParentTransformNode = vtkMRMLTransformNode::SafeDownCast(
+    this->GetScene() != 0 ? this->GetScene()->GetNodeByID(transformNodeID) : 0);
+  if (newParentTransformNode)
     {
-    transformNodeID = 0;
+    vtkMRMLTransformNode* thisTransform = vtkMRMLTransformNode::SafeDownCast(this);
+    if (thisTransform)
+      {
+      if (newParentTransformNode == thisTransform || thisTransform->IsTransformNodeMyChild(newParentTransformNode))
+        {
+        vtkErrorMacro("vtkMRMLTransformableNode::SetAndObserveTransformNodeID failed: parent transform cannot be self or a child transform");
+        return false;
+        }
+      }
     }
 
   this->SetAndObserveNodeReferenceID(this->GetTransformNodeReferenceRole(), transformNodeID);
+  return true;
 }
 
 
