@@ -381,9 +381,12 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
   }
 
   // figure out the index of Archetype in AllFileNames
+  // Collapsing of path is necessary to normalize filenames (path separator, capitalization of drive
+  // letter and path) for comparison.
+  std::string archetypeCollapsed = itksys::SystemTools::CollapseFullPath(this->Archetype);
   for (unsigned int k = 0; k < this->AllFileNames.size(); k++)
   {
-    if (this->AllFileNames[k] == this->Archetype)
+    if (itksys::SystemTools::CollapseFullPath(this->AllFileNames[k]) == archetypeCollapsed)
     {
       this->IndexArchetype = k;
       break;
