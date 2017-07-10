@@ -720,6 +720,10 @@ def updateVolumeFromArray(volumeNode, narray):
     raise RuntimeError("Unsupported numpy array shape: "+str(narray.shape))
 
   vimage = volumeNode.GetImageData()
+  if not vimage:
+    import vtk
+    vimage = vtk.vtkImageData()
+    volumeNode.SetAndObserveImageData(vimage)
   import vtk.util.numpy_support
   vtype = vtk.util.numpy_support.get_vtk_array_type(narray.dtype)
   vimage.SetDimensions(vshape)
