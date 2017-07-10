@@ -655,39 +655,85 @@ def array(pattern = "", index = 0):
   console for quick debugging/testing.  More specific API should be
   used in scripts to be sure you get exactly what you want.
   """
-  scalarTypes = ('vtkMRMLScalarVolumeNode', 'vtkMRMLLabelMapVolumeNode')
-  vectorTypes = ('vtkMRMLVectorVolumeNode', 'vtkMRMLMultiVolumeNode')
-  tensorTypes = ('vtkMRMLDiffusionTensorVolumeNode',)
-  pointTypes = ('vtkMRMLModelNode',)
-  import vtk.util.numpy_support
-  n = getNode(pattern=pattern, index=index)
-  if n.GetClassName() in scalarTypes:
-    i = n.GetImageData()
-    shape = list(n.GetImageData().GetDimensions())
-    shape.reverse()
-    a = vtk.util.numpy_support.vtk_to_numpy(i.GetPointData().GetScalars()).reshape(shape)
-    return a
-  elif n.GetClassName() in vectorTypes:
-    i = n.GetImageData()
-    shape = list(n.GetImageData().GetDimensions())
-    shape.reverse()
-    components = i.GetNumberOfScalarComponents()
-    if components > 1:
-      shape.append(components)
-    a = vtk.util.numpy_support.vtk_to_numpy(i.GetPointData().GetScalars()).reshape(shape)
-    return a
-  elif n.GetClassName() in tensorTypes:
-    i = n.GetImageData()
-    shape = list(n.GetImageData().GetDimensions())
-    shape.reverse()
-    a = vtk.util.numpy_support.vtk_to_numpy(i.GetPointData().GetTensors()).reshape(shape+[3,3])
-    return a
-  elif n.GetClassName() in pointTypes:
-    p = n.GetPolyData().GetPoints().GetData()
-    a = vtk.util.numpy_support.vtk_to_numpy(p)
-    return a
-  # TODO: accessors for other node types: polydata (verts, polys...), colors
+  node = getNode(pattern=pattern, index=index)
+  import slicer
+  if isinstance(node, slicer.vtkMRMLVolumeNode):
+    return arrayFromVolume(node)
+  elif isinstance(node, slicer.vtkMRMLModelNode):
+    return arrayFromModelPoints(node)
 
+  # TODO: accessors for other node types: polydata (verts, polys...), colors
+  return None
+
+def arrayFromVolume(volumeNode):
+  """Return voxel array from volume node as numpy array.
+  Voxels values are not copied. Voxel values in the volume node can be modified
+  by changing values in the numpy array.
+  After all modifications has been completed, call volumeNode.Modified().
+  """
+  scalarTypes = ['vtkMRMLScalarVolumeNode', 'vtkMRMLLabelMapVolumeNode']
+  vectorTypes = ['vtkMRMLVectorVolumeNode', 'vtkMRMLMultiVolumeNode']
+  tensorTypes = ['vtkMRMLDiffusionTensorVolumeNode']
+  vimage = volumeNode.GetImageData()
+  nshape = tuple(reversed(volumeNode.GetImageData().GetDimensions()))
+  import vtk.util.numpy_support
+  narray = None
+  if volumeNode.GetClassName() in scalarTypes:
+    narray = vtk.util.numpy_support.vtk_to_numpy(vimage.GetPointData().GetScalars()).reshape(nshape)
+  elif volumeNode.GetClassName() in vectorTypes:
+    components = vimage.GetNumberOfScalarComponents()
+    if components > 1:
+      nshape = nshape + (components,)
+    narray = vtk.util.numpy_support.vtk_to_numpy(vimage.GetPointData().GetScalars()).reshape(nshape)
+  elif volumeNode.GetClassName() in tensorTypes:
+    narray = vtk.util.numpy_support.vtk_to_numpy(vimage.GetPointData().GetTensors()).reshape(nshape+(3,3))
+  else:
+    raise RuntimeError("Unsupported volume type: "+volumeNode.GetClassName())
+  return narray
+
+def arrayFromModelPoints(modelNode):
+  """Return point positions of a model node as numpy array.
+  Voxels values in the volume node can be modified by modfying the numpy array.
+  After all modifications has been completed, call modelNode.Modified().
+  """
+  import vtk.util.numpy_support
+  pointData = modelNode.GetPolyData().GetPoints().GetData()
+  narray = vtk.util.numpy_support.vtk_to_numpy(pointData)
+  return narray
+
+def updateVolumeFromArray(volumeNode, narray):
+  """Sets voxels of a volume node from a numpy array.
+  Voxels values are copied, therefore if the numpy array
+  is modified after calling this method, voxel values in the volume node will not change.
+  """
+
+  vshape = tuple(reversed(narray.shape))
+  if len(vshape) == 3:
+    # Scalar volume
+    vcomponents = 1
+  elif len(vshape) == 4:
+    # Vector volume
+    vcomponents = vshape[0]
+    vshape = vshape[1:4]
+  else:
+    # TODO: add support for tensor volumes
+    raise RuntimeError("Unsupported numpy array shape: "+str(narray.shape))
+
+  vimage = volumeNode.GetImageData()
+  import vtk.util.numpy_support
+  vtype = vtk.util.numpy_support.get_vtk_array_type(narray.dtype)
+  vimage.SetDimensions(vshape)
+  vimage.AllocateScalars(vtype, vcomponents)
+
+  narrayTarget = arrayFromVolume(volumeNode)
+  narrayTarget[:] = narray
+
+  # Notify the application that image data is changed
+  # (same notifications as in vtkMRMLVolumeNode.SetImageDataConnection)
+  import slicer
+  volumeNode.StorableModified()
+  volumeNode.Modified()
+  volumeNode.InvokeEvent(slicer.vtkMRMLVolumeNode.ImageDataModifiedEvent, volumeNode)
 
 #
 # VTK
