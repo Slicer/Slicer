@@ -80,6 +80,7 @@ class UtilTestTest(ScriptedLoadableModuleTest):
     self.test_findChild()
     self.test_arrayFromVolume()
     self.test_updateVolumeFromArray()
+    self.test_arrayFromModelPoints()
     self.test_array()
 
   def test_setSliceViewerLayers(self):
@@ -183,7 +184,7 @@ class UtilTestTest(ScriptedLoadableModuleTest):
     # Try to get a widget that does not exists
     caughtException = False
     try:
-      slicer.util.findChild(utilWidget.Widget, 'Nonexisting_Label')
+      slicer.util.findChild(utilWidget.Widget, 'Unexistant_Label')
     except RuntimeError:
       caughtException = True
     self.assertTrue(caughtException)
@@ -236,6 +237,24 @@ class UtilTestTest(ScriptedLoadableModuleTest):
     self.assertEqual(voxelValueVtk, voxelValueNumpy)
 
     self.delayDisplay('Testing slicer.util.test_updateVolumeFromArray passed')
+
+  def test_arrayFromModelPoints(self):
+    # Test if retrieving point coordinates as a numpy array works
+
+    self.delayDisplay('Create a model containing a sphere')
+    sphere = vtk.vtkSphereSource()
+    sphere.SetRadius(30.0)
+    sphere.Update()
+    modelNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLModelNode')
+    modelNode.SetAndObservePolyData(sphere.GetOutput())
+    modelNode.CreateDefaultDisplayNodes()
+    a = slicer.util.arrayFromModelPoints(modelNode)
+
+    self.delayDisplay('Change Y scaling')
+    a[:,2] = a[:,2] * 2.5
+    modelNode.GetPolyData().Modified()
+
+    self.delayDisplay('Testing slicer.util.test_arrayFromModelPoints passed')
 
   def test_array(self):
     # Test if convenience function of getting numpy array from various nodes works
