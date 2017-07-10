@@ -514,6 +514,7 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
       std::string tagAttributeValue = shNode->GetItemAttribute(seriesItemID, tagAttributeName);
       if (shNode->HasItemAttribute(seriesItemID, tagAttributeName))
         {
+        exportable->setTag(tagName, tagAttributeValue.c_str());
         d->TagsTable->setItem(row, 1, new QTableWidgetItem(QString(tagAttributeValue.c_str())));
         }
       // Use default value from exportable otherwise
