@@ -11,6 +11,7 @@
 ============================================================================*/
 
 #include "vtkArchive.h"
+#include "vtkLoggingMacros.h"
 #include "vtksys/Glob.hxx"
 #include "vtksys/SystemTools.hxx"
 
@@ -31,11 +32,11 @@ class vtkArchiveTools
 public:
   static void Message(const char* title, const char* message)
     {
-    std::cerr << title << " " << message << std::endl << std::flush;
+    vtkInfoWithoutObjectMacro(<< title << " " << message);
     }
   static void Message(const char* m)
     {
-    std::cerr << m << std::endl << std::flush;
+    vtkInfoWithoutObjectMacro(<< m);
     }
   static void Stdout(const char* s)
   {
@@ -268,6 +269,7 @@ bool extract_tar(const char* tarFileName, bool verbose, bool extract, std::vecto
     }
   for (;;)
     {
+    std::string message;
     r = archive_read_next_header(a, &entry);
     if (r == ARCHIVE_EOF)
       {
@@ -284,8 +286,8 @@ bool extract_tar(const char* tarFileName, bool verbose, bool extract, std::vecto
       }
     if (verbose && extract)
       {
-      vtkArchiveTools::Stdout("x ");
-      vtkArchiveTools::Stdout(archive_entry_pathname(entry));
+      message += "x ";
+      message += +archive_entry_pathname(entry);
       }
     if(verbose && !extract)
       {
@@ -293,7 +295,7 @@ bool extract_tar(const char* tarFileName, bool verbose, bool extract, std::vecto
       }
     else if(!extract)
       {
-      vtkArchiveTools::Stdout(archive_entry_pathname(entry));
+      message += archive_entry_pathname(entry);
       }
     if(extract)
       {
@@ -331,9 +333,9 @@ bool extract_tar(const char* tarFileName, bool verbose, bool extract, std::vecto
           }
         }
       }
-    if (verbose || !extract)
+    if (verbose && !message.empty())
       {
-      vtkArchiveTools::Stdout("\n");
+      vtkArchiveTools::Message(message.c_str());
       }
     }
   archive_read_close(a);
