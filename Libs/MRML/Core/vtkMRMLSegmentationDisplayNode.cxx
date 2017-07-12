@@ -492,6 +492,12 @@ void vtkMRMLSegmentationDisplayNode::SetSegmentOverrideColor(std::string segment
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLSegmentationDisplayNode::UnsetSegmentOverrideColor(std::string segmentID)
+{
+  this->SetSegmentOverrideColor(segmentID, SEGMENT_COLOR_NO_OVERRIDE, SEGMENT_COLOR_NO_OVERRIDE, SEGMENT_COLOR_NO_OVERRIDE);
+}
+
+//---------------------------------------------------------------------------
 bool vtkMRMLSegmentationDisplayNode::GetSegmentVisibility(std::string segmentID)
 {
   this->UpdateSegmentList();

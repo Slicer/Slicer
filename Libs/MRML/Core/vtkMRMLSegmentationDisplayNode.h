@@ -197,6 +197,8 @@ public:
   void SetSegmentOverrideColor(std::string segmentID, double r, double g, double b);
   /// Set segment override color by segment ID
   void SetSegmentOverrideColor(std::string segmentID, vtkVector3d overrideColor);
+  /// Unset segment override color (default segment color will be used for display instead).
+  void UnsetSegmentOverrideColor(std::string segmentID);
 
   /// Get overall segment visibility by segment ID. Convenience function for python compatibility.
   /// \return Segment visibility if segment found, otherwise false
