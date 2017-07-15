@@ -33,7 +33,7 @@ if(NOT DEFINED OpenIGTLink_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    "ba564645200a8c6ce9e4169cb8a893a0ff814b02"
+    "92bc3d7b4fd8294f10ae34b1c832a5285aaa154f"
     QUIET
     )
 
