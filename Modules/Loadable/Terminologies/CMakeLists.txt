@@ -21,11 +21,14 @@ set(MODULE_SRCS
   qSlicer${MODULE_NAME}Module.h
   qSlicer${MODULE_NAME}ModuleWidget.cxx
   qSlicer${MODULE_NAME}ModuleWidget.h
+  qSlicer${MODULE_NAME}Reader.cxx
+  qSlicer${MODULE_NAME}Reader.h
   )
 
 set(MODULE_MOC_SRCS
   qSlicer${MODULE_NAME}Module.h
   qSlicer${MODULE_NAME}ModuleWidget.h
+  qSlicer${MODULE_NAME}Reader.h
   )
 
 set(MODULE_UI_SRCS

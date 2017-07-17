@@ -1,6 +1,6 @@
 {
   "SegmentationCategoryTypeContextName": "Segmentation category and type - DICOM master list",
-  "@schema": "https://raw.githubusercontent.com/qiicr/dcmqi/master/doc/segment-context-schema.json#",
+  "@schema": "https://raw.githubusercontent.com/qiicr/dcmqi/master/doc/schemas/segment-context-schema.json#",
   "SegmentationCodes": {
     "Category": [
       {

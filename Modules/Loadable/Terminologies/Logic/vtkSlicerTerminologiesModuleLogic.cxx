@@ -50,7 +50,9 @@
 
 static rapidjson::Value JSON_EMPTY_VALUE;
 static std::string ANATOMIC_CONTEXT_SCHEMA = "https://raw.githubusercontent.com/qiicr/dcmqi/master/doc/anatomic-context-schema.json#";
+static std::string ANATOMIC_CONTEXT_SCHEMA_1 = "https://raw.githubusercontent.com/qiicr/dcmqi/master/doc/schemas/anatomic-context-schema.json#";
 static std::string TERMINOLOGY_CONTEXT_SCHEMA = "https://raw.githubusercontent.com/qiicr/dcmqi/master/doc/segment-context-schema.json#";
+static std::string TERMINOLOGY_CONTEXT_SCHEMA_1 = "https://raw.githubusercontent.com/qiicr/dcmqi/master/doc/schemas/segment-context-schema.json#";
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerTerminologiesModuleLogic);
@@ -1053,7 +1055,7 @@ bool vtkSlicerTerminologiesModuleLogic::LoadContextFromFile(std::string filePath
     return false;
     }
   std::string schema = (*jsonRoot)["@schema"].GetString();
-  if (!schema.compare(TERMINOLOGY_CONTEXT_SCHEMA))
+  if (!schema.compare(TERMINOLOGY_CONTEXT_SCHEMA) || !schema.compare(TERMINOLOGY_CONTEXT_SCHEMA_1))
     {
     // Store terminology
     std::string contextName = (*jsonRoot)["SegmentationCategoryTypeContextName"].GetString();
@@ -1061,7 +1063,7 @@ bool vtkSlicerTerminologiesModuleLogic::LoadContextFromFile(std::string filePath
       this->Internal->LoadedTerminologies, contextName, jsonRoot);
     vtkDebugMacro("Terminology named '" << contextName << "' successfully loaded from file " << filePath);
     }
-  else if (!schema.compare(ANATOMIC_CONTEXT_SCHEMA))
+  else if (!schema.compare(ANATOMIC_CONTEXT_SCHEMA) || !schema.compare(ANATOMIC_CONTEXT_SCHEMA_1))
     {
     // Store anatomic context
     std::string contextName = (*jsonRoot)["AnatomicContextName"].GetString();
@@ -1110,7 +1112,7 @@ std::string vtkSlicerTerminologiesModuleLogic::LoadTerminologyFromFile(std::stri
     return "";
     }
   std::string schema = (*terminologyRoot)["@schema"].GetString();
-  if (schema.compare(TERMINOLOGY_CONTEXT_SCHEMA))
+  if (schema.compare(TERMINOLOGY_CONTEXT_SCHEMA) && schema.compare(TERMINOLOGY_CONTEXT_SCHEMA_1))
     {
     vtkErrorMacro("LoadTerminologyFromFile: File " << filePath << " is not a terminology context file according to its schema");
     fclose(fp);
@@ -1182,12 +1184,12 @@ bool vtkSlicerTerminologiesModuleLogic::LoadTerminologyFromSegmentDescriptorFile
 void vtkSlicerTerminologiesModuleLogic::LoadDefaultTerminologies()
 {
   std::string success("");
-  success = this->LoadTerminologyFromFile(this->GetModuleShareDirectory() + "/SegmentationCategoryTypeModifier-SlicerGeneralAnatomy.json");
+  success = this->LoadTerminologyFromFile(this->GetModuleShareDirectory() + "/SegmentationCategoryTypeModifier-SlicerGeneralAnatomy.term.json");
   if (success.empty())
     {
     vtkErrorMacro("LoadDefaultTerminologies: Failed to load terminology 'SegmentationCategoryTypeModifier-SlicerGeneralAnatomy'");
     }
-  success = this->LoadTerminologyFromFile(this->GetModuleShareDirectory() + "/SegmentationCategoryTypeModifier-DICOM-Master.json");
+  success = this->LoadTerminologyFromFile(this->GetModuleShareDirectory() + "/SegmentationCategoryTypeModifier-DICOM-Master.term.json");
   if (success.empty())
     {
     vtkErrorMacro("LoadDefaultTerminologies: Failed to load terminology 'SegmentationCategoryTypeModifier-DICOM-Master'");
@@ -1224,7 +1226,7 @@ std::string vtkSlicerTerminologiesModuleLogic::LoadAnatomicContextFromFile(std::
     return "";
     }
   std::string schema = (*anatomicContextRoot)["@schema"].GetString();
-  if (schema.compare(ANATOMIC_CONTEXT_SCHEMA))
+  if (schema.compare(ANATOMIC_CONTEXT_SCHEMA) && schema.compare(ANATOMIC_CONTEXT_SCHEMA_1))
     {
     vtkErrorMacro("LoadAnatomicContextFromFile: File " << filePath << " is not an anatomic context file according to its schema");
     fclose(fp);
@@ -1296,7 +1298,7 @@ bool vtkSlicerTerminologiesModuleLogic::LoadAnatomicContextFromSegmentDescriptor
 void vtkSlicerTerminologiesModuleLogic::LoadDefaultAnatomicContexts()
 {
   std::string success("");
-  success = this->LoadAnatomicContextFromFile(this->GetModuleShareDirectory() + "/AnatomicRegionAndModifier-DICOM-Master.json");
+  success = this->LoadAnatomicContextFromFile(this->GetModuleShareDirectory() + "/AnatomicRegionAndModifier-DICOM-Master.term.json");
   if (success.empty())
     {
     vtkErrorMacro("LoadDefaultAnatomicContexts: Failed to load anatomical region context 'AnatomicRegionAndModifier-DICOM-Master'");
