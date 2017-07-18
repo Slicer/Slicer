@@ -119,8 +119,8 @@ def loadSlicerRCFile():
   import os
   rcfile = getSlicerRCFileName()
   if os.path.isfile( rcfile ):
-    print 'Loading Slicer RC file [%s]' % ( rcfile )
-    execfile( rcfile )
+    print('Loading Slicer RC file [%s]' % ( rcfile ))
+    execfile( rcfile, globals() )
 
 #-----------------------------------------------------------------------------
 #
