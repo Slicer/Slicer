@@ -53,8 +53,8 @@ public:
   /// It is the responsibility of the module's manager to call the methods.
   /// \a enter() and \a exit() must be called when reimplementing these methods
   /// in order to have \a isEntered() valid.
-  virtual void enter();
-  virtual void exit();
+  Q_INVOKABLE virtual void enter();
+  Q_INVOKABLE virtual void exit();
   bool isEntered()const;
 
   /// Node editing
