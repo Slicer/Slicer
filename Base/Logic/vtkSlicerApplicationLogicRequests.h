@@ -27,6 +27,8 @@ public:
     m_UID = uid;
   }
 
+  virtual ~DataRequest(){}
+
   virtual void Execute(vtkSlicerApplicationLogic*) {};
 
   int GetUID()const{return m_UID;}
