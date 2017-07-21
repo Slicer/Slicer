@@ -281,6 +281,22 @@ if(Slicer_USE_PYTHONQT_WITH_OPENSSL)
     )
 endif()
 
+# Check that python standard library modules can be imported
+foreach(stdlib_module IN ITEMS
+    "bz2"
+    )
+  add_test(
+    NAME py_test_stdlib_import_${stdlib_module}_using_slicer
+    COMMAND ${Slicer_LAUNCHER_EXECUTABLE}
+    -c "import ${stdlib_module}" --no-splash --ignore-slicerrc --disable-settings
+    )
+  add_test(
+    NAME py_test_stdlib_import_${stdlib_module}_using_python
+    COMMAND ${PYTHON_EXECUTABLE}
+    -c "import ${stdlib_module}"
+    )
+endforeach()
+
 #
 # SelfTests
 # see http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Developers/Tutorials/SelfTestModule

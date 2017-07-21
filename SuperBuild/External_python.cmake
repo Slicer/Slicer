@@ -2,9 +2,13 @@
 set(proj python)
 
 # Set dependency list
-set(${proj}_DEPENDENCIES zlib)
+set(${proj}_DEPENDENCIES "")
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_python)
-  list(APPEND ${proj}_DEPENDENCIES CTKAPPLAUNCHER)
+  list(APPEND ${proj}_DEPENDENCIES
+    bzip2
+    CTKAPPLAUNCHER
+    zlib
+    )
 endif()
 if(Slicer_USE_PYTHONQT_WITH_TCL)
   if(WIN32)
@@ -88,12 +92,15 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
       )
   endif()
 
-  # Force modules that statically link to zlib to not be built-in.  Otherwise,
-  # when building in Debug configuration, the Python library--which we force to
-  # build in Release configuration--would mix Debug and Release C runtime
-  # libraries.
+  # Force modules that statically link to zlib or libbz2 to not be built-in.
+  # Otherwise, when building in Debug configuration, the Python library--which
+  # we force to build in Release configuration--would mix Debug and Release C
+  # runtime libraries.
   if(WIN32)
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS
+        # Depends on libbz2
+        -DBUILTIN_BZ2:BOOL=OFF
+        # Depends on zlib
         -DBUILTIN_BINASCII:BOOL=OFF
         -DBUILTIN_ZLIB:BOOL=OFF
       )
@@ -140,6 +147,8 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
       -DSRC_DIR:PATH=${python_SOURCE_DIR}
       -DDOWNLOAD_SOURCES:BOOL=OFF
       -DINSTALL_WINDOWS_TRADITIONAL:BOOL=OFF
+      -DBZIP2_INCLUDE_DIR:PATH=${BZIP2_INCLUDE_DIR}
+      -DBZIP2_LIBRARIES:FILEPATH=${BZIP2_LIBRARIES}
       -DZLIB_INCLUDE_DIR:PATH=${ZLIB_INCLUDE_DIR}
       -DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARY}
       -DENABLE_TKINTER:BOOL=${Slicer_USE_PYTHONQT_WITH_TCL}
