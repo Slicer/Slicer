@@ -175,6 +175,10 @@ protected:
   int ActionState;
   int ActionsEnabled;
 
+  /// Indicates whether the shift key was used during the previous action.
+  /// This is used to require shift-up before returning to default mode.
+  bool ShiftKeyUsedForPreviousAction;
+
   int StartActionEventPosition[2];
   double StartActionFOV[3];
   double VolumeScalarRange[2];

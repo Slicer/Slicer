@@ -52,6 +52,7 @@ vtkSliceViewInteractorStyle::vtkSliceViewInteractorStyle()
 {
   this->ActionState = vtkSliceViewInteractorStyle::None;
   this->ActionsEnabled = vtkSliceViewInteractorStyle::AllActionsMask;
+  this->ShiftKeyUsedForPreviousAction = false;
 
   this->StartActionEventPosition[0] = 0;
   this->StartActionEventPosition[1] = 0;
@@ -114,6 +115,13 @@ void vtkSliceViewInteractorStyle::OnKeyPress()
 //----------------------------------------------------------------------------
 void vtkSliceViewInteractorStyle::OnKeyRelease()
 {
+
+  std::string key = this->Interactor->GetKeySym();
+
+  if (((key.find("Shift") != std::string::npos)) && this->ShiftKeyUsedForPreviousAction)
+    {
+    this->ShiftKeyUsedForPreviousAction = false;
+    }
   this->Superclass::OnKeyRelease();
 }
 
@@ -375,6 +383,7 @@ void vtkSliceViewInteractorStyle::OnLeftButtonUp()
 {
   if (this->ActionState == this->Translate)
     {
+    this->ShiftKeyUsedForPreviousAction =  true;
     this->EndTranslate();
     }
   else if (this->ActionState == this->Blend)
@@ -541,7 +550,7 @@ void vtkSliceViewInteractorStyle::OnMouseMove()
         double xyz[3];
         vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(this->GetInteractor(), sliceNode, pos[0], pos[1], xyz);
         crosshairNode->SetCursorPositionXYZ(xyz, sliceNode);
-        if (this->Interactor->GetShiftKey())
+        if (this->Interactor->GetShiftKey() && (!this->ShiftKeyUsedForPreviousAction))
           {
           performDefaultAction = false;
           double cursorPositionRAS[3];
