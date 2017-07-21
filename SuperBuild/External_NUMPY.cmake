@@ -69,13 +69,13 @@ set(${proj}_WORKING_DIR \"${CMAKE_BINARY_DIR}/${proj}\")
 ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py install)
 ")
 
-  set(_version "1.9.2")
+  set(_version "1.13.1")
 
   #------------------------------------------------------------------------------
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    URL "http://slicer.kitware.com/midas3/download/item/210950/numpy-${_version}.tar.gz"
-    URL_MD5 "a1ed53432dbcd256398898d35bc8e645"
+    URL "https://pypi.python.org/packages/c0/3a/40967d9f5675fbb097ffec170f59c2ba19fc96373e73ad47c2cae9a30aed/numpy-${_version}.zip"
+    URL_MD5 "2c3c0f4edf720c3a7b525dacc825b9ae"
     SOURCE_DIR ${proj}
     BUILD_IN_SOURCE 1
     PATCH_COMMAND ${CMAKE_COMMAND} -DNUMPY_SRC_DIR=${CMAKE_BINARY_DIR}/${proj}
