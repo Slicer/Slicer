@@ -137,8 +137,13 @@ QButtonGroup* ButtonGroupWidgetWrapper::buttonGroup()const
 QString ButtonGroupWidgetWrapper::checkedValue()
 {
   QAbstractButton* button = this->ButtonGroup->checkedButton();
-  Q_ASSERT(button);
-  return button->text();
+  if (button) {
+    return button->text();
+  }
+  else {
+    // Handle case where <string-enumeration> has no <default> element
+    return QString("");
+  }
 }
 
 //-----------------------------------------------------------------------------
