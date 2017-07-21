@@ -1422,7 +1422,7 @@ class DICOMHeaderPopup(qt.QDialog, SizePositionSettingsMixin):
     for fileList in fileLists:
       for filePath in fileList:
         filePaths.append(filePath)
-        self.listWidget.setFileList(filePaths)
+    self.listWidget.setFileList(filePaths)
 
   def show(self):
     if not self.isVisible():
