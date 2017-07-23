@@ -20,32 +20,26 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerSubjectHierarchyModuleWidgetsPlugin_h
-#define __qSlicerSubjectHierarchyModuleWidgetsPlugin_h
+#ifndef __qMRMLSubjectHierarchyComboBoxPlugin_h
+#define __qMRMLSubjectHierarchyComboBoxPlugin_h
 
-// Qt includes
-#include <QDesignerCustomWidgetCollectionInterface>
+#include "qSlicerSubjectHierarchyModuleWidgetsAbstractPlugin.h"
 
-// SubjectHierarchy includes
-#include "qMRMLSubjectHierarchyTreeViewPlugin.h"
-#include "qMRMLSubjectHierarchyComboBoxPlugin.h"
-
-// \class Group the plugins in one library
-class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_PLUGINS_EXPORT qSlicerSubjectHierarchyModuleWidgetsPlugin
+class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_PLUGINS_EXPORT qMRMLSubjectHierarchyComboBoxPlugin
   : public QObject
-  , public QDesignerCustomWidgetCollectionInterface
+  , public qSlicerSubjectHierarchyModuleWidgetsAbstractPlugin
 {
   Q_OBJECT
-  Q_INTERFACES(QDesignerCustomWidgetCollectionInterface);
 
 public:
-  QList<QDesignerCustomWidgetInterface*> customWidgets() const
-    {
-    QList<QDesignerCustomWidgetInterface *> plugins;
-    plugins << new qMRMLSubjectHierarchyTreeViewPlugin;
-    plugins << new qMRMLSubjectHierarchyComboBoxPlugin;
-    return plugins;
-    }
+  qMRMLSubjectHierarchyComboBoxPlugin(QObject* parent = 0);
+
+  QWidget *createWidget(QWidget* parent);
+  QString  domXml() const;
+  QString  includeFile() const;
+  bool     isContainer() const;
+  QString  name() const;
+
 };
 
 #endif
