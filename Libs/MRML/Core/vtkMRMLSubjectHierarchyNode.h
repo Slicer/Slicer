@@ -325,6 +325,9 @@ public:
   /// the attribute of this item containing the referenced SOP instance UIDs
   /// \sa vtkMRMLSubjectHierarchyConstants::GetDICOMReferencedInstanceUIDsAttributeName()
   std::vector<vtkIdType> GetItemsReferencedFromItemByDICOM(vtkIdType itemID);
+  /// Python compatibility method to get items that are referenced from a given item by DICOM.
+  /// \sa GetItemsReferencedFromItemByDICOM
+  void GetItemsReferencedFromItemByDICOM(vtkIdType itemID, vtkIdList* referencedIdList);
 
   /// Generate unique item name
   std::string GenerateUniqueItemName(std::string name);

@@ -2903,6 +2903,24 @@ std::vector<vtkIdType> vtkMRMLSubjectHierarchyNode::GetItemsReferencedFromItemBy
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLSubjectHierarchyNode::GetItemsReferencedFromItemByDICOM(vtkIdType itemID, vtkIdList* referencedIdList)
+{
+  if (!referencedIdList)
+    {
+    vtkErrorMacro("GetItemsReferencedFromItemByDICOM: Invalid output ID list");
+    return;
+    }
+
+  referencedIdList->Reset();
+  std::vector<vtkIdType> referencedItemIDs = this->GetItemsReferencedFromItemByDICOM(itemID);
+  std::vector<vtkIdType>::iterator itemIt;
+  for (itemIt=referencedItemIDs.begin(); itemIt!=referencedItemIDs.end(); ++itemIt)
+    {
+    referencedIdList->InsertNextId(*itemIt);
+    }
+}
+
+//---------------------------------------------------------------------------
 std::string vtkMRMLSubjectHierarchyNode::GenerateUniqueItemName(std::string name)
 {
   std::vector<vtkIdType> foundItemIDs;
