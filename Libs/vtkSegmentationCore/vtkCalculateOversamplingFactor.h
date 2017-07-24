@@ -56,16 +56,16 @@ public:
 
 protected:
   /// Calculate relative structure size from input model and rasterization reference volume
-  double CalculateRelativeStructureSize();
+  /// \return Success flag
+  bool CalculateRelativeStructureSize();
 
   /// Calculate complexity measure based on surface poly data in input model
-  double CalculateComplexityMeasure();
+  /// \return Success flag
+  bool CalculateComplexityMeasure();
 
-  /// Use fuzzy rules to determine oversampling factor based on relative structure size and complexity measure
-  /// \param relativeStructureSize Relative structure size calculated by \sa CalculateRelativeStructureSize
-  /// \param complexityMeasure Complexity measure calculated by \sa CalculateComplexityMeasure
+  /// Use fuzzy rules to determine oversampling factor based on calculated relative structure size and complexity measure
   /// \return Automatically calculated oversampling factor
-  double DetermineOversamplingFactor(double relativeStructureSize, double complexityMeasure);
+  double DetermineOversamplingFactor();
 
   /// Clip a membership function with the clip value
   /// This means that the values of the membership function will be maximized at the clip value,
@@ -82,7 +82,10 @@ public:
   vtkSetObjectMacro(ReferenceGeometryImageData, vtkOrientedImageData);
 
   vtkGetMacro(OutputOversamplingFactor, double);
-  vtkSetMacro(OutputOversamplingFactor, double);
+
+  vtkGetMacro(OutputRelativeStructureSize, double);
+  vtkGetMacro(OutputComplexityMeasure, double);
+  vtkGetMacro(OutputNormalizedShapeIndex, double);
 
   vtkGetMacro(LogSpeedMeasurements, bool);
   vtkSetMacro(LogSpeedMeasurements, bool);
@@ -101,6 +104,13 @@ protected:
 
   /// Calculated oversampling factor for the segmentation node and its reference volume
   double OutputOversamplingFactor;
+
+  /// Calculated relative structure size
+  double OutputRelativeStructureSize;
+  /// Calculated complexity measure
+  double OutputComplexityMeasure;
+  /// Calculated normalized shape index (NSI), for debugging purposes
+  double OutputNormalizedShapeIndex;
 
   /// Flag telling whether the speed measurements are logged on standard output
   bool LogSpeedMeasurements;

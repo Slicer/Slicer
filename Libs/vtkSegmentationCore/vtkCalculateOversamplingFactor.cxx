@@ -45,6 +45,9 @@ vtkCalculateOversamplingFactor::vtkCalculateOversamplingFactor()
   this->InputPolyData = NULL;
   this->ReferenceGeometryImageData = NULL;
   this->OutputOversamplingFactor = 1;
+  this->OutputRelativeStructureSize = 0.0;
+  this->OutputComplexityMeasure = 0.0;
+  this->OutputNormalizedShapeIndex = 0.0;
   this->MassPropertiesAlgorithm = NULL;
   this->LogSpeedMeasurementsOff();
 }
@@ -94,16 +97,14 @@ bool vtkCalculateOversamplingFactor::CalculateOversamplingFactor()
   massProperties->Update();
 
   // Get relative structure size
-  double relativeStructureSize = this->CalculateRelativeStructureSize();
-  if (relativeStructureSize == -1.0)
+  if (!this->CalculateRelativeStructureSize())
     {
     vtkErrorMacro("CalculateOversamplingFactor: Failed to calculate relative structure size");
     return false;
     }
 
   // Get complexity measure
-  double complexityMeasure = this->CalculateComplexityMeasure();
-  if (complexityMeasure == -1.0)
+  if (!this->CalculateComplexityMeasure())
     {
     vtkErrorMacro("CalculateOversamplingFactor: Failed to calculate complexity measure");
     return false;
@@ -113,8 +114,7 @@ bool vtkCalculateOversamplingFactor::CalculateOversamplingFactor()
 #endif
 
   // Determine crisp oversampling factor based on crisp inputs using fuzzy rules
-  this->OutputOversamplingFactor = this->DetermineOversamplingFactor(relativeStructureSize, complexityMeasure);
-
+  this->OutputOversamplingFactor = this->DetermineOversamplingFactor();
   vtkDebugMacro("CalculateOversamplingFactor: Automatic oversampling factor of " << this->OutputOversamplingFactor << " has been calculated.");
 
   if (this->LogSpeedMeasurements)
@@ -134,22 +134,22 @@ bool vtkCalculateOversamplingFactor::CalculateOversamplingFactor()
 }
 
 //----------------------------------------------------------------------------
-double vtkCalculateOversamplingFactor::CalculateRelativeStructureSize()
+bool vtkCalculateOversamplingFactor::CalculateRelativeStructureSize()
 {
   if (!this->InputPolyData)
     {
     vtkErrorMacro("CalculateRelativeStructureSize: Invalid input poly data!");
-    return -1.0;
+    return false;
     }
   if (!this->ReferenceGeometryImageData)
     {
     vtkErrorMacro("CalculateRelativeStructureSize: Invalid rasterization reference volume node!");
-    return -1.0;
+    return false;
     }
   if (!this->MassPropertiesAlgorithm)
     {
     vtkErrorMacro("CalculateRelativeStructureSize: Invalid mass properties algorithm!");
-    return -1.0;
+    return false;
     }
 
   // Get structure volume in mm^3
@@ -173,35 +173,35 @@ double vtkCalculateOversamplingFactor::CalculateRelativeStructureSize()
   double relativeStructureSize = structureVolume / volumeVolume;
 
   // Map raw measurement to the fuzzy input scale
-  double sizeMeasure = (-1.0) * log10(relativeStructureSize);
-  vtkDebugMacro("CalculateRelativeStructureSize: Relative structure size: " << relativeStructureSize << ", size measure: " << sizeMeasure);
+  this->OutputRelativeStructureSize = (-1.0) * log10(relativeStructureSize);
+  vtkDebugMacro("CalculateRelativeStructureSize: Structure size fraction: " << relativeStructureSize << ", relative structure size: " << this->OutputRelativeStructureSize);
 
-  return sizeMeasure;
+  return true;
 }
 
 //----------------------------------------------------------------------------
-double vtkCalculateOversamplingFactor::CalculateComplexityMeasure()
+bool vtkCalculateOversamplingFactor::CalculateComplexityMeasure()
 {
   if (!this->InputPolyData)
     {
     vtkErrorMacro("CalculateComplexityMeasure: Invalid input poly data!");
-    return -1.0;
+    return false;
     }
   if (!this->MassPropertiesAlgorithm)
     {
     vtkErrorMacro("CalculateComplexityMeasure: Invalid mass properties algorithm!");
-    return -1.0;
+    return false;
     }
 
   // Normalized shape index (NSI) characterizes the deviation of the shape of an object
   // from a sphere (from surface area and volume). A sphere's NSI is one. This number is always >= 1.0
-  double normalizedShapeIndex = this->MassPropertiesAlgorithm->GetNormalizedShapeIndex();
+  this->OutputNormalizedShapeIndex = this->MassPropertiesAlgorithm->GetNormalizedShapeIndex();
 
   // Map raw measurement to the fuzzy input scale
-  double complexityMeasure = std::max(normalizedShapeIndex - 1.0, 0.0); // If smaller then 0, then return 0
-  vtkDebugMacro("CalculateComplexityMeasure: Normalized shape index: " << normalizedShapeIndex << ", complexity measure: " << complexityMeasure);
+  this->OutputComplexityMeasure = std::max(this->OutputNormalizedShapeIndex - 1.0, 0.0); // If smaller then 0, then return 0
+  vtkDebugMacro("CalculateComplexityMeasure: Normalized shape index: " << this->OutputNormalizedShapeIndex << ", complexity measure: " << this->OutputComplexityMeasure);
 
-  return complexityMeasure;
+  return true;
 }
 
 //---------------------------------------------------------------------------
@@ -216,9 +216,9 @@ double vtkCalculateOversamplingFactor::CalculateComplexityMeasure()
 // 5. If RSS is Medium and Complexity is Low then Oversampling is Normal
 // 6. If RSS is Large, then Oversampling is Low
 //---------------------------------------------------------------------------
-double vtkCalculateOversamplingFactor::DetermineOversamplingFactor(double relativeStructureSize, double complexityMeasure)
+double vtkCalculateOversamplingFactor::DetermineOversamplingFactor()
 {
-  if (relativeStructureSize == -1.0 || complexityMeasure == -1.0)
+  if (this->OutputRelativeStructureSize == -1.0 || this->OutputComplexityMeasure == -1.0)
     {
     vtkErrorMacro("DetermineOversamplingFactor: Invalid input measures! Returning default oversampling of 1");
     return 1.0;
@@ -272,13 +272,13 @@ double vtkCalculateOversamplingFactor::DetermineOversamplingFactor(double relati
   oversamplingVeryHigh->AddPoint(2.25, 1);
 
   // Fuzzify inputs
-  double sizeLargeMembership = sizeLarge->GetValue(relativeStructureSize);
-  double sizeMediumMembership = sizeMedium->GetValue(relativeStructureSize);
-  double sizeSmallMembership = sizeSmall->GetValue(relativeStructureSize);
-  double sizeVerySmallMembership = sizeVerySmall->GetValue(relativeStructureSize);
+  double sizeLargeMembership = sizeLarge->GetValue(this->OutputRelativeStructureSize);
+  double sizeMediumMembership = sizeMedium->GetValue(this->OutputRelativeStructureSize);
+  double sizeSmallMembership = sizeSmall->GetValue(this->OutputRelativeStructureSize);
+  double sizeVerySmallMembership = sizeVerySmall->GetValue(this->OutputRelativeStructureSize);
 
-  double complexityLowMembership = complexityLow->GetValue(complexityMeasure);
-  double complexityHighMembership = complexityHigh->GetValue(complexityMeasure);
+  double complexityLowMembership = complexityLow->GetValue(this->OutputComplexityMeasure);
+  double complexityHighMembership = complexityHigh->GetValue(this->OutputComplexityMeasure);
 
   // Apply rules and determine consequents
 
