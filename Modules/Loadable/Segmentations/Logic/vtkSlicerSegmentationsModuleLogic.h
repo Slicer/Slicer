@@ -39,11 +39,12 @@ class vtkPolyData;
 class vtkDataObject;
 class vtkGeneralTransform;
 
-class vtkMRMLScalarVolumeNode;
 class vtkMRMLSegmentationStorageNode;
+class vtkMRMLScalarVolumeNode;
 class vtkMRMLLabelMapVolumeNode;
-class vtkMRMLModelNode;
 class vtkMRMLVolumeNode;
+class vtkMRMLModelNode;
+class vtkMRMLModelHierarchyNode;
 
 /// \ingroup SlicerRt_QtModules_Segmentations
 class VTK_SLICER_SEGMENTATIONS_LOGIC_EXPORT vtkSlicerSegmentationsModuleLogic :
@@ -137,6 +138,30 @@ public:
   /// Otherwise return with failure.
   static bool ExportSegmentToRepresentationNode(vtkSegment* segment, vtkMRMLNode* representationNode);
 
+  /// Export multiple segments into a model hierarchy, a model node from each segment
+  /// \param segmentationNode Segmentation node from which the the segments are exported
+  /// \param segmentIds List of segment IDs to export
+  /// \param modelHierarchyNode Model hierarchy to export the segments to
+  static bool ExportSegmentsToModelHierarchy(vtkMRMLSegmentationNode* segmentationNode,
+    std::vector<std::string>& segmentIDs, vtkMRMLModelHierarchyNode* modelHierarchyNode);
+
+  /// Export multiple segments into a model hierarchy, a model node from each segment
+  /// \param segmentationNode Segmentation node from which the the segments are exported
+  /// \param segmentIds List of segment IDs to export
+  /// \param modelHierarchyNode Model hierarchy to export the segments to
+  static bool ExportSegmentsToModelHierarchy(vtkMRMLSegmentationNode* segmentationNode,
+    vtkStringArray* segmentIds, vtkMRMLModelHierarchyNode* modelHierarchyNode);
+
+  /// Export visible segments into a model hierarchy, a model node from each segment
+  /// \param segmentationNode Segmentation node from which the the segments are exported
+  /// \param modelHierarchyNode Model hierarchy to export the visible segments to
+  static bool ExportVisibleSegmentsToModelHierarchy(vtkMRMLSegmentationNode* segmentationNode, vtkMRMLModelHierarchyNode* modelHierarchyNode);
+
+  /// Export all segments into a model hierarchy, a model node from each segment
+  /// \param segmentationNode Segmentation node from which the the segments are exported
+  /// \param modelHierarchyNode Model hierarchy to export the segments to
+  static bool ExportAllSegmentsToModelHierarchy(vtkMRMLSegmentationNode* segmentationNode, vtkMRMLModelHierarchyNode* modelHierarchyNode);
+
   /// Export multiple segments into a multi-label labelmap volume node
   /// \param segmentationNode Segmentation node from which the the segments are exported
   /// \param segmentIds List of segment IDs to export
@@ -151,6 +176,13 @@ public:
   /// \param labelmapNode Labelmap node to export the segments to
   /// \param referenceVolumeNode If specified, then the merged labelmap node will match the geometry of referenceVolumeNode
   static bool ExportSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* segmentIDs,
+    vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode = NULL);
+
+  /// Export visible segments into a multi-label labelmap volume node
+  /// \param segmentationNode Segmentation node from which the the visible segments are exported
+  /// \param labelmapNode Labelmap node to export the segments to
+  /// \param referenceVolumeNode If specified, then the merged labelmap node will match the geometry of referenceVolumeNode
+  static bool ExportVisibleSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode,
     vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode = NULL);
 
   /// Export all segments into a multi-label labelmap volume node
