@@ -1,5 +1,6 @@
 import numpy
 import os
+import json
 import vtk, qt, ctk, slicer, vtkITK
 from DICOMLib import DICOMPlugin
 from DICOMLib import DICOMLoadable
@@ -37,6 +38,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     self.tags['instanceUID'] = "0008,0018"
     self.tags['windowCenter'] = "0028,1050"
     self.tags['windowWidth'] = "0028,1051"
+    self.tags['classUID'] = "0008,0016"
 
   @staticmethod
   def readerApproaches():
@@ -447,6 +449,13 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
           logging.info('No display node: cannot use window/level found in DICOM tags')
       except ValueError:
         pass # DICOM tags cannot be parsed to floating point numbers
+
+      # initialize quantity and units codes
+      (quantity,units) = self.mapSOPClassUIDToDICOMQuantityAndUnits(slicer.dicomDatabase.fileValue(file,self.tags['classUID']))
+      if quantity is not None:
+        volumeNode.SetAttribute("DICOM.QuantityCode", json.dumps(quantity))
+      if units is not None:
+        volumeNode.SetAttribute("DICOM.UnitsCode", json.dumps(units))
 
   def loadWithMultipleLoaders(self,loadable):
     """Load using multiple paths (for testing)
