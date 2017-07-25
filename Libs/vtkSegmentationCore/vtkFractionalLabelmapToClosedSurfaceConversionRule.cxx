@@ -62,7 +62,7 @@ unsigned int vtkFractionalLabelmapToClosedSurfaceConversionRule::GetConversionCo
     vtkDataObject* vtkNotUsed(targetRepresentation)/*=NULL*/)
 {
   // Rough input-independent guess (ms)
-  return 500;
+  return 600;
 }
 
 //----------------------------------------------------------------------------
