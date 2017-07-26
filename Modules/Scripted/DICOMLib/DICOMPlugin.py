@@ -277,34 +277,3 @@ class DICOMPlugin(object):
                               slicer.dicomDatabase.fileValue(firstFile, tags['studyTime']) )
         # Set item name
         shn.SetItemName(studyItemID, studyDescription + ' (' + studyDate + ')')
-
-  def mapSOPClassUIDToDICOMQuantityAndUnits(self, classUID):
-
-    MRname2UID = {
-        "MR Image Storage": "1.2.840.10008.5.1.4.1.1.4",
-        "Enhanced MR Image Storage": "1.2.840.10008.5.1.4.1.1.4.1",
-        "Legacy Converted Enhanced MR Image Storage": "1.2.840.10008.5.1.4.1.1.4.4"
-        }
-
-    CTname2UID = {
-        "CT Image Storage": "1.2.840.10008.5.1.4.1.1.2",
-        "Enhanced CT Image Storage": "1.2.840.10008.5.1.4.1.1.2.1",
-        "Legacy Converted Enhanced CT Image Storage": "1.2.840.10008.5.1.4.1.1.2.2"
-        }
-
-    quantity = None
-    units = None
-
-    # Note more specialized definitions can be specified for MR by more
-    # specialized plugins, see codes 110800 and on in
-    # http://dicom.nema.org/medical/dicom/current/output/chtml/part16/chapter_D.html
-    if classUID in MRname2UID.values():
-      quantity = {"CodingSchemeDesignator": "DCM", "CodeValue": "110852", "CodeMeaning": "MR signal intensity"}
-      units = {"CodingSchemeDesignator": "UCUM", "CodeValue": "1", "CodeMeaning": "no units"}
-
-    if classUID in CTname2UID.values():
-      quantity = {"CodingSchemeDesignator": "DCM", "CodeValue": "110852", "CodeMeaning": "Attenuation Coefficient"}
-      units = {"CodingSchemeDesignator": "UCUM", "CodeValue": "[hnsf'U]", "CodeMeaning": "Hounsfield unit"}
-
-    return (quantity, units)
-      
