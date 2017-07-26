@@ -108,13 +108,16 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
 
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 
-  # Force Python build to "Release".
+  # Force python build to "Release"
   if(CMAKE_CONFIGURATION_TYPES)
-    set(SAVED_CMAKE_CFG_INTDIR ${CMAKE_CFG_INTDIR})
-    set(CMAKE_CFG_INTDIR "Release")
+    set(_build_command BUILD_COMMAND ${CMAKE_COMMAND} --build . --config Release)
+    set(_install_command INSTALL_COMMAND ${CMAKE_COMMAND} --build . --config Release --target install)
   else()
+    set(_build_command)
+    set(_install_command)
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
-      -DCMAKE_BUILD_TYPE:STRING=Release)
+      -DCMAKE_BUILD_TYPE:STRING=Release
+      )
   endif()
 
   ExternalProject_SetIfNotDefined(
@@ -155,6 +158,8 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
       -DENABLE_SSL:BOOL=${PYTHON_ENABLE_SSL}
       ${EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS}
     ${EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS}
+    ${_build_command}
+    ${_install_command}
     DEPENDS
       python-source ${${proj}_DEPENDENCIES}
     )
@@ -199,10 +204,6 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
       DEPENDEES install
       )
 
-  endif()
-
-  if(CMAKE_CONFIGURATION_TYPES)
-    set(CMAKE_CFG_INTDIR ${SAVED_CMAKE_CFG_INTDIR}) # Restore CMAKE_CFG_INTDIR
   endif()
 
   #-----------------------------------------------------------------------------
