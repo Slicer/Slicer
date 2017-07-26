@@ -471,9 +471,9 @@ bool vtkOrientedImageDataResample::ResampleOrientedImageToReferenceGeometry(vtkO
   vtkOrientedImageDataResample::TransformExtent(effectiveInputExtent, referenceImageToInputImageTransform.GetPointer(), outputExtent);
 
   // Return with failure if effective output extent is empty
-  if ( outputExtent[0] == outputExtent[1]
-    || outputExtent[2] == outputExtent[3]
-    || outputExtent[4] == outputExtent[5] )
+  if ( outputExtent[0] > outputExtent[1]
+    || outputExtent[2] > outputExtent[3]
+    || outputExtent[4] > outputExtent[5] )
     {
     return false;
     }
