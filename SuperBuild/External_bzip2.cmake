@@ -32,6 +32,7 @@ if((NOT DEFINED BZIP2_INCLUDE_DIR
 
   set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
   set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+  set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
@@ -41,7 +42,7 @@ if((NOT DEFINED BZIP2_INCLUDE_DIR
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    "4ddd33d7ebad6fd681b0fa7edd9217272d09493b"
+    "0e735f23032ececcf52ed49b27928390fff28e50"
     QUIET
     )
 
@@ -51,12 +52,13 @@ if((NOT DEFINED BZIP2_INCLUDE_DIR
     GIT_TAG "${${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG}"
     SOURCE_DIR ${EP_SOURCE_DIR}
     BINARY_DIR ${EP_BINARY_DIR}
+    INSTALL_DIR ${EP_INSTALL_DIR}
     CMAKE_CACHE_ARGS
       #-DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
       -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
       -DCMAKE_DEBUG_POSTFIX:STRING=
-    INSTALL_COMMAND ""
+      -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
@@ -65,9 +67,9 @@ if((NOT DEFINED BZIP2_INCLUDE_DIR
 
   set(BZIP2_INCLUDE_DIR ${EP_SOURCE_DIR})
   if(WIN32)
-    set(BZIP2_LIBRARIES ${EP_BINARY_DIR}/${CMAKE_CFG_INTDIR}/libbz2.lib)
+    set(BZIP2_LIBRARIES ${EP_INSTALL_DIR}/lib/libbz2.lib)
   else()
-    set(BZIP2_LIBRARIES ${EP_BINARY_DIR}/${CMAKE_CFG_INTDIR}/libbz2.a)
+    set(BZIP2_LIBRARIES ${EP_INSTALL_DIR}/lib/libbz2.a)
   endif()
 else()
   # The project is provided using zlib_DIR, nevertheless since other project may depend on zlib,
