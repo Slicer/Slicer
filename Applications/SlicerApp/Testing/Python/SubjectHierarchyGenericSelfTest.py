@@ -97,6 +97,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     self.section_AddNodeToSubjectHierarchy()
     self.section_CLI()
     self.section_CreateSecondBranch()
+    self.section_AttributeFilter()
     self.section_ReparentNodeInSubjectHierarchy()
     self.section_LoadScene()
 
@@ -335,6 +336,28 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     self.assertEqual( shNode.GetItemParent(self.patient2ItemID), shNode.GetSceneItemID() )
     self.assertEqual( shNode.GetItemParent(self.study2ItemID), self.patient2ItemID )
     self.assertEqual( shNode.GetItemParent(self.folderItemID), self.study2ItemID )
+
+  # ------------------------------------------------------------------------------
+  def section_AttributeFilter(self):
+    self.delayDisplay("Attribute filter",self.delayMs)
+
+    # Get subject hierarchy tree view and model
+    dataWidget = slicer.modules.data.widgetRepresentation()
+    self.assertIsNotNone( dataWidget )
+    shTreeView = slicer.util.findChild(dataWidget, name='SubjectHierarchyTreeView')
+    self.assertIsNotNone( shTreeView )
+    shModel = shTreeView.model()
+    self.assertIsNotNone( shModel )
+
+    self.assertEqual(shTreeView.displayedItemCount(), 9)
+    shTreeView.setAttributeFilter('DICOM.Modality')
+    self.assertEqual(shTreeView.displayedItemCount(), 3)
+    shTreeView.setAttributeFilter('DICOM.Modality','IncorrectValue')
+    self.assertEqual(shTreeView.displayedItemCount(), 0)
+    shTreeView.setAttributeFilter('DICOM.Modality','CT')
+    self.assertEqual(shTreeView.displayedItemCount(), 3)
+    shTreeView.removeAttributeFilter()
+    self.assertEqual(shTreeView.displayedItemCount(), 9)
 
   # ------------------------------------------------------------------------------
   def section_ReparentNodeInSubjectHierarchy(self):

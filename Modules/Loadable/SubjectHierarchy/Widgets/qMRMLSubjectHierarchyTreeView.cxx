@@ -489,12 +489,13 @@ vtkIdType qMRMLSubjectHierarchyTreeView::rootItem()const
       treeRootItemID = this->sortFilterProxyModel()->hideItemsUnaffiliatedWithItemID();
       }
     }
-  // Check if stored root item ID matches the actual root item in the tree view
-  if (d->RootItemID != treeRootItemID)
+  // Check if stored root item ID matches the actual root item in the tree view.
+  // If the tree is empty (e.g. due to filters), then treeRootItemID is invalid, and then it's not an error
+  if (treeRootItemID && d->RootItemID != treeRootItemID)
     {
     qCritical() << Q_FUNC_INFO << ": Root item mismatch";
     }
-  return treeRootItemID;
+  return d->RootItemID;
 }
 
 //--------------------------------------------------------------------------
@@ -553,6 +554,9 @@ void qMRMLSubjectHierarchyTreeView::setAttributeFilter(const QString& attributeN
 {
   this->sortFilterProxyModel()->setAttributeNameFilter(attributeName);
   this->sortFilterProxyModel()->setAttributeValueFilter(attributeValue.toString());
+
+  // Reset root item, as it may have been corrupted, when tree became empty due to the filter
+  this->setRootItem(this->rootItem());
 }
 
 //--------------------------------------------------------------------------
@@ -560,12 +564,18 @@ void qMRMLSubjectHierarchyTreeView::removeAttributeFilter()
 {
   this->sortFilterProxyModel()->setAttributeNameFilter(QString());
   this->sortFilterProxyModel()->setAttributeValueFilter(QString());
+
+  // Reset root item, as it may have been corrupted, when tree became empty due to the filter
+  this->setRootItem(this->rootItem());
 }
 
 //--------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeView::setLevelFilter(QString &levelFilter)
 {
   this->sortFilterProxyModel()->setLevelFilter(levelFilter);
+
+  // Reset root item, as it may have been corrupted, when tree became empty due to the filter
+  this->setRootItem(this->rootItem());
 }
 
 //------------------------------------------------------------------------------
