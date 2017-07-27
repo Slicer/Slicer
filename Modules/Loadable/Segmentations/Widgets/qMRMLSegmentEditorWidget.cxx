@@ -29,6 +29,7 @@
 #include "vtkMRMLSegmentationNode.h"
 #include "vtkMRMLSegmentationDisplayNode.h"
 #include "vtkMRMLSegmentEditorNode.h"
+#include "vtkMRMLSliceCompositeNode.h"
 #include "vtkSegmentation.h"
 #include "vtkSegmentationHistory.h"
 #include "vtkSegment.h"
@@ -202,6 +203,10 @@ public:
   /// Structure containing necessary objects for each slice and 3D view handling interactions
   QVector<SegmentEditorEventObservation> EventObservations;
 
+  /// Indicates if views and layouts are observed
+  /// (essentially, the widget is active).
+  bool ViewsObserved;
+
   /// Button group for the effects
   QButtonGroup EffectButtonGroup;
 
@@ -249,6 +254,7 @@ qMRMLSegmentEditorWidgetPrivate::qMRMLSegmentEditorWidgetPrivate(qMRMLSegmentEdi
   , AlignedMasterVolumeUpdateSegmentationNodeTransform(NULL)
   , MaskModeComboBoxFixedItemsCount(0)
   , EffectButtonStyle(Qt::ToolButtonTextUnderIcon)
+  , ViewsObserved(false)
 {
   this->AlignedMasterVolume = vtkOrientedImageData::New();
   this->ModifierLabelmap = vtkOrientedImageData::New();
@@ -1225,16 +1231,7 @@ void qMRMLSegmentEditorWidget::updateWidgetFromSegmentationNode()
         }
 
       // Set label layer to empty, because edit actor will be shown in the slice views during editing
-      vtkMRMLSelectionNode* selectionNode = qSlicerCoreApplication::application()->applicationLogic()->GetSelectionNode();
-      if (selectionNode)
-        {
-        selectionNode->SetActiveLabelVolumeID(NULL);
-        qSlicerCoreApplication::application()->applicationLogic()->PropagateVolumeSelection(vtkMRMLApplicationLogic::LabelLayer, 0);
-        }
-      else
-        {
-        qCritical() << Q_FUNC_INFO << ": Unable to get selection node to show segmentation node " << segmentationNode->GetName();
-        }
+      this->hideLabelLayer();
       }
 
     emit segmentationNodeChanged(d->SegmentationNode);
@@ -1746,17 +1743,7 @@ void qMRMLSegmentEditorWidget::onMasterVolumeNodeChanged(vtkMRMLNode* node)
 
     if (volumeNode)
       {
-      // Show reference volume in background layer of slice viewers
-      vtkMRMLSelectionNode* selectionNode = qSlicerCoreApplication::application()->applicationLogic()->GetSelectionNode();
-      if (!selectionNode)
-        {
-        qCritical() << Q_FUNC_INFO << ": Unable to get selection node to show volume node " << volumeNode->GetName();
-        return;
-        }
-      selectionNode->SetActiveVolumeID(volumeNode->GetID());
-      selectionNode->SetSecondaryVolumeID(NULL); // Hide foreground volume
-      selectionNode->SetActiveLabelVolumeID(NULL); // Hide label volume
-      qSlicerCoreApplication::application()->applicationLogic()->PropagateVolumeSelection();
+      this->showMasterVolumeInSliceViewers(true, true);
       }
 
     // Notify effects about change
@@ -2000,26 +1987,74 @@ void qMRMLSegmentEditorWidget::onSegmentAddedRemoved()
 }
 
 //---------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::showMasterVolumeInSliceViewers(bool forceShowInBackground /*=false*/, bool fitSlice /*=false*/)
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  if (!d->ParameterSetNode->GetMasterVolumeNode())
+    {
+    return;
+    }
+    qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+  if (!layoutManager)
+    {
+    // application is closing
+    return;
+    }
+  vtkCollection* sliceLogics = layoutManager->mrmlSliceLogics();
+  if (!sliceLogics)
+    {
+    return;
+    }
+  vtkObject* object = NULL;
+  vtkCollectionSimpleIterator it;
+  for (sliceLogics->InitTraversal(it); (object = sliceLogics->GetNextItemAsObject(it));)
+    {
+    vtkMRMLSliceLogic* sliceLogic = vtkMRMLSliceLogic::SafeDownCast(object);
+    if (!sliceLogic)
+      {
+      continue;
+      }
+    vtkMRMLSliceCompositeNode* sliceCompositeNode = sliceLogic->GetSliceCompositeNode();
+    if (!sliceCompositeNode)
+      {
+      continue;
+      }
+    std::string backgroundVolumeID = (sliceCompositeNode->GetBackgroundVolumeID() ? sliceCompositeNode->GetBackgroundVolumeID() : "");
+    std::string foregroundVolumeID = (sliceCompositeNode->GetForegroundVolumeID() ? sliceCompositeNode->GetForegroundVolumeID() : "");
+    std::string masterVolumeID = (d->ParameterSetNode->GetMasterVolumeNode()->GetID() ? d->ParameterSetNode->GetMasterVolumeNode()->GetID() : "");
+    bool masterVolumeAlreadyShown = (backgroundVolumeID == masterVolumeID || foregroundVolumeID == masterVolumeID);
+    if (!masterVolumeAlreadyShown || forceShowInBackground)
+      {
+      sliceCompositeNode->SetBackgroundVolumeID(d->ParameterSetNode->GetMasterVolumeNode()->GetID());
+      sliceCompositeNode->SetForegroundVolumeID(NULL);
+      sliceCompositeNode->SetLabelVolumeID(NULL);
+      }
+    if (fitSlice)
+      {
+      sliceLogic->FitSliceToAll(true);
+      }
+    }
+}
+
+
+//---------------------------------------------------------------------------
 void qMRMLSegmentEditorWidget::onLayoutChanged(int layoutIndex)
 {
   Q_D(qMRMLSegmentEditorWidget);
   Q_UNUSED(layoutIndex);
 
-  // Refresh view observations with the new layout
-  this->setupViewObservations();
-
-  // Set volume selection to all slice viewers in new layout
-  vtkMRMLSelectionNode* selectionNode = qSlicerCoreApplication::application()->applicationLogic()->GetSelectionNode();
-  if (selectionNode && d->ParameterSetNode)
+  if (d->ViewsObserved)
     {
-    selectionNode->SetActiveVolumeID(d->ParameterSetNode->GetMasterVolumeNode() ? d->ParameterSetNode->GetMasterVolumeNode()->GetID() : NULL);
-    selectionNode->SetSecondaryVolumeID(NULL);
-    selectionNode->SetActiveLabelVolumeID(NULL);
-    qSlicerCoreApplication::application()->applicationLogic()->PropagateVolumeSelection();
+    // Refresh view observations with the new layout
+    this->setupViewObservations();
+
+    // Set volume selection to all slice viewers in new layout
+    this->showMasterVolumeInSliceViewers();
+
+    // Let effects know about the updated layout
+    d->notifyEffectsOfLayoutChange();
     }
 
-  // Let effects know about the updated layout
-  d->notifyEffectsOfLayoutChange();
 }
 
 //---------------------------------------------------------------------------
@@ -2129,6 +2164,11 @@ void qMRMLSegmentEditorWidget::setupViewObservations()
 
   // Set up interactor observations
   qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+  if (!layoutManager)
+    {
+    // application is closing
+    return;
+    }
 
   // Slice views
   foreach (QString sliceViewName, layoutManager->sliceViewNames())
@@ -2211,6 +2251,8 @@ void qMRMLSegmentEditorWidget::setupViewObservations()
     viewNodeObservation.ObservationTags << viewNode->AddObserver(vtkCommand::ModifiedEvent, viewNodeObservation.CallbackCommand, 1.0);
     d->EventObservations << viewNodeObservation;
     }
+
+  d->ViewsObserved = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -2228,6 +2270,7 @@ void qMRMLSegmentEditorWidget::removeViewObservations()
       }
     }
   d->EventObservations.clear();
+  d->ViewsObserved = false;
 }
 
 //---------------------------------------------------------------------------
@@ -2655,6 +2698,38 @@ void qMRMLSegmentEditorWidget::onSelectSegmentShortcut()
       this->setCurrentSegmentID(segmentIDs[newSegmentIndex].c_str());
       return;
       }
+    }
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::hideLabelLayer()
+{
+  qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+  if (!layoutManager)
+    {
+    // application is closing
+    return;
+    }
+  vtkCollection* sliceLogics = layoutManager->mrmlSliceLogics();
+  if (!sliceLogics)
+    {
+    return;
+    }
+  vtkObject* object = NULL;
+  vtkCollectionSimpleIterator it;
+  for (sliceLogics->InitTraversal(it); (object = sliceLogics->GetNextItemAsObject(it));)
+    {
+    vtkMRMLSliceLogic* sliceLogic = vtkMRMLSliceLogic::SafeDownCast(object);
+    if (!sliceLogic)
+      {
+      continue;
+      }
+    vtkMRMLSliceCompositeNode* sliceCompositeNode = sliceLogic->GetSliceCompositeNode();
+    if (!sliceCompositeNode)
+      {
+      continue;
+      }
+    sliceCompositeNode->SetLabelVolumeID(NULL);
     }
 }
 

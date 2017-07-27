@@ -242,12 +242,21 @@ public slots:
   /// Returns true if there were lightbox views.
   bool turnOffLightboxes();
 
+  /// Unselect labelmap layer in all slice views in the active layout
+  void hideLabelLayer();
+
   /// Set appearance of effect buttons. Showing text may make it easier
   /// to find an effect but uses more space.
   void setEffectButtonStyle(Qt::ToolButtonStyle toolButtonStyle);
 
   /// Perform updates to prevent layout collapse 
   void updateEffectLayouts();
+
+  /// Show master volume in slice views by hiding foreground and label volumes.
+  /// \param forceShowInBackground If set to false then views will only change
+  ///   if master volume is not selected as either foreground or background volume.
+  /// \param fitSlice Reset field of view to include all volumes.
+  void showMasterVolumeInSliceViewers(bool forceShowInBackground = false, bool fitSlice = false);
 
 signals:
   /// Emitted if different segment is selected in the segment list.
