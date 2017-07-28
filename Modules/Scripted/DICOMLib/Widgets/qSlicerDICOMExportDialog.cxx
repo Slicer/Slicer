@@ -551,8 +551,9 @@ void qSlicerDICOMExportDialog::exportSeries()
   QString errorMessage = exportContext.getVariable("errorMessage").toString();
   if (errorMessage.isNull())
     {
-    // Invalid return value from DICOM exporter
-    d->ErrorLabel->setText("Exporter returned with invalid value");
+    // Invalid return value from DICOM exporter (it never returned)
+    d->ErrorLabel->setText("Error occurred in exporter");
+    return;
     }
   else if (!errorMessage.isEmpty())
     {
