@@ -848,20 +848,16 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
     self.onLoadingFinished()
 
   def warnUserIfLoadableWarningsAndProceed(self):
-    warningsInLoadableWithConfidence = 0.0
-    maximumConfidence = 0.0
+    warningsInSelectedLoadables = False
     for plugin in self.loadablesByPlugin:
       for loadable in self.loadablesByPlugin[plugin]:
-        if loadable.warning != "":
+        if loadable.selected and loadable.warning != "":
+          warningsInSelectedLoadables = True
           logging.warning('Warning in DICOM plugin ' + plugin.loadType + ' when examining loadable ' + loadable.name +
                           ': ' + loadable.warning)
-          if warningsInLoadableWithConfidence < loadable.confidence:
-            warningsInLoadableWithConfidence = loadable.confidence
-        if maximumConfidence < loadable.confidence:
-          maximumConfidence = loadable.confidence
-    if warningsInLoadableWithConfidence == maximumConfidence and not self.advancedView:
+    if warningsInSelectedLoadables:
       warning = "Warnings detected during load.  Examine data in Advanced mode for details.  Load anyway?"
-      if not slicer.util.confirmOkCancelDisplay(warning):
+      if not slicer.util.confirmOkCancelDisplay(warning, parent=self):
         return False
     return True
 
