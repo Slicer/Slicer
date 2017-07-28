@@ -294,7 +294,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
       self.selectedSegmentIds = vtk.vtkStringArray()
       segmentationNode.GetDisplayNode().GetVisibleSegmentIDs(self.selectedSegmentIds)
       if self.selectedSegmentIds.GetNumberOfValues() < self.minimumNumberOfSegments:
-        logging.info("Auto-complete operation skipped: at least {0} visible segments are required".format(self.minimumNumberOfSegments))
+        logging.error("Auto-complete operation skipped: at least {0} visible segments are required".format(self.minimumNumberOfSegments))
         return
       if not self.mergedLabelmapGeometryImage:
         self.mergedLabelmapGeometryImage = vtkSegmentationCore.vtkOrientedImageData()
