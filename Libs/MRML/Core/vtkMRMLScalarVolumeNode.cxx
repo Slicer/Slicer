@@ -12,6 +12,7 @@ Version:   $Revision: 1.14 $
 
 =========================================================================auto=*/
 // MRML includes
+#include "vtkCodedEntry.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLScene.h"
@@ -26,21 +27,35 @@ Version:   $Revision: 1.14 $
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLScalarVolumeNode);
+vtkCxxSetObjectMacro(vtkMRMLScalarVolumeNode, VoxelValueQuantity, vtkCodedEntry);
+vtkCxxSetObjectMacro(vtkMRMLScalarVolumeNode, VoxelValueUnits, vtkCodedEntry);
 
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode::vtkMRMLScalarVolumeNode()
+: VoxelValueQuantity(NULL)
+, VoxelValueUnits(NULL)
 {
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode::~vtkMRMLScalarVolumeNode()
 {
+  this->SetVoxelValueQuantity(NULL);
+  this->SetVoxelValueUnits(NULL);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLScalarVolumeNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
+  if (this->GetVoxelValueQuantity())
+    {
+    of << " voxelValueQuantity=\"" << vtkMRMLNode::URLEncodeString(this->GetVoxelValueQuantity()->GetAsString().c_str()) << "\"";
+    }
+  if (this->GetVoxelValueUnits())
+    {
+    of << " voxelValueUnits=\"" << vtkMRMLNode::URLEncodeString(this->GetVoxelValueUnits()->GetAsString().c_str()) << "\"";
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -68,6 +83,18 @@ void vtkMRMLScalarVolumeNode::ReadXMLAttributes(const char** atts)
         {
         this->SetAttribute("LabelMap", "1");
         }
+      }
+    else if (!strcmp(attName, "voxelValueQuantity"))
+      {
+      vtkNew<vtkCodedEntry> entry;
+      entry->SetFromString(vtkMRMLNode::URLDecodeString(attValue));
+      this->SetVoxelValueQuantity(entry.GetPointer());
+      }
+    else if (!strcmp(attName, "voxelValueUnits"))
+      {
+      vtkNew<vtkCodedEntry> entry;
+      entry->SetFromString(vtkMRMLNode::URLDecodeString(attValue));
+      this->SetVoxelValueUnits(entry.GetPointer());
       }
     }
 
@@ -112,6 +139,14 @@ vtkMRMLScalarVolumeDisplayNode* vtkMRMLScalarVolumeNode::GetScalarVolumeDisplayN
 void vtkMRMLScalarVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
+  if (this->GetVoxelValueQuantity())
+    {
+    os << indent << "VoxelValueQuantity: " << this->GetVoxelValueQuantity()->GetAsPrintableString() << "\n";
+    }
+  if (this->GetVoxelValueUnits())
+    {
+    os << indent << "VoxelValueUnits: " << this->GetVoxelValueUnits()->GetAsPrintableString() << "\n";
+    }
 }
 
 //---------------------------------------------------------------------------

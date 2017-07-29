@@ -97,15 +97,19 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
         "fileName": "Mouse-MR-example-where-GDCM_fails.zip",
         "name": "Mouse-MR-example-where-GDCM_fails",
         "seriesUID": "1.3.6.1.4.1.9590.100.1.2.366426457713813178933224342280246227461",
-        "expectedFailures": ["GDCM", "Archetype"]
+        "expectedFailures": ["GDCM", "Archetype"],
+        "voxelValueQuantity": "(DCM, 110852, \\"MR signal intensity\\")",
+        "voxelValueUnits": "(UCUM, 1, \\"no units\\")"
       },
       { "url": "http://slicer.kitware.com/midas3/download/item/294857/deidentifiedMRHead-dcm-one-series.zip",
         "fileName": "deidentifiedMRHead-dcm-one-series.zip",
         "name": "deidentifiedMRHead-dcm-one-series",
         "seriesUID": "1.3.6.1.4.1.5962.99.1.3814087073.479799962.1489872804257.270.0",
-        "expectedFailures": []
+        "expectedFailures": [],
+        "voxelValueQuantity": "(DCM, 110852, \\"MR signal intensity\\")",
+        "voxelValueUnits": "(UCUM, 1, \\"no units\\")"
       }
-    ]''') 
+    ]''')
 
     # another dataset that could be added in the future - currently fails for all readers
     # due to invalid format - see https://issues.slicer.org/view.php?id=3569
@@ -159,11 +163,11 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
         loadable = detailsPopup.getAllSelectedLoadables().keys()[0]
 
         #
-        # try loading using each of the selected readers, fail 
+        # try loading using each of the selected readers, fail
         # on enexpected load issue
         #
         scalarVolumePlugin = slicer.modules.dicomPlugins['DICOMScalarVolumePlugin']()
-        readerApproaches = scalarVolumePlugin.readerApproaches()   
+        readerApproaches = scalarVolumePlugin.readerApproaches()
         basename = loadable.name
         volumesByApproach = {}
         for readerApproach in readerApproaches:
@@ -176,6 +180,13 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
             raise Exception("Expected to NOT be able to read with %s, but could!" % readerApproach)
           if volumeNode:
             volumesByApproach[readerApproach] = volumeNode
+
+            self.delayDisplay('Test quantity and unit')
+            if 'voxelValueQuantity' in dataset.keys():
+              self.assertEqual(volumeNode.GetVoxelValueQuantity().GetAsPrintableString(), dataset['voxelValueQuantity'])
+            if 'voxelValueUnits' in dataset.keys():
+              self.assertEqual(volumeNode.GetVoxelValueUnits().GetAsPrintableString(), dataset['voxelValueUnits'])
+
 
         #
         # for each approach that loaded as expected, compare the volumes
@@ -211,5 +222,5 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
     mainWindow.moduleSelector().selectModule('DICOMReaders')
 
     logging.info(loadingResult)
-  
+
     return testPass

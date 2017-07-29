@@ -18,6 +18,7 @@
 // MRML includes
 #include "vtkMRMLVolumeNode.h"
 class vtkMRMLScalarVolumeDisplayNode;
+class vtkCodedEntry;
 
 /// \brief MRML node for representing a volume (image stack).
 ///
@@ -71,11 +72,26 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
   /// Create and observe default display node
   virtual void CreateDefaultDisplayNodes();
 
+  /// Measured quantity of voxel values, specified as a standard coded entry.
+  /// For example: (DCM, 112031, "Attenuation Coefficient")
+  void SetVoxelValueQuantity(vtkCodedEntry*);
+  vtkGetObjectMacro(VoxelValueQuantity, vtkCodedEntry);
+
+  /// Measurement unit of voxel value quantity, specified as a standard coded entry.
+  /// For example: (UCUM, [hnsf'U], "Hounsfield unit")
+  /// It stores a single unit. Plural (units) name is chosen to be consistent
+  /// with nomenclature in the DICOM standard.
+  void SetVoxelValueUnits(vtkCodedEntry*);
+  vtkGetObjectMacro(VoxelValueUnits, vtkCodedEntry);
+
 protected:
   vtkMRMLScalarVolumeNode();
   ~vtkMRMLScalarVolumeNode();
   vtkMRMLScalarVolumeNode(const vtkMRMLScalarVolumeNode&);
   void operator=(const vtkMRMLScalarVolumeNode&);
+
+  vtkCodedEntry* VoxelValueQuantity;
+  vtkCodedEntry* VoxelValueUnits;
 };
 
 #endif
