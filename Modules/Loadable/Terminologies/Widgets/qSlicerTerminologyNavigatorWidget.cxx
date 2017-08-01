@@ -428,7 +428,7 @@ QTableWidgetItem* qSlicerTerminologyNavigatorWidgetPrivate::findTableWidgetItemF
     {
     QString codingSchemeDesignator = item->data(qSlicerTerminologyNavigatorWidget::CodingSchemeDesignatorRole).toString();
     QString codeValue = item->data(qSlicerTerminologyNavigatorWidget::CodeValueRole).toString();
-    if ( category->GetCodingScheme() && !codingSchemeDesignator.compare(category->GetCodingScheme())
+    if ( category->GetCodingSchemeDesignator() && !codingSchemeDesignator.compare(category->GetCodingSchemeDesignator())
       && category->GetCodeValue() && !codeValue.compare(category->GetCodeValue()) )
       {
       return item;
@@ -458,7 +458,7 @@ QTableWidgetItem* qSlicerTerminologyNavigatorWidgetPrivate::findTableWidgetItemF
     {
     QString codingSchemeDesignator = item->data(qSlicerTerminologyNavigatorWidget::CodingSchemeDesignatorRole).toString();
     QString codeValue = item->data(qSlicerTerminologyNavigatorWidget::CodeValueRole).toString();
-    if ( type->GetCodingScheme() && !codingSchemeDesignator.compare(type->GetCodingScheme())
+    if ( type->GetCodingSchemeDesignator() && !codingSchemeDesignator.compare(type->GetCodingSchemeDesignator())
       && type->GetCodeValue() && !codeValue.compare(type->GetCodeValue()) )
       {
       return item;
@@ -808,21 +808,21 @@ QString qSlicerTerminologyNavigatorWidget::serializeTerminologyEntry(vtkSlicerTe
   // codeValue, codeMeaning triple), type, typeModifier, anatomicContextName, anatomicRegion, anatomicRegionModifier
   QString serializedEntry;
   serializedEntry += QString(entry->GetTerminologyContextName()) + "~"; // Invalid string if NULL
-  serializedEntry += QString(entry->GetCategoryObject() ? entry->GetCategoryObject()->GetCodingScheme() : NULL) + "^"
+  serializedEntry += QString(entry->GetCategoryObject() ? entry->GetCategoryObject()->GetCodingSchemeDesignator() : NULL) + "^"
     + QString(entry->GetCategoryObject() ? entry->GetCategoryObject()->GetCodeValue() : NULL) + "^"
     + QString(entry->GetCategoryObject() ? entry->GetCategoryObject()->GetCodeMeaning() : NULL) + "~";
-  serializedEntry += QString(entry->GetTypeObject() ? entry->GetTypeObject()->GetCodingScheme() : NULL) + "^"
+  serializedEntry += QString(entry->GetTypeObject() ? entry->GetTypeObject()->GetCodingSchemeDesignator() : NULL) + "^"
     + QString(entry->GetTypeObject() ? entry->GetTypeObject()->GetCodeValue() : NULL) + "^"
     + QString(entry->GetTypeObject() ? entry->GetTypeObject()->GetCodeMeaning() : NULL) + "~";
-  serializedEntry += QString(entry->GetTypeModifierObject() ? entry->GetTypeModifierObject()->GetCodingScheme() : NULL) + "^"
+  serializedEntry += QString(entry->GetTypeModifierObject() ? entry->GetTypeModifierObject()->GetCodingSchemeDesignator() : NULL) + "^"
     + QString(entry->GetTypeModifierObject() ? entry->GetTypeModifierObject()->GetCodeValue() : NULL) + "^"
     + QString(entry->GetTypeModifierObject() ? entry->GetTypeModifierObject()->GetCodeMeaning() : NULL) + "~";
 
   serializedEntry += QString(entry->GetAnatomicContextName()) + "~";
-  serializedEntry += QString(entry->GetAnatomicRegionObject() ? entry->GetAnatomicRegionObject()->GetCodingScheme() : NULL) + "^"
+  serializedEntry += QString(entry->GetAnatomicRegionObject() ? entry->GetAnatomicRegionObject()->GetCodingSchemeDesignator() : NULL) + "^"
     + QString(entry->GetAnatomicRegionObject() ? entry->GetAnatomicRegionObject()->GetCodeValue() : NULL) + "^"
     + QString(entry->GetAnatomicRegionObject() ? entry->GetAnatomicRegionObject()->GetCodeMeaning() : NULL) + "~";
-  serializedEntry += QString(entry->GetAnatomicRegionModifierObject() ? entry->GetAnatomicRegionModifierObject()->GetCodingScheme() : NULL) + "^"
+  serializedEntry += QString(entry->GetAnatomicRegionModifierObject() ? entry->GetAnatomicRegionModifierObject()->GetCodingSchemeDesignator() : NULL) + "^"
     + QString(entry->GetAnatomicRegionModifierObject() ? entry->GetAnatomicRegionModifierObject()->GetCodeValue() : NULL) + "^"
     + QString(entry->GetAnatomicRegionModifierObject() ? entry->GetAnatomicRegionModifierObject()->GetCodeMeaning() : NULL);
 
@@ -1166,7 +1166,7 @@ void qSlicerTerminologyNavigatorWidget::populateCategoryTable()
     addedCategoryItem->setData(CodeValueRole, QString(addedCategoryId.CodeValue.c_str()));
     d->tableWidget_Category->setItem(index, 0, addedCategoryItem);
 
-    if ( d->CurrentCategoryObject->GetCodingScheme() && !addedCategoryId.CodingSchemeDesignator.compare(d->CurrentCategoryObject->GetCodingScheme())
+    if ( d->CurrentCategoryObject->GetCodingSchemeDesignator() && !addedCategoryId.CodingSchemeDesignator.compare(d->CurrentCategoryObject->GetCodingSchemeDesignator())
       && d->CurrentCategoryObject->GetCodeValue() && !addedCategoryId.CodeValue.compare(d->CurrentCategoryObject->GetCodeValue()) )
       {
       selectedItem = addedCategoryItem;
@@ -1220,7 +1220,7 @@ void qSlicerTerminologyNavigatorWidget::populateTypeTable()
     addedTypeItem->setData(CodeValueRole, QString(addedTypeId.CodeValue.c_str()));
     d->tableWidget_Type->setItem(index, 0, addedTypeItem);
 
-    if ( d->CurrentTypeObject->GetCodingScheme() && !addedTypeId.CodingSchemeDesignator.compare(d->CurrentTypeObject->GetCodingScheme())
+    if ( d->CurrentTypeObject->GetCodingSchemeDesignator() && !addedTypeId.CodingSchemeDesignator.compare(d->CurrentTypeObject->GetCodingSchemeDesignator())
       && d->CurrentTypeObject->GetCodeValue() && !addedTypeId.CodeValue.compare(d->CurrentTypeObject->GetCodeValue()) )
       {
       selectedItem = addedTypeItem;
@@ -1873,7 +1873,7 @@ void qSlicerTerminologyNavigatorWidget::populateRegionTable()
     addedRegionItem->setData(CodeValueRole, QString(addedRegionId.CodeValue.c_str()));
     d->tableWidget_AnatomicRegion->setItem(index, 0, addedRegionItem);
 
-    if ( d->CurrentRegionObject->GetCodingScheme() && !addedRegionId.CodingSchemeDesignator.compare(d->CurrentRegionObject->GetCodingScheme())
+    if ( d->CurrentRegionObject->GetCodingSchemeDesignator() && !addedRegionId.CodingSchemeDesignator.compare(d->CurrentRegionObject->GetCodingSchemeDesignator())
       && d->CurrentRegionObject->GetCodeValue() && !addedRegionId.CodeValue.compare(d->CurrentRegionObject->GetCodeValue()) )
       {
       selectedItem = addedRegionItem;

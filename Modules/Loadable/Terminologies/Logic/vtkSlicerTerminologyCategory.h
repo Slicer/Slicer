@@ -23,17 +23,24 @@
 #ifndef __vtkSlicerTerminologyCategory_h
 #define __vtkSlicerTerminologyCategory_h
 
-// VTK includes
-#include <vtkObject.h>
+// MRML includes
+#include "vtkCodedEntry.h"
 
 #include "vtkSlicerTerminologiesModuleLogicExport.h"
 
-/// VTK implementation of \sa qSlicerDICOMExportable
-class VTK_SLICER_TERMINOLOGIES_LOGIC_EXPORT vtkSlicerTerminologyCategory : public vtkObject
+/// \brief Terminology property category object
+///
+/// Encapsulates the mandatory and optional fields for a terminology category.
+/// The following fields inherited from \sa vtkCodedEntry:
+///   CodingSchemeDesignator: 'codingScheme' member of the category object. Value example "SRT"
+///   CodeValue: 'codeValue' member of the category object. Value example "T-D0050"
+///   CodeMeaning: 'codeMeaning' member of the category object. Value example "Tissue"
+///
+class VTK_SLICER_TERMINOLOGIES_LOGIC_EXPORT vtkSlicerTerminologyCategory : public vtkCodedEntry
 {
 public:
   static vtkSlicerTerminologyCategory *New();
-  vtkTypeMacro(vtkSlicerTerminologyCategory, vtkObject);
+  vtkTypeMacro(vtkSlicerTerminologyCategory, vtkCodedEntry);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Reset state of object
@@ -43,18 +50,12 @@ public:
   virtual void Copy(vtkSlicerTerminologyCategory* aCategory);
 
 public:
-  vtkGetStringMacro(CodeMeaning);
-  vtkSetStringMacro(CodeMeaning);
-  vtkGetStringMacro(CodingScheme);
-  vtkSetStringMacro(CodingScheme);
   vtkGetStringMacro(SNOMEDCTConceptID);
   vtkSetStringMacro(SNOMEDCTConceptID);
   vtkGetStringMacro(UMLSConceptUID);
   vtkSetStringMacro(UMLSConceptUID);
   vtkGetStringMacro(Cid);
   vtkSetStringMacro(Cid);
-  vtkGetStringMacro(CodeValue);
-  vtkSetStringMacro(CodeValue);
   vtkGetStringMacro(ContextGroupName);
   vtkSetStringMacro(ContextGroupName);
 
@@ -69,18 +70,12 @@ protected:
   void operator=(const vtkSlicerTerminologyCategory&);
 
 protected:
-  /// 'codeMeaning' member of the category object. Value example "Tissue"
-  char* CodeMeaning;
-  /// 'codingScheme' member of the category object. Value example "SRT"
-  char* CodingScheme;
   /// 'SNOMEDCTConceptID' member of the category object. Value example "85756007"
   char* SNOMEDCTConceptID;
   /// 'UMLSConceptUID' member of the category object. Value example "C0040300"
   char* UMLSConceptUID;
   /// 'cid' member of the category object. Value example "7051"
   char* Cid;
-  /// 'codeValue' member of the category object. Value example "T-D0050"
-  char* CodeValue;
   /// 'contextGroupName' member of the category object. Value example "Segmentation Property Categories"
   char* ContextGroupName;
 

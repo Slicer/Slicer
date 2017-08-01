@@ -32,12 +32,9 @@ vtkStandardNewMacro(vtkSlicerTerminologyCategory);
 //----------------------------------------------------------------------------
 vtkSlicerTerminologyCategory::vtkSlicerTerminologyCategory()
 {
-  this->CodeMeaning = NULL;
-  this->CodingScheme = NULL;
   this->SNOMEDCTConceptID = NULL;
   this->UMLSConceptUID = NULL;
   this->Cid = NULL;
-  this->CodeValue = NULL;
   this->ContextGroupName = NULL;
   this->ShowAnatomy = false;
 }
@@ -45,18 +42,18 @@ vtkSlicerTerminologyCategory::vtkSlicerTerminologyCategory()
 //----------------------------------------------------------------------------
 vtkSlicerTerminologyCategory::~vtkSlicerTerminologyCategory()
 {
+  this->Initialize();
 }
 
 //----------------------------------------------------------------------------
 void vtkSlicerTerminologyCategory::Initialize()
 {
-  this->CodeMeaning = NULL;
-  this->CodingScheme = NULL;
-  this->SNOMEDCTConceptID = NULL;
-  this->UMLSConceptUID = NULL;
-  this->Cid = NULL;
-  this->CodeValue = NULL;
-  this->ContextGroupName = NULL;
+  Superclass::Initialize();
+
+  this->SetSNOMEDCTConceptID(NULL);
+  this->SetUMLSConceptUID(NULL);
+  this->SetCid(NULL);
+  this->SetContextGroupName(NULL);
   this->ShowAnatomy = false;
 }
 
@@ -65,12 +62,9 @@ void vtkSlicerTerminologyCategory::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
 
-  os << indent << "CodeMeaning:   " << (this->CodeMeaning?this->CodeMeaning:"NULL") << "\n";
-  os << indent << "CodingScheme:   " << (this->CodingScheme?this->CodingScheme:"NULL") << "\n";
   os << indent << "SNOMEDCTConceptID:   " << (this->SNOMEDCTConceptID?this->SNOMEDCTConceptID:"NULL") << "\n";
   os << indent << "UMLSConceptUID:   " << (this->UMLSConceptUID?this->UMLSConceptUID:"NULL") << "\n";
   os << indent << "Cid:   " << (this->Cid?this->Cid:"NULL") << "\n";
-  os << indent << "CodeValue:   " << (this->CodeValue?this->CodeValue:"NULL") << "\n";
   os << indent << "ContextGroupName:   " << (this->ContextGroupName?this->ContextGroupName:"NULL") << "\n";
   os << indent << "ShowAnatomy:   " << (this->ShowAnatomy?"true":"false") << "\n";
 }
@@ -83,12 +77,11 @@ void vtkSlicerTerminologyCategory::Copy(vtkSlicerTerminologyCategory* aCategory)
     return;
     }
 
-  this->SetCodeMeaning(aCategory->GetCodeMeaning());
-  this->SetCodingScheme(aCategory->GetCodingScheme());
+  Superclass::Copy(aCategory);
+
   this->SetSNOMEDCTConceptID(aCategory->GetSNOMEDCTConceptID());
   this->SetUMLSConceptUID(aCategory->GetUMLSConceptUID());
   this->SetCid(aCategory->GetCid());
-  this->SetCodeValue(aCategory->GetCodeValue());
   this->SetContextGroupName(aCategory->GetContextGroupName());
   this->SetShowAnatomy(aCategory->GetShowAnatomy());
 }

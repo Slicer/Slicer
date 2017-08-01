@@ -300,7 +300,7 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::PopulateTerminologyCategory
     }
 
   category->SetCodeMeaning(codeMeaning->value.GetString());
-  category->SetCodingScheme(codingScheme->value.GetString());
+  category->SetCodingSchemeDesignator(codingScheme->value.GetString());
   category->SetSNOMEDCTConceptID(SNOMEDCTConceptID != categoryObject.MemberEnd() ? SNOMEDCTConceptID->value.GetString() : NULL);
   category->SetUMLSConceptUID(UMLSConceptUID != categoryObject.MemberEnd() ? UMLSConceptUID->value.GetString() : NULL);
   category->SetCid(cid != categoryObject.MemberEnd() ? cid->value.GetString() : NULL);
@@ -408,7 +408,7 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::PopulateTerminologyTypeFrom
     }
 
   type->SetCodeMeaning(codeMeaning->value.GetString());
-  type->SetCodingScheme(codingScheme->value.GetString());
+  type->SetCodingSchemeDesignator(codingScheme->value.GetString());
   type->SetSlicerLabel(slicerLabel != typeObject.MemberEnd() ? slicerLabel->value.GetString() : NULL);
   type->SetSNOMEDCTConceptID(SNOMEDCTConceptID != typeObject.MemberEnd() ? SNOMEDCTConceptID->value.GetString() : NULL);
   type->SetUMLSConceptUID(UMLSConceptUID != typeObject.MemberEnd() ? UMLSConceptUID->value.GetString() : NULL);
@@ -1750,7 +1750,7 @@ vtkSlicerTerminologiesModuleLogic::CodeIdentifier vtkSlicerTerminologiesModuleLo
     return CodeIdentifier("","","");
     }
   CodeIdentifier id(
-    (category->GetCodingScheme()?category->GetCodingScheme():""),
+    (category->GetCodingSchemeDesignator()?category->GetCodingSchemeDesignator():""),
     (category->GetCodeValue()?category->GetCodeValue():""),
     (category->GetCodeMeaning()?category->GetCodeMeaning():"") );
   return id;
@@ -1764,7 +1764,7 @@ vtkSlicerTerminologiesModuleLogic::CodeIdentifier vtkSlicerTerminologiesModuleLo
     return CodeIdentifier("","","");
     }
   CodeIdentifier id(
-    (type->GetCodingScheme()?type->GetCodingScheme():""),
+    (type->GetCodingSchemeDesignator()?type->GetCodingSchemeDesignator():""),
     (type->GetCodeValue()?type->GetCodeValue():""),
     (type->GetCodeMeaning()?type->GetCodeMeaning():"") );
   return id;

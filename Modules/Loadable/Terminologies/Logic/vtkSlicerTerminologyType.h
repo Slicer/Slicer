@@ -23,17 +23,25 @@
 #ifndef __vtkSlicerTerminologyType_h
 #define __vtkSlicerTerminologyType_h
 
-// VTK includes
-#include <vtkObject.h>
+// MRML includes
+#include "vtkCodedEntry.h"
 
 #include "vtkSlicerTerminologiesModuleLogicExport.h"
 
-/// VTK implementation of \sa qSlicerDICOMLoadable
-class VTK_SLICER_TERMINOLOGIES_LOGIC_EXPORT vtkSlicerTerminologyType : public vtkObject
+/// \brief Terminology property type object
+///
+/// Encapsulates the mandatory and optional fields for a terminology type.
+/// The following fields inherited from \sa vtkCodedEntry:
+///   CodingSchemeDesignator: 'codingScheme' member of the type object. Value example "SRT"
+///   CodeValue: 'codeValue' member of the type object. Value example "T-41066"
+///   CodeMeaning: 'codeMeaning' member of the type object. Value example "Artery"
+///
+
+class VTK_SLICER_TERMINOLOGIES_LOGIC_EXPORT vtkSlicerTerminologyType : public vtkCodedEntry
 {
 public:
   static vtkSlicerTerminologyType *New();
-  vtkTypeMacro(vtkSlicerTerminologyType, vtkObject);
+  vtkTypeMacro(vtkSlicerTerminologyType, vtkCodedEntry);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Reset state of object
@@ -45,10 +53,6 @@ public:
 public:
   vtkGetVector3Macro(RecommendedDisplayRGBValue, unsigned char);
   vtkSetVector3Macro(RecommendedDisplayRGBValue, unsigned char);
-  vtkGetStringMacro(CodeMeaning);
-  vtkSetStringMacro(CodeMeaning);
-  vtkGetStringMacro(CodingScheme);
-  vtkSetStringMacro(CodingScheme);
   vtkGetStringMacro(SlicerLabel);
   vtkSetStringMacro(SlicerLabel);
   vtkGetStringMacro(SNOMEDCTConceptID);
@@ -57,8 +61,6 @@ public:
   vtkSetStringMacro(UMLSConceptUID);
   vtkGetStringMacro(Cid);
   vtkSetStringMacro(Cid);
-  vtkGetStringMacro(CodeValue);
-  vtkSetStringMacro(CodeValue);
   vtkGetStringMacro(ContextGroupName);
   vtkSetStringMacro(ContextGroupName);
 
@@ -75,10 +77,6 @@ protected:
 protected:
   /// 'recommendedDisplayRGBValue' member of the category object
   unsigned char RecommendedDisplayRGBValue[3];
-  /// 'codeMeaning' member of the category object. Value example "Artery"
-  char* CodeMeaning;
-  /// 'codingScheme' member of the category object. Value example "SRT"
-  char* CodingScheme;
   /// 'slicerLabel' member of the category object. Value example "artery"
   char* SlicerLabel;
   /// 'SNOMEDCTConceptID' member of the category object. Value example "275989006"
@@ -87,8 +85,6 @@ protected:
   char* UMLSConceptUID;
   /// 'cid' member of the category object. Value example "7166"
   char* Cid;
-  /// 'codeValue' member of the category object. Value example "T-41066"
-  char* CodeValue;
   /// 'contextGroupName' member of the category object. Value example "Common Tissue Segmentation Types"
   char* ContextGroupName;
 

@@ -39,8 +39,6 @@ void vtkCodedEntry::Initialize()
   this->SetCodeMeaning(NULL);
 }
 
-;
-
 //----------------------------------------------------------------------------
 void vtkCodedEntry::SetSchemeValueMeaning(const std::string& scheme,
   const std::string& value, const std::string& meaning)
@@ -60,15 +58,15 @@ void vtkCodedEntry::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkCodedEntry::Copy(vtkCodedEntry* aType)
+void vtkCodedEntry::Copy(vtkCodedEntry* aEntry)
 {
-  if (!aType)
+  if (!aEntry)
     {
     return;
     }
-  this->SetCodingSchemeDesignator(aType->GetCodingSchemeDesignator());
-  this->SetCodeValue(aType->GetCodeValue());
-  this->SetCodeMeaning(aType->GetCodeMeaning());
+  this->SetCodingSchemeDesignator(aEntry->GetCodingSchemeDesignator());
+  this->SetCodeValue(aEntry->GetCodeValue());
+  this->SetCodeMeaning(aEntry->GetCodeMeaning());
 }
 
 //----------------------------------------------------------------------------
