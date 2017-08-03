@@ -23,6 +23,7 @@
 
 // STD includes
 #include <algorithm>
+#include <iterator>
 #include <set>
 #include <sstream>
 

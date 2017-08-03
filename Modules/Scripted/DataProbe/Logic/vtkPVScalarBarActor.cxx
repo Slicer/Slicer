@@ -208,10 +208,10 @@ int vtkPVScalarBarActor::CreateLabel(
     textActor->ComputeScaledFont(this->P->Viewport);
     }
 
-  // One Windows, formats with exponents have three digits by default
+  // On Visual Studio prior 2015, formats with exponents have three digits by default
   // whereas on other systems, exponents have two digits. Set to two
   // digits on Windows for consistent behavior.
-#ifdef _WIN32
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
   unsigned int oldWin32ExponentFormat = _set_output_format(_TWO_DIGIT_EXPONENT);
 #endif
 
@@ -272,7 +272,7 @@ int vtkPVScalarBarActor::CreateLabel(
   // Set the txt label
   textActor->SetInput(string);
 
-#ifdef _WIN32
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
   _set_output_format(oldWin32ExponentFormat);
 #endif
 
