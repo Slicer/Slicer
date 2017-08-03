@@ -590,20 +590,20 @@ class ExtensionWizard(object):
                         help="print the extension description (s4ext)"
                              " to standard output")
 
-    if _haveGit:
-      parser.add_argument("--publish", action="store_true",
-                          help="publish the extension in the destination"
-                               " directory to github (account required)")
-      parser.add_argument("--contribute", action="store_true",
-                          help="register or update a compiled extension with"
-                               " the extension index (github account required)")
-      parser.add_argument("--target", metavar="VERSION", default="master",
-                          help="version of Slicer for which the extension"
-                               " is intended (default='master')")
-      parser.add_argument("--index", metavar="PATH",
-                          help="location for the extension index clone"
-                               " (default: private directory"
-                               " in the extension clone)")
+    parser.add_argument("--publish", action="store_true",
+                        help="publish the extension in the destination"
+                             " directory to github (account required)")
+    parser.add_argument("--contribute", action="store_true",
+                        help="register or update a compiled extension with"
+                             " the extension index (github account required)")
+    parser.add_argument("--target", metavar="VERSION", default="master",
+                        help="version of Slicer for which the extension"
+                             " is intended (default='master')")
+    parser.add_argument("--index", metavar="PATH",
+                        help="location for the extension index clone"
+                             " (default: private directory"
+                             " in the extension clone)")
+
 
     parser.add_argument("destination", default=os.getcwd(), nargs="?",
                         help="location of output files / extension source"
@@ -611,6 +611,19 @@ class ExtensionWizard(object):
 
     args = parser.parse_args(args)
     initLogging(logging.getLogger(), args)
+
+    # The following arguments are only available if _haveGit is True
+    if not _haveGit and (args.publish or args.contribute):
+        option = "--publish"
+        if args.contribute:
+            option = "--contribute"
+        die(textwrap.dedent(
+            """\
+            Option '%s' is not available.
+
+            Consider re-building Slicer with SSL support or downloading
+            Slicer from http://download.slicer.org
+            """ % option))
 
     # Add built-in templates
     scriptPath = os.path.dirname(os.path.realpath(__file__))
