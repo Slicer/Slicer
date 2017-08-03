@@ -24,7 +24,7 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
    OR NOT DEFINED LibArchive_LIBRARY) AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   #
-  # NOTE: - a stable, recent release (3.0.4) of LibArchive is now checked out from git
+  # NOTE: - a stable, recent release (3.3.2) of LibArchive is now checked out from git
   #         for all platforms.  For notes on cross-platform issues with earlier versions
   #         of LibArchive, see the repository for earlier revisions of this file.
 
@@ -42,13 +42,13 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
-    "${git_protocol}://github.com/Slicer/libarchive.git"
+    "${git_protocol}://github.com/libarchive/libarchive.git"
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    "453b390286a59503f1ed3e2d8382e244cddbc304" # slicer-v3.0.4
+    "v3.3.2"
     QUIET
     )
 
@@ -86,7 +86,7 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
     )
   if(APPLE)
     ExternalProject_Add_Step(${proj} fix_rpath
-      COMMAND install_name_tool -id ${CMAKE_BINARY_DIR}/${proj}-install/lib/libarchive.12.dylib ${CMAKE_BINARY_DIR}/${proj}-install/lib/libarchive.12.dylib
+      COMMAND install_name_tool -id ${CMAKE_BINARY_DIR}/${proj}-install/lib/libarchive.16.dylib ${CMAKE_BINARY_DIR}/${proj}-install/lib/libarchive.16.dylib
       DEPENDEES install
       )
   endif()
