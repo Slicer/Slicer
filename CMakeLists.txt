@@ -615,6 +615,30 @@ set(Slicer_INSTALL_QtPlugins_DIR "${Slicer_INSTALL_ROOT}${Slicer_QtPlugins_DIR}"
 include(SlicerBlockFindQtAndCheckVersion)
 mark_as_superbuild(VARS QT_QMAKE_EXECUTABLE LABELS "FIND_PACKAGE")
 
+#
+# If qmake is found in a system location, explicitly mark Qt as such. Doing so
+# will prevent system path from being prepended to PATH or (DY)LD_LIBRARY_PATH
+# when generating the launcher settings and avoid system libraries symbols from
+# conflicting with Slicer version of these libraries.
+#
+# See https://issues.slicer.org/view.php?id=3574
+#
+foreach(_path IN ITEMS
+    "/bin"
+    "/usr/bin/"
+    "/usr/local/bin"
+    "/opt/bin"
+    "/opt/local/bin"
+    )
+  if("${QT_QMAKE_EXECUTABLE}" MATCHES "^${_path}")
+    set(Slicer_USE_SYSTEM_QT ON)
+    message(STATUS "")
+    message(STATUS "Forcing Slicer_USE_SYSTEM_QT to ON (qmake found in a system location: ${_path})")
+    message(STATUS "")
+    break()
+  endif()
+endforeach()
+
 #-----------------------------------------------------------------------------
 # Testing
 #-----------------------------------------------------------------------------
