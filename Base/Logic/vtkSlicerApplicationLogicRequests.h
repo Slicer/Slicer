@@ -568,7 +568,10 @@ protected:
 class WriteDataRequestFile: public DataRequest
 {
 public:
-  WriteDataRequestFile(const std::string& node, const std::string& filename, int uid = 0)
+  WriteDataRequestFile(
+      const std::string& vtkNotUsed(node),
+      const std::string& vtkNotUsed(filename),
+      int uid = 0)
     : DataRequest(uid)
   {
   }
