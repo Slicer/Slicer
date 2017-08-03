@@ -63,6 +63,7 @@ set(${KIT}_TARGET_LIBRARIES
   qMRMLWidgets
   MRMLLogic
   MRMLCore
+  qSlicerBaseQTGUI # required for access to qSlicerApplication singletons
   )
 
 #-----------------------------------------------------------------------------
