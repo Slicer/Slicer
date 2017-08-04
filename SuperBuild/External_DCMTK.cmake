@@ -41,7 +41,7 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    "e4df3575fd590bea865e017c84c8f880a9a6c1c0"
+    "c9ccd45212cb542d78201995951fbcfb416f8b16" # v3.6.2 + Patch for DCMTK_ENABLE_CXX11 support on Linux
     QUIET
     )
 
