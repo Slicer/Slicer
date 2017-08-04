@@ -96,6 +96,7 @@ endmacro()
 # Set default values
 #-----------------------------------------------------------------------------
 setIfNotDefined(CTEST_PARALLEL_LEVEL 8)
+setIfNotDefined(CTEST_CONTINUOUS_DURATION 46800) # Lasts 13 hours (Assuming it starts at 9am, it will end around 10pm)
 setIfNotDefined(MIDAS_PACKAGE_URL "http://slicer.kitware.com/midas3")
 setIfNotDefined(MIDAS_PACKAGE_EMAIL "MIDAS_PACKAGE_EMAIL-NOTDEFINED" OBFUSCATE)
 setIfNotDefined(MIDAS_PACKAGE_API_KEY "MIDAS_PACKAGE_API_KEY-NOTDEFINED" OBFUSCATE)
@@ -156,7 +157,19 @@ if(SCRIPT_MODE STREQUAL "experimental")
   set(force_build TRUE)
   set(model Experimental)
 elseif(SCRIPT_MODE STREQUAL "continuous")
-  set(empty_binary_directory FALSE)
+  if(${CTEST_CONTINUOUS_DURATION} GREATER 0)
+    # Continuous tests are performed in a loop
+    # until duration expires. Clean up the build
+    # tree at the beginning.
+    set(empty_binary_directory TRUE)
+  else()
+    # A single continuous test run is requested,
+    # do not delete the build tree.
+    # (useful when the nightly build tree is reused
+    # as continuous build tree and repeated builds
+    # are triggered by an external scheduler)
+    set(empty_binary_directory FALSE)
+  endif()
   set(force_build FALSE)
   set(model Continuous)
 elseif(SCRIPT_MODE STREQUAL "nightly")
@@ -426,8 +439,8 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
   endif()
 endmacro()
 
-if(SCRIPT_MODE STREQUAL "continuous")
-  while(${CTEST_ELAPSED_TIME} LESS 46800) # Lasts 13 hours (Assuming it starts at 9am, it will end around 10pm)
+if(SCRIPT_MODE STREQUAL "continuous" AND ${CTEST_CONTINUOUS_DURATION} GREATER 0)
+  while(${CTEST_ELAPSED_TIME} LESS ${CTEST_CONTINUOUS_DURATION})
     set(START_TIME ${CTEST_ELAPSED_TIME})
     run_ctest()
     set(interval 300)
