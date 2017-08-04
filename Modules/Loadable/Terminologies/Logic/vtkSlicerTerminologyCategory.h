@@ -47,7 +47,7 @@ public:
   virtual void Initialize();
 
   /// Copy one category into another
-  virtual void Copy(vtkSlicerTerminologyCategory* aCategory);
+  virtual void Copy(vtkCodedEntry* aCategory);
 
 public:
   vtkGetStringMacro(SNOMEDCTConceptID);

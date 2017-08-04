@@ -70,18 +70,21 @@ void vtkSlicerTerminologyCategory::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerTerminologyCategory::Copy(vtkSlicerTerminologyCategory* aCategory)
+void vtkSlicerTerminologyCategory::Copy(vtkCodedEntry* aCategory)
 {
   if (!aCategory)
     {
     return;
     }
 
-  Superclass::Copy(aCategory);
+  this->Superclass::Copy(aCategory);
 
-  this->SetSNOMEDCTConceptID(aCategory->GetSNOMEDCTConceptID());
-  this->SetUMLSConceptUID(aCategory->GetUMLSConceptUID());
-  this->SetCid(aCategory->GetCid());
-  this->SetContextGroupName(aCategory->GetContextGroupName());
-  this->SetShowAnatomy(aCategory->GetShowAnatomy());
+  vtkSlicerTerminologyCategory *aTerminologyCategory =
+      vtkSlicerTerminologyCategory::SafeDownCast(aCategory);
+
+  this->SetSNOMEDCTConceptID(aTerminologyCategory->GetSNOMEDCTConceptID());
+  this->SetUMLSConceptUID(aTerminologyCategory->GetUMLSConceptUID());
+  this->SetCid(aTerminologyCategory->GetCid());
+  this->SetContextGroupName(aTerminologyCategory->GetContextGroupName());
+  this->SetShowAnatomy(aTerminologyCategory->GetShowAnatomy());
 }

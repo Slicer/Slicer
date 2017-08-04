@@ -48,7 +48,7 @@ public:
   virtual void Initialize();
 
   /// Copy one type into another
-  virtual void Copy(vtkSlicerTerminologyType* aType);
+  virtual void Copy(vtkCodedEntry* aType);
 
 public:
   vtkGetVector3Macro(RecommendedDisplayRGBValue, unsigned char);

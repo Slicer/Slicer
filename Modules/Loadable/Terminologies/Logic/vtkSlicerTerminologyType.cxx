@@ -79,20 +79,23 @@ void vtkSlicerTerminologyType::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerTerminologyType::Copy(vtkSlicerTerminologyType* aType)
+void vtkSlicerTerminologyType::Copy(vtkCodedEntry* aType)
 {
   if (!aType)
     {
     return;
     }
 
-  Superclass::Copy(aType);
+  this->Superclass::Copy(aType);
 
-  this->SetRecommendedDisplayRGBValue(aType->GetRecommendedDisplayRGBValue());
-  this->SetSlicerLabel(aType->GetSlicerLabel());
-  this->SetSNOMEDCTConceptID(aType->GetSNOMEDCTConceptID());
-  this->SetUMLSConceptUID(aType->GetUMLSConceptUID());
-  this->SetCid(aType->GetCid());
-  this->SetContextGroupName(aType->GetContextGroupName());
-  this->SetHasModifiers(aType->GetHasModifiers());
+  vtkSlicerTerminologyType *aTerminologyType =
+      vtkSlicerTerminologyType::SafeDownCast(aType);
+
+  this->SetRecommendedDisplayRGBValue(aTerminologyType->GetRecommendedDisplayRGBValue());
+  this->SetSlicerLabel(aTerminologyType->GetSlicerLabel());
+  this->SetSNOMEDCTConceptID(aTerminologyType->GetSNOMEDCTConceptID());
+  this->SetUMLSConceptUID(aTerminologyType->GetUMLSConceptUID());
+  this->SetCid(aTerminologyType->GetCid());
+  this->SetContextGroupName(aTerminologyType->GetContextGroupName());
+  this->SetHasModifiers(aTerminologyType->GetHasModifiers());
 }
