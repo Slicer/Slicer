@@ -33,6 +33,10 @@
 #include <QDebug>
 #include <QStringList>
 #include <QInputDialog>
+#include <QSettings>
+
+// SlicerQt includes
+#include "qSlicerApplication.h"
 
 // VTK includes
 #include <vtkCallbackCommand.h>
@@ -98,7 +102,6 @@ qSlicerSubjectHierarchyPluginHandler::qSlicerSubjectHierarchyPluginHandler(QObje
   , m_SubjectHierarchyNode(NULL)
   , m_MRMLScene(NULL)
   , m_PluginLogic(NULL)
-  , m_AutoDeleteSubjectHierarchyChildren(false)
 {
   this->m_CurrentItems.clear();
 
@@ -493,13 +496,96 @@ QList<vtkIdType> qSlicerSubjectHierarchyPluginHandler::currentItems()
 //-----------------------------------------------------------------------------
 bool qSlicerSubjectHierarchyPluginHandler::autoDeleteSubjectHierarchyChildren()const
 {
-  return this->m_AutoDeleteSubjectHierarchyChildren;
+  QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
+  if (settings->contains("SubjectHierarchy/AutoDeleteSubjectHierarchyChildren"))
+    {
+    return settings->value("SubjectHierarchy/AutoDeleteSubjectHierarchyChildren").toBool();
+    }
+
+  return false; // Default value
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyPluginHandler::setAutoDeleteSubjectHierarchyChildren(bool flag)
+void qSlicerSubjectHierarchyPluginHandler::setAutoDeleteSubjectHierarchyChildren(bool on)
 {
-  this->m_AutoDeleteSubjectHierarchyChildren = flag;
+  QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
+  settings->setValue("SubjectHierarchy/AutoDeleteSubjectHierarchyChildren", on);
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerSubjectHierarchyPluginHandler::displayPatientIDInSubjectHierarchyItemName()const
+{
+  QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
+  if (settings->contains("SubjectHierarchy/DisplayPatientIDInSubjectHierarchyItemName"))
+    {
+    return settings->value("SubjectHierarchy/DisplayPatientIDInSubjectHierarchyItemName").toBool();
+    }
+
+  return true; // Default value
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyPluginHandler::setDisplayPatientIDInSubjectHierarchyItemName(bool on)
+{
+  QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
+  settings->setValue("SubjectHierarchy/DisplayPatientIDInSubjectHierarchyItemName", on);
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerSubjectHierarchyPluginHandler::displayPatientBirthDateInSubjectHierarchyItemName()const
+{
+  QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
+  if (settings->contains("SubjectHierarchy/DisplayPatientBirthDateInSubjectHierarchyItemName"))
+    {
+    return settings->value("SubjectHierarchy/DisplayPatientBirthDateInSubjectHierarchyItemName").toBool();
+    }
+
+  return false; // Default value
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyPluginHandler::setDisplayPatientBirthDateInSubjectHierarchyItemName(bool on)
+{
+  QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
+  settings->setValue("SubjectHierarchy/DisplayPatientBirthDateInSubjectHierarchyItemName", on);
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerSubjectHierarchyPluginHandler::displayStudyIDInSubjectHierarchyItemName()const
+{
+  QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
+  if (settings->contains("SubjectHierarchy/DisplayStudyIDInSubjectHierarchyItemName"))
+    {
+    return settings->value("SubjectHierarchy/DisplayStudyIDInSubjectHierarchyItemName").toBool();
+    }
+
+  return false; // Default value
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyPluginHandler::setDisplayStudyIDInSubjectHierarchyItemName(bool on)
+{
+  QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
+  settings->setValue("SubjectHierarchy/DisplayStudyIDInSubjectHierarchyItemName", on);
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerSubjectHierarchyPluginHandler::displayStudyDateInSubjectHierarchyItemName()const
+{
+  QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
+  if (settings->contains("SubjectHierarchy/DisplayStudyDateInSubjectHierarchyItemName"))
+    {
+    return settings->value("SubjectHierarchy/DisplayStudyDateInSubjectHierarchyItemName").toBool();
+    }
+
+  return true; // Default value
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyPluginHandler::setDisplayStudyDateInSubjectHierarchyItemName(bool on)
+{
+  QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
+  settings->setValue("SubjectHierarchy/DisplayStudyDateInSubjectHierarchyItemName", on);
 }
 
 //-----------------------------------------------------------------------------

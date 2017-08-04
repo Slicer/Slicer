@@ -29,13 +29,10 @@
 #include <QKeyEvent>
 #include <QInputDialog>
 #include <QMessageBox>
-#include <QSettings>
 #include <QDebug>
 #include <QToolTip>
 #include <QBuffer>
-
-// SlicerQt includes
-#include "qSlicerApplication.h"
+#include <QApplication>
 
 // SubjectHierarchy includes
 #include "qMRMLSubjectHierarchyTreeView.h"
@@ -1107,8 +1104,6 @@ void qMRMLSubjectHierarchyTreeView::deleteSelectedItems()
     if (answer == QMessageBox::YesToAll)
       {
       qSlicerSubjectHierarchyPluginHandler::instance()->setAutoDeleteSubjectHierarchyChildren(true);
-      QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
-      settings->setValue("SubjectHierarchy/AutoDeleteSubjectHierarchyChildren", "true");
       }
 
     // Remove item (and if requested its children) and its associated data node if any

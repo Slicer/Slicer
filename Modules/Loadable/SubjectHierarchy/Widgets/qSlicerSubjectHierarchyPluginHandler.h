@@ -60,6 +60,22 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyPlu
   /// By default, a pop-up question asking the user to confirm the deletion of
   /// children nodes will be shown.
   Q_PROPERTY (bool autoDeleteSubjectHierarchyChildren READ autoDeleteSubjectHierarchyChildren WRITE setAutoDeleteSubjectHierarchyChildren)
+  /// Flag determining whether the patient ID tag is included in the name of the patient
+  /// subject hierarchy item name after loading from DICOM.
+  /// True by default
+  Q_PROPERTY (bool displayPatientIDInSubjectHierarchyItemName READ displayPatientIDInSubjectHierarchyItemName WRITE setDisplayPatientIDInSubjectHierarchyItemName)
+  /// Flag determining whether the patient birth date tag is included in the name of the patient
+  /// subject hierarchy item name after loading from DICOM.
+  /// False by default
+  Q_PROPERTY (bool displayPatientBirthDateInSubjectHierarchyItemName READ displayPatientBirthDateInSubjectHierarchyItemName WRITE setDisplayPatientBirthDateInSubjectHierarchyItemName)
+  /// Flag determining whether the study ID tag is included in the name of the study
+  /// subject hierarchy item name after loading from DICOM.
+  /// False by default
+  Q_PROPERTY (bool displayStudyIDInSubjectHierarchyItemName READ displayStudyIDInSubjectHierarchyItemName WRITE setDisplayStudyIDInSubjectHierarchyItemName)
+  /// Flag determining whether the study date tag is included in the name of the study
+  /// subject hierarchy item name after loading from DICOM.
+  /// True by default
+  Q_PROPERTY (bool displayStudyDateInSubjectHierarchyItemName READ displayStudyDateInSubjectHierarchyItemName WRITE setDisplayStudyDateInSubjectHierarchyItemName)
 
 public:
   /// Instance getter for the singleton class
@@ -100,6 +116,14 @@ public:
 
   Q_INVOKABLE bool autoDeleteSubjectHierarchyChildren()const;
   Q_INVOKABLE void setAutoDeleteSubjectHierarchyChildren(bool flag);
+  Q_INVOKABLE bool displayPatientIDInSubjectHierarchyItemName()const;
+  Q_INVOKABLE void setDisplayPatientIDInSubjectHierarchyItemName(bool on);
+  Q_INVOKABLE bool displayPatientBirthDateInSubjectHierarchyItemName()const;
+  Q_INVOKABLE void setDisplayPatientBirthDateInSubjectHierarchyItemName(bool on);
+  Q_INVOKABLE bool displayStudyIDInSubjectHierarchyItemName()const;
+  Q_INVOKABLE void setDisplayStudyIDInSubjectHierarchyItemName(bool on);
+  Q_INVOKABLE bool displayStudyDateInSubjectHierarchyItemName()const;
+  Q_INVOKABLE void setDisplayStudyDateInSubjectHierarchyItemName(bool on);
 
 public:
   /// Register a plugin
@@ -186,10 +210,6 @@ protected:
 
   /// Callback handling deletion of the subject hierarchy node
   vtkSmartPointer<vtkCallbackCommand> m_CallBack;
-
-  /// Flag determining whether subject hierarchy children nodes are automatically
-  /// deleted upon deleting a parent subject hierarchy node.
-  bool m_AutoDeleteSubjectHierarchyChildren;
 
 public:
   /// Private constructor made public to enable python wrapping

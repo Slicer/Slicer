@@ -63,15 +63,41 @@ void qSlicerSubjectHierarchySettingsPanelPrivate::init()
   // Default values
   this->AutoDeleteSubjectHierarchyChildrenEnabledCheckBox->setChecked(false);
 
+  this->PatientIDTagCheckBox->setChecked(true);
+  this->PatientBirthDateTagCheckBox->setChecked(false);
+  this->StudyIDTagCheckBox->setChecked(false);
+  this->StudyDateTagCheckBox->setChecked(true);
+
   // Register settings
   q->registerProperty("SubjectHierarchy/AutoDeleteSubjectHierarchyChildren", this->AutoDeleteSubjectHierarchyChildrenEnabledCheckBox,
                       "checked", SIGNAL(toggled(bool)),
-                      "Enable/disable automatic subject hierarchy children deletion", ctkSettingsPanel::OptionRequireRestart);
+                      "Enable/disable automatic subject hierarchy children deletion", ctkSettingsPanel::OptionNone);
+
+  q->registerProperty("SubjectHierarchy/DisplayPatientIDInSubjectHierarchyItemName", this->PatientIDTagCheckBox,
+                      "checked", SIGNAL(toggled(bool)),
+                      "Include patient ID in the name of the patient item", ctkSettingsPanel::OptionNone);
+  q->registerProperty("SubjectHierarchy/DisplayPatientBirthDateInSubjectHierarchyItemName", this->PatientBirthDateTagCheckBox,
+                      "checked", SIGNAL(toggled(bool)),
+                      "Include patient birth date in the name of the patient item", ctkSettingsPanel::OptionNone);
+  q->registerProperty("SubjectHierarchy/DisplayStudyIDInSubjectHierarchyItemName", this->StudyIDTagCheckBox,
+                      "checked", SIGNAL(toggled(bool)),
+                      "Include study ID in the name of the study item", ctkSettingsPanel::OptionNone);
+  q->registerProperty("SubjectHierarchy/DisplayStudyDateInSubjectHierarchyItemName", this->StudyDateTagCheckBox,
+                      "checked", SIGNAL(toggled(bool)),
+                      "Include study date in the name of the study item", ctkSettingsPanel::OptionNone);
 
   // Actions to propagate to the application when settings are changed
   QObject::connect(this->AutoDeleteSubjectHierarchyChildrenEnabledCheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(enableAutoDeleteSubjectHierarchyChildren(bool)));
+                   q, SLOT(setAutoDeleteSubjectHierarchyChildrenEnabled(bool)));
 
+  QObject::connect(this->PatientIDTagCheckBox, SIGNAL(toggled(bool)),
+                   q, SLOT(setDisplayPatientIDEnabled(bool)));
+  QObject::connect(this->PatientBirthDateTagCheckBox, SIGNAL(toggled(bool)),
+                   q, SLOT(setDisplayPatientBirthDateEnabled(bool)));
+  QObject::connect(this->StudyIDTagCheckBox, SIGNAL(toggled(bool)),
+                   q, SLOT(setDisplayStudyIDEnabled(bool)));
+  QObject::connect(this->StudyDateTagCheckBox, SIGNAL(toggled(bool)),
+                   q, SLOT(setDisplayStudyDateEnabled(bool)));
 }
 
 // --------------------------------------------------------------------------
@@ -92,7 +118,31 @@ qSlicerSubjectHierarchySettingsPanel::~qSlicerSubjectHierarchySettingsPanel()
 }
 
 // --------------------------------------------------------------------------
-void qSlicerSubjectHierarchySettingsPanel::enableAutoDeleteSubjectHierarchyChildren(bool value)
+void qSlicerSubjectHierarchySettingsPanel::setAutoDeleteSubjectHierarchyChildrenEnabled(bool on)
 {
-  Q_UNUSED(value);
+  Q_UNUSED(on);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSubjectHierarchySettingsPanel::setDisplayPatientIDEnabled(bool on)
+{
+  Q_UNUSED(on);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSubjectHierarchySettingsPanel::setDisplayPatientBirthDateEnabled(bool on)
+{
+  Q_UNUSED(on);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSubjectHierarchySettingsPanel::setDisplayStudyIDEnabled(bool on)
+{
+  Q_UNUSED(on);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSubjectHierarchySettingsPanel::setDisplayStudyDateEnabled(bool on)
+{
+  Q_UNUSED(on);
 }

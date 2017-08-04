@@ -35,13 +35,9 @@
 #include "qSlicerSubjectHierarchyRegisterPlugin.h"
 #include "qSlicerSubjectHierarchyFolderPlugin.h"
 
-// SlicerQt includes
-#include "qSlicerApplication.h"
-
 // Qt includes
 #include <QDebug>
 #include <QString>
-#include <QSettings>
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_SubjectHierarchy
@@ -74,34 +70,14 @@ qSlicerSubjectHierarchyPluginLogicPrivate::~qSlicerSubjectHierarchyPluginLogicPr
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyPluginLogicPrivate::loadApplicationSettings()
-{
-  // Load settings
-  QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
-  if (!settings)
-    {
-    qWarning() << Q_FUNC_INFO << ": Invalid application settings!";
-    }
-  else
-    {
-    if (settings->contains("SubjectHierarchy/AutoDeleteSubjectHierarchyChildren"))
-      {
-      qSlicerSubjectHierarchyPluginHandler::instance()->setAutoDeleteSubjectHierarchyChildren(
-        settings->value("SubjectHierarchy/AutoDeleteSubjectHierarchyChildren").toBool() == true );
-      }
-    }
-}
-
-//-----------------------------------------------------------------------------
 // qSlicerSubjectHierarchyPluginLogic methods
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyPluginLogic::qSlicerSubjectHierarchyPluginLogic(QWidget* _parent)
+qSlicerSubjectHierarchyPluginLogic::qSlicerSubjectHierarchyPluginLogic(QObject* _parent)
   : Superclass( _parent )
   , d_ptr( new qSlicerSubjectHierarchyPluginLogicPrivate(*this) )
 {
   Q_D(qSlicerSubjectHierarchyPluginLogic);
-  d->loadApplicationSettings();
 
   // Register Subject Hierarchy core plugins
   this->registerCorePlugins();

@@ -6,36 +6,164 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>398</width>
-    <height>83</height>
+    <width>419</width>
+    <height>166</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Developer</string>
+   <string>SubjectHierarchySettingsPanel</string>
   </property>
-  <layout class="QFormLayout" name="formLayout">
-   <property name="fieldGrowthPolicy">
-    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-   </property>
+  <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
-    <widget class="QLabel" name="AutoDeleteSubjectHierarchyChildrenEnabledLabel">
-     <property name="toolTip">
-      <string>Delete whole branch under the deleted item from subject hierarchy.</string>
+    <widget class="QGroupBox" name="OperationGroupBox">
+     <property name="title">
+      <string>Operation</string>
      </property>
-     <property name="text">
-      <string>Automatically delete subject hierarchy children:</string>
+     <property name="flat">
+      <bool>true</bool>
      </property>
+     <layout class="QFormLayout" name="formLayout_2">
+      <item row="0" column="0">
+       <widget class="QLabel" name="AutoDeleteSubjectHierarchyChildrenEnabledLabel">
+        <property name="toolTip">
+         <string>Delete whole branch under the deleted item from subject hierarchy.</string>
+        </property>
+        <property name="text">
+         <string>Automatically delete subject hierarchy children:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QCheckBox" name="AutoDeleteSubjectHierarchyChildrenEnabledCheckBox">
+        <property name="toolTip">
+         <string>Automatically delete subject hierarchy children for nodes removed from the scene.</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="QCheckBox" name="AutoDeleteSubjectHierarchyChildrenEnabledCheckBox">
-     <property name="toolTip">
-      <string>Automatically delete subject hierarchy children for nodes removed from the scene.</string>
+   <item row="1" column="0">
+    <widget class="QGroupBox" name="DisplayGroupBox">
+     <property name="title">
+      <string>Display</string>
      </property>
-     <property name="text">
-      <string/>
+     <property name="flat">
+      <bool>true</bool>
      </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="1" column="1">
+       <widget class="QLabel" name="StudyIDTagLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>  ID:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="PatientTagsLabel">
+        <property name="text">
+         <string>Patient tags in item name:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="4">
+       <widget class="QCheckBox" name="PatientBirthDateTagCheckBox">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="PatientIDTagLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>  ID:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="StudyTagsLabel">
+        <property name="text">
+         <string>Study tags in item name:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="4">
+       <widget class="QCheckBox" name="StudyDateTagCheckBox">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QCheckBox" name="StudyIDTagCheckBox">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QCheckBox" name="PatientIDTagCheckBox">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <widget class="QLabel" name="StudyDateTagLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>  Study date:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QLabel" name="PatientBirthDateTagLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>  Birth date:</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
+   </item>
+   <item row="2" column="0">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
