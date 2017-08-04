@@ -187,7 +187,7 @@ if(APPLE)
     # for SuperBuild extensions.
 
     file(WRITE ${slicer_extension_cpack_bundle_fixup_directory}/CMakeLists.txt
-    "cmake_minimum_required(VERSION 3.0)
+    "cmake_minimum_required(VERSION 3.5)
 install(SCRIPT \"${slicer_extension_cpack_bundle_fixup_directory}/SlicerExtensionCPackBundleFixup.cmake\")")
     set(source_dir "${slicer_extension_cpack_bundle_fixup_directory}")
     set(build_dir "${slicer_extension_cpack_bundle_fixup_directory}-binary")

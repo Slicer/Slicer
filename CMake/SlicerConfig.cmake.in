@@ -52,6 +52,8 @@
 #  ConfigurePrerequisites    | Slicer_USE_CONFIGUREPREREQUISITES
 # --------------------------------------------------------------------------
 
+cmake_minimum_required(VERSION 3.5)
+
 foreach(component NoExtensionSupport ConfigurePrerequisites)
   string(TOUPPER ${component} _COMPONENT)
   set(Slicer_USE_${_COMPONENT} 0)

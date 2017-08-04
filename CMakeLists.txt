@@ -1,17 +1,5 @@
 
-cmake_minimum_required(VERSION 2.8.9)
-if(POLICY CMP0017)
-  cmake_policy(SET CMP0017 OLD)
-endif()
-foreach(p
-  CMP0048 # CMake 3.0
-  CMP0054 # CMake 3.1
-  CMP0020 # CMake 2.8.11
-  )
-  if(POLICY ${p})
-    cmake_policy(SET ${p} NEW)
-  endif()
-endforeach()
+cmake_minimum_required(VERSION 3.5)
 
 #-----------------------------------------------------------------------------
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake" ${CMAKE_MODULE_PATH})

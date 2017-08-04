@@ -2,16 +2,6 @@
 include(@CMAKE_SOURCE_DIR@/CMake/BundleUtilitiesWithRPath.cmake)
 #include(BundleUtilities)
 
-#
-# Avoid following symlinks encountered during FILE GLOB_RECURSE calls:
-#
-if(COMMAND CMAKE_POLICY)
-  cmake_policy(SET CMP0009 NEW)
-  if(POLICY CMP0011)
-    cmake_policy(SET CMP0011 NEW)
-  endif()
-endif()
-
 #-----------------------------------------------------------------------------
 set(PYTHON_STDLIB_SUBDIR "@PYTHON_STDLIB_SUBDIR@")
 set(PYTHON_SITE_PACKAGES_SUBDIR "@PYTHON_SITE_PACKAGES_SUBDIR@")

@@ -10,16 +10,6 @@ if(NOT EXISTS "${CMAKE_INSTALL_PREFIX}")
   message(FATAL_ERROR "CMAKE_INSTALL_PREFIX is set to a nonexistent directory :(")
 endif()
 
-#
-# Avoid following symlinks encountered during FILE GLOB_RECURSE calls:
-#
-if(COMMAND CMAKE_POLICY)
-  cmake_policy(SET CMP0009 NEW)
-  if(POLICY CMP0011)
-    cmake_policy(SET CMP0011 NEW)
-  endif()
-endif()
-
 #-----------------------------------------------------------------------------
 # gp_log_message - Convenient function allowing to both display and log a message.
 # Log file: $ENV{DESTDIR}/../complete-bundles-log.txt

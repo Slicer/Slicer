@@ -12,7 +12,7 @@
 #     'glxinfo | grep OpenGL' to obtain GPU details.
 ####################################################################################
 
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.5)
 
 #
 # For additional information, see http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Developers/Tutorials/DashboardSetup

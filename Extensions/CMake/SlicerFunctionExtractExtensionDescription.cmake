@@ -24,15 +24,6 @@ if(NOT DEFINED Slicer_EXTENSIONS_CMAKE_DIR)
   set(Slicer_EXTENSIONS_CMAKE_DIR ${CMAKE_CURRENT_LIST_DIR})
 endif()
 
-foreach(p
-  CMP0054 # CMake 3.1
-  CMP0064 # CMake 3.4
-  )
-  if(POLICY ${p})
-    cmake_policy(SET ${p} NEW)
-  endif()
-endforeach()
-
 #
 # slicerFunctionExtractExtensionDescription(EXTENSION_FILE <file> VAR_PREFIX <var-prefix>)
 # is used to extract information associated with a given extension <file>.
