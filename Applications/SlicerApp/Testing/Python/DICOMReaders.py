@@ -98,16 +98,16 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
         "name": "Mouse-MR-example-where-GDCM_fails",
         "seriesUID": "1.3.6.1.4.1.9590.100.1.2.366426457713813178933224342280246227461",
         "expectedFailures": ["GDCM", "Archetype"],
-        "voxelValueQuantity": "(DCM, 110852, \\"MR signal intensity\\")",
-        "voxelValueUnits": "(UCUM, 1, \\"no units\\")"
+        "voxelValueQuantity": "(110852, DCM, \\"MR signal intensity\\")",
+        "voxelValueUnits": "(1, UCUM, \\"no units\\")"
       },
       { "url": "http://slicer.kitware.com/midas3/download/item/294857/deidentifiedMRHead-dcm-one-series.zip",
         "fileName": "deidentifiedMRHead-dcm-one-series.zip",
         "name": "deidentifiedMRHead-dcm-one-series",
         "seriesUID": "1.3.6.1.4.1.5962.99.1.3814087073.479799962.1489872804257.270.0",
         "expectedFailures": [],
-        "voxelValueQuantity": "(DCM, 110852, \\"MR signal intensity\\")",
-        "voxelValueUnits": "(UCUM, 1, \\"no units\\")"
+        "voxelValueQuantity": "(110852, DCM, \\"MR signal intensity\\")",
+        "voxelValueUnits": "(1, UCUM, \\"no units\\")"
       }
     ]''')
 

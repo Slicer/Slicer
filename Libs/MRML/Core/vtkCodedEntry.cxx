@@ -19,8 +19,8 @@ vtkStandardNewMacro(vtkCodedEntry);
 
 //----------------------------------------------------------------------------
 vtkCodedEntry::vtkCodedEntry()
-: CodingSchemeDesignator(NULL)
-, CodeValue(NULL)
+: CodeValue(NULL)
+, CodingSchemeDesignator(NULL)
 , CodeMeaning(NULL)
 {
 }
@@ -34,27 +34,18 @@ vtkCodedEntry::~vtkCodedEntry()
 //----------------------------------------------------------------------------
 void vtkCodedEntry::Initialize()
 {
-  this->SetCodingSchemeDesignator(NULL);
   this->SetCodeValue(NULL);
+  this->SetCodingSchemeDesignator(NULL);
   this->SetCodeMeaning(NULL);
-}
-
-//----------------------------------------------------------------------------
-void vtkCodedEntry::SetSchemeValueMeaning(const std::string& scheme,
-  const std::string& value, const std::string& meaning)
-{
-  this->SetCodingSchemeDesignator(scheme.c_str());
-  this->SetCodeValue(value.c_str());
-  this->SetCodeMeaning(meaning.c_str());
 }
 
 //----------------------------------------------------------------------------
 void vtkCodedEntry::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
-  os << indent << "CodingSchemeDesignator: " << (this->CodingSchemeDesignator?this->CodingSchemeDesignator:"(none)") << "\n";
   os << indent << "CodeValue: " << (this->CodeValue?this->CodeValue:"(none)") << "\n";
-  os << indent << "CodeMeaning: " << (this->CodeMeaning?this->CodeMeaning:"(none)") << "\n";
+  os << indent << "CodingSchemeDesignator: " << (this->CodingSchemeDesignator ? this->CodingSchemeDesignator : "(none)") << "\n";
+  os << indent << "CodeMeaning: " << (this->CodeMeaning ? this->CodeMeaning : "(none)") << "\n";
 }
 
 //----------------------------------------------------------------------------
@@ -64,17 +55,26 @@ void vtkCodedEntry::Copy(vtkCodedEntry* aEntry)
     {
     return;
     }
-  this->SetCodingSchemeDesignator(aEntry->GetCodingSchemeDesignator());
   this->SetCodeValue(aEntry->GetCodeValue());
+  this->SetCodingSchemeDesignator(aEntry->GetCodingSchemeDesignator());
   this->SetCodeMeaning(aEntry->GetCodeMeaning());
+}
+
+//----------------------------------------------------------------------------
+void vtkCodedEntry::SetValueSchemeMeaning(const std::string& value,
+  const std::string& scheme, const std::string& meaning)
+{
+  this->SetCodeValue(value.c_str());
+  this->SetCodingSchemeDesignator(scheme.c_str());
+  this->SetCodeMeaning(meaning.c_str());
 }
 
 //----------------------------------------------------------------------------
 std::string vtkCodedEntry::GetAsPrintableString()
 {
   std::string printable = std::string("(")
-    + (this->CodingSchemeDesignator ? this->CodingSchemeDesignator : "(none)") + ", "
-    + (this->CodeValue ? this->CodeValue : "(none)") + ", \""
+    + (this->CodeValue ? this->CodeValue : "(none)") + ", "
+    + (this->CodingSchemeDesignator ? this->CodingSchemeDesignator : "(none)") + ", \""
     + (this->CodeMeaning ? this->CodeMeaning : "") + "\")";
   return printable;
 }
@@ -83,11 +83,6 @@ std::string vtkCodedEntry::GetAsPrintableString()
 std::string vtkCodedEntry::GetAsString()
 {
   std::string str;
-  if (this->CodingSchemeDesignator)
-    {
-    str += "CodingSchemeDesignator:";
-    str += this->CodingSchemeDesignator;
-    }
   if (this->CodeValue)
     {
     if (!str.empty())
@@ -96,6 +91,11 @@ std::string vtkCodedEntry::GetAsString()
       }
     str += "CodeValue:";
     str += this->CodeValue;
+    }
+  if (this->CodingSchemeDesignator)
+    {
+    str += "CodingSchemeDesignator:";
+    str += this->CodingSchemeDesignator;
     }
   if (this->CodeMeaning)
     {
@@ -121,13 +121,13 @@ bool vtkCodedEntry::SetFromString(const std::string& content)
     int colonIndex = attribute.find(':');
     std::string name = attribute.substr(0, colonIndex);
     std::string value = attribute.substr(colonIndex + 1);
-    if (name == "CodingSchemeDesignator")
-      {
-      this->SetCodingSchemeDesignator(value.c_str());
-      }
-    else if (name == "CodeValue")
+    if (name == "CodeValue")
       {
       this->SetCodeValue(value.c_str());
+      }
+    else if (name == "CodingSchemeDesignator")
+      {
+      this->SetCodingSchemeDesignator(value.c_str());
       }
     else if (name == "CodeMeaning")
       {
@@ -139,14 +139,14 @@ bool vtkCodedEntry::SetFromString(const std::string& content)
       success = false;
       }
     }
-  if (this->GetCodingSchemeDesignator() == NULL)
-    {
-    vtkWarningMacro("Parsing coded entry string failed: CodingSchemeDesignator is not specified in " + content);
-    success = false;
-    }
   if (this->GetCodeValue() == NULL)
     {
     vtkWarningMacro("Parsing coded entry string failed: CodeValue is not specified in " + content);
+    success = false;
+    }
+  if (this->GetCodingSchemeDesignator() == NULL)
+    {
+    vtkWarningMacro("Parsing coded entry string failed: CodingSchemeDesignator is not specified in " + content);
     success = false;
     }
   // CodeMeaning is optional

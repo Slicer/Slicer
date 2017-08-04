@@ -34,11 +34,14 @@ public:
   /// Reset state of object
   virtual void Initialize();
 
-  /// Convenience function for setting coding scheme, code value, and code meaning with a single method call
-  virtual void SetSchemeValueMeaning(const std::string& scheme, const std::string& value, const std::string& meaning);
-
   /// Copy one type into another
-  virtual void Copy(vtkCodedEntry* aType);
+  virtual void Copy(vtkCodedEntry* aEntry);
+
+  ///
+  /// Code Value (DICOM tag (0008,0100)) is an identifier that is unambiguous within
+  /// the Coding Scheme denoted by Coding Scheme Designator and Coding Scheme Version.
+  vtkGetStringMacro(CodeValue);
+  vtkSetStringMacro(CodeValue);
 
   ///
   /// Coding Scheme Designator identifies the coding scheme
@@ -49,12 +52,6 @@ public:
   vtkSetStringMacro(CodingSchemeDesignator);
 
   ///
-  /// Code Value (DICOM tag (0008,0100)) is an identifier that is unambiguous within
-  /// the Coding Scheme denoted by Coding Scheme Designator and Coding Scheme Version.
-  vtkGetStringMacro(CodeValue);
-  vtkSetStringMacro(CodeValue);
-
-  ///
   /// Code Meaning is text that has meaning to a human and conveys
   /// the meaning of the term defined by the combination of Code Value and Coding Scheme Designator.
   /// Though such a meaning can be "looked up" in the dictionary for the coding scheme, it is encoded
@@ -62,19 +59,22 @@ public:
   vtkGetStringMacro(CodeMeaning);
   vtkSetStringMacro(CodeMeaning);
 
+  /// Convenience function for setting code value, coding scheme, and code meaning with a single method call
+  virtual void SetValueSchemeMeaning(const std::string& value, const std::string& scheme, const std::string& meaning);
+
   ///
   /// Get content of the object as a single human-readable string.
-  /// Example: (UCUM, [hnsf'U], Hounsfield unit)
+  /// Example: ([hnsf'U], UCUM, "Hounsfield unit")
   std::string GetAsPrintableString();
 
   ///
   /// Get content of the object as a single machine-readable string.
-  /// Example: CodingSchemeDesignator:UCUM|CodeValue:[hnsf'U]|CodeMeaning:Hounsfield unit
+  /// Example: CodeValue:[hnsf'U]|CodingSchemeDesignator:UCUM|CodeMeaning:Hounsfield unit
   std::string GetAsString();
 
   ///
   /// Set content of the object from a single machine-readable string.
-  /// Example input: CodingSchemeDesignator:UCUM|CodeValue:[hnsf'U]|CodeMeaning:Hounsfield unit
+  /// Example input: CodeValue:[hnsf'U]|CodingSchemeDesignator:UCUM|CodeMeaning:Hounsfield unit
   /// \return true on success
   bool SetFromString(const std::string& content);
 
@@ -85,8 +85,8 @@ protected:
   void operator=(const vtkCodedEntry&);
 
 protected:
-  char* CodingSchemeDesignator;
   char* CodeValue;
+  char* CodingSchemeDesignator;
   char* CodeMeaning;
 };
 

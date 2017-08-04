@@ -300,14 +300,14 @@ class DICOMPlugin(object):
     # http://dicom.nema.org/medical/dicom/current/output/chtml/part16/chapter_D.html
     if classUID in MRname2UID.values():
       quantity = slicer.vtkCodedEntry()
-      quantity.SetSchemeValueMeaning("DCM", "110852", "MR signal intensity")
+      quantity.SetValueSchemeMeaning("110852", "DCM", "MR signal intensity")
       units = slicer.vtkCodedEntry()
-      units.SetSchemeValueMeaning("UCUM", "1", "no units")
+      units.SetValueSchemeMeaning("1", "UCUM", "no units")
 
     if classUID in CTname2UID.values():
       quantity = slicer.vtkCodedEntry()
-      quantity.SetSchemeValueMeaning("DCM", "112031", "Attenuation Coefficient")
+      quantity.SetValueSchemeMeaning("112031", "DCM", "Attenuation Coefficient")
       units = slicer.vtkCodedEntry()
-      units.SetSchemeValueMeaning("UCUM", "[hnsf'U]", "Hounsfield unit")
+      units.SetValueSchemeMeaning("[hnsf'U]", "UCUM", "Hounsfield unit")
 
     return (quantity, units)
