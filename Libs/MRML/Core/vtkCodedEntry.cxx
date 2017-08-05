@@ -85,15 +85,15 @@ std::string vtkCodedEntry::GetAsString()
   std::string str;
   if (this->CodeValue)
     {
-    if (!str.empty())
-      {
-      str += "|";
-      }
     str += "CodeValue:";
     str += this->CodeValue;
     }
   if (this->CodingSchemeDesignator)
     {
+    if (!str.empty())
+      {
+      str += "|";
+      }
     str += "CodingSchemeDesignator:";
     str += this->CodingSchemeDesignator;
     }

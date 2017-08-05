@@ -100,6 +100,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLVolumeNodeEventsTest.cxx
   vtkMRMLVolumeNodeTest1.cxx
   vtkMRMLdGEMRICProceduralColorNodeTest1.cxx
+  vtkCodedEntryTest1.cxx
   vtkObserverManagerTest1.cxx
   vtkOrientedBSplineTransformTest1.cxx
   vtkOrientedGridTransformTest1.cxx
