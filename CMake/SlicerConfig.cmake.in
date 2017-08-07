@@ -340,6 +340,12 @@ set(Slicer_INSTALL_THIRDPARTY_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_E
 # The Slicer install prefix (*not* defined in the install tree)
 set(Slicer_INSTALL_PREFIX  "@CMAKE_INSTALL_PREFIX@")
 
+
+# --------------------------------------------------------------------------
+# Testing
+# --------------------------------------------------------------------------
+include(CTestUseLaunchers)
+
 # --------------------------------------------------------------------------
 # External data
 # --------------------------------------------------------------------------
