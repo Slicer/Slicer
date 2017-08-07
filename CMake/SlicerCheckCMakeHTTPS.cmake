@@ -31,3 +31,5 @@ function(slicer_check_cmake_https)
 
   message(STATUS "${msg} - ok")
 endfunction()
+
+slicer_check_cmake_https()

@@ -23,7 +23,6 @@
 # CMake https support
 #-----------------------------------------------------------------------------
 include(SlicerCheckCMakeHTTPS)
-slicer_check_cmake_https()
 
 #-----------------------------------------------------------------------------
 # Git protocol option
