@@ -257,8 +257,6 @@ class DICOMPlugin(object):
                               slicer.dicomDatabase.fileValue(firstFile, tags['patientComments']) )
         # Set item name
         patientItemName = patientName
-        displayPatientID = slicer.app.settings().value('SubjectHierarchy/DisplayPatientIDInSubjectHierarchyItemName')
-        displayPatientBirthDate = slicer.app.settings().value('SubjectHierarchy/DisplayPatientBirthDateInSubjectHierarchyItemName')
         if pluginHandlerSingleton.displayPatientIDInSubjectHierarchyItemName:
           patientItemName += ' (' + str(patientId) + ')'
         if pluginHandlerSingleton.displayPatientBirthDateInSubjectHierarchyItemName and patientBirthDate != '':
@@ -286,8 +284,6 @@ class DICOMPlugin(object):
                               slicer.dicomDatabase.fileValue(firstFile, tags['studyTime']) )
         # Set item name
         studyItemName = studyDescription
-        displayStudyID = slicer.app.settings().value('SubjectHierarchy/DisplayStudyIDInSubjectHierarchyItemName')
-        displayStudyDate = slicer.app.settings().value('SubjectHierarchy/DisplayStudyDateInSubjectHierarchyItemName')
         if pluginHandlerSingleton.displayStudyIDInSubjectHierarchyItemName:
           studyItemName += ' (' + str(studyId) + ')'
         if pluginHandlerSingleton.displayStudyDateInSubjectHierarchyItemName and studyDate != '':
