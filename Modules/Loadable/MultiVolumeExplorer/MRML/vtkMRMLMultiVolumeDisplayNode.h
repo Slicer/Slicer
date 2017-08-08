@@ -40,32 +40,32 @@ class VTK_SLICER_MULTIVOLUMEEXPLORER_MODULE_MRML_EXPORT vtkMRMLMultiVolumeDispla
   public:
   static vtkMRMLMultiVolumeDisplayNode *New();
   vtkTypeMacro(vtkMRMLMultiVolumeDisplayNode,vtkMRMLScalarVolumeDisplayNode);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
-  virtual vtkMRMLNode* CreateNodeInstance();
+  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
 
   /// 
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts);
+  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
 
   /// 
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent);
+  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
 
   /// 
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node);
+  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
 
   /// 
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "MultiVolumeDisplay";};
+  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "MultiVolumeDisplay";};
 
   /// 
   /// Get the pipeline input
 #if (VTK_MAJOR_VERSION <= 5)
   virtual vtkImageData* GetInputImageData();
 #else
-  virtual vtkAlgorithmOutput* GetInputImageDataConnection();
+  virtual vtkAlgorithmOutput* GetInputImageDataConnection() VTK_OVERRIDE;
 #endif
   /// 
   /// Get the pipeline output
@@ -74,9 +74,9 @@ class VTK_SLICER_MULTIVOLUMEEXPLORER_MODULE_MRML_EXPORT vtkMRMLMultiVolumeDispla
   virtual vtkImageData* GetOutputImageData();
   //ETX
 #else
-  virtual vtkAlgorithmOutput* GetOutputImageDataConnection();
+  virtual vtkAlgorithmOutput* GetOutputImageDataConnection() VTK_OVERRIDE;
 #endif
-  virtual void UpdateImageDataPipeline();
+  virtual void UpdateImageDataPipeline() VTK_OVERRIDE;
 
   //--------------------------------------------------------------------------
   /// Display Information
@@ -98,7 +98,7 @@ protected:
 #if (VTK_MAJOR_VERSION <= 5)
   virtual void SetInputToImageDataPipeline(vtkImageData *imageData);
 #else
-  virtual void SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection);
+  virtual void SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection) VTK_OVERRIDE;
 #endif
 
   virtual vtkImageData* GetScalarImageData();
