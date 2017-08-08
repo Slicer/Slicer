@@ -244,6 +244,7 @@ qMRMLSegmentEditorWidgetPrivate::qMRMLSegmentEditorWidgetPrivate(qMRMLSegmentEdi
   , Locked(false)
   , ActiveEffect(NULL)
   , LastActiveEffect(NULL)
+  , ViewsObserved(false)
   , AlignedMasterVolume(NULL)
   , ModifierLabelmap(NULL)
   , SelectedSegmentLabelmap(NULL)
@@ -254,7 +255,6 @@ qMRMLSegmentEditorWidgetPrivate::qMRMLSegmentEditorWidgetPrivate(qMRMLSegmentEdi
   , AlignedMasterVolumeUpdateSegmentationNodeTransform(NULL)
   , MaskModeComboBoxFixedItemsCount(0)
   , EffectButtonStyle(Qt::ToolButtonTextUnderIcon)
-  , ViewsObserved(false)
 {
   this->AlignedMasterVolume = vtkOrientedImageData::New();
   this->ModifierLabelmap = vtkOrientedImageData::New();
