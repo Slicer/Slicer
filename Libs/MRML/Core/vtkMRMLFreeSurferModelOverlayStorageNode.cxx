@@ -497,7 +497,7 @@ bool vtkMRMLFreeSurferModelOverlayStorageNode
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLFreeSurferModelOverlayStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLFreeSurferModelOverlayStorageNode::WriteDataInternal(vtkMRMLNode * vtkNotUsed(refNode))
 {
   vtkErrorMacro("Model Writing not supported for FreeSurfer models. For RemoteIO, please see the CopyData method as a possible workaround.");
   return 0;
