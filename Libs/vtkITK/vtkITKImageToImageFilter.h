@@ -164,6 +164,7 @@ public:
 
   ///  Override vtkSource's Update so that we can access
   /// this class's GetOutput(). vtkSource's GetOutput is not virtual.
+  using vtkAlgorithm::Update;
   virtual void Update()
     {
       this->vtkCast->Update();
