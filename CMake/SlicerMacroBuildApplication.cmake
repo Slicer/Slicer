@@ -362,7 +362,7 @@ macro(slicerMacroBuildApplication)
 
   if(QT_MAC_USE_COCOA)
     get_filename_component(qt_menu_nib
-      "@QT_QTGUI_LIBRARY_RELEASE@/Resources/qt_menu.nib"
+      "${QT_QTGUI_LIBRARY_RELEASE}/Resources/qt_menu.nib"
       REALPATH)
 
     set(qt_menu_nib_sources
