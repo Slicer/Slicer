@@ -227,7 +227,7 @@ bool list_archive(const char* archiveFileName, std::vector<std::string>& files)
 
   if (archive_read_open_filename(a, archiveFileName, 10240) != ARCHIVE_OK)
     {
-    vtkArchiveTools::Error("Problem with archive_read_open_file(): ",
+    vtkArchiveTools::Error("Problem with archive_read_open_filename(): ",
                            archive_error_string(a));
     return false;
     }
@@ -257,13 +257,13 @@ bool extract_tar(const char* tarFileName, bool verbose, bool extract, std::vecto
 {
   struct archive* a = archive_read_new();
   struct archive *ext = archive_write_disk_new();
-  archive_read_support_compression_all(a);
+  archive_read_support_filter_all(a);
   archive_read_support_format_all(a);
   struct archive_entry *entry;
-  int r = archive_read_open_file(a, tarFileName, 10240);
+  int r = archive_read_open_filename(a, tarFileName, 10240);
   if(r)
     {
-    vtkArchiveTools::Error("Problem with archive_read_open_file(): ",
+    vtkArchiveTools::Error("Problem with archive_read_open_filename(): ",
                          archive_error_string(a));
     return false;
     }
@@ -339,7 +339,7 @@ bool extract_tar(const char* tarFileName, bool verbose, bool extract, std::vecto
       }
     }
   archive_read_close(a);
-  archive_read_finish(a);
+  archive_read_free(a);
   return true;
 }
 
