@@ -661,6 +661,8 @@ def array(pattern = "", index = 0):
     return arrayFromVolume(node)
   elif isinstance(node, slicer.vtkMRMLModelNode):
     return arrayFromModelPoints(node)
+  elif isinstance(node, slicer.vtkMRMLGridTransformNode):
+    return arrayFromGridTransform(node)
 
   # TODO: accessors for other node types: polydata (verts, polys...), colors
   return None
@@ -699,6 +701,20 @@ def arrayFromModelPoints(modelNode):
   import vtk.util.numpy_support
   pointData = modelNode.GetPolyData().GetPoints().GetData()
   narray = vtk.util.numpy_support.vtk_to_numpy(pointData)
+  return narray
+
+def arrayFromGridTransform(gridTransformNode):
+  """Return voxel array from transform node as numpy array.
+  Vector values are not copied. Values in the transform node can be modified
+  by changing values in the numpy array.
+  After all modifications has been completed, call gridTransformNode.Modified().
+  """
+  transformGrid = gridTransformNode.GetTransformFromParent()
+  displacementGrid = transformGrid.GetDisplacementGrid()
+  nshape = tuple(reversed(displacementGrid.GetDimensions()))
+  import vtk.util.numpy_support
+  nshape = nshape + (3,)
+  narray = vtk.util.numpy_support.vtk_to_numpy(displacementGrid.GetPointData().GetScalars()).reshape(nshape)
   return narray
 
 def updateVolumeFromArray(volumeNode, narray):
