@@ -45,14 +45,6 @@ if(Slicer_PLATFORM_CHECK)
     message(FATAL_ERROR "Only Mac OSX >= 10.5 is supported !")
   endif()
 
-  # CMake 2.8.11 is required to build Slicer on Mountain Lion
-  # See http://www.na-mic.org/Bug/view.php?id=2957
-  if(DARWIN_MAJOR_VERSION GREATER "11")
-    if(${CMAKE_VERSION} VERSION_LESS "2.8.11")
-      message(FATAL_ERROR "CMake >= 2.8.11 is required on Mountain Lion !")
-    endif()
-  endif()
-
   if(MSVC)
     # See http://www.cmake.org/cmake/help/v2.8.10/cmake.html#variable:MSVC_VERSION
     # and https://en.wikipedia.org/wiki/Microsoft_Visual_Studio#Version_history
