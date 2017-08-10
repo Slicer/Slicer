@@ -19,6 +19,7 @@ set(expected_defined_vars
   BUILD_TESTING
   CTEST_BUILD_CONFIGURATION
   CTEST_CMAKE_GENERATOR
+  CTEST_DROP_SITE
   EXTENSION_BUILD_OPTIONS_STRING
   EXTENSION_BUILD_SUBDIRECTORY
   EXTENSION_ENABLED
@@ -39,7 +40,6 @@ set(expected_defined_vars
   )
 if(RUN_CTEST_UPLOAD)
   list(APPEND expected_defined_vars
-    CTEST_DROP_SITE
     EXTENSION_ARCHITECTURE
     EXTENSION_BITNESS
     EXTENSION_OPERATING_SYSTEM
@@ -231,13 +231,19 @@ if(build_errors GREATER "0")
 else()
   message("Packaging and uploading extension ${EXTENSION_NAME} to midas ...")
   set(package_list)
+  set(package_target "package")
+  if(RUN_CTEST_UPLOAD)
+    set(package_target "packageupload")
+  endif()
   if(RUN_CTEST_PACKAGES)
     ctest_build(
-      TARGET packageupload
+      TARGET ${package_target}
       BUILD ${EXTENSION_SUPERBUILD_BINARY_DIR}/${EXTENSION_BUILD_SUBDIRECTORY}
       APPEND
       )
-    ctest_submit(PARTS Build)
+    if(RUN_CTEST_SUBMIT)
+      ctest_submit(PARTS Build)
+    endif()
   endif()
 
   if(RUN_CTEST_UPLOAD)

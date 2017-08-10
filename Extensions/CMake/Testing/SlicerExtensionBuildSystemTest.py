@@ -8,6 +8,7 @@ import re
 import string
 import subprocess
 import sys
+import textwrap
 import threading
 
 import BaseHTTPServer
@@ -332,6 +333,18 @@ class SlicerExtensionBuildSystemTest(unittest.TestCase):
           ]]
         self._remove_matching_lines(extension_dir + '/CMakeLists.txt', patterns)
 
+    # Add extension description file with invalid repository
+    description_file = extension_description_dir + '/TestExtInvalidSCM.s4ext'
+    print("Writing %s" % description_file)
+    with open(description_file, 'w') as description_file:
+      description_file.write(textwrap.dedent(
+        """
+        scm git
+        scmurl git://github.com/Slicer/ExtensionThatDoNotExists
+        scmrevision abcdefg
+        """))
+
+
   def test_index_build_with_upload(self):
     self._test_index_build('build_with_upload', True)
 
@@ -503,9 +516,9 @@ include({slicer_source_dir}/Extensions/CMake/SlicerExtensionsDashboardDriverScri
       cmd.extend(['-T', config.CMAKE_GENERATOR_TOOLSET])
 
     cmd.append('-DSlicer_UPLOAD_EXTENSIONS:BOOL=%s' % ('1' if test_upload else '0'))
+    cmd.append('-DCTEST_DROP_SITE:STRING=%s' % self.ctest_drop_site)
 
     if test_upload:
-      cmd.append('-DCTEST_DROP_SITE:STRING=%s' % self.ctest_drop_site)
       cmd.append('-DMIDAS_PACKAGE_URL:STRING=%s' % self.midas_package_url)
 
     cmd.append(config.Slicer_SOURCE_DIR + '/Extensions/CMake')
@@ -597,41 +610,55 @@ include({slicer_source_dir}/Extensions/CMake/SlicerExtensionsDashboardDriverScri
 
     requests = iter(_requests)
 
+    # Check number of requests
+    expected_request_count = 0
+
+    # Top-level configure/build/notes
+    if with_ctest:
+      expected_request_count += 3
+
+    # Configure/Build/Test/Packaging for TestExtA, TestExtB and TestExtC
+    expected_request_count += 4 * 3
+
+    # Configure for TestExtInvalidSCM
+    expected_request_count += 1
+
+    # Upload to Midas and CDash for TestExtA, TestExtB and TestExtC
+    if test_upload:
+      expected_request_count += 3 * 3
+
+    self.assertEqual(len(_requests), expected_request_count)
+
     # Check CDash and Midas queries
-    if not test_upload:
-      self.assertEqual(len(_requests), 3 if with_ctest else 0)
+    if with_ctest:
+      # Upload top-level configure results to CDash
+      check_cdash_request(parse_request(requests.next()), 'PUT', r'.+Configure\.xml')
 
-      if with_ctest:
-        # Upload top-level configure results to CDash
-        check_cdash_request(parse_request(requests.next()), 'PUT', r'.+Configure\.xml')
-        # Upload top-level build results and notes to CDash
-        check_cdash_request(parse_request(requests.next()), 'PUT', r'.+Build\.xml')
-        check_cdash_request(parse_request(requests.next()), 'PUT', r'.+Notes\.xml')
+    for extensionName in ['TestExtInvalidSCM', 'TestExtA', 'TestExtB', 'TestExtC']:
 
-    else:
-      self.assertEqual(len(_requests), 7 * 3 + (3 if with_ctest else 0))
+      # Upload configure/build/test results to CDash
+      check_cdash_request(parse_request(requests.next()), 'PUT', r'.+' + extensionName + r'.+Configure\.xml')
+      if extensionName == 'TestExtInvalidSCM':
+        continue
+      check_cdash_request(parse_request(requests.next()), 'PUT', r'.+' + extensionName + r'.+Build\.xml')
+      check_cdash_request(parse_request(requests.next()), 'PUT', r'.+' + extensionName + r'.+Test\.xml')
 
-      if with_ctest:
-        # Upload top-level configure results to CDash
-        check_cdash_request(parse_request(requests.next()), 'PUT', r'.+Configure\.xml')
-
-      for extensionName in ['TestExtA', 'TestExtB', 'TestExtC']:
-        # Upload configure/build/test results to CDash
-        check_cdash_request(parse_request(requests.next()), 'PUT', r'.+' + extensionName + r'.+Configure\.xml')
-        check_cdash_request(parse_request(requests.next()), 'PUT', r'.+' + extensionName + r'.+Build\.xml')
-        check_cdash_request(parse_request(requests.next()), 'PUT', r'.+' + extensionName + r'.+Test\.xml')
+      if test_upload:
         # Upload package to midas
         check_midas_request(parse_request(requests.next()), 'GET', 'midas.login')
         check_midas_request(parse_request(requests.next()), 'PUT', 'midas.slicerpackages.extension.upload', {'productname': extensionName})
-        # Upload packaging result to CDash
-        check_cdash_request(parse_request(requests.next()), 'PUT', r'.+' + extensionName + r'.+Build\.xml')
+
+      # Upload packaging result to CDash
+      check_cdash_request(parse_request(requests.next()), 'PUT', r'.+' + extensionName + r'.+Build\.xml')
+
+      if test_upload:
         # Upload url to CDash
         check_cdash_request(parse_request(requests.next()), 'PUT', r'.+' + extensionName + r'.+Upload\.xml')
 
-      if with_ctest:
-        # Upload top-level build results and notes to CDash
-        check_cdash_request(parse_request(requests.next()), 'PUT', r'.+Build\.xml')
-        check_cdash_request(parse_request(requests.next()), 'PUT', r'.+Notes\.xml')
+    if with_ctest:
+      # Upload top-level build results and notes to CDash
+      check_cdash_request(parse_request(requests.next()), 'PUT', r'.+Build\.xml')
+      check_cdash_request(parse_request(requests.next()), 'PUT', r'.+Notes\.xml')
 
   def _check_midas_upload_query_parameters(self, test_upload, with_ctest=False):
     if not test_upload:
