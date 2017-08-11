@@ -80,8 +80,7 @@ class LoadModulesDialog(object):
       self.ui.addToSearchPaths.text = "Add selected modules to search paths"
 
     # If developer mode is already enabled then don't even show the option
-    settings = qt.QSettings()
-    developerModeAlreadyEnabled = slicer.util.settingsValue('Developer/DeveloperMode', False, lambda v: v.lower()=='true')
+    developerModeAlreadyEnabled = slicer.util.settingsValue('Developer/DeveloperMode', False, converter=slicer.util.toBool)
     if developerModeAlreadyEnabled:
       self.ui.enableDeveloperMode.visible = False
       self.ui.enableDeveloperMode.checked = False
