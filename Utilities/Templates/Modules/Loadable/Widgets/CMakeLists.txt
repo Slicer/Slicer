@@ -21,7 +21,7 @@ set(${KIT}_UI_SRCS
   )
 
 set(${KIT}_RESOURCES
-  ../Resources/UI/qSlicer${MODULE_NAME}FooBarWidget.ui
+  ../Resources/qSlicer${MODULE_NAME}Module.qrc
   )
 
 set(${KIT}_TARGET_LIBRARIES
