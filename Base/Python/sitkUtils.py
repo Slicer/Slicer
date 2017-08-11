@@ -69,11 +69,11 @@ def EnsureRegistration():
 # and will be removed in the future.
 #
 # Problem with the old methods:
-#  - Referring to nodes by ID is unreliable: several nodes may have the same node name;
+#  - Referring to nodes by name is unreliable: several nodes may have the same node name;
 #    users may change node name at any time; node names may be changed when added to the scene
 #    if a node name is already used, etc.
 #  - Old APIs are used. For example, adding of display nodes, showing volumes in certain views, adding nodes
-#    to the scene have simpler, more effective methods.
+#    to the scene now have simpler, more effective methods.
 #
 
 def CloneSlicerNode( NodeName, NewNodeNamePrefix ):
