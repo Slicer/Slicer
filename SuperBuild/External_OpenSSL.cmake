@@ -195,6 +195,9 @@ this version of visual studio [${MSVC_VERSION}]. You could either:
       # VS2013
       set(OpenSSL_1.0.1h_1800_URL http://packages.kitware.com/download/bitstream/8918/OpenSSL_1_0_1h-install-msvc1800-32.tar.gz)
       set(OpenSSL_1.0.1h_1800_MD5 f10ceb422ab37f2b0bd5e225c74fd1d4)
+      # VS2015
+      set(OpenSSL_1.0.1h_1900_URL https://packages.kitware.com/download/item/10334/OpenSSL_1_0_1h-install-msvc1900-32.tar.gz)
+      set(OpenSSL_1.0.1h_1900_MD5 e0e26ae6ac5693d266c804e738d7aa14)
 
       # OpenSSL 1.0.1l
       # VS2008
@@ -217,6 +220,9 @@ this version of visual studio [${MSVC_VERSION}]. You could either:
       # VS2013
       set(OpenSSL_1.0.1h_1800_URL http://packages.kitware.com/download/bitstream/8915/OpenSSL_1_0_1h-install-msvc1800-64.tar.gz)
       set(OpenSSL_1.0.1h_1800_MD5 7aefdd94babefbe603cca48ff86da768)
+      # VS2015
+      set(OpenSSL_1.0.1h_1900_URL https://packages.kitware.com/download/item/10331/OpenSSL_1_0_1h-install-msvc1900-64.tar.gz)
+      set(OpenSSL_1.0.1h_1900_MD5 f93d266def384926015550452573e824)
 
       # OpenSSL 1.0.1l
       # VS2008
