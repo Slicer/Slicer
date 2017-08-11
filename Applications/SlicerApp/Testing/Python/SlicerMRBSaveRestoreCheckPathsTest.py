@@ -1,6 +1,7 @@
 
 import os
 import unittest
+import ctk
 import vtk
 import qt
 import slicer
