@@ -76,7 +76,10 @@ class SampleDataSource:
     fixed = sampleDataLogic.downloadFromSource(dataSource)[0]
   """
 
-  def __init__(self,sampleName=None,uris=None,fileNames=None,nodeNames=None,customDownloader=None):
+  def __init__(self, sampleName=None, uris=None, fileNames=None, nodeNames=None,
+    customDownloader=None, thumbnailFileName=None,
+    loadFileType='VolumeFile', loadFileProperties={}):
+
     self.sampleName = sampleName
     if isinstance(uris, basestring):
       uris = [uris,]
@@ -86,6 +89,9 @@ class SampleDataSource:
     self.fileNames = fileNames
     self.nodeNames = nodeNames
     self.customDownloader = customDownloader
+    self.thumbnailFileName = thumbnailFileName
+    self.loadFileType = loadFileType
+    self.loadFileProperties = loadFileProperties
     if len(uris) != len(fileNames) or len(uris) != len(nodeNames):
       raise Exception("All fields of sample data source must have the same length")
 
@@ -137,14 +143,23 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
         b = qt.QToolButton()
         b.setText(name)
 
-        # Look for thumbnail image with the name of any node name with .png extension
-        for nodeName in source.nodeNames:
-          if not nodeName:
-            continue
-          thumbnailImage = os.path.join(iconPath, nodeName+'.png')
-          if os.path.exists(thumbnailImage):
-            b.setIcon(qt.QIcon(thumbnailImage))
-            break
+        # Set thumbnail
+        if source.thumbnailFileName:
+          # Thumbnail provided
+          thumbnailImage = source.thumbnailFileName
+        else:
+          # Look for thumbnail image with the name of any node name with .png extension
+          thumbnailImage = None
+          for nodeName in source.nodeNames:
+            if not nodeName:
+              continue
+            thumbnailImageAttempt = os.path.join(iconPath, nodeName+'.png')
+            if os.path.exists(thumbnailImageAttempt):
+              thumbnailImage = thumbnailImageAttempt
+              break
+        if thumbnailImage and os.path.exists(thumbnailImage):
+          b.setIcon(qt.QIcon(thumbnailImage))
+
         b.setIconSize(iconSize)
         b.setToolButtonStyle(qt.Qt.ToolButtonTextUnderIcon)
         qSize = qt.QSizePolicy()
@@ -195,6 +210,42 @@ class SampleDataLogic:
   list that is assigned to a category following the model
   used in registerBuiltInSampleDataSources below.
   """
+
+  @staticmethod
+  def registerCustomSampleDataSource(category='Custom',
+    sampleName=None, uris=None, fileNames=None, nodeNames=None,
+    customDownloader=None, thumbnailFileName=None,
+    loadFileType='VolumeFile', loadFileProperties={}):
+    """Adds custom data sets to SampleData.
+    :param category: Section title of data set in SampleData module GUI.
+    :param sampleName: Displayed name of data set in SampleData module GUI.
+    :param thumbnailFileName: Displayed thumbnail of data set in SampleData module GUI,
+    :param uris: Download URL(s).
+    :param fileNames: File name(s) that will be loaded.
+    :param nodeNames: Node name in the scene.
+    :param customDownloader: Custom function for downloading.
+    :param loadFileType: file format name ('VolumeFile' by default).
+    :param loadFileProperties: custom properties passed to the IO plugin.
+    """
+
+    try:
+      slicer.modules.sampleDataSources
+    except AttributeError:
+      slicer.modules.sampleDataSources = {}
+
+    if not slicer.modules.sampleDataSources.has_key(category):
+      slicer.modules.sampleDataSources[category] = []
+
+    slicer.modules.sampleDataSources[category].append(SampleDataSource(
+      sampleName=sampleName,
+      uris=uris,
+      fileNames=fileNames,
+      nodeNames=nodeNames,
+      thumbnailFileName=thumbnailFileName,
+      loadFileType=loadFileType,
+      loadFileProperties=loadFileProperties
+      ))
+
   def __init__(self, logMessage=None):
     if logMessage:
       self.logMessage = logMessage
@@ -253,7 +304,7 @@ class SampleDataLogic:
     for uri,fileName,nodeName in zip(source.uris,source.fileNames,source.nodeNames):
       filePath = self.downloadFileIntoCache(uri, fileName)
       if nodeName:
-        nodes.append(self.loadVolume(filePath, nodeName))
+        nodes.append(self.loadNode(filePath, nodeName, source.loadFileType, source.loadFileProperties))
     return nodes
 
   def sourceForSampleName(self,sampleName):
@@ -350,16 +401,30 @@ class SampleDataLogic:
       self.logMessage('<b>File already exists in cache - reusing it.</b>')
     return filePath
 
-  def loadVolume(self, uri, name):
+  def loadNode(self, uri, name, fileType = 'VolumeFile', fileProperties = {}):
     self.logMessage('<b>Requesting load</b> <i>%s</i> from %s...\n' % (name, uri))
-    success, volumeNode = slicer.util.loadVolume(uri, properties = {'name' : name}, returnNode=True)
-    if success:
-      self.logMessage('<b>Load finished</b>\n')
-      # since it was read from a temp directory remove the storage node
-      volumeStorageNode = volumeNode.GetStorageNode()
-      if volumeStorageNode is not None:
-        slicer.mrmlScene.RemoveNode(volumeStorageNode)
-      volumeNode.SetAndObserveStorageNodeID(None)
-    else:
+
+    fileProperties['fileName'] = uri
+    fileProperties['name'] = name
+    firstLoadedNode = None
+    loadedNodes = vtk.vtkCollection()
+    success = slicer.app.coreIOManager().loadNodes(fileType, fileProperties, loadedNodes)
+
+    if not success or loadedNodes.GetNumberOfItems()<1:
       self.logMessage('<b><font color="red">\tLoad failed!</font></b>\n')
-    return volumeNode
+      return None
+
+    self.logMessage('<b>Load finished</b>\n')
+
+    # since nodes were read from a temp directory remove the storage nodes
+    for i in range(loadedNodes.GetNumberOfItems()):
+      loadedNode = loadedNodes.GetItemAsObject(i)
+      if not loadedNode.IsA("vtkMRMLStorableNode"):
+        continue
+      storageNode = loadedNode.GetStorageNode()
+      if not storageNode:
+        continue
+      slicer.mrmlScene.RemoveNode(storageNode)
+      loadedNode.SetAndObserveStorageNodeID(None)
+
+    return loadedNodes.GetItemAsObject(0)
