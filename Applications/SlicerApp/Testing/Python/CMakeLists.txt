@@ -218,6 +218,14 @@ slicer_add_python_test(
   TESTNAME_PREFIX mainwindow_
   )
 
+if(Slicer_USE_SimpleITK)
+  slicer_add_python_unittest(
+    SCRIPT ${Slicer_SOURCE_DIR}/Base/Python/tests/test_sitkUtils.py
+    SLICER_ARGS --no-main-window
+    TESTNAME_PREFIX nomainwindow_
+    )
+endif()
+
 slicer_add_python_unittest(
   SCRIPT ${Slicer_SOURCE_DIR}/Base/Python/tests/test_saferef.py
   SLICER_ARGS --no-main-window --disable-modules

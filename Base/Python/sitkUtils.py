@@ -2,23 +2,90 @@ import slicer
 import ctk
 import vtk
 import SimpleITK as sitk
+import warnings
 
-## This assumes that you have already loaded the 'MRHead1' data from the informatics module.
-def GetSlicerITKReadWriteAddress( NodeName ):
+__sitk__MRMLIDImageIO_Registered__ = False
+
+def PushVolumeToSlicer(sitkimage, targetNode=None, name=None, className='vtkMRMLScalarVolumeNode'):
+    """ Given a SimpleITK image, push it back to slicer for viewing
+
+    :param targetNode: Target node that will store the image. If None then a new node will be created.
+    :param className: if a new target node is created then this parameter determines node class. For label volumes, set it to vtkMRMLLabelVolumeNode.
+    :param name: if a new target node is created then this parameter will be used as basis of node name.
+      If an existing node is specified as targetNode then this value will not be used.
+    """
+
+    EnsureRegistration()
+
+    # Create new node if needed
+    if not targetNode:
+        targetNode = slicer.mrmlScene.AddNewNodeByClass(className, slicer.mrmlScene.GetUniqueNameByString(name))
+        targetNode.CreateDefaultDisplayNodes()
+
+    myNodeFullITKAddress = GetSlicerITKReadWriteAddress(targetNode)
+    sitk.WriteImage(sitkimage, myNodeFullITKAddress)
+
+    return targetNode
+
+
+def PullVolumeFromSlicer(nodeObjectOrName):
+    """ Given a slicer MRML image node or name, return the SimpleITK
+        image object.
+    """
+    EnsureRegistration()
+    myNodeFullITKAddress = GetSlicerITKReadWriteAddress(nodeObjectOrName)
+    sitkimage = sitk.ReadImage(myNodeFullITKAddress)
+    return sitkimage
+
+def GetSlicerITKReadWriteAddress(nodeObjectOrName):
     """ This function will return the ITK FileIO formatted text address
             so that the image can be read directly from the MRML scene
     """
-    #nodesList = slicer.util.getNodes('*vtkMRMLScalarVolumeNode*')
-    myNode = slicer.util.getNode(NodeName)
+    myNode = nodeObjectOrName if isinstance(nodeObjectOrName, slicer.vtkMRMLNode) else slicer.util.getNode(nodeObjectOrName)
     myNodeSceneAddress = myNode.GetScene().GetAddressAsString("").replace('Addr=','')
     myNodeSceneID = myNode.GetID()
     myNodeFullITKAddress = 'slicer:' + myNodeSceneAddress + '#' + myNodeSceneID
     return myNodeFullITKAddress
 
+def EnsureRegistration():
+    """This is a complete hack, but attempting to read
+    a dummy file with AddArchetypeVolume
+    has a side effect of registering
+    the MRMLIDImageIO file reader.
+    """
+    # TODO: check if this ensure registration mechanism is still needed
+
+    global __sitk__MRMLIDImageIO_Registered__
+    if __sitk__MRMLIDImageIO_Registered__:
+      return
+    vl = slicer.modules.volumes.logic()
+    volumeNode = vl.AddArchetypeVolume('_DUMMY_DOES_NOT_EXIST__','invalidRead')
+    __sitk__MRMLIDImageIO_Registered__ = True
+
+###################################################################
+# Following methods in this module are all deprecated because
+# they are replaced by more robust and simpler methods.
+# They are kept only for temporarily for backward compatibility
+# and will be removed in the future.
+#
+# Problem with the old methods:
+#  - Referring to nodes by ID is unreliable: several nodes may have the same node name;
+#    users may change node name at any time; node names may be changed when added to the scene
+#    if a node name is already used, etc.
+#  - Old APIs are used. For example, adding of display nodes, showing volumes in certain views, adding nodes
+#    to the scene have simpler, more effective methods.
+#
+
 def CloneSlicerNode( NodeName, NewNodeNamePrefix ):
     """ Create a new node in slicer by cloning
             from an exising node.
+        The method is deprecated and will be removed in the future.
     """
+
+    warnings.warn("'CloneSlicerNode' method is deprecated and will be removed in the future."+
+        " Use slicer.modules.volumes.logic().CloneVolume(slicer.mrmlScene, sourceNode, newNodeNamePrefix) instead.",
+        FutureWarning)
+
     n = slicer.util.getNode(NodeName)
     vl = slicer.modules.volumes.logic()
     newvol = vl.CloneVolume(slicer.mrmlScene,n,NewNodeNamePrefix)
@@ -28,14 +95,25 @@ __sitk__VOLUME_TYPES__ = [ 'Scalar', 'LabelMap' ]
 
 def checkVolumeNodeType(nodeType):
     """ Raise an error if the node type is not a recognized volume node
+        The method is deprecated and will be removed in the future.
     """
+
+    warnings.warn("'checkVolumeNodeType' method is deprecated and will be removed in the future.",
+        FutureWarning)
+
+    global __sitk__VOLUME_TYPES__
     volume_type = nodeType.rsplit('VolumeNode')[0].split('vtkMRML')[1]
     if volume_type not in __sitk__VOLUME_TYPES__:
         raise ValueError('Volume type %s is not valid' % volume_type )
 
 def CreateNewVolumeNode(nodeName, nodeType='vtkMRMLScalarVolumeNode', overwrite=False):
     """ Create a new node from scratch
+        The method is deprecated and will be removed in the future.
     """
+
+    warnings.warn("'CreateNewVolumeNode' method is deprecated and will be removed in the future.",
+        FutureWarning)
+
     scene = slicer.mrmlScene
     checkVolumeNodeType(nodeType)
     newNode = scene.CreateNodeByClass(nodeType)
@@ -45,7 +123,13 @@ def CreateNewVolumeNode(nodeName, nodeType='vtkMRMLScalarVolumeNode', overwrite=
 
 def CreateNewDisplayNode(nodeName='default'):
     """ Create a new node from scratch
+        The method is deprecated and will be removed in the future.
     """
+
+    warnings.warn("'CreateNewVolumeNode' method is deprecated and will be removed in the future."+
+        "Use volumeNode.CreateDefaultDisplayNodes() method instead.",
+        FutureWarning)
+
     scene = slicer.mrmlScene
     nodeType='vtkMRMLScalarVolumeDisplayNode'
     newNode = scene.CreateNodeByClass(nodeType)
@@ -57,7 +141,12 @@ def CreateNewDisplayNode(nodeName='default'):
 
 def removeOldMRMLNode(node):
     """ Overwrite a MRML node with the same name and class as the given node
+        The method is deprecated and will be removed in the future.
     """
+
+    warnings.warn("'removeOldMRMLNode' method is deprecated and will be removed in the future.",
+        FutureWarning)
+
     scene = slicer.mrmlScene
     collection = scene.GetNodesByClassByName(node.GetClassName(), node.GetName())
     collection.UnRegister(scene)
@@ -74,6 +163,12 @@ def removeOldMRMLNode(node):
     return 0
 
 def AddNodeToMRMLScene(newNode, nodeName='default', overwrite=False):
+    """ The method is deprecated and will be removed in the future.
+    """
+
+    warnings.warn("'AddNodeToMRMLScene' method is deprecated and will be removed in the future.",
+        FutureWarning)
+
     scene = slicer.mrmlScene
     if not overwrite:
         nodeName = scene.GetUniqueNameByString(nodeName)
@@ -82,26 +177,24 @@ def AddNodeToMRMLScene(newNode, nodeName='default', overwrite=False):
         removeOldMRMLNode(newNode)
     scene.AddNode(newNode)
 
-def EnsureRegistration():
-    """This is a complete hack, but attempting to read
-    a dummy file with AddArchetypeVolume
-    has a side effect of registering
-    the MRMLImageIO file reader.
-    """
-    vl = slicer.modules.volumes.logic()
-    volumeNode = vl.AddArchetypeVolume('_DUMMY_DOES_NOT_EXISTS__','invalidRead')
 
 def PullFromSlicer( NodeName ):
     """ Given a slicer MRML image name, return the SimpleITK
             image object.
+    The method is deprecated and will be removed in the future.
+    Use PullVolumeFromSlicer method instead.
     """
-    EnsureRegistration()
-    myNodeFullITKAddress = GetSlicerITKReadWriteAddress( NodeName )
-    sitkimage = sitk.ReadImage(myNodeFullITKAddress)
-    return sitkimage
+
+    warnings.warn("'PullFromSlicer' method is deprecated and will be removed in the future."+
+        " Use PullFromSlicer method instead.",
+        FutureWarning)
+
+    return PullVolumeFromSlicer(NodeName)
 
 def PushToSlicer(sitkimage, NodeName, compositeView=0, overwrite=False):
     """ Given a SimpleITK image, push it back to slicer for viewing
+    The method is deprecated and will be removed in the future.
+    Use sitkUtils.PushVolumeToSlicer method and slicer.util.setSliceViewerLayers methods instead.
     ===============================================================
     Viewing options
     ---------------
@@ -109,60 +202,63 @@ def PushToSlicer(sitkimage, NodeName, compositeView=0, overwrite=False):
     bit 1: Set as foreground image
     bit 2: Set as label image
     """
-    from sitkUtils import EnsureRegistration, CreateNewVolumeNode, CreateNewDisplayNode, GetSlicerITKReadWriteAddress
-    scene = slicer.mrmlScene
-    compositeViewMap = {0:'background',
-                        1:'foreground',
-                        2:'label'}
-    if compositeView in compositeViewMap.keys():
-        imageType = compositeViewMap[compositeView]
-    else:
-        raise Exception('Unknown view option given: {0}. See help'.format(compositeView))
-    EnsureRegistration()
-    if imageType == 'label':
-        newNode = CreateNewVolumeNode(NodeName,'vtkMRMLLabelMapVolumeNode', overwrite)
-    else:
-        newNode = CreateNewVolumeNode(NodeName,'vtkMRMLScalarVolumeNode', overwrite)
 
-    if not overwrite:
-        newDisplayNode = CreateNewDisplayNode(NodeName)
-    else:
-        nodeCollection = scene.GetNodesByClassByName('vtkMRMLScalarVolumeDisplayNode', NodeName + '_Display')
-        nodeCollection.UnRegister(scene)
-        count = nodeCollection.GetNumberOfItems()
-        if count == 0:
-            newDisplayNode = CreateNewDisplayNode(NodeName)
-        elif count == 1:
-            newDisplayNode = nodeCollection.GetItemAsObject(0)
-        else:
-            Exception( "Too many display nodes for %s!" % NodeName )
-    newNode.SetAndObserveDisplayNodeID(newDisplayNode.GetID())
-    myNodeFullITKAddress = GetSlicerITKReadWriteAddress(newNode.GetName())
-    sitk.WriteImage(sitkimage, myNodeFullITKAddress)
-    writtenNode = slicer.util.getNode(newNode.GetName())
-    selectionNode = slicer.app.applicationLogic().GetSelectionNode()
-    if imageType == 'foreground':
-        selectionNode.SetReferenceSecondaryVolumeID(writtenNode.GetID())
-    elif imageType == 'background':
-        selectionNode.SetReferenceActiveVolumeID(writtenNode.GetID())
-    elif imageType == 'label':
-        selectionNode.SetReferenceActiveLabelVolumeID(writtenNode.GetID())
+    warnings.warn("'removeOldMRMLNode' method is deprecated and will be removed in the future."+
+        " Use sitkUtils.PushVolumeToSlicer method and slicer.util.setSliceViewerLayers methods instead.",
+        FutureWarning)
 
-    applicationLogic = slicer.app.applicationLogic()
-    applicationLogic.PropagateVolumeSelection(0)
+    if compositeView not in range(3):
+        raise Exception("Unknown compositeView option given: {0}. Valid values are 0 = background, 1 = foreground', or 2 = label.".format(compositeView))
+
+    if compositeView == 2:
+        newNodeClassName = 'vtkMRMLLabelMapVolumeNode'
+    else:
+        newNodeClassName = 'vtkMRMLScalarVolumeNode'
+
+    newNodeBaseName = targetNodeName
+    targetNode = None
+    if overwrite:
+        # reuse node if possible
+        targetNode = slicer.util.getNode(targetNode)
+        if targetNode and targetNode.GetClassName() != newNodeClassName:
+            # target node incompatible, need to create a new one
+            slicer.mrmlScene.RemoveNode(targetNode)
+            targetNode = None
+
+    targetNode = PushVolumeToSlicer(sitkimage, targetNode=targetNode, name=newNodeBaseName, className=newNodeClassName)
+
+    if showInSliceViewers:
+        if compositeView == 0:
+            slicer.util.setSliceViewerLayers(background = targetNode)
+        elif compositeView == 1:
+            slicer.util.setSliceViewerLayers(foreground = targetNode)
+        elif compositeView == 2:
+            slicer.util.setSliceViewerLayers(label = targetNode)
+
+    return targetNode
+
 
 # Helper functions
 def PushBackground(sitkImage, nodeName, overwrite=False):
+    warnings.warn("'PushBackground' method is deprecated and will be removed in the future."+
+        " Use sitkUtils.PushVolumeToSlicer method and slicer.util.setSliceViewerLayers methods instead.",
+        FutureWarning)
     PushToSlicer(sitkImage, nodeName, 0, overwrite)
 
 def PushForeground(sitkImage, nodeName, overwrite=False):
+    warnings.warn("'PushForeground' method is deprecated and will be removed in the future."+
+        " Use sitkUtils.PushVolumeToSlicer method and slicer.util.setSliceViewerLayers methods instead.",
+        FutureWarning)
     PushToSlicer(sitkImage, nodeName, 1, overwrite)
 
 def PushLabel(sitkImage, nodeName, overwrite=False):
+    warnings.warn("'PushLabel' method is deprecated and will be removed in the future."+
+        " Use sitkUtils.PushVolumeToSlicer method and slicer.util.setSliceViewerLayers methods instead.",
+        FutureWarning)
     PushToSlicer(sitkImage, nodeName, 2, overwrite)
 
 ###############
-############### The real work starts here
+############### Testing
 ###############
 def slicerNotes_UnitTest():
     newPointSource = sitk.Image(128,128,128,sitk.sitkFloat32)
