@@ -79,10 +79,10 @@ int connect(
      size_t *num_components) /* set to NULL if not interested */
 {
   unsigned int i;
-  register unsigned int axisv;
+  unsigned int axisv;
   size_t data_len;
-  register size_t label, *outimagep, *outimage_end, *imagep, *new_imagep, boundary_mask_start, component_mask, axis_mask;
-  register ptrdiff_t *stride, stridev;
+  size_t label, *outimagep, *outimage_end, *imagep, *new_imagep, boundary_mask_start, component_mask, axis_mask;
+  ptrdiff_t *stride, stridev;
 
   //assert(rank >= 0); // Note: Always true !
   if (rank == 0) {
@@ -146,13 +146,13 @@ int connect(
 
 static void recursive_copy(
      int axis,
-     register size_t mask)
+     size_t mask)
 {
-  register size_t len = g_axis_len[axis] - 2;
+  size_t len = g_axis_len[axis] - 2;
 
   if (axis == 0) {
-    register size_t *outimagep;
-    register char *inimagep, inbackground;
+    size_t *outimagep;
+    char *inimagep, inbackground;
 
     inimagep = g_inimagep;
     inbackground = g_inbackground;

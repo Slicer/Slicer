@@ -260,8 +260,8 @@ int Tilg_Test_3(int c, int d, int type)
 /* d wird fuer den Zusatztest bei paralleler Tilgung verwendet        */
 {
   int          de = 0;
-  register int df = 0;
-  register int du = 0;
+  int          df = 0;
+  int          du = 0;
   int          dex = 0, dfx = 0, bcx = 0;
   int          dey = 0, dfy = 0, bcy = 0;
   int          dez = 0, dfz = 0, bcz = 0;
