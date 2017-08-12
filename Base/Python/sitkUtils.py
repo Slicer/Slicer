@@ -10,7 +10,7 @@ def PushVolumeToSlicer(sitkimage, targetNode=None, name=None, className='vtkMRML
     """ Given a SimpleITK image, push it back to slicer for viewing
 
     :param targetNode: Target node that will store the image. If None then a new node will be created.
-    :param className: if a new target node is created then this parameter determines node class. For label volumes, set it to vtkMRMLLabelVolumeNode.
+    :param className: if a new target node is created then this parameter determines node class. For label volumes, set it to vtkMRMLLabelMapVolumeNode.
     :param name: if a new target node is created then this parameter will be used as basis of node name.
       If an existing node is specified as targetNode then this value will not be used.
     """
@@ -73,7 +73,7 @@ def EnsureRegistration():
 #    users may change node name at any time; node names may be changed when added to the scene
 #    if a node name is already used, etc.
 #  - Old APIs are used. For example, adding of display nodes, showing volumes in certain views, adding nodes
-#    to the scene now have simpler, more effective methods.
+#    to the scene have simpler, more effective methods.
 #
 
 def CloneSlicerNode( NodeName, NewNodeNamePrefix ):
@@ -215,11 +215,11 @@ def PushToSlicer(sitkimage, NodeName, compositeView=0, overwrite=False):
     else:
         newNodeClassName = 'vtkMRMLScalarVolumeNode'
 
-    newNodeBaseName = targetNodeName
+    newNodeBaseName = NodeName
     targetNode = None
     if overwrite:
         # reuse node if possible
-        targetNode = slicer.util.getNode(targetNode)
+        targetNode = slicer.util.getNode(NodeName)
         if targetNode and targetNode.GetClassName() != newNodeClassName:
             # target node incompatible, need to create a new one
             slicer.mrmlScene.RemoveNode(targetNode)
@@ -227,13 +227,12 @@ def PushToSlicer(sitkimage, NodeName, compositeView=0, overwrite=False):
 
     targetNode = PushVolumeToSlicer(sitkimage, targetNode=targetNode, name=newNodeBaseName, className=newNodeClassName)
 
-    if showInSliceViewers:
-        if compositeView == 0:
-            slicer.util.setSliceViewerLayers(background = targetNode)
-        elif compositeView == 1:
-            slicer.util.setSliceViewerLayers(foreground = targetNode)
-        elif compositeView == 2:
-            slicer.util.setSliceViewerLayers(label = targetNode)
+    if compositeView == 0:
+        slicer.util.setSliceViewerLayers(background = targetNode)
+    elif compositeView == 1:
+        slicer.util.setSliceViewerLayers(foreground = targetNode)
+    elif compositeView == 2:
+        slicer.util.setSliceViewerLayers(label = targetNode)
 
     return targetNode
 
