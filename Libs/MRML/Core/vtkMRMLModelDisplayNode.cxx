@@ -18,6 +18,7 @@ Version:   $Revision: 1.3 $
 // VTK includes
 #include <vtkAlgorithmOutput.h>
 #include <vtkAssignAttribute.h>
+#include <vtkCellData.h>
 #include <vtkCommand.h>
 #include <vtkLookupTable.h>
 #include <vtkObjectFactory.h>
@@ -288,16 +289,10 @@ void vtkMRMLModelDisplayNode::UpdateScalarRange()
     {
     if (this->GetActiveScalarName())
       {
-      // Use output of AssignAttribute instead of this->GetOutputMesh()
-      // since the data scalar range should not be retrieved from a
-      // thresholded mesh even when thresholding is enabled.
-      // Need to call Update() since we need to use GetOutput() on the
-      // AssignAttribuet filter to retrieve its output mesh scalar range.
-      this->AssignAttribute->Update();
-      vtkPointSet* mesh = vtkPointSet::SafeDownCast(this->AssignAttribute->GetOutput());
-      if (mesh)
+      vtkDataArray *dataArray = this->GetActiveScalarArray();
+      if (dataArray)
         {
-        this->SetScalarRange(mesh->GetScalarRange());
+        this->SetScalarRange(dataArray->GetRange());
         }
       else
         {
@@ -325,8 +320,7 @@ void vtkMRMLModelDisplayNode::UpdateScalarRange()
     }
   else if (flag == vtkMRMLDisplayNode::UseDataTypeScalarRange)
     {
-    vtkPointData* pData = this->GetOutputMesh()->GetPointData();
-    vtkDataArray *dataArray = pData ? pData->GetArray(this->GetActiveScalarName()) : NULL;
+    vtkDataArray *dataArray = this->GetActiveScalarArray();
     if (dataArray)
       {
       this->SetScalarRange(dataArray->GetDataTypeMin(), dataArray->GetDataTypeMax());
@@ -337,4 +331,46 @@ void vtkMRMLModelDisplayNode::UpdateScalarRange()
                       << "mesh does not have an active scalar array.");
       }
     }
+}
+
+//-----------------------------------------------------------
+vtkDataArray* vtkMRMLModelDisplayNode::GetActiveScalarArray()
+{
+  if (this->GetActiveScalarName() == NULL || strcmp(this->GetActiveScalarName(),"") == 0)
+    {
+    return NULL;
+    }
+
+  // Use output of AssignAttribute instead of this->GetOutputMesh()
+  // since the data scalar range should not be retrieved from a
+  // thresholded mesh even when thresholding is enabled.
+  // Need to call Update() since we need to use GetOutput() on the
+  // AssignAttribuet filter to retrieve its output mesh scalar range.
+  this->AssignAttribute->Update();
+  vtkPointSet* mesh = vtkPointSet::SafeDownCast(this->AssignAttribute->GetOutput());
+  if (mesh == NULL)
+    {
+    return NULL;
+    }
+
+  vtkDataSetAttributes* attributes = NULL;
+  switch (this->GetActiveAttributeLocation())
+    {
+    case vtkAssignAttribute::POINT_DATA:
+      attributes = mesh->GetPointData();
+      break;
+    case vtkAssignAttribute::CELL_DATA:
+      attributes = mesh->GetCellData();
+      break;
+    default:
+      vtkWarningMacro("vtkMRMLModelDisplayNode::GetActiveScalarArray failed: unsupported attribute location: "
+        << this->GetActiveAttributeLocation());
+      break;
+    }
+  if (attributes == NULL)
+    {
+    return NULL;
+    }
+  vtkDataArray *dataArray = attributes->GetArray(this->GetActiveScalarName());
+  return dataArray;
 }

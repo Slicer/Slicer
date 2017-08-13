@@ -469,6 +469,12 @@ public:
   /// \sa GetViewNodeIDs(), AddViewNodeID()
   void SetViewNodeIDs(const std::vector< std::string >& viewNodeIDs);
 
+  /// Converts attribute location (point or cell data) to string
+  static const char* GetAttributeLocationAsString(int id);
+
+  /// Gets attribute location (point or cell data) from string
+  static int GetAttributeLocationFromString(const char* name);
+
 protected:
   vtkMRMLDisplayNode();
   ~vtkMRMLDisplayNode();

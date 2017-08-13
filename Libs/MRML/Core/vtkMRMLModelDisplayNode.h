@@ -132,6 +132,9 @@ protected:
   /// its ActiveScalarName and its ActiveAttributeLocation
   virtual void UpdateAssignedAttribute();
 
+  /// Returns the current active scalar array (based on active scalar name and location)
+  virtual vtkDataArray* GetActiveScalarArray();
+
   /// Update the ScalarRange based on the ScalarRangeFlag
   virtual void UpdateScalarRange();
 

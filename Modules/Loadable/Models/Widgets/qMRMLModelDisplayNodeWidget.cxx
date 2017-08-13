@@ -224,8 +224,9 @@ void qMRMLModelDisplayNodeWidget::setActiveScalarName(const QString& arrayName)
     {
     return;
     }
-
+  int wasModified = d->MRMLModelDisplayNode->StartModify();
   d->MRMLModelDisplayNode->SetActiveScalarName(arrayName.toLatin1());
+  d->MRMLModelDisplayNode->SetActiveAttributeLocation(d->ActiveScalarComboBox->currentArrayLocation());
 
   // if there's no color node set for a non empty array name, use a default
   if (!arrayName.isEmpty() &&
@@ -235,7 +236,7 @@ void qMRMLModelDisplayNodeWidget::setActiveScalarName(const QString& arrayName)
 
     d->MRMLModelDisplayNode->SetAndObserveColorNodeID(colorNodeID);
     }
-
+  d->MRMLModelDisplayNode->EndModify(wasModified);
 }
 
 //------------------------------------------------------------------------------
@@ -540,6 +541,8 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
     {
     d->ActiveScalarComboBox->setCurrentArray(
       d->MRMLModelDisplayNode->GetActiveScalarName());
+    // Array location would need to be set in d->ActiveScalarComboBox if
+    // same scalar name is used in multiple locations.
     }
   d->ActiveScalarComboBox->blockSignals(wasBlocking);
 

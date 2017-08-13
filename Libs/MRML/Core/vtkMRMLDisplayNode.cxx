@@ -174,6 +174,8 @@ void vtkMRMLDisplayNode::WriteXML(ostream& of, int nIndent)
   if (this->ActiveScalarName != NULL)
     {
     of << " activeScalarName=\"" << this->ActiveScalarName << "\"";
+    of << " activeAttributeLocation=\"" << vtkMRMLDisplayNode::GetAttributeLocationAsString(
+        this->GetActiveAttributeLocation()) << "\"";
     }
 
   std::stringstream ss;
@@ -512,6 +514,18 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
     else if (!strcmp(attName, "activeScalarName"))
       {
       this->SetActiveScalarName(attValue);
+      }
+    else if (!strcmp(attName, "activeAttributeLocation"))
+      {
+      int id = this->GetAttributeLocationFromString(attValue);
+      if (id<0)
+        {
+        vtkWarningMacro("Invalid activeAttributeLocation: " << (attValue ? attValue : "(none)"));
+        }
+      else
+        {
+        this->SetActiveAttributeLocation(id);
+        }
       }
     else if (!strcmp(attName, "viewNodeRef"))
       {
@@ -1015,4 +1029,39 @@ const char* vtkMRMLDisplayNode
       // invalid id
       return "";
     }
+}
+
+//-----------------------------------------------------------
+const char* vtkMRMLDisplayNode::GetAttributeLocationAsString(int id)
+{
+  switch (id)
+    {
+    case vtkAssignAttribute::POINT_DATA: return "point";
+    case vtkAssignAttribute::CELL_DATA: return "cell";
+    case vtkAssignAttribute::VERTEX_DATA: return "vertex";
+    case vtkAssignAttribute::EDGE_DATA: return "edge";
+    default:
+      // invalid id
+      return "";
+    }
+}
+
+//-----------------------------------------------------------
+int vtkMRMLDisplayNode::GetAttributeLocationFromString(const char* name)
+{
+  if (name == NULL)
+    {
+    // invalid name
+    return -1;
+    }
+  for (int i = 0; i < vtkAssignAttribute::NUM_ATTRIBUTE_LOCS; i++)
+    {
+    if (strcmp(name, vtkMRMLDisplayNode::GetAttributeLocationAsString(i)) == 0)
+      {
+      // found a matching name
+      return i;
+      }
+    }
+  // name not found
+  return -1;
 }
