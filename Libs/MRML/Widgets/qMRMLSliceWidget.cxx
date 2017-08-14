@@ -62,7 +62,7 @@ void qMRMLSliceWidgetPrivate::init()
     ->SetSliceLogic(this->SliceController->sliceLogic());
 
   connect(this->SliceView, SIGNAL(resized(QSize)),
-          this->SliceController, SLOT(setSliceViewSize(QSize)));
+          this, SLOT(setSliceViewSize(QSize)));
 
   connect(this->SliceController, SIGNAL(imageDataConnectionChanged(vtkAlgorithmOutput*)),
           this, SLOT(setImageDataConnection(vtkAlgorithmOutput*)));
@@ -73,12 +73,22 @@ void qMRMLSliceWidgetPrivate::init()
 }
 
 // --------------------------------------------------------------------------
+void qMRMLSliceWidgetPrivate::setSliceViewSize(const QSize& size)
+{
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+  const QSize scaledSize = size * this->SliceView->devicePixelRatio();
+  this->SliceController->setSliceViewSize(scaledSize);
+#else
+  this->SliceController->setSliceViewSize(size);
+#endif
+}
+
+// --------------------------------------------------------------------------
 void qMRMLSliceWidgetPrivate::endProcessing()
 {
   // When a scene is closed, we need to reconfigure the SliceNode to
   // the size of the widget.
-  QRect rect = this->SliceView->geometry();
-  this->SliceController->setSliceViewSize(QSize(rect.width(), rect.height()));
+  this->setSliceViewSize(this->SliceView->size());
 }
 
 // --------------------------------------------------------------------------

@@ -63,6 +63,7 @@ public:
   void init();
 
 public slots:
+  void setSliceViewSize(const QSize& size);
   void endProcessing();
   /// Set the image data to the slice view
   void setImageDataConnection(vtkAlgorithmOutput * imageDataConnection);
