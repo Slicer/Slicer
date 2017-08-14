@@ -463,8 +463,10 @@ vtkMRMLNode* vtkMRMLScene::CreateNodeByClass(const char* className)
       }
     else
       {
+#ifndef VTK_HAS_INITIALIZE_OBJECT_BASE
 #ifdef VTK_DEBUG_LEAKS
       vtkDebugLeaks::DestructClass(className);
+#endif
 #endif
       }
     }
