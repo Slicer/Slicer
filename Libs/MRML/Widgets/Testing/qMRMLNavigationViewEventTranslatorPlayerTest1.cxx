@@ -121,7 +121,11 @@ int qMRMLNavigationViewEventTranslatorPlayerTest1(int argc, char * argv [] )
   navigationView.setMRMLViewNode(viewNode);
 
   etpWidget.addTestCase(&topLevel,
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+                        xmlDirectory + "qMRMLNavigationViewEventTranslatorPlayerTest1_QVTKOpenGLWidget.xml",
+#else
                         xmlDirectory + "qMRMLNavigationViewEventTranslatorPlayerTest1.xml",
+#endif
                         &checkFinalWidgetState);
 
   // ------------------------

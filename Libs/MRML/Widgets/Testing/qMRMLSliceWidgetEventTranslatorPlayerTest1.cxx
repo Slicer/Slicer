@@ -125,7 +125,11 @@ int qMRMLSliceWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
   sliceWidget.setMRMLSliceNode(redSliceNode);
 
   etpWidget.addTestCase(&sliceWidget,
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+                        xmlDirectory + "qMRMLSliceWidgetEventTranslatorPlayerTest1_QVTKOpenGLWidget.xml",
+#else
                         xmlDirectory + "qMRMLSliceWidgetEventTranslatorPlayerTest1.xml",
+#endif
                         &checkFinalWidgetState);
 
   // ------------------------

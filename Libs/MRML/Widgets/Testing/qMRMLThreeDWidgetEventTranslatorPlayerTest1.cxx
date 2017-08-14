@@ -101,7 +101,11 @@ int qMRMLThreeDWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
   widget.setMRMLScene(scene.GetPointer());
   widget.setMRMLViewNode(viewNode.GetPointer());
   etpWidget.addTestCase(&widget,
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+                        xmlDirectory + "qMRMLThreeDWidgetEventTranslatorPlayerTest1_QVTKOpenGLWidget.xml",
+#else
                         xmlDirectory + "qMRMLThreeDWidgetEventTranslatorPlayerTest1.xml",
+#endif
                         &checkFinalWidgetState);
 
   // ------------------------
