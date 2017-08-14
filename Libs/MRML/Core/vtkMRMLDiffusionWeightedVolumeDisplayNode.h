@@ -37,32 +37,32 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeDisplayNode : public vtkMRML
   public:
   static vtkMRMLDiffusionWeightedVolumeDisplayNode *New();
   vtkTypeMacro(vtkMRMLDiffusionWeightedVolumeDisplayNode,vtkMRMLScalarVolumeDisplayNode);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
-  virtual vtkMRMLNode* CreateNodeInstance();
+  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
 
   ///
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts);
+  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent);
+  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node);
+  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "DiffusionWeightedVolumeDisplay";};
+  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "DiffusionWeightedVolumeDisplay";}
 
   ///
   /// Get the pipeline input
-  virtual vtkAlgorithmOutput* GetInputImageDataConnection();
+  virtual vtkAlgorithmOutput* GetInputImageDataConnection() VTK_OVERRIDE;
 
 
-  virtual void UpdateImageDataPipeline();
+  virtual void UpdateImageDataPipeline() VTK_OVERRIDE;
 
   //--------------------------------------------------------------------------
   /// Display Information
@@ -81,9 +81,9 @@ protected:
 
   ///
   /// Set the input of the pipeline
-  virtual void SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection);
+  virtual void SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection) VTK_OVERRIDE;
 
-  virtual vtkAlgorithmOutput* GetScalarImageDataConnection();
+  virtual vtkAlgorithmOutput* GetScalarImageDataConnection() VTK_OVERRIDE;
 
   /// This property holds the current diffusion component used for display.
   int DiffusionComponent;

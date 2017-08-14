@@ -18,7 +18,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSystemInformation : public vtkObject
 public:
   static vtkSystemInformation *New();
   vtkTypeMacro(vtkSystemInformation,vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   const char * GetVendorString();
   const char * GetVendorID();

@@ -45,7 +45,7 @@ public:
 
   static vtkMRMLMarkupsDisplayableManager2D *New();
   vtkTypeMacro(vtkMRMLMarkupsDisplayableManager2D, vtkMRMLAbstractSliceViewDisplayableManager);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// Hide/Show a widget so that the node's display node visibility setting
   /// matches that of the widget
@@ -79,7 +79,7 @@ public:
                                   double *worldCoordinates, double *localCoordinates);
 
   /// Set mrml parent transform to widgets
-  virtual void SetParentTransformToWidget(vtkMRMLMarkupsNode *vtkNotUsed(node), vtkAbstractWidget *vtkNotUsed(widget)){};
+  virtual void SetParentTransformToWidget(vtkMRMLMarkupsNode *vtkNotUsed(node), vtkAbstractWidget *vtkNotUsed(widget)){}
 
   /// Set/Get the 2d scale factor to divide 3D scale by to show 2D elements appropriately (usually set to 300)
   vtkSetMacro(ScaleFactor2D, double);
@@ -120,32 +120,32 @@ protected:
   vtkMRMLMarkupsDisplayableManager2D();
   virtual ~vtkMRMLMarkupsDisplayableManager2D();
 
-  virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData);
+  virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData) VTK_OVERRIDE;
 
   /// Wrap the superclass render request in a check for batch processing
   virtual void RequestRender();
 
   /// Remove MRML observers
-  virtual void RemoveMRMLObservers();
+  virtual void RemoveMRMLObservers() VTK_OVERRIDE;
 
   /// Called from RequestRender method if UpdateFromMRMLRequested is true
   /// \sa RequestRender() SetUpdateFromMRMLRequested()
-  virtual void UpdateFromMRML();
+  virtual void UpdateFromMRML() VTK_OVERRIDE;
 
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
+  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) VTK_OVERRIDE;
 
   /// Called after the corresponding MRML event is triggered, from AbstractDisplayableManager
   /// \sa ProcessMRMLSceneEvents
-  virtual void UpdateFromMRMLScene();
-  virtual void OnMRMLSceneEndClose();
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
+  virtual void UpdateFromMRMLScene() VTK_OVERRIDE;
+  virtual void OnMRMLSceneEndClose() VTK_OVERRIDE;
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) VTK_OVERRIDE;
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) VTK_OVERRIDE;
 
   /// Called after the corresponding MRML View container was modified
-  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller);
+  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller) VTK_OVERRIDE;
 
   /// Handler for specific SliceView actions, iterate over the widgets in the helper
-  virtual void OnMRMLSliceNodeModifiedEvent();
+  virtual void OnMRMLSliceNodeModifiedEvent() VTK_OVERRIDE;
 
   /// Check, if the widget is displayable in the current slice geometry for
   /// this markup, returns true if a 3d displayable manager
@@ -238,7 +238,7 @@ protected:
   int Updating;
 
   /// Respond to interactor style events
-  virtual void OnInteractorStyleEvent(int eventid);
+  virtual void OnInteractorStyleEvent(int eventid) VTK_OVERRIDE;
 
   /// Accessor for internal flag that disables interactor style event processing
   vtkGetMacro(DisableInteractorStyleEventsProcessing, int);

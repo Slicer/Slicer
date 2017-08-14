@@ -53,11 +53,11 @@ public:
 
   vtkTypeMacro(vtkMRMLDisplayableHierarchyNodeTestHelper1, vtkMRMLDisplayableNode);
 
-  virtual vtkMRMLNode* CreateNodeInstance()
+  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE
     {
     return vtkMRMLDisplayableHierarchyNodeTestHelper1::New();
     }
-  virtual const char* GetNodeTagName()
+  virtual const char* GetNodeTagName() VTK_OVERRIDE
     {
     return "vtkMRMLNodeTestHelper1";
     }

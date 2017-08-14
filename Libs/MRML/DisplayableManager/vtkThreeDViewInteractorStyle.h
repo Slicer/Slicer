@@ -54,38 +54,39 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkThreeDViewInteractorStyle :
 public:
   static vtkThreeDViewInteractorStyle *New();
   vtkTypeMacro(vtkThreeDViewInteractorStyle,vtkInteractorStyle);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// Reimplemented for camera orientation
-  virtual void OnChar();
-  virtual void OnKeyPress();
-  virtual void OnKeyRelease();
+
+  virtual void OnChar() VTK_OVERRIDE;
+  virtual void OnKeyPress() VTK_OVERRIDE;
+  virtual void OnKeyRelease() VTK_OVERRIDE;
 
   ///
   /// Event bindings controlling the effects of pressing mouse buttons
   /// or moving the mouse.
-  virtual void OnMouseMove();
-  virtual void OnLeave();
-  virtual void OnLeftButtonDown();
-  virtual void OnLeftButtonUp();
-  virtual void OnMiddleButtonDown();
-  virtual void OnMiddleButtonUp();
-  virtual void OnRightButtonDown();
-  virtual void OnRightButtonUp();
-  virtual void OnMouseWheelForward();
-  virtual void OnMouseWheelBackward();
+  virtual void OnMouseMove() VTK_OVERRIDE;
+  virtual void OnLeave() VTK_OVERRIDE;
+  virtual void OnLeftButtonDown() VTK_OVERRIDE;
+  virtual void OnLeftButtonUp() VTK_OVERRIDE;
+  virtual void OnMiddleButtonDown() VTK_OVERRIDE;
+  virtual void OnMiddleButtonUp() VTK_OVERRIDE;
+  virtual void OnRightButtonDown() VTK_OVERRIDE;
+  virtual void OnRightButtonUp() VTK_OVERRIDE;
+  virtual void OnMouseWheelForward() VTK_OVERRIDE;
+  virtual void OnMouseWheelBackward() VTK_OVERRIDE;
 
   /// These methods for the different interactions in different modes
   /// are overridden in subclasses to perform the correct motion. Since
   /// they are called by OnTimer, they do not have mouse coord parameters
   /// (use interactor's GetEventPosition and GetLastEventPosition)
-  virtual void Rotate();
-  virtual void Spin();
-  virtual void Pan();
-  virtual void Dolly();
+  virtual void Rotate() VTK_OVERRIDE;
+  virtual void Spin() VTK_OVERRIDE;
+  virtual void Pan() VTK_OVERRIDE;
+  virtual void Dolly() VTK_OVERRIDE;
   virtual void Dolly(double factor);
 
-  virtual void OnExpose();
+  virtual void OnExpose() VTK_OVERRIDE;
 
   ///
   /// Get/Set the CameraNode
@@ -94,7 +95,7 @@ public:
 
   ///
   /// Reimplemented to set the default interactive update rate
-  virtual void SetInteractor(vtkRenderWindowInteractor *interactor);
+  virtual void SetInteractor(vtkRenderWindowInteractor *interactor) VTK_OVERRIDE;
 
   ///
   /// Get/Set the ModelDisplayableManager, for picking

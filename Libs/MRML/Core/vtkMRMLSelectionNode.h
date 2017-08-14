@@ -36,31 +36,31 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   public:
   static vtkMRMLSelectionNode *New();
   vtkTypeMacro(vtkMRMLSelectionNode,vtkMRMLNode);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
-  virtual vtkMRMLNode* CreateNodeInstance();
+  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
 
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts);
+  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
 
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent);
+  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
 
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node);
+  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
 
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "Selection";};
+  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "Selection";}
 
   /// Set the nodes as references to the current scene.
-  virtual void SetSceneReferences();
+  virtual void SetSceneReferences() VTK_OVERRIDE;
 
   /// Update the stored reference to another node in the scene
-  virtual void UpdateReferenceID(const char *oldID, const char *newID);
+  virtual void UpdateReferenceID(const char *oldID, const char *newID) VTK_OVERRIDE;
 
   /// Updates this node if it depends on other nodes
   /// when the node is deleted in the scene
-  virtual void UpdateReferences();
+  virtual void UpdateReferences() VTK_OVERRIDE;
 
   /// the ID of a MRMLVolumeNode (typically background)
   vtkGetStringMacro (ActiveVolumeID);
@@ -199,7 +199,7 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   /// Method to propagate events generated in units nodes.
   /// \sa GetNodeReferenceID(), SetAndObserveNodeReferenceID()
   /// \sa UnitModifiedEvent
-  void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
+  void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData) VTK_OVERRIDE;
 
   /// Remove a placeNode class name from the list
   /// \sa PlaceNodeClassNameInList

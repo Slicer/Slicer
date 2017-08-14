@@ -67,7 +67,7 @@ public:
    *
    * ImageFunction::IsInsideBuffer() can be used to check bounds before
    * calling the method. */
-  virtual TensorDataType Evaluate( const PointType& point ) const
+  virtual TensorDataType Evaluate( const PointType& point ) const ITK_OVERRIDE
   {
     ContinuousIndexType index;
 
@@ -85,7 +85,7 @@ public:
    *
    * ImageFunction::IsInsideBuffer() can be used to check bounds before
    * calling the method. */
-  virtual TensorDataType EvaluateAtContinuousIndex( const ContinuousIndexType & index ) const = 0;
+  virtual TensorDataType EvaluateAtContinuousIndex( const ContinuousIndexType & index ) const ITK_OVERRIDE = 0;
 
   /** Interpolate the image at an index position.
    *
@@ -96,7 +96,7 @@ public:
    * ImageFunction::IsInsideBuffer() can be used to check bounds before
    * calling the method. */
 
-  virtual TensorDataType EvaluateAtIndex( const IndexType & index ) const
+  virtual TensorDataType EvaluateAtIndex( const IndexType & index ) const ITK_OVERRIDE
   {
     return this->GetInputImage()->GetPixel( index );
   }

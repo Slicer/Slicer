@@ -52,25 +52,25 @@ class vtkRep##from##ToRep##to##Rule: public vtkSegmentationConverterRule \
 public: \
   static vtkRep##from##ToRep##to##Rule* New(); \
   vtkTypeMacro(vtkRep##from##ToRep##to##Rule, vtkSegmentationConverterRule); \
-  virtual vtkSegmentationConverterRule* CreateRuleInstance(); \
+  virtual vtkSegmentationConverterRule* CreateRuleInstance() VTK_OVERRIDE; \
   virtual vtkDataObject* ConstructRepresentationObjectByRepresentation( \
-    std::string vtkNotUsed(representationName)) { return NULL; }; \
+    std::string vtkNotUsed(representationName))  VTK_OVERRIDE { return NULL; }; \
   virtual vtkDataObject* ConstructRepresentationObjectByClass( \
-    std::string vtkNotUsed(className)) { return NULL; }; \
+    std::string vtkNotUsed(className)) VTK_OVERRIDE { return NULL; }; \
   virtual bool Convert( \
     vtkDataObject* vtkNotUsed(sourceRepresentation),\
-    vtkDataObject* vtkNotUsed(targetRepresentation)) { return true; } \
+    vtkDataObject* vtkNotUsed(targetRepresentation)) VTK_OVERRIDE { return true; } \
   virtual unsigned int GetConversionCost( \
     vtkDataObject* sourceRepresentation=NULL, \
-    vtkDataObject* targetRepresentation=NULL) \
+    vtkDataObject* targetRepresentation=NULL)  VTK_OVERRIDE \
   { \
     (void)sourceRepresentation; \
     (void)targetRepresentation; \
     return weight; \
   }; \
-  virtual const char* GetName(){ return "Rep " #from " to Rep " #to; }; \
-  virtual const char* GetSourceRepresentationName() { return "Rep" #from ; }  \
-  virtual const char* GetTargetRepresentationName() { return "Rep" #to ; } \
+  virtual const char* GetName() VTK_OVERRIDE { return "Rep " #from " to Rep " #to; } \
+  virtual const char* GetSourceRepresentationName() VTK_OVERRIDE { return "Rep" #from ; }  \
+  virtual const char* GetTargetRepresentationName()  VTK_OVERRIDE { return "Rep" #to ; } \
 }; \
 vtkSegmentationConverterRuleNewMacro(vtkRep##from##ToRep##to##Rule);
 

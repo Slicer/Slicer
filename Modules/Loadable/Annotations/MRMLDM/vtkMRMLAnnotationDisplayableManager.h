@@ -46,7 +46,7 @@ public:
 
   static vtkMRMLAnnotationDisplayableManager *New();
   vtkTypeMacro(vtkMRMLAnnotationDisplayableManager, vtkMRMLAbstractDisplayableManager);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   // the following functions must be public to be accessible by the callback
   /// Propagate properties of MRML node to widget.
@@ -78,7 +78,7 @@ public:
                                   double *worldCoordinates, double *localCoordinates);
 
   /// Set mrml parent transform to widgets
-  virtual void SetParentTransformToWidget(vtkMRMLAnnotationNode *vtkNotUsed(node), vtkAbstractWidget *vtkNotUsed(widget)){};
+  virtual void SetParentTransformToWidget(vtkMRMLAnnotationNode *vtkNotUsed(node), vtkAbstractWidget *vtkNotUsed(widget)){}
 
   /// Set/Get the 2d scale factor to divide 3D scale by to show 2D elements appropriately (usually set to 300)
   vtkSetMacro(ScaleFactor2D, double);
@@ -105,31 +105,31 @@ protected:
   vtkMRMLAnnotationDisplayableManager();
   virtual ~vtkMRMLAnnotationDisplayableManager();
 
-  virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData);
+  virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData) VTK_OVERRIDE;
 
-  virtual void Create();
+  virtual void Create() VTK_OVERRIDE;
 
   /// wrap the superclass render request in a check for batch processing
   virtual void RequestRender();
 
   /// Remove MRML observers
-  virtual void RemoveMRMLObservers();
+  virtual void RemoveMRMLObservers() VTK_OVERRIDE;
 
   /// Called from RequestRender method if UpdateFromMRMLRequested is true
   /// \sa RequestRender() SetUpdateFromMRMLRequested()
-  virtual void UpdateFromMRML();
+  virtual void UpdateFromMRML() VTK_OVERRIDE;
 
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
+  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) VTK_OVERRIDE;
 
   /// Called after the corresponding MRML event is triggered, from AbstractDisplayableManager
   /// \sa ProcessMRMLSceneEvents
-  virtual void UpdateFromMRMLScene();
-  virtual void OnMRMLSceneEndClose();
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
+  virtual void UpdateFromMRMLScene() VTK_OVERRIDE;
+  virtual void OnMRMLSceneEndClose() VTK_OVERRIDE;
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) VTK_OVERRIDE;
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) VTK_OVERRIDE;
 
   /// Called after the corresponding MRML View container was modified
-  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller);
+  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller) VTK_OVERRIDE;
 
   /// Handler for specific SliceView actions
   virtual void OnMRMLSliceNodeModifiedEvent(vtkMRMLSliceNode * sliceNode);
@@ -160,7 +160,7 @@ protected:
   virtual void OnMRMLAnnotationNodeLockModifiedEvent(vtkMRMLNode* node);
   virtual void OnMRMLAnnotationDisplayNodeModifiedEvent(vtkMRMLNode *node);
   virtual void OnMRMLAnnotationControlPointModifiedEvent(vtkMRMLNode *node);
-  virtual void OnMRMLSelectionNodeUnitModifiedEvent(vtkMRMLSelectionNode*) {};
+  virtual void OnMRMLSelectionNodeUnitModifiedEvent(vtkMRMLSelectionNode*) {}
 
   //
   // Handling of interaction within the RenderWindow
@@ -174,7 +174,7 @@ protected:
   vtkMRMLAnnotationClickCounter* m_ClickCounter;
 
   /// Update just the position for the widget, implemented by subclasses.
-  virtual void UpdatePosition(vtkAbstractWidget *vtkNotUsed(widget), vtkMRMLNode *vtkNotUsed(node)) {};
+  virtual void UpdatePosition(vtkAbstractWidget *vtkNotUsed(widget), vtkMRMLNode *vtkNotUsed(node)) {}
   //
   // Seeds for widget placement
   //
@@ -232,7 +232,7 @@ protected:
   int m_Updating;
 
   /// Respond to interactor style events
-  virtual void OnInteractorStyleEvent(int eventid);
+  virtual void OnInteractorStyleEvent(int eventid) VTK_OVERRIDE;
 
   /// Accessor for internal flag that disables interactor style event processing
   vtkGetMacro(DisableInteractorStyleEventsProcessing, int);

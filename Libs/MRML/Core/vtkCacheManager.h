@@ -25,7 +25,7 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   /// The Usual vtk class functions
   static vtkCacheManager *New();
   vtkTypeMacro(vtkCacheManager, vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   vtkGetMacro (InsufficientFreeBufferNotificationFlag, int );
   vtkSetMacro (InsufficientFreeBufferNotificationFlag, int );

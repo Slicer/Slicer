@@ -19,40 +19,40 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationTextDisplayNod
  public:
   static vtkMRMLAnnotationTextDisplayNode *New (  );
   vtkTypeMacro ( vtkMRMLAnnotationTextDisplayNode,vtkMRMLAnnotationDisplayNode );
-  void PrintSelf ( ostream& os, vtkIndent indent );
+  void PrintSelf ( ostream& os, vtkIndent indent ) VTK_OVERRIDE;
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance (  );
+  virtual vtkMRMLNode* CreateNodeInstance () VTK_OVERRIDE;
 
   // Description:
   // Read node attributes from XML (MRML) file
-  virtual void ReadXMLAttributes ( const char** atts );
+  virtual void ReadXMLAttributes ( const char** atts ) VTK_OVERRIDE;
 
   // Description:
   // Write this node's information to a MRML file in XML format.
-  virtual void WriteXML ( ostream& of, int indent );
+  virtual void WriteXML ( ostream& of, int indent ) VTK_OVERRIDE;
 
 
   // Description:
   // Copy the node's attributes to this object
-  virtual void Copy ( vtkMRMLNode *node );
+  virtual void Copy ( vtkMRMLNode *node ) VTK_OVERRIDE;
 
   // Description:
   // Get node XML tag name (like Volume, Annotation)
-  virtual const char* GetNodeTagName() {return "AnnotationTextDisplay";}
+  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "AnnotationTextDisplay";}
 
   // Description:
   // Finds the storage node and read the data
-  virtual void UpdateScene(vtkMRMLScene *scene);
+  virtual void UpdateScene(vtkMRMLScene *scene) VTK_OVERRIDE;
 
   // Description:
   // alternative method to propagate events generated in Display nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
-                                   void * /*callData*/ );
+                                   void * /*callData*/ ) VTK_OVERRIDE;
 
   // Description:
   // Get/Set for Text scale
@@ -118,9 +118,9 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationTextDisplayNod
   vtkBooleanMacro(AttachEdgeOnly,int);
 
   /// Create a backup of this node and attach it.
-  void CreateBackup();
+  void CreateBackup() VTK_OVERRIDE;
   /// Restore an attached backup of this node.
-  void RestoreBackup();
+  void RestoreBackup() VTK_OVERRIDE;
 
   /// Utility function to return a new string with \n's inserted in the input
   /// string to bring each line down below the MaxCharactersPerLine. Tries to

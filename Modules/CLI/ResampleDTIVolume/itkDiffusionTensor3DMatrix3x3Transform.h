@@ -61,7 +61,7 @@ public:
   void SetCenter( PointType center );
 
   // /Evaluate the position of the transformed tensor in the output image
-  PointType EvaluateTensorPosition( const PointType & point );
+  PointType EvaluateTensorPosition( const PointType & point ) ITK_OVERRIDE;
 
   // /Set the 3x3 transform matrix
   virtual void SetMatrix3x3( MatrixTransformType & matrix );
@@ -72,7 +72,7 @@ public:
   // /Evaluate the transformed tensor
   virtual TensorDataType EvaluateTransformedTensor( TensorDataType & tensor );
 
-  virtual TensorDataType EvaluateTransformedTensor( TensorDataType & tensor, PointType & outputPosition ); // dummy
+  virtual TensorDataType EvaluateTransformedTensor( TensorDataType & tensor, PointType & outputPosition ) ITK_OVERRIDE; // dummy
                                                                                                            // output
                                                                                                            // position;
                                                                                                            // to be
@@ -81,7 +81,7 @@ public:
                                                                                                            // non-rigid
                                                                                                            // transforms
 
-  virtual typename Transform<double, 3, 3>::Pointer GetTransform();
+  virtual typename Transform<double, 3, 3>::Pointer GetTransform() ITK_OVERRIDE;
 
 protected:
   void ComputeOffset();

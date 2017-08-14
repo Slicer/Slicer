@@ -33,7 +33,7 @@ class VTK_SLICER_ATLASCREATOR_MODULE_LOGIC_EXPORT vtkAtlasCreatorLogic :
   public:
   static vtkAtlasCreatorLogic *New();
   vtkTypeMacro(vtkAtlasCreatorLogic,vtkSlicerModuleLogic);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   // Description: Get/Set MRML node storing parameter values
   vtkGetObjectMacro (AtlasCreatorNode, vtkMRMLAtlasCreatorNode);

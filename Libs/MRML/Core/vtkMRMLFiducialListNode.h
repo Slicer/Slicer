@@ -51,32 +51,32 @@ public:
   ///
   static vtkMRMLFiducialListNode *New();
   vtkTypeMacro(vtkMRMLFiducialListNode,vtkMRMLTransformableNode);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   ///--------------------------------------------------------------------------
   /// MRMLNode methods
   ///--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance();
+  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
 
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts);
+  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
 
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent);
+  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
 
 
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node);
+  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
 
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "FiducialList";};
+  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "FiducialList";}
 
   ///
-  virtual void UpdateScene(vtkMRMLScene *scene);
+  virtual void UpdateScene(vtkMRMLScene *scene) VTK_OVERRIDE;
 
   /// update display node ids
-  void UpdateReferences();
+  void UpdateReferences() VTK_OVERRIDE;
 
   /// Get/Set for Symbol scale
 ///  vtkSetMacro(SymbolScale,double);
@@ -177,7 +177,7 @@ public:
   int  IsFiducialPresent(vtkMRMLFiducial *o);
 
   /// Process events from the MRML scene
-  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
+  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) VTK_OVERRIDE;
 
   /// DisplayModifiedEvent is generated when display node parameters is changed
   /// PolyDataModifiedEvent is generated when something else is changed
@@ -252,11 +252,11 @@ public:
   void SetGlyphTypeFromString(const char *glyphString);
 
   /// transform utility functions
-  virtual bool CanApplyNonLinearTransforms()const;
-  virtual void ApplyTransform(vtkAbstractTransform* transform);
+  virtual bool CanApplyNonLinearTransforms()const VTK_OVERRIDE;
+  virtual void ApplyTransform(vtkAbstractTransform* transform) VTK_OVERRIDE;
 
   /// Create default storage node or NULL if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() VTK_OVERRIDE;
 
   /// move a fiducial point in the collection, one up/down
   /// returns -1 on failure (current index is out of bounds, the fid is already

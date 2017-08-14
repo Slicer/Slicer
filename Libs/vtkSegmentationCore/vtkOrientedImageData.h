@@ -38,12 +38,12 @@ class vtkSegmentationCore_EXPORT vtkOrientedImageData : public vtkImageData
 public:
   static vtkOrientedImageData *New();
   vtkTypeMacro(vtkOrientedImageData,vtkImageData);
-  virtual void PrintSelf(ostream& os, vtkIndent indent);
+  virtual void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// Shallow copy
-  virtual void ShallowCopy(vtkDataObject *src);
+  virtual void ShallowCopy(vtkDataObject *src) VTK_OVERRIDE;
   /// Deep copy
-  virtual void DeepCopy(vtkDataObject *src);
+  virtual void DeepCopy(vtkDataObject *src) VTK_OVERRIDE;
   /// Copy orientation information only
   virtual void CopyDirections(vtkDataObject *src);
 
@@ -76,7 +76,7 @@ public:
   void SetGeometryFromImageToWorldMatrix(vtkMatrix4x4* mat);
 
   /// Compute image bounds (xmin,xmax, ymin,ymax, zmin,zmax).
-  virtual void ComputeBounds();
+  virtual void ComputeBounds() VTK_OVERRIDE;
 
   /// Get the inverse of the geometry matrix
   void GetWorldToImageMatrix(vtkMatrix4x4* mat);

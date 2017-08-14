@@ -46,7 +46,7 @@ public:
 
   static vtkTopologicalHierarchy *New();
   vtkTypeMacro(vtkTopologicalHierarchy, vtkObject );
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// Get output topological hierarchy levels
   virtual vtkIntArray* GetOutputLevels();

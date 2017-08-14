@@ -37,24 +37,24 @@ class VTK_MRML_EXPORT vtkMRMLMarkupsStorageNode : public vtkMRMLStorageNode
 public:
   static vtkMRMLMarkupsStorageNode *New();
   vtkTypeMacro(vtkMRMLMarkupsStorageNode,vtkMRMLStorageNode);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
-  virtual vtkMRMLNode* CreateNodeInstance();
+  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
 
   ///
   /// Get node XML tag name (like Storage, Model)
-  virtual const char* GetNodeTagName()  {return "MarkupsStorage";};
+  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "MarkupsStorage";};
 
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts);
+  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
 
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent);
+  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
 
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node);
+  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
 
-  virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode);
+  virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode) VTK_OVERRIDE;
 
   /// Coordinate system options
   enum
@@ -92,19 +92,19 @@ protected:
   void operator=(const vtkMRMLMarkupsStorageNode&);
 
   /// Initialize all the supported write file types
-  virtual void InitializeSupportedReadFileTypes();
+  virtual void InitializeSupportedReadFileTypes() VTK_OVERRIDE;
 
   /// Initialize all the supported write file types
-  virtual void InitializeSupportedWriteFileTypes();
+  virtual void InitializeSupportedWriteFileTypes() VTK_OVERRIDE;
 
   /// Read data and set it in the referenced node
   /// Needs to be implemented by subclasses
-  virtual int ReadDataInternal(vtkMRMLNode *refNode);
+  virtual int ReadDataInternal(vtkMRMLNode *refNode) VTK_OVERRIDE;
 
   /// Write data from a  referenced node
   /// There can be any number of points associated with a
   /// markup, so subclasses need to implement this for their markup type
-  virtual int WriteDataInternal(vtkMRMLNode *refNode);
+  virtual int WriteDataInternal(vtkMRMLNode *refNode) VTK_OVERRIDE;
 
   /// Extract the first quoted string from an input string and return it.
   /// Used in parsing the input strings in \sa ReadDataInternal.

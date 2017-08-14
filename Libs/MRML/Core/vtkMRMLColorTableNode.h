@@ -28,37 +28,37 @@ class VTK_MRML_EXPORT vtkMRMLColorTableNode : public vtkMRMLColorNode
 public:
   static vtkMRMLColorTableNode *New();
   vtkTypeMacro(vtkMRMLColorTableNode,vtkMRMLColorNode);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   //--------------------------------------------------------------------------
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance();
+  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
 
   ///
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts);
+  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent);
+  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node);
+  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "ColorTable";};
+  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "ColorTable";}
 
-  vtkGetObjectMacro(LookupTable, vtkLookupTable);
+  virtual vtkLookupTable* GetLookupTable() VTK_OVERRIDE;
   virtual void SetLookupTable(vtkLookupTable* newLookupTable);
 
   ///
   /// Get/Set for Type
-  void SetType(int type);
-  vtkGetMacro(Type,int);
+  void SetType(int type) VTK_OVERRIDE;
+  //GetType is defined in ColorTableNode class via macro.
   void SetTypeToFullRainbow();
   void SetTypeToGrey();
   void SetTypeToIron();
@@ -97,7 +97,7 @@ public:
   void SetTypeToCoolTint3();
 
 
-  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
+  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) VTK_OVERRIDE;
 
   ///
   /// The list of valid table types
@@ -172,12 +172,12 @@ public:
 
   ///
   /// Return the lowest and highest integers, for use in looping
-  int GetFirstType () { return this->FullRainbow; };
-  int GetLastType () { return this->CoolTint3; };
+  int GetFirstType () VTK_OVERRIDE { return this->FullRainbow; };
+  int GetLastType () VTK_OVERRIDE { return this->CoolTint3; };
 
   ///
   /// return a text string describing the colour look up table type
-  virtual const char * GetTypeAsString();
+  virtual const char * GetTypeAsString() VTK_OVERRIDE;
 
   ///
   /// Set the size of the colour table if it's a User table
@@ -185,7 +185,7 @@ public:
 
   ///
   /// Set the size of the colour table if it's a User table
-  virtual int GetNumberOfColors();
+  virtual int GetNumberOfColors() VTK_OVERRIDE;
 
   ///
   /// keep track of where we last added a colour
@@ -206,7 +206,7 @@ public:
 
   /// Retrieve the color associated to the index
   /// Return true if the color exists, false otherwise
-  virtual bool GetColor(int entry, double color[4]);
+  virtual bool GetColor(int entry, double color[4]) VTK_OVERRIDE;
 
   ///
   /// clear out the names list
@@ -214,11 +214,11 @@ public:
 
   ///
   /// reset when close the scene
-  virtual void Reset(vtkMRMLNode* defaultNode);
+  virtual void Reset(vtkMRMLNode* defaultNode) VTK_OVERRIDE;
 
   ///
   /// Create default storage node or NULL if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() VTK_OVERRIDE;
 
 protected:
   vtkMRMLColorTableNode();

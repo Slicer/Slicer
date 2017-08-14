@@ -19,16 +19,16 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationStorageNode : 
 public:
   static vtkMRMLAnnotationStorageNode *New();
   vtkTypeMacro(vtkMRMLAnnotationStorageNode,vtkMRMLStorageNode);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
-  virtual vtkMRMLNode* CreateNodeInstance();
+  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
 
   // Description:
   // Get node XML tag name (like Storage, Model)
-  virtual const char* GetNodeTagName()  {return "AnnotationStorage";};
+  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "AnnotationStorage";}
 
   /// Return true if the node can be read in
-  virtual bool CanReadInReferenceNode(vtkMRMLNode* refNode);
+  virtual bool CanReadInReferenceNode(vtkMRMLNode* refNode) VTK_OVERRIDE;
 
 protected:
   vtkMRMLAnnotationStorageNode();
@@ -59,16 +59,16 @@ protected:
   const char* GetAnnotationStorageType() { return "text"; }
 
   /// Initialize all the supported read file types
-  virtual void InitializeSupportedReadFileTypes();
+  virtual void InitializeSupportedReadFileTypes() VTK_OVERRIDE;
 
   /// Initialize all the supported write file types
-  virtual void InitializeSupportedWriteFileTypes();
+  virtual void InitializeSupportedWriteFileTypes() VTK_OVERRIDE;
 
   /// Read data and set it in the referenced node
-  virtual int ReadDataInternal(vtkMRMLNode *refNode);
+  virtual int ReadDataInternal(vtkMRMLNode *refNode) VTK_OVERRIDE;
 
   /// Write data from a referenced node
-  virtual int WriteDataInternal(vtkMRMLNode *refNode);
+  virtual int WriteDataInternal(vtkMRMLNode *refNode) VTK_OVERRIDE;
   /// Write data from a referenced node into a passed stream
   virtual int WriteAnnotationDataInternal(vtkMRMLNode *refNode, fstream &of);
 

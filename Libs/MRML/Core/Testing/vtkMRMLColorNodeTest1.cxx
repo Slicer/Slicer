@@ -28,12 +28,12 @@ public:
 
   vtkTypeMacro(vtkMRMLColorNodeTestHelper1,vtkMRMLColorNode);
 
-  virtual vtkMRMLNode* CreateNodeInstance()
+  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE
     {
     return vtkMRMLColorNodeTestHelper1::New();
     }
 
-  const char * GetTypeAsString()
+  const char * GetTypeAsString() VTK_OVERRIDE
     {
     return "vtkMRMLColorNodeTestHelper1";
     }
@@ -43,8 +43,8 @@ public:
     std::cout << "vtkMRMLColorNodeTestHelper1 pretending to read a file " << std::endl;
     return EXIT_SUCCESS;
     }
-  virtual int GetNumberOfColors(){return 1;}
-  virtual bool GetColor(int vtkNotUsed(ind), double color[4])
+  virtual int GetNumberOfColors() VTK_OVERRIDE {return 1;}
+  virtual bool GetColor(int vtkNotUsed(ind), double color[4]) VTK_OVERRIDE
     {
     color[0] = 10;
     color[1] = 100;
@@ -52,7 +52,7 @@ public:
     return true;
     }
 
-  vtkMRMLStorageNode* CreateDefaultStorageNode()
+  vtkMRMLStorageNode* CreateDefaultStorageNode() VTK_OVERRIDE
     {
     // just some random storage node to pass the storage node test of basic MRML node tests
     return vtkMRMLColorTableStorageNode::New();

@@ -24,24 +24,24 @@ public:
   // void PrintSelf(ostream& os, vtkIndent indent);
   // Description:
   // Just prints short summary
-  virtual void PrintAnnotationInfo(ostream& os, vtkIndent indent, int titleFlag = 1);
+  virtual void PrintAnnotationInfo(ostream& os, vtkIndent indent, int titleFlag = 1) VTK_OVERRIDE;
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance();
+  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
   // Description:
   // Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "AnnotationControlPoints";};
+  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "AnnotationControlPoints";}
 
   // Description:
   // Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts);
+  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
 
   // Description:
   // Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent);
+  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
 
   /// Write this node's information to a vector of strings for passing to a CLI,
   /// precede each datum with the prefix if not an empty string
@@ -49,19 +49,19 @@ public:
   /// multipleFlag = 1 for the whole list, 1 for the first point
   virtual void WriteCLI(std::vector<std::string>& commandLine,
                         std::string prefix, int coordinateSystem = 0,
-                        int multipleFlag = 1);
+                        int multipleFlag = 1) VTK_OVERRIDE;
 
   // Description:
   // Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) {Superclass::Copy(node);}
+  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE {Superclass::Copy(node);}
 
-  void UpdateScene(vtkMRMLScene *scene);
+  void UpdateScene(vtkMRMLScene *scene) VTK_OVERRIDE;
 
   // Description:
   // alternative method to propagate events generated in Display nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
-                                   void * /*callData*/ );
+                                   void * /*callData*/ ) VTK_OVERRIDE;
 
 
   enum
@@ -69,7 +69,7 @@ public:
       ControlPointModifiedEvent = 19010,
     };
 
-  virtual void Modified()
+  virtual void Modified() VTK_OVERRIDE
     {
     Superclass::Modified();
 
@@ -83,7 +83,7 @@ public:
   /// Invokes any modified events that are 'pending', meaning they were generated
   /// while the DisableModifiedEvent flag was nonzero.
   /// Returns the old flag state.
-  virtual int InvokePendingModifiedEvent ()
+  virtual int InvokePendingModifiedEvent () VTK_OVERRIDE
     {
     if ( this->GetModifiedEventPending() )
       {
@@ -98,7 +98,7 @@ public:
 
   // Description:
   // Create default storage node or NULL if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() VTK_OVERRIDE;
 
   int  AddControlPoint(double newControl[3],int selectedFlag, int visibleFlag);
 
@@ -127,12 +127,12 @@ public:
     NUM_CP_ATTRIBUTE_TYPES
   };
 
-  const char *GetAttributeTypesEnumAsString(int val);
+  const char *GetAttributeTypesEnumAsString(int val) VTK_OVERRIDE;
 
 
   // Description:
   // Initializes all variables associated with annotations
-  virtual void ResetAnnotations();
+  virtual void ResetAnnotations() VTK_OVERRIDE;
 
   // Description:
   // add display node if not already present
@@ -158,7 +158,7 @@ public:
   const char* GetNumberingSchemeAsString(int g);
   void SetNumberingSchemeFromString(const char *schemeString);
 
-  virtual void Initialize(vtkMRMLScene* mrmlScene);
+  virtual void Initialize(vtkMRMLScene* mrmlScene) VTK_OVERRIDE;
 
 protected:
   vtkMRMLAnnotationControlPointsNode();

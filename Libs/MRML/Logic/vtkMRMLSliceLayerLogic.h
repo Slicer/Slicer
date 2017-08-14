@@ -65,7 +65,7 @@ public:
   /// The Usual vtk class functions
   static vtkMRMLSliceLayerLogic *New();
   vtkTypeMacro(vtkMRMLSliceLayerLogic,vtkMRMLAbstractLogic);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   ///
   /// The volume node to operate on
@@ -137,19 +137,19 @@ protected:
   void operator=(const vtkMRMLSliceLayerLogic&);
 
   // Initialize listening to MRML events
-  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
+  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene) VTK_OVERRIDE;
 
   ///
   /// provide the virtual method that updates this Logic based
   /// on mrml changes
   virtual void ProcessMRMLSceneEvents(vtkObject* caller,
                                       unsigned long event,
-                                      void* callData);
+                                      void* callData) VTK_OVERRIDE;
   virtual void ProcessMRMLNodesEvents(vtkObject* caller,
                                       unsigned long event,
-                                      void* callData);
+                                      void* callData) VTK_OVERRIDE;
   void UpdateLogic();
-  virtual void OnMRMLNodeModified(vtkMRMLNode* node);
+  virtual void OnMRMLNodeModified(vtkMRMLNode* node) VTK_OVERRIDE;
   vtkAlgorithmOutput* GetSliceImageDataConnection();
   vtkAlgorithmOutput* GetSliceImageDataConnectionUVW();
 

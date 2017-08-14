@@ -15,7 +15,7 @@ public:
   //static vtkURIHandler *New() { return NULL; };
     static vtkURIHandler *New();
   vtkTypeMacro(vtkURIHandler, vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   vtkGetStringMacro (HostName);
   vtkSetStringMacro (HostName);

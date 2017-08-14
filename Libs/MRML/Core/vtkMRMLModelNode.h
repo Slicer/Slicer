@@ -44,25 +44,25 @@ class VTK_MRML_EXPORT vtkMRMLModelNode : public vtkMRMLDisplayableNode
 public:
   static vtkMRMLModelNode *New();
   vtkTypeMacro(vtkMRMLModelNode,vtkMRMLDisplayableNode);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   //--------------------------------------------------------------------------
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance();
+  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
 
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "Model";};
+  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "Model";};
 
  /// Description:
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node);
+  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
 
   /// alternative method to propagate events generated in Display nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
-                                   void * /*callData*/ );
+                                   void * /*callData*/ ) VTK_OVERRIDE;
 
   /// Get associated model display MRML node
   vtkMRMLModelDisplayNode* GetModelDisplayNode();
@@ -217,12 +217,12 @@ public:
   /// This method returns the bounds of the object with any transforms that may
   /// be applied to it.
   /// \sa GetBounds()
-  virtual void GetRASBounds(double bounds[6]);
+  virtual void GetRASBounds(double bounds[6]) VTK_OVERRIDE;
 
   /// Get bounding box in global RAS form (xmin,xmax, ymin,ymax, zmin,zmax).
   /// This method always returns the bounds of the untransformed object.
   /// \sa GetRASBounds()
-  virtual void GetBounds(double bounds[6]);
+  virtual void GetBounds(double bounds[6]) VTK_OVERRIDE;
 
   /// Transforms bounds from the local coordinate system to the RAS (world)
   /// coordinate system. Only the corner points are used for determining the
@@ -230,15 +230,15 @@ public:
   /// bounds may not fully contain the transformed model points.
   virtual void TransformBoundsToRAS(double inputBounds_Local[6], double outputBounds_RAS[6]);
 
-  virtual bool CanApplyNonLinearTransforms()const;
-  virtual void ApplyTransform(vtkAbstractTransform* transform);
+  virtual bool CanApplyNonLinearTransforms()const VTK_OVERRIDE;
+  virtual void ApplyTransform(vtkAbstractTransform* transform) VTK_OVERRIDE;
 
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() VTK_OVERRIDE;
 
-  virtual std::string GetDefaultStorageNodeClassName(const char* filename /* =NULL */);
+  virtual std::string GetDefaultStorageNodeClassName(const char* filename /* =NULL */) VTK_OVERRIDE;
 
   /// Create and observe default display node
-  virtual void CreateDefaultDisplayNodes();
+  virtual void CreateDefaultDisplayNodes() VTK_OVERRIDE;
 
   /// Reimplemented to take into account the modified time of the mesh.
   /// Returns true if the node (default behavior) or the mesh are modified
@@ -247,7 +247,7 @@ public:
   /// So if you invoke MeshModifiedEvent without calling Modified() on the
   /// mesh, GetModifiedSinceRead() won't return true.
   /// \sa vtkMRMLStorableNode::GetModifiedSinceRead()
-  virtual bool GetModifiedSinceRead();
+  virtual bool GetModifiedSinceRead() VTK_OVERRIDE;
 
 protected:
   vtkMRMLModelNode();
@@ -264,11 +264,11 @@ protected:
 
   ///
   /// Called when a node reference ID is added (list size increased).
-  virtual void OnNodeReferenceAdded(vtkMRMLNodeReference *reference);
+  virtual void OnNodeReferenceAdded(vtkMRMLNodeReference *reference) VTK_OVERRIDE;
 
   ///
   /// Called when a node reference ID is modified.
-  virtual void OnNodeReferenceModified(vtkMRMLNodeReference *reference);
+  virtual void OnNodeReferenceModified(vtkMRMLNodeReference *reference) VTK_OVERRIDE;
 
 
   /// Internal function that sets the mesh to all the display nodes.

@@ -37,7 +37,7 @@ public:
   /// Create a new vtkMRMLVolumePropertyNode
   static vtkMRMLVolumePropertyNode *New();
   vtkTypeMacro(vtkMRMLVolumePropertyNode,vtkMRMLStorableNode);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// Don't change its scalarOpacity, gradientOpacity or color on the volumeproperty
   /// but use the methods below. It wouldn't observe them.
@@ -128,32 +128,32 @@ public:
   //--------------------------------------------------------------------------
   /// MRMLNode methods
   //--------------------------------------------------------------------------
-  virtual vtkMRMLNode* CreateNodeInstance();
+  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
 
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts);
+  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
 
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent);
+  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
 
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node);
+  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
 
   /// Copy only the parameterset (like Volume Propertys, Piecewiesefunctions
   /// etc. as deep copy,but no references etc.)
   void CopyParameterSet(vtkMRMLNode *node);
 
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "VolumeProperty";};
+  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "VolumeProperty";}
 
   /// Reimplemented for internal reasons.
-  virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData);
+  virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData) VTK_OVERRIDE;
 
   /// Create default storage node or NULL if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() VTK_OVERRIDE;
 
   /// \sa vtkMRMLStorableNode::GetModifiedSinceRead()
-  virtual bool GetModifiedSinceRead();
+  virtual bool GetModifiedSinceRead() VTK_OVERRIDE;
 
 protected:
   vtkMRMLVolumePropertyNode(void);

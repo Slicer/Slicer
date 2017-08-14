@@ -34,7 +34,7 @@ public:
   static vtkMRMLCrosshairDisplayableManager3D* New();
   vtkTypeMacro(vtkMRMLCrosshairDisplayableManager3D,
     vtkMRMLAbstractThreeDViewDisplayableManager);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
 protected:
   vtkMRMLCrosshairDisplayableManager3D();
@@ -42,19 +42,19 @@ protected:
 
   /// Initialize the displayable manager based on its associated
   /// vtkMRMLSliceNode
-  virtual void Create();
+  virtual void Create() VTK_OVERRIDE;
 
   /// Method to perform additional initialization
-  virtual void AdditionalInitializeStep();
+  virtual void AdditionalInitializeStep() VTK_OVERRIDE;
 
 private:
   vtkMRMLCrosshairDisplayableManager3D(const vtkMRMLCrosshairDisplayableManager3D&);// Not implemented
   void operator=(const vtkMRMLCrosshairDisplayableManager3D&);                     // Not Implemented
 
-  virtual void UnobserveMRMLScene();
-  virtual void ObserveMRMLScene();
-  virtual void UpdateFromMRMLScene();
-  virtual void OnMRMLNodeModified(vtkMRMLNode* node);
+  virtual void UnobserveMRMLScene() VTK_OVERRIDE;
+  virtual void ObserveMRMLScene() VTK_OVERRIDE;
+  virtual void UpdateFromMRMLScene() VTK_OVERRIDE;
+  virtual void OnMRMLNodeModified(vtkMRMLNode* node) VTK_OVERRIDE;
 
   class vtkInternal;
   vtkInternal * Internal;

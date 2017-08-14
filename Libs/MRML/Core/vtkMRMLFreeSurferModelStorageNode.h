@@ -27,13 +27,13 @@ class VTK_MRML_EXPORT vtkMRMLFreeSurferModelStorageNode : public vtkMRMLModelSto
   public:
   static vtkMRMLFreeSurferModelStorageNode *New();
   vtkTypeMacro(vtkMRMLFreeSurferModelStorageNode,vtkMRMLModelStorageNode);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
-  virtual vtkMRMLNode* CreateNodeInstance();
+  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
 
   ///
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts);
+  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
 
   ///
   /// Copy data from a  referenced node's filename to new location.
@@ -43,15 +43,15 @@ class VTK_MRML_EXPORT vtkMRMLFreeSurferModelStorageNode : public vtkMRMLModelSto
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent);
+  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node);
+  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
 
   ///
   /// Get node XML tag name (like Storage, Model)
-  virtual const char* GetNodeTagName()  {return "FreeSurferModelStorage";};
+  virtual const char* GetNodeTagName() VTK_OVERRIDE  {return "FreeSurferModelStorage";};
 
   ///
   /// Control use of the triangle stipper when reading the polydata
@@ -65,10 +65,10 @@ protected:
   void operator=(const vtkMRMLFreeSurferModelStorageNode&);
 
   /// Initialize all the supported write file types
-  virtual void InitializeSupportedReadFileTypes();
+  virtual void InitializeSupportedReadFileTypes() VTK_OVERRIDE;
 
   /// Read data and set it in the referenced node
-  virtual int ReadDataInternal(vtkMRMLNode *refNode);
+  virtual int ReadDataInternal(vtkMRMLNode *refNode) VTK_OVERRIDE;
 
   int UseStripper;
 };

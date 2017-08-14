@@ -141,7 +141,7 @@ class VTK_MRML_EXPORT vtkMRMLNode : public vtkObject
 
 public:
   vtkTypeMacro(vtkMRMLNode,vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// \brief Create instance of the default node. Like New only virtual.
   ///
@@ -427,7 +427,7 @@ public:
   /// of the instance variables).
   ///
   /// \sa GetDisableModifiedEvent()
-  virtual void Modified()
+  virtual void Modified() VTK_OVERRIDE
     {
     if (!this->GetDisableModifiedEvent())
       {
@@ -725,7 +725,7 @@ protected:
   public:
     vtkTypeMacro(vtkMRMLNodeReference,vtkObject);
     static vtkMRMLNodeReference *New();
-    void PrintSelf(ostream& vtkNotUsed(os), vtkIndent vtkNotUsed(indent)){};
+    void PrintSelf(ostream& vtkNotUsed(os), vtkIndent vtkNotUsed(indent)) VTK_OVERRIDE {};
 
   public:
     vtkSetStringMacro(ReferenceRole);

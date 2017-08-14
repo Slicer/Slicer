@@ -38,7 +38,7 @@ public:
   static vtkMRMLCrosshairDisplayableManager* New();
   vtkTypeMacro(vtkMRMLCrosshairDisplayableManager,
                        vtkMRMLAbstractSliceViewDisplayableManager);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   // Utility functions (used by 2D and 3D crosshair displayable managers)
   static vtkMRMLCrosshairNode* FindCrosshairNode(vtkMRMLScene* scene);
@@ -49,22 +49,22 @@ protected:
 
   /// Initialize the displayable manager based on its associated
   /// vtkMRMLSliceNode
-  virtual void Create();
+  virtual void Create() VTK_OVERRIDE;
 
   /// Called when the SliceNode is modified. May cause Crosshair to remap its position on screen.
-  virtual void OnMRMLSliceNodeModifiedEvent();
+  virtual void OnMRMLSliceNodeModifiedEvent() VTK_OVERRIDE;
 
   /// Method to perform additional initialization
-  virtual void AdditionalInitializeStep();
+  virtual void AdditionalInitializeStep() VTK_OVERRIDE;
 
 private:
   vtkMRMLCrosshairDisplayableManager(const vtkMRMLCrosshairDisplayableManager&);// Not implemented
   void operator=(const vtkMRMLCrosshairDisplayableManager&);                     // Not Implemented
 
-  virtual void UnobserveMRMLScene();
-  virtual void ObserveMRMLScene();
-  virtual void UpdateFromMRMLScene();
-  virtual void OnMRMLNodeModified(vtkMRMLNode* node);
+  virtual void UnobserveMRMLScene() VTK_OVERRIDE;
+  virtual void ObserveMRMLScene() VTK_OVERRIDE;
+  virtual void UpdateFromMRMLScene() VTK_OVERRIDE;
+  virtual void OnMRMLNodeModified(vtkMRMLNode* node) VTK_OVERRIDE;
 
   class vtkInternal;
   vtkInternal * Internal;

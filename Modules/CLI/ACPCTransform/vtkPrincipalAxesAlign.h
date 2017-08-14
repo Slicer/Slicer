@@ -34,9 +34,9 @@ public:
   vtkGetVector3Macro(XAxis, double);
   vtkGetVector3Macro(YAxis, double);
   vtkGetVector3Macro(ZAxis, double);
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
 protected:
   vtkPrincipalAxesAlign();

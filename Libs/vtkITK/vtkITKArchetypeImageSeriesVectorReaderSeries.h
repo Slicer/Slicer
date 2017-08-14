@@ -28,7 +28,7 @@ class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesVectorReaderSeries : public vtkIT
 public:
   static vtkITKArchetypeImageSeriesVectorReaderSeries *New();
   vtkTypeMacro(vtkITKArchetypeImageSeriesVectorReaderSeries,vtkITKArchetypeImageSeriesReader);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   static void ReadProgressCallback(itk::ProcessObject* obj,
                                    const itk::ProgressEvent&,
@@ -37,7 +37,7 @@ protected:
   vtkITKArchetypeImageSeriesVectorReaderSeries();
   ~vtkITKArchetypeImageSeriesVectorReaderSeries();
 
-  void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation *outInfo);
+  void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation *outInfo) VTK_OVERRIDE;
 };
 
 #endif

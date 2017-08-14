@@ -56,7 +56,7 @@ class VTK_SLICER_TRANSFORMS_MODULE_LOGIC_EXPORT vtkSlicerTransformLogic : public
   /// The Usual vtk class functions
   static vtkSlicerTransformLogic *New();
   vtkTypeMacro(vtkSlicerTransformLogic,vtkMRMLAbstractLogic);
-  void PrintSelf(ostream& os, vtkIndent indent) { Superclass::PrintSelf(os, indent); };
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE { Superclass::PrintSelf(os, indent); }
 
   /// Apply the associated transform to the transformable node. Return true
   /// on success, false otherwise.

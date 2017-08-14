@@ -28,32 +28,32 @@ class VTK_MRML_EXPORT vtkMRMLTransformStorageNode : public vtkMRMLStorageNode
   public:
   static vtkMRMLTransformStorageNode *New();
   vtkTypeMacro(vtkMRMLTransformStorageNode,vtkMRMLStorageNode);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
-  virtual vtkMRMLNode* CreateNodeInstance();
+  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
 
   ///
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts);
+  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent);
+  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
 
   ///
   /// Get node XML tag name (like Storage, Transform)
-  virtual const char* GetNodeTagName()  {return "TransformStorage";};
+  virtual const char* GetNodeTagName() VTK_OVERRIDE  {return "TransformStorage";};
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node);
+  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
 
   ///
   /// Initialize all the supported write file types
-  virtual void InitializeSupportedWriteFileTypes();
+  virtual void InitializeSupportedWriteFileTypes() VTK_OVERRIDE;
 
   /// Support only transform nodes
-  virtual bool CanReadInReferenceNode(vtkMRMLNode* refNode);
+  virtual bool CanReadInReferenceNode(vtkMRMLNode* refNode) VTK_OVERRIDE;
 
   ///
   /// If true then BSpline transforms will be written as deprecated but ITKv3-compatible
@@ -84,7 +84,7 @@ protected:
   virtual void SetAndObserveTransformFromParentAutoInvert(vtkMRMLTransformNode* transformNode, vtkAbstractTransform *transform);
 
   /// Read data and set it in the referenced node
-  virtual int ReadDataInternal(vtkMRMLNode *refNode);
+  virtual int ReadDataInternal(vtkMRMLNode *refNode) VTK_OVERRIDE;
 
   /// This method is specialized for ITKv3 tfm files as generated
   /// by legacy versions of BRAINSFit (see slicer issue #3788).
@@ -109,7 +109,7 @@ protected:
   virtual int ReadFromImageFile(vtkMRMLNode *refNode);
 
   /// Write data from a referenced node
-  virtual int WriteDataInternal(vtkMRMLNode *refNode);
+  virtual int WriteDataInternal(vtkMRMLNode *refNode) VTK_OVERRIDE;
 
   /// Writes simple or composite transform to an ITK transform file.
   /// Supports writing of legacy ITKv3 BSpline transform with additive bulk component.

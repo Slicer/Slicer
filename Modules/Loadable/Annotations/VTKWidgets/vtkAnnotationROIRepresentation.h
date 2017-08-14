@@ -68,7 +68,7 @@ public:
   ///
   /// Standard methods for the class.
   vtkTypeMacro(vtkAnnotationROIRepresentation,vtkWidgetRepresentation);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   static const int NUMBER_HANDLES = 7;
 
@@ -166,19 +166,19 @@ public:
 
   ///
   /// These are methods that satisfy vtkWidgetRepresentation's API.
-  virtual void PlaceWidget(double bounds[6]);
-  virtual void BuildRepresentation();
-  virtual int ComputeInteractionState(int X, int Y, int modify=0);
-  virtual void StartWidgetInteraction(double e[2]);
-  virtual void WidgetInteraction(double e[2]);
-  virtual double *GetBounds();
+  virtual void PlaceWidget(double bounds[6]) VTK_OVERRIDE;
+  virtual void BuildRepresentation() VTK_OVERRIDE;
+  virtual int ComputeInteractionState(int X, int Y, int modify=0) VTK_OVERRIDE;
+  virtual void StartWidgetInteraction(double e[2]) VTK_OVERRIDE;
+  virtual void WidgetInteraction(double e[2]) VTK_OVERRIDE;
+  virtual double *GetBounds() VTK_OVERRIDE;
 
   ///
   /// Methods supporting, and required by, the rendering process.
-  virtual void ReleaseGraphicsResources(vtkWindow*);
-  virtual int RenderOpaqueGeometry(vtkViewport*);
-  virtual int RenderTranslucentPolygonalGeometry(vtkViewport*);
-  virtual int HasTranslucentPolygonalGeometry();
+  virtual void ReleaseGraphicsResources(vtkWindow*) VTK_OVERRIDE;
+  virtual int RenderOpaqueGeometry(vtkViewport*) VTK_OVERRIDE;
+  virtual int RenderTranslucentPolygonalGeometry(vtkViewport*) VTK_OVERRIDE;
+  virtual int HasTranslucentPolygonalGeometry() VTK_OVERRIDE;
 
   enum {Outside=0,MoveF0,MoveF1,MoveF2,MoveF3,MoveF4,MoveF5,Translating,Rotating,Scaling};
 
@@ -200,7 +200,7 @@ public:
   /// get 3 extents along sides of the box
   void GetExtents(double bounds[]);
 
-  virtual void GetActors(vtkPropCollection *actors);
+  virtual void GetActors(vtkPropCollection *actors) VTK_OVERRIDE;
 
 
 protected:

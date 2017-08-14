@@ -29,7 +29,7 @@ class VTK_FreeSurfer_EXPORT vtkFSLookupTable : public vtkLookupTable
 public:
     static vtkFSLookupTable *New();
     vtkTypeMacro(vtkFSLookupTable,vtkLookupTable);
-    void PrintSelf(ostream& os, vtkIndent indent);
+    void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
 
 
@@ -75,22 +75,22 @@ public:
 
     ///
     /// from vtkScalarsToColors
-    double *GetRange();
+    double *GetRange() VTK_OVERRIDE;
     ///
     /// don't do anything as it's overriding the LUTs low threshold with the
     /// scalar values' lowest value
-    void SetRange(double, double);
+    void SetRange(double, double) VTK_OVERRIDE;
     ///
     /// Given a scalar value val, return an rgba color value
     /// returns array of length 3, 0-255
-    unsigned char *MapValue(double val);
+    unsigned char *MapValue(double val) VTK_OVERRIDE;
     ///
     /// passes val to MapValue
-    void GetColor(double, double[3]);
+    void GetColor(double, double[3]) VTK_OVERRIDE;
     ///
     /// take input scalars and push them through the calculation to get colours
     /// to put int the output array
-    void MapScalarsThroughTable2(void* input, unsigned char* outupt, int inputDataType, int numberOfValues, int inputIncrement, int outputIncrement);
+    void MapScalarsThroughTable2(void* input, unsigned char* outupt, int inputDataType, int numberOfValues, int inputIncrement, int outputIncrement) VTK_OVERRIDE;
 
     ///
     /// Type constant, can have different types of colour scales
@@ -106,7 +106,7 @@ public:
 
     // Description:
     // Get the number of available colors for mapping to.
-    virtual vtkIdType GetNumberOfAvailableColors();
+    virtual vtkIdType GetNumberOfAvailableColors() VTK_OVERRIDE;
 protected:
     vtkFSLookupTable();
     ~vtkFSLookupTable();

@@ -43,7 +43,7 @@ public:
   /// The Usual VTK class functions
   static vtkMRMLSliceLinkLogic *New();
   vtkTypeMacro(vtkMRMLSliceLinkLogic,vtkMRMLAbstractLogic);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
 protected:
 
@@ -51,17 +51,17 @@ protected:
   virtual ~vtkMRMLSliceLinkLogic();
 
   // On a change in scene, we need to manage the observations.
-  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
+  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene) VTK_OVERRIDE;
 
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
-  virtual void OnMRMLNodeModified(vtkMRMLNode* node);
-  virtual void OnMRMLSceneStartBatchProcess();
-  virtual void OnMRMLSceneEndBatchProcess();
-  virtual void OnMRMLSceneStartImport();
-  virtual void OnMRMLSceneEndImport();
-  virtual void OnMRMLSceneStartRestore();
-  virtual void OnMRMLSceneEndRestore();
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) VTK_OVERRIDE;
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) VTK_OVERRIDE;
+  virtual void OnMRMLNodeModified(vtkMRMLNode* node) VTK_OVERRIDE;
+  virtual void OnMRMLSceneStartBatchProcess() VTK_OVERRIDE;
+  virtual void OnMRMLSceneEndBatchProcess() VTK_OVERRIDE;
+  virtual void OnMRMLSceneStartImport() VTK_OVERRIDE;
+  virtual void OnMRMLSceneEndImport() VTK_OVERRIDE;
+  virtual void OnMRMLSceneStartRestore() VTK_OVERRIDE;
+  virtual void OnMRMLSceneEndRestore() VTK_OVERRIDE;
 
   // Used internally to control whether we are in the process of
   // broadcasting events. PIMPL it?

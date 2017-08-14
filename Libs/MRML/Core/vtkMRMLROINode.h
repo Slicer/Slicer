@@ -14,38 +14,38 @@ class VTK_MRML_EXPORT vtkMRMLROINode : public vtkMRMLTransformableNode
 public:
   static vtkMRMLROINode *New();
   vtkTypeMacro(vtkMRMLROINode,vtkMRMLTransformableNode);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   //--------------------------------------------------------------------------
   /// MRML methods
   //--------------------------------------------------------------------------
-  virtual vtkMRMLNode* CreateNodeInstance();
+  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
 
   ///
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts);
+  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
 
   virtual void ReadXMLString( const char *keyValuePairs);
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent);
+  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node);
+  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "MRMLROINode";};
+  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "MRMLROINode";}
 
   ///
   ///
-  virtual void UpdateScene(vtkMRMLScene *scene);
+  virtual void UpdateScene(vtkMRMLScene *scene) VTK_OVERRIDE;
 
   ///
   /// update display node ids
-  void UpdateReferences();
+  void UpdateReferences() VTK_OVERRIDE;
 
   ///
   /// Indicates if the ROI is visible
@@ -98,15 +98,15 @@ public:
   vtkSetStringMacro(LabelText);
   vtkGetStringMacro(LabelText);
 
-  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
+  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) VTK_OVERRIDE;
 
   vtkGetStringMacro(VolumeNodeID);
   vtkSetStringMacro(VolumeNodeID);
 
   ///
   /// transform utility functions
-  virtual bool CanApplyNonLinearTransforms()const;
-  virtual void ApplyTransform(vtkAbstractTransform* transform);
+  virtual bool CanApplyNonLinearTransforms()const VTK_OVERRIDE;
+  virtual void ApplyTransform(vtkAbstractTransform* transform) VTK_OVERRIDE;
 
   /// Description
   /// get transformed planes for the ROI region

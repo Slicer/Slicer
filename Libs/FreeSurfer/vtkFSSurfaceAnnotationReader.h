@@ -39,7 +39,7 @@ class VTK_FreeSurfer_EXPORT vtkFSSurfaceAnnotationReader : public vtkDataReader
 public:
   static vtkFSSurfaceAnnotationReader *New();
   vtkTypeMacro(vtkFSSurfaceAnnotationReader,vtkDataReader);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   vtkIntArray *GetOutput();
   void SetOutput(vtkIntArray *output);

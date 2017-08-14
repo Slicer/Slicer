@@ -62,7 +62,7 @@ class VTK_MRML_EXPORT vtkMRMLScene : public vtkObject
 public:
   static vtkMRMLScene *New();
   vtkTypeMacro(vtkMRMLScene, vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// Set URL (file name) of the scene
   void SetURL(const char *url);

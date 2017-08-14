@@ -34,29 +34,29 @@ class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumeRenderingDispla
 {
 public:
   vtkTypeMacro(vtkMRMLVolumeRenderingDisplayNode,vtkMRMLDisplayNode);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts);
+  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
 
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent);
+  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
 
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node);
+  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
 
   /// Mark the volume, ROI and volume property nodes as references.
-  virtual void SetSceneReferences();
+  virtual void SetSceneReferences() VTK_OVERRIDE;
 
   /// Update the stored reference to another node in the scene
-  virtual void UpdateReferenceID(const char *oldID, const char *newID);
+  virtual void UpdateReferenceID(const char *oldID, const char *newID) VTK_OVERRIDE;
 
   /// Updates this node if it depends on other nodes
   /// when the node is deleted in the scene
-  virtual void UpdateReferences();
+  virtual void UpdateReferences() VTK_OVERRIDE;
 
   /// Observe the reference transform node
-  virtual void UpdateScene(vtkMRMLScene *scene);
+  virtual void UpdateScene(vtkMRMLScene *scene) VTK_OVERRIDE;
 
   /// the ID of a MRMLVolumeNode
   vtkGetStringMacro (VolumeNodeID);
@@ -139,7 +139,7 @@ protected:
   vtkMRMLVolumeRenderingDisplayNode(const vtkMRMLVolumeRenderingDisplayNode&);
   void operator=(const vtkMRMLVolumeRenderingDisplayNode&);
 
-  virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData);
+  virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData) VTK_OVERRIDE;
 
   vtkIntArray* ObservedEvents;
 

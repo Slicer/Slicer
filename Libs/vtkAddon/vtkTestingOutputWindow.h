@@ -53,13 +53,13 @@ public:
   // it changes the output window to that.
   static vtkTestingOutputWindow* GetInstance();
 
-  virtual void PrintSelf(ostream& os, vtkIndent indent);
+  virtual void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
-  virtual void DisplayText(const char* text);
-  virtual void DisplayErrorText(const char* text);
-  virtual void DisplayWarningText(const char* text);
-  virtual void DisplayGenericWarningText(const char* text); 
-  virtual void DisplayDebugText(const char* text);
+  virtual void DisplayText(const char* text) VTK_OVERRIDE;
+  virtual void DisplayErrorText(const char* text) VTK_OVERRIDE;
+  virtual void DisplayWarningText(const char* text) VTK_OVERRIDE;
+  virtual void DisplayGenericWarningText(const char* text) VTK_OVERRIDE;
+  virtual void DisplayDebugText(const char* text) VTK_OVERRIDE;
 
   // Sets number of warning and error messages to zero
   virtual void ResetNumberOfLoggedMessages();

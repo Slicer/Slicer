@@ -32,7 +32,7 @@ public:
 
   static vtkMRMLMarkupsClickCounter *New();
   vtkTypeMacro(vtkMRMLMarkupsClickCounter, vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// Check if enough clicks are counted
   bool HasEnoughClicks(int clicks);

@@ -30,7 +30,7 @@ public:
 
   static vtkMRMLAnnotationClickCounter *New();
   vtkTypeMacro(vtkMRMLAnnotationClickCounter, vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// Increase the click counter and return the number of clicks.
   /// \sa HasEnoughClicks()

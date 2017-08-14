@@ -54,13 +54,13 @@ class VTK_SLICER_VOLUMERENDERING_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLVol
 public:
   static vtkMRMLVolumeRenderingDisplayableManager *New();
   vtkTypeMacro(vtkMRMLVolumeRenderingDisplayableManager, vtkMRMLAbstractThreeDViewDisplayableManager);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   virtual void Reset();
 
   void SetGUICallbackCommand(vtkCommand* callback);
 
-  virtual void Create();
+  virtual void Create() VTK_OVERRIDE;
 
   ///
   /// Return the volume mapper of the volume rendering display node
@@ -119,12 +119,12 @@ public:
   virtual int IsMapperSupported(vtkVolumeMapper* volumeMapper,
                                 vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
-  virtual void OnMRMLSceneStartClose();
-  virtual void OnMRMLSceneEndClose();
-  virtual void OnMRMLSceneEndImport();
-  virtual void OnMRMLSceneEndRestore();
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
+  virtual void OnMRMLSceneStartClose() VTK_OVERRIDE;
+  virtual void OnMRMLSceneEndClose() VTK_OVERRIDE;
+  virtual void OnMRMLSceneEndImport() VTK_OVERRIDE;
+  virtual void OnMRMLSceneEndRestore() VTK_OVERRIDE;
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) VTK_OVERRIDE;
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) VTK_OVERRIDE;
 
   void UpdateDisplayNodeList();
 
@@ -140,19 +140,19 @@ protected:
   vtkMRMLVolumeRenderingDisplayableManager(const vtkMRMLVolumeRenderingDisplayableManager&);
   void operator=(const vtkMRMLVolumeRenderingDisplayableManager&);
 
-  virtual int ActiveInteractionModes();
+  virtual int ActiveInteractionModes() VTK_OVERRIDE;
   // Description:
   // Don't support nested event processing
   // TODO: Probably a bad idea to not support nested calls
-  virtual bool EnterMRMLNodesCallback()const;
+  virtual bool EnterMRMLNodesCallback()const VTK_OVERRIDE;
 
   // Description:
   // Update MRML events
   virtual void ProcessMRMLNodesEvents(vtkObject * caller,
                                  unsigned long event,
-                                 void * callData);
+                                 void * callData) VTK_OVERRIDE;
 
-  virtual void OnInteractorStyleEvent(int eventId);
+  virtual void OnInteractorStyleEvent(int eventId) VTK_OVERRIDE;
 
   //virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
 

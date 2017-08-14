@@ -38,10 +38,10 @@ public:
   static vtkMRMLModelDisplayNode *New();
   vtkTypeMacro(vtkMRMLModelDisplayNode,vtkMRMLDisplayNode);
 
-  virtual vtkMRMLNode* CreateNodeInstance();
+  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
 
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "ModelDisplay";};
+  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "ModelDisplay";}
 
   /// Set and observe mesh for this model. It should be the output
   /// mesh connection of the model node.
@@ -84,15 +84,15 @@ public:
   /// are removed, therefore if a GUI or other component observes the mesh, then it will detect that
   /// the scalar is deleted and so it may deactivate the selected scalar.
   /// \sa SetActiveAttributeLocation()
-  virtual void SetActiveScalarName(const char *scalarName);
+  virtual void SetActiveScalarName(const char *scalarName) VTK_OVERRIDE;
 
   /// Reimplemented to update pipeline with new value
   /// \sa SetActiveScalarName()
-  virtual void SetActiveAttributeLocation(int location);
+  virtual void SetActiveAttributeLocation(int location) VTK_OVERRIDE;
 
   /// Reimplemented to update scalar range accordingly
   /// \sa SetActiveScalarName()
-  virtual void SetScalarRangeFlag(int flag);
+  virtual void SetScalarRangeFlag(int flag) VTK_OVERRIDE;
 
   /// Set whether to threshold the model display node.
   /// \sa ThresholdEnabled, GetThresholdEnabled()
@@ -123,7 +123,7 @@ protected:
 
   virtual void ProcessMRMLEvents(vtkObject *caller,
                                  unsigned long event,
-                                 void *callData);
+                                 void *callData) VTK_OVERRIDE;
 
   /// To be reimplemented in subclasses if the input of the pipeline changes
   virtual void SetInputToMeshPipeline(vtkAlgorithmOutput* meshConnection);

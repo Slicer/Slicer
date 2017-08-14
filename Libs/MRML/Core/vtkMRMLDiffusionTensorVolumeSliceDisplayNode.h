@@ -34,69 +34,69 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode
  public:
   static vtkMRMLDiffusionTensorVolumeSliceDisplayNode *New (  );
   vtkTypeMacro ( vtkMRMLDiffusionTensorVolumeSliceDisplayNode,vtkMRMLGlyphableVolumeSliceDisplayNode );
-  void PrintSelf ( ostream& os, vtkIndent indent );
+  void PrintSelf ( ostream& os, vtkIndent indent ) VTK_OVERRIDE;
 
   //--------------------------------------------------------------------------
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance (  );
+  virtual vtkMRMLNode* CreateNodeInstance () VTK_OVERRIDE;
 
   ///
   /// Read node attributes from XML (MRML) file
-  virtual void ReadXMLAttributes ( const char** atts );
+  virtual void ReadXMLAttributes ( const char** atts ) VTK_OVERRIDE;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML ( ostream& of, int indent );
+  virtual void WriteXML ( ostream& of, int indent ) VTK_OVERRIDE;
 
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy ( vtkMRMLNode *node );
+  virtual void Copy ( vtkMRMLNode *node ) VTK_OVERRIDE;
 
   ///
   /// Get node XML tag name (like Volume, UnstructuredGrid)
-  virtual const char* GetNodeTagName ( ) {return "DiffusionTensorVolumeSliceDisplayNode";};
+  virtual const char* GetNodeTagName () VTK_OVERRIDE {return "DiffusionTensorVolumeSliceDisplayNode";}
 
   ///
   /// Updates this node if it depends on other nodes
   /// when the node is deleted in the scene
-  virtual void UpdateReferences();
+  virtual void UpdateReferences() VTK_OVERRIDE;
 
   ///
   /// Finds the storage node and read the data
-  virtual void UpdateScene(vtkMRMLScene *scene);
+  virtual void UpdateScene(vtkMRMLScene *scene) VTK_OVERRIDE;
 
   ///
   /// Update the stored reference to another node in the scene
-  virtual void UpdateReferenceID(const char *oldID, const char *newID);
+  virtual void UpdateReferenceID(const char *oldID, const char *newID) VTK_OVERRIDE;
 
   ///
   /// alternative method to propagate events generated in Display nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
-                                   void * /*callData*/ );
+                                   void * /*callData*/ ) VTK_OVERRIDE;
 
   /// Return the glyph producer output for the input image data.
   /// \sa GetOutputPolyData()
-  virtual vtkAlgorithmOutput* GetOutputMeshConnection();
+  virtual vtkAlgorithmOutput* GetOutputMeshConnection() VTK_OVERRIDE;
 
   ///
   /// Update the pipeline based on this node attributes
-  virtual void UpdateAssignedAttribute();
+  virtual void UpdateAssignedAttribute() VTK_OVERRIDE;
 
   ///
   /// Set ImageData for a volume slice
-  virtual void SetSliceImagePort(vtkAlgorithmOutput *imagePort);
+  virtual void SetSliceImagePort(vtkAlgorithmOutput *imagePort) VTK_OVERRIDE;
 
   ///
   /// Set slice to RAS transformation
-  virtual void SetSlicePositionMatrix(vtkMatrix4x4 *matrix);
+  virtual void SetSlicePositionMatrix(vtkMatrix4x4 *matrix) VTK_OVERRIDE;
 
   ///
   /// Set slice to IJK transformation
-  virtual void SetSliceGlyphRotationMatrix(vtkMatrix4x4 *matrix);
+  virtual void SetSliceGlyphRotationMatrix(vtkMatrix4x4 *matrix) VTK_OVERRIDE;
 
   //--------------------------------------------------------------------------
   /// Display Information: Geometry to display (not mutually exclusive)

@@ -25,13 +25,13 @@ class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesVectorReaderFile : public vtkITKA
  public:
   static vtkITKArchetypeImageSeriesVectorReaderFile *New();
   vtkTypeMacro(vtkITKArchetypeImageSeriesVectorReaderFile,vtkITKArchetypeImageSeriesReader);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
  protected:
   vtkITKArchetypeImageSeriesVectorReaderFile();
   ~vtkITKArchetypeImageSeriesVectorReaderFile();
 
-  void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation *outInfo);
+  void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation *outInfo) VTK_OVERRIDE;
   static void ReadProgressCallback(itk::ProcessObject* obj,const itk::ProgressEvent&, void* data);
   /// private:
 };

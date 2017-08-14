@@ -45,7 +45,7 @@ public:
 
   static vtkSlicerTablesLogic *New();
   vtkTypeMacro(vtkSlicerTablesLogic, vtkSlicerModuleLogic);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// Loads a table from filename.
   /// If findSchema is true then the method looks for a schema file (for example, basefilename.schema.csv)

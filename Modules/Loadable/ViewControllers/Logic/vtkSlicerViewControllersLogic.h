@@ -42,7 +42,7 @@ class VTK_SLICER_VIEWCONTROLLERS_MODULE_LOGIC_EXPORT vtkSlicerViewControllersLog
 public:
   static vtkSlicerViewControllersLogic *New();
   vtkTypeMacro(vtkSlicerViewControllersLogic, vtkSlicerModuleLogic);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
 public:
 
@@ -66,7 +66,7 @@ protected:
   virtual ~vtkSlicerViewControllersLogic();
 
   /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
-  virtual void RegisterNodes();
+  virtual void RegisterNodes() VTK_OVERRIDE;
 
 private:
   vtkSlicerViewControllersLogic(const vtkSlicerViewControllersLogic&); // Not implemented

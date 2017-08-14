@@ -44,7 +44,7 @@ public:
   // The usual VTK class functions
   static vtkSlicerScalarBarActor *New();
   vtkTypeMacro(vtkSlicerScalarBarActor,vtkScalarBarActor);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// Get for the flag on using VTK6 annotation as label
   vtkGetMacro(UseAnnotationAsLabel, int);
@@ -65,7 +65,7 @@ protected:
   //
   // The default implementation creates exactly this->NumberOfLabels
   // tick marks, uniformly spaced on a linear or logarithmic scale.
-  virtual void LayoutTicks();
+  virtual void LayoutTicks() VTK_OVERRIDE;
 
   /// flag for setting color name as label
   int UseAnnotationAsLabel;

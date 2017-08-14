@@ -32,21 +32,21 @@ class VTK_SLICER_EDITORLIB_MODULE_LOGIC_EXPORT vtkImageConnectivity : public vtk
 public:
   static vtkImageConnectivity *New();
   vtkTypeMacro(vtkImageConnectivity,vtkImageAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// Function
   void SetFunction(int func) {
-    this->Function = func;};
+    this->Function = func;}
   void SetFunctionToIdentifyIslands() {
-    this->SetFunction(CONNECTIVITY_IDENTIFY);};
+    this->SetFunction(CONNECTIVITY_IDENTIFY);}
   void SetFunctionToRemoveIslands() {
-    this->SetFunction(CONNECTIVITY_REMOVE);};
+    this->SetFunction(CONNECTIVITY_REMOVE);}
   void SetFunctionToChangeIsland() {
-    this->SetFunction(CONNECTIVITY_CHANGE);};
+    this->SetFunction(CONNECTIVITY_CHANGE);}
   void SetFunctionToMeasureIsland() {
-    this->SetFunction(CONNECTIVITY_MEASURE);};
+    this->SetFunction(CONNECTIVITY_MEASURE);}
   void SetFunctionToSaveIsland() {
-    this->SetFunction(CONNECTIVITY_SAVE);};
+    this->SetFunction(CONNECTIVITY_SAVE);}
   int GetFunction() {return this->Function;}
   const char* GetFunctionString();
 
@@ -90,7 +90,7 @@ protected:
   int Function;
   int SliceBySlice;
 
-  void ExecuteDataWithInformation(vtkDataObject *, vtkInformation *);
+  virtual void ExecuteDataWithInformation(vtkDataObject *, vtkInformation *) VTK_OVERRIDE;
 
 private:
   vtkImageConnectivity(const vtkImageConnectivity&);

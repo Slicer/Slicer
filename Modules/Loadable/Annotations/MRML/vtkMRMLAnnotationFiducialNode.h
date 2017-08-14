@@ -27,11 +27,11 @@ public:
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance();
+  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "AnnotationFiducials";};
+  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "AnnotationFiducials";}
 
-  virtual const char* GetIcon() {return ":/Icons/AnnotationPoint.png";};
+  virtual const char* GetIcon() VTK_OVERRIDE {return ":/Icons/AnnotationPoint.png";}
 
   int  SetFiducial(double newControl[3],int selectedFlag, int visibleFlag);
 

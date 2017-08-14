@@ -41,7 +41,7 @@ class VTK_SLICER_TERMINOLOGIES_LOGIC_EXPORT vtkSlicerTerminologiesModuleLogic :
 public:
   static vtkSlicerTerminologiesModuleLogic *New();
   vtkTypeMacro(vtkSlicerTerminologiesModuleLogic, vtkSlicerModuleLogic);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// Information needed to uniquely identify a terminology code
   class CodeIdentifier
@@ -172,7 +172,7 @@ protected:
   vtkSlicerTerminologiesModuleLogic();
   virtual ~vtkSlicerTerminologiesModuleLogic();
 
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
+  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) VTK_OVERRIDE;
 
   /// Load default terminology dictionaries from JSON into \sa LoadedTerminologies
   void LoadDefaultTerminologies();

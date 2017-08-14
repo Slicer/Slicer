@@ -43,7 +43,7 @@ class vtkSegmentationCore_EXPORT vtkCalculateOversamplingFactor : public vtkObje
 public:
   static vtkCalculateOversamplingFactor *New();
   vtkTypeMacro(vtkCalculateOversamplingFactor, vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
 public:
   /// Calculate oversampling factor for the input model and its rasterization reference volume

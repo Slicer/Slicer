@@ -41,7 +41,7 @@ class VTK_SLICER_TERMINOLOGIES_LOGIC_EXPORT vtkSlicerTerminologyCategory : publi
 public:
   static vtkSlicerTerminologyCategory *New();
   vtkTypeMacro(vtkSlicerTerminologyCategory, vtkCodedEntry);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// Reset state of object
   virtual void Initialize();

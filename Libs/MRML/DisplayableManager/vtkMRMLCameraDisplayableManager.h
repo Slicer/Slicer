@@ -36,9 +36,9 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLCameraDisplayableManager :
 public:
   static vtkMRMLCameraDisplayableManager* New();
   vtkTypeMacro(vtkMRMLCameraDisplayableManager,vtkMRMLAbstractThreeDViewDisplayableManager);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
-  virtual void RemoveMRMLObservers();
+  virtual void RemoveMRMLObservers() VTK_OVERRIDE;
 
   void UpdateCameraNode();
 
@@ -58,22 +58,22 @@ protected:
   vtkMRMLCameraDisplayableManager();
   virtual ~vtkMRMLCameraDisplayableManager();
 
-  virtual void Create();
+  virtual void Create() VTK_OVERRIDE;
 
-  virtual void OnMRMLSceneEndClose();
-  virtual void OnMRMLSceneStartImport();
-  virtual void OnMRMLSceneEndImport();
-  virtual void OnMRMLSceneEndRestore();
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
+  virtual void OnMRMLSceneEndClose() VTK_OVERRIDE;
+  virtual void OnMRMLSceneStartImport() VTK_OVERRIDE;
+  virtual void OnMRMLSceneEndImport() VTK_OVERRIDE;
+  virtual void OnMRMLSceneEndRestore() VTK_OVERRIDE;
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) VTK_OVERRIDE;
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) VTK_OVERRIDE;
 
   virtual void ProcessMRMLNodesEvents(vtkObject *caller,
                                       unsigned long event,
-                                      void *callData);
-  virtual void OnMRMLNodeModified(vtkMRMLNode* node);
+                                      void *callData) VTK_OVERRIDE;
+  virtual void OnMRMLNodeModified(vtkMRMLNode* node) VTK_OVERRIDE;
 
   void SetAndObserveCameraNode(vtkMRMLCameraNode * newCameraNode);
-  virtual void AdditionalInitializeStep();
+  virtual void AdditionalInitializeStep() VTK_OVERRIDE;
   void SetCameraToRenderer();
   void SetCameraToInteractor();
 

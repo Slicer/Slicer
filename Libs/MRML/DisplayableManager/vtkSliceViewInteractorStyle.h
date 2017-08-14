@@ -40,7 +40,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkSliceViewInteractorStyle : public vt
 public:
   static vtkSliceViewInteractorStyle *New();
   vtkTypeMacro(vtkSliceViewInteractorStyle,vtkInteractorStyleUser);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   ///
   /// Events are either handled here by changing the slice node
@@ -49,27 +49,27 @@ public:
   /// passes them to observers if there are any.
   ///
   /// Generic event bindings
-  virtual void OnMouseMove();
-  virtual void OnLeftButtonDown();
-  virtual void OnLeftButtonUp();
-  virtual void OnMiddleButtonDown();
-  virtual void OnMiddleButtonUp();
-  virtual void OnRightButtonDown();
-  virtual void OnRightButtonUp();
+  virtual void OnMouseMove() VTK_OVERRIDE;
+  virtual void OnLeftButtonDown() VTK_OVERRIDE;
+  virtual void OnLeftButtonUp() VTK_OVERRIDE;
+  virtual void OnMiddleButtonDown() VTK_OVERRIDE;
+  virtual void OnMiddleButtonUp() VTK_OVERRIDE;
+  virtual void OnRightButtonDown() VTK_OVERRIDE;
+  virtual void OnRightButtonUp() VTK_OVERRIDE;
   /// MouseWheel callbacks added for slicer
-  virtual void OnMouseWheelForward();
-  virtual void OnMouseWheelBackward();
+  virtual void OnMouseWheelForward() VTK_OVERRIDE;
+  virtual void OnMouseWheelBackward() VTK_OVERRIDE;
   ///
   /// Keyboard functions
-  virtual void OnChar();
-  virtual void OnKeyPress();
-  virtual void OnKeyRelease();
+  virtual void OnChar() VTK_OVERRIDE;
+  virtual void OnKeyPress() VTK_OVERRIDE;
+  virtual void OnKeyRelease() VTK_OVERRIDE;
   ///
   /// These are more esoteric events, but are useful in some cases.
-  virtual void OnExpose();
-  virtual void OnConfigure();
-  virtual void OnEnter();
-  virtual void OnLeave();
+  virtual void OnExpose() VTK_OVERRIDE;
+  virtual void OnConfigure() VTK_OVERRIDE;
+  virtual void OnEnter() VTK_OVERRIDE;
+  virtual void OnLeave() VTK_OVERRIDE;
 
   /// Internal state management for multi-event sequences (like click-drag-release)
 

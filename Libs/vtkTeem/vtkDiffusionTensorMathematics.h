@@ -39,7 +39,7 @@ class VTK_Teem_EXPORT vtkDiffusionTensorMathematics : public vtkThreadedImageAlg
 public:
   static vtkDiffusionTensorMathematics *New();
   vtkTypeMacro(vtkDiffusionTensorMathematics,vtkThreadedImageAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   ///
   /// Get the Operation to perform.
@@ -286,21 +286,21 @@ protected:
 
   virtual int RequestInformation (vtkInformation*,
                                   vtkInformationVector**,
-                                  vtkInformationVector*);
+                                  vtkInformationVector*) VTK_OVERRIDE;
 
   virtual void ThreadedRequestData(vtkInformation *request,
                                    vtkInformationVector **inputVector,
                                    vtkInformationVector *outputVector,
                                    vtkImageData ***inData,
                                    vtkImageData **outData,
-                                   int extent[6], int threadId);
+                                   int extent[6], int threadId) VTK_OVERRIDE;
 
-  int FillInputPortInformation(int port, vtkInformation* info);
+  int FillInputPortInformation(int port, vtkInformation* info) VTK_OVERRIDE;
 
   // Reimplemented to delete the tensor array of the output.
   virtual int RequestData(vtkInformation* request,
                           vtkInformationVector** inputVector,
-                          vtkInformationVector* outputVector);
+                          vtkInformationVector* outputVector) VTK_OVERRIDE;
 private:
   vtkDiffusionTensorMathematics(const vtkDiffusionTensorMathematics&);
   void operator=(const vtkDiffusionTensorMathematics&);

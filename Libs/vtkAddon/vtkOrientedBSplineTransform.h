@@ -36,11 +36,11 @@ class VTK_ADDON_EXPORT vtkOrientedBSplineTransform : public vtkBSplineTransform
 public:
   static vtkOrientedBSplineTransform *New();
   vtkTypeMacro(vtkOrientedBSplineTransform,vtkBSplineTransform);
-  virtual void PrintSelf(ostream& os, vtkIndent indent);
+  virtual void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   // Description:
   // Make another transform of the same type.
-  vtkAbstractTransform *MakeTransform();
+  vtkAbstractTransform *MakeTransform() VTK_OVERRIDE;
 
   // Description:
   // Set/Get the b-spline grid axis directions.
@@ -69,23 +69,23 @@ protected:
 
   // Description:
   // Update the displacement grid.
-  void InternalUpdate();
+  void InternalUpdate() VTK_OVERRIDE;
 
   // Description:
   // Copy this transform from another of the same type.
-  void InternalDeepCopy(vtkAbstractTransform *transform);
+  void InternalDeepCopy(vtkAbstractTransform *transform) VTK_OVERRIDE;
 
   // Description:
   // Internal functions for calculating the transformation.
-  void ForwardTransformPoint(const double in[3], double out[3]);
+  void ForwardTransformPoint(const double in[3], double out[3]) VTK_OVERRIDE;
   using Superclass::ForwardTransformPoint; // Inherit the float version from parent
 
   void ForwardTransformDerivative(const double in[3], double out[3],
-                                  double derivative[3][3]);
+                                  double derivative[3][3]) VTK_OVERRIDE;
   using Superclass::ForwardTransformDerivative; // Inherit the float version from parent
 
   void InverseTransformDerivative(const double in[3], double out[3],
-                                  double derivative[3][3]);
+                                  double derivative[3][3]) VTK_OVERRIDE;
   using Superclass::InverseTransformDerivative; // Inherit the float version from parent
 
   // Description:

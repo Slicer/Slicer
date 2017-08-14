@@ -23,7 +23,7 @@ class VTK_MRML_EXPORT vtkDataFileFormatHelper : public vtkObject
   /// The Usual vtk class functions
   static vtkDataFileFormatHelper *New();
   vtkTypeMacro(vtkDataFileFormatHelper, vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   static std::string GetFileExtensionFromFormatString(
    const char* fileformat);

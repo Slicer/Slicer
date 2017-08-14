@@ -28,25 +28,25 @@ class VTK_MRML_EXPORT vtkMRMLVolumeHeaderlessStorageNode
 public:
   static vtkMRMLVolumeHeaderlessStorageNode *New();
   vtkTypeMacro(vtkMRMLVolumeHeaderlessStorageNode,vtkMRMLStorageNode);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
-  virtual vtkMRMLNode* CreateNodeInstance();
+  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
 
   ///
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts);
+  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent);
+  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node);
+  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
 
   ///
   /// Get node XML tag name (like Storage, Model)
-  virtual const char* GetNodeTagName()  {return "VolumeHeaderlessStorage";};
+  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "VolumeHeaderlessStorage";}
 
   ///
   /// Scan order in the file
@@ -114,8 +114,8 @@ public:
   vtkSetMacro(CenterImage, int);
 
   /// Return true if node can be read in
-  virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode);
-  virtual bool CanWriteFromReferenceNode(vtkMRMLNode *refNode);
+  virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode) VTK_OVERRIDE;
+  virtual bool CanWriteFromReferenceNode(vtkMRMLNode *refNode) VTK_OVERRIDE;
 
 protected:
 
@@ -125,13 +125,13 @@ protected:
   void operator=(const vtkMRMLVolumeHeaderlessStorageNode&);
 
   /// Initialize all the supported write file types
-  virtual void InitializeSupportedWriteFileTypes();
+  virtual void InitializeSupportedWriteFileTypes() VTK_OVERRIDE;
 
   /// Read data and set it in the referenced node
-  virtual int ReadDataInternal(vtkMRMLNode *refNode);
+  virtual int ReadDataInternal(vtkMRMLNode *refNode) VTK_OVERRIDE;
 
   /// Write data from a  referenced node
-  virtual int WriteDataInternal(vtkMRMLNode *refNode);
+  virtual int WriteDataInternal(vtkMRMLNode *refNode) VTK_OVERRIDE;
 
   char *FileScanOrder;
   int FileScalarType;

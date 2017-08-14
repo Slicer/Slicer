@@ -27,22 +27,22 @@ class VTK_SLICER_COLORS_MODULE_LOGIC_EXPORT vtkSlicerColorLogic
   /// The Usual vtk class functions
   static vtkSlicerColorLogic *New();
   vtkTypeMacro(vtkSlicerColorLogic,vtkMRMLColorLogic);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// Return a default color node id for a label map
-  virtual const char * GetDefaultLabelMapColorNodeID();
+  virtual const char * GetDefaultLabelMapColorNodeID() VTK_OVERRIDE;
 
   /// Return a default color node id for the editor
-  virtual const char * GetDefaultEditorColorNodeID();
+  virtual const char * GetDefaultEditorColorNodeID() VTK_OVERRIDE;
 
   /// Return a default color node id for the charts
-  virtual const char * GetDefaultChartColorNodeID();
+  virtual const char * GetDefaultChartColorNodeID() VTK_OVERRIDE;
 
   /// look for color files in the Base/Logic/Resources/ColorFiles directory and
   /// put their names in the ColorFiles list. Look in any user defined color
   /// files paths and put them in the UserColorFiles list.
-  virtual std::vector<std::string> FindDefaultColorFiles();
-  virtual std::vector<std::string> FindUserColorFiles();
+  virtual std::vector<std::string> FindDefaultColorFiles() VTK_OVERRIDE;
+  virtual std::vector<std::string> FindUserColorFiles() VTK_OVERRIDE;
 
 protected:
   vtkSlicerColorLogic();

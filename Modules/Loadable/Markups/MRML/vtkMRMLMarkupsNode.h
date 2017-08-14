@@ -74,7 +74,7 @@ public:
   vtkTypeMacro(vtkMRMLMarkupsNode,vtkMRMLDisplayableNode);
 
   void PrintMarkup(ostream&  os, vtkIndent indent, Markup *markup);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   virtual const char* GetIcon() {return "";};
 
@@ -82,15 +82,15 @@ public:
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance();
+  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "Markups";};
+  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "Markups";};
 
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts);
+  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
 
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent);
+  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
 
   /// Write this node's information to a vector of strings for passing to a CLI,
   /// precede each datum with the prefix if not an empty string
@@ -98,22 +98,22 @@ public:
   /// multipleFlag = 1 for the whole list, 1 for the first selected markup
   virtual void WriteCLI(std::vector<std::string>& commandLine,
                         std::string prefix, int coordinateSystem = 0,
-                        int multipleFlag = 1);
+                        int multipleFlag = 1) VTK_OVERRIDE;
 
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node);
+  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
 
   /// Currently only calls superclass UpdateScene
-  void UpdateScene(vtkMRMLScene *scene);
+  void UpdateScene(vtkMRMLScene *scene) VTK_OVERRIDE;
 
   /// Alternative method to propagate events generated in Display nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
-                                   void * /*callData*/ );
+                                   void * /*callData*/ ) VTK_OVERRIDE;
 
 
   /// Create default storage node or NULL if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() VTK_OVERRIDE;
 
   /// Access to a VTK string array, not currently used
   int AddText(const char *newText);
@@ -302,10 +302,10 @@ public:
 
   /// Returns true since can apply non linear transforms
   /// \sa ApplyTransform
-  virtual bool CanApplyNonLinearTransforms()const;
+  virtual bool CanApplyNonLinearTransforms()const VTK_OVERRIDE;
   /// Apply the passed transformation to all of the markup points
   /// \sa CanApplyNonLinearTransforms
-  virtual void ApplyTransform(vtkAbstractTransform* transform);
+  virtual void ApplyTransform(vtkAbstractTransform* transform) VTK_OVERRIDE;
 
   /// Get the markup label format string that defines the markup names.
   /// \sa SetMarkupLabelFormat
@@ -334,7 +334,7 @@ public:
   /// So if you invoke class specific modified events without calling Modified() on the
   /// markups, GetModifiedSinceRead() won't return true.
   /// \sa vtkMRMLStorableNode::GetModifiedSinceRead()
-  virtual bool GetModifiedSinceRead();
+  virtual bool GetModifiedSinceRead() VTK_OVERRIDE;
 
   /// Reset the id of the nth markup according to the local policy
   /// Called after an already initialised markup has been added to the

@@ -65,7 +65,7 @@ public:
 
   static vtkSlicerVolumesLogic *New();
   vtkTypeMacro(vtkSlicerVolumesLogic,vtkSlicerModuleLogic);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   typedef vtkSlicerVolumesLogic Self;
 
@@ -294,7 +294,7 @@ protected:
 
   virtual void ProcessMRMLNodesEvents(vtkObject * caller,
                                   unsigned long event,
-                                  void * callData);
+                                  void * callData) VTK_OVERRIDE;
 
 
   void InitializeStorageNode(vtkMRMLStorageNode * storageNode,

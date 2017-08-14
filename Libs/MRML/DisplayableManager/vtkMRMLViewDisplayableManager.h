@@ -42,7 +42,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLViewDisplayableManager
 public:
   static vtkMRMLViewDisplayableManager* New();
   vtkTypeMacro(vtkMRMLViewDisplayableManager,vtkMRMLAbstractThreeDViewDisplayableManager);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
 protected:
 
@@ -50,18 +50,18 @@ protected:
   virtual ~vtkMRMLViewDisplayableManager();
 
   /// Receives events from the view and the camera nodes.
-  virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData);
-  virtual void ProcessWidgetsEvents(vtkObject *caller, unsigned long event, void *callData);
+  virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData) VTK_OVERRIDE;
+  virtual void ProcessWidgetsEvents(vtkObject *caller, unsigned long event, void *callData) VTK_OVERRIDE;
 
-  virtual void AdditionalInitializeStep();
+  virtual void AdditionalInitializeStep() VTK_OVERRIDE;
 
   /// Observe the View node and initialize the renderer accordingly.
-  virtual void Create();
+  virtual void Create() VTK_OVERRIDE;
 
   /// Called each time the view node is modified.
   /// Internally update the renderer from the view node.
   /// \sa UpdateFromMRMLViewNode()
-  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller);
+  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller) VTK_OVERRIDE;
 
   /// Update the renderer from the view node properties.
   /// \sa UpdateFromCameraNode

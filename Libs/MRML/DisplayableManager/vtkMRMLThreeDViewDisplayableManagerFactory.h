@@ -42,7 +42,7 @@ public:
 
   vtkTypeMacro(vtkMRMLThreeDViewDisplayableManagerFactory,
                        vtkMRMLDisplayableManagerFactory);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// This is a singleton pattern New.  There will only be ONE
   /// reference to a vtkMRMLThreeDViewDisplayableManagerFactory object per process. Clients that

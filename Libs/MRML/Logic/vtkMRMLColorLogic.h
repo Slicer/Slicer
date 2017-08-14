@@ -38,7 +38,7 @@ public:
   /// The Usual vtk class functions
   static vtkMRMLColorLogic *New();
   vtkTypeMacro(vtkMRMLColorLogic,vtkMRMLAbstractLogic);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// \brief Add default color nodes.
   ///
@@ -219,7 +219,7 @@ protected:
   void operator=(const vtkMRMLColorLogic&);
 
   /// Reimplemented to listen to specific scene events
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
+  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) VTK_OVERRIDE;
 
   /// Called when the scene fires vtkMRMLScene::NewSceneEvent.
   /// We add the default LUTs.

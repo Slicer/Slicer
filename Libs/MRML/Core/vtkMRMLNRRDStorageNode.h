@@ -28,25 +28,25 @@ class VTK_MRML_EXPORT vtkMRMLNRRDStorageNode : public vtkMRMLStorageNode
   public:
   static vtkMRMLNRRDStorageNode *New();
   vtkTypeMacro(vtkMRMLNRRDStorageNode,vtkMRMLStorageNode);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
-  virtual vtkMRMLNode* CreateNodeInstance();
+  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
 
   ///
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts);
+  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent);
+  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node);
+  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
 
   ///
   /// Get node XML tag name (like Storage, Model)
-  virtual const char* GetNodeTagName()  {return "NRRDStorage";};
+  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "NRRDStorage";}
 
   ///
   /// Center image on read
@@ -58,13 +58,13 @@ class VTK_MRML_EXPORT vtkMRMLNRRDStorageNode : public vtkMRMLStorageNode
   int ParseDiffusionInformation(vtkNRRDReader *reader,vtkDoubleArray *grad,vtkDoubleArray *bvalues);
 
   /// Return true if the node can be read in.
-  virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode);
+  virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode) VTK_OVERRIDE;
 
   ///
   /// Configure the storage node for data exchange. This is an
   /// opportunity to optimize the storage node's settings, for
   /// instance to turn off compression.
-  virtual void ConfigureForDataExchange();
+  virtual void ConfigureForDataExchange() VTK_OVERRIDE;
 
 protected:
   vtkMRMLNRRDStorageNode();
@@ -73,16 +73,16 @@ protected:
   void operator=(const vtkMRMLNRRDStorageNode&);
 
   /// Initialize all the supported write file types
-  virtual void InitializeSupportedReadFileTypes();
+  virtual void InitializeSupportedReadFileTypes() VTK_OVERRIDE;
 
   /// Initialize all the supported write file types
-  virtual void InitializeSupportedWriteFileTypes();
+  virtual void InitializeSupportedWriteFileTypes() VTK_OVERRIDE;
 
   /// Read data and set it in the referenced node
-  virtual int ReadDataInternal(vtkMRMLNode *refNode);
+  virtual int ReadDataInternal(vtkMRMLNode *refNode) VTK_OVERRIDE;
 
   /// Write data from a  referenced node
-  virtual int WriteDataInternal(vtkMRMLNode *refNode);
+  virtual int WriteDataInternal(vtkMRMLNode *refNode) VTK_OVERRIDE;
 
   int CenterImage;
 

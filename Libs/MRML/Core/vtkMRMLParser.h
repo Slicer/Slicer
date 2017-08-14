@@ -46,8 +46,8 @@ protected:
   vtkMRMLParser(const vtkMRMLParser&);
   void operator=(const vtkMRMLParser&);
 
-  virtual void StartElement(const char* name, const char** atts);
-  virtual void EndElement (const char *name);
+  virtual void StartElement(const char* name, const char** atts) VTK_OVERRIDE;
+  virtual void EndElement (const char *name) VTK_OVERRIDE;
 
 private:
   vtkMRMLScene* MRMLScene;

@@ -46,7 +46,7 @@ public:
 
   static vtkMRMLDisplayableManagerGroup *New();
   vtkTypeMacro(vtkMRMLDisplayableManagerGroup,vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// Convenient method equivalent to call SetAndObserveDisplayableManagerFactory, SetRenderer,
   /// then instantiate and add all displayable managers registered within the \a factory.

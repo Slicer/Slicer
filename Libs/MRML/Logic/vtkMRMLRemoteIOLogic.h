@@ -36,7 +36,7 @@ public:
   /// The Usual vtk class functions
   static vtkMRMLRemoteIOLogic *New();
   vtkTypeMacro(vtkMRMLRemoteIOLogic,vtkMRMLAbstractLogic);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  virtual void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   void AddDataIOToScene();
   void RemoveDataIOFromScene();

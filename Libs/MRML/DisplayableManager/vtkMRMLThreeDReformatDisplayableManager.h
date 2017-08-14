@@ -36,7 +36,7 @@ public:
   static vtkMRMLThreeDReformatDisplayableManager* New();
   vtkTypeMacro(vtkMRMLThreeDReformatDisplayableManager,
                        vtkMRMLAbstractThreeDViewDisplayableManager);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
 protected:
   vtkMRMLThreeDReformatDisplayableManager();
@@ -44,16 +44,16 @@ protected:
 
   /// Initialize the displayable manager based on its associated
   /// vtkMRMLSliceNode
-  virtual void Create();
+  virtual void Create() VTK_OVERRIDE;
 
   /// WidgetCallback is a static function to relay modified events from the Logic
-  virtual void ProcessWidgetsEvents(vtkObject *caller, unsigned long event, void *callData);
+  virtual void ProcessWidgetsEvents(vtkObject *caller, unsigned long event, void *callData) VTK_OVERRIDE;
 
-  virtual void UnobserveMRMLScene();
-  virtual void UpdateFromMRMLScene();
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
-  virtual void OnMRMLNodeModified(vtkMRMLNode* node);
+  virtual void UnobserveMRMLScene() VTK_OVERRIDE;
+  virtual void UpdateFromMRMLScene() VTK_OVERRIDE;
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) VTK_OVERRIDE;
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) VTK_OVERRIDE;
+  virtual void OnMRMLNodeModified(vtkMRMLNode* node) VTK_OVERRIDE;
 
 private:
   vtkMRMLThreeDReformatDisplayableManager(const vtkMRMLThreeDReformatDisplayableManager&);// Not implemented

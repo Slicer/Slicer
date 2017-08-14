@@ -30,7 +30,7 @@ class VTK_ITK_EXPORT vtkITKImageWriter : public vtkImageAlgorithm
 public:
   static vtkITKImageWriter *New();
   vtkTypeMacro(vtkITKImageWriter,vtkImageAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   ///
   /// Specify file name for the image file. You should specify either

@@ -36,7 +36,7 @@ class VTK_MRML_EXPORT vtkImageBimodalAnalysis : public vtkImageAlgorithm
 public:
   static vtkImageBimodalAnalysis *New();
   vtkTypeMacro(vtkImageBimodalAnalysis,vtkImageAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   ///
   /// Set the type of data, if known
@@ -84,8 +84,8 @@ protected:
 
   int Offset;
 
-  virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
-  void ExecuteDataWithInformation(vtkDataObject *, vtkInformation*);
+  virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  void ExecuteDataWithInformation(vtkDataObject *, vtkInformation*) VTK_OVERRIDE;
 
 private:
   vtkImageBimodalAnalysis(const vtkImageBimodalAnalysis&);

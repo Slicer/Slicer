@@ -16,39 +16,39 @@ public:
   vtkTypeMacro(vtkMRMLAnnotationRulerNode,vtkMRMLAnnotationLinesNode);
   // Description:
   // Just prints short summary
-  void PrintAnnotationInfo(ostream& os, vtkIndent indent, int titleFlag = 1);
+  void PrintAnnotationInfo(ostream& os, vtkIndent indent, int titleFlag = 1) VTK_OVERRIDE;
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance();
+  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
   // Description:
   // Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "AnnotationRuler";};
+  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "AnnotationRuler";}
 
-  virtual const char* GetIcon() {return ":/Icons/AnnotationDistance.png";};
+  virtual const char* GetIcon() VTK_OVERRIDE {return ":/Icons/AnnotationDistance.png";}
 
   // Description:
   // Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts);
+  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
 
   // Description:
   // Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent);
+  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
 
 
   // Description:
   // Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node);
+  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
 
-  void UpdateScene(vtkMRMLScene *scene);
+  void UpdateScene(vtkMRMLScene *scene) VTK_OVERRIDE;
 
   // Description:
   // alternative method to propagate events generated in Display nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
-                                   void * /*callData*/ );
+                                   void * /*callData*/ ) VTK_OVERRIDE;
 
 
 
@@ -158,11 +158,11 @@ public:
 
   // Description:
   // transform utility functions
-  virtual void ApplyTransform(vtkAbstractTransform* transform);
+  virtual void ApplyTransform(vtkAbstractTransform* transform) VTK_OVERRIDE;
 
   // Description:
   // Create default storage node or NULL if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() VTK_OVERRIDE;
 
 //  void Initialize(vtkMRMLScene* mrmlScene);
 

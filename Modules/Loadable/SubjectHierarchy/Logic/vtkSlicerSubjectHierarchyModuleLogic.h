@@ -48,7 +48,7 @@ public:
 public:
   static vtkSlicerSubjectHierarchyModuleLogic *New();
   vtkTypeMacro(vtkSlicerSubjectHierarchyModuleLogic,vtkSlicerModuleLogic);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
 public:
   /// Place series in subject hierarchy. Create subject and study node if needed
@@ -105,10 +105,10 @@ public:
 
 protected:
   /// Called each time a new scene is set
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
+  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) VTK_OVERRIDE;
 
   /// Called every time the scene has been significantly changed.
-  virtual void UpdateFromMRMLScene();
+  virtual void UpdateFromMRMLScene() VTK_OVERRIDE;
 
 protected:
   vtkSlicerSubjectHierarchyModuleLogic();

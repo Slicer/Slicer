@@ -21,7 +21,7 @@ class VTK_ITK_EXPORT vtkITKLevelTracing3DImageFilter : public vtkImageAlgorithm
 public:
   static vtkITKLevelTracing3DImageFilter *New();
   vtkTypeMacro(vtkITKLevelTracing3DImageFilter, vtkImageAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// Methods to set/get seeds.  Seeds are specified in IJK (not XYZ).
   vtkSetVector3Macro(Seed, int);
@@ -31,9 +31,9 @@ protected:
   vtkITKLevelTracing3DImageFilter();
   ~vtkITKLevelTracing3DImageFilter();
 
-  virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
-  virtual int FillInputPortInformation(int port, vtkInformation *info);
+  virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  virtual int FillInputPortInformation(int port, vtkInformation *info) VTK_OVERRIDE;
 
   int Seed[3];
 

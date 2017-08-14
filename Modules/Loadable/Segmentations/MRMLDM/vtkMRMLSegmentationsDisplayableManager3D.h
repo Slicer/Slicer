@@ -40,28 +40,28 @@ public:
 
   static vtkMRMLSegmentationsDisplayableManager3D* New();
   vtkTypeMacro(vtkMRMLSegmentationsDisplayableManager3D,vtkMRMLAbstractThreeDViewDisplayableManager);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
 protected:
 
   vtkMRMLSegmentationsDisplayableManager3D();
   virtual ~vtkMRMLSegmentationsDisplayableManager3D();
 
-  virtual void UnobserveMRMLScene();
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
-  virtual void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData);
+  virtual void UnobserveMRMLScene() VTK_OVERRIDE;
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) VTK_OVERRIDE;
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) VTK_OVERRIDE;
+  virtual void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) VTK_OVERRIDE;
 
   /// Update actors based on segmentations in the scene
-  virtual void UpdateFromMRML();
+  virtual void UpdateFromMRML() VTK_OVERRIDE;
 
-  virtual void OnMRMLSceneStartClose();
-  virtual void OnMRMLSceneEndClose();
+  virtual void OnMRMLSceneStartClose() VTK_OVERRIDE;
+  virtual void OnMRMLSceneEndClose() VTK_OVERRIDE;
 
-  virtual void OnMRMLSceneEndBatchProcess();
+  virtual void OnMRMLSceneEndBatchProcess() VTK_OVERRIDE;
 
   /// Initialize the displayable manager
-  virtual void Create();
+  virtual void Create() VTK_OVERRIDE;
 
 private:
 

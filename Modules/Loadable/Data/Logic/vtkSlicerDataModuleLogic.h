@@ -39,7 +39,7 @@ class VTK_SLICER_DATA_LOGIC_EXPORT vtkSlicerDataModuleLogic :
 public:
   static vtkSlicerDataModuleLogic *New();
   vtkTypeMacro(vtkSlicerDataModuleLogic, vtkSlicerModuleLogic);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
 public:
   vtkSetMacro( SceneChanged, bool );
@@ -51,14 +51,14 @@ protected:
   virtual ~vtkSlicerDataModuleLogic();
 
   /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
-  virtual void RegisterNodes();
+  virtual void RegisterNodes() VTK_OVERRIDE;
 
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
-  virtual void UpdateFromMRMLScene();
+  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) VTK_OVERRIDE;
+  virtual void UpdateFromMRMLScene() VTK_OVERRIDE;
 
   /// Reimplemented to delete the storage/display nodes when a displayable
   /// node is being removed.
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* removedNode);
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* removedNode) VTK_OVERRIDE;
 
   ///
   /// This property controls whether the removal from the scene of a model node

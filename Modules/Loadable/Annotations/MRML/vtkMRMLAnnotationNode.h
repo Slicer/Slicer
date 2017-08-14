@@ -30,56 +30,56 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationNode : public 
 public:
   static vtkMRMLAnnotationNode *New();
   vtkTypeMacro(vtkMRMLAnnotationNode,vtkMRMLModelNode);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
   // Description:
   // Just prints short summary
   virtual void PrintAnnotationInfo(ostream& os, vtkIndent indent, int titleFlag = 1);
 
-  virtual const char* GetIcon() {return "";};
+  virtual const char* GetIcon() {return "";}
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance();
+  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
   // Description:
   // Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "Annotation";};
+  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "Annotation";}
 
   // Description:
   // Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts);
+  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
 
   // Description:
   // Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent);
+  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
 
 
   // Description:
   // Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node);
+  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
 
 
-  void UpdateScene(vtkMRMLScene *scene);
+  void UpdateScene(vtkMRMLScene *scene) VTK_OVERRIDE;
 
   // Description:
   // alternative method to propagate events generated in Display nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
-                                   void * /*callData*/ );
+                                   void * /*callData*/ ) VTK_OVERRIDE;
 
   // vtkMRMLModelNode overrides it and it handles models only, while in annotations
   // we have all kinds of nodes (e.g., screenshot), so we need to revert to the generic
   // storable node implementation.
-  virtual std::string GetDefaultStorageNodeClassName(const char* filename /* =NULL */);
+  virtual std::string GetDefaultStorageNodeClassName(const char* filename /* =NULL */) VTK_OVERRIDE;
 
   // Description:
   // Create default storage node or NULL if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() VTK_OVERRIDE;
 
   /// Returns false since in general cannot apply non linear transforms
   /// \sa ApplyTransformMatrix, ApplyTransform
-  virtual bool CanApplyNonLinearTransforms()const {return false;};
+  virtual bool CanApplyNonLinearTransforms()const VTK_OVERRIDE {return false;}
 
   int AddText(const char *newText,int selectedFlag, int visibleFlag);
   void SetText(int id, const char *newText,int selectedFlag, int visibleFlag);

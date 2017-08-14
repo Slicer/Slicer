@@ -13,7 +13,7 @@ class VTK_MRML_EXPORT vtkTagTableCollection : public vtkCollection
 public:
   static vtkTagTableCollection *New();
   vtkTypeMacro(vtkTagTableCollection, vtkCollection);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  virtual void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   vtkTagTable * FindTagTableByName ( const char *name );
   void AddTableByName ( vtkTagTable *t, const char *name );

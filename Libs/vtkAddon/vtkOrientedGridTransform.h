@@ -25,7 +25,7 @@ class VTK_ADDON_EXPORT vtkOrientedGridTransform : public vtkGridTransform
 public:
   static vtkOrientedGridTransform *New();
   vtkTypeMacro(vtkOrientedGridTransform,vtkGridTransform);
-  virtual void PrintSelf(ostream& os, vtkIndent indent);
+  virtual void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   // Description:
   // Set/Get the b-spline grid axis directions.
@@ -37,7 +37,7 @@ public:
 
   // Description:
   // Make another transform of the same type.
-  vtkAbstractTransform *MakeTransform();
+  vtkAbstractTransform *MakeTransform() VTK_OVERRIDE;
 
 protected:
   vtkOrientedGridTransform();
@@ -45,11 +45,11 @@ protected:
 
   // Description:
   // Update the displacement grid.
-  void InternalUpdate();
+  void InternalUpdate() VTK_OVERRIDE;
 
   // Description:
   // Copy this transform from another of the same type.
-  void InternalDeepCopy(vtkAbstractTransform *transform);
+  void InternalDeepCopy(vtkAbstractTransform *transform) VTK_OVERRIDE;
 
   // Avoid hiding overloads from base class... these will include the float
   // overloads that forward to the double overloads (hence no need to override
@@ -60,13 +60,13 @@ protected:
 
   // Description:
   // Internal functions for calculating the transformation.
-  void ForwardTransformPoint(const double in[3], double out[3]);
+  void ForwardTransformPoint(const double in[3], double out[3]) VTK_OVERRIDE;
 
   void ForwardTransformDerivative(const double in[3], double out[3],
-                                  double derivative[3][3]);
+                                  double derivative[3][3]) VTK_OVERRIDE;
 
   void InverseTransformDerivative(const double in[3], double out[3],
-                                  double derivative[3][3]);
+                                  double derivative[3][3]) VTK_OVERRIDE;
 
   // Description:
   // Grid axis direction vectors (i, j, k) in the output space

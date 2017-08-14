@@ -67,7 +67,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLModelDisplayableManager
 public:
   static vtkMRMLModelDisplayableManager* New();
   vtkTypeMacro(vtkMRMLModelDisplayableManager,vtkMRMLAbstractThreeDViewDisplayableManager);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   ///
   /// Get/Set the ClipModels Node
@@ -142,28 +142,28 @@ protected:
   vtkMRMLModelDisplayableManager();
   virtual ~vtkMRMLModelDisplayableManager();
 
-  virtual void AdditionalInitializeStep();
-  virtual int ActiveInteractionModes();
+  virtual void AdditionalInitializeStep() VTK_OVERRIDE;
+  virtual int ActiveInteractionModes() VTK_OVERRIDE;
 
-  virtual void UnobserveMRMLScene();
+  virtual void UnobserveMRMLScene() VTK_OVERRIDE;
 
-  virtual void OnMRMLSceneStartClose();
-  virtual void OnMRMLSceneEndClose();
-  virtual void UpdateFromMRMLScene();
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
+  virtual void OnMRMLSceneStartClose() VTK_OVERRIDE;
+  virtual void OnMRMLSceneEndClose() VTK_OVERRIDE;
+  virtual void UpdateFromMRMLScene() VTK_OVERRIDE;
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) VTK_OVERRIDE;
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) VTK_OVERRIDE;
 
-  virtual void OnInteractorStyleEvent(int eventId);
-  virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData);
+  virtual void OnInteractorStyleEvent(int eventId) VTK_OVERRIDE;
+  virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData) VTK_OVERRIDE;
 
   /// Returns true if something visible in modelNode has changed and would
   /// require a refresh.
   bool OnMRMLDisplayableModelNodeModifiedEvent(vtkMRMLDisplayableNode * modelNode);
 
   /// Updates Actors based on models in the scene
-  void UpdateFromMRML();
+  virtual void UpdateFromMRML() VTK_OVERRIDE;
 
-  virtual void RemoveMRMLObservers();
+  virtual void RemoveMRMLObservers() VTK_OVERRIDE;
 
   friend class vtkThreeDViewInteractorStyle; // Access to RequestRender();
 

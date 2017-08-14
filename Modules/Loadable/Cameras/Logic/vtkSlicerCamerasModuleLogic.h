@@ -38,7 +38,7 @@ class VTK_SLICER_CAMERAS_LOGIC_EXPORT vtkSlicerCamerasModuleLogic
 public:
   static vtkSlicerCamerasModuleLogic *New();
   vtkTypeMacro(vtkSlicerCamerasModuleLogic, vtkSlicerModuleLogic);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// Scan the scene and search for the active camera that is used
   /// in the view.
@@ -57,8 +57,8 @@ protected:
   vtkSlicerCamerasModuleLogic();
   virtual ~vtkSlicerCamerasModuleLogic();
 
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
-  virtual void ProcessMRMLSceneEvents(vtkObject *, unsigned long, void *);
+  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) VTK_OVERRIDE;
+  virtual void ProcessMRMLSceneEvents(vtkObject *, unsigned long, void *) VTK_OVERRIDE;
 
   bool CopyImportedCameras;
 

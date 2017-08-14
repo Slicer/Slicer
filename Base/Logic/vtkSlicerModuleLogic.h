@@ -27,7 +27,7 @@ public:
   /// The Usual vtk class functions
   static vtkSlicerModuleLogic *New();
   vtkTypeMacro(vtkSlicerModuleLogic, vtkMRMLAbstractLogic);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// Get access to overall application state
   virtual vtkSlicerApplicationLogic* GetApplicationLogic();

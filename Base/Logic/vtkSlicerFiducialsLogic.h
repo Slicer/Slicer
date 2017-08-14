@@ -35,7 +35,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerFiducialsLogic : public vtkMRMLAbstr
   /// The Usual vtk class functions
   static vtkSlicerFiducialsLogic *New();
   vtkTypeMacro(vtkSlicerFiducialsLogic, vtkMRMLAbstractLogic);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// Get the currently selected list from the scene. Returns NULL if no
   /// selection node or no active fiducial list id is set on the selection

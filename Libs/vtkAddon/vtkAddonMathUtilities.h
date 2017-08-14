@@ -31,7 +31,7 @@ class VTK_ADDON_EXPORT vtkAddonMathUtilities : public vtkObject
 public:
   static vtkAddonMathUtilities *New();
   vtkTypeMacro(vtkAddonMathUtilities,vtkObject);
-  virtual void PrintSelf(ostream& os, vtkIndent indent);
+  virtual void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   static bool MatrixAreEqual(const vtkMatrix4x4* m1,
                              const vtkMatrix4x4* m2,

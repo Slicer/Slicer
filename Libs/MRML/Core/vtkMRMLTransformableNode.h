@@ -32,21 +32,21 @@ class VTK_MRML_EXPORT vtkMRMLTransformableNode : public vtkMRMLStorableNode
 {
 public:
   vtkTypeMacro(vtkMRMLTransformableNode,vtkMRMLStorableNode);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
-  virtual vtkMRMLNode* CreateNodeInstance() = 0;
+  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE = 0;
 
   ///
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts);
+  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent);
+  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() = 0;
+  virtual const char* GetNodeTagName() VTK_OVERRIDE = 0;
 
   ///
   /// Set a reference to transform node
@@ -66,7 +66,7 @@ public:
   /// alternative method to propagate events generated in Transform nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                   unsigned long /*event*/,
-                                  void * /*callData*/ );
+                                  void * /*callData*/ ) VTK_OVERRIDE;
 
   /// TransformModifiedEvent is send when the parent transform is modidied
   enum
@@ -125,7 +125,7 @@ protected:
 
   ///
   /// Called when a node reference ID is added (list size increased).
-  virtual void OnNodeReferenceAdded(vtkMRMLNodeReference *reference)
+  virtual void OnNodeReferenceAdded(vtkMRMLNodeReference *reference) VTK_OVERRIDE
   {
     Superclass::OnNodeReferenceAdded(reference);
     if (std::string(reference->GetReferenceRole()) == this->TransformNodeReferenceRole)
@@ -136,7 +136,7 @@ protected:
 
   ///
   /// Called when a node reference ID is modified.
-  virtual void OnNodeReferenceModified(vtkMRMLNodeReference *reference)
+  virtual void OnNodeReferenceModified(vtkMRMLNodeReference *reference) VTK_OVERRIDE
   {
     Superclass::OnNodeReferenceModified(reference);
     if (std::string(reference->GetReferenceRole()) == this->TransformNodeReferenceRole)
@@ -147,7 +147,7 @@ protected:
 
   ///
   /// Called after a node reference ID is removed (list size decreased).
-  virtual void OnNodeReferenceRemoved(vtkMRMLNodeReference *reference)
+  virtual void OnNodeReferenceRemoved(vtkMRMLNodeReference *reference) VTK_OVERRIDE
   {
     Superclass::OnNodeReferenceRemoved(reference);
     if (std::string(reference->GetReferenceRole()) == this->TransformNodeReferenceRole)

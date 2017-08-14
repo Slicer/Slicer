@@ -46,41 +46,41 @@ public:
   static vtkMRMLMarkupsFiducialNode *New();
   vtkTypeMacro(vtkMRMLMarkupsFiducialNode,vtkMRMLMarkupsNode);
   /// Print out the node information to the output stream
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
-  virtual const char* GetIcon() {return ":/Icons/MarkupsMouseModePlace.png";};
+  virtual const char* GetIcon() VTK_OVERRIDE {return ":/Icons/MarkupsMouseModePlace.png";}
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance();
+  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "MarkupsFiducial";};
+  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "MarkupsFiducial";}
 
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts);
+  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
 
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent);
+  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
 
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node);
+  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
 
   /// Calls the superclass UpdateScene
-  void UpdateScene(vtkMRMLScene *scene);
+  void UpdateScene(vtkMRMLScene *scene) VTK_OVERRIDE;
 
   /// Alternative method to propagate events generated in Display nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
-                                   void * /*callData*/ );
+                                   void * /*callData*/ ) VTK_OVERRIDE;
 
 
   /// Create default storage node or NULL if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() VTK_OVERRIDE;
 
   /// Create and observe default display node(s)
-  virtual void CreateDefaultDisplayNodes();
+  virtual void CreateDefaultDisplayNodes() VTK_OVERRIDE;
 
   /// Return a cast display node, returns null if none
   vtkMRMLMarkupsDisplayNode *GetMarkupsDisplayNode();
@@ -127,8 +127,8 @@ public:
   /// Get world coordinates on nth fiducial
   void GetNthFiducialWorldCoordinates(int n, double coords[4]);
 
-  virtual void GetRASBounds(double bounds[6]);
-  virtual void GetBounds(double bounds[6]);
+  virtual void GetRASBounds(double bounds[6]) VTK_OVERRIDE;
+  virtual void GetBounds(double bounds[6]) VTK_OVERRIDE;
 
 protected:
   vtkMRMLMarkupsFiducialNode();

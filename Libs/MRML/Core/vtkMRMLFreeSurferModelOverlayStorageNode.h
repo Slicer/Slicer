@@ -26,9 +26,9 @@ class VTK_MRML_EXPORT vtkMRMLFreeSurferModelOverlayStorageNode
 public:
   static vtkMRMLFreeSurferModelOverlayStorageNode *New();
   vtkTypeMacro(vtkMRMLFreeSurferModelOverlayStorageNode,vtkMRMLModelStorageNode);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
-  virtual vtkMRMLNode* CreateNodeInstance();
+  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
 
   ///
   /// Copy data from a  referenced node's filename to new location.
@@ -38,10 +38,10 @@ public:
 
   ///
   /// Get node XML tag name (like Storage, Model)
-  virtual const char* GetNodeTagName()  {return "FreeSurferModelOverlayStorage";};
+  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "FreeSurferModelOverlayStorage";}
 
   /// Return true if reference node can be written from
-  virtual bool CanWriteFromReferenceNode(vtkMRMLNode *refNode);
+  virtual bool CanWriteFromReferenceNode(vtkMRMLNode *refNode) VTK_OVERRIDE;
 
 protected:
   vtkMRMLFreeSurferModelOverlayStorageNode();
@@ -50,20 +50,20 @@ protected:
   void operator=(const vtkMRMLFreeSurferModelOverlayStorageNode&);
 
   /// Initialize all the supported read file types
-  virtual void InitializeSupportedReadFileTypes();
+  virtual void InitializeSupportedReadFileTypes() VTK_OVERRIDE;
 
   /// Initialize all the supported write file types
-  virtual void InitializeSupportedWriteFileTypes();
+  virtual void InitializeSupportedWriteFileTypes() VTK_OVERRIDE;
 
   ///
   /// Read data and set it in the referenced node
   /// NOTE: Subclasses should implement this method
-  virtual int ReadDataInternal(vtkMRMLNode *refNode);
+  virtual int ReadDataInternal(vtkMRMLNode *refNode) VTK_OVERRIDE;
 
   ///
   /// Write data from a  referenced node
   /// NOTE: Subclasses should implement this method
-  virtual int WriteDataInternal(vtkMRMLNode *refNode);
+  virtual int WriteDataInternal(vtkMRMLNode *refNode) VTK_OVERRIDE;
 
   bool ReadScalarOverlay(const std::string& fullName, vtkMRMLModelNode* modelNode);
   bool ReadScalarOverlayAnnot(const std::string& fullName, vtkMRMLModelNode* modelNode);

@@ -38,7 +38,7 @@ class VTK_SLICER_TERMINOLOGIES_LOGIC_EXPORT vtkSlicerTerminologyEntry : public v
 public:
   static vtkSlicerTerminologyEntry *New();
   vtkTypeMacro(vtkSlicerTerminologyEntry, vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// Copy one entry into another
   virtual void Copy(vtkSlicerTerminologyEntry* aEntry);

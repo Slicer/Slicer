@@ -74,7 +74,7 @@ public:
 public:
   static vtkSegmentationConverter* New();
   vtkTypeMacro(vtkSegmentationConverter, vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// Deep copy one converter into another
   virtual void DeepCopy(vtkSegmentationConverter* aConverter);

@@ -28,33 +28,33 @@ class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLStorableNode
   public:
   static vtkMRMLSceneViewNode *New();
   vtkTypeMacro(vtkMRMLSceneViewNode,vtkMRMLStorableNode);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
-  virtual vtkMRMLNode* CreateNodeInstance();
+  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
 
   ///
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts);
+  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent);
+  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
 
   ///
   /// Write this node's body to a MRML file in XML format.
-  virtual void WriteNodeBodyXML(ostream& of, int indent);
+  virtual void WriteNodeBodyXML(ostream& of, int indent) VTK_OVERRIDE;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node);
+  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "SceneView";};
+  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "SceneView";}
 
   ///
   /// Updates scene nodes
-  virtual void UpdateScene(vtkMRMLScene *scene);
+  virtual void UpdateScene(vtkMRMLScene *scene) VTK_OVERRIDE;
 
   ///
   /// Updates internal nodes
@@ -63,7 +63,7 @@ class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLStorableNode
   ///
   /// Set dependencies between this node and a child node
   /// when parsing XML file
-  virtual void ProcessChildNode(vtkMRMLNode *node);
+  virtual void ProcessChildNode(vtkMRMLNode *node) VTK_OVERRIDE;
 
   /// \sa StoreScene() RestoreScene()
   vtkMRMLScene* GetStoredScene();
@@ -109,7 +109,7 @@ class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLStorableNode
 
   ///
   /// Create default storage node or NULL if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() VTK_OVERRIDE;
 
   /// Get vector of nodes of a specified class in the scene.
   /// Returns 0 on failure, number of nodes on success.

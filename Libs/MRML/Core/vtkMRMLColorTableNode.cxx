@@ -587,6 +587,14 @@ void vtkMRMLColorTableNode::ProcessMRMLEvents ( vtkObject *caller,
 }
 
 //---------------------------------------------------------------------------
+vtkLookupTable* vtkMRMLColorTableNode::GetLookupTable()
+{
+    vtkDebugMacro(<< this->GetClassName() << " (" << this                 \
+                  << "): returning LookupTable address " << this->LookupTable );   \
+    return this->LookupTable;
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLColorTableNode::SetType(int type)
 {
   if (this->GetLookupTable() != NULL &&

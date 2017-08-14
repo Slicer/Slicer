@@ -38,7 +38,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkImageFillROI : public vtkImageAlgorithm
 public:
   static vtkImageFillROI *New();
   vtkTypeMacro(vtkImageFillROI,vtkImageAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   vtkSetMacro(Value, double);
   vtkGetMacro(Value, double);
@@ -92,7 +92,7 @@ protected:
   /// Not threaded because too simple a filter
   virtual int RequestData(vtkInformation* request,
                           vtkInformationVector** inputVectors,
-                          vtkInformationVector* outputVector);
+                          vtkInformationVector* outputVector) VTK_OVERRIDE;
 
 private:
   vtkImageFillROI(const vtkImageFillROI&);

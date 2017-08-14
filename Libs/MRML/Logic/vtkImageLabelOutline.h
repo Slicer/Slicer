@@ -30,7 +30,7 @@ class VTK_MRML_LOGIC_EXPORT vtkImageLabelOutline : public vtkImageNeighborhoodFi
 public:
   static vtkImageLabelOutline *New();
   vtkTypeMacro(vtkImageLabelOutline,vtkImageNeighborhoodFilter);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   ///
   /// background pixel value in the image (usually 0)
@@ -50,7 +50,7 @@ protected:
   int Outline;
 
   void ThreadedExecute(vtkImageData *inData, vtkImageData *outData,
-                       int extent[6], int id);
+                       int extent[6], int id) VTK_OVERRIDE;
 };
 
 #endif

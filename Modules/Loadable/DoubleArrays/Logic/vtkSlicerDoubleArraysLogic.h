@@ -41,7 +41,7 @@ public:
 
   static vtkSlicerDoubleArraysLogic *New();
   vtkTypeMacro(vtkSlicerDoubleArraysLogic, vtkSlicerModuleLogic);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   vtkMRMLDoubleArrayNode* AddDoubleArray(const char* fileName,
                                          const char* name = 0);

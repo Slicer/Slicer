@@ -38,7 +38,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLAbstractThreeDViewDisplayableMan
 public:
 
   static vtkMRMLAbstractThreeDViewDisplayableManager *New();
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
   vtkTypeMacro(vtkMRMLAbstractThreeDViewDisplayableManager,
                        vtkMRMLAbstractDisplayableManager);
 
@@ -50,7 +50,7 @@ protected:
   vtkMRMLAbstractThreeDViewDisplayableManager();
   virtual ~vtkMRMLAbstractThreeDViewDisplayableManager();
 
-  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller);
+  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller) VTK_OVERRIDE;
 
   /// Could be overloaded in DisplayableManager subclass
   virtual void OnMRMLViewNodeModifiedEvent(){}

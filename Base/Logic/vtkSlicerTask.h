@@ -11,7 +11,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerTask : public vtkObject
 public:
   static vtkSlicerTask *New();
   vtkTypeMacro(vtkSlicerTask,vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   typedef vtkMRMLAbstractLogic::TaskFunctionPointer TaskFunctionPointer;
 

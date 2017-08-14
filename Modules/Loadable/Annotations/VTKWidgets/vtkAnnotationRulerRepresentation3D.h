@@ -30,25 +30,19 @@ public:
 
   static vtkAnnotationRulerRepresentation3D *New();
   vtkTypeMacro(vtkAnnotationRulerRepresentation3D, vtkDistanceRepresentation3D);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   void SetDistance(double distance);
 
   // Description:
-  // Scale the glyphs used as tick marks
-  void SetGlyphScale(double scale);
-  vtkGetMacro(GlyphScale, double);
-
-  // Description:
   // Get the line actor property
-  virtual vtkProperty *GetLineProperty();
+  virtual vtkProperty *GetLineProperty() VTK_OVERRIDE;
 
   // Description:
   // Set/Get position of the label title. 0 is at the start of the
   // line whereas 1 is at the end.
   //vtkSetMacro(LabelPosition, double);
   void SetLabelPosition(double labelPosition);
-  vtkGetMacro(LabelPosition, double);
 
   // Description:
   // Set/Get the maximum number of ticks in ruler mode
@@ -59,25 +53,17 @@ public:
   // Change the polydata displayed as tick markers
   void UpdateGlyphPolyData(vtkPolyData *polyData);
 
-  // Description:
-  // Get the glyph actor
-  vtkGetObjectMacro(GlyphActor, vtkActor);
-
-  // Description:
-  // Get the label actor
-  vtkGetObjectMacro(LabelActor, vtkFollower);
-
   // Required by the rendering process, check if the glyph and label actors
   // have translucency and return true if so. Fixes a bug when the label
   // was set to a non 1 opacity but was not being rendered.
-  virtual int HasTranslucentPolygonalGeometry();
+  virtual int HasTranslucentPolygonalGeometry() VTK_OVERRIDE;
 
 protected:
 
   vtkAnnotationRulerRepresentation3D();
   virtual ~vtkAnnotationRulerRepresentation3D();
 
-  virtual void BuildRepresentation();
+  virtual void BuildRepresentation() VTK_OVERRIDE;
 
   // Internal use: set the label actor's position from current world point 1
   // and 2 positions and label position factor
@@ -93,14 +79,6 @@ private:
 
   // Maximum number of ticks on the 3d ruler
   int MaxTicks;
-
-  bool GlyphScaleSpecified;
-
-  // Label title position
-  double LabelPosition;
-
-  // Glyph3D scale
-  double GlyphScale;
 
 };
 

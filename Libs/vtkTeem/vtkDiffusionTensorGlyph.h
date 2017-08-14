@@ -72,7 +72,7 @@ class VTK_Teem_EXPORT vtkDiffusionTensorGlyph : public vtkTensorGlyph
 {
 public:
   vtkTypeMacro(vtkDiffusionTensorGlyph,vtkTensorGlyph);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// Description
   /// Construct object with defaults:
@@ -165,13 +165,13 @@ public:
   /// When determining the modified time of the filter,
   /// this checks the modified time of the mask input,
   /// if it exists.
-  vtkMTimeType GetMTime();
+  vtkMTimeType GetMTime() VTK_OVERRIDE;
 
 protected:
   vtkDiffusionTensorGlyph();
   ~vtkDiffusionTensorGlyph();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
   void ColorGlyphsBy(int measure);
 

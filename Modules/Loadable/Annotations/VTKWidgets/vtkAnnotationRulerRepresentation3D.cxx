@@ -148,13 +148,6 @@ void vtkAnnotationRulerRepresentation3D::SetDistance(double distance)
   this->m_Distance = distance;
 }
 
-//----------------------------------------------------------------------
-void vtkAnnotationRulerRepresentation3D::SetGlyphScale( double scale )
-{
-  this->GlyphScale = scale;
-  this->GlyphScaleSpecified = true;
-}
-
 //----------------------------------------------------------------------------
 vtkProperty * vtkAnnotationRulerRepresentation3D::GetLineProperty()
 {
@@ -175,7 +168,6 @@ void vtkAnnotationRulerRepresentation3D::SetLabelPosition(double labelPosition)
     this->LabelPosition = labelPosition;
     }
   this->UpdateLabelActorPosition();
-  // this->Modified();
 }
 
 //----------------------------------------------------------------------

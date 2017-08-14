@@ -34,7 +34,7 @@ public:
   ///
   static vtkMRMLFiducial *New();
   vtkTypeMacro(vtkMRMLFiducial,vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   //--------------------------------------------------------------------------
   /// MRML methods

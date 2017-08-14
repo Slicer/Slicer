@@ -40,7 +40,7 @@ public:
   typedef vtkMRMLAbstractSliceViewDisplayableManager Self;
 
   static vtkMRMLAbstractSliceViewDisplayableManager *New();
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
   vtkTypeMacro(vtkMRMLAbstractSliceViewDisplayableManager,
                        vtkMRMLAbstractDisplayableManager);
 
@@ -80,7 +80,7 @@ protected:
   vtkMRMLAbstractSliceViewDisplayableManager();
   virtual ~vtkMRMLAbstractSliceViewDisplayableManager();
 
-  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller);
+  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller) VTK_OVERRIDE;
 
   /// Could be overloaded if DisplayableManager subclass
   virtual void OnMRMLSliceNodeModifiedEvent(){}

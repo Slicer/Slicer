@@ -37,28 +37,28 @@ class VTK_SLICER_SEGMENTATIONS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLSegme
 public:
   static vtkMRMLSegmentationsDisplayableManager2D* New();
   vtkTypeMacro(vtkMRMLSegmentationsDisplayableManager2D, vtkMRMLAbstractSliceViewDisplayableManager);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// Assemble and return info string to display in Data probe for a given viewer XYZ position.
   /// \return Invalid string by default, meaning no information to display.
-  virtual std::string GetDataProbeInfoStringForPosition(double xyz[3]);
+  virtual std::string GetDataProbeInfoStringForPosition(double xyz[3]) VTK_OVERRIDE;
 
 protected:
-  virtual void UnobserveMRMLScene();
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
-  virtual void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData);
+  virtual void UnobserveMRMLScene() VTK_OVERRIDE;
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) VTK_OVERRIDE;
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) VTK_OVERRIDE;
+  virtual void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) VTK_OVERRIDE;
 
   /// Update Actors based on transforms in the scene
-  virtual void UpdateFromMRML();
+  virtual void UpdateFromMRML() VTK_OVERRIDE;
 
-  virtual void OnMRMLSceneStartClose();
-  virtual void OnMRMLSceneEndClose();
+  virtual void OnMRMLSceneStartClose() VTK_OVERRIDE;
+  virtual void OnMRMLSceneEndClose() VTK_OVERRIDE;
 
-  virtual void OnMRMLSceneEndBatchProcess();
+  virtual void OnMRMLSceneEndBatchProcess() VTK_OVERRIDE;
 
   /// Initialize the displayable manager based on its associated vtkMRMLSliceNode
-  virtual void Create();
+  virtual void Create() VTK_OVERRIDE;
 
 protected:
   vtkMRMLSegmentationsDisplayableManager2D();

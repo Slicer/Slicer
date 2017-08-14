@@ -70,7 +70,7 @@ public:
   ///
   /// Standard methods for the class.
   vtkTypeMacro(vtkAnnotationROIRepresentation2D,vtkAnnotationROIRepresentation);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   ///
   /// Get the intersecting plane;
@@ -79,25 +79,25 @@ public:
   /// Get Intersection transform to 2D coordinate system
   vtkGetObjectMacro(IntersectionPlaneTransform,vtkTransform);
 
-  virtual void GetActors2D(vtkPropCollection *actors);
+  virtual void GetActors2D(vtkPropCollection *actors) VTK_OVERRIDE;
 
   void GetIntersectionActors(vtkPropCollection *actors);
 
-  virtual int ComputeInteractionState(int X, int Y, int modify=0);
-  virtual void StartWidgetInteraction(double e[2]);
-  virtual void WidgetInteraction(double e[2]);
-  virtual void SetInteractionState(int state);
+  virtual int ComputeInteractionState(int X, int Y, int modify=0) VTK_OVERRIDE;
+  virtual void StartWidgetInteraction(double e[2]) VTK_OVERRIDE;
+  virtual void WidgetInteraction(double e[2]) VTK_OVERRIDE;
+  virtual void SetInteractionState(int state) VTK_OVERRIDE;
 
   ///
   /// Methods supporting, and required by, the rendering process.
-  virtual void ReleaseGraphicsResources(vtkWindow*);
-  virtual int RenderOpaqueGeometry(vtkViewport*);
-  virtual int RenderTranslucentPolygonalGeometry(vtkViewport*);
-  virtual int RenderOverlay(vtkViewport *viewport);
+  virtual void ReleaseGraphicsResources(vtkWindow*) VTK_OVERRIDE;
+  virtual int RenderOpaqueGeometry(vtkViewport*) VTK_OVERRIDE;
+  virtual int RenderTranslucentPolygonalGeometry(vtkViewport*) VTK_OVERRIDE;
+  virtual int RenderOverlay(vtkViewport *viewport) VTK_OVERRIDE;
 
-  virtual int HasTranslucentPolygonalGeometry();
+  virtual int HasTranslucentPolygonalGeometry() VTK_OVERRIDE;
 
-  virtual void SizeHandles();
+  virtual void SizeHandles() VTK_OVERRIDE;
 
   vtkGetMacro(SliceIntersectionVisibility, int);
   vtkSetMacro(SliceIntersectionVisibility, int);
@@ -105,8 +105,8 @@ public:
   vtkGetMacro(HandlesVisibility, int);
   vtkSetMacro(HandlesVisibility, int);
 
-  virtual int HighlightHandle(vtkProp *prop);
-  virtual void HighlightFace(int cellId);
+  virtual int HighlightHandle(vtkProp *prop) VTK_OVERRIDE;
+  virtual void HighlightFace(int cellId) VTK_OVERRIDE;
 
   vtkSetMacro(HandleSizeInPixels,int);
   vtkGetMacro(HandleSizeInPixels,int);
@@ -151,8 +151,8 @@ protected:
 
   double ComputeHandleRadiusInWorldCoordinates(double radInPixels);
 
-  virtual void CreateDefaultProperties();
-  virtual void PositionHandles();
+  virtual void CreateDefaultProperties() VTK_OVERRIDE;
+  virtual void PositionHandles() VTK_OVERRIDE;
 
   int SliceIntersectionVisibility;
 

@@ -12,36 +12,36 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
   public:
     static vtkMRMLROIListNode *New();
     vtkTypeMacro(vtkMRMLROIListNode,vtkMRMLNode);
-    void PrintSelf(ostream& os, vtkIndent indent);
+    void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
     //--------------------------------------------------------------------------
     /// MRMLNode methods
     //--------------------------------------------------------------------------
-    virtual vtkMRMLNode* CreateNodeInstance();
+    virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
 
     ///
     /// Set node attributes
-    virtual void ReadXMLAttributes( const char** atts);
+    virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
 
     ///
     /// Write this node's information to a MRML file in XML format.
-    virtual void WriteXML(ostream& of, int indent);
+    virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
 
     ///
     /// Copy the node's attributes to this object
-    virtual void Copy(vtkMRMLNode *node);
+    virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
 
     ///
     /// Get node XML tag name (like Volume, Model)
-    virtual const char* GetNodeTagName() {return "ROIList";};
+    virtual const char* GetNodeTagName() VTK_OVERRIDE {return "ROIList";}
 
     ///
     ///
-    virtual void UpdateScene(vtkMRMLScene *scene);
+    virtual void UpdateScene(vtkMRMLScene *scene) VTK_OVERRIDE;
 
     ///
     /// update display node ids
-    void UpdateReferences();
+    void UpdateReferences() VTK_OVERRIDE;
 
     ///
     /// Get the number of ROIs in the list
@@ -93,7 +93,7 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
     /// Remove all ROIs from the list
     void RemoveAllROIs();
 
-    void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
+    void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) VTK_OVERRIDE;
 
     /// DisplayModifiedEvent is generated when display node parameters is changed
     /// PolyDataModifiedEvent is generated when something else is changed
