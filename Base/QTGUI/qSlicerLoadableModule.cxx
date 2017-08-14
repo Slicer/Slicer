@@ -150,7 +150,7 @@ void qSlicerLoadableModule::setup()
 {
 #ifndef QT_NO_DEBUG
   Q_D(qSlicerLoadableModule);
-  Q_ASSERT(d != 0);
+  // Q_ASSERT(d != 0);
 #endif
 
 #ifdef Slicer_USE_PYTHONQT

@@ -22,7 +22,7 @@
 #include "qSlicerDirectoryListView.h"
 
 qSlicerDirectoryListViewPlugin::qSlicerDirectoryListViewPlugin(QObject* parent)
-  : qSlicerQTGUIAbstractPlugin(parent)
+  : QObject(parent)
 {
 }
 

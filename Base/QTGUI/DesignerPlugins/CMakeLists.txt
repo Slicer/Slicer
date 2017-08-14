@@ -31,7 +31,6 @@ set(${KIT}_SRCS
 set(${KIT}_MOC_SRCS
   qSlicerQTGUIPlugins.h
 
-  qSlicerQTGUIAbstractPlugin.h
   qSlicerDirectoryListViewPlugin.h
   qSlicerModulePanelPlugin.h
   qSlicerModulesListViewPlugin.h

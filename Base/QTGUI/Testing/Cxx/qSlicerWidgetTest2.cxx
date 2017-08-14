@@ -18,7 +18,11 @@
 #include <QString>
 #include <QTimer>
 #include <QVBoxLayout>
+#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
 #include <QWebView>
+#else
+#include <QWebEngineView>
+#endif
 
 // SlicerQt includes
 #include "qSlicerWidget.h"
@@ -166,7 +170,11 @@ int qSlicerWidgetTest2(int argc, char * argv[] )
   vbox.addWidget(vtkWidget);
   vtkWidget->GetRenderWindow()->Render();
 
+#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
   QWebView webView;
+#else
+  QWebEngineView webView;
+#endif
   webView.setParent(&parentWidget);
   webView.setUrl(QUrl("http://pyjs.org/examples"));
   vbox.addWidget(&webView);

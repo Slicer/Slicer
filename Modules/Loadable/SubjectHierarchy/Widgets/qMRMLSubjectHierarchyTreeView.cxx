@@ -150,10 +150,17 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init()
 
   // Set up headers
   q->header()->setStretchLastSection(false);
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
   q->header()->setResizeMode(this->Model->nameColumn(), QHeaderView::Stretch);
   q->header()->setResizeMode(this->Model->visibilityColumn(), QHeaderView::ResizeToContents);
   q->header()->setResizeMode(this->Model->transformColumn(), QHeaderView::Interactive);
   q->header()->setResizeMode(this->Model->idColumn(), QHeaderView::ResizeToContents);
+#else
+  q->header()->setSectionResizeMode(this->Model->nameColumn(), QHeaderView::Stretch);
+  q->header()->setSectionResizeMode(this->Model->visibilityColumn(), QHeaderView::ResizeToContents);
+  q->header()->setSectionResizeMode(this->Model->transformColumn(), QHeaderView::Interactive);
+  q->header()->setSectionResizeMode(this->Model->idColumn(), QHeaderView::ResizeToContents);
+#endif
 
   // Set generic MRML item delegate
   q->setItemDelegate(new qMRMLItemDelegate(q));

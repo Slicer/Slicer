@@ -186,8 +186,13 @@ void qSlicerDataModuleWidget::setup()
   d->TransformMRMLTreeView->sceneModel()->setIDColumn(1);
   d->TransformMRMLTreeView->sceneModel()->setHorizontalHeaderLabels(QStringList() << "Nodes" << "IDs");
   d->TransformMRMLTreeView->header()->setStretchLastSection(false);
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
   d->TransformMRMLTreeView->header()->setResizeMode(0, QHeaderView::Stretch);
   d->TransformMRMLTreeView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
+#else
+  d->TransformMRMLTreeView->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+  d->TransformMRMLTreeView->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+#endif
 
   connect( d->TransformMRMLTreeView, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
            this, SLOT(onCurrentNodeChanged(vtkMRMLNode*)) );
@@ -226,8 +231,13 @@ void qSlicerDataModuleWidget::setup()
   d->AllNodesMRMLTreeView->sceneModel()->setIDColumn(1);
   d->AllNodesMRMLTreeView->sceneModel()->setHorizontalHeaderLabels(QStringList() << "Nodes" << "IDs");
   d->AllNodesMRMLTreeView->header()->setStretchLastSection(false);
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
   d->AllNodesMRMLTreeView->header()->setResizeMode(0, QHeaderView::Stretch);
   d->AllNodesMRMLTreeView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
+#else
+  d->AllNodesMRMLTreeView->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+  d->AllNodesMRMLTreeView->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+#endif
 
   // Edit properties
   connect( d->AllNodesMRMLTreeView, SIGNAL(editNodeRequested(vtkMRMLNode*)),

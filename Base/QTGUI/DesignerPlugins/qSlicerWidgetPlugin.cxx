@@ -24,7 +24,7 @@
 
 // --------------------------------------------------------------------------
 qSlicerWidgetPlugin::qSlicerWidgetPlugin(QObject* parent)
-  : qSlicerQTGUIAbstractPlugin(parent)
+  : QObject(parent)
 {
 }
 

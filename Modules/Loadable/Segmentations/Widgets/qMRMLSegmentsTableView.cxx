@@ -134,7 +134,11 @@ void qMRMLSegmentsTableViewPrivate::init()
   this->SegmentsTable->horizontalHeaderItem(
     this->columnIndex("Visible"))->setIcon(QIcon(":/Icons/Small/SlicerVisibleInvisible.png") );
 
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
   this->SegmentsTable->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+#else
+  this->SegmentsTable->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+#endif
   this->SegmentsTable->horizontalHeader()->setStretchLastSection(1);
 
   // Select rows

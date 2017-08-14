@@ -79,10 +79,18 @@ macro(SlicerMacroTranslation)
   # UPDATE or ADD translation
   # ---------------------------------------------------------------------------------
 
-  if(Slicer_UPDATE_TRANSLATION)
-    QT4_CREATE_TRANSLATION(QM_OUTPUT_FILES ${FILES_TO_TRANSLATE} ${TS_FILES})
+  if(CTK_QT_VERSION VERSION_LESS "5")
+    if(Slicer_UPDATE_TRANSLATION)
+      QT4_CREATE_TRANSLATION(QM_OUTPUT_FILES ${FILES_TO_TRANSLATE} ${TS_FILES})
+    else()
+      QT4_ADD_TRANSLATION(QM_OUTPUT_FILES ${TS_FILES})
+    endif()
   else()
-    QT4_ADD_TRANSLATION(QM_OUTPUT_FILES ${TS_FILES})
+    if(Slicer_UPDATE_TRANSLATION)
+      QT5_CREATE_TRANSLATION(QM_OUTPUT_FILES ${FILES_TO_TRANSLATE} ${TS_FILES})
+    else()
+      QT5_ADD_TRANSLATION(QM_OUTPUT_FILES ${TS_FILES})
+    endif()
   endif()
 
   # ---------------------------------------------------------------------------------

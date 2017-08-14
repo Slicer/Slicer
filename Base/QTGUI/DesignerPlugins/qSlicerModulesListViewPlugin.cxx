@@ -22,7 +22,7 @@
 #include "qSlicerModulesListView.h"
 
 qSlicerModulesListViewPlugin::qSlicerModulesListViewPlugin(QObject* parent)
-  : qSlicerQTGUIAbstractPlugin(parent)
+  : QObject(parent)
 {
 }
 

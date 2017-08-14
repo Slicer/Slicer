@@ -18,8 +18,14 @@
 #ifndef __qMRMLExpandingWebView_h
 #define __qMRMLExpandingWebView_h
 
+#include "qMRMLWidgetsConfigure.h" // For MRML_WIDGETS_HAVE_WEBKIT_SUPPORT
+
 // Qt includes
+#ifdef MRML_WIDGETS_HAVE_WEBKIT_SUPPORT
 #include <QWebView>
+#else
+#include <QWebEngineView>
+#endif
 
 #include "qMRMLWidgetsExport.h"
 
@@ -31,12 +37,21 @@ class vtkMRMLScene;
 /// \brief qMRMLExpandingWebView is the display canvas for some or all of a MRML scene.
 ///
 /// qMRMLExpandingWebView is currently implemented as a subclass of QWebView
-class QMRML_WIDGETS_EXPORT qMRMLExpandingWebView : public QWebView
+class QMRML_WIDGETS_EXPORT qMRMLExpandingWebView :
+#ifdef MRML_WIDGETS_HAVE_WEBKIT_SUPPORT
+    public QWebView
+#else
+    public QWebEngineView
+#endif
 {
   Q_OBJECT
 public:
   /// Superclass typedef
+#ifdef MRML_WIDGETS_HAVE_WEBKIT_SUPPORT
   typedef QWebView Superclass;
+#else
+  typedef QWebEngineView Superclass;
+#endif
 
   /// Constructors
   explicit qMRMLExpandingWebView(QWidget* parent = 0);

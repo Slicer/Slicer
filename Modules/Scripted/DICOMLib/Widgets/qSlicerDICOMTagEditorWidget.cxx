@@ -26,10 +26,10 @@
 
 // Qt includes
 #include <QDebug>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QTableWidget>
-#include <QScrollArea>
 #include <QHeaderView>
+#include <QScrollArea>
+#include <QTableWidget>
+#include <QVBoxLayout>
 
 // STD includes
 #include <algorithm>
@@ -128,7 +128,11 @@ void qSlicerDICOMTagEditorWidgetPrivate::setupUi(QWidget *qSlicerDICOMTagEditorW
   this->TagsTable = new QTableWidget(qSlicerDICOMTagEditorWidget);
   this->TagsTable->setColumnCount(2);
   this->TagsTable->horizontalHeader()->setVisible(false);
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
   this->TagsTable->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+#else
+  this->TagsTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+#endif
   this->TagsTable->verticalHeader()->setVisible(false);
   this->TagsTable->horizontalHeader()->setStretchLastSection(true);
   this->TagsTable->setSelectionMode(QAbstractItemView::NoSelection);

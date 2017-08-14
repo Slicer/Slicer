@@ -21,11 +21,22 @@
 #ifndef __qMRMLWidgetsAbstractPlugin_h
 #define __qMRMLWidgetsAbstractPlugin_h
 
+#include "qMRMLWidgetsConfigure.h" // For MRML_WIDGETS_HAVE_QT5
+
+// Qt includes
+#ifdef MRML_WIDGETS_HAVE_QT5
+#include <QtUiPlugin/QDesignerCustomWidgetInterface>
+#else
 #include <QDesignerCustomWidgetInterface>
+#endif
+
 #include "qMRMLWidgetsPluginsExport.h"
 
 class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLWidgetsAbstractPlugin : public QDesignerCustomWidgetInterface
 {
+#ifdef MRML_WIDGETS_HAVE_QT5
+  Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QDesignerCustomWidgetInterface")
+#endif
   Q_INTERFACES(QDesignerCustomWidgetInterface);
 public:
 

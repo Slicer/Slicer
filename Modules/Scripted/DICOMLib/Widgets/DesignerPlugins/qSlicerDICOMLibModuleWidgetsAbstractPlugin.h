@@ -23,12 +23,20 @@
 #ifndef __qSlicerDICOMLibModuleWidgetsAbstractPlugin_h
 #define __qSlicerDICOMLibModuleWidgetsAbstractPlugin_h
 
+#include <QtGlobal>
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 #include <QDesignerCustomWidgetInterface>
+#else
+#include <QtUiPlugin/QDesignerCustomWidgetInterface>
+#endif
 #include "qSlicerDICOMLibModuleWidgetsPluginsExport.h"
 
 class Q_SLICER_MODULE_DICOMLIB_WIDGETS_PLUGINS_EXPORT qSlicerDICOMLibModuleWidgetsAbstractPlugin
     : public QDesignerCustomWidgetInterface
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+  Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QDesignerCustomWidgetInterface")
+#endif
   Q_INTERFACES(QDesignerCustomWidgetInterface);
 public:
 

@@ -206,7 +206,7 @@ ctkFileDialog* qSlicerStandardFileDialog::createFileDialog(
     {
     fileDialog->setSidebarUrls(ioManager->favorites());
     }
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
   // Workaround for Mac to show mounted volumes.
   // See issue #2240
   QList<QUrl> sidebarUrls = fileDialog->sidebarUrls();

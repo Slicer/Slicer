@@ -41,6 +41,18 @@ endif()
 # --------------------------------------------------------------------------
 # Configure headers
 # --------------------------------------------------------------------------
+set(MRML_WIDGETS_HAVE_QT5 1)
+if(CTK_QT_VERSION VERSION_LESS "5")
+  set(MRML_WIDGETS_HAVE_QT5 0)
+endif()
+
+set(MRML_WIDGETS_HAVE_WEBKIT_SUPPORT 1)
+if(CTK_QT_VERSION VERSION_GREATER "4")
+  if(Qt5_VERSION VERSION_GREATER "5.5.0")
+    set(MRML_WIDGETS_HAVE_WEBKIT_SUPPORT 0)
+  endif()
+endif()
+
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/qMRMLWidgetsConfigure.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/qMRMLWidgetsConfigure.h
@@ -370,9 +382,23 @@ if(Slicer_USE_QtTesting)
     )
 endif()
 
-QT4_WRAP_CPP(MRMLWidgets_MOC_CXX ${MRMLWidgets_MOC_SRCS})
-QT4_WRAP_UI(MRMLWidgets_UI_CXX ${MRMLWidgets_UI_SRCS})
-QT4_ADD_RESOURCES(MRMLWidgets_QRC_CXX ${MRMLWidgets_QRC_SRCS})
+if(CTK_QT_VERSION VERSION_LESS "5")
+  set(_moc_options)
+  if(MRML_WIDGETS_HAVE_WEBKIT_SUPPORT)
+    set(_moc_options OPTIONS -DMRML_WIDGETS_HAVE_WEBKIT_SUPPORT)
+  endif()
+  QT4_WRAP_CPP(MRMLWidgets_MOC_CXX ${MRMLWidgets_MOC_SRCS} OPTIONS ${_moc_options})
+  QT4_WRAP_UI(MRMLWidgets_UI_CXX ${MRMLWidgets_UI_SRCS})
+  QT4_ADD_RESOURCES(MRMLWidgets_QRC_CXX ${MRMLWidgets_QRC_SRCS})
+else()
+  set(_moc_options OPTIONS -DMRML_WIDGETS_HAVE_QT5)
+  if(MRML_WIDGETS_HAVE_WEBKIT_SUPPORT)
+    set(_moc_options OPTIONS -DMRML_WIDGETS_HAVE_WEBKIT_SUPPORT)
+  endif()
+  QT5_WRAP_CPP(MRMLWidgets_MOC_CXX ${MRMLWidgets_MOC_SRCS} ${_moc_options})
+  QT5_WRAP_UI(MRMLWidgets_UI_CXX ${MRMLWidgets_UI_SRCS})
+  QT5_ADD_RESOURCES(MRMLWidgets_QRC_CXX ${MRMLWidgets_QRC_SRCS})
+endif()
 
 source_group("Resources" FILES
   ${MRMLWidgets_UI_SRCS}

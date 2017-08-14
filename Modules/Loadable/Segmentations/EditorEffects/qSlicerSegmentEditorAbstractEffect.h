@@ -25,6 +25,7 @@
 #include "qSlicerSegmentationsEditorEffectsExport.h"
 
 // Qt includes
+#include <QCursor>
 #include <QIcon>
 #include <QPoint>
 #include <QList>

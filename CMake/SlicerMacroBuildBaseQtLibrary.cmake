@@ -32,10 +32,10 @@
 #   SRCS .................: List of source files
 #
 #   MOC_SRCS .............: Optional list of headers to run through the meta object compiler (moc)
-#                           using QT4_WRAP_CPP CMake macro
+#                           using QT(4|5)_WRAP_CPP CMake macro
 #
 #   UI_SRCS ..............: Optional list of UI file to run through UI compiler (uic) using
-#                           QT4_WRAP_UI CMake macro
+#                           QT(4|5)_WRAP_UI CMake macro
 #
 #   INCLUDE_DIRECTORIES ..: Optional list of extra folder that should be included. See implementation
 #                           for the list of folder included by default.
@@ -44,7 +44,7 @@
 #                           CMake macro. See implementation for the list of libraries added by default.
 #
 #   RESOURCES ............: Optional list of files that should be converted into resource header
-#                           using QT4_ADD_RESOURCES
+#                           using QT(4|5)_ADD_RESOURCES
 #
 # Options:
 #
@@ -138,13 +138,31 @@ macro(SlicerMacroBuildBaseQtLibrary)
   #-----------------------------------------------------------------------------
   # Sources
   # --------------------------------------------------------------------------
-  QT4_WRAP_CPP(SLICERQTBASELIB_MOC_OUTPUT ${SLICERQTBASELIB_MOC_SRCS})
-  QT4_WRAP_UI(SLICERQTBASELIB_UI_CXX ${SLICERQTBASELIB_UI_SRCS})
-  if(DEFINED SLICERQTBASELIB_RESOURCES)
-    QT4_ADD_RESOURCES(SLICERQTBASELIB_QRC_SRCS ${SLICERQTBASELIB_RESOURCES})
-  endif(DEFINED SLICERQTBASELIB_RESOURCES)
+  if(CTK_QT_VERSION VERSION_LESS "5")
+    set(_moc_options)
+    if(Slicer_HAVE_WEBKIT_SUPPORT)
+      set(_moc_options OPTIONS -DSlicer_HAVE_WEBKIT_SUPPORT)
+    endif()
+    QT4_WRAP_CPP(SLICERQTBASELIB_MOC_OUTPUT ${SLICERQTBASELIB_MOC_SRCS} ${_moc_options})
+    QT4_WRAP_UI(SLICERQTBASELIB_UI_CXX ${SLICERQTBASELIB_UI_SRCS})
+    if(DEFINED SLICERQTBASELIB_RESOURCES)
+      QT4_ADD_RESOURCES(SLICERQTBASELIB_QRC_SRCS ${SLICERQTBASELIB_RESOURCES})
+    endif(DEFINED SLICERQTBASELIB_RESOURCES)
 
-  QT4_ADD_RESOURCES(SLICERQTBASELIB_QRC_SRCS ${Slicer_SOURCE_DIR}/Resources/qSlicer.qrc)
+    QT4_ADD_RESOURCES(SLICERQTBASELIB_QRC_SRCS ${Slicer_SOURCE_DIR}/Resources/qSlicer.qrc)
+  else()
+    set(_moc_options OPTIONS -DSlicer_HAVE_QT5)
+    if(Slicer_HAVE_WEBKIT_SUPPORT)
+      set(_moc_options OPTIONS -DSlicer_HAVE_WEBKIT_SUPPORT)
+    endif()
+    QT5_WRAP_CPP(SLICERQTBASELIB_MOC_OUTPUT ${SLICERQTBASELIB_MOC_SRCS} ${_moc_options})
+    QT5_WRAP_UI(SLICERQTBASELIB_UI_CXX ${SLICERQTBASELIB_UI_SRCS})
+    if(DEFINED SLICERQTBASELIB_RESOURCES)
+      QT5_ADD_RESOURCES(SLICERQTBASELIB_QRC_SRCS ${SLICERQTBASELIB_RESOURCES})
+    endif(DEFINED SLICERQTBASELIB_RESOURCES)
+
+    QT5_ADD_RESOURCES(SLICERQTBASELIB_QRC_SRCS ${Slicer_SOURCE_DIR}/Resources/qSlicer.qrc)
+  endif()
 
   set_source_files_properties(
     ${SLICERQTBASELIB_UI_CXX}

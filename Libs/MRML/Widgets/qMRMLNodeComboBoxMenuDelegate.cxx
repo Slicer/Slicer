@@ -66,7 +66,11 @@ QStyleOptionMenuItem qMRMLNodeComboBoxMenuDelegate::getStyleOption(
     QPalette resolvedpalette =
         option.palette.resolve(QApplication::palette("QMenu"));
     QVariant value = index.data(Qt::ForegroundRole);
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
     if (qVariantCanConvert<QBrush>(value))
+#else
+    if (value.canConvert(QMetaType::QBrush))
+#endif
       {
       resolvedpalette.setBrush(QPalette::WindowText, qvariant_cast<QBrush>(value));
       resolvedpalette.setBrush(QPalette::ButtonText, qvariant_cast<QBrush>(value));
@@ -140,7 +144,11 @@ QStyleOptionMenuItem qMRMLNodeComboBoxMenuDelegate::getStyleOption(
           menuOption.icon = qvariant_cast<QPixmap>(variant);
           break;
       }
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
     if (qVariantCanConvert<QBrush>(index.data(Qt::BackgroundRole)))
+#else
+    if (index.data(Qt::BackgroundRole).canConvert(QMetaType::QBrush))
+#endif
       {
       menuOption.palette.setBrush(QPalette::All, QPalette::Background,
                              qvariant_cast<QBrush>(index.data(Qt::BackgroundRole)));

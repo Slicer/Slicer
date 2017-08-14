@@ -200,10 +200,17 @@ void qMRMLTableModel::updateModelFromMRML()
   vtkTable* table = (tableNode ? tableNode->GetTable() : NULL);
   if (table==NULL || table->GetNumberOfColumns()==0)
     {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+    beginResetModel();
+#endif
     // setRowCount and setColumnCount to 0 would not be enough, it's necessary to remove the header as well
     setRowCount(0);
     setColumnCount(0);
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
     reset();
+#else
+    endResetModel();
+#endif
     QObject::connect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onItemChanged(QStandardItem*)), Qt::UniqueConnection);
     return;
     }

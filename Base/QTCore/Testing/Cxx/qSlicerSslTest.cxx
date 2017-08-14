@@ -23,7 +23,9 @@ private slots:
   void testHttpsConnection_data();
 };
 
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 Q_DECLARE_METATYPE(QNetworkReply::NetworkError)
+#endif
 
 // ----------------------------------------------------------------------------
 void qSlicerSslTester::testSupportsSsl()

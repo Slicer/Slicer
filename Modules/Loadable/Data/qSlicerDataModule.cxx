@@ -18,9 +18,6 @@
 
 ==============================================================================*/
 
-// Qt includes
-#include <QtPlugin>
-
 // SlicerQt includes
 #include "qSlicerApplication.h"
 #include "qSlicerIOManager.h"
@@ -51,7 +48,10 @@
 #include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+#include <QtPlugin>
 Q_EXPORT_PLUGIN2(qSlicerDataModule, qSlicerDataModule);
+#endif
 
 //-----------------------------------------------------------------------------
 class qSlicerDataModulePrivate

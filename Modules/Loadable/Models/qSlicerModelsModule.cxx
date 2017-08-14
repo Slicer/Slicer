@@ -18,9 +18,6 @@
 
 ==============================================================================*/
 
-// Qt includes
-#include <QtPlugin>
-
 // Models includes
 #include "qSlicerModelsModule.h"
 #include "qSlicerModelsModuleWidget.h"
@@ -46,7 +43,10 @@
 #include "qSlicerSubjectHierarchyModelsPlugin.h"
 
 //-----------------------------------------------------------------------------
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+#include <QtPlugin>
 Q_EXPORT_PLUGIN2(qSlicerModelsModule, qSlicerModelsModule);
+#endif
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Models

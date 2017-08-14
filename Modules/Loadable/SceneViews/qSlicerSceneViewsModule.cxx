@@ -1,7 +1,4 @@
 
-// Qt includes
-#include <QtPlugin>
-
 // QTGUI includes
 #include "qSlicerApplication.h"
 #include "qSlicerCoreIOManager.h"
@@ -18,7 +15,10 @@
 #include "qSlicerSubjectHierarchySceneViewsPlugin.h"
 
 //-----------------------------------------------------------------------------
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+#include <QtPlugin>
 Q_EXPORT_PLUGIN2(qSlicerSceneViewsModule, qSlicerSceneViewsModule);
+#endif
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_SceneViews

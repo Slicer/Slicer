@@ -21,8 +21,14 @@
 #ifndef __qSlicerMarkupsModuleWidgetsPlugin_h
 #define __qSlicerMarkupsModuleWidgetsPlugin_h
 
+#include "vtkSlicerConfigure.h" // For Slicer_HAVE_QT5
+
 // Qt includes
+#ifdef Slicer_HAVE_QT5
+#include <QtUiPlugin/QDesignerCustomWidgetCollectionInterface>
+#else
 #include <QDesignerCustomWidgetCollectionInterface>
+#endif
 
 // Markups includes
 #include "qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin.h"
@@ -34,6 +40,9 @@ class Q_SLICER_MODULE_MARKUPS_WIDGETS_PLUGINS_EXPORT qSlicerMarkupsModuleWidgets
   , public QDesignerCustomWidgetCollectionInterface
 {
   Q_OBJECT
+#ifdef Slicer_HAVE_QT5
+  Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QDesignerCustomWidgetCollectionInterface")
+#endif
   Q_INTERFACES(QDesignerCustomWidgetCollectionInterface);
 
 public:

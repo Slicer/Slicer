@@ -471,7 +471,11 @@ void qMRMLAnnotationTreeView::hideScene()
   // set the column widths
   for (int i = 0; i < this->header()->count(); ++i)
     {
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
     this->header()->setResizeMode(i, QHeaderView::ResizeToContents);
+#else
+    this->header()->setSectionResizeMode(i, QHeaderView::ResizeToContents);
+#endif
     }
 }
 

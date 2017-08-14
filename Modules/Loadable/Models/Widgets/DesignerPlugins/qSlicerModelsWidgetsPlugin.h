@@ -21,8 +21,14 @@
 #ifndef __qSlicerModelsWidgetsPlugin_h
 #define __qSlicerModelsWidgetsPlugin_h
 
+#include "vtkSlicerConfigure.h" // For Slicer_HAVE_QT5
+
 // Qt includes
+#ifdef Slicer_HAVE_QT5
+#include <QtUiPlugin/QDesignerCustomWidgetCollectionInterface>
+#else
 #include <QDesignerCustomWidgetCollectionInterface>
+#endif
 
 // Models includes
 #include "qMRMLModelDisplayNodeWidgetPlugin.h"
@@ -33,6 +39,9 @@ class Q_SLICER_QTMODULES_MODELS_WIDGETS_PLUGINS_EXPORT qSlicerModelsWidgetsPlugi
   , public QDesignerCustomWidgetCollectionInterface
 {
   Q_OBJECT
+#ifdef Slicer_HAVE_QT5
+  Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QDesignerCustomWidgetCollectionInterface")
+#endif
   Q_INTERFACES(QDesignerCustomWidgetCollectionInterface);
 
 public:

@@ -41,6 +41,9 @@
 #cmakedefine Slicer_USE_QtTesting
 #cmakedefine Slicer_USE_OPENTRACKER
 
+#cmakedefine Slicer_HAVE_QT5
+#cmakedefine Slicer_HAVE_WEBKIT_SUPPORT
+
 #define VTKSLICER_CONFIGURATION_TYPES "@CMAKE_CONFIGURATION_TYPES@"
 #cmakedefine Slicer_BUILD_WIN32_CONSOLE
 

@@ -15,9 +15,6 @@
 
 ==============================================================================*/
 
-// Qt includes
-#include <QtPlugin>
-
 // LoadableModuleTemplate Logic includes
 #include <vtkSlicerLoadableModuleTemplateLogic.h>
 
@@ -26,7 +23,10 @@
 #include "qSlicerLoadableModuleTemplateModuleWidget.h"
 
 //-----------------------------------------------------------------------------
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+#include <QtPlugin>
 Q_EXPORT_PLUGIN2(qSlicerLoadableModuleTemplateModule, qSlicerLoadableModuleTemplateModule);
+#endif
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_ExtensionTemplate

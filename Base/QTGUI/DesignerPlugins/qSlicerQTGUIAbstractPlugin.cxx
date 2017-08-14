@@ -20,8 +20,7 @@
 
 #include "qSlicerQTGUIAbstractPlugin.h"
 
-qSlicerQTGUIAbstractPlugin::qSlicerQTGUIAbstractPlugin(QObject* parent)
-  : QObject(parent)
+qSlicerQTGUIAbstractPlugin::qSlicerQTGUIAbstractPlugin()
 {
 }
 

@@ -22,7 +22,7 @@
 #include "qSlicerModulePanel.h"
 
 qSlicerModulePanelPlugin::qSlicerModulePanelPlugin(QObject* parent)
-  : qSlicerQTGUIAbstractPlugin(parent)
+  : QObject(parent)
 {
 }
 

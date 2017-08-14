@@ -96,14 +96,22 @@ void qMRMLSegmentationConversionParametersWidgetPrivate::init()
                    q, SLOT(applyConversion()));
 
   // Set up initial look of the tables
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
   this->PathsTable->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+#else
+  this->PathsTable->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+#endif
   this->PathsTable->horizontalHeader()->setStretchLastSection(1);
   this->PathsTable->setSelectionMode(QAbstractItemView::SingleSelection);
   this->PathsTable->setSelectionBehavior(QAbstractItemView::SelectRows);
   this->PathsColumnLabels << "Cost" << "Path";
   this->PathsTable->setColumnCount(this->PathsColumnLabels.size());
 
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
   this->ParametersTable->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+#else
+  this->ParametersTable->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+#endif
   this->ParametersTable->horizontalHeader()->setStretchLastSection(1);
   this->ParametersColumnLabels << "Name" << "Value";
   this->ParametersTable->setColumnCount(this->ParametersColumnLabels.size());

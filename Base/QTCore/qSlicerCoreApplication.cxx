@@ -23,7 +23,6 @@
 
 // Qt includes
 #include <QDebug>
-#include <QDesktopServices>
 #include <QDir>
 #include <QLocale>
 #include <QMessageBox>
@@ -32,6 +31,12 @@
 #include <QResource>
 #include <QSettings>
 #include <QTranslator>
+
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+#include <QDesktopServices>
+#else
+#include <QStandardPaths>
+#endif
 
 // For:
 //  - Slicer_QTLOADABLEMODULES_LIB_DIR
@@ -1026,7 +1031,14 @@ QString qSlicerCoreApplication::defaultScenePath() const
 {
   QSettings* appSettings = this->userSettings();
   Q_ASSERT(appSettings);
-  QString defaultScenePath = appSettings->value("DefaultScenePath", QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation)).toString();
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+  QString defaultScenePath = appSettings->value(
+        "DefaultScenePath", QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation)).toString();
+#else
+  QString defaultScenePath = appSettings->value(
+        "DefaultScenePath", QStandardPaths::DocumentsLocation).toString();
+#endif
+
   return defaultScenePath;
 }
 

@@ -21,7 +21,9 @@
 #include <QFileInfo>
 #include <QHBoxLayout>
 #include <QToolButton>
+#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
 #include <QWebFrame>
+#endif
 
 // STD includes
 #include <vector>
@@ -107,7 +109,11 @@ void qMRMLChartViewPrivate::init()
   q->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
   // Expose the ChartView class to Javascript
+#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
   q->page()->mainFrame()->addToJavaScriptWindowObject(QString("qtobject"), this);
+#else
+  // XXX Change to webchannel
+#endif
 
   this->PopupWidget = new ctkPopupWidget;
   QHBoxLayout* popupLayout = new QHBoxLayout;
@@ -347,7 +353,11 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
 
   // expose this object to the Javascript code so Javascript can call
   // slots in this Qt object, e.g. onDataPointClicked()
+#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
   q->page()->mainFrame()->addToJavaScriptWindowObject(QString("qtobject"), this);
+#else
+  // XXX Change to webchannel
+#endif
 
 }
 

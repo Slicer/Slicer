@@ -21,7 +21,6 @@ set(${KIT}_SRCS
 
 # Headers that should run through moc
 set(${KIT}_MOC_SRCS
-  qSlicerQTCLIAbstractPlugin.h
   qSlicerQTCLIPlugins.h
   qSlicerCLIProgressBarPlugin.h
   )

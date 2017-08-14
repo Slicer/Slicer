@@ -22,7 +22,7 @@
 #include "qSlicerMouseModeToolBar.h"
 
 qSlicerMouseModeToolBarPlugin::qSlicerMouseModeToolBarPlugin(QObject* parent)
-  : qSlicerQTGUIAbstractPlugin(parent)
+  : QObject(parent)
 {
 }
 

@@ -24,6 +24,7 @@
 #include <QFileInfo>
 #include <QHBoxLayout>
 #include <QListView>
+#include <QMimeData>
 #include <QStandardItemModel>
 #include <QUrl>
 

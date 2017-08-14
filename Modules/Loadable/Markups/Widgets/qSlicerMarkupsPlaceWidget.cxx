@@ -36,7 +36,10 @@
 #include <vtkMRMLMarkupsFiducialNode.h>
 
 // Qt includes
-#include <QtGui>
+#include <QColor>
+#include <QDebug>
+#include <QList>
+#include <QMenu>
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_CreateModels

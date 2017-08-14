@@ -18,9 +18,6 @@
 
 ==============================================================================*/
 
-// Qt includes
-#include <QtPlugin>
-
 // Slicer includes
 #include <qSlicerApplication.h>
 #include <vtkSlicerUnitsLogic.h>
@@ -30,7 +27,10 @@
 #include "qSlicerUnitsSettingsPanel.h"
 
 //-----------------------------------------------------------------------------
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+#include <QtPlugin>
 Q_EXPORT_PLUGIN2(qSlicerUnitsModule, qSlicerUnitsModule);
+#endif
 
 //-----------------------------------------------------------------------------
 class qSlicerUnitsModulePrivate

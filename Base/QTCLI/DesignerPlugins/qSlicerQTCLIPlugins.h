@@ -21,8 +21,14 @@
 #ifndef __qSlicerQTCLIPlugins_h
 #define __qSlicerQTCLIPlugins_h
 
-// QT includes
+#include "vtkSlicerConfigure.h" // For Slicer_HAVE_QT5
+
+// Qt includes
+#ifdef Slicer_HAVE_QT5
+#include <QtUiPlugin/QDesignerCustomWidgetCollectionInterface>
+#else
 #include <QDesignerCustomWidgetCollectionInterface>
+#endif
 
 // QtCLI includes
 #include "qSlicerCLIProgressBarPlugin.h"
@@ -33,6 +39,9 @@ class Q_SLICER_BASE_QTCLI_PLUGINS_EXPORT qSlicerQTCLIPlugins
   , public QDesignerCustomWidgetCollectionInterface
 {
   Q_OBJECT
+#ifdef Slicer_HAVE_QT5
+  Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QDesignerCustomWidgetCollectionInterface")
+#endif
   Q_INTERFACES(QDesignerCustomWidgetCollectionInterface);
 
 public:

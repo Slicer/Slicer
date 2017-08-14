@@ -165,8 +165,13 @@ qSlicerSaveDataDialogPrivate::qSlicerSaveDataDialogPrivate(QWidget* parentWidget
   QHeaderView* previousHeaderView = this->FileWidget->horizontalHeader();
   ctkCheckableHeaderView* headerView = new ctkCheckableHeaderView(Qt::Horizontal, this->FileWidget);
   // Copy the previous behavior of the header into the new checkable header view
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
   headerView->setClickable(previousHeaderView->isClickable());
   headerView->setMovable(previousHeaderView->isMovable());
+#else
+  headerView->setSectionsClickable(previousHeaderView->sectionsClickable());
+  headerView->setSectionsMovable(previousHeaderView->sectionsMovable());
+#endif
   headerView->setHighlightSections(previousHeaderView->highlightSections());
   headerView->setStretchLastSection(previousHeaderView->stretchLastSection());
   // Propagate to top-level items only (depth = 1),no need to go deeper

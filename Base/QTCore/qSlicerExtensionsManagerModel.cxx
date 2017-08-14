@@ -30,6 +30,9 @@
 #include <QTemporaryFile>
 #include <QTextStream>
 #include <QUrl>
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+#include <QUrlQuery>
+#endif
 
 // CTK includes
 #include <ctkScopedCurrentDir.h>
@@ -76,10 +79,18 @@ struct UpdateDownloadInformation
 class QStandardItemModelWithRole : public QStandardItemModel
 {
 public:
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
   void setRoleNames(const QHash<int,QByteArray> &roleNames)
   {
     this->QStandardItemModel::setRoleNames(roleNames);
   }
+#else
+  QHash<int, QByteArray> roleNames() const
+  {
+    return this->CustomRoleNames;
+  }
+  QHash<int,QByteArray> CustomRoleNames;
+#endif
 };
 
 } // end of anonymous namespace
@@ -281,7 +292,15 @@ void qSlicerExtensionsManagerModelPrivate::init()
     roleNames[Qt::UserRole + 1 + columnIdx] = columnName.toLatin1();
     ++columnIdx;
     }
+
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+  //
+  // See QStandardItemModelWithRole::roleNames() for Qt5 implementation
+  //
   this->Model.setRoleNames(roleNames);
+#else
+  this->Model.CustomRoleNames = roleNames;
+#endif
 
   QObject::connect(q, SIGNAL(slicerRequirementsChanged(QString,QString,QString)),
                    q, SLOT(identifyIncompatibleExtensions()));
@@ -1123,8 +1142,15 @@ qSlicerExtensionsManagerModelPrivate::downloadExtension(
   this->debug(QString("Downloading extension [ itemId: %1]").arg(itemId));
   QUrl downloadUrl(q->serverUrl());
   downloadUrl.setPath(downloadUrl.path() + "/download");
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
   downloadUrl.setQueryItems(
         QList<QPair<QString, QString> >() << QPair<QString, QString>("items", itemId));
+#else
+  QUrlQuery urlQuery;
+  urlQuery.setQueryItems(
+        QList<QPair<QString, QString> >() << QPair<QString, QString>("items", itemId));
+  downloadUrl.setQuery(urlQuery);
+#endif
 
   QNetworkReply* const reply =
     this->NetworkManager.get(QNetworkRequest(downloadUrl));
@@ -1170,7 +1196,11 @@ void qSlicerExtensionsManagerModel::onInstallDownloadFinished(
 
   QNetworkReply* const reply = task->reply();
   QUrl downloadUrl = reply->url();
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
   Q_ASSERT(downloadUrl.hasQueryItem("items"));
+#else
+  Q_ASSERT(QUrlQuery(downloadUrl).hasQueryItem("items"));
+#endif
 
   emit this->downloadFinished(reply);
 
@@ -1580,7 +1610,11 @@ void qSlicerExtensionsManagerModel::onUpdateDownloadFinished(
   // Get network reply
   QNetworkReply* const reply = task->reply();
   QUrl downloadUrl = reply->url();
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
   Q_ASSERT(downloadUrl.hasQueryItem("items"));
+#else
+  Q_ASSERT(QUrlQuery(downloadUrl).hasQueryItem("items"));
+#endif
 
   // Notify observers of event
   emit this->downloadFinished(reply);

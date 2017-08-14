@@ -61,19 +61,28 @@ if(BUILD_TESTING)
     EXTRA_INCLUDE ${EXTRA_INCLUDE}
     )
 
-  set(KIT_TEST_MOC_SRCS
+  set(KIT_TEST_GENERATE_MOC_SRCS
     )
   if(Slicer_USE_PYTHONQT)
-    list(APPEND KIT_TEST_MOC_SRCS
+    list(APPEND KIT_TEST_GENERATE_MOC_SRCS
       qSlicerLoadableModuleWithPythonTest.cxx
       qSlicerPythonManagerWithoutApplicationTest.cxx
       qSlicerScriptedLoadableModuleTest.cxx
       qSlicerScriptedLoadableModuleWidgetTest.cxx
       )
-    QT4_GENERATE_MOCS(${KIT_TEST_MOC_SRCS})
   endif()
 
-  QT4_ADD_RESOURCES(Tests Resources/${KIT}Testing.qrc)
+  if(CTK_QT_VERSION VERSION_LESS "5")
+    if(KIT_TEST_GENERATE_MOC_SRCS)
+      QT4_GENERATE_MOCS(${KIT_TEST_GENERATE_MOC_SRCS})
+    endif()
+    QT4_ADD_RESOURCES(Tests Resources/${KIT}Testing.qrc)
+  else()
+    if(KIT_TEST_GENERATE_MOC_SRCS)
+      QT5_GENERATE_MOCS(${KIT_TEST_GENERATE_MOC_SRCS})
+    endif()
+    QT5_ADD_RESOURCES(Tests Resources/${KIT}Testing.qrc)
+  endif()
 
   add_executable(${KIT}CxxTests ${Tests})
   target_link_libraries(${KIT}CxxTests ${KIT})

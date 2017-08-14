@@ -137,8 +137,7 @@ set(Tests_UtilityFiles
   qMRMLNodeObject.h
   )
 
-QT4_WRAP_CPP(Tests_MOC_CXX ${Tests_MOC_SRCS})
-QT4_GENERATE_MOCS(
+set(KIT_TEST_GENERATE_MOC_SRCS
   qMRMLCheckableNodeComboBoxTest.cxx
   qMRMLColorModelTest.cxx
   qMRMLDisplayNodeViewComboBoxTest.cxx
@@ -149,6 +148,21 @@ QT4_GENERATE_MOCS(
   qMRMLSceneModelTest.cxx
   qMRMLSliceControllerWidgetTest.cxx
   )
+if(CTK_QT_VERSION VERSION_LESS "5")
+  set(_moc_options)
+  if(MRML_WIDGETS_HAVE_WEBKIT_SUPPORT)
+    set(_moc_options OPTIONS -DMRML_WIDGETS_HAVE_WEBKIT_SUPPORT)
+  endif()
+  QT4_WRAP_CPP(Tests_MOC_CXX ${Tests_MOC_SRCS} ${_moc_options})
+  QT4_GENERATE_MOCS(${KIT_TEST_GENERATE_MOC_SRCS})
+else()
+  set(_moc_options OPTIONS -DMRML_WIDGETS_HAVE_QT5)
+  if(MRML_WIDGETS_HAVE_WEBKIT_SUPPORT)
+    set(_moc_options OPTIONS -DMRML_WIDGETS_HAVE_WEBKIT_SUPPORT)
+  endif()
+  QT5_WRAP_CPP(Tests_MOC_CXX ${Tests_MOC_SRCS} ${_moc_options})
+  QT5_GENERATE_MOCS(${KIT_TEST_GENERATE_MOC_SRCS})
+endif()
 
 include_directories( ${CMAKE_CURRENT_BINARY_DIR})
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR})

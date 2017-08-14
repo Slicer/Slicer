@@ -24,9 +24,18 @@
 #include <QMessageBox>
 #include <QTimerEvent>
 #include <QToolButton>
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+#include <QUrlQuery>
+#endif
+#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
 #include <QWebFrame>
 #include <QWebHistory>
 #include <QWebView>
+#else
+#include <QWebEngineHistory>
+#include <QWebEnginePage>
+#include <QWebEngineView>
+#endif
 
 // CTK includes
 #include <ctkSearchBox.h>
@@ -177,10 +186,17 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
 
   // Back and forward buttons
   qSlicerExtensionsActionsWidget * actionsWidget = new qSlicerExtensionsActionsWidget;
+#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
   actionsWidget->ManageBackButton->setDefaultAction(this->ExtensionsManageBrowser->webView()->pageAction(QWebPage::Back));
   actionsWidget->ManageForwardButton->setDefaultAction(this->ExtensionsManageBrowser->webView()->pageAction(QWebPage::Forward));
   actionsWidget->InstallBackButton->setDefaultAction(this->ExtensionsInstallWidget->webView()->pageAction(QWebPage::Back));
   actionsWidget->InstallForwardButton->setDefaultAction(this->ExtensionsInstallWidget->webView()->pageAction(QWebPage::Forward));
+#else
+  actionsWidget->ManageBackButton->setDefaultAction(this->ExtensionsManageBrowser->webView()->pageAction(QWebEnginePage::Back));
+  actionsWidget->ManageForwardButton->setDefaultAction(this->ExtensionsManageBrowser->webView()->pageAction(QWebEnginePage::Forward));
+  actionsWidget->InstallBackButton->setDefaultAction(this->ExtensionsInstallWidget->webView()->pageAction(QWebEnginePage::Back));
+  actionsWidget->InstallForwardButton->setDefaultAction(this->ExtensionsInstallWidget->webView()->pageAction(QWebEnginePage::Forward));
+#endif
 
   this->tabWidget->setCornerWidget(actionsWidget, Qt::TopLeftCorner);
 
@@ -326,7 +342,11 @@ void qSlicerExtensionsManagerWidget::onCurrentTabChanged(int index)
   Q_D(qSlicerExtensionsManagerWidget);
   Q_UNUSED(index);
 
+#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
   QWebHistory* history = d->ExtensionsManageBrowser->webView()->history();
+#else
+  QWebEngineHistory* history = d->ExtensionsManageBrowser->webView()->history();
+#endif
   if (history->canGoBack())
     {
     history->goToItem(history->items().first());
@@ -357,7 +377,11 @@ void qSlicerExtensionsManagerWidget::onInstallUrlChanged(const QUrl& newUrl)
   if (newUrl.path().endsWith("/slicerappstore"))
     {
     d->toolsWidget->InstallSearchBox->setEnabled(true);
+#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
     d->lastSearchText = newUrl.queryItemValue("search");
+#else
+    d->lastSearchText = QUrlQuery(newUrl).queryItemValue("search");
+#endif
     d->toolsWidget->InstallSearchBox->setText(d->lastSearchText);
     }
   else
@@ -390,9 +414,14 @@ void qSlicerExtensionsManagerWidget::timerEvent(QTimerEvent* e)
     const QString& searchText = d->toolsWidget->InstallSearchBox->text();
     if (searchText != d->lastSearchText)
       {
+#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
       d->ExtensionsInstallWidget->webView()->page()->mainFrame()->evaluateJavaScript(
         "midas.slicerappstore.search = " + jsQuote(searchText) + ";"
         "midas.slicerappstore.applyFilter();");
+#else
+      qDebug() << "qSlicerExtensionsManagerWidget::timerEvent - "
+                  "Not implemented with Qt5";
+#endif
       d->lastSearchText = searchText;
       }
     this->killTimer(d->searchTimerId);

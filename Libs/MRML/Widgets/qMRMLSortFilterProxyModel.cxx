@@ -271,7 +271,7 @@ qMRMLSortFilterProxyModel::AcceptType qMRMLSortFilterProxyModel
   foreach(const QString& nodeType, d->NodeTypes)
     {
     // filter by node type
-    if (!node->IsA(nodeType.toAscii().data()))
+    if (!node->IsA(nodeType.toLatin1().data()))
       {
       //std::cout << "Reject node: " << node->GetName() << "(" << node->GetID()
       //          << ") type: " << typeid(*node).name() <<std::endl;
@@ -287,7 +287,7 @@ qMRMLSortFilterProxyModel::AcceptType qMRMLSortFilterProxyModel
       {
       foreach(const QString& hideChildNodeType, d->HideChildNodeTypes)
         {
-        if (node->IsA(hideChildNodeType.toAscii().data()))
+        if (node->IsA(hideChildNodeType.toLatin1().data()))
           {
           return Reject;
           }

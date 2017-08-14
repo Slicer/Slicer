@@ -24,8 +24,14 @@
 #ifndef __qSlicerTransformsModuleWidgetsPlugin_h
 #define __qSlicerTransformsModuleWidgetsPlugin_h
 
+#include "vtkSlicerConfigure.h" // For Slicer_HAVE_QT5
+
 // Qt includes
+#ifdef Slicer_HAVE_QT5
+#include <QtUiPlugin/QDesignerCustomWidgetCollectionInterface>
+#else
 #include <QDesignerCustomWidgetCollectionInterface>
+#endif
 
 // Transforms includes
 #include "qMRMLTransformDisplayNodeWidgetPlugin.h"
@@ -37,6 +43,9 @@ class Q_SLICER_MODULE_TRANSFORMS_WIDGETS_PLUGINS_EXPORT qSlicerTransformsModuleW
   , public QDesignerCustomWidgetCollectionInterface
 {
   Q_OBJECT
+#ifdef Slicer_HAVE_QT5
+  Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QDesignerCustomWidgetCollectionInterface")
+#endif
   Q_INTERFACES(QDesignerCustomWidgetCollectionInterface);
 
 public:

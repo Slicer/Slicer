@@ -25,13 +25,20 @@
 #include <QSettings>
 #include <QStatusBar>
 #include <QTextBrowser>
+#include <QUrl>
+#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
 #include <QWebFrame>
 #include <QWebSettings>
-#include <QUrl>
+#else
+#include <QWebEngineSettings>
+#endif
 
 // MRML includes
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSceneViewNode.h"
+
+// MRML/Widgets includes
+#include <qMRMLExpandingWebView.h>
 
 // VTK includes
 #include "vtkCollection.h"
@@ -68,6 +75,8 @@ public:
   QPointer<qSlicerSceneViewsModuleDialog> SceneViewDialog;
 
   QString htmlFromSceneView(vtkMRMLSceneViewNode *sceneView);
+
+  qMRMLExpandingWebView* sceneViewsWebView;
 };
 
 //-----------------------------------------------------------------------------
@@ -117,26 +126,48 @@ void qSlicerSceneViewsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   Q_Q(qSlicerSceneViewsModuleWidget);
   this->Ui_qSlicerSceneViewsModuleWidget::setupUi(widget);
 
-  this->sceneViewsWebView->setMRMLScene(q->mrmlScene());
-  this->sceneViewsWebView->page()->mainFrame()->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAsNeeded);
+  this->sceneViewsWebView = new qMRMLExpandingWebView();
+  this->CreateAndEditVerticalLayout->insertWidget(0, this->sceneViewsWebView);
 
+  this->sceneViewsWebView->setMRMLScene(q->mrmlScene());
+#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
+  this->sceneViewsWebView->page()->mainFrame()->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAsNeeded);
+#endif
   // propagate fonts from the application
   QSettings *settings =
     qSlicerApplication::application()->settingsDialog()->settings();
   QFont currentFont = settings->value("Font").value<QFont>();
+#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
   this->sceneViewsWebView->settings()->setFontFamily(QWebSettings::StandardFont,
                                                      currentFont.family());
   this->sceneViewsWebView->settings()->setFontSize(QWebSettings::DefaultFontSize,
                                                    currentFont.pointSize());
+#else
+  this->sceneViewsWebView->settings()->setFontFamily(QWebEngineSettings::StandardFont,
+                                                     currentFont.family());
+  this->sceneViewsWebView->settings()->setFontSize(QWebEngineSettings::DefaultFontSize,
+                                                   currentFont.pointSize());
+#endif
 
   // capture link clicked
+#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
   this->sceneViewsWebView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
   QObject::connect(this->sceneViewsWebView, SIGNAL(linkClicked(const QUrl &)),
                     q, SLOT(captureLinkClicked(QUrl)));
+#else
+  qDebug() << "qSlicerSceneViewsModuleWidgetPrivate::setupUi - "
+              "Capture link not implemented with Qt5";
+#endif
+
   // restore scroll bar position when the contents have been changed
+#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
   QObject::connect(this->sceneViewsWebView->page()->mainFrame(),
                    SIGNAL(contentsSizeChanged(const QSize &)),
                    q, SLOT(restoreScrollPosition(QSize)));
+#else
+  qDebug() << "qSlicerSceneViewsModuleWidgetPrivate::setupUi - "
+              "Restore scroll bar position not implemented with Qt5";
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -239,7 +270,6 @@ void qSlicerSceneViewsModuleWidget::setup()
   Q_D(qSlicerSceneViewsModuleWidget);
   this->Superclass::setup();
   d->setupUi(this);
-
 }
 
 //-----------------------------------------------------------------------------
@@ -357,7 +387,12 @@ void qSlicerSceneViewsModuleWidget::updateFromMRMLScene()
   Q_D(qSlicerSceneViewsModuleWidget);
 
   // clear the cache so new thumbnails will be used
+#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
   d->sceneViewsWebView->settings()->clearMemoryCaches();
+#else
+  qDebug() << "qSlicerSceneViewsModuleWidget::updateFromMRMLScene - "
+              "clearMemoryCaches not implemented with Qt5";
+#endif
 
   int numSceneViews = this->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLSceneViewNode");
   QString createImagePath = QString("qrc:///Icons/Camera.png");
@@ -403,7 +438,12 @@ void qSlicerSceneViewsModuleWidget::updateFromMRMLScene()
   QString baseURL;
   // save the scroll bar position so can restore it once the html
   // has been rendered
+#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
   this->savedScrollPosition = d->sceneViewsWebView->page()->mainFrame()->scrollBarValue(Qt::Vertical);
+#else
+  qDebug() << "qSlicerSceneViewsModuleWidget::updateFromMRMLScene - "
+              "Save scroll bar position not implemented with Qt5";
+#endif
 
   d->sceneViewsWebView->setHtml(htmlPage, baseURL);
   d->sceneViewsWebView->show();
@@ -538,7 +578,12 @@ void qSlicerSceneViewsModuleWidget::restoreScrollPosition(const QSize &size)
 {
   Q_UNUSED(size);
   Q_D(qSlicerSceneViewsModuleWidget);
+#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
   d->sceneViewsWebView->page()->mainFrame()->setScrollBarValue(Qt::Vertical, this->savedScrollPosition);
+#else
+  qDebug() << "qSlicerSceneViewsModuleWidget::restoreScrollPosition - "
+              "not implemented with Qt5";
+#endif
 }
 //-----------------------------------------------------------------------------
 // SceneView functionality

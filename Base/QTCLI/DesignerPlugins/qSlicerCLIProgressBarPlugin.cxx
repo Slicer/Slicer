@@ -23,7 +23,7 @@
 
 //-----------------------------------------------------------------------------
 qSlicerCLIProgressBarPlugin::qSlicerCLIProgressBarPlugin(QObject* parent)
-  : qSlicerQTCLIAbstractPlugin(parent)
+  : QObject(parent)
 {
 }
 

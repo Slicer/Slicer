@@ -159,7 +159,11 @@ mark_as_superbuild(GIT_EXECUTABLE)
 # Qt requirements
 #-----------------------------------------------------------------------------
 if(NOT DEFINED Slicer_REQUIRED_QT_VERSION)
-  set(Slicer_REQUIRED_QT_VERSION "4.7.4" CACHE STRING "Minimum required Qt version" FORCE)
+  set(_required_qt_version "4.7.4")
+  if(DEFINED Qt5_DIR)
+    set(_required_qt_version "5.6.0")
+  endif()
+  set(Slicer_REQUIRED_QT_VERSION ${_required_qt_version} CACHE STRING "Minimum required Qt version" FORCE)
 endif()
 mark_as_superbuild(Slicer_REQUIRED_QT_VERSION)
 
@@ -577,27 +581,62 @@ endif()
 #-----------------------------------------------------------------------------
 # Qt - Slicer_REQUIRED_QT_MODULES
 #-----------------------------------------------------------------------------
-# Module name should be specified as they appear in FindQt4.cmake
+# Module name should be specified as they appear in FindQt4.cmake or
 # For example, the module name associated with the variable QT_USE_QTXML is QTXML.
 # Note that the modules will be installed when packaging.
-set(Slicer_REQUIRED_QT_MODULES
-  QTCORE QTGUI
-  QTNETWORK QTOPENGL
-  QTUITOOLS #no dll
-  QTXML QTXMLPATTERNS
-  QTWEBKIT
-  QTSVG QTSQL
-  )
-if(WIN32)
-  list(APPEND Slicer_REQUIRED_QT_MODULES PHONON) # webkit requires phonon
-endif()
-if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
-  list(APPEND Slicer_REQUIRED_QT_MODULES QTSCRIPT)
-endif()
-if(BUILD_TESTING)
-  list(APPEND Slicer_REQUIRED_QT_MODULES QTTEST)
+if(Slicer_REQUIRED_QT_VERSION VERSION_LESS "5")
+  set(Slicer_REQUIRED_QT_MODULES
+    QTCORE QTGUI
+    QTNETWORK QTOPENGL
+    QTUITOOLS #no dll
+    QTXML QTXMLPATTERNS
+    QTWEBKIT
+    QTSVG QTSQL
+    )
+  if(WIN32)
+    list(APPEND Slicer_REQUIRED_QT_MODULES PHONON) # webkit requires phonon
+  endif()
+  if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
+    list(APPEND Slicer_REQUIRED_QT_MODULES QTSCRIPT)
+  endif()
+  if(BUILD_TESTING)
+    list(APPEND Slicer_REQUIRED_QT_MODULES QTTEST)
+  endif()
+else()
+  set(Slicer_REQUIRED_QT_MODULES
+    Core Widgets
+    Network OpenGL
+    PrintSupport # Required by "Annotations" module
+    UiTools #no dll
+    Xml XmlPatterns
+    Svg Sql
+    )
+  find_package(Qt5 COMPONENTS Core QUIET)
+  if(Qt5_VERSION VERSION_LESS "5.6.0")
+    list(APPEND Slicer_REQUIRED_QT_MODULES
+      WebKit
+      )
+  else()
+    list(APPEND Slicer_REQUIRED_QT_MODULES
+      WebEngine
+      WebEngineWidgets
+      )
+  endif()
+  if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
+    list(APPEND Slicer_REQUIRED_QT_MODULES Script)
+  endif()
+  if(BUILD_TESTING)
+    list(APPEND Slicer_REQUIRED_QT_MODULES Test)
+  endif()
 endif()
 list(APPEND Slicer_REQUIRED_QT_MODULES ${Slicer_ADDITIONAL_REQUIRED_QT_MODULES})
+
+if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER "4.9")
+  set(QT_LIBRARIES)
+  foreach(lib IN LISTS Slicer_REQUIRED_QT_MODULES)
+    list(APPEND QT_LIBRARIES Qt5::${lib})
+  endforeach()
+endif()
 
 if(DEFINED Slicer_ADDITIONAL_REQUIRED_QT_MODULES)
   mark_as_superbuild(Slicer_ADDITIONAL_REQUIRED_QT_MODULES:STRING)
@@ -615,7 +654,23 @@ set(Slicer_INSTALL_QtPlugins_DIR "${Slicer_INSTALL_ROOT}${Slicer_QtPlugins_DIR}"
 # Qt
 #-----------------------------------------------------------------------------
 include(SlicerBlockFindQtAndCheckVersion)
-mark_as_superbuild(VARS QT_QMAKE_EXECUTABLE LABELS "FIND_PACKAGE")
+if(Slicer_REQUIRED_QT_VERSION VERSION_LESS "5")
+  mark_as_superbuild(VARS QT_QMAKE_EXECUTABLE LABELS "FIND_PACKAGE")
+else()
+  mark_as_superbuild(VARS Qt5_DIR LABELS "FIND_PACKAGE")
+endif()
+
+set(Slicer_HAVE_QT5 1)
+if(Slicer_REQUIRED_QT_VERSION VERSION_LESS "5")
+  set(Slicer_HAVE_QT5 0)
+endif()
+
+set(Slicer_HAVE_WEBKIT_SUPPORT 1)
+if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER "4.9")
+  if(Qt5_VERSION VERSION_GREATER "5.5.0")
+    set(Slicer_HAVE_WEBKIT_SUPPORT 0)
+  endif()
+endif()
 
 #
 # If qmake is found in a system location, explicitly mark Qt as such. Doing so

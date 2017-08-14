@@ -22,21 +22,26 @@
 #define __qSlicerQTGUIAbstractPlugin_h
 
 // QT includes
+#include <QtGlobal>
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 #include <QDesignerCustomWidgetInterface>
-#include <QObject>
+#else
+#include <QtUiPlugin/QDesignerCustomWidgetInterface>
+#endif
 
 // QTGUI includes
 #include "qSlicerBaseQTGUIDesignerPluginsExport.h"
 
 class Q_SLICER_DESIGNER_PLUGINS_EXPORT qSlicerQTGUIAbstractPlugin
-  : public QObject
-  , public QDesignerCustomWidgetInterface
+  : public QDesignerCustomWidgetInterface
 {
-  Q_OBJECT
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+  Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QDesignerCustomWidgetInterface")
+#endif
   Q_INTERFACES(QDesignerCustomWidgetInterface);
 public:
 
-  qSlicerQTGUIAbstractPlugin(QObject* parent = 0);
+  qSlicerQTGUIAbstractPlugin();
   // Don't reimplement this method.
   QString group() const;
   // You can reimplement these methods

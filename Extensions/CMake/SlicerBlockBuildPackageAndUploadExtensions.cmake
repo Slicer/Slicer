@@ -1,10 +1,18 @@
 
+if(Slicer_REQUIRED_QT_VERSION VERSION_LESS "5")
+  set(Slicer_QT_VERSION_MAJOR "${QT_VERSION_MAJOR}")
+  set(Slicer_QT_VERSION_MINOR "${QT_VERSION_MINOR}")
+else()
+  set(Slicer_QT_VERSION_MAJOR "${Qt5_VERSION_MAJOR}")
+  set(Slicer_QT_VERSION_MINOR "${Qt5_VERSION_MINOR}")
+endif()
+
 #-----------------------------------------------------------------------------
 # Sanity checks
 set(expected_defined_vars
   CMAKE_GENERATOR
-  QT_VERSION_MAJOR
-  QT_VERSION_MINOR
+  Slicer_QT_VERSION_MAJOR
+  Slicer_QT_VERSION_MINOR
   Slicer_EXTENSIONS_TRACK_QUALIFIER
   Slicer_WC_REVISION
   CTEST_DROP_SITE

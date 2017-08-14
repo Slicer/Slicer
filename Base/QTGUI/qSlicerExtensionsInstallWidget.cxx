@@ -21,8 +21,15 @@
 // Qt includes
 #include <QDebug>
 #include <QDesktopServices>
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+#include <QUrlQuery>
+#endif
+#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
 #include <QWebFrame>
 #include <QWebView>
+#else
+#include <QWebEngineView>
+#endif
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -67,11 +74,20 @@ qSlicerExtensionsInstallWidgetPrivate::qSlicerExtensionsInstallWidgetPrivate(qSl
 QUrl qSlicerExtensionsInstallWidgetPrivate::extensionsListUrl()
 {
   QUrl url(this->ExtensionsManagerModel->serverUrlWithExtensionsStorePath());
-  url.setQueryItems(QList<QPair<QString, QString> >()
-                    << QPair<QString, QString>("layout", "empty")
-                    << QPair<QString, QString>("os", this->SlicerOs)
-                    << QPair<QString, QString>("arch", this->SlicerArch)
-                    << QPair<QString, QString>("revision", this->SlicerRevision));
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+  url.setQueryItems(
+#else
+  QUrlQuery urlQuery;
+  urlQuery.setQueryItems(
+#endif
+        QList<QPair<QString, QString> >()
+        << QPair<QString, QString>("layout", "empty")
+        << QPair<QString, QString>("os", this->SlicerOs)
+        << QPair<QString, QString>("arch", this->SlicerArch)
+        << QPair<QString, QString>("revision", this->SlicerRevision));
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+  url.setQuery(urlQuery);
+#endif
   return url;
 }
 
@@ -142,7 +158,9 @@ qSlicerExtensionsInstallWidget::qSlicerExtensionsInstallWidget(QWidget* _parent)
   : Superclass(_parent)
   , d_ptr(new qSlicerExtensionsInstallWidgetPrivate(*this))
 {
+#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
   this->webView()->page()->setLinkDelegationPolicy(QWebPage::DelegateExternalLinks);
+#endif
 }
 
 // --------------------------------------------------------------------------
@@ -294,11 +312,15 @@ void qSlicerExtensionsInstallWidget::initJavascript()
 {
   Q_D(qSlicerExtensionsInstallWidget);
   this->Superclass::initJavascript();
+#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
   this->webView()->page()->mainFrame()->addToJavaScriptWindowObject(
         "extensions_manager_model", d->ExtensionsManagerModel);
 
   this->webView()->page()->mainFrame()->addToJavaScriptWindowObject(
         "extensions_install_widget", this);
+#else
+  qDebug() << "qSlicerExtensionsInstallWidget::initJavascript - Not implemented";
+#endif
 }
 
 // --------------------------------------------------------------------------

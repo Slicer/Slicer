@@ -15,9 +15,6 @@
 
 ==============================================================================*/
 
-// Qt includes
-#include <QtPlugin>
-
 // Slice includes
 #include <qSlicerCoreApplication.h>
 #include <qSlicerCoreIOManager.h>
@@ -31,7 +28,10 @@
 #include "qSlicerDoubleArraysReader.h"
 
 //-----------------------------------------------------------------------------
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+#include <QtPlugin>
 Q_EXPORT_PLUGIN2(qSlicerDoubleArraysModule, qSlicerDoubleArraysModule);
+#endif
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_ExtensionTemplate

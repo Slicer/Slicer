@@ -24,7 +24,8 @@
 #include "qSlicerQTCLIAbstractPlugin.h"
 
 class Q_SLICER_BASE_QTCLI_PLUGINS_EXPORT qSlicerCLIProgressBarPlugin
-  : public qSlicerQTCLIAbstractPlugin
+  : public QObject,
+    public qSlicerQTCLIAbstractPlugin
 {
   Q_OBJECT
 public:

@@ -206,8 +206,8 @@ bool qSlicerCLILoadableModuleFactoryItem::updateLogo(qSlicerCLILoadableModuleFac
   int pixelSize = 0;
   unsigned long bufferLength = 0;
 
-  void * resolvedGetModuleLogoSymbol = item->symbolAddress("GetModuleLogo");
-  void * resolvedModuleLogoImageSymbol = item->symbolAddress("ModuleLogoImage");
+  SymbolAddressType resolvedGetModuleLogoSymbol = item->symbolAddress("GetModuleLogo");
+  SymbolAddressType resolvedModuleLogoImageSymbol = item->symbolAddress("ModuleLogoImage");
 
   if(resolvedGetModuleLogoSymbol)
     {
@@ -223,10 +223,10 @@ bool qSlicerCLILoadableModuleFactoryItem::updateLogo(qSlicerCLILoadableModuleFac
     QStringList expectedSymbols;
     expectedSymbols << "ModuleLogoWidth" << "ModuleLogoHeight"
                     << "ModuleLogoPixelSize" << "ModuleLogoLength";
-    QList<void*> resolvedSymbols;
+    QList<SymbolAddressType> resolvedSymbols;
     foreach(const QString& symbol, expectedSymbols)
       {
-      void * resolvedSymbol = item->symbolAddress(symbol);
+      SymbolAddressType resolvedSymbol = item->symbolAddress(symbol);
       if (resolvedSymbol)
         {
         resolvedSymbols << resolvedSymbol;

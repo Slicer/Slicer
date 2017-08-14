@@ -21,12 +21,21 @@
 #ifndef __qSlicerUnitModuleWidgetsAbstractPlugin_h
 #define __qSlicerUnitModuleWidgetsAbstractPlugin_h
 
+#include <QtGlobal>
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 #include <QDesignerCustomWidgetInterface>
+#else
+#include <QtUiPlugin/QDesignerCustomWidgetInterface>
+#endif
+
 #include "qSlicerUnitsModuleWidgetsPluginsExport.h"
 
 class Q_SLICER_MODULE_UNITS_WIDGETS_PLUGINS_EXPORT qSlicerUnitsModuleWidgetsAbstractPlugin
   : public QDesignerCustomWidgetInterface
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+  Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QDesignerCustomWidgetInterface")
+#endif
   Q_INTERFACES(QDesignerCustomWidgetInterface);
 public:
 
