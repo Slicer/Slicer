@@ -164,8 +164,9 @@ if(Slicer_USE_PYTHONQT)
     )
 endif()
 
-# Additional Target libraries (QT libs already included)
+# Additional Target libraries
 set(KIT_target_libraries
+  ${QT_LIBRARIES}
   SlicerBaseLogic
   MRMLDisplayableManager
   ${CTKAppLauncherLib_LIBRARIES}
