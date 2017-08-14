@@ -82,6 +82,7 @@ void qMRMLThreeDWidgetPrivate::init()
   layout->addWidget(this->ThreeDController);
 
   this->ThreeDView = new qMRMLThreeDView;
+  this->ThreeDView->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
   layout->addWidget(this->ThreeDView);
 
   this->ThreeDController->setThreeDView(this->ThreeDView);
