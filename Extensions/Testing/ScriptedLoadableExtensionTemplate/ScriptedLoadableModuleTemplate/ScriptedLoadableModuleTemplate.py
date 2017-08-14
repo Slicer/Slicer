@@ -203,8 +203,7 @@ class ScriptedLoadableModuleTemplateLogic(ScriptedLoadableModuleLogic):
       type = slicer.qMRMLScreenShotDialog.FullLayout
 
     # grab and convert to vtk image data
-    qpixMap = qt.QPixmap().grabWidget(widget)
-    qimage = qpixMap.toImage()
+    qimage = ctk.ctkWidgetsUtils.grabWidget(widget)
     imageData = vtk.vtkImageData()
     slicer.qMRMLUtils().qImageToVtkImageData(qimage,imageData)
 
