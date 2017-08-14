@@ -145,6 +145,8 @@ signals:
   void nodeAboutToBeEdited(vtkMRMLNode* node);
 
 protected:
+  virtual void showEvent(QShowEvent *);
+
   QScopedPointer<qMRMLSliceWidgetPrivate> d_ptr;
 
   /// Constructor allowing derived class to specify a specialized pimpl.
