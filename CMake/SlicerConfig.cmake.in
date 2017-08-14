@@ -445,6 +445,12 @@ slicer_config_set_compiler_ep( CMAKE_C_COMPILER   "@Slicer_CMAKE_C_COMPILER_CONF
    CACHE PATH "Path to C compiler used in Slicer build" FORCE )
 slicer_config_set_compiler_ep( CMAKE_CXX_COMPILER "@Slicer_CMAKE_CXX_COMPILER_CONFIG@"
    CACHE PATH "Path to CXX compiler used in Slicer build" FORCE )
+slicer_config_set_compiler_ep( CMAKE_CXX_STANDARD "@Slicer_CMAKE_CXX_STANDARD_CONFIG@"
+   CACHE PATH "C++ standard used in Slicer build" FORCE )
+slicer_config_set_compiler_ep( CMAKE_CXX_STANDARD_REQUIRED "@Slicer_CMAKE_CXX_STANDARD_REQUIRED_CONFIG@"
+   CACHE PATH "Whether the specified C++ standard is a requirement in Slicer build" FORCE )
+slicer_config_set_compiler_ep( CMAKE_CXX_EXTENSIONS "@Slicer_CMAKE_CXX_EXTENSIONS_CONFIG@"
+   CACHE PATH "Whether compiler specific extensions are requested in Slicer build" FORCE )
 
 set(CMAKE_CXX_FLAGS    "@Slicer_CMAKE_CXX_FLAGS_CONFIG@")
 set(CMAKE_C_FLAGS      "@Slicer_CMAKE_C_FLAGS_CONFIG@")

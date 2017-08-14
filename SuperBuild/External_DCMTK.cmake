@@ -33,6 +33,25 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       )
   endif()
 
+  set(ep_cxx_standard_args)
+  # XXX: On MSVC disable building DCMTK with C++11. DCMTK checks C++11.
+  # compiler compatibility by inspecting __cplusplus, but MSVC doesn't set __cplusplus.
+  # See https://blogs.msdn.microsoft.com/vcblog/2016/06/07/standards-version-switches-in-the-compiler/.
+  # Microsoft: "We won’t update __cplusplus until the compiler fully conforms to
+  # the standard. Until then, you can check the value of _MSVC_LANG."
+  if(CMAKE_CXX_STANDARD AND UNIX)
+    list(APPEND ep_cxx_standard_args
+      -DCMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD}
+      -DCMAKE_CXX_STANDARD_REQUIRED:BOOL=${CMAKE_CXX_STANDARD_REQUIRED}
+      -DCMAKE_CXX_EXTENSIONS:BOOL=${CMAKE_CXX_EXTENSIONS}
+      )
+    if(NOT CMAKE_CXX_STANDARD EQUAL 98)
+      list(APPEND ep_cxx_standard_args
+      -DDCMTK_ENABLE_CXX11:BOOL=ON
+      )
+    endif()
+  endif()
+
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
     "${git_protocol}://github.com/commontk/dcmtk"
@@ -56,6 +75,7 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
       -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
+      ${ep_cxx_standard_args}
       ${CMAKE_PROJECT_INCLUDE_EXTERNAL_PROJECT_ARG}
       -DBUILD_SHARED_LIBS:BOOL=ON
       -DDCMTK_WITH_DOXYGEN:BOOL=OFF

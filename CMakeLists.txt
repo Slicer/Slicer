@@ -2,6 +2,13 @@
 cmake_minimum_required(VERSION 3.5)
 
 #-----------------------------------------------------------------------------
+# Enable C++11
+#-----------------------------------------------------------------------------
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+#-----------------------------------------------------------------------------
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake" ${CMAKE_MODULE_PATH})
 include(ExternalProject)
 include(ExternalProjectDependency)
