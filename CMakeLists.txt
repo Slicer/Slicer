@@ -514,7 +514,7 @@ if(Slicer_BUILD_CLI_SUPPORT)
 endif()
 
 #-----------------------------------------------------------------------------
-# VTKv7 - Slicer_VTK_COMPONENTS
+# VTKv8 - Slicer_VTK_COMPONENTS
 #-----------------------------------------------------------------------------
 set(Slicer_VTK_RENDERING_BACKEND "OpenGL" CACHE STRING "Choose the rendering backend.")
 set_property(CACHE Slicer_VTK_RENDERING_BACKEND PROPERTY STRINGS "OpenGL" "OpenGL2")
