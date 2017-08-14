@@ -417,6 +417,12 @@ if(NOT Slicer_DONT_USE_EXTENSION)
   endif()
   if(NOT ${Slicer_SKIP_SlicerEnableExtensionTesting}
      AND NOT "${EXTENSION_NAME}" STREQUAL "")
-    include(SlicerEnableExtensionTesting)
+     include(CTest)
+     include(ExternalData)
+
+     find_package(Git)
+     mark_as_superbuild(GIT_EXECUTABLE)
+     find_package(Subversion)
+     mark_as_superbuild(Subversion_SVN_EXECUTABLE)
   endif()
 endif()

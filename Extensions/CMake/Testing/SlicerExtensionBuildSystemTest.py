@@ -680,7 +680,7 @@ include({slicer_source_dir}/Extensions/CMake/SlicerExtensionsDashboardDriverScri
           'repository_url': ['NA'],
           'revision': ['0'],
           'slicer_revision': None, #['25430'],
-          'submissiontype': ['nightly'],
+          'submissiontype': ['experimental'],
           'token': ['TestTokenWithExpectedLengthxxxxxxxxxxxxx']
           }
         if extensionName != 'TestExtA':
