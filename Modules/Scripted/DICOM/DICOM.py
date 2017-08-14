@@ -228,7 +228,7 @@ class DICOMWidget:
     # - if the update is requested before the timeout, the call to timer.start() resets it
     # - the actual update only happens when the the full time elapses since the last request
     self.updateRecentActivityTimer = qt.QTimer()
-    self.updateRecentActivityTimer.singleShot = True
+    self.updateRecentActivityTimer.setSingleShot(True)
     self.updateRecentActivityTimer.interval = 500
     self.updateRecentActivityTimer.connect('timeout()', self.onUpateRecentActivityRequestTimeout)
 
@@ -288,7 +288,7 @@ class DICOMWidget:
     self.toggleListener.checkable = True
     if hasattr(slicer, 'dicomListener'):
       self.toggleListener.text = "Stop Listener"
-      slicer.dicomListener.process.connect('stateChanged(int)',self.onListenerStateChanged)
+      slicer.dicomListener.process.connect('stateChanged(QProcess::ProcessState)',self.onListenerStateChanged)
     else:
       self.toggleListener.text = "Start Listener"
     self.localFrame.layout().addWidget(self.toggleListener)

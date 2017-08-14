@@ -1013,7 +1013,7 @@ class DICOMPluginSelector(qt.QWidget):
   """
 
   def __init__(self, parent, width=50, height=100):
-    super(DICOMPluginSelector, self).__init__(parent, width=width, height=height)
+    super(DICOMPluginSelector, self).__init__(parent)
     self.setMinimumHeight(height)
     self.setMinimumWidth(width)
     self.setLayout(qt.QVBoxLayout())
@@ -1076,10 +1076,10 @@ class DICOMLoadableTable(qt.QTableWidget):
     self.setColumnCount(3)
     self.setHorizontalHeaderLabels(['DICOM Data', 'Reader', 'Warnings'])
     self.setSelectionBehavior(qt.QTableView.SelectRows)
-    self.horizontalHeader().setResizeMode(qt.QHeaderView.Stretch)
-    self.horizontalHeader().setResizeMode(0, qt.QHeaderView.ResizeToContents)
-    self.horizontalHeader().setResizeMode(1, qt.QHeaderView.Stretch)
-    self.horizontalHeader().setResizeMode(2, qt.QHeaderView.Stretch)
+    self.horizontalHeader().setSectionResizeMode(qt.QHeaderView.Stretch)
+    self.horizontalHeader().setSectionResizeMode(0, qt.QHeaderView.ResizeToContents)
+    self.horizontalHeader().setSectionResizeMode(1, qt.QHeaderView.Stretch)
+    self.horizontalHeader().setSectionResizeMode(2, qt.QHeaderView.Stretch)
 
   def addLoadableRow(self, loadable, row, reader):
     self.insertRow(row)
@@ -1172,9 +1172,9 @@ class DICOMHeaderWidget(qt.QTableWidget):
   def configure(self):
     self.setColumnCount(2)
     self.setHorizontalHeaderLabels(['Tag', 'Value'])
-    self.horizontalHeader().setResizeMode(qt.QHeaderView.Stretch)
-    self.horizontalHeader().setResizeMode(0, qt.QHeaderView.Stretch)
-    self.horizontalHeader().setResizeMode(1, qt.QHeaderView.Stretch)
+    self.horizontalHeader().setSectionResizeMode(qt.QHeaderView.Stretch)
+    self.horizontalHeader().setSectionResizeMode(0, qt.QHeaderView.Stretch)
+    self.horizontalHeader().setSectionResizeMode(1, qt.QHeaderView.Stretch)
 
   def setHeader(self, dcmFile=None):
     #TODO: this method never gets called. Should be called when clicking on items from the SeriesTable
