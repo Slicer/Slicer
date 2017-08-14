@@ -6,9 +6,13 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
 =========================================================================auto=*/
+
+// EditorLib includes
 #include "vtkPichonFastMarchingPDF.h"
-#include "vtkObjectFactory.h"
+
+// VTK includes
 #include <vtkMath.h>
+#include <vtkObjectFactory.h>
 
 vtkPichonFastMarchingPDF::vtkPichonFastMarchingPDF( int _realizationMax )
 {

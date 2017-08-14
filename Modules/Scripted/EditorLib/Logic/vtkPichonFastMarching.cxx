@@ -10,21 +10,16 @@
 #define _USE_MATH_DEFINES
 #endif
 
-
-
-#if defined(__sun)
-#endif
-
-
-#include "vtkObjectFactory.h"
-
-#include <vtkInformation.h>
+// EditorLib includes
 #include "vtkPichonFastMarching.h"
-#include "vtkPointData.h"
-#include "vtkDataArray.h"
-#include <vtkMath.h>
-#include <vtkStreamingDemandDrivenPipeline.h>
 
+// VTK includes
+#include <vtkInformation.h>
+#include <vtkDataArray.h>
+#include <vtkMath.h>
+#include <vtkObjectFactory.h>
+#include <vtkPointData.h>
+#include <vtkStreamingDemandDrivenPipeline.h>
 
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
