@@ -65,7 +65,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
     panel.registerProperty(
       "DICOM/ScalarVolume/ReaderApproach", readersComboBox,
-      "currentIndex", qt.SIGNAL("currentIndexChanged(int)"))
+      "currentIndex", str(qt.SIGNAL("currentIndexChanged(int)")))
 
   @staticmethod
   def compareVolumeNodes(volumeNode1,volumeNode2):
