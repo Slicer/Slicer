@@ -117,6 +117,11 @@ int SlicerAppMain(int argc, char* argv[])
   QSurfaceFormat::setDefaultFormat(format);
 #endif
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
+  // Enable automatic scaling based on the pixel density of the monitor
+  QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#endif
+
   // Allow a custom appliction name so that the settings
   // can be distinct for differently named applications
   QString applicationName("Slicer");
