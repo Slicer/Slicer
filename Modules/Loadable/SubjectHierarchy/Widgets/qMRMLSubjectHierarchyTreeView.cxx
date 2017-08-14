@@ -614,7 +614,11 @@ bool qMRMLSubjectHierarchyTreeView::clickDecoration(QMouseEvent* e)
   Q_D(qMRMLSubjectHierarchyTreeView);
 
   QModelIndex index = this->indexAt(e->pos());
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
   QStyleOptionViewItemV4 opt = this->viewOptions();
+#else
+  QStyleOptionViewItem opt = this->viewOptions();
+#endif
   opt.rect = this->visualRect(index);
   qobject_cast<qMRMLItemDelegate*>(this->itemDelegate())->initStyleOption(&opt,index);
   QRect decorationElement = this->style()->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, this);

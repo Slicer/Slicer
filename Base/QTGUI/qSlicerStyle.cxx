@@ -146,7 +146,11 @@ QRect qSlicerStyle::subControlRect(ComplexControl control, const QStyleOptionCom
         int topHeight = 0;
         int verticalAlignment = this->proxy()->styleHint(
             SH_GroupBox_TextLabelVerticalAlignment, groupBox, widget);
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
         bool flat = groupBox->features & QStyleOptionFrameV2::Flat;
+#else
+        bool flat = groupBox->features & QStyleOptionFrame::Flat;
+#endif
         if (!groupBox->text.isEmpty())
           {
           topHeight = groupBox->fontMetrics.height();
