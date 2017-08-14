@@ -22,6 +22,7 @@
 #include "vtkPichonFastMarching.h"
 #include "vtkPointData.h"
 #include "vtkDataArray.h"
+#include <vtkMath.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
 
 
@@ -70,20 +71,20 @@ float vtkPichonFastMarching::speed( int index )
   // make sure speed is not too small
   s*=1e10;
 
-  if(!finite(s))
+  if(!vtkMath::IsFinite(s))
     {
     s = 1.;
     if(!warned){
-      std::cerr << "WARNING: s set to 1.0, since it was not finite()" << std::endl;
+      std::cerr << "WARNING: s set to 1.0, since it was not vtkMath::IsFinite()" << std::endl;
       warned = true;
     }
     }
 
 
-  if( (s<1.0/(INF/1e6)) || finite(s)==0 )
+  if( (s<1.0/(INF/1e6)) || vtkMath::IsFinite(s)==0 )
     {
-      if(finite(s)==0)
-    vtkErrorMacro( "Error in vtkPichonFastMarching::speed(...): finite(s)==0 " << s );
+      if(vtkMath::IsFinite(s)==0)
+    vtkErrorMacro( "Error in vtkPichonFastMarching::speed(...): vtkMath::IsFinite(s)==0 " << s );
       /*
       else
     vtkErrorMacro( "(s<1.0/(INF/1e6)) " << s );
@@ -582,7 +583,7 @@ bool vtkPichonFastMarching::minHeapIsSorted( void )
     }
   for(k=(N-1);k>=1;k--)
     {
-      if( finite( node[tree[k].nodeIndex].T)==0 )
+      if( vtkMath::IsFinite( node[tree[k].nodeIndex].T)==0 )
     vtkErrorMacro( "Error in vtkPichonFastMarching::minHeapIsSorted(): "
                << "NaN or Inf value in minHeap : " << node[tree[k].nodeIndex].T );
 
