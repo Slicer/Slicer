@@ -284,6 +284,13 @@ mark_as_superbuild(Slicer_INSTALL_ITKPython)
 option(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT "Build Slicer with parameter serializer support" ON)
 mark_as_superbuild(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT)
 
+set(Slicer_VTK_VERSION_MAJOR 8 CACHE STRING "The VTK major version (7 or 8).")
+set_property(CACHE Slicer_VTK_VERSION_MAJOR PROPERTY STRINGS "7" "8")
+if(NOT "${Slicer_VTK_VERSION_MAJOR}" STREQUAL "7" AND NOT "${Slicer_VTK_VERSION_MAJOR}" STREQUAL "8")
+  message(FATAL_ERROR "error: Slicer_VTK_VERSION_MAJOR must be 7 or 8.")
+endif()
+mark_as_superbuild(Slicer_VTK_VERSION_MAJOR)
+
 #
 # SimpleITK has large internal libraries, which take an extremely long
 # time to link on windows when they are static. Creating shared
@@ -777,7 +784,7 @@ endif()
 #-----------------------------------------------------------------------------
 # VTK
 #-----------------------------------------------------------------------------
-find_package(VTK 7.1 COMPONENTS ${Slicer_VTK_COMPONENTS} REQUIRED NO_MODULE)
+find_package(VTK ${Slicer_VTK_VERSION_MAJOR} COMPONENTS ${Slicer_VTK_COMPONENTS} REQUIRED NO_MODULE)
 if(NOT TARGET vtkGUISupportQt)
   message(FATAL_ERROR "error: VTK was not configured to use QT, you probably need "
                     "to recompile it with VTK_USE_GUISUPPORT ON, VTK_Group_Qt ON, "

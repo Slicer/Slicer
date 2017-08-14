@@ -192,6 +192,9 @@ set(Slicer_LOGOS_RESOURCE "@Slicer_LOGOS_RESOURCE@")
 # Slicer home (top of the tree)
 set(Slicer_HOME "@Slicer_HOME@")
 
+# Slicer binary directory
+set(Slicer_BINARY_DIR "@Slicer_BINARY_DIR@")
+
 # Slicer Core library
 set(Slicer_CORE_LIBRARY @Slicer_CORE_LIBRARY_CONFIG@)
 
@@ -203,6 +206,9 @@ set(MRML_LIBRARIES @MRML_LIBRARIES@)
 
 # Slicer Libs VTK wrapped libraries
 set(Slicer_Libs_VTK_WRAPPED_LIBRARIES "@Slicer_Libs_VTK_WRAPPED_LIBRARIES@")
+
+# Slicer VTK version
+set(Slicer_VTK_VERSION_MAJOR "@Slicer_VTK_VERSION_MAJOR@")
 
 # Slicer include directories for module
 @Slicer_INCLUDE_MODULE_DIRS_CONFIG@
