@@ -20,6 +20,9 @@
 #include <QApplication>
 #include <QTimer>
 
+// Slicer includes
+#include "vtkSlicerConfigure.h"
+
 // qMRML includes
 #include "qMRMLNodeComboBox.h"
 #include "qMRMLSceneModel.h"
@@ -31,6 +34,9 @@
 
 // VTK includes
 #include <vtkNew.h>
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+#include <QVTKOpenGLWidget.h>
+#endif
 
 namespace
 {
@@ -55,6 +61,13 @@ bool checkActionCount(int line, qMRMLSceneModel* sceneModel, int expected)
 // test the adding of user menu actions
 int qMRMLNodeComboBoxTest8( int argc, char * argv [] )
 {
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+  // Set default surface format for QVTKOpenGLWidget
+  QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
+  format.setSamples(0);
+  QSurfaceFormat::setDefaultFormat(format);
+#endif
+
   QApplication app(argc, argv);
 
   vtkNew<vtkMRMLScene> scene;

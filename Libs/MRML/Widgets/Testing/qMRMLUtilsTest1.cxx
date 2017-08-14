@@ -22,8 +22,16 @@
 #include <QApplication>
 #include <QDebug>
 
+// Slicer includes
+#include "vtkSlicerConfigure.h"
+
 // qMRMLWidgets include
 #include <qMRMLUtils.h>
+
+// VTK includes
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+#include <QVTKOpenGLWidget.h>
+#endif
 
 // STD includes
 #include <cstdlib>
@@ -31,6 +39,13 @@
 
 int qMRMLUtilsTest1( int argc, char * argv [] )
 {
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+  // Set default surface format for QVTKOpenGLWidget
+  QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
+  format.setSamples(0);
+  QSurfaceFormat::setDefaultFormat(format);
+#endif
+
   QApplication app(argc, argv);
 
   // Test color conversions

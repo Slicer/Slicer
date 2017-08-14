@@ -1,14 +1,28 @@
 #include <qMRMLTransformSliders.h>
 #include <QApplication>
 
+// Slicer includes
+#include "vtkSlicerConfigure.h"
+
+// VTK includes
 #include <vtkMatrix4x4.h>
 #include <vtkMRMLTransformNode.h>
 #include <vtkNew.h>
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+#include <QVTKOpenGLWidget.h>
+#endif
 
 // STD includes
 
 int qMRMLTransformSlidersTest1( int argc, char * argv [] )
 {
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+  // Set default surface format for QVTKOpenGLWidget
+  QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
+  format.setSamples(0);
+  QSurfaceFormat::setDefaultFormat(format);
+#endif
+
   QApplication app(argc, argv);
 
   QWidget widget;

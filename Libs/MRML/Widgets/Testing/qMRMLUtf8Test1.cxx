@@ -25,6 +25,9 @@
 #include <QLineEdit>
 #include <QTimer>
 
+// Slicer includes
+#include "vtkSlicerConfigure.h"
+
 // CTK includes
 #include <ctkCallback.h>
 
@@ -35,6 +38,9 @@
 
 // VTK includes
 #include "vtkNew.h"
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+#include <QVTKOpenGLWidget.h>
+#endif
 
 // STD includes
 #include <cstdlib>
@@ -62,6 +68,13 @@ void saveScene(void* vtkNotUsed(data))
 //------------------------------------------------------------------------------
 int qMRMLUtf8Test1(int argc, char * argv [] )
 {
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+  // Set default surface format for QVTKOpenGLWidget
+  QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
+  format.setSamples(0);
+  QSurfaceFormat::setDefaultFormat(format);
+#endif
+
   QApplication app(argc, argv);
 
   vtkNew<vtkMRMLScene> scene;

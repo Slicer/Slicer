@@ -30,6 +30,7 @@
 #include "qMRMLLayoutManager_p.h"
 #include "qMRMLSliceControllerWidget.h"
 #include "qMRMLSliceWidget.h"
+#include "vtkSlicerConfigure.h"
 
 // MRML includes
 #include <vtkMRMLApplicationLogic.h>
@@ -44,6 +45,9 @@
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkWeakPointer.h>
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+#include <QVTKOpenGLWidget.h>
+#endif
 
 //------------------------------------------------------------------------------
 class qSlicerLayoutCustomSliceViewFactory
@@ -192,6 +196,13 @@ protected:
 //------------------------------------------------------------------------------
 int qMRMLLayoutManagerWithCustomFactoryTest(int argc, char * argv[] )
 {
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+  // Set default surface format for QVTKOpenGLWidget
+  QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
+  format.setSamples(0);
+  QSurfaceFormat::setDefaultFormat(format);
+#endif
+
   QApplication app(argc, argv);
 
   QWidget w;

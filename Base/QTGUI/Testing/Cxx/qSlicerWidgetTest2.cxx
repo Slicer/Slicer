@@ -24,6 +24,9 @@
 #include <QWebEngineView>
 #endif
 
+// Slicer includes
+#include "vtkSlicerConfigure.h"
+
 // SlicerQt includes
 #include "qSlicerWidget.h"
 
@@ -49,6 +52,9 @@
 #include <vtkProperty2D.h>
 #include <vtkActor2D.h>
 #include <vtkVersion.h>
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+#include <QVTKOpenGLWidget.h>
+#endif
 
 // STD includes
 
@@ -146,6 +152,14 @@ int qSlicerWidgetTest2(int argc, char * argv[] )
       << std::endl;
     return EXIT_FAILURE;
     }
+
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+  // Set default surface format for QVTKOpenGLWidget
+  QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
+  format.setSamples(0);
+  QSurfaceFormat::setDefaultFormat(format);
+#endif
+
   //
   // Create a simple gui with a quit button and render window
   //

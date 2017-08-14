@@ -24,6 +24,7 @@
 
 // Slicer includes
 #include "qMRMLLayoutManager.h"
+#include "vtkSlicerConfigure.h"
 
 // MRML includes
 #include <vtkMRMLApplicationLogic.h>
@@ -33,12 +34,22 @@
 
 // VTK includes
 #include <vtkNew.h>
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+#include <QVTKOpenGLWidget.h>
+#endif
 
 // Common test driver includes
 #include "qMRMLLayoutManagerTestHelper.cxx"
 
 int qMRMLLayoutManagerTest4(int argc, char * argv[] )
 {
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+  // Set default surface format for QVTKOpenGLWidget
+  QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
+  format.setSamples(0);
+  QSurfaceFormat::setDefaultFormat(format);
+#endif
+
   QApplication app(argc, argv);
 
   QWidget w;

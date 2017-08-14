@@ -697,6 +697,14 @@ foreach(_path IN ITEMS
   endif()
 endforeach()
 
+# Prefer QVTKOpenGLWidget to QVTKWidget when supported
+set(Slicer_VTK_USE_QVTKOPENGLWIDGET 1)
+if(Slicer_REQUIRED_QT_VERSION VERSION_LESS "5"
+    OR Slicer_VTK_VERSION_MAJOR VERSION_LESS "8"
+    OR NOT Slicer_VTK_RENDERING_USE_OpenGL2_BACKEND)
+  set(Slicer_VTK_USE_QVTKOPENGLWIDGET 0)
+endif()
+
 #-----------------------------------------------------------------------------
 # Testing
 #-----------------------------------------------------------------------------

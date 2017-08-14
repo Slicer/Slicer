@@ -119,6 +119,7 @@
 
 #cmakedefine Slicer_VTK_RENDERING_USE_OpenGL_BACKEND
 #cmakedefine Slicer_VTK_RENDERING_USE_OpenGL2_BACKEND
+#cmakedefine Slicer_VTK_USE_QVTKOPENGLWIDGET
 
 // Library sub-directory - The following macros define directories only valid for a given build tree.
 #define VTK_DIR "@VTK_DIR@"

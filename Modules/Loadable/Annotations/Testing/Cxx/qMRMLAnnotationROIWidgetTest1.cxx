@@ -4,6 +4,9 @@
 #include <QDebug>
 #include <QTimer>
 
+// Slicer includes
+#include "vtkSlicerConfigure.h"
+
 // Annotations includes
 #include "qMRMLAnnotationROIWidget.h"
 #include "vtkMRMLAnnotationROINode.h"
@@ -13,10 +16,20 @@
 
 // VTK includes
 #include <vtkSmartPointer.h>
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+#include <QVTKOpenGLWidget.h>
+#endif
 
 //-----------------------------------------------------------------------------
 int qMRMLAnnotationROIWidgetTest1(int argc, char * argv[] )
 {
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+  // Set default surface format for QVTKOpenGLWidget
+  QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
+  format.setSamples(0);
+  QSurfaceFormat::setDefaultFormat(format);
+#endif
+
   QApplication app(argc, argv);
 
   vtkSmartPointer<vtkMRMLScene> scene =

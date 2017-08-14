@@ -25,6 +25,7 @@
 
 // Slicer includes
 #include "qMRMLLayoutManager.h"
+#include "vtkSlicerConfigure.h"
 
 // MRML includes
 #include <vtkMRMLApplicationLogic.h>
@@ -35,6 +36,9 @@
 // VTK includes
 #include <vtkCollection.h>
 #include <vtkNew.h>
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+#include <QVTKOpenGLWidget.h>
+#endif
 
 // Common test driver includes
 #include "qMRMLWidgetCxxTests.h"
@@ -78,6 +82,13 @@ bool checkNumberOfItems(int line, qMRMLLayoutManager* layoutManager, int expecte
 // --------------------------------------------------------------------------
 int qMRMLLayoutManagerTest3(int argc, char * argv[] )
 {
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+  // Set default surface format for QVTKOpenGLWidget
+  QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
+  format.setSamples(0);
+  QSurfaceFormat::setDefaultFormat(format);
+#endif
+
   QApplication app(argc, argv);
   QWidget w;
   w.show();

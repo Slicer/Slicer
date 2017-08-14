@@ -22,8 +22,15 @@
 #include <qMRMLTreeView.h>
 #include <qMRMLSceneTransformModel.h>
 
+// Slicer includes
+#include "vtkSlicerConfigure.h"
+
+// VTK includes
 #include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLScene.h>
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+#include <QVTKOpenGLWidget.h>
+#endif
 
 #include <vtkTimerLog.h>
 
@@ -31,6 +38,13 @@
 
 int qMRMLTreeViewTest1( int argc, char * argv [] )
 {
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+  // Set default surface format for QVTKOpenGLWidget
+  QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
+  format.setSamples(0);
+  QSurfaceFormat::setDefaultFormat(format);
+#endif
+
   QApplication app(argc, argv);
   if( argc < 2 )
     {

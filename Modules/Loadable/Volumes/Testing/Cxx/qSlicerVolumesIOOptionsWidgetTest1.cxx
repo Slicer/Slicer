@@ -26,6 +26,8 @@
 // Slicer includes
 #include "qSlicerApplication.h"
 #include "vtkSlicerApplicationLogic.h"
+#include "vtkSlicerConfigure.h"
+
 // Volumes includes
 #include "qSlicerVolumesIOOptionsWidget.h"
 
@@ -33,9 +35,21 @@
 #include "vtkMRMLColorLogic.h"
 #include "vtkMRMLScene.h"
 
+// VTK includes
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+#include <QVTKOpenGLWidget.h>
+#endif
+
 //-----------------------------------------------------------------------------
 int qSlicerVolumesIOOptionsWidgetTest1( int argc, char * argv[] )
 {
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+  // Set default surface format for QVTKOpenGLWidget
+  QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
+  format.setSamples(0);
+  QSurfaceFormat::setDefaultFormat(format);
+#endif
+
   qSlicerApplication app(argc, argv);
 
   // set up the color nodes for access from the widget

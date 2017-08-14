@@ -58,6 +58,9 @@
 // VTK includes
 //#include <vtkObject.h>
 #include <vtksys/SystemTools.hxx>
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+#include <QVTKOpenGLWidget.h>
+#endif
 
 #if defined (_WIN32) && !defined (Slicer_BUILD_WIN32_CONSOLE)
 # include <windows.h>
@@ -105,6 +108,14 @@ int SlicerAppMain(int argc, char* argv[])
 #endif
 #endif
 
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+  // Set default surface format for QVTKOpenGLWidget. Disable multisampling to
+  // support volume rendering and other VTK functionality that reads from the
+  // framebuffer; see https://gitlab.kitware.com/vtk/vtk/issues/17095.
+  QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
+  format.setSamples(0);
+  QSurfaceFormat::setDefaultFormat(format);
+#endif
 
   // Allow a custom appliction name so that the settings
   // can be distinct for differently named applications

@@ -22,6 +22,9 @@
 #include <QApplication>
 #include <QTimer>
 
+// Slicer includes
+#include "vtkSlicerConfigure.h"
+
 // qMRML includes
 #include "qMRMLNodeComboBox.h"
 
@@ -30,6 +33,10 @@
 
 // VTK includes
 #include <vtkNew.h>
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+#include <QVTKOpenGLWidget.h>
+#endif
+
 
 // Common test driver includes
 #include "qMRMLWidgetCxxTests.h"
@@ -41,6 +48,14 @@ int qMRMLNodeComboBoxTest3( int argc, char * argv [] )
     std::cerr<< "Wrong number of arguments." << std::endl;
     return EXIT_FAILURE;
     }
+
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+  // Set default surface format for QVTKOpenGLWidget
+  QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
+  format.setSamples(0);
+  QSurfaceFormat::setDefaultFormat(format);
+#endif
+
   QApplication app(argc, argv);
 
   qMRMLNodeComboBox nodeSelector;

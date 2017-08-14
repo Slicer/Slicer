@@ -22,6 +22,9 @@
 #include <QApplication>
 #include <QTimer>
 
+// Slicer includes
+#include "vtkSlicerConfigure.h"
+
 // Volumes includes
 #include "qSlicerDTISliceDisplayWidget.h"
 #include <vtkSlicerVolumesLogic.h>
@@ -35,6 +38,9 @@
 #include <vtkImageData.h>
 #include <vtkNew.h>
 #include <vtkTrivialProducer.h>
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+#include <QVTKOpenGLWidget.h>
+#endif
 
 // ITK includes
 #include <itkConfigure.h>
@@ -44,6 +50,13 @@
 int qSlicerDTISliceDisplayWidgetTest2( int argc, char * argv[] )
 {
   itk::itkFactoryRegistration();
+
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+  // Set default surface format for QVTKOpenGLWidget
+  QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
+  format.setSamples(0);
+  QSurfaceFormat::setDefaultFormat(format);
+#endif
 
   QApplication app(argc, argv);
 
