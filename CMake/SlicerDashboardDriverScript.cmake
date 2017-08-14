@@ -28,7 +28,6 @@ set(expected_variables
   CTEST_MEMORYCHECK_COMMAND
   CTEST_SVN_COMMAND
   CTEST_GIT_COMMAND
-  QT_QMAKE_EXECUTABLE
   )
 
 # Update list of expected variables based on build options.
@@ -45,6 +44,19 @@ foreach(var ${expected_variables})
     message(FATAL_ERROR "Variable ${var} should be defined in top-level script !")
   endif()
 endforeach()
+
+# Handle Qt configuration
+if(NOT DEFINED QT_QMAKE_EXECUTABLE AND NOT DEFINED Qt5_DIR)
+  message(FATAL_ERROR "Either QT_QMAKE_EXECUTABLE (for Qt4) or Qt5_DIR (for Qt5) should be defined in top-level script")
+endif()
+if(DEFINED QT_QMAKE_EXECUTABLE)
+  set(QT_CACHE_ENTRY "QT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}")
+  list(APPEND variables QT_QMAKE_EXECUTABLE)
+endif()
+if(DEFINED Qt5_DIR)
+  set(QT_CACHE_ENTRY "Qt5_DIR:PATH=${Qt5_DIR}")
+  list(APPEND variables Qt5_DIR)
+endif()
 
 if(NOT DEFINED CTEST_CONFIGURATION_TYPE AND DEFINED CTEST_BUILD_CONFIGURATION)
   set(CTEST_CONFIGURATION_TYPE ${CTEST_BUILD_CONFIGURATION})
@@ -278,7 +290,7 @@ macro(run_ctest)
     # Write initial cache.
     #-----------------------------------------------------------------------------
     file(WRITE "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt" "
-QT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+${QT_CACHE_ENTRY}
 GIT_EXECUTABLE:FILEPATH=${CTEST_GIT_COMMAND}
 Subversion_SVN_EXECUTABLE:FILEPATH=${CTEST_SVN_COMMAND}
 WITH_COVERAGE:BOOL=${WITH_COVERAGE}
