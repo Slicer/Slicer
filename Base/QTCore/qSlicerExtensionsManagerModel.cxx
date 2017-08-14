@@ -873,6 +873,8 @@ QUrl qSlicerExtensionsManagerModel::serverUrl()const
 {
   QSettings settings(this->extensionsSettingsFilePath(), QSettings::IniFormat);
   return QUrl(settings.value("Extensions/ServerUrl").toString());
+  //HS Uncomment the following line for debugging and comment above line.
+  //return QUrl("http://10.171.2.133:8080");
 }
 
 // --------------------------------------------------------------------------
@@ -1167,14 +1169,12 @@ qSlicerExtensionsManagerModelPrivate::downloadExtension(
 bool qSlicerExtensionsManagerModel::downloadAndInstallExtension(const QString& extensionId)
 {
   Q_D(qSlicerExtensionsManagerModel);
-
   QString error;
   if (!d->checkExtensionSettingsPermissions(error))
     {
     d->critical(error);
     return false;
     }
-
   qSlicerExtensionDownloadTask* const task = d->downloadExtension(extensionId);
   if (!task)
     {
@@ -1212,7 +1212,6 @@ void qSlicerExtensionsManagerModel::onInstallDownloadFinished(
 
   const QString& extensionName = task->extensionName();
   const QString& archiveName = task->archiveName();
-
   QTemporaryFile file(QString("%1/%2.XXXXXX").arg(QDir::tempPath(), archiveName));
   if (!file.open())
     {
@@ -1221,7 +1220,6 @@ void qSlicerExtensionsManagerModel::onInstallDownloadFinished(
     }
   file.write(reply->readAll());
   file.close();
-
   const ExtensionMetadataType& extensionMetadata =
     this->filterExtensionMetadata(task->metadata());
   this->installExtension(extensionName, extensionMetadata, file.fileName());
@@ -1240,7 +1238,6 @@ bool qSlicerExtensionsManagerModel::installExtension(
       QString("Failed to list extension archive '%1'").arg(archiveFile));
     return false;
     }
-
   for (size_t n = 0; n < archiveContents.size(); ++n)
     {
     const std::string& s = archiveContents[n];

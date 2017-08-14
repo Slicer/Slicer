@@ -30,6 +30,12 @@
 #include <QWebView>
 #else
 #include <QWebEngineView>
+#include <QWebChannel>
+#include <QWebEngineScript>
+#include <QWebEnginePage>
+#include <QWebEngineProfile>
+#include <qwebenginescriptcollection.h>
+#include <QFile>
 #endif
 
 // QtCore includes
@@ -64,6 +70,7 @@ public:
   QWebView* WebView;
 #else
   QWebEngineView* WebView;
+  QWebChannel* WebChannel;
 #endif
 };
 
@@ -83,6 +90,39 @@ void qSlicerWebWidgetPrivate::init()
   this->WebView = new QWebView();
 #else
   this->WebView = new QWebEngineView();
+
+  QWebEngineProfile *profile = new QWebEngineProfile("MyWebChannelProfile", q);
+
+  QFile webChannelJsFile(":/qtwebchannel/qwebchannel.js");
+
+  if (!webChannelJsFile.open(QIODevice::ReadOnly))
+    {
+    qDebug() << QString("Couldn't open qwebchannel.js file: %1").arg(webChannelJsFile.errorString());
+    }
+  else
+    {
+    qDebug() << "OK webEngineProfile";
+    QByteArray webChannelJs = webChannelJsFile.readAll();
+    webChannelJs.append(
+        "\n"
+        "new QWebChannel(qt.webChannelTransport, function(channel) {"
+        " window.extensions_install_widget = channel.objects.extensions_install_widget;"
+        " console.log('From core: ' + extensions_install_widget.slicerOs);"
+        "});"
+        );
+    QWebEngineScript script;
+    script.setSourceCode(webChannelJs);
+    script.setName("qwebchannel_appended.js");
+    script.setWorldId(QWebEngineScript::MainWorld);
+    script.setInjectionPoint(QWebEngineScript::DocumentCreation);
+    script.setRunsOnSubFrames(false);
+    profile->scripts()->insert(script);
+    }
+
+  QWebEnginePage *myPage = new QWebEnginePage(profile, this->WebView);
+  this->WebView->setPage(myPage);
+  this->WebChannel = new QWebChannel(this->WebView->page());
+  this->WebView->page()->setWebChannel(this->WebChannel);
 #endif
   this->verticalLayout->insertWidget(0, this->WebView);
 
@@ -92,8 +132,6 @@ void qSlicerWebWidgetPrivate::init()
   QNetworkAccessManager * networkAccessManager = this->WebView->page()->networkAccessManager();
   Q_ASSERT(networkAccessManager);
   networkAccessManager->setCookieJar(new qSlicerPersistentCookieJar());
-#else
-  qDebug() << "Support for qSlicerPersistentCookieJar not implemented";
 #endif
 
   QObject::connect(this->WebView, SIGNAL(loadStarted()),
@@ -179,11 +217,23 @@ qSlicerWebWidget::webView()
 QString qSlicerWebWidget::evalJS(const QString &js)
 {
   Q_D(qSlicerWebWidget);
+
 #if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
   return d->mainFrame()->evaluateJavaScript(js).toString();
 #else
-  return QString(); // XXX Not implemented
+  // NOTE: Beginning Qt5.7, the call to runJavaScript becomes asynchronous,
+  // and generally it takes a function lambda which is called once
+  // the script evaluation is completed. This takes in the result string
+  // as an argument.
+  // Since the result of JavaScript evaluation is not used anywhere
+  // in the code base, the function lambda is not supplied here,
+  // and an empty string is returned instead.
+  // When the need arises to use the result string, function lambdas
+  // and resulting infrastructure will have to be provided.
+  d->WebView->page()->runJavaScript(js);
+  return QString();
 #endif
+
 }
 
 // --------------------------------------------------------------------------

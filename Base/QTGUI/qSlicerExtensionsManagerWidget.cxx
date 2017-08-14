@@ -373,7 +373,6 @@ void qSlicerExtensionsManagerWidget::onManageUrlChanged(const QUrl& newUrl)
 void qSlicerExtensionsManagerWidget::onInstallUrlChanged(const QUrl& newUrl)
 {
   Q_D(qSlicerExtensionsManagerWidget);
-
   if (newUrl.path().endsWith("/slicerappstore"))
     {
     d->toolsWidget->InstallSearchBox->setEnabled(true);
@@ -419,8 +418,9 @@ void qSlicerExtensionsManagerWidget::timerEvent(QTimerEvent* e)
         "midas.slicerappstore.search = " + jsQuote(searchText) + ";"
         "midas.slicerappstore.applyFilter();");
 #else
-      qDebug() << "qSlicerExtensionsManagerWidget::timerEvent - "
-                  "Not implemented with Qt5";
+      d->ExtensionsInstallWidget->webView()->page()->runJavaScript(
+        "midas.slicerappstore.search = " + jsQuote(searchText) + ";"
+        "midas.slicerappstore.applyFilter();");
 #endif
       d->lastSearchText = searchText;
       }
