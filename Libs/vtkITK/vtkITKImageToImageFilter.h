@@ -56,7 +56,11 @@ class VTK_ITK_EXPORT vtkITKImageToImageFilter
 public:
   static vtkITKImageToImageFilter *New()
    {
-     return new vtkITKImageToImageFilter;
+     vtkITKImageToImageFilter* result = new vtkITKImageToImageFilter;
+#ifdef VTK_HAS_INITIALIZE_OBJECT_BASE
+     result->InitializeObjectBase();
+#endif
+     return result;
    };
 
   vtkTypeMacro(vtkITKImageToImageFilter, vtkImageAlgorithm);

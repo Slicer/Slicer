@@ -84,6 +84,9 @@ vtkSegmentationConverterFactory* vtkSegmentationConverterFactory::GetInstance()
     if(!vtkSegmentationConverterFactoryInstance)
       {
       vtkSegmentationConverterFactoryInstance = new vtkSegmentationConverterFactory;
+#ifdef VTK_HAS_INITIALIZE_OBJECT_BASE
+      vtkSegmentationConverterFactoryInstance->InitializeObjectBase();
+#endif
       }
     }
   // return the instance

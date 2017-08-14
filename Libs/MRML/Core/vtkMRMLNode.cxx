@@ -1716,7 +1716,12 @@ vtkMRMLNode::vtkMRMLNodeReference* vtkMRMLNode::vtkMRMLNodeReference::New()
     {
     return static_cast<vtkMRMLNode::vtkMRMLNodeReference*>(ret);
     }
-  return new vtkMRMLNode::vtkMRMLNodeReference;
+
+  vtkMRMLNode::vtkMRMLNodeReference* result = new vtkMRMLNode::vtkMRMLNodeReference;
+#ifdef VTK_HAS_INITIALIZE_OBJECT_BASE
+  result->InitializeObjectBase();
+#endif
+  return result;
 }
 
 //----------------------------------------------------------------------------

@@ -55,6 +55,9 @@ vtkMRMLThreeDViewDisplayableManagerFactory* vtkMRMLThreeDViewDisplayableManagerF
     if(!Self::Instance)
       {
       Self::Instance = new vtkMRMLThreeDViewDisplayableManagerFactory;
+#ifdef VTK_HAS_INITIALIZE_OBJECT_BASE
+      Self::Instance->InitializeObjectBase();
+#endif
       }
     }
   // return the instance

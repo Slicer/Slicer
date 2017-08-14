@@ -82,6 +82,9 @@ vtkEventBroker* vtkEventBroker::GetInstance()
     if(!vtkEventBrokerInstance)
       {
       vtkEventBrokerInstance = new vtkEventBroker;
+#ifdef VTK_HAS_INITIALIZE_OBJECT_BASE
+      vtkEventBrokerInstance->InitializeObjectBase();
+#endif
       }
     }
   // return the instance

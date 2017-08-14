@@ -75,7 +75,13 @@ qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy::New()
     {
     return static_cast<qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy*>(ret);
     }
-  return new qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy;
+
+  qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy* result =
+    new qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy;
+#ifdef VTK_HAS_INITIALIZE_OBJECT_BASE
+  result->InitializeObjectBase();
+#endif
+  return result;
 }
 
 //---------------------------------------------------------------------------

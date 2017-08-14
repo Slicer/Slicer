@@ -844,6 +844,9 @@ void vtkPichonFastMarching::init(int _dimX, int _dimY, int _dimZ, double _depth,
       vtkErrorMacro("Error in void vtkPichonFastMarching::init(), not enough memory for allocation of 'pdfIntensityIn'");
       return;
     }
+#ifdef VTK_HAS_INITIALIZE_OBJECT_BASE
+  pdfIntensityIn->InitializeObjectBase();
+#endif
 
   pdfInhomoIn = new vtkPichonFastMarchingPDF( (int) _depth );
   if(!(pdfInhomoIn!=NULL))
@@ -851,6 +854,9 @@ void vtkPichonFastMarching::init(int _dimX, int _dimY, int _dimZ, double _depth,
       vtkErrorMacro("Error in void vtkPichonFastMarching::init(), not enough memory for allocation of 'pdfInhomoIn'");
       return;
     }
+#ifdef VTK_HAS_INITIALIZE_OBJECT_BASE
+  pdfInhomoIn->InitializeObjectBase();
+#endif
 
   initialized=false; // we will need one pass in the execute
   // function before we are properly initialized
