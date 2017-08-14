@@ -120,9 +120,7 @@ int SlicerAppMain(int argc, char* argv[])
   QCoreApplication::setApplicationVersion(Slicer_VERSION_FULL);
   //vtkObject::SetGlobalWarningDisplay(false);
   QApplication::setDesktopSettingsAware(false);
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
   QApplication::setStyle(new qSlicerStyle());
-#endif
 
   qSlicerApplication app(argc, argv);
   if (app.returnCode() != -1)

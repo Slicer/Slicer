@@ -20,11 +20,7 @@
 
 // Qt includes
 #include <QAbstractScrollArea>
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 #include <QCleanlooksStyle>
-#else
-#include <QCommonStyle>
-#endif
 #include <QDebug>
 #include <QEvent>
 #include <QGroupBox>
@@ -39,11 +35,7 @@
 
 // --------------------------------------------------------------------------
 qSlicerStyle::qSlicerStyle()
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
   : Superclass(new QCleanlooksStyle)
-#else
-  : Superclass(new QCommonStyle)
-#endif
 {
   this->baseStyle()->setParent(this);
 }
@@ -299,6 +291,10 @@ int qSlicerStyle::styleHint(StyleHint hint, const QStyleOption *opt, const QWidg
 bool qSlicerStyle::eventFilter(QObject* obj, QEvent* event)
 {
   QWidget* widget = qobject_cast<QWidget*>(obj);
+  if (!widget)
+    {
+    return this->Superclass::eventFilter(obj, event);
+    }
   switch (event->type())
     {
     case QEvent::Wheel:
