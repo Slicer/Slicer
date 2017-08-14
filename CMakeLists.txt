@@ -4,9 +4,16 @@ cmake_minimum_required(VERSION 3.5)
 #-----------------------------------------------------------------------------
 # Enable C++11
 #-----------------------------------------------------------------------------
-set(CMAKE_CXX_STANDARD 11)
+set(_msg "Setting C++ standard")
+message(STATUS "${_msg}")
+if("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "8" OR DEFINED Qt5_DIR)
+  set(CMAKE_CXX_STANDARD 11)
+else()
+  set(CMAKE_CXX_STANDARD 98)
+endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+message(STATUS "${_msg} - C++${CMAKE_CXX_STANDARD}")
 
 #-----------------------------------------------------------------------------
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake" ${CMAKE_MODULE_PATH})
@@ -160,7 +167,7 @@ mark_as_superbuild(GIT_EXECUTABLE)
 #-----------------------------------------------------------------------------
 if(NOT DEFINED Slicer_REQUIRED_QT_VERSION)
   set(_required_qt_version "4.7.4")
-  if(DEFINED Qt5_DIR)
+  if(DEFINED Qt5_DIR OR "${Slicer_VTK_VERSION_MAJOR}" STREQUAL "8")
     set(_required_qt_version "5.6.0")
   endif()
   set(Slicer_REQUIRED_QT_VERSION ${_required_qt_version} CACHE STRING "Minimum required Qt version" FORCE)
@@ -295,7 +302,11 @@ mark_as_superbuild(Slicer_INSTALL_ITKPython)
 option(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT "Build Slicer with parameter serializer support" ON)
 mark_as_superbuild(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT)
 
-set(Slicer_VTK_VERSION_MAJOR 8 CACHE STRING "The VTK major version (7 or 8).")
+set(_default_vtk "7")
+if(DEFINED Qt5_DIR)
+  set(_default_vtk "8")
+endif()
+set(Slicer_VTK_VERSION_MAJOR ${_default_vtk} CACHE STRING "The VTK major version (7 or 8).")
 set_property(CACHE Slicer_VTK_VERSION_MAJOR PROPERTY STRINGS "7" "8")
 if(NOT "${Slicer_VTK_VERSION_MAJOR}" STREQUAL "7" AND NOT "${Slicer_VTK_VERSION_MAJOR}" STREQUAL "8")
   message(FATAL_ERROR "error: Slicer_VTK_VERSION_MAJOR must be 7 or 8.")
@@ -527,10 +538,18 @@ endif()
 #-----------------------------------------------------------------------------
 # VTKv8 - Slicer_VTK_COMPONENTS
 #-----------------------------------------------------------------------------
-set(Slicer_VTK_RENDERING_BACKEND "OpenGL" CACHE STRING "Choose the rendering backend.")
-set_property(CACHE Slicer_VTK_RENDERING_BACKEND PROPERTY STRINGS "OpenGL" "OpenGL2")
+if(Slicer_VTK_VERSION_MAJOR STREQUAL "7")
+  set(_backend "OpenGL")
+else()
+  set(_backend "OpenGL2")
+endif()
+set(Slicer_VTK_RENDERING_BACKEND "${_backend}" CACHE STRING "Rendering backend." FORCE)
 mark_as_superbuild(Slicer_VTK_RENDERING_BACKEND)
 set(Slicer_VTK_RENDERING_USE_${Slicer_VTK_RENDERING_BACKEND}_BACKEND 1)
+
+message(STATUS "Configuring VTK")
+message(STATUS "  Slicer_VTK_RENDERING_BACKEND is ${Slicer_VTK_RENDERING_BACKEND}")
+message(STATUS "  Slicer_VTK_VERSION_MAJOR is ${Slicer_VTK_VERSION_MAJOR}")
 
 set(Slicer_VTK_COMPONENTS
   vtkFiltersExtraction
