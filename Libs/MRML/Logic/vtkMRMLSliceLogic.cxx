@@ -532,6 +532,19 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
       dims[0] = dims1[0];
       dims[1] = dims1[1];
       }
+
+    // Force non-zero dimension to avoid "Bad plane coordinate system"
+    // error from vtkPlaneSource when slice viewers have a height or width
+    // of zero.
+    if (dims[0] < 1)
+      {
+      dims[0] = 1;
+      }
+    if (dims[1] < 1)
+      {
+      dims[1] = 1;
+      }
+
     // set the plane corner point for use in a model
     double inPt[4]={0,0,0,1};
     double outPt[4];
