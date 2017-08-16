@@ -45,6 +45,28 @@
 #include "qSlicerWebWidget.h"
 #include "ui_qSlicerWebWidget.h"
 
+
+//-----------------------------------------------------------------------------
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
+
+class qSlicerWebEnginePage: public QWebEnginePage
+{
+public:
+  qSlicerWebEnginePage(QWebEngineProfile *profile, QObject *parent = nullptr)
+    : QWebEnginePage(profile, parent)
+  {
+  }
+protected:
+  virtual bool certificateError(const QWebEngineCertificateError &certificateError)
+  {
+    qDebug() << "[SSL] [" << qPrintable(certificateError.url().host().trimmed()) << "]"
+             << qPrintable(certificateError.errorDescription());
+    return false;
+  }
+};
+
+#endif
+
 //-----------------------------------------------------------------------------
 class qSlicerWebWidgetPrivate: public Ui_qSlicerWebWidget
 {
@@ -118,7 +140,7 @@ void qSlicerWebWidgetPrivate::init()
     profile->scripts()->insert(script);
     }
 
-  QWebEnginePage *myPage = new QWebEnginePage(profile, this->WebView);
+  qSlicerWebEnginePage *myPage = new qSlicerWebEnginePage(profile, this->WebView);
   this->WebView->setPage(myPage);
   this->WebChannel = new QWebChannel(this->WebView->page());
   this->WebView->page()->setWebChannel(this->WebChannel);
@@ -160,7 +182,7 @@ void qSlicerWebWidgetPrivate::init()
                    SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError> & )),
                    q, SLOT(handleSslErrors(QNetworkReply*, const QList<QSslError> & )));
 #else
-  qDebug() << "qSlicerWebWidget - Handling of SSL error not implemented";
+  // See qSlicerWebEnginePage::certificateError
 #endif
 #endif
 }
