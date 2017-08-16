@@ -49,7 +49,11 @@
 #include <vtkTransform.h>
 #include <vtkVersion.h>
 
+// VTKAddon includes
 #include <vtkAddonMathUtilities.h>
+
+// STD includes
+#include <algorithm>
 
 //----------------------------------------------------------------------------
 const int vtkMRMLSliceLogic::SLICE_INDEX_ROTATED=-1;
@@ -524,14 +528,8 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
     // Force non-zero dimension to avoid "Bad plane coordinate system"
     // error from vtkPlaneSource when slice viewers have a height or width
     // of zero.
-    if (dims[0] < 1)
-      {
-      dims[0] = 1;
-      }
-    if (dims[1] < 1)
-      {
-      dims[1] = 1;
-      }
+    dims[0] = std::max(1, dims[0]);
+    dims[1] = std::max(1, dims[1]);
 
     // set the plane corner point for use in a model
     double inPt[4]={0,0,0,1};
