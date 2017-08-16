@@ -163,6 +163,10 @@ public slots:
   /// \sa recentLogFiles(), setupFileLogging()
   QString currentLogFile()const;
 
+signals:
+
+  void mainWindowShown();
+
 protected:
   /// Reimplemented from qSlicerCoreApplication
   virtual void handlePreApplicationCommandLineArguments();

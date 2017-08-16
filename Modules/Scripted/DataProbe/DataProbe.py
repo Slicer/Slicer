@@ -32,7 +32,7 @@ See <a>http://www.slicer.org</a> for details.  Module implemented by Steve Piepe
 
     # Trigger the menu to be added when application has started up
     if not slicer.app.commandOptions().noMainWindow :
-      qt.QTimer.singleShot(0, self.addView);
+      slicer.app.connect("mainWindowShown()", self.addView)
 
     # Add this test to the SelfTest module's list for discovery when the module
     # is created.  Since this module may be discovered before SelfTests itself,

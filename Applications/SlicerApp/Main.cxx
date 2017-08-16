@@ -209,6 +209,8 @@ int SlicerAppMain(int argc, char* argv[])
     {
     window.reset(new qSlicerAppMainWindow);
     window->setWindowTitle(window->windowTitle()+ " " + Slicer_VERSION_FULL);
+
+    QObject::connect(window.data(), SIGNAL(windowShown()), &app, SIGNAL(mainWindowShown()));
     }
   else if (app.commandOptions()->showPythonInteractor()
     && !app.commandOptions()->runPythonAndExit())
