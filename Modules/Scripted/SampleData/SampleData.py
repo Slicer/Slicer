@@ -37,7 +37,7 @@ use it for commercial purposes.</p>
 
     # Trigger the menu to be added when application has started up
     if not slicer.app.commandOptions().noMainWindow :
-      slicer.app.connect("mainWindowShown()", self.addMenu)
+      slicer.app.connect("startupCompleted()", self.addMenu)
 
     # allow other modules to register sample data sources by appending
     # instances or subclasses SampleDataSource objects on this list

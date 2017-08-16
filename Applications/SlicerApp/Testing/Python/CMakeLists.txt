@@ -305,6 +305,39 @@ foreach(stdlib_module IN ITEMS
     )
 endforeach()
 
+# Check that application signal "startupCompleted()" is emitted
+# (1) with mainwindow
+set(_dest "${CMAKE_CURRENT_BINARY_DIR}/StartupCompletedTest")
+file(MAKE_DIRECTORY ${_dest})
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/SlicerStartupCompletedTest.py DESTINATION ${_dest})
+set(_test "py_startupcompleted_signal_emitted_with_mainwindow_test")
+add_test(
+  NAME ${_test}
+  COMMAND ${Slicer_LAUNCHER_EXECUTABLE}
+    --testing --no-splash
+    --disable-builtin-cli-modules
+    --disable-builtin-loadable-modules
+    --disable-builtin-scripted-loadable-modules
+    --additional-module-path ${_dest}
+    --exit-after-startup
+  )
+set_tests_properties(${_test} PROPERTIES PASS_REGULAR_EXPRESSION "StartupCompleted emitted")
+
+# (2) without mainwindow
+set(_test "py_startupcompleted_signal_emitted_without_mainwindow_test")
+add_test(
+  NAME ${_test}
+  COMMAND ${Slicer_LAUNCHER_EXECUTABLE}
+    --testing --no-splash
+    --disable-builtin-cli-modules
+    --disable-builtin-loadable-modules
+    --disable-builtin-scripted-loadable-modules
+    --additional-module-path ${_dest}
+    --no-main-window
+    --exit-after-startup
+  )
+set_tests_properties(${_test} PROPERTIES PASS_REGULAR_EXPRESSION "StartupCompleted emitted")
+
 #
 # SelfTests
 # see http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Developers/Tutorials/SelfTestModule

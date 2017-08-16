@@ -69,7 +69,7 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
 
     # Trigger the menu to be added when application has started up
     if not slicer.app.commandOptions().noMainWindow :
-      slicer.app.connect("mainWindowShown()", self.performPostModuleDiscoveryTasks)
+      slicer.app.connect("startupCompleted()", self.performPostModuleDiscoveryTasks)
 
   def setup(self):
     pluginHandlerSingleton = slicer.qSlicerSubjectHierarchyPluginHandler.instance()

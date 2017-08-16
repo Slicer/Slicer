@@ -165,7 +165,16 @@ public slots:
 
 signals:
 
-  void mainWindowShown();
+  /// Emitted when the startup phase has been completed.
+  ///
+  /// Startup is complete when all the modules have been
+  /// initialized and the main window is shown to the user.
+  ///
+  /// \note If the application is started without the mainwindow,
+  /// the signal is emitted after the modules are initialized.
+  ///
+  /// \sa qSlicerAppMainWindow::windowShown()
+  void startupCompleted();
 
 protected:
   /// Reimplemented from qSlicerCoreApplication
