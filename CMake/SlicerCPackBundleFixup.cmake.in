@@ -147,6 +147,7 @@ function(fixup_bundle_with_plugins app)
     "${app_dir}/Contents/@Slicer_QtPlugins_DIR@/styles/*Plugins.so"
     "${app_dir}/Contents/@Slicer_QtPlugins_DIR@/imageformats/*${suffix}"
     "${app_dir}/Contents/@Slicer_QtPlugins_DIR@/sqldrivers/*${suffix}"
+    "${app_dir}/Contents/@Slicer_QtPlugins_DIR@/platforms/*${suffix}"
     )
 
   set(Slicer_BUILD_CLI_SUPPORT "@Slicer_BUILD_CLI_SUPPORT@")
@@ -270,6 +271,7 @@ function(fixup_bundle_with_plugins app)
   _fixup_paths_append(libs_path "${Slicer_BUILD_DIR}/@Slicer_BIN_DIR@/styles")
   #_fixup_paths_append(libs_path "${Slicer_BUILD_DIR}/@Slicer_BIN_DIR@/imageformats")
   #_fixup_paths_append(libs_path "${Slicer_BUILD_DIR}/@Slicer_BIN_DIR@/sqldrivers")
+  #_fixup_paths_append(libs_path "${Slicer_BUILD_DIR}/@Slicer_BIN_DIR@/platforms")
   if (Slicer_ADDITIONAL_PROJECTS)
     foreach(additional_project ${Slicer_ADDITIONAL_PROJECTS})
       find_package(${additional_project})

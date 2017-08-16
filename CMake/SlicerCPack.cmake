@@ -29,7 +29,33 @@ if(Slicer_USE_PYTHONQT_WITH_TCL AND NOT Slicer_USE_SYSTEM_tcl)
 endif()
 
 if(NOT Slicer_USE_SYSTEM_QT)
-  set(SlicerBlockInstallQtPlugins_subdirectories imageformats sqldrivers designer:qwebview)
+  set(SlicerBlockInstallQtPlugins_subdirectories
+    imageformats
+    sqldrivers
+    )
+  if(Slicer_REQUIRED_QT_VERSION VERSION_LESS "5")
+    list(APPEND SlicerBlockInstallQtPlugins_subdirectories
+      designer:qwebview
+      )
+  else()
+    list(APPEND SlicerBlockInstallQtPlugins_subdirectories
+      designer:webengineview
+      )
+    if(APPLE)
+      list(APPEND
+        platforms:cocoa
+        )
+    elseif(UNIX)
+      list(APPEND SlicerBlockInstallQtPlugins_subdirectories
+        platforms:xcb
+        xcbglintegrations:xcb-glx-integration
+        )
+    elseif(WIN32)
+      list(APPEND SlicerBlockInstallQtPlugins_subdirectories
+        platforms:windows
+        )
+    endif()
+  endif()
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallQtPlugins.cmake)
 endif()
 
