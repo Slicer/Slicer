@@ -41,7 +41,7 @@ add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test
   --compare
     ${BASELINE}/dt-helix-ref-RotationAndAffine.nrrd
     ${TransformedImage2}
-  --compareIntensityTolerance 1
+  --compareIntensityTolerance 1e-10
   ModuleEntryPoint
     -f ${RotationAndAffineFile}
     -T FS
@@ -62,7 +62,7 @@ add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test
   --compare
     ${BASELINE}/dt-helix-ref-BS.nrrd
     ${TransformedImage3}
-  --compareIntensityTolerance 1
+  --compareIntensityTolerance 1e-10
   ModuleEntryPoint
     -f ${BSplineFile}
     --interpolation ws
@@ -81,7 +81,7 @@ add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test
   --compare
     ${BASELINE}/dt-helix-ref-BSInterpolation.nrrd
     ${TransformedImage4}
-  --compareIntensityTolerance 0
+  --compareIntensityTolerance 1e-10
   ModuleEntryPoint
     -f ${AffineFile}
     --interpolation bs
