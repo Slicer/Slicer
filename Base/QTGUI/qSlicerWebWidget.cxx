@@ -97,11 +97,10 @@ void qSlicerWebWidgetPrivate::init()
 
   if (!webChannelJsFile.open(QIODevice::ReadOnly))
     {
-    qDebug() << QString("Couldn't open qwebchannel.js file: %1").arg(webChannelJsFile.errorString());
+    qWarning() << QString("Couldn't open qwebchannel.js file: %1").arg(webChannelJsFile.errorString());
     }
   else
     {
-    qDebug() << "OK webEngineProfile";
     QByteArray webChannelJs = webChannelJsFile.readAll();
     webChannelJs.append(
         "\n"
@@ -128,12 +127,6 @@ void qSlicerWebWidgetPrivate::init()
 
   this->WebView->installEventFilter(q);
 
-#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
-  QNetworkAccessManager * networkAccessManager = this->WebView->page()->networkAccessManager();
-  Q_ASSERT(networkAccessManager);
-  networkAccessManager->setCookieJar(new qSlicerPersistentCookieJar());
-#endif
-
   QObject::connect(this->WebView, SIGNAL(loadStarted()),
                    q, SLOT(onLoadStarted()));
 
@@ -143,20 +136,20 @@ void qSlicerWebWidgetPrivate::init()
   QObject::connect(this->WebView, SIGNAL(loadProgress(int)),
                    this->ProgressBar, SLOT(setValue(int)));
 
+  this->ProgressBar->setVisible(false);
+
 #if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
+  QNetworkAccessManager * networkAccessManager = this->WebView->page()->networkAccessManager();
+  Q_ASSERT(networkAccessManager);
+  networkAccessManager->setCookieJar(new qSlicerPersistentCookieJar());
+
   QObject::connect(this->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()),
                    q, SLOT(initJavascript()));
 
   this->WebView->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
-#endif
 
-  this->ProgressBar->setVisible(false);
-
-#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
   this->mainFrame()->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAlwaysOn);
-#endif
 
-#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
   QObject::connect(this->WebView->page(), SIGNAL(linkClicked(QUrl)),
                    q, SLOT(onLinkClicked(QUrl)));
 #endif
