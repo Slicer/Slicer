@@ -51,18 +51,6 @@
 
 #include <vtkAddonMathUtilities.h>
 
-// STD includes
-
-//----------------------------------------------------------------------------
-// Convenient macros
-#ifndef max
-#define max(a,b)            (((a) > (b)) ? (a) : (b))
-#endif
-
-#ifndef min
-#define min(a,b)            (((a) < (b)) ? (a) : (b))
-#endif
-
 //----------------------------------------------------------------------------
 const int vtkMRMLSliceLogic::SLICE_INDEX_ROTATED=-1;
 const int vtkMRMLSliceLogic::SLICE_INDEX_OUT_OF_VOLUME=-2;
