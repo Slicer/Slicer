@@ -42,7 +42,7 @@ if(NOT Slicer_USE_SYSTEM_QT)
       designer:webengineview
       )
     if(APPLE)
-      list(APPEND
+      list(APPEND SlicerBlockInstallQtPlugins_subdirectories
         platforms:cocoa
         )
     elseif(UNIX)
