@@ -188,7 +188,7 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
     file(WRITE ${download_extension_wrapper_script} "
       execute_process(
         COMMAND ${command}
-        WORKING_DIR \"${EXTENSION_SUPERBUILD_BINARY_DIR}\"
+        WORKING_DIRECTORY \"${CMAKE_CURRENT_BINARY_DIR}\"
         RESULT_VARIABLE result
         )
       message(STATUS \"download_${proj}_wrapper_script: Ignoring result \${result}\")
