@@ -253,6 +253,9 @@ void qSlicerCropVolumeModuleWidget::setup()
   connect(d->BSRadioButton, SIGNAL(toggled(bool)),
           this, SLOT(onInterpolationModeChanged()));
 
+  connect(d->FillValueSpinBox, SIGNAL(valueChanged(double)),
+    this, SLOT(onFillValueChanged(double)));
+
   // Observe info section, only update content if opened
   this->connect(d->VolumeInformationCollapsibleButton,
     SIGNAL(clicked(bool)),
@@ -535,6 +538,17 @@ void qSlicerCropVolumeModuleWidget::onSpacingScalingValueChanged(double s)
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerCropVolumeModuleWidget::onFillValueChanged(double s)
+{
+  Q_D(qSlicerCropVolumeModuleWidget);
+  if (!d->ParametersNode)
+  {
+    return;
+  }
+  d->ParametersNode->SetFillValue(s);
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerCropVolumeModuleWidget::onIsotropicModeChanged(bool isotropic)
 {
   Q_D(qSlicerCropVolumeModuleWidget);
@@ -606,6 +620,7 @@ void qSlicerCropVolumeModuleWidget::updateWidgetFromMRML()
     d->IsotropicCheckbox->setChecked(false);
     d->SpacingScalingSpinBox->setValue(1.0);
     d->LinearRadioButton->setChecked(1);
+    d->FillValueSpinBox->setValue(0.0);
 
     this->updateVolumeInfo();
 
@@ -631,6 +646,8 @@ void qSlicerCropVolumeModuleWidget::updateWidgetFromMRML()
   d->VisibilityButton->setChecked(d->ParametersNode->GetROINode() && (d->ParametersNode->GetROINode()->GetDisplayVisibility() != 0));
 
   d->SpacingScalingSpinBox->setValue(d->ParametersNode->GetSpacingScalingConst());
+
+  d->FillValueSpinBox->setValue(d->ParametersNode->GetFillValue());
 
   this->updateVolumeInfo();
 }

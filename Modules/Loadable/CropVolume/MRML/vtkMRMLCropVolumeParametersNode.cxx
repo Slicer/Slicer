@@ -61,6 +61,7 @@ vtkMRMLCropVolumeParametersNode::vtkMRMLCropVolumeParametersNode()
   this->InterpolationMode = vtkMRMLCropVolumeParametersNode::InterpolationLinear;
   this->IsotropicResampling = false;
   this->SpacingScalingConst = 1.;
+  this->FillValue = 0.;
 }
 
 //----------------------------------------------------------------------------
@@ -113,6 +114,12 @@ void vtkMRMLCropVolumeParametersNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >> this->SpacingScalingConst;
       }
+    else if (!strcmp(attName, "fillValue"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->FillValue;
+      }
   }
 }
 
@@ -125,6 +132,7 @@ void vtkMRMLCropVolumeParametersNode::WriteXML(ostream& of, int nIndent)
   of << " interpolationMode=\"" << this->InterpolationMode << "\"";
   of << " isotropicResampling=\"" << (this->IsotropicResampling ? "true" : "false") << "\"";
   of << " spaceScalingConst=\"" << this->SpacingScalingConst << "\"";
+  of << " fillValue=\"" << this->FillValue << "\"";
 }
 
 //----------------------------------------------------------------------------
@@ -141,6 +149,7 @@ void vtkMRMLCropVolumeParametersNode::Copy(vtkMRMLNode *anode)
   this->SetInterpolationMode(node->GetInterpolationMode());
   this->SetIsotropicResampling(node->GetIsotropicResampling());
   this->SetSpacingScalingConst(node->GetSpacingScalingConst());
+  this->SetFillValue(node->GetFillValue());
 
   this->EndModify(disabledModify);
 }
@@ -154,6 +163,7 @@ void vtkMRMLCropVolumeParametersNode::PrintSelf(ostream& os, vtkIndent indent)
   os << "InterpolationMode: " << this->InterpolationMode << "\n";
   os << "IsotropicResampling: " << (this->IsotropicResampling ? "true" : "false") << "\n";
   os << "SpacingScalingConst: " << this->SpacingScalingConst << "\n";
+  os << "FillValue: " << this->FillValue << "\n";
 }
 
 //----------------------------------------------------------------------------

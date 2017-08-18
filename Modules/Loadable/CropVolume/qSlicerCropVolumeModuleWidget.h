@@ -54,6 +54,7 @@ protected slots:
   void onMRMLSceneEndBatchProcessEvent();
   void onInterpolationEnabled(bool interpolationEnabled);
   void onVolumeInformationSectionClicked(bool isOpen);
+  void onFillValueChanged(double);
 
   void updateVolumeInfo();
 

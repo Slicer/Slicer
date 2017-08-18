@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>297</width>
-    <height>451</height>
+    <width>583</width>
+    <height>792</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -401,6 +401,35 @@
          </widget>
         </item>
        </layout>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="FillValueLabel">
+        <property name="text">
+         <string>Fill value:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="ctkDoubleSpinBox" name="FillValueSpinBox">
+        <property name="toolTip">
+         <string>Voxel values outside the input volume will be filled with this value</string>
+        </property>
+        <property name="decimalsOption">
+         <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts|ctkDoubleSpinBox::DecimalsByValue|ctkDoubleSpinBox::InsertDecimals</set>
+        </property>
+        <property name="minimum">
+         <double>-65536.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>65535.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>10.000000000000000</double>
+        </property>
+        <property name="setMode">
+         <enum>ctkDoubleSpinBox::SetAlways</enum>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -983,6 +1012,22 @@
     <hint type="destinationlabel">
      <x>173</x>
      <y>531</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>InterpolationEnabledCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>FillValueSpinBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>405</x>
+     <y>392</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>405</x>
+     <y>577</y>
     </hint>
    </hints>
   </connection>

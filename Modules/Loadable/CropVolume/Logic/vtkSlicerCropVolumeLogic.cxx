@@ -199,14 +199,14 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
     }
 
   int errorCode = 0;
-  if(pnode->GetVoxelBased()) // voxel based cropping selected
+  if (pnode->GetVoxelBased()) // voxel based cropping selected
     {
     errorCode = this->CropVoxelBased(inputROI, inputVolume, outputVolume);
     }
   else  // interpolated cropping selected
     {
     errorCode = this->CropInterpolated(inputROI, inputVolume, outputVolume,
-      pnode->GetIsotropicResampling(), pnode->GetSpacingScalingConst(), pnode->GetInterpolationMode());
+      pnode->GetIsotropicResampling(), pnode->GetSpacingScalingConst(), pnode->GetInterpolationMode(), pnode->GetFillValue());
     }
   pnode->SetOutputVolumeNodeID(outputVolume->GetID());
   return errorCode;
@@ -413,7 +413,7 @@ bool vtkSlicerCropVolumeLogic::GetInterpolatedCropOutputGeometry(vtkMRMLAnnotati
 
 //----------------------------------------------------------------------------
 int vtkSlicerCropVolumeLogic::CropInterpolated(vtkMRMLAnnotationROINode* roi, vtkMRMLVolumeNode* inputVolume, vtkMRMLVolumeNode* outputVolume,
-  bool isotropicResampling, double spacingScale, int interpolationMode)
+  bool isotropicResampling, double spacingScale, int interpolationMode, double fillValue)
 {
   if (!roi || !inputVolume || !outputVolume)
     {
@@ -575,6 +575,9 @@ int vtkSlicerCropVolumeLogic::CropInterpolated(vtkMRMLAnnotationROINode* roi, vt
     }
 
   cmdNode->SetParameterAsString("interpolationType", interp.c_str());
+
+  cmdNode->SetParameterAsDouble("defaultPixelValue", fillValue);
+
   this->Internal->ResampleLogic->ApplyAndWait(cmdNode, false);
 
   this->GetMRMLScene()->RemoveNode(cmdNode);

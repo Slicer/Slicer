@@ -88,7 +88,7 @@ public:
 
   /// Perform interpolated cropping.
   int CropInterpolated(vtkMRMLAnnotationROINode* roi, vtkMRMLVolumeNode* inputVolume, vtkMRMLVolumeNode* outputNode,
-    bool isotropicResampling, double spacingScale, int interpolationMode);
+    bool isotropicResampling, double spacingScale, int interpolationMode, double fillValue);
 
   /// Computes output volume geometry for interpolated cropping (without actually cropping the image).
   static bool GetInterpolatedCropOutputGeometry(vtkMRMLAnnotationROINode* roi, vtkMRMLVolumeNode* inputVolume,

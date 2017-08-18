@@ -93,6 +93,9 @@ public:
   vtkSetMacro(SpacingScalingConst, double);
   vtkGetMacro(SpacingScalingConst, double);
 
+  vtkSetMacro(FillValue, double);
+  vtkGetMacro(FillValue, double);
+
 protected:
   vtkMRMLCropVolumeParametersNode();
   ~vtkMRMLCropVolumeParametersNode();
@@ -104,6 +107,7 @@ protected:
   int InterpolationMode;
   bool IsotropicResampling;
   double SpacingScalingConst;
+  double FillValue;
 };
 
 #endif
