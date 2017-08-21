@@ -190,6 +190,7 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
         COMMAND ${command}
         WORKING_DIRECTORY \"${CMAKE_CURRENT_BINARY_DIR}\"
         RESULT_VARIABLE result
+        ERROR_VARIABLE error
         )
       message(STATUS \"download_${proj}_wrapper_script: Ignoring result \${result}\")
       if(NOT result EQUAL 0)
@@ -198,7 +199,7 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
         file(WRITE \"${EXTENSION_SOURCE_DIR}/CMakeLists.txt\"
           \"cmake_minimum_required(VERSION 3.5)
           project(${proj} NONE)
-          message(FATAL_ERROR \\\"Failed to download extension using ${ext_ep_options_repository}\\\")
+          message(FATAL_ERROR \\\"Failed to download extension using ${ext_ep_options_repository}\\n\${error}\\\")
           \"
           )
       endif()
