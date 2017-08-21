@@ -320,7 +320,7 @@ class SegmentStatisticsParameterEditorDialog(qt.QDialog):
         for plugin in self.logic.plugins:
           pluginOptionsCollapsibleButton = ctk.ctkCollapsibleGroupBox(self.parametersWidget)
           pluginOptionsCollapsibleButton.setTitle( plugin.name )
-          pluginOptionsFormLayout = qt.QFormLayout(pluginrOptionsCollapsibleButton)
+          pluginOptionsFormLayout = qt.QFormLayout(pluginOptionsCollapsibleButton)
           pluginOptionsFormLayout.addRow(plugin.optionsWidget)
           self.parametersLayout.addRow(pluginOptionsCollapsibleButton)
 
