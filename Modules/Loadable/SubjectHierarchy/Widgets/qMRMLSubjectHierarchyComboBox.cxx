@@ -95,6 +95,8 @@ void qMRMLSubjectHierarchyComboBoxPrivate::init()
   QObject::connect(this->TreeView, SIGNAL(currentItemChanged(vtkIdType)),
                    q, SLOT(updateComboBoxTitleAndIcon(vtkIdType)));
   QObject::connect(this->TreeView, SIGNAL(currentItemChanged(vtkIdType)),
+                   q, SIGNAL(currentItemChanged(vtkIdType)));
+  QObject::connect(this->TreeView, SIGNAL(currentItemChanged(vtkIdType)),
                    container, SLOT(hide()));
 }
 
