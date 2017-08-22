@@ -2574,7 +2574,7 @@ void qMRMLSegmentEditorWidget::installKeyboardShortcuts(QWidget* parent /*=NULL*
     QObject::connect(s, SIGNAL(activated()), this, SLOT(onSelectEffectShortcut()));
     }
 
-  // Keys Shift + 1, 2, ..., 9, 0 => toggle activation of effect 1..10
+  // Keys Shift + 1, 2, ..., 9, 0 => toggle activation of effect 11..20
   for (int effectIndex = 1; effectIndex <= 10; effectIndex++)
     {
     QShortcut* s = new QShortcut(QKeySequence("Shift+"+QString::number(effectIndex % 10)), parent);
