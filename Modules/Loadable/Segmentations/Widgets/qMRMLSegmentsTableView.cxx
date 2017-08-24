@@ -367,7 +367,6 @@ void qMRMLSegmentsTableView::populateSegmentTable()
     QToolButton* visibilityButton = new QToolButton();
     visibilityButton->setEnabled(displayNode != NULL);
     visibilityButton->setAutoRaise(true);
-    visibilityButton->setToolTip("Set visibility for segment. Keep the button pressed for the advanced visibility options to show");
     visibilityButton->setProperty(ID_PROPERTY, segmentId);
     if (displayNode != NULL && properties.Visible && (properties.Visible3D || properties.Visible2DFill || properties.Visible2DOutline))
       {
@@ -385,6 +384,8 @@ void qMRMLSegmentsTableView::populateSegmentTable()
     // Set up actions for the visibility button if required
     if (d->AdvancedSegmentVisibility)
       {
+      visibilityButton->setToolTip("Set visibility for segment. Keep the button pressed for the advanced visibility options to show");
+
       QAction* visibility3DAction = new QAction("Show in 3D", visibilityButton);
       visibility3DAction->setCheckable(true);
       visibility3DAction->setChecked(properties.Visible3D);

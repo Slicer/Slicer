@@ -1798,6 +1798,17 @@ void qMRMLSegmentEditorWidget::onAddSegment()
     segmentIDList << QString(addedSegmentID.c_str());
     d->SegmentsTableView->setSelectedSegmentIDs(segmentIDList);
     }
+
+  // Assign the new segment the terminology of the (now second) last segment
+  if (segmentationNode->GetSegmentation()->GetNumberOfSegments() > 1)
+    {
+    vtkSegment* secondLastSegment = segmentationNode->GetSegmentation()->GetNthSegment(
+      segmentationNode->GetSegmentation()->GetNumberOfSegments() - 2 );
+    std::string repeatedTerminologyEntry("");
+    secondLastSegment->GetTag(secondLastSegment->GetTerminologyEntryTagName(), repeatedTerminologyEntry);
+    segmentationNode->GetSegmentation()->GetSegment(addedSegmentID)->SetTag(
+      secondLastSegment->GetTerminologyEntryTagName(), repeatedTerminologyEntry );
+    }
 }
 
 //-----------------------------------------------------------------------------
