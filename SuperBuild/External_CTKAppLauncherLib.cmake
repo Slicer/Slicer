@@ -59,6 +59,8 @@ if(NOT DEFINED CTKAppLauncherLib_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${
       # XXX Revisit this when visibility flags will directly be used in Slicer
       -DCTKAppLauncher_VISIBILITY_HIDDEN:BOOL=OFF
       ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
+      # macOS
+      -DCMAKE_MACOSX_RPATH:BOOL=0
     INSTALL_COMMAND ""
     DEPENDS
       ${${proj}_DEPENDENCIES}

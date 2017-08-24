@@ -99,6 +99,8 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" Packaging/s
       -DWRAP_PYTHON:BOOL=ON
       -DSimpleITK_BUILD_DISTRIBUTE:BOOL=ON # Shorten version and install path removing -g{GIT-HASH} suffix.
       -DExternalData_OBJECT_STORES:PATH=${ExternalData_OBJECT_STORES}
+      # macOS
+      -DCMAKE_MACOSX_RPATH:BOOL=0
     #
     INSTALL_COMMAND ${CMAKE_COMMAND} -P ${_install_script}
     #

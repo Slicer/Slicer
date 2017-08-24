@@ -31,6 +31,8 @@ if(APPLE)
     VARS CMAKE_OSX_ARCHITECTURES:STRING CMAKE_OSX_SYSROOT:PATH CMAKE_OSX_DEPLOYMENT_TARGET:STRING
     ALL_PROJECTS
     )
+
+  set(CMAKE_MACOSX_RPATH 0)
 endif()
 
 #-----------------------------------------------------------------------------

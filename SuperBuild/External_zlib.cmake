@@ -55,6 +55,8 @@ if(NOT DEFINED zlib_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
       -DZLIB_MANGLE_PREFIX:STRING=slicer_zlib_
       -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+      # macOS
+      -DCMAKE_MACOSX_RPATH:BOOL=0
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
