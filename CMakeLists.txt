@@ -164,6 +164,9 @@ if(NOT GIT_FOUND)
 endif()
 mark_as_superbuild(GIT_EXECUTABLE)
 
+find_package(Patch REQUIRED)
+mark_as_superbuild(PATCH_EXECUTABLE)
+
 #-----------------------------------------------------------------------------
 # Qt requirements
 #-----------------------------------------------------------------------------
