@@ -36,6 +36,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     )
 
   # ITK release v4.12.0rc1 from 2017.05.09 with
+  # * MINC patch to set MACOSX_RPATH based on CMAKE_MACOSX_RPATH
   # * KWsys patch to set MACOSX_RPATH based on CMAKE_MACOSX_RPATH
   # * Reverted "Slicer patches for CMP0042"
   # * Slicer patches for CMP0042
@@ -43,7 +44,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   # * fix DCMTK imageIO orientation bug
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    "4c38b954ccb85f6d016360dfc0000b1b01dca3e8" # slicer-v4.12.0-2017-05-09-2d63918
+    "c390a4e7d571802c6e7f554a9e928c3d2de4fd07" # slicer-v4.12.0-2017-05-09-2d63918
     QUIET
     )
 
