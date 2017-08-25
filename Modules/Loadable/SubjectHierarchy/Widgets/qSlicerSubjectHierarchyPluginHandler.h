@@ -100,18 +100,26 @@ public:
   Q_INVOKABLE void setPluginLogic(qSlicerSubjectHierarchyPluginLogic* pluginLogic);
 
   /// Set current subject hierarchy item (single selection only)
+  /// IMPORTANT NOTE: This function will not change the selection in individual widgets (tree views, comboboxes). This is
+  ///                 solely used for plugin-provided context menus.
   Q_INVOKABLE void setCurrentItem(vtkIdType itemID);
 
   /// Get current subject hierarchy item (single selection only).
   /// This function is called from the plugins when exposing and performing the supported actions. As the plugin actions are not
-  /// aggregated on multi-selection, this function is never called from plugins in that case (and thus NULL is returned).
+  /// aggregated on multi-selection, this function is never called from plugins in that case (and thus invalid ID is returned).
+  /// IMPORTANT NOTE: This function is solely used for plugin-provided context menus. This is NOT to be used for getting the
+  ///                 selected item of individual widgets (tree views, comboboxes).
   /// \return Current item if only one is selected, otherwise INVALID_ITEM_ID
   Q_INVOKABLE vtkIdType currentItem();
 
   /// Set current subject hierarchy items in case of multi-selection
+  /// IMPORTANT NOTE: This function will not change the selection in individual widgets (tree views, comboboxes). This is
+  ///                 solely used for plugin-provided context menus.
   Q_INVOKABLE void setCurrentItems(QList<vtkIdType> items);
 
   /// Get current subject hierarchy items in case of multi-selection
+  /// IMPORTANT NOTE: This function is solely used for plugin-provided context menus. This is NOT to be used for getting the
+  ///                 selected items of individual widgets (tree views, comboboxes).
   Q_INVOKABLE QList<vtkIdType> currentItems();
 
   Q_INVOKABLE bool autoDeleteSubjectHierarchyChildren()const;

@@ -37,6 +37,7 @@ class qMRMLSortFilterSubjectHierarchyProxyModel;
 class qMRMLSubjectHierarchyModel;
 class vtkMRMLSubjectHierarchyNode;
 class vtkMRMLScene;
+class vtkIdList;
 
 /// \ingroup Slicer_QtModules_SubjectHierarchy
 class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyTreeView : public QTreeView
@@ -57,6 +58,8 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyTreeV
   Q_PROPERTY(bool contextMenuEnabled READ contextMenuEnabled WRITE setContextMenuEnabled)
   /// This property controls whether the Edit properties context menu action is visible. Visible by default
   Q_PROPERTY(bool editMenuActionVisible READ editMenuActionVisible WRITE setEditMenuActionVisible)
+  /// Flag determining whether multiple items can be selected
+  Q_PROPERTY(bool multiSelection READ multiSelection WRITE setMultiSelection)
 
 public:
   typedef QTreeView Superclass;
@@ -67,20 +70,21 @@ public:
   Q_INVOKABLE vtkMRMLScene* mrmlScene()const;
   Q_INVOKABLE vtkMRMLSubjectHierarchyNode* subjectHierarchyNode()const;
 
+  /// Get current (=selected) item. If there are multiple items selected, then the first one is returned
   Q_INVOKABLE vtkIdType currentItem()const;
-  Q_INVOKABLE vtkIdType rootItem()const;
+  /// Get current (=selected) items.
+  QList<vtkIdType> currentItems();
+  /// Get current (=selected) items.
+  /// \param vtkIdList for python compatibility
+  Q_INVOKABLE void currentItems(vtkIdList* selectedItems);
 
-  void setShowRootItem(bool show);
+  /// Get root item of the tree
+  Q_INVOKABLE vtkIdType rootItem()const;
+  /// Get root item visibility
   bool showRootItem()const;
 
-  bool highlightReferencedItems()const;
-  void setHighlightReferencedItems(bool highlightOn);
-
-  bool contextMenuEnabled()const;
-  void setContextMenuEnabled(bool enabled);
-
-  bool editMenuActionVisible()const;
-  void setEditMenuActionVisible(bool visible);
+  /// Get whether multi-selection is enabled
+  bool multiSelection();
 
   /// Set attribute filter that allows showing only items that have the specified attribute and their parents.
   /// \param attributeName Name of the attribute by which the items are filtered
@@ -98,6 +102,80 @@ public:
 
   /// Determine the number of shown items
   Q_INVOKABLE int displayedItemCount()const;
+
+  bool highlightReferencedItems()const;
+  bool contextMenuEnabled()const;
+  bool editMenuActionVisible()const;
+
+public slots:
+  /// Set MRML scene
+  virtual void setMRMLScene(vtkMRMLScene* scene);
+
+  /// Set current (=selected) subject hierarchy item
+  virtual void setCurrentItem(vtkIdType itemID);
+  /// Set current (=selected) subject hierarchy items
+  virtual void setCurrentItems(QList<vtkIdType> items);
+  /// Python compatibility function to set current (=selected) subject hierarchy items
+  virtual void setCurrentItems(vtkIdList* items);
+
+  /// Set subject hierarchy item to be the root in the shown tree
+  virtual void setRootItem(vtkIdType itemID);
+  /// Set root item visibility
+  void setShowRootItem(bool show);
+
+  /// Rename currently selected one item by popping up a dialog
+  void renameCurrentItem();
+  /// Delete selected subject hierarchy items and associated data nodes
+  void deleteSelectedItems();
+  /// Edit properties of current item
+  virtual void editCurrentItem();
+
+  /// Handle expand item requests in the subject hierarchy tree. Expands branch
+  virtual void expandItem(vtkIdType itemID);
+  /// Handle collapse item requests in the subject hierarchy tree. Collapses branch
+  virtual void collapseItem(vtkIdType itemID);
+
+  /// Handle manual selection of a plugin as the new owner of a subject hierarchy node
+  virtual void selectPluginForCurrentItem();
+
+  /// Update select plugin actions. Is called when the plugin selection sub-menu is opened,
+  /// and when the user manually changes the owner plugin of a node. It sets checked state
+  /// and update confidence values in the select plugin actions in the node context menu
+  /// for the currently selected node.
+  virtual void updateSelectPluginActions();
+
+  /// Set multi-selection
+  virtual void setMultiSelection(bool multiSelectionOn);
+
+  /// Show hint to user about context menus
+  /// \param visibility True if visibility context menu hint is to be shown, false for general context menu. False by default
+  /// \return Flag indicating whether hint could be shown (i.e. there was an item in the tree is displayable)
+  bool showContextMenuHint(bool visibility=false);
+
+  void setHighlightReferencedItems(bool highlightOn);
+  void setContextMenuEnabled(bool enabled);
+  void setEditMenuActionVisible(bool visible);
+
+signals:
+  void currentItemChanged(vtkIdType);
+
+protected slots:
+  virtual void onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+
+  /// Updates subject hierarchy item expanded property when item is expanded
+  virtual void onItemExpanded(const QModelIndex &expandedItemIndex);
+  /// Updates subject hierarchy item expanded property when item is collapsed
+  virtual void onItemCollapsed(const QModelIndex &collapsedItemIndex);
+
+  /// Expand tree to depth specified by the clicked context menu action
+  virtual void expandToDepthFromContextMenu();
+
+  /// Update root item to restore view
+  /// (e.g. after tree was updated in the model from the subject hierarchy)
+  virtual void updateRootItem();
+
+  /// Called when scene end is finished. Hierarchy is cleared in that case.
+  void onSceneCloseEnded(vtkObject* sceneObject);
 
 protected:
   /// Set the subject hierarchy node found in the given scene. Called only internally.
@@ -126,69 +204,6 @@ protected:
   /// Apply highlight for subject hierarchy items referenced by argument items by DICOM
   /// \sa highlightReferencedItems
   void applyReferenceHighlightForItems(QList<vtkIdType> itemIDs);
-
-public slots:
-  /// Set MRML scene
-  virtual void setMRMLScene(vtkMRMLScene* scene);
-
-  /// Set current (=selected) subject hierarchy item
-  virtual void setCurrentItem(vtkIdType itemID);
-
-  /// Set subject hierarchy item to be the root in the shown tree
-  virtual void setRootItem(vtkIdType itemID);
-
-  /// Rename currently selected one item by popping up a dialog
-  void renameCurrentItem();
-  /// Delete selected subject hierarchy items and associated data nodes
-  void deleteSelectedItems();
-  /// Edit properties of current item
-  virtual void editCurrentItem();
-
-  /// Handle expand item requests in the subject hierarchy tree. Expands branch
-  virtual void expandItem(vtkIdType itemID);
-  /// Handle collapse item requests in the subject hierarchy tree. Collapses branch
-  virtual void collapseItem(vtkIdType itemID);
-
-  /// Select items in the subject hierarchy tree
-  virtual void selectItems(QList<vtkIdType> itemIDs);
-
-  /// Handle manual selection of a plugin as the new owner of a subject hierarchy node
-  virtual void selectPluginForCurrentItem();
-
-  /// Update select plugin actions. Is called when the plugin selection sub-menu is opened,
-  /// and when the user manually changes the owner plugin of a node. It sets checked state
-  /// and update confidence values in the select plugin actions in the node context menu
-  /// for the currently selected node.
-  virtual void updateSelectPluginActions();
-
-  /// Set multi-selection
-  virtual void setMultiSelection(bool multiSelectionOn);
-
-  /// Show hint to user about context menus
-  /// \param visibility True if visibility context menu hint is to be shown, false for general context menu. False by default
-  /// \return Flag indicating whether hint could be shown (i.e. there was an item in the tree is displayable)
-  bool showContextMenuHint(bool visibility=false);
-
-signals:
-  void currentItemChanged(vtkIdType);
-
-protected slots:
-  virtual void onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
-
-  /// Updates subject hierarchy item expanded property when item is expanded
-  virtual void onItemExpanded(const QModelIndex &expandedItemIndex);
-  /// Updates subject hierarchy item expanded property when item is collapsed
-  virtual void onItemCollapsed(const QModelIndex &collapsedItemIndex);
-
-  /// Expand tree to depth specified by the clicked context menu action
-  virtual void expandToDepthFromContextMenu();
-
-  /// Update root item to restore view
-  /// (e.g. after tree was updated in the model from the subject hierarchy)
-  virtual void updateRootItem();
-
-  /// Called when scene end is finished. Hierarchy is cleared in that case.
-  void onSceneCloseEnded(vtkObject* sceneObject);
 
 protected:
   QScopedPointer<qMRMLSubjectHierarchyTreeViewPrivate> d_ptr;
