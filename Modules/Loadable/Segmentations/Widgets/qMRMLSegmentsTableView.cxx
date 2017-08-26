@@ -643,6 +643,15 @@ void qMRMLSegmentsTableView::onSegmentTableItemChanged(QTableWidgetItem* changed
 
       // Set color to segment if it changed
       QColor color = changedItem->data(Qt::DecorationRole).value<QColor>();
+      if (color.red() == 127 && color.green() == 127 && color.blue() == 127)
+        {
+        // Use color from slicer generic anatomy color table if there was no color associated to the terminology entry
+        double generatedColor[3] = {0.5,0.5,0.5};
+        displayNode->GenerateSegmentColor(generatedColor);
+        color.setRedF(generatedColor[0]);
+        color.setGreenF(generatedColor[1]);
+        color.setBlueF(generatedColor[2]);
+        }
       double* oldColorArray = segment->GetColor();
       QColor oldColor = QColor::fromRgbF(oldColorArray[0], oldColorArray[1], oldColorArray[2]);
       if (oldColor != color)

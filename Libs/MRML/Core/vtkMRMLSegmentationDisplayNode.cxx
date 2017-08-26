@@ -1184,7 +1184,7 @@ void vtkMRMLSegmentationDisplayNode::UpdateSegmentList()
     {
     if (this->SegmentationDisplayProperties.find(*segmentIdIt) == this->SegmentationDisplayProperties.end())
       {
-      // the segment does not exist in segmentation
+      // The segment does not exist in segmentation
       missingSegmentIDs.push_back(*segmentIdIt);
       }
     }
@@ -1195,5 +1195,5 @@ void vtkMRMLSegmentationDisplayNode::UpdateSegmentList()
     this->SetSegmentDisplayPropertiesToDefault(*missingSegmentIdIt);
     }
 
-   this->SetDisableModifiedEvent(wasDisableModified);
+  this->SetDisableModifiedEvent(wasDisableModified);
 }
