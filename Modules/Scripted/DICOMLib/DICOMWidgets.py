@@ -78,15 +78,16 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
   def __init__(self, dicomBrowser=None):
     VTKObservationMixin.__init__(self)
     self.settings = qt.QSettings()
-
-    # This creates a DICOM database in the current working directory if nothing else
-    # is specified in the settings, therefore promptForDatabaseDirectory must be called before this.
-    self.dicomBrowser = dicomBrowser if dicomBrowser is not None else ctkDICOMBrowser()
+    self.dicomBrowser = None
 
     # initialize the dicomDatabase
     #   - pick a default and let the user know
     if not slicer.dicomDatabase:
       self.promptForDatabaseDirectory()
+
+    # This creates a DICOM database in the current working directory if nothing else
+    # is specified in the settings, therefore promptForDatabaseDirectory must be called before this.
+    self.dicomBrowser = dicomBrowser if dicomBrowser is not None else ctkDICOMBrowser()
 
     self.browserPersistent = settingsValue('DICOM/BrowserPersistent', False, converter=toBool)
     self.tableDensity = settingsValue('DICOM/tableDensity', 'Compact')
@@ -509,6 +510,8 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
       databaseDirectory = os.path.join(slicer.app.temporaryPath, 'tempDICOMDatabase')
     else:
       databaseDirectory = self.settings.value('DatabaseDirectory')
+      if not databaseDirectory:
+        databaseDirectory = ""
     if not os.path.exists(databaseDirectory):
       try:
         os.makedirs(databaseDirectory)
@@ -518,9 +521,12 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
         databaseDirectory = os.path.join(documents, "SlicerDICOMDatabase")
         if not os.path.exists(databaseDirectory):
           os.makedirs(databaseDirectory)
-        message = "DICOM Database will be stored in\n\n{}\n\nUse the Local Database button in " \
-                "the DICOM Browser to pick a different location.".format(databaseDirectory)
-        slicer.util.infoDisplay(message, parent=self, windowTitle='DICOM')
+        if not slicer.app.commandOptions().testingEnabled:
+          message = "DICOM Database will be stored in\n\n{}\n\nUse the Local Database button in " \
+                    "the DICOM Browser to pick a different location.".format(databaseDirectory)
+          slicer.util.infoDisplay(message, parent=self, windowTitle='DICOM')
+          self.settings.setValue('DatabaseDirectory', databaseDirectory)
+
     self.onDatabaseDirectoryChanged(databaseDirectory)
 
   def onTableDensityComboBox(self, state):
