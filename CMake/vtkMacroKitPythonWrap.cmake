@@ -80,7 +80,7 @@ macro(vtkMacroKitPythonWrap)
       # Create list of wrapping dependencies for generating the hierarchy file.
       # Also create list of include directories of dependencies for wrapping.
       set(_kit_wrap_depends)
-      set(_kit_wrap_include_dirs)
+      set(_kit_wrap_include_dirs ${VTK_INCLUDE_DIRS})
 
       # Add kit include dirs
       list(APPEND _kit_wrap_include_dirs ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})

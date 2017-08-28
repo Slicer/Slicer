@@ -93,10 +93,6 @@ set(lib_name ${PROJECT_NAME})
 set(srcs ${vtkAddon_SRCS})
 add_library(${lib_name} ${srcs})
 
-# Teem vtkNRRDReader overwrites VTK vtkNrrdReader
-set(VTK_WRAP_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${VTK_INCLUDE_DIRS}
-    CACHE INTERNAL "VTK wrap include dirs" FORCE)
-
 set(libs
   ${VTK_LIBRARIES}
   )
