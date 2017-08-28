@@ -82,7 +82,7 @@ if(NOT DEFINED CTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    "4f55362909f7fa1784903951194d051a4a4c2368"
+    "8ca4547f819f103975c895dadd9abac4ff614321"
     QUIET
     )
 
