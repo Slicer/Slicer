@@ -1344,6 +1344,8 @@ void vtkMRMLSegmentationStorageNode::SetSegmentTagsFromString(vtkSegment* segmen
     size_t colonPosition = mapPairStr.find(":");
     if (colonPosition == std::string::npos)
       {
+      tagsValue = tagsValue.substr(separatorPosition + 1);
+      separatorPosition = tagsValue.find(separatorCharacter);
       continue;
       }
     segment->SetTag(mapPairStr.substr(0, colonPosition), mapPairStr.substr(colonPosition + 1));
