@@ -33,6 +33,16 @@ class SliceAnnotations(VTKObservationMixin):
     self.dataProbeUtil = DataProbeUtil.DataProbeUtil()
 
     self.dicomVolumeNode = 0
+
+    # Cache recently used extracted DICOM values.
+    # Getting all necessary DICOM values from the database (tag cache)
+    # would slow down slice browsing significantly.
+    # We may have several different volumes shown in different slice views,
+    # so we keep in the cache a number of items, not just 2.
+    self.extractedDICOMValuesCacheSize = 12
+    import collections
+    self.extractedDICOMValuesCache = collections.OrderedDict()
+
     self.sliceViewNames = []
     self.popupGeometry = qt.QRect()
     self.cornerTexts =[]
@@ -162,6 +172,8 @@ class SliceAnnotations(VTKObservationMixin):
 
     self.restoreDefaultsButton = find(window, 'restoreDefaultsButton')[0]
 
+    self.updateEnabledButtons()
+
     # connections
     self.sliceViewAnnotationsCheckBox.connect('clicked()', self.onSliceViewAnnotationsCheckBox)
 
@@ -204,6 +216,7 @@ class SliceAnnotations(VTKObservationMixin):
     settings = qt.QSettings()
     settings.setValue('DataProbe/sliceViewAnnotations.enabled', self.sliceViewAnnotationsEnabled)
     settings.setValue('DataProbe/sliceViewAnnotations.scalarBarEnabled', self.scalarBarEnabled)
+    self.updateEnabledButtons()
     self.updateSliceViewFromGUI()
 
   def onBackgroundLayerPersistenceCheckBox(self):
@@ -315,6 +328,17 @@ class SliceAnnotations(VTKObservationMixin):
     self.sliceViewAnnotationsEnabled = int(self.parameterNode.GetParameter(self.parameter))
     self.updateSliceViewFromGUI()
 
+  def updateEnabledButtons(self):
+    enabled = self.sliceViewAnnotationsEnabled
+
+    self.cornerTextParametersCollapsibleButton.enabled = enabled
+    self.activateCornersGroupBox.enabled = enabled
+    self.fontPropertiesGroupBox.enabled = enabled
+    self.scalarBarLayerSelectionGroupBox.enabled = enabled
+    self.annotationsAmountGroupBox.enabled = enabled
+    self.scalarBarCollapsibleButton.enabled = enabled
+    self.restoreDefaultsButton.enabled = enabled
+
   def updateSliceViewFromGUI(self):
     # Create corner annotations if have not created already
     if len(self.sliceViewNames) == 0:
@@ -327,16 +351,6 @@ class SliceAnnotations(VTKObservationMixin):
       self.annotationsDisplayAmount = 1
     elif self.level3RadioButton.checked:
       self.annotationsDisplayAmount = 2
-
-    enabled = self.sliceViewAnnotationsEnabled
-
-    self.cornerTextParametersCollapsibleButton.enabled = enabled
-    self.activateCornersGroupBox.enabled = enabled
-    self.fontPropertiesGroupBox.enabled = enabled
-    self.scalarBarLayerSelectionGroupBox.enabled = enabled
-    self.annotationsAmountGroupBox.enabled = enabled
-    self.scalarBarCollapsibleButton.enabled = enabled
-    self.restoreDefaultsButton.enabled = enabled
 
     for sliceViewName in self.sliceViewNames:
       sliceWidget = self.layoutManager.sliceWidget(sliceViewName)
@@ -399,6 +413,12 @@ class SliceAnnotations(VTKObservationMixin):
     return scalarBar
 
   def updateViewAnnotations(self,caller,event):
+    if not self.sliceViewAnnotationsEnabled:
+      # when self.sliceViewAnnotationsEnabled is set to false
+      # then annotation and scalar bar gets hidden, therefore
+      # we have nothing to do here
+      return
+
     layoutManager = self.layoutManager
     if layoutManager is None:
       return
@@ -435,8 +455,10 @@ class SliceAnnotations(VTKObservationMixin):
       self.makeAnnotationText(sliceLogic)
     else:
       # Clear Annotations
-      for position in range(3):
+      for position in range(4):
         cornerAnnotation.SetText(position, "")
+
+    self.sliceViews[sliceViewName].scheduleRender()
 
   def updateScalarBar(self, sliceLogic):
     sliceCompositeNode = sliceLogic.GetSliceCompositeNode()
@@ -796,8 +818,14 @@ class SliceAnnotations(VTKObservationMixin):
       for key in cornerText.keys():
         self.cornerTexts[i][key]['text'] = ''
 
-  @staticmethod
-  def extractDICOMValues(uid):
+  def extractDICOMValues(self, uid):
+
+    # Used cached tags, if found.
+    # DICOM objects are not allowed to be changed,
+    # so if the UID matches then the content has to match as well
+    if uid in self.extractedDICOMValuesCache.keys():
+      return self.extractedDICOMValuesCache[uid]
+
     p ={}
     tags = {
     "0008,0021": "Series Date",
@@ -820,4 +848,11 @@ class SliceAnnotations(VTKObservationMixin):
     for tag in tags.keys():
       value = slicer.dicomDatabase.instanceValue(uid,tag)
       p[tags[tag]] = value
+
+    # Store DICOM tags in cache
+    self.extractedDICOMValuesCache[uid] = p
+    if len(self.extractedDICOMValuesCache[uid]) > self.extractedDICOMValuesCacheSize:
+      # cache is full, drop oldest item
+      self.extractedDICOMValuesCache.pop_item(last=False)
+
     return p
