@@ -73,46 +73,45 @@ macro(vtkMacroKitPythonWrap)
     set(TMP_WRAP_FILES ${MY_KIT_SRCS} ${MY_KIT_WRAP_HEADERS})
     set(_wrap_hierarchy_stamp_file)
 
+    # Create list of wrapping dependencies for generating the hierarchy file.
+    set(_kit_wrap_depends)
+    set(_kit_wrap_include_dirs ${VTK_INCLUDE_DIRS})
+
+    # Add kit include dirs
+    list(APPEND _kit_wrap_include_dirs ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+    list(APPEND _kit_wrap_include_dirs ${Slicer_Base_INCLUDE_DIRS})
+    set(_kit_include_dirs ${${MY_KIT_NAME}_INCLUDE_DIRS})
+    if(_kit_include_dirs)
+      list(APPEND _kit_wrap_include_dirs ${_kit_include_dirs})
+    endif()
+
+    # Add VTK dependencies
+    foreach(_dep ${VTK_LIBRARIES})
+      list(APPEND _kit_wrap_depends ${_dep})
+    endforeach()
+
+    # Recursively add dependencies and get their include directories
+    foreach(_dep ${MY_KIT_PYTHON_LIBRARIES})
+      set(_${MY_KIT_NAME}_wrap_depends)
+      set(_${MY_KIT_NAME}_wrap_include_dirs)
+      _get_dependencies_recurse("${MY_KIT_NAME}" "${_dep}")
+      list(APPEND _kit_wrap_depends ${_${MY_KIT_NAME}_wrap_depends})
+      list(APPEND _kit_wrap_include_dirs ${_${MY_KIT_NAME}_wrap_include_dirs})
+    endforeach()
+
+    if(_kit_wrap_depends)
+      list(REMOVE_DUPLICATES _kit_wrap_depends)
+    endif()
+    if(_kit_wrap_include_dirs)
+      list(REMOVE_DUPLICATES _kit_wrap_include_dirs)
+    endif()
+
+    # Update list of include directories for wrapper tool command lines
+    list(APPEND VTK_WRAP_INCLUDE_DIRS ${_kit_wrap_include_dirs})
+
     # Generate hierarchy files for VTK8 and later
     if(NOT ${Slicer_VTK_VERSION_MAJOR} VERSION_LESS 8)
       include(${VTK_CMAKE_DIR}/vtkWrapHierarchy.cmake)
-
-      # Create list of wrapping dependencies for generating the hierarchy file.
-      # Also create list of include directories of dependencies for wrapping.
-      set(_kit_wrap_depends)
-      set(_kit_wrap_include_dirs ${VTK_INCLUDE_DIRS})
-
-      # Add kit include dirs
-      list(APPEND _kit_wrap_include_dirs ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
-      list(APPEND _kit_wrap_include_dirs ${Slicer_Base_INCLUDE_DIRS})
-      set(_kit_include_dirs ${${MY_KIT_NAME}_INCLUDE_DIRS})
-      if(_kit_include_dirs)
-        list(APPEND _kit_wrap_include_dirs ${_kit_include_dirs})
-      endif()
-
-      # Add VTK dependencies
-      foreach(_dep ${VTK_LIBRARIES})
-        list(APPEND _kit_wrap_depends ${_dep})
-      endforeach()
-
-      # Recursively add dependencies and get their include directories
-      foreach(_dep ${MY_KIT_PYTHON_LIBRARIES})
-        set(_${MY_KIT_NAME}_wrap_depends)
-        set(_${MY_KIT_NAME}_wrap_include_dirs)
-        _get_dependencies_recurse("${MY_KIT_NAME}" "${_dep}")
-        list(APPEND _kit_wrap_depends ${_${MY_KIT_NAME}_wrap_depends})
-        list(APPEND _kit_wrap_include_dirs ${_${MY_KIT_NAME}_wrap_include_dirs})
-      endforeach()
-
-      if(_kit_wrap_depends)
-        list(REMOVE_DUPLICATES _kit_wrap_depends)
-      endif()
-      if(_kit_wrap_include_dirs)
-        list(REMOVE_DUPLICATES _kit_wrap_include_dirs)
-      endif()
-
-      # Update list of include directories for wrapper tool command lines
-      list(APPEND VTK_WRAP_INCLUDE_DIRS ${_kit_wrap_include_dirs})
 
       # Set variables for this and future runs of vtk_wrap_hierarchy:
       #  - <module_name>_WRAP_DEPENDS
@@ -216,4 +215,3 @@ macro(vtkMacroKitPythonWrap)
   endif()
 
 endmacro()
-
