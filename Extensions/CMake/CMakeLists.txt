@@ -66,9 +66,6 @@ include(ExternalProject)
 find_package(Slicer REQUIRED)
 find_package(Git REQUIRED)
 find_package(Subversion REQUIRED)
-# XXX Explicitly define a CACHE variable to workaround https://gitlab.kitware.com/cmake/cmake/issues/15448
-#     It fixes https://www.na-mic.org/Bug/view.php?id=4311
-set(Subversion_SVN_EXECUTABLE ${Subversion_SVN_EXECUTABLE} CACHE FILEPATH "SVN command line client")
 
 #-----------------------------------------------------------------------------
 # Options
