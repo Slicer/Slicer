@@ -27,7 +27,7 @@
 #
 # SlicerMacroExtractRepositoryInfo(VAR_PREFIX <var-prefix> [SOURCE_DIR <dir>])
 #
-# If no SOURCE_DIR is provided, it will default to CMAKE_CURRENT_SOURCE_DIR.
+# If no SOURCE_DIR is provided, it will default to CMAKE_SOURCE_DIR.
 #
 # The macro will define the following variables:
 #  <var-prefix>_WC_TYPE - Either 'git', 'svn' or 'local' - The type will also be 'svn' if 'git-svn' is used.
@@ -70,7 +70,7 @@ macro(SlicerMacroExtractRepositoryInfo)
   set(wc_info_prefix ${MY_VAR_PREFIX})
 
   if(NOT EXISTS "${MY_SOURCE_DIR}")
-    set(MY_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+    set(MY_SOURCE_DIR ${CMAKE_SOURCE_DIR})
   endif()
 
   # Clear variables
