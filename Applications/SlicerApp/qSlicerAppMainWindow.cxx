@@ -109,6 +109,7 @@ qSlicerAppMainWindowPrivate::qSlicerAppMainWindowPrivate(qSlicerAppMainWindow& o
   this->ErrorLogToolButton = 0;
   this->ModuleSelectorToolBar = 0;
   this->LayoutManager = 0;
+  this->WindowInitialShowCompleted = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -1118,13 +1119,15 @@ void qSlicerAppMainWindow::closeEvent(QCloseEvent *event)
 //-----------------------------------------------------------------------------
 void qSlicerAppMainWindow::showEvent(QShowEvent *event)
 {
+  Q_D(qSlicerAppMainWindow);
   this->Superclass::showEvent(event);
-  if (!event->spontaneous())
+  if (!d->WindowInitialShowCompleted)
     {
+    d->WindowInitialShowCompleted = true;
     this->disclaimer();
     this->pythonConsoleInitialDisplay();
+    emit initialWindowShown();
     }
-  emit windowShown();
 }
 
 //-----------------------------------------------------------------------------

@@ -120,9 +120,9 @@ public slots:
   virtual void on_ViewExtensionsManagerAction_triggered();
 
 signals:
-  /// Emitted when the window is shown to the user.
+  /// Emitted when the window is first shown to the user.
   /// \sa showEvent(QShowEvent *)
-  void windowShown();
+  void initialWindowShown();
 
 protected slots:
   virtual void onModuleLoaded(const QString& moduleName);

@@ -240,7 +240,7 @@ int SlicerAppMain(int argc, char* argv[])
 
   if (window)
     {
-    QObject::connect(window.data(), SIGNAL(windowShown()), &app, SIGNAL(startupCompleted()));
+    QObject::connect(window.data(), SIGNAL(initialWindowShown()), &app, SIGNAL(startupCompleted()));
     }
   else
     {

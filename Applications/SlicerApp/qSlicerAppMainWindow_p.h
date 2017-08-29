@@ -78,6 +78,8 @@ public:
   QQueue<qSlicerIO::IOProperties> RecentlyLoadedFileProperties;
 
   QByteArray                      StartupState;
+
+  bool                            WindowInitialShowCompleted;
 };
 
 #endif
