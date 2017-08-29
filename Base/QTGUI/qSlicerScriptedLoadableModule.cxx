@@ -192,6 +192,28 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
 void qSlicerScriptedLoadableModule::setup()
 {
   Q_D(qSlicerScriptedLoadableModule);
+
+  qSlicerCoreApplication * app = qSlicerCoreApplication::application();
+  if (app)
+    {
+    // Set to /path/to/lib/Slicer-X.Y/qt-scripted-modules
+    QString modulePath = QFileInfo(this->path()).absolutePath();
+    // Set to /path/to/lib/Slicer-X.Y
+    modulePath = QFileInfo(modulePath).absolutePath();
+    // Set to /path/to/lib/Slicer-X.Y/qt-loadable-modules
+    modulePath = modulePath + "/" Slicer_QTLOADABLEMODULES_SUBDIR;
+
+    bool isEmbedded = app->isEmbeddedModule(this->path());
+    if (!isEmbedded)
+      {
+      if (!qSlicerLoadableModule::importModulePythonExtensions(
+            app->corePythonManager(), app->intDir(), modulePath, isEmbedded))
+        {
+        qWarning() << "qSlicerLoadableModule::setup - Failed to import module" << this->name() << "python extensions";
+        }
+      }
+    }
+
   this->registerFileDialog();
   this->registerIO();
   d->PythonCppAPI.callMethod(Pimpl::SetupMethod);

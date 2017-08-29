@@ -47,7 +47,11 @@ public:
   virtual QString helpText()const;
   virtual QString acknowledgementText()const;
 
-  /// Import python extensions associated with \a modulePath.
+  /// \brief Import python extensions associated with \a modulePath.
+  ///
+  /// \a modulePath can either be the path to the module library or the
+  /// directory containing the module library.
+  ///
   /// Python extensions corresponds to files matching the following wildcard expression:
   /// <ul>
   ///   <li>vtkSlicer*ModuleLogic.py</li>
@@ -55,8 +59,10 @@ public:
   ///   <li>vtkSlicer*ModuleMRMLDisplayableManager.py</li>
   ///   <li>qSlicer*PythonQt.* python</li>
   /// </ul>
-  /// These files are searched within the \a modulePath minus the \a IntDir
+  ///
+  /// These files are searched within the \a modulePath directory minus the \a IntDir
   /// if it applies.
+  ///
   /// \sa qSlicerCoreApplication::intDir(), qSlicerCoreApplication::corePythonManager()
   static bool importModulePythonExtensions(qSlicerCorePythonManager * pythonManager,
                                            const QString& intDir,
