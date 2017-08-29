@@ -184,7 +184,7 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
     get_property(command TARGET ${proj}-download PROPERTY _EP_download_COMMAND)
     set(download_extension_wrapper_script
       ${CMAKE_CURRENT_BINARY_DIR}/download_${proj}_wrapper_script.cmake)
-    message(STATUS "Configuring extension download wrapper script: ${download_extension_wrapper_script}")
+    #message(STATUS "Configuring extension download wrapper script: ${download_extension_wrapper_script}")
     file(WRITE ${download_extension_wrapper_script} "
       execute_process(
         COMMAND ${command}
@@ -237,7 +237,7 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
   #
   set(build_extension_wrapper_script
     ${CMAKE_CURRENT_BINARY_DIR}/build_${proj}_wrapper_script.cmake)
-  message(STATUS "Configuring extension upload wrapper script: ${build_extension_wrapper_script}")
+  #message(STATUS "Configuring extension upload wrapper script: ${build_extension_wrapper_script}")
   file(WRITE ${build_extension_wrapper_script} "
     execute_process(
       COMMAND ${wrapper_command}
@@ -248,7 +248,7 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
     ")
 
   # Add extension external project
-  message("ext_ep_download_command:${ext_ep_download_command}")
+  #message("ext_ep_download_command:${ext_ep_download_command}")
   ExternalProject_Add(${proj}
     ${ext_ep_download_command}
     SOURCE_DIR ${EXTENSION_SOURCE_DIR}
