@@ -757,6 +757,25 @@ std::string vtkSegmentation::GetSegmentIdBySegment(vtkSegment* segment)
 }
 
 //---------------------------------------------------------------------------
+std::string vtkSegmentation::GetSegmentIdBySegmentName(std::string name)
+{
+  // Make given name lowercase for case-insensitive comparison
+  std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+
+  for (SegmentMap::iterator segmentIt = this->Segments.begin(); segmentIt != this->Segments.end(); ++segmentIt)
+    {
+    std::string currentSegmentName(segmentIt->second->GetName() ? segmentIt->second->GetName() : "");
+    std::transform(currentSegmentName.begin(), currentSegmentName.end(), currentSegmentName.begin(), ::tolower);
+    if (!currentSegmentName.compare(name))
+      {
+      return segmentIt->first;
+      }
+    }
+
+  return "";
+}
+
+//---------------------------------------------------------------------------
 std::vector<vtkSegment*> vtkSegmentation::GetSegmentsByTag(std::string tag, std::string value/*=""*/)
 {
   std::vector<vtkSegment*> foundSegments;

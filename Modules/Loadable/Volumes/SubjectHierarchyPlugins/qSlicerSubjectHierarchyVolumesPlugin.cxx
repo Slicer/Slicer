@@ -457,8 +457,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::collectShownVolumes( QSet<vtkIdType>&
       }
     if (layer & vtkMRMLApplicationLogic::ForegroundLayer && compositeNode->GetForegroundVolumeID())
       {
-      shownVolumeItemIDs.insert(shNode->GetItemByDataNode(
-        scene->GetNodeByID(compositeNode->GetForegroundVolumeID())) );
+      shownVolumeItemIDs.insert(shNode->GetItemByDataNode( scene->GetNodeByID(compositeNode->GetForegroundVolumeID())) );
       }
     if (layer & vtkMRMLApplicationLogic::LabelLayer && compositeNode->GetLabelVolumeID() && strcmp(compositeNode->GetLabelVolumeID(),""))
       {

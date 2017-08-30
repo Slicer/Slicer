@@ -256,6 +256,11 @@ public:
   /// Returns empty string if segment is not found.
   std::string GetSegmentIdBySegment(vtkSegment* segment);
 
+  /// Find segment ID by segment name. Search is case-insensitive.
+  /// If multiple segments have the same name, the first match is returned.
+  /// Returns empty string if segment is not found.
+  std::string GetSegmentIdBySegmentName(std::string name);
+
   /// Get segments that contain a certain tag
   /// \param tag Tag name to look for in segments
   /// \param value Tag value to look for in segments. If omitted or empty then any value is accepted

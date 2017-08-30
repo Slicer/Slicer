@@ -305,7 +305,7 @@ qSlicerAbstractModuleWidget* qSlicerSubjectHierarchyAbstractPlugin::switchToModu
   moduleWithAction->widgetRepresentation(); // Make sure it's created before showing
   moduleWithAction->action()->trigger();
 
-  // Get node selector combobox
+  // Get module widget
   return dynamic_cast<qSlicerAbstractModuleWidget*>(moduleWithAction->widgetRepresentation());
 }
 
