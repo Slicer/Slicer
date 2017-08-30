@@ -30,27 +30,36 @@ class DICOMLoadable(object):
   instead.
   """
 
-  def __init__(self):
-    # the file list of the data to be loaded
-    self.files = []
-    # name exposed to the user for the node
-    self.name = "Unknown"
-    # extra information the user sees on mouse over of the thing
-    self.tooltip = "No further information available"
-    # things the user should know before loading this data
-    self.warning = ""
-    # is the object checked for loading by default
-    self.selected = False
-    # confidence - from 0 to 1 where 0 means low chance
-    # that the user actually wants to load their data this
-    # way up to 1, which means that the plugin is very confident
-    # that this is the best way to load the data.
-    # When more than one plugin marks the same series as
-    # selected, the one with the highest confidence is
-    # actually selected by default.  In the case of a tie,
-    # both series are selected for loading.
-    self.confidence = 0.5
-
+  def __init__(self, qLoadable=None):
+    if qLoadable is None:
+      # the file list of the data to be loaded
+      self.files = []
+      # name exposed to the user for the node
+      self.name = "Unknown"
+      # extra information the user sees on mouse over of the thing
+      self.tooltip = "No further information available"
+      # things the user should know before loading this data
+      self.warning = ""
+      # is the object checked for loading by default
+      self.selected = False
+      # confidence - from 0 to 1 where 0 means low chance
+      # that the user actually wants to load their data this
+      # way up to 1, which means that the plugin is very confident
+      # that this is the best way to load the data.
+      # When more than one plugin marks the same series as
+      # selected, the one with the highest confidence is
+      # actually selected by default.  In the case of a tie,
+      # both series are selected for loading.
+      self.confidence = 0.5
+    else:
+      self.name = qLoadable.name
+      self.tooltip = qLoadable.tooltip
+      self.warning = qLoadable.warning
+      self.files = []
+      for file in qLoadable.files:
+        self.files.append(file)
+      self.selected = qLoadable.selected
+      self.confidence = qLoadable.confidence
 
 #
 # DICOMPlugin

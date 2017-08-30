@@ -61,7 +61,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
     readersComboBox.toolTip = "Preferred back end.  Archetype was used by default in Slicer before June of 2017.  Change this setting if data that previously loaded stops working (and report an issue)."
 
-    formLayout.addRow("DICOM reader approach", readersComboBox)
+    formLayout.addRow("DICOM reader approach:", readersComboBox)
 
     panel.registerProperty(
       "DICOM/ScalarVolume/ReaderApproach", readersComboBox,

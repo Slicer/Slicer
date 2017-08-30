@@ -778,8 +778,11 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
     if len(referencedFileLists):
       (self.referencedLoadables, loadEnabled) = self.getLoadablesFromFileLists(referencedFileLists)
 
-    if loadEnabled:
+    automaticallyLoadReferences = int(slicer.util.settingsValue('DICOM/automaticallyLoadReferences', qt.QMessageBox.InvalidRole))
+    if loadEnabled and automaticallyLoadReferences == qt.QMessageBox.InvalidRole:
       self.showReferenceDialogAndProceed()
+    elif loadEnabled and automaticallyLoadReferences == qt.QMessageBox.Yes:
+      self.addReferencesAndProceed()
     else:
       self.proceedWithReferencedLoadablesSelection()
 
@@ -787,7 +790,13 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
 
   def showReferenceDialogAndProceed(self):
     referencesDialog = DICOMReferencesDialog(self, loadables=self.referencedLoadables)
-    if referencesDialog.exec_() == qt.QMessageBox.Ok:
+    answer = referencesDialog.exec_()
+    if referencesDialog.rememberChoiceAndStopAskingCheckbox.checked == True:
+      if answer == qt.QMessageBox.Yes:
+        qt.QSettings().setValue('DICOM/automaticallyLoadReferences', qt.QMessageBox.Yes)
+      if answer == qt.QMessageBox.No:
+        qt.QSettings().setValue('DICOM/automaticallyLoadReferences', qt.QMessageBox.No)
+    if answer == qt.QMessageBox.Yes:
       # each check box corresponds to a referenced loadable that was selected by examine;
       # if the user confirmed that reference should be loaded, add it to the self.loadablesByPlugin dictionary
       for plugin in self.referencedLoadables:
@@ -796,6 +805,15 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
             self.loadablesByPlugin[plugin].append(loadable)
         self.loadablesByPlugin[plugin] = list(set(self.loadablesByPlugin[plugin]))
       self.proceedWithReferencedLoadablesSelection()
+    elif answer == qt.QMessageBox.No:
+      self.proceedWithReferencedLoadablesSelection()
+
+  def addReferencesAndProceed(self):
+    for plugin in self.referencedLoadables:
+      for loadable in [l for l in self.referencedLoadables[plugin] if l.selected]:
+        self.loadablesByPlugin[plugin].append(loadable)
+      self.loadablesByPlugin[plugin] = list(set(self.loadablesByPlugin[plugin]))
+    self.proceedWithReferencedLoadablesSelection()
 
   def proceedWithReferencedLoadablesSelection(self):
     if not self.warnUserIfLoadableWarningsAndProceed():
@@ -888,7 +906,8 @@ class DICOMReferencesDialog(qt.QMessageBox):
 
   WINDOW_TITLE = "Referenced datasets found"
   WINDOW_TEXT = "The loaded DICOM objects contain references to other datasets you did not select for loading. Please " \
-                "confirm if you would like to load the following referenced datasets."
+                "select Yes if you would like to load the following referenced datasets, No if you only want to load the " \
+                "originally selected series, or Cancel to abort loading."
 
   def __init__(self, parent, loadables):
     super(DICOMReferencesDialog, self).__init__(parent)
@@ -900,32 +919,42 @@ class DICOMReferencesDialog(qt.QMessageBox):
     self._setBasicProperties()
     self._addTextLabel()
     self._addLoadableCheckboxes()
-    self.okButton = self.addButton(self.Ok)
+    self.rememberChoiceAndStopAskingCheckbox = qt.QCheckBox('Remember choice and stop asking')
+    self.rememberChoiceAndStopAskingCheckbox.toolTip = 'Can be changed later in Application Settings / DICOM'
+    self.yesButton = self.addButton(self.Yes)
+    self.yesButton.setSizePolicy(qt.QSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Preferred))
+    self.noButton = self.addButton(self.No)
+    self.noButton.setSizePolicy(qt.QSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Preferred))
     self.cancelButton = self.addButton(self.Cancel)
-    self.layout().addWidget(self.okButton, 2, 0, 1, 1)
-    self.layout().addWidget(self.cancelButton, 2, 1, 1, 1)
+    self.cancelButton.setSizePolicy(qt.QSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Preferred))
+    self.layout().addWidget(self.yesButton, 3, 0, 1, 1)
+    self.layout().addWidget(self.noButton, 3, 1, 1, 1)
+    self.layout().addWidget(self.cancelButton, 3, 2, 1, 1)
+    self.layout().addWidget(self.rememberChoiceAndStopAskingCheckbox, 2, 0, 1, 3)
 
   def _setBasicProperties(self):
     self.layout().setSpacing(9)
     self.setWindowTitle(self.WINDOW_TITLE)
-    fm = qt.QFontMetrics(qt.QApplication.font(self))
-    self.setStyleSheet("QWidget{min-width: " + str(fm.width(self.WINDOW_TITLE)) + "px;}")
+    self.fontMetrics = qt.QFontMetrics(qt.QApplication.font(self))
+    self.setMinimumWidth(self.fontMetrics.width(self.WINDOW_TITLE))
 
   def _addTextLabel(self):
     label = qt.QLabel(self.WINDOW_TEXT)
     label.wordWrap = True
-    self.layout().addWidget(label, 0, 0, 1, 2)
+    self.layout().addWidget(label, 0, 0, 1, 3)
 
   def _addLoadableCheckboxes(self):
     self.checkBoxGroupBox = qt.QGroupBox("References")
     self.checkBoxGroupBox.setLayout(qt.QFormLayout())
     for plugin in self.loadables:
       for loadable in [l for l in self.loadables[plugin] if l.selected]:
-        cb = qt.QCheckBox(loadable.name, self)
+        checkBoxText = loadable.name + ' (' + plugin.loadType + ') '
+        cb = qt.QCheckBox(checkBoxText, self)
         cb.checked = True
+        cb.setSizePolicy(qt.QSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Preferred))
         self.checkboxes[loadable] = cb
         self.checkBoxGroupBox.layout().addWidget(cb)
-    self.layout().addWidget(self.checkBoxGroupBox, 1, 0, 1, 2)
+    self.layout().addWidget(self.checkBoxGroupBox, 1, 0, 1, 3)
 
 
 class DICOMDetailsDialog(DICOMDetailsBase, qt.QDialog):

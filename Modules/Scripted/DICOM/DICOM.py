@@ -111,6 +111,24 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
 class _ui_DICOMSettingsPanel(object):
   def __init__(self, parent):
     vBoxLayout = qt.QVBoxLayout(parent)
+    # Add generic settings
+    genericGroupBox = ctk.ctkCollapsibleGroupBox()
+    genericGroupBox.title = "Generic DICOM settings"
+    genericGroupBoxFormLayout = qt.QFormLayout(genericGroupBox)
+    loadReferencesComboBox = ctk.ctkComboBox()
+    loadReferencesComboBox.toolTip = "Determines whether referenced DICOM series are " \
+      "offered when loading DICOM, or the automatic behavior if interaction is disabled. " \
+      "Interactive selection of referenced series is the default selection"
+    loadReferencesComboBox.addItem("Ask user", qt.QMessageBox.InvalidRole)
+    loadReferencesComboBox.addItem("Always", qt.QMessageBox.Yes)
+    loadReferencesComboBox.addItem("Never", qt.QMessageBox.No)
+    loadReferencesComboBox.currentIndex = 0
+    genericGroupBoxFormLayout.addRow("Load referenced series:", loadReferencesComboBox)
+    parent.registerProperty(
+      "DICOM/automaticallyLoadReferences", loadReferencesComboBox, "currentUserDataAsString", qt.SIGNAL("currentIndexChanged (int)"))
+    vBoxLayout.addWidget(genericGroupBox)
+
+    # Add settings panel for the plugins
     plugins = slicer.modules.dicomPlugins
     for pluginName in plugins.keys():
       if hasattr(plugins[pluginName], 'settingsPanelEntry'):
