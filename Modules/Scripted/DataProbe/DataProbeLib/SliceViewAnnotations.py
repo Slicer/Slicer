@@ -851,8 +851,8 @@ class SliceAnnotations(VTKObservationMixin):
 
     # Store DICOM tags in cache
     self.extractedDICOMValuesCache[uid] = p
-    if len(self.extractedDICOMValuesCache[uid]) > self.extractedDICOMValuesCacheSize:
+    if len(self.extractedDICOMValuesCache) > self.extractedDICOMValuesCacheSize:
       # cache is full, drop oldest item
-      self.extractedDICOMValuesCache.pop_item(last=False)
+      self.extractedDICOMValuesCache.popitem(last=False)
 
     return p
