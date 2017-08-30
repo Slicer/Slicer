@@ -135,6 +135,12 @@ vtkMRMLScene* qMRMLSubjectHierarchyComboBox::mrmlScene()const
 void qMRMLSubjectHierarchyComboBox::setMRMLScene(vtkMRMLScene* scene)
 {
   Q_D(const qMRMLSubjectHierarchyComboBox);
+
+  if (this->mrmlScene() == scene)
+    {
+    return;
+    }
+
   d->TreeView->setMRMLScene(scene);
 
   vtkMRMLSubjectHierarchyNode* shNode = d->TreeView->subjectHierarchyNode();

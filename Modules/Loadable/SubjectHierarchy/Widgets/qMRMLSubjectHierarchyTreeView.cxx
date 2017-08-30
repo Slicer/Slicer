@@ -144,7 +144,7 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init()
   this->Model = new qMRMLSubjectHierarchyModel(q);
   QObject::connect( this->Model, SIGNAL(requestExpandItem(vtkIdType)), q, SLOT(expandItem(vtkIdType)) );
   QObject::connect( this->Model, SIGNAL(requestCollapseItem(vtkIdType)), q, SLOT(collapseItem(vtkIdType)) );
-  QObject::connect( this->Model, SIGNAL(requestSelectItems(QList<vtkIdType>)), q, SLOT(selectItems(QList<vtkIdType>)) );
+  QObject::connect( this->Model, SIGNAL(requestSelectItems(QList<vtkIdType>)), q, SLOT(setCurrentItems(QList<vtkIdType>)) );
   QObject::connect( this->Model, SIGNAL(subjectHierarchyUpdated()), q, SLOT(updateRootItem()) );
 
   this->SortFilterModel = new qMRMLSortFilterSubjectHierarchyProxyModel(q);
@@ -343,6 +343,11 @@ vtkMRMLScene* qMRMLSubjectHierarchyTreeView::mrmlScene()const
 //------------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeView::setMRMLScene(vtkMRMLScene* scene)
 {
+  if (this->mrmlScene() == scene)
+    {
+    return;
+    }
+
   this->setSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(scene));
 
   // Connect scene close ended event so that subject hierarchy can be cleared

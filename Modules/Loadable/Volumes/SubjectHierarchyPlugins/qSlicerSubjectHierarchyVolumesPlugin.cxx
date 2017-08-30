@@ -439,6 +439,10 @@ void qSlicerSubjectHierarchyVolumesPlugin::collectShownVolumes( QSet<vtkIdType>&
     qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
     return;
     }
+  if (scene->IsBatchProcessing())
+    {
+    return;
+    }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
     {
