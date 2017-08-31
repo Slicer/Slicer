@@ -178,10 +178,14 @@ endif()
 # Check if scripted module import works as expected
 #
 
+set(testname ScriptedModuleDiscoveryTest)
 slicer_add_python_test(
-  SCRIPT ScriptedModuleDiscoveryTest.py
+  SCRIPT ${testname}.py
   SLICER_ARGS --no-main-window --disable-builtin-modules --additional-module-path ${CMAKE_CURRENT_SOURCE_DIR}/ScriptedModuleDiscoveryTest
   TESTNAME_PREFIX nomainwindow_
+  )
+set_tests_properties(py_nomainwindow_${testname} PROPERTIES
+  PASS_REGULAR_EXPRESSION "ModuleAWidget finalized"
   )
 
 #

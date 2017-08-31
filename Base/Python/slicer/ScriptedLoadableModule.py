@@ -81,6 +81,26 @@ class ScriptedLoadableModuleWidget:
     if not parent:
       self.setup()
       self.parent.show()
+    slicer.app.moduleManager().connect(
+      'moduleAboutToBeUnloaded(QString)', self._onModuleAboutToBeUnloaded)
+
+  def cleanup(self):
+    """Override this function to implement module widget specific cleanup.
+
+    It is invoked when the signal `qSlicerModuleManager::moduleAboutToBeUnloaded(QString)`
+    corresponding to the current module is emitted and just before a module is
+    effectively unloaded.
+    """
+    pass
+
+  def _onModuleAboutToBeUnloaded(self, moduleName):
+    """This slot calls `cleanup()` if the module about to be unloaded is the
+    current one.
+    """
+    if moduleName == self.moduleName:
+      self.cleanup()
+      slicer.app.moduleManager().disconnect(
+        'moduleAboutToBeUnloaded(QString)', self._onModuleAboutToBeUnloaded)
 
   def setupDeveloperSection(self):
     if not self.developerMode:
@@ -133,9 +153,6 @@ class ScriptedLoadableModuleWidget:
   def setup(self):
     # Instantiate and connect default widgets ...
     self.setupDeveloperSection()
-
-  def cleanup(self):
-    pass
 
   def onReload(self):
     """

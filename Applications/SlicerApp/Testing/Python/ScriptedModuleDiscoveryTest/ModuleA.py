@@ -20,5 +20,9 @@ class ModuleA(ScriptedLoadableModule):
     return SOMEVAR
 
 class ModuleAWidget(ScriptedLoadableModuleWidget):
+  def __init__(self, parent=None):
+    ScriptedLoadableModuleWidget.__init__(self, parent)
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
+  def cleanup(self):
+    print("ModuleAWidget finalized")
