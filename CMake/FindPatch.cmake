@@ -7,10 +7,15 @@
 #
 # The module defines the following variables:
 #
-# ``PATCH_EXECUTABLE``
+# ``Patch_EXECUTABLE``, ``PATCH_EXECUTABLE``
 #   Path to patch command-line executable.
-# ````Patch_FOUND``, ``PATCH_FOUND``
+# ``Patch_FOUND``, ``PATCH_FOUND``
 #   True if the patch command-line executable was found.
+#
+# The following :prop_tgt:`IMPORTED` targets are also defined:
+#
+# ``Patch::patch``
+#   The command-line executable.
 #
 # Example usage:
 #
@@ -21,22 +26,52 @@
 #      message("Patch found: ${Patch_EXECUTABLE}")
 #    endif()
 
-set(_x86 "(x86)")  # Indirection required to avoid error related to CMP0053
-find_program(PATCH_EXECUTABLE
+set(_doc "Patch command line executable")
+set(_patch_path )
+
+if(DEFINED PATCH_EXECUTABLE)
+  set(Patch_EXECUTABLE ${PATCH_EXECUTABLE})
+endif()
+
+if(CMAKE_HOST_WIN32)
+  set(_patch_path
+    "$ENV{LOCALAPPDATA}/Programs/Git/bin"
+    "$ENV{LOCALAPPDATA}/Programs/Git/usr/bin"
+    "$ENV{APPDATA}/Programs/Git/bin"
+    "$ENV{APPDATA}/Programs/Git/usr/bin"
+    )
+endif()
+
+# First search the PATH
+find_program(Patch_EXECUTABLE
   NAME patch
-  PATHS "$ENV{ProgramFiles}/Git/usr/bin"
-        "$ENV{ProgramFiles${_x86}}/Git/usr/bin"
-        "$ENV{ProgramFiles}/GnuWin32/bin"
-        "$ENV{ProgramFiles${_x86}}/GnuWin32/bin"
-        "$ENV{ProgramFiles}/Git/bin"
-        "$ENV{ProgramFiles${_x86}}/Git/bin"
-        "$ENV{LOCALAPPDATA}/Programs/Git/bin"
-        "$ENV{LOCALAPPDATA}/Programs/Git/usr/bin"
-        "$ENV{APPDATA}/Programs/Git/bin"
-        "$ENV{APPDATA}/Programs/Git/usr/bin"
-  DOC "Patch command line executable"
+  PATHS ${_patch_path}
+  DOC ${_doc}
   )
+
+if(CMAKE_HOST_WIN32)
+  # Now look for installations in Git/ directories under typical installation
+  # prefixes on Windows.
+  find_program(Patch_EXECUTABLE
+    NAMES patch
+    PATH_SUFFIXES Git/usr/bin Git/bin GnuWin32/bin
+    DOC ${_doc}
+    )
+endif()
+
+if(Patch_EXECUTABLE AND NOT TARGET Patch::patch)
+  add_executable(Patch::patch IMPORTED)
+  set_property(TARGET Patch::patch PROPERTY IMPORTED_LOCATION ${Patch_EXECUTABLE})
+endif()
+
+if(NOT DEFINED PATCH_EXECUTABLE)
+  set(PATCH_EXECUTABLE ${Patch_EXECUTABLE})
+endif()
+
+unset(_patch_path)
+unset(_doc)
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Patch
-                                  REQUIRED_VARS PATCH_EXECUTABLE)
+                                  REQUIRED_VARS Patch_EXECUTABLE)
+
