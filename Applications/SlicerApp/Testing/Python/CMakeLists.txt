@@ -184,9 +184,11 @@ slicer_add_python_test(
   SLICER_ARGS --no-main-window --disable-builtin-modules --additional-module-path ${CMAKE_CURRENT_SOURCE_DIR}/ScriptedModuleDiscoveryTest
   TESTNAME_PREFIX nomainwindow_
   )
+if(UNIX)
 set_tests_properties(py_nomainwindow_${testname} PROPERTIES
   PASS_REGULAR_EXPRESSION "ModuleAWidget finalized"
   )
+endif()
 
 #
 # Application tests
