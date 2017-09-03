@@ -114,7 +114,7 @@ set(vtkITK_INCLUDE_DIRS_CONFIG ${vtkITK_INCLUDE_DIRS})
 
 # Slicer external projects variables
 set(Slicer_SUPERBUILD_EP_VARS_CONFIG)
-foreach(varname ${Slicer_EP_LABEL_FIND_PACKAGE} QtTesting_DIR)
+foreach(varname ${Slicer_EP_LABEL_FIND_PACKAGE} QtTesting_DIR BRAINSCommonLib_DIR)
   set(Slicer_SUPERBUILD_EP_VARS_CONFIG
    "${Slicer_SUPERBUILD_EP_VARS_CONFIG}
 slicer_config_set_ep(
