@@ -278,6 +278,11 @@ Slicer_Remote_Add(BRAINSTools
   VARS ${BRAINSTools_options}
   )
 list_conditional_append(Slicer_BUILD_BRAINSTOOLS Slicer_REMOTE_DEPENDENCIES BRAINSTools)
+if(Slicer_BUILD_BRAINSTOOLS)
+  # This is added to SlicerConfig and is useful for extension depending on BRAINSTools
+  set(BRAINSCommonLib_DIR "${CMAKE_BINARY_DIR}/${Slicer_BINARY_INNER_SUBDIR}/Modules/Remote/BRAINSTools/BRAINSCommonLib")
+  mark_as_superbuild(BRAINSCommonLib_DIR:PATH)
+endif()
 
 Slicer_Remote_Add(EMSegment
   SVN_REPOSITORY "http://svn.slicer.org/Slicer3/branches/Slicer4-EMSegment"
