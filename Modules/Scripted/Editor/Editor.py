@@ -4,14 +4,16 @@ import qt, ctk, vtk
 import EditorLib
 from EditorLib.EditUtil import EditUtil
 import slicer
+from slicer.ScriptedLoadableModule import *
 from slicer.util import VTKObservationMixin
 
 #
 # Editor
 #
 
-class Editor:
+class Editor(ScriptedLoadableModule):
   def __init__(self, parent):
+    ScriptedLoadableModule.__init__(self, parent)
     import string
     parent.title = "Editor"
     parent.categories = ["", "Segmentation"]
@@ -41,7 +43,7 @@ This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colon
 # qSlicerPythonModuleExampleWidget
 #
 
-class EditorWidget(VTKObservationMixin):
+class EditorWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
   # Lower priorities:
   #->> additional option for list of allowed labels - texts
@@ -61,11 +63,11 @@ class EditorWidget(VTKObservationMixin):
       self.parent.setLayout(qt.QVBoxLayout())
       self.parent.setMRMLScene(slicer.mrmlScene)
       self.layout = self.parent.layout()
-      self.setup()
-      self.parent.show()
     else:
       self.parent = parent
       self.layout = parent.layout()
+
+    ScriptedLoadableModuleWidget.__init__(self, parent)
 
   def turnOffLightboxes(self):
     """Since the editor effects can't be used in lightbox mode,
@@ -259,6 +261,10 @@ class EditorWidget(VTKObservationMixin):
 
     # Add spacer to layout
     self.layout.addStretch(1)
+
+  def cleanup(self):
+    if type(self.parent) is slicer.qMRMLWidget:
+      self.parent.setMRMLScene(None)
 
   # creates the frame for the effect options
   # assumes self.effectsToolsFrame and its layout has already been created
