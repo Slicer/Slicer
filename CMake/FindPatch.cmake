@@ -7,9 +7,9 @@
 #
 # The module defines the following variables:
 #
-# ``Patch_EXECUTABLE``, ``PATCH_EXECUTABLE``
+# ``Patch_EXECUTABLE``
 #   Path to patch command-line executable.
-# ``Patch_FOUND``, ``PATCH_FOUND``
+# ``Patch_FOUND``
 #   True if the patch command-line executable was found.
 #
 # The following :prop_tgt:`IMPORTED` targets are also defined:
@@ -28,10 +28,6 @@
 
 set(_doc "Patch command line executable")
 set(_patch_path )
-
-if(DEFINED PATCH_EXECUTABLE)
-  set(Patch_EXECUTABLE ${PATCH_EXECUTABLE})
-endif()
 
 if(CMAKE_HOST_WIN32)
   set(_patch_path
@@ -62,10 +58,6 @@ endif()
 if(Patch_EXECUTABLE AND NOT TARGET Patch::patch)
   add_executable(Patch::patch IMPORTED)
   set_property(TARGET Patch::patch PROPERTY IMPORTED_LOCATION ${Patch_EXECUTABLE})
-endif()
-
-if(NOT DEFINED PATCH_EXECUTABLE)
-  set(PATCH_EXECUTABLE ${Patch_EXECUTABLE})
 endif()
 
 unset(_patch_path)
