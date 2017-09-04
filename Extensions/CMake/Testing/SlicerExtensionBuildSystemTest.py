@@ -342,6 +342,7 @@ class SlicerExtensionBuildSystemTest(unittest.TestCase):
         scm git
         scmurl git://github.com/Slicer/ExtensionThatDoNotExists
         scmrevision abcdefg
+        depends TestExtA TestExtB TestExtC
         """))
 
 
@@ -634,7 +635,7 @@ include({slicer_source_dir}/Extensions/CMake/SlicerExtensionsDashboardDriverScri
       # Upload top-level configure results to CDash
       check_cdash_request(parse_request(requests.next()), 'PUT', r'.+Configure\.xml')
 
-    for extensionName in ['TestExtInvalidSCM', 'TestExtA', 'TestExtB', 'TestExtC']:
+    for extensionName in ['TestExtA', 'TestExtB', 'TestExtC', 'TestExtInvalidSCM']:
 
       # Upload configure/build/test results to CDash
       check_cdash_request(parse_request(requests.next()), 'PUT', r'.+' + extensionName + r'.+Configure\.xml')
