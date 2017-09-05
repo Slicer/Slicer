@@ -391,7 +391,6 @@ mark_as_advanced(ADDITIONAL_CXX_FLAGS)
 # CMake Function(s) and Macro(s)
 #-----------------------------------------------------------------------------
 include(CMakeParseArguments)
-include(Slicer3PluginsMacros)
 include(SlicerMacroGetOperatingSystemArchitectureBitness)
 if(Slicer_BUILD_I18N_SUPPORT)
   include(SlicerMacroTranslation)
