@@ -220,6 +220,9 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
 
   # Git
   "HEAD is now"
+
+  # SimpleITK: Warning from SWIG with self member type
+  "sitkCommand.* [wW]arning 314.*self.*is a python keyword"
   )
 
 set(CTEST_CUSTOM_ERROR_EXCEPTION
