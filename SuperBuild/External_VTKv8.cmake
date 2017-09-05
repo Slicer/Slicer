@@ -120,9 +120,9 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
 
 set(_git_tag)
 if("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "7")
-  set(_git_tag "a024cefc2acf25350734e6f04d2562f9a6a3b124")
+  set(_git_tag "021f76a8fb27ef3e15a791193502fee91566ad7b")
 elseif("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "8")
-  set(_git_tag "ed6b44ecf6cef84fa934425e803343e68b0215ad")
+  set(_git_tag "5c81aa99311b177984f9a65f500ccfaf06735fcf")
 else()
   message(FATAL_ERROR "error: Unsupported Slicer_VTK_VERSION_MAJOR: ${Slicer_VTK_VERSION_MAJOR}")
 endif()
