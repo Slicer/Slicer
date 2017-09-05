@@ -8,6 +8,11 @@ set(_msg "Setting C++ standard")
 message(STATUS "${_msg}")
 if("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "8" OR DEFINED Qt5_DIR)
   set(CMAKE_CXX_STANDARD 11)
+  # Since SimpleITK requires CMP0067 to properly support C++11, requires
+  # the corresponding CMake version.
+  if(CMAKE_VERSION VERSION_LESS "3.8.2")
+    message(FATAL_ERROR "CMake >= 3.8.2 is required to enable C++11 support")
+  endif()
 else()
   set(CMAKE_CXX_STANDARD 98)
 endif()
