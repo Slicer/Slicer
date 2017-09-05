@@ -103,6 +103,7 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
 
   # Make
   "warning: jobserver unavailable"
+  "warning: -jN forced in submake: disabling jobserver mode."
 
   # Suppressing warnings about duplicate libraries in Darwin
   # At some point this may be addressed by CMake feature request:
@@ -179,6 +180,10 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   # About redefinition of symbols
   "pyconfig.h.*warning:.*redefined"
   "features.h.*"
+  # python-packaging, python-pip, python-GitPython
+  "no previously-included files found matching"
+  # python-chardet, python-GitPython
+  "warning: no files found matching"
 
   # curl suppressions
   "cmcurl.*warning.*conditional expression is constant"
