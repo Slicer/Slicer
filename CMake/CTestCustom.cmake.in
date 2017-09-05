@@ -138,6 +138,12 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "VTK.Rendering.vtkCarbonRenderWindow.*warning.*(NewRgn|DiffRgn|EqualRgn|DisposeRgn).*is deprecated"
   # exception specific to Mac/X11
   "VTK.Rendering.vtkOpenGL.*warning: this is the location of the previous definition"
+  # Windows: warning C4910: 'vtkImageIterator' : '__declspec(dllexport)' and 'extern' are incompatible on an explicit instantiation
+  "Common.DataModel.vtkImageIterator.h.*warning C4910"
+
+  # GDCM
+  # gdcmXXXXX.obj : warning LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
+  "gdcm.*obj.*warning LNK4221"
 
   # CTK - dcmtk
   "dcmdata/dcovlay.h:93: warning: use of old-style cast"
@@ -152,15 +158,13 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "tclap.include.tclap.*Arg.h.*warning C4512"
 
   # Teem
+  # Windows - warning C4244: 'function' : conversion from 'size_t' to 'double'
+  "teem.src.*C4244"
   # Mac - teem/src/nrrd/superset.c:433: warning: format '%d' expects type 'int', but argument 6 has type 'ptrdiff_t'
   "teem.src.nrrd.superset.c.*warning"
 
   # Python - Windows
-  "Modules.zlib.gzio"
-  "Modules._ctypes.libffi_msvc.ffi.*warning C4018"
-  "Modules.audioop.c.*warning C4018"
-  "Modules._multiprocessing.*warning"
-  "(Python|Objects|Modules|modules|PC).*conversion from '(Py_uintptr_t|Py_ssize_t|INT_PTR|size_t|__int64)' to '.*', possible loss of data"
+  "Python-2.7.13.Modules"
   # Python - Linux
   "dist.py.*UserWarning.*licence.*distribution option is deprecated"
   "Objects.unicodeobject.c.*warning:.*differ in signedness"
