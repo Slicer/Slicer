@@ -72,10 +72,9 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py in
   set(_version "1.13.1")
 
   set(_common_patch_args
-    ${CMAKE_COMMAND}
-      -DPatch_EXECUTABLE:PATH=${Patch_EXECUTABLE}
-      -DSOURCE_DIR:PATH=<SOURCE_DIR>
-      -DBINARY_DIR:PATH=${CMAKE_BINARY_DIR}
+    -DPatch_EXECUTABLE:PATH=${Patch_EXECUTABLE}
+    -DSOURCE_DIR:PATH=<SOURCE_DIR>
+    -DBINARY_DIR:PATH=${CMAKE_BINARY_DIR}
     )
 
   #------------------------------------------------------------------------------
@@ -95,13 +94,13 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py in
       #
       # To allow building without a Fortran compiler, effectively back out this change:
       # https://github.com/numpy/numpy/commit/4a3fd1f40ef59b872341088a2e97712c671ea4ca
-      ${CMAKE_COMMAND} ${_common_patch_args}
+      COMMAND ${CMAKE_COMMAND} ${_common_patch_args}
         -DPATCH:FILEPATH=${CMAKE_CURRENT_LIST_DIR}/numpy-02-fcompiler-optional-revert-4a3fd1f.patch
         -P ${CMAKE_SOURCE_DIR}/CMake/SlicerPatch.cmake
       #
       # Ignore "RuntimeWarning: invalid value encountered in power"
       # See https://discourse.slicer.org/t/runtime-warning-on-startup-in-numpy/757/10
-      ${CMAKE_COMMAND} ${_common_patch_args}
+      COMMAND ${CMAKE_COMMAND} ${_common_patch_args}
          -DPATCH:FILEPATH=${CMAKE_CURRENT_LIST_DIR}/numpy-03-core-getlimits-ignore-warnings.patch
         -P ${CMAKE_SOURCE_DIR}/CMake/SlicerPatch.cmake
     CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${_configure_script}
