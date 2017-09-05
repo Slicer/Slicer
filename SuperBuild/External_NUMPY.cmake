@@ -71,6 +71,13 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py in
 
   set(_version "1.13.1")
 
+  set(_common_patch_args
+    ${CMAKE_COMMAND}
+      -DPatch_EXECUTABLE:PATH=${Patch_EXECUTABLE}
+      -DSOURCE_DIR:PATH=<SOURCE_DIR>
+      -DBINARY_DIR:PATH=${CMAKE_BINARY_DIR}
+    )
+
   #------------------------------------------------------------------------------
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
@@ -82,11 +89,15 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py in
       #
       # Fix NUMPY config so it works with clang (originally added in r21445
       # Problem is bogus inclusion of '-faltivec' on OS X Intel problem was bad platform test.
-      ${Patch_COMMAND} -p1 ${CMAKE_CURRENT_LIST_DIR}/numpy-01-system_info-fix-clang.patch
+      ${CMAKE_COMMAND} ${_common_patch_args}
+        -DPATCH:FILEPATH=${CMAKE_CURRENT_LIST_DIR}/numpy-01-system_info-fix-clang.patch
+        -P ${CMAKE_SOURCE_DIR}/CMake/SlicerPatch.cmake
       #
       # To allow building without a Fortran compiler, effectively back out this change:
       # https://github.com/numpy/numpy/commit/4a3fd1f40ef59b872341088a2e97712c671ea4ca
-      COMMAND ${Patch_COMMAND} -p1 ${CMAKE_CURRENT_LIST_DIR}/numpy-02-fcompiler-optional-revert-4a3fd1f.patch
+      ${CMAKE_COMMAND} ${_common_patch_args}
+        -DPATCH:FILEPATH=${CMAKE_CURRENT_LIST_DIR}/numpy-02-fcompiler-optional-revert-4a3fd1f.patch
+        -P ${CMAKE_SOURCE_DIR}/CMake/SlicerPatch.cmake
     CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${_configure_script}
     BUILD_COMMAND ${CMAKE_COMMAND} -P ${_build_script}
     INSTALL_COMMAND ${CMAKE_COMMAND} -P ${_install_script}
