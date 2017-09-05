@@ -74,7 +74,7 @@ vtkMRMLTableNode* vtkSlicerTablesLogic
     }
 
   // Storable node
-  vtkMRMLTableNode *tableNode;
+  vtkMRMLTableNode *tableNode = 0;
 
   // Check if the file is sqlite
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileName);
