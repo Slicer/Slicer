@@ -300,10 +300,11 @@ void qMRMLSliceWidget::setSliceLogics(vtkCollection* logics)
 // --------------------------------------------------------------------------
 void qMRMLSliceWidget::showEvent(QShowEvent* event)
 {
-  Q_D(qMRMLSliceWidget);
   Superclass::showEvent(event);
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+  Q_D(qMRMLSliceWidget);
+
   // Reset slice view size when screen changes to account for a possible change
   // in the device pixel ratio.
   QWindow* window = NULL;

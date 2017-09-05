@@ -77,8 +77,6 @@ qSlicerSubjectHierarchyPluginLogic::qSlicerSubjectHierarchyPluginLogic(QObject* 
   : Superclass( _parent )
   , d_ptr( new qSlicerSubjectHierarchyPluginLogicPrivate(*this) )
 {
-  Q_D(qSlicerSubjectHierarchyPluginLogic);
-
   // Register Subject Hierarchy core plugins
   this->registerCorePlugins();
 }

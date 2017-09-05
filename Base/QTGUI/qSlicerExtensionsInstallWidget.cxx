@@ -313,7 +313,6 @@ void qSlicerExtensionsInstallWidget::onMessageLogged(const QString& text, ctkErr
 // --------------------------------------------------------------------------
 void qSlicerExtensionsInstallWidget::onLoadStarted()
 {
-  Q_D(qSlicerExtensionsInstallWidget);
   this->Superclass::onLoadStarted();
   this->initJavascript();
 }

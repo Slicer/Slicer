@@ -2851,7 +2851,6 @@ void qMRMLSegmentEditorWidget::masterVolumeNodeSelectorRemoveAttribute(const QSt
 //-----------------------------------------------------------------------------
 void qMRMLSegmentEditorWidget::anchorClicked(const QUrl &url)
 {
-  Q_D(qMRMLSegmentEditorWidget);
   if (url.path().isEmpty())
     {
     this->updateEffectLayouts();

@@ -133,8 +133,6 @@ void qSlicerSubjectHierarchyVolumeRenderingPlugin::showVisibilityContextMenuActi
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyVolumeRenderingPlugin::showVolumeRenderingForCurrentItem()
 {
-  Q_D(qSlicerSubjectHierarchyVolumeRenderingPlugin);
-
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
     {

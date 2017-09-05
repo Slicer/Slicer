@@ -1198,7 +1198,6 @@ void qSlicerSegmentEditorScissorsEffect::setSliceCutMode(int sliceCutModeIndex)
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorScissorsEffect::onSliceCutDepthChanged(double value)
 {
-  Q_D(qSlicerSegmentEditorScissorsEffect);
   this->setParameter("SliceCutDepthMm", value);
 }
 

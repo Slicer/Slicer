@@ -633,7 +633,6 @@ QMimeData* qMRMLSubjectHierarchyModel::mimeData(const QModelIndexList& indexes)c
 bool qMRMLSubjectHierarchyModel::dropMimeData( const QMimeData *data, Qt::DropAction action,
                                             int row, int column, const QModelIndex &parent )
 {
-  Q_D(qMRMLSubjectHierarchyModel);
   Q_UNUSED(column);
   // We want to do drag&drop only into the first item of a line (and not on a
   // random column.
