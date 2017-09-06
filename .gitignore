@@ -1,5 +1,6 @@
 # Ignore all dotfiles...
 .*
+!.gitattributes
 
 # Ignore all back-up files...
 *~
