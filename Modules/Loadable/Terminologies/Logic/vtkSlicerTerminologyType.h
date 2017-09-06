@@ -40,6 +40,9 @@
 class VTK_SLICER_TERMINOLOGIES_LOGIC_EXPORT vtkSlicerTerminologyType : public vtkCodedEntry
 {
 public:
+  static int INVALID_COLOR[3];
+
+public:
   static vtkSlicerTerminologyType *New();
   vtkTypeMacro(vtkSlicerTerminologyType, vtkCodedEntry);
   void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;

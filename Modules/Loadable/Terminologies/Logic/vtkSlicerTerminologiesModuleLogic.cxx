@@ -440,7 +440,9 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::PopulateTerminologyTypeFrom
     }
   else
     {
-    type->SetRecommendedDisplayRGBValue(127,127,127); // 'Invalid' gray
+    type->SetRecommendedDisplayRGBValue( vtkSlicerTerminologyType::INVALID_COLOR[0],
+                                         vtkSlicerTerminologyType::INVALID_COLOR[1],
+                                         vtkSlicerTerminologyType::INVALID_COLOR[2] ); // 'Invalid' gray
     }
 
   type->SetHasModifiers((modifier->value).IsArray());

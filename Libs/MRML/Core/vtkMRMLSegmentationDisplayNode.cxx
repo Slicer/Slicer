@@ -780,7 +780,7 @@ void vtkMRMLSegmentationDisplayNode::SetSegmentDisplayPropertiesToDefault(const 
                          && color[2] == vtkSegment::SEGMENT_COLOR_INVALID[2] );
   if (generateNewColor)
     {
-    this->GenerateSegmentColor(color);
+    this->GenerateSegmentColor(color, ++this->NumberOfGeneratedColors);
 
     // Set color to segment (no override is specified by default, so segment color is used)
     segment->SetColor(color);
@@ -912,7 +912,7 @@ bool vtkMRMLSegmentationDisplayNode::CalculateAutoOpacitiesForSegments()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationDisplayNode::GenerateSegmentColor(double color[3])
+void vtkMRMLSegmentationDisplayNode::GenerateSegmentColor(double color[3], int colorNumber/*=0*/)
 {
   if (!this->Scene)
     {
@@ -923,7 +923,7 @@ void vtkMRMLSegmentationDisplayNode::GenerateSegmentColor(double color[3])
   // Get default generic anatomy color table
   vtkMRMLColorTableNode* genericAnatomyColorNode = vtkMRMLColorTableNode::SafeDownCast(
     this->Scene->GetNodeByID("vtkMRMLColorTableNodeFileGenericAnatomyColors.txt") );
-  if (!genericAnatomyColorNode)
+  if (!genericAnatomyColorNode || colorNumber == -1)
     {
     // Generate random color if default color table is not available (such as in logic tests)
     color[0] = rand() * 1.0 / RAND_MAX;
@@ -932,11 +932,17 @@ void vtkMRMLSegmentationDisplayNode::GenerateSegmentColor(double color[3])
     return;
     }
 
+  // Default is to use NumberOfGeneratedColors
+  if (colorNumber == 0)
+    {
+    colorNumber == this->NumberOfGeneratedColors;
+    }
+
   // Get color corresponding to the number of added segments (which is incremented in
   // vtkMRMLSegmentationNode::AddSegmentDisplayProperties every time a new segment display
   // properties entry is added
   double currentColor[4] = {0.0, 0.0, 0.0, 0.0};
-  genericAnatomyColorNode->GetColor(++this->NumberOfGeneratedColors, currentColor);
+  genericAnatomyColorNode->GetColor(colorNumber, currentColor);
   color[0] = currentColor[0];
   color[1] = currentColor[1];
   color[2] = currentColor[2];

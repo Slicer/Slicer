@@ -27,12 +27,17 @@
 #include <vtkObjectFactory.h>
 
 //------------------------------------------------------------------------------
+int vtkSlicerTerminologyType::INVALID_COLOR[3] = {127, 127, 127};
+
+//------------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerTerminologyType);
 
 //----------------------------------------------------------------------------
 vtkSlicerTerminologyType::vtkSlicerTerminologyType()
 {
-  this->RecommendedDisplayRGBValue[0] = this->RecommendedDisplayRGBValue[1] = this->RecommendedDisplayRGBValue[2] = 127;
+  this->RecommendedDisplayRGBValue[0] = INVALID_COLOR[0];
+  this->RecommendedDisplayRGBValue[1] = INVALID_COLOR[1];
+  this->RecommendedDisplayRGBValue[2] = INVALID_COLOR[2];
   this->SlicerLabel = NULL;
   this->SNOMEDCTConceptID = NULL;
   this->UMLSConceptUID = NULL;
@@ -57,7 +62,9 @@ void vtkSlicerTerminologyType::Initialize()
   this->SetUMLSConceptUID(NULL);
   this->SetCid(NULL);
   this->SetContextGroupName(NULL);
-  this->RecommendedDisplayRGBValue[0] = this->RecommendedDisplayRGBValue[1] = this->RecommendedDisplayRGBValue[2] = 127;
+  this->RecommendedDisplayRGBValue[0] = INVALID_COLOR[0];
+  this->RecommendedDisplayRGBValue[1] = INVALID_COLOR[1];
+  this->RecommendedDisplayRGBValue[2] = INVALID_COLOR[2];
   this->HasModifiers = false;
 }
 

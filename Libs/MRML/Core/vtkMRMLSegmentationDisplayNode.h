@@ -160,10 +160,14 @@ public:
 
   /// Generate new color for an added segment. Uses \sa NumberOfGeneratedColors to get the color
   /// for the new segment from default label color table
-  void GenerateSegmentColor(double color[3]);
-  /// Python compatibility function for \sa GenerateSegmentColor
+  /// \param color Output argument for the generated color
+  /// \param colorNumber Index of the color in generic anatomy color table that is returned.
+  ///                    Default value is 0, meaning that \sa NumberOfGeneratedColors is used.
+  ///                    A value of -1 means that a random color is generated.
+  void GenerateSegmentColor(double color[3], int colorNumber=0);
+  /// Python compatibility function for \sa GenerateSegmentColor.
+  /// The color with index \sa NumberOfGeneratedColors from generic anatomy color table is returned.
   void GenerateSegmentColor(double &r, double &g, double &b);
-
 
   /// Collect representation names that are stored as poly data
   void GetPolyDataRepresentationNames(std::set<std::string> &representationNames);
