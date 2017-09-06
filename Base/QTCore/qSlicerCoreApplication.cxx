@@ -663,6 +663,50 @@ bool qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::ApplicationAt
 }
 
 //-----------------------------------------------------------------------------
+QProcessEnvironment qSlicerCoreApplication::startupEnvironment() const
+{
+  Q_D(const qSlicerCoreApplication);
+
+  ctkAppLauncherSettings appLauncherSettings;
+  appLauncherSettings.setLauncherName(this->applicationName().replace("-tmp", ""));
+  appLauncherSettings.setLauncherDir(d->SlicerHome);
+  if (!appLauncherSettings.readSettings(this->launcherSettingsFilePath()))
+    {
+    qCritical() << "Failed to read launcher settings" << this->launcherSettingsFilePath();
+    }
+
+  QProcessEnvironment startupEnv(d->Environment);
+
+  // Update regular environment variables
+  QHash<QString, QString> envVars = appLauncherSettings.envVars();
+  foreach(const QString& key, envVars.keys())
+    {
+    startupEnv.remove(key);
+    }
+
+  // Update path environment variables (includes PATH and/or (DY)LD_LIBRARY_PATH)
+  QHash<QString, QStringList> pathsEnvVars = appLauncherSettings.pathsEnvVars();
+  foreach(const QString& key, pathsEnvVars.keys())
+    {
+    QStringList slicerPaths = pathsEnvVars.value(key);
+    QStringList currentPaths = startupEnv.value(key).split(appLauncherSettings.pathSep());
+    foreach(const QString& slicerPath, slicerPaths)
+      {
+      currentPaths.removeAll(slicerPath);
+      }
+    startupEnv.insert(key, currentPaths.join(appLauncherSettings.pathSep()));
+    }
+  return startupEnv;
+}
+
+//-----------------------------------------------------------------------------
+QProcessEnvironment qSlicerCoreApplication::environment() const
+{
+  Q_D(const qSlicerCoreApplication);
+  return d->Environment;
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerCoreApplication::setEnvironmentVariable(const QString& key, const QString& value)
 {
   Q_D(qSlicerCoreApplication);
@@ -1103,13 +1147,14 @@ QString qSlicerCoreApplication::launcherExecutableFilePath()const
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::launcherSettingsFilePath()const
 {
+  QString appName = this->applicationName().replace("-tmp", "");
   if (this->isInstalled())
     {
-    return this->slicerHome() + "/" Slicer_BIN_DIR "/" + this->applicationName() + "LauncherSettings.ini";
+    return this->slicerHome() + "/" Slicer_BIN_DIR "/" + appName + "LauncherSettings.ini";
     }
   else
     {
-    return this->slicerHome() + "/" + this->applicationName() + "LauncherSettings.ini";
+    return this->slicerHome() + "/" + appName + "LauncherSettings.ini";
     }
 }
 

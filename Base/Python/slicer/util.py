@@ -49,6 +49,24 @@ def sourceDir():
   """
   return _readCMakeCache('Slicer_SOURCE_DIR')
 
+def startupEnvironment():
+  """Returns the environment without the Slicer specific values.
+
+  Path environment variables like `PATH`, `LD_LIBRARY_PATH` or `PYTHONPATH`
+  will not contain values found in the launcher settings.
+
+  Similarly `key=value` environment variables also found in the launcher
+  settings are excluded. Note that if a value was associated with a key prior
+  starting Slicer, it will not be set in the environment returned by this
+  function.
+
+  The function excludes both the Slicer launcher settings and the revision
+  specific launcher settings.
+  """
+  import slicer
+  startupEnv = slicer.app.startupEnvironment()
+  return {varname: startupEnv.value(varname) for varname in startupEnv.keys()}
+
 #
 # Custom Import
 #

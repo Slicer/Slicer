@@ -274,6 +274,12 @@ slicer_add_python_unittest(
   TESTNAME_PREFIX nomainwindow_
   )
 
+slicer_add_python_unittest(
+  SCRIPT ${Slicer_SOURCE_DIR}/Base/Python/slicer/tests/test_slicer_environment.py
+  SLICER_ARGS --no-main-window --disable-modules
+  TESTNAME_PREFIX nomainwindow_
+  )
+
 # DCMTKPrivateDictionary test
 slicer_add_python_test(
   SCRIPT DCMTKPrivateDictTest.py
