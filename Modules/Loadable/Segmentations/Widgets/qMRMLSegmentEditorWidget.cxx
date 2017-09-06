@@ -2539,6 +2539,19 @@ void qMRMLSegmentEditorWidget::setReadOnly(bool aReadOnly)
   this->updateWidgetFromMRML();
 }
 
+//------------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::toggleMasterVolumeIntensityMaskEnabled()
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  if (!d->ParameterSetNode)
+  {
+    qCritical() << Q_FUNC_INFO << ": Invalid segment editor parameter set node";
+    return;
+  }
+  d->ParameterSetNode->SetMasterVolumeIntensityMask(
+    !d->ParameterSetNode->GetMasterVolumeIntensityMask());
+}
+
 //-----------------------------------------------------------------------------
 void qMRMLSegmentEditorWidget::undo()
 {
@@ -2642,6 +2655,10 @@ void qMRMLSegmentEditorWidget::installKeyboardShortcuts(QWidget* parent /*=NULL*
     nextShortcut->setProperty("segmentIndexOffset", +1);
     QObject::connect(nextShortcut, SIGNAL(activated()), this, SLOT(onSelectSegmentShortcut()));
     }
+
+  QShortcut* toggleMasterVolumeIntensityMaskShortcut = new QShortcut(QKeySequence(Qt::Key_I), parent);
+  d->KeyboardShortcuts.push_back(toggleMasterVolumeIntensityMaskShortcut);
+  QObject::connect(toggleMasterVolumeIntensityMaskShortcut, SIGNAL(activated()), this, SLOT(toggleMasterVolumeIntensityMaskEnabled()));
 }
 
 //-----------------------------------------------------------------------------

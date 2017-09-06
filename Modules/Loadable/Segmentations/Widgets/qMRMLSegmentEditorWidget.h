@@ -222,6 +222,8 @@ public slots:
   void setMaximumNumberOfUndoStates(int);
   /// Set whether the widget is read-only
   void setReadOnly(bool aReadOnly);
+  /// Enable/disable masking using master volume intensity
+  void toggleMasterVolumeIntensityMaskEnabled();
 
   /// Restores previous saved state of the segmentation
   void undo();
