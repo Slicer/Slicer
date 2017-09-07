@@ -44,6 +44,7 @@
 #include <vtkMRMLLabelMapVolumeNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLModelHierarchyNode.h>
+#include <vtkMRMLModelDisplayNode.h>
 
 // VTK includes
 #include <vtkCollection.h>
@@ -851,6 +852,11 @@ void qSlicerSubjectHierarchySegmentationsPlugin::exportToClosedSurface()
   std::string exportedNodeName = std::string(segmentationNode->GetName()) + "-models";
   exportedNodeName = segmentationNode->GetScene()->GetUniqueNameByString(exportedNodeName.c_str());
   newParentModelHierarchyNode->SetName(exportedNodeName.c_str());
+  vtkSmartPointer<vtkMRMLNode> newDisplayNode = vtkSmartPointer<vtkMRMLNode>::Take(
+    segmentationNode->GetScene()->CreateNodeByClass("vtkMRMLModelDisplayNode"));
+  vtkMRMLModelDisplayNode* newParentModelHierarchyDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(
+    segmentationNode->GetScene()->AddNode(newDisplayNode));
+  newParentModelHierarchyNode->SetAndObserveDisplayNodeID(newParentModelHierarchyDisplayNode->GetID());
 
   // Export visible segments into a model hierarchy
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
