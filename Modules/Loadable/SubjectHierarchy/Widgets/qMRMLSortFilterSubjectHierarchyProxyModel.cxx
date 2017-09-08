@@ -274,6 +274,11 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType item
     {
     return true;
     }
+  if (itemID == shNode->GetSceneItemID())
+    {
+    // Always accept scene
+    return true;
+    }
   qMRMLSubjectHierarchyModel* model = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
 
   // Declare condition flag that is set to true if an item check fails.
