@@ -416,7 +416,10 @@ void qMRMLSegmentsTableView::populateSegmentTable()
     // Get generated color from slicer generic anatomy color table that is used if there is no recommended color
     // in the selected terminology entry. This color is the same as the one generated for the empty segment
     double generatedColorArray[3] = {0.5,0.5,0.5};
-    displayNode->GenerateSegmentColor(generatedColorArray, segmentation->GetSegmentIndex(segmentId.toLatin1().constData()) + 1);
+    if (displayNode)
+    {
+      displayNode->GenerateSegmentColor(generatedColorArray, segmentation->GetSegmentIndex(segmentId.toLatin1().constData()) + 1);
+    }
     QColor generatedColor = QColor::fromRgbF(generatedColorArray[0], generatedColorArray[1], generatedColorArray[2]);
     // Set item data
     colorItem->setData(Qt::DecorationRole, color);
