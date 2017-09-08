@@ -26,10 +26,10 @@ public:
   static vtkMRMLCustomNode *New();
   vtkTypeMacro(vtkMRMLCustomNode, vtkMRMLNode);
 
-  virtual vtkMRMLNode* CreateNodeInstance();
-  virtual const char* GetNodeTagName() { return "Custom"; }
+  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
+  virtual const char* GetNodeTagName() VTK_OVERRIDE { return "Custom"; }
 
-  virtual void Reset(vtkMRMLNode* defaultNode)
+  virtual void Reset(vtkMRMLNode* defaultNode) VTK_OVERRIDE
     {
     ++this->ResetCount;
     this->vtkMRMLNode::Reset(defaultNode);
@@ -55,8 +55,8 @@ public:
   static vtkMRMLAnotherCustomNode *New();
   vtkTypeMacro(vtkMRMLAnotherCustomNode, vtkMRMLNode);
 
-  virtual vtkMRMLNode* CreateNodeInstance();
-  virtual const char* GetNodeTagName() { return "AnotherCustom"; }
+  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
+  virtual const char* GetNodeTagName() VTK_OVERRIDE { return "AnotherCustom"; }
 
 protected:
   vtkMRMLAnotherCustomNode(){}

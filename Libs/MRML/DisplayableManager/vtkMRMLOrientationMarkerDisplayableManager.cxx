@@ -69,7 +69,7 @@ public:
   // Get the actual bounds for this Actor.
   // vtkAxesActor's implementation keeps the origin in the middle of the bounds
   // which wastes a lot of space.
-  double* GetBounds()
+  double* GetBounds() VTK_OVERRIDE
     {
     vtkBoundingBox totalBoundingBox(this->XAxisShaft->GetBounds());
     totalBoundingBox.AddBounds(this->YAxisShaft->GetBounds());

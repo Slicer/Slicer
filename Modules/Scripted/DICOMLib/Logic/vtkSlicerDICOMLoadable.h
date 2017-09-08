@@ -35,7 +35,7 @@ class VTK_SLICER_DICOMLIB_MODULE_LOGIC_EXPORT vtkSlicerDICOMLoadable : public vt
 public:
   static vtkSlicerDICOMLoadable *New();
   vtkTypeMacro(vtkSlicerDICOMLoadable, vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
 public:
   vtkGetStringMacro(Name);

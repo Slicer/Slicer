@@ -58,7 +58,7 @@ class vtkSubjectHierarchyItem : public vtkObject
 public:
   static vtkSubjectHierarchyItem *New();
   vtkTypeMacro(vtkSubjectHierarchyItem, vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
   void ReadXMLAttributes(const char** atts);
   void WriteXML(ostream& of, int indent);
   void DeepCopy(vtkSubjectHierarchyItem* item, bool copyChildren=true);
@@ -696,7 +696,7 @@ vtkSubjectHierarchyItem* vtkSubjectHierarchyItem::FindChildByID(vtkIdType itemID
     // No need to look up item ID if it is the invalid ID
     return NULL;
     }
-  
+
   // Try to find item in cache
   std::map<vtkIdType, vtkSubjectHierarchyItem*>::iterator itemIt = vtkSubjectHierarchyItem::ItemCache.find(itemID);
   if (itemIt != vtkSubjectHierarchyItem::ItemCache.end())
@@ -1388,7 +1388,7 @@ vtkSubjectHierarchyItem* vtkSubjectHierarchyItem::GetAncestorAtLevel(std::string
   while (currentItem && currentItem->Parent)
     {
     currentItem = currentItem->Parent;
-    if ( currentItem 
+    if ( currentItem
       && !currentItem->GetAttribute(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelAttributeName()).compare(level))
       {
       // Level found
@@ -3131,7 +3131,7 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNod
   bool wasResolving = firstShNode->Internal->IsResolving;
   firstShNode->Internal->IsResolving = true;
   // Invoke event marking the end of the resolving operation
-  firstShNode->InvokeCustomModifiedEvent(SubjectHierarchyStartResolveEvent);  
+  firstShNode->InvokeCustomModifiedEvent(SubjectHierarchyStartResolveEvent);
 
   // Merge subject hierarchy nodes into the first one found
   std::vector<vtkMRMLSubjectHierarchyNode*> mergedShNodes;
@@ -3179,7 +3179,7 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNod
   // Indicate that resolving unresolved items is underway
   firstShNode->Internal->IsResolving = wasResolving;
   // Invoke event marking the end of the resolving operation
-  firstShNode->InvokeCustomModifiedEvent(SubjectHierarchyEndResolveEvent);  
+  firstShNode->InvokeCustomModifiedEvent(SubjectHierarchyEndResolveEvent);
 
   // Return the first (and now only) subject hierarchy node into which the others were merged
   return firstShNode;

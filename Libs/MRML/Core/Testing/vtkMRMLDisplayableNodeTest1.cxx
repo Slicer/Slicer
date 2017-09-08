@@ -44,16 +44,16 @@ public:
       }
     return InternalDisplayNodes;
     }
-  virtual vtkMRMLNode* CreateNodeInstance()
+  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE
     {
     return vtkMRMLDisplayableNodeTestHelper1::New();
     }
-  virtual const char* GetNodeTagName()
+  virtual const char* GetNodeTagName() VTK_OVERRIDE
     {
     return "vtkMRMLDisplayableNodeTestHelper1";
     }
 
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() VTK_OVERRIDE
     {
     // just some random storage node to pass the storage node test of basic MRML node tests
     return vtkMRMLStorageNode::SafeDownCast(vtkMRMLModelStorageNode::New());
@@ -70,11 +70,11 @@ public:
 
   vtkTypeMacro(vtkMRMLDisplayNodeTestHelper, vtkMRMLDisplayNode);
 
-  virtual vtkMRMLNode* CreateNodeInstance()
+  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE
     {
     return vtkMRMLDisplayNodeTestHelper::New();
     }
-  virtual const char* GetNodeTagName()
+  virtual const char* GetNodeTagName() VTK_OVERRIDE
     {
     return "vtkMRMLDisplayNodeTestHelper";
     }

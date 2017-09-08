@@ -44,10 +44,10 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// Reset state of object
-  virtual void Initialize();
+  virtual void Initialize() VTK_OVERRIDE;
 
   /// Copy one category into another
-  virtual void Copy(vtkCodedEntry* aCategory);
+  virtual void Copy(vtkCodedEntry* aCategory) VTK_OVERRIDE;
 
 public:
   vtkGetStringMacro(SNOMEDCTConceptID);

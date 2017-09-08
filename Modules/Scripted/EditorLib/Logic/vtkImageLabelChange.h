@@ -28,7 +28,7 @@ class VTK_SLICER_EDITORLIB_MODULE_LOGIC_EXPORT vtkImageLabelChange : public vtkT
 public:
     static vtkImageLabelChange *New();
     vtkTypeMacro(vtkImageLabelChange,vtkThreadedImageAlgorithm);
-    void PrintSelf(ostream& os, vtkIndent indent);
+    void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
     vtkSetMacro(InputLabel, float);
     vtkGetMacro(InputLabel, float);
@@ -46,7 +46,7 @@ protected:
     float OutputLabel;
 
     void ThreadedExecute(vtkImageData *inData, vtkImageData *outData,
-        int extent[6], int id);
+        int extent[6], int id) VTK_OVERRIDE;
 };
 
 #endif

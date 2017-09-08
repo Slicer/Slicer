@@ -101,7 +101,7 @@ public:
 
   /// Method to query the mapping from an id of a LightBox frame to
   /// the Renderer for that frame
-  virtual vtkRenderer *GetRenderer(int id);
+  virtual vtkRenderer *GetRenderer(int id) VTK_OVERRIDE;
 
   /// Method to set the real LightBoxManager
   virtual void SetLightBoxRendererManager(vtkLightBoxRendererManager *mgr);

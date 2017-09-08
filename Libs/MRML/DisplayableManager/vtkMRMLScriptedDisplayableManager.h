@@ -33,7 +33,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLScriptedDisplayableManager :
 public:
   static vtkMRMLScriptedDisplayableManager* New();
   vtkTypeMacro(vtkMRMLScriptedDisplayableManager,vtkMRMLAbstractDisplayableManager);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   void SetPythonSource(const std::string& pythonSource);
 
@@ -41,20 +41,20 @@ protected:
   vtkMRMLScriptedDisplayableManager();
   virtual ~vtkMRMLScriptedDisplayableManager();
 
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
+  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) VTK_OVERRIDE;
 
-  virtual void ProcessMRMLSceneEvents(vtkObject *caller, unsigned long event, void *callData);
-  virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData);
+  virtual void ProcessMRMLSceneEvents(vtkObject *caller, unsigned long event, void *callData) VTK_OVERRIDE;
+  virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData) VTK_OVERRIDE;
 
-  virtual void Create();
+  virtual void Create() VTK_OVERRIDE;
 
-  virtual void RemoveMRMLObservers();
+  virtual void RemoveMRMLObservers() VTK_OVERRIDE;
 
-  virtual void UpdateFromMRML();
+  virtual void UpdateFromMRML() VTK_OVERRIDE;
 
-  virtual void OnInteractorStyleEvent(int eventid);
+  virtual void OnInteractorStyleEvent(int eventid) VTK_OVERRIDE;
 
-  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller);
+  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller) VTK_OVERRIDE;
 
 private:
   vtkMRMLScriptedDisplayableManager(const vtkMRMLScriptedDisplayableManager&);// Not implemented

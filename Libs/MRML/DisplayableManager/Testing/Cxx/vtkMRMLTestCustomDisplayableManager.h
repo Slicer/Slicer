@@ -33,7 +33,7 @@ class vtkMRMLTestCustomDisplayableManager :
 public:
   static vtkMRMLTestCustomDisplayableManager* New();
   vtkTypeMacro(vtkMRMLTestCustomDisplayableManager,vtkMRMLAbstractDisplayableManager);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   // For testing
   static int NodeAddedCountThreeDView;
@@ -45,11 +45,11 @@ protected:
   virtual ~vtkMRMLTestCustomDisplayableManager();
 
   virtual void AdditionnalInitializeStep();
-  virtual void OnInteractorStyleEvent(int eventid);
+  virtual void OnInteractorStyleEvent(int eventid) VTK_OVERRIDE;
 
-  virtual void Create();
+  virtual void Create() VTK_OVERRIDE;
 
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) VTK_OVERRIDE;
 
 private:
 

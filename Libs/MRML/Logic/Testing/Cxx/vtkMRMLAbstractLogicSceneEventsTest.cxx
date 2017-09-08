@@ -42,23 +42,23 @@ public:
   vtkTypeMacro(vtkMRMLTestLogic, vtkMRMLAbstractLogic);
   static vtkMRMLTestLogic *New();
 
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* scene);
-  virtual void UnobserveMRMLScene();
-  virtual void ObserveMRMLScene();
-  virtual void RegisterNodes();
-  virtual void UpdateFromMRMLScene();
+  virtual void SetMRMLSceneInternal(vtkMRMLScene* scene) VTK_OVERRIDE;
+  virtual void UnobserveMRMLScene() VTK_OVERRIDE;
+  virtual void ObserveMRMLScene() VTK_OVERRIDE;
+  virtual void RegisterNodes() VTK_OVERRIDE;
+  virtual void UpdateFromMRMLScene() VTK_OVERRIDE;
 
-  virtual void OnMRMLSceneStartBatchProcess();
-  virtual void OnMRMLSceneEndBatchProcess();
-  virtual void OnMRMLSceneStartClose();
-  virtual void OnMRMLSceneEndClose();
-  virtual void OnMRMLSceneStartImport();
-  virtual void OnMRMLSceneEndImport();
-  virtual void OnMRMLSceneStartRestore();
-  virtual void OnMRMLSceneEndRestore();
-  virtual void OnMRMLSceneNew();
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* nodeAdded);
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* nodeRemoved);
+  virtual void OnMRMLSceneStartBatchProcess() VTK_OVERRIDE;
+  virtual void OnMRMLSceneEndBatchProcess() VTK_OVERRIDE;
+  virtual void OnMRMLSceneStartClose() VTK_OVERRIDE;
+  virtual void OnMRMLSceneEndClose() VTK_OVERRIDE;
+  virtual void OnMRMLSceneStartImport() VTK_OVERRIDE;
+  virtual void OnMRMLSceneEndImport() VTK_OVERRIDE;
+  virtual void OnMRMLSceneStartRestore() VTK_OVERRIDE;
+  virtual void OnMRMLSceneEndRestore() VTK_OVERRIDE;
+  virtual void OnMRMLSceneNew() VTK_OVERRIDE;
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* nodeAdded) VTK_OVERRIDE;
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* nodeRemoved) VTK_OVERRIDE;
 
   enum MethodType{
     Set = 0,

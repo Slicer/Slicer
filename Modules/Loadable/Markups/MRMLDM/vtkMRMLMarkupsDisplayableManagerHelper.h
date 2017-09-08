@@ -52,7 +52,7 @@ public:
 
   static vtkMRMLMarkupsDisplayableManagerHelper *New();
   vtkTypeMacro(vtkMRMLMarkupsDisplayableManagerHelper, vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// Lock/Unlock all widgets based on the state of the nodes
   void UpdateLockedAllWidgetsFromNodes();

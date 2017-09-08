@@ -48,10 +48,10 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// Reset state of object
-  virtual void Initialize();
+  virtual void Initialize() VTK_OVERRIDE;
 
   /// Copy one type into another
-  virtual void Copy(vtkCodedEntry* aType);
+  virtual void Copy(vtkCodedEntry* aType) VTK_OVERRIDE;
 
 public:
   vtkGetVector3Macro(RecommendedDisplayRGBValue, unsigned char);

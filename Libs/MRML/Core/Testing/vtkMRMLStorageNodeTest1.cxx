@@ -30,11 +30,11 @@ public:
 
   vtkTypeMacro(vtkMRMLStorageNodeTestHelper1,vtkMRMLStorageNode);
 
-  virtual vtkMRMLNode* CreateNodeInstance()
+  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE
     {
     return vtkMRMLStorageNodeTestHelper1::New();
     }
-  virtual const char* GetNodeTagName()
+  virtual const char* GetNodeTagName() VTK_OVERRIDE
     {
     return "vtkMRMLStorageNodeTestHelper1";
     }
@@ -42,11 +42,11 @@ public:
   virtual bool CanApplyNonLinearTransforms() { return false; }
   virtual void ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform)) { return; }
 
-  bool CanReadInReferenceNode(vtkMRMLNode * refNode)
+  bool CanReadInReferenceNode(vtkMRMLNode * refNode) VTK_OVERRIDE
     {
     return refNode->IsA(this->SupportedClass);
     }
-  int ReadDataInternal(vtkMRMLNode * vtkNotUsed(refNode))
+  int ReadDataInternal(vtkMRMLNode * vtkNotUsed(refNode)) VTK_OVERRIDE
     {
     return this->ReadDataReturnValue;
     }
