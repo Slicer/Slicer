@@ -268,7 +268,7 @@ set(BRAINSTools_options
   BRAINS_DEBUG_IMAGE_WRITE:BOOL=OFF
   USE_BRAINSTransformConvert:BOOL=ON
   USE_DWIConvert:BOOL=${Slicer_BUILD_DICOM_SUPPORT} ## Need to figure out library linking
-  USE_BRAINSDemonWarp:BOOL=OFF
+  USE_BRAINSDemonWarp:BOOL=ON
   USE_BRAINSRefacer:BOOL=OFF
   )
 Slicer_Remote_Add(BRAINSTools
