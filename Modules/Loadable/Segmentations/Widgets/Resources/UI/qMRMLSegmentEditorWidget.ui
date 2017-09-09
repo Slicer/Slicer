@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>758</width>
-    <height>873</height>
+    <width>406</width>
+    <height>426</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -89,8 +89,11 @@
          <height>0</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>Add new empty segment</string>
+       </property>
        <property name="text">
-        <string>Add segment</string>
+        <string>Add</string>
        </property>
        <property name="icon">
         <iconset resource="../qSlicerSegmentationsModuleWidgets.qrc">
@@ -102,12 +105,15 @@
       <widget class="QPushButton" name="RemoveSegmentButton">
        <property name="minimumSize">
         <size>
-         <width>116</width>
+         <width>96</width>
          <height>0</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>Remove selected segment(s)</string>
+       </property>
        <property name="text">
-        <string>Remove selected</string>
+        <string>Remove</string>
        </property>
        <property name="icon">
         <iconset resource="../qSlicerSegmentationsModuleWidgets.qrc">
@@ -116,15 +122,15 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="CreateSurfaceButton">
+      <widget class="ctkMenuButton" name="Show3DButton">
        <property name="minimumSize">
         <size>
-         <width>104</width>
+         <width>96</width>
          <height>0</height>
         </size>
        </property>
        <property name="text">
-        <string>Create surface</string>
+        <string> Show 3D</string>
        </property>
        <property name="icon">
         <iconset resource="../qSlicerSegmentationsModuleWidgets.qrc">
@@ -132,6 +138,22 @@
        </property>
        <property name="checkable">
         <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="ctkMenuButton" name="SwitchToSegmentationsButton">
+       <property name="minimumSize">
+        <size>
+         <width>104</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Edit segmentation properties in Segmentations module:&lt;br/&gt;- Import from volume/models (e.g. from nrrd)&lt;br/&gt;- Export to volume/models (e.g. save to STL)&lt;br/&gt;- Advanced visibility options&lt;br/&gt;- Conversion: representations, converter options (e.g. smoothing)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string> Segmentations...</string>
        </property>
       </widget>
      </item>
@@ -444,6 +466,11 @@
    <header>ctkFittedTextBrowser.h</header>
   </customwidget>
   <customwidget>
+   <class>ctkMenuButton</class>
+   <extends>QPushButton</extends>
+   <header>ctkMenuButton.h</header>
+  </customwidget>
+  <customwidget>
    <class>ctkRangeWidget</class>
    <extends>QWidget</extends>
    <header>ctkRangeWidget.h</header>
@@ -451,6 +478,7 @@
  </customwidgets>
  <resources>
   <include location="../qSlicerSegmentationsModuleWidgets.qrc"/>
+  <include location="../../../Resources/qSlicerSegmentationsModule.qrc"/>
   <include location="../../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
  </resources>
  <connections>

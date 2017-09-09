@@ -83,7 +83,7 @@
            <string>Add empty segment</string>
           </property>
           <property name="text">
-           <string>Add segment</string>
+           <string>Add</string>
           </property>
           <property name="icon">
            <iconset resource="../../Widgets/Resources/qSlicerSegmentationsModuleWidgets.qrc">
@@ -94,10 +94,10 @@
         <item>
          <widget class="QPushButton" name="pushButton_RemoveSelected">
           <property name="toolTip">
-           <string>Remove selected segment</string>
+           <string>Remove selected segment(s)</string>
           </property>
           <property name="text">
-           <string>Remove selected</string>
+           <string>Remove</string>
           </property>
           <property name="icon">
            <iconset resource="../../Widgets/Resources/qSlicerSegmentationsModuleWidgets.qrc">
@@ -107,8 +107,11 @@
         </item>
         <item>
          <widget class="QPushButton" name="pushButton_EditSelected">
+          <property name="toolTip">
+           <string>Edit segments in the Segment Editor module</string>
+          </property>
           <property name="text">
-           <string>Edit selected</string>
+           <string>Segment Editor</string>
           </property>
           <property name="icon">
            <iconset resource="../../Widgets/Resources/qSlicerSegmentationsModuleWidgets.qrc">

@@ -424,8 +424,6 @@ void qSlicerSegmentationsModuleWidget::onEditSelectedSegment()
     qCritical() << Q_FUNC_INFO << ": Invalid segment selection";
     return;
     }
-  QStringList segmentID;
-  segmentID << d->SegmentsTableView->selectedSegmentIDs()[0];
 
   // Switch to Segment Editor module, select segmentation node and segment ID
   qSlicerAbstractModuleWidget* moduleWidget = qSlicerSubjectHierarchyAbstractPlugin::switchToModule("SegmentEditor");
@@ -435,10 +433,10 @@ void qSlicerSegmentationsModuleWidget::onEditSelectedSegment()
     return;
     }
   // Get segmentation selector combobox and set segmentation
-  qMRMLNodeComboBox* nodeSelector = moduleWidget->findChild<qMRMLNodeComboBox*>("MRMLNodeComboBox_Segmentation");
+  qMRMLNodeComboBox* nodeSelector = moduleWidget->findChild<qMRMLNodeComboBox*>("SegmentationNodeComboBox");
   if (!nodeSelector)
     {
-    qCritical() << Q_FUNC_INFO << ": MRMLNodeComboBox_Segmentation is not found in Segment Editor module";
+    qCritical() << Q_FUNC_INFO << ": SegmentationNodeComboBox is not found in Segment Editor module";
     return;
     }
   nodeSelector->setCurrentNode(d->MRMLNodeComboBox_Segmentation->currentNode());
@@ -450,7 +448,7 @@ void qSlicerSegmentationsModuleWidget::onEditSelectedSegment()
     qCritical() << Q_FUNC_INFO << ": SegmentsTableView is not found in Segment Editor module";
     return;
     }
-  segmentsTable->setSelectedSegmentIDs(segmentID);
+  segmentsTable->setSelectedSegmentIDs(d->SegmentsTableView->selectedSegmentIDs());
 }
 
 //-----------------------------------------------------------------------------
