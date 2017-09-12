@@ -278,13 +278,13 @@ def setSliceViewerLayers(background='keep-current', foreground='keep-current', l
   num = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSliceCompositeNode')
   for i in range(num):
       sliceViewer = slicer.mrmlScene.GetNthNodeByClass(i, 'vtkMRMLSliceCompositeNode')
-      if background is not 'keep-current':
+      if background != 'keep-current':
           sliceViewer.SetBackgroundVolumeID(_nodeID(background))
-      if foreground is not 'keep-current':
+      if foreground != 'keep-current':
           sliceViewer.SetForegroundVolumeID(_nodeID(foreground))
       if foregroundOpacity is not None:
           sliceViewer.SetForegroundOpacity(foregroundOpacity)
-      if label is not 'keep-current':
+      if label != 'keep-current':
           sliceViewer.SetLabelVolumeID(_nodeID(label))
       if labelOpacity is not None:
           sliceViewer.SetLabelOpacity(labelOpacity)

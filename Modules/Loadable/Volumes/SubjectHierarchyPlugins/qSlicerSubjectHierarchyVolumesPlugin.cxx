@@ -455,15 +455,18 @@ void qSlicerSubjectHierarchyVolumesPlugin::collectShownVolumes( QSet<vtkIdType>&
   for (int i=0; i<numberOfCompositeNodes; i++)
     {
     compositeNode = vtkMRMLSliceCompositeNode::SafeDownCast( scene->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
-    if (layer & vtkMRMLApplicationLogic::BackgroundLayer && compositeNode->GetBackgroundVolumeID())
+    if ( layer & vtkMRMLApplicationLogic::BackgroundLayer
+      && compositeNode->GetBackgroundVolumeID() && strcmp(compositeNode->GetBackgroundVolumeID(),"") && strcmp(compositeNode->GetBackgroundVolumeID(),"NULL") )
       {
       shownVolumeItemIDs.insert(shNode->GetItemByDataNode( scene->GetNodeByID(compositeNode->GetBackgroundVolumeID())) );
       }
-    if (layer & vtkMRMLApplicationLogic::ForegroundLayer && compositeNode->GetForegroundVolumeID())
+    if ( layer & vtkMRMLApplicationLogic::ForegroundLayer
+      && compositeNode->GetForegroundVolumeID() && strcmp(compositeNode->GetForegroundVolumeID(),"") && strcmp(compositeNode->GetForegroundVolumeID(),"NULL") )
       {
       shownVolumeItemIDs.insert(shNode->GetItemByDataNode( scene->GetNodeByID(compositeNode->GetForegroundVolumeID())) );
       }
-    if (layer & vtkMRMLApplicationLogic::LabelLayer && compositeNode->GetLabelVolumeID() && strcmp(compositeNode->GetLabelVolumeID(),""))
+    if ( layer & vtkMRMLApplicationLogic::LabelLayer
+      && compositeNode->GetLabelVolumeID() && strcmp(compositeNode->GetLabelVolumeID(),"") && strcmp(compositeNode->GetLabelVolumeID(),"NULL") )
       {
       shownVolumeItemIDs.insert(shNode->GetItemByDataNode( scene->GetNodeByID(compositeNode->GetLabelVolumeID())) );
       }
