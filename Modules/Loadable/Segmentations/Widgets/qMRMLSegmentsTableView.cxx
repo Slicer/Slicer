@@ -34,6 +34,7 @@
 // Terminologies includes
 #include "qSlicerTerminologyItemDelegate.h"
 #include "qSlicerTerminologyNavigatorWidget.h"
+#include "vtkSlicerTerminologiesModuleLogic.h"
 #include "vtkSlicerTerminologyEntry.h"
 #include "vtkSlicerTerminologyCategory.h"
 #include "vtkSlicerTerminologyType.h"
@@ -42,6 +43,12 @@
 #include <vtkMRMLScene.h>
 #include <vtkMRMLLabelMapVolumeNode.h>
 #include <vtkMRMLModelNode.h>
+
+// SlicerQt includes
+#include <qSlicerCoreApplication.h>
+#include <qSlicerModuleManager.h>
+#include <qSlicerAbstractCoreModule.h>
+#include <qMRMLItemDelegate.h>
 
 // VTK includes
 #include <vtkWeakPointer.h>
@@ -54,9 +61,6 @@
 #include <QToolButton>
 #include <QContextMenuEvent>
 #include <QMenu>
-
-// qMRML includes
-#include "qMRMLItemDelegate.h"
 
 #define ID_PROPERTY "ID"
 #define VISIBILITY_PROPERTY "Visible"
@@ -1101,15 +1105,28 @@ QString qMRMLSegmentsTableView::terminologyTooltipForSegment(vtkSegment* segment
     return QString();
     }
 
+  // Get terminologies module logic
+  vtkSlicerTerminologiesModuleLogic* terminologiesLogic = NULL;
+  qSlicerAbstractCoreModule* terminologiesModule = qSlicerCoreApplication::application()->moduleManager()->module("Terminologies");
+  if (terminologiesModule)
+    {
+    terminologiesLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(terminologiesModule->logic());
+    }
+  else
+    {
+    qCritical() << Q_FUNC_INFO << ": Terminologies module is not found";
+    return QString();
+    } 
+
   std::string serializedTerminology("");
   if (!segment->GetTag(vtkSegment::GetTerminologyEntryTagName(), serializedTerminology))
     {
     return QString("No terminology information");
     }
   vtkSmartPointer<vtkSlicerTerminologyEntry> terminologyEntry = vtkSmartPointer<vtkSlicerTerminologyEntry>::New();
-  if (!qSlicerTerminologyNavigatorWidget::deserializeTerminologyEntry(serializedTerminology.c_str(), terminologyEntry))
+  if (!terminologiesLogic->DeserializeTerminologyEntry(serializedTerminology, terminologyEntry))
     {
-    return QString("Invalid terminology information!");
+    return QString("Invalid terminology information");
     }
 
   QString terminology = QString("Terminology:");

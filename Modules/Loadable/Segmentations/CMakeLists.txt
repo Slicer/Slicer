@@ -23,6 +23,7 @@ set(MODULE_INCLUDE_DIRECTORIES
   ${qSlicerSegmentationsEditorEffects_INCLUDE_DIRS}
   ${qSlicerSegmentationsSubjectHierarchyPlugins_INCLUDE_DIRS}
   ${qSlicerSubjectHierarchyModuleWidgets_INCLUDE_DIRS}
+  ${vtkSlicerTerminologiesModuleLogic_INCLUDE_DIRS}
   )
 
 set(MODULE_SRCS
@@ -51,6 +52,8 @@ set(MODULE_TARGET_LIBRARIES
   qSlicer${MODULE_NAME}ModuleWidgets
   qSlicer${MODULE_NAME}SubjectHierarchyPlugins
   qSlicer${MODULE_NAME}EditorEffects
+  qSlicerSubjectHierarchyModuleWidgets
+  vtkSlicerTerminologiesModuleLogic
   )
 
 set(MODULE_RESOURCES

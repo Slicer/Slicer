@@ -30,8 +30,9 @@
 #include "vtkOrientedImageDataResample.h"
 #include "vtkSegmentationConverterFactory.h"
 
-// Subject Hierarchy includes
-#include <vtkMRMLSubjectHierarchyNode.h>
+// Terminologies includes
+#include "vtkSlicerTerminologiesModuleLogic.h"
+#include "vtkSlicerTerminologyEntry.h"
 
 // VTK includes
 #include <vtkCallbackCommand.h>
@@ -54,28 +55,31 @@
 #include <vtksys/SystemTools.hxx>
 
 // MRML includes
-#include <vtkEventBroker.h>
+#include <vtkMRMLScene.h>
+#include "vtkMRMLSegmentationNode.h"
+#include "vtkMRMLSegmentationDisplayNode.h"
+#include "vtkMRMLSegmentationStorageNode.h"
+#include "vtkMRMLSegmentEditorNode.h"
+#include <vtkMRMLSubjectHierarchyNode.h>
+#include <vtkMRMLTransformNode.h>
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLLabelMapVolumeNode.h>
 #include <vtkMRMLLabelMapVolumeDisplayNode.h>
 #include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLModelHierarchyNode.h>
 #include <vtkMRMLModelNode.h>
-#include <vtkMRMLScene.h>
-#include "vtkMRMLSegmentationNode.h"
-#include "vtkMRMLSegmentationDisplayNode.h"
-#include "vtkMRMLSegmentationStorageNode.h"
-#include "vtkMRMLSegmentEditorNode.h"
-#include <vtkMRMLTransformNode.h>
+#include <vtkEventBroker.h>
 
 // STD includes
 #include <sstream>
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerSegmentationsModuleLogic);
+vtkCxxSetObjectMacro(vtkSlicerSegmentationsModuleLogic, TerminologiesLogic, vtkSlicerTerminologiesModuleLogic);
 
 //----------------------------------------------------------------------------
 vtkSlicerSegmentationsModuleLogic::vtkSlicerSegmentationsModuleLogic()
+ : TerminologiesLogic(NULL)
 {
   this->SubjectHierarchyUIDCallbackCommand = vtkCallbackCommand::New();
   this->SubjectHierarchyUIDCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
@@ -1290,7 +1294,7 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkOrie
   threshold->SetOutputScalarType(VTK_UNSIGNED_CHAR);
 
   for (int labelIndex = 0; labelIndex < labelValues->GetNumberOfValues(); ++labelIndex)
-  {
+    {
     int label = labelValues->GetValue(labelIndex);
 
     threshold->ThresholdBetween(label, label);
@@ -1448,6 +1452,22 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(
 
   segmentationNode->EndModify(segmentationNodeWasModified);
   return true;
+}
+
+//-----------------------------------------------------------------------------
+bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNodeWithTerminology(vtkMRMLLabelMapVolumeNode* labelmapNode,
+  vtkMRMLSegmentationNode* segmentationNode, std::string terminologyContextName, std::string insertBeforeSegmentId/*=""*/)
+{
+  // Import labelmap to segmentation
+  if (! vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(
+        labelmapNode, segmentationNode, insertBeforeSegmentId ) )
+    {
+    vtkErrorMacro("ImportLabelmapToSegmentationNodeWithTerminology: Invalid labelmap volume");
+    return false;
+    }
+  
+  // Assign terminology to segments in the populated segmentation based on the labels of the imported labelmap
+  return this->SetTerminologyToSegmentationFromLabelmapNode(segmentationNode, labelmapNode, terminologyContextName);
 }
 
 //-----------------------------------------------------------------------------
@@ -1785,6 +1805,110 @@ bool vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(vtkOrientedIm
   const char* segmentIdChar = segmentID.c_str();
   segmentationNode->GetSegmentation()->InvokeEvent(vtkSegmentation::MasterRepresentationModified, (void*)segmentIdChar);
   segmentationNode->GetSegmentation()->InvokeEvent(vtkSegmentation::RepresentationModified, (void*)segmentIdChar);
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+bool vtkSlicerSegmentationsModuleLogic::SetTerminologyToSegmentationFromLabelmapNode(vtkMRMLSegmentationNode* segmentationNode,
+  vtkMRMLLabelMapVolumeNode* labelmapNode, std::string terminologyContextName)
+{
+  if (terminologyContextName.empty())
+    {
+    return true;
+    }
+  if (!this->TerminologiesLogic)
+    {
+    vtkErrorMacro("SetTerminologyToSegmentationFromLabelmapNode: Terminology logic cannot be accessed");
+    return false;
+    }
+  if (!segmentationNode)
+    {
+    vtkErrorMacro("SetTerminologyToSegmentationFromLabelmapNode: Invalid segmentation node");
+    return false;
+    }
+  if (!labelmapNode || !labelmapNode->GetImageData())
+    {
+    vtkErrorMacro("SetTerminologyToSegmentationFromLabelmapNode: Invalid labelmap volume node");
+    return false;
+    }
+
+  // Get color node
+  if (!labelmapNode->GetDisplayNode())
+    {
+    vtkErrorMacro("SetTerminologyToSegmentationFromLabelmapNode: Segmentation node " << segmentationNode->GetName() << " has no display node");
+    return false;
+    }
+  vtkMRMLColorTableNode* colorNode = vtkMRMLColorTableNode::SafeDownCast(labelmapNode->GetDisplayNode()->GetColorNode());
+  if (!colorNode)
+    {
+    vtkErrorMacro("SetTerminologyToSegmentationFromLabelmapNode: Segmentation node " << segmentationNode->GetName() << " has no associated color table node");
+    return false;
+    }
+
+  // Get first terminology entry. This is set to segments that cannot be matched to labels, and when
+  // label names are not found in 3dSlicerLabel attributes in terminology types within the context.
+  std::vector<vtkSlicerTerminologiesModuleLogic::CodeIdentifier> categories;
+  this->TerminologiesLogic->GetCategoriesInTerminology(terminologyContextName, categories);
+  if (categories.empty())
+    {
+    vtkErrorMacro("SetTerminologyToSegmentationFromLabelmapNode: Terminology context " << terminologyContextName << " is empty");
+    return false;
+    }
+  std::vector<vtkSlicerTerminologiesModuleLogic::CodeIdentifier> typesInFirstCategory;
+  int firstNonEmptyCategoryIndex = -1;
+  do
+    {
+    this->TerminologiesLogic->GetTypesInTerminologyCategory(terminologyContextName, categories[++firstNonEmptyCategoryIndex], typesInFirstCategory);
+    }
+  while (typesInFirstCategory.empty() && firstNonEmptyCategoryIndex < categories.size());
+  if (typesInFirstCategory.empty())
+    {
+    vtkErrorMacro("SetTerminologyToSegmentationFromLabelmapNode: All categories in terminology context " << terminologyContextName << " are empty");
+    return false;
+    }
+
+  vtkSmartPointer<vtkSlicerTerminologyEntry> firstTerminologyEntry = vtkSmartPointer<vtkSlicerTerminologyEntry>::New();
+  firstTerminologyEntry->SetTerminologyContextName(terminologyContextName.c_str());
+  vtkSmartPointer<vtkSlicerTerminologyCategory> firstCategory = vtkSmartPointer<vtkSlicerTerminologyCategory>::New();
+  this->TerminologiesLogic->GetCategoryInTerminology(
+    terminologyContextName, categories[firstNonEmptyCategoryIndex], firstCategory );
+  firstTerminologyEntry->GetCategoryObject()->Copy(firstCategory);
+  vtkSmartPointer<vtkSlicerTerminologyType> firstType = vtkSmartPointer<vtkSlicerTerminologyType>::New();
+  this->TerminologiesLogic->GetTypeInTerminologyCategory(
+    terminologyContextName, categories[firstNonEmptyCategoryIndex], typesInFirstCategory[0], firstType );
+  firstTerminologyEntry->GetTypeObject()->Copy(firstType);
+  std::string firstTerminologyString = this->TerminologiesLogic->SerializeTerminologyEntry(firstTerminologyEntry);
+  
+  // Assign terminology entry to each segment in the segmentation
+  std::vector<std::string> segmentIDs;
+  segmentationNode->GetSegmentation()->GetSegmentIDs(segmentIDs);
+  vtkSmartPointer<vtkSlicerTerminologyEntry> foundTerminologyEntry = vtkSmartPointer<vtkSlicerTerminologyEntry>::New();
+  for (std::vector<std::string>::iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
+    {
+    vtkSegment* segment = segmentationNode->GetSegmentation()->GetSegment(*segmentIdIt);
+
+    // Check if label for the current segment exists in labelmap. If there were segments in the segmentation when
+    // importing, then the label and so terminology will not be found. In this case terminology tag is left as is
+    // (which may be the default GeneralAnatomy/Tissue/Tissue, or the one the user manually specified)
+    int label = colorNode->GetColorIndexByName(segment->GetName());
+    if (label == -1)
+      {
+      continue;
+      }
+
+    // Search for the 3dSlicerLabel attribute in the specified terminology context
+    if (this->TerminologiesLogic->FindTypeInTerminologyBy3dSlicerLabel(terminologyContextName, segment->GetName(), foundTerminologyEntry))
+      {
+      std::string foundTerminologyString = this->TerminologiesLogic->SerializeTerminologyEntry(foundTerminologyEntry);
+      segment->SetTag(vtkSegment::GetTerminologyEntryTagName(), foundTerminologyString);
+      }
+    else
+      {
+      // Set first entry if 3dSlicerLabel is not found
+      segment->SetTag(vtkSegment::GetTerminologyEntryTagName(), firstTerminologyString);
+      }
+    }
 
   return true;
 }

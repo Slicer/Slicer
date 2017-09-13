@@ -78,17 +78,17 @@ protected:
   void operator=(const vtkSlicerTerminologyType&);
 
 protected:
-  /// 'recommendedDisplayRGBValue' member of the category object
+  /// 'recommendedDisplayRGBValue' member of the type object
   unsigned char RecommendedDisplayRGBValue[3];
-  /// 'slicerLabel' member of the category object. Value example "artery"
+  /// '3dSlicerLabel' member of the type object. Value example "artery"
   char* SlicerLabel;
-  /// 'SNOMEDCTConceptID' member of the category object. Value example "275989006"
+  /// 'SNOMEDCTConceptID' member of the type object. Value example "275989006"
   char* SNOMEDCTConceptID;
-  /// 'UMLSConceptUID' member of the category object. Value example "C0555806"
+  /// 'UMLSConceptUID' member of the type object. Value example "C0555806"
   char* UMLSConceptUID;
-  /// 'cid' member of the category object. Value example "7166"
+  /// 'cid' member of the type object. Value example "7166"
   char* Cid;
-  /// 'contextGroupName' member of the category object. Value example "Common Tissue Segmentation Types"
+  /// 'contextGroupName' member of the type object. Value example "Common Tissue Segmentation Types"
   char* ContextGroupName;
 
   /// Flag indicating whether the type object has a 'Modifier' member array. False by default.

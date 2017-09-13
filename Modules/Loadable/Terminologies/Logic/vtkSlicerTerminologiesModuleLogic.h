@@ -31,6 +31,7 @@
 #include <vtkVector.h>
 
 class vtkStringArray;
+class vtkSlicerTerminologyEntry;
 class vtkSlicerTerminologyCategory;
 class vtkSlicerTerminologyType;
 
@@ -47,12 +48,16 @@ public:
   class CodeIdentifier
     {
     public:
+      CodeIdentifier()
+        : CodingSchemeDesignator("")
+        , CodeValue("")
+        , CodeMeaning("")
+        { };
       CodeIdentifier(std::string codingSchemeDesignator, std::string codeValue, std::string codeMeaning)
-        {
-        this->CodingSchemeDesignator = codingSchemeDesignator;
-        this->CodeValue = codeValue;
-        this->CodeMeaning = codeMeaning;
-        };
+        : CodingSchemeDesignator(codingSchemeDesignator)
+        , CodeValue(codeValue)
+        , CodeMeaning(codeMeaning)
+        { };
       std::string CodingSchemeDesignator;
       std::string CodeValue;
       std::string CodeMeaning; // Human readable name (not required for ID)
@@ -159,10 +164,40 @@ public:
   bool GetRegionModifierInAnatomicRegion(std::string anatomicContextName,
     CodeIdentifier regionId, CodeIdentifier modifierId, vtkSlicerTerminologyType* regionModifier);
 
+  /// Find terminology type or type modifier based on '3dSlicerLabel' attribute
+  /// \param terminologyName Terminology context in which the attribute is looked for
+  /// \param slicerLabel Attribute to look for
+  /// \param entry Terminology entry populated if the attribute is found
+  /// \return Flag indicating whether the attribute was found
+  bool FindTypeInTerminologyBy3dSlicerLabel(std::string terminologyName, std::string slicerLabel, vtkSlicerTerminologyEntry* entry);
+
   /// Convert terminology category object to code identifier
   static CodeIdentifier CodeIdentifierFromTerminologyCategory(vtkSlicerTerminologyCategory* category);
   /// Convert terminology type object to code identifier
   static CodeIdentifier CodeIdentifierFromTerminologyType(vtkSlicerTerminologyType* type);
+
+  /// Convert terminology entry VTK object to string containing identifiers
+  /// Serialized terminology entry consists of the following: terminologyContextName, category (codingScheme,  
+  /// codeValue, codeMeaning triple), type, typeModifier, anatomicContextName, anatomicRegion, anatomicRegionModifier
+  static std::string SerializeTerminologyEntry(vtkSlicerTerminologyEntry* entry);
+
+  /// Assemble terminology string from terminology codes
+  /// Note: The order of the attributes are inconsistent with the codes used in this class for compatibility reasons
+  ///       (to vtkMRMLColorLogic::AddTermToTerminology)
+  static std::string SerializeTerminologyEntry(
+    std::string terminologyContextName,
+    std::string categoryValue, std::string categorySchemeDesignator, std::string categoryMeaning,
+    std::string typeValue, std::string typeSchemeDesignator, std::string typeMeaning,
+    std::string modifierValue, std::string modifierSchemeDesignator, std::string modifierMeaning,
+    std::string anatomicContextName,
+    std::string regionValue, std::string regionSchemeDesignator, std::string regionMeaning,
+    std::string regionModifierValue, std::string regionModifierSchemeDesignator, std::string regionModifierMeaning );
+
+  /// Populate terminology entry VTK object based on serialized entry
+  /// Serialized terminology entry consists of the following: terminologyContextName, category (codingScheme,  
+  /// codeValue, codeMeaning triple), type, typeModifier, anatomicContextName, anatomicRegion, anatomicRegionModifier
+  ///  \return Success flag
+  bool DeserializeTerminologyEntry(std::string serializedEntry, vtkSlicerTerminologyEntry* entry);
 
 public:
   vtkGetStringMacro(UserContextsPath);

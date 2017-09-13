@@ -18,15 +18,6 @@
 
 ==============================================================================*/
 
-// Qt includes
-#include <QDebug>
-
-// Slicer includes
-#include "qSlicerIOManager.h"
-#include "qSlicerNodeWriter.h"
-#include "vtkMRMLThreeDViewDisplayableManagerFactory.h"
-#include "vtkMRMLSliceViewDisplayableManagerFactory.h"
-
 // Segmentations includes
 #include "qSlicerSegmentationsModule.h"
 #include "qSlicerSegmentationsModuleWidget.h"
@@ -42,8 +33,19 @@
 #include "qSlicerSegmentEditorScissorsEffect.h"
 #include "qSlicerSegmentEditorEraseEffect.h"
 
+// Slicer includes
+#include <qSlicerIOManager.h>
+#include <qSlicerNodeWriter.h>
+#include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
+#include <vtkMRMLSliceViewDisplayableManagerFactory.h>
+#include <qSlicerCoreApplication.h>
+#include <qSlicerModuleManager.h>
+
 // Subject Hierarchy includes
 #include "qSlicerSubjectHierarchyPluginHandler.h"
+
+// Terminologies includes
+#include "vtkSlicerTerminologiesModuleLogic.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -51,6 +53,9 @@
 
 // PythonQt includes
 #include "PythonQt.h"
+
+// Qt includes
+#include <QDebug>
 
 //-----------------------------------------------------------------------------
 #if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
@@ -121,6 +126,12 @@ QStringList qSlicerSegmentationsModule::contributors() const
 }
 
 //-----------------------------------------------------------------------------
+QStringList qSlicerSegmentationsModule::dependencies()const
+{
+  return QStringList() << "Terminologies";
+}
+ 
+//-----------------------------------------------------------------------------
 QIcon qSlicerSegmentationsModule::icon()const
 {
   return QIcon(":/Icons/Segmentations.png");
@@ -178,15 +189,42 @@ void qSlicerSegmentationsModule::setup()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerSegmentationsModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerSegmentationsModule::createWidgetRepresentation()
 {
-  return new qSlicerSegmentationsModuleWidget;
+  qSlicerSegmentationsModuleWidget* moduleWidget = new qSlicerSegmentationsModuleWidget();
+
+  qSlicerAbstractCoreModule* terminologiesModule = qSlicerCoreApplication::application()->moduleManager()->module("Terminologies");
+  if (terminologiesModule)
+    {
+    vtkSlicerTerminologiesModuleLogic* terminologiesLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(terminologiesModule->logic());
+    moduleWidget->setTerminologiesLogic(terminologiesLogic);
+    }
+  else
+    {
+    qCritical() << Q_FUNC_INFO << ": Terminologies module is not found";
+    } 
+
+  return moduleWidget;
 }
 
 //-----------------------------------------------------------------------------
 vtkMRMLAbstractLogic* qSlicerSegmentationsModule::createLogic()
 {
-  return vtkSlicerSegmentationsModuleLogic::New();
+  vtkSlicerSegmentationsModuleLogic* moduleLogic = vtkSlicerSegmentationsModuleLogic::New();
+
+  qSlicerAbstractCoreModule* terminologiesModule = qSlicerCoreApplication::application()->moduleManager()->module("Terminologies");
+  if (terminologiesModule)
+    {
+    vtkSlicerTerminologiesModuleLogic* terminologiesLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(terminologiesModule->logic());
+    moduleLogic->SetTerminologiesLogic(terminologiesLogic);
+    }
+  else
+    {
+    qCritical() << Q_FUNC_INFO << ": Terminologies module is not found";
+    } 
+
+  return moduleLogic;
+
 }
 
 //-----------------------------------------------------------------------------

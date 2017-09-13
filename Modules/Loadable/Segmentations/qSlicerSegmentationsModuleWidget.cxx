@@ -29,6 +29,9 @@
 #include "qMRMLSegmentsTableView.h"
 #include "qMRMLSegmentationRepresentationsListView.h"
 
+// Terminologies includes
+#include "vtkSlicerTerminologiesModuleLogic.h"
+
 // SlicerQt includes
 #include <qSlicerApplication.h>
 #include <qSlicerAbstractModuleWidget.h>
@@ -45,6 +48,7 @@
 #include <vtkCollection.h>
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>
+
 // Qt includes
 #include <QDebug>
 #include <QMessageBox>
@@ -60,14 +64,21 @@ public:
   qSlicerSegmentationsModuleWidgetPrivate(qSlicerSegmentationsModuleWidget& object);
   ~qSlicerSegmentationsModuleWidgetPrivate();
   vtkSlicerSegmentationsModuleLogic* logic() const;
+  void populateTerminologyContextComboBox();
+
 public:
   vtkWeakPointer<vtkMRMLSegmentationNode> SegmentationNode;
   /// Using this flag prevents overriding the parameter set node contents when the
   ///   QMRMLCombobox selects the first instance of the specified node type when initializing
   bool ModuleWindowInitialized;
 
-  QButtonGroup* ImportExportOperationButtonGroup; // import/export
-  QButtonGroup* ImportExportTypeButtonGroup; // model/labelmap
+  /// Terminologies module logic
+  vtkSlicerTerminologiesModuleLogic* TerminologiesLogic;
+
+  /// Import/export buttons
+  QButtonGroup* ImportExportOperationButtonGroup;
+  /// Model/labelmap buttons
+  QButtonGroup* ImportExportTypeButtonGroup;
 };
 
 //-----------------------------------------------------------------------------
@@ -77,6 +88,7 @@ public:
 qSlicerSegmentationsModuleWidgetPrivate::qSlicerSegmentationsModuleWidgetPrivate(qSlicerSegmentationsModuleWidget& object)
   : q_ptr(&object)
   , ModuleWindowInitialized(false)
+  , TerminologiesLogic(NULL)
   , ImportExportOperationButtonGroup(NULL)
   , ImportExportTypeButtonGroup(NULL)
 {
@@ -93,6 +105,24 @@ qSlicerSegmentationsModuleWidgetPrivate::logic() const
 {
   Q_Q(const qSlicerSegmentationsModuleWidget);
   return vtkSlicerSegmentationsModuleLogic::SafeDownCast(q->logic());
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSegmentationsModuleWidgetPrivate::populateTerminologyContextComboBox()
+{
+  this->ComboBox_TerminologyContext->clear();
+
+  if (!this->TerminologiesLogic)
+    {
+    return;
+    }
+
+  std::vector<std::string> terminologyNames;
+  this->TerminologiesLogic->GetLoadedTerminologyNames(terminologyNames);
+  for (std::vector<std::string>::iterator termIt=terminologyNames.begin(); termIt!=terminologyNames.end(); ++termIt)
+    {
+    this->ComboBox_TerminologyContext->addItem(termIt->c_str());
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -150,6 +180,8 @@ void qSlicerSegmentationsModuleWidget::onEnter()
                     this, SLOT(onMRMLSceneEndRestoreEvent()));
 
   this->onSegmentationNodeChanged( d->MRMLNodeComboBox_Segmentation->currentNode() );
+
+  d->populateTerminologyContextComboBox();
 }
 
 //-----------------------------------------------------------------------------
@@ -424,6 +456,8 @@ void qSlicerSegmentationsModuleWidget::onEditSelectedSegment()
     qCritical() << Q_FUNC_INFO << ": Invalid segment selection";
     return;
     }
+  QStringList segmentID;
+  segmentID << d->SegmentsTableView->selectedSegmentIDs()[0];
 
   // Switch to Segment Editor module, select segmentation node and segment ID
   qSlicerAbstractModuleWidget* moduleWidget = qSlicerSubjectHierarchyAbstractPlugin::switchToModule("SegmentEditor");
@@ -433,10 +467,10 @@ void qSlicerSegmentationsModuleWidget::onEditSelectedSegment()
     return;
     }
   // Get segmentation selector combobox and set segmentation
-  qMRMLNodeComboBox* nodeSelector = moduleWidget->findChild<qMRMLNodeComboBox*>("SegmentationNodeComboBox");
+  qMRMLNodeComboBox* nodeSelector = moduleWidget->findChild<qMRMLNodeComboBox*>("MRMLNodeComboBox_Segmentation");
   if (!nodeSelector)
     {
-    qCritical() << Q_FUNC_INFO << ": SegmentationNodeComboBox is not found in Segment Editor module";
+    qCritical() << Q_FUNC_INFO << ": MRMLNodeComboBox_Segmentation is not found in Segment Editor module";
     return;
     }
   nodeSelector->setCurrentNode(d->MRMLNodeComboBox_Segmentation->currentNode());
@@ -448,7 +482,7 @@ void qSlicerSegmentationsModuleWidget::onEditSelectedSegment()
     qCritical() << Q_FUNC_INFO << ": SegmentsTableView is not found in Segment Editor module";
     return;
     }
-  segmentsTable->setSelectedSegmentIDs(d->SegmentsTableView->selectedSegmentIDs());
+  segmentsTable->setSelectedSegmentIDs(segmentID);
 }
 
 //-----------------------------------------------------------------------------
@@ -505,12 +539,16 @@ void qSlicerSegmentationsModuleWidget::onImportExportOptionsButtonClicked()
     d->label_ImportExportType->setText("Output type:");
     d->label_ImportExportNode->setText("Output node:");
     d->PushButton_ImportExport->setText("Export");
+    d->label_TerminologyContext->setVisible(false);
+    d->ComboBox_TerminologyContext->setVisible(false);
     }
   else
     {
     d->label_ImportExportType->setText("Input type:");
     d->label_ImportExportNode->setText("Input node:");
     d->PushButton_ImportExport->setText("Import");
+    d->label_TerminologyContext->setVisible(d->radioButton_Labelmap->isChecked());
+    d->ComboBox_TerminologyContext->setVisible(d->radioButton_Labelmap->isChecked());
     }
   d->MRMLNodeComboBox_ImportExportNode->setNoneEnabled(d->radioButton_Export->isChecked());
   d->ComboBox_ExportedSegments->setEnabled(d->radioButton_Export->isChecked());
@@ -542,7 +580,7 @@ void qSlicerSegmentationsModuleWidget::onImportExportOptionsButtonClicked()
     }
   d->MRMLNodeComboBox_ImportExportNode->setNodeTypes(nodeTypes);
   d->MRMLNodeComboBox_ExportLabelmapReferenceVolume->setEnabled(
-    d->radioButton_Labelmap->isChecked() && d->radioButton_Export->isChecked());
+    d->radioButton_Labelmap->isChecked() && d->radioButton_Export->isChecked() );
 }
 
 //-----------------------------------------------------------------------------
@@ -812,7 +850,10 @@ bool qSlicerSegmentationsModuleWidget::importToCurrentSegmentation()
   if (labelmapNode)
     {
     QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
-    bool success = vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(labelmapNode, currentSegmentationNode);
+    std::string currentTerminologyContextName(
+      d->ComboBox_TerminologyContext->currentText() == d->ComboBox_TerminologyContext->defaultText() ? "" : d->ComboBox_TerminologyContext->currentText().toLatin1().constData());
+    bool success = d->logic()->ImportLabelmapToSegmentationNodeWithTerminology(
+      labelmapNode, currentSegmentationNode, currentTerminologyContextName);
     QApplication::restoreOverrideCursor();
     if (!success)
       {
@@ -968,4 +1009,11 @@ void qSlicerSegmentationsModuleWidget::onSegmentationNodeReferenceChanged()
   d->label_ReferenceVolumeName->setText(referenceVolumeNode->GetName());
 
   d->MRMLNodeComboBox_ExportLabelmapReferenceVolume->setCurrentNode(referenceVolumeNode);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSegmentationsModuleWidget::setTerminologiesLogic(vtkSlicerTerminologiesModuleLogic* logic)
+{
+  Q_D(qSlicerSegmentationsModuleWidget);
+  d->TerminologiesLogic = logic;
 }

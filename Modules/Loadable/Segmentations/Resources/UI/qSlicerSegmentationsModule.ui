@@ -83,7 +83,7 @@
            <string>Add empty segment</string>
           </property>
           <property name="text">
-           <string>Add</string>
+           <string>Add segment</string>
           </property>
           <property name="icon">
            <iconset resource="../../Widgets/Resources/qSlicerSegmentationsModuleWidgets.qrc">
@@ -94,10 +94,10 @@
         <item>
          <widget class="QPushButton" name="pushButton_RemoveSelected">
           <property name="toolTip">
-           <string>Remove selected segment(s)</string>
+           <string>Remove selected segment</string>
           </property>
           <property name="text">
-           <string>Remove</string>
+           <string>Remove selected</string>
           </property>
           <property name="icon">
            <iconset resource="../../Widgets/Resources/qSlicerSegmentationsModuleWidgets.qrc">
@@ -107,11 +107,8 @@
         </item>
         <item>
          <widget class="QPushButton" name="pushButton_EditSelected">
-          <property name="toolTip">
-           <string>Edit segments in the Segment Editor module</string>
-          </property>
           <property name="text">
-           <string>Segment Editor</string>
+           <string>Edit selected</string>
           </property>
           <property name="icon">
            <iconset resource="../../Widgets/Resources/qSlicerSegmentationsModuleWidgets.qrc">
@@ -575,6 +572,26 @@
            </property>
            <property name="removeEnabled">
             <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_TerminologyContext">
+           <property name="text">
+            <string>Terminology context:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="ctkComboBox" name="ComboBox_TerminologyContext">
+           <property name="toolTip">
+            <string>Labels of the imported labelmap will be mapped to terminology entries of this context</string>
+           </property>
+           <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+           </property>
+           <property name="defaultText">
+            <string>Choose terminology...</string>
            </property>
           </widget>
          </item>

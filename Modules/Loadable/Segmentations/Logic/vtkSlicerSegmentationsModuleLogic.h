@@ -45,6 +45,7 @@ class vtkMRMLLabelMapVolumeNode;
 class vtkMRMLVolumeNode;
 class vtkMRMLModelNode;
 class vtkMRMLModelHierarchyNode;
+class vtkSlicerTerminologiesModuleLogic;
 
 /// \ingroup SlicerRt_QtModules_Segmentations
 class VTK_SLICER_SEGMENTATIONS_LOGIC_EXPORT vtkSlicerSegmentationsModuleLogic :
@@ -193,16 +194,17 @@ public:
   /// Import all labels from a labelmap node to a segmentation node, each label to a separate segment.
   /// The colors of the new segments are set from the color table corresponding to the labelmap volume.
   /// \param insertBeforeSegmentId New segments will be inserted before this segment.
-  static bool ImportLabelmapToSegmentationNode( vtkMRMLLabelMapVolumeNode* labelmapNode,
-    vtkMRMLSegmentationNode* segmentationNode, std::string insertBeforeSegmentId = "");
+  static bool ImportLabelmapToSegmentationNode(vtkMRMLLabelMapVolumeNode* labelmapNode,
+    vtkMRMLSegmentationNode* segmentationNode, std::string insertBeforeSegmentId="");
 
   /// Import all labels from a labelmap image to a segmentation node, each label to a separate segment
-  /// The colors of the new segments are randomly generated.
+  /// The colors of the new segments are randomly generated, unless terminology context is specified, in which case the terminology
+  ///   entries are attempted to be mapped to the imported labels
   /// LabelmapImage is defined in the segmentation node's coordinate system
   /// (parent transform of the segmentation node is not used during import).
   /// \param baseSegmentName Prefix for the names of the new segments. Empty by default, in which case the prefix will be "Label"
-  static bool ImportLabelmapToSegmentationNode(vtkOrientedImageData* labelmapImage, vtkMRMLSegmentationNode* segmentationNode,
-    std::string baseSegmentName = "", std::string insertBeforeSegmentId = "");
+  static bool ImportLabelmapToSegmentationNode(vtkOrientedImageData* labelmapImage,
+    vtkMRMLSegmentationNode* segmentationNode, std::string baseSegmentName="", std::string insertBeforeSegmentId="") ;
 
   /// Update segmentation from segments in a labelmap node.
   /// \param updatedSegmentIDs Defines how label values 1..N are mapped to segment IDs (0..N-1).
@@ -212,7 +214,15 @@ public:
   /// Update segmentation from segments in a labelmap node.
   /// \param updatedSegmentIDs Defines how label values 1..N are mapped to segment IDs (0..N-1).
   static bool ImportLabelmapToSegmentationNode(vtkOrientedImageData* labelmapImage,
-    vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* updatedSegmentIDs, vtkGeneralTransform* labelmapToSegmentationTransform = NULL);
+    vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* updatedSegmentIDs,
+    vtkGeneralTransform* labelmapToSegmentationTransform=NULL );
+
+  /// Import all labels from a labelmap node to a segmentation node, each label to a separate segment.
+  /// Terminology and color is set to the segments based on the color table corresponding to the labelmap volume node.
+  /// \param terminologyContextName Terminology context the entries of which are mapped to the labels imported from the labelmap node
+  /// \param insertBeforeSegmentId New segments will be inserted before this segment.
+  bool ImportLabelmapToSegmentationNodeWithTerminology(vtkMRMLLabelMapVolumeNode* labelmapNode,
+    vtkMRMLSegmentationNode* segmentationNode, std::string terminologyContextName, std::string insertBeforeSegmentId="");
 
   /// Import model into the segmentation as a segment.
   static bool ImportModelToSegmentationNode(vtkMRMLModelNode* modelNode, vtkMRMLSegmentationNode* segmentationNode, std::string insertBeforeSegmentId = "");
@@ -294,6 +304,16 @@ public:
     };
   static bool SetBinaryLabelmapToSegment(vtkOrientedImageData* labelmap, vtkMRMLSegmentationNode* segmentationNode, std::string segmentID, int mergeMode=MODE_REPLACE, const int extent[6]=0);
 
+  /// Assign terminology to segments in a segmentation node based on the labels of a labelmap node. Match is made based on the
+  /// 3dSlicerLabel terminology type attribute. If the terminology context does not contain that attribute, match cannot be made.
+  /// \param terminologyContextName Terminology context the entries of which are mapped to the labels imported from the labelmap node
+  bool SetTerminologyToSegmentationFromLabelmapNode(vtkMRMLSegmentationNode* segmentationNode,
+    vtkMRMLLabelMapVolumeNode* labelmapNode, std::string terminologyContextName);
+
+public:
+  /// Set Terminologies module logic
+  void SetTerminologiesLogic(vtkSlicerTerminologiesModuleLogic* terminologiesLogic);
+
 protected:
   virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene) VTK_OVERRIDE;
 
@@ -316,6 +336,9 @@ protected:
 
   /// Command handling subject hierarchy UID added events
   vtkCallbackCommand* SubjectHierarchyUIDCallbackCommand;
+
+  /// Terminologies module logic
+  vtkSlicerTerminologiesModuleLogic* TerminologiesLogic;
 
 private:
   vtkSlicerSegmentationsModuleLogic(const vtkSlicerSegmentationsModuleLogic&); // Not implemented

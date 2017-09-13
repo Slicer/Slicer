@@ -99,29 +99,6 @@ public:
   /// Get whether anatomic region section are visible
   bool anatomicRegionSectionVisible() const;
 
-  /// Convert terminology entry VTK object to string containing identifiers
-  /// Serialized terminology entry consists of the following: terminologyContextName, category (codingScheme,  
-  /// codeValue, codeMeaning triple), type, typeModifier, anatomicContextName, anatomicRegion, anatomicRegionModifier
-  static QString serializeTerminologyEntry(vtkSlicerTerminologyEntry* entry);
-
-  /// Assemble terminology string from terminology codes
-  /// Note: The order of the attributes are inconsistent with the codes used in this class for compatibility reasons
-  ///       (to vtkMRMLColorLogic::AddTermToTerminology)
-  Q_INVOKABLE static QString serializeTerminologyEntry(
-    QString terminologyContextName,
-    QString categoryValue, QString categorySchemeDesignator, QString categoryMeaning,
-    QString typeValue, QString typeSchemeDesignator, QString typeMeaning,
-    QString modifierValue, QString modifierSchemeDesignator, QString modifierMeaning,
-    QString anatomicContextName,
-    QString regionValue, QString regionSchemeDesignator, QString regionMeaning,
-    QString regionModifierValue, QString regionModifierSchemeDesignator, QString regionModifierMeaning );
-
-  /// Populate terminology entry VTK object based on serialized entry
-  /// Serialized terminology entry consists of the following: terminologyContextName, category (codingScheme,  
-  /// codeValue, codeMeaning triple), type, typeModifier, anatomicContextName, anatomicRegion, anatomicRegionModifier
-  ///  \return Success flag
-  Q_INVOKABLE static bool deserializeTerminologyEntry(QString serializedEntry, vtkSlicerTerminologyEntry* entry);
-
   /// Generate name for given terminology
   Q_INVOKABLE static QString nameFromTerminology(vtkSlicerTerminologyEntry* entry);
   /// Generate name for current terminology
