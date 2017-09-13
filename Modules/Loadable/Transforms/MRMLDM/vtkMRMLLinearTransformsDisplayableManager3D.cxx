@@ -44,6 +44,7 @@
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
+#include <vtkPickingManager.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
@@ -266,6 +267,16 @@ void vtkMRMLLinearTransformsDisplayableManager3D::vtkInternal::AddDisplayNode(vt
   // - Widget events
   pipeline->Widget->AddObserver(
     vtkCommand::InteractionEvent, this->External->GetWidgetsCallbackCommand());
+
+  if (this->External->GetInteractor()->GetPickingManager())
+    {
+    if (!(this->External->GetInteractor()->GetPickingManager()->GetEnabled()))
+      {
+      // if the picking manager is not already turned on for this
+      // interactor, enable it
+      this->External->GetInteractor()->GetPickingManager()->EnabledOn();
+      }
+    }
 
   // Add actor / set renderers and cache
   pipeline->Widget->SetInteractor(this->External->GetInteractor());
