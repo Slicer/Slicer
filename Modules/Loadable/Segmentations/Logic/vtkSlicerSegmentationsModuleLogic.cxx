@@ -95,6 +95,7 @@ vtkSlicerSegmentationsModuleLogic::~vtkSlicerSegmentationsModuleLogic()
     this->SubjectHierarchyUIDCallbackCommand->Delete();
     this->SubjectHierarchyUIDCallbackCommand = NULL;
     }
+  this->SetTerminologiesLogic(NULL);
 }
 
 //----------------------------------------------------------------------------
