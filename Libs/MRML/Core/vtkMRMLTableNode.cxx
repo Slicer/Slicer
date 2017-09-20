@@ -26,7 +26,6 @@
 
 // VTK includes
 #include <vtkCommand.h>
-#include <vtkFloatArray.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkStringArray.h>
@@ -45,6 +44,8 @@ static const char SCHEMA_COLUMN_DEFAULT_VALUE[] = "defaultValue";
 static const char SCHEMA_COLUMN_LONG_NAME[] = "longName";
 static const char SCHEMA_COLUMN_DESCRIPTION[] = "description";
 static const char SCHEMA_COLUMN_UNIT_LABEL[] = "unitLabel";
+
+static const char SCHEMA_DEFAULT_COLUMN_NAME[] = "<default>";
 
 //------------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLTableNode);
@@ -312,9 +313,16 @@ vtkAbstractArray* vtkMRMLTableNode::AddColumn(vtkAbstractArray* column)
   else
     {
     int numberOfRows = this->Table->GetNumberOfRows();
-    newColumn = vtkSmartPointer<vtkFloatArray>::New();
+    int valueTypeId = this->GetColumnValueTypeFromSchema(SCHEMA_DEFAULT_COLUMN_NAME);
+    if (valueTypeId == VTK_VOID)
+      {
+      // schema is not defined or no valid column type is defined for column
+      valueTypeId = VTK_STRING;
+      }
+    newColumn = vtkSmartPointer<vtkAbstractArray>::Take(vtkAbstractArray::CreateArray(valueTypeId));
     newColumn->SetNumberOfTuples(numberOfRows);
-    vtkVariant emptyCell(0.);
+
+    vtkVariant emptyCell(this->GetColumnProperty(SCHEMA_DEFAULT_COLUMN_NAME, SCHEMA_COLUMN_DEFAULT_VALUE));
     for (int i=0; i<numberOfRows; i++)
       {
       newColumn->SetVariantValue(i, emptyCell);
@@ -710,11 +718,17 @@ std::string vtkMRMLTableNode::GetColumnProperty(int columnIndex, const std::stri
 //----------------------------------------------------------------------------
 std::string vtkMRMLTableNode::GetColumnProperty(const std::string& columnName, const std::string& propertyName)
 {
-  if (propertyName == SCHEMA_COLUMN_NAME || propertyName == SCHEMA_COLUMN_TYPE)
+  if (propertyName == SCHEMA_COLUMN_NAME)
     {
     vtkErrorMacro("vtkMRMLTableNode::GetColumnProperty failed: reserved propertyName: " << propertyName);
     return "";
     }
+  if (propertyName == SCHEMA_COLUMN_TYPE && columnName != SCHEMA_DEFAULT_COLUMN_NAME)
+    {
+    vtkErrorMacro("vtkMRMLTableNode::GetColumnProperty failed: reserved propertyName: " << propertyName);
+    return "";
+    }
+
   return this->GetColumnPropertyInternal(columnName, propertyName);
 }
 
@@ -760,7 +774,12 @@ void vtkMRMLTableNode::SetColumnProperty(int columnIndex, const std::string& pro
 //----------------------------------------------------------------------------
 void vtkMRMLTableNode::SetColumnProperty(const std::string& columnName, const std::string& propertyName, const std::string& propertyValue)
 {
-  if (propertyName == SCHEMA_COLUMN_NAME || propertyName == SCHEMA_COLUMN_TYPE)
+  if (propertyName == SCHEMA_COLUMN_NAME)
+    {
+    vtkErrorMacro("vtkMRMLTableNode::SetColumnProperty failed: reserved propertyName: " << propertyName);
+    return;
+    }
+  if (propertyName == SCHEMA_COLUMN_TYPE && columnName != SCHEMA_DEFAULT_COLUMN_NAME)
     {
     vtkErrorMacro("vtkMRMLTableNode::SetColumnProperty failed: reserved propertyName: " << propertyName);
     return;
@@ -974,4 +993,27 @@ vtkIdType vtkMRMLTableNode::InsertNextBlankRowWithDefaultValues(vtkTable* table)
     }
 
   return rowIndex;
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLTableNode::GetDefaultColumnName()
+{
+  return SCHEMA_DEFAULT_COLUMN_NAME;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLTableNode::SetDefaultColumnType(const std::string& type, const std::string& defaultValue /* ="" */)
+{
+  int valueType = this->GetValueTypeFromString(type);
+  if (valueType == VTK_VOID)
+    {
+    vtkErrorMacro("vtkMRMLTableNode::SetDefaultColumnType failed: Unknown column value type: " << type
+      << ". Supported types: string, double, float, int, unsigned int, bit,"
+      ", short, unsigned short, long, unsigned long, char, signed char, unsigned char, long long, unsigned long long"
+      ", __int64, unsigned __int64, idtype");
+    return false;
+    }
+  this->SetColumnProperty(SCHEMA_DEFAULT_COLUMN_NAME, SCHEMA_COLUMN_TYPE, type);
+  this->SetColumnProperty(SCHEMA_DEFAULT_COLUMN_NAME, SCHEMA_COLUMN_TYPE, defaultValue);
+  return true;
 }

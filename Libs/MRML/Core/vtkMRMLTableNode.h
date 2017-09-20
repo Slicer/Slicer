@@ -88,7 +88,8 @@ public:
   /// Set schema table
   ///
   /// Each row of the schema table contains description of a data table column. Columns of the schema table:
-  /// - columnName: name of the data table column that properties are defined for (required)
+  /// - columnName: name of the data table column that properties are defined for  (required)
+  ///   Column name \<default\> is reserved for defining default properties for new columns.
   /// - type: data type of the column. Supported types: string, double, float, int, unsigned int, bit,
   ///   short, unsigned short, long, unsigned long, char, signed char, unsigned char, long long, unsigned long long
   ///   __int64, unsigned __int64, idtype. Default: string.
@@ -257,6 +258,19 @@ public:
   /// Insert next blank row into the table, using default values defined in the schema.
   /// \return row index of the inserted row
   vtkIdType InsertNextBlankRowWithDefaultValues(vtkTable* table);
+
+  /// Set default type and default value for new columns.
+  /// This is a convenience method to set column type with a simple call.
+  /// To get or set other default properties, call SetColumnProperty()
+  /// or GetColumnProperty() using the column name returned by GetDefaultColumnName().
+  /// \param type: type of valyes stored in new columns by default (string, double, ...)
+  /// \param defaultValue: this value is used when a new row is added to the column
+  /// \return True on success.
+  /// \sa SetAndObserveSchema
+  bool SetDefaultColumnType(const std::string& type, const std::string& defaultValue="");
+
+  /// Name of the column that stores default properties that are used when a new column is created.
+  const char* GetDefaultColumnName();
 
   //----------------------------------------------------------------
   /// Constructor and destructor

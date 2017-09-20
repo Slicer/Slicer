@@ -5,3 +5,4 @@ TestInt,int,,Int column for testing,Descripton can contain comma but then all va
 TestDouble,double,0,Double column for testing,Default value is 0,mm,,,
 TestFloat,float,1.00E+06,Float column for testing,Default value is a big number,sec,,,
 SUV,double,nan,Standardized Uptake Value body weight,,g/ml,{SUVbw}g/ml,UCUM,Standardized Uptake Value body weight
+<default>,string,,,,,,,
