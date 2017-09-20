@@ -609,7 +609,6 @@ QMimeData* qMRMLSubjectHierarchyModel::mimeData(const QModelIndexList& indexes)c
     {
     return 0;
     }
-  QModelIndex parent = indexes[0].parent();
   QModelIndexList allColumnsIndexes;
   foreach(const QModelIndex& index, indexes)
     {
@@ -1406,7 +1405,6 @@ void qMRMLSubjectHierarchyModel::delayedItemChanged()
   // Update each dropped item
   foreach(vtkIdType draggedShItemID, d->DraggedSubjectHierarchyItems)
     {
-    QModelIndex parentIndex = this->indexFromSubjectHierarchyItem(draggedShItemID).parent();
     this->updateSubjectHierarchyItemFromItem(
       draggedShItemID, this->itemFromSubjectHierarchyItem(draggedShItemID) );
     }
