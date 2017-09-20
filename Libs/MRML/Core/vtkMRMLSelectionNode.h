@@ -144,6 +144,11 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   void SetActiveLayoutID(const char* id);
   void SetReferenceActiveLayoutID (const char *id) { this->SetActiveLayoutID(id); };
 
+  /// the ID of a MRMLPlotChartNode
+  vtkGetStringMacro (ActivePlotChartID );
+  void SetActivePlotChartID(const char* id);
+  void SetReferenceActivePlotChartID (const char *id) { this->SetActivePlotChartID(id); };
+
   /// A list of events that this node can throw
   /// ActivePlaceNodeIDChangedEvent: is no longer observed by the Mouse mode
   /// tool bar, it only watches for the ActivePlaceNodeClassNameChangedEvent
@@ -268,6 +273,7 @@ protected:
   char *ActiveTableID;
   char *ActiveViewID;
   char *ActiveLayoutID;
+  char *ActivePlotChartID;
 
   /// displayable/Display node class pairs for contolling
   /// to which display node to apply properties in hierarchy display widgets

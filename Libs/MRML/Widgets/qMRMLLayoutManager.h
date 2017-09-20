@@ -47,6 +47,7 @@ class vtkMRMLChartViewNode;
 class vtkMRMLTableNode;
 class vtkMRMLTableViewNode;
 class vtkMRMLViewNode;
+class vtkMRMLPlotViewNode;
 
 class vtkCollection;
 class vtkRenderer;
@@ -86,6 +87,7 @@ class QMRML_WIDGETS_EXPORT qMRMLLayoutManager : public ctkLayoutFactory
   Q_PROPERTY(int threeDViewCount READ threeDViewCount DESIGNABLE false)
   Q_PROPERTY(int chartViewCount READ chartViewCount DESIGNABLE false)
   Q_PROPERTY(int tableViewCount READ tableViewCount DESIGNABLE false)
+  Q_PROPERTY(int plotViewCount READ plotViewCount DESIGNABLE false)
 
 public:
   /// Superclass typedef
@@ -138,6 +140,7 @@ public:
   int threeDViewCount()const;
   int chartViewCount()const;
   int tableViewCount()const;
+  int plotViewCount()const;
 
   /// Get ThreeDWidget identified by \a id
   /// where \a id is an integer ranging from 0 to N-1 with N being the number
@@ -146,6 +149,7 @@ public:
   Q_INVOKABLE qMRMLThreeDWidget* threeDWidget(int id)const;
   Q_INVOKABLE qMRMLChartWidget* chartWidget(int id)const;
   Q_INVOKABLE qMRMLTableWidget* tableWidget(int id)const;
+  Q_INVOKABLE qMRMLTableWidget* plotWidget(int id)const;
 
   /// Return the up-to-date list of vtkMRMLSliceLogics associated to the slice views.
   /// The returned collection object is owned by the layout manager.
@@ -193,6 +197,17 @@ public:
   /// \sa  activeMRMLTableViewNode(), activeMRMLThreeDViewNode(),
   /// activeThreeDRenderer()
   Q_INVOKABLE vtkRenderer* activeTableRenderer()const;
+  /// Return the view node of the active plot view.
+  /// \todo For now the active view is the first plot view.
+  /// \sa  activePlotRenderer(), activeMRMLThreeDViewNode(),
+  /// activeThreeDRenderer()
+  Q_INVOKABLE vtkMRMLPlotViewNode* activeMRMLPlotViewNode()const;
+  /// Return the renderer of the active plot view.
+  /// \todo For now the active view is the first plot view.
+  /// \sa  activeMRMLPlotViewNode(), activeMRMLThreeDViewNode(),
+  /// activeThreeDRenderer()
+  Q_INVOKABLE vtkRenderer* activePlotRenderer()const;
+
 
 public slots:
   /// Set the enabled property value
@@ -224,9 +239,11 @@ signals:
   void activeMRMLThreeDViewNodeChanged(vtkMRMLViewNode * newActiveMRMLThreeDViewNode);
   void activeMRMLChartViewNodeChanged(vtkMRMLChartViewNode * newActiveMRMLChartViewNode);
   void activeMRMLTableViewNodeChanged(vtkMRMLTableViewNode * newActiveMRMLChartViewNode);
+  void activeMRMLPlotViewNodeChanged(vtkMRMLPlotViewNode * newActiveMRMLPlotViewNode);
   void activeThreeDRendererChanged(vtkRenderer* newRenderer);
   void activeChartRendererChanged(vtkRenderer* newRenderer);
   void activeTableRendererChanged(vtkRenderer* newRenderer);
+  void activePlotRendererChanged(vtkRenderer* newRenderer);
   void layoutChanged(int);
 
   /// Signal emitted when editing of a node is requested from within the layout

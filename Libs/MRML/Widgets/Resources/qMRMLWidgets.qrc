@@ -1,162 +1,165 @@
 <RCC>
-  <qresource>
-    <file>Icons/LayoutCompareViewGrid.png</file>
-    <file>Icons/VisibleOff.png</file>
-    <file>Icons/VisibleOn.png</file>
-    <file>Icons/VisibleOrInvisible.png</file>
-    <file>Icons/VisiblePartially.png</file>
-    <file>Icons/LinkOff.png</file>
-    <file>Icons/LinkOn.png</file>
-    <file>Icons/HotLinkOn.png</file>
-    <file>Icons/PushPinIn.png</file>
-    <file>Icons/PushPinOut.png</file>
-    <file>Icons/Layout3DTableView.png</file>
-    <file>Icons/LayoutChooseView.png</file>
-    <file>Icons/LayoutCompareView.png</file>
-    <file>Icons/LayoutConventionalView.png</file>
-    <file>Icons/LayoutConventionalWidescreenView.png</file>
-    <file>Icons/LayoutDual3DView.png</file>
-    <file>Icons/LayoutFourUpView.png</file>
-    <file>Icons/LayoutFourUpQuantitativeView.png</file>
-    <file>Icons/LayoutFourUpTableView.png</file>
-    <file>Icons/LayoutLightboxView.png</file>
-    <file>Icons/LayoutOneUp3DView.png</file>
-    <file>Icons/LayoutOneUpGreenSliceView.png</file>
-    <file>Icons/LayoutOneUpQuantitativeView.png</file>
-    <file>Icons/LayoutOneUpRedSliceView.png</file>
-    <file>Icons/LayoutOneUpYellowSliceView.png</file>
-    <file>Icons/LayoutSideBySideCompareView.png</file>
-    <file>Icons/LayoutTabbed3DView.png</file>
-    <file>Icons/LayoutTabbedSliceView.png</file>
-    <file>Icons/LayoutTriple3DView.png</file>
-    <file>Icons/LayoutThreeOverThreeView.png</file>
-    <file>Icons/LayoutFourOverFourView.png</file>
-    <file>Icons/LayoutTwoOverTwoView.png</file>
-    <file>Icons/LayoutSideBySideView.png</file>
-    <file>Icons/LayoutFourByThreeSliceView.png</file>
-    <file>Icons/LayoutFourByTwoSliceView.png</file>
-    <file>Icons/LayoutFiveByTwoSliceView.png</file>
-    <file>Icons/LayoutThreeByThreeSliceView.png</file>
-    <file>Icons/OrientationMarker.png</file>
-    <file>Icons/Ruler.png</file>
-    <file>Icons/SliceMoreOptions.png</file>
-    <file>Icons/SliceViewerBG.png</file>
-    <file>Icons/SliceViewerFG.png</file>
-    <file>Icons/SliceViewerLB.png</file>
-    <file>Icons/SliceViewerSEG.png</file>
-    <file>Icons/SliceViewerOR.png</file>
-    <file>Icons/SliceInterpolationOn.png</file>
-    <file>Icons/SliceInterpolationOff.png</file>
-    <file>Icons/SlicerAutomaticSliceSpacing.png</file>
-    <file>Icons/SlicerManualSliceSpacing.png</file>
-    <file>Icons/SlicesAnnotation.png</file>
-    <file>Icons/SlicesComposite.png</file>
-    <file>Icons/SlicesCrosshair.png</file>
-    <file>Icons/SlicesFadeToBG.png</file>
-    <file>Icons/SlicesFadeToFG.png</file>
-    <file>Icons/SlicesFeaturesVisible.png</file>
-    <file>Icons/SlicesFieldOfView.png</file>
-    <file>Icons/SlicesFitToWindow.png</file>
-    <file>Icons/SlicesLabelFill.png</file>
-    <file>Icons/SlicesLabelNoOutline.png</file>
-    <file>Icons/SlicesLabelOutline.png</file>
-    <file>Icons/SlicesLabelOutlineAndFill.png</file>
-    <file>Icons/SlicesLabelOpacity.png</file>
-    <file>Icons/SlicerRotateToPixelSpace.png</file>
-    <file>Icons/SlicesSpatialUnit.png</file>
-    <file>Icons/SlicesToggleFgBg.png</file>
-    <file>Icons/SlicesWinLevThreshCol.png</file>
-    <file>Icons/SliceWidgetOff.png</file>
-    <file>Icons/SliceWidgetOn.png</file>
-    <file>Icons/SnapshotDelete.png</file>
-    <file>Icons/SnapshotRestore.png</file>
-    <file>Icons/ViewAxis.png</file>
-    <file>Icons/ViewCamera.png</file>
-    <file>Icons/ViewCameraSelect.png</file>
-    <file>Icons/ViewCapture.png</file>
-    <file>Icons/ViewCenter.png</file>
-    <file>Icons/ViewFeaturesVisible.png</file>
-    <file>Icons/ViewFPS.png</file>
-    <file>Icons/ViewOrtho.png</file>
-    <file>Icons/ViewPerspective.png</file>
-    <file>Icons/ViewPitch.png</file>
-    <file>Icons/ViewRock.png</file>
-    <file>Icons/ViewRoll.png</file>
-    <file>Icons/ViewSpin.png</file>
-    <file>Icons/ViewStereo.png</file>
-    <file>Icons/ViewYaw.png</file>
-    <file>Icons/ViewZoomIn.png</file>
-    <file>Icons/ViewZoomOut.png</file>
-    <file>Icons/ClippingUnion.png</file>
-    <file>Icons/ClippingIntersection.png</file>
-    <file>Icons/RedSpacePositive.png</file>
-    <file>Icons/RedSpaceNegative.png</file>
-    <file>Icons/YellowSpacePositive.png</file>
-    <file>Icons/YellowSpaceNegative.png</file>
-    <file>Icons/GreenSpacePositive.png</file>
-    <file>Icons/GreenSpaceNegative.png</file>
-    <file>Icons/column_add.png</file>
-    <file>Icons/column_delete.png</file>
-    <file>Icons/column_header_lock.png</file>
-    <file>Icons/row_add.png</file>
-    <file>Icons/row_delete.png</file>
-    <file>Icons/row_header_lock.png</file>
-    <file alias="AbdomenColors">Icons/LUTs/AbdomenColors.png</file>
-    <file alias="blankLUT">Icons/LUTs/blankLUT.png</file>
-    <file alias="dGEMRIC-3T">Icons/LUTs/cartilegeMIdGEMRIC-3T.png</file>
-    <file alias="dGEMRIC-1.5T">Icons/LUTs/cartilegeMRIdGEMRIC-1.5T.png</file>
-    <file alias="Blue">Icons/LUTs/discreteBlue.png</file>
-    <file alias="Cool1">Icons/LUTs/discreteCool1.png</file>
-    <file alias="Cool2">Icons/LUTs/discreteCool2.png</file>
-    <file alias="Cool3">Icons/LUTs/discreteCool3.png</file>
-    <file alias="Cyan">Icons/LUTs/discreteCyan.png</file>
-    <file alias="Desert">Icons/LUTs/discreteDesert.png</file>
-    <file alias="fMRI">Icons/LUTs/discretefMRI.png</file>
-    <file alias="fMRIPA">Icons/LUTs/discretefMRIPA.png</file>
-    <file alias="FullRainbow">Icons/LUTs/discreteFullRainbow.png</file>
-    <file alias="Green">Icons/LUTs/discreteGreen.png</file>
-    <file alias="Grey">Icons/LUTs/discreteGrey.png</file>
-    <file alias="InvertedGrey">Icons/LUTs/discreteInvertedGrey.png</file>
-    <file alias="Iron">Icons/LUTs/discreteIron.png</file>
-    <file alias="Labels">Icons/LUTs/discreteLabels.png</file>
-    <file alias="Magenta">Icons/LUTs/discreteMagenta.png</file>
-    <file alias="Ocean">Icons/LUTs/discreteOcean.png</file>
-    <file alias="Rainbow">Icons/LUTs/discreteRainbow.png</file>
-    <file alias="Random">Icons/LUTs/discreteRandom.png</file>
-    <file alias="RandomIntegers">Icons/LUTs/discreteRandomIntegers.png</file>
-    <file alias="Red">Icons/LUTs/discreteRed.png</file>
-    <file alias="ReverseRainbow">Icons/LUTs/discreteReverseRainbow.png</file>
-    <file alias="Warm1">Icons/LUTs/discreteWarm1.png</file>
-    <file alias="Warm2">Icons/LUTs/discreteWarm2.png</file>
-    <file alias="Warm3">Icons/LUTs/discreteWarm3.png</file>
-    <file alias="Yellow">Icons/LUTs/discreteYellow.png</file>
-    <file alias="BlueRed">Icons/LUTs/freeSurferBlueRed.png</file>
-    <file alias="GreenRed">Icons/LUTs/freeSurferGreenRed.png</file>
-    <file alias="Heat">Icons/LUTs/freeSurferHeat.png</file>
-    <file alias="RedBlue">Icons/LUTs/freeSurferRedBlue.png</file>
-    <file alias="RedGreen">Icons/LUTs/freeSurferRedGreen.png</file>
-    <file alias="GenericAnatomyColors">Icons/LUTs/genericAnatomyColors.png</file>
-    <file alias="GenericColors">Icons/LUTs/genericColors.png</file>
-    <file alias="UserDefined">Icons/LUTs/labelsCustom.png</file>
-    <file alias="64Color-Nonsemantic">Icons/LUTs/labelsNonSemantic.png</file>
-    <file alias="PelvisColor">Icons/LUTs/labelsPelvisColor.png</file>
-    <file alias="PET-Heat">Icons/LUTs/petPETHeat.png</file>
-    <file alias="PET-MaximumIntensityProjection">Icons/LUTs/petPETMIP.png</file>
-    <file alias="PET-Rainbow">Icons/LUTs/petPETRainbow.png</file>
-    <file alias="CoolShade1">Icons/LUTs/shadeCoolShade1.png</file>
-    <file alias="CoolShade2">Icons/LUTs/shadeCoolShade2.png</file>
-    <file alias="CoolShade3">Icons/LUTs/shadeCoolShade3.png</file>
-    <file alias="WarmShade1">Icons/LUTs/shadeWarmShade1.png</file>
-    <file alias="WarmShade2">Icons/LUTs/shadeWarmShade2.png</file>
-    <file alias="WarmShade3">Icons/LUTs/shadeWarmShade3.png</file>
-    <file alias="Slicer3_2010_Brain_Labels">Icons/LUTs/slicerBrainLUT2010.png</file>
-    <file alias="Slicer3_2010_Label_Colors">Icons/LUTs/slicerShortLUT.png</file>
-    <file alias="SPL-BrainAtlas-ColorFile">Icons/LUTs/SPL-BrainAtlas-ColorFile.png</file>
-    <file alias="CoolTint1">Icons/LUTs/tintCoolTint1.png</file>
-    <file alias="CoolTint2">Icons/LUTs/tintCoolTint2.png</file>
-    <file alias="CoolTint3">Icons/LUTs/tintCoolTint3.png</file>
-    <file alias="WarmTint1">Icons/LUTs/tintWarmTint1.png</file>
-    <file alias="WarmTint2">Icons/LUTs/tintWarmTint2.png</file>
-    <file alias="WarmTint3">Icons/LUTs/tintWarmTint3.png</file>
-  </qresource>
+    <qresource prefix="/">
+        <file>Icons/LayoutCompareViewGrid.png</file>
+        <file>Icons/VisibleOff.png</file>
+        <file>Icons/VisibleOn.png</file>
+        <file>Icons/VisibleOrInvisible.png</file>
+        <file>Icons/VisiblePartially.png</file>
+        <file>Icons/LinkOff.png</file>
+        <file>Icons/LinkOn.png</file>
+        <file>Icons/HotLinkOn.png</file>
+        <file>Icons/PushPinIn.png</file>
+        <file>Icons/PushPinOut.png</file>
+        <file>Icons/Layout3DTableView.png</file>
+        <file>Icons/LayoutChooseView.png</file>
+        <file>Icons/LayoutCompareView.png</file>
+        <file>Icons/LayoutConventionalView.png</file>
+        <file>Icons/LayoutConventionalWidescreenView.png</file>
+        <file>Icons/LayoutDual3DView.png</file>
+        <file>Icons/LayoutFourUpView.png</file>
+        <file>Icons/LayoutFourUpQuantitativeView.png</file>
+        <file>Icons/LayoutFourUpTableView.png</file>
+        <file>Icons/LayoutLightboxView.png</file>
+        <file>Icons/LayoutOneUp3DView.png</file>
+        <file>Icons/LayoutOneUpGreenSliceView.png</file>
+        <file>Icons/LayoutOneUpQuantitativeView.png</file>
+        <file>Icons/LayoutOneUpRedSliceView.png</file>
+        <file>Icons/LayoutOneUpYellowSliceView.png</file>
+        <file>Icons/LayoutSideBySideCompareView.png</file>
+        <file>Icons/LayoutTabbed3DView.png</file>
+        <file>Icons/LayoutTabbedSliceView.png</file>
+        <file>Icons/LayoutTriple3DView.png</file>
+        <file>Icons/LayoutThreeOverThreeView.png</file>
+        <file>Icons/LayoutFourOverFourView.png</file>
+        <file>Icons/LayoutTwoOverTwoView.png</file>
+        <file>Icons/LayoutSideBySideView.png</file>
+        <file>Icons/LayoutFourByThreeSliceView.png</file>
+        <file>Icons/LayoutFourByTwoSliceView.png</file>
+        <file>Icons/LayoutFiveByTwoSliceView.png</file>
+        <file>Icons/LayoutThreeByThreeSliceView.png</file>
+        <file>Icons/OrientationMarker.png</file>
+        <file>Icons/Ruler.png</file>
+        <file>Icons/SliceMoreOptions.png</file>
+        <file>Icons/SliceViewerBG.png</file>
+        <file>Icons/SliceViewerFG.png</file>
+        <file>Icons/SliceViewerLB.png</file>
+        <file>Icons/SliceViewerSEG.png</file>
+        <file>Icons/SliceViewerOR.png</file>
+        <file>Icons/SliceInterpolationOn.png</file>
+        <file>Icons/SliceInterpolationOff.png</file>
+        <file>Icons/SlicerAutomaticSliceSpacing.png</file>
+        <file>Icons/SlicerManualSliceSpacing.png</file>
+        <file>Icons/SlicesAnnotation.png</file>
+        <file>Icons/SlicesComposite.png</file>
+        <file>Icons/SlicesCrosshair.png</file>
+        <file>Icons/SlicesFadeToBG.png</file>
+        <file>Icons/SlicesFadeToFG.png</file>
+        <file>Icons/SlicesFeaturesVisible.png</file>
+        <file>Icons/SlicesFieldOfView.png</file>
+        <file>Icons/SlicesFitToWindow.png</file>
+        <file>Icons/SlicesLabelFill.png</file>
+        <file>Icons/SlicesLabelNoOutline.png</file>
+        <file>Icons/SlicesLabelOutline.png</file>
+        <file>Icons/SlicesLabelOutlineAndFill.png</file>
+        <file>Icons/SlicesLabelOpacity.png</file>
+        <file>Icons/SlicerRotateToPixelSpace.png</file>
+        <file>Icons/SlicesSpatialUnit.png</file>
+        <file>Icons/SlicesToggleFgBg.png</file>
+        <file>Icons/SlicesWinLevThreshCol.png</file>
+        <file>Icons/SliceWidgetOff.png</file>
+        <file>Icons/SliceWidgetOn.png</file>
+        <file>Icons/SnapshotDelete.png</file>
+        <file>Icons/SnapshotRestore.png</file>
+        <file>Icons/ViewAxis.png</file>
+        <file>Icons/ViewCamera.png</file>
+        <file>Icons/ViewCameraSelect.png</file>
+        <file>Icons/ViewCapture.png</file>
+        <file>Icons/ViewCenter.png</file>
+        <file>Icons/ViewFeaturesVisible.png</file>
+        <file>Icons/ViewFPS.png</file>
+        <file>Icons/ViewOrtho.png</file>
+        <file>Icons/ViewPerspective.png</file>
+        <file>Icons/ViewPitch.png</file>
+        <file>Icons/ViewRock.png</file>
+        <file>Icons/ViewRoll.png</file>
+        <file>Icons/ViewSpin.png</file>
+        <file>Icons/ViewStereo.png</file>
+        <file>Icons/ViewYaw.png</file>
+        <file>Icons/ViewZoomIn.png</file>
+        <file>Icons/ViewZoomOut.png</file>
+        <file>Icons/ClippingUnion.png</file>
+        <file>Icons/ClippingIntersection.png</file>
+        <file>Icons/RedSpacePositive.png</file>
+        <file>Icons/RedSpaceNegative.png</file>
+        <file>Icons/YellowSpacePositive.png</file>
+        <file>Icons/YellowSpaceNegative.png</file>
+        <file>Icons/GreenSpacePositive.png</file>
+        <file>Icons/GreenSpaceNegative.png</file>
+        <file>Icons/column_add.png</file>
+        <file>Icons/column_delete.png</file>
+        <file>Icons/column_header_lock.png</file>
+        <file>Icons/row_add.png</file>
+        <file>Icons/row_delete.png</file>
+        <file>Icons/row_header_lock.png</file>
+        <file alias="AbdomenColors">Icons/LUTs/AbdomenColors.png</file>
+        <file alias="blankLUT">Icons/LUTs/blankLUT.png</file>
+        <file alias="dGEMRIC-3T">Icons/LUTs/cartilegeMIdGEMRIC-3T.png</file>
+        <file alias="dGEMRIC-1.5T">Icons/LUTs/cartilegeMRIdGEMRIC-1.5T.png</file>
+        <file alias="Blue">Icons/LUTs/discreteBlue.png</file>
+        <file alias="Cool1">Icons/LUTs/discreteCool1.png</file>
+        <file alias="Cool2">Icons/LUTs/discreteCool2.png</file>
+        <file alias="Cool3">Icons/LUTs/discreteCool3.png</file>
+        <file alias="Cyan">Icons/LUTs/discreteCyan.png</file>
+        <file alias="Desert">Icons/LUTs/discreteDesert.png</file>
+        <file alias="fMRI">Icons/LUTs/discretefMRI.png</file>
+        <file alias="fMRIPA">Icons/LUTs/discretefMRIPA.png</file>
+        <file alias="FullRainbow">Icons/LUTs/discreteFullRainbow.png</file>
+        <file alias="Green">Icons/LUTs/discreteGreen.png</file>
+        <file alias="Grey">Icons/LUTs/discreteGrey.png</file>
+        <file alias="InvertedGrey">Icons/LUTs/discreteInvertedGrey.png</file>
+        <file alias="Iron">Icons/LUTs/discreteIron.png</file>
+        <file alias="Labels">Icons/LUTs/discreteLabels.png</file>
+        <file alias="Magenta">Icons/LUTs/discreteMagenta.png</file>
+        <file alias="Ocean">Icons/LUTs/discreteOcean.png</file>
+        <file alias="Rainbow">Icons/LUTs/discreteRainbow.png</file>
+        <file alias="Random">Icons/LUTs/discreteRandom.png</file>
+        <file alias="RandomIntegers">Icons/LUTs/discreteRandomIntegers.png</file>
+        <file alias="Red">Icons/LUTs/discreteRed.png</file>
+        <file alias="ReverseRainbow">Icons/LUTs/discreteReverseRainbow.png</file>
+        <file alias="Warm1">Icons/LUTs/discreteWarm1.png</file>
+        <file alias="Warm2">Icons/LUTs/discreteWarm2.png</file>
+        <file alias="Warm3">Icons/LUTs/discreteWarm3.png</file>
+        <file alias="Yellow">Icons/LUTs/discreteYellow.png</file>
+        <file alias="BlueRed">Icons/LUTs/freeSurferBlueRed.png</file>
+        <file alias="GreenRed">Icons/LUTs/freeSurferGreenRed.png</file>
+        <file alias="Heat">Icons/LUTs/freeSurferHeat.png</file>
+        <file alias="RedBlue">Icons/LUTs/freeSurferRedBlue.png</file>
+        <file alias="RedGreen">Icons/LUTs/freeSurferRedGreen.png</file>
+        <file alias="GenericAnatomyColors">Icons/LUTs/genericAnatomyColors.png</file>
+        <file alias="GenericColors">Icons/LUTs/genericColors.png</file>
+        <file alias="UserDefined">Icons/LUTs/labelsCustom.png</file>
+        <file alias="64Color-Nonsemantic">Icons/LUTs/labelsNonSemantic.png</file>
+        <file alias="PelvisColor">Icons/LUTs/labelsPelvisColor.png</file>
+        <file alias="PET-Heat">Icons/LUTs/petPETHeat.png</file>
+        <file alias="PET-MaximumIntensityProjection">Icons/LUTs/petPETMIP.png</file>
+        <file alias="PET-Rainbow">Icons/LUTs/petPETRainbow.png</file>
+        <file alias="CoolShade1">Icons/LUTs/shadeCoolShade1.png</file>
+        <file alias="CoolShade2">Icons/LUTs/shadeCoolShade2.png</file>
+        <file alias="CoolShade3">Icons/LUTs/shadeCoolShade3.png</file>
+        <file alias="WarmShade1">Icons/LUTs/shadeWarmShade1.png</file>
+        <file alias="WarmShade2">Icons/LUTs/shadeWarmShade2.png</file>
+        <file alias="WarmShade3">Icons/LUTs/shadeWarmShade3.png</file>
+        <file alias="Slicer3_2010_Brain_Labels">Icons/LUTs/slicerBrainLUT2010.png</file>
+        <file alias="Slicer3_2010_Label_Colors">Icons/LUTs/slicerShortLUT.png</file>
+        <file alias="SPL-BrainAtlas-ColorFile">Icons/LUTs/SPL-BrainAtlas-ColorFile.png</file>
+        <file alias="CoolTint1">Icons/LUTs/tintCoolTint1.png</file>
+        <file alias="CoolTint2">Icons/LUTs/tintCoolTint2.png</file>
+        <file alias="CoolTint3">Icons/LUTs/tintCoolTint3.png</file>
+        <file alias="WarmTint1">Icons/LUTs/tintWarmTint1.png</file>
+        <file alias="WarmTint2">Icons/LUTs/tintWarmTint2.png</file>
+        <file alias="WarmTint3">Icons/LUTs/tintWarmTint3.png</file>
+        <file>Icons/LayoutThreeOverThreeQuantitativeView.png</file>
+        <file>Icons/LayoutConvetionalQuantitativeView.png</file>
+        <file>Icons/LayoutFourUpQuantitativeTableView.png</file>
+    </qresource>
 </RCC>

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>274</width>
+    <width>351</width>
     <height>360</height>
    </rect>
   </property>
@@ -32,13 +32,6 @@
      <property name="sizeConstraint">
       <enum>QLayout::SetMinimumSize</enum>
      </property>
-     <item>
-      <widget class="QLabel" name="TableNodeSelectorLabel">
-       <property name="text">
-        <string>Active Table:</string>
-       </property>
-      </widget>
-     </item>
      <item>
       <widget class="qMRMLNodeComboBox" name="TableNodeSelector">
        <property name="nodeTypes">
@@ -161,6 +154,20 @@
             <number>0</number>
            </property>
            <item>
+            <widget class="QToolButton" name="PlotButton">
+             <property name="toolTip">
+              <string>Generate an Interactive Plot based on user-selection of the columns of the table.</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+               <normaloff>:/Icons/Medium/SlicerInteractivePlotting.png</normaloff>:/Icons/Medium/SlicerInteractivePlotting.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
             <spacer name="horizontalSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -185,7 +192,7 @@
               <string>...</string>
              </property>
              <property name="icon">
-              <iconset resource="../../Widgets/Resources/qSlicerTablesModuleWidgets.qrc">
+              <iconset>
                <normaloff>:/Icons/column_add.png</normaloff>:/Icons/column_add.png</iconset>
              </property>
             </widget>
@@ -199,7 +206,7 @@
               <string>...</string>
              </property>
              <property name="icon">
-              <iconset resource="../../Widgets/Resources/qSlicerTablesModuleWidgets.qrc">
+              <iconset>
                <normaloff>:/Icons/column_delete.png</normaloff>:/Icons/column_delete.png</iconset>
              </property>
             </widget>
@@ -213,7 +220,7 @@
               <string>...</string>
              </property>
              <property name="icon">
-              <iconset resource="../../Widgets/Resources/qSlicerTablesModuleWidgets.qrc">
+              <iconset>
                <normaloff>:/Icons/row_header_lock.png</normaloff>:/Icons/row_header_lock.png</iconset>
              </property>
              <property name="checkable">
@@ -246,7 +253,7 @@
               <string>...</string>
              </property>
              <property name="icon">
-              <iconset resource="../../Widgets/Resources/qSlicerTablesModuleWidgets.qrc">
+              <iconset>
                <normaloff>:/Icons/row_add.png</normaloff>:/Icons/row_add.png</iconset>
              </property>
             </widget>
@@ -260,7 +267,7 @@
               <string>...</string>
              </property>
              <property name="icon">
-              <iconset resource="../../Widgets/Resources/qSlicerTablesModuleWidgets.qrc">
+              <iconset>
                <normaloff>:/Icons/row_delete.png</normaloff>:/Icons/row_delete.png</iconset>
              </property>
             </widget>
@@ -274,7 +281,7 @@
               <string>...</string>
              </property>
              <property name="icon">
-              <iconset resource="../../Widgets/Resources/qSlicerTablesModuleWidgets.qrc">
+              <iconset>
                <normaloff>:/Icons/column_header_lock.png</normaloff>:/Icons/column_header_lock.png</iconset>
              </property>
              <property name="checkable">
@@ -351,15 +358,15 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>qMRMLTableView</class>
+   <extends>QTableView</extends>
+   <header>qMRMLTableView.h</header>
+  </customwidget>
+  <customwidget>
    <class>qSlicerWidget</class>
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLTableView</class>
-   <extends>QTableView</extends>
-   <header>qMRMLTableView.h</header>
   </customwidget>
   <customwidget>
    <class>ctkCollapsibleButton</class>
@@ -374,6 +381,22 @@
   <include location="../../Widgets/Resources/qSlicerTablesModuleWidgets.qrc"/>
  </resources>
  <connections>
+  <connection>
+   <sender>TableNodeSelector</sender>
+   <signal>currentNodeChanged(vtkMRMLNode*)</signal>
+   <receiver>TableView</receiver>
+   <slot>setMRMLTableNode(vtkMRMLNode*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>240</x>
+     <y>10</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>204</x>
+     <y>758</y>
+    </hint>
+   </hints>
+  </connection>
   <connection>
    <sender>qSlicerTablesModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
@@ -391,18 +414,18 @@
    </hints>
   </connection>
   <connection>
-   <sender>TableNodeSelector</sender>
-   <signal>currentNodeChanged(vtkMRMLNode*)</signal>
+   <sender>qSlicerTablesModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>TableView</receiver>
-   <slot>setMRMLTableNode(vtkMRMLNode*)</slot>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>240</x>
-     <y>10</y>
+     <x>175</x>
+     <y>179</y>
     </hint>
     <hint type="destinationlabel">
-     <x>204</x>
-     <y>758</y>
+     <x>175</x>
+     <y>231</y>
     </hint>
    </hints>
   </connection>

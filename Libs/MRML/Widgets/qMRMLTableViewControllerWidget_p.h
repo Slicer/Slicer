@@ -72,6 +72,7 @@ public:
 
   QAction* CopyAction;
   QAction* PasteAction;
+  QAction* PlotAction;
 
 public slots:
   void onTableNodeSelected(vtkMRMLNode* node);
@@ -84,6 +85,7 @@ public slots:
   void setFirstColumnLocked(bool locked);
   void copySelection();
   void pasteSelection();
+  void plotSelection();
 
 protected:
   virtual void setupPopupUi();

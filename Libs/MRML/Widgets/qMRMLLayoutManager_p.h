@@ -58,6 +58,8 @@ class qMRMLChartView;
 class qMRMLChartWidget;
 class qMRMLTableView;
 class qMRMLTableWidget;
+class qMRMLPlotView;
+class qMRMLPlotWidget;
 class qMRMLThreeDView;
 class qMRMLThreeDWidget;
 class vtkCollection;
@@ -66,6 +68,7 @@ class vtkMRMLLayoutLogic;
 class vtkMRMLLayoutNode;
 class vtkMRMLChartViewNode;
 class vtkMRMLTableViewNode;
+class vtkMRMLPlotViewNode;
 class vtkMRMLViewNode;
 class vtkMRMLSliceNode;
 class vtkXMLDataElement;
@@ -90,6 +93,7 @@ public:
   void setActiveMRMLThreeDViewNode(vtkMRMLViewNode * node);
   void setActiveMRMLChartViewNode(vtkMRMLChartViewNode * node);
   void setActiveMRMLTableViewNode(vtkMRMLTableViewNode * node);
+  void setActiveMRMLPlotViewNode(vtkMRMLPlotViewNode * node);
 
   /// Enable/disable paint event associated with the TargetWidget
   //bool startUpdateLayout();
@@ -107,6 +111,7 @@ public:
   qMRMLThreeDWidget* threeDWidget(vtkMRMLViewNode* node)const;
   qMRMLChartWidget* chartWidget(vtkMRMLChartViewNode* node)const;
   qMRMLTableWidget* tableWidget(vtkMRMLTableViewNode* node)const;
+  qMRMLPlotWidget* plotWidget(vtkMRMLPlotViewNode* node)const;
 
   /// Convenient function allowing to get a reference to the sliceView widget
   /// identified by \a sliceViewName
@@ -130,6 +135,7 @@ public slots:
   void onActiveThreeDViewNodeChanged(vtkMRMLAbstractViewNode*);
   void onActiveChartViewNodeChanged(vtkMRMLAbstractViewNode*);
   void onActiveTableViewNodeChanged(vtkMRMLAbstractViewNode*);
+  void onActivePlotViewNodeChanged(vtkMRMLAbstractViewNode*);
 
   /// Show segmentation controls in slice widgets only if there is at
   /// least one segmentation node in the scene
@@ -143,6 +149,7 @@ public:
   vtkMRMLViewNode*        ActiveMRMLThreeDViewNode;
   vtkMRMLChartViewNode*   ActiveMRMLChartViewNode;
   vtkMRMLTableViewNode*   ActiveMRMLTableViewNode;
+  vtkMRMLPlotViewNode*    ActiveMRMLPlotViewNode;
 protected:
   void showWidget(QWidget* widget);
 };
@@ -194,6 +201,25 @@ public:
 
 protected:
   virtual QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode);
+};
+
+//------------------------------------------------------------------------------
+class QMRML_WIDGETS_EXPORT qMRMLLayoutPlotViewFactory
+  : public qMRMLLayoutViewFactory
+{
+  Q_OBJECT
+public:
+  typedef qMRMLLayoutViewFactory Superclass;
+  qMRMLLayoutPlotViewFactory(QObject* parent = 0);
+
+  virtual QString viewClassName()const;
+
+  vtkMRMLColorLogic* colorLogic()const;
+  void setColorLogic(vtkMRMLColorLogic* colorLogic);
+
+protected:
+  virtual QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode);
+  vtkMRMLColorLogic* ColorLogic;
 };
 
 //------------------------------------------------------------------------------

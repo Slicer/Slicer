@@ -69,6 +69,7 @@ qMRMLTableViewControllerWidgetPrivate::qMRMLTableViewControllerWidgetPrivate(
   this->TableView = 0;
   this->CopyAction = 0;
   this->PasteAction = 0;
+  this->PlotAction = 0;
 }
 
 //---------------------------------------------------------------------------
@@ -89,15 +90,25 @@ void qMRMLTableViewControllerWidgetPrivate::setupPopupUi()
   this->CopyAction = new QAction(this);
   this->CopyAction->setIcon(QIcon(":Icons/Medium/SlicerEditCopy.png"));
   this->CopyAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  // set CTRL+C shortcut
   this->CopyAction->setShortcuts(QKeySequence::Copy);
   this->CopyAction->setToolTip(tr("Copy"));
   q->addAction(this->CopyAction);
   this->PasteAction = new QAction(this);
   this->PasteAction->setIcon(QIcon(":Icons/Medium/SlicerEditPaste.png"));
   this->PasteAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  // set CTRL+V shortcut
   this->PasteAction->setShortcuts(QKeySequence::Paste);
   this->PasteAction->setToolTip(tr("Paste"));
   q->addAction(this->PasteAction);
+  this->PlotAction = new QAction(this);
+  this->PlotAction->setIcon(QIcon(":Icons/Medium/SlicerInteractivePlotting.png"));
+  this->PlotAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  // set CTRL+P shortcut
+  this->PlotAction->setShortcuts(QKeySequence::Print);
+  this->PlotAction->setToolTip(tr("Generate an Interactive Plot based on user-selection"
+                               " of the columns of the table."));
+  q->addAction(this->PlotAction);
 
   // Connect Table selector
   this->connect(this->tableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
@@ -117,6 +128,8 @@ void qMRMLTableViewControllerWidgetPrivate::setupPopupUi()
   this->connect(this->CopyAction, SIGNAL(triggered()), SLOT(copySelection()));
   this->PasteButton->setDefaultAction(this->PasteAction);
   this->connect(this->PasteAction, SIGNAL(triggered()), SLOT(pasteSelection()));
+  this->PlotButton->setDefaultAction(this->PlotAction);
+  this->connect(this->PlotAction, SIGNAL(triggered()), SLOT(plotSelection()));
 
   // Connect the scene
   QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
@@ -259,6 +272,18 @@ void qMRMLTableViewControllerWidgetPrivate::pasteSelection()
     }
   this->TableView->pasteSelection();
 }
+
+//-----------------------------------------------------------------------------
+void qMRMLTableViewControllerWidgetPrivate::plotSelection()
+{
+  if (!this->TableView)
+    {
+    qWarning("qMRMLTableViewControllerWidgetPrivate::plotSelection failed: TableView is invalid");
+    return;
+    }
+  this->TableView->plotSelection();
+}
+
 // --------------------------------------------------------------------------
 // qMRMLTableViewControllerWidget methods
 

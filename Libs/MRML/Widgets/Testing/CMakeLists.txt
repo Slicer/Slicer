@@ -64,6 +64,7 @@ set(TEST_SOURCES
   qMRMLNodeComboBoxTest9.cxx
   qMRMLNodeComboBoxLazyUpdateTest1.cxx
   qMRMLNodeFactoryTest1.cxx
+  qMRMLPlotViewTest1.cxx
   qMRMLScalarInvariantComboBoxTest1.cxx
   qMRMLSceneCategoryModelTest1.cxx
   qMRMLSceneColorTableModelTest1.cxx
@@ -219,6 +220,7 @@ simple_test( qMRMLNodeComboBoxTest8 )
 simple_test( qMRMLNodeComboBoxTest9 )
 simple_test( qMRMLNodeComboBoxLazyUpdateTest1 )
 simple_test( qMRMLNodeFactoryTest1 )
+simple_test( qMRMLPlotViewTest1 )
 simple_test( qMRMLScalarInvariantComboBoxTest1 )
 simple_test( qMRMLSceneCategoryModelTest1 )
 simple_test( qMRMLSceneColorTableModelTest1 )

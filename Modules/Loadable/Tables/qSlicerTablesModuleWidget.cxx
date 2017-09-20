@@ -65,6 +65,7 @@ public:
   vtkWeakPointer<vtkMRMLTableNode> MRMLTableNode;
   QAction*                      CopyAction;
   QAction*                      PasteAction;
+  QAction*                      PlotAction;
 };
 
 //-----------------------------------------------------------------------------
@@ -74,6 +75,7 @@ qSlicerTablesModuleWidgetPrivate::qSlicerTablesModuleWidgetPrivate(qSlicerTables
   this->MRMLTableNode = 0;
   this->CopyAction = 0;
   this->PasteAction = 0;
+  this->PlotAction = 0;
 }
 //-----------------------------------------------------------------------------
 vtkSlicerTablesLogic* qSlicerTablesModuleWidgetPrivate::logic()const
@@ -114,15 +116,25 @@ void qSlicerTablesModuleWidget::setup()
   d->CopyAction = new QAction(this);
   d->CopyAction->setIcon(QIcon(":Icons/Medium/SlicerEditCopy.png"));
   d->CopyAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  // set CTRL+C shortcut
   d->CopyAction->setShortcuts(QKeySequence::Copy);
   d->CopyAction->setToolTip(tr("Copy"));
   this->addAction(d->CopyAction);
   d->PasteAction = new QAction(this);
   d->PasteAction->setIcon(QIcon(":Icons/Medium/SlicerEditPaste.png"));
   d->PasteAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  // set CTRL+V shortcut
   d->PasteAction->setShortcuts(QKeySequence::Paste);
   d->PasteAction->setToolTip(tr("Paste"));
   this->addAction(d->PasteAction);
+  d->PlotAction = new QAction(this);
+  d->PlotAction->setIcon(QIcon(":Icons/Medium/SlicerInteractivePlotting.png"));
+  d->PlotAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  // set CTRL+P shortcut
+  d->PlotAction->setShortcuts(QKeySequence::Print);
+  d->PlotAction->setToolTip(tr("Generate an Interactive Plot based on user-selection"
+                               " of the columns of the table."));
+  this->addAction(d->PlotAction);
 
   // Connect node selector with module itself
   this->connect(d->TableNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), SLOT(onNodeSelected(vtkMRMLNode*)));
@@ -136,11 +148,13 @@ void qSlicerTablesModuleWidget::setup()
   this->connect(d->LockFirstRowButton, SIGNAL(toggled(bool)), d->TableView, SLOT(setFirstRowLocked(bool)));
   this->connect(d->LockFirstColumnButton, SIGNAL(toggled(bool)), d->TableView, SLOT(setFirstColumnLocked(bool)));
 
-  // Connect copy and paste actions
+  // Connect copy, paste and plot actions
   d->CopyButton->setDefaultAction(d->CopyAction);
   this->connect(d->CopyAction, SIGNAL(triggered()), d->TableView, SLOT(copySelection()));
   d->PasteButton->setDefaultAction(d->PasteAction);
   this->connect(d->PasteAction, SIGNAL(triggered()), d->TableView, SLOT(pasteSelection()));
+  d->PlotButton->setDefaultAction(d->PlotAction);
+  this->connect(d->PlotAction, SIGNAL(triggered()), d->TableView, SLOT(plotSelection()));
 
   this->onNodeSelected(0);
 }

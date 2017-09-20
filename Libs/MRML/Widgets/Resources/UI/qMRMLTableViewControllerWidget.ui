@@ -64,7 +64,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
          <normaloff>:/Icons/Medium/SlicerUnlock.png</normaloff>:/Icons/Medium/SlicerUnlock.png</iconset>
        </property>
        <property name="checkable">
@@ -91,7 +91,7 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
          <normaloff>:/Icons/Medium/SlicerEditCopy.png</normaloff>:/Icons/Medium/SlicerEditCopy.png</iconset>
        </property>
       </widget>
@@ -105,8 +105,22 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
          <normaloff>:/Icons/Medium/SlicerEditPaste.png</normaloff>:/Icons/Medium/SlicerEditPaste.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="PlotButton">
+       <property name="toolTip">
+        <string>Generate an Interactive Plot based on user-selection of the columns of the table.</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+         <normaloff>:/Icons/Medium/SlicerInteractivePlotting.png</normaloff>:/Icons/Medium/SlicerInteractivePlotting.png</iconset>
        </property>
       </widget>
      </item>
@@ -303,6 +317,7 @@
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>ctkPopupWidget</class>
@@ -313,6 +328,7 @@
  </customwidgets>
  <resources>
   <include location="../qMRMLWidgets.qrc"/>
+  <include location="../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
  </resources>
  <connections/>
 </ui>

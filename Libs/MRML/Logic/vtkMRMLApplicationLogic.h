@@ -128,6 +128,9 @@ public:
   /// Propagate selected table in the SelectionNode to table view nodes.
   void PropagateTableSelection();
 
+  /// Propagate selected PlotChart in the SelectionNode to Plot view nodes.
+  void PropagatePlotChartSelection();
+
   /// zip the directory into a zip file
   /// Returns success or failure.
   bool Zip(const char *zipFileName, const char *directoryToZip);

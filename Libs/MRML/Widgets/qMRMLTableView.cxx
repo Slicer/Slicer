@@ -26,12 +26,20 @@
 #include <QDebug>
 #include <QHeaderView>
 #include <QHBoxLayout>
+#include <QMessageBox>
 #include <QKeyEvent>
 #include <QSortFilterProxyModel>
+#include <QString>
 #include <QToolButton>
 
 // CTK includes
 #include <ctkPopupWidget.h>
+
+// VTK includes
+#include <vtkCollection.h>
+#include <vtkIntArray.h>
+#include <vtkNew.h>
+#include <vtkStringArray.h>
 
 // qMRML includes
 #include "qMRMLTableView.h"
@@ -39,6 +47,9 @@
 #include "qMRMLTableModel.h"
 
 // MRML includes
+#include <vtkMRMLSelectionNode.h>
+#include <vtkMRMLPlotDataNode.h>
+#include <vtkMRMLPlotChartNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLTableNode.h>
 #include <vtkMRMLTableViewNode.h>
@@ -427,6 +438,159 @@ void qMRMLTableView::pasteSelection()
     rowIndex++;
     }
   tableNode->EndModify(wasModified);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLTableView::plotSelection()
+{
+  Q_D(qMRMLTableView);
+  CTK_CHECK_AND_RETURN_IF_FAIL(d->verifyTableModelAndNode)
+
+  vtkMRMLTableNode* tableNode = mrmlTableNode();
+
+  if(!this->mrmlScene())
+    {
+    qWarning() << "qMRMLTableView::plotSelection failed: no mrmlScene available";
+    return;
+    }
+
+  vtkMRMLSelectionNode* selectionNode = vtkMRMLSelectionNode::SafeDownCast(
+    this->mrmlScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
+
+  if (!selectionNode)
+    {
+    qWarning() << "qMRMLTableView::plotSelection failed: invalid selection Node";
+    return;
+    }
+
+  vtkSmartPointer<vtkMRMLPlotChartNode> plotChartNode = vtkMRMLPlotChartNode::SafeDownCast(
+    this->mrmlScene()->GetNodeByID(selectionNode->GetActivePlotChartID()));
+
+  if (!plotChartNode)
+    {
+    plotChartNode = vtkSmartPointer<vtkMRMLPlotChartNode>::New();
+    this->mrmlScene()->AddNode(plotChartNode);
+    selectionNode->SetActivePlotChartID(plotChartNode->GetID());
+    }
+
+  qMRMLTableModel* mrmlModel = tableModel();
+  QItemSelectionModel* selection = selectionModel();
+  vtkNew<vtkIntArray> columnIndexs;
+  for (int columnIndex = 0; columnIndex < mrmlModel->columnCount(); columnIndex++)
+    {
+    if (!selection->columnIntersectsSelection(columnIndex, QModelIndex()))
+      {
+      // no items are selected in this entire column, skip it
+      continue;
+      }
+    columnIndexs->InsertNextValue(columnIndex);
+    }
+
+  if (columnIndexs->GetNumberOfValues() < 2)
+    {
+    QString message = QString("To generate a plot, please select at least two columns");
+    qCritical() << Q_FUNC_INFO << ": " << message;
+    QMessageBox::warning(NULL, tr("Failed to plot data"), message);
+    return;
+    }
+
+  // Remove columns/plots not selected from plotChartNode
+  plotChartNode->RemoveAllPlotDataNodeIDs();
+
+  // Add columns/plots not selected from plotChartNode
+  for (int columnIndex = 1; columnIndex < columnIndexs->GetNumberOfValues(); columnIndex++)
+    {
+    std::string columnName = tableNode->GetColumnName(columnIndexs->GetValue(columnIndex));
+
+    vtkMRMLPlotDataNode *plotDataNode = NULL;
+    vtkCollection* colPlots = this->mrmlScene()->GetNodesByClassByName("vtkMRMLPlotDataNode", columnName.c_str());
+
+    if (!colPlots)
+      {
+      continue;
+      }
+
+    for (int plotIndex = 0; plotIndex < colPlots->GetNumberOfItems(); plotIndex++)
+      {
+      plotDataNode = vtkMRMLPlotDataNode::SafeDownCast(colPlots->GetItemAsObject(plotIndex));
+      if (plotDataNode == NULL)
+        {
+        continue;
+        }
+      else
+        {
+        break;
+        }
+      }
+
+    if (plotDataNode == NULL)
+      {
+      vtkSmartPointer<vtkMRMLNode> node = vtkSmartPointer<vtkMRMLNode>::Take(
+        this->mrmlScene()->CreateNodeByClass("vtkMRMLPlotDataNode"));
+      plotDataNode = vtkMRMLPlotDataNode::SafeDownCast(node);
+      this->mrmlScene()->AddNode(plotDataNode);
+      plotDataNode->SetName(columnName.c_str());
+      plotDataNode->SetXColumnIndex(columnIndexs->GetValue(0));
+      plotDataNode->SetYColumnIndex(columnIndexs->GetValue(columnIndex));
+      plotDataNode->SetAndObserveTableNodeID(tableNode->GetID());
+      }
+
+    std::string namePlotDataNode = plotDataNode->GetName();
+    std::size_t found = namePlotDataNode.find("Markups");
+    if (found != std::string::npos)
+      {
+      plotChartNode->RemovePlotDataNodeID(plotDataNode->GetID());
+      plotDataNode->GetNodeReference("Markups")->RemoveNodeReferenceIDs("Markups");
+      this->mrmlScene()->RemoveNode(plotDataNode);
+      continue;
+      }
+
+    std::string Type = plotChartNode->GetAttribute("Type");
+    if (!Type.compare("Line"))
+      {
+      plotDataNode->SetType(vtkMRMLPlotDataNode::LINE);
+      }
+    else if (!Type.compare("Scatter"))
+      {
+      plotDataNode->SetType(vtkMRMLPlotDataNode::POINTS);
+      }
+    else if (!Type.compare("Line and Scatter"))
+      {
+      plotDataNode->SetType(vtkMRMLPlotDataNode::LINE);
+
+      vtkMRMLPlotDataNode* plotDataNodeCopy = vtkMRMLPlotDataNode::SafeDownCast
+        (plotDataNode->GetNodeReference("Markups"));
+
+      if (plotDataNodeCopy)
+        {
+        plotDataNodeCopy->SetType(vtkMRMLPlotDataNode::POINTS);
+        }
+      else
+        {
+        vtkSmartPointer<vtkMRMLNode> node = vtkSmartPointer<vtkMRMLNode>::Take
+          (this->mrmlScene()->CreateNodeByClass("vtkMRMLPlotDataNode"));
+        plotDataNodeCopy = vtkMRMLPlotDataNode::SafeDownCast(node);
+        std::string namePlotDataNodeCopy = namePlotDataNode + " Markups";
+        plotDataNodeCopy->CopyWithScene(plotDataNode);
+        plotDataNodeCopy->SetName(namePlotDataNodeCopy.c_str());
+        plotDataNodeCopy->SetType(vtkMRMLPlotDataNode::POINTS);
+        this->mrmlScene()->AddNode(plotDataNodeCopy);
+        plotDataNode->AddNodeReferenceID("Markups", plotDataNodeCopy->GetID());
+        plotDataNodeCopy->AddNodeReferenceID("Markups", plotDataNode->GetID());
+        }
+
+      plotChartNode->AddAndObservePlotDataNodeID(plotDataNodeCopy->GetID());
+      }
+    else if (!Type.compare("Bar"))
+      {
+      plotDataNode->SetType(vtkMRMLPlotDataNode::BAR);
+      }
+
+    plotChartNode->AddAndObservePlotDataNodeID(plotDataNode->GetID());
+
+    colPlots->Delete();
+    colPlots = NULL;
+    }
 }
 
 //-----------------------------------------------------------------------------

@@ -25,19 +25,20 @@
 #include "vtkMRMLApplicationLogic.h"
 #include "vtkMRMLColorLogic.h"
 #include "vtkMRMLSliceLogic.h"
-#include <vtkMRMLSliceLinkLogic.h>
-#include <vtkMRMLModelHierarchyLogic.h>
+#include "vtkMRMLSliceLinkLogic.h"
+#include "vtkMRMLModelHierarchyLogic.h"
 
 // MRML includes
-#include <vtkMRMLInteractionNode.h>
-#include <vtkMRMLScene.h>
-#include <vtkMRMLSelectionNode.h>
-#include <vtkMRMLSliceCompositeNode.h>
-#include <vtkMRMLSliceNode.h>
-#include <vtkMRMLStorableNode.h>
-#include <vtkMRMLStorageNode.h>
-#include <vtkMRMLSceneViewNode.h>
-#include <vtkMRMLTableViewNode.h>
+#include "vtkMRMLInteractionNode.h"
+#include "vtkMRMLPlotViewNode.h"
+#include "vtkMRMLScene.h"
+#include "vtkMRMLSelectionNode.h"
+#include "vtkMRMLSliceCompositeNode.h"
+#include "vtkMRMLSliceNode.h"
+#include "vtkMRMLStorableNode.h"
+#include "vtkMRMLStorageNode.h"
+#include "vtkMRMLSceneViewNode.h"
+#include "vtkMRMLTableViewNode.h"
 
 // VTK includes
 #include <vtkCollection.h>
@@ -405,9 +406,31 @@ void vtkMRMLApplicationLogic::PropagateTableSelection()
       continue;
       }
     tnode->SetTableNodeID( tableId );
-    }
+  }
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::PropagatePlotChartSelection()
+{
+  if ( !this->Internal->SelectionNode || !this->GetMRMLScene() )
+    {
+    return;
+    }
+
+  char *PlotChartId = this->Internal->SelectionNode->GetActivePlotChartID();
+
+  const int nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLPlotViewNode");
+  for (int i = 0; i < nnodes; i++)
+    {
+    vtkMRMLPlotViewNode* pnode = vtkMRMLPlotViewNode::SafeDownCast (
+      this->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLPlotViewNode" ) );
+    if(!pnode->GetDoPropagatePlotChartSelection())
+      {
+      continue;
+      }
+    pnode->SetPlotChartNodeID(PlotChartId);
+  }
+}
 
 //----------------------------------------------------------------------------
 void vtkMRMLApplicationLogic::FitSliceToAll(bool onlyIfPropagateVolumeSelectionAllowed /* =false */)

@@ -87,6 +87,7 @@ public slots:
 
   void copySelection();
   void pasteSelection();
+  void plotSelection();
 
   void insertRow();
   void insertColumn();

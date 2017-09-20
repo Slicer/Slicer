@@ -26,6 +26,7 @@
 
 // VTK includes
 #include <vtkCommand.h>
+#include <vtkFloatArray.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkStringArray.h>
@@ -311,9 +312,9 @@ vtkAbstractArray* vtkMRMLTableNode::AddColumn(vtkAbstractArray* column)
   else
     {
     int numberOfRows = this->Table->GetNumberOfRows();
-    newColumn = vtkSmartPointer<vtkStringArray>::New();
+    newColumn = vtkSmartPointer<vtkFloatArray>::New();
     newColumn->SetNumberOfTuples(numberOfRows);
-    vtkVariant emptyCell("");
+    vtkVariant emptyCell(0.);
     for (int i=0; i<numberOfRows; i++)
       {
       newColumn->SetVariantValue(i, emptyCell);
