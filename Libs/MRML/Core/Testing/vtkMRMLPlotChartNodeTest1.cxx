@@ -35,28 +35,28 @@ int vtkMRMLPlotChartNodeTest1(int , char * [] )
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkMRMLPlotChartNode> node;
   EXERCISE_ALL_BASIC_MRML_METHODS(node.GetPointer());
-  scene->AddNode(node);
+  scene->AddNode(node.GetPointer());
 
   // Create two PlotDataNodes
   vtkNew<vtkMRMLPlotDataNode> plotDataNode1;
   vtkNew<vtkMRMLPlotDataNode> plotDataNode2;
-  scene->AddNode(plotDataNode1);
-  scene->AddNode(plotDataNode2);
+  scene->AddNode(plotDataNode1.GetPointer());
+  scene->AddNode(plotDataNode2.GetPointer());
 
   // Create a vtkTable
   vtkNew<vtkTable> table;
 
   vtkNew<vtkFloatArray> arrX;
   arrX->SetName("X Axis");
-  table->AddColumn(arrX);
+  table->AddColumn(arrX.GetPointer());
 
   vtkNew<vtkFloatArray> arrC;
   arrC->SetName("Cosine");
-  table->AddColumn(arrC);
+  table->AddColumn(arrC.GetPointer());
 
   vtkNew<vtkFloatArray> arrS;
   arrS->SetName("Sine");
-  table->AddColumn(arrS);
+  table->AddColumn(arrS.GetPointer());
 
   // Fill in the table with some example values
   int numPoints = 69;
@@ -70,13 +70,13 @@ int vtkMRMLPlotChartNodeTest1(int , char * [] )
     }
 
   // Create a MRMLTableNode
-  vtkNew<vtkMRMLTableNode> TableNode;
-  scene->AddNode(TableNode);
-  TableNode->SetAndObserveTable(table.GetPointer());
+  vtkNew<vtkMRMLTableNode> tableNode;
+  scene->AddNode(tableNode.GetPointer());
+  tableNode->SetAndObserveTable(table.GetPointer());
 
   // Set and Observe the MRMLTableNode
-  plotDataNode1->SetAndObserveTableNodeID(TableNode->GetID());
-  plotDataNode2->SetAndObserveTableNodeID(TableNode->GetID());
+  plotDataNode1->SetAndObserveTableNodeID(tableNode->GetID());
+  plotDataNode2->SetAndObserveTableNodeID(tableNode->GetID());
   plotDataNode2->SetYColumnIndex(2);
 
   // Add and Observe plots IDs in PlotChart
@@ -84,11 +84,11 @@ int vtkMRMLPlotChartNodeTest1(int , char * [] )
   node->AddAndObservePlotDataNodeID(plotDataNode2->GetID());
 
   // Test The references
-  CHECK_POINTER(node->GetPlotDataNode(), plotDataNode1);
-  CHECK_POINTER(node->GetNthPlotDataNode(1), plotDataNode2);
+  CHECK_POINTER(node->GetPlotDataNode(), plotDataNode1.GetPointer());
+  CHECK_POINTER(node->GetNthPlotDataNode(1), plotDataNode2.GetPointer());
 
   node->RemovePlotDataNodeID(plotDataNode1->GetID());
-  CHECK_POINTER(node->GetPlotDataNode(), plotDataNode2);
+  CHECK_POINTER(node->GetPlotDataNode(), plotDataNode2.GetPointer());
 
   // Verify that Copy method creates a true independent copy
   vtkSmartPointer< vtkMRMLPlotChartNode > nodeCopy = vtkSmartPointer< vtkMRMLPlotChartNode >::New();

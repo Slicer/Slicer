@@ -33,7 +33,7 @@ int vtkMRMLPlotDataNodeTest1(int , char * [] )
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkMRMLPlotDataNode> node;
   EXERCISE_ALL_BASIC_MRML_METHODS(node.GetPointer());
-  scene->AddNode(node);
+  scene->AddNode(node.GetPointer());
 
   vtkPlot* plot1 = node->GetPlot();
   CHECK_NOT_NULL(plot1);
@@ -43,11 +43,11 @@ int vtkMRMLPlotDataNodeTest1(int , char * [] )
 
   vtkNew<vtkFloatArray> arrX;
   arrX->SetName("X Axis");
-  table->AddColumn(arrX);
+  table->AddColumn(arrX.GetPointer());
 
   vtkNew<vtkFloatArray> arrC;
   arrC->SetName("Cosine");
-  table->AddColumn(arrC);
+  table->AddColumn(arrC.GetPointer());
 
   // Fill in the table with some example values
   int numPoints = 69;
@@ -60,12 +60,12 @@ int vtkMRMLPlotDataNodeTest1(int , char * [] )
     }
 
   // Create a MRMLTableNode
-  vtkNew<vtkMRMLTableNode> TableNode;
-  scene->AddNode(TableNode);
-  TableNode->SetAndObserveTable(table.GetPointer());
+  vtkNew<vtkMRMLTableNode> tableNode;
+  scene->AddNode(tableNode.GetPointer());
+  tableNode->SetAndObserveTable(table.GetPointer());
 
   // Set and Observe the MRMLTableNode
-  node->SetAndObserveTableNodeID(TableNode->GetID());
+  node->SetAndObserveTableNodeID(tableNode->GetID());
 
   node->SetType(vtkMRMLPlotDataNode::BAR);
   vtkPlot* plot2 = node->GetPlot();

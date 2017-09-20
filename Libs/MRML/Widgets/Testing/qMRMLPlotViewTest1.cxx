@@ -64,15 +64,15 @@ int qMRMLPlotViewTest1( int argc, char * argv [] )
 
   vtkNew<vtkFloatArray> arrX;
   arrX->SetName("X Axis");
-  table->AddColumn(arrX);
+  table->AddColumn(arrX.GetPointer());
 
   vtkNew<vtkFloatArray> arrC;
   arrC->SetName("Cosine");
-  table->AddColumn(arrC);
+  table->AddColumn(arrC.GetPointer());
 
   vtkNew<vtkFloatArray> arrS;
   arrS->SetName("Sine");
-  table->AddColumn(arrS);
+  table->AddColumn(arrS.GetPointer());
 
   // Fill in the table with some example values
   int numPoints = 69;
@@ -86,24 +86,24 @@ int qMRMLPlotViewTest1( int argc, char * argv [] )
     }
 
   // Create a MRMLTableNode
-  vtkNew<vtkMRMLTableNode> TableNode;
-  scene->AddNode(TableNode);
-  TableNode->SetAndObserveTable(table.GetPointer());
+  vtkNew<vtkMRMLTableNode> tableNode;
+  scene->AddNode(tableNode.GetPointer());
+  tableNode->SetAndObserveTable(table.GetPointer());
 
   // Create two plotDataNodes
   vtkNew<vtkMRMLPlotDataNode> plotDataNode1;
   vtkNew<vtkMRMLPlotDataNode> plotDataNode2;
-  scene->AddNode(plotDataNode1);
-  scene->AddNode(plotDataNode2);
+  scene->AddNode(plotDataNode1.GetPointer());
+  scene->AddNode(plotDataNode2.GetPointer());
 
   // Set and Observe the MRMLTableNode
-  plotDataNode1->SetAndObserveTableNodeID(TableNode->GetID());
-  plotDataNode2->SetAndObserveTableNodeID(TableNode->GetID());
+  plotDataNode1->SetAndObserveTableNodeID(tableNode->GetID());
+  plotDataNode2->SetAndObserveTableNodeID(tableNode->GetID());
   plotDataNode2->SetYColumnIndex(2);
 
   // Create a PlotChart node
   vtkNew<vtkMRMLPlotChartNode> plotChartNode;
-  scene->AddNode(plotChartNode);
+  scene->AddNode(plotChartNode.GetPointer());
   // Add and Observe plots IDs in PlotChart
   plotDataNode1->SetName(arrC->GetName());
   plotChartNode->AddAndObservePlotDataNodeID(plotDataNode1->GetID());
@@ -112,7 +112,7 @@ int qMRMLPlotViewTest1( int argc, char * argv [] )
 
   // Create PlotView node
   vtkNew<vtkMRMLPlotViewNode> plotViewNode;
-  scene->AddNode(plotViewNode);
+  scene->AddNode(plotViewNode.GetPointer());
   // Set PlotChart ID in PlotView
   plotViewNode->SetPlotChartNodeID(plotChartNode->GetID());
 
@@ -126,8 +126,8 @@ int qMRMLPlotViewTest1( int argc, char * argv [] )
 
   qMRMLPlotWidget* plotWidget = new qMRMLPlotWidget();
   plotWidget->setParent(&parentWidget);
-  plotWidget->setMRMLScene(scene);
-  plotWidget->setMRMLPlotViewNode(plotViewNode);
+  plotWidget->setMRMLScene(scene.GetPointer());
+  plotWidget->setMRMLPlotViewNode(plotViewNode.GetPointer());
   vbox.addWidget(plotWidget);
   parentWidget.show();
   parentWidget.raise();
