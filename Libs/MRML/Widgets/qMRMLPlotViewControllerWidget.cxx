@@ -193,7 +193,7 @@ void qMRMLPlotViewControllerWidgetPrivate::onPlotChartNodeSelected(vtkMRMLNode *
 
   if (!selectionNode)
     {
-    qWarning() << "qMRMLPlotViewController::onPlotChartNodeSelected: invalid selection Node";
+    qWarning() << "qMRMLPlotViewController::onPlotChartNodeSelected: invalid selection Node, cannot set active plot chart.";
     return;
     }
 

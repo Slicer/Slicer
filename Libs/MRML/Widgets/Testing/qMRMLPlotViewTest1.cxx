@@ -36,6 +36,7 @@
 #include "vtkMRMLPlotChartNode.h"
 #include "vtkMRMLPlotViewNode.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLTableNode.h"
 
 // VTK includes
@@ -58,6 +59,10 @@ int qMRMLPlotViewTest1( int argc, char * argv [] )
   QApplication app(argc, argv);
 
   vtkNew<vtkMRMLScene> scene;
+
+  // qMRMLPlotViewControllerWidget requires selection node
+  vtkNew<vtkMRMLSelectionNode> selectionNode;
+  scene->AddNode(selectionNode.GetPointer());
 
   // Create a vtkTable
   vtkNew<vtkTable> table;
