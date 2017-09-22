@@ -82,7 +82,7 @@
      <item row="2" column="0">
       <widget class="qMRMLCheckableNodeComboBox" name="plotDataComboBox" native="true">
        <property name="toolTip">
-        <string>Add/Remove Plots from the current Plot Layout</string>
+        <string>Add/Remove Plots from the current Plot Layout the plotData selected. The &quot;Default&quot; will apport any modification. The &quot;indexes&quot; values </string>
        </property>
        <property name="nodeTypes" stdset="0">
         <stringlist>
@@ -137,6 +137,23 @@
      </item>
      <item row="0" column="0">
       <layout class="QVBoxLayout" name="verticalLayout"/>
+     </item>
+     <item row="2" column="1">
+      <widget class="QComboBox" name="xAxisComboBox">
+       <property name="toolTip">
+        <string>This combobox allow to change the X-axis for all the plotData selected. The value &quot;Default&quot; will not apport any modification. The value &quot;Indexes&quot; will use simple ordinal numbers 1, 2, 3, ... as x coordinate values. For the other values, the correspective column will be used. </string>
+       </property>
+       <item>
+        <property name="text">
+         <string>Default</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Indexes</string>
+        </property>
+       </item>
+      </widget>
      </item>
     </layout>
    </item>
@@ -315,6 +332,7 @@
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>ctkPopupWidget</class>
