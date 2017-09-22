@@ -1,9 +1,7 @@
 /*==============================================================================
 
-  Program: 3D Slicer
-
-  Copyright (c) Laboratory for Percutaneous Surgery (PerkLab)
-  Queen's University, Kingston, ON, Canada. All Rights Reserved.
+  Copyright (c) Kapteyn Astronomical Institute
+  University of Groningen, Groningen, Netherlands. All Rights Reserved.
 
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
@@ -14,9 +12,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  This file was originally developed by Csaba Pinter, PerkLab, Queen's University
-  and was supported through the Applied Cancer Research Unit program of Cancer Care
-  Ontario with funds provided by the Ontario Ministry of Health and Long-Term Care
+  This file was originally developed by Davide Punzo, Kapteyn Astronomical Institute,
+  and was supported through the European Research Council grant nr. 291531.
 
 ==============================================================================*/
 
