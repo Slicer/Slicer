@@ -73,6 +73,7 @@ vtkMRMLPlotChartNode::vtkMRMLPlotChartNode()
   this->SetAttribute("AxisLabelFontSize", "12");
 
   this->SetAttribute("LookupTable", "");
+  this->SetAttribute("fitPlotToAxes", "off");
 
   vtkIntArray  *events = vtkIntArray::New();
   events->InsertNextValue(vtkCommand::ModifiedEvent);

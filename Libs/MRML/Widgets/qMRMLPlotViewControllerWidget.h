@@ -78,6 +78,9 @@ public slots:
   /// \sa setTitle
   void showTitle(bool show);
 
+  /// Adjust the chart viewer's field of view to match the extent of the chart axes
+  void fitPlotToAxes();
+
   /// Conrtol the diplay of a label along the X-Axis
   /// \sa setXAxisLabel
   void showXAxisLabel(bool show);

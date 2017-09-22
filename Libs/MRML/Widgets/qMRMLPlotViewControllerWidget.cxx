@@ -65,6 +65,8 @@ qMRMLPlotViewControllerWidgetPrivate::qMRMLPlotViewControllerWidgetPrivate(
   qMRMLPlotViewControllerWidget& object)
   : Superclass(object)
 {
+  this->FitToWindowToolButton = NULL;
+
   this->PlotChartNode = NULL;
   this->PlotViewNode = NULL;
   this->PlotView = NULL;
@@ -101,6 +103,8 @@ void qMRMLPlotViewControllerWidgetPrivate::setupPopupUi()
                    q, SLOT(showGrid(bool)));
   QObject::connect(this->actionShow_Legend, SIGNAL(toggled(bool)),
                    q, SLOT(showLegend(bool)));
+  QObject::connect(this->actionFit_to_window, SIGNAL(triggered()),
+                   q, SLOT(fitPlotToAxes()));
 
   // Connect the buttons
   this->showGridToolButton->setDefaultAction(this->actionShow_Grid);
@@ -142,10 +146,20 @@ void qMRMLPlotViewControllerWidgetPrivate::setupPopupUi()
 //---------------------------------------------------------------------------
 void qMRMLPlotViewControllerWidgetPrivate::init()
 {
+  Q_Q(qMRMLPlotViewControllerWidget);
+
   this->Superclass::init();
+
   this->ViewLabel->setText(qMRMLPlotViewControllerWidget::tr("P"));
   this->BarLayout->addStretch(1);
   this->setColor(QColor(27, 198, 207));
+
+  this->FitToWindowToolButton = new QToolButton(q);
+  this->FitToWindowToolButton->setAutoRaise(true);
+  this->FitToWindowToolButton->setDefaultAction(this->actionFit_to_window);
+  this->FitToWindowToolButton->setFixedSize(15, 15);
+  this->BarLayout->insertWidget(2, this->FitToWindowToolButton);
+
 }
 
 
@@ -376,7 +390,20 @@ void qMRMLPlotViewControllerWidget::showTitle(bool show)
   else
     {
     d->PlotChartNode->SetAttribute("ShowTitle", "off");
+  }
+}
+
+//---------------------------------------------------------------------------
+void qMRMLPlotViewControllerWidget::fitPlotToAxes()
+{
+  Q_D(qMRMLPlotViewControllerWidget);
+
+  if(!d->PlotChartNode)
+    {
+    return;
     }
+
+  d->PlotChartNode->SetAttribute("fitPlotToAxes", "on");
 }
 
 //---------------------------------------------------------------------------

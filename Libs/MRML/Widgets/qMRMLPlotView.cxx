@@ -710,6 +710,12 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
     axis->GetLabelProperties()->SetFontSize(StringToInt(pln->GetAttribute("AxisLabelFontSize")));
     }
 
+  if (!strcmp(pln->GetAttribute("fitPlotToAxes"), "on"))
+    {
+    this->RecalculateBounds();
+    pln->SetAttribute("fitPlotToAxes", "off");
+    }
+
   // Repaint the chart scene
   q->scene()->SetDirty(true);
 }
