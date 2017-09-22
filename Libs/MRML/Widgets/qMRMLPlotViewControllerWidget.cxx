@@ -678,7 +678,11 @@ void qMRMLPlotViewControllerWidget::updateWidgetFromMRML()
         }
       }
     }
-  d->xAxisComboBox->setCurrentText(currentCol);
+
+  // After Qt5 migration, the next line can be replaced by this call:
+  // d->xAxisComboBox->setCurrentText(currentCol);
+  d->xAxisComboBox->setCurrentIndex(d->xAxisComboBox->findText(currentCol));
+
   d->xAxisComboBox->blockSignals(xAxisComboBoxBlockSignals);
   d->plotDataComboBox->blockSignals(plotBlockSignals);
 
