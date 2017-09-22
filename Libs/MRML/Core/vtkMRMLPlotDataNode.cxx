@@ -79,8 +79,6 @@ vtkMRMLPlotDataNode::vtkMRMLPlotDataNode()
 {
   this->Plot = NULL;
   this->Type = -1;
-  this->XColumnIndex = 0;
-  this->YColumnIndex = 1;
   this->XColumnName = "(none)";
   this->YColumnName = "(none)";
   this->HideFromEditorsOff();
@@ -124,8 +122,8 @@ void vtkMRMLPlotDataNode::WriteXML(ostream& of, int nIndent)
   // Start by having the superclass write its information
   Superclass::WriteXML(of, nIndent);
   of << " Type=\"" << this->GetType() << "\"";
-  of << " XColumnIndex=\"" << this->GetXColumnIndex() << "\"";
-  of << " YColumnIndex=\"" << this->GetYColumnIndex() << "\"";
+  of << " XColumnName=\"" << this->GetXColumnName() << "\"";
+  of << " YColumnName=\"" << this->GetYColumnName() << "\"";
   of << " ";
 }
 
@@ -146,13 +144,13 @@ void vtkMRMLPlotDataNode::ReadXMLAttributes(const char** atts)
       {
       this->SetType(StringToInt(attValue));
       }
-    else if (!strcmp(attName, "XColumnIndex"))
+    else if (!strcmp(attName, "XColumnName"))
       {
-      this->SetXColumnIndex(StringToInt(attValue));
+      this->SetXColumnName(attValue);
       }
-    else if (!strcmp(attName, "YColumnIndex"))
+    else if (!strcmp(attName, "YColumnName"))
       {
-      this->SetYColumnIndex(StringToInt(attValue));
+      this->SetYColumnName(attValue);
       }
     }
   this->EndModify(disabledModify);
@@ -175,8 +173,8 @@ void vtkMRMLPlotDataNode::Copy(vtkMRMLNode *anode)
     }
 
   this->SetType(node->GetType());
-  this->SetXColumnIndex(node->GetXColumnIndex());
-  this->SetYColumnIndex(node->GetYColumnIndex());
+  this->SetXColumnName(node->GetXColumnName());
+  this->SetYColumnName(node->GetYColumnName());
 
   this->EndModify(disabledModify);
 }
@@ -256,9 +254,7 @@ void vtkMRMLPlotDataNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
   os << indent << "\nType: " << this->Type;
-  os << indent << "\nXColumnIndex: " << this->XColumnIndex;
   os << indent << "\nXColumnName: " << this->XColumnName;
-  os << indent << "\nYColumnIndex: " << this->YColumnIndex;
   os << indent << "\nYColumnName: " << this->YColumnName;
   os << indent << "\nvtkPlot: " <<
     (this->Plot ? this->Plot->GetClassName() : "(none)");
@@ -284,51 +280,27 @@ void vtkMRMLPlotDataNode::SetAndObservePlot(vtkPlot* plot)
 
 //----------------------------------------------------------------------------
 void vtkMRMLPlotDataNode::SetInputData(vtkMRMLTableNode *tableNode,
-                                   vtkIdType xColumnIndex,
-                                   vtkIdType yColumnIndex)
+                                       vtkStdString xColumnName,
+                                       vtkStdString yColumnName)
 {
-  if (tableNode == NULL || tableNode->GetTable() == NULL ||
+  if (tableNode == NULL ||
+      tableNode->GetTable() == NULL ||
       tableNode->GetNumberOfColumns() < 2 ||
-      this->GetPlot() == NULL)
+      this->GetPlot() == NULL ||
+      !xColumnName.compare("(none)") ||
+      !yColumnName.compare("(none)"))
     {
     return;
     }
 
-  this->SetXColumnName(tableNode->GetColumnName(xColumnIndex));
-  this->SetYColumnName(tableNode->GetColumnName(yColumnIndex));
-
-  this->GetPlot()->SetInputData(tableNode->GetTable(), xColumnIndex, yColumnIndex);
+  this->GetPlot()->SetInputData(tableNode->GetTable(), xColumnName, yColumnName);
   this->Modified();
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLPlotDataNode::SetInputData(vtkMRMLTableNode *tableNode)
 {
-  this->SetInputData(tableNode, this->GetXColumnIndex(), this->GetYColumnIndex());
-}
-
-//----------------------------------------------------------------------------
-std::string vtkMRMLPlotDataNode::GetXColumnName()
-{
-  return this->XColumnName;
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLPlotDataNode::SetXColumnName(const std::string &xColumnName)
-{
-  this->XColumnName = xColumnName;
-}
-
-//----------------------------------------------------------------------------
-std::string vtkMRMLPlotDataNode::GetYColumnName()
-{
-  return this->YColumnName;
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLPlotDataNode::SetYColumnName(const std::string &yColumnName)
-{
-  this->YColumnName = yColumnName;
+  this->SetInputData(tableNode, this->GetXColumnName(), this->GetYColumnName());
 }
 
 //----------------------------------------------------------------------------
@@ -408,17 +380,17 @@ void vtkMRMLPlotDataNode::SetType(int type)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLPlotDataNode::SetXColumnIndex(vtkIdType xColumnIndex)
+void vtkMRMLPlotDataNode::SetXColumnName(vtkStdString xColumnName)
 {
-  this->XColumnIndex = xColumnIndex;
+  this->XColumnName = xColumnName;
   // Set the connection between the vktTable and the vtkPlot
   this->SetInputData(this->GetTableNode());
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLPlotDataNode::SetYColumnIndex(vtkIdType yColumnIndex)
+void vtkMRMLPlotDataNode::SetYColumnName(vtkStdString yColumnName)
 {
-  this->YColumnIndex = yColumnIndex;
+  this->YColumnName = yColumnName;
   // Set the connection between the vktTable and the vtkPlot
   this->SetInputData(this->GetTableNode());
 }

@@ -315,9 +315,8 @@ void qMRMLPlotViewControllerWidgetPrivate::onXAxisSelected(const QString &Column
         arrX->SetValue(rowIndex, rowIndex);
         }
       plotDataNode->GetTableNode()->AddColumn(arrX);
-      ColumnIndex = plotDataNode->GetTableNode()->GetColumnIndex(Column.toStdString().c_str());
       }
-    plotDataNode->SetXColumnIndex(ColumnIndex);
+    plotDataNode->SetXColumnName(Column.toStdString());
     }
 }
 

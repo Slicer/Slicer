@@ -530,8 +530,8 @@ void qMRMLTableView::plotSelection()
       plotDataNode = vtkMRMLPlotDataNode::SafeDownCast(node);
       this->mrmlScene()->AddNode(plotDataNode);
       plotDataNode->SetName(columnName.c_str());
-      plotDataNode->SetXColumnIndex(columnIndexs->GetValue(0));
-      plotDataNode->SetYColumnIndex(columnIndexs->GetValue(columnIndex));
+      plotDataNode->SetXColumnName(tableNode->GetColumnName(columnIndexs->GetValue(0)));
+      plotDataNode->SetYColumnName(tableNode->GetColumnName(columnIndexs->GetValue(columnIndex)));
       plotDataNode->SetAndObserveTableNodeID(tableNode->GetID());
       }
 

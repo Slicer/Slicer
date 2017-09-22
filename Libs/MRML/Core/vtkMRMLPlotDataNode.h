@@ -152,36 +152,26 @@ public:
   virtual void SetType(int type);
 
   ///
-  /// Get the index of the XColumn
+  /// Get the name of the XColumn
   /// \brief vtkGetMacro
-  vtkGetMacro(XColumnIndex, vtkIdType);
+  vtkGetMacro(XColumnName, vtkStdString);
 
   ///
-  /// Set the index of the XColumn and assure the data connection
+  /// Set the name of the XColumn and assure the data connection
   /// \brief vtkSetMacro
   /// \sa SetInputData
-  virtual void SetXColumnIndex(vtkIdType xColumnIndex);
+  virtual void SetXColumnName(vtkStdString xColumnName);
 
   ///
-  /// Utility method to get the name of the XColumn.
-  /// The name is automatically set internally
-  virtual std::string GetXColumnName();
-
-  ///
-  /// Get the index of the YColumn
+  /// Get the name of the YColumn
   /// \brief vtkGetMacro
-  vtkGetMacro(YColumnIndex, vtkIdType);
+  vtkGetMacro(YColumnName, vtkStdString);
 
   ///
-  /// Set the index of the YColumn and assure the data connection
+  /// Set the name of the YColumn and assure the data connection
   /// \brief vtkSetMacro
   /// \sa SetInputData
-  virtual void SetYColumnIndex(vtkIdType yColumnIndex);
-
-  ///
-  /// Utility method to get the name of the YColumn.
-  /// The name is automatically set internally
-  virtual std::string GetYColumnName();
+  virtual void SetYColumnName(vtkStdString yColumnName);
 
   //----------------------------------------------------------------
   /// Constructor and destructor
@@ -241,21 +231,16 @@ public:
   /// This method is called internally everytime
   /// that a new vtkPlot or vtkMRMLTable has been
   /// set and observed.
-  /// \sa vtkPlot->SetInputData(), SetXColumnName(), SetYColumnName()
+  /// \sa vtkPlot->SetInputData()
   virtual void SetInputData(vtkMRMLTableNode* tableNode,
-                            vtkIdType xColumnIndex,
-                            vtkIdType yColumnIndex);
+                            vtkStdString xColumnName,
+                            vtkStdString yColumnName);
 
   /// Utility method for setting InputData without
   /// providing the XColumnIndex and YColumnIndex parameters
   /// \sa GetXColumnIndex(), GetYColumnIndex()
   /// \def default are 0, 1
   virtual void SetInputData(vtkMRMLTableNode* tableNode);
-
-  ///
-  /// Internal utility methods to store the name of the columns
-  virtual void SetXColumnName(const std::string& xColumnName);
-  virtual void SetYColumnName(const std::string& yColumnName);
 
   //----------------------------------------------------------------
   /// Data
@@ -267,11 +252,8 @@ public:
   /// Type of Plot (line, scatter, bar)
   int Type;
 
-  vtkIdType XColumnIndex;
-  vtkIdType YColumnIndex;
-
-  std::string XColumnName;
-  std::string YColumnName;
+  vtkStdString XColumnName;
+  vtkStdString YColumnName;
 };
 
 #endif

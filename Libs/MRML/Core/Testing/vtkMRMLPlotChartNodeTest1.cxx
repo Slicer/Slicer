@@ -76,8 +76,11 @@ int vtkMRMLPlotChartNodeTest1(int , char * [] )
 
   // Set and Observe the MRMLTableNode
   plotDataNode1->SetAndObserveTableNodeID(tableNode->GetID());
+  plotDataNode1->SetXColumnName(tableNode->GetColumnName(0));
+  plotDataNode1->SetYColumnName(tableNode->GetColumnName(1));
   plotDataNode2->SetAndObserveTableNodeID(tableNode->GetID());
-  plotDataNode2->SetYColumnIndex(2);
+  plotDataNode2->SetXColumnName(tableNode->GetColumnName(0));
+  plotDataNode2->SetYColumnName(tableNode->GetColumnName(2));
 
   // Add and Observe plots IDs in PlotChart
   node->AddAndObservePlotDataNodeID(plotDataNode1->GetID());
