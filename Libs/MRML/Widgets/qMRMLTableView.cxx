@@ -591,6 +591,7 @@ void qMRMLTableView::plotSelection()
     colPlots->Delete();
     colPlots = NULL;
     }
+
 }
 
 //-----------------------------------------------------------------------------
