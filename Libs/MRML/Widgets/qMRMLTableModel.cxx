@@ -287,6 +287,8 @@ void qMRMLTableModel::updateModelFromMRML()
           item->setData(font, Qt::FontRole);
           }
 
+        int dataType = columnArray->GetDataType();
+
         // Set item property for known types.
         // Special types are defined to be displayed differently, handled by qMRMLTableItemDelegate.
         // NOTE: The data type itself can be enough, but in future types it will be necessary to define display role
@@ -302,7 +304,19 @@ void qMRMLTableModel::updateModelFromMRML()
         // Default display as text
         else
           {
-          item->setText(QString(variant.ToString()));
+          if (dataType == VTK_CHAR || dataType == VTK_UNSIGNED_CHAR || dataType == VTK_SIGNED_CHAR)
+            {
+            // vtkVariant converts char type to string as a single letter, therefore we need to use
+            // custom converter
+            item->setText(QString::number(variant.ToInt()));
+            }
+          else
+            {
+            item->setText(QString(variant.ToString()));
+            }
+          item->setData(QVariant(), UserRoleValueType);
+          item->setCheckable(false);
+          item->setData(QVariant(), Qt::CheckStateRole);
           }
         }
       else
@@ -432,8 +446,8 @@ void qMRMLTableModel::updateMRMLFromModel(QStandardItem* item)
   if (tableRow>=0)
     {
     // Get item value according to type
-    int type = item->data(UserRoleValueType).toInt();
-    if (type == VTK_BIT)
+    int widgetType = item->data(UserRoleValueType).toInt();
+    if (widgetType == VTK_BIT)
       {
       // Cell bool value changed
       int checked = item->checkState();
@@ -456,20 +470,57 @@ void qMRMLTableModel::updateMRMLFromModel(QStandardItem* item)
     else
       {
       // Cell text value changed
-      vtkVariant itemText(item->text().toLatin1().constData()); // the vtkVariant constructor makes a copy of the input buffer, so using constData is safe
-      vtkVariant valueInTableBefore = table->GetValue(tableRow, tableCol);
-      table->SetValue(tableRow, tableCol, itemText);
-      vtkVariant valueInTableAfter = table->GetValue(tableRow, tableCol);
-      if (valueInTableBefore == valueInTableAfter)
+      int dataType = table->GetColumn(tableCol)->GetDataType();
+      if (dataType == VTK_CHAR || dataType == VTK_UNSIGNED_CHAR || dataType == VTK_SIGNED_CHAR)
         {
-        // The value is not changed, this means that the table cannot store this value - revert the value in the table
-        this->blockSignals(true);
-        item->setText(QString(valueInTableBefore.ToString()));
-        this->blockSignals(false);
+        // vtkVariant would convert char to a letter, so we need custom conversion here
+        bool valid = false;
+        int newValue = item->text().toInt(&valid);
+        if (dataType == VTK_UNSIGNED_CHAR)
+          {
+          if (newValue < VTK_UNSIGNED_CHAR_MIN || newValue > VTK_UNSIGNED_CHAR_MAX)
+            {
+            valid = false;
+            }
+          }
+        else
+          {
+          if (newValue < VTK_SIGNED_CHAR_MIN || newValue > VTK_SIGNED_CHAR_MAX)
+            {
+            valid = false;
+            }
+          }
+        if (valid)
+          {
+          table->SetValue(tableRow, tableCol, newValue);
+          table->Modified();
+          }
+        else
+          {
+          vtkVariant valueInTableBefore = table->GetValue(tableRow, tableCol); // restore this value if new value is invalid
+          this->blockSignals(true);
+          item->setText(QString::number(valueInTableBefore.ToInt()));
+          this->blockSignals(false);
+          }
         }
       else
         {
-        table->Modified();
+        vtkVariant valueInTableBefore = table->GetValue(tableRow, tableCol); // restore this value if new value is invalid
+        vtkVariant itemText(item->text().toLatin1().constData()); // the vtkVariant constructor makes a copy of the input buffer, so using constData is safe
+        table->SetValue(tableRow, tableCol, itemText);
+        vtkVariant valueInTableAfter = table->GetValue(tableRow, tableCol);
+        if (valueInTableBefore == valueInTableAfter)
+          {
+          // The value is not changed then it means it is invalid,
+          // restore previous value
+          this->blockSignals(true);
+          item->setText(QString(valueInTableBefore.ToString()));
+          this->blockSignals(false);
+          }
+        else
+          {
+          table->Modified();
+          }
         }
       }
     }

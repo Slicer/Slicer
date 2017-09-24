@@ -64,6 +64,8 @@ public:
   bool firstRowLocked()const;
   bool firstColumnLocked()const;
 
+  QList<int> selectedMRMLTableColumnIndices()const;
+
 public slots:
   /// Set the MRML \a scene that should be listened for events.
   /// If scene is set then MRMLTableViewNode has to be set, too.
@@ -102,10 +104,15 @@ signals:
   /// have a setMRMLScene slot.
   void mrmlSceneChanged(vtkMRMLScene*);
 
+  /// Emitted when a different table node is selected or different cells are selected.
+  void selectionChanged();
+
 protected:
   virtual void keyPressEvent(QKeyEvent* event);
 
   QScopedPointer<qMRMLTableViewPrivate> d_ptr;
+
+  virtual void selectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
 
 private:
   Q_DECLARE_PRIVATE(qMRMLTableView);

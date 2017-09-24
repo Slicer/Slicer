@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>qSlicerTableColumnPropertiesWidget</class>
+ <widget class="qSlicerWidget" name="qSlicerTableColumnPropertiesWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>768</width>
+    <height>285</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>Place markups</string>
+  </property>
+  <layout class="QFormLayout" name="formLayout_2">
+   <property name="fieldGrowthPolicy">
+    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+   </property>
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item row="1" column="0">
+    <widget class="QLabel" name="NameLabel">
+     <property name="text">
+      <string>Name:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLineEdit" name="NameLineEdit">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="DataTypeLabel">
+     <property name="text">
+      <string>Data type:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QComboBox" name="DataTypeComboBox">
+       <item>
+        <property name="text">
+         <string>string</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>double</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>int</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>bit</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>float</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>char</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>signed char</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>short</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>long long</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>__int64</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>idtype</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>unsigned char</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>unsigned short</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>unsigned int</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>unsigned long</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>unsigned long long</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>unsigned __int64</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="ApplyTypeChangeButton">
+       <property name="text">
+        <string>Convert</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="CancelTypeChangeButton">
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="NullValueLabel">
+     <property name="text">
+      <string>Null value:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QLineEdit" name="NullValueLineEdit"/>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="LongNameLabel">
+     <property name="text">
+      <string>Long name:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QLineEdit" name="LongNameLineEdit"/>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="DescriptionLabel">
+     <property name="text">
+      <string>Description:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <widget class="QLineEdit" name="DescriptionLineEdit"/>
+   </item>
+   <item row="6" column="0">
+    <widget class="QLabel" name="UnitLabelLabel">
+     <property name="text">
+      <string>Unit label:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="QLineEdit" name="UnitLabelLineEdit"/>
+   </item>
+  </layout>
+  <action name="ActionPersistent">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Place multiple markups</string>
+   </property>
+   <property name="toolTip">
+    <string>Place multiple markups</string>
+   </property>
+  </action>
+  <action name="ActionDeleteAll">
+   <property name="icon">
+    <iconset>
+     <normaloff>:/Icons/MarkupsDeleteAllRows.png</normaloff>:/Icons/MarkupsDeleteAllRows.png</iconset>
+   </property>
+   <property name="text">
+    <string>Delete all markups</string>
+   </property>
+   <property name="toolTip">
+    <string>Delete all markups in the list</string>
+   </property>
+  </action>
+  <action name="ActionVisibility">
+   <property name="icon">
+    <iconset resource="../../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+     <normaloff>:/Icons/Small/SlicerInvisible.png</normaloff>
+     <normalon>:/Icons/Small/SlicerVisible.png</normalon>:/Icons/Small/SlicerInvisible.png</iconset>
+   </property>
+   <property name="text">
+    <string>Visibility</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle markups visibility</string>
+   </property>
+  </action>
+  <action name="ActionLocked">
+   <property name="icon">
+    <iconset resource="../../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+     <normaloff>:/Icons/Small/SlicerUnlock.png</normaloff>
+     <normalon>:/Icons/Small/SlicerLock.png</normalon>:/Icons/Small/SlicerUnlock.png</iconset>
+   </property>
+   <property name="text">
+    <string>Locked</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle markup point positions lock</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>qSlicerWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../../../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc"/>
+  <include location="../../../Resources/qSlicerTablesModule.qrc"/>
+  <include location="../../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
+ </resources>
+ <connections/>
+</ui>

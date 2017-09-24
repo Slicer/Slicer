@@ -156,6 +156,11 @@ void qSlicerTablesModuleWidget::setup()
   d->PlotButton->setDefaultAction(d->PlotAction);
   this->connect(d->PlotAction, SIGNAL(triggered()), d->TableView, SLOT(plotSelection()));
 
+  d->SelectedColumnPropertiesWidget->setSelectionFromMRMLTableView(d->TableView);
+
+  d->NewColumnPropertiesWidget->setMRMLTableColumnName(vtkMRMLTableNode::GetDefaultColumnName());
+  this->connect(d->TableNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), d->NewColumnPropertiesWidget, SLOT(setMRMLTableNode(vtkMRMLNode*)));
+
   this->onNodeSelected(0);
 }
 

@@ -8,6 +8,7 @@ string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
 #-----------------------------------------------------------------------------
 add_subdirectory(Logic)
 add_subdirectory(SubjectHierarchyPlugins)
+add_subdirectory(Widgets)
 
 #-----------------------------------------------------------------------------
 set(MODULE_EXPORT_DIRECTIVE "Q_SLICER_QTMODULES_${MODULE_NAME_UPPER}_EXPORT")
@@ -16,6 +17,8 @@ set(MODULE_EXPORT_DIRECTIVE "Q_SLICER_QTMODULES_${MODULE_NAME_UPPER}_EXPORT")
 set(MODULE_INCLUDE_DIRECTORIES
   ${CMAKE_CURRENT_SOURCE_DIR}/Logic
   ${CMAKE_CURRENT_BINARY_DIR}/Logic
+  ${CMAKE_CURRENT_SOURCE_DIR}/Widgets
+  ${CMAKE_CURRENT_BINARY_DIR}/Widgets
   ${CMAKE_CURRENT_SOURCE_DIR}/SubjectHierarchyPlugins
   ${CMAKE_CURRENT_BINARY_DIR}/SubjectHierarchyPlugins
   ${qSlicerSubjectHierarchyModuleWidgets_INCLUDE_DIRS}
@@ -44,6 +47,7 @@ set(MODULE_TARGET_LIBRARIES
   vtkSlicer${MODULE_NAME}ModuleLogic
   qMRMLWidgets
   qSlicer${MODULE_NAME}SubjectHierarchyPlugins
+  qSlicer${MODULE_NAME}ModuleWidgets
   )
 
 set(MODULE_RESOURCES

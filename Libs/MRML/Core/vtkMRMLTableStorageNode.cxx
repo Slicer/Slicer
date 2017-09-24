@@ -374,36 +374,57 @@ bool vtkMRMLTableStorageNode::ReadTable(std::string filename, vtkMRMLTableNode* 
       vtkIdType numberOfTuples = column->GetNumberOfTuples();
       typedColumn->SetNumberOfTuples(numberOfTuples);
 
-      // Initialize with default value
-      std::string defaultValueStr = tableNode->GetColumnProperty(columnName, "defaultValue");
+      // Initialize with null value
+      std::string nullValueStr = tableNode->GetColumnProperty(columnName, "nullValue");
       if (typedColumn->IsNumeric())
         {
         // numeric arrays can be initialized in one batch
-        double defaultValue = 0.0;
-        if (!defaultValueStr.empty())
+        double nullValue = 0.0;
+        if (!nullValueStr.empty())
           {
-          defaultValue = vtkVariant(defaultValueStr).ToDouble();
+          nullValue = vtkVariant(nullValueStr).ToDouble();
           }
-        typedColumn->FillComponent(0, defaultValue);
+        typedColumn->FillComponent(0, nullValue);
         }
       else
         {
-        vtkVariant defaultValue(defaultValueStr);
+        vtkVariant nullValue(nullValueStr);
         for (vtkIdType row = 0; row < numberOfTuples; ++row)
           {
-          typedColumn->SetVariantValue(row, defaultValue);
+          typedColumn->SetVariantValue(row, nullValue);
           }
         }
 
       // Set values
-      for (vtkIdType row = 0; row < numberOfTuples; ++row)
+      if (valueTypeId == VTK_CHAR || valueTypeId == VTK_SIGNED_CHAR || valueTypeId == VTK_UNSIGNED_CHAR)
         {
-        if (column->GetValue(row).empty())
+        bool valid = false;
+        for (vtkIdType row = 0; row < numberOfTuples; ++row)
           {
-          // empty cell, leave the default value
-          continue;
+          if (column->GetValue(row).empty())
+            {
+            // empty cell, leave the null value
+            continue;
+            }
+          int value = column->GetVariantValue(row).ToInt(&valid);
+          if (!valid)
+            {
+            continue;
+            }
+          typedColumn->SetVariantValue(row, vtkVariant(value));
           }
-        typedColumn->SetVariantValue(row, column->GetVariantValue(row));
+        }
+      else
+        {
+        for (vtkIdType row = 0; row < numberOfTuples; ++row)
+          {
+          if (column->GetValue(row).empty())
+            {
+            // empty cell, leave the null value
+            continue;
+            }
+          typedColumn->SetVariantValue(row, column->GetVariantValue(row));
+          }
         }
 
       table->AddColumn(typedColumn);
@@ -497,7 +518,7 @@ bool vtkMRMLTableStorageNode::WriteSchema(std::string filename, vtkMRMLTableNode
         schemaRowIndex = schemaTable->InsertNextBlankRow();
         columnNameArray->SetValue(schemaRowIndex, column->GetName());
         }
-      columnTypeArray->SetValue(schemaRowIndex, vtkImageScalarTypeNameMacro(column->GetDataType()));
+      columnTypeArray->SetValue(schemaRowIndex, vtkMRMLTableNode::GetValueTypeAsString(column->GetDataType()));
       }
     }
 

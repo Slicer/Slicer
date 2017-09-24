@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>351</width>
-    <height>360</height>
+    <width>467</width>
+    <height>502</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -313,6 +313,49 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="ctkCollapsibleButton" name="SelectedColumnPropertiesCollapsibleButton">
+        <property name="text">
+         <string>Column properties</string>
+        </property>
+        <property name="collapsed">
+         <bool>true</bool>
+        </property>
+        <property name="contentsFrameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <widget class="qSlicerTableColumnPropertiesWidget" name="SelectedColumnPropertiesWidget"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="ctkCollapsibleButton" name="NewColumnPropertiesCollapsibleButton">
+        <property name="text">
+         <string>New column defaults</string>
+        </property>
+        <property name="collapsed">
+         <bool>true</bool>
+        </property>
+        <property name="contentsFrameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="qSlicerTableColumnPropertiesWidget" name="NewColumnPropertiesWidget">
+           <property name="columnNameVisible">
+            <bool>false</bool>
+           </property>
+           <property name="confirmTypeChange">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -369,6 +412,11 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>qSlicerTableColumnPropertiesWidget</class>
+   <extends>qSlicerWidget</extends>
+   <header>qSlicerTableColumnPropertiesWidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>ctkCollapsibleButton</class>
    <extends>QWidget</extends>
    <header>ctkCollapsibleButton.h</header>
@@ -378,7 +426,6 @@
  <resources>
   <include location="../qSlicerTablesModule.qrc"/>
   <include location="../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
-  <include location="../../Widgets/Resources/qSlicerTablesModuleWidgets.qrc"/>
  </resources>
  <connections>
   <connection>

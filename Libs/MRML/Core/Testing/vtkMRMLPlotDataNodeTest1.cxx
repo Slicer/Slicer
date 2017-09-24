@@ -31,11 +31,11 @@
 int vtkMRMLPlotDataNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLScene> scene;
-  vtkNew<vtkMRMLPlotDataNode> node;
-  EXERCISE_ALL_BASIC_MRML_METHODS(node.GetPointer());
-  scene->AddNode(node.GetPointer());
+  vtkNew<vtkMRMLPlotDataNode> plotDataNode;
+  EXERCISE_ALL_BASIC_MRML_METHODS(plotDataNode.GetPointer());
+  scene->AddNode(plotDataNode.GetPointer());
 
-  vtkPlot* plot1 = node->GetPlot();
+  vtkPlot* plot1 = plotDataNode->GetPlot();
   CHECK_NOT_NULL(plot1);
 
   // Create a vtkTable
@@ -65,19 +65,23 @@ int vtkMRMLPlotDataNodeTest1(int , char * [] )
   tableNode->SetAndObserveTable(table.GetPointer());
 
   // Set and Observe the MRMLTableNode
-  node->SetAndObserveTableNodeID(tableNode->GetID());
+  plotDataNode->SetAndObserveTableNodeID(tableNode->GetID());
 
-  node->SetType(vtkMRMLPlotDataNode::BAR);
-  vtkPlot* plot2 = node->GetPlot();
+  plotDataNode->SetType(vtkMRMLPlotDataNode::BAR);
+  vtkPlot* plot2 = plotDataNode->GetPlot();
   CHECK_NOT_NULL(plot2);
 
-  CHECK_STD_STRING(node->GetYColumnName(), arrC->GetName())
+  plotDataNode->SetXColumnName(arrX->GetName());
+  plotDataNode->SetYColumnName(arrC->GetName());
+
 
   // Verify that Copy method creates a true independent copy
   vtkSmartPointer<vtkMRMLPlotDataNode> nodeCopy = vtkSmartPointer<vtkMRMLPlotDataNode>::New();
-  nodeCopy->CopyWithScene(node.GetPointer());
+  nodeCopy->CopyWithScene(plotDataNode.GetPointer());
 
-  CHECK_STD_STRING(node->GetName(), nodeCopy->GetName());
+  CHECK_STD_STRING(plotDataNode->GetName(), nodeCopy->GetName());
+  CHECK_STD_STRING(plotDataNode->GetXColumnName(), arrX->GetName());
+  CHECK_STD_STRING(plotDataNode->GetYColumnName(), arrC->GetName());
 
   std::cout << "vtkMRMLPlotDataNodeTest1 completed successfully" << std::endl;
   return EXIT_SUCCESS;

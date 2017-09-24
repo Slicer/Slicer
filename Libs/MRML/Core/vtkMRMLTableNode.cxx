@@ -25,22 +25,27 @@
 #include "vtkMRMLTableStorageNode.h"
 
 // VTK includes
+#include <vtkBitArray.h>
+#include <vtkCharArray.h>
 #include <vtkCommand.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
+#include <vtkSignedCharArray.h>
 #include <vtkStringArray.h>
 #include <vtkTable.h>
+#include <vtkUnsignedCharArray.h>
 
 // VTKSYS includes
 #include <vtksys/SystemTools.hxx>
 
 // STD includes
 #include <sstream>
+#include <deque>
 
 // Reserved property names
 static const char SCHEMA_COLUMN_NAME[] = "columnName";
 static const char SCHEMA_COLUMN_TYPE[] = "type";
-static const char SCHEMA_COLUMN_DEFAULT_VALUE[] = "defaultValue";
+static const char SCHEMA_COLUMN_NULL_VALUE[] = "nullValue";
 static const char SCHEMA_COLUMN_LONG_NAME[] = "longName";
 static const char SCHEMA_COLUMN_DESCRIPTION[] = "description";
 static const char SCHEMA_COLUMN_UNIT_LABEL[] = "unitLabel";
@@ -292,20 +297,20 @@ vtkAbstractArray* vtkMRMLTableNode::AddColumn(vtkAbstractArray* column)
         // Table is shorter than the array, add empty rows to the table.
         for (int i=0; i<numberOfColumnsToAddToTable; i++)
           {
-          this->InsertNextBlankRowWithDefaultValues(this->Table);
+          this->InsertNextBlankRowWithNullValues(this->Table);
           }
         }
       else if (numberOfColumnsToAddToTable<0)
         {
         // Need to add more items to the array to match the table size.
         // To make sure that augmentation of the array is consistent, we create a dummy vtkTable
-        // and use InsertNextBlankRowWithDefaultValues() method.
+        // and use InsertNextBlankRowWithNullValues() method.
         vtkNew<vtkTable> augmentingTable;
         augmentingTable->AddColumn(newColumn);
         int numberOfColumnsToAddToArray = -numberOfColumnsToAddToTable;
         for (int i=0; i<numberOfColumnsToAddToArray; i++)
           {
-          this->InsertNextBlankRowWithDefaultValues(augmentingTable.GetPointer());
+          this->InsertNextBlankRowWithNullValues(augmentingTable.GetPointer());
           }
         }
       }
@@ -322,7 +327,7 @@ vtkAbstractArray* vtkMRMLTableNode::AddColumn(vtkAbstractArray* column)
     newColumn = vtkSmartPointer<vtkAbstractArray>::Take(vtkAbstractArray::CreateArray(valueTypeId));
     newColumn->SetNumberOfTuples(numberOfRows);
 
-    vtkVariant emptyCell(this->GetColumnProperty(SCHEMA_DEFAULT_COLUMN_NAME, SCHEMA_COLUMN_DEFAULT_VALUE));
+    vtkVariant emptyCell(this->GetColumnProperty(SCHEMA_DEFAULT_COLUMN_NAME, SCHEMA_COLUMN_NULL_VALUE));
     for (int i=0; i<numberOfRows; i++)
       {
       newColumn->SetVariantValue(i, emptyCell);
@@ -343,6 +348,12 @@ vtkAbstractArray* vtkMRMLTableNode::AddColumn(vtkAbstractArray* column)
       }
     while (this->Table->GetColumnByName(newColumnName.c_str())!=0);
     newColumn->SetName(newColumnName.c_str());
+    }
+
+  // Copy null value and other column properties
+  if (this->Schema && this->GetPropertyRowIndex(SCHEMA_DEFAULT_COLUMN_NAME)>=0)
+    {
+    this->CopyAllColumnProperties(SCHEMA_DEFAULT_COLUMN_NAME, newColumn->GetName());
     }
 
   this->Table->AddColumn(newColumn);
@@ -558,7 +569,7 @@ int vtkMRMLTableNode::AddEmptyRow()
     vtkDebugMacro("vtkMRMLTableNode::AddEmptyRow called for an empty table. Add an empty column first.");
     this->AddColumn();
     }
-  vtkIdType rowIndex = this->InsertNextBlankRowWithDefaultValues(this->Table);
+  vtkIdType rowIndex = this->InsertNextBlankRowWithNullValues(this->Table);
   this->Table->Modified();
   this->EndModify(tableWasModified);
   return rowIndex;
@@ -690,7 +701,7 @@ void vtkMRMLTableNode::GetAllColumnPropertyNames(vtkStringArray* propertyNames)
       continue;
       }
     std::string columnName = column->GetName();
-    if (!columnName.compare(SCHEMA_COLUMN_NAME) || !columnName.compare(SCHEMA_COLUMN_TYPE))
+    if (!columnName.compare(SCHEMA_COLUMN_NAME))
       {
       // reserved for internal use
       continue;
@@ -698,7 +709,6 @@ void vtkMRMLTableNode::GetAllColumnPropertyNames(vtkStringArray* propertyNames)
     propertyNames->InsertNextValue(columnName.c_str());
     }
 }
-
 
 //----------------------------------------------------------------------------
 std::string vtkMRMLTableNode::GetColumnProperty(int columnIndex, const std::string& propertyName)
@@ -723,10 +733,9 @@ std::string vtkMRMLTableNode::GetColumnProperty(const std::string& columnName, c
     vtkErrorMacro("vtkMRMLTableNode::GetColumnProperty failed: reserved propertyName: " << propertyName);
     return "";
     }
-  if (propertyName == SCHEMA_COLUMN_TYPE && columnName != SCHEMA_DEFAULT_COLUMN_NAME)
+  if (propertyName == SCHEMA_COLUMN_TYPE)
     {
-    vtkErrorMacro("vtkMRMLTableNode::GetColumnProperty failed: reserved propertyName: " << propertyName);
-    return "";
+    return vtkMRMLTableNode::GetValueTypeAsString(this->GetColumnType(columnName));
     }
 
   return this->GetColumnPropertyInternal(columnName, propertyName);
@@ -779,9 +788,9 @@ void vtkMRMLTableNode::SetColumnProperty(const std::string& columnName, const st
     vtkErrorMacro("vtkMRMLTableNode::SetColumnProperty failed: reserved propertyName: " << propertyName);
     return;
     }
-  if (propertyName == SCHEMA_COLUMN_TYPE && columnName != SCHEMA_DEFAULT_COLUMN_NAME)
+  if (propertyName == SCHEMA_COLUMN_TYPE)
     {
-    vtkErrorMacro("vtkMRMLTableNode::SetColumnProperty failed: reserved propertyName: " << propertyName);
+    this->SetColumnType(columnName, vtkMRMLTableNode::GetValueTypeFromString(propertyValue));
     return;
     }
   if (propertyName.empty())
@@ -789,6 +798,12 @@ void vtkMRMLTableNode::SetColumnProperty(const std::string& columnName, const st
     vtkErrorMacro("vtkMRMLTableNode::SetColumnProperty failed: property name is invalid");
     return;
     }
+  this->SetColumnPropertyInternal(columnName, propertyName, propertyValue);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTableNode::SetColumnPropertyInternal(const std::string& columnName, const std::string& propertyName, const std::string& propertyValue)
+{
   // Make sure there is a schema
   if (this->Schema == NULL)
     {
@@ -822,7 +837,7 @@ void vtkMRMLTableNode::SetColumnProperty(const std::string& columnName, const st
     newPropertyArray->SetNumberOfValues(numberOfRows);
     for (int i = 0; i<numberOfRows; i++)
       {
-        newPropertyArray->SetVariantValue(i, "");
+      newPropertyArray->SetVariantValue(i, "");
       }
     this->Schema->AddColumn(newPropertyArray.GetPointer());
     propertyArray = newPropertyArray.GetPointer();
@@ -931,15 +946,15 @@ std::string vtkMRMLTableNode::GetColumnDescription(const std::string& columnName
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLTableNode::SetColumnDefaultValue(const std::string& columnName, const std::string& description)
+void vtkMRMLTableNode::SetColumnNullValue(const std::string& columnName, const std::string& description)
 {
-  this->SetColumnProperty(columnName, SCHEMA_COLUMN_DEFAULT_VALUE, description);
+  this->SetColumnProperty(columnName, SCHEMA_COLUMN_NULL_VALUE, description);
 }
 
 //----------------------------------------------------------------------------
-std::string vtkMRMLTableNode::GetColumnDefaultValue(const std::string& columnName)
+std::string vtkMRMLTableNode::GetColumnNullValue(const std::string& columnName)
 {
-  return this->GetColumnProperty(columnName, SCHEMA_COLUMN_DEFAULT_VALUE);
+  return this->GetColumnProperty(columnName, SCHEMA_COLUMN_NULL_VALUE);
 }
 
 //----------------------------------------------------------------------------
@@ -961,7 +976,7 @@ int vtkMRMLTableNode::GetValueTypeFromString(std::string valueTypeStr)
   const int MAX_TYPE_ID = 50; // currently there are less than 30 types, it is not likely there will be ever more than this
   for (int typeId = 0; typeId < MAX_TYPE_ID; typeId++)
     {
-    if (valueTypeStr == vtkImageScalarTypeNameMacro(typeId))
+    if (valueTypeStr == vtkMRMLTableNode::GetValueTypeAsString(typeId))
       {
       return typeId;
       }
@@ -971,11 +986,17 @@ int vtkMRMLTableNode::GetValueTypeFromString(std::string valueTypeStr)
 }
 
 //----------------------------------------------------------------------------
-vtkIdType vtkMRMLTableNode::InsertNextBlankRowWithDefaultValues(vtkTable* table)
+std::string vtkMRMLTableNode::GetValueTypeAsString(int valueType)
+{
+  return vtkImageScalarTypeNameMacro(valueType);
+}
+
+//----------------------------------------------------------------------------
+vtkIdType vtkMRMLTableNode::InsertNextBlankRowWithNullValues(vtkTable* table)
 {
   if (table == NULL)
     {
-    vtkErrorMacro("vtkMRMLTableNode::InsertNextBlankRowWithDefaultValues failed: invalid table");
+    vtkErrorMacro("vtkMRMLTableNode::InsertNextBlankRowWithNullValues failed: invalid table");
     return -1;
     }
 
@@ -988,8 +1009,8 @@ vtkIdType vtkMRMLTableNode::InsertNextBlankRowWithDefaultValues(vtkTable* table)
       {
       continue;
       }
-    vtkVariant defaultValue(this->GetColumnProperty(columnIndex, "defaultValue"));
-    column->SetVariantValue(rowIndex, defaultValue);
+    vtkVariant nullValue(this->GetColumnProperty(columnIndex, "nullValue"));
+    column->SetVariantValue(rowIndex, nullValue);
     }
 
   return rowIndex;
@@ -1002,7 +1023,7 @@ const char* vtkMRMLTableNode::GetDefaultColumnName()
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLTableNode::SetDefaultColumnType(const std::string& type, const std::string& defaultValue /* ="" */)
+bool vtkMRMLTableNode::SetDefaultColumnType(const std::string& type, const std::string& nullValue /* ="" */)
 {
   int valueType = this->GetValueTypeFromString(type);
   if (valueType == VTK_VOID)
@@ -1014,6 +1035,139 @@ bool vtkMRMLTableNode::SetDefaultColumnType(const std::string& type, const std::
     return false;
     }
   this->SetColumnProperty(SCHEMA_DEFAULT_COLUMN_NAME, SCHEMA_COLUMN_TYPE, type);
-  this->SetColumnProperty(SCHEMA_DEFAULT_COLUMN_NAME, SCHEMA_COLUMN_TYPE, defaultValue);
+  this->SetColumnProperty(SCHEMA_DEFAULT_COLUMN_NAME, SCHEMA_COLUMN_NULL_VALUE, nullValue);
   return true;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLTableNode::SetColumnType(const std::string& columnName, int valueType)
+{
+  int columnIndex = this->GetColumnIndex(columnName.c_str());
+  if (columnIndex < 0)
+    {
+    // there is no such column, it can be only the default column type
+    if (columnName != SCHEMA_DEFAULT_COLUMN_NAME)
+      {
+      vtkErrorMacro("vtkMRMLTableNode::SetColumnType failed: column by this name does not exist: " << columnName);
+      return false;
+      }
+    this->SetColumnPropertyInternal(SCHEMA_DEFAULT_COLUMN_NAME, SCHEMA_COLUMN_TYPE, vtkMRMLTableNode::GetValueTypeAsString(valueType));
+    return true;
+    }
+
+  if (this->GetColumnType(columnName) == valueType)
+    {
+    // nothing to do, type not changed
+    return true;
+    }
+
+  vtkTable* table = this->GetTable();
+
+  vtkSmartPointer<vtkAbstractArray> oldColumn = table->GetColumn(columnIndex);
+  vtkSmartPointer<vtkAbstractArray> newColumn = vtkSmartPointer<vtkAbstractArray>::Take(vtkAbstractArray::CreateArray(valueType));
+  newColumn->SetName(oldColumn->GetName());
+  vtkIdType numberOfTuples = oldColumn->GetNumberOfTuples();
+  newColumn->SetNumberOfTuples(numberOfTuples);
+  vtkVariant nullValue(this->GetColumnProperty(columnIndex, "nullValue"));
+
+  vtkDataArray* newDataArray = vtkDataArray::SafeDownCast(newColumn);
+  if (newDataArray)
+    {
+    // Initialize it with 0, just in case conversion from null value fails
+    // (for example if null value is "abc" and new type is double, then
+    // some new column values could remain uninitialized).
+    newDataArray->FillComponent(0, 0);
+    }
+
+  vtkBitArray* oldColumnBitArray = vtkBitArray::SafeDownCast(oldColumn);
+  vtkCharArray* oldColumnCharArray = vtkCharArray::SafeDownCast(oldColumn);
+  vtkSignedCharArray* oldColumnSignedCharArray = vtkSignedCharArray::SafeDownCast(oldColumn);
+  vtkUnsignedCharArray* oldColumnUnsignedCharArray = vtkUnsignedCharArray::SafeDownCast(oldColumn);
+  vtkCharArray* newColumnCharArray = vtkCharArray::SafeDownCast(newColumn);
+  vtkSignedCharArray* newColumnSignedCharArray = vtkSignedCharArray::SafeDownCast(newColumn);
+  vtkUnsignedCharArray* newColumnUnsignedCharArray = vtkUnsignedCharArray::SafeDownCast(newColumn);
+  if (oldColumnBitArray)
+    {
+    // vtkVariant cannot convert values from VTK_BIT type, therefore we need to handle it
+    // as a special case here.
+    for (int tupleIndex = 0; tupleIndex < numberOfTuples; ++tupleIndex)
+      {
+      int value = oldColumnBitArray->GetValue(tupleIndex);
+      newColumn->SetVariantValue(tupleIndex, vtkVariant(value));
+      }
+    }
+  else if (oldColumnCharArray || oldColumnSignedCharArray || oldColumnUnsignedCharArray)
+    {
+    // char may be converted as a single-character string
+    for (int tupleIndex = 0; tupleIndex < numberOfTuples; ++tupleIndex)
+      {
+      int value = oldColumn->GetVariantValue(tupleIndex).ToInt();
+      newColumn->SetVariantValue(tupleIndex, vtkVariant(value));
+      }
+    }
+  else if (newColumnCharArray || newColumnSignedCharArray || newColumnUnsignedCharArray)
+    {
+    // char may be converted as a single-character string
+    for (int tupleIndex = 0; tupleIndex < numberOfTuples; ++tupleIndex)
+      {
+      int value = oldColumn->GetVariantValue(tupleIndex).ToInt();
+      newColumn->SetVariantValue(tupleIndex, vtkVariant(value));
+      }
+    }
+  else
+    {
+    for (int tupleIndex = 0; tupleIndex < numberOfTuples; ++tupleIndex)
+      {
+      // Initialize it with null value, just in case conversion from previous value fails
+      newColumn->SetVariantValue(tupleIndex, nullValue);
+      // Copy converted value
+      std::string valueAsString = oldColumn->GetVariantValue(tupleIndex).ToString();
+      vtkVariant value(valueAsString);
+      newColumn->SetVariantValue(tupleIndex, value);
+      }
+    }
+
+  // Replace column: vtkTable API has no way of inserting a column, so we temporarily remove all columns
+  // after the selected column and put back in order.
+  int wasModified = this->StartModify();
+  std::deque< vtkSmartPointer< vtkAbstractArray > > removedColumns;
+  while (table->GetNumberOfColumns() > columnIndex)
+    {
+    removedColumns.push_back(table->GetColumn(table->GetNumberOfColumns()-1));
+    table->RemoveColumn(table->GetNumberOfColumns() - 1);
+    }
+  removedColumns.pop_back(); // discard the last column, that is the old column
+  table->AddColumn(newColumn);
+  while (!removedColumns.empty())
+    {
+    table->AddColumn(removedColumns.back());
+    removedColumns.pop_back();
+    }
+  this->Modified();
+  this->EndModify(wasModified);
+
+  return true;
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLTableNode::GetColumnType(const std::string& columnName)
+{
+  if (columnName == SCHEMA_DEFAULT_COLUMN_NAME)
+    {
+    int valueTypeId = this->GetColumnValueTypeFromSchema(SCHEMA_DEFAULT_COLUMN_NAME);
+    if (valueTypeId == VTK_VOID)
+      {
+      // schema is not defined or no valid column type is defined for column
+      valueTypeId = VTK_STRING;
+      }
+    return valueTypeId;
+    }
+
+  int columnIndex = this->GetColumnIndex(columnName.c_str());
+  if (columnIndex < 0)
+    {
+    return VTK_VOID;
+    }
+  int valueTypeId = this->Table->GetColumn(columnIndex)->GetDataType();
+  return valueTypeId;
 }

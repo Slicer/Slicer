@@ -219,6 +219,8 @@ void qMRMLTableView::setMRMLTableNode(vtkMRMLTableNode* node)
 
   this->horizontalHeader()->setMinimumSectionSize(60);
   this->resizeColumnsToContents();
+
+  emit selectionChanged();
 }
 
 //------------------------------------------------------------------------------
@@ -795,4 +797,32 @@ vtkMRMLScene* qMRMLTableView::mrmlScene()const
 {
   Q_D(const qMRMLTableView);
   return d->MRMLScene;
+}
+
+//---------------------------------------------------------------------------
+QList<int> qMRMLTableView::selectedMRMLTableColumnIndices()const
+{
+  Q_D(const qMRMLTableView);
+  QList<int> mrmlColumnIndexList;
+  QModelIndexList selection = selectionModel()->selectedIndexes();
+  qMRMLTableModel* tableModel = this->tableModel();
+  QModelIndex index;
+  foreach(index, selection)
+    {
+    int mrmlColumnIndex = tableModel->mrmlTableColumnIndex(index);
+    if (!mrmlColumnIndexList.contains(mrmlColumnIndex))
+      {
+      // insert unique row/column index only
+      mrmlColumnIndexList.push_back(mrmlColumnIndex);
+      }
+    }
+  return mrmlColumnIndexList;
+}
+
+//---------------------------------------------------------------------------
+void qMRMLTableView::selectionChanged(const QItemSelection & selected, const QItemSelection & deselected)
+{
+  Q_D(const qMRMLTableView);
+  QTableView::selectionChanged(selected, deselected);
+  emit selectionChanged();
 }

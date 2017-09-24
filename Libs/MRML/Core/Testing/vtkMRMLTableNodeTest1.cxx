@@ -167,9 +167,7 @@ int vtkMRMLTableNodeTest1(int , char * [] )
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   CHECK_STD_STRING(node2->GetColumnProperty(0, "columnName"), "");
   TESTING_OUTPUT_ASSERT_ERRORS_END();
-  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  CHECK_STD_STRING(node2->GetColumnProperty(0, "type"), "");
-  TESTING_OUTPUT_ASSERT_ERRORS_END();
+  CHECK_STD_STRING(node2->GetColumnProperty(0, "type"), "string");
 
   std::cout << "vtkMRMLTableNodeTest1 completed successfully" << std::endl;
   return EXIT_SUCCESS;

@@ -93,7 +93,7 @@ public:
   /// - type: data type of the column. Supported types: string, double, float, int, unsigned int, bit,
   ///   short, unsigned short, long, unsigned long, char, signed char, unsigned char, long long, unsigned long long
   ///   __int64, unsigned __int64, idtype. Default: string.
-  /// - defaultValue: value to be used when a value is not specified
+  /// - nullValue: value to be used when a value is not specified (new table row is added, blank string is entered, etc)
   /// - longName: full human-readable name of the column
   /// - description: human-readable detailed description of the column
   /// - unitLabel: simple unit label
@@ -195,9 +195,9 @@ public:
   int GetNumberOfColumns();
 
   ///
-  /// Set default value for blank rows and missing non-string values.
-  void SetColumnDefaultValue(const std::string& columnName, const std::string& defaultValue);
-  std::string GetColumnDefaultValue(const std::string& columnName);
+  /// Set null value for blank rows and missing values.
+  void SetColumnNullValue(const std::string& columnName, const std::string& nullValue);
+  std::string GetColumnNullValue(const std::string& columnName);
 
   ///
   /// Set a full human-readable name of a column.
@@ -218,7 +218,7 @@ public:
 
   ///
   /// Get a column property.
-  /// Property names reserved for internal use: columnName, type.
+  /// Property name "columnName" is reserved for internal use.
   /// \sa SetAndObserveSchema, GetColumnValueTypeFromSchema
   std::string GetColumnProperty(const std::string& columnName, const std::string& propertyName);
   std::string GetColumnProperty(int columnIndex, const std::string& propertyName);
@@ -230,8 +230,9 @@ public:
 
   ///
   /// Set a column property value.
-  /// Property names reserved for internal use: columnName, type.
-  /// \sa SetAndObserveSchema, GetColumnValueTypeFromSchema
+  /// Property name "columnName" is reserved for internal use.
+  /// Property name "type" converts existing values in the column.
+  /// \sa SetAndObserveSchema
   void SetColumnProperty(const std::string& columnName, const std::string& propertyName, const std::string& propertyValue);
   void SetColumnProperty(int columnIndex, const std::string& propertyName, const std::string& propertyValue);
 
@@ -255,22 +256,39 @@ public:
   /// because once the table column is created, the actual column type is the type of the associated VTK data array.
   int GetColumnValueTypeFromSchema(const std::string& columnName);
 
-  /// Insert next blank row into the table, using default values defined in the schema.
+  /// Insert next blank row into the table, using null values defined in the schema.
   /// \return row index of the inserted row
-  vtkIdType InsertNextBlankRowWithDefaultValues(vtkTable* table);
+  vtkIdType InsertNextBlankRowWithNullValues(vtkTable* table);
 
-  /// Set default type and default value for new columns.
+  /// Get data type of a column.
+  /// \return column type ID
+  int GetColumnType(const std::string& columnName);
+
+  /// Change data type of a column.
+  /// If values are stored in the column then values will be converted, therefore
+  /// data loss may occur.
+  /// \param type: new column value type ID
+  /// \return True on success.
+  bool SetColumnType(const std::string& columnName, int typeId);
+
+  /// Set default type and null value for new columns.
   /// This is a convenience method to set column type with a simple call.
   /// To get or set other default properties, call SetColumnProperty()
   /// or GetColumnProperty() using the column name returned by GetDefaultColumnName().
-  /// \param type: type of valyes stored in new columns by default (string, double, ...)
-  /// \param defaultValue: this value is used when a new row is added to the column
+  /// \param type: type of values stored in new columns by default (string, double, ...)
+  /// \param nullValue: this value is used when a new row is added to the column
   /// \return True on success.
   /// \sa SetAndObserveSchema
-  bool SetDefaultColumnType(const std::string& type, const std::string& defaultValue="");
+  bool SetDefaultColumnType(const std::string& type, const std::string& nullValue="");
 
   /// Name of the column that stores default properties that are used when a new column is created.
-  const char* GetDefaultColumnName();
+  static const char* GetDefaultColumnName();
+
+  /// Get value type id from string (inverse of vtkImageScalarTypeNameMacro)
+  static int GetValueTypeFromString(std::string valueTypeStr);
+
+  /// Get value type id from string (uses vtkImageScalarTypeNameMacro)
+  static std::string GetValueTypeAsString(int valueType);
 
   //----------------------------------------------------------------
   /// Constructor and destructor
@@ -281,16 +299,15 @@ public:
   vtkMRMLTableNode(const vtkMRMLTableNode&);
   void operator=(const vtkMRMLTableNode&);
 
-
  protected:
 
   /// Get column property, even for reserved properties
   std::string GetColumnPropertyInternal(const std::string& columnName, const std::string& propertyName);
 
-  vtkIdType GetPropertyRowIndex(const std::string& columnName);
+  /// Set column property, even for reserved properties
+  void SetColumnPropertyInternal(const std::string& columnName, const std::string& propertyName, const std::string& propertyValue);
 
-  /// Get value type id from string (inverse of vtkImageScalarTypeNameMacro)
-  int GetValueTypeFromString(std::string valueTypeStr);
+  vtkIdType GetPropertyRowIndex(const std::string& columnName);
 
   //----------------------------------------------------------------
   /// Data
