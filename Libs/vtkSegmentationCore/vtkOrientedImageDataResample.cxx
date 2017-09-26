@@ -607,7 +607,7 @@ template <typename T> void CalculateEffectiveExtentGeneric(vtkOrientedImageData*
 }
 
 //----------------------------------------------------------------------------
-bool vtkOrientedImageDataResample::CalculateEffectiveExtent(vtkOrientedImageData* image, int effectiveExtent[6])
+bool vtkOrientedImageDataResample::CalculateEffectiveExtent(vtkOrientedImageData* image, int effectiveExtent[6], double threshold /*=0.0*/)
 {
   if (!image)
     {
@@ -616,7 +616,7 @@ bool vtkOrientedImageDataResample::CalculateEffectiveExtent(vtkOrientedImageData
 
   switch (image->GetScalarType())
     {
-    vtkTemplateMacro(CalculateEffectiveExtentGeneric<VTK_TT>(image, effectiveExtent, 0));
+    vtkTemplateMacro(CalculateEffectiveExtentGeneric<VTK_TT>(image, effectiveExtent, threshold));
   default:
     vtkGenericWarningMacro("vtkOrientedImageDataResample::CalculateEffectiveExtent: Unknown ScalarType");
     return false;
