@@ -320,7 +320,7 @@
    <item>
     <widget class="ctkCollapsibleButton" name="AdjustingDataDisplayCollapsibleWidget">
      <property name="text">
-      <string>Display</string>
+      <string>Display and Layouts</string>
      </property>
      <property name="collapsed">
       <bool>true</bool>
