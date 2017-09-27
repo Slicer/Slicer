@@ -35,6 +35,9 @@ public:
   /// Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName() VTK_OVERRIDE  {return "ModelStorage";}
 
+  /// Write this node's information to a MRML file in XML format.
+  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
+
   /// Return true if the reference node can be read in
   virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode) VTK_OVERRIDE;
 
