@@ -307,13 +307,14 @@ void qSlicerSettingsModulesPanel::onAddModulesAdditionalPathClicked()
   qSlicerCoreApplication * coreApp = qSlicerCoreApplication::application();
   QString path = QFileDialog::getExistingDirectory(
         this, tr("Select folder"),
-        coreApp->revisionUserSettings()->value("Extensions/InstallPath").toString());
+        coreApp->revisionUserSettings()->value("Modules/MostRecentlySelectedPath").toString());
   // An empty directory means that the user cancelled the dialog.
   if (path.isEmpty())
     {
     return;
     }
   d->AdditionalModulePathsView->addDirectory(path);
+  coreApp->revisionUserSettings()->setValue("Modules/MostRecentlySelectedPath", path);
 }
 
 // --------------------------------------------------------------------------
