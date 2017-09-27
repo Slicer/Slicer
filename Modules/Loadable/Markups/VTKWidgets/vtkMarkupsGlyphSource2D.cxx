@@ -107,10 +107,10 @@ int vtkMarkupsGlyphSource2D::RequestData(
       this->CreateVertex(pts,verts,colors);
       break;
     case VTK_DASH_GLYPH:
-      this->CreateDash(pts,lines,polys,colors,this->Scale);
+      this->CreateDash(pts,lines,polys,colors);
       break;
     case VTK_CROSS_GLYPH:
-      this->CreateCross(pts,lines,polys,colors,this->Scale);
+      this->CreateCross(pts,lines,polys,colors);
       break;
     case VTK_THICKCROSS_GLYPH:
       this->CreateThickCross(pts,lines,polys,colors);
@@ -137,7 +137,7 @@ int vtkMarkupsGlyphSource2D::RequestData(
       this->CreateHookedArrow(pts,lines,polys,colors);
       break;
     case VTK_STARBURST_GLYPH:
-      this->CreateStarBurst(pts,lines,polys,colors,this->Scale);
+      this->CreateStarBurst(pts,lines,polys,colors);
       break;
     }
 
@@ -499,8 +499,7 @@ void vtkMarkupsGlyphSource2D::CreateHookedArrow(vtkPoints *pts, vtkCellArray *li
 
 void vtkMarkupsGlyphSource2D::CreateStarBurst(vtkPoints *pts, vtkCellArray *lines,
                                                  vtkCellArray *vtkNotUsed(polys),
-                                                 vtkUnsignedCharArray *colors,
-                                                 double vtkNotUsed( scale ))
+                                                 vtkUnsignedCharArray *colors)
 {
   // make a star shaped array of lines around the center, from SeedSWidget.tcl
   float PI =  3.1415926;

@@ -143,9 +143,9 @@ protected:
   void CreateVertex(vtkPoints *pts, vtkCellArray *verts,
                     vtkUnsignedCharArray *colors);
   void CreateDash(vtkPoints *pts, vtkCellArray *lines,
-                  vtkCellArray *polys, vtkUnsignedCharArray *colors, double scale);
+                  vtkCellArray *polys, vtkUnsignedCharArray *colors, double scale = 1.0);
   void CreateCross(vtkPoints *pts, vtkCellArray *lines,
-                   vtkCellArray *polys, vtkUnsignedCharArray *colors, double scale);
+                   vtkCellArray *polys, vtkUnsignedCharArray *colors, double scale = 1.0);
   void CreateThickCross(vtkPoints *pts, vtkCellArray *lines,
                         vtkCellArray *polys, vtkUnsignedCharArray *colors);
   void CreateTriangle(vtkPoints *pts, vtkCellArray *lines,
@@ -163,7 +163,7 @@ protected:
   void CreateHookedArrow(vtkPoints *pts, vtkCellArray *lines,
                          vtkCellArray *polys, vtkUnsignedCharArray *colors);
   void CreateStarBurst(vtkPoints *pts, vtkCellArray *lines,
-                       vtkCellArray *polys, vtkUnsignedCharArray *colors, double scale);
+                       vtkCellArray *polys, vtkUnsignedCharArray *colors);
 
 private:
   vtkMarkupsGlyphSource2D(const vtkMarkupsGlyphSource2D&);  /// Not implemented.

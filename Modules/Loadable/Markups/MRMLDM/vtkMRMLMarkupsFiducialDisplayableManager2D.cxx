@@ -844,15 +844,7 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::SetNthSeed(int n, vtkMRMLMarkup
                   static const double inPlaneOpacity = 1.0;
                   if (displayP1[2] < 0)
                     {
-                    // when the glyph source is a cross2d or a dash2d, filled
-                    // off is not working correctly, the lines extend to the
-                    // edges of the viewer (the scaling is applied to line
-                    // length
-                    if (glyphType != vtkMRMLMarkupsDisplayNode::Dash2D &&
-                        glyphType != vtkMRMLMarkupsDisplayNode::Cross2D)
-                      {
-                      glyphSource->FilledOff();
-                      }
+                    glyphSource->FilledOff();
                     if (displayP1[2] > -threshold)
                       {
                       projectionOpacity = inPlaneOpacity;
