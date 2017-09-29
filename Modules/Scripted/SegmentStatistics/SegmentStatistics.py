@@ -424,6 +424,8 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
     Update statistical measures for specified segment.
     Note: This will not change or reset measurement results of other segments
     """
+    import vtkSegmentationCorePython as vtkSegmentationCore
+
     segmentationNode = slicer.mrmlScene.GetNodeByID(self.getParameterNode().GetParameter("Segmentation"))
 
     if not segmentationNode.GetSegmentation().GetSegment(segmentID):
