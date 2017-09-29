@@ -211,6 +211,22 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
       DEPENDEES install
       )
 
+    # Note: Install rules for SlicerPythonLauncherSettingsToInstall.ini and SlicerPython executable
+    #       are specified in SlicerBlockInstallPython.cmake
+
+    if(UNIX AND NOT APPLE)
+      find_program(LSB_RELEASE_EXECUTABLE NAMES lsb_release)
+      if(LSB_RELEASE_EXECUTABLE)
+        ExternalProject_Add_Step(${proj} configure_lsb_release_wrapper
+          COMMAND ${CMAKE_COMMAND}
+            -DCTKAppLauncher_DIR:PATH=${CTKAppLauncher_DIR}
+            -DLSB_RELEASE_EXECUTABLE:PATH=${LSB_RELEASE_EXECUTABLE}
+            -DPYTHON_REAL_EXECUTABLE:FILEPATH=${slicer_PYTHON_REAL_EXECUTABLE}
+            -P ${Slicer_SOURCE_DIR}/SuperBuild/python_configure_lsb_release_wrapper.cmake
+          DEPENDEES install
+          )
+      endif()
+    endif()
   endif()
 
   #-----------------------------------------------------------------------------
