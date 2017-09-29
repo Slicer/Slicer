@@ -48,7 +48,7 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    "e8a11f40901212f5d25e2f03938c5410aa9f6a3c" # v3.3.2 + patch disabling LHA (See #4407)
+    "43a14d4a097607d44c8741b24795d9ddc70b9be8" # master (v3.3.3) + patch disabling LHA (See #4407)
     QUIET
     )
 
