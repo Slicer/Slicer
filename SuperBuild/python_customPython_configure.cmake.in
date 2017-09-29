@@ -20,7 +20,7 @@ set(PYTHON_EXECUTABLE "@PYTHON_EXECUTABLE@")
 set(slicer_PYTHON_REAL_EXECUTABLE "@slicer_PYTHON_REAL_EXECUTABLE@")
 set(slicer_PYTHON_SHARED_LIBRARY_DIR "@slicer_PYTHON_SHARED_LIBRARY_DIR@")
 set(PYTHON_ENABLE_SSL @PYTHON_ENABLE_SSL@)
-set(CTKAPPLAUNCHER_DIR "@CTKAPPLAUNCHER_DIR@")
+set(CTKAppLauncher_DIR "@CTKAppLauncher_DIR@")
 set(python_DIR "@python_DIR@")
 set(Slicer_BIN_DIR "@Slicer_BIN_DIR@")
 set(Slicer_LIB_DIR "@Slicer_LIB_DIR@")
@@ -32,36 +32,16 @@ set(Slicer_BINARY_DIR "@Slicer_BINARY_DIR@")
 # Copy and rename launcher
 #-----------------------------------------------------------------------------
 
-find_program(
-  CTKAPPLAUNCHER_EXECUTABLE CTKAppLauncher
-  PATHS ${CTKAPPLAUNCHER_DIR}/bin NO_DEFAULT_PATH
-  )
-if(NOT EXISTS ${CTKAPPLAUNCHER_EXECUTABLE})
-  message(FATAL_ERROR "error: CTKAPPLAUNCHER_EXECUTABLE not found: ${CTKAPPLAUNCHER_EXECUTABLE}")
-endif()
+find_package(CTKAppLauncher REQUIRED)
 
 configure_file(
-  ${CTKAPPLAUNCHER_EXECUTABLE}
+  ${CTKAppLauncher_EXECUTABLE}
   ${PYTHON_EXECUTABLE}
   COPYONLY
   )
 if(NOT EXISTS ${PYTHON_EXECUTABLE})
   message(FATAL_ERROR "error: PYTHON_EXECUTABLE points to an inexistent file: ${PYTHON_EXECUTABLE}")
 endif()
-
-
-#-----------------------------------------------------------------------------
-function(_listToQtSettingsArray ITEMS ITEMNAME OUTPUTVAR)
-  set(idx 1)
-  set(SETTINGS_ARRAY)
-  list(LENGTH ITEMS item_count)
-  foreach(item ${ITEMS})
-    set(SETTINGS_ARRAY "${SETTINGS_ARRAY}${idx}\\${ITEMNAME}=${item}\n")
-    math(EXPR idx "${idx} + 1")
-  endforeach()
-  set(SETTINGS_ARRAY "${SETTINGS_ARRAY}size=${item_count}")
-  set(${OUTPUTVAR} ${SETTINGS_ARRAY} PARENT_SCOPE)
-endfunction()
 
 #-----------------------------------------------------------------------------
 # Settings specific to the build tree.
@@ -74,14 +54,14 @@ if(PYTHON_ENABLE_SSL)
   list(APPEND _library_paths_build
     ${OPENSSL_EXPORT_LIBRARY_DIR})
 endif()
-_listToQtSettingsArray("${_library_paths_build}" "path" SETTINGS_PYTHONLAUNCHER_LIBRARY_PATHS)
+ctkAppLauncherListToQtSettingsArray("${_library_paths_build}" "path" SETTINGS_PYTHONLAUNCHER_LIBRARY_PATHS)
 
 set(_pythonpath_paths_build
   "${PYTHONHOME}/${PYTHON_STDLIB_SUBDIR}"
   "${PYTHONHOME}/${PYTHON_STDLIB_SUBDIR}/lib-dynload"
   "${PYTHONHOME}/${PYTHON_SITE_PACKAGES_SUBDIR}"
   )
-_listToQtSettingsArray("${_pythonpath_paths_build}" "path" SETTINGS_PYTHONLAUNCHER_PYTHONPATH_PATHS)
+ctkAppLauncherListToQtSettingsArray("${_pythonpath_paths_build}" "path" SETTINGS_PYTHONLAUNCHER_PYTHONPATH_PATHS)
 
 set(PYTHON_EXE_SUFFIX_CONFIG "")
 
@@ -124,7 +104,7 @@ set(_library_paths_installed
   <APPLAUNCHER_DIR>/../${Slicer_LIB_DIR}
   <APPLAUNCHER_DIR>/../lib/Python/lib
   )
-_listToQtSettingsArray("${_library_paths_installed}" "path" SETTINGS_PYTHONLAUNCHER_LIBRARY_PATHS)
+ctkAppLauncherListToQtSettingsArray("${_library_paths_installed}" "path" SETTINGS_PYTHONLAUNCHER_LIBRARY_PATHS)
 
 set(_pythonpath_paths_installed
   "${PYTHONHOME}/lib/Python/${PYTHON_STDLIB_SUBDIR}"
@@ -132,7 +112,7 @@ set(_pythonpath_paths_installed
   "${PYTHONHOME}/lib/Python/${PYTHON_SITE_PACKAGES_SUBDIR}"
   "<APPLAUNCHER_DIR>/../${Slicer_BIN_DIR}/Python"
   )
-_listToQtSettingsArray("${_pythonpath_paths_installed}" "path" SETTINGS_PYTHONLAUNCHER_PYTHONPATH_PATHS)
+ctkAppLauncherListToQtSettingsArray("${_pythonpath_paths_installed}" "path" SETTINGS_PYTHONLAUNCHER_PYTHONPATH_PATHS)
 
 set(PYTHON_EXE_SUFFIX_CONFIG "-real")
 

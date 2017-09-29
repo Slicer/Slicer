@@ -98,6 +98,7 @@
 #include <vtkMRMLScene.h>
 
 // CTKLauncherLib includes
+#include <ctkAppLauncherEnvironment.h>
 #include <ctkAppLauncherSettings.h>
 
 // VTK includes
@@ -214,6 +215,20 @@ void qSlicerCoreApplicationPrivate::init()
   this->parseArguments();
 
   this->SlicerHome = this->discoverSlicerHomeDirectory();
+
+  // Save the environment if no launcher is used (this is for example the case
+  // on MacOSX when slicer is started from an install tree)
+  if (ctkAppLauncherEnvironment::currentLevel() == 0)
+    {
+    QProcessEnvironment updatedEnv;
+    ctkAppLauncherEnvironment::saveEnvironment(
+          this->Environment, this->Environment.keys(), updatedEnv);
+    foreach(const QString& varname, updatedEnv.keys())
+      {
+      q->setEnvironmentVariable(varname, updatedEnv.value(varname));
+      }
+    }
+
   q->setEnvironmentVariable("SLICER_HOME", this->SlicerHome);
 
   ctkAppLauncherSettings appLauncherSettings;
@@ -665,38 +680,7 @@ bool qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::ApplicationAt
 //-----------------------------------------------------------------------------
 QProcessEnvironment qSlicerCoreApplication::startupEnvironment() const
 {
-  Q_D(const qSlicerCoreApplication);
-
-  ctkAppLauncherSettings appLauncherSettings;
-  appLauncherSettings.setLauncherName(this->applicationName().replace("-tmp", ""));
-  appLauncherSettings.setLauncherDir(d->SlicerHome);
-  if (!appLauncherSettings.readSettings(this->launcherSettingsFilePath()))
-    {
-    qCritical() << "Failed to read launcher settings" << this->launcherSettingsFilePath();
-    }
-
-  QProcessEnvironment startupEnv(d->Environment);
-
-  // Update regular environment variables
-  QHash<QString, QString> envVars = appLauncherSettings.envVars();
-  foreach(const QString& key, envVars.keys())
-    {
-    startupEnv.remove(key);
-    }
-
-  // Update path environment variables (includes PATH and/or (DY)LD_LIBRARY_PATH)
-  QHash<QString, QStringList> pathsEnvVars = appLauncherSettings.pathsEnvVars();
-  foreach(const QString& key, pathsEnvVars.keys())
-    {
-    QStringList slicerPaths = pathsEnvVars.value(key);
-    QStringList currentPaths = startupEnv.value(key).split(appLauncherSettings.pathSep());
-    foreach(const QString& slicerPath, slicerPaths)
-      {
-      currentPaths.removeAll(slicerPath);
-      }
-    startupEnv.insert(key, currentPaths.join(appLauncherSettings.pathSep()));
-    }
-  return startupEnv;
+  return ctkAppLauncherEnvironment::environment(0);
 }
 
 //-----------------------------------------------------------------------------

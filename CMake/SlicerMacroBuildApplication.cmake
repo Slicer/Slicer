@@ -522,7 +522,8 @@ macro(slicerMacroBuildApplication)
   # --------------------------------------------------------------------------
   if(SLICERAPP_CONFIGURE_LAUNCHER)
     if(Slicer_USE_CTKAPPLAUNCHER)
-      include(${CTKAPPLAUNCHER_DIR}/CMake/ctkAppLauncher.cmake)
+
+      find_package(CTKAppLauncher REQUIRED)
 
       # Define list of extra 'application to launch' to associate with the launcher
       # within the build tree
@@ -580,7 +581,7 @@ macro(slicerMacroBuildApplication)
 
       include(SlicerBlockCTKAppLauncherSettings)
 
-      ctkAppLauncherConfigure(
+      ctkAppLauncherConfigureForTarget(
         # Executable target associated with the launcher
         TARGET ${slicerapp_target}
         # Location of the launcher settings in the install tree
@@ -639,11 +640,11 @@ macro(slicerMacroBuildApplication)
           # Create command to update launcher icon
           add_custom_command(
             DEPENDS
-              ${CTKAPPLAUNCHER_DIR}/bin/CTKAppLauncherW${CMAKE_EXECUTABLE_SUFFIX}
+              ${CTKAppLauncher_DIR}/bin/CTKAppLauncherW${CMAKE_EXECUTABLE_SUFFIX}
             OUTPUT
               ${Slicer_BINARY_DIR}/CMakeFiles/${SLICERAPP_APPLICATION_NAME}W${CMAKE_EXECUTABLE_SUFFIX}
             COMMAND ${CMAKE_COMMAND} -E copy
-              ${CTKAPPLAUNCHER_DIR}/bin/CTKAppLauncherW${CMAKE_EXECUTABLE_SUFFIX}
+              ${CTKAppLauncher_DIR}/bin/CTKAppLauncherW${CMAKE_EXECUTABLE_SUFFIX}
               ${Slicer_BINARY_DIR}/CMakeFiles/${SLICERAPP_APPLICATION_NAME}W${CMAKE_EXECUTABLE_SUFFIX}
             COMMAND
               ${CTKResEdit_EXECUTABLE}

@@ -61,7 +61,7 @@ if(NOT TARGET ConfigureAdditionalLauncherSettings AND _configure_additional_laun
   list(FIND SEM_LAUNCH_COMMAND "--launch" launch_index)
   list(INSERT SEM_LAUNCH_COMMAND ${launch_index} ${Slicer_ADDITIONAL_LAUNCHER_SETTINGS})
 
-  include(${CTKAPPLAUNCHER_DIR}/CMake/ctkAppLauncher.cmake)
+  include(${CTKAppLauncher_DIR}/CMake/ctkAppLauncher.cmake)
 
   #-----------------------------------------------------------------------------
   #-----------------------------------------------------------------------------

@@ -21,26 +21,23 @@ if(Slicer_USE_CTKAPPLAUNCHER)
     message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
   endif()
 
-  if(NOT DEFINED CTKAPPLAUNCHER_DIR)
+  if(NOT DEFINED CTKAppLauncher_DIR)
+
     SlicerMacroGetOperatingSystemArchitectureBitness(VAR_PREFIX CTKAPPLAUNCHER)
-    set(launcher_version "0.1.14")
-    set(item_id "")
+    set(launcher_version "0.1.19")
     # On windows, use i386 launcher unconditionally
     if("${CTKAPPLAUNCHER_OS}" STREQUAL "win")
       set(CTKAPPLAUNCHER_ARCHITECTURE "i386")
-      set(md5 "5511af8ea134e9d516070d85bdb890f3")
-      set(item_id "7565")
+      set(md5 "7ea0db18dde8f55c0883d0cdef1c0d3f")
     elseif("${CTKAPPLAUNCHER_OS}" STREQUAL "linux")
-      set(md5 "2bdd93a8b41f245902a38429e6b20ea4")
-      set(item_id "9838")
+      set(md5 "13410abd49e5bb29250f6134e4867732")
     elseif("${CTKAPPLAUNCHER_OS}" STREQUAL "macosx")
-      set(md5 "06bff63508db30244467de64afae000b")
-      set(item_id "6112")
+      set(md5 "b7555384cf2d514c33fec35dcb695ead")
     endif()
 
     ExternalProject_Add(${proj}
       ${${proj}_EP_ARGS}
-      URL http://packages.kitware.com/api/rest?method=midas.item.download&id=${item_id}&dummy=CTKAppLauncher-${launcher_version}-${CTKAPPLAUNCHER_OS}-${CTKAPPLAUNCHER_ARCHITECTURE}.tar.gz
+      URL https://github.com/commontk/AppLauncher/releases/download/v${launcher_version}/CTKAppLauncher-${launcher_version}-${CTKAPPLAUNCHER_OS}-${CTKAPPLAUNCHER_ARCHITECTURE}.tar.gz
       URL_MD5 ${md5}
       SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
       CONFIGURE_COMMAND ""
@@ -54,7 +51,7 @@ if(Slicer_USE_CTKAPPLAUNCHER)
       VERSION ${launcher_version}
       )
 
-    set(CTKAPPLAUNCHER_DIR ${CMAKE_BINARY_DIR}/${proj})
+    set(CTKAppLauncher_DIR ${CMAKE_BINARY_DIR}/${proj})
 
   else()
     ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
@@ -62,7 +59,7 @@ if(Slicer_USE_CTKAPPLAUNCHER)
 
   mark_as_superbuild(
     VARS
-      CTKAPPLAUNCHER_DIR:PATH
+      CTKAppLauncher_DIR:PATH
     LABELS "FIND_PACKAGE"
     )
 
