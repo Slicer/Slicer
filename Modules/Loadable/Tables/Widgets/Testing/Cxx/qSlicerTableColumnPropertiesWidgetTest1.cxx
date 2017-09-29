@@ -34,10 +34,15 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLTableNode.h"
 
+// Slicer includes
+#include "vtkSlicerConfigure.h"
+
 // VTK includes
 #include <vtkNew.h>
 #include <vtkTable.h>
-
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+#include <QVTKOpenGLWidget.h>
+#endif
 
 int qSlicerTableColumnPropertiesWidgetTest1( int argc, char * argv [] )
 {
