@@ -39,7 +39,9 @@ if(Slicer_USE_CTKAPPLAUNCHER)
       ${${proj}_EP_ARGS}
       URL https://github.com/commontk/AppLauncher/releases/download/v${launcher_version}/CTKAppLauncher-${launcher_version}-${CTKAPPLAUNCHER_OS}-${CTKAPPLAUNCHER_ARCHITECTURE}.tar.gz
       URL_MD5 ${md5}
+      DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
       SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
+      BUILD_IN_SOURCE 1
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
       INSTALL_COMMAND ""

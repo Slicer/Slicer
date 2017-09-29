@@ -190,27 +190,31 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
 
   if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_python)
 
-    # Configure python launcher
-    configure_file(
-      SuperBuild/python_customPython_configure.cmake.in
-      ${CMAKE_CURRENT_BINARY_DIR}/python_customPython_configure.cmake
-      @ONLY)
-    set(python_customPython_configure_args)
+    ExternalProject_Add_Step(${proj} configure_python_launcher
+      COMMAND ${CMAKE_COMMAND}
+        -DCMAKE_EXECUTABLE_SUFFIX:STRING=${CMAKE_EXECUTABLE_SUFFIX}
+        -DCTKAppLauncher_DIR:PATH=${CTKAppLauncher_DIR}
+        -DOPENSSL_EXPORT_LIBRARY_DIR:PATH=${OPENSSL_EXPORT_LIBRARY_DIR}
+        -Dpython_DIR:PATH=${python_DIR}
+        -DPYTHON_ENABLE_SSL:BOOL=${PYTHON_ENABLE_SSL}
+        -DPYTHON_REAL_EXECUTABLE:FILEPATH=${slicer_PYTHON_REAL_EXECUTABLE}
+        -DPYTHON_SHARED_LIBRARY_DIR:PATH=${slicer_PYTHON_SHARED_LIBRARY_DIR}
+        -DPYTHON_SITE_PACKAGES_SUBDIR:STRING=${PYTHON_SITE_PACKAGES_SUBDIR}
+        -DPYTHON_STDLIB_SUBDIR:STRING=${PYTHON_STDLIB_SUBDIR}
+        -DSlicer_BIN_DIR:PATH=${Slicer_BIN_DIR}
+        -DSlicer_BINARY_DIR:PATH=${Slicer_BINARY_DIR}
+        -DSlicer_LIB_DIR:PATH=${Slicer_LIB_DIR}
+        -DSlicer_SHARE_DIR:PATH=${Slicer_SHARE_DIR}
+        -DSlicer_SOURCE_DIR:PATH=${Slicer_SOURCE_DIR}
 
-    if(PYTHON_ENABLE_SSL)
-      set(python_customPython_configure_args -DOPENSSL_EXPORT_LIBRARY_DIR:PATH=${OPENSSL_EXPORT_LIBRARY_DIR})
-    endif()
-
-    ExternalProject_Add_Step(${proj} python_customPython_configure
-      COMMAND ${CMAKE_COMMAND} ${python_customPython_configure_args}
-        -P ${CMAKE_CURRENT_BINARY_DIR}/python_customPython_configure.cmake
+        -P ${Slicer_SOURCE_DIR}/SuperBuild/python_configure_python_launcher.cmake
       DEPENDEES install
       )
 
   endif()
 
   #-----------------------------------------------------------------------------
-  # Launcher setting specific to build tree
+  # Slicer Launcher setting specific to build tree
 
   set(_lib_subdir lib)
   if(WIN32)
@@ -252,7 +256,7 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
     )
 
   #-----------------------------------------------------------------------------
-  # Launcher setting specific to install tree
+  # Slicer Launcher setting specific to install tree
 
   # library paths
   if(UNIX)
