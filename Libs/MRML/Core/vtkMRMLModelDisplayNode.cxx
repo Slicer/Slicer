@@ -40,6 +40,7 @@ vtkMRMLModelDisplayNode::vtkMRMLModelDisplayNode()
   this->AssignAttribute = vtkAssignAttribute::New();
   this->ThresholdFilter = vtkThreshold::New();
   this->ThresholdEnabled = false;
+  this->SliceDisplayMode = SliceDisplayIntersection;
 
   // the default behavior for models is to use the scalar range of the data
   // to reset the display scalar range, so use the Data flag
@@ -52,6 +53,69 @@ vtkMRMLModelDisplayNode::~vtkMRMLModelDisplayNode()
   this->PassThrough->Delete();
   this->AssignAttribute->Delete();
   this->ThresholdFilter->Delete();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLModelDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
+{
+  Superclass::PrintSelf(os, indent);
+
+  os << indent << "Slice display mode: " << this->GetSliceDisplayModeAsString(this->SliceDisplayMode) << "\n";
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLModelDisplayNode::WriteXML(ostream& of, int nIndent)
+{
+  // Write all attributes not equal to their defaults
+  this->Superclass::WriteXML(of, nIndent);
+
+  if (this->GetSliceDisplayMode() != SliceDisplayIntersection)
+    {
+    of << " sliceDisplayMode=\"" << this->GetSliceDisplayModeAsString(this->GetSliceDisplayMode()) << "\"";
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLModelDisplayNode::ReadXMLAttributes(const char** atts)
+{
+  int disabledModify = this->StartModify();
+  this->Superclass::ReadXMLAttributes(atts);
+
+  const char* attName;
+  const char* attValue;
+  while (*atts != NULL)
+    {
+    attName = *(atts++);
+    attValue = *(atts++);
+    if (!strcmp(attName, "sliceDisplayMode"))
+      {
+      int id = this->GetSliceDisplayModeFromString(attValue);
+      if (id < 0)
+        {
+        vtkWarningMacro("Invalid sliceDisplayMode: " << (attValue ? attValue : "(none)"));
+        }
+      else
+        {
+        this->SetSliceDisplayMode(id);
+        }
+      }
+    }
+  this->EndModify(disabledModify);
+}
+
+//----------------------------------------------------------------------------
+// Copy the node's attributes to this object.
+// Does NOT copy: ID, FilePrefix, Name, ID
+void vtkMRMLModelDisplayNode::Copy(vtkMRMLNode *anode)
+{
+  int disabledModify = this->StartModify();
+
+  Superclass::Copy(anode);
+  vtkMRMLModelDisplayNode *node = (vtkMRMLModelDisplayNode *)anode;
+
+  this->SetSliceDisplayMode(node->GetSliceDisplayMode());
+
+  this->EndModify(disabledModify);
 }
 
 //---------------------------------------------------------------------------
@@ -373,4 +437,49 @@ vtkDataArray* vtkMRMLModelDisplayNode::GetActiveScalarArray()
     }
   vtkDataArray *dataArray = attributes->GetArray(this->GetActiveScalarName());
   return dataArray;
+}
+
+//-----------------------------------------------------------
+void vtkMRMLModelDisplayNode::SetSliceDisplayModeToIntersection()
+{
+  this->SetSliceDisplayMode(SliceDisplayIntersection);
+};
+
+//-----------------------------------------------------------
+void vtkMRMLModelDisplayNode::SetSliceDisplayModeToProjection()
+{
+  this->SetSliceDisplayMode(SliceDisplayProjection);
+};
+
+//-----------------------------------------------------------
+const char* vtkMRMLModelDisplayNode::GetSliceDisplayModeAsString(int id)
+{
+  switch (id)
+    {
+    case SliceDisplayIntersection: return "intersection";
+    case SliceDisplayProjection: return "projection";
+    default:
+      // invalid id
+      return "";
+    }
+}
+
+//-----------------------------------------------------------
+int vtkMRMLModelDisplayNode::GetSliceDisplayModeFromString(const char* name)
+{
+  if (name == NULL)
+    {
+    // invalid name
+    return -1;
+    }
+  for (int i = 0; i<SliceDisplayMode_Last; i++)
+    {
+    if (strcmp(name, GetSliceDisplayModeAsString(i)) == 0)
+      {
+      // found a matching name
+      return i;
+      }
+    }
+  // unknown name
+  return -1;
 }

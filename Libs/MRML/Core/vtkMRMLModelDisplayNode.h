@@ -37,6 +37,26 @@ class VTK_MRML_EXPORT vtkMRMLModelDisplayNode : public vtkMRMLDisplayNode
 public:
   static vtkMRMLModelDisplayNode *New();
   vtkTypeMacro(vtkMRMLModelDisplayNode,vtkMRMLDisplayNode);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+
+  enum SliceDisplayModeType
+    {
+    SliceDisplayIntersection, ///< Show model in slice view as intersection with slice
+    SliceDisplayProjection, ///< Show full model projected on the slice (similar to MIP view of images)
+    SliceDisplayMode_Last // placeholder after the last valid value, this must be the last in the list of modes
+    };
+
+  ///
+  /// Read node attributes from XML file
+  virtual void ReadXMLAttributes(const char** atts) VTK_OVERRIDE;
+
+  ///
+  /// Write this node's information to a MRML file in XML format.
+  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
+
+  ///
+  /// Copy the node's attributes to this object
+  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
 
   virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
 
@@ -115,6 +135,17 @@ public:
   double GetThresholdMin();
   double GetThresholdMax();
 
+  /// Specifies how to represent the 3D model in a 2D slice.
+  /// By default intersection is showed.
+  vtkGetMacro(SliceDisplayMode, int);
+  vtkSetMacro(SliceDisplayMode, int);
+  void SetSliceDisplayModeToIntersection();
+  void SetSliceDisplayModeToProjection();
+
+  /// Convert between slice display mode ID and name
+  static const char* GetSliceDisplayModeAsString(int id);
+  static int GetSliceDisplayModeFromString(const char* name);
+
 protected:
   vtkMRMLModelDisplayNode();
   ~vtkMRMLModelDisplayNode();
@@ -160,6 +191,8 @@ protected:
   /// scalar values.
   /// \sa ThresholdFilter
   bool ThresholdEnabled;
+
+  int SliceDisplayMode;
 };
 
 #endif
