@@ -145,6 +145,11 @@ bool qSlicerVolumesReader::load(const IOProperties& properties)
     {
     options |= properties["discardOrientation"].toBool() ? 0x10 : 0x0;
     }
+  bool propagateVolumeSelection = true;
+  if (properties.contains("show"))
+    {
+    propagateVolumeSelection = properties["show"].toBool();
+    }
   vtkSmartPointer<vtkStringArray> fileList;
   if (properties.contains("fileNames"))
     {
@@ -170,23 +175,26 @@ bool qSlicerVolumesReader::load(const IOProperties& properties)
         node->GetDisplayNode()->SetAndObserveColorNodeID(colorNodeID.toLatin1());
         }
       }
-    vtkSlicerApplicationLogic* appLogic =
-      d->Logic->GetApplicationLogic();
-    vtkMRMLSelectionNode* selectionNode =
-      appLogic ? appLogic->GetSelectionNode() : 0;
-    if (selectionNode)
+    if (propagateVolumeSelection)
       {
-      if (vtkMRMLLabelMapVolumeNode::SafeDownCast(node))
+      vtkSlicerApplicationLogic* appLogic =
+        d->Logic->GetApplicationLogic();
+      vtkMRMLSelectionNode* selectionNode =
+        appLogic ? appLogic->GetSelectionNode() : 0;
+      if (selectionNode)
         {
-        selectionNode->SetReferenceActiveLabelVolumeID(node->GetID());
-        }
-      else
-        {
-        selectionNode->SetReferenceActiveVolumeID(node->GetID());
-        }
-      if (appLogic)
-        {
-        appLogic->PropagateVolumeSelection(); // includes FitSliceToAll by default
+        if (vtkMRMLLabelMapVolumeNode::SafeDownCast(node))
+          {
+          selectionNode->SetReferenceActiveLabelVolumeID(node->GetID());
+          }
+        else
+          {
+          selectionNode->SetReferenceActiveVolumeID(node->GetID());
+          }
+        if (appLogic)
+          {
+          appLogic->PropagateVolumeSelection(); // includes FitSliceToAll by default
+          }
         }
       }
     this->setLoadedNodes(QStringList(QString(node->GetID())));

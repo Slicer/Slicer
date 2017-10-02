@@ -363,6 +363,16 @@ def loadLabelVolume(filename, properties={}, returnNode=False):
   return loadNodeFromFile(filename, filetype, properties, returnNode)
 
 def loadVolume(filename, properties={}, returnNode=False):
+  """Properties:
+  - name: this name will be used as node name for the loaded volume
+  - labelmap: interpret volume as labelmap
+  - singleFile: ignore all other files in the directory
+  - center: ignore image position
+  - discardOrientation: ignore image axis directions
+  - autoWindowLevel: compute window/level automatically
+  - show: display volume in slice viewers after loading is completed
+  - fileNames: list of filenames to load the volume from
+  """
   filetype = 'VolumeFile'
   return loadNodeFromFile(filename, filetype, properties, returnNode)
 

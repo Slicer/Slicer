@@ -659,7 +659,6 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (
     vtkErrorMacro("AddArchetypeVolume: Failed to add volume - MRMLScene is null");
     return 0;
     }
-  this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
 
   bool labelMap = false;
   if ( loadingOptions & 1 )    // labelMap is true
@@ -795,7 +794,6 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (
     testScene->SetDataIOManager(0);
     }
 
-  this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
   if (modified)
     {
     this->Modified();

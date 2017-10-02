@@ -88,6 +88,8 @@ qSlicerVolumesIOOptionsWidget::qSlicerVolumesIOOptionsWidget(QWidget* parentWidg
           this, SLOT(updateProperties()));
   connect(d->OrientationCheckBox, SIGNAL(toggled(bool)),
           this, SLOT(updateProperties()));
+  connect(d->ShowCheckBox, SIGNAL(toggled(bool)),
+          this, SLOT(updateProperties()));
   connect(d->ColorTableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
           this, SLOT(updateProperties()));
 
@@ -125,6 +127,7 @@ void qSlicerVolumesIOOptionsWidget::updateProperties()
   d->Properties["center"] = d->CenteredCheckBox->isChecked();
   d->Properties["singleFile"] = d->SingleFileCheckBox->isChecked();
   d->Properties["discardOrientation"] = d->OrientationCheckBox->isChecked();
+  d->Properties["show"] = d->ShowCheckBox->isChecked();
   d->Properties["colorNodeID"] = d->ColorTableComboBox->currentNodeID();
 }
 

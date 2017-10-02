@@ -28,9 +28,32 @@
     </widget>
    </item>
    <item>
+    <widget class="QCheckBox" name="LabelMapCheckBox">
+     <property name="text">
+      <string>LabelMap</string>
+     </property>
+     <property name="toolTip">
+      <string>Load the volume as a labelmap (each voxel value representing a segmented structure).</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="SingleFileCheckBox">
+     <property name="text">
+      <string>Single File</string>
+     </property>
+     <property name="toolTip">
+      <string>Only load the selected file. The application will not attempt to look for similar files that can make up the complete volume.</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QCheckBox" name="CenteredCheckBox">
      <property name="text">
       <string>Centered</string>
+     </property>
+     <property name="toolTip">
+      <string>Ignore image position information that is specified in the image header.</string>
      </property>
     </widget>
    </item>
@@ -39,19 +62,21 @@
      <property name="text">
       <string>Ignore Orientation</string>
      </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="LabelMapCheckBox">
-     <property name="text">
-      <string>LabelMap</string>
+     <property name="toolTip">
+      <string>Ignore axis orientation information that is specified in the image header.</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QCheckBox" name="SingleFileCheckBox">
+    <widget class="QCheckBox" name="ShowCheckBox">
      <property name="text">
-      <string>Single File</string>
+      <string>Show</string>
+     </property>
+     <property name="toolTip">
+      <string>Show volume in slice viewers after loading is completed.</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
