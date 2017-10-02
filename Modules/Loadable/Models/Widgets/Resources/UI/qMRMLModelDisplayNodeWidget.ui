@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>319</width>
-    <height>450</height>
+    <width>433</width>
+    <height>791</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,390 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="qMRMLDisplayNodeWidget" name="MRMLDisplayNodeWidget"/>
+    <widget class="ctkCollapsibleGroupBox" name="CollapsibleGroupBox">
+     <property name="title">
+      <string>Visibility</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout_2">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+      </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="VisibilityLabel">
+        <property name="text">
+         <string>Visible:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QCheckBox" name="VisibilityCheckBox">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="DisplayNodeViewLabel">
+        <property name="text">
+         <string>View:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="qMRMLDisplayNodeViewComboBox" name="DisplayNodeViewComboBox">
+        <property name="toolTip">
+         <string>Select views in which to show this node. All unchecked shows in all 3D and 2D views.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="ColorLabel">
+        <property name="text">
+         <string>Color:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="ctkColorPickerButton" name="ColorPickerButton">
+        <property name="displayColorName">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="ctkCollapsibleGroupBox" name="RepresentationCollapsibleGroupBox">
+     <property name="title">
+      <string>3D Display</string>
+     </property>
+     <property name="collapsed">
+      <bool>false</bool>
+     </property>
+     <layout class="QFormLayout" name="formLayout_4">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+      </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="OpacityLabel">
+        <property name="text">
+         <string>Opacity:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="ctkSliderWidget" name="OpacitySliderWidget">
+        <property name="singleStep">
+         <double>0.100000000000000</double>
+        </property>
+        <property name="pageStep">
+         <double>0.250000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>1.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="RepresentationLabel">
+        <property name="text">
+         <string>Representation:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="RepresentationComboBox">
+        <item>
+         <property name="text">
+          <string>Points</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Wireframe</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Surface</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Surface with Edges</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="4" column="0" colspan="2">
+       <widget class="ctkCollapsibleGroupBox" name="Advanced3dCollapsibleGroupBox">
+        <property name="title">
+         <string>Advanced</string>
+        </property>
+        <property name="collapsed">
+         <bool>true</bool>
+        </property>
+        <layout class="QFormLayout" name="formLayout_5">
+         <property name="fieldGrowthPolicy">
+          <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="PointSizeLabel">
+           <property name="text">
+            <string>Point Size:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="ctkSliderWidget" name="PointSizeSliderWidget">
+           <property name="decimals">
+            <number>2</number>
+           </property>
+           <property name="minimum">
+            <double>1.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>100.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="LineWidthLabel">
+           <property name="text">
+            <string>Line Width:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="ctkSliderWidget" name="LineWidthSliderWidget">
+           <property name="decimals">
+            <number>2</number>
+           </property>
+           <property name="minimum">
+            <double>1.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>100.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="EdgeColorLabel">
+           <property name="text">
+            <string>Edge Color:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="ctkColorPickerButton" name="EdgeColorPickerButton"/>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="LightingLabel">
+           <property name="text">
+            <string>Lighting:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QCheckBox" name="LightingCheckBox">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="InterpolationLabel">
+           <property name="text">
+            <string>Interpolation:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QComboBox" name="InterpolationComboBox">
+           <item>
+            <property name="text">
+             <string>Flat</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Gouraud</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Phong</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="5" column="0" colspan="2">
+          <widget class="ctkVTKSurfaceMaterialPropertyWidget" name="MaterialPropertyWidget">
+           <property name="colorVisible">
+            <bool>false</bool>
+           </property>
+           <property name="opacityVisible">
+            <bool>false</bool>
+           </property>
+           <property name="backfaceCullingVisible">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QCheckBox" name="ClippingCheckBox">
+        <property name="toolTip">
+         <string>Hide part of the model according to Clipping Planes settings.</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="ClippingLabel">
+        <property name="text">
+         <string>Clipping:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QComboBox" name="ShowFacesComboBox">
+        <property name="toolTip">
+         <string>All: recommended for open surface. Front: recommended for faster rendering of closed opaque surfaces. Back: Useful for rendering backface of open surfaces with different color.</string>
+        </property>
+        <item>
+         <property name="text">
+          <string>All</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Front-facing</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Back-facing</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="CullingLabel">
+        <property name="text">
+         <string>Visible Sides:</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="ctkCollapsibleGroupBox" name="SliceDisplayCollapsibleGroupBox">
+     <property name="title">
+      <string>Slice Display</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout_6">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+      </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="SliceIntersectionVisibilityLabel">
+        <property name="text">
+         <string>Visible:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QCheckBox" name="SliceIntersectionVisibilityCheckBox">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Mode:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="SliceIntersectionThicknessLabel">
+        <property name="text">
+         <string>Line Width:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QSpinBox" name="SliceIntersectionThicknessSpinBox">
+        <property name="suffix">
+         <string> px</string>
+        </property>
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>10</number>
+        </property>
+        <property name="singleStep">
+         <number>1</number>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QComboBox" name="SliceDisplayModeComboBox">
+        <item>
+         <property name="text">
+          <string>Intersection</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Projection</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="SliceIntersectionOpacityLabel">
+        <property name="text">
+         <string>Opacity:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="ctkSliderWidget" name="SliceIntersectionOpacitySlider">
+        <property name="singleStep">
+         <double>0.100000000000000</double>
+        </property>
+        <property name="pageStep">
+         <double>0.250000000000000</double>
+        </property>
+        <property name="minimum">
+         <double>0.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="SingleStep" stdset="0">
+         <double>0.010000000000000</double>
+        </property>
+        <property name="Decimals" stdset="0">
+         <number>2</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item>
     <widget class="ctkCollapsibleGroupBox" name="ScalarsGroupBox">
@@ -28,48 +411,10 @@
      <property name="checked">
       <bool>false</bool>
      </property>
-     <layout class="QGridLayout" name="gridLayout" columnstretch="0,1">
-      <item row="0" column="0">
-       <widget class="QLabel" name="ScalarsVisibilityLabel">
-        <property name="text">
-         <string>Visible:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QCheckBox" name="ScalarsVisibilityCheckBox">
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="ActiveScalarLabel">
-        <property name="text">
-         <string>Active Scalar:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1" colspan="2">
-       <widget class="ctkVTKDataSetArrayComboBox" name="ActiveScalarComboBox"/>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="ScalarsColorTableLabel">
-        <property name="text">
-         <string>Color Table:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1" colspan="2">
-       <widget class="qMRMLColorTableComboBox" name="ScalarsColorNodeComboBox"/>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="ScalarRangeModeLabel">
-        <property name="text">
-         <string>Scalar Range Mode:</string>
-        </property>
-       </widget>
-      </item>
+     <property name="collapsed">
+      <bool>true</bool>
+     </property>
+     <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,0">
       <item row="3" column="1" colspan="2">
        <widget class="QComboBox" name="DisplayedScalarRangeModeComboBox">
         <property name="toolTip">
@@ -97,24 +442,51 @@
         </item>
        </widget>
       </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="ScalarRangeModeLabel">
+        <property name="text">
+         <string>Scalar Range Mode:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="ScalarsColorTableLabel">
+        <property name="text">
+         <string>Color Table:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="ActiveScalarLabel">
+        <property name="text">
+         <string>Active Scalar:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="ScalarsVisibilityLabel">
+        <property name="text">
+         <string>Visible:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" colspan="2">
+       <widget class="qMRMLColorTableComboBox" name="ScalarsColorNodeComboBox"/>
+      </item>
+      <item row="0" column="1">
+       <widget class="QCheckBox" name="ScalarsVisibilityCheckBox">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" colspan="2">
+       <widget class="ctkVTKDataSetArrayComboBox" name="ActiveScalarComboBox"/>
+      </item>
       <item row="4" column="0">
        <widget class="QLabel" name="DisplayedScalarRangeLabel">
         <property name="text">
          <string>Displayed Range:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1" colspan="2">
-       <widget class="qMRMLRangeWidget" name="DisplayedScalarRangeWidget">
-        <property name="toolTip">
-         <string>Set the display scalar range, used when the Display option is selected.</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="0">
-       <widget class="QLabel" name="ThresholdLabel">
-        <property name="text">
-         <string>Threshold:</string>
         </property>
        </widget>
       </item>
@@ -132,8 +504,22 @@ should set &quot;backface&quot; and &quot;frontface&quot; to OFF in the Represen
         </property>
        </widget>
       </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="ThresholdLabel">
+        <property name="text">
+         <string>Threshold:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1" colspan="2">
+       <widget class="qMRMLRangeWidget" name="DisplayedScalarRangeWidget">
+        <property name="toolTip">
+         <string>Set the display scalar range, used when the Display option is selected.</string>
+        </property>
+       </widget>
+      </item>
       <item row="5" column="2">
-       <widget class="ctkRangeWidget" name="ThresholdRangeWidget" native="true">
+       <widget class="ctkRangeWidget" name="ThresholdRangeWidget">
         <property name="toolTip">
          <string>Range used to threshold scalar values.</string>
         </property>
@@ -146,14 +532,19 @@ should set &quot;backface&quot; and &quot;frontface&quot; to OFF in the Represen
  </widget>
  <customwidgets>
   <customwidget>
+   <class>qMRMLCheckableNodeComboBox</class>
+   <extends>qMRMLNodeComboBox</extends>
+   <header>qMRMLCheckableNodeComboBox.h</header>
+  </customwidget>
+  <customwidget>
    <class>qMRMLColorTableComboBox</class>
    <extends>qMRMLNodeComboBox</extends>
    <header>qMRMLColorTableComboBox.h</header>
   </customwidget>
   <customwidget>
-   <class>qMRMLDisplayNodeWidget</class>
-   <extends>QWidget</extends>
-   <header>qMRMLDisplayNodeWidget.h</header>
+   <class>qMRMLDisplayNodeViewComboBox</class>
+   <extends>qMRMLCheckableNodeComboBox</extends>
+   <header>qMRMLDisplayNodeViewComboBox.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLNodeComboBox</class>
@@ -161,9 +552,19 @@ should set &quot;backface&quot; and &quot;frontface&quot; to OFF in the Represen
    <header>qMRMLNodeComboBox.h</header>
   </customwidget>
   <customwidget>
+   <class>qMRMLRangeWidget</class>
+   <extends>ctkRangeWidget</extends>
+   <header>qMRMLRangeWidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>ctkVTKDataSetArrayComboBox</class>
    <extends>QComboBox</extends>
    <header>ctkVTKDataSetArrayComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkVTKSurfaceMaterialPropertyWidget</class>
+   <extends>ctkMaterialPropertyWidget</extends>
+   <header>ctkVTKSurfaceMaterialPropertyWidget.h</header>
   </customwidget>
   <customwidget>
    <class>ctkCollapsibleGroupBox</class>
@@ -172,9 +573,14 @@ should set &quot;backface&quot; and &quot;frontface&quot; to OFF in the Represen
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qMRMLRangeWidget</class>
+   <class>ctkColorPickerButton</class>
+   <extends>QPushButton</extends>
+   <header>ctkColorPickerButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkMaterialPropertyWidget</class>
    <extends>QWidget</extends>
-   <header>qMRMLRangeWidget.h</header>
+   <header>ctkMaterialPropertyWidget.h</header>
   </customwidget>
   <customwidget>
    <class>ctkRangeWidget</class>
@@ -182,9 +588,9 @@ should set &quot;backface&quot; and &quot;frontface&quot; to OFF in the Represen
    <header>ctkRangeWidget.h</header>
   </customwidget>
   <customwidget>
-   <class>ctkDoubleSpinBox</class>
+   <class>ctkSliderWidget</class>
    <extends>QWidget</extends>
-   <header>ctkDoubleSpinBox.h</header>
+   <header>ctkSliderWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -55,6 +55,12 @@ public:
   vtkMRMLModelDisplayNode* mrmlModelDisplayNode()const;
   vtkMRMLNode* mrmlDisplayableNode()const;
 
+  bool visibility()const;
+  bool clipping()const;
+  bool sliceIntersectionVisible()const;
+  int sliceIntersectionThickness()const;
+  double sliceIntersectionOpacity()const;
+
   bool scalarsVisibility()const;
   QString activeScalarName()const;
   vtkMRMLColorNode* scalarsColorNode()const;
@@ -95,6 +101,25 @@ public slots:
   /// can be set from a model node or a model hierarchy node
   void setMRMLModelOrHierarchyNode(vtkMRMLNode* modelNode);
 
+  void setVisibility(bool);
+  void setClipping(bool);
+
+  void setSliceIntersectionVisible(bool);
+  void setSliceDisplayMode(int);
+  void setSliceIntersectionThickness(int);
+  void setSliceIntersectionOpacity(double);
+
+  void setRepresentation(int);
+  void setPointSize(double);
+  void setLineWidth(double);
+  void setShowFaces(int);
+  void setColor(const QColor&);
+  void setOpacity(double);
+  void setEdgeVisibility(bool);
+  void setEdgeColor(const QColor&);
+  void setLighting(bool);
+  void setInterpolation(int);
+
   void setScalarsVisibility(bool);
   void setActiveScalarName(const QString&);
   void setScalarsColorNode(vtkMRMLNode*);
@@ -112,6 +137,7 @@ public slots:
 
 protected slots:
   void updateWidgetFromMRML();
+  void updateNodeFromProperty();
   vtkMRMLSelectionNode* getSelectionNode(vtkMRMLScene *mrmlScene);
 
 protected:

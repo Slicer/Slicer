@@ -205,7 +205,7 @@
       <string>Display</string>
      </property>
      <property name="collapsed" stdset="0">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
@@ -242,7 +242,7 @@
    <item>
     <widget class="ctkCollapsibleButton" name="ClippingButton" native="true">
      <property name="text" stdset="0">
-      <string>Clipping</string>
+      <string>Clipping Planes</string>
      </property>
      <property name="collapsed" stdset="0">
       <bool>true</bool>
