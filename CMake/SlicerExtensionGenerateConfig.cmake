@@ -30,6 +30,12 @@
 #     )
 #
 
+if(NOT DEFINED EXTENSION_SUPERBUILD_BINARY_DIR)
+  # This extension is built as part of the main application.
+  # Targets and paths are managed the same way as for core modules.
+  return()
+endif()
+
 get_property(_module_targets GLOBAL PROPERTY SLICER_MODULE_TARGETS)
 if(_module_targets)
   foreach(target ${_module_targets})
