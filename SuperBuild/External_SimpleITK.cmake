@@ -41,7 +41,7 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" Packaging/s
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    "534787d1254baa0758676aba10774f4d3b6d35dc"
+    "699ed4bb8934b83ee3bb4a6633b547291f0347ce"
     QUIET
     )
 
