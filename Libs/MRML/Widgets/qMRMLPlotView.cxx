@@ -194,7 +194,6 @@ void qMRMLPlotViewPrivate::init()
 //---------------------------------------------------------------------------
 void qMRMLPlotViewPrivate::setMRMLScene(vtkMRMLScene* newScene)
 {
-  Q_Q(qMRMLPlotView);
   if (newScene == this->MRMLScene)
     {
     return;
@@ -233,7 +232,6 @@ vtkMRMLScene* qMRMLPlotViewPrivate::mrmlScene()
 // --------------------------------------------------------------------------
 void qMRMLPlotViewPrivate::onPlotChartNodeChanged()
 {
-  Q_Q(qMRMLPlotView);
   vtkMRMLPlotChartNode *newPlotChartNode = NULL;
 
   if (this->MRMLPlotViewNode && this->MRMLPlotViewNode->GetPlotChartNodeID())
