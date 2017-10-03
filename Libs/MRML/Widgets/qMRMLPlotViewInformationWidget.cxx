@@ -39,6 +39,29 @@
 #include <vtkPlot.h>
 #include <vtkPlotLine.h>
 
+// stream includes
+#include <sstream>
+
+namespace
+{
+//----------------------------------------------------------------------------
+template <typename T> std::string NumberToString(T V)
+{
+  std::string stringValue;
+  std::stringstream strstream;
+  strstream << V;
+  strstream >> stringValue;
+  return stringValue;
+}
+
+//----------------------------------------------------------------------------
+std::string DoubleToString(double Value)
+{
+  return NumberToString<double>(Value);
+}
+
+}// end namespace
+
 //--------------------------------------------------------------------------
 // qMRMLPlotViewViewPrivate methods
 
@@ -257,7 +280,7 @@ void qMRMLPlotViewInformationWidgetPrivate::onTitleFontSizeChanged(double size)
     return;
     }
 
-  mrmlPlotChartNode->SetAttribute("TitleFontSize", (std::to_string(size).c_str()));
+  mrmlPlotChartNode->SetAttribute("TitleFontSize", (DoubleToString(size).c_str()));
 }
 
 // --------------------------------------------------------------------------
@@ -269,7 +292,7 @@ void qMRMLPlotViewInformationWidgetPrivate::onAxisTitleFontSizeChanged(double si
     return;
     }
 
-  mrmlPlotChartNode->SetAttribute("AxisTitleFontSize", (std::to_string(size).c_str()));
+  mrmlPlotChartNode->SetAttribute("AxisTitleFontSize", (DoubleToString(size).c_str()));
 }
 
 // --------------------------------------------------------------------------
@@ -281,7 +304,7 @@ void qMRMLPlotViewInformationWidgetPrivate::onAxisLabelFontSizeChanged(double si
     return;
     }
 
-  mrmlPlotChartNode->SetAttribute("AxisLabelFontSize", (std::to_string(size).c_str()));
+  mrmlPlotChartNode->SetAttribute("AxisLabelFontSize", (DoubleToString(size).c_str()));
 }
 
 // --------------------------------------------------------------------------

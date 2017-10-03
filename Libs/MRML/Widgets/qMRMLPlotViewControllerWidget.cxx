@@ -825,7 +825,7 @@ void qMRMLPlotViewControllerWidget::updateWidgetFromMRML()
       {
       continue;
       }
-    auto plotDataNodesIndex = std::distance(plotDataNodesIDs.begin(), it);
+    int plotDataNodesIndex = std::distance(plotDataNodesIDs.begin(), it);
     plotDataNodesWasModifying[plotDataNodesIndex] = plotDataNode->StartModify();
     }
 
@@ -939,7 +939,7 @@ void qMRMLPlotViewControllerWidget::updateWidgetFromMRML()
       {
       continue;
       }
-    auto plotDataNodesIndex = std::distance(plotDataNodesIDs.begin(), it);
+    int plotDataNodesIndex = std::distance(plotDataNodesIDs.begin(), it);
     plotDataNode->EndModify(plotDataNodesWasModifying[plotDataNodesIndex]);
     }
 
