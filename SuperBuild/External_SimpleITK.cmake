@@ -67,6 +67,27 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" Packaging/s
     NAME ${proj}
     )
 
+  set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
+  if(CMAKE_CXX_STANDARD EQUAL 11 AND CMAKE_CXX_STANDARD LESS 30)
+    #
+    # Since SimpleITK requires C++11 with libc++ ( vs. libstdc++ ), we let
+    # it's build system figure out the correct set of flags.
+    #
+    # From Brad:
+    #   "Compiling ITK with C++98 while compiling SimpleITK C++11,
+    #   is not ideal, but all the tests seem to pass for the wrapping.
+    #   That said, there may be a problem if the SimpleITK C++ interface
+    #   is used with this mixing of C++ standards."
+    #
+    # More details here: https://discourse.slicer.org/t/cannot-compile-slicer-on-mac-macos-sierra-clang-9-cmake-3-9-1/1104/9
+    #
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
+      -DCMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD}
+      -DCMAKE_CXX_STANDARD_REQUIRED:BOOL=${CMAKE_CXX_STANDARD_REQUIRED}
+      -DCMAKE_CXX_EXTENSIONS:BOOL=${CMAKE_CXX_EXTENSIONS}
+      )
+  endif()
+
   ExternalProject_add(SimpleITK
     ${${proj}_EP_ARGS}
     SOURCE_DIR ${EP_SOURCE_DIR}/SuperBuild
@@ -79,9 +100,7 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" Packaging/s
       -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
       -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
-      -DCMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD}
-      -DCMAKE_CXX_STANDARD_REQUIRED:BOOL=${CMAKE_CXX_STANDARD_REQUIRED}
-      -DCMAKE_CXX_EXTENSIONS:BOOL=${CMAKE_CXX_EXTENSIONS}
+      ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
       -DBUILD_SHARED_LIBS:BOOL=${Slicer_USE_SimpleITK_SHARED}
       -DBUILD_EXAMPLES:BOOL=OFF
       -DSimpleITK_PYTHON_THREADS:BOOL=ON
