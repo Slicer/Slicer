@@ -84,7 +84,7 @@ void vtkMRMLPlotViewNode::ReadXMLAttributes(const char** atts)
     attValue = *(atts++);
     if(!strcmp(attName, "doPropagatePlotChartSelection"))
       {
-      this->SetDoPropagatePlotChartSelection(atoi(attValue)?true:false);
+      this->SetDoPropagatePlotChartSelection(atoi(attValue) ? true : false);
       }
     }
 

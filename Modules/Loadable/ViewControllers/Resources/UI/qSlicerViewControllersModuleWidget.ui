@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>519</width>
-    <height>560</height>
+    <height>1181</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,6 +28,14 @@
       <string>3D View Controllers</string>
      </property>
      <layout class="QVBoxLayout" name="ThreeDViewControllersLayout"/>
+    </widget>
+   </item>
+   <item>
+    <widget class="ctkCollapsibleButton" name="PlotViewControllersCollapsibleButton">
+     <property name="text">
+      <string>Plot View Controllers</string>
+     </property>
+     <layout class="QVBoxLayout" name="PlotViewControllersLayout"/>
     </widget>
    </item>
    <item>
@@ -53,12 +61,13 @@
            <bool>true</bool>
           </property>
           <property name="toolTip">
-           <string>Select a slice from the current scene</string>
+           <string>Select a view from the current scene. Each element corresponds to a specific widget. View nodes are connected with 3D rendering widgets. PlotView with Plotting widgets. Slices (Red, Green, Yellow) with 2D rendering widgets.</string>
           </property>
           <property name="nodeTypes">
            <stringlist>
             <string>vtkMRMLSliceNode</string>
             <string>vtkMRMLViewNode</string>
+            <string>vtkMRMLPlotViewNode</string>
            </stringlist>
           </property>
           <property name="showHidden">
@@ -87,6 +96,9 @@
       <item>
        <widget class="qMRMLThreeDViewInformationWidget" name="MRMLThreeDViewInformationWidget"/>
       </item>
+      <item>
+       <widget class="qMRMLPlotViewInformationWidget" name="MRMLPlotViewInformationWidget"/>
+      </item>
      </layout>
     </widget>
    </item>
@@ -110,6 +122,12 @@
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLPlotViewInformationWidget</class>
+   <extends>qMRMLWidget</extends>
+   <header>qMRMLPlotViewInformationWidget.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLSliceInformationWidget</class>
@@ -220,6 +238,38 @@
     <hint type="destinationlabel">
      <x>259</x>
      <y>454</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerViewControllersModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>MRMLPlotViewInformationWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>259</x>
+     <y>323</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>259</x>
+     <y>593</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MRMLViewNodeComboBox</sender>
+   <signal>currentNodeChanged(vtkMRMLNode*)</signal>
+   <receiver>MRMLPlotViewInformationWidget</receiver>
+   <slot>setMRMLPlotViewNode(vtkMRMLNode*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>300</x>
+     <y>216</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>259</x>
+     <y>593</y>
     </hint>
    </hints>
   </connection>

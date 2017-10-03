@@ -32,6 +32,7 @@
 
 #include "vtkSlicerViewControllersModuleLogicExport.h"
 
+class vtkMRMLPlotViewNode;
 class vtkMRMLSliceNode;
 class vtkMRMLViewNode;
 
@@ -57,6 +58,12 @@ public:
   /// new view nodes. ResetAllViewNodesToDefault() can be called to
   /// update all existing view nodes to the new default settings immediately.
   vtkMRMLViewNode* GetDefaultThreeDViewNode();
+
+  /// Retrieves the default plot view node from the scene.
+  /// The returned node can be changed to customize the contents of
+  /// new view nodes. ResetAllViewNodesToDefault() can be called to
+  /// update all existing view nodes to the new default settings immediately.
+  vtkMRMLPlotViewNode* GetDefaultPlotViewNode();
 
   /// Reset all existing slice and 3D view nodes to default settings.
   void ResetAllViewNodesToDefault();

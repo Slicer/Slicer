@@ -40,6 +40,7 @@
 #include <vtkIntArray.h>
 #include <vtkNew.h>
 #include <vtkStringArray.h>
+#include <vtkTable.h>
 
 // qMRML includes
 #include "qMRMLTableView.h"
@@ -466,6 +467,24 @@ void qMRMLTableView::plotSelection()
     return;
     }
 
+  // Set a Plot Layout
+  vtkMRMLLayoutNode* layoutNode = vtkMRMLLayoutNode::SafeDownCast(
+    this->mrmlScene()->GetFirstNodeByClass("vtkMRMLLayoutNode"));
+  if (!layoutNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Unable to get layout node!";
+    return;
+    }
+  int viewArra = layoutNode->GetViewArrangement();
+  if (viewArra != vtkMRMLLayoutNode::SlicerLayoutConventionalPlotView  &&
+      viewArra != vtkMRMLLayoutNode::SlicerLayoutFourUpPlotView        &&
+      viewArra != vtkMRMLLayoutNode::SlicerLayoutFourUpPlotTableView   &&
+      viewArra != vtkMRMLLayoutNode::SlicerLayoutOneUpPlotView         &&
+      viewArra != vtkMRMLLayoutNode::SlicerLayoutThreeOverThreePlotView)
+  {
+    layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutConventionalPlotView);
+  }
+
   vtkSmartPointer<vtkMRMLPlotChartNode> plotChartNode = vtkMRMLPlotChartNode::SafeDownCast(
     this->mrmlScene()->GetNodeByID(selectionNode->GetActivePlotChartID()));
 
@@ -500,11 +519,65 @@ void qMRMLTableView::plotSelection()
   // Remove columns/plots not selected from plotChartNode
   plotChartNode->RemoveAllPlotDataNodeIDs();
 
+  // Check the DataType of the (X-Axis) Column
+  vtkAbstractArray* XColumn = tableNode->GetTable()->GetColumn(columnIndexs->GetValue(0));
+  if (XColumn != NULL)
+    {
+    int XColumnDataType = XColumn->GetDataType();
+    if (XColumnDataType == VTK_STRING || XColumnDataType == VTK_BIT)
+      {
+      QString message = QString("The DataType of the input X-Axis Column is 'string' or 'bit'. Such formats are not accepted by Plots."
+                                " Please convert the DataType of the Column in numeric (tools are available in the Table module GUI)"
+                                " in order to procede with the plotting.");
+      qCritical() << Q_FUNC_INFO << ": " << message;
+      QMessageBox::warning(NULL, tr("Failed to create Plot"), message);
+      return;
+      }
+    }
+
+  bool unvalidatedDataTypeString = false;
+  // Check the DataType of the Y-Axis Columns
+  for (int columnIndex = 1; columnIndex < columnIndexs->GetNumberOfValues(); columnIndex++)
+    {
+    vtkAbstractArray* YColumn = tableNode->GetTable()->GetColumn(columnIndexs->GetValue(columnIndex));
+    if (YColumn == NULL)
+      {
+      continue;
+      }
+    int YColumnDataType = YColumn->GetDataType();
+    if (YColumnDataType == VTK_STRING || YColumnDataType == VTK_BIT)
+      {
+      unvalidatedDataTypeString = true;
+      }
+    }
+
+  if (unvalidatedDataTypeString)
+    {
+    QString message = QString("The DataType of one or more input Columns is 'string' or 'bit'. Such formats are not accepted by Plots."
+                              " Please convert the DataType of the Columns in numeric (tools are available in the Table module GUI),"
+                              " before replotting the Columns.");
+    qCritical() << Q_FUNC_INFO << ": " << message;
+    QMessageBox::warning(NULL, tr("Failed to create Plot"), message);
+    }
+
   // Add columns/plots not selected from plotChartNode
   for (int columnIndex = 1; columnIndex < columnIndexs->GetNumberOfValues(); columnIndex++)
     {
+    // Check if ColumnDataType is String and skip it if positive.
+    vtkAbstractArray* Column = tableNode->GetTable()->GetColumn(columnIndexs->GetValue(columnIndex));
+    if (Column == NULL)
+      {
+      continue;
+      }
+    int ColumnDataType = Column->GetDataType();
+    if (ColumnDataType == VTK_STRING || ColumnDataType == VTK_BIT)
+      {
+      continue;
+      }
+
     std::string columnName = tableNode->GetColumnName(columnIndexs->GetValue(columnIndex));
 
+    // Check if there is already a PlotDataNode for this Column and avoid duplication
     vtkMRMLPlotDataNode *plotDataNode = NULL;
     vtkCollection* colPlots = this->mrmlScene()->GetNodesByClassByName("vtkMRMLPlotDataNode", columnName.c_str());
 
@@ -526,6 +599,7 @@ void qMRMLTableView::plotSelection()
         }
       }
 
+    // Create a PlotDataNode if NULL
     if (plotDataNode == NULL)
       {
       vtkSmartPointer<vtkMRMLNode> node = vtkSmartPointer<vtkMRMLNode>::Take(
@@ -548,70 +622,19 @@ void qMRMLTableView::plotSelection()
       continue;
       }
 
-    std::string Type = plotChartNode->GetAttribute("Type");
-    if (!Type.compare("Line"))
+    // Set the type of the PlotDataNode
+    const char* Type = plotChartNode->GetAttribute("Type");
+    if (strcmp(Type, "Custom"))
       {
-      plotDataNode->SetType(vtkMRMLPlotDataNode::LINE);
-      }
-    else if (!Type.compare("Scatter"))
-      {
-      plotDataNode->SetType(vtkMRMLPlotDataNode::POINTS);
-      }
-    else if (!Type.compare("Line and Scatter"))
-      {
-      plotDataNode->SetType(vtkMRMLPlotDataNode::LINE);
-
-      vtkMRMLPlotDataNode* plotDataNodeCopy = vtkMRMLPlotDataNode::SafeDownCast
-        (plotDataNode->GetNodeReference("Markups"));
-
-      if (plotDataNodeCopy)
-        {
-        plotDataNodeCopy->SetType(vtkMRMLPlotDataNode::POINTS);
-        }
-      else
-        {
-        vtkSmartPointer<vtkMRMLNode> node = vtkSmartPointer<vtkMRMLNode>::Take
-          (this->mrmlScene()->CreateNodeByClass("vtkMRMLPlotDataNode"));
-        plotDataNodeCopy = vtkMRMLPlotDataNode::SafeDownCast(node);
-        std::string namePlotDataNodeCopy = namePlotDataNode + " Markups";
-        plotDataNodeCopy->CopyWithScene(plotDataNode);
-        plotDataNodeCopy->SetName(namePlotDataNodeCopy.c_str());
-        plotDataNodeCopy->SetType(vtkMRMLPlotDataNode::POINTS);
-        this->mrmlScene()->AddNode(plotDataNodeCopy);
-        plotDataNode->AddNodeReferenceID("Markups", plotDataNodeCopy->GetID());
-        plotDataNodeCopy->AddNodeReferenceID("Markups", plotDataNode->GetID());
-        }
-
-      plotChartNode->AddAndObservePlotDataNodeID(plotDataNodeCopy->GetID());
-      }
-    else if (!Type.compare("Bar"))
-      {
-      plotDataNode->SetType(vtkMRMLPlotDataNode::BAR);
+      plotDataNode->SetType(plotDataNode->GetPlotTypeFromString(Type));
       }
 
+    // Add the reference of the PlotDataNode in the active PlotChartNode
     plotChartNode->AddAndObservePlotDataNodeID(plotDataNode->GetID());
 
     colPlots->Delete();
     colPlots = NULL;
     }
-
-  // Set a Plot Layout
-  vtkMRMLLayoutNode* layoutNode = vtkMRMLLayoutNode::SafeDownCast(
-    this->mrmlScene()->GetFirstNodeByClass("vtkMRMLLayoutNode"));
-  if (!layoutNode)
-    {
-    qCritical() << Q_FUNC_INFO << ": Unable to get layout node!";
-    return;
-    }
-  int viewArra = layoutNode->GetViewArrangement();
-  if (viewArra != vtkMRMLLayoutNode::SlicerLayoutConventionalPlotView  &&
-      viewArra != vtkMRMLLayoutNode::SlicerLayoutFourUpPlotView        &&
-      viewArra != vtkMRMLLayoutNode::SlicerLayoutFourUpPlotTableView   &&
-      viewArra != vtkMRMLLayoutNode::SlicerLayoutOneUpPlotView         &&
-      viewArra != vtkMRMLLayoutNode::SlicerLayoutThreeOverThreePlotView)
-  {
-    layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutConventionalPlotView);
-  }
 }
 
 //-----------------------------------------------------------------------------

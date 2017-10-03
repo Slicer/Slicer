@@ -64,7 +64,7 @@ public:
   virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
 
   ///
-  /// Set node attributes
+  /// Set node attributes.
   virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
 
   ///
@@ -72,7 +72,7 @@ public:
   virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
 
   ///
-  /// Get node XML tag name (like Volume, Model)
+  /// Get node XML tag name (like Volume, Model).
   virtual const char* GetNodeTagName() VTK_OVERRIDE { return "Plot"; };
 
   ///
@@ -82,7 +82,7 @@ public:
 
   ///
   /// Set and observe Table node ID.
-  /// Utility method that conveniently takes a string instead of a char*
+  /// Utility method that conveniently takes a string instead of a char*.
   /// \sa TableNodeID, GetTableNodeID(), SetInputData()
   virtual bool SetAndObserveTableNodeID(const std::string& TableNodeID);
 
@@ -91,7 +91,7 @@ public:
   virtual vtkMRMLTableNode* GetTableNode();
 
   ///
-  /// Method to propagate events generated in Plot nodes
+  /// Method to propagate events generated in Plot nodes.
   virtual void ProcessMRMLEvents (vtkObject *caller,
                                   unsigned long event,
                                   void *callData) VTK_OVERRIDE;
@@ -110,7 +110,7 @@ public:
   ///
   /// Updates other nodes in the scene depending on this node
   /// or updates this node if it depends on other nodes when the scene is read in
-  /// This method is called automatically by XML parser after all nodes are created
+  /// This method is called automatically by XML parser after all nodes are created.
   virtual void UpdateScene(vtkMRMLScene * scene) VTK_OVERRIDE;
 
   ///
@@ -142,41 +142,82 @@ public:
   /// Get observed plot
   vtkGetObjectMacro(Plot, vtkPlot);
 
-  /// Get the type of the plot (line, scatter, bar)
+  /// Get the type of the plot (line, scatter, bar).
   /// \brief vtkGetMacro
-  /// \sa SetTypeAndColor
   vtkGetMacro(Type, int);
 
   ///
-  /// Set the type of the plot (line, scatter, bar)
+  /// Set the type of the plot (line, scatter, bar).
   virtual void SetType(int type);
 
   ///
-  /// Get the name of the XColumn
+  /// Utility method to eet the type of
+  /// the plot (line, scatter, bar) from strings.
+  virtual void SetType(const char* type);
+
+  ///
+  /// Get the name of the XColumn.
   /// \brief vtkGetMacro
   vtkGetMacro(XColumnName, vtkStdString);
 
   ///
-  /// Set the name of the XColumn and assure the data connection
+  /// Set the name of the XColumn and assure the data connection.
+  /// The value "Indexes" can not be used to point a column in a table.
+  /// Such entry will be ignored and numeric indexes will used as deafult.
   /// \brief vtkSetMacro
   /// \sa SetInputData
   virtual void SetXColumnName(vtkStdString xColumnName);
 
   ///
-  /// Get the name of the YColumn
+  /// Get the name of the YColumn.
   /// \brief vtkGetMacro
   vtkGetMacro(YColumnName, vtkStdString);
 
   ///
-  /// Set the name of the YColumn and assure the data connection
+  /// Set the name of the YColumn and assure the data connection.
   /// \brief vtkSetMacro
   /// \sa SetInputData
   virtual void SetYColumnName(vtkStdString yColumnName);
 
+  ///
+  /// Convert between plot type ID and name
+  virtual const char *GetPlotTypeAsString(int id);
+  virtual int GetPlotTypeFromString(const char *name);
+
+  ///
+  /// Utility methods to set/get the marker style
+  /// available for Line and Points Plots.
+  virtual void SetMarkerStyle(int style);
+  virtual int GetMarkerStyle();
+
+  ///
+  /// Convert between plot markers style ID and name
+  const char *GetMarkersStyleAsString(int id);
+  int GetMarkersStyleFromString(const char *name);
+
+  ///
+  /// Utility methods to set/get the marker size
+  /// available for Line and Points Plots.
+  virtual void SetMarkerSize(float size);
+  virtual float GetMarkerSize();
+
+  ///
+  /// Utility methods to set/get the Line width
+  /// available for Line Plots.
+  virtual void SetLineWidth(float width);
+  virtual float GetLineWidth();
+
+  ///
+  /// Set/Get Color of the vtkPlot
+  virtual void SetPlotColor(double color[4]);
+  virtual void SetPlotColor(unsigned char color[4]);
+  virtual void GetPlotColor(double color[4]);
+  virtual void GetPlotColor(unsigned char color[4]);
+
   //----------------------------------------------------------------
   /// Constructor and destructor
   //----------------------------------------------------------------
- protected:
+protected:
   vtkMRMLPlotDataNode();
   ~vtkMRMLPlotDataNode();
   vtkMRMLPlotDataNode(const vtkMRMLPlotDataNode&);
@@ -237,7 +278,7 @@ public:
                             vtkStdString yColumnName);
 
   /// Utility method for setting InputData without
-  /// providing the XColumnIndex and YColumnIndex parameters
+  /// providing the XColumnIndex and YColumnIndex parameters.
   /// \sa GetXColumnIndex(), GetYColumnIndex()
   /// \def default are 0, 1
   virtual void SetInputData(vtkMRMLTableNode* tableNode);
@@ -249,7 +290,7 @@ public:
   vtkPlot* Plot;
 
   ///
-  /// Type of Plot (line, scatter, bar)
+  /// Type of Plot (Line, Scatter, Bar).
   int Type;
 
   vtkStdString XColumnName;

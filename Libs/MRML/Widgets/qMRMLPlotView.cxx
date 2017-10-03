@@ -59,6 +59,7 @@
 #include <vtkContextScene.h>
 #include <vtkContextView.h>
 #include <vtkNew.h>
+#include <vtkPen.h>
 #include <vtkPlot.h>
 #include <vtkRenderer.h>
 #include <vtkSelection.h>
@@ -436,6 +437,8 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
     return;
     }
 
+  int plnWasModifying = pln->StartModify();
+
   const char* defaultPlotColorNodeID = this->ColorLogic->GetDefaultPlotColorNodeID();
   vtkMRMLColorNode *defaultColorNode = vtkMRMLColorNode::SafeDownCast
     (this->MRMLScene->GetNodeByID(defaultPlotColorNodeID));
@@ -461,6 +464,11 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
   for(int chartPlotDataNodesIndex = 0; chartPlotDataNodesIndex < q->chart()->GetNumberOfPlots(); chartPlotDataNodesIndex++)
     {
     bool plotFound = false;
+    vtkPlot *plot = q->chart()->GetPlot(chartPlotDataNodesIndex);
+    if (!plot)
+      {
+      continue;
+      }
     for(int plotDataNodesIndex = 0; plotDataNodesIndex < plotDataNodes->GetNumberOfItems(); plotDataNodesIndex++)
       {
       vtkMRMLPlotDataNode* plotDataNode = vtkMRMLPlotDataNode::SafeDownCast
@@ -469,7 +477,7 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
         {
         continue;
         }
-      if (q->chart()->GetPlot(chartPlotDataNodesIndex) == plotDataNode->GetPlot())
+      if (plot == plotDataNode->GetPlot())
         {
         plotFound = true;
         break;
@@ -477,15 +485,22 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
       }
     if (!plotFound)
       {
-      q->removePlot(q->chart()->GetPlot(chartPlotDataNodesIndex));
+      q->removePlot(plot);
       }
     }
 
+  std::vector<int> plotDataNodesWasModifying(plotDataNodes->GetNumberOfItems(), 0);
   for(int plotDataNodesIndex = 0; plotDataNodesIndex < plotDataNodes->GetNumberOfItems(); plotDataNodesIndex++)
     {
     vtkMRMLPlotDataNode* plotDataNode = vtkMRMLPlotDataNode::SafeDownCast
       (plotDataNodes->GetItemAsObject(plotDataNodesIndex));
     if (!plotDataNode)
+      {
+      continue;
+      }
+    plotDataNodesWasModifying[plotDataNodesIndex] = plotDataNode->StartModify();
+    vtkPlot* plot = plotDataNode->GetPlot();
+    if (!plot)
       {
       continue;
       }
@@ -498,22 +513,26 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
         {
         continue;
         }
-      vtkPlot* plot = plotDataNode->GetPlot();
-      if (!plot)
-        {
-        continue;
-        }
 
-      // Set color of the plot
-      double color[4] = {0., 0., 0., 0.};
-
-      vtkIdType plotIndex = pln->GetColorPlotIdexFromID(plotDataNode->GetID());
-      if (plotIndex < 0)
+      // Check if the plot color is the default
+      unsigned char rgba[4] = {0, 0, 0, 255};
+      plotDataNode->GetPlotColor(rgba);
+      if (rgba[0] == 0 &&
+          rgba[1] == 0 &&
+          rgba[2] == 0 &&
+          rgba[3] == 255)
         {
-        plotIndex = 0;
+        // Set color of the plot
+        double color[4] = {0., 0., 0., 0.};
+
+        vtkIdType plotIndex = pln->GetColorPlotIndexFromID(plotDataNode->GetID());
+        if (plotIndex < 0)
+          {
+          plotIndex = 0;
+          }
+        colorNode->GetColor(plotIndex, color);
+        plotDataNode->SetPlotColor(color);
         }
-      colorNode->GetColor(plotIndex , color);
-      plot->SetColor(color[0], color[1], color[2]);
 
       // Add plot if not already in chart
       if (q->plotIndex(plot) < vtkIdType(0))
@@ -524,32 +543,22 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
       break;
       }
 
-    bool columnXFound = false;
-    bool columnYFound = false;
-    for (int columnIndex = 0; columnIndex < plotDataNode->GetTableNode()->GetNumberOfColumns(); columnIndex++)
+    vtkMRMLTableNode *mrmlTableNode = plotDataNode->GetTableNode();
+    if (!plotFound || !mrmlTableNode ||
+        (mrmlTableNode->GetColumnIndex(plotDataNode->GetXColumnName()) == -1 &&
+         plotDataNode->GetXColumnName().compare("Indexes")) ||
+        mrmlTableNode->GetColumnIndex(plotDataNode->GetYColumnName()) == -1)
       {
-      if(!strcmp(plotDataNode->GetTableNode()->GetColumnName(columnIndex).c_str(), plotDataNode->GetXColumnName().c_str()))
-        {
-        columnXFound = true;
-        }
-      if(!strcmp(plotDataNode->GetTableNode()->GetColumnName(columnIndex).c_str(), plotDataNode->GetYColumnName().c_str()))
-        {
-        columnYFound = true;
-        }
-      }
-
-    if (!plotFound || !columnXFound || !columnYFound)
-      {
-      // This if is necessary for a BUG at VTK level:
-      // in the case of a plot removed with corner ID 0,
-      // when successively the addPlot method is called
-      // (to add the same plot instance to vtkChartXY) it will
-      // fail to setup the graph in the vtkChartXY render.
-      if (q->chart()->GetPlotCorner(plotDataNode->GetPlot()) == 0)
-        {
-        q->chart()->SetPlotCorner(plotDataNode->GetPlot(), 1);
-        }
-      q->removePlot(plotDataNode->GetPlot());
+        // This if is necessary for a BUG at VTK level:
+        // in the case of a plot removed with corner ID 0,
+        // when successively the addPlot method is called
+        // (to add the same plot instance to vtkChartXY) it will
+        // fail to setup the graph in the vtkChartXY render.
+        if (q->chart()->GetPlotCorner(plot) == 0)
+          {
+          q->chart()->SetPlotCorner(plot, 1);
+          }
+        q->removePlot(plot);
       }
     }
 
@@ -710,14 +719,28 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
     axis->GetLabelProperties()->SetFontSize(StringToInt(pln->GetAttribute("AxisLabelFontSize")));
     }
 
-  if (!strcmp(pln->GetAttribute("fitPlotToAxes"), "on"))
+  if (!strcmp(pln->GetAttribute("FitPlotToAxes"), "on"))
     {
     this->RecalculateBounds();
-    pln->SetAttribute("fitPlotToAxes", "off");
+    pln->SetAttribute("FitPlotToAxes", "off");
     }
 
   // Repaint the chart scene
   q->scene()->SetDirty(true);
+
+  // End MRML Modifications
+  pln->EndModify(plnWasModifying);
+
+  for(int plotDataNodesIndex = 0; plotDataNodesIndex < plotDataNodes->GetNumberOfItems(); plotDataNodesIndex++)
+    {
+    vtkMRMLPlotDataNode* plotDataNode = vtkMRMLPlotDataNode::SafeDownCast
+      (plotDataNodes->GetItemAsObject(plotDataNodesIndex));
+    if (!plotDataNode)
+      {
+      continue;
+      }
+    plotDataNode->EndModify(plotDataNodesWasModifying[plotDataNodesIndex]);
+    }
 }
 
 // --------------------------------------------------------------------------

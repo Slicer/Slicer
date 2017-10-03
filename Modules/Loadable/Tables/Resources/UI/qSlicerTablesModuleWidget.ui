@@ -24,7 +24,16 @@
     <normaloff>:/Icons/Tables.png</normaloff>:/Icons/Tables.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -33,13 +42,13 @@
       <enum>QLayout::SetMinimumSize</enum>
      </property>
      <item>
-      <widget class="qMRMLNodeComboBox" name="TableNodeSelector">
-       <property name="nodeTypes">
+      <widget class="qMRMLNodeComboBox" name="TableNodeSelector" native="true">
+       <property name="nodeTypes" stdset="0">
         <stringlist>
          <string>vtkMRMLTableNode</string>
         </stringlist>
        </property>
-       <property name="renameEnabled">
+       <property name="renameEnabled" stdset="0">
         <bool>true</bool>
        </property>
       </widget>
@@ -79,21 +88,18 @@
     </layout>
    </item>
    <item>
-    <widget class="ctkCollapsibleButton" name="DisplayEditCollapsibleWidget">
+    <widget class="ctkCollapsibleButton" name="DisplayEditCollapsibleWidget" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>1</verstretch>
       </sizepolicy>
      </property>
-     <property name="text">
+     <property name="text" stdset="0">
       <string>Edit</string>
      </property>
-     <property name="checked">
+     <property name="checked" stdset="0">
       <bool>true</bool>
-     </property>
-     <property name="contentsFrameShape">
-      <enum>QFrame::NoFrame</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_8">
       <item>
@@ -150,13 +156,22 @@
            <property name="spacing">
             <number>0</number>
            </property>
-           <property name="margin">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
             <number>0</number>
            </property>
            <item>
             <widget class="QToolButton" name="PlotButton">
              <property name="toolTip">
-              <string>Generate an Interactive Plot based on user-selection of the columns of the table.</string>
+              <string>Generate an Interactive Plot based on user-selection of the columns of the table. The First (from left to right) Column will be used as X-Axis and each additional Column will be plotted in the same Chart as Y-Axis.</string>
              </property>
              <property name="text">
               <string/>
@@ -314,41 +329,35 @@
        </widget>
       </item>
       <item>
-       <widget class="ctkCollapsibleButton" name="SelectedColumnPropertiesCollapsibleButton">
-        <property name="text">
+       <widget class="ctkCollapsibleButton" name="SelectedColumnPropertiesCollapsibleButton" native="true">
+        <property name="text" stdset="0">
          <string>Column properties</string>
         </property>
-        <property name="collapsed">
+        <property name="collapsed" stdset="0">
          <bool>true</bool>
-        </property>
-        <property name="contentsFrameShape">
-         <enum>QFrame::StyledPanel</enum>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <widget class="qSlicerTableColumnPropertiesWidget" name="SelectedColumnPropertiesWidget"/>
+          <widget class="qSlicerTableColumnPropertiesWidget" name="SelectedColumnPropertiesWidget" native="true"/>
          </item>
         </layout>
        </widget>
       </item>
       <item>
-       <widget class="ctkCollapsibleButton" name="NewColumnPropertiesCollapsibleButton">
-        <property name="text">
+       <widget class="ctkCollapsibleButton" name="NewColumnPropertiesCollapsibleButton" native="true">
+        <property name="text" stdset="0">
          <string>New column defaults</string>
         </property>
-        <property name="collapsed">
+        <property name="collapsed" stdset="0">
          <bool>true</bool>
-        </property>
-        <property name="contentsFrameShape">
-         <enum>QFrame::StyledPanel</enum>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
-          <widget class="qSlicerTableColumnPropertiesWidget" name="NewColumnPropertiesWidget">
-           <property name="columnNameVisible">
+          <widget class="qSlicerTableColumnPropertiesWidget" name="NewColumnPropertiesWidget" native="true">
+           <property name="columnNameVisible" stdset="0">
             <bool>false</bool>
            </property>
-           <property name="confirmTypeChange">
+           <property name="confirmTypeChange" stdset="0">
             <bool>false</bool>
            </property>
           </widget>
@@ -415,6 +424,7 @@
    <class>qSlicerTableColumnPropertiesWidget</class>
    <extends>qSlicerWidget</extends>
    <header>qSlicerTableColumnPropertiesWidget.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>ctkCollapsibleButton</class>

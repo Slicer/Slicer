@@ -45,7 +45,7 @@ class VTK_MRML_EXPORT vtkMRMLPlotChartNode : public vtkMRMLNode
   virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
 
   ///
-  /// Set node attributes
+  /// Set node attributes.
   virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
 
   ///
@@ -53,15 +53,15 @@ class VTK_MRML_EXPORT vtkMRMLPlotChartNode : public vtkMRMLNode
   virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
 
   ///
-  /// Copy the node's attributes to this object
+  /// Copy the node's attributes to this object.
   virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
 
   ///
-  /// Get node XML tag name (like Volume, Model)
+  /// Get node XML tag name (like Volume, Model).
   virtual const char* GetNodeTagName() VTK_OVERRIDE {return "PlotChart";};
 
   ///
-  /// Method to propagate events generated in mrml
+  /// Method to propagate events generated in mrml.
   virtual void ProcessMRMLEvents(vtkObject *caller,
                                  unsigned long event,
                                  void *callData) VTK_OVERRIDE;
@@ -94,12 +94,12 @@ class VTK_MRML_EXPORT vtkMRMLPlotChartNode : public vtkMRMLNode
   void AddAndObservePlotDataNodeID(const char *plotDataNodeID);
 
   ///
-  /// Convenience method that removes the plot node ID from the list
+  /// Convenience method that removes the plot node ID from the list.
   /// \sa SetAndObserverNthPlotDataNodeID(int, const char*)
   void RemovePlotDataNodeID(const char *plotDataNodeID);
 
   ///
-  /// Convenience method that removes the Nth plot node ID from the list
+  /// Convenience method that removes the Nth plot node ID from the list.
   /// \sa SetAndObserverNthPlotDataNodeID(int, const char*)
   void RemoveNthPlotDataNodeID(int n);
 
@@ -142,15 +142,15 @@ class VTK_MRML_EXPORT vtkMRMLPlotChartNode : public vtkMRMLNode
   ///
   /// Return the index of the Nth plot node ID.
   /// If not found, it return '-1'
-  int GetNthPlotIdexFromID(const char* plotDataNodeID);
+  int GetNthPlotIndexFromID(const char* plotDataNodeID);
 
   ///
   /// Return an index to color each Plot.
   /// If not found, it return '-1'
-  vtkIdType GetColorPlotIdexFromID(const char* plotDataNodeID);
+  vtkIdType GetColorPlotIndexFromID(const char* plotDataNodeID);
 
   ///
-  /// Utility function that returns the first plot node id.
+  /// Utility function that returns the first plot node ID.
   /// \sa GetNthPlotDataNodeID(int), GetPlotDataNode()
   const char *GetPlotDataNodeID();
 
@@ -172,25 +172,18 @@ class VTK_MRML_EXPORT vtkMRMLPlotChartNode : public vtkMRMLNode
   vtkMRMLPlotDataNode* GetPlotDataNode();
 
   ///
-  /// Get the list of Plot names
+  /// Get the list of Plot names.
   virtual int GetPlotNames(std::vector<std::string> &plotDataNodeNames);
 
   ///
-  /// Get the list of Plot ids
+  /// Get the list of Plot ids.
   virtual int GetPlotIDs(std::vector<std::string> &plotDataNodeIDs);
-
-  ///
-  /// Set the Type for all the referenced Plots.
-  /// Type is also an attribute (see below),
-  /// but this method has to be used to properly set all the referenced Plots.
-  virtual void SetPlotType(const char* Type);
 
   ///
   /// In addition a set of properties are available for a PlotChart.
   /// These are stored as Attributes of PlotChartNode.
   /// Available properties are:
   ///
-  /// \li  "Type" - "Line", "Line and Scatter", "Scatter", "Bar"
   /// \li  "TitleName" - title ploted on the PlotChart
   /// \li  "ShowTitle" - show title "on" or "off"
   /// \li  "XAxisLabelName" - label ploted on the x-axis
@@ -207,7 +200,15 @@ class VTK_MRML_EXPORT vtkMRMLPlotChartNode : public vtkMRMLNode
   /// \li  "AxisLabelFontSize" - default: "12"
   /// \li  "LookupTable" colorNodeID default: NULL
   ///
-  ///  NOTE: To change the PlotType SetPlotType has to be used.
+  /// Further attributes of PlotChartNode are connected with
+  /// the PlotDataProperties. If they are have value "Custom"
+  /// then each PlotDataNode has its individual value. If another
+  /// value is chosen, all the PlotDataNodes referenced by the
+  /// PlotChartNode will be updated with the new value.
+  ///
+  /// \li  "Type" - "Custom", "Line", "Scatter", "Bar"
+  /// \li  "XAxis" - Set XAxis "Custom", "..." (list of Columns)
+  /// \li  "Markers" - show markers "Custom", "Cross", "Plus", "Square", "Circle", "Diamond"
   ///
 
   virtual const char* GetPlotDataNodeReferenceRole();

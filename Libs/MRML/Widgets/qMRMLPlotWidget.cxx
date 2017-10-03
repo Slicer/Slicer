@@ -61,8 +61,8 @@ public:
 qMRMLPlotWidgetPrivate::qMRMLPlotWidgetPrivate(qMRMLPlotWidget& object)
   : q_ptr(&object)
 {
-  this->PlotView = 0;
-  this->PlotController = 0;
+  this->PlotView = NULL;
+  this->PlotController = NULL;
 }
 
 //---------------------------------------------------------------------------

@@ -41,7 +41,7 @@ public:
    virtual vtkMRMLNode* CreateNodeInstance()  VTK_OVERRIDE;
 
   ///
-  /// Read node attributes from XML file
+  /// Read node attributes from XML file.
   virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
 
   ///
@@ -49,23 +49,23 @@ public:
   virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
 
   ///
-  /// Copy the node's attributes to this object
+  /// Copy the node's attributes to this object.
   virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
 
   ///
-  /// Get node XML tag name (like Volume, Model)
+  /// Get node XML tag name (like Volume, Model).
   virtual const char* GetNodeTagName() VTK_OVERRIDE { return "PlotView"; };
 
   ///
-  /// Set and Update the PlotChart node id displayed in this PlotView
+  /// Set and Update the PlotChart node id displayed in this PlotView.
   virtual void SetPlotChartNodeID(const char *PlotChartNodeID);
 
   ///
-  /// Get the PlotChart node id displayed in this PlotView
+  /// Get the PlotChart node id displayed in this PlotView.
   const char* GetPlotChartNodeID();
 
   ///
-  /// Get the PlotChart node displayed in this PlotView
+  /// Get the PlotChart node displayed in this PlotView.
   vtkMRMLPlotChartNode* GetPlotChartNode();
 
   ///
@@ -77,7 +77,7 @@ public:
   vtkGetMacro (DoPropagatePlotChartSelection, bool );
 
   ///
-  /// Method to propagate events generated in mrml
+  /// Method to propagate events generated in mrml.
   virtual void ProcessMRMLEvents(vtkObject *caller,
                                  unsigned long event,
                                  void *callData) VTK_OVERRIDE;

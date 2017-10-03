@@ -51,8 +51,6 @@ vtkMRMLPlotChartNode::vtkMRMLPlotChartNode()
   this->HideFromEditors = 0;
 
   // default properties
-  this->SetAttribute("Type", "Line");
-
   this->SetAttribute("ShowGrid", "on");
   this->SetAttribute("ShowLegend", "on");
 
@@ -72,8 +70,13 @@ vtkMRMLPlotChartNode::vtkMRMLPlotChartNode()
   this->SetAttribute("AxisTitleFontSize", "16");
   this->SetAttribute("AxisLabelFontSize", "12");
 
-  this->SetAttribute("LookupTable", "");
-  this->SetAttribute("fitPlotToAxes", "off");
+  this->SetAttribute("LookupTable", "(none)");
+  this->SetAttribute("FitPlotToAxes", "off");
+
+  // global properties for PlotDataNodes
+  this->SetAttribute("Type", "Custom");
+  this->SetAttribute("XAxis", "Custom");
+  this->SetAttribute("Markers", "Custom");
 
   vtkIntArray  *events = vtkIntArray::New();
   events->InsertNextValue(vtkCommand::ModifiedEvent);
@@ -189,7 +192,7 @@ void vtkMRMLPlotChartNode::RemovePlotDataNodeID(const char *plotDataNodeID)
     return;
     }
 
-  this->RemoveNthPlotDataNodeID(this->GetNthPlotIdexFromID(plotDataNodeID));
+  this->RemoveNthPlotDataNodeID(this->GetNthPlotIndexFromID(plotDataNodeID));
 }
 
 //----------------------------------------------------------------------------
@@ -229,7 +232,7 @@ const char* vtkMRMLPlotChartNode::GetNthPlotDataNodeID(int n)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLPlotChartNode::GetNthPlotIdexFromID(const char *plotDataNodeID)
+int vtkMRMLPlotChartNode::GetNthPlotIndexFromID(const char *plotDataNodeID)
 {
   if (!plotDataNodeID)
     {
@@ -254,30 +257,9 @@ int vtkMRMLPlotChartNode::GetNthPlotIdexFromID(const char *plotDataNodeID)
 }
 
 //----------------------------------------------------------------------------
-vtkIdType vtkMRMLPlotChartNode::GetColorPlotIdexFromID(const char *plotDataNodeID)
+vtkIdType vtkMRMLPlotChartNode::GetColorPlotIndexFromID(const char *plotDataNodeID)
 {
-  std::string tempPlotDataNodeID(plotDataNodeID);
-
-  vtkMRMLPlotDataNode* plotDataNode = this->GetNthPlotDataNode
-    (this->GetNthPlotIdexFromID(plotDataNodeID));
-  if (!plotDataNode)
-    {
-    return -1;
-    }
-  std::string namePlotDataNode = plotDataNode->GetName();
-  std::size_t found = namePlotDataNode.find("Markups");
-  if (found != std::string::npos)
-    {
-    vtkMRMLPlotDataNode* markupsPlotDataNode = vtkMRMLPlotDataNode::SafeDownCast
-      (plotDataNode->GetNodeReference("Markups"));
-    if (!markupsPlotDataNode)
-      {
-      return -1;
-      }
-    tempPlotDataNodeID = markupsPlotDataNode->GetID();
-    }
-
-  return this->GetNthPlotIdexFromID(tempPlotDataNodeID.c_str());
+  return this->GetNthPlotIndexFromID(plotDataNodeID);
 }
 
 //----------------------------------------------------------------------------
@@ -350,89 +332,4 @@ int vtkMRMLPlotChartNode::GetPlotIDs(std::vector<std::string> &plotDataNodeIDs)
     }
 
   return static_cast<int>(plotDataNodeIDs.size());
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLPlotChartNode::SetPlotType(const char *Type)
-{
-    if (!this->GetScene() || !strcmp(Type, this->GetAttribute("Type")))
-      {
-      return;
-      }
-
-    int wasModifying = this->StartModify();
-    std::vector<std::string> plotDataNodesIDs;
-    this->GetPlotIDs(plotDataNodesIDs);
-
-    std::vector<std::string>::iterator it = plotDataNodesIDs.begin();
-    for (; it != plotDataNodesIDs.end(); ++it)
-      {
-      vtkMRMLPlotDataNode* plotDataNode = vtkMRMLPlotDataNode::SafeDownCast
-        (this->GetScene()->GetNodeByID((*it).c_str()));
-      if (!plotDataNode)
-        {
-        continue;
-        }
-
-      std::string namePlotDataNode = plotDataNode->GetName();
-      std::size_t found = namePlotDataNode.find("Markups");
-      if (found != std::string::npos &&
-          (!strcmp(Type,"Line") || !strcmp(Type,"Scatter") || !strcmp(Type,"Bar")))
-        {
-        this->RemovePlotDataNodeID(plotDataNode->GetID());
-        plotDataNode->GetNodeReference("Markups")->RemoveNodeReferenceIDs("Markups");
-        this->GetScene()->RemoveNode(plotDataNode);
-        continue;
-        }
-
-      if (!strcmp(Type,"Line"))
-        {
-        plotDataNode->SetType(vtkMRMLPlotDataNode::LINE);
-        }
-      else if (!strcmp(Type,"Scatter"))
-        {
-        plotDataNode->SetType(vtkMRMLPlotDataNode::POINTS);
-        }
-      else if (!strcmp(Type,"Line and Scatter"))
-        {
-        plotDataNode->SetType(vtkMRMLPlotDataNode::LINE);
-
-        vtkMRMLPlotDataNode* plotDataNodeCopy = vtkMRMLPlotDataNode::SafeDownCast
-          (plotDataNode->GetNodeReference("Markups"));
-
-        if (plotDataNodeCopy)
-          {
-          plotDataNodeCopy->SetType(vtkMRMLPlotDataNode::POINTS);
-          }
-        else
-          {
-          vtkSmartPointer<vtkMRMLNode> node = vtkSmartPointer<vtkMRMLNode>::Take
-            (this->GetScene()->CreateNodeByClass("vtkMRMLPlotDataNode"));
-          plotDataNodeCopy = vtkMRMLPlotDataNode::SafeDownCast(node);
-          std::string namePlotDataNodeCopy = namePlotDataNode + " Markups";
-          plotDataNodeCopy->CopyWithScene(plotDataNode);
-          plotDataNodeCopy->SetName(namePlotDataNodeCopy.c_str());
-          plotDataNodeCopy->SetType(vtkMRMLPlotDataNode::POINTS);
-          this->GetScene()->AddNode(plotDataNodeCopy);
-          plotDataNode->AddNodeReferenceID("Markups", plotDataNodeCopy->GetID());
-          plotDataNodeCopy->AddNodeReferenceID("Markups", plotDataNode->GetID());
-          }
-
-        this->AddAndObservePlotDataNodeID(plotDataNodeCopy->GetID());
-        }
-      else if (!strcmp(Type,"Bar"))
-        {
-        plotDataNode->SetType(vtkMRMLPlotDataNode::BAR);
-        }
-      else
-        {
-        vtkErrorWithObjectMacro(this, "vtkMRMLPlotChartNode::SetPlotType: Unknown PlotType"<< Type);
-        this->EndModify(wasModifying);
-        return;
-        }
-      }
-
-    this->SetAttribute("Type", Type);
-
-    this->EndModify(wasModifying);
 }

@@ -54,7 +54,7 @@ public:
   explicit qMRMLPlotView(QWidget* parent = 0);
   virtual ~qMRMLPlotView();
 
-  /// Return a pointer on the current MRML scene
+  /// Return a pointer on the current MRML scene.
   vtkMRMLScene* mrmlScene() const;
 
   /// Get the PlotView node observed by view.
@@ -72,10 +72,10 @@ public:
 
 public slots:
 
-  /// Set the MRML \a scene that should be listened for events
+  /// Set the MRML \a scene that should be listened for events.
   void setMRMLScene(vtkMRMLScene* newScene);
 
-  /// Set the current \a viewNode to observe
+  /// Set the current \a viewNode to observe.
   void setMRMLPlotViewNode(vtkMRMLPlotViewNode* newPlotViewNode);
 
 signals:
@@ -87,7 +87,7 @@ signals:
 
   /// Signal emitted when a data point or more has been selected. Returns
   /// the MRMLPlotDataNodes IDs and the correspective arrays with
-  /// the data points ids (vtkIdTypeArray)
+  /// the data points ids (vtkIdTypeArray).
   void dataSelected(vtkStringArray* mrmlPlotDataIDs, vtkCollection* selectionCol);
 
 protected:

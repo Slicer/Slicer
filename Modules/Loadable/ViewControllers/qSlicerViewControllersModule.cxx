@@ -30,6 +30,7 @@
 
 #include "vtkSlicerViewControllersLogic.h"
 
+#include <vtkMRMLPlotViewNode.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLViewNode.h>
 
@@ -208,6 +209,32 @@ void qSlicerViewControllersModule::writeDefaultSliceViewSettings(vtkMRMLSliceNod
     }
   QSettings settings;
   settings.beginGroup("DefaultSliceView");
+  writeCommonViewSettings(defaultViewNode, settings);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerViewControllersModule::readDefaultPlotViewSettings(vtkMRMLPlotViewNode* defaultViewNode)
+{
+  if (!defaultViewNode)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: defaultViewNode is invalid";
+    return;
+    }
+  QSettings settings;
+  settings.beginGroup("DefaultPlotView");
+  readCommonViewSettings(defaultViewNode, settings);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerViewControllersModule::writeDefaultPlotViewSettings(vtkMRMLPlotViewNode* defaultViewNode)
+{
+  if (!defaultViewNode)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: defaultViewNode is invalid";
+    return;
+    }
+  QSettings settings;
+  settings.beginGroup("DefaultPlotView");
   writeCommonViewSettings(defaultViewNode, settings);
 }
 

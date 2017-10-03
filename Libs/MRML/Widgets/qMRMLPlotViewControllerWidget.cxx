@@ -23,11 +23,14 @@
 #include <QInputDialog>
 #include <QLabel>
 #include <QMenu>
+#include <QMessageBox>
 #include <QHBoxLayout>
 
 // VTK includes
 #include <vtkCollection.h>
 #include <vtkFloatArray.h>
+#include <vtkPlot.h>
+#include <vtkPlotLine.h>
 #include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
 #include <vtkTable.h>
@@ -68,13 +71,13 @@ qMRMLPlotViewControllerWidgetPrivate::qMRMLPlotViewControllerWidgetPrivate(
   qMRMLPlotViewControllerWidget& object)
   : Superclass(object)
 {
-  this->FitToWindowToolButton = NULL;
+  this->FitToWindowToolButton = 0;
 
-  this->PlotChartNode = NULL;
-  this->PlotViewNode = NULL;
-  this->PlotView = NULL;
+  this->PlotChartNode = 0;
+  this->PlotViewNode = 0;
+  this->PlotView = 0;
 
-  this->SelectionNode = NULL;
+  this->SelectionNode = 0;
 }
 
 //---------------------------------------------------------------------------
@@ -98,14 +101,22 @@ void qMRMLPlotViewControllerWidgetPrivate::setupPopupUi()
   // Connect Plot selector
   this->connect(this->plotDataComboBox, SIGNAL(checkedNodesChanged()),
                 SLOT(onPlotDataNodesSelected()));
+  this->connect(this->plotDataComboBox, SIGNAL(nodeAddedByUser(vtkMRMLNode*)),
+                SLOT(onPlotDataNodeAdded(vtkMRMLNode*)));
+  this->connect(this->plotDataComboBox, SIGNAL(nodeAboutToBeEdited(vtkMRMLNode*)),
+                SLOT(onPlotDataNodeEdited(vtkMRMLNode*)));
 
   // Connect the Plot Type selector
   this->connect(this->plotTypeComboBox, SIGNAL(currentIndexChanged(const QString&)),
-                SLOT(onPlotTypeSelected(const QString&)));
+                SLOT(onPlotTypeChanged(const QString&)));
 
   // Connect xAxis comboBox
-    this->connect(this->xAxisComboBox, SIGNAL(currentIndexChanged(const QString&)),
-                  SLOT(onXAxisSelected(const QString&)));
+  this->connect(this->xAxisComboBox, SIGNAL(currentIndexChanged(const QString&)),
+                SLOT(onXAxisChanged(const QString&)));
+
+  // Connect Markers comboBox
+  this->connect(this->markersComboBox, SIGNAL(currentIndexChanged(const QString&)),
+                SLOT(onMarkersChanged(const QString&)));
 
   // Connect the actions
   QObject::connect(this->actionShow_Grid, SIGNAL(toggled(bool)),
@@ -232,12 +243,7 @@ void qMRMLPlotViewControllerWidgetPrivate::onPlotDataNodesSelected()
 {
   Q_Q(qMRMLPlotViewControllerWidget);
 
-  if (!this->PlotViewNode)
-    {
-    return;
-    }
-
-  if (!this->PlotChartNode)
+  if (!this->PlotViewNode || !this->PlotChartNode)
     {
     return;
     }
@@ -277,11 +283,67 @@ void qMRMLPlotViewControllerWidgetPrivate::onPlotDataNodesSelected()
         this->PlotChartNode->AddAndObservePlotDataNodeID(dn->GetID());
         }
       }
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
-void qMRMLPlotViewControllerWidgetPrivate::onPlotTypeSelected(const QString &Type)
+void qMRMLPlotViewControllerWidgetPrivate::onPlotDataNodeAdded(vtkMRMLNode *node)
+{
+  Q_Q(qMRMLPlotViewControllerWidget);
+
+  if (!this->PlotChartNode)
+    {
+    return;
+    }
+
+  vtkMRMLPlotDataNode *plotDataNode = vtkMRMLPlotDataNode::SafeDownCast(node);
+
+  if (plotDataNode)
+    {
+    return;
+    }
+
+  q->mrmlScene()->AddNode(plotDataNode);
+
+  const char* Type = this->PlotChartNode->GetAttribute("Type");
+  if (strcmp("Custom", Type))
+    {
+    plotDataNode->SetType(plotDataNode->GetPlotTypeFromString(Type));
+    }
+
+  const char* XAxis = this->PlotChartNode->GetAttribute("XAxis");
+  if (strcmp("Custom", XAxis))
+    {
+    plotDataNode->SetXColumnName(XAxis);
+    }
+
+  const char* Markers = this->PlotChartNode->GetAttribute("Markers");
+  if (strcmp("Custom", Markers))
+    {
+    plotDataNode->SetMarkerStyle(plotDataNode->GetMarkersStyleFromString(Markers));
+    }
+
+  // Add the reference of the PlotDataNode in the active PlotChartNode
+  this->PlotChartNode->AddAndObservePlotDataNodeID(plotDataNode->GetID());
+}
+
+// --------------------------------------------------------------------------
+void qMRMLPlotViewControllerWidgetPrivate::onPlotDataNodeEdited(vtkMRMLNode *node)
+{
+  if (node == NULL)
+    {
+    return;
+    }
+
+  QString message = QString("To edit the node %1 : Please navigate to"
+                            " the ViewController Module. Additional editing options"
+                            " are available under the Advanced menu.").arg(node->GetName());
+  qWarning() << Q_FUNC_INFO << ": " << message;
+  QMessageBox::warning(NULL, tr("Edit PlotDataNode"), message);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLPlotViewControllerWidgetPrivate::onPlotTypeChanged(const QString &Type)
 {
   Q_Q(qMRMLPlotViewControllerWidget);
   if (!this->PlotChartNode || !q->mrmlScene())
@@ -289,41 +351,32 @@ void qMRMLPlotViewControllerWidgetPrivate::onPlotTypeSelected(const QString &Typ
     return;
     }
 
-  this->PlotChartNode->SetPlotType(Type.toStdString().c_str());
+  this->PlotChartNode->SetAttribute("Type", Type.toStdString().c_str());
 }
 
 // --------------------------------------------------------------------------
-void qMRMLPlotViewControllerWidgetPrivate::onXAxisSelected(const QString &Column)
+void qMRMLPlotViewControllerWidgetPrivate::onXAxisChanged(const QString &Column)
 {
   Q_Q(qMRMLPlotViewControllerWidget);
-  if (!this->PlotChartNode || !Column.compare("Default"))
+  if (!this->PlotChartNode)
     {
     return;
     }
 
-  int numPlotDataNodes = this->PlotChartNode->GetNumberOfPlotDataNodes();
-  for (int indexPlotDataNode = 0; indexPlotDataNode < numPlotDataNodes; indexPlotDataNode++)
+  this->PlotChartNode->SetAttribute("XAxis", Column.toStdString().c_str());
+}
+
+// --------------------------------------------------------------------------
+void qMRMLPlotViewControllerWidgetPrivate::onMarkersChanged(const QString &str)
+{
+  Q_Q(qMRMLPlotViewControllerWidget);
+
+  if(!this->PlotChartNode)
     {
-    vtkMRMLPlotDataNode* plotDataNode = this->PlotChartNode->GetNthPlotDataNode(indexPlotDataNode);
-    if (!plotDataNode)
-      {
-      continue;
-      }
-    int ColumnIndex = plotDataNode->GetTableNode()->GetColumnIndex(Column.toStdString().c_str());
-    if (!Column.compare("Indexes") && ColumnIndex == -1)
-      {
-      vtkSmartPointer<vtkFloatArray> arrX = vtkSmartPointer<vtkFloatArray>::New();
-      arrX->SetName("Indexes");
-      int numberOfRows = plotDataNode->GetTableNode()->GetNumberOfRows();
-      arrX->SetNumberOfValues(numberOfRows);
-      for (int rowIndex = 0; rowIndex < numberOfRows; rowIndex++)
-        {
-        arrX->SetValue(rowIndex, rowIndex);
-        }
-      plotDataNode->GetTableNode()->AddColumn(arrX);
-      }
-    plotDataNode->SetXColumnName(Column.toStdString());
+    return;
     }
+
+  this->PlotChartNode->SetAttribute("Markers", str.toStdString().c_str());
 }
 
 // --------------------------------------------------------------------------
@@ -450,7 +503,7 @@ void qMRMLPlotViewControllerWidget::fitPlotToAxes()
     return;
     }
 
-  d->PlotChartNode->SetAttribute("fitPlotToAxes", "on");
+  d->PlotChartNode->SetAttribute("FitPlotToAxes", "on");
 }
 
 //---------------------------------------------------------------------------
@@ -622,8 +675,12 @@ void qMRMLPlotViewControllerWidget::updateWidgetFromMRML()
   if (!mrmlPlotChartNode)
     {
     // Set the widgets to default states
-    int tindex = d->plotTypeComboBox->findText(QString("Line"));
+    int tindex = d->plotTypeComboBox->findText(QString("Custom"));
     d->plotTypeComboBox->setCurrentIndex(tindex);
+    tindex = d->xAxisComboBox->findText(QString("Custom"));
+    d->xAxisComboBox->setCurrentIndex(tindex);
+    tindex = d->markersComboBox->findText(QString("Custom"));
+    d->markersComboBox->setCurrentIndex(tindex);
     d->actionShow_Grid->setChecked(true);
     d->actionShow_Legend->setChecked(true);
     d->showTitleCheckBox->setChecked(true);
@@ -644,6 +701,8 @@ void qMRMLPlotViewControllerWidget::updateWidgetFromMRML()
     return;
     }
 
+  int plnWasModifying = mrmlPlotChartNode->StartModify();
+
   // Plot selector
   std::vector<std::string> plotDataNodesIDs;
   mrmlPlotChartNode->GetPlotIDs(plotDataNodesIDs);
@@ -657,24 +716,30 @@ void qMRMLPlotViewControllerWidget::updateWidgetFromMRML()
   bool xAxisComboBoxBlockSignals = d->xAxisComboBox->blockSignals(true);
   QString currentCol = d->xAxisComboBox->itemText(d->xAxisComboBox->currentIndex());
   d->xAxisComboBox->clear();
-  d->xAxisComboBox->addItem("Default");
+  d->xAxisComboBox->addItem("Custom");
   d->xAxisComboBox->addItem("Indexes");
   std::vector<std::string>::iterator it = plotDataNodesIDs.begin();
   for (; it != plotDataNodesIDs.end(); ++it)
     {
-    vtkMRMLPlotDataNode *dn = vtkMRMLPlotDataNode::SafeDownCast
+    vtkMRMLPlotDataNode *plotDataNode = vtkMRMLPlotDataNode::SafeDownCast
       (this->mrmlScene()->GetNodeByID((*it).c_str()));
-    if (dn)
+    if (plotDataNode == NULL)
       {
-      d->plotDataComboBox->setCheckState(dn, Qt::Checked);
-      int numCol = dn->GetTableNode()->GetNumberOfColumns();
-      for (int ii = 0; ii < numCol; ++ii)
+      continue;
+      }
+    d->plotDataComboBox->setCheckState(plotDataNode, Qt::Checked);
+    vtkMRMLTableNode* mrmlTableNode = plotDataNode->GetTableNode();
+    if (mrmlTableNode == NULL)
+      {
+      continue;
+      }
+    int numCol = mrmlTableNode->GetNumberOfColumns();
+    for (int ii = 0; ii < numCol; ++ii)
+      {
+      QString ColumnName = QString::fromStdString(mrmlTableNode->GetColumnName(ii));
+      if (d->xAxisComboBox->findText(ColumnName) == -1)
         {
-        QString ColumnName = QString::fromStdString(dn->GetTableNode()->GetColumnName(ii));
-        if (d->xAxisComboBox->findText(ColumnName) == -1)
-          {
-          d->xAxisComboBox->addItem(ColumnName);
-          }
+        d->xAxisComboBox->addItem(ColumnName);
         }
       }
     }
@@ -732,11 +797,11 @@ void qMRMLPlotViewControllerWidget::updateWidgetFromMRML()
 
   // PlotType selector
   const char *type;
-  std::string stype("Line");
+  std::string stype("Custom");
   type = mrmlPlotChartNode->GetAttribute("Type");
-  if (!type)
+  if (type == NULL)
     {
-    // no type specified, default to "Line"
+    // no type specified, default to "Custom"
     type = stype.c_str();
     }
   if (type)
@@ -749,6 +814,134 @@ void qMRMLPlotViewControllerWidget::updateWidgetFromMRML()
       }
     }
 
+  // Handle Modify events for PlotDataNodes
+  std::vector<int> plotDataNodesWasModifying(mrmlPlotChartNode->GetNumberOfPlotDataNodes(), 0);
+  it = plotDataNodesIDs.begin();
+  for (; it != plotDataNodesIDs.end(); ++it)
+    {
+    vtkMRMLPlotDataNode *plotDataNode = vtkMRMLPlotDataNode::SafeDownCast
+      (this->mrmlScene()->GetNodeByID((*it).c_str()));
+    if (!plotDataNode)
+      {
+      continue;
+      }
+    auto plotDataNodesIndex = std::distance(plotDataNodesIDs.begin(), it);
+    plotDataNodesWasModifying[plotDataNodesIndex] = plotDataNode->StartModify();
+    }
+
+  // Update selected Type for all PlotDataNode
+  if (strcmp(type, "Custom"))
+    {
+    it = plotDataNodesIDs.begin();
+    for (; it != plotDataNodesIDs.end(); ++it)
+      {
+      vtkMRMLPlotDataNode *plotDataNode = vtkMRMLPlotDataNode::SafeDownCast
+        (this->mrmlScene()->GetNodeByID((*it).c_str()));
+      if (!plotDataNode)
+        {
+        continue;
+        }
+      plotDataNode->SetType(type);
+      }
+    }
+
+  // XAxis selector
+  const char *xAxis;
+  stype = "Custom";
+  xAxis = mrmlPlotChartNode->GetAttribute("XAxis");
+  if (xAxis == NULL)
+    {
+    // no type specified, default to "Custom"
+    xAxis = stype.c_str();
+    }
+  if (xAxis)
+    {
+    QString qtype(xAxis);
+    int tindex = d->xAxisComboBox->findText(qtype);
+    if (tindex != -1)
+      {
+      d->xAxisComboBox->setCurrentIndex(tindex);
+      }
+    }
+
+  // Update selected XAxis for all PlotDataNode
+  if (strcmp(xAxis, "Custom"))
+    {
+    it = plotDataNodesIDs.begin();
+    for (; it != plotDataNodesIDs.end(); ++it)
+      {
+      vtkMRMLPlotDataNode *plotDataNode = vtkMRMLPlotDataNode::SafeDownCast
+        (this->mrmlScene()->GetNodeByID((*it).c_str()));
+      if (!plotDataNode)
+        {
+        continue;
+        }
+      plotDataNode->SetXColumnName(xAxis);
+      }
+    }
+
+  // UnCheck Markers if Type is Bar
+  if (!strcmp(type, "Bar"))
+    {
+    d->markersComboBox->setEnabled(false);
+    mrmlPlotChartNode->SetAttribute("Markers", "Custom");
+    }
+  else
+    {
+    d->markersComboBox->setEnabled(true);
+    }
+
+  // Markers selector
+  const char *markers;
+  stype = "Custom";
+  markers = mrmlPlotChartNode->GetAttribute("Markers");
+  if (markers == NULL)
+    {
+    // no type specified, default to "Custom"
+    markers = stype.c_str();
+    }
+  if (markers)
+    {
+    QString qtype(markers);
+    int tindex = d->markersComboBox->findText(qtype);
+    if (tindex != -1)
+      {
+      d->markersComboBox->setCurrentIndex(tindex);
+      }
+    }
+
+  // Update selected PlotDataNodes Markers if Type is Line
+  if (strcmp("Custom", markers))
+    {
+    it = plotDataNodesIDs.begin();
+    for (; it != plotDataNodesIDs.end(); ++it)
+      {
+      vtkMRMLPlotDataNode *plotDataNode = vtkMRMLPlotDataNode::SafeDownCast
+        (this->mrmlScene()->GetNodeByID((*it).c_str()));
+      if (plotDataNode == NULL)
+        {
+        continue;
+        }
+      plotDataNode->SetMarkerStyle(plotDataNode->
+        GetMarkersStyleFromString(markers));
+      }
+    }
+
+  // End MRML Modifications
+  mrmlPlotChartNode->EndModify(plnWasModifying);
+
+  it = plotDataNodesIDs.begin();
+  for (; it != plotDataNodesIDs.end(); ++it)
+    {
+    vtkMRMLPlotDataNode *plotDataNode = vtkMRMLPlotDataNode::SafeDownCast
+      (this->mrmlScene()->GetNodeByID((*it).c_str()));
+    if (!plotDataNode)
+      {
+      continue;
+      }
+    auto plotDataNodesIndex = std::distance(plotDataNodesIDs.begin(), it);
+    plotDataNode->EndModify(plotDataNodesWasModifying[plotDataNodesIndex]);
+    }
 
 }
 
@@ -767,7 +960,7 @@ void qMRMLPlotViewControllerWidget::setMRMLScene(vtkMRMLScene* newScene)
 
   // Disable the node selectors as they would fire signal currentIndexChanged(0)
   // meaning that there is no current node anymore. It's not true, it just means
-  // that the current node was not in the combo box list menu before
+  // that the current node was not in the combo box list menu before.
   bool plotChartBlockSignals = d->plotChartComboBox->blockSignals(true);
   bool plotBlockSignals = d->plotDataComboBox->blockSignals(true);
 
