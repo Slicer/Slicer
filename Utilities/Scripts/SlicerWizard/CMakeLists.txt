@@ -1,5 +1,5 @@
-if(NOT "${Slicer_VERSION_TWEAK}" STREQUAL "") # This is set only for release
-  set(Slicer_VERSION_TWEAK_OR_DEV "${Slicer_VERSION_TWEAK}")
+if("${Slicer_RELEASE_TYPE}" STREQUAL "Stable")
+  set(Slicer_VERSION_TWEAK_OR_DEV "0")
 else()
   set(Slicer_VERSION_TWEAK_OR_DEV "\"dev0\"")
 endif()

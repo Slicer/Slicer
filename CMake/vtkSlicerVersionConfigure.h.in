@@ -26,12 +26,16 @@
 /// \def Slicer_VERSION_FULL
 /// \brief Slicer long version string.
 ///
-/// Format is `<Slicer_VERSION_MAJOR>.<Slicer_VERSION_MINOR>.<Slicer_VERSION_PATCH>[-<Slicer_BUILDDATE>|-<Slicer_VERSION_TWEAK>]`
+/// Format is `<Slicer_VERSION_MAJOR>.<Slicer_VERSION_MINOR>.<Slicer_VERSION_PATCH>[-<Slicer_BUILDDATE>]`
 #define Slicer_VERSION_FULL "@Slicer_VERSION_FULL@"
 
 /// \def Slicer_BUILDDATE
 /// \brief Build date associated with this project binaries.
 #define Slicer_BUILDDATE "@Slicer_BUILDDATE@"
+
+/// \def Slicer_RELEASE_TYPE
+/// \brief Type of Slicer release: `Experimental`, `Nightly` or `Stable`.
+#define Slicer_RELEASE_TYPE "@Slicer_RELEASE_TYPE@"
 
 /// \def Slicer_WC_URL
 /// \brief Source control management URL identifying this project sources.

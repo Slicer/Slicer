@@ -49,10 +49,7 @@ endif()
 if(NOT DEFINED Slicer_VERSION_PATCH)
   set(Slicer_VERSION_PATCH "0")
 endif()
-if(POLICY CMP0048)
-  set(_project_version VERSION "${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}.${Slicer_VERSION_PATCH}")
-endif()
-project(Slicer ${_project_version})
+project(Slicer VERSION "${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}.${Slicer_VERSION_PATCH}")
 
 #-----------------------------------------------------------------------------
 # Update CMake module path
@@ -118,6 +115,16 @@ if(UNIX AND NOT APPLE)
       FORCE)
   endif()
 endif()
+
+#-----------------------------------------------------------------------------
+# Release type
+#-----------------------------------------------------------------------------
+set(Slicer_RELEASE_TYPE "Experimental" CACHE STRING "Type of Slicer release.")
+mark_as_advanced(Slicer_RELEASE_TYPE)
+# Set the possible values for cmake-gui
+set_property(CACHE Slicer_RELEASE_TYPE PROPERTY STRINGS
+  "Experimental" "Nightly" "Stable")
+mark_as_superbuild(Slicer_RELEASE_TYPE)
 
 #-----------------------------------------------------------------------------
 # Set a default build type if none was specified
@@ -489,8 +496,6 @@ message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} text of disc
 #-----------------------------------------------------------------------------
 # Slicer version number.
 #-----------------------------------------------------------------------------
-# Releases define a tweak level
-#set(Slicer_VERSION_TWEAK 0)
 include(SlicerVersion)
 
 #-----------------------------------------------------------------------------

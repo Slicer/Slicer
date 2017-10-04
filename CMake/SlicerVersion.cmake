@@ -11,14 +11,12 @@
 #  GIT_EXECUTABLE
 #  Slicer_CMAKE_DIR
 #  Slicer_MAIN_PROJECT_APPLICATION_NAME
+#  Slicer_RELEASE_TYPE
 #  Slicer_SOURCE_DIR
 #  Slicer_VERSION_MAJOR
 #  Slicer_VERSION_MINOR
 #  Slicer_VERSION_PATCH
 #  Subversion_SVN_EXECUTABLE
-#
-# Optionally, these variable can also be set:
-#  Slicer_VERSION_TWEAK
 #
 
 # --------------------------------------------------------------------------
@@ -28,6 +26,7 @@ set(expected_defined_vars
   GIT_EXECUTABLE
   Slicer_CMAKE_DIR
   Slicer_MAIN_PROJECT_APPLICATION_NAME
+  Slicer_RELEASE_TYPE
   Slicer_SOURCE_DIR
   Slicer_VERSION_MAJOR
   Slicer_VERSION_MINOR
@@ -65,16 +64,13 @@ if(NOT Slicer_FORCED_WC_REVISION STREQUAL "")
   set(Slicer_WC_REVISION "${Slicer_FORCED_WC_REVISION}")
 endif()
 
-if("${Slicer_VERSION_TWEAK}" STREQUAL "")
-  set(_version_qualifier "-${Slicer_BUILDDATE}")
-elseif("${Slicer_VERSION_TWEAK}" GREATER 0)
-  set(_version_qualifier "-${Slicer_VERSION_TWEAK}")
-endif()
-
-# XXX This variable should not be set explicitly
 set(Slicer_VERSION      "${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
 set(Slicer_VERSION_FULL "${Slicer_VERSION}.${Slicer_VERSION_PATCH}")
-set(Slicer_VERSION_FULL "${Slicer_VERSION_FULL}${_version_qualifier}")
+
+if(NOT "${Slicer_RELEASE_TYPE}" STREQUAL "Stable")
+  set(Slicer_VERSION_FULL "${Slicer_VERSION_FULL}-${Slicer_BUILDDATE}")
+endif()
 
 message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} version [${Slicer_VERSION_FULL}]")
 message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} revision [${Slicer_WC_REVISION}]")
+message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} release type [${Slicer_RELEASE_TYPE}]")

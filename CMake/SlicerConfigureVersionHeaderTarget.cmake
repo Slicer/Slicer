@@ -28,6 +28,7 @@
 #  Slicer_BINARY_DIR
 #  Slicer_CMAKE_DIR
 #  Slicer_MAIN_PROJECT_APPLICATION_NAME
+#  Slicer_RELEASE_TYPE
 #  Slicer_SOURCE_DIR
 #  Slicer_VERSION_MAJOR
 #  Slicer_VERSION_MINOR
@@ -36,7 +37,6 @@
 #
 # Optionally, these variable can also be set:
 #  Slicer_FORCED_WC_REVISION (default "")
-#  Slicer_VERSION_TWEAK
 #
 
 # --------------------------------------------------------------------------
@@ -47,6 +47,7 @@ set(expected_defined_vars
   Slicer_BINARY_DIR
   Slicer_CMAKE_DIR
   Slicer_MAIN_PROJECT_APPLICATION_NAME # Used by SlicerVersion.cmake
+  Slicer_RELEASE_TYPE
   Slicer_SOURCE_DIR
   Slicer_VERSION_MAJOR
   Slicer_VERSION_MINOR
@@ -78,7 +79,6 @@ if(NOT SLICER_CONFIGURE_VERSION_HEADER)
     COMMAND ${CMAKE_COMMAND}
       ${script_args}
       -DSlicer_FORCED_WC_REVISION:STRING=${Slicer_FORCED_WC_REVISION}
-      -DSlicer_VERSION_TWEAK:STRING=${Slicer_VERSION_TWEAK}
       -DSLICER_CONFIGURE_VERSION_HEADER=1
       -P ${CMAKE_CURRENT_LIST_FILE}
     COMMENT "Configuring vtkSlicerVersionConfigure.h"
