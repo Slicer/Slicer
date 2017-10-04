@@ -79,6 +79,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
   Q_PROPERTY(QString intDir READ intDir CONSTANT)
   Q_PROPERTY(bool isInstalled READ isInstalled CONSTANT)
   Q_PROPERTY(bool isRelease READ isRelease CONSTANT)
+  Q_PROPERTY(QString releaseType READ releaseType CONSTANT)
   Q_PROPERTY(QString repositoryUrl READ repositoryUrl CONSTANT)
   Q_PROPERTY(QString repositoryBranch READ repositoryBranch CONSTANT)
   Q_PROPERTY(QString repositoryRevision READ repositoryRevision CONSTANT)
@@ -250,11 +251,16 @@ public:
   /// Return true is this instance of Slicer is running from an installed directory
   bool isInstalled()const;
 
-  /// \brief Return true if this instance of Slicer is a \a Release build.
+  /// \brief Return the release type of this instance of Slicer.
   ///
-  /// \copydetails qSlicerUtils::isRelease()
+  /// Release type can be `Experimental`, `Nightly` or `Stable`.
+  QString releaseType()const;
+
+  /// \brief Return true if this instance of Slicer is a \a Stable release build.
   ///
-  /// \sa qSlicerUtils::isRelease()
+  /// \deprecated Use `releaseType() == "Stable"` instead.
+  ///
+  /// \sa releaseType()
   bool isRelease()const;
 
   /// Associate a module with a node type.

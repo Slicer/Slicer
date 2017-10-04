@@ -1001,9 +1001,16 @@ bool qSlicerCoreApplication::isInstalled()const
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::releaseType()const
+{
+  return QString(Slicer_RELEASE_TYPE);
+}
+
+//-----------------------------------------------------------------------------
 bool qSlicerCoreApplication::isRelease()const
 {
-  return qSlicerUtils::isRelease(Slicer_VERSION_FULL);
+  qWarning() << Q_FUNC_INFO << "Deprecated: Use releaseType() instead";
+  return this->releaseType() == "Stable";
 }
 
 //-----------------------------------------------------------------------------
