@@ -275,7 +275,7 @@ bool qSlicerUtils::setPermissionsRecursively(const QString &path,
 //-----------------------------------------------------------------------------
 bool qSlicerUtils::isRelease(const QString& version)
 {
-  return QRegExp("\\d+\\.\\d+\\.\\d+(-rc\\d+)?(-\\d+)?").exactMatch(version);
+  return QRegExp("\\d+\\.\\d+\\.\\d+(-\\d+)?").exactMatch(version);
 }
 
 //-----------------------------------------------------------------------------

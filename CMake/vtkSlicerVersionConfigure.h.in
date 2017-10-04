@@ -26,7 +26,7 @@
 /// \def Slicer_VERSION_FULL
 /// \brief Slicer long version string.
 ///
-/// Format is `<Slicer_VERSION_MAJOR>.<Slicer_VERSION_MINOR>.<Slicer_VERSION_PATCH>[-rc<Slicer_VERSION_RC>][-<Slicer_BUILDDATE>|-<Slicer_VERSION_TWEAK>]`
+/// Format is `<Slicer_VERSION_MAJOR>.<Slicer_VERSION_MINOR>.<Slicer_VERSION_PATCH>[-<Slicer_BUILDDATE>|-<Slicer_VERSION_TWEAK>]`
 #define Slicer_VERSION_FULL "@Slicer_VERSION_FULL@"
 
 /// \def Slicer_BUILDDATE

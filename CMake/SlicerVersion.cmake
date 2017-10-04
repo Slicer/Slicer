@@ -19,7 +19,6 @@
 #
 # Optionally, these variable can also be set:
 #  Slicer_VERSION_TWEAK
-#  Slicer_VERSION_RC
 #
 
 # --------------------------------------------------------------------------
@@ -75,9 +74,6 @@ endif()
 # XXX This variable should not be set explicitly
 set(Slicer_VERSION      "${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
 set(Slicer_VERSION_FULL "${Slicer_VERSION}.${Slicer_VERSION_PATCH}")
-if(Slicer_VERSION_RC)
-  set(Slicer_VERSION_FULL "${Slicer_VERSION_FULL}-rc${Slicer_VERSION_RC}")
-endif()
 set(Slicer_VERSION_FULL "${Slicer_VERSION_FULL}${_version_qualifier}")
 
 message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} version [${Slicer_VERSION_FULL}]")

@@ -491,7 +491,6 @@ message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} text of disc
 #-----------------------------------------------------------------------------
 # Releases define a tweak level
 #set(Slicer_VERSION_TWEAK 0)
-#set(Slicer_VERSION_RC 0)
 include(SlicerVersion)
 
 #-----------------------------------------------------------------------------

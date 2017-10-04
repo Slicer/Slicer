@@ -893,7 +893,7 @@ int qSlicerUtilsTest1(int, char * [] )
       }
 
     // <MAJOR_VERSION>.<MINOR_VERSION>.<PATCH_VERSION>-rc{1|2|3...}
-    expected = true;
+    expected = false;
     current = qSlicerUtils::isRelease("1.22.3001-rc12");
     if (current != expected)
       {
