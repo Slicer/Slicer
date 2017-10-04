@@ -252,7 +252,9 @@ if(CPACK_GENERATOR STREQUAL "NSIS")
 
   set(APPLICATION_NAME "${Slicer_MAIN_PROJECT_APPLICATION_NAME}")
   set(EXECUTABLE_NAME "${Slicer_MAIN_PROJECT_APPLICATION_NAME}")
-  slicer_verbose_set(CPACK_PACKAGE_EXECUTABLES "..\\\\${EXECUTABLE_NAME}" "${APPLICATION_NAME}")
+  # Set application name used to create Start Menu shortcuts
+  set(PACKAGE_APPLICATION_NAME "${PACKAGE_APPLICATION_NAME} ${Slicer_VERSION_FULL}")
+  slicer_verbose_set(CPACK_PACKAGE_EXECUTABLES "..\\\\${EXECUTABLE_NAME}" "${PACKAGE_APPLICATION_NAME}")
 
   # -------------------------------------------------------------------------
   # File extensions
