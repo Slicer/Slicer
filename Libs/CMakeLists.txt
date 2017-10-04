@@ -122,6 +122,7 @@ set(MRML_LIBRARIES ${_mrml_libraries} CACHE INTERNAL "MRML libraries" FORCE)
 #-----------------------------------------------------------------------------
 set(_vtk_wrapped_libraries
   vtkAddon
+  vtkSegmentationCore
   vtkTeem
   vtkITK
   FreeSurfer

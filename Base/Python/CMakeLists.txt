@@ -19,6 +19,8 @@ set(Slicer_PYTHON_MODULES_CONFIG "
 # slicer libs
 'mrml',
 'teem',
+'vtkAddon',
+'vtkSegmentationCore',
 'qMRMLWidgetsPythonQt',
 # slicer base libs
 'logic',
