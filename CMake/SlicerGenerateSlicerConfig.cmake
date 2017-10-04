@@ -108,6 +108,7 @@ set(RemoteIO_INCLUDE_DIRS_CONFIG ${RemoteIO_INCLUDE_DIRS})
 set(vtkTeem_INCLUDE_DIRS_CONFIG ${vtkTeem_INCLUDE_DIRS})
 set(vtkAddon_INCLUDE_DIRS_CONFIG ${vtkAddon_INCLUDE_DIRS})
 set(vtkITK_INCLUDE_DIRS_CONFIG ${vtkITK_INCLUDE_DIRS})
+set(vtkSegmentationCore_INCLUDE_DIRS_CONFIG ${vtkSegmentationCore_INCLUDE_DIRS})
 
 # Note: For sake of simplification, the macro 'slicer_config_set_ep' is not invoked conditionally, if
 # the configured 'value' parameter is an empty string, the macro 'slicer_config_set_ep' is a no-op.

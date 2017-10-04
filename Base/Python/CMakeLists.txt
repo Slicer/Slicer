@@ -12,6 +12,7 @@ set(Slicer_PYTHON_SCRIPTS
   teem
   vtkAddon
   vtkITK
+  vtkSegmentationCore
   )
 
 set(Slicer_PYTHON_MODULES_CONFIG "

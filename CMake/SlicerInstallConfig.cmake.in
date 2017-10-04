@@ -55,6 +55,7 @@ set(Slicer_Libs_LIBRARY_DIRS
   "${Slicer_HOME}/lib/tclap"
   "${Slicer_HOME}/lib/vtkAddon"
   "${Slicer_HOME}/lib/vtkITK"
+  "${Slicer_HOME}/lib/vtkSegmentationCore"
   "${Slicer_HOME}/lib/vtkTeem"
   "${Slicer_HOME}/lib/TclTk/lib"
   "${Slicer_HOME}/lib/TclTk/lib/itcl@INCR_TCL_VERSION_DOT@"
@@ -75,6 +76,7 @@ set(Slicer_Libs_INCLUDE_DIRS
   "${Slicer_HOME}/include/tclap"
   "${Slicer_HOME}/include/vtkAddon"
   "${Slicer_HOME}/include/vtkITK"
+  "${Slicer_HOME}/include/vtkSegmentationCore"
   "${Slicer_HOME}/include/vtkTeem"
   )
 

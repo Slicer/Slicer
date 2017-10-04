@@ -268,6 +268,9 @@ set(vtkAddon_INCLUDE_DIRS "@vtkAddon_INCLUDE_DIRS_CONFIG@"
 set(vtkITK_INCLUDE_DIRS "@vtkITK_INCLUDE_DIRS_CONFIG@"
   CACHE INTERNAL "vtkITK includes" FORCE)
 
+set(vtkSegmentationCore_INCLUDE_DIRS "@vtkSegmentationCore_INCLUDE_DIRS_CONFIG@"
+  CACHE INTERNAL "vtkSegmentationCore includes" FORCE)
+
 set(vtkTeem_INCLUDE_DIRS "@vtkTeem_INCLUDE_DIRS_CONFIG@"
   CACHE INTERNAL "vtkTeem includes" FORCE)
 
