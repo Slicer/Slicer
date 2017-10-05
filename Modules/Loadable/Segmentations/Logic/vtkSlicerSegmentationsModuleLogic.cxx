@@ -787,6 +787,10 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentToRepresentationNode(vtkSeg
       {
       modelNode->SetAndObserveTransformNodeID(parentTransformNode->GetID());
       }
+      else
+      {
+      modelNode->SetAndObserveTransformNodeID(NULL);
+      }
 
     return true;
     }
