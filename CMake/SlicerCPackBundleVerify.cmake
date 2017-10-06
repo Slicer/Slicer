@@ -13,5 +13,5 @@ foreach(var ${expected_existing_vars})
   endif()
 endforeach()
 
-set(app_name "${Slicer_MAIN_PROJECT_APPLICATION_NAME}-${Slicer_VERSION_FULL}.app")
+set(app_name "${Slicer_MAIN_PROJECT_APPLICATION_NAME}.app")
 verify_app("${Slicer_INSTALL_DIR}/${app_name")
