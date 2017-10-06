@@ -524,7 +524,7 @@ endif()
 # Slicer install directories
 #-----------------------------------------------------------------------------
 set(Slicer_INSTALL_ROOT "./")
-set(Slicer_BUNDLE_LOCATION "${Slicer_MAIN_PROJECT_APPLICATION_NAME}.app/Contents")
+set(Slicer_BUNDLE_LOCATION "${Slicer_MAIN_PROJECT_APPLICATION_NAME}-${Slicer_VERSION_FULL}.app/Contents")
 # NOTE: Make sure to update vtkSlicerApplicationLogic::IsEmbeddedModule if
 #       the following variables are changed.
 set(Slicer_EXTENSIONS_DIRBASENAME "Extensions")

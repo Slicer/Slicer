@@ -165,6 +165,22 @@ int vtkSlicerApplicationLogicTest1(int , char * [])
     }
     {
       TestRowType row;
+      row.push_back("/home/jchris/Projects/Something.app/Contents/lib/Slicer-4.1/qt-loadable-modules/libqSlicerAnnotationsModule.dylib");
+      row.push_back("/home/jchris/Projects/Something.app/Contents");
+      row.push_back("4810");
+      row.push_back("1");
+      data.push_back(row);
+    }
+    {
+      TestRowType row;
+      row.push_back("/home/jchris/Projects/" Slicer_BUNDLE_LOCATION "/lib/Slicer-4.1/qt-loadable-modules/libqSlicerAnnotationsModule.dylib");
+      row.push_back("/home/jchris/Projects/" Slicer_BUNDLE_LOCATION);
+      row.push_back("4810");
+      row.push_back("1");
+      data.push_back(row);
+    }
+    {
+      TestRowType row;
       row.push_back("/home/jchris/Projects/Slicer4-Superbuild-Debug/Slicer-build/bin/Slicer.app/Contents/Extensions-4810/Reporting/lib/Slicer-4.1/qt-loadable-modules/Python/vtkSlicerReportingModuleLogic.py");
       row.push_back("/home/jchris/Projects/Slicer4-Superbuild-Debug/Slicer-build");
       row.push_back("4810");
