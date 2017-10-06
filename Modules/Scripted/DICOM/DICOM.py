@@ -197,8 +197,7 @@ class DICOMFileDialog:
     mainWindow = slicer.util.mainWindow()
     mainWindow.moduleSelector().selectModule('DICOM')
     dicomWidget = slicer.modules.DICOMWidget
-    for directory in self.directoriesToAdd:
-      dicomWidget.detailsPopup.dicomBrowser.onImportDirectory(directory)
+    dicomWidget.detailsPopup.dicomBrowser.importDirectories(self.directoriesToAdd)
     self.directoriesToAdd = []
 
 #
