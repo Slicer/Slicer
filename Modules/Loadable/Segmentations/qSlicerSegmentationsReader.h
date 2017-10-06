@@ -45,6 +45,7 @@ public:
   virtual QString description()const;
   virtual IOFileType fileType()const;
   virtual QStringList extensions()const;
+  virtual qSlicerIOOptions* options()const;
 
   virtual bool load(const IOProperties& properties);
 

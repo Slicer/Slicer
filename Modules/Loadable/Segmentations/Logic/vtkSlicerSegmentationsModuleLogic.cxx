@@ -235,7 +235,7 @@ vtkMRMLSegmentationNode* vtkSlicerSegmentationsModuleLogic::GetSegmentationNodeF
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLSegmentationNode* vtkSlicerSegmentationsModuleLogic::LoadSegmentationFromFile(const char* fileName)
+vtkMRMLSegmentationNode* vtkSlicerSegmentationsModuleLogic::LoadSegmentationFromFile(const char* fileName, bool autoOpacities/*=true*/)
 {
   if (this->GetMRMLScene() == NULL || fileName == NULL)
     {
@@ -293,7 +293,10 @@ vtkMRMLSegmentationNode* vtkSlicerSegmentationsModuleLogic::LoadSegmentationFrom
 
       // If not loading segmentation from a scene (where display information is available),
       // then calculate and set auto-opacity for the displayed poly data for better visualization
-      displayNode->CalculateAutoOpacitiesForSegments();
+      if (autoOpacities)
+        {
+        displayNode->CalculateAutoOpacitiesForSegments();
+        }
       }
     }
 

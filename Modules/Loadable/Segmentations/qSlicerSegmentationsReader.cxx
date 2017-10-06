@@ -20,6 +20,7 @@
 
 // Segmentations includes
 #include "qSlicerSegmentationsReader.h"
+#include "qSlicerSegmentationsIOOptionsWidget.h"
 
 #include "vtkMRMLSegmentationNode.h"
 
@@ -89,6 +90,14 @@ QStringList qSlicerSegmentationsReader::extensions()const
 }
 
 //-----------------------------------------------------------------------------
+qSlicerIOOptions* qSlicerSegmentationsReader::options()const
+{
+  qSlicerIOOptionsWidget* options = new qSlicerSegmentationsIOOptionsWidget;
+  options->setMRMLScene(this->mrmlScene());
+  return options;
+}
+ 
+//-----------------------------------------------------------------------------
 bool qSlicerSegmentationsReader::load(const IOProperties& properties)
 {
   Q_D(qSlicerSegmentationsReader);
@@ -101,7 +110,13 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
     return false;
     }
 
-  vtkMRMLSegmentationNode* node = d->SegmentationsLogic->LoadSegmentationFromFile(fileName.toLatin1().constData());
+  bool autoOpacities = true;
+  if (properties.contains("autoOpacities"))
+    {
+    autoOpacities = properties["autoOpacities"].toBool();
+    }
+
+  vtkMRMLSegmentationNode* node = d->SegmentationsLogic->LoadSegmentationFromFile(fileName.toLatin1().constData(), autoOpacities);
   if (!node)
     {
     this->setLoadedNodes(QStringList());

@@ -72,7 +72,10 @@ public:
   static vtkMRMLSegmentationNode* GetSegmentationNodeForSegment(vtkMRMLScene* scene, vtkSegment* segment, std::string& segmentId);
 
   /// Load segmentation from file
-  vtkMRMLSegmentationNode* LoadSegmentationFromFile(const char* filename);
+  /// \param filename Path and name of file containing segmentation (nrrd, vtm, etc.)
+  /// \param autoOpacities Optional flag determining whether segment opacities are calculated automatically based on containment. True by default
+  /// \return Loaded segmentation node
+  vtkMRMLSegmentationNode* LoadSegmentationFromFile(const char* filename, bool autoOpacities=true);
 
   /// Create labelmap volume MRML node from oriented image data.
   /// Creates a display node if a display node does not exist. Shifts image extent to start from zero.
