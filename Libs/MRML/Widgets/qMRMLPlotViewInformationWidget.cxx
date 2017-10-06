@@ -449,11 +449,7 @@ void qMRMLPlotViewInformationWidgetPrivate::updateWidgetFromMRMLPlotDataNode()
   if (mrmlPlotChartNode)
     {
     const char *markers = mrmlPlotChartNode->GetAttribute("Markers");
-    if (!strcmp(markers, "Custom"))
-      {
-      this->markersStyleComboBox->setEnabled(true);
-      }
-    else
+    if (strcmp(markers, "Custom"))
       {
       this->markersStyleComboBox->setEnabled(false);
       }
