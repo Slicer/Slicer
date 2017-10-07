@@ -293,6 +293,7 @@ macro(slicerMacroBuildApplication)
     LAUNCHER_SPLASHSCREEN_FILE
     APPLE_ICON_FILE
     WIN_ICON_FILE
+    LICENSE_FILE
 
     TARGET_NAME_VAR
     )
