@@ -77,6 +77,22 @@ if(DEFINED CMAKE_CONFIGURATION_TYPES)
   mark_as_superbuild(CMAKE_CONFIGURATION_TYPES)
 endif()
 
+if(DEFINED SLICERAPP_LAUNCHER_SPLASHSCREEN_FILE)
+  mark_as_superbuild(SLICERAPP_LAUNCHER_SPLASHSCREEN_FILE)
+endif()
+
+if(DEFINED SLICERAPP_WIN_ICON_FILE)
+  mark_as_superbuild(SLICERAPP_WIN_ICON_FILE)
+endif()
+
+if(DEFINED SLICERAPP_APPLE_ICON_FILE)
+  mark_as_superbuild(SLICERAPP_APPLE_ICON_FILE)
+endif()
+
+if(DEFINED SLICERAPP_LICENSE_FILE)
+  mark_as_superbuild(SLICERAPP_LICENSE_FILE)
+endif()
+
 # Provide a mechanism to disable one or more modules.
 mark_as_superbuild(
   Slicer_QTLOADABLEMODULES_DISABLED:STRING
