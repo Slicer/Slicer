@@ -24,15 +24,15 @@ if(Slicer_USE_CTKAPPLAUNCHER)
   if(NOT DEFINED CTKAppLauncher_DIR)
 
     SlicerMacroGetOperatingSystemArchitectureBitness(VAR_PREFIX CTKAPPLAUNCHER)
-    set(launcher_version "0.1.20")
+    set(launcher_version "0.1.21")
     # On windows, use i386 launcher unconditionally
     if("${CTKAPPLAUNCHER_OS}" STREQUAL "win")
       set(CTKAPPLAUNCHER_ARCHITECTURE "i386")
-      set(md5 "808da4233c0dec0b34f40c6dd8db3d68")
+      set(md5 "9fa2acb7d934a43720a0bee8679cbeff")
     elseif("${CTKAPPLAUNCHER_OS}" STREQUAL "linux")
-      set(md5 "0caffa8818ee3e39a88057d98492d24a")
+      set(md5 "57d9e6fc1fdfe42d78fc4e277b9559ba")
     elseif("${CTKAPPLAUNCHER_OS}" STREQUAL "macosx")
-      set(md5 "c94db1c8abc5c890e08de045fec83781")
+      set(md5 "1f0d86b1eeb386d6892a76db7b111280")
     endif()
 
     ExternalProject_Add(${proj}
