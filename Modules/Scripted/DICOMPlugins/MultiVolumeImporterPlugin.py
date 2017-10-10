@@ -557,7 +557,10 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
     loadAsVolumeSequence = hasattr(loadable, 'loadAsVolumeSequence') and loadable.loadAsVolumeSequence
     if loadAsVolumeSequence:
-      volumeSequenceNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSequenceNode")
+      volumeSequenceNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSequenceNode",
+        slicer.mrmlScene.GenerateUniqueName(mvNode.GetName()))
+      volumeSequenceNode.SetIndexName("")
+      volumeSequenceNode.SetIndexUnit("")
     else:
       mvImage = vtk.vtkImageData()
       mvImageArray = None
@@ -666,6 +669,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         # faster for images. Images are usually not modified, so the risk of accidentally modifying
         # data in the sequence is low.
         sequenceBrowserNode.SetSaveChanges(volumeSequenceNode, True)
+        # Show frame number in proxy volume node name
+        sequenceBrowserNode.SetOverwriteProxyName(volumeSequenceNode, True);
 
         # Automatically select the volume to display
         imageProxyVolumeNode = sequenceBrowserNode.GetProxyNode(volumeSequenceNode)
