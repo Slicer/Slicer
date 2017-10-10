@@ -518,79 +518,96 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     instanceUIDs = instanceUIDs[:-1]
     mvNode.SetAttribute("DICOM.instanceUIDs", instanceUIDs)
 
-    # read each frame into scalar volume
-    for frameNumber in range(nFrames):
+    progressbar = slicer.util.createProgressDialog(labelText="Loading "+mvNode.GetName(), maximum=nFrames,
+                                                   windowModality = qt.Qt.WindowModal)
 
-      sNode = slicer.vtkMRMLVolumeArchetypeStorageNode()
-      sNode.ResetFileNameList();
+    try:
+      # read each frame into scalar volume
+      for frameNumber in range(nFrames):
 
-      frameFileList = files[frameNumber*filesPerFrame:(frameNumber+1)*filesPerFrame]
-      # sv plugin will sort the filenames by geometric order
-      svLoadables = scalarVolumePlugin.examine([frameFileList])
+        progressbar.value = frameNumber
+        slicer.app.processEvents()
+        if progressbar.wasCanceled:
+          break
 
-      if len(svLoadables) == 0:
-        return None
+        sNode = slicer.vtkMRMLVolumeArchetypeStorageNode()
+        sNode.ResetFileNameList();
 
-      frame = scalarVolumePlugin.load(svLoadables[0])
+        frameFileList = files[frameNumber*filesPerFrame:(frameNumber+1)*filesPerFrame]
+        # sv plugin will sort the filenames by geometric order
+        svLoadables = scalarVolumePlugin.examine([frameFileList])
 
-      if frame.GetImageData() == None:
-        logging.error('Failed to read a multivolume frame!')
-        return None
+        if len(svLoadables) == 0:
+          raise IOError("volume frame %d is invalid" % frameNumber)
 
-      if frameNumber == 0:
+        frame = scalarVolumePlugin.load(svLoadables[0])
+
+        if frame.GetImageData() == None:
+          raise IOError("volume frame %d is invalid" % frameNumber)
+
+        if frameNumber == 0:
+          frameImage = frame.GetImageData()
+          frameExtent = frameImage.GetExtent()
+          frameSize = frameExtent[1]*frameExtent[3]*frameExtent[5]
+
+          mvImage.SetExtent(frameExtent)
+          if vtk.VTK_MAJOR_VERSION <= 5:
+            mvImage.SetNumberOfScalarComponents(nFrames)
+            mvImage.SetScalarType(frame.GetImageData().GetScalarType())
+            mvImage.AllocateScalars()
+          else:
+            mvImage.AllocateScalars(frame.GetImageData().GetScalarType(), nFrames)
+
+          mvImageArray = vtk.util.numpy_support.vtk_to_numpy(mvImage.GetPointData().GetScalars())
+
+          mvNode.SetScene(slicer.mrmlScene)
+
+          mat = vtk.vtkMatrix4x4()
+          frame.GetRASToIJKMatrix(mat)
+          mvNode.SetRASToIJKMatrix(mat)
+          frame.GetIJKToRASMatrix(mat)
+          mvNode.SetIJKToRASMatrix(mat)
+
         frameImage = frame.GetImageData()
-        frameExtent = frameImage.GetExtent()
-        frameSize = frameExtent[1]*frameExtent[3]*frameExtent[5]
+        frameImageArray = vtk.util.numpy_support.vtk_to_numpy(frameImage.GetPointData().GetScalars())
 
-        mvImage.SetExtent(frameExtent)
-        if vtk.VTK_MAJOR_VERSION <= 5:
-          mvImage.SetNumberOfScalarComponents(nFrames)
-          mvImage.SetScalarType(frame.GetImageData().GetScalarType())
-          mvImage.AllocateScalars()
-        else:
-          mvImage.AllocateScalars(frame.GetImageData().GetScalarType(), nFrames)
+        mvImageArray.T[frameNumber] = frameImageArray
 
-        mvImageArray = vtk.util.numpy_support.vtk_to_numpy(mvImage.GetPointData().GetScalars())
+        # Remove temporary volume node
+        if frame.GetDisplayNode():
+          slicer.mrmlScene.RemoveNode(frame.GetDisplayNode())
+        if frame.GetStorageNode():
+          slicer.mrmlScene.RemoveNode(frame.GetStorageNode())
+        slicer.mrmlScene.RemoveNode(frame)
 
-        mvNode.SetScene(slicer.mrmlScene)
+      mvDisplayNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLMultiVolumeDisplayNode')
+      mvDisplayNode.SetDefaultColorMap()
 
-        mat = vtk.vtkMatrix4x4()
-        frame.GetRASToIJKMatrix(mat)
-        mvNode.SetRASToIJKMatrix(mat)
-        frame.GetIJKToRASMatrix(mat)
-        mvNode.SetIJKToRASMatrix(mat)
+      mvNode.SetAndObserveDisplayNodeID(mvDisplayNode.GetID())
+      mvNode.SetAndObserveImageData(mvImage)
+      mvNode.SetNumberOfFrames(nFrames)
+      mvNode.SetName(loadable.name)
+      slicer.mrmlScene.AddNode(mvNode)
 
-      frameImage = frame.GetImageData()
-      frameImageArray = vtk.util.numpy_support.vtk_to_numpy(frameImage.GetPointData().GetScalars())
+      #
+      # automatically select the volume to display
+      #
+      appLogic = slicer.app.applicationLogic()
+      selNode = appLogic.GetSelectionNode()
+      selNode.SetReferenceActiveVolumeID(mvNode.GetID())
+      appLogic.PropagateVolumeSelection()
 
-      mvImageArray.T[frameNumber] = frameImageArray
+      # file list is no longer needed - remove the attribute
+      mvNode.RemoveAttribute('MultiVolume.FrameFileList')
 
-      # Remove temporary volume node
-      if frame.GetDisplayNode():
-        slicer.mrmlScene.RemoveNode(frame.GetDisplayNode())
-      if frame.GetStorageNode():
-        slicer.mrmlScene.RemoveNode(frame.GetStorageNode())
-      slicer.mrmlScene.RemoveNode(frame)
+    except Exception as e:
+      logging.error("Failed to read a multivolume: {0}".format(e.message))
+      import traceback
+      traceback.print_exc()
+      mvNode = None
 
-    mvDisplayNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLMultiVolumeDisplayNode')
-    mvDisplayNode.SetDefaultColorMap()
-
-    mvNode.SetAndObserveDisplayNodeID(mvDisplayNode.GetID())
-    mvNode.SetAndObserveImageData(mvImage)
-    mvNode.SetNumberOfFrames(nFrames)
-    mvNode.SetName(loadable.name)
-    slicer.mrmlScene.AddNode(mvNode)
-
-    #
-    # automatically select the volume to display
-    #
-    appLogic = slicer.app.applicationLogic()
-    selNode = appLogic.GetSelectionNode()
-    selNode.SetReferenceActiveVolumeID(mvNode.GetID())
-    appLogic.PropagateVolumeSelection()
-
-    # file list is no longer needed - remove the attribute
-    mvNode.RemoveAttribute('MultiVolume.FrameFileList')
+    finally:
+      progressbar.close()
 
     return mvNode
 
