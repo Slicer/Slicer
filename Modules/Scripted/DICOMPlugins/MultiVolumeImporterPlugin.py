@@ -87,7 +87,9 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     # here all files are lumped into one list for the situations when
     # individual frames should be parsed from series
     loadables += self.examineFilesMultiseries(allfiles)
-    loadables += self.examineFilesIPPAcqTime(allfiles)
+    if len(allfiles)>len(files):
+      # only examineFilesIPPAcqTime again if there are multiple file groups
+      loadables += self.examineFilesIPPAcqTime(allfiles)
 
     # this strategy sorts the files into groups
     loadables += self.examineFilesIPPInstanceNumber(allfiles)
