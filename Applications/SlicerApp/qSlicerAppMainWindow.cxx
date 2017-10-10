@@ -1049,22 +1049,39 @@ void qSlicerAppMainWindow::on_HelpKeyboardShortcutsAction_triggered()
 //---------------------------------------------------------------------------
 void qSlicerAppMainWindow::on_HelpBrowseTutorialsAction_triggered()
 {
-  QDesktopServices::openUrl(QUrl(QString(
-    "http://www.slicer.org/slicerWiki/index.php/Documentation/%1.%2/Training")
-      .arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR)));
+  QString url;
+  if (qSlicerApplication::application()->isRelease())
+    {
+    url = QString("http://www.slicer.org/slicerWiki/index.php/Documentation/%1.%2/Training")
+                    .arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
+    }
+  else
+    {
+    url = QString("http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Training");
+    }
+  QDesktopServices::openUrl(QUrl(url));
 }
+
 //---------------------------------------------------------------------------
 void qSlicerAppMainWindow::on_HelpInterfaceDocumentationAction_triggered()
 {
-  QDesktopServices::openUrl(QUrl(QString(
-    "http://wiki.slicer.org/slicerWiki/index.php/Documentation/%1.%2")
-      .arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR)));
+  QString url;
+  if (qSlicerApplication::application()->isRelease())
+    {
+    url = QString("http://www.slicer.org/slicerWiki/index.php/Documentation/%1.%2")
+                    .arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
+    }
+  else
+    {
+    url = QString("http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly");
+    }
+  QDesktopServices::openUrl(QUrl(url));
 }
 
 //---------------------------------------------------------------------------
 void qSlicerAppMainWindow::on_HelpSlicerPublicationsAction_triggered()
 {
-  QDesktopServices::openUrl(QUrl("http://www.slicer.org/publications"));
+  QDesktopServices::openUrl(QUrl("http://www.spl.harvard.edu/publications/pages/display/?collection=11"));
 }
 
 //---------------------------------------------------------------------------
