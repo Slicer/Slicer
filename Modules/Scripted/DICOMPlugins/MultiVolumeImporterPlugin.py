@@ -563,11 +563,15 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
       mvImageArray.T[frameNumber] = frameImageArray
 
-    mvDisplayNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLMultiVolumeDisplayNode')
-    mvDisplayNode.SetReferenceCount(mvDisplayNode.GetReferenceCount()-1)
-    mvDisplayNode.SetScene(slicer.mrmlScene)
+      # Remove temporary volume node
+      if frame.GetDisplayNode():
+        slicer.mrmlScene.RemoveNode(frame.GetDisplayNode())
+      if frame.GetStorageNode():
+        slicer.mrmlScene.RemoveNode(frame.GetStorageNode())
+      slicer.mrmlScene.RemoveNode(frame)
+
+    mvDisplayNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLMultiVolumeDisplayNode')
     mvDisplayNode.SetDefaultColorMap()
-    slicer.mrmlScene.AddNode(mvDisplayNode)
 
     mvNode.SetAndObserveDisplayNodeID(mvDisplayNode.GetID())
     mvNode.SetAndObserveImageData(mvImage)
@@ -714,8 +718,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       frameLabelsStr = frameLabelsStr[:-1]
 
       mvNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLMultiVolumeNode')
-      mvNode.SetReferenceCount(mvNode.GetReferenceCount()-1)
-      mvNode.SetScene(slicer.mrmlScene)
+      mvNode.UnRegister(None)
       mvNode.SetAttribute("MultiVolume.FrameLabels",frameLabelsStr)
       mvNode.SetAttribute("MultiVolume.FrameIdentifyingDICOMTagName",frameTag)
       mvNode.SetAttribute('MultiVolume.NumberOfFrames',str(len(tagValue2FileList)))
