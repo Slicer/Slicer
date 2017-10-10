@@ -67,6 +67,24 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     self.multiVolumeTagsUnits['Standard.B-value'] = "sec/mm2"
     self.epsilon = epsilon
 
+  @staticmethod
+  def settingsPanelEntry(panel, parent):
+    """Create a settings panel entry for this plugin class.
+    It is added to the DICOM panel of the application settings
+    by the DICOM module.
+    """
+
+    formLayout = qt.QFormLayout(parent)
+    importFormatsComboBox = ctk.ctkComboBox()
+    importFormatsComboBox.toolTip = "Preferred format for imported volume sequences. It determines what MRML node type volume sequences will be loaded into."
+    importFormatsComboBox.addItem("default (multi-volume)", "default")
+    importFormatsComboBox.addItem("volume sequence", "sequence")
+    importFormatsComboBox.addItem("multi-volume", "multivolume") 
+    importFormatsComboBox.currentIndex = 0
+    formLayout.addRow("Preferred multi-volume import format:", importFormatsComboBox)
+    panel.registerProperty(
+      "DICOM/PreferredMultiVolumeImportFormat", importFormatsComboBox, "currentUserDataAsString", qt.SIGNAL("currentIndexChanged (int)"))
+
   def examine(self,fileLists):
     """ Returns a list of DICOMLoadable instances
     corresponding to ways of interpreting the
@@ -98,22 +116,36 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     # for loading them as volume sequence.
     # A slightly higher confidence value is set for volume sequence loadables,
     # therefore by default data will be loaded as volume sequence.
+
     if hasattr(slicer.modules, 'sequences'):
+
       seqLoadables = []
       for loadable in loadables:
         seqLoadable = DICOMLib.DICOMLoadable()
         seqLoadable.files = loadable.files
         seqLoadable.tooltip = loadable.tooltip.replace(' frames MultiVolume by ', ' frames Volume Sequence by ')
         seqLoadable.name = loadable.tooltip.replace(' frames MultiVolume by ', ' frames Volume Sequence by ')
-        seqLoadable.selected = loadable.selected
         seqLoadable.multivolume = loadable.multivolume
-        seqLoadable.confidence = loadable.confidence + 0.05
+        seqLoadable.selected = loadable.selected
+
+        seqLoadable.confidence = loadable.confidence
+
         seqLoadable.loadAsVolumeSequence = True
         seqLoadables.append(seqLoadable)
-      loadables[0:0] = seqLoadables # prepend seqLoadables to loadables list
+
+      # Among all selected loadables, the ones that are listed first will be selected by default,
+      # therefore we need to prepend loadables if sequence format is preferred.
+      # Determine from settings loading into sequence node should have higher confidence (selected by default).
+      settings = qt.QSettings()
+      sequenceFormatPreferred = (settings.value("DICOM/PreferredMultiVolumeImportFormat", "default") == "sequence")
+      if sequenceFormatPreferred:
+       # prepend
+       loadables[0:0] = seqLoadables
+      else:
+       # append
+       loadables += seqLoadables
 
     return loadables
-
 
   def examineFilesMultiseries(self,files):
     """
@@ -540,7 +572,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     instanceUIDs = instanceUIDs[:-1]
     mvNode.SetAttribute("DICOM.instanceUIDs", instanceUIDs)
 
-    progressbar = slicer.util.createProgressDialog(labelText="Loading "+mvNode.GetName(), maximum=nFrames,
+    progressbar = slicer.util.createProgressDialog(labelText="Loading "+mvNode.GetName(),
+                                                   value=0, maximum=nFrames,
                                                    windowModality = qt.Qt.WindowModal)
 
     try:
