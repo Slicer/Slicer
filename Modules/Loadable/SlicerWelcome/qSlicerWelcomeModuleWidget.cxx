@@ -98,20 +98,12 @@ void qSlicerWelcomeModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   // is loaded.
   this->FeedbackCollapsibleWidget->setProperty("source", ":HTML/Feedback.html");
   this->WelcomeAndAboutCollapsibleWidget->setProperty("source", ":HTML/About.html");
-  this->OverviewCollapsibleWidget->setProperty("source", ":HTML/Overview.html");
-  this->LoadingScenesAndDataCollapsibleWidget->setProperty("source", ":HTML/LoadingScenesAndData.html");
-  this->AdjustingDataDisplayCollapsibleWidget->setProperty("source", ":HTML/AdjustingDataDisplay.html");
-  this->MouseModesCollapsibleWidget->setProperty("source", ":HTML/MouseModes.html");
   this->OtherUsefulHintsCollapsibleWidget->setProperty("source", ":HTML/OtherUsefulHints.html");
   this->AcknowledgmentCollapsibleWidget->setProperty("source", ":HTML/Acknowledgment.html");
 
   foreach(QWidget* widget, QWidgetList()
           << this->FeedbackCollapsibleWidget
           << this->WelcomeAndAboutCollapsibleWidget
-          << this->OverviewCollapsibleWidget
-          << this->LoadingScenesAndDataCollapsibleWidget
-          << this->AdjustingDataDisplayCollapsibleWidget
-          << this->MouseModesCollapsibleWidget
           << this->OtherUsefulHintsCollapsibleWidget
           << this->AcknowledgmentCollapsibleWidget
           )
