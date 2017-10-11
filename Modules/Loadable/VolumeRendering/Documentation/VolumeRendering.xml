@@ -2,7 +2,7 @@
 <executable>
   <category>Core</category>
   <title>Volume Rendering</title>
-  <description><![CDATA[This module provides interactive visualization of 3D image data.]]></description>
+  <description><![CDATA[Volume Rendering Module provides advanced tools for toggling interactive volume rendering of datasets.]]></description>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.3/Modules/VolumeRendering</documentation-url>
   <license>slicer4</license>
   <contributor>Julien Finet (Kitware), Alex Yarmarkovich (Isomics), Yanling Liu (SAIC-Frederick, NCI-Frederick), Andreas Freudling (SPL, BWH), Ron Kikinis(SPL, BWH)</contributor>

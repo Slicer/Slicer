@@ -78,13 +78,17 @@ qSlicerVolumeRenderingModule::~qSlicerVolumeRenderingModule()
 //-----------------------------------------------------------------------------
 QString qSlicerVolumeRenderingModule::helpText()const
 {
-  QString help =
-    "Volume Rendering allows the rendering of volumes in 3D space and not only "
-    "as 2D surfaces defined in 3D space. \n"
+  QString help = QString(
+    "Volume Rendering Module provides advanced tools for toggling interactive "
+    "volume rendering of datasets.<br/>"
+    "If supported, hardware accelerated volume rendering is made available."
+    "The module permits selection of preset transfer functions to colorize and set opacity "
+    "of data in a task-appropriate way, and tools to customize the transfer functions that specify "
+    "these parameters.<br/>"
     "<a href=\"%1/Documentation/%2.%3/Modules/VolumeRendering\">"
-    "%1/Documentation/%2.%3/Modules/VolumeRendering</a>\n"
+    "%1/Documentation/%2.%3/Modules/VolumeRendering</a><br/>"
     "Tutorials are available at <a href=\"%1/Documentation/%2.%3/Modules/VolumeRendering\">"
-    "%1/Documentation/%2.%3/Modules/VolumeRendering</a>";
+    "%1/Documentation/%2.%3/Modules/VolumeRendering</a>");
   return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
 }
 

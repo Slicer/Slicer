@@ -83,7 +83,7 @@ qSlicerModelsModule::~qSlicerModelsModule()
 QString qSlicerModelsModule::helpText()const
 {
   QString help =
-    "The Models Module loads and adjusts display parameters of models.<br>"
+    "The Models Module loads and adjusts display parameters of models such as Color, Transparency, and Clipping.<br>"
     "For more information see <a href=\"%1/Documentation/%2.%3/Modules/Models\">%1/Documentation/%2.%3/Modules/Models</a><br>"
     "Save models via the File menu, Save button.<br>"
     "The Add 3D model or a model directory button will allow you to load any "

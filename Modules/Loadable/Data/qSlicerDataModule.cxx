@@ -140,13 +140,14 @@ vtkMRMLAbstractLogic* qSlicerDataModule::createLogic()
 //-----------------------------------------------------------------------------
 QString qSlicerDataModule::helpText()const
 {
-  QString help =
-    "The Data Module displays and permits operations on the MRML tree, and "
-    "creates and edits transformation hierarchies.<br>"
-    "The Load panels exposes options for loading data. Helpful comments can be "
-    "opened by clicking on the \"information\" icons in each load panel.<br>"
+  QString help = QString(
+    "The Data module is the central data-organizing point where all loaded data is "
+    "presented for access and manipulation is the Data module. It allows organizing "
+    "the data in folders or patient/study trees (automatically done for DICOM), "
+    "visualizing any displayable data, transformation of whole branches, and a "
+    "multitude of data type specific features.<br>"
     "<a href=\"%1/Documentation/%2.%3/Modules/Data\">"
-    "%1/Documentation/%2.%3/Modules/Data</a>";
+    "%1/Documentation/%2.%3/Modules/Data</a>");
   return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
 }
 

@@ -74,7 +74,9 @@ qSlicerVolumesModule::~qSlicerVolumesModule()
 QString qSlicerVolumesModule::helpText()const
 {
   QString help = QString(
-    "The Volumes Module loads and adjusts display parameters of volume data.<br>"
+    "The Volumes Module is the interface for adjusting Window, Level, Threshold, "
+    "Color LUT and other parameters that control the display of volume image data "
+    "in the scene.<br>"
     "<a href=\"%1/Documentation/%2.%3/Modules/Volumes\">"
     "%1/Documentation/%2.%3/Modules/Volumes</a><br>");
   return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
