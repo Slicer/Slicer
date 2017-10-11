@@ -1340,7 +1340,6 @@ QString qSlicerCoreApplication::libraries()const
     "<a href=\"http://www.itk.org/\">ITK</a>, "
     "<a href=\"http://www.commontk.org/index.php/Main_Page\">CTK</a>, "
     "<a href=\"https://www.qt.io/\">Qt</a>, "
-    "<a href=\"http://www.tcl.tk\">Tcl/Tk</a>, "
     "<a href=\"http://teem.sf.net\">Teem</a>, "
     "<a href=\"http://www.python.org/\">Python</a>, "
     "<a href=\"http://dicom.offis.de/dcmtk\">DCMTK</a>, "
