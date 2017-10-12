@@ -398,14 +398,14 @@ public:
   /// \sa InterpolateTexture, SetInterpolateTexture(), GetInterpolateTexture()
   vtkBooleanMacro(InterpolateTexture, int);
 
-  /// Set and observe color node of the displaty node.
+  /// Set and observe color node of the display node.
   /// \sa ColorNodeID, GetColorNodeID()
   virtual void SetAndObserveColorNodeID(const char *ColorNodeID);
-  /// Set and observe color node of the displaty node.
+  /// Set and observe color node of the display node.
   /// Utility method that conveniently takes a string instead of a char*
   /// \sa ColorNodeID, GetColorNodeID()
   void SetAndObserveColorNodeID(const std::string& ColorNodeID);
-  /// Get color node ID of the displaty node.
+  /// Get color node ID of the display node.
   /// \sa ColorNodeID, SetAndObserveColorNodeID()
   vtkGetStringMacro(ColorNodeID);
 
