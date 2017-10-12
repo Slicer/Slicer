@@ -70,6 +70,10 @@ public:
   int LabelColumn;
   int OpacityColumn;
   int CheckableColumn;
+
+  /// This flag allows to make sure that during updating widget from MRML,
+  /// GUI updates will not trigger MRML node updates.
+  bool IsUpdatingWidgetFromMRML;
 };
 
 #endif

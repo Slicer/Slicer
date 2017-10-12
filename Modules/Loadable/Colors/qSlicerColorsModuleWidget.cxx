@@ -276,6 +276,8 @@ void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode
       range = fsColorNode->GetScalarsToColors()->GetRange();
       d->ScalarBarActor->SetLookupTable(fsColorNode->GetScalarsToColors());
       }
+    disconnect(d->LUTRangeWidget, SIGNAL(valuesChanged(double, double)),
+      this, SLOT(setLookupTableRange(double, double)));
     if (range)
       {
       // Make the range a bit (10%) larger than the values to allow some room for
@@ -293,6 +295,8 @@ void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode
       d->LUTRangeWidget->setEnabled(false);
       d->LUTRangeWidget->setValues(0.,0.);
       }
+    connect(d->LUTRangeWidget, SIGNAL(valuesChanged(double, double)),
+      this, SLOT(setLookupTableRange(double, double)));
     // update the annotations from the superclass color node since this is a
     // color table or freesurfer color node
     int numberOfColors = colorNode->GetNumberOfColors();

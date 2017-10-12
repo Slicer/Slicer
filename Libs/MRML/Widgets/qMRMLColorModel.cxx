@@ -40,6 +40,7 @@ qMRMLColorModelPrivate::qMRMLColorModelPrivate(qMRMLColorModel& object)
   this->LabelColumn = 1;
   this->OpacityColumn = 2;
   this->CheckableColumn = -1;
+  this->IsUpdatingWidgetFromMRML = false;
 }
 
 //------------------------------------------------------------------------------
@@ -323,9 +324,17 @@ void qMRMLColorModel::updateNode()
 {
   Q_D(qMRMLColorModel);
 
+  if (d->IsUpdatingWidgetFromMRML)
+    {
+    // Updating widget from MRML is already in progress
+    return;
+    }
+  d->IsUpdatingWidgetFromMRML = true;
+
   if (d->MRMLColorNode == 0)
     {
     this->setRowCount(this->noneEnabled() ? 1 : 0);
+    d->IsUpdatingWidgetFromMRML = false;
     return;
     }
 
@@ -353,6 +362,8 @@ void qMRMLColorModel::updateNode()
   QObject::connect(this, SIGNAL(itemChanged(QStandardItem*)),
                    this, SLOT(onItemChanged(QStandardItem*)),
                    Qt::UniqueConnection);
+
+  d->IsUpdatingWidgetFromMRML = false;
 }
 
 //------------------------------------------------------------------------------
