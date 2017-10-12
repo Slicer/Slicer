@@ -364,13 +364,13 @@ void qMRMLColorModel::updateItemFromColor(QStandardItem* item, int color, int co
     return;
     }
   item->setData(color, qMRMLColorModel::ColorEntryRole);
-  double rgba[4] = {0.,0.,0.,1.};
 
   QString colorName = d->MRMLColorNode->GetNamesInitialised() ?
     d->MRMLColorNode->GetColorName(color) : "";
   if (column == d->ColorColumn)
     {
     QPixmap pixmap;
+    double rgba[4] = { 0., 0., 0., 1. };
     const bool validColor = d->MRMLColorNode->GetColor(color, rgba);
     if (validColor)
       {
@@ -399,6 +399,8 @@ void qMRMLColorModel::updateItemFromColor(QStandardItem* item, int color, int co
     }
   if (column == d->OpacityColumn)
     {
+    double rgba[4] = { 0., 0., 0., 1. };
+    d->MRMLColorNode->GetColor(color, rgba);
     item->setData(QString::number(rgba[3],'f',2), Qt::DisplayRole);
     }
   if (column == d->CheckableColumn)

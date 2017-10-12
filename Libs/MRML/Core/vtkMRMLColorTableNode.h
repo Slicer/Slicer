@@ -52,8 +52,21 @@ public:
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() VTK_OVERRIDE {return "ColorTable";}
 
-  virtual vtkLookupTable* GetLookupTable() VTK_OVERRIDE;
-  virtual void SetLookupTable(vtkLookupTable* newLookupTable);
+  /// Access lookup table object that stores table values.
+  /// \sa SetAndObserveLookupTable()
+  vtkGetObjectMacro(LookupTable, vtkLookupTable);
+
+  /// Set lookup table object that this object will use.
+  /// \sa GetLookupTable()
+  virtual void SetAndObserveLookupTable(vtkLookupTable *newLookupTable);
+
+  /// Deprecated method, kept only for backward compatibility.
+  /// Use SetAndObserveLookupTable method instead.
+  /// \sa SetAndObserveLookupTable()
+  virtual void SetLookupTable(vtkLookupTable* newLookupTable)
+    {
+    SetAndObserveLookupTable(newLookupTable);
+    }
 
   ///
   /// Get/Set for Type

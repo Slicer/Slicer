@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>360</width>
-    <height>480</height>
+    <width>292</width>
+    <height>485</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -73,22 +73,26 @@
       <string>Color Table Display</string>
      </property>
      <property name="collapsed">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
      <property name="contentsFrameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout" columnstretch="0,0">
-      <item row="1" column="0">
-       <widget class="QLabel" name="NumberOfColorsLabel">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
+      <item row="2" column="1">
+       <widget class="QCheckBox" name="HideInvalidColorsCheckBox">
+        <property name="toolTip">
+         <string>Show/Hide the unnamed color entries in the list below.</string>
         </property>
         <property name="text">
-         <string>Number of Colors:</string>
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="LUTRangeLabel">
+        <property name="text">
+         <string>Scalar Range:</string>
         </property>
        </widget>
       </item>
@@ -115,52 +119,48 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
-       <widget class="QCheckBox" name="HideInvalidColorsCheckBox">
-        <property name="toolTip">
-         <string>Show/Hide the unnamed color entries in the list below.</string>
+      <item row="1" column="0">
+       <widget class="QLabel" name="NumberOfColorsLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
         <property name="text">
-         <string/>
+         <string>Number of Colors:</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="LUTRangeLabel">
-        <property name="text">
-         <string>Scalar Range:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="ctkRangeWidget" name="LUTRangeWidget">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="toolTip">
-         <string>The range of scalars that are mapped to the full range of colors.</string>
-        </property>
-        <property name="singleStep">
-         <double>1.000000000000000</double>
-        </property>
-        <property name="minimum">
-         <double>-1024.000000000000000</double>
-        </property>
-        <property name="maximum">
-         <double>3071.000000000000000</double>
-        </property>
-        <property name="spinBoxAlignment">
-         <set>Qt::AlignTop|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0" colspan="2">
+      <item row="5" column="0" colspan="2">
        <widget class="qMRMLColorTableView" name="ColorView">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0" colspan="2">
+       <widget class="qMRMLRangeWidget" name="LUTRangeWidget">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="toolTip">
+         <string>The range of scalars that are mapped to the full range of colors.</string>
+        </property>
+        <property name="minimum">
+         <double>-150.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>150.000000000000000</double>
+        </property>
+        <property name="minimumValue">
+         <double>-100.000000000000000</double>
+        </property>
+        <property name="maximumValue">
+         <double>100.000000000000000</double>
         </property>
        </widget>
       </item>
@@ -214,7 +214,7 @@
         </property>
         <property name="checked">
          <bool>false</bool>
-       </property>
+        </property>
        </widget>
       </item>
       <item>
@@ -250,6 +250,11 @@
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLRangeWidget</class>
+   <extends>ctkRangeWidget</extends>
+   <header>qMRMLRangeWidget.h</header>
   </customwidget>
   <customwidget>
    <class>qSlicerWidget</class>
@@ -365,6 +370,22 @@
     <hint type="destinationlabel">
      <x>128</x>
      <y>238</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerColorsModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>LUTRangeWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>179</x>
+     <y>239</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>179</x>
+     <y>200</y>
     </hint>
    </hints>
   </connection>

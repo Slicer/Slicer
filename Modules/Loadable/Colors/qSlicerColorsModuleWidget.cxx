@@ -278,8 +278,14 @@ void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode
       }
     if (range)
       {
-      d->LUTRangeWidget->setRange(
-        qMin(range[0], -1024.),qMax(range[1], 3071.));
+      // Make the range a bit (10%) larger than the values to allow some room for
+      // adjustment. More adjustment can be done by manually setting the range on the GUI.
+      double rangeMargin = (range[1] - range[0])*0.1;
+      if (rangeMargin == 0)
+        {
+        rangeMargin = 10.0;
+        }
+      d->LUTRangeWidget->setRange(range[0] - rangeMargin, range[1] + rangeMargin);
       d->LUTRangeWidget->setValues(range[0], range[1]);
       }
     else
@@ -358,8 +364,6 @@ void qSlicerColorsModuleWidget::updateNumberOfColors()
     {
     qWarning() << "updateNumberOfColors: please select a discrete color table node to adjust the number of colors";
     }
-  // update the slider which will trigger updating the table on the node
-  d->LUTRangeWidget->setRange(0, newNumber - 1);
 }
 
 //-----------------------------------------------------------------------------
