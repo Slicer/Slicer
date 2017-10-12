@@ -31,7 +31,9 @@ public:
     vtkTypeMacro(vtkFSLookupTable,vtkLookupTable);
     void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
-
+    // Description:
+    // Copy the contents from another LookupTable
+    void DeepCopy(vtkScalarsToColors *lut) VTK_OVERRIDE;
 
     vtkGetMacro(LowThresh,float);
     vtkSetMacro(LowThresh,float);
