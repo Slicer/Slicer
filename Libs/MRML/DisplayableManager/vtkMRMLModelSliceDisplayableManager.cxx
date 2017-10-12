@@ -17,6 +17,7 @@
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLModelSliceDisplayableManager.h"
+#include "vtkMRMLModelDisplayableManager.h"
 
 // MRML includes
 #include <vtkMRMLApplicationLogic.h>
@@ -495,8 +496,13 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
       // that lookup table original range.
       vtkLookupTable* dNodeLUT = modelDisplayNode->GetColorNode() ?
                                  modelDisplayNode->GetColorNode()->GetLookupTable() : NULL;
-      vtkNew<vtkLookupTable> lut;
-      lut->DeepCopy(dNodeLUT);
+      vtkSmartPointer<vtkLookupTable> lut = vtkSmartPointer<vtkLookupTable>::Take(
+        vtkMRMLModelDisplayableManager::CreateLookupTableCopy(dNodeLUT));
+
+      // actorProperties->SetOpacity() does not seem to have any effect when
+      // a lookup table is used, so we set opacity in the lookup table
+      lut->SetAlpha(displayNode->GetSliceIntersectionOpacity());
+
       mapper->SetLookupTable(lut.GetPointer());
 
       // Set scalar range

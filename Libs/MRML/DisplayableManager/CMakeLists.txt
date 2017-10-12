@@ -37,6 +37,7 @@ set(include_dirs
   ${CMAKE_CURRENT_BINARY_DIR}
   ${MRMLCore_INCLUDE_DIRS}
   ${MRMLLogic_INCLUDE_DIRS}
+  ${FreeSurfer_INCLUDE_DIRS}
   )
 if(MRMLDisplayableManager_USE_PYTHON)
   list(APPEND include_dirs ${PYTHON_INCLUDE_DIR})
@@ -147,6 +148,7 @@ set(libs
   ${VTK_LIBRARIES}
   MRMLCore
   MRMLLogic
+  FreeSurfer
   )
 
 if(MRMLDisplayableManager_USE_PYTHON)

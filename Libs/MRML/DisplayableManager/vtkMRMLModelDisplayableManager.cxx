@@ -36,6 +36,8 @@
 #include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLTransformNode.h>
 
+#include <vtkFSLookupTable.h>
+
 // VTK includes
 #include <vtkAlgorithm.h>
 #include <vtkAlgorithmOutput.h>
@@ -1568,9 +1570,9 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
           // of the colorNode vtkLookupTable in order not to impact
           // that lookup table original range.
           vtkLookupTable* dNodeLUT = modelDisplayNode->GetColorNode() ?
-                                     modelDisplayNode->GetColorNode()->GetLookupTable() : NULL;
-          vtkNew<vtkLookupTable> lut;
-          lut->DeepCopy(dNodeLUT);
+            modelDisplayNode->GetColorNode()->GetLookupTable() : NULL;
+          vtkSmartPointer<vtkLookupTable> lut = vtkSmartPointer<vtkLookupTable>::Take(
+            vtkMRMLModelDisplayableManager::CreateLookupTableCopy(dNodeLUT));
           mapper->SetLookupTable(lut.GetPointer());
 
           // Set scalar range
@@ -2169,4 +2171,26 @@ vtkMRMLSelectionNode* vtkMRMLModelDisplayableManager::GetSelectionNode()
           this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
     }
   return this->Internal->SelectionNode;
+}
+
+//---------------------------------------------------------------------------
+vtkLookupTable* vtkMRMLModelDisplayableManager::CreateLookupTableCopy(vtkLookupTable* sourceLut)
+{
+  vtkLookupTable* copiedLut = NULL;
+  vtkFSLookupTable* sourceLutFS = vtkFSLookupTable::SafeDownCast(sourceLut);
+  if (sourceLutFS)
+    {
+    copiedLut = vtkFSLookupTable::New();
+    }
+  else
+    {
+    copiedLut = vtkLookupTable::New();
+    }
+  copiedLut->DeepCopy(sourceLut);
+
+  // Workaround for VTK bug in vtkLookupTable::DeepCopy
+  // (special colors are not copied)
+  copiedLut->BuildSpecialColors();
+
+  return copiedLut;
 }
