@@ -1450,7 +1450,10 @@ void qMRMLSegmentEditorWidget::updateEffectsSectionFromMRML()
 
     // Perform updates to prevent layout collapse
     d->EffectHelpBrowser->setMinimumHeight(d->EffectHelpBrowser->sizeHint().height());
-    d->EffectHelpBrowser->layout()->update();
+    if (d->EffectHelpBrowser->layout())
+      {
+      d->EffectHelpBrowser->layout()->update();
+      }
     activeEffect->optionsFrame()->setMinimumHeight(activeEffect->optionsFrame()->sizeHint().height());
     activeEffect->optionsLayout()->activate();
     this->setMinimumHeight(this->sizeHint().height());
