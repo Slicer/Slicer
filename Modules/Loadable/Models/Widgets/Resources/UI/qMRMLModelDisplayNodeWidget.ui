@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>433</width>
-    <height>791</height>
+    <width>297</width>
+    <height>464</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -320,52 +320,8 @@
       <item row="0" column="1">
        <widget class="QCheckBox" name="SliceIntersectionVisibilityCheckBox">
         <property name="text">
-         <string/>
+         <string> </string>
         </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Mode:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="SliceIntersectionThicknessLabel">
-        <property name="text">
-         <string>Line Width:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QSpinBox" name="SliceIntersectionThicknessSpinBox">
-        <property name="suffix">
-         <string> px</string>
-        </property>
-        <property name="minimum">
-         <number>0</number>
-        </property>
-        <property name="maximum">
-         <number>10</number>
-        </property>
-        <property name="singleStep">
-         <number>1</number>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QComboBox" name="SliceDisplayModeComboBox">
-        <item>
-         <property name="text">
-          <string>Intersection</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Projection</string>
-         </property>
-        </item>
        </widget>
       </item>
       <item row="1" column="0">
@@ -397,6 +353,72 @@
         </property>
         <property name="Decimals" stdset="0">
          <number>2</number>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Mode:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QComboBox" name="SliceDisplayModeComboBox">
+        <property name="toolTip">
+         <string>Intersection: shows intersection of the model with the slice. Projection: shows the full model projected on the slice plane with solid color. Colored projection: shows the full model projected on the slice plane, colored by distance from the slice plane (overrides Active scalar selection).</string>
+        </property>
+        <item>
+         <property name="text">
+          <string>Intersection</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Projection</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Distance encoded projection</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="SliceIntersectionThicknessLabel">
+        <property name="text">
+         <string>Line Width:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QSpinBox" name="SliceIntersectionThicknessSpinBox">
+        <property name="suffix">
+         <string> px</string>
+        </property>
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>10</number>
+        </property>
+        <property name="singleStep">
+         <number>1</number>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="DistanceToColorLabel">
+        <property name="text">
+         <string>Color Table:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="qMRMLColorTableComboBox" name="DistanceToColorNodeComboBox">
+        <property name="toolTip">
+         <string>Color table that maps distance from slice plane to colors. Used when 'Distance encoded projection' mode is chosen.</string>
         </property>
        </widget>
       </item>
@@ -476,7 +498,7 @@
       <item row="0" column="1">
        <widget class="QCheckBox" name="ScalarsVisibilityCheckBox">
         <property name="text">
-         <string/>
+         <string> </string>
         </property>
        </widget>
       </item>

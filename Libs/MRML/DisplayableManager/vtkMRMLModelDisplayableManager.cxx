@@ -818,7 +818,7 @@ void vtkMRMLModelDisplayableManager::UpdateModelsFromMRML()
 
   std::vector<vtkMRMLNode *> dnodes;
   int nnodes = scene ? scene->GetNodesByClass("vtkMRMLDisplayableNode", dnodes) : 0;
-  for (int n=0; n<nnodes; n++)
+  for (int n = 0; n<nnodes && !clearDisplayedModels; n++)
     {
     node = dnodes[n];
     vtkMRMLDisplayableNode *model = vtkMRMLDisplayableNode::SafeDownCast(node);
@@ -828,10 +828,16 @@ void vtkMRMLModelDisplayableManager::UpdateModelsFromMRML()
         !strcmp(model->GetName(), "Yellow Volume Slice"))
       {
       slices.push_back(model);
-      vtkMRMLDisplayNode *dnode = model->GetDisplayNode();
-      if (dnode && this->Internal->DisplayedActors.find(dnode->GetID()) == this->Internal->DisplayedActors.end() )
+
+      int ndnodes = model->GetNumberOfDisplayNodes();
+      for (int i = 0; i<ndnodes && !clearDisplayedModels; i++)
         {
-        clearDisplayedModels = true;
+        vtkMRMLDisplayNode *dnode = model->GetNthDisplayNode(i);
+        if (dnode && this->Internal->DisplayedActors.find(dnode->GetID()) == this->Internal->DisplayedActors.end())
+          {
+          clearDisplayedModels = true;
+          break;
+          }
         }
       }
     }
@@ -858,10 +864,16 @@ void vtkMRMLModelDisplayableManager::UpdateModelsFromMRML()
     {
     vtkMRMLDisplayableNode *model = slices[i];
     // add nodes that are not in the list yet
-    vtkMRMLDisplayNode *dnode = model->GetDisplayNode();
-    if (dnode && this->Internal->DisplayedActors.find(dnode->GetID()) == this->Internal->DisplayedActors.end() )
+    bool updateModelNeeded = false;
+    int ndnodes = model->GetNumberOfDisplayNodes();
+    for (int i = 0; i<ndnodes; i++)
       {
-      this->UpdateModel(model);
+      vtkMRMLDisplayNode *dnode = model->GetNthDisplayNode(i);
+      if (dnode && this->Internal->DisplayedActors.find(dnode->GetID()) == this->Internal->DisplayedActors.end())
+        {
+        this->UpdateModel(model);
+        break;
+        }
       }
     this->SetModelDisplayProperty(model);
     }

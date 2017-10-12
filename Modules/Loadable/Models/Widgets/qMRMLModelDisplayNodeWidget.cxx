@@ -93,6 +93,8 @@ void qMRMLModelDisplayNodeWidgetPrivate::init()
     q, SLOT(setSliceIntersectionThickness(int)));
   q->connect(this->SliceIntersectionOpacitySlider, SIGNAL(valueChanged(double)),
     q, SLOT(setSliceIntersectionOpacity(double)));
+  q->connect(this->DistanceToColorNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+    q, SLOT(setDistanceToColorNode(vtkMRMLNode*)));
 
   q->connect(this->RepresentationComboBox, SIGNAL(currentIndexChanged(int)),
     q, SLOT(setRepresentation(int)));
@@ -525,6 +527,23 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
 
   d->SliceDisplayModeComboBox->setCurrentIndex(d->MRMLModelDisplayNode->GetSliceDisplayMode());
 
+  wasBlocking = d->DistanceToColorNodeComboBox->blockSignals(true);
+  if (d->DistanceToColorNodeComboBox->mrmlScene() !=
+    d->MRMLModelDisplayNode->GetScene())
+    {
+    d->DistanceToColorNodeComboBox->setMRMLScene(
+      d->MRMLModelDisplayNode->GetScene());
+    }
+  if (d->DistanceToColorNodeComboBox->currentNodeID() !=
+    d->MRMLModelDisplayNode->GetDistanceEncodedProjectionColorNodeID())
+    {
+    d->DistanceToColorNodeComboBox->setCurrentNodeID(
+      d->MRMLModelDisplayNode->GetDistanceEncodedProjectionColorNodeID());
+    }
+  d->DistanceToColorNodeComboBox->setEnabled(d->MRMLModelDisplayNode->GetSliceDisplayMode()
+    == vtkMRMLModelDisplayNode::SliceDisplayDistanceEncodedProjection);
+  d->DistanceToColorNodeComboBox->blockSignals(wasBlocking);
+
   // Representation
   switch (d->MRMLModelDisplayNode->GetRepresentation())
     {
@@ -855,7 +874,17 @@ void qMRMLModelDisplayNodeWidget::setSliceDisplayMode(int newMode)
   {
     return;
   }
+  int wasModified = d->MRMLModelDisplayNode->StartModify();
+  // Select a color node if none is selected yet
+  if (d->MRMLModelDisplayNode->GetSliceDisplayMode()
+    != vtkMRMLModelDisplayNode::SliceDisplayDistanceEncodedProjection
+    && newMode == vtkMRMLModelDisplayNode::SliceDisplayDistanceEncodedProjection
+    && d->MRMLModelDisplayNode->GetDistanceEncodedProjectionColorNodeID() == NULL)
+    {
+    d->MRMLModelDisplayNode->SetAndObserveDistanceEncodedProjectionColorNodeID("vtkMRMLFreeSurferProceduralColorNodeRedGreen");
+    }
   d->MRMLModelDisplayNode->SetSliceDisplayMode(newMode);
+  d->MRMLModelDisplayNode->EndModify(wasModified);
 }
 
 // --------------------------------------------------------------------------
@@ -973,4 +1002,16 @@ void qMRMLModelDisplayNodeWidget::setInterpolation(int newInterpolation)
     return;
   }
   d->Property->SetInterpolation(newInterpolation);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLModelDisplayNodeWidget::setDistanceToColorNode(vtkMRMLNode* colorNode)
+{
+  Q_D(qMRMLModelDisplayNodeWidget);
+  if (!d->MRMLModelDisplayNode.GetPointer())
+    {
+    return;
+    }
+  d->MRMLModelDisplayNode->SetAndObserveDistanceEncodedProjectionColorNodeID(
+    colorNode ? colorNode->GetID() : NULL);
 }

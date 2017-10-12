@@ -108,6 +108,7 @@ public slots:
   void setSliceDisplayMode(int);
   void setSliceIntersectionThickness(int);
   void setSliceIntersectionOpacity(double);
+  void setDistanceToColorNode(vtkMRMLNode*);
 
   void setRepresentation(int);
   void setPointSize(double);
