@@ -864,7 +864,6 @@ void vtkMRMLModelDisplayableManager::UpdateModelsFromMRML()
     {
     vtkMRMLDisplayableNode *model = slices[i];
     // add nodes that are not in the list yet
-    bool updateModelNeeded = false;
     int ndnodes = model->GetNumberOfDisplayNodes();
     for (int i = 0; i<ndnodes; i++)
       {
