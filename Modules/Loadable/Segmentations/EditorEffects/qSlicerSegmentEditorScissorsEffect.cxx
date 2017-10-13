@@ -529,11 +529,11 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
         break;
       case SliceCutModeSymmetric:
         {
-        vtkNew<vtkMatrix4x4> sliceXYToSegmentationToTransform;
-        vtkMatrix4x4::Invert(segmentationToSliceXYTransform->GetMatrix(), sliceXYToSegmentationToTransform.GetPointer());
+        vtkNew<vtkMatrix4x4> sliceXYToSegmentationTransform;
+        vtkMatrix4x4::Invert(segmentationToSliceXYTransform->GetMatrix(), sliceXYToSegmentationTransform.GetPointer());
         double sliceNormalVector_SliceXY[4] = { 0, 0, 1, 0};
         double sliceNormalVector_World[4] = { 0, 0, 1, 0 };
-        sliceXYToSegmentationToTransform->MultiplyPoint(sliceNormalVector_SliceXY, sliceNormalVector_World);
+        sliceXYToSegmentationTransform->MultiplyPoint(sliceNormalVector_SliceXY, sliceNormalVector_World);
         double sliceThicknessMmPerPixel = vtkMath::Norm(sliceNormalVector_World);
         double sliceCutDepthMm = q->doubleParameter("SliceCutDepthMm");
         double halfSliceCutDepthPixel = sliceCutDepthMm / sliceThicknessMmPerPixel / 2.0;
