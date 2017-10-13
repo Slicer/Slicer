@@ -27,10 +27,6 @@
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-// Needed when we don't use the vtkStandardNewMacro.
-vtkInstantiatorNewMacro(vtkMRMLSliceViewDisplayableManagerFactory);
-
-//----------------------------------------------------------------------------
 // vtkMRMLSliceViewDisplayableManagerFactory methods
 
 //----------------------------------------------------------------------------

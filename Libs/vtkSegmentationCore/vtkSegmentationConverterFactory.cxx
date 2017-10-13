@@ -58,10 +58,6 @@ vtkSegmentationConverterFactoryInitialize::~vtkSegmentationConverterFactoryIniti
 }
 
 //----------------------------------------------------------------------------
-// Needed when we don't use the vtkStandardNewMacro.
-vtkInstantiatorNewMacro(vtkSegmentationConverterFactory);
-
-//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 // Up the reference count so it behaves like New

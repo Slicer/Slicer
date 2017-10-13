@@ -121,7 +121,6 @@ NAME* NAME::Instance;
 //    }
 //  return Self::Instance;
 //}
-//vtkInstantiatorNewMacro(NAME);
 
 //----------------------------------------------------------------------------
 ///
