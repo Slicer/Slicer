@@ -125,7 +125,8 @@ class _ui_DICOMSettingsPanel(object):
     loadReferencesComboBox.currentIndex = 0
     genericGroupBoxFormLayout.addRow("Load referenced series:", loadReferencesComboBox)
     parent.registerProperty(
-      "DICOM/automaticallyLoadReferences", loadReferencesComboBox, "currentUserDataAsString", qt.SIGNAL("currentIndexChanged (int)"))
+      "DICOM/automaticallyLoadReferences", loadReferencesComboBox,
+      "currentUserDataAsString", str(qt.SIGNAL("currentIndexChanged(int)")))
     vBoxLayout.addWidget(genericGroupBox)
 
     # Add settings panel for the plugins
