@@ -5,18 +5,13 @@
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkFSLookupTable.h,v $
-  Date:      $Date: 2006/02/28 20:50:07 $
-  Version:   $Revision: 1.4 $
-
 =========================================================================auto=*/
 
 #ifndef __vtkFSLookupTable_h
 #define __vtkFSLookupTable_h
 
 #include <FreeSurferConfigure.h>
-#include "vtkFreeSurferWin32Header.h"
+#include "vtkFreeSurferExport.h"
 
 // VTK includes
 #include <vtkLookupTable.h>

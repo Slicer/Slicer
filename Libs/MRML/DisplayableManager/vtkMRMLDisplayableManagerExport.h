@@ -5,19 +5,14 @@
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   3D MRML
-  Module:    $RCSfile: vtkMRMLDisplayableManagerWin32Header.h,v $
-  Date:      $Date: 2006/01/06 17:56:51 $
-  Version:   $Revision: 1.4 $
-
 =========================================================================auto=*/
-///  vtkMRMLDisplayableManagerWin32Header - manage Windows system differences
+///  vtkMRMLDisplayableManagerExport
 ///
-/// The vtkMRMLDisplayableManagerWin32Header captures some system differences between Unix
+/// The vtkMRMLDisplayableManagerExport captures some system differences between Unix
 /// and Windows operating systems.
 
-#ifndef __vtkMRMLDisplayableManagerWin32Header_h
-#define __vtkMRMLDisplayableManagerWin32Header_h
+#ifndef __vtkMRMLDisplayableManagerExport_h
+#define __vtkMRMLDisplayableManagerExport_h
 
 #include <vtkMRMLDisplayableManagerConfigure.h>
 

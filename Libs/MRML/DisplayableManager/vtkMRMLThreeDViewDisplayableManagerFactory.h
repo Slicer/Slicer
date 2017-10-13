@@ -27,7 +27,7 @@
 // VTK includes
 #include <vtkSingleton.h>
 
-#include "vtkMRMLDisplayableManagerWin32Header.h"
+#include "vtkMRMLDisplayableManagerExport.h"
 
 class vtkRenderer;
 

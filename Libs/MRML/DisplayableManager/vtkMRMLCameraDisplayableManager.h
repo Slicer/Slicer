@@ -25,7 +25,7 @@
 // MRMLDisplayableManager includes
 #include "vtkMRMLAbstractThreeDViewDisplayableManager.h"
 
-#include "vtkMRMLDisplayableManagerWin32Header.h"
+#include "vtkMRMLDisplayableManagerExport.h"
 
 class vtkMRMLCameraNode;
 

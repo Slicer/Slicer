@@ -15,7 +15,7 @@
 #ifndef __vtkITK_h
 #define __vtkITK_h
 
-#include "vtkITKWin32Header.h"
+#include "vtkITKExport.h"
 #include "vtkITKNumericTraits.h"
 
 #endif

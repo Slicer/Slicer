@@ -17,7 +17,7 @@
 #ifndef __vtkSlicerBaseLogic_h
 #define __vtkSlicerBaseLogic_h
 
-#include "vtkSlicerBaseLogicWin32Header.h"
+#include "vtkSlicerBaseLogicExport.h"
 
 #endif
 

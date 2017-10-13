@@ -5,11 +5,6 @@
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkMRMLCommandLineModuleNode.h,v $
-  Date:      $Date: 2006/03/19 17:12:29 $
-  Version:   $Revision: 1.3 $
-
 =========================================================================auto=*/
 
 #ifndef __vtkMRMLCommandLineModuleNode_h
@@ -18,7 +13,7 @@
 /// MRML includes
 #include <vtkMRMLNode.h>
 
-#include "vtkMRMLCLIWin32Header.h"
+#include "vtkMRMLCLIExport.h"
 
 class ModuleDescription;
 

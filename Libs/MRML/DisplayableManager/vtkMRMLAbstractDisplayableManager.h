@@ -24,7 +24,7 @@
 // MRMLLogic includes
 #include "vtkMRMLAbstractLogic.h"
 
-#include "vtkMRMLDisplayableManagerWin32Header.h"
+#include "vtkMRMLDisplayableManagerExport.h"
 
 class vtkMRMLInteractionNode;
 class vtkMRMLSelectionNode;

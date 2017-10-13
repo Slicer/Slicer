@@ -5,11 +5,6 @@
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkMRMLAbstractLogic.h,v $
-  Date:      $Date: 2010-06-19 12:48:04 -0400 (Sat, 19 Jun 2010) $
-  Version:   $Revision: 13859 $
-
 =========================================================================auto=*/
 
 #ifndef __vtkMRMLAbstractLogic_h
@@ -29,7 +24,7 @@ class vtkMRMLScene;
 class vtkIntArray;
 class vtkFloatArray;
 
-#include "vtkMRMLLogicWin32Header.h"
+#include "vtkMRMLLogicExport.h"
 
 
 //----------------------------------------------------------------------------

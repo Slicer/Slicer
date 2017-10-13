@@ -5,11 +5,6 @@
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   MRML
-  Module:    $RCSfile: itkMRMLIDImageIO.h,v $
-  Date:      $Date: 2006-06-19 09:16:30 -0400 (Mon, 19 Jun 2006) $
-  Version:   $Rev: 607 $
-
 =========================================================================auto=*/
 
 #ifndef itkMRMLIDImageIO_h
@@ -21,7 +16,7 @@
 
 #include <vtkVersion.h>
 
-#include "itkMRMLIDIOWin32Header.h"
+#include "itkMRMLIDIOExport.h"
 
 #include "itkImageIOBase.h"
 

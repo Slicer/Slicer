@@ -25,7 +25,7 @@
 #include "vtkInteractorStyle.h"
 #include "vtkSmartPointer.h"
 
-#include "vtkMRMLDisplayableManagerWin32Header.h"
+#include "vtkMRMLDisplayableManagerExport.h"
 
 class vtkMRMLModelDisplayableManager;
 class vtkCellPicker;

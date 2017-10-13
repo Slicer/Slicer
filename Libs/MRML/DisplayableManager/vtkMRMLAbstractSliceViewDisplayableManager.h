@@ -24,7 +24,7 @@
 // MRMLDisplayableManager includes
 #include "vtkMRMLAbstractDisplayableManager.h"
 
-#include "vtkMRMLDisplayableManagerWin32Header.h"
+#include "vtkMRMLDisplayableManagerExport.h"
 
 class vtkMRMLSliceNode;
 

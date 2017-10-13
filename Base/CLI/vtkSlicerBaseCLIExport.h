@@ -6,13 +6,14 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
 =========================================================================auto=*/
-// .NAME vtkSlicerBaseCLIWin32Header - manage Windows system differences
-// .SECTION Description
-// The vtkSlicerBaseCLIWin32Header captures some system differences between Unix
+
+// vtkSlicerBaseCLIExport
+//
+// The vtkSlicerBaseCLIExport captures some system differences between Unix
 // and Windows operating systems.
 
-#ifndef __vtkSlicerBaseCLIWin32Header_h
-#define __vtkSlicerBaseCLIWin32Header_h
+#ifndef __vtkSlicerBaseCLIExport_h
+#define __vtkSlicerBaseCLIExport_h
 
 #include <vtkSlicerBaseCLIConfigure.h>
 

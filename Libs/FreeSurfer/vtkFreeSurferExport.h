@@ -5,19 +5,15 @@
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   3D MRML
-  Module:    $RCSfile: vtkFreeSurferWin32Header.h,v $
-  Date:      $Date: 2006/01/06 17:56:51 $
-  Version:   $Revision: 1.4 $
-
 =========================================================================auto=*/
-/// .NAME vtkFreeSurferWin32Header - manage Windows system differences
-/// .SECTION Description
-/// The vtkFreeSurferWin32Header captures some system differences between Unix
+
+/// vtkFreeSurferExport
+///
+/// The vtkFreeSurferExport captures some system differences between Unix
 /// and Windows operating systems.
 
-#ifndef __vtkFreeSurferWin32Header_h
-#define __vtkFreeSurferWin32Header_h
+#ifndef __vtkFreeSurferExport_h
+#define __vtkFreeSurferExport_h
 
 #include <FreeSurferConfigure.h>
 

@@ -15,13 +15,13 @@
 
 ==============================================================================*/ 
 
-///  vtkAddonWin32Header - manage Windows system differences
+/// vtkAddonExport
 ///
-/// The vtkAddonWin32Header captures some system differences between Unix
+/// The vtkAddonExport captures some system differences between Unix
 /// and Windows operating systems.
 
-#ifndef __vtkAddonWin32Header_h
-#define __vtkAddonWin32Header_h
+#ifndef __vtkAddonExport_h
+#define __vtkAddonExport_h
 
 #include <vtkAddonConfigure.h>
 

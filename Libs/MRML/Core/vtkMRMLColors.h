@@ -21,7 +21,7 @@
 #ifndef __vtkMRMLColors_h
 #define __vtkMRMLColors_h
 
-#include "vtkMRMLWin32Header.h"
+#include "vtkMRMLExport.h"
 
 class vtkColor3d;
 

@@ -5,19 +5,15 @@
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   3D MRML
-  Module:    $RCSfile: vtkMRMLCLIWin32Header.h,v $
-  Date:      $Date: 2006/01/06 17:56:51 $
-  Version:   $Revision: 1.4 $
-
 =========================================================================auto=*/
-///  vtkMRMLCLIWin32Header - manage Windows system differences
+
+/// vtkMRMLCLIExport
 ///
-/// The vtkMRMLCLIWin32Header captures some system differences between Unix
+/// The vtkMRMLCLIExport captures some system differences between Unix
 /// and Windows operating systems.
 
-#ifndef __vtkMRMLCLIWin32Header_h
-#define __vtkMRMLCLIWin32Header_h
+#ifndef __vtkMRMLCLIExport_h
+#define __vtkMRMLCLIExport_h
 
 #include <vtkMRMLCLIConfigure.h>
 

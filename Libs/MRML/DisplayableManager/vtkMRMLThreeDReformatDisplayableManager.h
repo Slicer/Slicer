@@ -23,7 +23,7 @@
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLAbstractThreeDViewDisplayableManager.h"
-#include "vtkMRMLDisplayableManagerWin32Header.h"
+#include "vtkMRMLDisplayableManagerExport.h"
 
 /// \brief Displayable manager for ImplicitPlaneWidget2 in 3D views.
 ///

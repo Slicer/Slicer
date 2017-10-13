@@ -21,7 +21,7 @@
 #include "vtkMatrix4x4.h"
 
 // MRML includes
-#include "vtkMRMLDisplayableManagerWin32Header.h"
+#include "vtkMRMLDisplayableManagerExport.h"
 
 class vtkMRMLSegmentationDisplayNode;
 class vtkMRMLSliceLogic;

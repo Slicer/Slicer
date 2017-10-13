@@ -23,7 +23,7 @@
 
 // MRMLLogic includes
 #include "vtkMRMLAbstractLogic.h"
-#include "vtkMRMLLogicWin32Header.h"
+#include "vtkMRMLLogicExport.h"
 
 // MRML includes
 class vtkMRMLAbstractViewNode;

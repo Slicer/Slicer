@@ -8,7 +8,7 @@
 #include <vtkCommand.h>
 #include <vtkAlgorithm.h>
 
-#include "vtkSlicerBaseCLIWin32Header.h"
+#include "vtkSlicerBaseCLIExport.h"
 
 // STD includes
 #include <string>

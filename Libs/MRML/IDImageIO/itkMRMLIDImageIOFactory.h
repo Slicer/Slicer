@@ -22,7 +22,7 @@
 
 #include "itkMRMLIDImageIO.h"
 
-#include "itkMRMLIDIOWin32Header.h"
+#include "itkMRMLIDIOExport.h"
 
 namespace itk
 {

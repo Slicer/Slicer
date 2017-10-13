@@ -22,7 +22,7 @@
 #define __vtkMRMLLightBoxRendererManagerProxy_h
 
 // MRMLDisplayableManager include
-#include "vtkMRMLDisplayableManagerWin32Header.h"
+#include "vtkMRMLDisplayableManagerExport.h"
 #include "vtkMRMLAbstractLogic.h"
 
 class vtkRenderer;

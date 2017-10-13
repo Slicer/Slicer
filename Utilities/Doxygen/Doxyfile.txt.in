@@ -769,7 +769,7 @@ EXCLUDE_PATTERNS       = moc_*.cxx \
                          */Plugins/* \
                          */CMake/* \
                          q*Export.h \
-                         vtk*Win32Header.h \
+                         vtk*Export.h \
                          @Slicer_ADDITIONAL_EXCLUDE_PATTERN@
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names

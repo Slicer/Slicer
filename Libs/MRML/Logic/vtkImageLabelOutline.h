@@ -17,7 +17,7 @@
 
 #include "vtkImageNeighborhoodFilter.h"
 
-#include "vtkMRMLLogicWin32Header.h"
+#include "vtkMRMLLogicExport.h"
 
 class vtkImageData;
 

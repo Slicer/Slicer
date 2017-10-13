@@ -23,7 +23,7 @@
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLAbstractSliceViewDisplayableManager.h"
-#include "vtkMRMLDisplayableManagerWin32Header.h"
+#include "vtkMRMLDisplayableManagerExport.h"
 
 /// \brief Displayable manager for slice (2D) views.
 ///

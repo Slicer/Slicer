@@ -6,13 +6,14 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
 =========================================================================auto=*/
-///  vtkSlicerBaseLogicWin32Header - manage Windows system differences
+
+/// vtkSlicerBaseLogicExport
 ///
-/// The vtkSlicerBaseLogicWin32Header captures some system differences between Unix
+/// The vtkSlicerBaseLogicExport captures some system differences between Unix
 /// and Windows operating systems.
 
-#ifndef __vtkSlicerBaseLogicWin32Header_h
-#define __vtkSlicerBaseLogicWin32Header_h
+#ifndef __vtkSlicerBaseLogicExport_h
+#define __vtkSlicerBaseLogicExport_h
 
 #include <vtkSlicerBaseLogicConfigure.h>
 

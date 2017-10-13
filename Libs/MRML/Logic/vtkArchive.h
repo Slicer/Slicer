@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-#include "vtkMRMLLogicWin32Header.h"
+#include "vtkMRMLLogicExport.h"
 
 // TODO: this should really be a vtk class that has configuration options
 // and progress events.

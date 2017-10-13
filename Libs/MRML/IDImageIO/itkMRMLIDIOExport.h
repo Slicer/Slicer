@@ -5,19 +5,15 @@
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   3D MRML
-  Module:    $RCSfile: itkMRMLIDIOWin32Header.h,v $
-  Date:      $Date: 2006/01/06 17:56:51 $
-  Version:   $Revision: 1.4 $
-
 =========================================================================auto=*/
-///  itkMRMLIDIOWin32Header - manage Windows system differences
+
+/// itkMRMLIDIOExport
 ///
-/// The itkMRMLIDIOWin32Header captures some system differences between Unix
+/// The itkMRMLIDIOExport captures some system differences between Unix
 /// and Windows operating systems.
 
-#ifndef itkMRMLIDIOWin32Header_h
-#define itkMRMLIDIOWin32Header_h
+#ifndef itkMRMLIDIOExport_h
+#define itkMRMLIDIOExport_h
 
 #include <itkMRMLIDImageIOConfigure.h>
 

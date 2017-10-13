@@ -23,7 +23,7 @@
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLAbstractSliceViewDisplayableManager.h"
-#include "vtkMRMLDisplayableManagerWin32Header.h"
+#include "vtkMRMLDisplayableManagerExport.h"
 
 class vtkMRMLDisplayableNode;
 class vtkCutter;

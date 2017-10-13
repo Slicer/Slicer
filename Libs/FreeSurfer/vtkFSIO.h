@@ -5,17 +5,12 @@
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkFSIO.h,v $
-  Date:      $Date: 2006/08/08 19:37:40 $
-  Version:   $Revision: 1.10 $
-
 =========================================================================auto=*/
 
 #ifndef __vtkFSIO_h
 #define __vtkFSIO_h
 
-#include "vtkFreeSurferWin32Header.h"
+#include "vtkFreeSurferExport.h"
 
 // VTK includes
 #include <vtk_zlib.h>

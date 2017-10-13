@@ -1,5 +1,5 @@
-#ifndef __vtkRemoteIOWin32Header_h
-#define __vtkRemoteIOWin32Header_h
+#ifndef __vtkRemoteIOExport_h
+#define __vtkRemoteIOExport_h
 
 #include <vtkRemoteIOConfigure.h>
 

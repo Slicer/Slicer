@@ -131,7 +131,7 @@ VTK_MAKE_INSTANTIATOR3("${PROJECT_NAME}Instantiator"
   "${DisplayableManager_SRCS}"
   "VTK_MRML_DISPLAYABLEMANAGER_EXPORT"
   ${PROJECT_BINARY_DIR}
-  "vtk${PROJECT_NAME}Win32Header.h")
+  "vtk${PROJECT_NAME}Export.h")
 
 set(srcs
   ${KIT_SRCS}

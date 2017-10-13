@@ -16,4 +16,4 @@
  * This is needed for loading mrml code as module.
  */
 
-#include "vtkMRMLWin32Header.h"
+#include "vtkMRMLExport.h"

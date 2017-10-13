@@ -5,18 +5,13 @@
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkFSSurfaceReader.h,v $
-  Date:      $Date: 2006/05/26 19:40:14 $
-  Version:   $Revision: 1.9 $
-
 =========================================================================auto=*/
 
 #ifndef __vtkFSSurfaceReader_h
 #define __vtkFSSurfaceReader_h
 
 #include "FreeSurferConfigure.h"
-#include "vtkFreeSurferWin32Header.h"
+#include "vtkFreeSurferExport.h"
 
 // VTK includes
 #include <vtkDataReader.h>

@@ -5,11 +5,6 @@
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkImageNeighborhoodFilter.h,v $
-  Date:      $Date$
-  Version:   $Revision$
-
 =========================================================================auto=*/
 
 #ifndef __vtkImageNeighborhoodFilter_h
@@ -17,7 +12,7 @@
 
 #include <vtkImageSpatialAlgorithm.h>
 
-#include "vtkMRMLLogicWin32Header.h"
+#include "vtkMRMLLogicExport.h"
 
 /// \brief Augments vtkImageSpatialFilter with a mask to allow neighborhoods of any shape.
 ///
