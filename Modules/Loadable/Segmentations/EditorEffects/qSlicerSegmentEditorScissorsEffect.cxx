@@ -518,8 +518,8 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
     double segmentationBounds_SliceXY[6] = { 0, -1, 0, -1, 0, -1 };
     vtkOrientedImageDataResample::TransformOrientedImageDataBounds(modifierLabelmap, segmentationToSliceXYTransform.GetPointer(), segmentationBounds_SliceXY);
     // Extend bounds by half slice to make sure the boundaries are included
-    double sliceCutDepthMm = q->doubleParameter("SliceCutDepthMm");
-    switch (this->ConvertSliceCutModeFromString(q->parameter("SliceCutMode")))
+    int sliceCutMode = this->ConvertSliceCutModeFromString(q->parameter("SliceCutMode"));
+    switch (sliceCutMode)
       {
       case SliceCutModePositive:
         segmentationBounds_SliceXY[4] = 0;
@@ -528,22 +528,41 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
         segmentationBounds_SliceXY[5] = 0;
         break;
       case SliceCutModeSymmetric:
-        segmentationBounds_SliceXY[4] = -sliceCutDepthMm / 2.0;
-        segmentationBounds_SliceXY[5] = sliceCutDepthMm / 2.0;
+        {
+        vtkNew<vtkMatrix4x4> sliceXYToSegmentationToTransform;
+        vtkMatrix4x4::Invert(segmentationToSliceXYTransform->GetMatrix(), sliceXYToSegmentationToTransform.GetPointer());
+        double sliceNormalVector_SliceXY[4] = { 0, 0, 1, 0};
+        double sliceNormalVector_World[4] = { 0, 0, 1, 0 };
+        sliceXYToSegmentationToTransform->MultiplyPoint(sliceNormalVector_SliceXY, sliceNormalVector_World);
+        double sliceThicknessMmPerPixel = vtkMath::Norm(sliceNormalVector_World);
+        double sliceCutDepthMm = q->doubleParameter("SliceCutDepthMm");
+        double halfSliceCutDepthPixel = sliceCutDepthMm / sliceThicknessMmPerPixel / 2.0;
+        if (halfSliceCutDepthPixel < 0.5)
+          {
+          // include at least the current slice
+          halfSliceCutDepthPixel = 0.5;
+          }
+        segmentationBounds_SliceXY[4] = -halfSliceCutDepthPixel;
+        segmentationBounds_SliceXY[5] = halfSliceCutDepthPixel;
+        }
         break;
       default:
         // unlimited
         break;
       }
-    if (segmentationBounds_SliceXY[4] < segmentationBounds_SliceXY[5])
+    if (sliceCutMode != SliceCutModeSymmetric)
       {
-      segmentationBounds_SliceXY[4] -= 0.5;
-      segmentationBounds_SliceXY[5] += 0.5;
-      }
-    else
-      {
-      segmentationBounds_SliceXY[4] += 0.5;
-      segmentationBounds_SliceXY[5] -= 0.5;
+      // Add half slice to make sure the current slice and the last slice are fully included
+      if (segmentationBounds_SliceXY[4] < segmentationBounds_SliceXY[5])
+        {
+        segmentationBounds_SliceXY[4] -= 0.5;
+        segmentationBounds_SliceXY[5] += 0.5;
+        }
+      else
+        {
+        segmentationBounds_SliceXY[4] += 0.5;
+        segmentationBounds_SliceXY[5] -= 0.5;
+        }
       }
     for (int pointIndex = 0; pointIndex < numberOfPoints; pointIndex++)
       {
