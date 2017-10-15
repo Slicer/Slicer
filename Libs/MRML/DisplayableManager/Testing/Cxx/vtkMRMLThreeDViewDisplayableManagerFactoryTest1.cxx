@@ -35,8 +35,6 @@
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 
-// STD includes
-
 //----------------------------------------------------------------------------
 int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {

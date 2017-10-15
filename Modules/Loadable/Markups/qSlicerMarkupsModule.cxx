@@ -36,7 +36,6 @@
 #include "qSlicerSubjectHierarchyMarkupsPlugin.h"
 
 // Markups includes
-#include "MarkupsInstantiator.h"
 #include "qSlicerMarkupsModule.h"
 #include "qSlicerMarkupsModuleWidget.h"
 #include "qSlicerMarkupsReader.h"

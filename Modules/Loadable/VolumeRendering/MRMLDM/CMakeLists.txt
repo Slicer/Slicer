@@ -15,12 +15,12 @@ set(displayable_manager_SRCS
   vtkMRMLVolumeRenderingDisplayableManager.cxx
   )
 
-VTK_MAKE_INSTANTIATOR3("${MODULE_NAME}Instantiator"
-  displayable_manager_instantiator_SRCS
-  "${displayable_manager_SRCS}"
-  "${${KIT}_EXPORT_DIRECTIVE}"
-  ${CMAKE_CURRENT_BINARY_DIR}
-  "${KIT}Export.h"
+SlicerConfigureDisplayableManagerObjectFactory(
+  TARGET_NAME ${KIT}
+  SRCS "${displayable_manager_SRCS}"
+  EXPORT_MACRO "${${KIT}_EXPORT_DIRECTIVE}"
+  EXPORT_HEADER "${KIT}Export.h"
+  OUTPUT_SRCS_VAR displayable_manager_instantiator_SRCS
   )
 
 set(${KIT}_SRCS

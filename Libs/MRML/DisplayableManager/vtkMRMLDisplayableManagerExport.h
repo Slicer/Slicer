@@ -26,4 +26,10 @@
 #define VTK_MRML_DISPLAYABLEMANAGER_EXPORT
 #endif
 
+#if defined(MRMLDisplayableManager_AUTOINIT)
+#include "MRMLDisplayableManagerObjectFactory.h"
+#include "vtkAutoInit.h"
+VTK_AUTOINIT(MRMLDisplayableManager)
+#endif
+
 #endif

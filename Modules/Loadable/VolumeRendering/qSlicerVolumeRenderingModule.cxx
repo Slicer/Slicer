@@ -32,7 +32,6 @@
 #include "qSlicerVolumeRenderingModuleWidget.h"
 #include "qSlicerVolumeRenderingReader.h"
 #include "qSlicerVolumeRenderingSettingsPanel.h"
-#include "VolumeRenderingInstantiator.h"
 
 // SubjectHierarchy Plugins includes
 #include "qSlicerSubjectHierarchyPluginHandler.h"

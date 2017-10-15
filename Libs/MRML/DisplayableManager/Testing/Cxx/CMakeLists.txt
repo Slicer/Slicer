@@ -26,12 +26,12 @@ set(DisplayableManagerTest_SRCS
   )
 
 # Create the instantiator for DisplayableManager classes.
-VTK_MAKE_INSTANTIATOR3("${PROJECT_NAME}TestInstantiator"
-  DisplayableManagerInstantiatorTest_SRCS
-  "${DisplayableManagerTest_SRCS}"
-  ""
-  ${PROJECT_BINARY_DIR}
-  "")
+SlicerConfigureDisplayableManagerObjectFactory(
+  TARGET_NAME ${KIT}CxxTests
+  SRCS "${DisplayableManagerTest_SRCS}"
+  NO_EXPORT
+  OUTPUT_SRCS_VAR DisplayableManagerInstantiatorTest_SRCS
+  )
 
 add_executable(${KIT}CxxTests
   ${Tests}

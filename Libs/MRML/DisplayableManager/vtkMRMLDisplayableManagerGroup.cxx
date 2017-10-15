@@ -33,7 +33,6 @@
 
 // VTK includes
 #include <vtkCallbackCommand.h>
-#include <vtkInstantiator.h>
 #include <vtkObjectFactory.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
@@ -134,7 +133,7 @@ bool vtkMRMLDisplayableManagerGroup
 {
   // Check if displayableManagerName is a valid displayable manager
   vtkSmartPointer<vtkObject> objectSmartPointer;
-  objectSmartPointer.TakeReference(vtkInstantiator::CreateInstance(displayableManagerName));
+  objectSmartPointer.TakeReference(vtkObjectFactory::CreateInstance(displayableManagerName));
   if (objectSmartPointer.GetPointer() &&
       objectSmartPointer->IsA("vtkMRMLAbstractDisplayableManager"))
     {
@@ -171,7 +170,7 @@ vtkMRMLAbstractDisplayableManager* vtkMRMLDisplayableManagerGroup
 #endif
     // Object will be unregistered when the SmartPointer will go out-of-scope
     displayableManager = vtkMRMLAbstractDisplayableManager::SafeDownCast(
-      vtkInstantiator::CreateInstance(displayableManagerName));
+      vtkObjectFactory::CreateInstance(displayableManagerName));
 #ifdef MRMLDisplayableManager_USE_PYTHON
     }
 #endif

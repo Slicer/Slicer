@@ -10,7 +10,6 @@
 #include <qSlicerNodeWriter.h>
 
 // AnnotationModule includes
-#include "AnnotationsInstantiator.h"
 #include "qSlicerAnnotationsModule.h"
 #include "GUI/qSlicerAnnotationModuleWidget.h"
 #include "vtkSlicerAnnotationModuleLogic.h"
