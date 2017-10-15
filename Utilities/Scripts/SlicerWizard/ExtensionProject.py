@@ -156,6 +156,13 @@ class ExtensionProject(object):
       if _isCommand(t, "project") and len(t.arguments):
         return t.arguments[0].text
 
+    # Support older extension that do not call "project(Name)"
+    # in top-level CMakeLists.txt
+    try:
+      return self.getValue("EXTENSION_NAME")
+    except KeyError:
+      pass
+
     raise EOFError("could not find project")
 
   #---------------------------------------------------------------------------
