@@ -1303,3 +1303,37 @@ void qSlicerSegmentEditorAbstractEffect::interactionNodeModified(vtkMRMLInteract
     this->selectEffect("");
     }
 }
+
+//-----------------------------------------------------------------------------
+bool qSlicerSegmentEditorAbstractEffect::segmentationDisplayableInView(vtkMRMLAbstractViewNode* viewNode)
+{
+  Q_D(qSlicerSegmentEditorAbstractEffect);
+  if (!viewNode)
+    {
+    qWarning() << Q_FUNC_INFO << ": failed. Invalid viewNode.";
+    return false;
+    }
+
+  vtkMRMLSegmentEditorNode* parameterSetNode = this->parameterSetNode();
+  if (!parameterSetNode)
+    {
+    return false;
+    }
+
+  vtkMRMLSegmentationNode* segmentationNode = parameterSetNode->GetSegmentationNode();
+  if (!segmentationNode)
+    {
+    return false;
+    }
+  const char* viewNodeID = viewNode->GetID();
+  int numberOfDisplayNodes = segmentationNode->GetNumberOfDisplayNodes();
+  for (int displayNodeIndex = 0; displayNodeIndex < numberOfDisplayNodes; displayNodeIndex++)
+    {
+    vtkMRMLDisplayNode* segmentationDisplayNode = segmentationNode->GetNthDisplayNode(displayNodeIndex);
+    if (segmentationDisplayNode->IsDisplayableInView(viewNodeID))
+      {
+      return true;
+      }
+    }
+  return false;
+}

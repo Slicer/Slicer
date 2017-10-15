@@ -202,6 +202,8 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     # Add a pipeline for each 2D slice view
     for sliceViewName in layoutManager.sliceViewNames():
       sliceWidget = layoutManager.sliceWidget(sliceViewName)
+      if not self.scriptedEffect.segmentationDisplayableInView(sliceWidget.mrmlSliceNode()):
+        continue
       renderer = self.scriptedEffect.renderer(sliceWidget)
       if renderer is None:
         logging.error("setupPreviewDisplay: Failed to get renderer!")

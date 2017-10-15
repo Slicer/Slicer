@@ -78,6 +78,7 @@
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLTransformNode.h>
+#include <vtkMRMLViewNode.h>
 
 // Slicer includes
 #include "qMRMLSliceView.h"
@@ -753,11 +754,14 @@ void qSlicerSegmentEditorPaintEffectPrivate::updateBrushes()
   Q_Q(qSlicerSegmentEditorPaintEffect);
   // unusedWidgetPipelines will contain those widget pointers that are not in the layout anymore
   QList<qMRMLWidget*> unusedWidgetPipelines = this->BrushPipelines.keys();
-
   qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
   foreach(QString sliceViewName, layoutManager->sliceViewNames())
     {
     qMRMLSliceWidget* sliceWidget = layoutManager->sliceWidget(sliceViewName);
+    if (!q->segmentationDisplayableInView(sliceWidget->mrmlSliceNode()))
+      {
+      continue;
+      }
     unusedWidgetPipelines.removeOne(sliceWidget); // not an orphan
 
     BrushPipeline* brushPipeline = this->brushForWidget(sliceWidget);
@@ -767,6 +771,10 @@ void qSlicerSegmentEditorPaintEffectPrivate::updateBrushes()
   for (int threeDViewId = 0; threeDViewId < layoutManager->threeDViewCount(); ++threeDViewId)
     {
     qMRMLThreeDWidget* threeDWidget = layoutManager->threeDWidget(threeDViewId);
+    if (!q->segmentationDisplayableInView(threeDWidget->mrmlViewNode()))
+      {
+      continue;
+      }
     unusedWidgetPipelines.removeOne(threeDWidget); // not an orphan
 
     BrushPipeline* brushPipeline = this->brushForWidget(threeDWidget);

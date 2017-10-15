@@ -67,6 +67,7 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentEditorWidget : pu
   QVTK_OBJECT
   Q_PROPERTY(bool segmentationNodeSelectorVisible READ segmentationNodeSelectorVisible WRITE setSegmentationNodeSelectorVisible)
   Q_PROPERTY(bool masterVolumeNodeSelectorVisible READ masterVolumeNodeSelectorVisible WRITE setMasterVolumeNodeSelectorVisible)
+  Q_PROPERTY(bool autoShowMasterVolumeNode READ autoShowMasterVolumeNode WRITE setAutoShowMasterVolumeNode)
   Q_PROPERTY(bool switchToSegmentationsButtonVisible READ switchToSegmentationsButtonVisible WRITE setSwitchToSegmentationsButtonVisible)
   Q_PROPERTY(bool undoEnabled READ undoEnabled WRITE setUndoEnabled)
   Q_PROPERTY(int maximumNumberOfUndoStates READ maximumNumberOfUndoStates WRITE setMaximumNumberOfUndoStates)
@@ -151,6 +152,10 @@ public:
   bool segmentationNodeSelectorVisible() const;
   /// Show/hide the master volume node selector widget.
   bool masterVolumeNodeSelectorVisible() const;
+  /// If autoShowMasterVolumeNode is enabled then master volume is automatically
+  /// displayed in slice views when a new master volume is selected or layout is changed.
+  /// Enabled by default.
+  bool autoShowMasterVolumeNode() const;
   /// Show/hide the switch to Segmentations module button
   bool switchToSegmentationsButtonVisible() const;
   /// Undo/redo enabled.
@@ -220,6 +225,10 @@ public slots:
   void setSegmentationNodeSelectorVisible(bool);
   /// Show/hide the master volume node selector widget.
   void setMasterVolumeNodeSelectorVisible(bool);
+  /// If autoShowMasterVolumeNode is enabled then master volume is automatically
+  /// displayed in slice views when a new master volume is selected or layout is changed.
+  /// Enabled by default.
+  void setAutoShowMasterVolumeNode(bool);
   /// Show/hide the switch to Segmentations module button
   void setSwitchToSegmentationsButtonVisible(bool);
   /// Undo/redo enabled.
@@ -314,6 +323,8 @@ protected slots:
   void onMasterVolumeImageDataModified();
   /// Handle layout changes
   void onLayoutChanged(int layoutIndex);
+  /// Handle display node view ID changes
+  void onSegmentationDisplayModified();
 
   /// Changed selected editable segment area
   void onMaskModeChanged(int);

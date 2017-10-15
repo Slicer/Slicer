@@ -372,6 +372,8 @@ public:
 
   Q_INVOKABLE static double sliceSpacing(qMRMLSliceWidget* sliceWidget);
 
+  Q_INVOKABLE bool segmentationDisplayableInView(vtkMRMLAbstractViewNode* viewNode);
+
 protected:
   /// Name of the effect
   QString m_Name;
