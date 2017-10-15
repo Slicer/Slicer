@@ -32,6 +32,7 @@
 
 // Markups includes
 #include "qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin.h"
+#include "qSlicerMarkupsPlaceWidgetPlugin.h"
 #include "qSlicerSimpleMarkupsWidgetPlugin.h"
 
 // \class Group the plugins in one library
@@ -50,6 +51,7 @@ public:
     {
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin;
+    plugins << new qSlicerMarkupsPlaceWidgetPlugin;
     plugins << new qSlicerSimpleMarkupsWidgetPlugin;
 
     return plugins;

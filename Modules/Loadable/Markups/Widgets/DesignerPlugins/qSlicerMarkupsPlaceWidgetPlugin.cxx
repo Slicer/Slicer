@@ -43,7 +43,7 @@ QString qSlicerMarkupsPlaceWidgetPlugin
 ::domXml() const
 {
   return "<widget class=\"qSlicerMarkupsPlaceWidget\" \
-          name=\"SimpleMarkupsWidget\">\n"
+          name=\"MarkupsPlaceWidget\">\n"
           "</widget>\n";
 }
 
