@@ -30,9 +30,6 @@
 // SlicerQt includes
 #include "qSlicerWidget.h"
 
-// QVTK includes
-#include <QVTKWidget.h>
-
 // Slicer includes
 #include <vtkMRMLSliceLogic.h>
 
@@ -54,6 +51,8 @@
 #include <vtkVersion.h>
 #ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
 #include <QVTKOpenGLWidget.h>
+#else
+#include <QVTKWidget.h>
 #endif
 
 // STD includes
@@ -179,7 +178,13 @@ int qSlicerWidgetTest2(int argc, char * argv[] )
   widget->setParent(&parentWidget);
   vbox.addWidget(widget);
 
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+  QVTKOpenGLWidget * vtkWidget = new QVTKOpenGLWidget;
+  vtkWidget->setEnableHiDPI(true);
+#else
   QVTKWidget* vtkWidget = new QVTKWidget();
+#endif
+
   vtkWidget->setParent(&parentWidget);
   vbox.addWidget(vtkWidget);
   vtkWidget->GetRenderWindow()->Render();
