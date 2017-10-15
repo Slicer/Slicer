@@ -91,7 +91,6 @@ macro(SlicerMacroBuildModuleLogic)
     set(Slicer_EXPORT_HEADER_CUSTOM_CONTENT "
       // ####### Expanded from \@Slicer_EXPORT_HEADER_CUSTOM_CONTENT\@ #######
       #if defined(${MODULELOGIC_NAME}_AUTOINIT)
-      # include \"${MODULELOGIC_NAME}ObjectFactory.h\"
       # include \"vtkAutoInit.h\"
       VTK_AUTOINIT(${MODULELOGIC_NAME})
       #endif
