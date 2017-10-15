@@ -21,12 +21,12 @@ endif()
 
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  set(_version "2.1.0")
+  set(_version "2.1.7")
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    URL "https://pypi.python.org/packages/d7/16/e914d345d7d4e988f9196b9719a99220bad6a5dbd636162f9b5cc35f3bd6/GitPython-${_version}.tar.gz"
-    URL_MD5 "29b1fcf504d080dc7a5e630957e829d7"
+    URL "https://pypi.python.org/packages/e1/ec/9f2bbc86a0188bf83221212be87fa4b70dc71a9385efcc95a25e9789894e/GitPython-${_version}.tar.gz"
+    URL_MD5 "a63fdd2a650694ea23e268fd0c952034"
     SOURCE_DIR ${proj}
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ""
