@@ -51,8 +51,35 @@ class ExtensionProject(object):
     if not os.path.exists(cmakeFile):
       raise IOError("CMakeLists.txt not found")
 
-    self._scriptPath = cmakeFile
+    self._scriptContents, self._encoding = self._parse(cmakeFile, encoding=encoding)
 
+    try:
+      self.getValue("EXTENSION_NAME")
+    except KeyError:
+      for cmakeFile in self._collect_cmakefiles(path):
+        self._scriptContents, self._encoding = self._parse(cmakeFile, encoding=encoding)
+        try:
+          self.getValue("EXTENSION_NAME")
+          break
+        except KeyError:
+          continue
+
+  @staticmethod
+  def _collect_cmakefiles(path):
+    """Return list of CMakeLists.txt found in `path` at depth=1"""
+    cmakeFiles = []
+    dirnames = []
+    for _, dirnames, _ in os.walk(path):
+      break
+    for dirname in dirnames:
+      cmakeFile = os.path.join(path, dirname, "CMakeLists.txt")
+      if os.path.exists(cmakeFile):
+        cmakeFiles.append(cmakeFile)
+    return cmakeFiles
+
+  #---------------------------------------------------------------------------
+  @staticmethod
+  def _parse(cmakeFile, encoding=None):
     with open(cmakeFile) as fp:
       contents = fp.read()
 
@@ -69,14 +96,14 @@ class ExtensionProject(object):
         # If unable to determine encoding, skip unicode conversion... users
         # must not feed any unicode into the script or things will likely break
         # later (e.g. when trying to save the project)
-        self._scriptContents = CMakeParser.CMakeScript(contents)
+        contents = CMakeParser.CMakeScript(contents)
 
       else:
         # Otherwise, decode the contents into unicode
         contents = contents.decode(encoding)
-        self._scriptContents = CMakeParser.CMakeScript(contents)
+        contents = CMakeParser.CMakeScript(contents)
 
-      self._encoding = encoding
+    return contents, encoding
 
   #---------------------------------------------------------------------------
   def __enter__(self):
