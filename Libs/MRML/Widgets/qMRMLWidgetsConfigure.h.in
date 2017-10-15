@@ -21,7 +21,9 @@
 #ifndef __qMRMLWidgetsConfigure_h
 #define __qMRMLWidgetsConfigure_h
 
+#ifndef HAVE_STDINT_H
 #cmakedefine HAVE_STDINT_H
+#endif
 
 #cmakedefine MRML_WIDGETS_HAVE_QT5
 #cmakedefine MRML_WIDGETS_HAVE_WEBKIT_SUPPORT
