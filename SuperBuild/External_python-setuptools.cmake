@@ -45,7 +45,7 @@ ExternalProject_Execute(${proj} \"easy_install\" \"${PYTHON_EXECUTABLE}\" setup.
     # slicer-v36.6.0
     # - include patch to support parallel build
     GIT_REPOSITORY "${git_protocol}://github.com/Slicer/setuptools.git"
-    GIT_TAG "cf3b29bbbba469aff6f0affe95b2561434bb289e"
+    GIT_TAG "288143264db3f9b867bc479547b44d1167abf160"
     SOURCE_DIR ${proj}
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ""
