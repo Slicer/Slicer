@@ -1897,7 +1897,7 @@ vtkCollection* vtkMRMLLayoutLogic::GetViewsFromAttributes(const ViewAttributes& 
         }
       if (nodes->GetNumberOfItems() > 1)
         {
-        vtkWarningMacro("Couldn't find node with SingletonTag: " << attributeValue );
+        vtkWarningMacro("Found several nodes with a similar SingletonTag: " << attributeValue );
         // Did not find the node, return an empty list to trigger the
         // calling method, CreateMissingViews(), to create the appropriate node.
         nodes->RemoveAllItems();
