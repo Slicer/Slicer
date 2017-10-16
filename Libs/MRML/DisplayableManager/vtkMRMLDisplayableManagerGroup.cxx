@@ -33,6 +33,7 @@
 
 // VTK includes
 #include <vtkCallbackCommand.h>
+#include <vtkDebugLeaks.h>
 #include <vtkObjectFactory.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
@@ -139,6 +140,9 @@ bool vtkMRMLDisplayableManagerGroup
     {
     return true;
     }
+#ifdef VTK_DEBUG_LEAKS
+  vtkDebugLeaks::DestructClass(displayableManagerName);
+#endif
 #ifdef MRMLDisplayableManager_USE_PYTHON
   // Check if vtkClassOrScriptName is a python script
   if (std::string(displayableManagerName).find(".py") != std::string::npos)
