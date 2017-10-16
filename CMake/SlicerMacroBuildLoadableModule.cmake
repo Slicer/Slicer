@@ -18,10 +18,6 @@
 #
 ################################################################################
 
-#
-#
-#
-
 macro(slicerMacroBuildLoadableModule)
   set(options
     NO_INSTALL
@@ -134,7 +130,7 @@ macro(slicerMacroBuildLoadableModule)
   if(NOT EXISTS ${Slicer_LOGOS_RESOURCE})
     message("Warning, Slicer_LOGOS_RESOURCE doesn't exist: ${Slicer_LOGOS_RESOURCE}")
   endif()
-  
+
   if(CTK_QT_VERSION VERSION_LESS "5")
     set(_moc_options)
     if(Slicer_HAVE_WEBKIT_SUPPORT)
@@ -292,7 +288,7 @@ endmacro()
 
 
 #
-# Deprecated macro - Will be removed for 4.4
+# Deprecated macro - Will be removed after 4.8
 #
 macro(slicerMacroBuildQtModule)
   set(options
@@ -320,10 +316,9 @@ macro(slicerMacroBuildQtModule)
     ${ARGN}
     )
 
+  # See http://www.na-mic.org/Bug/view.php?id=3332
   #message(AUTHOR_WARNING
-  #  "Macro 'slicerMacroBuildQtModule' is deprecated, "
-  #  "consider using macro 'slicerMacroBuildLoadableModule'."
-  #  "See http://www.na-mic.org/Bug/view.php?id=2648"
+  #  "Macro 'slicerMacroBuildQtModule' is deprecated: Use 'slicerMacroBuildLoadableModule' instead."
   #  )
 
   set(QTMODULE_ARGS)

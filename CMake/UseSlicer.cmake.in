@@ -221,7 +221,7 @@ if(NOT DEFINED BUILD_SHARED_LIBS)
 endif()
 
 #-----------------------------------------------------------------------------
-# Include directories - See SlicerMacroBuildQtModule
+# Include directories - See SlicerMacroBuildLoadableModule
 #------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -246,7 +246,7 @@ include(SlicerConfigureDisplayableManagerObjectFactory)
 include(SlicerMacroBuildModuleLogic)
 include(SlicerMacroBuildModuleMRML)
 include(SlicerMacroBuildModuleWidgets)
-include(SlicerMacroBuildQtModule)
+include(SlicerMacroBuildLoadableModule)
 include(SlicerMacroBuildScriptedModule)
 include(SlicerFunctionAddPythonQtResources)
 include(SlicerMacroExtractRepositoryInfo)

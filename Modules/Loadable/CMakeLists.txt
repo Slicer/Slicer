@@ -1,5 +1,5 @@
 
-include(${Slicer_CMAKE_DIR}/SlicerMacroBuildQtModule.cmake)
+include(${Slicer_CMAKE_DIR}/SlicerMacroBuildLoadableModule.cmake)
 
 set(qtmodules
   AtlasCreator
