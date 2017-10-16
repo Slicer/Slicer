@@ -19,12 +19,12 @@ endif()
 
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  set(_version "0.30.0a0")
+  set(_version "0.30.0")
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    URL "https://pypi.python.org/packages/a7/37/947b4329c4a3c72093b6c8e9b4be8c7f10c32dbb78848d3a234ce01c059d/wheel-${_version}.tar.gz"
-    URL_MD5 "aa1145d48e4da2f9415eac2d51468a83"
+    URL "https://pypi.python.org/packages/fa/b4/f9886517624a4dcb81a1d766f68034344b7565db69f13d52697222daeb72/wheel-${_version}.tar.gz"
+    URL_MD5 "e48f8f2329f1419572d93b68a63272a9"
     SOURCE_DIR ${proj}
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ""

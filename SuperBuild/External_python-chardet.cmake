@@ -20,12 +20,12 @@ endif()
 
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  set(_version "2.3.0")
+  set(_version "3.0.4")
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    URL "https://pypi.python.org/packages/7d/87/4e3a3f38b2f5c578ce44f8dc2aa053217de9f0b6d737739b0ddac38ed237/chardet-${_version}.tar.gz"
-    URL_MD5 "25274d664ccb5130adae08047416e1a8"
+    URL "https://pypi.python.org/packages/fc/bb/a5768c230f9ddb03acc9ef3f0d4a3cf93462473795d18e9535498c8f929d/chardet-${_version}.tar.gz"
+    URL_MD5 "7dd1ba7f9c77e32351b0a0cfacf4055c"
     SOURCE_DIR ${proj}
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ""
