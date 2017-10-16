@@ -83,8 +83,9 @@ To segment a single object, create a segment and paint inside and create another
     # Allow users revert to this state by clicking Undo
     self.scriptedEffect.saveStateForUndo()
 
-    # Export master image data to volume node.
-    # Note: We do not use the master volume node here, as the master volume may have been resampled to match segmentation geometry.
+    # Export master image data to temporary new volume node.
+    # Note: Although the original master volume node is already in the scene, we do not use it here,
+    # because the master volume may have been resampled to match segmentation geometry.
     import vtkSegmentationCorePython as vtkSegmentationCore
     masterVolumeNode = slicer.vtkMRMLScalarVolumeNode()
     slicer.mrmlScene.AddNode(masterVolumeNode)
