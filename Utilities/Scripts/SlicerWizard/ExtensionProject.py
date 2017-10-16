@@ -52,16 +52,15 @@ class ExtensionProject(object):
       raise IOError("CMakeLists.txt not found")
 
     self._scriptContents, self._encoding = self._parse(cmakeFile, encoding=encoding)
-
     try:
       self._scriptPath = cmakeFile
-      self.getValue("EXTENSION_NAME")
+      self.getValue("EXTENSION_HOMEPAGE")
     except KeyError:
       for cmakeFile in self._collect_cmakefiles(path):
         self._scriptContents, self._encoding = self._parse(cmakeFile, encoding=encoding)
         try:
           self._scriptPath = cmakeFile
-          self.getValue("EXTENSION_NAME")
+          self.getValue("EXTENSION_HOMEPAGE")
           break
         except KeyError:
           continue
