@@ -23,7 +23,7 @@
 #include <QDebug>
 
 // MRMLWidgets includes
-#include "qMRMLLayoutManager_p.h"
+#include <qMRMLLayoutManager_p.h>
 #include <qMRMLSliceWidget.h>
 #include <qMRMLSliceControllerWidget.h>
 #include <qMRMLChartView.h>
