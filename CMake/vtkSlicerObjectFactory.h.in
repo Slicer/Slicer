@@ -25,18 +25,18 @@ public:
   static @vtk-module@ObjectFactory * New();
   vtkTypeMacro(@vtk-module@ObjectFactory, vtkObjectFactory)
 
-  const char * GetDescription() override { return "@vtk-module@ factory overrides."; }
+  const char * GetDescription() VTK_OVERRIDE { return "@vtk-module@ factory overrides."; }
 
-  const char * GetVTKSourceVersion() override;
+  const char * GetVTKSourceVersion() VTK_OVERRIDE;
 
-  void PrintSelf(ostream &os, vtkIndent indent) override;
+  void PrintSelf(ostream &os, vtkIndent indent) VTK_OVERRIDE;
 
 protected:
   @vtk-module@ObjectFactory();
 
 private:
-  @vtk-module@ObjectFactory(const @vtk-module@ObjectFactory&) = delete;
-  void operator=(const @vtk-module@ObjectFactory&) = delete;
+  @vtk-module@ObjectFactory(const @vtk-module@ObjectFactory&) VTK_DELETE_FUNCTION;
+  void operator=(const @vtk-module@ObjectFactory&) VTK_DELETE_FUNCTION;
 };
 
 #endif // __@vtk-module@ObjectFactory_h
