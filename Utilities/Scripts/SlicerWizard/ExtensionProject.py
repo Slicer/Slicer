@@ -54,11 +54,13 @@ class ExtensionProject(object):
     self._scriptContents, self._encoding = self._parse(cmakeFile, encoding=encoding)
 
     try:
+      self._scriptPath = cmakeFile
       self.getValue("EXTENSION_NAME")
     except KeyError:
       for cmakeFile in self._collect_cmakefiles(path):
         self._scriptContents, self._encoding = self._parse(cmakeFile, encoding=encoding)
         try:
+          self._scriptPath = cmakeFile
           self.getValue("EXTENSION_NAME")
           break
         except KeyError:
