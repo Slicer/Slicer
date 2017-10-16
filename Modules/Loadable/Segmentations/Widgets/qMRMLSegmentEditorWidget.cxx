@@ -3081,7 +3081,10 @@ void qMRMLSegmentEditorWidget::updateEffectLayouts()
   if (d->ActiveEffect)
     {
     d->EffectHelpBrowser->setMinimumHeight(d->EffectHelpBrowser->sizeHint().height());
-    d->EffectHelpBrowser->layout()->update();
+    if (d->EffectHelpBrowser->layout())
+      {
+      d->EffectHelpBrowser->layout()->update();
+      }
     d->ActiveEffect->optionsFrame()->setMinimumHeight(d->ActiveEffect->optionsFrame()->sizeHint().height());
     d->ActiveEffect->optionsLayout()->activate();
     }
