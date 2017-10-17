@@ -77,6 +77,9 @@ def logIn(repo=None):
   as necessary via the same. On success, the credentials are also saved to any
   store that the user has configured.
 
+  If `GITHUB_TOKEN` environment variable is set, its value will be used
+  as password when invoking `git-credentials`_.
+
   .. _git-credentials: http://git-scm.com/docs/gitcredentials.html
   """
 
@@ -84,7 +87,10 @@ def logIn(repo=None):
   client = repo.git if repo is not None else git.cmd.Git()
 
   # Request login credentials
-  credRequest = _CredentialToken(protocol="https", host="github.com")
+  github_token = {}
+  if "GITHUB_TOKEN" in os.environ:
+    github_token = {"password": os.environ["GITHUB_TOKEN"]}
+  credRequest = _CredentialToken(protocol="https", host="github.com", **github_token)
   cred = _credentials(client, credRequest)
 
   # Log in
