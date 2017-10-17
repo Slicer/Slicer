@@ -1,5 +1,6 @@
 import os
 import string
+import re
 import vtk, qt, ctk, slicer
 import vtk.util.numpy_support
 import DICOMLib
@@ -40,6 +41,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     self.multiVolumeTags['AcquisitionTime'] = "0008,0032"
     self.multiVolumeTags['SeriesTime'] = "0008,0031"
     self.multiVolumeTags['ContentTime'] = "0008,0033"
+    # Siemens Somatom Cardiac CT 'ScanOptions' tag contains info on cardiac cycle
+    self.multiVolumeTags['CardiacCycle'] = "0018,0022"
     # this one is GE-specific using the private tag
     self.multiVolumeTags['Siemens.B-value'] = "0019,100c"
     self.multiVolumeTags['GE.B-value'] = "0043,1039"
@@ -65,6 +68,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     self.multiVolumeTagsUnits['GE.B-value'] = "sec/mm2"
     self.multiVolumeTagsUnits['Philips.B-value'] = "sec/mm2"
     self.multiVolumeTagsUnits['Standard.B-value'] = "sec/mm2"
+    self.multiVolumeTagsUnits['CardiacCycle'] = "%"
     self.epsilon = epsilon
 
   @staticmethod
@@ -157,7 +161,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     logging.debug('MultiVolumeImportPlugin:examineMultiseries')
     loadables = []
 
-    mvNodes = self.initMultiVolumes(files,prescribedTags=['SeriesTime','AcquisitionTime','FlipAngle'])
+    mvNodes = self.initMultiVolumes(files,prescribedTags=['SeriesTime','AcquisitionTime','FlipAngle','CardiacCycle'])
 
     logging.debug('DICOMMultiVolumePlugin found '+str(len(mvNodes))+' multivolumes!')
 
@@ -190,7 +194,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
   def emptyTagValueFound(self,files,tags):
     for f in files:
       for tag in tags:
-        value = slicer.dicomDatabase.fileValue(f,tag)
+        value = slicer.dicomDatabase.fileValue(f,self.tags[tag])
         if value == None or value == "":
           return True
     return False
@@ -779,6 +783,17 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
             # (0043,1039) IS [1000001250\8\0\0] #  16, 4 Unknown Tag & Data
             # GE Discovery w750
             tagValue = float(int(tagValueStr.split('\\')[0]) % 100000)
+          except:
+            continue
+        elif frameTag == "CardiacCycle":
+          try:
+            # Parse this:
+            #  TP0PC0965, PULSTART_P0020PC, PULSEND_P0080PC...
+            #  TP10PC0965, PULSTART_P0020PC, PULSEND_P0080PC...
+            #  TP30PC0965, PULSTART_P0020PC, PULSEND_P0080PC...
+            cardiacPhaseInfo = tagValueStr.split('\\')[0] # TP0PC0965
+            matched = re.search("TP(\d+)PC(\d+)", cardiacPhaseInfo)
+            tagValue = float(matched.groups()[0])
           except:
             continue
         else:
