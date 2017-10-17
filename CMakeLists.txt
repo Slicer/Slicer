@@ -636,6 +636,7 @@ if(Slicer_REQUIRED_QT_VERSION VERSION_LESS "5")
 else()
   set(Slicer_REQUIRED_QT_MODULES
     Core Widgets
+    Multimedia
     Network OpenGL
     PrintSupport # Required by "Annotations" module
     UiTools #no dll
