@@ -42,9 +42,10 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   # * Slicer patches for CMP0042
   # * MINC patch to support building using redhat devtoolset 2
   # * fix DCMTK imageIO orientation bug
+  # * Support color images (RGB/RGBA) with DCMTK. See #4454
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    "c390a4e7d571802c6e7f554a9e928c3d2de4fd07" # slicer-v4.12.0-2017-05-09-2d63918
+    "9ab5fb62184e1e41982c1eef6932983c6e62940a" # slicer-v4.12.0-2017-05-09-2d63918
     QUIET
     )
 
