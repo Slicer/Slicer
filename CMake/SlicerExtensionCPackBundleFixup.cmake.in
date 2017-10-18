@@ -278,6 +278,8 @@ function(fixup_slicer_extension)
   set(exepath "${ext_dir}/Contents/MacOS")
 
   set(candidates_pattern
+    "${ext_dir}/Contents/@Slicer_BUNDLE_EXTENSIONS_LOCATION@@Slicer_THIRDPARTY_BIN_DIR@/[^/]+"
+    "${ext_dir}/Contents/@Slicer_BUNDLE_EXTENSIONS_LOCATION@@Slicer_THIRDPARTY_LIB_DIR@/[^/]+"
     )
 
   set(Slicer_USE_PYTHONQT "@Slicer_USE_PYTHONQT@")
