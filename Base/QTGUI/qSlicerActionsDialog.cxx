@@ -29,6 +29,7 @@
 
 // SlicerQt includes
 #include "qSlicerActionsDialog.h"
+#include "qSlicerCoreApplication.h"
 #include "ui_qSlicerActionsDialog.h"
 #include "vtkSlicerVersionConfigure.h"
 
@@ -70,9 +71,14 @@ void qSlicerActionsDialogPrivate::init()
 #endif
   this->WebView->setObjectName("WebView");
   this->gridLayout->addWidget(this->WebView, 0, 0);
+  QString wikiVersion = "Nightly";
+  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
+  if (app && app->releaseType() == "Stable")
+    {
+    wikiVersion = QString("%1.%2").arg(app->majorVersion()).arg(app->minorVersion());
+    }
   QString shortcutsUrl =
-    QString("http://wiki.slicer.org/slicerWiki/index.php/Documentation/%1.%2/")
-    .arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
+    QString("http://wiki.slicer.org/slicerWiki/index.php/Documentation/%1/").arg(wikiVersion);
   shortcutsUrl += "SlicerApplication/MouseandKeyboardShortcuts";
   this->WebView->setUrl( shortcutsUrl );
 }
