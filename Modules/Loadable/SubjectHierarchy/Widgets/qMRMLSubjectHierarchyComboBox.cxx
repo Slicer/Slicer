@@ -98,8 +98,6 @@ void qMRMLSubjectHierarchyComboBoxPrivate::init()
                    q, SLOT(updateComboBoxTitleAndIcon(vtkIdType)));
   QObject::connect(this->TreeView, SIGNAL(currentItemChanged(vtkIdType)),
                    q, SIGNAL(currentItemChanged(vtkIdType)));
-  QObject::connect(this->TreeView, SIGNAL(currentItemChanged(vtkIdType)),
-                   container, SLOT(hide()));
 }
 
 // --------------------------------------------------------------------------
@@ -378,6 +376,10 @@ void qMRMLSubjectHierarchyComboBox::updateComboBoxTitleAndIcon(vtkIdType selecte
     this->setDefaultIcon(QIcon());
     return;
     }
+
+  // Hide popup
+  QFrame* container = qobject_cast<QFrame*>(this->view()->parentWidget());
+  container->hide();
 
   // Assemble title for selected item
   QString titleText(shNode->GetItemName(selectedShItemID).c_str());
