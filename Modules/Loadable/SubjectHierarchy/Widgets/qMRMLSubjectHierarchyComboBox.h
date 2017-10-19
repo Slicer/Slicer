@@ -52,6 +52,10 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyCombo
   Q_PROPERTY(bool highlightReferencedItems READ highlightReferencedItems WRITE setHighlightReferencedItems)
   /// Property determining the maximum number of items (rows) shown in the popup tree
   Q_PROPERTY(int maximumNumberOfShownItems READ maximumNumberOfShownItems WRITE setMaximumNumberOfShownItems)
+  /// Property determining the vertical alignement of the popup tree with the combobox.
+  /// If aligned, the popup will shift vertically so that the selected item overlays above the combobox.
+  /// Else, the popup tree appears below the combobox, like for a qMRMLNodeComboBox.
+  Q_PROPERTY(bool alignPopupVertically READ alignPopupVertically WRITE setAlignPopupVertically)
 
 public:
   typedef ctkComboBox Superclass;
@@ -73,6 +77,9 @@ public:
 
   int maximumNumberOfShownItems()const;
   void setMaximumNumberOfShownItems(int maxNumberOfShownItems);
+
+  bool alignPopupVertically()const;
+  void setAlignPopupVertically(bool align);
 
   /// Set attribute filter that allows showing only items that have the specified attribute and their parents.
   /// \param attributeName Name of the attribute by which the items are filtered
