@@ -261,7 +261,8 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsRow(int sourceRow, 
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType itemID)const
+bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType itemID,
+                                                                  bool canAcceptIfAnyChildIsAccepted/*=true*/)const
 {
   Q_D(const qMRMLSortFilterSubjectHierarchyProxyModel);
 
@@ -319,8 +320,15 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType item
     std::string levelFilterStr(d->LevelFilter.toLatin1().constData());
     if (!shNode->IsItemLevel(itemID, levelFilterStr))
       {
-      // If level was requested but different, then only show if any of its children are shown
-      onlyAcceptIfAnyChildIsAccepted = true;
+      if (canAcceptIfAnyChildIsAccepted)
+        {
+        // If level was requested but different, then only show if any of its children are shown
+        onlyAcceptIfAnyChildIsAccepted = true;
+        }
+      else
+        {
+        return false;
+        }
       }
     }
 
@@ -330,8 +338,15 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType item
     std::string attributeNameFilterStr(d->AttributeNameFilter.toLatin1().constData());
     if (!shNode->HasItemAttribute(itemID, attributeNameFilterStr))
       {
-      // If attribute was requested but missing, then only show if any of its children are shown
-      onlyAcceptIfAnyChildIsAccepted = true;
+      if (canAcceptIfAnyChildIsAccepted)
+        {
+        // If attribute was requested but missing, then only show if any of its children are shown
+        onlyAcceptIfAnyChildIsAccepted = true;
+        }
+      else
+        {
+        return false;
+        }
       }
     else if (!d->AttributeValueFilter.isEmpty())
       {
@@ -339,8 +354,15 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType item
       std::string attributeValue = shNode->GetItemAttribute(itemID, attributeNameFilterStr);
       if (attributeValue.compare(attributeValueFilterStr))
         {
-        // If attribute value check was requested but failed, then only show if any of its children are shown
-        onlyAcceptIfAnyChildIsAccepted = true;
+        if (canAcceptIfAnyChildIsAccepted)
+          {
+          // If attribute value check was requested but failed, then only show if any of its children are shown
+          onlyAcceptIfAnyChildIsAccepted = true;
+          }
+        else
+          {
+          return false;
+          }
         }
       }
     }
@@ -351,7 +373,15 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType item
     QString itemName(shNode->GetItemName(itemID).c_str());
     if (!itemName.contains(d->NameFilter, Qt::CaseInsensitive))
       {
-      onlyAcceptIfAnyChildIsAccepted = true;
+      if (canAcceptIfAnyChildIsAccepted)
+        {
+        // If item name was requested but different, then only show if any of its children are shown
+        onlyAcceptIfAnyChildIsAccepted = true;
+        }
+      else
+        {
+        return false;
+        }
       }
     }
 
@@ -377,4 +407,26 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType item
 
   // All criteria were met
   return true;
+}
+
+//------------------------------------------------------------------------------
+Qt::ItemFlags qMRMLSortFilterSubjectHierarchyProxyModel::flags(const QModelIndex & index)const 
+{
+  vtkIdType itemID = this->subjectHierarchyItemFromIndex(index);
+  bool isSelectable = this->filterAcceptsItem(itemID, false);
+  qMRMLSubjectHierarchyModel* sceneModel = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
+  QStandardItem* item = sceneModel->itemFromSubjectHierarchyItem(itemID);
+  if (!item)
+    {
+    return Qt::ItemFlags();
+    }
+
+  if (isSelectable)
+    {
+    return item->flags() | Qt::ItemIsSelectable;
+    }
+  else
+    {
+    return item->flags() & ~Qt::ItemIsSelectable;
+    }
 }
