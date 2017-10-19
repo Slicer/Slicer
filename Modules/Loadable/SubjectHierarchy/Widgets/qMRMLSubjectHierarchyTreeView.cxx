@@ -415,7 +415,7 @@ void qMRMLSubjectHierarchyTreeView::setCurrentItems(QList<vtkIdType> items)
     return;
     }
 
-  this->selectionModel()->clearSelection();
+  this->clearSelection();
 
   foreach (long itemID, items)
     {
@@ -443,7 +443,7 @@ void qMRMLSubjectHierarchyTreeView::setCurrentItems(vtkIdList* items)
     return;
     }
 
-  this->selectionModel()->clearSelection();
+  this->clearSelection();
 
   for (int index=0; index<items->GetNumberOfIds(); ++index)
     {
