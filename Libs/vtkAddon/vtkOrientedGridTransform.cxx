@@ -24,6 +24,8 @@ vtkOrientedGridTransform::vtkOrientedGridTransform()
   this->GridDirectionMatrix = NULL;
   this->GridIndexToOutputTransformMatrixCached = vtkMatrix4x4::New();
   this->OutputToGridIndexTransformMatrixCached = vtkMatrix4x4::New();
+
+  this->LastWarningMTime = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -322,10 +324,16 @@ void vtkOrientedGridTransform::InverseTransformDerivative(const double inPoint[3
     inverse[1] = lastInverse[1];
     inverse[2] = lastInverse[2];
 
-    vtkWarningMacro("InverseTransformPoint: no convergence (" <<
-                    inPoint[0] << ", " << inPoint[1] << ", " << inPoint[2] <<
-                    ") error = " << sqrt(errorSquared) << " after " <<
-                    i << " iterations.");
+    if (this->MTime > this->LastWarningMTime)
+      {
+      vtkWarningMacro("InverseTransformPoint: no convergence (" <<
+                      inPoint[0] << ", " << inPoint[1] << ", " << inPoint[2] <<
+                      ") error = " << sqrt(errorSquared) << " after " <<
+                      i << " iterations."
+                      "  Further convergence warnings suppressed until transform is modified.");
+      this->LastWarningMTime = this->MTime;
+      }
+    this->InvokeEvent(vtkOrientedGridTransform::ConvergenceFailureEvent);
     }
 
   // convert point

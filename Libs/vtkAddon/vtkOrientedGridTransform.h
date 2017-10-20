@@ -18,6 +18,7 @@
 
 #include "vtkAddon.h"
 
+#include "vtkCommand.h"
 #include "vtkGridTransform.h"
 
 class VTK_ADDON_EXPORT vtkOrientedGridTransform : public vtkGridTransform
@@ -38,6 +39,14 @@ public:
   // Description:
   // Make another transform of the same type.
   vtkAbstractTransform *MakeTransform() VTK_OVERRIDE;
+
+  /// List of custom events fired by the class.
+  // ConvergenceFailureEvent is invoked when the gradient cannot be
+  // inverted, probably due to a singular transform or numeric instability.
+  enum Events
+    {
+    ConvergenceFailureEvent = vtkCommand::UserEvent + 1
+    };
 
 protected:
   vtkOrientedGridTransform();
@@ -77,6 +86,11 @@ protected:
   // grid index (IJK) coordinate system.
   vtkMatrix4x4* GridIndexToOutputTransformMatrixCached;
   vtkMatrix4x4* OutputToGridIndexTransformMatrixCached;
+
+  // Description:
+  // Avoid generating hundreds of warning messages for convergence problems
+  // by keeping track of the MTime when the last warning was issued.
+  vtkMTimeType LastWarningMTime;
 
 private:
   vtkOrientedGridTransform(const vtkOrientedGridTransform&);  // Not implemented.
