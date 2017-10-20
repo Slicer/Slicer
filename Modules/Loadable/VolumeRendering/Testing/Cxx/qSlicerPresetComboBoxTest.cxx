@@ -34,7 +34,7 @@
 
 // CTK includes
 #include "ctkTest.h"
-#include <ctkVTKScalarsToColorsUtils.h>
+#include <ctkVTKWidgetsUtils.h>
 #include <ctkWidgetsUtils.h>
 
 // MRML includes
