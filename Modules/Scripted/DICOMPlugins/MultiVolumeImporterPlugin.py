@@ -87,7 +87,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     importFormatsComboBox.currentIndex = 0
     formLayout.addRow("Preferred multi-volume import format:", importFormatsComboBox)
     panel.registerProperty(
-      "DICOM/PreferredMultiVolumeImportFormat", importFormatsComboBox, "currentUserDataAsString", qt.SIGNAL("currentIndexChanged (int)"))
+      "DICOM/PreferredMultiVolumeImportFormat", importFormatsComboBox,
+      "currentUserDataAsString", str(qt.SIGNAL("currentIndexChanged(int)")))
 
   def examine(self,fileLists):
     """ Returns a list of DICOMLoadable instances
