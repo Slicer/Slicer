@@ -264,6 +264,14 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.fileNamePatternWidget.text = "image_%05d.png"
     advancedFormLayout.addRow("Image file name pattern:", self.fileNamePatternWidget)
 
+
+    self.maxFramesWidget = qt.QSpinBox()
+    self.maxFramesWidget.setRange(1, 9999)
+    self.maxFramesWidget.setValue(600)
+    self.maxFramesWidget.setToolTip(
+      "Maximum number of frames to be captured. Default: 600, maximum: 9999.")
+    advancedFormLayout.addRow("Maximum # of frames:", self.maxFramesWidget)
+
     # Capture button
     self.captureButtonLabelCapture = "Capture"
     self.captureButtonLabelCancel = "Cancel"
@@ -304,9 +312,13 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.videoExportCheckBox.connect('toggled(bool)', self.videoFormatWidget, 'setEnabled(bool)')
     self.videoFormatWidget.connect("currentIndexChanged(int)", self.updateVideoFormat)
     self.singleStepButton.connect('toggled(bool)', self.numberOfStepsSliderWidget, 'setDisabled(bool)')
+    self.maxFramesWidget.connect('valueChanged(int)', self.maxFramesChanged)
 
     self.updateVideoFormat(0)
     self.updateViewOptions()
+
+  def maxFramesChanged(self):
+    self.numberOfStepsSliderWidget.maximum = self.maxFramesWidget.value
 
   def openURL(self, URL):
     qt.QDesktopServices().openUrl(qt.QUrl(URL))
