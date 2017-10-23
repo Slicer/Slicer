@@ -37,6 +37,7 @@
 #
 # Optionally, these variable can also be set:
 #  Slicer_FORCED_WC_REVISION (default "")
+#  Slicer_FORCED_WC_LAST_CHANGED_DATE (default ""): Format YYYY-MM-DD
 #
 
 # --------------------------------------------------------------------------
@@ -75,10 +76,14 @@ if(NOT SLICER_CONFIGURE_VERSION_HEADER)
   if(NOT DEFINED Slicer_FORCED_WC_REVISION)
     set(Slicer_FORCED_WC_REVISION "")
   endif()
+  if(NOT DEFINED Slicer_FORCED_WC_LAST_CHANGED_DATE)
+    set(Slicer_FORCED_WC_LAST_CHANGED_DATE "")
+  endif()
   add_custom_target(SlicerConfigureVersionHeader ALL
     COMMAND ${CMAKE_COMMAND}
       ${script_args}
       -DSlicer_FORCED_WC_REVISION:STRING=${Slicer_FORCED_WC_REVISION}
+      -DSlicer_FORCED_WC_LAST_CHANGED_DATE:STRING=${Slicer_FORCED_WC_LAST_CHANGED_DATE}
       -DSLICER_CONFIGURE_VERSION_HEADER=1
       -P ${CMAKE_CURRENT_LIST_FILE}
     COMMENT "Configuring vtkSlicerVersionConfigure.h"
