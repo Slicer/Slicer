@@ -303,9 +303,7 @@ void qMRMLSubjectHierarchyComboBox::showPopup()
   // Custom size
   int displayedItemCount = d->TreeView->displayedItemCount();
   const int numberOfRows = qMin(displayedItemCount, d->MaximumNumberOfShownItems);
-  QSize itemSize = QSize(
-    d->TreeView->sizeHintForColumn(d->TreeView->model()->nameColumn()), d->TreeView->sizeHintForRow(0) );
-  listRect.setHeight( numberOfRows * itemSize.height() );
+  int popupHeight = numberOfRows * d->TreeView->sizeHintForRow(0);
 
   // Add margins for the height
   // NB: not needed for the width as the item labels will be cropped
@@ -314,8 +312,9 @@ void qMRMLSubjectHierarchyComboBox::showPopup()
   container->getContentsMargins(&marginLeft, &marginTop, &marginRight, &marginBottom);
   int tvMarginLeft, tvMarginTop, tvMarginRight, tvMarginBottom;
   d->TreeView->getContentsMargins(&tvMarginLeft, &tvMarginTop, &tvMarginRight, &tvMarginBottom);
-  listRect.setHeight( listRect.height() + marginTop + marginBottom + tvMarginTop + tvMarginBottom);
+  popupHeight += marginTop + marginBottom + tvMarginTop + tvMarginBottom;
 
+  // Position of the container
   if(d->AlignPopupVertically)
     {
     // Position horizontally
@@ -343,10 +342,13 @@ void qMRMLSubjectHierarchyComboBox::showPopup()
     }
   else
     {
+    // Position below the combobox
     listRect.moveTo(below);
     }
 
-  container->setGeometry(listRect);
+  container->move(listRect.topLeft());
+  container->setFixedHeight(popupHeight);
+  container->setFixedWidth(this->width());
   container->raise();
   container->show();
 
