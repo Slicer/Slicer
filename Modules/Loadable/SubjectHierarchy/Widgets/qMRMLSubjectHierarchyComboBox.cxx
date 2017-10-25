@@ -307,12 +307,13 @@ void qMRMLSubjectHierarchyComboBox::showPopup()
     d->TreeView->sizeHintForColumn(d->TreeView->model()->nameColumn()), d->TreeView->sizeHintForRow(0) );
   listRect.setHeight( numberOfRows * itemSize.height() );
 
+  // Add margins for the height
+  // NB: not needed for the width as the item labels will be cropped
+  // without displaying an horizontal scroll bar
   int marginLeft, marginTop, marginRight, marginBottom;
   container->getContentsMargins(&marginLeft, &marginTop, &marginRight, &marginBottom);
   int tvMarginLeft, tvMarginTop, tvMarginRight, tvMarginBottom;
   d->TreeView->getContentsMargins(&tvMarginLeft, &tvMarginTop, &tvMarginRight, &tvMarginBottom);
-  listRect.setWidth( listRect.width() + marginLeft + marginRight + tvMarginLeft + tvMarginRight);
-  listRect.setWidth( listRect.width() + container->frameWidth());
   listRect.setHeight( listRect.height() + marginTop + marginBottom + tvMarginTop + tvMarginBottom);
 
   if(d->AlignPopupVertically)
