@@ -79,6 +79,7 @@ void qMRMLSubjectHierarchyComboBoxPrivate::init()
 
   q->setDefaultText("Select subject hierarchy item");
   q->setDefaultIcon(QIcon());
+  q->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed));
 
   // Setup tree view
   this->TreeView = new qMRMLSubjectHierarchyTreeView(q);
