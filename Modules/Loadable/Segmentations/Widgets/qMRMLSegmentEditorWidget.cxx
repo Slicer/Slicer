@@ -1380,8 +1380,7 @@ void qMRMLSegmentEditorWidget::onMasterVolumeImageDataModified()
     {
     double range[2] = { 0.0, 0.0 };
     d->MasterVolumeNode->GetImageData()->GetScalarRange(range);
-    d->MasterVolumeIntensityMaskRangeWidget->setMinimum(range[0]);
-    d->MasterVolumeIntensityMaskRangeWidget->setMaximum(range[1]);
+    d->MasterVolumeIntensityMaskRangeWidget->setRange(range[0], range[1]);
     d->MasterVolumeIntensityMaskRangeWidget->setEnabled(true);
     }
   else
