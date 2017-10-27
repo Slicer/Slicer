@@ -1,6 +1,4 @@
 # Install a pre-commit hook to bootstrap commit hooks.
-MESSAGE(STATUS "Execute c:/D/S4/CMake/SlicerCheckSourceTree.cmake with target directory: ${Slicer_SOURCE_DIR}/.git/hooks/pre-commit")
-
 if (EXISTS "${Slicer_SOURCE_DIR}/.git/config" AND
     NOT EXISTS "${Slicer_SOURCE_DIR}/.git/hooks/pre-commit")
   # Silently ignore the error if the hooks directory is read-only.
