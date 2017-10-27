@@ -6,6 +6,9 @@
 # check if a file with the suffix ".applied" exists in build directory
 # specified using <BINARY_DIR>.
 #
+# If DOWNLOAD_STAMP is modified after the patch has been applied, this means that
+# the source have been re-downloaded and that the patch must be re-applied.
+#
 # Usage:
 #
 #   cmake \
@@ -13,6 +16,7 @@
 #     -DPatch_EXECUTABLE:PATH=/path/to/patch \
 #     -DSOURCE_DIR:PATH=/path/to/src \
 #     -DBINARY_DIR:PATH=/path/to/build \
+#     -DDOWNLOAD_STAMP:PATH=/path/to/download-stamp \
 #     SlicerPatch.cmake
 #
 
@@ -33,9 +37,19 @@ get_filename_component(patch_filename ${PATCH} NAME)
 
 set(msg "Applying '${patch_filename}'")
 set(applied ${BINARY_DIR}/${patch_filename}.applied)
+
+set(reapply 0)
+if(EXISTS "${DOWNLOAD_STAMP}" AND "${DOWNLOAD_STAMP}" IS_NEWER_THAN "${applied}")
+  set(reapply 1)
+endif()
+
 if(EXISTS ${applied})
-  message(STATUS "${msg} - skipping (already applied)")
-  return()
+  if(NOT reapply)
+    message(STATUS "${msg} - skipping (already applied)")
+    return()
+  else()
+     file(REMOVE ${applied})
+  endif()
 endif()
 execute_process(
   COMMAND ${Patch_EXECUTABLE} --quiet -p1 -i ${PATCH}
