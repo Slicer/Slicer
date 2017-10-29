@@ -66,6 +66,9 @@ This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colon
 
 class ScriptedLoadableModuleWidget:
   def __init__(self, parent = None):
+    """If parent widget is not specified: a top-level widget is created automatically;
+    the application has to delete this widget (by calling widget.parent.deleteLater() to avoid memory leaks.
+    """
     # Get module name by stripping 'Widget' from the class name
     self.moduleName = self.__class__.__name__
     if self.moduleName.endswith('Widget'):
