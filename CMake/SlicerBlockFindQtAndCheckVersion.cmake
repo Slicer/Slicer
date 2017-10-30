@@ -117,7 +117,7 @@ set(_project_name ${Slicer_MAIN_PROJECT_APPLICATION_NAME})
 if(NOT Slicer_SOURCE_DIR)
   set(_project_name ${PROJECT_NAME})
 endif()
-message(STATUS "Configuring ${_project_name} with Qt ${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH} (using modules: ${command_separated_module_list})")
+message(STATUS "Configuring ${_project_name} with Qt ${_major}.${_minor}.${_patch} (using modules: ${command_separated_module_list})")
 
 # Since Qt5 does not set CMake variables for plugins and binary directories,
 # we explicitly set them here.
