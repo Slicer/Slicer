@@ -76,9 +76,9 @@ function(ExternalProject_GenerateProjectDescription_Step projectname)
 file(WRITE \"${CMAKE_BINARY_DIR}/${description_file}\" \"${name} \${output}\")
 ")
 
-  set(source_dir ${CMAKE_BINARY_DIR}/${projectname})
+  ExternalProject_Get_property(${projectname} SOURCE_DIR)
   if(_epgpd_SOURCE_DIR)
-    set(source_dir ${_epgpd_SOURCE_DIR})
+    set(SOURCE_DIR ${_epgpd_SOURCE_DIR})
   endif()
   
   ExternalProject_Add_Step(${projectname} generate_project_description
@@ -86,7 +86,7 @@ file(WRITE \"${CMAKE_BINARY_DIR}/${description_file}\" \"${name} \${output}\")
     COMMENT "Generate ${description_file}"
     DEPENDEES download
     BYPRODUCTS ${CMAKE_BINARY_DIR}/${description_file}
-    WORKING_DIRECTORY ${source_dir}
+    WORKING_DIRECTORY ${SOURCE_DIR}
     )
 
 endfunction()
