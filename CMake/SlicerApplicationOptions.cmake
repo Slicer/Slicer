@@ -77,3 +77,11 @@ endif()
 mark_as_advanced(Slicer_DISCLAIMER_AT_STARTUP)
 mark_as_superbuild(Slicer_DISCLAIMER_AT_STARTUP)
 message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} text of disclaimer at startup [${Slicer_DISCLAIMER_AT_STARTUP}]")
+
+#-----------------------------------------------------------------------------
+# Applications directory
+#-----------------------------------------------------------------------------
+if(NOT DEFINED Slicer_APPLICATIONS_DIR)
+  set(Slicer_APPLICATIONS_DIR "Applications")
+endif()
+mark_as_superbuild(Slicer_APPLICATIONS_DIR:PATH)
