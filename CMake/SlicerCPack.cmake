@@ -194,7 +194,7 @@ endmacro()
 # -------------------------------------------------------------------------
 set(CPACK_MONOLITHIC_INSTALL ON)
 
-set(Slicer_CPACK_PACKAGE_NAME ${SlicerApp_APPLICATION_NAME})
+get_property(${project}_CPACK_PACKAGE_NAME GLOBAL PROPERTY ${project}_APPLICATION_NAME)
 slicer_cpack_set("CPACK_PACKAGE_NAME")
 
 set(Slicer_CPACK_PACKAGE_VENDOR ${Slicer_ORGANIZATION_NAME})
