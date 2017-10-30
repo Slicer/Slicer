@@ -228,7 +228,7 @@ ExternalProject_Execute(${proj} \"install\" make install)
     )
 
   # paths
-  set(${proj}_PATHS_LAUNCHER_BUILD ${tcl_build}/bin)
+  set(${proj}_PATHS_LAUNCHER_BUILD ${Slicer_TCL_DIR}/bin)
   mark_as_superbuild(
     VARS ${proj}_PATHS_LAUNCHER_BUILD
     LABELS "PATHS_LAUNCHER_BUILD"
@@ -247,8 +247,8 @@ ExternalProject_Execute(${proj} \"install\" make install)
 
   # environment variables
   set(${proj}_ENVVARS_LAUNCHER_BUILD
-    "TCL_LIBRARY=${tcl_build}/lib/tcl${TCL_TK_VERSION_DOT}"
-    "TK_LIBRARY=${tcl_build}/lib/tk${TCL_TK_VERSION_DOT}"
+    "TCL_LIBRARY=${Slicer_TCL_DIR}/lib/tcl${TCL_TK_VERSION_DOT}"
+    "TK_LIBRARY=${Slicer_TCL_DIR}/lib/tk${TCL_TK_VERSION_DOT}"
     )
   mark_as_superbuild(
     VARS ${proj}_ENVVARS_LAUNCHER_BUILD
