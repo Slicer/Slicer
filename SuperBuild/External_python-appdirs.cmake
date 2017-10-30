@@ -25,7 +25,8 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     ${${proj}_EP_ARGS}
     URL "https://pypi.python.org/packages/48/69/d87c60746b393309ca30761f8e2b49473d43450b150cb08f3c6df5c11be5/appdirs-${_version}.tar.gz"
     URL_MD5 "44c679904082a2133f5566c8a0d3ab42"
-    SOURCE_DIR ${proj}
+    DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
+    SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""

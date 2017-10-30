@@ -15,10 +15,6 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   set(INCR_TCL_VERSION_DOT "4.0")
   set(INCR_TCL_VERSION "40")
-  set(incrTcl_DOWNLOAD_COMMAND
-    URL "http://slicer.kitware.com/midas3/download/item/155632/itcl4.0.1.tar.gz"
-    URL_MD5 "8d71d4247b19ad5d6bcbb776590ced55"
-    )
 
   if(UNIX)
 
@@ -56,9 +52,11 @@ ExternalProject_Execute(${proj} \"install\" make install)
 
     ExternalProject_Add(${proj}
       ${${proj}_EP_ARGS}
-      ${incrTcl_DOWNLOAD_COMMAND}
+      URL "http://slicer.kitware.com/midas3/download/item/155632/itcl4.0.1.tar.gz"
+      URL_MD5 "8d71d4247b19ad5d6bcbb776590ced55"
+      DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
       UPDATE_COMMAND "" # Disable update
-      SOURCE_DIR tcl/incrTcl
+      SOURCE_DIR ${tcl_base}/incrTcl
       BUILD_IN_SOURCE 1
       CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${_configure_script}
       BUILD_COMMAND ${CMAKE_COMMAND} -P ${_build_script}

@@ -25,7 +25,8 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     ${${proj}_EP_ARGS}
     URL "https://pypi.python.org/packages/16/d8/bc6316cf98419719bd59c91742194c111b6f2e85abac88e496adefaf7afe/six-${_version}.tar.gz"
     URL_MD5 "d12789f9baf7e9fb2524c0c64f1773f8"
-    SOURCE_DIR ${proj}
+    DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
+    SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""

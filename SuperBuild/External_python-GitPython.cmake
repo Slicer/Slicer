@@ -27,7 +27,8 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     ${${proj}_EP_ARGS}
     URL "https://pypi.python.org/packages/e1/ec/9f2bbc86a0188bf83221212be87fa4b70dc71a9385efcc95a25e9789894e/GitPython-${_version}.tar.gz"
     URL_MD5 "a63fdd2a650694ea23e268fd0c952034"
-    SOURCE_DIR ${proj}
+    DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
+    SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""

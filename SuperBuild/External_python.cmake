@@ -1,4 +1,6 @@
 
+include(ListToString)
+
 set(proj python)
 
 # Set dependency list
@@ -56,7 +58,7 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
   ExternalProject_Add(python-source
     URL "https://www.python.org/ftp/python/2.7.13/Python-2.7.13.tgz"
     URL_MD5 "17add4bf0ad0ec2f08e0cae6d205c700"
-    DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
+    DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
     SOURCE_DIR ${python_SOURCE_DIR}
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
@@ -132,18 +134,22 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
     QUIET
     )
 
+  set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
+  set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+  set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
+
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY}"
     GIT_TAG "${${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG}"
-    SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
-    BINARY_DIR ${proj}-build
+    SOURCE_DIR ${EP_SOURCE_DIR}
+    BINARY_DIR ${EP_BINARY_DIR}
     CMAKE_CACHE_ARGS
       -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
       #-DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags} # Not used
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
       -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
-      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/${proj}-install
+      -DCMAKE_INSTALL_PREFIX:PATH=${EP_INSTALL_DIR}
       #-DBUILD_TESTING:BOOL=OFF
       -DBUILD_LIBPYTHON_SHARED:BOOL=ON
       -DUSE_SYSTEM_LIBRARIES:BOOL=OFF

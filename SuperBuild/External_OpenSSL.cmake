@@ -109,7 +109,7 @@ ExternalProject_Execute(${proj} \"configure\" sh config --with-zlib-lib=${_zlib_
       ${${proj}_EP_ARGS}
       URL ${OpenSSL_${OPENSSL_DOWNLOAD_VERSION}_URL}
       URL_MD5 ${OpenSSL_${OPENSSL_DOWNLOAD_VERSION}_MD5}
-      DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
+      DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
       SOURCE_DIR ${EP_SOURCE_DIR}
       BUILD_IN_SOURCE 1
       PATCH_COMMAND ${CMAKE_COMMAND} -P ${_configure_script}
@@ -245,7 +245,7 @@ this version of visual studio [${MSVC_VERSION}]. You could either:
       ${${proj}_EP_ARGS}
       URL ${OpenSSL_${OPENSSL_DOWNLOAD_VERSION}_${MSVC_VERSION}_URL}
       URL_MD5 ${OpenSSL_${OPENSSL_DOWNLOAD_VERSION}_${MSVC_VERSION}_MD5}
-      DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
+      DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
       SOURCE_DIR ${EP_SOURCE_DIR}
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""

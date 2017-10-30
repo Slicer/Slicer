@@ -132,12 +132,15 @@ endif()
     QUIET
     )
 
+  set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
+  set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY}"
     GIT_TAG "${${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG}"
-    SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
-    BINARY_DIR ${proj}-build
+    SOURCE_DIR ${EP_SOURCE_DIR}
+    BINARY_DIR ${EP_BINARY_DIR}
     CMAKE_CACHE_ARGS
       -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
       -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
@@ -175,22 +178,8 @@ endif()
 
   ExternalProject_GenerateProjectDescription_Step(${proj})
 
-  set(VTK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
-  set(VTK_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
-
-#  set(PNG_INCLUDE_DIR ${VTK_SOURCE_DIR}/ThirdParty/png/vtkpng)
-
-#  set(PNG_LIBRARY_DIR ${VTK_DIR}/lib)
-#  if(CMAKE_CONFIGURATION_TYPES)
-#    set(PNG_LIBRARY_DIR ${PNG_LIBRARY_DIR}/${CMAKE_CFG_INTDIR})
-#  endif()
-#  if(WIN32)
-#    set(PNG_LIBRARY ${PNG_LIBRARY_DIR}/vtkpng-6.0.lib)
-#  elseif(APPLE)
-#    set(PNG_LIBRARY ${PNG_LIBRARY_DIR}/libvtkpng-6.0.dylib)
-#  else()
-#    set(PNG_LIBRARY ${PNG_LIBRARY_DIR}/libvtkpng-6.0.so)
-#  endif()
+  set(VTK_DIR ${EP_BINARY_DIR})
+  set(VTK_SOURCE_DIR ${EP_SOURCE_DIR})
 
   #-----------------------------------------------------------------------------
   # Launcher setting specific to build tree
@@ -240,6 +229,3 @@ mark_as_superbuild(
   VARS VTK_DIR:PATH
   LABELS "FIND_PACKAGE"
   )
-
-ExternalProject_Message(${proj} "PNG_INCLUDE_DIR:${PNG_INCLUDE_DIR}")
-ExternalProject_Message(${proj} "PNG_LIBRARY:${PNG_LIBRARY}")

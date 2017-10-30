@@ -30,6 +30,8 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   ExternalProject_Write_SetBuildEnv_Commands(${_env_script})
   ExternalProject_Write_SetPythonSetupEnv_Commands(${_env_script} APPEND)
 
+  set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
+
   # install step
   # - we use "easy_install" only to allow installing with "--always-unzip"
   set(_install_script ${CMAKE_BINARY_DIR}/${proj}_install_step.cmake)
@@ -46,7 +48,8 @@ ExternalProject_Execute(${proj} \"easy_install\" \"${PYTHON_EXECUTABLE}\" setup.
     # - include patch to support parallel build
     GIT_REPOSITORY "${git_protocol}://github.com/Slicer/setuptools.git"
     GIT_TAG "288143264db3f9b867bc479547b44d1167abf160"
-    SOURCE_DIR ${proj}
+    DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
+    SOURCE_DIR ${EP_SOURCE_DIR}
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
@@ -56,7 +59,7 @@ ExternalProject_Execute(${proj} \"easy_install\" \"${PYTHON_EXECUTABLE}\" setup.
     )
 
   ExternalProject_GenerateProjectDescription_Step(${proj}
-    SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
+    SOURCE_DIR ${EP_SOURCE_DIR}
     )
 
 else()

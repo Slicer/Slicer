@@ -27,8 +27,8 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(tcl_CONFIGURE_COMMAND ${CMAKE_COMMAND} -E echo Configuring tcl)
   set(tcl_BUILD_COMMAND ${CMAKE_COMMAND} -E echo Building tcl)
   set(tcl_INSTALL_COMMAND ${CMAKE_COMMAND} -E echo Installing tcl)
-  set(tcl_base ${CMAKE_CURRENT_BINARY_DIR}/tcl)
-  set(tcl_build ${CMAKE_CURRENT_BINARY_DIR}/tcl-build)
+  set(tcl_base ${CMAKE_BINARY_DIR}/tcl)
+  set(tcl_build ${CMAKE_BINARY_DIR}/tcl-build)
 
   set(tcl_DOWNLOAD_COMMAND)
   set(tcl_PATCH_COMMAND)
@@ -49,7 +49,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       URL ${tcl_URL}
       URL_MD5 ${tcl_MD5}
       )
-    set(tcl_SOURCE_DIR tcl-build)
+    set(tcl_SOURCE_DIR ${CMAKE_BINARY_DIR}/tcl-build)
     mark_as_superbuild(
       INCR_TCL_VERSION_DOT:STRING
       INCR_TCL_VERSION:STRING
@@ -106,7 +106,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   else()
     set(TCL_TK_VERSION_DOT "8.6")
     set(TCL_TK_VERSION "86")
-    set(tcl_SOURCE_DIR tcl/tcl)
+    set(tcl_SOURCE_DIR ${CMAKE_BINARY_DIR}/tcl/tcl)
     set(tcl_BUILD_IN_SOURCE 1)
 
     set(tcl_DOWNLOAD_COMMAND

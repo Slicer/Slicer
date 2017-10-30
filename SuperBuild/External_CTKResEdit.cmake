@@ -31,11 +31,15 @@ if(NOT DEFINED CTKResEdit_EXECUTABLE)
   set(url "${url}&id=${item_id}&dummy=CTKResEdit-${CTKResEdit_VERSION}-${CTKResEdit_OS}-${CTKResEdit_ARCHITECTURE}.tar.gz")
   set(md5 "f59547c480420199081b94e96df292ec")
 
+  set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj})
+
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     URL ${url}
     URL_MD5 ${md5}
-    SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
+    DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
+    SOURCE_DIR ${EP_BINARY_DIR}
+    BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
@@ -47,7 +51,7 @@ if(NOT DEFINED CTKResEdit_EXECUTABLE)
     VERSION ${CTKResEdit_VERSION}
     )
 
-  set(CTKResEdit_EXECUTABLE ${CMAKE_BINARY_DIR}/${proj}/bin/CTKResEdit.exe)
+  set(CTKResEdit_EXECUTABLE ${EP_BINARY_DIR}/bin/CTKResEdit.exe)
 
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})

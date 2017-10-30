@@ -52,13 +52,17 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
     QUIET
     )
 
+  set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
+  set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+  set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
+
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY}"
     GIT_TAG "${${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG}"
-    SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
-    BINARY_DIR ${proj}-build
-    INSTALL_DIR LibArchive-install
+    SOURCE_DIR ${EP_SOURCE_DIR}
+    BINARY_DIR ${EP_BINARY_DIR}
+    INSTALL_DIR ${EP_INSTALL_DIR}
     CMAKE_CACHE_ARGS
     # Not used -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
     # Not used -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
@@ -88,7 +92,7 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
     )
   if(APPLE)
     ExternalProject_Add_Step(${proj} fix_rpath
-      COMMAND install_name_tool -id ${CMAKE_BINARY_DIR}/${proj}-install/lib/libarchive.16.dylib ${CMAKE_BINARY_DIR}/${proj}-install/lib/libarchive.16.dylib
+      COMMAND install_name_tool -id ${EP_INSTALL_DIR}/lib/libarchive.16.dylib ${EP_INSTALL_DIR}/lib/libarchive.16.dylib
       DEPENDEES install
       )
   endif()

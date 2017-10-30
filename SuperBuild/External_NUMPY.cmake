@@ -84,6 +84,7 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py in
     ${${proj}_EP_ARGS}
     URL "https://pypi.python.org/packages/c0/3a/40967d9f5675fbb097ffec170f59c2ba19fc96373e73ad47c2cae9a30aed/numpy-${_version}.zip"
     URL_MD5 "2c3c0f4edf720c3a7b525dacc825b9ae"
+    DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
     SOURCE_DIR ${proj}
     BUILD_IN_SOURCE 1
     PATCH_COMMAND
