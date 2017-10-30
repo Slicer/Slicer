@@ -1297,9 +1297,6 @@ void qSlicerAppMainWindow::setupMenuActions()
 #else
   d->ViewExtensionsManagerAction->setVisible(false);
 #endif
-#ifndef Slicer_USE_PYTHONQT
-  d->WindowPythonInteractorAction->setVisible(false);
-#endif
 
 #if defined Slicer_USE_QtTesting && defined Slicer_BUILD_CLI_SUPPORT
   if (app->commandOptions()->enableQtTesting() ||
@@ -1684,6 +1681,7 @@ bool qSlicerAppMainWindow::eventFilter(QObject* object, QEvent* event)
       d->setErrorLogIconHighlighted(false);
       }
     }
+#ifdef Slicer_USE_PYTHONQT
   if (object == this->pythonConsole())
     {
     if (event->type() == QEvent::Hide)
@@ -1693,5 +1691,6 @@ bool qSlicerAppMainWindow::eventFilter(QObject* object, QEvent* event)
       d->PythonConsoleToggleViewAction->blockSignals(wasBlocked);
       }
     }
+#endif
   return this->Superclass::eventFilter(object, event);
 }

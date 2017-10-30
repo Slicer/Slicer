@@ -8,6 +8,7 @@
 #include <qSlicerCoreApplication.h>
 #include <qSlicerIOManager.h>
 #include <qSlicerNodeWriter.h>
+#include <vtkSlicerConfigure.h> // For Slicer_USE_PYTHONQT
 
 // AnnotationModule includes
 #include "qSlicerAnnotationsModule.h"
@@ -16,7 +17,9 @@
 #include "qSlicerAnnotationsReader.h"
 
 // PythonQt includes
+#ifdef Slicer_USE_PYTHONQT
 #include "PythonQt.h"
+#endif
 
 //-----------------------------------------------------------------------------
 #if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
@@ -95,6 +98,7 @@ void qSlicerAnnotationsModule::setup()
     QStringList() << "vtkMRMLAnnotationNode", true, this));
 
   // Register subject hierarchy plugin
+#ifdef Slicer_USE_PYTHONQT
   PythonQt::init();
   PythonQtObjectPtr context = PythonQt::self()->getMainModule();
   context.evalScript( QString(
@@ -102,6 +106,7 @@ void qSlicerAnnotationsModule::setup()
     "scriptedPlugin = slicer.qSlicerSubjectHierarchyScriptedPlugin(None) \n"
     "scriptedPlugin.setPythonSource(AnnotationsSubjectHierarchyPlugin.filePath) \n"
     ) );
+#endif
 }
 
 //-----------------------------------------------------------------------------
