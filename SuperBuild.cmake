@@ -93,11 +93,14 @@ if(DEFINED SLICERAPP_LICENSE_FILE)
   mark_as_superbuild(SLICERAPP_LICENSE_FILE)
 endif()
 
-# Provide a mechanism to disable one or more modules.
+# Provide a mechanism to disable/enable one or more modules.
 mark_as_superbuild(
   Slicer_QTLOADABLEMODULES_DISABLED:STRING
+  Slicer_QTLOADABLEMODULES_ENABLED:STRING
   Slicer_QTSCRIPTEDMODULES_DISABLED:STRING
+  Slicer_QTSCRIPTEDMODULES_ENABLED:STRING
   Slicer_CLIMODULES_DISABLED:STRING
+  Slicer_CLIMODULES_ENABLED:STRING
   )
 
 #------------------------------------------------------------------------------
