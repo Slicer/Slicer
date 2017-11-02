@@ -11,3 +11,5 @@
 #ifndef BUILD_SHARED_LIBS
 #define VTKITK_STATIC
 #endif
+
+#cmakedefine VTKITK_BUILD_DICOM_SUPPORT
