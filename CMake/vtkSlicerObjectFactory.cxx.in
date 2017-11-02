@@ -42,7 +42,7 @@ void @vtk-module@ObjectFactory::PrintSelf(ostream &os, vtkIndent indent)
 // Registration of object factories.
 static unsigned int @vtk-module@Count;
 
-/* @VTK-MODULE@_EXPORT */ void @vtk-module@_AutoInit_Construct()
+@VTK-MODULE@_EXPORT void @vtk-module@_AutoInit_Construct()
 {
   if(++@vtk-module@Count == 1)
     {
@@ -57,7 +57,7 @@ static unsigned int @vtk-module@Count;
     }
 }
 
-/* @VTK-MODULE@_EXPORT */ void @vtk-module@_AutoInit_Destruct()
+@VTK-MODULE@_EXPORT void @vtk-module@_AutoInit_Destruct()
 {
   if(--@vtk-module@Count == 0)
     {

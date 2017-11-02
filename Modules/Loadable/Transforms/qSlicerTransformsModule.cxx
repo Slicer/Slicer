@@ -31,9 +31,6 @@
 #include "qSlicerTransformsModule.h"
 #include "qSlicerTransformsModuleWidget.h"
 #include "qSlicerTransformsReader.h"
-#include "vtkMRMLLinearTransformsDisplayableManager3D.h"
-#include "vtkMRMLTransformsDisplayableManager2D.h"
-#include "vtkMRMLTransformsDisplayableManager3D.h"
 
 // VTK includes
 #include "vtkSmartPointer.h"
@@ -41,6 +38,10 @@
 // SubjectHierarchy Plugins includes
 #include "qSlicerSubjectHierarchyPluginHandler.h"
 #include "qSlicerSubjectHierarchyTransformsPlugin.h"
+
+// DisplayableManager initialization
+#include <vtkAutoInit.h>
+VTK_MODULE_INIT(vtkSlicerTransformsModuleMRMLDisplayableManager)
 
 //-----------------------------------------------------------------------------
 #if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
@@ -148,14 +149,6 @@ void qSlicerTransformsModule::setup()
   app->coreIOManager()->registerIO(new qSlicerNodeWriter(
     "Transforms", QString("TransformFile"),
     QStringList() << "vtkMRMLTransformNode", true, this));
-
-  // Use the displayable manager class to make sure the the containing library is loaded
-  vtkSmartPointer<vtkMRMLTransformsDisplayableManager2D> dm2d=
-    vtkSmartPointer<vtkMRMLTransformsDisplayableManager2D>::New();
-  vtkSmartPointer<vtkMRMLTransformsDisplayableManager3D> dm3d=
-    vtkSmartPointer<vtkMRMLTransformsDisplayableManager3D>::New();
-  vtkSmartPointer<vtkMRMLLinearTransformsDisplayableManager3D> ldm3d=
-    vtkSmartPointer<vtkMRMLLinearTransformsDisplayableManager3D>::New();
 
   // Register displayable managers
   vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager("vtkMRMLTransformsDisplayableManager2D");
