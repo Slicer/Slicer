@@ -1110,7 +1110,15 @@ bool qSlicerCoreApplication::isEmbeddedModule(const QString& moduleFileName)cons
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::defaultTemporaryPath() const
 {
+#ifdef Q_OS_UNIX
+  // In multi-user Linux environment, a single temporary directory is shared
+  // by all users. We need to create a separate directory for each user,
+  // as users do not have access to another user's directory.
+  QString userName = qgetenv("USER");
+  return QFileInfo(QDir::tempPath(), this->applicationName()+"-"+userName).absoluteFilePath();
+#else
   return QFileInfo(QDir::tempPath(), this->applicationName()).absoluteFilePath();
+#endif
 }
 
 //-----------------------------------------------------------------------------
