@@ -464,5 +464,4 @@ ExternalProject_Add(${proj}
   INSTALL_COMMAND ""
   )
 
-include(ExternalProjectAlwaysConfigure)
 ExternalProject_AlwaysConfigure(${proj})
