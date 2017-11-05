@@ -622,6 +622,10 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
             *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::PerpendicularDiffusivity(w));
             break;
 
+          case vtkDiffusionTensorMathematics::VTK_TENS_MEAN_DIFFUSIVITY:
+            *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::MeanDiffusivity(w));
+            break;
+
           case vtkDiffusionTensorMathematics::VTK_TENS_MAX_EIGENVALUE_PROJX:
             *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::MaxEigenvalueProjectionX(v,w));
             break;
@@ -894,6 +898,7 @@ void vtkDiffusionTensorMathematics::ThreadedRequestData(
     case VTK_TENS_COLOR_MODE:
     case VTK_TENS_PARALLEL_DIFFUSIVITY:
     case VTK_TENS_PERPENDICULAR_DIFFUSIVITY:
+    case VTK_TENS_MEAN_DIFFUSIVITY:
       switch (outData[0]->GetScalarType())
       {
         vtkTemplateMacro(vtkDiffusionTensorMathematicsExecute1Eigen(
@@ -1067,6 +1072,15 @@ double vtkDiffusionTensorMathematics::PerpendicularDiffusivity(double w[3])
   return ( ( w[1] + w[2] ) / 2 );
 }
 
+double vtkDiffusionTensorMathematics::MeanDiffusivity(double w[3])
+{
+  if ((w[0] <= VTK_EPS) || (w[1] <= VTK_EPS) || (w[2] <= VTK_EPS))
+  {
+    return DOUBLE_NAN;
+  }
+
+  return ( ( w[0] + w[1] + w[2] ) / 3 );
+}
 
 double vtkDiffusionTensorMathematics::RAIMaxEigenvecX(double **v, double w[3])
 {

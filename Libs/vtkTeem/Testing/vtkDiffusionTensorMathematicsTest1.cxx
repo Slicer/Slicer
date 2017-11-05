@@ -96,7 +96,7 @@ int vtkDiffusionTensorMathematicsTest1(int vtkNotUsed(argc), char* vtkNotUsed(ar
   filter->SetMaskLabelValue(0);  // mask all the labels different from 0
   filter->SetMaskWithScalars(1); // turn on masking
   for (int i = vtkDiffusionTensorMathematics::VTK_TENS_TRACE;
-       i <=vtkDiffusionTensorMathematics::VTK_TENS_PERPENDICULAR_DIFFUSIVITY;
+       i <=vtkDiffusionTensorMathematics::VTK_TENS_MEAN_DIFFUSIVITY;
        ++i)
     {
     filter->SetOperation(i);
