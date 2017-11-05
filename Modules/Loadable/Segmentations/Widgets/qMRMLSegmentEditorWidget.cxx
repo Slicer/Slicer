@@ -1065,8 +1065,8 @@ void qMRMLSegmentEditorWidget::updateWidgetFromMRML()
 
   int wasModified = d->ParameterSetNode->StartModify();
 
-  updateWidgetFromSegmentationNode();
-  updateWidgetFromMasterVolumeNode();
+  this->updateWidgetFromSegmentationNode();
+  this->updateWidgetFromMasterVolumeNode();
 
   d->EffectsGroupBox->setEnabled(d->SegmentationNode != NULL);
   d->MaskingGroupBox->setEnabled(d->SegmentationNode != NULL);
@@ -1108,7 +1108,7 @@ void qMRMLSegmentEditorWidget::updateWidgetFromMRML()
   d->SegmentsTableView->setReadOnly(d->Locked);
 
   // Effects section (list and options)
-  updateEffectsSectionFromMRML();
+  this->updateEffectsSectionFromMRML();
 
   // Undo/redo section
 
@@ -1116,6 +1116,28 @@ void qMRMLSegmentEditorWidget::updateWidgetFromMRML()
   d->RedoButton->setEnabled(!d->Locked);
 
   // Masking section
+  this->updateMaskingSection();
+
+  // Segmentation object might have been replaced, update selected segment
+  this->onSegmentAddedRemoved();
+
+  d->ParameterSetNode->EndModify(wasModified);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::updateMaskingSection()
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  if (!this->mrmlScene() || this->mrmlScene()->IsClosing())
+    {
+    return;
+    }
+
+  if (!d->ParameterSetNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid segment editor parameter set node";
+    return;
+    }
 
   bool wasBlocked = d->MaskModeComboBox->blockSignals(true);
   int maskModeIndex = -1;
@@ -1135,6 +1157,24 @@ void qMRMLSegmentEditorWidget::updateWidgetFromMRML()
   wasBlocked = d->MasterVolumeIntensityMaskCheckBox->blockSignals(true);
   d->MasterVolumeIntensityMaskCheckBox->setChecked(d->ParameterSetNode->GetMasterVolumeIntensityMask());
   d->MasterVolumeIntensityMaskCheckBox->blockSignals(wasBlocked);
+
+  // Update segment names
+  vtkMRMLSegmentationNode* segmentationNode = d->ParameterSetNode->GetSegmentationNode();
+  if (segmentationNode)
+    {
+    vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
+    std::vector< std::string > segmentIDs;
+    segmentation->GetSegmentIDs(segmentIDs);
+    for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
+      {
+      int currentSegmentItemIndex = d->MaskModeComboBox->findData(QString::fromLocal8Bit(segmentIdIt->c_str()));
+      if (currentSegmentItemIndex >= d->MaskModeComboBoxFixedItemsCount)
+        {
+        QString segmentName = segmentation->GetSegment(*segmentIdIt)->GetName();
+        d->MaskModeComboBox->setItemText(currentSegmentItemIndex, segmentName);
+        }
+      }
+    }
 
   // Initialize mask range if it has never set and intensity masking es enabled
   if (d->ParameterSetNode->GetMasterVolumeIntensityMask()
@@ -1156,11 +1196,6 @@ void qMRMLSegmentEditorWidget::updateWidgetFromMRML()
   int overwriteModeIndex = d->OverwriteModeComboBox->findData(d->ParameterSetNode->GetOverwriteMode());
   d->OverwriteModeComboBox->setCurrentIndex(overwriteModeIndex);
   d->OverwriteModeComboBox->blockSignals(wasBlocked);
-
-  // Segmentation object might have been replaced, update selected segment
-  onSegmentAddedRemoved();
-
-  d->ParameterSetNode->EndModify(wasModified);
 }
 
 //-----------------------------------------------------------------------------
@@ -1268,6 +1303,7 @@ void qMRMLSegmentEditorWidget::updateWidgetFromSegmentationNode()
     qvtkReconnect(d->SegmentationNode, segmentationNode, vtkSegmentation::ContainedRepresentationNamesModified, this, SLOT(onSegmentAddedRemoved()));
     qvtkReconnect(d->SegmentationNode, segmentationNode, vtkSegmentation::SegmentAdded, this, SLOT(onSegmentAddedRemoved()));
     qvtkReconnect(d->SegmentationNode, segmentationNode, vtkSegmentation::SegmentRemoved, this, SLOT(onSegmentAddedRemoved()));
+    qvtkReconnect(d->SegmentationNode, segmentationNode, vtkSegmentation::SegmentModified, this, SLOT(updateMaskingSection()));
     qvtkReconnect(d->SegmentationNode, segmentationNode, vtkMRMLDisplayableNode::DisplayModifiedEvent, this, SLOT(onSegmentationDisplayModified()));
     d->SegmentationNode = segmentationNode;
 
@@ -1327,7 +1363,6 @@ void qMRMLSegmentEditorWidget::updateWidgetFromSegmentationNode()
 
   // Update closed surface button with new segmentation
   this->onSegmentAddedRemoved();
-
 }
 
 //-----------------------------------------------------------------------------
@@ -1739,7 +1774,7 @@ void qMRMLSegmentEditorWidget::onSegmentationNodeChanged(vtkMRMLNode* node)
     return;
     }
 
-  setActiveEffect(NULL); // deactivate current effect when we switch to a different segmentation
+  this->setActiveEffect(NULL); // deactivate current effect when we switch to a different segmentation
   d->ParameterSetNode->SetAndObserveSegmentationNode(vtkMRMLSegmentationNode::SafeDownCast(node));
 }
 
@@ -2119,9 +2154,6 @@ void qMRMLSegmentEditorWidget::onSegmentAddedRemoved()
 
   if (segmentationNode)
     {
-    //bool labelmapPresent = segmentationNode->GetSegmentation()->ContainsRepresentation(
-    //  vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName() );
-
     vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
     std::vector< std::string > segmentIDs;
     segmentation->GetSegmentIDs(segmentIDs);
@@ -2146,7 +2178,6 @@ void qMRMLSegmentEditorWidget::onSegmentAddedRemoved()
     // switch to the first masking option (no mask).
     d->MaskModeComboBox->setCurrentIndex(0);
     }
-
 }
 
 //---------------------------------------------------------------------------
