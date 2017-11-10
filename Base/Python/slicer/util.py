@@ -919,66 +919,83 @@ def delayDisplay(message,autoCloseMsec=1000):
     okButton.connect('clicked()', messagePopup.close)
   messagePopup.exec_()
 
-def infoDisplay(text, windowTitle="Slicer information", parent=None, standardButtons=None, **kwargs):
+def infoDisplay(text, windowTitle=None, parent=None, standardButtons=None, **kwargs):
   """Display popup with a info message.
   """
-  import qt
+  import qt, slicer
   import logging
+  if not windowTitle:
+    windowTitle = slicer.app.applicationName + " information"
   logging.info(text)
   if mainWindow(verbose=False):
     standardButtons = standardButtons if standardButtons else qt.QMessageBox.Ok
     messageBox(text, parent, windowTitle=windowTitle, icon=qt.QMessageBox.Information, standardButtons=standardButtons,
                **kwargs)
 
-def warningDisplay(text, windowTitle="Slicer warning", parent=None, standardButtons=None, **kwargs):
+def warningDisplay(text, windowTitle=None, parent=None, standardButtons=None, **kwargs):
   """Display popup with a warning message.
   """
-  import qt
+  import qt, slicer
   import logging
+  if not windowTitle:
+    windowTitle = slicer.app.applicationName + " warning"
   logging.warning(text)
   if mainWindow(verbose=False):
     standardButtons = standardButtons if standardButtons else qt.QMessageBox.Ok
     messageBox(text, parent, windowTitle=windowTitle, icon=qt.QMessageBox.Warning, standardButtons=standardButtons,
                **kwargs)
 
-def errorDisplay(text, windowTitle="Slicer error", parent=None, standardButtons=None, **kwargs):
+def errorDisplay(text, windowTitle=None, parent=None, standardButtons=None, **kwargs):
   """Display an error popup.
   """
-  import qt
+  import qt, slicer
   import logging
+  if not windowTitle:
+    windowTitle = slicer.app.applicationName + " error"
   logging.error(text)
   if mainWindow(verbose=False):
     standardButtons = standardButtons if standardButtons else qt.QMessageBox.Ok
     messageBox(text, parent, windowTitle=windowTitle, icon=qt.QMessageBox.Critical, standardButtons=standardButtons,
                **kwargs)
 
-def confirmOkCancelDisplay(text, windowTitle="Slicer confirmation", parent=None, **kwargs):
+def confirmOkCancelDisplay(text, windowTitle=None, parent=None, **kwargs):
   """Display an confirmation popup. Return if confirmed with OK.
   """
-  import qt
+  import qt, slicer
+  if not windowTitle:
+    windowTitle = slicer.app.applicationName + " confirmation"
   result = messageBox(text, parent=parent, windowTitle=windowTitle, icon=qt.QMessageBox.Question,
                        standardButtons=qt.QMessageBox.Ok | qt.QMessageBox.Cancel, **kwargs)
   return result == qt.QMessageBox.Ok
 
-def confirmYesNoDisplay(text, windowTitle="Slicer confirmation", parent=None, **kwargs):
+def confirmYesNoDisplay(text, windowTitle=None, parent=None, **kwargs):
   """Display an confirmation popup. Return if confirmed with Yes.
   """
-  import qt
+  import qt, slicer
+  if not windowTitle:
+    windowTitle = slicer.app.applicationName + " confirmation"
   result = messageBox(text, parent=parent, windowTitle=windowTitle, icon=qt.QMessageBox.Question,
                        standardButtons=qt.QMessageBox.Yes | qt.QMessageBox.No, **kwargs)
   return result == qt.QMessageBox.Yes
 
-def confirmRetryCloseDisplay(text, windowTitle="Slicer error", parent=None, **kwargs):
+def confirmRetryCloseDisplay(text, windowTitle=None, parent=None, **kwargs):
   """Display an confirmation popup. Return if confirmed with Retry.
   """
-  import qt
+  import qt, slicer
+  if not windowTitle:
+    windowTitle = slicer.app.applicationName + " error"
   result = messageBox(text, parent=parent, windowTitle=windowTitle, icon=qt.QMessageBox.Critical,
                        standardButtons=qt.QMessageBox.Retry | qt.QMessageBox.Close, **kwargs)
   return result == qt.QMessageBox.Retry
 
 def messageBox(text, parent=None, **kwargs):
+  """Displays a messagebox.
+  ctkMessageBox is used instead of a default qMessageBox to provide "Don't show again" checkbox.
+  For example: slicer.util.messageBox("Some message", dontShowAgainSettingsKey = "MainWindow/DontShowSomeMessage")
+  """
   import qt
-  mbox = qt.QMessageBox(parent if parent else mainWindow())
+  import ctk
+  mbox = ctk.ctkMessageBox(parent if parent else mainWindow())
   mbox.text = text
   for key, value in kwargs.iteritems():
     if hasattr(mbox, key):
