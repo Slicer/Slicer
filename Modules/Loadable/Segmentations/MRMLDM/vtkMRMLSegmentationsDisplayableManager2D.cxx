@@ -483,6 +483,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayableTra
       for (PipelineMapType::iterator pipelineIt=pipelinesIter->second.begin(); pipelineIt!=pipelinesIter->second.end(); ++pipelineIt)
         {
         Pipeline* currentPipeline = pipelineIt->second;
+        currentPipeline->SliceIntersectionUpdatedTime = 0; // Trigger slice intersection recomputation
         this->GetNodeTransformToWorld(mNode, currentPipeline->NodeToWorldTransform, currentPipeline->WorldToNodeTransform);
         }
       this->UpdateDisplayNodePipeline(pipelinesIter->first, pipelinesIter->second);
