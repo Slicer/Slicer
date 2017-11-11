@@ -86,19 +86,6 @@ macro(SlicerMacroBuildModuleLogic)
     set(MODULELOGIC_NO_INSTALL_OPTION "NO_INSTALL")
   endif()
 
-  set(Slicer_EXPORT_HEADER_CUSTOM_CONTENT)
-  if(${MODULELOGIC_NAME}_AUTOINIT)
-    set(Slicer_EXPORT_HEADER_CUSTOM_CONTENT "
-      // ####### Expanded from \@Slicer_EXPORT_HEADER_CUSTOM_CONTENT\@ #######
-      #if defined(${MODULELOGIC_NAME}_AUTOINIT)
-      # include \"vtkAutoInit.h\"
-      VTK_AUTOINIT(${MODULELOGIC_NAME})
-      #endif
-      // ##################################################
-      "
-      )
-  endif()
-
   SlicerMacroBuildModuleVTKLibrary(
     NAME ${MODULELOGIC_NAME}
     EXPORT_DIRECTIVE ${MODULELOGIC_EXPORT_DIRECTIVE}
@@ -108,13 +95,6 @@ macro(SlicerMacroBuildModuleLogic)
     TARGET_LIBRARIES ${MODULELOGIC_TARGET_LIBRARIES}
     ${MODULELOGIC_NO_INSTALL_OPTION}
     )
-
-  if(${MODULELOGIC_NAME}_AUTOINIT)
-    set_property(TARGET ${MODULELOGIC_NAME}
-      APPEND PROPERTY COMPILE_DEFINITIONS
-      "${PROJECT_NAME}_AUTOINIT=1(${MODULELOGIC_NAME})"
-      )
-  endif()
 
   set_property(GLOBAL APPEND PROPERTY SLICER_MODULE_LOGIC_TARGETS ${MODULELOGIC_NAME})
 
