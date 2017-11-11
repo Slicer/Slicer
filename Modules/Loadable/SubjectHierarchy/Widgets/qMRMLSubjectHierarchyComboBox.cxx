@@ -155,6 +155,13 @@ void qMRMLSubjectHierarchyComboBox::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyComboBox::clearSelection()
+{
+  Q_D(const qMRMLSubjectHierarchyComboBox);
+  d->TreeView->clearSelection();
+}
+
+//------------------------------------------------------------------------------
 vtkIdType qMRMLSubjectHierarchyComboBox::currentItem()const
 {
   Q_D(const qMRMLSubjectHierarchyComboBox);

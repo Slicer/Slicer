@@ -66,6 +66,7 @@ public:
   Q_INVOKABLE vtkMRMLScene* mrmlScene()const;
   Q_INVOKABLE vtkMRMLSubjectHierarchyNode* subjectHierarchyNode()const;
 
+  Q_INVOKABLE void clearSelection();
   Q_INVOKABLE vtkIdType currentItem()const;
   Q_INVOKABLE vtkIdType rootItem()const;
 
