@@ -354,6 +354,9 @@ protected slots:
   /// Switch to Segmentations module and jump to Import/Export section
   void onImportExportActionClicked();
 
+  /// Update masking section on the UI
+  void updateMaskingSection();
+
 protected:
   /// Callback function invoked when interaction happens
   static void processEvents(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
