@@ -56,6 +56,7 @@ public:
 
 public:
   int MaximumNumberOfShownItems;
+  bool AlignPopupVertically;
 
   qMRMLSubjectHierarchyTreeView* TreeView;
 };
@@ -64,6 +65,7 @@ public:
 qMRMLSubjectHierarchyComboBoxPrivate::qMRMLSubjectHierarchyComboBoxPrivate(qMRMLSubjectHierarchyComboBox& object)
   : q_ptr(&object)
   , MaximumNumberOfShownItems(20)
+  , AlignPopupVertically(true)
   , TreeView(NULL)
 {
 }
@@ -259,6 +261,20 @@ void qMRMLSubjectHierarchyComboBox::setMaximumNumberOfShownItems(int maxNumberOf
   d->MaximumNumberOfShownItems = maxNumberOfShownItems;
 }
 
+//--------------------------------------------------------------------------
+bool qMRMLSubjectHierarchyComboBox::alignPopupVertically()const
+{
+  Q_D(const qMRMLSubjectHierarchyComboBox);
+  return d->AlignPopupVertically;
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyComboBox::setAlignPopupVertically(bool align)
+{
+  Q_D(qMRMLSubjectHierarchyComboBox);
+  d->AlignPopupVertically = align;
+}
+
 //-----------------------------------------------------------------------------
 void qMRMLSubjectHierarchyComboBox::showPopup()
 {
@@ -289,28 +305,36 @@ void qMRMLSubjectHierarchyComboBox::showPopup()
   listRect.setWidth( listRect.width() + container->frameWidth());
   listRect.setHeight( listRect.height() + marginTop + marginBottom + tvMarginTop + tvMarginBottom);
 
-  // Position horizontally
-  listRect.moveLeft(above.x());
+  if(d->AlignPopupVertically)
+    {
+    // Position horizontally
+    listRect.moveLeft(above.x());
 
-  // Position vertically so the currently selected item lines up with the combo box
-  const QRect currentItemRect = d->TreeView->visualRect(d->TreeView->currentIndex());
-  const int offset = listRect.top() - currentItemRect.top();
-  listRect.moveTop(above.y() + offset - listRect.top());
+    // Position vertically so the currently selected item lines up with the combo box
+    const QRect currentItemRect = d->TreeView->visualRect(d->TreeView->currentIndex());
+    const int offset = listRect.top() - currentItemRect.top();
+    listRect.moveTop(above.y() + offset - listRect.top());
 
-  if (listRect.width() > screen.width() )
-    {
-    listRect.setWidth(screen.width());
+    if (listRect.width() > screen.width() )
+      {
+      listRect.setWidth(screen.width());
+      }
+    if (mapToGlobal(listRect.bottomRight()).x() > screen.right())
+      {
+      below.setX(screen.x() + screen.width() - listRect.width());
+      above.setX(screen.x() + screen.width() - listRect.width());
+      }
+    if (mapToGlobal(listRect.topLeft()).x() < screen.x() )
+      {
+      below.setX(screen.x());
+      above.setX(screen.x());
+      }
     }
-  if (mapToGlobal(listRect.bottomRight()).x() > screen.right())
+  else
     {
-    below.setX(screen.x() + screen.width() - listRect.width());
-    above.setX(screen.x() + screen.width() - listRect.width());
+    listRect.moveTo(below);
     }
-  if (mapToGlobal(listRect.topLeft()).x() < screen.x() )
-    {
-    below.setX(screen.x());
-    above.setX(screen.x());
-    }
+
   container->setGeometry(listRect);
   container->raise();
   container->show();
