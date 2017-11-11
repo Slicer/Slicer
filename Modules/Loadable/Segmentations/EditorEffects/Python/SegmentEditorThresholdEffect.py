@@ -109,7 +109,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     masterImageData = self.scriptedEffect.masterVolumeImageData()
     if masterImageData:
       lo, hi = masterImageData.GetScalarRange()
-      self.thresholdSlider.minimum, self.thresholdSlider.maximum = lo, hi
+      self.thresholdSlider.setRange(lo, hi)
       self.thresholdSlider.singleStep = (hi - lo) / 1000.
       if (self.scriptedEffect.doubleParameter("MinimumThreshold") == self.scriptedEffect.doubleParameter("MaximumThreshold")):
         # has not been initialized yet
