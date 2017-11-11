@@ -3,7 +3,7 @@
 # This module will set the variables Slicer_VERSION and Slicer_VERSION_FULL.
 #
 # It will also set all variables describing the SCM associated
-# with Slicer_SOURCE_DIR.
+# with <Slicer_MAIN_PROJECT_APPLICATION_NAME>_SOURCE_DIR.
 #
 # It has been designed to be included in the build system of Slicer.
 #
@@ -11,8 +11,8 @@
 #  GIT_EXECUTABLE
 #  Slicer_CMAKE_DIR
 #  Slicer_MAIN_PROJECT_APPLICATION_NAME
+#  <Slicer_MAIN_PROJECT_APPLICATION_NAME>_SOURCE_DIR
 #  Slicer_RELEASE_TYPE
-#  Slicer_SOURCE_DIR
 #  Slicer_VERSION_MAJOR
 #  Slicer_VERSION_MINOR
 #  Slicer_VERSION_PATCH
@@ -26,8 +26,8 @@ set(expected_defined_vars
   GIT_EXECUTABLE
   Slicer_CMAKE_DIR
   Slicer_MAIN_PROJECT_APPLICATION_NAME
+  ${Slicer_MAIN_PROJECT_APPLICATION_NAME}_SOURCE_DIR
   Slicer_RELEASE_TYPE
-  Slicer_SOURCE_DIR
   Slicer_VERSION_MAJOR
   Slicer_VERSION_MINOR
   Slicer_VERSION_PATCH
@@ -55,7 +55,7 @@ include(SlicerMacroExtractRepositoryInfo)
 
 SlicerMacroExtractRepositoryInfo(
   VAR_PREFIX Slicer
-  SOURCE_DIR ${Slicer_SOURCE_DIR}
+  SOURCE_DIR ${${Slicer_MAIN_PROJECT_APPLICATION_NAME}_SOURCE_DIR}
   )
 
 if(NOT Slicer_FORCED_WC_LAST_CHANGED_DATE STREQUAL "")

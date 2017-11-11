@@ -273,9 +273,11 @@ mark_as_superbuild(Slicer_UPDATE_TRANSLATION)
 
 set(Slicer_FORCED_WC_LAST_CHANGED_DATE "" CACHE STRING "Overwrite value of auto-discovered Slicer_WC_LAST_CHANGED_DATE (format: YYYY-MM-DD)")
 mark_as_advanced(Slicer_FORCED_WC_LAST_CHANGED_DATE)
+mark_as_superbuild(Slicer_FORCED_WC_LAST_CHANGED_DATE)
 
 set(Slicer_FORCED_WC_REVISION "" CACHE STRING "Overwrite value of auto-discovered Slicer_WC_REVISION")
 mark_as_advanced(Slicer_FORCED_WC_REVISION)
+mark_as_superbuild(Slicer_FORCED_WC_REVISION)
 
 option(Slicer_USE_FOLDERS "Organize build targets into folders" ON)
 mark_as_superbuild(Slicer_USE_FOLDERS)
@@ -433,6 +435,12 @@ include(SlicerApplicationOptions)
 # Slicer version number.
 #-----------------------------------------------------------------------------
 include(SlicerVersion)
+mark_as_superbuild(
+  VARS
+    Slicer_VERSION_MAJOR:STRING
+    Slicer_VERSION_MINOR:STRING
+    Slicer_VERSION_PATCH:STRING
+  )
 
 #-----------------------------------------------------------------------------
 # Slicer sub-directories

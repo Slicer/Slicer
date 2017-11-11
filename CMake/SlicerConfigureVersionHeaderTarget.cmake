@@ -28,6 +28,7 @@
 #  Slicer_BINARY_DIR
 #  Slicer_CMAKE_DIR
 #  Slicer_MAIN_PROJECT_APPLICATION_NAME
+#  <Slicer_MAIN_PROJECT_APPLICATION_NAME>_SOURCE_DIR
 #  Slicer_RELEASE_TYPE
 #  Slicer_SOURCE_DIR
 #  Slicer_VERSION_MAJOR
@@ -48,6 +49,7 @@ set(expected_defined_vars
   Slicer_BINARY_DIR
   Slicer_CMAKE_DIR
   Slicer_MAIN_PROJECT_APPLICATION_NAME # Used by SlicerVersion.cmake
+  ${Slicer_MAIN_PROJECT_APPLICATION_NAME}_SOURCE_DIR
   Slicer_RELEASE_TYPE
   Slicer_SOURCE_DIR
   Slicer_VERSION_MAJOR
