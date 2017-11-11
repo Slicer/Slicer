@@ -59,6 +59,9 @@ if(Slicer_BUILD_CLI_SUPPORT)
   set(ModuleDescriptionParser_USE_PYTHON OFF)
 endif()
 
+# Qt designer plugins
+set(MRML_BUILD_QT_DESIGNER_PLUGINS ${Slicer_BUILD_QT_DESIGNER_PLUGINS})
+
 # ITKFactories directories
 set(MRMLIDImageIO_ITKFACTORIES_DIR ${Slicer_ITKFACTORIES_DIR})
 set(MRMLIDImageIO_INSTALL_ITKFACTORIES_DIR ${Slicer_INSTALL_ITKFACTORIES_DIR})

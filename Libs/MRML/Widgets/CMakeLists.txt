@@ -12,6 +12,10 @@ if(NOT DEFINED BUILD_SHARED_LIBS)
   option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
 endif(NOT DEFINED BUILD_SHARED_LIBS)
 
+if(NOT DEFINED MRML_BUILD_QT_DESIGNER_PLUGINS)
+  option(MRML_BUILD_QT_DESIGNER_PLUGINS "Build Qt designer plugins." ON)
+endif()
+
 include(CheckIncludeFiles)
 check_include_files("stdint.h" HAVE_STDINT_H)
 
@@ -548,7 +552,9 @@ endif()
 # --------------------------------------------------------------------------
 # Qt Designer Plugins
 # --------------------------------------------------------------------------
-add_subdirectory(DesignerPlugins)
+if(MRML_BUILD_QT_DESIGNER_PLUGINS)
+  add_subdirectory(DesignerPlugins)
+endif()
 
 # --------------------------------------------------------------------------
 # Set INCLUDE_DIRS variable

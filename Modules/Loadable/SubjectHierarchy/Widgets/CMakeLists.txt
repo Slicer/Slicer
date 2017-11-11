@@ -116,4 +116,6 @@ if(Slicer_USE_PYTHONQT)
 endif()
 
 #-----------------------------------------------------------------------------
-add_subdirectory(DesignerPlugins)
+if(Slicer_BUILD_QT_DESIGNER_PLUGINS)
+  add_subdirectory(DesignerPlugins)
+endif()

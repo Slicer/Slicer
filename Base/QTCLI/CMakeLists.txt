@@ -117,8 +117,9 @@ SlicerMacroBuildBaseQtLibrary(
   WRAP_PYTHONQT
   )
 
-# Plugin
-add_subdirectory(DesignerPlugins)
+if(Slicer_BUILD_QT_DESIGNER_PLUGINS)
+  add_subdirectory(DesignerPlugins)
+endif()
 
 # --------------------------------------------------------------------------
 # Python Wrapping

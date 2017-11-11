@@ -319,11 +319,7 @@ SlicerMacroBuildBaseQtLibrary(
 # Slicer icon engine
 #-----------------------------------------------------------------------------
 
-#
-# CTK
-#
 set(CTK_LIBRARIES CTKWidgets)
-
 ctkMacroBuildQtIconEnginesPlugin(
   NAME qSlicerIconEnginePlugin
   EXPORT_DIRECTIVE "Q_SLICER_BASE_QTGUI_ICON_ENGINE_EXPORT"
@@ -333,10 +329,15 @@ ctkMacroBuildQtIconEnginesPlugin(
   TARGET_LIBRARIES ${QT_LIBRARIES} ${CTK_LIBRARIES}
   )
 
+#-----------------------------------------------------------------------------
 # Qt Plugins
-add_subdirectory(DesignerPlugins)
+#-----------------------------------------------------------------------------
+if(Slicer_BUILD_QT_DESIGNER_PLUGINS)
+  add_subdirectory(DesignerPlugins)
+endif()
 add_subdirectory(StylePlugins)
 
+#-----------------------------------------------------------------------------
 # Testing
 # Note: Within both Testing/Cxx and Testing/Python, some code is useful to both Slicer and the
 #       Extensions. For that reason, the Testing directory is added unconditionally.

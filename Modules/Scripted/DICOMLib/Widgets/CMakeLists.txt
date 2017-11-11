@@ -58,9 +58,11 @@ SlicerMacroBuildModuleWidgets(
   )
 
 #-----------------------------------------------------------------------------
-if(BUILD_TESTING)
-  #add_subdirectory(Testing)
+if(Slicer_BUILD_QT_DESIGNER_PLUGINS)
+  add_subdirectory(DesignerPlugins)
 endif()
 
 #-----------------------------------------------------------------------------
-add_subdirectory(DesignerPlugins)
+if(BUILD_TESTING)
+  #add_subdirectory(Testing)
+endif()
