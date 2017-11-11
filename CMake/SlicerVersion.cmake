@@ -57,6 +57,10 @@ SlicerMacroExtractRepositoryInfo(
   VAR_PREFIX Slicer
   SOURCE_DIR ${Slicer_SOURCE_DIR}
   )
+
+if(NOT Slicer_FORCED_WC_LAST_CHANGED_DATE STREQUAL "")
+  set(Slicer_WC_LAST_CHANGED_DATE "${Slicer_FORCED_WC_LAST_CHANGED_DATE}")
+endif()
 string(REGEX REPLACE ".*([0-9][0-9][0-9][0-9]\\-[0-9][0-9]\\-[0-9][0-9]).*" "\\1"
   Slicer_BUILDDATE "${Slicer_WC_LAST_CHANGED_DATE}")
 
