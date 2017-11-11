@@ -28,6 +28,7 @@
 #include <vtkMRMLApplicationLogic.h>
 
 // MRML includes
+#include <vtkMRMLCoreTestingMacros.h>
 #include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLViewNode.h>
@@ -38,11 +39,9 @@
 #include <vtkRenderWindowInteractor.h>
 #include <vtkCamera.h>
 
-// STD includes
-
-#include "vtkMRMLCoreTestingMacros.h"
-
-
+// DisplayableManager initialization
+#include <vtkAutoInit.h>
+VTK_MODULE_INIT(vtkSlicerAnnotationsModuleMRMLDisplayableManager)
 
 //----------------------------------------------------------------------------
 class vtkRenderRequestCallback : public vtkCommand
