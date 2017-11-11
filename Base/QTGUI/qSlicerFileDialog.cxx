@@ -305,6 +305,7 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
   bool res = fileDialog->exec();
   if (res)
     {
+    QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
     properties = ioProperties;
     if (options)
       {
@@ -336,6 +337,7 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
       Q_ASSERT(d->Action == qSlicerFileDialog::Read ||
                d->Action == qSlicerFileDialog::Write);
       }
+    QApplication::restoreOverrideCursor();
     }
 
   ioManager->setFavorites(fileDialog->sidebarUrls());
