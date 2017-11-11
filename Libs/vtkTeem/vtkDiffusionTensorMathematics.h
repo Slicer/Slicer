@@ -41,12 +41,6 @@ public:
   vtkTypeMacro(vtkDiffusionTensorMathematics,vtkThreadedImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
-  ///
-  /// Get the Operation to perform.
-  vtkGetMacro(Operation,int);
-  vtkSetClampMacro(Operation,int, VTK_TENS_TRACE, VTK_TENS_PERPENDICULAR_DIFFUSIVITY);
-
-
   /// Operation options.
   enum
   {
@@ -78,9 +72,13 @@ public:
     VTK_TENS_PARALLEL_DIFFUSIVITY = 25,
     VTK_TENS_PERPENDICULAR_DIFFUSIVITY = 26,
     VTK_TENS_COLOR_ORIENTATION_MIDDLE_EIGENVECTOR = 27,
-    VTK_TENS_COLOR_ORIENTATION_MIN_EIGENVECTOR = 28
+    VTK_TENS_COLOR_ORIENTATION_MIN_EIGENVECTOR = 28,
+    VTK_TENS_MEAN_DIFFUSIVITY = 29
   };
-
+  ///
+  /// Get the Operation to perform.
+  vtkGetMacro(Operation,int);
+  vtkSetClampMacro(Operation,int, VTK_TENS_TRACE, VTK_TENS_MEAN_DIFFUSIVITY);
 
   ///
   /// Output the trace (sum of eigenvalues = sum along diagonal)
@@ -112,6 +110,8 @@ public:
     {this->SetOperation(VTK_TENS_PARALLEL_DIFFUSIVITY);};
   void SetOperationToPerpendicularDiffusivity()
     {this->SetOperation(VTK_TENS_PERPENDICULAR_DIFFUSIVITY);};
+  void SetOperationToMeanDiffusivity()
+    {this->SetOperation(VTK_TENS_MEAN_DIFFUSIVITY);};
 
   ///
   /// Output a selected eigenvalue
@@ -251,6 +251,7 @@ public:
   static double MiddleEigenvalue(double w[3]);
   static double ParallelDiffusivity(double w[3]);
   static double PerpendicularDiffusivity(double w[3]);
+  static double MeanDiffusivity(double w[3]);
   static double MinEigenvalue(double w[3]);
   static double RAIMaxEigenvecX(double **v, double w[3]);
   static double RAIMaxEigenvecY(double **v, double w[3]);
