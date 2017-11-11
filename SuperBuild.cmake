@@ -181,6 +181,17 @@ if(Slicer_USE_PYTHONQT_WITH_TCL AND UNIX)
   list(APPEND Slicer_DEPENDENCIES incrTcl)
 endif()
 
+#------------------------------------------------------------------------------
+# Slicer_ADDITIONAL_DEPENDENCIES, EXTERNAL_PROJECT_ADDITIONAL_DIR
+#------------------------------------------------------------------------------
+
+#
+# Setting the variable Slicer_ADDITIONAL_DEPENDENCIES allows to introduce additional
+# Slicer external project dependencies.
+#
+# Additional external project files are looked up in the EXTERNAL_PROJECT_ADDITIONAL_DIR.
+#
+
 if(DEFINED Slicer_ADDITIONAL_DEPENDENCIES)
   list(APPEND Slicer_DEPENDENCIES ${Slicer_ADDITIONAL_DEPENDENCIES})
 endif()
@@ -347,11 +358,18 @@ Slicer_Remote_Add(LandmarkRegistration
   )
 list_conditional_append(Slicer_BUILD_LandmarkRegistration Slicer_REMOTE_DEPENDENCIES LandmarkRegistration)
 
-#-----------------------------------------------------------------------------
-# Define list of additional options used to configure Slicer
+
+#------------------------------------------------------------------------------
+# Slicer_ADDITIONAL_PROJECTS
 #------------------------------------------------------------------------------
 
-# Projects that Slicer needs to download/configure/build/install...
+#
+# List of <proj>_DIR variables that will be passed to the inner build.
+# Then, the variables are:
+# (1) associated with CPACK_INSTALL_CMAKE_PROJECTS in SlicerCPack
+# (2) used to get <proj>_LIBRARY_DIRS and update "libs_path" in SlicerCPackBundleFixup.
+#
+
 list(APPEND Slicer_ADDITIONAL_PROJECTS ${Slicer_ADDITIONAL_DEPENDENCIES})
 if(Slicer_ADDITIONAL_PROJECTS)
   list(REMOVE_DUPLICATES Slicer_ADDITIONAL_PROJECTS)
@@ -362,7 +380,15 @@ if(Slicer_ADDITIONAL_PROJECTS)
   mark_as_superbuild(Slicer_ADDITIONAL_PROJECTS:STRING)
 endif()
 
+#------------------------------------------------------------------------------
+# Process external projects, aggregate variable marked as superbuild and set <proj>_EP_ARGS variable.
+#------------------------------------------------------------------------------
+
 ExternalProject_Include_Dependencies(Slicer DEPENDS_VAR Slicer_DEPENDENCIES)
+
+#------------------------------------------------------------------------------
+# Define list of additional options used to configure Slicer
+#------------------------------------------------------------------------------
 
 set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
 if(WIN32)
