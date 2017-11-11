@@ -29,11 +29,15 @@ set(${KIT}_SRCS
   qSlicerSegmentEditorEraseEffect.h
   qSlicerSegmentEditorScissorsEffect.cxx
   qSlicerSegmentEditorScissorsEffect.h
-  qSlicerSegmentEditorScriptedEffect.cxx
-  qSlicerSegmentEditorScriptedEffect.h
-  qSlicerSegmentEditorScriptedLabelEffect.cxx
-  qSlicerSegmentEditorScriptedLabelEffect.h
   )
+if(Slicer_USE_PYTHONQT)
+  list(APPEND ${KIT}_SRCS
+    qSlicerSegmentEditorScriptedEffect.cxx
+    qSlicerSegmentEditorScriptedEffect.h
+    qSlicerSegmentEditorScriptedLabelEffect.cxx
+    qSlicerSegmentEditorScriptedLabelEffect.h
+    )
+endif()
 
 set(${KIT}_MOC_SRCS
   qSlicerSegmentEditorEffectFactory.h
@@ -45,9 +49,13 @@ set(${KIT}_MOC_SRCS
   qSlicerSegmentEditorPaintEffect_p.h
   qSlicerSegmentEditorEraseEffect.h
   qSlicerSegmentEditorScissorsEffect.h
-  qSlicerSegmentEditorScriptedEffect.h
-  qSlicerSegmentEditorScriptedLabelEffect.h
   )
+if(Slicer_USE_PYTHONQT)
+  list(APPEND ${KIT}_MOC_SRCS
+    qSlicerSegmentEditorScriptedEffect.h
+    qSlicerSegmentEditorScriptedLabelEffect.h
+    )
+endif()
 
 set(${KIT}_UI_SRCS
   )
