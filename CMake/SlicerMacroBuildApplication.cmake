@@ -75,7 +75,9 @@ macro(slicerMacroBuildAppLibrary)
     set(SLICERAPPLIB_APPLICATION_NAME ${SLICERAPPLIB_NAME})
   endif()
 
+  message(STATUS "--------------------------------------------------")
   message(STATUS "Configuring ${SLICERAPPLIB_APPLICATION_NAME} application library: ${SLICERAPPLIB_NAME}")
+  message(STATUS "--------------------------------------------------")
 
   macro(_set_applib_property varname)
     set_property(GLOBAL PROPERTY ${SLICERAPPLIB_APPLICATION_NAME}_${varname} ${SLICERAPPLIB_${varname}})
@@ -327,7 +329,9 @@ macro(slicerMacroBuildApplication)
     string(REGEX REPLACE "(.+)App" "\\1" SLICERAPP_APPLICATION_NAME ${SLICERAPP_NAME})
   endif()
 
+  message(STATUS "--------------------------------------------------")
   message(STATUS "Configuring ${SLICERAPP_APPLICATION_NAME} application: ${SLICERAPP_NAME}")
+  message(STATUS "--------------------------------------------------")
 
   macro(_set_app_property varname)
     set_property(GLOBAL PROPERTY ${SLICERAPP_APPLICATION_NAME}_${varname} ${SLICERAPP_${varname}})
@@ -549,7 +553,7 @@ macro(slicerMacroBuildApplication)
       foreach(executable ${executables})
         find_program(${executable}_EXECUTABLE ${executable})
         if(${executable}_EXECUTABLE)
-          message(STATUS "Enabling Slicer build tree launcher option: --${executable}")
+          message(STATUS "Enabling ${SLICERAPP_APPLICATION_NAME} build tree launcher option: --${executable}")
           ctkAppLauncherAppendExtraAppToLaunchToList(
             LONG_ARG ${executable}
             HELP "Start ${executable}"
@@ -570,7 +574,7 @@ macro(slicerMacroBuildApplication)
       foreach(executable ${executables})
         find_program(${executable}_EXECUTABLE ${executable})
         if(${executable}_EXECUTABLE)
-          message(STATUS "Enabling Slicer install tree launcher option: --${executable}")
+          message(STATUS "Enabling ${SLICERAPP_APPLICATION_NAME} install tree launcher option: --${executable}")
           ctkAppLauncherAppendExtraAppToLaunchToList(
             LONG_ARG ${executable}
             HELP "Start ${executable}"
