@@ -438,10 +438,10 @@ include(SlicerVersion)
 # Slicer sub-directories
 #-----------------------------------------------------------------------------
 set(Slicer_BIN_DIR "bin")
-set(Slicer_LIB_DIR "lib/Slicer-${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
-set(Slicer_INCLUDE_DIR "include/Slicer-${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
-set(Slicer_SHARE_DIR "share/Slicer-${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
-set(Slicer_LIBEXEC_DIR "libexec/Slicer-${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
+set(Slicer_LIB_DIR "lib/${Slicer_MAIN_PROJECT_APPLICATION_NAME}-${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
+set(Slicer_INCLUDE_DIR "include/${Slicer_MAIN_PROJECT_APPLICATION_NAME}-${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
+set(Slicer_SHARE_DIR "share/${Slicer_MAIN_PROJECT_APPLICATION_NAME}-${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
+set(Slicer_LIBEXEC_DIR "libexec/${Slicer_MAIN_PROJECT_APPLICATION_NAME}-${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
 set(Slicer_ITKFACTORIES_DIR "${Slicer_LIB_DIR}/ITKFactories")
 set(Slicer_QM_DIR "${Slicer_BIN_DIR}/Translations")
 
