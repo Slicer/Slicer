@@ -71,7 +71,11 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py in
 
   set(_version "1.13.1")
 
-  set(_download_stamp "${CMAKE_BINARY_DIR}/${proj}-prefix/src/${proj}-stamp/${proj}-download")
+  if(CMAKE_CONFIGURATION_TYPES)
+    set(_download_stamp "${Slicer_BINARY_DIR}/${proj}-prefix/src/${proj}-stamp/${CMAKE_CFG_INTDIR}/${proj}-download")
+  else()
+    set(_download_stamp "${Slicer_BINARY_DIR}/${proj}-prefix/src/${proj}-stamp/${proj}-download")
+  endif()
   set(_common_patch_args
     -DPatch_EXECUTABLE:PATH=${Patch_EXECUTABLE}
     -DSOURCE_DIR:PATH=<SOURCE_DIR>
