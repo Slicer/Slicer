@@ -172,6 +172,9 @@ class UtilTestTest(ScriptedLoadableModuleTest):
     self.assertIsNotNone(label, qt.QLabel)
     self.assertEqual(label.text, 'My custom UI')
 
+    # Parent window is created automatically, delete it now to prevent memory leaks
+    utilWidget.parent.deleteLater()
+
   def test_findChild(self):
     # Create a top-level widget (parent is not specified)
     utilWidget = UtilTestWidget()
@@ -188,6 +191,9 @@ class UtilTestTest(ScriptedLoadableModuleTest):
     except RuntimeError:
       caughtException = True
     self.assertTrue(caughtException)
+
+    # Parent window is created automatically, delete it now to prevent memory leaks
+    utilWidget.parent.deleteLater()
 
   def test_arrayFromVolume(self):
     # Test if retrieving voxels as a numpy array works
