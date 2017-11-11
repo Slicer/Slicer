@@ -506,6 +506,9 @@ class ExtensionWizard(object):
       if len(msg) > 2 and not len(msg[1].strip()):
         del msg[1]
 
+      # Update PR title to indicate the target name
+      msg[0] += " [%s]" % args.target
+
       # Try to add compare URL to pull request message, if applicable
       if update and oldRef is not None:
         extensionRepo = GithubHelper.getRepo(gh, url=xd.scmurl)
