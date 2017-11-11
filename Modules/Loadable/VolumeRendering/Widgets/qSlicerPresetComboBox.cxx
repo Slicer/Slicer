@@ -27,7 +27,7 @@
 #endif
 
 // CTK includes
-#include <ctkVTKScalarsToColorsUtils.h>
+#include <ctkVTKWidgetsUtils.h>
 #include <ctkWidgetsUtils.h>
 
 /// Module logic includes

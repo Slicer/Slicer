@@ -22,7 +22,7 @@
 #include <QPixmap>
 
 // CTK includes
-#include <ctkVTKScalarsToColorsUtils.h>
+#include <ctkVTKWidgetsUtils.h>
 
 // qMRML includes
 #include "qMRMLSceneColorTableModel.h"
