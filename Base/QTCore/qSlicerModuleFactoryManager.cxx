@@ -309,14 +309,17 @@ QStringList qSlicerModuleFactoryManager::modulePaths(const QString& basePath)
   //     and "modulePath(basePath)".
 
   QStringList paths;
-  foreach(const QString& subPath, QStringList()
+
+  QStringList subPaths;
 #ifdef Slicer_USE_PYTHONQT
-          << Slicer_QTSCRIPTEDMODULES_LIB_DIR
+  subPaths << Slicer_QTSCRIPTEDMODULES_LIB_DIR;
 #endif
 #ifdef Slicer_BUILD_CLI_SUPPORT
-          << Slicer_CLIMODULES_BIN_DIR
+  subPaths << Slicer_CLIMODULES_BIN_DIR;
 #endif
-          << Slicer_QTLOADABLEMODULES_LIB_DIR)
+  subPaths << Slicer_QTLOADABLEMODULES_LIB_DIR;
+
+  foreach(const QString& subPath, subPaths)
     {
     QString candidatePath = QDir(basePath).filePath(subPath);
     if (QDir(candidatePath).exists())
