@@ -27,6 +27,7 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QMouseEvent>
+#include <QLabel>
 
 // SubjectHierarchy includes
 #include "qMRMLSubjectHierarchyComboBox.h"
@@ -59,6 +60,7 @@ public:
   bool AlignPopupVertically;
 
   qMRMLSubjectHierarchyTreeView* TreeView;
+  QLabel* NoItemLabel;
 };
 
 //------------------------------------------------------------------------------
@@ -67,6 +69,7 @@ qMRMLSubjectHierarchyComboBoxPrivate::qMRMLSubjectHierarchyComboBoxPrivate(qMRML
   , MaximumNumberOfShownItems(20)
   , AlignPopupVertically(true)
   , TreeView(NULL)
+  , NoItemLabel(NULL)
 {
 }
 
@@ -90,8 +93,13 @@ void qMRMLSubjectHierarchyComboBoxPrivate::init()
   this->TreeView->setHeaderHidden(true);
   this->TreeView->setContextMenuEnabled(false);
 
+  // No item label
+  this->NoItemLabel = new QLabel("No items");
+  this->NoItemLabel->setMargin(4);
+
   // Add tree view to container
   QFrame* container = qobject_cast<QFrame*>(q->view()->parentWidget());
+  container->layout()->addWidget(this->NoItemLabel);
   container->layout()->addWidget(this->TreeView);
 
   // Make connections
@@ -300,19 +308,60 @@ void qMRMLSubjectHierarchyComboBox::showPopup()
   QPoint below = mapToGlobal(listRect.bottomLeft());
   QPoint above = mapToGlobal(listRect.topLeft());
 
-  // Custom size
+  // Custom Height
+  int popupHeight = 0;
   int displayedItemCount = d->TreeView->displayedItemCount();
-  const int numberOfRows = qMin(displayedItemCount, d->MaximumNumberOfShownItems);
-  int popupHeight = numberOfRows * d->TreeView->sizeHintForRow(0);
+  if (displayedItemCount == 0)
+    {
+    // If there is no items, find what message to show instead
+    vtkMRMLSubjectHierarchyNode* shNode = d->TreeView->subjectHierarchyNode();
+    vtkIdType rootItem = d->TreeView->rootItem();
+    std::vector<vtkIdType> childItemIDs;
+    shNode->GetItemChildren(rootItem, childItemIDs, false);
+    if (childItemIDs.empty())
+      {
+      if (rootItem!= shNode->GetSceneItemID())
+        {
+        std::string rootName = shNode->GetItemName(rootItem);
+        QString label = QString("No items in branch: ") + QString::fromStdString(rootName);
+        d->NoItemLabel->setText(label);
+        }
+      else
+        {
+        d->NoItemLabel->setText("No items in scene");
+        }
+      }
+    else
+      {
+      d->NoItemLabel->setText("No items accepted by current filters");
+      }
 
-  // Add margins for the height
-  // NB: not needed for the width as the item labels will be cropped
-  // without displaying an horizontal scroll bar
+      // Show no item label instead of tree view
+      d->NoItemLabel->show();
+      d->TreeView->hide();
+      popupHeight = d->NoItemLabel->sizeHint().height();
+    }
+  else
+    {
+    // Height based on the number of items
+    const int numberOfRows = qMin(displayedItemCount, d->MaximumNumberOfShownItems);
+    popupHeight = numberOfRows * d->TreeView->sizeHintForRow(0);
+
+    // Add tree view margins for the height
+    // NB: not needed for the width as the item labels will be cropped
+    // without displaying an horizontal scroll bar
+    int tvMarginLeft, tvMarginTop, tvMarginRight, tvMarginBottom;
+    d->TreeView->getContentsMargins(&tvMarginLeft, &tvMarginTop, &tvMarginRight, &tvMarginBottom);
+    popupHeight += tvMarginTop + tvMarginBottom;
+
+    d->NoItemLabel->hide();
+    d->TreeView->show();
+    }
+
+  // Add container margins for the height
   int marginLeft, marginTop, marginRight, marginBottom;
   container->getContentsMargins(&marginLeft, &marginTop, &marginRight, &marginBottom);
-  int tvMarginLeft, tvMarginTop, tvMarginRight, tvMarginBottom;
-  d->TreeView->getContentsMargins(&tvMarginLeft, &tvMarginTop, &tvMarginRight, &tvMarginBottom);
-  popupHeight += marginTop + marginBottom + tvMarginTop + tvMarginBottom;
+  popupHeight += marginTop + marginBottom;
 
   // Position of the container
   if(d->AlignPopupVertically)
