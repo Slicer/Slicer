@@ -452,7 +452,7 @@ class ExtensionWizard(object):
 
       # Ensure that user's fork is up to date
       logging.info("updating target branch (%s) branch on fork", args.target)
-      xiRemote.push("%s:%s" % (xiBase, args.target))
+      xiRemote.push("%s:refs/heads/%s" % (xiBase, args.target))
 
       # Determine if this is an addition or update to the index
       xdf = name + ".s4ext"
