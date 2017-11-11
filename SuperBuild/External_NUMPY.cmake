@@ -71,10 +71,12 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py in
 
   set(_version "1.13.1")
 
+  set(_download_stamp "${CMAKE_BINARY_DIR}/${proj}-prefix/src/${proj}-stamp/${proj}-download")
   set(_common_patch_args
     -DPatch_EXECUTABLE:PATH=${Patch_EXECUTABLE}
     -DSOURCE_DIR:PATH=<SOURCE_DIR>
     -DBINARY_DIR:PATH=${CMAKE_BINARY_DIR}
+    -DDOWNLOAD_STAMP:FILEPATH=${_download_stamp}
     )
 
   #------------------------------------------------------------------------------
