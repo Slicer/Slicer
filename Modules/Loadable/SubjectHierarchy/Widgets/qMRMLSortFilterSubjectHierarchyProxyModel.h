@@ -88,6 +88,16 @@ public:
   /// \param rootItemID Ancestor item of branch in which the accepted items are counted
   Q_INVOKABLE int acceptedItemCount(vtkIdType rootItemID)const;
 
+  /// Returns true if the item in the row indicated by the given sourceRow and
+  /// sourceParent should be included in the model; otherwise returns false.
+  /// This method test each item via \a filterAcceptsItem
+  virtual bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent)const;
+
+  /// Filters items to decide which to display in the view
+  virtual bool filterAcceptsItem(vtkIdType itemID, bool canAcceptIfAnyChildIsAccepted=true)const;
+
+  virtual Qt::ItemFlags flags(const QModelIndex & index)const;
+
 public slots:
   void setNameFilter(QString filter);
   void setAttributeNameFilter(QString filter);
@@ -95,13 +105,6 @@ public slots:
   void setLevelFilter(QString filter);
 
 protected:
-  /// Returns true if the item in the row indicated by the given sourceRow and
-  /// sourceParent should be included in the model; otherwise returns false.
-  /// This method test each item via \a filterAcceptsItem
-  virtual bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent)const;
-
-  /// Filters items to decide which to display in the view
-  virtual bool filterAcceptsItem(vtkIdType itemID)const;
 
   QStandardItem* sourceItem(const QModelIndex& index)const;
 
