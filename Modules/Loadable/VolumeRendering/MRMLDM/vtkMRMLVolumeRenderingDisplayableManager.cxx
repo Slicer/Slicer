@@ -751,6 +751,14 @@ void vtkMRMLVolumeRenderingDisplayableManager::OnVolumeRenderingDisplayNodeModif
       }
     return;
     }
+
+  if (dnode != this->DisplayedNode && !dnode->GetVisibility())
+    {
+    // one of the hidden (not active) volumes are modified
+    // we do not need to do anything
+    return;
+    }
+
   bool wasVolumeVisible = this->IsVolumeInView();
 
   this->UpdatePipelineFromDisplayNode(dnode);
