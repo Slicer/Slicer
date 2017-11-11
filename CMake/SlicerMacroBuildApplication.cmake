@@ -318,13 +318,20 @@ macro(slicerMacroBuildApplication)
     message(FATAL_ERROR "Unknown keywords given to slicerMacroBuildApplication(): \"${SLICERAPP_UNPARSED_ARGUMENTS}\"")
   endif()
 
-  set(expected_defined_vars NAME)
+  set(expected_defined_vars
+    NAME
+    LAUNCHER_SPLASHSCREEN_FILE
+    APPLE_ICON_FILE
+    WIN_ICON_FILE
+    LICENSE_FILE
+    )
   foreach(var ${expected_defined_vars})
     if(NOT DEFINED SLICERAPP_${var})
       message(FATAL_ERROR "${var} is mandatory")
     endif()
   endforeach()
 
+  # Set defaults
   if(NOT DEFINED SLICERAPP_APPLICATION_NAME)
     string(REGEX REPLACE "(.+)App" "\\1" SLICERAPP_APPLICATION_NAME ${SLICERAPP_NAME})
   endif()
@@ -340,10 +347,7 @@ macro(slicerMacroBuildApplication)
 
   _set_app_property("APPLICATION_NAME")
 
-  macro(_set_path_var varname defaultvalue)
-    if(NOT DEFINED SLICERAPP_${varname})
-      set(SLICERAPP_${varname} ${defaultvalue})
-    endif()
+  macro(_set_path_var varname)
     if(NOT IS_ABSOLUTE ${SLICERAPP_${varname}})
       set(SLICERAPP_${varname} ${CMAKE_CURRENT_SOURCE_DIR}/${SLICERAPP_${varname}})
     endif()
@@ -353,12 +357,12 @@ macro(slicerMacroBuildApplication)
     _set_app_property(${varname})
   endmacro()
 
-  _set_path_var(LAUNCHER_SPLASHSCREEN_FILE "Resources/Images/${SLICERAPP_APPLICATION_NAME}-SplashScreen.png")
-  _set_path_var(APPLE_ICON_FILE "Resources/${SLICERAPP_APPLICATION_NAME}.icns")
-  _set_path_var(WIN_ICON_FILE "Resources/${SLICERAPP_APPLICATION_NAME}.ico")
-  _set_path_var(LICENSE_FILE "${Slicer_SOURCE_DIR}/License.txt")
+  _set_path_var(LAUNCHER_SPLASHSCREEN_FILE)
+  _set_path_var(APPLE_ICON_FILE)
+  _set_path_var(WIN_ICON_FILE)
+  _set_path_var(LICENSE_FILE)
   if(DEFINED SLICERAPP_DEFAULT_SETTINGS_FILE)
-    _set_path_var(DEFAULT_SETTINGS_FILE "")
+    _set_path_var(DEFAULT_SETTINGS_FILE)
   endif()
 
   # --------------------------------------------------------------------------
