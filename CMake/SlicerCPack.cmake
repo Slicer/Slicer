@@ -164,30 +164,15 @@ endif()
 set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${Slicer_BINARY_DIR};Slicer;Runtime;/")
 
 # -------------------------------------------------------------------------
-# Common package properties
+# Define helper macros and functions
 # -------------------------------------------------------------------------
-set(CPACK_MONOLITHIC_INSTALL ON)
-
-set(Slicer_CPACK_PACKAGE_NAME ${SlicerApp_APPLICATION_NAME})
-set(Slicer_CPACK_PACKAGE_VENDOR ${Slicer_ORGANIZATION_NAME})
-set(Slicer_CPACK_PACKAGE_VERSION_MAJOR "${Slicer_VERSION_MAJOR}")
-set(Slicer_CPACK_PACKAGE_VERSION_MINOR "${Slicer_VERSION_MINOR}")
-set(Slicer_CPACK_PACKAGE_VERSION_PATCH "${Slicer_VERSION_PATCH}")
-set(Slicer_CPACK_PACKAGE_VERSION "${Slicer_VERSION_FULL}")
-set(Slicer_CPACK_PACKAGE_INSTALL_DIRECTORY "${Slicer_CPACK_PACKAGE_NAME} ${Slicer_CPACK_PACKAGE_VERSION}")
-
-set(project ${${Slicer_MAIN_PROJECT}_APPLICATION_NAME})
-
-# Get main application properties
-get_property(${project}_CPACK_PACKAGE_DESCRIPTION_FILE GLOBAL PROPERTY ${project}_DESCRIPTION_FILE)
-get_property(${project}_CPACK_RESOURCE_FILE_LICENSE GLOBAL PROPERTY ${project}_LICENSE_FILE)
-get_property(${project}_CPACK_PACKAGE_DESCRIPTION_SUMMARY GLOBAL PROPERTY ${project}_DESCRIPTION_SUMMARY)
-get_property(${project}_CPACK_PACKAGE_ICON GLOBAL PROPERTY ${project}_APPLE_ICON_FILE)
-
 function(slicer_verbose_set varname)
   message(STATUS "Setting ${varname} to '${ARGN}'")
   set(${varname} "${ARGN}" PARENT_SCOPE)
 endfunction()
+
+# Convenience variable used below
+set(project ${${Slicer_MAIN_PROJECT}_APPLICATION_NAME})
 
 macro(slicer_cpack_set varname)
   if(DEFINED ${project}_${varname})
@@ -204,18 +189,44 @@ macro(slicer_cpack_set varname)
   endif()
 endmacro()
 
+# -------------------------------------------------------------------------
+# Common package properties
+# -------------------------------------------------------------------------
+set(CPACK_MONOLITHIC_INSTALL ON)
+
+set(Slicer_CPACK_PACKAGE_NAME ${SlicerApp_APPLICATION_NAME})
 slicer_cpack_set("CPACK_PACKAGE_NAME")
+
+set(Slicer_CPACK_PACKAGE_VENDOR ${Slicer_ORGANIZATION_NAME})
 slicer_cpack_set("CPACK_PACKAGE_VENDOR")
-slicer_cpack_set("CPACK_PACKAGE_DESCRIPTION_SUMMARY")
-slicer_cpack_set("CPACK_PACKAGE_DESCRIPTION_FILE")
-slicer_cpack_set("CPACK_RESOURCE_FILE_LICENSE")
+
+set(Slicer_CPACK_PACKAGE_VERSION_MAJOR "${Slicer_VERSION_MAJOR}")
 slicer_cpack_set("CPACK_PACKAGE_VERSION_MAJOR")
+
+set(Slicer_CPACK_PACKAGE_VERSION_MINOR "${Slicer_VERSION_MINOR}")
 slicer_cpack_set("CPACK_PACKAGE_VERSION_MINOR")
+
+set(Slicer_CPACK_PACKAGE_VERSION_PATCH "${Slicer_VERSION_PATCH}")
 slicer_cpack_set("CPACK_PACKAGE_VERSION_PATCH")
+
+set(Slicer_CPACK_PACKAGE_VERSION "${Slicer_VERSION_FULL}")
 slicer_cpack_set("CPACK_PACKAGE_VERSION")
+
 set(CPACK_SYSTEM_NAME "${Slicer_OS}-${Slicer_ARCHITECTURE}")
+
+set(Slicer_CPACK_PACKAGE_INSTALL_DIRECTORY "${Slicer_CPACK_PACKAGE_NAME} ${Slicer_CPACK_PACKAGE_VERSION}")
 slicer_cpack_set("CPACK_PACKAGE_INSTALL_DIRECTORY")
 
+get_property(${project}_CPACK_PACKAGE_DESCRIPTION_FILE GLOBAL PROPERTY ${project}_DESCRIPTION_FILE)
+slicer_cpack_set("CPACK_PACKAGE_DESCRIPTION_FILE")
+
+get_property(${project}_CPACK_RESOURCE_FILE_LICENSE GLOBAL PROPERTY ${project}_LICENSE_FILE)
+slicer_cpack_set("CPACK_RESOURCE_FILE_LICENSE")
+
+get_property(${project}_CPACK_PACKAGE_DESCRIPTION_SUMMARY GLOBAL PROPERTY ${project}_DESCRIPTION_SUMMARY)
+slicer_cpack_set("CPACK_PACKAGE_DESCRIPTION_SUMMARY")
+
+get_property(${project}_CPACK_PACKAGE_ICON GLOBAL PROPERTY ${project}_APPLE_ICON_FILE)
 if(APPLE)
   slicer_cpack_set("CPACK_PACKAGE_ICON")
 endif()
