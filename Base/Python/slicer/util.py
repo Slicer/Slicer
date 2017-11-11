@@ -783,6 +783,38 @@ def updateVolumeFromArray(volumeNode, narray):
   volumeNode.Modified()
   volumeNode.InvokeEvent(slicer.vtkMRMLVolumeNode.ImageDataModifiedEvent, volumeNode)
 
+def updateTableFromArray(tableNode, narrays):
+  """Sets values in a table node from a numpy array.
+  Values are copied, therefore if the numpy array
+  is modified after calling this method, values in the table node will not change.
+
+  Example:
+
+      import numpy as np
+      histogram = np.histogram(arrayFromVolume(getNode('MRHead')))
+      tableNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode")
+      updateTableFromArray(tableNode, histogram)
+
+  """
+  import numpy as np
+  import vtk.util.numpy_support
+
+  if tableNode is None:
+    tableNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode")
+  if type(narrays) == np.ndarray and len(narrays.shape) == 1:
+    ncolumns = [narrays]
+  elif type(narrays) == np.ndarray and len(narrays.shape) == 2:
+    ncolumns = narrays.T
+  elif type(narrays) == tuple or type(narrays) == list:
+    ncolumns = narrays
+  else:
+    raise ValueError('Expected narrays is a numpy ndarray, or tuple or list of numpy ndarrays, got %s instead.' % (str(type(narrays))))
+  tableNode.RemoveAllColumns()
+  for ncolumn in ncolumns:
+    vcolumn = vtk.util.numpy_support.numpy_to_vtk(num_array=ncolumn.ravel(),deep=True,array_type=vtk.VTK_FLOAT)
+    tableNode.AddColumn(vcolumn)
+  return tableNode
+
 #
 # VTK
 #

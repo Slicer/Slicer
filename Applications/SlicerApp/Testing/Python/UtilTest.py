@@ -80,6 +80,7 @@ class UtilTestTest(ScriptedLoadableModuleTest):
     self.test_findChild()
     self.test_arrayFromVolume()
     self.test_updateVolumeFromArray()
+    self.test_updateTableFromArray()
     self.test_arrayFromModelPoints()
     self.test_array()
 
@@ -243,6 +244,33 @@ class UtilTestTest(ScriptedLoadableModuleTest):
     self.assertEqual(voxelValueVtk, voxelValueNumpy)
 
     self.delayDisplay('Testing slicer.util.test_updateVolumeFromArray passed')
+
+  def test_updateTableFromArray(self):
+    # Test if updating table values from a numpy array works
+    import numpy as np
+
+    self.delayDisplay('Test simple 2D array update')
+    a=np.array([[1,2,3,4],[5,6,7,8],[9,10,11,12]])
+    tableNode1 = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode")
+    slicer.util.updateTableFromArray(tableNode1, a)
+    self.assertEqual(tableNode1.GetNumberOfColumns(), 4)
+    self.assertEqual(tableNode1.GetNumberOfRows(), 3)
+
+    self.delayDisplay('Download sample data')
+    import SampleData
+    sampleDataLogic = SampleData.SampleDataLogic()
+    volumeNode = sampleDataLogic.downloadMRHead()
+
+    self.delayDisplay('Compute histogram')
+    histogram = np.histogram(slicer.util.arrayFromVolume(volumeNode))
+
+    self.delayDisplay('Test table update')
+    tableNode2 = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode")
+    slicer.util.updateTableFromArray(tableNode2, histogram)
+    self.assertEqual(tableNode2.GetNumberOfColumns(), 2)
+    self.assertEqual(tableNode2.GetNumberOfRows(), 11)
+
+    self.delayDisplay('Testing slicer.util.test_updateTableFromArray passed')
 
   def test_arrayFromModelPoints(self):
     # Test if retrieving point coordinates as a numpy array works
