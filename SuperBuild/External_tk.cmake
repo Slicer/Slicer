@@ -77,7 +77,7 @@ ExternalProject_Execute(${proj} \"install\" make install)
       URL "http://slicer.kitware.com/midas3/download/item/155631/tk8.6.1-src.tar.gz"
       URL_MD5 "63f21c3a0e0cefbd854b4eb29b129ac6"
       UPDATE_COMMAND "" # Disable update
-      SOURCE_DIR tcl/tk
+      SOURCE_DIR ${tcl_base}/tk
       BUILD_IN_SOURCE 1
       CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${_configure_script}
       BUILD_COMMAND ${CMAKE_COMMAND} -P ${_build_script}

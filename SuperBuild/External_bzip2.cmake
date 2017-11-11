@@ -30,10 +30,6 @@ if((NOT DEFINED BZIP2_INCLUDE_DIR
     set(git_protocol "git")
   endif()
 
-  set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
-  set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
-  set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
-
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
     "${git_protocol}://github.com/commontk/bzip2.git"
@@ -45,6 +41,10 @@ if((NOT DEFINED BZIP2_INCLUDE_DIR
     "0e735f23032ececcf52ed49b27928390fff28e50"
     QUIET
     )
+
+  set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
+  set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+  set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}

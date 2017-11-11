@@ -25,7 +25,8 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     ${${proj}_EP_ARGS}
     URL "https://pypi.python.org/packages/5d/1d/dd9716ef3a0ac60c23035a9b333818e34dec2e853733d03f502533af9b84/pydicom-${_version}.tar.gz"
     URL_MD5 "a66ca6728e69ba565ab9c8a21740eee8"
-    SOURCE_DIR ${proj}
+    DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
+    SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""

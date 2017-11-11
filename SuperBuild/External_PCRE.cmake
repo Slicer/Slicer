@@ -21,17 +21,16 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   #  PCRE (Perl Compatible Regular Expressions)
   #
 
-  # follow the standard EP_PREFIX locations
-  set(pcre_binary_dir ${CMAKE_CURRENT_BINARY_DIR}/PCRE-prefix/src/PCRE-build)
-  set(pcre_source_dir ${CMAKE_CURRENT_BINARY_DIR}/PCRE-prefix/src/PCRE)
-  set(pcre_install_dir ${CMAKE_CURRENT_BINARY_DIR}/PCRE)
+  set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/PCRE)
+  set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/PCRE-build)
+  set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/PCRE-install)
 
-    include(ExternalProjectForNonCMakeProject)
+  include(ExternalProjectForNonCMakeProject)
 
-    # environment
-    set(_env_script ${CMAKE_BINARY_DIR}/${proj}_Env.cmake)
-    ExternalProject_Write_SetBuildEnv_Commands(${_env_script})
-    file(APPEND ${_env_script}
+  # environment
+  set(_env_script ${CMAKE_BINARY_DIR}/${proj}_Env.cmake)
+  ExternalProject_Write_SetBuildEnv_Commands(${_env_script})
+  file(APPEND ${_env_script}
 "#------------------------------------------------------------------------------
 # Added by '${CMAKE_CURRENT_LIST_FILE}'
 
@@ -39,13 +38,13 @@ set(ENV{YACC} \"${BISON_EXECUTABLE}\")
 set(ENV{YFLAGS} \"${BISON_FLAGS}\")
 ")
 
-    # configure step
-    set(_configure_script ${CMAKE_BINARY_DIR}/${proj}_configure_step.cmake)
-    file(WRITE ${_configure_script}
+  # configure step
+  set(_configure_script ${CMAKE_BINARY_DIR}/${proj}_configure_step.cmake)
+  file(WRITE ${_configure_script}
 "include(\"${_env_script}\")
-set(${proj}_WORKING_DIR \"${pcre_binary_dir}\")
-ExternalProject_Execute(${proj} \"configure\" sh ${pcre_source_dir}/configure
-    --prefix=${pcre_install_dir} --disable-shared)
+set(${proj}_WORKING_DIR \"${EP_BINARY_DIR}\")
+ExternalProject_Execute(${proj} \"configure\" sh ${EP_SOURCE_DIR}/configure
+    --prefix=${EP_INSTALL_DIR} --disable-shared)
 ")
 
   set(_version "8.38")
@@ -54,6 +53,9 @@ ExternalProject_Execute(${proj} \"configure\" sh ${pcre_source_dir}/configure
     ${${proj}_EP_ARGS}
     URL http://slicer.kitware.com/midas3/download/item/263369/pcre-${_version}.tar.gz
     URL_MD5 8a353fe1450216b6655dfcf3561716d9
+    DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
+    SOURCE_DIR ${EP_SOURCE_DIR}
+    BINARY_DIR ${EP_BINARY_DIR}
     UPDATE_COMMAND "" # Disable update
     CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${_configure_script}
     DEPENDS
@@ -63,4 +65,6 @@ ExternalProject_Execute(${proj} \"configure\" sh ${pcre_source_dir}/configure
   ExternalProject_GenerateProjectDescription_Step(${proj}
     VERSION ${_version}
     )
+
+  set(PCRE_DIR ${EP_INSTALL_DIR})
 endif()
