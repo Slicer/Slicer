@@ -96,8 +96,12 @@ void qMRMLSubjectHierarchyComboBoxPrivate::init()
   // Make connections
   QObject::connect(this->TreeView, SIGNAL(currentItemChanged(vtkIdType)),
                    q, SLOT(updateComboBoxTitleAndIcon(vtkIdType)));
+  QObject::connect(this->TreeView, SIGNAL(currentItemModified(vtkIdType)),
+                   q, SLOT(updateComboBoxTitleAndIcon(vtkIdType)));
   QObject::connect(this->TreeView, SIGNAL(currentItemChanged(vtkIdType)),
                    q, SIGNAL(currentItemChanged(vtkIdType)));
+  QObject::connect(this->TreeView, SIGNAL(currentItemModified(vtkIdType)),
+                   q, SIGNAL(currentItemModified(vtkIdType)));
 }
 
 // --------------------------------------------------------------------------

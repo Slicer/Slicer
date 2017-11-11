@@ -112,6 +112,7 @@ public slots:
 
 signals:
   void currentItemChanged(vtkIdType);
+  void currentItemModified(vtkIdType);
 
 protected slots:
   void updateComboBoxTitleAndIcon(vtkIdType selectedShItemID);

@@ -311,6 +311,9 @@ void qMRMLSubjectHierarchyTreeView::setSubjectHierarchyNode(vtkMRMLSubjectHierar
 
   d->SubjectHierarchyNode = shNode;
 
+  qvtkReconnect( shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent,
+                 this, SLOT( onSubjectHierarchyItemModified(vtkObject*,void*) ) );
+
   if (!shNode)
     {
     d->Model->setMRMLScene(NULL);
@@ -1295,6 +1298,64 @@ void qMRMLSubjectHierarchyTreeView::setMultiSelection(bool multiSelectionOn)
 bool qMRMLSubjectHierarchyTreeView::multiSelection()
 {
   return (this->selectionMode() == QAbstractItemView::ExtendedSelection);
+}
+
+//-----------------------------------------------------------------------------
+vtkIdType qMRMLSubjectHierarchyTreeView::firstSelectedSubjectHierarchyItemInBranch(vtkIdType itemID)
+{
+  // Check if item itself is selected
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  if (d->SelectedItems.contains(itemID))
+    {
+    return itemID;
+    }
+
+  // Look for selected item in children recursively
+  std::vector<vtkIdType> childItemIDs;
+  d->SubjectHierarchyNode->GetItemChildren(itemID, childItemIDs, true);
+  for (std::vector<vtkIdType>::iterator childIt=childItemIDs.begin(); childIt!=childItemIDs.end(); ++childIt)
+    {
+    vtkIdType selectedId = this->firstSelectedSubjectHierarchyItemInBranch(*childIt);
+    if (selectedId != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+      {
+      return selectedId;
+      }
+    }
+
+  // That item is not selected and does not have
+  // any children items selected
+  return vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::onSubjectHierarchyItemModified(vtkObject *caller, void *callData)
+{
+  vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(caller);
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+
+  // Get item ID
+  vtkIdType itemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+  if (callData)
+    {
+    vtkIdType* itemIdPtr = reinterpret_cast<vtkIdType*>(callData);
+    if (itemIdPtr)
+      {
+      itemID = *itemIdPtr;
+      }
+    }
+
+  // Forward `currentItemModified` if the modified item or one of
+  // its children was selected, to adequately update other widgets
+  // that use that modified item such as qMRMLSubjectHierarchyComboBox
+  vtkIdType selectedId = this->firstSelectedSubjectHierarchyItemInBranch(itemID);
+  if (selectedId != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    emit currentItemModified(selectedId);
+    }
 }
 
 //-----------------------------------------------------------------------------

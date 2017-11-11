@@ -160,6 +160,7 @@ public slots:
 
 signals:
   void currentItemChanged(vtkIdType);
+  void currentItemModified(vtkIdType);
 
 protected slots:
   virtual void onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
@@ -175,6 +176,10 @@ protected slots:
   /// Update root item to restore view
   /// (e.g. after tree was updated in the model from the subject hierarchy)
   virtual void updateRootItem();
+
+  /// Propagate item modified signal if the item or an item in its branch
+  /// was selected in that treeview
+  virtual void onSubjectHierarchyItemModified(vtkObject *caller, void *callData);
 
   /// Called when scene end is finished. Hierarchy is cleared in that case.
   virtual void onMRMLSceneCloseEnded(vtkObject* sceneObject);
@@ -210,6 +215,10 @@ protected:
   /// Apply highlight for subject hierarchy items referenced by argument items by DICOM
   /// \sa highlightReferencedItems
   void applyReferenceHighlightForItems(QList<vtkIdType> itemIDs);
+
+  /// Return the id of the first subject hierarchy item that is found to be selected
+  /// within the branch that has the input item id as its root
+  vtkIdType firstSelectedSubjectHierarchyItemInBranch(vtkIdType itemID);
 
 protected:
   QScopedPointer<qMRMLSubjectHierarchyTreeViewPrivate> d_ptr;
