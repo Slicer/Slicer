@@ -973,14 +973,14 @@ qMRMLChartWidget* qMRMLLayoutManager::chartWidget(int id)const
 qMRMLTableWidget* qMRMLLayoutManager::tableWidget(int id)const
 {
   return qobject_cast<qMRMLTableWidget*>(
-              this->mrmlViewFactory("vtkMRMLTableViewNode")->viewWidget(id));
+    this->mrmlViewFactory("vtkMRMLTableViewNode")->viewWidget(id));
 }
 
 //------------------------------------------------------------------------------
-qMRMLTableWidget *qMRMLLayoutManager::plotWidget(int id)const
+qMRMLPlotWidget *qMRMLLayoutManager::plotWidget(int id)const
 {
-  return qobject_cast<qMRMLTableWidget*>(
-              this->mrmlViewFactory("vtkMRMLPlotViewNode")->viewWidget(id));
+  return qobject_cast<qMRMLPlotWidget*>(
+    this->mrmlViewFactory("vtkMRMLPlotViewNode")->viewWidget(id));
 }
 
 //------------------------------------------------------------------------------

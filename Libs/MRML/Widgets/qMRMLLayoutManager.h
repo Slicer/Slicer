@@ -32,6 +32,7 @@ class QWidget;
 #include "qMRMLWidgetsExport.h"
 
 class qMRMLChartWidget;
+class qMRMLPlotWidget;
 class qMRMLTableWidget;
 class qMRMLThreeDWidget;
 class qMRMLSliceWidget;
@@ -149,7 +150,7 @@ public:
   Q_INVOKABLE qMRMLThreeDWidget* threeDWidget(int id)const;
   Q_INVOKABLE qMRMLChartWidget* chartWidget(int id)const;
   Q_INVOKABLE qMRMLTableWidget* tableWidget(int id)const;
-  Q_INVOKABLE qMRMLTableWidget* plotWidget(int id)const;
+  Q_INVOKABLE qMRMLPlotWidget* plotWidget(int id)const;
 
   /// Return the up-to-date list of vtkMRMLSliceLogics associated to the slice views.
   /// The returned collection object is owned by the layout manager.
