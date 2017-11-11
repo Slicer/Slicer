@@ -42,11 +42,13 @@
 #include <vector>
 
 #include "itkArchetypeSeriesFileNames.h"
-#include "itkDCMTKImageIO.h"
 #include "itkOrientImageFilter.h"
 #include "itkImageSeriesReader.h"
+#ifdef VTKITK_BUILD_DICOM_SUPPORT
+#include "itkDCMTKImageIO.h"
 #include "itkGDCMSeriesFileNames.h"
 #include "itkGDCMImageIO.h"
+#endif
 
 vtkStandardNewMacro(vtkITKArchetypeImageSeriesReader);
 
@@ -67,7 +69,9 @@ vtkITKArchetypeImageSeriesReader::vtkITKArchetypeImageSeriesReader()
   this->FileNameSliceCount = 0;
   this->UseNativeOrigin = true;
 
+#ifdef VTKITK_BUILD_DICOM_SUPPORT
   this->SetDICOMImageIOApproachToGDCM();
+#endif
 
   this->OutputScalarType = VTK_FLOAT;
   this->NumberOfComponents = 0;
@@ -170,8 +174,11 @@ void vtkITKArchetypeImageSeriesReader::PrintSelf(ostream& os, vtkIndent indent)
     os << ", " << this->DefaultDataOrigin[idx];
     }
   os << ")\n";
-
+#ifdef VTKITK_BUILD_DICOM_SUPPORT
   os << indent << "DICOMImageIOApproach: " << this->GetDICOMImageIOApproach();
+#else
+  os << indent << "DICOMImageIOApproach: " << "NA";
+#endif
 }
 
 //----------------------------------------------------------------------------
@@ -240,6 +247,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
   this->AllFileNames.resize( 0 );
 
   // Some file types require special processing
+#ifdef VTKITK_BUILD_DICOM_SUPPORT
   itk::ImageIOBase::Pointer dicomIO;
   if (this->GetDICOMImageIOApproach() == vtkITKArchetypeImageSeriesReader::DCMTK)
     {
@@ -252,6 +260,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
 
   // Test whether the input file is a DICOM file
   this->ArchetypeIsDICOM = dicomIO->CanReadFile(this->Archetype);
+#endif
 
   // if user already set up FileNames, we do not try to find candidate files
   if ( this->GetNumberOfFileNames() > 0 )
@@ -278,6 +287,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
   }
   else
   {
+#ifdef VTKITK_BUILD_DICOM_SUPPORT
     if ( this->ArchetypeIsDICOM && !this->GetSingleFile() )
     {
       typedef itk::GDCMSeriesFileNames DICOMNameGeneratorType;
@@ -335,7 +345,9 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
         this->IsOnlyFile = true;
       }
     }
-    else if( !this->GetSingleFile() )
+    else
+#endif
+    if( !this->GetSingleFile() )
     { // not dicom
       // check the dimensions of the archetype - if there
       // is more then one slice, use only the archetype
@@ -436,18 +448,25 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
 
   try
     {
-    // If there is only one file in the series, just use an image file reader
-    if (this->FileNames.size() == 1)
+    if (this->FileNames.size() == 0)
+      {
+      vtkErrorMacro( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: Failed to read file series");
+      this->SetErrorCode(vtkErrorCode::FileNotFoundError);
+      return 0;
+      }
+    else if (this->FileNames.size() == 1) // If there is only one file in the series, just use an image file reader
       {
       itk::OrientImageFilter<ImageType,ImageType>::Pointer orient =
         itk::OrientImageFilter<ImageType,ImageType>::New();
       itk::ImageFileReader<ImageType>::Pointer imageReader =
         itk::ImageFileReader<ImageType>::New();
       imageReader->SetFileName(this->FileNames[0].c_str());
+#ifdef VTKITK_BUILD_DICOM_SUPPORT
       if (this->ArchetypeIsDICOM)
         {
         imageReader->SetImageIO(dicomIO);
         }
+#endif
 
       if (this->UseNativeCoordinateOrientation)
         {
@@ -528,11 +547,13 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
       itk::ImageSeriesReader<ImageType>::Pointer seriesReader =
         itk::ImageSeriesReader<ImageType>::New();
       seriesReader->SetFileNames(this->FileNames);
+#ifdef VTKITK_BUILD_DICOM_SUPPORT
       if (this->ArchetypeIsDICOM)
         {
           seriesReader->SetImageIO(dicomIO);
         }
       else
+#endif
         {
         itk::ImageFileReader<ImageType>::Pointer imageReader =
           itk::ImageFileReader<ImageType>::New();
@@ -1082,6 +1103,7 @@ std::string vtkITKArchetypeImageSeriesReader::GetMetaDataWithoutSpaces(const itk
 //----------------------------------------------------------------------------
 void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
 {
+#ifdef VTKITK_BUILD_DICOM_SUPPORT
   itk::TimeProbe AnalyzeTime;
   AnalyzeTime.Start();
 
@@ -1305,7 +1327,7 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
 
   // double timeelapsed = AnalyzeTime.GetMean(); UNUSED
   AnalyzeHeader = false;
-  return;
+#endif
 }
 
 //----------------------------------------------------------------------------

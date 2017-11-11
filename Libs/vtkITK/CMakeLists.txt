@@ -11,6 +11,10 @@ if(NOT DEFINED BUILD_SHARED_LIBS)
   option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
 endif()
 
+if(NOT DEFINED VTKITK_BUILD_DICOM_SUPPORT)
+  option(VTKITK_BUILD_DICOM_SUPPORT "Build with DICOM support" ON)
+endif()
+
 # --------------------------------------------------------------------------
 # Dependencies
 # --------------------------------------------------------------------------

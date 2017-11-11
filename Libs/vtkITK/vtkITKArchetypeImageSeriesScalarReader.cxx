@@ -30,8 +30,10 @@
 // ITK includes
 #include <itkOrientImageFilter.h>
 #include <itkImageSeriesReader.h>
+#ifdef VTKITK_BUILD_DICOM_SUPPORT
 #include <itkDCMTKImageIO.h>
 #include <itkGDCMImageIO.h>
+#endif
 
 vtkStandardNewMacro(vtkITKArchetypeImageSeriesScalarReader);
 
@@ -90,6 +92,7 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
     vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()));
   this->SetMetaDataScalarRangeToPointDataInfo(data);
 
+#ifdef VTKITK_BUILD_DICOM_SUPPORT
 #define vtkITKExecuteDataDeclareDICOMImageIO \
       typedef itk::ImageIOBase ImageIOType; \
       ImageIOType::Pointer imageIO; \
@@ -107,6 +110,11 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
         this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError); \
         return 0; \
         }
+#else
+#define vtkITKExecuteDataDeclareDICOMImageIO \
+  typedef itk::ImageIOBase ImageIOType; \
+  ImageIOType::Pointer imageIO;
+#endif
 
 /// SCALAR MACRO
 #define vtkITKExecuteDataFromSeries(typeN, type) \
