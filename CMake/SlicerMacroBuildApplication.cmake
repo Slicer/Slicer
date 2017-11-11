@@ -338,6 +338,8 @@ macro(slicerMacroBuildApplication)
     message(STATUS "Setting ${SLICERAPP_APPLICATION_NAME} ${varname} to '${SLICERAPP_${varname}}'")
   endmacro()
 
+  _set_app_property("APPLICATION_NAME")
+
   macro(_set_path_var varname defaultvalue)
     if(NOT DEFINED SLICERAPP_${varname})
       set(SLICERAPP_${varname} ${defaultvalue})
