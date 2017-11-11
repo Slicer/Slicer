@@ -843,3 +843,24 @@ macro(ExternalProject_SetIfNotDefined var defaultvalue)
     set(${var} "${defaultvalue}")
   endif()
 endmacro()
+
+#.rst:
+# .. cmake:function:: ExternalProject_AlwaysConfigure
+#
+# Add a external project step named `forceconfigure` to `project_name` ensuring
+# the project will always be reconfigured.
+#
+# .. code-block:: cmake
+#
+#  ExternalProject_AlwaysConfigure(<project_name>)
+function(ExternalProject_AlwaysConfigure proj)
+  # This custom external project step forces the configure and later
+  # steps to run.
+  _ep_get_step_stampfile(${proj} "configure" stampfile)
+  ExternalProject_Add_Step(${proj} forceconfigure
+    COMMAND ${CMAKE_COMMAND} -E remove ${stampfile}
+    COMMENT "Forcing configure step for '${proj}'"
+    DEPENDEES build
+    ALWAYS 1
+    )
+endfunction()
