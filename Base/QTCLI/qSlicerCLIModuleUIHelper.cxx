@@ -17,6 +17,7 @@
 #include <QRadioButton>
 #include <QSpinBox>
 #include <QToolButton>
+#include <QSizePolicy>
 
 // CTK includes
 #include <ctkDirectoryButton.h>
@@ -868,6 +869,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createDirectoryTagWidget(const ModuleP
 
   INSTANCIATE_WIDGET_VALUE_WRAPPER(Directory, _name, _label, widget);
 
+  widget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
   return widget;
 }
 
@@ -910,6 +912,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createFileTagWidget(const ModuleParame
   QHBoxLayout* hBoxLayout = new QHBoxLayout;
   hBoxLayout->setContentsMargins(0,0,0,0);
   hBoxLayout->addWidget(pathLineEdit);
+  widget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
   widget->setLayout(hBoxLayout);
   return widget;
 }
