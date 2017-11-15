@@ -41,6 +41,11 @@ public:
   /// meaningful
   virtual bool isValid()const;
 
+  // Update GUI widgets based on properties.
+  // Derived classes can override this method to set default
+  // options on the GUI.
+  virtual void updateGUI(const qSlicerIO::IOProperties& ioProperties);
+
 public slots:
   virtual void setFileName(const QString& fileName);
   virtual void setFileNames(const QStringList& fileNames);
