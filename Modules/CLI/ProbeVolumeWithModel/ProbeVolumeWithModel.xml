@@ -18,14 +18,14 @@
       <index>0</index>
       <description><![CDATA[Volume to use to "paint" the model]]></description>
     </image>
-    <geometry>
+    <geometry fileExtensions=".vtk,.vtp,.vtu">
       <name>InputModel</name>
       <label>Input Model</label>
       <channel>input</channel>
       <index>1</index>
       <description><![CDATA[Input model]]></description>
     </geometry>
-    <geometry reference="InputModel">
+    <geometry fileExtensions=".vtk,.vtp,.vtu" reference="InputModel" >
       <name>OutputModel</name>
       <label>Output Model</label>
       <channel>output</channel>
