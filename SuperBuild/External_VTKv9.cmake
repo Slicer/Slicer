@@ -1,5 +1,5 @@
 
-set(proj VTKv8)
+set(proj VTKv9)
 
 # Set dependency list
 set(${proj}_DEPENDENCIES "zlib")
@@ -123,6 +123,8 @@ if("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "7")
   set(_git_tag "57d826c1bcdf6cd201b1e77dd14a84d6930e3a55")
 elseif("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "8")
   set(_git_tag "71cf31677877a3a93a3d3f23ad4c400cf7dff770")
+elseif("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "9")
+  set(_git_tag "e3f97b0952160c7d7c599deacd8e630eb9ebfc26")
 else()
   message(FATAL_ERROR "error: Unsupported Slicer_VTK_VERSION_MAJOR: ${Slicer_VTK_VERSION_MAJOR}")
 endif()

@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.5)
 #-----------------------------------------------------------------------------
 set(_msg "Setting C++ standard")
 message(STATUS "${_msg}")
-if("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "8" OR DEFINED Qt5_DIR)
+if("${Slicer_VTK_VERSION_MAJOR}" MATCHES "^(8|9)$" OR DEFINED Qt5_DIR)
   set(CMAKE_CXX_STANDARD 11)
   # Since SimpleITK requires CMP0067 to properly support C++11, requires
   # the corresponding CMake version.
@@ -185,7 +185,7 @@ mark_as_superbuild(Patch_EXECUTABLE)
 #-----------------------------------------------------------------------------
 if(NOT DEFINED Slicer_REQUIRED_QT_VERSION)
   set(_required_qt_version "4.7.4")
-  if(DEFINED Qt5_DIR OR "${Slicer_VTK_VERSION_MAJOR}" STREQUAL "8")
+  if(DEFINED Qt5_DIR OR "${Slicer_VTK_VERSION_MAJOR}" MATCHES "^(8|9)$")
     set(_required_qt_version "5.6.0")
   endif()
   set(Slicer_REQUIRED_QT_VERSION ${_required_qt_version} CACHE STRING "Minimum required Qt version" FORCE)
@@ -330,12 +330,12 @@ mark_as_superbuild(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT)
 
 set(_default_vtk "7")
 if(DEFINED Qt5_DIR)
-  set(_default_vtk "8")
+  set(_default_vtk "9")
 endif()
-set(Slicer_VTK_VERSION_MAJOR ${_default_vtk} CACHE STRING "The VTK major version (7 or 8).")
-set_property(CACHE Slicer_VTK_VERSION_MAJOR PROPERTY STRINGS "7" "8")
-if(NOT "${Slicer_VTK_VERSION_MAJOR}" STREQUAL "7" AND NOT "${Slicer_VTK_VERSION_MAJOR}" STREQUAL "8")
-  message(FATAL_ERROR "error: Slicer_VTK_VERSION_MAJOR must be 7 or 8.")
+set(Slicer_VTK_VERSION_MAJOR ${_default_vtk} CACHE STRING "The VTK major version (7, 8 or 9).")
+set_property(CACHE Slicer_VTK_VERSION_MAJOR PROPERTY STRINGS "7" "8" "9")
+if(NOT "${Slicer_VTK_VERSION_MAJOR}" MATCHES "^(7|8|9)$")
+  message(FATAL_ERROR "error: Slicer_VTK_VERSION_MAJOR must be 7, 8 or 9.")
 endif()
 mark_as_superbuild(Slicer_VTK_VERSION_MAJOR)
 
@@ -495,7 +495,7 @@ if(Slicer_BUILD_CLI_SUPPORT)
 endif()
 
 #-----------------------------------------------------------------------------
-# VTKv8 - Slicer_VTK_COMPONENTS
+# VTKv9 - Slicer_VTK_COMPONENTS
 #-----------------------------------------------------------------------------
 if(Slicer_VTK_VERSION_MAJOR STREQUAL "7")
   set(_backend "OpenGL")
