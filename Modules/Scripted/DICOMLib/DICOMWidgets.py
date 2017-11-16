@@ -678,8 +678,11 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
   def getLoadablesFromFileLists(self, fileLists):
     """Take list of file lists, return loadables by plugin dictionary
     """
-
     loadablesByPlugin = {}
+    loadEnabled = False
+    if not type(fileLists) is list or len(fileLists)==0 or not type(fileLists[0]) is tuple:
+      logging.error('File lists must contain a non-empty list of tuples')
+      return loadablesByPlugin, loadEnabled
 
     allFileCount = missingFileCount = 0
     for fileList in self.fileLists:
@@ -697,7 +700,6 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
 
     plugins = self.pluginSelector.selectedPlugins()
 
-    loadEnabled = False
     progress = slicer.util.createProgressDialog(parent=self, value=0, maximum=len(plugins))
 
     for step, pluginClass in enumerate(plugins):

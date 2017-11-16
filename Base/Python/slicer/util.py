@@ -1108,3 +1108,106 @@ interactor.AddObserver(vtk.vtkCommand.LeftButtonPressEvent, onClick)
   up()
   interactor.SetShiftKey(0)
   interactor.SetControlKey(0)
+
+def downloadFile(url, targetFilePath):
+  """ Download ``url`` to local storage as ``targetFilePath``
+
+  Target file path needs to indicate the file name and extension as well
+  """
+  import os
+  import logging
+  if not os.path.exists(targetFilePath) or os.stat(targetFilePath).st_size == 0:
+    logging.info('Downloading from\n  %s\nas file\n  %s\nIt may take a few minutes...' % (url,targetFilePath))
+    try:
+      import urllib
+      urllib.urlretrieve(url, targetFilePath)
+    except Exception, e:
+      import traceback
+      traceback.print_exc()
+      logging.error('Failed to download file from ' + url)
+      return False
+  else:
+    logging.info('Requested file has been found: ' + targetFilePath)
+  return True
+
+def extractArchive(archiveFilePath, outputDir, expectedNumberOfExtractedFiles=None):
+  """ Extract file ``archiveFilePath`` into folder ``outputDir``.
+
+  Number of expected files unzipped may be specified in ``expectedNumberOfExtractedFiles``.
+  If folder contains the same number of files as expected (if specified), then it will be
+  assumed that unzipping has been successfully done earlier.
+  """
+  import os
+  import logging
+  from slicer import app
+  if not os.path.exists(archiveFilePath):
+    logging.error('Specified file %s does not exist' % (archiveFilePath))
+    return False
+  fileName, fileExtension = os.path.splitext(archiveFilePath)
+  if fileExtension.lower() != '.zip':
+    #TODO: Support other archive types
+    logging.error('Only zip archives are supported now, got ' + fileExtension)
+    return False
+
+  numOfFilesInOutputDir = len(getFilesInDirectory(outputDir, False))
+  if expectedNumberOfExtractedFiles is not None \
+      and numOfFilesInOutputDir == expectedNumberOfExtractedFiles:
+    logging.info('File %s already unzipped into %s' % (archiveFilePath, outputDir))
+    return True
+
+  extractSuccessful = app.applicationLogic().Unzip(archiveFilePath, outputDir)
+  numOfFilesInOutputDirTest = len(getFilesInDirectory(outputDir, False))
+  if extractSuccessful is False or (expectedNumberOfExtractedFiles is not None \
+      and numOfFilesInOutputDirTest != expectedNumberOfExtractedFiles):
+    logging.error('Unzipping %s into %s failed' % (archiveFilePath, outputDir))
+    return False
+  logging.info('Unzipping %s into %s successful' % (archiveFilePath, outputDir))
+  return True
+
+def downloadAndExtractArchive(url, archiveFilePath, outputDir, \
+                              expectedNumberOfExtractedFiles=None, numberOfTrials=3):
+  """ Downloads an archive from ``url`` as ``archiveFilePath``, and extracts it to ``outputDir``.
+
+  This combined function tests the success of the download by the extraction step,
+  and re-downloads if extraction failed.
+  """
+  import os
+  import shutil
+  import logging
+
+  maxNumberOfTrials = numberOfTrials
+
+  def _cleanup():
+    # If there was a failure, delete downloaded file and empty output folder
+    logging.warning('Download and extract failed, removing archive and destination folder and retrying. Attempt #%d...' % (maxNumberOfTrials - numberOfTrials))
+    os.remove(archiveFilePath)
+    shutil.rmtree(outputDir)
+    os.mkdir(outputDir)
+
+  while numberOfTrials:
+    if not downloadFile(url, archiveFilePath):
+      numberOfTrials -= 1
+      _cleanup()
+      continue
+    if not extractArchive(archiveFilePath, outputDir, expectedNumberOfExtractedFiles):
+      numberOfTrials -= 1
+      _cleanup()
+      continue
+    return True
+
+  _cleanup()
+  return False
+
+def getFilesInDirectory(directory, absolutePath=True):
+  """ Collect all files in a directory and its subdirectories in a list
+  """
+  import os
+  allFiles=[]
+  for root, subdirs, files in os.walk(directory):
+    for fileName in files:
+      if absolutePath:
+        fileAbsolutePath = os.path.abspath(os.path.join(root, fileName)).replace('\\','/')
+        allFiles.append(fileAbsolutePath)
+      else:
+        allFiles.append(fileName)
+  return allFiles

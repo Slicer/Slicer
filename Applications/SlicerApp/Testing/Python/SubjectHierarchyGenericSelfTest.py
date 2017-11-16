@@ -117,6 +117,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
       os.mkdir(self.dicomDataDir)
 
     self.dicomDatabaseDir = subjectHierarchyGenericSelfTestDir + '/CtkDicomDatabase'
+    self.dicomZipFileUrl = 'http://slicer.kitware.com/midas3/download/item/137843/TestDicomCT.zip'
     self.dicomZipFilePath = subjectHierarchyGenericSelfTestDir + '/TestDicomCT.zip'
     self.expectedNumOfFilesInDicomDataDir = 10
     self.tempDir = subjectHierarchyGenericSelfTestDir + '/Temp'
@@ -162,56 +163,20 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
   # ------------------------------------------------------------------------------
   def section_LoadDicomData(self):
     try:
-      # Download and unzip test CT DICOM data
-      import urllib
-      downloads = (
-          ('http://slicer.kitware.com/midas3/download/item/137843/TestDicomCT.zip', self.dicomZipFilePath),
-          )
-
-      downloaded = 0
-      for url,filePath in downloads:
-        if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
-          if downloaded == 0:
-            self.delayDisplay('Downloading input data to folder\n' + self.dicomZipFilePath + '.\n\n  It may take a few minutes...',self.delayMs)
-          print('Requesting download from %s...' % (url))
-          urllib.urlretrieve(url, filePath)
-          downloaded += 1
-        else:
-          self.delayDisplay('Input data has been found in folder ' + self.dicomZipFilePath, self.delayMs)
-      if downloaded > 0:
-        self.delayDisplay('Downloading input data finished',self.delayMs)
-
-      numOfFilesInDicomDataDir = len([name for name in os.listdir(self.dicomDataDir) if os.path.isfile(self.dicomDataDir + '/' + name)])
-      if (numOfFilesInDicomDataDir != self.expectedNumOfFilesInDicomDataDir):
-        slicer.app.applicationLogic().Unzip(self.dicomZipFilePath, self.dicomDataDir)
-        self.delayDisplay("Unzipping done",self.delayMs)
-
-      numOfFilesInDicomDataDirTest = len([name for name in os.listdir(self.dicomDataDir) if os.path.isfile(self.dicomDataDir + '/' + name)])
-      self.assertEqual( numOfFilesInDicomDataDirTest, self.expectedNumOfFilesInDicomDataDir )
-
       # Open test database and empty it
-      with DICOMUtils.TemporaryDICOMDatabase(self.dicomDatabaseDir, True) as db:
+      with DICOMUtils.TemporaryDICOMDatabase(self.dicomDatabaseDir) as db:
         self.assertTrue( db.isOpen )
         self.assertEqual( slicer.dicomDatabase, db)
 
-        # Import test data in database
-        indexer = ctk.ctkDICOMIndexer()
-        self.assertIsNotNone( indexer )
+        # Download, unzip, import, and load data. Verify loaded nodes.
+        loadedNodes = {'vtkMRMLScalarVolumeNode':1}
+        with DICOMUtils.LoadDICOMFilesToDatabase( \
+            self.dicomZipFileUrl, self.dicomZipFilePath, \
+            self.dicomDataDir, self.expectedNumOfFilesInDicomDataDir, \
+            {}, loadedNodes) as success:
+          self.assertTrue(success)
 
-        indexer.addDirectory( slicer.dicomDatabase, self.dicomDataDir )
-
-        self.assertEqual( len(slicer.dicomDatabase.patients()), 1 )
-        self.assertIsNotNone( slicer.dicomDatabase.patients()[0] )
-
-        # Load test data
-        numOfScalarVolumeNodesBeforeLoad = len( slicer.util.getNodes('vtkMRMLScalarVolumeNode*') )
-        self.assertEqual( len( slicer.util.getNodes('vtkMRMLSubjectHierarchyNode*') ), 1 )
-
-        patient = slicer.dicomDatabase.patients()[0]
-        DICOMUtils.loadPatientByUID(patient)
-
-        self.assertEqual( len( slicer.util.getNodes('vtkMRMLScalarVolumeNode*') ),  numOfScalarVolumeNodesBeforeLoad + 1 )
-        self.assertEqual( len( slicer.util.getNodes('vtkMRMLSubjectHierarchyNode*') ), 1 )
+      self.assertEqual( len( slicer.util.getNodes('vtkMRMLSubjectHierarchyNode*') ), 1 )
 
     except Exception, e:
       import traceback
