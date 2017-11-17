@@ -22,7 +22,7 @@ set(UNITTEST_LIB_PATHS
   "--additional-module-paths"
   ${CMAKE_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}
   ${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_LIB_DIR}
-  ${CMAKE_BINARY_DIR}/${Slicer_QTLOADBLEMODULES_LIB_DIR}
+  ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}
   )
 
 macro(slicer_add_python_test)
