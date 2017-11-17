@@ -76,6 +76,7 @@ public:
     ///
     /// don't do anything as it's overriding the LUTs low threshold with the
     /// scalar values' lowest value
+    using vtkLookupTable::SetRange;
     void SetRange(double, double) VTK_OVERRIDE;
     ///
     /// Given a scalar value val, return an rgba color value
