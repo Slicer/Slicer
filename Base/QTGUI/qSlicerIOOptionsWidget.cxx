@@ -100,6 +100,6 @@ void qSlicerIOOptionsWidget::setFileNames(const QStringList& fileNames)
 //------------------------------------------------------------------------------
 void qSlicerIOOptionsWidget::updateGUI(const qSlicerIO::IOProperties& ioProperties)
 {
-  Q_D(qSlicerIOOptions);
+  Q_UNUSED(ioProperties);
   // derived classes should implement update of GUI based on provided properties
 }
