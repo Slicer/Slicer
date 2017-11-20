@@ -552,18 +552,24 @@ macro(slicerMacroBuildApplication)
       if(UNIX)
         list(APPEND executables gnome-terminal xterm ddd gdb)
       elseif(WIN32)
-        list(APPEND executables VisualStudio cmd)
+        list(APPEND executables VisualStudio VisualStudioProject cmd)
         set(VisualStudio_EXECUTABLE ${CMAKE_VS_DEVENV_COMMAND})
-        set(VisualStudio_ARGUMENTS ${Slicer_BINARY_DIR}/${Slicer_MAIN_PROJECT_APPLICATION_NAME}.sln)
+        set(VisualStudio_HELP "Open Visual Studio with Slicer's DLL paths set up")
+        set(VisualStudioProject_EXECUTABLE ${CMAKE_VS_DEVENV_COMMAND})
+        set(VisualStudioProject_ARGUMENTS ${Slicer_BINARY_DIR}/${Slicer_MAIN_PROJECT_APPLICATION_NAME}.sln)
+        set(VisualStudioProject_HELP "Open Visual Studio ${Slicer_MAIN_PROJECT_APPLICATION_NAME} project with Slicer's DLL paths set up")
         set(cmd_ARGUMENTS "/c start cmd")
       endif()
       foreach(executable ${executables})
         find_program(${executable}_EXECUTABLE ${executable})
         if(${executable}_EXECUTABLE)
           message(STATUS "Enabling ${SLICERAPP_APPLICATION_NAME} build tree launcher option: --${executable}")
+          if(NOT DEFINED ${executable}_HELP)
+            set(${executable}_HELP "Start ${executable}")
+          endif()
           ctkAppLauncherAppendExtraAppToLaunchToList(
             LONG_ARG ${executable}
-            HELP "Start ${executable}"
+            HELP ${${executable}_HELP}
             PATH ${${executable}_EXECUTABLE}
             ARGUMENTS ${${executable}_ARGUMENTS}
             OUTPUTVAR extraApplicationToLaunchListForBuildTree
