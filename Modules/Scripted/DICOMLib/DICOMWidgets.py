@@ -680,8 +680,8 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
     """
     loadablesByPlugin = {}
     loadEnabled = False
-    if not type(fileLists) is list or len(fileLists)==0 or not type(fileLists[0]) is tuple:
-      logging.error('File lists must contain a non-empty list of tuples')
+    if not type(fileLists) is list or len(fileLists) == 0 or not type(fileLists[0]) in [tuple, list]:
+      logging.error('File lists must contain a non-empty list of tuples/lists')
       return loadablesByPlugin, loadEnabled
 
     allFileCount = missingFileCount = 0
