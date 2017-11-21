@@ -23,6 +23,9 @@
 # Extension include directories for module Widget
 @EXTENSION_INCLUDE_MODULE_WIDGET_DIRS_CONFIG@
 
+# Extension VTK wrap hierarchy files
+@EXTENSION_WRAP_HIERARCHY_FILES_CONFIG@
+
 # Extension Module logic include file directories.
 set(@EXTENSION_NAME@_ModuleLogic_INCLUDE_DIRS "@EXTENSION_ModuleLogic_INCLUDE_DIRS_CONFIG@"
   CACHE INTERNAL "Extension Module logic includes" FORCE)
