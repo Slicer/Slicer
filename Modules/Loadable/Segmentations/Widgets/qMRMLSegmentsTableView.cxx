@@ -421,9 +421,9 @@ void qMRMLSegmentsTableView::populateSegmentTable()
     // in the selected terminology entry. This color is the same as the one generated for the empty segment
     double generatedColorArray[3] = {0.5,0.5,0.5};
     if (displayNode)
-    {
+      {
       displayNode->GenerateSegmentColor(generatedColorArray, segmentation->GetSegmentIndex(segmentId.toLatin1().constData()) + 1);
-    }
+      }
     QColor generatedColor = QColor::fromRgbF(generatedColorArray[0], generatedColorArray[1], generatedColorArray[2]);
     // Set item data
     colorItem->setData(Qt::DecorationRole, color);

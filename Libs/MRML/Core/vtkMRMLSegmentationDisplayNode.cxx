@@ -1150,7 +1150,7 @@ void vtkMRMLSegmentationDisplayNode::UpdateSegmentList()
     }
   if (this->SegmentListUpdateSource == segmentation && this->SegmentListUpdateTime >= segmentation->GetMTime())
     {
-    // already up-to-date
+    // Already up-to-date
     return;
     }
   this->SegmentListUpdateTime = segmentation->GetMTime();
@@ -1159,6 +1159,12 @@ void vtkMRMLSegmentationDisplayNode::UpdateSegmentList()
   // Disable modified event, as we just update internal cache
   bool wasDisableModified = this->GetDisableModifiedEvent();
   this->SetDisableModifiedEvent(true);
+
+  // Reset number of generated colors if last segment was removed
+  if (segmentation->GetNumberOfSegments() == 0)
+    {
+    this->NumberOfGeneratedColors = 0;
+    }
 
   // Remove unused segment display properties and colors
   // Get list of segment IDs that we have display properties for but does not exist in
@@ -1169,7 +1175,7 @@ void vtkMRMLSegmentationDisplayNode::UpdateSegmentList()
     {
     if (segmentation->GetSegment(it->first) == NULL)
       {
-      // the segment does not exist in segmentation
+      // The segment does not exist in segmentation
       orphanSegmentIds.push_back(it->first);
       }
     }
