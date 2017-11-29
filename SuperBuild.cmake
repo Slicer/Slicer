@@ -305,7 +305,7 @@ Slicer_Remote_Add(BRAINSTools
   GIT_REPOSITORY "${git_protocol}://github.com/Slicer/BRAINSTools.git"
   # Include patches:
   # - for supporting integration with Slicer setting LAUNCH_EXE using SEM_LAUNCH_COMMAND
-  GIT_TAG "42ac3c373865e19526e1be060b2b67846f7beecd" # master (from 2017-11-29, post v4.7.1)
+  GIT_TAG "4f25a8a1226c38c60b0cd2210079beb71d5b3e44" # master (from 2017-11-29, post v4.7.1)
   OPTION_NAME Slicer_BUILD_BRAINSTOOLS
   OPTION_DEPENDS "Slicer_BUILD_CLI_SUPPORT;Slicer_BUILD_CLI"
   LABELS REMOTE_MODULE
