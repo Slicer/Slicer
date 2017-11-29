@@ -56,7 +56,7 @@ include(SlicerBlockUploadExtensionPrerequisites) # Common to all extensions
 #-----------------------------------------------------------------------------
 # Collect extension description file (*.s4ext)
 #-----------------------------------------------------------------------------
-file(GLOB_RECURSE s4extfiles "${Slicer_EXTENSION_DESCRIPTION_DIR}/*.s4ext")
+file(GLOB s4extfiles "${Slicer_EXTENSION_DESCRIPTION_DIR}/*.s4ext")
 
 # Get the dependency information of each extension
 set(EXTENSION_LIST)
