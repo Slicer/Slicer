@@ -41,6 +41,13 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     VERSION ${_version}
     )
 
+  # Set 'GIT_PYTHON_GIT_EXECUTABLE' env. variable to ensure "import git" done
+  # in ExternalProject_PythonModule_InstallTreeCleanup succeeds on platform where
+  # git is not available in the PATH.
+  set(${proj}_EP_PYTHONMODULE_INSTALL_TREE_CLEANUP_CODE_BEFORE_IMPORT "import os
+os.environ[\"GIT_PYTHON_GIT_EXECUTABLE\"] = \"${GIT_EXECUTABLE}\"
+"
+  )
   # See #3749 - Delete test files causing packaging to fail on windows
   ExternalProject_PythonModule_InstallTreeCleanup(${proj} "git" "test")
 
