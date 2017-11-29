@@ -327,7 +327,16 @@ public:
   std::vector<vtkIdType> GetItemsReferencedFromItemByDICOM(vtkIdType itemID);
   /// Python compatibility method to get items that are referenced from a given item by DICOM.
   /// \sa GetItemsReferencedFromItemByDICOM
-  void GetItemsReferencedFromItemByDICOM(vtkIdType itemID, vtkIdList* referencedIdList);
+  void GetItemsReferencedFromItemByDICOM(vtkIdType itemID, vtkIdList* referencingIdList);
+
+  /// Get subject hierarchy items that reference a given item by DICOM.
+  /// Finds the series items that contain the SOP instance UID of the item among their
+  /// referenced SOP instance UIDs.
+  /// \sa vtkMRMLSubjectHierarchyConstants::GetDICOMReferencedInstanceUIDsAttributeName()
+  std::vector<vtkIdType> GetItemsReferencingItemByDICOM(vtkIdType itemID);
+  /// Python compatibility method to get items that are referenced from a given item by DICOM.
+  /// \sa GetItemsReferencingItemByDICOM
+  void GetItemsReferencingItemByDICOM(vtkIdType itemID, vtkIdList* referencingIdList);
 
   /// Generate unique item name
   std::string GenerateUniqueItemName(std::string name);
