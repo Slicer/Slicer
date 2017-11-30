@@ -1047,19 +1047,17 @@ set(Slicer_EXTENSION_CPACK ${Slicer_SOURCE_DIR}/CMake/SlicerExtensionCPack.cmake
 
 
 # --------------------------------------------------------------------------
-# Bundle extension(s)
+# Bundle remote modules and extensions adding source directories.
 # --------------------------------------------------------------------------
 
 set(extensions_build_dir "${Slicer_BINARY_DIR}/E")
 
-# Configure SlicerConfig for bundled extension(s) or module(s)
+# Configure a no-op SlicerConfig for bundled projects
 set(Slicer_DIR ${extensions_build_dir})
 configure_file(
   ${Slicer_SOURCE_DIR}/CMake/SlicerConfig.cmake.in
   ${Slicer_DIR}/SlicerConfig.cmake @ONLY)
 
-# --------------------------------------------------------------------------
-# Add remote extension source directories.
 #
 # Directories can be set in three ways:
 #
@@ -1114,7 +1112,6 @@ set(Slicer_THIRDPARTY_SHARE_DIR  ${Slicer_SHARE_DIR})
 # --------------------------------------------------------------------------
 # Configure and install headers
 # --------------------------------------------------------------------------
-
 set(files
   vtkSlicerConfigure.h
   vtkSlicerVersionConfigureInternal.h
@@ -1142,7 +1139,6 @@ endif()
 #-----------------------------------------------------------------------------
 # Testing
 #-----------------------------------------------------------------------------
-
 if(BUILD_TESTING)
   add_subdirectory(Testing)
 endif()
@@ -1161,7 +1157,6 @@ endif()
 #-----------------------------------------------------------------------------
 # Documentation
 #-----------------------------------------------------------------------------
-
 if(Slicer_BUILD_DOCUMENTATION)
   # Automatically generate documentation at build time
   set(all_arg)
@@ -1178,7 +1173,6 @@ endif()
 #-----------------------------------------------------------------------------
 # Install CMake modules
 #-----------------------------------------------------------------------------
-
 if(NOT Slicer_INSTALL_NO_DEVELOPMENT)
   file(GLOB cmake_files "${CMAKE_CURRENT_SOURCE_DIR}/CMake/*.cmake")
   install(
