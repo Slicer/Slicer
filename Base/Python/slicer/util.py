@@ -745,6 +745,19 @@ def arrayFromGridTransform(gridTransformNode):
   narray = vtk.util.numpy_support.vtk_to_numpy(displacementGrid.GetPointData().GetScalars()).reshape(nshape)
   return narray
 
+def arrayFromSegment(segmentationNode, segmentId):
+  """Return voxel array of a segment's binary labelmap representation as numpy array.
+  Voxels values are not copied.
+  If binary labelmap is the master representation then voxel values in the volume node can be modified
+  by changing values in the numpy array. After all modifications has been completed, call:
+  segmentationNode.GetSegmentation().GetSegment(segmentID).Modified()
+  """
+  vimage = segmentationNode.GetBinaryLabelmapRepresentation(segmentId)
+  nshape = tuple(reversed(vimage.GetDimensions()))
+  import vtk.util.numpy_support
+  narray = vtk.util.numpy_support.vtk_to_numpy(vimage.GetPointData().GetScalars()).reshape(nshape)
+  return narray
+
 def updateVolumeFromArray(volumeNode, narray):
   """Sets voxels of a volume node from a numpy array.
   Voxels values are copied, therefore if the numpy array
