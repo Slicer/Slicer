@@ -543,9 +543,9 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
 
     vtkMRMLTableNode *mrmlTableNode = plotDataNode->GetTableNode();
     if (!plotFound || !mrmlTableNode ||
-        (mrmlTableNode->GetColumnIndex(plotDataNode->GetXColumnName()) == -1 &&
+        (mrmlTableNode->GetColumnIndex(plotDataNode->GetXColumnName()) < 0 &&
          plotDataNode->GetXColumnName().compare("Indexes")) ||
-        mrmlTableNode->GetColumnIndex(plotDataNode->GetYColumnName()) == -1)
+        mrmlTableNode->GetColumnIndex(plotDataNode->GetYColumnName()) < 0)
       {
         // This if is necessary for a BUG at VTK level:
         // in the case of a plot removed with corner ID 0,
