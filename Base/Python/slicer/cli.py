@@ -50,10 +50,10 @@ def runSync(module, node=None, parameters=None, delete_temporary_files=True, upd
   returning the node (or the new one if created)
   node: existing parameter node (None by default)
   parameters: dictionary of parameters for cli (None by default)
-  delete_temporary_files: remove temp files created during exectuion (True by default)
+  delete_temporary_files: remove temp files created during execution (True by default)
   update_display: show output nodes after completion
   """
-  return run(module, node=node, parameters=parameters, wait_for_completion=True, delete_temporary_files=delete_temporary_files)
+  return run(module, node=node, parameters=parameters, wait_for_completion=True, delete_temporary_files=delete_temporary_files, update_display=update_display)
 
 def run(module, node = None, parameters = None, wait_for_completion = False, delete_temporary_files = True, update_display=True):
   """Runs a CLI, optionally given a node with optional parameters, returning
