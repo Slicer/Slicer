@@ -58,7 +58,7 @@ function(ExternalProject_Execute proj stepname)
     message(FATAL_ERROR "${proj}: Variable ${proj}_WORKING_DIR is set to a non-existent directory !")
   endif()
   execute_process(
-    COMMAND ${PYTHON_EXECUTABLE} ${cmd}
+    COMMAND ${cmd}
     WORKING_DIRECTORY ${${proj}_WORKING_DIR}
     RESULT_VARIABLE result
     OUTPUT_VARIABLE output
