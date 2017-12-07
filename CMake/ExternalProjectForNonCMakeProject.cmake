@@ -37,9 +37,17 @@ set(_this_list_file ${CMAKE_CURRENT_LIST_FILE})
 #! Run <executable> with the list of arguments past the last expected argument as parameters
 #! and the working directory previously set to <proj>_WORKING_DIR.
 #!
-#! Standard output and standard error will be captured and written into two files:
+#! By default, standard output and standard error will be captured and written into
+#! two files and displated only if exit code is not zero:
 #!   <CMAKE_BINARY_DIR>/<proj>_<stepname>_step_output.txt
 #!   <CMAKE_BINARY_DIR>/<proj>_<stepname>_step_error.txt
+#!
+#! Logging to files help prevent CTest or IDE like Visual Studio for improperly
+#! identifying process output as errors or warnings.
+#!
+#! For debugging purpose, logging to files of standard error and output
+#! can be disabled setting the environment variable 'EP_EXECUTE_DISABLE_CAPTURE_OUTPUTS'
+#! to 1.
 #!
 #! If the command execute successfully, the following message will be printed:
 #!   <proj>: '<stepname>' step successfully completed.
@@ -57,23 +65,49 @@ function(ExternalProject_Execute proj stepname)
   if(NOT EXISTS ${${proj}_WORKING_DIR})
     message(FATAL_ERROR "${proj}: Variable ${proj}_WORKING_DIR is set to a non-existent directory !")
   endif()
+
+  # Check if output and error should be captured into files
+  set(capture_outputs 1)
+  if("$ENV{EP_EXECUTE_DISABLE_CAPTURE_OUTPUTS}")
+    set(capture_outputs 0)
+    set(_reason " (EP_EXECUTE_DISABLE_CAPTURE_OUTPUTS env. variable set to '$ENV{EP_EXECUTE_DISABLE_CAPTURE_OUTPUTS}')")
+    message(STATUS "${proj}: '${stepname}' Disabling capture of outputs${_reason}")
+  endif()
+
+  # Execute command
+  set(_args)
+  if(capture_outputs)
+    set(_args
+      OUTPUT_VARIABLE output
+      ERROR_VARIABLE error
+      )
+  endif()
   execute_process(
     COMMAND ${cmd}
     WORKING_DIRECTORY ${${proj}_WORKING_DIR}
     RESULT_VARIABLE result
-    OUTPUT_VARIABLE output
-    ERROR_VARIABLE error
+    ${_args}
     )
 
-  set(output_file "${CMAKE_BINARY_DIR}/${proj}_${stepname}_step_output.txt")
-  file(WRITE ${output_file} ${output})
+  # If it applies, write output to files
+  if(capture_outputs)
+    set(output_file "${CMAKE_BINARY_DIR}/${proj}_${stepname}_step_output.txt")
+    file(WRITE ${output_file} ${output})
 
-  set(error_file "${CMAKE_BINARY_DIR}/${proj}_${stepname}_step_error.txt")
-  file(WRITE ${error_file} ${error})
+    set(error_file "${CMAKE_BINARY_DIR}/${proj}_${stepname}_step_error.txt")
+    file(WRITE ${error_file} ${error})
+  endif()
 
   if(NOT ${result} EQUAL 0)
-    message(STATUS "${proj}: Errors detected - See below.\n${output}\n${error}")
-    message(FATAL_ERROR "${proj}: Error in ${stepname} step. See ${output_file} and ${error_file}")
+    if(capture_outputs)
+      message(STATUS "${proj}: Errors detected - See below.\n${output}\n${error}")
+      message(FATAL_ERROR "${proj}: ${stepname} step failed with exit code '${result}'.
+Outputs also captured in ${output_file} and ${error_file}.
+Setting env. variable EP_EXECUTE_DISABLE_CAPTURE_OUTPUTS to 1 allows to disable file capture.
+")
+    else()
+      message(FATAL_ERROR "${proj}: ${stepname} step failed with exit code '${result}'.")
+    endif()
   endif()
 
   message(STATUS "${proj}: '${stepname}' step successfully completed.")
