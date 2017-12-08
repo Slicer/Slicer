@@ -989,14 +989,18 @@ int vtkMRMLScene::Commit(const char* url)
 
   int indent=0;
 
-    // this event is being detected by GUI to provide feedback during load
-    // of data. But,
-    // commented out for now because CLI modules are using MRML to write
-    // data in another thread, causing GUI to crash.
-//  this->InvokeEvent (vtkMRMLScene::SaveProgressFeedbackEvent );
+  // this event is being detected by GUI to provide feedback during load
+  // of data. But, commented out for now because CLI modules are using MRML
+  // to write data in another thread, causing GUI to crash.
+  //this->InvokeEvent (vtkMRMLScene::SaveProgressFeedbackEvent );
 
   //file << "<?xml version=\"1.0\" standalone='no'?>\n";
   //file << "<!DOCTYPE MRML SYSTEM \"mrml20.dtd\">\n";
+
+  // Add XML encoding specification. Since Slicer uses the Latin1 (ISO-8859-1) character set,
+  // but the MRML file did not specify it, the extra characters made XML loading fail with
+  // characters in the file that are valid for Slicer.
+  *os << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n";
 
   //--- BEGIN test of user tags
   //file << "<MRML>\n";
