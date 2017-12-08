@@ -116,6 +116,12 @@ set(CTEST_DROP_SITE \"${CTEST_DROP_SITE}\")
 set(CTEST_DROP_LOCATION \"/submit.php?project=Slicer4\")
 set(CTEST_DROP_SITE_CDASH TRUE)")
   endif()
+  message(STATUS "CTestCustom.cmake has been written to: ${ctestconfig_dest_dir}")
+  configure_file(
+    ${Slicer_CMAKE_DIR}/CTestCustom.cmake.in
+    ${ctestconfig_dest_dir}/CTestCustom.cmake
+    COPYONLY
+    )
 endforeach()
 
 set(track_qualifier_cleaned "${Slicer_EXTENSIONS_TRACK_QUALIFIER}-")
