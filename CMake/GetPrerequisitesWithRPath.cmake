@@ -537,7 +537,10 @@ function(gp_resolved_file_type original_file file exepath dirs type_var)
     endif()
 
     if(APPLE)
-      if(resolved_file MATCHES "^(/System/Library/|/usr/lib/|/opt/X11/)")
+      if(resolved_file MATCHES "^.*Qt.*framework")
+        #pass: we need to package Qt
+        set(is_system 0)
+      elseif(resolved_file MATCHES "^(/System/Library/|/usr/lib/|/opt/X11/)")
         set(is_system 1)
       endif()
     endif()
