@@ -159,7 +159,8 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "UserWarning:"
 
   # Python - Windows
-  "Python-2.7.13.Modules"
+  "(P|p)ython-2.7.13.(M|m)odules"
+  "(P|p)ython-2.7.13.PC"
   # Python - Linux
   "Objects.unicodeobject.c.*warning:.*differ in signedness"
   "[Ii]nclude.(string|unicodeobject).h.*note: expected ‘const char *’ but argument is of type ‘unsigned char *’"
