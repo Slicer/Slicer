@@ -189,7 +189,7 @@ void vtkFSLookupTable::SetRange(double /*lo*/, double /*hi*/)
 }
 
 //------------------------------------------------------------------------------
-unsigned char *vtkFSLookupTable::MapValue(double val)
+const unsigned char *vtkFSLookupTable::MapValue(double val)
 {
     /// variables for the heat colour scale
     float f, ftmp, c1, c2, fcurv;
@@ -356,7 +356,7 @@ unsigned char *vtkFSLookupTable::MapValue(double val)
 //------------------------------------------------------------------------------
 void vtkFSLookupTable::GetColor(double val, double rgb[3])
 {
-    unsigned char *rgb8 = this->MapValue(val);
+    const unsigned char *rgb8 = this->MapValue(val);
 
     rgb[0] = rgb8[0]/255.0;
     rgb[1] = rgb8[1]/255.0;
@@ -522,7 +522,7 @@ void vtkFSLookupTable::MapScalarsThroughTable2(void *input, unsigned char *outpu
           ucPtr = static_cast<unsigned char*>(input);
           ucPtr += n*inputIncrement;
           ucVal = *ucPtr;
-          unsigned char *rgb8 = this->MapValue((double)ucVal);
+          const unsigned char *rgb8 = this->MapValue((double)ucVal);
 
           // now save it to the output - unsigned char return guarantees it's 0-255
           output[n*outputIncrement*sizeof(unsigned char)] = rgb8[0];
