@@ -137,6 +137,9 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "ld.*has different visibility.*(libdcmdata|libdcmnet|libdcmimgle|liboflog|libofstd).a"
   "DCMTK.(ofstd|dcmdata|dcmjpls|dcmnet|dcmimage|dcmimgle|dcmpstat|dcmqrdb).(lib|include|apps).*conversion from '(size_t|SOCKET)' to '.*', possible loss of data"
 
+  # EMSegment
+  "warning: the use of .mktemp. is dangerous, better use .mkstemp."
+
   # Libs/OpenIGTLink
   "(OpenIGTLink|openigtlink).[Ss]ource.igtl"
 
@@ -157,6 +160,10 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
 
   # Python
   "UserWarning:"
+
+  # Python (posixmodule)
+  "warning: the use of .tmpnam. is dangerous, better use .mkstemp."
+  "warning: the use of .tmpnam_r. is dangerous, better use .mkstemp."
 
   # Python - Windows
   "(P|p)ython-2.7.13.(M|m)odules"
