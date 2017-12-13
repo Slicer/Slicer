@@ -137,7 +137,7 @@ public:
   /// \brief Utility function to RegisterNodeClass(), the node tag name is used when
   /// registering the node.
   ///
-  /// \sa RegisterNodeClass()
+  /// \sa RegisterNodeClass(vtkMRMLNode* node, const char* tagName)
   void RegisterNodeClass(vtkMRMLNode* node);
 
   /// Add a path to the list.
@@ -302,6 +302,11 @@ public:
   /// Get the nth registered node class, returns NULL if n is out of the range 0-GetNumberOfRegisteredNodeClasses
   /// Useful for iterating through nodes to find all the possible storage nodes.
   vtkMRMLNode * GetNthRegisteredNodeClass(int n);
+
+  /// \brief Return True if \a className is a registered node.
+  ///
+  /// \sa RegisterNodeClass(vtkMRMLNode* node)
+  bool IsNodeClassRegistered(const std::string& className);
 
   /// \brief Generate a node name that is unique in the scene.
   /// Calling this function successively with the same baseName returns a

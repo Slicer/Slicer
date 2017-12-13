@@ -2138,6 +2138,24 @@ vtkMRMLNode *vtkMRMLScene::GetNthRegisteredNodeClass(int n)
 }
 
 //------------------------------------------------------------------------------
+bool vtkMRMLScene::IsNodeClassRegistered(const std::string& className)
+{
+  for (int index=0; index < this->GetNumberOfRegisteredNodeClasses(); ++index)
+    {
+    vtkMRMLNode* registeredNodeClass = this->GetNthRegisteredNodeClass(index);
+    if (!registeredNodeClass)
+      {
+      continue;
+      }
+    if (className == registeredNodeClass->GetClassName())
+      {
+      return true;
+      }
+    }
+  return false;
+}
+
+//------------------------------------------------------------------------------
 std::string vtkMRMLScene::GenerateUniqueID(vtkMRMLNode* node)
 {
   if (!node)
