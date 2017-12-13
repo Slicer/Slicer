@@ -354,7 +354,6 @@ void qMRMLPlotViewControllerWidgetPrivate::onPlotTypeChanged(const QString &Type
 // --------------------------------------------------------------------------
 void qMRMLPlotViewControllerWidgetPrivate::onXAxisChanged(const QString &Column)
 {
-  Q_Q(qMRMLPlotViewControllerWidget);
   if (!this->PlotChartNode)
     {
     return;

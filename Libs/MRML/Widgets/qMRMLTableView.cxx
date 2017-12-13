@@ -791,7 +791,6 @@ vtkMRMLScene* qMRMLTableView::mrmlScene()const
 //---------------------------------------------------------------------------
 QList<int> qMRMLTableView::selectedMRMLTableColumnIndices()const
 {
-  Q_D(const qMRMLTableView);
   QList<int> mrmlColumnIndexList;
   QModelIndexList selection = selectionModel()->selectedIndexes();
   qMRMLTableModel* tableModel = this->tableModel();
@@ -811,7 +810,6 @@ QList<int> qMRMLTableView::selectedMRMLTableColumnIndices()const
 //---------------------------------------------------------------------------
 void qMRMLTableView::selectionChanged(const QItemSelection & selected, const QItemSelection & deselected)
 {
-  Q_D(const qMRMLTableView);
   QTableView::selectionChanged(selected, deselected);
   emit selectionChanged();
 }

@@ -318,7 +318,6 @@ void qSlicerTableColumnPropertiesWidget::setMRMLTableColumnNames(const QStringLi
 //------------------------------------------------------------------------------
 void qSlicerTableColumnPropertiesWidget::setMRMLTableColumnName(const QString& selectedColumn)
 {
-  Q_D(qSlicerTableColumnPropertiesWidget);
   QStringList selectedColumns;
   selectedColumns << selectedColumn;
   this->setMRMLTableColumnNames(selectedColumns);
@@ -354,7 +353,6 @@ void qSlicerTableColumnPropertiesWidget::onDataTypeChanged(const QString& newDat
 //------------------------------------------------------------------------------
 void qSlicerTableColumnPropertiesWidget::onPropertyChanged(const QString& newPropertyValue)
 {
-  Q_D(qSlicerTableColumnPropertiesWidget);
   QLineEdit* propertyWidget = qobject_cast<QLineEdit*>(sender());
   if (propertyWidget != NULL)
     {
