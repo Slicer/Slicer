@@ -1008,7 +1008,7 @@ bool vtkITKTransformConverter::SetITKImageFromVTKOrientedGridTransform(vtkObject
     vtkErrorWithObjectMacro(loggerObject, "Cannot save grid transform: the input vtkOrientedGridTransform does not contain a valid displacement grid");
     return false;
     }
-  if (gridImage_Ras->GetNumberOfScalarComponents()!=VTKDimension)
+  if (gridImage_Ras->GetNumberOfScalarComponents() != static_cast<int>(VTKDimension))
     {
     vtkErrorWithObjectMacro(loggerObject, "Cannot save grid transform: the input vtkOrientedGridTransform expected to contain "
       << VTKDimension << " components but it actually contains " << gridImage_Ras->GetNumberOfScalarComponents() );
