@@ -230,6 +230,7 @@
 # (and possibly others) found in:
 #
 cmake_policy(SET CMP0009 NEW)
+cmake_policy(SET CMP0011 NEW)
 
 get_filename_component(BundleUtilities_cmake_dir "${CMAKE_CURRENT_LIST_FILE}" PATH)
 include("${BundleUtilities_cmake_dir}/GetPrerequisitesWithRPath.cmake")
