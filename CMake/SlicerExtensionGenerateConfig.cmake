@@ -99,11 +99,11 @@ else()
 endif()
 
 # Export Targets file.
-set(EXTENSION_TARGETS_FILE "${EXTENSION_SUPERBUILD_BINARY_DIR}/${EXTENSION_NAME}Targets.cmake")
+set(EXTENSION_TARGETS_FILE "${EXTENSION_SUPERBUILD_BINARY_DIR}/${EXTENSION_BUILD_SUBDIRECTORY}/${EXTENSION_NAME}Targets.cmake")
 get_property(Slicer_TARGETS GLOBAL PROPERTY Slicer_TARGETS)
 export(TARGETS ${Slicer_TARGETS} FILE ${EXTENSION_TARGETS_FILE})
 
 # Configure <Extension>Config.cmake for the build tree.
 configure_file(
   ${Slicer_CMAKE_DIR}/SlicerExtensionConfig.cmake.in
-  ${EXTENSION_SUPERBUILD_BINARY_DIR}/${EXTENSION_NAME}Config.cmake @ONLY)
+  ${EXTENSION_SUPERBUILD_BINARY_DIR}/${EXTENSION_BUILD_SUBDIRECTORY}/${EXTENSION_NAME}Config.cmake @ONLY)
