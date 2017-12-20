@@ -231,6 +231,8 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
 
 set(CTEST_CUSTOM_ERROR_EXCEPTION
   ${CTEST_CUSTOM_ERROR_EXCEPTION}
+  # Python
+  "UserWarning:"
   # Python - Windows
   # These warnings are interpreted as errors on Windows
   "dist.py.*UserWarning.*Unknown distribution option.*"

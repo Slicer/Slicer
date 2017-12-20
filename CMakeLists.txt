@@ -380,7 +380,8 @@ endif()
 configure_file(
   CMake/CTestCustom.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/CTestCustom.cmake
-  @ONLY)
+  COPYONLY
+  )
 
 #-----------------------------------------------------------------------------
 # Additional CXX/C Flags
