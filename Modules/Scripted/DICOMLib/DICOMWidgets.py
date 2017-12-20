@@ -523,7 +523,7 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
           os.makedirs(databaseDirectory)
         if not slicer.app.commandOptions().testingEnabled:
           message = "DICOM Database will be stored in\n\n{}\n\nUse the Local Database button in " \
-                    "the DICOM Browser to pick a different location.".format(databaseDirectory)
+                    "the DICOM Browser to pick a different location.".format(slicer.util.toVTKString(databaseDirectory))
           slicer.util.infoDisplay(message, parent=self, windowTitle='DICOM')
           self.settings.setValue('DatabaseDirectory', databaseDirectory)
 
