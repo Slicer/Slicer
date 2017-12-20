@@ -83,6 +83,17 @@ set(${target}_INCLUDE_DIRS
   endforeach()
 endif()
 
+get_property(_wrap_hierarchy_targets GLOBAL PROPERTY SLICER_WRAP_HIERARCHY_TARGETS)
+if(_wrap_hierarchy_targets)
+  foreach(target ${_wrap_hierarchy_targets})
+    set(EXTENSION_WRAP_HIERARCHY_FILES_CONFIG
+"${EXTENSION_WRAP_HIERARCHY_FILES_CONFIG}
+set(${target}_WRAP_HIERARCHY_FILE
+  \"${${target}_WRAP_HIERARCHY_FILE}\")"
+)
+  endforeach()
+endif()
+
 set(EXTENSION_SOURCE_DIR_CONFIG "set(${EXTENSION_NAME}_SOURCE_DIR \"${${EXTENSION_NAME}_SOURCE_DIR}\")")
 
 # Variables that will be used for populating AdditionalLauncherSettings.ini.
