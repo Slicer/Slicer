@@ -157,11 +157,17 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   # Libs/tclap
   "tclap.include.tclap.*Arg.h.*warning C4512"
 
+  # Swig
+  "Swig.Source"
+
   # Teem
   # Windows - warning C4244: 'function' : conversion from 'size_t' to 'double'
   "teem.src.*C4244"
   # Mac - teem/src/nrrd/superset.c:433: warning: format '%d' expects type 'int', but argument 6 has type 'ptrdiff_t'
   "teem.src.nrrd.superset.c.*warning"
+
+  # Python
+  "UserWarning: Unknown distribution"
 
   # Python - Windows
   "Python-2.7.13.Modules"
@@ -210,7 +216,7 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "ranlib: file:.*bin.libslicerlibcurl.a.*has no symbols"
 
   #PythonQt
-  "PythonQt.src.*conversion from 'size_t' to '.*', possible loss of data"
+  "PythonQt.src"
 
   #Libarchive
   "LibArchive.libArchive.*signed/unsigned mismatch"
