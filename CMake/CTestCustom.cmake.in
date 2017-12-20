@@ -48,24 +48,6 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "Microsoft SDKs."
   "VC.include."
 
-  # Numpy warnings
-  "_configtest.*warning"
-  # C4244: 'conversion' conversion from 'type1' to 'type2', possible loss of data
-  # C4028: formal parameter 'number' different from declaration
-  # C4996: 'function': was declared deprecated
-  # C4133: '=' : incompatible types - from 'PyArray_Descr *' to 'PyObject *'
-  # C4146: unary minus operator applied to unsigned type, result still unsigned
-  # C4716: function '...' : must return a value
-  # C4723: Potential divide by zero
-  "numpy.(core|numarray|linalg|random).*warning (C4244|C4028|C4996|C4133|C4146|C4716|C4723)"
-  # warning: assignment from incompatible pointer type
-  # warning: ‘...’ defined but not used
-  # warning: ‘...’ may be used uninitialized in this function
-  "numpy.(core).*warning.*(assignment|defined but not used|uninitialized)"
-  "NUMPY.*Warning"
-  # Mac
-  "numpy.core.src.multiarray.descriptor.*was declared here"
-
   # Tcl
   "tcl.tcl.unix.*warning: cast"
   #  warning: '...' is deprecated (declared at ...)
