@@ -668,7 +668,12 @@ void vtkMRMLAnnotationNode::Initialize(vtkMRMLScene* mrmlScene)
   this->CreateAnnotationTextDisplayNode();
   this->DisableModifiedEventOff();
 
-  mrmlScene->AddNode(this);
+  // A node should only be added to the scene if it is not added already
+  // (there is not check in mrmlScene, and it causes problems).
+  if (!mrmlScene->IsNodePresent(this))
+    {
+    mrmlScene->AddNode(this);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -726,6 +731,11 @@ void vtkMRMLAnnotationNode::RestoreBackup()
 // Save the views
 void vtkMRMLAnnotationNode::SaveView()
 {
+  if (!this->GetScene())
+    {
+    vtkWarningMacro("vtkMRMLAnnotationNode::SaveView failed: scene is invalid");
+    return;
+    }
 
   // pointers to the current sliceNodes in the scene
   vtkMRMLSliceNode* redSliceNode = vtkMRMLSliceNode::SafeDownCast(this->GetScene()->GetNthNodeByClass(0,"vtkMRMLSliceNode"));
