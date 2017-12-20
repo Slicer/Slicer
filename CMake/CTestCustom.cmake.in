@@ -87,6 +87,10 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "warning: jobserver unavailable"
   "warning: -jN forced in submake: disabling jobserver mode."
 
+  # Windows: Ignore warning on Windows for static builds complaining that the archive has
+  # no public symbols and hence will be inaccessible.
+  "warning LNK4221"
+
   # Suppressing warnings about duplicate libraries in Darwin
   # At some point this may be addressed by CMake feature request:
   # http://public.kitware.com/Bug/view.php?id=10179
@@ -123,10 +127,6 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "VTK.Rendering.vtkOpenGL.*warning: this is the location of the previous definition"
   # Windows: warning C4910: 'vtkImageIterator' : '__declspec(dllexport)' and 'extern' are incompatible on an explicit instantiation
   "Common.DataModel.vtkImageIterator.h.*warning C4910"
-
-  # GDCM
-  # gdcmXXXXX.obj : warning LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
-  "gdcm.*obj.*warning LNK4221"
 
   # CTK - dcmtk
   "dcmdata/dcovlay.h:93: warning: use of old-style cast"
