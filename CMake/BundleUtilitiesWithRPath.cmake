@@ -604,6 +604,12 @@ function(copy_resolved_item_into_bundle resolved_item resolved_embedded_item)
   else()
     #message(STATUS "copying COMMAND ${CMAKE_COMMAND} -E copy ${resolved_item} ${resolved_embedded_item}")
     execute_process(COMMAND ${CMAKE_COMMAND} -E copy "${resolved_item}" "${resolved_embedded_item}")
+
+    if(UNIX)
+      # fix permissions in staging dir
+      execute_process(COMMAND chmod -R u+w "${resolved_embedded_item}")
+    endif()
+
     if(UNIX AND NOT APPLE)
       file(RPATH_REMOVE FILE "${resolved_embedded_item}")
     endif()
@@ -633,10 +639,21 @@ function(copy_resolved_framework_into_bundle resolved_item resolved_embedded_ite
       get_filename_component(resolved_embedded_dir "${resolved_embedded_dir}/../.." ABSOLUTE)
       #message(STATUS "copying COMMAND ${CMAKE_COMMAND} -E copy_directory '${resolved_dir}' '${resolved_embedded_dir}'")
       execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory "${resolved_dir}" "${resolved_embedded_dir}")
+
+      if(UNIX)
+        # fix permissions in staging dir
+        execute_process(COMMAND chmod -R u+w "${resolved_embedded_dir}")
+      endif()
+
     else()
       # Framework lib itself:
       #message(STATUS "copying COMMAND ${CMAKE_COMMAND} -E copy ${resolved_item} ${resolved_embedded_item}")
       execute_process(COMMAND ${CMAKE_COMMAND} -E copy "${resolved_item}" "${resolved_embedded_item}")
+
+      if(UNIX)
+        # fix permissions in staging dir
+        execute_process(COMMAND chmod -R u+w "${resolved_embedded_item}")
+      endif()
 
       # Plus Resources, if they exist:
       string(REGEX REPLACE "^(.*)/[^/]+$" "\\1/Resources" resolved_resources "${resolved_item}")
@@ -644,6 +661,11 @@ function(copy_resolved_framework_into_bundle resolved_item resolved_embedded_ite
       if(EXISTS "${resolved_resources}")
         #message(STATUS "copying COMMAND ${CMAKE_COMMAND} -E copy_directory '${resolved_resources}' '${resolved_embedded_resources}'")
         execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory "${resolved_resources}" "${resolved_embedded_resources}")
+
+        if(UNIX)  # fix permissions in staging dir
+          execute_process(COMMAND chmod -R u+w "${resolved_embedded_resources}")
+        endif()
+
       endif()
 
       # Some frameworks e.g. Qt put Info.plist in wrong place, so when it is
@@ -655,6 +677,11 @@ function(copy_resolved_framework_into_bundle resolved_item resolved_embedded_ite
         if(EXISTS "${resolved_info_plist}")
           #message(STATUS "copying COMMAND ${CMAKE_COMMAND} -E copy_directory '${resolved_info_plist}' '${resolved_embedded_info_plist}'")
           execute_process(COMMAND ${CMAKE_COMMAND} -E copy "${resolved_info_plist}" "${resolved_embedded_info_plist}")
+
+          if(UNIX)  # fix permissions in staging dir
+            execute_process(COMMAND chmod -R u+w "${resolved_embedded_info_plist}")
+          endif()
+
         endif()
       endif()
 
@@ -679,6 +706,12 @@ function(copy_resolved_framework_into_bundle resolved_item resolved_embedded_ite
         endif()
       endif()
     endif()
+
+    if(UNIX)
+      # fix permissions in staging dir
+      execute_process(COMMAND chmod -R u+w "${resolved_embedded_item}")
+    endif()
+
     if(UNIX AND NOT APPLE)
       file(RPATH_REMOVE FILE "${resolved_embedded_item}")
     endif()
@@ -843,6 +876,9 @@ endfunction()
 
 function(copy_and_fixup_bundle src dst libs dirs)
   execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory "${src}" "${dst}")
+  if(UNIX)  # fix permissions in staging dir
+    execute_process(COMMAND chmod -R u+w "${dst}")
+  endif()
   fixup_bundle("${dst}" "${libs}" "${dirs}")
 endfunction()
 
