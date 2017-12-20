@@ -44,6 +44,13 @@ qSlicerCorePythonManager::qSlicerCorePythonManager(QObject* _parent)
   : Superclass(_parent)
 {
   this->Factory = 0;
+
+  // If it applies, disable import of user site packages
+  QString noUserSite = qgetenv("PYTHONNOUSERSITE");
+  Py_NoUserSiteDirectory = noUserSite.toInt();
+
+  // Import site module to ensure the 'site-packages' directory
+  // is added to the python path. (see site.addsitepackages function).
   int flags = this->initializationFlags();
   flags &= ~(PythonQt::IgnoreSiteModule); // Clear bit
   this->setInitializationFlags(flags);
