@@ -30,9 +30,10 @@ include(SlicerCheckCMakeHTTPS)
 option(${CMAKE_PROJECT_NAME}_USE_GIT_PROTOCOL "If behind a firewall turn this off to use http instead." ON)
 set(git_protocol "git")
 if(NOT ${CMAKE_PROJECT_NAME}_USE_GIT_PROTOCOL)
-  set(git_protocol "http")
+  set(git_protocol "https")
 
   # Verify that the global git config has been updated with the expected "insteadOf" option.
+  # XXX CMake 3.8: Replace this with use of GIT_CONFIG option provided by ExternalProject
   function(_check_for_required_git_config_insteadof base insteadof)
     execute_process(
       COMMAND ${GIT_EXECUTABLE} config --global --get "url.${base}.insteadof"
@@ -48,13 +49,9 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_GIT_PROTOCOL)
 "option ${CMAKE_PROJECT_NAME}_USE_GIT_PROTOCOL set to FALSE. "
 "See http://na-mic.org/Mantis/view.php?id=2731"
 "\nYou could do so by running the command:\n"
-"  ${GIT_EXECUTABLE} config --global url.\"${base}\".insteadOf \"${insteadof}\"\n")
+"  ${GIT_EXECUTABLE} config --global url.${base}.insteadOf ${insteadof}\n")
     endif()
   endfunction()
-
-  if("${ITK_VERSION_MAJOR}" LESS 4)
-    _check_for_required_git_config_insteadof("http://itk.org/" "git://itk.org/")
-  endif()
 
 endif()
 
