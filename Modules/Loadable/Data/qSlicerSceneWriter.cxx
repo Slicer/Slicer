@@ -110,30 +110,29 @@ bool qSlicerSceneWriter::write(const qSlicerIO::IOProperties& properties)
 }
 
 //----------------------------------------------------------------------------
-bool qSlicerSceneWriter::writeToMRML(const qSlicerIO::IOProperties& properties)
+namespace
 {
-  // set the mrml scene url first
-  Q_ASSERT(!properties["fileName"].toString().isEmpty());
-  QString fileName = properties["fileName"].toString();
+/// Save an explicit default scene view recording the state of the scene when
+/// saved to file.
+void saveDefaultSceneView(vtkMRMLScene* mrmlScene, const qSlicerIO::IOProperties& properties)
+{
+  if (!mrmlScene->IsNodeClassRegistered("vtkMRMLSceneViewNode"))
+    {
+    return;
+    }
 
-  this->mrmlScene()->SetURL(fileName.toLatin1());
-  std::string parentDir = vtksys::SystemTools::GetParentDirectory(this->mrmlScene()->GetURL());
-  this->mrmlScene()->SetRootDirectory(parentDir.c_str());
-
-  // save an explicit default scene view recording the state of the scene when
-  // saved to file
   const char *defaultSceneName = "Master Scene View";
   vtkSmartPointer<vtkMRMLSceneViewNode> sceneViewNode;
   vtkSmartPointer<vtkCollection> oldSceneViewNodes;
   oldSceneViewNodes.TakeReference(
-    this->mrmlScene()->GetNodesByClassByName("vtkMRMLSceneViewNode", defaultSceneName));
+    mrmlScene->GetNodesByClassByName("vtkMRMLSceneViewNode", defaultSceneName));
   if (oldSceneViewNodes->GetNumberOfItems() == 0)
     {
     // make a new one
     vtkNew<vtkMRMLSceneViewNode> newSceneViewNode;
     newSceneViewNode->SetName(defaultSceneName);
     newSceneViewNode->SetSceneViewDescription("Scene at MRML file save point");
-    this->mrmlScene()->AddNode(newSceneViewNode.GetPointer());
+    mrmlScene->AddNode(newSceneViewNode.GetPointer());
 
     // create a storage node
     // set the file name from the node name
@@ -164,6 +163,21 @@ bool qSlicerSceneWriter::writeToMRML(const qSlicerIO::IOProperties& properties)
 
   // force a write
   sceneViewNode->GetStorageNode()->WriteData(sceneViewNode);
+}
+}
+
+//----------------------------------------------------------------------------
+bool qSlicerSceneWriter::writeToMRML(const qSlicerIO::IOProperties& properties)
+{
+  // set the mrml scene url first
+  Q_ASSERT(!properties["fileName"].toString().isEmpty());
+  QString fileName = properties["fileName"].toString();
+
+  this->mrmlScene()->SetURL(fileName.toLatin1());
+  std::string parentDir = vtksys::SystemTools::GetParentDirectory(this->mrmlScene()->GetURL());
+  this->mrmlScene()->SetRootDirectory(parentDir.c_str());
+
+  saveDefaultSceneView(this->mrmlScene(), properties);
 
   // write out the mrml file
   bool res = this->mrmlScene()->Commit();
