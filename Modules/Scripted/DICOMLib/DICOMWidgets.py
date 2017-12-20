@@ -516,8 +516,14 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
       try:
         os.makedirs(databaseDirectory)
       except OSError:
-        documentsLocation = qt.QDesktopServices.DocumentsLocation
-        documents = qt.QDesktopServices.storageLocation(documentsLocation)
+        try:
+          # Qt4
+          documentsLocation = qt.QDesktopServices.DocumentsLocation
+          documents = qt.QDesktopServices.storageLocation(documentsLocation)
+        except AttributeError:
+          # Qt5
+          documentsLocation = qt.QStandardPaths.DocumentsLocation
+          documents = qt.QStandardPaths.writableLocation(documentsLocation)
         databaseDirectory = os.path.join(documents, "SlicerDICOMDatabase")
         if not os.path.exists(databaseDirectory):
           os.makedirs(databaseDirectory)
