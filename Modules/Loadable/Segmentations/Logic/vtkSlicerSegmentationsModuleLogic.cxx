@@ -842,8 +842,18 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToModelHierarchy(vtkMRMLSe
     existingModelNamesToModels[modelNode->GetName()] = modelNode;
     }
 
+  std::vector<std::string> exportedSegmentIDs;
+  if (segmentIDs.empty())
+    {
+    segmentationNode->GetSegmentation()->GetSegmentIDs(exportedSegmentIDs);
+    }
+  else
+    {
+    exportedSegmentIDs = segmentIDs;
+    }
+
   // Export each segment into a model
-  for (std::vector<std::string>::iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
+  for (std::vector<std::string>::iterator segmentIdIt = exportedSegmentIDs.begin(); segmentIdIt != exportedSegmentIDs.end(); ++segmentIdIt)
     {
     // Export segment into model node
     vtkSegment* segment = segmentationNode->GetSegmentation()->GetSegment(*segmentIdIt);
