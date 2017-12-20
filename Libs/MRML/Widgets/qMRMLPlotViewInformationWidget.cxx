@@ -357,33 +357,33 @@ void qMRMLPlotViewInformationWidgetPrivate::updateWidgetFromMRMLPlotDataNode()
       }
     for (int ColumnIndex = 0; ColumnIndex < mrmlTableNode->GetNumberOfColumns(); ColumnIndex++)
       {
-      const char* columnName = mrmlTableNode->GetColumnName(ColumnIndex).c_str();
-      if (this->xAxisComboBox->findText(columnName) == -1)
+      std::string columnName = mrmlTableNode->GetColumnName(ColumnIndex).c_str();
+      if (this->xAxisComboBox->findText(columnName.c_str()) == -1)
         {
-        this->xAxisComboBox->addItem(columnName);
+        this->xAxisComboBox->addItem(columnName.c_str());
         }
-      if (this->yAxisComboBox->findText(columnName) == -1)
+      if (this->yAxisComboBox->findText(columnName.c_str()) == -1)
         {
-        this->yAxisComboBox->addItem(columnName);
+        this->yAxisComboBox->addItem(columnName.c_str());
         }
       }
     }
 
-  const char* xAxisName = this->PlotDataNode->GetXColumnName().c_str();
-  int xAxisIndex = this->xAxisComboBox->findText(xAxisName);
-  if (xAxisIndex == -1)
+  std::string xAxisName = this->PlotDataNode->GetXColumnName();
+  int xAxisIndex = this->xAxisComboBox->findText(xAxisName.c_str());
+  if (xAxisIndex < 0)
     {
-    this->xAxisComboBox->addItem(xAxisName);
-    xAxisIndex = this->xAxisComboBox->findText(xAxisName);
+    this->xAxisComboBox->addItem(xAxisName.c_str());
+    xAxisIndex = this->xAxisComboBox->findText(xAxisName.c_str());
     }
   this->xAxisComboBox->setCurrentIndex(xAxisIndex);
 
-  const char* yAxisName = this->PlotDataNode->GetYColumnName().c_str();
-  int yAxisIndex = this->yAxisComboBox->findText(yAxisName);
-  if (yAxisIndex == -1)
+  std::string yAxisName = this->PlotDataNode->GetYColumnName();
+  int yAxisIndex = this->yAxisComboBox->findText(yAxisName.c_str());
+  if (yAxisIndex < 0)
     {
-    this->yAxisComboBox->addItem(yAxisName);
-    yAxisIndex = this->yAxisComboBox->findText(yAxisName);
+    this->yAxisComboBox->addItem(yAxisName.c_str());
+    yAxisIndex = this->yAxisComboBox->findText(yAxisName.c_str());
     }
   this->yAxisComboBox->setCurrentIndex(yAxisIndex);
 

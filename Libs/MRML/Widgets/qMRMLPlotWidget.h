@@ -44,6 +44,7 @@ class vtkMRMLScene;
 class QMRML_WIDGETS_EXPORT qMRMLPlotWidget : public qMRMLWidget
 {
   Q_OBJECT
+  Q_PROPERTY(QString viewLabel READ viewLabel WRITE setViewLabel)
 public:
   /// Superclass typedef
   typedef qMRMLWidget Superclass;
@@ -53,7 +54,7 @@ public:
   virtual ~qMRMLPlotWidget();
 
   /// Get the Plot node observed by view.
-  vtkMRMLPlotViewNode* mrmlPlotViewNode()const;
+  Q_INVOKABLE vtkMRMLPlotViewNode* mrmlPlotViewNode()const;
 
   /// Get a reference to the underlying Plot View
   /// Becareful if you change the PlotView, you might
@@ -71,9 +72,8 @@ public:
   void setViewLabel(const QString& newPlotViewLabel);
 
   /// Set the color logic that is used by the view.
-  void setColorLogic(vtkMRMLColorLogic* colorLogic);
-  vtkMRMLColorLogic* colorLogic()const;
-
+  Q_INVOKABLE void setColorLogic(vtkMRMLColorLogic* colorLogic);
+  Q_INVOKABLE vtkMRMLColorLogic* colorLogic()const;
 
 public slots:
   /// Set the current \a viewNode to observe

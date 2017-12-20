@@ -73,7 +73,7 @@ public:
 
   ///
   /// Get node XML tag name (like Volume, Model).
-  virtual const char* GetNodeTagName() VTK_OVERRIDE { return "Plot"; };
+  virtual const char* GetNodeTagName() VTK_OVERRIDE { return "PlotData"; };
 
   ///
   /// Set and observe Table node ID.

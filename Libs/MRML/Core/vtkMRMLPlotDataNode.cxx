@@ -323,7 +323,7 @@ void vtkMRMLPlotDataNode::SetInputData(vtkMRMLTableNode *tableNode,
 {
   if (tableNode == NULL ||
       tableNode->GetTable() == NULL ||
-      tableNode->GetNumberOfColumns() < 2 ||
+      tableNode->GetNumberOfColumns() < 1 ||
       this->Plot == NULL ||
       !xColumnName.compare("(none)") ||
       !yColumnName.compare("(none)"))
@@ -475,13 +475,16 @@ void vtkMRMLPlotDataNode::SetXColumnName(vtkStdString xColumnName)
     return;
     }
 
-  if (!xColumnName.compare("Indexes") && this->Plot)
+  if (this->Plot)
     {
-    this->Plot->SetUseIndexForXSeries(true);
-    }
-  else if (this->Plot)
-    {
-    this->Plot->SetUseIndexForXSeries(false);
+    if (!xColumnName.compare("Indexes"))
+      {
+      this->Plot->SetUseIndexForXSeries(true);
+      }
+    else
+      {
+      this->Plot->SetUseIndexForXSeries(false);
+      }
     }
 
   this->XColumnName = xColumnName;
