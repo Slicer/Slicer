@@ -273,7 +273,6 @@ bool qSlicerSceneWriter::writeToMRB(const qSlicerIO::IOProperties& properties)
 bool qSlicerSceneWriter::writeToDirectory(const qSlicerIO::IOProperties& properties)
 {
   // open a file dialog to let the user choose where to save
-  QString tempDir = qSlicerCoreApplication::application()->temporaryPath();
   QString saveDirName = properties["fileName"].toString();
 
   QDir saveDir(saveDirName);
