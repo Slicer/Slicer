@@ -1866,7 +1866,7 @@ void qMRMLSegmentEditorWidget::onMasterVolumeNodeChanged(vtkMRMLNode* node)
 
     if (volumeNode && d->AutoShowMasterVolumeNode)
       {
-      this->showMasterVolumeInSliceViewers(true, true);
+      this->showMasterVolumeInSliceViewers();
       }
 
     // Notify effects about change
