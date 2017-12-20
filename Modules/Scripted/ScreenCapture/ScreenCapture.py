@@ -225,7 +225,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.videoLengthSliderWidget.value = 5
     self.videoLengthSliderWidget.suffix = "s"
     self.videoLengthSliderWidget.decimals = 1
-    self.videoLengthSliderWidget.setToolTip("Length of the exported video in seconds.")
+    self.videoLengthSliderWidget.setToolTip("Length of the exported video in seconds (without backward steps and repeating).")
     self.videoLengthSliderWidget.setEnabled(False)
     outputFormLayout.addRow("Video length:", self.videoLengthSliderWidget)
 
@@ -237,6 +237,21 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.advancedCollapsibleButton.collapsed = True
     outputFormLayout.addRow(self.advancedCollapsibleButton)
     advancedFormLayout = qt.QFormLayout(self.advancedCollapsibleButton)
+
+    self.forwardBackwardCheckBox = qt.QCheckBox(" ")
+    self.forwardBackwardCheckBox.checked = False
+    self.forwardBackwardCheckBox.setToolTip("If checked, image series will be generated playing forward and then backward.")
+    advancedFormLayout.addRow("Forward-backward:", self.forwardBackwardCheckBox)
+
+    self.repeatSliderWidget = ctk.ctkSliderWidget()
+    self.repeatSliderWidget.decimals = 0
+    self.repeatSliderWidget.singleStep = 1
+    self.repeatSliderWidget.minimum = 1
+    self.repeatSliderWidget.maximum = 50
+    self.repeatSliderWidget.value = 1
+    self.repeatSliderWidget.setToolTip("Number of times image series are repeated. Useful for making short videos longer for playback in software"
+      " that does not support looped playback.")
+    advancedFormLayout.addRow("Repeat:", self.repeatSliderWidget)
 
     ffmpegPath = self.logic.getFfmpegPath()
     self.ffmpegPathSelector = ctk.ctkPathLineEdit()
@@ -264,13 +279,12 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.fileNamePatternWidget.text = "image_%05d.png"
     advancedFormLayout.addRow("Image file name pattern:", self.fileNamePatternWidget)
 
-
     self.maxFramesWidget = qt.QSpinBox()
     self.maxFramesWidget.setRange(1, 9999)
     self.maxFramesWidget.setValue(600)
     self.maxFramesWidget.setToolTip(
-      "Maximum number of frames to be captured. Default: 600, maximum: 9999.")
-    advancedFormLayout.addRow("Maximum # of frames:", self.maxFramesWidget)
+      "Maximum number of images to be captured (without backward steps and repeating).")
+    advancedFormLayout.addRow("Maximum number of images:", self.maxFramesWidget)
 
     # Capture button
     self.captureButtonLabelCapture = "Capture"
@@ -435,6 +449,10 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
       self.sequenceStartItemIndexWidget.enabled = sequenceItemCount>0
       self.sequenceEndItemIndexWidget.enabled = sequenceItemCount>0
 
+    numberOfSteps = int(self.numberOfStepsSliderWidget.value)
+    self.forwardBackwardCheckBox.enabled = (numberOfSteps > 1)
+    self.repeatSliderWidget.enabled = (numberOfSteps > 1)
+
   def setSliceOffset(self, offset):
     sliceLogic = self.logic.getSliceLogicFromSliceNode(self.viewNodeSelector.currentNode())
     sliceLogic.SetSliceOffset(offset)
@@ -529,8 +547,35 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
       else:
         raise ValueError('Unsupported view node type.')
 
+      import shutil
+
+      fps = numberOfSteps / self.videoLengthSliderWidget.value
+
+      if numberOfSteps > 1:
+        forwardBackward = self.forwardBackwardCheckBox.checked
+        numberOfRepeats = int(self.repeatSliderWidget.value)
+        filePathPattern = os.path.join(outputDir, imageFileNamePattern)
+        fileIndex = numberOfSteps
+        for repeatIndex in range(numberOfRepeats):
+          if forwardBackward:
+            for step in reversed(xrange(1, numberOfSteps-1)):
+              sourceFilename = filePathPattern % step
+              destinationFilename = filePathPattern % fileIndex
+              self.logic.addLog("Copy to "+destinationFilename)
+              shutil.copyfile(sourceFilename, destinationFilename)
+              fileIndex += 1
+          if repeatIndex < numberOfRepeats - 1:
+            for step in range(numberOfSteps):
+              sourceFilename = filePathPattern % step
+              destinationFilename = filePathPattern % fileIndex
+              self.logic.addLog("Copy to "+destinationFilename)
+              shutil.copyfile(sourceFilename, destinationFilename)
+              fileIndex += 1
+        if forwardBackward and (numberOfSteps > 2):
+          numberOfSteps += numberOfSteps - 2
+        numberOfSteps *= numberOfRepeats
+
       if videoOutputRequested:
-        fps = numberOfSteps / self.videoLengthSliderWidget.value
         try:
           self.logic.createVideo(fps, self.extraVideoOptionsWidget.text,
             outputDir, imageFileNamePattern, self.videoFileNameWidget.text)
@@ -880,16 +925,11 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
     originalForegroundOpacity = compositeNode.GetForegroundOpacity()
     startForegroundOpacity = 0.0
     endForegroundOpacity = 1.0
-    opacityStepSize = 2 * (endForegroundOpacity - startForegroundOpacity) / (numberOfImages - 1)
+    opacityStepSize = (endForegroundOpacity - startForegroundOpacity) / (numberOfImages - 1)
     for offsetIndex in range(numberOfImages):
       filename = filePathPattern % offsetIndex
       self.addLog("Write "+filename)
-      if offsetIndex < numberOfImages/2:
-        # fade from start
-        compositeNode.SetForegroundOpacity(startForegroundOpacity + offsetIndex * opacityStepSize)
-      else:
-        # fade to start
-        compositeNode.SetForegroundOpacity(startForegroundOpacity + (numberOfImages-offsetIndex) * opacityStepSize)
+      compositeNode.SetForegroundOpacity(startForegroundOpacity + offsetIndex * opacityStepSize)
       self.captureImageFromView(None if captureAllViews else sliceView, filename)
       if self.cancelRequested:
         break
