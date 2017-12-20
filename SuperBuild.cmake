@@ -353,7 +353,7 @@ list_conditional_append(Slicer_BUILD_CompareVolumes Slicer_REMOTE_DEPENDENCIES C
 
 Slicer_Remote_Add(LandmarkRegistration
   GIT_REPOSITORY "${git_protocol}://github.com/pieper/LandmarkRegistration"
-  GIT_TAG "a8c80bccea13979a98e967ed226a13d123a9c7ac"
+  GIT_TAG "8ff85fc303e84ad4dbf612973532f9982596c236"
   OPTION_NAME Slicer_BUILD_LandmarkRegistration
   OPTION_DEPENDS "Slicer_BUILD_CompareVolumes;Slicer_USE_PYTHONQT"
   LABELS REMOTE_MODULE
