@@ -96,3 +96,10 @@ void qSlicerIOOptionsWidget::setFileNames(const QStringList& fileNames)
   d->Properties["fileName"] = fileNames;
   this->updateValid();
 }
+
+//------------------------------------------------------------------------------
+void qSlicerIOOptionsWidget::updateGUI(const qSlicerIO::IOProperties& ioProperties)
+{
+  Q_D(qSlicerIOOptions);
+  // derived classes should implement update of GUI based on provided properties
+}

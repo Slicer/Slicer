@@ -38,6 +38,10 @@ public:
   qSlicerSceneIOOptionsWidget(QWidget *parent=0);
   virtual ~qSlicerSceneIOOptionsWidget();
 
+  // Update checkboxes in the widget based on
+  // "clear" and "copyCameras" Boolean properties.
+  void updateGUI(const qSlicerIO::IOProperties& ioProperties);
+
 protected slots:
   void updateProperties();
 

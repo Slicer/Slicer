@@ -255,6 +255,14 @@ qSlicerIOOptions* qSlicerStandardFileDialog
     options = fileDescriptions.count() ?
       ioManager->fileWriterOptions(nodeToSave, fileDescriptions[0]) : 0;
     }
+  // Update options widget based on properties.
+  // This allows customizing default settings in the widget. For example,
+  // in scene open dialog, Clear scene option can be set to enabled or disabled by default.
+  qSlicerIOOptionsWidget* optionsWidget = dynamic_cast<qSlicerIOOptionsWidget*>(options);
+  if (optionsWidget)
+    {
+    optionsWidget->updateGUI(ioProperties);
+    }
   return options;
 }
 
