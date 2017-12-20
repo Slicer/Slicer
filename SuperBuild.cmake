@@ -304,9 +304,8 @@ set(BRAINSTools_options
 Slicer_Remote_Add(BRAINSTools
   GIT_REPOSITORY "${git_protocol}://github.com/Slicer/BRAINSTools.git"
   # Include patches:
-  # - for exporting "BRAINSCommonLib" (submitted to upstream as https://github.com/BRAINSia/BRAINSTools/pull/355)
-  # - for https://issues.slicer.org/view.php?id=4463 already integrated in upstream BRAINSTools
-  GIT_TAG "66db91f6d9944a5f931a58a67e195e3986c1751b" # master (from 2017-08-04, post v4.7.1)
+  # - for supporting integration with Slicer setting LAUNCH_EXE using SEM_LAUNCH_COMMAND
+  GIT_TAG "42ac3c373865e19526e1be060b2b67846f7beecd" # master (from 2017-11-29, post v4.7.1)
   OPTION_NAME Slicer_BUILD_BRAINSTOOLS
   OPTION_DEPENDS "Slicer_BUILD_CLI_SUPPORT;Slicer_BUILD_CLI"
   LABELS REMOTE_MODULE
