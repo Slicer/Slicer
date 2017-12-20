@@ -353,19 +353,25 @@ endif()
 #-----------------------------------------------------------------------------
 # Documentation
 #-----------------------------------------------------------------------------
-find_package(Doxygen QUIET)
+option(Slicer_BUILD_DOCUMENTATION "Build documentation (Doxygen, sphinx, ...)" ON)
+mark_as_advanced(Slicer_BUILD_DOCUMENTATION)
+mark_as_superbuild(Slicer_BUILD_DOCUMENTATION)
 
-if(DOXYGEN_DOT_FOUND)
-  mark_as_superbuild(DOXYGEN_EXECUTABLE)
+if(Slicer_BUILD_DOCUMENTATION)
+  find_package(Doxygen QUIET)
 
-  set(DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-   CACHE PATH "Where documentation archives should be stored")
-  mark_as_advanced(DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY)
-  mark_as_superbuild(DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY)
+  if(DOXYGEN_DOT_FOUND)
+    mark_as_superbuild(DOXYGEN_EXECUTABLE)
 
-  option(DOCUMENTATION_TARGET_IN_ALL "Include the custom target for building documentation in 'all'" OFF)
-  mark_as_advanced(DOCUMENTATION_TARGET_IN_ALL)
-  mark_as_superbuild(DOCUMENTATION_TARGET_IN_ALL)
+    set(DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+     CACHE PATH "Where documentation archives should be stored")
+    mark_as_advanced(DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY)
+    mark_as_superbuild(DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY)
+
+    option(DOCUMENTATION_TARGET_IN_ALL "Include the custom target for building documentation in 'all'" OFF)
+    mark_as_advanced(DOCUMENTATION_TARGET_IN_ALL)
+    mark_as_superbuild(DOCUMENTATION_TARGET_IN_ALL)
+  endif()
 endif()
 
 #-----------------------------------------------------------------------------
@@ -1148,16 +1154,22 @@ endif()
 # Documentation
 #-----------------------------------------------------------------------------
 
-# Automatically generate documentation at build time
-set(all_arg)
-if(DOCUMENTATION_TARGET_IN_ALL)
-  set(all_arg "ALL")
-endif()
-add_custom_target(doc ${all_arg})
-add_custom_target(doc-tarballs ${all_arg})
+if(Slicer_BUILD_DOCUMENTATION)
+  # Automatically generate documentation at build time
+  set(all_arg)
+  if(DOCUMENTATION_TARGET_IN_ALL)
+    set(all_arg "ALL")
+  endif()
+  add_custom_target(doc ${all_arg})
+  add_custom_target(doc-tarballs ${all_arg})
 
-add_subdirectory(Utilities/Doxygen)
-add_subdirectory(Utilities/Scripts/SlicerWizard/doc)
+  add_subdirectory(Utilities/Doxygen)
+  add_subdirectory(Utilities/Scripts/SlicerWizard/doc)
+endif()
+
+#-----------------------------------------------------------------------------
+# Install CMake modules
+#-----------------------------------------------------------------------------
 
 if(NOT Slicer_INSTALL_NO_DEVELOPMENT)
   file(GLOB cmake_files "${CMAKE_CURRENT_SOURCE_DIR}/CMake/*.cmake")
