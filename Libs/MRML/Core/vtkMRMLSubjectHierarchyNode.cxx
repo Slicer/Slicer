@@ -1194,7 +1194,6 @@ void vtkSubjectHierarchyItem::ReparentChildrenToParent()
     }
 
   this->Parent->Modified();
-  this->Modified();
 }
 
 //---------------------------------------------------------------------------

@@ -75,6 +75,7 @@ vtkMRMLSegmentationNode::vtkMRMLSegmentationNode()
 vtkMRMLSegmentationNode::~vtkMRMLSegmentationNode()
 {
   this->SetAndObserveSegmentation(NULL);
+
   // Make sure this callback cannot call this object
   this->SegmentationModifiedCallbackCommand->SetClientData(NULL);
 }
@@ -264,11 +265,24 @@ void vtkMRMLSegmentationNode::OnMasterRepresentationModified()
 //---------------------------------------------------------------------------
 void vtkMRMLSegmentationNode::OnSegmentAdded(const char* vtkNotUsed(segmentId))
 {
+  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(this->GetDisplayNode());
+  if (displayNode)
+    {
+    // Make sure the properties of the new segment are as expected even before the first update is triggered (e.g. by slice controller widget)
+    displayNode->UpdateSegmentList();
+    }
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLSegmentationNode::OnSegmentRemoved(const char* vtkNotUsed(segmentId))
 {
+  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(this->GetDisplayNode());
+  if (displayNode)
+    {
+    // Make sure the segment is removed from the display properties as well, so that when a new segment is added
+    // in its place it is properly populated (it will have the same segment ID, so it would simply claim it)
+    displayNode->UpdateSegmentList();
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -411,10 +425,10 @@ void vtkMRMLSegmentationNode::ApplyTransform(vtkAbstractTransform* transform)
   char* preferredDisplayRepresentation3D = NULL;
   vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(this->GetDisplayNode());
   if (displayNode)
-  {
+    {
     preferredDisplayRepresentation2D = displayNode->GetPreferredDisplayRepresentationName2D();
     preferredDisplayRepresentation3D = displayNode->GetPreferredDisplayRepresentationName3D();
-  }
+    }
 
   // Make sure preferred display representations exist after transformation
   // (it was invalidated in the process unless it is the master representation)
