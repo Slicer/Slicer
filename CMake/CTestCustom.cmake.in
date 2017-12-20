@@ -106,6 +106,7 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
 
   # VTK suppressions
   "vtkfreetype"
+  "vtkkwiml.*old-style-cast"
   "Utilities.vtktiff"
   "VTK.*IO.vtkMySQLQuery.cxx"
   "VTK.*Utilities.vtkexodus2"
@@ -138,6 +139,9 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
 
   # Libs/tclap
   "tclap.include.tclap.*Arg.h.*warning C4512"
+
+  # Lua - SimpleITK-build/Lua-prefix/src/Lua/src/lauxlib.c:577:61: warning: while loop has empty body [-Wempty-body]
+  "src.Lua.src.lauxlib"
 
   # Swig
   "Swig.Source"
@@ -198,6 +202,12 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
 
   #PythonQt
   "PythonQt.src"
+  "PythonQt.PythonQtConversion.h.*deprecated-writable-strings"
+  "PythonQt.src.PythonQtConversion.(cpp|h).*write-strings"
+  "PythonQt.src.PythonQtConversion.cpp.*tautological-compare"
+  "PythonQt.src.PythonQtSlot.cpp.*unused-value"
+  "PythonQt.src.PythonQtSignalReceiver.cpp.*logical-op-parentheses"
+  "PythonQt.PythonQtInstanceWrapper.h.*old-style-cast"
 
   #Libarchive
   "LibArchive.libArchive.*signed/unsigned mismatch"
