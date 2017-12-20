@@ -1331,7 +1331,6 @@ void qSlicerSegmentEditorAbstractEffect::interactionNodeModified(vtkMRMLInteract
 //-----------------------------------------------------------------------------
 bool qSlicerSegmentEditorAbstractEffect::segmentationDisplayableInView(vtkMRMLAbstractViewNode* viewNode)
 {
-  Q_D(qSlicerSegmentEditorAbstractEffect);
   if (!viewNode)
     {
     qWarning() << Q_FUNC_INFO << ": failed. Invalid viewNode.";
