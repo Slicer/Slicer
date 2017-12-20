@@ -666,6 +666,7 @@ foreach(_path IN ITEMS
     "/bin"
     "/usr/bin/"
     "/usr/local/bin"
+    "/usr/local/Cellar"
     "/opt/bin"
     "/opt/local/bin"
     )
