@@ -246,7 +246,9 @@ def importDicom(dicomDataDir, dicomDatabase=None):
     indexer = ctk.ctkDICOMIndexer()
     assert indexer is not None
 
-    indexer.addDirectory( slicer.dicomDatabase, dicomDataDir )
+    if dicomDatabase is None:
+      dicomDatabase = slicer.dicomDatabase
+    indexer.addDirectory( dicomDatabase, dicomDataDir )
     indexer.waitForImportFinished()
   except Exception, e:
     import traceback

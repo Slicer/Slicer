@@ -2934,7 +2934,7 @@ std::vector<vtkIdType> vtkMRMLSubjectHierarchyNode::GetItemsReferencingItemByDIC
   std::string uidsString = item->GetUID(vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName());
   if (uidsString.empty())
     {
-    vtkErrorMacro("GetItemsReferencingItemByDICOM: No DICOM UIDs in item with ID " << itemID);
+    vtkDebugMacro("GetItemsReferencingItemByDICOM: No DICOM UIDs in item with ID " << itemID);
     return referencingItemIDs;
     }
   std::vector<std::string> uidVector;
