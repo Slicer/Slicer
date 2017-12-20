@@ -121,8 +121,6 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
 set(_git_tag)
 if("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "7")
   set(_git_tag "43f6ee36f6e28c8347768bd97df4d767da6b4ce7")
-elseif("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "8")
-  set(_git_tag "b796f88c53a616558eab61ece778f3960debbcad")
 elseif("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "9")
   set(_git_tag "27c57a18d6fc7154de7d839fa0380b58c456969b")
 else()
