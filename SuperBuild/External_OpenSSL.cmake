@@ -76,7 +76,7 @@ You could either:
     file(APPEND ${_env_script}
 "#------------------------------------------------------------------------------
 # Added by '${CMAKE_CURRENT_LIST_FILE}'
-include(\"${${CMAKE_PROJECT_NAME}_CMAKE_DIR}/ExternalProjectForNonCMakeProject.cmake\")
+include(\"${Slicer_CMAKE_DIR}/ExternalProjectForNonCMakeProject.cmake\")
 set(CMAKE_BINARY_DIR \"${CMAKE_BINARY_DIR}\")
 set(ENV{VS_UNICODE_OUTPUT} \"\")
 ")
