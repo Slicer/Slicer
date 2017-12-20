@@ -1071,7 +1071,7 @@ QString qSlicerCoreApplication::defaultScenePath() const
         "DefaultScenePath", QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation)).toString();
 #else
   QString defaultScenePath = appSettings->value(
-        "DefaultScenePath", QStandardPaths::DocumentsLocation).toString();
+        "DefaultScenePath", QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)).toString();
 #endif
 
   return defaultScenePath;
