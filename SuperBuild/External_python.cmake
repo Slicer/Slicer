@@ -362,7 +362,9 @@ function(ExternalProject_PythonModule_InstallTreeCleanup proj modname dirnames)
   ExternalProject_Get_Property(${proj} tmp_dir)
   set(_file "${tmp_dir}/${proj}_install_tree_cleanup.py")
   set(_content
-"import ${modname}
+"
+${${proj}_EP_PYTHONMODULE_INSTALL_TREE_CLEANUP_CODE_BEFORE_IMPORT}
+import ${modname}
 import os.path
 import shutil
 ")
