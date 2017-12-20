@@ -112,6 +112,9 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
 
   # Force python build to "Release"
   if(CMAKE_CONFIGURATION_TYPES)
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
+      -DCMAKE_CONFIGURATION_TYPES:STRING=Release
+      )
     set(_build_command BUILD_COMMAND ${CMAKE_COMMAND} --build . --config Release)
     set(_install_command INSTALL_COMMAND ${CMAKE_COMMAND} --build . --config Release --target install)
   else()
