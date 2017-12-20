@@ -63,10 +63,6 @@
 #include "vtkVolumeProperty.h"
 #include <vtkVersion.h>
 
-// ITKSys includes
-//#include <itksys/SystemTools.hxx>
-//#include <itksys/Directory.hxx>
-
 // STD includes
 #include <cassert>
 #include <cmath>
