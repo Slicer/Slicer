@@ -166,12 +166,12 @@ macro(Slicer_Remote_Add projectname)
 
   if(_ep_OPTION_NAME AND NOT ${_ep_OPTION_DEFAULT} MATCHES ".+")
     set(_ep_OPTION_DEFAULT ON)
-    #message("[${projectname}] Setting default value for OPTION_DEFAULT:${_ep_OPTION_DEFAULT}")
+    #message("[${projectname}] Setting default value for ${_ep_OPTION_NAME} OPTION_DEFAULT to ${_ep_OPTION_DEFAULT}")
   endif()
 
   if(_ep_OPTION_NAME AND NOT ${_ep_OPTION_FORCE} MATCHES ".+")
     set(_ep_OPTION_FORCE OFF)
-    #message("[${projectname}] Setting default value for OPTION_FORCE:${_ep_OPTION_FORCE}")
+    #message("[${projectname}] Setting default value for ${_ep_OPTION_NAME} OPTION_FORCE to ${_ep_OPTION_FORCE}")
   endif()
 
   set(_add_source 1)
@@ -220,6 +220,13 @@ macro(Slicer_Remote_Add projectname)
     ExternalProject_Add_Source(${projectname}
       ${_ep_args_to_pass}
       SOURCE_DIR_VAR ${_ep_SOURCE_DIR_VAR}
+      )
+  elseif(_ep_LABELS)
+    if(NOT _ep_PROJECTS)
+      set(_ep_PROJECTS "")
+    endif()
+    ExternalProject_DeclareLabels(
+      LABELS ${_ep_LABELS} PROJECTS ${_ep_PROJECTS}
       )
   endif()
 

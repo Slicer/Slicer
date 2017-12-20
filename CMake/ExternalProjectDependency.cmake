@@ -294,6 +294,47 @@ function(_sb_append_to_cmake_args)
   endforeach()
 endfunction()
 
+#.rst:
+# .. cmake:function:: ExternalProject_DeclareLabels
+#
+# .. code-block:: cmake
+#
+#  ExternalProject_DeclareLabels(
+#      [PROJECTS <projectname> [<projectname> [...]] | ALL_PROJECTS]
+#      LABELS <label1> [<label2> [...]]
+#    )
+#
+# .. code-block:: cmake
+#
+#  PROJECTS corresponds to a list of <projectname> that will be added using 'ExternalProject_Add' function.
+#           If not specified and called within a project file, it defaults to the value of 'SUPERBUILD_TOPLEVEL_PROJECT'
+#           Otherwise, it defaults to 'CMAKE_PROJECT_NAME'.
+#           If instead 'ALL_PROJECTS' is specified, the variables and labels will be passed to all projects.
+#
+#  LABELS is a list of label to pass to the <projectname> as CMake CACHE args of the
+#           form -D<projectname>_EP_LABEL_<label>= unless specific variables
+#           have been associated with the labels using mark_as_superbuild.
+#
+function(ExternalProject_DeclareLabels)
+  set(options ALL_PROJECTS)
+  set(oneValueArgs)
+  set(multiValueArgs PROJECTS LABELS)
+  cmake_parse_arguments(_sb "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  if(_sb_PROJECTS AND _sb_ALL_PROJECTS)
+    message(FATAL_ERROR "Arguments 'PROJECTS' and 'ALL_PROJECTS' are mutually exclusive !")
+  endif()
+
+  if(_sb_ALL_PROJECTS)
+    set(optional_arg_ALL_PROJECTS "ALL_PROJECTS")
+  else()
+    set(optional_arg_ALL_PROJECTS PROJECTS ${_sb_PROJECTS})
+  endif()
+
+  _sb_append_to_cmake_args(
+    LABELS ${_sb_LABELS} ${optional_arg_ALL_PROJECTS})
+endfunction()
+
 function(_sb_get_external_project_arguments proj varname)
 
   mark_as_superbuild(${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${proj}:BOOL)
@@ -305,7 +346,9 @@ function(_sb_get_external_project_arguments proj varname)
       list(REMOVE_DUPLICATES _labels)
       foreach(label ${_labels})
         get_property(${proj}_EP_LABEL_${label} GLOBAL PROPERTY ${proj}_EP_LABEL_${label})
-        list(REMOVE_DUPLICATES ${proj}_EP_LABEL_${label})
+        if(${proj}_EP_LABEL_${label})
+          list(REMOVE_DUPLICATES ${proj}_EP_LABEL_${label})
+        endif()
         _sb_append_to_cmake_args(PROJECTS ${proj}
           VARS ${proj}_EP_LABEL_${label}:STRING)
       endforeach()
