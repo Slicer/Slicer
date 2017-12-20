@@ -110,7 +110,7 @@ set(_git_tag)
 if("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "7")
   set(_git_tag "43f6ee36f6e28c8347768bd97df4d767da6b4ce7")
 elseif("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "9")
-  set(_git_tag "27c57a18d6fc7154de7d839fa0380b58c456969b")
+  set(_git_tag "887c5065ec2220be04b105ce1d966c5162e729af")
 else()
   message(FATAL_ERROR "error: Unsupported Slicer_VTK_VERSION_MAJOR: ${Slicer_VTK_VERSION_MAJOR}")
 endif()
@@ -184,10 +184,23 @@ endif()
     )
 
   # pythonpath
-  set(${proj}_PYTHONPATH_LAUNCHER_BUILD
-    ${VTK_DIR}/Wrapping/Python
-    ${VTK_DIR}/${_library_output_subdir}/<CMAKE_CFG_INTDIR>
-    )
+  if(Slicer_VTK_VERSION_MAJOR VERSION_GREATER 7)
+    if(UNIX)
+      set(${proj}_PYTHONPATH_LAUNCHER_BUILD
+        ${VTK_DIR}/${_library_output_subdir}/python2.7/site-packages
+        )
+    else()
+      set(${proj}_PYTHONPATH_LAUNCHER_BUILD
+        ${VTK_DIR}/${_library_output_subdir}/<CMAKE_CFG_INTDIR>/Lib/site-packages
+        )
+    endif()
+  else()
+    set(${proj}_PYTHONPATH_LAUNCHER_BUILD
+      ${VTK_DIR}/Wrapping/Python
+      ${VTK_DIR}/${_library_output_subdir}/<CMAKE_CFG_INTDIR>
+      )
+  endif()
+
   mark_as_superbuild(
     VARS ${proj}_PYTHONPATH_LAUNCHER_BUILD
     LABELS "PYTHONPATH_LAUNCHER_BUILD"
