@@ -12,7 +12,7 @@ if(Slicer_USE_PYTHONQT)
 
   set(PYTHON_DIR "${Slicer_SUPERBUILD_DIR}/python-install")
   if(NOT EXISTS "${PYTHON_DIR}/${PYTHON_STDLIB_SUBDIR}")
-    message(STATUS "Skipping generation of python install rules - Unexistant directory PYTHON_DIR:${PYTHON_DIR}/${PYTHON_STDLIB_SUBDIR}")
+    message(FATAL_ERROR "Skipping generation of python install rules - Unexistant directory PYTHON_DIR:${PYTHON_DIR}/${PYTHON_STDLIB_SUBDIR}")
     return()
   endif()
 
