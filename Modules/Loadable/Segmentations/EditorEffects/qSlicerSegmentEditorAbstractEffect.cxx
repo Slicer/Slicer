@@ -22,12 +22,14 @@
 #include "qSlicerSegmentEditorAbstractEffect.h"
 #include "qSlicerSegmentEditorAbstractEffect_p.h"
 
-#include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLSegmentationNode.h"
 #include "vtkMRMLSegmentationDisplayNode.h"
 #include "vtkMRMLSegmentEditorNode.h"
-#include "vtkOrientedImageData.h"
+
 #include "vtkSlicerSegmentationsModuleLogic.h"
+
+// SegmentationCore includes
+#include "vtkOrientedImageData.h"
 
 // Qt includes
 #include <QDebug>
@@ -51,6 +53,9 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLViewNode.h"
+#include "vtkMRMLInteractionNode.h"
+#include "vtkMRMLScalarVolumeNode.h"
+#include "vtkMRMLSubjectHierarchyNode.h"
 
 // VTK includes
 #include <vtkImageConstantPad.h>
@@ -75,7 +80,6 @@
 //-----------------------------------------------------------------------------
 qSlicerSegmentEditorAbstractEffectPrivate::qSlicerSegmentEditorAbstractEffectPrivate(qSlicerSegmentEditorAbstractEffect& object)
   : q_ptr(&object)
-  , Scene(NULL)
   , SavedCursor(QCursor(Qt::ArrowCursor))
   , OptionsFrame(NULL)
 {
@@ -470,6 +474,26 @@ void qSlicerSegmentEditorAbstractEffect::modifySelectedSegmentByLabelmap(vtkOrie
           {
           qCritical() << Q_FUNC_INFO << ": Failed to remove modifier labelmap from segment " << this->parameterSetNode()->GetMaskSegmentID();
           }
+        }
+      }
+    }
+
+  // Make sure the segmentation node is under the same parent as the master volume
+  vtkMRMLScalarVolumeNode* masterVolumeNode = d->ParameterSetNode->GetMasterVolumeNode();
+  if (masterVolumeNode)
+    {
+    vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(d->ParameterSetNode->GetScene());
+    if (shNode)
+      {
+      vtkIdType segmentationId = shNode->GetItemByDataNode(segmentationNode);
+      vtkIdType masterVolumeShId = shNode->GetItemByDataNode(masterVolumeNode);
+      if (segmentationId && masterVolumeShId)
+        {
+        shNode->SetItemParent(segmentationId, shNode->GetItemParent(masterVolumeShId));
+        }
+      else
+        {
+        qCritical() << Q_FUNC_INFO << ": Subject hierarchy items not found for segmentation or master volume";
         }
       }
     }
@@ -979,7 +1003,7 @@ vtkOrientedImageData* qSlicerSegmentEditorAbstractEffect::referenceGeometryImage
 {
   Q_D(qSlicerSegmentEditorAbstractEffect);
   bool success = false;
-  emit d->updateVolumeSignal(d->ReferenceGeometryImage.GetPointer(), success); // this resets the labelmap and cleares it
+  emit d->updateVolumeSignal(d->ReferenceGeometryImage.GetPointer(), success); // this resets the labelmap and clears it
   if (!success)
     {
     return NULL;

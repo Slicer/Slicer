@@ -35,6 +35,7 @@
 #include <QDebug>
 #include <QAction>
 #include <QStandardItem>
+#include <QMessageBox>
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -42,6 +43,10 @@
 // VTK includes
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
+#include <vtkCollection.h>
+
+// STD includes
+#include <algorithm>
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
@@ -429,6 +434,124 @@ void qSlicerSubjectHierarchyDICOMPlugin::openDICOMExportDialog()
     return;
     }
 
+  // Check whether there is a study and patient for the exported item
+  bool validSelection = false;
+  if (shNode->IsItemLevel(currentItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy()))
+    {
+    if (shNode->IsItemLevel(shNode->GetItemParent(currentItemID), vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient()))
+      {
+      // Valid if current item is study and has a patient parent
+      validSelection = true;
+      }
+    }
+  else // Item belongs to a data node (i.e. series)
+    {
+    vtkIdType studyItemID = shNode->GetItemParent(currentItemID);
+    if ( studyItemID && shNode->IsItemLevel(studyItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy())
+      && shNode->IsItemLevel(shNode->GetItemParent(studyItemID), vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient()) )
+      {
+      // Valid if current item is a series and has a study parent which has a patient parent
+      validSelection = true;
+      }
+    }
+  if (!validSelection)
+    {
+    QString message = QString("Data to export need to be under a study item with a parent patient.\n"
+                              "Default patient and study will be created and the selected data and its related datasets "
+                              "will be moved in it for export.\n\n"
+                              "If you'd like to create the hierarchy manually, please click Cancel, "
+                              "then create a patient by right-clicking the empty area in Subject hierarchy in the Data module "
+                              "and choosing 'Create new subject'. Study can be similarly created under the patient. The data "
+                              "to export can be drag&dropped under the study.");
+    QMessageBox::StandardButton answer =
+      QMessageBox::question(NULL, tr("Create new patient and study for DICOM export?"), message,
+      QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Ok);
+    if (answer == QMessageBox::Ok)
+      {
+      // Generate new patient name
+      std::string patientName = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNewItemNamePrefix()
+        + vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient();
+      patientName = shNode->GenerateUniqueItemName(patientName);
+
+      if (shNode->IsItemLevel(currentItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy()))
+        {
+        // Create parent patient
+        vtkIdType patientItemID = shNode->CreateSubjectItem(shNode->GetSceneItemID(), patientName);
+
+        // Move existing study under new patient
+        shNode->SetItemParent(currentItemID, patientItemID);
+        }
+      else
+        {
+        // Collect referenced items for the selected data item
+        // DICOM references
+        std::vector<vtkIdType> referencedItems = shNode->GetItemsReferencedFromItemByDICOM(currentItemID);
+        // MRML references available in SH
+        vtkSmartPointer<vtkCollection> referencedNodes;
+        referencedNodes.TakeReference(shNode->GetScene()->GetReferencedNodes(shNode->GetItemDataNode(currentItemID)));
+        for (int index=0; index!=referencedNodes->GetNumberOfItems(); ++index)
+          {
+          vtkIdType nodeItemID = shNode->GetItemByDataNode(vtkMRMLNode::SafeDownCast(referencedNodes->GetItemAsObject(index)));
+          if (nodeItemID && (std::find(referencedItems.begin(), referencedItems.end(), nodeItemID) == referencedItems.end()))
+            {
+            referencedItems.push_back(nodeItemID);
+            }
+          }
+
+        // Check if referenced items are already in a study, and use that if found
+        vtkIdType studyItemID = 0;
+        for (std::vector<vtkIdType>::iterator itemIt=referencedItems.begin(); itemIt!=referencedItems.end(); itemIt++)
+          {
+          vtkIdType currentParentStudyItemID = shNode->GetItemAncestorAtLevel(
+            *itemIt, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy() );
+          if (currentParentStudyItemID && !studyItemID)
+            {
+            studyItemID = currentParentStudyItemID;
+            }
+          else if (currentParentStudyItemID)
+            {
+            qWarning() << Q_FUNC_INFO << ": Items referenced by '" << shNode->GetItemName(currentItemID).c_str()
+              << "' are in multiple studies. The first found study will be used as parent for referenced data";
+            }
+          }
+
+        // Create new study if no referenced data item is in a study already
+        if (!studyItemID)
+          {
+          // Generate new study name
+          std::string studyName = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNewItemNamePrefix()
+            + vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy();
+          studyName = shNode->GenerateUniqueItemName(studyName);
+          // Create new study
+          studyItemID = shNode->CreateStudyItem(shNode->GetSceneItemID(), studyName);
+
+          // Create parent patient for new study
+          vtkIdType patientItemID = shNode->CreateSubjectItem(shNode->GetSceneItemID(), patientName);
+          shNode->SetItemParent(studyItemID, patientItemID);
+          }
+        else if (!shNode->GetItemAncestorAtLevel(studyItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient()))
+          {
+          // Create parent patient for found study if it had none
+          vtkIdType patientItemID = shNode->CreateSubjectItem(shNode->GetSceneItemID(), patientName);
+          shNode->SetItemParent(studyItemID, patientItemID);
+          }
+
+        // Move selected item and all items it references under the study
+        shNode->SetItemParent(currentItemID, studyItemID);
+        for (std::vector<vtkIdType>::iterator itemIt=referencedItems.begin(); itemIt!=referencedItems.end(); itemIt++)
+          {
+          shNode->SetItemParent(*itemIt, studyItemID);
+          }
+        }
+      }
+    else
+      {
+      qWarning() << Q_FUNC_INFO << ": DICOM export cannot be performed without a parent patient and study. Manual interaction has been selected.";
+      return;
+      }
+    }
+
+  // Open export dialog
   qSlicerDICOMExportDialog* exportDialog = new qSlicerDICOMExportDialog(NULL);
   exportDialog->setMRMLScene(qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene());
   exportDialog->exec(currentItemID);
