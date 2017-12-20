@@ -620,7 +620,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
       # create the grid transform node
       gridTransform = slicer.vtkMRMLGridTransformNode()
-      gridTransform.SetName('Acquisition Transform')
+      gridTransform.SetName(slicer.mrmlScene.GenerateUniqueName(volumeNode.GetName()+' acquisition transform'))
       slicer.mrmlScene.AddNode(gridTransform)
 
       # create a grid transform with one vector at the corner of each slice
