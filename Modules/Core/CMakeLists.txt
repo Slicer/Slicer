@@ -11,7 +11,6 @@ set(KIT_include_directories
   ${qSlicerBaseQTGUI_BINARY_DIR}
   ${MRMLLogic_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}/EventBroker
-  ${CMAKE_CURRENT_SOURCE_DIR}/ROI
   )
 
 # Source files
@@ -26,11 +25,6 @@ set(KIT_SRCS
   EventBroker/qSlicerEventBrokerModule.h
   EventBroker/qSlicerEventBrokerModuleWidget.cxx
   EventBroker/qSlicerEventBrokerModuleWidget.h
-
-  ROI/qSlicerROIModule.cxx
-  ROI/qSlicerROIModule.h
-  ROI/qSlicerROIModuleWidget.cxx
-  ROI/qSlicerROIModuleWidget.h
   )
 
 # Headers that should run through moc
@@ -39,16 +33,11 @@ set(KIT_MOC_SRCS
 
   EventBroker/qSlicerEventBrokerModule.h
   EventBroker/qSlicerEventBrokerModuleWidget.h
-
-  ROI/qSlicerROIModule.h
-  ROI/qSlicerROIModuleWidget.h
-
   )
 
 # UI files
 set(KIT_UI_SRCS
   Resources/UI/qSlicerEventBrokerModuleWidget.ui
-  Resources/UI/qSlicerROIModuleWidget.ui
   )
 
 # Additional Target libraries (QT libs already included)

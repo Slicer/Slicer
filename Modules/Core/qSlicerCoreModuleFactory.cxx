@@ -21,11 +21,6 @@
 // SlicerQt/CoreModules includes
 #include "qSlicerCoreModuleFactory.h"
 #include "qSlicerEventBrokerModule.h"
-//#include "qSlicerROIModule.h"
-// FIXME:Move the following to the Models module (when it will be ready in Qt.)
-#include "qSlicerCoreApplication.h"
-#include "qSlicerCoreIOManager.h"
-// endofFIXME
 #include "qSlicerUtils.h"
 
 //-----------------------------------------------------------------------------
@@ -88,9 +83,6 @@ void qSlicerCoreModuleFactory::registerItems()
 {
   Q_D(qSlicerCoreModuleFactory);
   d->registerCoreModule<qSlicerEventBrokerModule>();
-  // vtkMRMLROINode are obsolete, one should use the Annotations module to
-  // interact with nodes.
-  //d->registerCoreModule<qSlicerROIModule>();
 }
 
 //-----------------------------------------------------------------------------

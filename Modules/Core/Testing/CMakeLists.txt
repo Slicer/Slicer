@@ -3,7 +3,9 @@ set(KIT ${PROJECT_NAME})
 set(KIT_TEST_SRCS)
 set(KIT_TEST_NAMES)
 set(KIT_TEST_NAMES_CXX)
-set(modulenames EventBroker ROI)
+set(modulenames
+  EventBroker
+  )
 add_definitions(-DGENERIC_CXX_MODULE_TEST_SKIP_DEPENDENCIES)
 SlicerMacroConfigureGenericCxxModuleTests("${modulenames}" KIT_TEST_SRCS KIT_TEST_NAMES KIT_TEST_NAMES_CXX)
 

@@ -24,27 +24,4 @@
         <translation type="unfinished"></translation>
     </message>
 </context>
-<context>
-    <name>qSlicerROIModule</name>
-    <message>
-        <location filename="../UI/qSlicerROIModule.ui" line="14"/>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../UI/qSlicerROIModule.ui" line="20"/>
-        <source>ROI Display</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../UI/qSlicerROIModule.ui" line="29"/>
-        <source>Select a ROI :</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../UI/qSlicerROIModule.ui" line="37"/>
-        <source>vtkMRMLROINode</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
 </TS>
