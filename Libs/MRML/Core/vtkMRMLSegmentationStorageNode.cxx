@@ -55,13 +55,12 @@
 
 #ifdef SUPPORT_4D_SPATIAL_NRRD
 // ITK includes
-#include <itkImageFileWriter.h>
-#include <itkNrrdImageIO.h>
 #include <itkExceptionObject.h>
 #include <itkImageFileWriter.h>
 #include <itkImageFileReader.h>
 #include <itkMetaDataDictionary.h>
 #include <itkMetaDataObject.h>
+#include <itkNrrdImageIO.h>
 #endif
 
 // STL & C++ includes
