@@ -81,6 +81,15 @@ int vtkMRMLSceneTest1(int , char * [] )
   TEST_SET_GET_STRING(scene1.GetPointer(), URL);
   TEST_SET_GET_STRING(scene1.GetPointer(), RootDirectory);
 
+  //---------------------------------------------------------------------------
+  // Test IsNodeClassRegistered
+  //---------------------------------------------------------------------------
+
+  {
+  CHECK_BOOL(scene1->IsNodeClassRegistered(""), false);
+  CHECK_BOOL(scene1->IsNodeClassRegistered("vtkMRMLScalarVolumeNode"), true);
+  CHECK_BOOL(scene1->IsNodeClassRegistered("vtkMRMLInvalidNode"), false);
+  }
 
   //---------------------------------------------------------------------------
   // Test ResetNodes
