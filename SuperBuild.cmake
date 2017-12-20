@@ -401,6 +401,28 @@ if(WIN32)
 endif()
 
 #------------------------------------------------------------------------------
+# Customizing SlicerApp metadata
+#------------------------------------------------------------------------------
+
+# Configuring Slicer setting these variables allows to overwrite the properties
+# associated with the SlicerApp application.
+
+foreach(name IN ITEMS
+  DESCRIPTION_SUMMARY
+  DESCRIPTION_FILE
+  LAUNCHER_SPLASHSCREEN_FILE
+  APPLE_ICON_FILE
+  WIN_ICON_FILE
+  LICENSE_FILE
+  )
+  if(DEFINED SlicerApp_${name})
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
+      -DSlicerApp_${name}:STRING=${SlicerApp_${name}}
+      )
+  endif()
+endforeach()
+
+#------------------------------------------------------------------------------
 # Slicer_EXTENSION_SOURCE_DIRS
 #------------------------------------------------------------------------------
 
