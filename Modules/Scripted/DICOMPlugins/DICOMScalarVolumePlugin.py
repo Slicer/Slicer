@@ -542,9 +542,10 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     # the individual frames.  Save the class instance so external
     # code such as the DICOMReaders test can introspect to validate.
 
-    self.acquisitionModeling = self.AcquisitionModeling()
-    self.acquisitionModeling.createAcquisitionTransform(volumeNode,
-      addAcquisitionTransformIfNeeded=self.acquisitionGeometryRegularizationEnabled())
+    if volumeNode:
+      self.acquisitionModeling = self.AcquisitionModeling()
+      self.acquisitionModeling.createAcquisitionTransform(volumeNode,
+        addAcquisitionTransformIfNeeded=self.acquisitionGeometryRegularizationEnabled())
 
     return volumeNode
 
