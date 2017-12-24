@@ -53,9 +53,10 @@ public slots:
 
 protected slots:
   void updateWidgetFromMRML();
-  void updateTransferFunction();
+  void updateHistogram();
   void onPresetButtonClicked();
   void onLockWindowLevelButtonClicked();
+  void onHistogramSectionExpanded(bool);
 
 protected:
   void showEvent(QShowEvent * event);
