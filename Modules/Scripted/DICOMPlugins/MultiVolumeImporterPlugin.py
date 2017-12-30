@@ -129,7 +129,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         seqLoadable = DICOMLib.DICOMLoadable()
         seqLoadable.files = loadable.files
         seqLoadable.tooltip = loadable.tooltip.replace(' frames MultiVolume by ', ' frames Volume Sequence by ')
-        seqLoadable.name = loadable.tooltip.replace(' frames MultiVolume by ', ' frames Volume Sequence by ')
+        seqLoadable.name = loadable.name.replace(' frames MultiVolume by ', ' frames Volume Sequence by ')
         seqLoadable.multivolume = loadable.multivolume
         seqLoadable.selected = loadable.selected
 
@@ -560,10 +560,12 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     filesPerFrame = nFiles/nFrames
     frames = []
 
+    baseName = loadable.name
+    
     loadAsVolumeSequence = hasattr(loadable, 'loadAsVolumeSequence') and loadable.loadAsVolumeSequence
     if loadAsVolumeSequence:
       volumeSequenceNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSequenceNode",
-        slicer.mrmlScene.GenerateUniqueName(mvNode.GetName()))
+        slicer.mrmlScene.GenerateUniqueName(baseName))
       volumeSequenceNode.SetIndexName("")
       volumeSequenceNode.SetIndexUnit("")
     else:
@@ -580,7 +582,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     instanceUIDs = instanceUIDs[:-1]
     mvNode.SetAttribute("DICOM.instanceUIDs", instanceUIDs)
 
-    progressbar = slicer.util.createProgressDialog(labelText="Loading "+mvNode.GetName(),
+    progressbar = slicer.util.createProgressDialog(labelText="Loading "+baseName,
                                                    value=0, maximum=nFrames,
                                                    windowModality = qt.Qt.WindowModal)
 
@@ -668,7 +670,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
         # Add browser node
         sequenceBrowserNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSequenceBrowserNode',
-          slicer.mrmlScene.GenerateUniqueName(mvNode.GetName() + " browser"))
+          slicer.mrmlScene.GenerateUniqueName(baseName + " browser"))
         sequenceBrowserNode.SetAndObserveMasterSequenceNodeID(volumeSequenceNode.GetID())
         # If save changes are allowed then proxy nodes are updated using shallow copy, which is much
         # faster for images. Images are usually not modified, so the risk of accidentally modifying
