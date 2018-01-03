@@ -401,6 +401,8 @@ class UndoRedo(object):
     self.undoSize = undoSize
     self.undoList = []
     self.redoList = []
+    self.undoObservers = []
+    self.redoObservers = []
     self.stateChangedCallback = self.defaultStateChangedCallback
 
   def defaultStateChangedCallback(self):
@@ -408,6 +410,24 @@ class UndoRedo(object):
     for when the state of the stacks changes (e.g. for updating the
     enable state of menu items or buttons"""
     pass
+
+  def addUndoObserver(self, observer):
+    """observer is a callable to be invoked when an undo operation
+    is selected"""
+    self.undoObservers.append(observer)
+
+  def addRedoObserver(self, observer):
+    """observer is a callable to be invoked when an redo operation
+    is selected"""
+    self.redoObservers.append(observer)
+
+  def removeUndoObserver(self, observer):
+    """observer is a callable to be removed from the list"""
+    self.undoObservers.remove(observer)
+
+  def removeRedoObserver(self, observer):
+    """observer is a callable to be removed from the list"""
+    self.redoObservers.remove(observer)
 
   def undoEnabled(self):
     """for managing undo/redo button state"""
@@ -453,6 +473,8 @@ class UndoRedo(object):
     self.undoList[-1].restore()
     self.undoList = self.undoList[:-1]
     self.stateChangedCallback()
+    for observer in self.undoObservers:
+      observer()
 
   def redo(self):
     """Perform the operation when the user presses
@@ -468,3 +490,5 @@ class UndoRedo(object):
     self.redoList[-1].restore()
     self.redoList = self.redoList[:-1]
     self.stateChangedCallback()
+    for observer in self.redoObservers:
+      observer()
