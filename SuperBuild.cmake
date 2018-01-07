@@ -315,7 +315,7 @@ endif()
 
 Slicer_Remote_Add(EMSegment
   SVN_REPOSITORY "http://svn.slicer.org/Slicer3/branches/Slicer4-EMSegment"
-  SVN_REVISION -r "17143"
+  SVN_REVISION -r "17145"
   OPTION_NAME Slicer_BUILD_EMSegment
   OPTION_DEPENDS "Slicer_BUILD_BRAINSTOOLS;Slicer_BUILD_QTLOADABLEMODULES;Slicer_USE_PYTHONQT_WITH_TCL"
   LABELS REMOTE_MODULE
