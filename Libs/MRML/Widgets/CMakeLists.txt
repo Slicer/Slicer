@@ -10,7 +10,7 @@ cmake_minimum_required(VERSION 3.5)
 # --------------------------------------------------------------------------
 if(NOT DEFINED BUILD_SHARED_LIBS)
   option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
-endif(NOT DEFINED BUILD_SHARED_LIBS)
+endif()
 
 if(NOT DEFINED MRML_BUILD_QT_DESIGNER_PLUGINS)
   option(MRML_BUILD_QT_DESIGNER_PLUGINS "Build Qt designer plugins." ON)

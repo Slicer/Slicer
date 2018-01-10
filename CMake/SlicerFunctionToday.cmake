@@ -29,10 +29,10 @@ function(today RESULT_VAR)
                     OUTPUT_VARIABLE today_date
                     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-  else(WIN32)
+  else()
     message(SEND_ERROR "error: Failed to obtain today date - ${RESULT_VAR} set to 0000-00-00")
     set(today_date "0000-00-00")
-  endif(WIN32)
+  endif()
   set(${RESULT_VAR} ${today_date} PARENT_SCOPE)
 endfunction()
 

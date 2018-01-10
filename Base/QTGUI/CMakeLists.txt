@@ -301,7 +301,7 @@ if(Slicer_USE_PYTHONQT)
     qSlicerPythonManager.h
     )
 
-endif(Slicer_USE_PYTHONQT)
+endif()
 
 SlicerMacroBuildBaseQtLibrary(
   NAME ${PROJECT_NAME}

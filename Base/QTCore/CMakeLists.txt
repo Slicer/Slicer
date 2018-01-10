@@ -233,7 +233,7 @@ if(Slicer_USE_PYTHONQT)
     list(APPEND KIT_target_libraries
       ${PYTHONQT_LIBRARY}
       )
-  endif(WIN32)
+  endif()
 
   # Sources
   list(APPEND KIT_SRCS
@@ -246,7 +246,7 @@ if(Slicer_USE_PYTHONQT)
     qSlicerCorePythonManager.h
     )
 
-endif(Slicer_USE_PYTHONQT)
+endif()
 
 SlicerMacroBuildBaseQtLibrary(
   NAME ${PROJECT_NAME}

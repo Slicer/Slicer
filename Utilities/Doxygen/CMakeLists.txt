@@ -66,9 +66,9 @@ if( DOXYGEN_FOUND )
     # in the Visual Studio IDE (regardless of DOCUMENTATION_TARGET_IN_ALL setting).
     #set_target_properties(doc-dev PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD 1)
 
-  else( DOXYGEN_DOT_FOUND )
+  else()
     message( WARNING
       "Warning: Dot not found - Documentation will not be created"
       )
-  endif( DOXYGEN_DOT_FOUND )
-endif( DOXYGEN_FOUND )
+  endif()
+endif()

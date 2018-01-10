@@ -102,12 +102,12 @@ if(GIT_EXECUTABLE)
     set(${prefix}_WC_REVISION ${${prefix}_WC_REVISION_HASH})
     if(NOT ${GIT_error} EQUAL 0)
       message(SEND_ERROR "Command \"${GIT_EXECUTBALE} rev-parse --verify -q --short=7 HEAD\" in directory ${dir} failed with output:\n${GIT_error}")
-    else(NOT ${GIT_error} EQUAL 0)
+    else()
       execute_process(COMMAND ${GIT_EXECUTABLE} name-rev ${${prefix}_WC_REVISION_HASH}
          WORKING_DIRECTORY ${dir}
          OUTPUT_VARIABLE ${prefix}_WC_REVISION_NAME
           OUTPUT_STRIP_TRAILING_WHITESPACE)
-    endif(NOT ${GIT_error} EQUAL 0)
+    endif()
 
     execute_process(COMMAND ${GIT_EXECUTABLE} config --get remote.origin.url
        WORKING_DIRECTORY ${dir}
@@ -154,8 +154,8 @@ if(GIT_EXECUTABLE)
           "\\2" ${prefix}_WC_LAST_CHANGED_REV "${${prefix}_WC_INFO}")
         string(REGEX REPLACE "^(.*\n)?Last Changed Date: ([^\n]+).*"
           "\\2" ${prefix}_WC_LAST_CHANGED_DATE "${${prefix}_WC_INFO}")
-      endif(${git_svn_info_result} EQUAL 0)
-    endif(NOT "${git_config_output}" STREQUAL "")
+      endif()
+    endif()
 
     # If there is no 'remote.origin', default to "NA" value and print a warning message.
     if(NOT ${prefix}_WC_URL)
@@ -165,8 +165,8 @@ if(GIT_EXECUTABLE)
       set(${prefix}_WC_ROOT ${${prefix}_WC_URL})
     endif()
 
-  endmacro(GIT_WC_INFO)
-endif(GIT_EXECUTABLE)
+  endmacro()
+endif()
 
 # Handle the QUIETLY and REQUIRED arguments and set GIT_FOUND to TRUE if
 # all listed variables are TRUE

@@ -112,6 +112,6 @@ foreach(module ${cli_modules})
   if(_build_module)
     add_subdirectory(${module})
   endif()
-endforeach(module)
+endforeach()
 
 # External modules have been moved to Modules/Remote/CMakeLists.txt

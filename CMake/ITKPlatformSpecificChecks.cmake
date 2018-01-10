@@ -18,10 +18,10 @@ if(WIN32)
            -D_CRT_VCCLRIT_NO_DEPRECATE
            -D_SCL_SECURE_NO_DEPRECATE
            )
-       endif(NOT ITK_ENABLE_VISUAL_STUDIO_DEPRECATED_C_WARNINGS)
-     endif(NOT MINGW)
-   endif(NOT CYGWIN)
-endif(WIN32)
+       endif()
+     endif()
+   endif()
+endif()
 
 if(WIN32)
   # Some libraries (e.g. vxl libs) have no dllexport markup, so we can
@@ -39,19 +39,19 @@ if(WIN32)
       set(CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS
         "-shared -Wl,--export-all-symbols -Wl,--enable-auto-import")
       set(CMAKE_EXE_LINKER_FLAGS "-Wl,--enable-auto-import")
-    endif(MINGW)
+    endif()
     if(CYGWIN)
       set(CMAKE_EXE_LINKER_FLAGS "-Wl,--enable-auto-import")
-    endif(CYGWIN)
-  #else(CMAKE_COMPILER_IS_GNUCXX)
+    endif()
+  #else()
    #if(BUILD_SHARED_LIBS)
    #  set(ITK_LIBRARY_BUILD_TYPE "SHARED")
-   #else(BUILD_SHARED_LIBS)
+   #else()
    #  set(ITK_LIBRARY_BUILD_TYPE "STATIC")
-   #endif(BUILD_SHARED_LIBS)
+   #endif()
    #set(BUILD_SHARED_LIBS OFF)
-  endif(CMAKE_COMPILER_IS_GNUCXX)
-endif(WIN32)
+  endif()
+endif()
 
 #-----------------------------------------------------------------------------
 #ITK requires special compiler flags on some platforms.
@@ -61,7 +61,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
  itkCHECK_CXX_ACCEPTS_FLAGS("-Wno-deprecated" CXX_HAS_DEPRECATED_FLAG)
  if(CXX_HAS_DEPRECATED_FLAG)
    set(ITK_REQUIRED_CXX_FLAGS "${ITK_REQUIRED_CXX_FLAGS} -Wno-deprecated")
- endif(CXX_HAS_DEPRECATED_FLAG)
+ endif()
  if(APPLE)
    # -no-cpp-precomp and -Wno-long-double were compiler flags present
    # only in Apple's gcc and not in the FSF gcc. The flags are obsolete
@@ -77,17 +77,17 @@ if(CMAKE_COMPILER_IS_GNUCXX)
    if(CXX_HAS_LONGDOUBLE_FLAG)
      set(ITK_REQUIRED_C_FLAGS "${ITK_REQUIRED_C_FLAGS} -Wno-long-double")
      set(ITK_REQUIRED_CXX_FLAGS "${ITK_REQUIRED_CXX_FLAGS} -Wno-long-double")
-   endif(CXX_HAS_LONGDOUBLE_FLAG)
+   endif()
 
    option(ITK_USE_64BITS_APPLE_TRUNCATION_WARNING "Turn on warnings on 64bits to 32bits truncations." OFF)
    mark_as_advanced(ITK_USE_64BITS_APPLE_TRUNCATION_WARNING)
- endif(APPLE)
+ endif()
 
  # gcc must have -msse2 option to enable sse2 support
  if(VNL_CONFIG_ENABLE_SSE2 OR VNL_CONFIG_ENABLE_SSE2_ROUNDING)
    set(ITK_REQUIRED_CXX_FLAGS "${ITK_REQUIRED_CXX_FLAGS} -msse2")
- endif(VNL_CONFIG_ENABLE_SSE2 OR VNL_CONFIG_ENABLE_SSE2_ROUNDING)
-endif(CMAKE_COMPILER_IS_GNUCXX)
+ endif()
+endif()
 
 #-----------------------------------------------------------------------------
 
@@ -117,8 +117,8 @@ if(SUN_COMPILER)
   itkCHECK_CXX_ACCEPTS_FLAGS("-library=stlport4" SUN_COMPILER_HAS_STL_PORT_4)
   if(SUN_COMPILER_HAS_STL_PORT_4)
     set(ITK_REQUIRED_CXX_FLAGS "${ITK_REQUIRED_CXX_FLAGS} -library=stlport4")
-  endif(SUN_COMPILER_HAS_STL_PORT_4)
-endif(SUN_COMPILER)
+  endif()
+endif()
 
 #-----------------------------------------------------------------------------
 # The frename-registers option does not work due to a bug in the gnu compiler.
@@ -130,12 +130,12 @@ if(CMAKE_COMPILER_IS_GNUCXX)
   foreach(COMP_OPTION ${ALL_FLAGS})
     if("${COMP_OPTION}" STREQUAL "-frename-registers")
       message(FATAL_ERROR "-frename-registers causes runtime bugs.  It must be removed from your compilation options.")
-    endif("${COMP_OPTION}" STREQUAL "-frename-registers")
+    endif()
     if("${COMP_OPTION}" STREQUAL "-ffloat-store")
       message(FATAL_ERROR "-ffloat-store causes runtime bugs on gcc 3.2.3 (appearently not on gcc 3.4.3, but the exact criteria is not known).  It must be removed from your compilation options.")
-    endif("${COMP_OPTION}" STREQUAL "-ffloat-store")
-  endforeach(COMP_OPTION)
-endif(CMAKE_COMPILER_IS_GNUCXX)
+    endif()
+  endforeach()
+endif()
 
 #---------------------------------------------------------------
 # run try compiles and tests for ITK

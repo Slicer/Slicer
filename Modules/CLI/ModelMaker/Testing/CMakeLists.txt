@@ -13,7 +13,7 @@ foreach(filenum RANGE 1 5)
   configure_file(${TEST_DATA}/ModelMakerTest.mrml
       ${TEMP}/ModelMakerTest${filenum}.mrml
       COPYONLY)
-endforeach(filenum)
+endforeach()
 
 set(testname ${CLP}Test)
 add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>

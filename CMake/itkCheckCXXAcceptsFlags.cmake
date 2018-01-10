@@ -21,9 +21,9 @@ macro(itkCHECK_CXX_ACCEPTS_FLAGS FLAGS VAR)
       OUTPUT_VARIABLE OUTPUT)
     if(${VAR})
       set(${VAR} TRUE CACHE INTERNAL "CXX compiler accepts flag ${FLAGS}")
-    else(${VAR})
+    else()
       set(${VAR} FALSE CACHE INTERNAL "CXX compiler accepts flag ${FLAGS}")
-    endif(${VAR})
+    endif()
 
    set(_UNKNOWN_FLAG_MSGS
      "ignoring unknown option"
@@ -35,8 +35,8 @@ macro(itkCHECK_CXX_ACCEPTS_FLAGS FLAGS VAR)
      string(REGEX MATCH "${MSG}" _FOUNDIT "${OUTPUT}")
      if("${_FOUNDIT}" MATCHES "${MSG}")
        set(${VAR} FALSE CACHE INTERNAL "CXX compiler accepts flag ${FLAGS}")
-     endif("${_FOUNDIT}" MATCHES "${MSG}")
-   endforeach(MSG ${_UNKNOWN_FLAG_MSGS})
+     endif()
+   endforeach()
 
    if(${VAR})
      message(STATUS "Checking to see if CXX compiler accepts flag ${FLAGS} - Yes")
@@ -44,13 +44,13 @@ macro(itkCHECK_CXX_ACCEPTS_FLAGS FLAGS VAR)
        "Determining if the CXX compiler accepts the flag ${FLAGS} passed with "
        "the following output:\n${OUTPUT}\n"
        "Source file was:\n${_SOURCE}\n")
-   else(${VAR})
+   else()
      message(STATUS "Checking to see if CXX compiler accepts flag ${FLAGS} - No")
      file(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log
        "Determining if the CXX compiler accepts the flag ${FLAGS} passed with "
        "the following output:\n${OUTPUT}\n"
        "Source file was:\n${_SOURCE}\n")
-   endif(${VAR})
+   endif()
 
-   endif(NOT DEFINED ${VAR})
-endmacro(itkCHECK_CXX_ACCEPTS_FLAGS)
+   endif()
+endmacro()
