@@ -39,7 +39,7 @@ macro(slicerMacroBuildAppLibrary)
     INCLUDE_DIRECTORIES
     TARGET_LIBRARIES
     )
-  CMAKE_PARSE_ARGUMENTS(SLICERAPPLIB
+  cmake_parse_arguments(SLICERAPPLIB
     "${options}"
     "${oneValueArgs}"
     "${multiValueArgs}"
@@ -304,7 +304,7 @@ macro(slicerMacroBuildApplication)
     INCLUDE_DIRECTORIES
     TARGET_LIBRARIES
     )
-  CMAKE_PARSE_ARGUMENTS(SLICERAPP
+  cmake_parse_arguments(SLICERAPP
     "${options}"
     "${oneValueArgs}"
     "${multiValueArgs}"

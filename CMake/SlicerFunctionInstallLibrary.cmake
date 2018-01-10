@@ -53,7 +53,7 @@ function(slicerInstallLibrary)
   set(multiValueArgs
     PERMISSIONS
     )
-  CMAKE_PARSE_ARGUMENTS(_slicerInstallLibrary
+  cmake_parse_arguments(_slicerInstallLibrary
     "${options}"
     "${oneValueArgs}"
     "${multiValueArgs}"

@@ -37,7 +37,7 @@ macro(SlicerMacroBuildModuleLogic)
     INCLUDE_DIRECTORIES
     TARGET_LIBRARIES
     )
-  CMAKE_PARSE_ARGUMENTS(MODULELOGIC
+  cmake_parse_arguments(MODULELOGIC
     "${options}"
     "${oneValueArgs}"
     "${multiValueArgs}"

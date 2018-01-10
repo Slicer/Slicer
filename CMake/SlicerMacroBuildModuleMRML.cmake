@@ -37,7 +37,7 @@ macro(SlicerMacroBuildModuleMRML)
     INCLUDE_DIRECTORIES
     TARGET_LIBRARIES
     )
-  CMAKE_PARSE_ARGUMENTS(MODULEMRML
+  cmake_parse_arguments(MODULEMRML
     "${options}"
     "${oneValueArgs}"
     "${multiValueArgs}"

@@ -37,7 +37,7 @@ macro(slicerMacroBuildLoadableModule)
     TARGET_LIBRARIES
     RESOURCES
     )
-  CMAKE_PARSE_ARGUMENTS(LOADABLEMODULE
+  cmake_parse_arguments(LOADABLEMODULE
     "${options}"
     "${oneValueArgs}"
     "${multiValueArgs}"
@@ -309,7 +309,7 @@ macro(slicerMacroBuildQtModule)
     TARGET_LIBRARIES
     RESOURCES
     )
-  CMAKE_PARSE_ARGUMENTS(QTMODULE
+  cmake_parse_arguments(QTMODULE
     "${options}"
     "${oneValueArgs}"
     "${multiValueArgs}"

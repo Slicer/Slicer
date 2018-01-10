@@ -33,7 +33,7 @@ macro(SlicerMacroConfigureModuleCxxTestDriver)
     INCLUDE_DIRECTORIES
     TARGET_LIBRARIES
     )
-  CMAKE_PARSE_ARGUMENTS(SLICER_TEST_DRIVER
+  cmake_parse_arguments(SLICER_TEST_DRIVER
     "${options}"
     "${oneValueArgs}"
     "${multiValueArgs}"

@@ -37,7 +37,7 @@ macro(SlicerMacroBuildModuleVTKLibrary)
     INCLUDE_DIRECTORIES
     TARGET_LIBRARIES
     )
-  CMAKE_PARSE_ARGUMENTS(MODULEVTKLIBRARY
+  cmake_parse_arguments(MODULEVTKLIBRARY
     "${options}"
     "${oneValueArgs}"
     "${multiValueArgs}"

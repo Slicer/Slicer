@@ -40,7 +40,7 @@ macro(SlicerMacroBuildModuleWidgets)
     TARGET_LIBRARIES
     RESOURCES
     )
-  CMAKE_PARSE_ARGUMENTS(MODULEWIDGETS
+  cmake_parse_arguments(MODULEWIDGETS
     "${options}"
     "${oneValueArgs}"
     "${multiValueArgs}"

@@ -34,7 +34,7 @@ macro(SlicerMacroPythonWrapModuleVTKLibrary)
     SRCS
     WRAPPED_TARGET_LIBRARIES
     )
-  CMAKE_PARSE_ARGUMENTS(PYTHONWRAPMODULEVTKLIBRARY
+  cmake_parse_arguments(PYTHONWRAPMODULEVTKLIBRARY
     "${options}"
     "${oneValueArgs}"
     "${multiValueArgs}"

@@ -15,7 +15,7 @@ macro(slicerMacroBuildCLI)
     LINK_DIRECTORIES
     INCLUDE_DIRECTORIES
   )
-  CMAKE_PARSE_ARGUMENTS(MY_SLICER
+  cmake_parse_arguments(MY_SLICER
     "${options}"
     "${oneValueArgs}"
     "${multiValueArgs}"

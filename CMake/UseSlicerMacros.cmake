@@ -74,7 +74,7 @@ function(slicer_setting_variable_message varname)
   set(options      OBFUSCATE SKIP_TRUNCATE)
   set(oneValueArgs PRETEXT)
   set(multiValueArgs )
-  CMAKE_PARSE_ARGUMENTS(LOCAL
+  cmake_parse_arguments(LOCAL
     "${options}"
     "${oneValueArgs}"
     "${multiValueArgs}"

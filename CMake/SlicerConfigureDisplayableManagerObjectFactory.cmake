@@ -23,7 +23,7 @@ function(SlicerConfigureDisplayableManagerObjectFactory)
   set(multiValueArgs
     SRCS
     )
-  CMAKE_PARSE_ARGUMENTS(DM_OBJECT_FACTORY
+  cmake_parse_arguments(DM_OBJECT_FACTORY
     "${options}"
     "${oneValueArgs}"
     "${multiValueArgs}"

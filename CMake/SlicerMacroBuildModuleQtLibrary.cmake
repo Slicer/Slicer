@@ -40,7 +40,7 @@ macro(SlicerMacroBuildModuleQtLibrary)
     TARGET_LIBRARIES
     RESOURCES
     )
-  CMAKE_PARSE_ARGUMENTS(MODULEQTLIBRARY
+  cmake_parse_arguments(MODULEQTLIBRARY
     "${options}"
     "${oneValueArgs}"
     "${multiValueArgs}"

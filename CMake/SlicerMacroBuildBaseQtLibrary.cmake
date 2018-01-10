@@ -68,7 +68,7 @@ macro(SlicerMacroBuildBaseQtLibrary)
     TARGET_LIBRARIES
     RESOURCES
     )
-  CMAKE_PARSE_ARGUMENTS(SLICERQTBASELIB
+  cmake_parse_arguments(SLICERQTBASELIB
     "${options}"
     "${oneValueArgs}"
     "${multiValueArgs}"
