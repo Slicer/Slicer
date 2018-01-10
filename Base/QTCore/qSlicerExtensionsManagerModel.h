@@ -177,6 +177,10 @@ public:
   /// \sa setServerUrl
   Q_INVOKABLE ExtensionMetadataType retrieveExtensionMetadata(const QString& extensionId);
 
+  /// \brief Query the extension server and retrieve the metadata associated with \a extensionName
+  /// \sa setServerUrl
+  Q_INVOKABLE ExtensionMetadataType retrieveExtensionMetadataByName(const QString& extensionName);
+
   /// Install extension from the specified archive file.
   ///
   /// This attempts to install an extension given only the archive file

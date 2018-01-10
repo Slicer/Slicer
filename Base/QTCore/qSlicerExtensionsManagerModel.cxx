@@ -1126,6 +1126,26 @@ qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerMod
 }
 
 // --------------------------------------------------------------------------
+qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerModel
+::retrieveExtensionMetadataByName(const QString& extensionName)
+{
+  Q_D(qSlicerExtensionsManagerModel);
+
+  if (extensionName.isEmpty())
+    {
+    return ExtensionMetadataType();
+    }
+
+  qMidasAPI::ParametersType parameters;
+  parameters["productname"] = extensionName;
+  parameters["slicer_revision"] = this->slicerRevision();
+  parameters["os"] = this->slicerOs();
+  parameters["arch"] = this->slicerArch();
+
+  return d->retrieveExtensionMetadata(parameters);
+}
+
+// --------------------------------------------------------------------------
 qSlicerExtensionDownloadTask*
 qSlicerExtensionsManagerModelPrivate::downloadExtension(
   const QString& extensionId)
