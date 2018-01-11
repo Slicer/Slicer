@@ -3165,6 +3165,7 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNod
     {
     vtkErrorWithObjectMacro( scene,
       "vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode: Invalid first subject hierarchy node" );
+    return firstShNode;
     }
   if (shNodesInScene.size() == 1)
     {

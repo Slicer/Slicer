@@ -1350,7 +1350,7 @@ const char* vtkMRMLTransformNode::GetTransformInfo(vtkAbstractTransform* inputTr
       }
     else
       {
-      const char* className=transform->GetClassName();
+      const char* className = (transform ? transform->GetClassName() : NULL);
       ss << " " << (className?className:"invalid");
       }
     }

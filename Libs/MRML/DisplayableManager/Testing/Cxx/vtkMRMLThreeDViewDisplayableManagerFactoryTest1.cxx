@@ -300,7 +300,7 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
         << " - Problem with group->GetDisplayableManagerByClassName() method" << std::endl;
     std::cerr << "\tdm2 should NOT be NULL" << std::endl;
     }
-  if (!dm2->IsA("vtkMRMLCameraDisplayableManager"))
+  else if (!dm2->IsA("vtkMRMLCameraDisplayableManager"))
     {
     std::cerr << "Line " << __LINE__
         << " - Problem with group->GetDisplayableManagerByClassName() method" << std::endl;

@@ -904,8 +904,8 @@ void qMRMLPlotViewControllerWidget::updateWidgetFromMRML()
       }
     }
 
-  // Update selected PlotDataNodes Markers if Type is Line
-  if (strcmp("Custom", markers))
+  // Update selected PlotDataNodes Markers if Type is non-custom
+  if (markers!=NULL && strcmp("Custom", markers))
     {
     it = plotDataNodesIDs.begin();
     for (; it != plotDataNodesIDs.end(); ++it)

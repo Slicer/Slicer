@@ -133,7 +133,7 @@ void qSlicerModulesListViewPrivate::updateItem(QStandardItem* item)
     }
   QString text = moduleName;
   QString tooltip = moduleName;
-  qSlicerAbstractCoreModule* coreModule = this->FactoryManager->moduleInstance(moduleName);
+  qSlicerAbstractCoreModule* coreModule = (this->FactoryManager ? this->FactoryManager->moduleInstance(moduleName) : NULL);
   if (coreModule)
     {
     text = coreModule->title();
