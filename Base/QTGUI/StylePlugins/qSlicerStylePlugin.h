@@ -32,6 +32,10 @@ class QStyle;
 
 class Q_SLICER_STYLES_PLUGINS_EXPORT qSlicerStylePlugin : public QStylePlugin
 {
+  Q_OBJECT
+#if (QT_VERSION > QT_VERSION_CHECK(5, 0, 0))
+    Q_PLUGIN_METADATA(IID QStyleFactoryInterface_iid FILE "SlicerStyle.json")
+#endif
 public:
   /// Superclass typedef
   typedef QStylePlugin Superclass;

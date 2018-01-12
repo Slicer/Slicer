@@ -16,6 +16,7 @@ set(${KIT}_SRCS
 
 # Headers that should run through moc
 set(${KIT}_MOC_SRCS
+  qSlicerStylePlugin.h
   )
 
 set(${KIT}_TARGET_LIBRARIES

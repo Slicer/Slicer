@@ -69,7 +69,8 @@ qSlicerSettingsStylesPanelPrivate
                  << "Cleanlooks"
                  << "Macintosh"
                  << "Macintosh (aqua)"
-                 << "GTK+";
+                 << "GTK+"
+                 << "Fusion";
 }
 
 // --------------------------------------------------------------------------
