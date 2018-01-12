@@ -20,7 +20,11 @@
 
 // Qt includes
 #include <QAbstractScrollArea>
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 #include <QCleanlooksStyle>
+#else
+#include <QStyleFactory>
+#endif
 #include <QDebug>
 #include <QEvent>
 #include <QGroupBox>
@@ -35,7 +39,11 @@
 
 // --------------------------------------------------------------------------
 qSlicerStyle::qSlicerStyle()
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
   : Superclass(new QCleanlooksStyle)
+#else
+  : Superclass(QStyleFactory::create("fusion"))
+#endif
 {
   this->baseStyle()->setParent(this);
 }

@@ -21,9 +21,6 @@
 #ifndef __qSlicerStyle_h
 #define __qSlicerStyle_h
 
-// Qt includes
-//#include <QProxyStyle>
-
 // CTK includes
 #include <ctkProxyStyle.h>
 
