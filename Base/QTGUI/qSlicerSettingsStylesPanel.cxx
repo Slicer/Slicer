@@ -129,12 +129,12 @@ void qSlicerSettingsStylesPanelPrivate::init()
 int qSlicerSettingsStylesPanelPrivate
 ::styleIndex(const QString& styleName) const
 {
-  int styleIndex = this->StyleComboBox->findText(styleName);
+  int styleIndex = this->StyleComboBox->findText(styleName, Qt::MatchFixedString);
   if (styleIndex == -1)
     {
     // if not found (call setCurrentStyle with a wrong style for example),
     // default to slicer's style
-    styleIndex = this->StyleComboBox->findText("Slicer");
+    styleIndex = this->StyleComboBox->findText("Slicer", Qt::MatchFixedString);
     }
   return styleIndex;
 }
@@ -145,6 +145,32 @@ isQtStyle(const QString& styleName) const
 {
   // Styles are case insensitive
   return this->QtStyles.contains(styleName, Qt::CaseInsensitive);
+}
+
+namespace
+{
+QString toCamelCase(const QString& s)
+{
+  QString camelCase;
+  if (s.size() <= 0)
+    {
+    return camelCase;
+    }
+
+  camelCase = s[0].toUpper();
+  for (int i = 1; i < s.size(); ++i)
+    {
+    if (s[i - 1] == " ")
+      {
+      camelCase.append(s[i].toUpper());
+      }
+    else
+      {
+      camelCase.append(s[i]);
+      }
+    };
+  return camelCase;
+}
 }
 
 // --------------------------------------------------------------------------
@@ -159,7 +185,7 @@ void qSlicerSettingsStylesPanelPrivate::populateStyles()
     {
     if (! this->isQtStyle(style)) // check if not Qt's built in style
       {
-      this->StyleComboBox->addItem(style);
+      this->StyleComboBox->addItem(toCamelCase(style));
       }
     }
 
