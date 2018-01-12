@@ -41,11 +41,6 @@ endif()
 list(APPEND dirs
   MRML/Widgets
   )
-if(CTK_QT_VERSION VERSION_GREATER "4")
-  list(APPEND dirs
-    qtstyleplugins
-    )
-endif()
 
 #-----------------------------------------------------------------------------
 # Set library properties

@@ -275,12 +275,6 @@ if(Slicer_USE_PYTHONQT)
     )
 endif()
 
-if(CTK_QT_VERSION VERSION_GREATER "4")
-  list(APPEND KIT_target_libraries
-    qtstyleplugins
-    )
-endif()
-
 # Resources
 set(KIT_resources
   Resources/qSlicerBaseQTGUI.qrc
