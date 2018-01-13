@@ -268,8 +268,10 @@ void vtkMRMLSegmentationNode::OnSegmentAdded(const char* vtkNotUsed(segmentId))
   vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(this->GetDisplayNode());
   if (displayNode)
     {
-    // Make sure the properties of the new segment are as expected even before the first update is triggered (e.g. by slice controller widget)
-    displayNode->UpdateSegmentList();
+    // Make sure the properties of the new segment are as expected even before the first update is triggered (e.g. by slice controller widget).
+    // removeUnusedDisplayProperties is set to false to prevent removing of display properties of segments
+    // that are not added to the segmentation node yet (this occurs during scene loading).
+    displayNode->UpdateSegmentList(false);
     }
 }
 

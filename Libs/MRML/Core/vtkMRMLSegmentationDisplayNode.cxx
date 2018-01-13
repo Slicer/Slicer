@@ -1132,7 +1132,7 @@ void vtkMRMLSegmentationDisplayNode::GetVisibleSegmentIDs(vtkStringArray* segmen
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationDisplayNode::UpdateSegmentList()
+void vtkMRMLSegmentationDisplayNode::UpdateSegmentList(bool removeUnusedDisplayProperties /*=true*/)
 {
   vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(this->GetDisplayableNode());
   vtkSegmentation* segmentation = segmentationNode ? segmentationNode->GetSegmentation() : NULL;
@@ -1167,24 +1167,27 @@ void vtkMRMLSegmentationDisplayNode::UpdateSegmentList()
     }
 
   // Remove unused segment display properties and colors
-  // Get list of segment IDs that we have display properties for but does not exist in
-  // the segmentation anymore.
-  std::vector<std::string> orphanSegmentIds;
-  for (SegmentDisplayPropertiesMap::iterator it = this->SegmentationDisplayProperties.begin();
-    it != this->SegmentationDisplayProperties.end(); ++it)
+  if (removeUnusedDisplayProperties)
     {
-    if (segmentation->GetSegment(it->first) == NULL)
+    // Get list of segment IDs that we have display properties for but does not exist in
+    // the segmentation anymore.
+    std::vector<std::string> orphanSegmentIds;
+    for (SegmentDisplayPropertiesMap::iterator it = this->SegmentationDisplayProperties.begin();
+      it != this->SegmentationDisplayProperties.end(); ++it)
       {
-      // The segment does not exist in segmentation
-      orphanSegmentIds.push_back(it->first);
+      if (segmentation->GetSegment(it->first) == NULL)
+        {
+        // The segment does not exist in segmentation
+        orphanSegmentIds.push_back(it->first);
+        }
       }
-    }
-  // Delete unused properties and color table entries
-  for (std::vector<std::string>::iterator orphanSegmentIdIt = orphanSegmentIds.begin();
-    orphanSegmentIdIt != orphanSegmentIds.end(); ++orphanSegmentIdIt)
-    {
-    // Remove segment display properties
-    this->RemoveSegmentDisplayProperties(*orphanSegmentIdIt);
+    // Delete unused properties and color table entries
+    for (std::vector<std::string>::iterator orphanSegmentIdIt = orphanSegmentIds.begin();
+      orphanSegmentIdIt != orphanSegmentIds.end(); ++orphanSegmentIdIt)
+      {
+      // Remove segment display properties
+      this->RemoveSegmentDisplayProperties(*orphanSegmentIdIt);
+      }
     }
 
   // Add missing segment display properties

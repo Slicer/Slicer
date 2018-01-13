@@ -268,8 +268,9 @@ protected:
   void GetSegmentIDs(std::vector<std::string>& segmentIDs, bool visibleSegmentsOnly);
 
   /// Update list of segment display properties.
-  /// Remove entries for missing segments and add missing entries for existing segments
-  void UpdateSegmentList();
+  /// Remove entries for missing segments (if removeUnusedDisplayProperties is enabled)
+  /// and add missing entries for existing segments.
+  void UpdateSegmentList(bool removeUnusedDisplayProperties = true);
 
 protected:
   vtkMRMLSegmentationDisplayNode();
