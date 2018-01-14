@@ -160,7 +160,7 @@ QString toCamelCase(const QString& s)
   camelCase = s[0].toUpper();
   for (int i = 1; i < s.size(); ++i)
     {
-    if (s[i - 1] == " ")
+    if (s[i - 1] == ' ')
       {
       camelCase.append(s[i].toUpper());
       }
