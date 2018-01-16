@@ -125,7 +125,9 @@ macro(vtkMacroKitPythonWrap)
       #  - <module_name>_WRAP_HIERARCHY_FILE
       set(${MY_KIT_NAME}_WRAP_DEPENDS "${_kit_wrap_depends}" CACHE INTERNAL "${MY_KIT_NAME} wrapping dependencies" FORCE)
       set(_wrap_hierarchy_file "${Slicer_BINARY_DIR}/${MY_KIT_NAME}Hierarchy.txt")
-      set(_wrap_hierarchy_stamp_file ${CMAKE_CURRENT_BINARY_DIR}/${MY_KIT_NAME}Hierarchy.stamp.txt)
+      if(${Slicer_VTK_VERSION_MAJOR} VERSION_LESS 9)
+        set(_wrap_hierarchy_stamp_file ${CMAKE_CURRENT_BINARY_DIR}/${MY_KIT_NAME}Hierarchy.stamp.txt)
+      endif()
       set(${MY_KIT_NAME}_WRAP_HIERARCHY_FILE "${_wrap_hierarchy_file}" CACHE INTERNAL "${MY_KIT_NAME} wrap hierarchy file" FORCE)
 
       set_property(GLOBAL APPEND PROPERTY SLICER_WRAP_HIERARCHY_TARGETS ${MY_KIT_NAME})
@@ -150,7 +152,11 @@ macro(vtkMacroKitPythonWrap)
     # hierarchy file is created.
     # XXX Use target_sources if cmake_minimum_required >= 3.1
     get_target_property(_kit_srcs ${MY_KIT_NAME} SOURCES)
-    list(APPEND _kit_srcs ${_wrap_hierarchy_stamp_file})
+    if(${Slicer_VTK_VERSION_MAJOR} VERSION_LESS 9)
+      list(APPEND _kit_srcs ${_wrap_hierarchy_stamp_file})
+    else()
+      list(APPEND _kit_srcs ${_wrap_hierarchy_file})
+    endif()
     set_target_properties(${MY_KIT_NAME} PROPERTIES SOURCES "${_kit_srcs}")
 
     set(VTK_KIT_PYTHON_LIBRARIES)
