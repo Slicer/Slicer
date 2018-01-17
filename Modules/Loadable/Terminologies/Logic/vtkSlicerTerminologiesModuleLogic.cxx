@@ -932,6 +932,7 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
         }
 
       // Create and populate modifier
+      regionModifier.SetObject();
       this->GetJsonCodeFromIdentifier(regionModifier, regionModifierId, allocator);
 
       // Set modifier to region
