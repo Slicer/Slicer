@@ -202,7 +202,7 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromSelectionNode()
     QString placeNodeResource = QString(selectionNode->GetPlaceNodeResourceByIndex(i).c_str());
     QString placeNodeIconName = QString(selectionNode->GetPlaceNodeIconNameByIndex(i).c_str());
 
-    QAction* action = q->actionFromText(placeNodeIconName, this->CreateAndPlaceMenu);
+    QAction* action = q->actionFromPlaceNodeClassName(placeNodeClassName, this->CreateAndPlaceMenu);
     if (!action)
       {
       // add it
@@ -557,11 +557,11 @@ void qSlicerMouseModeToolBar::switchPlaceMode()
 }
 
 //---------------------------------------------------------------------------
-QAction* qSlicerMouseModeToolBar::actionFromText(QString actionText, QMenu *menu)
+QAction* qSlicerMouseModeToolBar::actionFromPlaceNodeClassName(QString placeNodeClassName, QMenu *menu)
 {
   foreach(QAction* action, menu->actions())
     {
-    if (action->text() == actionText)
+    if (action->objectName() == placeNodeClassName)
       {
       return action;
       }

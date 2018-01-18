@@ -139,7 +139,7 @@ QString ButtonGroupWidgetWrapper::checkedValue()
 {
   QAbstractButton* button = this->ButtonGroup->checkedButton();
   if (button) {
-    return button->text();
+    return button->property("EnumeratedValue").toString();
   }
   else {
     // Handle case where <string-enumeration> has no <default> element
@@ -152,7 +152,7 @@ void ButtonGroupWidgetWrapper::setCheckedValue(const QString& value)
 {
   foreach(QAbstractButton* button, this->ButtonGroup->buttons())
     {
-    if (button->text() == value)
+    if (button->property("EnumeratedValue").toString() == value)
       {
       button->setChecked(true);
       break;
@@ -943,6 +943,10 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createEnumerationTagWidget(const Modul
     QRadioButton * radio = new QRadioButton(value, widget);
     _layout->addWidget(radio);
     radio->setChecked(defaultValue == value);
+    // enumValue may differ from displayed text when the application is
+    // translated or text is modified from outside the application
+    // (such as KDE does, to inject keyboard shortcuts)
+    radio->setProperty("EnumeratedValue", value);
     // Add radio button to button group
     widget->buttonGroup()->addButton(radio);
     }
