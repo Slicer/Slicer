@@ -513,7 +513,7 @@ int vtkMRMLMarkupsFiducialStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     vtkDebugMacro("WriteDataInternal: wrote id " << id.c_str());
 
     int p = 0;
-    double xyz[3];
+    double xyz[3] = { 0.0, 0.0, 0.0 };
     if (this->GetCoordinateSystem() == vtkMRMLMarkupsFiducialStorageNode::RAS)
       {
       markupsNode->GetMarkupPoint(i,p,xyz);
@@ -528,6 +528,12 @@ int vtkMRMLMarkupsFiducialStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 //      markupsNode->GetMarkupPointIJK(i,p,xyz);
       markupsNode->GetMarkupPoint(i,p,xyz);
       }
+    else
+      {
+      vtkErrorMacro("WriteData: invalid coordinate system index " << this->GetCoordinateSystem());
+      return 0;
+      }
+
     of << "," << xyz[0] << "," << xyz[1] << "," << xyz[2];
 
     double orientation[4];
