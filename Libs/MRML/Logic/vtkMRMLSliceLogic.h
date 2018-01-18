@@ -20,6 +20,7 @@
 
 // STD includes
 #include <vector>
+#include <deque>
 
 class vtkMRMLDisplayNode;
 class vtkMRMLLinearTransformNode;
@@ -38,6 +39,8 @@ class vtkImageData;
 class vtkImageReslice;
 class vtkPolyDataCollection;
 class vtkTransform;
+
+struct SliceLayerInfo;
 
 /// \brief Slicer logic class for slice manipulation.
 ///
@@ -381,6 +384,12 @@ protected:
   ///
   /// Helper to set Window/Level in any layer
   void SetWindowLevel(double window, double level, int layer);
+
+  /// Helper to update input of blend filter from a set of layers.
+  /// It minimizes changes to the imaging pipeline (does not remove and
+  /// re-add an input if it is not changed) because rebuilding of the pipeline
+  /// is a relatively expensive operation.
+  bool UpdateBlendLayers(vtkImageBlend* blend, const std::deque<SliceLayerInfo> &layers);
 
   bool                        AddingSliceModelNodes;
   bool                        Initialized;

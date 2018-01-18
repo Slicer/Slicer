@@ -62,6 +62,18 @@ const int vtkMRMLSliceLogic::SLICE_INDEX_NO_VOLUME=-3;
 const std::string vtkMRMLSliceLogic::SLICE_MODEL_NODE_NAME_SUFFIX = std::string("Volume Slice");
 
 //----------------------------------------------------------------------------
+struct SliceLayerInfo
+  {
+  SliceLayerInfo(vtkAlgorithmOutput* blendInput, double opacity)
+    {
+    this->BlendInput = blendInput;
+    this->Opacity = opacity;
+    }
+  vtkSmartPointer<vtkAlgorithmOutput> BlendInput;
+  double Opacity;
+  };
+
+//----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLSliceLogic);
 
 //----------------------------------------------------------------------------
@@ -852,6 +864,52 @@ void vtkMRMLSliceLogic::UpdateImageData ()
 }
 
 //----------------------------------------------------------------------------
+bool vtkMRMLSliceLogic::UpdateBlendLayers(vtkImageBlend* blend, const std::deque<SliceLayerInfo> &layers)
+{
+  const int blendPort = 0;
+  vtkMTimeType oldBlendMTime = blend->GetMTime();
+
+  bool layersChanged = false;
+  if (layers.size() == blend->GetNumberOfInputConnections(blendPort))
+    {
+    int layerIndex = 0;
+    for (std::deque<SliceLayerInfo>::const_iterator layerIt = layers.begin(); layerIt != layers.end(); ++layerIt, ++layerIndex)
+      {
+      if (layerIt->BlendInput != blend->GetInputConnection(blendPort, layerIndex))
+        {
+        layersChanged = true;
+        break;
+        }
+      }
+    }
+  else
+    {
+    layersChanged = true;
+    }
+  if (layersChanged)
+    {
+    blend->RemoveAllInputs();
+    int layerIndex = 0;
+    for (std::deque<SliceLayerInfo>::const_iterator layerIt = layers.begin(); layerIt != layers.end(); ++layerIt, ++layerIndex)
+      {
+      blend->AddInputConnection(layerIt->BlendInput);
+      }
+    }
+
+  // Update opacities
+    {
+    int layerIndex = 0;
+    for (std::deque<SliceLayerInfo>::const_iterator layerIt = layers.begin(); layerIt != layers.end(); ++layerIt, ++layerIndex)
+      {
+      blend->SetOpacity(layerIndex, layerIt->Opacity);
+      }
+    }
+
+  bool modified = (blend->GetMTime() > oldBlendMTime);
+  return modified;
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::UpdatePipeline()
 {
   int modified = 0;
@@ -956,11 +1014,9 @@ void vtkMRMLSliceLogic::UpdatePipeline()
         alphaBlending = true;
         }
       }
-    vtkMTimeType oldBlendMTime = this->Blend->GetMTime();
-    vtkMTimeType oldBlendUVWMTime = this->BlendUVW->GetMTime();
 
-    int layerIndex = 0;
-    int layerIndexUVW = 0;
+    std::deque<SliceLayerInfo> layers;
+    std::deque<SliceLayerInfo> layersUVW;
 
     if (!alphaBlending)
       {
@@ -985,8 +1041,7 @@ void vtkMRMLSliceLogic::UpdatePipeline()
       tempCast->SetInputConnection( tempMath->GetOutputPort() );
       tempCast->SetOutputScalarTypeToUnsignedChar();
 
-      this->Blend->SetInputConnection( tempCast->GetOutputPort() );
-      this->Blend->SetOpacity( layerIndex++, 1.0 );
+      layers.push_back(SliceLayerInfo(tempCast->GetOutputPort(), 1.0));
 
       // UVW pipeline
       vtkNew<vtkImageMathematics> tempMathUVW;
@@ -1011,88 +1066,67 @@ void vtkMRMLSliceLogic::UpdatePipeline()
       tempCastUVW->SetInputConnection( tempMathUVW->GetOutputPort() );
       tempCastUVW->SetOutputScalarTypeToUnsignedChar();
 
-      this->BlendUVW->AddInputConnection( tempCastUVW->GetOutputPort() );
-      this->BlendUVW->SetOpacity( layerIndexUVW++, 1.0 );
+      layersUVW.push_back(SliceLayerInfo(tempCastUVW->GetOutputPort(), 1.0));
       }
     else
       {
-      this->Blend->RemoveAllInputs();
-      this->BlendUVW->RemoveAllInputs();
       if (sliceCompositing ==  vtkMRMLSliceCompositeNode::Alpha)
         {
         if ( backgroundImagePort )
           {
-          this->Blend->AddInputConnection( backgroundImagePort );
-          this->Blend->SetOpacity( layerIndex++, 1.0 );
+          layers.push_back(SliceLayerInfo(backgroundImagePort, 1.0));
           }
         if ( foregroundImagePort )
           {
-          this->Blend->AddInputConnection( foregroundImagePort );
-          this->Blend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetForegroundOpacity() );
+          layers.push_back(SliceLayerInfo(foregroundImagePort, this->SliceCompositeNode->GetForegroundOpacity()));
           }
         if ( backgroundImagePortUVW )
           {
-          this->BlendUVW->AddInputConnection( backgroundImagePortUVW );
-          this->BlendUVW->SetOpacity( layerIndexUVW++, 1.0 );
+          layersUVW.push_back(SliceLayerInfo(backgroundImagePortUVW, 1.0));
           }
         if ( foregroundImagePortUVW )
           {
-          this->BlendUVW->AddInputConnection( foregroundImagePortUVW );
-          this->BlendUVW->SetOpacity( layerIndexUVW++, this->SliceCompositeNode->GetForegroundOpacity() );
+          layersUVW.push_back(SliceLayerInfo(foregroundImagePortUVW, this->SliceCompositeNode->GetForegroundOpacity()));
           }
         }
       else if (sliceCompositing == vtkMRMLSliceCompositeNode::ReverseAlpha)
         {
         if ( foregroundImagePort )
           {
-          this->Blend->AddInputConnection( foregroundImagePort );
-          this->Blend->SetOpacity( layerIndex++, 1.0 );
+          layers.push_back(SliceLayerInfo(foregroundImagePort, 1.0));
           }
         if ( backgroundImagePort )
           {
-          this->Blend->AddInputConnection( backgroundImagePort );
-          this->Blend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetForegroundOpacity() );
+          layers.push_back(SliceLayerInfo(backgroundImagePort, this->SliceCompositeNode->GetForegroundOpacity()));
           }
         if ( foregroundImagePortUVW )
           {
-          this->BlendUVW->AddInputConnection( foregroundImagePortUVW );
-          this->BlendUVW->SetOpacity( layerIndexUVW++, 1.0 );
+          layersUVW.push_back(SliceLayerInfo(foregroundImagePortUVW, 1.0));
           }
         if ( backgroundImagePortUVW )
           {
-          this->BlendUVW->AddInputConnection( backgroundImagePortUVW );
-          this->BlendUVW->SetOpacity( layerIndexUVW++, this->SliceCompositeNode->GetForegroundOpacity() );
+          layersUVW.push_back(SliceLayerInfo(backgroundImagePortUVW, this->SliceCompositeNode->GetForegroundOpacity()));
           }
         }
       }
+
     // always blending the label layer
     vtkAlgorithmOutput* labelImagePort = this->LabelLayer ? this->LabelLayer->GetImageDataConnection() : 0;
     vtkAlgorithmOutput* labelImagePortUVW = this->LabelLayer ? this->LabelLayer->GetImageDataConnectionUVW() : 0;
     if ( labelImagePort )
       {
-      this->Blend->AddInputConnection( labelImagePort );
-      this->Blend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetLabelOpacity() );
+      layers.push_back(SliceLayerInfo(labelImagePort, this->SliceCompositeNode->GetLabelOpacity()));
       }
     if ( labelImagePortUVW )
       {
-      this->BlendUVW->AddInputConnection( labelImagePortUVW );
-      this->BlendUVW->SetOpacity( layerIndexUVW++, this->SliceCompositeNode->GetLabelOpacity() );
+      layersUVW.push_back(SliceLayerInfo(labelImagePortUVW, this->SliceCompositeNode->GetLabelOpacity()));
       }
-    while (this->Blend->GetNumberOfInputConnections(0) > layerIndex)
-      {
-      // it decreases the number of inputs
-      this->Blend->RemoveInputConnection(0, this->Blend->GetNumberOfInputConnections(0) - 1);
-      }
-    while (this->BlendUVW->GetNumberOfInputConnections(0) > layerIndexUVW)
-      {
-      // it decreases the number of inputs
-      this->BlendUVW->RemoveInputConnection(0, this->BlendUVW->GetNumberOfInputConnections(0) - 1);
-      }
-    if (this->Blend->GetMTime() > oldBlendMTime)
+
+    if (UpdateBlendLayers(this->Blend, layers))
       {
       modified = 1;
       }
-    if (this->BlendUVW->GetMTime() > oldBlendUVWMTime)
+    if (UpdateBlendLayers(this->BlendUVW, layersUVW))
       {
       modified = 1;
       }
