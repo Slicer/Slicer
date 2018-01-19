@@ -285,7 +285,7 @@ CMAKE_DEPENDENT_OPTION(
   "Slicer_USE_PYTHONQT" OFF)
 mark_as_superbuild(Slicer_USE_NUMPY)
 
-option(Slicer_USE_OpenIGTLink "Build Slicer with OpenIGTLink support." ON)
+option(Slicer_USE_OpenIGTLink "Build Slicer with OpenIGTLink support." OFF)
 mark_as_superbuild(Slicer_USE_OpenIGTLink)
 
 option(Slicer_USE_CTKAPPLAUNCHER "Configure ctkAppLauncher." ON)
