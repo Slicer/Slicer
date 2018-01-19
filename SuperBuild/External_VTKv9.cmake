@@ -211,9 +211,23 @@ endif()
 
   # pythonpath
   if(NOT APPLE)
-    set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
-      <APPLAUNCHER_DIR>/${Slicer_INSTALL_LIB_DIR}/python2.7/site-packages
-      )
+    # This is not required for macOS where VTK python package is installed
+    # in a standard location using CMake/SlicerBlockInstallExternalPythonModules.cmake
+    if(Slicer_VTK_VERSION_MAJOR VERSION_GREATER 8)
+      if(UNIX)
+        set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
+          <APPLAUNCHER_DIR>/${Slicer_INSTALL_LIB_DIR}/python2.7/site-packages
+          )
+      else()
+        set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
+          <APPLAUNCHER_DIR>/${Slicer_INSTALL_BIN_DIR}/Lib/site-packages
+          )
+      endif()
+    else()
+      set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
+        <APPLAUNCHER_DIR>/${Slicer_INSTALL_LIB_DIR}/python2.7/site-packages
+        )
+    endif()
     mark_as_superbuild(
       VARS ${proj}_PYTHONPATH_LAUNCHER_INSTALLED
       LABELS "PYTHONPATH_LAUNCHER_INSTALLED"
