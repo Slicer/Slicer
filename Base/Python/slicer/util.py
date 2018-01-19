@@ -589,6 +589,11 @@ def resetSliceViews():
 # MRML
 #
 
+class MRMLNodeNotFoundException(Exception):
+  """Exception raised when a requested MRML node was not found.
+  """
+  pass
+
 def getNodes(pattern="*", scene=None, useLists=False):
   """Return a dictionary of nodes where the name or id matches the ``pattern``.
   By default, ``pattern`` is a wildcard and it returns all nodes associated
@@ -618,12 +623,13 @@ def getNode(pattern="*", index=0, scene=None):
   """Return the indexth node where name or id matches ``pattern``.
   By default, ``pattern`` is a wildcard and it returns the first node
   associated with ``slicer.mrmlScene``.
+  Throws MRMLNodeNotFoundException exception if no node is found
+  that matches the specified pattern.
   """
   nodes = getNodes(pattern, scene)
-  try:
-    return nodes.values()[index]
-  except IndexError:
-    return None
+  if not nodes:
+    raise MRMLNodeNotFoundException("could not find nodes in the scene by name or id '%s'" % (pattern if (type(pattern) == str) else ""))
+  return nodes.values()[index]
 
 def getNodesByClass(className, scene=None):
   """Return all nodes in the scene of the specified class.
@@ -642,25 +648,20 @@ def getNodesByClass(className, scene=None):
   return nodeList
 
 def getFirstNodeByClassByName(className, name, scene=None):
-  """Return the frist node in the scene that matches the specified node name and node class.
+  """Return the first node in the scene that matches the specified node name and node class.
   """
   import slicer
   if scene is None:
     scene = slicer.mrmlScene
-  nodes = scene.GetNodesByClassByName(className, name)
-  nodes.UnRegister(nodes)
-  if nodes.GetNumberOfItems() > 0:
-    return nodes.GetItemAsObject(0)
-  return None
+  return scene.GetFirstNode(name, className)
 
 def getFirstNodeByName(name, className=None):
-  """get the first MRML node that has the given name
-  - use a regular expression to match names post-pended with addition characters
-  - optionally specify a classname that must match
+  """Get the first MRML node that name starts with the specified name.
+  Optionally specify a classname that must also match.
   """
   import slicer
   scene = slicer.mrmlScene
-  return scene.GetFirstNode(name, className, None, False)
+  return scene.GetFirstNode(name, className, False, False)
 
 class NodeModify:
   """Context manager to conveniently compress mrml node modified event.
