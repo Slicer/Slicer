@@ -44,7 +44,7 @@ if(NOT DEFINED qRestAPI_DIR)
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    "86b5bd6a790b6e048d8d33a0298b9b3a6f2508f5"
+    "ddc0cfcc220d0ccd02b4afdd699d1e780dac3fa3"
     QUIET
     )
 
