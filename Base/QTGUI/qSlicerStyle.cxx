@@ -146,6 +146,7 @@ QRect qSlicerStyle::subControlRect(ComplexControl control, const QStyleOptionCom
   /// the following code aims at overriding that value by setting it to 4.
   switch(control)
     {
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
     case CC_GroupBox:
       if (const QStyleOptionGroupBox *groupBox =
           qstyleoption_cast<const QStyleOptionGroupBox *>(option))
@@ -154,11 +155,7 @@ QRect qSlicerStyle::subControlRect(ComplexControl control, const QStyleOptionCom
         int topHeight = 0;
         int verticalAlignment = this->proxy()->styleHint(
             SH_GroupBox_TextLabelVerticalAlignment, groupBox, widget);
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
         bool flat = groupBox->features & QStyleOptionFrameV2::Flat;
-#else
-        bool flat = groupBox->features & QStyleOptionFrame::Flat;
-#endif
         if (!groupBox->text.isEmpty())
           {
           topHeight = groupBox->fontMetrics.height();
@@ -213,6 +210,7 @@ QRect qSlicerStyle::subControlRect(ComplexControl control, const QStyleOptionCom
           }
         }
       break;
+#endif
 #ifndef QT_NO_SLIDER
     // <HACK>
     // Reimplemented to work around bug: http://bugreports.qt.nokia.com/browse/QTBUG-13318
