@@ -52,6 +52,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerExtensionsManagerModel : public QObject
   Q_PROPERTY(QString extensionsInstallPath READ extensionsInstallPath)
   Q_PROPERTY(bool newExtensionEnabledByDefault READ newExtensionEnabledByDefault WRITE setNewExtensionEnabledByDefault)
   Q_PROPERTY(QString extensionsSettingsFilePath READ extensionsSettingsFilePath WRITE setExtensionsSettingsFilePath)
+  Q_PROPERTY(QString extensionsHistorySettingsFilePath READ extensionsHistorySettingsFilePath WRITE setExtensionsHistorySettingsFilePath)
   Q_PROPERTY(QString slicerRevision READ slicerRevision WRITE setSlicerRevision)
   Q_PROPERTY(QString slicerOs READ slicerOs WRITE setSlicerOs)
   Q_PROPERTY(QString slicerArch READ slicerArch WRITE setSlicerArch)
@@ -143,6 +144,11 @@ public:
 
   QString extensionsSettingsFilePath()const;
   void setExtensionsSettingsFilePath(const QString& extensionsSettingsFilePath);
+
+  QString extensionsHistorySettingsFilePath()const;
+  void setExtensionsHistorySettingsFilePath(const QString& extensionsHistorySettingsFilePath);
+
+  QVariantMap extensionsHistoryInformation()const;
 
   QString slicerRevision()const;
   void setSlicerRevision(const QString& revision);
@@ -304,6 +310,10 @@ public slots:
   /// \sa scheduleExtensionForUninstall, isExtensionScheduledForUninstall,
   bool uninstallScheduledExtensions();
 
+  void gatherExtensionsHistoryInformationOnStartup();
+
+  QVariantMap getExtensionHistoryInformation();
+
   void identifyIncompatibleExtensions();
 
   bool exportExtensionList(QString& exportFilePath);
@@ -347,7 +357,13 @@ signals:
 
   void messageLogged(const QString& text, ctkErrorLogLevel::LogLevels level) const;
 
+  void extensionHistoryGatheredOnStartup(const QVariantMap&);
+
+  void installDownloadProgress(const QString& extensionName, qint64 received, qint64 total);
+
 protected slots:
+
+  void onInstallDownloadProgress(qSlicerExtensionDownloadTask* task, qint64 received, qint64 total);
 
   /// \sa downloadAndInstallExtension
   void onInstallDownloadFinished(qSlicerExtensionDownloadTask* task);

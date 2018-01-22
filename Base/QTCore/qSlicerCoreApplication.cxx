@@ -355,6 +355,7 @@ void qSlicerCoreApplicationPrivate::init()
 
   qSlicerExtensionsManagerModel * model = new qSlicerExtensionsManagerModel(q);
   model->setExtensionsSettingsFilePath(q->slicerRevisionUserSettingsFilePath());
+  model->setExtensionsHistorySettingsFilePath(q->slicerUserSettingsFilePath());
   model->setSlicerRequirements(q->repositoryRevision(), q->os(), q->arch());
   q->setExtensionsManagerModel(model);
 
@@ -1251,6 +1252,12 @@ void qSlicerCoreApplication::setExtensionsInstallPath(const QString& path)
   Q_ASSERT(this->extensionsManagerModel());
   this->extensionsManagerModel()->updateModel();
 #endif
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplication::gatherExtensionsHistoryInformationOnStartup()
+{
+  this->extensionsManagerModel()->gatherExtensionsHistoryInformationOnStartup();
 }
 
 //-----------------------------------------------------------------------------

@@ -290,6 +290,7 @@ void qSlicerApplicationPrivate::init()
   //----------------------------------------------------------------------------
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   this->ExtensionsManagerDialog = new qSlicerExtensionsManagerDialog(0);
+  this->ExtensionsManagerDialog->setExtensionsManagerModel(q->extensionsManagerModel());
 #endif
 
   //----------------------------------------------------------------------------

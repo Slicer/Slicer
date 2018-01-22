@@ -101,6 +101,8 @@ if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND KIT_SRCS
     qSlicerExtensionsInstallWidget.cxx
     qSlicerExtensionsInstallWidget.h
+    qSlicerExtensionsRestoreWidget.cxx
+    qSlicerExtensionsRestoreWidget.h
     qSlicerExtensionsManageWidget.cxx
     qSlicerExtensionsManageWidget.h
     qSlicerExtensionsManagerDialog.cxx
@@ -199,6 +201,7 @@ set(KIT_MOC_SRCS
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND KIT_MOC_SRCS
     qSlicerExtensionsInstallWidget.h
+    qSlicerExtensionsRestoreWidget.h
     qSlicerExtensionsManageWidget.h
     qSlicerExtensionsManagerDialog.h
     qSlicerExtensionsManagerWidget.h

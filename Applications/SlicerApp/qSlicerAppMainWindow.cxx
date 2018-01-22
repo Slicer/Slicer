@@ -1165,6 +1165,7 @@ void qSlicerAppMainWindow::showEvent(QShowEvent *event)
     d->WindowInitialShowCompleted = true;
     this->disclaimer();
     this->pythonConsoleInitialDisplay();
+    qSlicerApplication::application()->gatherExtensionsHistoryInformationOnStartup();
     emit initialWindowShown();
     }
 }
