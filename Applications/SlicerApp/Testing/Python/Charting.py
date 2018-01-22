@@ -198,11 +198,11 @@ class ChartingTest(unittest.TestCase):
     #self.assertIsNotNone( logic.hasImageData(volumeNode) )
 
     # Change the layout to one that has a chart.  This created the ChartView
-    ln = slicer.util.getNode(pattern='vtkMRMLLayoutNode*')
+    ln = slicer.mrmlScene.GetFirstNodeByClass('vtkMRMLLayoutNode')
     ln.SetViewArrangement(24)
 
     # Get the first ChartView node
-    cvn = slicer.util.getNode(pattern='vtkMRMLChartViewNode*')
+    cvn = slicer.mrmlScene.GetFirstNodeByClass('vtkMRMLChartViewNode')
 
     # Create arrays of data
     dn = slicer.mrmlScene.AddNode(slicer.vtkMRMLDoubleArrayNode())

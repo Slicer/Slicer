@@ -219,10 +219,13 @@ def PushToSlicer(sitkimage, NodeName, compositeView=0, overwrite=False):
     targetNode = None
     if overwrite:
         # reuse node if possible
-        targetNode = slicer.util.getNode(NodeName)
-        if targetNode and targetNode.GetClassName() != newNodeClassName:
-            # target node incompatible, need to create a new one
-            slicer.mrmlScene.RemoveNode(targetNode)
+        try:
+            targetNode = slicer.util.getNode(NodeName)
+            if targetNode.GetClassName() != newNodeClassName:
+                # target node incompatible, need to create a new one
+                slicer.mrmlScene.RemoveNode(targetNode)
+                targetNode = None
+        except slicer.util.MRMLNodeNotFoundException:
             targetNode = None
 
     targetNode = PushVolumeToSlicer(sitkimage, targetNode=targetNode, name=newNodeBaseName, className=newNodeClassName)

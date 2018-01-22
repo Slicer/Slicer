@@ -117,7 +117,6 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
     self.delayDisplay("Table properties",self.delayMs)
 
     tableNode = slicer.util.getNode(self.sampleTableName)
-    self.assertTrue( tableNode is not None )
 
     tableNode.SetColumnLongName("Column 1", "First column")
     tableNode.SetColumnUnitLabel("Column 1", "mm")
@@ -137,7 +136,6 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
     self.assertTrue( tablesWidget is not None )
 
     tableNode = slicer.util.getNode(self.sampleTableName)
-    self.assertTrue( tableNode is not None )
 
     tablesWidget.setCurrentTableNode(tableNode)
 

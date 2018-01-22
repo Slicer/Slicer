@@ -257,7 +257,7 @@ class EditUtil(object):
     """Turn on or off the crosshair and enable navigation mode
     by manipulating the scene's singleton crosshair node.
     """
-    crosshairNode = slicer.util.getNode('vtkMRMLCrosshairNode*')
+    crosshairNode = slicer.mrmlScene.GetFirstNodeByClass('vtkMRMLCrosshairNode')
     if crosshairNode:
       if crosshairNode.GetCrosshairMode() == 0:
         crosshairNode.SetCrosshairMode(1)

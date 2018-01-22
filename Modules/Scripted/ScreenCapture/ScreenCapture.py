@@ -1115,7 +1115,7 @@ class ScreenCaptureTest(ScriptedLoadableModuleTest):
     layoutManager = slicer.app.layoutManager()
     layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutFourUpView)
     for sliceViewNodeId in ['vtkMRMLSliceNodeRed', 'vtkMRMLSliceNodeYellow', 'vtkMRMLSliceNodeGreen']:
-      slicer.util.getNode(sliceViewNodeId).SetSliceVisible(True)
+      slicer.mrmlScene.GetNodeByID(sliceViewNodeId).SetSliceVisible(True)
 
     self.tempDir= slicer.app.temporaryPath + '/ScreenCaptureTest'
     self.numberOfImages = 10
@@ -1144,7 +1144,7 @@ class ScreenCaptureTest(ScriptedLoadableModuleTest):
 
   def test_SliceSweep(self):
     self.delayDisplay("Testing SliceSweep")
-    viewNode = slicer.util.getNode('vtkMRMLSliceNodeRed')
+    viewNode = slicer.mrmlScene.GetNodeByID('vtkMRMLSliceNodeRed')
     self.assertIsNotNone(viewNode)
     self.logic.captureSliceSweep(viewNode, -125, 75, self.numberOfImages, self.tempDir, self.imageFileNamePattern)
     self.verifyAndDeleteWrittenFiles()
@@ -1152,7 +1152,7 @@ class ScreenCaptureTest(ScriptedLoadableModuleTest):
 
   def test_SliceFade(self):
     self.delayDisplay("Testing SliceFade")
-    viewNode = slicer.util.getNode('vtkMRMLSliceNodeRed')
+    viewNode = slicer.mrmlScene.GetNodeByID('vtkMRMLSliceNodeRed')
     self.assertIsNotNone(viewNode)
     self.logic.captureSliceFade(viewNode, self.numberOfImages, self.tempDir, self.imageFileNamePattern)
     self.verifyAndDeleteWrittenFiles()
@@ -1160,7 +1160,7 @@ class ScreenCaptureTest(ScriptedLoadableModuleTest):
 
   def test_3dViewRotation(self):
     self.delayDisplay("Testing 3D view rotation")
-    viewNode = slicer.util.getNode('vtkMRMLViewNode1')
+    viewNode = slicer.mrmlScene.GetNodeByID('vtkMRMLViewNode1')
     self.assertIsNotNone(viewNode)
     self.logic.capture3dViewRotation(viewNode, -180, 180, self.numberOfImages, AXIS_YAW, self.tempDir, self.imageFileNamePattern)
     self.verifyAndDeleteWrittenFiles()

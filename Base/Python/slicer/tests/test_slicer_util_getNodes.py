@@ -24,7 +24,12 @@ class SlicerUtilTest(unittest.TestCase):
         self.assertEqual(slicer.util.getFirstNodeByName("Volume", 'vtkMRMLScalarVolumeNode').GetName(), "Volume1" )
 
     def test_getNode(self):
-        self.assertIsNone(slicer.util.getNode(""))
+
+        # Test handling of requesting non-existing node
+        with self.assertRaises(slicer.util.MRMLNodeNotFoundException):
+          slicer.util.getNode("")
+        with self.assertRaises(slicer.util.MRMLNodeNotFoundException):
+          slicer.util.getNode("NotExistingNodeName")
 
         # For the following tests, use a dedicated scene where
         # all nodes are known.

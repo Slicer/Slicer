@@ -206,7 +206,7 @@ class SliceLinkLogicTest(unittest.TestCase):
     print('eps = ' + str(eps) + '\n')
 
     # Change to a CompareView
-    ln = slicer.util.getNode(pattern='vtkMRMLLayoutNode*')
+    ln = slicer.mrmlScene.GetFirstNodeByClass('vtkMRMLLayoutNode')
     ln.SetNumberOfCompareViewRows(3)
     ln.SetNumberOfCompareViewLightboxColumns(4)
     ln.SetViewArrangement(12)

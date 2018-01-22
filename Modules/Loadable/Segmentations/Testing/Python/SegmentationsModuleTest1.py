@@ -105,7 +105,6 @@ class SegmentationsModuleTest1(unittest.TestCase):
 
     # Change master representation to closed surface (so that conversion is possible when adding segment)
     self.inputSegmentationNode = slicer.util.getNode('vtkMRMLSegmentationNode1')
-    self.assertIsNotNone(self.inputSegmentationNode)
     self.inputSegmentationNode.GetSegmentation().SetMasterRepresentationName(self.closedSurfaceReprName)
 
   #------------------------------------------------------------------------------
