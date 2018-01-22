@@ -59,5 +59,12 @@
       <description><![CDATA[Name of the file to store the coordinates of the central (1D) skeleton points]]></description>
       <default>skeleton.txt</default>
     </string>
+    <pointfile fileExtensions=".fcsv" coordinateSystem="lps">
+      <name>OutputFiducialsFileName</name>
+      <label>Output markup fiducials</label>
+      <description><![CDATA[Centerline points as fiducial list]]></description>
+      <longflag>fiducialsFile</longflag>
+      <channel>output</channel>
+    </pointfile>
   </parameters>
 </executable>

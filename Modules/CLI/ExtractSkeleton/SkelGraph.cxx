@@ -18,7 +18,7 @@
 //  ===============================================
 
 #include <iostream>
-
+#include <vector>
 #include "SkelGraph.h"
 
 /*
@@ -29,752 +29,476 @@ Constructors, Destructor
 
 SkelGraph::SkelGraph()
 {
-  graph  = NULL;
-  to_do = NULL;
-  endpoints = NULL;
-  image = NULL;
-  label_image = NULL;
-  max_node = NULL;
-}
-
-SkelGraph::SkelGraph(SkelGraph * skelgraph)
-{    // not fully implemented
-  if( skelgraph == NULL )
-    {
-    SkelGraph();
-    return;
-    }
-
-  // Extracted Graph
-  if( skelgraph->graph )
-    {
-    graph = new list<skel_branch>(*(skelgraph->graph) );
-    }
-  else
-    {
-    graph = NULL;
-    }
-
-  if( skelgraph->to_do )
-    {
-    to_do = new list<skel_branch>(*(skelgraph->to_do) );
-    }
-  else
-    {
-    to_do = NULL;
-    }
-
-  if( skelgraph->endpoints )
-    {
-    endpoints = new list<point>(*(skelgraph->endpoints) );
-    }
-  else
-    {
-    endpoints = NULL;
-    }
-
-  image = skelgraph->image;
-  label_image = skelgraph->label_image; // only for temporary use, WATCH OUT
-  for( int i = 0; i < 3; i++ )
-    {
-    dim[i] = skelgraph->dim[i];
-    }
-
-  max_length = skelgraph->max_length;
-  max_node = NULL;                   // for storage of start of maximal path
-  // find right max_node
-  list<skel_branch>::iterator elem, elem_new;
-  elem_new = graph->begin();
-  elem = skelgraph->graph->begin();
-  while( elem_new != graph->end() )
-    {
-    if( skelgraph->max_node == &(*elem) )
-      {
-      max_node = &(*elem_new);
-      }
-    ++elem_new;
-    ++elem;
-    }
-
+  m_MaximalPathLength = -1;
 }
 
 SkelGraph::~SkelGraph()
 {
-  if( image )
-    {
-    delete [] image;
-    }
-  if( label_image )
-    {
-    delete [] label_image;
-    }
   ResetGraph();
 }
 
 void SkelGraph::ResetGraph()
 {
-  if( graph && !(graph->empty() ) )
-    {
-    list<skel_branch>::iterator elem;
-    elem = graph->begin();
-    while( elem != graph->end() )
-      {
-      // delete content
-      if( elem->end_1_neighbors )
-        {
-        delete elem->end_1_neighbors;
-        }
-      if( elem->end_2_neighbors )
-        {
-        delete elem->end_2_neighbors;
-        }
-      if( elem->end_1_point )
-        {
-        delete elem->end_1_point;
-        }
-      if( elem->end_2_point )
-        {
-        delete elem->end_2_point;
-        }
-      if( elem->acc_path )
-        {
-        delete elem->acc_path;
-        }
-      if( elem->max_path )
-        {
-        delete elem->max_path;
-        }
-      elem++;
-      }
-
-    delete graph; graph = NULL;
-    }
-  if( to_do && !(to_do->empty() ) )
-    {
-    list<skel_branch>::iterator elem;
-    elem = to_do->begin();
-    while( elem != to_do->end() )
-      {
-      // delete content
-      if( elem->end_1_neighbors )
-        {
-        delete elem->end_1_neighbors;
-        }
-      if( elem->end_2_neighbors )
-        {
-        delete elem->end_2_neighbors;
-        }
-      if( elem->end_1_point )
-        {
-        delete elem->end_1_point;
-        }
-      if( elem->end_2_point )
-        {
-        delete elem->end_2_point;
-        }
-      if( elem->acc_path )
-        {
-        delete elem->acc_path;
-        }
-      if( elem->max_path )
-        {
-        delete elem->max_path;
-        }
-      elem++;
-      }
-
-    delete to_do; to_do = NULL;
-    }
-  if( endpoints )
-    {
-    delete endpoints;
-    }
-  endpoints = NULL;
+  m_Graph.clear();
+  m_MaximalPath.clear();
+  m_MaximalPathLength = -1;
 }
 
 // -------------------------------------------------------------------------
 // Public Methods
 // -------------------------------------------------------------------------
 
-void SkelGraph::Extract_skel_graph(unsigned char *orig_image, int orig_dim[3])
+void SkelGraph::ExtractSkeletalGraph(const unsigned char *image, const int dim[3])
 // Graph compilation of a thinning skeleton
 {
-  if( graph )
-    {
-    ResetGraph();
-    }
-  graph = new list<skel_branch>();
-  if( label_image )
-    {
-    delete [] label_image;
-    }
+  ResetGraph();
 
-  image = orig_image;
-  for( int i = 0; i < 3; i++ )
-    {
-    dim[i] = orig_dim[i];
-    }
   int size_image = dim[0] * dim[1] * dim[2];
 
-  label_image = new int[size_image];
+  int* label_image = new int[size_image];
   for( int i = 0; i < size_image; i++ )
     {
     label_image[i] = 0;
     }
 
-  // determine endpoints = points that have exactly 1 neighbor
-  find_endpoints();
+  // determine m_EndPointsTemp = points that have exactly 1 neighbor
+  std::deque<Coord3i> endPoints;
+  FindEndpoints(endPoints, image, dim);
   // if (DEBUG_VSKEL)
-  //  cout << endpoints->size() << " Endpoints found" << endl;
+  //  std::cout << m_EndPointsTemp.size() << " Endpoints found" << std::endl;
 
-  // if  (while) untreated endpoint -> put it into to_do list
-  // if  (while) to_do list non-empty -> follow branches
+  // if  (while) untreated endpoint -> put it into branchesToDo list
+  // if  (while) branchesToDo list non-empty -> follow branches
   //    following of branch has 1 neighbor -> label, cont
   //    branch ends                        -> stop, next
-  //    multiple branches emerge           -> stop, put in to_do list
-  list<point>::iterator act_endpoint;
-  act_endpoint = endpoints->begin();
-  // if  (while) untreated endpoint -> put it into to_do list
-  while( act_endpoint != endpoints->end() )
+  //    multiple branches emerge           -> stop, put in branchesToDo list
+
+  // if  (while) untreated endpoint -> put it into branchesToDo list
+  for (std::deque<Coord3i>::iterator act_endpoint = endPoints.begin(); act_endpoint != endPoints.end(); ++act_endpoint)
     {
-    if( act_endpoint != endpoints->end() )
+    if (label_image[(*act_endpoint)[0] + dim[0] * ((*act_endpoint)[1] + dim[1] * (*act_endpoint)[2])])
       {
-      // add to to_do list (which should be empty at this point)
-      to_do = new list<skel_branch>;
-      skel_branch *branch_elem;
-      Add_new_elem_to_todo(branch_elem);
-      branch_elem->end_1_point->x = branch_elem->end_2_point->x = act_endpoint->x;
-      branch_elem->end_1_point->y = branch_elem->end_2_point->y = act_endpoint->y;
-      branch_elem->end_1_point->z = branch_elem->end_2_point->z = act_endpoint->z;
-
-      list<skel_branch>::iterator act_branch;
-      act_branch = to_do->begin();
-      while( !to_do->empty() )
-        {
-        // act_branch != to_do->end() &&
-        // if  (while) to_do list non-empty -> follow branches
-        int     branch_done = 0;
-        point * act_point = act_branch->end_2_point;
-        int     branchID = act_branch->branchID;
-        // label endpoint
-        label_image[act_point->x
-                    + dim[0] * (act_point->y + dim[1] * act_point->z)] = branchID;
-        while( !branch_done )
-          {
-          list<point> * neighbors = new list<point>();
-          get_valid_neighbors(act_point, neighbors);
-          const size_t num_nb = neighbors->size();
-          if( num_nb == 0 )
-            {
-            //    branch ends                        -> stop, next
-            branch_done = 1;
-            }
-          if( num_nb == 1 )
-            {
-            //    following of branch has 1 neighbor -> label, cont
-            point * pt = &(*(neighbors->begin() ) );
-            // update length
-            // since act_point->x - pt->x is either [-1,0,1] -> abs == ^2
-            act_branch->length += sqrt( (float) abs(act_point->x - pt->x)
-                                        + abs(act_point->y - pt->y)
-                                        + abs(act_point->z - pt->z) );
-            act_point->x = pt->x; act_point->y = pt->y; act_point->z = pt->z;
-            label_image[act_point->x
-                        + dim[0] * (act_point->y + dim[1] * act_point->z)] = branchID;
-            }
-          else
-            {
-            //    multiple branches emerge           -> stop, put in to_do list
-            branch_done = 1;
-            skel_branch * *       elems = new skel_branch *[num_nb];
-            list<point>::iterator act_neighbor = neighbors->begin();
-            int                   i = 0;
-            while( act_neighbor != neighbors->end() )
-              {
-              point * pt = &(*act_neighbor);
-              Add_new_elem_to_todo(elems[i]);
-              // label start point
-              elems[i]->end_1_point->x = elems[i]->end_2_point->x = pt->x;
-              elems[i]->end_1_point->y = elems[i]->end_2_point->y = pt->y;
-              elems[i]->end_1_point->z = elems[i]->end_2_point->z = pt->z;
-              label_image[pt->x + dim[0]
-                          * (pt->y + dim[1] * pt->z)] = elems[i]->branchID;
-              // update ends with act_branch
-              if( !elems[i]->end_1_neighbors )
-                {
-                elems[i]->end_1_neighbors = new list<int>();
-                }
-              elems[i]->end_1_neighbors->push_back(act_branch->branchID);
-              if( !act_branch->end_2_neighbors )
-                {
-                act_branch->end_2_neighbors = new list<int>();
-                }
-              act_branch->end_2_neighbors->push_back(elems[i]->branchID);
-
-              ++act_neighbor; i++;
-              }
-            // update ends of new branches with each other
-            for( size_t ii = 0; ii < num_nb; ii++ )
-              {
-              for( size_t jj = 0; jj < num_nb; jj++ )
-                {
-                if( ii != jj )
-                  {
-                  if( !elems[ii]->end_1_neighbors )
-                    {
-                    elems[ii]->end_1_neighbors = new list<int>();
-                    }
-                  elems[ii]->end_1_neighbors->push_back(elems[jj]->branchID);
-                  }
-                }
-              }
-            delete [] elems; elems = NULL;
-            }   // else
-          delete neighbors; neighbors = NULL;
-          } // while (! branch_done)
-
-        // copy branch from to_do to graph
-        graph->insert(graph->end(), *act_branch);
-        // remove it from to_do
-        to_do->pop_front();
-        act_branch = to_do->begin();
-        }
-
-      delete to_do; to_do = NULL;
+      // this endpoint has been already labeled (processed)
+      continue;
       }
-    // find next valid endpoint -> an yet unlabeled endpoint
-    while( act_endpoint != endpoints->end()  &&
-           label_image[act_endpoint->x
-                       + dim[0] * (act_endpoint->y + dim[1] * act_endpoint->z)] )
+
+    // add new branch
+    std::list<skel_branch> branchesToDo;
+    skel_branch *branch_elem = AddNewBranchToDo(branchesToDo);
+    branch_elem->end_1_point = *act_endpoint;
+    branch_elem->end_2_point = *act_endpoint;
+    branch_elem->points.push_back(*act_endpoint);
+
+    while (!branchesToDo.empty())
       {
-      ++act_endpoint;
+      std::list<skel_branch>::iterator act_branch = branchesToDo.begin();
+
+      // act_branch != branchesToDo->end() &&
+      // if  (while) branchesToDo list non-empty -> follow branches
+      bool branch_done = false;
+      Coord3i act_point = act_branch->end_2_point;
+      int branchID = act_branch->branchID;
+      // label endpoint
+      label_image[act_point[0] + dim[0] * (act_point[1] + dim[1] * act_point[2])] = branchID;
+      while (!branch_done)
+        {
+        std::deque<Coord3i> neighbors;
+        GetValidNeighbors(label_image, act_point, neighbors, image, dim);
+        const size_t num_nb = neighbors.size();
+        if( num_nb == 0 )
+          {
+          //    branch ends                        -> stop, next
+          branch_done = true;
+          }
+        else if( num_nb == 1 )
+          {
+          //    following of branch has 1 neighbor -> label, cont
+          Coord3i pt = *(neighbors.begin());
+          // update length
+          // since act_point[0] - pt[0] is either [-1,0,1] -> abs == ^2
+          act_branch->length += pointdistance(act_point, pt);
+          act_branch->points.push_back(pt);
+          act_point = pt;
+          label_image[act_point[0]
+                      + dim[0] * (act_point[1] + dim[1] * act_point[2])] = branchID;
+          }
+        else
+          {
+          //    multiple branches emerge -> stop, put in branchesToDo list
+          branch_done = 1;
+          std::vector<skel_branch*> neighborBranches;
+          for (std::deque<Coord3i>::iterator act_neighbor = neighbors.begin(); act_neighbor != neighbors.end(); ++act_neighbor)
+            {
+            Coord3i pt = *act_neighbor;
+            skel_branch* newElem = AddNewBranchToDo(branchesToDo);
+            neighborBranches.push_back(newElem);
+            // label start Coord3i
+            newElem->end_1_point = pt;
+            newElem->end_2_point = pt;
+            newElem->points.push_back(pt);
+            label_image[pt[0] + dim[0] * (pt[1] + dim[1] * pt[2])] = newElem->branchID;
+            // update ends with act_branch
+            newElem->end_1_neighbors.push_back(act_branch->branchID);
+            act_branch->end_2_neighbors.push_back(newElem->branchID);
+            }
+          // update ends of new branches with each other
+          for( size_t ii = 0; ii < num_nb; ii++ )
+            {
+            for( size_t jj = 0; jj < num_nb; jj++ )
+              {
+              if( ii != jj )
+                {
+                neighborBranches[ii]->end_1_neighbors.push_back(neighborBranches[jj]->branchID);
+                }
+              }
+            }
+          }   // else
+        } // while (! branch_done)
+
+      // copy branch from branchesToDo to m_Graph
+      m_Graph.push_back(*act_branch);
+      // remove it from branchesToDo
+      branchesToDo.pop_front();
       }
     }
 
   // done
-  delete endpoints; endpoints = NULL;
+
   delete [] label_image; label_image = NULL;
   image = NULL; // no delete, since image points to original
 
   // if (DEBUG_VSKEL)
-  //   cout << graph->size() << " Branches found" << endl;
-  // graph print
+  //   std::cout << m_Graph.size() << " Branches found" << std::endl;
+  // m_Graph print
   // PrintGraph();
 }
 
 void SkelGraph::PrintGraph()
-// print actual graph
+// print actual m_Graph
 {
-  list<skel_branch>::iterator act_graph;
-  list<int>::iterator         act_nb;
+  std::deque<skel_branch>::iterator act_graph;
+  std::deque<int>::iterator         act_nb;
 
-  act_graph = graph->begin();
-  cout << "Graph : " << endl;
+  act_graph = m_Graph.begin();
+  std::cout << "Graph : " << std::endl;
   int cnt = 0;
-  cout << "Number: Branch Br.ID | N 1 | N 2 | Length | End1 | End2 " << endl;
-  while( act_graph != graph->end() )
+  std::cout << "Number: Branch Br.ID | N 1 | N 2 | Length | End1 | End2 " << std::endl;
+  while( act_graph != m_Graph.end() )
     {
     cnt++;
-    cout << cnt << ": Br. " << act_graph->branchID;
+    std::cout << cnt << ": Br. " << act_graph->branchID;
 
-    if( act_graph->end_1_neighbors )
+    if( !act_graph->end_1_neighbors.empty() )
       {
-      act_nb = act_graph->end_1_neighbors->begin();
-      cout << "| ";
-      while( act_nb != act_graph->end_1_neighbors->end() )
+      act_nb = act_graph->end_1_neighbors.begin();
+      std::cout << "| ";
+      while( act_nb != act_graph->end_1_neighbors.end() )
         {
-        cout << *act_nb << ", ";
+        std::cout << *act_nb << ", ";
         act_nb++;
         }
       }
     else
       {
-      cout << "| None";
+      std::cout << "| None";
       }
 
-    if( act_graph->end_2_neighbors )
+    if(!act_graph->end_2_neighbors.empty())
       {
-      act_nb = act_graph->end_2_neighbors->begin();
-      cout << "| ";
-      while( act_nb != act_graph->end_2_neighbors->end() )
+      act_nb = act_graph->end_2_neighbors.begin();
+      std::cout << "| ";
+      while( act_nb != act_graph->end_2_neighbors.end() )
         {
-        cout << *act_nb << ", ";
+        std::cout << *act_nb << ", ";
         act_nb++;
         }
       }
     else
       {
-      cout << "|  None";
+      std::cout << "|  None";
       }
-    cout << "| " << act_graph->length << "| "
-         << act_graph->end_1_point->x << "," << act_graph->end_1_point->y << ","
-         << act_graph->end_1_point->z << " | "
-         << act_graph->end_2_point->x << "," << act_graph->end_2_point->y << ","
-         << act_graph->end_2_point->z << " | " << endl;
+    std::cout << "| " << act_graph->length << "| "
+         << act_graph->end_1_point[0] << "," << act_graph->end_1_point[1] << ","
+         << act_graph->end_1_point[2] << " | "
+         << act_graph->end_2_point[0] << "," << act_graph->end_2_point[1] << ","
+         << act_graph->end_2_point[2] << " | " << std::endl;
     act_graph++;
     }
 }
 
-void SkelGraph::Extract_max_axis_in_graph()
-// extract maximal path between 2 points in the graph
+void SkelGraph::FindMaximalPath()
+// extract maximal path between 2 points in the m_Graph
 {
-  list<skel_branch>::iterator act_endbranch;
-
-  act_endbranch = graph->begin();
-  // initialize
-  while( act_endbranch != graph->end() )
+  for (std::deque<skel_branch>::iterator branch = m_Graph.begin(); branch != m_Graph.end(); ++branch)
     {
-    act_endbranch->max_length = 0.0;
-    if( act_endbranch->max_path )
-      {
-      delete act_endbranch->max_path;
-      }
-    act_endbranch->max_path = NULL;
-    ++act_endbranch;
+    branch->max_path_length = 0.0;
+    branch->max_path.clear();
     }
 
-  act_endbranch = graph->begin();
-
-  while( act_endbranch != graph->end() )
+  for (std::deque<skel_branch>::iterator act_endbranch = m_Graph.begin(); act_endbranch != m_Graph.end(); ++act_endbranch)
     {
     //  search for next entry that has neighbors but
     // end_1_neighbors == NULL OR act_endbranch->end_2_neighbors != NULL
-    while( act_endbranch->end_1_neighbors && act_endbranch->end_2_neighbors &&
-           (act_endbranch->end_1_neighbors || act_endbranch->end_2_neighbors) )
+    if (act_endbranch->end_1_neighbors.empty() && act_endbranch->end_2_neighbors.empty())
       {
-      ++act_endbranch;
+      // no neighbors
+      continue;
+      }
+    if (!act_endbranch->end_1_neighbors.empty() && !act_endbranch->end_2_neighbors.empty())
+      {
+      // neighbors on both sides
+      continue;
       }
 
-    // initialize
-    list<skel_branch>::iterator act_branch;
-    act_branch = graph->begin();
-    while( act_branch != graph->end() )
+    // reset temporary acc path and its length
+    for (std::deque<skel_branch>::iterator branch = m_Graph.begin(); branch != m_Graph.end(); ++branch)
       {
-      act_branch->acc_length = 0.0;
-      if( act_branch->acc_path )
-        {
-        delete act_branch->acc_path;
-        }
-      act_branch->acc_path = NULL;
-      ++act_branch;
+      branch->acc_length = 0.0;
+      branch->acc_path.clear();
       }
 
     // do cost traversal
-    list<skel_branch *> * wait_list = new list<skel_branch *>();
-    wait_list->push_back(&(*act_endbranch) );
-    while( !wait_list->empty() )
+    std::deque< skel_branch* > wait_list;
+    wait_list.push_back(&(*act_endbranch));
+    while( !wait_list.empty() )
       {
       // get next entry in wait_list
-      skel_branch * act_node = *(wait_list->begin() );
-      wait_list->pop_front();
+      skel_branch * act_node = *(wait_list.begin());
+      wait_list.pop_front();
 
       // add to path
       act_node->acc_length += act_node->length;
-      if( !act_node->acc_path )
-        {
-        act_node->acc_path = new list<int>();
-        }
-      act_node->acc_path->push_back(act_node->branchID);
-      int                         act_pos_id = act_node->branchID;
-      list<skel_branch>::iterator act_pos_list = graph->begin();
+      act_node->acc_path.push_back(act_node->branchID);
+      int act_pos_id = act_node->branchID;
+      std::deque<skel_branch>::iterator act_pos_list = m_Graph.begin();
       // since the graph_id's are the location of its member in the list,
       // we can use advance for random access
       advance(act_pos_list, act_pos_id - 1);
-      // cout << "A " << act_pos_id  << endl;
+      // std::cout << "A " << act_pos_id  << std::endl;
       for( int i = 0; i < 2; i++ )
         {
-        list<int> * cont_end = NULL;
-        point *     cont_end_point = NULL;
+        std::deque<int> * cont_end = NULL;
+        Coord3i cont_end_point;
         if( i == 0 )
           {
-          cont_end = act_node->end_2_neighbors;
+          cont_end = &(act_node->end_2_neighbors);
           cont_end_point = act_node->end_2_point;
           }
         else if( i == 1 )
           {
-          cont_end = act_node->end_1_neighbors;
+          cont_end = &(act_node->end_1_neighbors);
           cont_end_point = act_node->end_1_point;
           }
-        if( cont_end )
+        if (cont_end->empty())
           {
-          // add all neighbors to wait_list that are not yet treated
-          list<int>::iterator neighbors = cont_end->begin();
-          while( neighbors != cont_end->end() )
-            {
-            // get neighbours entry
-            int                         distance = *neighbors - act_pos_id;
-            list<skel_branch>::iterator act_pos_neigh = act_pos_list;
-            advance(act_pos_neigh, distance);
-            skel_branch * act_neighbor = &(*(act_pos_neigh) );
-            if( !act_neighbor->acc_path )
-              {
-              // neighbour not yet treated
-              wait_list->push_back(act_neighbor);
-              // update entries of neighbour
-              // since act_point->x - pt->x is either [-1,0,1] -> abs == ^2
-              // add distance between branches to length at preceding branch
-              point * cont_neigh_point = NULL;
-              act_neighbor->acc_length = act_node->acc_length;
-              // determine connection costs -> since we do not know which one is the
-              // corresponding endpoint of the neighbour, we have to try out and take
-              // the one combination that yields the smallest costs
-              double conn_costs = 100.0;
-              for( int j = 0; j < 2; j++ )
-                {
-                if( j == 0 )
-                  {
-                  cont_neigh_point = act_neighbor->end_1_point;
-                  }
-                else if( j == 1 )
-                  {
-                  cont_neigh_point = act_neighbor->end_2_point;
-                  }
-                double new_costs = sqrt( (float)abs(cont_neigh_point->x - cont_end_point->x)
-                                         + abs(cont_neigh_point->y - cont_end_point->y)
-                                         + abs(cont_neigh_point->z - cont_end_point->z) );
-                if( conn_costs > new_costs )
-                  {
-                  conn_costs = new_costs;
-                  }
-                }
-              act_neighbor->acc_length += conn_costs;
+          continue;
+          }
 
-              // copy path
-              if( act_neighbor->acc_path )
-                {
-                delete act_neighbor->acc_path;
-                return;
-                }
-              act_neighbor->acc_path = new list<int>(*(act_node->acc_path) );
-              // initiate with copy of path of preceding branch
-              }
-            ++neighbors;
+        // add all neighbors to wait_list that are not yet treated
+        for(std::deque<int>::iterator neighbors = cont_end->begin(); neighbors != cont_end->end(); ++neighbors)
+          {
+          // get neighbours entry
+          int distance = *neighbors - act_pos_id;
+          std::deque<skel_branch>::iterator act_pos_neigh = act_pos_list;
+          advance(act_pos_neigh, distance);
+          skel_branch * act_neighbor = &(*(act_pos_neigh) );
+          if (!act_neighbor->acc_path.empty())
+            {
+            // neighbour already treated
+            continue;
             }
+          wait_list.push_back(act_neighbor);
+          // update entries of neighbour
+          // since act_point[0] - pt[0] is either [-1,0,1] -> abs == ^2
+          // add distance between branches to length at preceding branch
+          Coord3i cont_neigh_point;
+          act_neighbor->acc_length = act_node->acc_length;
+          // determine connection costs -> since we do not know which one is the
+          // corresponding endpoint of the neighbour, we have to try out and take
+          // the one combination that yields the smallest costs
+          double conn_costs1 = pointdistance(act_neighbor->end_1_point, cont_end_point);
+          double conn_costs2 = pointdistance(act_neighbor->end_2_point, cont_end_point);
+          act_neighbor->acc_length += (conn_costs1 < conn_costs2 ? conn_costs1 : conn_costs2);
+          // copy path
+          // initiate with copy of path of preceding branch
+          act_neighbor->acc_path = act_node->acc_path;
           }
         }
       }
 
-    delete wait_list; wait_list = NULL;
-
     // look for maximum
-
-    list<skel_branch>::iterator act_graph;
-    act_graph = graph->begin();
-    skel_branch * act_max_node = &(*(act_graph) );
-    double        act_max_val = 0.0;
-    while( act_graph != graph->end() )
+    skel_branch * act_max_node = NULL;
+    double act_max_val = -1;
+    for (std::deque<skel_branch>::iterator branch = m_Graph.begin(); branch != m_Graph.end(); ++branch)
       {
-      if( act_graph->acc_length > act_max_val )
+      if (branch->acc_length > act_max_val)
         {
-        act_max_val = act_graph->acc_length;
-        act_max_node = &(*(act_graph) );
+        act_max_val = branch->acc_length;
+        act_max_node = &(*(branch) );
         }
-      ++act_graph;
       }
-
     // copy maximal path
-    act_endbranch->max_length = act_max_val;
-    if( act_endbranch->max_path )
-      {
-      delete act_endbranch->max_path;
-      }
-    act_endbranch->max_path = new list<int>(*(act_max_node->acc_path) );
+    act_endbranch->max_path_length = act_max_val;
+    act_endbranch->max_path = act_max_node->acc_path;
 
     //     if (DEBUG_VSKEL) {
-    //       cout << act_endbranch->branchID
-    //      << " : max length = " << act_endbranch->max_length
+    //       std::cout << act_endbranch->branchID
+    //      << " : max length = " << act_endbranch->max_path_length
     //      << " | path = ";
     //       //double len = 0.0;
-    //       list<int>::iterator act_path = act_endbranch->max_path->begin();
-    //       //list<skel_branch>::iterator old_pos = graph->end();
+    //       std::deque<int>::iterator act_path = act_endbranch->max_path->begin();
+    //       //std::deque<skel_branch>::iterator old_pos = m_Graph.end();
     //       while (act_path != act_endbranch->max_path->end()) {
-    //   // list<skel_branch>::iterator act_pos = graph->begin();
+    //   // std::deque<skel_branch>::iterator act_pos = m_Graph.begin();
     //   // advance(act_pos, *act_path - 1);
     //   //len += act_pos->length;
-    //   //if (old_pos != graph->end()) {
-    //   //double len1 = sqrt(abs(act_pos->end_1_point->x - old_pos->end_2_point->x) +
-    //   //         abs(act_pos->end_1_point->y - old_pos->end_2_point->y) +
-    //   //         abs(act_pos->end_1_point->z - old_pos->end_2_point->z));
-    //   //  double len2 = sqrt(abs(act_pos->end_2_point->x - old_pos->end_1_point->x) +
-    //   //         abs(act_pos->end_2_point->y - old_pos->end_1_point->y) +
-    //   //         abs(act_pos->end_2_point->z - old_pos->end_1_point->z));
+    //   //if (old_pos != m_Graph.end()) {
+    //   //double len1 = sqrt(abs(act_pos->end_1_point[0] - old_pos->end_2_point[0]) +
+    //   //         abs(act_pos->end_1_point[1] - old_pos->end_2_point[1]) +
+    //   //         abs(act_pos->end_1_point[2] - old_pos->end_2_point[2]));
+    //   //  double len2 = sqrt(abs(act_pos->end_2_point[0] - old_pos->end_1_point[0]) +
+    //   //         abs(act_pos->end_2_point[1] - old_pos->end_1_point[1]) +
+    //   //         abs(act_pos->end_2_point[2] - old_pos->end_1_point[2]));
     //   //  if (len1 < len2) len += len1; else len += len2;
     //   //}
     //   //old_pos = act_pos;
-    //   cout << *act_path << ",";
-    //   // cout << len << "-";
+    //   std::cout << *act_path << ",";
+    //   // std::cout << len << "-";
     //   ++act_path;
     //       }
-    //       cout << endl;
+    //       std::cout << std::endl;
     //     }
-    ++act_endbranch;
     }
 
   // Get Maximum of all maximal paths (which is double contained, otherweise it would
   // not be maximal )
 
-  double act_max_val = 0.0;
-  act_endbranch = graph->begin();
-  skel_branch * act_max_node = &(*(act_endbranch) );
-  // initialize
-  while( act_endbranch != graph->end() )
+  skel_branch* maximalPathStartBranch = NULL;
+  m_MaximalPathLength = -1.0;
+  for (std::deque<skel_branch>::iterator branch = m_Graph.begin(); branch != m_Graph.end(); ++branch)
     {
-    if( act_endbranch->max_length  >  act_max_val )
+    if (branch->max_path_length > m_MaximalPathLength)
       {
-      act_max_val = act_endbranch->max_length;
-      act_max_node = &(*(act_endbranch) );
+      m_MaximalPathLength = branch->max_path_length;
+      maximalPathStartBranch = &(*(branch) );
       }
-    ++act_endbranch;
     }
-
-  max_node = act_max_node;
-}
-
-void SkelGraph::Sample_along_axis(int n_dim, list<point> * axis_points)
-// sample along the medial axis and perpendicular to it
-{
-
-  if( axis_points == NULL )
+  if (maximalPathStartBranch)
     {
-    axis_points = new list<point>;  //  n_dim points
-
-    }
-  list<int>::iterator act_path = max_node->max_path->begin();
-
-  list<skel_branch>::iterator act_pos = graph->begin();
-  advance(act_pos, *act_path - 1);
-  point *endpt_1, *endpt_2;
-  if( act_pos->end_1_neighbors )
-    {
-    endpt_1 = act_pos->end_2_point;
-    endpt_2 = act_pos->end_1_point;
+    m_MaximalPath = maximalPathStartBranch->max_path;
     }
   else
     {
-    endpt_2 = act_pos->end_2_point;
-    endpt_1 = act_pos->end_1_point;
+    m_MaximalPath.clear();
     }
-
-  int    cnt_samples = n_dim - 1;
-  double inc_dist = (max_node->max_length * 0.95) / cnt_samples;
-  double samp_len = max_node->max_length * 0.025; // take 5% off at ends
-
-  double len = 0.0;
-
-  point act_point;
-  // list<point>::iterator act_point  = axis_points->begin();
-  list<skel_branch>::iterator old_pos = graph->end();
-  // sentinel, because cannot set NULL
-  // cout << "ID from start_len end_len samp_len samp_coor" << endl;
-  while( act_path != max_node->max_path->end() )
-    {
-    act_pos = graph->begin();
-    advance(act_pos, *act_path - 1);
-    // add connection cost to prev_branch branch
-    if( old_pos != graph->end() )
-      {
-      double len1 = sqrt( (float)abs(act_pos->end_1_point->x - old_pos->end_2_point->x)
-                          + abs(act_pos->end_1_point->y - old_pos->end_2_point->y)
-                          + abs(act_pos->end_1_point->z - old_pos->end_2_point->z) );
-      double len2 = sqrt( (float)abs(act_pos->end_2_point->x - old_pos->end_1_point->x)
-                          + abs(act_pos->end_2_point->y - old_pos->end_1_point->y)
-                          + abs(act_pos->end_2_point->z - old_pos->end_1_point->z) );
-      if( len1 < len2 )
-        {
-        len += len1;
-        endpt_2 = act_pos->end_2_point;
-        endpt_1 = act_pos->end_1_point;
-        }
-      else
-        {
-        len += len2;
-        endpt_1 = act_pos->end_2_point;
-        endpt_2 = act_pos->end_1_point;
-        }
-      }
-    while( len + act_pos->length >= samp_len )   // next sample found
-      { // cout << act_pos->branchID << " ,"  ;
-      cnt_samples--;
-      // interpolate position
-      double factor;
-      if( act_pos->length )
-        {
-        factor = (samp_len - len) / act_pos->length;  // interpolation factor
-        }
-      else
-        {
-        factor = 0.0;  // interpolation factor
-
-        }
-      // cout << "f = " << factor << ",";
-      act_point.x = (int) (endpt_1->x + factor * (endpt_2->x - endpt_1->x) );
-      act_point.y = (int) (endpt_1->y + factor * (endpt_2->y - endpt_1->y) );
-      act_point.z = (int) (endpt_1->z + factor * (endpt_2->z - endpt_1->z) );
-      // cout  << len + act_pos->length << "," << samp_len << "," << act_pos->length
-      //      << " - "
-      //      << act_point->x << "," << act_point->y << "," << act_point->z
-      //            << endl;
-      samp_len += inc_dist;
-      axis_points->push_back(act_point);
-      }
-
-    len += act_pos->length;
-    old_pos = act_pos;
-    ++act_path;
-    }
-
-  //   if (DEBUG_VSKEL) {
-  //     act_point  = axis_points->begin();
-  //     while (act_point != axis_points->end() ) {
-  //       cout  << "(" << act_point->x << "," << act_point->y
-  //             << "," << act_point->z << "), ";
-  //       ++act_point;
-  //     }
-  //     cout << endl;
-  //   }
 }
+
+void SkelGraph::SampleAlongMaximalPath(int requestedNumberOfPoints, std::deque<Coord3i> &axis_points)
+{
+  axis_points.clear();
+  double minimumDistance = m_MaximalPathLength / (requestedNumberOfPoints - 1);
+  skel_branch* previousBranch = NULL;
+  Coord3i previousPointPosition;
+  for (std::deque<int>::iterator branchId = m_MaximalPath.begin(); branchId != m_MaximalPath.end(); ++branchId)
+    {
+    skel_branch& branch = m_Graph[(*branchId) - 1];
+    // Check if we need forward or reverse point order
+    bool reversePointOrder = false;
+    if (previousBranch)
+      {
+      if (std::find(branch.end_2_neighbors.begin(), branch.end_2_neighbors.end(), previousBranch->branchID) != branch.end_2_neighbors.end())
+        {
+        reversePointOrder = true;
+        }
+      }
+    else
+      {
+      // first branch
+      if (branch.end_2_neighbors.empty())
+        {
+        reversePointOrder = true;
+        previousPointPosition = branch.points.back();
+        }
+      else
+        {
+        previousPointPosition = branch.points.front();
+        }
+      axis_points.push_back(previousPointPosition);
+      }
+    // Append point positions
+    if (reversePointOrder)
+      {
+      for (std::deque<Coord3i>::reverse_iterator point = branch.points.rbegin(); point != branch.points.rend(); ++point)
+        {
+        if (pointdistance(previousPointPosition, *point) < minimumDistance)
+          {
+          continue;
+          }
+        axis_points.push_back(*point);
+        previousPointPosition = *point;
+        }
+      }
+    else
+      {
+      for (std::deque<Coord3i>::iterator point = branch.points.begin(); point != branch.points.end(); ++point)
+        {
+        if (pointdistance(previousPointPosition, *point) < minimumDistance)
+          {
+          continue;
+          }
+        axis_points.push_back(*point);
+        previousPointPosition = *point;
+        }
+      }
+    previousBranch = &branch;
+
+    // Make sure the last point is included exactly
+    if (branchId + 1 == m_MaximalPath.end())
+      {
+      Coord3i lastPoint = (reversePointOrder ? branch.points.front() : branch.points.back());
+      // Remove one before last point if it is too close to the last point
+      if (pointdistance(previousPointPosition, lastPoint) < minimumDistance)
+        {
+        axis_points.pop_back();
+        }
+      axis_points.push_back(lastPoint);
+      }
+    }
+}
+
 
 // -------------------------------------------------------------------------
 // Private Methods
 // -------------------------------------------------------------------------
 
-void SkelGraph::find_endpoints()
-// find all endpoints in image
+void SkelGraph::FindEndpoints(std::deque<Coord3i> &endPoints, const unsigned char *image, const int dim[3])
 {
-  point elem;
-
-  endpoints = new list<point>;
-
-  // search image
-  for( int x = 1; x < dim[0] - 1; x++ )
+  endPoints.clear();
+  for( int z = 1; z < dim[2] - 1; z++ )
     {
     for( int y = 1; y < dim[1] - 1; y++ )
       {
-      for( int z = 1; z < dim[2] - 1; z++ )
+      for( int x = 1; x < dim[0] - 1; x++ )
         {
-        if( image[x + dim[0] * ( y + dim[1] * z )] && endpoint_Test(x, y, z) )
+        if( image[x + dim[0] * ( y + dim[1] * z )] && IsEndpoint(x, y, z, image, dim) )
           {
           // x,y,z is an endpoint
-          elem.x = x;
-          elem.y = y;
-          elem.z = z;
-          endpoints->insert(endpoints->end(), elem);
-          // appends copy of elem at end
+          Coord3i elem;
+          elem[0] = x;
+          elem[1] = y;
+          elem[2] = z;
+          endPoints.push_back(elem);
           }
         }
       }
     }
-
 }
 
-int SkelGraph::endpoint_Test(int x, int y, int z)
-// tests whether (x,y,z) is an endpoint
+int SkelGraph::IsEndpoint(int x, int y, int z, const unsigned char *image, const int dim[3])
 {
-  int pz = z - 1;
-
   int nb = 0;
-
-  for( int i = 0; i < 3; i++ )
+  int pz = z - 1;
+  for (int i = 0; i < 3; i++)
     {
     int py = y - 1;
     for( int j = 0; j < 3; j++ )
@@ -784,6 +508,11 @@ int SkelGraph::endpoint_Test(int x, int y, int z)
         {
         if( image[px + dim[0] * ( py + dim[1] * pz )] )
           {
+          if (nb == 2)
+            {
+            // it would be more than 2 neighbors, not an endpoint
+            return false;
+            }
           nb++;
           }
         px++;
@@ -793,55 +522,38 @@ int SkelGraph::endpoint_Test(int x, int y, int z)
     pz++;
     }
 
-  return nb == 2;   // == 1 neighbor
-
+  return (nb == 2);   // == 1 neighbor
 }
 
-void SkelGraph::Add_new_elem_to_todo(skel_branch * & newElem)
-// adds a new element with default values to To_do list
+skel_branch* SkelGraph::AddNewBranchToDo(std::list<skel_branch> &branchesToDo)
 {
   skel_branch new_elem;
-
-  new_elem.branchID = static_cast<int>(to_do->size() + graph->size() + 1);
-  new_elem.length = 0.0;
-  new_elem.end_1_neighbors = NULL;
-  new_elem.end_2_neighbors = NULL;
-  new_elem.end_1_point = new point;
-  new_elem.end_2_point = new point;
-  new_elem.end_1_point->x = 0; new_elem.end_1_point->y = 0;
-  new_elem.end_1_point->z = 0;
-  new_elem.end_2_point->x = 0; new_elem.end_2_point->y = 0;
-  new_elem.end_2_point->z = 0;
-
-  new_elem.acc_length = new_elem.max_length = 0.0;
-  new_elem.acc_path = new_elem.max_path = NULL;
-
-  newElem = &(*(to_do->insert(to_do->end(), new_elem) ) );
-
+  new_elem.branchID = static_cast<int>(branchesToDo.size() + m_Graph.size() + 1);
+  branchesToDo.push_back(new_elem);
+  return &(branchesToDo.back());
 }
 
-void SkelGraph::get_valid_neighbors(point *act_point, list<point> * & neighbors)
-// returns a list of valid neighbors at act_point
-// points that exist in skeleton, but are yet unlabeled
+void SkelGraph::GetValidNeighbors(int* label_image, Coord3i &act_point, std::deque<Coord3i> &neighbors, const unsigned char *image, const int dim[3])
 {
-  point pt_elem;
-
-  int pz = act_point->z - 1;
+  int pz = act_point[2] - 1;
 
   for( int i = 0; i < 3; i++ )
     {
-    int py = act_point->y - 1;
+    int py = act_point[1] - 1;
     for( int j = 0; j < 3; j++ )
       {
-      int px = act_point->x - 1;
+      int px = act_point[0] - 1;
       for( int k = 0; k < 3; k++ )
         {
         if( image[px + dim[0] * ( py + dim[1] * pz )] &&
             !label_image[px + dim[0] * ( py + dim[1] * pz )] )
           {
           // point exist in skeleton, but is yet unlabeled
-          pt_elem.x = px; pt_elem.y = py; pt_elem.z = pz;
-          neighbors->push_back(pt_elem);
+          Coord3i pt_elem;
+          pt_elem[0] = px;
+          pt_elem[1] = py;
+          pt_elem[2] = pz;
+          neighbors.push_back(pt_elem);
           }
         px++;
         }
@@ -851,13 +563,13 @@ void SkelGraph::get_valid_neighbors(point *act_point, list<point> * & neighbors)
     }
 
   //   if (DEBUG_VSKEL) {
-  //     list<point>::iterator act_neighbor = neighbors->begin();
+  //     std::deque<Coord3i>::iterator act_neighbor = neighbors->begin();
   //     int num_nb = neighbors->size();
   //     int i = 0;
   //     while (act_neighbor != neighbors->end()) {
   //       i++;
-  //       point * pt = &(*act_neighbor);
-  //       cout << i << ".Neighbour: "<< pt->x << "," << pt->y << "," << pt->z << endl;
+  //       Coord3i * pt = &(*act_neighbor);
+  //       std::cout << i << ".Neighbour: "<< pt[0] << "," << pt[1] << "," << pt[2] << std::endl;
   //       ++act_neighbor;
   //     }
   //   }

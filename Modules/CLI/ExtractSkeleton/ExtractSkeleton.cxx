@@ -19,6 +19,16 @@
 #include "SkelGraph.h"
 #include "tilg_iso_3D.h"
 
+// MRML includes
+#include <vtkMRMLNode.h>
+
+// VTK includes
+#include <vtkNew.h>
+
+// Markups includes
+#include <vtkMRMLMarkupsFiducialNode.h>
+#include <vtkMRMLMarkupsFiducialStorageNode.h>
+
 // Use an anonymous namespace to keep class types and function names
 // from colliding when module is used as shared object module.  Every
 // thing should be in an anonymous namespace except for the module
@@ -45,6 +55,9 @@ int main(int argc, char * *argv)
     typedef unsigned char                         OutputPixelType;
     typedef itk::Image<OutputPixelType, 3>        OutputImageType;
     typedef itk::ImageFileWriter<OutputImageType> WriterType;
+
+    typedef OutputImageType::PointType            OutputPointType;
+    typedef OutputImageType::IndexType            OutputIndexType;
 
     ReaderType::Pointer Reader = ReaderType::New();
     Reader->SetFileName(InputImageFileName.c_str() );
@@ -82,15 +95,21 @@ int main(int argc, char * *argv)
                 inputImageBuffer, outputImageBuffer, extract2DSheet);
     std::cout << "Extracted skeleton." << std::endl;
 
-    std::list<point> axisPoints;
-
-    SkelGraph * graph = new SkelGraph();
-    graph->Extract_skel_graph(outputImageBuffer, dim);
-    graph->Extract_max_axis_in_graph();
-    graph->Sample_along_axis(NumberOfPoints, &axisPoints);
+    SkelGraph graph;
+    graph.ExtractSkeletalGraph(outputImageBuffer, dim);
+    graph.FindMaximalPath();
+    std::deque<Coord3i> axisPoints;
+    graph.SampleAlongMaximalPath(NumberOfPoints, axisPoints);
 
     std::ofstream writeOutputFile;
-    writeOutputFile.open(OutputPointsFileName.c_str() );
+    bool writeSeedsFile = !OutputPointsFileName.empty();
+    if (writeSeedsFile)
+      {
+      writeOutputFile.open(OutputPointsFileName.c_str());
+      }
+
+    vtkNew<vtkMRMLMarkupsFiducialNode> fiducialNode;
+    fiducialNode->SetName("C");
 
     if( !DontPruneBranches )
       {
@@ -98,33 +117,59 @@ int main(int argc, char * *argv)
              dim[0] * dim[1] * dim[2] * sizeof(OutputPixelType) );
       }
 
-    int                        i = 0;
-    std::list<point>::iterator iter = axisPoints.begin();
+    OutputPointType position_LPS;
+    OutputIndexType position_IJK;
+
+    int i = 0;
+    std::deque<Coord3i>::iterator iter = axisPoints.begin();
     while( iter != axisPoints.end() )
       {
-      OutputImageType::IndexType pt;
-      pt[0] = iter->x;
-      pt[1] = iter->y;
-      pt[2] = iter->z;
+      OutputImageType::IndexType position_IJK;
+      position_IJK[0] = (*iter)[0];
+      position_IJK[1] = (*iter)[1];
+      position_IJK[2] = (*iter)[2];
 
       if( !DontPruneBranches )
         {
-        outputImage->SetPixel(pt, 255);
+        outputImage->SetPixel(position_IJK, 255);
         }
 
-      writeOutputFile << i << " " << iter->x
-                      << " " << iter->y
-                      << " " << iter->z << std::endl;
+      if (writeSeedsFile)
+        {
+        writeOutputFile << i
+          << " " << (*iter)[0]
+          << " " << (*iter)[1]
+          << " " << (*iter)[2] << std::endl;
+        }
+
+      outputImage->TransformIndexToPhysicalPoint(position_IJK, position_LPS);
+      // first two coordinates are inverted because MRML is always in RAS coordinate system
+      fiducialNode->AddFiducial(-position_LPS[0], -position_LPS[1], position_LPS[2]);
+
       iter++;
       i++;
       }
 
-    std::cout << "Wrote points file." << std::endl;
+    if (writeSeedsFile)
+      {
+      std::cout << "Wrote points file." << std::endl;
+      }
+
+    if (!OutputFiducialsFileName.empty())
+      {
+      vtkNew<vtkMRMLMarkupsFiducialStorageNode> outputFiducialStorageNode;
+      outputFiducialStorageNode->SetFileName(OutputFiducialsFileName.c_str());
+      // the .xml file specifies that it expects the output file in LPS
+      // coordinate system
+      outputFiducialStorageNode->UseLPSOn();
+      outputFiducialStorageNode->WriteData(fiducialNode.GetPointer());
+      }
 
     WriterType::Pointer writer = WriterType::New();
     writer->SetFileName(OutputImageFileName.c_str() );
     writer->SetInput(outputImage);
     writer->Update();
+
     std::cout << "Wrote output image." << std::endl;
 
     }

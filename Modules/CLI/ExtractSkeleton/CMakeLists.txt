@@ -39,6 +39,11 @@ SEMMacroBuildCLI(
     misc.h
     misc.cxx
   TARGET_LIBRARIES ${ITK_LIBRARIES}
+    MRMLCore
+    vtkSlicerMarkupsModuleMRML
+  INCLUDE_DIRECTORIES
+    ${MRMLCore_INCLUDE_DIRS}
+    ${vtkSlicerMarkupsModuleMRML_INCLUDE_DIRS}
   )
 
 #-----------------------------------------------------------------------------

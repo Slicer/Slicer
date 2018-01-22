@@ -11,11 +11,6 @@
   See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
 ==========================================================================*/
-/*****************************************************************************************************
-//
-// Title: coordTypes.h
-//
-*******************************************************************************************************/
 
 #ifndef COORD_TYPES_H
 #define COORD_TYPES_H
@@ -24,17 +19,14 @@
 
 #include "misc.h"
 
-typedef struct point_struct
-  {
-  int x;
-  int y;
-  int z;
-  } point;
-
 class Coord3i
 {
   int v[3];
 public:
+  Coord3i()
+  {
+    v[0] = v[1] = v[2] = -1;
+  }
   inline int & operator[](int i)
   {
     return v[i];
@@ -85,6 +77,13 @@ public:
   };
 };
 
+// Euclidean distance between two points
+// TODO: use image pixel spacing
+inline double pointdistance(Coord3i &p1, Coord3i &p2)
+{
+  return sqrt((double)sqr(p1[0] - p2[0]) + sqr(p1[1] - p2[1]) + sqr(p1[2] - p2[2]));
+}
+
 inline void normcrossprod(double *v1, double *v2, double *norm)
 // calculate normalized crossproduct
 {
@@ -100,9 +99,9 @@ inline void normcrossprod(double *v1, double *v2, double *norm)
   norm[2] /= absval;
 }
 
-inline double vectorangle(double *v1, double *v2)
 // calculate angle between two vectors (0..M_PI), you might want to adjust to 0..M_PI/2
 // range after call via 'if (angle > M_PI/2) angle = M_PI-angle;'
+inline double vectorangle(double *v1, double *v2)
 {
   double prod = 0, length1 = 0, length2 = 0;
 
@@ -115,9 +114,9 @@ inline double vectorangle(double *v1, double *v2)
   return acos(prod / sqrt(length1 * length2) );
 }
 
-inline double vectorangle(Coord3d v1, Coord3d v2)
 // calculate angle between two vectors (0..M_PI), you might want to adjust to 0..M_PI/2
 // range after call via 'if (angle > M_PI/2) angle = M_PI-angle;'
+inline double vectorangle(Coord3d v1, Coord3d v2)
 {
   double prod = 0, length1 = 0, length2 = 0;
 
@@ -145,9 +144,9 @@ inline double vec_length(double *x, double *y)
   return sqrt(sqr(x[0] - y[0]) + sqr(x[1] - y[1]) + sqr(x[2] - y[2]) );
 }
 
+// transform and check index, returns 0 on success and 1 if corrected location
 inline int transWorldToImage(Coord3d loc_world, int *loc_img,
                              double *origin, int *dims, double voxelsize)
-// transform and check index, returns 0 on success and 1 if corrected location
 {
   int adjust = 0;
 

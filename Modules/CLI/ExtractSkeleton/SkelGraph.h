@@ -14,88 +14,87 @@
 #ifndef _SKEL_GRAPH_H_
 #define _SKEL_GRAPH_H_
 
+#include <deque>
 #include <list>
 #include "coordTypes.h"
 
-using namespace std;
-
-typedef struct skel_branch_struct
+struct skel_branch
   {
-  int branchID;     // == position in graph
-  double length;
+  skel_branch()
+  {
+    branchID = -1;
+    length = 0;
+    acc_length = 0;
+    max_path_length = 0;
+  }
+  int branchID;     // == position in m_Graph
+  double length; // length between end points
+  std::deque<Coord3i> points;
 
   double acc_length;  // for temporary use when searching maximal path
-  list<int> * acc_path;
+  std::deque<int> acc_path;
 
-  double max_length;
-  list<int> * max_path;         // maximal path
+  double max_path_length;
+  std::deque<int> max_path;         // maximal path
 
-  point * end_1_point;
-  point * end_2_point;
-  list<int> * end_1_neighbors; // id's == one can use advance for random access
-  list<int> * end_2_neighbors;
-  } skel_branch;
+  Coord3i end_1_point;
+  Coord3i end_2_point;
+  std::deque<int> end_1_neighbors; // id's == one can use advance for random access
+  std::deque<int> end_2_neighbors;
+  };
 
 class SkelGraph
 {
+public:
+  SkelGraph();
+  virtual ~SkelGraph();
+
+  // Print info on all m_Graph nodes to standard output
+  void PrintGraph();
+
+  // Extract skeletal m_Graph
+  // Limitation: currently image spacing is not taken into account.
+  // If image spacing is highly anisotropic then longest path computation
+  // may not give optimal results, and sampling distance (when calling
+  // SampleAlongMaximalPath) may be uneven.
+  void ExtractSkeletalGraph(const unsigned char *image, const int dim[3]);
+
+  // Extract maximal path between 2 points in the m_Graph
+  void FindMaximalPath();
+
+  // Sample points along the maximal path.
+  // requestedNumberOfPoints is an approximate number of points to be returned.
+  void SampleAlongMaximalPath(int requestedNumberOfPoints, std::deque<Coord3i> &axis_points);
+
 private:
-
-  // Extracted Graph
-  list<skel_branch> * graph;
-
-  // To_Do list, only of temporary use for extract graph
-  list<skel_branch> * to_do;
-
-  // endpoint list, only of temporary use
-  list<point> * endpoints;
-
-  // Image to extract from
-  unsigned char *image;
-  int            dim[3];
-  // Label image, only of temporary use
-  int *label_image;
-
-  skel_branch * max_node;   // for storage of start of maximal path
-  double        max_length;
 
   // private routines
 
-  void Add_new_elem_to_todo(skel_branch * & newElem);
-
   // adds a new element with default values to To_do list
-
-  void find_endpoints();
+  skel_branch* AddNewBranchToDo(std::list<skel_branch> &branchesToDo);
 
   // find all endpoints in image
-
-  int endpoint_Test(int x, int y, int z);
+  void FindEndpoints(std::deque<Coord3i> &endPoints, const unsigned char *image, const int dim[3]);
 
   // tests whether (x,y,z) is an endpoint
-
-  void get_valid_neighbors(point *point1, std::list<point> * & neighbors);
+  int IsEndpoint(int x, int y, int z, const unsigned char *image, const int dim[3]);
 
   // returns a list of valid neighbors at act_point
+  // points that exist in skeleton, but are yet unlabeled
+  void GetValidNeighbors(int* label_image, Coord3i &act_point, std::deque<Coord3i> &neighbors, const unsigned char *image, const int dim[3]);
 
   void ResetGraph();
 
-public:
+  // Extracted Graph
+  std::deque<skel_branch> m_Graph;
 
-  SkelGraph();
-  SkelGraph(SkelGraph * graph); // not fully implemented
-  ~SkelGraph();
+  // To_Do list, only of temporary use for extract m_Graph
+  //std::deque<skel_branch> * branchesToDo;
 
-  void PrintGraph();
+  // List of branch IDs that make up the longest path
+  std::deque<int> m_MaximalPath;
+  double m_MaximalPathLength;
 
-  void Extract_skel_graph(unsigned char *orig_image, int orig_dim[3]);
-  // Extract skeletal graph
-
-  void Extract_max_axis_in_graph();
-
-  // extract maximal path between 2 points in the graph
-
-  void Sample_along_axis(int n_dim, list<point> * axis_points);
-
-  // sample along the medial axis and perpendicular to it
 
 };
 
