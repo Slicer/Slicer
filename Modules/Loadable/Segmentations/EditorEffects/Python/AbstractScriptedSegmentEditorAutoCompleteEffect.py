@@ -49,6 +49,24 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     self.delayedAutoUpdateTimer.stop()
     self.observeSegmentation(False)
 
+  @staticmethod
+  def isBackgroundLabelmap(labelmapOrientedImageData):
+    if labelmapOrientedImageData is None:
+      return False
+    # If five or more corner voxels of the image contain non-zero, then it is background
+    extent = labelmapOrientedImageData.GetExtent()
+    if extent[0] > extent[1] or extent[2] > extent[3] or extent[4] > extent[5]:
+      return False
+    numberOfFilledCorners = 0
+    for i in [0,1]:
+      for j in [2,3]:
+        for k in [4,5]:
+          if labelmapOrientedImageData.GetScalarComponentAsFloat(extent[i],extent[j],extent[k],0) > 0:
+            numberOfFilledCorners += 1
+          if numberOfFilledCorners > 4:
+            return True
+    return False
+
   def setupOptionsFrame(self):
     self.autoUpdateCheckBox = qt.QCheckBox("Auto-update")
     self.autoUpdateCheckBox.setToolTip("Auto-update results preview when input segments change.")
@@ -246,6 +264,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
 
     import vtkSegmentationCorePython as vtkSegmentationCore
     segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
+    segmentationDisplayNode = segmentationNode.GetDisplayNode()
     previewNode = self.getPreviewNode()
 
     self.scriptedEffect.saveStateForUndo()
@@ -258,6 +277,9 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
       previewSegment = previewNode.GetSegmentation().GetSegment(segmentID)
       previewSegmentLabelmap = previewSegment.GetRepresentation(vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName())
       slicer.vtkSlicerSegmentationsModuleLogic.SetBinaryLabelmapToSegment(previewSegmentLabelmap, segmentationNode, segmentID)
+      if segmentationDisplayNode is not None and self.isBackgroundLabelmap(previewSegmentLabelmap):
+        # Automatically hide result segments that are background (all eight corners are non-zero)
+        segmentationDisplayNode.SetSegmentVisibility(segmentID, False)
       previewNode.GetSegmentation().RemoveSegment(segmentID) # delete now to limit memory usage
 
     self.reset()
@@ -317,6 +339,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
         min(masterImageExtent[5], labelsEffectiveExtent[5]+margin[2]) ]
       self.mergedLabelmapGeometryImage.SetExtent(labelsExpandedExtent)
 
+      # Create and setup preview node
       previewNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLSegmentationNode')
       previewNode.UnRegister(None)
       previewNode = slicer.mrmlScene.AddNode(previewNode)
