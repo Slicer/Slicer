@@ -128,6 +128,15 @@ protected slots:
   /// Export to closed surface
   void exportToClosedSurface();
 
+  /// Convert labelmap to segmentation node
+  void convertLabelmapToSegmentation();
+
+  /// Convert model to segmentation node
+  void convertModelToSegmentation();
+
+  /// Convert model hierarchy to segmentation node
+  void convertModelHierarchyToSegmentation();
+
   /// Toggle 2D fill visibility for the current segmentation
   void toggle2DFillVisibility(bool);
 

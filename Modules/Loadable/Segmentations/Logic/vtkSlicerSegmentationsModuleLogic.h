@@ -230,6 +230,10 @@ public:
   /// Import model into the segmentation as a segment.
   static bool ImportModelToSegmentationNode(vtkMRMLModelNode* modelNode, vtkMRMLSegmentationNode* segmentationNode, std::string insertBeforeSegmentId = "");
 
+  /// Import model hierarchy into the segmentation as segments.
+  static bool ImportModelHierarchyToSegmentationNode(
+    vtkMRMLModelHierarchyNode* modelHierarchyNode, vtkMRMLSegmentationNode* segmentationNode, std::string insertBeforeSegmentId = "" );
+
   /// Create representation of only one segment in a segmentation.
   /// Useful if only one segment is processed, and we do not want to convert all segments to a certain
   /// segmentation to save time.
@@ -240,7 +244,8 @@ public:
   /// Apply the parent transform of a node to an oriented image data.
   /// Useful if we want to get a labelmap representation of a segmentation in the proper geometry for processing.
   /// \return Success flag
-  static bool ApplyParentTransformToOrientedImageData(vtkMRMLTransformableNode* transformableNode, vtkOrientedImageData* orientedImageData, bool linearInterpolation=false, double backgroundColor[4]=NULL);
+  static bool ApplyParentTransformToOrientedImageData(
+    vtkMRMLTransformableNode* transformableNode, vtkOrientedImageData* orientedImageData, bool linearInterpolation=false, double backgroundColor[4]=NULL );
 
   /// Apply the parent transform of a node to a poly data.
   /// Useful if we want to get a surface or contours representation of a segmentation in the proper geometry for processing.
@@ -256,7 +261,8 @@ public:
   ///   representation node's parent transform concatenated with the inverse of the segmentation's parent transform.
   /// \param representationToSegmentationTransform General transform between the representation node and the segmentation node.
   /// \return Success flag
-  static bool GetTransformBetweenRepresentationAndSegmentation(vtkMRMLTransformableNode* representationNode, vtkMRMLSegmentationNode* segmentationNode, vtkGeneralTransform* representationToSegmentationTransform);
+  static bool GetTransformBetweenRepresentationAndSegmentation(
+    vtkMRMLTransformableNode* representationNode, vtkMRMLSegmentationNode* segmentationNode, vtkGeneralTransform* representationToSegmentationTransform );
 
   /// Convenience function to get a specified representation of a segment in a segmentation.
   /// A duplicate of the representation data object is copied into the argument output object, with the segmentation's parent transform
