@@ -180,12 +180,17 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
     self.log = qt.QTextEdit()
     self.log.readOnly = True
     self.layout.addWidget(self.log)
-    self.logMessage('<p>Status: <i>Idle</i>\n')
+    self.logMessage('<p>Status: <i>Idle</i>')
 
     # Add spacer to layout
     self.layout.addStretch(1)
 
-  def logMessage(self,message):
+  def logMessage(self, message, logLevel=logging.INFO):
+    # Set text color based on log level
+    if logLevel >= logging.ERROR:
+      message = '<font color="red">' + message + '</font>'
+    elif logLevel >= logging.WARNING:
+      message = '<font color="orange">' + message + '</font>'
     # Show message in status bar
     doc = qt.QTextDocument()
     doc.setHtml(message)
@@ -195,6 +200,7 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
     self.log.insertPlainText('\n')
     self.log.ensureCursorVisible()
     self.log.repaint()
+    logging.log(logLevel, message)
     slicer.app.processEvents(qt.QEventLoop.ExcludeUserInputEvents)
 
 #
@@ -292,6 +298,9 @@ class SampleDataLogic:
     """Given a uri and and a filename, download the data into
     a file of the given name in the scene's cache"""
     destFolderPath = slicer.mrmlScene.GetCacheManager().GetRemoteCacheDirectory()
+    if not os.access(destFolderPath, os.W_OK):
+      errorMessage = '<b>Cache folder %s is not writable!</b>' % destFolderPath
+      self.logMessage(errorMessage, logging.ERROR)
     return self.downloadFile(uri, destFolderPath, name)
 
   def downloadSourceIntoCache(self, source):
@@ -309,7 +318,15 @@ class SampleDataLogic:
     for uri,fileName,nodeName in zip(source.uris,source.fileNames,source.nodeNames):
       filePath = self.downloadFileIntoCache(uri, fileName)
       if nodeName:
-        nodes.append(self.loadNode(filePath, nodeName, source.loadFileType, source.loadFileProperties))
+        loadedNode = self.loadNode(filePath, nodeName, source.loadFileType, source.loadFileProperties)
+        if loadedNode is None:
+          self.logMessage('<b>Load failed! Trying to download again...</b>', logging.ERROR)
+          file = qt.QFile(filePath)
+          if not file.remove():
+            self.logMessage('<b>Load failed! Unable to delete and try again loading %s!</b>' % filePath, logging.ERROR)
+            return None
+          return self.downloadFromSource(source)
+        nodes.append(loadedNode)
     return nodes
 
   def sourceForSampleName(self,sampleName):
@@ -394,20 +411,20 @@ class SampleDataLogic:
     filePath = destFolderPath + '/' + name
     if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
       import urllib
-      self.logMessage('<b>Requesting download</b> <i>%s</i> from %s...\n' % (name, uri))
+      self.logMessage('<b>Requesting download</b> <i>%s</i> from %s...' % (name, uri))
       # add a progress bar
       self.downloadPercent = 0
       try:
         urllib.urlretrieve(uri, filePath, self.reportHook)
         self.logMessage('<b>Download finished</b>')
       except IOError as e:
-        self.logMessage('<b><font color="red">\tDownload failed: %s</font></b>' % e)
+        self.logMessage('<b>\tDownload failed: %s</b>' % e, logging.ERROR)
     else:
       self.logMessage('<b>File already exists in cache - reusing it.</b>')
     return filePath
 
   def loadNode(self, uri, name, fileType = 'VolumeFile', fileProperties = {}):
-    self.logMessage('<b>Requesting load</b> <i>%s</i> from %s...\n' % (name, uri))
+    self.logMessage('<b>Requesting load</b> <i>%s</i> from %s...' % (name, uri))
 
     fileProperties['fileName'] = uri
     fileProperties['name'] = name
@@ -416,10 +433,10 @@ class SampleDataLogic:
     success = slicer.app.coreIOManager().loadNodes(fileType, fileProperties, loadedNodes)
 
     if not success or loadedNodes.GetNumberOfItems()<1:
-      self.logMessage('<b><font color="red">\tLoad failed!</font></b>\n')
+      self.logMessage('<b>\tLoad failed!</b>', logging.ERROR)
       return None
 
-    self.logMessage('<b>Load finished</b>\n')
+    self.logMessage('<b>Load finished</b>')
 
     # since nodes were read from a temp directory remove the storage nodes
     for i in range(loadedNodes.GetNumberOfItems()):
