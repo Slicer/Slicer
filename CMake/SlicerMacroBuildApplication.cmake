@@ -542,14 +542,9 @@ macro(slicerMacroBuildApplication)
       set(extraApplicationToLaunchListForBuildTree)
 
       if(${Slicer_REQUIRED_QT_VERSION} VERSION_GREATER_EQUAL 5 AND NOT QT_DESIGNER_EXECUTABLE)
-        find_package(Qt5 COMPONENTS Designer QUIET)
-        if(Qt5Designer_FOUND)
-          # Since Qt only provides a CMake module to find the designer library, we work
-          # around this limitation by deducting the path of the designer executable.
-          if(EXISTS ${_qt5Designer_install_prefix}/bin/designer${CMAKE_EXECUTABLE_SUFFIX})
-            set(QT_DESIGNER_EXECUTABLE ${_qt5Designer_install_prefix}/bin/designer${CMAKE_EXECUTABLE_SUFFIX})
-          endif()
-        endif()
+        # Since Qt only provides a CMake module to find the designer library, we work
+        # around this limitation by finding the designer executable.
+        find_program(QT_DESIGNER_EXECUTABLE designer Designer "${QT_BINARY_DIR}")
       endif()
 
       if(EXISTS ${QT_DESIGNER_EXECUTABLE})
