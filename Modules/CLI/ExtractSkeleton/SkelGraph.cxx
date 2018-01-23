@@ -17,8 +17,11 @@
 //  + Processing utilities of the graph
 //  ===============================================
 
+// STD includes
+#include <algorithm>
 #include <iostream>
 #include <vector>
+
 #include "SkelGraph.h"
 
 /*
