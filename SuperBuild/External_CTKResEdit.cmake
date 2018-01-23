@@ -49,6 +49,7 @@ if(NOT DEFINED CTKResEdit_EXECUTABLE)
 
   ExternalProject_GenerateProjectDescription_Step(${proj}
     VERSION ${CTKResEdit_VERSION}
+    LICENSE_FILES "https://raw.githubusercontent.com/jcfr/ResEdit/master/LICENSE"
     )
 
   set(CTKResEdit_EXECUTABLE ${EP_BINARY_DIR}/bin/CTKResEdit.exe)

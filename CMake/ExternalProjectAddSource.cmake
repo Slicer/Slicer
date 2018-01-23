@@ -42,12 +42,18 @@
 #!     [PROJECTS <projectname> [<projectname> [...]]]
 #!     [LABELS <label1> [<label2> [...]]]
 #!     [VARS <name1>:<type1>=<value1> [<name2>:<type2>=<value2> [...]]]
+#!     #
+#!     # See ExternalProject_GenerateProjectDescription_Step
+#!     #
+#!     [VERSION <version>]
+#!     [LICENSE_FILES <file> [...]]
 #!   )
 #!
 function(ExternalProject_Add_Source projectname)
   set(options)
   set(_ep_one_args DOWNLOAD_DIR URL URL_MD5 GIT_REPOSITORY GIT_TAG SVN_REPOSITORY SVN_USERNAME SVN_PASSWORD SVN_TRUST_CERT)
-  set(oneValueArgs ${_ep_one_args} SOURCE_DIR_VAR)
+  set(_epgpd_one_args VERSION LICENSE_FILES)
+  set(oneValueArgs ${_ep_one_args} ${_epgpd_one_args} SOURCE_DIR_VAR)
   set(_ep_multi_args SVN_REVISION)
   set(multiValueArgs ${_ep_multi_args} LABELS PROJECTS VARS)
   cmake_parse_arguments(_ep "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -81,6 +87,17 @@ function(ExternalProject_Add_Source projectname)
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
       INSTALL_COMMAND ""
+      )
+
+    set(_epgpd_args_to_pass)
+    foreach(arg ${_epgpd_one_args})
+      if(_ep_${arg})
+        list(APPEND _epgpd_args_to_pass ${arg} ${_ep_${arg}})
+      endif()
+    endforeach()
+
+    ExternalProject_GenerateProjectDescription_Step(${projectname}
+      ${_epgpd_args_to_pass}
       )
 
     set(${_ep_SOURCE_DIR_VAR} ${CMAKE_BINARY_DIR}/${projectname} PARENT_SCOPE)
@@ -137,6 +154,11 @@ endfunction()
 #!     ]
 #!     [LABELS REMOTE_MODULE]
 #!     [VARS <name1>:<type1>=<value1> [<name2>:<type2>=<value2> [...]]]
+#!     #
+#!     # See ExternalProject_GenerateProjectDescription_Step
+#!     #
+#!     [VERSION <version>]
+#!     [LICENSE_FILES <file> [...]]
 #!   )
 #!
 #! If no <option_name> is specified or if the option is enabled, the variable "Foo_SOURCE_DIR" set
@@ -154,7 +176,9 @@ endfunction()
 macro(Slicer_Remote_Add projectname)
   set(options)
   set(_add_source_args
-    DOWNLOAD_DIR URL URL_MD5 GIT_REPOSITORY GIT_TAG SVN_REPOSITORY SVN_USERNAME SVN_PASSWORD SVN_TRUST_CERT)
+    DOWNLOAD_DIR URL URL_MD5 GIT_REPOSITORY GIT_TAG SVN_REPOSITORY SVN_USERNAME SVN_PASSWORD SVN_TRUST_CERT
+    VERSION LICENSE_FILES
+    )
   set(oneValueArgs OPTION_NAME OPTION_DEFAULT OPTION_FORCE SOURCE_DIR_VAR ${_add_source_args})
   set(_add_source_multi_args SVN_REVISION LABELS PROJECTS VARS)
   set(multiValueArgs OPTION_DEPENDS ${_add_source_multi_args})

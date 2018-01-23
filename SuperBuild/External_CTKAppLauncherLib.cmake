@@ -69,7 +69,9 @@ if(NOT DEFINED CTKAppLauncherLib_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${
       ${${proj}_DEPENDENCIES}
     )
 
-  ExternalProject_GenerateProjectDescription_Step(${proj})
+  ExternalProject_GenerateProjectDescription_Step(${proj}
+    LICENSE_FILES "https://raw.githubusercontent.com/commontk/AppLauncher/master/LICENSE_Apache_20"
+    )
 
   set(CTKAppLauncherLib_DIR ${EP_BINARY_DIR})
 

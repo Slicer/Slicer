@@ -53,6 +53,7 @@ if(Slicer_USE_CTKAPPLAUNCHER)
 
     ExternalProject_GenerateProjectDescription_Step(${proj}
       VERSION ${launcher_version}
+      LICENSE_FILES "https://raw.githubusercontent.com/commontk/AppLauncher/v${launcher_version}/LICENSE_Apache_20"
       )
 
     set(CTKAppLauncher_DIR ${EP_BINARY_DIR})

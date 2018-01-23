@@ -295,6 +295,7 @@ this version of visual studio [${MSVC_VERSION}]. You could either:
 
   ExternalProject_GenerateProjectDescription_Step(${proj}
     VERSION ${OPENSSL_DOWNLOAD_VERSION}
+    LICENSE_FILES "https://www.openssl.org/source/license.txt"
     )
 
   #-----------------------------------------------------------------------------

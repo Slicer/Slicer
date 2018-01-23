@@ -212,6 +212,8 @@ endmacro()
 Slicer_Remote_Add(jqPlot
   URL http://slicer.kitware.com/midas3/download?items=15065&dummy=jquery.jqplot.1.0.4r1120.tar.gz
   URL_MD5 5c5d73730145c3963f09e1d3ca355580
+  LICENSE_FILES "MIT-LICENSE.txt"
+  VERSION "1.0.4"
   SOURCE_DIR_VAR jqPlot_DIR
   LABELS FIND_PACKAGE
   )
@@ -220,6 +222,7 @@ list(APPEND Slicer_REMOTE_DEPENDENCIES jqPlot)
 Slicer_Remote_Add(OpenIGTLinkIF
   GIT_REPOSITORY ${git_protocol}://github.com/Slicer/OpenIGTLinkIF.git
   GIT_TAG 0266aa27ad19a00f8d2b1c04736b9f3d3fb25aee
+  LICENSE_FILES "https://www.slicer.org/LICENSE"
   OPTION_NAME Slicer_BUILD_OpenIGTLinkIF
   OPTION_DEPENDS "Slicer_BUILD_QTLOADABLEMODULES;Slicer_USE_OpenIGTLink"
   LABELS REMOTE_MODULE
@@ -250,6 +253,7 @@ list_conditional_append(Slicer_BUILD_MultiVolumeImporter Slicer_REMOTE_DEPENDENC
 Slicer_Remote_Add(SimpleFilters
   GIT_REPOSITORY ${git_protocol}://github.com/SimpleITK/SlicerSimpleFilters.git
   GIT_TAG 0e0648faeea0b3cbb8c27a93be0d95253ce13b98
+  LICENSE_FILES "https://www.slicer.org/LICENSE"
   OPTION_NAME Slicer_BUILD_SimpleFilters
   OPTION_DEPENDS "Slicer_BUILD_QTSCRIPTEDMODULES;Slicer_USE_SimpleITK"
   LABELS REMOTE_MODULE
@@ -301,6 +305,7 @@ set(BRAINSTools_options
 Slicer_Remote_Add(BRAINSTools
   GIT_REPOSITORY "${git_protocol}://github.com/Slicer/BRAINSTools.git"
   GIT_TAG "c1289e6686f3fd27db2ce0ea19c36e9792e40d2a" # master (from 2017-11-29, post v4.7.1)
+  LICENSE_FILES "http://www.apache.org/licenses/LICENSE-2.0.txt"
   OPTION_NAME Slicer_BUILD_BRAINSTOOLS
   OPTION_DEPENDS "Slicer_BUILD_CLI_SUPPORT;Slicer_BUILD_CLI"
   LABELS REMOTE_MODULE
@@ -316,6 +321,8 @@ endif()
 Slicer_Remote_Add(EMSegment
   SVN_REPOSITORY "http://svn.slicer.org/Slicer3/branches/Slicer4-EMSegment"
   SVN_REVISION -r "17145"
+  LICENSE_FILES "https://www.slicer.org/LICENSE"
+  VERSION ${Slicer_VERSION}
   OPTION_NAME Slicer_BUILD_EMSegment
   OPTION_DEPENDS "Slicer_BUILD_BRAINSTOOLS;Slicer_BUILD_QTLOADABLEMODULES;Slicer_USE_PYTHONQT_WITH_TCL"
   LABELS REMOTE_MODULE

@@ -65,6 +65,11 @@ ExternalProject_Execute(${proj} \"install\" make install)
         ${${proj}_DEPENDENCIES}
     )
 
+    ExternalProject_GenerateProjectDescription_Step(${proj}
+      VERSION ${INCR_TCL_VERSION_DOT}
+      LICENSE_FILES "https://github.com/tcltk/itcl/blob/master/license.terms"
+      )
+
     #-----------------------------------------------------------------------------
     # Launcher setting specific to build tree
 
