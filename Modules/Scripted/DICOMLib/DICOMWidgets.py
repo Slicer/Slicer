@@ -702,7 +702,7 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
                                  % (missingFileCount, allFileCount), windowTitle="DICOM")
 
     if missingFileCount == allFileCount:
-      return
+      return loadablesByPlugin, loadEnabled
 
     plugins = self.pluginSelector.selectedPlugins()
 
