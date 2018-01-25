@@ -89,6 +89,8 @@ public:
   }
   QSize sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
   {
+    Q_UNUSED(option);
+    Q_UNUSED(index);
     return QSize(200, 60);
   }
 
@@ -129,7 +131,7 @@ public:
   QVariantMap extensionRestoreInformation;
   QString checkOnStartupSettingsKey;
   QString silentInstallOnStartUpSettingsKey;
-  unsigned int nrOfExtensionsToInstall;
+  int nrOfExtensionsToInstall;
   int currentExtensionToInstall;
   bool headlessMode;
 
@@ -308,7 +310,7 @@ QStringList qSlicerExtensionsRestoreWidgetPrivate
 ::getSelectedExtensions()
 {
   QStringList selectedExtensions;
-  for (unsigned int i = 0; i < extensionList->count(); i++)
+  for (int i = 0; i < extensionList->count(); i++)
     {
     QListWidgetItem* currentItem = extensionList->item(i);
     if (currentItem->data(Qt::UserRole + 1).toBool())
@@ -502,6 +504,7 @@ void qSlicerExtensionsRestoreWidget::onProgressChanged(const QString& extensionN
 void qSlicerExtensionsRestoreWidget
 ::onInstallationFinished(QString extensionName)
 {
+  Q_UNUSED(extensionName);
   Q_D(qSlicerExtensionsRestoreWidget);
   d->downloadAndInstallNextExtension();
 }

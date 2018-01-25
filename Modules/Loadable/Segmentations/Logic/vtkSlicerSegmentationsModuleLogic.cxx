@@ -1172,7 +1172,7 @@ bool vtkSlicerSegmentationsModuleLogic::ImportModelToSegmentationNode(vtkMRMLMod
 
 //-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationsModuleLogic::ImportModelHierarchyToSegmentationNode(vtkMRMLModelHierarchyNode* modelHierarchyNode,
-  vtkMRMLSegmentationNode* segmentationNode, std::string insertBeforeSegmentId/*=""*/)
+  vtkMRMLSegmentationNode* segmentationNode, std::string vtkNotUsed(insertBeforeSegmentId)/*=""*/)
 {
   if (!segmentationNode)
     {

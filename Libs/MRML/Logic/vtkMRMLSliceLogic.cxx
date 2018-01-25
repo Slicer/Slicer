@@ -870,7 +870,8 @@ bool vtkMRMLSliceLogic::UpdateBlendLayers(vtkImageBlend* blend, const std::deque
   vtkMTimeType oldBlendMTime = blend->GetMTime();
 
   bool layersChanged = false;
-  if (layers.size() == blend->GetNumberOfInputConnections(blendPort))
+  int numberOfLayers = layers.size();
+  if (numberOfLayers == blend->GetNumberOfInputConnections(blendPort))
     {
     int layerIndex = 0;
     for (std::deque<SliceLayerInfo>::const_iterator layerIt = layers.begin(); layerIt != layers.end(); ++layerIt, ++layerIndex)

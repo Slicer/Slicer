@@ -356,6 +356,7 @@ void qSlicerScalarVolumeDisplayWidget::showEvent( QShowEvent * event )
 // --------------------------------------------------------------------------
 void qSlicerScalarVolumeDisplayWidget::onHistogramSectionExpanded(bool expanded)
 {
+  Q_UNUSED(expanded);
   this->updateHistogram();
 }
 

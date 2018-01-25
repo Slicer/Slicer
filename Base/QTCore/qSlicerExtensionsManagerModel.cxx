@@ -1353,8 +1353,6 @@ bool qSlicerExtensionsManagerModel::downloadAndInstallExtension(const QString& e
 void qSlicerExtensionsManagerModel::onInstallDownloadProgress(
   qSlicerExtensionDownloadTask* task, qint64 received, qint64 total)
 {
-  Q_D(qSlicerExtensionsManagerModel);
-
   // Look up the update information
   const QString& extensionName = task->extensionName();
 
