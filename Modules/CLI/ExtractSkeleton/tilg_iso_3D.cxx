@@ -77,14 +77,16 @@ void mark(int x, int y, int z)
 /* markiert alles was von x,y,z aus erreichbar ist */
 /* einfache rekursive Version                      */
 {
-  int i, j, k;
+  const int upper_k = z + 2;
+  const int upper_j = y + 2;
+  const int upper_i = x + 2;
 
   p[x][y][z] = BG;
-  for( k = z - 1; k < z + 2; k++ )
+  for( int k = z - 1; k < upper_k; k++ )
     {
-    for( j = y - 1; j < y + 2; j++ )
+    for( int j = y - 1; j < upper_j; j++ )
       {
-      for( i = x - 1; i < x + 2; i++ )
+      for( int i = x - 1; i < upper_i; i++ )
         {
         if( p[i][j][k] == OBJ )
           {
