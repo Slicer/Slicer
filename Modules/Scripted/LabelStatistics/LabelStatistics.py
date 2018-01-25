@@ -41,7 +41,7 @@ class LabelStatisticsWidget(ScriptedLoadableModuleWidget):
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
 
-    self.chartOptions = ("Count", "Volume mm^3", "Volume cc", "Min", "Max", "Mean", "StdDev")
+    self.chartOptions = ("Count", "Volume mm^3", "Volume cc", "Min", "Max", "Mean", "Median", "StdDev")
 
     self.logic = None
     self.grayscaleNode = None
@@ -284,7 +284,7 @@ class LabelStatisticsLogic(ScriptedLoadableModuleLogic):
   def __init__(self, grayscaleNode, labelNode, colorNode=None, nodeBaseName=None, fileName=None):
     #import numpy
     
-    self.keys = ("Index", "Count", "Volume mm^3", "Volume cc", "Min", "Max", "Mean", "StdDev")
+    self.keys = ("Index", "Count", "Volume mm^3", "Volume cc", "Min", "Max", "Mean", "Median", "StdDev")
     cubicMMPerVoxel = reduce(lambda x,y: x*y, labelNode.GetSpacing())
     ccPerCubicMM = 0.001
 
@@ -342,6 +342,13 @@ class LabelStatisticsLogic(ScriptedLoadableModuleLogic):
 
       stat1.Update()
 
+      medians = vtk.vtkImageHistogramStatistics()
+      medians.SetInputConnection(grayscaleNode.GetImageDataConnection())
+      stencil.Update()
+      medians.SetStencilData(stencil.GetOutput())
+
+      medians.Update()
+
       # this.InvokeEvent(vtkLabelStatisticsLogic::LabelStatsInnerLoop, (void*)"0.75")
 
       if stat1.GetVoxelCount() > 0:
@@ -354,6 +361,7 @@ class LabelStatisticsLogic(ScriptedLoadableModuleLogic):
         self.labelStats[i,"Min"] = stat1.GetMin()[0]
         self.labelStats[i,"Max"] = stat1.GetMax()[0]
         self.labelStats[i,"Mean"] = stat1.GetMean()[0]
+        self.labelStats[i,"Median"] = medians.GetMedian()
         self.labelStats[i,"StdDev"] = stat1.GetStandardDeviation()[0]
 
         # this.InvokeEvent(vtkLabelStatisticsLogic::LabelStatsInnerLoop, (void*)"1")
@@ -578,3 +586,4 @@ if __name__ == "__main__":
   print( sys.argv )
 
   slicelet = LabelStatisticsSlicelet()
+
