@@ -124,7 +124,6 @@ int main(int argc, char * *argv)
     std::deque<Coord3i>::iterator iter = axisPoints.begin();
     while( iter != axisPoints.end() )
       {
-      OutputImageType::IndexType position_IJK;
       position_IJK[0] = (*iter)[0];
       position_IJK[1] = (*iter)[1];
       position_IJK[2] = (*iter)[2];
