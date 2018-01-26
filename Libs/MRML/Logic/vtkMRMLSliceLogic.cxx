@@ -320,14 +320,15 @@ void vtkMRMLSliceLogic::UpdateSliceCompositeNode()
     {
     if ( node == 0 )
       {
-      node = vtkMRMLSliceCompositeNode::New();
+      // Use CreateNodeByClass instead of New to use default node specified in the scene
+      node = vtkMRMLSliceCompositeNode::SafeDownCast(this->GetMRMLScene()->CreateNodeByClass("vtkMRMLSliceCompositeNode"));
       node->SetLayoutName(this->GetName());
-      this->SetSliceCompositeNode (node);
+      this->SetSliceCompositeNode(node);
       node->Delete();
       }
     else
       {
-      this->SetSliceCompositeNode (node);
+      this->SetSliceCompositeNode(node);
       }
     }
 

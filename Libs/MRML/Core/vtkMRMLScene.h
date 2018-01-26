@@ -101,15 +101,21 @@ public:
 
   /// \brief Create node with a given class
   ///
-  /// This method ensures the new node properties are
-  /// initialized using the associated default node if any.
+  /// Result of this method may be different than creating
+  /// a node directly (using its own constructor), as this
+  /// method ensures the new node properties are
+  /// initialized based on the associated default node.
+  /// Default node may be specified in the scene, using
+  /// AddDefaultNode() method.
   ///
   /// \note A default node is associated with an other node if
   /// it belongs to the class hierarchy of that node.
   ///
   /// \warning This method does NOT add the new node to the scene.
+  /// To create a new node and add it to the scene in one step,
+  /// use AddNewNodeByClass().
   ///
-  /// \sa AddDefaultNode()
+  /// \sa AddDefaultNode(), AddNewNodeByClass()
   vtkMRMLNode* CreateNodeByClass(const char* className);
 
   /// \brief Register a node class to the scene so that the scene can later
