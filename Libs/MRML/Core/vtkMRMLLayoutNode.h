@@ -2,7 +2,7 @@
 #define __vtkMRMLLayoutNode_h
 
 // MRML includes
-#include "vtkMRMLNode.h"
+#include "vtkMRMLAbstractLayoutNode.h"
 
 class vtkXMLDataElement;
 
@@ -10,11 +10,11 @@ class vtkXMLDataElement;
 ///
 /// When the scene is closing (vtkMRMLScene::Clear), the view arrangement is
 /// set to none due to the Copy() call on an empty node.
-class VTK_MRML_EXPORT vtkMRMLLayoutNode : public vtkMRMLNode
+class VTK_MRML_EXPORT vtkMRMLLayoutNode : public vtkMRMLAbstractLayoutNode
 {
 public:
   static vtkMRMLLayoutNode *New();
-  vtkTypeMacro(vtkMRMLLayoutNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLLayoutNode,vtkMRMLAbstractLayoutNode);
   virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
   void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
@@ -32,97 +32,97 @@ public:
   virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
 
   /// Get/Set for Current layout
-  vtkGetMacro (ViewArrangement, int );
-  virtual void SetViewArrangement ( int );
+  vtkGetMacro(ViewArrangement, int);
+  virtual void SetViewArrangement(int);
 
-  vtkGetMacro (GUIPanelVisibility, int);
-  vtkSetMacro (GUIPanelVisibility, int);
+  vtkGetMacro(GUIPanelVisibility, int);
+  vtkSetMacro(GUIPanelVisibility, int);
 
-  vtkGetMacro ( BottomPanelVisibility, int );
-  vtkSetMacro (BottomPanelVisibility, int );
+  vtkGetMacro(BottomPanelVisibility, int);
+  vtkSetMacro(BottomPanelVisibility, int);
 
-  /// 0 is Leftside, 1 is right side
-  vtkGetMacro (GUIPanelLR, int );
-  vtkSetMacro (GUIPanelLR, int );
+  /// 0 is left side, 1 is right side
+  vtkGetMacro(GUIPanelLR, int);
+  vtkSetMacro(GUIPanelLR, int);
 
   /// Control the collapse state of the SliceControllers
-  vtkGetMacro (CollapseSliceControllers, int);
-  vtkSetMacro (CollapseSliceControllers, int);
+  vtkGetMacro(CollapseSliceControllers, int);
+  vtkSetMacro(CollapseSliceControllers, int);
 
   /// CompareView configuration Get/Set methods
-  vtkGetMacro ( NumberOfCompareViewRows, int );
-  vtkSetClampMacro ( NumberOfCompareViewRows, int, 1, 50);
-  vtkGetMacro ( NumberOfCompareViewColumns, int );
-  vtkSetClampMacro ( NumberOfCompareViewColumns, int, 1, 50 );
+  vtkGetMacro(NumberOfCompareViewRows, int);
+  vtkSetClampMacro(NumberOfCompareViewRows, int, 1, 50);
+  vtkGetMacro(NumberOfCompareViewColumns, int);
+  vtkSetClampMacro(NumberOfCompareViewColumns, int, 1, 50);
 
   /// CompareView lightbox configuration Get/Set methods
-  vtkGetMacro ( NumberOfCompareViewLightboxRows, int );
-  vtkSetClampMacro ( NumberOfCompareViewLightboxRows, int, 1, 50 );
-  vtkGetMacro ( NumberOfCompareViewLightboxColumns, int );
-  vtkSetClampMacro ( NumberOfCompareViewLightboxColumns, int, 1, 50 );
+  vtkGetMacro(NumberOfCompareViewLightboxRows, int);
+  vtkSetClampMacro(NumberOfCompareViewLightboxRows, int, 1, 50);
+  vtkGetMacro(NumberOfCompareViewLightboxColumns, int);
+  vtkSetClampMacro(NumberOfCompareViewLightboxColumns, int, 1, 50);
 
   /// Set/Get the size of the main and secondary panels (size of Frame1
   /// in each panel)
-  vtkGetMacro( MainPanelSize, int);
-  vtkSetMacro( MainPanelSize, int);
-  vtkGetMacro( SecondaryPanelSize, int);
-  vtkSetMacro( SecondaryPanelSize, int);
+  vtkGetMacro(MainPanelSize, int);
+  vtkSetMacro(MainPanelSize, int);
+  vtkGetMacro(SecondaryPanelSize, int);
+  vtkSetMacro(SecondaryPanelSize, int);
 
   /// Set/Get the size of the last selected module
-  vtkGetStringMacro( SelectedModule);
-  vtkSetStringMacro( SelectedModule);
+  vtkGetStringMacro(SelectedModule);
+  vtkSetStringMacro(SelectedModule);
 
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() VTK_OVERRIDE {return "Layout";}
 
   enum SlicerLayout
     {
-      SlicerLayoutInitialView = 0,
-      SlicerLayoutDefaultView = 1,
-      SlicerLayoutConventionalView = 2,
-      SlicerLayoutFourUpView = 3,
-      SlicerLayoutOneUp3DView = 4,
-      SlicerLayoutOneUpSliceView = 5, // XXX Slicer 4.5 - Remove this value. Here only for backward compatibility.
-      SlicerLayoutOneUpRedSliceView = 6,
-      SlicerLayoutOneUpYellowSliceView = 7,
-      SlicerLayoutOneUpGreenSliceView = 8,
-      SlicerLayoutTabbed3DView = 9,
-      SlicerLayoutTabbedSliceView = 10,
-      SlicerLayoutLightboxView = 11, // XXX Slicer 4.5 - Remove this value. Here only for backward compatibility.
-      SlicerLayoutCompareView = 12,
-      SlicerLayoutSideBySideLightboxView = 13, // XXX Slicer 4.5 - Remove this value. Here only for backward compatibility.
-      SlicerLayoutNone = 14,
-      SlicerLayoutDual3DView = 15,
-      SlicerLayoutConventionalWidescreenView = 16,
-      SlicerLayoutCompareWidescreenView = 17,
-      SlicerLayoutSingleLightboxView = 18, // XXX Slicer 4.5 - Remove this value. Here only for backward compatibility.
-      SlicerLayoutTriple3DEndoscopyView = 19, // Up to here, all layouts are Slicer 3 compatible
-      SlicerLayout3DPlusLightboxView = 20, // XXX Slicer 4.5 - Remove this value. Here only for backward compatibility.
-      SlicerLayoutThreeOverThreeView = 21,
-      SlicerLayoutFourOverFourView = 22,
-      SlicerLayoutCompareGridView = 23,
-      SlicerLayoutConventionalQuantitativeView = 24,
-      SlicerLayoutFourUpQuantitativeView = 25,
-      SlicerLayoutOneUpQuantitativeView = 26,
-      SlicerLayoutTwoOverTwoView = 27,
-      SlicerLayoutThreeOverThreeQuantitativeView = 28,
-      SlicerLayoutSideBySideView = 29,
-      SlicerLayoutFourByThreeSliceView = 30,
-      SlicerLayoutFourByTwoSliceView = 31,
-      SlicerLayoutFiveByTwoSliceView = 32,
-      SlicerLayoutThreeByThreeSliceView = 33,
-      SlicerLayoutFourUpTableView = 34,
-      SlicerLayout3DTableView = 35,
-      SlicerLayoutConventionalPlotView = 36,
-      SlicerLayoutFourUpPlotView = 37,
-      SlicerLayoutFourUpPlotTableView = 38,
-      SlicerLayoutOneUpPlotView = 39,
-      SlicerLayoutThreeOverThreePlotView = 40,
-      SlicerLayoutFinalView, // special value, must be placed after the last standard view (used for iterating through all the views)
+    SlicerLayoutInitialView = 0,
+    SlicerLayoutDefaultView = 1,
+    SlicerLayoutConventionalView = 2,
+    SlicerLayoutFourUpView = 3,
+    SlicerLayoutOneUp3DView = 4,
+    SlicerLayoutOneUpSliceView = 5, // XXX Slicer 4.5 - Remove this value. Here only for backward compatibility.
+    SlicerLayoutOneUpRedSliceView = 6,
+    SlicerLayoutOneUpYellowSliceView = 7,
+    SlicerLayoutOneUpGreenSliceView = 8,
+    SlicerLayoutTabbed3DView = 9,
+    SlicerLayoutTabbedSliceView = 10,
+    SlicerLayoutLightboxView = 11, // XXX Slicer 4.5 - Remove this value. Here only for backward compatibility.
+    SlicerLayoutCompareView = 12,
+    SlicerLayoutSideBySideLightboxView = 13, // XXX Slicer 4.5 - Remove this value. Here only for backward compatibility.
+    SlicerLayoutNone = 14,
+    SlicerLayoutDual3DView = 15,
+    SlicerLayoutConventionalWidescreenView = 16,
+    SlicerLayoutCompareWidescreenView = 17,
+    SlicerLayoutSingleLightboxView = 18, // XXX Slicer 4.5 - Remove this value. Here only for backward compatibility.
+    SlicerLayoutTriple3DEndoscopyView = 19, // Up to here, all layouts are Slicer 3 compatible
+    SlicerLayout3DPlusLightboxView = 20, // XXX Slicer 4.5 - Remove this value. Here only for backward compatibility.
+    SlicerLayoutThreeOverThreeView = 21,
+    SlicerLayoutFourOverFourView = 22,
+    SlicerLayoutCompareGridView = 23,
+    SlicerLayoutConventionalQuantitativeView = 24,
+    SlicerLayoutFourUpQuantitativeView = 25,
+    SlicerLayoutOneUpQuantitativeView = 26,
+    SlicerLayoutTwoOverTwoView = 27,
+    SlicerLayoutThreeOverThreeQuantitativeView = 28,
+    SlicerLayoutSideBySideView = 29,
+    SlicerLayoutFourByThreeSliceView = 30,
+    SlicerLayoutFourByTwoSliceView = 31,
+    SlicerLayoutFiveByTwoSliceView = 32,
+    SlicerLayoutThreeByThreeSliceView = 33,
+    SlicerLayoutFourUpTableView = 34,
+    SlicerLayout3DTableView = 35,
+    SlicerLayoutConventionalPlotView = 36,
+    SlicerLayoutFourUpPlotView = 37,
+    SlicerLayoutFourUpPlotTableView = 38,
+    SlicerLayoutOneUpPlotView = 39,
+    SlicerLayoutThreeOverThreePlotView = 40,
+    SlicerLayoutFinalView, // special value, must be placed after the last standard view (used for iterating through all the views)
 
-      SlicerLayoutMaximizedView = 98,
-      SlicerLayoutCustomView = 99,
-      SlicerLayoutUserView = 100
+    SlicerLayoutMaximizedView = 98,
+    SlicerLayoutCustomView = 99,
+    SlicerLayoutUserView = 100
     };
 
   /// Adds a layout description with integer identifier

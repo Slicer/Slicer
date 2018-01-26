@@ -30,6 +30,7 @@
 #include <sstream>
 
 const char* vtkMRMLAbstractViewNode::OrientationMarkerHumanModelReferenceRole = "OrientationMarkerHumanModel";
+const char* vtkMRMLAbstractViewNode::ParentLayoutNodeReferenceRole = "ParentLayoutNodeRef";
 const int vtkMRMLAbstractViewNode::AxisLabelsCount = 6;
 static const char* DEFAULT_AXIS_LABELS[vtkMRMLAbstractViewNode::AxisLabelsCount] = {"L", "R", "P", "A", "I", "S"};
 
@@ -573,7 +574,8 @@ const char* vtkMRMLAbstractViewNode::GetAxisLabel(int labelIndex)
 {
   if (labelIndex<0 || labelIndex>=vtkMRMLAbstractViewNode::AxisLabelsCount)
     {
-    vtkErrorMacro("vtkMRMLAbstractViewNode::GetAxisLabel labelIndex=" << labelIndex << " argument is invalid. Valid range: 0<=labelIndex<" << vtkMRMLAbstractViewNode::AxisLabelsCount);
+    vtkErrorMacro("vtkMRMLAbstractViewNode::GetAxisLabel labelIndex=" << labelIndex << " argument is invalid. Valid range: 0<=labelIndex<"
+      << vtkMRMLAbstractViewNode::AxisLabelsCount);
     return "";
     }
   return this->AxisLabels->GetValue(labelIndex);
@@ -584,7 +586,8 @@ void vtkMRMLAbstractViewNode::SetAxisLabel(int labelIndex, const char* label)
 {
   if (labelIndex<0 || labelIndex>=vtkMRMLAbstractViewNode::AxisLabelsCount)
     {
-    vtkErrorMacro("vtkMRMLAbstractViewNode::SetAxisLabel labelIndex="<<labelIndex<<" argument is invalid. Valid range: 0<=labelIndex<" <<vtkMRMLAbstractViewNode::AxisLabelsCount);
+    vtkErrorMacro("vtkMRMLAbstractViewNode::SetAxisLabel labelIndex=" << labelIndex << " argument is invalid. Valid range: 0<=labelIndex<"
+      << vtkMRMLAbstractViewNode::AxisLabelsCount);
     return;
     }
   if (label==NULL)
@@ -598,4 +601,34 @@ void vtkMRMLAbstractViewNode::SetAxisLabel(int labelIndex, const char* label)
     }
   this->AxisLabels->SetValue(labelIndex, label);
   this->Modified();
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLNode* vtkMRMLAbstractViewNode::GetParentLayoutNode()
+{
+  return this->GetNodeReference(this->ParentLayoutNodeReferenceRole);
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLAbstractViewNode::SetAndObserveParentLayoutNodeID(const char *layoutNodeId)
+{
+  if (!layoutNodeId)
+    {
+    return false;
+    }
+
+  this->SetAndObserveNodeReferenceID(this->ParentLayoutNodeReferenceRole, layoutNodeId);
+  return true;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLAbstractViewNode::SetAndObserveParentLayoutNode(vtkMRMLNode* node)
+{
+  if (node && this->Scene != node->GetScene())
+    {
+    vtkErrorMacro("Cannot set reference: the referenced and referencing node are not in the same scene");
+    return false;
+    }
+
+  return this->SetAndObserveParentLayoutNodeID(node ? node->GetID() : NULL);
 }

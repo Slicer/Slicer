@@ -15,9 +15,7 @@ vtkMRMLNodeNewMacro(vtkMRMLLayoutNode);
 //----------------------------------------------------------------------------
 vtkMRMLLayoutNode::vtkMRMLLayoutNode()
 {
-
   this->SetSingletonTag("vtkMRMLLayoutNode");
-  this->HideFromEditors = 1;
   this->GUIPanelVisibility = 1;
   this->BottomPanelVisibility = 1;
   this->GUIPanelLR = 0;
@@ -177,16 +175,15 @@ void vtkMRMLLayoutNode::ReadXMLAttributes(const char** atts)
     }
 
   this->EndModify(disabledModify);
-
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLLayoutNode::SetViewArrangement ( int arrNew )
+void vtkMRMLLayoutNode::SetViewArrangement(int arrNew)
 {
   // if the view arrangement definition has not been changed, return
-  if (this->ViewArrangement == arrNew
-      && this->GetCurrentLayoutDescription()
-      && this->GetCurrentLayoutDescription() == this->GetLayoutDescription(arrNew))
+  if ( this->ViewArrangement == arrNew
+    && this->GetCurrentLayoutDescription()
+    && this->GetCurrentLayoutDescription() == this->GetLayoutDescription(arrNew) )
     {
     return;
     }
@@ -349,13 +346,11 @@ void vtkMRMLLayoutNode::Copy(vtkMRMLNode *anode)
   this->SetSelectedModule( node->GetSelectedModule() );
 
   this->EndModify(disabledModify);
-
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLLayoutNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-
   Superclass::PrintSelf(os,indent);
 
   // Layout:

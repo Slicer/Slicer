@@ -55,6 +55,8 @@
 // Factory methods
 
 //------------------------------------------------------------------------------
+// qMRMLLayoutThreeDViewFactory
+//------------------------------------------------------------------------------
 qMRMLLayoutThreeDViewFactory::qMRMLLayoutThreeDViewFactory(QObject* parent)
   : qMRMLLayoutViewFactory(parent)
 {
@@ -88,6 +90,8 @@ QWidget* qMRMLLayoutThreeDViewFactory
   return threeDWidget;
 }
 
+//------------------------------------------------------------------------------
+// qMRMLLayoutChartViewFactory
 //------------------------------------------------------------------------------
 qMRMLLayoutChartViewFactory::qMRMLLayoutChartViewFactory(QObject* parent)
   : qMRMLLayoutViewFactory(parent)
@@ -145,6 +149,8 @@ QWidget* qMRMLLayoutChartViewFactory::createViewFromNode(vtkMRMLAbstractViewNode
 }
 
 //------------------------------------------------------------------------------
+// qMRMLLayoutTableViewFactory
+//------------------------------------------------------------------------------
 qMRMLLayoutTableViewFactory::qMRMLLayoutTableViewFactory(QObject* parent)
   : qMRMLLayoutViewFactory(parent)
 {
@@ -180,6 +186,8 @@ QWidget* qMRMLLayoutTableViewFactory::createViewFromNode(vtkMRMLAbstractViewNode
 }
 
 //------------------------------------------------------------------------------
+// qMRMLLayoutPlotViewFactory
+//------------------------------------------------------------------------------
 qMRMLLayoutPlotViewFactory::qMRMLLayoutPlotViewFactory(QObject* parent)
   : qMRMLLayoutViewFactory(parent)
   , ColorLogic(0)
@@ -210,6 +218,7 @@ void qMRMLLayoutPlotViewFactory::setColorLogic(vtkMRMLColorLogic *colorLogic)
     }
 }
 
+//------------------------------------------------------------------------------
 QWidget* qMRMLLayoutPlotViewFactory::createViewFromNode(vtkMRMLAbstractViewNode* viewNode)
 {
   if (!this->layoutManager() || !viewNode || !this->layoutManager()->viewport())
@@ -234,6 +243,8 @@ QWidget* qMRMLLayoutPlotViewFactory::createViewFromNode(vtkMRMLAbstractViewNode*
   return plotWidget;
 }
 
+//------------------------------------------------------------------------------
+// qMRMLLayoutSliceViewFactory
 //------------------------------------------------------------------------------
 qMRMLLayoutSliceViewFactory::qMRMLLayoutSliceViewFactory(QObject* parent)
   : qMRMLLayoutViewFactory(parent)
@@ -603,8 +614,8 @@ void qMRMLLayoutManagerPrivate::onNodeAddedEvent(vtkObject* scene, vtkObject* no
     return;
     }
 
-  // Layout node
-  vtkMRMLLayoutNode * layoutNode = vtkMRMLLayoutNode::SafeDownCast(node);
+  // Layout node added
+  vtkMRMLLayoutNode* layoutNode = vtkMRMLLayoutNode::SafeDownCast(node);
   if (layoutNode)
     {
     //qDebug() << "qMRMLLayoutManagerPrivate::onLayoutNodeAddedEvent";
@@ -617,17 +628,24 @@ void qMRMLLayoutManagerPrivate::onNodeAddedEvent(vtkObject* scene, vtkObject* no
     this->setMRMLLayoutNode(layoutNode);
     }
 
+  // View node added
   vtkMRMLAbstractViewNode* viewNode =
     vtkMRMLAbstractViewNode::SafeDownCast(node);
   if (viewNode)
     {
-    foreach(qMRMLLayoutViewFactory* mrmlViewFactory, q->mrmlViewFactories())
+    // No explicit parent layout node means that view is handled by the main Slicer layout
+    if (!viewNode->GetParentLayoutNode())
       {
-      mrmlViewFactory->onViewNodeAdded(viewNode);
+      foreach(qMRMLLayoutViewFactory* mrmlViewFactory, q->mrmlViewFactories())
+        {
+        mrmlViewFactory->onViewNodeAdded(viewNode);
+        }
       }
     }
   else if (node->IsA("vtkMRMLSegmentationNode"))
     {
+    // Show segmentation section in slice view controller if the first segmentation
+    // node has been added to the scene
     this->updateSegmentationControls();
     }
 }
@@ -692,11 +710,11 @@ void qMRMLLayoutManagerPrivate::onSceneClosedEvent()
   //qDebug() << "qMRMLLayoutManagerPrivate::onSceneClosedEvent";
   if (this->MRMLScene->IsBatchProcessing())
     {
-    // some more processing on the scene is happeninng, let's just wait until it
+    // Some more processing on the scene is happening, let's just wait until it
     // finishes.
     return;
     }
-  //int viewArrangement = this->SavedCurrentViewArrangement;
+
   // Since the loaded scene may not contain the required nodes, calling
   // initialize will make sure the LayoutNode, MRMLViewNode,
   // MRMLSliceNode exists.

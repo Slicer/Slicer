@@ -113,6 +113,17 @@ public:
   virtual int IsMappedInLayout();
   virtual void SetMappedInLayout(int value);
 
+  /// Get parent layout node.
+  /// Default is no reference, meaning that the view is managed by the main layout.
+  /// Non-empty reference means standalone view or view managed by another layout.
+  vtkMRMLNode* GetParentLayoutNode();
+  /// Set parent layout node reference
+  /// \sa GetParentLayoutNode
+  bool SetAndObserveParentLayoutNodeID(const char *layoutNodeId);
+  /// Set parent layout node reference
+  /// \sa GetParentLayoutNode
+  bool SetAndObserveParentLayoutNode(vtkMRMLNode* node);
+
   /// \brief Indicates whether or not the view is visible in the current layout.
   ///
   /// A view is visible in the current layout it is both mapped in layout
@@ -268,7 +279,6 @@ protected:
   int OrientationMarkerSize;
 
   static const char* OrientationMarkerHumanModelReferenceRole;
-  static const char* OrientationMarkerHumanModelMRMLAttributeName;
 
   ///
   /// For views that supports ruler display (where RulerEnabled=true)
@@ -279,6 +289,8 @@ protected:
   ///
   /// Labels of coordinate system axes
   vtkSmartPointer<vtkStringArray> AxisLabels;
+
+  static const char* ParentLayoutNodeReferenceRole;
 };
 
 //------------------------------------------------------------------------------

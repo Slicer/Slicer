@@ -106,6 +106,7 @@ set(MRMLCore_SRCS
   vtkImageBimodalAnalysis.cxx
   vtkDataFileFormatHelper.cxx
   vtkMRMLLogic.cxx
+  vtkMRMLAbstractLayoutNode.cxx
   vtkMRMLAbstractViewNode.cxx
   vtkMRMLCameraNode.cxx
   vtkMRMLChartNode.cxx

@@ -329,8 +329,9 @@ void qMRMLLayoutViewFactory::onNodeAdded(vtkObject* scene, vtkObject* node)
 
   Q_UNUSED(scene);
   vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(node);
-  if (viewNode)
+  if (viewNode && !viewNode->GetParentLayoutNode())
     {
+    // No explicit parent layout node means that view is handled by the main Slicer layout
     this->onViewNodeAdded(viewNode);
     }
 }
@@ -365,12 +366,12 @@ void qMRMLLayoutViewFactory::onViewNodeAdded(vtkMRMLAbstractViewNode* node)
     return;
     }
   if (this->viewWidget(node))
-    { // the view already exist, no need to create it again.
+    { // The view already exists, no need to create it again.
     return;
     }
   QWidget* viewWidget = this->createViewFromNode(node);
   if (!viewWidget)
-    { // the factory can not create such view, then do nothing about it
+    { // The factory cannot create such view, do nothing about it
     return;
     }
 
@@ -380,6 +381,7 @@ void qMRMLLayoutViewFactory::onViewNodeAdded(vtkMRMLAbstractViewNode* node)
   viewWidget->setVisible(false);
 
   d->Views[node] = viewWidget;
+
   // For now, the active view is the first one
   if (this->viewCount() == 1)
     {
@@ -566,7 +568,7 @@ QList<QWidget*> qMRMLLayoutViewFactory::createViewsFromXML(QDomElement viewEleme
 }
 
 //------------------------------------------------------------------------------
-void qMRMLLayoutViewFactory::setupView(QDomElement viewElement, QWidget*view)
+void qMRMLLayoutViewFactory::setupView(QDomElement viewElement, QWidget* view)
 {
   this->Superclass::setupView(viewElement, view);
   vtkMRMLAbstractViewNode* viewNode = this->viewNode(view);
