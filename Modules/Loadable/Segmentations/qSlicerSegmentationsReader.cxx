@@ -35,6 +35,7 @@
 #include <vtkMRMLStorageNode.h>
 
 // VTK includes
+#include <vtkNew.h>
 #include <vtkSmartPointer.h>
 #include <vtkSTLReader.h>
 
