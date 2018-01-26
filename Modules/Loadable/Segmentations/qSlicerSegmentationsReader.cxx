@@ -148,7 +148,7 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
       displayNode->SetPreferredDisplayRepresentationName2D(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
       }
 
-    segmentationNode->GetSegmentation()->AddSegment(segment);
+    segmentationNode->GetSegmentation()->AddSegment(segment.GetPointer());
 
     this->setLoadedNodes(QStringList(QString(segmentationNode->GetID())));
     }
