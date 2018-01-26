@@ -116,7 +116,7 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
 
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileName.toStdString());
 
-  if (extension.compare(".stl") == NULL)
+  if (extension.compare(".stl") == 0)
     {
     // Create segmentation from STL file
     vtkNew<vtkSTLReader> reader;
