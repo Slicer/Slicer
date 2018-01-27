@@ -43,7 +43,6 @@ class QAction;
 class qMRMLSceneViewMenu;
 class vtkMRMLPlotViewNode;
 class vtkMRMLPlotChartNode;
-class vtkMRMLSelectionNode;
 class QString;
 
 //-----------------------------------------------------------------------------
@@ -64,7 +63,6 @@ public:
 
   vtkWeakPointer<vtkMRMLPlotChartNode>   PlotChartNode;
   vtkWeakPointer<vtkMRMLPlotViewNode>    PlotViewNode;
-  vtkWeakPointer<vtkMRMLSelectionNode>   SelectionNode;
   qMRMLPlotView*                         PlotView;
 
   QString                                PlotViewLabel;
@@ -76,9 +74,6 @@ public slots:
   /// Called after a PlotChartNode is selected
   /// using the associated qMRMLNodeComboBox.
   void onPlotChartNodeSelected(vtkMRMLNode* node);
-
-  /// Called when the Singleton SelectionNode is modified.
-  void onSelectionNodeModified();
 
   /// Called after an PlotDataNode is selected
   /// using the associated qMRMLNodeComboBox.

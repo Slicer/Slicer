@@ -76,8 +76,6 @@ qMRMLPlotViewControllerWidgetPrivate::qMRMLPlotViewControllerWidgetPrivate(
   this->PlotChartNode = 0;
   this->PlotViewNode = 0;
   this->PlotView = 0;
-
-  this->SelectionNode = 0;
 }
 
 //---------------------------------------------------------------------------
@@ -207,7 +205,7 @@ void qMRMLPlotViewControllerWidgetPrivate::onPlotChartNodeSelected(vtkMRMLNode *
 
   vtkMRMLPlotChartNode *mrmlPlotChartNode = vtkMRMLPlotChartNode::SafeDownCast(node);
 
-  if (!this->PlotViewNode || !this->SelectionNode || this->PlotChartNode == mrmlPlotChartNode)
+  if (!this->PlotViewNode || this->PlotChartNode == mrmlPlotChartNode)
     {
     return;
     }
@@ -216,26 +214,16 @@ void qMRMLPlotViewControllerWidgetPrivate::onPlotChartNodeSelected(vtkMRMLNode *
                       q, SLOT(updateWidgetFromMRML()));
 
   this->PlotChartNode = mrmlPlotChartNode;
-  this->SelectionNode->SetActivePlotChartID(mrmlPlotChartNode ? mrmlPlotChartNode->GetID() : "");
   this->PlotViewNode->SetPlotChartNodeID(mrmlPlotChartNode ? mrmlPlotChartNode->GetID() : NULL);
 
-  q->updateWidgetFromMRML();
-}
-
-// --------------------------------------------------------------------------
-void qMRMLPlotViewControllerWidgetPrivate::onSelectionNodeModified()
-{
-  Q_Q(qMRMLPlotViewControllerWidget);
-
-  if (!this->SelectionNode || !q->mrmlScene())
+  vtkMRMLSelectionNode* selectionNode = vtkMRMLSelectionNode::SafeDownCast(
+    q->mrmlScene() ? q->mrmlScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton") : NULL);
+  if (selectionNode)
     {
-    return;
+    selectionNode->SetActivePlotChartID(mrmlPlotChartNode ? mrmlPlotChartNode->GetID() : "");
     }
 
-  vtkMRMLPlotChartNode *mrmlPlotChartNode = vtkMRMLPlotChartNode::SafeDownCast(
-    q->mrmlScene()->GetNodeByID(this->SelectionNode->GetActivePlotChartID()));
-
-  this->onPlotChartNodeSelected(mrmlPlotChartNode);
+  q->updateWidgetFromMRML();
 }
 
 // --------------------------------------------------------------------------
@@ -962,20 +950,6 @@ void qMRMLPlotViewControllerWidget::setMRMLScene(vtkMRMLScene* newScene)
 
   d->plotChartComboBox->blockSignals(plotChartBlockSignals);
   d->plotDataComboBox->blockSignals(plotBlockSignals);
-
-  vtkMRMLSelectionNode* selectionNode = vtkMRMLSelectionNode::SafeDownCast(
-    this->mrmlScene() ? this->mrmlScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton") : NULL);
-
-  if (!selectionNode)
-    {
-    return;
-    }
-
-  this->qvtkReconnect(d->SelectionNode, selectionNode, vtkCommand::ModifiedEvent,
-                      d, SLOT(onSelectionNodeModified()));
-
-  d->SelectionNode = selectionNode;
-  d->onSelectionNodeModified();
 
   if (this->mrmlScene())
     {

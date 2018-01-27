@@ -208,6 +208,9 @@ void qMRMLPlotViewPrivate::setMRMLScene(vtkMRMLScene* newScene)
     vtkMRMLScene::EndBatchProcessEvent, this, SLOT(endProcessing()));
 
   this->MRMLScene = newScene;
+
+  // Update chart (just in case plot view node was set before the scene)
+  this->onPlotChartNodeChanged();
 }
 
 
@@ -234,7 +237,7 @@ void qMRMLPlotViewPrivate::onPlotChartNodeChanged()
 {
   vtkMRMLPlotChartNode *newPlotChartNode = NULL;
 
-  if (this->MRMLPlotViewNode && this->MRMLPlotViewNode->GetPlotChartNodeID())
+  if (this->MRMLScene && this->MRMLPlotViewNode && this->MRMLPlotViewNode->GetPlotChartNodeID())
     {
     newPlotChartNode = vtkMRMLPlotChartNode::SafeDownCast
       (this->MRMLScene->GetNodeByID(this->MRMLPlotViewNode->GetPlotChartNodeID()));
@@ -405,7 +408,7 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
 {
   Q_Q(qMRMLPlotView);
 
-  if (!this->MRMLScene || !this->ColorLogic || !this->MRMLPlotViewNode
+  if (!this->MRMLScene || !this->MRMLPlotViewNode
       || !q->isEnabled() || !q->chart() || !q->chart()->GetLegend())
     {
     return;
@@ -437,7 +440,17 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
 
   int plnWasModifying = pln->StartModify();
 
-  const char* defaultPlotColorNodeID = this->ColorLogic->GetDefaultPlotColorNodeID();
+  std::string defaultPlotColorNodeID = "vtkMRMLProceduralColorNodeRandomIntegers";
+  if (this->ColorLogic)
+    {
+    defaultPlotColorNodeID = this->ColorLogic->GetDefaultPlotColorNodeID();
+    }
+  else
+    {
+    qWarning() << Q_FUNC_INFO << ": colorLogic is not defined for PlotView, using default color node "
+      << defaultPlotColorNodeID.c_str();
+    }
+
   vtkMRMLColorNode *defaultColorNode = vtkMRMLColorNode::SafeDownCast
     (this->MRMLScene->GetNodeByID(defaultPlotColorNodeID));
   vtkMRMLColorNode *colorNode = vtkMRMLColorNode::SafeDownCast
