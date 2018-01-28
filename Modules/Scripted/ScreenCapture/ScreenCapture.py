@@ -864,8 +864,6 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
     if not viewNode:
       raise ValueError('Invalid view node.')
     elif viewNode.IsA("vtkMRMLSliceNode"):
-      if not viewNode.IsMappedInLayout():
-        raise ValueError('Selected slice view is not visible in the current layout.')
       return slicer.app.layoutManager().sliceWidget(viewNode.GetLayoutName()).sliceView()
     elif viewNode.IsA("vtkMRMLViewNode"):
       renderView = None
@@ -885,7 +883,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
     self.cancelRequested = False
 
-    if not sliceNode.IsMappedInLayout():
+    if not captureAllViews and not sliceNode.IsMappedInLayout():
       raise ValueError('Selected slice view is not visible in the current layout.')
 
     if not os.path.exists(outputDir):
@@ -914,6 +912,9 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
                         outputFilenamePattern, captureAllViews = None):
 
     self.cancelRequested = False
+    
+    if not captureAllViews and not sliceNode.IsMappedInLayout():
+      raise ValueError('Selected slice view is not visible in the current layout.')
 
     if not os.path.exists(outputDir):
       os.makedirs(outputDir)
