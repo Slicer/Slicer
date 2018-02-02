@@ -88,6 +88,7 @@ ExternalProject_Execute(${proj} \"configure\" sh ${EP_SOURCE_DIR}/configure
       SOURCE_DIR ${EP_SOURCE_DIR}
       BINARY_DIR ${EP_BINARY_DIR}
       CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${_configure_script}
+      INSTALL_COMMAND $(MAKE) install -j1  # Avoid race condition disabling parallel build
       DEPENDS ${${proj}_DEPENDENCIES}
       )
 
