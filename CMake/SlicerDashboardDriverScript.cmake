@@ -367,17 +367,16 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     #-----------------------------------------------------------------------------
     # Global coverage ...
     #-----------------------------------------------------------------------------
-    if(run_ctest_with_coverage)
+    if(WITH_COVERAGE AND CTEST_COVERAGE_COMMAND AND run_ctest_with_coverage)
+      message("----------- [ Global coverage ] -----------")
       # HACK Unfortunately ctest_coverage ignores the BUILD argument, try to force it...
-      file(READ ${slicer_build_dir}/CMakeFiles/TargetDirectories.txt slicer_build_coverage_dirs)
-      file(APPEND "${CTEST_BINARY_DIRECTORY}/CMakeFiles/TargetDirectories.txt" "${slicer_build_coverage_dirs}")
-
-      if(WITH_COVERAGE AND CTEST_COVERAGE_COMMAND)
-        message("----------- [ Global coverage ] -----------")
-        ctest_coverage(BUILD "${slicer_build_dir}")
-        if(run_ctest_submit)
-          ctest_submit(PARTS Coverage)
-        endif()
+      if(EXISTS ${slicer_build_dir}/CMakeFiles/TargetDirectories.txt)
+        file(READ ${slicer_build_dir}/CMakeFiles/TargetDirectories.txt slicer_build_coverage_dirs)
+        file(APPEND "${CTEST_BINARY_DIRECTORY}/CMakeFiles/TargetDirectories.txt" "${slicer_build_coverage_dirs}")
+      endif()
+      ctest_coverage(BUILD "${slicer_build_dir}")
+      if(run_ctest_submit)
+        ctest_submit(PARTS Coverage)
       endif()
     endif()
 
