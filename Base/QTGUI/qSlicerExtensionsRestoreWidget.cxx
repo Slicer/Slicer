@@ -183,6 +183,7 @@ void qSlicerExtensionsRestoreWidgetPrivate
   this->silentInstallOnStartup->setText(QObject::tr("Install previous extensions without request"));
 
   this->progressDialog->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
+  this->progressDialog->close();
 
   installButton->setText(QObject::tr("Install Selected"));
   layoutForProgressAndButton->addWidget(this->progressBar);
