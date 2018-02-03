@@ -1257,7 +1257,9 @@ void qSlicerCoreApplication::setExtensionsInstallPath(const QString& path)
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplication::gatherExtensionsHistoryInformationOnStartup()
 {
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   this->extensionsManagerModel()->gatherExtensionsHistoryInformationOnStartup();
+#endif
 }
 
 //-----------------------------------------------------------------------------
