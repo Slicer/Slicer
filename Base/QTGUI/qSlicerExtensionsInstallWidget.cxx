@@ -329,7 +329,7 @@ void qSlicerExtensionsInstallWidget::initJavascript()
   this->webView()->page()->mainFrame()->addToJavaScriptWindowObject(
         "extensions_install_widget", this);
 #else
-    this->webView()->page()->webChannel()->registerObject(
+  this->webView()->page()->webChannel()->registerObject(
         "extensions_manager_model", d->ExtensionsManagerModel);
 
   this->webView()->page()->webChannel()->registerObject(
