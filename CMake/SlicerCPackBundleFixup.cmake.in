@@ -87,7 +87,7 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
     set(path "@fixup_path@/@Slicer_ITKFACTORIES_DIR@")
   endif()
 
-  foreach(qt_plugin_dir designer iconengines styles imageformats sqldrivers)
+  foreach(qt_plugin_dir designer iconengines styles imageformats sqldrivers platforms)
     if(item MATCHES "@Slicer_QtPlugins_DIR@/${qt_plugin_dir}/[^/]+\\.(so|dylib)$")
       set(path "@fixup_path@/@Slicer_QtPlugins_DIR@/${qt_plugin_dir}")
     endif()
