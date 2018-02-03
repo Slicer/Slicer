@@ -1520,11 +1520,13 @@ void qSlicerExtensionsManagerModelTester::testSetExtensionsSettingsFilePath()
   QCOMPARE(model.extensionsSettingsFilePath(), QString());
 
   QSignalSpy spyModelUpdated(&model, SIGNAL(modelUpdated()));
+  QSignalSpy spyExtensionsSettingsFilePathChanged(&model, SIGNAL(extensionsSettingsFilePathChanged(QString)));
 
   model.setExtensionsSettingsFilePath(extensionsSettingsFilePath);
   QCOMPARE(model.extensionsSettingsFilePath(), expectedExtensionsSettingsFilePath);
 
   QCOMPARE(spyModelUpdated.count(), 0);
+  QCOMPARE(spyExtensionsSettingsFilePathChanged.count(), 1);
 }
 
 // ----------------------------------------------------------------------------
@@ -1869,19 +1871,24 @@ typedef QString (qSlicerExtensionsManagerModel::* QStringGetter)()const;
 
 // ----------------------------------------------------------------------------
 void testRequirementsHelper(qSlicerExtensionsManagerModel * model,
-                            QStringSetter qStringSetterFuncPtr, QStringGetter qStringGetterFuncPtr)
+                            QStringSetter qStringSetterFuncPtr,
+                            QStringGetter qStringGetterFuncPtr,
+                            const char * changedPropertySignal
+                            )
 {
   QFETCH(QStringList, valuesToSet);
   QFETCH(QString, expectedFinalValue);
   QFETCH(int, expectedSlicerRequirementsChangedCount);
 
   QSignalSpy spySlicerRequirementsChanged(model, SIGNAL(slicerRequirementsChanged(QString,QString,QString)));
+  QSignalSpy spySlicerPropertyChanged(model, changedPropertySignal);
   foreach(const QString& valuetoSet, valuesToSet)
     {
     (model->*qStringSetterFuncPtr)(valuetoSet);
     }
   QCOMPARE((model->*qStringGetterFuncPtr)(), expectedFinalValue);
   QCOMPARE(spySlicerRequirementsChanged.count(), expectedSlicerRequirementsChangedCount);
+  QCOMPARE(spySlicerPropertyChanged.count(), expectedSlicerRequirementsChangedCount);
 }
 
 } // end of anonymous namespace
@@ -1892,7 +1899,9 @@ void qSlicerExtensionsManagerModelTester::testSetSlicerRevision()
   qSlicerExtensionsManagerModel model;
   testRequirementsHelper(&model,
                          &qSlicerExtensionsManagerModel::setSlicerRevision,
-                         &qSlicerExtensionsManagerModel::slicerRevision);
+                         &qSlicerExtensionsManagerModel::slicerRevision,
+                         SIGNAL(slicerRevisionChanged(QString))
+                         );
 }
 
 // ----------------------------------------------------------------------------
@@ -1902,8 +1911,14 @@ void qSlicerExtensionsManagerModelTester::testSetSlicerRevision_data()
   QTest::addColumn<QString>("expectedFinalValue");
   QTest::addColumn<int>("expectedSlicerRequirementsChangedCount");
 
-  QTest::newRow("0") << (QStringList() << "" << "1" << "" << "1") << "1" << 3;
-  QTest::newRow("1") << (QStringList() << "" << "1" << "1") << "1" << 1;
+  QTest::newRow("0")
+      << (QStringList() << "" << "1" << "" << "1")
+      << "1"
+      << 3;
+  QTest::newRow("1")
+      << (QStringList() << "" << "1" << "1")
+      << "1"
+      << 1;
 }
 
 // ----------------------------------------------------------------------------
@@ -1912,7 +1927,8 @@ void qSlicerExtensionsManagerModelTester::testSetSlicerOs()
   qSlicerExtensionsManagerModel model;
   testRequirementsHelper(&model,
                          &qSlicerExtensionsManagerModel::setSlicerOs,
-                         &qSlicerExtensionsManagerModel::slicerOs);
+                         &qSlicerExtensionsManagerModel::slicerOs,
+                         SIGNAL(slicerOsChanged(QString)));
 }
 
 // ----------------------------------------------------------------------------
@@ -1922,8 +1938,14 @@ void qSlicerExtensionsManagerModelTester::testSetSlicerOs_data()
   QTest::addColumn<QString>("expectedFinalValue");
   QTest::addColumn<int>("expectedSlicerRequirementsChangedCount");
 
-  QTest::newRow("0") << (QStringList() << "" << "linux" << "" << "linux") << "linux" << 3;
-  QTest::newRow("1") << (QStringList() << "" << "linux" << "linux") << "linux" << 1;
+  QTest::newRow("0")
+      << (QStringList() << "" << "linux" << "" << "linux")
+      << "linux"
+      << 3;
+  QTest::newRow("1")
+      << (QStringList() << "" << "linux" << "linux")
+      << "linux"
+      << 1;
 }
 
 // ----------------------------------------------------------------------------
@@ -1932,7 +1954,8 @@ void qSlicerExtensionsManagerModelTester::testSetSlicerArch()
   qSlicerExtensionsManagerModel model;
   testRequirementsHelper(&model,
                          &qSlicerExtensionsManagerModel::setSlicerArch,
-                         &qSlicerExtensionsManagerModel::slicerArch);
+                         &qSlicerExtensionsManagerModel::slicerArch,
+                         SIGNAL(slicerArchChanged(QString)));
 }
 
 // ----------------------------------------------------------------------------
@@ -1942,8 +1965,14 @@ void qSlicerExtensionsManagerModelTester::testSetSlicerArch_data()
   QTest::addColumn<QString>("expectedFinalValue");
   QTest::addColumn<int>("expectedSlicerRequirementsChangedCount");
 
-  QTest::newRow("0") << (QStringList() << "" << "amd64" << "" << "amd64") << "amd64" << 3;
-  QTest::newRow("1") << (QStringList() << "" << "amd64" << "amd64") << "amd64" << 1;
+  QTest::newRow("0")
+      << (QStringList() << "" << "amd64" << "" << "amd64")
+      << "amd64"
+      << 3;
+  QTest::newRow("1")
+      << (QStringList() << "" << "amd64" << "amd64")
+      << "amd64"
+      << 1;
 }
 
 // ----------------------------------------------------------------------------

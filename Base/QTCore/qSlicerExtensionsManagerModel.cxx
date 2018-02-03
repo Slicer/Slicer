@@ -1080,7 +1080,12 @@ QString qSlicerExtensionsManagerModel::extensionDescriptionFile(const QString& e
 void qSlicerExtensionsManagerModel::setNewExtensionEnabledByDefault(bool value)
 {
   Q_D(qSlicerExtensionsManagerModel);
+  if (d->NewExtensionEnabledByDefault == value)
+    {
+    return;
+    }
   d->NewExtensionEnabledByDefault = value;
+  emit this->newExtensionEnabledByDefaultChanged(value);
 }
 
 // --------------------------------------------------------------------------
@@ -2227,11 +2232,33 @@ void qSlicerExtensionsManagerModel::updateModel()
 
 // --------------------------------------------------------------------------
 CTK_GET_CPP(qSlicerExtensionsManagerModel, QString, extensionsSettingsFilePath, ExtensionsSettingsFilePath)
-CTK_SET_CPP(qSlicerExtensionsManagerModel, const QString&, setExtensionsSettingsFilePath, ExtensionsSettingsFilePath)
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManagerModel::setExtensionsSettingsFilePath(const QString& extensionsSettingsFilePath)
+{
+  Q_D(qSlicerExtensionsManagerModel);
+  if (d->ExtensionsSettingsFilePath == extensionsSettingsFilePath)
+    {
+    return;
+    }
+  d->ExtensionsSettingsFilePath = extensionsSettingsFilePath;
+  emit this->extensionsSettingsFilePathChanged(extensionsSettingsFilePath);
+}
 
 // --------------------------------------------------------------------------
 CTK_GET_CPP(qSlicerExtensionsManagerModel, QString, extensionsHistorySettingsFilePath, ExtensionsHistorySettingsFilePath)
-CTK_SET_CPP(qSlicerExtensionsManagerModel, const QString&, setExtensionsHistorySettingsFilePath, ExtensionsHistorySettingsFilePath)
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManagerModel::setExtensionsHistorySettingsFilePath(const QString& extensionsHistorySettingsFilePath)
+{
+  Q_D(qSlicerExtensionsManagerModel);
+  if (d->ExtensionsHistorySettingsFilePath == extensionsHistorySettingsFilePath)
+    {
+    return;
+    }
+  d->ExtensionsHistorySettingsFilePath = extensionsHistorySettingsFilePath;
+  emit this->extensionsHistorySettingsFilePathChanged(extensionsHistorySettingsFilePath);
+}
 
 // --------------------------------------------------------------------------
 CTK_GET_CPP(qSlicerExtensionsManagerModel, QString, slicerRevision, SlicerRevision)
@@ -2239,14 +2266,7 @@ CTK_GET_CPP(qSlicerExtensionsManagerModel, QString, slicerRevision, SlicerRevisi
 // --------------------------------------------------------------------------
 void qSlicerExtensionsManagerModel::setSlicerRevision(const QString& revision)
 {
-  Q_D(qSlicerExtensionsManagerModel);
-  if (d->SlicerRevision == revision)
-    {
-    return;
-    }
-  d->SlicerRevision = revision;
-
-  emit this->slicerRequirementsChanged(d->SlicerRevision, d->SlicerOs, d->SlicerArch);
+  this->setSlicerRequirements(revision, this->slicerOs(), this->slicerArch());
 }
 
 // --------------------------------------------------------------------------
@@ -2255,14 +2275,7 @@ CTK_GET_CPP(qSlicerExtensionsManagerModel, QString, slicerOs, SlicerOs)
 // --------------------------------------------------------------------------
 void qSlicerExtensionsManagerModel::setSlicerOs(const QString& os)
 {
-  Q_D(qSlicerExtensionsManagerModel);
-  if (d->SlicerOs == os)
-    {
-    return;
-    }
-  d->SlicerOs = os;
-
-  emit this->slicerRequirementsChanged(d->SlicerRevision, d->SlicerOs, d->SlicerArch);
+  this->setSlicerRequirements(this->slicerRevision(), os, this->slicerArch());
 }
 
 // --------------------------------------------------------------------------
@@ -2271,14 +2284,7 @@ CTK_GET_CPP(qSlicerExtensionsManagerModel, QString, slicerArch, SlicerArch)
 // --------------------------------------------------------------------------
 void qSlicerExtensionsManagerModel::setSlicerArch(const QString& arch)
 {
-  Q_D(qSlicerExtensionsManagerModel);
-  if (d->SlicerArch == arch)
-    {
-    return;
-    }
-  d->SlicerArch = arch;
-
-  emit this->slicerRequirementsChanged(d->SlicerRevision, d->SlicerOs, d->SlicerArch);
+  this->setSlicerRequirements(this->slicerRevision(), this->slicerOs(), arch);
 }
 
 // --------------------------------------------------------------------------
@@ -2289,10 +2295,27 @@ void qSlicerExtensionsManagerModel::setSlicerRequirements(const QString& revisio
     {
     return;
     }
+  QString previousSlicerRevision = d->SlicerRevision;
   d->SlicerRevision = revision;
+
+  QString previousSlicerOs = d->SlicerOs;
   d->SlicerOs = os;
+
+  QString previousSlicerArch = d->SlicerArch;
   d->SlicerArch = arch;
 
+  if (previousSlicerRevision != d->SlicerRevision)
+    {
+    emit this->slicerRevisionChanged(d->SlicerRevision);
+    }
+  if (previousSlicerOs != d->SlicerOs)
+    {
+    emit this->slicerOsChanged(d->SlicerOs);
+    }
+  if (previousSlicerArch != d->SlicerArch)
+    {
+    emit this->slicerArchChanged(d->SlicerArch);
+    }
   emit this->slicerRequirementsChanged(d->SlicerRevision, d->SlicerOs, d->SlicerArch);
 }
 
@@ -2315,7 +2338,18 @@ void qSlicerExtensionsManagerModel::identifyIncompatibleExtensions()
 
 // --------------------------------------------------------------------------
 CTK_GET_CPP(qSlicerExtensionsManagerModel, QString, slicerVersion, SlicerVersion)
-CTK_SET_CPP(qSlicerExtensionsManagerModel, const QString& , setSlicerVersion, SlicerVersion)
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManagerModel::setSlicerVersion(const QString& slicerVersion)
+{
+  Q_D(qSlicerExtensionsManagerModel);
+  if (d->SlicerVersion == slicerVersion)
+    {
+    return;
+    }
+  d->SlicerVersion = slicerVersion;
+  emit this->slicerVersionChanged(slicerVersion);
+}
 
 // --------------------------------------------------------------------------
 QStringList qSlicerExtensionsManagerModel::isExtensionCompatible(
