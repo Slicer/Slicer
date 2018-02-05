@@ -23,13 +23,18 @@
 
 // Qt includes
 #include <QtGlobal>
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
+#include <QTime>
+#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
+class QWebFrame;
+class QWebView;
+#else
 #include <QWebEngineCertificateError>
 #include <QWebEnginePage>
 #include <QWebEngineProfile>
 #endif
 
 // QtGUI includes
+#include "qSlicerWebWidget.h"
 #include "ui_qSlicerWebWidget.h"
 
 //-----------------------------------------------------------------------------

@@ -27,10 +27,8 @@
 #if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
 #include <QWebFrame>
 #include <QWebView>
-class QWebChannel;
 #else
 #include <QWebEngineView>
-#include <QWebChannel>
 #endif
 
 // CTK includes
@@ -38,59 +36,14 @@ class QWebChannel;
 
 // QtGUI includes
 #include "qSlicerExtensionsInstallWidget.h"
+#include "qSlicerExtensionsInstallWidget_p.h"
 #include "qSlicerExtensionsManagerModel.h"
-#include "qSlicerWebWidget_p.h"
-
-// --------------------------------------------------------------------------
-class ExtensionInstallWidgetWebChannelProxy : public QObject
-{
-  Q_OBJECT
-public:
-  ExtensionInstallWidgetWebChannelProxy():InstallWidget(0){}
-  qSlicerExtensionsInstallWidget* InstallWidget;
-public slots:
-  void refresh();
-private:
-  Q_DISABLE_COPY(ExtensionInstallWidgetWebChannelProxy);
-};
 
 // --------------------------------------------------------------------------
 void ExtensionInstallWidgetWebChannelProxy::refresh()
 {
   this->InstallWidget->refresh();
 }
-
-//-----------------------------------------------------------------------------
-class qSlicerExtensionsInstallWidgetPrivate : public qSlicerWebWidgetPrivate
-{
-  Q_DECLARE_PUBLIC(qSlicerExtensionsInstallWidget);
-protected:
-  qSlicerExtensionsInstallWidget* const q_ptr;
-
-public:
-  qSlicerExtensionsInstallWidgetPrivate(qSlicerExtensionsInstallWidget& object);
-  virtual ~qSlicerExtensionsInstallWidgetPrivate();
-
-  /// Return the URL allowing to retrieve the extension list page
-  /// associated with the current architecture, operating system and slicer revision.
-  QUrl extensionsListUrl();
-
-  void setFailurePage(const QStringList &errors);
-
-  virtual void updateWebChannelScript(QByteArray& webChannelScript);
-  virtual void initializeWebChannel(QWebChannel* webChannel);
-  void registerExtensionsManagerModel(qSlicerExtensionsManagerModel* oldModel, qSlicerExtensionsManagerModel* newModel);
-
-  qSlicerExtensionsManagerModel * ExtensionsManagerModel;
-
-  QString SlicerRevision;
-  QString SlicerOs;
-  QString SlicerArch;
-
-  bool BrowsingEnabled;
-
-  ExtensionInstallWidgetWebChannelProxy* InstallWidgetForWebChannel;
-};
 
 // --------------------------------------------------------------------------
 qSlicerExtensionsInstallWidgetPrivate::qSlicerExtensionsInstallWidgetPrivate(qSlicerExtensionsInstallWidget& object)
@@ -231,6 +184,10 @@ void qSlicerExtensionsInstallWidgetPrivate::initializeWebChannel(QWebChannel* we
 void qSlicerExtensionsInstallWidgetPrivate::registerExtensionsManagerModel(
     qSlicerExtensionsManagerModel* oldModel, qSlicerExtensionsManagerModel* newModel)
 {
+#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
+  Q_UNUSED(oldModel);
+  Q_UNUSED(newModel);
+#else
   Q_Q(qSlicerExtensionsInstallWidget);
   QWebChannel* webChannel = q->webView()->page()->webChannel();
   if (oldModel)
@@ -241,6 +198,7 @@ void qSlicerExtensionsInstallWidgetPrivate::registerExtensionsManagerModel(
     {
     webChannel->registerObject("extensions_manager_model", newModel);
     }
+#endif
 }
 
 // --------------------------------------------------------------------------
@@ -462,5 +420,3 @@ void qSlicerExtensionsInstallWidget::onLinkClicked(const QUrl& url)
       }
     }
 }
-
-#include "moc_qSlicerExtensionsInstallWidget.cxx"

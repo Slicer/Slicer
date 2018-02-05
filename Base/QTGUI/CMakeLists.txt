@@ -102,6 +102,7 @@ if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND KIT_SRCS
     qSlicerExtensionsInstallWidget.cxx
     qSlicerExtensionsInstallWidget.h
+    qSlicerExtensionsInstallWidget_p.h
     qSlicerExtensionsRestoreWidget.cxx
     qSlicerExtensionsRestoreWidget.h
     qSlicerExtensionsManageWidget.cxx
@@ -203,6 +204,7 @@ set(KIT_MOC_SRCS
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND KIT_MOC_SRCS
     qSlicerExtensionsInstallWidget.h
+    qSlicerExtensionsInstallWidget_p.h
     qSlicerExtensionsRestoreWidget.h
     qSlicerExtensionsManageWidget.h
     qSlicerExtensionsManagerDialog.h
@@ -212,11 +214,6 @@ if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   set(KIT_TEST_GENERATE_MOC_SRCS
     qSlicerExtensionsInstallWidget.cxx
     )
-  if(CTK_QT_VERSION VERSION_LESS "5")
-    QT4_GENERATE_MOCS(${KIT_TEST_GENERATE_MOC_SRCS})
-  else()
-    QT5_GENERATE_MOCS(${KIT_TEST_GENERATE_MOC_SRCS})
-  endif()
 endif()
 
 if(Slicer_BUILD_I18N_SUPPORT)
