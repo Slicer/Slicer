@@ -211,9 +211,6 @@ if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
     qSlicerExtensionsManagerWidget.h
     qSlicerSettingsExtensionsPanel.h
     )
-  set(KIT_TEST_GENERATE_MOC_SRCS
-    qSlicerExtensionsInstallWidget.cxx
-    )
 endif()
 
 if(Slicer_BUILD_I18N_SUPPORT)
