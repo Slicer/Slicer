@@ -93,6 +93,7 @@ set(KIT_SRCS
   qSlicerViewersToolBar_p.h
   qSlicerWebWidget.cxx
   qSlicerWebWidget.h
+  qSlicerWebWidget_p.h
   qSlicerWidget.cxx
   qSlicerWidget.h
   )
@@ -195,6 +196,7 @@ set(KIT_MOC_SRCS
   qSlicerViewersToolBar.h
   qSlicerViewersToolBar_p.h
   qSlicerWebWidget.h
+  qSlicerWebWidget_p.h
   qSlicerWidget.h
   )
 
@@ -207,6 +209,14 @@ if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
     qSlicerExtensionsManagerWidget.h
     qSlicerSettingsExtensionsPanel.h
     )
+  set(KIT_TEST_GENERATE_MOC_SRCS
+    qSlicerExtensionsInstallWidget.cxx
+    )
+  if(CTK_QT_VERSION VERSION_LESS "5")
+    QT4_GENERATE_MOCS(${KIT_TEST_GENERATE_MOC_SRCS})
+  else()
+    QT5_GENERATE_MOCS(${KIT_TEST_GENERATE_MOC_SRCS})
+  endif()
 endif()
 
 if(Slicer_BUILD_I18N_SUPPORT)

@@ -36,6 +36,7 @@ class QUrl;
 #ifdef Slicer_HAVE_WEBKIT_SUPPORT
 class QWebView;
 #else
+class QWebChannel;
 class QWebEngineView;
 #endif
 
@@ -89,6 +90,7 @@ protected slots:
   void handleSslErrors(QNetworkReply* reply, const QList<QSslError> &errors);
 
 protected:
+  qSlicerWebWidget(qSlicerWebWidgetPrivate* pimpl, QWidget* parent = 0);
   QScopedPointer<qSlicerWebWidgetPrivate> d_ptr;
 
   /// Event filter used to capture WebView Show and Hide events in order to both set

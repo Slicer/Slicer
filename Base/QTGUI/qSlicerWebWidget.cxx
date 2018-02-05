@@ -34,7 +34,7 @@
 #include <QWebEngineScript>
 #include <QWebEnginePage>
 #include <QWebEngineProfile>
-#include <qwebenginescriptcollection.h>
+#include <QWebEngineScriptCollection>
 #include <QFile>
 #endif
 
@@ -43,58 +43,7 @@
 
 // QtGUI includes
 #include "qSlicerWebWidget.h"
-#include "ui_qSlicerWebWidget.h"
-
-
-//-----------------------------------------------------------------------------
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
-
-class qSlicerWebEnginePage: public QWebEnginePage
-{
-public:
-  qSlicerWebEnginePage(QWebEngineProfile *profile, QObject *parent = nullptr)
-    : QWebEnginePage(profile, parent)
-  {
-  }
-protected:
-  virtual bool certificateError(const QWebEngineCertificateError &certificateError)
-  {
-    qDebug() << "[SSL] [" << qPrintable(certificateError.url().host().trimmed()) << "]"
-             << qPrintable(certificateError.errorDescription());
-    return false;
-  }
-};
-
-#endif
-
-//-----------------------------------------------------------------------------
-class qSlicerWebWidgetPrivate: public Ui_qSlicerWebWidget
-{
-  Q_DECLARE_PUBLIC(qSlicerWebWidget);
-protected:
-  qSlicerWebWidget* const q_ptr;
-
-public:
-  qSlicerWebWidgetPrivate(qSlicerWebWidget& object);
-
-  void init();
-
-#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
-  /// Convenient function to return the mainframe
-  QWebFrame* mainFrame();
-#endif
-
-  /// Convenient method to set "document.webkitHidden" property
-  void setDocumentWebkitHidden(bool value);
-
-  QTime DownloadTime;
-#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
-  QWebView* WebView;
-#else
-  QWebEngineView* WebView;
-  QWebChannel* WebChannel;
-#endif
-};
+#include "qSlicerWebWidget_p.h"
 
 // --------------------------------------------------------------------------
 qSlicerWebWidgetPrivate::qSlicerWebWidgetPrivate(qSlicerWebWidget& object)
@@ -124,13 +73,7 @@ void qSlicerWebWidgetPrivate::init()
   else
     {
     QByteArray webChannelJs = webChannelJsFile.readAll();
-    webChannelJs.append(
-        "\n"
-        "new QWebChannel(qt.webChannelTransport, function(channel) {"
-        " window.extensions_install_widget = channel.objects.extensions_install_widget;"
-        " console.log('From core: ' + extensions_install_widget.slicerOs);"
-        "});"
-        );
+    this->updateWebChannelScript(webChannelJs);
     QWebEngineScript script;
     script.setSourceCode(webChannelJs);
     script.setName("qwebchannel_appended.js");
@@ -143,6 +86,7 @@ void qSlicerWebWidgetPrivate::init()
   qSlicerWebEnginePage *myPage = new qSlicerWebEnginePage(profile, this->WebView);
   this->WebView->setPage(myPage);
   this->WebChannel = new QWebChannel(this->WebView->page());
+  this->initializeWebChannel(this->WebChannel);
   this->WebView->page()->setWebChannel(this->WebChannel);
 #endif
   this->verticalLayout->insertWidget(0, this->WebView);
@@ -209,6 +153,14 @@ qSlicerWebWidget::qSlicerWebWidget(QWidget* _parent)
 {
   Q_D(qSlicerWebWidget);
   d->init();
+}
+
+//-----------------------------------------------------------------------------
+qSlicerWebWidget::qSlicerWebWidget(
+  qSlicerWebWidgetPrivate* pimpl, QWidget* _parent)
+  : Superclass(_parent), d_ptr(pimpl)
+{
+  // Note: You are responsible to call init() in the constructor of derived class.
 }
 
 // --------------------------------------------------------------------------
