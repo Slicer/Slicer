@@ -1008,13 +1008,6 @@ QString qSlicerCoreApplication::releaseType()const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreApplication::isRelease()const
-{
-  qWarning() << Q_FUNC_INFO << "Deprecated: Use releaseType() instead";
-  return this->releaseType() == "Stable";
-}
-
-//-----------------------------------------------------------------------------
 void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* newMRMLScene)
 {
   Q_D(qSlicerCoreApplication);
