@@ -52,6 +52,11 @@ qSlicerWebWidgetPrivate::qSlicerWebWidgetPrivate(qSlicerWebWidget& object)
 }
 
 // --------------------------------------------------------------------------
+qSlicerWebWidgetPrivate::~qSlicerWebWidgetPrivate()
+{
+}
+
+// --------------------------------------------------------------------------
 void qSlicerWebWidgetPrivate::init()
 {
   Q_Q(qSlicerWebWidget);

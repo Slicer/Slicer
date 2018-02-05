@@ -67,8 +67,9 @@ protected:
 
 public:
   qSlicerWebWidgetPrivate(qSlicerWebWidget& object);
+  virtual ~qSlicerWebWidgetPrivate();
 
-  void init();
+  virtual void init();
 
 #if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
   /// Convenient function to return the mainframe
