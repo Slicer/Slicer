@@ -3,6 +3,7 @@ import os
 import vtk, qt, ctk, slicer, vtkITK
 from DICOMLib import DICOMPlugin
 from DICOMLib import DICOMLoadable
+from DICOMLib import DICOMUtils
 from DICOMLib import DICOMExportScalarVolume
 import logging
 
@@ -160,11 +161,6 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     loadable.selected = True
     # add it to the list of loadables later, if pixel data is available in at least one file
 
-    # while looping through files, keep track of their
-    # position and orientation for later use
-    positions = {}
-    orientations = {}
-
     # make subseries volumes based on tag differences
     subseriesTags = [
         "seriesInstanceUID",
@@ -184,15 +180,6 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     subseriesFiles = {}
     subseriesValues = {}
     for file in loadable.files:
-
-      # save position and orientation
-      positions[file] = slicer.dicomDatabase.fileValue(file,self.tags['position'])
-      if positions[file] == "":
-        positions[file] = None
-      orientations[file] = slicer.dicomDatabase.fileValue(file,self.tags['orientation'])
-      if orientations[file] == "":
-        orientations[file] = None
-
       # check for subseries values
       for tag in subseriesTags:
         value = slicer.dicomDatabase.fileValue(file,self.tags[tag])
@@ -250,100 +237,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     # now for each series and subseries, sort the images
     # by position and check for consistency
     #
-
-    # TODO: more consistency checks:
-    # - is there gantry tilt?
-    # - are the orientations the same for all slices?
     for loadable in loadables:
-      #
-      # use the first file to get the ImageOrientationPatient for the
-      # series and calculate the scan direction (assumed to be perpendicular
-      # to the acquisition plane)
-      #
-      value = slicer.dicomDatabase.fileValue(loadable.files[0], self.tags['numberOfFrames'])
-      if value != "":
-        loadable.warning += "Multi-frame image. If slice orientation or spacing is non-uniform then the image may be displayed incorrectly. Use with caution.  "
-
-      validGeometry = True
-      ref = {}
-      for tag in [self.tags['position'], self.tags['orientation']]:
-        value = slicer.dicomDatabase.fileValue(loadable.files[0], tag)
-        if not value or value == "":
-          loadable.warning += "Reference image in series does not contain geometry information.  Please use caution.  "
-          validGeometry = False
-          loadable.confidence = 0.2
-          break
-        ref[tag] = value
-
-      if not validGeometry:
-        continue
-
-      # get the geometry of the scan
-      # with respect to an arbitrary slice
-      sliceAxes = [float(zz) for zz in ref[self.tags['orientation']].split('\\')]
-      x = sliceAxes[:3]
-      y = sliceAxes[3:]
-      scanAxis = self.cross(x,y)
-      scanOrigin = [float(zz) for zz in ref[self.tags['position']].split('\\')]
-
-      acquisitionGeometryRegularizationEnabled = self.acquisitionGeometryRegularizationEnabled()
-
-      #
-      # for each file in series, calculate the distance along
-      # the scan axis, sort files by this
-      #
-      sortList = []
-      missingGeometry = False
-      for file in loadable.files:
-        if not positions[file]:
-          missingGeometry = True
-          break
-        position = [float(zz) for zz in positions[file].split('\\')]
-        vec = self.difference(position, scanOrigin)
-        dist = self.dot(vec, scanAxis)
-        sortList.append((file, dist))
-
-      if missingGeometry:
-        loadable.warning += "One or more images is missing geometry information.  "
-      else:
-        sortedFiles = sorted(sortList, key=lambda x: x[1])
-        distances = {}
-        loadable.files = []
-        for file,dist in sortedFiles:
-          loadable.files.append(file)
-          distances[file] = dist
-
-        #
-        # confirm equal spacing between slices
-        # - use variable 'epsilon' to determine the tolerance
-        #
-        spaceWarnings = 0
-        if len(loadable.files) > 1:
-          file0 = loadable.files[0]
-          file1 = loadable.files[1]
-          dist0 = distances[file0]
-          dist1 = distances[file1]
-          spacing0 = dist1 - dist0
-          n = 1
-          for fileN in loadable.files[1:]:
-            fileNminus1 = loadable.files[n-1]
-            distN = distances[fileN]
-            distNminus1 = distances[fileNminus1]
-            spacingN = distN - distNminus1
-            spaceError = spacingN - spacing0
-            if abs(spaceError) > self.epsilon:
-              spaceWarnings += 1
-              loadable.warning += "Images are not equally spaced (a difference of %g vs %g in spacings was detected)." % (spaceError, spacing0)
-              if acquisitionGeometryRegularizationEnabled:
-                loadable.warning += "  Slicer apply a transform to this series trying to regularize the volume.  Please use caution.  "
-              else:
-                loadable.warning += ("  If loaded image appears distorted, enable 'Acquisition geometry regularization'"
-                  " in Application settins / DICOM / DICOMScalarVolumePlugin.  Please use caution.  ")
-              break
-            n += 1
-
-        if spaceWarnings != 0:
-          logging.warning("Geometric issues were found with %d of the series.  Please use caution." % spaceWarnings)
+      loadable.files, distances, loadable.warning = DICOMUtils.getSortedImageFiles(loadable.files, self.epsilon)
 
     return loadables
 
@@ -362,22 +257,6 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
       return 0
     cmp = xNumber - yNumber
     return cmp
-
-  #
-  # math utilities for processing dicom volumes
-  # TODO: there must be good replacements for these
-  #
-  def cross(self, x, y):
-    return [x[1] * y[2] - x[2] * y[1],
-            x[2] * y[0] - x[0] * y[2],
-            x[0] * y[1] - x[1] * y[0]]
-
-  def difference(self, x, y):
-    return [x[0] - y[0], x[1] - y[1], x[2] - y[2]]
-
-  def dot(self, x, y):
-    return x[0] * y[0] + x[1] * y[1] + x[2] * y[2]
-
 
   #
   # different ways to load a set of dicom files:

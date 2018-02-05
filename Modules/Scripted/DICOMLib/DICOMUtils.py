@@ -385,3 +385,108 @@ class LoadDICOMFilesToDatabase:
 
   def __exit__(self, type, value, traceback):
     pass
+
+#------------------------------------------------------------------------------
+# TODO: more consistency checks:
+# - is there gantry tilt?
+# - are the orientations the same for all slices?
+def getSortedImageFiles(filePaths, epsilon=0.01):
+  """ Sort DICOM image files in increasing slice order (IS direction) corresponding to a series
+
+      Use the first file to get the ImageOrientationPatient for the
+      series and calculate the scan direction (assumed to be perpendicular
+      to the acquisition plane)
+
+      epsilon: Maximum difference in distance between slices to consider spacing uniform
+  """
+  if len(filePaths) == 0:
+    return [],[]
+
+  # Define DICOM tags used in this function
+  tags = {}
+  tags['position'] = "0020,0032"
+  tags['orientation'] = "0020,0037"
+  tags['numberOfFrames'] = "0028,0008"
+
+  warningText = ''
+  if slicer.dicomDatabase.fileValue(filePaths[0], tags['numberOfFrames']) != "":
+    warningText += "Multi-frame image. If slice orientation or spacing is non-uniform then the image may be displayed incorrectly. Use with caution.\n"
+
+  # Make sure first file contains valid geometry
+  ref = {}
+  for tag in [tags['position'], tags['orientation']]:
+    value = slicer.dicomDatabase.fileValue(filePaths[0], tag)
+    if not value or value == "":
+      logging.error("Reference image does not contain geometry information in series " + str(seriesUID))
+      return [],[]
+    ref[tag] = value
+
+  # Determine out-of-plane direction for first slice
+  import numpy as np
+  sliceAxes = [float(zz) for zz in ref[tags['orientation']].split('\\')]
+  x = np.array(sliceAxes[:3])
+  y = np.array(sliceAxes[3:])
+  scanAxis = np.cross(x,y)
+  scanOrigin = np.array([float(zz) for zz in ref[tags['position']].split('\\')])
+
+  # For each file in series, calculate the distance along the scan axis, sort files by this
+  sortList = []
+  missingGeometry = False
+  for file in filePaths:
+    positionStr = slicer.dicomDatabase.fileValue(file,tags['position'])
+    orientationStr = slicer.dicomDatabase.fileValue(file,tags['orientation'])
+    if not positionStr or positionStr == "" or not orientationStr or orientationStr == "":
+      missingGeometry = True
+      break
+    position = np.array([float(zz) for zz in positionStr.split('\\')])
+    vec = position - scanOrigin
+    dist = vec.dot(scanAxis)
+    sortList.append((file, dist))
+
+  if missingGeometry:
+    logging.error("One or more images is missing geometry information in series " + str(seriesUID))
+    return [],[]
+
+  # Sort files names by distance from reference slice
+  sortedFiles = sorted(sortList, key=lambda x: x[1])
+  files = []
+  distances = {}
+  for file,dist in sortedFiles:
+    files.append(file)
+    distances[file] = dist
+
+  # Get acquisition geometry regularization setting value
+  settings = qt.QSettings()
+  acquisitionGeometryRegularizationEnabled = (settings.value("DICOM/ScalarVolume/AcquisitionGeometryRegularization", "default") == "transform")
+
+  # Confirm equal spacing between slices
+  # - use variable 'epsilon' to determine the tolerance
+  spaceWarnings = 0
+  if len(files) > 1:
+    file0 = files[0]
+    file1 = files[1]
+    dist0 = distances[file0]
+    dist1 = distances[file1]
+    spacing0 = dist1 - dist0
+    n = 1
+    for fileN in files[1:]:
+      fileNminus1 = files[n-1]
+      distN = distances[fileN]
+      distNminus1 = distances[fileNminus1]
+      spacingN = distN - distNminus1
+      spaceError = spacingN - spacing0
+      if abs(spaceError) > epsilon:
+        spaceWarnings += 1
+        warningText += "Images are not equally spaced (a difference of %g vs %g in spacings was detected)." % (spaceError, spacing0)
+        if acquisitionGeometryRegularizationEnabled:
+          warningText += "  Slicer will apply a transform to this series trying to regularize the volume. Please use caution.\n"
+        else:
+          warningText += ("  If loaded image appears distorted, enable 'Acquisition geometry regularization'"
+            " in Application settins / DICOM / DICOMScalarVolumePlugin. Please use caution.\n")
+        break
+      n += 1
+
+  if spaceWarnings != 0:
+    logging.warning("Geometric issues were found with %d of the series. Please use caution.\n" % spaceWarnings)
+
+  return files, distances, warningText
