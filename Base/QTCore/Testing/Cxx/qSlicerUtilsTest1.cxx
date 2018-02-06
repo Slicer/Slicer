@@ -226,15 +226,15 @@ int qSlicerUtilsTest1(int, char * [] )
   // Test extractModuleNameFromLibraryName()
   //-----------------------------------------------------------------------------
   QStringList libraryNames;
-  libraryNames << "ThresholdLib.dll"
-               << "Threshold.dll"
-               << "libThreshold.so"
-               << "libThreshold.so.2.3"
-               << "libThreshold.dylib"
-               << "qSlicerThresholdModule.so"
-               << "qSlicerThreshold.dylib";
+  libraryNames << "VRLib.dll"
+               << "VR.dll"
+               << "libVR.so"
+               << "libVR.so.2.3"
+               << "libVR.dylib"
+               << "qSlicerVRModule.so"
+               << "qSlicerVR.dylib";
 
-  QString expectedModuleName = "Threshold";
+  QString expectedModuleName = "VR";
 
   foreach (const QString& libraryName, libraryNames)
     {
