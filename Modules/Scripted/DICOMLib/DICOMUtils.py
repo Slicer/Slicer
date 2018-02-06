@@ -407,6 +407,9 @@ def getSortedImageFiles(filePaths, epsilon=0.01):
   tags['position'] = "0020,0032"
   tags['orientation'] = "0020,0037"
   tags['numberOfFrames'] = "0028,0008"
+  tags['seriesUID'] = "0020,000E"
+
+  seriesUID = slicer.dicomDatabase.fileValue(filePaths[0], tags['seriesUID'])
 
   warningText = ''
   if slicer.dicomDatabase.fileValue(filePaths[0], tags['numberOfFrames']) != "":
