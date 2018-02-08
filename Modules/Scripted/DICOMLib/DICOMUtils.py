@@ -399,8 +399,9 @@ def getSortedImageFiles(filePaths, epsilon=0.01):
 
       epsilon: Maximum difference in distance between slices to consider spacing uniform
   """
+  warningText = ''
   if len(filePaths) == 0:
-    return [],[]
+    return filePaths, [], warningText
 
   # Define DICOM tags used in this function
   tags = {}
@@ -411,7 +412,6 @@ def getSortedImageFiles(filePaths, epsilon=0.01):
 
   seriesUID = slicer.dicomDatabase.fileValue(filePaths[0], tags['seriesUID'])
 
-  warningText = ''
   if slicer.dicomDatabase.fileValue(filePaths[0], tags['numberOfFrames']) != "":
     warningText += "Multi-frame image. If slice orientation or spacing is non-uniform then the image may be displayed incorrectly. Use with caution.\n"
 
@@ -420,8 +420,8 @@ def getSortedImageFiles(filePaths, epsilon=0.01):
   for tag in [tags['position'], tags['orientation']]:
     value = slicer.dicomDatabase.fileValue(filePaths[0], tag)
     if not value or value == "":
-      logging.error("Reference image does not contain geometry information in series " + str(seriesUID))
-      return [],[]
+      warningText += "Reference image in series does not contain geometry information. Please use caution.\n"
+      return filePaths, [], warningText
     ref[tag] = value
 
   # Determine out-of-plane direction for first slice
@@ -447,8 +447,8 @@ def getSortedImageFiles(filePaths, epsilon=0.01):
     sortList.append((file, dist))
 
   if missingGeometry:
-    logging.error("One or more images is missing geometry information in series " + str(seriesUID))
-    return [],[]
+    warningText += "One or more images is missing geometry information in series. Please use caution.\n"
+    return filePaths, [], warningText
 
   # Sort files names by distance from reference slice
   sortedFiles = sorted(sortList, key=lambda x: x[1])
