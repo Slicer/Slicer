@@ -61,7 +61,6 @@ if(NOT DEFINED CTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DCTK_QT_VERSION:STRING=5
       )
   endif()
-
   if(NOT DEFINED git_protocol)
     set(git_protocol "git")
   endif()
@@ -74,7 +73,7 @@ if(NOT DEFINED CTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    "9604eda05cbe1016395b7e197b8fde6b2d1181e9"
+    "a6da1ca8f9ff890c4587b4f16059f4cc54e32ecb"
     QUIET
     )
 
