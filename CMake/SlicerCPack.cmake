@@ -121,7 +121,7 @@ else()
 
   # Get Qt root directory
   set(qt_root_dir "")
-  if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER "4")
+  if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER "5")
     get_property(_filepath TARGET "Qt5::Core" PROPERTY LOCATION_RELEASE)
     get_filename_component(_dir ${_filepath} PATH)
     set(qt_root_dir "${_dir}/..")
