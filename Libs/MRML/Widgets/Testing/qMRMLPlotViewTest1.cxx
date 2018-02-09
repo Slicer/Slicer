@@ -32,7 +32,7 @@
 #include "qMRMLPlotViewControllerWidget.h"
 
 // MRML includes
-#include "vtkMRMLPlotDataNode.h"
+#include "vtkMRMLPlotSeriesNode.h"
 #include "vtkMRMLPlotChartNode.h"
 #include "vtkMRMLPlotViewNode.h"
 #include "vtkMRMLScene.h"
@@ -95,28 +95,28 @@ int qMRMLPlotViewTest1( int argc, char * argv [] )
   scene->AddNode(tableNode.GetPointer());
   tableNode->SetAndObserveTable(table.GetPointer());
 
-  // Create two plotDataNodes
-  vtkNew<vtkMRMLPlotDataNode> plotDataNode1;
-  vtkNew<vtkMRMLPlotDataNode> plotDataNode2;
-  scene->AddNode(plotDataNode1.GetPointer());
-  scene->AddNode(plotDataNode2.GetPointer());
+  // Create two plotSeriesNodes
+  vtkNew<vtkMRMLPlotSeriesNode> plotSeriesNode1;
+  vtkNew<vtkMRMLPlotSeriesNode> plotSeriesNode2;
+  scene->AddNode(plotSeriesNode1.GetPointer());
+  scene->AddNode(plotSeriesNode2.GetPointer());
 
   // Set and Observe the MRMLTableNode
-  plotDataNode1->SetAndObserveTableNodeID(tableNode->GetID());
-  plotDataNode1->SetXColumnName(tableNode->GetColumnName(0));
-  plotDataNode1->SetYColumnName(tableNode->GetColumnName(1));
-  plotDataNode2->SetAndObserveTableNodeID(tableNode->GetID());
-  plotDataNode2->SetXColumnName(tableNode->GetColumnName(0));
-  plotDataNode2->SetYColumnName(tableNode->GetColumnName(2));
+  plotSeriesNode1->SetAndObserveTableNodeID(tableNode->GetID());
+  plotSeriesNode1->SetXColumnName(tableNode->GetColumnName(0));
+  plotSeriesNode1->SetYColumnName(tableNode->GetColumnName(1));
+  plotSeriesNode2->SetAndObserveTableNodeID(tableNode->GetID());
+  plotSeriesNode2->SetXColumnName(tableNode->GetColumnName(0));
+  plotSeriesNode2->SetYColumnName(tableNode->GetColumnName(2));
 
   // Create a PlotChart node
   vtkNew<vtkMRMLPlotChartNode> plotChartNode;
   scene->AddNode(plotChartNode.GetPointer());
   // Add and Observe plots IDs in PlotChart
-  plotDataNode1->SetName(arrC->GetName());
-  plotChartNode->AddAndObservePlotDataNodeID(plotDataNode1->GetID());
-  plotDataNode2->SetName(arrS->GetName());
-  plotChartNode->AddAndObservePlotDataNodeID(plotDataNode2->GetID());
+  plotSeriesNode1->SetName(arrC->GetName());
+  plotChartNode->AddAndObservePlotSeriesNodeID(plotSeriesNode1->GetID());
+  plotSeriesNode2->SetName(arrS->GetName());
+  plotChartNode->AddAndObservePlotSeriesNodeID(plotSeriesNode2->GetID());
 
   // Create PlotView node
   vtkNew<vtkMRMLPlotViewNode> plotViewNode;

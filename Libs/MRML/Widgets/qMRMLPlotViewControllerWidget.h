@@ -33,7 +33,7 @@ class vtkMRMLPlotViewNode;
 
 ///
 /// qMRMLPlotViewControllerWidget offers controls to a Plot view
-/// (vtkMRMLPlotChartNode and vtkMRMLPlotDataNode). This controller
+/// (vtkMRMLPlotChartNode and vtkMRMLPlotSeriesNode). This controller
 /// allows for the content (data) and style (properties) of a plot to
 /// be defined.
 class QMRML_WIDGETS_EXPORT qMRMLPlotViewControllerWidget
@@ -67,48 +67,9 @@ public slots:
   /// PlotViewNodes are 1-to-1 with PlotViews
   void setMRMLPlotViewNode(vtkMRMLPlotViewNode* PlotViewNode);
 
-  /// Control the display of a grid in the chart.
-  void showGrid(bool show);
-
-  /// Control the display of the legend in the chart.
-  void showLegend(bool show);
-
-  /// Control the display of the title for the chart.
-  /// \sa setTitle
-  void showTitle(bool show);
-
   /// Adjust the chart viewer's field of view to match
   /// the extent of the chart axes.
   void fitPlotToAxes();
-
-  /// Conrtol the diplay of a label along the X-Axis.
-  /// \sa setXAxisLabel
-  void showXAxisLabel(bool show);
-
-  /// Control the display of a label along the Y-AXis.
-  /// \sa setYAxisLabel
-  void showYAxisLabel(bool show);
-
-  /// Set the title.
-  /// \sa showTitle
-  void setTitle(const QString& str);
-
-  /// Set the label along the X-Axis.
-  /// \sa showXAxisLabel
-  void setXAxisLabel(const QString& str);
-
-  /// Set the label along the Y-Axis.
-  /// \sa showYAxisLabel
-  void setYAxisLabel(const QString& str);
-
-  /// Show a popup to edit the title.
-  void editTitle();
-
-  /// Show a popup to edit the label along the X-Axis.
-  void editXAxisLabel();
-
-  /// Show a popup to edit the label along the Y-Axis.
-  void editYAxisLabel();
 
 protected slots:
   void updateWidgetFromMRML();

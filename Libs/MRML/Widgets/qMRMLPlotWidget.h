@@ -32,7 +32,6 @@ class qMRMLPlotWidgetPrivate;
 
 // MRML includes
 class vtkMRMLPlotViewNode;
-class vtkMRMLColorLogic;
 class vtkMRMLScene;
 
 /// \brief qMRMLPlotWidget is the toplevel Plotting widget that can be
@@ -70,10 +69,6 @@ public:
   /// \sa qMRMLPlotControllerWidget::PlotViewLabel()
   /// \sa PlotViewLabel()
   void setViewLabel(const QString& newPlotViewLabel);
-
-  /// Set the color logic that is used by the view.
-  Q_INVOKABLE void setColorLogic(vtkMRMLColorLogic* colorLogic);
-  Q_INVOKABLE vtkMRMLColorLogic* colorLogic()const;
 
 public slots:
   /// Set the current \a viewNode to observe

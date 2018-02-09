@@ -17,15 +17,15 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerSubjectHierarchyPlotChartPlugin_h
-#define __qSlicerSubjectHierarchyPlotChartPlugin_h
+#ifndef __qSlicerSubjectHierarchyPlotsPlugin_h
+#define __qSlicerSubjectHierarchyPlotsPlugin_h
 
 // SubjectHierarchy Plugins includes
 #include "qSlicerSubjectHierarchyAbstractPlugin.h"
 
-#include "qSlicerSubjectHierarchyModuleWidgetsExport.h"
+#include "qSlicerPlotsSubjectHierarchyPluginsExport.h"
 
-class qSlicerSubjectHierarchyPlotChartPluginPrivate;
+class qSlicerSubjectHierarchyPlotsPluginPrivate;
 class vtkMRMLPlotViewNode;
 
 // Due to some reason the Python wrapping of this class fails, therefore
@@ -35,15 +35,15 @@ class vtkMRMLPlotViewNode;
 //BTX
 
 /// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
-class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyPlotChartPlugin : public qSlicerSubjectHierarchyAbstractPlugin
+class Q_SLICER_PLOTS_SUBJECT_HIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyPlotsPlugin : public qSlicerSubjectHierarchyAbstractPlugin
 {
 public:
   Q_OBJECT
 
 public:
   typedef qSlicerSubjectHierarchyAbstractPlugin Superclass;
-  qSlicerSubjectHierarchyPlotChartPlugin(QObject* parent = NULL);
-  virtual ~qSlicerSubjectHierarchyPlotChartPlugin();
+  qSlicerSubjectHierarchyPlotsPlugin(QObject* parent = NULL);
+  virtual ~qSlicerSubjectHierarchyPlotsPlugin();
 
 public:
   /// Determines if a data node can be placed in the hierarchy using the actual plugin,
@@ -91,11 +91,11 @@ protected:
   vtkMRMLPlotViewNode* getPlotViewNode()const;
 
 protected:
-  QScopedPointer<qSlicerSubjectHierarchyPlotChartPluginPrivate> d_ptr;
+  QScopedPointer<qSlicerSubjectHierarchyPlotsPluginPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerSubjectHierarchyPlotChartPlugin);
-  Q_DISABLE_COPY(qSlicerSubjectHierarchyPlotChartPlugin);
+  Q_DECLARE_PRIVATE(qSlicerSubjectHierarchyPlotsPlugin);
+  Q_DISABLE_COPY(qSlicerSubjectHierarchyPlotsPlugin);
 };
 
 //ETX

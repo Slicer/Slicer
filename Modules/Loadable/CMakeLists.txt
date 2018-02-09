@@ -15,6 +15,7 @@ set(qtmodules
   DoubleArrays
   #Measurements
   Models
+  Plots
   SceneViews
   Segmentations
   SlicerWelcome

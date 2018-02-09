@@ -33,18 +33,16 @@
 // CTK includes
 #include <ctkAxesWidget.h>
 #include <ctkLogger.h>
-#include <ctkPopupWidget.h>
+//#include <ctkPopupWidget.h>
 
 // qMRML includes
 #include "qMRMLColors.h"
 #include "qMRMLPlotView_p.h"
 
 // MRML includes
-#include <vtkMRMLPlotDataNode.h>
+#include <vtkMRMLPlotSeriesNode.h>
 #include <vtkMRMLPlotChartNode.h>
 #include <vtkMRMLPlotViewNode.h>
-#include <vtkMRMLColorLogic.h>
-#include <vtkMRMLColorNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLTableNode.h>
 
@@ -54,16 +52,19 @@
 #include <vtkChartLegend.h>
 #include <vtkChartXY.h>
 #include <vtkCollection.h>
-#include <vtkColorSeries.h>
 #include <vtkContextMouseEvent.h>
 #include <vtkContextScene.h>
 #include <vtkContextView.h>
 #include <vtkNew.h>
 #include <vtkPen.h>
 #include <vtkPlot.h>
+#include <vtkPlotLine.h>
+#include <vtkPlotBar.h>
 #include <vtkRenderer.h>
+#include <vtkRenderWindow.h>
 #include <vtkSelection.h>
 #include <vtkStringArray.h>
+#include <vtkTable.h>
 #include <vtkTextProperty.h>
 
 //--------------------------------------------------------------------------
@@ -76,9 +77,9 @@ qMRMLPlotViewPrivate::qMRMLPlotViewPrivate(qMRMLPlotView& object)
   this->MRMLScene = 0;
   this->MRMLPlotViewNode = 0;
   this->MRMLPlotChartNode = 0;
-  this->ColorLogic = 0;
-  this->PinButton = 0;
-  this->PopupWidget = 0;
+  //this->PinButton = 0;
+//  this->PopupWidget = 0;
+  this->UpdatingWidgetFromMRML = false;
 }
 
 //---------------------------------------------------------------------------
@@ -86,46 +87,21 @@ qMRMLPlotViewPrivate::~qMRMLPlotViewPrivate()
 {
 }
 
-namespace
-{
-//----------------------------------------------------------------------------
-template <typename T> T StringToNumber(const char* num)
-{
-  std::stringstream ss;
-  ss << num;
-  T result;
-  return ss >> result ? result : 0;
-}
-
-//----------------------------------------------------------------------------
-int StringToInt(const char* str)
-{
-  return StringToNumber<int>(str);
-}
-
-}// end namespace
-
 //---------------------------------------------------------------------------
 void qMRMLPlotViewPrivate::init()
 {
   Q_Q(qMRMLPlotView);
 
-  // Let the QWebView expand in both directions
-  q->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-  this->PopupWidget = new ctkPopupWidget;
+/*  this->PopupWidget = new ctkPopupWidget;
   QHBoxLayout* popupLayout = new QHBoxLayout;
   popupLayout->addWidget(new QToolButton);
   this->PopupWidget->setLayout(popupLayout);
+  */
 
   if (!q->chart())
     {
     return;
     }
-
-  q->chart()->SetActionToButton(vtkChart::SELECT, vtkContextMouseEvent::LEFT_BUTTON);
-  q->chart()->SetActionToButton(vtkChart::PAN, vtkContextMouseEvent::MIDDLE_BUTTON);
-  q->chart()->SetActionToButton(vtkChart::ZOOM, vtkContextMouseEvent::RIGHT_BUTTON);
 
   qvtkConnect(q->chart(), vtkCommand::SelectionChangedEvent, this, SLOT(emitSelection()));
 
@@ -213,6 +189,205 @@ void qMRMLPlotViewPrivate::setMRMLScene(vtkMRMLScene* newScene)
   this->onPlotChartNodeChanged();
 }
 
+// --------------------------------------------------------------------------
+vtkMRMLPlotSeriesNode* qMRMLPlotViewPrivate::plotSeriesNodeFromPlot(vtkPlot* plot)
+{
+  if (plot == NULL)
+    {
+    return NULL;
+    }
+  QMap< vtkPlot*, QString >::iterator plotIt = this->MapPlotToPlotSeriesNodeID.find(plot);
+  if (plotIt == this->MapPlotToPlotSeriesNodeID.end())
+    {
+    return NULL;
+    }
+  QString plotSeriesNodeID = plotIt.value();
+  if (plotSeriesNodeID.isEmpty())
+    {
+    return NULL;
+    }
+  vtkMRMLPlotSeriesNode* plotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(this->mrmlScene()->GetNodeByID(plotSeriesNodeID.toLatin1().constData()));
+  if (plotSeriesNode == NULL)
+    {
+    // node is not in the scene anymore
+    this->MapPlotToPlotSeriesNodeID.erase(plotIt);
+    }
+  return plotSeriesNode;
+}
+
+// --------------------------------------------------------------------------
+vtkSmartPointer<vtkPlot> qMRMLPlotViewPrivate::updatePlotFromPlotSeriesNode(vtkMRMLPlotSeriesNode* plotSeriesNode, vtkPlot* existingPlot)
+{
+  if (plotSeriesNode == NULL)
+    {
+    return NULL;
+    }
+  vtkMRMLTableNode* tableNode = plotSeriesNode->GetTableNode();
+  if (tableNode == NULL || tableNode->GetTable() == NULL)
+    {
+    return NULL;
+    }
+  vtkTable *table = tableNode->GetTable();
+  std::string yColumnName = plotSeriesNode->GetYColumnName();
+  if (yColumnName.empty())
+    {
+    return NULL;
+    }
+  vtkAbstractArray* yColumn = table->GetColumnByName(yColumnName.c_str());
+  if (!yColumn)
+    {
+    return NULL;
+    }
+  int yColumnType = yColumn->GetDataType();
+  if (yColumnType == VTK_STRING || yColumnType == VTK_BIT)
+    {
+    qWarning() << Q_FUNC_INFO << ": Y column has unsupported data type: 'string' or 'bit'";
+    return NULL;
+    }
+
+  std::string xColumnName = plotSeriesNode->GetXColumnName();
+  vtkAbstractArray* xColumn = NULL;
+  if (!xColumnName.empty())
+    {
+    xColumn = table->GetColumnByName(xColumnName.c_str());
+    }
+
+  if (plotSeriesNode->IsXColumnRequired())
+    {
+    if (!xColumn)
+      {
+      return NULL;
+      }
+    int xColumnType = xColumn->GetDataType();
+    if (xColumnType == VTK_STRING || xColumnType == VTK_BIT)
+      {
+      qWarning() << Q_FUNC_INFO << ": X column has unsupported data type for scatter plot: 'string' or 'bit'";
+      return NULL;
+      }
+    }
+
+  vtkSmartPointer<vtkPlot> newPlot = existingPlot;
+  int plotType = plotSeriesNode->GetPlotType();
+  switch (plotType)
+    {
+    case vtkMRMLPlotSeriesNode::PlotTypeScatter:
+    case vtkMRMLPlotSeriesNode::PlotTypeLine:
+      if (!existingPlot || !existingPlot->IsA("vtkPlotLine"))
+        {
+        newPlot = vtkSmartPointer<vtkPlotLine>::New();
+        }
+      break;
+    case vtkMRMLPlotSeriesNode::PlotTypeBar:
+    case vtkMRMLPlotSeriesNode::PlotTypeScatterBar:
+      if (!existingPlot || !existingPlot->IsA("vtkPlotBar"))
+        {
+        newPlot = vtkSmartPointer<vtkPlotBar>::New();
+        }
+      break;
+    default:
+      return NULL;
+    }
+
+  // Common properties
+  newPlot->SetWidth(plotSeriesNode->GetLineWidth());
+  double* color = plotSeriesNode->GetColor();
+  newPlot->SetColor(color[0], color[1], color[2]);
+  newPlot->SetOpacity(plotSeriesNode->GetOpacity());
+  if (newPlot->GetPen())
+    {
+    newPlot->GetPen()->SetOpacityF(plotSeriesNode->GetOpacity());
+    if (plotType == vtkMRMLPlotSeriesNode::PlotTypeBar)
+      {
+      newPlot->GetPen()->SetLineType(vtkPen::SOLID_LINE);
+      }
+    else
+      {
+      int lineStyleVtk = vtkPen::NO_PEN;
+      switch (plotSeriesNode->GetLineStyle())
+      {
+      case vtkMRMLPlotSeriesNode::LineStyleNone: lineStyleVtk = vtkPen::NO_PEN; break;
+      case vtkMRMLPlotSeriesNode::LineStyleSolid: lineStyleVtk = vtkPen::SOLID_LINE; break;
+      case vtkMRMLPlotSeriesNode::LineStyleDash: lineStyleVtk = vtkPen::DASH_LINE; break;
+      case vtkMRMLPlotSeriesNode::LineStyleDot: lineStyleVtk = vtkPen::DOT_LINE; break;
+      case vtkMRMLPlotSeriesNode::LineStyleDashDot: lineStyleVtk = vtkPen::DASH_DOT_LINE; break;
+      case vtkMRMLPlotSeriesNode::LineStyleDashDotDot: lineStyleVtk = vtkPen::DASH_DOT_DOT_LINE; break;
+      default:
+        lineStyleVtk = vtkPen::NO_PEN;
+      }
+      newPlot->GetPen()->SetLineType(lineStyleVtk);
+      }
+    }
+
+  // Type-specific properties
+  vtkPlotLine* plotLine = vtkPlotLine::SafeDownCast(newPlot);
+  if (plotLine)
+    {
+    plotLine->SetMarkerSize(plotSeriesNode->GetMarkerSize());
+
+    int markerStyleVtk = VTK_MARKER_UNKNOWN;
+    switch (plotSeriesNode->GetMarkerStyle())
+      {
+      case vtkMRMLPlotSeriesNode::MarkerStyleNone: markerStyleVtk = VTK_MARKER_NONE; break;
+      case vtkMRMLPlotSeriesNode::MarkerStyleCross: markerStyleVtk = VTK_MARKER_CROSS; break;
+      case vtkMRMLPlotSeriesNode::MarkerStylePlus: markerStyleVtk = VTK_MARKER_PLUS; break;
+      case vtkMRMLPlotSeriesNode::MarkerStyleSquare: markerStyleVtk = VTK_MARKER_SQUARE; break;
+      case vtkMRMLPlotSeriesNode::MarkerStyleCircle: markerStyleVtk = VTK_MARKER_CIRCLE; break;
+      case vtkMRMLPlotSeriesNode::MarkerStyleDiamond: markerStyleVtk = VTK_MARKER_DIAMOND; break;
+      default:
+        markerStyleVtk = VTK_MARKER_UNKNOWN;
+      }
+    plotLine->SetMarkerStyle(markerStyleVtk);
+    }
+
+  vtkStringArray* labelArray = NULL;
+  std::string labelColumnName = plotSeriesNode->GetLabelColumnName();
+  if (!labelColumnName.empty())
+    {
+    labelArray = vtkStringArray::SafeDownCast(table->GetColumnByName(labelColumnName.c_str()));
+    }
+  newPlot->SetIndexedLabels(labelArray);
+
+  if (plotSeriesNode->IsXColumnRequired())
+    {
+    newPlot->SetUseIndexForXSeries(false);
+    newPlot->SetInputData(table, xColumnName, yColumnName);
+    if (labelArray)
+      {
+      newPlot->SetTooltipLabelFormat("%l = (%x, %y) %i");
+      }
+    else
+      {
+      newPlot->SetTooltipLabelFormat("%l = (%x, %y)");
+      }
+    }
+  else
+    {
+    newPlot->SetUseIndexForXSeries(true);
+    // In the case of Indexes, SetInputData still needs a proper Column.
+    newPlot->SetInputData(table, yColumnName, yColumnName);
+    if (labelArray)
+      {
+      newPlot->SetTooltipLabelFormat("%i: %l = %y");
+      }
+    else
+      {
+      newPlot->SetTooltipLabelFormat("%l = %y");
+      }
+    }
+
+  if (plotSeriesNode->GetName())
+    {
+    newPlot->SetLabel(plotSeriesNode->GetName());
+    }
+  else
+    {
+    newPlot->SetLabel(yColumnName);
+    }
+
+  // TODO: set labels as axis text using vtkAxis::SetCustomTickPositions(vtkDoubleArray *positions, vtkStringArray *labels)
+
+  return newPlot;
+}
 
 // --------------------------------------------------------------------------
 void qMRMLPlotViewPrivate::startProcessing()
@@ -247,6 +422,8 @@ void qMRMLPlotViewPrivate::onPlotChartNodeChanged()
     vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
 
   this->MRMLPlotChartNode = newPlotChartNode;
+
+  this->updateWidgetFromMRML();
 }
 
 // --------------------------------------------------------------------------
@@ -263,85 +440,17 @@ void qMRMLPlotViewPrivate::RecalculateBounds()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLPlotViewPrivate::switchSelectionMode()
+void qMRMLPlotViewPrivate::switchInteractionMode()
 {
   Q_Q(qMRMLPlotView);
 
-  if (!q->chart())
+  if (!this->MRMLPlotViewNode)
     {
     return;
     }
-
-  int buttonSelect, buttonSelectPoly, buttonSelectClickAndDrag;
-  buttonSelect = q->chart()->GetActionToButton(vtkChart::SELECT);
-  buttonSelectPoly = q->chart()->GetActionToButton(vtkChart::SELECT_POLYGON);
-  buttonSelectClickAndDrag = q->chart()->GetActionToButton(vtkChart::CLICK_AND_DRAG);
-  if (buttonSelect > 0 && buttonSelectPoly < 0 && buttonSelectClickAndDrag < 0)
-    {
-    q->chart()->SetActionToButton(vtkChart::SELECT_POLYGON, vtkContextMouseEvent::LEFT_BUTTON);
-    }
-  else if (buttonSelect < 0 && buttonSelectPoly > 0 && buttonSelectClickAndDrag < 0)
-    {
-    q->chart()->SetActionToButton(vtkChart::CLICK_AND_DRAG, vtkContextMouseEvent::LEFT_BUTTON);
-    }
-  else if (buttonSelect < 0 && buttonSelectPoly < 0 && buttonSelectClickAndDrag > 0)
-    {
-    q->chart()->SetActionToButton(vtkChart::SELECT, vtkContextMouseEvent::LEFT_BUTTON);
-    }
-  else if (buttonSelectClickAndDrag < 0 && buttonSelectPoly < 0 && buttonSelect < 0)
-    {
-    q->chart()->SetActionToButton(vtkChart::SELECT, vtkContextMouseEvent::LEFT_BUTTON);
-  }
-}
-
-// --------------------------------------------------------------------------
-void qMRMLPlotViewPrivate::switchLeftAndMiddleClick()
-{
-  Q_Q(qMRMLPlotView);
-
-  if (!q->chart())
-    {
-    return;
-    }
-
-  int buttonPan, buttonSelect, buttonSelectPoly, buttonSelectClickAndDrag;
-  buttonPan = q->chart()->GetActionToButton(vtkChart::PAN);
-  buttonSelect = q->chart()->GetActionToButton(vtkChart::SELECT);
-  buttonSelectPoly = q->chart()->GetActionToButton(vtkChart::SELECT_POLYGON);
-  buttonSelectClickAndDrag = q->chart()->GetActionToButton(vtkChart::CLICK_AND_DRAG);
-
-  if (buttonPan == 2)
-    {
-    q->chart()->SetActionToButton(vtkChart::PAN, vtkContextMouseEvent::LEFT_BUTTON);
-    if (buttonSelect == 1)
-      {
-      q->chart()->SetActionToButton(vtkChart::SELECT, vtkContextMouseEvent::MIDDLE_BUTTON);
-      }
-    else if (buttonSelectPoly == 1)
-      {
-      q->chart()->SetActionToButton(vtkChart::SELECT_POLYGON, vtkContextMouseEvent::MIDDLE_BUTTON);
-      }
-    else if (buttonSelectClickAndDrag == 1)
-      {
-      q->chart()->SetActionToButton(vtkChart::CLICK_AND_DRAG, vtkContextMouseEvent::MIDDLE_BUTTON);
-      }
-    }
-  else if (buttonPan == 1)
-    {
-    q->chart()->SetActionToButton(vtkChart::PAN, vtkContextMouseEvent::MIDDLE_BUTTON);
-    if (buttonSelect == 2)
-      {
-      q->chart()->SetActionToButton(vtkChart::SELECT, vtkContextMouseEvent::LEFT_BUTTON);
-      }
-    else if (buttonSelectPoly == 2)
-      {
-      q->chart()->SetActionToButton(vtkChart::SELECT_POLYGON, vtkContextMouseEvent::LEFT_BUTTON);
-      }
-    else if (buttonSelectClickAndDrag == 2)
-      {
-      q->chart()->SetActionToButton(vtkChart::CLICK_AND_DRAG, vtkContextMouseEvent::LEFT_BUTTON);
-      }
-    }
+  int interactionMode = this->MRMLPlotViewNode->GetInteractionMode();
+  interactionMode = (interactionMode + 1) % vtkMRMLPlotViewNode::InteractionMode_Last;
+  this->MRMLPlotViewNode->SetInteractionMode(interactionMode);
 }
 
 // --------------------------------------------------------------------------
@@ -356,51 +465,42 @@ void qMRMLPlotViewPrivate::emitSelection()
 
   const char *PlotChartNodeID = this->MRMLPlotViewNode->GetPlotChartNodeID();
 
-  vtkMRMLPlotChartNode* pln = vtkMRMLPlotChartNode::SafeDownCast
+  vtkMRMLPlotChartNode* plotChartNode = vtkMRMLPlotChartNode::SafeDownCast
     (this->MRMLScene->GetNodeByID(PlotChartNodeID));
-  if (!pln)
+  if (!plotChartNode)
     {
     return;
     }
 
-  vtkNew<vtkStringArray> mrmlPlotDataIDs;
+  vtkNew<vtkStringArray> mrmlPlotSeriesIDs;
   vtkNew<vtkCollection> selectionCol;
 
   for (int plotIndex = 0; plotIndex < q->chart()->GetNumberOfPlots(); plotIndex++)
     {
-    vtkPlot *Plot = q->chart()->GetPlot(plotIndex);
-    if (!Plot)
+    vtkPlot *plot = q->chart()->GetPlot(plotIndex);
+    if (!plot)
       {
       continue;
       }
-    vtkIdTypeArray *Selection = Plot->GetSelection();
-    if (!Selection)
+    vtkIdTypeArray *selection = plot->GetSelection();
+    if (!selection)
       {
       continue;
       }
 
-    if (Selection->GetNumberOfValues() > 0)
+    if (selection->GetNumberOfValues() > 0)
       {
-      selectionCol->AddItem(Selection);
-      // get MRMLPlotDataNode from pln and find the Node with the same vtkPlot address
-      int numPlotDataNodes = pln->GetNumberOfNodeReferences(pln->GetPlotDataNodeReferenceRole());
-      for (int plotDataNodeIndex = 0; plotDataNodeIndex < numPlotDataNodes; plotDataNodeIndex++)
+      selectionCol->AddItem(selection);
+      vtkMRMLPlotSeriesNode* plotSeriesNode = this->plotSeriesNodeFromPlot(plot);
+      if (plotSeriesNode)
         {
-        vtkMRMLPlotDataNode *PlotDataNode = pln->GetNthPlotDataNode(plotDataNodeIndex);
-        if (!PlotDataNode)
-          {
-          continue;
-          }
-        if (PlotDataNode->GetPlot() == Plot)
-          {
-          mrmlPlotDataIDs->InsertNextValue(PlotDataNode->GetID());
-          break;
-          }
+        // valid plot data node found
+        mrmlPlotSeriesIDs->InsertNextValue(plotSeriesNode->GetID());
         }
       }
     }
   // emit the signal
-  emit q->dataSelected(mrmlPlotDataIDs.GetPointer(), selectionCol.GetPointer());
+  emit q->dataSelected(mrmlPlotSeriesIDs.GetPointer(), selectionCol.GetPointer());
 }
 
 // --------------------------------------------------------------------------
@@ -409,17 +509,47 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
   Q_Q(qMRMLPlotView);
 
   if (!this->MRMLScene || !this->MRMLPlotViewNode
-      || !q->isEnabled() || !q->chart() || !q->chart()->GetLegend())
+    || !q->isEnabled() || !q->chart() || !q->chart()->GetLegend())
     {
     return;
     }
 
-  // Get the PlotChartNode
-  const char *PlotChartNodeID = this->MRMLPlotViewNode->GetPlotChartNodeID();
+  if (this->UpdatingWidgetFromMRML)
+    {
+    return;
+    }
+  this->UpdatingWidgetFromMRML = true;
 
-  vtkMRMLPlotChartNode* pln = vtkMRMLPlotChartNode::SafeDownCast
-    (this->MRMLScene->GetNodeByID(PlotChartNodeID));
-  if (!pln)
+  // Set interaction mode
+  int interactionMode = this->MRMLPlotViewNode->GetInteractionMode();
+  switch (interactionMode)
+  {
+  case vtkMRMLPlotViewNode::InteractionModePanView:
+    q->chart()->SetActionToButton(vtkChart::PAN, vtkContextMouseEvent::LEFT_BUTTON);
+    q->chart()->SetActionToButton(vtkChart::ZOOM, vtkContextMouseEvent::MIDDLE_BUTTON);
+    q->chart()->SetActionToButton(vtkChart::ZOOM_AXIS, vtkContextMouseEvent::RIGHT_BUTTON);
+    break;
+  case vtkMRMLPlotViewNode::InteractionModeSelectPoints:
+    q->chart()->SetActionToButton(vtkChart::SELECT, vtkContextMouseEvent::LEFT_BUTTON);
+    q->chart()->SetActionToButton(vtkChart::PAN, vtkContextMouseEvent::MIDDLE_BUTTON);
+    q->chart()->SetActionToButton(vtkChart::ZOOM_AXIS, vtkContextMouseEvent::RIGHT_BUTTON);
+    break;
+  case vtkMRMLPlotViewNode::InteractionModeFreehandSelectPoints:
+    q->chart()->SetActionToButton(vtkChart::SELECT_POLYGON, vtkContextMouseEvent::LEFT_BUTTON);
+    q->chart()->SetActionToButton(vtkChart::PAN, vtkContextMouseEvent::MIDDLE_BUTTON);
+    q->chart()->SetActionToButton(vtkChart::ZOOM_AXIS, vtkContextMouseEvent::RIGHT_BUTTON);
+    break;
+  case vtkMRMLPlotViewNode::InteractionModeMovePoints:
+    q->chart()->SetActionToButton(vtkChart::CLICK_AND_DRAG, vtkContextMouseEvent::LEFT_BUTTON);
+    q->chart()->SetActionToButton(vtkChart::PAN, vtkContextMouseEvent::MIDDLE_BUTTON);
+    q->chart()->SetActionToButton(vtkChart::ZOOM_AXIS, vtkContextMouseEvent::RIGHT_BUTTON);
+    break;
+  }
+
+  // Get the PlotChartNode
+  const char *plotChartNodeID = this->MRMLPlotViewNode->GetPlotChartNodeID();
+  vtkMRMLPlotChartNode* plotChartNode = vtkMRMLPlotChartNode::SafeDownCast(this->MRMLScene->GetNodeByID(plotChartNodeID));
+  if (!plotChartNode)
     {
     // Clean all the plots in vtkChartXY
     while(q->chart()->GetNumberOfPlots() > 0)
@@ -435,323 +565,163 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
         }
       q->removePlot(q->chart()->GetPlot(0));
       }
+    this->MapPlotToPlotSeriesNodeID.clear();
+    this->UpdatingWidgetFromMRML = false;
     return;
     }
 
-  int plnWasModifying = pln->StartModify();
+  // Enable moving of data points by drag-and-drop if point moving is enabled
+  // both in the plot chart and view nodes.
+  q->chart()->SetDragPointAlongX(this->MRMLPlotViewNode->GetEnablePointMoveAlongX()
+    && plotChartNode->GetEnablePointMoveAlongX());
+  q->chart()->SetDragPointAlongY(this->MRMLPlotViewNode->GetEnablePointMoveAlongY()
+    && plotChartNode->GetEnablePointMoveAlongY());
 
-  std::string defaultPlotColorNodeID = "vtkMRMLProceduralColorNodeRandomIntegers";
-  if (this->ColorLogic)
+  vtkSmartPointer<vtkCollection> allPlotSeriesNodesInScene = vtkSmartPointer<vtkCollection>::Take
+    (this->mrmlScene()->GetNodesByClass("vtkMRMLPlotSeriesNode"));
+
+  std::vector<std::string> plotSeriesNodesIDs;
+  plotChartNode->GetPlotSeriesNodeIDs(plotSeriesNodesIDs);
+
+  // Plot data nodes that should not be added to the chart
+  // because they are already added or because they should not be added
+  // (as not all necessary table data are available).
+  std::set< vtkMRMLPlotSeriesNode* > plotSeriesNodesNotToAdd;
+
+  // Remove plots from chart that are no longer needed or available
+  for (int chartPlotSeriesNodesIndex = q->chart()->GetNumberOfPlots()-1; chartPlotSeriesNodesIndex >= 0; chartPlotSeriesNodesIndex--)
     {
-    defaultPlotColorNodeID = this->ColorLogic->GetDefaultPlotColorNodeID();
-    }
-  else
-    {
-    qWarning() << Q_FUNC_INFO << ": colorLogic is not defined for PlotView, using default color node "
-      << defaultPlotColorNodeID.c_str();
-    }
-
-  vtkMRMLColorNode *defaultColorNode = vtkMRMLColorNode::SafeDownCast
-    (this->MRMLScene->GetNodeByID(defaultPlotColorNodeID));
-  vtkMRMLColorNode *colorNode = vtkMRMLColorNode::SafeDownCast
-    (this->MRMLScene->GetNodeByID(pln->GetAttribute("LookupTable")));
-
-  if (!colorNode)
-    {
-    colorNode = defaultColorNode;
-    }
-
-  if (!colorNode)
-    {
-    return;
-    }
-
-  vtkSmartPointer<vtkCollection> plotDataNodes = vtkSmartPointer<vtkCollection>::Take
-    (this->mrmlScene()->GetNodesByClass("vtkMRMLPlotDataNode"));
-
-  std::vector<std::string> plotDataNodesIDs;
-  pln->GetPlotIDs(plotDataNodesIDs);
-
-  for(int chartPlotDataNodesIndex = 0; chartPlotDataNodesIndex < q->chart()->GetNumberOfPlots(); chartPlotDataNodesIndex++)
-    {
-    bool plotFound = false;
-    vtkPlot *plot = q->chart()->GetPlot(chartPlotDataNodesIndex);
+    vtkPlot *plot = q->chart()->GetPlot(chartPlotSeriesNodesIndex);
     if (!plot)
       {
       continue;
       }
-    for(int plotDataNodesIndex = 0; plotDataNodesIndex < plotDataNodes->GetNumberOfItems(); plotDataNodesIndex++)
+    // If it is NULL then it means that there is no usable associated plot data node
+    // and so the plot should be removed.
+    vtkMRMLPlotSeriesNode* plotSeriesNode = this->plotSeriesNodeFromPlot(plot);
+    if (plotSeriesNode != NULL)
       {
-      vtkMRMLPlotDataNode* plotDataNode = vtkMRMLPlotDataNode::SafeDownCast
-        (plotDataNodes->GetItemAsObject(plotDataNodesIndex));
-      if (!plotDataNode)
+      plotSeriesNodesNotToAdd.insert(plotSeriesNode);
+      if (std::find(plotSeriesNodesIDs.begin(), plotSeriesNodesIDs.end(),
+        plotSeriesNode->GetID()) == plotSeriesNodesIDs.end())
         {
-        continue;
-        }
-      if (plot == plotDataNode->GetPlot())
-        {
-        plotFound = true;
-        break;
+        // plot data node is no longer associated with this chart
+        plotSeriesNode = NULL;
         }
       }
-    if (!plotFound)
+
+    bool deletePlot = true;
+    if (plotSeriesNode)
       {
+      vtkSmartPointer<vtkPlot> newPlot = this->updatePlotFromPlotSeriesNode(plotSeriesNode, plot);
+      if (newPlot == plot)
+        {
+        // keep current plot
+        deletePlot = false;
+        }
+      else
+        {
+        this->MapPlotToPlotSeriesNodeID[plot] = plotSeriesNode->GetID();
+        q->addPlot(newPlot);
+        }
+      }
+
+    if (deletePlot)
+      {
+      // This if is necessary for a BUG at VTK level:
+      // in the case of a plot removed with corner ID 0,
+      // when successively the addPlot method is called
+      // (to add the same plot instance to vtkChartXY) it will
+      // fail to setup the graph in the vtkChartXY render.
+      if (q->chart()->GetPlotCorner(plot) == 0)
+        {
+        q->chart()->SetPlotCorner(plot, 1);
+        }
+
       q->removePlot(plot);
+      this->MapPlotToPlotSeriesNodeID.remove(plot);
       }
     }
 
-  std::vector<int> plotDataNodesWasModifying(plotDataNodes->GetNumberOfItems(), 0);
-  for(int plotDataNodesIndex = 0; plotDataNodesIndex < plotDataNodes->GetNumberOfItems(); plotDataNodesIndex++)
+  // Add missing plots to the chart
+  for (std::vector<std::string>::iterator it = plotSeriesNodesIDs.begin(); it != plotSeriesNodesIDs.end(); ++it)
     {
-    vtkMRMLPlotDataNode* plotDataNode = vtkMRMLPlotDataNode::SafeDownCast
-      (plotDataNodes->GetItemAsObject(plotDataNodesIndex));
-    if (!plotDataNode)
+    vtkMRMLPlotSeriesNode* plotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(this->mrmlScene()->GetNodeByID(it->c_str()));
+    if (!plotSeriesNode || plotSeriesNodesNotToAdd.find(plotSeriesNode) != plotSeriesNodesNotToAdd.end())
+      {
+      // node is invalid or need not to be added
+      continue;
+      }
+    vtkSmartPointer<vtkPlot> newPlot = this->updatePlotFromPlotSeriesNode(plotSeriesNode, NULL);
+    if (!newPlot)
       {
       continue;
       }
-    plotDataNodesWasModifying[plotDataNodesIndex] = plotDataNode->StartModify();
-    vtkPlot* plot = plotDataNode->GetPlot();
-    if (!plot)
-      {
-      continue;
-      }
-
-    bool plotFound = false;
-    std::vector<std::string>::iterator it = plotDataNodesIDs.begin();
-    for (; it != plotDataNodesIDs.end(); ++it)
-      {
-      if ((*it).compare(plotDataNode->GetID()))
-        {
-        continue;
-        }
-
-      // Check if the plot color is the default
-      unsigned char rgba[4] = {0, 0, 0, 255};
-      plotDataNode->GetPlotColor(rgba);
-      if (rgba[0] == 0 &&
-          rgba[1] == 0 &&
-          rgba[2] == 0 &&
-          rgba[3] == 255)
-        {
-        // Set color of the plot
-        double color[4] = {0., 0., 0., 0.};
-
-        vtkIdType plotIndex = pln->GetColorPlotIndexFromID(plotDataNode->GetID());
-        if (plotIndex < 0)
-          {
-          plotIndex = 0;
-          }
-        colorNode->GetColor(plotIndex, color);
-        plotDataNode->SetPlotColor(color);
-        }
-
-      // Add plot if not already in chart
-      if (q->plotIndex(plot) < vtkIdType(0))
-        {
-        q->addPlot(plot);
-        }
-      plotFound = true;
-      break;
-      }
-
-    vtkMRMLTableNode *mrmlTableNode = plotDataNode->GetTableNode();
-    if (!plotFound || !mrmlTableNode ||
-        (mrmlTableNode->GetColumnIndex(plotDataNode->GetXColumnName()) < 0 &&
-         plotDataNode->GetXColumnName().compare("Indexes")) ||
-        mrmlTableNode->GetColumnIndex(plotDataNode->GetYColumnName()) < 0)
-      {
-        // This if is necessary for a BUG at VTK level:
-        // in the case of a plot removed with corner ID 0,
-        // when successively the addPlot method is called
-        // (to add the same plot instance to vtkChartXY) it will
-        // fail to setup the graph in the vtkChartXY render.
-        if (q->chart()->GetPlotCorner(plot) == 0)
-          {
-          q->chart()->SetPlotCorner(plot, 1);
-          }
-        q->removePlot(plot);
-      }
+    this->MapPlotToPlotSeriesNodeID[newPlot] = plotSeriesNode->GetID();
+    q->addPlot(newPlot);
     }
+
+  int fontTypeIndex = q->chart()->GetTitleProperties()->GetFontFamilyFromString(plotChartNode->GetFontType() ? plotChartNode->GetFontType() : "Arial");
 
   // Setting Title
-  if (!strcmp(pln->GetAttribute("ShowTitle"), "on"))
+  if (plotChartNode->GetTitleVisibility())
     {
-    q->chart()->SetTitle(pln->GetAttribute("TitleName"));
+    q->chart()->SetTitle(plotChartNode->GetTitle() ? plotChartNode->GetTitle() : "");
     }
   else
     {
     q->chart()->SetTitle("");
     }
+  q->chart()->GetTitleProperties()->SetFontFamily(fontTypeIndex);
+  q->chart()->GetTitleProperties()->SetFontSize(plotChartNode->GetTitleFontSize());
 
   // Setting Legend
-  if (!strcmp(pln->GetAttribute("ShowLegend"), "on"))
-    {
-    q->chart()->SetShowLegend(true);
-    }
-  else
-    {
-    q->chart()->SetShowLegend(false);
-    }
-
-  // Setting Title and Legend Properties
-  int VTKFont = q->chart()->GetTitleProperties()->GetFontFamilyFromString(pln->GetAttribute("FontType"));
-
-  q->chart()->GetTitleProperties()->SetFontFamily(VTKFont);
-  q->chart()->GetTitleProperties()->SetFontSize(StringToInt(pln->GetAttribute("TitleFontSize")));
-  q->chart()->GetLegend()->GetLabelProperties()->SetFontFamily(VTKFont);
-
-  // Setting ClickAndDrag action draggable along X and Y axes
-  if (!strcmp(pln->GetAttribute("ClickAndDragAlongX"), "on"))
-    {
-    q->chart()->SetDragPointAlongX(true);
-    }
-  else
-    {
-    q->chart()->SetDragPointAlongX(false);
-    }
-
-  if (!strcmp(pln->GetAttribute("ClickAndDragAlongY"), "on"))
-    {
-    q->chart()->SetDragPointAlongY(true);
-    }
-  else
-    {
-    q->chart()->SetDragPointAlongY(false);
-    }
+  q->chart()->SetShowLegend(plotChartNode->GetLegendVisibility());
+  q->chart()->GetLegend()->GetLabelProperties()->SetFontFamily(fontTypeIndex);
 
   // Setting Axes
-  // Assuming the the Top and Bottom axes are the "X" axis
-  vtkAxis *axis = q->chart()->GetAxis(vtkAxis::BOTTOM);
-  if (axis)
+  const unsigned int numberOfAxisIDs = 4;
+  int axisIDs[numberOfAxisIDs] = { vtkAxis::BOTTOM, vtkAxis::TOP, vtkAxis::LEFT, vtkAxis::RIGHT };
+  for (int axisIndex = 0; axisIndex < numberOfAxisIDs; ++axisIndex)
     {
-    if (!strcmp(pln->GetAttribute("ShowXAxisLabel"), "on"))
-      {
-      axis->SetTitle(pln->GetAttribute("XAxisLabelName"));
-      }
-    else
-      {
-      axis->SetTitle("");
-      }
-
-    if (!strcmp(pln->GetAttribute("ShowGrid"), "on"))
-      {
-      axis->SetGridVisible(true);
-      }
-    else
-      {
-      axis->SetGridVisible(false);
-      }
-
-    axis->GetTitleProperties()->SetFontFamily(VTKFont);
-    axis->GetTitleProperties()->SetFontSize(StringToInt(pln->GetAttribute("AxisTitleFontSize")));
-    axis->GetLabelProperties()->SetFontFamily(VTKFont);
-    axis->GetLabelProperties()->SetFontSize(StringToInt(pln->GetAttribute("AxisLabelFontSize")));
-    }
-
-  axis = q->chart()->GetAxis(vtkAxis::TOP);
-  if (axis)
-    {
-    if (!strcmp(pln->GetAttribute("ShowXAxisLabel"), "on"))
-      {
-      axis->SetTitle(pln->GetAttribute("XAxisLabelName"));
-      }
-    else
-      {
-      axis->SetTitle("");
-      }
-
-    if (!strcmp(pln->GetAttribute("ShowGrid"), "on"))
-      {
-      axis->SetGridVisible(true);
-      }
-    else
-      {
-      axis->SetGridVisible(false);
-      }
-
-    axis->GetTitleProperties()->SetFontFamily(VTKFont);
-    axis->GetTitleProperties()->SetFontSize(StringToInt(pln->GetAttribute("AxisTitleFontSize")));
-    axis->GetLabelProperties()->SetFontFamily(VTKFont);
-    axis->GetLabelProperties()->SetFontSize(StringToInt(pln->GetAttribute("AxisLabelFontSize")));
-    }
-
-  // Assuming the Left and Right axis are the "Y" axis
-  axis = q->chart()->GetAxis(vtkAxis::LEFT);
-  if (axis)
-    {
-    if (!strcmp(pln->GetAttribute("ShowYAxisLabel"), "on"))
-      {
-      axis->SetTitle(pln->GetAttribute("YAxisLabelName"));
-      }
-    else
-      {
-      axis->SetTitle("");
-      }
-
-    if (!strcmp(pln->GetAttribute("ShowGrid"), "on"))
-      {
-      axis->SetGridVisible(true);
-      }
-    else
-      {
-      axis->SetGridVisible(false);
-      }
-
-    axis->GetTitleProperties()->SetFontFamily(VTKFont);
-    axis->GetTitleProperties()->SetFontSize(StringToInt(pln->GetAttribute("AxisTitleFontSize")));
-    axis->GetLabelProperties()->SetFontFamily(VTKFont);
-    axis->GetLabelProperties()->SetFontSize(StringToInt(pln->GetAttribute("AxisLabelFontSize")));
-    }
-
-  axis = q->chart()->GetAxis(vtkAxis::RIGHT);
-  if (axis)
-    {
-    if (!strcmp(pln->GetAttribute("ShowYAxisLabel"), "on"))
-      {
-      axis->SetTitle(pln->GetAttribute("YAxisLabelName"));
-      }
-    else
-      {
-      axis->SetTitle("");
-      }
-
-    if (!strcmp(pln->GetAttribute("ShowGrid"), "on"))
-      {
-      axis->SetGridVisible(true);
-      }
-    else
-      {
-      axis->SetGridVisible(false);
-      }
-
-    axis->GetTitleProperties()->SetFontFamily(VTKFont);
-    axis->GetTitleProperties()->SetFontSize(StringToInt(pln->GetAttribute("AxisTitleFontSize")));
-    axis->GetLabelProperties()->SetFontFamily(VTKFont);
-    axis->GetLabelProperties()->SetFontSize(StringToInt(pln->GetAttribute("AxisLabelFontSize")));
-    }
-
-  if (!strcmp(pln->GetAttribute("FitPlotToAxes"), "on"))
-    {
-    this->RecalculateBounds();
-    pln->SetAttribute("FitPlotToAxes", "off");
-    }
-
-  // Repaint the chart scene
-  q->scene()->SetDirty(true);
-
-  // End MRML Modifications
-  pln->EndModify(plnWasModifying);
-
-  for(int plotDataNodesIndex = 0; plotDataNodesIndex < plotDataNodes->GetNumberOfItems(); plotDataNodesIndex++)
-    {
-    vtkMRMLPlotDataNode* plotDataNode = vtkMRMLPlotDataNode::SafeDownCast
-      (plotDataNodes->GetItemAsObject(plotDataNodesIndex));
-    if (!plotDataNode)
+    int axisID = axisIDs[axisIndex];
+    vtkAxis *axis = q->chart()->GetAxis(axisID);
+    if (!axis)
       {
       continue;
       }
-    plotDataNode->EndModify(plotDataNodesWasModifying[plotDataNodesIndex]);
+    // Assuming the the Top and Bottom axes are the "X" axis
+    if (axisID == vtkAxis::BOTTOM || axisID == vtkAxis::TOP)
+      {
+      if (plotChartNode->GetXAxisTitleVisibility())
+        {
+        axis->SetTitle(plotChartNode->GetXAxisTitle() ? plotChartNode->GetXAxisTitle() : "");
+        }
+      else
+        {
+        axis->SetTitle("");
+        }
+      }
+    else if (axisID == vtkAxis::LEFT || axisID == vtkAxis::RIGHT)
+      {
+      if (plotChartNode->GetYAxisTitleVisibility())
+        {
+        axis->SetTitle(plotChartNode->GetYAxisTitle() ? plotChartNode->GetYAxisTitle() : "");
+        }
+      else
+        {
+        axis->SetTitle("");
+        }
+      }
+    axis->SetGridVisible(plotChartNode->GetGridVisibility());
+    axis->GetTitleProperties()->SetFontFamily(fontTypeIndex);
+    axis->GetTitleProperties()->SetFontSize(plotChartNode->GetAxisTitleFontSize());
+    axis->GetLabelProperties()->SetFontFamily(fontTypeIndex);
+    axis->GetLabelProperties()->SetFontSize(plotChartNode->GetAxisLabelFontSize());
     }
+
+  q->scene()->SetDirty(true);
+  this->UpdatingWidgetFromMRML = false;
 }
 
 // --------------------------------------------------------------------------
@@ -804,8 +774,12 @@ void qMRMLPlotView::setMRMLPlotViewNode(vtkMRMLPlotViewNode* newPlotViewNode)
   d->qvtkReconnect(d->MRMLPlotViewNode, newPlotViewNode,
     vtkMRMLPlotViewNode::PlotChartNodeChangedEvent, d, SLOT(updateWidgetFromMRML()));
 
-  // connect on PlotDataNodeChangedEvent (e.g. PlotView is looking at a
-  // different PlotDataNode
+  // update when plot view interaction mode is changed
+  d->qvtkReconnect(d->MRMLPlotViewNode, newPlotViewNode,
+    vtkCommand::ModifiedEvent, d, SLOT(updateWidgetFromMRML()));
+
+  // connect on PlotSeriesNodeChangedEvent (e.g. PlotView is looking at a
+  // different PlotSeriesNode
   d->qvtkReconnect(d->MRMLPlotViewNode, newPlotViewNode,
     vtkMRMLPlotViewNode::PlotChartNodeChangedEvent, d, SLOT(onPlotChartNodeChanged()));
 
@@ -825,20 +799,6 @@ vtkMRMLPlotViewNode* qMRMLPlotView::mrmlPlotViewNode()const
 {
   Q_D(const qMRMLPlotView);
   return d->MRMLPlotViewNode;
-}
-
-//---------------------------------------------------------------------------
-void qMRMLPlotView::setColorLogic(vtkMRMLColorLogic *colorLogic)
-{
-  Q_D(qMRMLPlotView);
-  d->ColorLogic = colorLogic;
-}
-
-//---------------------------------------------------------------------------
-vtkMRMLColorLogic *qMRMLPlotView::colorLogic() const
-{
-  Q_D(const qMRMLPlotView);
-  return d->ColorLogic;
 }
 
 //---------------------------------------------------------------------------
@@ -863,15 +823,11 @@ void qMRMLPlotView::keyPressEvent(QKeyEvent *event)
 
   if (event->key() == Qt::Key_S)
     {
-    d->switchSelectionMode();
+    d->switchInteractionMode();
     }
   if (event->key() == Qt::Key_R)
     {
     d->RecalculateBounds();
-    }
-  if (event->key() == Qt::Key_Shift)
-    {
-    d->switchLeftAndMiddleClick();
     }
 }
 
@@ -880,9 +836,13 @@ void qMRMLPlotView::keyReleaseEvent(QKeyEvent *event)
 {
   Q_D(qMRMLPlotView);
   this->Superclass::keyPressEvent(event);
+}
 
-  if (event->key() == Qt::Key_Shift)
-    {
-    d->switchLeftAndMiddleClick();
-    }
+// --------------------------------------------------------------------------
+void qMRMLPlotView::fitToContent()
+{
+  Q_D(qMRMLPlotView);
+  d->RecalculateBounds();
+  // Repaint the chart scene
+  this->scene()->SetDirty(true);
 }

@@ -39,7 +39,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelHierarchyNode.h"
-#include "vtkMRMLPlotDataNode.h"
+#include "vtkMRMLPlotSeriesNode.h"
 #include "vtkMRMLPlotChartNode.h"
 #include "vtkMRMLPlotViewNode.h"
 #include "vtkMRMLProceduralColorNode.h"
@@ -218,7 +218,7 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLTableNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLTableStorageNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLTableViewNode >::New() );
-  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLPlotDataNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLPlotSeriesNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLPlotChartNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLPlotViewNode >::New() );
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLSubjectHierarchyNode>::New()); // Increments next subject hierarchy item ID
@@ -1272,6 +1272,11 @@ vtkMRMLNode* vtkMRMLScene::AddNewNodeByClass(
     }
   vtkSmartPointer<vtkMRMLNode> nodeToAdd =
       vtkSmartPointer<vtkMRMLNode>::Take(this->CreateNodeByClass(className.c_str()));
+  if (nodeToAdd == NULL)
+    {
+    vtkErrorMacro("AddNewNodeByClass: failed to create node by class " << className);
+    return NULL;
+    }
   if (!nodeBaseName.empty())
     {
     nodeToAdd->SetName(nodeBaseName.c_str());

@@ -225,7 +225,7 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
   // Generate javascript for the data, ticks, options
   //
   //
-  QStringList plotData;
+  QStringList plotSeries;
   QStringList plotXAxisTicks;
   QStringList plotOptions;
 
@@ -234,25 +234,25 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
   if (!type || (type && !strcmp(type, "Line")))
     {
     // line charts are the default
-    plotData << this->lineData(cn);
+    plotSeries << this->lineData(cn);
     plotXAxisTicks << this->lineXAxisTicks(cn);
     plotOptions << this->lineOptions(cn);
     }
   else if (type && !strcmp(type, "Scatter"))
     {
-    plotData << this->scatterData(cn);
+    plotSeries << this->scatterData(cn);
     plotXAxisTicks << this->scatterXAxisTicks(cn);
     plotOptions << this->scatterOptions(cn);
     }
   else if (type && !strcmp(type, "Bar"))
     {
-    plotData << this->barData(cn);
+    plotSeries << this->barData(cn);
     plotXAxisTicks << this->barXAxisTicks(cn);
     plotOptions << this->barOptions(cn);
     }
   else if (type && !strcmp(type, "Box"))
     {
-    plotData << this->boxData(cn);
+    plotSeries << this->boxData(cn);
     plotXAxisTicks << this->boxXAxisTicks(cn);
     plotOptions << this->boxOptions(cn);
     }
@@ -282,8 +282,8 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
     "$(window).resize( resizeSlot );";
 
   // data mouse over slot - represented in javascript
-  QStringList plotDataMouseOverSlot;
-  plotDataMouseOverSlot <<
+  QStringList plotSeriesMouseOverSlot;
+  plotSeriesMouseOverSlot <<
     "var dataMouseOverSlot = function(ev, seriesIndex, pointIndex, data) {"
     "try {"
     "qtobject.onDataMouseOver(seriesIndex, pointIndex, data[0], data[1]);"
@@ -291,8 +291,8 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
     "};";
 
   // data point click slot - represented in javascript
-  QStringList plotDataPointClickedSlot;
-  plotDataPointClickedSlot <<
+  QStringList plotSeriesPointClickedSlot;
+  plotSeriesPointClickedSlot <<
     "var dataPointClickedSlot = function(ev, seriesIndex, pointIndex, data) {"
     "try {"
     "qtobject.onDataPointClicked(seriesIndex, pointIndex, data[0], data[1]);"
@@ -300,15 +300,15 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
     "};";
 
   // bind a data point clicked to the slot
-  QStringList plotDataMouseOverHook;
-  plotDataMouseOverHook <<
-    "$('#chart').bind('jqplotDataMouseOver', dataMouseOverSlot);";
+  QStringList plotSeriesMouseOverHook;
+  plotSeriesMouseOverHook <<
+    "$('#chart').bind('jqplotSeriesMouseOver', dataMouseOverSlot);";
 
 
   // bind a data point clicked to the slot
-  QStringList plotDataPointClickedHook;
-  plotDataPointClickedHook <<
-    "$('#chart').bind('jqplotDataClick', dataPointClickedSlot);";
+  QStringList plotSeriesPointClickedHook;
+  plotSeriesPointClickedHook <<
+    "$('#chart').bind('jqplotSeriesClick', dataPointClickedSlot);";
 
   // Assemble the plot
   //
@@ -325,7 +325,7 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
     "<div id=\"chart\"></div>"                       // 2. container for the chart
     "<script class=\"code\" type=\"text/javascript\">"    // 3. container for js
     "$(document).ready(function(){";                 // 4. ready function
-  plot << plotData;     // insert data
+  plot << plotSeries;     // insert data
   plot << plotXAxisTicks;  // insert ticks if needed
   plot << plotOptions;  // insert options
   plot <<
@@ -333,10 +333,10 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
   plot << plotResizeSlot;        // insert definition of the resizeSlot
   plot << plotInitialResize;     // insert an initial call to resizeSlot
   plot << plotResizeHook;        // insert hook to call resizeSlot on page resize
-  plot << plotDataMouseOverSlot; // insert definition of the data mouse over slot
-  plot << plotDataMouseOverHook; // insert the binding to the slot
-  plot << plotDataPointClickedSlot; // insert definition of the data clicked slot
-  plot << plotDataPointClickedHook; // insert the binding to the slot
+  plot << plotSeriesMouseOverSlot; // insert definition of the data mouse over slot
+  plot << plotSeriesMouseOverHook; // insert the binding to the slot
+  plot << plotSeriesPointClickedSlot; // insert definition of the data clicked slot
+  plot << plotSeriesPointClickedHook; // insert the binding to the slot
 
   plot <<
     "});"                   // end of function and end of call to ready()

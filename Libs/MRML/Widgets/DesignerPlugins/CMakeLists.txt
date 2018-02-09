@@ -61,8 +61,6 @@ set(${KIT}_SRCS
   qMRMLNodeComboBoxPlugin.h
   qMRMLPlotViewControllerWidgetPlugin.cxx
   qMRMLPlotViewControllerWidgetPlugin.h
-  qMRMLPlotViewInformationWidgetPlugin.cxx
-  qMRMLPlotViewInformationWidgetPlugin.h
   qMRMLPlotWidgetPlugin.cxx
   qMRMLPlotWidgetPlugin.h
   qMRMLRangeWidgetPlugin.cxx
@@ -130,7 +128,6 @@ set(${KIT}_MOC_SRCS
   qMRMLNodeAttributeTableWidgetPlugin.h
   qMRMLNodeComboBoxPlugin.h
   qMRMLPlotViewControllerWidgetPlugin.h
-  qMRMLPlotViewInformationWidgetPlugin.h
   qMRMLPlotWidgetPlugin.h
   qMRMLRangeWidgetPlugin.h
   qMRMLROIWidgetPlugin.h

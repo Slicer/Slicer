@@ -214,9 +214,6 @@ public:
 
   virtual QString viewClassName()const;
 
-  vtkMRMLColorLogic* colorLogic()const;
-  void setColorLogic(vtkMRMLColorLogic* colorLogic);
-
 protected:
   virtual QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode);
   vtkMRMLColorLogic* ColorLogic;

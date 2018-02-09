@@ -33,6 +33,7 @@
 
 // Qt includes
 class QToolButton;
+#include <QMap>
 
 // VTK includes
 #include <vtkWeakPointer.h>
@@ -40,19 +41,20 @@ class QToolButton;
 // CTK includes
 #include <ctkPimpl.h>
 #include <ctkVTKObject.h>
-class ctkPopupWidget;
+//class ctkPopupWidget;
 
 // qMRML includes
 #include "qMRMLPlotView.h"
 
 // vtk includes
 #include <vtkSmartPointer.h>
+class vtkPlot;
 
+class vtkMRMLPlotSeriesNode;
 class vtkMRMLPlotViewNode;
 class vtkMRMLPlotChartNode;
-class vtkMRMLColorLogic;
-class vtkMRMLColorNode;
 class vtkObject;
+class vtkPlot;
 class vtkStringArray;
 
 //-----------------------------------------------------------------------------
@@ -72,6 +74,12 @@ public:
   void setMRMLScene(vtkMRMLScene* scene);
   vtkMRMLScene *mrmlScene();
 
+  vtkMRMLPlotSeriesNode* plotSeriesNodeFromPlot(vtkPlot* plot);
+
+  // Tries to update the existing plot. If returns NULL then it means the existing plot must be deleted.
+  // If returned plot differs from the existin plot, then existing plot must be replaced by the returned one.
+  vtkSmartPointer<vtkPlot> updatePlotFromPlotSeriesNode(vtkMRMLPlotSeriesNode* plotSeriesNode, vtkPlot* existingPlot);
+
 public slots:
   /// Handle MRML scene event
   void startProcessing();
@@ -81,21 +89,22 @@ public slots:
   void onPlotChartNodeChanged();
 
   void RecalculateBounds();
-  void switchSelectionMode();
-  void switchLeftAndMiddleClick();
+  void switchInteractionMode();
 
   void emitSelection();
 
 protected:
 
-  vtkMRMLScene*                      MRMLScene;
-  vtkMRMLPlotViewNode*               MRMLPlotViewNode;
-  vtkMRMLPlotChartNode*              MRMLPlotChartNode;
+  vtkWeakPointer<vtkMRMLScene>         MRMLScene;
+  vtkWeakPointer<vtkMRMLPlotViewNode>  MRMLPlotViewNode;
+  vtkWeakPointer<vtkMRMLPlotChartNode> MRMLPlotChartNode;
 
-  vtkWeakPointer<vtkMRMLColorLogic>  ColorLogic;
+  //QToolButton*                       PinButton;
+//  ctkPopupWidget*                    PopupWidget;
 
-  QToolButton*                       PinButton;
-  ctkPopupWidget*                    PopupWidget;
+  bool                               UpdatingWidgetFromMRML;
+
+  QMap< vtkPlot*, QString > MapPlotToPlotSeriesNodeID;
 };
 
 #endif

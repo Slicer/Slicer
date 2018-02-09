@@ -30,7 +30,6 @@ class qMRMLPlotViewPrivate;
 
 // MRML includes
 class vtkMRMLPlotViewNode;
-class vtkMRMLColorLogic;
 class vtkMRMLScene;
 
 // VTK includes
@@ -60,13 +59,6 @@ public:
   /// Get the PlotView node observed by view.
   vtkMRMLPlotViewNode* mrmlPlotViewNode()const;
 
-  /// Set the application color logic for default node
-  /// color.
-  void setColorLogic(vtkMRMLColorLogic* colorLogic);
-
-  /// Get the application color logic. 0 by default.
-  vtkMRMLColorLogic* colorLogic()const;
-
   /// Redefine the sizeHint so layouts work properly.
   virtual QSize sizeHint() const;
 
@@ -78,6 +70,9 @@ public slots:
   /// Set the current \a viewNode to observe.
   void setMRMLPlotViewNode(vtkMRMLPlotViewNode* newPlotViewNode);
 
+  /// Change axis limits to show all content.
+  void fitToContent();
+
 signals:
 
   /// When designing custom qMRMLWidget in the designer, you can connect the
@@ -86,9 +81,9 @@ signals:
   void mrmlSceneChanged(vtkMRMLScene*);
 
   /// Signal emitted when a data point or more has been selected. Returns
-  /// the MRMLPlotDataNodes IDs and the correspective arrays with
+  /// the MRMLPlotSeriesNodes IDs and the correspective arrays with
   /// the data points ids (vtkIdTypeArray).
-  void dataSelected(vtkStringArray* mrmlPlotDataIDs, vtkCollection* selectionCol);
+  void dataSelected(vtkStringArray* mrmlPlotSeriesIDs, vtkCollection* selectionCol);
 
 protected:
   QScopedPointer<qMRMLPlotViewPrivate> d_ptr;

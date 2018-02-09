@@ -175,6 +175,7 @@ public:
   /// Get column index of the first column by the specified name.
   /// Returns -1 if no such column is found.
   int GetColumnIndex(const char* columnName);
+  int GetColumnIndex(const std::string &columnName);
 
   ///
   /// Get column index from column pointer.

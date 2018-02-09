@@ -34,6 +34,15 @@ public:
   vtkTypeMacro(vtkMRMLPlotViewNode, vtkMRMLAbstractViewNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  /// Enum of the available plot types
+  enum {
+    InteractionModePanView,
+    InteractionModeSelectPoints,
+    InteractionModeFreehandSelectPoints,
+    InteractionModeMovePoints,
+    InteractionMode_Last // must be last
+  };
+
   //--------------------------------------------------------------------------
   /// MRMLNode methods
   //--------------------------------------------------------------------------
@@ -75,6 +84,31 @@ public:
   /// Default value is true.
   vtkSetMacro (DoPropagatePlotChartSelection, bool );
   vtkGetMacro (DoPropagatePlotChartSelection, bool );
+
+  /// Get/Set interaction mode for mouse left-click and drag.
+  /// InteractionModePanView: pans chart view
+  /// InteractionModeSelectPoints: select points with rectangular shape
+  /// InteractionModeFreehandSelectPoints: select points with free-hand drawn shape
+  /// InteractionModeMovePoints: move plot data points
+  vtkGetMacro(InteractionMode, int);
+  vtkSetMacro(InteractionMode, int);
+
+  /// Enable moving of data points along X axis by click-and-drag in plot views.
+  /// Points may only be moved in the view if moving is enabled in the plot chart node as well.
+  vtkBooleanMacro(EnablePointMoveAlongX, bool);
+  vtkGetMacro(EnablePointMoveAlongX, bool);
+  vtkSetMacro(EnablePointMoveAlongX, bool);
+
+  /// Enable moving of data points along Y axis by click-and-drag in plot views.
+  /// Points may only be moved in the view if moving is enabled in the plot chart node as well.
+  vtkBooleanMacro(EnablePointMoveAlongY, bool);
+  vtkGetMacro(EnablePointMoveAlongY, bool);
+  vtkSetMacro(EnablePointMoveAlongY, bool);
+
+  ///
+  /// Convert between interaction mode ID and name
+  static const char *GetInteractionModeAsString(int id);
+  static int GetInteractionModeFromString(const char *name);
 
   ///
   /// Method to propagate events generated in mrml.
@@ -121,6 +155,10 @@ protected:
   virtual void OnNodeReferenceRemoved(vtkMRMLNodeReference *reference) VTK_OVERRIDE;
 
   bool DoPropagatePlotChartSelection;
+
+  int InteractionMode;
+  bool EnablePointMoveAlongX;
+  bool EnablePointMoveAlongY;
 };
 
 #endif

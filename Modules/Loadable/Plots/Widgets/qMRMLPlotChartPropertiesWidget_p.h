@@ -17,8 +17,8 @@
 
 ==============================================================================*/
 
-#ifndef __qMRMLPlotViewInformationWidget_p_h
-#define __qMRMLPlotViewInformationWidget_p_h
+#ifndef __qMRMLPlotChartPropertiesWidget_p_h
+#define __qMRMLPlotChartPropertiesWidget_p_h
 
 //
 //  W A R N I N G
@@ -36,8 +36,8 @@
 #include <ctkVTKObject.h>
 
 // qMRML includes
-#include "qMRMLPlotViewInformationWidget.h"
-#include "ui_qMRMLPlotViewInformationWidget.h"
+#include "qMRMLPlotChartPropertiesWidget.h"
+#include "ui_qMRMLPlotChartPropertiesWidget.h"
 
 /// VTK includes
 #include <vtkSmartPointer.h>
@@ -45,25 +45,24 @@
 #include <vtkImageData.h>
 
 class QAction;
-class ctkVTKPlotViewView;
 class vtkMRMLPlotChartNode;
-class vtkMRMLPlotDataNode;
+class vtkMRMLPlotSeriesNode;
 class vtkMRMLPlotViewNode;
 class vtkObject;
 
 //-----------------------------------------------------------------------------
-class qMRMLPlotViewInformationWidgetPrivate
+class qMRMLPlotChartPropertiesWidgetPrivate
  : public QObject
- , public Ui_qMRMLPlotViewInformationWidget
+ , public Ui_qMRMLPlotChartPropertiesWidget
 {
   Q_OBJECT
   QVTK_OBJECT
-  Q_DECLARE_PUBLIC(qMRMLPlotViewInformationWidget);
+  Q_DECLARE_PUBLIC(qMRMLPlotChartPropertiesWidget);
 protected:
-  qMRMLPlotViewInformationWidget* const q_ptr;
+  qMRMLPlotChartPropertiesWidget* const q_ptr;
 public:
-  qMRMLPlotViewInformationWidgetPrivate(qMRMLPlotViewInformationWidget& object);
-  ~qMRMLPlotViewInformationWidgetPrivate();
+  qMRMLPlotChartPropertiesWidgetPrivate(qMRMLPlotChartPropertiesWidget& object);
+  ~qMRMLPlotChartPropertiesWidgetPrivate();
 
   void setupUi(qMRMLWidget* widget);
 
@@ -71,11 +70,7 @@ public:
 
 public slots:
   /// Update widget state using the associated MRML PlotView node.
-  void updateWidgetFromMRMLPlotViewNode();
-
-  /// Called after a ColorNode is selected
-  /// using the associated qMRMLNodeComboBox.
-  void onColorNodeChanged(vtkMRMLNode* node);
+  void updateWidgetFromMRML();
 
   /// Change the type of font used in the plot.
   void onFontTypeChanged(const QString& type);
@@ -89,52 +84,16 @@ public slots:
   /// Change the font size of the labels of the axes.
   void onAxisLabelFontSizeChanged(double size);
 
-  /// Activate Click and Drag for x-Axis.
-  void activateClickAndDragX(bool activate);
-
-  /// Activate Click and Drag for y-Axis.
-  void activateClickAndDragY(bool activate);
-
-  /// Update widget state using the associated MRML PlotData node.
-  void updateWidgetFromMRMLPlotDataNode();
-
-  /// Called after a PlotDataNode is selected
+  /// Called after an PlotSeriesNode is selected
   /// using the associated qMRMLNodeComboBox.
-  void onPlotDataNodeChanged(vtkMRMLNode* node);
+  void onPlotSeriesNodesSelected();
 
-  /// Called after a TableNode is selected
+  /// Called after a PlotSeriesNode is added
   /// using the associated qMRMLNodeComboBox.
-  void onInputTableNodeChanged(vtkMRMLNode* node);
-
-  /// Change the x-Axis of the plot.
-  void onXAxisChanged(const QString& xAxis);
-
-  /// Change the y-Axis of the plot.
-  void onYAxisChanged(const QString& yAxis);
-
-  /// Change the type of plot (Line, Scatter, Bar).
-  void onPlotTypeChanged(const QString& type);
-
-  /// Change markers style for Line and Scatter plots.
-  void onMarkersStyleChanged(const QString& style);
-
-  /// Change markers size for Line and Scatter plots.
-  void onMarkersSizeChanged(double size);
-
-  /// Change line widht for Line plots.
-  void onLineWidthChanged(double width);
-
-  /// Change the color of a single PlotDataNode.
-  void onPlotDataColorChanged(const QColor& color);
-
-  /// Copy the current PlotDataNode.
-  /// Additionally, the node reference will be added
-  /// to the active PlotChartNode.
-  void onCopyPlotDataNodeClicked();
+  void onPlotSeriesNodeAdded(vtkMRMLNode* node);
 
 public:
-  vtkWeakPointer<vtkMRMLPlotViewNode>    PlotViewNode;
-  vtkWeakPointer<vtkMRMLPlotDataNode>    PlotDataNode;
+  vtkWeakPointer<vtkMRMLPlotChartNode> PlotChartNode;
 
 };
 

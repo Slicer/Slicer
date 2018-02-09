@@ -373,6 +373,12 @@ int vtkMRMLTableNode::GetColumnIndex(const char* columnName)
 }
 
 //----------------------------------------------------------------------------
+int vtkMRMLTableNode::GetColumnIndex(const std::string &columnName)
+{
+  return this->GetColumnIndex(columnName.c_str());
+}
+
+//----------------------------------------------------------------------------
 int vtkMRMLTableNode::GetColumnIndex(vtkAbstractArray* column)
 {
   if (column == 0)

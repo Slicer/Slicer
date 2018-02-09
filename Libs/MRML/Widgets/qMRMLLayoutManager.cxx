@@ -201,24 +201,6 @@ QString qMRMLLayoutPlotViewFactory::viewClassName() const
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLColorLogic *qMRMLLayoutPlotViewFactory::colorLogic() const
-{
-  return this->ColorLogic;
-}
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutPlotViewFactory::setColorLogic(vtkMRMLColorLogic *colorLogic)
-{
-  this->ColorLogic = colorLogic;
-  foreach(QWidget* view, this->registeredViews())
-    {
-    qMRMLPlotWidget* plotWidget = qobject_cast<qMRMLPlotWidget*>(view);
-    Q_ASSERT(plotWidget);
-    plotWidget->setColorLogic(this->colorLogic());
-    }
-}
-
-//------------------------------------------------------------------------------
 QWidget* qMRMLLayoutPlotViewFactory::createViewFromNode(vtkMRMLAbstractViewNode* viewNode)
 {
   if (!this->layoutManager() || !viewNode || !this->layoutManager()->viewport())
@@ -227,15 +209,13 @@ QWidget* qMRMLLayoutPlotViewFactory::createViewFromNode(vtkMRMLAbstractViewNode*
     return 0;
     }
 
-  // There must be a unique TableWidget per node
+  // There must be a unique plot widget per node
   Q_ASSERT(!this->viewWidget(viewNode));
 
   qMRMLPlotWidget* plotWidget = new qMRMLPlotWidget(this->layoutManager()->viewport());
   QString layoutName(viewNode->GetLayoutName());
   plotWidget->setObjectName(QString("qMRMLPlotWidget" + layoutName));
   plotWidget->setViewLabel(viewNode->GetLayoutLabel());
-  /// \todo move color logic to view factory.
-  plotWidget->setColorLogic(this->colorLogic());
   plotWidget->setMRMLScene(this->mrmlScene());
   vtkMRMLPlotViewNode* plotViewNode = vtkMRMLPlotViewNode::SafeDownCast(viewNode);
   plotWidget->setMRMLPlotViewNode(plotViewNode);
@@ -1018,12 +998,6 @@ void qMRMLLayoutManager::setMRMLColorLogic(vtkMRMLColorLogic* colorLogic)
       this->mrmlViewFactory("vtkMRMLChartViewNode"));
   Q_ASSERT(viewChartFactory);
   viewChartFactory->setColorLogic(colorLogic);
-
-  qMRMLLayoutPlotViewFactory* viewPlotFactory =
-    qobject_cast<qMRMLLayoutPlotViewFactory*>(
-      this->mrmlViewFactory("vtkMRMLPlotViewNode"));
-  Q_ASSERT(viewPlotFactory);
-  viewPlotFactory->setColorLogic(colorLogic);
 }
 
 //------------------------------------------------------------------------------

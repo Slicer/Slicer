@@ -53,7 +53,6 @@
 #include "qMRMLNodeAttributeTableWidgetPlugin.h"
 #include "qMRMLNodeComboBoxPlugin.h"
 #include "qMRMLPlotWidgetPlugin.h"
-#include "qMRMLPlotViewInformationWidgetPlugin.h"
 #include "qMRMLPlotViewControllerWidgetPlugin.h"
 #include "qMRMLRangeWidgetPlugin.h"
 #include "qMRMLROIWidgetPlugin.h"
@@ -112,7 +111,6 @@ public:
             << new qMRMLNodeAttributeTableWidgetPlugin
             << new qMRMLNodeComboBoxPlugin
             << new qMRMLPlotWidgetPlugin
-            << new qMRMLPlotViewInformationWidgetPlugin
             << new qMRMLPlotViewControllerWidgetPlugin
             << new qMRMLRangeWidgetPlugin
             << new qMRMLROIWidgetPlugin

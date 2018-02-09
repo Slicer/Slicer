@@ -150,9 +150,6 @@ set(MRMLWidgets_SRCS
   qMRMLPlotViewControllerWidget.cxx
   qMRMLPlotViewControllerWidget.h
   qMRMLPlotViewControllerWidget_p.h
-  qMRMLPlotViewInformationWidget.cxx
-  qMRMLPlotViewInformationWidget.h
-  qMRMLPlotViewInformationWidget_p.h
   qMRMLRangeWidget.cxx
   qMRMLRangeWidget.h
   qMRMLROIWidget.cxx
@@ -291,8 +288,6 @@ set(MRMLWidgets_MOC_SRCS
   qMRMLPlotWidget.h
   qMRMLPlotViewControllerWidget.h
   qMRMLPlotViewControllerWidget_p.h
-  qMRMLPlotViewInformationWidget.h
-  qMRMLPlotViewInformationWidget_p.h
   qMRMLPlotView_p.h
   qMRMLPlotView.h
   qMRMLRangeWidget.h
@@ -360,7 +355,6 @@ set(MRMLWidgets_UI_SRCS
   Resources/UI/qMRMLNodeAttributeTableView.ui
   Resources/UI/qMRMLNodeAttributeTableWidget.ui
   Resources/UI/qMRMLPlotViewControllerWidget.ui
-  Resources/UI/qMRMLPlotViewInformationWidget.ui
   Resources/UI/qMRMLROIWidget.ui
   Resources/UI/qMRMLSceneFactoryWidget.ui
   Resources/UI/qMRMLScreenShotDialog.ui

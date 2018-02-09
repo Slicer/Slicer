@@ -96,9 +96,6 @@
       <item>
        <widget class="qMRMLThreeDViewInformationWidget" name="MRMLThreeDViewInformationWidget"/>
       </item>
-      <item>
-       <widget class="qMRMLPlotViewInformationWidget" name="MRMLPlotViewInformationWidget"/>
-      </item>
      </layout>
     </widget>
    </item>
@@ -123,11 +120,6 @@
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLPlotViewInformationWidget</class>
-   <extends>qMRMLWidget</extends>
-   <header>qMRMLPlotViewInformationWidget.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLSliceInformationWidget</class>
@@ -238,38 +230,6 @@
     <hint type="destinationlabel">
      <x>259</x>
      <y>454</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>qSlicerViewControllersModuleWidget</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>MRMLPlotViewInformationWidget</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>259</x>
-     <y>323</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>259</x>
-     <y>593</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>MRMLViewNodeComboBox</sender>
-   <signal>currentNodeChanged(vtkMRMLNode*)</signal>
-   <receiver>MRMLPlotViewInformationWidget</receiver>
-   <slot>setMRMLPlotViewNode(vtkMRMLNode*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>300</x>
-     <y>216</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>259</x>
-     <y>593</y>
     </hint>
    </hints>
   </connection>

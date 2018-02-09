@@ -1,0 +1,6 @@
+/**
+\defgroup Slicer_QtModules_Plots Plots
+\ingroup Slicer_QtModules
+This module creates 2D plots from tables by using plot series, chart, and view nodes.
+
+*/

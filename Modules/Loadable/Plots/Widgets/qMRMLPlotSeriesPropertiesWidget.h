@@ -17,8 +17,8 @@
 
 ==============================================================================*/
 
-#ifndef __qMRMLPlotViewInformationWidget_h
-#define __qMRMLPlotViewInformationWidget_h
+#ifndef __qMRMLPlotSeriesPropertiesWidget_h
+#define __qMRMLPlotSeriesPropertiesWidget_h
 
 // Qt includes
 #include <QWidget>
@@ -26,18 +26,17 @@
 // CTK includes
 #include <ctkPimpl.h>
 
-// qMRMLWidget includes
-#include "qMRMLWidget.h"
+// Plots Widgets includes
+#include "qSlicerPlotsModuleWidgetsExport.h"
+#include "ui_qMRMLPlotSeriesPropertiesWidget.h"
 
-#include "qMRMLWidgetsExport.h"
-
-class qMRMLPlotViewInformationWidgetPrivate;
+class qMRMLPlotSeriesPropertiesWidgetPrivate;
 class vtkMRMLNode;
-class vtkMRMLPlotViewNode;
+class vtkMRMLPlotSeriesNode;
 
 class vtkMRMLPlotViewLogic;
 
-class QMRML_WIDGETS_EXPORT qMRMLPlotViewInformationWidget : public qMRMLWidget
+class Q_SLICER_MODULE_PLOTS_WIDGETS_EXPORT qMRMLPlotSeriesPropertiesWidget : public qMRMLWidget
 {
   Q_OBJECT
 public:
@@ -45,29 +44,26 @@ public:
   typedef qMRMLWidget Superclass;
 
   /// Constructors
-  explicit qMRMLPlotViewInformationWidget(QWidget* parent = 0);
-  virtual ~qMRMLPlotViewInformationWidget();
+  explicit qMRMLPlotSeriesPropertiesWidget(QWidget* parent = 0);
+  virtual ~qMRMLPlotSeriesPropertiesWidget();
 
   /// Get \a PlotViewNode
-  vtkMRMLPlotViewNode* mrmlPlotViewNode()const;
+  vtkMRMLPlotSeriesNode* mrmlPlotSeriesNode()const;
 
 public slots:
 
-  /// Set a new PlotViewNode.
-  void setMRMLPlotViewNode(vtkMRMLNode* newNode);
+  /// Select plot series node to edit.
+  void setMRMLPlotSeriesNode(vtkMRMLNode* node);
 
-  /// Set a new PlotViewNode.
-  void setMRMLPlotViewNode(vtkMRMLPlotViewNode* newPlotViewNode);
-
-  /// Set view group
-  void setViewGroup(int viewGroup);
+  /// Select plot series node to edit.
+  void setMRMLPlotSeriesNode(vtkMRMLPlotSeriesNode* plotSeriesNode);
 
 protected:
-  QScopedPointer<qMRMLPlotViewInformationWidgetPrivate> d_ptr;
+  QScopedPointer<qMRMLPlotSeriesPropertiesWidgetPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qMRMLPlotViewInformationWidget);
-  Q_DISABLE_COPY(qMRMLPlotViewInformationWidget);
+  Q_DECLARE_PRIVATE(qMRMLPlotSeriesPropertiesWidget);
+  Q_DISABLE_COPY(qMRMLPlotSeriesPropertiesWidget);
 };
 
 #endif

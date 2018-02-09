@@ -467,5 +467,4 @@ void qSlicerViewControllersModuleWidget::onAdvancedViewNodeChanged(vtkMRMLNode* 
   // Only show widget corresponding to selected view node type
   d->MRMLSliceInformationWidget->setVisible(vtkMRMLSliceNode::SafeDownCast(viewNode) != 0);
   d->MRMLThreeDViewInformationWidget->setVisible(vtkMRMLViewNode::SafeDownCast(viewNode) != 0);
-  d->MRMLPlotViewInformationWidget->setVisible(vtkMRMLPlotViewNode::SafeDownCast(viewNode) != 0);
 }

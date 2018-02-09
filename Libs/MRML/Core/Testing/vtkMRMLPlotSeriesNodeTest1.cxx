@@ -17,7 +17,7 @@
 
 ==============================================================================*/
 
-#include "vtkMRMLPlotDataNode.h"
+#include "vtkMRMLPlotSeriesNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLTableNode.h"
 
@@ -28,15 +28,12 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-int vtkMRMLPlotDataNodeTest1(int , char * [] )
+int vtkMRMLPlotSeriesNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLScene> scene;
-  vtkNew<vtkMRMLPlotDataNode> plotDataNode;
-  EXERCISE_ALL_BASIC_MRML_METHODS(plotDataNode.GetPointer());
-  scene->AddNode(plotDataNode.GetPointer());
-
-  vtkPlot* plot1 = plotDataNode->GetPlot();
-  CHECK_NOT_NULL(plot1);
+  vtkNew<vtkMRMLPlotSeriesNode> plotSeriesNode;
+  EXERCISE_ALL_BASIC_MRML_METHODS(plotSeriesNode.GetPointer());
+  scene->AddNode(plotSeriesNode.GetPointer());
 
   // Create a vtkTable
   vtkNew<vtkTable> table;
@@ -65,24 +62,22 @@ int vtkMRMLPlotDataNodeTest1(int , char * [] )
   tableNode->SetAndObserveTable(table.GetPointer());
 
   // Set and Observe the MRMLTableNode
-  plotDataNode->SetAndObserveTableNodeID(tableNode->GetID());
+  plotSeriesNode->SetAndObserveTableNodeID(tableNode->GetID());
 
-  plotDataNode->SetType(vtkMRMLPlotDataNode::BAR);
-  vtkPlot* plot2 = plotDataNode->GetPlot();
-  CHECK_NOT_NULL(plot2);
+  plotSeriesNode->SetPlotType(vtkMRMLPlotSeriesNode::PlotTypeBar);
 
-  plotDataNode->SetXColumnName(arrX->GetName());
-  plotDataNode->SetYColumnName(arrC->GetName());
+  plotSeriesNode->SetXColumnName(arrX->GetName());
+  plotSeriesNode->SetYColumnName(arrC->GetName());
 
 
   // Verify that Copy method creates a true independent copy
-  vtkSmartPointer<vtkMRMLPlotDataNode> nodeCopy = vtkSmartPointer<vtkMRMLPlotDataNode>::New();
-  nodeCopy->CopyWithScene(plotDataNode.GetPointer());
+  vtkSmartPointer<vtkMRMLPlotSeriesNode> nodeCopy = vtkSmartPointer<vtkMRMLPlotSeriesNode>::New();
+  nodeCopy->CopyWithScene(plotSeriesNode.GetPointer());
 
-  CHECK_STD_STRING(plotDataNode->GetName(), nodeCopy->GetName());
-  CHECK_STD_STRING(plotDataNode->GetXColumnName(), arrX->GetName());
-  CHECK_STD_STRING(plotDataNode->GetYColumnName(), arrC->GetName());
+  CHECK_STD_STRING(plotSeriesNode->GetName(), nodeCopy->GetName());
+  CHECK_STD_STRING(plotSeriesNode->GetXColumnName(), arrX->GetName());
+  CHECK_STD_STRING(plotSeriesNode->GetYColumnName(), arrC->GetName());
 
-  std::cout << "vtkMRMLPlotDataNodeTest1 completed successfully" << std::endl;
+  std::cout << "vtkMRMLPlotSeriesNodeTest1 completed successfully" << std::endl;
   return EXIT_SUCCESS;
 }

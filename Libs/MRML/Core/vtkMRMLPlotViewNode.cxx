@@ -44,16 +44,18 @@ vtkMRMLNodeNewMacro(vtkMRMLPlotViewNode);
 //----------------------------------------------------------------------------
 vtkMRMLPlotViewNode::vtkMRMLPlotViewNode()
 : DoPropagatePlotChartSelection(true)
+, InteractionMode(InteractionModePanView)
+, EnablePointMoveAlongX(true)
+, EnablePointMoveAlongY(true)
 {
-  vtkIntArray  *events = vtkIntArray::New();
+  vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkCommand::ModifiedEvent);
   events->InsertNextValue(vtkMRMLPlotViewNode::PlotChartNodeChangedEvent);
   events->InsertNextValue(vtkMRMLPlotChartNode::PlotModifiedEvent);
 
   this->AddNodeReferenceRole(this->GetPlotChartNodeReferenceRole(),
                              this->GetPlotChartNodeReferenceMRMLAttributeName(),
-                             events);
-  events->Delete();
+                             events.GetPointer());
 }
 
 //----------------------------------------------------------------------------
@@ -66,7 +68,12 @@ void vtkMRMLPlotViewNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  of << " doPropagatePlotChartSelection=\"" << (int)this->DoPropagatePlotChartSelection << "\"";
+  vtkMRMLWriteXMLBeginMacro(of);
+  vtkMRMLWriteXMLIntMacro(doPropagatePlotChartSelection, DoPropagatePlotChartSelection);
+  vtkMRMLWriteXMLEnumMacro(interactionMode, InteractionMode);
+  vtkMRMLWriteXMLBooleanMacro(enablePointMoveAlongX, EnablePointMoveAlongX);
+  vtkMRMLWriteXMLBooleanMacro(enablePointMoveAlongY, EnablePointMoveAlongY);
+  vtkMRMLWriteXMLEndMacro();
 }
 
 //----------------------------------------------------------------------------
@@ -76,17 +83,12 @@ void vtkMRMLPlotViewNode::ReadXMLAttributes(const char** atts)
 
   Superclass::ReadXMLAttributes(atts);
 
-  const char* attName;
-  const char* attValue;
-  while (*atts != NULL)
-    {
-    attName = *(atts++);
-    attValue = *(atts++);
-    if(!strcmp(attName, "doPropagatePlotChartSelection"))
-      {
-      this->SetDoPropagatePlotChartSelection(atoi(attValue) ? true : false);
-      }
-    }
+  vtkMRMLReadXMLBeginMacro(atts);
+  vtkMRMLReadXMLIntMacro(doPropagatePlotChartSelection, DoPropagatePlotChartSelection);
+  vtkMRMLReadXMLEnumMacro(interactionMode, InteractionMode);
+  vtkMRMLReadXMLBooleanMacro(enablePointMoveAlongX, EnablePointMoveAlongX);
+  vtkMRMLReadXMLBooleanMacro(enablePointMoveAlongY, EnablePointMoveAlongY);
+  vtkMRMLReadXMLEndMacro();
 
   this->EndModify(disabledModify);
 }
@@ -96,13 +98,16 @@ void vtkMRMLPlotViewNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLPlotViewNode::Copy(vtkMRMLNode *anode)
 {
-  vtkMRMLPlotViewNode *aPlotviewnode = vtkMRMLPlotViewNode::SafeDownCast(anode);
-
   int disabledModify = this->StartModify();
 
   this->Superclass::Copy(anode);
 
-  this->SetDoPropagatePlotChartSelection(aPlotviewnode->GetDoPropagatePlotChartSelection());
+  vtkMRMLCopyBeginMacro(anode);
+  vtkMRMLCopyIntMacro(DoPropagatePlotChartSelection);
+  vtkMRMLCopyEnumMacro(InteractionMode);
+  vtkMRMLCopyBooleanMacro(EnablePointMoveAlongX);
+  vtkMRMLCopyBooleanMacro(EnablePointMoveAlongY);
+  vtkMRMLCopyEndMacro();
 
   this->EndModify(disabledModify);
 }
@@ -112,7 +117,12 @@ void vtkMRMLPlotViewNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 
-  os << indent << "DoPropagatePlotChartSelection: " << this->DoPropagatePlotChartSelection << "\n";
+  vtkMRMLPrintBeginMacro(os, indent);
+  vtkMRMLPrintIntMacro(DoPropagatePlotChartSelection);
+  vtkMRMLPrintEnumMacro(InteractionMode);
+  vtkMRMLPrintBooleanMacro(EnablePointMoveAlongX);
+  vtkMRMLPrintBooleanMacro(EnablePointMoveAlongY);
+  vtkMRMLPrintEndMacro();
 }
 
 //----------------------------------------------------------------------------
@@ -188,4 +198,39 @@ void vtkMRMLPlotViewNode::OnNodeReferenceRemoved(vtkMRMLNodeReference *reference
     {
     this->InvokeEvent(vtkMRMLPlotViewNode::PlotChartNodeChangedEvent, reference->GetReferencedNode());
     }
+}
+
+//-----------------------------------------------------------
+const char* vtkMRMLPlotViewNode::GetInteractionModeAsString(int id)
+{
+  switch (id)
+  {
+  case InteractionModePanView: return "PanView";
+  case InteractionModeSelectPoints: return "SelectPoints";
+  case InteractionModeFreehandSelectPoints: return "FreehandSelectPoints";
+  case InteractionModeMovePoints: return "MovePoints";
+  default:
+    // invalid id
+    return "";
+  }
+}
+
+//-----------------------------------------------------------
+int vtkMRMLPlotViewNode::GetInteractionModeFromString(const char* name)
+{
+  if (name == NULL)
+  {
+    // invalid name
+    return -1;
+  }
+  for (int ii = 0; ii < InteractionMode_Last; ii++)
+  {
+    if (strcmp(name, GetInteractionModeAsString(ii)) == 0)
+    {
+      // found a matching name
+      return ii;
+    }
+  }
+  // unknown name
+  return -1;
 }

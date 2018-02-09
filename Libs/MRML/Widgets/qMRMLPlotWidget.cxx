@@ -83,6 +83,7 @@ void qMRMLPlotWidgetPrivate::init()
   layout->addWidget(this->PlotController);
 
   this->PlotView = new qMRMLPlotView;
+  this->PlotView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   layout->addWidget(this->PlotView);
 
   this->PlotController->setPlotView(this->PlotView);
@@ -148,18 +149,4 @@ QString qMRMLPlotWidget::viewLabel()const
 {
   Q_D(const qMRMLPlotWidget);
   return d->PlotController->viewLabel();
-}
-
-//---------------------------------------------------------------------------
-void qMRMLPlotWidget::setColorLogic(vtkMRMLColorLogic* colorLogic)
-{
-  Q_D(const qMRMLPlotWidget);
-  d->PlotView->setColorLogic(colorLogic);
-}
-
-//---------------------------------------------------------------------------
-vtkMRMLColorLogic* qMRMLPlotWidget::colorLogic()const
-{
-  Q_D(const qMRMLPlotWidget);
-  return d->PlotView->colorLogic();
 }

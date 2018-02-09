@@ -17,7 +17,7 @@
 
 ==============================================================================*/
 
-#include "vtkMRMLPlotDataNode.h"
+#include "vtkMRMLPlotSeriesNode.h"
 #include "vtkMRMLPlotChartNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLTableNode.h"
@@ -37,11 +37,11 @@ int vtkMRMLPlotChartNodeTest1(int , char * [] )
   EXERCISE_ALL_BASIC_MRML_METHODS(node.GetPointer());
   scene->AddNode(node.GetPointer());
 
-  // Create two PlotDataNodes
-  vtkNew<vtkMRMLPlotDataNode> plotDataNode1;
-  vtkNew<vtkMRMLPlotDataNode> plotDataNode2;
-  scene->AddNode(plotDataNode1.GetPointer());
-  scene->AddNode(plotDataNode2.GetPointer());
+  // Create two PlotSeriesNodes
+  vtkNew<vtkMRMLPlotSeriesNode> plotSeriesNode1;
+  vtkNew<vtkMRMLPlotSeriesNode> plotSeriesNode2;
+  scene->AddNode(plotSeriesNode1.GetPointer());
+  scene->AddNode(plotSeriesNode2.GetPointer());
 
   // Create a vtkTable
   vtkNew<vtkTable> table;
@@ -75,23 +75,23 @@ int vtkMRMLPlotChartNodeTest1(int , char * [] )
   tableNode->SetAndObserveTable(table.GetPointer());
 
   // Set and Observe the MRMLTableNode
-  plotDataNode1->SetAndObserveTableNodeID(tableNode->GetID());
-  plotDataNode1->SetXColumnName(tableNode->GetColumnName(0));
-  plotDataNode1->SetYColumnName(tableNode->GetColumnName(1));
-  plotDataNode2->SetAndObserveTableNodeID(tableNode->GetID());
-  plotDataNode2->SetXColumnName(tableNode->GetColumnName(0));
-  plotDataNode2->SetYColumnName(tableNode->GetColumnName(2));
+  plotSeriesNode1->SetAndObserveTableNodeID(tableNode->GetID());
+  plotSeriesNode1->SetXColumnName(tableNode->GetColumnName(0));
+  plotSeriesNode1->SetYColumnName(tableNode->GetColumnName(1));
+  plotSeriesNode2->SetAndObserveTableNodeID(tableNode->GetID());
+  plotSeriesNode2->SetXColumnName(tableNode->GetColumnName(0));
+  plotSeriesNode2->SetYColumnName(tableNode->GetColumnName(2));
 
   // Add and Observe plots IDs in PlotChart
-  node->AddAndObservePlotDataNodeID(plotDataNode1->GetID());
-  node->AddAndObservePlotDataNodeID(plotDataNode2->GetID());
+  node->AddAndObservePlotSeriesNodeID(plotSeriesNode1->GetID());
+  node->AddAndObservePlotSeriesNodeID(plotSeriesNode2->GetID());
 
   // Test The references
-  CHECK_POINTER(node->GetPlotDataNode(), plotDataNode1.GetPointer());
-  CHECK_POINTER(node->GetNthPlotDataNode(1), plotDataNode2.GetPointer());
+  CHECK_POINTER(node->GetPlotSeriesNode(), plotSeriesNode1.GetPointer());
+  CHECK_POINTER(node->GetNthPlotSeriesNode(1), plotSeriesNode2.GetPointer());
 
-  node->RemovePlotDataNodeID(plotDataNode1->GetID());
-  CHECK_POINTER(node->GetPlotDataNode(), plotDataNode2.GetPointer());
+  node->RemovePlotSeriesNodeID(plotSeriesNode1->GetID());
+  CHECK_POINTER(node->GetPlotSeriesNode(), plotSeriesNode2.GetPointer());
 
   // Verify that Copy method creates a true independent copy
   vtkSmartPointer< vtkMRMLPlotChartNode > nodeCopy = vtkSmartPointer< vtkMRMLPlotChartNode >::New();

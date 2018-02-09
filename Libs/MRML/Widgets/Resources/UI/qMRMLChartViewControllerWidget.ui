@@ -55,21 +55,21 @@
      <item row="1" column="1">
       <widget class="QComboBox" name="chartTypeComboBox">
        <property name="toolTip">
-        <string>Select a chart type (line, scatter, bar)</string>
+        <string>Select a chart type (scatter, line, bar)</string>
        </property>
        <item>
         <property name="text">
-         <string>Line</string>
+         <string>scatter</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Scatter</string>
+         <string>line</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Bar</string>
+         <string>bar</string>
         </property>
        </item>
       </widget>
