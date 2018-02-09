@@ -27,6 +27,7 @@
 
 class qSlicerSubjectHierarchyPlotsPluginPrivate;
 class vtkMRMLPlotViewNode;
+class vtkSlicerPlotsLogic;
 
 // Due to some reason the Python wrapping of this class fails, therefore
 // put everything between BTX/ETX to exclude from wrapping.
@@ -42,7 +43,7 @@ public:
 
 public:
   typedef qSlicerSubjectHierarchyAbstractPlugin Superclass;
-  qSlicerSubjectHierarchyPlotsPlugin(QObject* parent = NULL);
+  qSlicerSubjectHierarchyPlotsPlugin(vtkSlicerPlotsLogic* plotsLogic, QObject* parent = NULL);
   virtual ~qSlicerSubjectHierarchyPlotsPlugin();
 
 public:
@@ -75,9 +76,6 @@ public:
 
   /// Get visibility icon for a visibility state
   virtual QIcon visibilityIcon(int visible);
-
-  /// Open module belonging to item and set inputs in opened module
-  virtual void editProperties(vtkIdType itemID);
 
   /// Set display visibility of a owned subject hierarchy item
   virtual void setDisplayVisibility(vtkIdType itemID, int visible);

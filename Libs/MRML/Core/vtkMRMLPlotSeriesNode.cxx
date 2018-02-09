@@ -146,7 +146,7 @@ void vtkMRMLPlotSeriesNode::Copy(vtkMRMLNode *anode)
 
   Superclass::Copy(anode);
 
-  vtkMRMLCopyBeginMacro(anode, vtkMRMLPlotSeriesNode);
+  vtkMRMLCopyBeginMacro(anode);
   vtkMRMLCopyEnumMacro(PlotType);
   vtkMRMLCopyStdStringMacro(XColumnName);
   vtkMRMLCopyStdStringMacro(YColumnName);

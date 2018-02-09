@@ -224,7 +224,7 @@ bool qSlicerPlotsModuleWidget::setEditedNode(vtkMRMLNode* node,
     }
   else if (vtkMRMLPlotSeriesNode::SafeDownCast(node))
     {
-//    d->PlotSeriesNodeSelector->setCurrentNode(node);
+    d->PlotSeriesNodeSelector->setCurrentNode(node);
     return true;
     }
 
@@ -275,35 +275,7 @@ void qSlicerPlotsModuleWidget::onShowChartButtonClicked()
     return;
     }
 
-  // Get layout node
-  vtkMRMLLayoutNode* layoutNode = vtkMRMLLayoutNode::SafeDownCast(this->mrmlScene()->GetFirstNodeByClass("vtkMRMLLayoutNode"));
-  if (!layoutNode)
-    {
-    qCritical("qSlicerSubjectHierarchyTablesPlugin::getTableViewNode: Unable to get layout node");
-    return;
-    }
-
-  // Switch to a layout that contains plot
-  qMRMLLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
-  if (layoutManager)
-    {
-    int currentLayout = layoutManager->layout();
-    int layoutWithPlot = vtkSlicerPlotsLogic::GetLayoutWithPlot(currentLayout);
-    layoutNode->SetViewArrangement(layoutWithPlot);
-    }
-
-
-  // Show plot in viewers
-  vtkSlicerApplicationLogic* appLogic = qSlicerApplication::application()->applicationLogic();
-  if (appLogic)
-    {
-    vtkMRMLSelectionNode* selectionNode = appLogic->GetSelectionNode();
-    if (selectionNode)
-      {
-      selectionNode->SetActivePlotChartID(d->MRMLPlotChartNode->GetID());
-      }
-    appLogic->PropagatePlotChartSelection();
-    }
+  logic->ShowChartInLayout(d->MRMLPlotChartNode);
 }
 
 //-----------------------------------------------------------------------------

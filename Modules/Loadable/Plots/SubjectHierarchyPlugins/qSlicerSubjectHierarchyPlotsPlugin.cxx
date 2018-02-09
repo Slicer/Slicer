@@ -27,6 +27,9 @@
 #include <vtkMRMLLayoutNode.h>
 #include <vtkMRMLPlotViewNode.h>
 
+#include <vtkSlicerPlotsLogic.h>
+#include <qMRMLPlotWidget.h>
+
 // VTK includes
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
@@ -54,6 +57,8 @@ public:
   void init();
 public:
   QIcon PlotIcon;
+
+  vtkWeakPointer<vtkSlicerPlotsLogic> PlotsLogic;
 
   QIcon VisibleIcon;
   QIcon HiddenIcon;
@@ -86,13 +91,15 @@ qSlicerSubjectHierarchyPlotsPluginPrivate::~qSlicerSubjectHierarchyPlotsPluginPr
 // qSlicerSubjectHierarchyPlotsPlugin methods
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyPlotsPlugin::qSlicerSubjectHierarchyPlotsPlugin(QObject* parent)
+qSlicerSubjectHierarchyPlotsPlugin::qSlicerSubjectHierarchyPlotsPlugin(vtkSlicerPlotsLogic* plotsLogic, QObject* parent)
  : Superclass(parent)
  , d_ptr( new qSlicerSubjectHierarchyPlotsPluginPrivate(*this) )
 {
-  this->m_Name = QString("PlotChart");
-
   Q_D(qSlicerSubjectHierarchyPlotsPlugin);
+
+  this->m_Name = QString("PlotChart");
+  d->PlotsLogic = plotsLogic;
+
   d->init();
 }
 
@@ -189,6 +196,8 @@ QIcon qSlicerSubjectHierarchyPlotsPlugin::visibilityIcon(int visible)
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyPlotsPlugin::setDisplayVisibility(vtkIdType itemID, int visible)
 {
+  Q_D(qSlicerSubjectHierarchyPlotsPlugin);
+
   if (!itemID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
@@ -212,52 +221,22 @@ void qSlicerSubjectHierarchyPlotsPlugin::setDisplayVisibility(vtkIdType itemID, 
     return;
     }
 
-  // Get layout node
-  vtkMRMLLayoutNode* layoutNode = vtkMRMLLayoutNode::SafeDownCast(scene->GetFirstNodeByClass("vtkMRMLLayoutNode"));
-  if (!layoutNode)
+  vtkMRMLPlotChartNode* associatedPlotChartNode = vtkMRMLPlotChartNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+  d->PlotsLogic->ShowChartInLayout(visible ? associatedPlotChartNode : NULL);
+
+  // Update icons of all charts (if we show this chart then we may have hidden other charts)
+  if (scene->IsBatchProcessing())
     {
-    qCritical() << Q_FUNC_INFO << ": Unable to get layout node!";
     return;
     }
-
-  vtkMRMLPlotViewNode* plotViewNode = this->getPlotViewNode();
-
-  vtkMRMLPlotChartNode* associatedPlotChartNode = vtkMRMLPlotChartNode::SafeDownCast(shNode->GetItemDataNode(itemID));
-  if (associatedPlotChartNode && visible)
+  std::vector< vtkMRMLNode* > chartNodes;
+  scene->GetNodesByClass("vtkMRMLPlotChartNode", chartNodes);
+  for (std::vector< vtkMRMLNode* >::iterator chartIt = chartNodes.begin(); chartIt != chartNodes.end(); ++chartIt)
     {
-    // Switch to four-up quantitative layout
-    layoutNode->SetViewArrangement( vtkMRMLLayoutNode::SlicerLayoutConventionalPlotView );
-
-    // Make sure we have a valid plot view node (if we want to show the plotLayout, but there was
-    // no plot view, then one was just created when we switched to quantitative layout)
-    if (!plotViewNode)
-      {
-      plotViewNode = this->getPlotViewNode();
-      }
-
-    // Hide currently shown plotLayout and trigger icon update
-    if ( plotViewNode->GetPlotChartNodeID()
-      && strcmp(plotViewNode->GetPlotChartNodeID(), associatedPlotChartNode->GetID()) )
-      {
-      vtkIdType plotLayoutItemID = shNode->GetItemByDataNode(scene->GetNodeByID(plotViewNode->GetPlotChartNodeID()));
-      if (plotLayoutItemID)
-        {
-        plotViewNode->SetPlotChartNodeID(NULL);
-        shNode->ItemModified(plotLayoutItemID);
-        }
-      }
-
-    // Select plotLayout to show
-    plotViewNode->SetPlotChartNodeID(associatedPlotChartNode->GetID());
+    vtkMRMLPlotChartNode* chartNode = vtkMRMLPlotChartNode::SafeDownCast(*chartIt);
+    vtkIdType chartNodeId = shNode->GetItemByDataNode(chartNode);
+    shNode->ItemModified(chartNodeId);
     }
-  else if (plotViewNode)
-    {
-    // Hide plotLayout
-    plotViewNode->SetPlotChartNodeID(NULL);
-    }
-
-  // Trigger icon update
-  shNode->ItemModified(itemID);
 }
 
 //-----------------------------------------------------------------------------
@@ -282,34 +261,14 @@ int qSlicerSubjectHierarchyPlotsPlugin::getDisplayVisibility(vtkIdType itemID)co
     return 0;
     }
 
-  // Return hidden if current layout is not one of the quantitative ones
-  if ( qSlicerApplication::application()->layoutManager()->layout() != vtkMRMLLayoutNode::SlicerLayoutFourUpPlotView
-    && qSlicerApplication::application()->layoutManager()->layout() != vtkMRMLLayoutNode::SlicerLayoutFourUpPlotTableView
-    && qSlicerApplication::application()->layoutManager()->layout() != vtkMRMLLayoutNode::SlicerLayoutOneUpPlotView
-    && qSlicerApplication::application()->layoutManager()->layout() != vtkMRMLLayoutNode::SlicerLayoutConventionalPlotView
-    && qSlicerApplication::application()->layoutManager()->layout() != vtkMRMLLayoutNode::SlicerLayoutThreeOverThreePlotView)
-    {
-    return 0;
-    }
-
   // Return shown if plotLayout in plot view is the examined item's associated data node
   vtkMRMLPlotChartNode* associatedPlotChartNode = vtkMRMLPlotChartNode::SafeDownCast(shNode->GetItemDataNode(itemID));
-  if ( associatedPlotChartNode && plotViewNode->GetPlotChartNodeID()
-    && !strcmp(plotViewNode->GetPlotChartNodeID(), associatedPlotChartNode->GetID()) )
-    {
-    return 1;
-    }
-  else
+  if (!associatedPlotChartNode)
     {
     return 0;
     }
-}
 
-//---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyPlotsPlugin::editProperties(vtkIdType itemID)
-{
-  Q_UNUSED(itemID);
-  // No module to edit PlotChart, just switch layout
+  return (associatedPlotChartNode == plotViewNode->GetPlotChartNode()) ? 1 : 0;
 }
 
 //---------------------------------------------------------------------------
@@ -322,11 +281,27 @@ vtkMRMLPlotViewNode* qSlicerSubjectHierarchyPlotsPlugin::getPlotViewNode()const
     return NULL;
     }
 
-  vtkMRMLPlotViewNode* plotViewNode = vtkMRMLPlotViewNode::SafeDownCast(scene->GetFirstNodeByClass("vtkMRMLPlotViewNode"));
-  if (!plotViewNode)
+  qMRMLLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+  if (!layoutManager)
     {
     return NULL;
     }
 
-  return plotViewNode;
+  for (int i=0; i<layoutManager->plotViewCount(); i++)
+    {
+    qMRMLPlotWidget* plotWidget = layoutManager->plotWidget(0);
+    if (!plotWidget)
+      {
+      // invalid plot widget
+      continue;
+      }
+    vtkMRMLPlotViewNode* plotView = plotWidget->mrmlPlotViewNode();
+    if (plotView)
+      {
+      return plotView;
+      }
+    }
+
+  // no valid plot view in current layout
+  return false;
 }

@@ -130,6 +130,9 @@ void qMRMLPlotChartPropertiesWidgetPrivate::updateWidgetFromMRML()
     this->axisTitleFontSizeDoubleSpinBox->setValue(16);
     this->axisLabelFontSizeDoubleSpinBox->setValue(12);
 
+    this->legendVisibleCheckBox->setChecked(false);
+    this->gridVisibleCheckBox->setChecked(false);
+
     bool plotBlockSignals = this->plotSeriesComboBox->blockSignals(true);
     for (int idx = 0; idx < this->plotSeriesComboBox->nodeCount(); idx++)
       {
@@ -147,10 +150,13 @@ void qMRMLPlotChartPropertiesWidgetPrivate::updateWidgetFromMRML()
   this->axisTitleFontSizeDoubleSpinBox->setValue(this->PlotChartNode->GetAxisTitleFontSize());
   this->axisLabelFontSizeDoubleSpinBox->setValue(this->PlotChartNode->GetAxisLabelFontSize());
 
-  // Titles, axis labels (checkboxes AND text widgets)
+  // Titles, axis labels
   this->titleLineEdit->setText(this->PlotChartNode->GetTitle() ? this->PlotChartNode->GetTitle() : "");
   this->xAxisLabelLineEdit->setText(this->PlotChartNode->GetXAxisTitle() ? this->PlotChartNode->GetXAxisTitle() : "");
   this->yAxisLabelLineEdit->setText(this->PlotChartNode->GetYAxisTitle() ? this->PlotChartNode->GetYAxisTitle() : "");
+
+  this->legendVisibleCheckBox->setChecked(this->PlotChartNode->GetLegendVisibility());
+  this->gridVisibleCheckBox->setChecked(this->PlotChartNode->GetGridVisibility());
 
     // Plot series selector
   bool plotBlockSignals = this->plotSeriesComboBox->blockSignals(true);

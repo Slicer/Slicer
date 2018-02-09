@@ -33,6 +33,7 @@
 
 class vtkAbstractArray;
 class vtkMRMLTableNode;
+class vtkMRMLPlotChartNode;
 class vtkMRMLPlotSeriesNode;
 
 /// \ingroup Slicer_QtModules_ExtensionTemplate
@@ -54,6 +55,10 @@ public:
   /// Create a deep copy of a \a source and add it to the current scene.
   /// \sa GetMRMLScene()
   vtkMRMLPlotSeriesNode* CloneSeries(vtkMRMLPlotSeriesNode* source, const char *name);
+
+  /// Show chart in view layout.
+  /// Switches to a layout that contains a plot and propagates
+  void ShowChartInLayout(vtkMRMLPlotChartNode* chartNode);
 
 protected:
   vtkSlicerPlotsLogic();

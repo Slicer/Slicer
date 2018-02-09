@@ -180,5 +180,6 @@ class PlotsSelfTestTest(ScriptedLoadableModuleTest):
     plotView.setMRMLPlotViewNode(plotViewNode)
     plotView.show()
 
+    # Save variables into slicer namespace for debugging
     slicer.plotWidget = plotWidget
-    slicer.plotvIEW = plotView
+    slicer.plotView = plotView

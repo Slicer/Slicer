@@ -23,10 +23,16 @@
 // Plots Logic includes
 #include "vtkSlicerPlotsLogic.h"
 
+// Slicer includes
+#include <qSlicerApplication.h>
+#include <qSlicerLayoutManager.h>
+
 // MRML includes
+#include <vtkMRMLPlotChartNode.h>
 #include <vtkMRMLLayoutNode.h>
 #include <vtkMRMLPlotSeriesNode.h>
 #include <vtkMRMLScene.h>
+#include <vtkMRMLSelectionNode.h>
 
 // VTK includes
 #include <vtkNew.h>
@@ -95,4 +101,37 @@ vtkMRMLPlotSeriesNode* vtkSlicerPlotsLogic::CloneSeries(vtkMRMLPlotSeriesNode* s
   clonedSeriesNode->SetName(source->GetScene()->GetUniqueNameByString(nodeName.c_str()));
   source->GetScene()->AddNode(clonedSeriesNode);
   return clonedSeriesNode;
+}
+
+// --------------------------------------------------------------------------
+void vtkSlicerPlotsLogic::ShowChartInLayout(vtkMRMLPlotChartNode* chartNode)
+{
+  // Switch to a layout that contains plot
+  vtkMRMLLayoutNode* layoutNode = vtkMRMLLayoutNode::SafeDownCast(this->GetMRMLScene()->GetFirstNodeByClass("vtkMRMLLayoutNode"));
+  if (layoutNode)
+    {
+    qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+    if (layoutManager)
+      {
+      int currentLayout = layoutManager->layout();
+      int layoutWithPlot = vtkSlicerPlotsLogic::GetLayoutWithPlot(currentLayout);
+      if (currentLayout != layoutWithPlot)
+        {
+        layoutNode->SetViewArrangement(layoutWithPlot);
+        }
+      }
+    }
+
+  // Show plot in viewers
+  vtkSlicerApplicationLogic* appLogic = qSlicerApplication::application()->applicationLogic();
+  if (appLogic)
+    {
+    vtkMRMLSelectionNode* selectionNode = appLogic->GetSelectionNode();
+    if (selectionNode)
+      {
+      const char* chartNodeID = (chartNode ? chartNode->GetID() : NULL);
+      selectionNode->SetActivePlotChartID(chartNodeID);
+      }
+    appLogic->PropagatePlotChartSelection();
+    }
 }

@@ -115,8 +115,12 @@ QStringList qSlicerPlotsModule::dependencies() const
 //-----------------------------------------------------------------------------
 void qSlicerPlotsModule::setup()
 {
+  this->Superclass::setup();
+
+  vtkSlicerPlotsLogic* plotsLogic = vtkSlicerPlotsLogic::SafeDownCast(this->logic());
+
   // Register Subject Hierarchy core plugins
-  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyPlotsPlugin());
+  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyPlotsPlugin(plotsLogic));
 }
 
 
