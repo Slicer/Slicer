@@ -882,19 +882,19 @@ protected:
   /// Holders for MRML callbacks
   vtkCallbackCommand *MRMLCallbackCommand;
 
-  ///
-  /// Flag to avoid event loops
-  int InMRMLCallbackFlag;
-
-  char *Description;
-  char *Name;
   char *ID;
+  char *Name;
+  char *Description;
   int HideFromEditors;
   int Selectable;
   int Selected;
   int AddToScene;
 
   int  SaveWithScene;
+
+  ///
+  /// Flag to avoid event loops
+  int InMRMLCallbackFlag;
 
   // We don't increase the reference count of Scene when store its pointer
   // therefore we must use a weak pointer to prevent pointer dangling when

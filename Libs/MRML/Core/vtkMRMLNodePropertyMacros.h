@@ -283,32 +283,32 @@
 
 /// Macro for printing bool node property value.
 #define vtkMRMLPrintBooleanMacro(propertyName) \
-  os << indent << #propertyName ": " << (this->Get##propertyName() ? "true" : "false")  << "\n";
+  printOutputStream << printOutputIndent << #propertyName ": " << (this->Get##propertyName() ? "true" : "false")  << "\n";
 
 /// Macro for printing char* node property value.
 #define vtkMRMLPrintStringMacro(propertyName) \
-  os << indent << #propertyName ": " << (this->Get##propertyName() != NULL ? this->Get##propertyName() : "(none)")  << "\n";
+  printOutputStream << printOutputIndent << #propertyName ": " << (this->Get##propertyName() != NULL ? this->Get##propertyName() : "(none)")  << "\n";
 
 /// Macro for printing std::string node property value.
 #define vtkMRMLPrintStdStringMacro(propertyName) \
-  os << indent << #propertyName ": " << this->Get##propertyName() << "\n";
+  printOutputStream << printOutputIndent << #propertyName ": " << this->Get##propertyName() << "\n";
 
 /// Macro for printing enum node property value.
 #define vtkMRMLPrintEnumMacro(propertyName) \
-  os << indent << #propertyName ": " << (Get##propertyName##AsString(Get##propertyName()))  << "\n";
+  printOutputStream << printOutputIndent << #propertyName ": " << (Get##propertyName##AsString(Get##propertyName()))  << "\n";
 
 /// Macro for printing int node property value.
 #define vtkMRMLPrintIntMacro(propertyName) \
-  os << indent << #propertyName ": " << this->Get##propertyName() << "\n";
+  printOutputStream << printOutputIndent << #propertyName ": " << this->Get##propertyName() << "\n";
 
 /// Macro for printing floating-point (float or double) node property value.
 #define vtkMRMLPrintFloatMacro(propertyName) \
-  os << indent << #propertyName ": " << this->Get##propertyName() << "\n";
+  printOutputStream << printOutputIndent << #propertyName ": " << this->Get##propertyName() << "\n";
 
 /// Macro for printing floating-point (float or double) vector node property value.
 #define vtkMRMLPrintVectorMacro(propertyName, vectorType, vectorSize) \
   { \
-  os << indent << #propertyName " : ["; \
+  printOutputStream << printOutputIndent << #propertyName " : ["; \
   vectorType* vectorValue = this->Get##propertyName(); \
   if (vectorValue) \
     { \
@@ -316,11 +316,11 @@
       { \
       if (i > 0) \
         { \
-        os << ", "; \
+        printOutputStream << ", "; \
         } \
-      os << vectorValue[i]; \
+      printOutputStream << vectorValue[i]; \
       } \
-    os << "]\n"; \
+    printOutputStream << "]\n"; \
     } \
   }
 

@@ -38,16 +38,17 @@ vtkMRMLNode::vtkMRMLNode()
   // macro will not free memory.
   , Name(NULL)
   , Description(NULL)
-  , SingletonTag(NULL)
-  , TempURLString(NULL)
   , HideFromEditors(0)
   , Selectable(1)
   , Selected(0)
   , AddToScene(1)
+  , SaveWithScene(true)
+  , InMRMLCallbackFlag(0)
+  , TempURLString(NULL)
+  , SingletonTag(NULL)
   , DisableModifiedEvent(0)
   , ModifiedEventPending(0)
-  , InMRMLCallbackFlag(0)
-  , SaveWithScene(true)
+
 {
   // Set up callbacks
   this->MRMLCallbackCommand = vtkCallbackCommand::New();

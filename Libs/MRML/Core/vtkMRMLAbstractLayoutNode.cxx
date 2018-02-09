@@ -13,7 +13,7 @@
   limitations under the License.
 
   This file was originally developed by Csaba Pinter, PerkLab, Queen's University
-  and was supported through CANARIE’s Research Software Program, and Cancer
+  and was supported through CANARIE's Research Software Program, and Cancer
   Care Ontario.
 
 ==============================================================================*/
@@ -61,6 +61,6 @@ void vtkMRMLAbstractLayoutNode::Copy(vtkMRMLNode *anode)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAbstractLayoutNode::PrintSelf(ostream& os, vtkIndent indent)
+void vtkMRMLAbstractLayoutNode::PrintSelf(ostream& vtkNotUsed(os), vtkIndent vtkNotUsed(indent))
 {
 }

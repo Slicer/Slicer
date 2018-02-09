@@ -36,10 +36,10 @@ static const char* DEFAULT_AXIS_LABELS[vtkMRMLAbstractViewNode::AxisLabelsCount]
 
 //----------------------------------------------------------------------------
 vtkMRMLAbstractViewNode::vtkMRMLAbstractViewNode()
-: LayoutLabel(NULL)
-, ViewGroup(0)
-, Active(0)
+: ViewGroup(0)
+, LayoutLabel(NULL)
 , Visibility(1)
+, Active(0)
 , OrientationMarkerEnabled(false)
 , OrientationMarkerType(OrientationMarkerTypeNone)
 , OrientationMarkerSize(OrientationMarkerSizeMedium)
@@ -109,12 +109,12 @@ void vtkMRMLAbstractViewNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLAbstractViewNode::ReadXMLAttributes(const char** atts)
 {
-  bool isBackgroundColor2Set = false;
   int disabledModify = this->StartModify();
 
   this->Superclass::ReadXMLAttributes(atts);
 
-  this->BackgroundColor2[0] = -1; // indicates that it is not set
+  const int backGroundColorInvalid = -1;
+  this->BackgroundColor2[0] = backGroundColorInvalid;
 
   vtkMRMLReadXMLBeginMacro(atts);
   vtkMRMLReadXMLStringMacro(layoutLabel, LayoutLabel);
@@ -168,7 +168,7 @@ void vtkMRMLAbstractViewNode::ReadXMLAttributes(const char** atts)
       }
     }
 #if MRML_SUPPORT_VERSION < 0x040000
-  if (this->BackgroundColor2[0] < 0)
+  if (this->BackgroundColor2[0] == backGroundColorInvalid)
     {
     // BackgroundColor2 has not been set
     this->BackgroundColor2[0] = this->BackgroundColor[0];
