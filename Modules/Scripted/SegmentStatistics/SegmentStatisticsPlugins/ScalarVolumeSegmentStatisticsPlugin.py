@@ -8,7 +8,7 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
   def __init__(self):
     super(ScalarVolumeSegmentStatisticsPlugin,self).__init__()
     self.name = "Scalar Volume"
-    self.keys = ["voxel_count", "volume_mm3", "volume_cm3", "min", "max", "mean", "stdev"]
+    self.keys = ["voxel_count", "volume_mm3", "volume_cm3", "min", "max", "mean", "median", "stdev"]
     self.defaultKeys = self.keys # calculate all measurements by default
     #... developer may add extra options to configure other parameters
 
@@ -79,6 +79,11 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
     stat.SetStencilData(stencil.GetOutput())
     stat.Update()
 
+    medians = vtk.vtkImageHistogramStatistics()
+    medians.SetInputData(grayscaleNode.GetImageData())
+    medians.SetStencilData(stencil.GetOutput())
+    medians.Update()
+
     # create statistics list
     stats = {}
     if "voxel_count" in requestedKeys:
@@ -96,6 +101,8 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
         stats["mean"] = stat.GetMean()[0]
       if "stdev" in requestedKeys:
         stats["stdev"] = stat.GetStandardDeviation()[0]
+      if "median" in requestedKeys:
+        stats["median"] = medians.GetMedian()
     return stats
 
   def getMeasurementInfo(self, key):
@@ -116,6 +123,8 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
     # DCM has "Number of needles" etc., so probably "Number of voxels"
     # should be added too. Need to discuss with @dclunie. For now, a
     # QIICR private scheme placeholder.
+    # @moselhy also could not find DICOM quantity code for "median"
+
     info["voxel_count"] = \
       self.createMeasurementInfo(name="Voxel count", description="Number of voxels", units="voxels",
                                    quantityDicomCode=self.createCodedEntry("nvoxels", "99QIICR", "Number of voxels", True),
@@ -153,6 +162,13 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
                                    quantityDicomCode=scalarVolumeQuantity.GetAsString(),
                                    unitsDicomCode=scalarVolumeUnits.GetAsString(),
                                    derivationDicomCode=self.createCodedEntry("R-00317","SRT","Mean", True))
+
+    info["median"] = \
+      self.createMeasurementInfo(name="Median", description="Median scalar value",
+                                   units=scalarVolumeUnits.GetCodeMeaning(),
+                                   quantityDicomCode=scalarVolumeQuantity.GetAsString(),
+                                   unitsDicomCode=scalarVolumeUnits.GetAsString(),
+                                   derivationDicomCode=self.createCodedEntry("median","SRT","Median", True))
 
     info["stdev"] = \
       self.createMeasurementInfo(name="Standard deviation", description="Standard deviation of scalar values",
