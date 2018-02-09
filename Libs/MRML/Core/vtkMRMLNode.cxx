@@ -32,42 +32,32 @@ Version:   $Revision: 1.11 $
 
 //------------------------------------------------------------------------------
 vtkMRMLNode::vtkMRMLNode()
-{
-  this->ID = NULL;
-
-  // Strings
-  this->Description = NULL;
-
+  : ID(NULL)
   // By default all MRML nodes have a blank name
   // Must set name to NULL first so that the SetName
   // macro will not free memory.
-  this->Name = NULL;
-
-  this->SingletonTag = NULL;
-
-  this->HideFromEditors = 0;
-  this->Selectable = 1;
-  this->Selected = 0;
-
-  this->AddToScene = 1;
-
-  this->DisableModifiedEvent = 0;
-  this->ModifiedEventPending = 0;
-
+  , Name(NULL)
+  , Description(NULL)
+  , SingletonTag(NULL)
+  , TempURLString(NULL)
+  , HideFromEditors(0)
+  , Selectable(1)
+  , Selected(0)
+  , AddToScene(1)
+  , DisableModifiedEvent(0)
+  , ModifiedEventPending(0)
+  , InMRMLCallbackFlag(0)
+  , SaveWithScene(true)
+{
   // Set up callbacks
-  this->MRMLCallbackCommand = vtkCallbackCommand::New ( );
+  this->MRMLCallbackCommand = vtkCallbackCommand::New();
   this->MRMLCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
   this->MRMLCallbackCommand->SetCallback( vtkMRMLNode::MRMLCallback );
-  this->InMRMLCallbackFlag = 0;
-  this->SaveWithScene = true;
 
   this->MRMLObserverManager = vtkObserverManager::New();
   this->MRMLObserverManager->AssignOwner( this );
   this->MRMLObserverManager->GetCallbackCommand()->SetClientData( reinterpret_cast<void *> (this) );
   this->MRMLObserverManager->GetCallbackCommand()->SetCallback(vtkMRMLNode::MRMLCallback);
-
-
-  this->TempURLString = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -84,21 +74,10 @@ vtkMRMLNode::~vtkMRMLNode()
   this->NodeReferences.clear();
   this->NodeReferenceEvents.clear();
 
-  if (this->Description)
-    {
-    delete [] this->Description;
-    this->Description = NULL;
-    }
-  if (this->Name)
-    {
-    delete [] this->Name;
-    this->Name = NULL;
-    }
-  if (this->ID)
-    {
-    delete [] this->ID;
-    this->ID = NULL;
-    }
+  this->SetID(NULL);
+  this->SetName(NULL);
+  this->SetDescription(NULL);
+
   if (this->MRMLObserverManager)
     {
     this->MRMLObserverManager->Delete();
@@ -113,16 +92,8 @@ vtkMRMLNode::~vtkMRMLNode()
     this->MRMLCallbackCommand = NULL;
     }
 
-  if (this->TempURLString)
-    {
-    delete [] this->TempURLString;
-    this->TempURLString = NULL;
-    }
-
-  if (this->SingletonTag)
-    {
-    this->SetSingletonTag(NULL);
-    }
+  this->SetTempURLString(NULL);
+  this->SetSingletonTag(NULL);
 }
 
 //----------------------------------------------------------------------------
@@ -144,20 +115,26 @@ void vtkMRMLNode::Copy(vtkMRMLNode *node)
 {
   int disabledModify = this->StartModify();
 
+  vtkMRMLCopyBeginMacro(node);
+
+  // Only copy the node name when in the source node it is not empty
+  // this is used for singleton node updates and for resetting nodes.
   if (node->GetName() && strcmp(node->GetName(),""))
     {
-    this->SetName(node->GetName());
+    vtkMRMLCopyStringMacro(Name);
     }
-  this->SetHideFromEditors( node->HideFromEditors );
-  this->SetSaveWithScene( node->SaveWithScene );
-  this->SetSelectable( node->Selectable );
-  this->SetAddToScene( node->AddToScene );
-
+  vtkMRMLCopyStringMacro(Description);
+  vtkMRMLCopyBooleanMacro(HideFromEditors);
+  vtkMRMLCopyBooleanMacro(SaveWithScene);
+  vtkMRMLCopyBooleanMacro(Selectable);
+  vtkMRMLCopyBooleanMacro(AddToScene);
   if (node->GetSingletonTag())
     {
-    this->SetSingletonTag( node->GetSingletonTag() );
+    vtkMRMLCopyStringMacro(SingletonTag);
     }
-  this->SetDescription(node->GetDescription());
+
+  vtkMRMLCopyEndMacro();
+
   this->Attributes = node->Attributes;
 
   this->CopyReferences(node);
@@ -283,48 +260,49 @@ void vtkMRMLNode::Reset(vtkMRMLNode* defaultNode)
     newNode = vtkSmartPointer<vtkMRMLNode>::Take(this->CreateNodeInstance());
     }
 
+  // Preserve SaveWithScene, HideFromEditors, Selectable, and SingletonTag
+  // properties during reset by saving the original values and then restoring them.
+
+  // Save
   int save = this->GetSaveWithScene();
   int hide = this->GetHideFromEditors();
   int select = this->GetSelectable();
   char *tag = this->GetSingletonTag();
 
   int wasModifying = this->StartModify();
+
+  // Copy
   this->CopyWithScene(newNode);
 
+  // Restore
   this->SetSaveWithScene(save);
   this->SetHideFromEditors(hide);
   this->SetSelectable(select);
   this->SetSingletonTag(tag);
+
   this->EndModify(wasModifying);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  os << indent << "ID: " <<
-    (this->ID ? this->ID : "(none)") << "\n";
-  os << indent << "Class: " <<
-    (this->GetClassName() ? this->GetClassName() : "(none)") << "\n";
+  vtkMRMLPrintBeginMacro(os, indent);
+  vtkMRMLPrintStringMacro(ID);
+  vtkMRMLPrintStringMacro(ClassName);
+  vtkMRMLPrintStringMacro(Name);
 
   // vtkObject's PrintSelf prints a long list of registered events, which
   // is too long and not useful, therefore we don't call vtkObject::PrintSelf
   // but print essential information on the vtkObject base.
-  os << indent << "Debug: " << (this->Debug ? "On\n" : "Off\n");
-  os << indent << "Modified Time: " << this->GetMTime() << "\n";
+  vtkMRMLPrintBooleanMacro(Debug);
+  vtkMRMLPrintIntMacro(MTime);
 
-  os << indent << "Name: " <<
-    (this->Name ? this->Name : "(none)") << "\n";
-
-  os << indent << "Description: " <<
-    (this->Description ? this->Description : "(none)") << "\n";
-
-  os << indent << "SingletonTag: " <<
-    (this->SingletonTag ? this->SingletonTag : "(none)") << "\n";
-
-  os << indent << "HideFromEditors: " << this->HideFromEditors << "\n";
-
-  os << indent << "Selectable: " << this->Selectable << "\n";
-  os << indent << "Selected: " << this->Selected << "\n";
+  vtkMRMLPrintStringMacro(Description);
+  vtkMRMLPrintStringMacro(SingletonTag);
+  vtkMRMLPrintBooleanMacro(HideFromEditors);
+  vtkMRMLPrintBooleanMacro(Selectable);
+  vtkMRMLPrintBooleanMacro(Selected);
+  vtkMRMLPrintEndMacro();
 
   if (!this->Attributes.empty())
     {
@@ -376,6 +354,16 @@ void vtkMRMLNode::ReadXMLAttributes(const char** atts)
 {
   int disabledModify = this->StartModify();
 
+  vtkMRMLReadXMLBeginMacro(atts);
+  vtkMRMLReadXMLStringMacro(id, ID);
+  vtkMRMLReadXMLStringMacro(name, Name);
+  vtkMRMLReadXMLStringMacro(description, Description);
+  vtkMRMLReadXMLBooleanMacro(hideFromEditors, HideFromEditors);
+  vtkMRMLReadXMLBooleanMacro(selectable, Selectable);
+  vtkMRMLReadXMLBooleanMacro(selected, Selected);
+  vtkMRMLReadXMLStringMacro(singletonTag, SingletonTag);
+  vtkMRMLReadXMLEndMacro();
+
   std::map<std::string, std::string> references;
 
   const char* attName;
@@ -385,56 +373,7 @@ void vtkMRMLNode::ReadXMLAttributes(const char** atts)
     attName = *(atts++);
     attValue = *(atts++);
 
-    if (!strcmp(attName, "id"))
-      {
-      this->SetID(attValue);
-      }
-    else if (!strcmp(attName, "name"))
-      {
-      this->SetName(attValue);
-      }
-    else if (!strcmp(attName, "description"))
-      {
-      this->SetDescription(attValue);
-      }
-    else if (!strcmp(attName, "hideFromEditors"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->HideFromEditors = 1;
-        }
-      else
-        {
-        this->HideFromEditors = 0;
-        }
-      }
-    else if (!strcmp(attName, "selectable"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->Selectable = 1;
-        }
-      else
-        {
-        this->Selectable = 0;
-        }
-      }
-     else if (!strcmp(attName, "selected"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->Selected = 1;
-        }
-      else
-        {
-        this->Selected = 0;
-        }
-      }
-     else if (!strcmp(attName, "singletonTag"))
-       {
-       this->SetSingletonTag(attValue);
-       }
-     else if (!strcmp(attName, "attributes"))
+     if (!strcmp(attName, "attributes"))
        {
        std::stringstream attributes(attValue);
        std::string attribute;
@@ -517,28 +456,16 @@ void vtkMRMLNode::ParseReferencesAttribute(const char *attValue,
 void vtkMRMLNode::WriteXML(ostream& of, int nIndent)
 {
   vtkIndent indent(nIndent);
-  of << indent;
-  if (this->ID != NULL)
-    {
-    of << " id=\"" << this->ID << "\"";
-    }
-  if (this->Name != NULL)
-    {
-    of << " name=\"" << this->Name << "\"";
-    }
-  if (this->Description != NULL)
-    {
-    of << " description=\"" << this->Description << "\"";
-    }
-  of << " hideFromEditors=\"" << (this->HideFromEditors ? "true" : "false") << "\"";
 
-  of << " selectable=\"" << (this->Selectable ? "true" : "false") << "\"";
-  of << " selected=\"" << (this->Selected ? "true" : "false") << "\"";
-
-  if (this->SingletonTag)
-    {
-    of << " singletonTag=\"" << this->SingletonTag << "\"";
-    }
+  vtkMRMLWriteXMLBeginMacro(of);
+  vtkMRMLWriteXMLStringMacro(id, ID);
+  vtkMRMLWriteXMLStringMacro(name, Name);
+  vtkMRMLWriteXMLStringMacro(description, Description);
+  vtkMRMLWriteXMLBooleanMacro(hideFromEditors, HideFromEditors);
+  vtkMRMLWriteXMLBooleanMacro(selectable, Selectable);
+  vtkMRMLWriteXMLBooleanMacro(selected, Selected);
+  vtkMRMLWriteXMLStringMacro(singletonTag, SingletonTag);
+  vtkMRMLWriteXMLEndMacro();
 
   if (this->Attributes.size())
     {
@@ -1068,6 +995,30 @@ const char * vtkMRMLNode::URLDecodeString(const char *inString)
   this->SetTempURLString(kwInString.c_str());
   this->DisableModifiedEventOff();
   return (this->GetTempURLString());
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLNode::XMLAttributeEncodeString(const std::string& inString)
+{
+  std::string outString = inString;
+  vtksys::SystemTools::ReplaceString(outString, "&", "&amp;");
+  vtksys::SystemTools::ReplaceString(outString, "\"", "&quot;");
+  vtksys::SystemTools::ReplaceString(outString, "'", "&apos;");
+  vtksys::SystemTools::ReplaceString(outString, "<", "&lt;");
+  vtksys::SystemTools::ReplaceString(outString, ">", "&gt;");
+  return outString;
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLNode::XMLAttributeDecodeString(const std::string& inString)
+{
+  std::string outString = inString;
+  vtksys::SystemTools::ReplaceString(outString, "&quot;", "\"");
+  vtksys::SystemTools::ReplaceString(outString, "&apos;", "'");
+  vtksys::SystemTools::ReplaceString(outString, "&lt;", "<");
+  vtksys::SystemTools::ReplaceString(outString, "&gt;", ">");
+  vtksys::SystemTools::ReplaceString(outString, "&amp;", "&");
+  return outString;
 }
 
 //// Reference API

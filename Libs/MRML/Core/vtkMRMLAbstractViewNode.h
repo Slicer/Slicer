@@ -259,12 +259,8 @@ protected:
 
   ///
   /// Indicates whether or not the View is active.
-  /// Inactive (1) by default.
+  /// Inactive by default.
   int Active;
-
-  ///
-  /// When a view is set Active, make other views inactive.
-  virtual void RemoveActiveFlagInScene();
 
   ///
   /// Background colors

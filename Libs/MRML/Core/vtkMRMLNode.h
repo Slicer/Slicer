@@ -33,6 +33,9 @@ class vtkCallbackCommand;
 // Slicer VTK add-on includes
 #include <vtkLoggingMacros.h>
 
+// Helper macros for simplifying reading, writing, copying, and printing node properties.
+#include "vtkMRMLNodePropertyMacros.h"
+
 // STD includes
 #include <map>
 #include <string>
@@ -197,6 +200,7 @@ public:
   /// \note
   /// Subclasses should implement this method.
   /// Call this method in the subclass implementation.
+  /// Node name is only updated if a non-empty node name is specified in the source node.
   virtual void Copy(vtkMRMLNode *node);
 
   /// \brief Copy the references of the node into this.
@@ -567,6 +571,16 @@ public:
   /// \note Currently only works on %, space, ', ", <, >
   /// \sa URLEncodeString()
   const char *URLDecodeString(const char *inString);
+
+  /// \brief Encode an XML attribute string (replaces special characters by .
+  ///
+  /// \sa XMLAttributeDecodeString()
+  std::string XMLAttributeEncodeString(const std::string& inString);
+
+  /// \brief Decode a URL string.
+  ///
+  /// \sa XMLAttributeEncodeString()
+  std::string XMLAttributeDecodeString(const std::string& inString);
 
   /// Get/Set for Selected
   vtkGetMacro(Selected, int);

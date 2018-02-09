@@ -1053,7 +1053,7 @@ int vtkMRMLScene::Commit(const char* url)
       }
 
     vtkIndent vindent(indent);
-    *os << vindent << "<" << node->GetNodeTagName() << "\n";
+    *os << vindent << "<" << node->GetNodeTagName() << "\n ";
 
     if(indent<=0)
       indent = 1;

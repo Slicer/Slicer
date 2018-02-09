@@ -41,21 +41,16 @@ vtkMRMLNodeNewMacro(vtkMRMLCameraNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLCameraNode::vtkMRMLCameraNode()
+: InternalActiveTag(NULL)
+, Camera(NULL)
 {
-  //this->SingletonTag = const_cast<char *>("vtkMRMLCameraNode");
-
   this->HideFromEditors = 0;
 
-  this->InternalActiveTag = NULL;
-  this->Camera = NULL;
-  vtkCamera *camera = vtkCamera::New();
-
+  vtkNew<vtkCamera> camera;
   camera->SetPosition(0, 500, 0);
   camera->SetFocalPoint(0, 0, 0);
   camera->SetViewUp(0, 0, 1);
-
-  this->SetAndObserveCamera(camera);
-  camera->Delete();
+  this->SetAndObserveCamera(camera.GetPointer());
 
   this->AppliedTransform = vtkMatrix4x4::New();
  }
@@ -79,29 +74,15 @@ void vtkMRMLCameraNode::WriteXML(ostream& of, int nIndent)
 
   Superclass::WriteXML(of, nIndent);
 
-  double *position = this->GetPosition();
-  of << " position=\"" << position[0] << " "
-    << position[1] << " "
-    << position[2] << "\"";
-
-  double *focalPoint = this->GetFocalPoint();
-  of << " focalPoint=\"" << focalPoint[0] << " "
-    << focalPoint[1] << " "
-    << focalPoint[2] << "\"";
-
-  double *viewUp = this->GetViewUp();
-    of << " viewUp=\"" << viewUp[0] << " "
-      << viewUp[1] << " "
-      << viewUp[2] << "\"";
-
-  of << " parallelProjection=\"" << (this->GetParallelProjection() ? "true" : "false") << "\"";
-
-  of << " parallelScale=\"" << this->GetParallelScale() << "\"";
-
-  if (this->GetActiveTag())
-    {
-    of << " activetag=\"" << this->GetActiveTag() << "\"";
-    }
+  vtkMRMLWriteXMLBeginMacro(of);
+  vtkMRMLWriteXMLVectorMacro(position, Position, double, 3);
+  vtkMRMLWriteXMLVectorMacro(focalPoint, FocalPoint, double, 3);
+  vtkMRMLWriteXMLVectorMacro(viewUp, ViewUp, double, 3);
+  vtkMRMLWriteXMLBooleanMacro(parallelProjection, ParallelProjection);
+  vtkMRMLWriteXMLFloatMacro(parallelScale, ParallelScale);
+  vtkMRMLWriteXMLFloatMacro(viewAngle, ViewAngle);
+  vtkMRMLWriteXMLStringMacro(activetag, ActiveTag);
+  vtkMRMLWriteXMLEndMacro();
 
   if (this->GetAppliedTransform())
     {
@@ -132,66 +113,23 @@ void vtkMRMLCameraNode::ReadXMLAttributes(const char** atts)
 
   Superclass::ReadXMLAttributes(atts);
 
+  vtkMRMLReadXMLBeginMacro(atts);
+  vtkMRMLReadXMLVectorMacro(position, Position, double, 3);
+  vtkMRMLReadXMLVectorMacro(focalPoint, FocalPoint, double, 3);
+  vtkMRMLReadXMLVectorMacro(viewUp, ViewUp, double, 3);
+  vtkMRMLReadXMLBooleanMacro(parallelProjection, ParallelProjection);
+  vtkMRMLReadXMLFloatMacro(parallelScale, ParallelScale);
+  vtkMRMLReadXMLFloatMacro(viewAngle, ViewAngle);
+  vtkMRMLReadXMLStringMacro(activetag, ActiveTag);
+  vtkMRMLReadXMLEndMacro();
+
   const char* attName;
   const char* attValue;
   while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "position"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      double Position[3];
-      ss >> Position[0];
-      ss >> Position[1];
-      ss >> Position[2];
-      this->SetPosition(Position);
-      }
-    else if (!strcmp(attName, "focalPoint"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      double FocalPoint[3];
-      ss >> FocalPoint[0];
-      ss >> FocalPoint[1];
-      ss >> FocalPoint[2];
-      this->SetFocalPoint(FocalPoint);
-      }
-    else if (!strcmp(attName, "viewUp"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      double ViewUp[3];
-      ss >> ViewUp[0];
-      ss >> ViewUp[1];
-      ss >> ViewUp[2];
-      this->SetViewUp(ViewUp);
-      }
-    else if (!strcmp(attName, "parallelProjection"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->SetParallelProjection(1);
-        }
-      else
-        {
-        this->SetParallelProjection(0);
-        }
-      }
-    else if (!strcmp(attName, "parallelScale"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      double parallelScale;
-      ss >> parallelScale;
-      this->SetParallelScale(parallelScale);
-      }
-    else if (!strcmp(attName, "activetag"))
-      {
-      this->SetActiveTag(attValue);
-      }
-    else if (!strcmp(attName, "active"))
+    if (!strcmp(attName, "active"))
       {
       // Legacy, was replaced by active tag, try to set ActiveTag instead
       // to link to the main viewer
@@ -220,8 +158,8 @@ void vtkMRMLCameraNode::ReadXMLAttributes(const char** atts)
         }
       }
     }
-    this->EndModify(disabledModify);
 
+  this->EndModify(disabledModify);
 }
 
 
@@ -233,21 +171,29 @@ void vtkMRMLCameraNode::Copy(vtkMRMLNode *anode)
   int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLCameraNode *node = vtkMRMLCameraNode::SafeDownCast(anode);
-  assert(node);
 
-  this->SetPosition(node->GetPosition());
-  this->SetFocalPoint(node->GetFocalPoint());
-  this->SetViewUp(node->GetViewUp());
-  this->SetParallelProjection(node->GetParallelProjection());
-  this->SetParallelScale(node->GetParallelScale());
-  this->AppliedTransform->DeepCopy(node->GetAppliedTransform());
-  // Important, do not call SetActiveTag() or the owner of the current tag
-  // (node) will lose its tag, and the active camera will be untagged, and
-  // a the active camera of the current view will be reset to NULL, and a
-  // new camera will be created on the fly by VTK the next time an active
-  // camera is need, one completely disconnected from Slicer3's MRML/internals
-  this->SetInternalActiveTag(node->GetActiveTag());
+  vtkMRMLCopyBeginMacro(anode);
+  vtkMRMLCopyVectorMacro(Position, double, 3);
+  vtkMRMLCopyVectorMacro(FocalPoint, double, 3);
+  vtkMRMLCopyVectorMacro(ViewUp, double, 3);
+  vtkMRMLCopyBooleanMacro(ParallelProjection);
+  vtkMRMLCopyFloatMacro(ParallelScale);
+  vtkMRMLCopyFloatMacro(ViewAngle);
+  vtkMRMLCopyEndMacro();
+
+  vtkMRMLCameraNode *node = vtkMRMLCameraNode::SafeDownCast(anode);
+  if (node)
+    {
+    this->AppliedTransform->DeepCopy(node->GetAppliedTransform());
+
+    // Important, do not call SetActiveTag() or the owner of the current tag
+    // (node) will lose its tag, and the active camera will be untagged, and
+    // a the active camera of the current view will be reset to NULL, and a
+    // new camera will be created on the fly by VTK the next time an active
+    // camera is need, one completely disconnected from Slicer3's MRML/internals
+    this->SetInternalActiveTag(node->GetActiveTag());
+    }
+
   // Maybe the new position and focalpoint combo doesn't fit the existing
   // clipping range
   this->ResetClippingRange();
@@ -260,18 +206,16 @@ void vtkMRMLCameraNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 
-  os << indent << "Parallel projection: " << this->GetParallelProjection() << '\n';
-  os << indent << "Parallel scale: " << this->GetParallelScale() << '\n';
-  os << indent << "ViewAngle:" << this->GetViewAngle() << '\n';
-  double v[3];
-  this->GetPosition(v);
-  os << indent << "Position: " << v[0] << ", " << v[1] << ", " << v[2] << '\n';
-  this->GetFocalPoint(v);
-  os << indent << "FocalPoint: " << v[0] << ", " << v[1] << ", " << v[2] << '\n';
-  this->GetViewUp(v);
-  os << indent << "ViewUp: " << v[0] << ", " << v[1] << ", " << v[2] << '\n';
-  os << indent << "ActiveTag: " <<
-    (this->GetActiveTag() ? this->GetActiveTag() : "(none)") << "\n";
+  vtkMRMLPrintBeginMacro(os, indent);
+  vtkMRMLPrintVectorMacro(Position, double, 3);
+  vtkMRMLPrintVectorMacro(FocalPoint, double, 3);
+  vtkMRMLPrintVectorMacro(ViewUp, double, 3);
+  vtkMRMLPrintBooleanMacro(ParallelProjection);
+  vtkMRMLPrintFloatMacro(ParallelScale);
+  vtkMRMLPrintFloatMacro(ViewAngle);
+  vtkMRMLPrintStringMacro(ActiveTag);
+  vtkMRMLPrintEndMacro();
+
   os << indent << "AppliedTransform: " ;
   this->GetAppliedTransform()->PrintSelf(os, indent.GetNextIndent());
 }
