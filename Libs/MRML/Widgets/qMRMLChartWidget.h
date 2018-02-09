@@ -72,10 +72,12 @@ public:
   void setColorLogic(vtkMRMLColorLogic* colorLogic);
   vtkMRMLColorLogic* colorLogic()const;
 
-
 public slots:
   /// Set the current \a viewNode to observe
   void setMRMLChartViewNode(vtkMRMLChartViewNode* newChartViewNode);
+
+protected slots:
+  void onAppAboutToQuit();
 
 protected:
   QScopedPointer<qMRMLChartWidgetPrivate> d_ptr;

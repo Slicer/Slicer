@@ -59,8 +59,9 @@ protected:
 #endif
 
 //-----------------------------------------------------------------------------
-class qSlicerWebWidgetPrivate: public Ui_qSlicerWebWidget
+class qSlicerWebWidgetPrivate: public QObject, Ui_qSlicerWebWidget
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerWebWidget);
 protected:
   qSlicerWebWidget* const q_ptr;
@@ -81,6 +82,11 @@ public:
 
   /// Convenient method to set "document.webkitHidden" property
   void setDocumentWebkitHidden(bool value);
+
+protected slots:
+  void onAppAboutToQuit();
+
+public:
 
   QTime DownloadTime;
 #if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))

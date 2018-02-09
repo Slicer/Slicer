@@ -16,6 +16,7 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QCoreApplication>
 #include <QDebug>
 #include <QFileInfo>
 #include <QGridLayout>
@@ -89,6 +90,15 @@ void qMRMLChartWidgetPrivate::init()
                    this->ChartView, SLOT(setMRMLScene(vtkMRMLScene*)));
   QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    this->ChartController, SLOT(setMRMLScene(vtkMRMLScene*)));
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
+  // XXX Since relying on automatic deletion of QWebEngineView when the application
+  // exit causes the application to crash. This is a workaround for explicitly
+  // deleting the object before the application exit.
+  // See https://bugreports.qt.io/browse/QTBUG-50160#comment-305211
+  QObject::connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()),
+                   q, SLOT(onAppAboutToQuit()));
+#endif
 }
 
 // --------------------------------------------------------------------------
@@ -107,10 +117,12 @@ qMRMLChartWidget::qMRMLChartWidget(QWidget* parentWidget)
 qMRMLChartWidget::~qMRMLChartWidget()
 {
   Q_D(qMRMLChartWidget);
-  d->ChartView->setMRMLScene(0);
+  if (d->ChartView)
+    {
+    d->ChartView->setMRMLScene(0);
+    }
   d->ChartController->setMRMLScene(0);
 }
-
 
 // --------------------------------------------------------------------------
 void qMRMLChartWidget::setMRMLChartViewNode(vtkMRMLChartViewNode* newChartViewNode)
@@ -160,4 +172,15 @@ vtkMRMLColorLogic* qMRMLChartWidget::colorLogic()const
 {
   Q_D(const qMRMLChartWidget);
   return d->ChartView->colorLogic();
+}
+
+//---------------------------------------------------------------------------
+void qMRMLChartWidget::onAppAboutToQuit()
+{
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
+  Q_D(qMRMLChartWidget);
+  d->ChartView->setMRMLScene(0);
+  delete d->ChartView;
+  d->ChartView = 0;
+#endif
 }

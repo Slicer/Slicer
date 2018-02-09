@@ -29,6 +29,7 @@
 #include <QWebFrame>
 #include <QWebView>
 #else
+#include <QCoreApplication>
 #include <QWebEngineView>
 #include <QWebChannel>
 #include <QWebEngineScript>
@@ -93,6 +94,13 @@ void qSlicerWebWidgetPrivate::init()
   this->WebChannel = new QWebChannel(this->WebView->page());
   this->initializeWebChannel(this->WebChannel);
   this->WebView->page()->setWebChannel(this->WebChannel);
+
+  // XXX Since relying on automatic deletion of QWebEngineView when the application
+  // exit causes the application to crash. This is a workaround for explicitly
+  // deleting the object before the application exit.
+  // See https://bugreports.qt.io/browse/QTBUG-50160#comment-305211
+  QObject::connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()),
+                   this, SLOT(onAppAboutToQuit()));
 #endif
   this->verticalLayout->insertWidget(0, this->WebView);
 
@@ -143,6 +151,19 @@ QWebFrame* qSlicerWebWidgetPrivate::mainFrame()
   return this->WebView->page()->mainFrame();
 }
 #endif
+
+// --------------------------------------------------------------------------
+void qSlicerWebWidgetPrivate::onAppAboutToQuit()
+{
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
+  if (this->WebView)
+    {
+    this->WebView->setParent(0);
+    delete this->WebView;
+    this->WebView = 0;
+    }
+#endif
+}
 
 // --------------------------------------------------------------------------
 void qSlicerWebWidgetPrivate::setDocumentWebkitHidden(bool value)

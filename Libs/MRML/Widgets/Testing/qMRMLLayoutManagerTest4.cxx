@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QApplication>
+#include <QTimer>
 #include <QWidget>
 
 // Slicer includes
@@ -82,9 +83,21 @@ int qMRMLLayoutManagerTest4(int argc, char * argv[] )
     }
 
   // Note:
-  // Qt reports leaks in debug mode (LEAK: 88 WebCoreNode) on exit.
-  // This seems to be harmless and will be fixed in future Qt releases.
-  // More info: https://bugreports.qt.io/browse/QTBUG-29390
+  // (1) Qt4 reports leaks in debug mode (LEAK: 88 WebCoreNode) on exit.
+  //     This seems to be harmless and will be fixed in future Qt releases.
+  //     More info: https://bugreports.qt.io/browse/QTBUG-29390
+  // (2) Because of Qt5 issue #50160, we need to explicitly call the quit function.
+  //     This ensures that the workaround associated with qSlicerWebWidget,
+  //     qMRMLChartWidget, ... is applied.
+  //     See https://bugreports.qt.io/browse/QTBUG-50160#comment-305211
 
-  return EXIT_SUCCESS;
+  QTimer autoExit;
+  if (argc < 2 || QString(argv[1]) != "-I")
+    {
+    QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
+    autoExit.start(1000);
+    }
+  int res = app.exec();
+
+  return res;
 }
