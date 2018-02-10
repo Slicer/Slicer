@@ -303,5 +303,5 @@ vtkMRMLPlotViewNode* qSlicerSubjectHierarchyPlotsPlugin::getPlotViewNode()const
     }
 
   // no valid plot view in current layout
-  return false;
+  return NULL;
 }
