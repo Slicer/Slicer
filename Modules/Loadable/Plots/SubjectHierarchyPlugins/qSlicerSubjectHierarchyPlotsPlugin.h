@@ -29,13 +29,8 @@ class qSlicerSubjectHierarchyPlotsPluginPrivate;
 class vtkMRMLPlotViewNode;
 class vtkSlicerPlotsLogic;
 
-// Due to some reason the Python wrapping of this class fails, therefore
-// put everything between BTX/ETX to exclude from wrapping.
-// TODO investigate why the wrapping fails:
-//   https://www.assembla.com/spaces/slicerrt/tickets/210-python-wrapping-error-when-starting-up-slicer-with-slicerrt
-//BTX
 
-/// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
+/// \ingroup Slicer_QtModules_SubjectHierarchy_Plugins
 class Q_SLICER_PLOTS_SUBJECT_HIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyPlotsPlugin : public qSlicerSubjectHierarchyAbstractPlugin
 {
 public:
@@ -43,10 +38,14 @@ public:
 
 public:
   typedef qSlicerSubjectHierarchyAbstractPlugin Superclass;
-  qSlicerSubjectHierarchyPlotsPlugin(vtkSlicerPlotsLogic* plotsLogic, QObject* parent = NULL);
+  qSlicerSubjectHierarchyPlotsPlugin(QObject* parent = NULL);
   virtual ~qSlicerSubjectHierarchyPlotsPlugin();
 
 public:
+
+  /// Set plots module logic. Required for switching layouts and showing plot in layout.
+  void setPlotsLogic(vtkSlicerPlotsLogic* plotsLogic);
+
   /// Determines if a data node can be placed in the hierarchy using the actual plugin,
   /// and gets a confidence value for a certain MRML node (usually the type and possibly attributes are checked).
   /// \param node Node to be added to the hierarchy
@@ -95,7 +94,5 @@ private:
   Q_DECLARE_PRIVATE(qSlicerSubjectHierarchyPlotsPlugin);
   Q_DISABLE_COPY(qSlicerSubjectHierarchyPlotsPlugin);
 };
-
-//ETX
 
 #endif

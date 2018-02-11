@@ -117,10 +117,12 @@ void qSlicerPlotsModule::setup()
 {
   this->Superclass::setup();
 
-  vtkSlicerPlotsLogic* plotsLogic = vtkSlicerPlotsLogic::SafeDownCast(this->logic());
-
   // Register Subject Hierarchy core plugins
-  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyPlotsPlugin(plotsLogic));
+
+  vtkSlicerPlotsLogic* plotsLogic = vtkSlicerPlotsLogic::SafeDownCast(this->logic());
+  qSlicerSubjectHierarchyPlotsPlugin* shPlugin = new qSlicerSubjectHierarchyPlotsPlugin();
+  shPlugin->setPlotsLogic(plotsLogic);
+  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(shPlugin);
 }
 
 

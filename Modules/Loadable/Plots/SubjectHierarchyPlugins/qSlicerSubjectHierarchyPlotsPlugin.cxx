@@ -91,21 +91,25 @@ qSlicerSubjectHierarchyPlotsPluginPrivate::~qSlicerSubjectHierarchyPlotsPluginPr
 // qSlicerSubjectHierarchyPlotsPlugin methods
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyPlotsPlugin::qSlicerSubjectHierarchyPlotsPlugin(vtkSlicerPlotsLogic* plotsLogic, QObject* parent)
+qSlicerSubjectHierarchyPlotsPlugin::qSlicerSubjectHierarchyPlotsPlugin(QObject* parent)
  : Superclass(parent)
  , d_ptr( new qSlicerSubjectHierarchyPlotsPluginPrivate(*this) )
 {
   Q_D(qSlicerSubjectHierarchyPlotsPlugin);
-
   this->m_Name = QString("PlotChart");
-  d->PlotsLogic = plotsLogic;
-
   d->init();
 }
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyPlotsPlugin::~qSlicerSubjectHierarchyPlotsPlugin()
 {
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyPlotsPlugin::setPlotsLogic(vtkSlicerPlotsLogic* plotsLogic)
+{
+  Q_D(qSlicerSubjectHierarchyPlotsPlugin);
+  d->PlotsLogic = plotsLogic;
 }
 
 //----------------------------------------------------------------------------
@@ -221,8 +225,15 @@ void qSlicerSubjectHierarchyPlotsPlugin::setDisplayVisibility(vtkIdType itemID, 
     return;
     }
 
-  vtkMRMLPlotChartNode* associatedPlotChartNode = vtkMRMLPlotChartNode::SafeDownCast(shNode->GetItemDataNode(itemID));
-  d->PlotsLogic->ShowChartInLayout(visible ? associatedPlotChartNode : NULL);
+  if (d->PlotsLogic)
+    {
+    vtkMRMLPlotChartNode* associatedPlotChartNode = vtkMRMLPlotChartNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+    d->PlotsLogic->ShowChartInLayout(visible ? associatedPlotChartNode : NULL);
+    }
+  else
+    {
+    qWarning() << Q_FUNC_INFO << ": plotsLogic is not set, cannot show chart in layout";
+    }
 
   // Update icons of all charts (if we show this chart then we may have hidden other charts)
   if (scene->IsBatchProcessing())
