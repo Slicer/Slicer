@@ -131,6 +131,12 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   # Windows: warning C4910: 'vtkImageIterator' : '__declspec(dllexport)' and 'extern' are incompatible on an explicit instantiation
   "Common.DataModel.vtkImageIterator.h.*warning C4910"
 
+  # bzip2
+  "bzip2.blocksort.c.*Winline"
+
+  # CTK
+  "moc_ctkTransferFunctionBarsItem.cxx.*old-style-cast"
+
   # CTK - dcmtk
   "dcmdata/dcovlay.h:93: warning: use of old-style cast"
   "/usr/bin/ranlib: .*lib(dcmtls|oflog).a.*has no symbols"
@@ -139,6 +145,9 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
 
   # EMSegment
   "warning: the use of .mktemp. is dangerous, better use .mkstemp."
+
+  # JsonCpp
+  "json.(reader|value).h.*warning C4275.*non dll-interface class"
 
   # Libs/OpenIGTLink
   "(OpenIGTLink|openigtlink).[Ss]ource.igtl"
@@ -168,10 +177,12 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   # Python - Windows
   "(P|p)ython-2.7.13.(M|m)odules"
   "(P|p)ython-2.7.13.PC"
+  "Include\um\winsock2.h.*warning C4005: 'INVALID_SOCKET': macro redefinition"
   # Python - Linux
   "Objects.unicodeobject.c.*warning:.*differ in signedness"
   "[Ii]nclude.(string|unicodeobject).h.*note: expected ‘const char *’ but argument is of type ‘unsigned char *’"
   "Modules.expat.xmlparse.*warning.*discards qualifiers from pointer target type"
+  "Objects.stringobject.c.*uninitialized"
   # Python - Mac
   "ranlib: file:.*libpython2.7.a.*has no symbols"
   "python.Modules._cursesmodule.c.*warning.*may be used uninitialized in this function"
@@ -185,10 +196,11 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   # About redefinition of symbols
   "pyconfig.h.*warning:.*redefined"
   "features.h.*"
-  # python-packaging, python-pip, python-GitPython
-  "no previously-included files found matching"
-  # python-chardet, python-GitPython
+
+  # python packages
+  "warning: no previously-included files.*matching.*distribution"
   "warning: no files found matching"
+  "warnings.warn.msg"
 
   # curl suppressions
   "cmcurl.*warning.*conditional expression is constant"
