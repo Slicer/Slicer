@@ -27,6 +27,7 @@
 #include <vtkAssignAttribute.h>
 #include <vtkCommand.h>
 #include <vtkIntArray.h>
+#include <vtkNew.h>
 #include <vtkObjectFactory.h>
 
 // VTKSYS includes
