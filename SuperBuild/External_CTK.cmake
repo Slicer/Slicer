@@ -135,6 +135,17 @@ if(NOT DEFINED CTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       ${${proj}_DEPENDENCIES}
     )
 
+  if(Slicer_USE_PYTHONQT)
+    if(APPLE)
+      ExternalProject_Add_Step(${proj} fix_pythonqt_rpath
+        COMMAND install_name_tool
+          -id ${EP_BINARY_DIR}/CMakeExternals/Install/lib/libPythonQt.dylib
+          ${EP_BINARY_DIR}/CMakeExternals/Install/lib/libPythonQt.dylib
+        DEPENDEES build
+        )
+    endif()
+  endif()
+
   ExternalProject_GenerateProjectDescription_Step(${proj})
 
   set(CTK_DIR ${EP_BINARY_DIR})
