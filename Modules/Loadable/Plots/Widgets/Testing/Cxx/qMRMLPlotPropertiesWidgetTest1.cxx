@@ -94,7 +94,7 @@ int qMRMLPlotPropertiesWidgetTest1( int argc, char * argv [] )
 
   // Create a MRMLTableNode
   vtkMRMLTableNode* tableNode = vtkMRMLTableNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLTableNode"));
-  tableNode->SetAndObserveTable(table);
+  tableNode->SetAndObserveTable(table.GetPointer());
 
   // Create two plotSeriesNodes
 
@@ -141,7 +141,7 @@ int qMRMLPlotPropertiesWidgetTest1( int argc, char * argv [] )
 
   qMRMLPlotChartPropertiesWidget* chartPropertiesWidget = new qMRMLPlotChartPropertiesWidget();
   chartPropertiesWidget->setMRMLScene(scene.GetPointer());
-  chartPropertiesWidget->setMRMLPlotChartNode(plotChartNode);
+  chartPropertiesWidget->setMRMLPlotChartNode(plotChartNode.GetPointer());
   gridLayout.addWidget(chartPropertiesWidget, 1, 0);
 
   qMRMLPlotSeriesPropertiesWidget* seriesPropertiesWidget = new qMRMLPlotSeriesPropertiesWidget();
