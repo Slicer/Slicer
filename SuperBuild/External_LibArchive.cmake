@@ -46,9 +46,12 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
     QUIET
     )
 
+  # master (v3.3.3) with patches:
+  # - disabling LHA (See #4407)
+  # - fixing GCC7 build errors
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    "43a14d4a097607d44c8741b24795d9ddc70b9be8" # master (v3.3.3) + patch disabling LHA (See #4407)
+    "ebec58f7698ed04712e885aa2c354547fc8c596d"
     QUIET
     )
 
