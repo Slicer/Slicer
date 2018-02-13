@@ -29,6 +29,8 @@
 # We mean it.
 #
 
+include(ExternalProject)
+include(${CMAKE_CURRENT_LIST_DIR}/ExternalProjectGenerateProjectDescription.cmake)
 
 #!
 #! ExternalProject_Add_Source(<projectname>
