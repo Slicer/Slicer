@@ -196,12 +196,6 @@ public:
   /// \sa vtkOutputWindowDisplayErrorText
   void DisplayErrors();
 
-  /// Return True if errors have been recorded
-  bool HasErrors() const;
-
-  /// Clear list of errors
-  void Clear();
-
 protected:
   vtkSlicerErrorSink();
   virtual ~vtkSlicerErrorSink(){}
@@ -249,18 +243,6 @@ void vtkSlicerErrorSink::DisplayErrors()
     vtkOutputWindowDisplayErrorText((*it).c_str());
     ++it;
     }
-}
-
-//----------------------------------------------------------------------------
-bool vtkSlicerErrorSink::HasErrors() const
-{
-  return this->ErrorList.size() > 0;
-}
-
-//----------------------------------------------------------------------------
-void vtkSlicerErrorSink::Clear()
-{
-  this->ErrorList.clear();
 }
 
 //----------------------------------------------------------------------------

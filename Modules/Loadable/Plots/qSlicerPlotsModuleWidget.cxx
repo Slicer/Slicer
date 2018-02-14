@@ -136,8 +136,9 @@ void qSlicerPlotsModuleWidget::onNodeSelected(vtkMRMLNode* node)
 //-----------------------------------------------------------------------------
 void qSlicerPlotsModuleWidget::onMRMLPlotChartNodeModified(vtkObject* caller)
 {
-  Q_D(qSlicerPlotsModuleWidget);
+  Q_UNUSED(caller);
   /*
+  Q_D(qSlicerPlotsModuleWidget);
 #ifndef QT_NO_DEBUG
   vtkMRMLPlotChartNode* tableNode = vtkMRMLPlotChartNode::SafeDownCast(caller);
   Q_ASSERT(d->MRMLPlotChartNode == tableNode);

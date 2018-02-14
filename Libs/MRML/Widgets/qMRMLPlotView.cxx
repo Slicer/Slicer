@@ -682,7 +682,7 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
   // Setting Axes
   const unsigned int numberOfAxisIDs = 4;
   int axisIDs[numberOfAxisIDs] = { vtkAxis::BOTTOM, vtkAxis::TOP, vtkAxis::LEFT, vtkAxis::RIGHT };
-  for (int axisIndex = 0; axisIndex < numberOfAxisIDs; ++axisIndex)
+  for (unsigned int axisIndex = 0; axisIndex < numberOfAxisIDs; ++axisIndex)
     {
     int axisID = axisIDs[axisIndex];
     vtkAxis *axis = q->chart()->GetAxis(axisID);

@@ -467,7 +467,6 @@ void qMRMLTableView::plotSelection()
   // Validate type of selected columns
   int stringColumnIndex = -1; // one string column is allowed (to be used as point labels)
   std::deque<int> columnIndices;
-  qMRMLTableModel* mrmlModel = tableModel();
   QItemSelectionModel* selection = selectionModel();
   QModelIndexList selectedColumns = selection->selectedIndexes();
   for (int i = 0; i< selectedColumns.count(); i++)

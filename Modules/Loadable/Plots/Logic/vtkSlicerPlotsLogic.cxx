@@ -83,7 +83,7 @@ int vtkSlicerPlotsLogic::GetLayoutWithPlot(int currentLayout)
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLPlotSeriesNode* vtkSlicerPlotsLogic::CloneSeries(vtkMRMLPlotSeriesNode* source, const char *name)
+vtkMRMLPlotSeriesNode* vtkSlicerPlotsLogic::CloneSeries(vtkMRMLPlotSeriesNode* source, const char * vtkNotUsed(name))
 {
   if (!source || source->GetScene() == NULL)
     {
