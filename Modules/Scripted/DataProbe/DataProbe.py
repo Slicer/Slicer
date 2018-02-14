@@ -54,7 +54,7 @@ See <a>http://www.slicer.org</a> for details.  Module implemented by Steve Piepe
   def addView(self):
     """
     Create the persistent widget shown in the bottom left of the user interface
-    Do this in a singleShot callback so the rest of the interface is already
+    Do this in a startupCompleted callback so the rest of the interface is already
     built.
     """
     # TODO - the parent name will likely change
