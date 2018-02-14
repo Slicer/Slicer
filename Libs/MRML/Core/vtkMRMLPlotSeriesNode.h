@@ -206,8 +206,8 @@ public:
 
   ///
   /// Set/Get Color of the line and markers of the plot
-  vtkGetVectorMacro(Color, double, 3);
-  vtkSetVectorMacro(Color, double, 3);
+  vtkGetVector3Macro(Color, double);
+  vtkSetVector3Macro(Color, double);
 
   ///
   /// Utility function that generates a color that is not used by other plot series nodes.
