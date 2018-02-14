@@ -62,8 +62,8 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
     # Include patches for:
     # * DCMTK_ENABLE_CXX11 support on Linux
-    # * configuration warning related to CMP0005
-    "53f8545c88aab47a08269c90039357fcf283ee58" # v3.6.2_20170809
+    # * Set CMP0067 to ensure try_compile work as expected
+    "88225bc0a3bcaf2d4e4f212522659a06d80ac3bb" # v3.6.3_20180205
     QUIET
     )
 
