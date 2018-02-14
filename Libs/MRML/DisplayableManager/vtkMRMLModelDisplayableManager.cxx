@@ -512,8 +512,9 @@ void vtkMRMLModelDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller,
           {
           requestRender = false;
           break;
-          }
+          } // else fall through
       case vtkCommand::ModifiedEvent:
+        VTK_FALLTHROUGH;
       case vtkMRMLModelNode::MeshModifiedEvent:
         requestRender = this->OnMRMLDisplayableModelNodeModifiedEvent(
           displayableNode);
