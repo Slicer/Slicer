@@ -264,20 +264,27 @@ void qMRMLThreeDView::rotateToViewAxis(unsigned int axisId)
     {
   case 0:
     cam->RotateTo(vtkMRMLCameraNode::Left);
+    break;
   case 1:
     cam->RotateTo(vtkMRMLCameraNode::Right);
+    break;
   case 2:
     cam->RotateTo(vtkMRMLCameraNode::Posterior);
+    break;
   case 3:
     cam->RotateTo(vtkMRMLCameraNode::Anterior);
+    break;
   case 4:
     cam->RotateTo(vtkMRMLCameraNode::Inferior);
+    break;
   case 5:
     cam->RotateTo(vtkMRMLCameraNode::Superior);
+    break;
   default:
     qWarning() << "qMRMLThreeDView::rotateToViewAxis: " << axisId
                << " is not a valid axis id (0 to 5 : "
                << "-X, +X, -Y, +Y, -Z, +Z).";
+    break;
     }
 }
 

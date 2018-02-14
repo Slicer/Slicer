@@ -302,12 +302,16 @@ bool qSlicerSceneWriter::writeToDirectory(const qSlicerIO::IOProperties& propert
     switch(numFiles)
       {
       case -2:
+        VTK_FALLTHROUGH;
       case -1:
         error = tr("fails to be created");
+        break;
       case 1:
         error = tr("contains 1 file or directory");
+        break;
       default:
         error = tr("contains %1 files or directories").arg(numFiles);
+        break;
       }
     QString message = tr("Selected directory\n\"%1\"\n%2.\n"
                          "Please choose an empty directory.")
