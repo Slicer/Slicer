@@ -682,7 +682,8 @@ def array(pattern = "", index = 0):
   """Return the array you are "most likely to want" from the indexth
   MRML node that matches the pattern.  Meant to be used in the python
   console for quick debugging/testing.  More specific API should be
-  used in scripts to be sure you get exactly what you want.
+  used in scripts to be sure you get exactly what you want, such as
+  arrayFromVolume, arrayFromModelPoints, and arrayFromGridTransform.
   """
   node = getNode(pattern=pattern, index=index)
   import slicer
@@ -701,6 +702,15 @@ def arrayFromVolume(volumeNode):
   Voxels values are not copied. Voxel values in the volume node can be modified
   by changing values in the numpy array.
   After all modifications has been completed, call volumeNode.Modified().
+
+  .. warning:: Memory area of the returned array is managed by VTK, therefore
+    values in the array may be changed, but the array must not be reallocated
+    (change array size, shallow-copy content from other array most likely causes
+    application crash). To allow arbitrary numpy operations on a volume array:
+
+      1. Make a deep-copy of the returned VTK-managed array using :func:`numpy.copy`.
+      2. Perform any computations using the copied array.
+      3. Write results back to the image data using :py:meth:`updateVolumeFromArray`.
   """
   scalarTypes = ['vtkMRMLScalarVolumeNode', 'vtkMRMLLabelMapVolumeNode']
   vectorTypes = ['vtkMRMLVectorVolumeNode', 'vtkMRMLMultiVolumeNode']
@@ -726,6 +736,10 @@ def arrayFromModelPoints(modelNode):
   """Return point positions of a model node as numpy array.
   Voxels values in the volume node can be modified by modfying the numpy array.
   After all modifications has been completed, call modelNode.Modified().
+
+  .. warning:: Important: memory area of the returned array is managed by VTK,
+    therefore values in the array may be changed, but the array must not be reallocated.
+    See :py:meth:`arrayFromVolume` for details.
   """
   import vtk.util.numpy_support
   pointData = modelNode.GetPolyData().GetPoints().GetData()
@@ -737,6 +751,10 @@ def arrayFromGridTransform(gridTransformNode):
   Vector values are not copied. Values in the transform node can be modified
   by changing values in the numpy array.
   After all modifications has been completed, call gridTransformNode.Modified().
+
+  .. warning:: Important: memory area of the returned array is managed by VTK,
+    therefore values in the array may be changed, but the array must not be reallocated.
+    See :py:meth:`arrayFromVolume` for details.
   """
   transformGrid = gridTransformNode.GetTransformFromParent()
   displacementGrid = transformGrid.GetDisplacementGrid()
@@ -752,6 +770,10 @@ def arrayFromSegment(segmentationNode, segmentId):
   If binary labelmap is the master representation then voxel values in the volume node can be modified
   by changing values in the numpy array. After all modifications has been completed, call:
   segmentationNode.GetSegmentation().GetSegment(segmentID).Modified()
+
+  .. warning:: Important: memory area of the returned array is managed by VTK,
+    therefore values in the array may be changed, but the array must not be reallocated.
+    See :py:meth:`arrayFromVolume` for details.
   """
   vimage = segmentationNode.GetBinaryLabelmapRepresentation(segmentId)
   nshape = tuple(reversed(vimage.GetDimensions()))
@@ -761,8 +783,10 @@ def arrayFromSegment(segmentationNode, segmentId):
 
 def updateVolumeFromArray(volumeNode, narray):
   """Sets voxels of a volume node from a numpy array.
-  Voxels values are copied, therefore if the numpy array
+  Voxels values are deep-copied, therefore if the numpy array
   is modified after calling this method, voxel values in the volume node will not change.
+  Dimensions and data size of the source numpy array does not have to match the current
+  content of the volume node.
   """
 
   vshape = tuple(reversed(narray.shape))
