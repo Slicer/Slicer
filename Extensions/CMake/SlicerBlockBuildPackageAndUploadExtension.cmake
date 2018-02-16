@@ -113,7 +113,7 @@ set(CTEST_NIGHTLY_START_TIME \"3:00:00 UTC\")
 
 set(CTEST_DROP_METHOD \"http\")
 set(CTEST_DROP_SITE \"${CTEST_DROP_SITE}\")
-set(CTEST_DROP_LOCATION \"/submit.php?project=Slicer4\")
+set(CTEST_DROP_LOCATION \"/submit.php?project=SlicerPreview\")
 set(CTEST_DROP_SITE_CDASH TRUE)")
   endif()
   message(STATUS "CTestCustom.cmake has been written to: ${ctestconfig_dest_dir}")
