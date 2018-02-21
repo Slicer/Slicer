@@ -186,7 +186,7 @@ def PullFromSlicer( NodeName ):
     """
 
     warnings.warn("'PullFromSlicer' method is deprecated and will be removed in the future."+
-        " Use PullFromSlicer method instead.",
+        " Use PullVolumeFromSlicer method instead.",
         FutureWarning)
 
     return PullVolumeFromSlicer(NodeName)
