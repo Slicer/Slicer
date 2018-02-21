@@ -16,10 +16,6 @@
 #  EXTENSION_SUPERBUILD_BINARY_DIR
 #  EXTENSION_BUILD_SUBDIRECTORY
 #  Slicer_CMAKE_DIR
-#  MIDAS_PACKAGE_URL
-#  MIDAS_PACKAGE_EMAIL
-#  MIDAS_PACKAGE_API_KEY
-#  CTEST_MODEL
 #  Slicer_WC_REVISION
 #  EXTENSION_NAME
 #  EXTENSION_CATEGORY
@@ -31,6 +27,17 @@
 #  EXTENSION_ENABLED
 #  EXTENSION_OPERATING_SYSTEM
 #  EXTENSION_ARCHITECTURE
+#
+# The following variables can either be defined in the including scope or
+# as environment variables:
+#
+#  CTEST_MODEL
+#  MIDAS_PACKAGE_URL
+#  MIDAS_PACKAGE_EMAIL
+#  MIDAS_PACKAGE_API_KEY
+#  SLICER_EXTENSION_MANAGER_CLIENT_EXECUTABLE
+#  SLICER_EXTENSION_MANAGER_URL
+#  SLICER_EXTENSION_MANAGER_API_KEY
 #
 # Then, using  the 'SlicerMacroExtractRepositoryInfo' CMake module, the script
 # will also set the following variables:
@@ -84,11 +91,18 @@ if(NOT PACKAGEUPLOAD)
   _seput_set_if_not_defined(MIDAS_PACKAGE_EMAIL "MIDAS_PACKAGE_EMAIL-NOTDEFINED" OBFUSCATE)
   _seput_set_if_not_defined(MIDAS_PACKAGE_API_KEY "MIDAS_PACKAGE_API_KEY-NOTDEFINED" OBFUSCATE)
 
+  _seput_set_if_not_defined(SLICER_EXTENSION_MANAGER_CLIENT_EXECUTABLE "SLICER_EXTENSION_MANAGER_CLIENT_EXECUTABLE-NOTDEFINED")
+  _seput_set_if_not_defined(SLICER_EXTENSION_MANAGER_URL "SLICER_EXTENSION_MANAGER_URL-NOTDEFINED")
+  _seput_set_if_not_defined(SLICER_EXTENSION_MANAGER_API_KEY "SLICER_EXTENSION_MANAGER_API_KEY-NOTDEFINED" OBFUSCATE)
+
   set(script_vars
     Slicer_CMAKE_DIR
     MIDAS_PACKAGE_URL
     MIDAS_PACKAGE_EMAIL
     MIDAS_PACKAGE_API_KEY
+    SLICER_EXTENSION_MANAGER_CLIENT_EXECUTABLE
+    SLICER_EXTENSION_MANAGER_URL
+    SLICER_EXTENSION_MANAGER_API_KEY
     CTEST_MODEL
     Slicer_WC_REVISION
     EXTENSION_NAME
@@ -255,6 +269,7 @@ foreach(p ${package_list})
   if(package_uploaded)
     message(WARNING "Skipping additional package: ${p}")
   else()
+    set(package_uploaded 1)
     get_filename_component(package_name "${p}" NAME)
     message("Uploading [${package_name}] on [${MIDAS_PACKAGE_URL}]")
     midas_api_upload_extension(
@@ -282,7 +297,6 @@ foreach(p ${package_list})
       #RELEASE ${release}
       RESULT_VARNAME slicer_midas_upload_status
       )
-    set(package_uploaded 1)
     if(NOT slicer_midas_upload_status STREQUAL "ok")
       file(WRITE ${EXTENSION_BINARY_DIR}/PACKAGES.txt "")
       message(FATAL_ERROR
@@ -291,5 +305,29 @@ Check that:
 (1) you have been granted permission to upload
 (2) your email and api key are correct")
     endif()
+
+    get_filename_component(package_directory ${p} DIRECTORY)
+    set(error_file ${package_directory}/slicer_extension_server_upload_errors.txt)
+    execute_process(COMMAND
+      ${SLICER_EXTENSION_MANAGER_CLIENT_EXECUTABLE}
+        --api-url ${SLICER_EXTENSION_MANAGER_URL}/api/v1
+        --api-key ${SLICER_EXTENSION_MANAGER_API_KEY}
+          extension upload Slicer ${p}
+            --os ${EXTENSION_OPERATING_SYSTEM}
+            --arch ${EXTENSION_ARCHITECTURE}
+            --name ${EXTENSION_NAME}
+            --repo_type ${EXTENSION_WC_TYPE}
+            --repo_url ${EXTENSION_WC_URL}
+            --revision ${EXTENSION_WC_REVISION}
+            --app_revision ${Slicer_WC_REVISION}
+      RESULT_VARIABLE slicer_extension_manager_upload_status
+      ERROR_FILE ${error_file}
+      )
+    if(NOT slicer_extension_manager_upload_status EQUAL 0)
+      message(STATUS "Failed to upload extension using ${SLICER_EXTENSION_MANAGER_CLIENT_EXECUTABLE}.
+See ${error_file} for more details.")
+    endif()
+    message(STATUS "slicer_extension_manager_upload_status: ${slicer_extension_manager_upload_status}")
+
   endif()
 endforeach()
