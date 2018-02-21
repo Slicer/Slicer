@@ -821,17 +821,19 @@ def updateVolumeFromArray(volumeNode, narray):
   volumeNode.Modified()
   volumeNode.InvokeEvent(slicer.vtkMRMLVolumeNode.ImageDataModifiedEvent, volumeNode)
 
-def updateTableFromArray(tableNode, narrays):
+def updateTableFromArray(tableNode, narrays, columnNames=None):
   """Sets values in a table node from a numpy array.
-  Values are copied, therefore if the numpy array
-  is modified after calling this method, values in the table node will not change.
+  columnNames may contain a string or list of strings that will be used as column name(s).
+  Values are copied, therefore if the numpy array  is modified after calling this method,
+  values in the table node will not change.
+  All previous content of the table is deleted.
 
   Example:
 
       import numpy as np
       histogram = np.histogram(arrayFromVolume(getNode('MRHead')))
       tableNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode")
-      updateTableFromArray(tableNode, histogram)
+      updateTableFromArray(tableNode, histogram, ["Count", "Intensity"])
 
   """
   import numpy as np
@@ -848,8 +850,15 @@ def updateTableFromArray(tableNode, narrays):
   else:
     raise ValueError('Expected narrays is a numpy ndarray, or tuple or list of numpy ndarrays, got %s instead.' % (str(type(narrays))))
   tableNode.RemoveAllColumns()
-  for ncolumn in ncolumns:
+  # Convert single string to a single-element string list
+  if columnNames is None:
+    columnNames = []
+  if isinstance(columnNames, basestring):
+    columnNames = [columnNames]
+  for columnIndex, ncolumn in enumerate(ncolumns):
     vcolumn = vtk.util.numpy_support.numpy_to_vtk(num_array=ncolumn.ravel(),deep=True,array_type=vtk.VTK_FLOAT)
+    if (columnNames is not None) and (columnIndex < len(columnNames)):
+      vcolumn.SetName(columnNames[columnIndex])
     tableNode.AddColumn(vcolumn)
   return tableNode
 
