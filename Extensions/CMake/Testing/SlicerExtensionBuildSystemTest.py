@@ -435,7 +435,7 @@ set(EXTENSIONS_BUILDSYSTEM_SOURCE_DIRECTORY "{slicer_source_dir}/Extensions/CMak
 
 set(CTEST_NOTES_FILES "${{CTEST_SCRIPT_DIRECTORY}}/${{CTEST_SCRIPT_NAME}}")
 
-set(CTEST_PROJECT_NAME "Slicer4")
+set(CTEST_PROJECT_NAME "SlicerPreview")
 set(CTEST_BUILD_NAME "${{MY_OPERATING_SYSTEM}}-${{MY_COMPILER}}-${{BUILD_OPTIONS_STRING}}-${{EXTENSIONS_INDEX_GIT_TAG}}-${{CTEST_BUILD_CONFIGURATION}}")
 
 include({slicer_source_dir}/Extensions/CMake/SlicerExtensionsDashboardDriverScript.cmake)
@@ -598,7 +598,7 @@ include({slicer_source_dir}/Extensions/CMake/SlicerExtensionsDashboardDriverScri
       http_method = parsed_request[0]
       query_data = parsed_request[1]
       self.assertEqual(http_method, expected_http_method)
-      self.assertEqual(query_data['project'][0], 'Slicer4')
+      self.assertEqual(query_data['project'][0], 'SlicerPreview')
       self.assertIsNotNone(re.match(expected_filename_regex, query_data['FileName'][0]))
 
     def check_midas_request(parsed_request, expected_http_method, expected_midas_method, expected_params={}):
