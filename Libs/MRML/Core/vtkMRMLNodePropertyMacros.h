@@ -177,7 +177,7 @@
     { \
     vtkVariant variantValue(xmlReadAttValue); \
     bool valid = false; \
-    int scalarValue =  variantValue.ToFloat(&valid); \
+    double scalarValue =  variantValue.ToDouble(&valid); \
     if (valid) \
       { \
       this->Set##propertyName(scalarValue); \
