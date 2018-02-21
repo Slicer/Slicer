@@ -197,8 +197,8 @@ void vtkMRMLPlotChartNode::Copy(vtkMRMLNode *anode)
   vtkMRMLCopyBooleanMacro(LegendVisibility);
   vtkMRMLCopyBooleanMacro(XAxisRangeAuto);
   vtkMRMLCopyBooleanMacro(YAxisRangeAuto);
-  vtkMRMLCopyVectorMacro(XAxisRange);
-  vtkMRMLCopyVectorMacro(YAxisRange);
+  vtkMRMLCopyVectorMacro(XAxisRange, double, 2);
+  vtkMRMLCopyVectorMacro(YAxisRange, double, 2);
   vtkMRMLCopyStringMacro(XAxisTitle);
   vtkMRMLCopyBooleanMacro(XAxisTitleVisibility);
   vtkMRMLCopyStringMacro(YAxisTitle);
