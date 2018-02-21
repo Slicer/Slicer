@@ -257,7 +257,19 @@
 
 /// Macro for copying floating-point (float or double) vector node property value.
 #define vtkMRMLCopyVectorMacro(propertyName, vectorType, vectorSize) \
-  this->Set##propertyName(this->SafeDownCast(copySourceNode)->Get##propertyName());
+    { \
+    /* Currently, vectorType and vectorSize is not essential, but in the future */ \
+    /* this information may be used more. */ \
+    vectorType* sourceVector = this->SafeDownCast(copySourceNode)->Get##propertyName(); \
+    if (sourceVector != NULL) \
+      { \
+      this->Set##propertyName(sourceVector); \
+      } \
+    else \
+      { \
+      vtkErrorMacro("Failed to copy #xmlAttributeName attribute value: source node returned NULL"); \
+      } \
+    }
 
 /// @}
 
