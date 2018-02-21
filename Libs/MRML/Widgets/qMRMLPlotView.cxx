@@ -92,18 +92,13 @@ void qMRMLPlotViewPrivate::init()
 {
   Q_Q(qMRMLPlotView);
 
-/*  this->PopupWidget = new ctkPopupWidget;
-  QHBoxLayout* popupLayout = new QHBoxLayout;
-  popupLayout->addWidget(new QToolButton);
-  this->PopupWidget->setLayout(popupLayout);
-  */
-
   if (!q->chart())
     {
     return;
     }
 
   qvtkConnect(q->chart(), vtkCommand::SelectionChangedEvent, this, SLOT(emitSelection()));
+  qvtkConnect(q->chart(), vtkCommand::InteractionEvent, q, SLOT(updateMRMLChartAxisRangeFromWidget()));
 
   if (!q->chart()->GetBackgroundBrush() ||
       !q->chart()->GetTitleProperties() ||
@@ -436,7 +431,168 @@ void qMRMLPlotViewPrivate::RecalculateBounds()
     return;
     }
 
-  q->chart()->RecalculateBounds();
+  // The following is a clone of vtkChartXY::RecalculatePlotBounds(),
+  // with the difference that axis is rescaled even if its behavior is not set to vtkAxis::AUTO.
+
+  // Get the bounds of each plot, and each axis  - ordering as laid out below
+  double y1[] = { 0.0, 0.0 }; // left -> 0
+  double x1[] = { 0.0, 0.0 }; // bottom -> 1
+  double y2[] = { 0.0, 0.0 }; // right -> 2
+  double x2[] = { 0.0, 0.0 }; // top -> 3
+                              // Store whether the ranges have been initialized - follows same order
+  bool initialized[] = { false, false, false, false };
+  double bounds[4] = { 0.0, 0.0, 0.0, 0.0 };
+  for (int plotIndex = 0; plotIndex < q->chart()->GetNumberOfPlots(); plotIndex++)
+    {
+    vtkPlot* plot = q->chart()->GetPlot(plotIndex);
+    if (!plot->GetVisible())
+      {
+      continue;
+      }
+    plot->GetBounds(bounds);
+    if (bounds[1] - bounds[0] < 0.0)
+      {
+      // skip uninitialized bounds.
+      continue;
+      }
+    int corner = q->chart()->GetPlotCorner(plot);
+
+    // Initialize the appropriate ranges, or push out the ranges
+    if ((corner == 0 || corner == 3)) // left
+      {
+      if (!initialized[0])
+        {
+        y1[0] = bounds[2];
+        y1[1] = bounds[3];
+        initialized[0] = true;
+        }
+      else
+        {
+        if (y1[0] > bounds[2]) // min
+          {
+          y1[0] = bounds[2];
+          }
+        if (y1[1] < bounds[3]) // max
+          {
+          y1[1] = bounds[3];
+          }
+        }
+      }
+    if ((corner == 0 || corner == 1)) // bottom
+      {
+      if (!initialized[1])
+        {
+        x1[0] = bounds[0];
+        x1[1] = bounds[1];
+        initialized[1] = true;
+        }
+      else
+        {
+        if (x1[0] > bounds[0]) // min
+          {
+          x1[0] = bounds[0];
+          }
+        if (x1[1] < bounds[1]) // max
+          {
+          x1[1] = bounds[1];
+          }
+        }
+      }
+    if ((corner == 1 || corner == 2)) // right
+      {
+      if (!initialized[2])
+        {
+        y2[0] = bounds[2];
+        y2[1] = bounds[3];
+        initialized[2] = true;
+        }
+      else
+        {
+        if (y2[0] > bounds[2]) // min
+          {
+          y2[0] = bounds[2];
+          }
+        if (y2[1] < bounds[3]) // max
+          {
+          y2[1] = bounds[3];
+          }
+        }
+      }
+    if ((corner == 2 || corner == 3)) // top
+    {
+      if (!initialized[3])
+        {
+        x2[0] = bounds[0];
+        x2[1] = bounds[1];
+        initialized[3] = true;
+        }
+      else
+        {
+        if (x2[0] > bounds[0]) // min
+          {
+          x2[0] = bounds[0];
+          }
+        if (x2[1] < bounds[1]) // max
+          {
+          x2[1] = bounds[1];
+          }
+        }
+      }
+    }
+
+  // Now set the newly calculated bounds on the axes
+  for (int i = 0; i < 4; ++i)
+  {
+    vtkAxis* axis = q->chart()->GetAxis(i);
+    double* range = nullptr;
+    switch (i)
+    {
+    case 0:
+      range = y1;
+      break;
+    case 1:
+      range = x1;
+      break;
+    case 2:
+      range = y2;
+      break;
+    case 3:
+      range = x2;
+      break;
+    default:
+      return;
+    }
+
+    if (q->chart()->GetAdjustLowerBoundForLogPlot() && axis->GetLogScale() && range[0] <= 0.)
+      {
+      if (range[1] <= 0.)
+        {
+        // All of the data is negative, so we arbitrarily set the axis range to
+        // be positive and show no data
+        range[1] = 1.;
+        }
+      // The minimum value is set to either 4 decades below the max or to 1,
+      // regardless of the true minimum value (which is less than 0)
+      range[0] = (range[1] < 1.e4 ? range[1] / 1.e4 : 1.);
+      }
+    if (q->chart()->GetForceAxesToBounds())
+      {
+      axis->SetUnscaledMinimumLimit(range[0]);
+      axis->SetUnscaledMaximumLimit(range[1]);
+      }
+    if (initialized[i])
+      {
+      axis->SetUnscaledRange(range[0], range[1]);
+      axis->AutoScale();
+      }
+    }
+
+  //q->chart()->Modified();
+  // end of code adopted from vtkChartXY::RecalculatePlotBounds()
+
+  //q->chart()->RecalculatePlotTransforms();
+
+  q->updateMRMLChartAxisRangeFromWidget();
 }
 
 // --------------------------------------------------------------------------
@@ -701,6 +857,15 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
         {
         axis->SetTitle("");
         }
+      if (plotChartNode->GetXAxisRangeAuto())
+        {
+        axis->SetBehavior(vtkAxis::AUTO);
+        }
+      else
+        {
+        axis->SetBehavior(vtkAxis::FIXED);
+        axis->SetUnscaledRange(plotChartNode->GetXAxisRange());
+        }
       }
     else if (axisID == vtkAxis::LEFT || axisID == vtkAxis::RIGHT)
       {
@@ -711,6 +876,15 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
       else
         {
         axis->SetTitle("");
+        }
+      if (plotChartNode->GetYAxisRangeAuto())
+        {
+        axis->SetBehavior(vtkAxis::AUTO);
+        }
+      else
+        {
+        axis->SetBehavior(vtkAxis::FIXED);
+        axis->SetUnscaledRange(plotChartNode->GetYAxisRange());
         }
       }
     axis->SetGridVisible(plotChartNode->GetGridVisibility());
@@ -845,4 +1019,36 @@ void qMRMLPlotView::fitToContent()
   d->RecalculateBounds();
   // Repaint the chart scene
   this->scene()->SetDirty(true);
+  this->update();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLPlotView::updateMRMLChartAxisRangeFromWidget()
+{
+  Q_D(qMRMLPlotView);
+  if (!d->MRMLPlotChartNode)
+    {
+    return;
+    }
+  if (d->UpdatingWidgetFromMRML)
+    {
+    return;
+    }
+  int wasModified = d->MRMLPlotChartNode->StartModify();
+  // Setting Axes
+  vtkAxis *bottomAxis = this->chart()->GetAxis(vtkAxis::BOTTOM);
+  if (bottomAxis)
+    {
+    double range[2] = { 0, 1 };
+    bottomAxis->GetUnscaledRange(range);
+    d->MRMLPlotChartNode->SetXAxisRange(range);
+    }
+  vtkAxis *leftAxis = this->chart()->GetAxis(vtkAxis::LEFT);
+  if (leftAxis)
+    {
+    double range[2] = { 0, 1 };
+    leftAxis->GetUnscaledRange(range);
+    d->MRMLPlotChartNode->SetYAxisRange(range);
+    }
+  d->MRMLPlotChartNode->EndModify(wasModified);
 }

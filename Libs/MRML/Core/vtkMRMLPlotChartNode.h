@@ -191,6 +191,20 @@ class VTK_MRML_EXPORT vtkMRMLPlotChartNode : public vtkMRMLNode
   vtkGetMacro(LegendVisibility, bool);
   vtkSetMacro(LegendVisibility, bool);
 
+  vtkGetMacro(XAxisRangeAuto, bool);
+  vtkSetMacro(XAxisRangeAuto, bool);
+  vtkBooleanMacro(XAxisRangeAuto, bool);
+
+  vtkGetMacro(YAxisRangeAuto, bool);
+  vtkSetMacro(YAxisRangeAuto, bool);
+  vtkBooleanMacro(YAxisRangeAuto, bool);
+
+  vtkGetVector2Macro(XAxisRange, double);
+  vtkSetVector2Macro(XAxisRange, double);
+
+  vtkGetVector2Macro(YAxisRange, double);
+  vtkSetVector2Macro(YAxisRange, double);
+
   /// Title of X axis
   vtkSetStringMacro(XAxisTitle);
   vtkGetStringMacro(XAxisTitle);
@@ -272,6 +286,10 @@ class VTK_MRML_EXPORT vtkMRMLPlotChartNode : public vtkMRMLNode
   bool TitleVisibility;
   bool GridVisibility;
   bool LegendVisibility;
+  bool XAxisRangeAuto;
+  bool YAxisRangeAuto;
+  double XAxisRange[2];
+  double YAxisRange[2];
   char* XAxisTitle;
   bool XAxisTitleVisibility;
   char* YAxisTitle;

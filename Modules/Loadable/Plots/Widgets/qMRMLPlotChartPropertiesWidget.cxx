@@ -86,6 +86,20 @@ void qMRMLPlotChartPropertiesWidgetPrivate::setupUi(qMRMLWidget* widget)
   this->connect(this->gridVisibleCheckBox, SIGNAL(toggled(bool)),
     q, SLOT(gridVisibility(bool)));
 
+  this->connect(this->xAxisManualRangeCheckBox, SIGNAL(toggled(bool)),
+    q, SLOT(xAxisManualRangeEnabled(bool)));
+  this->connect(this->xAxisRangeMinDoubleSpinBox, SIGNAL(valueChanged(double)),
+    q, SLOT(onXAxisRangeMinChanged(double)));
+  this->connect(this->xAxisRangeMaxDoubleSpinBox, SIGNAL(valueChanged(double)),
+    q, SLOT(onXAxisRangeMaxChanged(double)));
+
+  this->connect(this->yAxisManualRangeCheckBox, SIGNAL(toggled(bool)),
+    q, SLOT(yAxisManualRangeEnabled(bool)));
+  this->connect(this->yAxisRangeMinDoubleSpinBox, SIGNAL(valueChanged(double)),
+    q, SLOT(onYAxisRangeMinChanged(double)));
+  this->connect(this->yAxisRangeMaxDoubleSpinBox, SIGNAL(valueChanged(double)),
+    q, SLOT(onYAxisRangeMaxChanged(double)));
+
   this->connect(this->plotSeriesComboBox, SIGNAL(checkedNodesChanged()), this, SLOT(onPlotSeriesNodesSelected()));
   this->connect(this->plotSeriesComboBox, SIGNAL(nodeAddedByUser(vtkMRMLNode*)), this, SLOT(onPlotSeriesNodeAdded(vtkMRMLNode*)));
 
@@ -105,6 +119,14 @@ void qMRMLPlotChartPropertiesWidgetPrivate::updateWidgetFromMRML()
     this->xAxisLabelLineEdit->clear();
     this->yAxisLabelLineEdit->clear();
 
+    this->xAxisManualRangeCheckBox->setChecked(false);
+    this->yAxisManualRangeCheckBox->setChecked(false);
+
+    this->xAxisRangeMinDoubleSpinBox->setValue(0);
+    this->xAxisRangeMaxDoubleSpinBox->setValue(0);
+    this->yAxisRangeMinDoubleSpinBox->setValue(0);
+    this->yAxisRangeMaxDoubleSpinBox->setValue(0);
+
     this->fontTypeComboBox->setCurrentIndex(-1);
     this->titleFontSizeDoubleSpinBox->setValue(20);
     this->axisTitleFontSizeDoubleSpinBox->setValue(16);
@@ -121,6 +143,40 @@ void qMRMLPlotChartPropertiesWidgetPrivate::updateWidgetFromMRML()
     this->plotSeriesComboBox->blockSignals(plotBlockSignals);
 
     return;
+    }
+
+  this->xAxisManualRangeCheckBox->setChecked(!this->PlotChartNode->GetXAxisRangeAuto());
+  if (!this->PlotChartNode->GetXAxisRangeAuto())
+    {
+    double* range = this->PlotChartNode->GetXAxisRange();
+    this->xAxisRangeMinDoubleSpinBox->setValue(range[0]);
+    this->xAxisRangeMaxDoubleSpinBox->setValue(range[1]);
+    }
+  else
+    {
+    bool wasBlocked = this->xAxisRangeMinDoubleSpinBox->blockSignals(true);
+    this->xAxisRangeMinDoubleSpinBox->setValue(0);
+    this->xAxisRangeMinDoubleSpinBox->blockSignals(wasBlocked);
+    wasBlocked = this->xAxisRangeMaxDoubleSpinBox->blockSignals(true);
+    this->xAxisRangeMaxDoubleSpinBox->setValue(0);
+    this->xAxisRangeMaxDoubleSpinBox->blockSignals(wasBlocked);
+    }
+
+  this->yAxisManualRangeCheckBox->setChecked(!this->PlotChartNode->GetYAxisRangeAuto());
+  if (!this->PlotChartNode->GetYAxisRangeAuto())
+    {
+    double* range = this->PlotChartNode->GetYAxisRange();
+    this->yAxisRangeMinDoubleSpinBox->setValue(range[0]);
+    this->yAxisRangeMaxDoubleSpinBox->setValue(range[1]);
+    }
+  else
+    {
+    bool wasBlocked = this->yAxisRangeMinDoubleSpinBox->blockSignals(true);
+    this->yAxisRangeMinDoubleSpinBox->setValue(0);
+    this->yAxisRangeMinDoubleSpinBox->blockSignals(wasBlocked);
+    wasBlocked = this->yAxisRangeMaxDoubleSpinBox->blockSignals(true);
+    this->yAxisRangeMaxDoubleSpinBox->setValue(0);
+    this->yAxisRangeMaxDoubleSpinBox->blockSignals(wasBlocked);
     }
 
   this->fontTypeComboBox->setCurrentIndex(this->fontTypeComboBox->findText(
@@ -395,4 +451,82 @@ void qMRMLPlotChartPropertiesWidget::setMRMLScene(vtkMRMLScene* newScene)
     {
     d->updateWidgetFromMRML();
     }
+}
+
+//---------------------------------------------------------------------------
+void qMRMLPlotChartPropertiesWidget::xAxisManualRangeEnabled(bool manual)
+{
+  Q_D(qMRMLPlotChartPropertiesWidget);
+  if (!d->PlotChartNode)
+    {
+    return;
+    }
+  d->PlotChartNode->SetXAxisRangeAuto(!manual);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLPlotChartPropertiesWidget::onXAxisRangeMinChanged(double rangeMin)
+{
+  Q_D(qMRMLPlotChartPropertiesWidget);
+  if (!d->PlotChartNode)
+    {
+    return;
+    }
+  double range[2] = { 0 };
+  d->PlotChartNode->GetXAxisRange(range);
+  range[0] = rangeMin;
+  d->PlotChartNode->SetXAxisRange(range);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLPlotChartPropertiesWidget::onXAxisRangeMaxChanged(double rangeMax)
+{
+  Q_D(qMRMLPlotChartPropertiesWidget);
+  if (!d->PlotChartNode)
+    {
+    return;
+    }
+  double range[2] = { 0 };
+  d->PlotChartNode->GetXAxisRange(range);
+  range[1] = rangeMax;
+  d->PlotChartNode->SetXAxisRange(range);
+}
+
+//---------------------------------------------------------------------------
+void qMRMLPlotChartPropertiesWidget::yAxisManualRangeEnabled(bool manual)
+{
+  Q_D(qMRMLPlotChartPropertiesWidget);
+  if (!d->PlotChartNode)
+  {
+    return;
+  }
+  d->PlotChartNode->SetYAxisRangeAuto(!manual);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLPlotChartPropertiesWidget::onYAxisRangeMinChanged(double rangeMin)
+{
+  Q_D(qMRMLPlotChartPropertiesWidget);
+  if (!d->PlotChartNode)
+  {
+    return;
+  }
+  double range[2] = { 0 };
+  d->PlotChartNode->GetYAxisRange(range);
+  range[0] = rangeMin;
+  d->PlotChartNode->SetYAxisRange(range);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLPlotChartPropertiesWidget::onYAxisRangeMaxChanged(double rangeMax)
+{
+  Q_D(qMRMLPlotChartPropertiesWidget);
+  if (!d->PlotChartNode)
+  {
+    return;
+  }
+  double range[2] = { 0 };
+  d->PlotChartNode->GetYAxisRange(range);
+  range[1] = rangeMax;
+  d->PlotChartNode->SetYAxisRange(range);
 }

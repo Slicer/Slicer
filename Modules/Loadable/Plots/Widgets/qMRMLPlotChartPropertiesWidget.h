@@ -77,6 +77,14 @@ public slots:
   /// \sa showYAxisLabel
   void setYAxisLabel(const QString& str);
 
+  void xAxisManualRangeEnabled(bool);
+  void onXAxisRangeMinChanged(double);
+  void onXAxisRangeMaxChanged(double);
+
+  void yAxisManualRangeEnabled(bool);
+  void onYAxisRangeMinChanged(double);
+  void onYAxisRangeMaxChanged(double);
+
 signals:
 
   /// Signal fired when the user adds a new plot series node to the scene

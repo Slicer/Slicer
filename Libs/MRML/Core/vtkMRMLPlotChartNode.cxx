@@ -51,6 +51,8 @@ vtkMRMLPlotChartNode::vtkMRMLPlotChartNode()
 , TitleVisibility(true)
 , GridVisibility(true)
 , LegendVisibility(true)
+, XAxisRangeAuto(true)
+, YAxisRangeAuto(true)
 , XAxisTitle(NULL)
 , XAxisTitleVisibility(true)
 , YAxisTitle(NULL)
@@ -64,6 +66,11 @@ vtkMRMLPlotChartNode::vtkMRMLPlotChartNode()
   this->HideFromEditors = 0;
 
   this->SetFontType("Arial");
+
+  this->XAxisRange[0] = 0.0;
+  this->XAxisRange[1] = 1.0;
+  this->YAxisRange[0] = 0.0;
+  this->YAxisRange[1] = 1.0;
 
   vtkNew<vtkIntArray>  events;
   events->InsertNextValue(vtkCommand::ModifiedEvent);
@@ -123,9 +130,13 @@ void vtkMRMLPlotChartNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLBeginMacro(of);
   vtkMRMLWriteXMLStringMacro(title, Title);
   vtkMRMLWriteXMLIntMacro(titleFontSize, TitleFontSize);
-  vtkMRMLWriteXMLBooleanMacro(TitleVisibility, TitleVisibility);
+  vtkMRMLWriteXMLBooleanMacro(titleVisibility, TitleVisibility);
   vtkMRMLWriteXMLBooleanMacro(gridVisibility, GridVisibility);
   vtkMRMLWriteXMLBooleanMacro(legendVisibility, LegendVisibility);
+  vtkMRMLWriteXMLBooleanMacro(xAxisRangeAuto, XAxisRangeAuto);
+  vtkMRMLWriteXMLBooleanMacro(yAxisRangeAuto, YAxisRangeAuto);
+  vtkMRMLWriteXMLVectorMacro(xAxisRange, XAxisRange, double, 2);
+  vtkMRMLWriteXMLVectorMacro(yAxisRange, YAxisRange, double, 2);
   vtkMRMLWriteXMLStringMacro(xAxisTitle, XAxisTitle);
   vtkMRMLWriteXMLBooleanMacro(xAxisTitleVisibility, XAxisTitleVisibility);
   vtkMRMLWriteXMLStringMacro(yAxisTitle, YAxisTitle);
@@ -148,9 +159,13 @@ void vtkMRMLPlotChartNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLBeginMacro(atts);
   vtkMRMLReadXMLStringMacro(title, Title);
   vtkMRMLReadXMLIntMacro(titleFontSize, TitleFontSize);
-  vtkMRMLReadXMLBooleanMacro(TitleVisibility, TitleVisibility);
+  vtkMRMLReadXMLBooleanMacro(titleVisibility, TitleVisibility);
   vtkMRMLReadXMLBooleanMacro(gridVisibility, GridVisibility);
   vtkMRMLReadXMLBooleanMacro(legendVisibility, LegendVisibility);
+  vtkMRMLReadXMLBooleanMacro(xAxisRangeAuto, XAxisRangeAuto);
+  vtkMRMLReadXMLBooleanMacro(yAxisRangeAuto, YAxisRangeAuto);
+  vtkMRMLReadXMLVectorMacro(xAxisRange, XAxisRange, double, 2);
+  vtkMRMLReadXMLVectorMacro(yAxisRange, YAxisRange, double, 2);
   vtkMRMLReadXMLStringMacro(xAxisTitle, XAxisTitle);
   vtkMRMLReadXMLBooleanMacro(xAxisTitleVisibility, XAxisTitleVisibility);
   vtkMRMLReadXMLStringMacro(yAxisTitle, YAxisTitle);
@@ -180,6 +195,10 @@ void vtkMRMLPlotChartNode::Copy(vtkMRMLNode *anode)
   vtkMRMLCopyBooleanMacro(TitleVisibility);
   vtkMRMLCopyBooleanMacro(GridVisibility);
   vtkMRMLCopyBooleanMacro(LegendVisibility);
+  vtkMRMLCopyBooleanMacro(XAxisRangeAuto);
+  vtkMRMLCopyBooleanMacro(YAxisRangeAuto);
+  vtkMRMLCopyVectorMacro(XAxisRange);
+  vtkMRMLCopyVectorMacro(YAxisRange);
   vtkMRMLCopyStringMacro(XAxisTitle);
   vtkMRMLCopyBooleanMacro(XAxisTitleVisibility);
   vtkMRMLCopyStringMacro(YAxisTitle);
@@ -205,6 +224,10 @@ void vtkMRMLPlotChartNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintBooleanMacro(TitleVisibility);
   vtkMRMLPrintBooleanMacro(GridVisibility);
   vtkMRMLPrintBooleanMacro(LegendVisibility);
+  vtkMRMLPrintBooleanMacro(XAxisRangeAuto);
+  vtkMRMLPrintBooleanMacro(YAxisRangeAuto);
+  vtkMRMLPrintVectorMacro(XAxisRange, double, 2);
+  vtkMRMLPrintVectorMacro(YAxisRange, double, 2);
   vtkMRMLPrintStringMacro(XAxisTitle);
   vtkMRMLPrintBooleanMacro(XAxisTitleVisibility);
   vtkMRMLPrintStringMacro(YAxisTitle);

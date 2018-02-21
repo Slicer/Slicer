@@ -85,6 +85,10 @@ signals:
   /// the data points ids (vtkIdTypeArray).
   void dataSelected(vtkStringArray* mrmlPlotSeriesIDs, vtkCollection* selectionCol);
 
+protected slots:
+
+  void updateMRMLChartAxisRangeFromWidget();
+
 protected:
   QScopedPointer<qMRMLPlotViewPrivate> d_ptr;
 
