@@ -118,6 +118,14 @@ int SlicerAppMain(int argc, char* argv[])
 #endif
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
+#ifdef _WIN32
+  // Qt windows defaults to the PROCESS_PER_MONITOR_DPI_AWARE for DPI display
+  // on windows. Unfortunately, this doesn't work well on multi-screens setups.
+  // By calling SetProcessDPIAware(), we force the value to
+  // PROCESS_SYSTEM_DPI_AWARE instead which fixes those issues.
+  SetProcessDPIAware();
+#endif
+
   // Enable automatic scaling based on the pixel density of the monitor
   QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
