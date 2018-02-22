@@ -271,39 +271,43 @@ foreach(p ${package_list})
   else()
     set(package_uploaded 1)
     get_filename_component(package_name "${p}" NAME)
-    message("Uploading [${package_name}] on [${MIDAS_PACKAGE_URL}]")
-    midas_api_upload_extension(
-      SERVER_URL ${MIDAS_PACKAGE_URL}
-      SERVER_EMAIL ${MIDAS_PACKAGE_EMAIL}
-      SERVER_APIKEY ${MIDAS_PACKAGE_API_KEY}
-      TMP_DIR ${EXTENSION_BINARY_DIR}
-      SUBMISSION_TYPE ${CTEST_MODEL}
-      SLICER_REVISION ${Slicer_WC_REVISION}
-      EXTENSION_NAME ${EXTENSION_NAME}
-      EXTENSION_CATEGORY ${EXTENSION_CATEGORY}
-      EXTENSION_ICONURL ${EXTENSION_ICONURL}
-      EXTENSION_CONTRIBUTORS ${EXTENSION_CONTRIBUTORS}
-      EXTENSION_DESCRIPTION ${EXTENSION_DESCRIPTION}
-      EXTENSION_HOMEPAGE ${EXTENSION_HOMEPAGE}
-      EXTENSION_SCREENSHOTURLS ${EXTENSION_SCREENSHOTURLS}
-      EXTENSION_REPOSITORY_TYPE ${EXTENSION_WC_TYPE}
-      EXTENSION_REPOSITORY_URL ${EXTENSION_WC_URL}
-      EXTENSION_SOURCE_REVISION ${EXTENSION_WC_REVISION}
-      EXTENSION_ENABLED ${EXTENSION_ENABLED}
-      OPERATING_SYSTEM ${EXTENSION_OPERATING_SYSTEM}
-      ARCHITECTURE ${EXTENSION_ARCHITECTURE}
-      PACKAGE_FILEPATH ${p}
-      PACKAGE_TYPE "archive"
-      #RELEASE ${release}
-      RESULT_VARNAME slicer_midas_upload_status
-      )
-    if(NOT slicer_midas_upload_status STREQUAL "ok")
-      file(WRITE ${EXTENSION_BINARY_DIR}/PACKAGES.txt "")
-      message(FATAL_ERROR
-"Upload of [${package_name}] failed !
-Check that:
-(1) you have been granted permission to upload
-(2) your email and api key are correct")
+
+    set(upload_to_midas 1)
+    if(upload_to_midas)
+      message("Uploading [${package_name}] to [${MIDAS_PACKAGE_URL}]")
+      midas_api_upload_extension(
+        SERVER_URL ${MIDAS_PACKAGE_URL}
+        SERVER_EMAIL ${MIDAS_PACKAGE_EMAIL}
+        SERVER_APIKEY ${MIDAS_PACKAGE_API_KEY}
+        TMP_DIR ${EXTENSION_BINARY_DIR}
+        SUBMISSION_TYPE ${CTEST_MODEL}
+        SLICER_REVISION ${Slicer_WC_REVISION}
+        EXTENSION_NAME ${EXTENSION_NAME}
+        EXTENSION_CATEGORY ${EXTENSION_CATEGORY}
+        EXTENSION_ICONURL ${EXTENSION_ICONURL}
+        EXTENSION_CONTRIBUTORS ${EXTENSION_CONTRIBUTORS}
+        EXTENSION_DESCRIPTION ${EXTENSION_DESCRIPTION}
+        EXTENSION_HOMEPAGE ${EXTENSION_HOMEPAGE}
+        EXTENSION_SCREENSHOTURLS ${EXTENSION_SCREENSHOTURLS}
+        EXTENSION_REPOSITORY_TYPE ${EXTENSION_WC_TYPE}
+        EXTENSION_REPOSITORY_URL ${EXTENSION_WC_URL}
+        EXTENSION_SOURCE_REVISION ${EXTENSION_WC_REVISION}
+        EXTENSION_ENABLED ${EXTENSION_ENABLED}
+        OPERATING_SYSTEM ${EXTENSION_OPERATING_SYSTEM}
+        ARCHITECTURE ${EXTENSION_ARCHITECTURE}
+        PACKAGE_FILEPATH ${p}
+        PACKAGE_TYPE "archive"
+        #RELEASE ${release}
+        RESULT_VARNAME slicer_midas_upload_status
+        )
+      if(NOT slicer_midas_upload_status STREQUAL "ok")
+        file(WRITE ${EXTENSION_BINARY_DIR}/PACKAGES.txt "")
+        message(FATAL_ERROR
+  "Upload of [${package_name}] failed !
+  Check that:
+  (1) you have been granted permission to upload
+  (2) your email and api key are correct")
+      endif()
     endif()
 
     message("Uploading [${package_name}] to [${SLICER_EXTENSION_MANAGER_URL}]")
