@@ -306,9 +306,13 @@ Check that:
 (2) your email and api key are correct")
     endif()
 
+    message("Uploading [${package_name}] to [${SLICER_EXTENSION_MANAGER_URL}]")
     get_filename_component(package_directory ${p} DIRECTORY)
     set(error_file ${package_directory}/slicer_extension_server_upload_errors.txt)
     execute_process(COMMAND
+      ${CMAKE_COMMAND} -E env
+        LC_ALL=en_US.UTF-8
+        LANG=en_US.UTF-8
       ${SLICER_EXTENSION_MANAGER_CLIENT_EXECUTABLE}
         --api-url ${SLICER_EXTENSION_MANAGER_URL}/api/v1
         --api-key ${SLICER_EXTENSION_MANAGER_API_KEY}
