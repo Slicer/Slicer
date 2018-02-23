@@ -99,8 +99,8 @@ void qMRMLCaptureToolBarPrivate::init()
   // Screenshot button
   this->ScreenshotAction = new QAction(q);
   this->ScreenshotAction->setIcon(QIcon(":/Icons/ViewCapture.png"));
-  this->ScreenshotAction->setText(q->tr("Screenshot"));
-  this->ScreenshotAction->setToolTip(q->tr(
+  this->ScreenshotAction->setText(qMRMLCaptureToolBar::tr("Screenshot"));
+  this->ScreenshotAction->setToolTip(qMRMLCaptureToolBar::tr(
     "Capture a screenshot of the full layout, 3D view or slice views. Use File, Save to save the image. Edit in the Annotations module."));
   QObject::connect(this->ScreenshotAction, SIGNAL(triggered()),
                    q, SIGNAL(screenshotButtonClicked()));
@@ -109,15 +109,15 @@ void qMRMLCaptureToolBarPrivate::init()
   // Scene View buttons
   this->SceneViewAction = new QAction(q);
   this->SceneViewAction->setIcon(QIcon(":/Icons/ViewCamera.png"));
-  this->SceneViewAction->setText(q->tr("Scene view"));
-  this->SceneViewAction->setToolTip(q->tr("Capture and name a scene view."));
+  this->SceneViewAction->setText(qMRMLCaptureToolBar::tr("Scene view"));
+  this->SceneViewAction->setToolTip(qMRMLCaptureToolBar::tr("Capture and name a scene view."));
   QObject::connect(this->SceneViewAction, SIGNAL(triggered()),
                    q, SIGNAL(sceneViewButtonClicked()));
   q->addAction(this->SceneViewAction);
 
   // Scene view menu
   QToolButton* sceneViewMenuButton = new QToolButton(q);
-  sceneViewMenuButton->setText(q->tr("Restore view"));
+  sceneViewMenuButton->setText(qMRMLCaptureToolBar::tr("Restore view"));
   sceneViewMenuButton->setIcon(QIcon(":/Icons/ViewCameraSelect.png"));
   sceneViewMenuButton->setToolTip(QObject::tr("Restore or delete saved scene views."));
   this->SceneViewMenu = new qMRMLSceneViewMenu(sceneViewMenuButton);

@@ -162,9 +162,9 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   //----------------------------------------------------------------------------
   // ModulePanel
   //----------------------------------------------------------------------------
-  this->PanelDockWidget->toggleViewAction()->setText("&Module Panel");
+  this->PanelDockWidget->toggleViewAction()->setText(qSlicerAppMainWindow::tr("&Module Panel"));
   this->PanelDockWidget->toggleViewAction()->setToolTip(
-    q->tr("Collapse/Expand the GUI panel and allows Slicer's viewers to occupy "
+    qSlicerAppMainWindow::tr("Collapse/Expand the GUI panel and allows Slicer's viewers to occupy "
           "the entire application window"));
   this->PanelDockWidget->toggleViewAction()->setShortcut(QKeySequence("Ctrl+5"));
   this->ViewMenu->insertAction(this->WindowToolBarsMenu->menuAction(),
@@ -510,8 +510,8 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
     QObject::connect(q->pythonConsole(), SIGNAL(aboutToExecute(const QString&)),
       q, SLOT(onPythonConsoleUserInput(const QString&)));
     // Set up show/hide action
-    this->PythonConsoleToggleViewAction->setText(q->tr("&Python Interactor"));
-    this->PythonConsoleToggleViewAction->setToolTip(q->tr(
+    this->PythonConsoleToggleViewAction->setText(qSlicerAppMainWindow::tr("&Python Interactor"));
+    this->PythonConsoleToggleViewAction->setToolTip(qSlicerAppMainWindow::tr(
       "Show Python Interactor window for controlling the application's data, user interface, and internals"));
     this->PythonConsoleToggleViewAction->setShortcut(QKeySequence("Ctrl+3"));
     QObject::connect(this->PythonConsoleToggleViewAction, SIGNAL(toggled(bool)),
