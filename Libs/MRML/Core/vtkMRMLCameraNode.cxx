@@ -41,8 +41,8 @@ vtkMRMLNodeNewMacro(vtkMRMLCameraNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLCameraNode::vtkMRMLCameraNode()
-: InternalActiveTag(NULL)
-, Camera(NULL)
+: Camera(NULL),
+  InternalActiveTag(NULL)
 {
   this->HideFromEditors = 0;
 

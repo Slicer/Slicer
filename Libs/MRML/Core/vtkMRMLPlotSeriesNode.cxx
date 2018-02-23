@@ -59,9 +59,9 @@ vtkMRMLNodeNewMacro(vtkMRMLPlotSeriesNode);
 vtkMRMLPlotSeriesNode::vtkMRMLPlotSeriesNode()
   : PlotType(PlotTypeLine)
   , LineWidth(2)
+  , LineStyle(LineStyleSolid)
   , MarkerSize(7)
   , MarkerStyle(MarkerStyleCircle)
-  , LineStyle(LineStyleSolid)
   , Opacity(1.0)
 {
   this->HideFromEditors = 0;
