@@ -41,26 +41,6 @@
 // stream includes
 #include <sstream>
 
-namespace
-{
-//----------------------------------------------------------------------------
-template <typename T> std::string NumberToString(T V)
-{
-  std::string stringValue;
-  std::stringstream strstream;
-  strstream << V;
-  strstream >> stringValue;
-  return stringValue;
-}
-
-//----------------------------------------------------------------------------
-std::string DoubleToString(double Value)
-{
-  return NumberToString<double>(Value);
-}
-
-}// end namespace
-
 //--------------------------------------------------------------------------
 // qMRMLPlotSeriesPropertiesWidgetPrivate methods
 
