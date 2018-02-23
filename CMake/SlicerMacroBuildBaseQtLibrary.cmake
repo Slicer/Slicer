@@ -208,6 +208,8 @@ macro(SlicerMacroBuildBaseQtLibrary)
       )
 
     set_property(GLOBAL APPEND PROPERTY Slicer_QM_OUTPUT_DIRS ${QM_OUTPUT_DIR})
+  else()
+    set(QM_OUTPUT_FILES )
   endif()
 
   # --------------------------------------------------------------------------

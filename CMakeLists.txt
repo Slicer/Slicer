@@ -215,6 +215,7 @@ option(Slicer_BUILD_DIFFUSION_SUPPORT "Build Slicer with diffusion (DWI, DTI) su
 mark_as_superbuild(Slicer_BUILD_DIFFUSION_SUPPORT)
 
 option(Slicer_BUILD_I18N_SUPPORT "Build Slicer with Internationalization support" OFF)
+mark_as_superbuild(Slicer_BUILD_I18N_SUPPORT)
 
 option(Slicer_BUILD_QTLOADABLEMODULES "Build Slicer QT Loadable Modules" ON)
 mark_as_advanced(Slicer_BUILD_QTLOADABLEMODULES)
