@@ -66,6 +66,7 @@
 #include <vtkProperty.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkSmartPointer.h>
+#include <vtkTexture.h>
 #include <vtkTransformFilter.h>
 #include <vtkVersion.h>
 #include <vtkWeakPointer.h>
