@@ -15,6 +15,10 @@ endif()
 
 set(Slicer_MAIN_PROJECT_APPLICATION_NAME ${${Slicer_MAIN_PROJECT}_APPLICATION_NAME})
 
+# XXX Propagate source directory to support case of a Slicer-based application
+#     includes Slicer as an external project.
+mark_as_superbuild(${Slicer_MAIN_PROJECT_APPLICATION_NAME}_SOURCE_DIR)
+
 #-----------------------------------------------------------------------------
 # Terminal support
 #-----------------------------------------------------------------------------
