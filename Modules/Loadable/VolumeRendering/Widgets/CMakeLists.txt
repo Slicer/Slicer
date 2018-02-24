@@ -21,6 +21,8 @@ set(${KIT}_SRCS
   qSlicer${MODULE_NAME}ModuleWidget.h
   qSlicer${MODULE_NAME}PropertiesWidget.cxx
   qSlicer${MODULE_NAME}PropertiesWidget.h
+  qSlicer${MODULE_NAME}PresetComboBox.cxx
+  qSlicer${MODULE_NAME}PresetComboBox.h
   qMRMLVolumePropertyNodeWidget.cxx
   qMRMLVolumePropertyNodeWidget.h
   )
@@ -32,6 +34,7 @@ set(${KIT}_MOC_SRCS
   qSlicerPresetComboBox_p.h
   qSlicer${MODULE_NAME}ModuleWidget.h
   qSlicer${MODULE_NAME}PropertiesWidget.h
+  qSlicer${MODULE_NAME}PresetComboBox.h
   qMRMLVolumePropertyNodeWidget.h
   )
 
@@ -40,6 +43,7 @@ set(${KIT}_UI_SRCS
   ../Resources/UI/qSlicerCPURayCast${MODULE_NAME}PropertiesWidget.ui
   ../Resources/UI/qSlicerGPURayCast${MODULE_NAME}PropertiesWidget.ui
   ../Resources/UI/qSlicer${MODULE_NAME}ModuleWidget.ui
+  ../Resources/UI/qSlicer${MODULE_NAME}PresetComboBox.ui
   )
 
 set(${KIT}_RESOURCES

@@ -18,7 +18,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="ctkVTKVolumePropertyWidget" name="VolumeProperty"/>
+    <widget class="ctkVTKVolumePropertyWidget" name="VolumePropertyWidget"/>
    </item>
   </layout>
  </widget>

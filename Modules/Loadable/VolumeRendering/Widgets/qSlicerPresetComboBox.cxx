@@ -75,8 +75,7 @@ void qSlicerIconComboBox::showPopup()
 
   QRect listRect(this->style()->subControlRect(QStyle::CC_ComboBox, &opt,
                                                QStyle::SC_ComboBoxListBoxPopup, this));
-  QRect screen = QApplication::desktop()->availableGeometry(
-    QApplication::desktop()->screenNumber(this));
+  QRect screen = QApplication::desktop()->availableGeometry(QApplication::desktop()->screenNumber(this));
   QPoint below = mapToGlobal(listRect.bottomLeft());
   QPoint above = mapToGlobal(listRect.topLeft());
 
@@ -99,32 +98,33 @@ void qSlicerIconComboBox::showPopup()
   // Position horizontally.
   listRect.moveLeft(above.x());
 
-  // Position vertically so the curently selected item lines up
+  // Position vertically so the currently selected item lines up
   // with the combo box.
   const QRect currentItemRect = view()->visualRect(view()->currentIndex());
   const int offset = listRect.top() - currentItemRect.top();
-  listRect.moveTop(above.y()
-                   + offset
-                   - listRect.top());
+  listRect.moveTop(above.y() + offset - listRect.top());
 
-  if (listRect.width() > screen.width() )
-      listRect.setWidth(screen.width());
-  if (mapToGlobal(listRect.bottomRight()).x() > screen.right()) {
-      below.setX(screen.x() + screen.width() - listRect.width());
-      above.setX(screen.x() + screen.width() - listRect.width());
-  }
-  if (mapToGlobal(listRect.topLeft()).x() < screen.x() ) {
-      below.setX(screen.x());
-      above.setX(screen.x());
-  }
+  if (listRect.width() > screen.width())
+    {
+    listRect.setWidth(screen.width());
+    }
+  if (mapToGlobal(listRect.bottomRight()).x() > screen.right())
+    {
+    below.setX(screen.x() + screen.width() - listRect.width());
+    above.setX(screen.x() + screen.width() - listRect.width());
+    }
+  if (mapToGlobal(listRect.topLeft()).x() < screen.x() )
+    {
+    below.setX(screen.x());
+    above.setX(screen.x());
+    }
   container->setGeometry(listRect);
   container->raise();
   container->show();
   this->view()->setFocus();
-  this->view()->scrollTo(this->view()->currentIndex(),
-                     this->style()->styleHint(QStyle::SH_ComboBox_Popup, &opt, this)
-                             ? QAbstractItemView::PositionAtCenter
-                             : QAbstractItemView::EnsureVisible);
+  this->view()->scrollTo( this->view()->currentIndex(),
+    this->style()->styleHint(QStyle::SH_ComboBox_Popup, &opt, this)
+      ? QAbstractItemView::PositionAtCenter : QAbstractItemView::EnsureVisible);
   container->update();
 }
 
@@ -139,8 +139,7 @@ qSlicerPresetComboBoxPrivate::qSlicerPresetComboBoxPrivate(
 void qSlicerPresetComboBoxPrivate::init()
 {
   Q_Q(qSlicerPresetComboBox);
-  // We don't want to reset default text.
-  //q->qMRMLNodeComboBox::d_ptr->AutoDefaultText = false;
+
   q->setNodeTypes(QStringList("vtkMRMLVolumePropertyNode"));
   q->setSelectNodeUponCreation(false);
   q->setAddEnabled(false);
@@ -148,27 +147,19 @@ void qSlicerPresetComboBoxPrivate::init()
   q->setBaseName(q->tr("Preset"));
 
   qSlicerIconComboBox* comboBox = new qSlicerIconComboBox;
-  //comboBox->setDefaultIcon(QIcon());
-  //comboBox->setDefaultText(q->tr("Select a Preset"));
   comboBox->forceDefault(true);
   q->setComboBox(comboBox);
   q->updateComboBoxTitleAndIcon(0);
-  //comboBox->setMaximumHeight(comboBox->sizeHint().height());
 
-  qMRMLSceneModel* sceneModel =
-    qobject_cast<qMRMLSceneModel*>(q->sortFilterProxyModel()->sourceModel());
+  qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(q->sortFilterProxyModel()->sourceModel());
   sceneModel->setNameColumn(-1);
-  //sceneModel->setToolTipNameColumn(0);
 
-  QObject::connect(q, SIGNAL(nodeAdded(vtkMRMLNode*)),
-                   q, SLOT(setIconToPreset(vtkMRMLNode*)));
-  QObject::connect(q, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-                   q, SLOT(updateComboBoxTitleAndIcon(vtkMRMLNode*)));
+  QObject::connect(q, SIGNAL(nodeAdded(vtkMRMLNode*)), q, SLOT(setIconToPreset(vtkMRMLNode*)));
+  QObject::connect(q, SIGNAL(currentNodeChanged(vtkMRMLNode*)), q, SLOT(updateComboBoxTitleAndIcon(vtkMRMLNode*)));
 }
 
 // --------------------------------------------------------------------------
-qSlicerPresetComboBox
-::qSlicerPresetComboBox(QWidget* parentWidget)
+qSlicerPresetComboBox::qSlicerPresetComboBox(QWidget* parentWidget)
   : Superclass(parentWidget)
   , d_ptr(new qSlicerPresetComboBoxPrivate(*this))
 {
@@ -177,8 +168,7 @@ qSlicerPresetComboBox
 }
 
 // --------------------------------------------------------------------------
-qSlicerPresetComboBox
-::~qSlicerPresetComboBox()
+qSlicerPresetComboBox::~qSlicerPresetComboBox()
 {
 }
 
@@ -228,19 +218,19 @@ void qSlicerPresetComboBox::setIconToPreset(vtkMRMLNode* presetNode)
   vtkMRMLVolumePropertyNode* volumePropertyNode = vtkMRMLVolumePropertyNode::SafeDownCast(presetNode);
   if (volumePropertyNode)
     {
-  int previewSize = this->style()->pixelMetric(QStyle::PM_SmallIconSize);
-  vtkScalarsToColors* colors =
-    volumePropertyNode->GetVolumeProperty() ? volumePropertyNode->GetVolumeProperty()->GetRGBTransferFunction() : 0;
-  assert(colors && colors->GetRange()[1] > colors->GetRange()[0]);
-  QImage img = ctk::scalarsToColorsImage(colors, QSize(previewSize, previewSize));
+    int previewSize = this->style()->pixelMetric(QStyle::PM_SmallIconSize);
+    vtkScalarsToColors* colors =
+      volumePropertyNode->GetVolumeProperty() ? volumePropertyNode->GetVolumeProperty()->GetRGBTransferFunction() : 0;
+    assert(colors && colors->GetRange()[1] > colors->GetRange()[0]);
+    QImage img = ctk::scalarsToColorsImage(colors, QSize(previewSize, previewSize));
 #if QT_VERSION >= 0x040700
-  QString imgSrc = ctk::base64HTMLImageTagSrc(img);
+    QString imgSrc = ctk::base64HTMLImageTagSrc(img);
 #else
-  QString imgSrc = QString(":%1").arg(presetNode->GetName());
-  QPixmapCache::insert(imgSrc, QPixmap::fromImage(img));
+    QString imgSrc = QString(":%1").arg(presetNode->GetName());
+    QPixmapCache::insert(imgSrc, QPixmap::fromImage(img));
 #endif
-  QString toolTip = QString("<img src=\"%1\"> %2").arg(imgSrc).arg(presetNode->GetName());
-  sceneModel->setData(sceneModel->indexFromNode(presetNode), toolTip, Qt::ToolTipRole);
+    QString toolTip = QString("<img src=\"%1\"> %2").arg(imgSrc).arg(presetNode->GetName());
+    sceneModel->setData(sceneModel->indexFromNode(presetNode), toolTip, Qt::ToolTipRole);
     }
 }
 

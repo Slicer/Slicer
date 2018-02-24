@@ -75,6 +75,10 @@ public slots:
   void spreadAllPoints(double factor,
                        bool dontSpreadFirstAndLast = false);
 
+  /// Set chart extent
+  void setChartsExtent(double extent[2]);
+  void setChartsExtent(double min, double max);
+
 signals:
   void thresholdChanged(bool enabled);
   void volumePropertyChanged();

@@ -66,17 +66,17 @@ public:
   vtkSetMacro(AxisLabelsVisible, int);
 
   ///
-  /// Indicates if the axis labels visibility contolled by camera orientation
+  /// Indicates if the axis labels visibility controlled by camera orientation
   vtkGetMacro(AxisLabelsCameraDependent, int);
   vtkSetMacro(AxisLabelsCameraDependent, int);
 
   ///
   /// Toggles visibility of fiducial points in 3D viewer
-  vtkGetMacro (FiducialsVisible, int );
-  vtkSetMacro (FiducialsVisible, int );
+  vtkGetMacro(FiducialsVisible, int );
+  vtkSetMacro(FiducialsVisible, int );
 
-  vtkGetMacro (FiducialLabelsVisible, int );
-  vtkSetMacro (FiducialLabelsVisible, int );
+  vtkGetMacro(FiducialLabelsVisible, int );
+  vtkSetMacro(FiducialLabelsVisible, int );
 
   ///
   /// Field of view size
@@ -90,60 +90,60 @@ public:
 
   ///
   /// Turn on and off animated spinning or rocking.
-  vtkGetMacro (AnimationMode, int );
-  vtkSetMacro (AnimationMode, int );
+  vtkGetMacro(AnimationMode, int );
+  vtkSetMacro(AnimationMode, int );
 
   ///
-  vtkGetMacro (ViewAxisMode, int );
-  vtkSetMacro (ViewAxisMode, int );
+  vtkGetMacro(ViewAxisMode, int );
+  vtkSetMacro(ViewAxisMode, int );
 
   ///
   /// Direction of animated spinning
-  vtkGetMacro ( SpinDirection, int );
-  vtkSetMacro ( SpinDirection, int );
+  vtkGetMacro(SpinDirection, int );
+  vtkSetMacro(SpinDirection, int );
 
   ///
   /// Number of degrees in spin increment.
-  vtkGetMacro ( SpinDegrees, double );
-  vtkSetMacro ( SpinDegrees, double );
+  vtkGetMacro(SpinDegrees, double );
+  vtkSetMacro(SpinDegrees, double );
 
-  vtkGetMacro ( RotateDegrees, double );
-  vtkSetMacro ( RotateDegrees, double );
+  vtkGetMacro(RotateDegrees, double );
+  vtkSetMacro(RotateDegrees, double );
 
   ///
   /// Amount of wait time between spin increments
-  vtkGetMacro ( AnimationMs, int );
-  vtkSetMacro ( AnimationMs, int );
+  vtkGetMacro(AnimationMs, int );
+  vtkSetMacro(AnimationMs, int );
 
   ///
   /// Length of animated rocking
-  vtkGetMacro ( RockLength, int );
-  vtkSetMacro ( RockLength, int );
+  vtkGetMacro(RockLength, int );
+  vtkSetMacro(RockLength, int );
 
   ///
   /// Increment of animated rock
-  vtkGetMacro ( RockCount, int );
-  vtkSetMacro ( RockCount, int );
+  vtkGetMacro(RockCount, int );
+  vtkSetMacro(RockCount, int );
 
   ///
   /// stereo mode (including nostereo)
-  vtkGetMacro ( StereoType, int );
-  vtkSetMacro ( StereoType, int );
+  vtkGetMacro(StereoType, int );
+  vtkSetMacro(StereoType, int );
 
   ///
   /// specifies orthographic or perspective rendering
-  vtkGetMacro (RenderMode, int );
-  vtkSetMacro (RenderMode, int );
+  vtkGetMacro(RenderMode, int );
+  vtkSetMacro(RenderMode, int );
 
   /// Use depth peeling or not.
   /// 0 by default.
-  vtkGetMacro ( UseDepthPeeling, int );
-  vtkSetMacro ( UseDepthPeeling, int );
+  vtkGetMacro(UseDepthPeeling, int );
+  vtkSetMacro(UseDepthPeeling, int );
 
   /// Show FPS in the lower right side of the screen.
   /// 0 by default.
-  vtkGetMacro ( FPSVisible, int );
-  vtkSetMacro ( FPSVisible, int );
+  vtkGetMacro(FPSVisible, int );
+  vtkSetMacro(FPSVisible, int );
 
   /// Modes for automatically controlling camera
   enum

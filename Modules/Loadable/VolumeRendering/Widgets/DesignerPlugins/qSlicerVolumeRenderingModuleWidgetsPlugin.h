@@ -33,6 +33,7 @@
 // VolumeRendering includes
 #include "qMRMLVolumePropertyNodeWidgetPlugin.h"
 #include "qSlicerPresetComboBoxPlugin.h"
+#include "qSlicerVolumeRenderingPresetComboBoxPlugin.h"
 
 // \class Group the plugins in one library
 class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_PLUGINS_EXPORT qSlicerVolumeRenderingModuleWidgetsPlugin
@@ -50,7 +51,8 @@ public:
     {
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new qMRMLVolumePropertyNodeWidgetPlugin
-            << new qSlicerPresetComboBoxPlugin;
+            << new qSlicerPresetComboBoxPlugin
+            << new qSlicerVolumeRenderingPresetComboBoxPlugin;
     return plugins;
     }
 };

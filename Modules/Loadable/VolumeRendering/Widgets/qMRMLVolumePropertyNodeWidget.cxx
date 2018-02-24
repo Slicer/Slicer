@@ -29,6 +29,7 @@
 
 // VTK includes
 #include <vtkVolumeProperty.h>
+#include <vtkWeakPointer.h>
 
 //-----------------------------------------------------------------------------
 class qMRMLVolumePropertyNodeWidgetPrivate
@@ -45,7 +46,7 @@ public:
 
   virtual void setupUi();
 
-  vtkMRMLVolumePropertyNode*                   VolumePropertyNode;
+  vtkWeakPointer<vtkMRMLVolumePropertyNode> VolumePropertyNode;
 };
 
 // --------------------------------------------------------------------------
@@ -66,9 +67,9 @@ void qMRMLVolumePropertyNodeWidgetPrivate::setupUi()
 {
   Q_Q(qMRMLVolumePropertyNodeWidget);
   this->Ui_qMRMLVolumePropertyNodeWidget::setupUi(q);
-  QObject::connect(this->VolumeProperty, SIGNAL(chartsExtentChanged()),
+  QObject::connect(this->VolumePropertyWidget, SIGNAL(chartsExtentChanged()),
                    q, SIGNAL(chartsExtentChanged()));
-  QObject::connect(this->VolumeProperty, SIGNAL(thresholdEnabledChanged(bool)),
+  QObject::connect(this->VolumePropertyWidget, SIGNAL(thresholdEnabledChanged(bool)),
                    q, SIGNAL(thresholdChanged(bool)));
 }
 
@@ -92,7 +93,7 @@ qMRMLVolumePropertyNodeWidget::~qMRMLVolumePropertyNodeWidget()
 vtkVolumeProperty* qMRMLVolumePropertyNodeWidget::volumeProperty()const
 {
   Q_D(const qMRMLVolumePropertyNodeWidget);
-  return d->VolumeProperty->volumeProperty();
+  return d->VolumePropertyWidget->volumeProperty();
 }
 
 // --------------------------------------------------------------------------
@@ -121,51 +122,63 @@ void qMRMLVolumePropertyNodeWidget::updateFromVolumePropertyNode()
   Q_D(qMRMLVolumePropertyNodeWidget);
   vtkVolumeProperty* newVolumeProperty =
     d->VolumePropertyNode ? d->VolumePropertyNode->GetVolumeProperty() : 0;
-  qvtkReconnect(d->VolumeProperty->volumeProperty(), newVolumeProperty,
+  qvtkReconnect(d->VolumePropertyWidget->volumeProperty(), newVolumeProperty,
                 vtkCommand::ModifiedEvent, this, SIGNAL(volumePropertyChanged()));
-  d->VolumeProperty->setVolumeProperty(newVolumeProperty);
+  d->VolumePropertyWidget->setVolumeProperty(newVolumeProperty);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLVolumePropertyNodeWidget::chartsBounds(double bounds[4])const
 {
   Q_D(const qMRMLVolumePropertyNodeWidget);
-  d->VolumeProperty->chartsBounds(bounds);
+  d->VolumePropertyWidget->chartsBounds(bounds);
+}
+
+// ----------------------------------------------------------------------------
+void qMRMLVolumePropertyNodeWidget::setChartsExtent(double extent[2])
+{
+  Q_D(qMRMLVolumePropertyNodeWidget);
+  d->VolumePropertyWidget->chartsExtent(extent);
+}
+
+// ----------------------------------------------------------------------------
+void qMRMLVolumePropertyNodeWidget::setChartsExtent(double min, double max)
+{
+  Q_D(qMRMLVolumePropertyNodeWidget);
+  d->VolumePropertyWidget->setChartsExtent(min, max);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLVolumePropertyNodeWidget::chartsExtent(double extent[4])const
 {
   Q_D(const qMRMLVolumePropertyNodeWidget);
-  d->VolumeProperty->chartsExtent(extent);
+  d->VolumePropertyWidget->chartsExtent(extent);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLVolumePropertyNodeWidget::setThreshold(bool enable)
 {
   Q_D(qMRMLVolumePropertyNodeWidget);
-  d->VolumeProperty->setThresholdEnabled(enable);
+  d->VolumePropertyWidget->setThresholdEnabled(enable);
 }
 
 // --------------------------------------------------------------------------
 bool qMRMLVolumePropertyNodeWidget::hasThreshold()const
 {
   Q_D(const qMRMLVolumePropertyNodeWidget);
-  return d->VolumeProperty->isThresholdEnabled();
+  return d->VolumePropertyWidget->isThresholdEnabled();
 }
 
 // --------------------------------------------------------------------------
-void qMRMLVolumePropertyNodeWidget
-::moveAllPoints(double x, double y, bool dontMoveFirstAndLast)
+void qMRMLVolumePropertyNodeWidget::moveAllPoints(double x, double y, bool dontMoveFirstAndLast)
 {
   Q_D(const qMRMLVolumePropertyNodeWidget);
-  return d->VolumeProperty->moveAllPoints(x, y, dontMoveFirstAndLast);
+  return d->VolumePropertyWidget->moveAllPoints(x, y, dontMoveFirstAndLast);
 }
 
 // --------------------------------------------------------------------------
-void qMRMLVolumePropertyNodeWidget
-::spreadAllPoints(double factor, bool dontSpreadFirstAndLast)
+void qMRMLVolumePropertyNodeWidget::spreadAllPoints(double factor, bool dontSpreadFirstAndLast)
 {
   Q_D(const qMRMLVolumePropertyNodeWidget);
-  return d->VolumeProperty->spreadAllPoints(factor, dontSpreadFirstAndLast);
+  return d->VolumePropertyWidget->spreadAllPoints(factor, dontSpreadFirstAndLast);
 }

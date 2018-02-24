@@ -7,17 +7,26 @@
     <x>0</x>
     <y>0</y>
     <width>456</width>
-    <height>794</height>
+    <height>677</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Volume Render</string>
+   <string>Volume Rendering</string>
   </property>
   <layout class="QFormLayout" name="formLayout_2">
    <property name="fieldGrowthPolicy">
     <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
    </property>
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item row="1" column="0">
@@ -34,7 +43,7 @@
         <string>Volume:</string>
        </property>
        <property name="indicatorIcon">
-        <iconset>
+        <iconset resource="../../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
          <normaloff>:/Icons/VisibleOn.png</normaloff>
          <normalon>:/Icons/VisibleOff.png</normalon>:/Icons/VisibleOn.png</iconset>
        </property>
@@ -105,7 +114,7 @@
           <string>vtkMRMLVolumeRenderingDisplayNode</string>
          </stringlist>
         </property>
-        <property name="renameEnabled">
+        <property name="showHidden">
          <bool>true</bool>
         </property>
         <property name="noneEnabled">
@@ -114,7 +123,7 @@
         <property name="addEnabled">
          <bool>false</bool>
         </property>
-        <property name="showHidden">
+        <property name="renameEnabled">
          <bool>true</bool>
         </property>
        </widget>
@@ -184,22 +193,24 @@
      <property name="collapsed">
       <bool>false</bool>
      </property>
-     <property name="contentsFrameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
      <layout class="QFormLayout" name="formLayout_11">
       <property name="fieldGrowthPolicy">
        <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
       </property>
-      <item row="0" column="0">
-       <widget class="QLabel" name="PresetsLabel">
-        <property name="text">
-         <string>Preset:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="qSlicerPresetComboBox" name="PresetsNodeComboBox"/>
+      <property name="leftMargin">
+       <number>4</number>
+      </property>
+      <property name="topMargin">
+       <number>4</number>
+      </property>
+      <property name="rightMargin">
+       <number>4</number>
+      </property>
+      <property name="bottomMargin">
+       <number>4</number>
+      </property>
+      <item row="0" column="0" colspan="2">
+       <widget class="qSlicerVolumeRenderingPresetComboBox" name="PresetComboBox"/>
       </item>
       <item row="2" column="0">
        <widget class="QLabel" name="CropLabel">
@@ -229,7 +240,7 @@
            <string>Display ROI</string>
           </property>
           <property name="indicatorIcon">
-           <iconset>
+           <iconset resource="../../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
             <normaloff>:/Icons/VisibleOn.png</normaloff>
             <normalon>:/Icons/VisibleOff.png</normalon>:/Icons/VisibleOn.png</iconset>
           </property>
@@ -250,7 +261,7 @@
            <string>Fit to Volume</string>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="../../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
             <normaloff>:/Icons/ViewCenter.png</normaloff>:/Icons/ViewCenter.png</iconset>
           </property>
          </widget>
@@ -271,44 +282,6 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="ctkDoubleSlider" name="PresetOffsetSlider">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="toolTip">
-         <string>Shift transfer functions</string>
-        </property>
-        <property name="value">
-         <double>0.500000000000000</double>
-        </property>
-        <property name="singleStep">
-         <double>0.100000000000000</double>
-        </property>
-        <property name="pageStep">
-         <double>0.100000000000000</double>
-        </property>
-        <property name="maximum">
-         <double>1.000000000000000</double>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="handleToolTip">
-         <string>%1</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label">
-        <property name="toolTip">
-         <string>Shift transfer functions</string>
-        </property>
-        <property name="text">
-         <string>Shift:</string>
-        </property>
-       </widget>
-      </item>
      </layout>
     </widget>
    </item>
@@ -326,10 +299,19 @@
      <property name="collapsed">
       <bool>false</bool>
      </property>
-     <property name="contentsFrameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
      <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="leftMargin">
+       <number>4</number>
+      </property>
+      <property name="topMargin">
+       <number>4</number>
+      </property>
+      <property name="rightMargin">
+       <number>4</number>
+      </property>
+      <property name="bottomMargin">
+       <number>4</number>
+      </property>
       <item>
        <widget class="QTabWidget" name="AdvancedTabWidget">
         <property name="currentIndex">
@@ -419,7 +401,16 @@
              <property name="fieldGrowthPolicy">
               <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
              </property>
-             <property name="margin">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
               <number>0</number>
              </property>
              <item row="0" column="0" colspan="2">
@@ -439,7 +430,16 @@
           <string>Volume Properties</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_2">
-          <property name="margin">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
            <number>0</number>
           </property>
           <item>
@@ -521,14 +521,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-    <class>qMRMLDisplayNodeViewComboBox</class>
-    <extends>qMRMLCheckableNodeComboBox</extends>
-    <header>qMRMLDisplayNodeViewComboBox.h</header>
-  </customwidget>
-  <customwidget>
    <class>qMRMLCheckableNodeComboBox</class>
    <extends>qMRMLNodeComboBox</extends>
    <header>qMRMLCheckableNodeComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLDisplayNodeViewComboBox</class>
+   <extends>qMRMLCheckableNodeComboBox</extends>
+   <header>qMRMLDisplayNodeViewComboBox.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLNodeComboBox</class>
@@ -552,9 +552,9 @@
    <header>qMRMLVolumePropertyNodeWidget.h</header>
   </customwidget>
   <customwidget>
-   <class>qSlicerPresetComboBox</class>
-   <extends>qMRMLNodeComboBox</extends>
-   <header>qSlicerPresetComboBox.h</header>
+   <class>qSlicerVolumeRenderingPresetComboBox</class>
+   <extends>qSlicerWidget</extends>
+   <header>qSlicerVolumeRenderingPresetComboBox.h</header>
   </customwidget>
   <customwidget>
    <class>ctkCheckablePushButton</class>
@@ -579,11 +579,6 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ctkDoubleSlider</class>
-   <extends>QWidget</extends>
-   <header>ctkDoubleSlider.h</header>
-  </customwidget>
-  <customwidget>
    <class>ctkExpandButton</class>
    <extends>QToolButton</extends>
    <header>ctkExpandButton.h</header>
@@ -601,7 +596,7 @@
  </customwidgets>
  <resources>
   <include location="../../../Annotations/Resources/qSlicerAnnotationModule.qrc"/>
-  <include location="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc"/>
+  <include location="../../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc"/>
  </resources>
  <connections>
   <connection>
@@ -611,12 +606,12 @@
    <slot>setMRMLVolumePropertyNode(vtkMRMLNode*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>400</x>
-     <y>82</y>
+     <x>446</x>
+     <y>66</y>
     </hint>
     <hint type="destinationlabel">
-     <x>230</x>
-     <y>732</y>
+     <x>105</x>
+     <y>305</y>
     </hint>
    </hints>
   </connection>
@@ -627,12 +622,12 @@
    <slot>setMRMLAnnotationROINode(vtkMRMLNode*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>400</x>
-     <y>79</y>
+     <x>446</x>
+     <y>63</y>
     </hint>
     <hint type="destinationlabel">
-     <x>114</x>
-     <y>541</y>
+     <x>96</x>
+     <y>296</y>
     </hint>
    </hints>
   </connection>
@@ -659,12 +654,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>400</x>
-     <y>76</y>
+     <x>446</x>
+     <y>60</y>
     </hint>
     <hint type="destinationlabel">
-     <x>400</x>
-     <y>79</y>
+     <x>446</x>
+     <y>63</y>
     </hint>
    </hints>
   </connection>
@@ -675,12 +670,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>400</x>
-     <y>76</y>
+     <x>446</x>
+     <y>60</y>
     </hint>
     <hint type="destinationlabel">
-     <x>400</x>
-     <y>82</y>
+     <x>446</x>
+     <y>66</y>
     </hint>
    </hints>
   </connection>
@@ -691,12 +686,12 @@
    <slot>setMRMLDisplayNode(vtkMRMLNode*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>400</x>
-     <y>76</y>
+     <x>446</x>
+     <y>60</y>
     </hint>
     <hint type="destinationlabel">
-     <x>400</x>
-     <y>85</y>
+     <x>446</x>
+     <y>69</y>
     </hint>
    </hints>
   </connection>
@@ -711,8 +706,8 @@
      <y>260</y>
     </hint>
     <hint type="destinationlabel">
-     <x>400</x>
-     <y>85</y>
+     <x>446</x>
+     <y>69</y>
     </hint>
    </hints>
   </connection>
@@ -727,8 +722,8 @@
      <y>228</y>
     </hint>
     <hint type="destinationlabel">
-     <x>400</x>
-     <y>79</y>
+     <x>446</x>
+     <y>63</y>
     </hint>
    </hints>
   </connection>
@@ -743,8 +738,8 @@
      <y>227</y>
     </hint>
     <hint type="destinationlabel">
-     <x>400</x>
-     <y>82</y>
+     <x>446</x>
+     <y>66</y>
     </hint>
    </hints>
   </connection>
@@ -759,8 +754,8 @@
      <y>228</y>
     </hint>
     <hint type="destinationlabel">
-     <x>400</x>
-     <y>76</y>
+     <x>446</x>
+     <y>60</y>
     </hint>
    </hints>
   </connection>
@@ -803,12 +798,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>400</x>
-     <y>79</y>
+     <x>446</x>
+     <y>63</y>
     </hint>
     <hint type="destinationlabel">
-     <x>145</x>
-     <y>193</y>
+     <x>188</x>
+     <y>185</y>
     </hint>
    </hints>
   </connection>
@@ -819,12 +814,28 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>400</x>
-     <y>82</y>
+     <x>446</x>
+     <y>66</y>
     </hint>
     <hint type="destinationlabel">
-     <x>230</x>
-     <y>732</y>
+     <x>105</x>
+     <y>305</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>VolumePropertyNodeComboBox</sender>
+   <signal>currentNodeChanged(bool)</signal>
+   <receiver>PresetComboBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>81</x>
+     <y>66</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>24</x>
+     <y>125</y>
     </hint>
    </hints>
   </connection>
@@ -835,28 +846,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>400</x>
-     <y>79</y>
+     <x>446</x>
+     <y>63</y>
     </hint>
     <hint type="destinationlabel">
-     <x>238</x>
-     <y>193</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>VolumePropertyNodeComboBox</sender>
-   <signal>currentNodeChanged(bool)</signal>
-   <receiver>PresetOffsetSlider</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>400</x>
-     <y>82</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>263</x>
-     <y>181</y>
+     <x>319</x>
+     <y>187</y>
     </hint>
    </hints>
   </connection>
@@ -867,12 +862,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>400</x>
-     <y>79</y>
+     <x>446</x>
+     <y>63</y>
     </hint>
     <hint type="destinationlabel">
-     <x>333</x>
-     <y>193</y>
+     <x>450</x>
+     <y>189</y>
     </hint>
    </hints>
   </connection>
@@ -899,12 +894,12 @@
    <slot>setChecked(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>231</x>
-     <y>366</y>
+     <x>105</x>
+     <y>305</y>
     </hint>
     <hint type="destinationlabel">
-     <x>231</x>
-     <y>366</y>
+     <x>105</x>
+     <y>305</y>
     </hint>
    </hints>
   </connection>
@@ -915,12 +910,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>264</x>
-     <y>76</y>
+     <x>325</x>
+     <y>60</y>
     </hint>
     <hint type="destinationlabel">
-     <x>231</x>
-     <y>366</y>
+     <x>105</x>
+     <y>305</y>
     </hint>
    </hints>
   </connection>
@@ -931,8 +926,8 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>176</x>
-     <y>76</y>
+     <x>237</x>
+     <y>60</y>
     </hint>
     <hint type="destinationlabel">
      <x>49</x>
@@ -947,12 +942,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>176</x>
-     <y>76</y>
+     <x>237</x>
+     <y>60</y>
     </hint>
     <hint type="destinationlabel">
-     <x>133</x>
-     <y>254</y>
+     <x>259</x>
+     <y>216</y>
     </hint>
    </hints>
   </connection>
@@ -963,12 +958,12 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>429</x>
-     <y>360</y>
+     <x>105</x>
+     <y>305</y>
     </hint>
     <hint type="destinationlabel">
-     <x>392</x>
-     <y>353</y>
+     <x>105</x>
+     <y>305</y>
     </hint>
    </hints>
   </connection>
