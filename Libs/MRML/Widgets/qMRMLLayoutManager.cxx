@@ -870,8 +870,7 @@ QList<qMRMLLayoutViewFactory*> qMRMLLayoutManager::mrmlViewFactories()const
   QList<qMRMLLayoutViewFactory*> res;
   foreach(ctkLayoutViewFactory* viewFactory, this->registeredViewFactories())
     {
-    qMRMLLayoutViewFactory* mrmlViewFactory =
-      qobject_cast<qMRMLLayoutViewFactory*>(viewFactory);
+    qMRMLLayoutViewFactory* mrmlViewFactory = qobject_cast<qMRMLLayoutViewFactory*>(viewFactory);
     if (mrmlViewFactory)
       {
       res << mrmlViewFactory;
@@ -899,8 +898,7 @@ void qMRMLLayoutManager
 ::registerViewFactory(ctkLayoutViewFactory* viewFactory)
 {
   this->Superclass::registerViewFactory(viewFactory);
-  qMRMLLayoutViewFactory* mrmlViewFactory = qobject_cast<qMRMLLayoutViewFactory*>(
-    viewFactory);
+  qMRMLLayoutViewFactory* mrmlViewFactory = qobject_cast<qMRMLLayoutViewFactory*>(viewFactory);
   if (mrmlViewFactory)
     {
     mrmlViewFactory->setLayoutManager(this);
@@ -919,74 +917,133 @@ void qMRMLLayoutManager::onViewportChanged()
 //------------------------------------------------------------------------------
 qMRMLSliceWidget* qMRMLLayoutManager::sliceWidget(const QString& name)const
 {
-  return qobject_cast<qMRMLSliceWidget*>(
-    this->mrmlViewFactory("vtkMRMLSliceNode")->viewWidget(name));
+  qMRMLLayoutViewFactory* viewFactory = this->mrmlViewFactory("vtkMRMLSliceNode");
+  if (!viewFactory)
+    {
+    return NULL;
+    }
+  return qobject_cast<qMRMLSliceWidget*>(viewFactory->viewWidget(name));
 }
 
 //------------------------------------------------------------------------------
 QStringList qMRMLLayoutManager::sliceViewNames() const
 {
-  return this->mrmlViewFactory("vtkMRMLSliceNode")->viewNodeNames();
+  qMRMLLayoutViewFactory* viewFactory = this->mrmlViewFactory("vtkMRMLSliceNode");
+  if (!viewFactory)
+    {
+    return QStringList();
+    }
+  return viewFactory->viewNodeNames();
 }
 
 //------------------------------------------------------------------------------
 int qMRMLLayoutManager::threeDViewCount()const
 {
-  return this->mrmlViewFactory("vtkMRMLViewNode")->viewCount();
+  qMRMLLayoutViewFactory* viewFactory = this->mrmlViewFactory("vtkMRMLViewNode");
+  if (!viewFactory)
+    {
+    return 0;
+    }
+  return viewFactory->viewCount();
 }
 
 //------------------------------------------------------------------------------
 int qMRMLLayoutManager::chartViewCount()const
 {
-  return this->mrmlViewFactory("vtkMRMLChartViewNode")->viewCount();
+  qMRMLLayoutViewFactory* viewFactory = this->mrmlViewFactory("vtkMRMLChartViewNode");
+  if (!viewFactory)
+    {
+    return 0;
+    }
+  return viewFactory->viewCount();
 }
 
 //------------------------------------------------------------------------------
 int qMRMLLayoutManager::tableViewCount()const
 {
-  return this->mrmlViewFactory("vtkMRMLTableViewNode")->viewCount();
+  qMRMLLayoutViewFactory* viewFactory = this->mrmlViewFactory("vtkMRMLTableViewNode");
+  if (!viewFactory)
+    {
+    return 0;
+    }
+  return viewFactory->viewCount();
 }
 
 //------------------------------------------------------------------------------
 int qMRMLLayoutManager::plotViewCount() const
 {
-  return this->mrmlViewFactory("vtkMRMLPlotViewNode")->viewCount();
+  qMRMLLayoutViewFactory* viewFactory = this->mrmlViewFactory("vtkMRMLPlotViewNode");
+  if (!viewFactory)
+    {
+    return 0;
+    }
+  return viewFactory->viewCount();
 }
 
 //------------------------------------------------------------------------------
 qMRMLThreeDWidget* qMRMLLayoutManager::threeDWidget(int id)const
 {
-  return qobject_cast<qMRMLThreeDWidget*>(
-    this->mrmlViewFactory("vtkMRMLViewNode")->viewWidget(id));
+  qMRMLLayoutViewFactory* viewFactory = this->mrmlViewFactory("vtkMRMLViewNode");
+  if (!viewFactory)
+    {
+    return NULL;
+    }
+  return qobject_cast<qMRMLThreeDWidget*>(viewFactory->viewWidget(id));
+}
+
+//------------------------------------------------------------------------------
+qMRMLThreeDWidget* qMRMLLayoutManager::threeDWidget(const QString& name)const
+{
+  qMRMLLayoutViewFactory* viewFactory = this->mrmlViewFactory("vtkMRMLViewNode");
+  if (!viewFactory)
+    {
+    return NULL;
+    }
+  return qobject_cast<qMRMLThreeDWidget*>(viewFactory->viewWidget(name));
 }
 
 //------------------------------------------------------------------------------
 qMRMLChartWidget* qMRMLLayoutManager::chartWidget(int id)const
 {
-  return qobject_cast<qMRMLChartWidget*>(
-    this->mrmlViewFactory("vtkMRMLChartViewNode")->viewWidget(id));
+  qMRMLLayoutViewFactory* viewFactory = this->mrmlViewFactory("vtkMRMLChartViewNode");
+  if (!viewFactory)
+    {
+    return NULL;
+    }
+  return qobject_cast<qMRMLChartWidget*>(viewFactory->viewWidget(id));
 }
 
 //------------------------------------------------------------------------------
 qMRMLTableWidget* qMRMLLayoutManager::tableWidget(int id)const
 {
-  return qobject_cast<qMRMLTableWidget*>(
-    this->mrmlViewFactory("vtkMRMLTableViewNode")->viewWidget(id));
+  qMRMLLayoutViewFactory* viewFactory = this->mrmlViewFactory("vtkMRMLTableViewNode");
+  if (!viewFactory)
+    {
+    return NULL;
+    }
+  return qobject_cast<qMRMLTableWidget*>(viewFactory->viewWidget(id));
 }
 
 //------------------------------------------------------------------------------
 qMRMLPlotWidget *qMRMLLayoutManager::plotWidget(int id)const
 {
-  return qobject_cast<qMRMLPlotWidget*>(
-    this->mrmlViewFactory("vtkMRMLPlotViewNode")->viewWidget(id));
+  qMRMLLayoutViewFactory* viewFactory = this->mrmlViewFactory("vtkMRMLPlotViewNode");
+  if (!viewFactory)
+    {
+    return NULL;
+    }
+  return qobject_cast<qMRMLPlotWidget*>(viewFactory->viewWidget(id));
 }
 
 //------------------------------------------------------------------------------
 vtkCollection* qMRMLLayoutManager::mrmlSliceLogics()const
 {
   qMRMLLayoutSliceViewFactory* viewFactory =
-    qobject_cast<qMRMLLayoutSliceViewFactory*>(
-      this->mrmlViewFactory("vtkMRMLSliceNode"));
+    qobject_cast<qMRMLLayoutSliceViewFactory*>(this->mrmlViewFactory("vtkMRMLSliceNode"));
+  if (!viewFactory)
+    {
+    return NULL;
+    }
   return viewFactory->sliceLogics();
 }
 
@@ -994,9 +1051,11 @@ vtkCollection* qMRMLLayoutManager::mrmlSliceLogics()const
 void qMRMLLayoutManager::setMRMLColorLogic(vtkMRMLColorLogic* colorLogic)
 {
   qMRMLLayoutChartViewFactory* viewChartFactory =
-    qobject_cast<qMRMLLayoutChartViewFactory*>(
-      this->mrmlViewFactory("vtkMRMLChartViewNode"));
-  Q_ASSERT(viewChartFactory);
+    qobject_cast<qMRMLLayoutChartViewFactory*>(this->mrmlViewFactory("vtkMRMLChartViewNode"));
+  if (!viewChartFactory)
+    {
+    return;
+    }
   viewChartFactory->setColorLogic(colorLogic);
 }
 
@@ -1004,8 +1063,11 @@ void qMRMLLayoutManager::setMRMLColorLogic(vtkMRMLColorLogic* colorLogic)
 vtkMRMLColorLogic* qMRMLLayoutManager::mrmlColorLogic()const
 {
   qMRMLLayoutChartViewFactory* viewFactory =
-    qobject_cast<qMRMLLayoutChartViewFactory*>(
-      this->mrmlViewFactory("vtkMRMLChartViewNode"));
+    qobject_cast<qMRMLLayoutChartViewFactory*>(this->mrmlViewFactory("vtkMRMLChartViewNode"));
+  if (!viewFactory)
+    {
+    return NULL;
+    }
   return viewFactory->colorLogic();
 }
 

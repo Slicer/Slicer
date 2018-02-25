@@ -117,7 +117,7 @@ public:
   /// Return the view factory that handles the viewClassName view nodes.
   /// This can be used to replace a view factory with another one.
   /// \sa mrmlViewFactories(), registerViewFactory(), unregisterViewFactory()
-  qMRMLLayoutViewFactory* mrmlViewFactory(const QString& viewClassName)const;
+  Q_INVOKABLE qMRMLLayoutViewFactory* mrmlViewFactory(const QString& viewClassName)const;
 
   /// Return the mrml scene of the layout manager. It is the scene that is set
   /// by setMRMLScene().
@@ -129,8 +129,11 @@ public:
   /// qMRMLThreeDWidget respectively).
   Q_INVOKABLE QWidget* viewWidget(vtkMRMLNode *n) const;
 
-  /// Get SliceViewWidget identified by \a name
+  /// Get slice view widget identified by \a name
   Q_INVOKABLE qMRMLSliceWidget* sliceWidget(const QString& name)const;
+
+  /// Get 3D widget identified by \a name
+  Q_INVOKABLE qMRMLThreeDWidget* threeDWidget(const QString& name)const;
 
   /// Get the list of SliceWidgetNames
   /// All slice widget names are returned,

@@ -51,6 +51,7 @@ public:
   virtual void init();
 
   vtkMRMLAbstractViewNode* viewNodeByName(const QString& viewName)const;
+  vtkMRMLAbstractViewNode* viewNodeByLayoutLabel(const QString& layoutLabel)const;
 
   vtkMRMLLayoutLogic::ViewAttributes attributesFromXML(QDomElement viewElement)const;
   vtkMRMLLayoutLogic::ViewProperties propertiesFromXML(QDomElement viewElement)const;
@@ -95,7 +96,21 @@ vtkMRMLAbstractViewNode* qMRMLLayoutViewFactoryPrivate
       return viewNode;
       }
     }
-  return 0;
+  return NULL;
+}
+
+//------------------------------------------------------------------------------
+vtkMRMLAbstractViewNode* qMRMLLayoutViewFactoryPrivate
+::viewNodeByLayoutLabel(const QString& layoutLabel)const
+{
+  foreach(vtkMRMLAbstractViewNode* viewNode, this->Views.keys())
+    {
+    if (layoutLabel == QString(viewNode->GetLayoutLabel()))
+      {
+      return viewNode;
+      }
+    }
+  return NULL;
 }
 
 //------------------------------------------------------------------------------
@@ -281,6 +296,14 @@ QWidget* qMRMLLayoutViewFactory::viewWidget(const QString& name)const
 {
   Q_D(const qMRMLLayoutViewFactory);
   vtkMRMLAbstractViewNode* viewNode = d->viewNodeByName(name);
+  return this->viewWidget(viewNode);
+}
+
+//------------------------------------------------------------------------------
+QWidget* qMRMLLayoutViewFactory::viewWidgetByLayoutLabel(const QString& layoutLabel)const
+{
+  Q_D(const qMRMLLayoutViewFactory);
+  vtkMRMLAbstractViewNode* viewNode = d->viewNodeByLayoutLabel(layoutLabel);
   return this->viewWidget(viewNode);
 }
 

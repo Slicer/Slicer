@@ -85,10 +85,11 @@ public:
   /// \sa setMRMLScene()
   Q_INVOKABLE vtkMRMLScene* mrmlScene()const;
 
-  QWidget* viewWidget(int id)const;
-  QWidget* viewWidget(vtkMRMLAbstractViewNode* node)const;
-  QWidget* viewWidget(const QString& name)const;
-  int viewCount()const;
+  Q_INVOKABLE QWidget* viewWidget(int id)const;
+  Q_INVOKABLE QWidget* viewWidget(vtkMRMLAbstractViewNode* node)const;
+  Q_INVOKABLE QWidget* viewWidget(const QString& name)const;
+  Q_INVOKABLE QWidget* viewWidgetByLayoutLabel(const QString& layoutLabel)const;
+  Q_INVOKABLE int viewCount()const;
 
   virtual void beginSetupLayout();
 
