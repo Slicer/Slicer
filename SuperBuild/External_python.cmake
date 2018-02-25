@@ -65,10 +65,6 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
     INSTALL_COMMAND ""
     )
 
-  if(NOT DEFINED git_protocol)
-    set(git_protocol "git")
-  endif()
-
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS CMAKE_ARGS)
 
   if(Slicer_USE_PYTHONQT_WITH_TCL)
@@ -127,7 +123,7 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
-    "${git_protocol}://github.com/python-cmake-buildsystem/python-cmake-buildsystem.git"
+    "${EP_GIT_PROTOCOL}://github.com/python-cmake-buildsystem/python-cmake-buildsystem.git"
     QUIET
     )
 

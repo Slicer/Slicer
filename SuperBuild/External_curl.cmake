@@ -51,7 +51,7 @@ if((NOT DEFINED CURL_INCLUDE_DIR
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
-    "${git_protocol}://github.com/Slicer/curl.git"
+    "${EP_GIT_PROTOCOL}://github.com/Slicer/curl.git"
     QUIET
     )
 

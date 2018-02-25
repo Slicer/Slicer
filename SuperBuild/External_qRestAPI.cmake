@@ -18,10 +18,6 @@ endif()
 
 if(NOT DEFINED qRestAPI_DIR)
 
-  if(NOT DEFINED git_protocol)
-    set(git_protocol "git")
-  endif()
-
 
   set(ep_cache_args)
   if(Slicer_REQUIRED_QT_VERSION VERSION_LESS "5")
@@ -38,7 +34,7 @@ if(NOT DEFINED qRestAPI_DIR)
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
-    "${git_protocol}://github.com/commontk/qRestAPI.git"
+    "${EP_GIT_PROTOCOL}://github.com/commontk/qRestAPI.git"
     QUIET
     )
 

@@ -31,10 +31,6 @@ if(NOT DEFINED SlicerExecutionModel_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM
       )
   endif()
 
-  if(NOT DEFINED git_protocol)
-    set(git_protocol "git")
-  endif()
-
   macro(_set var type value)
     set(${var} ${value})
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
@@ -75,7 +71,7 @@ if(NOT DEFINED SlicerExecutionModel_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
-    "${git_protocol}://github.com/Slicer/SlicerExecutionModel.git"
+    "${EP_GIT_PROTOCOL}://github.com/Slicer/SlicerExecutionModel.git"
     QUIET
     )
 

@@ -96,13 +96,9 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
     set(VTK_ENABLE_KITS 1)
   endif()
 
-  if(NOT DEFINED git_protocol)
-    set(git_protocol "git")
-  endif()
-
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
-    "${git_protocol}://github.com/Slicer/VTK.git"
+    "${EP_GIT_PROTOCOL}://github.com/Slicer/VTK.git"
     QUIET
     )
 

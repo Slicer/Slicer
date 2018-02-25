@@ -19,10 +19,6 @@ endif()
 
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  if(NOT DEFINED git_protocol)
-    set(git_protocol "git")
-  endif()
-
   include(ExternalProjectForNonCMakeProject)
 
   # environment
@@ -46,7 +42,7 @@ ExternalProject_Execute(${proj} \"easy_install\" \"${PYTHON_EXECUTABLE}\" setup.
     ${${proj}_EP_ARGS}
     # slicer-v36.6.0
     # - include patch to support parallel build
-    GIT_REPOSITORY "${git_protocol}://github.com/Slicer/setuptools.git"
+    GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/Slicer/setuptools.git"
     GIT_TAG "288143264db3f9b867bc479547b44d1167abf160"
     DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
     SOURCE_DIR ${EP_SOURCE_DIR}

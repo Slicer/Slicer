@@ -27,7 +27,7 @@ if(NOT DEFINED OpenIGTLink_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
-    "${git_protocol}://github.com/openigtlink/OpenIGTLink.git"
+    "${EP_GIT_PROTOCOL}://github.com/openigtlink/OpenIGTLink.git"
     QUIET
     )
 

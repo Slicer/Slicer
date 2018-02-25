@@ -35,7 +35,7 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" Packaging/s
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
-    "${git_protocol}://itk.org/SimpleITK.git"
+    "${EP_GIT_PROTOCOL}://itk.org/SimpleITK.git"
     QUIET
     )
 

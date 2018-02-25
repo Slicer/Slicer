@@ -18,13 +18,9 @@ endif()
 
 if(NOT DEFINED ${proj}_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  if(NOT DEFINED git_protocol)
-    set(git_protocol "git")
-  endif()
-
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    #GIT_REPOSITORY "${git_protocol}://github.com/Foo/Foo.git"
+    #GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/Foo/Foo.git"
     #GIT_TAG "1e823001cb41c92667299635643f1007876d09f6"
     DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo "Remove this line and uncomment GIT_REPOSITORY and GIT_TAG"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}

@@ -20,13 +20,9 @@ endif()
 if(NOT DEFINED ${proj}_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
 
-  if(NOT DEFINED git_protocol)
-    set(git_protocol "git")
-  endif()
-
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
-    "${git_protocol}://github.com/miloyip/rapidjson.git"
+    "${EP_GIT_PROTOCOL}://github.com/miloyip/rapidjson.git"
     QUIET
     )
 

@@ -20,7 +20,7 @@ if(NOT DEFINED CTKAppLauncherLib_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
-    "${git_protocol}://github.com/commontk/AppLauncher.git"
+    "${EP_GIT_PROTOCOL}://github.com/commontk/AppLauncher.git"
     QUIET
     )
 

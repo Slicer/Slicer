@@ -27,11 +27,7 @@ include(SlicerCheckCMakeHTTPS)
 #-----------------------------------------------------------------------------
 # Git protocol option
 #-----------------------------------------------------------------------------
-option(${CMAKE_PROJECT_NAME}_USE_GIT_PROTOCOL "If behind a firewall turn this off to use http instead." ON)
-set(git_protocol "git")
-if(NOT ${CMAKE_PROJECT_NAME}_USE_GIT_PROTOCOL)
-  set(git_protocol "https")
-
+if(EP_GIT_PROTOCOL STREQUAL "https")
   # Verify that the global git config has been updated with the expected "insteadOf" option.
   # XXX CMake 3.8: Replace this with use of GIT_CONFIG option provided by ExternalProject
   function(_check_for_required_git_config_insteadof base insteadof)
@@ -220,7 +216,7 @@ Slicer_Remote_Add(jqPlot
 list(APPEND Slicer_REMOTE_DEPENDENCIES jqPlot)
 
 Slicer_Remote_Add(OpenIGTLinkIF
-  GIT_REPOSITORY ${git_protocol}://github.com/Slicer/OpenIGTLinkIF.git
+  GIT_REPOSITORY ${EP_GIT_PROTOCOL}://github.com/Slicer/OpenIGTLinkIF.git
   GIT_TAG 0266aa27ad19a00f8d2b1c04736b9f3d3fb25aee
   LICENSE_FILES "https://www.slicer.org/LICENSE"
   OPTION_NAME Slicer_BUILD_OpenIGTLinkIF
@@ -233,7 +229,7 @@ option(Slicer_BUILD_MULTIVOLUME_SUPPORT "Build MultiVolume support." ON)
 mark_as_advanced(Slicer_BUILD_MULTIVOLUME_SUPPORT)
 
 Slicer_Remote_Add(MultiVolumeExplorer
-  GIT_REPOSITORY ${git_protocol}://github.com/fedorov/MultiVolumeExplorer.git
+  GIT_REPOSITORY ${EP_GIT_PROTOCOL}://github.com/fedorov/MultiVolumeExplorer.git
   GIT_TAG b1bb131c41b6fa47a5c298b5d36b95b2e739d2e3
   OPTION_NAME Slicer_BUILD_MultiVolumeExplorer
   OPTION_DEPENDS "Slicer_BUILD_QTLOADABLEMODULES;Slicer_BUILD_MULTIVOLUME_SUPPORT;Slicer_USE_PYTHONQT"
@@ -242,7 +238,7 @@ Slicer_Remote_Add(MultiVolumeExplorer
 list_conditional_append(Slicer_BUILD_MultiVolumeExplorer Slicer_REMOTE_DEPENDENCIES MultiVolumeExplorer)
 
 Slicer_Remote_Add(MultiVolumeImporter
-  GIT_REPOSITORY ${git_protocol}://github.com/fedorov/MultiVolumeImporter.git
+  GIT_REPOSITORY ${EP_GIT_PROTOCOL}://github.com/fedorov/MultiVolumeImporter.git
   GIT_TAG baa0621ac414910da17fe97dabe1fb7982fbbb62
   OPTION_NAME Slicer_BUILD_MultiVolumeImporter
   OPTION_DEPENDS "Slicer_BUILD_QTLOADABLEMODULES;Slicer_BUILD_MULTIVOLUME_SUPPORT;Slicer_USE_PYTHONQT"
@@ -251,7 +247,7 @@ Slicer_Remote_Add(MultiVolumeImporter
 list_conditional_append(Slicer_BUILD_MultiVolumeImporter Slicer_REMOTE_DEPENDENCIES MultiVolumeImporter)
 
 Slicer_Remote_Add(SimpleFilters
-  GIT_REPOSITORY ${git_protocol}://github.com/SimpleITK/SlicerSimpleFilters.git
+  GIT_REPOSITORY ${EP_GIT_PROTOCOL}://github.com/SimpleITK/SlicerSimpleFilters.git
   GIT_TAG ed2dfa5584d29086a40c07c981ca01019f676889
   OPTION_NAME Slicer_BUILD_SimpleFilters
   OPTION_DEPENDS "Slicer_BUILD_QTSCRIPTEDMODULES;Slicer_USE_SimpleITK"
@@ -302,7 +298,7 @@ set(BRAINSTools_options
   USE_BRAINSRefacer:BOOL=OFF
   )
 Slicer_Remote_Add(BRAINSTools
-  GIT_REPOSITORY "${git_protocol}://github.com/Slicer/BRAINSTools.git"
+  GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/Slicer/BRAINSTools.git"
   GIT_TAG "c1289e6686f3fd27db2ce0ea19c36e9792e40d2a" # master (from 2017-11-29, post v4.7.1)
   LICENSE_FILES "http://www.apache.org/licenses/LICENSE-2.0.txt"
   OPTION_NAME Slicer_BUILD_BRAINSTOOLS
@@ -329,7 +325,7 @@ Slicer_Remote_Add(EMSegment
 list_conditional_append(Slicer_BUILD_EMSegment Slicer_REMOTE_DEPENDENCIES EMSegment)
 
 Slicer_Remote_Add(OtsuThresholdImageFilter
-  GIT_REPOSITORY "${git_protocol}://github.com/Slicer/Slicer-OtsuThresholdImageFilter"
+  GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/Slicer/Slicer-OtsuThresholdImageFilter"
   GIT_TAG "cf39e5064472af31809ec1fa2f93fb97dc9a606e"
   OPTION_NAME Slicer_BUILD_OtsuThresholdImageFilter
   OPTION_DEPENDS "Slicer_BUILD_EMSegment"
@@ -338,7 +334,7 @@ Slicer_Remote_Add(OtsuThresholdImageFilter
 list_conditional_append(Slicer_BUILD_OtsuThresholdImageFilter Slicer_REMOTE_DEPENDENCIES OtsuThresholdImageFilter)
 
 Slicer_Remote_Add(DataStore
-  GIT_REPOSITORY "${git_protocol}://github.com/Slicer/Slicer-DataStore"
+  GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/Slicer/Slicer-DataStore"
   GIT_TAG "327148e0259f301651a35711dd84b19fcb0a860f"
   OPTION_NAME Slicer_BUILD_DataStore
   LABELS REMOTE_MODULE
@@ -346,7 +342,7 @@ Slicer_Remote_Add(DataStore
 list_conditional_append(Slicer_BUILD_DataStore Slicer_REMOTE_DEPENDENCIES DataStore)
 
 Slicer_Remote_Add(CompareVolumes
-  GIT_REPOSITORY "${git_protocol}://github.com/pieper/CompareVolumes"
+  GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/pieper/CompareVolumes"
   GIT_TAG "9a41493ed810a85b97245604af4138c5f45ff52f"
   OPTION_NAME Slicer_BUILD_CompareVolumes
   OPTION_DEPENDS "Slicer_USE_PYTHONQT"
@@ -355,7 +351,7 @@ Slicer_Remote_Add(CompareVolumes
 list_conditional_append(Slicer_BUILD_CompareVolumes Slicer_REMOTE_DEPENDENCIES CompareVolumes)
 
 Slicer_Remote_Add(LandmarkRegistration
-  GIT_REPOSITORY "${git_protocol}://github.com/pieper/LandmarkRegistration"
+  GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/pieper/LandmarkRegistration"
   GIT_TAG "474826daa0147d08205a1f7bc147dfbf8177e024"
   OPTION_NAME Slicer_BUILD_LandmarkRegistration
   OPTION_DEPENDS "Slicer_BUILD_CompareVolumes;Slicer_USE_PYTHONQT"

@@ -36,13 +36,9 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
     -DENABLE_OPENSSL:BOOL=OFF
     )
 
-  if(NOT DEFINED git_protocol)
-    set(git_protocol "git")
-  endif()
-
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
-    "${git_protocol}://github.com/Slicer/LibArchive.git"
+    "${EP_GIT_PROTOCOL}://github.com/Slicer/LibArchive.git"
     QUIET
     )
 
