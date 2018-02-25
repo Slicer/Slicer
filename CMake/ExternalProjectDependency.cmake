@@ -28,10 +28,6 @@
 
 include(CMakeParseArguments)
 
-if(NOT DEFINED EP_LIST_SEPARATOR)
-  set(EP_LIST_SEPARATOR "^^")
-endif()
-
 #.rst:
 # Global Variables
 # ^^^^^^^^^^^^^^^^
@@ -67,6 +63,50 @@ endif()
 #
 # This variable can be set to explicitly identify the name of the top-level project.
 # If not set, it default to the value of ``CMAKE_PROJECT_NAME``.
+if(NOT DEFINED SUPERBUILD_TOPLEVEL_PROJECT)
+  if(NOT DEFINED CMAKE_PROJECT_NAME)
+    message(FATAL_ERROR "Failed to initialize variable SUPERBUILD_TOPLEVEL_PROJECT. Variable CMAKE_PROJECT_NAME is not defined.")
+  endif()
+  set(SUPERBUILD_TOPLEVEL_PROJECT ${CMAKE_PROJECT_NAME})
+endif()
+
+#.rst:
+# .. cmake:variable:: EP_LIST_SEPARATOR
+#
+# This variable is used to separate list items when passed in various external project
+# ``..._COMMAND`` options.
+#
+# If defaults to ``^^``.
+if(NOT DEFINED EP_LIST_SEPARATOR)
+  set(EP_LIST_SEPARATOR "^^")
+endif()
+
+
+#.rst:
+# .. cmake:variable:: EP_GIT_PROTOCOL
+#
+# The value of this variable is controled by the option ``<SUPERBUILD_TOPLEVEL_PROJECT>_USE_GIT_PROTOCOL``
+# automatically defined by including this CMake module. Setting this option allows to update the value of
+# ``EP_GIT_PROTOCOL`` variable.
+#
+# If enabled, the variable ``EP_GIT_PROTOCOL`` is set to ``git``. Otherwise, it is set to ``https``.
+# The option is enabled by default.
+#
+# The variable ``EP_GIT_PROTOCOL`` can be used when adding external project. For example:
+#
+# .. code-block:: cmake
+#
+#   ExternalProject_Add(${proj}
+#     ${${proj}_EP_ARGS}
+#     GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/Foo/Foo.git"
+#     [...]
+#     )
+#
+option(${SUPERBUILD_TOPLEVEL_PROJECT}_USE_GIT_PROTOCOL "If behind a firewall turn this off to use https instead." ON)
+set(EP_GIT_PROTOCOL "git")
+if(NOT ${SUPERBUILD_TOPLEVEL_PROJECT}_USE_GIT_PROTOCOL)
+  set(EP_GIT_PROTOCOL "https")
+endif()
 
 # Compute -G arg for configuring external projects with the same CMake generator:
 if(CMAKE_EXTRA_GENERATOR)
@@ -99,8 +139,7 @@ set(EP_CMAKE_GENERATOR_TOOLSET "${CMAKE_GENERATOR_TOOLSET}")
 # .. code-block:: cmake
 #
 #  PROJECTS corresponds to a list of <projectname> that will be added using 'ExternalProject_Add' function.
-#           If not specified and called within a project file, it defaults to the value of 'SUPERBUILD_TOPLEVEL_PROJECT'
-#           Otherwise, it defaults to 'CMAKE_PROJECT_NAME'.
+#           If not specified and called within a project file, it defaults to the value of 'SUPERBUILD_TOPLEVEL_PROJECT'.
 #           If instead 'ALL_PROJECTS' is specified, the variables and labels will be passed to all projects.
 #
 #  VARS is an expected list of variables specified as <varname>:<vartype> to pass to <projectname>
@@ -272,8 +311,7 @@ set(_ALL_PROJECT_IDENTIFIER "ALLALLALL")
 #    )
 #
 #  PROJECTS corresponds to a list of <projectname> that will be added using 'ExternalProject_Add' function.
-#           If not specified and called within a project file, it defaults to the value of 'SUPERBUILD_TOPLEVEL_PROJECT'
-#           Otherwise, it defaults to 'CMAKE_PROJECT_NAME'.
+#           If not specified and called within a project file, it defaults to the value of 'SUPERBUILD_TOPLEVEL_PROJECT'.
 #           If instead 'ALL_PROJECTS' is specified, the variables and labels will be passed to all projects.
 #
 #  VARS is an expected list of variables specified as <varname>:<vartype> to pass to <projectname>
@@ -291,11 +329,7 @@ function(_sb_append_to_cmake_args)
   cmake_parse_arguments(_sb "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if(NOT _sb_PROJECTS AND NOT _sb_ALL_PROJECTS)
-    if(SUPERBUILD_TOPLEVEL_PROJECT)
-      set(_sb_PROJECTS ${SUPERBUILD_TOPLEVEL_PROJECT})
-    else()
-      set(_sb_PROJECTS ${CMAKE_PROJECT_NAME})
-    endif()
+    set(_sb_PROJECTS ${SUPERBUILD_TOPLEVEL_PROJECT})
   endif()
 
   if(_sb_ALL_PROJECTS)
@@ -337,8 +371,7 @@ endfunction()
 # .. code-block:: cmake
 #
 #  PROJECTS corresponds to a list of <projectname> that will be added using 'ExternalProject_Add' function.
-#           If not specified and called within a project file, it defaults to the value of 'SUPERBUILD_TOPLEVEL_PROJECT'
-#           Otherwise, it defaults to 'CMAKE_PROJECT_NAME'.
+#           If not specified and called within a project file, it defaults to the value of 'SUPERBUILD_TOPLEVEL_PROJECT'.
 #           If instead 'ALL_PROJECTS' is specified, the variables and labels will be passed to all projects.
 #
 #  LABELS is a list of label to pass to the <projectname> as CMake CACHE args of the
