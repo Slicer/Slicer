@@ -161,8 +161,11 @@ qSlicerApplicationPrivate::~qSlicerApplicationPrivate()
   delete this->SettingsDialog;
   this->SettingsDialog = 0;
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-  delete this->ExtensionsManagerDialog;
-  this->ExtensionsManagerDialog =0;
+  if(this->ExtensionsManagerDialog)
+    {
+    delete this->ExtensionsManagerDialog;
+    this->ExtensionsManagerDialog =0;
+    }
 #endif
 #ifdef Slicer_USE_QtTesting
   delete this->TestingUtility;
@@ -284,14 +287,6 @@ void qSlicerApplicationPrivate::init()
 
   QObject::connect(this->SettingsDialog, SIGNAL(restartRequested()),
                    q, SLOT(restart()));
-
-  //----------------------------------------------------------------------------
-  // Dialogs
-  //----------------------------------------------------------------------------
-#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-  this->ExtensionsManagerDialog = new qSlicerExtensionsManagerDialog(0);
-  this->ExtensionsManagerDialog->setExtensionsManagerModel(q->extensionsManagerModel());
-#endif
 
   //----------------------------------------------------------------------------
   // Test Utility
@@ -669,6 +664,10 @@ ctkSettingsDialog* qSlicerApplication::settingsDialog()const
 void qSlicerApplication::openExtensionsManagerDialog()
 {
   Q_D(qSlicerApplication);
+  if(!d->ExtensionsManagerDialog)
+    {
+    d->ExtensionsManagerDialog = new qSlicerExtensionsManagerDialog(0);
+    }
   if (!d->ExtensionsManagerDialog->extensionsManagerModel() &&
       this->mainWindow())
     {
