@@ -103,13 +103,16 @@ void qSlicerAnnotationsModule::setup()
 
   // Register subject hierarchy plugin
 #ifdef Slicer_USE_PYTHONQT
-  PythonQt::init();
-  PythonQtObjectPtr context = PythonQt::self()->getMainModule();
-  context.evalScript( QString(
-    "from SubjectHierarchyPlugins import AnnotationsSubjectHierarchyPlugin \n"
-    "scriptedPlugin = slicer.qSlicerSubjectHierarchyScriptedPlugin(None) \n"
-    "scriptedPlugin.setPythonSource(AnnotationsSubjectHierarchyPlugin.filePath) \n"
-    ) );
+  if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
+    {
+    PythonQt::init();
+    PythonQtObjectPtr context = PythonQt::self()->getMainModule();
+    context.evalScript( QString(
+      "from SubjectHierarchyPlugins import AnnotationsSubjectHierarchyPlugin \n"
+      "scriptedPlugin = slicer.qSlicerSubjectHierarchyScriptedPlugin(None) \n"
+      "scriptedPlugin.setPythonSource(AnnotationsSubjectHierarchyPlugin.filePath) \n"
+      ) );
+    }
 #endif
 }
 

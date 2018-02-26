@@ -200,9 +200,12 @@ void qSlicerSegmentationsModule::setup()
   // Python effects
   // (otherwise it would be the responsibility of the module that embeds the segment editor widget)
 #ifdef Slicer_USE_PYTHONQT
-  PythonQt::init();
-  PythonQtObjectPtr context = PythonQt::self()->getMainModule();
-  context.evalScript(QString("import SegmentEditorEffects; SegmentEditorEffects.registerEffects()"));
+  if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
+    {
+    PythonQt::init();
+    PythonQtObjectPtr context = PythonQt::self()->getMainModule();
+    context.evalScript(QString("import SegmentEditorEffects; SegmentEditorEffects.registerEffects()"));
+    }
 #endif
 }
 
