@@ -603,7 +603,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         orientationString = slicer.dicomDatabase.instanceValue(uid, orientationTag)
         spacingString = slicer.dicomDatabase.instanceValue(uid, spacingTag)
         if positionString == "" or orientationString == "" or spacingString == "":
-          logging.warning('No geomtry information available for DICOM data, skipping corner calculations')
+          logging.warning('No geometry information available for DICOM data, skipping corner calculations')
           return None
 
         position = numpy.array(map(float, positionString.split('\\')))
