@@ -1652,6 +1652,7 @@ bool qSlicerCoreApplication::loadCaCertificates(const QString& slicerHome)
     }
   return !QSslSocket::defaultCaCertificates().empty();
 #else
+  Q_UNUSED(slicerHome);
   return false;
 #endif
 }
