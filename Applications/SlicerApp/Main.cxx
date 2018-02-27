@@ -35,7 +35,8 @@ int SlicerAppMain(int argc, char* argv[])
   typedef qSlicerAppMainWindow SlicerMainWindowType;
   typedef qSlicerStyle SlicerAppStyle;
 
-  qSlicerApplicationHelper::preInitializeApplication<SlicerAppStyle>(argv[0]);
+  qSlicerApplicationHelper::preInitializeApplication(
+        argv[0], new SlicerAppStyle);
 
   qSlicerApplication app(argc, argv);
   if (app.returnCode() != -1)

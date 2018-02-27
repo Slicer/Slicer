@@ -31,6 +31,7 @@
 
 #include "qSlicerBaseQTAppExport.h"
 
+class ctkProxyStyle;
 class qSlicerModuleFactoryManager;
 
 class Q_SLICER_BASE_QTAPP_EXPORT qSlicerApplicationHelper : public QObject
@@ -43,8 +44,7 @@ public:
   qSlicerApplicationHelper(QObject * parent = 0);
   virtual ~qSlicerApplicationHelper();
 
-  template<typename SlicerStyleType>
-  static void preInitializeApplication(const char* argv0);
+  static void preInitializeApplication(const char* argv0, ctkProxyStyle* style);
 
   template<typename SlicerMainWindowType>
   static void postInitializeApplication(

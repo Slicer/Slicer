@@ -21,7 +21,9 @@
 #include "qSlicerApplicationHelper.h"
 
 // Qt includes
+#include <QFont>
 #include <QSettings>
+#include <QSysInfo>
 
 // Slicer includes
 #include "qSlicerApplication.h"
@@ -47,6 +49,16 @@
 // MRMLWidgets includes
 #include <qMRMLEventLoggerWidget.h>
 
+// ITK includes
+#include <itkFactoryRegistration.h>
+
+// VTK includes
+#include <vtksys/SystemTools.hxx>
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+#include <QVTKOpenGLWidget.h>
+#endif
+
+// PythonQt includes
 #ifdef Slicer_USE_PYTHONQT
 # include <PythonQtObjectPtr.h>
 # include <PythonQtPythonInclude.h>
@@ -60,6 +72,65 @@ qSlicerApplicationHelper::qSlicerApplicationHelper(QObject * parent) : Superclas
 //----------------------------------------------------------------------------
 qSlicerApplicationHelper::~qSlicerApplicationHelper()
 {
+}
+
+//----------------------------------------------------------------------------
+void qSlicerApplicationHelper::preInitializeApplication(
+    const char* argv0, ctkProxyStyle* style)
+{
+  itk::itkFactoryRegistration();
+
+#if QT_VERSION >= 0x040803
+#ifdef Q_OS_MACX
+  if (QSysInfo::MacintoshVersion > QSysInfo::MV_10_8)
+    {
+    // Fix Mac OS X 10.9 (mavericks) font issue
+    // https://bugreports.qt-project.org/browse/QTBUG-32789
+    QFont::insertSubstitution(".Lucida Grande UI", "Lucida Grande");
+    }
+#endif
+#endif
+
+#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+  // Set default surface format for QVTKOpenGLWidget. Disable multisampling to
+  // support volume rendering and other VTK functionality that reads from the
+  // framebuffer; see https://gitlab.kitware.com/vtk/vtk/issues/17095.
+  QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
+  format.setSamples(0);
+  QSurfaceFormat::setDefaultFormat(format);
+#endif
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
+#ifdef _WIN32
+  // Qt windows defaults to the PROCESS_PER_MONITOR_DPI_AWARE for DPI display
+  // on windows. Unfortunately, this doesn't work well on multi-screens setups.
+  // By calling SetProcessDPIAware(), we force the value to
+  // PROCESS_SYSTEM_DPI_AWARE instead which fixes those issues.
+  SetProcessDPIAware();
+#endif
+
+  // Enable automatic scaling based on the pixel density of the monitor
+  QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#endif
+
+  // Allow a custom appliction name so that the settings
+  // can be distinct for differently named applications
+  QString applicationName("Slicer");
+  if (argv0)
+    {
+    std::string name = vtksys::SystemTools::GetFilenameWithoutExtension(argv0);
+    applicationName = QString::fromLocal8Bit(name.c_str());
+    applicationName.remove(QString("App-real"));
+    }
+  QCoreApplication::setApplicationName(applicationName);
+
+  QCoreApplication::setApplicationVersion(Slicer_VERSION_FULL);
+  //vtkObject::SetGlobalWarningDisplay(false);
+  QApplication::setDesktopSettingsAware(false);
+  if (style)
+    {
+    QApplication::setStyle(style);
+    }
 }
 
 //----------------------------------------------------------------------------
