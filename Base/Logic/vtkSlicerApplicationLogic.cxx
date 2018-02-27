@@ -489,7 +489,7 @@ vtkMTimeType vtkSlicerApplicationLogic::RequestReadFile(const char *refNode, con
 
   this->ReadDataQueueLock->Lock();
   this->RequestTimeStamp.Modified();
-  int uid = this->RequestTimeStamp.GetMTime();
+  vtkMTimeType uid = this->RequestTimeStamp.GetMTime();
   (*this->InternalReadDataQueue).push(
     new ReadDataRequestFile(refNode, filename, displayData, deleteFile, uid));
   this->ReadDataQueueLock->Unlock();

@@ -2717,7 +2717,7 @@ void vtkSlicerCLIModuleLogic::ProcessMRMLLogicsEvents(vtkObject* caller,
   if (caller->IsA("vtkSlicerApplicationLogic") &&
       event == vtkSlicerApplicationLogic::RequestProcessedEvent)
     {
-    unsigned long uid = reinterpret_cast<unsigned long>(callData);
+    vtkMTimeType uid = reinterpret_cast<vtkMTimeType>(callData);
     vtkInternal::RequestType::iterator it =
       std::find_if(this->Internal->LastRequests.begin(),
       this->Internal->LastRequests.end(), vtkInternal::FindRequest(uid));

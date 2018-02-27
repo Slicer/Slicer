@@ -34,7 +34,7 @@ public:
   int GetUID()const{return m_UID;}
 
 protected:
-  int m_UID;
+  vtkMTimeType m_UID;
 };
 
 //----------------------------------------------------------------------------
