@@ -23,6 +23,7 @@
 // Qt includes
 #include <QFont>
 #include <QSettings>
+#include <QStyleFactory>
 #include <QSysInfo>
 
 // Slicer includes
@@ -36,12 +37,14 @@
 #include "qSlicerLoadableModuleFactory.h"
 #include "qSlicerModuleFactoryManager.h"
 #include "qSlicerModuleManager.h"
+#include "qSlicerSettingsStylesPanel.h"
 
 #ifdef Slicer_USE_PYTHONQT
 # include "qSlicerScriptedLoadableModuleFactory.h"
 #endif
 
 // CTK includes
+#include <ctkProxyStyle.h>
 #ifdef Slicer_USE_PYTHONQT
 # include <ctkPythonConsole.h>
 #endif
@@ -76,10 +79,23 @@ qSlicerApplicationHelper::~qSlicerApplicationHelper()
 
 //----------------------------------------------------------------------------
 void qSlicerApplicationHelper::preInitializeApplication(
-    const char* argv0, ctkProxyStyle* style)
+    const char* argv0, const QString& styleName)
 {
   itk::itkFactoryRegistration();
+  ctkProxyStyle* style = qobject_cast<ctkProxyStyle*>(QStyleFactory::create(styleName));
+  if (!style)
+    {
+    qWarning() << "Failed to set" << styleName << "style: "
+               << "Available styles are"
+               << qSlicerSettingsStylesPanel::availableSlicerStyles().join(", ");
+    }
+  Self::preInitializeApplication(argv0, style);
+}
 
+//----------------------------------------------------------------------------
+void qSlicerApplicationHelper::preInitializeApplication(
+    const char* argv0, ctkProxyStyle* style)
+{
 #if QT_VERSION >= 0x040803
 #ifdef Q_OS_MACX
   if (QSysInfo::MacintoshVersion > QSysInfo::MV_10_8)

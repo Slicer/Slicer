@@ -24,7 +24,6 @@
 
 // SlicerApp includes
 #include "qSlicerAppMainWindow.h"
-#include "qSlicerStyle.h"
 
 namespace
 {
@@ -33,10 +32,8 @@ namespace
 int SlicerAppMain(int argc, char* argv[])
 {
   typedef qSlicerAppMainWindow SlicerMainWindowType;
-  typedef qSlicerStyle SlicerAppStyle;
 
-  qSlicerApplicationHelper::preInitializeApplication(
-        argv[0], new SlicerAppStyle);
+  qSlicerApplicationHelper::preInitializeApplication(argv[0], "Slicer");
 
   qSlicerApplication app(argc, argv);
   if (app.returnCode() != -1)
@@ -52,9 +49,8 @@ int SlicerAppMain(int argc, char* argv[])
 
   if (!window.isNull())
     {
-    QString windowTitle = "%1 %2";
-    window->setWindowTitle(
-      windowTitle.arg(window->windowTitle()).arg(Slicer_VERSION_FULL));
+    QString windowTitle = QString("%1 %2").arg(window->windowTitle()).arg(Slicer_VERSION_FULL);
+    window->setWindowTitle(windowTitle);
     }
 
   return app.exec();
