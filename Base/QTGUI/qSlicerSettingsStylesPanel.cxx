@@ -37,6 +37,7 @@
 class qSlicerSettingsStylesPanelPrivate: public Ui_qSlicerSettingsStylesPanel
 {
   Q_DECLARE_PUBLIC(qSlicerSettingsStylesPanel);
+  typedef qSlicerSettingsStylesPanelPrivate Self;
 protected:
   qSlicerSettingsStylesPanel* const q_ptr;
 
@@ -44,11 +45,12 @@ public:
   qSlicerSettingsStylesPanelPrivate(qSlicerSettingsStylesPanel& object);
   void init();
   int styleIndex(const QString& styleName) const;
-  bool isQtStyle(const QString& styleName) const;
   void populateStyles();
 
+  static bool isQtStyle(const QString& styleName);
+  static QStringList qtStyles();
+
   QStringList AdditionalPaths;
-  QStringList QtStyles;
 };
 
 // --------------------------------------------------------------------------
@@ -59,18 +61,6 @@ qSlicerSettingsStylesPanelPrivate
 ::qSlicerSettingsStylesPanelPrivate(qSlicerSettingsStylesPanel& object)
   :q_ptr(&object)
 {
-  this->QtStyles << "Windows"
-                 << "WindowsCE"
-                 << "WindowsXP"
-                 << "WindowsVista"
-                 << "Motif"
-                 << "CDE"
-                 << "Plastique"
-                 << "Cleanlooks"
-                 << "Macintosh"
-                 << "Macintosh (aqua)"
-                 << "GTK+"
-                 << "Fusion";
 }
 
 // --------------------------------------------------------------------------
@@ -139,14 +129,6 @@ int qSlicerSettingsStylesPanelPrivate
   return styleIndex;
 }
 
-// --------------------------------------------------------------------------
-bool qSlicerSettingsStylesPanelPrivate::
-isQtStyle(const QString& styleName) const
-{
-  // Styles are case insensitive
-  return this->QtStyles.contains(styleName, Qt::CaseInsensitive);
-}
-
 namespace
 {
 QString toCamelCase(const QString& s)
@@ -176,17 +158,15 @@ QString toCamelCase(const QString& s)
 // --------------------------------------------------------------------------
 void qSlicerSettingsStylesPanelPrivate::populateStyles()
 {
+  Q_Q(qSlicerSettingsStylesPanel);
   QString currentStyle = this->StyleComboBox->currentText();
 
   bool wasBlocking = this->StyleComboBox->blockSignals(true);
   // Re-populate styles
   this->StyleComboBox->clear();
-  foreach(const QString& style, QStyleFactory::keys())
+  foreach(const QString& style, q->availableSlicerStyles())
     {
-    if (! this->isQtStyle(style)) // check if not Qt's built in style
-      {
-      this->StyleComboBox->addItem(toCamelCase(style));
-      }
+    this->StyleComboBox->addItem(toCamelCase(style));
     }
 
   // Find the previously set style
@@ -194,6 +174,32 @@ void qSlicerSettingsStylesPanelPrivate::populateStyles()
   this->StyleComboBox->blockSignals(wasBlocking);
 
   this->StyleComboBox->setCurrentIndex(currentStyleIndex);
+}
+
+// --------------------------------------------------------------------------
+QStringList qSlicerSettingsStylesPanelPrivate::qtStyles()
+{
+  return QStringList()
+      << "Windows"
+      << "WindowsCE"
+      << "WindowsXP"
+      << "WindowsVista"
+      << "Motif"
+      << "CDE"
+      << "Plastique"
+      << "Cleanlooks"
+      << "Macintosh"
+      << "Macintosh (aqua)"
+      << "GTK+"
+      << "Fusion";
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerSettingsStylesPanelPrivate::
+isQtStyle(const QString& styleName)
+{
+  // Styles are case insensitive
+  return Self::qtStyles().contains(styleName, Qt::CaseInsensitive);
 }
 
 // --------------------------------------------------------------------------
@@ -258,6 +264,21 @@ void qSlicerSettingsStylesPanel::onRemoveStyleAdditionalPathClicked()
   Q_D(qSlicerSettingsStylesPanel);
   // Remove all selected
   d->AdditionalStylePathsView->removeSelectedDirectories();
+}
+
+// --------------------------------------------------------------------------
+QStringList qSlicerSettingsStylesPanel::availableSlicerStyles()
+{
+  QStringList styles;
+  foreach(const QString& style, QStyleFactory::keys())
+    {
+    if (qSlicerSettingsStylesPanelPrivate::isQtStyle(style))
+      {
+      continue;
+      }
+    styles << style;
+    }
+  return styles;
 }
 
 // --------------------------------------------------------------------------

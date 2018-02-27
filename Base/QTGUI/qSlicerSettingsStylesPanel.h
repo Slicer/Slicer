@@ -48,6 +48,12 @@ public:
   /// Destructor
   virtual ~qSlicerSettingsStylesPanel();
 
+  /// Return list of all available styles.
+  ///
+  /// Qt built-in styles are not included in the list.
+  /// \sa setCurrentStyle
+  static QStringList availableSlicerStyles();
+
   /// \sa currentStyle
   QString currentStyle() const;
 
