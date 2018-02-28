@@ -150,6 +150,9 @@ qSlicerApplicationPrivate::qSlicerApplicationPrivate(
 {
   this->ToolTipTrapper = 0;
   this->SettingsDialog = 0;
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+  this->ExtensionsManagerDialog = 0;
+#endif
 #ifdef Slicer_USE_QtTesting
   this->TestingUtility = 0;
 #endif
