@@ -94,15 +94,22 @@ void qSlicerSettingsGeneralPanelPrivate::init()
 #endif
 
 #ifdef Slicer_USE_PYTHONQT
-#include "PythonQt.h"
-  PythonQt::init();
-  PythonQtObjectPtr context = PythonQt::self()->getMainModule();
-  context.evalScript(QString("slicerrcfilename = getSlicerRCFileName()\n"));
-  QVariant slicerrcFileNameVar = context.getVariable("slicerrcfilename");
-  this->SlicerRCFileValueLabel->setText(slicerrcFileNameVar.toString());
-  QIcon openFileIcon = QApplication::style()->standardIcon(QStyle::SP_DialogOpenButton);
-  this->SlicerRCFileOpenButton->setIcon(openFileIcon);
-  QObject::connect(this->SlicerRCFileOpenButton, SIGNAL(clicked()), q, SLOT(openSlicerRCFile()));
+  if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
+    {
+    PythonQt::init();
+    PythonQtObjectPtr context = PythonQt::self()->getMainModule();
+    context.evalScript(QString("slicerrcfilename = getSlicerRCFileName()\n"));
+    QVariant slicerrcFileNameVar = context.getVariable("slicerrcfilename");
+    this->SlicerRCFileValueLabel->setText(slicerrcFileNameVar.toString());
+    QIcon openFileIcon = QApplication::style()->standardIcon(QStyle::SP_DialogOpenButton);
+    this->SlicerRCFileOpenButton->setIcon(openFileIcon);
+    QObject::connect(this->SlicerRCFileOpenButton, SIGNAL(clicked()), q, SLOT(openSlicerRCFile()));
+    }
+  else
+    {
+    this->SlicerRCFileOpenButton->setVisible(false);
+    this->SlicerRCFileValueLabel->setVisible(false);
+    }
 #else
   this->SlicerRCFileLabel->setVisible(false);
   this->SlicerRCFileValueLabel->setVisible(false);

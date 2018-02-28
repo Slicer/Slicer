@@ -162,7 +162,7 @@ void qSlicerLoadableModule::setup()
 
 #ifdef Slicer_USE_PYTHONQT
   qSlicerCoreApplication * app = qSlicerCoreApplication::application();
-  if (app)
+  if (app && !qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
     {
     // By convention, if the module is not embedded,
     // "<MODULEPATH>/Python" will be appended to PYTHONPATH
