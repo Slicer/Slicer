@@ -103,12 +103,12 @@ for name in dir(slicer.moduleNames):
   if module is None:
     continue
   moduleType = None
-  if module.inherits('qSlicerLoadableModule'):
-    module_type = "Loadable"
-  elif module.inherits('qSlicerCLIModule'):
+  if module.inherits('qSlicerCLIModule'):
     module_type = "CLI"
   elif module.inherits('qSlicerScriptedLoadableModule'):
     module_type = "Scripted"
+  elif module.inherits('qSlicerLoadableModule'):
+    module_type = "Loadable"
   elif module.inherits('qSlicerCoreModule'):
     module_type = "Core"
   else:
