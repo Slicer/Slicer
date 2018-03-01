@@ -544,7 +544,7 @@ void qMRMLPlotViewPrivate::RecalculateBounds()
   for (int i = 0; i < 4; ++i)
   {
     vtkAxis* axis = q->chart()->GetAxis(i);
-    double* range = nullptr;
+    double* range = NULL;
     switch (i)
     {
     case 0:
