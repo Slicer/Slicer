@@ -127,6 +127,11 @@ int qSlicerStyle::pixelMetric(PixelMetric metric, const QStyleOption * option,
     case QStyle::PM_SliderLength:
       return 12; // default to 27
       break;
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+    case QStyle::PM_ButtonIconSize:
+      return 24; // Like with cleanlooks style
+      break;
+#endif
     default:
       return Superclass::pixelMetric(metric, option, widget);
       break;
