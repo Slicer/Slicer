@@ -47,6 +47,7 @@
 #include <vtkRenderLargeImage.h>
 #include <vtkRenderWindow.h>
 #include <vtkSmartPointer.h>
+#include <vtkWindowToImageFilter.h>
 
 //-----------------------------------------------------------------------------
 class qMRMLScreenShotDialogPrivate : public Ui_qMRMLScreenShotDialog
@@ -311,18 +312,28 @@ void qMRMLScreenShotDialog::grabScreenShot(int screenshotWindow)
 {
   Q_D(qMRMLScreenShotDialog);
   QWidget* widget = 0;
+  vtkRenderWindow* renderWindow = 0;
   switch (screenshotWindow)
     {
     case qMRMLScreenShotDialog::ThreeD:
+      {
       // Create a screenshot of the first 3DView
-      widget = d->LayoutManager.data()->threeDWidget(0)->threeDView();
+      qMRMLThreeDView* threeDView = d->LayoutManager.data()->threeDWidget(0)->threeDView();
+      widget = threeDView;
+      renderWindow = threeDView->renderWindow();
+      }
       break;
     case qMRMLScreenShotDialog::Red:
     case qMRMLScreenShotDialog::Yellow:
     case qMRMLScreenShotDialog::Green:
       // Create a screenshot of a specific sliceView
-      widget = const_cast<qMRMLSliceView*>(
-          d->LayoutManager.data()->sliceWidget(this->enumToString(screenshotWindow))->sliceView());
+      {
+      QString name = this->enumToString(screenshotWindow);
+      qMRMLSliceWidget* sliceWidget = d->LayoutManager.data()->sliceWidget(name);
+      qMRMLSliceView* sliceView = sliceWidget->sliceView();
+      widget = sliceView;
+      renderWindow = sliceView->renderWindow();
+      }
       break;
     case qMRMLScreenShotDialog::FullLayout:
     default:
@@ -334,25 +345,52 @@ void qMRMLScreenShotDialog::grabScreenShot(int screenshotWindow)
   double scaleFactor = d->scaleFactorSpinBox->value();
 
   vtkNew<vtkImageData> newImageData;
-  if (scaleFactor != 1 &&
-      screenshotWindow  == qMRMLScreenShotDialog::ThreeD)
+  if (!qFuzzyCompare(scaleFactor, 1.0) &&
+      screenshotWindow == qMRMLScreenShotDialog::ThreeD)
     {
     // use off screen rendering to magnifiy the VTK widget's image without interpolation
-    // TODO: fix VTK so that the slice windows are scaled rather than tiled
-    vtkRenderer *renderer = NULL;
-    renderer = vtkRenderer::SafeDownCast(d->LayoutManager.data()->threeDWidget(0)->threeDView()->renderWindow()->GetRenderers()->GetItemAsObject(0));
+    vtkRenderer *renderer = renderWindow->GetRenderers()->GetFirstRenderer();
     vtkNew<vtkRenderLargeImage> renderLargeImage;
     renderLargeImage->SetInput(renderer);
     renderLargeImage->SetMagnification(scaleFactor);
     renderLargeImage->Update();
     newImageData.GetPointer()->DeepCopy(renderLargeImage->GetOutput());
     }
+  else if (!qFuzzyCompare(scaleFactor, 1.0) && renderWindow != NULL)
+    {
+    // Render slice widget at high resolution
+
+    // Enable offscreen rendering
+    renderWindow->OffScreenRenderingOn();
+
+    // Resize render window and slice widget
+    int* renderWindowSize = renderWindow->GetSize();
+    int width = renderWindowSize[0];
+    int height = renderWindowSize[1];
+    int scaledWidth = width * scaleFactor;
+    int scaledHeight = height * scaleFactor;
+    renderWindow->SetSize(scaledWidth, scaledHeight);
+    widget->resize(scaledWidth, scaledHeight);
+
+    renderWindow->Render();
+
+    vtkNew<vtkWindowToImageFilter> windowToImageFilter;
+    windowToImageFilter->SetInput(renderWindow);
+    windowToImageFilter->Update();
+    newImageData->DeepCopy(windowToImageFilter->GetOutput());
+
+    // Resize slice widget to its original size
+    widget->resize(width, height);
+
+    // Disable offscreen rendering; restores original render window size
+    renderWindow->OffScreenRenderingOff();
+    }
   else
     {
     // no scaling, or for not just the 3D window
     QImage screenShot = ctk::grabVTKWidget(widget);
 
-    if (scaleFactor != 1.0)
+    if (!qFuzzyCompare(scaleFactor, 1.0))
       {
       // Rescale the image which gets saved
       QImage rescaledScreenShot = screenShot.scaled(screenShot.size().width() * scaleFactor,
