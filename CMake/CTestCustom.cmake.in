@@ -149,9 +149,6 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   # JsonCpp
   "json.(reader|value).h.*warning C4275.*non dll-interface class"
 
-  # Libs/OpenIGTLink
-  "(OpenIGTLink|openigtlink).[Ss]ource.igtl"
-
   # Libs/tclap
   "tclap.include.tclap.*Arg.h.*warning C4512"
 

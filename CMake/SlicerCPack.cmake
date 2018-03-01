@@ -111,9 +111,6 @@ else()
   endif()
 
   # Calling find_package will ensure the *_LIBRARY_DIRS expected by the fixup script are set.
-  if(Slicer_USE_OpenIGTLink)
-    find_package(OpenIGTLink REQUIRED)
-  endif()
   if(Slicer_BUILD_CLI_SUPPORT)
     find_package(SlicerExecutionModel REQUIRED)
   endif()

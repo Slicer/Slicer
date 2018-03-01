@@ -64,14 +64,6 @@ if(NOT "${Teem_DIR}" STREQUAL "" AND EXISTS "${Teem_DIR}/CMakeCache.txt")
 endif()
 
 # -------------------------------------------------------------------------
-# Install OpenIGTLink
-# -------------------------------------------------------------------------
-if(Slicer_USE_OpenIGTLink
-  AND NOT "${OpenIGTLink_DIR}" STREQUAL "" AND EXISTS "${OpenIGTLink_DIR}/CMakeCache.txt")
-  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${OpenIGTLink_DIR};igtl;RuntimeLibraries;/")
-endif()
-
-# -------------------------------------------------------------------------
 # Install CTK
 # -------------------------------------------------------------------------
 if(NOT "${CTK_DIR}" STREQUAL "" AND EXISTS "${CTK_DIR}/CTK-build/CMakeCache.txt")
