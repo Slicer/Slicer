@@ -112,6 +112,7 @@ endif()
 # --------------------------------------------------------------------------
 # Slicer options
 # --------------------------------------------------------------------------
+set(CMAKE_DEFAULT_BUILD_TYPE "@CMAKE_DEFAULT_BUILD_TYPE@")
 set(Slicer_USE_NUMPY "@Slicer_USE_NUMPY@")
 set(Slicer_USE_PYTHONQT "@Slicer_USE_PYTHONQT@")
 set(Slicer_USE_PYTHONQT_WITH_TCL "@Slicer_USE_PYTHONQT_WITH_TCL@")
