@@ -10,8 +10,6 @@ set(ep_common_cxx_flags "${CMAKE_CXX_FLAGS_INIT} ${ADDITIONAL_CXX_FLAGS}")
 # Project dependencies
 #-----------------------------------------------------------------------------
 
-include(ExternalProject)
-
 foreach(dep ${EXTENSION_DEPENDS})
   mark_as_superbuild(${dep}_DIR)
 endforeach()
