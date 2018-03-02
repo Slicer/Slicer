@@ -81,4 +81,3 @@ void vtkSlicerSuperLoadableModuleTemplateLogic
 ::OnMRMLSceneNodeRemoved(vtkMRMLNode* vtkNotUsed(node))
 {
 }
-

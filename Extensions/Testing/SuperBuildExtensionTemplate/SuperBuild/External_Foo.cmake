@@ -41,8 +41,12 @@ if(NOT DEFINED ${proj}_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
        # requirements of a real CMake based external project.
       -DFOO_INSTALL_RUNTIME_DIR:STRING=${Slicer_INSTALL_THIRDPARTY_LIB_DIR}
       -DFOO_INSTALL_LIBRARY_DIR:STRING=${Slicer_INSTALL_THIRDPARTY_LIB_DIR}
-    CONFIGURE_COMMAND ${CMAKE_COMMAND} -E echo "This CONFIGURE_COMMAND is just here as a placeholder. Remove this line to enable configuring of a real CMake based external project"
-    BUILD_COMMAND ${CMAKE_COMMAND} -E echo "This BUILD_COMMAND is just here as a placeholder. Remove this line to enable building of a real CMake based external project"
+    CONFIGURE_COMMAND ${CMAKE_COMMAND} -E echo
+      "This CONFIGURE_COMMAND is just here as a placeholder."
+      "Remove this line to enable configuring of a real CMake based external project"
+    BUILD_COMMAND ${CMAKE_COMMAND} -E echo
+      "This BUILD_COMMAND is just here as a placeholder."
+      "Remove this line to enable building of a real CMake based external project"
     INSTALL_COMMAND ""
     DEPENDS
       ${${proj}_DEPENDS}
@@ -54,4 +58,3 @@ else()
 endif()
 
 mark_as_superbuild(${proj}_DIR:PATH)
-

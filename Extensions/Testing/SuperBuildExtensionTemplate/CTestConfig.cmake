@@ -1,4 +1,4 @@
-set(CTEST_PROJECT_NAME "SuperBuildLoadableExtensionTemplate")
+set(CTEST_PROJECT_NAME "SuperBuildExtensionTemplate")
 set(CTEST_NIGHTLY_START_TIME "3:00:00 UTC")
 
 set(CTEST_DROP_METHOD "http")

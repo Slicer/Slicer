@@ -40,8 +40,7 @@ public:
 // qSlicerSuperLoadableModuleTemplateModulePrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerSuperLoadableModuleTemplateModulePrivate
-::qSlicerSuperLoadableModuleTemplateModulePrivate()
+qSlicerSuperLoadableModuleTemplateModulePrivate::qSlicerSuperLoadableModuleTemplateModulePrivate()
 {
 }
 
@@ -49,8 +48,7 @@ qSlicerSuperLoadableModuleTemplateModulePrivate
 // qSlicerSuperLoadableModuleTemplateModule methods
 
 //-----------------------------------------------------------------------------
-qSlicerSuperLoadableModuleTemplateModule
-::qSlicerSuperLoadableModuleTemplateModule(QObject* _parent)
+qSlicerSuperLoadableModuleTemplateModule::qSlicerSuperLoadableModuleTemplateModule(QObject* _parent)
   : Superclass(_parent)
   , d_ptr(new qSlicerSuperLoadableModuleTemplateModulePrivate)
 {
@@ -62,27 +60,27 @@ qSlicerSuperLoadableModuleTemplateModule::~qSlicerSuperLoadableModuleTemplateMod
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSuperLoadableModuleTemplateModule::helpText()const
+QString qSlicerSuperLoadableModuleTemplateModule::helpText() const
 {
-  return "This is a loadable module bundled in an extension";
+  return "This is a loadable module that can be bundled in an extension";
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSuperLoadableModuleTemplateModule::acknowledgementText()const
+QString qSlicerSuperLoadableModuleTemplateModule::acknowledgementText() const
 {
-  return "This work was was partially funded by NIH grant 3P41RR013218-12S1";
+  return "This work was partially funded by NIH grant NXNNXXNNNNNN-NNXN";
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerSuperLoadableModuleTemplateModule::contributors()const
+QStringList qSlicerSuperLoadableModuleTemplateModule::contributors() const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("Jean-Christophe Fillion-Robin (Kitware)");
+  moduleContributors << QString("John Doe (AnyWare Corp.)");
   return moduleContributors;
 }
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerSuperLoadableModuleTemplateModule::icon()const
+QIcon qSlicerSuperLoadableModuleTemplateModule::icon() const
 {
   return QIcon(":/Icons/SuperLoadableModuleTemplate.png");
 }
@@ -106,7 +104,7 @@ void qSlicerSuperLoadableModuleTemplateModule::setup()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerSuperLoadableModuleTemplateModule
+qSlicerAbstractModuleRepresentation* qSlicerSuperLoadableModuleTemplateModule
 ::createWidgetRepresentation()
 {
   return new qSlicerSuperLoadableModuleTemplateModuleWidget;

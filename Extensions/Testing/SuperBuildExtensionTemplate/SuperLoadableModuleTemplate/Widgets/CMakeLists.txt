@@ -40,4 +40,3 @@ SlicerMacroBuildModuleWidgets(
   RESOURCES ${${KIT}_RESOURCES}
   WRAP_PYTHONQT
   )
-
