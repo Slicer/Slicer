@@ -36,6 +36,7 @@ if(APPLE)
     )
 
   set(CMAKE_MACOSX_RPATH 0)
+  mark_as_superbuild(VARS CMAKE_MACOSX_RPATH:BOOL ALL_PROJECTS)
 endif()
 
 #-----------------------------------------------------------------------------

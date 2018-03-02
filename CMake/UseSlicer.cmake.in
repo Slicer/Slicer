@@ -296,6 +296,7 @@ if(APPLE)
   set(Slicer_BUNDLE_EXTENSIONS_LOCATION "${Slicer_EXTENSIONS_DIRNAME}/${EXTENSION_NAME}/")
   set(CMAKE_INSTALL_NAME_TOOL "" CACHE FILEPATH "" FORCE) # XXX Probably not needed anymore
   set(CMAKE_MACOSX_RPATH 0 CACHE BOOL "" FORCE)
+  mark_as_superbuild(VARS CMAKE_MACOSX_RPATH:BOOL ALL_PROJECTS)
 endif()
 
 #-----------------------------------------------------------------------------
