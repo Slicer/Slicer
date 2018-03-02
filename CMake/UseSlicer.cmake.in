@@ -260,6 +260,16 @@ include(SlicerMacroPythonTesting)
 include(SlicerMacroConfigureGenericCxxModuleTests)
 include(SlicerMacroConfigureGenericPythonModuleTests)
 
+if(DEFINED CMAKE_OSX_ARCHITECTURES)
+  mark_as_superbuild( VARS CMAKE_OSX_ARCHITECTURES:STRING ALL_PROJECTS)
+endif()
+if(DEFINED CMAKE_OSX_SYSROOT)
+  mark_as_superbuild(VARS CMAKE_OSX_SYSROOT:PATH ALL_PROJECTS)
+endif()
+if(DEFINED CMAKE_OSX_DEPLOYMENT_TARGET)
+  mark_as_superbuild(VARS CMAKE_OSX_DEPLOYMENT_TARGET:STRING ALL_PROJECTS)
+endif()
+
 if(NOT Slicer_DONT_USE_EXTENSION)
   #-----------------------------------------------------------------------------
   # Configure additional launcher settings
