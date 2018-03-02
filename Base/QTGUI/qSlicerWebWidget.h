@@ -72,7 +72,7 @@ public:
 #endif
 
   /// Convenient function to evaluate JS in main frame context
-  QString evalJS(const QString &js);
+  Q_INVOKABLE QString evalJS(const QString &js);
 
 public slots:
 
