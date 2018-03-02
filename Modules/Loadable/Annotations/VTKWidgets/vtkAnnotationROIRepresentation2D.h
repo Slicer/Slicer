@@ -108,9 +108,11 @@ public:
   virtual int HighlightHandle(vtkProp *prop) VTK_OVERRIDE;
   virtual void HighlightFace(int cellId) VTK_OVERRIDE;
 
-  vtkSetMacro(HandleSizeInPixels,int);
-  vtkGetMacro(HandleSizeInPixels,int);
-
+  ///
+  /// Set/Get the handle diameter as a fraction of the window diagonal.
+  /// Valid range is between 0.0001 and 0.5.
+  vtkSetClampMacro(HandleSize, double, 0.0001, 0.5);
+  vtkGetMacro(HandleSize, double);
 
   void PrintIntersections(ostream& os);
 
@@ -156,7 +158,7 @@ protected:
 
   int SliceIntersectionVisibility;
 
-  double  HandleSizeInPixels;
+  double HandleSize;
   int HandlesVisibility;
 
 private:

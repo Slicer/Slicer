@@ -37,6 +37,7 @@
 #include <vtkProperty2D.h>
 #include <vtkPropPicker.h>
 #include <vtkRenderer.h>
+#include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkSmartPointer.h>
 #include <vtkSphereSource.h>
@@ -59,7 +60,7 @@ vtkAnnotationROIRepresentation2D::vtkAnnotationROIRepresentation2D()
 
   this->SliceIntersectionVisibility = 1;
 
-  this->HandleSizeInPixels = 4;
+  this->HandleSize = 0.01;
   this->HandlesVisibility = 1;
 
   // Set up the initial properties
@@ -478,7 +479,7 @@ void vtkAnnotationROIRepresentation2D::PositionHandles()
   //double *p7 = pts + 3*7;
   double x[3];
 
-  double radius = this->ComputeHandleRadiusInWorldCoordinates(this->HandleSizeInPixels);
+  double radius = this->ComputeHandleRadiusInWorldCoordinates(this->HandleSize);
 
   int count=0;
   for (int i=0; i<6; i++)
@@ -682,24 +683,32 @@ int vtkAnnotationROIRepresentation2D::ComputeInteractionState(int X, int Y, int 
 }
 
 //----------------------------------------------------------------------------
-double vtkAnnotationROIRepresentation2D::ComputeHandleRadiusInWorldCoordinates(double radInPixels)
+double vtkAnnotationROIRepresentation2D::ComputeHandleRadiusInWorldCoordinates(double handleSize)
 {
-  /*
-  double *center
-    = static_cast<vtkDoubleArray *>(this->Points->GetData())->GetPointer(3*14);
+  const double defaultHandleRadius = 5.0;
+  if (!this->Renderer || !this->Renderer->GetRenderWindow())
+    {
+    return defaultHandleRadius;
+    }
+  int* windowSize = this->Renderer->GetRenderWindow()->GetSize();
+  if (!windowSize)
+    {
+    return defaultHandleRadius;
+    }
 
-  double radius =
-      this->vtkWidgetRepresentation::SizeHandlesInPixels(1.5,center);
-  return radius;
-  */
-
+  double windowDiameterInPixels = sqrt(windowSize[0] * windowSize[0] + windowSize[1] * windowSize[1]);
+  double radiusInPixels = windowDiameterInPixels * handleSize * 0.5;
+  if (radiusInPixels < 1)
+    {
+    radiusInPixels = 1;
+    }
 
   // Get transform from 2D image to world
   vtkNew<vtkMatrix4x4> XYtoWorldMatrix;
   XYtoWorldMatrix->DeepCopy(this->GetIntersectionPlaneTransform()->GetMatrix());
   XYtoWorldMatrix->Invert();
   double xyz0[4] = {0,0,0,1};
-  double xyz1[4] = {radInPixels,radInPixels,0,1};
+  double xyz1[4] = {radiusInPixels,radiusInPixels,0,1};
   double wxyz0[4] = {0,0,0,1};
   double wxyz1[4] = {0,0,0,1};
 
@@ -717,10 +726,10 @@ double vtkAnnotationROIRepresentation2D::ComputeHandleRadiusInWorldCoordinates(d
 //----------------------------------------------------------------------------
 void vtkAnnotationROIRepresentation2D::SizeHandles()
 {
-  //double radius = this->ComputeHandleRadiusInWorldCoordinates(this->HandleSizeInPixels);
+  double radius = this->ComputeHandleRadiusInWorldCoordinates(this->HandleSize);
   for(int i=0; i<7; i++)
     {
-    //this->HandleGeometry[i]->SetRadius(radius);
+    this->HandleGeometry[i]->SetRadius(radius);
     this->HandleGeometry[i]->Modified();
     }
 }
