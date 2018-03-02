@@ -100,7 +100,9 @@ class SurfaceToolboxWidget(ScriptedLoadableModuleWidget):
     self.layout.addWidget(decimationFrame)
     decimationFormLayout = qt.QFormLayout(decimationFrame)
 
-    reductionFrame, reductionSlider, reductionSpinBox = numericInputFrame(self.parent,"Reduction:","Tooltip",0.0,1.0,0.05,2)
+    reductionFrame, reductionSlider, reductionSpinBox = numericInputFrame(self.parent,"Reduction:",
+      "Specifies the desired reduction in the total number of polygons (e.g., if Reduction is set"
+      +" to 0.9, this filter will try to reduce the data set to 10% of its original size).", 0.0,1.0,0.05,2)
     decimationFormLayout.addWidget(reductionFrame)
 
     boundaryDeletionCheckBox = qt.QCheckBox("Boundary deletion")
