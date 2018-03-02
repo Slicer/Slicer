@@ -103,7 +103,7 @@ if(Slicer_USE_CONFIGUREPREREQUISITES)
     endif()
     # Note: By setting CMAKE_OSX_* variables before any enable_language() or project() calls,
     #       we ensure that the bitness will be properly detected.
-    include(SlicerBlockSetCMakeOSXVariables)
+    include(SlicerInitializeOSXVariables)
     set(Slicer_PREREQUISITES_CONFIGURED 1 CACHE INTERNAL "True if component 'ConfigurePrerequisites' has already been included")
   endif()
   return()

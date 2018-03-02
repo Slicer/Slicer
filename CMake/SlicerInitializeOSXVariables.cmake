@@ -19,7 +19,7 @@
 ################################################################################
 
 #
-# SlicerBlockSetCMakeOSXVariables
+# SlicerInitializeOSXVariables
 #
 
 #
