@@ -52,32 +52,72 @@ set(_template_dir ${Slicer_SOURCE_DIR}/Extensions)
 set(_extension_template_generator_commands )
 
 # Add custom command re-generating an extension template
-macro(_append_extension_template_generator_commands module_type)
-  set(wizard_module_type ${module_type})
-  if("${module_type}" STREQUAL "ScriptedLoadable")
-    set(wizard_module_type "Scripted")
+macro(_append_extension_template_generator_commands)
+  set(options)
+  set(oneValueArgs
+    EXTENSION_NAME
+    EXTENSION_TYPE
+    )
+  set(multiValueArgs
+    MODULE_TYPES
+    )
+  cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  # Sanity checks
+  if(NOT MY_MODULE_TYPES)
+    message(FATAL_ERROR "Parameter MODULE_TYPES is not specified !")
   endif()
 
-  set(extension_name ${module_type}ExtensionTemplate)
-  set(module_name ${module_type}ModuleTemplate)
-  set(additional_wizard_args)
-  if("${module_type}" STREQUAL "ScriptedEditorEffect")
-    set(extension_name "EditorExtensionTemplate")
-    set(module_name "EditorEffectTemplate")
-    set(additional_wizard_args
-      --templateKey ${module_type}=TemplateKeyEffect
-      )
+  # Set defaults
+  if(NOT MY_EXTENSION_NAME)
+    list(GET MY_MODULE_TYPES 0 extension_name_prefix)
+    if("${extension_name_prefix}" STREQUAL "ScriptedEditorEffect")
+      set(extension_name_prefix "Editor")
+    endif()
+    set(MY_EXTENSION_NAME "${extension_name_prefix}ExtensionTemplate")
+  endif()
+  if(NOT MY_EXTENSION_TYPE)
+    set(MY_EXTENSION_TYPE "default")
   endif()
 
+  set(extension_name ${MY_EXTENSION_NAME})
+  set(extension_type ${MY_EXTENSION_TYPE})
   set(extension_dir ${_template_dir}/Testing/${extension_name})
   set(description_file ${_template_dir}/${extension_name}.s4ext)
+
+  set(wizard_add_module_args)
+  set(additional_wizard_args)
+
+  foreach(module_type IN LISTS MY_MODULE_TYPES)
+
+    set(wizard_module_type ${module_type})
+    if("${module_type}" STREQUAL "ScriptedLoadable")
+      set(wizard_module_type "Scripted")
+    endif()
+
+    set(module_name "${module_type}ModuleTemplate")
+    if(extension_type STREQUAL "superbuild")
+      set(module_name "Super${module_name}")
+    endif()
+
+    if("${module_type}" STREQUAL "ScriptedEditorEffect")
+      set(module_name "EditorEffectTemplate")
+      list(APPEND additional_wizard_args
+        --templateKey ${module_type}=TemplateKeyEffect
+        )
+    endif()
+
+    list(APPEND wizard_add_module_args
+        --addModule ${wizard_module_type}:${module_name}
+      )
+  endforeach()
 
   list(APPEND _extension_template_generator_commands
     COMMAND ${CMAKE_COMMAND} -E remove -f ${description_file}
     COMMAND ${CMAKE_COMMAND} -E remove_directory ${extension_dir}
     COMMAND ${Slicer_BINARY_DIR}/bin/slicerExtensionWizard
-      --addModule ${wizard_module_type}:${module_name}
-      --create ${extension_name}
+      ${wizard_add_module_args}
+      --create ${extension_type}:${extension_name}
       ${additional_wizard_args}
       ${_template_dir}/Testing
     COMMAND ${CMAKE_COMMAND}
@@ -90,7 +130,7 @@ macro(_append_extension_template_generator_commands module_type)
     )
 endmacro()
 
-# Loop over module type and add template generators
+# Loop over module types and add template generator commands
 foreach(type IN ITEMS
     CLI
     Loadable
@@ -98,8 +138,17 @@ foreach(type IN ITEMS
     ScriptedLoadable
     ScriptedSegmentEditorEffect
     )
-  _append_extension_template_generator_commands(${type})
+  _append_extension_template_generator_commands(MODULE_TYPES ${type})
 endforeach()
+
+# Add template generator command for a SuperBuild extension
+_append_extension_template_generator_commands(
+  EXTENSION_NAME "SuperBuildExtensionTemplate"
+  EXTENSION_TYPE "superbuild"
+  MODULE_TYPES
+    CLI
+    Loadable
+  )
 
 # Add convenience target allowing to re-generate templates
 add_custom_target(SlicerGenerateExtensionTemplates
