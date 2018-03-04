@@ -83,6 +83,26 @@ vtkMRMLPlotChartNode::vtkMRMLPlotChartNode()
 //----------------------------------------------------------------------------
 vtkMRMLPlotChartNode::~vtkMRMLPlotChartNode()
 {
+  if (this->Title)
+    {
+    delete [] this->Title;
+    this->Title = NULL;
+    }
+  if (this->XAxisTitle)
+    {
+    delete [] this->XAxisTitle;
+    this->XAxisTitle = NULL;
+    }
+  if (this->YAxisTitle)
+    {
+    delete [] this->YAxisTitle;
+    this->YAxisTitle = NULL;
+    }
+  if (this->FontType)
+    {
+    delete [] this->FontType;
+    this->FontType = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------
