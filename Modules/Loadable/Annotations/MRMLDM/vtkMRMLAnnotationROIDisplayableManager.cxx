@@ -38,6 +38,7 @@
 #include <vtkProperty.h>
 #include <vtkRenderer.h>
 // for picking
+#include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
@@ -419,6 +420,11 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnota
 /// Propagate properties of MRML node to widget.
 void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget2D(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget)
 {
+  if (!this->GetRenderer() || !this->GetRenderer()->GetRenderWindow() || this->GetRenderer()->GetRenderWindow()->GetNeverRendered())
+    {
+    return;
+    }
+
   vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
   if (!sliceNode)
     {
