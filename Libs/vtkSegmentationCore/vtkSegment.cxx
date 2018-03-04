@@ -70,6 +70,11 @@ vtkSegment::~vtkSegment()
 {
   this->RemoveAllRepresentations();
   this->Representations.clear();
+  if (this->Name)
+    {
+    delete [] this->Name;
+    this->Name = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------
