@@ -64,7 +64,6 @@ public:
 //----------------------------------------------------------------------------
 vtkSegmentation::vtkSegmentation()
 {
-  this->SetMasterRepresentationName(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
   this->Converter = vtkSegmentationConverter::New();
 
   this->SegmentCallbackCommand = vtkCallbackCommand::New();
@@ -78,6 +77,8 @@ vtkSegmentation::vtkSegmentation()
   this->MasterRepresentationModifiedEnabled = true;
 
   this->SegmentIdAutogeneratorIndex = 0;
+
+  this->SetMasterRepresentationName(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
 }
 
 //----------------------------------------------------------------------------
