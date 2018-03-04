@@ -70,7 +70,7 @@ vtkITKArchetypeImageSeriesReader::vtkITKArchetypeImageSeriesReader()
   this->UseNativeOrigin = true;
 
 #ifdef VTKITK_BUILD_DICOM_SUPPORT
-  this->SetDICOMImageIOApproachToGDCM();
+  this->DICOMImageIOApproach = vtkITKArchetypeImageSeriesReader::GDCM;
 #endif
 
   this->OutputScalarType = VTK_FLOAT;
