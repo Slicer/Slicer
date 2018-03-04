@@ -1064,7 +1064,7 @@ void qSlicerSegmentEditorScissorsEffect::setupOptionsFrame()
   d->gridLayout->addWidget(d->fillInsideRadioButton, 0, 3);
   d->gridLayout->addWidget(d->fillOutsideRadioButton, 0, 4);
 
-  d->operationGroup = new QButtonGroup();
+  d->operationGroup = new QButtonGroup(this);
   d->operationGroup->setExclusive(true);
   d->operationGroup->addButton(d->eraseInsideRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::OperationEraseInside);
   d->operationGroup->addButton(d->eraseOutsideRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::OperationEraseOutside);
@@ -1084,7 +1084,7 @@ void qSlicerSegmentEditorScissorsEffect::setupOptionsFrame()
   d->gridLayout->addWidget(d->circleRadioButton, 1, 2);
   d->gridLayout->addWidget(d->rectangleRadioButton, 1, 3);
 
-  d->shapeGroup = new QButtonGroup();
+  d->shapeGroup = new QButtonGroup(this);
   d->shapeGroup->setExclusive(true);
   d->shapeGroup->addButton(d->freeFormRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::ShapeFreeForm);
   d->shapeGroup->addButton(d->circleRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::ShapeCircle);
@@ -1122,7 +1122,7 @@ void qSlicerSegmentEditorScissorsEffect::setupOptionsFrame()
 
   this->addOptionsWidget(d->gridLayout);
 
-  d->sliceCutModeGroup = new QButtonGroup();
+  d->sliceCutModeGroup = new QButtonGroup(this);
   d->sliceCutModeGroup->setExclusive(true);
   d->sliceCutModeGroup->addButton(d->unlimitedRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::SliceCutModeUnlimited);
   d->sliceCutModeGroup->addButton(d->positiveRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::SliceCutModePositive);
