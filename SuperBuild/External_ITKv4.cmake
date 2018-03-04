@@ -131,6 +131,11 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   set(ITK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
+  if(NOT DEFINED ITK_VALGRIND_SUPPRESSIONS_FILE)
+    set(ITK_VALGRIND_SUPPRESSIONS_FILE ${EP_SOURCE_DIR}/CMake/InsightValgrind.supp)
+  endif()
+  mark_as_superbuild(ITK_VALGRIND_SUPPRESSIONS_FILE:FILEPATH)
+
   #-----------------------------------------------------------------------------
   # Launcher setting specific to build tree
 

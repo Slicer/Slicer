@@ -1,15 +1,61 @@
-#!/bin/csh
+#!/usr/bin/env bash
+
+#------------------------------------------------------------------------------
+# Common options: http://valgrind.org/docs/manual/manual-core.html#manual-core.options
+#
+TRACE_CHILDREN=yes        # yes|no
+GEN_SUPPRESSION=all       # yes|no|all
+VERBOSE_FLAG=             # <none>|-q|-v
+
+# Memcheck options: http://valgrind.org/docs/manual/mc-manual.html#mc-manual.options
+LEAK_CHECK=yes            # yes|no
+SHOW_LEAK_KINDS=definite  # a comma separated list of one or more of definite,indirect,possible,reachable
+TRACK_ORIGIN=yes          # yes|no
+
+#------------------------------------------------------------------------------
+help() {
+  cat >&2 <<ENDHELP
+Usage:
+
+  runValgrind @Slicer_MAIN_PROJECT_APPLICATION_EXECUTABLE@ [args]
+
+  runValgrind /path/to/executable [args]
+
+ENDHELP
+exit 1
+}
+
+if [[ $# == 0 ]]; then
+  help
+fi
+
+executable=$1
+valgrind_output=${executable}_valgrind_output.txt
+
+echo ""
+echo "Valgrind output saved to: ${valgrind_output}"
+echo ""
+
+#------------------------------------------------------------------------------
+# Source environment
+#
+
+eval $(@Slicer_LAUNCHER_EXECUTABLE@ --launcher-show-set-environment-commands)
+
+#------------------------------------------------------------------------------
+# Run valgrind
+#
 valgrind \
- --sim-hints=lax-ioctls \
- --trace-children=yes \
- -q \
  --tool=memcheck \
- --leak-check=yes \
- --show-reachable=yes \
- --gen-suppressions=all \
- --suppressions=../Slicer3/CMake/Slicer3ValgrindSuppressions.supp                   \
- --suppressions=../Slicer3-lib/VTK/CMake/VTKValgrindSuppressions.supp               \
- --suppressions=../Slicer3-lib/Insight/CMake/InsightValgrind.supp                   \
- --suppressions=../Slicer3-lib/Insight/Utilities/gdcm/CMake/gdcmValgrind.supp       \
- --suppressions=../Slicer3-lib/Insight/Utilities/vxl/config/valgrind.supp           \
- ../Slicer-build/bin/Slicer3-real $* |& tee /tmp/slicerval
+ ${VERBOSE_FLAG} \
+ --trace-children=${TRACE_CHILDREN} \
+ --gen-suppressions=${GEN_SUPPRESSION} \
+ --suppressions=@CTK_VALGRIND_SUPPRESSIONS_FILE@ \
+ --suppressions=@ITK_VALGRIND_SUPPRESSIONS_FILE@ \
+ --suppressions=@PYTHON_VALGRIND_SUPPRESSIONS_FILE@ \
+ --suppressions=@Slicer_VALGRIND_SUPPRESSIONS_FILE@ \
+ --suppressions=@VTK_VALGRIND_SUPPRESSIONS_FILE@ \
+ --leak-check=${LEAK_CHECK} \
+ --show-leak-kinds=${SHOW_LEAK_KINDS} \
+ --track-origins=${TRACK_ORIGIN} \
+ $* |& tee ${valgrind_output}

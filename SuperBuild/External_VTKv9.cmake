@@ -163,6 +163,11 @@ endif()
   set(VTK_DIR ${EP_BINARY_DIR})
   set(VTK_SOURCE_DIR ${EP_SOURCE_DIR})
 
+  if(NOT DEFINED VTK_VALGRIND_SUPPRESSIONS_FILE)
+    set(VTK_VALGRIND_SUPPRESSIONS_FILE ${EP_SOURCE_DIR}/CMake/VTKValgrindSuppressions.supp)
+  endif()
+  mark_as_superbuild(VTK_VALGRIND_SUPPRESSIONS_FILE:FILEPATH)
+
   #-----------------------------------------------------------------------------
   # Launcher setting specific to build tree
 

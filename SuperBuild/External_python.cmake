@@ -232,6 +232,11 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
     endif()
   endif()
 
+  if(NOT DEFINED PYTHON_VALGRIND_SUPPRESSIONS_FILE)
+    set(PYTHON_VALGRIND_SUPPRESSIONS_FILE ${python_SOURCE_DIR}/Misc/valgrind-python.supp)
+  endif()
+  mark_as_superbuild(PYTHON_VALGRIND_SUPPRESSIONS_FILE:FILEPATH)
+
   #-----------------------------------------------------------------------------
   # Slicer Launcher setting specific to build tree
 

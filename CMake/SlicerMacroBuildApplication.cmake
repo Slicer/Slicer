@@ -477,12 +477,15 @@ macro(slicerMacroBuildApplication)
     endif()
   endif()
 
+  get_target_property(_slicerapp_output_dir ${slicerapp_target} RUNTIME_OUTPUT_DIRECTORY)
+
+  set(SLICERAPP_EXECUTABLE "${_slicerapp_output_dir}/${executable_name}${CMAKE_EXECUTABLE_SUFFIX}")
+  _set_app_property("EXECUTABLE")
+
   if(WIN32)
     if(Slicer_USE_PYTHONQT)
       # HACK - See http://www.na-mic.org/Bug/view.php?id=1180
       get_filename_component(_python_library_name_we ${PYTHON_LIBRARY} NAME_WE)
-      get_target_property(_slicerapp_output_dir
-        ${slicerapp_target} RUNTIME_OUTPUT_DIRECTORY)
       add_custom_command(
         TARGET ${slicerapp_target}
         POST_BUILD

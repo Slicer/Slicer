@@ -1,0 +1,496 @@
+#
+# Slicer
+#
+{
+   ctkLayoutManager
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   fun:_ZN16ctkLayoutManager17widgetItemFromXMLE11QDomElement
+   fun:_ZN16ctkLayoutManager14processElementE11QDomElement
+   fun:_ZN16ctkLayoutManager18processItemElementE11QDomElementP11QLayoutItem
+   fun:_ZN16ctkLayoutManager20processLayoutElementE11QDomElement
+   fun:_ZN16ctkLayoutManager14processElementE11QDomElement
+   fun:_ZN16ctkLayoutManager11setupLayoutEv
+   fun:_ZN16ctkLayoutFactory11setupLayoutEv
+   fun:_ZN16ctkLayoutManager7refreshEv
+   fun:_ZN25qMRMLLayoutManagerPrivate20updateLayoutInternalEv
+   ...
+}
+{
+   qSlicerModulesMenu
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   fun:_ZN14QLayoutPrivate16createWidgetItemEPK7QLayoutP7QWidget
+   fun:_ZN10QBoxLayout12insertWidgetEiP7QWidgeti6QFlagsIN2Qt13AlignmentFlagEE
+   fun:_ZN18qSlicerModulePanel9addModuleEP25qSlicerAbstractCoreModule
+   fun:_ZN18qSlicerModulePanel9setModuleERK7QString
+   fun:_ZN11QMetaObject8activateEP7QObjectiiPPv
+   fun:_ZN28qSlicerModuleSelectorToolBar14moduleSelectedERK7QString
+   fun:_ZN28qSlicerModuleSelectorToolBar14actionSelectedEP7QAction
+   fun:_ZN28qSlicerModuleSelectorToolBar18qt_static_metacallEP7QObjectN11QMetaObject4CallEiPPv
+   fun:_ZN11QMetaObject8activateEP7QObjectiiPPv
+   fun:_ZN18qSlicerModulesMenu20currentModuleChangedERK7QString
+   fun:_ZN18qSlicerModulesMenu14actionSelectedEP7QAction
+}
+{
+   QGridLayout in qMRMLSliceControllerWidget
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   fun:_ZN14QLayoutPrivate16createWidgetItemEPK7QLayoutP7QWidget
+   fun:_ZN11QGridLayout9addWidgetEP7QWidgetiiii6QFlagsIN2Qt13AlignmentFlagEE
+   ...
+   fun:_ZN29Ui_qMRMLSliceControllerWidget7setupUiEP14ctkPopupWidget
+   fun:_ZN33qMRMLSliceControllerWidgetPrivate12setupPopupUiEv
+   fun:_ZN29qMRMLViewControllerBarPrivate4initEv
+   fun:_ZN33qMRMLSliceControllerWidgetPrivate4initEv
+   fun:_ZN26qMRMLSliceControllerWidgetC1EP7QWidget
+   fun:_ZN23qMRMLSliceWidgetPrivate4initEv
+   ...
+}
+{
+   QPixmapIconEngine
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   fun:_ZN12QMapDataBase10createNodeEiiP12QMapNodeBaseb
+   obj:*/gcc_64/lib/libQt5Gui.so.5.10.0
+   fun:_ZN6QImage7setTextERK7QStringS2_
+   ...
+   fun:_ZN12QImageReader4readEP6QImage
+   fun:_ZN12QImageReader4readEv
+   fun:_ZN17QPixmapIconEngine7addFileERK7QStringRK5QSizeN5QIcon4ModeENS6_5StateE
+   fun:_ZN5QIcon7addFileERK7QStringRK5QSizeNS_4ModeENS_5StateE
+   ...
+}
+{
+   PythonQt, QUiLoader and custom plugins
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   ...
+   fun:_ZNK*Plugins13customWidgetsEv
+   fun:_ZN13QFormInternalL13insertPluginsEP7QObjectP4QMapI7QStringP30QDesignerCustomWidgetInterfaceE.constprop.43
+   fun:_ZN13QFormInternal12QFormBuilder19updateCustomWidgetsEv
+   fun:_ZN13QFormInternal12QFormBuilder13setPluginPathERK11QStringList
+   fun:_ZN9QUiLoaderC1EP7QObject
+   fun:_ZN25PythonQtWrapper_QUiLoader13new_QUiLoaderEP7QObject
+   fun:_ZN25PythonQtWrapper_QUiLoader18qt_static_metacallEP7QObjectN11QMetaObject4CallEiPPv
+   fun:_ZN25PythonQtWrapper_QUiLoader11qt_metacallEN11QMetaObject4CallEiPPv
+   fun:_Z16PythonQtCallSlotP17PythonQtClassInfoP7QObjectP7_objectbP16PythonQtSlotInfoPvPS4_PS7_P29PythonQtPassThisOwnershipType
+   ...
+}
+{
+   PythonQt, QUiLoader and custom plugins
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   ...
+   fun:_ZNK*Plugin13customWidgetsEv
+   fun:_ZN13QFormInternalL13insertPluginsEP7QObjectP4QMapI7QStringP30QDesignerCustomWidgetInterfaceE.constprop.43
+   fun:_ZN13QFormInternal12QFormBuilder19updateCustomWidgetsEv
+   fun:_ZN13QFormInternal12QFormBuilder13setPluginPathERK11QStringList
+   fun:_ZN9QUiLoaderC1EP7QObject
+   fun:_ZN25PythonQtWrapper_QUiLoader13new_QUiLoaderEP7QObject
+   fun:_ZN25PythonQtWrapper_QUiLoader18qt_static_metacallEP7QObjectN11QMetaObject4CallEiPPv
+   fun:_ZN25PythonQtWrapper_QUiLoader11qt_metacallEN11QMetaObject4CallEiPPv
+   fun:_Z16PythonQtCallSlotP17PythonQtClassInfoP7QObjectP7_objectbP16PythonQtSlotInfoPvPS4_PS7_P29PythonQtPassThisOwnershipType
+   ...
+}
+{
+   qSlicerCoreApplication and QResource::registerResource
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   fun:_ZN9QResource16registerResourceEPKhRK7QString
+   fun:_ZN22qSlicerCoreApplication16registerResourceERK10QByteArray
+   fun:_ZN22qSlicerCoreApplication18qt_static_metacallEP7QObjectN11QMetaObject4CallEiPPv
+   fun:_ZN22qSlicerCoreApplication11qt_metacallEN11QMetaObject4CallEiPPv
+   fun:_ZN18qSlicerApplication11qt_metacallEN11QMetaObject4CallEiPPv
+   fun:_Z16PythonQtCallSlotP17PythonQtClassInfoP7QObjectP7_objectbP16PythonQtSlotInfoPvPS4_PS7_P29PythonQtPassThisOwnershipType
+   fun:_Z29PythonQtSlotFunction_CallImplP17PythonQtClassInfoP7QObjectP16PythonQtSlotInfoP7_objectS6_PvPS7_P29PythonQtPassThisOwnershipType
+   fun:_Z27PythonQtMemberFunction_CallP16PythonQtSlotInfoP7_objectS2_S2_
+   fun:PyObject_Call
+   ...
+}
+{
+   PythonQt, ctkAbstractPythonManager and ctkStreamHandler
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   fun:_ZN12_GLOBAL__N_116ctkStreamHandler10initBufferEv.constprop.29
+   fun:_ZN12_GLOBAL__N_116ctkStreamHandler6xsputnEPKcl
+   fun:_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l
+   fun:_ZN24ctkAbstractPythonManager11printStdoutERK7QString
+   fun:_ZN24ctkAbstractPythonManager18qt_static_metacallEP7QObjectN11QMetaObject4CallEiPPv
+   fun:_ZN11QMetaObject8activateEP7QObjectiiPPv
+   fun:_ZN8PythonQt12pythonStdOutERK7QString
+   fun:_ZN8PythonQt16stdOutRedirectCBERK7QString
+   fun:_ZL28PythonQtStdOutRedirect_writeP7_objectS0_
+   fun:PyObject_Call
+   fun:PyEval_CallObjectWithKeywords
+}
+{
+   vtkSlicerTerminologiesModuleLogic
+   Memcheck:Cond
+   fun:_ZN33vtkSlicerTerminologiesModuleLogic11vtkInternal31PopulateTerminologyTypeFromJsonERN9rapidjson12GenericValueINS1_4UTF8IcEENS1_19MemoryPoolAllocatorINS1_12CrtAllocatorEEEEEP24vtkSlicerTerminologyType
+   ...
+}
+#
+# NVidia driver
+#
+{
+   NVidia driver
+   Memcheck:Cond
+   obj:/usr/lib/nvidia-???/libnvidia-glcore.so.???.??
+   ...
+   obj:/usr/lib/nvidia-???/libGL.so.???.??
+   obj:*/gcc_64/plugins/xcbglintegrations/libqxcb-glx-integration.so
+   fun:_ZN14QOpenGLContext11makeCurrentEP8QSurface
+   ...
+}
+{
+   NVidia driver
+   Memcheck:Cond
+   obj:/usr/lib/nvidia-???/libnvidia-glcore.so.???.??
+   ...
+   fun:_ZN23vtkOpenGLPolyDataMapper11RenderPieceEP11vtkRendererP8vtkActor
+   fun:_ZN17vtkPolyDataMapper6RenderEP11vtkRendererP8vtkActor
+   fun:*
+   fun:_ZN11vtkRenderer26DeviceRenderOpaqueGeometryEv
+   fun:_ZN17vtkOpenGLRenderer26DeviceRenderOpaqueGeometryEv
+   fun:_ZN17vtkOpenGLRenderer14UpdateGeometryEv
+   fun:_ZN17vtkOpenGLRenderer12DeviceRenderEv
+}
+{
+   NVidia driver
+   Memcheck:Cond
+   obj:/usr/lib/nvidia-???/libnvidia-glcore.so.???.??
+   ...
+   fun:_ZN20vtkOpenGLRenderTimer4StopEv
+   fun:_ZN19vtkOpenGLFXAAFilter7ExecuteEP17vtkOpenGLRenderer
+   fun:_ZN17vtkOpenGLRenderer14UpdateGeometryEv
+   fun:_ZN17vtkOpenGLRenderer12DeviceRenderEv
+   ...
+}
+{
+   NVidia driver
+   Memcheck:Cond
+   obj:/usr/lib/nvidia-???/libnvidia-glcore.so.???.??
+   ...
+   fun:_ZN20vtkOpenGLRenderTimer5ReadyEv
+   fun:_ZN19vtkOpenGLFXAAFilter14PrintBenchmarkEv
+   fun:_ZN19vtkOpenGLFXAAFilter7ExecuteEP17vtkOpenGLRenderer
+   fun:_ZN17vtkOpenGLRenderer14UpdateGeometryEv
+   fun:_ZN17vtkOpenGLRenderer12DeviceRenderEv
+   ...
+}
+{
+   NVidia driver and vtkShaderProgram
+   Memcheck:Param
+   write(buf)
+   obj:/lib/x86_64-linux-gnu/libc-2.21.so
+   fun:_IO_file_write@@GLIBC_2.2.5
+   fun:new_do_write
+   fun:_IO_do_write@@GLIBC_2.2.5
+   fun:_IO_file_sync@@GLIBC_2.2.5
+   fun:fflush
+   obj:/usr/lib/nvidia-352/libnvidia-glcore.so.352.63
+   ...
+   fun:_ZN16vtkShaderProgram4LinkEv
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Cond
+   obj:/usr/lib/nvidia-352/libnvidia-glcore.so.352.63
+   ...
+   fun:_ZN16vtkShaderProgram4LinkEv
+   fun:_ZN16vtkShaderProgram13CompileShaderEv
+   ...
+}
+#
+# Misc libraries
+#
+{
+   libexpat
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libfontconfig.so.?.?.?
+   ...
+   obj:/lib/x86_64-linux-gnu/libexpat.so.?.?.?
+   fun:XML_ParseBuffer
+   fun:FcConfigParseAndLoad
+   fun:FcConfigParseAndLoad
+}
+{
+   GLib
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:g_slice_alloc
+   fun:g_hash_table_new_full
+   obj:/lib/x86_64-linux-gnu/libglib-2.0.so.0.4600.2
+   obj:/lib/x86_64-linux-gnu/libglib-2.0.so.0.4600.2
+   fun:call_init.part.0
+   fun:call_init
+   fun:_dl_init
+   obj:/lib/x86_64-linux-gnu/ld-2.21.so
+}
+#
+# ITK
+#
+{
+   ITK H5
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:itk_H5FL_reg_malloc
+   fun:H5P_create_prop
+   fun:itk_H5P_register_real
+   fun:H5P__ocrt_reg_prop
+   fun:H5P_init_interface.part.8
+   fun:itk_H5P_init
+   fun:itk_H5_init_library
+   fun:itk_H5open
+   fun:_ZN2H517DSetCreatPropList11getConstantEv
+   fun:_GLOBAL__sub_I_H5DcreatProp.cpp
+   fun:call_init.part.0
+}
+#
+# PythonQt
+#
+{
+   PythonQt Slicer decorators
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   fun:_ZN15PythonQtPrivate13addDecoratorsEP7QObjecti
+   fun:initqSlicer*PythonQt
+   fun:_PyImport_LoadDynamicModule
+   ...
+}
+{
+   PythonQt CTK decorators
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   fun:_ZN15PythonQtPrivate13addDecoratorsSlicerEP7QObjecti
+   fun:_Z32initCTK*PythonQtDecoratorsv
+   fun:initCTK*PythonQt
+   fun:_PyImport_LoadDynamicModule
+   ...
+}
+{
+   PythonQtCallSlot
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   fun:_ZN25ctk*PythonQtDecorators18qt_static_metacallEP7QObjectN11QMetaObject4CallEiPPv.part.40
+   fun:_ZN25ctk*PythonQtDecorators11qt_metacallEN11QMetaObject4CallEiPPv
+   fun:_Z16PythonQtCallSlotP17PythonQtClassInfoP7QObjectP7_objectbP16PythonQtSlotInfoPvPS4_PS7_P29PythonQtPassThisOwnershipType
+   fun:_Z29PythonQtSlotFunction_CallImplP17PythonQtClassInfoP7QObjectP16PythonQtSlotInfoP7_objectS6_PvPS7_P29PythonQtPassThisOwnershipType
+   fun:_Z28PythonQtInstanceWrapper_initP29PythonQtInstanceWrapperStructP7_objectS2_
+   fun:type_call
+   fun:PyObject_Call
+   ...
+}
+{
+   PythonQt decorators
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   fun:_ZN15PythonQtPrivate13addDecoratorsEP7QObjecti
+   ...
+   fun:_PyImport_LoadDynamicModule
+   ...
+}
+{
+   PythonQt decorators
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   fun:_ZN15PythonQtPrivate13addDecoratorsEP7QObjecti
+   fun:_ZN8PythonQt4initEiRK10QByteArray
+   fun:_ZN24ctkAbstractPythonManager12initPythonQtEi
+   fun:_ZN24ctkAbstractPythonManager10initializeEv
+   fun:_ZN24ctkAbstractPythonManager11mainContextEv
+   fun:_ZN29qSlicerCoreApplicationPrivate4initEv
+   fun:_ZN25qSlicerApplicationPrivate4initEv
+   fun:_ZN18qSlicerApplicationC1ERiPPc
+   fun:main
+}
+{
+   PythonQt decorators
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   fun:_ZN15PythonQtPrivate13addDecoratorsEP7QObjecti
+   fun:_ZN17PythonQtClassInfo9decoratorEv
+   ...
+}
+#
+# Qt
+#
+{
+   QCoreApplication with Qt5DBus
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:calloc
+   obj:/lib/x86_64-linux-gnu/libdbus-1.so.3.14.3
+   ...
+   obj:*/gcc_64/lib/libQt5DBus.so.5.10.0
+   fun:_ZN7QObject5eventEP6QEvent
+   fun:_ZN16QCoreApplication15notifyInternal2EP7QObjectP6QEvent
+   ...
+}
+{
+   QCoreApplication with Qt5DBus
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   fun:realloc
+   obj:/lib/x86_64-linux-gnu/libdbus-1.so.3.14.3
+   ...
+   obj:*/gcc_64/lib/libQt5DBus.so.5.10.0
+   fun:_ZN7QObject5eventEP6QEvent
+   fun:_ZN16QCoreApplication15notifyInternal2EP7QObjectP6QEvent
+   fun:_ZN23QCoreApplicationPrivate16sendPostedEventsEP7QObjectiP11QThreadData
+   ...
+}
+{
+   QDBusConnection
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   obj:*/gcc_64/lib/libQt5DBus.so.5.10.0
+   obj:*/gcc_64/lib/libQt5DBus.so.5.10.0
+   fun:_ZN15QDBusConnection10sessionBusEv
+   obj:*/gcc_64/lib/libQt5XcbQpa.so.5.10.0
+   obj:*/gcc_64/lib/libQt5XcbQpa.so.5.10.0
+   fun:_ZNK15QXcbIntegration13accessibilityEv
+   fun:_ZN11QAccessible8isActiveEv
+   fun:_ZN11QAccessible19updateAccessibilityEP16QAccessibleEvent
+   ...
+}
+{
+   QMenu
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   ...
+   obj:*/gcc_64/lib/libQt5Widgets.so.5.10.0
+   fun:_ZN5QMenu11actionEventEP12QActionEvent
+   fun:_ZN7QWidget5eventEP6QEvent
+   fun:_ZN5QMenu5eventEP6QEvent
+   fun:_ZN19QApplicationPrivate13notify_helperEP7QObjectP6QEvent
+   fun:_ZN12QApplication6notifyEP7QObjectP6QEvent
+   ...
+}
+{
+   QMenu
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   ...
+   obj:*/gcc_64/lib/libQt5Widgets.so.5.10.0
+   fun:_ZN5QMenu11actionEventEP12QActionEvent
+   fun:_ZN7QWidget5eventEP6QEvent
+   fun:_ZN5QMenu5eventEP6QEvent
+   fun:_ZN19QApplicationPrivate13notify_helperEP7QObjectP6QEvent
+   fun:_ZN12QApplication6notifyEP7QObjectP6QEvent
+   ...
+}
+{
+   QAccessible
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   obj:*/gcc_64/lib/libQt5Widgets.so.5.10.0
+   fun:_ZN11QAccessible24queryAccessibleInterfaceEP7QObject
+   fun:_ZNK16QAccessibleEvent19accessibleInterfaceEv
+   fun:_ZN11QAccessible19updateAccessibilityEP16QAccessibleEvent
+   ...
+}
+#
+# Python suppressions copied from Python-2.7.13/Misc/valgrind-python.supp
+#
+# Since these suppressions are commented by default in "valgrind-python.supp",
+# we copied and enabled them here.
+#
+# For more details, read Python-2.7.13/Misc/README.valgrind
+#
+{
+   Handle PyMalloc confusing valgrind (possibly leaked)
+   Memcheck:Leak
+   fun:realloc
+   fun:_PyObject_GC_Resize
+#   fun:COMMENT_THIS_LINE_TO_DISABLE_LEAK_WARNING
+}
+{
+   Handle PyMalloc confusing valgrind (possibly leaked)
+   Memcheck:Leak
+   fun:malloc
+   fun:_PyObject_GC_New
+#   fun:COMMENT_THIS_LINE_TO_DISABLE_LEAK_WARNING
+}
+{
+   Handle PyMalloc confusing valgrind (possibly leaked)
+   Memcheck:Leak
+   fun:malloc
+   fun:_PyObject_GC_NewVar
+#   fun:COMMENT_THIS_LINE_TO_DISABLE_LEAK_WARNING
+}
+{
+   ADDRESS_IN_RANGE/Invalid read of size 4
+   Memcheck:Addr4
+   fun:PyObject_Free
+}
+{
+   ADDRESS_IN_RANGE/Invalid read of size 4
+   Memcheck:Value4
+   fun:PyObject_Free
+}
+{
+   ADDRESS_IN_RANGE/Use of uninitialised value of size 8
+   Memcheck:Addr8
+   fun:PyObject_Free
+}
+{
+   ADDRESS_IN_RANGE/Use of uninitialised value of size 8
+   Memcheck:Value8
+   fun:PyObject_Free
+}
+{
+   ADDRESS_IN_RANGE/Conditional jump or move depends on uninitialised value
+   Memcheck:Cond
+   fun:PyObject_Free
+}
+{
+   ADDRESS_IN_RANGE/Invalid read of size 4
+   Memcheck:Addr4
+   fun:PyObject_Realloc
+}
+{
+   ADDRESS_IN_RANGE/Invalid read of size 4
+   Memcheck:Value4
+   fun:PyObject_Realloc
+}
+{
+   ADDRESS_IN_RANGE/Use of uninitialised value of size 8
+   Memcheck:Addr8
+   fun:PyObject_Realloc
+}
+{
+   ADDRESS_IN_RANGE/Use of uninitialised value of size 8
+   Memcheck:Value8
+   fun:PyObject_Realloc
+}
+{
+   ADDRESS_IN_RANGE/Conditional jump or move depends on uninitialised value
+   Memcheck:Cond
+   fun:PyObject_Realloc
+}

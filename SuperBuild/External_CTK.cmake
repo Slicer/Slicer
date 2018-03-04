@@ -70,7 +70,7 @@ if(NOT DEFINED CTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    "59ad0ef7e7abba886816ceb1bbbc0e7e803e5a1b"
+    "ca4c77bfc4a052280334831b5936e661947d4551"
     QUIET
     )
 
@@ -144,6 +144,11 @@ if(NOT DEFINED CTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   ExternalProject_GenerateProjectDescription_Step(${proj})
 
   set(CTK_DIR ${EP_BINARY_DIR})
+
+  if(NOT DEFINED CTK_VALGRIND_SUPPRESSIONS_FILE)
+    set(CTK_VALGRIND_SUPPRESSIONS_FILE ${EP_SOURCE_DIR}/CMake/CTKValgrind.supp)
+  endif()
+  mark_as_superbuild(CTK_VALGRIND_SUPPRESSIONS_FILE:FILEPATH)
 
   #-----------------------------------------------------------------------------
   # Launcher setting specific to build tree

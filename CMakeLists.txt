@@ -776,7 +776,7 @@ set(Slicer_ExternalData_URL_TEMPLATES ${ExternalData_URL_TEMPLATES})
 # Testing
 #-----------------------------------------------------------------------------
 set(Slicer_LAUNCHER_EXECUTABLE ${Slicer_BINARY_DIR}/${Slicer_MAIN_PROJECT_APPLICATION_NAME}${CMAKE_EXECUTABLE_SUFFIX})
-set(Slicer_LAUNCH_COMMAND ${Slicer_LAUNCHER_EXECUTABLE} --launcher-no-splash --launch)
+set(Slicer_LAUNCH_COMMAND ${Slicer_LAUNCHER_EXECUTABLE} --launch)
 
 include(SlicerMacroConfigureModuleCxxTestDriver)
 include(SlicerMacroSimpleTest)
@@ -805,9 +805,6 @@ if(BUILD_TESTING)
 
   if(Slicer_BUILD_CLI_SUPPORT)
     set(SEM_LAUNCH_COMMAND ${Slicer_LAUNCH_COMMAND})
-    if(USE_VALGRIND)
-      set(SEM_LAUNCH_COMMAND "${Slicer_BINARY_DIR}/Scripts/runValgrindForOneModule.sh")
-    endif()
   endif()
 endif()
 
@@ -973,9 +970,6 @@ set(QMRML_EXPORT_HEADER_TEMPLATE "${CMAKE_CURRENT_SOURCE_DIR}/Libs/MRML/Widgets/
 # Configure testing scripts
 #-----------------------------------------------------------------------------
 set(files
-  Utilities/Scripts/runValgrind.sh
-  Utilities/Scripts/runValgrindForOneModule.sh
-  Utilities/Scripts/runValgrindForOneModuleWithSlicer4AndQT.sh
   Utilities/Scripts/computeCodeCoverageLocally.sh
   Utilities/Scripts/computeCodeCoverageForOneTest.sh
   Utilities/Scripts/runExperimentalOffScreen.sh
@@ -1149,7 +1143,6 @@ if(BUILD_TESTING)
 endif()
 
 # Install testing data
-
 if(NOT Slicer_INSTALL_NO_DEVELOPMENT)
   install(DIRECTORY
     Testing
@@ -1158,6 +1151,18 @@ if(NOT Slicer_INSTALL_NO_DEVELOPMENT)
     PATTERN "CMakeLists.txt" EXCLUDE
     )
 endif()
+
+#-----------------------------------------------------------------------------
+# Dynamic analysis
+#-----------------------------------------------------------------------------
+set(Slicer_VALGRIND_SUPPRESSIONS_FILE "${Slicer_SOURCE_DIR}/CMake/SlicerValgrind.supp")
+get_property(Slicer_MAIN_PROJECT_APPLICATION_EXECUTABLE GLOBAL PROPERTY "${Slicer_MAIN_PROJECT_APPLICATION_NAME}_EXECUTABLE")
+set(script "Utilities/Scripts/runValgrind.sh")
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/${script}.in
+  ${CMAKE_CURRENT_BINARY_DIR}/${script}
+  @ONLY
+  )
 
 #-----------------------------------------------------------------------------
 # Documentation
