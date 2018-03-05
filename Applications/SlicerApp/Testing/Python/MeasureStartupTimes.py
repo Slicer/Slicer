@@ -84,19 +84,19 @@ def collect_startup_times_overall(output_file, drop_cache=False, display_output=
   with open(output_file, 'w') as file:
     file.write(json.dumps(results, indent=4))
 
-def read_modules(input_file='Modules.json'):
+def read_modules(input_file):
   # Read list of modules
   with open(input_file) as input:
     modules = json.load(input)
   print("Found %d modules reading %s\n" % (len(modules), input_file))
   return modules
 
-def collect_modules(output_file='Modules.json'):
+def collect_modules(output_file):
   # Collect list of all modules and their associated types
   python_script = TemporaryPythonScript("""
 import json
 
-modules = {}
+modules = {{}}
 moduleManager = slicer.app.moduleManager()
 for name in dir(slicer.moduleNames):
   module = moduleManager.module(name)
@@ -115,9 +115,9 @@ for name in dir(slicer.moduleNames):
     raise Exception("Failed to module type of %s" % name)
   print("Found module %s of type %s" % (name, module_type))
   modules[name] = module_type
-with open("Modules.json", 'w') as output:
+with open("{0}", 'w') as output:
   output.write(json.dumps(modules, indent=4))
-""")
+""".format(output_file))
 
   (returnCode, stdout, stderr) = runSlicerAndExit(slicer_executable, ['--python-script', python_script.name])
   assert returnCode == EXIT_SUCCESS
@@ -125,8 +125,16 @@ with open("Modules.json", 'w') as output:
 
   return read_modules(output_file)
 
-def collect_startup_times_including_one_module(output_file, drop_cache=False, display_output=False):
-  modules = collect_modules()
+def slicerRevision():
+  (returnCode, stdout, stderr) = runSlicerAndExit(slicer_executable, [
+    '--no-main-window', '--ignore-slicerrc', '--disable-modules',
+    '--python-code', 'print(slicer.app.repositoryRevision)'
+  ])
+  assert returnCode == EXIT_SUCCESS
+  return stdout.split()[0]
+
+def collect_startup_times_including_one_module(output_file, module_list, drop_cache=False, display_output=False):
+  modules = collect_modules(module_list)
   # Collect startup times disabling each module one by one
   moduleTimes = {}
   for (idx, (moduleName, moduleType)) in enumerate(modules.iteritems(), start=1):
@@ -149,8 +157,8 @@ def collect_startup_times_including_one_module(output_file, drop_cache=False, di
   with open(output_file, 'w') as file:
     file.write(json.dumps(moduleTimes, indent=4))
 
-def collect_startup_times_excluding_one_module(output_file, drop_cache=False, display_output=False):
-  modules = collect_modules()
+def collect_startup_times_excluding_one_module(output_file, module_list, drop_cache=False, display_output=False):
+  modules = collect_modules(module_list)
   # Collect startup times disabling each module one by one
   moduleTimes = {}
   for (idx, (moduleName, moduleType)) in enumerate(modules.iteritems(), start=1):
@@ -173,8 +181,8 @@ def collect_startup_times_excluding_one_module(output_file, drop_cache=False, di
   with open(output_file, 'w') as file:
     file.write(json.dumps(moduleTimes, indent=4))
 
-def collect_startup_times_modules_to_load(output_file, modules_to_load, drop_cache=False, display_output=False):
-  modules = collect_modules()
+def collect_startup_times_modules_to_load(output_file, modules_to_load, module_list, drop_cache=False, display_output=False):
+  modules = collect_modules(module_list)
   modulesToIgnore = list(modules.keys())
   for moduleName in modules_to_load.split(","):
     print("Including %s" % moduleName)
@@ -218,6 +226,9 @@ if __name__ == '__main__':
 
   runSlicerAndExitWithTime = timecall(runSlicerAndExit, repeat=args.repeat)
 
+  sliver_revision = slicerRevision()
+  module_list = "Modules-r%s.json" % sliver_revision
+
   if args.reuse_module_list:
     print("Loading existing module listing")
     collect_modules = read_modules
@@ -230,21 +241,21 @@ if __name__ == '__main__':
   # Since the "normal" experiment is included in the "overall" one,
   # it is not executed by default.
   if args.normal:
-    collect_startup_times_normal("StartupTimesNormal.json", **common_kwargs)
+    collect_startup_times_normal("StartupTimesNormal-r%s.json" % sliver_revision, **common_kwargs)
 
   # Since the "modules-to-load" experiment requires user input and is provided
   # for convenience, it is not executed by default.
   if args.modules_to_load:
     collect_startup_times_modules_to_load(
-      "StartupTimesSelectedModules.json", args.modules_to_load, **common_kwargs)
+      "StartupTimesSelectedModules.json", args.modules_to_load, module_list, **common_kwargs)
 
   if all or args.overall:
-    collect_startup_times_overall("StartupTimes.json", **common_kwargs)
+    collect_startup_times_overall("StartupTimes-r%s.json" % sliver_revision, **common_kwargs)
 
   if all or args.excluding_one_module:
     collect_startup_times_excluding_one_module(
-      "StartupTimesExcludingOneModule.json", **common_kwargs)
+      "StartupTimesExcludingOneModule-r%s.json" % sliver_revision, module_list, **common_kwargs)
 
   if all or args.including_one_module:
     collect_startup_times_including_one_module(
-      "StartupTimesIncludingOneModule.json", **common_kwargs)
+      "StartupTimesIncludingOneModule-r%s.json" % sliver_revision, module_list, **common_kwargs)
