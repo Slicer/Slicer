@@ -78,6 +78,9 @@ public slots:
   /// Change the font size of the title of the plot.
   void onTitleFontSizeChanged(double size);
 
+  /// Change the font size of the legend of the plot.
+  void onLegendFontSizeChanged(double size);
+
   /// Change the font size of the title of the axes.
   void onAxisTitleFontSizeChanged(double size);
 

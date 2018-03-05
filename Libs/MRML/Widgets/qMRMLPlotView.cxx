@@ -833,6 +833,7 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
 
   // Setting Legend
   q->chart()->SetShowLegend(plotChartNode->GetLegendVisibility());
+  q->chart()->GetLegend()->GetLabelProperties()->SetFontSize(plotChartNode->GetLegendFontSize());
   q->chart()->GetLegend()->GetLabelProperties()->SetFontFamily(fontTypeIndex);
 
   // Setting Axes

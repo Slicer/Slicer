@@ -191,6 +191,10 @@ class VTK_MRML_EXPORT vtkMRMLPlotChartNode : public vtkMRMLNode
   vtkGetMacro(LegendVisibility, bool);
   vtkSetMacro(LegendVisibility, bool);
 
+  /// Title font size. Default: 20.
+  vtkSetMacro(LegendFontSize, int);
+  vtkGetMacro(LegendFontSize, int);
+
   vtkGetMacro(XAxisRangeAuto, bool);
   vtkSetMacro(XAxisRangeAuto, bool);
   vtkBooleanMacro(XAxisRangeAuto, bool);
@@ -286,6 +290,7 @@ class VTK_MRML_EXPORT vtkMRMLPlotChartNode : public vtkMRMLNode
   bool TitleVisibility;
   bool GridVisibility;
   bool LegendVisibility;
+  int LegendFontSize;
   bool XAxisRangeAuto;
   bool YAxisRangeAuto;
   double XAxisRange[2];

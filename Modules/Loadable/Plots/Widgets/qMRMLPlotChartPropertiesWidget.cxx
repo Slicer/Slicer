@@ -70,6 +70,8 @@ void qMRMLPlotChartPropertiesWidgetPrivate::setupUi(qMRMLWidget* widget)
                 this, SLOT(onFontTypeChanged(const QString&)));
   this->connect(this->titleFontSizeDoubleSpinBox, SIGNAL(valueChanged(double)),
                 this, SLOT(onTitleFontSizeChanged(double)));
+  this->connect(this->legendFontSizeDoubleSpinBox, SIGNAL(valueChanged(double)),
+                this, SLOT(onLegendFontSizeChanged(double)));
   this->connect(this->axisTitleFontSizeDoubleSpinBox, SIGNAL(valueChanged(double)),
                 this, SLOT(onAxisTitleFontSizeChanged(double)));
   this->connect(this->axisLabelFontSizeDoubleSpinBox, SIGNAL(valueChanged(double)),
@@ -129,6 +131,7 @@ void qMRMLPlotChartPropertiesWidgetPrivate::updateWidgetFromMRML()
 
     this->fontTypeComboBox->setCurrentIndex(-1);
     this->titleFontSizeDoubleSpinBox->setValue(20);
+    this->legendFontSizeDoubleSpinBox->setValue(16);
     this->axisTitleFontSizeDoubleSpinBox->setValue(16);
     this->axisLabelFontSizeDoubleSpinBox->setValue(12);
 
@@ -183,6 +186,7 @@ void qMRMLPlotChartPropertiesWidgetPrivate::updateWidgetFromMRML()
     this->PlotChartNode->GetFontType() ? this->PlotChartNode->GetFontType() : ""));
 
   this->titleFontSizeDoubleSpinBox->setValue(this->PlotChartNode->GetTitleFontSize());
+  this->legendFontSizeDoubleSpinBox->setValue(this->PlotChartNode->GetLegendFontSize());
   this->axisTitleFontSizeDoubleSpinBox->setValue(this->PlotChartNode->GetAxisTitleFontSize());
   this->axisLabelFontSizeDoubleSpinBox->setValue(this->PlotChartNode->GetAxisLabelFontSize());
 
@@ -236,6 +240,16 @@ void qMRMLPlotChartPropertiesWidgetPrivate::onTitleFontSizeChanged(double size)
     return;
     }
   this->PlotChartNode->SetTitleFontSize(size);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLPlotChartPropertiesWidgetPrivate::onLegendFontSizeChanged(double size)
+{
+  if (!this->PlotChartNode)
+    {
+    return;
+    }
+  this->PlotChartNode->SetLegendFontSize(size);
 }
 
 // --------------------------------------------------------------------------

@@ -51,6 +51,7 @@ vtkMRMLPlotChartNode::vtkMRMLPlotChartNode()
 , TitleVisibility(true)
 , GridVisibility(true)
 , LegendVisibility(true)
+, LegendFontSize(16)
 , XAxisRangeAuto(true)
 , YAxisRangeAuto(true)
 , XAxisTitle(NULL)
@@ -153,6 +154,7 @@ void vtkMRMLPlotChartNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLBooleanMacro(titleVisibility, TitleVisibility);
   vtkMRMLWriteXMLBooleanMacro(gridVisibility, GridVisibility);
   vtkMRMLWriteXMLBooleanMacro(legendVisibility, LegendVisibility);
+  vtkMRMLWriteXMLIntMacro(legendFontSize, LegendFontSize);
   vtkMRMLWriteXMLBooleanMacro(xAxisRangeAuto, XAxisRangeAuto);
   vtkMRMLWriteXMLBooleanMacro(yAxisRangeAuto, YAxisRangeAuto);
   vtkMRMLWriteXMLVectorMacro(xAxisRange, XAxisRange, double, 2);
@@ -182,6 +184,7 @@ void vtkMRMLPlotChartNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLBooleanMacro(titleVisibility, TitleVisibility);
   vtkMRMLReadXMLBooleanMacro(gridVisibility, GridVisibility);
   vtkMRMLReadXMLBooleanMacro(legendVisibility, LegendVisibility);
+  vtkMRMLReadXMLIntMacro(legendFontSize, LegendFontSize);
   vtkMRMLReadXMLBooleanMacro(xAxisRangeAuto, XAxisRangeAuto);
   vtkMRMLReadXMLBooleanMacro(yAxisRangeAuto, YAxisRangeAuto);
   vtkMRMLReadXMLVectorMacro(xAxisRange, XAxisRange, double, 2);
@@ -215,6 +218,7 @@ void vtkMRMLPlotChartNode::Copy(vtkMRMLNode *anode)
   vtkMRMLCopyBooleanMacro(TitleVisibility);
   vtkMRMLCopyBooleanMacro(GridVisibility);
   vtkMRMLCopyBooleanMacro(LegendVisibility);
+  vtkMRMLCopyIntMacro(LegendFontSize);
   vtkMRMLCopyBooleanMacro(XAxisRangeAuto);
   vtkMRMLCopyBooleanMacro(YAxisRangeAuto);
   vtkMRMLCopyVectorMacro(XAxisRange, double, 2);
@@ -244,6 +248,7 @@ void vtkMRMLPlotChartNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintBooleanMacro(TitleVisibility);
   vtkMRMLPrintBooleanMacro(GridVisibility);
   vtkMRMLPrintBooleanMacro(LegendVisibility);
+  vtkMRMLPrintIntMacro(LegendFontSize);
   vtkMRMLPrintBooleanMacro(XAxisRangeAuto);
   vtkMRMLPrintBooleanMacro(YAxisRangeAuto);
   vtkMRMLPrintVectorMacro(XAxisRange, double, 2);

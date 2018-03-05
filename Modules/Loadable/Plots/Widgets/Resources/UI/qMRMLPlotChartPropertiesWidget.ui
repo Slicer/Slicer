@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>235</width>
+    <width>315</width>
     <height>314</height>
    </rect>
   </property>
@@ -257,28 +257,28 @@
      </property>
     </widget>
    </item>
-   <item row="10" column="0">
+   <item row="11" column="0">
     <widget class="QLabel" name="axisTitleFontSizeLabel">
      <property name="text">
       <string>Axis title font size:</string>
      </property>
     </widget>
    </item>
-   <item row="10" column="1">
+   <item row="11" column="1">
     <widget class="ctkDoubleSpinBox" name="axisTitleFontSizeDoubleSpinBox">
      <property name="value">
       <double>16.000000000000000</double>
      </property>
     </widget>
    </item>
-   <item row="11" column="0">
+   <item row="12" column="0">
     <widget class="QLabel" name="axisLabelFontSizeLabel">
      <property name="text">
       <string>Axis label font size:</string>
      </property>
     </widget>
    </item>
-   <item row="11" column="1">
+   <item row="12" column="1">
     <widget class="ctkDoubleSpinBox" name="axisLabelFontSizeDoubleSpinBox">
      <property name="value">
       <double>12.000000000000000</double>
@@ -310,6 +310,20 @@
     <widget class="QCheckBox" name="gridVisibleCheckBox">
      <property name="text">
       <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="0">
+    <widget class="QLabel" name="legendFontSizeLabel">
+     <property name="text">
+      <string>Legend font size:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="1">
+    <widget class="ctkDoubleSpinBox" name="legendFontSizeDoubleSpinBox">
+     <property name="value">
+      <double>16.000000000000000</double>
      </property>
     </widget>
    </item>
