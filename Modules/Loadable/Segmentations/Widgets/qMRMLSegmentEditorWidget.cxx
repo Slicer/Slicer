@@ -2470,6 +2470,11 @@ void qMRMLSegmentEditorWidget::setupViewObservations()
     for (int displayNodeIndex = 0; displayNodeIndex < numberOfDisplayNodes; displayNodeIndex++)
       {
       vtkMRMLDisplayNode* segmentationDisplayNode = d->SegmentationNode->GetNthDisplayNode(displayNodeIndex);
+      if (!segmentationDisplayNode)
+        {
+        // this may occur during scene close
+        continue;
+        }
       d->ObservedViewNodeIDs[segmentationDisplayNode->GetID()] = segmentationDisplayNode->GetViewNodeIDs();
       }
     }
