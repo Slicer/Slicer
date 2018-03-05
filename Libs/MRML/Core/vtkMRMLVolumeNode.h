@@ -211,6 +211,13 @@ public:
   virtual void ApplyNonLinearTransform(vtkAbstractTransform* transform);
 
   virtual bool GetModifiedSinceRead() VTK_OVERRIDE;
+
+  ///
+  /// Get background voxel value of the image. It can be used for assigning
+  /// intensity value to "empty" voxels when the image is transformed.
+  /// It is computed as median value of the 8 corner voxels.
+  virtual double GetImageBackgroundScalarComponentAsDouble(int component);
+
 protected:
   vtkMRMLVolumeNode();
   ~vtkMRMLVolumeNode();

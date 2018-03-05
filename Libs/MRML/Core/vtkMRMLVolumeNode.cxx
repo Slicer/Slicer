@@ -38,6 +38,7 @@ Version:   $Revision: 1.14 $
 
 #include <algorithm> // For std::min
 #include <cassert>
+#include <vector>
 
 //----------------------------------------------------------------------------
 
@@ -1011,80 +1012,6 @@ void vtkMRMLVolumeNode::ApplyNonLinearTransform(vtkAbstractTransform* transform)
 
   vtkNew<vtkMatrix4x4> rasToIJK;
 
-  /** THIS MAY BE NEEDED IF TRANSFORM ORIGIN
-  // Compute extents of the output image
-  // For each of 6 volume boundary planes:
-  // 1. Convert the slice image to a polydata
-  // 2. Transform polydata
-  // Then append all poly datas and compute RAS extents
-
-  vtkNew<vtkImageDataGeometryFilter> imageDataGeometryFilter;
-  imageDataGeometryFilter->SetInput(this->GetImageData());
-
-  vtkNew<vtkGeneralTransform> IJK2WorldTransform;
-  IJK2WorldTransform->Identity();
-  //IJK2WorldTransform->PostMultiply();
-
-  IJK2WorldTransform->Concatenate(transform);
-
-  this->GetRASToIJKMatrix(rasToIJK.GetPointer());
-  rasToIJK->Invert();
-  IJK2WorldTransform->Concatenate(rasToIJK.GetPointer());
-
-  vtkNew<vtkTransformPolyDataFilter> transformFilter;
-  transformFilter->SetInput(imageDataGeometryFilter->GetOutput());
-  transformFilter->SetTransform(IJK2WorldTransform.GetPointer());
-
-  vtkSmartPointer<vtkPolyData> planes[6];
-
-  planes[0] = vtkSmartPointer<vtkPolyData>::New();
-  imageDataGeometryFilter->SetExtent(extent[0],extent[0], extent[2],extent[3],extent[4],extent[5]);
-  imageDataGeometryFilter->Update();
-  transformFilter->Update();
-  planes[0]->DeepCopy(transformFilter->GetOutput());
-
-  planes[1] = vtkSmartPointer<vtkPolyData>::New();
-  imageDataGeometryFilter->SetExtent(extent[1],extent[1], extent[2],extent[3],extent[4],extent[5]);
-  imageDataGeometryFilter->Update();
-  transformFilter->Update();
-  planes[1]->DeepCopy(transformFilter->GetOutput());
-
-  planes[2] = vtkSmartPointer<vtkPolyData>::New();
-  imageDataGeometryFilter->SetExtent(extent[0],extent[1], extent[2],extent[2],extent[4],extent[5]);
-  imageDataGeometryFilter->Update();
-  transformFilter->Update();
-  planes[2]->DeepCopy(transformFilter->GetOutput());
-
-  planes[3] = vtkSmartPointer<vtkPolyData>::New();
-  imageDataGeometryFilter->SetExtent(extent[0],extent[1], extent[3],extent[3],extent[4],extent[5]);
-  imageDataGeometryFilter->Update();
-  transformFilter->Update();
-  planes[3]->DeepCopy(transformFilter->GetOutput());
-
-  planes[4] = vtkSmartPointer<vtkPolyData>::New();
-  imageDataGeometryFilter->SetExtent(extent[0],extent[1], extent[2],extent[3],extent[4],extent[4]);
-  imageDataGeometryFilter->Update();
-  transformFilter->Update();
-  planes[4]->DeepCopy(transformFilter->GetOutput());
-
-  planes[5] = vtkSmartPointer<vtkPolyData>::New();
-  imageDataGeometryFilter->SetExtent(extent[0],extent[1], extent[2],extent[3],extent[5],extent[5]);
-  imageDataGeometryFilter->Update();
-  transformFilter->Update();
-  planes[5]->DeepCopy(transformFilter->GetOutput());
-
-  vtkNew<vtkAppendPolyData> appendPolyData;
-  for (int i=0; i<6; i++)
-    {
-    appendPolyData->AddInput(planes[i]);
-    }
-  appendPolyData->Update();
-  double bounds[6];
-  appendPolyData->GetOutput()->ComputeBounds();
-  appendPolyData->GetOutput()->GetBounds(bounds);
-
-  ****/
-
   vtkNew<vtkImageReslice> reslice;
   reslice->GenerateStencilOutputOn();
 
@@ -1117,42 +1044,47 @@ void vtkMRMLVolumeNode::ApplyNonLinearTransform(vtkAbstractTransform* transform)
 
   reslice->SetInputConnection(this->ImageDataConnection);
   reslice->SetInterpolationModeToLinear();
-  reslice->SetBackgroundColor(0, 0, 0, 0);
-  reslice->AutoCropOutputOff();
-  reslice->SetOptimization(1);
-
-  reslice->SetOutputOrigin( this->GetImageData()->GetOrigin() );
-  reslice->SetOutputSpacing( this->GetImageData()->GetSpacing() );
-  reslice->SetOutputDimensionality( 3 );
-
-  /***
-  double spacing[3];
-  double boxBounds[6];
-
-  int dimensions[3];
-  double origin[3];
-
-  this->GetOrigin(origin);
-  this->GetSpacing(spacing);
-  this->GetRASBounds(boxBounds);
-
-  for (int i=0; i<3; i++)
+  double backgroundColor[4] = { 0, 0, 0, 0 };
+  for (int i = 0; i < 4; i++)
     {
-    dimensions[i] = (bounds[2*i+1] - bounds[2*i])/spacing[i];
+    backgroundColor[i] = this->GetImageBackgroundScalarComponentAsDouble(i);
     }
-  reslice->SetOutputExtent( 0, dimensions[0],
-                            0, dimensions[1],
-                            0, dimensions[2]);
-  ***/
+  reslice->SetBackgroundColor(backgroundColor);
 
-  reslice->SetOutputExtent( extent);
+  // Enable AutoCropOutput to compute extent, origin, and spacing to avoid clipping.
+  // This requires that extent, origin, and spacing are not set manually
+  // (SetOutputOrigin, SetOutputSpacing, SetOutputExtent must not be called).
+  reslice->AutoCropOutputOn();
+
+  // Keep output spacing (1,1,1)
+  reslice->TransformInputSamplingOff();
+
+  reslice->SetOptimization(1);
+  reslice->SetOutputDimensionality(3);
 
   reslice->Update();
 
   vtkNew<vtkImageData> resampleImage;
   resampleImage->DeepCopy(reslice->GetOutput());
 
+  // Perform image data and origin update in one step
+  int wasModified = this->StartModify();
+
+  // Origin is stored in image node therefore origin in
+  // image data object must be set to (0,0,0).
+  double resampledOrigin_IJK[4] = { 0, 0, 0, 0 };
+  resampleImage->GetOrigin(resampledOrigin_IJK);
+  double resampledOrigin_RAS[4] = { 0, 0, 0, 0 };
+  IJKToRAS->MultiplyPoint(resampledOrigin_IJK, resampledOrigin_RAS);
+  double* origin = this->GetOrigin();
+  this->SetOrigin(
+    origin[0] + resampledOrigin_RAS[0],
+    origin[1] + resampledOrigin_RAS[1],
+    origin[2] + resampledOrigin_RAS[2]);
+  resampleImage->SetOrigin(0, 0, 0);
+
   this->SetAndObserveImageData(resampleImage.GetPointer());
+  this->EndModify(wasModified);
 }
 
 //---------------------------------------------------------------------------
@@ -1191,4 +1123,39 @@ void vtkMRMLVolumeNode::ShiftImageDataExtentToZeroStart()
     extent[2*i] = 0;
     }
   imageData->SetExtent(extent);
+}
+
+//---------------------------------------------------------------------------
+double vtkMRMLVolumeNode::GetImageBackgroundScalarComponentAsDouble(int component)
+{
+  vtkImageData* imageData = this->GetImageData();
+  if (!imageData)
+  {
+    return 0.0;
+  }
+
+  int extent[6] = { 0,-1,0,-1,0,-1 };
+  imageData->GetExtent(extent);
+
+  if (extent[0] > extent[1] || extent[2] > extent[3] || extent[4] > extent[5])
+  {
+    return 0.0;
+  }
+
+  std::vector<double> scalarValues;
+  scalarValues.push_back(imageData->GetScalarComponentAsDouble(extent[0], extent[2], extent[4], component));
+  scalarValues.push_back(imageData->GetScalarComponentAsDouble(extent[0], extent[2], extent[5], component));
+  scalarValues.push_back(imageData->GetScalarComponentAsDouble(extent[0], extent[3], extent[4], component));
+  scalarValues.push_back(imageData->GetScalarComponentAsDouble(extent[0], extent[3], extent[5], component));
+  scalarValues.push_back(imageData->GetScalarComponentAsDouble(extent[1], extent[2], extent[4], component));
+  scalarValues.push_back(imageData->GetScalarComponentAsDouble(extent[1], extent[2], extent[5], component));
+  scalarValues.push_back(imageData->GetScalarComponentAsDouble(extent[1], extent[3], extent[4], component));
+  scalarValues.push_back(imageData->GetScalarComponentAsDouble(extent[1], extent[3], extent[5], component));
+
+  // Get the median value (nth_element performs partial sorting until nth largest element is found)
+  const int medianElementIndex = 3;
+  std::nth_element(scalarValues.begin(), scalarValues.begin() + medianElementIndex, scalarValues.end());
+  double medianValue = scalarValues[medianElementIndex];
+
+  return medianValue;
 }
