@@ -45,14 +45,11 @@ Step1: Download the list of trusted CAs from mozilla website [4]
 
 Step2: Generate "Slicer.crt"
 
- ./make-ca.sh                                         &&
- ./remove-expired-certs.sh certs                      &&
- mv "BLFS-ca-bundle-0.crt"  "Slicer.crt"
+ ./make-ca.sh
 
 
 Step3: Clean-up
 
- rm -rf certs                               &&
  rm certdata.txt
 
 
