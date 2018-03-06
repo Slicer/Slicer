@@ -301,7 +301,7 @@ endif()
 
 Slicer_Remote_Add(EMSegment
   SVN_REPOSITORY "http://svn.slicer.org/Slicer3/branches/Slicer4-EMSegment"
-  SVN_REVISION -r "17149"
+  SVN_REVISION -r "17150"
   LICENSE_FILES "https://www.slicer.org/LICENSE"
   VERSION ${Slicer_VERSION}
   OPTION_NAME Slicer_BUILD_EMSegment
