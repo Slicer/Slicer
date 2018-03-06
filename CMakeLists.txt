@@ -785,11 +785,6 @@ include(SlicerMacroConfigureGenericCxxModuleTests)
 include(SlicerMacroConfigureGenericPythonModuleTests)
 
 if(BUILD_TESTING)
-  include(MIDAS)
-  set(MIDAS_REST_URL "http://midas.kitware.com/api/rest" CACHE STRING "The MIDAS server where testing data resides")
-  set(MIDAS_KEY_DIR "${Slicer_SOURCE_DIR}/Testing/Data")
-  set(MIDAS_DATA_DIR "${Slicer_BINARY_DIR}/MIDAS_Data")
-
   # The variable CXX_TEST_PATH should *NOT* be used when adding tests.
   # Instead the the $<TARGET_FILE:...> generator expression should be
   # considered. See r16586 for more details.
