@@ -554,7 +554,7 @@ void vtkSubjectHierarchyItem::WriteXML(ostream& of, int nIndent, vtkMRMLNode* xm
       {
       // Node is not saved with the scene, but may still have children, attributes, etc.
       // so write it to the scene but without data node ID.
-      of << " name=\"" << (this->DataNode->GetName() ? this->DataNode->GetName() : "") << "\"";
+      of << " name=\"" << xmlEncoderNode->XMLAttributeEncodeString(this->DataNode->GetName() ? this->DataNode->GetName() : "") << "\"";
       }
     }
   else if (!this->TemporaryDataNodeID.empty())
@@ -563,7 +563,7 @@ void vtkSubjectHierarchyItem::WriteXML(ostream& of, int nIndent, vtkMRMLNode* xm
     }
   else
     {
-    of << " name=\"" << this->Name << "\"";
+    of << " name=\"" << xmlEncoderNode->XMLAttributeEncodeString(this->Name) << "\"";
     }
 
   //TODO: Storing the parent is necessary if we want to avoid adding extra features to vtkMRMLParser.
