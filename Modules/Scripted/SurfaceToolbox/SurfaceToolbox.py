@@ -194,6 +194,21 @@ class SurfaceToolboxWidget(ScriptedLoadableModuleWidget):
     cleanerButton.checkable = True
     self.layout.addWidget(cleanerButton)
 
+    fillHolesButton = qt.QPushButton("Fill holes")
+    fillHolesButton.checkable = True
+    self.layout.addWidget(fillHolesButton)
+
+    fillHolesFrame = qt.QFrame(self.parent)
+    self.layout.addWidget(fillHolesFrame)
+    fillHolesFormLayout = qt.QFormLayout(fillHolesFrame)
+
+    fillHolesSizeFrame, fillHolesSizeSlider, fillHolesSizeSpinBox = numericInputFrame(self.parent,"Maximum hole size:",
+      "Specifies the maximum size of holes that will be filled. This is represented as a radius to the bounding"
+      +" circumsphere containing the hole. Note that this is an approximate area; the actual area cannot be"
+      +" computed without first triangulating the hole. "
+      , 0.0, 1000, 0.1, 1)
+    fillHolesFormLayout.addWidget(fillHolesSizeFrame)
+
     connectivityButton = qt.QPushButton("Connectivity")
     connectivityButton.checkable = True
     self.layout.addWidget(connectivityButton)
@@ -244,6 +259,8 @@ class SurfaceToolboxWidget(ScriptedLoadableModuleWidget):
       splitting = False
       featureAngle = 30.0
       cleaner = False
+      fillHoles = False
+      fillHolesSize = 1000.0
       connectivity = False
 
     scope_locals = locals()
@@ -292,6 +309,7 @@ class SurfaceToolboxWidget(ScriptedLoadableModuleWidget):
       featureAngleFrame.visible = state.splitting
       featureAngleSlider.value = state.featureAngle
       featureAngleSpinBox.value = state.featureAngle
+      featureAngleFrame.visible = state.splitting
 
       mirrorButton.checked = state.mirror
       mirrorFrame.visible = state.mirror
@@ -300,6 +318,11 @@ class SurfaceToolboxWidget(ScriptedLoadableModuleWidget):
       mirrorZCheckBox.checked = state.mirrorZ
 
       cleanerButton.checked = state.cleaner
+
+      fillHolesButton.checked = state.fillHoles
+      fillHolesFrame.visible = state.fillHoles
+      fillHolesSizeSlider.value = state.fillHolesSize
+      fillHolesSizeSpinBox.value = state.fillHolesSize
 
       connectivityButton.checked = state.connectivity
 
@@ -355,6 +378,11 @@ class SurfaceToolboxWidget(ScriptedLoadableModuleWidget):
     connect(mirrorZCheckBox, 'toggled(bool)', 'state.mirrorZ = bool(args[0])')
 
     connect(cleanerButton, 'clicked(bool)', 'state.cleaner = args[0]')
+
+    connect(fillHolesButton, 'clicked(bool)', 'state.fillHoles = args[0]')
+    connect(fillHolesSizeSlider, 'valueChanged(double)', 'state.fillHolesSize = args[0]')
+    connect(fillHolesSizeSpinBox, 'valueChanged(double)', 'state.fillHolesSize = args[0]')
+
     connect(connectivityButton, 'clicked(bool)', 'state.connectivity = args[0]')
 
     def onApply():
@@ -457,6 +485,19 @@ class SurfaceToolboxLogic(ScriptedLoadableModuleLogic):
       cleaner = vtk.vtkCleanPolyData()
       cleaner.SetInputConnection(surface)
       surface = cleaner.GetOutputPort()
+
+    if state.fillHoles:
+      fillHoles = vtk.vtkFillHolesFilter()
+      fillHoles.SetHoleSize(state.fillHolesSize)
+      fillHoles.SetInputConnection(surface)
+      # Need to auto-orient normals, otherwise holes
+      # could appear to be unfilled when only front-facing elements
+      # are chosen to be visible.
+      normals = vtk.vtkPolyDataNormals()
+      normals.AutoOrientNormalsOn()
+      normals.ConsistencyOn()
+      normals.SetInputConnection(fillHoles.GetOutputPort())
+      surface = normals.GetOutputPort()
 
     if state.connectivity:
       connectivity = vtk.vtkPolyDataConnectivityFilter()
