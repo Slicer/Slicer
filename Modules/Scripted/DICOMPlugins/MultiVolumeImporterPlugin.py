@@ -43,6 +43,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     self.multiVolumeTags['ContentTime'] = "0008,0033"
     # Siemens Somatom Cardiac CT 'ScanOptions' tag contains info on cardiac cycle
     self.multiVolumeTags['CardiacCycle'] = "0018,0022"
+    # GE Revolution CT uses 'NominalPercentageOfCardiacPhase' tag to identify cardiac cycle
+    self.multiVolumeTags['NominalPercentageOfCardiacPhase'] = "0020,9241"
     # this one is GE-specific using the private tag
     self.multiVolumeTags['Siemens.B-value'] = "0019,100c"
     self.multiVolumeTags['GE.B-value'] = "0043,1039"
@@ -69,6 +71,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     self.multiVolumeTagsUnits['Philips.B-value'] = "sec/mm2"
     self.multiVolumeTagsUnits['Standard.B-value'] = "sec/mm2"
     self.multiVolumeTagsUnits['CardiacCycle'] = "%"
+    self.multiVolumeTagsUnits['NominalPercentageOfCardiacPhase'] = "%"
     self.epsilon = epsilon
 
   @staticmethod
