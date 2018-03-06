@@ -125,25 +125,28 @@
     }
 
 /// Macro for reading char* node property from XML.
+/// XML decoding is not needed as attribute values are already decoded by the XML parser.
 #define vtkMRMLReadXMLStringMacro(xmlAttributeName, propertyName) \
   if (!strcmp(xmlReadAttName, #xmlAttributeName)) \
     { \
-    this->Set##propertyName(vtkMRMLNode::XMLAttributeDecodeString(xmlReadAttValue).c_str()); \
+    this->Set##propertyName(xmlReadAttValue); \
     }
 
 /// Macro for reading std::string node property from XML.
+/// XML decoding is not needed as attribute values are already decoded by the XML parser.
 #define vtkMRMLReadXMLStdStringMacro(xmlAttributeName, propertyName) \
   if (!strcmp(xmlReadAttName, #xmlAttributeName)) \
     { \
-    this->Set##propertyName(vtkMRMLNode::XMLAttributeDecodeString(xmlReadAttValue)); \
+    this->Set##propertyName(xmlReadAttValue); \
     }
 
 /// Macro for reading enum node property from XML.
 /// Requires Get(propertyName)FromString method to convert from string to numeric value.
+/// XML decoding is not needed as attribute values are already decoded by the XML parser.
 #define vtkMRMLReadXMLEnumMacro(xmlAttributeName, propertyName) \
   if (!strcmp(xmlReadAttName, #xmlAttributeName)) \
     { \
-    int propertyValue = this->Get##propertyName##FromString(vtkMRMLNode::XMLAttributeDecodeString(xmlReadAttValue).c_str()); \
+    int propertyValue = this->Get##propertyName##FromString(xmlReadAttValue); \
     if (propertyValue >= 0) \
       { \
       this->Set##propertyName(propertyValue); \

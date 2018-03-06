@@ -123,9 +123,8 @@ void vtkMRMLSubjectHierarchyLegacyNode::ReadXMLAttributes(const char** atts)
         std::string itemStr = valueStr.substr(0, itemSeparatorPosition);
         size_t nameValueSeparatorPosition = itemStr.find(vtkMRMLSubjectHierarchyLegacyNode::SUBJECTHIERARCHY_UID_NAME_VALUE_SEPARATOR);
 
-        std::string name = vtkMRMLNode::XMLAttributeDecodeString(itemStr.substr(0, nameValueSeparatorPosition));
-        std::string value = vtkMRMLNode::XMLAttributeDecodeString(
-          itemStr.substr(nameValueSeparatorPosition + vtkMRMLSubjectHierarchyLegacyNode::SUBJECTHIERARCHY_UID_NAME_VALUE_SEPARATOR.size()) );
+        std::string name = itemStr.substr(0, nameValueSeparatorPosition);
+        std::string value = itemStr.substr(nameValueSeparatorPosition + vtkMRMLSubjectHierarchyLegacyNode::SUBJECTHIERARCHY_UID_NAME_VALUE_SEPARATOR.size());
         this->UIDs[name] = value;
 
         valueStr = valueStr.substr(itemSeparatorPosition + vtkMRMLSubjectHierarchyLegacyNode::SUBJECTHIERARCHY_UID_ITEM_SEPARATOR.size());
@@ -136,9 +135,8 @@ void vtkMRMLSubjectHierarchyLegacyNode::ReadXMLAttributes(const char** atts)
         std::string itemStr = valueStr.substr(0, itemSeparatorPosition);
         size_t tagLevelSeparatorPosition = itemStr.find(vtkMRMLSubjectHierarchyLegacyNode::SUBJECTHIERARCHY_UID_NAME_VALUE_SEPARATOR);
 
-        std::string name = vtkMRMLNode::XMLAttributeDecodeString(itemStr.substr(0, tagLevelSeparatorPosition));
-        std::string value = vtkMRMLNode::XMLAttributeDecodeString(
-          itemStr.substr(tagLevelSeparatorPosition + vtkMRMLSubjectHierarchyLegacyNode::SUBJECTHIERARCHY_UID_NAME_VALUE_SEPARATOR.size()) );
+        std::string name = itemStr.substr(0, tagLevelSeparatorPosition);
+        std::string value = itemStr.substr(tagLevelSeparatorPosition + vtkMRMLSubjectHierarchyLegacyNode::SUBJECTHIERARCHY_UID_NAME_VALUE_SEPARATOR.size());
         this->UIDs[name] = value;
         }
       }

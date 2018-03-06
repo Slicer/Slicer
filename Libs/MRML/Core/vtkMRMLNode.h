@@ -572,12 +572,16 @@ public:
   /// \sa URLEncodeString()
   const char *URLDecodeString(const char *inString);
 
-  /// \brief Encode an XML attribute string (replaces special characters by .
+  /// \brief Encode an XML attribute string (replaces special characters by code sequences)
   ///
   /// \sa XMLAttributeDecodeString()
   std::string XMLAttributeEncodeString(const std::string& inString);
 
-  /// \brief Decode a URL string.
+  /// \brief Decode an XML attribute string.
+  ///
+  /// Important: attributes that vtkMRMLNode::ReadXMLAttributes method receives are
+  /// already decoded, therefore no XML attribute decoding must not be applied to
+  /// those strings.
   ///
   /// \sa XMLAttributeEncodeString()
   std::string XMLAttributeDecodeString(const std::string& inString);

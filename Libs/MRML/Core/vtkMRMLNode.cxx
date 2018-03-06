@@ -383,6 +383,9 @@ void vtkMRMLNode::ReadXMLAttributes(const char** atts)
          int colonIndex = attribute.find(':');
          std::string name = attribute.substr(0, colonIndex);
          std::string value = attribute.substr(colonIndex + 1);
+         // decode percent sign and semicolon (semicolon is a special character because it separates attributes)
+         vtksys::SystemTools::ReplaceString(value, "%3B", ";");
+         vtksys::SystemTools::ReplaceString(value, "%25", "%");
          this->SetAttribute(name.c_str(), value.c_str());
          }
        }
@@ -480,7 +483,11 @@ void vtkMRMLNode::WriteXML(ostream& of, int nIndent)
         {
         of << ';';
         }
-      of << it->first << ':' << it->second;
+      std::string attributeValue = it->second;
+      // encode percent sign and semicolon (semicolon is a special character because it separates attributes)
+      vtksys::SystemTools::ReplaceString(attributeValue, "%", "%25");
+      vtksys::SystemTools::ReplaceString(attributeValue, ";", "%3B");
+      of << this->XMLAttributeEncodeString(it->first) << ':' << this->XMLAttributeEncodeString(attributeValue);
       }
     of << "\"";
     }

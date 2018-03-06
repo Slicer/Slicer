@@ -59,7 +59,7 @@ public:
   static vtkSubjectHierarchyItem *New();
   vtkTypeMacro(vtkSubjectHierarchyItem, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
-  void ReadXMLAttributes(const char** atts, vtkMRMLNode* xmlDecoderNode);
+  void ReadXMLAttributes(const char** atts);
   void WriteXML(ostream& of, int indent, vtkMRMLNode* xmlEncoderNode);
   void DeepCopy(vtkSubjectHierarchyItem* item, bool copyChildren=true);
 
@@ -403,21 +403,15 @@ void vtkSubjectHierarchyItem::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //---------------------------------------------------------------------------
-void vtkSubjectHierarchyItem::ReadXMLAttributes(const char** atts, vtkMRMLNode* xmlDecoderNode)
+void vtkSubjectHierarchyItem::ReadXMLAttributes(const char** atts)
 {
-  if (!xmlDecoderNode)
-    {
-    vtkErrorMacro("ReadXMLAttributes: Invalid XML decoder node");
-    return;
-    }
-
   const char* attName = NULL;
   const char* attValue = NULL;
 
   while (*atts != NULL)
     {
     attName = *(atts++);
-    attValue = *(atts++);
+    attValue = *(atts++); // already XML-decoded (e.g., &amp; decoded to &)
 
     if (!strcmp(attName, "id"))
       {
@@ -473,9 +467,8 @@ void vtkSubjectHierarchyItem::ReadXMLAttributes(const char** atts, vtkMRMLNode* 
         std::string itemStr = valueStr.substr(0, itemSeparatorPosition);
         size_t nameValueSeparatorPosition = itemStr.find(vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_NAME_VALUE_SEPARATOR);
 
-        std::string name = xmlDecoderNode->XMLAttributeDecodeString(itemStr.substr(0, nameValueSeparatorPosition));
-        std::string value = xmlDecoderNode->XMLAttributeDecodeString(
-          itemStr.substr(nameValueSeparatorPosition + vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_NAME_VALUE_SEPARATOR.size()) );
+        std::string name = itemStr.substr(0, nameValueSeparatorPosition);
+        std::string value = itemStr.substr(nameValueSeparatorPosition + vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_NAME_VALUE_SEPARATOR.size());
         this->UIDs[name] = value;
 
         valueStr = valueStr.substr(itemSeparatorPosition + vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_SEPARATOR.size());
@@ -486,9 +479,8 @@ void vtkSubjectHierarchyItem::ReadXMLAttributes(const char** atts, vtkMRMLNode* 
         std::string itemStr = valueStr.substr(0, itemSeparatorPosition);
         size_t nameValueSeparatorPosition = itemStr.find(vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_NAME_VALUE_SEPARATOR);
 
-        std::string name = xmlDecoderNode->XMLAttributeDecodeString(itemStr.substr(0, nameValueSeparatorPosition));
-        std::string value = xmlDecoderNode->XMLAttributeDecodeString(
-          itemStr.substr(nameValueSeparatorPosition + vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_NAME_VALUE_SEPARATOR.size()) );
+        std::string name = itemStr.substr(0, nameValueSeparatorPosition);
+        std::string value = itemStr.substr(nameValueSeparatorPosition + vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_NAME_VALUE_SEPARATOR.size());
         this->UIDs[name] = value;
         }
       }
@@ -505,9 +497,8 @@ void vtkSubjectHierarchyItem::ReadXMLAttributes(const char** atts, vtkMRMLNode* 
         std::string itemStr = valueStr.substr(0, itemSeparatorPosition);
         size_t nameValueSeparatorPosition = itemStr.find(vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_NAME_VALUE_SEPARATOR);
 
-        std::string name = xmlDecoderNode->XMLAttributeDecodeString(itemStr.substr(0, nameValueSeparatorPosition));
-        std::string value = xmlDecoderNode->XMLAttributeDecodeString(
-          itemStr.substr(nameValueSeparatorPosition + vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_NAME_VALUE_SEPARATOR.size()) );
+        std::string name = itemStr.substr(0, nameValueSeparatorPosition);
+        std::string value = itemStr.substr(nameValueSeparatorPosition + vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_NAME_VALUE_SEPARATOR.size());
         this->Attributes[name] = value;
 
         valueStr = valueStr.substr(itemSeparatorPosition + vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_SEPARATOR.size());
@@ -518,9 +509,8 @@ void vtkSubjectHierarchyItem::ReadXMLAttributes(const char** atts, vtkMRMLNode* 
         std::string itemStr = valueStr.substr(0, itemSeparatorPosition);
         size_t nameValueSeparatorPosition = itemStr.find(vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_NAME_VALUE_SEPARATOR);
 
-        std::string name = xmlDecoderNode->XMLAttributeDecodeString(itemStr.substr(0, nameValueSeparatorPosition));
-        std::string value = xmlDecoderNode->XMLAttributeDecodeString(
-          itemStr.substr(nameValueSeparatorPosition + vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_NAME_VALUE_SEPARATOR.size()) );
+        std::string name = itemStr.substr(0, nameValueSeparatorPosition);
+        std::string value = itemStr.substr(nameValueSeparatorPosition + vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_NAME_VALUE_SEPARATOR.size());
         this->Attributes[name] = value;
         }
       }
@@ -1769,7 +1759,7 @@ void vtkMRMLSubjectHierarchyNode::ReadItemFromXML(const char** atts)
 {
   // Create subject hierarchy item, and read its attributes
   vtkSmartPointer<vtkSubjectHierarchyItem> item = vtkSmartPointer<vtkSubjectHierarchyItem>::New();
-  item->ReadXMLAttributes(atts, this);
+  item->ReadXMLAttributes(atts);
 
   // Add item to the unresolved items.
   // These items will be resolved (item ID, parent and children item pointers, data node ID and pointer)

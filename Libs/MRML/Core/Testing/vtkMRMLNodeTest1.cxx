@@ -193,12 +193,13 @@ bool TestSetNodeReferenceIDToZeroOrEmptyString();
 bool TestNodeReferenceSerialization();
 bool TestClearScene();
 bool TestImportSceneReferenceValidDuringImport();
-
+int TestSaveLoadSpecialCharacters();
 
 //---------------------------------------------------------------------------
 int vtkMRMLNodeTest1(int , char * [] )
 {
   bool res = true;
+  res = res && (TestSaveLoadSpecialCharacters() == EXIT_SUCCESS);
   res = res && (TestBasicMethods() == EXIT_SUCCESS);
   res = res && (TestAttribute() == EXIT_SUCCESS);
   res = res && TestCopyWithScene();
@@ -3214,4 +3215,47 @@ bool TestImportSceneReferenceValidDuringImport()
     }
 
   return true;
+}
+
+//---------------------------------------------------------------------------
+int TestSaveLoadSpecialCharacters()
+{
+  vtkNew<vtkMRMLScene> scene;
+
+  const std::string special1 = "Test that special characters can be stored -- ampersand : (&) quote : (\") apostrophe: (') less: (<) greater: (>)";
+  const std::string special2 = "Test that content is not double-decoded -- &amp; &quot; &apos; &lt; &gt; &nbsp;";
+  const std::string special3 = "Test attribute percentage encoding -- % %3B %25 %% something";
+
+  vtkNew<vtkMRMLModelNode> node;
+  scene->AddNode(node.GetPointer());
+  node->SetName(special1.c_str());
+  node->SetDescription(special2.c_str());
+  node->SetAttribute("special1Att", special1.c_str());
+  node->SetAttribute("special2Att", special2.c_str());
+  node->SetAttribute("special3Att", special3.c_str());
+
+  std::stringstream ss;
+
+  // Write scene to XML string
+  scene->SetSaveToXMLString(1);
+  CHECK_BOOL(scene->Commit() != 0, true);
+  std::string sceneXMLString = scene->GetSceneXMLString();
+
+  std::cout << sceneXMLString << std::endl;
+
+  vtkNew<vtkMRMLScene> sceneReloaded;
+  sceneReloaded->SetLoadFromXMLString(1);
+  sceneReloaded->SetSceneXMLString(sceneXMLString);
+  CHECK_BOOL(sceneReloaded->Import() != 0, true);
+
+  vtkMRMLNode* nodeReloaded = sceneReloaded->GetFirstNodeByClass("vtkMRMLModelNode");
+  CHECK_NOT_NULL(nodeReloaded);
+
+  CHECK_STRING(node->GetName(), nodeReloaded->GetName());
+  CHECK_STRING(node->GetDescription(), nodeReloaded->GetDescription());
+  CHECK_STRING(node->GetAttribute("special1Att"), nodeReloaded->GetAttribute("special1Att"));
+  CHECK_STRING(node->GetAttribute("special2Att"), nodeReloaded->GetAttribute("special2Att"));
+  CHECK_STRING(node->GetAttribute("special3Att"), nodeReloaded->GetAttribute("special3Att"));
+
+  return EXIT_SUCCESS;
 }
