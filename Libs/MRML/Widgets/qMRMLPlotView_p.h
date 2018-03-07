@@ -80,6 +80,9 @@ public:
   // If returned plot differs from the existin plot, then existing plot must be replaced by the returned one.
   vtkSmartPointer<vtkPlot> updatePlotFromPlotSeriesNode(vtkMRMLPlotSeriesNode* plotSeriesNode, vtkPlot* existingPlot);
 
+  // Adjust range to make it displayable with logarithmic scale
+  void adjustRangeForLogScale(double range[2], double computedLimit[2]);
+
 public slots:
   /// Handle MRML scene event
   void startProcessing();

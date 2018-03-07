@@ -54,6 +54,8 @@ vtkMRMLPlotChartNode::vtkMRMLPlotChartNode()
 , LegendFontSize(16)
 , XAxisRangeAuto(true)
 , YAxisRangeAuto(true)
+, XAxisLogScale(false)
+, YAxisLogScale(false)
 , XAxisTitle(NULL)
 , XAxisTitleVisibility(true)
 , YAxisTitle(NULL)
@@ -159,6 +161,8 @@ void vtkMRMLPlotChartNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLBooleanMacro(yAxisRangeAuto, YAxisRangeAuto);
   vtkMRMLWriteXMLVectorMacro(xAxisRange, XAxisRange, double, 2);
   vtkMRMLWriteXMLVectorMacro(yAxisRange, YAxisRange, double, 2);
+  vtkMRMLWriteXMLBooleanMacro(xAxisLogScale, XAxisLogScale);
+  vtkMRMLWriteXMLBooleanMacro(yAxisLogScale, YAxisLogScale);
   vtkMRMLWriteXMLStringMacro(xAxisTitle, XAxisTitle);
   vtkMRMLWriteXMLBooleanMacro(xAxisTitleVisibility, XAxisTitleVisibility);
   vtkMRMLWriteXMLStringMacro(yAxisTitle, YAxisTitle);
@@ -189,6 +193,8 @@ void vtkMRMLPlotChartNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLBooleanMacro(yAxisRangeAuto, YAxisRangeAuto);
   vtkMRMLReadXMLVectorMacro(xAxisRange, XAxisRange, double, 2);
   vtkMRMLReadXMLVectorMacro(yAxisRange, YAxisRange, double, 2);
+  vtkMRMLReadXMLBooleanMacro(xAxisLogScale, XAxisLogScale);
+  vtkMRMLReadXMLBooleanMacro(yAxisLogScale, YAxisLogScale);
   vtkMRMLReadXMLStringMacro(xAxisTitle, XAxisTitle);
   vtkMRMLReadXMLBooleanMacro(xAxisTitleVisibility, XAxisTitleVisibility);
   vtkMRMLReadXMLStringMacro(yAxisTitle, YAxisTitle);
@@ -223,6 +229,8 @@ void vtkMRMLPlotChartNode::Copy(vtkMRMLNode *anode)
   vtkMRMLCopyBooleanMacro(YAxisRangeAuto);
   vtkMRMLCopyVectorMacro(XAxisRange, double, 2);
   vtkMRMLCopyVectorMacro(YAxisRange, double, 2);
+  vtkMRMLCopyBooleanMacro(XAxisLogScale);
+  vtkMRMLCopyBooleanMacro(YAxisLogScale);
   vtkMRMLCopyStringMacro(XAxisTitle);
   vtkMRMLCopyBooleanMacro(XAxisTitleVisibility);
   vtkMRMLCopyStringMacro(YAxisTitle);
@@ -253,6 +261,8 @@ void vtkMRMLPlotChartNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintBooleanMacro(YAxisRangeAuto);
   vtkMRMLPrintVectorMacro(XAxisRange, double, 2);
   vtkMRMLPrintVectorMacro(YAxisRange, double, 2);
+  vtkMRMLPrintBooleanMacro(XAxisLogScale);
+  vtkMRMLPrintBooleanMacro(YAxisLogScale);
   vtkMRMLPrintStringMacro(XAxisTitle);
   vtkMRMLPrintBooleanMacro(XAxisTitleVisibility);
   vtkMRMLPrintStringMacro(YAxisTitle);

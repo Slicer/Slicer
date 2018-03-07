@@ -60,10 +60,10 @@ public slots:
   void setMRMLPlotChartNode(vtkMRMLPlotChartNode* plotChartNode);
 
   /// Control the display of a grid in the chart.
-  void gridVisibility(bool show);
+  void setGridVisibility(bool show);
 
   /// Control the display of the legend in the chart.
-  void legendVisibility(bool show);
+  void setLegendVisibility(bool show);
 
   /// Set the title.
   /// \sa TitleVisibility
@@ -77,13 +77,31 @@ public slots:
   /// \sa showYAxisLabel
   void setYAxisLabel(const QString& str);
 
-  void xAxisManualRangeEnabled(bool);
-  void onXAxisRangeMinChanged(double);
-  void onXAxisRangeMaxChanged(double);
+  /// Change the type of font used in the plot.
+  void setFontType(const QString& type);
 
-  void yAxisManualRangeEnabled(bool);
-  void onYAxisRangeMinChanged(double);
-  void onYAxisRangeMaxChanged(double);
+  /// Change the font size of the title of the plot.
+  void setTitleFontSize(double size);
+
+  /// Change the font size of the legend of the plot.
+  void setLegendFontSize(double size);
+
+  /// Change the font size of the title of the axes.
+  void setAxisTitleFontSize(double size);
+
+  /// Change the font size of the labels of the axes.
+  void setAxisLabelFontSize(double size);
+
+  void setXAxisManualRangeEnabled(bool);
+  void setXAxisRangeMin(double);
+  void setXAxisRangeMax(double);
+
+  void setYAxisManualRangeEnabled(bool);
+  void setYAxisRangeMin(double);
+  void setYAxisRangeMax(double);
+
+  void setXAxisLogScale(bool);
+  void setYAxisLogScale(bool);
 
 signals:
 

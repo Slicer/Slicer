@@ -211,6 +211,30 @@ vtkMRMLPlotSeriesNode* qMRMLPlotViewPrivate::plotSeriesNodeFromPlot(vtkPlot* plo
 }
 
 // --------------------------------------------------------------------------
+void qMRMLPlotViewPrivate::adjustRangeForLogScale(double range[2], double computedLimit[2])
+{
+  // Log scale is only enabled for positive axis range,
+  // as vtkAxis behavior is inconsistent for negative values.
+  if (range[1] <= 0)
+    {
+    computedLimit[0] = 0.1;
+    computedLimit[1] = 1;
+    range[0] = 0.1;
+    range[1] = 1;
+    return;
+    }
+
+  computedLimit[0] = 0;
+  computedLimit[1] = vtkMath::Inf();
+  if (range[0] <= 0)
+    {
+    // The minimum value is set to either 4 decades below the max or to 1,
+    // regardless of the true minimum value (which is less than 0)
+    range[0] = (range[1] < 1.e4 ? range[1] / 1.e4 : 1.);
+    }
+}
+
+// --------------------------------------------------------------------------
 vtkSmartPointer<vtkPlot> qMRMLPlotViewPrivate::updatePlotFromPlotSeriesNode(vtkMRMLPlotSeriesNode* plotSeriesNode, vtkPlot* existingPlot)
 {
   if (plotSeriesNode == NULL)
@@ -432,7 +456,8 @@ void qMRMLPlotViewPrivate::RecalculateBounds()
     }
 
   // The following is a clone of vtkChartXY::RecalculatePlotBounds(),
-  // with the difference that axis is rescaled even if its behavior is not set to vtkAxis::AUTO.
+  // with the difference that axis is rescaled even if its behavior is not set to vtkAxis::AUTO
+  // and how log scale range and limits are computed.
 
   // Get the bounds of each plot, and each axis  - ordering as laid out below
   double y1[] = { 0.0, 0.0 }; // left -> 0
@@ -449,7 +474,7 @@ void qMRMLPlotViewPrivate::RecalculateBounds()
       {
       continue;
       }
-    plot->GetBounds(bounds);
+    plot->GetUnscaledInputBounds(bounds);
     if (bounds[1] - bounds[0] < 0.0)
       {
       // skip uninitialized bounds.
@@ -546,7 +571,7 @@ void qMRMLPlotViewPrivate::RecalculateBounds()
     vtkAxis* axis = q->chart()->GetAxis(i);
     double* range = NULL;
     switch (i)
-    {
+      {
     case 0:
       range = y1;
       break;
@@ -561,34 +586,18 @@ void qMRMLPlotViewPrivate::RecalculateBounds()
       break;
     default:
       return;
-    }
+      }
 
-    if (q->chart()->GetAdjustLowerBoundForLogPlot() && axis->GetLogScale() && range[0] <= 0.)
-      {
-      if (range[1] <= 0.)
-        {
-        // All of the data is negative, so we arbitrarily set the axis range to
-        // be positive and show no data
-        range[1] = 1.;
-        }
-      // The minimum value is set to either 4 decades below the max or to 1,
-      // regardless of the true minimum value (which is less than 0)
-      range[0] = (range[1] < 1.e4 ? range[1] / 1.e4 : 1.);
+    double limit[2] = { -vtkMath::Inf(), vtkMath::Inf() };
+    if (axis->GetLogScale())
+     {
+      this->adjustRangeForLogScale(range, limit);
       }
-    if (q->chart()->GetForceAxesToBounds())
-      {
-      axis->SetUnscaledMinimumLimit(range[0]);
-      axis->SetUnscaledMaximumLimit(range[1]);
-      }
-    if (initialized[i])
-      {
-      axis->SetUnscaledRange(range[0], range[1]);
-      axis->AutoScale();
-      }
-    }
-
-  //q->chart()->Modified();
-  // end of code adopted from vtkChartXY::RecalculatePlotBounds()
+    axis->SetUnscaledMinimumLimit(limit[0]);
+    axis->SetUnscaledMaximumLimit(limit[1]);
+    axis->SetUnscaledRange(range[0], range[1]);
+    axis->AutoScale();
+  }
 
   //q->chart()->RecalculatePlotTransforms();
 
@@ -848,6 +857,9 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
       continue;
       }
     // Assuming the the Top and Bottom axes are the "X" axis
+    bool mrmlLogScale = false;
+    bool mrmlRangeAuto = true;
+    double mrmlRange[2] = { 0.0, 1.0 };
     if (axisID == vtkAxis::BOTTOM || axisID == vtkAxis::TOP)
       {
       if (plotChartNode->GetXAxisTitleVisibility())
@@ -858,17 +870,11 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
         {
         axis->SetTitle("");
         }
-      if (plotChartNode->GetXAxisRangeAuto())
-        {
-        axis->SetBehavior(vtkAxis::AUTO);
-        }
-      else
-        {
-        axis->SetBehavior(vtkAxis::FIXED);
-        axis->SetUnscaledRange(plotChartNode->GetXAxisRange());
-        }
+      mrmlLogScale = plotChartNode->GetXAxisLogScale();
+      mrmlRangeAuto = plotChartNode->GetXAxisRangeAuto();
+      plotChartNode->GetXAxisRange(mrmlRange);
       }
-    else if (axisID == vtkAxis::LEFT || axisID == vtkAxis::RIGHT)
+    else // (axisID == vtkAxis::LEFT || axisID == vtkAxis::RIGHT)
       {
       if (plotChartNode->GetYAxisTitleVisibility())
         {
@@ -878,16 +884,47 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
         {
         axis->SetTitle("");
         }
-      if (plotChartNode->GetYAxisRangeAuto())
-        {
-        axis->SetBehavior(vtkAxis::AUTO);
-        }
-      else
-        {
-        axis->SetBehavior(vtkAxis::FIXED);
-        axis->SetUnscaledRange(plotChartNode->GetYAxisRange());
-        }
+      mrmlLogScale = plotChartNode->GetYAxisLogScale();
+      mrmlRangeAuto = plotChartNode->GetYAxisRangeAuto();
+      plotChartNode->GetYAxisRange(mrmlRange);
       }
+
+    if (mrmlRangeAuto)
+      {
+      // Automatic range
+      if (axis->GetLogScale() != mrmlLogScale)
+        {
+        double unscaledRange[2] = { 0.0, 1.0 };
+        double limit[2] = { -vtkMath::Inf(), vtkMath::Inf() };
+        axis->GetUnscaledRange(unscaledRange);
+        axis->SetLogScale(mrmlLogScale);
+        if (mrmlLogScale)
+          {
+          this->adjustRangeForLogScale(unscaledRange, limit);
+          }
+        axis->SetUnscaledMinimumLimit(limit[0]);
+        axis->SetUnscaledMaximumLimit(limit[1]);
+        axis->SetUnscaledRange(unscaledRange);
+        axis->Update();
+        }
+      axis->SetBehavior(vtkAxis::AUTO);
+      }
+    else
+      {
+      // Manual range
+      axis->SetBehavior(vtkAxis::FIXED);
+      axis->SetLogScale(mrmlLogScale);
+      double limit[2] = { -vtkMath::Inf(), vtkMath::Inf() };
+      if (mrmlLogScale)
+        {
+        this->adjustRangeForLogScale(mrmlRange, limit);
+        }
+      axis->SetUnscaledMinimumLimit(limit[0]);
+      axis->SetUnscaledMaximumLimit(limit[1]);
+      axis->SetUnscaledRange(mrmlRange);
+      axis->Update();
+      }
+
     axis->SetGridVisible(plotChartNode->GetGridVisibility());
     axis->GetTitleProperties()->SetFontFamily(fontTypeIndex);
     axis->GetTitleProperties()->SetFontSize(plotChartNode->GetAxisTitleFontSize());

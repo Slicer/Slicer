@@ -209,6 +209,18 @@ class VTK_MRML_EXPORT vtkMRMLPlotChartNode : public vtkMRMLNode
   vtkGetVector2Macro(YAxisRange, double);
   vtkSetVector2Macro(YAxisRange, double);
 
+  /// Enable logarithmic scaling of X axis.
+  /// Only positive axis range can be displayed using logarithmic scale.
+  vtkGetMacro(XAxisLogScale, bool);
+  vtkSetMacro(XAxisLogScale, bool);
+  vtkBooleanMacro(XAxisLogScale, bool);
+
+  /// Enable logarithmic scaling of Y axis.
+  /// Only positive axis range can be displayed using logarithmic scale.
+  vtkGetMacro(YAxisLogScale, bool);
+  vtkSetMacro(YAxisLogScale, bool);
+  vtkBooleanMacro(YAxisLogScale, bool);
+
   /// Title of X axis
   vtkSetStringMacro(XAxisTitle);
   vtkGetStringMacro(XAxisTitle);
@@ -295,6 +307,8 @@ class VTK_MRML_EXPORT vtkMRMLPlotChartNode : public vtkMRMLNode
   bool YAxisRangeAuto;
   double XAxisRange[2];
   double YAxisRange[2];
+  bool XAxisLogScale;
+  bool YAxisLogScale;
   char* XAxisTitle;
   bool XAxisTitleVisibility;
   char* YAxisTitle;

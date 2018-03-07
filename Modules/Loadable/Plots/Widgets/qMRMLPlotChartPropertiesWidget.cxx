@@ -67,15 +67,15 @@ void qMRMLPlotChartPropertiesWidgetPrivate::setupUi(qMRMLWidget* widget)
 
   // PlotChart Properties
   this->connect(this->fontTypeComboBox, SIGNAL(currentIndexChanged(const QString&)),
-                this, SLOT(onFontTypeChanged(const QString&)));
+    q, SLOT(setFontType(const QString&)));
   this->connect(this->titleFontSizeDoubleSpinBox, SIGNAL(valueChanged(double)),
-                this, SLOT(onTitleFontSizeChanged(double)));
+    q, SLOT(setTitleFontSize(double)));
   this->connect(this->legendFontSizeDoubleSpinBox, SIGNAL(valueChanged(double)),
-                this, SLOT(onLegendFontSizeChanged(double)));
+    q, SLOT(setLegendFontSize(double)));
   this->connect(this->axisTitleFontSizeDoubleSpinBox, SIGNAL(valueChanged(double)),
-                this, SLOT(onAxisTitleFontSizeChanged(double)));
+    q, SLOT(setAxisTitleFontSize(double)));
   this->connect(this->axisLabelFontSizeDoubleSpinBox, SIGNAL(valueChanged(double)),
-                this, SLOT(onAxisLabelFontSizeChanged(double)));
+    q, SLOT(setAxisLabelFontSize(double)));
 
   QObject::connect(this->titleLineEdit, SIGNAL(textEdited(const QString&)),
     q, SLOT(setTitle(const QString&)));
@@ -84,23 +84,28 @@ void qMRMLPlotChartPropertiesWidgetPrivate::setupUi(qMRMLWidget* widget)
   QObject::connect(this->yAxisLabelLineEdit, SIGNAL(textEdited(const QString&)),
     q, SLOT(setYAxisLabel(const QString&)));
   this->connect(this->legendVisibleCheckBox, SIGNAL(toggled(bool)),
-    q, SLOT(legendVisibility(bool)));
+    q, SLOT(setLegendVisibility(bool)));
   this->connect(this->gridVisibleCheckBox, SIGNAL(toggled(bool)),
-    q, SLOT(gridVisibility(bool)));
+    q, SLOT(setGridVisibility(bool)));
 
   this->connect(this->xAxisManualRangeCheckBox, SIGNAL(toggled(bool)),
-    q, SLOT(xAxisManualRangeEnabled(bool)));
+    q, SLOT(setXAxisManualRangeEnabled(bool)));
   this->connect(this->xAxisRangeMinDoubleSpinBox, SIGNAL(valueChanged(double)),
-    q, SLOT(onXAxisRangeMinChanged(double)));
+    q, SLOT(setXAxisRangeMin(double)));
   this->connect(this->xAxisRangeMaxDoubleSpinBox, SIGNAL(valueChanged(double)),
-    q, SLOT(onXAxisRangeMaxChanged(double)));
+    q, SLOT(setXAxisRangeMax(double)));
 
   this->connect(this->yAxisManualRangeCheckBox, SIGNAL(toggled(bool)),
-    q, SLOT(yAxisManualRangeEnabled(bool)));
+    q, SLOT(setYAxisManualRangeEnabled(bool)));
   this->connect(this->yAxisRangeMinDoubleSpinBox, SIGNAL(valueChanged(double)),
-    q, SLOT(onYAxisRangeMinChanged(double)));
+    q, SLOT(setYAxisRangeMin(double)));
   this->connect(this->yAxisRangeMaxDoubleSpinBox, SIGNAL(valueChanged(double)),
-    q, SLOT(onYAxisRangeMaxChanged(double)));
+    q, SLOT(setYAxisRangeMax(double)));
+
+  this->connect(this->xAxisLogScaleCheckBox, SIGNAL(toggled(bool)),
+    q, SLOT(setXAxisLogScale(bool)));
+  this->connect(this->yAxisLogScaleCheckBox, SIGNAL(toggled(bool)),
+    q, SLOT(setYAxisLogScale(bool)));
 
   this->connect(this->plotSeriesComboBox, SIGNAL(checkedNodesChanged()), this, SLOT(onPlotSeriesNodesSelected()));
   this->connect(this->plotSeriesComboBox, SIGNAL(nodeAddedByUser(vtkMRMLNode*)), this, SLOT(onPlotSeriesNodeAdded(vtkMRMLNode*)));
@@ -182,6 +187,14 @@ void qMRMLPlotChartPropertiesWidgetPrivate::updateWidgetFromMRML()
     this->yAxisRangeMaxDoubleSpinBox->blockSignals(wasBlocked);
     }
 
+  bool blockedLogScale = this->xAxisLogScaleCheckBox->blockSignals(true);
+  this->xAxisLogScaleCheckBox->setChecked(this->PlotChartNode->GetXAxisLogScale());
+  this->xAxisLogScaleCheckBox->blockSignals(blockedLogScale);
+  blockedLogScale = this->yAxisLogScaleCheckBox->blockSignals(true);
+  this->yAxisLogScaleCheckBox->setChecked(this->PlotChartNode->GetYAxisLogScale());
+  this->yAxisLogScaleCheckBox->blockSignals(blockedLogScale);
+
+
   this->fontTypeComboBox->setCurrentIndex(this->fontTypeComboBox->findText(
     this->PlotChartNode->GetFontType() ? this->PlotChartNode->GetFontType() : ""));
 
@@ -223,53 +236,58 @@ void qMRMLPlotChartPropertiesWidgetPrivate::updateWidgetFromMRML()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLPlotChartPropertiesWidgetPrivate::onFontTypeChanged(const QString &type)
+void qMRMLPlotChartPropertiesWidget::setFontType(const QString &type)
 {
-  if (!this->PlotChartNode)
+  Q_D(qMRMLPlotChartPropertiesWidget);
+  if (!d->PlotChartNode)
     {
     return;
     }
-  this->PlotChartNode->SetFontType(type.toStdString().c_str());
+  d->PlotChartNode->SetFontType(type.toStdString().c_str());
 }
 
 // --------------------------------------------------------------------------
-void qMRMLPlotChartPropertiesWidgetPrivate::onTitleFontSizeChanged(double size)
+void qMRMLPlotChartPropertiesWidget::setTitleFontSize(double size)
 {
-  if (!this->PlotChartNode)
+  Q_D(qMRMLPlotChartPropertiesWidget);
+  if (!d->PlotChartNode)
     {
     return;
     }
-  this->PlotChartNode->SetTitleFontSize(size);
+  d->PlotChartNode->SetTitleFontSize(size);
 }
 
 // --------------------------------------------------------------------------
-void qMRMLPlotChartPropertiesWidgetPrivate::onLegendFontSizeChanged(double size)
+void qMRMLPlotChartPropertiesWidget::setLegendFontSize(double size)
 {
-  if (!this->PlotChartNode)
+  Q_D(qMRMLPlotChartPropertiesWidget);
+  if (!d->PlotChartNode)
     {
     return;
     }
-  this->PlotChartNode->SetLegendFontSize(size);
+  d->PlotChartNode->SetLegendFontSize(size);
 }
 
 // --------------------------------------------------------------------------
-void qMRMLPlotChartPropertiesWidgetPrivate::onAxisTitleFontSizeChanged(double size)
+void qMRMLPlotChartPropertiesWidget::setAxisTitleFontSize(double size)
 {
-  if (!this->PlotChartNode)
+  Q_D(qMRMLPlotChartPropertiesWidget);
+  if (!d->PlotChartNode)
     {
     return;
     }
-  this->PlotChartNode->SetAxisTitleFontSize(size);
+  d->PlotChartNode->SetAxisTitleFontSize(size);
 }
 
 // --------------------------------------------------------------------------
-void qMRMLPlotChartPropertiesWidgetPrivate::onAxisLabelFontSizeChanged(double size)
+void qMRMLPlotChartPropertiesWidget::setAxisLabelFontSize(double size)
 {
-  if (!this->PlotChartNode)
+  Q_D(qMRMLPlotChartPropertiesWidget);
+  if (!d->PlotChartNode)
     {
     return;
     }
-  this->PlotChartNode->SetAxisLabelFontSize(size);
+  d->PlotChartNode->SetAxisLabelFontSize(size);
 }
 
 // --------------------------------------------------------------------------
@@ -385,7 +403,7 @@ void qMRMLPlotChartPropertiesWidget::setMRMLPlotChartNode(vtkMRMLPlotChartNode* 
 }
 
 //---------------------------------------------------------------------------
-void qMRMLPlotChartPropertiesWidget::gridVisibility(bool show)
+void qMRMLPlotChartPropertiesWidget::setGridVisibility(bool show)
 {
   Q_D(qMRMLPlotChartPropertiesWidget);
   if (!d->PlotChartNode)
@@ -396,7 +414,7 @@ void qMRMLPlotChartPropertiesWidget::gridVisibility(bool show)
 }
 
 //---------------------------------------------------------------------------
-void qMRMLPlotChartPropertiesWidget::legendVisibility(bool show)
+void qMRMLPlotChartPropertiesWidget::setLegendVisibility(bool show)
 {
   Q_D(qMRMLPlotChartPropertiesWidget);
   if (!d->PlotChartNode)
@@ -468,7 +486,7 @@ void qMRMLPlotChartPropertiesWidget::setMRMLScene(vtkMRMLScene* newScene)
 }
 
 //---------------------------------------------------------------------------
-void qMRMLPlotChartPropertiesWidget::xAxisManualRangeEnabled(bool manual)
+void qMRMLPlotChartPropertiesWidget::setXAxisManualRangeEnabled(bool manual)
 {
   Q_D(qMRMLPlotChartPropertiesWidget);
   if (!d->PlotChartNode)
@@ -479,7 +497,7 @@ void qMRMLPlotChartPropertiesWidget::xAxisManualRangeEnabled(bool manual)
 }
 
 // --------------------------------------------------------------------------
-void qMRMLPlotChartPropertiesWidget::onXAxisRangeMinChanged(double rangeMin)
+void qMRMLPlotChartPropertiesWidget::setXAxisRangeMin(double rangeMin)
 {
   Q_D(qMRMLPlotChartPropertiesWidget);
   if (!d->PlotChartNode)
@@ -493,7 +511,7 @@ void qMRMLPlotChartPropertiesWidget::onXAxisRangeMinChanged(double rangeMin)
 }
 
 // --------------------------------------------------------------------------
-void qMRMLPlotChartPropertiesWidget::onXAxisRangeMaxChanged(double rangeMax)
+void qMRMLPlotChartPropertiesWidget::setXAxisRangeMax(double rangeMax)
 {
   Q_D(qMRMLPlotChartPropertiesWidget);
   if (!d->PlotChartNode)
@@ -507,24 +525,24 @@ void qMRMLPlotChartPropertiesWidget::onXAxisRangeMaxChanged(double rangeMax)
 }
 
 //---------------------------------------------------------------------------
-void qMRMLPlotChartPropertiesWidget::yAxisManualRangeEnabled(bool manual)
+void qMRMLPlotChartPropertiesWidget::setYAxisManualRangeEnabled(bool manual)
 {
   Q_D(qMRMLPlotChartPropertiesWidget);
   if (!d->PlotChartNode)
-  {
+    {
     return;
-  }
+    }
   d->PlotChartNode->SetYAxisRangeAuto(!manual);
 }
 
 // --------------------------------------------------------------------------
-void qMRMLPlotChartPropertiesWidget::onYAxisRangeMinChanged(double rangeMin)
+void qMRMLPlotChartPropertiesWidget::setYAxisRangeMin(double rangeMin)
 {
   Q_D(qMRMLPlotChartPropertiesWidget);
   if (!d->PlotChartNode)
-  {
+    {
     return;
-  }
+    }
   double range[2] = { 0 };
   d->PlotChartNode->GetYAxisRange(range);
   range[0] = rangeMin;
@@ -532,15 +550,37 @@ void qMRMLPlotChartPropertiesWidget::onYAxisRangeMinChanged(double rangeMin)
 }
 
 // --------------------------------------------------------------------------
-void qMRMLPlotChartPropertiesWidget::onYAxisRangeMaxChanged(double rangeMax)
+void qMRMLPlotChartPropertiesWidget::setYAxisRangeMax(double rangeMax)
 {
   Q_D(qMRMLPlotChartPropertiesWidget);
   if (!d->PlotChartNode)
-  {
+    {
     return;
-  }
+    }
   double range[2] = { 0 };
   d->PlotChartNode->GetYAxisRange(range);
   range[1] = rangeMax;
   d->PlotChartNode->SetYAxisRange(range);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLPlotChartPropertiesWidget::setXAxisLogScale(bool logScale)
+{
+  Q_D(qMRMLPlotChartPropertiesWidget);
+  if (!d->PlotChartNode)
+    {
+    return;
+    }
+  d->PlotChartNode->SetXAxisLogScale(logScale);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLPlotChartPropertiesWidget::setYAxisLogScale(bool logScale)
+{
+  Q_D(qMRMLPlotChartPropertiesWidget);
+  if (!d->PlotChartNode)
+    {
+    return;
+    }
+  d->PlotChartNode->SetYAxisLogScale(logScale);
 }

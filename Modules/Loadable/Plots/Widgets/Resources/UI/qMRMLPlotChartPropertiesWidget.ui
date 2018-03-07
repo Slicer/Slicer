@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>315</width>
-    <height>314</height>
+    <width>555</width>
+    <height>584</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -130,6 +130,12 @@
        <property name="enabled">
         <bool>false</bool>
        </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="minimum">
         <double>-99999999.000000000000000</double>
        </property>
@@ -142,6 +148,12 @@
       <widget class="ctkDoubleSpinBox" name="xAxisRangeMaxDoubleSpinBox">
        <property name="enabled">
         <bool>false</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
        <property name="minimum">
         <double>-99999999.000000000000000</double>
@@ -177,6 +189,12 @@
        <property name="enabled">
         <bool>false</bool>
        </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="minimum">
         <double>-99999999.000000000000000</double>
        </property>
@@ -189,6 +207,12 @@
       <widget class="ctkDoubleSpinBox" name="yAxisRangeMaxDoubleSpinBox">
        <property name="enabled">
         <bool>false</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
        <property name="minimum">
         <double>-99999999.000000000000000</double>
@@ -217,7 +241,7 @@
      </property>
     </widget>
    </item>
-   <item row="8" column="1">
+   <item row="9" column="1">
     <widget class="QComboBox" name="fontTypeComboBox">
      <item>
       <property name="text">
@@ -236,49 +260,49 @@
      </item>
     </widget>
    </item>
-   <item row="8" column="0">
+   <item row="9" column="0">
     <widget class="QLabel" name="fontTypeLabel">
      <property name="text">
       <string>Font Type:</string>
      </property>
     </widget>
    </item>
-   <item row="9" column="0">
+   <item row="10" column="0">
     <widget class="QLabel" name="titleFontSizeLabel">
      <property name="text">
       <string>Chart title font size:</string>
      </property>
     </widget>
    </item>
-   <item row="9" column="1">
+   <item row="10" column="1">
     <widget class="ctkDoubleSpinBox" name="titleFontSizeDoubleSpinBox">
      <property name="value">
       <double>20.000000000000000</double>
      </property>
     </widget>
    </item>
-   <item row="11" column="0">
+   <item row="12" column="0">
     <widget class="QLabel" name="axisTitleFontSizeLabel">
      <property name="text">
       <string>Axis title font size:</string>
      </property>
     </widget>
    </item>
-   <item row="11" column="1">
+   <item row="12" column="1">
     <widget class="ctkDoubleSpinBox" name="axisTitleFontSizeDoubleSpinBox">
      <property name="value">
       <double>16.000000000000000</double>
      </property>
     </widget>
    </item>
-   <item row="12" column="0">
+   <item row="13" column="0">
     <widget class="QLabel" name="axisLabelFontSizeLabel">
      <property name="text">
       <string>Axis label font size:</string>
      </property>
     </widget>
    </item>
-   <item row="12" column="1">
+   <item row="13" column="1">
     <widget class="ctkDoubleSpinBox" name="axisLabelFontSizeDoubleSpinBox">
      <property name="value">
       <double>12.000000000000000</double>
@@ -306,24 +330,62 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="1">
-    <widget class="QCheckBox" name="gridVisibleCheckBox">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="10" column="0">
+   <item row="11" column="0">
     <widget class="QLabel" name="legendFontSizeLabel">
      <property name="text">
       <string>Legend font size:</string>
      </property>
     </widget>
    </item>
-   <item row="10" column="1">
+   <item row="11" column="1">
     <widget class="ctkDoubleSpinBox" name="legendFontSizeDoubleSpinBox">
      <property name="value">
       <double>16.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0">
+    <widget class="QLabel" name="logScaleLabel">
+     <property name="text">
+      <string>Logarithmic scale:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QCheckBox" name="xAxisLogScaleCheckBox">
+       <property name="text">
+        <string>X axis</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="yAxisLogScaleCheckBox">
+       <property name="text">
+        <string>Y axis</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="3" column="1">
+    <widget class="QCheckBox" name="gridVisibleCheckBox">
+     <property name="text">
+      <string/>
      </property>
     </widget>
    </item>

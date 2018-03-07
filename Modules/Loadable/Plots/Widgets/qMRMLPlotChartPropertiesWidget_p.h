@@ -72,21 +72,6 @@ public slots:
   /// Update widget state using the associated MRML PlotView node.
   void updateWidgetFromMRML();
 
-  /// Change the type of font used in the plot.
-  void onFontTypeChanged(const QString& type);
-
-  /// Change the font size of the title of the plot.
-  void onTitleFontSizeChanged(double size);
-
-  /// Change the font size of the legend of the plot.
-  void onLegendFontSizeChanged(double size);
-
-  /// Change the font size of the title of the axes.
-  void onAxisTitleFontSizeChanged(double size);
-
-  /// Change the font size of the labels of the axes.
-  void onAxisLabelFontSizeChanged(double size);
-
   /// Called after an PlotSeriesNode is selected
   /// using the associated qMRMLNodeComboBox.
   void onPlotSeriesNodesSelected();
