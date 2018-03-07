@@ -421,10 +421,12 @@ class qSlicerMultiVolumeExplorerModuleWidget(qSlicerMultiVolumeExplorerSimplifie
     self._multiVolumeIntensityChart.showLegend = True if checked == 2 else False
 
   def onXLogScaleRequested(self, checked):
-    self._multiVolumeIntensityChart.showXLogScale = True if checked == 2 else False
+    pass
+    #self._multiVolumeIntensityChart.showXLogScale = True if checked == 2 else False
 
   def onYLogScaleRequested(self, checked):
-    self._multiVolumeIntensityChart.showYLogScale = True if checked == 2 else False
+    pass
+    #self._multiVolumeIntensityChart.showYLogScale = True if checked == 2 else False
 
   def onLVMRMLSceneChanged(self, mrmlScene):
     self.labelMapSelector.setMRMLScene(slicer.mrmlScene)

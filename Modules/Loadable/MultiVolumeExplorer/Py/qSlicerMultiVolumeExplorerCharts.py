@@ -54,15 +54,7 @@ class MultiVolumeIntensityChartView(object):
 
   @property
   def chart(self):
-    return self.__chartView.chart()
-
-  @property
-  def xAxis(self):
-      return self.chart.GetAxis(1)
-
-  @property
-  def yAxis(self):
-      return self.chart.GetAxis(0)
+    return self.__chart
 
   @property
   def showXLogScale(self):
@@ -72,7 +64,7 @@ class MultiVolumeIntensityChartView(object):
   def showXLogScale(self, value):
     assert type(value) is bool, "Only boolean values are allowed for this class member"
     self.__xLogScaleEnabled = value
-    self.xAxis.SetLogScale(value)
+    #self.xAxis.SetLogScale(value)
 
   @property
   def showYLogScale(self):
@@ -82,7 +74,7 @@ class MultiVolumeIntensityChartView(object):
   def showYLogScale(self, value):
     assert type(value) is bool, "Only boolean values are allowed for this class member"
     self.__yLogScaleEnabled = value
-    self.yAxis.SetLogScale(value)
+    #self.yAxis.SetLogScale(value)
 
   @property
   def showLegend(self):
@@ -92,7 +84,7 @@ class MultiVolumeIntensityChartView(object):
   def showLegend(self, value):
     assert type(value) is bool, "Only boolean values are allowed for this class member"
     self.__showLegend = value
-    self.chart.SetShowLegend(value)
+    self.chart.SetLegendVisibility(value)
 
   @property
   def fgMultiVolumeNode(self):
@@ -112,16 +104,20 @@ class MultiVolumeIntensityChartView(object):
     self.__bgMultiVolumeNode = bgMultiVolumeNode
 
     if not self.__bgMultiVolumeNode:
-      self.__chartView.minimumSize = QSize(0,0)
+      self.chartView.minimumSize = QSize(0,0)
       return
     else:
-      self.__chartView.minimumSize = QSize(200,200)
+      self.__chartView.minimumSize = QSize(200,240)
     nFrames = self.__bgMultiVolumeNode.GetNumberOfFrames()
 
-    self.refreshArray(self.__bgxArray, nFrames, '')
+    self.refreshArray(self.__bgxArray, nFrames, 'x')
     self.refreshArray(self.__bgyArray, nFrames, '1st multivolume')
 
-    self.__chartTable = self.createNewVTKTable(self.__bgxArray, self.__bgyArray)
+    if self.__chartTableNode:
+      slicer.mrmlScene.RemoveNode(self.__chartTableNode)
+      self.__chartTableNode = None
+    self.__chartTableNode = self.createNewVTKTableNode(self.__bgxArray, self.__bgyArray)
+    self.__chartTable = self.__chartTableNode.GetTable()
     self.__chartTable.SetNumberOfRows(nFrames)
 
     # get the range of intensities for the
@@ -156,13 +152,26 @@ class MultiVolumeIntensityChartView(object):
     array.SetName(name)
 
   def __init__(self):
-    self.__chartView = ctk.ctkVTKChartView()
+    self.__chartView = slicer.qMRMLPlotView()
+    self.__chartView.setMRMLScene(slicer.mrmlScene)
+    self.__chartViewNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLPlotViewNode")
+    self.__chartView.setMRMLPlotViewNode(self.__chartViewNode)
+    self.__chart = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLPlotChartNode")
+    self.__chart.LegendVisibilityOff()
+    self.__chart.SetAxisTitleFontSize(15)
+    self.__chartViewNode.SetPlotChartNodeID(self.__chart.GetID())
+    self.__chartView.show()
 
     self.__bgxArray = vtk.vtkFloatArray()
     self.__bgyArray = vtk.vtkFloatArray()
-    self.__bgxArray.SetName('')
+    self.__bgxArray.SetName('x')
     self.__bgyArray.SetName('1st multivolume')
-    self.__chartTable = self.createNewVTKTable(self.__bgxArray, self.__bgyArray)
+    self.__chartTableNode = self.createNewVTKTableNode(self.__bgxArray, self.__bgyArray)
+    self.__chartTable = self.__chartTableNode.GetTable()
+    self.__fgChartTableNode = None
+
+    self.__bgPlot = None
+    self.__fgPlot = None
 
     self.__bgMultiVolumeNode = None
     self.__fgMultiVolumeNode = None
@@ -187,14 +196,17 @@ class MultiVolumeIntensityChartView(object):
     self.clearPlots()
 
   def clearPlots(self):
-    self.chart.RemovePlot(0)
-    self.chart.RemovePlot(0)
+    self.__chart.RemoveAllPlotSeriesNodeIDs()
+    if self.__bgPlot:
+      slicer.mrmlScene.RemoveNode(self.__bgPlot)
+    if self.__fgPlot:
+      slicer.mrmlScene.RemoveNode(self.__fgPlot)
 
-  def createNewVTKTable(self, xArray, yArray):
-    chartTable = vtk.vtkTable()
-    chartTable.AddColumn(xArray)
-    chartTable.AddColumn(yArray)
-    return chartTable
+  def createNewVTKTableNode(self, xArray, yArray):
+    chartTableNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode", "bgChartTable")
+    chartTableNode.GetTable().AddColumn(xArray)
+    chartTableNode.GetTable().AddColumn(yArray)
+    return chartTableNode
 
   def setMultiVolumeRange(self, minVal, maxVal):
     assert maxVal > minVal and type(minVal) is int and type(maxVal) is int
@@ -202,19 +214,19 @@ class MultiVolumeIntensityChartView(object):
 
   def activateSignalIntensityMode(self):
     if self.__chartMode != self.SIGNAL_INTENSITY_MODE:
-      self.yAxis.SetBehavior(vtk.vtkAxis.AUTO)
+      self.__chart.SetYAxisRangeAuto(True)
       self.__chartMode = self.SIGNAL_INTENSITY_MODE
 
   def activateFixedRangeIntensityMode(self):
     logging.debug("Fixed range for yAxis: min(%d), max(%d)" % (self.__mvRange[0], self.__mvRange[1]))
     if self.__chartMode != self.FIXED_RANGE_INTENSITY_MODE:
       self.__chartMode = self.FIXED_RANGE_INTENSITY_MODE
-      self.yAxis.SetBehavior(vtk.vtkAxis.FIXED)
-      self.yAxis.SetRange(self.__mvRange[0],self.__mvRange[1])
+      self.__chart.SetYAxisRangeAuto(False)
+      self.__chart.SetYAxisRange(self.__mvRange[0],self.__mvRange[1])
 
   def activatePercentageChangeMode(self):
     if self.__chartMode != self.PERCENTAGE_CHANGE_MODE:
-      self.yAxis.SetBehavior(vtk.vtkAxis.AUTO)
+      self.__chart.SetYAxisRangeAuto(True)
       self.__chartMode = self.PERCENTAGE_CHANGE_MODE
 
   def createChart(self, sliceWidget, xy, ignoreCurrentBackground=False):
@@ -260,13 +272,16 @@ class MultiVolumeIntensityChartView(object):
       fgijk = self.getIJKIntFromIJKFloat(fgijkFloat)
 
       fgImage = self.__fgMultiVolumeNode.GetImageData()
-      fgChartTable = vtk.vtkTable()
+      if self.__fgChartTableNode:
+        slicer.mrmlScene.RemoveNode(self.__fgChartTableNode)
+      self.__fgChartTableNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode", "fgChartTable")
+      fgChartTable = self.__fgChartTableNode.GetTable()
       if fgijk[0] == bgijk[0] and fgijk[1] == bgijk[1] and fgijk[2] == bgijk[2] and \
          fgImage.GetNumberOfScalarComponents() == bgImage.GetNumberOfScalarComponents():
         useFg = True
 
         fgxArray = vtk.vtkFloatArray()
-        self.refreshArray(fgxArray, nComponents, '')
+        self.refreshArray(fgxArray, nComponents, 'fg')
 
         fgyArray = vtk.vtkFloatArray()
         self.refreshArray(fgyArray, nComponents, '2nd multivolume')
@@ -299,14 +314,28 @@ class MultiVolumeIntensityChartView(object):
     self.clearPlots()
     self.setAxesTitle()
 
-    bgPlot = self.chart.AddPlot(vtk.vtkChart.POINTS if useFg else vtk.vtkChart.LINE)
+    self.__bgPlot = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLPlotSeriesNode", "1st multivolume")
+    self.__bgPlot.SetAndObserveTableNodeID(self.__chartTableNode.GetID())
+    self.__bgPlot.SetXColumnName('x')
+    self.__bgPlot.SetYColumnName('1st multivolume')
+    self.__bgPlot.SetPlotType(slicer.vtkMRMLPlotSeriesNode.PlotTypeScatter)
+    if useFg:
+      self.__bgPlot.SetLineStyle(slicer.vtkMRMLPlotSeriesNode.LineStyleNone)
+    else:
+      self.__bgPlot.SetMarkerStyle(slicer.vtkMRMLPlotSeriesNode.MarkerStyleNone)
+    self.__chart.AddAndObservePlotSeriesNodeID(self.__bgPlot.GetID())
     # bgPlot.SetLabel("Primary multivolume ")
-    self.setPlotInputTable(bgPlot, self.__chartTable)
 
     if useFg:
-      fgPlot = self.chart.AddPlot(vtk.vtkChart.LINE)
+      self.__fgPlot = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLPlotSeriesNode", "2nd multivolume")
+      self.__fgPlot.SetAndObserveTableNodeID(self.__fgChartTableNode.GetID())
+      self.__fgPlot.SetXColumnName('fg')
+      self.__fgPlot.SetYColumnName('2nd multivolume')
+      self.__fgPlot.SetPlotType(slicer.vtkMRMLPlotSeriesNode.PlotTypeScatter)
+      self.__fgPlot.SetColor(1,0,0)
+      self.__fgPlot.SetMarkerStyle(slicer.vtkMRMLPlotSeriesNode.MarkerStyleNone)
+      self.__chart.AddAndObservePlotSeriesNodeID(self.__fgPlot.GetID())
       # bgPlot.SetLabel("Primary multivolume ")
-      self.setPlotInputTable(fgPlot, fgChartTable)
 
   def xyToRAS(self, sliceLogic, xyPoint):
     sliceNode = sliceLogic.GetSliceNode()
@@ -328,12 +357,6 @@ class MultiVolumeIntensityChartView(object):
         if math.isnan(val):
           val = 0
         chartTable.SetValue(c, 1, (val / self.baselineAverageSignal - 1) * 100.)
-
-  def setPlotInputTable(self, plot, table):
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      plot.SetInput(table, 0, 1)
-    else:
-      plot.SetInputData(table, 0, 1)
 
   def arePixelsWithinImageExtent(self, image, ijk):
     extent = image.GetExtent()
@@ -365,10 +388,10 @@ class MultiVolumeIntensityChartView(object):
     self.setXAxisTitle(xTitle)
 
   def setYAxisTitle(self, title):
-    self.yAxis.SetTitle(title)
+    self.__chart.SetYAxisTitle(title)
 
   def setXAxisTitle(self, title):
-    self.xAxis.SetTitle(title)
+    self.__chart.SetXAxisTitle(title)
 
 
 class LabeledImageChartView(object):
