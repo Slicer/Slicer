@@ -56,6 +56,12 @@ def collect_startup_times_normal(output_file, drop_cache=False, display_output=F
 
 def collect_startup_times_overall(output_file, drop_cache=False, display_output=False):
 
+  results= {}
+
+  test = ["--help"]
+  (duration, result) = runSlicerAndExitWithTime(slicer_executable, test, drop_cache=drop_cache)
+  results[" ".join(test)] = duration
+
   tests = [
     [],
     ['--disable-builtin-cli-modules'],
@@ -64,8 +70,6 @@ def collect_startup_times_overall(output_file, drop_cache=False, display_output=
     ['--disable-builtin-cli-modules', '--disable-builtin-scripted-loadable-modules'],
     ['--disable-modules']
   ]
-
-  results= {}
 
   for test in tests:
     (duration, result) = runSlicerAndExitWithTime(slicer_executable, test, drop_cache=drop_cache)
