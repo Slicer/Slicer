@@ -65,6 +65,9 @@ public:
 
   virtual void init();
 
+  /// Terminates the calling process "immediately".
+  void quickExit(int exitCode);
+
   /// Set up the local and remote data input/output for this application.
   /// Use this as a template for creating stand alone scenes, then call
   /// vtkSlicerApplicationLogic::SetMRMLSceneDataIO to hook it into a scene.

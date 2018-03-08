@@ -393,6 +393,17 @@ void qSlicerCoreApplicationPrivate::init()
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerCoreApplicationPrivate::quickExit(int exitCode)
+{
+  // XXX When supporting exclusively C++11, replace with std::quick_exit
+#ifdef Q_OS_WIN32
+  ExitProcess(exitCode);
+#else
+  _exit(exitCode);
+#endif
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerCoreApplicationPrivate::initDataIO()
 {
   Q_Q(qSlicerCoreApplication);
@@ -761,44 +772,38 @@ void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
                 << "Options\n";
       }
     std::cout << qPrintable(options->helpText()) << std::endl;
-    this->terminate(EXIT_SUCCESS);
-    return;
+    d->quickExit(EXIT_SUCCESS);
     }
 
   if (options->displayVersionAndExit())
     {
     std::cout << qPrintable(this->applicationName() + " " +
                             this->applicationVersion()) << std::endl;
-    this->terminate(EXIT_SUCCESS);
-    return;
+    d->quickExit(EXIT_SUCCESS);
     }
 
   if (options->displayProgramPathAndExit())
     {
     std::cout << qPrintable(this->arguments().at(0)) << std::endl;
-    this->terminate(EXIT_SUCCESS);
-    return;
+    d->quickExit(EXIT_SUCCESS);
     }
 
   if (options->displayHomePathAndExit())
     {
     std::cout << qPrintable(this->slicerHome()) << std::endl;
-    this->terminate(EXIT_SUCCESS);
-    return;
+    d->quickExit(EXIT_SUCCESS);
     }
 
   if (options->displaySettingsPathAndExit())
     {
     std::cout << qPrintable(this->userSettings()->fileName()) << std::endl;
-    this->terminate(EXIT_SUCCESS);
-    return;
+    d->quickExit(EXIT_SUCCESS);
     }
 
   if (options->displayTemporaryPathAndExit())
     {
     std::cout << qPrintable(this->temporaryPath()) << std::endl;
-    this->terminate(EXIT_SUCCESS);
-    return;
+    d->quickExit(EXIT_SUCCESS);
     }
 
   if (options->ignoreRest())
