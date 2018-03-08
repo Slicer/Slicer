@@ -35,13 +35,13 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" Packaging/s
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
-    "${EP_GIT_PROTOCOL}://itk.org/SimpleITK.git"
+    "${EP_GIT_PROTOCOL}://github.com/Slicer/SimpleITK.git"
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    "699ed4bb8934b83ee3bb4a6633b547291f0347ce"
+    "67872f823dc35250fa8a1457a25c64e57fb1245f" #  slicer-v1.0.1-2017-09-29-699ed4b
     QUIET
     )
 
