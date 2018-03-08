@@ -50,6 +50,10 @@ class QMRML_WIDGETS_EXPORT qMRMLSliceWidget : public qMRMLWidget
 {
   Q_OBJECT
   Q_PROPERTY(QString sliceOrientation READ sliceOrientation WRITE setSliceOrientation)
+  Q_PROPERTY(QString sliceViewName READ sliceViewName WRITE setSliceViewName)
+  Q_PROPERTY(QString sliceViewLabel READ sliceViewName WRITE setSliceViewLabel)
+  Q_PROPERTY(QColor sliceViewColor READ sliceViewColor WRITE setSliceViewColor)
+
 public:
   /// Superclass typedef
   typedef qMRMLWidget Superclass;
@@ -110,10 +114,10 @@ public:
   Q_INVOKABLE vtkInteractorObserver* interactorStyle()const;
 
   /// Return the overlay corner annotation of the view
-  vtkCornerAnnotation* overlayCornerAnnotation()const;
+  Q_INVOKABLE vtkCornerAnnotation* overlayCornerAnnotation()const;
 
   /// propagates the logics to the qMRMLSliceControllerWidget
-  void setSliceLogics(vtkCollection* logics);
+  Q_INVOKABLE void setSliceLogics(vtkCollection* logics);
 
   /// Get a reference to the underlying slice view. It is the widget that
   /// renders the view (contains vtkRenderWindow).
