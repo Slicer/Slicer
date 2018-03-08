@@ -18,13 +18,25 @@ endif()
 
 if(NOT DEFINED ${proj}_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
+  #ExternalProject_SetIfNotDefined(
+  #  ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
+  #  "${EP_GIT_PROTOCOL}://github.com/Foo/Foo.git"
+  #  QUIET
+  #  )
+
+  #ExternalProject_SetIfNotDefined(
+  #  ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
+  #  "1e823001cb41c92667299635643f1007876d09f6"
+  #  QUIET
+  #  )
+
   set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
   set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    #GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/Foo/Foo.git"
-    #GIT_TAG "1e823001cb41c92667299635643f1007876d09f6"
+    #GIT_REPOSITORY "${${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY}"
+    #GIT_TAG "${${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG}"
     DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo "Remove this line and uncomment GIT_REPOSITORY and GIT_TAG"
     SOURCE_DIR ${EP_SOURCE_DIR}
     BINARY_DIR ${EP_BINARY_DIR}

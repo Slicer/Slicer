@@ -1,13 +1,13 @@
 
 #-----------------------------------------------------------------------------
-# Enable and setup External project global properties
+# External project common settings
 #-----------------------------------------------------------------------------
 
 set(ep_common_c_flags "${CMAKE_C_FLAGS_INIT} ${ADDITIONAL_C_FLAGS}")
 set(ep_common_cxx_flags "${CMAKE_CXX_FLAGS_INIT} ${ADDITIONAL_CXX_FLAGS}")
 
 #-----------------------------------------------------------------------------
-# Project dependencies
+# Top-level "external" project
 #-----------------------------------------------------------------------------
 
 foreach(dep ${EXTENSION_DEPENDS})
@@ -15,7 +15,11 @@ foreach(dep ${EXTENSION_DEPENDS})
 endforeach()
 
 set(proj ${SUPERBUILD_TOPLEVEL_PROJECT})
-set(${proj}_DEPENDS Foo)
+
+# Project dependencies
+set(${proj}_DEPENDS
+   Foo
+   )
 
 ExternalProject_Include_Dependencies(${proj}
   PROJECT_VAR proj
