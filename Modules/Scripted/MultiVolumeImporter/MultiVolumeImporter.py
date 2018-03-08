@@ -2,6 +2,8 @@ from __future__ import print_function
 import sys, re, os
 
 from __main__ import vtk, qt, ctk, slicer
+from slicer.ScriptedLoadableModule import *
+
 try:
   NUMPY_AVAILABLE = True
   import vtk.util.numpy_support
@@ -13,8 +15,9 @@ from MultiVolumeImporterLib.Helper import Helper
 # MultiVolumeImporter
 #
 
-class MultiVolumeImporter:
+class MultiVolumeImporter(ScriptedLoadableModule):
   def __init__(self, parent):
+    ScriptedLoadableModule.__init__(self, parent)
     parent.title = "MultiVolumeImporter"
     parent.categories = ["MultiVolume Support"]
     parent.contributors = ["Andrey Fedorov (SPL, BWH)",\
@@ -39,20 +42,10 @@ class MultiVolumeImporter:
 # qMultiVolumeImporterWidget
 #
 
-class MultiVolumeImporterWidget:
-  def __init__(self, parent = None):
-    if not parent:
-      self.parent = slicer.qMRMLWidget()
-      self.parent.setLayout(qt.QVBoxLayout())
-      self.parent.setMRMLScene(slicer.mrmlScene)
-    else:
-      self.parent = parent
-    self.layout = self.parent.layout()
-    if not parent:
-      self.setup()
-      self.parent.show()
+class MultiVolumeImporterWidget(ScriptedLoadableModuleWidget):
 
   def setup(self):
+    ScriptedLoadableModuleWidget.setup(self)
     # Instantiate and connect widgets ...
 
     if not NUMPY_AVAILABLE:
@@ -147,11 +140,11 @@ class MultiVolumeImporterWidget:
     return
 
   def humanSort(self,l):
-    """ Sort the given list in the way that humans expect. 
+    """ Sort the given list in the way that humans expect.
         Conributed by Yanling Liu
-    """ 
-    convert = lambda text: int(text) if text.isdigit() else text 
-    alphanum_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ] 
+    """
+    convert = lambda text: int(text) if text.isdigit() else text
+    alphanum_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ]
     l.sort( key=alphanum_key )
 
   def onImportButtonClicked(self):
