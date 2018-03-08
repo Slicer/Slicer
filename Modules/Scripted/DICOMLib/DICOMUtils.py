@@ -23,20 +23,21 @@ def loadPatientByUID(patientUID):
     logging.error('DICOM module or database cannot be accessed')
     return False
 
-  if not patientUID in slicer.dicomDatabase.patients():
-    logging.error('No patient found with DICOM database UID %s' % patientUID)
+  patientUIDstr = str(patientUID)
+  if not patientUIDstr in slicer.dicomDatabase.patients():
+    logging.error('No patient found with DICOM database UID %s' % patientUIDstr)
     return False
 
   # Select all series in selected patient
-  studies = slicer.dicomDatabase.studiesForPatient(patientUID)
+  studies = slicer.dicomDatabase.studiesForPatient(patientUIDstr)
   if len(studies) == 0:
-    logging.warning('No studies found in patient with DICOM database UID ' + str(patientUID))
+    logging.warning('No studies found in patient with DICOM database UID ' + patientUIDstr)
     return False
 
   series = [slicer.dicomDatabase.seriesForStudy(study) for study in studies]
   seriesUIDs = [uid for uidList in series for uid in uidList]
   if len(seriesUIDs) == 0:
-    logging.warning('No series found in patient with DICOM database UID ' + str(patientUID))
+    logging.warning('No series found in patient with DICOM database UID ' + patientUIDstr)
     return False
 
   return loadSeriesByUID(seriesUIDs)
