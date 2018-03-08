@@ -702,6 +702,8 @@ endif()
 set(ExternalData_OBJECT_STORES "${ExternalData_OBJECT_STORES_DEFAULT}")
 message(STATUS "Setting ExternalData_OBJECT_STORES to '${ExternalData_OBJECT_STORES}'")
 
+set(Slicer_ExternalData_DATA_MANAGEMENT_TARGET ${PROJECT_NAME}Data)
+
 #-----------------------------------------------------------------------------
 # Get operating system, architecture and bitness
 #-----------------------------------------------------------------------------
@@ -766,7 +768,6 @@ set(Slicer_ModuleWidgets_INCLUDE_DIRS CACHE INTERNAL "Slicer Module Widgets incl
 #-----------------------------------------------------------------------------
 # ExternalData configuration for test data
 #-----------------------------------------------------------------------------
-set(Slicer_ExternalData_DATA_MANAGEMENT_TARGET ${PROJECT_NAME}Data)
 list(APPEND ExternalData_URL_TEMPLATES "http://slicer.kitware.com/midas3/api/rest?method=midas.bitstream.download&checksum=%(hash)")
 include(ExternalData)
 set(Slicer_ExternalData_OBJECT_STORES ${ExternalData_OBJECT_STORES})
