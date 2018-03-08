@@ -405,7 +405,10 @@ public slots:
   bool unregisterResource(int handle);
 
 protected:
-  ///
+
+  /// Process command line arguments **before** the applicaton event loop is started.
+  /// \sa handleCommandLineArguments()
+  /// \sa qSlicerApplication::startupCompleted()
   virtual void handlePreApplicationCommandLineArguments();
 
   /// Set MRML Scene
@@ -414,8 +417,11 @@ protected:
 
 protected slots:
 
-  ///
+  /// Process command line arguments **atfer** the applicaton event loop is started.
+  /// \sa handlePreApplicationCommandLineArguments()
+  /// \sa qSlicerApplication::startupCompleted()
   virtual void handleCommandLineArguments();
+
   virtual void onSlicerApplicationLogicModified();
   void onSlicerApplicationLogicRequest(vtkObject*, void* , unsigned long);
   void processAppLogicModified();

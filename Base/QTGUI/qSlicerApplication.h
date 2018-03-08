@@ -173,7 +173,7 @@ signals:
   /// \note If the application is started without the mainwindow,
   /// the signal is emitted after the modules are initialized.
   ///
-  /// \sa qSlicerAppMainWindow::windowShown()
+  /// \sa qSlicerAppMainWindow::initialWindowShown()
   void startupCompleted();
 
 protected:
