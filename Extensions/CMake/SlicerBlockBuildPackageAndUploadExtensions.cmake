@@ -121,13 +121,6 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
       set(EP_ARG_EXTENSION_DEPENDS DEPENDS ${EXTENSION_DEPENDS})
     endif()
   endif()
-  set(EXTENSION_REBUILD_DEPENDS)
-  if(NOT "${EXTENSION_DEPENDS}" STREQUAL "")
-    set(EP_ARG_EXTENSION_REBUILD_DEPENDS DEPENDS)
-    foreach(dep ${EXTENSION_DEPENDS})
-      list(APPEND EP_ARG_EXTENSION_REBUILD_DEPENDS ${dep}-rebuild)
-    endforeach()
-  endif()
 
   #-----------------------------------------------------------------------------
   # Configure extension source download wrapper script
