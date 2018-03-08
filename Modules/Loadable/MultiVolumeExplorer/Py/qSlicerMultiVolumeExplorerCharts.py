@@ -64,7 +64,7 @@ class MultiVolumeIntensityChartView(object):
   def showXLogScale(self, value):
     assert type(value) is bool, "Only boolean values are allowed for this class member"
     self.__xLogScaleEnabled = value
-    #self.xAxis.SetLogScale(value)
+    self.__chart.SetXAxisLogScale(value)
 
   @property
   def showYLogScale(self):
@@ -74,7 +74,7 @@ class MultiVolumeIntensityChartView(object):
   def showYLogScale(self, value):
     assert type(value) is bool, "Only boolean values are allowed for this class member"
     self.__yLogScaleEnabled = value
-    #self.yAxis.SetLogScale(value)
+    self.__chart.SetYAxisLogScale(value)
 
   @property
   def showLegend(self):
