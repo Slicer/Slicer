@@ -51,7 +51,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSliceWidget : public qMRMLWidget
   Q_OBJECT
   Q_PROPERTY(QString sliceOrientation READ sliceOrientation WRITE setSliceOrientation)
   Q_PROPERTY(QString sliceViewName READ sliceViewName WRITE setSliceViewName)
-  Q_PROPERTY(QString sliceViewLabel READ sliceViewName WRITE setSliceViewLabel)
+  Q_PROPERTY(QString sliceViewLabel READ sliceViewLabel WRITE setSliceViewLabel)
   Q_PROPERTY(QColor sliceViewColor READ sliceViewColor WRITE setSliceViewColor)
 
 public:
