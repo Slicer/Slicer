@@ -138,6 +138,9 @@ if(VTK_WRAP_PYTHON)
   # Folder
   set_target_properties(${PROJECT_NAME}Python PROPERTIES FOLDER "Core-Base")
   set_target_properties(${PROJECT_NAME}PythonD PROPERTIES FOLDER "Core-Base")
+  if(TARGET ${PROJECT_NAME}Hierarchy)
+    set_target_properties(${PROJECT_NAME}Hierarchy PROPERTIES FOLDER "Core-Base")
+  endif()
 endif()
 
 # --------------------------------------------------------------------------

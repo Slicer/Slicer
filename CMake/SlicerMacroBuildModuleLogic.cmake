@@ -139,6 +139,9 @@ macro(SlicerMacroBuildModuleLogic)
     if(NOT "${MODULELOGIC_FOLDER}" STREQUAL "")
       set_target_properties(${MODULELOGIC_NAME}Python PROPERTIES FOLDER ${MODULELOGIC_FOLDER})
       set_target_properties(${MODULELOGIC_NAME}PythonD PROPERTIES FOLDER ${MODULELOGIC_FOLDER})
+      if(TARGET ${MODULELOGIC_NAME}Hierarchy)
+        set_target_properties(${MODULELOGIC_NAME}Hierarchy PROPERTIES FOLDER ${MODULELOGIC_FOLDER})
+      endif()
     endif()
 
     # Export target

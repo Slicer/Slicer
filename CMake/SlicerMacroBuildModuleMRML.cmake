@@ -114,6 +114,9 @@ macro(SlicerMacroBuildModuleMRML)
     if(NOT "${MODULEMRML_FOLDER}" STREQUAL "")
       set_target_properties(${MODULEMRML_NAME}Python PROPERTIES FOLDER ${MODULEMRML_FOLDER})
       set_target_properties(${MODULEMRML_NAME}PythonD PROPERTIES FOLDER ${MODULEMRML_FOLDER})
+      if(TARGET ${MODULEMRML_NAME}Hierarchy)
+        set_target_properties(${MODULEMRML_NAME}Hierarchy PROPERTIES FOLDER ${MODULEMRML_FOLDER})
+      endif()
     endif()
 
     # Export target

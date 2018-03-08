@@ -208,6 +208,9 @@ if(VTK_WRAP_PYTHON)
 
   set_target_properties(${lib_name}Python PROPERTIES FOLDER "Core-Base")
   set_target_properties(${lib_name}PythonD PROPERTIES FOLDER "Core-Base")
+  if(TARGET ${lib_name}Hierarchy)
+    set_target_properties(${lib_name}Hierarchy PROPERTIES FOLDER "Core-Base")
+  endif()
 endif()
 
 # --------------------------------------------------------------------------
