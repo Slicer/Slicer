@@ -23,7 +23,6 @@
 // Qt includes
 #include <QFont>
 #include <QSettings>
-#include <QStyleFactory>
 #include <QSysInfo>
 
 // Slicer includes
@@ -37,7 +36,6 @@
 #include "qSlicerLoadableModuleFactory.h"
 #include "qSlicerModuleFactoryManager.h"
 #include "qSlicerModuleManager.h"
-#include "qSlicerSettingsStylesPanel.h"
 
 #ifdef Slicer_USE_PYTHONQT
 # include "qSlicerScriptedLoadableModuleFactory.h"
@@ -75,21 +73,6 @@ qSlicerApplicationHelper::qSlicerApplicationHelper(QObject * parent) : Superclas
 //----------------------------------------------------------------------------
 qSlicerApplicationHelper::~qSlicerApplicationHelper()
 {
-}
-
-//----------------------------------------------------------------------------
-void qSlicerApplicationHelper::preInitializeApplication(
-    const char* argv0, const QString& styleName)
-{
-  itk::itkFactoryRegistration();
-  ctkProxyStyle* style = qobject_cast<ctkProxyStyle*>(QStyleFactory::create(styleName));
-  if (!style)
-    {
-    qWarning() << "Failed to set" << styleName << "style: "
-               << "Available styles are"
-               << qSlicerSettingsStylesPanel::availableSlicerStyles().join(", ");
-    }
-  Self::preInitializeApplication(argv0, style);
 }
 
 //----------------------------------------------------------------------------

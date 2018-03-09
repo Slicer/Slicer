@@ -44,8 +44,6 @@ public:
   qSlicerApplicationHelper(QObject * parent = 0);
   virtual ~qSlicerApplicationHelper();
 
-  static void preInitializeApplication(const char* argv0, const QString& styleName);
-
   static void preInitializeApplication(const char* argv0, ctkProxyStyle* style);
 
   template<typename SlicerMainWindowType>

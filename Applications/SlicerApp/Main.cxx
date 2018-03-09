@@ -21,6 +21,7 @@
 // Slicer includes
 #include "qSlicerApplication.h"
 #include "qSlicerApplicationHelper.h"
+#include "qSlicerStyle.h"
 
 // SlicerApp includes
 #include "qSlicerAppMainWindow.h"
@@ -32,8 +33,9 @@ namespace
 int SlicerAppMain(int argc, char* argv[])
 {
   typedef qSlicerAppMainWindow SlicerMainWindowType;
+  typedef qSlicerStyle SlicerAppStyle;
 
-  qSlicerApplicationHelper::preInitializeApplication(argv[0], "Slicer");
+  qSlicerApplicationHelper::preInitializeApplication(argv[0], new SlicerAppStyle);
 
   qSlicerApplication app(argc, argv);
   if (app.returnCode() != -1)
