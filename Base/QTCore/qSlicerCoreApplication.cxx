@@ -635,14 +635,12 @@ void qSlicerCoreApplicationPrivate::parseArguments()
     {
     qWarning() << "Failed to parse arguments - "
                   "it seems you forgot to call setCoreCommandOptions()";
-    q->terminate(EXIT_FAILURE);
-    return;
+    this->quickExit(EXIT_FAILURE);
     }
   if (!options->parse(q->arguments()))
     {
     qCritical("Problem parsing command line arguments.  Try with --help.");
-    q->terminate(EXIT_FAILURE);
-    return;
+    this->quickExit(EXIT_FAILURE);
     }
 }
 
