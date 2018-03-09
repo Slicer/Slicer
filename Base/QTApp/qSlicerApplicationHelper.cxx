@@ -79,6 +79,7 @@ qSlicerApplicationHelper::~qSlicerApplicationHelper()
 void qSlicerApplicationHelper::preInitializeApplication(
     const char* argv0, ctkProxyStyle* style)
 {
+  itk::itkFactoryRegistration();
 #if QT_VERSION >= 0x040803
 #ifdef Q_OS_MACX
   if (QSysInfo::MacintoshVersion > QSysInfo::MV_10_8)
