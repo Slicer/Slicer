@@ -181,6 +181,16 @@ class MultiVolumeImporterWidget(ScriptedLoadableModuleWidget):
         fileNames.append(fileName)
     self.humanSort(fileNames)
 
+    # check for nifti file that may be 4D as special case
+    niftiFiles = []
+    for fileName in fileNames:
+      if fileName.lower().endswith('.nii.gz') or fileName.lower().endswith('.nii'):
+        niftiFiles.append(fileName)
+    if len(niftiFiles) == 1:
+     self.read4DNIfTI(mvNode, niftiFiles[0])
+     return
+
+    # not 4D nifti, so keep trying
     for fileName in fileNames:
       (s,f) = self.readFrame(fileName)
       if s:
@@ -296,3 +306,61 @@ class MultiVolumeImporterWidget(ScriptedLoadableModuleWidget):
     slicer.mrmlScene.RemoveNode(sn)
     slicer.mrmlScene.RemoveNode(node)
 
+  def read4DNIfTI(self, mvNode, fileName):
+    """Try to read a 4D nifti file as a multivolume"""
+    print('trying to read %s' % fileName)
+
+    reader = vtk.vtkNIFTIImageReader()
+    reader.SetFileName(fileName)
+    reader.SetTimeAsVector(True)
+    reader.Update()
+    timeSpacing = reader.GetTimeSpacing()
+    nFrames = reader.GetTimeDimension()
+
+    volumeLabels = vtk.vtkDoubleArray()
+    frameLabelsAttr = ''
+    volumeLabels.SetNumberOfTuples(nFrames)
+    volumeLabels.SetNumberOfComponents(1)
+    volumeLabels.Allocate(nFrames)
+    for i in range(nFrames):
+      frameId = self.__veInitial.value + timeSpacing * self.__veStep.value * i
+      volumeLabels.SetComponent(i, 0, frameId)
+      frameLabelsAttr += str(frameId)+','
+    frameLabelsAttr = frameLabelsAttr[:-1]
+
+
+    mvDisplayNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLMultiVolumeDisplayNode')
+    mvDisplayNode.SetScene(slicer.mrmlScene)
+    slicer.mrmlScene.AddNode(mvDisplayNode)
+    mvDisplayNode.SetReferenceCount(mvDisplayNode.GetReferenceCount()-1)
+    mvDisplayNode.SetDefaultColorMap()
+
+    imageChangeInformation = vtk.vtkImageChangeInformation()
+    imageChangeInformation.SetInputConnection(reader.GetOutputPort())
+    imageChangeInformation.SetOutputSpacing( 1, 1, 1 )
+    imageChangeInformation.SetOutputOrigin( 0, 0, 0 )
+    imageChangeInformation.Update()
+
+    scaleMatrix = vtk.vtkMatrix4x4()
+    spacing = reader.GetOutputDataObject(0).GetSpacing()
+    for diag in range(3):
+      scaleMatrix.SetElement(diag, diag, spacing[diag])
+    ijkToRAS = vtk.vtkMatrix4x4()
+    ijkToRAS.DeepCopy(reader.GetQFormMatrix())
+    vtk.vtkMatrix4x4.Multiply4x4(ijkToRAS, scaleMatrix, ijkToRAS)
+    mvNode.SetIJKToRASMatrix(ijkToRAS)
+    mvNode.SetAndObserveDisplayNodeID(mvDisplayNode.GetID())
+    mvNode.SetAndObserveImageData(imageChangeInformation.GetOutputDataObject(0))
+    mvNode.SetNumberOfFrames(nFrames)
+
+    mvNode.SetLabelArray(volumeLabels)
+    mvNode.SetLabelName(self.__veLabel.text)
+
+    mvNode.SetAttribute('MultiVolume.FrameLabels',frameLabelsAttr)
+    mvNode.SetAttribute('MultiVolume.NumberOfFrames',str(nFrames))
+    mvNode.SetAttribute('MultiVolume.FrameIdentifyingDICOMTagName','')
+    mvNode.SetAttribute('MultiVolume.FrameIdentifyingDICOMTagUnits','')
+
+    mvNode.SetName(str(nFrames)+' frames NIfTI MultiVolume')
+    Helper.SetBgFgVolumes(mvNode.GetID(),None)
+    return
