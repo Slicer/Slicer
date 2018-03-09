@@ -465,7 +465,7 @@ function(_sb_get_external_project_arguments proj varname)
     # USES_TERMINAL_* options were introduced in CMake 3.4
     foreach(step IN ITEMS DOWNLOAD UPDATE CONFIGURE BUILD TEST INSTALL)
       list(APPEND _ep_arguments
-        USES_TERMINAL_${step}
+        USES_TERMINAL_${step} 1
         )
     endforeach()
   endif()
