@@ -199,9 +199,13 @@ endforeach()
 # of generated packages from its standard output and create a file PACKAGES.txt
 # containing the list of package paths.
 
-# The following variable can be used when testing this module. It avoids
-# to wait for a rebuild of the project.
+# Setting the environment variable SLICER_EXTENSION_MANAGER_SKIP_PACKAGING_TARGET to
+# any non empty value can be used when testing this module. It avoids to wait for a rebuild
+# of the project.
 set(_build_target 1)
+if(NOT "$ENV{SLICER_EXTENSION_MANAGER_SKIP_PACKAGING_TARGET}" STREQUAL "")
+  set(_build_target 0)
+endif()
 
 if(_build_target)
   execute_process(
@@ -272,7 +276,13 @@ foreach(p ${package_list})
     set(package_uploaded 1)
     get_filename_component(package_name "${p}" NAME)
 
+    # Setting the environment variable SLICER_EXTENSION_MANAGER_SKIP_MIDAS_UPLOAD to
+    # any non empty value can be used when testing this module. It skips upload of the
+    # package to Midas.
     set(upload_to_midas 1)
+    if(NOT "$ENV{SLICER_EXTENSION_MANAGER_SKIP_MIDAS_UPLOAD}" STREQUAL "")
+      set(upload_to_midas 0)
+    endif()
     if(upload_to_midas)
       message("Uploading [${package_name}] to [${MIDAS_PACKAGE_URL}]")
       midas_api_upload_extension(
