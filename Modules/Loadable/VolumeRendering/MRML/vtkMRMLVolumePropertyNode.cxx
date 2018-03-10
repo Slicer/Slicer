@@ -152,11 +152,15 @@ void vtkMRMLVolumePropertyNode::CopyParameterSet(vtkMRMLNode *anode)
     return;
     }
 
+  vtkMRMLCopyBeginMacro(anode);
+  vtkMRMLCopyVectorMacro(EffectiveRange, double, 2);
+  vtkMRMLCopyEndMacro();
+
+  // VolumeProperty
   this->VolumeProperty->SetIndependentComponents(node->VolumeProperty->GetIndependentComponents());
   this->VolumeProperty->SetInterpolationType(node->VolumeProperty->GetInterpolationType());
 
-  //VolumeProperty
-  for (int i=0;i<VTK_MAX_VRCOMP;i++)
+  for (int i=0; i<VTK_MAX_VRCOMP; i++)
     {
     this->VolumeProperty->SetComponentWeight(i,node->GetVolumeProperty()->GetComponentWeight(i));
     //TODO: No set method for GrayTransferFunction, ColorChannels, and DefaultGradientOpacity
@@ -186,8 +190,6 @@ void vtkMRMLVolumePropertyNode::CopyParameterSet(vtkMRMLNode *anode)
     this->VolumeProperty->SetSpecular(i, node->VolumeProperty->GetSpecular(i));
     this->VolumeProperty->SetSpecularPower(i, node->VolumeProperty->GetSpecularPower(i));
     }
-
-  this->SetEffectiveRange(node->GetEffectiveRange());
 }
 
 //----------------------------------------------------------------------------
@@ -195,7 +197,9 @@ void vtkMRMLVolumePropertyNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 
-  os << indent << "EffectiveRange: (" << this->EffectiveRange[0] << ", " << this->EffectiveRange[1] << ")\n";
+  vtkMRMLPrintBeginMacro(os, indent);
+  vtkMRMLPrintVectorMacro(EffectiveRange, double, 2);
+  vtkMRMLPrintEndMacro();
 
   os << indent << "VolumeProperty: ";
   this->VolumeProperty->PrintSelf(os,indent.GetNextIndent());

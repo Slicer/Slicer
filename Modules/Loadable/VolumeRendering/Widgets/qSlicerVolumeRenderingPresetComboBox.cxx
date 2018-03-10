@@ -154,6 +154,13 @@ vtkMRMLNode* qSlicerVolumeRenderingPresetComboBox::currentNode()const
 }
 
 // --------------------------------------------------------------------------
+QString qSlicerVolumeRenderingPresetComboBox::currentNodeID()const
+{
+  Q_D(const qSlicerVolumeRenderingPresetComboBox);
+  return d->PresetComboBox->currentNodeID();
+}
+
+// --------------------------------------------------------------------------
 vtkMRMLVolumePropertyNode* qSlicerVolumeRenderingPresetComboBox::mrmlVolumePropertyNode()const
 {
   Q_D(const qSlicerVolumeRenderingPresetComboBox);
@@ -165,6 +172,13 @@ void qSlicerVolumeRenderingPresetComboBox::setCurrentNode(vtkMRMLNode* node)
 {
   Q_D(qSlicerVolumeRenderingPresetComboBox);
   d->PresetComboBox->setCurrentNode(node);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingPresetComboBox::setCurrentNodeID(const QString& nodeID)
+{
+  Q_D(qSlicerVolumeRenderingPresetComboBox);
+  d->PresetComboBox->setCurrentNodeID(nodeID);
 }
 
 // --------------------------------------------------------------------------
@@ -291,6 +305,15 @@ void qSlicerVolumeRenderingPresetComboBox::updatePresetSliderRange()
 void qSlicerVolumeRenderingPresetComboBox::applyPreset(vtkMRMLNode* node)
 {
   Q_D(qSlicerVolumeRenderingPresetComboBox);
+
+  if (this->signalsBlocked())
+    {
+    // Prevent the preset node from overwriting the active volume property node (thus reverting
+    // changes in the transfer functions) when the widget's signals are blocked.
+    // Needed to handle here, because if the inner combobox's signals are blocked, then the icon
+    // is not updated.
+    return;
+    }
 
   vtkMRMLVolumePropertyNode* presetNode = vtkMRMLVolumePropertyNode::SafeDownCast(node);
   if (!presetNode || !d->VolumePropertyNode)

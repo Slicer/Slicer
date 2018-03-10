@@ -287,7 +287,7 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLVolumeNodeChanged(vtkMRMLN
 
   vtkSlicerVolumeRenderingLogic *logic = vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic());
 
-  // see if the volume has any display node for a current viewer
+  // See if the volume has any display node for a current viewer
   vtkMRMLVolumeRenderingDisplayNode *dnode = logic->GetFirstVolumeRenderingDisplayNode(volumeNode);
   if (!this->mrmlScene()->IsClosing())
     {
@@ -306,6 +306,16 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLVolumeNodeChanged(vtkMRMLN
     }
 
   this->setMRMLDisplayNode(dnode);
+
+  // Select preset node that was previously selected for this volume
+  vtkMRMLVolumePropertyNode* volumePropertyNode = this->mrmlVolumePropertyNode();
+  if (volumePropertyNode)
+    {
+    vtkMRMLVolumePropertyNode* presetNode = logic->GetPresetByName(volumePropertyNode->GetName());
+    bool wasBlocking = d->PresetComboBox->blockSignals(true);
+    d->PresetComboBox->setCurrentNode(presetNode);
+    d->PresetComboBox->blockSignals(wasBlocking);
+    }
 
   emit currentVolumeNodeChanged(volumeNode);
 }

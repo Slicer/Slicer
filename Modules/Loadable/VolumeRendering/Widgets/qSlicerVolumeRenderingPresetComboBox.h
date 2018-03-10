@@ -46,6 +46,9 @@ public:
   /// Get selected preset node in the combobox.
   /// Note: This node is not in the main MRML scene, but from the private presets scene
   Q_INVOKABLE vtkMRMLNode* currentNode()const;
+  /// Return the currently selected node id . "" if no node is selected
+  /// Utility function that is based on currentNode
+  Q_INVOKABLE QString currentNodeID()const;
 
   /// Get volume property node controlling volume rendering transfer functions.
   /// Its content mirrors the currently selected preset node in the combobox.
@@ -54,6 +57,9 @@ public:
 public slots:
   /// Set selected preset node in the combobox. Triggers update of the volume property node
   void setCurrentNode(vtkMRMLNode* node);
+  /// Select the node to be current. If \a nodeID is invalid (or can't be found
+  /// in the scene), the current node becomes 0.
+  void setCurrentNodeID(const QString& nodeID);
 
   /// Set volume property node controlling volume rendering transfer functions.
   /// Its content mirrors the currently selected preset node in the combobox.
