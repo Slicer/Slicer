@@ -29,6 +29,7 @@
 #include <vtkMRMLViewNode.h>
 
 // VTK includes
+#include <vtkCamera.h>
 #include <vtkIntArray.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
@@ -207,6 +208,17 @@ void vtkMRMLCameraDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller,
       this->UpdateCameraNode();
       vtkDebugMacro("ProcessingMRML: got a camera node modified event");
       break;
+    case vtkCommand::ResetCameraClippingRangeEvent:
+      if (this->GetRenderer())
+        {
+        this->GetRenderer()->ResetCameraClippingRange();
+        }
+      else if (this->GetCameraNode() && this->GetCameraNode()->GetCamera())
+        {
+        vtkCamera* camera = this->GetCameraNode()->GetCamera();
+        camera->SetClippingRange(0.1, camera->GetDistance()*2);
+        }
+      break;
     default:
       this->Superclass::ProcessMRMLNodesEvents(caller, event, callData);
       break;
@@ -272,6 +284,7 @@ void vtkMRMLCameraDisplayableManager::SetAndObserveCameraNode(vtkMRMLCameraNode 
   vtkNew<vtkIntArray> cameraNodeEvents;
   cameraNodeEvents->InsertNextValue(vtkCommand::ModifiedEvent);
   cameraNodeEvents->InsertNextValue(vtkMRMLCameraNode::ActiveTagModifiedEvent);
+  cameraNodeEvents->InsertNextValue(vtkCommand::ResetCameraClippingRangeEvent);
 
   vtkSetAndObserveMRMLNodeEventsMacro(
     this->Internal->CameraNode, newCameraNode, cameraNodeEvents.GetPointer());

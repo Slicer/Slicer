@@ -508,12 +508,7 @@ vtkMRMLCameraNode* vtkMRMLCameraNode::FindActiveTagInScene(const char *tag)
 //---------------------------------------------------------------------------
 void vtkMRMLCameraNode::ResetClippingRange()
 {
-  // \tbd: use vtkRenderer::ResetClippingRange ?
-  // Need to get the renderer from the view node associated with the camera
-  if (this->Camera)
-    {
-    this->Camera->SetClippingRange(0.1, this->Camera->GetDistance()*2);
-}
+  this->InvokeEvent(vtkCommand::ResetCameraClippingRangeEvent);
 }
 
 //---------------------------------------------------------------------------
