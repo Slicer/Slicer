@@ -336,7 +336,7 @@ void vtkMRMLCameraNode::ProcessMRMLEvents ( vtkObject *caller,
       this->Camera == vtkCamera::SafeDownCast(caller) &&
       event ==  vtkCommand::ModifiedEvent)
     {
-    this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
+    this->Modified();
     }
 
   vtkMRMLTransformNode *tnode = this->GetParentTransformNode();
@@ -393,7 +393,7 @@ void vtkMRMLCameraNode::ProcessMRMLEvents ( vtkObject *caller,
     this->Camera->SetViewUp(v[0],v[1],v[2]);
 
     this->GetAppliedTransform()->DeepCopy(transformToWorld.GetPointer());
-    this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
+    this->Modified();
     }
 }
 
@@ -513,7 +513,7 @@ void vtkMRMLCameraNode::ResetClippingRange()
   if (this->Camera)
     {
     this->Camera->SetClippingRange(0.1, this->Camera->GetDistance()*2);
-    }
+}
 }
 
 //---------------------------------------------------------------------------
