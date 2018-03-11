@@ -124,7 +124,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
     frameSkipSlider.connect('valueChanged(double)', self.frameSkipSliderValueChanged)
     frameSkipSlider.decimals = 0
     frameSkipSlider.minimum = 0
-    frameSkipSlider.maximum = 10
+    frameSkipSlider.maximum = 50
     flythroughFormLayout.addRow("Frame skip:", frameSkipSlider)
 
     # Frame delay slider
@@ -274,9 +274,11 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
     if self.path:
       f = int(f)
       p = self.path[f]
+      wasModified = self.cameraNode.StartModify()
       self.camera.SetPosition(*p)
       foc = self.path[f+1]
       self.camera.SetFocalPoint(*foc)
+      self.camera.OrthogonalizeViewUp()
 
       toParent = vtk.vtkMatrix4x4()
       self.transform.GetMatrixTransformToParent(toParent)
@@ -305,6 +307,8 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
 
       self.transform.SetMatrixTransformToParent(toParent)
 
+      self.cameraNode.EndModify(wasModified)
+      self.cameraNode.ResetClippingRange()
 
 class EndoscopyComputePath:
   """Compute path given a list of fiducials.
