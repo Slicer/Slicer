@@ -301,8 +301,10 @@ message(STATUS "Setting ENV{ExternalData_OBJECT_STORES} to $ENV{ExternalData_OBJ
 #-----------------------------------------------------------------------------
 
 if(empty_binary_directory AND NOT run_ctest_with_disable_clean)
-  message("Directory ${CTEST_BINARY_DIRECTORY} cleaned !")
+  set(msg "Removing binary directory [${CTEST_BINARY_DIRECTORY}]")
+  message(STATUS "${msg}")
   ctest_empty_binary_directory(${CTEST_BINARY_DIRECTORY})
+  message(STATUS "${msg} - done")
 endif()
 
 #-----------------------------------------------------------------------------

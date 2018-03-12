@@ -206,6 +206,7 @@ setIfNotDefined(CTEST_DROP_SITE "slicer.cdash.org")
 # The following variable can be used to disable specific steps
 #-----------------------------------------------------------------------------
 setIfNotDefined(run_ctest_submit TRUE)
+setIfNotDefined(run_ctest_with_disable_clean FALSE)
 setIfNotDefined(run_ctest_with_update TRUE)
 setIfNotDefined(run_ctest_with_configure TRUE)
 setIfNotDefined(run_ctest_with_build TRUE)
@@ -292,9 +293,11 @@ list(APPEND variables model)
 list(APPEND variables track)
 list(APPEND variables CTEST_USE_LAUNCHERS)
 
-if(empty_binary_directory)
-  message("Directory ${CTEST_BINARY_DIRECTORY} cleaned !")
+if(empty_binary_directory AND NOT run_ctest_with_disable_clean)
+  set(msg "Removing binary directory [${CTEST_BINARY_DIRECTORY}]")
+  message(STATUS "${msg}")
   ctest_empty_binary_directory(${CTEST_BINARY_DIRECTORY})
+  message(STATUS "${msg} - done")
 endif()
 
 # Given a variable name, this function will display the text
