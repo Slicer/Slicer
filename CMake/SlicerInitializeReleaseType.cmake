@@ -11,7 +11,7 @@ mark_as_advanced(Slicer_RELEASE_TYPE)
 # Set the possible values for cmake-gui
 set_property(CACHE Slicer_RELEASE_TYPE PROPERTY STRINGS
   "Experimental"
-  "Nightly"
+  "Preview"
   "Stable"
   )
 
