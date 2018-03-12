@@ -116,7 +116,7 @@ if(WITH_DOCUMENTATION)
 endif()
 
 #-----------------------------------------------------------------------------
-# The following variable can be used while testing the driver scripts
+# The following variable can be used to disable specific steps
 #-----------------------------------------------------------------------------
 setIfNotDefined(run_ctest_submit TRUE)
 setIfNotDefined(run_ctest_with_disable_clean FALSE)
@@ -268,10 +268,18 @@ foreach(var ${variables})
   display_var(${var})
 endforeach()
 
+#-----------------------------------------------------------------------------
+# Cleanup previous dashboard
+#-----------------------------------------------------------------------------
+
 if(empty_binary_directory AND NOT run_ctest_with_disable_clean)
   message("Directory ${CTEST_BINARY_DIRECTORY} cleaned !")
   ctest_empty_binary_directory(${CTEST_BINARY_DIRECTORY})
 endif()
+
+#-----------------------------------------------------------------------------
+# Source code checkout and update commands
+#-----------------------------------------------------------------------------
 
 if(NOT EXISTS "${CTEST_SOURCE_DIRECTORY}")
   if(NOT DEFINED GIT_REPOSITORY)
@@ -287,11 +295,9 @@ else()
   set(CTEST_UPDATE_COMMAND "${CTEST_GIT_COMMAND}")
 endif()
 
-set(CTEST_SOURCE_DIRECTORY "${CTEST_SOURCE_DIRECTORY}")
-
-#
+#-----------------------------------------------------------------------------
 # run_ctest macro
-#
+#-----------------------------------------------------------------------------
 macro(run_ctest)
   ctest_start(${model} TRACK ${track})
 
@@ -515,6 +521,10 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     file(REMOVE ${build_in_progress_file})
   endif()
 endmacro()
+
+#-----------------------------------------------------------------------------
+# Dashboard execution
+#-----------------------------------------------------------------------------
 
 if(SCRIPT_MODE STREQUAL "continuous" AND ${CTEST_CONTINUOUS_DURATION} GREATER 0)
   while(${CTEST_ELAPSED_TIME} LESS ${CTEST_CONTINUOUS_DURATION})

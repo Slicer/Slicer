@@ -203,7 +203,7 @@ setIfNotDefined(MIDAS_PACKAGE_API_KEY "MIDAS_PACKAGE_API_KEY-NOTDEFINED" OBFUSCA
 setIfNotDefined(CTEST_DROP_SITE "slicer.cdash.org")
 
 #-----------------------------------------------------------------------------
-# The following variable can be used while testing the driver scripts
+# The following variable can be used to disable specific steps
 #-----------------------------------------------------------------------------
 setIfNotDefined(run_ctest_submit TRUE)
 setIfNotDefined(run_ctest_with_update TRUE)
@@ -331,6 +331,10 @@ foreach(var ${variables})
   display_var(${var})
 endforeach()
 
+#-----------------------------------------------------------------------------
+# Source code checkout and update commands
+#-----------------------------------------------------------------------------
+
 if(NOT EXTENSIONS_BUILDSYSTEM_TESTING)
   # Compute 'work_dir' and 'src_name' variable used by both _write_gitclone_script and _update_gitclone_script
   get_filename_component(src_dir ${Slicer_EXTENSION_DESCRIPTION_DIR} REALPATH)
@@ -377,9 +381,9 @@ if(NOT EXTENSIONS_BUILDSYSTEM_TESTING)
 
 endif()
 
-#
+#-----------------------------------------------------------------------------
 # run_ctest macro
-#
+#-----------------------------------------------------------------------------
 macro(run_ctest)
 
   set(slicer_build_in_progress FALSE)
@@ -541,6 +545,10 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     endif()
   endif()
 endmacro()
+
+#-----------------------------------------------------------------------------
+# Dashboard execution
+#-----------------------------------------------------------------------------
 
 if(SCRIPT_MODE STREQUAL "continuous")
   while(${CTEST_ELAPSED_TIME} LESS 46800) # Lasts 13 hours (Assuming it starts at 9am, it will end around 10pm)
