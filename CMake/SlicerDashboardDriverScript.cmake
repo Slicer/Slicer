@@ -290,6 +290,18 @@ macro(run_ctest)
     message("First time build - Initialize CMakeCache.txt")
     set(force_build TRUE)
 
+    set(OPTIONAL_CACHE_CONTENT)
+
+    if(DEFINED CMAKE_C_COMPILER)
+      set(OPTIONAL_CACHE_CONTENT "${OPTIONAL_CACHE_CONTENT}
+CMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}")
+    endif()
+
+    if(DEFINED CMAKE_CXX_COMPILER)
+      set(OPTIONAL_CACHE_CONTENT "${OPTIONAL_CACHE_CONTENT}
+CMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}")
+    endif()
+
     #-----------------------------------------------------------------------------
     # Write initial cache.
     #-----------------------------------------------------------------------------
@@ -300,6 +312,7 @@ Subversion_SVN_EXECUTABLE:FILEPATH=${CTEST_SVN_COMMAND}
 WITH_COVERAGE:BOOL=${WITH_COVERAGE}
 DOCUMENTATION_TARGET_IN_ALL:BOOL=${WITH_DOCUMENTATION}
 DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY:PATH=${DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY}
+${OPTIONAL_CACHE_CONTENT}
 ${ADDITIONAL_CMAKECACHE_OPTION}
 ")
   endif()
@@ -316,6 +329,18 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     endif()
 
     #-----------------------------------------------------------------------------
+    # Environment
+    #-----------------------------------------------------------------------------
+
+    # This will ensure compiler paths specified using the cache variables are used
+    # consistently.
+    if(DEFINED CMAKE_C_COMPILER)
+      set(ENV{CC} "/dev/null")
+    endif()
+    if(DEFINED CMAKE_CXX_COMPILER)
+      set(ENV{CXX} "/dev/null")
+    endif()
+
     # Configure
     #-----------------------------------------------------------------------------
     if(run_ctest_with_configure)

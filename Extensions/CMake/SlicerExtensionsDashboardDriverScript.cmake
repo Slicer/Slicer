@@ -393,9 +393,21 @@ macro(run_ctest)
       message("First time build - Initialize CMakeCache.txt")
       set(force_build TRUE)
 
-      set(Slicer_EXTENSION_DESCRIPTION_DIR_CMAKECACHE)
+      set(OPTIONAL_CACHE_CONTENT)
+
       if(NOT EXTENSIONS_BUILDSYSTEM_TESTING)
-        set(Slicer_EXTENSION_DESCRIPTION_DIR_CMAKECACHE "Slicer_EXTENSION_DESCRIPTION_DIR:PATH=${Slicer_EXTENSION_DESCRIPTION_DIR}")
+        set(OPTIONAL_CACHE_CONTENT "${OPTIONAL_CACHE_CONTENT}
+Slicer_EXTENSION_DESCRIPTION_DIR:PATH=${Slicer_EXTENSION_DESCRIPTION_DIR}")
+      endif()
+
+      if(DEFINED CMAKE_C_COMPILER)
+        set(OPTIONAL_CACHE_CONTENT "${OPTIONAL_CACHE_CONTENT}
+CMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}")
+      endif()
+
+      if(DEFINED CMAKE_CXX_COMPILER)
+        set(OPTIONAL_CACHE_CONTENT "${OPTIONAL_CACHE_CONTENT}
+CMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}")
       endif()
 
       #-----------------------------------------------------------------------------
@@ -412,7 +424,7 @@ MIDAS_PACKAGE_EMAIL:STRING=${MIDAS_PACKAGE_EMAIL}
 MIDAS_PACKAGE_API_KEY:STRING=${MIDAS_PACKAGE_API_KEY}
 Slicer_DIR:PATH=${Slicer_DIR}
 Slicer_UPLOAD_EXTENSIONS:BOOL=${Slicer_UPLOAD_EXTENSIONS}
-${Slicer_EXTENSION_DESCRIPTION_DIR_CMAKECACHE}
+${OPTIONAL_CACHE_CONTENT}
 ${ADDITIONAL_CMAKECACHE_OPTION}
 ")
     endif()
@@ -441,6 +453,18 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
       endif()
 
       #-----------------------------------------------------------------------------
+      # Environment
+      #-----------------------------------------------------------------------------
+
+      # This will ensure compiler paths specified using the cache variables are used
+      # consistently.
+      if(DEFINED CMAKE_C_COMPILER)
+        set(ENV{CC} "/dev/null")
+      endif()
+      if(DEFINED CMAKE_CXX_COMPILER)
+        set(ENV{CXX} "/dev/null")
+      endif()
+
       # Configure
       #-----------------------------------------------------------------------------
       if(run_ctest_with_configure)
