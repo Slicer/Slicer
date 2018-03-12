@@ -162,7 +162,6 @@ set(expected_variables
   CTEST_CMAKE_GENERATOR
   CTEST_TEST_TIMEOUT
   CTEST_BUILD_FLAGS
-  CTEST_PROJECT_NAME
   EXTENSIONS_TRACK_QUALIFIER
   EXTENSIONS_BUILDSYSTEM_SOURCE_DIRECTORY
   EXTENSIONS_BUILDSYSTEM_TESTING
@@ -213,6 +212,25 @@ setIfNotDefined(run_ctest_with_configure TRUE)
 setIfNotDefined(run_ctest_with_build TRUE)
 setIfNotDefined(run_ctest_with_notes TRUE)
 setIfNotDefined(Slicer_UPLOAD_EXTENSIONS TRUE)
+
+#-----------------------------------------------------------------------------
+# CTest Project Name
+#-----------------------------------------------------------------------------
+if(NOT DEFINED Slicer_APPLICATION_NAME)
+  set(Slicer_APPLICATION_NAME "Slicer")
+endif()
+list(APPEND variables Slicer_APPLICATION_NAME)
+if(NOT DEFINED CTEST_PROJECT_NAME)
+  set(CTEST_PROJECT_NAME  "${Slicer_APPLICATION_NAME}Preview")
+  if("${Slicer_RELEASE_TYPE}" STREQUAL "Stable")
+    set(CTEST_PROJECT_NAME  "${Slicer_APPLICATION_NAME}Stable")
+    # XXX Rename Slicer CDash project
+    if("${Slicer_APPLICATION_NAME}" STREQUAL "Slicer")
+      set(CTEST_PROJECT_NAME "Slicer4")
+    endif()
+  endif()
+endif()
+list(APPEND variables CTEST_PROJECT_NAME)
 
 set(CTEST_COMMAND ${CMAKE_CTEST_COMMAND})
 

@@ -21,7 +21,6 @@ set(expected_variables
   CTEST_TEST_TIMEOUT
   CTEST_BUILD_FLAGS
   TEST_TO_EXCLUDE_REGEX
-  CTEST_PROJECT_NAME
   CTEST_SOURCE_DIRECTORY
   CTEST_BINARY_DIRECTORY
   CTEST_SVN_COMMAND
@@ -133,9 +132,28 @@ setIfNotDefined(run_ctest_with_upload TRUE)
 setIfNotDefined(run_ctest_with_notes TRUE)
 
 #-----------------------------------------------------------------------------
+# CTest Project Name
+#-----------------------------------------------------------------------------
+if(NOT DEFINED Slicer_APPLICATION_NAME)
+  set(Slicer_APPLICATION_NAME "Slicer")
+endif()
+list(APPEND variables Slicer_APPLICATION_NAME)
+if(NOT DEFINED CTEST_PROJECT_NAME)
+  set(CTEST_PROJECT_NAME  "${Slicer_APPLICATION_NAME}Preview")
+  if("${Slicer_RELEASE_TYPE}" STREQUAL "Stable")
+    set(CTEST_PROJECT_NAME  "${Slicer_APPLICATION_NAME}Stable")
+    # XXX Rename Slicer CDash project
+    if("${Slicer_APPLICATION_NAME}" STREQUAL "Slicer")
+      set(CTEST_PROJECT_NAME "Slicer4")
+    endif()
+  endif()
+endif()
+list(APPEND variables CTEST_PROJECT_NAME)
+
+#-----------------------------------------------------------------------------
 if(NOT DEFINED GIT_REPOSITORY)
   if(NOT DEFINED SVN_REPOSITORY)
-    set(SVN_REPOSITORY "http://svn.slicer.org/${CTEST_PROJECT_NAME}")
+    set(SVN_REPOSITORY "http://svn.slicer.org/Slicer4")
   endif()
   if(NOT DEFINED SVN_BRANCH)
     set(SVN_BRANCH "trunk")
