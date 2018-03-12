@@ -332,6 +332,32 @@ foreach(var ${variables})
 endforeach()
 
 #-----------------------------------------------------------------------------
+# Environment
+#-----------------------------------------------------------------------------
+
+# This will ensure compiler paths specified using the cache variables are used
+# consistently.
+if(DEFINED CMAKE_C_COMPILER)
+  set(ENV{CC} "/dev/null")
+endif()
+if(DEFINED CMAKE_CXX_COMPILER)
+  set(ENV{CXX} "/dev/null")
+endif()
+
+if(UNIX)
+  if("$ENV{DISPLAY}" STREQUAL "")
+    set(ENV{DISPLAY} ":0")
+  endif()
+  message(STATUS "Setting ENV{DISPLAY} to $ENV{DISPLAY}")
+endif()
+
+# Cache for External data downloads
+if("$ENV{ExternalData_OBJECT_STORES}" STREQUAL "")
+  set(ENV{ExternalData_OBJECT_STORES} "$ENV{HOME}/.ExternalData")
+endif()
+message(STATUS "Setting ENV{ExternalData_OBJECT_STORES} to $ENV{ExternalData_OBJECT_STORES}")
+
+#-----------------------------------------------------------------------------
 # Source code checkout and update commands
 #-----------------------------------------------------------------------------
 
@@ -479,33 +505,6 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
       endif()
 
       #-----------------------------------------------------------------------------
-      # Environment
-      #-----------------------------------------------------------------------------
-
-      # This will ensure compiler paths specified using the cache variables are used
-      # consistently.
-      if(DEFINED CMAKE_C_COMPILER)
-        set(ENV{CC} "/dev/null")
-        message(STATUS "Setting ENV{CC} to $ENV{CC}")
-      endif()
-      if(DEFINED CMAKE_CXX_COMPILER)
-        set(ENV{CXX} "/dev/null")
-        message(STATUS "Setting ENV{CXX} to $ENV{CXX}")
-      endif()
-
-      if(UNIX)
-        if("$ENV{DISPLAY}" STREQUAL "")
-          set(ENV{DISPLAY} ":0")
-        endif()
-        message(STATUS "Setting ENV{DISPLAY} to $ENV{DISPLAY}")
-      endif()
-
-      # Cache for External data downloads
-      if("$ENV{ExternalData_OBJECT_STORES}" STREQUAL "")
-        set(ENV{ExternalData_OBJECT_STORES} "$ENV{HOME}/.ExternalData")
-      endif()
-      message(STATUS "Setting ENV{ExternalData_OBJECT_STORES} to $ENV{ExternalData_OBJECT_STORES}")
-
       # Configure
       #-----------------------------------------------------------------------------
       if(run_ctest_with_configure)
