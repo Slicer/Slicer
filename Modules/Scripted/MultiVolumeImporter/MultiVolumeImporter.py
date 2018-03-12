@@ -220,9 +220,8 @@ class MultiVolumeImporterWidget(ScriptedLoadableModuleWidget):
     else:
       frameIdMultiplier = 1.0
 
-    volumeLabels.SetNumberOfTuples(nFrames)
     volumeLabels.SetNumberOfComponents(1)
-    volumeLabels.Allocate(nFrames)
+    volumeLabels.SetNumberOfTuples(nFrames)
     for i in range(nFrames):
       frameId = frameIdMultiplier*(self.__veInitial.value+self.__veStep.value*i)
       volumeLabels.SetComponent(i, 0, frameId)
@@ -348,10 +347,8 @@ class MultiVolumeImporterWidget(ScriptedLoadableModuleWidget):
     # create frame labels using the timing info from the file
     # but use the advanced info so user can specify offset and scale
     volumeLabels = vtk.vtkDoubleArray()
-    frameLabelsAttr = ''
     volumeLabels.SetNumberOfTuples(nFrames)
-    volumeLabels.SetNumberOfComponents(1)
-    volumeLabels.Allocate(nFrames)
+    frameLabelsAttr = ''
     for i in range(nFrames):
       frameId = self.__veInitial.value + timeSpacing * self.__veStep.value * i
       volumeLabels.SetComponent(i, 0, frameId)
