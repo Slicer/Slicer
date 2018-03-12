@@ -158,7 +158,6 @@ set(expected_variables
   CTEST_BUILD_CONFIGURATION
   ADDITIONAL_CMAKECACHE_OPTION
   CTEST_NOTES_FILES
-  CTEST_DASHBOARD_ROOT
   CTEST_CMAKE_GENERATOR
   CTEST_TEST_TIMEOUT
   CTEST_BUILD_FLAGS
@@ -173,7 +172,7 @@ set(expected_variables
   Slicer_DIR
   )
 
-# List of all variables
+# Collect variables to display
 set(variables ${expected_variables})
 
 # Sanity check

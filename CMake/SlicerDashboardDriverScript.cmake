@@ -16,7 +16,6 @@ set(expected_variables
   WITH_DOCUMENTATION
   ADDITIONAL_CMAKECACHE_OPTION
   CTEST_NOTES_FILES
-  CTEST_DASHBOARD_ROOT
   CTEST_CMAKE_GENERATOR
   CTEST_TEST_TIMEOUT
   CTEST_BUILD_FLAGS
@@ -35,7 +34,7 @@ if(WITH_MEMCHECK)
   list(APPEND expected_variables CTEST_MEMORYCHECK_COMMAND)
 endif()
 
-# List of all variables
+# Collect variables to display
 set(variables ${expected_variables})
 
 # Sanity check
