@@ -24,15 +24,16 @@ set(expected_variables
   CTEST_PROJECT_NAME
   CTEST_SOURCE_DIRECTORY
   CTEST_BINARY_DIRECTORY
-  CTEST_COVERAGE_COMMAND
-  CTEST_MEMORYCHECK_COMMAND
   CTEST_SVN_COMMAND
   CTEST_GIT_COMMAND
   )
 
 # Update list of expected variables based on build options.
-if(WITH_DOCUMENTATION)
-  list(APPEND expected_variables DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY)
+if(WITH_COVERAGE)
+  list(APPEND expected_variables CTEST_COVERAGE_COMMAND)
+endif()
+if(WITH_MEMCHECK)
+  list(APPEND expected_variables CTEST_MEMORYCHECK_COMMAND)
 endif()
 
 # List of all variables
@@ -112,6 +113,9 @@ setIfNotDefined(CTEST_CONTINUOUS_DURATION 46800) # Lasts 13 hours (Assuming it s
 setIfNotDefined(MIDAS_PACKAGE_URL "http://slicer.kitware.com/midas3")
 setIfNotDefined(MIDAS_PACKAGE_EMAIL "MIDAS_PACKAGE_EMAIL-NOTDEFINED" OBFUSCATE)
 setIfNotDefined(MIDAS_PACKAGE_API_KEY "MIDAS_PACKAGE_API_KEY-NOTDEFINED" OBFUSCATE)
+if(WITH_DOCUMENTATION)
+  setIfNotDefined(DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY "$ENV{HOME}/Projects/Doxygen")
+endif()
 
 #-----------------------------------------------------------------------------
 # The following variable can be used while testing the driver scripts
