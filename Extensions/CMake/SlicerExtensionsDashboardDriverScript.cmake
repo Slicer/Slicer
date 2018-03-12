@@ -410,6 +410,11 @@ CMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}")
 CMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}")
       endif()
 
+      if(DEFINED CMAKE_OSX_DEPLOYMENT_TARGET)
+        set(OPTIONAL_CACHE_CONTENT "${OPTIONAL_CACHE_CONTENT}
+CMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET}")
+      endif()
+
       #-----------------------------------------------------------------------------
       # Write initial cache.
       #-----------------------------------------------------------------------------
