@@ -50,10 +50,10 @@
 #  <var-prefix>_WC_LAST_CHANGED_REV - revision of last commit
 #  <var-prefix>_WC_INFO
 #
-# If source directory is not a SVN, GIT or CVS, the macro will return early
+# If source directory is not a SVN or GIT, the macro will return early
 # displaying an warning message:
 #
-#   -- Skipping repository info extraction: directory [/path/to/src] is not a GIT, SVN or CVS checkout
+#   -- Skipping repository info extraction: directory [/path/to/src] is not a GIT or SVN checkout
 
 macro(SlicerMacroExtractRepositoryInfo)
   include(CMakeParseArguments)
@@ -89,10 +89,9 @@ macro(SlicerMacroExtractRepositoryInfo)
   set(${wc_info_prefix}_WC_REVISION_HASH "NA")
 
   if(NOT EXISTS ${MY_SOURCE_DIR}/.git
-      AND NOT EXISTS ${MY_SOURCE_DIR}/.svn
-      AND NOT EXISTS ${MY_SOURCE_DIR}/CVS)
+      AND NOT EXISTS ${MY_SOURCE_DIR}/.svn)
 
-    message(AUTHOR_WARNING "Skipping repository info extraction: directory [${MY_SOURCE_DIR}] is not a GIT, SVN or CVS checkout")
+    message(AUTHOR_WARNING "Skipping repository info extraction: directory [${MY_SOURCE_DIR}] is not a GIT or SVN checkout")
 
   else()
   
@@ -129,14 +128,6 @@ macro(SlicerMacroExtractRepositoryInfo)
         set(${wc_info_prefix}_WC_TYPE svn)
         Subversion_WC_INFO(${MY_SOURCE_DIR} ${wc_info_prefix})
 
-      else()
-
-        # Is <SOURCE_DIR> a CVS working copy ?
-        if(EXISTS ${MY_SOURCE_DIR}/CVS)
-
-          message(AUTHOR_WARNING "CVS info extraction *NOT* implemented !")
-
-        endif()
       endif()
     endif()
   endif()
