@@ -42,15 +42,49 @@ if(WITH_MEMCHECK)
 endif()
 
 #-----------------------------------------------------------------------------
+# Defaults
+#-----------------------------------------------------------------------------
+if(NOT DEFINED Slicer_USE_VTK_DEBUG_LEAKS)
+  list(APPEND expected_variables Slicer_RELEASE_TYPE)
+  set(Slicer_USE_VTK_DEBUG_LEAKS ON)
+  if("${Slicer_RELEASE_TYPE}" STREQUAL "Stable")
+    set(Slicer_USE_VTK_DEBUG_LEAKS OFF)
+  endif()
+endif()
+list(APPEND expected_variables Slicer_USE_VTK_DEBUG_LEAKS)
+
+if(NOT DEFINED BITNESS)
+  set(BITNESS "64")
+endif()
+list(APPEND expected_variables BITNESS)
+
+#-----------------------------------------------------------------------------
 # Set CTEST_BUILD_NAME
 #-----------------------------------------------------------------------------
 if(NOT DEFINED CTEST_BUILD_NAME)
   list(APPEND expected_variables
     OPERATING_SYSTEM
     COMPILER
-    BUILD_OPTIONS_STRING
+    QT_VERSION
+    Slicer_USE_PYTHONQT
+    Slicer_BUILD_CLI
+    Slicer_USE_VTK_DEBUG_LEAKS
+    BUILD_NAME_SUFFIX
     )
-  set(CTEST_BUILD_NAME "${OPERATING_SYSTEM}-${COMPILER}-${BUILD_OPTIONS_STRING}-${CTEST_BUILD_CONFIGURATION}")
+  set(name "${OPERATING_SYSTEM}-${COMPILER}-${BITNESS}bits-QT${QT_VERSION}")
+  if(NOT Slicer_USE_PYTHONQT)
+    set(name "${name}-NoPython")
+  endif()
+  if(NOT Slicer_BUILD_CLI)
+    set(name "${name}-NoCLI")
+  endif()
+  if(NOT Slicer_USE_VTK_DEBUG_LEAKS)
+    set(name "${name}-NoVTKDebugLeaks")
+  endif()
+  if(NOT "${BUILD_NAME_SUFFIX}" STREQUAL "")
+    set(name "${name}-${BUILD_NAME_SUFFIX}")
+  endif()
+  set(CTEST_BUILD_NAME "${name}-${CTEST_BUILD_CONFIGURATION}")
 endif()
 list(APPEND expected_variables CTEST_BUILD_NAME)
 
@@ -438,6 +472,16 @@ CMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET}")
 Subversion_SVN_EXECUTABLE:FILEPATH=${CTEST_SVN_COMMAND}")
     endif()
 
+    if(DEFINED Slicer_USE_PYTHONQT)
+      set(OPTIONAL_CACHE_CONTENT "${OPTIONAL_CACHE_CONTENT}
+Slicer_USE_PYTHONQT:BOOL=${Slicer_USE_PYTHONQT}")
+    endif()
+
+    if(DEFINED Slicer_BUILD_CLI)
+      set(OPTIONAL_CACHE_CONTENT "${OPTIONAL_CACHE_CONTENT}
+Slicer_BUILD_CLI:BOOL=${Slicer_BUILD_CLI}")
+    endif()
+
     #-----------------------------------------------------------------------------
     # Write initial cache.
     #-----------------------------------------------------------------------------
@@ -448,6 +492,7 @@ GIT_EXECUTABLE:FILEPATH=${CTEST_GIT_COMMAND}
 WITH_COVERAGE:BOOL=${WITH_COVERAGE}
 DOCUMENTATION_TARGET_IN_ALL:BOOL=${WITH_DOCUMENTATION}
 DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY:PATH=${DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY}
+Slicer_USE_VTK_DEBUG_LEAKS:BOOL=${Slicer_USE_VTK_DEBUG_LEAKS}
 ${OPTIONAL_CACHE_CONTENT}
 ${ADDITIONAL_CMAKECACHE_OPTION}
 ")

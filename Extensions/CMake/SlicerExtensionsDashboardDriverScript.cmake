@@ -180,15 +180,28 @@ set(expected_variables
   )
 
 #-----------------------------------------------------------------------------
+# Defaults
+#-----------------------------------------------------------------------------
+if(NOT DEFINED BITNESS)
+  set(BITNESS "64")
+endif()
+list(APPEND expected_variables BITNESS)
+
+#-----------------------------------------------------------------------------
 # Set CTEST_BUILD_NAME
 #-----------------------------------------------------------------------------
 if(NOT DEFINED CTEST_BUILD_NAME)
   list(APPEND expected_variables
     OPERATING_SYSTEM
     COMPILER
-    BUILD_OPTIONS_STRING
+    QT_VERSION
+    BUILD_NAME_SUFFIX
     )
-  set(CTEST_BUILD_NAME "${OPERATING_SYSTEM}-${COMPILER}-${BUILD_OPTIONS_STRING}-${CTEST_BUILD_CONFIGURATION}")
+  set(name "${OPERATING_SYSTEM}-${COMPILER}-${BITNESS}bits-QT${QT_VERSION}")
+  if(NOT "${BUILD_NAME_SUFFIX}" STREQUAL "")
+    set(name "${name}-${BUILD_NAME_SUFFIX}")
+  endif()
+  set(CTEST_BUILD_NAME "${name}-${CTEST_BUILD_CONFIGURATION}")
 endif()
 list(APPEND expected_variables CTEST_BUILD_NAME)
 
