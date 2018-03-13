@@ -44,6 +44,17 @@ endif()
 #-----------------------------------------------------------------------------
 # Defaults
 #-----------------------------------------------------------------------------
+if(WIN32)
+  if(NOT DEFINED Slicer_BUILD_WIN32_CONSOLE)
+    if(WITH_PACKAGES)
+      set(Slicer_BUILD_WIN32_CONSOLE OFF)
+    else()
+      set(Slicer_BUILD_WIN32_CONSOLE ON)
+    endif()
+  endif()
+  list(APPEND expected_variables Slicer_BUILD_WIN32_CONSOLE)
+endif()
+
 if(NOT DEFINED Slicer_USE_VTK_DEBUG_LEAKS)
   list(APPEND expected_variables Slicer_RELEASE_TYPE)
   set(Slicer_USE_VTK_DEBUG_LEAKS ON)
@@ -78,6 +89,11 @@ if(NOT DEFINED CTEST_BUILD_NAME)
   if(NOT Slicer_BUILD_CLI)
     set(name "${name}-NoCLI")
   endif()
+  if(WIN32)
+    if(NOT Slicer_BUILD_WIN32_CONSOLE)
+      set(name "${name}-NoConsole")
+    endif()
+  endif())
   if(NOT Slicer_USE_VTK_DEBUG_LEAKS)
     set(name "${name}-NoVTKDebugLeaks")
   endif()
@@ -470,6 +486,11 @@ CMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET}")
     if(DEFINED CTEST_SVN_COMMAND)
       set(OPTIONAL_CACHE_CONTENT "${OPTIONAL_CACHE_CONTENT}
 Subversion_SVN_EXECUTABLE:FILEPATH=${CTEST_SVN_COMMAND}")
+    endif()
+
+    if(DEFINED Slicer_BUILD_WIN32_CONSOLE)
+      set(OPTIONAL_CACHE_CONTENT "${OPTIONAL_CACHE_CONTENT}
+Slicer_BUILD_WIN32_CONSOLE:BOOL=${Slicer_BUILD_WIN32_CONSOLE}")
     endif()
 
     if(DEFINED Slicer_USE_PYTHONQT)
