@@ -29,11 +29,8 @@ set(expected_variables
   WITH_DOCUMENTATION
   ADDITIONAL_CMAKECACHE_OPTION
   CTEST_CMAKE_GENERATOR
-  CTEST_TEST_TIMEOUT
   CTEST_BUILD_FLAGS
   TEST_TO_EXCLUDE_REGEX
-  CTEST_SVN_COMMAND
-  CTEST_GIT_COMMAND
   )
 
 # Update list of expected variables based on build options.
@@ -167,6 +164,7 @@ endmacro()
 #-----------------------------------------------------------------------------
 # Set default values
 #-----------------------------------------------------------------------------
+setIfNotDefined(CTEST_TEST_TIMEOUT 900) # 15mins
 setIfNotDefined(CTEST_PARALLEL_LEVEL 8)
 setIfNotDefined(CTEST_CONTINUOUS_DURATION 46800) # Lasts 13 hours (Assuming it starts at 9am, it will end around 10pm)
 setIfNotDefined(MIDAS_PACKAGE_URL "http://slicer.kitware.com/midas3")
@@ -229,6 +227,26 @@ else()
   list(APPEND variables GIT_REPOSITORY GIT_TAG)
 endif()
 
+#-----------------------------------------------------------------------------
+# Required executables
+#-----------------------------------------------------------------------------
+if(NOT DEFINED CTEST_GIT_COMMAND)
+  find_program(CTEST_GIT_COMMAND NAMES git)
+endif()
+if(NOT EXISTS "${CTEST_GIT_COMMAND}")
+  message(FATAL_ERROR "CTEST_GIT_COMMAND is set to a non-existent path [${CTEST_GIT_COMMAND}]")
+endif()
+message(STATUS "CTEST_GIT_COMMAND: ${CTEST_GIT_COMMAND}")
+
+if(NOT DEFINED CTEST_SVN_COMMAND)
+  find_program(CTEST_SVN_COMMAND NAMES svn)
+endif()
+if(NOT EXISTS "${CTEST_SVN_COMMAND}")
+  message(FATAL_ERROR "CTEST_SVN_COMMAND is set to a non-existent path [${CTEST_SVN_COMMAND}]")
+endif()
+message(STATUS "CTEST_SVN_COMMAND: ${CTEST_SVN_COMMAND}")
+
+#-----------------------------------------------------------------------------
 # Should binary directory be cleaned?
 set(empty_binary_directory FALSE)
 
@@ -415,6 +433,11 @@ CMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}")
 CMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET}")
     endif()
 
+    if(DEFINED CTEST_SVN_COMMAND)
+      set(OPTIONAL_CACHE_CONTENT "${OPTIONAL_CACHE_CONTENT}
+Subversion_SVN_EXECUTABLE:FILEPATH=${CTEST_SVN_COMMAND}")
+    endif()
+
     #-----------------------------------------------------------------------------
     # Write initial cache.
     #-----------------------------------------------------------------------------
@@ -422,7 +445,6 @@ CMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET}")
 ${QT_CACHE_ENTRY}
 CDASH_PROJECT_NAME:STRING=${CDASH_PROJECT_NAME}
 GIT_EXECUTABLE:FILEPATH=${CTEST_GIT_COMMAND}
-Subversion_SVN_EXECUTABLE:FILEPATH=${CTEST_SVN_COMMAND}
 WITH_COVERAGE:BOOL=${WITH_COVERAGE}
 DOCUMENTATION_TARGET_IN_ALL:BOOL=${WITH_DOCUMENTATION}
 DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY:PATH=${DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY}

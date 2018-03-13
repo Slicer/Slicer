@@ -171,14 +171,11 @@ set(expected_variables
   ADDITIONAL_CMAKECACHE_OPTION
   CTEST_NOTES_FILES
   CTEST_CMAKE_GENERATOR
-  CTEST_TEST_TIMEOUT
   CTEST_BUILD_FLAGS
   EXTENSIONS_TRACK_QUALIFIER
   EXTENSIONS_BUILDSYSTEM_TESTING
   EXTENSIONS_INDEX_GIT_REPOSITORY
   EXTENSIONS_INDEX_GIT_TAG
-  CTEST_SVN_COMMAND
-  CTEST_GIT_COMMAND
   Slicer_DIR
   )
 
@@ -267,6 +264,7 @@ list(APPEND CTEST_NOTES_FILES "${CTEST_SCRIPT_DIRECTORY}/${CTEST_SCRIPT_NAME}")
 #-----------------------------------------------------------------------------
 # Set default values
 #-----------------------------------------------------------------------------
+setIfNotDefined(CTEST_TEST_TIMEOUT 900) # 15mins
 setIfNotDefined(CTEST_PARALLEL_LEVEL 8)
 setIfNotDefined(MIDAS_PACKAGE_URL "http://slicer.kitware.com/midas3")
 setIfNotDefined(MIDAS_PACKAGE_EMAIL "MIDAS_PACKAGE_EMAIL-NOTDEFINED" OBFUSCATE)
@@ -296,6 +294,25 @@ if(NOT DEFINED CDASH_PROJECT_NAME)
   endif()
 endif()
 list(APPEND variables CDASH_PROJECT_NAME)
+
+#-----------------------------------------------------------------------------
+# Required executables
+#-----------------------------------------------------------------------------
+if(NOT DEFINED CTEST_GIT_COMMAND)
+  find_program(CTEST_GIT_COMMAND NAMES git)
+endif()
+if(NOT EXISTS "${CTEST_GIT_COMMAND}")
+  message(FATAL_ERROR "CTEST_GIT_COMMAND is set to a non-existent path [${CTEST_GIT_COMMAND}]")
+endif()
+message(STATUS "CTEST_GIT_COMMAND: ${CTEST_GIT_COMMAND}")
+
+if(NOT DEFINED CTEST_SVN_COMMAND)
+  find_program(CTEST_SVN_COMMAND NAMES svn)
+endif()
+if(NOT EXISTS "${CTEST_SVN_COMMAND}")
+  message(FATAL_ERROR "CTEST_SVN_COMMAND is set to a non-existent path [${CTEST_SVN_COMMAND}]")
+endif()
+message(STATUS "CTEST_SVN_COMMAND: ${CTEST_SVN_COMMAND}")
 
 #-----------------------------------------------------------------------------
 set(CTEST_COMMAND ${CMAKE_CTEST_COMMAND})
@@ -529,6 +546,11 @@ CMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}")
 CMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET}")
       endif()
 
+      if(DEFINED CTEST_SVN_COMMAND)
+        set(OPTIONAL_CACHE_CONTENT "${OPTIONAL_CACHE_CONTENT}
+Subversion_SVN_EXECUTABLE:FILEPATH=${CTEST_SVN_COMMAND}")
+      endif()
+
       #-----------------------------------------------------------------------------
       # Write initial cache.
       #-----------------------------------------------------------------------------
@@ -537,7 +559,6 @@ CTEST_MODEL:STRING=${model}
 CTEST_SITE:STRING=${CTEST_SITE}
 Slicer_EXTENSIONS_TRACK_QUALIFIER:STRING=${EXTENSIONS_TRACK_QUALIFIER}
 GIT_EXECUTABLE:FILEPATH=${CTEST_GIT_COMMAND}
-Subversion_SVN_EXECUTABLE:FILEPATH=${CTEST_SVN_COMMAND}
 MIDAS_PACKAGE_URL:STRING=${MIDAS_PACKAGE_URL}
 MIDAS_PACKAGE_EMAIL:STRING=${MIDAS_PACKAGE_EMAIL}
 MIDAS_PACKAGE_API_KEY:STRING=${MIDAS_PACKAGE_API_KEY}
