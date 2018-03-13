@@ -379,7 +379,7 @@
              <double>1.000000000000000</double>
             </property>
             <property name="maximum">
-             <double>20.000000000000000</double>
+             <double>100.000000000000000</double>
             </property>
             <property name="value">
              <double>8.000000000000000</double>
@@ -506,11 +506,6 @@
            <widget class="qMRMLAnnotationROIWidget" name="ROIWidget"/>
           </item>
          </layout>
-        </widget>
-        <widget class="QWidget" name="MiscTab">
-         <attribute name="title">
-          <string>Misc</string>
-         </attribute>
         </widget>
        </widget>
       </item>

@@ -63,11 +63,12 @@ void qSlicerGPURayCastVolumeRenderingPropertiesWidgetPrivate
   this->populateRenderingTechniqueComboBox();
   QObject::connect(this->RenderingTechniqueComboBox, SIGNAL(currentIndexChanged(int)),
                    widget, SLOT(setRenderingTechnique(int)));
+  QObject::connect(this->JitteringCheckBox, SIGNAL(toggled(bool)),
+                   widget, SLOT(setJittering(bool)));
 }
 
 // --------------------------------------------------------------------------
-void qSlicerGPURayCastVolumeRenderingPropertiesWidgetPrivate
-::populateRenderingTechniqueComboBox()
+void qSlicerGPURayCastVolumeRenderingPropertiesWidgetPrivate::populateRenderingTechniqueComboBox()
 {
   this->RenderingTechniqueComboBox->clear();
   this->RenderingTechniqueComboBox->addItem(
@@ -94,8 +95,7 @@ qSlicerGPURayCastVolumeRenderingPropertiesWidget
 }
 
 //-----------------------------------------------------------------------------
-qSlicerGPURayCastVolumeRenderingPropertiesWidget
-::~qSlicerGPURayCastVolumeRenderingPropertiesWidget()
+qSlicerGPURayCastVolumeRenderingPropertiesWidget::~qSlicerGPURayCastVolumeRenderingPropertiesWidget()
 {
 }
 
@@ -108,32 +108,52 @@ vtkMRMLGPURayCastVolumeRenderingDisplayNode* qSlicerGPURayCastVolumeRenderingPro
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerGPURayCastVolumeRenderingPropertiesWidget
-::updateWidgetFromMRML()
+void qSlicerGPURayCastVolumeRenderingPropertiesWidget::updateWidgetFromMRML()
 {
   Q_D(qSlicerGPURayCastVolumeRenderingPropertiesWidget);
-  if (!this->mrmlGPURayCastDisplayNode())
+
+  vtkMRMLGPURayCastVolumeRenderingDisplayNode* displayNode = this->mrmlGPURayCastDisplayNode();
+  if (!displayNode)
     {
     return;
     }
-  int technique = this->mrmlGPURayCastDisplayNode()->GetRaycastTechnique();
+
+  int technique = displayNode->GetRaycastTechnique();
   int index = d->RenderingTechniqueComboBox->findData(QVariant(technique));
   if (index == -1)
     {
     index = 0;
     }
+  bool wasBlocked = d->RenderingTechniqueComboBox->blockSignals(true);
   d->RenderingTechniqueComboBox->setCurrentIndex(index);
+  d->RenderingTechniqueComboBox->blockSignals(wasBlocked);
+
+  wasBlocked = d->JitteringCheckBox->blockSignals(true);
+  d->JitteringCheckBox->setChecked(displayNode->GetUseJittering());
+  d->JitteringCheckBox->blockSignals(wasBlocked);
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerGPURayCastVolumeRenderingPropertiesWidget
-::setRenderingTechnique(int index)
+void qSlicerGPURayCastVolumeRenderingPropertiesWidget::setRenderingTechnique(int index)
 {
   Q_D(qSlicerGPURayCastVolumeRenderingPropertiesWidget);
-  if (!this->mrmlGPURayCastDisplayNode())
+  vtkMRMLGPURayCastVolumeRenderingDisplayNode* displayNode = this->mrmlGPURayCastDisplayNode();
+  if (!displayNode)
     {
     return;
     }
   int technique = d->RenderingTechniqueComboBox->itemData(index).toInt();
-  this->mrmlGPURayCastDisplayNode()->SetRaycastTechnique(technique);
+  displayNode->SetRaycastTechnique(technique);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerGPURayCastVolumeRenderingPropertiesWidget::setJittering(bool on)
+{
+  Q_D(qSlicerGPURayCastVolumeRenderingPropertiesWidget);
+  vtkMRMLGPURayCastVolumeRenderingDisplayNode* displayNode = this->mrmlGPURayCastDisplayNode();
+  if (!displayNode)
+    {
+    return;
+    }
+  displayNode->SetUseJittering(on);
 }

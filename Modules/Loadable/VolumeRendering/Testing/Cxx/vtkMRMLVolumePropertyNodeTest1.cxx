@@ -61,13 +61,6 @@ int vtkMRMLVolumePropertyNodeTest1(int argc, char * argv[] )
   annLogic->SetMRMLScene(scene.GetPointer()); // register custom nodes
   vtkNew<vtkMRMLLayoutLogic> layLogic;
   layLogic->SetMRMLScene(scene.GetPointer()); // register custom nodes
-  // TODO: Remove these expected warnings by fixing node references in vtkMRMLVolumeRenderingDisplayNode.
-  // Currently, in vtkMRMLVolumeRenderingDisplayNode node references implemented manually (obsolete method),
-  // with lots of unnecessary code and warnings. Instead, standard node references should be used for the
-  // three referenced nodes.
-  TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
-  CHECK_EXIT_SUCCESS(vtkMRMLCoreTestingUtilities::ExerciseSceneLoadingMethods(sceneFilePath, scene.GetPointer()));
-  TESTING_OUTPUT_ASSERT_WARNINGS_END();
 
   return EXIT_SUCCESS;
 }

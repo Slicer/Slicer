@@ -34,6 +34,8 @@ vtkMRMLNodeNewMacro(vtkMRMLGPURayCastVolumeRenderingDisplayNode);
 vtkMRMLGPURayCastVolumeRenderingDisplayNode::vtkMRMLGPURayCastVolumeRenderingDisplayNode()
 {
   this->RaycastTechnique = vtkMRMLGPURayCastVolumeRenderingDisplayNode::Composite;
+  this->UseJittering = 0;
+  this->LockSampleDistanceToInputSpacing = 1;
 }
 
 //----------------------------------------------------------------------------
@@ -46,20 +48,11 @@ void vtkMRMLGPURayCastVolumeRenderingDisplayNode::ReadXMLAttributes(const char**
 {
   this->Superclass::ReadXMLAttributes(atts);
 
-  const char* attName;
-  const char* attValue;
-  while (*atts != NULL)
-    {
-    attName = *(atts++);
-    attValue = *(atts++);
-    if (!strcmp(attName,"raycastTechnique"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->RaycastTechnique;
-      continue;
-      }
-    }
+  vtkMRMLReadXMLBeginMacro(atts);
+  vtkMRMLReadXMLIntMacro(raycastTechnique, RaycastTechnique);
+  vtkMRMLReadXMLIntMacro(useJittering, UseJittering);
+  vtkMRMLReadXMLIntMacro(lockSampleDistanceToInputSpacing, LockSampleDistanceToInputSpacing);
+  vtkMRMLReadXMLEndMacro();
 }
 
 //----------------------------------------------------------------------------
@@ -67,7 +60,11 @@ void vtkMRMLGPURayCastVolumeRenderingDisplayNode::WriteXML(ostream& of, int nInd
 {
   this->Superclass::WriteXML(of, nIndent);
 
-  of << " raycastTechnique=\"" << this->RaycastTechnique << "\"";
+  vtkMRMLWriteXMLBeginMacro(of);
+  vtkMRMLWriteXMLIntMacro(raycastTechnique, RaycastTechnique);
+  vtkMRMLWriteXMLIntMacro(useJittering, UseJittering);
+  vtkMRMLWriteXMLIntMacro(lockSampleDistanceToInputSpacing, LockSampleDistanceToInputSpacing);
+  vtkMRMLWriteXMLEndMacro();
 }
 
 //----------------------------------------------------------------------------
@@ -75,9 +72,12 @@ void vtkMRMLGPURayCastVolumeRenderingDisplayNode::Copy(vtkMRMLNode *anode)
 {
   int wasModifying = this->StartModify();
   this->Superclass::Copy(anode);
-  vtkMRMLGPURayCastVolumeRenderingDisplayNode *node = vtkMRMLGPURayCastVolumeRenderingDisplayNode::SafeDownCast(anode);
 
-  this->SetRaycastTechnique(node->GetRaycastTechnique());
+  vtkMRMLCopyBeginMacro(anode);
+  vtkMRMLCopyIntMacro(RaycastTechnique);
+  vtkMRMLCopyIntMacro(UseJittering);
+  vtkMRMLCopyIntMacro(LockSampleDistanceToInputSpacing);
+  vtkMRMLCopyEndMacro();
 
   this->EndModify(wasModifying);
 }
@@ -87,5 +87,9 @@ void vtkMRMLGPURayCastVolumeRenderingDisplayNode::PrintSelf(ostream& os, vtkInde
 {
   this->Superclass::PrintSelf(os,indent);
 
-  os << "RaycastTechnique: " << this->RaycastTechnique << "\n";
+  vtkMRMLPrintBeginMacro(os, indent);
+  vtkMRMLPrintIntMacro(RaycastTechnique);
+  vtkMRMLPrintIntMacro(UseJittering);
+  vtkMRMLPrintIntMacro(LockSampleDistanceToInputSpacing);
+  vtkMRMLPrintEndMacro();
 }

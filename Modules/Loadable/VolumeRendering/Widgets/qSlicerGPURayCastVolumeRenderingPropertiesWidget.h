@@ -40,6 +40,7 @@ public:
 
 public slots:
   void setRenderingTechnique(int index);
+  void setJittering(bool on);
 
 protected slots:
   virtual void updateWidgetFromMRML();

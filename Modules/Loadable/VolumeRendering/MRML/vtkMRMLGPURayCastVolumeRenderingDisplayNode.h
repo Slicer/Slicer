@@ -55,8 +55,18 @@ public:
 
   // Description:
   // Ray cast technique
-  vtkGetMacro (RaycastTechnique, int);
-  vtkSetMacro (RaycastTechnique, int);
+  vtkGetMacro(RaycastTechnique, int);
+  vtkSetMacro(RaycastTechnique, int);
+
+  // Description:
+  // Jittering
+  vtkGetMacro(UseJittering, int);
+  vtkSetMacro(UseJittering, int);
+
+  // Description:
+  // Lock sample distance to volume spacing
+  vtkGetMacro(LockSampleDistanceToInputSpacing, int);
+  vtkSetMacro(LockSampleDistanceToInputSpacing, int);
 
 protected:
   vtkMRMLGPURayCastVolumeRenderingDisplayNode();
@@ -70,6 +80,15 @@ protected:
    * 3: MINIP
    * */
   int RaycastTechnique;
+
+  /// Use jittering to reduce the wood-grain effect if on. Off by default
+  int UseJittering;
+
+  /// Compute sample distance from volume spacing if on. Off by default
+  /// If turned on, then AutoAdjustSampleDistances and explicit SampleDistance
+  /// will be ignored, and only the internal auto-calculation will determine
+  /// the sampling distance.
+  int LockSampleDistanceToInputSpacing;
 };
 
 #endif

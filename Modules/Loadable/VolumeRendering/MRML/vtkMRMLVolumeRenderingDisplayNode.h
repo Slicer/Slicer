@@ -45,48 +45,22 @@ public:
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
 
-  /// Mark the volume, ROI and volume property nodes as references.
-  virtual void SetSceneReferences() VTK_OVERRIDE;
-
-  /// Update the stored reference to another node in the scene
-  virtual void UpdateReferenceID(const char *oldID, const char *newID) VTK_OVERRIDE;
-
-  /// Updates this node if it depends on other nodes
-  /// when the node is deleted in the scene
-  virtual void UpdateReferences() VTK_OVERRIDE;
-
-  /// Observe the reference transform node
-  virtual void UpdateScene(vtkMRMLScene *scene) VTK_OVERRIDE;
-
-  /// the ID of a MRMLVolumeNode
-  vtkGetStringMacro (VolumeNodeID);
+  const char* GetVolumeNodeID();
   void SetAndObserveVolumeNodeID(const char *volumeNodeID);
-
-  /// Associated transform MRML node
   vtkMRMLVolumeNode* GetVolumeNode();
 
-  /// the ID of a parameter MRMLVolumePropertyNode
-  vtkGetStringMacro (VolumePropertyNodeID);
+  const char* GetVolumePropertyNodeID();
   void SetAndObserveVolumePropertyNodeID(const char *volumePropertyNodeID);
-
-  /// Associated transform MRML node
   vtkMRMLVolumePropertyNode* GetVolumePropertyNode();
 
-  /// the ID of a parameter MRMLROINode
-  vtkGetStringMacro (ROINodeID);
+  const char* GetROINodeID();
   void SetAndObserveROINodeID(const char *roiNodeID);
-
-  /// Associated transform MRML node
   vtkMRMLAnnotationROINode* GetROINode();
 
   /// Is cropping enabled?
   vtkSetMacro(CroppingEnabled,int);
   vtkGetMacro(CroppingEnabled,int);
   vtkBooleanMacro(CroppingEnabled,int);
-
-  //vtkSetMacro(UseThreshold,int);
-  //vtkGetMacro(UseThreshold,int);
-  //vtkBooleanMacro(UseThreshold,int);
 
   /// Estimated Sample Distance
   vtkSetMacro(EstimatedSampleDistance,double);
@@ -139,37 +113,28 @@ protected:
   vtkMRMLVolumeRenderingDisplayNode(const vtkMRMLVolumeRenderingDisplayNode&);
   void operator=(const vtkMRMLVolumeRenderingDisplayNode&);
 
-  virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData) VTK_OVERRIDE;
+  virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData) VTK_OVERRIDE;
 
-  vtkIntArray* ObservedEvents;
+  static const char* VolumeNodeReferenceRole;
+  static const char* VolumeNodeReferenceMRMLAttributeName;
+  static const char* VolumePropertyNodeReferenceRole;
+  static const char* VolumePropertyNodeReferenceMRMLAttributeName;
+  static const char* ROINodeReferenceRole;
+  static const char* ROINodeReferenceMRMLAttributeName;
 
-  char *VolumeNodeID;
-  virtual void SetVolumeNodeID(const char* arg);
-  vtkMRMLVolumeNode* VolumeNode;
-
-  char *VolumePropertyNodeID;
-  virtual void SetVolumePropertyNodeID(const char* arg);
-  vtkMRMLVolumePropertyNode* VolumePropertyNode;
-
-  char *ROINodeID;
-  virtual void SetROINodeID(const char* arg);
-  vtkMRMLAnnotationROINode* ROINode;
-
+protected:
   int CroppingEnabled;
 
-  double  EstimatedSampleDistance;
-  double  ExpectedFPS;
+  double EstimatedSampleDistance;
+  double ExpectedFPS;
 
   /// Tracking GPU memory size (in MB), not saved into scene file
   /// because different machines may have different GPU memory
   /// values.
   /// A value of 0 indicates to use the default value in the settings
-  ///
   int GPUMemorySize;
 
   double Threshold[2];
-
-  //int UseThreshold;
 
   /// follow window/level and thresholding setting in volume display node
   int FollowVolumeDisplayNode;
