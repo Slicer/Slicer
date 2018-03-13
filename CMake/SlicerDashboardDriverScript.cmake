@@ -192,23 +192,17 @@ setIfNotDefined(run_ctest_with_upload TRUE)
 setIfNotDefined(run_ctest_with_notes TRUE)
 
 #-----------------------------------------------------------------------------
-# CTest Project Name
+# CDash Project Name
 #-----------------------------------------------------------------------------
-if(NOT DEFINED Slicer_APPLICATION_NAME)
-  set(Slicer_APPLICATION_NAME "Slicer")
-endif()
-list(APPEND variables Slicer_APPLICATION_NAME)
-if(NOT DEFINED CTEST_PROJECT_NAME)
-  set(CTEST_PROJECT_NAME  "${Slicer_APPLICATION_NAME}Preview")
+if(NOT DEFINED CDASH_PROJECT_NAME)
+  set(CDASH_PROJECT_NAME  "SlicerPreview")
   if("${Slicer_RELEASE_TYPE}" STREQUAL "Stable")
-    set(CTEST_PROJECT_NAME  "${Slicer_APPLICATION_NAME}Stable")
     # XXX Rename Slicer CDash project
-    if("${Slicer_APPLICATION_NAME}" STREQUAL "Slicer")
-      set(CTEST_PROJECT_NAME "Slicer4")
-    endif()
+    set(CDASH_PROJECT_NAME "Slicer4")
+    # set(CDASH_PROJECT_NAME  "SlicerStable")
   endif()
 endif()
-list(APPEND variables CTEST_PROJECT_NAME)
+list(APPEND variables CDASH_PROJECT_NAME)
 
 #-----------------------------------------------------------------------------
 if(NOT DEFINED GIT_REPOSITORY)
@@ -426,6 +420,7 @@ CMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET}")
     #-----------------------------------------------------------------------------
     file(WRITE "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt" "
 ${QT_CACHE_ENTRY}
+CDASH_PROJECT_NAME:STRING=${CDASH_PROJECT_NAME}
 GIT_EXECUTABLE:FILEPATH=${CTEST_GIT_COMMAND}
 Subversion_SVN_EXECUTABLE:FILEPATH=${CTEST_SVN_COMMAND}
 WITH_COVERAGE:BOOL=${WITH_COVERAGE}

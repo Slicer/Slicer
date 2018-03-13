@@ -20,6 +20,7 @@ set(expected_defined_vars
   CTEST_BUILD_CONFIGURATION
   CTEST_CMAKE_GENERATOR
   CTEST_DROP_SITE
+  CDASH_PROJECT_NAME
   EXTENSION_BUILD_OPTIONS_STRING
   EXTENSION_BUILD_SUBDIRECTORY
   EXTENSION_ENABLED
@@ -113,7 +114,7 @@ set(CTEST_NIGHTLY_START_TIME \"3:00:00 UTC\")
 
 set(CTEST_DROP_METHOD \"http\")
 set(CTEST_DROP_SITE \"${CTEST_DROP_SITE}\")
-set(CTEST_DROP_LOCATION \"/submit.php?project=SlicerPreview\")
+set(CTEST_DROP_LOCATION \"/submit.php?project=${CDASH_PROJECT_NAME}\")
 set(CTEST_DROP_SITE_CDASH TRUE)")
   endif()
   message(STATUS "CTestCustom.cmake has been written to: ${ctestconfig_dest_dir}")

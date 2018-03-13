@@ -285,24 +285,19 @@ setIfNotDefined(run_ctest_with_notes TRUE)
 setIfNotDefined(Slicer_UPLOAD_EXTENSIONS TRUE)
 
 #-----------------------------------------------------------------------------
-# CTest Project Name
+# CDash Project Name
 #-----------------------------------------------------------------------------
-if(NOT DEFINED Slicer_APPLICATION_NAME)
-  set(Slicer_APPLICATION_NAME "Slicer")
-endif()
-list(APPEND variables Slicer_APPLICATION_NAME)
-if(NOT DEFINED CTEST_PROJECT_NAME)
-  set(CTEST_PROJECT_NAME  "${Slicer_APPLICATION_NAME}Preview")
+if(NOT DEFINED CDASH_PROJECT_NAME)
+  set(CDASH_PROJECT_NAME  "SlicerPreview")
   if("${Slicer_RELEASE_TYPE}" STREQUAL "Stable")
-    set(CTEST_PROJECT_NAME  "${Slicer_APPLICATION_NAME}Stable")
     # XXX Rename Slicer CDash project
-    if("${Slicer_APPLICATION_NAME}" STREQUAL "Slicer")
-      set(CTEST_PROJECT_NAME "Slicer4")
-    endif()
+    set(CDASH_PROJECT_NAME "Slicer4")
+    #set(CDASH_PROJECT_NAME  "SlicerStable")
   endif()
 endif()
-list(APPEND variables CTEST_PROJECT_NAME)
+list(APPEND variables CDASH_PROJECT_NAME)
 
+#-----------------------------------------------------------------------------
 set(CTEST_COMMAND ${CMAKE_CTEST_COMMAND})
 
 if(NOT EXTENSIONS_BUILDSYSTEM_TESTING)
@@ -494,6 +489,7 @@ macro(run_ctest)
   else()
 
     message("Configuring ${CTEST_BINARY_DIRECTORY}/CTestConfig.cmake")
+    # Require CTEST_DROP_SITE and CDASH_PROJECT_NAME
     configure_file(
       ${CTEST_SOURCE_DIRECTORY}/CTestConfig.cmake.in
       ${CTEST_BINARY_DIRECTORY}/CTestConfig.cmake
