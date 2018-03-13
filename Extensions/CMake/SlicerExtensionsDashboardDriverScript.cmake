@@ -253,6 +253,9 @@ list(APPEND expected_variables EXTENSIONS_BUILDSYSTEM_SOURCE_DIRECTORY)
 if(NOT DEFINED CTEST_SOURCE_DIRECTORY)
   set(CTEST_SOURCE_DIRECTORY ${EXTENSIONS_BUILDSYSTEM_SOURCE_DIRECTORY})
 endif()
+if(NOT EXISTS "${CTEST_SOURCE_DIRECTORY}")
+  message(FATAL_ERROR "Aborting build. CTEST_SOURCE_DIRECTORY is set to a non-existent directory [${CTEST_SOURCE_DIRECTORY}]")
+endif()
 list(APPEND expected_variables CTEST_SOURCE_DIRECTORY)
 
 #-----------------------------------------------------------------------------
@@ -500,10 +503,11 @@ if(NOT EXTENSIONS_BUILDSYSTEM_TESTING)
   set(CTEST_GIT_UPDATE_CUSTOM ${CMAKE_COMMAND} -P ${CTEST_SCRIPT_DIRECTORY}/${CTEST_SCRIPT_NAME}-${git_tag_cleaned}-${SCRIPT_MODE}-gitupdate.cmake)
 
   # Retrieve revision associated with Slicer build tree
-  if(NOT EXISTS "${Slicer_DIR}/vtkSlicerVersionConfigure.h")
-    message(FATAL_ERROR "Extension can NOT be built without a valid Slicer build tree. Check path associated with Slicer_DIR.")
+  set(slicer_version_header "${Slicer_DIR}/vtkSlicerVersionConfigure.h")
+  if(NOT EXISTS "${slicer_version_header}")
+    message(FATAL_ERROR "Aborting build. Could not find 'vtkSlicerVersionConfigure.h' in Slicer_DIR [${Slicer_DIR}].")
   endif()
-  _get_slicer_revision("${Slicer_DIR}/vtkSlicerVersionConfigure.h" Slicer_WC_REVISION)
+  _get_slicer_revision("${slicer_version_header}" Slicer_WC_REVISION)
   message("Slicer_WC_REVISION:${Slicer_WC_REVISION}")
   set(Slicer_PREVIOUS_WC_REVISION ${Slicer_WC_REVISION})
 
