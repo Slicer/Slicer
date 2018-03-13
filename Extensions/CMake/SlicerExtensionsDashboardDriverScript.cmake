@@ -508,7 +508,7 @@ if(NOT EXTENSIONS_BUILDSYSTEM_TESTING)
     message(FATAL_ERROR "Aborting build. Could not find 'vtkSlicerVersionConfigure.h' in Slicer_DIR [${Slicer_DIR}].")
   endif()
   _get_slicer_revision("${slicer_version_header}" Slicer_WC_REVISION)
-  message("Slicer_WC_REVISION:${Slicer_WC_REVISION}")
+  message(STATUS "Slicer_WC_REVISION:${Slicer_WC_REVISION}")
   set(Slicer_PREVIOUS_WC_REVISION ${Slicer_WC_REVISION})
 
 endif()
@@ -528,7 +528,7 @@ macro(run_ctest)
     message("Skipping run_ctest() - Slicer build in PROGRESS")
   else()
 
-    message("Configuring ${CTEST_BINARY_DIRECTORY}/CTestConfig.cmake")
+    message(STATUS "Configuring ${CTEST_BINARY_DIRECTORY}/CTestConfig.cmake")
     # Require CTEST_DROP_SITE and CDASH_PROJECT_NAME
     configure_file(
       ${CTEST_SOURCE_DIRECTORY}/CTestConfig.cmake.in
@@ -544,7 +544,7 @@ macro(run_ctest)
 
     # force a build if this is the first run and the build dir is empty
     if(NOT EXISTS "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt")
-      message("First time build - Initialize CMakeCache.txt")
+      message(STATUS "First time build - Initialize CMakeCache.txt")
       set(force_build TRUE)
 
       set(OPTIONAL_CACHE_CONTENT)
@@ -598,10 +598,10 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
       set(slicer_source_updated TRUE)
     endif()
 
-    message("FILES_UPDATED ................: ${FILES_UPDATED}")
-    message("force_build ..................: ${force_build}")
-    message("Slicer_PREVIOUS_WC_REVISION ..: ${Slicer_PREVIOUS_WC_REVISION}")
-    message("Slicer_WC_REVISION ...........: ${Slicer_WC_REVISION}")
+    message(STATUS "FILES_UPDATED ................: ${FILES_UPDATED}")
+    message(STATUS "force_build ..................: ${force_build}")
+    message(STATUS "Slicer_PREVIOUS_WC_REVISION ..: ${Slicer_PREVIOUS_WC_REVISION}")
+    message(STATUS "Slicer_WC_REVISION ...........: ${Slicer_WC_REVISION}")
 
     if(FILES_UPDATED GREATER 0 OR force_build OR slicer_source_updated)
 
@@ -619,13 +619,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
       # Configure
       #-----------------------------------------------------------------------------
       if(run_ctest_with_configure)
-        message("----------- [ Configure ${CTEST_PROJECT_NAME} ] -----------")
-
-        #set(label Slicer)
-
-        #set_property(GLOBAL PROPERTY SubProject ${label})
         set_property(GLOBAL PROPERTY Label ${label})
-
         ctest_configure(BUILD "${CTEST_BINARY_DIRECTORY}")
         ctest_read_custom_files("${CTEST_BINARY_DIRECTORY}")
         if(run_ctest_submit)
@@ -638,7 +632,6 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
       #-----------------------------------------------------------------------------
       set(build_errors)
       if(run_ctest_with_build)
-        message("----------- [ Build ${CTEST_PROJECT_NAME} ] -----------")
         ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" NUMBER_ERRORS build_errors APPEND)
         if(run_ctest_submit)
           ctest_submit(PARTS Build)

@@ -357,6 +357,7 @@ list(APPEND variables model)
 list(APPEND variables track)
 list(APPEND variables CTEST_USE_LAUNCHERS)
 
+#-----------------------------------------------------------------------------
 # Given a variable name, this function will display the text
 #   "-- <varname> ................: ${<varname>}"
 # and will ensure that the message is consistenly padded.
@@ -422,7 +423,6 @@ message(STATUS "Setting ENV{ExternalData_OBJECT_STORES} to $ENV{ExternalData_OBJ
 #-----------------------------------------------------------------------------
 # Cleanup previous dashboard
 #-----------------------------------------------------------------------------
-
 if(empty_binary_directory AND NOT run_ctest_with_disable_clean)
   set(msg "Removing binary directory [${CTEST_BINARY_DIRECTORY}]")
   message(STATUS "${msg}")
@@ -433,7 +433,6 @@ endif()
 #-----------------------------------------------------------------------------
 # Source code checkout and update commands
 #-----------------------------------------------------------------------------
-
 if(NOT EXISTS "${CTEST_SOURCE_DIRECTORY}")
   if(NOT DEFINED GIT_REPOSITORY)
     set(CTEST_CHECKOUT_COMMAND "${CTEST_SVN_COMMAND} checkout ${repository} ${CTEST_SOURCE_DIRECTORY}")
@@ -463,7 +462,7 @@ macro(run_ctest)
 
   # force a build if this is the first run and the build dir is empty
   if(NOT EXISTS "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt")
-    message("First time build - Initialize CMakeCache.txt")
+    message(STATUS "First time build - Initialize CMakeCache.txt")
     set(force_build TRUE)
 
     set(OPTIONAL_CACHE_CONTENT)
@@ -534,13 +533,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     # Configure
     #-----------------------------------------------------------------------------
     if(run_ctest_with_configure)
-      message("----------- [ Configure ${CTEST_PROJECT_NAME} ] -----------")
-
-      #set(label Slicer)
-
-      #set_property(GLOBAL PROPERTY SubProject ${label})
       set_property(GLOBAL PROPERTY Label ${label})
-
       ctest_configure(BUILD "${CTEST_BINARY_DIRECTORY}")
       ctest_read_custom_files("${CTEST_BINARY_DIRECTORY}")
       if(run_ctest_submit)
@@ -553,7 +546,6 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     #-----------------------------------------------------------------------------
     set(build_errors)
     if(run_ctest_with_build)
-      message("----------- [ Build ${CTEST_PROJECT_NAME} ] -----------")
       ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" NUMBER_ERRORS build_errors APPEND)
       if(run_ctest_submit)
         ctest_submit(PARTS Build)
@@ -571,7 +563,6 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     # Test
     #-----------------------------------------------------------------------------
     if(run_ctest_with_test)
-      message("----------- [ Test ${CTEST_PROJECT_NAME} ] -----------")
       ctest_test(
         BUILD "${slicer_build_dir}"
         #INCLUDE_LABEL ${label}
@@ -587,7 +578,6 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     # Global coverage ...
     #-----------------------------------------------------------------------------
     if(WITH_COVERAGE AND CTEST_COVERAGE_COMMAND AND run_ctest_with_coverage)
-      message("----------- [ Global coverage ] -----------")
       # HACK Unfortunately ctest_coverage ignores the BUILD argument, try to force it...
       if(EXISTS ${slicer_build_dir}/CMakeFiles/TargetDirectories.txt)
         file(READ ${slicer_build_dir}/CMakeFiles/TargetDirectories.txt slicer_build_coverage_dirs)
@@ -603,7 +593,6 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     # Global dynamic analysis ...
     #-----------------------------------------------------------------------------
     if(WITH_MEMCHECK AND CTEST_MEMORYCHECK_COMMAND AND run_ctest_with_memcheck)
-        message("----------- [ Global memcheck ] -----------")
         ctest_memcheck(BUILD "${slicer_build_dir}")
         if(run_ctest_submit)
           ctest_submit(PARTS MemCheck)
@@ -614,7 +603,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     # Package and upload
     #-----------------------------------------------------------------------------
     if(WITH_PACKAGES AND (run_ctest_with_packages OR run_ctest_with_upload))
-      message("----------- [ WITH_PACKAGES and UPLOAD ] -----------")
+      message(STATUS "----------- [ WITH_PACKAGES and UPLOAD ] -----------")
 
       if(build_errors GREATER "0")
         message("Build Errors Detected: ${build_errors}. Aborting package generation")
@@ -625,7 +614,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
 
         include(MIDASCTestUploadURL)
 
-        message("Packaging and uploading Slicer to midas ...")
+        message(STATUS "Packaging and uploading Slicer to midas ...")
         set(package_list)
         if(run_ctest_with_packages)
           ctest_build(
@@ -637,13 +626,13 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
         endif()
 
         if(run_ctest_with_upload)
-          message("Uploading Slicer package URL ...")
+          message(STATUS "Uploading Slicer package URL ...")
 
           file(STRINGS ${slicer_build_dir}/PACKAGES.txt package_list)
 
           foreach(p ${package_list})
             get_filename_component(package_name "${p}" NAME)
-            message("Uploading URL to [${package_name}] on CDash")
+            message(STATUS "Uploading URL to [${package_name}] on CDash")
             midas_ctest_upload_url(
               API_URL ${MIDAS_PACKAGE_URL}
               FILEPATH ${p}
