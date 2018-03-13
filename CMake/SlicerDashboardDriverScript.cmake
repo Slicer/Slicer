@@ -44,6 +44,20 @@ endif()
 #-----------------------------------------------------------------------------
 # Defaults
 #-----------------------------------------------------------------------------
+if(DEFINED Slicer_RELEASE_TYPE)
+  if("${Slicer_RELEASE_TYPE}" MATCHES "^P.*")
+    set(Slicer_RELEASE_TYPE "Experimental")
+  elseif("${Slicer_RELEASE_TYPE}" MATCHES "^P.*")
+    set(Slicer_RELEASE_TYPE "Preview")
+  elseif("${Slicer_RELEASE_TYPE}" MATCHES "^S.*")
+    set(Slicer_RELEASE_TYPE "Stable")
+  else()
+    message(FATAL_ERROR "Invalid value for Slicer_RELEASE_TYPE [${Slicer_RELEASE_TYPE}]")
+  endif()
+else()
+  set(Slicer_RELEASE_TYPE "Experimental")
+endif()
+
 if(WIN32)
   if(NOT DEFINED Slicer_BUILD_WIN32_CONSOLE)
     if(WITH_PACKAGES)

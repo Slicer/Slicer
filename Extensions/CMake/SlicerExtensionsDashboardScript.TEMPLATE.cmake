@@ -15,7 +15,7 @@ dashboard_set(ORGANIZATION          "Kitware")        # One word, no ponctuation
 dashboard_set(HOSTNAME              "karakoram")
 dashboard_set(OPERATING_SYSTEM      "Linux")
 dashboard_set(SCRIPT_MODE           "Experimental")   # Experimental, Continuous or Nightly
-dashboard_set(Slicer_RELEASE_TYPE   "Experimental")   # Experimental, Preview or Stable
+dashboard_set(Slicer_RELEASE_TYPE   "Experimental")   # (E)xperimental, (P)review or (S)table
 dashboard_set(EXTENSIONS_INDEX_BRANCH "master")       # "master", X.Y, ...
 if(APPLE)
   dashboard_set(CMAKE_OSX_DEPLOYMENT_TARGET "10.9")
