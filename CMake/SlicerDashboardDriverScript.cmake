@@ -62,12 +62,6 @@ if(NOT DEFINED CTEST_CONFIGURATION_TYPE AND DEFINED CTEST_BUILD_CONFIGURATION)
 endif()
 list(APPEND variables CTEST_CONFIGURATION_TYPE)
 
-if(EXISTS "${CTEST_LOG_FILE}")
-  list(APPEND CTEST_NOTES_FILES ${CTEST_LOG_FILE})
-endif()
-list(APPEND variables CTEST_LOG_FILE)
-list(APPEND variables CTEST_NOTES_FILES)
-
 #-----------------------------------------------------------------------------
 # Macro allowing to set a variable to its default value if not already defined.
 # The default value is set with:
