@@ -8,14 +8,14 @@
 #
 # SCRIPT_MODE:
 #
-#   experimental:
+#   Experimental:
 #     - run_ctest() macro will be called *ONE* time
 #     - binary directory will *NOT* be cleaned
-#   continuous:
+#   Continuous:
 #     - run_ctest() macro will be called EVERY 5 minutes ...
 #     - binary directory will *NOT* be cleaned
 #     - configure/build will be executed *ONLY* if the repository has been updated
-#   nightly:
+#   Nightly:
 #     - run_ctest() macro will be called *ONE* time
 #     - binary directory *WILL BE* cleaned
 #

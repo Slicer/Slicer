@@ -14,7 +14,7 @@ dashboard_set(DASHBOARDS_DIR        "$ENV{HOME}/Dashboards/")
 dashboard_set(ORGANIZATION          "Kitware")        # One word, no ponctuation
 dashboard_set(HOSTNAME              "karakoram")
 dashboard_set(OPERATING_SYSTEM      "Linux")
-dashboard_set(SCRIPT_MODE           "experimental")   # "experimental", "continuous", "nightly"
+dashboard_set(SCRIPT_MODE           "Experimental")   # Experimental, Continuous or Nightly
 dashboard_set(Slicer_RELEASE_TYPE   "Experimental")   # Experimental, Preview or Stable
 dashboard_set(EXTENSIONS_INDEX_BRANCH "master")       # "master", X.Y, ...
 if(APPLE)
@@ -31,28 +31,28 @@ dashboard_set(EXTENSIONS_BUILDSYSTEM_TESTING FALSE)   # If enabled, build <Slice
 
 dashboard_set(QT_VERSION            "5.10.0")         # Used only to set the build name
 
-# Slicer Directory settings
-#   Slicer_SOURCE_DIR: <DASHBOARDS_DIR>/<Slicer_DASHBOARD_SUBDIR>/<Slicer_DIRECTORY_BASENAME>-<Slicer_DIRECTORY_IDENTIFIER>        # Source directory
-#   Slicer_DIR       : <DASHBOARDS_DIR>/<Slicer_DASHBOARD_SUBDIR>/<Slicer_DIRECTORY_BASENAME>-<Slicer_DIRECTORY_IDENTIFIER>-build  # Build directory
+#   Slicer_SOURCE_DIR: <DASHBOARDS_DIR>/<Slicer_DASHBOARD_SUBDIR>/<Slicer_DIRECTORY_BASENAME>-<Slicer_DIRECTORY_IDENTIFIER>
+#   Slicer_DIR       : <DASHBOARDS_DIR>/<Slicer_DASHBOARD_SUBDIR>/<Slicer_DIRECTORY_BASENAME>-<Slicer_DIRECTORY_IDENTIFIER>-build
 dashboard_set(Slicer_DIRECTORY_BASENAME   "Slicer")
 dashboard_set(Slicer_DASHBOARD_SUBDIR     "${Slicer_RELEASE_TYPE}")
-dashboard_set(Slicer_DIRECTORY_IDENTIFIER "0")       # Set to arbirary integer to distinguish different Experimental/Preview builds, set to Slicer version XYZ for Stable
+dashboard_set(Slicer_DIRECTORY_IDENTIFIER "0")        # Set to arbitrary integer to distinguish different Experimental/Preview release build
+                                                      # Set to Slicer version XYZ for Stable release build
 dashboard_set(Slicer_SOURCE_DIR "${DASHBOARDS_DIR}/${Slicer_DASHBOARD_SUBDIR}/${Slicer_DIRECTORY_BASENAME}-${Slicer_DIRECTORY_IDENTIFIER}")
 dashboard_set(Slicer_DIR        "${DASHBOARDS_DIR}/${Slicer_DASHBOARD_SUBDIR}/${Slicer_DIRECTORY_BASENAME}-${Slicer_DIRECTORY_IDENTIFIER}-build/Slicer-build")
 
-# ExtensionIndex Directory settings
-#   <DASHBOARDS_DIR>/<EXTENSION_DASHBOARD_SUBDIR>/<EXTENSION_DIRECTORY_BASENAME>-<Slicer_DIRECTORY_IDENTIFIER>-E[-Testing]-b # Build directory
+# CTEST_SOURCE_DIRECTORY: <Slicer_SOURCE_DIR>/Extensions/CMake
+# CTEST_BINARY_DIRECTORY: <DASHBOARDS_DIR>/<EXTENSION_DASHBOARD_SUBDIR>/<EXTENSION_DIRECTORY_BASENAME>-<Slicer_DIRECTORY_IDENTIFIER>-E[-T]-b
 dashboard_set(EXTENSION_DASHBOARD_SUBDIR   "${Slicer_RELEASE_TYPE}")
 dashboard_set(EXTENSION_DIRECTORY_BASENAME "S")
 
 dashboard_set(EXTENSIONS_INDEX_GIT_TAG        "origin/${EXTENSIONS_INDEX_BRANCH}") # origin/master, origin/X.Y, ...
 dashboard_set(EXTENSIONS_INDEX_GIT_REPOSITORY "git://github.com/Slicer/ExtensionsIndex.git")
 
-set(ADDITIONAL_CMAKECACHE_OPTION "
-")
-
 # Build Name: <OPERATING_SYSTEM>-<COMPILER>-<BITNESS>bits-QT<QT_VERSION>[-<BUILD_NAME_SUFFIX>]-<CTEST_BUILD_CONFIGURATION
 set(BUILD_NAME_SUFFIX "")
+
+set(ADDITIONAL_CMAKECACHE_OPTION "
+")
 
 ##########################################
 # WARNING: DO NOT EDIT BEYOND THIS POINT #

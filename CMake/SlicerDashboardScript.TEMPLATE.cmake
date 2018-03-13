@@ -14,7 +14,7 @@ dashboard_set(DASHBOARDS_DIR        "$ENV{HOME}/Dashboards/")
 dashboard_set(ORGANIZATION          "Kitware")        # One word, no ponctuation
 dashboard_set(HOSTNAME              "karakoram")
 dashboard_set(OPERATING_SYSTEM      "Linux")
-dashboard_set(SCRIPT_MODE           "experimental")   # "experimental", "continuous", "nightly"
+dashboard_set(SCRIPT_MODE           "Experimental")   # Experimental, Continuous or Nightly
 dashboard_set(Slicer_RELEASE_TYPE   "Experimental")   # Experimental, Preview or Stable
 dashboard_set(WITH_PACKAGES         FALSE)            # Enable to generate packages
 dashboard_set(SVN_REVISION          "")               # Specify a revision for Stable release
@@ -41,20 +41,20 @@ else()
   dashboard_set(Qt5_DIR             "${DASHBOARDS_DIR}/Support/Qt${QT_VERSION}/${QT_VERSION}/gcc_64/lib/cmake/Qt5")
 endif()
 
-# Slicer Directory settings
-#   <DASHBOARDS_DIR>/<Slicer_DASHBOARD_SUBDIR>/<Slicer_DIRECTORY_BASENAME>-<Slicer_DIRECTORY_IDENTIFIER>        # Source directory
-#   <DASHBOARDS_DIR>/<Slicer_DASHBOARD_SUBDIR>/<Slicer_DIRECTORY_BASENAME>-<Slicer_DIRECTORY_IDENTIFIER>-build  # Build directory
+#   Source directory : <DASHBOARDS_DIR>/<Slicer_DASHBOARD_SUBDIR>/<Slicer_DIRECTORY_BASENAME>-<Slicer_DIRECTORY_IDENTIFIER>
+#   Build directory  : <DASHBOARDS_DIR>/<Slicer_DASHBOARD_SUBDIR>/<Slicer_DIRECTORY_BASENAME>-<Slicer_DIRECTORY_IDENTIFIER>-build
 dashboard_set(Slicer_DIRECTORY_BASENAME   "Slicer")
 dashboard_set(Slicer_DASHBOARD_SUBDIR     "${Slicer_RELEASE_TYPE}")
-dashboard_set(Slicer_DIRECTORY_IDENTIFIER "0") # Set to arbirary integer to distinguish different Experimental/Preview builds, set to Slicer version XYZ for Stable
-
-set(ADDITIONAL_CMAKECACHE_OPTION "
-")
+dashboard_set(Slicer_DIRECTORY_IDENTIFIER "0")        # Set to arbitrary integer to distinguish different Experimental/Preview release build
+                                                      # Set to Slicer version XYZ for Stable release build
 
 # Build Name: <OPERATING_SYSTEM>-<COMPILER>-<BITNESS>bits-QT<QT_VERSION>[-NoPython][-NoCLI][-NoVTKDebugLeaks][-<BUILD_NAME_SUFFIX>]-<CTEST_BUILD_CONFIGURATION
 set(BUILD_NAME_SUFFIX "")
 
 set(TEST_TO_EXCLUDE_REGEX "")
+
+set(ADDITIONAL_CMAKECACHE_OPTION "
+")
 
 ##########################################
 # WARNING: DO NOT EDIT BEYOND THIS POINT #
