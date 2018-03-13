@@ -20,7 +20,6 @@ endif()
 
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  set(tcl_SVN_REPOSITORY)
   set(tcl_SOURCE_DIR "")
   set(tcl_BINARY_DIR "")
   set(tcl_BUILD_IN_SOURCE 0)

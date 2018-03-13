@@ -145,9 +145,6 @@ test_big_endian(CMAKE_WORDS_BIGENDIAN)
 # Prerequisites
 #-----------------------------------------------------------------------------
 find_package(Subversion)
-if(NOT Subversion_FOUND)
-  message(FATAL_ERROR "error: Install SVN and try to re-configure")
-endif()
 mark_as_superbuild(Subversion_SVN_EXECUTABLE)
 
 find_package(Git)
