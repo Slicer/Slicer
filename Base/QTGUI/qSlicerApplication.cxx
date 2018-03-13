@@ -753,7 +753,7 @@ void qSlicerApplication::setupFileLogging()
 
   // Add new log file path for the current session
   QString tempDir = this->temporaryPath();
-  QString currentLogFilePath = tempDir + QString("/Slicer_") +
+  QString currentLogFilePath = tempDir + QString("/") + this->applicationName() + QString("_") +
     this->repositoryRevision() + QString("_") +
     QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss") +
     QString(".log");
