@@ -24,7 +24,8 @@ endif()
 dashboard_set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
 dashboard_set(COMPILER              "g++-X.Y.Z")      # Used only to set the build name
 dashboard_set(CTEST_BUILD_FLAGS     "")               # Use multiple CPU cores to build. For example "-j -l4" on unix
-#dashboard_set(CMAKE_C_COMPILER      "/path/to/c/compiler")   # By default, CMake auto-discovers the compilers
+# By default, CMake auto-discovers the compilers
+#dashboard_set(CMAKE_C_COMPILER      "/path/to/c/compiler")
 #dashboard_set(CMAKE_CXX_COMPILER    "/path/to/cxx/compiler")
 dashboard_set(CTEST_BUILD_CONFIGURATION "Release")
 dashboard_set(WITH_MEMCHECK       FALSE)
@@ -45,11 +46,7 @@ endif()
 #   <DASHBOARDS_DIR>/<Slicer_DASHBOARD_SUBDIR>/<Slicer_DIRECTORY_BASENAME>-<Slicer_DIRECTORY_IDENTIFIER>-build  # Build directory
 dashboard_set(Slicer_DIRECTORY_BASENAME   "Slicer")
 dashboard_set(Slicer_DASHBOARD_SUBDIR     "${Slicer_RELEASE_TYPE}")
-if("${Slicer_RELEASE_TYPE}" STREQUAL "Stable")
-  dashboard_set(Slicer_DIRECTORY_IDENTIFIER "481")
-else()
-  dashboard_set(Slicer_DIRECTORY_IDENTIFIER "0") # Arbitrary identifier to distinguish different build
-endif()
+dashboard_set(Slicer_DIRECTORY_IDENTIFIER "0") # Set to arbirary integer to distinguish different Experimental/Preview builds, set to Slicer version XYZ for Stable
 
 set(ADDITIONAL_CMAKECACHE_OPTION "
 ")
