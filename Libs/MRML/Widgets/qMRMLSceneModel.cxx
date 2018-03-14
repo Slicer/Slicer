@@ -1219,8 +1219,10 @@ void qMRMLSceneModel::onMRMLSceneNodeAdded(vtkMRMLScene* scene, vtkMRMLNode* nod
   Q_ASSERT(scene == d->MRMLScene);
   Q_ASSERT(vtkMRMLNode::SafeDownCast(node));
 
-  if (d->LazyUpdate && d->MRMLScene->IsBatchProcessing())
+  if (d->MRMLScene->IsImporting() || (d->LazyUpdate && d->MRMLScene->IsBatchProcessing()))
     {
+    // Node IDs and references are not valid until the import is completed, therefore do not attempt
+    // to add a node during importing (see https://issues.slicer.org/view.php?id=4080).
     return;
     }
   this->insertNode(node);
@@ -1386,7 +1388,7 @@ void qMRMLSceneModel::updateNodeItems(vtkMRMLNode* node, const QString& nodeUID)
 {
   Q_D(qMRMLSceneModel);
 
-  if (d->MRMLScene->IsClosing() || (d->LazyUpdate && d->MRMLScene->IsBatchProcessing()))
+  if (d->MRMLScene->IsClosing() || d->MRMLScene->IsImporting() || (d->LazyUpdate && d->MRMLScene->IsBatchProcessing()))
     {
     return;
     }
@@ -1508,10 +1510,9 @@ void qMRMLSceneModel::onMRMLSceneImported(vtkMRMLScene* scene)
 {
   Q_D(qMRMLSceneModel);
   Q_UNUSED(scene);
-  if (d->LazyUpdate)
-    {
-    this->updateScene();
-    }
+  // Node IDs and references are not valid until the import is completed,
+  // therefore we must update the model now (see https://issues.slicer.org/view.php?id=4080).
+  this->updateScene();
   //this->endResetModel();
 }
 
