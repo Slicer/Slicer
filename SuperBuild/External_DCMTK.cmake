@@ -63,7 +63,8 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     # Include patches for:
     # * DCMTK_ENABLE_CXX11 support on Linux
     # * Set CMP0067 to ensure try_compile work as expected
-    "88225bc0a3bcaf2d4e4f212522659a06d80ac3bb" # v3.6.3_20180205
+    # * Fix template parameter in dcmiod/iodimage
+    "54004ba20077c626ff4e3042b1d4a5b36eda5e0e" # v3.6.3_20180205
     QUIET
     )
 
