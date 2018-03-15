@@ -128,6 +128,19 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" Packaging/s
       -DWRAP_PYTHON:BOOL=ON
       -DSimpleITK_BUILD_DISTRIBUTE:BOOL=ON # Shorten version and install path removing -g{GIT-HASH} suffix.
       -DExternalData_OBJECT_STORES:PATH=${ExternalData_OBJECT_STORES}
+      # Explicitly disable Java and JNI:
+      #
+      #   This avoids call to /usr/libexec/java_home
+      #   during the configuration of SimpleITK (see CMake/sitkLanguageOptions.cmake).
+      #
+      #   On macOS, such call can trigger a pop-up asking the user to install Java.
+      #   Then, that same pop-up can timeout and raise a SIGALARM signal causing
+      #   the build to fail.
+      #
+      #   See https://discourse.slicer.org/t/nightly-mac-slicer-4-9-0-2018-03-13-macosx-amd64-does-not-open/2313/7
+      #
+      -DCMAKE_DISABLE_FIND_PACKAGE_Java:BOOL=ON
+      -DCMAKE_DISABLE_FIND_PACKAGE_JNI:BOOL=ON
     #
     INSTALL_COMMAND ${CMAKE_COMMAND} -P ${_install_script}
     #
