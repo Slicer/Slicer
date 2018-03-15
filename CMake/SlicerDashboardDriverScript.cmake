@@ -45,7 +45,7 @@ endif()
 # Defaults
 #-----------------------------------------------------------------------------
 if(DEFINED Slicer_RELEASE_TYPE)
-  if("${Slicer_RELEASE_TYPE}" MATCHES "^P.*")
+  if("${Slicer_RELEASE_TYPE}" MATCHES "^E.*")
     set(Slicer_RELEASE_TYPE "Experimental")
   elseif("${Slicer_RELEASE_TYPE}" MATCHES "^P.*")
     set(Slicer_RELEASE_TYPE "Preview")
