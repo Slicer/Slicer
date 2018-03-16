@@ -31,11 +31,11 @@ Version:   $Revision: 1.2 $
 
 //----------------------------------------------------------------------------
 const char* vtkMRMLVolumeRenderingDisplayNode::VolumeNodeReferenceRole = "volume";
-const char* vtkMRMLVolumeRenderingDisplayNode::VolumeNodeReferenceMRMLAttributeName = "volumeNodeRef";
+const char* vtkMRMLVolumeRenderingDisplayNode::VolumeNodeReferenceMRMLAttributeName = "volumeNodeID";
 const char* vtkMRMLVolumeRenderingDisplayNode::VolumePropertyNodeReferenceRole = "volumeProperty";
-const char* vtkMRMLVolumeRenderingDisplayNode::VolumePropertyNodeReferenceMRMLAttributeName = "volumePropertyNodeRef";
+const char* vtkMRMLVolumeRenderingDisplayNode::VolumePropertyNodeReferenceMRMLAttributeName = "volumePropertyNodeID";
 const char* vtkMRMLVolumeRenderingDisplayNode::ROINodeReferenceRole = "roi";
-const char* vtkMRMLVolumeRenderingDisplayNode::ROINodeReferenceMRMLAttributeName = "roiNodeRef";
+const char* vtkMRMLVolumeRenderingDisplayNode::ROINodeReferenceMRMLAttributeName = "ROINodeID";
 
 //----------------------------------------------------------------------------
 vtkMRMLVolumeRenderingDisplayNode::vtkMRMLVolumeRenderingDisplayNode()
