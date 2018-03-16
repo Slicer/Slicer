@@ -92,7 +92,7 @@ class SegmentStatisticsSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPl
     # Get master volume from segmentation
     masterVolume = segmentationNode.GetNodeReference(slicer.vtkMRMLSegmentationNode.GetReferenceImageGeometryReferenceRole())
     if masterVolume is not None:
-      statisticsWidget.grayscaleSelector.setCurrentNode(masterVolume)
+      statisticsWidget.scalarSelector.setCurrentNode(masterVolume)
 
   def sceneContextMenuActions(self):
     return []
