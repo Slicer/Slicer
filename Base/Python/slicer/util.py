@@ -701,7 +701,7 @@ def arrayFromVolume(volumeNode):
   """Return voxel array from volume node as numpy array.
   Voxels values are not copied. Voxel values in the volume node can be modified
   by changing values in the numpy array.
-  After all modifications has been completed, call volumeNode.Modified().
+  After all modifications has been completed, call :py:meth:`arrayFromVolumeModified`.
 
   .. warning:: Memory area of the returned array is managed by VTK, therefore
     values in the array may be changed, but the array must not be reallocated
@@ -732,10 +732,21 @@ def arrayFromVolume(volumeNode):
     raise RuntimeError("Unsupported volume type: "+volumeNode.GetClassName())
   return narray
 
+def arrayFromVolumeModified(volumeNode):
+  """Indicate that modification of a numpy array returned by :py:meth:`arrayFromVolume` has been completed."""
+  imageData = volumeNode.GetImageData()
+  pointData = imageData.GetPointData() if imageData else None
+  if pointData:
+    if pointData.GetScalars():
+      pointData.GetScalars().Modified()
+    if pointData.GetTensors():
+      pointData.GetTensors().Modified()
+  volumeNode.Modified()
+
 def arrayFromModelPoints(modelNode):
   """Return point positions of a model node as numpy array.
   Voxels values in the volume node can be modified by modfying the numpy array.
-  After all modifications has been completed, call modelNode.Modified().
+  After all modifications has been completed, call :py:meth:`arrayFromModelPointsModified`.
 
   .. warning:: Important: memory area of the returned array is managed by VTK,
     therefore values in the array may be changed, but the array must not be reallocated.
@@ -746,11 +757,19 @@ def arrayFromModelPoints(modelNode):
   narray = vtk.util.numpy_support.vtk_to_numpy(pointData)
   return narray
 
+def arrayFromModelPointsModified(modelNode):
+  """Indicate that modification of a numpy array returned by :py:meth:`arrayFromModelPoints` has been completed."""
+  polyData = volumeNode.GetPolyData()
+  pointData = polyData.GetPointData() if polyData else None
+  if pointData.GetData():
+    pointData.GetData().Modified()
+  modelNode.Modified()
+
 def arrayFromGridTransform(gridTransformNode):
   """Return voxel array from transform node as numpy array.
   Vector values are not copied. Values in the transform node can be modified
   by changing values in the numpy array.
-  After all modifications has been completed, call gridTransformNode.Modified().
+  After all modifications has been completed, call :py:meth:`arrayFromGridTransformModified`.
 
   .. warning:: Important: memory area of the returned array is managed by VTK,
     therefore values in the array may be changed, but the array must not be reallocated.
@@ -763,6 +782,13 @@ def arrayFromGridTransform(gridTransformNode):
   nshape = nshape + (3,)
   narray = vtk.util.numpy_support.vtk_to_numpy(displacementGrid.GetPointData().GetScalars()).reshape(nshape)
   return narray
+
+def arrayFromGridTransformModified(gridTransformNode):
+  """Indicate that modification of a numpy array returned by :py:meth:`arrayFromModelPoints` has been completed."""
+  transformGrid = gridTransformNode.GetTransformFromParent()
+  displacementGrid = transformGrid.GetDisplacementGrid()
+  displacementGrid.GetPointData().GetScalars().Modified()
+  displacementGrid.Modified()
 
 def arrayFromSegment(segmentationNode, segmentId):
   """Return voxel array of a segment's binary labelmap representation as numpy array.
