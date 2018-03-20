@@ -2,7 +2,6 @@
 include(${Slicer_CMAKE_DIR}/SlicerMacroBuildLoadableModule.cmake)
 
 set(qtmodules
-  AtlasCreator
   Cameras
   Units
   Terminologies
