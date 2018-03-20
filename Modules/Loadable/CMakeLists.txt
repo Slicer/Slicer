@@ -13,7 +13,6 @@ set(qtmodules
   Transforms
   Data
   DoubleArrays
-  #Measurements
   Models
   Plots
   SceneViews
