@@ -19,6 +19,8 @@ set(${KIT}_SRCS
   qMRMLSegmentEditorWidgetPlugin.h
   qMRMLSegmentationDisplayNodeWidgetPlugin.cxx
   qMRMLSegmentationDisplayNodeWidgetPlugin.h
+  qMRMLSegmentationFileExportWidgetPlugin.cxx
+  qMRMLSegmentationFileExportWidgetPlugin.h
   )
 
 set(${KIT}_MOC_SRCS
@@ -29,6 +31,7 @@ set(${KIT}_MOC_SRCS
   qMRMLSegmentSelectorWidgetPlugin.h
   qMRMLSegmentEditorWidgetPlugin.h
   qMRMLSegmentationDisplayNodeWidgetPlugin.h
+  qMRMLSegmentationFileExportWidgetPlugin.h
   )
 
 set(${KIT}_TARGET_LIBRARIES

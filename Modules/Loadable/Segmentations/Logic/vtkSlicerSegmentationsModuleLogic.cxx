@@ -35,6 +35,8 @@
 #include "vtkSlicerTerminologyEntry.h"
 
 // VTK includes
+#include <vtkActor.h>
+#include <vtkAppendPolyData.h>
 #include <vtkCallbackCommand.h>
 #include <vtkDataObject.h>
 #include <vtkGeneralTransform.h>
@@ -46,11 +48,18 @@
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
+#include <vtkOBJExporter.h>
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkProperty.h>
+#include <vtkRenderer.h>
+#include <vtkRenderWindow.h>
+#include <vtkSTLWriter.h>
 #include <vtkStringArray.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
+#include <vtkTriangleFilter.h>
 #include <vtkTrivialProducer.h>
 #include <vtksys/SystemTools.hxx>
 
@@ -1546,7 +1555,7 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNodeWithTerm
     vtkErrorMacro("ImportLabelmapToSegmentationNodeWithTerminology: Invalid labelmap volume");
     return false;
     }
-  
+
   // Assign terminology to segments in the populated segmentation based on the labels of the imported labelmap
   return this->SetTerminologyToSegmentationFromLabelmapNode(segmentationNode, labelmapNode, terminologyContextName);
 }
@@ -1977,7 +1986,7 @@ bool vtkSlicerSegmentationsModuleLogic::SetTerminologyToSegmentationFromLabelmap
     terminologyContextName, categories[firstNonEmptyCategoryIndex], typesInFirstCategory[0], firstType );
   firstTerminologyEntry->GetTypeObject()->Copy(firstType);
   std::string firstTerminologyString = this->TerminologiesLogic->SerializeTerminologyEntry(firstTerminologyEntry);
-  
+
   // Assign terminology entry to each segment in the segmentation
   std::vector<std::string> segmentIDs;
   segmentationNode->GetSegmentation()->GetSegmentIDs(segmentIDs);
@@ -2006,6 +2015,228 @@ bool vtkSlicerSegmentationsModuleLogic::SetTerminologyToSegmentationFromLabelmap
       // Set first entry if 3dSlicerLabel is not found
       segment->SetTag(vtkSegment::GetTerminologyEntryTagName(), firstTerminologyString);
       }
+    }
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentationToFiles(std::string destinationFolder,
+  vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* segmentIds /*=NULL*/,
+  std::string fileFormat /*="STL"*/, bool lps /*=true*/, bool merge /*=false*/)
+{
+  if (!segmentationNode || !segmentationNode->GetSegmentation())
+    {
+    vtkGenericWarningMacro("ExportSegmentsClosedSurfaceRepresentationToFiles failed: invalid segmentationNode");
+    return false;
+    }
+
+  std::vector<std::string> segmentIdsVector;
+  if (segmentIds == NULL)
+    {
+    segmentationNode->GetSegmentation()->GetSegmentIDs(segmentIdsVector);
+    }
+  else
+    {
+    for (int segmentIndex = 0; segmentIndex < segmentIds->GetNumberOfValues(); ++segmentIndex)
+      {
+      segmentIdsVector.push_back(segmentIds->GetValue(segmentIndex));
+      }
+    }
+
+  std::string extension = vtksys::SystemTools::LowerCase(fileFormat);
+  bool objFileFormat = false;
+  if (extension == "obj")
+    {
+    return ExportSegmentsClosedSurfaceRepresentationToObjFile(destinationFolder, segmentationNode, segmentIdsVector, lps);
+    }
+  if (extension != "stl")
+    {
+    vtkGenericWarningMacro("ExportSegmentsClosedSurfaceRepresentationToFiles: fileFormat "
+      << fileFormat << " is unknown. Using STL.");
+    }
+  return ExportSegmentsClosedSurfaceRepresentationToStlFiles(destinationFolder, segmentationNode, segmentIdsVector, lps, merge);
+}
+
+//-----------------------------------------------------------------------------
+bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentationToStlFiles(std::string destinationFolder,
+  vtkMRMLSegmentationNode* segmentationNode, std::vector<std::string>& segmentIDs, bool lps, bool merge)
+{
+  if (!segmentationNode)
+    {
+    vtkGenericWarningMacro("ExportSegmentsClosedSurfaceRepresentationToFiles failed: invalid segmentationNode");
+    return false;
+    }
+
+  // We explicitly write the coordinate system into the file header.
+  // See vtkMRMLModelStorageNode::WriteDataInternal.
+  const std::string coordinateSystemValue = (lps ? "LPS" : "RAS");
+  const std::string coordinateSytemSpecification = "SPACE=" + coordinateSystemValue;
+
+  vtkNew<vtkTriangleFilter> triangulator;
+  vtkNew<vtkSTLWriter> writer;
+  writer->SetFileType(VTK_BINARY);
+  writer->SetInputConnection(triangulator->GetOutputPort());
+  std::string header = std::string("Visualization Toolkit generated SLA File ") + coordinateSytemSpecification;
+  // STL header must be 80 characters long, otherwise VTK adds a char(0) in the header string
+  header.resize(80, ' ');
+  writer->SetHeader(header.c_str());
+
+  if (merge)
+    {
+    vtkNew<vtkAppendPolyData> appendPolyData;
+
+    for (std::vector<std::string>::iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
+      {
+      vtkNew<vtkPolyData> segmentPolyData;
+      bool polyDataAvailable = vtkSlicerSegmentationsModuleLogic::GetSegmentClosedSurfaceRepresentation(
+        segmentationNode, *segmentIdIt, segmentPolyData.GetPointer());
+      if (!polyDataAvailable || segmentPolyData.GetPointer() == NULL)
+        {
+        vtkErrorWithObjectMacro(segmentationNode, "ExportSegmentsClosedSurfaceRepresentationToFiles: Unable to convert segment "
+          << (*segmentIdIt) << " to closed surface representation");
+        continue;
+        }
+      appendPolyData->AddInputData(segmentPolyData.GetPointer());
+      }
+    appendPolyData->Update();
+    vtkSmartPointer<vtkPolyData> polyDataToExport = appendPolyData->GetOutput();
+    if (lps)
+      {
+      vtkNew<vtkTransform> transformRasToLps;
+      transformRasToLps->Scale(-1, -1, 1);
+      vtkNew<vtkTransformPolyDataFilter> transformPolyDataRasToLps;
+      transformPolyDataRasToLps->SetTransform(transformRasToLps.GetPointer());
+      transformPolyDataRasToLps->SetInputData(polyDataToExport);
+      transformPolyDataRasToLps->Update();
+      polyDataToExport = transformPolyDataRasToLps->GetOutput();
+      }
+    std::string filePath = destinationFolder + "/" + segmentationNode->GetName() + ".stl";
+    triangulator->SetInputData(polyDataToExport.GetPointer());
+    writer->SetFileName(filePath.c_str());
+    try
+      {
+      writer->Write();
+      }
+    catch (...)
+      {
+      vtkErrorWithObjectMacro(segmentationNode, "ExportSegmentsClosedSurfaceRepresentationToFiles:"
+        " Unable to write segmentation to " << filePath);
+      return false;
+      }
+    }
+  else
+    {
+    for (std::vector<std::string>::iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
+      {
+      vtkNew<vtkPolyData> segmentPolyData;
+      bool polyDataAvailable = vtkSlicerSegmentationsModuleLogic::GetSegmentClosedSurfaceRepresentation(
+        segmentationNode, *segmentIdIt, segmentPolyData.GetPointer());
+      if (!polyDataAvailable || segmentPolyData.GetPointer() == NULL)
+        {
+        vtkErrorWithObjectMacro(segmentationNode, "ExportSegmentsClosedSurfaceRepresentationToFiles: Unable to convert segment "
+          << (*segmentIdIt) << " to closed surface representation");
+        continue;
+        }
+      vtkSmartPointer<vtkPolyData> polyDataToExport = segmentPolyData;
+      if (lps)
+        {
+        vtkNew<vtkTransform> transformRasToLps;
+        transformRasToLps->Scale(-1, -1, 1);
+        vtkNew<vtkTransformPolyDataFilter> transformPolyDataRasToLps;
+        transformPolyDataRasToLps->SetTransform(transformRasToLps.GetPointer());
+        transformPolyDataRasToLps->SetInputData(polyDataToExport);
+        transformPolyDataRasToLps->Update();
+        polyDataToExport = transformPolyDataRasToLps->GetOutput();
+        }
+      std::string segmentName = segmentationNode->GetSegmentation()->GetSegment(*segmentIdIt)->GetName();
+      std::string filePath = destinationFolder + "/" + segmentationNode->GetName() + "_" + segmentName + ".stl";
+      triangulator->SetInputData(polyDataToExport.GetPointer());
+      writer->SetFileName(filePath.c_str());
+      try
+        {
+        writer->Write();
+        }
+      catch (...)
+        {
+        vtkErrorWithObjectMacro(segmentationNode, "ExportSegmentsClosedSurfaceRepresentationToFiles:"
+          " Unable to write segmentation to " << filePath);
+        return false;
+        }
+      }
+    }
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentationToObjFile(std::string destinationFolder,
+  vtkMRMLSegmentationNode* segmentationNode, std::vector<std::string>& segmentIDs, bool lps)
+{
+  if (!segmentationNode)
+    {
+    vtkGenericWarningMacro("ExportSegmentsClosedSurfaceRepresentationToFiles failed: invalid segmentationNode");
+    return false;
+    }
+
+  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
+
+  vtkNew<vtkRenderer> renderer;
+  vtkNew<vtkRenderWindow> renderWindow;
+  renderWindow->AddRenderer(renderer.GetPointer());
+
+  for (std::vector<std::string>::iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
+    {
+    vtkNew<vtkPolyData> segmentPolyData;
+    bool polyDataAvailable = vtkSlicerSegmentationsModuleLogic::GetSegmentClosedSurfaceRepresentation(
+      segmentationNode, *segmentIdIt, segmentPolyData.GetPointer());
+    if (!polyDataAvailable || segmentPolyData.GetPointer() == NULL)
+      {
+      vtkErrorWithObjectMacro(segmentationNode, "ExportSegmentsClosedSurfaceRepresentationToObjFile: Unable to convert segment "
+        << (*segmentIdIt) << " to closed surface representation");
+      continue;
+      }
+    vtkSmartPointer<vtkPolyData> polyDataToExport = segmentPolyData;
+    if (lps)
+      {
+      vtkNew<vtkTransform> transformRasToLps;
+      transformRasToLps->Scale(-1, -1, 1);
+      vtkNew<vtkTransformPolyDataFilter> transformPolyDataRasToLps;
+      transformPolyDataRasToLps->SetTransform(transformRasToLps.GetPointer());
+      transformPolyDataRasToLps->SetInputData(polyDataToExport);
+      transformPolyDataRasToLps->Update();
+      polyDataToExport = transformPolyDataRasToLps->GetOutput();
+      }
+    vtkNew<vtkPolyDataMapper> mapper;
+    mapper->SetInputData(polyDataToExport.GetPointer());
+    vtkNew<vtkActor> actor;
+    actor->SetMapper(mapper.GetPointer());
+
+    //vtkSegment* segment = segmentationNode->GetSegmentation()->GetSegment(*segmentIdIt);
+    if (displayNode)
+      {
+      double color[3] = { 0.5, 0.5, 0.5 };
+      displayNode->GetSegmentColor(*segmentIdIt, color);
+      actor->GetProperty()->SetColor(color);
+      actor->GetProperty()->SetOpacity(displayNode->GetSegmentOpacity3D(*segmentIdIt));
+      }
+    renderer->AddActor(actor.GetPointer());
+    }
+
+  vtkNew<vtkOBJExporter> exporter;
+  exporter->SetRenderWindow(renderWindow.GetPointer());
+  std::string fullNameWithoutExtension = destinationFolder + "/" + segmentationNode->GetName();
+  exporter->SetFilePrefix(fullNameWithoutExtension.c_str());
+  // TODO: write coordinate system name in file header comment
+  // Need to add API for that into VTK.
+  try
+    {
+    exporter->Write();
+    }
+  catch (...)
+    {
+    vtkErrorWithObjectMacro(segmentationNode, "ExportSegmentsClosedSurfaceRepresentationToObjFile:"
+      " Unable to write segmentation to " << fullNameWithoutExtension << ".obj");
+    return false;
     }
 
   return true;

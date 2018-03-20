@@ -329,6 +329,10 @@ void qSlicerSegmentationsModuleWidget::init()
   connect(d->PushButton_ImportExport, SIGNAL(clicked()),
     this, SLOT(onImportExportApply()));
 
+  d->ExportToFilesWidget->setSettingsKey("ExportSegmentsToFiles");
+  connect(d->MRMLNodeComboBox_Segmentation, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+    d->ExportToFilesWidget, SLOT(setSegmentationNode(vtkMRMLNode*)));
+
   connect(d->toolButton_MoveFromCurrentSegmentation, SIGNAL(clicked()),
     this, SLOT(onMoveFromCurrentSegmentation()) );
   connect(d->toolButton_CopyFromCurrentSegmentation, SIGNAL(clicked()),

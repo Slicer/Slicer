@@ -234,6 +234,17 @@ public:
   static bool ImportModelHierarchyToSegmentationNode(
     vtkMRMLModelHierarchyNode* modelHierarchyNode, vtkMRMLSegmentationNode* segmentationNode, std::string insertBeforeSegmentId = "" );
 
+  /// Export closed surface representation of multiple segments to files. Typically used for writing 3D printable model files.
+  /// \param segmentationNode Segmentation node from which the the segments are exported
+  /// \param destinationFolder Folder name where segments will be exported to
+  /// \param fileFormat Output file format (STL or OBJ).
+  /// \param merge Merge all models into a single mesh. Only applicable to STL format.
+  /// \param lps Save files in LPS coordinate system. If set to false then RAS coordinate system is used.
+  /// \param segmentIds List of segment IDs to export
+  static bool ExportSegmentsClosedSurfaceRepresentationToFiles(std::string destinationFolder,
+    vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* segmentIds = NULL,
+    std::string fileFormat = "STL", bool lps = true, bool merge = false);
+
   /// Create representation of only one segment in a segmentation.
   /// Useful if only one segment is processed, and we do not want to convert all segments to a certain
   /// segmentation to save time.
@@ -338,6 +349,11 @@ protected:
 
   /// Handle MRML node added events
   virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) VTK_OVERRIDE;
+
+  static bool ExportSegmentsClosedSurfaceRepresentationToStlFiles(std::string destinationFolder,
+    vtkMRMLSegmentationNode* segmentationNode, std::vector<std::string>& segmentIDs, bool lps, bool merge);
+  static bool ExportSegmentsClosedSurfaceRepresentationToObjFile(std::string destinationFolder,
+    vtkMRMLSegmentationNode* segmentationNode, std::vector<std::string>& segmentIDs, bool lps);
 
 protected:
   vtkSlicerSegmentationsModuleLogic();

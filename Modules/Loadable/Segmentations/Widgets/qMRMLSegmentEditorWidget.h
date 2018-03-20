@@ -353,6 +353,8 @@ protected slots:
   void onSetSurfaceSmoothingClicked();
   /// Switch to Segmentations module and jump to Import/Export section
   void onImportExportActionClicked();
+  /// Open Export to files dialog
+  void onExportToFilesActionClicked();
 
   /// Update masking section on the UI
   void updateMaskingSection();

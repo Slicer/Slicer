@@ -79,6 +79,7 @@
 #include "qSlicerModuleManager.h"
 #include <qSlicerAbstractModule.h>
 #include <qSlicerAbstractModuleWidget.h>
+#include <qMRMLSegmentationFileExportWidget.h>
 #include <qSlicerSubjectHierarchyAbstractPlugin.h>
 #include <qMRMLSliceWidget.h>
 #include <qMRMLSliceView.h>
@@ -363,9 +364,14 @@ void qMRMLSegmentEditorWidgetPrivate::init()
   this->SwitchToSegmentationsButton->setIcon(q->style()->standardIcon(QStyle::SP_ArrowRight));
 
   QMenu* segmentationsButtonMenu = new QMenu(q->tr("Segmentations"), this->SwitchToSegmentationsButton);
-  QAction* importExportAction = new QAction("Import/export...", segmentationsButtonMenu);
+
+  QAction* importExportAction = new QAction("Import/export nodes...", segmentationsButtonMenu);
   segmentationsButtonMenu->addAction(importExportAction);
   QObject::connect(importExportAction, SIGNAL(triggered()), q, SLOT(onImportExportActionClicked()));
+  QAction* exportToFileAction = new QAction("Export to files...", segmentationsButtonMenu);
+  segmentationsButtonMenu->addAction(exportToFileAction);
+  QObject::connect(exportToFileAction, SIGNAL(triggered()), q, SLOT(onExportToFilesActionClicked()));
+
   this->SwitchToSegmentationsButton->setMenu(segmentationsButtonMenu);
 
   QMenu* show3DButtonMenu = new QMenu(q->tr("Show 3D"), this->Show3DButton);
@@ -3213,6 +3219,44 @@ void qMRMLSegmentEditorWidget::onImportExportActionClicked()
       segmentationsScrollArea->ensureWidgetVisible(collapsibleButton);
       }
     }
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::onExportToFilesActionClicked()
+{
+  Q_D(qMRMLSegmentEditorWidget);
+
+  vtkMRMLSegmentationNode* segmentationNode = d->ParameterSetNode->GetSegmentationNode();
+  if (!segmentationNode)
+    {
+    return;
+    }
+
+  // Create dialog to show the parameters widget in a popup window
+  QDialog* exportDialog = new QDialog(NULL, Qt::Dialog);
+  exportDialog->setObjectName("SegmentationExportToFileWindow");
+  exportDialog->setWindowTitle("Export segments to files");
+
+  QVBoxLayout* layout = new QVBoxLayout(exportDialog);
+  layout->setContentsMargins(4, 4, 4, 4);
+  layout->setSpacing(4);
+
+  // Create file export widget to allow user editing conversion details
+
+  qMRMLSegmentationFileExportWidget* exportToFileWidget = new qMRMLSegmentationFileExportWidget(exportDialog);
+  exportToFileWidget->setSegmentationNode(d->SegmentationNode);
+  exportToFileWidget->setSettingsKey("ExportSegmentsToFiles");
+  layout->addWidget(exportToFileWidget);
+
+  // Connect conversion done event to dialog close
+  QObject::connect(exportToFileWidget, SIGNAL(exportToFilesDone()),
+    exportDialog, SLOT(accept()));
+
+  // Show dialog
+  exportDialog->exec();
+
+  // Delete dialog when done
+  delete exportDialog;
 }
 
 //-----------------------------------------------------------------------------
