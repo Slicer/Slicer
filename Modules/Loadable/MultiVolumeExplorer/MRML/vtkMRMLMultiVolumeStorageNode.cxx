@@ -17,7 +17,7 @@ Version:   $Revision: 1.6 $
 #include "vtkMRMLMultiVolumeStorageNode.h"
 #include "vtkMRMLMultiVolumeNode.h"
 
-#include "vtkNRRDReader.h"
+#include "vtkTeemNRRDReader.h"
 
 #include "vtkObjectFactory.h"
 #include "vtkImageChangeInformation.h"
@@ -56,15 +56,15 @@ int vtkMRMLMultiVolumeStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     vtkErrorMacro("ReadDataInternal: not a MultiVolume node.");
     return 0;
     }
-  
+
   std::string fullName = this->GetFullNameFromFileName();
-  if (fullName == std::string("")) 
+  if (fullName == std::string(""))
     {
     vtkErrorMacro("ReadData: File name not specified");
     return 0;
     }
 
-  vtkSmartPointer<vtkNRRDReader> reader =  vtkSmartPointer<vtkNRRDReader>::New();
+  vtkSmartPointer<vtkTeemNRRDReader> reader =  vtkSmartPointer<vtkTeemNRRDReader>::New();
   reader->SetFileName(fullName.c_str());
 
   // Check if this is a NRRD file that we can read
@@ -75,7 +75,7 @@ int vtkMRMLMultiVolumeStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     }
 
   // Set up reader
-  if (this->CenterImage) 
+  if (this->CenterImage)
     {
     reader->SetUseNativeOriginOff();
     }
@@ -87,7 +87,7 @@ int vtkMRMLMultiVolumeStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   // Read the header to see if the NRRD file corresponds to the
   // MRML Node
   reader->UpdateInformation();
-  
+
   // Check to see if the information contains MultiVolume attributes
   typedef std::vector<std::string> KeyVector;
   KeyVector keys = reader->GetHeaderKeysVector();
@@ -107,12 +107,12 @@ int vtkMRMLMultiVolumeStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
       }
     }
 
-  // 
+  //
   // Finally have verified that we have a MultiVolume nrrd file
   //
 
   // prepare volume node
-  if (volNode->GetImageData()) 
+  if (volNode->GetImageData())
     {
     volNode->SetAndObserveImageData (NULL);
     }
@@ -124,7 +124,7 @@ int vtkMRMLMultiVolumeStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   vtkMatrix4x4* mat = reader->GetRasToIjkMatrix();
   volNode->SetRASToIJKMatrix(mat);
 
-  // parse non-specific key-value pairs 
+  // parse non-specific key-value pairs
   for ( kit = keys.begin(); kit != keys.end(); ++kit)
     {
     volNode->SetAttribute((*kit).c_str(), reader->GetHeaderValue((*kit).c_str()));      }
@@ -144,6 +144,6 @@ int vtkMRMLMultiVolumeStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   // assign the buffer
   volNode->SetAndObserveImageData (ici->GetOutput());
 
-  // 
+  //
   return 1;
 }
