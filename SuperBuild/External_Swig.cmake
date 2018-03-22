@@ -48,7 +48,10 @@ if(NOT SWIG_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     #
 
     # swig uses bison find it by cmake and pass it down
-    find_package(BISON)
+    # Note: Based on Swig external project found in SimpleITK and the official swig
+    #       documentation, Bison is not required when building Swig from a pre-generated
+    #       source distribution.
+    find_package(BISON QUIET)
     set(BISON_FLAGS "" CACHE STRING "Flags used by bison")
     mark_as_advanced(BISON_FLAGS)
 
