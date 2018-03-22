@@ -227,6 +227,7 @@ class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
       self.logic.setParameterNode(self.parameterNode)
       self.parameterNodeObserver = self.parameterNode.AddObserver(vtk.vtkCommand.ModifiedEvent,
                                                                   self.updateGuiFromParameterNode)
+    self.updateGuiFromParameterNode()
 
   def updateGuiFromParameterNode(self, caller=None, event=None):
     if not self.parameterNode:
