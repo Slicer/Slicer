@@ -2045,7 +2045,6 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentatio
     }
 
   std::string extension = vtksys::SystemTools::LowerCase(fileFormat);
-  bool objFileFormat = false;
   if (extension == "obj")
     {
     return ExportSegmentsClosedSurfaceRepresentationToObjFile(destinationFolder, segmentationNode, segmentIdsVector, lps);
