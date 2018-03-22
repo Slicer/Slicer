@@ -30,8 +30,8 @@ set(cli_modules
   N4ITKBiasFieldCorrection
   OrientScalarVolume
   ProbeVolumeWithModel
-  ResampleDTIVolume # Needed by ResampleScalarVectorDWIVolume
-  ResampleScalarVectorDWIVolume # Depends on DiffusionApplications, needed by CropVolume
+  ResampleDTIVolume # Needed by ResampleScalarVectorDWIVolume (compiletime dependency)
+  ResampleScalarVectorDWIVolume # Depends on DiffusionApplications, needed by CropVolume (runtime dependency)
   RobustStatisticsSegmenter
   SimpleRegionGrowingSegmentation
   SubtractScalarVolumes
