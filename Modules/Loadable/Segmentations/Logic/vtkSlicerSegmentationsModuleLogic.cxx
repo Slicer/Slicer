@@ -2137,7 +2137,7 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentatio
           << (*segmentIdIt) << " to closed surface representation");
         continue;
         }
-      vtkSmartPointer<vtkPolyData> polyDataToExport = segmentPolyData;
+      vtkSmartPointer<vtkPolyData> polyDataToExport = segmentPolyData.GetPointer();
       if (lps)
         {
         vtkNew<vtkTransform> transformRasToLps;
@@ -2194,7 +2194,7 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentatio
         << (*segmentIdIt) << " to closed surface representation");
       continue;
       }
-    vtkSmartPointer<vtkPolyData> polyDataToExport = segmentPolyData;
+    vtkSmartPointer<vtkPolyData> polyDataToExport = segmentPolyData.GetPointer();
     if (lps)
       {
       vtkNew<vtkTransform> transformRasToLps;
