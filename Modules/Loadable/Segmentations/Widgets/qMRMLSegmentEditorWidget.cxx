@@ -299,7 +299,7 @@ qMRMLSegmentEditorWidgetPrivate::qMRMLSegmentEditorWidgetPrivate(qMRMLSegmentEdi
     // Local painting
     << "Paint" << "Draw" << "Erase" << "Level tracing" << "Grow from seeds" << "Fill between slices"
     // Global processing
-    << "Threshold" << "Margin" << "Smoothing"
+    << "Threshold" << "Margin" << "Hollow" << "Smoothing"
     // Global splitting, merging
     << "Scissors" << "Islands" << "Logical operators";
   this->UnorderedEffectsVisible = true;

@@ -2,15 +2,16 @@ from AbstractScriptedSegmentEditorEffect import *
 from AbstractScriptedSegmentEditorLabelEffect import *
 from AbstractScriptedSegmentEditorAutoCompleteEffect import *
 
-from SegmentEditorThresholdEffect import *
-from SegmentEditorSmoothingEffect import *
-from SegmentEditorGrowFromSeedsEffect import *
-from SegmentEditorFillBetweenSlicesEffect import *
 from SegmentEditorDrawEffect import *
-from SegmentEditorLevelTracingEffect import *
-from SegmentEditorMarginEffect import *
-from SegmentEditorLogicalEffect import *
+from SegmentEditorFillBetweenSlicesEffect import *
+from SegmentEditorGrowFromSeedsEffect import *
+from SegmentEditorHollowEffect import *
 from SegmentEditorIslandsEffect import *
+from SegmentEditorLevelTracingEffect import *
+from SegmentEditorLogicalEffect import *
+from SegmentEditorMarginEffect import *
+from SegmentEditorSmoothingEffect import *
+from SegmentEditorThresholdEffect import *
 
 from SegmentEditorEffects import *
 
@@ -18,15 +19,16 @@ import logging
 import importlib
 import traceback
 editorEffectNames = [
-  "SegmentEditorThresholdEffect",
-  "SegmentEditorSmoothingEffect",
-  "SegmentEditorGrowFromSeedsEffect",
-  "SegmentEditorFillBetweenSlicesEffect",
   "SegmentEditorDrawEffect",
+  "SegmentEditorFillBetweenSlicesEffect",
+  "SegmentEditorGrowFromSeedsEffect",
+  "SegmentEditorHollowEffect",
+  "SegmentEditorIslandsEffect",
   "SegmentEditorLevelTracingEffect",
-  "SegmentEditorMarginEffect",
   "SegmentEditorLogicalEffect",
-  "SegmentEditorIslandsEffect"
+  "SegmentEditorMarginEffect",
+  "SegmentEditorSmoothingEffect",
+  "SegmentEditorThresholdEffect"
   ]
 
 def registerEffects():
@@ -42,4 +44,4 @@ def registerEffects():
       instance.setPythonSource(effectFilename)
       instance.self().register()
     except Exception as e:
-      logging.error(traceback.format_exc())
+      logging.error("Error instantiating "+editorEffectName+":\n"+traceback.format_exc())
