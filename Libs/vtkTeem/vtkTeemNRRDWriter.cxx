@@ -1,6 +1,6 @@
 #include <map>
 
-#include "vtkNRRDWriter.h"
+#include "vtkTeemNRRDWriter.h"
 
 
 #include "vtkImageData.h"
@@ -12,10 +12,10 @@
 class AttributeMapType: public std::map<std::string, std::string> {};
 class AxisInfoMapType : public std::map<unsigned int, std::string> {};
 
-vtkStandardNewMacro(vtkNRRDWriter);
+vtkStandardNewMacro(vtkTeemNRRDWriter);
 
 //----------------------------------------------------------------------------
-vtkNRRDWriter::vtkNRRDWriter()
+vtkTeemNRRDWriter::vtkTeemNRRDWriter()
 {
   this->FileName = NULL;
   this->BValues = vtkDoubleArray::New();
@@ -32,7 +32,7 @@ vtkNRRDWriter::vtkNRRDWriter()
 }
 
 //----------------------------------------------------------------------------
-vtkNRRDWriter::~vtkNRRDWriter()
+vtkTeemNRRDWriter::~vtkTeemNRRDWriter()
 {
   this->SetFileName(NULL);
   this->SetDiffusionGradients(NULL);
@@ -48,19 +48,19 @@ vtkNRRDWriter::~vtkNRRDWriter()
 }
 
 //----------------------------------------------------------------------------
-vtkImageData* vtkNRRDWriter::GetInput()
+vtkImageData* vtkTeemNRRDWriter::GetInput()
 {
   return vtkImageData::SafeDownCast(this->Superclass::GetInput());
 }
 
 //----------------------------------------------------------------------------
-vtkImageData* vtkNRRDWriter::GetInput(int port)
+vtkImageData* vtkTeemNRRDWriter::GetInput(int port)
 {
   return vtkImageData::SafeDownCast(this->Superclass::GetInput(port));
 }
 
 //----------------------------------------------------------------------------
-int vtkNRRDWriter::FillInputPortInformation(
+int vtkTeemNRRDWriter::FillInputPortInformation(
   int vtkNotUsed(port), vtkInformation *info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkImageData");
@@ -70,7 +70,7 @@ int vtkNRRDWriter::FillInputPortInformation(
 
 //----------------------------------------------------------------------------
 // Writes all the data from the input.
-void vtkNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &kind, size_t &numComp, int &vtkType, void **buffer)
+void vtkTeemNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &kind, size_t &numComp, int &vtkType, void **buffer)
 {
 
   vtkDataArray *array;
@@ -131,7 +131,7 @@ void vtkNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &kind, size
      }
 }
 
-int vtkNRRDWriter::VTKToNrrdPixelType( const int vtkPixelType )
+int vtkTeemNRRDWriter::VTKToNrrdPixelType( const int vtkPixelType )
   {
   switch( vtkPixelType )
     {
@@ -172,7 +172,7 @@ int vtkNRRDWriter::VTKToNrrdPixelType( const int vtkPixelType )
     }
   }
 
-void* vtkNRRDWriter::MakeNRRD()
+void* vtkTeemNRRDWriter::MakeNRRD()
   {
   Nrrd *nrrd = nrrdNew();
   int kind[NRRD_DIM_MAX];
@@ -331,7 +331,7 @@ void* vtkNRRDWriter::MakeNRRD()
 
 //----------------------------------------------------------------------------
 // Writes all the data from the input.
-void vtkNRRDWriter::WriteData()
+void vtkTeemNRRDWriter::WriteData()
 {
   this->WriteErrorOff();
   if (this->GetFileName() == NULL)
@@ -387,7 +387,7 @@ void vtkNRRDWriter::WriteData()
   return;
 }
 
-void vtkNRRDWriter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkTeemNRRDWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 
@@ -397,7 +397,7 @@ void vtkNRRDWriter::PrintSelf(ostream& os, vtkIndent indent)
      this->MeasurementFrameMatrix->PrintSelf(os,indent);
 }
 
-void vtkNRRDWriter::SetAttribute(const std::string& name, const std::string& value)
+void vtkTeemNRRDWriter::SetAttribute(const std::string& name, const std::string& value)
 {
   if (!this->Attributes)
     {
@@ -407,7 +407,7 @@ void vtkNRRDWriter::SetAttribute(const std::string& name, const std::string& val
   (*this->Attributes)[name] = value;
 }
 
-void vtkNRRDWriter::SetAxisLabel(unsigned int axis, const char* label)
+void vtkTeemNRRDWriter::SetAxisLabel(unsigned int axis, const char* label)
 {
   if (!this->AxisLabels)
     {
@@ -423,7 +423,7 @@ void vtkNRRDWriter::SetAxisLabel(unsigned int axis, const char* label)
     }
 }
 
-void vtkNRRDWriter::SetAxisUnit(unsigned int axis, const char* unit)
+void vtkTeemNRRDWriter::SetAxisUnit(unsigned int axis, const char* unit)
 {
   if (!this->AxisUnits)
     {

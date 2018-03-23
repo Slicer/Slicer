@@ -1,6 +1,6 @@
 
-#ifndef __vtkNRRDWriter_h
-#define __vtkNRRDWriter_h
+#ifndef __vtkTeemNRRDWriter_h
+#define __vtkTeemNRRDWriter_h
 
 #include "vtkWriter.h"
 
@@ -17,17 +17,17 @@ class AxisInfoMapType;
 
 /// \brief Writes PNG files.
 ///
-/// vtkNRRDWriter writes NRRD files.
+/// vtkTeemNRRDWriter writes NRRD files.
 ///
-/// \sa vtkNRRDReader
-class VTK_Teem_EXPORT vtkNRRDWriter : public vtkWriter
+/// \sa vtkTeemNRRDReader
+class VTK_Teem_EXPORT vtkTeemNRRDWriter : public vtkWriter
 {
 public:
 
-  vtkTypeMacro(vtkNRRDWriter,vtkWriter);
+  vtkTypeMacro(vtkTeemNRRDWriter,vtkWriter);
   void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
-  static vtkNRRDWriter *New();
+  static vtkTeemNRRDWriter *New();
 
   ///
   /// Get the input to this writer.
@@ -78,8 +78,8 @@ public:
   void* MakeNRRD();
 
 protected:
-  vtkNRRDWriter();
-  ~vtkNRRDWriter();
+  vtkTeemNRRDWriter();
+  ~vtkTeemNRRDWriter();
 
   virtual int FillInputPortInformation(int port, vtkInformation *info) VTK_OVERRIDE;
 
@@ -107,8 +107,8 @@ protected:
   AxisInfoMapType *AxisUnits;
 
 private:
-  vtkNRRDWriter(const vtkNRRDWriter&);  /// Not implemented.
-  void operator=(const vtkNRRDWriter&);  /// Not implemented.
+  vtkTeemNRRDWriter(const vtkTeemNRRDWriter&);  /// Not implemented.
+  void operator=(const vtkTeemNRRDWriter&);  /// Not implemented.
   void vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &nrrdKind, size_t &numComp, int &vtkType, void **buffer);
   int VTKToNrrdPixelType( const int vtkPixelType );
   int DiffusionWeigthedData;

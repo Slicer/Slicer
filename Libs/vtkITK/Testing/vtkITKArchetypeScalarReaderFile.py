@@ -29,7 +29,7 @@ class vtkITKReaderAgainstNRRDReader(unittest.TestCase):
         self.ritk.SetArchetype(self.file_name)
         self.ritk.Update()
 
-        self.rnrrd = teem.vtkNRRDReader()
+        self.rnrrd = teem.vtkTeemNRRDReader()
         self.rnrrd.SetFileName(self.file_name)
         self.rnrrd.Update()
 

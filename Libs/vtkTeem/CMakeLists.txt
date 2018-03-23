@@ -64,8 +64,8 @@ endif()
 set(vtkTeem_SRCS
   vtkDiffusionTensorMathematics.cxx
   vtkDiffusionTensorGlyph.cxx
-  vtkNRRDReader.cxx
-  vtkNRRDWriter.cxx
+  vtkTeemNRRDReader.cxx
+  vtkTeemNRRDWriter.cxx
   vtkImageLabelCombine.cxx
   )
 

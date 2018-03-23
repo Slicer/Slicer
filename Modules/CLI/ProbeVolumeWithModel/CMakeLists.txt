@@ -15,7 +15,6 @@ set(${MODULE_NAME}_TARGET_LIBRARIES
   )
 
 #-----------------------------------------------------------------------------
-# Avoid vtkNRRDReader/vtkNrrdReader filename confusion on case insensitive file systems
 include_directories(BEFORE ${vtkTeem_INCLUDE_DIRS})
 
 #-----------------------------------------------------------------------------

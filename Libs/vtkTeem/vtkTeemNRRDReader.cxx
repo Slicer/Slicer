@@ -6,7 +6,7 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $RCSfile: vtkNRRDReader.cxx,v $
+  Module:    $RCSfile: vtkTeemNRRDReader.cxx,v $
   Date:      $Date: 2007/06/12 19:13:58 $
   Version:   $Revision: 1.7.2.1 $
 
@@ -14,7 +14,7 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    $RCSfile: vtkNRRDReader.cxx,v $
+  Module:    $RCSfile: vtkTeemNRRDReader.cxx,v $
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
@@ -26,7 +26,7 @@
 
 =========================================================================*/
 // vtkTeem includes
-#include "vtkNRRDReader.h"
+#include "vtkTeemNRRDReader.h"
 
 // VTK includes
 #include "vtkBitArray.h"
@@ -52,10 +52,10 @@
 // Teem includes
 #include "teem/ten.h"
 
-vtkStandardNewMacro(vtkNRRDReader);
+vtkStandardNewMacro(vtkTeemNRRDReader);
 
 //----------------------------------------------------------------------------
-vtkNRRDReader::vtkNRRDReader()
+vtkTeemNRRDReader::vtkTeemNRRDReader()
 {
   this->RasToIjkMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
   this->NRRDWorldToRasMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
@@ -69,28 +69,28 @@ vtkNRRDReader::vtkNRRDReader()
 }
 
 //----------------------------------------------------------------------------
-vtkNRRDReader::~vtkNRRDReader()
+vtkTeemNRRDReader::~vtkTeemNRRDReader()
 {
   nrrdNuke(this->nrrd);
   this->nrrd = NULL;
 }
 
 //----------------------------------------------------------------------------
-vtkMatrix4x4* vtkNRRDReader::GetRasToIjkMatrix()
+vtkMatrix4x4* vtkTeemNRRDReader::GetRasToIjkMatrix()
 {
   this->ExecuteInformation();
   return this->RasToIjkMatrix;
 }
 
 //----------------------------------------------------------------------------
-vtkMatrix4x4* vtkNRRDReader::GetMeasurementFrameMatrix()
+vtkMatrix4x4* vtkTeemNRRDReader::GetMeasurementFrameMatrix()
 {
   this->ExecuteInformation();
   return this->MeasurementFrameMatrix;
 }
 
 //----------------------------------------------------------------------------
-const char* vtkNRRDReader::GetHeaderKeys()
+const char* vtkTeemNRRDReader::GetHeaderKeys()
 {
   this->HeaderKeys.clear();
   for (std::map<std::string,std::string>::iterator i = HeaderKeyValue.begin(); i != HeaderKeyValue.end(); i++)
@@ -105,7 +105,7 @@ const char* vtkNRRDReader::GetHeaderKeys()
 }
 
 //----------------------------------------------------------------------------
-std::vector<std::string> vtkNRRDReader::GetHeaderKeysVector()
+std::vector<std::string> vtkTeemNRRDReader::GetHeaderKeysVector()
 {
   std::vector<std::string> keys;
   for (std::map<std::string,std::string>::iterator i = HeaderKeyValue.begin(); i != HeaderKeyValue.end(); i++)
@@ -116,7 +116,7 @@ std::vector<std::string> vtkNRRDReader::GetHeaderKeysVector()
 }
 
 //----------------------------------------------------------------------------
-const char* vtkNRRDReader::GetHeaderValue(const char *key)
+const char* vtkTeemNRRDReader::GetHeaderValue(const char *key)
 {
   std::map<std::string,std::string>::iterator i = HeaderKeyValue.find(key);
   if (i != HeaderKeyValue.end())
@@ -130,7 +130,7 @@ const char* vtkNRRDReader::GetHeaderValue(const char *key)
 }
 
 //----------------------------------------------------------------------------
-const char* vtkNRRDReader::GetAxisLabel(unsigned int axis)
+const char* vtkTeemNRRDReader::GetAxisLabel(unsigned int axis)
 {
   if (this->AxisLabels.find(axis) == this->AxisLabels.end())
     {
@@ -140,7 +140,7 @@ const char* vtkNRRDReader::GetAxisLabel(unsigned int axis)
 }
 
 //----------------------------------------------------------------------------
-const char* vtkNRRDReader::GetAxisUnit(unsigned int axis)
+const char* vtkTeemNRRDReader::GetAxisUnit(unsigned int axis)
 {
   if (this->AxisUnits.find(axis) == this->AxisUnits.end())
     {
@@ -150,7 +150,7 @@ const char* vtkNRRDReader::GetAxisUnit(unsigned int axis)
 }
 
 //----------------------------------------------------------------------------
-int vtkNRRDReader::CanReadFile(const char* filename)
+int vtkTeemNRRDReader::CanReadFile(const char* filename)
 {
   // Check the extension first to avoid opening files that do not
   // look like nrrds.  The file must have an appropriate extension to be
@@ -216,7 +216,7 @@ int vtkNRRDReader::CanReadFile(const char* filename)
     }
   int pointDataType = -1;
   int numOfComponents = -1;
-  if (!vtkNRRDReader::GetPointType(nrrdTemp, pointDataType, numOfComponents))
+  if (!vtkTeemNRRDReader::GetPointType(nrrdTemp, pointDataType, numOfComponents))
     {
     supported = false;
     }
@@ -227,9 +227,9 @@ int vtkNRRDReader::CanReadFile(const char* filename)
 }
 
 //----------------------------------------------------------------------------
-bool vtkNRRDReader::GetPointType(Nrrd* nrrdTemp, int& pointDataType, int &numOfComponents)
+bool vtkTeemNRRDReader::GetPointType(Nrrd* nrrdTemp, int& pointDataType, int &numOfComponents)
 {
-  // vtkNRRDReader only supports 3 or 4 dimensional image with scalar, vector,
+  // vtkTeemNRRDReader only supports 3 or 4 dimensional image with scalar, vector,
   // normal or tensor data. Other dimensionality is considered a multicomponent scalar field.
 
   if (nrrdTemp->dim < 3 || nrrdTemp->dim > 4)
@@ -320,7 +320,7 @@ bool vtkNRRDReader::GetPointType(Nrrd* nrrdTemp, int& pointDataType, int &numOfC
 }
 
 //----------------------------------------------------------------------------
-void vtkNRRDReader::ExecuteInformation()
+void vtkTeemNRRDReader::ExecuteInformation()
 {
   // This method determines the following and sets the appropriate value in
   // the parent IO class:
@@ -411,7 +411,7 @@ void vtkNRRDReader::ExecuteInformation()
 
   int pointDataType = -1;
   int numOfComponents = -1;
-  if (!vtkNRRDReader::GetPointType(this->nrrd, pointDataType, numOfComponents))
+  if (!vtkTeemNRRDReader::GetPointType(this->nrrd, pointDataType, numOfComponents))
     {
     vtkErrorMacro("ReadImageInformation: only 3 spatial dimension and 1 optional range axis is supported");
     nio = nrrdIoStateNix(nio);
@@ -663,7 +663,7 @@ void vtkNRRDReader::ExecuteInformation()
 }
 
 //----------------------------------------------------------------------------
-vtkImageData *vtkNRRDReader::AllocateOutputData(vtkDataObject *out, vtkInformation* outInfo)
+vtkImageData *vtkTeemNRRDReader::AllocateOutputData(vtkDataObject *out, vtkInformation* outInfo)
 {
   vtkImageData *res = vtkImageData::SafeDownCast(out);
   if (!res)
@@ -686,7 +686,7 @@ vtkImageData *vtkNRRDReader::AllocateOutputData(vtkDataObject *out, vtkInformati
 }
 
 //----------------------------------------------------------------------------
-void vtkNRRDReader::AllocatePointData(vtkImageData *out, vtkInformation* outInfo)
+void vtkTeemNRRDReader::AllocatePointData(vtkImageData *out, vtkInformation* outInfo)
 {
   // if the scalar type has not been set then we have a problem
   if (this->DataType == VTK_VOID)
@@ -802,7 +802,7 @@ void vtkNRRDReader::AllocatePointData(vtkImageData *out, vtkInformation* outInfo
 }
 
 //----------------------------------------------------------------------------
-int vtkNRRDReader::tenSpaceDirectionReduce(Nrrd *nout, const Nrrd *nin, double SD[9])
+int vtkTeemNRRDReader::tenSpaceDirectionReduce(Nrrd *nout, const Nrrd *nin, double SD[9])
 {
   char me[] = "tenSpaceDirectionReduce";
   char err[BUFSIZ];
@@ -889,7 +889,7 @@ int vtkNRRDReader::tenSpaceDirectionReduce(Nrrd *nout, const Nrrd *nin, double S
 //----------------------------------------------------------------------------
 // This function reads a data from a file.  The datas extent/axes
 // are assumed to be the same as the file extent/order.
-void vtkNRRDReader::ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo)
+void vtkTeemNRRDReader::ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo)
 {
   if (this->GetOutputInformation(0))
     {
@@ -1093,7 +1093,7 @@ void vtkNRRDReader::ExecuteDataWithInformation(vtkDataObject *output, vtkInforma
 }
 
 //----------------------------------------------------------------------------
-void vtkNRRDReader::PrintSelf(ostream& os, vtkIndent indent)
+void vtkTeemNRRDReader::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

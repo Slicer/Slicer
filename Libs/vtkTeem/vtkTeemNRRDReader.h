@@ -6,7 +6,7 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $RCSfile: vtkNRRDReader.h,v $
+  Module:    $RCSfile: vtkTeemNRRDReader.h,v $
   Date:      $Date: 2007/06/12 19:13:59 $
   Version:   $Revision: 1.3.2.1 $
 
@@ -14,7 +14,7 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    $RCSfile: vtkNRRDReader.h,v $
+  Module:    $RCSfile: vtkTeemNRRDReader.h,v $
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
@@ -26,8 +26,8 @@
 
 =========================================================================*/
 
-#ifndef __vtkNRRDReader_h
-#define __vtkNRRDReader_h
+#ifndef __vtkTeemNRRDReader_h
+#define __vtkTeemNRRDReader_h
 
 #include <string>
 #include <map>
@@ -51,12 +51,12 @@
 /// Reads Nearly Raw Raster Data files using the nrrdio library as used in ITK
 //
 /// \sa vtkImageReader2
-class VTK_Teem_EXPORT vtkNRRDReader : public vtkMedicalImageReader2
+class VTK_Teem_EXPORT vtkTeemNRRDReader : public vtkMedicalImageReader2
 {
 public:
-  static vtkNRRDReader *New();
+  static vtkTeemNRRDReader *New();
 
-  vtkTypeMacro(vtkNRRDReader,vtkMedicalImageReader2);
+  vtkTypeMacro(vtkTeemNRRDReader,vtkMedicalImageReader2);
 
   ///
   /// Returns a IJK to RAS transformation matrix
@@ -232,8 +232,8 @@ virtual void AllocateOutputData(vtkImageData *out, vtkInformation* outInfo, int 
 void AllocatePointData(vtkImageData *out, vtkInformation* outInfo);
 
 protected:
-  vtkNRRDReader();
-  ~vtkNRRDReader();
+  vtkTeemNRRDReader();
+  ~vtkTeemNRRDReader();
 
   static bool GetPointType(Nrrd* nrrdTemp, int& pointDataType, int &numOfComponents);
 
@@ -264,8 +264,8 @@ protected:
   int tenSpaceDirectionReduce(Nrrd *nout, const Nrrd *nin, double SD[9]);
 
 private:
-  vtkNRRDReader(const vtkNRRDReader&);  /// Not implemented.
-  void operator=(const vtkNRRDReader&);  /// Not implemented.
+  vtkTeemNRRDReader(const vtkTeemNRRDReader&);  /// Not implemented.
+  void operator=(const vtkTeemNRRDReader&);  /// Not implemented.
 
 };
 

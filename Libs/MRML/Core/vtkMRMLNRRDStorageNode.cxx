@@ -21,8 +21,8 @@ Version:   $Revision: 1.6 $
 #include "vtkMRMLVolumeNode.h"
 
 // vtkTeem includes
-#include <vtkNRRDReader.h>
-#include <vtkNRRDWriter.h>
+#include <vtkTeemNRRDReader.h>
+#include <vtkTeemNRRDWriter.h>
 
 // VTK includes
 #include <vtkImageChangeInformation.h>
@@ -147,7 +147,7 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     return 0;
     }
 
-  vtkNew<vtkNRRDReader> reader;
+  vtkNew<vtkTeemNRRDReader> reader;
 
   // Set Reader member variables
   if (this->CenterImage)
@@ -362,7 +362,7 @@ int vtkMRMLNRRDStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     return 0;
     }
   // Use here the NRRD Writer
-  vtkNew<vtkNRRDWriter> writer;
+  vtkNew<vtkTeemNRRDWriter> writer;
   writer->SetFileName(fullName.c_str());
   writer->SetInputConnection(volNode->GetImageDataConnection());
   writer->SetUseCompression(this->GetUseCompression());
@@ -401,7 +401,7 @@ int vtkMRMLNRRDStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(vtkNRRDReader *reader,vtkDoubleArray *grad,vtkDoubleArray *bvalues)
+int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(vtkTeemNRRDReader *reader,vtkDoubleArray *grad,vtkDoubleArray *bvalues)
 {
   std::string keys(reader->GetHeaderKeys());
   std::string key,value,num;

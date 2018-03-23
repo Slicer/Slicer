@@ -2,7 +2,7 @@
 #include "ProbeVolumeWithModelCLP.h"
 
 // vtkTeem includes
-#include <vtkNRRDReader.h>
+#include <vtkTeemNRRDReader.h>
 
 // VTK includes
 #include <vtkImageData.h>
@@ -27,7 +27,7 @@ int main( int argc, char * argv[] )
 
   PARSE_ARGS;
 
-  vtkNew<vtkNRRDReader> readerVol;
+  vtkNew<vtkTeemNRRDReader> readerVol;
   readerVol->SetFileName(InputVolume.c_str() );
   readerVol->Update();
 

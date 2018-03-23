@@ -17,7 +17,7 @@
 
 #include "vtkMRMLStorageNode.h"
 class vtkDoubleArray;
-class vtkNRRDReader;
+class vtkTeemNRRDReader;
 
 /// \brief MRML node for representing a volume storage.
 ///
@@ -55,7 +55,7 @@ class VTK_MRML_EXPORT vtkMRMLNRRDStorageNode : public vtkMRMLStorageNode
 
   ///
   /// Access the nrrd header fields to create a diffusion gradient table
-  int ParseDiffusionInformation(vtkNRRDReader *reader,vtkDoubleArray *grad,vtkDoubleArray *bvalues);
+  int ParseDiffusionInformation(vtkTeemNRRDReader *reader,vtkDoubleArray *grad,vtkDoubleArray *bvalues);
 
   /// Return true if the node can be read in.
   virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode) VTK_OVERRIDE;
