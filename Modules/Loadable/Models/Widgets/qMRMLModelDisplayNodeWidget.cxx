@@ -21,6 +21,9 @@
 // QT includes
 #include <QColor>
 
+// CTK includes
+#include <ctkUtils.h>
+
 // qMRML includes
 #include "qMRMLModelDisplayNodeWidget.h"
 #include "ui_qMRMLModelDisplayNodeWidget.h"
@@ -633,16 +636,20 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
   double newMin = 0.0;
   double newMax = 0.0;
   int decimals = 0;
-  if (displayRange[0]<displayRange[1])
+  if (displayRange[0] < displayRange[1])
     {
+    // Begin with a precision of 1% of the range
     precision = displayRange[1]/100.0 - displayRange[0]/100.0;
+    // Extend min/max by 20% to give some room to work with
     newMin = (floor(displayRange[0]/precision) - 20 ) * precision;
     newMax = (ceil(displayRange[1]/precision) + 20 ) * precision;
-    if (precision < 1.0)
-      {
-      decimals = -floor(log(precision));
-      }
-    precision = pow(10.0, -decimals);
+    // Use closest power of ten value as a step value
+    precision = ctk::closestPowerOfTen(precision);
+    // Find significant decimals to show
+    double stepDecimals = ctk::significantDecimals(precision);
+    double minDecimals = ctk::significantDecimals(displayRange[0]);
+    double maxDecimals = ctk::significantDecimals(displayRange[1]);
+    decimals = std::max(stepDecimals, std::max(minDecimals, maxDecimals));
     }
   wasBlocking = d->DisplayedScalarRangeWidget->blockSignals(true);
   d->DisplayedScalarRangeWidget->setRange(newMin, newMax);
