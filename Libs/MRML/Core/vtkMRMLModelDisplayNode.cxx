@@ -217,10 +217,20 @@ vtkPointSet* vtkMRMLModelDisplayNode::GetOutputMesh()
     }
 
   vtkAlgorithmOutput* outputConnection = this->GetOutputMeshConnection();
-  vtkAlgorithm* producer =  outputConnection? outputConnection->GetProducer() : 0;
+  if (!outputConnection)
+    {
+    return NULL;
+    }
+
+  vtkAlgorithm* producer = outputConnection->GetProducer();
+  if (!producer)
+    {
+    return NULL;
+    }
+
   producer->Update();
   return vtkPointSet::SafeDownCast(
-    producer ? producer->GetOutputDataObject(outputConnection->GetIndex()) : 0);
+           producer->GetOutputDataObject(outputConnection->GetIndex()));
 }
 
 //---------------------------------------------------------------------------
