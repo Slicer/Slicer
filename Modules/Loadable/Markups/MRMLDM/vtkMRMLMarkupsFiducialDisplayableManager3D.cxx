@@ -399,7 +399,9 @@ void vtkMRMLMarkupsFiducialDisplayableManager3D::SetNthSeed(int n, vtkMRMLMarkup
     {
     handleRep->VisibilityOn();
     handleRep->HandleVisibilityOn();
+#if VTK_MAJOR_VERSION < 9
     handleRep->EnablePicking();
+#endif
     if (textString.compare("") != 0)
       {
       handleRep->LabelVisibilityOn();
@@ -410,7 +412,9 @@ void vtkMRMLMarkupsFiducialDisplayableManager3D::SetNthSeed(int n, vtkMRMLMarkup
     {
     handleRep->VisibilityOff();
     handleRep->HandleVisibilityOff();
+#if VTK_MAJOR_VERSION < 9
     handleRep->DisablePicking();
+#endif
     handleRep->LabelVisibilityOff();
     seedWidget->GetSeed(n)->EnabledOff();
     }

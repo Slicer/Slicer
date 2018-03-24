@@ -713,7 +713,9 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::SetNthSeed(int n, vtkMRMLMarkup
       {
       handleRep->VisibilityOn();
       handleRep->HandleVisibilityOn();
+#if VTK_MAJOR_VERSION < 9
       handleRep->EnablePicking();
+#endif
       if (textString.compare("") != 0)
         {
         handleRep->LabelVisibilityOn();
@@ -731,6 +733,10 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::SetNthSeed(int n, vtkMRMLMarkup
       handleRep->VisibilityOff();
       handleRep->HandleVisibilityOff();
       handleRep->LabelVisibilityOff();
+#if VTK_MAJOR_VERSION < 9
+      // XXX This was part of commits:
+      // * r23648 (BUG: fixes for 3808 fiducial picking issue)
+      // * r24726 (BUG: Disable fiducials in light box mode. See #1690)
       handleRep->DisablePicking();
       vtkSeedRepresentation *seedRepresentation = vtkSeedRepresentation::SafeDownCast(seedWidget->GetRepresentation());
       if (seedRepresentation)
@@ -743,6 +749,8 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::SetNthSeed(int n, vtkMRMLMarkup
           orientedHandleRep->DisablePicking();
           }
         }
+      // XXX
+#endif
 
       // if the widget is not shown on the slice, show the intersection
       if (fiducialNode &&
@@ -925,10 +933,12 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::SetNthSeed(int n, vtkMRMLMarkup
       // use the unselected color
       pointHandleRep->GetProperty()->SetColor(displayNode->GetColor());
       }
+    // XXX This was part of commit r24726 (BUG: Disable fiducials in light box mode. See #1690)
     // update visibility and enabled (if the point handle is still enabled
     // while invisible, mousing near it will show it)
     pointHandleRep->SetVisibility(fidVisible);
     seedWidget->GetSeed(n)->SetEnabled(fidVisible);
+    // XXX
     }
 }
 
@@ -1041,6 +1051,7 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::PropagateMRMLToWidget(vtkMRMLMa
     {
     vtkDebugMacro("WARNING: updated the handle type");
     seedWidget->CreateDefaultRepresentation();
+    // XXX This was part of commit r24726 (BUG: Disable fiducials in light box mode. See #1690)
     // need to reset any old handles
     int numSeeds = seedRepresentation->GetNumberOfSeeds();
     // remove seeds from the end of the list
@@ -1049,6 +1060,7 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::PropagateMRMLToWidget(vtkMRMLMa
       seedWidget->DeleteSeed(n);
       }
     // set nth seed will recreate the handles
+    // XXX
     }
 
   // iterate over the fiducials in this markup
@@ -1056,6 +1068,12 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::PropagateMRMLToWidget(vtkMRMLMa
 
   vtkDebugMacro("Fids PropagateMRMLToWidget, node num markups = " << numberOfFiducials);
 
+#if VTK_MAJOR_VERSION < 9
+  // XXX This was part of commits:
+  // * r23648 (BUG: fixes for 3808 fiducial picking issue)
+  // * r23656 (3808: fix failing test - add some pointer checks)
+  // * r24726 (BUG: Disable fiducials in light box mode. See #1690)
+  // enable/disable picking in lightbox mode
   if (numberOfFiducials == 0)
     {
     if (handleRep)
@@ -1086,6 +1104,8 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::PropagateMRMLToWidget(vtkMRMLMa
       handleRep->EnablePicking();
       }
     }
+  // XXX
+#endif
 
   for (int n = 0; n < numberOfFiducials; n++)
     {
