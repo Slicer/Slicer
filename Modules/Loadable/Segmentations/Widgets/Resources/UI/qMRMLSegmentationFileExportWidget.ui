@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>590</width>
-    <height>141</height>
+    <width>415</width>
+    <height>160</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,7 +29,7 @@
    <property name="spacing">
     <number>4</number>
    </property>
-   <item row="6" column="1">
+   <item row="7" column="1">
     <widget class="QCheckBox" name="VisibleSegmentsOnlyCheckBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -42,49 +42,7 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="MergeIntoSingleFileLabel">
-     <property name="text">
-      <string>Merge into single file:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="FileFormatLabel">
-     <property name="text">
-      <string>File format:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="1">
-    <widget class="QComboBox" name="CoordinateSystemComboBox">
-     <item>
-      <property name="text">
-       <string>LPS</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>RAS</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="6" column="0">
-    <widget class="QLabel" name="VisibleSegmentsOnlyLabel">
-     <property name="text">
-      <string>Visible segments only: </string>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="0">
-    <widget class="QLabel" name="CoordinateSystemLabel">
-     <property name="text">
-      <string>Coordinate system: </string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="1">
+   <item row="6" column="1">
     <widget class="QCheckBox" name="MergeIntoSingleFileCheckBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -95,20 +53,6 @@
      <property name="text">
       <string/>
      </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="QComboBox" name="FileFormatComboBox">
-     <item>
-      <property name="text">
-       <string>STL</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>OBJ</string>
-      </property>
-     </item>
     </widget>
    </item>
    <item row="2" column="1">
@@ -135,10 +79,59 @@
      </item>
     </layout>
    </item>
-   <item row="9" column="0" colspan="2">
-    <widget class="QPushButton" name="ExportToFilesButton">
+   <item row="9" column="1">
+    <widget class="QComboBox" name="CoordinateSystemComboBox">
+     <item>
+      <property name="text">
+       <string>LPS</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>RAS</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="FileFormatLabel">
      <property name="text">
-      <string>Export</string>
+      <string>File format:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0">
+    <widget class="QLabel" name="VisibleSegmentsOnlyLabel">
+     <property name="text">
+      <string>Visible segments only: </string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="0">
+    <widget class="QLabel" name="CoordinateSystemLabel">
+     <property name="text">
+      <string>Coordinate system: </string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QComboBox" name="FileFormatComboBox">
+     <item>
+      <property name="text">
+       <string>STL</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>OBJ</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QLabel" name="MergeIntoSingleFileLabel">
+     <property name="text">
+      <string>Merge into single file:</string>
      </property>
     </widget>
    </item>
@@ -146,6 +139,39 @@
     <widget class="QLabel" name="DestinationFoldeLabel">
      <property name="text">
       <string>Destination folder: </string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="0" colspan="2">
+    <widget class="QPushButton" name="ExportToFilesButton">
+     <property name="text">
+      <string>Export</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="0">
+    <widget class="QLabel" name="ShowDestinationFolderOnExportCompleteLabel">
+     <property name="text">
+      <string>Show destination folder:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="1">
+    <widget class="QCheckBox" name="ShowDestinationFolderOnExportCompleteCheckBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="toolTip">
+      <string>Open destination folder when export is completed</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
      </property>
     </widget>
    </item>

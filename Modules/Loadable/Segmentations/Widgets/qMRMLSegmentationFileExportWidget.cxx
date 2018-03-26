@@ -145,6 +145,7 @@ void qMRMLSegmentationFileExportWidget::updateWidgetFromSettings()
   d->DestinationFolderButton->setDirectory(settings.value(d->SettingsKey + "/DestinationFolder", ".").toString());
   d->VisibleSegmentsOnlyCheckBox->setChecked(settings.value(d->SettingsKey + "/VisibleSegmentsOnly", false).toBool());
   d->MergeIntoSingleFileCheckBox->setChecked(settings.value(d->SettingsKey + "/MergeIntoSingleFile", false).toBool());
+  d->ShowDestinationFolderOnExportCompleteCheckBox->setChecked(settings.value(d->SettingsKey + "/ShowDestinationFolderOnExportComplete", true).toBool());
 
   QString coordinateSystem = settings.value(d->SettingsKey + "/CoordinateSystem", "LPS").toString();
   d->CoordinateSystemComboBox->setCurrentIndex(d->CoordinateSystemComboBox->findText(coordinateSystem));
@@ -166,6 +167,7 @@ void qMRMLSegmentationFileExportWidget::updateSettingsFromWidget()
   settings.setValue(d->SettingsKey + "/DestinationFolder", d->DestinationFolderButton->directory());
   settings.setValue(d->SettingsKey + "/VisibleSegmentsOnly", d->VisibleSegmentsOnlyCheckBox->isChecked());
   settings.setValue(d->SettingsKey + "/MergeIntoSingleFile", d->MergeIntoSingleFileCheckBox->isChecked());
+  settings.setValue(d->SettingsKey + "/ShowDestinationFolderOnExportComplete", d->ShowDestinationFolderOnExportCompleteCheckBox->isChecked());
   settings.setValue(d->SettingsKey + "/CoordinateSystem", d->CoordinateSystemComboBox->currentText());
 }
 
@@ -182,11 +184,11 @@ void qMRMLSegmentationFileExportWidget::exportToFiles()
   if (d->VisibleSegmentsOnlyCheckBox->isChecked()
     && d->SegmentationNode != NULL
     && vtkMRMLSegmentationDisplayNode::SafeDownCast(d->SegmentationNode->GetDisplayNode()) != NULL)
-  {
+    {
     segmentIds = vtkSmartPointer<vtkStringArray>::New();
     vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(d->SegmentationNode->GetDisplayNode());
     displayNode->GetVisibleSegmentIDs(segmentIds);
-  }
+    }
 
   vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentationToFiles(
     d->DestinationFolderButton->directory().toLatin1().constData(),
@@ -197,6 +199,11 @@ void qMRMLSegmentationFileExportWidget::exportToFiles()
     d->MergeIntoSingleFileCheckBox->isChecked());
 
   QApplication::restoreOverrideCursor();
+
+  if (d->ShowDestinationFolderOnExportCompleteCheckBox->isChecked())
+    {
+    this->showDestinationFolder();
+    }
 
   emit exportToFilesDone();
 }
