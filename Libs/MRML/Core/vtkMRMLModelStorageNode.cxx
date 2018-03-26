@@ -479,7 +479,13 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     vtkMRMLDisplayNode* displayNode = modelNode->GetDisplayNode();
     if (displayNode)
       {
-      actor->GetProperty()->SetColor(displayNode->GetColor());
+      double color[3] = { 0.5, 0.5, 0.5 };
+      displayNode->GetColor(color);
+      // OBJ exporter sets the same color for ambient, diffuse, specular
+      // so we scale it by 1/3 to avoid having too bright material.
+      double colorScale = 1.0 / 3.0;
+      actor->GetProperty()->SetColor(color[0] * colorScale, color[1] * colorScale, color[2] * colorScale);
+      actor->GetProperty()->SetSpecularPower(3.0);
       actor->GetProperty()->SetOpacity(displayNode->GetOpacity());
       }
     vtkNew<vtkRenderer> renderer;

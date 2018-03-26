@@ -2208,12 +2208,15 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentatio
     vtkNew<vtkActor> actor;
     actor->SetMapper(mapper.GetPointer());
 
-    //vtkSegment* segment = segmentationNode->GetSegmentation()->GetSegment(*segmentIdIt);
     if (displayNode)
       {
       double color[3] = { 0.5, 0.5, 0.5 };
       displayNode->GetSegmentColor(*segmentIdIt, color);
-      actor->GetProperty()->SetColor(color);
+      // OBJ exporter sets the same color for ambient, diffuse, specular
+      // so we scale it by 1/3 to avoid having too bright material.
+      double colorScale = 1.0 / 3.0;
+      actor->GetProperty()->SetColor(color[0] * colorScale, color[1] * colorScale, color[2] * colorScale);
+      actor->GetProperty()->SetSpecularPower(3.0);
       actor->GetProperty()->SetOpacity(displayNode->GetSegmentOpacity3D(*segmentIdIt));
       }
     renderer->AddActor(actor.GetPointer());
