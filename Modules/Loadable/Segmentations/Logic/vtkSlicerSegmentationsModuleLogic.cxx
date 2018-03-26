@@ -2076,9 +2076,7 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentatio
   vtkNew<vtkSTLWriter> writer;
   writer->SetFileType(VTK_BINARY);
   writer->SetInputConnection(triangulator->GetOutputPort());
-  std::string header = std::string("Visualization Toolkit generated SLA File ") + coordinateSytemSpecification;
-  // STL header must be 80 characters long, otherwise VTK adds a char(0) in the header string
-  header.resize(80, ' ');
+  std::string header = std::string("3D Slicer output. ") + coordinateSytemSpecification;
   writer->SetHeader(header.c_str());
 
   if (merge)
@@ -2225,8 +2223,14 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentatio
   exporter->SetRenderWindow(renderWindow.GetPointer());
   std::string fullNameWithoutExtension = destinationFolder + "/" + segmentationNode->GetName();
   exporter->SetFilePrefix(fullNameWithoutExtension.c_str());
-  // TODO: write coordinate system name in file header comment
-  // Need to add API for that into VTK.
+
+  // We explicitly write the coordinate system into the file header.
+  // See vtkMRMLModelStorageNode::WriteDataInternal.
+  const std::string coordinateSystemValue = (lps ? "LPS" : "RAS");
+  const std::string coordinateSytemSpecification = "SPACE=" + coordinateSystemValue;
+  std::string header = std::string("3D Slicer output. ") + coordinateSytemSpecification;
+  exporter->SetOBJFileComment(header.c_str());
+
   try
     {
     exporter->Write();

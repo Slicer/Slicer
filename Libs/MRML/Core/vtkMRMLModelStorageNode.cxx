@@ -365,7 +365,7 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     writer->SetFileName(fullName.c_str());
     writer->SetFileType(this->GetUseCompression() ? VTK_BINARY : VTK_ASCII );
 
-    std::string header = std::string("vtk output ") + coordinateSytemSpecification;
+    std::string header = std::string("3D Slicer output. ") + coordinateSytemSpecification;
     writer->SetHeader(header.c_str());
     try
       {
@@ -440,9 +440,7 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     writer->SetFileType(this->GetUseCompression() ? VTK_BINARY : VTK_ASCII );
     triangulator->SetInputConnection( modelNode->GetPolyDataConnection() );
     writer->SetInputConnection( triangulator->GetOutputPort() );
-    std::string header = std::string("Visualization Toolkit generated SLA File ") + coordinateSytemSpecification;
-    // STL header must be 80 characters long, otherwise VTK adds a char(0) in the header string
-    header.resize(80, ' ');
+    std::string header = std::string("3D Slicer output. ") + coordinateSytemSpecification;
     writer->SetHeader(header.c_str());
     try
       {
@@ -461,6 +459,7 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     writer->SetFileType(this->GetUseCompression() ? VTK_BINARY : VTK_ASCII );
     triangulator->SetInputConnection( modelNode->GetPolyDataConnection() );
     writer->SetInputConnection( triangulator->GetOutputPort() );
+    std::string header = std::string("3D Slicer output. ") + coordinateSytemSpecification;
     writer->AddComment(coordinateSytemSpecification);
     try
       {
@@ -495,8 +494,8 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
       fullNameWithoutExtension.erase(fullNameWithoutExtension.size() - 4);
       }
     exporter->SetFilePrefix(fullNameWithoutExtension.c_str());
-    // TODO: write coordinate system name in file header comment
-    // Need to add API for that into VTK.
+    std::string header = std::string("3D Slicer output. ") + coordinateSytemSpecification;
+    exporter->SetOBJFileComment(header.c_str());
     try
       {
       exporter->Write();
