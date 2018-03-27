@@ -65,6 +65,7 @@ public:
       {
       this->Actor = vtkSmartPointer<vtkActor>::New();
       vtkNew<vtkPolyDataMapper> mapper;
+      mapper->SetScalarVisibility(false); // ignore any scalars that an input mesh may contain
       this->Actor->SetMapper(mapper.GetPointer());
       this->Actor->SetVisibility(false);
       this->InputPolyData = vtkSmartPointer<vtkPolyData>::New();
