@@ -36,9 +36,11 @@
 
 // VTK includes
 #include <vtkActor2D.h>
+#include <vtkAppendPolyData.h>
 #include <vtkCallbackCommand.h>
 #include <vtkCamera.h>
 #include <vtkCellArray.h>
+#include <vtkCubeSource.h>
 #include <vtkImageChangeInformation.h>
 #include <vtkImageStencilData.h>
 #include <vtkImageStencilToImage.h>
@@ -497,6 +499,10 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
   // TODO: show a meaningful error message to the user if attempted
   vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(segmentationNode->GetParentTransformNode(), NULL, segmentationToWorldMatrix.GetPointer());
 
+  // Used for excluding one side of the slice plane from being modified when
+  // filling or erasing outside in slice cut mode.
+  vtkSmartPointer<vtkPolyData> additionalBrushRegion;
+
   qMRMLSliceWidget* sliceWidget = qobject_cast<qMRMLSliceWidget*>(viewWidget);
   qMRMLThreeDWidget* threeDWidget = qobject_cast<qMRMLThreeDWidget*>(viewWidget);
   if (sliceWidget)
@@ -516,7 +522,9 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
     segmentationToSliceXYTransform->Concatenate(worldToSliceXYMatrix.GetPointer());
     segmentationToSliceXYTransform->Concatenate(segmentationToWorldMatrix.GetPointer());
     double segmentationBounds_SliceXY[6] = { 0, -1, 0, -1, 0, -1 };
+    double originalSegmentationBounds_SliceXY[6] = { 0, -1, 0, -1, 0, -1 };
     vtkOrientedImageDataResample::TransformOrientedImageDataBounds(modifierLabelmap, segmentationToSliceXYTransform.GetPointer(), segmentationBounds_SliceXY);
+    vtkOrientedImageDataResample::TransformOrientedImageDataBounds(modifierLabelmap, segmentationToSliceXYTransform.GetPointer(), originalSegmentationBounds_SliceXY);
     // Extend bounds by half slice to make sure the boundaries are included
     int sliceCutMode = this->ConvertSliceCutModeFromString(q->parameter("SliceCutMode"));
     switch (sliceCutMode)
@@ -553,17 +561,47 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
     if (sliceCutMode != SliceCutModeSymmetric)
       {
       // Add half slice to make sure the current slice and the last slice are fully included
+      double brushZEpsilon = 0.0; // small offset to make have main and additional brush planes very close but not coincident
       if (segmentationBounds_SliceXY[4] < segmentationBounds_SliceXY[5])
         {
         segmentationBounds_SliceXY[4] -= 0.5;
         segmentationBounds_SliceXY[5] += 0.5;
+        brushZEpsilon = 0.001;
         }
       else
         {
         segmentationBounds_SliceXY[4] += 0.5;
         segmentationBounds_SliceXY[5] -= 0.5;
+        brushZEpsilon = -0.001;
+        }
+      if (!this->operationInside())
+        {
+        // Make sure the non-selected side of the plane is unaffected
+        // when working "outside"
+        vtkNew<vtkCubeSource> cube;
+        switch (sliceCutMode)
+          {
+          case SliceCutModePositive:
+            cube->SetBounds(segmentationBounds_SliceXY[0], segmentationBounds_SliceXY[1],
+              segmentationBounds_SliceXY[2], segmentationBounds_SliceXY[3],
+              originalSegmentationBounds_SliceXY[4], segmentationBounds_SliceXY[4] - brushZEpsilon);
+            break;
+          case SliceCutModeNegative:
+            cube->SetBounds(segmentationBounds_SliceXY[0], segmentationBounds_SliceXY[1],
+              segmentationBounds_SliceXY[2], segmentationBounds_SliceXY[3],
+              segmentationBounds_SliceXY[5] + brushZEpsilon, originalSegmentationBounds_SliceXY[5]);
+            break;
+          }
+        vtkNew<vtkTransformPolyDataFilter> transformToRasFilter;
+        vtkNew<vtkTransform> transformToRas;
+        transformToRas->SetMatrix(sliceNode->GetXYToRAS());
+        transformToRasFilter->SetTransform(transformToRas.GetPointer());
+        transformToRasFilter->SetInputConnection(cube->GetOutputPort());
+        transformToRasFilter->Update();
+        additionalBrushRegion = transformToRasFilter->GetOutput();
         }
       }
+
     for (int pointIndex = 0; pointIndex < numberOfPoints; pointIndex++)
       {
       double pointXY[4] = { 0., 0., 0., 1. };
@@ -756,7 +794,18 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
     closedSurfacePolys->InsertCellPoint(i * 2 + 1);
     }
 
-  this->BrushPolyDataNormals->SetInputData(closedSurfacePolyData.GetPointer());
+  if (additionalBrushRegion)
+    {
+    vtkNew<vtkAppendPolyData> append;
+    append->AddInputData(closedSurfacePolyData.GetPointer());
+    append->AddInputData(additionalBrushRegion);
+    this->BrushPolyDataNormals->SetInputConnection(append->GetOutputPort());
+    }
+  else
+    {
+    this->BrushPolyDataNormals->SetInputData(closedSurfacePolyData.GetPointer());
+    }
+
   return true;
 }
 
