@@ -28,10 +28,10 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
   #         for all platforms.  For notes on cross-platform issues with earlier versions
   #         of LibArchive, see the repository for earlier revisions of this file.
 
-  set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
+  set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 
   # CMake arguments specific to LibArchive >= 2.8.4
-  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
     -DBUILD_TESTING:BOOL=OFF
     -DENABLE_OPENSSL:BOOL=OFF
     )
@@ -83,7 +83,7 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
       -DZLIB_INCLUDE_DIR:PATH=${ZLIB_INCLUDE_DIR}
       -DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARY}
       -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-      ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
+      ${EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS}
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
