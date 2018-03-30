@@ -128,7 +128,7 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    "3e0e336e4b0f7c094f8f594c6daf7ef977f8a357"
+    "16d41fe7aeb24c3e3fada6f888837276e03a7f3a"
     QUIET
     )
 
