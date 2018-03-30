@@ -1125,6 +1125,7 @@ int vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation(vtkMRMLSeg
   appender->Update();
 
   writer->SetInputConnection(appender->GetOutputPort());
+  writer->SetVectorAxisKind(nrrdKindList);
   writer->Write();
   int writeFlag = 1;
   if (writer->GetWriteError())

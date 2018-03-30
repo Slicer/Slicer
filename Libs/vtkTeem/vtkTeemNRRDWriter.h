@@ -74,6 +74,11 @@ public:
   /// Method to set unit for each axis
   void SetAxisUnit(unsigned int axis, const char* unit);
 
+  /// Method to force axis kind for the non-spatial axis (4th dimension).
+  /// If not set (or set to nrrdKindUnknown) then axis kind is guessed
+  /// from the number of components and scalar type.
+  void SetVectorAxisKind(int kind);
+
   /// Utility function to return image as a Nrrd*
   void* MakeNRRD();
 
@@ -105,6 +110,7 @@ protected:
   AttributeMapType *Attributes;
   AxisInfoMapType *AxisLabels;
   AxisInfoMapType *AxisUnits;
+  int VectorAxisKind;
 
 private:
   vtkTeemNRRDWriter(const vtkTeemNRRDWriter&);  /// Not implemented.

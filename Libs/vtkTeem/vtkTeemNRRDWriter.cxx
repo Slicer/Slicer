@@ -29,6 +29,7 @@ vtkTeemNRRDWriter::vtkTeemNRRDWriter()
   this->Attributes = new AttributeMapType;
   this->AxisLabels = new AxisInfoMapType;
   this->AxisUnits = new AxisInfoMapType;
+  this->VectorAxisKind = nrrdKindUnknown;
 }
 
 //----------------------------------------------------------------------------
@@ -129,6 +130,11 @@ void vtkTeemNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &kind, 
      kind = nrrdKind3DMatrix;
      numComp = array->GetNumberOfComponents();
      }
+
+  if (this->VectorAxisKind != nrrdKindUnknown)
+    {
+    kind = this->VectorAxisKind;
+    }
 }
 
 int vtkTeemNRRDWriter::VTKToNrrdPixelType( const int vtkPixelType )
@@ -437,4 +443,9 @@ void vtkTeemNRRDWriter::SetAxisUnit(unsigned int axis, const char* unit)
     {
     this->AxisLabels->erase(axis);
     }
+}
+
+void vtkTeemNRRDWriter::SetVectorAxisKind(int kind)
+{
+  this->VectorAxisKind = kind;
 }
