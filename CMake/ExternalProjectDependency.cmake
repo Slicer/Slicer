@@ -443,6 +443,9 @@ function(_sb_get_external_project_arguments proj varname)
   # Automatically propagate CMake options
   foreach(_cmake_option IN ITEMS
     CMAKE_EXPORT_COMPILE_COMMANDS
+    CMAKE_JOB_POOL_COMPILE
+    CMAKE_JOB_POOL_LINK
+    CMAKE_JOB_POOLS
     )
     if(DEFINED ${_cmake_option})
       list(APPEND _ep_arguments CMAKE_CACHE_ARGS
