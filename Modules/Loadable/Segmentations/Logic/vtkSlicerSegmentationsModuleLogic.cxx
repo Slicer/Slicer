@@ -2227,12 +2227,14 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentatio
   std::string fullNameWithoutExtension = destinationFolder + "/" + segmentationNode->GetName();
   exporter->SetFilePrefix(fullNameWithoutExtension.c_str());
 
+#if VTK_MAJOR_VERSION >= 9
   // We explicitly write the coordinate system into the file header.
   // See vtkMRMLModelStorageNode::WriteDataInternal.
   const std::string coordinateSystemValue = (lps ? "LPS" : "RAS");
   const std::string coordinateSytemSpecification = "SPACE=" + coordinateSystemValue;
   std::string header = std::string("3D Slicer output. ") + coordinateSytemSpecification;
   exporter->SetOBJFileComment(header.c_str());
+#endif
 
   try
     {
