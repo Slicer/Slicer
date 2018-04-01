@@ -995,6 +995,7 @@ void vtkMRMLMarkupsFiducialDisplayableManager3D::OnMRMLMarkupsNodeMarkupAddedEve
   vtkSeedRepresentation * seedRepresentation = vtkSeedRepresentation::SafeDownCast(seedWidget->GetRepresentation());
   seedRepresentation->NeedToRenderOn();
   seedWidget->Modified();
+  this->RequestRender();
 }
 
 //---------------------------------------------------------------------------
