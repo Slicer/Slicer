@@ -390,25 +390,6 @@ macro(slicerMacroBuildApplication)
     message(STATUS "Setting MACOSX_BUNDLE_ICON_FILE to '${MACOSX_BUNDLE_ICON_FILE}'")
   endif()
 
-  if(QT_MAC_USE_COCOA)
-    get_filename_component(qt_menu_nib
-      "${QT_QTGUI_LIBRARY_RELEASE}/Resources/qt_menu.nib"
-      REALPATH)
-
-    set(qt_menu_nib_sources
-      "${qt_menu_nib}/classes.nib"
-      "${qt_menu_nib}/info.nib"
-      "${qt_menu_nib}/keyedobjects.nib"
-      )
-    set_source_files_properties(
-      ${qt_menu_nib_sources}
-      PROPERTIES
-      MACOSX_PACKAGE_LOCATION Resources/qt_menu.nib
-      )
-  else()
-    set(qt_menu_nib_sources)
-  endif()
-
   # --------------------------------------------------------------------------
   # Include dirs
   # --------------------------------------------------------------------------
@@ -455,7 +436,6 @@ macro(slicerMacroBuildApplication)
     ${SLICERAPP_EXE_OPTIONS}
     Main.cxx
     ${apple_bundle_sources}
-    ${qt_menu_nib_sources}
     )
   set_target_properties(${slicerapp_target} PROPERTIES
     LABELS ${SLICERAPP_NAME}
