@@ -378,7 +378,7 @@ macro(slicerMacroBuildApplication)
   # Configure Application Bundle Resources (Mac Only)
   # --------------------------------------------------------------------------
 
-  if(Q_WS_MAC)
+  if(APPLE)
     set(apple_bundle_sources ${SLICERAPP_APPLE_ICON_FILE})
     set_source_files_properties(
       "${apple_bundle_sources}"
