@@ -121,16 +121,13 @@ void vtkMRMLAbstractSliceViewDisplayableManager::ConvertRASToXYZ(
     {
     return;
     }
-  vtkMatrix4x4 *rasToXYZ = vtkMatrix4x4::New();
-  rasToXYZ->DeepCopy(sliceNode->GetXYToRAS());
-  rasToXYZ->Invert();
+  vtkNew<vtkMatrix4x4> rasToXYZ;
+  vtkMatrix4x4::Invert(sliceNode->GetXYToRAS(), rasToXYZ.GetPointer());
 
-  double rasw[4], xyzw[4];
-  rasw[0] = ras[0]; rasw[1] = ras[1]; rasw[2] = ras[2]; rasw[3] = 1.0;
+  double rasw[4] = { ras[0], ras[1], ras[2], 1.0 };
+  double xyzw[4];
   rasToXYZ->MultiplyPoint(rasw, xyzw);
   xyz[0] = xyzw[0]/xyzw[3]; xyz[1] = xyzw[1]/xyzw[3]; xyz[2] = xyzw[2]/xyzw[3];
-
-  rasToXYZ->Delete();
 }
 
 //---------------------------------------------------------------------------

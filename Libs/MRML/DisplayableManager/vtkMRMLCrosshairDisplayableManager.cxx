@@ -510,18 +510,28 @@ void vtkMRMLCrosshairDisplayableManager::OnMRMLNodeModified(
       int id = (int) (floor(xyz[2] + 0.5)); // round to find the lightbox
       vtkRenderer *renderer
         = this->GetLightBoxRendererManagerProxy()->GetRenderer(id);
-      if (renderer != this->Internal->LightBoxRenderer)
+      if (renderer == NULL)
         {
-        if (this->Internal->LightBoxRenderer)
+        // crosshair must not be displayed in this view
+        this->Internal->Actor->SetVisibility(false);
+        }
+      else
+        {
+        // crosshair must be displayed in this view
+        if (this->Internal->LightBoxRenderer == renderer)
           {
-          this->Internal->LightBoxRenderer
-            ->RemoveActor(this->Internal->Actor);
+          this->Internal->Actor->SetVisibility(true);
           }
-        if (renderer)
+        else
           {
+          if (this->Internal->LightBoxRenderer)
+            {
+            this->Internal->LightBoxRenderer->RemoveActor(this->Internal->Actor);
+            }
+          this->Internal->Actor->SetVisibility(true);
           renderer->AddActor(this->Internal->Actor);
+          this->Internal->LightBoxRenderer = renderer;
           }
-        this->Internal->LightBoxRenderer = renderer;
         }
       }
 
