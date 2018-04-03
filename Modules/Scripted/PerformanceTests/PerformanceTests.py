@@ -95,25 +95,39 @@ class PerformanceTestsWidget:
     self.log.ensureCursorVisible()
     self.log.repaint()
 
-  def reslicing(self, iters=50):
+  def reslicing(self, iters=100):
     """ go into a loop that stresses the reslice performance
     """
     import time
+    import math
+    import numpy as np
     sliceNode = slicer.util.getNode('vtkMRMLSliceNodeRed')
     dims = sliceNode.GetDimensions()
     elapsedTime = 0
-    for i in xrange(iters):
-      startTime = time.time()
-      sliceNode.SetSliceOffset(20)
-      slicer.app.processEvents()
-      endTime1 = time.time()
-      sliceNode.SetSliceOffset(80)
-      slicer.app.processEvents()
-      endTime2 = time.time()
-      delta = ((endTime1-startTime) + (endTime2 - endTime1)) / 2.
-      elapsedTime += delta
-    fps = iters / elapsedTime
-    result = "%d x %d, fps = %g (%g ms per frame)" % (dims[0], dims[1], fps, 1000./fps)
+    sliceOffset = 5
+    offsetSteps = 10
+    numerOfSweeps = int(math.ceil(iters / offsetSteps))
+    renderingTimesSec = np.zeros(numerOfSweeps*offsetSteps*2)
+    sampleIndex = 0
+    startOffset = sliceNode.GetSliceOffset()
+    for i in xrange(numerOfSweeps):
+      for offset in ([sliceOffset]*offsetSteps + [-sliceOffset]*offsetSteps):
+        startTime = time.time()
+        sliceNode.SetSliceOffset(sliceNode.GetSliceOffset()+offset)
+        slicer.app.processEvents()
+        endTime = time.time()
+        renderingTimesSec[sampleIndex] = (endTime-startTime)
+        sampleIndex += 1
+    sliceNode.SetSliceOffset(startOffset)
+
+    resultTableName = slicer.mrmlScene.GetUniqueNameByString("Reslice performance")
+    resultTableNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode", resultTableName)
+    slicer.util.updateTableFromArray(resultTableNode, renderingTimesSec, "Rendering time [s]")
+
+    renderingTimeMean = np.mean(renderingTimesSec)
+    renderingTimeStd = np.std(renderingTimesSec)
+    result = ("%d x %d, fps = %.1f (%.1f +/- %.2f ms per frame) - see details in table '%s'"
+      % (dims[0], dims[1], 1.0/renderingTimeMean, 1000. * renderingTimeMean, 1000. * renderingTimeStd, resultTableNode.GetName()))
     print (result)
     self.log.insertHtml('<i>%s</i>' % result)
     self.log.insertPlainText('\n')

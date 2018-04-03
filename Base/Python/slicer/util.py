@@ -864,6 +864,7 @@ def updateTableFromArray(tableNode, narrays, columnNames=None):
   """
   import numpy as np
   import vtk.util.numpy_support
+  import slicer
 
   if tableNode is None:
     tableNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode")
