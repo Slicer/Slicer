@@ -1,0 +1,42 @@
+version: 2
+jobs:
+  build:
+    working_directory: /usr/src/Slicer
+    docker:
+      - image: slicer/slicer-base
+    steps:
+      - checkout
+      - run:
+          name: Check for external project updates
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ] || [ "${CIRCLE_BRANCH}" == "nightly-master" ]; then
+              exit 0;
+            fi
+            if git diff --name-only master | grep -q SuperBuild > /dev/null; then
+              echo ""
+              echo "CircleCI does *NOT* build changes to Slicer dependencies"
+              echo ""
+              echo "slicer/slicer-base docker image needs to be updated."
+              echo ""
+              echo "For more details, see https://github.com/thewtex/SlicerDocker#update"
+              echo ""
+              exit 1
+            fi
+      - run:
+          name: System Information
+          command: |
+            echo "PROCESSOR_COUNT: $(grep -c processor /proc/cpuinfo)"
+      - run:
+          name: Build and Package Slicer
+          environment:
+            BUILD_TOOL_FLAGS: "-j3"
+          command: |
+            ../Slicer-build/BuildSlicer.sh
+            package=$(head -n1 /usr/src/Slicer-build/Slicer-build/PACKAGE_FILE.txt)
+            echo "package [${package}]"
+            mkdir -p /Slicer-package
+            mv ${package} /Slicer-package/
+
+      - store_artifacts:
+          path: /Slicer-package/
+

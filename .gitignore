@@ -9,6 +9,9 @@
 # except for .gitignore
 !.gitignore
 
+# ... and .circleci
+!.circleci
+
 # Exclude Kdevelop4 files ...
 .kdev*
 
