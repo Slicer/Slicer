@@ -101,8 +101,8 @@ public:
   Pipeline* CreateSegmentPipeline(std::string segmentID);
   void UpdateDisplayNode(vtkMRMLSegmentationDisplayNode* displayNode);
   void UpdateAllDisplayNodesForSegment(vtkMRMLSegmentationNode* segmentationNode);
-  void UpdateSegmentPipelines(vtkMRMLSegmentationDisplayNode*, PipelineMapType&);
-  void UpdateDisplayNodePipeline(vtkMRMLSegmentationDisplayNode*, PipelineMapType);
+  void UpdateSegmentPipelines(vtkMRMLSegmentationDisplayNode* displayNode, PipelineMapType &segmentPipelines);
+  void UpdateDisplayNodePipeline(vtkMRMLSegmentationDisplayNode* displayNode, PipelineMapType &segmentPipelines);
   void RemoveDisplayNode(vtkMRMLSegmentationDisplayNode* displayNode);
 
   // Observations
@@ -215,7 +215,8 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::RemoveSegmentationNo
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::GetNodeTransformToWorld(vtkMRMLTransformableNode* node, vtkGeneralTransform* transformToWorld)
+void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::GetNodeTransformToWorld(
+  vtkMRMLTransformableNode* node, vtkGeneralTransform* transformToWorld)
 {
   if (!node || !transformToWorld)
     {
@@ -354,7 +355,8 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateAllDisplayNode
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateSegmentPipelines(vtkMRMLSegmentationDisplayNode* displayNode, PipelineMapType &pipelines)
+void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateSegmentPipelines(
+  vtkMRMLSegmentationDisplayNode* displayNode, PipelineMapType &segmentPipelines)
 {
   // Get segmentation
   vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(displayNode->GetDisplayableNode());
@@ -374,17 +376,17 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateSegmentPipelin
   for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
     {
     // If segment does not have a pipeline, create one
-    PipelineMapType::iterator pipelineIt = pipelines.find(*segmentIdIt);
-    if (pipelineIt == pipelines.end())
+    PipelineMapType::iterator pipelineIt = segmentPipelines.find(*segmentIdIt);
+    if (pipelineIt == segmentPipelines.end())
       {
-      pipelines[*segmentIdIt] = this->CreateSegmentPipeline(*segmentIdIt);
-      this->GetNodeTransformToWorld(segmentationNode, pipelines[*segmentIdIt]->NodeToWorld);
+      segmentPipelines[*segmentIdIt] = this->CreateSegmentPipeline(*segmentIdIt);
+      this->GetNodeTransformToWorld(segmentationNode, segmentPipelines[*segmentIdIt]->NodeToWorld);
       }
     }
 
   // Make sure each pipeline belongs to an existing segment
-  PipelineMapType::iterator pipelineIt = pipelines.begin();
-  while (pipelineIt != pipelines.end())
+  PipelineMapType::iterator pipelineIt = segmentPipelines.begin();
+  while (pipelineIt != segmentPipelines.end())
     {
     const Pipeline* pipeline = pipelineIt->second;
     vtkSegment* segment = segmentation->GetSegment(pipelineIt->first);
@@ -392,7 +394,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateSegmentPipelin
       {
       PipelineMapType::iterator erasedIt = pipelineIt;
       ++pipelineIt;
-      pipelines.erase(erasedIt);
+      segmentPipelines.erase(erasedIt);
       this->External->GetRenderer()->RemoveActor(pipeline->Actor);
       delete pipeline;
       }
@@ -404,25 +406,23 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateSegmentPipelin
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayNodePipeline(vtkMRMLSegmentationDisplayNode* displayNode, PipelineMapType pipelines)
+void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayNodePipeline(
+  vtkMRMLSegmentationDisplayNode* displayNode, PipelineMapType &segmentPipelines)
 {
   // Sets visibility, set pipeline polydata input, update color
   if (!displayNode)
     {
     return;
     }
-  bool displayNodeVisible = displayNode->GetVisibility3D() && displayNode->GetOpacity3D()>0
+  bool displayNodeVisible = displayNode->GetVisibility3D() && displayNode->GetOpacity3D() > 0
     && displayNode->GetVisibility(this->External->GetMRMLViewNode()->GetID());
 
-  // Get segmentation display node
-  vtkMRMLSegmentationDisplayNode* segmentationDisplayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(displayNode);
-
   // Determine which representation to show
-  std::string shownRepresentationName = segmentationDisplayNode->GetDisplayRepresentationName3D();
+  std::string shownRepresentationName = displayNode->GetDisplayRepresentationName3D();
   if (shownRepresentationName.empty())
     {
     // Hide segmentation if there is no poly data representation to show
-    for (PipelineMapType::iterator pipelineIt=pipelines.begin(); pipelineIt!=pipelines.end(); ++pipelineIt)
+    for (PipelineMapType::iterator pipelineIt=segmentPipelines.begin(); pipelineIt!=segmentPipelines.end(); ++pipelineIt)
       {
       pipelineIt->second->Actor->SetVisibility(false);
       }
@@ -431,7 +431,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayNodePip
 
   // Get segmentation
   vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(
-    segmentationDisplayNode->GetDisplayableNode() );
+    displayNode->GetDisplayableNode() );
   if (!segmentationNode)
     {
     return;
@@ -448,7 +448,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayNodePip
     }
 
   // For all pipelines (pipeline per segment)
-  for (PipelineMapType::iterator pipelineIt=pipelines.begin(); pipelineIt!=pipelines.end(); ++pipelineIt)
+  for (PipelineMapType::iterator pipelineIt=segmentPipelines.begin(); pipelineIt!=segmentPipelines.end(); ++pipelineIt)
     {
     const Pipeline* pipeline = pipelineIt->second;
 
@@ -549,19 +549,26 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::RemoveObservations(v
 {
   vtkEventBroker* broker = vtkEventBroker::GetInstance();
   vtkEventBroker::ObservationVector observations;
-  observations = broker->GetObservations(node, vtkCommand::ModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand());
+  observations = broker->GetObservations(
+    node, vtkCommand::ModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand());
   broker->RemoveObservations(observations);
-  observations = broker->GetObservations(node, vtkMRMLTransformableNode::TransformModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand());
+  observations = broker->GetObservations(
+    node, vtkMRMLTransformableNode::TransformModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand());
   broker->RemoveObservations(observations);
-  observations = broker->GetObservations(node, vtkMRMLDisplayableNode::DisplayModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand() );
+  observations = broker->GetObservations(
+    node, vtkMRMLDisplayableNode::DisplayModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand() );
   broker->RemoveObservations(observations);
-  observations = broker->GetObservations(node, vtkSegmentation::RepresentationModified, this->External, this->External->GetMRMLNodesCallbackCommand() );
+  observations = broker->GetObservations(
+    node, vtkSegmentation::RepresentationModified, this->External, this->External->GetMRMLNodesCallbackCommand() );
   broker->RemoveObservations(observations);
-  observations = broker->GetObservations(node, vtkSegmentation::SegmentAdded, this->External, this->External->GetMRMLNodesCallbackCommand() );
+  observations = broker->GetObservations(
+    node, vtkSegmentation::SegmentAdded, this->External, this->External->GetMRMLNodesCallbackCommand() );
   broker->RemoveObservations(observations);
-  observations = broker->GetObservations(node, vtkSegmentation::SegmentRemoved, this->External, this->External->GetMRMLNodesCallbackCommand() );
+  observations = broker->GetObservations(
+    node, vtkSegmentation::SegmentRemoved, this->External, this->External->GetMRMLNodesCallbackCommand() );
   broker->RemoveObservations(observations);
-  observations = broker->GetObservations(node, vtkSegmentation::SegmentModified, this->External, this->External->GetMRMLNodesCallbackCommand());
+  observations = broker->GetObservations(
+    node, vtkSegmentation::SegmentModified, this->External, this->External->GetMRMLNodesCallbackCommand());
   broker->RemoveObservations(observations);
 }
 
@@ -627,7 +634,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::OnMRMLSceneNodeAdded(vtkMRMLNode*
     return;
     }
 
-  // Escape if the scene a scene is being closed, imported or connected
+  // Escape if the scene is being closed, imported or connected
   if (this->GetMRMLScene()->IsBatchProcessing())
     {
     this->SetUpdateFromMRMLRequested(1);
@@ -721,20 +728,20 @@ void vtkMRMLSegmentationsDisplayableManager3D::UpdateFromMRML()
   vtkMRMLScene* scene = this->GetMRMLScene();
   if (!scene)
     {
-    vtkDebugMacro( "vtkMRMLSegmentationsDisplayableManager3D->UpdateFromMRML: Scene is not set.")
+    vtkDebugMacro( "vtkMRMLSegmentationsDisplayableManager3D::UpdateFromMRML: Scene is not set")
     return;
     }
   this->Internal->ClearDisplayableNodes();
 
-  vtkMRMLSegmentationNode* mNode = NULL;
-  std::vector<vtkMRMLNode *> mNodes;
-  int nnodes = scene ? scene->GetNodesByClass("vtkMRMLSegmentationNode", mNodes) : 0;
-  for (int i=0; i<nnodes; i++)
+  vtkMRMLSegmentationNode* segmentationNode = NULL;
+  std::vector<vtkMRMLNode*> segmentationNodes;
+  int numOfSegmentationNodes = scene ? scene->GetNodesByClass("vtkMRMLSegmentationNode", segmentationNodes) : 0;
+  for (int i=0; i<numOfSegmentationNodes; i++)
     {
-    mNode  = vtkMRMLSegmentationNode::SafeDownCast(mNodes[i]);
-    if (mNode && this->Internal->UseDisplayableNode(mNode))
+    segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(segmentationNodes[i]);
+    if (segmentationNode && this->Internal->UseDisplayableNode(segmentationNode))
       {
-      this->Internal->AddSegmentationNode(mNode);
+      this->Internal->AddSegmentationNode(segmentationNode);
       }
     }
   this->RequestRender();
