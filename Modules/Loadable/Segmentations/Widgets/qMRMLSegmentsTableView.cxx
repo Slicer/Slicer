@@ -340,14 +340,13 @@ void qMRMLSegmentsTableView::populateSegmentTable()
     }
 
   // Get segmentation display node
-  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(
-    d->SegmentationNode->GetDisplayNode() );
+  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(d->SegmentationNode->GetDisplayNode());
 
   vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
   QStringList displayedSegmentIDs = this->displayedSegmentIDs();
   d->SegmentsTable->setRowCount(displayedSegmentIDs.size());
   int row = 0;
-  foreach(QString segmentId, displayedSegmentIDs)
+  foreach (QString segmentId, displayedSegmentIDs)
   {
     vtkSegment* segment = segmentation->GetSegment(segmentId.toLatin1().constData());
 
@@ -479,7 +478,7 @@ void qMRMLSegmentsTableView::updateWidgetFromMRML()
   // Find items for each segment and update each field
   vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
   QStringList displayedSegmentIDs = this->displayedSegmentIDs();
-  foreach(QString segmentId, displayedSegmentIDs)
+  foreach (QString segmentId, displayedSegmentIDs)
     {
     QTableWidgetItem* nameItem = d->findItemBySegmentID(segmentId);
     if (!nameItem)
@@ -923,13 +922,13 @@ bool qMRMLSegmentsTableView::eventFilter(QObject* target, QEvent* event)
 {
   Q_D(qMRMLSegmentsTableView);
   if (target == d->SegmentsTable)
-  {
+    {
     // Prevent giving the focus to the previous/next widget if arrow keys are used
     // at the edge of the table (without this: if the current cell is in the top
     // row and user press the Up key, the focus goes from the table to the previous
     // widget in the tab order)
     if (event->type() == QEvent::KeyPress)
-    {
+      {
       QKeyEvent* keyEvent = static_cast<QKeyEvent *>(event);
       QAbstractItemModel* model = d->SegmentsTable->model();
       QModelIndex currentIndex = d->SegmentsTable->currentIndex();
@@ -939,11 +938,11 @@ bool qMRMLSegmentsTableView::eventFilter(QObject* target, QEvent* event)
         || (keyEvent->key() == Qt::Key_Up && currentIndex.row() == 0)
         || (keyEvent->key() == Qt::Key_Right && currentIndex.column() == model->columnCount() - 1)
         || (keyEvent->key() == Qt::Key_Down && currentIndex.row() == model->rowCount() - 1)))
-      {
+        {
         return true;
+        }
       }
     }
-  }
   return this->QWidget::eventFilter(target, event);
 }
 
@@ -1053,6 +1052,16 @@ void qMRMLSegmentsTableView::contextMenuEvent(QContextMenuEvent* event)
   QObject::connect(showOnlySelectedAction, SIGNAL(triggered()), this, SLOT(showOnlySelectedSegments()));
   contextMenu->addAction(showOnlySelectedAction);
 
+  contextMenu->addSeparator();
+
+  QAction* moveUpAction = new QAction("Move segment up", this);
+  QObject::connect(moveUpAction, SIGNAL(triggered()), this, SLOT(moveSelectedSegmentsUp()));
+  contextMenu->addAction(moveUpAction);
+
+  QAction* moveDownAction = new QAction("Move segment down", this);
+  QObject::connect(moveDownAction, SIGNAL(triggered()), this, SLOT(moveSelectedSegmentsDown()));
+  contextMenu->addAction(moveDownAction);
+
   contextMenu->popup(event->globalPos());
 }
 
@@ -1083,8 +1092,8 @@ void qMRMLSegmentsTableView::showOnlySelectedSegments()
   // Hide all segments except the selected ones
   int disabledModify = displayNode->StartModify();
   QStringList displayedSegmentIDs = this->displayedSegmentIDs();
-  foreach(QString segmentId, displayedSegmentIDs)
-  {
+  foreach (QString segmentId, displayedSegmentIDs)
+    {
     bool visible = false;
     if (selectedSegmentIDs.contains(segmentId))
       {
@@ -1094,6 +1103,76 @@ void qMRMLSegmentsTableView::showOnlySelectedSegments()
     displayNode->SetSegmentVisibility(segmentId.toLatin1().constData(), visible);
     }
   displayNode->EndModify(disabledModify);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSegmentsTableView::moveSelectedSegmentsUp()
+{
+  QStringList selectedSegmentIDs = this->selectedSegmentIDs();
+  if (selectedSegmentIDs.size() == 0)
+    {
+    qWarning() << Q_FUNC_INFO << ": No segment selected";
+    return;
+    }
+
+  Q_D(qMRMLSegmentsTableView);
+  if (!d->SegmentationNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": No current segmentation node";
+    return;
+    }
+  vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
+
+  QList<int> segmentIndices;
+  foreach (QString segmentId, selectedSegmentIDs)
+    {
+    segmentIndices << segmentation->GetSegmentIndex(segmentId.toLatin1().constData());
+    }
+  int minIndex = *(std::min_element(segmentIndices.begin(), segmentIndices.end()));
+  if (minIndex == 0)
+    {
+    qDebug() << Q_FUNC_INFO << ": Cannot move top segment up";
+    return;
+    }
+  for (int i=0; i<selectedSegmentIDs.count(); ++i)
+    {
+    segmentation->SetSegmentIndex(selectedSegmentIDs[i].toLatin1().constData(), segmentIndices[i]-1);
+    }
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSegmentsTableView::moveSelectedSegmentsDown()
+{
+  QStringList selectedSegmentIDs = this->selectedSegmentIDs();
+  if (selectedSegmentIDs.size() == 0)
+    {
+    qWarning() << Q_FUNC_INFO << ": No segment selected";
+    return;
+    }
+
+  Q_D(qMRMLSegmentsTableView);
+  if (!d->SegmentationNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": No current segmentation node";
+    return;
+    }
+  vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
+
+  QList<int> segmentIndices;
+  foreach (QString segmentId, selectedSegmentIDs)
+    {
+    segmentIndices << segmentation->GetSegmentIndex(segmentId.toLatin1().constData());
+    }
+  int maxIndex = *(std::max_element(segmentIndices.begin(), segmentIndices.end()));
+  if (maxIndex == segmentation->GetNumberOfSegments()-1)
+    {
+    qDebug() << Q_FUNC_INFO << ": Cannot move bottom segment down";
+    return;
+    }
+  for (int i=selectedSegmentIDs.count()-1; i>=0; --i)
+    {
+    segmentation->SetSegmentIndex(selectedSegmentIDs[i].toLatin1().constData(), segmentIndices[i]+1);
+    }
 }
 
 // --------------------------------------------------------------------------

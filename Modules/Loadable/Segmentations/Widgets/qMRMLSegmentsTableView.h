@@ -125,6 +125,11 @@ public slots:
   /// Show only selected segments
   void showOnlySelectedSegments();
 
+  /// Move selected segments up in the list
+  void moveSelectedSegmentsUp();
+  /// Move selected segments down in the list
+  void moveSelectedSegmentsDown();
+
 signals:
   /// Emitted if selection changes
   void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
