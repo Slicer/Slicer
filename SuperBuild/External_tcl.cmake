@@ -182,7 +182,7 @@ ExternalProject_Execute(${proj} \"install\" make install)
 
   ExternalProject_GenerateProjectDescription_Step(${proj}
     VERSION ${TCL_TK_VERSION_DOT}
-    LICENSE_FILES "https://github.com/tcltk/tcl/blob/master/license.terms"
+    LICENSE_FILES "https://raw.githubusercontent.com/tcltk/tcl/master/license.terms"
     )
 
   #-----------------------------------------------------------------------------
