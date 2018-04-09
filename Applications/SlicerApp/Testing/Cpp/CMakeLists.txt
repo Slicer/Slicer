@@ -86,7 +86,7 @@ if(Slicer_HAS_CONSOLE_IO_SUPPORT)
   add_test(
     NAME slicer_nomainwindow_NoApplicationInformationOptionTest
     COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${APP_TARGET_NAME}>
-    --disable-modules --exit-after-startup
+    --disable-modules --ignore-slicerrc --exit-after-startup
     )
   set_tests_properties(
     slicer_nomainwindow_NoApplicationInformationOptionTest
@@ -95,7 +95,7 @@ if(Slicer_HAS_CONSOLE_IO_SUPPORT)
   add_test(
     NAME slicer_nomainwindow_ApplicationInformationOptionTest
     COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${APP_TARGET_NAME}>
-    --disable-modules --exit-after-startup --application-information
+    --disable-modules --ignore-slicerrc --exit-after-startup --application-information
     )
   set_tests_properties(
     slicer_nomainwindow_ApplicationInformationOptionTest

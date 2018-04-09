@@ -9,7 +9,7 @@ set(INPUT ${CMAKE_CURRENT_SOURCE_DIR}/../../Data/Input)
 add_test(
   NAME py_nomainwindow_SlicerPythonCodeExitSuccessTest
   COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${APP_TARGET_NAME}>
-  --disable-modules --no-main-window
+  --disable-modules --ignore-slicerrc --no-main-window
   --python-code "exit(slicer.util.EXIT_SUCCESS)"
   )
 add_test(
@@ -22,7 +22,7 @@ add_test(
 add_test(
   NAME py_nomainwindow_SlicerPythonCodeExitFailureTest
   COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${APP_TARGET_NAME}>
-  --disable-modules --no-main-window
+  --disable-modules --ignore-slicerr --no-main-windowc
   --python-code "exit(slicer.util.EXIT_FAILURE)"
   )
 add_test(
@@ -195,7 +195,7 @@ endif()
 #
 slicer_add_python_unittest(
   SCRIPT SlicerSceneObserverTest.py
-  SLICER_ARGS --no-main-window --disable-modules
+  SLICER_ARGS --no-main-window --disable-modules --ignore-slicerrc
   TESTNAME_PREFIX nomainwindow_
   )
 
@@ -292,7 +292,7 @@ if(Slicer_USE_PYTHONQT_WITH_OPENSSL)
   add_test(
     NAME py_SlicerSslTest
     COMMAND ${Slicer_LAUNCHER_EXECUTABLE}
-    -c "import urllib2; urllib2.urlopen('https://www.eff.org/https-everywhere')"
+    --ignore-slicerrc -c "import urllib2; urllib2.urlopen('https://www.eff.org/https-everywhere')"
     )
   add_test(
     NAME py_PythonSslTest
