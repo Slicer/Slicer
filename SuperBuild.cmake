@@ -173,6 +173,10 @@ if(Slicer_USE_PYTHONQT_WITH_TCL AND UNIX)
   list(APPEND Slicer_DEPENDENCIES incrTcl)
 endif()
 
+if(Slicer_USE_TBB)
+  list(APPEND Slicer_DEPENDENCIES tbb)
+endif()
+
 #------------------------------------------------------------------------------
 # Slicer_ADDITIONAL_DEPENDENCIES, EXTERNAL_PROJECT_ADDITIONAL_DIR
 #------------------------------------------------------------------------------

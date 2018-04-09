@@ -826,6 +826,7 @@ void qSlicerApplication::logApplicationInformation() const
       << "Operating system "
       << "Memory "
       << "CPU "
+      << "VTK configuration "
       << "Developer mode enabled "
       << "Prefer executable CLI "
       << "Additional module paths ";
@@ -846,11 +847,17 @@ void qSlicerApplication::logApplicationInformation() const
          qPrintable(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")));
 
   // Slicer version
-  qDebug("%s: %s (revision %s) %s - %s",
+  qDebug("%s: %s (revision %s) %s - %s %s",
          qPrintable(titles.at(1).leftJustified(titleWidth, '.')),
          Slicer_VERSION_FULL, qPrintable(this->repositoryRevision()),
          qPrintable(this->platform()),
-         this->isInstalled() ? "installed" : "not installed");
+         this->isInstalled() ? "installed" : "not installed",
+#ifdef _DEBUG
+         "debug"
+#else
+         "release"
+#endif
+         );
 
   // Operating system
   vtkNew<vtkSystemInformation> systemInfo;
@@ -918,18 +925,27 @@ void qSlicerApplication::logApplicationInformation() const
          systemInfo->GetModelName() ? systemInfo->GetModelName() : "unknown",
          numberOfPhysicalCPU, numberOfLogicalCPU);
 
+  qDebug("%s: %s rendering, %s threading",
+    qPrintable(titles.at(5).leftJustified(titleWidth, '.')),
+#ifdef Slicer_VTK_RENDERING_USE_OpenGL2_BACKEND
+    "OpenGL2",
+#else
+    "OpenGL",
+#endif
+    VTK_SMP_BACKEND);
+
   QSettings settings;
 
   // Developer mode enabled
   bool developerModeEnabled = settings.value("Developer/DeveloperMode", false).toBool();
   qDebug("%s: %s",
-         qPrintable(titles.at(5).leftJustified(titleWidth, '.')),
+         qPrintable(titles.at(6).leftJustified(titleWidth, '.')),
          developerModeEnabled ? "yes" : "no");
 
   // Prefer executable CLI
   bool preferExecutableCli = settings.value("Modules/PreferExecutableCLI", Slicer_CLI_PREFER_EXECUTABLE_DEFAULT).toBool();
   qDebug("%s: %s",
-         qPrintable(titles.at(6).leftJustified(titleWidth, '.')),
+         qPrintable(titles.at(7).leftJustified(titleWidth, '.')),
          preferExecutableCli ? "yes" : "no");
 
   // Additional module paths
@@ -951,7 +967,7 @@ void qSlicerApplication::logApplicationInformation() const
     }
 
   qDebug("%s: %s",
-         qPrintable(titles.at(7).leftJustified(titleWidth, '.')),
+         qPrintable(titles.at(8).leftJustified(titleWidth, '.')),
          additionalModulePaths.isEmpty() ? "(none)" : qPrintable(additionalModulePaths.join(", ")));
 
 }

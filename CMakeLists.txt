@@ -451,8 +451,28 @@ set(Slicer_VTK_RENDERING_BACKEND "${_backend}" CACHE STRING "Rendering backend."
 mark_as_superbuild(Slicer_VTK_RENDERING_BACKEND)
 set(Slicer_VTK_RENDERING_USE_${Slicer_VTK_RENDERING_BACKEND}_BACKEND 1)
 
+# Slicer build is only tested with Sequential and TBB. OpenMP might work.
+# Use TBB by default only on Windows, as it has not been tested on other platforms.
+if(WIN32)
+  set(Slicer_DEFAULT_VTK_SMP_IMPLEMENTATION_TYPE "TBB")
+else()
+  set(Slicer_DEFAULT_VTK_SMP_IMPLEMENTATION_TYPE "Sequential")
+endif()
+set(Slicer_VTK_SMP_IMPLEMENTATION_TYPE ${Slicer_DEFAULT_VTK_SMP_IMPLEMENTATION_TYPE}
+  CACHE STRING "Which multi-threaded parallelism implementation to use in VTK. Options are Sequential or TBB.")
+set_property(CACHE Slicer_VTK_SMP_IMPLEMENTATION_TYPE
+  PROPERTY
+    STRINGS Sequential TBB)
+mark_as_superbuild(Slicer_VTK_SMP_IMPLEMENTATION_TYPE)
+if(${Slicer_VTK_SMP_IMPLEMENTATION_TYPE} STREQUAL "TBB")
+  set(Slicer_USE_TBB TRUE)
+else()
+  set(Slicer_USE_TBB FALSE)
+endif()
+
 message(STATUS "Configuring VTK")
 message(STATUS "  Slicer_VTK_RENDERING_BACKEND is ${Slicer_VTK_RENDERING_BACKEND}")
+message(STATUS "  Slicer_VTK_SMP_IMPLEMENTATION_TYPE is ${Slicer_VTK_SMP_IMPLEMENTATION_TYPE}")
 message(STATUS "  Slicer_VTK_VERSION_MAJOR is ${Slicer_VTK_VERSION_MAJOR}")
 
 set(Slicer_VTK_COMPONENTS
