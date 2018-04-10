@@ -61,7 +61,7 @@ elseif (APPLE)
 else ()
   set(tbb_libdir "lib/${tbb_archdir}/gcc4.4")
   set(tbb_bindir "bin/${tbb_archdir}/gcc4.4")
-  set(tbb_libsuffix "${CMAKE_SHARED_LIBRARY_SUFFIX}*")
+  set(tbb_libsuffix "${CMAKE_SHARED_LIBRARY_SUFFIX}")
 endif ()
 
 if (NOT WIN32)
