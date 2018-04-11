@@ -108,7 +108,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic(ScriptedLoadableModuleLo
   requiring an instance of the Widget
   """
   def __init__(self):
-    ScriptedLoadableModuleLogic.__init__(self, parent)
+    ScriptedLoadableModuleLogic.__init__(self)
 
   #
   # for the red slice widget, convert the background volume's RAS
