@@ -59,6 +59,8 @@ set(vtkAddon_SRCS
   vtkOrientedBSplineTransform.h
   vtkOrientedGridTransform.cxx
   vtkOrientedGridTransform.h
+  vtkPersonInformation.cxx
+  vtkPersonInformation.h
   vtkAddonMathUtilities.h
   vtkAddonMathUtilities.cxx
   )

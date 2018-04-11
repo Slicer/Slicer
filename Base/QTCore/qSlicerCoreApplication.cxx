@@ -105,6 +105,9 @@
 #include <vtkNew.h>
 #include <vtksys/SystemTools.hxx>
 
+// VTKAddon includes
+#include <vtkPersonInformation.h>
+
 // Slicer includes
 #include "vtkSlicerVersionConfigure.h" // For Slicer_VERSION_{MINOR, MAJOR}, Slicer_VERSION_FULL
 
@@ -294,6 +297,12 @@ void qSlicerCoreApplicationPrivate::init()
   // Create the application Logic object,
   this->AppLogic = vtkSmartPointer<vtkSlicerApplicationLogic>::New();
   this->AppLogic->SetTemporaryPath(q->temporaryPath().toLatin1());
+  vtkPersonInformation* userInfo = this->AppLogic->GetUserInformation();
+  if (userInfo)
+    {
+    QString userInfoString = q->userSettings()->value("UserInformation").toString();
+    userInfo->SetFromString(userInfoString.toLatin1().constData());
+    }
   q->qvtkConnect(this->AppLogic, vtkCommand::ModifiedEvent,
               q, SLOT(onSlicerApplicationLogicModified()));
   q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::RequestInvokeEvent,
@@ -306,6 +315,9 @@ void qSlicerCoreApplicationPrivate::init()
               q, SLOT(onSlicerApplicationLogicRequest(vtkObject*,void*,ulong)));
   q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::RequestWriteDataEvent,
               q, SLOT(onSlicerApplicationLogicRequest(vtkObject*,void*,ulong)));
+  q->qvtkConnect(this->AppLogic->GetUserInformation(), vtkCommand::ModifiedEvent,
+    q, SLOT(onUserInformationModified()));
+
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->SetMRMLApplicationLogic(
     this->AppLogic.GetPointer());
   vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->SetMRMLApplicationLogic(
@@ -1476,6 +1488,17 @@ void qSlicerCoreApplication::restart()
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplication::onSlicerApplicationLogicModified()
 {
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplication::onUserInformationModified()
+{
+  vtkPersonInformation* userInfo = this->applicationLogic()->GetUserInformation();
+  if (!userInfo)
+    {
+    return;
+    }
+  this->userSettings()->setValue("UserInformation", userInfo->GetAsString().c_str());
 }
 
 //-----------------------------------------------------------------------------

@@ -29,6 +29,9 @@
 #include <vtkMRMLTableNode.h>
 #include <vtkMRMLRemoteIOLogic.h>
 
+// VTKAddon includes
+#include <vtkPersonInformation.h>
+
 // VTK includes
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
@@ -86,6 +89,8 @@ vtkSlicerApplicationLogic::vtkSlicerApplicationLogic()
 
   this->InternalReadDataQueue = new ReadDataQueue;
   this->InternalWriteDataQueue = new WriteDataQueue;
+
+  this->UserInformation = vtkPersonInformation::New();
 }
 
 //----------------------------------------------------------------------------
@@ -120,6 +125,8 @@ vtkSlicerApplicationLogic::~vtkSlicerApplicationLogic()
   delete this->InternalModifiedQueue;
   delete this->InternalReadDataQueue;
   delete this->InternalWriteDataQueue;
+
+  this->UserInformation->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -956,4 +963,10 @@ std::string vtkSlicerApplicationLogic::GetModuleSlicerXYLibDirectory(const std::
   libDirectory.append("/");
   libDirectory.append(slicerSubDir);
   return libDirectory;
+}
+
+//----------------------------------------------------------------------------
+vtkPersonInformation* vtkSlicerApplicationLogic::GetUserInformation()
+{
+  return this->UserInformation;
 }

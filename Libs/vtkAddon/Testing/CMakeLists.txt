@@ -4,6 +4,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkAddonMathUtilitiesTest1.cxx
   vtkAddonTestingUtilitiesTest1.cxx
   vtkLoggingMacrosTest1.cxx
+  vtkPersonInformationTest1.cxx
   )
 
 set(LIBRARY_NAME ${PROJECT_NAME})
@@ -24,3 +25,4 @@ endmacro()
 simple_test( vtkAddonMathUtilitiesTest1 )
 simple_test( vtkAddonTestingUtilitiesTest1 )
 simple_test( vtkLoggingMacrosTest1 )
+simple_test( vtkPersonInformationTest1 )

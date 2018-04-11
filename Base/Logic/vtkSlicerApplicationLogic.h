@@ -35,6 +35,7 @@ class vtkMRMLSelectionNode;
 class vtkMRMLInteractionNode;
 class vtkMRMLRemoteIOLogic;
 class vtkDataIOManagerLogic;
+class vtkPersonInformation;
 class vtkSlicerTask;
 class ModifiedQueue;
 class ProcessingTaskQueue;
@@ -206,6 +207,10 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   /// Get Slicer-X.Y lib directory associated with module located in \a filePath
   static std::string GetModuleSlicerXYLibDirectory(const std::string& filePath);
 
+  /// Get information about the current user (name, login, email, organization, etc.)
+  /// Values are allowed to be modified.
+  vtkPersonInformation* GetUserInformation();
+
 protected:
 
   vtkSlicerApplicationLogic();
@@ -255,6 +260,8 @@ private:
   ModifiedQueue*       InternalModifiedQueue;
   ReadDataQueue*       InternalReadDataQueue;
   WriteDataQueue*      InternalWriteDataQueue;
+
+  vtkPersonInformation* UserInformation;
 
   /// For use with external tracing tool (such as AQTime)
   int Tracing;
