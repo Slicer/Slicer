@@ -18,10 +18,13 @@
 
 ==============================================================================*/
 
+// Common test driver includes
+#include "qMRMLWidgetCxxTests.h"
+#include "qMRMLLayoutManagerTestHelper.cxx"
+
 // Qt includes
 #include <QApplication>
 #include <QLabel>
-#include <QTimer>
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -320,19 +323,14 @@ int qMRMLLayoutManagerWithCustomFactoryTest(int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
-
-  // Note:
-  // Qt reports leaks in debug mode (LEAK: 88 WebCoreNode) on exit.
-  // This seems to be harmless and will be fixed in future Qt releases.
-  // More info: https://bugreports.qt.io/browse/QTBUG-29390
-
-  QTimer autoExit;
   if (argc < 2 || QString(argv[1]) != "-I")
     {
-    QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
-    autoExit.start(1000);
+    return safeApplicationQuit(&app);
     }
-  return app.exec();
+  else
+    {
+    return app.exec();
+    }
 }
 
 #include "moc_qMRMLLayoutManagerWithCustomFactoryTest.cxx"

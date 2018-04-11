@@ -1,6 +1,10 @@
+// Qt includes
+#include <QApplication>
+#include <QTimer>
 
 // MRML includes
 #include <vtkMRMLLayoutNode.h>
+#include <qMRMLLayoutManager.h>
 
 namespace
 {
@@ -29,6 +33,25 @@ bool checkViewArrangement(int line, qMRMLLayoutManager* layoutManager,
     return false;
     }
   return true;
+}
+
+// --------------------------------------------------------------------------
+
+// Note:
+// (1) Qt4 reports leaks in debug mode (LEAK: 88 WebCoreNode) on exit.
+//     This seems to be harmless and will be fixed in future Qt releases.
+//     More info: https://bugreports.qt.io/browse/QTBUG-29390
+// (2) Because of Qt5 issue #50160, we need to explicitly call the quit function.
+//     This ensures that the workaround associated with qSlicerWebWidget,
+//     qMRMLChartWidget, ... is applied.
+//     See https://bugreports.qt.io/browse/QTBUG-50160#comment-305211
+
+int safeApplicationQuit(QApplication* app)
+{
+  QTimer autoExit;
+  QObject::connect(&autoExit, SIGNAL(timeout()), app, SLOT(quit()));
+  autoExit.start(1000);
+  return app->exec();
 }
 
 } // end of anonymous namespace

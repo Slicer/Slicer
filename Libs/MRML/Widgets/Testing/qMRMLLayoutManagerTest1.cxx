@@ -18,9 +18,12 @@
 
 ==============================================================================*/
 
+// Common test driver includes
+#include "qMRMLWidgetCxxTests.h"
+#include "qMRMLLayoutManagerTestHelper.cxx"
+
 // Qt includes
 #include <QApplication>
-#include <QTimer>
 #include <QWidget>
 
 // Slicer includes
@@ -222,13 +225,16 @@ int qMRMLLayoutManagerTest1(int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
-  QTimer autoExit;
+  int res = 0;
   if (argc < 2 || QString(argv[1]) != "-I")
     {
-    QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
-    autoExit.start(1000);
+    res = safeApplicationQuit(&app);
     }
-  int res = app.exec();
+  else
+    {
+    res = app.exec();
+    }
+
   delete layoutManager;
   delete viewport;
   delete viewport2;

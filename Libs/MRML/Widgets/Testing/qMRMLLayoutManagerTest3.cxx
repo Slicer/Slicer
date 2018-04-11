@@ -18,9 +18,12 @@
 
 ==============================================================================*/
 
+// Common test driver includes
+#include "qMRMLWidgetCxxTests.h"
+#include "qMRMLLayoutManagerTestHelper.cxx"
+
 // Qt includes
 #include <QApplication>
-#include <QTimer>
 #include <QWidget>
 
 // Slicer includes
@@ -45,22 +48,6 @@
 
 namespace
 {
-
-// --------------------------------------------------------------------------
-bool checkViewArrangement(int line, qMRMLLayoutManager* layoutManager,
-                          vtkMRMLLayoutNode * layoutNode, int expectedViewArrangement)
-{
-  if (layoutManager->layout() != expectedViewArrangement ||
-      layoutNode->GetViewArrangement() != expectedViewArrangement)
-    {
-    std::cerr << "Line " << line << " - Add scene failed:\n"
-              << " expected ViewArrangement: " << expectedViewArrangement << "\n"
-              << " current ViewArrangement: " << layoutNode->GetViewArrangement() << "\n"
-              << " current layout: " << layoutManager->layout() << std::endl;
-    return false;
-    }
-  return true;
-}
 
 // --------------------------------------------------------------------------
 bool checkNumberOfItems(int line, qMRMLLayoutManager* layoutManager, int expected)
@@ -144,11 +131,12 @@ int qMRMLLayoutManagerTest3(int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
-  QTimer autoExit;
   if (argc < 2 || QString(argv[1]) != "-I")
     {
-    QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
-    autoExit.start(1000);
+    return safeApplicationQuit(&app);
     }
-  return app.exec();
+  else
+    {
+    return app.exec();
+    }
 }

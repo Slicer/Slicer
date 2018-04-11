@@ -18,6 +18,10 @@
 
 ==============================================================================*/
 
+// Common test driver includes
+#include "qMRMLWidgetCxxTests.h"
+#include "qMRMLLayoutManagerTestHelper.cxx"
+
 // Qt includes
 #include <QApplication>
 #include <QHash>
@@ -392,5 +396,12 @@ int qMRMLLayoutManagerVisibilityTest(int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
-  return EXIT_SUCCESS;
+  if (argc < 2 || QString(argv[1]) != "-I")
+    {
+    return safeApplicationQuit(&app);
+    }
+  else
+    {
+    return app.exec();
+    }
 }

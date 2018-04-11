@@ -20,7 +20,6 @@
 
 // Qt includes
 #include <QApplication>
-#include <QTimer>
 #include <QWidget>
 
 // Slicer includes
@@ -193,7 +192,7 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
     TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
     newLayoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView);
     TESTING_OUTPUT_ASSERT_WARNINGS_END();
-    
+
     layoutNode = vtkMRMLLayoutNode::SafeDownCast(scene->AddNode(newLayoutNode.GetPointer()));
     applicationLogic->SetMRMLScene(scene.GetPointer());
     layoutManager->setMRMLScene(scene.GetPointer());
@@ -271,12 +270,13 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
-  QTimer autoExit;
   if (argc < 2 || QString(argv[1]) != "-I")
     {
-    QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
-    autoExit.start(1000);
+    return safeApplicationQuit(&app);
     }
-  return app.exec();
+  else
+    {
+    return app.exec();
+    }
 }
 
