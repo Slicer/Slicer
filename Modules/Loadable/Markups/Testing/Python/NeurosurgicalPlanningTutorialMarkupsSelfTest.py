@@ -1,27 +1,25 @@
 import os
-import time
 import unittest
 import vtk, qt, ctk, slicer
-import EditorLib
-from EditorLib.EditUtil import EditUtil
+from slicer.ScriptedLoadableModule import *
+import logging
 
 #
 # NeurosurgicalPlanningTutorialMarkupsSelfTest
 #
 
-class NeurosurgicalPlanningTutorialMarkupsSelfTest:
+class NeurosurgicalPlanningTutorialMarkupsSelfTest(ScriptedLoadableModule):
   def __init__(self, parent):
-    parent.title = "NeurosurgicalPlanningTutorialMarkupsSelfTest"
-    parent.categories = ["Testing.TestCases"]
-    parent.dependencies = []
-    parent.contributors = ["Nicole Aucoin (BWH)"]
-    parent.helpText = """
-    This is a test case that exercises the fiducials used in the Neurosurgical Planning tutorial.
-    """
-    parent.acknowledgementText = """
-    This file was originally developed by Nicole Aucoin, BWH and was partially funded by NIH grant 3P41RR013218-12S1.
-"""
-    self.parent = parent
+    ScriptedLoadableModule.__init__(self, parent)
+    self.parent.title = "NeurosurgicalPlanningTutorialMarkupsSelfTest"
+    self.parent.categories = ["Testing.TestCases"]
+    self.parent.dependencies = ["Segmentations"]
+    self.parent.contributors = ["Nicole Aucoin (BWH), Andras Lasso (PerkLab, Queen's)"]
+    self.parent.helpText = """This is a test case that exercises the fiducials used in the Neurosurgical Planning tutorial."""
+    parent.acknowledgementText = """This file was originally developed by Nicole Aucoin, BWH
+      and was partially funded by NIH grant 3P41RR013218-12S1. The test was updated to use Segment editor by
+      Andras Lasso, PerkLab, Queen's University and was supported through the Applied Cancer Research Unit program
+      of Cancer Care Ontario with funds provided by the Ontario Ministry of Health and Long-Term Care"""
 
     # Add this test to the SelfTest module's list for discovery when the module
     # is created.  Since this module may be discovered before SelfTests itself,
@@ -40,46 +38,11 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTest:
 # qNeurosurgicalPlanningTutorialMarkupsSelfTestWidget
 #
 
-class NeurosurgicalPlanningTutorialMarkupsSelfTestWidget:
-  def __init__(self, parent = None):
-    if not parent:
-      self.parent = slicer.qMRMLWidget()
-      self.parent.setLayout(qt.QVBoxLayout())
-      self.parent.setMRMLScene(slicer.mrmlScene)
-    else:
-      self.parent = parent
-    self.layout = self.parent.layout()
-    if not parent:
-      self.setup()
-      self.parent.show()
-
+class NeurosurgicalPlanningTutorialMarkupsSelfTestWidget(ScriptedLoadableModuleWidget):
   def setup(self):
+    ScriptedLoadableModuleWidget.setup(self)
+
     # Instantiate and connect widgets ...
-
-    #
-    # Reload and Test area
-    #
-    reloadCollapsibleButton = ctk.ctkCollapsibleButton()
-    reloadCollapsibleButton.text = "Reload && Test"
-    self.layout.addWidget(reloadCollapsibleButton)
-    reloadFormLayout = qt.QFormLayout(reloadCollapsibleButton)
-
-    # reload button
-    # (use this during development, but remove it when delivering
-    #  your module to users)
-    self.reloadButton = qt.QPushButton("Reload")
-    self.reloadButton.toolTip = "Reload this module."
-    self.reloadButton.name = "NeurosurgicalPlanningTutorialMarkupsSelfTest Reload"
-    reloadFormLayout.addWidget(self.reloadButton)
-    self.reloadButton.connect('clicked()', self.onReload)
-
-    # reload and test button
-    # (use this during development, but remove it when delivering
-    #  your module to users)
-    self.reloadAndTestButton = qt.QPushButton("Reload and Test")
-    self.reloadAndTestButton.toolTip = "Reload this module and then run the self tests."
-    reloadFormLayout.addWidget(self.reloadAndTestButton)
-    self.reloadAndTestButton.connect('clicked()', self.onReloadAndTest)
 
     #
     # Parameters Area
@@ -127,88 +90,25 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestWidget:
     pass
 
   def onApplyButton(self):
+    logging.debug("Execute logic.run() method")
     logic = NeurosurgicalPlanningTutorialMarkupsSelfTestLogic()
-    enableScreenshotsFlag = self.enableScreenshotsFlagCheckBox.checked
-    screenshotScaleFactor = int(self.screenshotScaleFactorSliderWidget.value)
-    print("Run the logic method, enable screen shots = %s" % enableScreenshotsFlag)
-    logic.run(enableScreenshotsFlag,screenshotScaleFactor)
-
-  def onReload(self,moduleName="NeurosurgicalPlanningTutorialMarkupsSelfTest"):
-    """Generic reload method for any scripted module.
-    ModuleWizard will subsitute correct default moduleName.
-    """
-    globals()[moduleName] = slicer.util.reloadScriptedModule(moduleName)
-
-  def onReloadAndTest(self,moduleName="NeurosurgicalPlanningTutorialMarkupsSelfTest"):
-    try:
-      self.onReload()
-      evalString = 'globals()["%s"].%sTest()' % (moduleName, moduleName)
-      tester = eval(evalString)
-      tester.runTest()
-    except Exception, e:
-      import traceback
-      traceback.print_exc()
-      slicer.util.warningDisplay('Exception!\n\n' + str(e) + "\n\nSee Python Console for Stack Trace",
-                                 windowTitle="Reload and Test")
-
+    logic.enableScreenshots = self.enableScreenshotsFlagCheckBox.checked
+    logic.screenshotScaleFactor = int(self.screenshotScaleFactorSliderWidget.value)
+    logic.run()
 
 #
 # NeurosurgicalPlanningTutorialMarkupsSelfTestLogic
 #
 
-class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic:
-
+class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic(ScriptedLoadableModuleLogic):
+  """This class should implement all the actual
+  computation done by your module.  The interface
+  should be such that other python code can import
+  this class and make use of the functionality without
+  requiring an instance of the Widget
+  """
   def __init__(self):
-    pass
-
-  def delayDisplay(self,message,msec=1000):
-    print(message)
-    self.info = qt.QDialog()
-    self.infoLayout = qt.QVBoxLayout()
-    self.info.setLayout(self.infoLayout)
-    self.label = qt.QLabel(message,self.info)
-    self.infoLayout.addWidget(self.label)
-    qt.QTimer.singleShot(msec, self.info.close)
-    self.info.exec_()
-
-  def takeScreenshot(self,name,description,type=-1):
-    # show the message even if not taking a screen shot
-    self.delayDisplay(description)
-
-    if self.enableScreenshots == 0:
-      return
-
-    lm = slicer.app.layoutManager()
-    # switch on the type to get the requested window
-    widget = 0
-    if type == slicer.qMRMLScreenShotDialog.FullLayout:
-      # full layout
-      widget = lm.viewport()
-    elif type == slicer.qMRMLScreenShotDialog.ThreeD:
-      # just the 3D window
-      widget = lm.threeDWidget(0).threeDView()
-    elif type == slicer.qMRMLScreenShotDialog.Red:
-      # red slice window
-      widget = lm.sliceWidget("Red")
-    elif type == slicer.qMRMLScreenShotDialog.Yellow:
-      # yellow slice window
-      widget = lm.sliceWidget("Yellow")
-    elif type == slicer.qMRMLScreenShotDialog.Green:
-      # green slice window
-      widget = lm.sliceWidget("Green")
-    else:
-      # default to using the full window
-      widget = slicer.util.mainWindow()
-      # reset the type so that the node is set correctly
-      type = slicer.qMRMLScreenShotDialog.FullLayout
-
-    # grab and convert to vtk image data
-    qimage = ctk.ctkWidgetsUtils.grabWidget(widget)
-    imageData = vtk.vtkImageData()
-    slicer.qMRMLUtils().qImageToVtkImageData(qimage,imageData)
-
-    annotationLogic = slicer.modules.annotations.logic()
-    annotationLogic.CreateSnapShot(name, description, type, self.screenshotScaleFactor, imageData)
+    ScriptedLoadableModuleLogic.__init__(self, parent)
 
   #
   # for the red slice widget, convert the background volume's RAS
@@ -230,54 +130,50 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic:
     worldCoords = [r, a, s, 1.0]
     rasToXyMatrix.MultiplyPoint(worldCoords, displayCoords)
 
-    return displayCoords
+    return (int(displayCoords[0]), int(displayCoords[1]))
 
-  def run(self,enableScreenshots=0,screenshotScaleFactor=1):
+  def run(self):
     """
     Run the actual algorithm
     """
-    self.delayDisplay('Running test of the Neurosurgical Planning tutorial')
-
-    self.enableScreenshots = enableScreenshots
-    self.screenshotScaleFactor = screenshotScaleFactor
+    slicer.util.delayDisplay('Running test of the Neurosurgical Planning tutorial')
 
     # conventional layout
     lm = slicer.app.layoutManager()
-    lm.setLayout(2)
+    lm.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalView)
 
-    moduleSelector = slicer.util.mainWindow().moduleSelector()
     #
     # first load the data
     #
-    if self.enableScreenshots == 1:
+    if self.enableScreenshots:
       # for the tutorial, do it through the welcome module
-      moduleSelector.selectModule('Welcome')
-      self.delayDisplay("Screenshot")
-      self.takeScreenshot('NeurosurgicalPlanning-Welcome','Welcome module',-1)
+      slicer.util.selectModule('Welcome')
+      slicer.util.delayDisplay("Screenshot")
+      self.takeScreenshot('NeurosurgicalPlanning-Welcome','Welcome module')
     else:
       # otherwise show the sample data module
-      moduleSelector.selectModule('SampleData')
+      slicer.util.selectModule('SampleData')
 
     # use the sample data module logic to load data for the self test
     import SampleData
     sampleDataLogic = SampleData.SampleDataLogic()
 
-    self.delayDisplay("Getting Baseline volume")
+    slicer.util.delayDisplay("Getting Baseline volume")
     baselineVolume = sampleDataLogic.downloadWhiteMatterExplorationBaselineVolume()
 
-    self.takeScreenshot('NeurosurgicalPlanning-Loaded','Data loaded',-1)
+    self.takeScreenshot('NeurosurgicalPlanning-Loaded','Data loaded')
 
     #
     # link the viewers
     #
 
-    if self.enableScreenshots == 1:
+    if self.enableScreenshots:
       # for the tutorial, pop up the linking control
       sliceController = slicer.app.layoutManager().sliceWidget("Red").sliceController()
       popupWidget = sliceController.findChild("ctkPopupWidget")
       if popupWidget is not None:
         popupWidget.pinPopup(1)
-        self.takeScreenshot('NeurosurgicalPlanning-Link','Link slice viewers',-1)
+        self.takeScreenshot('NeurosurgicalPlanning-Link','Link slice viewers')
         popupWidget.pinPopup(0)
 
     sliceLogic = slicer.app.layoutManager().sliceWidget('Red').sliceLogic()
@@ -289,47 +185,57 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic:
     #
     sliceLogic.StartSliceCompositeNodeInteraction(1)
     compositeNode.SetBackgroundVolumeID(baselineVolume.GetID())
+    slicer.app.processEvents()
+    sliceLogic.FitSliceToAll()
     sliceLogic.EndSliceCompositeNodeInteraction()
-
-    self.takeScreenshot('NeurosurgicalPlanning-Baseline','Baseline in background',-1)
+    self.takeScreenshot('NeurosurgicalPlanning-Baseline','Baseline in background')
 
     #
     # adjust window level on baseline
     #
-    moduleSelector.selectModule('Volumes')
+    slicer.util.selectModule('Volumes')
     baselineDisplay = baselineVolume.GetDisplayNode()
     baselineDisplay.SetAutoWindowLevel(0)
     baselineDisplay.SetWindow(2600)
     baselineDisplay.SetLevel(1206)
-    self.takeScreenshot('NeurosurgicalPlanning-WindowLevel','Set W/L on baseline',-1)
+    self.takeScreenshot('NeurosurgicalPlanning-WindowLevel','Set W/L on baseline')
 
     #
     # switch to red slice only
     #
-    lm.setLayout(6)
-    self.takeScreenshot('NeurosurgicalPlanning-RedSliceOnly','Set layout to Red Slice only',-1)
+    lm.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutOneUpRedSliceView)
+    slicer.app.processEvents()
+    sliceLogic.FitSliceToAll()
+    self.takeScreenshot('NeurosurgicalPlanning-RedSliceOnly','Set layout to Red Slice only')
 
     #
     # segmentation of tumour
     #
 
-    #
-    # create a label map and set it for editing
-    #
-    volumesLogic = slicer.modules.volumes.logic()
-    baselineVolumeLabel =  volumesLogic.CreateAndAddLabelVolume( slicer.mrmlScene, baselineVolume, baselineVolume.GetName() + '-label' )
-    baselineDisplayNode = baselineVolumeLabel.GetDisplayNode()
-    baselineDisplayNode.SetAndObserveColorNodeID('vtkMRMLColorTableNodeFileGenericAnatomyColors.txt')
-    selectionNode = slicer.app.applicationLogic().GetSelectionNode()
-    selectionNode.SetReferenceActiveVolumeID(baselineVolume.GetID())
-    selectionNode.SetReferenceActiveLabelVolumeID(baselineVolumeLabel.GetID())
-    slicer.app.applicationLogic().PropagateVolumeSelection(0)
+    # Create segmentation
+    segmentationNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSegmentationNode", baselineVolume.GetName() + '-segmentation')
+    segmentationNode.CreateDefaultDisplayNodes()
+    segmentationNode.SetReferenceImageGeometryParameterFromVolumeNode(baselineVolume)
 
     #
-    # editor module
+    # segment editor module
     #
-    moduleSelector.selectModule('Editor')
-    self.takeScreenshot('NeurosurgicalPlanning-Editor','Showing Editor Module',-1)
+    slicer.util.selectModule('SegmentEditor')
+    segmentEditorWidget = slicer.modules.segmenteditor.widgetRepresentation().self().editor
+    segmentEditorNode = segmentEditorWidget.mrmlSegmentEditorNode()
+    segmentEditorNode.SetAndObserveSegmentationNode(segmentationNode)
+    segmentEditorNode.SetAndObserveMasterVolumeNode(baselineVolume)
+
+    # create segments
+    region1SegmentId = segmentationNode.GetSegmentation().AddEmptySegment("Tumor-cystic")
+    region2SegmentId = segmentationNode.GetSegmentation().AddEmptySegment("Tumor-solid")
+    backgroundSegmentId = segmentationNode.GetSegmentation().AddEmptySegment("Background")
+    ventriclesSegmentId = segmentationNode.GetSegmentation().AddEmptySegment("Ventricles")
+    segmentEditorNode.SetSelectedSegmentID(region1SegmentId)
+    # Make segmentation results visible in 3D
+    segmentationNode.CreateClosedSurfaceRepresentation()
+
+    self.takeScreenshot('NeurosurgicalPlanning-Editor','Showing Editor Module')
 
     # set the slice offset so drawing is right
     sliceNode = sliceLogic.GetSliceNode()
@@ -339,176 +245,128 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic:
     #
     # paint
     #
-    parameterNode = EditUtil.getParameterNode()
-    paintEffect = EditorLib.PaintEffectOptions()
-    paintEffect.setMRMLDefaults()
-    paintEffect.__del__()
-    sliceWidget = lm.sliceWidget('Red')
-    paintTool = EditorLib.PaintEffectTool(sliceWidget)
-    self.takeScreenshot('NeurosurgicalPlanning-Paint','Paint tool in Editor Module',-1)
+    segmentEditorWidget.setActiveEffectByName("Paint")
+    paintEffect = segmentEditorWidget.activeEffect()
+    paintEffect.setParameter("BrushDiameterIsRelative", 0)
+    paintEffect.setParameter("BrushAbsoluteDiameter", 4.0)
+
+    self.takeScreenshot('NeurosurgicalPlanning-Paint','Paint tool in Editor Module')
 
     #
-    # paint in cystic part of tumor, using converstion from RAS coords to
+    # paint in cystic part of tumor, using conversion from RAS coords to
     # avoid slice widget size differences
     #
-    EditUtil.setLabel(293)
-    displayCoords = self.rasToDisplay(-7.4, 71, sliceOffset)
-    paintTool.paintAddPoint(displayCoords[0], displayCoords[1])
-    displayCoords = self.rasToDisplay(-11, 73, sliceOffset)
-    paintTool.paintAddPoint(displayCoords[0], displayCoords[1])
-    displayCoords = self.rasToDisplay(-12, 85, sliceOffset)
-    paintTool.paintAddPoint(displayCoords[0], displayCoords[1])
-    displayCoords = self.rasToDisplay(-13, 91, sliceOffset)
-    paintTool.paintAddPoint(displayCoords[0], displayCoords[1])
-    displayCoords = self.rasToDisplay(-15, 78, sliceOffset)
-    paintTool.paintAddPoint(displayCoords[0], displayCoords[1])
-    paintTool.paintApply()
-    self.takeScreenshot('NeurosurgicalPlanning-PaintCystic','Paint cystic part of tumor',-1)
+    segmentEditorNode.SetSelectedSegmentID(region1SegmentId)
+
+    clickCoordsList = [
+      [-7.4, 71, sliceOffset],
+      [-11, 73, sliceOffset],
+      [-12, 85, sliceOffset],
+      [-13, 91, sliceOffset],
+      [-15, 78, sliceOffset]]
+    sliceWidget = lm.sliceWidget('Red')
+    currentCoords = None
+    for clickCoords in clickCoordsList:
+      if currentCoords:
+        slicer.util.clickAndDrag(sliceWidget, start=self.rasToDisplay(*currentCoords), end=self.rasToDisplay(*clickCoords), steps=10)
+      currentCoords = clickCoords
+
+    self.takeScreenshot('NeurosurgicalPlanning-PaintCystic','Paint cystic part of tumor')
 
     #
     # paint in solid part of tumor
     #
-    EditUtil.setLabel(7)
-    displayCoords = self.rasToDisplay(-0.5 , 118.5, sliceOffset)
-    paintTool.paintAddPoint(displayCoords[0], displayCoords[1])
-    displayCoords = self.rasToDisplay(-7.4 , 116, sliceOffset)
-    paintTool.paintAddPoint(displayCoords[0], displayCoords[1])
-    paintTool.paintApply()
-    self.takeScreenshot('NeurosurgicalPlanning-PaintSolid','Paint solid part of tumor',-1)
+    segmentEditorNode.SetSelectedSegmentID(region2SegmentId)
+    slicer.util.clickAndDrag(sliceWidget, start=self.rasToDisplay(-0.5, 118.5, sliceOffset), end=self.rasToDisplay(-7.4, 116, sliceOffset), steps=10)
+    self.takeScreenshot('NeurosurgicalPlanning-PaintSolid','Paint solid part of tumor')
 
     #
     # paint around the tumor
     #
-    EditUtil.setLabel(295)
-    rMax = 25
-    rMin = -50
-    aMax = 145
-    aMin = 50
-    rasStep = 5
-
-    # draw the top and bottom
-    for r in range(rMin, rMax, rasStep):
-      displayCoords = self.rasToDisplay(r, aMin, sliceOffset)
-      paintTool.paintAddPoint(displayCoords[0], displayCoords[1])
-      displayCoords = self.rasToDisplay(r, aMax, sliceOffset)
-      paintTool.paintAddPoint(displayCoords[0], displayCoords[1])
-    # draw the left and right
-    for a in range(aMin, aMax, rasStep):
-      displayCoords = self.rasToDisplay(rMin, a, sliceOffset)
-      paintTool.paintAddPoint(displayCoords[0], displayCoords[1])
-      displayCoords = self.rasToDisplay(rMax, a, sliceOffset)
-      paintTool.paintAddPoint(displayCoords[0], displayCoords[1])
-
-    paintTool.paintApply()
-
-    self.takeScreenshot('NeurosurgicalPlanning-PaintAround','Paint around tumor',-1)
-    #
-    # clean up after painting
-    #
-    paintTool.cleanup()
-    paintTool = None
+    segmentEditorNode.SetSelectedSegmentID(backgroundSegmentId)
+    clickCoordsList = [
+      [-40, 50, sliceOffset],
+      [ 30, 50, sliceOffset],
+      [ 30, 145, sliceOffset],
+      [-40, 145, sliceOffset],
+      [-40, 50, sliceOffset]]
+    sliceWidget = lm.sliceWidget('Red')
+    currentCoords = None
+    for clickCoords in clickCoordsList:
+      if currentCoords:
+        slicer.util.clickAndDrag(sliceWidget, start=self.rasToDisplay(*currentCoords), end=self.rasToDisplay(*clickCoords), steps=30)
+      currentCoords = clickCoords
+    self.takeScreenshot('NeurosurgicalPlanning-PaintAround','Paint around tumor')
 
     #
     # Grow cut
     #
-    growCutLogic = EditorLib.GrowCutEffectLogic(sliceWidget.sliceLogic())
-    growCutLogic.growCut()
-    self.takeScreenshot('NeurosurgicalPlanning-Growcut','Growcut',-1)
+    segmentEditorWidget.setActiveEffectByName("Grow from seeds")
+    effect = segmentEditorWidget.activeEffect()
+    effect.self().onPreview()
+    effect.self().onApply()
+    self.takeScreenshot('NeurosurgicalPlanning-Growcut','Growcut')
 
-    #
-    # Merge split volume
-    #
-    slicer.util.selectModule('Editor')
-    slicer.util.findChildren(text='Split Merge Volume')[0].clicked()
-    self.takeScreenshot('NeurosurgicalPlanning-SplitMerge','SplitMerge',-1)
+    #segmentationNode.RemoveSegment(backgroundSegmentId)
 
     #
     # go to the data module
     #
-    moduleSelector.selectModule('Data')
-    self.takeScreenshot('NeurosurgicalPlanning-SplitMergeData','SplitMerge results in Data',-1)
+    slicer.util.selectModule('Data')
+    self.takeScreenshot('NeurosurgicalPlanning-GrowCutData','GrowCut segmentation results in Data')
 
     #
     # Ventricles Segmentation
     #
 
-    moduleSelector.selectModule('Editor')
-    #
-    # select the label volume with the area around the tumor
-    slicer.util.findChildren(name='PerStructureVolumesFrame')[0].collapsed = False
-    treeView = slicer.util.findChildren(name='StructuresView')[0]
-    selection = qt.QItemSelection()
-    # selecting the last split volume in the third row
-    row = 2
-    rowStart = treeView.model().index(row,0)
-    rowEnd = treeView.model().index(row,treeView.model().columnCount() - 1)
-    # rowSel = qt.QItemSelection(rowStart, rowEnd)
-    selection.select(rowStart, rowEnd)
-    # backup: select the label map in the slice logic too
-    baselinelabel295 = slicer.mrmlScene.GetFirstNodeByName("BaselineVolume-region 3-label")
-    sliceLogic.StartSliceCompositeNodeInteraction(1)
-    compositeNode.SetLabelVolumeID(baselinelabel295.GetID())
-    sliceLogic.EndSliceCompositeNodeInteraction()
-    self.takeScreenshot('NeurosurgicalPlanning-SelOutside','Select outside region',-1)
+    slicer.util.selectModule('SegmentEditor')
 
-    #
-    # Threshold tool
-    #
-    slicer.modules.EditorWidget.toolsBox.selectEffect('ThresholdEffect')
-    parameterNode = EditUtil.getParameterNode()
-    parameterNode.SetParameter('ThresholdEffect,min', str(1700))
-    slicer.modules.EditorWidget.toolsBox.currentTools[0].apply()
-    self.takeScreenshot('NeurosurgicalPlanning-Ventricles','Ventricles segmentation',-1)
+    segmentEditorNode.SetSelectedSegmentID(ventriclesSegmentId)
+    segmentEditorNode.SetOverwriteMode(slicer.vtkMRMLSegmentEditorNode.OverwriteNone)
+
+    # Thresholding
+    segmentEditorWidget.setActiveEffectByName("Threshold")
+    effect = segmentEditorWidget.activeEffect()
+    effect.setParameter("MinimumThreshold","1700")
+    #effect.setParameter("MaximumThreshold","695")
+    effect.self().onApply()
+    self.takeScreenshot('NeurosurgicalPlanning-Ventricles','Ventricles segmentation')
 
     #
     # Save Islands
     #
-    slicer.modules.EditorWidget.toolsBox.selectEffect('SaveIslandEffect')
-    saveIslandLogic = EditorLib.SaveIslandEffectLogic(sliceWidget.sliceLogic())
-    displayCoords = self.rasToDisplay(25.3, 5.8, sliceOffset)
-    xy = (displayCoords[0], displayCoords[1])
-    saveIslandLogic.saveIsland(xy)
-    self.takeScreenshot('NeurosurgicalPlanning-SaveIsland','Ventricles save island',-1)
-
-    #
-    # Merge and build
-    #
-    slicer.util.findChildren(text='Merge And Build')[0].clicked()
+    segmentEditorWidget.setActiveEffectByName("Islands")
+    effect = segmentEditorWidget.activeEffect()
+    effect.setParameter("Operation","KEEP_SELECTED_ISLAND")
+    slicer.util.clickAndDrag(sliceWidget, start=self.rasToDisplay(25.3, 5.8, sliceOffset), end=self.rasToDisplay(25.3, 5.8, sliceOffset), steps=1)
+    self.takeScreenshot('NeurosurgicalPlanning-SaveIsland','Ventricles save island')
 
     #
     # switch to conventional layout
     #
-    lm.setLayout(2)
-    self.takeScreenshot('NeurosurgicalPlanning-MergeAndBuild','Merged and built models',-1)
+    lm.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalView)
+    self.takeScreenshot('NeurosurgicalPlanning-MergeAndBuild','Merged and built models')
 
     #
-    # select label volume with label 293, in the second row
+    # Smoothing
     #
-    row = 1
-    rowStart = treeView.model().index(row,0)
-    rowEnd = treeView.model().index(row,treeView.model().columnCount() - 1)
-    # rowSel = qt.QItemSelection(rowStart, rowEnd)
-    selection.select(rowStart, rowEnd)
-    # backup: select the label map in the slice logic too
-    baselinelabel293 = slicer.mrmlScene.GetFirstNodeByName("BaselineVolume-region 1-label")
-    sliceLogic.StartSliceCompositeNodeInteraction(1)
-    compositeNode.SetLabelVolumeID(baselinelabel293.GetID())
-    sliceLogic.EndSliceCompositeNodeInteraction()
-    self.takeScreenshot('NeurosurgicalPlanning-SelCystic','Select cystic region',-1)
+    segmentEditorNode.SetSelectedSegmentID(region2SegmentId)
+    segmentEditorWidget.setActiveEffectByName("Smoothing")
+    effect = segmentEditorWidget.activeEffect()
+    effect.setParameter("SmoothingMethod", "MEDIAN")
+    effect.setParameter("KernelSizeMm", 5)
+    effect.self().onApply()
+    self.takeScreenshot('NeurosurgicalPlanning-Smoothed','Smoothed cystic region')
 
     #
-    # Dilate
+    # Dilation
     #
-    slicer.modules.EditorWidget.toolsBox.selectEffect('DilateEffect')
-    EditUtil.setLabel(293)
-    self.takeScreenshot('NeurosurgicalPlanning-Dilate','Dilate tool',-1)
-    # tutorial says to click apply three times
-    for d in range (1,3):
-      print d
-      # slicer.util.findChildren(name='DilateEffectOptionsApply')[0].clicked()
-      # slicer.modules.EditorWidget.toolsBox.currentTools[0].apply()
-      slicer.modules.EditorWidget.toolsBox.currentOption.onApply()
-    self.takeScreenshot('NeurosurgicalPlanning-Dilated','Dilated tumor',-1)
+    segmentEditorNode.SetSelectedSegmentID(region1SegmentId)
+    segmentEditorWidget.setActiveEffectByName("Margin")
+    effect = segmentEditorWidget.activeEffect()
+    effect.setParameter("MarginSizeMm", 3.0)
+    effect.self().onApply()
+    self.takeScreenshot('NeurosurgicalPlanning-Dilated','Dilated tumor')
 
     return True
 
@@ -518,30 +376,13 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestTest(unittest.TestCase):
   This is the test case for your scripted module.
   """
 
-  def delayDisplay(self,message,msec=1000):
-    """This utility method displays a small dialog and waits.
-    This does two things: 1) it lets the event loop catch up
-    to the state of the test so that rendering and widget updates
-    have all taken place before the test continues and 2) it
-    shows the user/developer/tester the state of the test
-    so that we'll know when it breaks.
-    """
-    print(message)
-    self.info = qt.QDialog()
-    self.infoLayout = qt.QVBoxLayout()
-    self.info.setLayout(self.infoLayout)
-    self.label = qt.QLabel(message,self.info)
-    self.infoLayout.addWidget(self.label)
-    qt.QTimer.singleShot(msec, self.info.close)
-    self.info.exec_()
-
   def setUp(self):
     """ Do whatever is needed to reset the state - typically a scene clear will be enough.
     """
     slicer.mrmlScene.Clear(0)
     # reset to conventional layout
     lm = slicer.app.layoutManager()
-    lm.setLayout(2)
+    lm.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalView)
 
   def runTest(self):
     """Run as few or as many tests as needed here.
@@ -551,7 +392,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestTest(unittest.TestCase):
 
   def test_NeurosurgicalPlanningTutorialMarkupsSelfTest1(self):
 
-    self.delayDisplay("Starting the Neurosurgical Planning Tutorial Markups test")
+    slicer.util.delayDisplay("Starting the Neurosurgical Planning Tutorial Markups test")
 
     # start in the welcome module
     m = slicer.util.mainWindow()
@@ -560,4 +401,4 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestTest(unittest.TestCase):
     logic = NeurosurgicalPlanningTutorialMarkupsSelfTestLogic()
     logic.run()
 
-    self.delayDisplay('Test passed!')
+    slicer.util.delayDisplay('Test passed!')
