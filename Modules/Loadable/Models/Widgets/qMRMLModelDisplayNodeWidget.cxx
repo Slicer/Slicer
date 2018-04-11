@@ -87,6 +87,9 @@ void qMRMLModelDisplayNodeWidgetPrivate::init()
     q, SLOT(setVisibility(bool)));
   q->connect(this->ClippingCheckBox, SIGNAL(toggled(bool)),
     q, SLOT(setClipping(bool)));
+  q->connect(this->ConfigureClippingPushButton, SIGNAL(clicked()),
+    q, SIGNAL(clippingConfigurationButtonClicked()));
+  this->ConfigureClippingPushButton->setVisible(false);
 
   q->connect(this->SliceIntersectionVisibilityCheckBox, SIGNAL(toggled(bool)),
     q, SLOT(setSliceIntersectionVisible(bool)));
@@ -237,6 +240,10 @@ void qMRMLModelDisplayNodeWidget::setMRMLModelDisplayNode(vtkMRMLNode* node)
 void qMRMLModelDisplayNodeWidget::setMRMLModelDisplayNode(vtkMRMLModelDisplayNode* ModelDisplayNode)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
+  if (d->MRMLModelDisplayNode == ModelDisplayNode)
+    {
+    return;
+    }
   qvtkReconnect(d->MRMLModelDisplayNode, ModelDisplayNode, vtkCommand::ModifiedEvent,
                 this, SLOT(updateWidgetFromMRML()));
   d->MRMLModelDisplayNode = ModelDisplayNode;
@@ -510,6 +517,7 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
   this->setEnabled(d->MRMLModelDisplayNode.GetPointer() != 0);
   if (!d->MRMLModelDisplayNode.GetPointer())
     {
+    emit displayNodeChanged();
     return;
     }
 
@@ -720,6 +728,7 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
     }
 
   d->ScalarsColorNodeComboBox->blockSignals(wasBlocking);
+  emit displayNodeChanged();
 }
 
 //------------------------------------------------------------------------------
@@ -761,6 +770,7 @@ void qMRMLModelDisplayNodeWidget::setClipping(bool clip)
     return;
     }
   d->MRMLModelDisplayNode->SetClipping(clip);
+  emit clippingToggled(clip);
 }
 
 //------------------------------------------------------------------------------
@@ -1021,4 +1031,18 @@ void qMRMLModelDisplayNodeWidget::setDistanceToColorNode(vtkMRMLNode* colorNode)
     }
   d->MRMLModelDisplayNode->SetAndObserveDistanceEncodedProjectionColorNodeID(
     colorNode ? colorNode->GetID() : NULL);
+}
+
+// --------------------------------------------------------------------------
+bool qMRMLModelDisplayNodeWidget::clippingConfigurationButtonVisible()const
+{
+  Q_D(const qMRMLModelDisplayNodeWidget);
+  return d->ConfigureClippingPushButton->isVisible();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLModelDisplayNodeWidget::setClippingConfigurationButtonVisible(bool show)
+{
+  Q_D(qMRMLModelDisplayNodeWidget);
+  d->ConfigureClippingPushButton->setVisible(show);
 }

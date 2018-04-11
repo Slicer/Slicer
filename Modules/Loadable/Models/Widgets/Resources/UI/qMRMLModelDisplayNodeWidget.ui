@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>297</width>
-    <height>464</height>
+    <height>476</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -252,16 +252,6 @@
         </layout>
        </widget>
       </item>
-      <item row="3" column="1">
-       <widget class="QCheckBox" name="ClippingCheckBox">
-        <property name="toolTip">
-         <string>Hide part of the model according to Clipping Planes settings.</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
       <item row="3" column="0">
        <widget class="QLabel" name="ClippingLabel">
         <property name="text">
@@ -297,6 +287,49 @@
          <string>Visible Sides:</string>
         </property>
        </widget>
+      </item>
+      <item row="3" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QCheckBox" name="ClippingCheckBox">
+          <property name="toolTip">
+           <string>Hide part of the model according to Clipping Planes settings.</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="ConfigureClippingPushButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Configure clipping planes</string>
+          </property>
+          <property name="text">
+           <string>Configure...</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>

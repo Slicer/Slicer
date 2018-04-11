@@ -56,6 +56,9 @@ public slots:
   void onCurrentNodeChanged(vtkMRMLNode* newCurrentNode);
   void includeFiberBundles(bool include);
   void onDisplayClassChanged(int index);
+  void onClippingConfigurationButtonClicked();
+  void onDisplayNodeChanged();
+  void onClipSelectedModelToggled(bool);
 
   static void onMRMLSceneEvent(vtkObject* vtk_obj, unsigned long event,
                                void* client_data, void* call_data);

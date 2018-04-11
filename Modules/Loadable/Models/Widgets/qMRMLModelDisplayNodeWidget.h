@@ -45,6 +45,7 @@ class Q_SLICER_QTMODULES_MODELS_WIDGETS_EXPORT qMRMLModelDisplayNodeWidget : pub
   Q_PROPERTY(ControlMode scalarRangeMode READ scalarRangeMode WRITE setScalarRangeMode)
   Q_PROPERTY(double minimumValue READ minimumValue WRITE setMinimumValue)
   Q_PROPERTY(double maximumValue READ maximumValue WRITE setMaximumValue)
+  Q_PROPERTY(bool clippingConfigurationButtonVisible READ clippingConfigurationButtonVisible WRITE setClippingConfigurationButtonVisible)
   Q_ENUMS(ControlMode)
 
 public:
@@ -60,6 +61,7 @@ public:
   bool sliceIntersectionVisible()const;
   int sliceIntersectionThickness()const;
   double sliceIntersectionOpacity()const;
+  bool clippingConfigurationButtonVisible()const;
 
   bool scalarsVisibility()const;
   QString activeScalarName()const;
@@ -90,6 +92,15 @@ signals:
   ///
   /// Signal sent if the auto/manual value is updated
   void scalarRangeModeValueChanged(ControlMode value);
+  ///
+  /// Signal sent if the any property in the display node is changed
+  void displayNodeChanged();
+  ///
+  /// Signal sent if user toggles clipping checkbox on the GUI
+  void clippingToggled(bool);
+  ///
+  /// Signal sent if clipping configuration button is clicked
+  void clippingConfigurationButtonClicked();
 
 public slots:
   /// Set the volume node to display
@@ -135,6 +146,9 @@ public slots:
   /// Set min/max of scalar range
   void setMinimumValue(double min);
   void setMaximumValue(double max);
+
+  /// Show/hide "Configure..." button for clipping
+  void setClippingConfigurationButtonVisible(bool);
 
 protected slots:
   void updateWidgetFromMRML();

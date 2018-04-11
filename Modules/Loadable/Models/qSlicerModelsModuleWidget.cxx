@@ -23,6 +23,7 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QModelIndex>
+#include <QScrollArea>
 
 #include <vtkCallbackCommand.h>
 
@@ -107,6 +108,8 @@ void qSlicerModelsModuleWidget::setup()
 
   d->setupUi(this);
 
+  d->ModelDisplayWidget->setEnabled(false);
+
   d->ClipModelsNodeComboBox->setVisible(false);
 
   d->DisplayClassTabWidget->setVisible(false);
@@ -145,6 +148,20 @@ void qSlicerModelsModuleWidget::setup()
 
   connect( d->DisplayClassTabWidget, SIGNAL(currentChanged(int)),
            this, SLOT(onDisplayClassChanged(int)) );
+
+  connect(d->ModelDisplayWidget, SIGNAL(clippingToggled(bool)),
+    this, SLOT(onClipSelectedModelToggled(bool)));
+
+  connect(d->ModelDisplayWidget, SIGNAL(clippingConfigurationButtonClicked()),
+    this, SLOT(onClippingConfigurationButtonClicked()));
+
+  // add an add hierarchy right click action on the scene and hierarchy nodes
+  connect(d->ModelDisplayWidget, SIGNAL(displayNodeChanged()),
+    this, SLOT(onDisplayNodeChanged()));
+
+  connect(d->ClipSelectedModelCheckBox, SIGNAL(toggled(bool)),
+    this, SLOT(onClipSelectedModelToggled(bool)));
+
 
   this->updateTreeViewModel();
 
@@ -591,4 +608,61 @@ bool qSlicerModelsModuleWidget::setEditedNode(vtkMRMLNode* node,
     }
 
   return false;
+}
+
+//-----------------------------------------------------------
+void qSlicerModelsModuleWidget::onClippingConfigurationButtonClicked()
+{
+  Q_D(qSlicerModelsModuleWidget);
+  d->ClippingButton->setCollapsed(false);
+  // Make sure import/export is visible
+  if (this->parent() && this->parent()->parent() && this->parent()->parent()->parent())
+    {
+    QScrollArea* scrollArea = qobject_cast<QScrollArea*>(this->parent()->parent()->parent());
+    if (scrollArea)
+      {
+      scrollArea->ensureWidgetVisible(d->ClippingButton);
+      }
+    }
+}
+
+//-----------------------------------------------------------
+void qSlicerModelsModuleWidget::onDisplayNodeChanged()
+{
+  Q_D(qSlicerModelsModuleWidget);
+  vtkMRMLModelDisplayNode* displayNode = d->ModelDisplayWidget->mrmlModelDisplayNode();
+  bool wasBlocked = d->ClipSelectedModelCheckBox->blockSignals(true);
+  d->ClipSelectedModelLabel->setEnabled(displayNode != NULL);
+  d->ClipSelectedModelCheckBox->setEnabled(displayNode != NULL);
+  d->ClipSelectedModelCheckBox->setChecked(displayNode != NULL && displayNode->GetClipping());
+  d->ClipSelectedModelCheckBox->blockSignals(wasBlocked);
+}
+
+//-----------------------------------------------------------
+void qSlicerModelsModuleWidget::onClipSelectedModelToggled(bool toggled)
+{
+  Q_D(qSlicerModelsModuleWidget);
+  vtkMRMLModelDisplayNode* displayNode = d->ModelDisplayWidget->mrmlModelDisplayNode();
+  if (displayNode)
+    {
+    int wasModified = displayNode->StartModify();
+    displayNode->SetClipping(toggled);
+    // By enabling clipping, backfaces may become visible.
+    // Therefore, it is better to render them (not cull them).
+    if (toggled)
+      {
+      displayNode->BackfaceCullingOff();
+      displayNode->FrontfaceCullingOff();
+      if (d->MRMLClipNodeWidget->mrmlClipNode() != NULL
+        && d->MRMLClipNodeWidget->redSliceClipState() == vtkMRMLClipModelsNode::ClipOff
+        && d->MRMLClipNodeWidget->greenSliceClipState() == vtkMRMLClipModelsNode::ClipOff
+        && d->MRMLClipNodeWidget->yellowSliceClipState() == vtkMRMLClipModelsNode::ClipOff)
+        {
+        // All clipping planes are disabled.
+        // Enable the first clipping plane to show a clipped model to the user.
+        d->MRMLClipNodeWidget->setRedSliceClipState(vtkMRMLClipModelsNode::ClipPositiveSpace);
+        }
+      }
+    displayNode->EndModify(wasModified);
+    }
 }

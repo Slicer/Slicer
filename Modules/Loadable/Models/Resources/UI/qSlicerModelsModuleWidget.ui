@@ -216,6 +216,9 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="clippingConfigurationButtonVisible">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
      </layout>
@@ -247,9 +250,29 @@
      <property name="collapsed" stdset="0">
       <bool>true</bool>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_4">
-      <item>
-       <widget class="qMRMLClipNodeWidget" name="MRMLClipNodeWidget" native="true"/>
+     <layout class="QFormLayout" name="formLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="ClipSelectedModelLabel">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Clip selected model:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QCheckBox" name="ClipSelectedModelCheckBox">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="2">
+       <widget class="qMRMLClipNodeWidget" name="MRMLClipNodeWidget"/>
       </item>
      </layout>
     </widget>
