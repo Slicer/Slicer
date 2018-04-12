@@ -40,6 +40,9 @@ public:
   /// Returns \a true if the \a filePath matches the CLI executable file name requirements
   static bool isCLIExecutable(const QString& filePath);
 
+  /// Returns \a true if the \a filePath matches scripted CLI requirements
+  static bool isCLIScriptedExecutable(const QString& filePath);
+
   /// Returns \a true if the \a filePath matches the CLI loadable module file name requirements.
   /// \note Associated \a fileName is expected to match the following
   /// regular expression: "(lib)?.+Lib\\.(dll|DLL|so|dylib)"

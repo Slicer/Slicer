@@ -162,14 +162,7 @@ bool qSlicerScriptedLoadableModuleFactory::isValidFile(const QFileInfo& file)con
     return false;
     }
 
-  // Skip the file if it begins with '#!' -- these are Python CLI scripts
-  //   note: uses QTextStream to avoid issues with BOM.
-  QFile scriptFile(file.filePath());
-  QTextStream scriptStream(&scriptFile);
-
-  if ( (file.filePath().endsWith(".py", Qt::CaseInsensitive)) &&
-       (scriptFile.open(QIODevice::ReadOnly))             &&
-       (scriptStream.readLine(2).startsWith("#!")) )
+  if (qSlicerUtils::isCLIScriptedExecutable(file.filePath()))
     {
     return false;
     }
