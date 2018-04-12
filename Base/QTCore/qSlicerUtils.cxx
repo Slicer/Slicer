@@ -51,6 +51,18 @@ bool qSlicerUtils::isExecutableName(const QString& name)
 //------------------------------------------------------------------------------
 bool qSlicerUtils::isCLIExecutable(const QString& filePath)
 {
+  // check if .py file starts with `#!` magic
+  //   note: uses QTextStream to avoid issues with BOM.
+  QFile scriptFile(filePath);
+  QTextStream scriptStream(&scriptFile);
+
+  if ( (filePath.endsWith(".py", Qt::CaseInsensitive)) &&
+       (scriptFile.open(QIODevice::ReadOnly))          &&
+       (scriptStream.readLine(2).startsWith("#!")) )
+    {
+    return true;
+    }
+
 #ifdef _WIN32
   return ( filePath.endsWith(".exe", Qt::CaseInsensitive) ||
            filePath.endsWith(".bat", Qt::CaseInsensitive) );

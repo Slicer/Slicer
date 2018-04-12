@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QProcess>
+#include <QStandardPaths>
 
 // SlicerQt includes
 #include "qSlicerCLIExecutableModuleFactory.h"
@@ -27,6 +28,23 @@
 #include "qSlicerCLIModuleFactoryHelper.h"
 #include "qSlicerUtils.h"
 #include <vtkSlicerCLIModuleLogic.h>
+
+//-----------------------------------------------------------------------------
+QString findPython()
+{
+  QString python_path = QStandardPaths::findExecutable("python-real");
+  if (python_path.isEmpty())
+    {
+    python_path = QStandardPaths::findExecutable("python");
+    }
+
+  QFileInfo python(python_path);
+  if (!(python.exists() && python.isExecutable()))
+    {
+    return QString();
+    }
+  return python_path;
+}
 
 //-----------------------------------------------------------------------------
 qSlicerCLIExecutableModuleFactoryItem::qSlicerCLIExecutableModuleFactoryItem(
@@ -55,6 +73,23 @@ qSlicerAbstractCoreModule* qSlicerCLIExecutableModuleFactoryItem::instanciator()
   QScopedPointer<qSlicerCLIModule> module(new qSlicerCLIModule());
   module->setModuleType("CommandLineModule");
   module->setEntryPoint(this->path());
+
+  // Identify CLI-only .py scripts by `#!` first line
+  // then set up interpreter path in SEM module `Location` parameter.
+  if (QFileInfo(this->path()).suffix().toLower() == "py")
+    {
+      QString python_path = findPython();
+      if (python_path.isEmpty())
+        {
+        this->appendInstantiateErrorString(
+          QString("Failed to find python interpreter for CLI: %1").arg(this->path()));
+        return 0;
+        }
+
+      module->setEntryPoint("python");
+      module->moduleDescription().SetLocation(python_path.toStdString());
+      module->moduleDescription().SetTarget(this->path().toStdString());
+    }
 
   QString xmlFilePath = this->xmlModuleDescriptionFilePath();
 
@@ -234,7 +269,10 @@ bool qSlicerCLIExecutableModuleFactory::isValidFile(const QFileInfo& file)const
     {
     return false;
     }
-  if (!file.isExecutable())
+
+  // consider .py files to be executable. interpreter is set in ::instanciator
+  if ((!file.isExecutable()) &&
+      (!file.filePath().endsWith(".py", Qt::CaseInsensitive)))
     {
     return false;
     }
