@@ -759,11 +759,10 @@ def arrayFromModelPoints(modelNode):
 
 def arrayFromModelPointsModified(modelNode):
   """Indicate that modification of a numpy array returned by :py:meth:`arrayFromModelPoints` has been completed."""
-  polyData = volumeNode.GetPolyData()
-  pointData = polyData.GetPointData() if polyData else None
-  if pointData.GetData():
-    pointData.GetData().Modified()
-  modelNode.Modified()
+  if modelNode.GetPolyData():
+    modelNode.GetPolyData().GetPoints().GetData().Modified()
+  # Trigger re-render
+  modelNode.GetDisplayNode().Modified()
 
 def arrayFromGridTransform(gridTransformNode):
   """Return voxel array from transform node as numpy array.
