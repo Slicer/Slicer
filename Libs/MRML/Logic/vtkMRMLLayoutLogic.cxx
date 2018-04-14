@@ -50,12 +50,12 @@
 //
 const char* conventionalView =
   "<layout type=\"vertical\" split=\"true\" >"
-  " <item>"
-  "  <view class=\"vtkMRMLViewNode\" singletontag=\"1\">"
+  " <item splitSize=\"500\">"
+  "  <view class=\"vtkMRMLViewNode\" singletontag=\"1\" verticalStretch=\"0\">"
   "    <property name=\"viewlabel\" action=\"default\">1</property>"
   "  </view>"
   " </item>"
-  " <item>"
+  " <item splitSize=\"500\">"
   "  <layout type=\"horizontal\">"
   "   <item>"
   "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\">"
@@ -131,12 +131,12 @@ const char* oneUp3DView =
 
 const char* threeDTableView =
   "<layout type=\"horizontal\" split=\"true\">"
-  " <item>"
+  " <item splitSize=\"500\">"
   "  <view class=\"vtkMRMLViewNode\" singletontag=\"1\">"
   "   <property name=\"viewlabel\" action=\"default\">1</property>"
   "  </view>"
   " </item>"
-  " <item>"
+  " <item splitSize=\"500\">"
   "  <view class=\"vtkMRMLTableViewNode\" singletontag=\"TableView1\">"
   "  <property name=\"viewlabel\" action=\"default\">T</property>"
   "  </view>"
@@ -195,7 +195,7 @@ const char* tabbedSliceView =
 
 const char* dual3DView =
   "<layout type=\"vertical\" split=\"true\" >"
-  " <item>"
+  " <item splitSize=\"500\">"
   "  <layout type=\"horizontal\">"
   "   <item>"
   "    <view class=\"vtkMRMLViewNode\" singletontag=\"1\">"
@@ -209,7 +209,7 @@ const char* dual3DView =
   "   </item>"
   "  </layout>"
   " </item>"
-  " <item>"
+  " <item splitSize=\"500\">"
   "  <layout type=\"horizontal\">"
   "   <item>"
   "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\">"
@@ -238,12 +238,12 @@ const char* dual3DView =
 
 const char* conventionalWidescreenView =
   "<layout type=\"horizontal\" split=\"true\" >"
-  " <item>"
+  " <item splitSize=\"500\">"
   "  <view class=\"vtkMRMLViewNode\" singletontag=\"1\">"
   "   <property name=\"viewlabel\" action=\"default\">1</property>"
   "  </view>"
   " </item>"
-  " <item>"
+  " <item splitSize=\"300\">"
   "  <layout type=\"vertical\">"
   "   <item>"
   "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\">"
@@ -272,12 +272,12 @@ const char* conventionalWidescreenView =
 
 const char* triple3DEndoscopyView =
   "<layout type=\"vertical\" split=\"true\" >"
-  " <item>"
+  " <item splitSize=\"500\">"
   "  <view class=\"vtkMRMLViewNode\" singletontag=\"1\">"
   "   <property name=\"viewlabel\" action=\"default\">1</property>"
   "  </view>"
   " </item>"
-  " <item>"
+  " <item splitSize=\"500\">"
   "  <layout type=\"horizontal\">"
   "   <item>"
   "    <view class=\"vtkMRMLViewNode\" singletontag=\"2\" type=\"secondary\">"
@@ -420,7 +420,7 @@ const char* fourOverFourView =
 
 const char* conventionalQuantitativeView =
   "<layout type=\"vertical\" split=\"true\" >"
-  " <item>"
+  " <item splitSize=\"500\">"
   "   <layout type=\"horizontal\">"
   "     <item>"
   "      <view class=\"vtkMRMLViewNode\" singletontag=\"1\">"
@@ -434,7 +434,7 @@ const char* conventionalQuantitativeView =
   "     </item>"
   "   </layout>"
   " </item>"
-  " <item>"
+  " <item splitSize=\"500\">"
   "  <layout type=\"horizontal\">"
   "   <item>"
   "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\">"
@@ -463,7 +463,7 @@ const char* conventionalQuantitativeView =
 
 const char* conventionalPlotView =
   "<layout type=\"vertical\" split=\"true\" >"
-  " <item>"
+  " <item splitSize=\"500\">"
   "   <layout type=\"horizontal\">"
   "     <item>"
   "      <view class=\"vtkMRMLViewNode\" singletontag=\"1\">"
@@ -477,7 +477,7 @@ const char* conventionalPlotView =
   "     </item>"
   "   </layout>"
   " </item>"
-  " <item>"
+  " <item splitSize=\"500\">"
   "  <layout type=\"horizontal\">"
   "   <item>"
   "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\">"
@@ -582,7 +582,7 @@ const char* fourUpPlotView =
 
 const char* fourUpPlotTableView =
   "<layout type=\"vertical\" split=\"true\" >"
-  " <item>"
+  " <item splitSize=\"500\">"
   "  <layout type=\"vertical\">"
   "   <item>"
   "    <layout type=\"horizontal\">"
@@ -620,7 +620,7 @@ const char* fourUpPlotTableView =
   "   </item>"
   "  </layout>"
   " </item>"
-  " <item>"
+  " <item splitSize=\"300\">"
   "  <view class=\"vtkMRMLTableViewNode\" singletontag=\"TableView1\">"
   "    <property name=\"viewlabel\" action=\"default\">T</property>"
   "  </view>"
@@ -783,7 +783,7 @@ const char* threeOverThreePlotView =
 
 const char* fourUpTableView =
   "<layout type=\"vertical\" split=\"true\" >"
-  " <item>"
+  " <item splitSize=\"500\">"
   "  <layout type=\"vertical\">"
   "   <item>"
   "    <layout type=\"horizontal\">"
@@ -821,7 +821,7 @@ const char* fourUpTableView =
   "   </item>"
   "  </layout>"
   " </item>"
-  " <item>"
+  " <item splitSize=\"300\">"
   "  <view class=\"vtkMRMLTableViewNode\" singletontag=\"TableView1\">"
   "    <property name=\"viewlabel\" action=\"default\">T</property>"
   "  </view>"
