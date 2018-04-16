@@ -25,7 +25,7 @@
 
 // VTK includes
 #include <vtkDecimatePro.h>
-#include <vtkDiscreteMarchingCubes.h>
+#include <vtkDiscreteFlyingEdges3D.h>
 #include <vtkImageChangeInformation.h>
 #include <vtkImageConstantPad.h>
 #include <vtkImageThreshold.h>
@@ -163,13 +163,18 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkDataObject* sour
   double smoothingFactor = vtkVariant(this->ConversionParameters[GetSmoothingFactorParameterName()].first).ToDouble();
   int computeSurfaceNormals = vtkVariant(this->ConversionParameters[GetComputeSurfaceNormalsParameterName()].first).ToInt();
 
+  // Normals computation in vtkDiscreteFlyingEdges3D is faster than computing normals in a subsequent
+  // vtkPolyDataNormals filter. However, if smoothing step is applied after vtkDiscreteFlyingEdges3D then
+  // computing normals after smoothing provides smoother surfaces.
+  bool marchingCubesComputesSurfaceNormals = (computeSurfaceNormals > 0) && (smoothingFactor <= 0);
+
   // Run marching cubes
-  vtkSmartPointer<vtkDiscreteMarchingCubes> marchingCubes = vtkSmartPointer<vtkDiscreteMarchingCubes>::New();
+  vtkSmartPointer<vtkDiscreteFlyingEdges3D> marchingCubes = vtkSmartPointer<vtkDiscreteFlyingEdges3D>::New();
   marchingCubes->SetInputData(binaryLabelmapWithIdentityGeometry);
   const int labelmapFillValue = binaryLabelmapWithIdentityGeometry->GetScalarRange()[1]; // max value
   marchingCubes->GenerateValues(1, labelmapFillValue, labelmapFillValue);
   marchingCubes->ComputeGradientsOff();
-  marchingCubes->ComputeNormalsOff();
+  marchingCubes->SetComputeNormals(marchingCubesComputesSurfaceNormals);
   marchingCubes->ComputeScalarsOff();
   marchingCubes->Update();
   vtkSmartPointer<vtkPolyData> processingResult = marchingCubes->GetOutput();
@@ -221,7 +226,7 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkDataObject* sour
   transformPolyDataFilter->SetInputData(processingResult);
   transformPolyDataFilter->SetTransform(labelmapGeometryTransform);
 
-  if (computeSurfaceNormals>0)
+  if (computeSurfaceNormals>0 && !marchingCubesComputesSurfaceNormals)
     {
     vtkSmartPointer<vtkPolyDataNormals> polyDataNormals = vtkSmartPointer<vtkPolyDataNormals>::New();
     polyDataNormals->SetInputConnection(transformPolyDataFilter->GetOutputPort());

@@ -26,8 +26,6 @@
 #include "vtkMRMLDisplayableManagerExport.h"
 
 class vtkMRMLDisplayableNode;
-class vtkCutter;
-class vtkProp;
 
 /// \brief Displayable manager for slice (2D) views.
 ///

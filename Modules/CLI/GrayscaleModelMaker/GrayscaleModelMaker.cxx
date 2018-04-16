@@ -15,7 +15,7 @@ Version:   $Revision$
 #include "GrayscaleModelMakerCLP.h"
 #include "vtkITKArchetypeImageSeriesScalarReader.h"
 #include "vtkImageData.h"
-#include "vtkMarchingCubes.h"
+#include "vtkFlyingEdges3D.h"
 #include "vtkWindowedSincPolyDataFilter.h"
 #include "vtkTransform.h"
 #include "vtkDecimatePro.h"
@@ -68,7 +68,7 @@ int main(int argc, char * argv[])
   vtkImageData *                    image;
   vtkWindowedSincPolyDataFilter *   smootherSinc = NULL;
   vtkDecimatePro *                  decimator = NULL;
-  vtkMarchingCubes *                mcubes = NULL;
+  vtkFlyingEdges3D *                mcubes = NULL;
   vtkTransform *                    transformIJKtoRAS = NULL;
   vtkReverseSense *                 reverser = NULL;
   vtkTransformPolyDataFilter *      transformer = NULL;
@@ -139,7 +139,7 @@ int main(int argc, char * argv[])
     transformIJKtoRAS->GetMatrix()->Print(std::cout);
     }
   transformIJKtoRAS->Inverse();
-  mcubes = vtkMarchingCubes::New();
+  mcubes = vtkFlyingEdges3D::New();
   vtkPluginFilterWatcher watchMCubes(mcubes,
                                      "Marching Cubes",
                                      CLPProcessInformation,

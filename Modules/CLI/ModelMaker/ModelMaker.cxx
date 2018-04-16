@@ -32,7 +32,8 @@ Version:   $Revision$
 // VTK includes
 #include <vtkDebugLeaks.h>
 #include <vtkDecimatePro.h>
-#include <vtkDiscreteMarchingCubes.h>
+#include <vtkDiscreteFlyingEdges3D.h>
+#include <vtkFlyingEdges3D.h>
 #include <vtkGeometryFilter.h>
 #include <vtkImageAccumulate.h>
 #include <vtkImageChangeInformation.h>
@@ -271,7 +272,7 @@ int main(int argc, char * argv[])
   // vtk and helper variables
   vtkSmartPointer<vtkITKArchetypeImageSeriesReader> reader;
   vtkImageData *                                    image;
-  vtkSmartPointer<vtkDiscreteMarchingCubes>         cubes;
+  vtkSmartPointer<vtkDiscreteFlyingEdges3D>         cubes;
   vtkSmartPointer<vtkWindowedSincPolyDataFilter>    smoother;
   bool                                              makeMultiple = false;
   bool                                              useStartEnd = false;
@@ -283,7 +284,7 @@ int main(int argc, char * argv[])
 
   vtkSmartPointer<vtkImageConstantPad>        padder;
   vtkSmartPointer<vtkDecimatePro>             decimator;
-  vtkSmartPointer<vtkMarchingCubes>           mcubes;
+  vtkSmartPointer<vtkFlyingEdges3D>           mcubes;
   vtkSmartPointer<vtkImageThreshold>          imageThreshold;
   vtkSmartPointer<vtkThreshold>               threshold;
   vtkSmartPointer<vtkImageToStructuredPoints> imageToStructuredPoints;
@@ -649,7 +650,7 @@ int main(int argc, char * argv[])
       cubes->SetInputData(NULL);
       cubes = NULL;
       }
-    cubes = vtkSmartPointer<vtkDiscreteMarchingCubes>::New();
+    cubes = vtkSmartPointer<vtkDiscreteFlyingEdges3D>::New();
     std::string            comment1 = "Discrete Marching Cubes";
     vtkPluginFilterWatcher watchDMCubes(cubes,
                                         comment1.c_str(),
@@ -1086,7 +1087,7 @@ int main(int argc, char * argv[])
         mcubes->SetInputData(NULL);
         mcubes = NULL;
         }
-      mcubes = vtkSmartPointer<vtkMarchingCubes>::New();
+      mcubes = vtkSmartPointer<vtkFlyingEdges3D>::New();
       std::string            comment5 = "Marching Cubes " + labelName;
       vtkPluginFilterWatcher watchThreshold(mcubes,
                                             comment5.c_str(),

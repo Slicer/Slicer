@@ -289,9 +289,12 @@ If segments overlap, segment higher in the segments table will have priority. <b
     ici.SetOutputOrigin(0, 0, 0)
 
     # Convert labelmap to combined polydata
-    convertToPolyData = vtk.vtkDiscreteMarchingCubes()
+    convertToPolyData = vtk.vtkDiscreteFlyingEdges3D()
     convertToPolyData.SetInputConnection(ici.GetOutputPort())
     convertToPolyData.SetNumberOfContours(len(segmentLabelValues))
+    convertToPolyData.ComputeGradientsOff()
+    convertToPolyData.ComputeNormalsOff()
+    convertToPolyData.ComputeScalarsOff()
     contourIndex = 0
     for segmentId, labelValue in segmentLabelValues:
       convertToPolyData.SetValue(contourIndex, labelValue)
