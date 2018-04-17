@@ -48,7 +48,6 @@ If segments overlap, segment higher in the segments table will have priority. <b
     self.kernelSizeMmSpinBox.setMRMLScene(slicer.mrmlScene)
     self.kernelSizeMmSpinBox.setToolTip("Diameter of the neighborhood that will be considered around each voxel. Higher value makes smoothing stronger (more details are suppressed).")
     self.kernelSizeMmSpinBox.quantity = "length"
-    self.kernelSizeMmSpinBox.unitAwareProperties &= ~slicer.qMRMLSpinBox.MinimumValue # disable setting deafult minimum value (it would be a large negative value)
     self.kernelSizeMmSpinBox.minimum = 0.0
     self.kernelSizeMmSpinBox.value = 3.0
     self.kernelSizeMmSpinBox.singleStep = 1.0
@@ -129,12 +128,14 @@ If segments overlap, segment higher in the segments table will have priority. <b
     self.methodSelectorComboBox.blockSignals(wasBlocked)
 
     wasBlocked = self.kernelSizeMmSpinBox.blockSignals(True)
+    self.setWidgetMinMaxStepFromImageSpacing(self.kernelSizeMmSpinBox, self.scriptedEffect.selectedSegmentLabelmap())
     self.kernelSizeMmSpinBox.value = self.scriptedEffect.doubleParameter("KernelSizeMm")
     self.kernelSizeMmSpinBox.blockSignals(wasBlocked)
     kernelSizePixel = self.getKernelSizePixel()
     self.kernelSizePixel.text = "{0}x{1}x{2} pixels".format(kernelSizePixel[0], kernelSizePixel[1], kernelSizePixel[2])
 
     wasBlocked = self.gaussianStandardDeviationMmSpinBox.blockSignals(True)
+    self.setWidgetMinMaxStepFromImageSpacing(self.gaussianStandardDeviationMmSpinBox, self.scriptedEffect.selectedSegmentLabelmap())
     self.gaussianStandardDeviationMmSpinBox.value = self.scriptedEffect.doubleParameter("GaussianStandardDeviationMm")
     self.gaussianStandardDeviationMmSpinBox.blockSignals(wasBlocked)
 
@@ -143,16 +144,6 @@ If segments overlap, segment higher in the segments table will have priority. <b
     self.jointTaubinSmoothingFactorSlider.blockSignals(wasBlocked)
 
     self.updateParameterWidgetsVisibility()
-
-    selectedSegmentLabelmap = self.scriptedEffect.selectedSegmentLabelmap()
-    if selectedSegmentLabelmap:
-      import math
-      selectedSegmentLabelmapSpacing = selectedSegmentLabelmap.GetSpacing()
-      singleStep = min(selectedSegmentLabelmapSpacing)
-      # round to power of 10 (for example: 0.2 -> 0.1; 0.09 -> 0.01) to show "nice" values
-      singleStep = pow(10,math.floor(math.log(singleStep)/math.log(10)))
-      self.kernelSizeMmSpinBox.singleStep = singleStep
-      self.gaussianStandardDeviationMmSpinBox.singleStep = singleStep
 
   def updateMRMLFromGUI(self):
     methodIndex = self.methodSelectorComboBox.currentIndex

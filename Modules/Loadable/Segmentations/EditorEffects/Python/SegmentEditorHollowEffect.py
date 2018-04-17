@@ -25,10 +25,6 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
   def helpText(self):
     return """Make the selected segment hollow by replacing the segment with a uniform-thickness shell defined by the segment boundary."""
 
-  def activate(self):
-    # Update intensity range
-    self.masterVolumeNodeChanged()
-
   def setupOptionsFrame(self):
 
     operationLayout = qt.QVBoxLayout()
@@ -74,20 +70,6 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
     # Turn off effect-specific cursor for this effect
     return slicer.util.mainWindow().cursor
 
-  def masterVolumeNodeChanged(self):
-    # Update thickness spinbox range and step size
-    import vtkSegmentationCorePython as vtkSegmentationCore
-    masterImageData = self.scriptedEffect.masterVolumeImageData()
-    if not masterImageData:
-      return
-
-    import math
-    minSpacing = min(masterImageData.GetSpacing())
-    self.shellThicknessMmSpinBox.minimum = 10**(math.floor(math.log(minSpacing/10.0)/math.log(10)))
-    self.shellThicknessMmSpinBox.maximum = 10**(math.ceil(math.log(minSpacing*100.0)/math.log(10)))
-    self.shellThicknessMmSpinBox.singleStep = self.shellThicknessMmSpinBox.minimum
-    #self.shellThicknessMmSpinBox.pageStep = self.shellThicknessMmSpinBox.singleStep*10
-
   def setMRMLDefaults(self):
     self.scriptedEffect.setParameterDefault("ShellMode", INSIDE_SURFACE)
     self.scriptedEffect.setParameterDefault("ShellThicknessMm", 3.0)
@@ -111,6 +93,7 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
   def updateGUIFromMRML(self):
     shellThicknessMm = self.scriptedEffect.doubleParameter("ShellThicknessMm")
     wasBlocked = self.shellThicknessMmSpinBox.blockSignals(True)
+    self.setWidgetMinMaxStepFromImageSpacing(self.shellThicknessMmSpinBox, self.scriptedEffect.selectedSegmentLabelmap())
     self.shellThicknessMmSpinBox.value = abs(shellThicknessMm)
     self.shellThicknessMmSpinBox.blockSignals(wasBlocked)
 
@@ -139,14 +122,7 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
       self.kernelSizePixel.text = "{0}x{1}x{2} pixels".format(abs(kernelSizePixel[0]), abs(kernelSizePixel[1]), abs(kernelSizePixel[2]))
       self.applyButton.setEnabled(True)
 
-    selectedSegmentLabelmap = self.scriptedEffect.selectedSegmentLabelmap()
-    if selectedSegmentLabelmap:
-      import math
-      selectedSegmentLabelmapSpacing = selectedSegmentLabelmap.GetSpacing()
-      singleStep = min(selectedSegmentLabelmapSpacing)
-      # round to power of 10 (for example: 0.2 -> 0.1; 0.09 -> 0.01) to show "nice" values
-      singleStep = pow(10,math.floor(math.log(singleStep)/math.log(10)))
-      self.shellThicknessMmSpinBox.singleStep = singleStep
+    self.setWidgetMinMaxStepFromImageSpacing(self.shellThicknessMmSpinBox, self.scriptedEffect.selectedSegmentLabelmap())
 
   def updateMRMLFromGUI(self):
     # Operation is managed separately

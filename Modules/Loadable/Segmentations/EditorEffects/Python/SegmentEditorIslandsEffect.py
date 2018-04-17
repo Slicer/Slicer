@@ -80,10 +80,11 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
     self.scriptedEffect.addOptionsWidget(operationLayout)
 
     self.minimumSizeSpinBox = qt.QSpinBox()
-    self.minimumSizeSpinBox.setToolTip("Minimum size of islands to be considered.")
+    self.minimumSizeSpinBox.setToolTip("Islands consisting of less voxels than this minimum size, will be deleted.")
     self.minimumSizeSpinBox.setMinimum(0)
     self.minimumSizeSpinBox.setMaximum(vtk.VTK_INT_MAX)
     self.minimumSizeSpinBox.setValue(1000)
+    self.minimumSizeSpinBox.suffix = " voxels"
     self.minimumSizeLabel = self.scriptedEffect.addLabeledOptionsWidget("Minimum size:", self.minimumSizeSpinBox)
 
     self.applyButton = qt.QPushButton("Apply")
