@@ -97,7 +97,7 @@ void qSlicerSettingsUserInformationPanel::setUserInformation(vtkPersonInformatio
 
   this->qvtkReconnect(d->UserInformation, userInfo,
     vtkCommand::ModifiedEvent,
-    this, SLOT(updateFromUserInformation(vtkObject*)));
+    this, SLOT(updateFromUserInformation()));
   d->UserInformation = userInfo;
 
   // Default values
