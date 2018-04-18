@@ -34,8 +34,7 @@ vtkMRMLNodeNewMacro(vtkMRMLGPURayCastVolumeRenderingDisplayNode);
 vtkMRMLGPURayCastVolumeRenderingDisplayNode::vtkMRMLGPURayCastVolumeRenderingDisplayNode()
 {
   this->RaycastTechnique = vtkMRMLGPURayCastVolumeRenderingDisplayNode::Composite;
-  this->UseJittering = 0;
-  this->LockSampleDistanceToInputSpacing = 1;
+  this->SurfaceSmoothing = false;
 }
 
 //----------------------------------------------------------------------------
@@ -50,8 +49,7 @@ void vtkMRMLGPURayCastVolumeRenderingDisplayNode::ReadXMLAttributes(const char**
 
   vtkMRMLReadXMLBeginMacro(atts);
   vtkMRMLReadXMLIntMacro(raycastTechnique, RaycastTechnique);
-  vtkMRMLReadXMLIntMacro(useJittering, UseJittering);
-  vtkMRMLReadXMLIntMacro(lockSampleDistanceToInputSpacing, LockSampleDistanceToInputSpacing);
+  vtkMRMLReadXMLIntMacro(surfaceSmoothing, SurfaceSmoothing);
   vtkMRMLReadXMLEndMacro();
 }
 
@@ -62,8 +60,7 @@ void vtkMRMLGPURayCastVolumeRenderingDisplayNode::WriteXML(ostream& of, int nInd
 
   vtkMRMLWriteXMLBeginMacro(of);
   vtkMRMLWriteXMLIntMacro(raycastTechnique, RaycastTechnique);
-  vtkMRMLWriteXMLIntMacro(useJittering, UseJittering);
-  vtkMRMLWriteXMLIntMacro(lockSampleDistanceToInputSpacing, LockSampleDistanceToInputSpacing);
+  vtkMRMLWriteXMLIntMacro(surfaceSmoothing, SurfaceSmoothing);
   vtkMRMLWriteXMLEndMacro();
 }
 
@@ -75,8 +72,7 @@ void vtkMRMLGPURayCastVolumeRenderingDisplayNode::Copy(vtkMRMLNode *anode)
 
   vtkMRMLCopyBeginMacro(anode);
   vtkMRMLCopyIntMacro(RaycastTechnique);
-  vtkMRMLCopyIntMacro(UseJittering);
-  vtkMRMLCopyIntMacro(LockSampleDistanceToInputSpacing);
+  vtkMRMLCopyIntMacro(SurfaceSmoothing);
   vtkMRMLCopyEndMacro();
 
   this->EndModify(wasModifying);
@@ -89,7 +85,6 @@ void vtkMRMLGPURayCastVolumeRenderingDisplayNode::PrintSelf(ostream& os, vtkInde
 
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintIntMacro(RaycastTechnique);
-  vtkMRMLPrintIntMacro(UseJittering);
-  vtkMRMLPrintIntMacro(LockSampleDistanceToInputSpacing);
+  vtkMRMLPrintIntMacro(SurfaceSmoothing);
   vtkMRMLPrintEndMacro();
 }

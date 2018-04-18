@@ -73,8 +73,10 @@ public:
   /// Quality used for PerformanceControl
   enum Quality
   {
-    Adaptative = 0,
-    MaximumQuality
+    AdaptiveQuality = 0, ///< quality determined from desired update rate
+    NormalQuality = 1,   ///< good image quality at reasonable speed
+    MaximumQuality = 2,  ///< high image quality, rendering time is not considered
+    Adaptative = 0       ///< deprecated (kept for backward compatibility only, same as AdaptiveQuality)
   };
   vtkSetMacro(PerformanceControl,int);
   vtkGetMacro(PerformanceControl,int);

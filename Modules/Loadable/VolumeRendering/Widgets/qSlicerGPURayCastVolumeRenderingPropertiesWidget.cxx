@@ -63,8 +63,8 @@ void qSlicerGPURayCastVolumeRenderingPropertiesWidgetPrivate
   this->populateRenderingTechniqueComboBox();
   QObject::connect(this->RenderingTechniqueComboBox, SIGNAL(currentIndexChanged(int)),
                    widget, SLOT(setRenderingTechnique(int)));
-  QObject::connect(this->JitteringCheckBox, SIGNAL(toggled(bool)),
-                   widget, SLOT(setJittering(bool)));
+  QObject::connect(this->SurfaceSmoothingCheckBox, SIGNAL(toggled(bool)),
+                   widget, SLOT(setSurfaceSmoothing(bool)));
 }
 
 // --------------------------------------------------------------------------
@@ -128,9 +128,9 @@ void qSlicerGPURayCastVolumeRenderingPropertiesWidget::updateWidgetFromMRML()
   d->RenderingTechniqueComboBox->setCurrentIndex(index);
   d->RenderingTechniqueComboBox->blockSignals(wasBlocked);
 
-  wasBlocked = d->JitteringCheckBox->blockSignals(true);
-  d->JitteringCheckBox->setChecked(displayNode->GetUseJittering());
-  d->JitteringCheckBox->blockSignals(wasBlocked);
+  wasBlocked = d->SurfaceSmoothingCheckBox->blockSignals(true);
+  d->SurfaceSmoothingCheckBox->setChecked(displayNode->GetSurfaceSmoothing());
+  d->SurfaceSmoothingCheckBox->blockSignals(wasBlocked);
 }
 
 //-----------------------------------------------------------------------------
@@ -147,7 +147,7 @@ void qSlicerGPURayCastVolumeRenderingPropertiesWidget::setRenderingTechnique(int
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerGPURayCastVolumeRenderingPropertiesWidget::setJittering(bool on)
+void qSlicerGPURayCastVolumeRenderingPropertiesWidget::setSurfaceSmoothing(bool on)
 {
   Q_D(qSlicerGPURayCastVolumeRenderingPropertiesWidget);
   vtkMRMLGPURayCastVolumeRenderingDisplayNode* displayNode = this->mrmlGPURayCastDisplayNode();
@@ -155,5 +155,5 @@ void qSlicerGPURayCastVolumeRenderingPropertiesWidget::setJittering(bool on)
     {
     return;
     }
-  displayNode->SetUseJittering(on);
+  displayNode->SetSurfaceSmoothing(on);
 }

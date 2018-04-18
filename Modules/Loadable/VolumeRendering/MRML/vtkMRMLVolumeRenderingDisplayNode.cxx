@@ -76,7 +76,7 @@ vtkMRMLVolumeRenderingDisplayNode::vtkMRMLVolumeRenderingDisplayNode()
   this->WindowLevel[0] = 0.0;
   this->WindowLevel[1] = 0.0;
 
-  this->PerformanceControl = 0;
+  this->PerformanceControl = vtkMRMLVolumeRenderingDisplayNode::AdaptiveQuality;
 }
 
 //----------------------------------------------------------------------------
