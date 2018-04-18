@@ -713,7 +713,7 @@ def arrayFromVolume(volumeNode):
       3. Write results back to the image data using :py:meth:`updateVolumeFromArray`.
   """
   scalarTypes = ['vtkMRMLScalarVolumeNode', 'vtkMRMLLabelMapVolumeNode']
-  vectorTypes = ['vtkMRMLVectorVolumeNode', 'vtkMRMLMultiVolumeNode']
+  vectorTypes = ['vtkMRMLVectorVolumeNode', 'vtkMRMLMultiVolumeNode', 'vtkMRMLDiffusionWeightedVolumeNode']
   tensorTypes = ['vtkMRMLDiffusionTensorVolumeNode']
   vimage = volumeNode.GetImageData()
   nshape = tuple(reversed(volumeNode.GetImageData().GetDimensions()))
