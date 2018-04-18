@@ -116,7 +116,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
-    "${EP_GIT_PROTOCOL}://github.com/Slicer/VTK.git"
+    "${EP_GIT_PROTOCOL}://github.com/lassoan/VTK.git"
     QUIET
     )
 
@@ -124,7 +124,7 @@ set(_git_tag)
 if("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "7")
   set(_git_tag "43f6ee36f6e28c8347768bd97df4d767da6b4ce7")
 elseif("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "9")
-  set(_git_tag "7f00e99e1f2e9768c5e82e43912f77c2630d3e45")
+  set(_git_tag "slicer-v9.0.0-2018-04-17-10e8cdc30e")
 else()
   message(FATAL_ERROR "error: Unsupported Slicer_VTK_VERSION_MAJOR: ${Slicer_VTK_VERSION_MAJOR}")
 endif()
