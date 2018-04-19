@@ -18,7 +18,6 @@
 // VolumeRendering includes
 #include "vtkSlicerVolumeRenderingModuleLogicExport.h"
 class vtkMRMLVolumeRenderingDisplayNode;
-class vtkMRMLVolumeRenderingScenarioNode;
 
 // Slicer includes
 #include "vtkSlicerModuleLogic.h"
@@ -219,10 +218,6 @@ public:
                                        vtkMRMLVolumePropertyNode *propNode = NULL,
                                        vtkMRMLAnnotationROINode *roiNode = NULL);
 
-  /// \deprecated
-  /// Create and add into the scene a vtkMRMLVolumeRenderingScenarioNode
-  vtkMRMLVolumeRenderingScenarioNode* CreateScenarioNode();
-
   /// Remove ViewNode from VolumeRenderingDisplayNode for a VolumeNode,
   void RemoveViewFromVolumeDisplayNodes(vtkMRMLVolumeNode *volumeNode,
                                         vtkMRMLViewNode *viewNode);
@@ -247,12 +242,6 @@ public:
   vtkMRMLVolumeRenderingDisplayNode* GetFirstVolumeRenderingDisplayNodeByROINode(vtkMRMLAnnotationROINode* roiNode);
 
   void UpdateTranferFunctionRangeFromImage(vtkMRMLVolumeRenderingDisplayNode* vspNode);
-
-  //void UpdateFgTranferFunctionRangeFromImage(vtkMRMLVolumeRenderingDisplayNode* vspNode);
-
-  //void UpdateVolumePropertyFromImageData(vtkMRMLVolumeRenderingDisplayNode* vspNode);
-
-  //void SetupFgVolumePropertyFromImageData(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
   /// Utility function that modifies the ROI node of the display node
   /// to fit the boundaries of the volume node

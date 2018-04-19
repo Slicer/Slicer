@@ -18,8 +18,6 @@ set(${KIT}_SRCS
   vtkMRMLVolumePropertyStorageNode.h
   vtkMRML${MODULE_NAME}DisplayNode.cxx
   vtkMRML${MODULE_NAME}DisplayNode.h
-  vtkMRML${MODULE_NAME}ScenarioNode.cxx
-  vtkMRML${MODULE_NAME}ScenarioNode.h
   )
 
 set(${KIT}_TARGET_LIBRARIES

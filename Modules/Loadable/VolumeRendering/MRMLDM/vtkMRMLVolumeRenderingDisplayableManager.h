@@ -23,27 +23,21 @@
 
 // VolumeRendering includes
 #include "vtkSlicerVolumeRenderingModuleMRMLDisplayableManagerExport.h"
-class vtkGPUVolumeRayCastMapper;
-class vtkFixedPointVolumeRayCastMapper;
-class vtkMRMLCPURayCastVolumeRenderingDisplayNode;
-class vtkMRMLGPURayCastVolumeRenderingDisplayNode;
-class vtkMRMLVolumeNode;
-class vtkMRMLVolumeRenderingDisplayNode;
-class vtkMRMLVolumeRenderingScenarioNode;
-class vtkSlicerVolumeRenderingLogic;
-class vtkVolumeProperty;
 
 // MRML DisplayableManager includes
 #include <vtkMRMLAbstractThreeDViewDisplayableManager.h>
 
-// VTK includes
+class vtkMRMLCPURayCastVolumeRenderingDisplayNode;
+class vtkMRMLGPURayCastVolumeRenderingDisplayNode;
+class vtkMRMLVolumeNode;
+class vtkMRMLVolumeRenderingDisplayNode;
+class vtkSlicerVolumeRenderingLogic;
+class vtkGPUVolumeRayCastMapper;
+class vtkFixedPointVolumeRayCastMapper;
 class vtkIntArray;
 class vtkMatrix4x4;
-class vtkPlanes;
-class vtkTimerLog;
 class vtkVolume;
 class vtkVolumeMapper;
-class vtkVolumeProperty;
 
 #define VTKIS_VOLUME_PROPS 100
 
@@ -59,8 +53,6 @@ public:
   virtual void Reset();
 
   void SetGUICallbackCommand(vtkCommand* callback);
-
-  virtual void Create() VTK_OVERRIDE;
 
   ///
   /// Return the volume mapper of the volume rendering display node
@@ -88,9 +80,6 @@ public:
   // Get Volume Actor
   vtkVolume* GetVolumeActor(){return this->Volume;}
 
-  void SetupHistograms(vtkMRMLVolumeRenderingDisplayNode* vspNode);
-  //vtkKWHistogramSet* GetHistogramSet(){return this->Histograms;}
-
   virtual bool UpdateMapper(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
   void UpdateMapper(vtkVolumeMapper* mapper,
@@ -102,19 +91,11 @@ public:
   void UpdateDesiredUpdateRate(vtkMRMLVolumeRenderingDisplayNode* vspNode);
   void UpdateClipping(vtkVolumeMapper* mapper, vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
-  //void CreateVolumePropertyGPURaycast3(vtkMRMLVolumeRenderingDisplayNode* vspNode);
-  //void UpdateVolumePropertyGPURaycast3(vtkMRMLVolumeRenderingDisplayNode* vspNode);
-
   void TransformModified(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
   void SetVolumeVisibility(int isVisible);
 
-  //void SetupVolumeRenderingInteractive(vtkMRMLVolumeRenderingDisplayNode* vspNode, int buttonDown);
-
-  /* return values:
-   * 0: mapper not supported
-   * 1: mapper supported
-   */
+  /// \return 0: mapper not supported, 1: mapper supported
   int IsMapperSupported(vtkMRMLVolumeRenderingDisplayNode* vspNode);
   virtual int IsMapperSupported(vtkVolumeMapper* volumeMapper,
                                 vtkMRMLVolumeRenderingDisplayNode* vspNode);
@@ -132,15 +113,19 @@ public:
   void RemoveDisplayNode(vtkMRMLVolumeRenderingDisplayNode* dnode);
   void RemoveDisplayNodes();
 
+public:
   static int DefaultGPUMemorySize;
 
 protected:
   vtkMRMLVolumeRenderingDisplayableManager();
   ~vtkMRMLVolumeRenderingDisplayableManager();
-  vtkMRMLVolumeRenderingDisplayableManager(const vtkMRMLVolumeRenderingDisplayableManager&);
-  void operator=(const vtkMRMLVolumeRenderingDisplayableManager&);
+
+  /// Initialize the displayable manager
+  virtual void Create() VTK_OVERRIDE;
+  void OnCreate();
 
   virtual int ActiveInteractionModes() VTK_OVERRIDE;
+
   // Description:
   // Don't support nested event processing
   // TODO: Probably a bad idea to not support nested calls
@@ -148,59 +133,10 @@ protected:
 
   // Description:
   // Update MRML events
-  virtual void ProcessMRMLNodesEvents(vtkObject * caller,
-                                 unsigned long event,
-                                 void * callData) VTK_OVERRIDE;
+  virtual void ProcessMRMLNodesEvents(vtkObject * caller, unsigned long event, void * callData) VTK_OVERRIDE;
 
   virtual void OnInteractorStyleEvent(int eventId) VTK_OVERRIDE;
 
-  //virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
-
-  //virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
-
-  void OnCreate();
-
-  static bool First;
-
-  vtkSlicerVolumeRenderingLogic *VolumeRenderingLogic;
-
-  // Description:
-  // The software accelerated software mapper
-  vtkFixedPointVolumeRayCastMapper *MapperRaycast;
-
-  // Description:
-  // The gpu ray cast mapper.
-  vtkGPUVolumeRayCastMapper *MapperGPURaycast3;
-
-  // Description:
-  // Actor used for Volume Rendering
-  vtkVolume *Volume;
-
-  // Description:
-  // internal histogram instance (bg)
-  //vtkKWHistogramSet *Histograms;
-
-  // Description:
-  // internal histogram instance (fg)
-  //vtkKWHistogramSet *HistogramsFg;
-
-  /// Holders for MRML callbacks
-  //vtkCallbackCommand *MRMLCallback;
-
-  //vtkVolumeProperty *VolumePropertyGPURaycast3;
-
-  vtkMRMLVolumeRenderingDisplayNode*    DisplayedNode;
-
-  typedef std::map<std::string, vtkMRMLVolumeRenderingDisplayNode *> DisplayNodesType;
-  DisplayNodesType      DisplayNodes;
-
-  vtkIntArray* DisplayObservedEvents;
-  // When interaction is >0, we are in interactive mode (low LOD)
-  int Interaction;
-  double OriginalDesiredUpdateRate;
-
-protected:
-  void OnScenarioNodeModified();
   void OnVolumeRenderingDisplayNodeModified(vtkMRMLVolumeRenderingDisplayNode* dnode);
 
   void CalculateMatrix(vtkMRMLVolumeRenderingDisplayNode *vspNode, vtkMatrix4x4 *output);
@@ -217,6 +153,35 @@ protected:
   double GetSampleDistance(vtkMRMLVolumeRenderingDisplayNode* vspNode);
   double GetFramerate(vtkMRMLVolumeRenderingDisplayNode* vspNode);
   virtual vtkIdType GetMaxMemoryInBytes(vtkVolumeMapper* mapper, vtkMRMLVolumeRenderingDisplayNode* vspNode);
+
+protected:
+  vtkSlicerVolumeRenderingLogic *VolumeRenderingLogic;
+
+  // Description:
+  // The software accelerated software mapper
+  vtkFixedPointVolumeRayCastMapper *MapperRaycast;
+
+  // Description:
+  // The gpu ray cast mapper.
+  vtkGPUVolumeRayCastMapper *MapperGPURaycast3;
+
+  // Description:
+  // Actor used for Volume Rendering
+  vtkVolume *Volume;
+
+  vtkMRMLVolumeRenderingDisplayNode*    DisplayedNode;
+
+  typedef std::map<std::string, vtkMRMLVolumeRenderingDisplayNode *> DisplayNodesType;
+  DisplayNodesType      DisplayNodes;
+
+  vtkIntArray* DisplayObservedEvents;
+  // When interaction is >0, we are in interactive mode (low LOD)
+  int Interaction;
+  double OriginalDesiredUpdateRate;
+
+protected:
+  vtkMRMLVolumeRenderingDisplayableManager(const vtkMRMLVolumeRenderingDisplayableManager&); // Not implemented
+  void operator=(const vtkMRMLVolumeRenderingDisplayableManager&); // Not implemented
 
 };
 

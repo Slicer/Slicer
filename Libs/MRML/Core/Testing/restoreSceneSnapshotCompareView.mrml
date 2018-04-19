@@ -15,8 +15,6 @@
   id="vtkMRMLXYPlotManagerNode1"  name="vtkMRMLXYPlotManagerNode1"  hideFromEditors="true"  selectable="true"  selected="false" ></XYPlot>
  <ProstateNavManager
   id="vtkMRMLProstateNavManagerNode1"  name="vtkMRMLProstateNavManagerNode1"  hideFromEditors="true"  selectable="true"  selected="false" ></ProstateNavManager>
- <VolumeRenderingScenario
-  id="vtkMRMLVolumeRenderingScenarioNode1"  name="vtkMRMLVolumeRenderingScenarioNode1"  hideFromEditors="true"  selectable="true"  selected="false"  parametersNodeID="NULL" ></VolumeRenderingScenario>
  <Slice
   id="vtkMRMLSliceNode1"  name="Green"  hideFromEditors="true"  selectable="true"  selected="false"  fieldOfView="335.58 293.887 1"  dimensions="330 289 1"  activeSlice="0"  layoutGridRows="1"  layoutGridColumns="1"  sliceToRAS="-1 0 0 0 0 0 1 0 0 1 0 0 0 0 0 1"  layoutName="Green"  orientation="Coronal"  jumpMode="1"  sliceVisibility="false"  widgetVisibility="false"  useLabelOutline="false"  sliceSpacingMode="0"  prescribedSliceSpacing="1 1 1" ></Slice>
  <SliceComposite
@@ -62,8 +60,6 @@
     id="vtkMRMLXYPlotManagerNode1"    name="vtkMRMLXYPlotManagerNode1"    hideFromEditors="true"    selectable="true"    selected="false"  ></XYPlot>
   <ProstateNavManager
     id="vtkMRMLProstateNavManagerNode1"    name="vtkMRMLProstateNavManagerNode1"    hideFromEditors="true"    selectable="true"    selected="false"  ></ProstateNavManager>
-  <VolumeRenderingScenario
-    id="vtkMRMLVolumeRenderingScenarioNode1"    name="vtkMRMLVolumeRenderingScenarioNode1"    hideFromEditors="true"    selectable="true"    selected="false"    parametersNodeID="NULL"  ></VolumeRenderingScenario>
   <Slice
     id="vtkMRMLSliceNode1"    name="Green"    hideFromEditors="true"    selectable="true"    selected="false"    fieldOfView="170.846 293.887 1"    dimensions="218 375 1"    activeSlice="0"    layoutGridRows="1"    layoutGridColumns="1"    sliceToRAS="-1 0 0 0 0 0 1 0 0 1 0 0 0 0 0 1"    layoutName="Green"    orientation="Coronal"    jumpMode="1"    sliceVisibility="false"    widgetVisibility="false"    useLabelOutline="false"    sliceSpacingMode="0"    prescribedSliceSpacing="1 1 1"  ></Slice>
   <SliceComposite
