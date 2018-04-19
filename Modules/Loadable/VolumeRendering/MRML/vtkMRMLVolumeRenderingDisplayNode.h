@@ -81,17 +81,17 @@ public:
   vtkSetMacro(PerformanceControl,int);
   vtkGetMacro(PerformanceControl,int);
 
-  vtkGetMacro (GPUMemorySize, int);
-  vtkSetMacro (GPUMemorySize, int);
+  vtkGetMacro(GPUMemorySize, int);
+  vtkSetMacro(GPUMemorySize, int);
 
   enum RayCastType
   {
-    Composite = 0, // composite with directional lighting (default)
-    CompositeEdgeColoring, // composite with fake lighting (edge coloring, faster)
+    Composite = 0, // Composite with directional lighting (default)
+    CompositeEdgeColoring, // Composite with fake lighting (edge coloring, faster) - Not used
     MaximumIntensityProjection,
     MinimumIntensityProjection,
-    GradiantMagnitudeOpacityModulation,
-    IllustrativeContextPreservingExploration
+    GradiantMagnitudeOpacityModulation, // Not used
+    IllustrativeContextPreservingExploration // Not used
   };
 
   vtkSetVector2Macro(Threshold, double);
@@ -108,6 +108,9 @@ public:
 
   vtkSetVector2Macro(WindowLevel, double);
   vtkGetVectorMacro(WindowLevel, double, 2);
+
+  vtkGetMacro(RaycastTechnique, int);
+  vtkSetMacro(RaycastTechnique, int);
 
 protected:
   vtkMRMLVolumeRenderingDisplayNode();
@@ -152,6 +155,15 @@ protected:
   /// 1: Maximum Quality
   /// 2: Fixed Framerate // unsupported yet
   int PerformanceControl;
+
+  /// Techniques for ray cast
+  /// 0: Composite with directional lighting (default)
+  /// 1: Composite with fake lighting (edge coloring, faster) - Not used
+  /// 2: MIP
+  /// 3: MINIP
+  /// 4: Gradient Magnitude Opacity Modulation - Not used
+  /// 5: Illustrative Context Preserving Exploration - Not used
+  int RaycastTechnique;
 };
 
 #endif

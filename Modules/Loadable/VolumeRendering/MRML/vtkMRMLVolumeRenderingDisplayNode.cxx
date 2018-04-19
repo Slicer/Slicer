@@ -40,6 +40,9 @@ const char* vtkMRMLVolumeRenderingDisplayNode::ROINodeReferenceMRMLAttributeName
 //----------------------------------------------------------------------------
 vtkMRMLVolumeRenderingDisplayNode::vtkMRMLVolumeRenderingDisplayNode()
 {
+  this->AddNodeReferenceRole(VolumeNodeReferenceRole,
+                             VolumeNodeReferenceMRMLAttributeName);
+
   vtkIntArray* volumePropertyEvents = vtkIntArray::New();
   volumePropertyEvents->InsertNextValue(vtkCommand::StartEvent);
   volumePropertyEvents->InsertNextValue(vtkCommand::EndEvent);
@@ -77,6 +80,7 @@ vtkMRMLVolumeRenderingDisplayNode::vtkMRMLVolumeRenderingDisplayNode()
   this->WindowLevel[1] = 0.0;
 
   this->PerformanceControl = vtkMRMLVolumeRenderingDisplayNode::AdaptiveQuality;
+  this->RaycastTechnique = vtkMRMLVolumeRenderingDisplayNode::Composite;
 }
 
 //----------------------------------------------------------------------------
@@ -100,6 +104,7 @@ void vtkMRMLVolumeRenderingDisplayNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLFloatMacro(estimatedSampleDistance, EstimatedSampleDistance);
   vtkMRMLReadXMLFloatMacro(expectedFPS, ExpectedFPS);
   vtkMRMLReadXMLIntMacro(performanceControl, PerformanceControl);
+  vtkMRMLReadXMLIntMacro(raycastTechnique, RaycastTechnique);
   vtkMRMLReadXMLEndMacro();
 }
 
@@ -119,6 +124,7 @@ void vtkMRMLVolumeRenderingDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLFloatMacro(estimatedSampleDistance, EstimatedSampleDistance);
   vtkMRMLWriteXMLFloatMacro(expectedFPS, ExpectedFPS);
   vtkMRMLWriteXMLIntMacro(performanceControl, PerformanceControl);
+  vtkMRMLWriteXMLIntMacro(raycastTechnique, RaycastTechnique);
   vtkMRMLWriteXMLEndMacro();
 }
 
@@ -141,6 +147,7 @@ void vtkMRMLVolumeRenderingDisplayNode::Copy(vtkMRMLNode *anode)
   vtkMRMLCopyFloatMacro(EstimatedSampleDistance);
   vtkMRMLCopyFloatMacro(ExpectedFPS);
   vtkMRMLCopyIntMacro(PerformanceControl);
+  vtkMRMLCopyIntMacro(RaycastTechnique);
   vtkMRMLCopyEndMacro();
 
   this->EndModify(wasModifying);
@@ -162,6 +169,7 @@ void vtkMRMLVolumeRenderingDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintFloatMacro(EstimatedSampleDistance);
   vtkMRMLPrintFloatMacro(ExpectedFPS);
   vtkMRMLPrintIntMacro(PerformanceControl);
+  vtkMRMLPrintIntMacro(RaycastTechnique);
   vtkMRMLPrintEndMacro();
 }
 

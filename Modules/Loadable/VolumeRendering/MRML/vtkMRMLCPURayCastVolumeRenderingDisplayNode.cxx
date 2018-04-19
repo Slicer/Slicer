@@ -33,7 +33,6 @@ vtkMRMLNodeNewMacro(vtkMRMLCPURayCastVolumeRenderingDisplayNode);
 //----------------------------------------------------------------------------
 vtkMRMLCPURayCastVolumeRenderingDisplayNode::vtkMRMLCPURayCastVolumeRenderingDisplayNode()
 {
-  this->RaycastTechnique = vtkMRMLCPURayCastVolumeRenderingDisplayNode::Composite;
 }
 
 //----------------------------------------------------------------------------
@@ -45,29 +44,12 @@ vtkMRMLCPURayCastVolumeRenderingDisplayNode::~vtkMRMLCPURayCastVolumeRenderingDi
 void vtkMRMLCPURayCastVolumeRenderingDisplayNode::ReadXMLAttributes(const char** atts)
 {
   this->Superclass::ReadXMLAttributes(atts);
-
-  const char* attName;
-  const char* attValue;
-  while (*atts != NULL)
-    {
-    attName = *(atts++);
-    attValue = *(atts++);
-    if (!strcmp(attName,"raycastTechnique"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->RaycastTechnique;
-      continue;
-      }
-    }
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLCPURayCastVolumeRenderingDisplayNode::WriteXML(ostream& of, int nIndent)
 {
   this->Superclass::WriteXML(of, nIndent);
-
-  of << " raycastTechnique=\"" << this->RaycastTechnique << "\"";
 }
 
 //----------------------------------------------------------------------------
@@ -75,10 +57,6 @@ void vtkMRMLCPURayCastVolumeRenderingDisplayNode::Copy(vtkMRMLNode *anode)
 {
   int wasModifying = this->StartModify();
   this->Superclass::Copy(anode);
-  vtkMRMLCPURayCastVolumeRenderingDisplayNode *node = vtkMRMLCPURayCastVolumeRenderingDisplayNode::SafeDownCast(anode);
-
-  this->SetRaycastTechnique(node->GetRaycastTechnique());
-
   this->EndModify(wasModifying);
 }
 
@@ -86,6 +64,4 @@ void vtkMRMLCPURayCastVolumeRenderingDisplayNode::Copy(vtkMRMLNode *anode)
 void vtkMRMLCPURayCastVolumeRenderingDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
-
-  os << "RaycastTechnique: " << this->RaycastTechnique << "\n";
 }

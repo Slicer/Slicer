@@ -120,8 +120,12 @@ public:
   /// \sa AddVolumeRenderingDisplayNode, AddAllVolumeRenderingDisplayNodes
   void RemoveAllVolumeRenderingDisplayNodes();
 
+  /// Re-create all volume rendering display nodes of the requested type.
+  /// Common properties of the display nodes are propagated.
+  void ChangeVolumeRenderingMethod(const char* displayNodeClassName = 0);
+
   /// Applies the properties (window level, threshold and color function) of
-  /// a volume display node to the volume rendering displaynode.
+  /// a volume display node to the volume rendering display node.
   /// If displayNode is 0, it uses the first display node.
   /// It's a utility method that internally calls
   /// CopyScalarDisplayToVolumeRenderingDisplayNode() or
@@ -318,6 +322,7 @@ protected:
   /// \sa SetDefaultRenderingMethod(), GetDefaultRenderingMethod(),
   /// CreateVolumeRenderingDisplayNode()
   char* DefaultRenderingMethod;
+
   bool UseLinearRamp;
 
   typedef std::vector<vtkMRMLNode*> DisplayNodesType;

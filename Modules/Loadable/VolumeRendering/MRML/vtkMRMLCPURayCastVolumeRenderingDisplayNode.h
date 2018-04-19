@@ -53,24 +53,11 @@ public:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() VTK_OVERRIDE {return "CPURayCastVolumeRendering";}
 
-  vtkGetMacro (RaycastTechnique, int);
-  vtkSetMacro (RaycastTechnique, int);
-
 protected:
   vtkMRMLCPURayCastVolumeRenderingDisplayNode();
   ~vtkMRMLCPURayCastVolumeRenderingDisplayNode();
   vtkMRMLCPURayCastVolumeRenderingDisplayNode(const vtkMRMLCPURayCastVolumeRenderingDisplayNode&);
   void operator=(const vtkMRMLCPURayCastVolumeRenderingDisplayNode&);
-
-  /* techniques in GPU ray cast
-   * 0: composite with directional lighting (default)
-   * 1: composite with fake lighting (edge coloring, faster)
-   * 2: MIP
-   * 3: MINIP
-   * 4: Gradient Magnitude Opacity Modulation
-   * 5: Illustrative Context Preserving Exploration
-   * */
-  int RaycastTechnique;
 };
 
 #endif

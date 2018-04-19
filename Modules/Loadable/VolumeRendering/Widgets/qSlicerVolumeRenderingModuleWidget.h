@@ -32,7 +32,7 @@ class qSlicerVolumeRenderingPropertiesWidget;
 class qSlicerVolumeRenderingModuleWidgetPrivate;
 class vtkMRMLAnnotationROINode;
 class vtkMRMLNode;
-class vtkMRMLScalarVolumeNode;
+class vtkMRMLVolumeNode;
 class vtkMRMLViewNode;
 class vtkMRMLVolumeRenderingDisplayNode;
 class vtkMRMLVolumePropertyNode;
@@ -49,41 +49,28 @@ public:
   qSlicerVolumeRenderingModuleWidget(QWidget *parent=0);
   virtual ~qSlicerVolumeRenderingModuleWidget();
 
-  Q_INVOKABLE vtkMRMLScalarVolumeNode* mrmlVolumeNode()const;
-  Q_INVOKABLE vtkMRMLVolumeRenderingDisplayNode* mrmlDisplayNode()const;
+  Q_INVOKABLE vtkMRMLVolumeNode* mrmlVolumeNode()const;
   Q_INVOKABLE vtkMRMLAnnotationROINode* mrmlROINode()const;
   Q_INVOKABLE vtkMRMLVolumePropertyNode* mrmlVolumePropertyNode()const;
+  Q_INVOKABLE vtkMRMLVolumeRenderingDisplayNode* mrmlDisplayNode()const;
 
-  void addRenderingMethodWidget(const QString& methodClassName,
-                                qSlicerVolumeRenderingPropertiesWidget* widget);
+  void addRenderingMethodWidget(const QString& methodClassName, qSlicerVolumeRenderingPropertiesWidget* widget);
 
   virtual bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString());
   virtual double nodeEditable(vtkMRMLNode* node);
 
 public slots:
-  /// Set the MRML node of interest
   void setMRMLVolumeNode(vtkMRMLNode* node);
-
-  void setMRMLDisplayNode(vtkMRMLNode* node);
-
   void setMRMLROINode(vtkMRMLNode* node);
-
   void setMRMLVolumePropertyNode(vtkMRMLNode* node);
 
-  void addVolumeIntoView(vtkMRMLNode* node);
-
   void fitROIToVolume();
-
-signals:
-  void currentVolumeNodeChanged(vtkMRMLNode* node);
-  void currentVolumeRenderingDisplayNodeChanged(vtkMRMLNode* node);
 
 protected slots:
   void onCurrentMRMLVolumeNodeChanged(vtkMRMLNode* node);
   void onVisibilityChanged(bool);
   void onCropToggled(bool);
 
-  void onCurrentMRMLDisplayNodeChanged(vtkMRMLNode* node);
   void onCurrentMRMLROINodeChanged(vtkMRMLNode* node);
   void onCurrentMRMLVolumePropertyNodeChanged(vtkMRMLNode* node);
 
@@ -92,8 +79,8 @@ protected slots:
   void onCurrentQualityControlChanged(int index);
   void onCurrentFramerateChanged(double fps);
 
-  void updateFromMRMLDisplayNode();
-  void updateFromMRMLDisplayROINode();
+  void updateWidgetFromDisplayNode();
+  void updateWidgetFromROINode();
 
   void synchronizeScalarDisplayNode();
   void setFollowVolumeDisplayNode(bool);
@@ -105,9 +92,10 @@ protected slots:
   void onEffectiveRangeModified();
 
 protected:
-  QScopedPointer<qSlicerVolumeRenderingModuleWidgetPrivate> d_ptr;
-
   virtual void setup();
+
+protected:
+  QScopedPointer<qSlicerVolumeRenderingModuleWidgetPrivate> d_ptr;
 
 private:
   Q_DECLARE_PRIVATE(qSlicerVolumeRenderingModuleWidget);
