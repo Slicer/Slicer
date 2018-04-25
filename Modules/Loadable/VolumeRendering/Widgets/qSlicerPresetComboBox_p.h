@@ -37,6 +37,9 @@ protected:
 public:
   qSlicerPresetComboBoxPrivate(qSlicerPresetComboBox& object);
   void init();
+
+public:
+  bool ShowIcons;
 };
 
 //-----------------------------------------------------------------------------
@@ -49,7 +52,7 @@ public:
   typedef ctkComboBox Superclass;
   explicit qSlicerIconComboBox(QWidget* parent=0);
 
-public :
+public:
   virtual void showPopup();
 
 private:

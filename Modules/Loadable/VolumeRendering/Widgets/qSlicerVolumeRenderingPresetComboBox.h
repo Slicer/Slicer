@@ -36,6 +36,7 @@ class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerVolumeRenderingPrese
   : public qSlicerWidget
 {
   Q_OBJECT
+  Q_PROPERTY(bool showIcons READ showIcons WRITE setShowIcons)
 
 public:
   /// Constructors
@@ -53,6 +54,9 @@ public:
   /// Get volume property node controlling volume rendering transfer functions.
   /// Its content mirrors the currently selected preset node in the combobox.
   Q_INVOKABLE vtkMRMLVolumePropertyNode* mrmlVolumePropertyNode()const;
+
+  bool showIcons()const;
+  void setShowIcons(bool show);
 
 public slots:
   /// Set selected preset node in the combobox. Triggers update of the volume property node

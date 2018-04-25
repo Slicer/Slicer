@@ -44,8 +44,6 @@ class vtkVolumeProperty;
 #include <map>
 #include <vector>
 
-class vtkStringArray;
-
 /// \ingroup Slicer_QtModules_VolumeRendering
 /// Collection of utility methods to control the Volume Rendering nodes.
 /// The fastest to volume render of vtkMRMLVolumeNode is to use
@@ -274,6 +272,10 @@ public:
   /// Removes a preset and its associated icon (if specified) from the preset scene.
   /// \sa GetPresetsScene(), GetIconVolumeReferenceRole()
   void RemovePreset(vtkMRMLVolumePropertyNode* preset);
+
+  /// Use custom presets scene
+  /// \return Nonzero if successfully loaded
+  int LoadCustomPresetsScene(const char* sceneFilePath);
   
   /// This node reference role name allows linking from a preset node to a volume
   /// node that contains an icon for the preset node.

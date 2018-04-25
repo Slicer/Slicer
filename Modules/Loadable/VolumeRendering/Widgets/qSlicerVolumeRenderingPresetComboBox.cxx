@@ -333,3 +333,17 @@ void qSlicerVolumeRenderingPresetComboBox::applyPreset(vtkMRMLNode* node)
 
   this->resetOffset();
 }
+
+// --------------------------------------------------------------------------
+bool qSlicerVolumeRenderingPresetComboBox::showIcons()const
+{
+  Q_D(const qSlicerVolumeRenderingPresetComboBox);
+  return d->PresetComboBox->showIcons();
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingPresetComboBox::setShowIcons(bool show)
+{
+  Q_D(qSlicerVolumeRenderingPresetComboBox);
+  d->PresetComboBox->setShowIcons(show);
+}

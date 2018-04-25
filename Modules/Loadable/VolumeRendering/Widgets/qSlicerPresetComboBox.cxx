@@ -132,6 +132,7 @@ void qSlicerIconComboBox::showPopup()
 qSlicerPresetComboBoxPrivate::qSlicerPresetComboBoxPrivate(
   qSlicerPresetComboBox& object)
   : q_ptr(&object)
+  , ShowIcons(true)
 {
 }
 
@@ -146,13 +147,7 @@ void qSlicerPresetComboBoxPrivate::init()
   q->setRemoveEnabled(false);
   q->setBaseName(q->tr("Preset"));
 
-  qSlicerIconComboBox* comboBox = new qSlicerIconComboBox;
-  comboBox->forceDefault(true);
-  q->setComboBox(comboBox);
-  q->updateComboBoxTitleAndIcon(0);
-
-  qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(q->sortFilterProxyModel()->sourceModel());
-  sceneModel->setNameColumn(-1);
+  q->setShowIcons(true);
 
   QObject::connect(q, SIGNAL(nodeAdded(vtkMRMLNode*)), q, SLOT(setIconToPreset(vtkMRMLNode*)));
   QObject::connect(q, SIGNAL(currentNodeChanged(vtkMRMLNode*)), q, SLOT(updateComboBoxTitleAndIcon(vtkMRMLNode*)));
@@ -175,43 +170,48 @@ qSlicerPresetComboBox::~qSlicerPresetComboBox()
 // --------------------------------------------------------------------------
 void qSlicerPresetComboBox::setIconToPreset(vtkMRMLNode* presetNode)
 {
+  Q_D(qSlicerPresetComboBox);
   if (presetNode == NULL)
     {
     return;
     }
 
-  // Search corresponding icon
-  QIcon presetIcon;
-  vtkMRMLVolumeNode* iconVolume = vtkMRMLVolumeNode::SafeDownCast(
-    presetNode->GetNodeReference(vtkSlicerVolumeRenderingLogic::GetIconVolumeReferenceRole()));
-  if (iconVolume && iconVolume->GetImageData()!=NULL)
-    {
-    QImage qimage;
-    qMRMLUtils::vtkImageDataToQImage(iconVolume->GetImageData(),qimage);
-    presetIcon = QIcon(QPixmap::fromImage(qimage));
-    }
-  if (presetIcon.availableSizes().size() == 0)
-    {
-    // Check if an image is available for this preset in the stock preset images
-    presetIcon = QIcon(QString(":/presets/") + presetNode->GetName());
-    }
-  if (presetIcon.availableSizes().size() == 0)
-    {
-    // Use generic icon (puzzle piece)
-    presetIcon = QIcon(":/Icons/Extension.png");
-    }
-
-  // Set icon
   qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sortFilterProxyModel()->sourceModel());
-  sceneModel->setData(sceneModel->indexFromNode(presetNode), presetIcon, Qt::DecorationRole);
 
-  // Update icon size
-  QList<QSize> iconSizes = presetIcon.availableSizes();
-  if (iconSizes.count())
+  if (d->ShowIcons)
     {
-    QSize iconSize = this->comboBox()->view()->iconSize();
-    this->comboBox()->view()->setIconSize(QSize(qMax(iconSize.width(), iconSizes[0].width()),
-                                                qMax(iconSize.height(), iconSizes[0].height())));
+    // Search corresponding icon
+    QIcon presetIcon;
+    vtkMRMLVolumeNode* iconVolume = vtkMRMLVolumeNode::SafeDownCast(
+      presetNode->GetNodeReference(vtkSlicerVolumeRenderingLogic::GetIconVolumeReferenceRole()));
+    if (iconVolume && iconVolume->GetImageData()!=NULL)
+      {
+      QImage qimage;
+      qMRMLUtils::vtkImageDataToQImage(iconVolume->GetImageData(),qimage);
+      presetIcon = QIcon(QPixmap::fromImage(qimage));
+      }
+    if (presetIcon.availableSizes().size() == 0)
+      {
+      // Check if an image is available for this preset in the stock preset images
+      presetIcon = QIcon(QString(":/presets/") + presetNode->GetName());
+      }
+    if (presetIcon.availableSizes().size() == 0)
+      {
+      // Use generic icon (puzzle piece)
+      presetIcon = QIcon(":/Icons/Extension.png");
+      }
+
+    // Set icon
+    sceneModel->setData(sceneModel->indexFromNode(presetNode), presetIcon, Qt::DecorationRole);
+
+    // Update icon size
+    QList<QSize> iconSizes = presetIcon.availableSizes();
+    if (iconSizes.count())
+      {
+      QSize iconSize = this->comboBox()->view()->iconSize();
+      this->comboBox()->view()->setIconSize(QSize(qMax(iconSize.width(), iconSizes[0].width()),
+                                                  qMax(iconSize.height(), iconSizes[0].height())));
+      }
     }
 
   // Set toolTip
@@ -237,15 +237,55 @@ void qSlicerPresetComboBox::setIconToPreset(vtkMRMLNode* presetNode)
 // --------------------------------------------------------------------------
 void qSlicerPresetComboBox::updateComboBoxTitleAndIcon(vtkMRMLNode* node)
 {
+  Q_D(qSlicerPresetComboBox);
   ctkComboBox* combo = qobject_cast<ctkComboBox*>(this->comboBox());
   if (node)
     {
     combo->setDefaultText(node->GetName());
-    combo->setDefaultIcon(combo->itemIcon(combo->currentIndex()));
+    combo->setDefaultIcon(d->ShowIcons ? combo->itemIcon(combo->currentIndex()) : QIcon());
     }
   else
     {
     combo->setDefaultText(tr("Select a Preset"));
     combo->setDefaultIcon(QIcon());
     }
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerPresetComboBox::showIcons()const
+{
+  Q_D(const qSlicerPresetComboBox);
+  return d->ShowIcons;
+}
+
+// --------------------------------------------------------------------------
+void qSlicerPresetComboBox::setShowIcons(bool show)
+{
+  Q_D(qSlicerPresetComboBox);
+  d->ShowIcons = show;
+
+  vtkMRMLScene* scene = this->mrmlScene();
+  qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sortFilterProxyModel()->sourceModel());
+
+  if (d->ShowIcons)
+    {
+    qSlicerIconComboBox* comboBox = new qSlicerIconComboBox;
+    comboBox->forceDefault(true);
+    this->setComboBox(comboBox);
+    sceneModel->setNameColumn(-1);
+    }
+  else
+    {
+    ctkComboBox* comboBox = new ctkComboBox;
+    comboBox->forceDefault(false);
+    this->setComboBox(comboBox);
+    sceneModel->setNameColumn(0);
+    }
+
+  // Update from scene
+  QString currentNodeID = this->currentNodeID();
+  this->setMRMLScene(NULL);
+  this->setMRMLScene(scene);
+  this->updateComboBoxTitleAndIcon(NULL);
+  this->setCurrentNodeID(currentNodeID);
 }

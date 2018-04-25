@@ -34,11 +34,16 @@ class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerPresetComboBox
   : public qMRMLNodeComboBox
 {
   Q_OBJECT
+  Q_PROPERTY(bool showIcons READ showIcons WRITE setShowIcons)
+
 public:
   /// Constructors
   typedef qMRMLNodeComboBox Superclass;
   explicit qSlicerPresetComboBox(QWidget* parent=0);
   virtual ~qSlicerPresetComboBox();
+
+  bool showIcons()const;
+  void setShowIcons(bool show);
 
 public slots:
   void setIconToPreset(vtkMRMLNode* presetNode);

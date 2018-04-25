@@ -1173,3 +1173,19 @@ void vtkSlicerVolumeRenderingLogic::RemovePreset(vtkMRMLVolumePropertyNode* pres
     }
   presetScene->RemoveNode(preset);
 }
+
+//---------------------------------------------------------------------------
+int vtkSlicerVolumeRenderingLogic::LoadCustomPresetsScene(const char* sceneFilePath)
+{
+  if (!this->PresetsScene)
+    {
+    this->PresetsScene = vtkMRMLScene::New();
+    }
+  else
+    {
+    this->PresetsScene->Clear(1);
+    }
+
+  this->PresetsScene->SetURL(sceneFilePath);
+  return this->PresetsScene->Import();
+}
