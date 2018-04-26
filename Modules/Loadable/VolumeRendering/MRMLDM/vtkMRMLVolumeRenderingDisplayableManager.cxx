@@ -545,7 +545,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdatePipelineROIs(
     }
 
   vtkNew<vtkPlanes> planes;
-  displayNode->GetROINode()->GetTransformedPlanes(planes);
+  displayNode->GetROINode()->GetTransformedPlanes(planes.GetPointer());
   //TODO: Workaround for bug that broke cropping: normals were inverted, need to invert them
   //      (the reason is not the use of SetUserMatrix instead of PokeMatrix when setting the transform to the mapper)
   vtkDoubleArray* normals = vtkDoubleArray::SafeDownCast(planes->GetNormals());
@@ -553,7 +553,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdatePipelineROIs(
     {
     normals->SetValue(i, (-1.0)*normals->GetValue(i));
     }
-  volumeMapper->SetClippingPlanes(planes);
+  volumeMapper->SetClippingPlanes(planes.GetPointer());
 }
 
 //---------------------------------------------------------------------------

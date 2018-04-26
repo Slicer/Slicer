@@ -36,7 +36,6 @@
 #include <vtkActor2D.h>
 #include <vtkAlgorithmOutput.h>
 #include <vtkCallbackCommand.h>
-#include <vtkCompositeDataGeometryFilter.h>
 #include <vtkDataSetSurfaceFilter.h>
 #include <vtkEventBroker.h>
 #include <vtkLookupTable.h>
@@ -57,7 +56,12 @@
 #include <vtkVersion.h>
 
 // VTK includes: customization
+#if VTK_MAJOR_VERSION >= 9
+  #include <vtkCompositeDataGeometryFilter.h>
 #include <vtkPlaneCutter.h>
+#else
+  #include <vtkCutter.h>
+#endif
 #include <vtkSampleImplicitFunctionFilter.h>
 
 // STD includes
@@ -81,8 +85,12 @@ public:
     vtkSmartPointer<vtkDataSetSurfaceFilter> SurfaceExtractor;
     vtkSmartPointer<vtkTransformFilter> ModelWarper;
     vtkSmartPointer<vtkPlane> Plane;
+#if VTK_MAJOR_VERSION >= 9
     vtkSmartPointer<vtkPlaneCutter> Cutter;
     vtkSmartPointer<vtkCompositeDataGeometryFilter> GeometryFilter; // appends multiple cut pieces into a single polydata
+#else
+    vtkSmartPointer<vtkCutter> Cutter;
+#endif
     vtkSmartPointer<vtkSampleImplicitFunctionFilter> SliceDistance;
     vtkSmartPointer<vtkProp> Actor;
     };
@@ -340,8 +348,12 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
   // Create pipeline
   Pipeline* pipeline = new Pipeline();
   pipeline->Actor = actor.GetPointer();
+#if VTK_MAJOR_VERSION >= 9
   pipeline->Cutter = vtkSmartPointer<vtkPlaneCutter>::New();
   pipeline->GeometryFilter = vtkSmartPointer<vtkCompositeDataGeometryFilter>::New();
+#else
+  pipeline->Cutter = vtkSmartPointer<vtkCutter>::New();
+#endif
   pipeline->SliceDistance = vtkSmartPointer<vtkSampleImplicitFunctionFilter>::New();
   pipeline->TransformToSlice = vtkSmartPointer<vtkTransform>::New();
   pipeline->NodeToWorld = vtkSmartPointer<vtkGeneralTransform>::New();
@@ -352,11 +364,18 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
 
   // Set up pipeline
   pipeline->Transformer->SetTransform(pipeline->TransformToSlice);
+#if VTK_MAJOR_VERSION >= 9
   pipeline->Transformer->SetInputConnection(pipeline->GeometryFilter->GetOutputPort());
   pipeline->Cutter->SetPlane(pipeline->Plane);
   pipeline->Cutter->BuildTreeOff(); // the cutter crashes for complex geometries if build tree is enabled
   pipeline->Cutter->SetInputConnection(pipeline->ModelWarper->GetOutputPort());
   pipeline->GeometryFilter->SetInputConnection(pipeline->Cutter->GetOutputPort());
+#else
+  pipeline->Transformer->SetInputConnection(pipeline->Cutter->GetOutputPort());
+  pipeline->Cutter->SetCutFunction(pipeline->Plane);
+  pipeline->Cutter->SetGenerateCutScalars(0);
+  pipeline->Cutter->SetInputConnection(pipeline->ModelWarper->GetOutputPort());
+#endif
   // Projection is created from outer surface of volumetric meshes (for polydata surface
   // extraction is just shallow-copy)
   pipeline->SurfaceExtractor->SetInputConnection(pipeline->ModelWarper->GetOutputPort());
@@ -478,7 +497,22 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
     {
     // show intersection in the slice view
     // include clipper in the pipeline
+#if VTK_MAJOR_VERSION >= 9
     pipeline->Transformer->SetInputConnection(pipeline->GeometryFilter->GetOutputPort());
+#else
+    pipeline->Transformer->SetInputConnection(pipeline->Cutter->GetOutputPort());
+
+    // optimization for slice to slice intersections which are 1 quad polydatas
+    // no need for 50^3 default locator divisons
+    if (pointSet->GetPoints() != NULL && pointSet->GetNumberOfPoints() <= 4)
+    {
+      vtkNew<vtkPointLocator> locator;
+      double *bounds = pointSet->GetBounds();
+      locator->SetDivisions(2, 2, 2);
+      locator->InitPointInsertion(pointSet->GetPoints(), bounds);
+      pipeline->Cutter->SetLocator(locator.GetPointer());
+    }
+#endif
     pipeline->Cutter->SetInputConnection(pipeline->ModelWarper->GetOutputPort());
 
     //  Set Poly Data Transform

@@ -32,8 +32,13 @@ Version:   $Revision$
 // VTK includes
 #include <vtkDebugLeaks.h>
 #include <vtkDecimatePro.h>
+#if VTK_MAJOR_VERSION >= 9
 #include <vtkDiscreteFlyingEdges3D.h>
 #include <vtkFlyingEdges3D.h>
+#else
+  #include <vtkDiscreteMarchingCubes.h>
+  #include <vtkMarchingCubes.h>
+#endif
 #include <vtkGeometryFilter.h>
 #include <vtkImageAccumulate.h>
 #include <vtkImageChangeInformation.h>
@@ -272,7 +277,11 @@ int main(int argc, char * argv[])
   // vtk and helper variables
   vtkSmartPointer<vtkITKArchetypeImageSeriesReader> reader;
   vtkImageData *                                    image;
+#if VTK_MAJOR_VERSION >= 9
   vtkSmartPointer<vtkDiscreteFlyingEdges3D>         cubes;
+#else
+  vtkSmartPointer<vtkDiscreteMarchingCubes>         cubes;
+#endif
   vtkSmartPointer<vtkWindowedSincPolyDataFilter>    smoother;
   bool                                              makeMultiple = false;
   bool                                              useStartEnd = false;
@@ -284,7 +293,12 @@ int main(int argc, char * argv[])
 
   vtkSmartPointer<vtkImageConstantPad>        padder;
   vtkSmartPointer<vtkDecimatePro>             decimator;
+
+#if VTK_MAJOR_VERSION >= 9
   vtkSmartPointer<vtkFlyingEdges3D>           mcubes;
+#else
+  vtkSmartPointer<vtkMarchingCubes>           mcubes;
+#endif
   vtkSmartPointer<vtkImageThreshold>          imageThreshold;
   vtkSmartPointer<vtkThreshold>               threshold;
   vtkSmartPointer<vtkImageToStructuredPoints> imageToStructuredPoints;
@@ -650,7 +664,12 @@ int main(int argc, char * argv[])
       cubes->SetInputData(NULL);
       cubes = NULL;
       }
+
+#if VTK_MAJOR_VERSION >= 9
     cubes = vtkSmartPointer<vtkDiscreteFlyingEdges3D>::New();
+#else
+    cubes = vtkSmartPointer<vtkDiscreteMarchingCubes>::New();
+#endif
     std::string            comment1 = "Discrete Marching Cubes";
     vtkPluginFilterWatcher watchDMCubes(cubes,
                                         comment1.c_str(),
@@ -1087,7 +1106,11 @@ int main(int argc, char * argv[])
         mcubes->SetInputData(NULL);
         mcubes = NULL;
         }
+#if VTK_MAJOR_VERSION >= 9
       mcubes = vtkSmartPointer<vtkFlyingEdges3D>::New();
+#else
+      mcubes = vtkSmartPointer<vtkMarchingCubes>::New();
+#endif
       std::string            comment5 = "Marching Cubes " + labelName;
       vtkPluginFilterWatcher watchThreshold(mcubes,
                                             comment5.c_str(),

@@ -25,7 +25,11 @@
 
 // VTK includes
 #include <vtkDecimatePro.h>
+#if VTK_MAJOR_VERSION >= 9
 #include <vtkDiscreteFlyingEdges3D.h>
+#else
+  #include <vtkDiscreteMarchingCubes.h>
+#endif
 #include <vtkImageChangeInformation.h>
 #include <vtkImageConstantPad.h>
 #include <vtkImageThreshold.h>
@@ -163,13 +167,19 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkDataObject* sour
   double smoothingFactor = vtkVariant(this->ConversionParameters[GetSmoothingFactorParameterName()].first).ToDouble();
   int computeSurfaceNormals = vtkVariant(this->ConversionParameters[GetComputeSurfaceNormalsParameterName()].first).ToInt();
 
+
+  // Run marching cubes
+
+#if VTK_MAJOR_VERSION >= 9
   // Normals computation in vtkDiscreteFlyingEdges3D is faster than computing normals in a subsequent
   // vtkPolyDataNormals filter. However, if smoothing step is applied after vtkDiscreteFlyingEdges3D then
   // computing normals after smoothing provides smoother surfaces.
   bool marchingCubesComputesSurfaceNormals = (computeSurfaceNormals > 0) && (smoothingFactor <= 0);
-
-  // Run marching cubes
   vtkSmartPointer<vtkDiscreteFlyingEdges3D> marchingCubes = vtkSmartPointer<vtkDiscreteFlyingEdges3D>::New();
+#else
+  bool marchingCubesComputesSurfaceNormals = false;
+  vtkSmartPointer<vtkDiscreteMarchingCubes> marchingCubes = vtkSmartPointer<vtkDiscreteMarchingCubes>::New();
+#endif
   marchingCubes->SetInputData(binaryLabelmapWithIdentityGeometry);
   const int labelmapFillValue = binaryLabelmapWithIdentityGeometry->GetScalarRange()[1]; // max value
   marchingCubes->GenerateValues(1, labelmapFillValue, labelmapFillValue);

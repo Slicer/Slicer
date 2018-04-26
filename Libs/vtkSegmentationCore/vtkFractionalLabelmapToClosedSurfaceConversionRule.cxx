@@ -25,7 +25,11 @@
 #include <vtkObjectFactory.h>
 #include <vtkPolyData.h>
 #include <vtkVersion.h>
+#if VTK_MAJOR_VERSION >= 9
 #include <vtkFlyingEdges3D.h>
+#else
+  #include <vtkMarchingCubes.h>
+#endif
 #include <vtkDecimatePro.h>
 #include <vtkSmoothPolyDataFilter.h>
 #include <vtkTransform.h>
@@ -173,7 +177,11 @@ bool vtkFractionalLabelmapToClosedSurfaceConversionRule::Convert(vtkDataObject* 
   imageResize->InterpolateOn();
 
   // Run marching cubes
+#if VTK_MAJOR_VERSION >= 9
   vtkSmartPointer<vtkFlyingEdges3D> marchingCubes = vtkSmartPointer<vtkFlyingEdges3D>::New();
+#else
+  vtkSmartPointer<vtkMarchingCubes> marchingCubes = vtkSmartPointer<vtkMarchingCubes>::New();
+#endif
   marchingCubes->SetInputConnection(imageResize->GetOutputPort());
   marchingCubes->SetNumberOfContours(1);
   marchingCubes->SetValue(0, (fractionalThreshold * (maximumValue - minimumValue)) + minimumValue);
