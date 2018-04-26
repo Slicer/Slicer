@@ -564,7 +564,7 @@ class DICOMPatcherLogic(ScriptedLoadableModuleLogic):
 
         patchedFilePath = os.path.abspath(os.path.join(rootOutput,file))
         for rule in self.patchingRules:
-          patchedFilePath = rule.generateOutputFilePath(patchedFilePath, ds)
+          patchedFilePath = rule.generateOutputFilePath(ds, patchedFilePath)
 
         ######################################################
         # Write
