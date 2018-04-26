@@ -24,6 +24,10 @@
 #include <QFile>
 #include <QMainWindow>
 
+#ifdef Q_OS_WIN
+#include <QtPlatformHeaders\QWindowsWindowFunctions>
+#endif
+
 #include "vtkSlicerConfigure.h" // For Slicer_USE_*, Slicer_BUILD_*_SUPPORT
 
 // CTK includes
@@ -666,6 +670,14 @@ ctkSettingsDialog* qSlicerApplication::settingsDialog()const
   Q_D(const qSlicerApplication);
   return d->SettingsDialog;
 }
+
+#ifdef Q_OS_WIN
+// --------------------------------------------------------------------------
+void qSlicerApplication::setHasBorderInFullScreen(bool hasBorder)
+{
+  QWindowsWindowFunctions::setHasBorderInFullScreen(this->mainWindow()->windowHandle(), hasBorder);
+}
+#endif
 
 // --------------------------------------------------------------------------
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
