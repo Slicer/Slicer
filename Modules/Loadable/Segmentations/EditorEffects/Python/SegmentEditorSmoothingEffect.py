@@ -281,10 +281,10 @@ If segments overlap, segment higher in the segments table will have priority. <b
 
     # Convert labelmap to combined polydata
     if vtk.VTK_MAJOR_VERSION >= 9:
-    convertToPolyData = vtk.vtkDiscreteFlyingEdges3D()
-    convertToPolyData.ComputeGradientsOff()
-    convertToPolyData.ComputeNormalsOff()
-    convertToPolyData.ComputeScalarsOff()
+      convertToPolyData = vtk.vtkDiscreteFlyingEdges3D()
+      convertToPolyData.ComputeGradientsOff()
+      convertToPolyData.ComputeNormalsOff()
+      convertToPolyData.ComputeScalarsOff()
     else:
       convertToPolyData = vtk.vtkDiscreteMarchingCubes()
 
