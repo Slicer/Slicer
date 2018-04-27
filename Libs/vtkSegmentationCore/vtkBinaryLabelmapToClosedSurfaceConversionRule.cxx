@@ -24,9 +24,10 @@
 #include "vtkOrientedImageData.h"
 
 // VTK includes
+#include <vtkVersion.h> // must precede reference to VTK_MAJOR_VERSION
 #include <vtkDecimatePro.h>
 #if VTK_MAJOR_VERSION >= 9
-#include <vtkDiscreteFlyingEdges3D.h>
+  #include <vtkDiscreteFlyingEdges3D.h>
 #else
   #include <vtkDiscreteMarchingCubes.h>
 #endif
@@ -39,7 +40,6 @@
 #include <vtkPolyDataNormals.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
-#include <vtkVersion.h>
 #include <vtkWindowedSincPolyDataFilter.h>
 
 //----------------------------------------------------------------------------

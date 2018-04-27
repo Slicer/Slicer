@@ -37,6 +37,7 @@
 #include "vtkOrientedImageDataResample.h"
 
 // VTK includes
+#include <vtkVersion.h> // must precede reference to VTK_MAJOR_VERSION
 #if VTK_MAJOR_VERSION >= 9
 #include <vtkCompositeDataGeometryFilter.h>
   #include <vtkPlaneCutter.h>

@@ -13,6 +13,8 @@ Version:   $Revision$
 =========================================================================auto=*/
 
 #include "GrayscaleModelMakerCLP.h"
+
+#include <vtkVersion.h> // must precede reference to VTK_MAJOR_VERSION
 #include "vtkITKArchetypeImageSeriesScalarReader.h"
 #include "vtkImageData.h"
 #if VTK_MAJOR_VERSION >= 9
@@ -34,7 +36,6 @@ Version:   $Revision$
 #include "ModuleDescriptionParser.h"
 #include "ModuleDescription.h"
 #include "vtkDebugLeaks.h"
-#include <vtkVersion.h>
 
 int main(int argc, char * argv[])
 {

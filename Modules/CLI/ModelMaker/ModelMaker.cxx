@@ -30,11 +30,12 @@ Version:   $Revision$
 #include "vtkITKArchetypeImageSeriesScalarReader.h"
 
 // VTK includes
+#include <vtkVersion.h> // must precede reference to VTK_MAJOR_VERSION
 #include <vtkDebugLeaks.h>
 #include <vtkDecimatePro.h>
 #if VTK_MAJOR_VERSION >= 9
-#include <vtkDiscreteFlyingEdges3D.h>
-#include <vtkFlyingEdges3D.h>
+  #include <vtkDiscreteFlyingEdges3D.h>
+  #include <vtkFlyingEdges3D.h>
 #else
   #include <vtkDiscreteMarchingCubes.h>
   #include <vtkMarchingCubes.h>
@@ -62,7 +63,6 @@ Version:   $Revision$
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkUnstructuredGrid.h>
 #include <vtkWindowedSincPolyDataFilter.h>
-#include <vtkVersion.h>
 
 // VTKsys includes
 #include <vtksys/SystemTools.hxx>

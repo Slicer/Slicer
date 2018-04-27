@@ -33,6 +33,7 @@
 #include <vtkMRMLTransformNode.h>
 
 // VTK includes
+#include <vtkVersion.h> // must precede reference to VTK_MAJOR_VERSION
 #include <vtkActor2D.h>
 #include <vtkAlgorithmOutput.h>
 #include <vtkCallbackCommand.h>
@@ -53,12 +54,11 @@
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkWeakPointer.h>
 #include <vtkPointLocator.h>
-#include <vtkVersion.h>
 
 // VTK includes: customization
 #if VTK_MAJOR_VERSION >= 9
   #include <vtkCompositeDataGeometryFilter.h>
-#include <vtkPlaneCutter.h>
+  #include <vtkPlaneCutter.h>
 #else
   #include <vtkCutter.h>
 #endif

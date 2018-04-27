@@ -22,11 +22,11 @@
 #include <vtkOrientedImageData.h>
 
 // VTK includes
+#include <vtkVersion.h> // must precede reference to VTK_MAJOR_VERSION
 #include <vtkObjectFactory.h>
 #include <vtkPolyData.h>
-#include <vtkVersion.h>
 #if VTK_MAJOR_VERSION >= 9
-#include <vtkFlyingEdges3D.h>
+  #include <vtkFlyingEdges3D.h>
 #else
   #include <vtkMarchingCubes.h>
 #endif
