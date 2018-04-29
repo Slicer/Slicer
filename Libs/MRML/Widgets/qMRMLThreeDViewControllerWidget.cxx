@@ -251,7 +251,6 @@ void qMRMLThreeDViewControllerWidgetPrivate::init()
 
   this->ViewLabel->setText(qMRMLThreeDViewControllerWidget::tr("1"));
   this->BarLayout->addStretch(1);
-  this->setColor(qMRMLColors::threeDViewBlue());
 }
 
 // --------------------------------------------------------------------------
@@ -639,4 +638,25 @@ void qMRMLThreeDViewControllerWidget::setRulerType(int newRulerType)
     {
     d->ViewNode->SetRenderMode(vtkMRMLViewNode::Orthographic);
     }
+}
+
+//---------------------------------------------------------------------------
+void qMRMLThreeDViewControllerWidget::setViewColor(const QColor& newViewColor)
+{
+  Q_D(qMRMLThreeDViewControllerWidget);
+
+  if (d->ViewNode)
+    {
+    qCritical() << "qMRMLThreeDViewControllerWidget::setViewColor should be called before setMRMLSliceNode";
+    return;
+    }
+
+  d->setColor(newViewColor);
+}
+
+//---------------------------------------------------------------------------
+QColor qMRMLThreeDViewControllerWidget::viewColor()const
+{
+  Q_D(const qMRMLThreeDViewControllerWidget);
+  return d->color();
 }

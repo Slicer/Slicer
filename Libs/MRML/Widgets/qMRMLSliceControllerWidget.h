@@ -113,7 +113,7 @@ public:
   /// Set the color for the slice view
   void setSliceViewColor(const QColor& newSliceViewColor);
 
-  /// Get the color for the slice view (as a string)
+  /// Get the color for the slice view
   QColor sliceViewColor()const;
 
   /// Set slice offset range

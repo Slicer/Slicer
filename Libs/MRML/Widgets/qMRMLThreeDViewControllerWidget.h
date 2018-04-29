@@ -53,6 +53,12 @@ public:
   /// Get the label for the view (abbreviation for the view name)
   QString viewLabel()const;
 
+  /// Set the color for the view
+  void setViewColor(const QColor& newViewColor);
+
+  /// Get the color for the view
+  QColor viewColor()const;
+
   void setQuadBufferStereoSupportEnabled(bool value);
 
 public slots:

@@ -1751,15 +1751,15 @@ void vtkMRMLLayoutLogic::ApplyProperty(const ViewProperty& property, vtkMRMLNode
   // ViewColor
   if (name == std::string("viewcolor"))
     {
-    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(view);
-    if (!sliceNode)
+    vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(view);
+    if (!viewNode)
       {
       vtkWarningMacro("Invalid view color property.");
       return;
       }
     double color[3];
     vtkMRMLColors::toRGBColor(value.c_str(), color);
-    sliceNode->SetLayoutColor(color);
+    viewNode->SetLayoutColor(color);
     }
   // Lightbox
   if (name == std::string("lightboxrows"))

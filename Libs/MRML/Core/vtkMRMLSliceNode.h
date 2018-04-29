@@ -74,13 +74,13 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
 
   ///
   /// The visibility of the slice in the 3DViewer.
-  vtkGetMacro ( SliceVisible, int );
-  vtkSetMacro ( SliceVisible, int );
+  vtkGetMacro(SliceVisible, int);
+  vtkSetMacro(SliceVisible, int);
 
   ///
   /// The visibility of the slice plane widget in the 3DViewer.
-  vtkGetMacro ( WidgetVisible, int );
-  vtkSetMacro ( WidgetVisible, int );
+  vtkGetMacro(WidgetVisible, int);
+  vtkSetMacro(WidgetVisible, int);
 
   /// Add View Node ID for the view to display this node in.
   /// \sa ViewNodeIDs, RemoveViewNodeID(), RemoveAllViewNodeIDs()
@@ -115,14 +115,14 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
 
   /// The ImpplicitePlane widget mode
   /// this lock the normal of the plane to the camera's one
-  vtkGetMacro ( WidgetNormalLockedToCamera, int );
-  vtkSetMacro ( WidgetNormalLockedToCamera, int );
+  vtkGetMacro(WidgetNormalLockedToCamera, int);
+  vtkSetMacro(WidgetNormalLockedToCamera, int);
 
   ///
   /// Use the label outline filter on this slice?
-  vtkGetMacro ( UseLabelOutline, int );
-  vtkSetMacro ( UseLabelOutline, int );
-  vtkBooleanMacro ( UseLabelOutline, int );
+  vtkGetMacro(UseLabelOutline, int);
+  vtkSetMacro(UseLabelOutline, int);
+  vtkBooleanMacro(UseLabelOutline, int);
 
   /// \brief Set 'standard' radiological convention views of patient space.
   ///
@@ -171,8 +171,8 @@ protected:
   /// try to match 'Reformat' but would not know what overall orientation to pick).
   ///
   /// \deprecated
-  vtkGetStringMacro (OrientationReference);
-  vtkSetStringMacro (OrientationReference);
+  vtkGetStringMacro(OrientationReference);
+  vtkSetStringMacro(OrientationReference);
 
 public:
 
@@ -232,19 +232,19 @@ public:
 
   ///
   /// Size of the slice plane in millimeters
-  vtkGetVector3Macro (FieldOfView, double);
-  void SetFieldOfView (double x, double y, double z);
+  vtkGetVector3Macro(FieldOfView, double);
+  void SetFieldOfView(double x, double y, double z);
 
   ///
   /// Origin of XYZ window
-  vtkGetVector3Macro (XYZOrigin, double);
-  void SetXYZOrigin (double x, double y, double z);
+  vtkGetVector3Macro(XYZOrigin, double);
+  void SetXYZOrigin(double x, double y, double z);
 
   ///
   /// Number of samples in each direction
   /// -- note that the spacing is implicitly FieldOfView / Dimensions
   vtkGetVectorMacro(Dimensions,int,3)
-  void SetDimensions (int x, int y, int z);
+  void SetDimensions(int x, int y, int z);
 
   ///
   /// Number of samples in each direction for the reslice operation
@@ -254,35 +254,35 @@ public:
   /// -- note that z, the number of slices, should be the same for both
   ///    Dimensions and UVWDimensions
   vtkGetVectorMacro(UVWDimensions,int,3)
-  void SetUVWDimensions (int x, int y, int z);
-  void SetUVWDimensions (int xyz[3]);
+  void SetUVWDimensions(int x, int y, int z);
+  void SetUVWDimensions(int xyz[3]);
 
   ///
   ///    maximum limit for  UVWDimensions
   vtkGetVectorMacro(UVWMaximumDimensions,int,3)
-  void SetUVWMaximumDimensions (int x, int y, int z);
-  void SetUVWMaximumDimensions (int xyz[3]);
+  void SetUVWMaximumDimensions(int x, int y, int z);
+  void SetUVWMaximumDimensions(int xyz[3]);
 
   ///
   /// Get/Set maximum extent in any direction occupied by slice
-  vtkGetVector3Macro (UVWExtents, double);
-  void SetUVWExtents (double x, double y, double z);
-  void SetUVWExtents (double xyz[3]);
+  vtkGetVector3Macro(UVWExtents, double);
+  void SetUVWExtents(double x, double y, double z);
+  void SetUVWExtents(double xyz[3]);
 
   ///
   /// Origin of UVW window
-  vtkGetVector3Macro (UVWOrigin, double);
-  void SetUVWOrigin (double x, double y, double z);
-  void SetUVWOrigin (double xyz[3]);
+  vtkGetVector3Macro(UVWOrigin, double);
+  void SetUVWOrigin(double x, double y, double z);
+  void SetUVWOrigin(double xyz[3]);
 
   ///
   /// Origin of slice in XYZ or UVW space depending on SliceResolutionMode
-  void SetSliceOrigin (double xyz[3]);
-  void SetSliceOrigin (double x, double y, double z);
+  void SetSliceOrigin(double xyz[3]);
+  void SetSliceOrigin(double x, double y, double z);
 
   ///
   /// Set UVW extents and dimensions,
-  /// produces less upadtes then calling both separately
+  /// produces less updates then calling both separately
   void SetUVWExtentsAndDimensions (double extents[3], int dimensions[3]);
 
 
@@ -317,16 +317,6 @@ public:
   /// - called when any of the inputs change
   void UpdateMatrices();
 
-  /// Color for layout as rgb
-  vtkSetVector3Macro(LayoutColor, double);
-  vtkGetVector3Macro(LayoutColor, double);
-
-  static double* redColor();
-  static double* yellowColor();
-  static double* greenColor();
-  static double* compareColor();
-  static double* grayColor();
-
   ///
   /// Set the number of rows and columns to use in a LightBox display
   /// of the node
@@ -334,12 +324,12 @@ public:
 
   ///
   /// Set/Get the number of rows to use ina LightBox display
-  vtkGetMacro (LayoutGridRows, int);
+  vtkGetMacro(LayoutGridRows, int);
   virtual void SetLayoutGridRows(int rows);
 
   ///
   /// Set/Get the number of columns to use ina LightBox display
-  vtkGetMacro (LayoutGridColumns, int);
+  vtkGetMacro(LayoutGridColumns, int);
   virtual void SetLayoutGridColumns(int cols);
 
   ///
@@ -348,10 +338,10 @@ public:
   /// T(x, y, z) - the transverse direction vector of the locator
   /// P(x, y, z) - the tip location of the locator
   /// All the above values are in RAS space.
-  void SetSliceToRASByNTP (double Nx, double Ny, double Nz,
-                           double Tx, double Ty, double Tz,
-                           double Px, double Py, double Pz,
-                           int Orientation);
+  void SetSliceToRASByNTP(double Nx, double Ny, double Nz,
+                          double Tx, double Ty, double Tz,
+                          double Px, double Py, double Pz,
+                          int Orientation);
 
   ///
   /// Set the RAS offset of the Slice to the passed values. JumpSlice
@@ -457,7 +447,7 @@ public:
   /// Get/Set a flag indicating what parameters are being manipulated
   /// within calls to InteractingOn() and InteractingOff(). These
   /// fields are used to propagate linked behaviors. This flag is a
-  /// bitfield, with multiple parameters OR'd to composte the
+  /// bitfield, with multiple parameters OR'd to compose the
   /// flag. Does not cause a Modifed().
   void SetInteractionFlags(unsigned int);
   vtkGetMacro(InteractionFlags, unsigned int);
@@ -494,8 +484,6 @@ public:
   vtkGetMacro(SliceResolutionMode, int);
 
 protected:
-
-
   vtkMRMLSliceNode();
   ~vtkMRMLSliceNode();
   vtkMRMLSliceNode(const vtkMRMLSliceNode&);
@@ -533,8 +521,6 @@ protected:
   std::string OrientationString;
 
   char *OrientationReference;
-
-  double LayoutColor[3];
 
   int LayoutGridRows;
   int LayoutGridColumns;

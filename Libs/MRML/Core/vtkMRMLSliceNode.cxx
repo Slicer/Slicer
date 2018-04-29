@@ -109,9 +109,9 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
 
   this->IsUpdatingMatrices = 0;
 
-  this->LayoutColor[0] = vtkMRMLSliceNode::grayColor()[0];
-  this->LayoutColor[1] = vtkMRMLSliceNode::grayColor()[1];
-  this->LayoutColor[2] = vtkMRMLSliceNode::grayColor()[2];
+  this->LayoutColor[0] = vtkMRMLAbstractViewNode::GetGrayColor()[0];
+  this->LayoutColor[1] = vtkMRMLAbstractViewNode::GetGrayColor()[1];
+  this->LayoutColor[2] = vtkMRMLAbstractViewNode::GetGrayColor()[2];
 
   this->SetOrientationReference("Reformat");
   this->SetLayoutLabel("");
@@ -155,57 +155,6 @@ void vtkMRMLSliceNode::ResetInteractionFlagsModifier()
 {
   // Don't call Modified()
   this->InteractionFlagsModifier = (unsigned int) -1;
-}
-
-
-//----------------------------------------------------------------------------
-double* vtkMRMLSliceNode::redColor()
-{
-  // #F34A33
-  static double redColor[3] = {243. / 255.,
-                                74. / 255.,
-                                51. / 255.};
-  return redColor;
-}
-
-//----------------------------------------------------------------------------
-double* vtkMRMLSliceNode::yellowColor()
-{
-  // #EDD54C
-  static double yellowColor[3] = {237. / 255.,
-                                  213. / 255.,
-                                   76. / 255.};
-  return yellowColor;
-}
-
-//----------------------------------------------------------------------------
-double* vtkMRMLSliceNode::greenColor()
-{
-  // #6EB04B
-  static double greenColor[3] = {110. / 255.,
-                                 176. / 255.,
-                                  75. / 255.};
-  return greenColor;
-}
-
-//----------------------------------------------------------------------------
-double* vtkMRMLSliceNode::compareColor()
-{
-  // #E17012
-  static double compareColor[3] = {225. / 255.,
-                                   112. / 255.,
-                                    18. / 255.};
-  return compareColor;
-}
-
-//----------------------------------------------------------------------------
-double* vtkMRMLSliceNode::grayColor()
-{
-  // #8C8C8C
-  static double grayColor[3] = {140. / 255.,
-                                140. / 255.,
-                                140. / 255.};
-  return grayColor;
 }
 
 //---------------------------------------------------------------------------
@@ -941,8 +890,6 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
       of << " orientationMatrix"<< this->URLEncodeString(it->first.c_str()) <<"=\"" << ss.str().c_str() << "\"";
     }
 
-  of << " layoutColor=\"" << this->LayoutColor[0] << " "
-     << this->LayoutColor[1] << " " << this->LayoutColor[2] << "\"";
   of << " orientation=\"" << this->GetOrientation() << "\"";
   if (this->OrientationReference)
     {
@@ -990,22 +937,12 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
     attValue = *(atts++);
     if (!strcmp(attName, "layoutLabel"))
       {
-      // layout label is set in Superclass
+      // Layout label is set in Superclass
       layoutLabelFound = true;
       }
     else if (!strcmp(attName, "layoutColor"))
       {
-      std::stringstream ss;
-      ss << attValue;
-      double val;
-      ss >> val;
-      this->LayoutColor[0] = val;
-      ss << attValue;
-      ss >> val;
-      this->LayoutColor[1] = val;
-      ss << attValue;
-      ss >> val;
-      this->LayoutColor[2] = val;
+      // Layout color is set in Superclass
       layoutColorFound = true;
       }
     else if (!strcmp(attName, "fieldOfView"))
@@ -1077,7 +1014,6 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
 
       this->SliceResolutionMode = val;
       }
-
     else if (!strcmp(attName, "sliceResolutionMode"))
       {
       std::stringstream ss;
@@ -1087,7 +1023,6 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
 
       this->SliceResolutionMode = val;
       }
-
     else if (!strcmp(attName, "activeSlice"))
       {
       std::stringstream ss;
@@ -1157,14 +1092,14 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
         this->UseLabelOutline = 0;
         }
       }
-   else if (!strcmp(attName, "orientation"))
+    else if (!strcmp(attName, "orientation"))
       {
       if (strcmp( attValue, "Reformat" ))
         {
         this->SetOrientation( attValue );
         }
       }
-   else if (!strcmp(attName, "orientationReference"))
+    else if (!strcmp(attName, "orientationReference"))
       {
       this->SetOrientationReference( attValue );
       }
@@ -1172,7 +1107,7 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
       {
       this->SetLayoutName( attValue );
       }
-   else if (!strcmp(attName, "dimensions"))
+    else if (!strcmp(attName, "dimensions"))
       {
       std::stringstream ss;
       unsigned int val;
@@ -1184,7 +1119,7 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
         this->Dimensions[i] = val;
         }
       }
-   else if (!strcmp(attName, "resliceDimensions"))
+    else if (!strcmp(attName, "resliceDimensions"))
       {
       std::stringstream ss;
       unsigned int val;
@@ -1252,7 +1187,6 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
 
       this->SetSliceSpacingMode( val );
       }
-
     else if (!strcmp(attName, "threeDViewNodeRef"))
       {
       std::stringstream ss(attValue);
@@ -1263,8 +1197,6 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
         this->AddThreeDViewID(id.c_str());
         }
       }
-
-
     }
 
   if (!layoutColorFound)
@@ -1273,23 +1205,23 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
     // Slicer3 scene file. Grok a color
     if (layoutName.find("Compare") == 0)
       {
-      this->SetLayoutColor(vtkMRMLSliceNode::compareColor());
+      this->SetLayoutColor(vtkMRMLAbstractViewNode::GetCompareColor());
       }
     else if (layoutName == "Red")
       {
-      this->SetLayoutColor(vtkMRMLSliceNode::redColor());
+      this->SetLayoutColor(vtkMRMLAbstractViewNode::GetRedColor());
       }
     else if (layoutName == "Yellow")
       {
-      this->SetLayoutColor(vtkMRMLSliceNode::yellowColor());
+      this->SetLayoutColor(vtkMRMLAbstractViewNode::GetYellowColor());
       }
     else if (layoutName == "Green")
       {
-      this->SetLayoutColor(vtkMRMLSliceNode::greenColor());
+      this->SetLayoutColor(vtkMRMLAbstractViewNode::GetGreenColor());
       }
     else
       {
-      this->SetLayoutColor(vtkMRMLSliceNode::grayColor());
+      this->SetLayoutColor(vtkMRMLAbstractViewNode::GetGrayColor());
       }
     }
 
@@ -1317,7 +1249,6 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
       }
     }
 
-
   this->UpdateMatrices();
 
   this->EndModify(disabledModify);
@@ -1336,8 +1267,6 @@ void vtkMRMLSliceNode::Copy(vtkMRMLNode *anode)
 
   Superclass::Copy(anode);
   vtkMRMLSliceNode *node = vtkMRMLSliceNode::SafeDownCast(anode);
-
-  this->SetLayoutColor(node->GetLayoutColor());
 
   this->SetSliceVisible(node->GetSliceVisible());
   this->SliceToRAS->DeepCopy(node->GetSliceToRAS());
@@ -1421,9 +1350,6 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
   int idx;
 
   Superclass::PrintSelf(os,indent);
-  os << indent << "LayoutColor: " << this->LayoutColor[0] << " "
-                                  << this->LayoutColor[1] << " "
-                                  << this->LayoutColor[2] << std::endl;
 
   os << indent << "FieldOfView:\n ";
   for (idx = 0; idx < 3; ++idx) {
@@ -1553,7 +1479,7 @@ void vtkMRMLSliceNode::JumpSliceByCentering(double r, double a, double s)
     }
 }
 
-
+//----------------------------------------------------------------------------
 void vtkMRMLSliceNode::JumpSliceByOffsetting(double r, double a, double s)
 {
   vtkMatrix4x4 *sliceToRAS = this->GetSliceToRAS();
@@ -1588,6 +1514,7 @@ void vtkMRMLSliceNode::JumpSliceByOffsetting(double r, double a, double s)
   this->UpdateMatrices();
 }
 
+//----------------------------------------------------------------------------
 void vtkMRMLSliceNode::JumpSliceByOffsetting(int k, double r, double a, double s)
 {
   // Jump the slice such that the kth slice is at the specified
@@ -1898,7 +1825,6 @@ void vtkMRMLSliceNode::SetUVWExtentsAndDimensions (double extents[3], int dimens
     this->UVWDimensions[0] = dimensions[0];
     this->UVWDimensions[1] = dimensions[1];
     this->UVWDimensions[2] = dimensions[2];
-
     }
 
   if (modified)
@@ -2068,15 +1994,13 @@ void vtkMRMLSliceNode::SetLayoutGridColumns(int cols)
 }
 
 //----------------------------------------------------------------------------
-void
-vtkMRMLSliceNode::SetSliceSpacingModeToAutomatic()
+void vtkMRMLSliceNode::SetSliceSpacingModeToAutomatic()
 {
   this->SetSliceSpacingMode(AutomaticSliceSpacingMode);
 }
 
 //----------------------------------------------------------------------------
-void
-vtkMRMLSliceNode::SetSliceSpacingModeToPrescribed()
+void vtkMRMLSliceNode::SetSliceSpacingModeToPrescribed()
 {
   this->SetSliceSpacingMode(PrescribedSliceSpacingMode);
 }
@@ -2120,7 +2044,6 @@ double vtkMRMLSliceNode::GetSliceOffset()
   sliceToRAS->MultiplyPoint(v1, v2);
 
   return ( v2[2] );
-
 }
 
 //----------------------------------------------------------------------------
@@ -2129,7 +2052,7 @@ void vtkMRMLSliceNode::SetSliceOffset(double offset)
   //
   // Set the Offset
   // - get the current translation in RAS space and convert it to Slice space
-  //   by transforming it by the invers of the upper 3x3 of SliceToRAS
+  //   by transforming it by the inverse of the upper 3x3 of SliceToRAS
   // - replace the z value of the translation with the new value given by the slider
   // - this preserves whatever translation was already in place
   //
@@ -2241,7 +2164,6 @@ void vtkMRMLSliceNode::RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode)
       }
     }
 
-
   //
   // find the closest direction for each of the major axes
   //
@@ -2317,7 +2239,6 @@ void vtkMRMLSliceNode::RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode)
         }
       }
     }
-
 
   //
   // plug vectors into slice matrix to best approximate requested orientation

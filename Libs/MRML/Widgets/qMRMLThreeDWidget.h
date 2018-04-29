@@ -41,6 +41,9 @@ class vtkCollection;
 class QMRML_WIDGETS_EXPORT qMRMLThreeDWidget : public qMRMLWidget
 {
   Q_OBJECT
+  Q_PROPERTY(QString viewLabel READ viewLabel WRITE setViewLabel)
+  Q_PROPERTY(QColor viewColor READ viewColor WRITE setViewColor)
+
 public:
   /// Superclass typedef
   typedef qMRMLWidget Superclass;
@@ -66,14 +69,22 @@ public:
 
   /// \sa qMRMLThreeDViewControllerWidget::viewLabel()
   /// \sa setiewLabel()
-  Q_INVOKABLE QString viewLabel()const;
+  QString viewLabel()const;
 
   /// \sa qMRMLThreeDViewControllerWidget::viewLabel()
   /// \sa viewLabel()
-  Q_INVOKABLE void setViewLabel(const QString& newViewLabel);
+  void setViewLabel(const QString& newViewLabel);
 
   /// \sa qMRMLThreeDViewControllerWidget::setQuadBufferStereoSupportEnabled
   Q_INVOKABLE void setQuadBufferStereoSupportEnabled(bool value);
+
+  /// \sa qMRMLThreeDViewControllerWidget::viewColor()
+  /// \sa setViewColor()
+  QColor viewColor()const;
+
+  /// \sa qMRMLThreeDViewControllerWidget::viewColor()
+  /// \sa viewColor()
+  void setViewColor(const QColor& newViewColor);
 
 public slots:
   /// Set the current \a viewNode to observe

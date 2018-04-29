@@ -92,8 +92,8 @@ public:
 
   ///
   /// Indicates whether or not the view is active
-  vtkGetMacro (Active, int );
-  vtkSetMacro (Active, int );
+  vtkGetMacro(Active, int );
+  vtkSetMacro(Active, int );
 
   /// \brief Indicates whether or not the view is visible.
   ///
@@ -138,15 +138,28 @@ public:
   /// 1st background color of the view.
   /// Black (0,0,0) by default.
   /// \sa SetBackgroundColor2()
-  vtkGetVector3Macro (BackgroundColor, double);
-  vtkSetVector3Macro (BackgroundColor, double);
+  vtkGetVector3Macro(BackgroundColor, double);
+  vtkSetVector3Macro(BackgroundColor, double);
 
   ///
   /// 2nd background color of the view
   /// Black (0,0,0) by default.
   /// \sa SetBackgroundColor2()
-  vtkGetVector3Macro (BackgroundColor2, double);
-  vtkSetVector3Macro (BackgroundColor2, double);
+  vtkGetVector3Macro(BackgroundColor2, double);
+  vtkSetVector3Macro(BackgroundColor2, double);
+
+  ///
+  /// Color for view header in layout as RGB
+  /// Gray by default
+  vtkSetVector3Macro(LayoutColor, double);
+  vtkGetVector3Macro(LayoutColor, double);
+
+  static double* GetRedColor();
+  static double* GetYellowColor();
+  static double* GetGreenColor();
+  static double* GetCompareColor();
+  static double* GetGrayColor();
+  static double* GetThreeDViewBlueColor();
 
   /// Tells if it is meaningful to display orientation marker in this view.
   /// It is set statically in each specific view node class and cannot be changed dynamically.
@@ -266,6 +279,10 @@ protected:
   /// Background colors
   double BackgroundColor[3];
   double BackgroundColor2[3];
+
+  ///
+  /// Color for view header in layout as RGB
+  double LayoutColor[3];
 
   ///
   /// For views that supports orientation marker display (where OrientationMarkerEnabled=true)

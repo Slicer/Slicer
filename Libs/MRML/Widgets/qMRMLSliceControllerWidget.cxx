@@ -1850,7 +1850,7 @@ void qMRMLSliceControllerWidget::setSliceViewColor(const QColor& newSliceViewCol
 
   if (d->MRMLSliceNode)
     {
-    qCritical() << "qMRMLSliceControllerWidget::setSliceViewColor should be called before setMRMLSliceNode !";
+    qCritical() << "qMRMLSliceControllerWidget::setSliceViewColor should be called before setMRMLSliceNode";
     return;
     }
 

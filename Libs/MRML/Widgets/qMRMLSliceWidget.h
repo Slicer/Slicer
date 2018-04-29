@@ -74,7 +74,7 @@ public:
 
   /// \sa qMRMLSliceControllerWidget::sliceOrientation()
   /// \sa setSliceOrientation()
-  QString sliceOrientation()const;
+  Q_INVOKABLE QString sliceOrientation()const;
 
   /// \sa qMRMLSliceControllerWidget::imageData()
   /// \sa setImageData();
@@ -124,9 +124,7 @@ public:
   /// \sa sliceController()
   Q_INVOKABLE qMRMLSliceView* sliceView()const;
 
-  //virtual bool eventFilter(QObject* object, QEvent* event);
 public slots:
-
   void setMRMLScene(vtkMRMLScene * newScene);
 
   /// \sa qMRMLSliceControllerWidget::setMRMLSliceNode()

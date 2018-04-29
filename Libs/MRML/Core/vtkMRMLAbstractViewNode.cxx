@@ -53,6 +53,10 @@ vtkMRMLAbstractViewNode::vtkMRMLAbstractViewNode()
   this->BackgroundColor2[1] = 0.0;
   this->BackgroundColor2[2] = 0.0;
 
+  this->LayoutColor[0] = vtkMRMLAbstractViewNode::GetThreeDViewBlueColor()[0];
+  this->LayoutColor[1] = vtkMRMLAbstractViewNode::GetThreeDViewBlueColor()[1];
+  this->LayoutColor[2] = vtkMRMLAbstractViewNode::GetThreeDViewBlueColor()[2];
+
   this->SetLayoutLabel("1");
   this->SetHideFromEditors(0);
 
@@ -87,6 +91,7 @@ void vtkMRMLAbstractViewNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLBooleanMacro(visibility, Visibility);
   vtkMRMLWriteXMLVectorMacro(backgroundColor, BackgroundColor, double, 3);
   vtkMRMLWriteXMLVectorMacro(backgroundColor2, BackgroundColor2, double, 3);
+  vtkMRMLWriteXMLVectorMacro(layoutColor, LayoutColor, double, 3);
   if (this->OrientationMarkerEnabled)
     {
     vtkMRMLWriteXMLEnumMacro(orientationMarkerType, OrientationMarkerType);
@@ -137,11 +142,11 @@ void vtkMRMLAbstractViewNode::ReadXMLAttributes(const char** atts)
 
   vtkMRMLReadXMLVectorMacro(backgroundColor, BackgroundColor, double, 3);
   vtkMRMLReadXMLVectorMacro(backgroundColor2, BackgroundColor2, double, 3);
+  vtkMRMLReadXMLVectorMacro(layoutColor, LayoutColor, double, 3);
   vtkMRMLReadXMLEnumMacro(orientationMarkerType, OrientationMarkerType);
   vtkMRMLReadXMLEnumMacro(orientationMarkerSize, OrientationMarkerSize);
   vtkMRMLReadXMLEnumMacro(rulerType, RulerType);
   vtkMRMLReadXMLEndMacro();
-
 
   const char* attName;
   const char* attValue;
@@ -212,6 +217,7 @@ void vtkMRMLAbstractViewNode::Copy(vtkMRMLNode *anode)
   vtkMRMLCopyIntMacro(Visibility);
   vtkMRMLCopyVectorMacro(BackgroundColor, double, 3);
   vtkMRMLCopyVectorMacro(BackgroundColor2, double, 3);
+  vtkMRMLCopyVectorMacro(LayoutColor, double, 3);
   if (this->OrientationMarkerEnabled)
     {
     vtkMRMLCopyEnumMacro(OrientationMarkerType);
@@ -265,6 +271,7 @@ void vtkMRMLAbstractViewNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintIntMacro(Visibility);
   vtkMRMLPrintVectorMacro(BackgroundColor, double, 3);
   vtkMRMLPrintVectorMacro(BackgroundColor2, double, 3);
+  vtkMRMLPrintVectorMacro(LayoutColor, double, 3);
   if (this->OrientationMarkerEnabled)
     {
     vtkMRMLPrintEnumMacro(OrientationMarkerType);
@@ -509,4 +516,64 @@ bool vtkMRMLAbstractViewNode::SetAndObserveParentLayoutNode(vtkMRMLNode* node)
     }
 
   return this->SetAndObserveParentLayoutNodeID(node ? node->GetID() : NULL);
+}
+
+//----------------------------------------------------------------------------
+double* vtkMRMLAbstractViewNode::GetRedColor()
+{
+  // #F34A33
+  static double redColor[3] = {243. / 255.,
+                                74. / 255.,
+                                51. / 255.};
+  return redColor;
+}
+
+//----------------------------------------------------------------------------
+double* vtkMRMLAbstractViewNode::GetYellowColor()
+{
+  // #EDD54C
+  static double yellowColor[3] = {237. / 255.,
+                                  213. / 255.,
+                                   76. / 255.};
+  return yellowColor;
+}
+
+//----------------------------------------------------------------------------
+double* vtkMRMLAbstractViewNode::GetGreenColor()
+{
+  // #6EB04B
+  static double greenColor[3] = {110. / 255.,
+                                 176. / 255.,
+                                  75. / 255.};
+  return greenColor;
+}
+
+//----------------------------------------------------------------------------
+double* vtkMRMLAbstractViewNode::GetCompareColor()
+{
+  // #E17012
+  static double compareColor[3] = {225. / 255.,
+                                   112. / 255.,
+                                    18. / 255.};
+  return compareColor;
+}
+
+//----------------------------------------------------------------------------
+double* vtkMRMLAbstractViewNode::GetGrayColor()
+{
+  // #8C8C8C
+  static double grayColor[3] = {140. / 255.,
+                                140. / 255.,
+                                140. / 255.};
+  return grayColor;
+}
+
+//------------------------------------------------------------------------------
+double* vtkMRMLAbstractViewNode::GetThreeDViewBlueColor()
+{
+  // #7483E9
+  static double blueColor[3] = {116. / 255.,
+                                131. / 255.,
+                                233. / 255.};
+  return blueColor;
 }

@@ -165,6 +165,20 @@ QString qMRMLThreeDWidget::viewLabel()const
   return d->ThreeDController->viewLabel();
 }
 
+//---------------------------------------------------------------------------
+void qMRMLThreeDWidget::setViewColor(const QColor& newViewColor)
+{
+  Q_D(qMRMLThreeDWidget);
+  d->ThreeDController->setViewColor(newViewColor);
+}
+
+//---------------------------------------------------------------------------
+QColor qMRMLThreeDWidget::viewColor()const
+{
+  Q_D(const qMRMLThreeDWidget);
+  return d->ThreeDController->viewColor();
+}
+
 //------------------------------------------------------------------------------
 void qMRMLThreeDWidget::getDisplayableManagers(vtkCollection *displayableManagers)
 {
