@@ -118,6 +118,8 @@ protected:
 
   bool brushPositionInWorld(qMRMLWidget* viewWidget, int brushPositionInView[2], double brushPosition_World[3]);
 
+  std::string segmentAtPosition(qMRMLWidget* viewWidget, double* ras);
+
 public slots:
   void onDiameterUnitsClicked();
   void onQuickDiameterButtonClicked();
@@ -157,7 +159,9 @@ public:
   ctkDoubleSlider* BrushDiameterSlider;
   QToolButton* BrushDiameterRelativeToggle;
   QCheckBox* BrushSphereCheckbox;
+  QCheckBox* EditIn3DViewsCheckbox;
   QCheckBox* ColorSmudgeCheckbox;
+  QCheckBox* EraseAllSegmentsCheckbox;
   QCheckBox* BrushPixelModeCheckbox;
 };
 

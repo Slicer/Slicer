@@ -91,7 +91,8 @@ public:
     {
     ModificationModeSet,
     ModificationModeAdd,
-    ModificationModeRemove
+    ModificationModeRemove,
+    ModificationModeRemoveAll
     };
 
   /// Get icon for effect to be displayed in segment editor

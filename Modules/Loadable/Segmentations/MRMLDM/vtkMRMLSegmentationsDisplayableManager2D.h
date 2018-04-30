@@ -26,6 +26,10 @@
 
 #include "vtkSlicerSegmentationsModuleMRMLDisplayableManagerExport.h"
 
+class vtkMRMLSegmentationDisplayNode;
+class vtkStringArray;
+class vtkDoubleArray;
+
 /// \brief Displayable manager for showing segmentations in slice (2D) views.
 ///
 /// Displays segmentations in slice viewers as labelmaps or contour lines
@@ -42,6 +46,11 @@ public:
   /// Assemble and return info string to display in Data probe for a given viewer XYZ position.
   /// \return Invalid string by default, meaning no information to display.
   virtual std::string GetDataProbeInfoStringForPosition(double xyz[3]) VTK_OVERRIDE;
+
+  /// Get list of segments visible at selected display position.
+  /// segmentValues is optional, if not NULL then it returns value for each segment for fractional representations
+  virtual void GetVisibleSegmentsForPosition(double ras[3], vtkMRMLSegmentationDisplayNode* displayNode,
+    vtkStringArray* segmentIDs, vtkDoubleArray* segmentValues = NULL);
 
 protected:
   virtual void UnobserveMRMLScene() VTK_OVERRIDE;

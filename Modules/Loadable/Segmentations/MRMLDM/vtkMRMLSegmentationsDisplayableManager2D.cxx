@@ -47,6 +47,7 @@
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
+#include <vtkStringArray.h>
 #include <vtkCallbackCommand.h>
 #include <vtkEventBroker.h>
 #include <vtkActor2D.h>
@@ -1350,141 +1351,28 @@ std::string vtkMRMLSegmentationsDisplayableManager2D::GetDataProbeInfoStringForP
   for (displayNodeIt = this->Internal->DisplayPipelines.begin(); displayNodeIt != this->Internal->DisplayPipelines.end(); ++displayNodeIt)
     {
     vtkMRMLSegmentationDisplayNode* displayNode = displayNodeIt->first;
-    bool displayNodeVisible = this->Internal->IsVisible(displayNode);
-    if (!displayNodeVisible)
+    if (!displayNode)
       {
       continue;
       }
 
-    // Get segmentation
-    vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(
-      displayNode->GetDisplayableNode() );
-    if (!segmentationNode)
-      {
-      continue;
-      }
-    vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
-    if (!segmentation)
-      {
-      continue;
-      }
-
-    // Get name of displayed representation
+    vtkNew<vtkStringArray> segmentIDs;
+    vtkSmartPointer<vtkDoubleArray> segmentValues;
     std::string shownRepresenatationName = displayNode->GetDisplayRepresentationName2D();
-
-    // For all pipelines (pipeline per segment)
-    std::set<std::string> segmentIDsAtPosition;
-    std::map<std::string, double> valueForSegment;
-
-    for (vtkInternal::PipelineMapType::iterator pipelineIt=displayNodeIt->second.begin(); pipelineIt!=displayNodeIt->second.end(); ++pipelineIt)
+    if (shownRepresenatationName == vtkSegmentationConverter::GetSegmentationFractionalLabelmapRepresentationName())
       {
-      vtkInternal::Pipeline* pipeline = pipelineIt->second;
+      segmentValues = vtkSmartPointer<vtkDoubleArray>::New();
+      }
+    this->GetVisibleSegmentsForPosition(ras, displayNode, segmentIDs.GetPointer(), segmentValues.GetPointer());
 
-      // Get visibility
-      vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
-      displayNode->GetSegmentDisplayProperties(pipelineIt->first, properties);
-      bool segmentVisible = displayNodeVisible && properties.Visible
-        && (properties.Visible2DOutline || properties.Visible2DFill);
-      if (!segmentVisible)
-        {
-        continue;
-        }
+    if (segmentIDs->GetNumberOfValues() == 0)
+      {
+      continue;
+      }
 
-      // Skip if segment is not visible in the current slice
-      if (!this->Internal->IsSegmentVisibleInCurrentSlice(displayNode, pipeline, pipelineIt->first))
-        {
-        continue;
-        }
-
-      // Get displayed representation
-      vtkPolyData* polyData = vtkPolyData::SafeDownCast(
-        segmentation->GetSegmentRepresentation(pipelineIt->first, shownRepresenatationName));
-      vtkOrientedImageData* imageData = vtkOrientedImageData::SafeDownCast(
-        segmentation->GetSegmentRepresentation(pipelineIt->first, shownRepresenatationName));
-      if (imageData)
-        {
-        int* imageExtent = imageData->GetExtent();
-        if (imageExtent[0]>imageExtent[1] || imageExtent[2]>imageExtent[3] || imageExtent[4]>imageExtent[5])
-          {
-          continue;
-          }
-
-        // Decide if point is in segment (image data)
-        vtkNew<vtkMatrix4x4> segmentationToOrientedImageIjkMatrix;
-        imageData->GetWorldToImageMatrix(segmentationToOrientedImageIjkMatrix.GetPointer());
-        vtkNew<vtkGeneralTransform> worldToOrientedImageIjkToTransform;
-        worldToOrientedImageIjkToTransform->Concatenate(segmentationToOrientedImageIjkMatrix.GetPointer());
-        worldToOrientedImageIjkToTransform->Concatenate(pipeline->WorldToNodeTransform);
-        double* ijkDouble = worldToOrientedImageIjkToTransform->TransformPoint(ras);
-        int ijk[3] = { (int)(ijkDouble[0]+0.5), (int)(ijkDouble[1]+0.5), (int)(ijkDouble[2]+0.5) };
-        if ( ijk[0] < imageExtent[0] || ijk[0] > imageExtent[1] ||
-             ijk[1] < imageExtent[2] || ijk[1] > imageExtent[3] ||
-             ijk[2] < imageExtent[4] || ijk[2] > imageExtent[5] )
-          {
-          continue;
-          }
-        double voxelValue = imageData->GetScalarComponentAsDouble(
-          ijk[0], ijk[1], ijk[2], 0);
-
-        vtkDoubleArray* scalarRange = vtkDoubleArray::SafeDownCast(
-          imageData->GetFieldData()->GetAbstractArray(vtkSegmentationConverter::GetScalarRangeFieldName()));
-
-        double minimumValue = 0.0;
-        if (scalarRange && scalarRange->GetNumberOfValues() == 2)
-        {
-          minimumValue = scalarRange->GetValue(0);
-        }
-        if (voxelValue > minimumValue)
-          {
-          segmentIDsAtPosition.insert(pipelineIt->first);
-
-          if (shownRepresenatationName == vtkSegmentationConverter::GetSegmentationFractionalLabelmapRepresentationName())
-            {
-            valueForSegment.insert(std::make_pair(pipelineIt->first, voxelValue));
-            }
-
-          }
-        }
-      else if (polyData)
-        {
-        if (polyData->GetNumberOfPoints() == 0)
-          {
-          continue;
-          }
-
-        // Use poly data that is displayed in the slice view
-        vtkPolyData* sliceFillPolyData = pipeline->TriangleFilter->GetPolyDataInput(0);
-        if (!sliceFillPolyData)
-          {
-          continue;
-          }
-        double tolerance = 0.0001;
-        int subId = -1;
-        double dist2 = 0.0;
-        double pcoords[3] = {0.0, 0.0, 0.0};
-        double* weights = new double[sliceFillPolyData->GetMaxCellSize()];
-        for (int index=0; index<sliceFillPolyData->GetNumberOfCells(); ++index)
-          {
-          vtkCell* cell = sliceFillPolyData->GetCell(index);
-          // If out of bounds, then do not investigate this cell further
-          double* bounds = cell->GetBounds();
-          if (ras[0]<bounds[0]-tolerance || ras[0]>bounds[1]+tolerance ||
-              ras[1]<bounds[2]-tolerance || ras[1]>bounds[3]+tolerance ||
-              ras[2]<bounds[4]-tolerance || ras[2]>bounds[5]+tolerance)
-            {
-            continue;
-            }
-          // Inside bounds the position is evaluated in the cell
-          if (cell->EvaluatePosition(ras, NULL, subId, pcoords, dist2, weights) == 1)
-            {
-            segmentIDsAtPosition.insert(pipelineIt->first);
-            break;
-            }
-          }
-        }
-      } // For each pipeline (=segment)
-
-    if (segmentIDsAtPosition.size() == 0)
+    vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(
+      displayNode->GetDisplayableNode());
+    if (!segmentationNode)
       {
       continue;
       }
@@ -1500,14 +1388,15 @@ std::string vtkMRMLSegmentationsDisplayableManager2D::GetDataProbeInfoStringForP
       }
     segmentsAtPositionInfoStr.append( "<b>" + std::string(segmentationNode->GetName()) + ":</b> " );
     std::string segmentsInfoStr;
-    for (std::set<std::string>::iterator segmentIt=segmentIDsAtPosition.begin(); segmentIt!=segmentIDsAtPosition.end(); ++segmentIt)
+    for (int segmentIdIndex = 0; segmentIdIndex < segmentIDs->GetNumberOfValues(); ++segmentIdIndex)
       {
-      vtkSegment* segment = segmentationNode->GetSegmentation()->GetSegment(*segmentIt);
+      const char* segmentId = segmentIDs->GetValue(segmentIdIndex);
+      vtkSegment* segment = segmentationNode->GetSegmentation()->GetSegment(segmentId);
       if (segment)
         {
         // Add color indicator
         double color[3] = {vtkSegment::SEGMENT_COLOR_INVALID[0], vtkSegment::SEGMENT_COLOR_INVALID[1], vtkSegment::SEGMENT_COLOR_INVALID[2]};
-        displayNode->GetSegmentColor(*segmentIt, color);
+        displayNode->GetSegmentColor(segmentId, color);
         std::stringstream colorStream;
         colorStream << "#" << std::hex << std::setfill('0')
             << std::setw(2) << (int)(color[0] * 255.0)
@@ -1518,27 +1407,29 @@ std::string vtkMRMLSegmentationsDisplayableManager2D::GetDataProbeInfoStringForP
         segmentsInfoStr.append(segment->GetName() ? segment->GetName() : "");
 
         // If the segmentation representation is a fractional labelmap then display the fill percentage
-        if (shownRepresenatationName == vtkSegmentationConverter::GetSegmentationFractionalLabelmapRepresentationName())
+        if (segmentValues.GetPointer() != NULL)
           {
-
           // Get the minimum and maximum scalar values from the fractional labelmap (default to 0.0 and 1.0)
           vtkOrientedImageData* imageData = vtkOrientedImageData::SafeDownCast(
             segment->GetRepresentation(shownRepresenatationName));
-          vtkDoubleArray* scalarRange = vtkDoubleArray::SafeDownCast(
-            imageData->GetFieldData()->GetAbstractArray(vtkSegmentationConverter::GetScalarRangeFieldName()));
-          double minimumValue = 0.0;
-          double maximumValue = 1.0;
-          if (scalarRange && scalarRange->GetNumberOfValues() == 2)
-          {
-            minimumValue = scalarRange->GetValue(0);
-            maximumValue = scalarRange->GetValue(1);
-          }
+          if (imageData)
+            {
+            vtkDoubleArray* scalarRange = vtkDoubleArray::SafeDownCast(
+              imageData->GetFieldData()->GetAbstractArray(vtkSegmentationConverter::GetScalarRangeFieldName()));
+            double minimumValue = 0.0;
+            double maximumValue = 1.0;
+            if (scalarRange && scalarRange->GetNumberOfValues() == 2)
+            {
+              minimumValue = scalarRange->GetValue(0);
+              maximumValue = scalarRange->GetValue(1);
+            }
 
-          // Calculate the voxel fill percent based on the maximum and minimum values.
-          double segmentVoxelFillPercent = 100*(valueForSegment[*segmentIt]-minimumValue)/(maximumValue-minimumValue);
-          std::stringstream percentStream;
-          percentStream << " " << std::fixed << std::setprecision(1) << segmentVoxelFillPercent << "%";
-          segmentsInfoStr.append(percentStream.str());
+            // Calculate the voxel fill percent based on the maximum and minimum values.
+            double segmentVoxelFillPercent = 100 * (segmentValues->GetValue(segmentIdIndex) - minimumValue) / (maximumValue - minimumValue);
+            std::stringstream percentStream;
+            percentStream << " " << std::fixed << std::setprecision(1) << segmentVoxelFillPercent << "%";
+            segmentsInfoStr.append(percentStream.str());
+            }
           }
 
         segmentsInfoStr.append(" ");
@@ -1553,4 +1444,168 @@ std::string vtkMRMLSegmentationsDisplayableManager2D::GetDataProbeInfoStringForP
     return "";
     }
   return "S " + segmentsAtPositionInfoStr;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLSegmentationsDisplayableManager2D::GetVisibleSegmentsForPosition(double ras[3],
+  vtkMRMLSegmentationDisplayNode* displayNode, vtkStringArray* segmentIDs, vtkDoubleArray* segmentValues/*=NULL*/)
+{
+  if (!segmentIDs)
+    {
+    return;
+    }
+  segmentIDs->Reset();
+  if (segmentValues)
+    {
+    segmentValues->Reset();
+    }
+
+  vtkInternal::PipelinesCacheType::iterator pipelinesIter = this->Internal->DisplayPipelines.find(displayNode);
+  if (pipelinesIter == this->Internal->DisplayPipelines.end())
+    {
+    return;
+    }
+
+  bool displayNodeVisible = this->Internal->IsVisible(displayNode);
+  if (!displayNodeVisible)
+    {
+    return;
+    }
+
+  // Get segmentation
+  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(
+    displayNode->GetDisplayableNode());
+  if (!segmentationNode)
+    {
+    return;
+    }
+  vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
+  if (!segmentation)
+    {
+    return;
+    }
+
+  // Get name of displayed representation
+  std::string shownRepresenatationName = displayNode->GetDisplayRepresentationName2D();
+
+  // For all pipelines (pipeline per segment)
+  std::set<std::string> segmentIDsAtPosition;
+  std::map<std::string, double> valueForSegment;
+
+  for (vtkInternal::PipelineMapType::iterator pipelineIt = pipelinesIter->second.begin(); pipelineIt != pipelinesIter->second.end(); ++pipelineIt)
+    {
+    vtkInternal::Pipeline* pipeline = pipelineIt->second;
+
+    // Get visibility
+    vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
+    displayNode->GetSegmentDisplayProperties(pipelineIt->first, properties);
+    bool segmentVisible = displayNodeVisible && properties.Visible
+      && (properties.Visible2DOutline || properties.Visible2DFill);
+    if (!segmentVisible)
+      {
+      continue;
+      }
+
+    // Skip if segment is not visible in the current slice
+    if (!this->Internal->IsSegmentVisibleInCurrentSlice(displayNode, pipeline, pipelineIt->first))
+      {
+      continue;
+      }
+
+    // Get displayed representation
+    vtkPolyData* polyData = vtkPolyData::SafeDownCast(
+      segmentation->GetSegmentRepresentation(pipelineIt->first, shownRepresenatationName));
+    vtkOrientedImageData* imageData = vtkOrientedImageData::SafeDownCast(
+      segmentation->GetSegmentRepresentation(pipelineIt->first, shownRepresenatationName));
+    if (imageData)
+      {
+      int* imageExtent = imageData->GetExtent();
+      if (imageExtent[0]>imageExtent[1] || imageExtent[2]>imageExtent[3] || imageExtent[4]>imageExtent[5])
+        {
+        continue;
+        }
+
+      // Decide if point is in segment (image data)
+      vtkNew<vtkMatrix4x4> segmentationToOrientedImageIjkMatrix;
+      imageData->GetWorldToImageMatrix(segmentationToOrientedImageIjkMatrix.GetPointer());
+      vtkNew<vtkGeneralTransform> worldToOrientedImageIjkToTransform;
+      worldToOrientedImageIjkToTransform->Concatenate(segmentationToOrientedImageIjkMatrix.GetPointer());
+      worldToOrientedImageIjkToTransform->Concatenate(pipeline->WorldToNodeTransform);
+      double* ijkDouble = worldToOrientedImageIjkToTransform->TransformPoint(ras);
+      int ijk[3] = { (int)(ijkDouble[0] + 0.5), (int)(ijkDouble[1] + 0.5), (int)(ijkDouble[2] + 0.5) };
+      if (ijk[0] < imageExtent[0] || ijk[0] > imageExtent[1] ||
+        ijk[1] < imageExtent[2] || ijk[1] > imageExtent[3] ||
+        ijk[2] < imageExtent[4] || ijk[2] > imageExtent[5])
+        {
+        continue;
+        }
+      double voxelValue = imageData->GetScalarComponentAsDouble(
+        ijk[0], ijk[1], ijk[2], 0);
+
+      vtkDoubleArray* scalarRange = vtkDoubleArray::SafeDownCast(
+        imageData->GetFieldData()->GetAbstractArray(vtkSegmentationConverter::GetScalarRangeFieldName()));
+
+      double minimumValue = 0.0;
+      if (scalarRange && scalarRange->GetNumberOfValues() == 2)
+        {
+        minimumValue = scalarRange->GetValue(0);
+        }
+      if (voxelValue > minimumValue)
+        {
+        segmentIDsAtPosition.insert(pipelineIt->first);
+
+        if (shownRepresenatationName == vtkSegmentationConverter::GetSegmentationFractionalLabelmapRepresentationName())
+          {
+          valueForSegment.insert(std::make_pair(pipelineIt->first, voxelValue));
+          }
+
+        }
+      }
+    else if (polyData)
+      {
+      if (polyData->GetNumberOfPoints() == 0)
+        {
+        continue;
+        }
+
+      // Use poly data that is displayed in the slice view
+      vtkPolyData* sliceFillPolyData = pipeline->TriangleFilter->GetPolyDataInput(0);
+      if (!sliceFillPolyData)
+        {
+        continue;
+        }
+      double tolerance = 0.0001;
+      int subId = -1;
+      double dist2 = 0.0;
+      double pcoords[3] = { 0.0, 0.0, 0.0 };
+      double* weights = new double[sliceFillPolyData->GetMaxCellSize()];
+      for (int index = 0; index<sliceFillPolyData->GetNumberOfCells(); ++index)
+        {
+        vtkCell* cell = sliceFillPolyData->GetCell(index);
+        // If out of bounds, then do not investigate this cell further
+        double* bounds = cell->GetBounds();
+        if (ras[0]<bounds[0] - tolerance || ras[0]>bounds[1] + tolerance ||
+          ras[1]<bounds[2] - tolerance || ras[1]>bounds[3] + tolerance ||
+          ras[2]<bounds[4] - tolerance || ras[2]>bounds[5] + tolerance)
+          {
+          continue;
+          }
+        // Inside bounds the position is evaluated in the cell
+        if (cell->EvaluatePosition(ras, NULL, subId, pcoords, dist2, weights) == 1)
+          {
+          segmentIDsAtPosition.insert(pipelineIt->first);
+          break;
+          }
+        }
+      }
+    } // For each pipeline (=segment)
+
+  for (std::set<std::string>::iterator segmentIt = segmentIDsAtPosition.begin(); segmentIt != segmentIDsAtPosition.end(); ++segmentIt)
+    {
+    segmentIDs->InsertNextValue(*segmentIt);
+    if (segmentValues)
+      {
+      segmentValues->InsertNextValue(valueForSegment[*segmentIt]);
+      }
+    }
 }

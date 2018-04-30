@@ -394,7 +394,8 @@ void qSlicerSegmentEditorAbstractEffect::modifySelectedSegmentByLabelmap(vtkOrie
       qCritical() << Q_FUNC_INFO << ": Failed to add modifier labelmap to selected segment";
       }
     }
-  else if (modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemove)
+  else if (modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemove
+    || modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemoveAll)
     {
     inverter->Update();
     vtkNew<vtkOrientedImageData> invertedModifierLabelmap;
@@ -444,7 +445,8 @@ void qSlicerSegmentEditorAbstractEffect::modifySelectedSegmentByLabelmap(vtkOrie
   if (!segmentIDsToOverwrite.empty())
     {
     if (modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeSet
-      || modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeAdd)
+      || modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeAdd
+      || modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemoveAll)
       {
       inverter->Update();
       vtkNew<vtkOrientedImageData> invertedModifierLabelmap;

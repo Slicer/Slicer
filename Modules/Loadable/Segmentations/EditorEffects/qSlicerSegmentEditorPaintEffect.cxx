@@ -22,6 +22,8 @@
 #include "qSlicerSegmentEditorPaintEffect.h"
 #include "qSlicerSegmentEditorPaintEffect_p.h"
 #include "vtkMRMLSegmentationNode.h"
+#include "vtkMRMLSegmentationDisplayNode.h"
+#include "vtkMRMLSegmentationsDisplayableManager2D.h"
 #include "vtkMRMLSegmentEditorNode.h"
 #include "vtkOrientedImageData.h"
 
@@ -68,6 +70,7 @@
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkSmartPointer.h>
+#include <vtkStringArray.h>
 #include <vtkWorldPointPicker.h>
 // CTK includes
 #include "ctkDoubleSlider.h"
@@ -226,6 +229,8 @@ qSlicerSegmentEditorPaintEffectPrivate::qSlicerSegmentEditorPaintEffectPrivate(q
   , BrushDiameterRelativeToggle(NULL)
   , BrushSphereCheckbox(NULL)
   , ColorSmudgeCheckbox(NULL)
+  , EraseAllSegmentsCheckbox(NULL)
+  , EditIn3DViewsCheckbox(NULL)
   , BrushPixelModeCheckbox(NULL)
 {
   this->PaintCoordinates_World = vtkSmartPointer<vtkPoints>::New();
@@ -332,7 +337,7 @@ void qSlicerSegmentEditorPaintEffectPrivate::paintApply(qMRMLWidget* viewWidget)
   vtkOrientedImageData* modifierLabelmap = q->defaultModifierLabelmap();
   if (!modifierLabelmap)
     {
-    qCritical() << Q_FUNC_INFO << ": Invalid segmentationNode";
+    qCritical() << Q_FUNC_INFO << ": Invalid modifier labelmap";
     return;
     }
   if (!q->parameterSetNode())
@@ -431,7 +436,18 @@ void qSlicerSegmentEditorPaintEffectPrivate::paintApply(qMRMLWidget* viewWidget)
   this->PaintCoordinates_World->Reset();
 
   // Notify editor about changes
-  qSlicerSegmentEditorAbstractEffect::ModificationMode modificationMode = (q->m_Erase ? qSlicerSegmentEditorAbstractEffect::ModificationModeRemove : qSlicerSegmentEditorAbstractEffect::ModificationModeAdd);
+  qSlicerSegmentEditorAbstractEffect::ModificationMode modificationMode;
+  if (q->m_AlwaysErase)
+    {
+    modificationMode = q->integerParameter("EraseAllSegments") ?
+      qSlicerSegmentEditorAbstractEffect::ModificationModeRemoveAll : qSlicerSegmentEditorAbstractEffect::ModificationModeRemove;
+    }
+  else
+    {
+    modificationMode = q->m_Erase ?
+      qSlicerSegmentEditorAbstractEffect::ModificationModeRemove : qSlicerSegmentEditorAbstractEffect::ModificationModeAdd;
+    }
+
   q->modifySelectedSegmentByLabelmap(modifierLabelmap, modificationMode, updateExtentList);
 }
 
@@ -841,7 +857,72 @@ void qSlicerSegmentEditorPaintEffectPrivate::clearBrushPipelines()
   this->BrushPipelines.clear();
 }
 
+//-----------------------------------------------------------------------------
+std::string qSlicerSegmentEditorPaintEffectPrivate::segmentAtPosition(qMRMLWidget* viewWidget, double* ras)
+{
+  Q_Q(qSlicerSegmentEditorPaintEffect);
+  if (!q->parameterSetNode())
+    {
+    return "";
+    }
+  vtkMRMLSegmentationNode* segmentationNode = q->parameterSetNode()->GetSegmentationNode();
+  if (!segmentationNode)
+    {
+    return "";
+    }
+  std::string selectedSegmentID = (q->parameterSetNode()->GetSelectedSegmentID() ? q->parameterSetNode()->GetSelectedSegmentID() : "");
+  qMRMLSliceWidget* sliceWidget = qobject_cast<qMRMLSliceWidget*>(viewWidget);
+  if (!sliceWidget)
+    {
+    // segment position can only be obtained from slice views
+    return selectedSegmentID;
+    }
+  if (!sliceWidget->sliceView())
+    {
+    return selectedSegmentID;
+    }
 
+  // Get slice displayable manager
+  vtkNew<vtkCollection> displayableManagerCollection;
+  sliceWidget->sliceView()->getDisplayableManagers(displayableManagerCollection);
+  vtkCollectionSimpleIterator it;
+  vtkObject* displayableManager = NULL;
+  vtkMRMLSegmentationsDisplayableManager2D* segmentationDisplayableManager2D = NULL;
+  for (displayableManagerCollection->InitTraversal(it);
+   displayableManager = displayableManagerCollection->GetNextItemAsObject(it);)
+    {
+    segmentationDisplayableManager2D = vtkMRMLSegmentationsDisplayableManager2D::SafeDownCast(displayableManager);
+    if (segmentationDisplayableManager2D)
+      {
+      // found the segmentation displayable manager
+      break;
+      }
+    }
+  if (!segmentationDisplayableManager2D)
+    {
+    return selectedSegmentID;
+    }
+  std::string newSelectedSegmentID;
+  for (int displayNodeIndex = 0; displayNodeIndex < segmentationNode->GetNumberOfDisplayNodes(); displayNodeIndex++)
+    {
+    vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetNthDisplayNode(displayNodeIndex));
+    vtkNew<vtkStringArray> segmentIDs;
+    segmentationDisplayableManager2D->GetVisibleSegmentsForPosition(ras, displayNode, segmentIDs.GetPointer());
+    if (segmentIDs->GetNumberOfValues() == 0)
+      {
+      continue;
+      }
+    if (!selectedSegmentID.empty() && segmentIDs->LookupValue(selectedSegmentID) >= 0)
+      {
+      // current segment ID is at the current position, don't change it
+      return selectedSegmentID;
+      }
+    // Don't return immediately if a segment ID is found, because via other display nodes
+    // it is still possible that the current segment is visible at this position.
+    newSelectedSegmentID = segmentIDs->GetValue(0);
+    }
+  return newSelectedSegmentID;
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -853,6 +934,7 @@ qSlicerSegmentEditorPaintEffect::qSlicerSegmentEditorPaintEffect(QObject* parent
  , d_ptr( new qSlicerSegmentEditorPaintEffectPrivate(*this) )
 {
   this->m_Name = QString("Paint");
+  this->m_AlwaysErase = false;
   this->m_Erase = false;
   this->m_ShowEffectCursorInThreeDView = true;
 }
@@ -975,6 +1057,15 @@ bool qSlicerSegmentEditorPaintEffect::processInteractionEvents(
 {
   Q_D(qSlicerSegmentEditorPaintEffect);
 
+  qMRMLSliceWidget* sliceWidget = qobject_cast<qMRMLSliceWidget*>(viewWidget);
+  qMRMLThreeDWidget* threeDWidget = qobject_cast<qMRMLThreeDWidget*>(viewWidget);
+
+  if (threeDWidget && !this->integerParameter("EditIn3DViews"))
+    {
+    // interacting in a 3D view and interaction in 3D views is disabled
+    return false;
+    }
+
   bool shiftKeyPressed = callerInteractor->GetShiftKey();
 
   // Process events that do not provide event position (or we don't need event position)
@@ -1033,8 +1124,6 @@ bool qSlicerSegmentEditorPaintEffect::processInteractionEvents(
     return true; // abortEvent
     }
 
-  qMRMLSliceWidget* sliceWidget = qobject_cast<qMRMLSliceWidget*>(viewWidget);
-  qMRMLThreeDWidget* threeDWidget = qobject_cast<qMRMLThreeDWidget*>(viewWidget);
   BrushPipeline* brushPipeline = NULL;
   if (sliceWidget)
     {
@@ -1080,14 +1169,41 @@ bool qSlicerSegmentEditorPaintEffect::processInteractionEvents(
       //this->cursorOff(sliceWidget);
       }
     QList<qMRMLWidget*> viewWidgets = d->BrushPipelines.keys();
+    if (!this->parameterSetNode())
+      {
+      return false;
+      }
     foreach (qMRMLWidget* viewWidget, viewWidgets)
       {
       d->BrushPipelines[viewWidget]->SetFeedbackVisibility(d->DelayedPaint);
       }
-    if (this->integerParameter("ColorSmudge"))
+    if (this->m_AlwaysErase)
       {
-      //TODO:
-      //EditUtil.setLabel(self.getLabelPixel(xy))
+      // Erase effect
+      this->m_Erase = true;
+      }
+    else
+      {
+      // Paint effect
+      std::string selectedSegmentId = (this->parameterSetNode()->GetSelectedSegmentID() ? this->parameterSetNode()->GetSelectedSegmentID() : "");
+      if (this->integerParameter("ColorSmudge"))
+        {
+        std::string paintSegmentId = d->segmentAtPosition(viewWidget, brushPosition_World);
+        if (paintSegmentId.empty())
+          {
+          // clicked on empty area
+          this->m_Erase = true;
+          }
+        else
+          {
+          this->parameterSetNode()->SetSelectedSegmentID(paintSegmentId.c_str());
+          this->m_Erase = false;
+          }
+        }
+      else
+        {
+        this->m_Erase = false;
+        }
       }
     d->paintAddPoint(viewWidget, brushPosition_World);
     abortEvent = true;
@@ -1223,24 +1339,38 @@ void qSlicerSegmentEditorPaintEffect::setupOptionsFrame()
   d->BrushSphereCheckbox->setToolTip("Use a 3D spherical brush rather than a 2D circular brush.");
   hbox->addWidget(d->BrushSphereCheckbox);
 
+  d->EditIn3DViewsCheckbox = new QCheckBox("Edit in 3D views");
+  d->EditIn3DViewsCheckbox->setToolTip("Allow painting in 3D views. If enabled, click-and-drag in a 3D view paints in the view instead of rotating the view.");
+  hbox->addWidget(d->EditIn3DViewsCheckbox);
+
   d->ColorSmudgeCheckbox = new QCheckBox("Color smudge");
-  //TODO: Implement this effect option
-  //d->ColorSmudgeCheckbox->setToolTip("Set the label number automatically by sampling the pixel location where the brush stroke starts.");
-  d->ColorSmudgeCheckbox->setToolTip("Not implemented yet");
-  d->ColorSmudgeCheckbox->setEnabled(false);
-  hbox->addWidget(d->ColorSmudgeCheckbox);
+  d->ColorSmudgeCheckbox->setToolTip("Select segment by sampling the pixel location"
+    "where the brush stroke starts. If brush stroke starts in an empty area then the brush erases highighted region from the selected segment.");
+  if (!this->m_AlwaysErase)
+    {
+    hbox->addWidget(d->ColorSmudgeCheckbox);
+    }
+
+  d->EraseAllSegmentsCheckbox = new QCheckBox("Erase all segments");
+  d->EraseAllSegmentsCheckbox->setToolTip("If not checked then highighted area is erased"
+    " from all segments. If unchecked then only area is only erased from selected segment.");
+  if (this->m_AlwaysErase)
+    {
+    hbox->addWidget(d->EraseAllSegmentsCheckbox);
+    }
 
   d->BrushPixelModeCheckbox = new QCheckBox("Pixel mode");
+  d->BrushPixelModeCheckbox->setToolTip("Paint exactly the pixel under the cursor, ignoring the diameter, threshold, and paint over.");
   //TODO: Implement this effect option
-  //d->BrushPixelModeCheckbox->setToolTip("Paint exactly the pixel under the cursor, ignoring the diameter, threshold, and paint over.");
-  d->BrushPixelModeCheckbox->setToolTip("Not implemented yet");
-  d->BrushPixelModeCheckbox->setEnabled(false);  hbox->addWidget(d->BrushPixelModeCheckbox);
+  //hbox->addWidget(d->BrushPixelModeCheckbox);
 
   this->addOptionsWidget(hbox);
 
   QObject::connect(d->BrushDiameterRelativeToggle, SIGNAL(clicked()), d, SLOT(onDiameterUnitsClicked()));
   QObject::connect(d->BrushSphereCheckbox, SIGNAL(clicked()), this, SLOT(updateMRMLFromGUI()));
+  QObject::connect(d->EditIn3DViewsCheckbox, SIGNAL(clicked()), this, SLOT(updateMRMLFromGUI()));
   QObject::connect(d->ColorSmudgeCheckbox, SIGNAL(clicked()), this, SLOT(updateMRMLFromGUI()));
+  QObject::connect(d->EraseAllSegmentsCheckbox, SIGNAL(clicked()), this, SLOT(updateMRMLFromGUI()));
   QObject::connect(d->BrushPixelModeCheckbox, SIGNAL(clicked()), this, SLOT(updateMRMLFromGUI()));
   QObject::connect(d->BrushDiameterSlider, SIGNAL(valueChanged(double)), d, SLOT(onDiameterValueChanged(double)));
   QObject::connect(d->BrushDiameterSpinBox, SIGNAL(valueChanged(double)), d, SLOT(onDiameterValueChanged(double)));
@@ -1257,7 +1387,9 @@ void qSlicerSegmentEditorPaintEffect::setMRMLDefaults()
   this->setCommonParameterDefault("BrushRelativeDiameter", 3.0);
   this->setCommonParameterDefault("BrushDiameterIsRelative", 1);
   this->setCommonParameterDefault("BrushSphere", 0);
-  this->setCommonParameterDefault("ColorSmudge", 0);
+  this->setCommonParameterDefault("EditIn3DViews", 0);
+  this->setParameterDefault("ColorSmudge", 0);
+  this->setParameterDefault("EraseAllSegments", 0);
   this->setCommonParameterDefault("BrushPixelMode", 0);
 }
 
@@ -1276,13 +1408,23 @@ void qSlicerSegmentEditorPaintEffect::updateGUIFromMRML()
     return;
     }
 
+  this->m_ShowEffectCursorInThreeDView = (this->integerParameter("EditIn3DViews") != 0);
+
   d->BrushSphereCheckbox->blockSignals(true);
   d->BrushSphereCheckbox->setChecked(this->integerParameter("BrushSphere"));
   d->BrushSphereCheckbox->blockSignals(false);
 
+  d->EditIn3DViewsCheckbox->blockSignals(true);
+  d->EditIn3DViewsCheckbox->setChecked(this->integerParameter("EditIn3DViews"));
+  d->EditIn3DViewsCheckbox->blockSignals(false);
+
   d->ColorSmudgeCheckbox->blockSignals(true);
   d->ColorSmudgeCheckbox->setChecked(this->integerParameter("ColorSmudge"));
   d->ColorSmudgeCheckbox->blockSignals(false);
+
+  d->EraseAllSegmentsCheckbox->blockSignals(true);
+  d->EraseAllSegmentsCheckbox->setChecked(this->integerParameter("EraseAllSegments"));
+  d->EraseAllSegmentsCheckbox->blockSignals(false);
 
   bool pixelMode = this->integerParameter("BrushPixelMode");
   d->BrushPixelModeCheckbox->blockSignals(true);
@@ -1353,7 +1495,17 @@ void qSlicerSegmentEditorPaintEffect::updateMRMLFromGUI()
   Superclass::updateMRMLFromGUI();
 
   this->setCommonParameter("BrushSphere", (int)d->BrushSphereCheckbox->isChecked());
-  this->setCommonParameter("ColorSmudge", (int)d->ColorSmudgeCheckbox->isChecked());
+  this->setCommonParameter("EditIn3DViews", (int)d->EditIn3DViewsCheckbox->isChecked());
+  if (this->m_AlwaysErase)
+    {
+    // erase
+    this->setParameter("EraseAllSegments", (int)d->EraseAllSegmentsCheckbox->isChecked());
+    }
+  else
+    {
+    // paint
+    this->setParameter("ColorSmudge", (int)d->ColorSmudgeCheckbox->isChecked());
+    }
   bool pixelMode = d->BrushPixelModeCheckbox->isChecked();
   bool pixelModeChanged = (pixelMode != (bool)this->integerParameter("BrushPixelMode"));
   this->setCommonParameter("BrushPixelMode", (int)pixelMode);

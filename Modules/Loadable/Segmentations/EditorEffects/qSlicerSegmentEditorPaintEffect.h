@@ -83,8 +83,11 @@ public slots:
   virtual void updateMRMLFromGUI();
 
 protected:
-  /// Flag determining whether to paint or erase.
+  /// Flag determining to always erase (not just when smudge from empty region)
   /// Overridden in the \sa qSlicerSegmentEditorEraseEffect subclass
+  bool m_AlwaysErase;
+
+  /// Flag determining whether to paint or erase.
   bool m_Erase;
 
 protected:
