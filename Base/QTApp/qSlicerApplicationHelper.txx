@@ -185,13 +185,12 @@ void qSlicerApplicationHelper::postInitializeApplication(
 
   if (window)
     {
+    if (splashScreen)
+      {
+      splashScreen->close();
+      }
     window->setHomeModuleCurrent();
     window->show();
-    }
-
-  if (splashScreen && window)
-    {
-    splashScreen->finish(window.data());
     }
 
   // Process command line argument after the event loop is started

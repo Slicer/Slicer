@@ -38,6 +38,21 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
     self.parent.icon = qt.QIcon(':Icons/Medium/SlicerLoadDICOM.png')
     self.parent.dependencies = ["SubjectHierarchy"]
 
+
+    # Tasks to execute after the application has started up
+    slicer.app.connect("startupCompleted()", self.performPostModuleDiscoveryTasks)
+
+  def setup(self):
+    pluginHandlerSingleton = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
+    pluginHandlerSingleton.registerPlugin(slicer.qSlicerSubjectHierarchyDICOMPlugin())
+
+  def performPostModuleDiscoveryTasks(self):
+    """Since dicom plugins are discovered while the application
+    is initialized, they may be found after the DICOM module
+    itself if initialized.  This method is tied to a singleShot
+    that will be called once the event loop is read to start.
+    """
+
     if slicer.mrmlScene.GetTagByClassName( "vtkMRMLScriptedModuleNode" ) != 'ScriptedModule':
       slicer.mrmlScene.RegisterNodeClass(vtkMRMLScriptedModuleNode())
 
@@ -54,32 +69,9 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
           # can't open the database, so prompt the user later if they enter module
           slicer.dicomDatabase = None
         else:
-          # the dicom listener is also global, but only started on app start if
-          # the user so chooses
-          if settings.contains('DICOM/RunListenerAtStart'):
-            if settings.value('DICOM/RunListenerAtStart') == 'true':
-              if not hasattr(slicer, 'dicomListener'):
-                try:
-                  slicer.dicomListener = DICOMLib.DICOMListener(slicer.dicomDatabase)
-                  slicer.dicomListener.start()
-                except (UserWarning,OSError) as message:
-                  logging.error('Problem trying to start DICOMListener:\n %s' % message)
+          self.startListener()
         if slicer.dicomDatabase:
           slicer.app.setDICOMDatabase(slicer.dicomDatabase)
-
-    # Tasks to execute after the application has started up
-    slicer.app.connect("startupCompleted()", self.performPostModuleDiscoveryTasks)
-
-  def setup(self):
-    pluginHandlerSingleton = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
-    pluginHandlerSingleton.registerPlugin(slicer.qSlicerSubjectHierarchyDICOMPlugin())
-
-  def performPostModuleDiscoveryTasks(self):
-    """Since dicom plugins are discovered while the application
-    is initialized, they may be found after the DICOM module
-    itself if initialized.  This method is tied to a singleShot
-    that will be called once the event loop is read to start.
-    """
     # set the dicom pre-cache tags once all plugin classes have been initialized
     DICOMLib.setDatabasePrecacheTags()
 
@@ -89,6 +81,19 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
       # add the settings options
       self.settingsPanel = DICOMSettingsPanel()
       slicer.app.settingsDialog().addPanel("DICOM", self.settingsPanel)
+
+  def startListener(self):
+    # the dicom listener is also global, but only started on app start if
+    # the user so chooses
+    settings = qt.QSettings()
+    if settings.contains('DICOM/RunListenerAtStart'):
+      if settings.value('DICOM/RunListenerAtStart') == 'true':
+        if not hasattr(slicer, 'dicomListener'):
+          try:
+            slicer.dicomListener = DICOMLib.DICOMListener(slicer.dicomDatabase)
+            slicer.dicomListener.start()
+          except (UserWarning,OSError) as message:
+            logging.error('Problem trying to start DICOMListener:\n %s' % message)
 
   def addMenu(self):
     """Add an action to the File menu that will go into
