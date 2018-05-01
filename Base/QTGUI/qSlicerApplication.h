@@ -86,7 +86,7 @@ public:
   /// Get IO Manager
   Q_INVOKABLE qSlicerIOManager* ioManager();
 
-  #ifdef Slicer_USE_PYTHONQT
+#ifdef Slicer_USE_PYTHONQT
   /// Get Python Manager
   Q_INVOKABLE qSlicerPythonManager * pythonManager();
   Q_INVOKABLE ctkPythonConsole * pythonConsole();
@@ -163,7 +163,7 @@ public slots:
   /// \sa recentLogFiles(), setupFileLogging()
   QString currentLogFile()const;
 
-#ifdef Q_OS_WIN
+#ifdef Q_OS_WIN32
   /// When turning on OpenGL and using the full screen mode, menus and tooltips
   /// are no longer visible. By enabling hasBorderInFullScreen, a one-pixel border
   /// is added around the window, which fixes the problem.

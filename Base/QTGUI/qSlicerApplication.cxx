@@ -24,8 +24,8 @@
 #include <QFile>
 #include <QMainWindow>
 
-#ifdef Q_OS_WIN
-#include <QtPlatformHeaders\QWindowsWindowFunctions>
+#if defined(Q_OS_WIN32) && (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+  #include <QtPlatformHeaders\QWindowsWindowFunctions> // for setHasBorderInFullScreen
 #endif
 
 #include "vtkSlicerConfigure.h" // For Slicer_USE_*, Slicer_BUILD_*_SUPPORT
@@ -671,11 +671,13 @@ ctkSettingsDialog* qSlicerApplication::settingsDialog()const
   return d->SettingsDialog;
 }
 
-#ifdef Q_OS_WIN
+#ifdef Q_OS_WIN32
 // --------------------------------------------------------------------------
 void qSlicerApplication::setHasBorderInFullScreen(bool hasBorder)
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
   QWindowsWindowFunctions::setHasBorderInFullScreen(this->mainWindow()->windowHandle(), hasBorder);
+#endif
 }
 #endif
 
