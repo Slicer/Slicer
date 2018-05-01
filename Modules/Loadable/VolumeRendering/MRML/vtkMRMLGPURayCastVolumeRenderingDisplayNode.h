@@ -54,11 +54,6 @@ public:
   virtual const char* GetNodeTagName() VTK_OVERRIDE {return "GPURayCastVolumeRendering";}
 
   // Description:
-  // Ray cast technique
-  vtkGetMacro(RaycastTechnique, int);
-  vtkSetMacro(RaycastTechnique, int);
-
-  // Description:
   // Reduce wood grain artifact to make surfaces appear smoother.
   // For example, by applying jittering on casted rays.
   vtkGetMacro(SurfaceSmoothing, bool);
@@ -69,13 +64,6 @@ protected:
   ~vtkMRMLGPURayCastVolumeRenderingDisplayNode();
   vtkMRMLGPURayCastVolumeRenderingDisplayNode(const vtkMRMLGPURayCastVolumeRenderingDisplayNode&);
   void operator=(const vtkMRMLGPURayCastVolumeRenderingDisplayNode&);
-
-  /* techniques in GPU ray cast
-   * 0: composite with directional lighting (default)
-   * 2: MIP
-   * 3: MINIP
-   * */
-  int RaycastTechnique;
 
   /// Make surface appearance smoother. Off by default
   bool SurfaceSmoothing;
