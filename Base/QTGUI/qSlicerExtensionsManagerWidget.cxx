@@ -377,12 +377,18 @@ void qSlicerExtensionsManagerWidget::onInstallUrlChanged(const QUrl& newUrl)
   if (newUrl.path().endsWith("/slicerappstore"))
     {
     d->toolsWidget->InstallSearchBox->setEnabled(true);
+    // When URL is changed because user clicked on a link then we want the search text
+    // to be reset. However, when user is entering text in the searchbox (it has the focus)
+    // then we must not overwrite the search text.
+    if (!d->toolsWidget->InstallSearchBox->hasFocus())
+      {
 #if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
-    d->lastSearchText = newUrl.queryItemValue("search");
+      QString lastSearchTextLoaded = newUrl.queryItemValue("search");
 #else
-    d->lastSearchText = QUrlQuery(newUrl).queryItemValue("search");
+      QString lastSearchTextLoaded = QUrlQuery(newUrl).queryItemValue("search");
 #endif
-    d->toolsWidget->InstallSearchBox->setText(d->lastSearchText);
+      d->toolsWidget->InstallSearchBox->setText(lastSearchTextLoaded);
+      }
     }
   else
     {
@@ -401,7 +407,7 @@ void qSlicerExtensionsManagerWidget::onSearchTextChanged(const QString& newText)
     }
   if (newText != d->lastSearchText)
     {
-    d->searchTimerId = this->startTimer(200);
+    d->searchTimerId = this->startTimer(500);
     }
 }
 
