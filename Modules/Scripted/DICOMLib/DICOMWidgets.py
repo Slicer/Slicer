@@ -66,6 +66,13 @@ class SizePositionSettingsMixin(object):
                                   qt.QPoint(screenPos.x() + (parent.width - self.width)/2, screenPos.y())))
     self.settings.endGroup()
 
+    # If window position is no longer valid (for example because the window was
+    # placed on a monitor that has been disconnected) then the window may simply not appear
+    # for the user. Use geometry validation feature of restoreGeometry to make sure that
+    # restored window appears.
+    savedGeometry = self.saveGeometry()
+    self.restoreGeometry(savedGeometry)
+
 
 class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
   """Implement the Qt window showing details and possible
