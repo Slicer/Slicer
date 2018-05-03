@@ -56,6 +56,8 @@ public:
   void init();
 public:
   QIcon ModelIcon;
+
+  QAction* ToggleSliceIntersectionVisibilityAction;
 };
 
 //-----------------------------------------------------------------------------
@@ -64,13 +66,20 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyModelsPluginPrivate::qSlicerSubjectHierarchyModelsPluginPrivate(qSlicerSubjectHierarchyModelsPlugin& object)
 : q_ptr(&object)
+, ModelIcon(QIcon(":Icons/Model.png"))
+, ToggleSliceIntersectionVisibilityAction(NULL)
 {
-  this->ModelIcon = QIcon(":Icons/Model.png");
 }
 
 //------------------------------------------------------------------------------
 void qSlicerSubjectHierarchyModelsPluginPrivate::init()
 {
+  Q_Q(qSlicerSubjectHierarchyModelsPlugin);
+
+  this->ToggleSliceIntersectionVisibilityAction = new QAction("Toggle slice intersection visibility",q);
+  QObject::connect(this->ToggleSliceIntersectionVisibilityAction, SIGNAL(toggled(bool)), q, SLOT(toggleSliceIntersectionVisibility(bool)));
+  this->ToggleSliceIntersectionVisibilityAction->setCheckable(true);
+  this->ToggleSliceIntersectionVisibilityAction->setChecked(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -218,3 +227,76 @@ QString qSlicerSubjectHierarchyModelsPlugin::tooltip(vtkIdType itemID)const
   return tooltipString;
 }
 
+//---------------------------------------------------------------------------
+QList<QAction*> qSlicerSubjectHierarchyModelsPlugin::visibilityContextMenuActions()const
+{
+  Q_D(const qSlicerSubjectHierarchyModelsPlugin);
+
+  QList<QAction*> actions;
+  actions << d->ToggleSliceIntersectionVisibilityAction;
+  return actions;
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyModelsPlugin::showVisibilityContextMenuActionsForItem(vtkIdType itemID)
+{
+  Q_D(qSlicerSubjectHierarchyModelsPlugin);
+
+  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    return;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+
+  // Model
+  if (this->canOwnSubjectHierarchyItem(itemID))
+    {
+    vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+    if (!modelNode)
+      {
+      qCritical() << Q_FUNC_INFO << ": Failed to find model node associated to subject hierarchy item " << itemID;
+      return;
+      }
+    vtkMRMLModelDisplayNode* displayNode = vtkMRMLModelDisplayNode::SafeDownCast(modelNode->GetDisplayNode());
+    if (!displayNode)
+      {
+      qCritical() << Q_FUNC_INFO << ": Failed to find display node for model node " << modelNode->GetName();
+      return;
+      }
+
+    d->ToggleSliceIntersectionVisibilityAction->blockSignals(true);
+    d->ToggleSliceIntersectionVisibilityAction->setChecked(displayNode->GetSliceIntersectionVisibility());
+    d->ToggleSliceIntersectionVisibilityAction->blockSignals(false);
+    d->ToggleSliceIntersectionVisibilityAction->setVisible(true);
+    }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyModelsPlugin::toggleSliceIntersectionVisibility(bool on)
+{
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+
+  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  if (!currentItemID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid current item";
+    return;
+    }
+
+  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(shNode->GetItemDataNode(currentItemID));
+  vtkMRMLModelDisplayNode* displayNode = modelNode ? vtkMRMLModelDisplayNode::SafeDownCast(modelNode->GetDisplayNode()) : NULL;
+  if (displayNode)
+    {
+    displayNode->SetSliceIntersectionVisibility(on);
+    }
+}

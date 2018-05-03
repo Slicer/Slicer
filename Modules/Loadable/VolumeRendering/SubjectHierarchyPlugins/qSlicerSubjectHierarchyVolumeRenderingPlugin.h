@@ -29,6 +29,7 @@
 #include "qSlicerVolumeRenderingSubjectHierarchyPluginsExport.h"
 
 class qSlicerSubjectHierarchyVolumeRenderingPluginPrivate;
+class vtkSlicerVolumeRenderingLogic;
 
 // Due to some reason the Python wrapping of this class fails, therefore
 // put everything between BTX/ETX to exclude from wrapping.
@@ -48,6 +49,9 @@ public:
   virtual ~qSlicerSubjectHierarchyVolumeRenderingPlugin();
 
 public:
+  /// Set volume rendering module logic. Required for accessing display nodes and setting up volume rendering related nodes.
+  void setVolumeRenderingLogic(vtkSlicerVolumeRenderingLogic* volumeRenderingLogic);
+
   /// Get visibility context menu item actions to add to tree view.
   /// These item visibility context menu actions can be shown in the implementations of \sa showVisibilityContextMenuActionsForItem
   virtual QList<QAction*> visibilityContextMenuActions()const;
@@ -57,8 +61,10 @@ public:
   virtual void showVisibilityContextMenuActionsForItem(vtkIdType itemID);
 
 protected slots:
-  /// Switch to Volume Rendering module and set up rendering for current volume item
-  void showVolumeRenderingForCurrentItem();
+  /// Toggle volume rendering option for current volume item
+  void toggleVolumeRenderingForCurrentItem(bool);
+  /// Switch to Volume Rendering module and select current volume item
+  void showVolumeRenderingOptionsForCurrentItem();
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyVolumeRenderingPluginPrivate> d_ptr;

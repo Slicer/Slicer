@@ -163,8 +163,10 @@ void qSlicerVolumeRenderingModule::setup()
     QStringList() << "vtkMRMLVolumePropertyNode", true, this));
 
   // Register Subject Hierarchy core plugins
-  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
-    new qSlicerSubjectHierarchyVolumeRenderingPlugin() );
+  vtkSlicerVolumeRenderingLogic* logic = vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic());
+  qSlicerSubjectHierarchyVolumeRenderingPlugin* shPlugin = new qSlicerSubjectHierarchyVolumeRenderingPlugin();
+  shPlugin->setVolumeRenderingLogic(logic);
+  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(shPlugin);
 }
 
 //-----------------------------------------------------------------------------

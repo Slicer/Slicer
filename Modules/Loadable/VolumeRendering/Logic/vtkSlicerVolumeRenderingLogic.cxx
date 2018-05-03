@@ -698,12 +698,66 @@ void vtkSlicerVolumeRenderingLogic::FitROIToVolume(vtkMRMLVolumeRenderingDisplay
 }
 
 //----------------------------------------------------------------------------
+vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::CreateDefaultVolumeRenderingNodes(vtkMRMLVolumeNode* volumeNode)
+{
+  if (!volumeNode)
+    {
+    vtkErrorMacro("CreateVolumeRenderingNodesForVolume: No volume node given");
+    return NULL;
+    }
+  vtkMRMLScene* scene = this->GetMRMLScene();
+  if (!scene)
+    {
+    vtkErrorMacro("CreateVolumeRenderingNodesForVolume: Invalid MRML scene");
+    return NULL;
+    }
+
+  vtkMRMLVolumeRenderingDisplayNode* displayNode = this->GetFirstVolumeRenderingDisplayNode(volumeNode);
+  if (!displayNode)
+    {
+    displayNode = this->CreateVolumeRenderingDisplayNode();
+    scene->AddNode(displayNode);
+    displayNode->Delete();
+
+    // Add all 3D views to the display node
+    std::vector<vtkMRMLNode*> viewNodes;
+    scene->GetNodesByClass("vtkMRMLViewNode", viewNodes);
+    for (std::vector<vtkMRMLNode*>::iterator nodeIt=viewNodes.begin(); nodeIt != viewNodes.end(); ++nodeIt)
+      {
+      displayNode->AddViewNodeID((*nodeIt)->GetID());
+      }
+
+    volumeNode->AddAndObserveDisplayNodeID(displayNode->GetID());
+    }
+  if (!displayNode)
+    {
+    vtkErrorMacro("CreateVolumeRenderingNodesForVolume: Failed to create volume rendering display node for scalar volume node " << volumeNode->GetName());
+    return NULL;
+    }
+
+  vtkMRMLVolumePropertyNode* volumePropertyNode = displayNode->GetVolumePropertyNode();
+  if (!volumePropertyNode)
+    {
+    this->UpdateDisplayNodeFromVolumeNode(displayNode, volumeNode);
+    volumePropertyNode = displayNode->GetVolumePropertyNode();
+    }
+  if (!volumePropertyNode)
+    {
+    vtkErrorMacro("CreateVolumeRenderingNodesForVolume: Failed to create volume property node for scalar volume node " << volumeNode->GetName());
+    return displayNode;
+    }
+
+  return displayNode;
+}
+
+//----------------------------------------------------------------------------
 vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::CreateVolumeRenderingDisplayNode(const char* renderingClassName)
 {
   vtkMRMLVolumeRenderingDisplayNode *node = NULL;
 
   if (this->GetMRMLScene() == 0)
     {
+    vtkErrorMacro("CreateVolumeRenderingDisplayNode: Invalid MRML scene");
     return node;
     }
   bool volumeRenderingUniqueName = true;

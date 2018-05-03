@@ -81,6 +81,18 @@ public:
   /// Generate tooltip for a owned subject hierarchy item
   virtual QString tooltip(vtkIdType itemID)const;
 
+  /// Get visibility context menu item actions to add to tree view.
+  /// These item visibility context menu actions can be shown in the implementations of \sa showVisibilityContextMenuActionsForItem
+  virtual QList<QAction*> visibilityContextMenuActions()const;
+
+  /// Show visibility context menu actions valid for a given subject hierarchy item.
+  /// \param itemID Subject Hierarchy item to show the visibility context menu items for
+  virtual void showVisibilityContextMenuActionsForItem(vtkIdType itemID);
+
+protected slots:
+  /// Toggle slice intersection visibility when action clicked in the context menu
+  void toggleSliceIntersectionVisibility(bool on);
+
 protected:
   QScopedPointer<qSlicerSubjectHierarchyModelsPluginPrivate> d_ptr;
 

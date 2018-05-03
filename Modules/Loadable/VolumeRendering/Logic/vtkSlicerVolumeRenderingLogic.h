@@ -85,6 +85,17 @@ public:
   vtkSetMacro(UseLinearRamp, bool);
   vtkGetMacro(UseLinearRamp, bool);
 
+  /// Create and set up all nodes needed for volume rendering for a given volume node:
+  /// - Display node according to the selected rendering method
+  /// - Volume property node for display options
+  /// - ROI node for cropping
+  /// When dealing with a volume node that may not have been shown in volume rendering before,
+  /// it's enough to call this function to prepare them for that. After this, only SetVisibility
+  /// needs to be called on its display node for showing it.
+  /// Does not create new nodes if they exist already.
+  /// \return Volume rendering display node for the given volume
+  vtkMRMLVolumeRenderingDisplayNode* CreateDefaultVolumeRenderingNodes(vtkMRMLVolumeNode* volumeNode);
+
   /// Create a volume rendering display node.
   /// The node to instantiate will be of type \a renderingType if not null,
   /// \a DefaultRenderingMethod if not null or
