@@ -163,14 +163,13 @@ public slots:
   /// \sa recentLogFiles(), setupFileLogging()
   QString currentLogFile()const;
 
-#ifdef Q_OS_WIN32
   /// When turning on OpenGL and using the full screen mode, menus and tooltips
   /// are no longer visible. By enabling hasBorderInFullScreen, a one-pixel border
   /// is added around the window, which fixes the problem.
   /// Border has to be enabled before going to full screen mode.
+  /// This method has only effect when using Qt5 on Windows.
   /// See http://doc.qt.io/qt-5/windows-issues.html#fullscreen-opengl-based-windows
   void setHasBorderInFullScreen(bool);
-#endif
 
 signals:
 

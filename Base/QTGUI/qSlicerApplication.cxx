@@ -671,15 +671,14 @@ ctkSettingsDialog* qSlicerApplication::settingsDialog()const
   return d->SettingsDialog;
 }
 
-#ifdef Q_OS_WIN32
+
 // --------------------------------------------------------------------------
 void qSlicerApplication::setHasBorderInFullScreen(bool hasBorder)
 {
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+#if defined(Q_OS_WIN32) && (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
   QWindowsWindowFunctions::setHasBorderInFullScreen(this->mainWindow()->windowHandle(), hasBorder);
 #endif
 }
-#endif
 
 // --------------------------------------------------------------------------
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
