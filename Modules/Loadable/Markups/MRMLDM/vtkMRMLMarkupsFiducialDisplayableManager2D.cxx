@@ -733,6 +733,9 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::SetNthSeed(int n, vtkMRMLMarkup
       handleRep->VisibilityOff();
       handleRep->HandleVisibilityOff();
       handleRep->LabelVisibilityOff();
+      // If mouse pointer is over a markup when switching to a different slice,
+      // its interaction state would stuck in vtkHandleRepresentation::NearSeed.
+      handleRep->SetInteractionState(vtkHandleRepresentation::Outside);
 #if VTK_MAJOR_VERSION < 9
       // XXX This was part of commits:
       // * r23648 (BUG: fixes for 3808 fiducial picking issue)
@@ -909,7 +912,7 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::SetNthSeed(int n, vtkMRMLMarkup
         && (interactionNode->GetPlaceModePersistence() == 1);
       }
     vtkHandleWidget *seed = seedWidget->GetSeed(n);
-    if (listLocked || persistentPlaceMode)
+    if (listLocked || persistentPlaceMode || !fidVisible)
       {
       seed->ProcessEventsOff();
       }
