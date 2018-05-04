@@ -84,6 +84,9 @@ else()
       install(PROGRAMS ${qt_root_dir}/libexec/QtWebEngineProcess
         DESTINATION ${Slicer_INSTALL_ROOT}/libexec COMPONENT Runtime
         )
+      install(
+        CODE "file(WRITE \"\${CMAKE_INSTALL_PREFIX}/libexec/qt.conf\" \"[Paths]\nPrefix=../resources\")"
+        COMPONENT Runtime)
     endif()
 
     set(_qt_version "${Qt5_VERSION_MAJOR}.${Qt5_VERSION_MINOR}.${Qt5_VERSION_PATCH}")
