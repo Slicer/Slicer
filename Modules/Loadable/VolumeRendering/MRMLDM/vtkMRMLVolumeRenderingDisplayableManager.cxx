@@ -575,12 +575,23 @@ double vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetSampleDistance(
 //---------------------------------------------------------------------------
 double vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetFramerate(vtkMRMLVolumeRenderingDisplayNode* displayNode)
 {
-  double framerate = displayNode ? displayNode->GetExpectedFPS() : 15.;
-  framerate = std::max(framerate, 0.0001);
-  if (displayNode->GetPerformanceControl() == vtkMRMLVolumeRenderingDisplayNode::MaximumQuality)
-    {
-    framerate = 0.0; // special value meaning full quality
-    }
+  if (!displayNode)
+  {
+    return 15.;
+  }
+  double framerate = 0.0001;
+  switch (displayNode->GetPerformanceControl())
+  {
+    case vtkMRMLVolumeRenderingDisplayNode::AdaptiveQuality:
+      framerate = std::max(displayNode->GetExpectedFPS(), 0.0001);
+      break;
+    case vtkMRMLVolumeRenderingDisplayNode::NormalQuality:
+    case vtkMRMLVolumeRenderingDisplayNode::MaximumQuality:
+      // special value meaning start render as soon as possible
+      // (next time the application processes events)
+      framerate = 0.0;
+      break;
+  }
   return framerate;
 }
 
