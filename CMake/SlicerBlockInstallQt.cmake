@@ -84,6 +84,7 @@ else()
       install(PROGRAMS ${qt_root_dir}/libexec/QtWebEngineProcess
         DESTINATION ${Slicer_INSTALL_ROOT}/libexec COMPONENT Runtime
         )
+      # XXX Workaround for QTBUG-66346 fixed in Qt >= 5.11 (See https://github.com/Slicer/Slicer/pull/944)
       install(
         CODE "file(WRITE \"\${CMAKE_INSTALL_PREFIX}/libexec/qt.conf\" \"[Paths]\nPrefix=../resources\")"
         COMPONENT Runtime)
