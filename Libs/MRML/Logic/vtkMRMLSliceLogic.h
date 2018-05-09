@@ -135,9 +135,6 @@ public:
   vtkGetObjectMacro(BlendUVW, vtkImageBlend);
 
   ///
-  /// The offset to the correct slice for lightbox mode
-  vtkGetObjectMacro(ActiveSliceTransform, vtkTransform);
-
   ///
   /// All the PolyData objects to render
   vtkGetObjectMacro(PolyDataCollection, vtkPolyDataCollection);

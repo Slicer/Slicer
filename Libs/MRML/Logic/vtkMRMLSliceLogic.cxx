@@ -93,7 +93,6 @@ vtkMRMLSliceLogic::vtkMRMLSliceLogic()
   this->ExtractModelTexture->SetOutputDimensionality (2);
   this->ExtractModelTexture->SetInputConnection(BlendUVW->GetOutputPort());
 
-  this->ActiveSliceTransform = vtkTransform::New();
   this->PolyDataCollection = vtkPolyDataCollection::New();
   this->LookupTableCollection = vtkCollection::New();
   this->SliceModelNode = 0;
@@ -131,11 +130,6 @@ vtkMRMLSliceLogic::~vtkMRMLSliceLogic()
     {
     this->ExtractModelTexture->Delete();
     this->ExtractModelTexture = 0;
-    }
-  if (this->ActiveSliceTransform)
-    {
-    this->ActiveSliceTransform->Delete();
-    this->ActiveSliceTransform = 0;
     }
   this->PolyDataCollection->Delete();
   this->LookupTableCollection->Delete();
