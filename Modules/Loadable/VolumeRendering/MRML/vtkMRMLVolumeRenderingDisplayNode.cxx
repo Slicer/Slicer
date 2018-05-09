@@ -43,7 +43,7 @@ vtkMRMLVolumeRenderingDisplayNode::vtkMRMLVolumeRenderingDisplayNode()
   this->AddNodeReferenceRole(VolumeNodeReferenceRole,
                              VolumeNodeReferenceMRMLAttributeName);
 
-  vtkIntArray* volumePropertyEvents = vtkIntArray::New();
+  vtkNew<vtkIntArray> volumePropertyEvents;
   volumePropertyEvents->InsertNextValue(vtkCommand::StartEvent);
   volumePropertyEvents->InsertNextValue(vtkCommand::EndEvent);
   volumePropertyEvents->InsertNextValue(vtkCommand::ModifiedEvent);
@@ -52,15 +52,13 @@ vtkMRMLVolumeRenderingDisplayNode::vtkMRMLVolumeRenderingDisplayNode()
   volumePropertyEvents->InsertNextValue(vtkCommand::EndInteractionEvent);
   this->AddNodeReferenceRole(VolumePropertyNodeReferenceRole,
                              VolumePropertyNodeReferenceMRMLAttributeName,
-                             volumePropertyEvents);
-  volumePropertyEvents->Delete();
+                             volumePropertyEvents.GetPointer());
 
-  vtkIntArray* roiEvents = vtkIntArray::New();
+  vtkNew<vtkIntArray> roiEvents;
   roiEvents->InsertNextValue(vtkCommand::ModifiedEvent);
   this->AddNodeReferenceRole(ROINodeReferenceRole,
                              ROINodeReferenceMRMLAttributeName,
-                             roiEvents);
-  roiEvents->Delete();
+                             roiEvents.GetPointer());
 
   this->ExpectedFPS = 8.;
   this->EstimatedSampleDistance = 2.0;

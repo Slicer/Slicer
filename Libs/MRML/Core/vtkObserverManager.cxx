@@ -214,13 +214,11 @@ void vtkObserverManager::RemoveObjectEvents(vtkObject *nodePtr)
 //----------------------------------------------------------------------------
 void vtkObserverManager::ObserveObject(vtkObject* node, float priority)
 {
-  vtkIntArray *events = vtkIntArray::New();
+  vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkCommand::ModifiedEvent);
-  vtkFloatArray *priorities = vtkFloatArray::New();
+  vtkNew<vtkFloatArray> priorities;
   priorities->InsertNextValue(priority);
-  this->AddObjectEvents(node, events, priorities);
-  events->Delete();
-  priorities->Delete();
+  this->AddObjectEvents(node, events.GetPointer(), priorities.GetPointer());
 }
 
 //----------------------------------------------------------------------------

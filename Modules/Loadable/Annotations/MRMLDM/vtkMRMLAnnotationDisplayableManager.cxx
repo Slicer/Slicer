@@ -177,12 +177,11 @@ void vtkMRMLAnnotationDisplayableManager::AddObserversToInteractionNode()
     //if (!interactionNode->HasObserver(vtkMRMLInteractionNode::InteractionModePersistenceChangedEvent))
     //  {
       vtkDebugMacro("AddObserversToInteractionNode: interactionNode found")
-      vtkIntArray *interactionEvents = vtkIntArray::New();
+      vtkNew<vtkIntArray> interactionEvents;
       interactionEvents->InsertNextValue(vtkMRMLInteractionNode::InteractionModeChangedEvent);
       interactionEvents->InsertNextValue(vtkMRMLInteractionNode::InteractionModePersistenceChangedEvent);
       interactionEvents->InsertNextValue(vtkMRMLInteractionNode::EndPlacementEvent);
-      vtkObserveMRMLNodeEventsMacro(interactionNode, interactionEvents);
-      interactionEvents->Delete();
+      vtkObserveMRMLNodeEventsMacro(interactionNode, interactionEvents.GetPointer());
     //  }
     }
   else { vtkDebugMacro("AddObserversToInteractionNode: No interaction node!"); }
@@ -219,10 +218,9 @@ void vtkMRMLAnnotationDisplayableManager::AddObserversToSelectionNode()
   if (selectionNode)
     {
     vtkDebugMacro("AddObserversToSelectionNode: selectionNode found")
-    vtkIntArray* selectionEvents = vtkIntArray::New();
+    vtkNew<vtkIntArray> selectionEvents;
     selectionEvents->InsertNextValue(vtkMRMLSelectionNode::UnitModifiedEvent);
-    vtkObserveMRMLNodeEventsMacro(selectionNode, selectionEvents);
-    selectionEvents->Delete();
+    vtkObserveMRMLNodeEventsMacro(selectionNode, selectionEvents.GetPointer());
     }
   else
     {

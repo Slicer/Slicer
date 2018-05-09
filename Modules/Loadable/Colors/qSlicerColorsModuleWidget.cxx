@@ -300,18 +300,16 @@ void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode
     // update the annotations from the superclass color node since this is a
     // color table or freesurfer color node
     int numberOfColors = colorNode->GetNumberOfColors();
-    vtkIntArray* indexArray = vtkIntArray::New();
+    vtkNew<vtkIntArray> indexArray;
     indexArray->SetNumberOfValues(numberOfColors);
-    vtkStringArray* stringArray = vtkStringArray::New();
+    vtkNew<vtkStringArray> stringArray;
     stringArray->SetNumberOfValues(numberOfColors);
     for (int colorIndex=0; colorIndex<numberOfColors; ++colorIndex)
       {
       indexArray->SetValue(colorIndex, colorIndex);
       stringArray->SetValue(colorIndex, colorNode->GetColorName(colorIndex));
       }
-    d->ScalarBarActor->GetLookupTable()->SetAnnotations(indexArray, stringArray);
-    indexArray->Delete();
-    stringArray->Delete();
+    d->ScalarBarActor->GetLookupTable()->SetAnnotations(indexArray.GetPointer(), stringArray.GetPointer());
     }
   else if (procColorNode != NULL)
     {

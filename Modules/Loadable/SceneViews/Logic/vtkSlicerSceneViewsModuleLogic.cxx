@@ -43,15 +43,14 @@ void vtkSlicerSceneViewsModuleLogic::SetMRMLSceneInternal(vtkMRMLScene * newScen
 {
   vtkDebugMacro("SetMRMLSceneInternal - listening to scene events");
 
-  vtkIntArray *events = vtkIntArray::New();
+  vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
 //  events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
   events->InsertNextValue(vtkMRMLScene::EndCloseEvent);
   events->InsertNextValue(vtkMRMLScene::EndImportEvent);
   events->InsertNextValue(vtkMRMLScene::EndRestoreEvent);
 //  events->InsertNextValue(vtkMRMLScene::SceneAboutToBeRestoredEvent);
-  this->SetAndObserveMRMLSceneEventsInternal(newScene, events);
-  events->Delete();
+  this->SetAndObserveMRMLSceneEventsInternal(newScene, events.GetPointer());
 }
 
 //-----------------------------------------------------------------------------

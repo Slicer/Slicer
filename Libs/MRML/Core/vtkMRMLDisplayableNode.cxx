@@ -23,6 +23,7 @@ Version:   $Revision: 1.3 $
 // VTK includes
 #include <vtkCallbackCommand.h>
 #include <vtkMath.h>
+#include <vtkNew.h>
 
 // STD includes
 #include <algorithm>
@@ -35,14 +36,13 @@ const char* vtkMRMLDisplayableNode::DisplayNodeReferenceMRMLAttributeName = "dis
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableNode::vtkMRMLDisplayableNode()
 {
-  vtkIntArray  *events = vtkIntArray::New();
+  vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkCommand::ModifiedEvent);
   events->InsertNextValue(vtkMRMLDisplayableNode::DisplayModifiedEvent);
 
   this->AddNodeReferenceRole(this->GetDisplayNodeReferenceRole(),
                              this->GetDisplayNodeReferenceMRMLAttributeName(),
-                             events);
-  events->Delete();
+                             events.GetPointer());
 }
 
 //----------------------------------------------------------------------------

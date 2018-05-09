@@ -490,13 +490,12 @@ void vtkSlicerAnnotationModuleLogic::OnInteractionModePersistenceChangedEvent(vt
 void vtkSlicerAnnotationModuleLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 {
   // a good time to add the observed events!
-  vtkIntArray *events = vtkIntArray::New();
+  vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
 //  events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
   events->InsertNextValue(vtkCommand::ModifiedEvent);
   events->InsertNextValue(vtkMRMLScene::EndCloseEvent);
-  this->SetAndObserveMRMLSceneEventsInternal(newScene, events);
-  events->Delete();
+  this->SetAndObserveMRMLSceneEventsInternal(newScene, events.GetPointer());
 }
 
 //---------------------------------------------------------------------------
@@ -508,13 +507,12 @@ void vtkSlicerAnnotationModuleLogic::ObserveMRMLScene()
     this->GetMRMLScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
   if (interactionNode)
     {
-    vtkIntArray *interactionEvents = vtkIntArray::New();
+    vtkNew<vtkIntArray> interactionEvents;
     interactionEvents->InsertNextValue(
         vtkMRMLInteractionNode::InteractionModeChangedEvent);
     interactionEvents->InsertNextValue(
         vtkMRMLInteractionNode::InteractionModePersistenceChangedEvent);
-    vtkObserveMRMLNodeEventsMacro(interactionNode, interactionEvents);
-    interactionEvents->Delete();
+    vtkObserveMRMLNodeEventsMacro(interactionNode, interactionEvents.GetPointer());
     }
   else
     {

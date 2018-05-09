@@ -37,13 +37,12 @@ vtkMRMLTransformableNode::vtkMRMLTransformableNode()
 
   this->HideFromEditors = 0;
 
-  vtkIntArray  *events = vtkIntArray::New();
+  vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkCommand::ModifiedEvent);
   events->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
   this->AddNodeReferenceRole(this->GetTransformNodeReferenceRole(),
                              this->GetTransformNodeReferenceMRMLAttributeName(),
-                             events);
-  events->Delete();
+                             events.GetPointer());
 }
 
 //----------------------------------------------------------------------------

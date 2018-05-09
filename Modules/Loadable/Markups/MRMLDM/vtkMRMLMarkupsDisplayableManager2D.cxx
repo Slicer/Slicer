@@ -182,12 +182,11 @@ void vtkMRMLMarkupsDisplayableManager2D::AddObserversToInteractionNode()
   if (interactionNode)
     {
     vtkDebugMacro("AddObserversToInteractionNode: interactionNode found");
-    vtkIntArray *interactionEvents = vtkIntArray::New();
+    vtkNew<vtkIntArray> interactionEvents;
     interactionEvents->InsertNextValue(vtkMRMLInteractionNode::InteractionModeChangedEvent);
     interactionEvents->InsertNextValue(vtkMRMLInteractionNode::InteractionModePersistenceChangedEvent);
     interactionEvents->InsertNextValue(vtkMRMLInteractionNode::EndPlacementEvent);
-    vtkObserveMRMLNodeEventsMacro(interactionNode, interactionEvents);
-    interactionEvents->Delete();
+    vtkObserveMRMLNodeEventsMacro(interactionNode, interactionEvents.GetPointer());
     }
   else { vtkDebugMacro("AddObserversToInteractionNode: No interaction node!"); }
 }

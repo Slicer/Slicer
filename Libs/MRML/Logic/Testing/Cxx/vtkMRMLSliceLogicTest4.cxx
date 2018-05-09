@@ -67,10 +67,10 @@ vtkMRMLScalarVolumeNode* loadVolume2(const char* volume, vtkMRMLScene* scene)
   scene->AddNode(scalarNode.GetPointer());
   storageNode->ReadData(scalarNode.GetPointer());
 
-  vtkMRMLColorTableNode* colorNode = vtkMRMLColorTableNode::New();
+  vtkNew<vtkMRMLColorTableNode> colorNode;
   colorNode->SetTypeToGrey();
-  scene->AddNode(colorNode);
-  colorNode->Delete();
+  scene->AddNode(colorNode.GetPointer());
+
   displayNode->SetAndObserveColorNodeID(colorNode->GetID());
 
   return scalarNode.GetPointer();

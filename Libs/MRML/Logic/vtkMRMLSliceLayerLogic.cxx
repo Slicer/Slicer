@@ -310,11 +310,10 @@ void vtkMRMLSliceLayerLogic::SetVolumeNode(vtkMRMLVolumeNode *volumeNode)
     }
   int wasModifying = this->StartModify();
 
-  vtkIntArray *events = vtkIntArray::New();
+  vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
   events->InsertNextValue(vtkCommand::ModifiedEvent);
-  vtkSetAndObserveMRMLNodeEventsMacro(this->VolumeNode, volumeNode, events );
-  events->Delete();
+  vtkSetAndObserveMRMLNodeEventsMacro(this->VolumeNode, volumeNode, events.GetPointer());
 
   // Update the reslice transform to move this image into XY
   this->UpdateTransforms();

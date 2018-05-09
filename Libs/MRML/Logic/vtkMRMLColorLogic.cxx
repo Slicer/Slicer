@@ -74,10 +74,9 @@ void vtkMRMLColorLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
   // We are solely interested in vtkMRMLScene::NewSceneEvent,
   // we don't want to listen to any other events.
-  vtkIntArray* sceneEvents = vtkIntArray::New();
+  vtkNew<vtkIntArray> sceneEvents;
   sceneEvents->InsertNextValue(vtkMRMLScene::NewSceneEvent);
-  this->SetAndObserveMRMLSceneEventsInternal(newScene, sceneEvents);
-  sceneEvents->Delete();
+  this->SetAndObserveMRMLSceneEventsInternal(newScene, sceneEvents.GetPointer());
 
   if (newScene)
     {
