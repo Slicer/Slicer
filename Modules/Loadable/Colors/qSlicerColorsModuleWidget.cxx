@@ -49,6 +49,7 @@
 // VTK includes
 #include <vtkColorTransferFunction.h>
 #include <vtkLookupTable.h>
+#include <vtkNew.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkScalarBarWidget.h>

@@ -24,6 +24,7 @@ Version:   $Revision: 1.2 $
 // VTK includes
 #include <vtkCommand.h>
 #include <vtkIntArray.h>
+#include <vtkNew.h>
 #include <vtkObjectFactory.h>
 
 // STD includes
