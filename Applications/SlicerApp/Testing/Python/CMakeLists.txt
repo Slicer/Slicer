@@ -325,6 +325,13 @@ add_test(
     ${Slicer_LAUNCHER_EXECUTABLE}
   )
 
+# Check that stand-alone Python interpreter, without PythonQt support, can `import slicer` safely (#945)
+add_test(
+  NAME py_standalonepython_import_slicer
+  COMMAND ${Slicer_LAUNCHER_EXECUTABLE} --launch
+    ${PYTHON} ${CMAKE_CURRENT_SOURCE_DIR}/StandalonePythonImportSlicerTest.py
+  )
+
 #
 # SelfTests
 # see http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Developers/Tutorials/SelfTestModule

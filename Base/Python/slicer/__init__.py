@@ -36,11 +36,19 @@ try:
 except ImportError:
   available_kits = []
 
+import string, os, sys
+standalone_python = "python" in string.lower(os.path.split(sys.executable)[-1])
+
 for kit in available_kits:
-   try:
-     exec "from %s import *" % (kit)
-   except ImportError as detail:
-     print detail
+  # skip PythonQt kits if we are running in a regular python interpreter
+  if standalone_python and "PythonQt" in kit:
+    print("Detected non-embedded Python interpreter. Skipping module '{}'".format(kit))
+    continue
+
+  try:
+    exec "from %s import *" % (kit)
+  except ImportError as detail:
+    print detail
 
 #-----------------------------------------------------------------------------
 # Cleanup: Removing things the user shouldn't have to see.
@@ -48,3 +56,4 @@ for kit in available_kits:
 del _createModule
 del available_kits
 del kit
+del standalone_python
