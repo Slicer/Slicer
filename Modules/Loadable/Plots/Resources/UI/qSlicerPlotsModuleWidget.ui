@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>288</width>
-    <height>923</height>
+    <width>349</width>
+    <height>434</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -37,123 +37,114 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="ctkCollapsibleButton" name="DisplayEditCollapsibleWidget">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>1</verstretch>
-      </sizepolicy>
+    <widget class="QTabWidget" name="PlotsTabWidget">
+     <property name="currentIndex">
+      <number>0</number>
      </property>
-     <property name="text">
-      <string>Plot charts</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-     <layout class="QFormLayout" name="formLayout">
-      <item row="0" column="0">
-       <widget class="QLabel" name="PlotChartLabel">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>27</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Chart:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <property name="sizeConstraint">
-         <enum>QLayout::SetMinimumSize</enum>
-        </property>
-        <item>
-         <widget class="qMRMLNodeComboBox" name="PlotChartNodeSelector">
-          <property name="nodeTypes">
-           <stringlist>
-            <string>vtkMRMLPlotChartNode</string>
-           </stringlist>
-          </property>
-          <property name="renameEnabled">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="ShowChartButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>30</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="toolTip">
-           <string>Allow plot editing</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-            <normaloff>:/Icons/Medium/SlicerVisible.png</normaloff>:/Icons/Medium/SlicerVisible.png</iconset>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="1" column="0" colspan="2">
-       <widget class="qMRMLPlotChartPropertiesWidget" name="PlotChartPropertiesWidget"/>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="ctkCollapsibleButton" name="DataSeriesCollapsibleButton">
-     <property name="text">
-      <string>Plot data series</string>
-     </property>
-     <property name="collapsed">
-      <bool>false</bool>
-     </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
-       <widget class="QLabel" name="PlotDataSeriesLabel">
-        <property name="text">
-         <string>Data series:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0" colspan="2">
-       <widget class="ctkPushButton" name="copyPlotSeriesNodePushButton">
-        <property name="text">
-         <string>Clone data series</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="qMRMLNodeComboBox" name="PlotSeriesNodeSelector">
-        <property name="nodeTypes">
-         <stringlist>
-          <string>vtkMRMLPlotSeriesNode</string>
-         </stringlist>
-        </property>
-        <property name="renameEnabled">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0" colspan="2">
-       <widget class="qMRMLPlotSeriesPropertiesWidget" name="PlotSeriesPropertiesWidget"/>
-      </item>
-     </layout>
+     <widget class="QWidget" name="charts">
+      <attribute name="title">
+       <string>Charts</string>
+      </attribute>
+      <layout class="QFormLayout" name="formLayout_2">
+       <item row="0" column="0">
+        <widget class="QLabel" name="PlotChartLabel">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>27</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Chart:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <property name="sizeConstraint">
+          <enum>QLayout::SetMinimumSize</enum>
+         </property>
+         <item>
+          <widget class="qMRMLNodeComboBox" name="PlotChartNodeSelector">
+           <property name="nodeTypes">
+            <stringlist>
+             <string>vtkMRMLPlotChartNode</string>
+            </stringlist>
+           </property>
+           <property name="renameEnabled">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="ShowChartButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>30</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>Allow plot editing</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+             <normaloff>:/Icons/Medium/SlicerVisible.png</normaloff>:/Icons/Medium/SlicerVisible.png</iconset>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="1" column="0" colspan="2">
+        <widget class="qMRMLPlotChartPropertiesWidget" name="PlotChartPropertiesWidget"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="series">
+      <attribute name="title">
+       <string>Series</string>
+      </attribute>
+      <layout class="QFormLayout" name="formLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="PlotDataSeriesLabel">
+         <property name="text">
+          <string>Data series:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="qMRMLNodeComboBox" name="PlotSeriesNodeSelector">
+         <property name="nodeTypes">
+          <stringlist>
+           <string>vtkMRMLPlotSeriesNode</string>
+          </stringlist>
+         </property>
+         <property name="renameEnabled">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="2">
+        <widget class="qMRMLPlotSeriesPropertiesWidget" name="PlotSeriesPropertiesWidget"/>
+       </item>
+       <item row="2" column="0" colspan="2">
+        <widget class="ctkPushButton" name="copyPlotSeriesNodePushButton">
+         <property name="text">
+          <string>Clone data series</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item>
@@ -219,12 +210,6 @@
    <class>qMRMLPlotSeriesPropertiesWidget</class>
    <extends>qMRMLWidget</extends>
    <header>qMRMLPlotSeriesPropertiesWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ctkCollapsibleButton</class>
-   <extends>QWidget</extends>
-   <header>ctkCollapsibleButton.h</header>
-   <container>1</container>
   </customwidget>
   <customwidget>
    <class>ctkPushButton</class>

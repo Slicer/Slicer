@@ -1,5 +1,20 @@
 <!DOCTYPE RCC><RCC version="1.0">
-  <qresource>
-    <file>Icons/Plots.png</file>
-  </qresource>
+    <qresource prefix="/Icons">
+        <file alias="Plots.png">Icons/Plots.png</file>
+    </qresource>
+    <qresource prefix="/Icons/Large">
+        <file alias="SlicerPlotSeries.png">Icons/Large/SlicerPlotSeries.png</file>
+    </qresource>
+    <qresource prefix="/Icons/Medium">
+        <file alias="SlicerPlotSeries.png">Icons/Medium/SlicerPlotSeries.png</file>
+    </qresource>
+    <qresource prefix="/Icons/XLarge">
+        <file alias="SlicerPlotSeries.png">Icons/XLarge/SlicerPlotSeries.png</file>
+    </qresource>
+    <qresource prefix="/Icons/XSmall">
+        <file alias="SlicerPlotSeries.png">Icons/XSmall/SlicerPlotSeries.png</file>
+    </qresource>
+    <qresource prefix="/Icons/Small">
+        <file alias="SlicerPlotSeries.png">Icons/Small/SlicerPlotSeries.png</file>
+    </qresource>
 </RCC>

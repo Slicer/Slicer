@@ -25,6 +25,7 @@
 #include <vtkMRMLScene.h>
 #include <vtkMRMLPlotChartNode.h>
 #include <vtkMRMLLayoutNode.h>
+#include <vtkMRMLPlotSeriesNode.h>
 #include <vtkMRMLPlotViewNode.h>
 
 #include <vtkSlicerPlotsLogic.h>
@@ -56,7 +57,8 @@ public:
   ~qSlicerSubjectHierarchyPlotsPluginPrivate();
   void init();
 public:
-  QIcon PlotIcon;
+  QIcon PlotChartIcon;
+  QIcon PlotSeriesIcon;
 
   vtkWeakPointer<vtkSlicerPlotsLogic> PlotsLogic;
 
@@ -71,7 +73,8 @@ public:
 qSlicerSubjectHierarchyPlotsPluginPrivate::qSlicerSubjectHierarchyPlotsPluginPrivate(qSlicerSubjectHierarchyPlotsPlugin& object)
 : q_ptr(&object)
 {
-  this->PlotIcon = QIcon(":Icons/Chart.png");
+  this->PlotChartIcon = QIcon(":Icons/Medium/SlicerInteractivePlotting.png");
+  this->PlotSeriesIcon = QIcon(":Icons/Medium/SlicerPlotSeries.png");
 
   this->VisibleIcon = QIcon(":Icons/VisibleOn.png");
   this->HiddenIcon = QIcon(":Icons/VisibleOff.png");
@@ -96,7 +99,7 @@ qSlicerSubjectHierarchyPlotsPlugin::qSlicerSubjectHierarchyPlotsPlugin(QObject* 
  , d_ptr( new qSlicerSubjectHierarchyPlotsPluginPrivate(*this) )
 {
   Q_D(qSlicerSubjectHierarchyPlotsPlugin);
-  this->m_Name = QString("PlotChart");
+  this->m_Name = QString("Plots");
   d->init();
 }
 
@@ -124,7 +127,10 @@ double qSlicerSubjectHierarchyPlotsPlugin::canAddNodeToSubjectHierarchy(
     }
   else if (node->IsA("vtkMRMLPlotChartNode"))
     {
-    // Node is a plotLayout
+    return 0.5;
+    }
+  else if (node->IsA("vtkMRMLPlotSeriesNode"))
+    {
     return 0.5;
     }
 
@@ -146,11 +152,14 @@ double qSlicerSubjectHierarchyPlotsPlugin::canOwnSubjectHierarchyItem(vtkIdType 
     return 0.0;
     }
 
-  // PlotLayout
   vtkMRMLNode* associatedNode = shNode->GetItemDataNode(itemID);
   if (associatedNode && associatedNode->IsA("vtkMRMLPlotChartNode"))
     {
     return 0.5; // There may be other plugins that can handle special PlotChart better
+    }
+  else if (associatedNode && associatedNode->IsA("vtkMRMLPlotSeriesNode"))
+    {
+    return 0.5; // There may be other plugins that can handle special PlotSeries better
     }
 
   return 0.0;
@@ -159,7 +168,7 @@ double qSlicerSubjectHierarchyPlotsPlugin::canOwnSubjectHierarchyItem(vtkIdType 
 //---------------------------------------------------------------------------
 const QString qSlicerSubjectHierarchyPlotsPlugin::roleForPlugin()const
 {
-  return "PlotLayout";
+  return "Plot";
 }
 
 //---------------------------------------------------------------------------
@@ -173,9 +182,21 @@ QIcon qSlicerSubjectHierarchyPlotsPlugin::icon(vtkIdType itemID)
 
   Q_D(qSlicerSubjectHierarchyPlotsPlugin);
 
-  if (this->canOwnSubjectHierarchyItem(itemID))
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
     {
-    return d->PlotIcon;
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return QIcon();
+    }
+
+  vtkMRMLNode* associatedNode = shNode->GetItemDataNode(itemID);
+  if (associatedNode && associatedNode->IsA("vtkMRMLPlotChartNode"))
+    {
+    return d->PlotChartIcon;
+    }
+  else if (associatedNode && associatedNode->IsA("vtkMRMLPlotSeriesNode"))
+    {
+    return d->PlotSeriesIcon;
     }
 
   // Item unknown by plugin
@@ -225,14 +246,62 @@ void qSlicerSubjectHierarchyPlotsPlugin::setDisplayVisibility(vtkIdType itemID, 
     return;
     }
 
-  if (d->PlotsLogic)
+  vtkMRMLPlotChartNode* plotChartNode = vtkMRMLPlotChartNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+  vtkMRMLPlotSeriesNode* plotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+
+  if (!d->PlotsLogic)
+    {
+    qWarning() << Q_FUNC_INFO << ": plotsLogic is not set, cannot show plot in layout";
+    return;
+    }
+
+  if (plotSeriesNode)
+    {
+    // A plot series node is selected.
+    if (visible)
+      {
+      // Show series in current chart (if there is one), otherwise create a new chart
+      vtkMRMLPlotChartNode* plotChartNode = NULL;
+      vtkMRMLPlotViewNode* plotViewNode = this->getPlotViewNode();
+      if (plotViewNode)
+        {
+        plotChartNode = plotViewNode->GetPlotChartNode();
+        }
+      if (!plotChartNode)
+        {
+        plotChartNode = vtkMRMLPlotChartNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLPlotChartNode"));
+        }
+      d->PlotsLogic->ShowChartInLayout(plotChartNode);
+      if (!plotChartNode->HasPlotSeriesNodeID(plotSeriesNode->GetID()))
+        {
+        plotChartNode->AddAndObservePlotSeriesNodeID(plotSeriesNode->GetID());
+        }
+      }
+    else
+      {
+      // Show series in current chart (if there is one), otherwise create a new chart
+      vtkMRMLPlotViewNode* plotViewNode = this->getPlotViewNode();
+      if (!plotViewNode)
+        {
+        // already hidden
+        return;
+        }
+      vtkMRMLPlotChartNode* plotChartNode = plotViewNode->GetPlotChartNode();;
+      if (!plotChartNode)
+        {
+        // already hidden
+        return;
+        }
+      if (plotChartNode->HasPlotSeriesNodeID(plotSeriesNode->GetID()))
+        {
+        plotChartNode->RemovePlotSeriesNodeID(plotSeriesNode->GetID());
+        }
+      }
+    }
+  else if (plotChartNode)
     {
     vtkMRMLPlotChartNode* associatedPlotChartNode = vtkMRMLPlotChartNode::SafeDownCast(shNode->GetItemDataNode(itemID));
     d->PlotsLogic->ShowChartInLayout(visible ? associatedPlotChartNode : NULL);
-    }
-  else
-    {
-    qWarning() << Q_FUNC_INFO << ": plotsLogic is not set, cannot show chart in layout";
     }
 
   // Update icons of all charts (if we show this chart then we may have hidden other charts)
@@ -247,6 +316,14 @@ void qSlicerSubjectHierarchyPlotsPlugin::setDisplayVisibility(vtkIdType itemID, 
     vtkMRMLPlotChartNode* chartNode = vtkMRMLPlotChartNode::SafeDownCast(*chartIt);
     vtkIdType chartNodeId = shNode->GetItemByDataNode(chartNode);
     shNode->ItemModified(chartNodeId);
+    }
+  std::vector< vtkMRMLNode* > seriesNodes;
+  scene->GetNodesByClass("vtkMRMLPlotSeriesNode", seriesNodes);
+  for (std::vector< vtkMRMLNode* >::iterator seriesIt = seriesNodes.begin(); seriesIt != seriesNodes.end(); ++seriesIt)
+    {
+    vtkMRMLPlotSeriesNode* seriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(*seriesIt);
+    vtkIdType seriesNodeId = shNode->GetItemByDataNode(seriesNode);
+    shNode->ItemModified(seriesNodeId);
     }
 }
 
@@ -266,20 +343,26 @@ int qSlicerSubjectHierarchyPlotsPlugin::getDisplayVisibility(vtkIdType itemID)co
     }
 
   vtkMRMLPlotViewNode* plotViewNode = this->getPlotViewNode();
-  if (!plotViewNode)
+  if (!plotViewNode || !plotViewNode->GetPlotChartNode())
     {
     // No quantitative view has been set yet
     return 0;
     }
 
-  // Return shown if plotLayout in plot view is the examined item's associated data node
-  vtkMRMLPlotChartNode* associatedPlotChartNode = vtkMRMLPlotChartNode::SafeDownCast(shNode->GetItemDataNode(itemID));
-  if (!associatedPlotChartNode)
+  vtkMRMLPlotSeriesNode* plotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+  if (plotSeriesNode)
     {
-    return 0;
+    return (plotViewNode->GetPlotChartNode()->HasPlotSeriesNodeID(plotSeriesNode->GetID()) ? 1 : 0);
     }
 
-  return (associatedPlotChartNode == plotViewNode->GetPlotChartNode()) ? 1 : 0;
+  vtkMRMLPlotChartNode* plotChartNode = vtkMRMLPlotChartNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+  if (plotChartNode)
+    {
+    // Return shown if plotLayout in plot view is the examined item's associated data node
+    return (plotChartNode == plotViewNode->GetPlotChartNode()) ? 1 : 0;
+    }
+
+  return 0;
 }
 
 //---------------------------------------------------------------------------

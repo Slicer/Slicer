@@ -207,6 +207,7 @@ void qSlicerPlotsModuleWidget::setCurrentPlotNode(vtkMRMLNode* tableNode)
 {
   Q_D(qSlicerPlotsModuleWidget);
   d->PlotChartNodeSelector->setCurrentNode(tableNode);
+  d->PlotsTabWidget->setCurrentIndex(0);
 }
 
 //-----------------------------------------------------------
@@ -221,11 +222,13 @@ bool qSlicerPlotsModuleWidget::setEditedNode(vtkMRMLNode* node,
   if (vtkMRMLPlotChartNode::SafeDownCast(node))
     {
     d->PlotChartNodeSelector->setCurrentNode(node);
+    d->PlotsTabWidget->setCurrentIndex(0);
     return true;
     }
   else if (vtkMRMLPlotSeriesNode::SafeDownCast(node))
     {
     d->PlotSeriesNodeSelector->setCurrentNode(node);
+    d->PlotsTabWidget->setCurrentIndex(1);
     return true;
     }
 

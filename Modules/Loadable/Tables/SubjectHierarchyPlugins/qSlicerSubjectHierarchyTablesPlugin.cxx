@@ -40,6 +40,7 @@
 
 // MRML widgets includes
 #include "qMRMLNodeComboBox.h"
+#include "qMRMLTableWidget.h"
 
 // VTK includes
 #include <vtkObjectFactory.h>
@@ -289,14 +290,6 @@ int qSlicerSubjectHierarchyTablesPlugin::getDisplayVisibility(vtkIdType itemID)c
     return 0;
     }
 
-  // Return hidden if current layout is not one of the table ones
-  // All layouts containing a table should be listed here:
-  if ( qSlicerApplication::application()->layoutManager()->layout() != vtkMRMLLayoutNode::SlicerLayoutFourUpTableView
-    && qSlicerApplication::application()->layoutManager()->layout() != vtkMRMLLayoutNode::SlicerLayout3DTableView )
-    {
-    return 0;
-    }
-
   // Return shown if table in table view is the examined node's associated data node
   vtkMRMLTableNode* associatedTableNode = vtkMRMLTableNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   if ( associatedTableNode && tableViewNode->GetTableNodeID()
@@ -320,11 +313,26 @@ vtkMRMLTableViewNode* qSlicerSubjectHierarchyTablesPlugin::getTableViewNode()con
     return NULL;
     }
 
-  vtkMRMLTableViewNode* tableViewNode = vtkMRMLTableViewNode::SafeDownCast(scene->GetFirstNodeByClass("vtkMRMLTableViewNode"));
-  if (!tableViewNode)
+  qMRMLLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+  if (!layoutManager)
     {
     return NULL;
     }
 
-  return tableViewNode;
+  for (int i = 0; i<layoutManager->tableViewCount(); i++)
+    {
+    qMRMLTableWidget* tableWidget = layoutManager->tableWidget(0);
+    if (!tableWidget)
+      {
+      // invalid plot widget
+      continue;
+      }
+    vtkMRMLTableViewNode* tableView = tableWidget->mrmlTableViewNode();
+    if (tableView)
+      {
+      return tableView;
+      }
+    }
+
+  return NULL;
 }

@@ -745,7 +745,7 @@ def arrayFromVolumeModified(volumeNode):
 
 def arrayFromModelPoints(modelNode):
   """Return point positions of a model node as numpy array.
-  Voxels values in the volume node can be modified by modfying the numpy array.
+  Point coordinates can be modified by modfying the numpy array.
   After all modifications has been completed, call :py:meth:`arrayFromModelPointsModified`.
 
   .. warning:: Important: memory area of the returned array is managed by VTK,
@@ -763,6 +763,18 @@ def arrayFromModelPointsModified(modelNode):
     modelNode.GetPolyData().GetPoints().GetData().Modified()
   # Trigger re-render
   modelNode.GetDisplayNode().Modified()
+
+def arrayFromModelPointData(modelNode, arrayName):
+  """Return point data array of a model node as numpy array.
+
+  .. warning:: Important: memory area of the returned array is managed by VTK,
+    therefore values in the array may be changed, but the array must not be reallocated.
+    See :py:meth:`arrayFromVolume` for details.
+  """
+  import vtk.util.numpy_support
+  arrayVtk = modelNode.GetPolyData().GetPointData().GetArray(arrayName)
+  narray = vtk.util.numpy_support.vtk_to_numpy(arrayVtk)
+  return narray
 
 def arrayFromGridTransform(gridTransformNode):
   """Return voxel array from transform node as numpy array.
@@ -1284,3 +1296,140 @@ def getFilesInDirectory(directory, absolutePath=True):
       else:
         allFiles.append(fileName)
   return allFiles
+
+def plot(narray, xColumnIndex = -1, columnNames = None, title = None, show = True, nodes = None):
+  """ Create a plot from a numpy array that contains two or more columns.
+  :param narray: input numpy array containing data series in columns.
+  :param xColumnIndex: index of column that will be used as x axis.
+    If it is set to negative number (by default) then row index will be used as x coordinate.
+  :param columnNames: names of each column of the input array.
+  :param title: title of the chart. Plot node names are set based on this value.
+  :param nodes: plot chart, table, and list of plot series nodes.
+    Specified in a dictionary, with keys: 'chart', 'table', 'series'.
+    Series contains a list of plot series nodes (one for each table column).
+    The parameter is used both as an input and output.
+  :return: plot chart node. Plot chart node provides access to chart properties and plot series nodes.
+
+  Example 1: simple plot
+
+  .. code-block:: python
+
+    # Get sample data
+    import numpy as np
+    import SampleData
+    volumeNode = SampleData.SampleDataLogic().downloadMRHead()
+
+    # Create new plot
+    histogram = np.histogram(arrayFromVolume(volumeNode), bins=50)
+    chartNode = plot(histogram, xColumnIndex = 1)
+
+    # Change some plot properties
+    chartNode.SetTitle("My histogram")
+    chartNode.GetNthPlotSeriesNode(0).SetPlotType(slicer.vtkMRMLPlotSeriesNode.PlotTypeScatterBar)
+
+  Example 2: plot with multiple updates
+
+  .. code-block:: python
+
+    # Get sample data
+    import numpy as np
+    import SampleData
+    volumeNode = SampleData.SampleDataLogic().downloadMRHead()
+
+    # Create variable that will store plot nodes (chart, table, series)
+    plotNodes = {}
+
+    # Create new plot
+    histogram = np.histogram(arrayFromVolume(volumeNode), bins=80)
+    plot(histogram, xColumnIndex = 1, nodes = plotNodes)
+
+    # Update plot
+    histogram = np.histogram(arrayFromVolume(volumeNode), bins=40)
+    plot(histogram, xColumnIndex = 1, nodes = plotNodes)
+
+  """
+  import slicer
+
+  chartNode = None
+  tableNode = None
+  seriesNodes = []
+
+  # Retrieve nodes that must be reused
+  if nodes is not None:
+    if nodes.has_key('chart'):
+      chartNode = nodes['chart']
+    if nodes.has_key('table'):
+      tableNode = nodes['table']
+    if nodes.has_key('series'):
+      seriesNodes = nodes['series']
+
+  # Create table node
+  if tableNode is None:
+    tableNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode")
+
+  if title is not None:
+    tableNode.SetName(title+' table')
+  updateTableFromArray(tableNode, narray)
+  # Update column names
+  numberOfColumns = tableNode.GetTable().GetNumberOfColumns()
+  yColumnIndex = 0
+  for columnIndex in range(numberOfColumns):
+    if (columnNames is not None) and (len(columnNames) > columnIndex):
+      columnName = columnNames[columnIndex]
+    else:
+      if columnIndex == xColumnIndex:
+        columnName = "X"
+      elif yColumnIndex == 0:
+        columnName = "Y"
+        yColumnIndex += 1
+      else:
+        columnName = "Y"+str(yColumnIndex)
+        yColumnIndex += 1
+    tableNode.GetTable().GetColumn(columnIndex).SetName(columnName)
+
+  # Create chart and add plot
+  if chartNode is None:
+    chartNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLPlotChartNode")
+  if title is not None:
+    chartNode.SetName(title + ' chart')
+    chartNode.SetTitle(title)
+
+  # Create plot series node(s)
+  xColumnName = columnNames[xColumnIndex] if (columnNames is not None) and (len(columnNames) > 0) else "X"
+  for columnIndex in range(numberOfColumns):
+    if columnIndex == xColumnIndex:
+      continue
+    if len(seriesNodes) > columnIndex:
+      seriesNode = seriesNodes[columnIndex]
+    else:
+      seriesNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLPlotSeriesNode")
+      seriesNodes.append(seriesNode)
+      seriesNode.SetUniqueColor()
+    seriesNode.SetAndObserveTableNodeID(tableNode.GetID())
+    if xColumnIndex < 0:
+      seriesNode.SetXColumnName("")
+      seriesNode.SetPlotType(seriesNode.PlotTypeLine)
+    else:
+      seriesNode.SetXColumnName(xColumnName)
+      seriesNode.SetPlotType(seriesNode.PlotTypeScatter)
+    yColumnName = tableNode.GetTable().GetColumn(columnIndex).GetName()
+    seriesNode.SetYColumnName(yColumnName)
+    if title:
+      seriesNode.SetName(title + " " + yColumnName)
+    if not chartNode.HasPlotSeriesNodeID(seriesNode.GetID()):
+      chartNode.AddAndObservePlotSeriesNodeID(seriesNode.GetID())
+
+  # Show plot in layout
+  if show:
+    slicer.modules.plots.logic().ShowChartInLayout(chartNode)
+
+  # Without this, chart view may show up completely empty when the same nodes are updated
+  # (this is probably due to a bug in plotting nodes or widgets).
+  chartNode.Modified()
+
+  if nodes is not None:
+    nodes['table'] = tableNode
+    nodes['chart'] = chartNode
+    nodes['series'] = seriesNodes
+
+  return chartNode

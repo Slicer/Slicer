@@ -164,10 +164,16 @@ int vtkSlicerTablesLogic::GetLayoutWithTable(int currentLayout)
     {
     case vtkMRMLLayoutNode::SlicerLayoutFourUpTableView:
     case vtkMRMLLayoutNode::SlicerLayout3DTableView:
+    case vtkMRMLLayoutNode::SlicerLayoutFourUpPlotTableView:
       // table already shown, no need to change
       return currentLayout;
     case vtkMRMLLayoutNode::SlicerLayoutOneUp3DView:
       return vtkMRMLLayoutNode::SlicerLayout3DTableView;
+    case vtkMRMLLayoutNode::SlicerLayoutConventionalPlotView:
+    case vtkMRMLLayoutNode::SlicerLayoutFourUpPlotView:
+    case vtkMRMLLayoutNode::SlicerLayoutOneUpPlotView:
+    case vtkMRMLLayoutNode::SlicerLayoutThreeOverThreePlotView:
+      return vtkMRMLLayoutNode::SlicerLayoutFourUpPlotTableView;
     default:
       return vtkMRMLLayoutNode::SlicerLayoutFourUpTableView;
     }

@@ -60,6 +60,9 @@ public:
   /// Switches to a layout that contains a plot and propagates
   void ShowChartInLayout(vtkMRMLPlotChartNode* chartNode);
 
+  /// Finds the first plot chart that contains the specified series
+  vtkMRMLPlotChartNode* GetFirstPlotChartForSeries(vtkMRMLPlotSeriesNode* seriesNode);
+
 protected:
   vtkSlicerPlotsLogic();
   virtual ~vtkSlicerPlotsLogic();
