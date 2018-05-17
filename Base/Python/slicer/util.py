@@ -65,7 +65,13 @@ def startupEnvironment():
   """
   import slicer
   startupEnv = slicer.app.startupEnvironment()
-  return {varname: startupEnv.value(varname) for varname in startupEnv.keys()}
+  import os
+  if os.name == 'nt':
+    # On Windows, subprocess functions expect environment to contain strings
+    # and Qt provide us unicode strings, so we need to convert them.
+    return {str(varname): str(startupEnv.value(varname)) for varname in startupEnv.keys()}
+  else:
+    return {varname: startupEnv.value(varname) for varname in startupEnv.keys()}
 
 #
 # Custom Import
