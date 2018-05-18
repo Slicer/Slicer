@@ -1091,6 +1091,13 @@ def messageBox(text, parent=None, **kwargs):
   for key, value in kwargs.iteritems():
     if hasattr(mbox, key):
       setattr(mbox, key, value)
+  # Windows 10 peek feature in taskbar shows all hidden but not destroyed windows
+  # (after creating and closing a messagebox, hovering over the mouse on Slicer icon, moving up the
+  # mouse to the peek thumbnail would show it again).
+  # Popup windows in other Qt applications often show closed popups (such as
+  # Paraview's Edit / Find data dialog, MeshMixer's File/Preferences dialog).
+  # By calling deleteLater, the messagebox is permanently deleted when the current call is completed.
+  mbox.deleteLater()
   return mbox.exec_()
 
 def createProgressDialog(parent=None, value=0, maximum=100, labelText="", windowTitle="Processing...", **kwargs):
