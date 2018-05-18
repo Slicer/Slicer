@@ -232,7 +232,8 @@ void vtkMRMLCrosshairDisplayableManager3D::OnMRMLNodeModified(vtkMRMLNode* node)
 
   // update the properties and style of the crosshair
   if (this->Internal->CrosshairMode != this->Internal->CrosshairNode->GetCrosshairMode()
-    || this->Internal->CrosshairThickness != this->Internal->CrosshairNode->GetCrosshairThickness())
+    || (this->Internal->CrosshairMode != vtkMRMLCrosshairNode::NoCrosshair
+      && this->Internal->CrosshairThickness != this->Internal->CrosshairNode->GetCrosshairThickness()))
     {
     this->Internal->BuildCrosshair();
     this->RequestRender();
@@ -250,7 +251,10 @@ void vtkMRMLCrosshairDisplayableManager3D::OnMRMLNodeModified(vtkMRMLNode* node)
     lastRas[0] = ras[0];
     lastRas[1] = ras[1];
     lastRas[2] = ras[2];
-    this->RequestRender();
+    if (this->Internal->CrosshairMode != vtkMRMLCrosshairNode::NoCrosshair)
+      {
+      this->RequestRender();
+      }
     }
 }
 

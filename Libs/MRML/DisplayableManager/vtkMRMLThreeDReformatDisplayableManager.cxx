@@ -79,7 +79,8 @@ public:
   // Widget
   vtkImplicitPlaneWidget2* NewImplicitPlaneWidget();
   vtkImplicitPlaneWidget2* GetWidget(vtkMRMLSliceNode*);
-  void UpdateWidget(vtkMRMLSliceNode*, vtkImplicitPlaneWidget2*);
+  // return with true if rendering is required
+  bool UpdateWidget(vtkMRMLSliceNode*, vtkImplicitPlaneWidget2*);
 
   SliceNodesLink                                SliceNodes;
   vtkMRMLThreeDReformatDisplayableManager*      External;
@@ -265,13 +266,13 @@ vtkImplicitPlaneWidget2* vtkMRMLThreeDReformatDisplayableManager::vtkInternal
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLThreeDReformatDisplayableManager::vtkInternal
+bool vtkMRMLThreeDReformatDisplayableManager::vtkInternal
 ::UpdateWidget(vtkMRMLSliceNode* sliceNode,
                vtkImplicitPlaneWidget2* planeWidget)
 {
   if (!sliceNode || (!planeWidget && !sliceNode->GetWidgetVisible()))
     {
-    return;
+    return false;
     }
 
   if (!planeWidget)
@@ -336,6 +337,9 @@ void vtkMRMLThreeDReformatDisplayableManager::vtkInternal
     sliceNode->IsDisplayableInThreeDView(this->External->GetMRMLViewNode()->GetID())
     && sliceNode->GetWidgetVisible();
 
+  // re-render if it was visible or now becomes visible
+  bool renderingRequired = planeWidget->GetEnabled() || visible;
+
   if ((!planeWidget->GetEnabled() && visible) ||
      (planeWidget->GetEnabled() && !visible) ||
      (!rep->GetLockNormalToCamera() && sliceNode->GetWidgetNormalLockedToCamera()) ||
@@ -344,6 +348,8 @@ void vtkMRMLThreeDReformatDisplayableManager::vtkInternal
     planeWidget->SetEnabled(sliceNode->GetWidgetVisible());
     planeWidget->SetLockNormalToCamera(sliceNode->GetWidgetNormalLockedToCamera());
     }
+
+  return renderingRequired;
 }
 
 //---------------------------------------------------------------------------
@@ -405,8 +411,10 @@ OnMRMLNodeModified(vtkMRMLNode* node)
   vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
   assert(sliceNode);
   vtkImplicitPlaneWidget2* planeWidget = this->Internal->GetWidget(sliceNode);
-  this->Internal->UpdateWidget(sliceNode, planeWidget);
-  this->RequestRender();
+  if (this->Internal->UpdateWidget(sliceNode, planeWidget))
+    {
+    this->RequestRender();
+    }
 }
 
 //----------------------------------------------------------------------------
