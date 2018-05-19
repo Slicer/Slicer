@@ -1409,11 +1409,13 @@ def plot(narray, xColumnIndex = -1, columnNames = None, title = None, show = Tru
 
   # Create plot series node(s)
   xColumnName = columnNames[xColumnIndex] if (columnNames is not None) and (len(columnNames) > 0) else "X"
+  seriesIndex = -1
   for columnIndex in range(numberOfColumns):
     if columnIndex == xColumnIndex:
       continue
-    if len(seriesNodes) > columnIndex:
-      seriesNode = seriesNodes[columnIndex]
+    seriesIndex += 1
+    if len(seriesNodes) > seriesIndex:
+      seriesNode = seriesNodes[seriesIndex]
     else:
       seriesNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLPlotSeriesNode")
       seriesNodes.append(seriesNode)
