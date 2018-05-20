@@ -309,6 +309,12 @@ void qSlicerModuleSelectorToolBar::actionSelected(QAction* action)
     {
     d->insertActionOnTop(action, d->HistoryMenu);
     }
+  if (action == 0)
+    {
+    // Because the NoModuleAction is not observed by ctkMenuComboBox, the
+    // toolbar shall clear the text of the current action manually.
+    d->ModulesComboBox->clearActiveAction();
+    }
   emit moduleSelected(action ? action->data().toString() : QString());
 }
 
