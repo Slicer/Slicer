@@ -266,6 +266,7 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
     LABELS "PATHS_LAUNCHER_BUILD"
     )
 
+  # pythonpath
   set(${proj}_PYTHONPATH_LAUNCHER_BUILD
     ${python_DIR}/${PYTHON_STDLIB_SUBDIR}
     ${python_DIR}/${PYTHON_STDLIB_SUBDIR}/lib-dynload
@@ -322,6 +323,41 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
 
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
+
+  # Extract python paths associated with current python interpreter
+  # This is required to support the case when Slicer is built within
+  # a virtual environment. More specifically, since Slicer links against
+  # the python library, we need to extract the python paths specific
+  # to the virtual environment.
+  set(python_cmd "import sys;print(';'.join(sys.path))")
+  execute_process(
+    COMMAND ${PYTHON_EXECUTABLE} -c "${python_cmd}"
+    RESULT_VARIABLE rv
+    OUTPUT_VARIABLE ov
+    ERROR_VARIABLE ev
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+  if(rv)
+    message(FATAL_ERROR "Failed to execute '${python_cmd}' using PYTHON_EXECUTABLE [${PYTHON_EXECUTABLE}]. ${ev}")
+  endif()
+
+  #-----------------------------------------------------------------------------
+  # Slicer Launcher setting specific to build tree
+
+  # pythonpath
+  set(${proj}_PYTHONPATH_LAUNCHER_BUILD
+    ${ov}
+    )
+  mark_as_superbuild(
+    VARS ${proj}_PYTHONPATH_LAUNCHER_BUILD
+    LABELS "PYTHONPATH_LAUNCHER_BUILD"
+    )
+
+  #-----------------------------------------------------------------------------
+  # Slicer Launcher setting specific to install tree
+
+  # NA
+
 endif()
 
 mark_as_superbuild(
