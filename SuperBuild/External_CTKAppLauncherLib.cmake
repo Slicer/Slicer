@@ -26,7 +26,7 @@ if(NOT DEFINED CTKAppLauncherLib_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    "48b4ae63168e3930e7a4d48da705c27c557e5564"
+    "37c0e80b95581e510d1b942324cbf98cf3e550c3"
     QUIET
     )
 

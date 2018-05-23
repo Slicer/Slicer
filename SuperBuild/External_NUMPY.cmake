@@ -151,8 +151,8 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py in
   # Launcher setting specific to install tree
 
   set(${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED
-    <APPLAUNCHER_DIR>/lib/Python/${PYTHON_SITE_PACKAGES_SUBDIR}/numpy/core
-    <APPLAUNCHER_DIR>/lib/Python/${PYTHON_SITE_PACKAGES_SUBDIR}/numpy/lib
+    <APPLAUNCHER_SETTINGS_DIR>/../lib/Python/${PYTHON_SITE_PACKAGES_SUBDIR}/numpy/core
+    <APPLAUNCHER_SETTINGS_DIR>/../lib/Python/${PYTHON_SITE_PACKAGES_SUBDIR}/numpy/lib
     )
   mark_as_superbuild(
     VARS ${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED

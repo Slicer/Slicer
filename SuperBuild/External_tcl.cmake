@@ -83,8 +83,8 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
     # library paths
     set(${proj}_incrTcl_LIBRARY_PATHS_LAUNCHER_INSTALLED
-      <APPLAUNCHER_DIR>/lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}
-      <APPLAUNCHER_DIR>/lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}
+      <APPLAUNCHER_SETTINGS_DIR>/../lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}
+      <APPLAUNCHER_SETTINGS_DIR>/../lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}
       )
     mark_as_superbuild(
       VARS ${proj}_incrTcl_LIBRARY_PATHS_LAUNCHER_INSTALLED
@@ -92,8 +92,8 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       )
 
     # Note: Search locations for TCL packages - space separated list
-    set(TCLLIBPATH "<APPLAUNCHER_DIR>/lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}")
-    set(TCLLIBPATH "${TCLLIBPATH} <APPLAUNCHER_DIR>/lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}")
+    set(TCLLIBPATH "<APPLAUNCHER_SETTINGS_DIR>/../lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}")
+    set(TCLLIBPATH "${TCLLIBPATH} <APPLAUNCHER_SETTINGS_DIR>/../lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}")
 
     # environment variables
     set(${proj}_incrTcl_ENVVARS_LAUNCHER_INSTALLED "TCLLIBPATH=${TCLLIBPATH}")
@@ -264,7 +264,7 @@ ExternalProject_Execute(${proj} \"install\" make install)
   endif()
 
   # library paths
-  set(${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED <APPLAUNCHER_DIR>/lib/TclTk/${tcllib_subdir})
+  set(${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED <APPLAUNCHER_SETTINGS_DIR>/../lib/TclTk/${tcllib_subdir})
   mark_as_superbuild(
     VARS ${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED
     LABELS "LIBRARY_PATHS_LAUNCHER_INSTALLED"
@@ -272,7 +272,7 @@ ExternalProject_Execute(${proj} \"install\" make install)
 
   # pythonpath
   set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
-    <APPLAUNCHER_DIR>/lib/Python/${PYTHON_STDLIB_SUBDIR}/lib-tk
+    <APPLAUNCHER_SETTINGS_DIR>/../lib/Python/${PYTHON_STDLIB_SUBDIR}/lib-tk
     )
   mark_as_superbuild(
     VARS ${proj}_PYTHONPATH_LAUNCHER_INSTALLED
@@ -281,8 +281,8 @@ ExternalProject_Execute(${proj} \"install\" make install)
 
   # environment variables
   set(${proj}_ENVVARS_LAUNCHER_INSTALLED
-    "TCL_LIBRARY=<APPLAUNCHER_DIR>/lib/TclTk/lib/tcl${TCL_TK_VERSION_DOT}"
-    "TK_LIBRARY=<APPLAUNCHER_DIR>/lib/TclTk/lib/tk${TCL_TK_VERSION_DOT}"
+    "TCL_LIBRARY=<APPLAUNCHER_SETTINGS_DIR>/../lib/TclTk/lib/tcl${TCL_TK_VERSION_DOT}"
+    "TK_LIBRARY=<APPLAUNCHER_SETTINGS_DIR>/../lib/TclTk/lib/tk${TCL_TK_VERSION_DOT}"
     )
   mark_as_superbuild(
     VARS ${proj}_ENVVARS_LAUNCHER_INSTALLED

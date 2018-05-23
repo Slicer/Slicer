@@ -67,7 +67,7 @@
 # LIBRARY_PATHS
 #-----------------------------------------------------------------------------
 set(SLICER_LIBRARY_PATHS_BUILD
-  <APPLAUNCHER_DIR>/bin/<CMAKE_CFG_INTDIR>
+  <APPLAUNCHER_SETTINGS_DIR>/bin/<CMAKE_CFG_INTDIR>
   )
 
 if(NOT Slicer_USE_SYSTEM_QT)
@@ -83,13 +83,13 @@ endif()
 
 if(Slicer_BUILD_CLI_SUPPORT AND Slicer_BUILD_CLI)
   list(APPEND SLICER_LIBRARY_PATHS_BUILD
-    <APPLAUNCHER_DIR>/${Slicer_CLIMODULES_LIB_DIR}/<CMAKE_CFG_INTDIR>
+    <APPLAUNCHER_SETTINGS_DIR>/${Slicer_CLIMODULES_LIB_DIR}/<CMAKE_CFG_INTDIR>
     )
 endif()
 
 if(Slicer_BUILD_QTLOADABLEMODULES)
   list(APPEND SLICER_LIBRARY_PATHS_BUILD
-    <APPLAUNCHER_DIR>/${Slicer_QTLOADABLEMODULES_LIB_DIR}/<CMAKE_CFG_INTDIR>
+    <APPLAUNCHER_SETTINGS_DIR>/${Slicer_QTLOADABLEMODULES_LIB_DIR}/<CMAKE_CFG_INTDIR>
     )
 endif()
 
@@ -102,13 +102,13 @@ endforeach()
 # PATHS
 #-----------------------------------------------------------------------------
 set(SLICER_PATHS_BUILD
-  <APPLAUNCHER_DIR>/bin/<CMAKE_CFG_INTDIR>
+  <APPLAUNCHER_SETTINGS_DIR>/bin/<CMAKE_CFG_INTDIR>
   ${QT_BINARY_DIR}
   )
 
 if(Slicer_BUILD_CLI_SUPPORT AND Slicer_BUILD_CLI)
   list(APPEND SLICER_PATHS_BUILD
-    <APPLAUNCHER_DIR>/${Slicer_CLIMODULES_BIN_DIR}/<CMAKE_CFG_INTDIR>
+    <APPLAUNCHER_SETTINGS_DIR>/${Slicer_CLIMODULES_BIN_DIR}/<CMAKE_CFG_INTDIR>
     )
 endif()
 
@@ -122,11 +122,11 @@ endforeach()
 #-----------------------------------------------------------------------------
 set(SLICER_ENVVARS_BUILD
   "SLICER_HOME=${Slicer_BINARY_DIR}" # See note below
-  "ITK_AUTOLOAD_PATH=<APPLAUNCHER_DIR>/${Slicer_ITKFACTORIES_DIR}/<CMAKE_CFG_INTDIR>"
+  "ITK_AUTOLOAD_PATH=<APPLAUNCHER_SETTINGS_DIR>/${Slicer_ITKFACTORIES_DIR}/<CMAKE_CFG_INTDIR>"
   )
 if(Slicer_USE_PYTHONQT_WITH_OPENSSL)
   list(APPEND SLICER_ENVVARS_BUILD
-    "SSL_CERT_FILE=<APPLAUNCHER_DIR>/${Slicer_SHARE_DIR}/Slicer.crt"
+    "SSL_CERT_FILE=<APPLAUNCHER_SETTINGS_DIR>/${Slicer_SHARE_DIR}/Slicer.crt"
     )
 endif()
 
@@ -141,7 +141,7 @@ endforeach()
 
 # QT_PLUGIN_PATH
 set(SLICER_QT_PLUGIN_PATH_BUILD
-  "<APPLAUNCHER_DIR>/bin"
+  "<APPLAUNCHER_SETTINGS_DIR>/bin"
   "${CTK_DIR}/CTK-build/bin"
   "${QT_PLUGINS_DIR}"
   )
@@ -160,19 +160,19 @@ set(SLICER_ADDITIONAL_PATH_ENVVARS_BUILD
 if(Slicer_USE_PYTHONQT)
 
   set(SLICER_PYTHONPATH_BUILD
-    "<APPLAUNCHER_DIR>/bin/<CMAKE_CFG_INTDIR>"
-    "<APPLAUNCHER_DIR>/bin/Python"
+    "<APPLAUNCHER_SETTINGS_DIR>/bin/<CMAKE_CFG_INTDIR>"
+    "<APPLAUNCHER_SETTINGS_DIR>/bin/Python"
     )
   if(Slicer_BUILD_QTLOADABLEMODULES)
     list(APPEND SLICER_PYTHONPATH_BUILD
-      "<APPLAUNCHER_DIR>/${Slicer_QTLOADABLEMODULES_LIB_DIR}/<CMAKE_CFG_INTDIR>"
-      "<APPLAUNCHER_DIR>/${Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR}"
+      "<APPLAUNCHER_SETTINGS_DIR>/${Slicer_QTLOADABLEMODULES_LIB_DIR}/<CMAKE_CFG_INTDIR>"
+      "<APPLAUNCHER_SETTINGS_DIR>/${Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR}"
       )
   endif()
 
   if(Slicer_USE_PYTHONQT)
     list(APPEND SLICER_PYTHONPATH_BUILD
-      "<APPLAUNCHER_DIR>/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}"
+      "<APPLAUNCHER_SETTINGS_DIR>/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}"
       )
   endif()
 
@@ -202,18 +202,18 @@ endif()
 #
 #  Indeed, on MacOSX, since Slicer_INSTALL_* variables already includes
 #  Slicer_BUNDLE_LOCATION (<appname>.app/Contents) they can *NOT*
-#  be used to reference paths from <APPLAUNCHER_DIR> which is itself
-#  set to /path/to/<appname>.app/Contents.
+#  be used to reference paths from <APPLAUNCHER_SETTINGS_DIR> which is itself
+#  set to /path/to/<appname>.app/Contents/bin.
 #
 
 #-----------------------------------------------------------------------------
 # LIBRARY_PATHS
 #-----------------------------------------------------------------------------
 set(SLICER_LIBRARY_PATHS_INSTALLED
-  <APPLAUNCHER_DIR>/${Slicer_BIN_DIR}
-  <APPLAUNCHER_DIR>/${Slicer_LIB_DIR}
-  <APPLAUNCHER_DIR>/${Slicer_CLIMODULES_LIB_DIR}
-  <APPLAUNCHER_DIR>/${Slicer_QTLOADABLEMODULES_LIB_DIR}
+  <APPLAUNCHER_SETTINGS_DIR>/../${Slicer_BIN_DIR}
+  <APPLAUNCHER_SETTINGS_DIR>/../${Slicer_LIB_DIR}
+  <APPLAUNCHER_SETTINGS_DIR>/../${Slicer_CLIMODULES_LIB_DIR}
+  <APPLAUNCHER_SETTINGS_DIR>/../${Slicer_QTLOADABLEMODULES_LIB_DIR}
   )
 
 # The following lines allow Slicer to load a CLI module extension that depends
@@ -232,9 +232,9 @@ endforeach()
 # PATHS
 #-----------------------------------------------------------------------------
 set(SLICER_PATHS_INSTALLED
-  <APPLAUNCHER_DIR>/${Slicer_BIN_DIR}
-  <APPLAUNCHER_DIR>/${Slicer_CLIMODULES_BIN_DIR}
-  <APPLAUNCHER_DIR>/${Slicer_QTLOADABLEMODULES_BIN_DIR}
+  <APPLAUNCHER_SETTINGS_DIR>/../${Slicer_BIN_DIR}
+  <APPLAUNCHER_SETTINGS_DIR>/../${Slicer_CLIMODULES_BIN_DIR}
+  <APPLAUNCHER_SETTINGS_DIR>/../${Slicer_QTLOADABLEMODULES_BIN_DIR}
   )
 
 # External projects - paths
@@ -248,12 +248,12 @@ endforeach()
 set(SLICER_ENVVARS_INSTALLED
   # SLICER_HOME might already be set on the machine, overwrite it because it
   # could have unwanted side effects
-  "SLICER_HOME=<APPLAUNCHER_DIR>"
-  "ITK_AUTOLOAD_PATH=<APPLAUNCHER_DIR>/${Slicer_ITKFACTORIES_DIR}"
+  "SLICER_HOME=<APPLAUNCHER_SETTINGS_DIR>/.."
+  "ITK_AUTOLOAD_PATH=<APPLAUNCHER_SETTINGS_DIR>/../${Slicer_ITKFACTORIES_DIR}"
   )
 if(Slicer_USE_PYTHONQT_WITH_OPENSSL)
   list(APPEND SLICER_ENVVARS_INSTALLED
-    "SSL_CERT_FILE=<APPLAUNCHER_DIR>/${Slicer_SHARE_DIR}/Slicer.crt"
+    "SSL_CERT_FILE=<APPLAUNCHER_SETTINGS_DIR>/../${Slicer_SHARE_DIR}/Slicer.crt"
     )
 endif()
 
@@ -268,7 +268,7 @@ endforeach()
 
 # QT_PLUGIN_PATH
 set(SLICER_QT_PLUGIN_PATH_INSTALLED
-  "<APPLAUNCHER_DIR>/${Slicer_QtPlugins_DIR}"
+  "<APPLAUNCHER_SETTINGS_DIR>/../${Slicer_QtPlugins_DIR}"
   )
 set(SLICER_ADDITIONAL_PATH_ENVVARS_INSTALLED
   "QT_PLUGIN_PATH"
@@ -277,12 +277,12 @@ set(SLICER_ADDITIONAL_PATH_ENVVARS_INSTALLED
 # PYTHONPATH
 if(Slicer_USE_PYTHONQT)
   set(SLICER_PYTHONPATH_INSTALLED
-    "<APPLAUNCHER_DIR>/${Slicer_LIB_DIR}"
-    "<APPLAUNCHER_DIR>/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}"
-    "<APPLAUNCHER_DIR>/${Slicer_QTLOADABLEMODULES_LIB_DIR}"
-    "<APPLAUNCHER_DIR>/lib/vtkTeem"
-    "<APPLAUNCHER_DIR>/bin/Python"
-    "<APPLAUNCHER_DIR>/${Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR}"
+    "<APPLAUNCHER_SETTINGS_DIR>/../${Slicer_LIB_DIR}"
+    "<APPLAUNCHER_SETTINGS_DIR>/../${Slicer_QTSCRIPTEDMODULES_LIB_DIR}"
+    "<APPLAUNCHER_SETTINGS_DIR>/../${Slicer_QTLOADABLEMODULES_LIB_DIR}"
+    "<APPLAUNCHER_SETTINGS_DIR>/../lib/vtkTeem"
+    "<APPLAUNCHER_SETTINGS_DIR>/../bin/Python"
+    "<APPLAUNCHER_SETTINGS_DIR>/../${Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR}"
     )
 
   # External projects - pythonpath

@@ -212,6 +212,7 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
         -DPYTHON_STDLIB_SUBDIR:STRING=${PYTHON_STDLIB_SUBDIR}
         -DSlicer_BIN_DIR:PATH=${Slicer_BIN_DIR}
         -DSlicer_BINARY_DIR:PATH=${Slicer_BINARY_DIR}
+        -DSlicer_BINARY_INNER_SUBDIR:STRING=${Slicer_BINARY_INNER_SUBDIR}
         -DSlicer_LIB_DIR:PATH=${Slicer_LIB_DIR}
         -DSlicer_SHARE_DIR:PATH=${Slicer_SHARE_DIR}
         -DSlicer_SOURCE_DIR:PATH=${Slicer_SOURCE_DIR}
@@ -291,7 +292,7 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
   # library paths
   if(UNIX)
     # On windows, python libraries are installed along with the executable
-    set(${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED <APPLAUNCHER_DIR>/lib/Python/lib)
+    set(${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED <APPLAUNCHER_SETTINGS_DIR>/../lib/Python/lib)
     mark_as_superbuild(
       VARS ${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED
       LABELS "LIBRARY_PATHS_LAUNCHER_INSTALLED"
@@ -300,9 +301,9 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
 
   # pythonpath
   set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
-    <APPLAUNCHER_DIR>/lib/Python/${PYTHON_STDLIB_SUBDIR}
-    <APPLAUNCHER_DIR>/lib/Python/${PYTHON_STDLIB_SUBDIR}/lib-dynload
-    <APPLAUNCHER_DIR>/lib/Python/${PYTHON_SITE_PACKAGES_SUBDIR}
+    <APPLAUNCHER_SETTINGS_DIR>/../lib/Python/${PYTHON_STDLIB_SUBDIR}
+    <APPLAUNCHER_SETTINGS_DIR>/../lib/Python/${PYTHON_STDLIB_SUBDIR}/lib-dynload
+    <APPLAUNCHER_SETTINGS_DIR>/../lib/Python/${PYTHON_SITE_PACKAGES_SUBDIR}
     )
   mark_as_superbuild(
     VARS ${proj}_PYTHONPATH_LAUNCHER_INSTALLED
@@ -311,7 +312,7 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
 
   # environment variables
   set(${proj}_ENVVARS_LAUNCHER_INSTALLED
-    "PYTHONHOME=<APPLAUNCHER_DIR>/lib/Python"
+    "PYTHONHOME=<APPLAUNCHER_SETTINGS_DIR>/../lib/Python"
     "PYTHONNOUSERSITE=1"
     )
   mark_as_superbuild(

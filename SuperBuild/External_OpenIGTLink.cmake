@@ -85,7 +85,7 @@ if(NOT DEFINED OpenIGTLink_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   # Launcher setting specific to install tree
 
   if(UNIX AND NOT APPLE)
-    set(${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED <APPLAUNCHER_DIR>/lib/igtl)
+    set(${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED <APPLAUNCHER_SETTINGS_DIR>/../lib/igtl)
     mark_as_superbuild(
       VARS ${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED
       LABELS "LIBRARY_PATHS_LAUNCHER_INSTALLED"

@@ -88,7 +88,7 @@ ExternalProject_Execute(${proj} \"install\" make install)
 
     # library paths
     set(${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED
-      <APPLAUNCHER_DIR>/lib/TclTk/lib/itcl4.0.1
+      <APPLAUNCHER_SETTINGS_DIR>/../lib/TclTk/lib/itcl4.0.1
       )
     mark_as_superbuild(
       VARS ${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED
@@ -96,7 +96,7 @@ ExternalProject_Execute(${proj} \"install\" make install)
       )
 
     # Note: Search locations for TCL packages - space separated list
-    set(TCLLIBPATH "<APPLAUNCHER_DIR>/lib/TclTk/lib/itcl4.0.1")
+    set(TCLLIBPATH "<APPLAUNCHER_SETTINGS_DIR>/../lib/TclTk/lib/itcl4.0.1")
 
     # environment variables
     set(${proj}_ENVVARS_LAUNCHER_INSTALLED "TCLLIBPATH=${TCLLIBPATH}")

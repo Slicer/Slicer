@@ -185,7 +185,7 @@ if(NOT DEFINED CTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   if(UNIX AND NOT APPLE)
     # On windows, pythonQt libraries are installed along with the executable
-    set(${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED <APPLAUNCHER_DIR>/lib/PythonQt)
+    set(${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED <APPLAUNCHER_SETTINGS_DIR>/../lib/PythonQt)
     mark_as_superbuild(
       VARS ${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED
       LABELS "LIBRARY_PATHS_LAUNCHER_INSTALLED"
