@@ -62,6 +62,18 @@ if(Slicer_USE_PYTHONQT)
     COMPONENT Runtime
     )
 
+  if(APPLE)
+    # Fixes Slicer issue #4554
+    set(dollar "$")
+    install(CODE
+      "set(app ${Slicer_INSTALL_BIN_DIR}/python-real)
+       set(appfilepath \"${dollar}ENV{DESTDIR}${dollar}{CMAKE_INSTALL_PREFIX}/${dollar}{app}\")
+       message(\"CPack: - Adding rpath to ${dollar}{app}\")
+       execute_process(COMMAND install_name_tool -add_rpath @loader_path/..  ${dollar}{appfilepath})"
+      COMPONENT Runtime
+      )
+  endif()
+
   # Install Slicer python launcher settings
   install(
     FILES ${python_bin_dir}/SlicerPythonLauncherSettingsToInstall.ini
