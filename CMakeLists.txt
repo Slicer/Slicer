@@ -624,29 +624,53 @@ if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER "4.9")
 endif()
 
 #
-# If qmake is found in a system location, explicitly mark Qt as such. Doing so
+# If qmake or Qt5Config are associated with a system location, explicitly mark Qt as such. Doing so
 # will prevent system path from being prepended to PATH or (DY)LD_LIBRARY_PATH
 # when generating the launcher settings and avoid system libraries symbols from
 # conflicting with Slicer version of these libraries.
 #
 # See https://issues.slicer.org/view.php?id=3574
 #
-foreach(_path IN ITEMS
-    "/bin"
-    "/usr/bin/"
-    "/usr/local/bin"
-    "/usr/local/Cellar"
-    "/opt/bin"
-    "/opt/local/bin"
-    )
-  if("${QT_QMAKE_EXECUTABLE}" MATCHES "^${_path}")
-    set(Slicer_USE_SYSTEM_QT ON)
-    message(STATUS "")
-    message(STATUS "Forcing Slicer_USE_SYSTEM_QT to ON (qmake found in a system location: ${_path})")
-    message(STATUS "")
-    break()
-  endif()
-endforeach()
+if(Slicer_HAVE_QT5)
+  foreach(_path IN ITEMS
+      "/usr/lib/"
+      "/usr/lib32/"
+      "/usr/lib64/"
+      "/usr/local/lib/"
+      # homebrew
+      "/usr/local/Cellar/lib/"
+      # macport
+      "/opt/lib"
+      "/opt/local/lib"
+      )
+    if("${Qt5_DIR}" MATCHES "^${_path}")
+      set(Slicer_USE_SYSTEM_QT ON)
+      message(STATUS "")
+      message(STATUS "Forcing Slicer_USE_SYSTEM_QT to ON (Qt5_DIR [${Qt5_DIR}] associated with a system location: ${_path})")
+      message(STATUS "")
+      break()
+    endif()
+  endforeach()
+else()
+  foreach(_path IN ITEMS
+      "/bin"
+      "/usr/bin/"
+      "/usr/local/bin"
+      # homebrew
+      "/usr/local/Cellar"
+      # macport
+      "/opt/bin"
+      "/opt/local/bin"
+      )
+    if("${QT_QMAKE_EXECUTABLE}" MATCHES "^${_path}")
+      set(Slicer_USE_SYSTEM_QT ON)
+      message(STATUS "")
+      message(STATUS "Forcing Slicer_USE_SYSTEM_QT to ON (qmake [${QT_QMAKE_EXECUTABLE}] found in a system location: ${_path})")
+      message(STATUS "")
+      break()
+    endif()
+  endforeach()
+endif()
 
 # Prefer QVTKOpenGLWidget to QVTKWidget when supported
 set(Slicer_VTK_USE_QVTKOPENGLWIDGET 1)

@@ -103,8 +103,12 @@ endforeach()
 #-----------------------------------------------------------------------------
 set(SLICER_PATHS_BUILD
   <APPLAUNCHER_SETTINGS_DIR>/bin/<CMAKE_CFG_INTDIR>
-  ${QT_BINARY_DIR}
   )
+if(NOT Slicer_USE_SYSTEM_QT)
+  list(APPEND SLICER_PATHS_BUILD
+    ${QT_BINARY_DIR}
+    )
+endif()
 
 if(Slicer_BUILD_CLI_SUPPORT AND Slicer_BUILD_CLI)
   list(APPEND SLICER_PATHS_BUILD
