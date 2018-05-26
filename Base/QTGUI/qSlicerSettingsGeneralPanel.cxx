@@ -129,16 +129,25 @@ void qSlicerSettingsGeneralPanelPrivate::init()
 
   q->registerProperty("no-splash", this->ShowSplashScreenCheckBox, "checked",
                       SIGNAL(toggled(bool)));
+
   ctkBooleanMapper* restartMapper = new ctkBooleanMapper(this->ConfirmRestartCheckBox, "checked", SIGNAL(toggled(bool)));
   restartMapper->setTrueValue(static_cast<int>(QMessageBox::InvalidRole));
   restartMapper->setFalseValue(static_cast<int>(QMessageBox::Ok));
   q->registerProperty("MainWindow/DontConfirmRestart",
                       restartMapper,"valueAsInt", SIGNAL(valueAsIntChanged(int)));
+
   ctkBooleanMapper* exitMapper = new ctkBooleanMapper(this->ConfirmExitCheckBox, "checked", SIGNAL(toggled(bool)));
   exitMapper->setTrueValue(static_cast<int>(QMessageBox::InvalidRole));
   exitMapper->setFalseValue(static_cast<int>(QMessageBox::Ok));
   q->registerProperty("MainWindow/DontConfirmExit",
                       exitMapper, "valueAsInt", SIGNAL(valueAsIntChanged(int)));
+
+  ctkBooleanMapper* sceneCloseMapper = new ctkBooleanMapper(this->ConfirmSceneCloseCheckBox, "checked", SIGNAL(toggled(bool)));
+  sceneCloseMapper->setTrueValue(static_cast<int>(QMessageBox::InvalidRole));
+  sceneCloseMapper->setFalseValue(static_cast<int>(QMessageBox::Discard));
+  q->registerProperty("MainWindow/DontConfirmSceneClose",
+                      sceneCloseMapper, "valueAsInt", SIGNAL(valueAsIntChanged(int)));
+
   q->registerProperty("SlicerWikiURL", this->SlicerWikiURLLineEdit, "text",
                       SIGNAL(textChanged(QString)));
   q->registerProperty("language", this->LanguageComboBox, "currentLanguage",

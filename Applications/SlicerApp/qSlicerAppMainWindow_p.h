@@ -62,7 +62,8 @@ public:
   static QList<qSlicerIO::IOProperties> readRecentlyLoadedFiles();
   static void writeRecentlyLoadedFiles(const QList<qSlicerIO::IOProperties>& fileProperties);
 
-  virtual bool confirmClose();
+  virtual bool confirmCloseApplication();
+  virtual bool confirmCloseScene();
 
   void setErrorLogIconHighlighted(bool);
 
