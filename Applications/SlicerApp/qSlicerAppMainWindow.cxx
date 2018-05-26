@@ -661,25 +661,26 @@ bool qSlicerAppMainWindowPrivate::confirmClose()
   bool close = false;
   if (!question.isEmpty())
     {
-    QMessageBox messageBox(QMessageBox::Warning, q->tr("Save before exit?"), question, QMessageBox::NoButton, q);
+    QMessageBox* messageBox = new QMessageBox(QMessageBox::Warning, q->tr("Save before exit?"), question, QMessageBox::NoButton, q);
     QAbstractButton* saveButton =
-       messageBox.addButton(q->tr("Save"), QMessageBox::ActionRole);
+       messageBox->addButton(q->tr("Save"), QMessageBox::ActionRole);
     QAbstractButton* exitButton =
-       messageBox.addButton(q->tr("Exit (discard modifications)"), QMessageBox::ActionRole);
+       messageBox->addButton(q->tr("Exit (discard modifications)"), QMessageBox::ActionRole);
     QAbstractButton* cancelButton =
-       messageBox.addButton(q->tr("Cancel exit"), QMessageBox::ActionRole);
+       messageBox->addButton(q->tr("Cancel exit"), QMessageBox::ActionRole);
     Q_UNUSED(cancelButton);
-    messageBox.exec();
-    if (messageBox.clickedButton() == saveButton)
+    messageBox->exec();
+    if (messageBox->clickedButton() == saveButton)
       {
       // \todo Check if the save data dialog was "applied" and close the
       // app in that case
       this->FileSaveSceneAction->trigger();
       }
-    else if (messageBox.clickedButton() == exitButton)
+    else if (messageBox->clickedButton() == exitButton)
       {
       close = true;
       }
+    messageBox->deleteLater();
     }
   else
     {
