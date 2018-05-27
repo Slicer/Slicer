@@ -144,7 +144,7 @@ void qSlicerSettingsGeneralPanelPrivate::init()
 
   ctkBooleanMapper* sceneCloseMapper = new ctkBooleanMapper(this->ConfirmSceneCloseCheckBox, "checked", SIGNAL(toggled(bool)));
   sceneCloseMapper->setTrueValue(static_cast<int>(QMessageBox::InvalidRole));
-  sceneCloseMapper->setFalseValue(static_cast<int>(QMessageBox::Discard));
+  sceneCloseMapper->setFalseValue(static_cast<int>(QMessageBox::AcceptRole));
   q->registerProperty("MainWindow/DontConfirmSceneClose",
                       sceneCloseMapper, "valueAsInt", SIGNAL(valueAsIntChanged(int)));
 
