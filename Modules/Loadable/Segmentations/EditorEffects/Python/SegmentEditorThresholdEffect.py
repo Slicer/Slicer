@@ -17,6 +17,9 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     scriptedEffect.name = 'Threshold'
 
     # Effect-specific members
+    import vtkITK
+    self.autoThresholdCalculator = vtkITK.vtkITKImageThresholdCalculator()
+
     self.timer = qt.QTimer()
     self.previewState = 0
     self.previewStep = 1
@@ -86,6 +89,46 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     self.thresholdSlider.singleStep = 0.01
     self.scriptedEffect.addOptionsWidget(self.thresholdSlider)
 
+    self.autoThresholdMethodSelectorComboBox = qt.QComboBox()
+    self.autoThresholdMethodSelectorComboBox.addItem("Otsu", METHOD_OTSU)
+    self.autoThresholdMethodSelectorComboBox.addItem("Huang", METHOD_HUANG)
+    self.autoThresholdMethodSelectorComboBox.addItem("IsoData", METHOD_ISO_DATA)
+    self.autoThresholdMethodSelectorComboBox.addItem("Kittler-Illingworth", METHOD_KITTLER_ILLINGWORTH)
+    self.autoThresholdMethodSelectorComboBox.addItem("Li", METHOD_LI)
+    self.autoThresholdMethodSelectorComboBox.addItem("Maximum entropy", METHOD_MAXIMUM_ENTROPY)
+    self.autoThresholdMethodSelectorComboBox.addItem("Moments", METHOD_MOMENTS)
+    self.autoThresholdMethodSelectorComboBox.addItem("Renyi entropy", METHOD_RENYI_ENTROPY)
+    self.autoThresholdMethodSelectorComboBox.addItem("Shanbhag", METHOD_SHANBHAG)
+    self.autoThresholdMethodSelectorComboBox.addItem("Triangle", METHOD_TRIANGLE)
+    self.autoThresholdMethodSelectorComboBox.addItem("Yen", METHOD_YEN)
+    self.autoThresholdMethodSelectorComboBox.setToolTip('Select method to compute threshold value automatically.)
+
+    self.autoThresholdModeSelectorComboBox = qt.QComboBox()
+    self.autoThresholdModeSelectorComboBox.addItem("set auto->maximum", MODE_SET_LOWER_MAX)
+    self.autoThresholdModeSelectorComboBox.addItem("set minimum->auto", MODE_SET_MIN_UPPER)
+    self.autoThresholdModeSelectorComboBox.addItem("set as lower", MODE_SET_LOWER)
+    self.autoThresholdModeSelectorComboBox.addItem("set as upper", MODE_SET_UPPER)
+    self.autoThresholdMethodSelectorComboBox.setToolTip('How to set lower and upper threshold values. Current refers to keeping the current value.')
+
+    self.selectNextAutoThresholdButton = qt.QPushButton(">")
+    self.selectNextAutoThresholdButton.setToolTip("Select next thresholding method and set thresholds using that."
+      +" Useful for iterating through all available methods.")
+
+    self.setAutoThresholdButton = qt.QPushButton("Set")
+    self.setAutoThresholdButton.setToolTip("Compute automatic threshold and set as threshold limit.")
+    # qt.QSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Expanding)
+    # fails on some systems, therefore set the policies using separate method calls
+    qSize = qt.QSizePolicy()
+    qSize.setHorizontalPolicy(qt.QSizePolicy.Expanding)
+    self.setAutoThresholdButton.setSizePolicy(qSize)
+
+    autoThresholdFrame = qt.QHBoxLayout()
+    autoThresholdFrame.addWidget(self.autoThresholdMethodSelectorComboBox)
+    autoThresholdFrame.addWidget(self.autoThresholdModeSelectorComboBox)
+    autoThresholdFrame.addWidget(self.selectNextAutoThresholdButton)
+    autoThresholdFrame.addWidget(self.setAutoThresholdButton)
+    self.scriptedEffect.addLabeledOptionsWidget("Automatic threshold:", autoThresholdFrame)
+
     self.useForPaintButton = qt.QPushButton("Use for masking")
     self.useForPaintButton.setToolTip("Use specified intensity range for masking and switch to Paint effect.")
     self.scriptedEffect.addOptionsWidget(self.useForPaintButton)
@@ -97,6 +140,10 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
 
     self.useForPaintButton.connect('clicked()', self.onUseForPaint)
     self.thresholdSlider.connect('valuesChanged(double,double)', self.onThresholdValuesChanged)
+    self.autoThresholdMethodSelectorComboBox.connect("currentIndexChanged(int)", self.updateMRMLFromGUI)
+    self.autoThresholdModeSelectorComboBox.connect("currentIndexChanged(int)", self.updateMRMLFromGUI)
+    self.selectNextAutoThresholdButton.connect('clicked()', self.onSelectNextAutoThresholdMethod)
+    self.setAutoThresholdButton.connect('clicked()', self.onAutoThreshold)
     self.applyButton.connect('clicked()', self.onApply)
 
   def createCursor(self, widget):
@@ -128,6 +175,8 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
   def setMRMLDefaults(self):
     self.scriptedEffect.setParameterDefault("MinimumThreshold", 0.)
     self.scriptedEffect.setParameterDefault("MaximumThreshold", 0)
+    self.scriptedEffect.setParameterDefault("AutoThresholdMethod", METHOD_OTSU)
+    self.scriptedEffect.setParameterDefault("AutoThresholdMode", MODE_SET_LOWER_MAX)
 
   def updateGUIFromMRML(self):
     self.thresholdSlider.blockSignals(True)
@@ -135,9 +184,27 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     self.thresholdSlider.setMaximumValue(self.scriptedEffect.doubleParameter("MaximumThreshold"))
     self.thresholdSlider.blockSignals(False)
 
+    autoThresholdMethod = self.autoThresholdMethodSelectorComboBox.findData(self.scriptedEffect.parameter("AutoThresholdMethod"))
+    wasBlocked = self.autoThresholdMethodSelectorComboBox.blockSignals(True)
+    self.autoThresholdMethodSelectorComboBox.setCurrentIndex(autoThresholdMethod)
+    self.autoThresholdMethodSelectorComboBox.blockSignals(wasBlocked)
+
+    autoThresholdMode = self.autoThresholdModeSelectorComboBox.findData(self.scriptedEffect.parameter("AutoThresholdMode"))
+    wasBlocked = self.autoThresholdModeSelectorComboBox.blockSignals(True)
+    self.autoThresholdModeSelectorComboBox.setCurrentIndex(autoThresholdMode)
+    self.autoThresholdModeSelectorComboBox.blockSignals(wasBlocked)
+
   def updateMRMLFromGUI(self):
     self.scriptedEffect.setParameter("MinimumThreshold", self.thresholdSlider.minimumValue)
     self.scriptedEffect.setParameter("MaximumThreshold", self.thresholdSlider.maximumValue)
+
+    methodIndex = self.autoThresholdMethodSelectorComboBox.currentIndex
+    autoThresholdMethod = self.autoThresholdMethodSelectorComboBox.itemData(methodIndex)
+    self.scriptedEffect.setParameter("AutoThresholdMethod", autoThresholdMethod)
+
+    modeIndex = self.autoThresholdModeSelectorComboBox.currentIndex
+    autoThresholdMode = self.autoThresholdModeSelectorComboBox.itemData(modeIndex)
+    self.scriptedEffect.setParameter("AutoThresholdMode", autoThresholdMode)
 
   #
   # Effect specific methods (the above ones are the API methods to override)
@@ -151,6 +218,65 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     parameterSetNode.SetMasterVolumeIntensityMaskRange(self.thresholdSlider.minimumValue, self.thresholdSlider.maximumValue)
     # Switch to paint effect
     self.scriptedEffect.selectEffect("Paint")
+
+  def onSelectNextAutoThresholdMethod(self):
+    self.autoThresholdMethodSelectorComboBox.currentIndex = (self.autoThresholdMethodSelectorComboBox.currentIndex + 1) \
+      % self.autoThresholdMethodSelectorComboBox.count
+    self.onAutoThreshold()
+
+  def onAutoThreshold(self):
+    autoThresholdMethod = self.scriptedEffect.parameter("AutoThresholdMethod")
+    autoThresholdMode = self.scriptedEffect.parameter("AutoThresholdMode")
+    self.autoThreshold(autoThresholdMethod, autoThresholdMode)
+
+  def autoThreshold(self, autoThresholdMethod, autoThresholdMode):
+    if autoThresholdMethod == METHOD_HUANG:
+      self.autoThresholdCalculator.SetMethodToHuang()
+    elif autoThresholdMethod == METHOD_INTERMODES:
+      self.autoThresholdCalculator.SetMethodToIntermodes()
+    elif autoThresholdMethod == METHOD_ISO_DATA:
+      self.autoThresholdCalculator.SetMethodToIsoData()
+    elif autoThresholdMethod == METHOD_KITTLER_ILLINGWORTH:
+      self.autoThresholdCalculator.SetMethodToKittlerIllingworth()
+    elif autoThresholdMethod == METHOD_LI:
+      self.autoThresholdCalculator.SetMethodToLi()
+    elif autoThresholdMethod == METHOD_MAXIMUM_ENTROPY:
+      self.autoThresholdCalculator.SetMethodToMaximumEntropy()
+    elif autoThresholdMethod == METHOD_MOMENTS:
+      self.autoThresholdCalculator.SetMethodToMoments()
+    elif autoThresholdMethod == METHOD_OTSU:
+      self.autoThresholdCalculator.SetMethodToOtsu()
+    elif autoThresholdMethod == METHOD_RENYI_ENTROPY:
+      self.autoThresholdCalculator.SetMethodToRenyiEntropy()
+    elif autoThresholdMethod == METHOD_SHANBHAG:
+      self.autoThresholdCalculator.SetMethodToShanbhag()
+    elif autoThresholdMethod == METHOD_TRIANGLE:
+      self.autoThresholdCalculator.SetMethodToTriangle()
+    elif autoThresholdMethod == METHOD_YEN:
+      self.autoThresholdCalculator.SetMethodToYen()
+    else:
+      logging.error("Unknown AutoThresholdMethod {0}".format(autoThresholdMethod))
+
+    masterImageData = self.scriptedEffect.masterVolumeImageData()
+    self.autoThresholdCalculator.SetInputData(masterImageData)
+
+    self.autoThresholdCalculator.Update()
+    computedThreshold = self.autoThresholdCalculator.GetThreshold()
+
+    masterVolumeMin, masterVolumeMax = masterImageData.GetScalarRange()
+
+    if autoThresholdMode == MODE_SET_UPPER:
+      self.scriptedEffect.setParameter("MaximumThreshold", computedThreshold)
+    elif autoThresholdMode == MODE_SET_LOWER:
+      self.scriptedEffect.setParameter("MinimumThreshold", computedThreshold)
+    elif autoThresholdMode == MODE_SET_MIN_UPPER:
+      self.scriptedEffect.setParameter("MinimumThreshold", masterVolumeMin)
+      self.scriptedEffect.setParameter("MaximumThreshold", computedThreshold)
+    elif autoThresholdMode == MODE_SET_LOWER_MAX:
+      self.scriptedEffect.setParameter("MinimumThreshold", computedThreshold)
+      self.scriptedEffect.setParameter("MaximumThreshold", masterVolumeMax)
+    else:
+      logging.error("Unknown AutoThresholdMode {0}".format(autoThresholdMode))
 
   def onApply(self):
     try:
@@ -217,12 +343,16 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
       self.scriptedEffect.addActor2D(sliceWidget, pipeline.actor)
 
   def preview(self):
+
     opacity = 0.5 + self.previewState / (2. * self.previewSteps)
     min = self.scriptedEffect.doubleParameter("MinimumThreshold")
     max = self.scriptedEffect.doubleParameter("MaximumThreshold")
 
     # Get color of edited segment
     segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
+    if not segmentationNode:
+      # scene was closed while preview was active
+      return
     displayNode = segmentationNode.GetDisplayNode()
     if displayNode is None:
       logging.error("preview: Invalid segmentation display node!")
@@ -282,3 +412,23 @@ class PreviewPipeline:
     # Setup pipeline
     self.colorMapper.SetInputConnection(self.thresholdFilter.GetOutputPort())
     self.mapper.SetInputConnection(self.colorMapper.GetOutputPort())
+
+###
+
+METHOD_HUANG = 'HUANG'
+METHOD_INTERMODES = 'INTERMODES'
+METHOD_ISO_DATA = 'ISO_DATA'
+METHOD_KITTLER_ILLINGWORTH = 'KITTLER_ILLINGWORTH'
+METHOD_LI = 'LI'
+METHOD_MAXIMUM_ENTROPY = 'MAXIMUM_ENTROPY'
+METHOD_MOMENTS = 'MOMENTS'
+METHOD_OTSU = 'OTSU'
+METHOD_RENYI_ENTROPY = 'RENYI_ENTROPY'
+METHOD_SHANBHAG = 'SHANBHAG'
+METHOD_TRIANGLE = 'TRIANGLE'
+METHOD_YEN = 'YEN'
+
+MODE_SET_UPPER = 'SET_UPPER'
+MODE_SET_LOWER = 'SET_LOWER'
+MODE_SET_MIN_UPPER = 'SET_MIN_UPPER'
+MODE_SET_LOWER_MAX = 'SET_LOWER_MAX'

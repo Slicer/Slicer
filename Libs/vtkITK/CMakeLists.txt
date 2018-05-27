@@ -93,6 +93,7 @@ set(vtkITK_SRCS
   vtkITKArchetypeImageSeriesScalarReader.cxx
   vtkITKArchetypeImageSeriesVectorReaderFile.cxx
   vtkITKArchetypeImageSeriesVectorReaderSeries.cxx
+  vtkITKImageThresholdCalculator.cxx
   vtkITKImageWriter.cxx
   vtkITKImageToImageFilter.h
   vtkITKImageToImageFilterFF.h
