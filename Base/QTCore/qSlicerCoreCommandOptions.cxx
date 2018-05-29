@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QDir>
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -218,7 +219,11 @@ bool qSlicerCoreCommandOptions::disableBuiltInScriptedLoadableModules()const
 QString qSlicerCoreCommandOptions::pythonScript() const
 {
   Q_D(const qSlicerCoreCommandOptions);
-  return d->ParsedArgs.value("python-script").toString();
+  // QDir::fromNativeSeparators is needed as users may specify path
+  // with native separators, for example
+  //     Slicer.exe --python-script c:\folder\subfolder\script.py
+  // but Python requires / as directory separator.
+  return QDir::fromNativeSeparators(d->ParsedArgs.value("python-script").toString());
 }
 
 //-----------------------------------------------------------------------------

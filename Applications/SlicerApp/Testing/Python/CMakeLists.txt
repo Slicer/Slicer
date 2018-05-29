@@ -69,6 +69,15 @@ slicer_add_python_test(
   SCRIPT_ARGS --no-main-window TESTNAME_PREFIX nomainwindow_
   )
 
+if (WIN32)
+  # Test script execution with native path separator character (backslash)
+  STRING(REPLACE "/" "\\\\" nativeFilePath "${CMAKE_CURRENT_SOURCE_DIR}/bSlicerTestingExitSuccessTest.py")
+  slicer_add_python_test(
+    SCRIPT ${nativeFilePath}
+    SCRIPT_ARGS --no-main-window TESTNAME_PREFIX nomainwindow_nativePath_
+    )
+endif()
+
 slicer_add_python_test(
   SCRIPT SlicerTestingExitFailureTest.py
   SCRIPT_ARGS --no-main-window TESTNAME_PREFIX nomainwindow_
@@ -385,7 +394,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
     slicerCloseCrashBug2590.py
     SlicerOrientationSelectorTest.py
     SlicerTransformInteractionTest1.py
-    ViewControllersSliceInterpolationBug1926.py  
+    ViewControllersSliceInterpolationBug1926.py
     RSNA2012ProstateDemo.py
     JRC2013Vis.py
     FiducialLayoutSwitchBug1914.py
