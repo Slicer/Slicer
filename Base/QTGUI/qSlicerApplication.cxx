@@ -677,6 +677,8 @@ void qSlicerApplication::setHasBorderInFullScreen(bool hasBorder)
 {
 #if defined(Q_OS_WIN32) && (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
   QWindowsWindowFunctions::setHasBorderInFullScreen(this->mainWindow()->windowHandle(), hasBorder);
+#else
+  Q_UNUSED(hasBorder);
 #endif
 }
 
