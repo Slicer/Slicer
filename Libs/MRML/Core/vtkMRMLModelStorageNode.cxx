@@ -252,72 +252,73 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         std::cout<<ex.GetDescription()<<std::endl;
         result = 0;
         }
-        vtkNew<vtkPolyData> vtkMesh;
-        // Get the number of points in the mesh
-        int numPoints = surfaceMesh->GetNumberOfPoints();
-        //int numCells = surfaceMesh->GetNumberOfCells();
+      vtkNew<vtkPolyData> vtkMesh;
+      // Get the number of points in the mesh
+      int numPoints = surfaceMesh->GetNumberOfPoints();
 
-        // Create the vtkPoints object and set the number of points
-        vtkNew<vtkPoints> vpoints;
-        vpoints->SetNumberOfPoints(numPoints);
-        // iterate over all the points in the itk mesh filling in
-        // the vtkPoints object as we go
-        floatMesh::PointsContainer::Pointer points = surfaceMesh->GetPoints();
+      // Create the vtkPoints object and set the number of points
+      vtkNew<vtkPoints> vpoints;
+      vpoints->SetNumberOfPoints(numPoints);
+      // iterate over all the points in the itk mesh filling in
+      // the vtkPoints object as we go
+      floatMesh::PointsContainer::Pointer points = surfaceMesh->GetPoints();
       for(floatMesh::PointsContainer::Iterator i = points->Begin();
-          i != points->End(); ++i)
+        i != points->End(); ++i)
         {
-          // Get the point index from the point container iterator
-          int idx = i->Index();
-          vpoints->SetPoint(idx, const_cast<double*>(i->Value().GetDataPointer()));
+        // Get the point index from the point container iterator
+        int idx = i->Index();
+        vpoints->SetPoint(idx, const_cast<double*>(i->Value().GetDataPointer()));
         }
-        vtkMesh->SetPoints(vpoints.GetPointer());
+      vtkMesh->SetPoints(vpoints.GetPointer());
 
-        vtkNew<vtkCellArray> cells;
-        floatMesh::CellsContainerIterator itCells = surfaceMesh->GetCells()->begin();
-        floatMesh::CellsContainerIterator itCellsEnd = surfaceMesh->GetCells()->end();
-        for (; itCells != itCellsEnd; ++itCells)
+      vtkNew<vtkCellArray> cells;
+      floatMesh::CellsContainerIterator itCells = surfaceMesh->GetCells()->begin();
+      floatMesh::CellsContainerIterator itCellsEnd = surfaceMesh->GetCells()->end();
+      for (; itCells != itCellsEnd; ++itCells)
         {
-          floatMesh::CellTraits::PointIdIterator itPt = itCells->Value()->PointIdsBegin();
-          vtkIdType ptIdList[64];
-          int nPts = 0;
-          for (; itPt != itCells->Value()->PointIdsEnd(); ++itPt)
+        floatMesh::CellTraits::PointIdIterator itPt = itCells->Value()->PointIdsBegin();
+        vtkIdType ptIdList[64];
+        int nPts = 0;
+        for (; itPt != itCells->Value()->PointIdsEnd(); ++itPt)
           {
-            ptIdList[nPts] = *itPt;
-            nPts++;
+          ptIdList[nPts] = *itPt;
+          nPts++;
           }
-          cells->InsertNextCell(nPts, ptIdList);
+        cells->InsertNextCell(nPts, ptIdList);
         }
 
-        vtkMesh->SetPolys(cells.GetPointer());
+      vtkMesh->SetPolys(cells.GetPointer());
 
-        modelNode->SetAndObservePolyData(vtkMesh.GetPointer());
+      modelNode->SetAndObservePolyData(vtkMesh.GetPointer());
       }
     else
-    {
+      {
       vtkDebugMacro("Cannot read model file '" << fullName.c_str() << "' (extension = " << extension.c_str() << ")");
       return 0;
+      }
     }
-    }
-    catch (...)
+  catch (...)
     {
-      result = 0;
+    vtkErrorMacro("ReadData: unknown exception while trying to read file: " << fullName.c_str());
+    result = 0;
     }
 
-    if (modelNode->GetMesh() != NULL)
+  if (modelNode->GetMesh() != NULL)
     {
-      // is there an active scalar array?
-      if (modelNode->GetDisplayNode())
+    // is there an active scalar array?
+    if (modelNode->GetDisplayNode()
+      && modelNode->GetDisplayNode()->GetScalarRangeFlag() == vtkMRMLDisplayNode::UseDataScalarRange)
       {
-        double *scalarRange = modelNode->GetMesh()->GetScalarRange();
-        if (scalarRange)
+      double *scalarRange = modelNode->GetMesh()->GetScalarRange();
+      if (scalarRange)
         {
-          vtkDebugMacro("ReadDataInternal: setting scalar range " << scalarRange[0] << ", " << scalarRange[1]);
-          modelNode->GetDisplayNode()->SetScalarRange(scalarRange);
+        vtkDebugMacro("ReadDataInternal: setting scalar range " << scalarRange[0] << ", " << scalarRange[1]);
+        modelNode->GetDisplayNode()->SetScalarRange(scalarRange);
         }
       }
-      //modelNode->GetMesh()->Modified();
     }
-    return result;
+
+  return result;
 }
 
 //----------------------------------------------------------------------------
