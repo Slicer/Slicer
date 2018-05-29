@@ -36,6 +36,7 @@
 /// Slicer includes
 #include "qSlicerCoreApplication.h"
 #include "vtkMRMLColorLogic.h"
+#include "vtkMRMLScene.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 #include "vtkSlicerApplicationLogic.h"
 
@@ -146,8 +147,21 @@ void qSlicerVolumesIOOptionsWidget::setFileNames(const QStringList& fileNames)
   bool onlyNumberInExtension = false;
   bool hasLabelMapName = false;
 
-  vtkNew<vtkMRMLVolumeArchetypeStorageNode> snode;
-  foreach(const QString& fileName, fileNames)
+  vtkSmartPointer<vtkMRMLVolumeArchetypeStorageNode> snode;
+  if (this->mrmlScene())
+    {
+    // storage node must be added to the scene to have access to supported file extensions
+    // (known file extensions are used to determine node name accurately when there are
+    // multiple '.' characters in the filename.
+    snode = vtkMRMLVolumeArchetypeStorageNode::SafeDownCast(
+      this->mrmlScene()->AddNewNodeByClass("vtkMRMLVolumeArchetypeStorageNode"));
+    }
+  if (snode.GetPointer() == NULL)
+    {
+    qWarning("qSlicerVolumesIOOptionsWidget::setFileNames: mrmlScene is invalid, node name may not be determined accurately");
+    snode = vtkSmartPointer<vtkMRMLVolumeArchetypeStorageNode>::New();
+    }
+ foreach(const QString& fileName, fileNames)
     {
     QFileInfo fileInfo(fileName);
     QString fileBaseName = fileInfo.baseName();
@@ -172,6 +186,10 @@ void qSlicerVolumesIOOptionsWidget::setFileNames(const QStringList& fileNames)
       {
       hasLabelMapName = true;
       }
+    }
+  if (snode->GetScene())
+    {
+    snode->GetScene()->RemoveNode(snode);
     }
   d->NameLineEdit->setText( names.join("; ") );
   d->SingleFileCheckBox->setChecked(!onlyNumberInName && !onlyNumberInExtension);
