@@ -237,7 +237,7 @@ SetUpTransform( parameters & list,
         rotation->SetTranslation( vec );
         transform = rotation;
         }
-      catch( itk::ExceptionObject exp )
+      catch( itk::ExceptionObject &exp )
         {
         std::string exception = exp.GetDescription();
         if( exception.find( "Attempting to set a non-orthogonal rotation matrix" ) != std::string::npos )
@@ -1240,7 +1240,7 @@ int Rotate( parameters & list )
     // Separate the vector image into a vector of images
     SeparateImages<PixelType>( reader->GetOutput(), vectorOfImage );
     }
-  catch( itk::ExceptionObject exception )
+  catch( itk::ExceptionObject &exception )
     {
     std::cerr << exception << std::endl;
     return EXIT_FAILURE;
@@ -1290,7 +1290,7 @@ int Rotate( parameters & list )
     writer->UseCompressionOn();
     writer->Update();
     }
-  catch( itk::ExceptionObject exception )
+  catch( itk::ExceptionObject &exception )
     {
     std::cerr << exception << std::endl;
     return EXIT_FAILURE;

@@ -247,7 +247,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         MeshSpatialObjectType::Pointer  SOMesh = dynamic_cast<MeshSpatialObjectType*> (curObj);
         surfaceMesh = SOMesh->GetMesh();
         }
-      catch(itk::ExceptionObject ex)
+      catch(itk::ExceptionObject &ex)
         {
         std::cout<<ex.GetDescription()<<std::endl;
         result = 0;
