@@ -717,10 +717,8 @@ bool qSlicerAppMainWindowPrivate::confirmCloseScene()
 
   // Use AcceptRole&RejectRole instead of Save&Discard becuase we would
   // like discard changes to be the default behavior.
-  QAbstractButton* exitButton =
-    confirmCloseMsgBox->addButton(q->tr("Close scene (discard modifications)"), QMessageBox::AcceptRole);
-  QAbstractButton* saveButton =
-    confirmCloseMsgBox->addButton(q->tr("Save scene"), QMessageBox::RejectRole);
+  confirmCloseMsgBox->addButton(q->tr("Close scene (discard modifications)"), QMessageBox::AcceptRole);
+  confirmCloseMsgBox->addButton(q->tr("Save scene"), QMessageBox::RejectRole);
   confirmCloseMsgBox->addButton(QMessageBox::Cancel);
 
   confirmCloseMsgBox->setDontShowAgainVisible(true);
