@@ -69,11 +69,12 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
   def deactivate(self):
     # Restore segment opacity
     segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
-    segmentID = self.scriptedEffect.parameterSetNode().GetSelectedSegmentID()
-    displayNode = segmentationNode.GetDisplayNode()
-    if (displayNode is not None) and (segmentID is not None):
-      displayNode.SetSegmentOpacity2DFill(segmentID, self.segment2DFillOpacity)
-      displayNode.SetSegmentOpacity2DOutline(segmentID, self.segment2DOutlineOpacity)
+    if segmentationNode:
+      segmentID = self.scriptedEffect.parameterSetNode().GetSelectedSegmentID()
+      displayNode = segmentationNode.GetDisplayNode()
+      if (displayNode is not None) and (segmentID is not None):
+        displayNode.SetSegmentOpacity2DFill(segmentID, self.segment2DFillOpacity)
+        displayNode.SetSegmentOpacity2DOutline(segmentID, self.segment2DOutlineOpacity)
 
     # Clear preview pipeline and stop timer
     self.clearPreviewDisplay()
@@ -101,14 +102,14 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     self.autoThresholdMethodSelectorComboBox.addItem("Shanbhag", METHOD_SHANBHAG)
     self.autoThresholdMethodSelectorComboBox.addItem("Triangle", METHOD_TRIANGLE)
     self.autoThresholdMethodSelectorComboBox.addItem("Yen", METHOD_YEN)
-    self.autoThresholdMethodSelectorComboBox.setToolTip('Select method to compute threshold value automatically.)
+    self.autoThresholdMethodSelectorComboBox.setToolTip("Select method to compute threshold value automatically.")
 
     self.autoThresholdModeSelectorComboBox = qt.QComboBox()
     self.autoThresholdModeSelectorComboBox.addItem("set auto->maximum", MODE_SET_LOWER_MAX)
     self.autoThresholdModeSelectorComboBox.addItem("set minimum->auto", MODE_SET_MIN_UPPER)
     self.autoThresholdModeSelectorComboBox.addItem("set as lower", MODE_SET_LOWER)
     self.autoThresholdModeSelectorComboBox.addItem("set as upper", MODE_SET_UPPER)
-    self.autoThresholdMethodSelectorComboBox.setToolTip('How to set lower and upper threshold values. Current refers to keeping the current value.')
+    self.autoThresholdMethodSelectorComboBox.setToolTip("How to set lower and upper threshold values. Current refers to keeping the current value.")
 
     self.selectNextAutoThresholdButton = qt.QPushButton(">")
     self.selectNextAutoThresholdButton.setToolTip("Select next thresholding method and set thresholds using that."

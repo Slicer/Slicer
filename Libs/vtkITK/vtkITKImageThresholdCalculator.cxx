@@ -55,7 +55,7 @@ void ITKComputeThresholdFromVTKImage(vtkITKImageThresholdCalculator *self, vtkIm
   typedef itk::Size<3> SizeType;
   typedef itk::Image<TPixelType, 3> ImageType;
   typedef itk::Statistics::ImageToHistogramFilter<ImageType> HistogramGeneratorType;
-  typedef HistogramGeneratorType::HistogramType HistogramType;
+  typedef typename HistogramGeneratorType::HistogramType HistogramType;
   typedef itk::HistogramThresholdCalculator<HistogramType, double> CalculatorType;
 
   // itk import for input itk images
@@ -69,7 +69,7 @@ void ITKComputeThresholdFromVTKImage(vtkITKImageThresholdCalculator *self, vtkIm
 
   ConnectPipelines(vtkExporter.GetPointer(), itkImporter);
 
-  HistogramGeneratorType::Pointer histGenerator = HistogramGeneratorType::New();
+  typename HistogramGeneratorType::Pointer histGenerator = HistogramGeneratorType::New();
   histGenerator->SetInput(itkImporter->GetOutput());
   HistogramGeneratorType::HistogramSizeType hsize(1);
   hsize[0] = 64;
@@ -77,7 +77,7 @@ void ITKComputeThresholdFromVTKImage(vtkITKImageThresholdCalculator *self, vtkIm
   histGenerator->SetAutoMinimumMaximum( true );
 
   // Create and initialize the calculator
-  CalculatorType::Pointer calculator;
+  typename CalculatorType::Pointer calculator;
   switch (self->GetMethod())
   {
     case vtkITKImageThresholdCalculator::METHOD_HUANG: calculator = itk::HuangThresholdCalculator<HistogramType>::New(); break;

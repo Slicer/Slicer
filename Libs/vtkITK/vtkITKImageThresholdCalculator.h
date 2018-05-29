@@ -77,7 +77,7 @@ public:
 
   ///
   /// The main interface which triggers the writer to start.
-  void Update();
+  void Update() VTK_OVERRIDE;
 
 protected:
   vtkITKImageThresholdCalculator();
