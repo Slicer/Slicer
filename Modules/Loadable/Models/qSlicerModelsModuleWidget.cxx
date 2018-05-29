@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QAction>
 #include <QDebug>
 #include <QInputDialog>
 #include <QMessageBox>

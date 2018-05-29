@@ -50,7 +50,10 @@
 #include <vtkSmartPointer.h>
 
 // Qt includes
+#include <QAbstractItemView>
+#include <QButtonGroup>
 #include <QDebug>
+#include <QItemSelection>
 #include <QMessageBox>
 
 //-----------------------------------------------------------------------------

@@ -35,6 +35,7 @@
 #include <QSettings>
 #include <QShowEvent>
 #include <QSignalMapper>
+#include <QStyle>
 #include <QTextEdit>
 #include <QTimer>
 #include <QToolButton>

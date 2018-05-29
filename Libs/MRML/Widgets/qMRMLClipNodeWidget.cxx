@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // QT includes
+#include <QButtonGroup>
 
 // qMRML includes
 #include "qMRMLClipNodeWidget.h"

@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QButtonGroup>
 #include <QDebug>
 
 // qMRML includes

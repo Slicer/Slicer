@@ -47,8 +47,9 @@
 #include <vtkCallbackCommand.h>
 
 // Qt includes
-#include <QSettings>
+#include <QAction>
 #include <QDebug>
+#include <QSettings>
 #include <QTimer>
 
 //-----------------------------------------------------------------------------

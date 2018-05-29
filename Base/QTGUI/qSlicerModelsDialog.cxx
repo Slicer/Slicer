@@ -20,6 +20,7 @@
 
 /// Qt includes
 #include <QFileDialog>
+#include <QStyle>
 
 /// SlicerQt includes
 #include "qSlicerApplication.h"

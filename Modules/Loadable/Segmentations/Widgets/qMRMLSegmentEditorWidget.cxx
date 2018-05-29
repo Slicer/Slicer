@@ -87,18 +87,19 @@
 #include <qMRMLThreeDView.h>
 
 // Qt includes
-#include <QDebug>
-#include <QToolButton>
+#include <QAbstractItemView>
+#include <QAction>
 #include <QButtonGroup>
+#include <QDebug>
+#include <QInputDialog>
 #include <QMainWindow>
+#include <QMenu>
 #include <QMessageBox>
 #include <QPointer>
-#include <QShortcut>
-#include <QVBoxLayout>
-#include <QMenu>
-#include <QAction>
-#include <QInputDialog>
 #include <QScrollArea>
+#include <QShortcut>
+#include <QToolButton>
+#include <QVBoxLayout>
 
 // CTK includes
 #include <ctkFlowLayout.h>

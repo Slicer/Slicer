@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QButtonGroup>
 #include <QDebug>
 #include <QGridLayout>
 #include <QHBoxLayout>
