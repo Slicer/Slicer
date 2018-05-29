@@ -52,7 +52,6 @@ vtkStandardNewMacro(vtkITKImageThresholdCalculator);
 template <class TPixelType>
 void ITKComputeThresholdFromVTKImage(vtkITKImageThresholdCalculator *self, vtkImageData *inputImage, double& computedThreshold)
 {
-  typedef itk::Size<3> SizeType;
   typedef itk::Image<TPixelType, 3> ImageType;
   typedef itk::Statistics::ImageToHistogramFilter<ImageType> HistogramGeneratorType;
   typedef typename HistogramGeneratorType::HistogramType HistogramType;
@@ -71,7 +70,7 @@ void ITKComputeThresholdFromVTKImage(vtkITKImageThresholdCalculator *self, vtkIm
 
   typename HistogramGeneratorType::Pointer histGenerator = HistogramGeneratorType::New();
   histGenerator->SetInput(itkImporter->GetOutput());
-  HistogramGeneratorType::HistogramSizeType hsize(1);
+  typename HistogramGeneratorType::HistogramSizeType hsize(1);
   hsize[0] = 64;
   histGenerator->SetHistogramSize( hsize );
   histGenerator->SetAutoMinimumMaximum( true );
