@@ -75,9 +75,11 @@ public:
   static const char *GetMethodAsString(int method);
   //@}
 
-  ///
+  /// Bring vtkAlgorithm::Update methods here
+  /// to avoid hiding Update override.
+  using vtkAlgorithm::Update;
   /// The main interface which triggers the writer to start.
-  void Update() VTK_OVERRIDE;
+  virtual void Update() VTK_OVERRIDE;
 
 protected:
   vtkITKImageThresholdCalculator();
