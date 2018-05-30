@@ -956,6 +956,9 @@ void qSlicerAppMainWindow::on_FileCloseSceneAction_triggered()
   if (d->confirmCloseScene())
     {
     qSlicerCoreApplication::application()->mrmlScene()->Clear(false);
+    // Make sure we don't remember the last scene's filename to prevent
+    // accidentally overwriting the scene.
+    qSlicerCoreApplication::application()->mrmlScene()->SetURL("");
     }
 }
 
