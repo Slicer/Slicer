@@ -12,7 +12,25 @@ def quit():
   exit(EXIT_SUCCESS)
 
 def exit(status=EXIT_SUCCESS):
+  """Exits the application with the specified exit code.
+  The method does not stops the process immediately but lets
+  pending events to be processed.
+  If exit() is called again while processing pending events,
+  the error code will be overwritten.
+
+  To make the application exit immediately, this code can be used.
+  Note that forcing the application to exit may result in
+  improperly released files and other resources.
+
+  .. code-block:: python
+
+    import sys
+    sys.exit(status)
+
+  """
+
   from slicer import app
+  # Prevent automatic exit overwrite this manually set exit code
   app.commandOptions().runPythonAndExit = False
   app.exit(status)
 
