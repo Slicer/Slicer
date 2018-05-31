@@ -13,7 +13,7 @@ comment = """
 
 """
 #
-######################################################### 
+#########################################################
 
 #------------------------------------------------------------------------------
 def loadPatientByUID(patientUID):
@@ -124,7 +124,7 @@ def loadSeriesByUID(seriesUIDs):
     logging.error('DICOM module or database cannot be accessed')
     return False
   dicomWidget = slicer.modules.dicom.widgetRepresentation().self()
-  
+
   dicomWidget.detailsPopup.offerLoadables(seriesUIDs, 'SeriesUIDList')
   if len(dicomWidget.detailsPopup.fileLists)==0 or \
       not type(dicomWidget.detailsPopup.fileLists[0]) is tuple:
@@ -494,3 +494,17 @@ def getSortedImageFiles(filePaths, epsilon=0.01):
     logging.warning("Geometric issues were found with %d of the series. Please use caution.\n" % spaceWarnings)
 
   return files, distances, warningText
+
+#------------------------------------------------------------------------------
+def refreshDICOMWidget():
+  """ Refresh DICOM browser from database.
+  It is useful when the database is changed via a database object that is
+  different from the one stored in the DICOM browser. There may be multiple
+  database connection (through different database objects) in the same process.
+  """
+  if not hasattr(slicer, 'dicomDatabase') or not hasattr(slicer.modules, 'dicom'):
+    logging.error('DICOM module or database cannot be accessed')
+    return False
+  dicomWidget = slicer.modules.dicom.widgetRepresentation().self()
+  dicomWidget.detailsPopup.dicomBrowser.dicomTableManager().updateTableViews()
+  return True
