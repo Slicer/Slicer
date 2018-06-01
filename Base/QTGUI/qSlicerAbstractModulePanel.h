@@ -39,8 +39,8 @@ public:
   void removeModule(const QString& moduleName);
   virtual void removeAllModules() = 0;
 
-  void setModuleManager(qSlicerModuleManager* moduleManager);
-  qSlicerModuleManager* moduleManager()const;
+  Q_INVOKABLE void setModuleManager(qSlicerModuleManager* moduleManager);
+  Q_INVOKABLE qSlicerModuleManager* moduleManager()const;
 
 signals:
   void moduleAdded(const QString& moduleName);
