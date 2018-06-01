@@ -40,6 +40,7 @@ class vtkImageReslice;
 class vtkTransform;
 
 struct SliceLayerInfo;
+struct BlendPipeline;
 
 /// \brief Slicer logic class for slice manipulation.
 ///
@@ -130,8 +131,8 @@ public:
   ///
   /// The compositing filter
   /// TODO: this will eventually be generalized to a per-layer compositing function
-  vtkGetObjectMacro(Blend, vtkImageBlend);
-  vtkGetObjectMacro(BlendUVW, vtkImageBlend);
+  vtkImageBlend* GetBlend();
+  vtkImageBlend* GetBlendUVW();
 
   ///
   /// An image reslice instance to pull a single slice from the volume that
@@ -388,9 +389,8 @@ protected:
   vtkMRMLSliceLayerLogic *    ForegroundLayer;
   vtkMRMLSliceLayerLogic *    LabelLayer;
 
-
-  vtkImageBlend *   Blend;
-  vtkImageBlend *   BlendUVW;
+  BlendPipeline* Pipeline;
+  BlendPipeline* PipelineUVW;
   vtkImageReslice * ExtractModelTexture;
   vtkAlgorithmOutput *    ImageDataConnection;
   vtkTransform *    ActiveSliceTransform;

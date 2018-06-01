@@ -32,12 +32,14 @@
 #include <vtkAlgorithmOutput.h>
 #include <vtkCallbackCommand.h>
 #include <vtkCollection.h>
+#include <vtkImageAppendComponents.h>
 #include <vtkImageBlend.h>
 #include <vtkImageResample.h>
 #include <vtkImageCast.h>
 #include <vtkImageData.h>
 #include <vtkImageMathematics.h>
 #include <vtkImageReslice.h>
+#include <vtkImageThreshold.h>
 #include <vtkInformation.h>
 #include <vtkMath.h>
 #include <vtkNew.h>
@@ -74,6 +76,121 @@ struct SliceLayerInfo
   };
 
 //----------------------------------------------------------------------------
+struct BlendPipeline
+{
+  BlendPipeline()
+  {
+    // AlphaBlending, ReverseAlphaBlending:
+    //
+    //   foreground \
+    //               > Blend
+    //   background /
+    //
+    // Add, Subtract:
+    //
+    //   Casting is needed to avoid overflow during adding (or subtracting).
+    //
+    //   AddSubMath adds/subtracts alpha channel, therefore we copy RGB and alpha
+    //   components and copy of the background's alpha channel to the output.
+    //   Splitting and appending channels is probably quite inefficient, but there does not
+    //   seem to be simpler pipeline to do this in VTK.
+    //
+    //   foreground > AddSubForegroundCast \
+    //                                      > AddSubMath > AddSubOutputCast ...
+    //   background > AddSubBackroundCast  /
+    //
+    //
+    //     ... AddSubOutputCast > AddSubExtractRGB \
+    //                                              > AddSubAppendRGBA > Blend
+    //             background > AddSubExtractAlpha /
+
+    this->AddSubForegroundCast->SetOutputScalarTypeToShort();
+    this->AddSubBackgroundCast->SetOutputScalarTypeToShort();
+    this->AddSubMath->SetOperationToAdd();
+    this->AddSubMath->SetInputConnection(0, this->AddSubBackgroundCast->GetOutputPort());
+    this->AddSubMath->SetInputConnection(1, this->AddSubForegroundCast->GetOutputPort());
+    this->AddSubOutputCast->SetInputConnection(this->AddSubMath->GetOutputPort());
+
+    this->AddSubExtractRGB->SetInputConnection(this->AddSubOutputCast->GetOutputPort());
+    this->AddSubExtractRGB->SetComponents(0, 1, 2);
+    this->AddSubExtractAlpha->SetComponents(3);
+    this->AddSubAppendRGBA->AddInputConnection(this->AddSubExtractRGB->GetOutputPort());
+    this->AddSubAppendRGBA->AddInputConnection(this->AddSubExtractAlpha->GetOutputPort());
+
+    this->AddSubOutputCast->SetOutputScalarTypeToUnsignedChar();
+    this->AddSubOutputCast->ClampOverflowOn();
+  }
+
+  void AddLayers(std::deque<SliceLayerInfo>& layers, int sliceCompositing,
+    vtkAlgorithmOutput* backgroundImagePort,
+    vtkAlgorithmOutput* foregroundImagePort, double foregroundOpacity,
+    vtkAlgorithmOutput* labelImagePort, double labelOpacity)
+  {
+    if (sliceCompositing == vtkMRMLSliceCompositeNode::Add || sliceCompositing == vtkMRMLSliceCompositeNode::Subtract)
+      {
+      if (!backgroundImagePort || !foregroundImagePort)
+        {
+        // not enough inputs for add/subtract, so use alpha blending pipeline
+        sliceCompositing = vtkMRMLSliceCompositeNode::Alpha;
+        }
+      }
+
+    if (sliceCompositing == vtkMRMLSliceCompositeNode::Alpha)
+      {
+      if (backgroundImagePort)
+        {
+        layers.push_back(SliceLayerInfo(backgroundImagePort, 1.0));
+        }
+      if (foregroundImagePort)
+        {
+        layers.push_back(SliceLayerInfo(foregroundImagePort, foregroundOpacity));
+        }
+      }
+    else if (sliceCompositing == vtkMRMLSliceCompositeNode::ReverseAlpha)
+      {
+      if (foregroundImagePort)
+        {
+        layers.push_back(SliceLayerInfo(foregroundImagePort, 1.0));
+        }
+      if (backgroundImagePort)
+        {
+        layers.push_back(SliceLayerInfo(backgroundImagePort, foregroundOpacity));
+        }
+      }
+    else
+      {
+      this->AddSubForegroundCast->SetInputConnection(foregroundImagePort);
+      this->AddSubBackgroundCast->SetInputConnection(backgroundImagePort);
+      this->AddSubExtractAlpha->SetInputConnection(backgroundImagePort);
+      if (sliceCompositing == vtkMRMLSliceCompositeNode::Add)
+        {
+        this->AddSubMath->SetOperationToAdd();
+        }
+      else
+        {
+        this->AddSubMath->SetOperationToSubtract();
+        }
+      layers.push_back(SliceLayerInfo(this->AddSubAppendRGBA->GetOutputPort(), 1.0));
+      }
+
+    // always blending the label layer
+    if (labelImagePort)
+      {
+      layers.push_back(SliceLayerInfo(labelImagePort, labelOpacity));
+      }
+  }
+
+  vtkNew<vtkImageCast> AddSubForegroundCast;
+  vtkNew<vtkImageCast> AddSubBackgroundCast;
+  vtkNew<vtkImageMathematics> AddSubMath;
+  vtkNew<vtkImageExtractComponents> AddSubExtractRGB;
+  vtkNew<vtkImageExtractComponents> AddSubExtractAlpha;
+  vtkNew<vtkImageAppendComponents> AddSubAppendRGBA;
+  vtkNew<vtkImageCast> AddSubOutputCast;
+  vtkNew<vtkImageBlend> Blend;
+};
+
+//----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLSliceLogic);
 
 //----------------------------------------------------------------------------
@@ -86,12 +203,13 @@ vtkMRMLSliceLogic::vtkMRMLSliceLogic()
   this->LabelLayer = 0;
   this->SliceNode = 0;
   this->SliceCompositeNode = 0;
-  this->Blend = vtkImageBlend::New();
-  this->BlendUVW = vtkImageBlend::New();
+
+  this->Pipeline = new BlendPipeline;
+  this->PipelineUVW = new BlendPipeline;
 
   this->ExtractModelTexture = vtkImageReslice::New();
   this->ExtractModelTexture->SetOutputDimensionality (2);
-  this->ExtractModelTexture->SetInputConnection(BlendUVW->GetOutputPort());
+  this->ExtractModelTexture->SetInputConnection(this->PipelineUVW->Blend->GetOutputPort());
 
   this->SliceModelNode = 0;
   this->SliceModelTransformNode = 0;
@@ -114,16 +232,9 @@ vtkMRMLSliceLogic::~vtkMRMLSliceLogic()
     this->ImageDataConnection = 0;
     }
 
-  if (this->Blend)
-    {
-    this->Blend->Delete();
-    this->Blend = 0;
-    }
-  if (this->BlendUVW)
-    {
-    this->BlendUVW->Delete();
-    this->BlendUVW = 0;
-    }
+  delete this->Pipeline;
+  delete this->PipelineUVW;
+
   if (this->ExtractModelTexture)
     {
     this->ExtractModelTexture->Delete();
@@ -801,19 +912,7 @@ void vtkMRMLSliceLogic
 //----------------------------------------------------------------------------
 vtkAlgorithmOutput * vtkMRMLSliceLogic::GetImageDataConnection()
 {
-/*   if ( (this->GetBackgroundLayer() != 0 && this->GetBackgroundLayer()->GetImageDataConnection() != 0) ||
-       (this->GetForegroundLayer() != 0 && this->GetForegroundLayer()->GetImageDataConnection() != 0) ||
-       (this->GetLabelLayer() != 0 && this->GetLabelLayer()->GetImageDataConnection() != 0) )
-    {
-*/
-    return this->ImageDataConnection;
-/*
-    }
-   else
-    {
-    return 0;
-    }
-*/
+  return this->ImageDataConnection;
 }
 
 //----------------------------------------------------------------------------
@@ -821,12 +920,12 @@ void vtkMRMLSliceLogic::UpdateImageData ()
 {
   if (this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceResolutionMatch2DView)
     {
-    this->ExtractModelTexture->SetInputConnection( this->Blend->GetOutputPort() );
-    this->ImageDataConnection = this->Blend->GetOutputPort();
+    this->ExtractModelTexture->SetInputConnection( this->Pipeline->Blend->GetOutputPort() );
+    this->ImageDataConnection = this->Pipeline->Blend->GetOutputPort();
     }
   else
     {
-    this->ExtractModelTexture->SetInputConnection( this->BlendUVW->GetOutputPort() );
+    this->ExtractModelTexture->SetInputConnection( this->PipelineUVW->Blend->GetOutputPort() );
     }
   // It seems very strange that the imagedata can be null.
   // It should probably be always a valid imagedata with invalid bounds if needed
@@ -835,9 +934,9 @@ void vtkMRMLSliceLogic::UpdateImageData ()
        (this->GetForegroundLayer() != 0 && this->GetForegroundLayer()->GetImageDataConnection() != 0) ||
        (this->GetLabelLayer() != 0 && this->GetLabelLayer()->GetImageDataConnection() != 0) )
     {
-    if (this->ImageDataConnection == 0 || this->Blend->GetOutputPort()->GetMTime() > this->ImageDataConnection->GetMTime())
+    if (this->ImageDataConnection == 0 || this->Pipeline->Blend->GetOutputPort()->GetMTime() > this->ImageDataConnection->GetMTime())
       {
-      this->ImageDataConnection = this->Blend->GetOutputPort();
+      this->ImageDataConnection = this->Pipeline->Blend->GetOutputPort();
       }
     }
   else
@@ -849,7 +948,7 @@ void vtkMRMLSliceLogic::UpdateImageData ()
       }
     else
       {
-      this->ExtractModelTexture->SetInputConnection( this->BlendUVW->GetOutputPort() );
+      this->ExtractModelTexture->SetInputConnection(this->PipelineUVW->Blend->GetOutputPort());
       }
     }
 }
@@ -986,139 +1085,30 @@ void vtkMRMLSliceLogic::UpdatePipeline()
     //    label opacity
     //
 
-    const int sliceCompositing = this->SliceCompositeNode->GetCompositing();
-    // alpha blend or reverse alpha blend
-    bool alphaBlending = (sliceCompositing == vtkMRMLSliceCompositeNode::Alpha ||
-                          sliceCompositing == vtkMRMLSliceCompositeNode::ReverseAlpha);
-
     vtkAlgorithmOutput* backgroundImagePort = this->BackgroundLayer ? this->BackgroundLayer->GetImageDataConnection() : 0;
     vtkAlgorithmOutput* foregroundImagePort = this->ForegroundLayer ? this->ForegroundLayer->GetImageDataConnection() : 0;
 
     vtkAlgorithmOutput* backgroundImagePortUVW = this->BackgroundLayer ? this->BackgroundLayer->GetImageDataConnectionUVW() : 0;
     vtkAlgorithmOutput* foregroundImagePortUVW = this->ForegroundLayer ? this->ForegroundLayer->GetImageDataConnectionUVW() : 0;
 
-    if (!alphaBlending)
-      {
-      if (!backgroundImagePort || !foregroundImagePort)
-        {
-        // not enough inputs for add/subtract, so use alpha blending
-        // pipeline
-        alphaBlending = true;
-        }
-      }
+    vtkAlgorithmOutput* labelImagePort = this->LabelLayer ? this->LabelLayer->GetImageDataConnection() : 0;
+    vtkAlgorithmOutput* labelImagePortUVW = this->LabelLayer ? this->LabelLayer->GetImageDataConnectionUVW() : 0;
 
     std::deque<SliceLayerInfo> layers;
     std::deque<SliceLayerInfo> layersUVW;
 
-    if (!alphaBlending)
-      {
-      vtkNew<vtkImageMathematics> tempMath;
-      if (sliceCompositing == vtkMRMLSliceCompositeNode::Add)
-        {
-        // add the foreground and background
-        tempMath->SetOperationToAdd();
-        }
-      else if (sliceCompositing == vtkMRMLSliceCompositeNode::Subtract)
-        {
-        // subtract the foreground and background
-        tempMath->SetOperationToSubtract();
-        }
-      tempMath->SetInputConnection(0, foregroundImagePort );
-      tempMath->SetInputConnection(1, backgroundImagePort );
-      vtkInformation *tempMathOutInfo = tempMath->GetOutputInformation(0);
-      vtkDataObject::SetPointDataActiveScalarInfo(tempMathOutInfo, VTK_SHORT,
-        vtkImageData::GetNumberOfScalarComponents(tempMathOutInfo));
+    this->Pipeline->AddLayers(layers, this->SliceCompositeNode->GetCompositing(),
+      backgroundImagePort, foregroundImagePort, this->SliceCompositeNode->GetForegroundOpacity(),
+      labelImagePort, this->SliceCompositeNode->GetLabelOpacity());
+    this->PipelineUVW->AddLayers(layersUVW, this->SliceCompositeNode->GetCompositing(),
+      backgroundImagePortUVW, foregroundImagePortUVW, this->SliceCompositeNode->GetForegroundOpacity(),
+      labelImagePortUVW, this->SliceCompositeNode->GetLabelOpacity());
 
-      vtkNew<vtkImageCast> tempCast;
-      tempCast->SetInputConnection( tempMath->GetOutputPort() );
-      tempCast->SetOutputScalarTypeToUnsignedChar();
-
-      layers.push_back(SliceLayerInfo(tempCast->GetOutputPort(), 1.0));
-
-      // UVW pipeline
-      vtkNew<vtkImageMathematics> tempMathUVW;
-      if (sliceCompositing == vtkMRMLSliceCompositeNode::Add)
-        {
-        // add the foreground and background
-        tempMathUVW->SetOperationToAdd();
-        }
-      else if (sliceCompositing == vtkMRMLSliceCompositeNode::Subtract)
-        {
-        // subtract the foreground and background
-        tempMathUVW->SetOperationToSubtract();
-        }
-
-      tempMathUVW->SetInputConnection(0, foregroundImagePortUVW );
-      tempMathUVW->SetInputConnection(1, backgroundImagePortUVW );
-      vtkInformation *tempMathUVWOutInfo = tempMathUVW->GetOutputInformation(0);
-      vtkDataObject::SetPointDataActiveScalarInfo(tempMathUVWOutInfo, VTK_SHORT,
-        vtkImageData::GetNumberOfScalarComponents(tempMathUVWOutInfo));
-
-      vtkNew<vtkImageCast> tempCastUVW;
-      tempCastUVW->SetInputConnection( tempMathUVW->GetOutputPort() );
-      tempCastUVW->SetOutputScalarTypeToUnsignedChar();
-
-      layersUVW.push_back(SliceLayerInfo(tempCastUVW->GetOutputPort(), 1.0));
-      }
-    else
-      {
-      if (sliceCompositing ==  vtkMRMLSliceCompositeNode::Alpha)
-        {
-        if ( backgroundImagePort )
-          {
-          layers.push_back(SliceLayerInfo(backgroundImagePort, 1.0));
-          }
-        if ( foregroundImagePort )
-          {
-          layers.push_back(SliceLayerInfo(foregroundImagePort, this->SliceCompositeNode->GetForegroundOpacity()));
-          }
-        if ( backgroundImagePortUVW )
-          {
-          layersUVW.push_back(SliceLayerInfo(backgroundImagePortUVW, 1.0));
-          }
-        if ( foregroundImagePortUVW )
-          {
-          layersUVW.push_back(SliceLayerInfo(foregroundImagePortUVW, this->SliceCompositeNode->GetForegroundOpacity()));
-          }
-        }
-      else if (sliceCompositing == vtkMRMLSliceCompositeNode::ReverseAlpha)
-        {
-        if ( foregroundImagePort )
-          {
-          layers.push_back(SliceLayerInfo(foregroundImagePort, 1.0));
-          }
-        if ( backgroundImagePort )
-          {
-          layers.push_back(SliceLayerInfo(backgroundImagePort, this->SliceCompositeNode->GetForegroundOpacity()));
-          }
-        if ( foregroundImagePortUVW )
-          {
-          layersUVW.push_back(SliceLayerInfo(foregroundImagePortUVW, 1.0));
-          }
-        if ( backgroundImagePortUVW )
-          {
-          layersUVW.push_back(SliceLayerInfo(backgroundImagePortUVW, this->SliceCompositeNode->GetForegroundOpacity()));
-          }
-        }
-      }
-
-    // always blending the label layer
-    vtkAlgorithmOutput* labelImagePort = this->LabelLayer ? this->LabelLayer->GetImageDataConnection() : 0;
-    vtkAlgorithmOutput* labelImagePortUVW = this->LabelLayer ? this->LabelLayer->GetImageDataConnectionUVW() : 0;
-    if ( labelImagePort )
-      {
-      layers.push_back(SliceLayerInfo(labelImagePort, this->SliceCompositeNode->GetLabelOpacity()));
-      }
-    if ( labelImagePortUVW )
-      {
-      layersUVW.push_back(SliceLayerInfo(labelImagePortUVW, this->SliceCompositeNode->GetLabelOpacity()));
-      }
-
-    if (UpdateBlendLayers(this->Blend, layers))
+    if (this->UpdateBlendLayers(this->Pipeline->Blend.GetPointer(), layers))
       {
       modified = 1;
       }
-    if (UpdateBlendLayers(this->BlendUVW, layersUVW))
+    if (this->UpdateBlendLayers(this->PipelineUVW->Blend.GetPointer(), layersUVW))
       {
       modified = 1;
       }
@@ -1222,20 +1212,20 @@ void vtkMRMLSliceLogic::PrintSelf(ostream& os, vtkIndent indent)
     os << indent << "LabelLayer: (none)\n";
     }
 
-  if (this->Blend)
+  if (this->Pipeline->Blend.GetPointer())
     {
     os << indent << "Blend: ";
-    this->Blend->PrintSelf(os, nextIndent);
+    this->Pipeline->Blend->PrintSelf(os, nextIndent);
     }
   else
     {
     os << indent << "Blend: (none)\n";
     }
 
-  if (this->BlendUVW)
+  if (this->PipelineUVW->Blend.GetPointer())
     {
     os << indent << "BlendUVW: ";
-    this->BlendUVW->PrintSelf(os, nextIndent);
+    this->PipelineUVW->Blend->PrintSelf(os, nextIndent);
     }
   else
     {
@@ -2427,4 +2417,16 @@ bool vtkMRMLSliceLogic::IsSliceModelDisplayNode(vtkMRMLDisplayNode *mrmlDisplayN
       }
     }
   return false;
+}
+
+//----------------------------------------------------------------------------
+vtkImageBlend* vtkMRMLSliceLogic::GetBlend()
+{
+  return this->Pipeline->Blend.GetPointer();
+}
+
+//----------------------------------------------------------------------------
+vtkImageBlend* vtkMRMLSliceLogic::GetBlendUVW()
+{
+  return this->PipelineUVW->Blend.GetPointer();
 }
