@@ -30,7 +30,8 @@ def exit(status=EXIT_SUCCESS):
   """
 
   from slicer import app
-  # Prevent automatic exit overwrite this manually set exit code
+  # Prevent automatic application exit (for example, triggered by starting Slicer
+  # with "--testing" argument) from overwriting the exit code that we set now.
   app.commandOptions().runPythonAndExit = False
   app.exit(status)
 
