@@ -90,6 +90,13 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     self.thresholdSlider.singleStep = 0.01
     self.scriptedEffect.addOptionsWidget(self.thresholdSlider)
 
+    self.autoThresholdModeSelectorComboBox = qt.QComboBox()
+    self.autoThresholdModeSelectorComboBox.addItem("auto->maximum", MODE_SET_LOWER_MAX)
+    self.autoThresholdModeSelectorComboBox.addItem("minimum->auto", MODE_SET_MIN_UPPER)
+    self.autoThresholdModeSelectorComboBox.addItem("as lower", MODE_SET_LOWER)
+    self.autoThresholdModeSelectorComboBox.addItem("as upper", MODE_SET_UPPER)
+    self.autoThresholdModeSelectorComboBox.setToolTip("How to set lower and upper threshold values. Current refers to keeping the current value.")
+
     self.autoThresholdMethodSelectorComboBox = qt.QComboBox()
     self.autoThresholdMethodSelectorComboBox.addItem("Otsu", METHOD_OTSU)
     self.autoThresholdMethodSelectorComboBox.addItem("Huang", METHOD_HUANG)
@@ -104,19 +111,17 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     self.autoThresholdMethodSelectorComboBox.addItem("Yen", METHOD_YEN)
     self.autoThresholdMethodSelectorComboBox.setToolTip("Select method to compute threshold value automatically.")
 
-    self.autoThresholdModeSelectorComboBox = qt.QComboBox()
-    self.autoThresholdModeSelectorComboBox.addItem("set auto->maximum", MODE_SET_LOWER_MAX)
-    self.autoThresholdModeSelectorComboBox.addItem("set minimum->auto", MODE_SET_MIN_UPPER)
-    self.autoThresholdModeSelectorComboBox.addItem("set as lower", MODE_SET_LOWER)
-    self.autoThresholdModeSelectorComboBox.addItem("set as upper", MODE_SET_UPPER)
-    self.autoThresholdMethodSelectorComboBox.setToolTip("How to set lower and upper threshold values. Current refers to keeping the current value.")
+    self.selectPreviousAutoThresholdButton = qt.QPushButton("<")
+    self.selectPreviousAutoThresholdButton.setToolTip("Select previous thresholding method and set thresholds using that."
+      +" Useful for iterating through all available methods.")
+
+    self.setAutoThresholdButton = qt.QPushButton("Reset")
+    self.setAutoThresholdButton.setToolTip("Set threshold using selected method.")
 
     self.selectNextAutoThresholdButton = qt.QPushButton(">")
     self.selectNextAutoThresholdButton.setToolTip("Select next thresholding method and set thresholds using that."
       +" Useful for iterating through all available methods.")
 
-    self.setAutoThresholdButton = qt.QPushButton("Set")
-    self.setAutoThresholdButton.setToolTip("Compute automatic threshold and set as threshold limit.")
     # qt.QSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Expanding)
     # fails on some systems, therefore set the policies using separate method calls
     qSize = qt.QSizePolicy()
@@ -124,10 +129,11 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     self.setAutoThresholdButton.setSizePolicy(qSize)
 
     autoThresholdFrame = qt.QHBoxLayout()
-    autoThresholdFrame.addWidget(self.autoThresholdMethodSelectorComboBox)
     autoThresholdFrame.addWidget(self.autoThresholdModeSelectorComboBox)
-    autoThresholdFrame.addWidget(self.selectNextAutoThresholdButton)
+    autoThresholdFrame.addWidget(self.autoThresholdMethodSelectorComboBox)
+    autoThresholdFrame.addWidget(self.selectPreviousAutoThresholdButton)
     autoThresholdFrame.addWidget(self.setAutoThresholdButton)
+    autoThresholdFrame.addWidget(self.selectNextAutoThresholdButton)
     self.scriptedEffect.addLabeledOptionsWidget("Automatic threshold:", autoThresholdFrame)
 
     self.useForPaintButton = qt.QPushButton("Use for masking")
@@ -141,8 +147,9 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
 
     self.useForPaintButton.connect('clicked()', self.onUseForPaint)
     self.thresholdSlider.connect('valuesChanged(double,double)', self.onThresholdValuesChanged)
-    self.autoThresholdMethodSelectorComboBox.connect("currentIndexChanged(int)", self.updateMRMLFromGUI)
-    self.autoThresholdModeSelectorComboBox.connect("currentIndexChanged(int)", self.updateMRMLFromGUI)
+    self.autoThresholdMethodSelectorComboBox.connect("activated(int)", self.onSelectedAutoThresholdMethod)
+    self.autoThresholdModeSelectorComboBox.connect("activated(int)", self.onSelectedAutoThresholdMethod)
+    self.selectPreviousAutoThresholdButton.connect('clicked()', self.onSelectPreviousAutoThresholdMethod)
     self.selectNextAutoThresholdButton.connect('clicked()', self.onSelectNextAutoThresholdMethod)
     self.setAutoThresholdButton.connect('clicked()', self.onAutoThreshold)
     self.applyButton.connect('clicked()', self.onApply)
@@ -220,10 +227,20 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     # Switch to paint effect
     self.scriptedEffect.selectEffect("Paint")
 
+  def onSelectPreviousAutoThresholdMethod(self):
+    self.autoThresholdMethodSelectorComboBox.currentIndex = (self.autoThresholdMethodSelectorComboBox.currentIndex - 1) \
+      % self.autoThresholdMethodSelectorComboBox.count
+    self.onSelectedAutoThresholdMethod()
+
   def onSelectNextAutoThresholdMethod(self):
     self.autoThresholdMethodSelectorComboBox.currentIndex = (self.autoThresholdMethodSelectorComboBox.currentIndex + 1) \
       % self.autoThresholdMethodSelectorComboBox.count
+    self.onSelectedAutoThresholdMethod()
+
+  def onSelectedAutoThresholdMethod(self):
+    self.updateMRMLFromGUI()
     self.onAutoThreshold()
+    self.updateGUIFromMRML()
 
   def onAutoThreshold(self):
     autoThresholdMethod = self.scriptedEffect.parameter("AutoThresholdMethod")
