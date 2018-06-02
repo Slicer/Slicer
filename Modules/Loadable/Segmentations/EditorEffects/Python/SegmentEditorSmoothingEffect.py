@@ -280,14 +280,10 @@ If segments overlap, segment higher in the segments table will have priority. <b
     ici.SetOutputOrigin(0, 0, 0)
 
     # Convert labelmap to combined polydata
-    if vtk.VTK_MAJOR_VERSION >= 9:
-      convertToPolyData = vtk.vtkDiscreteFlyingEdges3D()
-      convertToPolyData.ComputeGradientsOff()
-      convertToPolyData.ComputeNormalsOff()
-      convertToPolyData.ComputeScalarsOff()
-    else:
-      convertToPolyData = vtk.vtkDiscreteMarchingCubes()
-
+    # vtkDiscreteFlyingEdges3D cannot be used here, as in the output of that filter,
+    # each labeled region is completely disconnected from neighboring regions, and
+    # for joint smoothing it is essential for the points to move together.
+    convertToPolyData = vtk.vtkDiscreteMarchingCubes()
     convertToPolyData.SetInputConnection(ici.GetOutputPort())
     convertToPolyData.SetNumberOfContours(len(segmentLabelValues))
 
