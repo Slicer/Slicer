@@ -1011,6 +1011,14 @@ set(Slicer_EXTENSION_CPACK ${Slicer_SOURCE_DIR}/CMake/SlicerExtensionCPack.cmake
 
 
 # --------------------------------------------------------------------------
+# ThirdParty: Used to superbuild projects built in Slicer extension.
+# --------------------------------------------------------------------------
+set(Slicer_THIRDPARTY_BIN_DIR ${Slicer_BIN_DIR})
+set(Slicer_THIRDPARTY_LIB_DIR ${Slicer_LIB_DIR})
+set(Slicer_THIRDPARTY_SHARE_DIR  ${Slicer_SHARE_DIR})
+
+
+# --------------------------------------------------------------------------
 # Bundle remote modules and extensions adding source directories.
 # --------------------------------------------------------------------------
 
@@ -1065,13 +1073,6 @@ unset(Slicer_DIR)
 # Recover the QM output directories
 # --------------------------------------------------------------------------
 get_property(Slicer_QM_OUTPUT_DIRS GLOBAL PROPERTY Slicer_QM_OUTPUT_DIRS)
-
-# --------------------------------------------------------------------------
-# ThirdParty: Used to superbuild projects built in Slicer extension.
-# --------------------------------------------------------------------------
-set(Slicer_THIRDPARTY_BIN_DIR ${Slicer_BIN_DIR})
-set(Slicer_THIRDPARTY_LIB_DIR ${Slicer_LIB_DIR})
-set(Slicer_THIRDPARTY_SHARE_DIR  ${Slicer_SHARE_DIR})
 
 # --------------------------------------------------------------------------
 # Configure and install headers
