@@ -49,6 +49,13 @@ endif()
 # are searched for if not already found in ``EXTERNAL_PROJECT_DIR``.
 
 #.rst:
+# .. cmake:variable:: EXTERNAL_PROJECT_ADDITIONAL_DIRS
+#
+# If set, this variable represents additional directories in which external project files
+# are searched for if not already found in ``EXTERNAL_PROJECT_DIR`` and
+# ``EXTERNAL_PROJECT_ADDITIONAL_DIR``.
+
+#.rst:
 # .. cmake:variable:: EXTERNAL_PROJECT_FILE_PREFIX
 #
 # This variable describes the prefix of the external project files looked up in
@@ -582,6 +589,41 @@ function(_sb_is_optional proj output_var)
 endfunction()
 
 #.rst:
+# .. cmake:function:: ExternalProject_Add_Dependencies
+#
+# .. code-block:: cmake
+#
+#  ExternalProject_Add_Dependencies(<project_name>
+#      DEPENDS <dep1> [<dep2> [...]]
+#    )
+#
+#
+# .. code-block:: cmake
+#
+#  DEPENDS  List of additional dependencies to associat with `<project_name>`.
+#
+macro(ExternalProject_Add_Dependencies project_name)
+  set(options)
+  set(oneValueArgs)
+  set(multiValueArgs DEPENDS)
+  cmake_parse_arguments(_epad "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  # Sanity checks
+  if(x${project_name} STREQUAL xDEPENDS)
+    message(FATAL_ERROR "Argument <project_name> is missing !")
+  endif()
+  if(_epad_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "Invalid arguments: ${_epad_UNPARSED_ARGUMENTS}")
+  endif()
+
+  if(NOT _epad_DEPENDS)
+    message(FATAL_ERROR "Argument DEPENDS is missing")
+  endif()
+
+  set_property(GLOBAL PROPERTY SB_${project_name}_ADDITIONAL_DEPENDS ${_epad_DEPENDS})
+endmacro()
+
+#.rst:
 # .. cmake:function:: ExternalProject_Include_Dependencies
 #
 # .. code-block:: cmake
@@ -737,6 +779,12 @@ macro(ExternalProject_Include_Dependencies project_name)
     set(SB_FIRST_PASS TRUE)
   endif()
 
+  # Extra dependencies specified using "ExternalProject_Add_Dependencies"
+  get_property(_sb_ADDITIONAL_DEPENDS GLOBAL PROPERTY SB_${_sb_proj}_ADDITIONAL_DEPENDS)
+  if(NOT "x${_sb_ADDITIONAL_DEPENDS}" STREQUAL "x")
+    list(APPEND _sb_DEPENDS ${_sb_ADDITIONAL_DEPENDS})
+  endif()
+
   set(_sb_REQUIRED_DEPENDS)
   foreach(dep ${_sb_DEPENDS})
     if(NOT ${_sb_proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT})
@@ -790,15 +838,25 @@ macro(ExternalProject_Include_Dependencies project_name)
   foreach(dep ${_sb_DEPENDS})
     get_property(_included GLOBAL PROPERTY SB_${dep}_FILE_INCLUDED)
     if(NOT _included)
-      # XXX - Refactor - Add a single variable named 'EXTERNAL_PROJECT_DIRS'
       if(EXISTS "${EXTERNAL_PROJECT_DIR}/${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake")
         include(${EXTERNAL_PROJECT_DIR}/${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake)
       elseif(EXISTS "${${dep}_FILEPATH}")
+        # Originally implemented to support CTK buildsystem
         include(${${dep}_FILEPATH})
       elseif(EXISTS "${EXTERNAL_PROJECT_ADDITIONAL_DIR}/${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake")
         include(${EXTERNAL_PROJECT_ADDITIONAL_DIR}/${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake)
       else()
-        message(FATAL_ERROR "Can't find ${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake")
+        set(_found_ep_cmake FALSE)
+        foreach(_external_project_additional_dir ${EXTERNAL_PROJECT_ADDITIONAL_DIRS})
+          if(EXISTS "${_external_project_additional_dir}/${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake")
+            include(${_external_project_additional_dir}/${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake)
+            set(_found_ep_cmake TRUE)
+            break()
+          endif()
+        endforeach()
+        if(NOT _found_ep_cmake)
+          message(FATAL_ERROR "Can't find ${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake")
+        endif()
       endif()
       set_property(GLOBAL PROPERTY SB_${dep}_FILE_INCLUDED 1)
     endif()
