@@ -155,9 +155,6 @@ public:
   ~qMRMLSegmentEditorWidgetPrivate();
   void init();
 
-  /// Update list of effect buttons
-  void updateEffectList();
-
   /// Simple mechanism to let the effects know that default modifier labelmap has changed
   void notifyEffectsOfReferenceGeometryChange(const std::string& geometry);
   /// Simple mechanism to let the effects know that master volume has changed
@@ -195,6 +192,8 @@ public:
   std::string referenceImageGeometry();
 
   bool segmentationDisplayableInView(vtkMRMLAbstractViewNode* viewNode);
+
+  QToolButton* toolButton(qSlicerSegmentEditorAbstractEffect* effect);
 
 public:
   /// Segment editor parameter set node containing all selections and working images
@@ -441,7 +440,7 @@ void qMRMLSegmentEditorWidgetPrivate::init()
   this->EffectsGroupBox->setLayout(effectsGroupLayout);
 
   // Update effect buttons
-  this->updateEffectList();
+  q->updateEffectList();
 
   this->OptionsGroupBox->hide();
   this->OptionsGroupBox->setTitle("");
@@ -450,94 +449,20 @@ void qMRMLSegmentEditorWidgetPrivate::init()
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSegmentEditorWidgetPrivate::updateEffectList()
+QToolButton* qMRMLSegmentEditorWidgetPrivate::toolButton(qSlicerSegmentEditorAbstractEffect* effect)
 {
-  Q_Q(qMRMLSegmentEditorWidget);
-
-  // Create local copy of factory effects, so that
-  // - Effects can have different parameters
-  // - Segment editors can have different active effects
-  QList<qSlicerSegmentEditorAbstractEffect*> addedEffects = qSlicerSegmentEditorEffectFactory::instance()->copyEffects(this->RegisteredEffects);
-
-  // Set up effect connections and options frame for all newly added effects
-  foreach(qSlicerSegmentEditorAbstractEffect* effect, addedEffects)
-    {
-    // Connect callbacks that allow effects to send requests to the editor widget without
-    // introducing a direct dependency of the effect on the widget.
-    effect->setCallbackSlots(q,
-      SLOT(setActiveEffectByName(QString)),
-      SLOT(updateVolume(void*, bool&)),
-      SLOT(saveStateForUndo()));
-
-    effect->setVolumes(this->AlignedMasterVolume, this->ModifierLabelmap, this->MaskLabelmap, this->SelectedSegmentLabelmap, this->ReferenceGeometryImage);
-
-    // Add effect options frame to the options widget and hide them
-    effect->setupOptionsFrame();
-    QFrame* effectOptionsFrame = effect->optionsFrame();
-    effectOptionsFrame->setVisible(false);
-    this->EffectsOptionsFrame->layout()->addWidget(effectOptionsFrame);
-    }
-
-  // Update button list
-
-  // Deactivate possible previous buttons
   QList<QAbstractButton*> effectButtons = this->EffectButtonGroup.buttons();
-  foreach (QAbstractButton* button, effectButtons)
+  foreach(QAbstractButton* effectButton, effectButtons)
     {
-    this->EffectButtonGroup.removeButton(button);
-    button->deleteLater();
-    }
-
-  // Add NULL effect (arrow button to deactivate all effects)
-  QToolButton* effectButton = new QToolButton(this->EffectsGroupBox);
-  effectButton->setObjectName(NULL_EFFECT_NAME);
-  effectButton->setCheckable(true);
-  effectButton->setIcon(QIcon(":Icons/NullEffect.png"));
-  effectButton->setText("None");
-  effectButton->setToolTip("No editing");
-  effectButton->setToolButtonStyle(this->EffectButtonStyle);
-  effectButton->setProperty("Effect", QVariant::fromValue<QObject*>(NULL));
-  effectButton->setSizePolicy(QSizePolicy::MinimumExpanding, effectButton->sizePolicy().verticalPolicy());
-  this->EffectButtonGroup.addButton(effectButton);
-  this->EffectsGroupBox->layout()->addWidget(effectButton);
-
-
-  QList<qSlicerSegmentEditorAbstractEffect*> displayedEffects; // list of effect buttons to be displayed
-  QList<qSlicerSegmentEditorAbstractEffect*> unorderedEffects = this->RegisteredEffects;
-
-  // Add effects in the requested order
-  foreach(QString effectName, this->EffectNameOrder)
-    {
-    qSlicerSegmentEditorAbstractEffect* effect = q->effectByName(effectName);
-    if (effect)
+    qSlicerSegmentEditorAbstractEffect* foundEffect = qobject_cast<qSlicerSegmentEditorAbstractEffect*>(
+      effectButton->property("Effect").value<QObject*>());
+    if (effect == foundEffect)
       {
-      displayedEffects << effect;
-      unorderedEffects.removeOne(effect);
+      return dynamic_cast<QToolButton*>(effectButton);
       }
     }
-  // Add unordered effects
-  if (this->UnorderedEffectsVisible)
-    {
-    displayedEffects << unorderedEffects;
-    }
-
-  // Create buttons
-  foreach(qSlicerSegmentEditorAbstractEffect* effect, displayedEffects)
-    {
-    QToolButton* effectButton = new QToolButton(this->EffectsGroupBox);
-    effectButton->setObjectName(effect->name());
-    effectButton->setCheckable(true);
-    effectButton->setToolButtonStyle(this->EffectButtonStyle);
-    effectButton->setIcon(effect->icon());
-    effectButton->setText(effect->name());
-    effectButton->setToolTip(effect->name());
-    effectButton->setSizePolicy(QSizePolicy::MinimumExpanding, effectButton->sizePolicy().verticalPolicy());
-    effectButton->setProperty("Effect", QVariant::fromValue<QObject*>(effect));
-
-    this->EffectButtonGroup.addButton(effectButton);
-    this->EffectsGroupBox->layout()->addWidget(effectButton);
-    }
-
+  // not found
+  return NULL;
 }
 
 //-----------------------------------------------------------------------------
@@ -1053,6 +978,117 @@ qMRMLSegmentEditorWidget::qMRMLSegmentEditorWidget(QWidget* _parent)
 //-----------------------------------------------------------------------------
 qMRMLSegmentEditorWidget::~qMRMLSegmentEditorWidget()
 {
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::updateEffectList()
+{
+  Q_D(qMRMLSegmentEditorWidget);
+
+  if (d->toolButton(NULL) == NULL)
+    {
+    // Add NULL effect (arrow button to deactivate all effects)
+    QToolButton* effectButton = new QToolButton(d->EffectsGroupBox);
+    effectButton->setObjectName(NULL_EFFECT_NAME);
+    effectButton->setCheckable(true);
+    effectButton->setIcon(QIcon(":Icons/NullEffect.png"));
+    effectButton->setText("None");
+    effectButton->setToolTip("No editing");
+    effectButton->setToolButtonStyle(d->EffectButtonStyle);
+    effectButton->setProperty("Effect", QVariant::fromValue<QObject*>(NULL));
+    effectButton->setSizePolicy(QSizePolicy::MinimumExpanding, effectButton->sizePolicy().verticalPolicy());
+    d->EffectButtonGroup.addButton(effectButton);
+    }
+
+
+  // Create local copy of factory effects, so that
+  // - Effects can have different parameters
+  // - Segment editors can have different active effects
+  QList<qSlicerSegmentEditorAbstractEffect*> addedEffects = qSlicerSegmentEditorEffectFactory::instance()->copyEffects(d->RegisteredEffects);
+
+  // Set up effect connections and options frame for all newly added effects
+  foreach(qSlicerSegmentEditorAbstractEffect* effect, addedEffects)
+    {
+    // Connect callbacks that allow effects to send requests to the editor widget without
+    // introducing a direct dependency of the effect on the widget.
+    effect->setCallbackSlots(this,
+      SLOT(setActiveEffectByName(QString)),
+      SLOT(updateVolume(void*, bool&)),
+      SLOT(saveStateForUndo()));
+
+    // Set parameter set node (if it has been already set in the widget)
+    if (d->ParameterSetNode)
+      {
+      effect->setParameterSetNode(d->ParameterSetNode);
+      effect->setMRMLDefaults();
+      // Connect parameter modified event to update effect options widget
+      qvtkReconnect(d->ParameterSetNode, vtkMRMLSegmentEditorNode::EffectParameterModified, effect, SLOT(updateGUIFromMRML()));
+      }
+
+    effect->setVolumes(d->AlignedMasterVolume, d->ModifierLabelmap, d->MaskLabelmap, d->SelectedSegmentLabelmap, d->ReferenceGeometryImage);
+
+    QToolButton* effectButton = new QToolButton(d->EffectsGroupBox);
+    effectButton->setObjectName(effect->name());
+    effectButton->setCheckable(true);
+    effectButton->setToolButtonStyle(d->EffectButtonStyle);
+    effectButton->setIcon(effect->icon());
+    effectButton->setText(effect->name());
+    effectButton->setToolTip(effect->name());
+    effectButton->setSizePolicy(QSizePolicy::MinimumExpanding, effectButton->sizePolicy().verticalPolicy());
+    effectButton->setProperty("Effect", QVariant::fromValue<QObject*>(effect));
+    d->EffectButtonGroup.addButton(effectButton);
+
+    // Add effect options frame to the options widget and hide them
+    effect->setupOptionsFrame();
+    QFrame* effectOptionsFrame = effect->optionsFrame();
+    effectOptionsFrame->setVisible(false);
+    d->EffectsOptionsFrame->layout()->addWidget(effectOptionsFrame);
+    }
+
+  // Remove all buttons from the layout (so that it can be re-populated with
+  // a different button order) and hide all buttons (to only show buttons
+  // that are requested to be displayed).
+  QList<QAbstractButton*> effectButtons = d->EffectButtonGroup.buttons();
+  foreach (QAbstractButton* button, effectButtons)
+    {
+    button->hide();
+    d->EffectsGroupBox->layout()->removeWidget(button);
+    }
+
+  QList<qSlicerSegmentEditorAbstractEffect*> displayedEffects; // list of effect buttons to be displayed
+  QList<qSlicerSegmentEditorAbstractEffect*> unorderedEffects = d->RegisteredEffects;
+
+  // Add null effect first
+  displayedEffects << NULL;
+
+  // Add effects in the requested order
+  foreach(QString effectName, d->EffectNameOrder)
+    {
+    qSlicerSegmentEditorAbstractEffect* effect = this->effectByName(effectName);
+    if (effect)
+      {
+      displayedEffects << effect;
+      unorderedEffects.removeOne(effect);
+      }
+    }
+  // Add unordered effects
+  if (d->UnorderedEffectsVisible)
+    {
+    displayedEffects << unorderedEffects;
+    }
+
+  // Add buttons of displayed effect to layout
+  foreach(qSlicerSegmentEditorAbstractEffect* effect, displayedEffects)
+    {
+    QToolButton* effectButton = d->toolButton(effect);
+    if (!effectButton)
+      {
+      qWarning() << Q_FUNC_INFO << " failed: error showing effect button";
+      continue;
+      }
+    effectButton->show();
+    d->EffectsGroupBox->layout()->addWidget(effectButton);
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -2306,7 +2342,7 @@ void qMRMLSegmentEditorWidget::setEffectNameOrder(const QStringList& effectNames
     return;
     }
   d->EffectNameOrder = effectNames;
-  d->updateEffectList();
+  this->updateEffectList();
 }
 
 //------------------------------------------------------------------------------
@@ -2326,7 +2362,7 @@ void qMRMLSegmentEditorWidget::setUnorderedEffectsVisible(bool visible)
     return;
     }
   d->UnorderedEffectsVisible = visible;
-  d->updateEffectList();
+  this->updateEffectList();
 }
 
 //---------------------------------------------------------------------------
@@ -2345,22 +2381,26 @@ QStringList qMRMLSegmentEditorWidget::availableEffectNames()
 int qMRMLSegmentEditorWidget::effectCount()
 {
   Q_D(qMRMLSegmentEditorWidget);
-  return d->EffectButtonGroup.buttons().count();
+  return d->EffectsGroupBox->layout()->count();
 }
 
 //---------------------------------------------------------------------------
 qSlicerSegmentEditorAbstractEffect* qMRMLSegmentEditorWidget::effectByIndex(int index)
 {
   Q_D(qMRMLSegmentEditorWidget);
-  QList<QAbstractButton *> effectButtons = d->EffectButtonGroup.buttons();
-  if (index < 0 || index >= effectButtons.count())
+  if (index < 0 || index >= d->EffectsGroupBox->layout()->count())
     {
     return NULL;
     }
-  QAbstractButton* effectButton = effectButtons[index];
-  qSlicerSegmentEditorAbstractEffect* effect = qobject_cast<qSlicerSegmentEditorAbstractEffect*>(
-    effectButton->property("Effect").value<QObject*>());
-  return effect;
+  QLayoutItem* item = d->EffectsGroupBox->layout()->itemAt(index);
+  if (!item || !item->widget())
+    {
+    return NULL;
+    }
+  qSlicerSegmentEditorAbstractEffect* foundEffect = qobject_cast<qSlicerSegmentEditorAbstractEffect*>(
+    item->widget()->property("Effect").value<QObject*>());
+
+  return foundEffect;
 }
 
 //---------------------------------------------------------------------------

@@ -266,8 +266,13 @@ public slots:
   /// to find an effect but uses more space.
   void setEffectButtonStyle(Qt::ToolButtonStyle toolButtonStyle);
 
-  /// Perform updates to prevent layout collapse 
+  /// Perform updates to prevent layout collapse
   void updateEffectLayouts();
+
+  /// Update list of effect buttons.
+  /// It adds all effects registered with the effect factory
+  /// (and not filtered by unorderedEffectsVisible).
+  void updateEffectList();
 
   /// Show master volume in slice views by hiding foreground and label volumes.
   /// \param forceShowInBackground If set to false then views will only change

@@ -61,10 +61,22 @@ class SegmentEditorWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.editor.setMRMLScene(slicer.mrmlScene)
     self.layout.addWidget(self.editor)
 
+    # Observe editor effect registrations to make sure that any effects that are registered
+    # later will show up in the segment editor widget. For example, if Segment Editor is set
+    # as startup module, additional effects are registered after the segment editor widget is created.
+    import qSlicerSegmentationsEditorEffectsPythonQt
+    #TODO: For some reason the instance() function cannot be called as a class function although it's static
+    factory = qSlicerSegmentationsEditorEffectsPythonQt.qSlicerSegmentEditorEffectFactory()
+    self.effectFactorySingleton = factory.instance()
+    self.effectFactorySingleton.connect('effectRegistered(QString)', self.editorEffectRegistered)
+
     # Connect observers to scene events
     self.addObserver(slicer.mrmlScene, slicer.mrmlScene.StartCloseEvent, self.onSceneStartClose)
     self.addObserver(slicer.mrmlScene, slicer.mrmlScene.EndCloseEvent, self.onSceneEndClose)
     self.addObserver(slicer.mrmlScene, slicer.mrmlScene.EndImportEvent, self.onSceneEndImport)
+
+  def editorEffectRegistered(self):
+    self.editor.updateEffectList()
 
   def selectParameterNode(self):
     # Select parameter set node if one is found in the scene, and create one otherwise
@@ -151,6 +163,7 @@ class SegmentEditorWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
   def cleanup(self):
     self.removeObservers()
+    self.effectFactorySingleton.disconnect('effectRegistered(QString)', self.editorEffectRegistered)
 
 class SegmentEditorTest(ScriptedLoadableModuleTest):
   """

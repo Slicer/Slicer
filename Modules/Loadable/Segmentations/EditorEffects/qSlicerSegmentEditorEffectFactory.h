@@ -61,6 +61,10 @@ public:
   /// \return List of added effects (does not include effects that were already in the effects argument).
   Q_INVOKABLE QList<qSlicerSegmentEditorAbstractEffect*> copyEffects(QList<qSlicerSegmentEditorAbstractEffect*>& effects);
 
+signals:
+  /// Signals that a new effect has been registered.
+  void effectRegistered(QString);
+
 protected:
   /// List of registered effect instances
   QList<qSlicerSegmentEditorAbstractEffect*> m_RegisteredEffects;

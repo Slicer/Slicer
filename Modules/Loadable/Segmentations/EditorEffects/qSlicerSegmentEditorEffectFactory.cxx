@@ -125,7 +125,7 @@ bool qSlicerSegmentEditorEffectFactory::registerEffect(qSlicerSegmentEditorAbstr
 
   // Add the effect to the list
   this->m_RegisteredEffects << effectToRegister;
-
+  emit effectRegistered(effectToRegister->name());
   return true;
 }
 
