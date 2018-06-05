@@ -48,13 +48,16 @@ def GetSlicerITKReadWriteAddress(nodeObjectOrName):
     return myNodeFullITKAddress
 
 def EnsureRegistration():
-    """This is a complete hack, but attempting to read
-    a dummy file with AddArchetypeVolume
-    has a side effect of registering
-    the MRMLIDImageIO file reader.
+    """Make sure MRMLIDImageIO reader is registered.
     """
-    # TODO: check if this ensure registration mechanism is still needed
+    if 'MRMLIDImageIO' in sitk.ImageFileReader().GetRegisteredImageIOs():
+      # already registered
+      return
 
+    # Probably this hack is not needed anymore, but it would require some work to verify this,
+    # so for now just leave this here:
+    # This is a complete hack, but attempting to read a dummy file with AddArchetypeVolume
+    # has a side effect of registering the MRMLIDImageIO file reader.
     global __sitk__MRMLIDImageIO_Registered__
     if __sitk__MRMLIDImageIO_Registered__:
       return
