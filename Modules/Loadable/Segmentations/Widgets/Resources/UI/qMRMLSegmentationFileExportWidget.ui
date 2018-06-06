@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>415</width>
-    <height>160</height>
+    <height>184</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -37,21 +37,42 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="toolTip">
+      <string>Only export those segments that are currently visible.</string>
+     </property>
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
-   <item row="6" column="1">
-    <widget class="QCheckBox" name="MergeIntoSingleFileCheckBox">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
+   <item row="8" column="0">
+    <widget class="QLabel" name="SizeScaleLabel">
      <property name="text">
-      <string/>
+      <string>Size scale:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="1">
+    <widget class="QComboBox" name="CoordinateSystemComboBox">
+     <property name="toolTip">
+      <string>Output model XYZ axes are mapped to LPS (left-posterior-superior) or RAS (right-anterior-superior) patient axis directions. LPS is used more commonly.</string>
+     </property>
+     <item>
+      <property name="text">
+       <string>LPS</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>RAS</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="7" column="0">
+    <widget class="QLabel" name="VisibleSegmentsOnlyLabel">
+     <property name="text">
+      <string>Visible segments only: </string>
      </property>
     </widget>
    </item>
@@ -61,7 +82,11 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="ctkDirectoryButton" name="DestinationFolderButton"/>
+      <widget class="ctkDirectoryButton" name="DestinationFolderButton">
+       <property name="focusPolicy">
+        <enum>Qt::TabFocus</enum>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QToolButton" name="ShowDestinationFolderButton">
@@ -79,38 +104,45 @@
      </item>
     </layout>
    </item>
-   <item row="9" column="1">
-    <widget class="QComboBox" name="CoordinateSystemComboBox">
-     <item>
-      <property name="text">
-       <string>LPS</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>RAS</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="FileFormatLabel">
+   <item row="6" column="1">
+    <widget class="QCheckBox" name="MergeIntoSingleFileCheckBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="toolTip">
+      <string>Export all segments to a single output file.</string>
+     </property>
      <property name="text">
-      <string>File format:</string>
+      <string/>
      </property>
     </widget>
    </item>
-   <item row="7" column="0">
-    <widget class="QLabel" name="VisibleSegmentsOnlyLabel">
+   <item row="10" column="1">
+    <widget class="QCheckBox" name="ShowDestinationFolderOnExportCompleteCheckBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="toolTip">
+      <string>Open destination folder when export is completed.</string>
+     </property>
      <property name="text">
-      <string>Visible segments only: </string>
+      <string/>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
-   <item row="9" column="0">
-    <widget class="QLabel" name="CoordinateSystemLabel">
+   <item row="2" column="0">
+    <widget class="QLabel" name="DestinationFoldeLabel">
      <property name="text">
-      <string>Coordinate system: </string>
+      <string>Destination folder: </string>
      </property>
     </widget>
    </item>
@@ -128,17 +160,17 @@
      </item>
     </widget>
    </item>
-   <item row="6" column="0">
-    <widget class="QLabel" name="MergeIntoSingleFileLabel">
+   <item row="4" column="0">
+    <widget class="QLabel" name="FileFormatLabel">
      <property name="text">
-      <string>Merge into single file:</string>
+      <string>File format:</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="DestinationFoldeLabel">
+   <item row="9" column="0">
+    <widget class="QLabel" name="CoordinateSystemLabel">
      <property name="text">
-      <string>Destination folder: </string>
+      <string>Coordinate system: </string>
      </property>
     </widget>
    </item>
@@ -149,6 +181,13 @@
      </property>
     </widget>
    </item>
+   <item row="6" column="0">
+    <widget class="QLabel" name="MergeIntoSingleFileLabel">
+     <property name="text">
+      <string>Merge into single file:</string>
+     </property>
+    </widget>
+   </item>
    <item row="10" column="0">
     <widget class="QLabel" name="ShowDestinationFolderOnExportCompleteLabel">
      <property name="text">
@@ -156,22 +195,31 @@
      </property>
     </widget>
    </item>
-   <item row="10" column="1">
-    <widget class="QCheckBox" name="ShowDestinationFolderOnExportCompleteCheckBox">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+   <item row="8" column="1">
+    <widget class="ctkDoubleSpinBox" name="SizeScaleSpinBox">
+     <property name="focusPolicy">
+      <enum>Qt::TabFocus</enum>
      </property>
      <property name="toolTip">
-      <string>Open destination folder when export is completed</string>
+      <string>Adjust the exported model size. Point coordinates in the exported model will be multiplied by this number. By default Slicer uses millimeter unit for coordinates.</string>
      </property>
-     <property name="text">
-      <string/>
+     <property name="decimals">
+      <number>3</number>
      </property>
-     <property name="checked">
-      <bool>true</bool>
+     <property name="decimalsOption">
+      <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts</set>
+     </property>
+     <property name="minimum">
+      <double>0.000001000000000</double>
+     </property>
+     <property name="maximum">
+      <double>1000000.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="value">
+      <double>1.000000000000000</double>
      </property>
     </widget>
    </item>
@@ -189,7 +237,23 @@
    <extends>QWidget</extends>
    <header>ctkDirectoryButton.h</header>
   </customwidget>
+  <customwidget>
+   <class>ctkDoubleSpinBox</class>
+   <extends>QWidget</extends>
+   <header>ctkDoubleSpinBox.h</header>
+  </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>DestinationFolderButton</tabstop>
+  <tabstop>ShowDestinationFolderButton</tabstop>
+  <tabstop>FileFormatComboBox</tabstop>
+  <tabstop>MergeIntoSingleFileCheckBox</tabstop>
+  <tabstop>VisibleSegmentsOnlyCheckBox</tabstop>
+  <tabstop>SizeScaleSpinBox</tabstop>
+  <tabstop>CoordinateSystemComboBox</tabstop>
+  <tabstop>ShowDestinationFolderOnExportCompleteCheckBox</tabstop>
+  <tabstop>ExportToFilesButton</tabstop>
+ </tabstops>
  <resources>
   <include location="../../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
  </resources>

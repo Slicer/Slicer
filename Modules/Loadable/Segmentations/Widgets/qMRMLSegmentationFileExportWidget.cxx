@@ -145,6 +145,7 @@ void qMRMLSegmentationFileExportWidget::updateWidgetFromSettings()
   d->DestinationFolderButton->setDirectory(settings.value(d->SettingsKey + "/DestinationFolder", ".").toString());
   d->VisibleSegmentsOnlyCheckBox->setChecked(settings.value(d->SettingsKey + "/VisibleSegmentsOnly", false).toBool());
   d->MergeIntoSingleFileCheckBox->setChecked(settings.value(d->SettingsKey + "/MergeIntoSingleFile", false).toBool());
+  d->SizeScaleSpinBox->setValue(settings.value(d->SettingsKey + "/SizeScale", 1.0).toDouble());
   d->ShowDestinationFolderOnExportCompleteCheckBox->setChecked(settings.value(d->SettingsKey + "/ShowDestinationFolderOnExportComplete", true).toBool());
 
   QString coordinateSystem = settings.value(d->SettingsKey + "/CoordinateSystem", "LPS").toString();
@@ -167,6 +168,7 @@ void qMRMLSegmentationFileExportWidget::updateSettingsFromWidget()
   settings.setValue(d->SettingsKey + "/DestinationFolder", d->DestinationFolderButton->directory());
   settings.setValue(d->SettingsKey + "/VisibleSegmentsOnly", d->VisibleSegmentsOnlyCheckBox->isChecked());
   settings.setValue(d->SettingsKey + "/MergeIntoSingleFile", d->MergeIntoSingleFileCheckBox->isChecked());
+  settings.setValue(d->SettingsKey + "/SizeScale", d->SizeScaleSpinBox->value());
   settings.setValue(d->SettingsKey + "/ShowDestinationFolderOnExportComplete", d->ShowDestinationFolderOnExportCompleteCheckBox->isChecked());
   settings.setValue(d->SettingsKey + "/CoordinateSystem", d->CoordinateSystemComboBox->currentText());
 }
@@ -196,6 +198,7 @@ void qMRMLSegmentationFileExportWidget::exportToFiles()
     segmentIds.GetPointer(),
     d->FileFormatComboBox->currentText().toLatin1().constData(),
     d->CoordinateSystemComboBox->currentText() == "LPS",
+    d->SizeScaleSpinBox->value(),
     d->MergeIntoSingleFileCheckBox->isChecked());
 
   QApplication::restoreOverrideCursor();

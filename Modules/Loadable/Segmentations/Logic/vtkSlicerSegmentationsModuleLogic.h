@@ -243,7 +243,7 @@ public:
   /// \param segmentIds List of segment IDs to export
   static bool ExportSegmentsClosedSurfaceRepresentationToFiles(std::string destinationFolder,
     vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* segmentIds = NULL,
-    std::string fileFormat = "STL", bool lps = true, bool merge = false);
+    std::string fileFormat = "STL", bool lps = true, double sizeScale = 1.0, bool merge = false);
 
   /// Create representation of only one segment in a segmentation.
   /// Useful if only one segment is processed, and we do not want to convert all segments to a certain
@@ -351,9 +351,9 @@ protected:
   virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) VTK_OVERRIDE;
 
   static bool ExportSegmentsClosedSurfaceRepresentationToStlFiles(std::string destinationFolder,
-    vtkMRMLSegmentationNode* segmentationNode, std::vector<std::string>& segmentIDs, bool lps, bool merge);
+    vtkMRMLSegmentationNode* segmentationNode, std::vector<std::string>& segmentIDs, bool lps, double sizeScale, bool merge);
   static bool ExportSegmentsClosedSurfaceRepresentationToObjFile(std::string destinationFolder,
-    vtkMRMLSegmentationNode* segmentationNode, std::vector<std::string>& segmentIDs, bool lps);
+    vtkMRMLSegmentationNode* segmentationNode, std::vector<std::string>& segmentIDs, bool lps, double sizeScale);
 
 protected:
   vtkSlicerSegmentationsModuleLogic();

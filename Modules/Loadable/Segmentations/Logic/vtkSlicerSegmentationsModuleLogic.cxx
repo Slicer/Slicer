@@ -2023,7 +2023,7 @@ bool vtkSlicerSegmentationsModuleLogic::SetTerminologyToSegmentationFromLabelmap
 //-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentationToFiles(std::string destinationFolder,
   vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* segmentIds /*=NULL*/,
-  std::string fileFormat /*="STL"*/, bool lps /*=true*/, bool merge /*=false*/)
+  std::string fileFormat /*="STL"*/, bool lps /*=true*/, double sizeScale /*=1.0*/, bool merge /*=false*/)
 {
   if (!segmentationNode || !segmentationNode->GetSegmentation())
     {
@@ -2047,19 +2047,19 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentatio
   std::string extension = vtksys::SystemTools::LowerCase(fileFormat);
   if (extension == "obj")
     {
-    return ExportSegmentsClosedSurfaceRepresentationToObjFile(destinationFolder, segmentationNode, segmentIdsVector, lps);
+    return ExportSegmentsClosedSurfaceRepresentationToObjFile(destinationFolder, segmentationNode, segmentIdsVector, lps, sizeScale);
     }
   if (extension != "stl")
     {
     vtkGenericWarningMacro("ExportSegmentsClosedSurfaceRepresentationToFiles: fileFormat "
       << fileFormat << " is unknown. Using STL.");
     }
-  return ExportSegmentsClosedSurfaceRepresentationToStlFiles(destinationFolder, segmentationNode, segmentIdsVector, lps, merge);
+  return ExportSegmentsClosedSurfaceRepresentationToStlFiles(destinationFolder, segmentationNode, segmentIdsVector, lps, sizeScale, merge);
 }
 
 //-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentationToStlFiles(std::string destinationFolder,
-  vtkMRMLSegmentationNode* segmentationNode, std::vector<std::string>& segmentIDs, bool lps, bool merge)
+  vtkMRMLSegmentationNode* segmentationNode, std::vector<std::string>& segmentIDs, bool lps, double sizeScale, bool merge)
 {
   if (!segmentationNode)
     {
@@ -2077,6 +2077,12 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentatio
   writer->SetFileType(VTK_BINARY);
   writer->SetInputConnection(triangulator->GetOutputPort());
   std::string header = std::string("3D Slicer output. ") + coordinateSytemSpecification;
+  if (sizeScale != 1.0)
+    {
+    std::ostringstream strs;
+    strs << sizeScale;
+    header += ";SCALE=" + strs.str();
+    }
   writer->SetHeader(header.c_str());
 
   if (merge)
@@ -2096,20 +2102,20 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentatio
         }
       appendPolyData->AddInputData(segmentPolyData.GetPointer());
       }
-    appendPolyData->Update();
-    vtkSmartPointer<vtkPolyData> polyDataToExport = appendPolyData->GetOutput();
+    vtkNew<vtkTransform> transformRasToLps;
+    if (sizeScale != 1.0)
+      {
+      transformRasToLps->Scale(sizeScale, sizeScale, sizeScale);
+      }
     if (lps)
       {
-      vtkNew<vtkTransform> transformRasToLps;
       transformRasToLps->Scale(-1, -1, 1);
-      vtkNew<vtkTransformPolyDataFilter> transformPolyDataRasToLps;
-      transformPolyDataRasToLps->SetTransform(transformRasToLps.GetPointer());
-      transformPolyDataRasToLps->SetInputData(polyDataToExport);
-      transformPolyDataRasToLps->Update();
-      polyDataToExport = transformPolyDataRasToLps->GetOutput();
       }
+    vtkNew<vtkTransformPolyDataFilter> transformPolyDataToOutput;
+    transformPolyDataToOutput->SetTransform(transformRasToLps.GetPointer());
+    transformPolyDataToOutput->SetInputConnection(appendPolyData->GetOutputPort());
     std::string filePath = destinationFolder + "/" + segmentationNode->GetName() + ".stl";
-    triangulator->SetInputData(polyDataToExport.GetPointer());
+    triangulator->SetInputConnection(transformPolyDataToOutput->GetOutputPort());
     writer->SetFileName(filePath.c_str());
     try
       {
@@ -2135,20 +2141,21 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentatio
           << (*segmentIdIt) << " to closed surface representation");
         continue;
         }
-      vtkSmartPointer<vtkPolyData> polyDataToExport = segmentPolyData.GetPointer();
+      vtkNew<vtkTransform> transformRasToLps;
+      if (sizeScale != 1.0)
+        {
+        transformRasToLps->Scale(sizeScale, sizeScale, sizeScale);
+        }
       if (lps)
         {
-        vtkNew<vtkTransform> transformRasToLps;
         transformRasToLps->Scale(-1, -1, 1);
-        vtkNew<vtkTransformPolyDataFilter> transformPolyDataRasToLps;
-        transformPolyDataRasToLps->SetTransform(transformRasToLps.GetPointer());
-        transformPolyDataRasToLps->SetInputData(polyDataToExport);
-        transformPolyDataRasToLps->Update();
-        polyDataToExport = transformPolyDataRasToLps->GetOutput();
         }
+      vtkNew<vtkTransformPolyDataFilter> transformPolyDataToOutput;
+      transformPolyDataToOutput->SetTransform(transformRasToLps.GetPointer());
+      transformPolyDataToOutput->SetInputData(segmentPolyData.GetPointer());
       std::string segmentName = segmentationNode->GetSegmentation()->GetSegment(*segmentIdIt)->GetName();
       std::string filePath = destinationFolder + "/" + segmentationNode->GetName() + "_" + segmentName + ".stl";
-      triangulator->SetInputData(polyDataToExport.GetPointer());
+      triangulator->SetInputConnection(transformPolyDataToOutput->GetOutputPort());
       writer->SetFileName(filePath.c_str());
       try
         {
@@ -2167,7 +2174,7 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentatio
 
 //-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentationToObjFile(std::string destinationFolder,
-  vtkMRMLSegmentationNode* segmentationNode, std::vector<std::string>& segmentIDs, bool lps)
+  vtkMRMLSegmentationNode* segmentationNode, std::vector<std::string>& segmentIDs, bool lps, double sizeScale)
 {
   if (!segmentationNode)
     {
@@ -2192,19 +2199,20 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentatio
         << (*segmentIdIt) << " to closed surface representation");
       continue;
       }
-    vtkSmartPointer<vtkPolyData> polyDataToExport = segmentPolyData.GetPointer();
+    vtkNew<vtkTransform> transformRasToLps;
+    if (sizeScale != 1.0)
+      {
+      transformRasToLps->Scale(sizeScale, sizeScale, sizeScale);
+      }
     if (lps)
       {
-      vtkNew<vtkTransform> transformRasToLps;
       transformRasToLps->Scale(-1, -1, 1);
-      vtkNew<vtkTransformPolyDataFilter> transformPolyDataRasToLps;
-      transformPolyDataRasToLps->SetTransform(transformRasToLps.GetPointer());
-      transformPolyDataRasToLps->SetInputData(polyDataToExport);
-      transformPolyDataRasToLps->Update();
-      polyDataToExport = transformPolyDataRasToLps->GetOutput();
       }
+    vtkNew<vtkTransformPolyDataFilter> transformPolyDataToOutput;
+    transformPolyDataToOutput->SetTransform(transformRasToLps.GetPointer());
+    transformPolyDataToOutput->SetInputData(segmentPolyData.GetPointer());
     vtkNew<vtkPolyDataMapper> mapper;
-    mapper->SetInputData(polyDataToExport.GetPointer());
+    mapper->SetInputConnection(transformPolyDataToOutput->GetOutputPort());
     vtkNew<vtkActor> actor;
     actor->SetMapper(mapper.GetPointer());
 
@@ -2233,6 +2241,12 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentatio
   const std::string coordinateSystemValue = (lps ? "LPS" : "RAS");
   const std::string coordinateSytemSpecification = "SPACE=" + coordinateSystemValue;
   std::string header = std::string("3D Slicer output. ") + coordinateSytemSpecification;
+  if (sizeScale != 1.0)
+    {
+    std::ostringstream strs;
+    strs << sizeScale;
+    header += ";SCALE=" + strs.str();
+    }
   exporter->SetOBJFileComment(header.c_str());
 #endif
 
