@@ -25,7 +25,6 @@ Version:   $Revision: 1.3 $
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLViewNode);
 
-
 //----------------------------------------------------------------------------
 vtkMRMLViewNode::vtkMRMLViewNode()
 {
@@ -56,7 +55,7 @@ vtkMRMLViewNode::vtkMRMLViewNode()
   this->FPSVisible = 0;
   this->OrientationMarkerEnabled = true;
   this->RulerEnabled = true;
-  this->GPUMemorySize = 0; // means application default
+  this->GPUMemorySize = 0; // Means application default
   this->ExpectedFPS = 8.;
   this->VolumeRenderingQuality = vtkMRMLViewNode::Adaptive;
   this->RaycastTechnique = vtkMRMLViewNode::Composite;

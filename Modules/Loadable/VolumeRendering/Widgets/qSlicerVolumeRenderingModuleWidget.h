@@ -75,11 +75,11 @@ protected slots:
   void onCurrentMRMLVolumePropertyNodeChanged(vtkMRMLNode* node);
 
   void onCurrentRenderingMethodChanged(int index);
-  void onCurrentMemorySizeChanged(int index);
+  void onCurrentMemorySizeChanged();
   void onCurrentQualityControlChanged(int index);
   void onCurrentFramerateChanged(double fps);
 
-  void updateWidgetFromDisplayNode();
+  void updateWidgetFromMRML();
   void updateWidgetFromROINode();
 
   void synchronizeScalarDisplayNode();

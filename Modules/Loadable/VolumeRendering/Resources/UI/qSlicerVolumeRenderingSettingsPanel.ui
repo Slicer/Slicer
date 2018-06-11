@@ -46,73 +46,13 @@
     </widget>
    </item>
    <item row="4" column="1">
-    <widget class="QComboBox" name="GPUMemoryComboBox">
+    <widget class="qSlicerGPUMemoryComboBox" name="GPUMemoryComboBox">
      <property name="toolTip">
-      <string>Amount of memory available on the graphic card</string>
+      <string>Amount of memory allocated for volume rendering on the graphic card</string>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>-1</number>
      </property>
-     <item>
-      <property name="text">
-       <string>128 MB</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>256 MB</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>512 MB</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>1024 MB</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>1.5 GB</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>2 GB</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>3 GB</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>4 GB</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>6 GB</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>8 GB</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>12 GB</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>16 GB</string>
-      </property>
-     </item>
     </widget>
    </item>
    <item row="1" column="1">
@@ -178,6 +118,12 @@
    <class>ctkSliderWidget</class>
    <extends>QWidget</extends>
    <header>ctkSliderWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerGPUMemoryComboBox</class>
+   <extends>QComboBox</extends>
+   <header>qSlicerGPUMemoryComboBox.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

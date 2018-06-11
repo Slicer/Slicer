@@ -27,6 +27,8 @@ set(${KIT}_SRCS
   qSlicer${MODULE_NAME}PresetComboBox.h
   qMRMLVolumePropertyNodeWidget.cxx
   qMRMLVolumePropertyNodeWidget.h
+  qSlicerGPUMemoryComboBox.cxx
+  qSlicerGPUMemoryComboBox.h
   )
 
 set(${KIT}_MOC_SRCS
@@ -39,6 +41,7 @@ set(${KIT}_MOC_SRCS
   qSlicer${MODULE_NAME}PropertiesWidget.h
   qSlicer${MODULE_NAME}PresetComboBox.h
   qMRMLVolumePropertyNodeWidget.h
+  qSlicerGPUMemoryComboBox.h
   )
 
 set(${KIT}_UI_SRCS

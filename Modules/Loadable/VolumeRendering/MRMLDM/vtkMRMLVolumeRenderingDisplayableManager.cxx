@@ -205,7 +205,21 @@ vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::vtkInternal(vtkMRMLVolume
 {
   this->MultiVolumeActor = vtkSmartPointer<vtkMultiVolume>::New();
   this->MultiVolumeMapper = vtkSmartPointer<vtkGPUVolumeRayCastMapper>::New();
-  // Set GPU mapper to the multi-volume actor. Both objects are only used for GPU ray casting
+
+  // Set GPU mapper to the multi-volume actor. Both objects are only used for multi-volume GPU ray casting.
+  // vtkMultiVolume works differently than the other two rendering modes, in the sense that those use a
+  // separate mapper instance for each volume. Instead, vtkMultiVolume operates like this:
+  //
+  //                             <-- vtkVolume #1 (transfer functions, transform, etc.)
+  // Renderer <-- vtkMultiVolume <-- vtkVolume #2
+  //                    ^        <-- vtkVolume #3
+  //                    |
+  //         vtkGPUVolumeRayCastMapper
+  //         ^          ^            ^
+  //         |          |            |
+  //     InputCon1  InputCon2   InputCon3
+  //  (vtkImageData)
+  //
   this->MultiVolumeActor->SetMapper(this->MultiVolumeMapper);
 
   this->DisplayObservedEvents = vtkIntArray::New();
@@ -919,11 +933,17 @@ bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UseDisplayableNode(v
 //---------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateMultiVolumeMapperSampleDistance()
 {
-  double minimumSampleDistance = VTK_DOUBLE_MAX;
-  vtkInternal::VolumeToDisplayCacheType::iterator volumeIt;
-  for (volumeIt = this->VolumeToDisplayNodes.begin(); volumeIt!=this->VolumeToDisplayNodes.end(); ++volumeIt)
+  if (this->AddingVolumeNode)
     {
-    std::set< vtkMRMLVolumeRenderingDisplayNode* > displayNodes = this->VolumeToDisplayNodes[volumeIt->first];
+    return;
+    }
+
+  double minimumSampleDistance = VTK_DOUBLE_MAX;
+  vtkInternal::VolumeToDisplayCacheType volumeToDisplayCopy(this->VolumeToDisplayNodes);
+  vtkInternal::VolumeToDisplayCacheType::iterator volumeIt;
+  for (volumeIt=volumeToDisplayCopy.begin(); volumeIt!=volumeToDisplayCopy.end(); ++volumeIt)
+    {
+    std::set< vtkMRMLVolumeRenderingDisplayNode* > displayNodes(volumeToDisplayCopy[volumeIt->first]);
     std::set< vtkMRMLVolumeRenderingDisplayNode* >::iterator displayNodeIt;
     for (displayNodeIt = displayNodes.begin(); displayNodeIt != displayNodes.end(); displayNodeIt++)
       {

@@ -29,6 +29,7 @@
 #include "qSlicerGPURayCastVolumeRenderingPropertiesWidget.h"
 #include "qSlicerMultiVolumeRenderingPropertiesWidget.h"
 #include "qSlicerVolumeRenderingPresetComboBox.h"
+#include "qSlicerGPUMemoryComboBox.h"
 
 // MRML includes
 #include "vtkMRMLScene.h"
@@ -125,24 +126,11 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
                               new qSlicerGPURayCastVolumeRenderingPropertiesWidget);
   q->addRenderingMethodWidget("vtkMRMLMultiVolumeRenderingDisplayNode",
                               new qSlicerMultiVolumeRenderingPropertiesWidget);
-  QSettings settings;
-  int defaultGPUMemorySize = settings.value("VolumeRendering/GPUMemorySize").toInt();
-  this->MemorySizeComboBox->addItem(QString("Default (%1 MB)").arg(defaultGPUMemorySize), 0);
-  this->MemorySizeComboBox->insertSeparator(1);
-  this->MemorySizeComboBox->addItem("128 MB", 128);
-  this->MemorySizeComboBox->addItem("256 MB", 256);
-  this->MemorySizeComboBox->addItem("512 MB", 512);
-  this->MemorySizeComboBox->addItem("1024 MB", 1024);
-  this->MemorySizeComboBox->addItem("1.5 GB", 1536);
-  this->MemorySizeComboBox->addItem("2 GB", 2048);
-  this->MemorySizeComboBox->addItem("3 GB", 3072);
-  this->MemorySizeComboBox->addItem("4 GB", 4096);
-  this->MemorySizeComboBox->addItem("6 GB", 6144);
-  this->MemorySizeComboBox->addItem("8 GB", 8192);
-  this->MemorySizeComboBox->addItem("12 GB", 12288);
-  this->MemorySizeComboBox->addItem("16 GB", 16384);
+
+  QObject::connect(this->MemorySizeComboBox, SIGNAL(editTextChanged(QString)),
+                   q, SLOT(onCurrentMemorySizeChanged()));
   QObject::connect(this->MemorySizeComboBox, SIGNAL(currentIndexChanged(int)),
-                   q, SLOT(onCurrentMemorySizeChanged(int)));
+                   q, SLOT(onCurrentMemorySizeChanged()));
 
   for (int qualityIndex=0; qualityIndex<vtkMRMLViewNode::VolumeRenderingQuality_Last; qualityIndex++)
     {
@@ -237,8 +225,7 @@ vtkMRMLVolumeRenderingDisplayNode* qSlicerVolumeRenderingModuleWidgetPrivate::cr
   // Do not show newly selected volume (because it would be triggered by simply selecting it in the combobox,
   // and it would not adhere to the customary Slicer behavior)
   displayNode->SetVisibility(0);
-  //bool wasLastVolumeVisible = this->VisibilityCheckBox->isChecked();
-  //displayNode->SetVisibility(wasLastVolumeVisible);
+  // Set selected views to the display node
   foreach (vtkMRMLAbstractViewNode* viewNode, this->ViewCheckableNodeComboBox->checkedViewNodes())
     {
     displayNode->AddViewNodeID(viewNode ? viewNode->GetID() : 0);
@@ -309,7 +296,7 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLVolumeNodeChanged(vtkMRMLN
     }
   if (displayNode)
     {
-    this->qvtkReconnect(displayNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromDisplayNode()));
+    this->qvtkReconnect(displayNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
     }
 
   d->ViewCheckableNodeComboBox->setMRMLDisplayNode(displayNode);
@@ -325,7 +312,7 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLVolumeNodeChanged(vtkMRMLN
     }
 
   // Update widget from display node of the volume node
-  this->updateWidgetFromDisplayNode();
+  this->updateWidgetFromMRML();
 }
 
 // --------------------------------------------------------------------------
@@ -348,7 +335,7 @@ void qSlicerVolumeRenderingModuleWidget::onVisibilityChanged(bool visible)
   displayNode->SetVisibility(visible);
 
   // Update widget from display node of the volume node
-  this->updateWidgetFromDisplayNode();
+  this->updateWidgetFromMRML();
 }
 
 // --------------------------------------------------------------------------
@@ -361,7 +348,7 @@ void qSlicerVolumeRenderingModuleWidget::addRenderingMethodWidget(
 }
 
 // --------------------------------------------------------------------------
-void qSlicerVolumeRenderingModuleWidget::updateWidgetFromDisplayNode()
+void qSlicerVolumeRenderingModuleWidget::updateWidgetFromMRML()
 {
   Q_D(qSlicerVolumeRenderingModuleWidget);
 
@@ -416,9 +403,8 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromDisplayNode()
     settings.value("VolumeRendering/RenderingMethod", QString("vtkMRMLCPURayCastVolumeRenderinDisplayNode")).toString();
   QString currentRenderingMethod = displayNode ? QString(displayNode->GetClassName()) : defaultRenderingMethod;
   d->RenderingMethodComboBox->setCurrentIndex(d->RenderingMethodComboBox->findData(currentRenderingMethod) );
-  int index = firstViewNode ? d->MemorySizeComboBox->findData(QVariant(firstViewNode->GetGPUMemorySize())) : -1;
-  d->MemorySizeComboBox->setCurrentIndex(index);
-  d->QualityControlComboBox->setCurrentIndex( firstViewNode ? firstViewNode->GetVolumeRenderingQuality() : -1);
+  d->MemorySizeComboBox->setCurrentGPUMemory(firstViewNode ? firstViewNode->GetGPUMemorySize() : 0);
+  d->QualityControlComboBox->setCurrentIndex(firstViewNode ? firstViewNode->GetVolumeRenderingQuality() : -1);
   if (firstViewNode)
     {
     d->FramerateSliderWidget->setValue(firstViewNode->GetExpectedFPS());
@@ -605,15 +591,16 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentRenderingMethodChanged(int ind
     return;
     }
 
+  // Replace display nodes with new display nodes of the type corresponding to the requested method
   vtkSlicerVolumeRenderingLogic* volumeRenderingLogic = vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic());
   volumeRenderingLogic->ChangeVolumeRenderingMethod(renderingClassName.toLatin1());
 
-  // Update widget from display node of the volume node
-  this->updateWidgetFromDisplayNode();
+  // Perform necessary setup steps for the new display node for the current volume
+  this->onCurrentMRMLVolumeNodeChanged(d->VolumeNodeComboBox->currentNode());
 }
 
 // --------------------------------------------------------------------------
-void qSlicerVolumeRenderingModuleWidget::onCurrentMemorySizeChanged(int index)
+void qSlicerVolumeRenderingModuleWidget::onCurrentMemorySizeChanged()
 {
   Q_D(qSlicerVolumeRenderingModuleWidget);
   vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
@@ -621,8 +608,7 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentMemorySizeChanged(int index)
     {
     return;
     }
-  int gpuMemorySize = d->MemorySizeComboBox->itemData(index).toInt();
-  Q_ASSERT(gpuMemorySize >= 0 && gpuMemorySize < 10000);
+  int gpuMemorySize = d->MemorySizeComboBox->currentGPUMemoryInMB();
 
   std::vector<vtkMRMLNode*> viewNodes;
   displayNode->GetScene()->GetNodesByClass("vtkMRMLViewNode", viewNodes);
@@ -655,6 +641,8 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentQualityControlChanged(int inde
       viewNode->SetVolumeRenderingQuality(index);
       }
     }
+
+  this->updateWidgetFromMRML();
 }
 
 // --------------------------------------------------------------------------

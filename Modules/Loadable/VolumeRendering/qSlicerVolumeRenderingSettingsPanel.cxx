@@ -34,8 +34,6 @@
 #include <vtkSlicerVolumeRenderingLogic.h>
 
 // VTK includes
-#include <vtkGPUInfo.h>
-#include <vtkGPUInfoList.h>
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>
 
@@ -57,15 +55,11 @@ public:
   qSlicerVolumeRenderingSettingsPanelPrivate(qSlicerVolumeRenderingSettingsPanel& object);
   void init();
 
-  int memoryFromString(const QString& memory)const;
-  QString memoryToString(int memory)const;
-
   void addRenderingMethod(const QString& methodName, const QString& methodClassName);
 
   vtkMRMLScene* mrmlScene();
   vtkMRMLViewNode* defaultMrmlViewNode();
 
-  QRegExp MemoryRegExp;
   vtkSmartPointer<vtkSlicerVolumeRenderingLogic> VolumeRenderingLogic;
 };
 
@@ -77,7 +71,6 @@ qSlicerVolumeRenderingSettingsPanelPrivate
 ::qSlicerVolumeRenderingSettingsPanelPrivate(qSlicerVolumeRenderingSettingsPanel& object)
   :q_ptr(&object)
 {
-  this->MemoryRegExp = QRegExp("^(\\d+(?:\\.\\d*)?)\\s?(MB|GB)$");
 }
 
 // --------------------------------------------------------------------------
@@ -118,60 +111,13 @@ void qSlicerVolumeRenderingSettingsPanelPrivate::init()
   //
   // GPU memory
   //
-  this->GPUMemoryComboBox->setEditable(true);
-  this->GPUMemoryComboBox->lineEdit()->setValidator(new QRegExpValidator(this->MemoryRegExp, q));
-  this->GPUMemoryComboBox->insertItem(0, q->tr("0 MB"));
-  this->GPUMemoryComboBox->insertSeparator(1);
-
   QObject::connect(this->GPUMemoryComboBox, SIGNAL(editTextChanged(QString)),
                    q, SLOT(onGPUMemoryChanged()));
-  QObject::connect(this->GPUMemoryComboBox, SIGNAL(currentIndexChanged(QString)),
+  QObject::connect(this->GPUMemoryComboBox, SIGNAL(currentTextChanged(QString)),
                    q, SLOT(onGPUMemoryChanged()));
 
-  // Detect the amount of memory in the graphic card
-  vtkNew<vtkGPUInfoList> gpuInfoList;
-  gpuInfoList->Probe();
-
-  if (gpuInfoList->GetNumberOfGPUs() > 0)
-    {
-    int gpuMemoryInBytes = gpuInfoList->GetGPUInfo(0)->GetDedicatedVideoMemory();
-    int gpuMemoryInKo = gpuMemoryInBytes / 1024;
-    int gpuMemoryInMo = gpuMemoryInKo / 1024;
-    // Set it as the default amount of memory
-    q->setGPUMemory(gpuMemoryInMo);
-    }
-
   q->registerProperty("VolumeRendering/GPUMemorySize", q,
-                      "gpuMemory", SIGNAL(gpuMemoryChanged(int)));
-}
-
-// --------------------------------------------------------------------------
-int qSlicerVolumeRenderingSettingsPanelPrivate::memoryFromString(const QString& memory)const
-{
-  int pos = this->MemoryRegExp.indexIn(memory);
-  if (pos < 0)
-    {
-    return 0;
-    }
-
-  QString memoryValue = this->MemoryRegExp.cap(1);
-  QString memoryUnit = this->MemoryRegExp.cap(2);
-
-  double value = memoryValue.toDouble();
-  double unit = memoryUnit == "MB" ? 1. : 1024.;
-
-  return static_cast<int>(value * unit);
-}
-
-// --------------------------------------------------------------------------
-QString qSlicerVolumeRenderingSettingsPanelPrivate::memoryToString(int memory)const
-{
-  QString value = QString::number(memory) + " MB";
-  if (memory > 1024)
-    {
-    value = QString::number(static_cast<float>(memory) / 1024) + " GB";
-    }
-  return value;
+                      "gpuMemory", SIGNAL(gpuMemoryChanged(QString)));
 }
 
 // --------------------------------------------------------------------------
@@ -290,35 +236,18 @@ void qSlicerVolumeRenderingSettingsPanel::onVolumeRenderingLogicModified()
 }
 
 // --------------------------------------------------------------------------
-int qSlicerVolumeRenderingSettingsPanel::gpuMemory()const
+QString qSlicerVolumeRenderingSettingsPanel::gpuMemory()const
 {
   Q_D(const qSlicerVolumeRenderingSettingsPanel);
-  QString memory = d->GPUMemoryComboBox->currentText();
-  return d->memoryFromString(memory);
+  return d->GPUMemoryComboBox->currentGPUMemoryAsString();
 }
 
 // --------------------------------------------------------------------------
-void qSlicerVolumeRenderingSettingsPanel::setGPUMemory(int gpuMemory)
+void qSlicerVolumeRenderingSettingsPanel::setGPUMemory(const QString& gpuMemoryString)
 {
   Q_D(qSlicerVolumeRenderingSettingsPanel);
-  QString value = d->memoryToString(gpuMemory);
-  int index = d->GPUMemoryComboBox->findText(value);
-  bool currentIndexModified = false;
-  if (index == -1)
-    {
-    int customIndex = 0;
-    d->GPUMemoryComboBox->setItemText(customIndex, value);
-    index = customIndex;
-    if (index == d->GPUMemoryComboBox->currentIndex())
-      {
-      currentIndexModified = true;
-      }
-    }
-  d->GPUMemoryComboBox->setCurrentIndex(index);
-  if (currentIndexModified)
-    {
-    this->onGPUMemoryChanged();
-    }
+  d->GPUMemoryComboBox->setCurrentGPUMemoryFromString(gpuMemoryString);
+  this->onGPUMemoryChanged();
 }
 
 // --------------------------------------------------------------------------
@@ -330,8 +259,7 @@ void qSlicerVolumeRenderingSettingsPanel::onGPUMemoryChanged()
     return;
     }
 
-  int memory = this->gpuMemory();
-  vtkMRMLVolumeRenderingDisplayableManager::DefaultGPUMemorySize = memory;
+  int memory = d->GPUMemoryComboBox->currentGPUMemoryInMB();
 
   // Set to default view node
   vtkMRMLViewNode* defaultViewNode = d->defaultMrmlViewNode();
@@ -349,7 +277,7 @@ void qSlicerVolumeRenderingSettingsPanel::onGPUMemoryChanged()
     viewNode->SetGPUMemorySize(memory);
     }
 
-  emit gpuMemoryChanged(memory);
+  emit gpuMemoryChanged(this->gpuMemory());
 }
 
 // --------------------------------------------------------------------------

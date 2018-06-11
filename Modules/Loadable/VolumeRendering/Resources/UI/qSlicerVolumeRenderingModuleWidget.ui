@@ -311,9 +311,9 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QComboBox" name="MemorySizeComboBox">
+           <widget class="qSlicerGPUMemoryComboBox" name="MemorySizeComboBox">
             <property name="toolTip">
-             <string>Amount of memory in MB available on the GPU for rendering. &quot;Default&quot; can be modified in the settings.</string>
+             <string>Amount of memory allocated for volume rendering on the graphic card. &quot;Default&quot; can be modified in the settings.</string>
             </property>
             <property name="currentIndex">
              <number>-1</number>
@@ -555,6 +555,12 @@
    <class>ctkSliderWidget</class>
    <extends>QWidget</extends>
    <header>ctkSliderWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerGPUMemoryComboBox</class>
+   <extends>QComboBox</extends>
+   <header>qSlicerGPUMemoryComboBox.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

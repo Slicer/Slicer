@@ -136,7 +136,7 @@ public:
   vtkGetMacro(FPSVisible, int);
   vtkSetMacro(FPSVisible, int);
 
-  /// GPU memory size
+  /// GPU memory size in MB
   /// 0 by default (application default)
   vtkGetMacro(GPUMemorySize, int);
   vtkSetMacro(GPUMemorySize, int);
@@ -292,9 +292,8 @@ protected:
   /// Show the Frame per second as text on the lower right part of the view
   int FPSVisible;
 
-  /// Tracking GPU memory size (in MB), not saved into scene file
-  /// because different machines may have different GPU memory
-  /// values.
+  /// Tracking GPU memory size in MB.
+  /// Not saved into scene file because different machines may have different GPU memory values.
   /// A value of 0 indicates to use the default value in the settings
   int GPUMemorySize;
 

@@ -39,7 +39,7 @@ class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT qSlicerVolumeRenderingSettingsPa
   Q_PROPERTY(QString defaultQuality READ defaultQuality WRITE setDefaultQuality NOTIFY defaultQualityChanged)
   Q_PROPERTY(int defaultInteractiveSpeed READ defaultInteractiveSpeed WRITE setDefaultInteractiveSpeed NOTIFY defaultInteractiveSpeedChanged)
   Q_PROPERTY(bool defaultSurfaceSmoothing READ defaultSurfaceSmoothing WRITE setDefaultSurfaceSmoothing NOTIFY defaultSurfaceSmoothingChanged)
-  Q_PROPERTY(int gpuMemory READ gpuMemory WRITE setGPUMemory NOTIFY gpuMemoryChanged)
+  Q_PROPERTY(QString gpuMemory READ gpuMemory WRITE setGPUMemory NOTIFY gpuMemoryChanged)
 
 public:
   /// Superclass typedef
@@ -60,21 +60,21 @@ public:
   QString defaultQuality()const;
   int defaultInteractiveSpeed()const;
   bool defaultSurfaceSmoothing()const;
-  int gpuMemory()const;
+  QString gpuMemory()const;
 
 public slots:
   void setDefaultRenderingMethod(const QString& method);
   void setDefaultQuality(const QString& quality);
   void setDefaultInteractiveSpeed(int interactiveSpeed);
   void setDefaultSurfaceSmoothing(bool surfaceSmoothing);
-  void setGPUMemory(int gpuMemory);
+  void setGPUMemory(const QString& gpuMemory);
 
 signals:
   void defaultRenderingMethodChanged(const QString&);
   void defaultQualityChanged(const QString&);
   void defaultInteractiveSpeedChanged(int);
   void defaultSurfaceSmoothingChanged(bool);
-  void gpuMemoryChanged(int);
+  void gpuMemoryChanged(QString);
 
 protected slots:
   void onVolumeRenderingLogicModified();

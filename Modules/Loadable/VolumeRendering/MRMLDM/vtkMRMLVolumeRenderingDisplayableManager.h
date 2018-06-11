@@ -27,12 +27,10 @@
 // MRML DisplayableManager includes
 #include <vtkMRMLAbstractThreeDViewDisplayableManager.h>
 
-//TODO: For testing, remove
-#include <vtkGPUVolumeRayCastMapper.h>
-#include <vtkVolume.h>
-#include "vtkMRMLVolumeNode.h"
-
 class vtkSlicerVolumeRenderingLogic;
+class vtkMRMLVolumeNode;
+class vtkVolumeMapper;
+class vtkVolume;
 
 #define VTKIS_VOLUME_PROPS 100
 

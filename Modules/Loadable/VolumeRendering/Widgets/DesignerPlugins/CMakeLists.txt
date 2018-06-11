@@ -15,6 +15,8 @@ set(${KIT}_SRCS
   qSlicerPresetComboBoxPlugin.h
   qSlicerVolumeRenderingPresetComboBoxPlugin.cxx
   qSlicerVolumeRenderingPresetComboBoxPlugin.h
+  qSlicerGPUMemoryComboBoxPlugin.cxx
+  qSlicerGPUMemoryComboBoxPlugin.h
   )
 
 set(${KIT}_MOC_SRCS
@@ -23,6 +25,7 @@ set(${KIT}_MOC_SRCS
   qMRMLVolumePropertyNodeWidgetPlugin.h
   qSlicerPresetComboBoxPlugin.h
   qSlicerVolumeRenderingPresetComboBoxPlugin.h
+  qSlicerGPUMemoryComboBoxPlugin.h
   )
 
 set(${KIT}_TARGET_LIBRARIES
