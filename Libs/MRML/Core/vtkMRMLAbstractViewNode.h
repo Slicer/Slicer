@@ -44,15 +44,12 @@ public:
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
-  ///
   /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
 
-  ///
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
 
-  ///
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
 
@@ -60,7 +57,6 @@ public:
   /// \sa GetLayoutLabel()
   virtual void Reset(vtkMRMLNode* defaultNode) VTK_OVERRIDE;
 
-  ///
   /// Name of the layout. Must be unique between all the view nodes of the
   /// same type because it is used as a singleton tag.
   /// Typical names can be colors "Red", "Green", "Yellow",...
@@ -70,7 +66,6 @@ public:
   inline void SetLayoutName(const char *layoutName);
   inline const char *GetLayoutName();
 
-  ///
   /// An optional identifier to link groups of views. Views that have matching
   /// ViewGroup value are in the same group.
   /// ViewGroup is used for restricting scope of:
@@ -84,13 +79,11 @@ public:
   vtkSetMacro(ViewGroup, int);
   vtkGetMacro(ViewGroup, int);
 
-  ///
   /// Label for the view. Usually a 1 character label, e.g. R, 1, 2, etc.
   /// \sa SetLayoutName()
   vtkSetStringMacro(LayoutLabel);
   vtkGetStringMacro(LayoutLabel);
 
-  ///
   /// Indicates whether or not the view is active
   vtkGetMacro(Active, int );
   vtkSetMacro(Active, int );
@@ -134,21 +127,19 @@ public:
   /// \sa vtkMRMLLayoutNode::SetViewArrangement()
   bool IsViewVisibleInLayout();
 
-  ///
   /// 1st background color of the view.
   /// Black (0,0,0) by default.
   /// \sa SetBackgroundColor2()
   vtkGetVector3Macro(BackgroundColor, double);
   vtkSetVector3Macro(BackgroundColor, double);
 
-  ///
   /// 2nd background color of the view
   /// Black (0,0,0) by default.
   /// \sa SetBackgroundColor2()
   vtkGetVector3Macro(BackgroundColor2, double);
   vtkSetVector3Macro(BackgroundColor2, double);
 
-  ///
+
   /// Color for view header in layout as RGB
   /// Gray by default
   vtkSetVector3Macro(LayoutColor, double);
@@ -165,12 +156,10 @@ public:
   /// It is set statically in each specific view node class and cannot be changed dynamically.
   vtkGetMacro(OrientationMarkerEnabled, bool);
 
-  ///
   /// Get/Set orientation marker type (e.g., not displayed, cube, human, coordinate system axes)
   vtkSetMacro(OrientationMarkerType, int);
   vtkGetMacro(OrientationMarkerType, int);
 
-  ///
   /// Get/Set a custom human orientation marker model.
   /// If NULL or invalid node ID is specified then the default human model will be used.
   /// If the node has point data array with the name "Color" and 3 scalar components then
@@ -180,17 +169,14 @@ public:
   const char* GetOrientationMarkerHumanModelNodeID();
   vtkMRMLModelNode* GetOrientationMarkerHumanModelNode();
 
-  ///
   /// Convert between orientation marker type ID and name
   static const char* GetOrientationMarkerTypeAsString(int id);
   static int GetOrientationMarkerTypeFromString(const char* name);
 
-  ///
   /// Get/Set orientation marker is size. There are a few predefined marker sizes, defined by an enumerated value (e.g., small, medium, large).
   vtkSetMacro(OrientationMarkerSize, int);
   vtkGetMacro(OrientationMarkerSize, int);
 
-  ///
   /// Convert between orientation marker type ID and name
   static const char* GetOrientationMarkerSizeAsString(int id);
   static int GetOrientationMarkerSizeFromString(const char* name);
@@ -217,12 +203,10 @@ public:
   /// It is set statically in each specific view node class and cannot be changed dynamically.
   vtkGetMacro(RulerEnabled, bool);
 
-  ///
   /// Get/Set ruler type (e.g., not displayed, thin, thick)
   vtkSetMacro(RulerType, int);
   vtkGetMacro(RulerType, int);
 
-  ///
   /// Convert between ruler type ID and name
   static const char* GetRulerTypeAsString(int id);
   static int GetRulerTypeFromString(const char* name);
@@ -236,7 +220,6 @@ public:
     RulerType_Last // insert valid types above this line
   };
 
-  ///
   /// Get/Set labels of coordinate system axes.
   /// Order of labels: -X, +X, -Y, +Y, -Z, +Z.
   /// Default: L, R, P, A, I, S
@@ -246,7 +229,6 @@ public:
   const char* GetAxisLabel(int labelIndex);
   void SetAxisLabel(int labelIndex, const char* label);
 
-  ///
   /// Total number of coordinate system axis labels
   static const int AxisLabelsCount;
 
@@ -263,7 +245,7 @@ protected:
 
   ///
   /// Label to show for the view (shortcut for the name)
-  char * LayoutLabel;
+  char* LayoutLabel;
 
   ///
   /// Indicates whether or not the View is visible.

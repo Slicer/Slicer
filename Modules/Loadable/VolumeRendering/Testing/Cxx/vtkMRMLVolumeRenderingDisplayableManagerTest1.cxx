@@ -141,8 +141,7 @@ int vtkMRMLVolumeRenderingDisplayableManagerTest1(int argc, char* argv[])
   vtkNew<vtkSlicerVolumeRenderingLogic> vrLogic;
   vrLogic->SetMRMLScene(scene);
 
-  vrLogic->CopyScalarDisplayToVolumeRenderingDisplayNode(
-    vrDisplayNode.GetPointer());
+  vrLogic->CopyScalarDisplayToVolumeRenderingDisplayNode(vrDisplayNode.GetPointer());
 
   vrDisplayNode->SetFollowVolumeDisplayNode(1);
   volumeDisplayNode->SetThreshold(128, 245);

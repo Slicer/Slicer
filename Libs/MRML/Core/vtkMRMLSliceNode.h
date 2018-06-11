@@ -28,7 +28,7 @@ class vtkMatrix4x4;
 /// This node stores the information about how to map from RAS space to
 /// the desired slice plane.
 /// \li SliceToRAS is the matrix that rotates and translates the slice plane
-/// \li FieldOfView tells the size of  slice plane
+/// \li FieldOfView tells the size of slice plane
 class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
 {
   public:

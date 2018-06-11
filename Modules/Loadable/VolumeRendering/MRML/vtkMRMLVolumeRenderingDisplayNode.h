@@ -128,6 +128,7 @@ protected:
   static const char* ROINodeReferenceMRMLAttributeName;
 
 protected:
+  /// Flag indicating whether cropping is enabled
   int CroppingEnabled;
 
   double EstimatedSampleDistance;
@@ -141,7 +142,7 @@ protected:
 
   double Threshold[2];
 
-  /// follow window/level and thresholding setting in volume display node
+  /// Follow window/level and thresholding setting in volume display node
   int FollowVolumeDisplayNode;
   int IgnoreVolumeDisplayNodeThreshold;
 

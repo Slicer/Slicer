@@ -35,19 +35,15 @@ public:
 
   virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
 
-  ///
   /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
 
-  ///
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
 
-  ///
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
 
-  ///
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() VTK_OVERRIDE;
 
@@ -55,95 +51,80 @@ public:
   static double* defaultBackgroundColor();
   static double* defaultBackgroundColor2();
 
-  ///
   /// Indicates if the box is visible
   vtkGetMacro(BoxVisible, int);
   vtkSetMacro(BoxVisible, int);
 
-  ///
   /// Indicates if the axis labels are visible
   vtkGetMacro(AxisLabelsVisible, int);
   vtkSetMacro(AxisLabelsVisible, int);
 
-  ///
   /// Indicates if the axis labels visibility controlled by camera orientation
   vtkGetMacro(AxisLabelsCameraDependent, int);
   vtkSetMacro(AxisLabelsCameraDependent, int);
 
-  ///
   /// Toggles visibility of fiducial points in 3D viewer
-  vtkGetMacro(FiducialsVisible, int );
-  vtkSetMacro(FiducialsVisible, int );
+  vtkGetMacro(FiducialsVisible, int);
+  vtkSetMacro(FiducialsVisible, int);
 
-  vtkGetMacro(FiducialLabelsVisible, int );
-  vtkSetMacro(FiducialLabelsVisible, int );
+  vtkGetMacro(FiducialLabelsVisible, int);
+  vtkSetMacro(FiducialLabelsVisible, int);
 
-  ///
   /// Field of view size
   vtkGetMacro(FieldOfView, double);
   vtkSetMacro(FieldOfView, double);
 
-  ///
   /// Axis label size
   vtkGetMacro(LetterSize, double);
   vtkSetMacro(LetterSize, double);
 
-  ///
   /// Turn on and off animated spinning or rocking.
-  vtkGetMacro(AnimationMode, int );
-  vtkSetMacro(AnimationMode, int );
+  vtkGetMacro(AnimationMode, int);
+  vtkSetMacro(AnimationMode, int);
 
-  ///
-  vtkGetMacro(ViewAxisMode, int );
-  vtkSetMacro(ViewAxisMode, int );
+  vtkGetMacro(ViewAxisMode, int);
+  vtkSetMacro(ViewAxisMode, int);
 
-  ///
   /// Direction of animated spinning
-  vtkGetMacro(SpinDirection, int );
-  vtkSetMacro(SpinDirection, int );
+  vtkGetMacro(SpinDirection, int);
+  vtkSetMacro(SpinDirection, int);
 
-  ///
   /// Number of degrees in spin increment.
-  vtkGetMacro(SpinDegrees, double );
-  vtkSetMacro(SpinDegrees, double );
+  vtkGetMacro(SpinDegrees, double);
+  vtkSetMacro(SpinDegrees, double);
 
-  vtkGetMacro(RotateDegrees, double );
-  vtkSetMacro(RotateDegrees, double );
+  vtkGetMacro(RotateDegrees, double);
+  vtkSetMacro(RotateDegrees, double);
 
-  ///
   /// Amount of wait time between spin increments
-  vtkGetMacro(AnimationMs, int );
-  vtkSetMacro(AnimationMs, int );
+  vtkGetMacro(AnimationMs, int);
+  vtkSetMacro(AnimationMs, int);
 
-  ///
   /// Length of animated rocking
-  vtkGetMacro(RockLength, int );
-  vtkSetMacro(RockLength, int );
+  vtkGetMacro(RockLength, int);
+  vtkSetMacro(RockLength, int);
 
-  ///
   /// Increment of animated rock
-  vtkGetMacro(RockCount, int );
-  vtkSetMacro(RockCount, int );
+  vtkGetMacro(RockCount, int);
+  vtkSetMacro(RockCount, int);
 
-  ///
-  /// stereo mode (including nostereo)
-  vtkGetMacro(StereoType, int );
-  vtkSetMacro(StereoType, int );
+  /// Stereo mode (including NoStereo)
+  vtkGetMacro(StereoType, int);
+  vtkSetMacro(StereoType, int);
 
-  ///
-  /// specifies orthographic or perspective rendering
-  vtkGetMacro(RenderMode, int );
-  vtkSetMacro(RenderMode, int );
+  /// Specifies orthographic or perspective rendering
+  vtkGetMacro(RenderMode, int);
+  vtkSetMacro(RenderMode, int);
 
   /// Use depth peeling or not.
   /// 0 by default.
-  vtkGetMacro(UseDepthPeeling, int );
-  vtkSetMacro(UseDepthPeeling, int );
+  vtkGetMacro(UseDepthPeeling, int);
+  vtkSetMacro(UseDepthPeeling, int);
 
   /// Show FPS in the lower right side of the screen.
   /// 0 by default.
-  vtkGetMacro(FPSVisible, int );
-  vtkSetMacro(FPSVisible, int );
+  vtkGetMacro(FPSVisible, int);
+  vtkSetMacro(FPSVisible, int);
 
   /// Modes for automatically controlling camera
   enum
@@ -176,14 +157,14 @@ public:
       UserDefined_3
     };
 
-  /// render modes
+  /// Render modes
   enum
     {
       Perspective = 0,
       Orthographic
     };
 
-  /// animation mode
+  /// Animation mode
   enum
     {
       Off = 0,
@@ -191,7 +172,7 @@ public:
       Rock
     };
 
-  /// events
+  /// Events
   enum
     {
     GraphicalResourcesCreatedEvent = 19001,
@@ -212,32 +193,26 @@ protected:
   double FieldOfView;
   double LetterSize;
 
-  ///
-  /// parameters of automatic spin
+  /// Parameters of automatic spin
   int AnimationMode;
   int SpinDirection;
   double SpinDegrees;
   int AnimationMs;
 
-  ///
-  /// parameters of automatic rock
+  /// Parameters of automatic rock
   int RockLength;
   int RockCount;
 
-  ///
   /// Increment used to rotate the view
   /// once about an axis.
   double RotateDegrees;
 
-  ///
-  /// parameters for stereo viewing
+  /// Parameters for stereo viewing
   int StereoType;
 
-  ///
   /// Specifies orthographic or perspective rendering
   int RenderMode;
 
-  ///
   /// Parameters for look-from or rotate-around
   /// automatic view control
   int ViewAxisMode;

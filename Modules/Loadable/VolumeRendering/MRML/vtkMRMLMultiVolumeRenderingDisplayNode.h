@@ -38,20 +38,16 @@ public:
 
   virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
 
-  // Description:
-  // Set node attributes
+  /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
 
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() VTK_OVERRIDE {return "MultiVolumeRendering";}
 
   // Description:

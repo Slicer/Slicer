@@ -250,8 +250,7 @@ bool vtkMRMLSliceNode::IsThreeDViewIDPresent(const char* viewNodeID)const
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLSliceNode
-::IsDisplayableInThreeDView(const char* viewNodeID)const
+bool vtkMRMLSliceNode::IsDisplayableInThreeDView(const char* viewNodeID)const
 {
   return this->GetNumberOfThreeDViewIDs() == 0
     || this->IsThreeDViewIDPresent(viewNodeID);
@@ -266,8 +265,7 @@ bool vtkMRMLSliceNode::SetOrientation(const char* orientation)
     return false;
     }
 
-  vtkMatrix3x3 *orientationPreset =
-      this->GetSliceOrientationPreset(orientation);
+  vtkMatrix3x3 *orientationPreset = this->GetSliceOrientationPreset(orientation);
   if (orientationPreset == NULL)
     {
     return false;
@@ -348,8 +346,7 @@ vtkMatrix3x3 *vtkMRMLSliceNode::GetSliceOrientationPreset(const std::string &nam
       }
     }
 
-  vtkErrorMacro("GetSliceOrientationPreset: invalid orientation preset name: "
-                << name);
+  vtkErrorMacro("GetSliceOrientationPreset: invalid orientation preset name: " << name);
   return NULL;
 }
 
@@ -381,8 +378,7 @@ std::string vtkMRMLSliceNode::GetSliceOrientationPresetName(vtkMatrix3x3* orient
 std::string vtkMRMLSliceNode::GetOrientation(vtkMatrix4x4 *sliceToRAS)
 {
   vtkNew<vtkMatrix3x3> orientationMatrix;
-  vtkAddonMathUtilities::GetOrientationMatrix(
-        sliceToRAS, orientationMatrix.GetPointer());
+  vtkAddonMathUtilities::GetOrientationMatrix(sliceToRAS, orientationMatrix.GetPointer());
 
   std::string orientation =
       this->GetSliceOrientationPresetName(orientationMatrix.GetPointer());
