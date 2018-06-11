@@ -626,17 +626,17 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
 
     switch (viewNode->GetRaycastTechnique())
       {
-      case vtkMRMLViewNode::AdaptiveQuality:
+      case vtkMRMLViewNode::Adaptive:
         cpuMapper->SetAutoAdjustSampleDistances(true);
         cpuMapper->SetLockSampleDistanceToInputSpacing(false);
         cpuMapper->SetImageSampleDistance(1.0);
         break;
-      case vtkMRMLViewNode::NormalQuality:
+      case vtkMRMLViewNode::Normal:
         cpuMapper->SetAutoAdjustSampleDistances(false);
         cpuMapper->SetLockSampleDistanceToInputSpacing(true);
         cpuMapper->SetImageSampleDistance(1.0);
         break;
-      case vtkMRMLViewNode::MaximumQuality:
+      case vtkMRMLViewNode::Maximum:
         cpuMapper->SetAutoAdjustSampleDistances(false);
         cpuMapper->SetLockSampleDistanceToInputSpacing(false);
         cpuMapper->SetImageSampleDistance(0.5);
@@ -659,17 +659,17 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
 
     switch (viewNode->GetVolumeRenderingQuality())
       {
-      case vtkMRMLViewNode::AdaptiveQuality:
+      case vtkMRMLViewNode::Adaptive:
         gpuMapper->SetAutoAdjustSampleDistances(true);
         gpuMapper->SetLockSampleDistanceToInputSpacing(false);
         gpuMapper->SetUseJittering(viewNode->GetVolumeRenderingSurfaceSmoothing());
         break;
-      case vtkMRMLViewNode::NormalQuality:
+      case vtkMRMLViewNode::Normal:
         gpuMapper->SetAutoAdjustSampleDistances(false);
         gpuMapper->SetLockSampleDistanceToInputSpacing(true);
         gpuMapper->SetUseJittering(viewNode->GetVolumeRenderingSurfaceSmoothing());
         break;
-      case vtkMRMLViewNode::MaximumQuality:
+      case vtkMRMLViewNode::Maximum:
         gpuMapper->SetAutoAdjustSampleDistances(false);
         gpuMapper->SetLockSampleDistanceToInputSpacing(false);
         gpuMapper->SetUseJittering(viewNode->GetVolumeRenderingSurfaceSmoothing());
@@ -690,20 +690,19 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
       vtkMRMLMultiVolumeRenderingDisplayNode::SafeDownCast(displayNode);
     vtkGPUVolumeRayCastMapper* gpuMultiMapper = vtkGPUVolumeRayCastMapper::SafeDownCast(mapper);
 
-    //TODO: All the multi-volume display nodes must have the same settings that concern the mapper
     switch (viewNode->GetRaycastTechnique())
       {
-      case vtkMRMLViewNode::AdaptiveQuality:
+      case vtkMRMLViewNode::Adaptive:
         gpuMultiMapper->SetAutoAdjustSampleDistances(true);
         gpuMultiMapper->SetLockSampleDistanceToInputSpacing(false);
         gpuMultiMapper->SetUseJittering(viewNode->GetVolumeRenderingSurfaceSmoothing());
         break;
-      case vtkMRMLViewNode::NormalQuality:
+      case vtkMRMLViewNode::Normal:
         gpuMultiMapper->SetAutoAdjustSampleDistances(false);
         gpuMultiMapper->SetLockSampleDistanceToInputSpacing(true);
         gpuMultiMapper->SetUseJittering(viewNode->GetVolumeRenderingSurfaceSmoothing());
         break;
-      case vtkMRMLViewNode::MaximumQuality:
+      case vtkMRMLViewNode::Maximum:
         gpuMultiMapper->SetAutoAdjustSampleDistances(false);
         gpuMultiMapper->SetLockSampleDistanceToInputSpacing(false);
         gpuMultiMapper->SetUseJittering(viewNode->GetVolumeRenderingSurfaceSmoothing());
@@ -782,7 +781,7 @@ double vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetFramerate()
     return 15.;
     }
 
-  return ( viewNode->GetVolumeRenderingQuality() == vtkMRMLViewNode::MaximumQuality ?
+  return ( viewNode->GetVolumeRenderingQuality() == vtkMRMLViewNode::Maximum ?
            0.0 : // special value meaning full quality
            std::max(viewNode->GetExpectedFPS(), 0.0001) );
 }

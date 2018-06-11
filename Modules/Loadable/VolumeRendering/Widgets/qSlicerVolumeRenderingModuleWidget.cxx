@@ -141,12 +141,16 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
   this->MemorySizeComboBox->addItem("8 GB", 8192);
   this->MemorySizeComboBox->addItem("12 GB", 12288);
   this->MemorySizeComboBox->addItem("16 GB", 16384);
-
   QObject::connect(this->MemorySizeComboBox, SIGNAL(currentIndexChanged(int)),
                    q, SLOT(onCurrentMemorySizeChanged(int)));
 
+  for (int qualityIndex=0; qualityIndex<vtkMRMLViewNode::VolumeRenderingQuality_Last; qualityIndex++)
+    {
+    this->QualityControlComboBox->addItem(vtkMRMLViewNode::GetVolumeRenderingQualityAsString(qualityIndex));
+    }
   QObject::connect(this->QualityControlComboBox, SIGNAL(currentIndexChanged(int)),
                    q, SLOT(onCurrentQualityControlChanged(int)));
+
   QObject::connect(this->FramerateSliderWidget, SIGNAL(valueChanged(double)),
                    q, SLOT(onCurrentFramerateChanged(double)));
 
@@ -420,7 +424,7 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromDisplayNode()
     d->FramerateSliderWidget->setValue(firstViewNode->GetExpectedFPS());
     }
   d->FramerateSliderWidget->setEnabled(
-    firstViewNode && firstViewNode->GetVolumeRenderingQuality() == vtkMRMLViewNode::AdaptiveQuality );
+    firstViewNode && firstViewNode->GetVolumeRenderingQuality() == vtkMRMLViewNode::Adaptive );
   // Advanced rendering properties
   if (d->RenderingMethodWidgets[currentRenderingMethod])
     {

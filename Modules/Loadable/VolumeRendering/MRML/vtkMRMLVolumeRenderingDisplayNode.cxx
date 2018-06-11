@@ -241,7 +241,7 @@ double vtkMRMLVolumeRenderingDisplayNode::GetSampleDistance()
   const double minSpacing = volumeNode->GetMinSpacing() > 0 ? volumeNode->GetMinSpacing() : 1.;
   double sampleDistance = minSpacing / firstViewNode->GetVolumeRenderingOversamplingFactor();
   if ( firstViewNode
-    && firstViewNode->GetVolumeRenderingQuality() == vtkMRMLViewNode::MaximumQuality)
+    && firstViewNode->GetVolumeRenderingQuality() == vtkMRMLViewNode::Maximum)
     {
     sampleDistance = minSpacing / 10.; // =10x smaller than pixel is high quality
     }

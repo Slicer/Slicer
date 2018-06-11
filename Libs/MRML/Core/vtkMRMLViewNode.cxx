@@ -58,7 +58,7 @@ vtkMRMLViewNode::vtkMRMLViewNode()
   this->RulerEnabled = true;
   this->GPUMemorySize = 0; // means application default
   this->ExpectedFPS = 8.;
-  this->VolumeRenderingQuality = vtkMRMLViewNode::AdaptiveQuality;
+  this->VolumeRenderingQuality = vtkMRMLViewNode::Adaptive;
   this->RaycastTechnique = vtkMRMLViewNode::Composite;
   this->VolumeRenderingSurfaceSmoothing = false;
   this->VolumeRenderingOversamplingFactor = 2.0;
@@ -418,9 +418,9 @@ const char* vtkMRMLViewNode::GetVolumeRenderingQualityAsString(int id)
 {
   switch (id)
     {
-    case AdaptiveQuality: return "AdaptiveQuality";
-    case NormalQuality: return "NormalQuality";
-    case MaximumQuality: return "MaximumQuality";
+    case Adaptive: return "Adaptive";
+    case Normal: return "Normal";
+    case Maximum: return "Maximum";
     default:
       // invalid id
       return "";

@@ -141,25 +141,20 @@ QStringList qSlicerVolumeRenderingModule::categories() const
 void qSlicerVolumeRenderingModule::setup()
 {
   this->Superclass::setup();
-  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->
-    RegisterDisplayableManager("vtkMRMLVolumeRenderingDisplayableManager");
+  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
+    "vtkMRMLVolumeRenderingDisplayableManager");
 
   vtkSlicerVolumeRenderingLogic* volumeRenderingLogic =
     vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic());
   if (qSlicerApplication::application())
     {
-    qSlicerVolumeRenderingSettingsPanel* panel =
-      new qSlicerVolumeRenderingSettingsPanel;
-    qSlicerApplication::application()->settingsDialog()->addPanel(
-      "Volume rendering", panel);
+    qSlicerVolumeRenderingSettingsPanel* panel = new qSlicerVolumeRenderingSettingsPanel;
+    qSlicerApplication::application()->settingsDialog()->addPanel("Volume rendering", panel);
     panel->setVolumeRenderingLogic(volumeRenderingLogic);
     }
-  qSlicerCoreIOManager* coreIOManager =
-    qSlicerCoreApplication::application()->coreIOManager();
-  coreIOManager->registerIO(
-    new qSlicerVolumeRenderingReader(volumeRenderingLogic, this));
-  coreIOManager->registerIO(new qSlicerNodeWriter(
-    "Transfer Function", QString("TransferFunctionFile"),
+  qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
+  coreIOManager->registerIO(new qSlicerVolumeRenderingReader(volumeRenderingLogic, this));
+  coreIOManager->registerIO(new qSlicerNodeWriter("Transfer Function", QString("TransferFunctionFile"),
     QStringList() << "vtkMRMLVolumePropertyNode", true, this));
 
   // Register Subject Hierarchy core plugins

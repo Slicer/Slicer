@@ -81,19 +81,19 @@ public:
   /// Turn on and off animated spinning or rocking.
   vtkGetMacro(AnimationMode, int);
   vtkSetMacro(AnimationMode, int);
-  const char* GetAnimationModeAsString(int id);
-  int GetAnimationModeFromString(const char* name);
+  static const char* GetAnimationModeAsString(int id);
+  static int GetAnimationModeFromString(const char* name);
 
   vtkGetMacro(ViewAxisMode, int);
   vtkSetMacro(ViewAxisMode, int);
-  const char* GetViewAxisModeAsString(int id);
-  int GetViewAxisModeFromString(const char* name);
+  static const char* GetViewAxisModeAsString(int id);
+  static int GetViewAxisModeFromString(const char* name);
 
   /// Direction of animated spinning
   vtkGetMacro(SpinDirection, int);
   vtkSetMacro(SpinDirection, int);
-  const char* GetSpinDirectionAsString(int id);
-  int GetSpinDirectionFromString(const char* name);
+  static const char* GetSpinDirectionAsString(int id);
+  static int GetSpinDirectionFromString(const char* name);
 
   /// Number of degrees in spin increment.
   vtkGetMacro(SpinDegrees, double);
@@ -117,14 +117,14 @@ public:
   /// Stereo mode (including NoStereo)
   vtkGetMacro(StereoType, int);
   vtkSetMacro(StereoType, int);
-  const char* GetStereoTypeAsString(int id);
-  int GetStereoTypeFromString(const char* name);
+  static const char* GetStereoTypeAsString(int id);
+  static int GetStereoTypeFromString(const char* name);
 
   /// Specifies orthographic or perspective rendering
   vtkGetMacro(RenderMode, int);
   vtkSetMacro(RenderMode, int);
-  const char* GetRenderModeAsString(int id);
-  int GetRenderModeFromString(const char* name);
+  static const char* GetRenderModeAsString(int id);
+  static int GetRenderModeFromString(const char* name);
 
   /// Use depth peeling or not.
   /// 0 by default.
@@ -147,14 +147,14 @@ public:
 
   vtkSetMacro(VolumeRenderingQuality, int);
   vtkGetMacro(VolumeRenderingQuality, int);
-  const char* GetVolumeRenderingQualityAsString(int id);
-  int GetVolumeRenderingQualityFromString(const char* name);
+  static const char* GetVolumeRenderingQualityAsString(int id);
+  static int GetVolumeRenderingQualityFromString(const char* name);
 
   /// Rycasting technique for volume rendering
   vtkGetMacro(RaycastTechnique, int);
   vtkSetMacro(RaycastTechnique, int);
-  const char* GetRaycastTechniqueAsString(int id);
-  int GetRaycastTechniqueFromString(const char* name);
+  static const char* GetRaycastTechniqueAsString(int id);
+  static int GetRaycastTechniqueFromString(const char* name);
 
   /// Reduce wood grain artifact to make surfaces appear smoother.
   /// For example, by applying jittering on casted rays.
@@ -166,8 +166,8 @@ public:
   /// GetSampleDistance to be the volume's minimum spacing divided by the oversampling
   /// factor.
   /// If \sa VolumeRenderingQuality is set to maximum quality, then a fix oversampling factor of 10 is used.
-  vtkSetMacro(VolumeRenderingOversamplingFactor,double);
-  vtkGetMacro(VolumeRenderingOversamplingFactor,double);
+  vtkSetMacro(VolumeRenderingOversamplingFactor, double);
+  vtkGetMacro(VolumeRenderingOversamplingFactor, double);
 
   /// Modes for automatically controlling camera
   enum
@@ -221,16 +221,16 @@ public:
     };
 
   /// Quality setting used for \sa VolumeRenderingQuality
-  enum Quality
+  enum
     {
-    AdaptiveQuality = 0, ///< quality determined from desired update rate
-    NormalQuality,       ///< good image quality at reasonable speed
-    MaximumQuality,      ///< high image quality, rendering time is not considered
+    Adaptive = 0, ///< quality determined from desired update rate
+    Normal,       ///< good image quality at reasonable speed
+    Maximum,      ///< high image quality, rendering time is not considered
     VolumeRenderingQuality_Last
     };
 
   /// Ray casting technique for volume rendering
-  enum RayCastType
+  enum
     {
     Composite = 0, // Composite with directional lighting (default)
     CompositeEdgeColoring, // Composite with fake lighting (edge coloring, faster) - Not used
@@ -303,8 +303,8 @@ protected:
 
   /// Volume rendering quality control mode
   /// 0: Adaptive
-  /// 1: Maximum Quality
-  /// 2: Fixed Framerate // unsupported yet
+  /// 1: Normal Quality
+  /// 2: Maximum Quality
   int VolumeRenderingQuality;
 
   /// Techniques for volume rendering ray cast

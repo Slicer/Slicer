@@ -35,8 +35,12 @@ class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT qSlicerVolumeRenderingSettingsPa
 {
   Q_OBJECT
   QVTK_OBJECT
-  Q_PROPERTY(int gpuMemory READ gpuMemory WRITE setGPUMemory NOTIFY gpuMemoryChanged)
   Q_PROPERTY(QString defaultRenderingMethod READ defaultRenderingMethod WRITE setDefaultRenderingMethod NOTIFY defaultRenderingMethodChanged)
+  Q_PROPERTY(QString defaultQuality READ defaultQuality WRITE setDefaultQuality NOTIFY defaultQualityChanged)
+  Q_PROPERTY(int defaultInteractiveSpeed READ defaultInteractiveSpeed WRITE setDefaultInteractiveSpeed NOTIFY defaultInteractiveSpeedChanged)
+  Q_PROPERTY(bool defaultSurfaceSmoothing READ defaultSurfaceSmoothing WRITE setDefaultSurfaceSmoothing NOTIFY defaultSurfaceSmoothingChanged)
+  Q_PROPERTY(int gpuMemory READ gpuMemory WRITE setGPUMemory NOTIFY gpuMemoryChanged)
+
 public:
   /// Superclass typedef
   typedef ctkSettingsPanel Superclass;
@@ -52,22 +56,34 @@ public:
   void setVolumeRenderingLogic(vtkSlicerVolumeRenderingLogic* logic);
   vtkSlicerVolumeRenderingLogic* volumeRenderingLogic()const;
 
-  int gpuMemory()const;
-  void setGPUMemory(int gpuMemory);
-
   QString defaultRenderingMethod()const;
+  QString defaultQuality()const;
+  int defaultInteractiveSpeed()const;
+  bool defaultSurfaceSmoothing()const;
+  int gpuMemory()const;
+
 public slots:
   void setDefaultRenderingMethod(const QString& method);
+  void setDefaultQuality(const QString& quality);
+  void setDefaultInteractiveSpeed(int interactiveSpeed);
+  void setDefaultSurfaceSmoothing(bool surfaceSmoothing);
+  void setGPUMemory(int gpuMemory);
 
 signals:
-  void gpuMemoryChanged(int);
   void defaultRenderingMethodChanged(const QString&);
+  void defaultQualityChanged(const QString&);
+  void defaultInteractiveSpeedChanged(int);
+  void defaultSurfaceSmoothingChanged(bool);
+  void gpuMemoryChanged(int);
 
 protected slots:
   void onVolumeRenderingLogicModified();
-  void onGPUMemoryChanged();
   void onDefaultRenderingMethodChanged(int);
   void updateVolumeRenderingLogicDefaultRenderingMethod();
+  void onDefaultQualityChanged(int);
+  void onDefaultInteractiveSpeedChanged(double);
+  void onDefaultSurfaceSmoothingChanged(bool);
+  void onGPUMemoryChanged();
 
 protected:
   QScopedPointer<qSlicerVolumeRenderingSettingsPanelPrivate> d_ptr;
