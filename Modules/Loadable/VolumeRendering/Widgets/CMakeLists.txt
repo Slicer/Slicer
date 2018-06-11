@@ -14,6 +14,8 @@ set(${KIT}_SRCS
   qSlicerCPURayCast${MODULE_NAME}PropertiesWidget.h
   qSlicerGPURayCast${MODULE_NAME}PropertiesWidget.cxx
   qSlicerGPURayCast${MODULE_NAME}PropertiesWidget.h
+  qSlicerMulti${MODULE_NAME}PropertiesWidget.cxx
+  qSlicerMulti${MODULE_NAME}PropertiesWidget.h
   qSlicerPresetComboBox.cxx
   qSlicerPresetComboBox.h
   qSlicerPresetComboBox_p.h
@@ -30,6 +32,7 @@ set(${KIT}_SRCS
 set(${KIT}_MOC_SRCS
   qSlicerCPURayCast${MODULE_NAME}PropertiesWidget.h
   qSlicerGPURayCast${MODULE_NAME}PropertiesWidget.h
+  qSlicerMulti${MODULE_NAME}PropertiesWidget.h
   qSlicerPresetComboBox.h
   qSlicerPresetComboBox_p.h
   qSlicer${MODULE_NAME}ModuleWidget.h
@@ -42,6 +45,7 @@ set(${KIT}_UI_SRCS
   ../Resources/UI/qMRMLVolumePropertyNodeWidget.ui
   ../Resources/UI/qSlicerCPURayCast${MODULE_NAME}PropertiesWidget.ui
   ../Resources/UI/qSlicerGPURayCast${MODULE_NAME}PropertiesWidget.ui
+  ../Resources/UI/qSlicerMulti${MODULE_NAME}PropertiesWidget.ui
   ../Resources/UI/qSlicer${MODULE_NAME}ModuleWidget.ui
   ../Resources/UI/qSlicer${MODULE_NAME}PresetComboBox.ui
   )

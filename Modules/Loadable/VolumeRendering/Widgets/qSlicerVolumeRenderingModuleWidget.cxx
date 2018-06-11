@@ -27,6 +27,7 @@
 
 #include "qSlicerCPURayCastVolumeRenderingPropertiesWidget.h"
 #include "qSlicerGPURayCastVolumeRenderingPropertiesWidget.h"
+#include "qSlicerMultiVolumeRenderingPropertiesWidget.h"
 #include "qSlicerVolumeRenderingPresetComboBox.h"
 
 // MRML includes
@@ -122,6 +123,8 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
                               new qSlicerCPURayCastVolumeRenderingPropertiesWidget);
   q->addRenderingMethodWidget("vtkMRMLGPURayCastVolumeRenderingDisplayNode",
                               new qSlicerGPURayCastVolumeRenderingPropertiesWidget);
+  q->addRenderingMethodWidget("vtkMRMLGPURayCastMultiVolumeRenderingDisplayNode",
+                              new qSlicerMultiVolumeRenderingPropertiesWidget);
   QSettings settings;
   int defaultGPUMemorySize = settings.value("VolumeRendering/GPUMemorySize").toInt();
   this->MemorySizeComboBox->addItem(QString("Default (%1 MB)").arg(defaultGPUMemorySize), 0);

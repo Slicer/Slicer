@@ -20,6 +20,7 @@
 #include "vtkSlicerVolumeRenderingLogic.h"
 #include "vtkMRMLCPURayCastVolumeRenderingDisplayNode.h"
 #include "vtkMRMLGPURayCastVolumeRenderingDisplayNode.h"
+#include "vtkMRMLMultiVolumeRenderingDisplayNode.h"
 
 // Annotations includes
 #include <vtkMRMLAnnotationROINode.h>
@@ -71,6 +72,8 @@ vtkSlicerVolumeRenderingLogic::vtkSlicerVolumeRenderingLogic()
                                 "vtkMRMLCPURayCastVolumeRenderingDisplayNode");
   this->RegisterRenderingMethod("VTK GPU Ray Casting",
                                 "vtkMRMLGPURayCastVolumeRenderingDisplayNode");
+  this->RegisterRenderingMethod("VTK Multi-Volume (experimental)",
+                                "vtkMRMLMultiVolumeRenderingDisplayNode");
 }
 
 //----------------------------------------------------------------------------
@@ -128,7 +131,11 @@ void vtkSlicerVolumeRenderingLogic::RegisterNodes()
 
   vtkNew<vtkMRMLGPURayCastVolumeRenderingDisplayNode> gpuNode;
   this->GetMRMLScene()->RegisterNodeClass( gpuNode.GetPointer() );
+
+  vtkNew<vtkMRMLMultiVolumeRenderingDisplayNode> multiNode;
+  this->GetMRMLScene()->RegisterNodeClass( multiNode.GetPointer() );
 }
+
 //----------------------------------------------------------------------------
 void vtkSlicerVolumeRenderingLogic::RegisterRenderingMethod(const char* methodName, const char* displayNodeClassName)
 {

@@ -12,6 +12,8 @@ set(${KIT}_SRCS
   vtkMRMLCPURayCast${MODULE_NAME}DisplayNode.h
   vtkMRMLGPURayCast${MODULE_NAME}DisplayNode.cxx
   vtkMRMLGPURayCast${MODULE_NAME}DisplayNode.h
+  vtkMRMLMulti${MODULE_NAME}DisplayNode.cxx
+  vtkMRMLMulti${MODULE_NAME}DisplayNode.h
   vtkMRMLVolumePropertyNode.cxx
   vtkMRMLVolumePropertyNode.h
   vtkMRMLVolumePropertyStorageNode.cxx

@@ -27,6 +27,11 @@
 // MRML DisplayableManager includes
 #include <vtkMRMLAbstractThreeDViewDisplayableManager.h>
 
+//TODO: For testing, remove
+#include <vtkGPUVolumeRayCastMapper.h>
+#include <vtkVolume.h>
+#include "vtkMRMLVolumeNode.h"
+
 class vtkSlicerVolumeRenderingLogic;
 
 #define VTKIS_VOLUME_PROPS 100
@@ -70,13 +75,6 @@ protected:
   virtual void ProcessMRMLNodesEvents(vtkObject * caller, unsigned long event, void * callData) VTK_OVERRIDE;
 
   virtual void OnInteractorStyleEvent(int eventID) VTK_OVERRIDE;
-
-  /// Return true if the volume wasn't in the view.
-  //bool AddVolumeToView();
-  //void RemoveVolumeFromView();
-  //void RemoveVolumeFromView(vtkVolume* volume);
-  //bool IsVolumeInView();
-  //bool IsVolumeInView(vtkVolume* volume);
 
 protected:
   vtkSlicerVolumeRenderingLogic *VolumeRenderingLogic;
