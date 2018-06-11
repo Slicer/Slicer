@@ -78,7 +78,7 @@ void ITKComputeThresholdFromVTKImage(vtkITKImageThresholdCalculator *self, vtkIm
   // Create and initialize the calculator
   typename CalculatorType::Pointer calculator;
   switch (self->GetMethod())
-  {
+    {
     case vtkITKImageThresholdCalculator::METHOD_HUANG: calculator = itk::HuangThresholdCalculator<HistogramType>::New(); break;
     case vtkITKImageThresholdCalculator::METHOD_INTERMODES: calculator = itk::IntermodesThresholdCalculator<HistogramType>::New(); break;
     case vtkITKImageThresholdCalculator::METHOD_ISO_DATA: calculator = itk::IsoDataThresholdCalculator<HistogramType>::New(); break;
@@ -92,13 +92,21 @@ void ITKComputeThresholdFromVTKImage(vtkITKImageThresholdCalculator *self, vtkIm
     case vtkITKImageThresholdCalculator::METHOD_TRIANGLE: calculator = itk::TriangleThresholdCalculator<HistogramType>::New(); break;
     case vtkITKImageThresholdCalculator::METHOD_YEN: calculator = itk::YenThresholdCalculator<HistogramType>::New(); break;
     default:
-      vtkGenericWarningMacro("ITKComputeThresholdFromVTKImage failed: invalid method: " << self->GetMethod());
+      vtkErrorWithObjectMacro(self, "ITKComputeThresholdFromVTKImage failed: invalid method: " << self->GetMethod());
       return;
-  }
+    }
 
   calculator->SetInput( histGenerator->GetOutput() );
 
-  calculator->Update();
+  try
+    {
+    calculator->Update();
+    }
+  catch (itk::ExceptionObject err)
+    {
+    vtkErrorWithObjectMacro(self, "Failed to compute threshold value using method " << self->GetMethodAsString(self->GetMethod())
+      << ". Details: " << err);
+    }
 
   computedThreshold = calculator->GetThreshold();
 }

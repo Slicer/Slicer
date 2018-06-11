@@ -101,8 +101,13 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     self.autoThresholdMethodSelectorComboBox.addItem("Otsu", METHOD_OTSU)
     self.autoThresholdMethodSelectorComboBox.addItem("Huang", METHOD_HUANG)
     self.autoThresholdMethodSelectorComboBox.addItem("IsoData", METHOD_ISO_DATA)
+    # Kittler-Illingworth sometimes fails with an exception, but it does not cause any major issue,
+    # it just logs an error message and does not compute a new threshold value
     self.autoThresholdMethodSelectorComboBox.addItem("Kittler-Illingworth", METHOD_KITTLER_ILLINGWORTH)
-    self.autoThresholdMethodSelectorComboBox.addItem("Li", METHOD_LI)
+    # Li sometimes crashes (index out of range error in
+    # ITK/Modules/Filtering/Thresholding/include/itkLiThresholdCalculator.hxx#L94)
+    # We can add this method back when issue is fixed in ITK.
+    #self.autoThresholdMethodSelectorComboBox.addItem("Li", METHOD_LI)
     self.autoThresholdMethodSelectorComboBox.addItem("Maximum entropy", METHOD_MAXIMUM_ENTROPY)
     self.autoThresholdMethodSelectorComboBox.addItem("Moments", METHOD_MOMENTS)
     self.autoThresholdMethodSelectorComboBox.addItem("Renyi entropy", METHOD_RENYI_ENTROPY)
@@ -111,16 +116,18 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     self.autoThresholdMethodSelectorComboBox.addItem("Yen", METHOD_YEN)
     self.autoThresholdMethodSelectorComboBox.setToolTip("Select method to compute threshold value automatically.")
 
-    self.selectPreviousAutoThresholdButton = qt.QPushButton("<")
-    self.selectPreviousAutoThresholdButton.setToolTip("Select previous thresholding method and set thresholds using that."
+    self.selectPreviousAutoThresholdButton = qt.QToolButton()
+    self.selectPreviousAutoThresholdButton.text = "<"
+    self.selectPreviousAutoThresholdButton.setToolTip("Select previous thresholding method and set thresholds."
       +" Useful for iterating through all available methods.")
 
-    self.setAutoThresholdButton = qt.QPushButton("Reset")
+    self.selectNextAutoThresholdButton = qt.QToolButton()
+    self.selectNextAutoThresholdButton.text = ">"
+    self.selectNextAutoThresholdButton.setToolTip("Select next thresholding method and set thresholds."
+      +" Useful for iterating through all available methods.")
+
+    self.setAutoThresholdButton = qt.QPushButton("Set")
     self.setAutoThresholdButton.setToolTip("Set threshold using selected method.")
-
-    self.selectNextAutoThresholdButton = qt.QPushButton(">")
-    self.selectNextAutoThresholdButton.setToolTip("Select next thresholding method and set thresholds using that."
-      +" Useful for iterating through all available methods.")
 
     # qt.QSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Expanding)
     # fails on some systems, therefore set the policies using separate method calls
@@ -132,8 +139,8 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     autoThresholdFrame.addWidget(self.autoThresholdModeSelectorComboBox)
     autoThresholdFrame.addWidget(self.autoThresholdMethodSelectorComboBox)
     autoThresholdFrame.addWidget(self.selectPreviousAutoThresholdButton)
-    autoThresholdFrame.addWidget(self.setAutoThresholdButton)
     autoThresholdFrame.addWidget(self.selectNextAutoThresholdButton)
+    autoThresholdFrame.addWidget(self.setAutoThresholdButton)
     self.scriptedEffect.addLabeledOptionsWidget("Automatic threshold:", autoThresholdFrame)
 
     self.useForPaintButton = qt.QPushButton("Use for masking")
