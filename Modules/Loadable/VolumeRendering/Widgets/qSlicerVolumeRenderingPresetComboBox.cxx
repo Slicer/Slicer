@@ -91,7 +91,7 @@ void qSlicerVolumeRenderingPresetComboBoxPrivate::init()
 
   this->Ui_qSlicerVolumeRenderingPresetComboBox::setupUi(q);
 
-  QObject::connect(this->PresetComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), q, SLOT(applyPreset(vtkMRMLNode*)));
+  QObject::connect(this->PresetComboBox, SIGNAL(nodeActivated(vtkMRMLNode*)), q, SLOT(applyPreset(vtkMRMLNode*)));
   QObject::connect(this->PresetComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), q, SIGNAL(currentNodeChanged(vtkMRMLNode*)));
   QObject::connect(this->PresetComboBox, SIGNAL(currentNodeIDChanged(QString)), q, SIGNAL(currentNodeIDChanged(QString)));
 
