@@ -118,6 +118,12 @@ void qSlicerVolumeRenderingSettingsPanelPrivate::init()
 
   q->registerProperty("VolumeRendering/GPUMemorySize", q,
                       "gpuMemory", SIGNAL(gpuMemoryChanged(QString)));
+
+  // Update default view node from settings when startup completed.
+  // MRML scene is not accessible yet from the logic when it is set, so cannot access default view node
+  // either. Need to setup default node and set defaults to 3D views when the scene is available.
+  QObject::connect(qSlicerApplication::application(), SIGNAL(startupCompleted()),
+                   q, SLOT(updateDefaultViewNodeFromWidget()));
 }
 
 // --------------------------------------------------------------------------
@@ -226,13 +232,6 @@ void qSlicerVolumeRenderingSettingsPanel::onVolumeRenderingLogicModified()
   int defaultRenderingMethodIndex = d->RenderingMethodComboBox->findData(
     QString(defaultRenderingMethod));
   d->RenderingMethodComboBox->setCurrentIndex(defaultRenderingMethodIndex);
-
-  // MRML scene is not accessible yet from the logic when it is set, so cannot access default view node
-  // either. Need to setup default node and set defaults to 3D views when the scene is available.
-  this->onDefaultQualityChanged(d->QualityControlComboBox->currentIndex());
-  this->onDefaultInteractiveSpeedChanged(d->InteractiveSpeedSlider->value());
-  this->onDefaultSurfaceSmoothingChanged(d->SurfaceSmoothingCheckBox->isChecked());
-  this->onGPUMemoryChanged();
 }
 
 // --------------------------------------------------------------------------
@@ -446,4 +445,15 @@ void qSlicerVolumeRenderingSettingsPanel::onDefaultSurfaceSmoothingChanged(bool 
     }
 
   emit defaultSurfaceSmoothingChanged(smoothing);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingSettingsPanel::updateDefaultViewNodeFromWidget()
+{
+  Q_D(qSlicerVolumeRenderingSettingsPanel);
+
+  this->onDefaultQualityChanged(d->QualityControlComboBox->currentIndex());
+  this->onDefaultInteractiveSpeedChanged(d->InteractiveSpeedSlider->value());
+  this->onDefaultSurfaceSmoothingChanged(d->SurfaceSmoothingCheckBox->isChecked());
+  this->onGPUMemoryChanged();
 }

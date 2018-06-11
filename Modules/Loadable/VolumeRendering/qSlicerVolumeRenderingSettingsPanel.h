@@ -84,6 +84,7 @@ protected slots:
   void onDefaultInteractiveSpeedChanged(double);
   void onDefaultSurfaceSmoothingChanged(bool);
   void onGPUMemoryChanged();
+  void updateDefaultViewNodeFromWidget();
 
 protected:
   QScopedPointer<qSlicerVolumeRenderingSettingsPanelPrivate> d_ptr;
