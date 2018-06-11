@@ -149,6 +149,38 @@ void vtkMRMLTransformNode::FlattenGeneralTransform(vtkCollection* outputTransfor
     }
 }
 
+//---------------------------------------------------------------------------
+bool vtkMRMLTransformNode::AreTransformsEqual(vtkAbstractTransform* transform1, vtkAbstractTransform* transform2)
+{
+  if (transform1 == transform2)
+    {
+    return true;
+    }
+  vtkNew<vtkCollection> transformList1;
+  vtkMRMLTransformNode::FlattenGeneralTransform(transformList1.GetPointer(), transform1);
+  vtkNew<vtkCollection> transformList2;
+  vtkMRMLTransformNode::FlattenGeneralTransform(transformList2.GetPointer(), transform2);
+  if (transformList1->GetNumberOfItems() != transformList2->GetNumberOfItems())
+    {
+    return false;
+    }
+  vtkCollectionSimpleIterator it1;
+  transformList1->InitTraversal(it1);
+  vtkCollectionSimpleIterator it2;
+  transformList2->InitTraversal(it2);
+  vtkObject* transformComponent1 = NULL;
+  vtkObject* transformComponent2 = NULL;
+  while ((transformComponent1 = transformList1->GetNextItemAsObject(it1)) != NULL
+    && (transformComponent2 = transformList2->GetNextItemAsObject(it2)) != NULL)
+    {
+    if (transformComponent1 != transformComponent2)
+      {
+      return false;
+      }
+    }
+  return true;
+}
+
 //----------------------------------------------------------------------------
 int vtkMRMLTransformNode::DeepCopyTransform(vtkAbstractTransform* dst, vtkAbstractTransform* src)
 {

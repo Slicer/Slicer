@@ -1003,7 +1003,12 @@ void vtkMRMLModelDisplayableManager
     if (transformFilter)
       {
       transformFilter->SetInputConnection(meshConnection);
-      transformFilter->SetTransform(worldTransform);
+      // It is important to only update the transform if the transform chain is actually changed,
+      // because recomputing a non-linear transformation on a complex model may be very time-consuming.
+      if (!vtkMRMLTransformNode::AreTransformsEqual(worldTransform, transformFilter->GetTransform()))
+        {
+        transformFilter->SetTransform(worldTransform);
+        }
       }
 
     std::map<std::string, vtkProp3D *>::iterator ait;

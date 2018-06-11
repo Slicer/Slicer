@@ -113,6 +113,23 @@ int vtkMRMLTransformNodeTest1(int , char * [] )
   vtkNew<vtkMatrix4x4> c_from_r_mx;
   vtkMatrix4x4::Multiply4x4(c_from_b_mx.GetPointer(), b_from_r_mx.GetPointer(), c_from_r_mx.GetPointer());
 
+  // Test AreTransformsEqual
+  vtkNew<vtkGeneralTransform> transform1;
+  vtkNew<vtkGeneralTransform> transform2;
+  vtkMRMLTransformNode::GetTransformBetweenNodes(bTransform.GetPointer(), eTransform.GetPointer(), transform1.GetPointer());
+  vtkMRMLTransformNode::GetTransformBetweenNodes(bTransform.GetPointer(), eTransform.GetPointer(), transform2.GetPointer());
+  // Test equal
+  CHECK_BOOL(vtkMRMLTransformNode::AreTransformsEqual(transform1.GetPointer(), transform2.GetPointer()), true);
+  vtkMRMLTransformNode::GetTransformBetweenNodes(bTransform.GetPointer(), cTransform.GetPointer(), transform2.GetPointer());
+  // Test non-equal
+  CHECK_BOOL(vtkMRMLTransformNode::AreTransformsEqual(transform1.GetPointer(), transform2.GetPointer()), false);
+  // Check NULL transforms
+  CHECK_BOOL(vtkMRMLTransformNode::AreTransformsEqual(transform1.GetPointer(), NULL), false);
+  CHECK_BOOL(vtkMRMLTransformNode::AreTransformsEqual(NULL, NULL), true);
+  // check identity transform is the same as NULL transform
+  vtkMRMLTransformNode::GetTransformBetweenNodes(eTransform.GetPointer(), eTransform.GetPointer(), transform1.GetPointer());
+  CHECK_BOOL(vtkMRMLTransformNode::AreTransformsEqual(transform1, NULL), true);
+
   // Test GetMatrixTransformToNode computations
   vtkNew<vtkMatrix4x4> test_mx;
 

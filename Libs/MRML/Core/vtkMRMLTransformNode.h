@@ -315,6 +315,11 @@ public:
   static void FlattenGeneralTransform(vtkCollection* outputTransformList, vtkAbstractTransform* inputTransform);
 
   ///
+  /// Return true if the two transforms are equal. A transform object is considered to be the same if it is
+  /// made up of the same flattened list of transforms.
+  static bool AreTransformsEqual(vtkAbstractTransform* transform1, vtkAbstractTransform* transform2);
+
+  ///
   /// Utility function that determines if a transform is linear. It looks into composite transforms and only returns
   /// with true if all the transform components are linear.
   /// If concatenatedLinearTransform is specified and the transform is linear then it returns the concatenated linear
