@@ -123,7 +123,7 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
                               new qSlicerCPURayCastVolumeRenderingPropertiesWidget);
   q->addRenderingMethodWidget("vtkMRMLGPURayCastVolumeRenderingDisplayNode",
                               new qSlicerGPURayCastVolumeRenderingPropertiesWidget);
-  q->addRenderingMethodWidget("vtkMRMLGPURayCastMultiVolumeRenderingDisplayNode",
+  q->addRenderingMethodWidget("vtkMRMLMultiVolumeRenderingDisplayNode",
                               new qSlicerMultiVolumeRenderingPropertiesWidget);
   QSettings settings;
   int defaultGPUMemorySize = settings.value("VolumeRendering/GPUMemorySize").toInt();
@@ -364,6 +364,13 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromDisplayNode()
   // Get display node
   vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
 
+  // Get first view node
+  vtkMRMLViewNode* firstViewNode = NULL;
+  if (displayNode && displayNode->GetScene())
+    {
+    firstViewNode = displayNode->GetFirstViewNode();
+    }
+
   // Visibility checkbox
   d->VisibilityCheckBox->setChecked(displayNode ? displayNode->GetVisibility() : false);
 
@@ -405,15 +412,15 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromDisplayNode()
     settings.value("VolumeRendering/RenderingMethod", QString("vtkMRMLCPURayCastVolumeRenderinDisplayNode")).toString();
   QString currentRenderingMethod = displayNode ? QString(displayNode->GetClassName()) : defaultRenderingMethod;
   d->RenderingMethodComboBox->setCurrentIndex(d->RenderingMethodComboBox->findData(currentRenderingMethod) );
-  int index = displayNode ? d->MemorySizeComboBox->findData(QVariant(displayNode->GetGPUMemorySize())) : -1;
+  int index = firstViewNode ? d->MemorySizeComboBox->findData(QVariant(firstViewNode->GetGPUMemorySize())) : -1;
   d->MemorySizeComboBox->setCurrentIndex(index);
-  d->QualityControlComboBox->setCurrentIndex( displayNode ? displayNode->GetPerformanceControl() : -1);
-  if (displayNode)
+  d->QualityControlComboBox->setCurrentIndex( firstViewNode ? firstViewNode->GetVolumeRenderingQuality() : -1);
+  if (firstViewNode)
     {
-    d->FramerateSliderWidget->setValue(displayNode->GetExpectedFPS());
+    d->FramerateSliderWidget->setValue(firstViewNode->GetExpectedFPS());
     }
   d->FramerateSliderWidget->setEnabled(
-    displayNode && displayNode->GetPerformanceControl() == vtkMRMLVolumeRenderingDisplayNode::AdaptiveQuality );
+    firstViewNode && firstViewNode->GetVolumeRenderingQuality() == vtkMRMLViewNode::AdaptiveQuality );
   // Advanced rendering properties
   if (d->RenderingMethodWidgets[currentRenderingMethod])
     {
@@ -424,6 +431,7 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromDisplayNode()
     }
   else
     {
+    qWarning() << Q_FUNC_INFO << ": Failed to find rendering properties widget for rendering method " << currentRenderingMethod;
     // Index 0 is an empty widget
     d->RenderingMethodStackedWidget->setCurrentIndex(0);
     }
@@ -595,6 +603,9 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentRenderingMethodChanged(int ind
 
   vtkSlicerVolumeRenderingLogic* volumeRenderingLogic = vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic());
   volumeRenderingLogic->ChangeVolumeRenderingMethod(renderingClassName.toLatin1());
+
+  // Update widget from display node of the volume node
+  this->updateWidgetFromDisplayNode();
 }
 
 // --------------------------------------------------------------------------
@@ -608,7 +619,17 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentMemorySizeChanged(int index)
     }
   int gpuMemorySize = d->MemorySizeComboBox->itemData(index).toInt();
   Q_ASSERT(gpuMemorySize >= 0 && gpuMemorySize < 10000);
-  displayNode->SetGPUMemorySize(gpuMemorySize);
+
+  std::vector<vtkMRMLNode*> viewNodes;
+  displayNode->GetScene()->GetNodesByClass("vtkMRMLViewNode", viewNodes);
+  for (std::vector<vtkMRMLNode*>::iterator it=viewNodes.begin(); it!=viewNodes.end(); ++it)
+    {
+    vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(*it);
+    if (displayNode->IsDisplayableInView(viewNode->GetID()))
+      {
+      viewNode->SetGPUMemorySize(gpuMemorySize);
+      }
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -620,7 +641,16 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentQualityControlChanged(int inde
     return;
     }
 
-  displayNode->SetPerformanceControl(index);
+  std::vector<vtkMRMLNode*> viewNodes;
+  displayNode->GetScene()->GetNodesByClass("vtkMRMLViewNode", viewNodes);
+  for (std::vector<vtkMRMLNode*>::iterator it=viewNodes.begin(); it!=viewNodes.end(); ++it)
+    {
+    vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(*it);
+    if (displayNode->IsDisplayableInView(viewNode->GetID()))
+      {
+      viewNode->SetVolumeRenderingQuality(index);
+      }
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -632,7 +662,16 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentFramerateChanged(double fps)
     return;
     }
 
-  displayNode->SetExpectedFPS(fps);
+  std::vector<vtkMRMLNode*> viewNodes;
+  displayNode->GetScene()->GetNodesByClass("vtkMRMLViewNode", viewNodes);
+  for (std::vector<vtkMRMLNode*>::iterator it=viewNodes.begin(); it!=viewNodes.end(); ++it)
+    {
+    vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(*it);
+    if (displayNode->IsDisplayableInView(viewNode->GetID()))
+      {
+      viewNode->SetExpectedFPS(fps);
+      }
+    }
 }
 
 // --------------------------------------------------------------------------

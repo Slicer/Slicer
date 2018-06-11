@@ -56,7 +56,13 @@ vtkMRMLViewNode::vtkMRMLViewNode()
   this->FPSVisible = 0;
   this->OrientationMarkerEnabled = true;
   this->RulerEnabled = true;
- }
+  this->GPUMemorySize = 0; // means application default
+  this->ExpectedFPS = 8.;
+  this->VolumeRenderingQuality = vtkMRMLViewNode::AdaptiveQuality;
+  this->RaycastTechnique = vtkMRMLViewNode::Composite;
+  this->VolumeRenderingSurfaceSmoothing = false;
+  this->VolumeRenderingOversamplingFactor = 2.0;
+}
 
 //----------------------------------------------------------------------------
 vtkMRMLViewNode::~vtkMRMLViewNode()
@@ -73,119 +79,34 @@ const char* vtkMRMLViewNode::GetNodeTagName()
 void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
 {
   // Write all attributes not equal to their defaults
-
   this->Superclass::WriteXML(of, nIndent);
 
-  of << " fieldOfView=\"" << this->GetFieldOfView() << "\"";
-  of << " letterSize=\"" << this->GetLetterSize() << "\"";
-  of << " boxVisible=\"" << (this->BoxVisible ? "true" : "false") << "\"";
-  of << " fiducialsVisible=\"" << (this->FiducialsVisible ? "true" : "false") << "\"";
-  of << " fiducialLabelsVisible=\"" << (this->FiducialLabelsVisible ? "true" : "false") << "\"";
-  of << " axisLabelsVisible=\"" << (this->AxisLabelsVisible ? "true" : "false") << "\"";
-  of << " axisLabelsCameraDependent=\"" << (this->AxisLabelsCameraDependent ? "true" : "false") << "\"";
-
-  // spin or rock?
-  if ( this->GetAnimationMode() == vtkMRMLViewNode::Off )
-    {
-    of << " animationMode=\"" << "Off" << "\"";
-    }
-  else if ( this->GetAnimationMode() == vtkMRMLViewNode::Spin )
-    {
-    of << " animationMode=\"" << "Spin" << "\"";
-    }
-  else if ( this->GetAnimationMode() == vtkMRMLViewNode::Rock )
-    {
-    of << " animationMode=\"" << "Rock" << "\"";
-    }
-
-  if ( this->GetViewAxisMode() == vtkMRMLViewNode::LookFrom )
-    {
-    of << " viewAxisMode=\"" << "LookFrom" << "\"";
-    }
-  else if ( this->GetViewAxisMode() == vtkMRMLViewNode::RotateAround )
-    {
-    of << " viewAxisMode=\"" << "RotateAround" << "\"";
-    }
-
-  // configure spin
-  of << " spinDegrees=\"" << this->GetSpinDegrees() << "\"";
-  of << " spinMs=\"" << this->GetAnimationMs() << "\"";
-  if ( this->GetSpinDirection() == vtkMRMLViewNode::PitchUp )
-    {
-    of << " spinDirection=\"" << "PitchUp" << "\"";
-    }
-  else if ( this->GetSpinDirection() == vtkMRMLViewNode::PitchDown )
-    {
-    of << " spinDirection=\"" << "PitchDown" << "\"";
-    }
-  else if ( this->GetSpinDirection() == vtkMRMLViewNode::RollLeft )
-    {
-    of << " spinDirection=\"" << "RollLeft" << "\"";
-    }
-  else if ( this->GetSpinDirection() == vtkMRMLViewNode::RollRight )
-    {
-    of << " spinDirection=\"" << "RollRight" << "\"";
-    }
-  else if ( this->GetSpinDirection() == vtkMRMLViewNode::YawLeft )
-    {
-    of << " spinDirection=\"" << "YawLeft" << "\"";
-    }
-  else if ( this->GetSpinDirection() == vtkMRMLViewNode::YawRight )
-    {
-    of << " spinDirection=\"" << "YawRight" << "\"";
-    }
-
-  of << " rotateDegrees=\"" << this->GetRotateDegrees() << "\"";
-
-  // configure rock
-  of << " rockLength=\"" << this->GetRockLength() << "\"";
-  of << " rockCount=\"" << this->GetRockCount() << "\"";
-
-  // configure stereo
-  if ( this->GetStereoType() == vtkMRMLViewNode::NoStereo )
-    {
-    of << " stereoType=\"" << "NoStereo" << "\"";
-    }
-  else if ( this->GetStereoType() == vtkMRMLViewNode::RedBlue )
-    {
-    of << " stereoType=\"" << "RedBlue" << "\"";
-    }
-  else if ( this->GetStereoType() == vtkMRMLViewNode::Anaglyph )
-    {
-    of << " stereoType=\"" << "Anaglyph" << "\"";
-    }
-  else if ( this->GetStereoType() == vtkMRMLViewNode::QuadBuffer )
-    {
-    of << " stereoType=\"" << "QuadBuffer" << "\"";
-    }
-  else if ( this->GetStereoType() == vtkMRMLViewNode::Interlaced )
-    {
-    of << " stereoType=\"" << "Interlaced" << "\"";
-    }
-  else if ( this->GetStereoType() == vtkMRMLViewNode::UserDefined_1 )
-    {
-    of << " stereoType=\"" << "UserDefined_1" << "\"";
-    }
-  else if ( this->GetStereoType() == vtkMRMLViewNode::UserDefined_2 )
-    {
-    of << " stereoType=\"" << "UserDefined_2" << "\"";
-    }
-  else if ( this->GetStereoType() == vtkMRMLViewNode::UserDefined_3 )
-    {
-    of << " stereoType=\"" << "UserDefined_3" << "\"";
-    }
-
-  // configure render mode
-  if (this->GetRenderMode() == vtkMRMLViewNode::Perspective )
-    {
-    of << " renderMode=\"" << "Perspective" << "\"";
-    }
-  else if ( this->GetRenderMode() == vtkMRMLViewNode::Orthographic )
-    {
-    of << " renderMode=\"" << "Orthographic" << "\"";
-    }
-
-  of << " useDepthPeeling=\"" << this->GetUseDepthPeeling() << "\"";
+  vtkMRMLWriteXMLBeginMacro(of);
+  vtkMRMLWriteXMLFloatMacro(fieldOfView, FieldOfView);
+  vtkMRMLWriteXMLFloatMacro(letterSize, LetterSize);
+  vtkMRMLWriteXMLBooleanMacro(boxVisible, BoxVisible);
+  vtkMRMLWriteXMLBooleanMacro(fiducialsVisible, FiducialsVisible);
+  vtkMRMLWriteXMLBooleanMacro(fiducialLabelsVisible, FiducialLabelsVisible);
+  vtkMRMLWriteXMLBooleanMacro(axisLabelsVisible, AxisLabelsVisible);
+  vtkMRMLWriteXMLBooleanMacro(axisLabelsCameraDependent, AxisLabelsCameraDependent);
+  vtkMRMLWriteXMLEnumMacro(animationMode, AnimationMode);
+  vtkMRMLWriteXMLEnumMacro(viewAxisMode, ViewAxisMode);
+  vtkMRMLWriteXMLFloatMacro(spinDegrees, SpinDegrees);
+  vtkMRMLWriteXMLFloatMacro(spinMs, AnimationMs);
+  vtkMRMLWriteXMLEnumMacro(spinDirection, SpinDirection);
+  vtkMRMLWriteXMLFloatMacro(rotateDegrees, RotateDegrees);
+  vtkMRMLWriteXMLIntMacro(rockLength, RockLength);
+  vtkMRMLWriteXMLIntMacro(rockCount, RockCount);
+  vtkMRMLWriteXMLEnumMacro(stereoType, StereoType);
+  vtkMRMLWriteXMLEnumMacro(renderMode, RenderMode);
+  vtkMRMLWriteXMLIntMacro(useDepthPeeling, UseDepthPeeling);
+  vtkMRMLWriteXMLIntMacro(gpuMemorySize, GPUMemorySize);
+  vtkMRMLWriteXMLFloatMacro(expectedFPS, ExpectedFPS);
+  vtkMRMLWriteXMLEnumMacro(volumeRenderingQuality, VolumeRenderingQuality);
+  vtkMRMLWriteXMLEnumMacro(raycastTechnique, RaycastTechnique);
+  vtkMRMLWriteXMLIntMacro(volumeRenderingSurfaceSmoothing, VolumeRenderingSurfaceSmoothing);
+  vtkMRMLWriteXMLFloatMacro(volumeRenderingOversamplingFactor, VolumeRenderingOversamplingFactor);
+  vtkMRMLWriteXMLEndMacro();
 }
 
 //----------------------------------------------------------------------------
@@ -195,231 +116,33 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
 
   this->Superclass::ReadXMLAttributes(atts);
 
-  const char* attName;
-  const char* attValue;
-  while (*atts != NULL)
-    {
-    attName = *(atts++);
-    attValue = *(atts++);
-    if (!strcmp(attName, "fieldOfView"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      double fov;
-      ss >> fov;
-      this->FieldOfView = fov;
-      }
-    else if (!strcmp(attName, "letterSize"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      double fov;
-      ss >> fov;
-      this->LetterSize = fov;
-      }
-    else if (!strcmp(attName, "boxVisible"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->BoxVisible = 1;
-        }
-      else
-        {
-        this->BoxVisible = 0;
-        }
-      }
-    else if (!strcmp(attName, "fiducialsVisible"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->FiducialsVisible = 1;
-        }
-      else
-        {
-        this->FiducialsVisible = 0;
-        }
-      }
-    else if (!strcmp(attName, "fiducialLabelsVisible"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->FiducialLabelsVisible = 1;
-        }
-      else
-        {
-        this->FiducialLabelsVisible = 0;
-        }
-      }
-    else if (!strcmp(attName, "axisLabelsVisible"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->AxisLabelsVisible = 1;
-        }
-      else
-        {
-        this->AxisLabelsVisible = 0;
-        }
-      }
-    else if (!strcmp(attName, "axisLabelsCameraDependent"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->AxisLabelsCameraDependent = 1;
-        }
-      else
-        {
-        this->AxisLabelsCameraDependent = 0;
-        }
-      }
-    else if (!strcmp(attName, "stereoType"))
-      {
-      if (!strcmp(attValue,"NoStereo"))
-        {
-        this->StereoType = vtkMRMLViewNode::NoStereo;
-        }
-      else if ( !strcmp (attValue, "RedBlue" ))
-        {
-        this->StereoType = vtkMRMLViewNode::RedBlue;
-        }
-      else if ( !strcmp (attValue, "Anaglyph" ))
-        {
-        this->StereoType = vtkMRMLViewNode::Anaglyph;
-        }
-      else if ( !strcmp (attValue, "QuadBuffer" ))
-        {
-        this->StereoType = vtkMRMLViewNode::QuadBuffer;
-        }
-      else if ( !strcmp (attValue, "Interlaced" ))
-        {
-        this->StereoType = vtkMRMLViewNode::Interlaced;
-        }
-      else if ( !strcmp (attValue, "UserDefined_1" ))
-        {
-        this->StereoType = vtkMRMLViewNode::UserDefined_1;
-        }
-      else if ( !strcmp (attValue, "UserDefined_2" ))
-        {
-        this->StereoType = vtkMRMLViewNode::UserDefined_2;
-        }
-      else if ( !strcmp (attValue, "UserDefined_3" ))
-        {
-        this->StereoType = vtkMRMLViewNode::UserDefined_3;
-        }
-      }
-    else if (!strcmp(attName, "rockLength" ))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      int len;
-      ss >> len;
-      this->RockLength = len;
-      }
-    else if (!strcmp(attName, "rockCount" ))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      int count;
-      ss >> count;
-      this->RockCount = count;
-      }
-    else if (!strcmp(attName, "animationMode"))
-      {
-      if (!strcmp(attValue,"Off"))
-        {
-        this->AnimationMode = vtkMRMLViewNode::Off;
-        }
-      else if (!strcmp(attValue,"Spin"))
-        {
-        this->AnimationMode = vtkMRMLViewNode::Spin;
-        }
-      else if (!strcmp(attValue,"Rock"))
-        {
-        this->AnimationMode = vtkMRMLViewNode::Rock;
-        }
-      }
-    else if (!strcmp (attName, "viewAxisMode"))
-      {
-      if (!strcmp (attValue, "RotateAround"))
-        {
-        this->ViewAxisMode = vtkMRMLViewNode::RotateAround;
-        }
-      else if (!strcmp (attValue, "LookFrom"))
-        {
-        this->ViewAxisMode = vtkMRMLViewNode::LookFrom;
-        }
-      }
-    else if (!strcmp(attName, "spinDegrees" ))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      double deg;
-      ss >> deg;
-      this->SpinDegrees = deg;
-      }
-    else if ( !strcmp ( attName, "rotateDegrees"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      double deg;
-      ss >> deg;
-      this->RotateDegrees = deg;
-      }
-    else if (!strcmp(attName, "spinMs" ))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      int ms;
-      ss >> ms;
-      this->AnimationMs = ms;
-      }
-    else if (!strcmp(attName, "spinDirection"))
-      {
-      if (!strcmp(attValue,"RollLeft"))
-        {
-        this->SpinDirection = vtkMRMLViewNode::RollLeft;
-        }
-      else if ( !strcmp (attValue, "RollRight" ))
-        {
-        this->SpinDirection = vtkMRMLViewNode::RollRight;
-        }
-      else if (!strcmp(attValue,"YawLeft"))
-        {
-        this->SpinDirection = vtkMRMLViewNode::YawLeft;
-        }
-      else if ( !strcmp (attValue, "YawRight" ))
-        {
-        this->SpinDirection = vtkMRMLViewNode::YawRight;
-        }
-      else if ( !strcmp (attValue, "PitchUp" ))
-        {
-        this->SpinDirection = vtkMRMLViewNode::PitchUp;
-        }
-      else if ( !strcmp (attValue, "PitchDown" ))
-        {
-        this->SpinDirection = vtkMRMLViewNode::PitchDown;
-        }
-      }
-    else if (!strcmp(attName, "renderMode"))
-      {
-      if (!strcmp(attValue,"Perspective"))
-        {
-        this->RenderMode = vtkMRMLViewNode::Perspective;
-        }
-      else if ( !strcmp (attValue, "Orthographic" ))
-        {
-        this->RenderMode = vtkMRMLViewNode::Orthographic;
-        }
-      }
-    else if (!strcmp(attName, "useDepthPeeling" ))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      int use;
-      ss >> use;
-      this->SetUseDepthPeeling(use);
-      }
-    }
+  vtkMRMLReadXMLBeginMacro(atts);
+  vtkMRMLReadXMLFloatMacro(fieldOfView, FieldOfView);
+  vtkMRMLReadXMLFloatMacro(letterSize, LetterSize);
+  vtkMRMLReadXMLBooleanMacro(boxVisible, BoxVisible);
+  vtkMRMLReadXMLBooleanMacro(fiducialsVisible, FiducialsVisible);
+  vtkMRMLReadXMLBooleanMacro(fiducialLabelsVisible, FiducialLabelsVisible);
+  vtkMRMLReadXMLBooleanMacro(axisLabelsVisible, AxisLabelsVisible);
+  vtkMRMLReadXMLBooleanMacro(axisLabelsCameraDependent, AxisLabelsCameraDependent);
+  vtkMRMLReadXMLEnumMacro(animationMode, AnimationMode);
+  vtkMRMLReadXMLEnumMacro(viewAxisMode, ViewAxisMode);
+  vtkMRMLReadXMLFloatMacro(spinDegrees, SpinDegrees);
+  vtkMRMLReadXMLFloatMacro(spinMs, AnimationMs);
+  vtkMRMLReadXMLEnumMacro(spinDirection, SpinDirection);
+  vtkMRMLReadXMLFloatMacro(rotateDegrees, RotateDegrees);
+  vtkMRMLReadXMLIntMacro(rockLength, RockLength);
+  vtkMRMLReadXMLIntMacro(rockCount, RockCount);
+  vtkMRMLReadXMLEnumMacro(stereoType, StereoType);
+  vtkMRMLReadXMLEnumMacro(renderMode, RenderMode);
+  vtkMRMLReadXMLIntMacro(useDepthPeeling, UseDepthPeeling);
+  vtkMRMLReadXMLIntMacro(gpuMemorySize, GPUMemorySize);
+  vtkMRMLReadXMLFloatMacro(expectedFPS, ExpectedFPS);
+  vtkMRMLReadXMLEnumMacro(volumeRenderingQuality, VolumeRenderingQuality);
+  vtkMRMLReadXMLEnumMacro(raycastTechnique, RaycastTechnique);
+  vtkMRMLReadXMLIntMacro(volumeRenderingSurfaceSmoothing, VolumeRenderingSurfaceSmoothing);
+  vtkMRMLReadXMLFloatMacro(volumeRenderingOversamplingFactor, VolumeRenderingOversamplingFactor);
+  vtkMRMLReadXMLEndMacro();
+
   this->EndModify(disabledModify);
 }
 
@@ -431,27 +154,33 @@ void vtkMRMLViewNode::Copy(vtkMRMLNode *anode)
   int disabledModify = this->StartModify();
 
   this->Superclass::Copy(anode);
-  vtkMRMLViewNode *node = (vtkMRMLViewNode *) anode;
 
-  this->SetBoxVisible(node->GetBoxVisible());
-  this->SetFiducialsVisible(node->GetFiducialsVisible());
-  this->SetFiducialLabelsVisible(node->GetFiducialLabelsVisible());
-  this->SetAxisLabelsVisible(node->GetAxisLabelsVisible());
-  this->SetAxisLabelsCameraDependent(node->GetAxisLabelsCameraDependent());
-  this->SetFieldOfView(node->GetFieldOfView());
-  this->SetLetterSize(node->GetLetterSize());
-  this->SetAnimationMode ( node->GetAnimationMode ( ) );
-  this->SetViewAxisMode ( node->GetViewAxisMode ( ) );
-  this->SetSpinDirection ( node->GetSpinDirection ( ) );
-  this->SetAnimationMs ( node->GetAnimationMs() );
-  this->SetSpinDegrees (node->GetSpinDegrees ( ));
-  this->SetRotateDegrees (node->GetRotateDegrees ( ));
-  this->SetRockLength ( node->GetRockLength () );
-  this->SetRockCount ( node->GetRockCount ( ) );
-  this->SetStereoType ( node->GetStereoType ( ) );
-  this->SetRenderMode ( node->GetRenderMode() );
-  this->SetUseDepthPeeling ( node->GetUseDepthPeeling() );
-  this->SetFPSVisible ( node->GetFPSVisible() );
+  vtkMRMLCopyBeginMacro(anode);
+  vtkMRMLCopyFloatMacro(FieldOfView);
+  vtkMRMLCopyFloatMacro(LetterSize);
+  vtkMRMLCopyBooleanMacro(BoxVisible);
+  vtkMRMLCopyBooleanMacro(FiducialsVisible);
+  vtkMRMLCopyBooleanMacro(FiducialLabelsVisible);
+  vtkMRMLCopyBooleanMacro(AxisLabelsVisible);
+  vtkMRMLCopyBooleanMacro(AxisLabelsCameraDependent);
+  vtkMRMLCopyEnumMacro(AnimationMode);
+  vtkMRMLCopyEnumMacro(ViewAxisMode);
+  vtkMRMLCopyFloatMacro(SpinDegrees);
+  vtkMRMLCopyFloatMacro(AnimationMs);
+  vtkMRMLCopyEnumMacro(SpinDirection);
+  vtkMRMLCopyFloatMacro(RotateDegrees);
+  vtkMRMLCopyIntMacro(RockLength);
+  vtkMRMLCopyIntMacro(RockCount);
+  vtkMRMLCopyEnumMacro(StereoType);
+  vtkMRMLCopyEnumMacro(RenderMode);
+  vtkMRMLCopyIntMacro(UseDepthPeeling);
+  vtkMRMLCopyIntMacro(GPUMemorySize);
+  vtkMRMLCopyFloatMacro(ExpectedFPS);
+  vtkMRMLCopyIntMacro(VolumeRenderingQuality);
+  vtkMRMLCopyIntMacro(RaycastTechnique);
+  vtkMRMLCopyIntMacro(VolumeRenderingSurfaceSmoothing);
+  vtkMRMLCopyFloatMacro(VolumeRenderingOversamplingFactor);
+  vtkMRMLCopyEndMacro();
 
   this->EndModify(disabledModify);
 }
@@ -461,25 +190,32 @@ void vtkMRMLViewNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 
-  os << indent << "BoxVisible:        " << this->BoxVisible << "\n";
-  os << indent << "FiducialsVisible:        " << this->FiducialsVisible << "\n";
-  os << indent << "FiducialLabelsVisible:        " << this->FiducialLabelsVisible << "\n";
-  os << indent << "AxisLabelsVisible: " << this->AxisLabelsVisible << "\n";
-  os << indent << "AxisLabelsCameraDependent: " << this->AxisLabelsCameraDependent << "\n";
-  os << indent << "FieldOfView:       " << this->FieldOfView << "\n";
-  os << indent << "LetterSize:       " << this->LetterSize << "\n";
-  os << indent << "SpinDirection:       " << this->SpinDirection << "\n";
-  os << indent << "AnimationMs:       " << this->AnimationMs << "\n";
-  os << indent << "SpinDegrees:       " << this->SpinDegrees << "\n";
-  os << indent << "RotateDegrees:       " << this->RotateDegrees << "\n";
-  os << indent << "AnimationMode:       " << this->AnimationMode << "\n";
-  os << indent << "ViewAxisMode:       " << this->ViewAxisMode << "\n";
-  os << indent << "RockLength:       " << this->RockLength << "\n";
-  os << indent << "RockCount:       " << this->RockCount << "\n";
-  os << indent << "StereoType:       " << this->StereoType << "\n";
-  os << indent << "RenderMode:       " << this->RenderMode << "\n";
-  os << indent << "UseDepthPeeling:       " << this->UseDepthPeeling << "\n";
-  os << indent << "FPSVisible:       " << this->FPSVisible << "\n";
+  vtkMRMLPrintBeginMacro(os, indent);
+  vtkMRMLPrintFloatMacro(FieldOfView);
+  vtkMRMLPrintFloatMacro(LetterSize);
+  vtkMRMLPrintBooleanMacro(BoxVisible);
+  vtkMRMLPrintBooleanMacro(FiducialsVisible);
+  vtkMRMLPrintBooleanMacro(FiducialLabelsVisible);
+  vtkMRMLPrintBooleanMacro(AxisLabelsVisible);
+  vtkMRMLPrintBooleanMacro(AxisLabelsCameraDependent);
+  vtkMRMLPrintEnumMacro(AnimationMode);
+  vtkMRMLPrintEnumMacro(ViewAxisMode);
+  vtkMRMLPrintFloatMacro(SpinDegrees);
+  vtkMRMLPrintFloatMacro(AnimationMs);
+  vtkMRMLPrintEnumMacro(SpinDirection);
+  vtkMRMLPrintFloatMacro(RotateDegrees);
+  vtkMRMLPrintIntMacro(RockLength);
+  vtkMRMLPrintIntMacro(RockCount);
+  vtkMRMLPrintEnumMacro(StereoType);
+  vtkMRMLPrintEnumMacro(RenderMode);
+  vtkMRMLPrintIntMacro(UseDepthPeeling);
+  vtkMRMLPrintIntMacro(GPUMemorySize);
+  vtkMRMLPrintFloatMacro(ExpectedFPS);
+  vtkMRMLPrintIntMacro(VolumeRenderingQuality);
+  vtkMRMLPrintIntMacro(RaycastTechnique);
+  vtkMRMLPrintIntMacro(VolumeRenderingSurfaceSmoothing);
+  vtkMRMLPrintFloatMacro(VolumeRenderingOversamplingFactor);
+  vtkMRMLPrintEndMacro();
 }
 
 //------------------------------------------------------------------------------
@@ -499,4 +235,251 @@ double* vtkMRMLViewNode::defaultBackgroundColor2()
                                        0.4705882352941176,
                                        0.7450980392156863};
   return backgroundColor2;
+}
+
+//---------------------------------------------------------------------------
+const char* vtkMRMLViewNode::GetAnimationModeAsString(int id)
+{
+  switch (id)
+    {
+    case Off: return "Off";
+    case Spin: return "Spin";
+    case Rock: return "Rock";
+    default:
+      // invalid id
+      return "";
+    }
+}
+
+//-----------------------------------------------------------
+int vtkMRMLViewNode::GetAnimationModeFromString(const char* name)
+{
+  if (name == NULL)
+    {
+    // invalid name
+    return -1;
+    }
+  for (int ii = 0; ii < AnimationMode_Last; ii++)
+    {
+    if (strcmp(name, GetAnimationModeAsString(ii)) == 0)
+      {
+      // found a matching name
+      return ii;
+      }
+    }
+  // unknown name
+  return -1;
+}
+
+//---------------------------------------------------------------------------
+const char* vtkMRMLViewNode::GetViewAxisModeAsString(int id)
+{
+  switch (id)
+    {
+    case LookFrom: return "LookFrom";
+    case RotateAround: return "RotateAround";
+    default:
+      // invalid id
+      return "";
+    }
+}
+
+//-----------------------------------------------------------
+int vtkMRMLViewNode::GetViewAxisModeFromString(const char* name)
+{
+  if (name == NULL)
+    {
+    // invalid name
+    return -1;
+    }
+  for (int ii = 0; ii < ViewAxisMode_Last; ii++)
+    {
+    if (strcmp(name, GetViewAxisModeAsString(ii)) == 0)
+      {
+      // found a matching name
+      return ii;
+      }
+    }
+  // unknown name
+  return -1;
+}
+
+//---------------------------------------------------------------------------
+const char* vtkMRMLViewNode::GetSpinDirectionAsString(int id)
+{
+  switch (id)
+    {
+    case PitchUp: return "PitchUp";
+    case PitchDown: return "PitchDown";
+    case RollLeft: return "RollLeft";
+    case RollRight: return "RollRight";
+    case YawLeft: return "YawLeft";
+    case YawRight: return "YawRight";
+    default:
+      // invalid id
+      return "";
+    }
+}
+
+//-----------------------------------------------------------
+int vtkMRMLViewNode::GetSpinDirectionFromString(const char* name)
+{
+  if (name == NULL)
+    {
+    // invalid name
+    return -1;
+    }
+  for (int ii = 0; ii < SpinDirection_Last; ii++)
+    {
+    if (strcmp(name, GetSpinDirectionAsString(ii)) == 0)
+      {
+      // found a matching name
+      return ii;
+      }
+    }
+  // unknown name
+  return -1;
+}
+
+//---------------------------------------------------------------------------
+const char* vtkMRMLViewNode::GetStereoTypeAsString(int id)
+{
+  switch (id)
+    {
+    case NoStereo: return "NoStereo";
+    case RedBlue: return "RedBlue";
+    case Anaglyph: return "Anaglyph";
+    case QuadBuffer: return "QuadBuffer";
+    case Interlaced: return "Interlaced";
+    case UserDefined_1: return "UserDefined_1";
+    case UserDefined_2: return "UserDefined_2";
+    case UserDefined_3: return "UserDefined_3";
+    default:
+      // invalid id
+      return "";
+    }
+}
+
+//-----------------------------------------------------------
+int vtkMRMLViewNode::GetStereoTypeFromString(const char* name)
+{
+  if (name == NULL)
+    {
+    // invalid name
+    return -1;
+    }
+  for (int ii = 0; ii < StereoType_Last; ii++)
+    {
+    if (strcmp(name, GetStereoTypeAsString(ii)) == 0)
+      {
+      // found a matching name
+      return ii;
+      }
+    }
+  // unknown name
+  return -1;
+}
+
+//---------------------------------------------------------------------------
+const char* vtkMRMLViewNode::GetRenderModeAsString(int id)
+{
+  switch (id)
+    {
+    case Perspective: return "Perspective";
+    case Orthographic: return "Orthographic";
+    default:
+      // invalid id
+      return "";
+    }
+}
+
+//-----------------------------------------------------------
+int vtkMRMLViewNode::GetRenderModeFromString(const char* name)
+{
+  if (name == NULL)
+    {
+    // invalid name
+    return -1;
+    }
+  for (int ii = 0; ii < RenderMode_Last; ii++)
+    {
+    if (strcmp(name, GetRenderModeAsString(ii)) == 0)
+      {
+      // found a matching name
+      return ii;
+      }
+    }
+  // unknown name
+  return -1;
+}
+
+//---------------------------------------------------------------------------
+const char* vtkMRMLViewNode::GetVolumeRenderingQualityAsString(int id)
+{
+  switch (id)
+    {
+    case AdaptiveQuality: return "AdaptiveQuality";
+    case NormalQuality: return "NormalQuality";
+    case MaximumQuality: return "MaximumQuality";
+    default:
+      // invalid id
+      return "";
+    }
+}
+
+//-----------------------------------------------------------
+int vtkMRMLViewNode::GetVolumeRenderingQualityFromString(const char* name)
+{
+  if (name == NULL)
+    {
+    // invalid name
+    return -1;
+    }
+  for (int ii = 0; ii < VolumeRenderingQuality_Last; ii++)
+    {
+    if (strcmp(name, GetVolumeRenderingQualityAsString(ii)) == 0)
+      {
+      // found a matching name
+      return ii;
+      }
+    }
+  // unknown name
+  return -1;
+}
+
+//---------------------------------------------------------------------------
+const char* vtkMRMLViewNode::GetRaycastTechniqueAsString(int id)
+{
+  switch (id)
+    {
+    case Composite: return "Composite";
+    case CompositeEdgeColoring: return "CompositeEdgeColoring";
+    case MaximumIntensityProjection: return "MaximumIntensityProjection";
+    case MinimumIntensityProjection: return "MinimumIntensityProjection";
+    case GradiantMagnitudeOpacityModulation: return "GradiantMagnitudeOpacityModulation";
+    case IllustrativeContextPreservingExploration: return "IllustrativeContextPreservingExploration";
+    default:
+      // invalid id
+      return "";
+    }
+}
+
+//-----------------------------------------------------------
+int vtkMRMLViewNode::GetRaycastTechniqueFromString(const char* name)
+{
+  if (name == NULL)
+    {
+    // invalid name
+    return -1;
+    }
+  for (int ii = 0; ii < RaycastTechnique_Last; ii++)
+    {
+    if (strcmp(name, GetRaycastTechniqueAsString(ii)) == 0)
+      {
+      // found a matching name
+      return ii;
+      }
+    }
+  // unknown name
+  return -1;
 }

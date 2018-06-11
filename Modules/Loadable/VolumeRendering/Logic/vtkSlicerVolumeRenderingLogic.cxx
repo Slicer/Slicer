@@ -234,6 +234,8 @@ void vtkSlicerVolumeRenderingLogic::ChangeVolumeRenderingMethod(const char* disp
     return;
     }
 
+  this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
+
   // Create a display node of the requested type for all existing display nodes
   DisplayNodesType displayNodesCopy(this->DisplayNodes);
   DisplayNodesType::iterator displayIt;
@@ -245,7 +247,7 @@ void vtkSlicerVolumeRenderingLogic::ChangeVolumeRenderingMethod(const char* disp
     if (!newDisplayNode)
       {
       vtkErrorMacro("ChangeVolumeRenderingMethod: Failed to create display node of type " << displayNodeClassName);
-      return;
+      continue;
       }
     this->GetMRMLScene()->AddNode(newDisplayNode);
     newDisplayNode->Delete();
@@ -253,6 +255,8 @@ void vtkSlicerVolumeRenderingLogic::ChangeVolumeRenderingMethod(const char* disp
     this->GetMRMLScene()->RemoveNode(oldDisplayNode);
     displayableNode->AddAndObserveDisplayNodeID(newDisplayNode->GetID());
     }
+
+  this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
 }
 
 //----------------------------------------------------------------------------

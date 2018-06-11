@@ -23,6 +23,10 @@
 #include "vtkMRMLCPURayCastVolumeRenderingDisplayNode.h"
 #include "ui_qSlicerCPURayCastVolumeRenderingPropertiesWidget.h"
 
+// MRML includes
+#include "vtkMRMLScene.h"
+#include "vtkMRMLViewNode.h"
+
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_VolumeRendering
 class qSlicerCPURayCastVolumeRenderingPropertiesWidgetPrivate
@@ -71,13 +75,11 @@ void qSlicerCPURayCastVolumeRenderingPropertiesWidgetPrivate
 {
   this->RenderingTechniqueComboBox->clear();
   this->RenderingTechniqueComboBox->addItem(
-    "Composite With Shading", vtkMRMLVolumeRenderingDisplayNode::Composite);
+    "Composite With Shading", vtkMRMLViewNode::Composite);
   this->RenderingTechniqueComboBox->addItem(
-    "Maximum Intensity Projection",
-    vtkMRMLVolumeRenderingDisplayNode::MaximumIntensityProjection);
+    "Maximum Intensity Projection", vtkMRMLViewNode::MaximumIntensityProjection);
   this->RenderingTechniqueComboBox->addItem(
-    "Minimum Intensity Projection",
-    vtkMRMLVolumeRenderingDisplayNode::MinimumIntensityProjection);
+    "Minimum Intensity Projection", vtkMRMLViewNode::MinimumIntensityProjection);
 }
 
 //-----------------------------------------------------------------------------
@@ -108,15 +110,20 @@ vtkMRMLCPURayCastVolumeRenderingDisplayNode* qSlicerCPURayCastVolumeRenderingPro
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCPURayCastVolumeRenderingPropertiesWidget
-::updateWidgetFromMRML()
+void qSlicerCPURayCastVolumeRenderingPropertiesWidget::updateWidgetFromMRML()
 {
   Q_D(qSlicerCPURayCastVolumeRenderingPropertiesWidget);
   if (!this->mrmlCPURayCastDisplayNode())
     {
     return;
     }
-  int technique = this->mrmlCPURayCastDisplayNode()->GetRaycastTechnique();
+  vtkMRMLViewNode* firstViewNode = this->mrmlCPURayCastDisplayNode()->GetFirstViewNode();
+  if (!firstViewNode)
+    {
+    return;
+    }
+
+  int technique = firstViewNode->GetRaycastTechnique();
   int index = d->RenderingTechniqueComboBox->findData(QVariant(technique));
   if (index == -1)
     {
@@ -126,14 +133,25 @@ void qSlicerCPURayCastVolumeRenderingPropertiesWidget
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCPURayCastVolumeRenderingPropertiesWidget
-::setRenderingTechnique(int index)
+void qSlicerCPURayCastVolumeRenderingPropertiesWidget::setRenderingTechnique(int index)
 {
   Q_D(qSlicerCPURayCastVolumeRenderingPropertiesWidget);
-  if (!this->mrmlCPURayCastDisplayNode())
+  vtkMRMLCPURayCastVolumeRenderingDisplayNode* displayNode =
+    this->mrmlCPURayCastDisplayNode();
+  if (!displayNode)
     {
     return;
     }
   int technique = d->RenderingTechniqueComboBox->itemData(index).toInt();
-  this->mrmlCPURayCastDisplayNode()->SetRaycastTechnique(technique);
+
+  std::vector<vtkMRMLNode*> viewNodes;
+  displayNode->GetScene()->GetNodesByClass("vtkMRMLViewNode", viewNodes);
+  for (std::vector<vtkMRMLNode*>::iterator it=viewNodes.begin(); it!=viewNodes.end(); ++it)
+    {
+    vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(*it);
+    if (displayNode->IsDisplayableInView(viewNode->GetID()))
+      {
+      viewNode->SetRaycastTechnique(technique);
+      }
+    }
 }

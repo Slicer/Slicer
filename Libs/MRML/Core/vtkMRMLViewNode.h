@@ -81,13 +81,19 @@ public:
   /// Turn on and off animated spinning or rocking.
   vtkGetMacro(AnimationMode, int);
   vtkSetMacro(AnimationMode, int);
+  const char* GetAnimationModeAsString(int id);
+  int GetAnimationModeFromString(const char* name);
 
   vtkGetMacro(ViewAxisMode, int);
   vtkSetMacro(ViewAxisMode, int);
+  const char* GetViewAxisModeAsString(int id);
+  int GetViewAxisModeFromString(const char* name);
 
   /// Direction of animated spinning
   vtkGetMacro(SpinDirection, int);
   vtkSetMacro(SpinDirection, int);
+  const char* GetSpinDirectionAsString(int id);
+  int GetSpinDirectionFromString(const char* name);
 
   /// Number of degrees in spin increment.
   vtkGetMacro(SpinDegrees, double);
@@ -111,10 +117,14 @@ public:
   /// Stereo mode (including NoStereo)
   vtkGetMacro(StereoType, int);
   vtkSetMacro(StereoType, int);
+  const char* GetStereoTypeAsString(int id);
+  int GetStereoTypeFromString(const char* name);
 
   /// Specifies orthographic or perspective rendering
   vtkGetMacro(RenderMode, int);
   vtkSetMacro(RenderMode, int);
+  const char* GetRenderModeAsString(int id);
+  int GetRenderModeFromString(const char* name);
 
   /// Use depth peeling or not.
   /// 0 by default.
@@ -126,50 +136,109 @@ public:
   vtkGetMacro(FPSVisible, int);
   vtkSetMacro(FPSVisible, int);
 
+  /// GPU memory size
+  /// 0 by default (application default)
+  vtkGetMacro(GPUMemorySize, int);
+  vtkSetMacro(GPUMemorySize, int);
+
+  /// Expected FPS
+  vtkSetMacro(ExpectedFPS, double);
+  vtkGetMacro(ExpectedFPS, double);
+
+  vtkSetMacro(VolumeRenderingQuality, int);
+  vtkGetMacro(VolumeRenderingQuality, int);
+  const char* GetVolumeRenderingQualityAsString(int id);
+  int GetVolumeRenderingQualityFromString(const char* name);
+
+  /// Rycasting technique for volume rendering
+  vtkGetMacro(RaycastTechnique, int);
+  vtkSetMacro(RaycastTechnique, int);
+  const char* GetRaycastTechniqueAsString(int id);
+  int GetRaycastTechniqueFromString(const char* name);
+
+  /// Reduce wood grain artifact to make surfaces appear smoother.
+  /// For example, by applying jittering on casted rays.
+  /// Note: Only applies to GPU-based techniques
+  vtkGetMacro(VolumeRenderingSurfaceSmoothing, bool);
+  vtkSetMacro(VolumeRenderingSurfaceSmoothing, bool);
+
+  /// Oversampling factor for sample distance. The sample distance is calculated by \sa
+  /// GetSampleDistance to be the volume's minimum spacing divided by the oversampling
+  /// factor.
+  /// If \sa VolumeRenderingQuality is set to maximum quality, then a fix oversampling factor of 10 is used.
+  vtkSetMacro(VolumeRenderingOversamplingFactor,double);
+  vtkGetMacro(VolumeRenderingOversamplingFactor,double);
+
   /// Modes for automatically controlling camera
   enum
     {
-      RotateAround = 0,
-      LookFrom
+    RotateAround = 0,
+    LookFrom,
+    ViewAxisMode_Last
     };
 
   /// Rotate camera directions
   enum
     {
-      PitchUp = 0,
-      PitchDown,
-      RollLeft,
-      RollRight,
-      YawLeft,
-      YawRight
+    PitchUp = 0,
+    PitchDown,
+    RollLeft,
+    RollRight,
+    YawLeft,
+    YawRight,
+    SpinDirection_Last
     };
 
   /// Stereo modes
   enum
     {
-      NoStereo = 0,
-      RedBlue,
-      Anaglyph,
-      QuadBuffer,
-      Interlaced,
-      UserDefined_1,
-      UserDefined_2,
-      UserDefined_3
+    NoStereo = 0,
+    RedBlue,
+    Anaglyph,
+    QuadBuffer,
+    Interlaced,
+    UserDefined_1,
+    UserDefined_2,
+    UserDefined_3,
+    StereoType_Last
     };
 
   /// Render modes
   enum
     {
-      Perspective = 0,
-      Orthographic
+    Perspective = 0,
+    Orthographic,
+    RenderMode_Last
     };
 
   /// Animation mode
   enum
     {
-      Off = 0,
-      Spin,
-      Rock
+    Off = 0,
+    Spin,
+    Rock,
+    AnimationMode_Last
+    };
+
+  /// Quality setting used for \sa VolumeRenderingQuality
+  enum Quality
+    {
+    AdaptiveQuality = 0, ///< quality determined from desired update rate
+    NormalQuality,       ///< good image quality at reasonable speed
+    MaximumQuality,      ///< high image quality, rendering time is not considered
+    VolumeRenderingQuality_Last
+    };
+
+  /// Ray casting technique for volume rendering
+  enum RayCastType
+    {
+    Composite = 0, // Composite with directional lighting (default)
+    CompositeEdgeColoring, // Composite with fake lighting (edge coloring, faster) - Not used
+    MaximumIntensityProjection,
+    MinimumIntensityProjection,
+    GradiantMagnitudeOpacityModulation, // Not used
+    IllustrativeContextPreservingExploration, // Not used
+    RaycastTechnique_Last
     };
 
   /// Events
@@ -222,6 +291,39 @@ protected:
 
   /// Show the Frame per second as text on the lower right part of the view
   int FPSVisible;
+
+  /// Tracking GPU memory size (in MB), not saved into scene file
+  /// because different machines may have different GPU memory
+  /// values.
+  /// A value of 0 indicates to use the default value in the settings
+  int GPUMemorySize;
+
+  /// Expected frame per second rendered
+  double ExpectedFPS;
+
+  /// Volume rendering quality control mode
+  /// 0: Adaptive
+  /// 1: Maximum Quality
+  /// 2: Fixed Framerate // unsupported yet
+  int VolumeRenderingQuality;
+
+  /// Techniques for volume rendering ray cast
+  /// 0: Composite with directional lighting (default)
+  /// 1: Composite with fake lighting (edge coloring, faster) - Not used
+  /// 2: MIP
+  /// 3: MINIP
+  /// 4: Gradient Magnitude Opacity Modulation - Not used
+  /// 5: Illustrative Context Preserving Exploration - Not used
+  int RaycastTechnique;
+
+  /// Make surface appearance smoother in volume rendering. Off by default
+  bool VolumeRenderingSurfaceSmoothing;
+
+  /// Oversampling factor for sample distance. The sample distance is calculated by \sa
+  /// GetSampleDistance to be the volume's minimum spacing divided by the oversampling
+  /// factor.
+  /// If \sa VolumeRenderingQuality is set to maximum quality, then a fix oversampling factor of 10 is used.
+  double VolumeRenderingOversamplingFactor;
 };
 
 #endif

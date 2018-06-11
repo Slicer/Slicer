@@ -57,6 +57,10 @@ public:
   /// Update actors based on volumes in the scene
   virtual void UpdateFromMRML() VTK_OVERRIDE;
 
+  /// Utility functions mainly used for testing
+  vtkVolumeMapper* GetVolumeMapper(vtkMRMLVolumeNode* volumeNode);
+  vtkVolume* GetVolumeActor(vtkMRMLVolumeNode* volumeNode);
+
 public:
   static int DefaultGPUMemorySize;
 

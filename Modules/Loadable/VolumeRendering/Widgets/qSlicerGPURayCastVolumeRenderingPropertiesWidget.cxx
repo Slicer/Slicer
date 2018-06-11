@@ -23,6 +23,10 @@
 #include "vtkMRMLGPURayCastVolumeRenderingDisplayNode.h"
 #include "ui_qSlicerGPURayCastVolumeRenderingPropertiesWidget.h"
 
+// MRML includes
+#include "vtkMRMLScene.h"
+#include "vtkMRMLViewNode.h"
+
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_VolumeRendering
 class qSlicerGPURayCastVolumeRenderingPropertiesWidgetPrivate
@@ -72,13 +76,11 @@ void qSlicerGPURayCastVolumeRenderingPropertiesWidgetPrivate::populateRenderingT
 {
   this->RenderingTechniqueComboBox->clear();
   this->RenderingTechniqueComboBox->addItem(
-    "Composite With Shading", vtkMRMLVolumeRenderingDisplayNode::Composite);
+    "Composite With Shading", vtkMRMLViewNode::Composite);
   this->RenderingTechniqueComboBox->addItem(
-    "Maximum Intensity Projection",
-    vtkMRMLVolumeRenderingDisplayNode::MaximumIntensityProjection);
+    "Maximum Intensity Projection", vtkMRMLViewNode::MaximumIntensityProjection);
   this->RenderingTechniqueComboBox->addItem(
-    "Minimum Intensity Projection",
-    vtkMRMLVolumeRenderingDisplayNode::MinimumIntensityProjection);
+    "Minimum Intensity Projection", vtkMRMLViewNode::MinimumIntensityProjection);
 }
 
 //-----------------------------------------------------------------------------
@@ -117,8 +119,13 @@ void qSlicerGPURayCastVolumeRenderingPropertiesWidget::updateWidgetFromMRML()
     {
     return;
     }
+  vtkMRMLViewNode* firstViewNode = displayNode->GetFirstViewNode();
+  if (!firstViewNode)
+    {
+    return;
+    }
 
-  int technique = displayNode->GetRaycastTechnique();
+  int technique = firstViewNode->GetRaycastTechnique();
   int index = d->RenderingTechniqueComboBox->findData(QVariant(technique));
   if (index == -1)
     {
@@ -129,7 +136,7 @@ void qSlicerGPURayCastVolumeRenderingPropertiesWidget::updateWidgetFromMRML()
   d->RenderingTechniqueComboBox->blockSignals(wasBlocked);
 
   wasBlocked = d->SurfaceSmoothingCheckBox->blockSignals(true);
-  d->SurfaceSmoothingCheckBox->setChecked(displayNode->GetSurfaceSmoothing());
+  d->SurfaceSmoothingCheckBox->setChecked(firstViewNode->GetVolumeRenderingSurfaceSmoothing());
   d->SurfaceSmoothingCheckBox->blockSignals(wasBlocked);
 }
 
@@ -143,7 +150,17 @@ void qSlicerGPURayCastVolumeRenderingPropertiesWidget::setRenderingTechnique(int
     return;
     }
   int technique = d->RenderingTechniqueComboBox->itemData(index).toInt();
-  displayNode->SetRaycastTechnique(technique);
+
+  std::vector<vtkMRMLNode*> viewNodes;
+  displayNode->GetScene()->GetNodesByClass("vtkMRMLViewNode", viewNodes);
+  for (std::vector<vtkMRMLNode*>::iterator it=viewNodes.begin(); it!=viewNodes.end(); ++it)
+    {
+    vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(*it);
+    if (displayNode->IsDisplayableInView(viewNode->GetID()))
+      {
+      viewNode->SetRaycastTechnique(technique);
+      }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -155,5 +172,15 @@ void qSlicerGPURayCastVolumeRenderingPropertiesWidget::setSurfaceSmoothing(bool 
     {
     return;
     }
-  displayNode->SetSurfaceSmoothing(on);
+
+  std::vector<vtkMRMLNode*> viewNodes;
+  displayNode->GetScene()->GetNodesByClass("vtkMRMLViewNode", viewNodes);
+  for (std::vector<vtkMRMLNode*>::iterator it=viewNodes.begin(); it!=viewNodes.end(); ++it)
+    {
+    vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(*it);
+    if (displayNode->IsDisplayableInView(viewNode->GetID()))
+      {
+      viewNode->SetVolumeRenderingSurfaceSmoothing(on);
+      }
+    }
 }

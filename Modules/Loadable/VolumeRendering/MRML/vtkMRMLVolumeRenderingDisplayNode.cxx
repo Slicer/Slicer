@@ -20,6 +20,7 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLVolumePropertyNode.h"
 #include "vtkMRMLVolumeRenderingDisplayNode.h"
+#include "vtkMRMLViewNode.h"
 
 // VTK includes
 #include <vtkCommand.h>
@@ -61,11 +62,6 @@ vtkMRMLVolumeRenderingDisplayNode::vtkMRMLVolumeRenderingDisplayNode()
                              ROINodeReferenceMRMLAttributeName,
                              roiEvents.GetPointer());
 
-  this->ExpectedFPS = 8.;
-  this->EstimatedSampleDistance = 2.0;
-
-  this->GPUMemorySize = 0; // means application default
-
   this->CroppingEnabled = 0;//by default cropping is not enabled
 
   this->Threshold[0] = 0.0;
@@ -77,9 +73,6 @@ vtkMRMLVolumeRenderingDisplayNode::vtkMRMLVolumeRenderingDisplayNode()
 
   this->WindowLevel[0] = 0.0;
   this->WindowLevel[1] = 0.0;
-
-  this->PerformanceControl = vtkMRMLVolumeRenderingDisplayNode::AdaptiveQuality;
-  this->RaycastTechnique = vtkMRMLVolumeRenderingDisplayNode::Composite;
 }
 
 //----------------------------------------------------------------------------
@@ -99,11 +92,6 @@ void vtkMRMLVolumeRenderingDisplayNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLIntMacro(followVolumeDisplayNode, FollowVolumeDisplayNode);
   vtkMRMLReadXMLIntMacro(ignoreVolumeDisplayNodeThreshold, IgnoreVolumeDisplayNodeThreshold);
   vtkMRMLReadXMLIntMacro(useSingleVolumeProperty, UseSingleVolumeProperty);
-  vtkMRMLReadXMLIntMacro(gpuMemorySize, GPUMemorySize);
-  vtkMRMLReadXMLFloatMacro(estimatedSampleDistance, EstimatedSampleDistance);
-  vtkMRMLReadXMLFloatMacro(expectedFPS, ExpectedFPS);
-  vtkMRMLReadXMLIntMacro(performanceControl, PerformanceControl);
-  vtkMRMLReadXMLIntMacro(raycastTechnique, RaycastTechnique);
   vtkMRMLReadXMLEndMacro();
 }
 
@@ -119,11 +107,6 @@ void vtkMRMLVolumeRenderingDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLIntMacro(followVolumeDisplayNode, FollowVolumeDisplayNode);
   vtkMRMLWriteXMLIntMacro(ignoreVolumeDisplayNodeThreshold, IgnoreVolumeDisplayNodeThreshold);
   vtkMRMLWriteXMLIntMacro(useSingleVolumeProperty, UseSingleVolumeProperty);
-  vtkMRMLWriteXMLIntMacro(gpuMemorySize, GPUMemorySize);
-  vtkMRMLWriteXMLFloatMacro(estimatedSampleDistance, EstimatedSampleDistance);
-  vtkMRMLWriteXMLFloatMacro(expectedFPS, ExpectedFPS);
-  vtkMRMLWriteXMLIntMacro(performanceControl, PerformanceControl);
-  vtkMRMLWriteXMLIntMacro(raycastTechnique, RaycastTechnique);
   vtkMRMLWriteXMLEndMacro();
 }
 
@@ -142,11 +125,6 @@ void vtkMRMLVolumeRenderingDisplayNode::Copy(vtkMRMLNode *anode)
   vtkMRMLCopyIntMacro(FollowVolumeDisplayNode);
   vtkMRMLCopyIntMacro(IgnoreVolumeDisplayNodeThreshold);
   vtkMRMLCopyIntMacro(UseSingleVolumeProperty);
-  vtkMRMLCopyIntMacro(GPUMemorySize);
-  vtkMRMLCopyFloatMacro(EstimatedSampleDistance);
-  vtkMRMLCopyFloatMacro(ExpectedFPS);
-  vtkMRMLCopyIntMacro(PerformanceControl);
-  vtkMRMLCopyIntMacro(RaycastTechnique);
   vtkMRMLCopyEndMacro();
 
   this->EndModify(wasModifying);
@@ -164,11 +142,6 @@ void vtkMRMLVolumeRenderingDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintIntMacro(FollowVolumeDisplayNode);
   vtkMRMLPrintIntMacro(IgnoreVolumeDisplayNodeThreshold);
   vtkMRMLPrintIntMacro(UseSingleVolumeProperty);
-  vtkMRMLPrintIntMacro(GPUMemorySize);
-  vtkMRMLPrintFloatMacro(EstimatedSampleDistance);
-  vtkMRMLPrintFloatMacro(ExpectedFPS);
-  vtkMRMLPrintIntMacro(PerformanceControl);
-  vtkMRMLPrintIntMacro(RaycastTechnique);
   vtkMRMLPrintEndMacro();
 }
 
@@ -226,6 +199,53 @@ const char* vtkMRMLVolumeRenderingDisplayNode::GetROINodeID()
 vtkMRMLAnnotationROINode* vtkMRMLVolumeRenderingDisplayNode::GetROINode()
 {
   return vtkMRMLAnnotationROINode::SafeDownCast(this->GetNodeReference(ROINodeReferenceRole));
+}
+
+//-----------------------------------------------------------------------------
+vtkMRMLViewNode* vtkMRMLVolumeRenderingDisplayNode::GetFirstViewNode()
+{
+  if (!this->GetScene())
+    {
+    return NULL;
+    }
+
+  std::vector<vtkMRMLNode*> viewNodes;
+  this->GetScene()->GetNodesByClass("vtkMRMLViewNode", viewNodes);
+  for (std::vector<vtkMRMLNode*>::iterator it=viewNodes.begin(); it!=viewNodes.end(); ++it)
+    {
+    if (this->IsDisplayableInView((*it)->GetID()))
+      {
+      return vtkMRMLViewNode::SafeDownCast(*it);
+      }
+    }
+
+  return NULL;
+}
+
+//---------------------------------------------------------------------------
+double vtkMRMLVolumeRenderingDisplayNode::GetSampleDistance()
+{
+  vtkMRMLViewNode* firstViewNode = this->GetFirstViewNode();
+  if (!firstViewNode)
+    {
+    vtkErrorMacro("GetSampleDistance: Failed to access view node, returning 1mm");
+    return 1.0;
+    }
+  vtkMRMLVolumeNode* volumeNode = this->GetVolumeNode();
+  if (!volumeNode)
+    {
+    vtkErrorMacro("GetSampleDistance: Failed to access volume node, assuming 1mm voxel size");
+    return 1.0 / firstViewNode->GetVolumeRenderingOversamplingFactor();
+    }
+
+  const double minSpacing = volumeNode->GetMinSpacing() > 0 ? volumeNode->GetMinSpacing() : 1.;
+  double sampleDistance = minSpacing / firstViewNode->GetVolumeRenderingOversamplingFactor();
+  if ( firstViewNode
+    && firstViewNode->GetVolumeRenderingQuality() == vtkMRMLViewNode::MaximumQuality)
+    {
+    sampleDistance = minSpacing / 10.; // =10x smaller than pixel is high quality
+    }
+  return sampleDistance;
 }
 
 //---------------------------------------------------------------------------

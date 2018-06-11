@@ -34,8 +34,6 @@ vtkMRMLNodeNewMacro(vtkMRMLMultiVolumeRenderingDisplayNode);
 //----------------------------------------------------------------------------
 vtkMRMLMultiVolumeRenderingDisplayNode::vtkMRMLMultiVolumeRenderingDisplayNode()
 {
-  this->RaycastTechnique = vtkMRMLMultiVolumeRenderingDisplayNode::Composite;
-  this->SurfaceSmoothing = false;
 }
 
 //----------------------------------------------------------------------------
@@ -49,8 +47,6 @@ void vtkMRMLMultiVolumeRenderingDisplayNode::ReadXMLAttributes(const char** atts
   this->Superclass::ReadXMLAttributes(atts);
 
   vtkMRMLReadXMLBeginMacro(atts);
-  vtkMRMLReadXMLIntMacro(raycastTechnique, RaycastTechnique);
-  vtkMRMLReadXMLIntMacro(surfaceSmoothing, SurfaceSmoothing);
   vtkMRMLReadXMLEndMacro();
 }
 
@@ -60,8 +56,6 @@ void vtkMRMLMultiVolumeRenderingDisplayNode::WriteXML(ostream& of, int nIndent)
   this->Superclass::WriteXML(of, nIndent);
 
   vtkMRMLWriteXMLBeginMacro(of);
-  vtkMRMLWriteXMLIntMacro(raycastTechnique, RaycastTechnique);
-  vtkMRMLWriteXMLIntMacro(surfaceSmoothing, SurfaceSmoothing);
   vtkMRMLWriteXMLEndMacro();
 }
 
@@ -72,8 +66,6 @@ void vtkMRMLMultiVolumeRenderingDisplayNode::Copy(vtkMRMLNode *anode)
   this->Superclass::Copy(anode);
 
   vtkMRMLCopyBeginMacro(anode);
-  vtkMRMLCopyIntMacro(RaycastTechnique);
-  vtkMRMLCopyIntMacro(SurfaceSmoothing);
   vtkMRMLCopyEndMacro();
 
   this->EndModify(wasModifying);
@@ -85,7 +77,5 @@ void vtkMRMLMultiVolumeRenderingDisplayNode::PrintSelf(ostream& os, vtkIndent in
   this->Superclass::PrintSelf(os,indent);
 
   vtkMRMLPrintBeginMacro(os, indent);
-  vtkMRMLPrintIntMacro(RaycastTechnique);
-  vtkMRMLPrintIntMacro(SurfaceSmoothing);
   vtkMRMLPrintEndMacro();
 }

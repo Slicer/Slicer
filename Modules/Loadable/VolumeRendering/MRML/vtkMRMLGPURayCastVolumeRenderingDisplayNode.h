@@ -53,21 +53,11 @@ public:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() VTK_OVERRIDE {return "GPURayCastVolumeRendering";}
 
-  // Description:
-  // Reduce wood grain artifact to make surfaces appear smoother.
-  // For example, by applying jittering on casted rays.
-  vtkGetMacro(SurfaceSmoothing, bool);
-  vtkSetMacro(SurfaceSmoothing, bool);
-
 protected:
   vtkMRMLGPURayCastVolumeRenderingDisplayNode();
   ~vtkMRMLGPURayCastVolumeRenderingDisplayNode();
   vtkMRMLGPURayCastVolumeRenderingDisplayNode(const vtkMRMLGPURayCastVolumeRenderingDisplayNode&);
   void operator=(const vtkMRMLGPURayCastVolumeRenderingDisplayNode&);
-
-  /// Make surface appearance smoother. Off by default
-  bool SurfaceSmoothing;
 };
 
 #endif
-

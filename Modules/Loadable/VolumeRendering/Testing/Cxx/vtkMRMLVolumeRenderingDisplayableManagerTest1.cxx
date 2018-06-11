@@ -212,28 +212,27 @@ int vtkMRMLVolumeRenderingDisplayableManagerTest1(int argc, char* argv[])
     std::cout << "Saved screenshot: " << screenshootFilename << std::endl;
     }
 
-//TODO:
-  vtkGPUVolumeRayCastMapper* mapper = NULL;//vtkGPUVolumeRayCastMapper::SafeDownCast(vrDisplayableManager->GetVolumeMapper(vrDisplayNode.GetPointer()));
+  vtkGPUVolumeRayCastMapper* mapper = vtkGPUVolumeRayCastMapper::SafeDownCast(vrDisplayableManager->GetVolumeMapper(volumeNode));
   if (mapper)
     {
     CHECK_INT(mapper->GetMaxMemoryInBytes() / 1024 / 1024, 256);
-    vrDisplayNode->SetGPUMemorySize(250);
+    viewNode->SetGPUMemorySize(250);
     CHECK_INT(mapper->GetMaxMemoryInBytes() / 1024 / 1024, 256);
-    vrDisplayNode->SetGPUMemorySize(1024);
+    viewNode->SetGPUMemorySize(1024);
     CHECK_INT(mapper->GetMaxMemoryInBytes() / 1024 / 1024, 1024);
-    vrDisplayNode->SetGPUMemorySize(256);
+    viewNode->SetGPUMemorySize(256);
     CHECK_INT(mapper->GetMaxMemoryInBytes() / 1024 / 1024, 256);
-    vrDisplayNode->SetGPUMemorySize(520);
+    viewNode->SetGPUMemorySize(520);
     CHECK_INT(mapper->GetMaxMemoryInBytes() / 1024 / 1024, 640);
-    vrDisplayNode->SetGPUMemorySize(0);
+    viewNode->SetGPUMemorySize(0);
     CHECK_INT(mapper->GetMaxMemoryInBytes() / 1024 / 1024, 256);
-    vrDisplayNode->SetGPUMemorySize(2048);
+    viewNode->SetGPUMemorySize(2048);
     CHECK_INT(mapper->GetMaxMemoryInBytes() / 1024 / 1024, 2048);
-    vrDisplayNode->SetGPUMemorySize(4096);
+    viewNode->SetGPUMemorySize(4096);
     CHECK_INT(mapper->GetMaxMemoryInBytes() / 1024 / 1024, 4096);
-    vrDisplayNode->SetGPUMemorySize(8192);
+    viewNode->SetGPUMemorySize(8192);
     CHECK_INT(mapper->GetMaxMemoryInBytes() / 1024 / 1024, 8192);
-    vrDisplayNode->SetGPUMemorySize(16384);
+    viewNode->SetGPUMemorySize(16384);
     CHECK_INT(mapper->GetMaxMemoryInBytes() / 1024 / 1024, 16384);
    }
 
