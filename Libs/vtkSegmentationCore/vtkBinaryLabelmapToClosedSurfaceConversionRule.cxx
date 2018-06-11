@@ -41,6 +41,8 @@
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkWindowedSincPolyDataFilter.h>
+#include <vtkMatrix3x3.h>
+#include <vtkReverseSense.h>
 
 //----------------------------------------------------------------------------
 vtkSegmentationConverterRuleNewMacro(vtkBinaryLabelmapToClosedSurfaceConversionRule);
@@ -155,6 +157,7 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkDataObject* sour
     padder->Update();
     binaryLabelMap = padder->GetOutput();
     }
+
   // Clone labelmap and set identity geometry so that the whole transform can be done in IJK space and then
   // the whole transform can be applied on the poly data to transform it to the world coordinate system
   vtkSmartPointer<vtkImageData> binaryLabelmapWithIdentityGeometry = vtkSmartPointer<vtkImageData>::New();
@@ -175,6 +178,7 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkDataObject* sour
   // vtkPolyDataNormals filter. However, if smoothing step is applied after vtkDiscreteFlyingEdges3D then
   // computing normals after smoothing provides smoother surfaces.
   bool marchingCubesComputesSurfaceNormals = (computeSurfaceNormals > 0) && (smoothingFactor <= 0);
+
   vtkSmartPointer<vtkDiscreteFlyingEdges3D> marchingCubes = vtkSmartPointer<vtkDiscreteFlyingEdges3D>::New();
 #else
   bool marchingCubesComputesSurfaceNormals = false;
@@ -209,7 +213,7 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkDataObject* sour
     processingResult = decimator->GetOutput();
     }
 
-  if (smoothingFactor>0)
+  if (smoothingFactor > 0)
     {
     vtkSmartPointer<vtkWindowedSincPolyDataFilter> smoother = vtkSmartPointer<vtkWindowedSincPolyDataFilter>::New();
     smoother->SetInputData(processingResult);
@@ -236,7 +240,26 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkDataObject* sour
   transformPolyDataFilter->SetInputData(processingResult);
   transformPolyDataFilter->SetTransform(labelmapGeometryTransform);
 
-  if (computeSurfaceNormals>0 && !marchingCubesComputesSurfaceNormals)
+  // Determine if reference volume is in a left-handed coordinate system. If that is case, and normals are
+  // calculated in the marching cubes step, then flipping the normals is needed
+  bool flippedNormals = false;
+  if (marchingCubesComputesSurfaceNormals)
+    {
+    vtkNew<vtkMatrix3x3> directionsMatrix;
+    for (int i=0; i<3; ++i)
+      {
+      for (int j=0; j<3; ++j)
+        {
+        directionsMatrix->SetElement(i,j, labelmapImageToWorldMatrix->GetElement(i,j));
+        }
+      }
+    if (directionsMatrix->Determinant() < 0.0)
+      {
+      flippedNormals = true;
+      }
+    }
+
+  if (computeSurfaceNormals > 0 && !marchingCubesComputesSurfaceNormals)
     {
     vtkSmartPointer<vtkPolyDataNormals> polyDataNormals = vtkSmartPointer<vtkPolyDataNormals>::New();
     polyDataNormals->SetInputConnection(transformPolyDataFilter->GetOutputPort());
@@ -246,6 +269,15 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkDataObject* sour
     polyDataNormals->SplittingOff();
     polyDataNormals->Update();
     closedSurfacePolyData->ShallowCopy(polyDataNormals->GetOutput());
+    }
+  else if (computeSurfaceNormals > 0 && flippedNormals)
+    {
+    vtkNew<vtkReverseSense> flipNormals;
+    flipNormals->SetInputConnection(transformPolyDataFilter->GetOutputPort());
+    flipNormals->ReverseCellsOff();
+    flipNormals->ReverseNormalsOn();
+    flipNormals->Update();
+    closedSurfacePolyData->ShallowCopy(flipNormals->GetOutput());
     }
   else
     {
