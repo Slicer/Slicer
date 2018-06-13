@@ -237,7 +237,6 @@ void qSlicerCoreApplicationPrivate::init()
   ctkAppLauncherSettings appLauncherSettings;
   appLauncherSettings.setLauncherName(q->applicationName());
   appLauncherSettings.setLauncherDir(this->SlicerHome);
-  appLauncherSettings.setLauncherSettingsDir(QFileInfo(q->launcherSettingsFilePath()).absolutePath());
   if (!appLauncherSettings.readSettings(q->launcherSettingsFilePath()))
     {
     qCritical() << "Failed to read launcher settings" << q->launcherSettingsFilePath();
