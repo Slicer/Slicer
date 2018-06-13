@@ -50,6 +50,11 @@ bool vtkAddonMathUtilities::MatrixAreEqual(const vtkMatrix4x4* m1,
                                            const vtkMatrix4x4* m2,
                                            double tolerance)
 {
+  if (!m1 || !m2)
+    {
+    vtkGenericWarningMacro("vtkAddonMathUtilities::MatrixAreEqual: invalid input matrix");
+    return false;
+    }
   for (int i = 0; i < 4; i++)
     {
     for (int j = 0; j < 4; j++)
@@ -68,6 +73,11 @@ bool vtkAddonMathUtilities::MatrixAreEqual(const vtkMatrix4x4 *m1,
                                            const vtkMatrix3x3 *m2,
                                            double tolerance)
 {
+  if (!m1 || !m2)
+    {
+    vtkGenericWarningMacro("vtkAddonMathUtilities::MatrixAreEqual: invalid input matrix");
+    return false;
+    }
   for (int i = 0; i < 3; i++)
     {
     for (int j = 0; j < 3; j++)
@@ -94,6 +104,11 @@ bool vtkAddonMathUtilities::MatrixAreEqual(const vtkMatrix3x3 *m1,
                                            const vtkMatrix3x3 *m2,
                                            double tolerance)
 {
+  if (!m1 || !m2)
+    {
+    vtkGenericWarningMacro("vtkAddonMathUtilities::MatrixAreEqual: invalid input matrix");
+    return false;
+    }
   for (int i = 0; i < 3; i++)
     {
     for (int j = 0; j < 3; j++)
@@ -108,18 +123,49 @@ bool vtkAddonMathUtilities::MatrixAreEqual(const vtkMatrix3x3 *m1,
 }
 
 //----------------------------------------------------------------------------
+void vtkAddonMathUtilities::GetOrientationMatrixColumn(vtkMatrix4x4* m, int columnIndex,
+                                      double columnVector[3])
+{
+  if (!m)
+    {
+    vtkGenericWarningMacro("vtkAddonMathUtilities::GetMatrixColumn: invalid matrix");
+    return;
+    }
+  for (int rowIndex = 0; rowIndex < 3; ++rowIndex)
+    {
+    columnVector[rowIndex] = m->GetElement(rowIndex, columnIndex);
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkAddonMathUtilities::SetOrientationMatrixColumn(vtkMatrix4x4* m, int columnIndex,
+                                      double columnVector[3])
+{
+  if (!m)
+    {
+    vtkGenericWarningMacro("vtkAddonMathUtilities::GetMatrixColumn: invalid matrix");
+    return;
+    }
+  for (int rowIndex = 0; rowIndex < 3; ++rowIndex)
+    {
+    m->SetElement(rowIndex, columnIndex, columnVector[rowIndex]);
+    }
+}
+
+//----------------------------------------------------------------------------
 void vtkAddonMathUtilities::GetOrientationMatrix(vtkMatrix4x4* source,
                                                  vtkMatrix3x3* dest)
 {
   if (!source || !dest)
     {
+    vtkGenericWarningMacro("vtkAddonMathUtilities::GetOrientationMatrix: invalid source or destination matrix");
     return;
     }
-  for (int ii = 0; ii < 3; ++ii)
+  for (int rowIndex = 0; rowIndex < 3; ++rowIndex)
     {
-    for (int jj = 0; jj < 3; ++jj)
+    for (int columnIndex = 0; columnIndex < 3; ++columnIndex)
       {
-      dest->SetElement(ii, jj, source->GetElement(ii, jj));
+      dest->SetElement(rowIndex, columnIndex, source->GetElement(rowIndex, columnIndex));
       }
     }
 }
@@ -130,13 +176,14 @@ void vtkAddonMathUtilities::SetOrientationMatrix(vtkMatrix3x3* source,
 {
   if (!source || !dest)
     {
+    vtkGenericWarningMacro("vtkAddonMathUtilities::SetOrientationMatrix: invalid source or destination matrix");
     return;
     }
-  for (int ii = 0; ii < 3; ++ii)
+  for (int rowIndex = 0; rowIndex < 3; ++rowIndex)
     {
-    for (int jj = 0; jj < 3; ++jj)
+    for (int columnIndex = 0; columnIndex < 3; ++columnIndex)
       {
-      dest->SetElement(ii, jj, source->GetElement(ii, jj));
+      dest->SetElement(rowIndex, columnIndex, source->GetElement(rowIndex, columnIndex));
       }
     }
 }
@@ -146,6 +193,7 @@ void vtkAddonMathUtilities::NormalizeColumns(vtkMatrix3x3 *m, double scale[3])
 {
   if (!m)
     {
+    vtkGenericWarningMacro("vtkAddonMathUtilities::NormalizeColumns: invalid input matrix");
     return;
     }
   for (int col = 0; col < 3; col++)
@@ -169,6 +217,7 @@ void vtkAddonMathUtilities::NormalizeOrientationMatrixColumns(vtkMatrix4x4 *m, d
 {
   if (!m)
     {
+    vtkGenericWarningMacro("vtkAddonMathUtilities::NormalizeOrientationMatrixColumns: invalid input matrix");
     return;
     }
   for (int col = 0; col < 3; col++)

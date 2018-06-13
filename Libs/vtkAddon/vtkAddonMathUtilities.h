@@ -49,6 +49,12 @@ public:
                              const vtkMatrix3x3 *m2,
                              double tolerance = 1e-3);
 
+  /// Get matrix column as a vector
+  static void GetOrientationMatrixColumn(vtkMatrix4x4* m, int columnIndex, double columnVector[4]);
+
+  /// Set matrix column from a vector
+  static void SetOrientationMatrixColumn(vtkMatrix4x4* m, int columnIndex, double columnVector[4]);
+
   /// Update orientation vectors of \a dest matrix with values from \a source
   /// matrix.
   static void GetOrientationMatrix(vtkMatrix4x4* source, vtkMatrix3x3* dest);
