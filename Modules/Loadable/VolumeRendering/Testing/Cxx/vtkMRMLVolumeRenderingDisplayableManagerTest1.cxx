@@ -95,6 +95,7 @@ int vtkMRMLVolumeRenderingDisplayableManagerTest1(int argc, char* argv[])
 
   vtkNew<vtkMRMLVolumeRenderingDisplayableManager> vrDisplayableManager;
   vrDisplayableManager->SetMRMLApplicationLogic(applicationLogic);
+  vrDisplayableManager->SetMRMLScene(scene);
   displayableManagerGroup->AddDisplayableManager(vrDisplayableManager.GetPointer());
 
   vtkNew<vtkMRMLScalarVolumeNode> volumeNode;
@@ -118,16 +119,7 @@ int vtkMRMLVolumeRenderingDisplayableManagerTest1(int argc, char* argv[])
   volumeNode->SetAndObserveImageData(imageData.GetPointer());
   scene->AddNode(volumeNode.GetPointer());
 
-  vtkNew<vtkMRMLVolumePropertyNode> volumePropertyNode;
-  scene->AddNode(volumePropertyNode.GetPointer());
-
-  vtkNew<vtkMRMLGPURayCastVolumeRenderingDisplayNode> vrDisplayNode;
-  vrDisplayNode->SetAndObserveVolumeNodeID(volumeNode->GetID());
-  vrDisplayNode->SetAndObserveVolumePropertyNodeID(volumePropertyNode->GetID());
-
   displayableManagerGroup->GetInteractor()->Initialize();
-
-  scene->AddNode(vrDisplayNode.GetPointer());
 
   vtkNew<vtkMRMLScalarVolumeDisplayNode> volumeDisplayNode;
   volumeDisplayNode->SetThreshold(10, 245);
@@ -139,16 +131,19 @@ int vtkMRMLVolumeRenderingDisplayableManagerTest1(int argc, char* argv[])
   volumeNode->AddAndObserveDisplayNodeID(volumeDisplayNode->GetID());
 
   vtkNew<vtkSlicerVolumeRenderingLogic> vrLogic;
+  vrLogic->SetDefaultRenderingMethod("vtkMRMLGPURayCastVolumeRenderingDisplayNode");
   vrLogic->SetMRMLScene(scene);
 
-  vrLogic->CopyScalarDisplayToVolumeRenderingDisplayNode(vrDisplayNode.GetPointer());
+  vrLogic->CreateDefaultVolumeRenderingNodes(volumeNode);
+  vtkMRMLVolumeRenderingDisplayNode* vrDisplayNode = vrLogic->GetFirstVolumeRenderingDisplayNode(volumeNode);
+
+  vrLogic->CopyScalarDisplayToVolumeRenderingDisplayNode(vrDisplayNode, volumeDisplayNode);
 
   vrDisplayNode->SetFollowVolumeDisplayNode(1);
   volumeDisplayNode->SetThreshold(128, 245);
   volumeDisplayNode->SetWindowLevelMinMax(128, 245);
 
-  // TODO: Automatically move the camera (simulating movements)
-  // to have a good screenshot.
+  // TODO: Automatically move the camera (simulating movements) to have a good screenshot.
   renderer->SetBackground(0, 169. / 255, 79. /255);
   renderer->SetBackground2(0, 83. / 255, 155. /255);
   renderer->SetGradientBackground(true);

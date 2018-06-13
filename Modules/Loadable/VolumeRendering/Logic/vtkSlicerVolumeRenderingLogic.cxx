@@ -768,7 +768,6 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::CreateVolumeRe
 
   if (this->GetMRMLScene() == 0)
     {
-    vtkErrorMacro("CreateVolumeRenderingDisplayNode: Invalid MRML scene");
     return node;
     }
   bool volumeRenderingUniqueName = true;
