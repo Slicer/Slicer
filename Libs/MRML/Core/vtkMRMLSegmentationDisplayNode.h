@@ -198,6 +198,10 @@ public:
   /// \return Override color if segment found and color overridden, otherwise the invalid override color (-1,-1,-1)
   vtkVector3d GetSegmentOverrideColor(std::string segmentID);
   /// Set segment override color by segment ID
+  /// Override color is used for specifying custom color for a segment in selected views.
+  /// By default, segment color is invalid (-1,-1,-1), which means that the color stored in vtkSegment object
+  /// will be used. If a valid override color is specified then in the views corresponding to this display node,
+  /// segment will be colored using the override color.
   void SetSegmentOverrideColor(std::string segmentID, double r, double g, double b);
   /// Set segment override color by segment ID
   void SetSegmentOverrideColor(std::string segmentID, vtkVector3d overrideColor);
