@@ -165,10 +165,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
 protected:
 
   /// The OrientationReference is a place to store the last orientation
-  /// that was explicitly selected.  This way if the RotateToVolumePlane
-  /// is called repeatedly it will always return the same plane
-  /// (without the hint, it would first try to match, say, Coronal, and then
-  /// try to match 'Reformat' but would not know what overall orientation to pick).
+  /// that was explicitly selected.
   ///
   /// \deprecated
   vtkGetStringMacro(OrientationReference);
@@ -401,11 +398,22 @@ public:
   vtkSetMacro(ActiveSlice, int);
   vtkGetMacro(ActiveSlice, int);
 
-  /// adjusts the slice node to align with the
+  /// Adjusts the slice node to align with the
   /// native space of the image data so that no oblique resampling
   /// occurs when rendering (helps to see original acquisition data
-  /// and for obluique volumes with few slices).
+  /// and for oblique volumes with few slices).
+  /// For single-slice volume, slice normal is aligned to the volume
+  /// plane's normal.
   void RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode);
+
+  /// Adjusts the slice node to align with the
+  /// axes of the provided reference coordinate system
+  /// so that no oblique resampling
+  /// occurs when rendering (helps to see original acquisition data
+  /// and for obluique volumes with few slices).
+  /// If sliceNormalAxisIndex is >=0 then slice plane normal will
+  /// be aligned with that axis.
+  void RotateToAxes(vtkMatrix4x4 *referenceToRAS, int sliceNormalAxisIndex=-1);
 
   /// Get/Set a flag indicating whether this node is actively being
   /// manipulated (usually) by a user interface. This flag is used by

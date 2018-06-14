@@ -20,6 +20,7 @@ Version:   $Revision: 1.2 $
 
 // VTK includes
 #include <vtkAddonMathUtilities.h>
+#include <vtkImageData.h>
 #include <vtkMath.h>
 #include <vtkMatrix3x3.h>
 #include <vtkMatrix4x4.h>
@@ -2101,19 +2102,7 @@ void vtkMRMLSliceNode::SetSliceOffset(double offset)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode)
 {
-
-  //
-  // unfortunately, I can't think of a simpler way to calculate this, since
-  // the definition of something like "Coronal of an axial oblique" doesn't reduce down to
-  // just a rotation -- could include flips etc.
-  //
-  // instead:
-  // - calculate world space vectors for array axes
-  // - find the closest match to patient coordinate to define 'Right' in image space
-  // - pick the right vectors to put in the slice matrix to match existing orientation
-  //
-
-  if ( volumeNode == NULL )
+  if (volumeNode == NULL)
     {
     return;
     }
@@ -2137,188 +2126,92 @@ void vtkMRMLSliceNode::RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode)
       }
     }
 
-  // calculate vectors indicating transformed axis directions in RAS space (normalized)
-  // e.g. toRAS[0] is the three-vector in RAS space that points along the row axis in ijk space
-  // (toRAS[1] is the column, and toRAS[2] is slice)
-  double toRAS[3][3];
-
-  double len[3]; // length of each column vector
-  double ele;
-  int col, row;
-  for (col = 0; col < 3; col++)
+  int volumeAxisIndexForSliceZ = -1;
+  if (volumeNode->GetImageData() != NULL)
     {
-    len[col] = 0;
-    for (row = 0; row < 3; row++)
+    int dims[3] = { 0, 0, 0 };
+    volumeNode->GetImageData()->GetDimensions(dims);
+    for (int volumeAxisIndex = 0; volumeAxisIndex < 3; volumeAxisIndex++)
       {
-      ele = ijkToRAS->GetElement(row, col);
-      len[col] += ele*ele;
-      }
-    len[col] = sqrt(len[col]);
-    for (row = 0; row < 3; row++)
-      {
-      toRAS[col][row] = ijkToRAS->GetElement( row, col ) / len[col];
-      }
-    }
-
-  //
-  // find the closest direction for each of the major axes
-  //
-
-  // define major directions
-  double directions [6][3] = {
-                   {  1,  0,  0 },   // right
-                   { -1,  0,  0 },   // left
-                   {  0,  1,  0 },   // anterior
-                   {  0, -1,  0 },   // posterior
-                   {  0,  0,  1 },   // superior
-                   {  0,  0, -1 } }; // inferior
-
-  int closestAxis[3] = {0, 0, 0};
-  double closestDot[3] = {-1., -1., -1.};
-
-  int direction;
-  for (direction = 0; direction < 6; direction++)
-    {
-    double dot[3];
-    for (col = 0; col < 3; col++)
-      {
-      dot[col] = 0;
-      int i;
-      for (i = 0; i < 3; i++)
+      if (dims[volumeAxisIndex] == 1)
         {
-        dot[col] += toRAS[col][i] * directions[direction][i];
-        }
-      if (dot[col] > closestDot[col])
-        {
-        closestDot[col] = dot[col];
-        closestAxis[col] = direction;
+        volumeAxisIndexForSliceZ = volumeAxisIndex;
+        break;
         }
       }
     }
 
-  //
-  // assign the vectors that correspond to each major direction
-  //
-  double alignedRAS[6][3] = {{0., 0., 0.},{0., 0., 0.},{0., 0., 0.},
-                             {0., 0., 0.},{0., 0., 0.},{0., 0., 0.}};
-  for (col = 0; col < 3; col++)
+  this->RotateToAxes(ijkToRAS.GetPointer(), volumeAxisIndexForSliceZ);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceNode::RotateToAxes(vtkMatrix4x4 *referenceToRAS, int sliceNormalAxisIndex /*=-1*/)
+{
+  if (referenceToRAS == NULL )
     {
-    for (row = 0; row < 3; row++)
+    return;
+    }
+
+  double testedDirections[6][4] = {
+    { 1,  0,  0, 0 },
+    { -1, 0,  0, 0 },
+    { 0,  1,  0, 0 },
+    { 0, -1,  0, 0 },
+    { 0,  0,  1, 0 },
+    { 0,  0, -1, 0 } };
+
+  // background is a single-slice volume
+  // find combination of volume axis directions that are closest to current slice X, Y
+  // axis directions
+
+  // 8 combinations of X, Y vector directions, 2 vectors (slice X and Y)
+  double sliceXAxisDirection[3] = { 0.0 };
+  double sliceYAxisDirection[3] = { 0.0 };
+  vtkAddonMathUtilities::GetOrientationMatrixColumn(this->SliceToRAS, 0, sliceXAxisDirection);
+  vtkAddonMathUtilities::GetOrientationMatrixColumn(this->SliceToRAS, 1, sliceYAxisDirection);
+  double minAngleDiff = -1;
+  for (int testedDirectionIndexX = 0; testedDirectionIndexX < 6; testedDirectionIndexX++)
+    {
+    int volumeAxisAsSliceX = testedDirectionIndexX / 2;
+    if (sliceNormalAxisIndex >= 0 && volumeAxisAsSliceX == sliceNormalAxisIndex)
       {
-      switch (closestAxis[col])
+      // X slice axis must not be snapped to volume plane normal axis
+      continue;
+      }
+    for (int testedDirectionIndexY = 0; testedDirectionIndexY < 6; testedDirectionIndexY++)
+      {
+      int volumeAxisAsSliceY = testedDirectionIndexY / 2;
+      if (volumeAxisAsSliceY == volumeAxisAsSliceX
+        || (sliceNormalAxisIndex >= 0 && volumeAxisAsSliceY == sliceNormalAxisIndex))
         {
-        default:
-        case 0:  // R
-          alignedRAS[0][row] =  toRAS[col][row];
-          alignedRAS[1][row] = -toRAS[col][row];
-          break;
-        case 1:  // L
-          alignedRAS[0][row] = -toRAS[col][row];
-          alignedRAS[1][row] =  toRAS[col][row];
-          break;
-        case 2:  // A
-          alignedRAS[2][row] =  toRAS[col][row];
-          alignedRAS[3][row] = -toRAS[col][row];
-          break;
-        case 3:  // P
-          alignedRAS[2][row] = -toRAS[col][row];
-          alignedRAS[3][row] =  toRAS[col][row];
-          break;
-        case 4:  // S
-          alignedRAS[4][row] =  toRAS[col][row];
-          alignedRAS[5][row] = -toRAS[col][row];
-          break;
-        case 5:  // I
-          alignedRAS[4][row] = -toRAS[col][row];
-          alignedRAS[5][row] =  toRAS[col][row];
-          break;
+        // Y slice axis must not be snapped to X slice axis or volume plane normal axis
+        continue;
+        }
+      double sliceXAxisVolumeAxisDirection[4] = { 0.0 };
+      double sliceYAxisVolumeAxisDirection[4] = { 0.0 };
+      referenceToRAS->MultiplyPoint(testedDirections[testedDirectionIndexX], sliceXAxisVolumeAxisDirection);
+      referenceToRAS->MultiplyPoint(testedDirections[testedDirectionIndexY], sliceYAxisVolumeAxisDirection);
+
+      double angleDiff = vtkMath::AngleBetweenVectors(sliceXAxisVolumeAxisDirection, sliceXAxisDirection)
+        + vtkMath::AngleBetweenVectors(sliceYAxisVolumeAxisDirection, sliceYAxisDirection);
+      if (angleDiff < minAngleDiff || minAngleDiff < 0.)
+        {
+        minAngleDiff = angleDiff;
+        vtkMath::Normalize(sliceXAxisVolumeAxisDirection);
+        vtkMath::Normalize(sliceYAxisVolumeAxisDirection);
+        vtkAddonMathUtilities::SetOrientationMatrixColumn(this->SliceToRAS, 0, sliceXAxisVolumeAxisDirection);
+        vtkAddonMathUtilities::SetOrientationMatrixColumn(this->SliceToRAS, 1, sliceYAxisVolumeAxisDirection);
         }
       }
     }
 
-  //
-  // plug vectors into slice matrix to best approximate requested orientation
-  //
-
-  for (row = 0; row < 3; row++)
-    {
-    if ( !strcmp(this->GetOrientationReference(), "Sagittal") )
-      {
-      // first column is 'Posterior'
-      this->SliceToRAS->SetElement(row, 0, alignedRAS[3][row]);
-      // second column is 'Superior'
-      this->SliceToRAS->SetElement(row, 1, alignedRAS[4][row]);
-      // third column is 'Right'
-      this->SliceToRAS->SetElement(row, 2, alignedRAS[0][row]);
-      }
-    else if ( !strcmp(this->GetOrientationReference(), "Coronal") )
-      {
-      // first column is 'Left'
-      this->SliceToRAS->SetElement(row, 0, alignedRAS[1][row]);
-      // second column is 'Superior'
-      this->SliceToRAS->SetElement(row, 1, alignedRAS[4][row]);
-      // third column is 'Anterior'
-      this->SliceToRAS->SetElement(row, 2, alignedRAS[2][row]);
-      }
-    else if ( !strcmp(this->GetOrientationReference(), "Axial") )
-      {
-      // first column is 'Left'
-      this->SliceToRAS->SetElement(row, 0, alignedRAS[1][row]);
-      // second column is 'Anterior'
-      this->SliceToRAS->SetElement(row, 1, alignedRAS[2][row]);
-      // third column is 'Superior'
-      this->SliceToRAS->SetElement(row, 2, alignedRAS[4][row]);
-      }
-    else
-      {
-      // if not Axial, Sagittal, or Coronal, then assume it is Axial (could also be 'Reformat')
-      // but since we don't have a plan for that, map it to Axial
-      // first column is 'Left'
-      this->SliceToRAS->SetElement(row, 0, alignedRAS[1][row]);
-      // second column is 'Anterior'
-      this->SliceToRAS->SetElement(row, 1, alignedRAS[2][row]);
-      // third column is 'Superior'
-      this->SliceToRAS->SetElement(row, 2, alignedRAS[4][row]);
-      }
-    }
-
-  //
-  // If two colums project to the same axis, then there will be
-  // a column of all zeros in the SliceToRAS matrix - if this happens replace this
-  // with the cross product of the other columns
-  //
-  int nullColumn = -1;
-  for (col = 0; col < 3; col++)
-    {
-    int row;
-    bool isNull = true;
-    for (row = 0; row < 3; row++)
-      {
-      if (this->SliceToRAS->GetElement(row, col) != 0.0)
-        {
-        isNull = false;
-        }
-      }
-    if (isNull)
-      {
-      nullColumn = col;
-      }
-    }
-  if (nullColumn != -1)
-    {
-    vtkVector3<double> A(
-      this->SliceToRAS->GetElement(0, (nullColumn+1)%3),
-      this->SliceToRAS->GetElement(1, (nullColumn+1)%3),
-      this->SliceToRAS->GetElement(2, (nullColumn+1)%3));
-    vtkVector3<double> B(
-      this->SliceToRAS->GetElement(0, (nullColumn+2)%3),
-      this->SliceToRAS->GetElement(1, (nullColumn+2)%3),
-      this->SliceToRAS->GetElement(2, (nullColumn+2)%3));
-    vtkVector3<double> C = A.Cross(B);
-    this->SliceToRAS->SetElement(0, nullColumn, C.GetX());
-    this->SliceToRAS->SetElement(1, nullColumn, C.GetY());
-    this->SliceToRAS->SetElement(2, nullColumn, C.GetZ());
-    }
+  // Get final X, Y axis directions
+  vtkAddonMathUtilities::GetOrientationMatrixColumn(this->SliceToRAS, 0, sliceXAxisDirection);
+  vtkAddonMathUtilities::GetOrientationMatrixColumn(this->SliceToRAS, 1, sliceYAxisDirection);
+  // Set slice Z axis
+  double sliceZAxisDirection[3];
+  vtkMath::Cross(sliceXAxisDirection, sliceYAxisDirection, sliceZAxisDirection);
+  vtkAddonMathUtilities::SetOrientationMatrixColumn(this->SliceToRAS, 2, sliceZAxisDirection);
 
   this->UpdateMatrices();
 }
