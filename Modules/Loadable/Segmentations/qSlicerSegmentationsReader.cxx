@@ -140,6 +140,7 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
 
     vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(
       this->mrmlScene()->AddNewNodeByClass("vtkMRMLSegmentationNode", name.toLatin1().constData()));
+    segmentationNode->SetMasterRepresentationToClosedSurface();
     segmentationNode->CreateDefaultDisplayNodes();
     vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
     if (displayNode)

@@ -247,8 +247,8 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::CalculateOutputGeometry(vtk
   std::string geometryString = this->ConversionParameters[vtkSegmentationConverter::GetReferenceImageGeometryParameterName()].first;
   if (geometryString.empty() || !vtkSegmentationConverter::DeserializeImageGeometry(geometryString, geometryImageData))
     {
-    vtkInfoMacro("CalculateOutputGeometry: No image geometry specified, default geometry is calculated with 1 mm spacing");
     geometryString = this->GetDefaultImageGeometryStringForPolyData(closedSurfacePolyData);
+    vtkInfoMacro("CalculateOutputGeometry: No image geometry specified, default geometry is calculated (" << geometryString << ")");
 
     // If still not valid then return with error
     if (!vtkSegmentationConverter::DeserializeImageGeometry(geometryString, geometryImageData))
@@ -385,6 +385,16 @@ std::string vtkClosedSurfaceToBinaryLabelmapConversionRule::GetDefaultImageGeome
   int extent[6] = { 0, (int)(bounds[1]-bounds[0]+1),
                     0, (int)(bounds[3]-bounds[2]+1),
                     0, (int)(bounds[5]-bounds[4]+1) };
+
+  // set spacing to have an approxmately 250^3 volume
+  // this size is not too large for average computing hardware yet
+  // it is sufficiently detailed for many applications
+  const double preferredVolumeSizeInVoxels = 250 * 250 * 250;
+  double volumeSizeInMm3 = (bounds[1] - bounds[0]) * (bounds[3] - bounds[2]) * (bounds[5] - bounds[4]);
+  double spacing = std::pow(volumeSizeInMm3 / preferredVolumeSizeInVoxels, 1 / 3.);
+  geometryMatrix->SetElement(0, 0, spacing);
+  geometryMatrix->SetElement(1, 1, spacing);
+  geometryMatrix->SetElement(2, 2, spacing);
 
   // Serialize geometry
   std::string serializedGeometry = vtkSegmentationConverter::SerializeImageGeometry(geometryMatrix, extent);
