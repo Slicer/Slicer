@@ -280,6 +280,10 @@ public slots:
   /// \param fitSlice Reset field of view to include all volumes.
   void showMasterVolumeInSliceViewers(bool forceShowInBackground = false, bool fitSlice = false);
 
+  /// Rotate slice views to be aligned with segmentation node's internal
+  /// labelmap representation axes.
+  void rotateSliceViewsToSegmentation();
+
 signals:
   /// Emitted if different segment is selected in the segment list.
   void currentSegmentIDChanged(const QString&);
@@ -363,6 +367,9 @@ protected slots:
 
   /// Update masking section on the UI
   void updateMaskingSection();
+
+  /// Shows slice rotation warning button if slice views are rotated, hide otherwise
+  void updateSliceRotateWarningButtonVisibility();
 
 protected:
   /// Callback function invoked when interaction happens

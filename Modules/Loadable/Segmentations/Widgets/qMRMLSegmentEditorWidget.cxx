@@ -42,6 +42,7 @@
 #include "qSlicerSegmentEditorEffectFactory.h"
 
 // VTK includes
+#include <vtkAddonMathUtilities.h>
 #include <vtkAlgorithmOutput.h>
 #include <vtkCallbackCommand.h>
 #include <vtkCollection.h>
@@ -194,6 +195,11 @@ public:
   bool segmentationDisplayableInView(vtkMRMLAbstractViewNode* viewNode);
 
   QToolButton* toolButton(qSlicerSegmentEditorAbstractEffect* effect);
+
+  /// Return segmentation node's internal labelmap IJK to renderer world coordinate transform.
+  /// If cannot be retrieved (segmentation is not defined, non-linearly transformed, etc.)
+  /// then false is returned;
+  bool segmentationIJKToRAS(vtkMatrix4x4* ijkToRas);
 
 public:
   /// Segment editor parameter set node containing all selections and working images
@@ -383,6 +389,8 @@ void qMRMLSegmentEditorWidgetPrivate::init()
   // Make connections
   QObject::connect( this->SegmentationNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
     q, SLOT(onSegmentationNodeChanged(vtkMRMLNode*)) );
+  QObject::connect(this->SliceRotateWarningButton, SIGNAL(clicked()),
+    q, SLOT(rotateSliceViewsToSegmentation()));
   QObject::connect( this->MasterVolumeNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
     q, SLOT(onMasterVolumeNodeChanged(vtkMRMLNode*)) );
   QObject::connect( this->SegmentsTableView, SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
@@ -446,6 +454,8 @@ void qMRMLSegmentEditorWidgetPrivate::init()
   this->OptionsGroupBox->setTitle("");
   this->EffectHelpBrowser->setText("");
   this->MaskingGroupBox->hide();
+
+  q->updateSliceRotateWarningButtonVisibility();
 }
 
 //-----------------------------------------------------------------------------
@@ -566,7 +576,6 @@ bool qMRMLSegmentEditorWidgetPrivate::updateSelectedSegmentLabelmap()
     return true;
     }
   vtkNew<vtkOrientedImageData> referenceImage;
-  vtkNew<vtkMatrix4x4> referenceImageToWorld;
   vtkSegmentationConverter::DeserializeImageGeometry(referenceImageGeometry, referenceImage.GetPointer(), false);
   vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(segmentLabelmap, referenceImage.GetPointer(), this->SelectedSegmentLabelmap, /*linearInterpolation=*/false);
 
@@ -964,6 +973,38 @@ bool qMRMLSegmentEditorWidgetPrivate::segmentationDisplayableInView(vtkMRMLAbstr
 }
 
 //-----------------------------------------------------------------------------
+bool qMRMLSegmentEditorWidgetPrivate::segmentationIJKToRAS(vtkMatrix4x4* ijkToRas)
+{
+  if (!this->ParameterSetNode)
+    {
+    return false;
+    }
+  vtkMRMLSegmentationNode* segmentationNode = this->ParameterSetNode->GetSegmentationNode();
+  if (!segmentationNode || !segmentationNode->GetSegmentation())
+    {
+    return false;
+    }
+  if (!segmentationNode->GetSegmentation()->ContainsRepresentation(
+    vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()))
+    {
+    return false;
+    }
+  this->ReferenceGeometryImage->GetImageToWorldMatrix(ijkToRas);
+  vtkMRMLTransformNode* transformNode = segmentationNode->GetParentTransformNode();
+  if (transformNode)
+    {
+    if (!transformNode->IsTransformToWorldLinear())
+      {
+      return false;
+      }
+    vtkSmartPointer<vtkMatrix4x4> volumeRasToWorldRas = vtkSmartPointer<vtkMatrix4x4>::New();
+    transformNode->GetMatrixTransformToWorld(volumeRasToWorldRas);
+    vtkMatrix4x4::Multiply4x4(volumeRasToWorldRas, ijkToRas, ijkToRas);
+    }
+  return true;
+}
+
+//-----------------------------------------------------------------------------
 // qMRMLSegmentEditorWidget methods
 
 //-----------------------------------------------------------------------------
@@ -1110,6 +1151,7 @@ void qMRMLSegmentEditorWidget::updateWidgetFromMRML()
 
   this->updateWidgetFromSegmentationNode();
   this->updateWidgetFromMasterVolumeNode();
+  this->updateSliceRotateWarningButtonVisibility();
 
   d->EffectsGroupBox->setEnabled(d->SegmentationNode != NULL);
   d->MaskingGroupBox->setEnabled(d->SegmentationNode != NULL);
@@ -1322,6 +1364,7 @@ bool qMRMLSegmentEditorWidget::setMasterRepresentationToBinaryLabelmap()
 
   QApplication::restoreOverrideCursor();
 
+  this->updateSliceRotateWarningButtonVisibility();
   return true;
 }
 
@@ -2457,13 +2500,20 @@ void qMRMLSegmentEditorWidget::setupViewObservations()
     interactorObservation.ObservationTags << interactor->AddObserver(vtkCommand::LeaveEvent, interactorObservation.CallbackCommand, 1.0);
     d->EventObservations << interactorObservation;
 
-    // Slice node observations
+    // Slice node observation
     vtkMRMLSliceNode* sliceNode = sliceWidget->sliceLogic()->GetSliceNode();
     SegmentEditorEventObservation sliceNodeObservation;
     sliceNodeObservation.CallbackCommand = interactionCallbackCommand.GetPointer();
     sliceNodeObservation.ObservedObject = sliceNode;
     sliceNodeObservation.ObservationTags << sliceNode->AddObserver(vtkCommand::ModifiedEvent, sliceNodeObservation.CallbackCommand, 1.0);
     d->EventObservations << sliceNodeObservation;
+
+    // Slice pose observation
+    SegmentEditorEventObservation slicePoseObservation;
+    slicePoseObservation.CallbackCommand = interactionCallbackCommand.GetPointer();
+    slicePoseObservation.ObservedObject = sliceNode->GetSliceToRAS();
+    slicePoseObservation.ObservationTags << sliceNode->GetSliceToRAS()->AddObserver(vtkCommand::ModifiedEvent, slicePoseObservation.CallbackCommand, 1.0);
+    d->EventObservations << slicePoseObservation;
     }
 
   // 3D views
@@ -2527,6 +2577,7 @@ void qMRMLSegmentEditorWidget::setupViewObservations()
     }
 
   d->ObservedViewNodeIDs.clear();
+  this->updateSliceRotateWarningButtonVisibility();
 
   d->ViewsObserved = true;
 }
@@ -2616,6 +2667,13 @@ void qMRMLSegmentEditorWidget::processEvents(vtkObject* caller,
   // Do nothing if scene is closing
   if (!self->mrmlScene() || self->mrmlScene()->IsClosing())
     {
+    return;
+    }
+
+  vtkMatrix4x4* sliceToRAS = vtkMatrix4x4::SafeDownCast(caller);
+  if (sliceToRAS)
+    {
+    self->updateSliceRotateWarningButtonVisibility();
     return;
     }
 
@@ -3365,4 +3423,104 @@ void qMRMLSegmentEditorWidget::setAutoShowMasterVolumeNode(bool autoShow)
     return;
     }
   d->AutoShowMasterVolumeNode = autoShow;
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::updateSliceRotateWarningButtonVisibility()
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  vtkNew<vtkMatrix4x4> segmentationIJKToRAS;
+  if (!d->segmentationIJKToRAS(segmentationIJKToRAS))
+    {
+    // segmentation orientation cannot be determined
+    d->SliceRotateWarningButton->hide();
+    return;
+    }
+
+  qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+  if (!layoutManager)
+    {
+    // application is closing
+    d->SliceRotateWarningButton->hide();
+    return;
+    }
+
+  // Check if any of the slices are rotated
+  bool sliceRotated = false;
+  foreach(QString sliceViewName, layoutManager->sliceViewNames())
+    {
+    qMRMLSliceWidget* sliceWidget = layoutManager->sliceWidget(sliceViewName);
+    if (!d->segmentationDisplayableInView(sliceWidget->mrmlSliceNode()))
+      {
+      continue;
+      }
+    vtkMRMLSliceNode* sliceNode = sliceWidget->mrmlSliceNode();
+    if (!sliceNode)
+      {
+      continue;
+      }
+    vtkMatrix4x4* sliceToRAS = sliceNode->GetSliceToRAS();
+    // Only need to check alignment of X and Y axes, if they are aligned then Z axis will be aligned, too
+    for (int sliceAxisIndex = 0; sliceAxisIndex < 2; ++sliceAxisIndex)
+      {
+      double sliceAxisDirection[3] = {0.0};
+      vtkAddonMathUtilities::GetOrientationMatrixColumn(sliceToRAS, sliceAxisIndex, sliceAxisDirection);
+      bool foundParallelSegmentationAxis = false; // found a segmentation axis that is parallel to this slice axis
+      for (int segmentationAxisIndex = 0; segmentationAxisIndex < 3; ++segmentationAxisIndex)
+        {
+        double segmentationAxisDirection[3] = {0.0};
+        vtkAddonMathUtilities::GetOrientationMatrixColumn(segmentationIJKToRAS, segmentationAxisIndex, segmentationAxisDirection);
+        double angleDiffRad = vtkMath::AngleBetweenVectors(sliceAxisDirection, segmentationAxisDirection);
+        const double maxAngleDifferenceRad = 1e-3; // we consider angles to be parallel if difference is less than about 0.1 deg
+        if (angleDiffRad < maxAngleDifferenceRad || angleDiffRad > vtkMath::Pi() - maxAngleDifferenceRad)
+          {
+          // found a volume axis that this slice axis is parallel to
+          foundParallelSegmentationAxis = true;
+          break;
+          }
+        }
+      if (!foundParallelSegmentationAxis)
+        {
+        d->SliceRotateWarningButton->show();
+        return;
+        }
+      }
+    }
+  d->SliceRotateWarningButton->hide();
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::rotateSliceViewsToSegmentation()
+{
+  Q_D(qMRMLSegmentEditorWidget);
+    vtkNew<vtkMatrix4x4> segmentationIJKToRAS;
+  if (!d->segmentationIJKToRAS(segmentationIJKToRAS))
+    {
+    // segmentation orientation cannot be determined
+    d->SliceRotateWarningButton->hide();
+    return;
+    }
+
+  qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+  if (!layoutManager)
+    {
+    // application is closing
+    d->SliceRotateWarningButton->hide();
+    return;
+    }
+  foreach(QString sliceViewName, layoutManager->sliceViewNames())
+    {
+    qMRMLSliceWidget* sliceWidget = layoutManager->sliceWidget(sliceViewName);
+    if (!d->segmentationDisplayableInView(sliceWidget->mrmlSliceNode()))
+      {
+      continue;
+      }
+    vtkMRMLSliceNode* sliceNode = sliceWidget->mrmlSliceNode();
+    if (!sliceNode)
+      {
+      continue;
+      }
+    sliceNode->RotateToAxes(segmentationIJKToRAS.GetPointer());
+    }
+  this->updateSliceRotateWarningButtonVisibility();
 }

@@ -7,5 +7,6 @@
     <file>Icons/MakeModel.png</file>
     <file>Icons/Present.png</file>
     <file>Icons/Remove.png</file>
+    <file>Icons/SlicerRotateWarning.png</file>
   </qresource>
 </RCC>

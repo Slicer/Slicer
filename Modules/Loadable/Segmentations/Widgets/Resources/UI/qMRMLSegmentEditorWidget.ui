@@ -17,12 +17,47 @@
    <property name="spacing">
     <number>4</number>
    </property>
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
     <layout class="QGridLayout" name="NodeSelectorLayout">
-     <item row="1" column="1">
+     <item row="1" column="0">
+      <widget class="QLabel" name="MasterVolumeNodeLabel">
+       <property name="text">
+        <string>Master volume:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="SegmentationNodeLabel">
+       <property name="text">
+        <string>Segmentation:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="qMRMLNodeComboBox" name="SegmentationNodeComboBox">
+       <property name="nodeTypes">
+        <stringlist>
+         <string>vtkMRMLSegmentationNode</string>
+        </stringlist>
+       </property>
+       <property name="renameEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1" colspan="2">
       <widget class="qMRMLNodeComboBox" name="MasterVolumeNodeComboBox">
        <property name="nodeTypes">
         <stringlist>
@@ -48,29 +83,17 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="MasterVolumeNodeLabel">
+     <item row="0" column="2">
+      <widget class="QToolButton" name="SliceRotateWarningButton">
+       <property name="toolTip">
+        <string>Slice views orientation are not aligned with segmentation. Striping artifacts may appear. Click to align slice views to segmentation.</string>
+       </property>
        <property name="text">
-        <string>Master volume:</string>
+        <string>Slice rotated</string>
        </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="qMRMLNodeComboBox" name="SegmentationNodeComboBox">
-       <property name="nodeTypes">
-        <stringlist>
-         <string>vtkMRMLSegmentationNode</string>
-        </stringlist>
-       </property>
-       <property name="renameEnabled">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="SegmentationNodeLabel">
-       <property name="text">
-        <string>Segmentation:</string>
+       <property name="icon">
+        <iconset resource="../qSlicerSegmentationsModuleWidgets.qrc">
+         <normaloff>:/Icons/SlicerRotateWarning.png</normaloff>:/Icons/SlicerRotateWarning.png</iconset>
        </property>
       </widget>
      </item>
@@ -242,7 +265,16 @@
       <string>Options</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <property name="margin">
+      <property name="leftMargin">
+       <number>4</number>
+      </property>
+      <property name="topMargin">
+       <number>4</number>
+      </property>
+      <property name="rightMargin">
+       <number>4</number>
+      </property>
+      <property name="bottomMargin">
        <number>4</number>
       </property>
       <property name="spacing">
@@ -348,7 +380,16 @@
       <property name="verticalSpacing">
        <number>4</number>
       </property>
-      <property name="margin">
+      <property name="leftMargin">
+       <number>4</number>
+      </property>
+      <property name="topMargin">
+       <number>4</number>
+      </property>
+      <property name="rightMargin">
+       <number>4</number>
+      </property>
+      <property name="bottomMargin">
        <number>4</number>
       </property>
       <item row="0" column="0">
