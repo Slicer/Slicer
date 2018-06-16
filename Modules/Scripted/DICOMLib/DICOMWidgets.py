@@ -531,7 +531,7 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
           # Qt5
           documentsLocation = qt.QStandardPaths.DocumentsLocation
           documents = qt.QStandardPaths.writableLocation(documentsLocation)
-        databaseDirectory = os.path.join(documents, "SlicerDICOMDatabase")
+        databaseDirectory = os.path.join(documents, slicer.app.applicationName+"DICOMDatabase")
         if not os.path.exists(databaseDirectory):
           os.makedirs(databaseDirectory)
         if not slicer.app.commandOptions().testingEnabled:
