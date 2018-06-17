@@ -102,7 +102,7 @@ void ITKComputeThresholdFromVTKImage(vtkITKImageThresholdCalculator *self, vtkIm
     {
     calculator->Update();
     }
-  catch (itk::ExceptionObject err)
+  catch (itk::ExceptionObject &err)
     {
     vtkErrorWithObjectMacro(self, "Failed to compute threshold value using method " << self->GetMethodAsString(self->GetMethod())
       << ". Details: " << err);

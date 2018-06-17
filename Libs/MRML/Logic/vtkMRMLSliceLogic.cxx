@@ -80,6 +80,7 @@ struct BlendPipeline
 {
   BlendPipeline()
   {
+    /*
     // AlphaBlending, ReverseAlphaBlending:
     //
     //   foreground \
@@ -103,6 +104,7 @@ struct BlendPipeline
     //     ... AddSubOutputCast > AddSubExtractRGB \
     //                                              > AddSubAppendRGBA > Blend
     //             background > AddSubExtractAlpha /
+    */
 
     this->AddSubForegroundCast->SetOutputScalarTypeToShort();
     this->AddSubBackgroundCast->SetOutputScalarTypeToShort();
