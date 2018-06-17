@@ -19,12 +19,12 @@ endif()
 
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  set(_version "1.1")
+  set(_version "1.2")
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    URL "https://pypi.python.org/packages/9a/e8/c3c8da6d00145aaca07f2b784794917613dad26532068da4e8392dc48d7f/CouchDB-${_version}.tar.gz"
-    URL_MD5 "2ed5ad2a477fd3cb472ed6dc5a381ff3"
+    URL "https://pypi.python.org/packages/7c/c8/f94a107eca0c178e5d74c705dad1a5205c0f580840bd1b155cd8a258cb7c/CouchDB-${_version}.tar.gz"
+    URL_HASH "SHA256=1386a1a43f25bed3667e3b805222054940d674fa1967fa48e9d2012a18630ab7"
     DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BUILD_IN_SOURCE 1
