@@ -1,7 +1,7 @@
-set(proj python-PyGithub)
+set(proj python-pyjwt)
 
 # Set dependency list
-set(${proj}_DEPENDENCIES python python-setuptools python-pyjwt)
+set(${proj}_DEPENDENCIES python python-setuptools)
 
 if(NOT DEFINED ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} ${${CMAKE_PROJECT_NAME}_USE_SYSTEM_python})
@@ -12,7 +12,7 @@ ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   ExternalProject_FindPythonPackage(
-    MODULE_NAME "github"
+    MODULE_NAME "jwt"
     NO_VERSION_PROPERTY
     REQUIRED
     )
@@ -20,12 +20,12 @@ endif()
 
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  set(_version "1.39")
+  set(_version "1.6.4")
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    URL "https://pypi.python.org/packages/fd/28/c42bdd56111dae8c622c01af69e6d7f3d3ff0a96ad846f221749701f86b1/PyGithub-${_version}.tar.gz"
-    URL_HASH "SHA256=8a87bc0fbd0b70c2f12911f7f25a493cd13371bc1bbac6c548cc61b69e7d006f"
+    URL "https://pypi.python.org/packages/00/5e/b358c9bb24421e6155799d995b4aa3aa3307ffc7ecae4ad9d29fd7e07a73/PyJWT-${_version}.tar.gz"
+    URL_HASH "SHA256=4ee413b357d53fd3fb44704577afac88e72e878716116270d722723d65b42176"
     DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BUILD_IN_SOURCE 1
@@ -39,9 +39,6 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   ExternalProject_GenerateProjectDescription_Step(${proj}
     VERSION ${_version}
     )
-
-  # See #3749 - Delete test files causing packaging to fail on windows
-  ExternalProject_PythonModule_InstallTreeCleanup(${proj} "github" "tests")
 
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
