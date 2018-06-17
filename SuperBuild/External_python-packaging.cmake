@@ -19,12 +19,12 @@ endif()
 
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  set(_version "16.8")
+  set(_version "17.1")
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    URL "https://pypi.python.org/packages/c6/70/bb32913de251017e266c5114d0a645f262fb10ebc9bf6de894966d124e35/packaging-${_version}.tar.gz"
-    URL_MD5 "53895cdca04ecff80b54128e475b5d3b"
+    URL "https://pypi.python.org/packages/77/32/439f47be99809c12ef2da8b60a2c47987786d2c6c9205549dd6ef95df8bd/packaging-${_version}.tar.gz"
+    URL_HASH "SHA256=f019b770dd64e585a99714f1fd5e01c7a8f11b45635aa953fd41c689a657375b"
     DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BUILD_IN_SOURCE 1
