@@ -81,10 +81,13 @@ class SampleDataSource:
     loadFileType='VolumeFile', loadFileProperties={}):
 
     self.sampleName = sampleName
-    if isinstance(uris, basestring):
+    if (isinstance(uris, list) or isinstance(uris, tuple)) and isinstance(loadFileType, basestring):
+      loadFileType = [loadFileType] * len(uris)
+    elif isinstance(uris, basestring):
       uris = [uris,]
       fileNames = [fileNames,]
       nodeNames = [nodeNames,]
+      loadFileType = [loadFileType,]
     self.uris = uris
     self.fileNames = fileNames
     self.nodeNames = nodeNames
@@ -92,7 +95,7 @@ class SampleDataSource:
     self.thumbnailFileName = thumbnailFileName
     self.loadFileType = loadFileType
     self.loadFileProperties = loadFileProperties
-    if len(uris) != len(fileNames) or len(uris) != len(nodeNames):
+    if len(uris) != len(fileNames) or len(uris) != len(nodeNames) or len(uris) != len(loadFileType):
       raise Exception("All fields of sample data source must have the same length")
 
 
@@ -124,10 +127,12 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
 
     categories = slicer.modules.sampleDataSources.keys()
     categories.sort()
-    if 'BuiltIn' in categories:
-      categories.remove('BuiltIn')
-    categories.insert(0,'BuiltIn')
+    if self.logic.builtInCategoryName in categories:
+      categories.remove(self.logic.builtInCategoryName)
+    categories.insert(0,self.logic.builtInCategoryName)
     for category in categories:
+      if category == self.logic.developmentCategoryName and self.developerMode is False:
+        continue
       frame = ctk.ctkCollapsibleGroupBox(self.parent)
       self.layout.addWidget(frame)
       frame.title = category
@@ -255,7 +260,10 @@ class SampleDataLogic:
   def __init__(self, logMessage=None):
     if logMessage:
       self.logMessage = logMessage
+    self.builtInCategoryName = 'BuiltIn'
+    self.developmentCategoryName = 'Development'
     self.registerBuiltInSampleDataSources()
+    self.registerDevelopmentSampleDataSources()
 
   def registerBuiltInSampleDataSources(self):
     """Fills in the pre-define sample data sources"""
@@ -271,7 +279,8 @@ class SampleDataLogic:
           ('http://slicer.kitware.com/midas3/download/?items=2011,1',
             'http://slicer.kitware.com/midas3/download/?items=2010,1', ),
           ('DTIVolume.raw.gz', 'DTIVolume.nhdr'), (None, 'DTIVolume')),
-        ('DWIVolume', ('http://slicer.kitware.com/midas3/download/?items=2142,1', 'http://slicer.kitware.com/midas3/download/?items=2141,1'), ('dwi.raw.gz', 'dwi.nhdr'), (None, 'dwi')),
+        ('DWIVolume', ('http://slicer.kitware.com/midas3/download/?items=2142,1', 'http://slicer.kitware.com/midas3/download/?items=2141,1'),
+          ('dwi.raw.gz', 'dwi.nhdr'), (None, 'dwi')),
         ('CTA abdomen\n(Panoramix)', 'http://slicer.kitware.com/midas3/download/?items=9073,1', 'Panoramix-cropped.nrrd', 'Panoramix-cropped'),
         ('CBCTDentalSurgery',
           ('http://slicer.kitware.com/midas3/download/item/94510/Greyscale_presurg.gipl.gz',
@@ -289,10 +298,22 @@ class SampleDataLogic:
           ('CTBrain', 'MRBrainT1', 'MRBrainT2')),
         )
 
-    if not slicer.modules.sampleDataSources.has_key('BuiltIn'):
-      slicer.modules.sampleDataSources['BuiltIn'] = []
+    if not slicer.modules.sampleDataSources.has_key(self.builtInCategoryName):
+      slicer.modules.sampleDataSources[self.builtInCategoryName] = []
     for sourceArgument in sourceArguments:
-      slicer.modules.sampleDataSources['BuiltIn'].append(SampleDataSource(*sourceArgument))
+      slicer.modules.sampleDataSources[self.builtInCategoryName].append(SampleDataSource(*sourceArgument))
+
+  def registerDevelopmentSampleDataSources(self):
+    iconPath = os.path.join(os.path.dirname(__file__).replace('\\','/'), 'Resources','Icons')
+    self.registerCustomSampleDataSource(
+      category=self.developmentCategoryName, sampleName='TinyPatient',
+      uris=['http://slicer.kitware.com/midas3/download/item/245205/TinyPatient_CT.nrrd',
+            'http://slicer.kitware.com/midas3/download/item/367020/TinyPatient_Structures.seg.nrrd'],
+      fileNames=['TinyPatient_CT.nrrd', 'TinyPatient_Structures.seg.nrrd'],
+      nodeNames=['TinyPatient_CT', 'TinyPatient_Segments'],
+      thumbnailFileName=os.path.join(iconPath, 'TinyPatient.png'),
+      loadFileType=['VolumeFile', 'SegmentationFile']
+      )
 
   def downloadFileIntoCache(self, uri, name):
     """Given a uri and and a filename, download the data into
@@ -311,21 +332,22 @@ class SampleDataLogic:
       filePaths.append(self.downloadFileIntoCache(uri, fileName))
     return filePaths
 
-  def downloadFromSource(self,source):
+  def downloadFromSource(self,source,attemptCount=0):
     """Given an instance of SampleDataSource, downloads the data
     if needed and loads the results in slicer"""
     nodes = []
-    for uri,fileName,nodeName in zip(source.uris,source.fileNames,source.nodeNames):
+    for uri,fileName,nodeName,loadFileType in zip(source.uris,source.fileNames,source.nodeNames,source.loadFileType):
       filePath = self.downloadFileIntoCache(uri, fileName)
       if nodeName:
-        loadedNode = self.loadNode(filePath, nodeName, source.loadFileType, source.loadFileProperties)
-        if loadedNode is None:
+        loadedNode = self.loadNode(filePath, nodeName, loadFileType, source.loadFileProperties)
+        if loadedNode is None and attemptCount < 5:
+          attemptCount += 1
           self.logMessage('<b>Load failed! Trying to download again...</b>', logging.ERROR)
           file = qt.QFile(filePath)
           if not file.remove():
             self.logMessage('<b>Load failed! Unable to delete and try again loading %s!</b>' % filePath, logging.ERROR)
             return None
-          return self.downloadFromSource(source)
+          return self.downloadFromSource(source,attemptCount)
         nodes.append(loadedNode)
     return nodes
 
