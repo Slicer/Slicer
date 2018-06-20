@@ -1141,6 +1141,9 @@ void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLNodesEvents(vtkObject*
     return;
     }
 
+  //
+  // Volume node events
+  //
   vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(caller);
   if (volumeNode)
     {
@@ -1175,7 +1178,24 @@ void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLNodesEvents(vtkObject*
 
       this->RequestRender();
       }
+    else if (event == vtkMRMLScalarVolumeNode::ImageDataModifiedEvent)
+      {
+      int numDisplayNodes = volumeNode->GetNumberOfDisplayNodes();
+      for (int i=0; i<numDisplayNodes; i++)
+        {
+        vtkMRMLVolumeRenderingDisplayNode* displayNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(volumeNode->GetNthDisplayNode(i));
+        if (this->Internal->UseDisplayNode(displayNode))
+          {
+          this->Internal->UpdateDisplayNode(displayNode);
+          this->Internal->UpdateMultiVolumeMapperSampleDistance();
+          this->RequestRender();
+          }
+        }
+      }
     }
+  //
+  // View node events
+  //
   else if (caller->IsA("vtkMRMLViewNode"))
     {
     vtkInternal::VolumeToDisplayCacheType::iterator volumeIt;
@@ -1185,6 +1205,9 @@ void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLNodesEvents(vtkObject*
       this->Internal->UpdatePipelineTransforms(volumeIt->first);
       }
     }
+  //
+  // Other events
+  //
   else if (event == vtkCommand::StartEvent ||
            event == vtkCommand::StartInteractionEvent)
     {
@@ -1223,20 +1246,6 @@ void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLNodesEvents(vtkObject*
       {
       this->Internal->UpdateDisplayNode(vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(caller));
       this->RequestRender();
-      }
-    }
-  else if (event == vtkMRMLScalarVolumeNode::ImageDataModifiedEvent)
-    {
-    int numDisplayNodes = volumeNode->GetNumberOfDisplayNodes();
-    for (int i=0; i<numDisplayNodes; i++)
-      {
-      vtkMRMLVolumeRenderingDisplayNode* displayNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(volumeNode->GetNthDisplayNode(i));
-      if (this->Internal->UseDisplayNode(displayNode))
-        {
-        this->Internal->UpdateDisplayNode(displayNode);
-        this->Internal->UpdateMultiVolumeMapperSampleDistance();
-        this->RequestRender();
-        }
       }
     }
   else if (event == vtkMRMLViewNode::GraphicalResourcesCreatedEvent)
