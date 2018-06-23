@@ -128,7 +128,7 @@ int vtkMRMLTransformNodeTest1(int , char * [] )
   CHECK_BOOL(vtkMRMLTransformNode::AreTransformsEqual(NULL, NULL), true);
   // check identity transform is the same as NULL transform
   vtkMRMLTransformNode::GetTransformBetweenNodes(eTransform.GetPointer(), eTransform.GetPointer(), transform1.GetPointer());
-  CHECK_BOOL(vtkMRMLTransformNode::AreTransformsEqual(transform1, NULL), true);
+  CHECK_BOOL(vtkMRMLTransformNode::AreTransformsEqual(transform1.GetPointer(), NULL), true);
 
   // Test GetMatrixTransformToNode computations
   vtkNew<vtkMatrix4x4> test_mx;

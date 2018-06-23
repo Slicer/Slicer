@@ -3446,7 +3446,6 @@ void qMRMLSegmentEditorWidget::updateSliceRotateWarningButtonVisibility()
     }
 
   // Check if any of the slices are rotated
-  bool sliceRotated = false;
   foreach(QString sliceViewName, layoutManager->sliceViewNames())
     {
     qMRMLSliceWidget* sliceWidget = layoutManager->sliceWidget(sliceViewName);
