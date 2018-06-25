@@ -60,11 +60,11 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    # Include patches for:
-    # * DCMTK_ENABLE_CXX11 support on Linux
+    # Official DCMTK master as of 20180621
+    # http://git.dcmtk.org/?p=dcmtk.git;a=commit;h=29f9de10c2e8576147f16475b156bba98d14ba7d
+    # plus the following patch:
     # * Set CMP0067 to ensure try_compile work as expected
-    # * Fix template parameter in dcmiod/iodimage
-    "54004ba20077c626ff4e3042b1d4a5b36eda5e0e" # v3.6.3_20180205
+    "e79118cd2f40b77654630a56bbb17fe0bccc354c" # v3.6.3_20180621
     QUIET
     )
 
