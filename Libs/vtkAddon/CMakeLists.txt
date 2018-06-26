@@ -63,6 +63,7 @@ set(vtkAddon_SRCS
   vtkPersonInformation.h
   vtkAddonMathUtilities.h
   vtkAddonMathUtilities.cxx
+  vtkAddonSetGet.h
   )
 
 # Abstract/pure virtual classes
@@ -76,6 +77,7 @@ set(vtkAddon_SRCS
 set_source_files_properties(
   vtkAddonTestingUtilities.h
   vtkLoggingMacros.h 
+  vtkAddonSetGet.h
   WRAP_EXCLUDE
   )
 # --------------------------------------------------------------------------

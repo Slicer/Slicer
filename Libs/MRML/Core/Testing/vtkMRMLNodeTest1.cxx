@@ -23,6 +23,14 @@
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkStringArray.h>
+#include <vtkXMLDataElement.h>
+#include <vtkXMLUtilities.h>
+
+// VTKSYS includes
+#include <vtksys/SystemTools.hxx>
+
+// vtkAddon includes
+#include "vtkAddonSetGet.h"
 
 // STD includes
 #include <sstream>
@@ -70,12 +78,24 @@ public:
   void SetOtherNodeID(const char* id);
   vtkGetStringMacro(OtherNodeID);
 
+  vtkSetStdVectorMacro(TestingStringVector, std::vector<std::string>);
+  vtkGetStdVectorMacro(TestingStringVector, std::vector<std::string>);
+
+  vtkSetStdVectorMacro(TestingIntVector, std::vector<int>);
+  vtkGetStdVectorMacro(TestingIntVector, std::vector<int>);
+
+  vtkSetStdVectorMacro(TestingFloatVector, std::vector<float>);
+  vtkGetStdVectorMacro(TestingFloatVector, std::vector<float>);
+
   virtual void SetSceneReferences() VTK_OVERRIDE;
   virtual void UpdateReferenceID(const char *oldID, const char *newID) VTK_OVERRIDE;
   virtual void WriteXML(ostream& of, int nIndent) VTK_OVERRIDE;
   virtual void ReadXMLAttributes(const char** atts) VTK_OVERRIDE;
 
-  char *OtherNodeID;
+  char*                     OtherNodeID;
+  std::vector<std::string>  TestingStringVector;
+  std::vector<int>          TestingIntVector;
+  std::vector<float>        TestingFloatVector;
 
   vtkObject* LastMRMLEventCaller;
   unsigned long LastMRMLEventId;
@@ -194,6 +214,7 @@ bool TestNodeReferenceSerialization();
 bool TestClearScene();
 bool TestImportSceneReferenceValidDuringImport();
 int TestSaveLoadSpecialCharacters();
+int TestReadWriteXMLProperties();
 
 //---------------------------------------------------------------------------
 int vtkMRMLNodeTest1(int , char * [] )
@@ -219,6 +240,7 @@ int vtkMRMLNodeTest1(int , char * [] )
   res = res && TestSetNodeReferenceIDToZeroOrEmptyString();
   res = res && TestNodeReferenceSerialization();
   res = res && TestClearScene();
+  res = res && (TestReadWriteXMLProperties() == EXIT_SUCCESS);
 
   return res ? EXIT_SUCCESS : EXIT_FAILURE;
 }
@@ -244,11 +266,12 @@ void vtkMRMLNodeTestHelper1::SetSceneReferences()
 void vtkMRMLNodeTestHelper1::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
-  vtkIndent indent(nIndent);
-  if (this->OtherNodeID != NULL)
-    {
-    of << " OtherNodeRef=\"" << this->OtherNodeID << "\"";
-    }
+  vtkMRMLWriteXMLBeginMacro(of);
+  vtkMRMLWriteXMLStringMacro(OtherNodeRef, OtherNodeID);
+  vtkMRMLWriteXMLStdStringVectorMacro(TestingStringVector, TestingStringVector, std::vector);
+  vtkMRMLWriteXMLStdFloatVectorMacro(TestingFloatVector, TestingFloatVector, std::vector<float>);
+  vtkMRMLWriteXMLStdIntVectorMacro(TestingIntVector, TestingIntVector, std::vector<int>);
+  vtkMRMLWriteXMLEndMacro();
 }
 
 //----------------------------------------------------------------------------
@@ -256,17 +279,12 @@ void vtkMRMLNodeTestHelper1::ReadXMLAttributes(const char** atts)
 {
   int disabledModify = this->StartModify();
   Superclass::ReadXMLAttributes(atts);
-  const char* attName;
-  const char* attValue;
-  while (*atts != NULL)
-    {
-    attName = *(atts++);
-    attValue = *(atts++);
-    if (!strcmp(attName, "OtherNodeRef"))
-      {
-      this->SetOtherNodeID(attValue);
-      }
-    }
+  vtkMRMLReadXMLBeginMacro(atts);
+  vtkMRMLReadXMLStringMacro(OtherNodeRef, OtherNodeID);
+  vtkMRMLReadXMLStdStringVectorMacro(TestingStringVector, TestingStringVector, std::vector);
+  vtkMRMLReadXMLStdFloatVectorMacro(TestingFloatVector, TestingFloatVector, std::vector<float>);
+  vtkMRMLReadXMLStdIntVectorMacro(TestingIntVector, TestingIntVector, std::vector<int>);
+  vtkMRMLReadXMLEndMacro();
   this->EndModify(disabledModify);
 }
 
@@ -291,10 +309,9 @@ void vtkMRMLStorageNodeTestHelper::SetSceneReferences()
 void vtkMRMLStorageNodeTestHelper::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
-  if (this->OtherNodeID != NULL)
-    {
-    of << " OtherNodeRef=\"" << this->OtherNodeID << "\"";
-    }
+  vtkMRMLWriteXMLBeginMacro(of);
+  vtkMRMLWriteXMLStringMacro(OtherNodeRef, OtherNodeID);
+  vtkMRMLWriteXMLEndMacro();
 }
 
 //----------------------------------------------------------------------------
@@ -302,17 +319,9 @@ void vtkMRMLStorageNodeTestHelper::ReadXMLAttributes(const char** atts)
 {
   int disabledModify = this->StartModify();
   Superclass::ReadXMLAttributes(atts);
-  const char* attName;
-  const char* attValue;
-  while (*atts != NULL)
-    {
-    attName = *(atts++);
-    attValue = *(atts++);
-    if (!strcmp(attName, "OtherNodeRef"))
-      {
-      this->SetOtherNodeID(attValue);
-      }
-    }
+  vtkMRMLReadXMLBeginMacro(atts);
+  vtkMRMLReadXMLStringMacro(OtherNodeRef, OtherNodeID);
+  vtkMRMLReadXMLEndMacro();
   this->EndModify(disabledModify);
 }
 
@@ -2852,6 +2861,68 @@ bool TestClearScene()
     }
 
   return true;
+}
+
+//----------------------------------------------------------------------------
+int TestReadWriteXMLProperties()
+{
+  vtkNew<vtkMRMLNodeTestHelper1> node1;
+
+  std::vector<std::string> testingStringsVector;
+  testingStringsVector.push_back("Several;Semicolon;In;One;String");
+  testingStringsVector.push_back("Percent%Sign");
+  testingStringsVector.push_back("%25%3B;%");
+  node1->SetTestingStringVector(testingStringsVector);
+
+  std::vector<float> testingFloatVector;
+  testingFloatVector.push_back(0.0);
+  testingFloatVector.push_back(1.1);
+  testingFloatVector.push_back(2.2);
+  testingFloatVector.push_back(3.3);
+  testingFloatVector.push_back(4.4);
+  testingFloatVector.push_back(5.5);
+  node1->SetTestingFloatVector(testingFloatVector);
+
+  std::vector<int> testingIntVector;
+  testingFloatVector.push_back(0);
+  testingFloatVector.push_back(1);
+  testingFloatVector.push_back(2);
+  testingFloatVector.push_back(3);
+  testingFloatVector.push_back(4);
+  testingFloatVector.push_back(5);
+  node1->SetTestingIntVector(testingIntVector);
+
+  std::stringstream ss;
+  ss << "<MRMLNode ";
+  node1->WriteXML(ss, NULL);
+  ss << " />";
+  vtkSmartPointer<vtkXMLDataElement> element = vtkSmartPointer<vtkXMLDataElement>::Take(vtkXMLUtilities::ReadElementFromStream(ss));
+
+  const char *atts[] = {
+    "TestingStringVector", element->GetAttribute("TestingStringVector"),
+    "TestingFloatVector", element->GetAttribute("TestingFloatVector"),
+    "TestingIntVector", element->GetAttribute("TestingIntVector"),
+    NULL };
+
+  vtkNew<vtkMRMLNodeTestHelper1> node2;
+  node2->ReadXMLAttributes(atts);
+
+  if (node1->GetTestingStringVector() != node2->GetTestingStringVector())
+    {
+    return EXIT_FAILURE;
+    }
+
+  if (node1->GetTestingFloatVector() != node2->GetTestingFloatVector())
+    {
+    return EXIT_FAILURE;
+    }
+
+  if (node1->GetTestingIntVector() != node2->GetTestingIntVector())
+    {
+    return EXIT_FAILURE;
+    }
+
+  return EXIT_SUCCESS;
 }
 
 namespace

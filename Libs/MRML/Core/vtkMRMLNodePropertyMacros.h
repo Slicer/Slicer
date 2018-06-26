@@ -86,6 +86,48 @@
     xmlWriteOutputStream << "\""; \
   }
 
+/// Macro for writing std::vector (float or double) node property to XML.
+#define vtkMRMLWriteXMLStdFloatVectorMacro(xmlAttributeName, propertyName, vectorType) \
+  { \
+    xmlWriteOutputStream << " " #xmlAttributeName "=\""; \
+    vectorType vector = Get##propertyName(); \
+    for (vectorType::iterator it=vector.begin(); it!=vector.end(); it++) \
+      { \
+      xmlWriteOutputStream << *it; \
+      xmlWriteOutputStream << " "; \
+      } \
+    xmlWriteOutputStream << "\""; \
+  }
+
+/// Macro for writing std::vector (int) node property to XML.
+#define vtkMRMLWriteXMLStdIntVectorMacro(xmlAttributeName, propertyName, vectorType) \
+  { \
+    xmlWriteOutputStream << " " #xmlAttributeName "=\""; \
+    vectorType vector = Get##propertyName(); \
+    for (vectorType::iterator it=vector.begin(); it!=vector.end(); it++) \
+      { \
+      xmlWriteOutputStream << *it; \
+      xmlWriteOutputStream << " "; \
+      } \
+    xmlWriteOutputStream << "\""; \
+  }
+
+/// Macro for writing std::vector (of std::string) node property to XML.
+#define vtkMRMLWriteXMLStdStringVectorMacro(xmlAttributeName, propertyName, vectorType) \
+  { \
+    xmlWriteOutputStream << " " #xmlAttributeName "=\""; \
+    vectorType<std::string> vector = Get##propertyName(); \
+    for (vectorType<std::string>::iterator it=vector.begin(); it!=vector.end(); it++) \
+      { \
+      std::string attributeValue = *it; \
+      vtksys::SystemTools::ReplaceString(attributeValue, "%", "%25"); \
+      vtksys::SystemTools::ReplaceString(attributeValue, ";", "%3B"); \
+      xmlWriteOutputStream << vtkMRMLNode::XMLAttributeEncodeString(attributeValue); \
+      xmlWriteOutputStream << ";"; \
+      } \
+    xmlWriteOutputStream << "\""; \
+  }
+
 /// @}
 
 //----------------------------------------------------------------------------
@@ -207,6 +249,75 @@
     this->Set##propertyName(vectorValue); \
     }
 
+/// Macro for reading an iterable container (float or double) node property from XML.
+#define vtkMRMLReadXMLStdFloatVectorMacro(xmlAttributeName, propertyName, vectorType) \
+  if (!strcmp(xmlReadAttName, #xmlAttributeName)) \
+    { \
+    vectorType vector; \
+    std::string valueString(xmlReadAttValue); \
+    size_t separatorPosition = valueString.find(" "); \
+    while(separatorPosition != std::string::npos) \
+      { \
+      std::string attributeValue = valueString.substr(0, separatorPosition); \
+      vtkVariant variantValue(attributeValue); \
+      bool valid = false; \
+      vectorType::value_type scalarValue = variantValue.ToDouble(&valid); \
+      if (valid) \
+        { \
+        vector.insert(vector.end(), scalarValue); \
+        } \
+      valueString = valueString.substr(separatorPosition+1); \
+      separatorPosition = valueString.find(" "); \
+      } \
+    this->Set##propertyName(vector); \
+  }
+
+/// Macro for reading an iterable container (int) node property from XML.
+#define vtkMRMLReadXMLStdIntVectorMacro(xmlAttributeName, propertyName, vectorType) \
+  if (!strcmp(xmlReadAttName, #xmlAttributeName)) \
+    { \
+    vectorType vector; \
+    std::string valueString(xmlReadAttValue); \
+    size_t separatorPosition = valueString.find(" "); \
+    while(separatorPosition != std::string::npos) \
+      { \
+      std::string attributeValue = valueString.substr(0, separatorPosition); \
+      vtkVariant variantValue(attributeValue); \
+      bool valid = false; \
+      vectorType::value_type scalarValue = variantValue.ToInt(&valid); \
+      if (valid) \
+        { \
+        vector.insert(vector.end(), scalarValue); \
+        } \
+      valueString = valueString.substr(separatorPosition+1); \
+      separatorPosition = valueString.find(" "); \
+      } \
+    this->Set##propertyName(vector); \
+  }
+
+/// Macro for reading an iterable container (of std::string) node property from XML.
+#define vtkMRMLReadXMLStdStringVectorMacro(xmlAttributeName, propertyName, vectorType) \
+  if (!strcmp(xmlReadAttName, #xmlAttributeName)) \
+    { \
+    vectorType<std::string> vector; \
+    std::string valueString(xmlReadAttValue); \
+    size_t separatorPosition = valueString.find(";"); \
+    while(separatorPosition != std::string::npos) \
+      { \
+      std::string attributeValue = valueString.substr(0,separatorPosition); \
+      vtksys::SystemTools::ReplaceString(attributeValue, "%3B", ";"); \
+      vtksys::SystemTools::ReplaceString(attributeValue, "%25", "%"); \
+      vector.insert(vector.end(), attributeValue); \
+      valueString = valueString.substr(separatorPosition+1); \
+      separatorPosition = valueString.find(";"); \
+      } \
+    if (!valueString.empty()) \
+      { \
+      vector.push_back(valueString); \
+      } \
+    this->Set##propertyName(vector); \
+    }
+
 /// @}
 
 //----------------------------------------------------------------------------
@@ -274,6 +385,18 @@
       } \
     }
 
+/// Macro for copying an iterable container (float or double) vector node property value.
+#define vtkMRMLCopyStdFloatVectorMacro(propertyName) \
+  this->Set##propertyName(this->SafeDownCast(copySourceNode)->Get##propertyName());
+
+/// Macro for copying an iterable container (int) vector node property value.
+#define vtkMRMLCopyStdIntVectorMacro(propertyName) \
+  this->Set##propertyName(this->SafeDownCast(copySourceNode)->Get##propertyName());
+
+/// Macro for copying an iterable container (of std::string) vector node property value.
+#define vtkMRMLCopyStdStringVectorMacroMacro(propertyName) \
+  this->Set##propertyName(this->SafeDownCast(copySourceNode)->Get##propertyName());
+
 /// @}
 
 //----------------------------------------------------------------------------
@@ -337,6 +460,54 @@
       } \
     printOutputStream << "]\n"; \
     } \
+  }
+
+/// Macro for printing an iterable container (float or double) node property value.
+#define vtkMRMLPrintStdFloatVectorMacro(propertyName, vectorType) \
+  { \
+    printOutputStream << printOutputIndent << #propertyName " : ["; \
+    vectorType vector = this->Get##propertyName(); \
+    for (vectorType::iterator it=vector.begin(); it!=vector.end(); it++) \
+      { \
+      if (it != vector.begin()) \
+        { \
+        printOutputStream << ", "; \
+        } \
+      printOutputStream << *it; \
+      } \
+    printOutputStream << "]\n"; \
+  }
+
+/// Macro for printing an iterable container (int) node property value.
+#define vtkMRMLPrintStdIntVectorMacro(propertyName, vectorType) \
+  { \
+    printOutputStream << printOutputIndent << #propertyName " : ["; \
+    vectorType vector = this->Get##propertyName(); \
+    for (vectorType::iterator it=vector.begin(); it!=vector.end(); it++) \
+      { \
+      if (it != vector.begin()) \
+        { \
+        printOutputStream << ", "; \
+        } \
+      printOutputStream << *it; \
+      } \
+    printOutputStream << "]\n"; \
+  }
+
+/// Macro for printing iterable container (of std::string) node property value.
+#define vtkMRMLPrintStdStringVectorMacro(propertyName, vectorType) \
+  { \
+    printOutputStream << printOutputIndent << #propertyName " : ["; \
+    vectorType<std::string> vector = this->Get##propertyName(); \
+    for (vectorType<std::string>::iterator it=vector.begin(); it!=vector.end(); it++) \
+      { \
+      if (it != vector.begin()) \
+        { \
+        printOutputStream << ", "; \
+        } \
+      printOutputStream << *it; \
+      } \
+    printOutputStream << "]\n"; \
   }
 
 /// @}
