@@ -342,6 +342,7 @@ list_conditional_append(Slicer_BUILD_LandmarkRegistration Slicer_REMOTE_DEPENDEN
 set(_extension_depends )
 
 # Build only inner-build for superbuild-type extensions
+set(Slicer_BUNDLED_EXTENSION_NAMES)
 foreach(extension_dir ${Slicer_EXTENSION_SOURCE_DIRS})
   get_filename_component(extension_dir ${extension_dir} ABSOLUTE)
   get_filename_component(extension_name ${extension_dir} NAME) # The assumption is that source directories are named after the extension project
@@ -367,12 +368,17 @@ foreach(extension_dir ${Slicer_EXTENSION_SOURCE_DIRS})
       set(_additional_project_name "${CMAKE_MATCH_1}")
       list(APPEND _extension_depends ${_additional_project_name})
     endforeach()
+
+    list(APPEND Slicer_BUNDLED_EXTENSION_NAMES ${extension_name})
+
     message(STATUS "SuperBuild - ${extension_name} extension => ${_extension_depends}")
 
   endif()
 endforeach()
 
 list(APPEND Slicer_DEPENDENCIES ${_extension_depends})
+
+mark_as_superbuild(Slicer_BUNDLED_EXTENSION_NAMES:STRING)
 
 
 #------------------------------------------------------------------------------

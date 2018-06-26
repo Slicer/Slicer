@@ -67,6 +67,13 @@ include(${Slicer_CMAKE_DIR}/SlicerBlockInstallExtensionPackages.cmake)
 
 set(CPACK_INSTALL_CMAKE_PROJECTS)
 
+# Ensure external project associated with bundled extensions are packaged
+foreach(extension_name ${Slicer_BUNDLED_EXTENSION_NAMES})
+  if(DEFINED "${extension_name}_CPACK_INSTALL_CMAKE_PROJECTS")
+    set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${${extension_name}_CPACK_INSTALL_CMAKE_PROJECTS}")
+  endif()
+endforeach()
+
 # Install CTK Apps and Plugins (PythonQt modules, QtDesigner plugins ...)
 if(NOT "${CTK_DIR}" STREQUAL "" AND EXISTS "${CTK_DIR}/CTK-build/CMakeCache.txt")
   set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${CTK_DIR}/CTK-build;CTK;RuntimeApplications;/")
