@@ -190,7 +190,10 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       loadable.name = name
       loadable.selected = True
       loadable.multivolume = mvNode
-      loadable.confidence = 0.9
+      if tagName == 'TemporalPositionIdentifier':
+        loadable.confidence = 0.9
+      else:
+        loadable.confidence = 1.
       loadables.append(loadable)
 
     return loadables
@@ -313,7 +316,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       loadable.tooltip = loadable.name
       loadable.selected = True
       loadable.multivolume = mvNode
-      loadable.confidence = 0.9
+      loadable.confidence = 1.
       loadables.append(loadable)
 
     return loadables
@@ -429,7 +432,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       loadable.tooltip = loadable.name
       loadable.selected = True
       loadable.multivolume = mvNode
-      loadable.confidence = 0.9
+      loadable.confidence = 1.
       loadables.append(loadable)
 
     return loadables
@@ -506,7 +509,6 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         loadable.tooltip = loadable.name
         loadable.selected = True
         loadable.multivolume = mvNode
-        loadable.confidence = 1.
         loadables.append(loadable)
 
     return loadables
