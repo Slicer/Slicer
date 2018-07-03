@@ -392,7 +392,11 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::AddDisplayNode(vtkMR
     {
     PipelineCPU* pipelineCpu = new PipelineCPU();
     // Set volume to the mapper
-    pipelineCpu->RayCastMapperCPU->SetInputConnection(0, volumeNode->GetImageDataConnection());
+    // Reconnection is expensive operation, therefore only do it if needed
+    if (pipelineCpu->RayCastMapperCPU->GetInputConnection(0, 0) != volumeNode->GetImageDataConnection())
+      {
+      pipelineCpu->RayCastMapperCPU->SetInputConnection(0, volumeNode->GetImageDataConnection());
+      }
     // Add volume actor to renderer and local cache
     this->External->GetRenderer()->AddVolume(pipelineCpu->VolumeActor);
     // Add pipeline
@@ -402,7 +406,11 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::AddDisplayNode(vtkMR
     {
     PipelineGPU* pipelineGpu = new PipelineGPU();
     // Set volume to the mapper
-    pipelineGpu->RayCastMapperGPU->SetInputConnection(0, volumeNode->GetImageDataConnection());
+    // Reconnection is expensive operation, therefore only do it if needed
+    if (pipelineGpu->RayCastMapperGPU->GetInputConnection(0, 0) != volumeNode->GetImageDataConnection())
+      {
+      pipelineGpu->RayCastMapperGPU->SetInputConnection(0, volumeNode->GetImageDataConnection());
+      }
     // Add volume actor to renderer and local cache
     this->External->GetRenderer()->AddVolume(pipelineGpu->VolumeActor);
     // Add pipeline
@@ -663,7 +671,11 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
     // Make sure the correct mapper is set to the volume
     pipeline->VolumeActor->SetMapper(mapper);
     // Make sure the correct volume is set to the mapper
-    mapper->SetInputConnection(0, volumeNode->GetImageDataConnection());
+    // Reconnection is expensive operation, therefore only do it if needed
+    if (mapper->GetInputConnection(0, 0) != volumeNode->GetImageDataConnection())
+      {
+      mapper->SetInputConnection(0, volumeNode->GetImageDataConnection());
+      }
     }
   else if (displayNode->IsA("vtkMRMLGPURayCastVolumeRenderingDisplayNode"))
     {
@@ -696,7 +708,11 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
     // Make sure the correct mapper is set to the volume
     pipeline->VolumeActor->SetMapper(mapper);
     // Make sure the correct volume is set to the mapper
-    mapper->SetInputConnection(0, volumeNode->GetImageDataConnection());
+    // Reconnection is expensive operation, therefore only do it if needed
+    if (mapper->GetInputConnection(0, 0) != volumeNode->GetImageDataConnection())
+      {
+      mapper->SetInputConnection(0, volumeNode->GetImageDataConnection());
+      }
     }
   else if (displayNode->IsA("vtkMRMLMultiVolumeRenderingDisplayNode"))
     {
