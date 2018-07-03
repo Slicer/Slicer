@@ -3430,7 +3430,7 @@ void qMRMLSegmentEditorWidget::updateSliceRotateWarningButtonVisibility()
 {
   Q_D(qMRMLSegmentEditorWidget);
   vtkNew<vtkMatrix4x4> segmentationIJKToRAS;
-  if (!d->segmentationIJKToRAS(segmentationIJKToRAS))
+  if (!d->segmentationIJKToRAS(segmentationIJKToRAS.GetPointer()))
     {
     // segmentation orientation cannot be determined
     d->SliceRotateWarningButton->hide();
@@ -3468,7 +3468,7 @@ void qMRMLSegmentEditorWidget::updateSliceRotateWarningButtonVisibility()
       for (int segmentationAxisIndex = 0; segmentationAxisIndex < 3; ++segmentationAxisIndex)
         {
         double segmentationAxisDirection[3] = {0.0};
-        vtkAddonMathUtilities::GetOrientationMatrixColumn(segmentationIJKToRAS, segmentationAxisIndex, segmentationAxisDirection);
+        vtkAddonMathUtilities::GetOrientationMatrixColumn(segmentationIJKToRAS.GetPointer(), segmentationAxisIndex, segmentationAxisDirection);
         double angleDiffRad = vtkMath::AngleBetweenVectors(sliceAxisDirection, segmentationAxisDirection);
         const double maxAngleDifferenceRad = 1e-3; // we consider angles to be parallel if difference is less than about 0.1 deg
         if (angleDiffRad < maxAngleDifferenceRad || angleDiffRad > vtkMath::Pi() - maxAngleDifferenceRad)
@@ -3493,7 +3493,7 @@ void qMRMLSegmentEditorWidget::rotateSliceViewsToSegmentation()
 {
   Q_D(qMRMLSegmentEditorWidget);
     vtkNew<vtkMatrix4x4> segmentationIJKToRAS;
-  if (!d->segmentationIJKToRAS(segmentationIJKToRAS))
+  if (!d->segmentationIJKToRAS(segmentationIJKToRAS.GetPointer()))
     {
     // segmentation orientation cannot be determined
     d->SliceRotateWarningButton->hide();
