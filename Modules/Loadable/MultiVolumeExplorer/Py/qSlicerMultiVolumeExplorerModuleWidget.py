@@ -294,12 +294,28 @@ class qSlicerMultiVolumeExplorerModuleWidget(qSlicerMultiVolumeExplorerSimplifie
                                                   "vtkMRMLDiffusionTensorVolumeNode",
                                                   "vtkMRMLVectorVolumeNode"]
     self.extractFrameCopy = False
-    self.extractFrameCheckBox = QCheckBox('Enable copying')
+    self.extractFrameCheckBox = QCheckBox('Enable copying while sliding')
     hbox = QHBoxLayout()
     hbox.addWidget(QLabel('Current frame copy'))
     hbox.addWidget(self.frameCopySelector)
     hbox.addWidget(self.extractFrameCheckBox)
     self.inputFrameLayout.addRow(hbox)
+
+    self.currentFrameCopySelector = slicer.qMRMLNodeComboBox()
+    self.currentFrameCopySelector.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)
+    self.currentFrameCopySelector.nodeTypes = ['vtkMRMLScalarVolumeNode']
+    self.currentFrameCopySelector.setMRMLScene(slicer.mrmlScene)
+    self.currentFrameCopySelector.addEnabled = 0
+    self.currentFrameCopySelector.enabled = 0
+
+    self.currentFrameCopyButton = QPushButton('Copy frame')
+    self.currentFrameCopyButton.toolTip = 'Copy currently selected frame'
+
+    hbox2 = QHBoxLayout()
+    hbox2.addWidget(QLabel('Current frame click-to-copy'))
+    hbox2.addWidget(self.currentFrameCopySelector)
+    hbox2.addWidget(self.currentFrameCopyButton)
+    self.inputFrameLayout.addRow(hbox2)
 
   def setupPlotSettingsFrame(self):
     self.plotSettingsFrame = ctk.ctkCollapsibleButton()
@@ -405,6 +421,7 @@ class qSlicerMultiVolumeExplorerModuleWidget(qSlicerMultiVolumeExplorerSimplifie
     self.fgMultiVolumeSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onForegroundInputChanged)
     self.extractFrameCheckBox.connect('stateChanged(int)', self.onExtractFrameChanged)
     self.frameCopySelector.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onVFMRMLSceneChanged)
+    self.currentFrameCopyButton.connect('clicked()', self.onCopyButtonClicked)
 
   def onFrameCountBaselineCalculationChanged(self, value):
     self._multiVolumeIntensityChart.nFramesForBaselineCalculation = value
@@ -447,6 +464,8 @@ class qSlicerMultiVolumeExplorerModuleWidget(qSlicerMultiVolumeExplorerSimplifie
 
     if self._bgMultiVolumeNode is not None:
       self.frameCopySelector.setCurrentNode(None)
+      self.currentFrameCopySelector.setCurrentNode(None)
+
       self.nFramesBaselineCalculation.maximum = self._bgMultiVolumeNode.GetNumberOfFrames()
     self.onLabelNodeChanged()
 
@@ -464,6 +483,7 @@ class qSlicerMultiVolumeExplorerModuleWidget(qSlicerMultiVolumeExplorerSimplifie
   def onSliderChanged(self, frameId):
     qSlicerMultiVolumeExplorerSimplifiedModuleWidget.onSliderChanged(self, frameId)
     frameId = int(frameId)
+
     if self.extractFrameCopy:
       frameVolume = self.frameCopySelector.currentNode()
       frameVolumeCopy = Helper.extractFrame(frameVolume, self._bgMultiVolumeNode, frameId)
@@ -471,6 +491,20 @@ class qSlicerMultiVolumeExplorerModuleWidget(qSlicerMultiVolumeExplorerSimplifie
         self.frameCopySelector.setCurrentNode(frameVolumeCopy)
       frameName = '%s frame %d' % (self._bgMultiVolumeNode.GetName(), frameId)
       frameVolumeCopy.SetName(frameName)
+
+  def onCopyButtonClicked(self):
+    if self._bgMultiVolumeNode is None:
+      return
+
+    frameId = int(self.frameSlider.value)
+
+    frameName = '%s copied frame %d' % (self._bgMultiVolumeNode.GetName(), frameId)
+    nodeVolume = slicer.mrmlScene.GetNodesByName(frameName).GetNumberOfItems()
+    if (nodeVolume == 0):
+      frameVolume = self.currentFrameCopySelector.addNode()
+      frameVolumeCopy = Helper.extractFrame(frameVolume, self._bgMultiVolumeNode, frameId)
+      frameVolumeCopy.SetName(frameName)
+      self.currentFrameCopySelector.setCurrentNode(frameVolumeCopy)
 
   def onLabeledChartRequested(self):
     labelNode = self.labelMapSelector.currentNode()
