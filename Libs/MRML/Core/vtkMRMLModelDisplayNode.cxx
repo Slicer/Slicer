@@ -14,12 +14,14 @@ Version:   $Revision: 1.3 $
 // MRML includes
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLColorNode.h"
+#include "vtkMRMLModelNode.h"
 
 // VTK includes
 #include <vtkAlgorithmOutput.h>
 #include <vtkAssignAttribute.h>
 #include <vtkCellData.h>
 #include <vtkCommand.h>
+#include <vtkGeometryFilter.h>
 #include <vtkIntArray.h>
 #include <vtkLookupTable.h>
 #include <vtkNew.h>
@@ -43,12 +45,16 @@ vtkMRMLModelDisplayNode::vtkMRMLModelDisplayNode()
   this->PassThrough = vtkPassThrough::New();
   this->AssignAttribute = vtkAssignAttribute::New();
   this->ThresholdFilter = vtkThreshold::New();
+  this->ConvertToPolyDataFilter = vtkGeometryFilter::New();
   this->ThresholdEnabled = false;
   this->SliceDisplayMode = SliceDisplayIntersection;
 
   // the default behavior for models is to use the scalar range of the data
   // to reset the display scalar range, so use the Data flag
   this->SetScalarRangeFlag(vtkMRMLDisplayNode::UseDataScalarRange);
+
+  this->ThresholdFilter->SetInputConnection(this->AssignAttribute->GetOutputPort());
+  this->ConvertToPolyDataFilter->SetInputConnection(this->ThresholdFilter->GetOutputPort());
 
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkCommand::ModifiedEvent);
@@ -61,6 +67,7 @@ vtkMRMLModelDisplayNode::~vtkMRMLModelDisplayNode()
   this->PassThrough->Delete();
   this->AssignAttribute->Delete();
   this->ThresholdFilter->Delete();
+  this->ConvertToPolyDataFilter->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -171,8 +178,6 @@ void vtkMRMLModelDisplayNode
 {
   this->PassThrough->SetInputConnection(meshConnection);
   this->AssignAttribute->SetInputConnection(meshConnection);
-  this->ThresholdFilter->SetInputConnection(this->AssignAttribute->GetOutputPort());
-
   this->Modified();
 }
 
@@ -252,7 +257,18 @@ vtkAlgorithmOutput* vtkMRMLModelDisplayNode::GetOutputMeshConnection()
       this->GetScalarVisibility() && // do not threshold if scalars hidden
       this->ThresholdEnabled)
     {
-    return this->ThresholdFilter->GetOutputPort();
+    vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(this->GetDisplayableNode());
+    if (modelNode && modelNode->GetMeshType() == vtkMRMLModelNode::PolyDataMeshType)
+      {
+      // Threshold filter generates unstructured grid output. If input is a polydata mesh
+      // then the pipeline expects polydata as output mesh, therefore we need to use
+      // ConvertToPolyDataFilter output.
+      return this->ConvertToPolyDataFilter->GetOutputPort();
+      }
+    else
+      {
+      return this->ThresholdFilter->GetOutputPort();
+      }
     }
   else if (this->GetActiveScalarName())
     {
@@ -339,6 +355,23 @@ void vtkMRMLModelDisplayNode::SetActiveAttributeLocation(int location)
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLModelDisplayNode::SetActiveScalar(const char *scalarName, int location)
+{
+  if (location == this->ActiveAttributeLocation
+    && ((scalarName && this->ActiveScalarName && !strcmp(scalarName, this->ActiveScalarName))
+        || (scalarName == 0 && this->ActiveScalarName == 0)))
+    {
+    // no change
+    return;
+    }
+  int wasModifying = this->StartModify();
+  this->Superclass::SetActiveScalarName(scalarName);
+  this->Superclass::SetActiveAttributeLocation(location);
+  this->UpdateAssignedAttribute();
+  this->EndModify(wasModifying);
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLModelDisplayNode::SetScalarRangeFlag(int flag)
 {
   if (flag == this->ScalarRangeFlag)
@@ -356,8 +389,17 @@ void vtkMRMLModelDisplayNode::UpdateAssignedAttribute()
 {
   this->AssignAttribute->Assign(
     this->GetActiveScalarName(),
-    this->GetActiveScalarName() ? vtkDataSetAttributes::SCALARS : -1,
-    this->GetActiveAttributeLocation());
+    vtkDataSetAttributes::SCALARS,
+    this->GetActiveAttributeLocation() >= 0 ? this->GetActiveAttributeLocation() : vtkAssignAttribute::POINT_DATA);
+
+  if (this->GetActiveAttributeLocation() == vtkAssignAttribute::POINT_DATA)
+    {
+    this->ThresholdFilter->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_POINTS, vtkDataSetAttributes::SCALARS);
+    }
+  else if (this->GetActiveAttributeLocation() == vtkAssignAttribute::CELL_DATA)
+    {
+    this->ThresholdFilter->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_CELLS, vtkDataSetAttributes::SCALARS);
+    }
 
   if (this->GetScalarRangeFlag() != vtkMRMLDisplayNode::UseManualScalarRange)
     {
@@ -376,7 +418,7 @@ void vtkMRMLModelDisplayNode::UpdateScalarRange()
   int flag = this->GetScalarRangeFlag();
   if (flag == vtkMRMLDisplayNode::UseDataScalarRange)
     {
-    if (this->GetActiveScalarName())
+    if (this->GetActiveScalarName() && strcmp(this->GetActiveScalarName(), ""))
       {
       vtkDataArray *dataArray = this->GetActiveScalarArray();
       if (dataArray)

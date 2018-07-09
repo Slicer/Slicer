@@ -22,6 +22,7 @@
 class vtkAlgorithm;
 class vtkAlgorithmOutput;
 class vtkAssignAttribute;
+class vtkGeometryFilter;
 class vtkThreshold;
 class vtkPassThrough;
 class vtkPointSet;
@@ -111,6 +112,12 @@ public:
   /// \sa SetActiveScalarName()
   virtual void SetActiveAttributeLocation(int location) VTK_OVERRIDE;
 
+  /// Sets active scalar name and attribute location in one step.
+  /// It is preferable to use this method instead of calling SetActiveScalarName
+  /// and SetActiveAttributeLocation separately, to avoid transient states when
+  /// scalar name and location are temporarily inconsistent.
+  virtual void SetActiveScalar(const char *scalarName, int location);
+
   /// Reimplemented to update scalar range accordingly
   /// \sa SetActiveScalarName()
   virtual void SetScalarRangeFlag(int flag) VTK_OVERRIDE;
@@ -198,6 +205,11 @@ protected:
   /// option is set to true based on its scalar values.
   /// \sa AssignAttribute, ThresholdEnabled
   vtkThreshold* ThresholdFilter;
+
+  /// When ThresholdFilter is applied to a surface mesh, the output is
+  /// an unstructured grid. This filter can convert it back to a surface mesh
+  /// (vtkPolyData).
+  vtkGeometryFilter* ConvertToPolyDataFilter;
 
   /// Indicated whether to threshold the output mesh
   /// of the display model node based on its active
