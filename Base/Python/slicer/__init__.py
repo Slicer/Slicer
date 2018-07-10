@@ -42,7 +42,6 @@ standalone_python = "python" in string.lower(os.path.split(sys.executable)[-1])
 for kit in available_kits:
   # skip PythonQt kits if we are running in a regular python interpreter
   if standalone_python and "PythonQt" in kit:
-    print("Detected non-embedded Python interpreter. Skipping module '{}'".format(kit))
     continue
 
   try:
