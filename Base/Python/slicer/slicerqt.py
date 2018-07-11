@@ -43,15 +43,16 @@ class SlicerApplicationLogHandler(logging.Handler):
     self.category = "Python"
   def emit(self, record):
     try:
+      msg = self.format(record)
       context = ctk.ctkErrorLogContext()
       context.setCategory(self.category)
       context.setLine(record.lineno)
       context.setFile(record.pathname)
       context.setFunction(record.funcName)
-      context.setMessage(record.msg)
+      context.setMessage(msg)
       threadId = "{0}({1})".format(record.threadName, record.thread)
       slicer.app.errorLogModel().addEntry(qt.QDateTime.currentDateTime(), threadId,
-        self.pythonToCtkLevelConverter[record.levelno], self.origin, context, record.msg)
+        self.pythonToCtkLevelConverter[record.levelno], self.origin, context, msg)
     except:
       self.handleError(record)
 
@@ -69,7 +70,7 @@ def initLogging(logger):
   # We could filter out messages at INFO level or above (as they will be printed on the console anyway) by adding
   # applicationLogHandler.addFilter(_LogReverseLevelFilter(logging.INFO))
   # but then we would not log file name and line number of info, warning, and error level messages.
-  applicationLogHandler.setFormatter(logging.Formatter('%(levelname)s: %(message)s (%(pathname)s:%(lineno)d)'))
+  applicationLogHandler.setFormatter(logging.Formatter('%(message)s'))
   logger.addHandler(applicationLogHandler)
 
   # Prints info message to stdout (anything on stdout will also show up in the application log)
