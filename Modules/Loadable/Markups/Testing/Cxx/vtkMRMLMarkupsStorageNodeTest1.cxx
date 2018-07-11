@@ -62,17 +62,6 @@ int vtkMRMLMarkupsStorageNodeTest1(int vtkNotUsed(argc), char * vtkNotUsed(argv)
     return EXIT_FAILURE;
     }
 
-  node1->UseIJKOn();
-  if (node1->GetCoordinateSystemAsString().compare("IJK") != 0)
-    {
-    std::cerr << "Failed to set coordinate system to IJK "
-              << vtkMRMLMarkupsStorageNode::IJK
-              << ", int flag = " << node1->GetCoordinateSystem()
-              << ", string = " << node1->GetCoordinateSystemAsString().c_str()
-              << std::endl;
-    return EXIT_FAILURE;
-    }
-
   // reset coordinate system flag to RAS
   node1->UseRASOn();
  if (node1->GetCoordinateSystemAsString().compare("RAS") != 0)

@@ -60,12 +60,11 @@ public:
   enum
   {
     RAS = 0,
-    LPS,
-    IJK
+    LPS
   };
 
   /// Get/Set flag that controls if points are to be written in various coordinate systems
-  vtkSetClampMacro(CoordinateSystem, int, vtkMRMLMarkupsStorageNode::RAS, vtkMRMLMarkupsStorageNode::IJK);
+  vtkSetClampMacro(CoordinateSystem, int, vtkMRMLMarkupsStorageNode::RAS, vtkMRMLMarkupsStorageNode::LPS);
   vtkGetMacro(CoordinateSystem, int);
   std::string GetCoordinateSystemAsString();
   /// Convenience methods to get/set various coordinate system values
@@ -74,8 +73,6 @@ public:
   bool GetUseRAS();
   void UseLPSOn();
   bool GetUseLPS();
-  void UseIJKOn();
-  bool GetUseIJK();
 
   /// Convert between user input strings and strings safe to be
   /// written to the storage file. Since the current storage node

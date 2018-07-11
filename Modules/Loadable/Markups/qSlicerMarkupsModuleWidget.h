@@ -148,7 +148,7 @@ public slots:
   void onAddMarkupPushButtonClicked();
   void onMoveMarkupUpPushButtonClicked();
   void onMoveMarkupDownPushButtonClicked();
-  void onDeleteMarkupPushButtonClicked();
+  void onDeleteMarkupPushButtonClicked(bool confirm=true);
   void onDeleteAllMarkupsInListPushButtonClicked();
 
   /// Update the selection node from the combo box
@@ -209,6 +209,10 @@ public slots:
   /// the named list, calls logic method to do the move if it can find both
   /// markups nodes in the scene
   void moveSelectedToNamedList(QString listName);
+
+  void cutSelectedToClipboard();
+  void copySelectedToClipboard();
+  void pasteSelectedFromClipboard();
 
   /// Enable/disable editing the table if the markups node is un/locked
   void onActiveMarkupsNodeLockModifiedEvent();

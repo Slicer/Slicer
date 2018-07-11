@@ -136,10 +136,6 @@ std::string vtkMRMLMarkupsStorageNode::GetCoordinateSystemAsString()
     {
     coordString = std::string("LPS");
     }
-  else if (this->CoordinateSystem == vtkMRMLMarkupsStorageNode::IJK)
-    {
-    coordString = std::string("IJK");
-    }
   return coordString;
 }
 
@@ -172,25 +168,6 @@ void vtkMRMLMarkupsStorageNode::UseLPSOn()
 bool vtkMRMLMarkupsStorageNode::GetUseLPS()
 {
   if (this->GetCoordinateSystem() == vtkMRMLMarkupsStorageNode::LPS)
-    {
-    return true;
-    }
-  else
-    {
-    return false;
-    }
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLMarkupsStorageNode::UseIJKOn()
-{
-  this->SetCoordinateSystem(vtkMRMLMarkupsStorageNode::IJK);
-}
-
-//----------------------------------------------------------------------------
-bool vtkMRMLMarkupsStorageNode::GetUseIJK()
-{
-  if (this->GetCoordinateSystem() == vtkMRMLMarkupsStorageNode::IJK)
     {
     return true;
     }

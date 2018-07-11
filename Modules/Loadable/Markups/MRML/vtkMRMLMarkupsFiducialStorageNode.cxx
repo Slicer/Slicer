@@ -35,6 +35,7 @@ vtkMRMLNodeNewMacro(vtkMRMLMarkupsFiducialStorageNode);
 vtkMRMLMarkupsFiducialStorageNode::vtkMRMLMarkupsFiducialStorageNode()
 {
   this->DefaultWriteFileExtension = "fcsv";
+  this->FieldDelimiterCharacters = ",";
 }
 
 //----------------------------------------------------------------------------
@@ -70,6 +71,255 @@ void vtkMRMLMarkupsFiducialStorageNode::Copy(vtkMRMLNode *anode)
 bool vtkMRMLMarkupsFiducialStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
 {
   return refNode->IsA("vtkMRMLMarkupsFiducialNode");
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString(vtkMRMLMarkupsNode *markupsNode, int markupIndex, const char* line)
+{
+  if (!markupsNode)
+    {
+    vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed: invalid markupsnode");
+    return false;
+    }
+
+  if (markupIndex<0)
+    {
+    vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed: invalid markupIndex");
+    return false;
+    }
+
+  if (this->GetCoordinateSystem() != vtkMRMLMarkupsFiducialStorageNode::RAS
+    && this->GetCoordinateSystem() != vtkMRMLMarkupsFiducialStorageNode::LPS)
+    {
+    vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed: invalid coordinate system");
+    return false;
+    }
+
+  char separator = ',';
+  if (!this->FieldDelimiterCharacters.empty())
+    {
+    separator = this->FieldDelimiterCharacters[0];
+    }
+
+  std::stringstream ss(line);
+  std::string component;
+
+  // ID (if missing, use default)
+  std::string id;
+  getline(ss, id, separator);
+
+  // Position
+  double xyz[3] = { 0.0, 0.0, 0.0 };
+  for (int i = 0; i < 3; i++)
+    {
+    getline(ss, component, separator);
+    if (component.empty())
+      {
+      vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed: numeric value expected, got empty field");
+      return false;
+      }
+    vtkVariant v = vtkVariant(component);
+    xyz[i] = v.ToDouble();
+    if (!v.IsValid())
+      {
+      vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed: numeric value expected, got " << component);
+      return false;
+      }
+    }
+
+  // Orientation
+  double wxyz[4] = { 1.0, 0.0, 0.0, 0.0 };
+  for (int i = 0; i < 4; i++)
+    {
+    getline(ss, component, separator);
+    if (component.empty())
+      {
+      // if missing use default
+      continue;
+      }
+    vtkVariant v = vtkVariant(component);
+    wxyz[i] = v.ToDouble();
+    if (!v.IsValid())
+      {
+      vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed: numeric value expected, got " << component);
+      return false;
+      }
+    }
+
+  // Flag attributes
+  int visibilitySelectedLocked[3] = { 1, 1, 0 };
+  for (int i = 0; i < 3; i++)
+    {
+    getline(ss, component, separator);
+    if (component.empty())
+      {
+      continue;
+      }
+    vtkVariant v = vtkVariant(component);
+    visibilitySelectedLocked[i] = (v.ToDouble() > 0.0);
+    if (!v.IsValid())
+      {
+      vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed: numeric value expected, got " << component);
+      return false;
+      }
+    }
+
+  // label
+  // the label may have quotes around it, look for the end quote and comma
+  std::string labelDescID;
+  getline(ss, labelDescID);
+  // if there's no quote at the start of the line, the label was
+  // checked to be sure that there are no commas in it, so extract
+  // to the next comma
+  size_t endCommaPos = 0;
+  if (!labelDescID.empty() && labelDescID[0] != '"')
+    {
+    endCommaPos = labelDescID.find(separator);
+    component = labelDescID.substr(0, endCommaPos);
+    }
+  else
+    {
+    component = this->GetFirstQuotedString(labelDescID, &endCommaPos);
+    }
+  std::string label;
+  if (!component.empty())
+    {
+    vtkDebugMacro("Got label = " << component.c_str());
+    label = this->ConvertStringFromStorageFormat(component);
+    }
+
+  // description
+  // get the rest of the string after the label
+  std::string descID = labelDescID.substr(std::min(endCommaPos + 1, labelDescID.size()));
+  // the description may have quotes around it as well
+  if (!descID.empty() && descID[0] != '"')
+    {
+    endCommaPos = descID.find(separator);
+    component = descID.substr(0, endCommaPos);
+    }
+  else
+    {
+    component = this->GetFirstQuotedString(descID, &endCommaPos);
+    }
+  std::string description;
+  if (!component.empty())
+    {
+    vtkDebugMacro("Got description = " << component.c_str());
+    description = this->ConvertStringFromStorageFormat(component);
+    }
+
+  // in case the file was written by hand, the associated node id
+  // might be empty
+  size_t associatedNodeIDPos = ss.str().find_last_of(separator);
+  std::string associatedNodeID;
+  if (associatedNodeIDPos != std::string::npos)
+    {
+    component = ss.str().substr(associatedNodeIDPos + 1);
+    if (!component.empty())
+      {
+      vtkDebugMacro("Got associated node id = " << component.c_str());
+      associatedNodeID = component;
+      }
+    }
+
+  // Set values in markup
+
+  int wasModified = markupsNode->StartModify();
+  if (markupIndex <= markupsNode->GetNumberOfMarkups())
+    {
+    markupIndex = markupsNode->AddMarkupWithNPoints(1);
+    }
+
+  if (id.empty())
+    {
+    if (this->GetScene())
+      {
+      id = this->GetScene()->GenerateUniqueName(this->GetID());
+      }
+    }
+  markupsNode->SetNthMarkupID(markupIndex, id);
+
+  if (this->GetCoordinateSystem() == vtkMRMLMarkupsFiducialStorageNode::RAS)
+    {
+    markupsNode->SetMarkupPoint(markupIndex, 0, xyz[0], xyz[1], xyz[2]);
+    }
+  else if (this->GetCoordinateSystem() == vtkMRMLMarkupsFiducialStorageNode::LPS)
+    {
+    markupsNode->SetMarkupPointLPS(markupIndex, 0, xyz[0], xyz[1], xyz[2]);
+    }
+
+  markupsNode->SetNthMarkupOrientation(markupIndex, wxyz[0], wxyz[1], wxyz[2], wxyz[3]);
+
+  markupsNode->SetNthMarkupVisibility(markupIndex, visibilitySelectedLocked[0]);
+  markupsNode->SetNthMarkupSelected(markupIndex, visibilitySelectedLocked[1]);
+  markupsNode->SetNthMarkupLocked(markupIndex, visibilitySelectedLocked[2]);
+  markupsNode->SetNthMarkupLabel(markupIndex, label);
+  markupsNode->SetNthMarkupDescription(markupIndex, description);
+  markupsNode->SetNthMarkupAssociatedNodeID(markupIndex, associatedNodeID);
+  markupsNode->EndModify(wasModified);
+
+  return true;
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLMarkupsFiducialStorageNode::GetMarkupAsString(vtkMRMLMarkupsNode *markupsNode, int markupIndex)
+{
+  if (!markupsNode)
+    {
+    vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::GetMarkupAsString failed: invalid markupsnode");
+    return false;
+    }
+
+  std::stringstream of;
+  of.precision(3);
+  of.setf(std::ios::fixed, std::ios::floatfield);
+
+  char separator = ',';
+  if (!this->FieldDelimiterCharacters.empty())
+    {
+    separator = this->FieldDelimiterCharacters[0];
+    }
+
+  std::string id = markupsNode->GetNthMarkupID(markupIndex);
+  of << id.c_str();
+  vtkDebugMacro("WriteDataInternal: wrote id " << id.c_str());
+
+  int p = 0;
+  double xyz[3] = { 0.0, 0.0, 0.0 };
+  if (this->GetCoordinateSystem() == vtkMRMLMarkupsFiducialStorageNode::RAS)
+    {
+    markupsNode->GetMarkupPoint(markupIndex,p,xyz);
+    }
+  else if (this->GetCoordinateSystem() == vtkMRMLMarkupsFiducialStorageNode::LPS)
+    {
+    markupsNode->GetMarkupPointLPS(markupIndex,p,xyz);
+    }
+  else
+    {
+    vtkErrorMacro("WriteData: invalid coordinate system index " << this->GetCoordinateSystem());
+    return 0;
+    }
+
+  of << separator << xyz[0] << separator << xyz[1] << separator << xyz[2];
+
+  double orientation[4];
+  markupsNode->GetNthMarkupOrientation(markupIndex, orientation);
+  bool vis = markupsNode->GetNthMarkupVisibility(markupIndex);
+  bool sel = markupsNode->GetNthMarkupSelected(markupIndex);
+  bool lock = markupsNode->GetNthMarkupLocked(markupIndex);
+
+  std::string label = this->ConvertStringToStorageFormat(markupsNode->GetNthMarkupLabel(markupIndex));
+  std::string desc = this->ConvertStringToStorageFormat(markupsNode->GetNthMarkupDescription(markupIndex));
+
+  std::string associatedNodeID = markupsNode->GetNthMarkupAssociatedNodeID(markupIndex);
+
+  of << separator << orientation[0] << separator << orientation[1] << separator << orientation[2] << separator << orientation[3];
+  of << separator << vis << separator << sel << separator << lock;
+  of << separator << label;
+  of << separator << desc;
+  of << separator << associatedNodeID;
+
+  return of.str();
 }
 
 //----------------------------------------------------------------------------
@@ -247,8 +497,14 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
                 }
               // point line format = label,x,y,z,sel,vis
 
+              char separator = ',';
+              if (!this->FieldDelimiterCharacters.empty())
+                {
+                separator = this->FieldDelimiterCharacters[0];
+                }
+
               // label
-              getline(ss, component, ',');
+              getline(ss, component, separator);
               if (component.size())
                 {
                 vtkDebugMacro("Got label = " << component.c_str());
@@ -257,21 +513,21 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
                 }
 
               // x,y,z
-              getline(ss, component, ',');
+              getline(ss, component, separator);
               x = atof(component.c_str());
-              getline(ss, component, ',');
+              getline(ss, component, separator);
               y = atof(component.c_str());
-              getline(ss, component, ',');
+              getline(ss, component, separator);
               z = atof(component.c_str());
               markupsNode->SetMarkupPoint(thisMarkupNumber,0,x,y,z);
 
               // selected
-              getline(ss, component, ',');
+              getline(ss, component, separator);
               sel = atoi(component.c_str());
               markupsNode->SetNthMarkupSelected(thisMarkupNumber,sel);
 
               // visibility
-              getline(ss, component, ',');
+              getline(ss, component, separator);
               vtkDebugMacro("component = " << component.c_str());
               vis = atoi(component.c_str());
               markupsNode->SetNthMarkupVisibility(thisMarkupNumber,vis);
@@ -282,167 +538,12 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
             {
             // Slicer 4 markups fiducial file
             vtkDebugMacro("\n\n\n\nVersion = " << version << ", got a line: \n\"" << line << "\"");
-            std::string id = std::string("");
-            double x = 0.0, y = 0.0, z = 0.0;
-            double ow = 0.0, ox = 0.0, oy = 0.0, oz = 1.0;
-            int sel = 1, vis = 1, lock = 0;
-            std::string associatedNodeID = std::string("");
-            std::string label = std::string("");
-            std::string desc = std::string("");
 
-            std::stringstream ss(line);
             int numPoints = 1;
             markupsNode->AddMarkupWithNPoints(numPoints);
-
-            std::string component;
-
-            // id
-            getline(ss, component, ',');
-            if (component.size())
-              {
-              vtkDebugMacro("Got id = " << component.c_str());
-              id = component;
-              markupsNode->SetNthMarkupID(thisMarkupNumber,id);
-              }
-            else
-              {
-              vtkDebugMacro("No ID");
-              if (this->GetScene())
-                {
-                markupsNode->SetNthMarkupID(thisMarkupNumber,this->GetScene()->GenerateUniqueName(this->GetID()));
-                }
-              }
-
-            // x,y,z
-            getline(ss, component, ',');
-            x = atof(component.c_str());
-            getline(ss, component, ',');
-            y = atof(component.c_str());
-            getline(ss, component, ',');
-            z = atof(component.c_str());
-            if (this->GetCoordinateSystem() == vtkMRMLMarkupsFiducialStorageNode::RAS)
-              {
-              markupsNode->SetMarkupPoint(thisMarkupNumber,0,x,y,z);
-              }
-            else if (this->GetCoordinateSystem() == vtkMRMLMarkupsFiducialStorageNode::LPS)
-              {
-              markupsNode->SetMarkupPointLPS(thisMarkupNumber,0,x,y,z);
-              }
-            else
-              {
-              // IJK not implemented yet, assume RAS
-              markupsNode->SetMarkupPoint(thisMarkupNumber,0,x,y,z);
-              }
-
-            // orientatation
-            getline(ss, component, ',');
-            ow = atof(component.c_str());
-            getline(ss, component, ',');
-            ox = atof(component.c_str());
-            getline(ss, component, ',');
-            oy = atof(component.c_str());
-            getline(ss, component, ',');
-            oz = atof(component.c_str());
-            markupsNode->SetNthMarkupOrientation(thisMarkupNumber, ow, ox, oy, oz);
-
-            // visibility
-            getline(ss, component, ',');
-            vtkDebugMacro("component = " << component.c_str());
-            vis = atoi(component.c_str());
-            markupsNode->SetNthMarkupVisibility(thisMarkupNumber,vis);
-
-            // selected
-            getline(ss, component, ',');
-            sel = atoi(component.c_str());
-            markupsNode->SetNthMarkupSelected(thisMarkupNumber,sel);
-
-            // locked
-            getline(ss, component, ',');
-            lock = atoi(component.c_str());
-            markupsNode->SetNthMarkupLocked(thisMarkupNumber,lock);
-
-            // label
-            // the label may have quotes around it, look for the end quote and comma
-            // std::cout << "Line ss = '" << ss.str().c_str() << "'" << std::endl;
-            std::string labelDescID;
-            getline(ss, labelDescID);
-            // if there's no quote at the start of the line, the label was
-            // checked to be sure that there are no commas in it, so extract
-            // to the next comma
-            size_t endCommaPos;
-            if (labelDescID[0] != '"')
-              {
-              endCommaPos = labelDescID.find(",");
-              component = labelDescID.substr(0, endCommaPos);
-              }
-            else
-              {
-              component = this->GetFirstQuotedString(labelDescID, &endCommaPos);
-              }
-            if (component.size())
-              {
-              vtkDebugMacro("Got label = " << component.c_str());
-              label = this->ConvertStringFromStorageFormat(component);
-              markupsNode->SetNthMarkupLabel(thisMarkupNumber, label);
-              }
-            else
-              {
-              vtkDebugMacro("No label");
-              markupsNode->SetNthMarkupLabel(thisMarkupNumber,"");
-              }
-
-            // description
-            // get the rest of the string after the label
-            std::string descID = labelDescID.substr(endCommaPos + 1);
-            // the description may have quotes around it as well
-            if (descID[0] != '"')
-              {
-              endCommaPos = descID.find(",");
-              component = descID.substr(0, endCommaPos);
-              }
-            else
-              {
-              component = this->GetFirstQuotedString(descID, &endCommaPos);
-              }
-            if (component.size())
-              {
-              vtkDebugMacro("Got desc = " << component.c_str());
-              desc = this->ConvertStringFromStorageFormat(component);
-              markupsNode->SetNthMarkupDescription(thisMarkupNumber, desc);
-              }
-            else
-              {
-              vtkDebugMacro("No description");
-              markupsNode->SetNthMarkupDescription(thisMarkupNumber,"");
-              }
-
-            // in case the file was written by hand, the associated node id
-            // might be empty
-            size_t associatedNodeIDPos = ss.str().find_last_of(',');
-            if (associatedNodeIDPos != std::string::npos)
-              {
-              component = ss.str().substr(associatedNodeIDPos + 1);
-              if (component.size())
-                {
-                vtkDebugMacro("Got associated node id = " << component.c_str());
-                associatedNodeID = component;
-                markupsNode->SetNthMarkupAssociatedNodeID(thisMarkupNumber,associatedNodeID);
-                }
-              else
-                {
-                vtkDebugMacro("no associated node id");
-                markupsNode->SetNthMarkupAssociatedNodeID(thisMarkupNumber,"");
-                }
-              }
-            else
-              {
-                  markupsNode->SetNthMarkupAssociatedNodeID(thisMarkupNumber,"");
-              }
+            this->SetMarkupFromString(markupsNode, thisMarkupNumber, line);
 
             thisMarkupNumber++;
-            vtkDebugMacro("Line parsed, got id = " << id << ", vis = " << vis << ", sel = " << sel
-                          << ", associatedNodeID = " << associatedNodeID.c_str()
-                          << ", label = '" << label.c_str() << "', markup number is now " << thisMarkupNumber);
             } // point line
           }
         }
@@ -505,64 +606,23 @@ int vtkMRMLMarkupsFiducialStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   // id,x,y,z,ow,ox,oy,oz,vis,sel,lock,,,
   // label can have spaces, everything up to next comma is used, no quotes
   // necessary, same with the description
-  of << "# columns = id,x,y,z,ow,ox,oy,oz,vis,sel,lock,label,desc,associatedNodeID" << endl;
+  char separator = ',';
+  if (!this->FieldDelimiterCharacters.empty())
+  {
+    separator = this->FieldDelimiterCharacters[0];
+  }
+  of << "# columns = id" << separator << "x" << separator << "y" << separator << "z" << separator << "ow" << separator
+    << "ox" << separator << "oy" << separator << "oz" << separator << "vis" << separator << "sel" << separator
+    << "lock" << separator << "label" << separator << "desc" << separator << "associatedNodeID" << endl;
   for (int i = 0; i < numberOfMarkups; i++)
     {
-    std::string id = markupsNode->GetNthMarkupID(i);
-    of << id.c_str();
-    vtkDebugMacro("WriteDataInternal: wrote id " << id.c_str());
-
-    int p = 0;
-    double xyz[3] = { 0.0, 0.0, 0.0 };
-    if (this->GetCoordinateSystem() == vtkMRMLMarkupsFiducialStorageNode::RAS)
-      {
-      markupsNode->GetMarkupPoint(i,p,xyz);
-      }
-    else if (this->GetCoordinateSystem() == vtkMRMLMarkupsFiducialStorageNode::LPS)
-      {
-      markupsNode->GetMarkupPointLPS(i,p,xyz);
-      }
-    else if (this->GetCoordinateSystem() == vtkMRMLMarkupsFiducialStorageNode::IJK)
-      {
-      // not implemented yet, use RAS
-//      markupsNode->GetMarkupPointIJK(i,p,xyz);
-      markupsNode->GetMarkupPoint(i,p,xyz);
-      }
-    else
-      {
-      vtkErrorMacro("WriteData: invalid coordinate system index " << this->GetCoordinateSystem());
-      return 0;
-      }
-
-    of << "," << xyz[0] << "," << xyz[1] << "," << xyz[2];
-
-    double orientation[4];
-    markupsNode->GetNthMarkupOrientation(i, orientation);
-    bool vis = markupsNode->GetNthMarkupVisibility(i);
-    bool sel = markupsNode->GetNthMarkupSelected(i);
-    bool lock = markupsNode->GetNthMarkupLocked(i);
-
-    std::string label = this->ConvertStringToStorageFormat(markupsNode->GetNthMarkupLabel(i));
-    std::string desc = this->ConvertStringToStorageFormat(markupsNode->GetNthMarkupDescription(i));
-
-    std::string associatedNodeID = markupsNode->GetNthMarkupAssociatedNodeID(i);
-    if (associatedNodeID.size() == 0)
-      {
-      associatedNodeID = std::string("");
-      }
-    of << "," << orientation[0] << "," << orientation[1] << "," << orientation[2] << "," << orientation[3];
-    of << "," << vis << "," << sel << "," << lock;
-    of << "," << label;
-    of << "," << desc;
-    of << "," << associatedNodeID;
-
+    of << this->GetMarkupAsString(markupsNode, i);
     of << endl;
     }
 
   of.close();
 
   return 1;
-
 }
 
 //----------------------------------------------------------------------------

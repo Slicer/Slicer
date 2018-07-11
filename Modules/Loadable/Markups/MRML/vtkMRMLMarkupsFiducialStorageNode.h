@@ -56,6 +56,18 @@ public:
 
   virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode) VTK_OVERRIDE;
 
+  // If markupIndex >= number of existing markups then a new markup node is appended.
+  // Returns true on success.
+  virtual bool SetMarkupFromString(vtkMRMLMarkupsNode *markupsNode, int markupIndex, const char* str);
+
+  virtual std::string GetMarkupAsString(vtkMRMLMarkupsNode *markupsNode, int markupIndex);
+
+  /// Characters that separate between fields in the written file.
+  /// Comma by default.
+  /// Currently, only the first character of the string is used.
+  vtkSetMacro(FieldDelimiterCharacters, std::string);
+  vtkGetMacro(FieldDelimiterCharacters, std::string);
+
 protected:
   vtkMRMLMarkupsFiducialStorageNode();
   ~vtkMRMLMarkupsFiducialStorageNode();
@@ -81,6 +93,7 @@ protected:
   /// necessary, same with the description
   virtual int WriteDataInternal(vtkMRMLNode *refNode) VTK_OVERRIDE;
 
+  std::string FieldDelimiterCharacters;
 };
 
 #endif
