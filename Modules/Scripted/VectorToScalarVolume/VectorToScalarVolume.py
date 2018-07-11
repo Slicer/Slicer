@@ -1,4 +1,5 @@
 import vtk, qt, ctk, slicer
+import logging
 
 from slicer.ScriptedLoadableModule import *
 
@@ -12,9 +13,18 @@ class VectorToScalarVolume(ScriptedLoadableModule):
     self.parent.title = "Vector to Scalar Volume"
     self.parent.categories = ["Converters"]
     self.parent.dependencies = []
-    self.parent.contributors = ["Steve Pieper (Isomics)",]
+    self.parent.contributors = ["Steve Pieper (Isomics)",
+                                "Pablo Hernandez-Cerdan (Kitware)",
+                                "Jean-Christophe Fillion-Robin (Kitware)",]
     self.parent.helpText = """
-    Make a scalar (1 component) volume from a vector volume
+    <p>Make a scalar (1 component) volume from a vector volume.</p>
+
+    <p>It provides multiple conversion modes:</p>
+
+    <ul>
+    <li>convert RGB images to scalar using luminance as implemented in vtkImageLuminance (scalar = 0.30*R + 0.59*G + 0.11*B).</li>
+    <li>extract single components from any vector image.</li>
+    </ul>
     """
     self.parent.acknowledgementText = """
 Developed by Steve Pieper, Isomics, Inc.,
@@ -36,41 +46,45 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget):
     self.selectionCollapsibleButton.text = "Selection"
     self.layout.addWidget(self.selectionCollapsibleButton)
 
-    # Layout within the collapsible button
-    self.formLayout = qt.QFormLayout(self.selectionCollapsibleButton)
+    # Layout within the "Selection" collapsible button
+    parametersFormLayout = qt.QFormLayout(self.selectionCollapsibleButton)
 
     #
     # the volume selectors
     #
-    self.inputFrame = qt.QFrame(self.selectionCollapsibleButton)
-    self.inputFrame.setLayout(qt.QHBoxLayout())
-    self.formLayout.addWidget(self.inputFrame)
-    self.inputSelector = qt.QLabel("Input Vector Volume: ", self.inputFrame)
-    self.inputFrame.layout().addWidget(self.inputSelector)
-    self.inputSelector = slicer.qMRMLNodeComboBox(self.inputFrame)
+    self.inputSelector = slicer.qMRMLNodeComboBox()
     self.inputSelector.nodeTypes = ["vtkMRMLVectorVolumeNode"]
     self.inputSelector.addEnabled = False
     self.inputSelector.removeEnabled = False
     self.inputSelector.setMRMLScene( slicer.mrmlScene )
-    self.inputFrame.layout().addWidget(self.inputSelector)
+    parametersFormLayout.addRow("Input Vector Volume: ", self.inputSelector)
 
-    self.outputFrame = qt.QFrame(self.selectionCollapsibleButton)
-    self.outputFrame.setLayout(qt.QHBoxLayout())
-    self.formLayout.addWidget(self.outputFrame)
-    self.outputSelector = qt.QLabel("Output Scalar Volume: ", self.outputFrame)
-    self.outputFrame.layout().addWidget(self.outputSelector)
-    self.outputSelector = slicer.qMRMLNodeComboBox(self.outputFrame)
+    self.outputSelector = slicer.qMRMLNodeComboBox()
     self.outputSelector.nodeTypes = ["vtkMRMLScalarVolumeNode"]
+    self.outputSelector.hideChildNodeTypes = ["vtkMRMLVectorVolumeNode"]
     self.outputSelector.setMRMLScene( slicer.mrmlScene )
     self.outputSelector.addEnabled = True
     self.outputSelector.renameEnabled = True
     self.outputSelector.baseName = "Scalar Volume"
-    self.outputFrame.layout().addWidget(self.outputSelector)
+    parametersFormLayout.addRow("Output Scalar Volume: ", self.outputSelector)
+
+    #
+    # Options to extract single components of vector image instead of luminance.
+    #
+    self.conversionModeWidget = VectorToScalarVolumeConversionModeWidget()
+    parametersFormLayout.addRow("Conversion Options: ", self.conversionModeWidget)
 
     # Apply button
     self.applyButton = qt.QPushButton("Apply")
     self.applyButton.toolTip = "Run Convert the vector to scalar."
-    self.formLayout.addWidget(self.applyButton)
+    parametersFormLayout.addRow(self.applyButton)
+
+    # Defaults
+    self.conversionModeWidget.setConversionMode(VectorToScalarVolumeLogic.VECTOR_TO_LUMINANCE)
+    self.conversionModeWidget.setVolume(self.inputSelector.currentNode())
+
+    # Connections
+    self.inputSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.conversionModeWidget.setVolume)
     self.applyButton.connect('clicked(bool)', self.onApply)
 
     # Add vertical spacer
@@ -79,29 +93,160 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget):
   def onApply(self):
     inputVolume = self.inputSelector.currentNode()
     outputVolume = self.outputSelector.currentNode()
-    # check for input data
-    if not (inputVolume and outputVolume):
-      slicer.util.errorDisplay('Input and output volumes are required for conversion', windowTitle='Luminance')
+
+    # run the filter
+    logic = VectorToScalarVolumeLogic()
+    success = logic.run(
+      self.inputSelector.currentNode(), self.outputSelector.currentNode(),
+      self.conversionModeWidget.conversionMode(), self.conversionModeWidget.componentToExtract())
+
+    # make the output volume appear in all the slice views
+    if success:
+      selectionNode = slicer.app.applicationLogic().GetSelectionNode()
+      selectionNode.SetReferenceActiveVolumeID(outputVolume.GetID())
+      slicer.app.applicationLogic().PropagateVolumeSelection(0)
+
+
+#
+# VectorToScalarVolumeConversionModeWidget
+#
+
+class VectorToScalarVolumeConversionModeWidget(qt.QWidget):
+
+  def __init__(self, *args, **kwargs):
+
+    self._conversionMode = None
+    self._volume = None
+
+    qt.QWidget.__init__(self, *args, **kwargs)
+    optionsLayout = qt.QVBoxLayout(self)
+    self.optionsButtonGroup = qt.QButtonGroup()
+    self.optionsButtonGroup.exclusive = True
+
+    # Option: Grayscale
+    self.rgbRadioButton = qt.QRadioButton("RGB to Grayscale (Luminance)")
+    self.rgbRadioButton.toolTip = "Convert RGB into scalar using Luminance"
+    self.optionsButtonGroup.addButton(self.rgbRadioButton, VectorToScalarVolumeLogic.VECTOR_TO_LUMINANCE)
+    optionsLayout.addWidget(self.rgbRadioButton)
+
+    # Option: Single component
+    self.singleComponentLayout= qt.QHBoxLayout()
+    self.singleComponentRadioButton = qt.QRadioButton("Extract Single Component")
+    self.singleComponentRadioButton.toolTip = "Extract Single Component."
+    self.optionsButtonGroup.addButton(self.singleComponentRadioButton, VectorToScalarVolumeLogic.VECTOR_TO_SINGLE_COMPONENT)
+    self.singleComponentLayout.addWidget(self.singleComponentRadioButton)
+    self.componentsComboBox = qt.QComboBox()
+    self.singleComponentLayout.addWidget(self.componentsComboBox)
+    self.singleComponentLayout.addItem(qt.QSpacerItem(40, 20, qt.QSizePolicy.Expanding, qt.QSizePolicy.Minimum))
+    optionsLayout.addLayout(self.singleComponentLayout)
+
+    # Connections
+    self.optionsButtonGroup.connect('buttonClicked(int)', self.setConversionMode)
+
+  def volume(self):
+    return self._volume
+
+  def setVolume(self, value):
+    self._volume = value
+
+  def componentToExtract(self):
+    return self.componentsComboBox.currentIndex
+
+  def setComponentToExtract(self, value):
+    if 0 <= value < self.componentsComboBox.count:
+      self.componentsComboBox.currentIndex = value
+
+  def conversionMode(self):
+    return self._conversionMode
+
+  def setConversionMode(self, value):
+    if value not in (VectorToScalarVolumeLogic.VECTOR_TO_LUMINANCE,
+                     VectorToScalarVolumeLogic.VECTOR_TO_SINGLE_COMPONENT,):
       return
+
+    self.optionsButtonGroup.button(value).checked = True
+    self.componentsComboBox.enabled = (value == VectorToScalarVolumeLogic.VECTOR_TO_SINGLE_COMPONENT)
+    self.componentsComboBox.clear()
+
+    if value == VectorToScalarVolumeLogic.VECTOR_TO_SINGLE_COMPONENT:
+      # Check and display number of components
+      if self._volume is not None:
+        imageComponents = self._volume.GetImageData().GetNumberOfScalarComponents()
+        for comp in range(imageComponents):
+          self.componentsComboBox.insertItem(comp, str(comp))
+    else:
+      self.componentsComboBox.insertItem(-1, "None")
+
+    self._conversionMode = value
+
+
+#
+# VectorToScalarVolumeLogic
+#
+
+class VectorToScalarVolumeLogic(ScriptedLoadableModuleLogic):
+
+  VECTOR_TO_LUMINANCE = 0
+  VECTOR_TO_SINGLE_COMPONENT = 1
+
+  def isValidInputOutputData(self, inputVolume, outputVolume, conversionMode, component):
+    """Validates if the output is not the same as input
+    """
+    if not inputVolume:
+      msg = 'no input volume node defined'
+      logging.debug("isValidInputOutputData failed: %s" % msg)
+      return (False, msg)
+    if not outputVolume:
+      msg = 'no output volume node defined'
+      logging.debug("isValidInputOutputData failed: %s" % msg)
+      return (False, msg)
+    if inputVolume.GetID() == outputVolume.GetID():
+      msg = 'input and output volume is the same. ' \
+            'Create a new volume for output to avoid this error.'
+      logging.debug("isValidInputOutputData failed: %s" % msg)
+      return (False, msg)
+
     # check that data has enough components
     inputImage = inputVolume.GetImageData()
-    if not inputImage or inputImage.GetNumberOfScalarComponents() < 3:
-      slicer.util.errorDisplay('Input does not have enough components for conversion',
-                               windowTitle='Vector to Scalar Volume')
-      return
+    if conversionMode == self.VECTOR_TO_LUMINANCE:
+      nrbOfComponents = inputImage.GetNumberOfScalarComponents()
+      if nrbOfComponents < 3:
+        msg = 'input has only %d components but requires ' \
+              'at least 3 components for luminance conversion.' % nrbOfComponents
+        logging.debug("isValidInputOutputData failed: %s" % msg)
+        return (False, msg)
+
+    return (True, None)
+
+  def run(self, inputVolume, outputVolume, conversionMode, component):
+    """
+    Run the conversion
+    """
+
+    valid, msg = self.isValidInputOutputData(inputVolume, outputVolume, conversionMode, component)
+    if not valid:
+      slicer.util.errorDisplay(msg)
+      return False
+
+    logging.debug('Conversion mode is %d' % conversionMode)
+
     # run the filter
-    # - extract the RGB portions
     extract = vtk.vtkImageExtractComponents()
-    extract.SetComponents(0,1,2)
-    luminance = vtk.vtkImageLuminance()
     extract.SetInputConnection(inputVolume.GetImageDataConnection())
-    luminance.SetInputConnection(extract.GetOutputPort())
-    luminance.Update()
     ijkToRAS = vtk.vtkMatrix4x4()
     inputVolume.GetIJKToRASMatrix(ijkToRAS)
     outputVolume.SetIJKToRASMatrix(ijkToRAS)
-    outputVolume.SetImageDataConnection(luminance.GetOutputPort())
-    # make the output volume appear in all the slice views
-    selectionNode = slicer.app.applicationLogic().GetSelectionNode()
-    selectionNode.SetReferenceActiveVolumeID(outputVolume.GetID())
-    slicer.app.applicationLogic().PropagateVolumeSelection(0)
+    # - extract the RGB portions
+    if conversionMode == self.VECTOR_TO_LUMINANCE:
+      extract.SetComponents(0,1,2)
+      luminance = vtk.vtkImageLuminance()
+      luminance.SetInputConnection(extract.GetOutputPort())
+      luminance.Update()
+      outputVolume.SetImageDataConnection(luminance.GetOutputPort())
+    else:
+      logging.debug('Extracting component %d' % component)
+      extract.SetComponents(component)
+      extract.Update()
+      outputVolume.SetImageDataConnection(extract.GetOutputPort())
+
+    return True
