@@ -49,6 +49,7 @@
 #include <vtkCollection.h>
 #include <vtkNew.h>
 #include <vtkRenderer.h>
+#include <vtkRenderWindowInteractor.h>
 #include <vtkSmartPointer.h>
 
 //--------------------------------------------------------------------------

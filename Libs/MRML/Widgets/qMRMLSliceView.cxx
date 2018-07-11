@@ -51,6 +51,7 @@
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkRenderWindow.h>
+#include <vtkRenderWindowInteractor.h>
 #include <vtkSmartPointer.h>
 
 //--------------------------------------------------------------------------

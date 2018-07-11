@@ -56,6 +56,7 @@
 // VTK includes
 #include <vtksys/SystemTools.hxx>
 #ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+#include <QSurfaceFormat>
 #include <QVTKOpenGLWidget.h>
 #endif
 
