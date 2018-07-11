@@ -225,7 +225,7 @@ bool vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString(vtkMRMLMarkupsNode *
   // Set values in markup
 
   int wasModified = markupsNode->StartModify();
-  if (markupIndex <= markupsNode->GetNumberOfMarkups())
+  if (markupIndex >= markupsNode->GetNumberOfMarkups())
     {
     markupIndex = markupsNode->AddMarkupWithNPoints(1);
     }
@@ -270,10 +270,6 @@ std::string vtkMRMLMarkupsFiducialStorageNode::GetMarkupAsString(vtkMRMLMarkupsN
     return false;
     }
 
-  std::stringstream of;
-  of.precision(3);
-  of.setf(std::ios::fixed, std::ios::floatfield);
-
   char separator = ',';
   if (!this->FieldDelimiterCharacters.empty())
     {
@@ -281,7 +277,6 @@ std::string vtkMRMLMarkupsFiducialStorageNode::GetMarkupAsString(vtkMRMLMarkupsN
     }
 
   std::string id = markupsNode->GetNthMarkupID(markupIndex);
-  of << id.c_str();
   vtkDebugMacro("WriteDataInternal: wrote id " << id.c_str());
 
   int p = 0;
@@ -300,9 +295,7 @@ std::string vtkMRMLMarkupsFiducialStorageNode::GetMarkupAsString(vtkMRMLMarkupsN
     return 0;
     }
 
-  of << separator << xyz[0] << separator << xyz[1] << separator << xyz[2];
-
-  double orientation[4];
+  double orientation[4] = { 1.0, 0.0, 0.0, 0.0 };
   markupsNode->GetNthMarkupOrientation(markupIndex, orientation);
   bool vis = markupsNode->GetNthMarkupVisibility(markupIndex);
   bool sel = markupsNode->GetNthMarkupSelected(markupIndex);
@@ -313,6 +306,11 @@ std::string vtkMRMLMarkupsFiducialStorageNode::GetMarkupAsString(vtkMRMLMarkupsN
 
   std::string associatedNodeID = markupsNode->GetNthMarkupAssociatedNodeID(markupIndex);
 
+  std::stringstream of;
+  of.precision(3);
+  of.setf(std::ios::fixed, std::ios::floatfield);
+  of << id.c_str();
+  of << separator << xyz[0] << separator << xyz[1] << separator << xyz[2];
   of << separator << orientation[0] << separator << orientation[1] << separator << orientation[2] << separator << orientation[3];
   of << separator << vis << separator << sel << separator << lock;
   of << separator << label;
@@ -538,11 +536,7 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
             {
             // Slicer 4 markups fiducial file
             vtkDebugMacro("\n\n\n\nVersion = " << version << ", got a line: \n\"" << line << "\"");
-
-            int numPoints = 1;
-            markupsNode->AddMarkupWithNPoints(numPoints);
-            this->SetMarkupFromString(markupsNode, thisMarkupNumber, line);
-
+            this->SetMarkupFromString(markupsNode, markupsNode->GetNumberOfMarkups(), line);
             thisMarkupNumber++;
             } // point line
           }

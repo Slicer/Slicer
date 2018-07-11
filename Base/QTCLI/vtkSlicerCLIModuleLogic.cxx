@@ -1102,9 +1102,9 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
         {
         coordinateSystemFlag = 1;
         }
-      else if (coordinateSystemStr.compare("ijk") == 0)
+      else
         {
-        coordinateSystemFlag = 2;
+        vtkErrorMacro("Invalid coordinateSystemFlag value: " << coordinateSystemFlag);
         }
       // have a markups storage node, is there a coordinate flag?
       vtkMRMLMarkupsStorageNode *markupsStorage = vtkMRMLMarkupsStorageNode::SafeDownCast(out);
@@ -1416,15 +1416,15 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           {
           // check for a coordinate system flag
           std::string coordinateSystemStr = (*pit).GetCoordinateSystem();
-          // markups storage has RAS as 0, LPS as 1, IJK as 2
+          // markups storage has RAS as 0, LPS as 1
           int coordinateSystemFlag = 0;
           if (coordinateSystemStr.compare("lps") == 0)
             {
             coordinateSystemFlag = 1;
             }
-          else if (coordinateSystemStr.compare("ijk") == 0)
+          else
             {
-            coordinateSystemFlag = 2;
+            vtkErrorMacro("Invalid coordinateSystemFlag value:" << coordinateSystemFlag);
             }
 
           // get the fiducial list node
@@ -1526,15 +1526,15 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           {
           // check for a coordinate system flag
           std::string coordinateSystemStr = (*pit).GetCoordinateSystem();
-          // markups storage has RAS as 0, LPS as 1, IJK as 2
+          // markups storage has RAS as 0, LPS as 1
           int coordinateSystemFlag = 0;
           if (coordinateSystemStr.compare("lps") == 0)
             {
             coordinateSystemFlag = 1;
             }
-          else if (coordinateSystemStr.compare("ijk") == 0)
+          else
             {
-            coordinateSystemFlag = 2;
+            vtkErrorMacro("Invalid coordinateSystemFlag value:" << coordinateSystemFlag);
             }
           // get the fiducial list node
           vtkMRMLNode *node
@@ -1557,15 +1557,15 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           {
           // check for a coordinate system flag
           std::string coordinateSystemStr = (*pit).GetCoordinateSystem();
-          // markups storage has RAS as 0, LPS as 1, IJK as 2
+          // markups storage has RAS as 0, LPS as 1
           int coordinateSystemFlag = 0;
           if (coordinateSystemStr.compare("lps") == 0)
             {
             coordinateSystemFlag = 1;
             }
-          else if (coordinateSystemStr.compare("ijk") == 0)
+          else
             {
-            coordinateSystemFlag = 2;
+            vtkErrorMacro("Invalid coordinateSystemFlag value:" << coordinateSystemFlag);
             }
 
           // check multiple flag
