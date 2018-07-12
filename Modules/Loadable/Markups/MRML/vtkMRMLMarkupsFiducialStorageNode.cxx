@@ -267,7 +267,7 @@ std::string vtkMRMLMarkupsFiducialStorageNode::GetMarkupAsString(vtkMRMLMarkupsN
   if (!markupsNode)
     {
     vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::GetMarkupAsString failed: invalid markupsnode");
-    return false;
+    return "";
     }
 
   char separator = ',';
@@ -292,7 +292,7 @@ std::string vtkMRMLMarkupsFiducialStorageNode::GetMarkupAsString(vtkMRMLMarkupsN
   else
     {
     vtkErrorMacro("WriteData: invalid coordinate system index " << this->GetCoordinateSystem());
-    return 0;
+    return "";
     }
 
   double orientation[4] = { 1.0, 0.0, 0.0, 0.0 };
