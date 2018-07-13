@@ -76,7 +76,7 @@ public:
   };
 
   /// Set scalar range mode
-  void setScalarRangeMode(ControlMode autoScalarRange);
+  void setScalarRangeMode(ControlMode controlMode);
   ControlMode scalarRangeMode() const;
 
   /// Get minimum of the scalar display range

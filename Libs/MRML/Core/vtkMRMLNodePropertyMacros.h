@@ -10,6 +10,8 @@
 #ifndef __vtkMRMLNodePropertyMacros_h
 #define __vtkMRMLNodePropertyMacros_h
 
+#include <sstream> // needed for std::stringstream
+
 /// @file
 
 //----------------------------------------------------------------------------

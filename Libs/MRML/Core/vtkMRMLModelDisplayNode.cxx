@@ -45,6 +45,9 @@ vtkMRMLModelDisplayNode::vtkMRMLModelDisplayNode()
   this->PassThrough = vtkPassThrough::New();
   this->AssignAttribute = vtkAssignAttribute::New();
   this->ThresholdFilter = vtkThreshold::New();
+  this->ThresholdFilter->ThresholdBetween(0.0, -1.0); // indicates uninitialized
+  this->ThresholdRangeTemp[0] = 0.0;
+  this->ThresholdRangeTemp[1] = -1.0;
   this->ConvertToPolyDataFilter = vtkGeometryFilter::New();
   this->ThresholdEnabled = false;
   this->SliceDisplayMode = SliceDisplayIntersection;
@@ -75,7 +78,11 @@ void vtkMRMLModelDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
 
-  os << indent << "Slice display mode: " << this->GetSliceDisplayModeAsString(this->SliceDisplayMode) << "\n";
+  vtkMRMLPrintBeginMacro(os, indent);
+  vtkMRMLPrintEnumMacro(SliceDisplayMode);
+  vtkMRMLPrintBooleanMacro(ThresholdEnabled);
+  vtkMRMLPrintVectorMacro(ThresholdRange, double, 2);
+  vtkMRMLPrintEndMacro();
 }
 
 //----------------------------------------------------------------------------
@@ -84,10 +91,11 @@ void vtkMRMLModelDisplayNode::WriteXML(ostream& of, int nIndent)
   // Write all attributes not equal to their defaults
   this->Superclass::WriteXML(of, nIndent);
 
-  if (this->GetSliceDisplayMode() != SliceDisplayIntersection)
-    {
-    of << " sliceDisplayMode=\"" << this->GetSliceDisplayModeAsString(this->GetSliceDisplayMode()) << "\"";
-    }
+  vtkMRMLWriteXMLBeginMacro(of);
+  vtkMRMLWriteXMLEnumMacro(sliceDisplayMode, SliceDisplayMode);
+  vtkMRMLWriteXMLBooleanMacro(thresholdEnabled, ThresholdEnabled);
+  vtkMRMLWriteXMLVectorMacro(thresholdRange, ThresholdRange, double, 2);
+  vtkMRMLWriteXMLEndMacro();
 }
 
 //----------------------------------------------------------------------------
@@ -96,25 +104,12 @@ void vtkMRMLModelDisplayNode::ReadXMLAttributes(const char** atts)
   int disabledModify = this->StartModify();
   this->Superclass::ReadXMLAttributes(atts);
 
-  const char* attName;
-  const char* attValue;
-  while (*atts != NULL)
-    {
-    attName = *(atts++);
-    attValue = *(atts++);
-    if (!strcmp(attName, "sliceDisplayMode"))
-      {
-      int id = this->GetSliceDisplayModeFromString(attValue);
-      if (id < 0)
-        {
-        vtkWarningMacro("Invalid sliceDisplayMode: " << (attValue ? attValue : "(none)"));
-        }
-      else
-        {
-        this->SetSliceDisplayMode(id);
-        }
-      }
-    }
+  vtkMRMLReadXMLBeginMacro(atts);
+  vtkMRMLReadXMLEnumMacro(sliceDisplayMode, SliceDisplayMode);
+  vtkMRMLReadXMLBooleanMacro(thresholdEnabled, ThresholdEnabled);
+  vtkMRMLReadXMLVectorMacro(thresholdRange, ThresholdRange, double, 2);
+  vtkMRMLReadXMLEndMacro();
+
   this->EndModify(disabledModify);
 }
 
@@ -126,9 +121,12 @@ void vtkMRMLModelDisplayNode::Copy(vtkMRMLNode *anode)
   int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLModelDisplayNode *node = (vtkMRMLModelDisplayNode *)anode;
 
-  this->SetSliceDisplayMode(node->GetSliceDisplayMode());
+  vtkMRMLCopyBeginMacro(anode);
+  vtkMRMLCopyEnumMacro(SliceDisplayMode);
+  vtkMRMLCopyBooleanMacro(ThresholdEnabled);
+  vtkMRMLCopyVectorMacro(ThresholdRange, double, 2);
+  vtkMRMLCopyEndMacro();
 
   this->EndModify(disabledModify);
 }
@@ -289,6 +287,37 @@ vtkAlgorithmOutput* vtkMRMLModelDisplayNode::GetOutputPolyDataConnection()
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLModelDisplayNode::SetThresholdEnabled(bool enabled)
+{
+  if (this->ThresholdEnabled == enabled)
+    {
+    return;
+    }
+
+  int wasModified = this->StartModify();
+
+  this->ThresholdEnabled = enabled;
+  this->Modified();
+
+  // initialize threshold range if it has not been initialized yet
+  if (enabled && this->GetThresholdMin() > this->GetThresholdMax())
+    {
+    double dataRange[2] = { 0.0, -1.0 };
+    vtkDataArray *dataArray = this->GetActiveScalarArray();
+    if (dataArray)
+      {
+      dataArray->GetRange(dataRange);
+      }
+    if (dataRange[0] <= dataRange[1])
+      {
+      this->SetThresholdRange(dataRange);
+      }
+    }
+
+  this->EndModify(wasModified);
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLModelDisplayNode::SetThresholdRange(double min, double max)
 {
   vtkMTimeType mtime = this->ThresholdFilter->GetMTime();
@@ -322,6 +351,13 @@ void vtkMRMLModelDisplayNode::GetThresholdRange(double range[2])
 {
   range[0] = this->GetThresholdMin();
   range[1] = this->GetThresholdMax();
+}
+
+//---------------------------------------------------------------------------
+double* vtkMRMLModelDisplayNode::GetThresholdRange()
+{
+  this->GetThresholdRange(this->ThresholdRangeTemp);
+  return this->ThresholdRangeTemp;
 }
 
 //---------------------------------------------------------------------------
@@ -401,10 +437,7 @@ void vtkMRMLModelDisplayNode::UpdateAssignedAttribute()
     this->ThresholdFilter->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_CELLS, vtkDataSetAttributes::SCALARS);
     }
 
-  if (this->GetScalarRangeFlag() != vtkMRMLDisplayNode::UseManualScalarRange)
-    {
-    this->UpdateScalarRange();
-    }
+  this->UpdateScalarRange();
 }
 
 //---------------------------------------------------------------------------
@@ -415,38 +448,42 @@ void vtkMRMLModelDisplayNode::UpdateScalarRange()
     return;
     }
 
+  if (this->GetScalarRangeFlag() == vtkMRMLDisplayNode::UseManualScalarRange)
+    {
+    return;
+    }
+
+  double newScalarRange[2] = { 0.0, -1.0 };
   int flag = this->GetScalarRangeFlag();
   if (flag == vtkMRMLDisplayNode::UseDataScalarRange)
     {
-    if (this->GetActiveScalarName() && strcmp(this->GetActiveScalarName(), ""))
+    vtkDataArray *dataArray = this->GetActiveScalarArray();
+    if (dataArray)
       {
-      vtkDataArray *dataArray = this->GetActiveScalarArray();
-      if (dataArray)
-        {
-        this->SetScalarRange(dataArray->GetRange());
-        }
-      else
-        {
-        vtkErrorMacro("Can not use data scalar range: the output of the "
-                      << "AssignAttribute filter is not a valid vtkPointSet.");
-        }
+      dataArray->GetRange(newScalarRange);
       }
     }
   else if (flag == vtkMRMLDisplayNode::UseColorNodeScalarRange)
     {
-    if (!this->GetColorNode())
+    if (this->GetColorNode())
       {
-      vtkWarningMacro("Can not use color node scalar range since model "
-                      << "display node does not have a color node.");
-      }
-    else if (vtkLookupTable* lut = this->GetColorNode()->GetLookupTable())
-      {
-      this->SetScalarRange(lut->GetRange());
+      vtkLookupTable* lut = this->GetColorNode()->GetLookupTable();
+      if (lut)
+        {
+        double* lutRange = lut->GetRange();
+        newScalarRange[0] = lutRange[0];
+        newScalarRange[1] = lutRange[1];
+        }
+      else
+        {
+        vtkWarningMacro("Can not use color node scalar range since model "
+                        << "display node color node does not have a lookup table.");
+        }
       }
     else
       {
       vtkWarningMacro("Can not use color node scalar range since model "
-                      << "display node color node does not have a lookup table.");
+                      << "display node does not have a color node.");
       }
     }
   else if (flag == vtkMRMLDisplayNode::UseDataTypeScalarRange)
@@ -454,7 +491,8 @@ void vtkMRMLModelDisplayNode::UpdateScalarRange()
     vtkDataArray *dataArray = this->GetActiveScalarArray();
     if (dataArray)
       {
-      this->SetScalarRange(dataArray->GetDataTypeMin(), dataArray->GetDataTypeMax());
+      newScalarRange[0] = dataArray->GetDataTypeMin();
+      newScalarRange[1] = dataArray->GetDataTypeMax();
       }
     else
       {
@@ -462,12 +500,18 @@ void vtkMRMLModelDisplayNode::UpdateScalarRange()
                       << "mesh does not have an active scalar array.");
       }
     }
+
+  this->SetScalarRange(newScalarRange);
 }
 
 //-----------------------------------------------------------
 vtkDataArray* vtkMRMLModelDisplayNode::GetActiveScalarArray()
 {
   if (this->GetActiveScalarName() == NULL || strcmp(this->GetActiveScalarName(),"") == 0)
+    {
+    return NULL;
+    }
+  if (!this->GetInputMesh())
     {
     return NULL;
     }

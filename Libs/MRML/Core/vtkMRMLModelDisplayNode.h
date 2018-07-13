@@ -124,7 +124,7 @@ public:
 
   /// Set whether to threshold the model display node.
   /// \sa ThresholdEnabled, GetThresholdEnabled()
-  vtkSetMacro(ThresholdEnabled,bool);
+  void SetThresholdEnabled(bool enabled);
   vtkBooleanMacro(ThresholdEnabled,bool);
 
   /// Get whether to threshold the model display node.
@@ -140,6 +140,7 @@ public:
   /// Get the threshold range of the model display node.
   /// \sa SetThresholdRange()
   void GetThresholdRange(double range[2]);
+  double* GetThresholdRange();
   double GetThresholdMin();
   double GetThresholdMax();
 
@@ -166,6 +167,9 @@ public:
   virtual const char* GetDistanceEncodedProjectionColorNodeID();
   virtual vtkMRMLColorNode* GetDistanceEncodedProjectionColorNode();
 
+  /// Returns the current active scalar array (based on active scalar name and location)
+  virtual vtkDataArray* GetActiveScalarArray();
+
 protected:
   vtkMRMLModelDisplayNode();
   ~vtkMRMLModelDisplayNode();
@@ -183,10 +187,8 @@ protected:
   /// its ActiveScalarName and its ActiveAttributeLocation
   virtual void UpdateAssignedAttribute();
 
-  /// Returns the current active scalar array (based on active scalar name and location)
-  virtual vtkDataArray* GetActiveScalarArray();
-
-  /// Update the ScalarRange based on the ScalarRangeFlag
+  /// Update the ScalarRange based on the ScalarRangeFlag.
+  /// If UseManualScalarRange is selected then the method has no effect.
   virtual void UpdateScalarRange();
 
   /// Filter that changes the active scalar of the input mesh
@@ -218,6 +220,9 @@ protected:
   bool ThresholdEnabled;
 
   int SliceDisplayMode;
+
+  /// Temporary variable to allow GetThresholdRange() method to return threshold range as a pointer
+  double ThresholdRangeTemp[2];
 };
 
 #endif

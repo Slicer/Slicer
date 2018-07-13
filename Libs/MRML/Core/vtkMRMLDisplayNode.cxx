@@ -493,7 +493,13 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
       }
     else if (!strcmp(attName, "scalarRangeFlag"))
       {
-      this->SetScalarRangeFlag(atoi(attValue));
+      int scalarRangeFlag = this->GetScalarRangeFlagTypeFromString(attValue);
+      if (scalarRangeFlag < 0)
+        {
+        // invalid value, maybe legacy scene
+        scalarRangeFlag = atoi(attValue);
+        }
+      this->SetScalarRangeFlag(scalarRangeFlag);
       }
     else if (!strcmp(attName, "autoScalarRange"))
       {
@@ -627,7 +633,7 @@ void vtkMRMLDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "VectorVisibility:  " << this->VectorVisibility << "\n";
   os << indent << "TensorVisibility:  " << this->TensorVisibility << "\n";
   os << indent << "InterpolateTexture:" << this->InterpolateTexture << "\n";
-  os << indent << "ScalarRangeFlag:   " << this->ScalarRangeFlag << "\n";
+  os << indent << "ScalarRangeFlag:   " << this->GetScalarRangeFlagTypeAsString(this->ScalarRangeFlag) << "\n";
   os << indent << "BackfaceCulling:   " << this->BackfaceCulling << "\n";
   os << indent << "Clipping:          " << this->Clipping << "\n";
   os << indent << "SliceIntersectionVisibility: " << this->SliceIntersectionVisibility << "\n";
@@ -1030,6 +1036,27 @@ const char* vtkMRMLDisplayNode
       return "";
     }
 }
+
+//-----------------------------------------------------------
+int vtkMRMLDisplayNode::GetScalarRangeFlagTypeFromString(const char* name)
+{
+  if (name == NULL)
+    {
+    // invalid name
+    return -1;
+    }
+  for (int i = 0; i < vtkMRMLDisplayNode::NUM_SCALAR_RANGE_FLAGS; i++)
+    {
+    if (strcmp(name, vtkMRMLDisplayNode::GetScalarRangeFlagTypeAsString(i)) == 0)
+      {
+      // found a matching name
+      return i;
+      }
+    }
+  // name not found
+  return -1;
+}
+
 
 //-----------------------------------------------------------
 const char* vtkMRMLDisplayNode::GetAttributeLocationAsString(int id)

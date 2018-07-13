@@ -72,11 +72,16 @@ public:
     UseDataScalarRange,
     UseColorNodeScalarRange,
     UseDataTypeScalarRange,
+    // insert types above this line
+    NUM_SCALAR_RANGE_FLAGS
   } ScalarRangeFlagType;
 
   /// Convert between scalar range flag type id and string
   /// \sa ScalarRangeFlag
-  const char* GetScalarRangeFlagTypeAsString(int flag);
+  static const char* GetScalarRangeFlagTypeAsString(int flag);
+
+  /// Gets scalar range flag type from string
+  static int GetScalarRangeFlagTypeFromString(const char* name);
 
   /// Returns the first displayable node that is associated to this display node
   /// \sa vtkMRMLDisplayableNode

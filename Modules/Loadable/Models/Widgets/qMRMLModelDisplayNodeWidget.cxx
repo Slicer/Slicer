@@ -327,7 +327,7 @@ vtkMRMLColorNode* qMRMLModelDisplayNodeWidget::scalarsColorNode()const
 }
 
 // --------------------------------------------------------------------------
-void qMRMLModelDisplayNodeWidget::setScalarRangeMode(ControlMode scalarRangeMode)
+void qMRMLModelDisplayNodeWidget::setScalarRangeMode(ControlMode controlMode)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
 
@@ -336,44 +336,24 @@ void qMRMLModelDisplayNodeWidget::setScalarRangeMode(ControlMode scalarRangeMode
     return;
     }
 
-  int flag = d->MRMLModelDisplayNode->GetScalarRangeFlag();
-  switch (scalarRangeMode)
+  int newScalarRangeMode = vtkMRMLDisplayNode::UseManualScalarRange;
+  switch (controlMode)
     {
-    case qMRMLModelDisplayNodeWidget::Data :
-      if(flag == vtkMRMLDisplayNode::UseDataScalarRange)
-        {
-        return;
-        }
-      d->DisplayedScalarRangeWidget->setEnabled(false);
-      d->MRMLModelDisplayNode->SetScalarRangeFlag(vtkMRMLDisplayNode::UseDataScalarRange);
-      break;
-    case qMRMLModelDisplayNodeWidget::LUT :
-      if(flag == vtkMRMLDisplayNode::UseColorNodeScalarRange)
-        {
-        return;
-        }
-      d->DisplayedScalarRangeWidget->setEnabled(false);
-      d->MRMLModelDisplayNode->SetScalarRangeFlag(vtkMRMLDisplayNode::UseColorNodeScalarRange);
-      break;
-    case qMRMLModelDisplayNodeWidget::DataType :
-      if(flag == vtkMRMLDisplayNode::UseDataTypeScalarRange)
-        {
-        return;
-        }
-      d->DisplayedScalarRangeWidget->setEnabled(false);
-      d->MRMLModelDisplayNode->SetScalarRangeFlag(vtkMRMLDisplayNode::UseDataTypeScalarRange);
-      break;
-    case qMRMLModelDisplayNodeWidget::Manual :
-      if(flag == vtkMRMLDisplayNode::UseManualScalarRange)
-        {
-        return;
-        }
-      d->DisplayedScalarRangeWidget->setEnabled(true);
-      d->MRMLModelDisplayNode->SetScalarRangeFlag(vtkMRMLDisplayNode::UseManualScalarRange);
-      break;
+    case Data: newScalarRangeMode = vtkMRMLDisplayNode::UseDataScalarRange; break;
+    case LUT: newScalarRangeMode = vtkMRMLDisplayNode::UseColorNodeScalarRange; break;
+    case DataType: newScalarRangeMode = vtkMRMLDisplayNode::UseDataTypeScalarRange; break;
+    case Manual: newScalarRangeMode = vtkMRMLDisplayNode::UseManualScalarRange; break;
     }
 
-  emit this->scalarRangeModeValueChanged(scalarRangeMode);
+  int currentScalarRangeMode = d->MRMLModelDisplayNode->GetScalarRangeFlag();
+  if (currentScalarRangeMode == newScalarRangeMode)
+    {
+    // no change
+    return;
+    }
+
+  d->MRMLModelDisplayNode->SetScalarRangeFlag(newScalarRangeMode);
+  emit this->scalarRangeModeValueChanged(controlMode);
 }
 
 // --------------------------------------------------------------------------
@@ -431,14 +411,11 @@ void qMRMLModelDisplayNodeWidget::setScalarsDisplayRange(double min, double max)
     return;
     }
   double *range = d->MRMLModelDisplayNode->GetScalarRange();
-  if (range[0] != min || range[1] != max)
+  if (range[0] == min && range[1] == max)
     {
-    qvtkBlock(d->MRMLModelDisplayNode, vtkCommand::ModifiedEvent, this);
-    d->MRMLModelDisplayNode->SetScalarRange(min, max);
-    qvtkUnblock(d->MRMLModelDisplayNode, vtkCommand::ModifiedEvent, this);
-    d->ThresholdRangeWidget->setRange(min,max);
-    d->ThresholdRangeWidget->setValues(min,max);
+    return;
     }
+  d->MRMLModelDisplayNode->SetScalarRange(min, max);
 }
 
 //------------------------------------------------------------------------------
@@ -449,12 +426,7 @@ void qMRMLModelDisplayNodeWidget::setTresholdEnabled(bool b)
     {
     return;
     }
-
-  qvtkBlock(d->MRMLModelDisplayNode, vtkCommand::ModifiedEvent, this);
   d->MRMLModelDisplayNode->SetThresholdEnabled(b);
-  qvtkUnblock(d->MRMLModelDisplayNode, vtkCommand::ModifiedEvent, this);
-
-  d->ThresholdRangeWidget->setEnabled(b);
 }
 
 //------------------------------------------------------------------------------
@@ -467,12 +439,11 @@ void qMRMLModelDisplayNodeWidget::setThresholdRange(double min, double max)
     }
   double oldMin = d->MRMLModelDisplayNode->GetThresholdMin();
   double oldMax = d->MRMLModelDisplayNode->GetThresholdMax();
-  if (oldMin != min || oldMax != max)
+  if (oldMin == min && oldMax == max)
     {
-    qvtkBlock(d->MRMLModelDisplayNode, vtkCommand::ModifiedEvent, this);
-    d->MRMLModelDisplayNode->SetThresholdRange(min, max);
-    qvtkUnblock(d->MRMLModelDisplayNode, vtkCommand::ModifiedEvent, this);
+    return;
     }
+  d->MRMLModelDisplayNode->SetThresholdRange(min, max);
 }
 
 // --------------------------------------------------------------------------
@@ -637,65 +608,85 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
     d->ScalarsVisibilityCheckBox->blockSignals(wasBlocking);
     }
 
+  double dataRange[2] = { 0.0, 0.0 };
+  vtkDataArray *dataArray = d->MRMLModelDisplayNode->GetActiveScalarArray();
+  if (dataArray)
+    {
+    dataArray->GetRange(dataRange);
+    }
+
   // Update scalar values, range, decimals and single step
-  double *displayRange =  d->MRMLModelDisplayNode->GetScalarRange();
   double precision = 1.0;
-  double newMin = 0.0;
-  double newMax = 0.0;
+  double dataMin = 0.0;
+  double dataMax = 0.0;
   int decimals = 0;
-  if (displayRange[0] < displayRange[1])
+  if (dataRange[0] < dataRange[1])
     {
     // Begin with a precision of 1% of the range
-    precision = displayRange[1]/100.0 - displayRange[0]/100.0;
+    precision = dataRange[1]/100.0 - dataRange[0]/100.0;
     // Extend min/max by 20% to give some room to work with
-    newMin = (floor(displayRange[0]/precision) - 20 ) * precision;
-    newMax = (ceil(displayRange[1]/precision) + 20 ) * precision;
+    dataMin = (floor(dataRange[0]/precision) - 20 ) * precision;
+    dataMax = (ceil(dataRange[1]/precision) + 20 ) * precision;
     // Use closest power of ten value as a step value
     precision = ctk::closestPowerOfTen(precision);
     // Find significant decimals to show
     double stepDecimals = ctk::significantDecimals(precision);
-    double minDecimals = ctk::significantDecimals(displayRange[0]);
-    double maxDecimals = ctk::significantDecimals(displayRange[1]);
+    double minDecimals = ctk::significantDecimals(dataRange[0]);
+    double maxDecimals = ctk::significantDecimals(dataRange[1]);
     decimals = std::max(stepDecimals, std::max(minDecimals, maxDecimals));
     }
+
+  double *displayRange = d->MRMLModelDisplayNode->GetScalarRange();
+
   wasBlocking = d->DisplayedScalarRangeWidget->blockSignals(true);
-  d->DisplayedScalarRangeWidget->setRange(newMin, newMax);
+  d->DisplayedScalarRangeWidget->setRange(std::min(dataMin, displayRange[0]),
+    std::max(dataMax, displayRange[1]));
   d->DisplayedScalarRangeWidget->setValues(displayRange[0], displayRange[1]);
   d->DisplayedScalarRangeWidget->setDecimals(decimals);
   d->DisplayedScalarRangeWidget->setSingleStep(precision);
+  bool thresholdEnabled = (d->MRMLModelDisplayNode->GetScalarRangeFlag() == vtkMRMLDisplayNode::UseManualScalarRange);
+  d->DisplayedScalarRangeWidget->setEnabled(thresholdEnabled);
   d->DisplayedScalarRangeWidget->blockSignals(wasBlocking);
 
-  //wasBlocking = d->ThresholdRangeWidget->blockSignals(true);
-  d->ThresholdRangeWidget->setRange(displayRange[0] - precision, displayRange[1] + precision);
-  d->ThresholdRangeWidget->setValues(displayRange[0] - precision, displayRange[1] + precision);
+  double thresholdRange[2] = { 0.0, 0.0 };
+  d->MRMLModelDisplayNode->GetThresholdRange(thresholdRange);
+
+  wasBlocking = d->ThresholdRangeWidget->blockSignals(true);
+  d->ThresholdRangeWidget->setRange(dataRange[0] - precision, dataRange[1] + precision);
+  if (thresholdRange[0] <= thresholdRange[1])
+    {
+    // there is a valid threshold range
+    // If current threshold values do not fit in the current data range
+    // then we move the slider handles to make them fit,
+    // but values in the display node will not be changed until the user moves the handles.
+    d->ThresholdRangeWidget->setValues(std::max(dataRange[0] - precision, thresholdRange[0]),
+      std::min(dataRange[1] + precision, thresholdRange[1]));
+    }
+  else
+    {
+    // no valid threshold range is set move handles to the center
+    d->ThresholdRangeWidget->setValues(dataRange[0], dataRange[1]);
+    }
   d->ThresholdRangeWidget->setDecimals(decimals);
   d->ThresholdRangeWidget->setSingleStep(precision);
-  //d->ThresholdRangeWidget->blockSignals(wasBlocking);
+  d->ThresholdRangeWidget->setEnabled(d->MRMLModelDisplayNode->GetThresholdEnabled());
+  d->ThresholdRangeWidget->blockSignals(wasBlocking);
 
   wasBlocking = d->ThresholdCheckBox->blockSignals(true);
   d->ThresholdCheckBox->setChecked(d->MRMLModelDisplayNode->GetThresholdEnabled());
   d->ThresholdCheckBox->blockSignals(wasBlocking);
 
-  wasBlocking = d->DisplayedScalarRangeModeComboBox->blockSignals(true);
+  ControlMode controlMode = qMRMLModelDisplayNodeWidget::Manual;
   switch (d->MRMLModelDisplayNode->GetScalarRangeFlag())
     {
-    case vtkMRMLDisplayNode::UseDataScalarRange :
-      d->DisplayedScalarRangeWidget->setEnabled(false);
-      d->DisplayedScalarRangeModeComboBox->setCurrentIndex(qMRMLModelDisplayNodeWidget::Data);
-      break;
-    case vtkMRMLDisplayNode::UseColorNodeScalarRange :
-      d->DisplayedScalarRangeWidget->setEnabled(false);
-      d->DisplayedScalarRangeModeComboBox->setCurrentIndex(qMRMLModelDisplayNodeWidget::LUT);
-      break;
-    case vtkMRMLDisplayNode::UseDataTypeScalarRange :
-      d->DisplayedScalarRangeWidget->setEnabled(false);
-      d->DisplayedScalarRangeModeComboBox->setCurrentIndex(qMRMLModelDisplayNodeWidget::DataType);
-      break;
-    case vtkMRMLDisplayNode::UseManualScalarRange :
-      d->DisplayedScalarRangeWidget->setEnabled(true);
-      d->DisplayedScalarRangeModeComboBox->setCurrentIndex(qMRMLModelDisplayNodeWidget::Manual);
-      break;
+    case vtkMRMLDisplayNode::UseDataScalarRange: controlMode = qMRMLModelDisplayNodeWidget::Data; break;
+    case vtkMRMLDisplayNode::UseColorNodeScalarRange: controlMode = qMRMLModelDisplayNodeWidget::LUT; break;
+    case vtkMRMLDisplayNode::UseDataTypeScalarRange: controlMode = qMRMLModelDisplayNodeWidget::DataType; break;
+    case vtkMRMLDisplayNode::UseManualScalarRange: controlMode = qMRMLModelDisplayNodeWidget::Manual; break;
     }
+
+  wasBlocking = d->DisplayedScalarRangeModeComboBox->blockSignals(true);
+  d->DisplayedScalarRangeModeComboBox->setCurrentIndex(controlMode);
   d->DisplayedScalarRangeModeComboBox->blockSignals(wasBlocking);
 
   wasBlocking = d->ActiveScalarComboBox->blockSignals(true);
