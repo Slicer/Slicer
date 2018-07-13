@@ -868,7 +868,18 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDesiredUpdateR
       // It will then be restored when the volume rendering is hidden
       this->OriginalDesiredUpdateRate = renderWindowInteractor->GetDesiredUpdateRate();
       }
-    renderWindowInteractor->SetDesiredUpdateRate(fps);
+
+    // VTK is overly cautious when estimates rendering speed.
+    // This ususally results in lower quality and higher frame rates than requested.
+    // We update the the desired update rate of the renderer
+    // to make the actual update more closely match the desired.
+    // desired fps -> correctedFps
+    //           1 -> 0.1
+    //          10 -> 3.1
+    //          50 -> 35
+    //         100 -> 100
+    double correctedFps = pow(fps, 1.5) / 10.0;
+    renderWindowInteractor->SetDesiredUpdateRate(correctedFps);
     }
   else if (this->OriginalDesiredUpdateRate != 0.0)
     {
