@@ -218,8 +218,11 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkDataObject* sour
     vtkSmartPointer<vtkWindowedSincPolyDataFilter> smoother = vtkSmartPointer<vtkWindowedSincPolyDataFilter>::New();
     smoother->SetInputData(processingResult);
     smoother->SetNumberOfIterations(20); // based on VTK documentation ("Ten or twenty iterations is all the is usually necessary")
-    // This formula maps 0.0 -> 1.0 (almost no smoothing), 0.25 -> 0.01 (average smoothing),
-    // 0.5 -> 0.001 (more smoothing), 1.0 -> 0.0001 (very strong smoothing).
+    // This formula maps:
+    // 0.0  -> 1.0   (almost no smoothing)
+    // 0.25 -> 0.1   (average smoothing)
+    // 0.5  -> 0.01  (more smoothing)
+    // 1.0  -> 0.001 (very strong smoothing)
     double passBand = pow(10.0, -4.0*smoothingFactor);
     smoother->SetPassBand(passBand);
     smoother->BoundarySmoothingOff();
