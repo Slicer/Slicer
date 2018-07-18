@@ -54,6 +54,12 @@ public slots:
 
 protected slots:
 
+  void onSceneViewDoubleClicked(int row, int column);
+
+  void onRestoreButtonClicked();
+  void onEditButtonClicked();
+  void onDeleteButtonClicked();
+
   void moveDownSelected(QString mrmlId);
   void moveUpSelected(QString mrmlId);
 
@@ -63,26 +69,14 @@ protected slots:
   /// respond to mrml events
   void updateFromMRMLScene();
 
-  void captureLinkClicked(const QUrl &url);
-
-  /// When the html changes, try to go back to any previous scroll position.
-  /// Connected to contents size changed signal.
-  /// /sa savedScrollPosition
-  void restoreScrollPosition(const QSize &size);
-
 protected:
   QScopedPointer<qSlicerSceneViewsModuleWidgetPrivate> d_ptr;
 
   virtual void setup();
 
-  void removeTemporaryFiles();
-
 private:
   Q_DECLARE_PRIVATE(qSlicerSceneViewsModuleWidget);
   Q_DISABLE_COPY(qSlicerSceneViewsModuleWidget);
-
-  int savedScrollPosition;
-
 };
 
 #endif

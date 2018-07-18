@@ -2,58 +2,44 @@
 #include "ui_qSlicerSceneViewsModuleWidget.h"
 
 // CTK includes
-#include "ctkCollapsibleButton.h"
 #include "ctkMessageBox.h"
+#include "ctkFittedTextBrowser.h"
 
 // QT includes
-#include <QBuffer>
-#include <QButtonGroup>
 #include <QDebug>
-#include <QFile>
-#include <QFileDialog>
-#include <QFontMetrics>
-#include <QGraphicsPixmapItem>
-#include <QGraphicsRectItem>
-#include <QImageWriter>
-#include <QLineEdit>
-#include <QList>
+#include <QLabel>
 #include <QMainWindow>
-#include <QMessageBox>
-#include <QPrintDialog>
-#include <QPrinter>
+#include <QPointer>
 #include <QPushButton>
-#include <QSettings>
 #include <QStatusBar>
-#include <QTextBrowser>
-#include <QUrl>
-#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
-#include <QWebFrame>
-#include <QWebSettings>
-#else
-#include <QWebEngineSettings>
-#endif
+#include <QToolButton>
+#include <QVBoxLayout>
 
 // MRML includes
+#include "qMRMLUtils.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSceneViewNode.h"
-
-// MRML/Widgets includes
-#include <qMRMLExpandingWebView.h>
 
 // VTK includes
 #include "vtkCollection.h"
 #include "vtkImageData.h"
-#include "vtkImageResize.h"
 #include "vtkNew.h"
-#include "vtkPNGWriter.h"
 #include "vtkSmartPointer.h"
 
 // GUI includes
 #include "GUI/qSlicerSceneViewsModuleDialog.h"
-
 #include "qSlicerApplication.h"
 
-#include "qMRMLSceneModel.h"
+enum
+{
+  SCENE_VIEW_THUMBNAIL_COLUMN = 0,
+  SCENE_VIEW_DESCRIPTION_COLUMN,
+  SCENE_VIEW_ACTIONS_COLUMN,
+  // Add columns above this line
+  SCENE_VIEW_NUMBER_OF_COLUMNS
+};
+
+static const char ROW_INDEX_PROPERTY[] = "RowIndex";
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_SceneViews
@@ -69,14 +55,10 @@ public:
   void setupUi(qSlicerWidget* widget);
 
   vtkSlicerSceneViewsModuleLogic* logic() const;
-
   qSlicerSceneViewsModuleDialog* sceneViewDialog();
+  void updateTableRowFromSceneView(int row, vtkMRMLSceneViewNode *sceneView);
 
   QPointer<qSlicerSceneViewsModuleDialog> SceneViewDialog;
-
-  QString htmlFromSceneView(vtkMRMLSceneViewNode *sceneView);
-
-  qMRMLExpandingWebView* sceneViewsWebView;
 };
 
 //-----------------------------------------------------------------------------
@@ -126,126 +108,100 @@ void qSlicerSceneViewsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   Q_Q(qSlicerSceneViewsModuleWidget);
   this->Ui_qSlicerSceneViewsModuleWidget::setupUi(widget);
 
-  this->sceneViewsWebView = new qMRMLExpandingWebView();
-  this->CreateAndEditVerticalLayout->insertWidget(0, this->sceneViewsWebView);
+  this->SceneViewTableWidget->setColumnCount(SCENE_VIEW_NUMBER_OF_COLUMNS);
+  this->SceneViewTableWidget->setHorizontalHeaderLabels(QStringList() << "Thumbnail" << "Description" << "Actions");
+  this->SceneViewTableWidget->horizontalHeader()->hide();
 
-  this->sceneViewsWebView->setMRMLScene(q->mrmlScene());
-#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
-  this->sceneViewsWebView->page()->mainFrame()->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAsNeeded);
-#endif
-  // propagate fonts from the application
-  QSettings *settings =
-    qSlicerApplication::application()->settingsDialog()->settings();
-  QFont currentFont = settings->value("Font").value<QFont>();
-#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
-  this->sceneViewsWebView->settings()->setFontFamily(QWebSettings::StandardFont,
-                                                     currentFont.family());
-  this->sceneViewsWebView->settings()->setFontSize(QWebSettings::DefaultFontSize,
-                                                   currentFont.pointSize());
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+  this->SceneViewTableWidget->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+  this->SceneViewTableWidget->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+  this->SceneViewTableWidget->horizontalHeader()->setResizeMode(SCENE_VIEW_DESCRIPTION_COLUMN, QHeaderView::Stretch);
 #else
-  this->sceneViewsWebView->settings()->setFontFamily(QWebEngineSettings::StandardFont,
-                                                     currentFont.family());
-  this->sceneViewsWebView->settings()->setFontSize(QWebEngineSettings::DefaultFontSize,
-                                                   currentFont.pointSize());
+  this->SceneViewTableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+  this->SceneViewTableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+  this->SceneViewTableWidget->horizontalHeader()->setSectionResizeMode(SCENE_VIEW_DESCRIPTION_COLUMN, QHeaderView::Stretch);
 #endif
 
-  // capture link clicked
-#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
-  this->sceneViewsWebView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
-  QObject::connect(this->sceneViewsWebView, SIGNAL(linkClicked(const QUrl &)),
-                    q, SLOT(captureLinkClicked(QUrl)));
-#else
-  qDebug() << "qSlicerSceneViewsModuleWidgetPrivate::setupUi - "
-              "Capture link not implemented with Qt5";
-#endif
+  // background of text browser widget is painted by the widget, and images has no background
+  // either, so it is easier to just disable selection
+  this->SceneViewTableWidget->setSelectionMode(QAbstractItemView::NoSelection);
 
-  // restore scroll bar position when the contents have been changed
-#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
-  QObject::connect(this->sceneViewsWebView->page()->mainFrame(),
-                   SIGNAL(contentsSizeChanged(const QSize &)),
-                   q, SLOT(restoreScrollPosition(QSize)));
-#else
-  qDebug() << "qSlicerSceneViewsModuleWidgetPrivate::setupUi - "
-              "Restore scroll bar position not implemented with Qt5";
-#endif
+  // listen for click on a markup
+  QObject::connect(this->SceneViewTableWidget, SIGNAL(cellDoubleClicked(int, int)), q, SLOT(onSceneViewDoubleClicked(int, int)));
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSceneViewsModuleWidgetPrivate::htmlFromSceneView(vtkMRMLSceneViewNode *sceneView)
+void qSlicerSceneViewsModuleWidgetPrivate::updateTableRowFromSceneView(int row, vtkMRMLSceneViewNode *sceneView)
 {
-  QString html;
-
-  if (!sceneView)
+  Q_Q(qSlicerSceneViewsModuleWidget);
+  if (row >= this->SceneViewTableWidget->rowCount())
     {
-    return html;
+    return;
     }
+
+  // Thumbnail
+  vtkImageData* thumbnailImage = sceneView->GetScreenShot();
+  QLabel* thumbnailWidget = dynamic_cast<QLabel*>(this->SceneViewTableWidget->cellWidget(row, SCENE_VIEW_THUMBNAIL_COLUMN));
+  if (thumbnailWidget == NULL)
+    {
+    thumbnailWidget = new QLabel;
+    this->SceneViewTableWidget->setCellWidget(row, SCENE_VIEW_THUMBNAIL_COLUMN, thumbnailWidget);
+    }
+  if (thumbnailImage)
+    {
+    QImage qimage;
+    qMRMLUtils::vtkImageDataToQImage(thumbnailImage, qimage);
+    thumbnailWidget->setPixmap(QPixmap::fromImage(qimage).scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    }
+  else
+    {
+    thumbnailWidget->setPixmap(QPixmap(":/Icons/Extension.png"));
+    }
+
+  // Description
   QString name = sceneView->GetName();
-  QString id = sceneView->GetID();
   QString description = sceneView->GetSceneViewDescription().c_str();
   // replace any carriage returns with html line breaks
-  description.replace(QString("\n"),
-                      QString("<br>\n"));
-  QString tempDir = qSlicerApplication::application()->defaultTemporaryPath();
-  QString thumbnailPath = tempDir + "/" + id + ".png";
-  // the scene view node might have been added to the scene without a screen shot
-  if (sceneView->GetScreenShot())
+  description.replace(QString("\n"), QString("<br>"));
+  ctkFittedTextBrowser* descriptionWidget = dynamic_cast<ctkFittedTextBrowser*>(this->SceneViewTableWidget->cellWidget(row, SCENE_VIEW_DESCRIPTION_COLUMN));
+  if (descriptionWidget == NULL)
     {
-    /// tbd: always write out the image?
-    if (!QFile::exists(thumbnailPath))
-      {
-      vtkNew<vtkPNGWriter> writer;
-      writer->SetFileName(thumbnailPath.toLatin1());
-      vtkNew<vtkImageResize> resizeFilter;
-      resizeFilter->SetResizeMethodToOutputDimensions();
-      resizeFilter->SetInputData(sceneView->GetScreenShot());
-      // try to keep the aspect ratio while setting a height
-      int dims[3];
-      sceneView->GetScreenShot()->GetDimensions(dims);
-      float newHeight = 200;
-      float newWidth = (newHeight/(float)(dims[0])) * (float)(dims[1]);
-      resizeFilter->SetOutputDimensions(newHeight, newWidth, 1);
-      writer->SetInputConnection(resizeFilter->GetOutputPort());
-      try
-        {
-        writer->Write();
-        }
-      catch (...)
-        {
-        qWarning() << "Unable to write file " << thumbnailPath;
-        }
-      }
+    descriptionWidget = new ctkFittedTextBrowser;
+    descriptionWidget->setOpenExternalLinks(true);
+    descriptionWidget->setAutoFillBackground(false);
+    this->SceneViewTableWidget->setCellWidget(row, SCENE_VIEW_DESCRIPTION_COLUMN, descriptionWidget);
     }
-  QString restoreImagePath = QString("qrc:///Icons/Restore.png");
-  QString deleteImagePath = QString("qrc:///Icons/Delete.png");
+  descriptionWidget->setHtml("<h3>" + name + "</h3>\n" + description);
 
-  html = "<li>";
-  html += " <div style=\"width:100%;overflow-x:hidden;overflow-y:hidden;background-image:none;\">\n";
-  html += "  <div style=\"float:left; width:200px; margin:5px;\">\n";
-  html += "   <a href=\"Edit " + id + "\">\n";
-  if (sceneView->GetScreenShot())
+  QFrame* actionsWidget = dynamic_cast<QFrame*>(this->SceneViewTableWidget->cellWidget(row, SCENE_VIEW_ACTIONS_COLUMN));
+  if (actionsWidget == NULL)
     {
-    QUrl fileUrl = QUrl::fromLocalFile(thumbnailPath);
-    html += "    <img src=\"" + fileUrl.toString() + "\" ";
-    html += "style=\"visibility:visible; max-width:200; max-height:none; ";
-    html += "display:block; image-rendering:auto; width:auto; height:auto; ";
-    html += "margin-left:10px; margin-top:0px; opacity:1;\">\n";
+    actionsWidget = new QFrame;
+    QVBoxLayout* actionsLayout = new QVBoxLayout;
+    actionsWidget->setLayout(actionsLayout);
+    QToolButton* restoreButton = new QToolButton;
+    restoreButton->setText(q->tr("Restore"));
+    restoreButton->setToolTip(q->tr("Restore"));
+    restoreButton->setIcon(QIcon(":/Icons/Restore.png"));
+    restoreButton->setProperty(ROW_INDEX_PROPERTY, row);
+    QObject::connect(restoreButton, SIGNAL(clicked()), q, SLOT(onRestoreButtonClicked()));
+    QToolButton* editButton = new QToolButton;
+    editButton->setText(q->tr("Edit"));
+    editButton->setToolTip(q->tr("Edit"));
+    editButton->setIcon(QIcon(":/Icons/Medium/SlicerConfigure.png"));
+    editButton->setProperty(ROW_INDEX_PROPERTY, row);
+    QObject::connect(editButton, SIGNAL(clicked()), q, SLOT(onEditButtonClicked()));
+    QToolButton* deleteButton = new QToolButton;
+    deleteButton->setText(q->tr("Delete"));
+    deleteButton->setToolTip(q->tr("Delete"));
+    deleteButton->setIcon(QIcon(":/Icons/Delete.png"));
+    deleteButton->setProperty(ROW_INDEX_PROPERTY, row);
+    QObject::connect(deleteButton, SIGNAL(clicked()), q, SLOT(onDeleteButtonClicked()));
+    actionsLayout->addWidget(restoreButton);
+    actionsLayout->addWidget(editButton);
+    actionsLayout->addWidget(deleteButton);
+    this->SceneViewTableWidget->setCellWidget(row, SCENE_VIEW_ACTIONS_COLUMN, actionsWidget);
     }
-  html += "   </a>\n";
-  html += "  </div>\n";
-  html += "  <div style=\"margin-left: 240px;\">";
-  html += "   <h3><a href=\"Restore " + id  + "\"><img src=\"" + restoreImagePath + "\"></a> ";
-  html += "   " + name;
-  html += "    <a href=\"Delete " + id  + "\"><img src=\"" + deleteImagePath + "\"></a> ";
-  html += "   </h3>\n";
-  // don't underline the link
-  html += "   <a href=\"Edit " + id + "\" style=\"text-decoration:none;\">\n";
-  html += "   " + description + "\n";
-  html += "   </a>\n";
-  html += "  </div>\n";
-  html += " </div>\n";
-  html += "</li>\n";
-
-  return html;
 }
 
 //-----------------------------------------------------------------------------
@@ -256,7 +212,6 @@ qSlicerSceneViewsModuleWidget::qSlicerSceneViewsModuleWidget(QWidget* parent) :
   qSlicerAbstractModuleWidget(parent)
   , d_ptr(new qSlicerSceneViewsModuleWidgetPrivate(*this))
 {
-  this->savedScrollPosition = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -386,68 +341,31 @@ void qSlicerSceneViewsModuleWidget::updateFromMRMLScene()
 {
   Q_D(qSlicerSceneViewsModuleWidget);
 
-  // clear the cache so new thumbnails will be used
-#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
-  d->sceneViewsWebView->settings()->clearMemoryCaches();
-#else
-  qDebug() << "qSlicerSceneViewsModuleWidget::updateFromMRMLScene - "
-              "clearMemoryCaches not implemented with Qt5";
-#endif
-
-  int numSceneViews = this->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLSceneViewNode");
-  QString createImagePath = QString("qrc:///Icons/Camera.png");
-
-  QString headerHtml;
-  headerHtml = "<html>";
-  headerHtml += "<head></head>";
-  headerHtml += "<body link=\"000000\">";
-  headerHtml += " <div>";
-  headerHtml += "  <a href=\"Create\"><img src=\"" + createImagePath + "\"></a> ";
-  headerHtml += "   Scene Views ("
-    + QString::number(numSceneViews) + "):</div>";
-  headerHtml += "   <div style=\"width:100%;\">";
-  headerHtml += "    <ul>";
-
-  QString htmlPage = headerHtml;
-
-  for (int i = 0; i < numSceneViews; ++i)
+  if (this->mrmlScene() == NULL)
     {
-    vtkMRMLNode *mrmlNode = this->mrmlScene()->GetNthNodeByClass(i, "vtkMRMLSceneViewNode");
-    if (!mrmlNode)
+    d->SceneViewTableWidget->setRowCount(0);
+    return;
+    }
+  int numSceneViews = this->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLSceneViewNode");
+
+  // don't recreate the table if the number of items is not changed to preserve selection state
+  d->SceneViewTableWidget->setRowCount(numSceneViews);
+
+  std::vector<vtkMRMLNode*> sceneViewNodes;
+  this->mrmlScene()->GetNodesByClass("vtkMRMLSceneViewNode", sceneViewNodes);
+  int rowIndex = 0;
+  for (std::vector<vtkMRMLNode*>::iterator it = sceneViewNodes.begin(); it != sceneViewNodes.end(); ++it)
+    {
+    vtkMRMLSceneViewNode* sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(*it);
+    if (!sceneViewNode)
       {
       continue;
       }
-    vtkMRMLSceneViewNode *sceneView = vtkMRMLSceneViewNode::SafeDownCast(mrmlNode);
-    QString sceneViewHtml = d->htmlFromSceneView(sceneView);
-    htmlPage += sceneViewHtml;
-    // separarate scene views with a line
-    if (i < numSceneViews - 1)
-      {
-      QString lineHtml;
-      lineHtml = "<hr>\n";
-      htmlPage += lineHtml;
-      }
+    d->updateTableRowFromSceneView(rowIndex, sceneViewNode);
+    ++rowIndex;
     }
-  QString footerHtml;
-  footerHtml = "    </ul>\n";
-  footerHtml += "  </div>\n";
-  footerHtml += " </body>\n";
-  footerHtml += "</html>\n";
-  htmlPage += footerHtml;
 
-  QString baseURL;
-  // save the scroll bar position so can restore it once the html
-  // has been rendered
-#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
-  this->savedScrollPosition = d->sceneViewsWebView->page()->mainFrame()->scrollBarValue(Qt::Vertical);
-#else
-  qDebug() << "qSlicerSceneViewsModuleWidget::updateFromMRMLScene - "
-              "Save scroll bar position not implemented with Qt5";
-#endif
-
-  d->sceneViewsWebView->setHtml(htmlPage, baseURL);
-  d->sceneViewsWebView->show();
-
+  d->SceneViewTableWidget->resizeRowsToContents();
 }
 
 //-----------------------------------------------------------------------------
@@ -469,11 +387,6 @@ void qSlicerSceneViewsModuleWidget::enter()
   this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::EndBatchProcessEvent,
                     this, SLOT(onMRMLSceneReset()));
 
-  // this call needed for the case of a scene with scene views having been
-  // loaded while not in the scene views module, clear out the old thumbnails.
-  this->removeTemporaryFiles();
-
-  // and update the web view
   this->updateFromMRMLScene();
 }
 
@@ -481,8 +394,6 @@ void qSlicerSceneViewsModuleWidget::enter()
 void qSlicerSceneViewsModuleWidget::exit()
 {
   this->Superclass::exit();
-
-  // qDebug() << "exit widget";
 
   // remove mrml scene observations, don't need to update the GUI while the
   // module is not showing
@@ -510,81 +421,9 @@ void qSlicerSceneViewsModuleWidget::onMRMLSceneReset()
     {
     return;
     }
-
-  // clear temp files to avoid thumbnail clashes with reused node ids
-  this->removeTemporaryFiles();
-
-  // update the web view
   this->updateFromMRMLScene();
 }
 
-//-----------------------------------------------------------------------------
-void qSlicerSceneViewsModuleWidget::removeTemporaryFiles()
-{
-  QString tempDirectoryPath = qSlicerApplication::application()->defaultTemporaryPath();
-  // look for files with vtkMRMLSceneViewNodeX.png file names
-  QDir tempDir = QDir(tempDirectoryPath);
-  QStringList filters;
-  filters << "vtkMRMLSceneViewNode*.png";
-  tempDir.setNameFilters(filters);
-  QStringList fileList = tempDir.entryList();
-  for (int i = 0; i < fileList.size(); ++i)
-    {
-    QString imagePath = tempDir.absoluteFilePath(fileList.at(i));
-    if (!QFile::remove(imagePath))
-      {
-      qWarning() << "Error removing scene view thumbnail file " << imagePath;
-      }
-    }
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerSceneViewsModuleWidget::captureLinkClicked(const QUrl &url)
-{
-  QString toParse = url.toString();
-
-  QStringList operationAndID = toParse.split(" ");
-  QString operation = operationAndID[0];
-  QString id;
-  if (operationAndID.size() > 1)
-    {
-    // Create doesn't need an id
-    id = operationAndID[1];
-    }
-  if (operation == QString("Edit"))
-    {
-    this->editSceneView(id);
-    }
-  else if (operation == QString("Restore"))
-    {
-    this->restoreSceneView(id);
-    }
-  else if (operation == QString("Delete"))
-    {
-    this->mrmlScene()->RemoveNode(this->mrmlScene()->GetNodeByID(id.toLatin1()));
-    }
-  else if (operation == QString("Create"))
-    {
-    this->showSceneViewDialog();
-    }
-  else
-    {
-    qWarning() << "captureLinkClicked: unsupported operation: " << operation;
-    }
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerSceneViewsModuleWidget::restoreScrollPosition(const QSize &size)
-{
-  Q_UNUSED(size);
-  Q_D(qSlicerSceneViewsModuleWidget);
-#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
-  d->sceneViewsWebView->page()->mainFrame()->setScrollBarValue(Qt::Vertical, this->savedScrollPosition);
-#else
-  qDebug() << "qSlicerSceneViewsModuleWidget::restoreScrollPosition - "
-              "not implemented with Qt5";
-#endif
-}
 //-----------------------------------------------------------------------------
 // SceneView functionality
 //-----------------------------------------------------------------------------
@@ -605,12 +444,98 @@ bool qSlicerSceneViewsModuleWidget::setEditedNode(vtkMRMLNode* node,
 {
   Q_UNUSED(role);
   Q_UNUSED(context);
-  if (vtkMRMLSceneViewNode::SafeDownCast(node))
+  Q_D(qSlicerSceneViewsModuleWidget);
+  if (!vtkMRMLSceneViewNode::SafeDownCast(node))
     {
-    // Scene view is a webview and does not support selection
-    // TODO: change the webview to a native view (webview looks quite bad anyway, especially on high-DPI screens)
-    return true;
+    return false;
     }
-
+  std::vector<vtkMRMLNode*> sceneViewNodes;
+  this->mrmlScene()->GetNodesByClass("vtkMRMLSceneViewNode", sceneViewNodes);
+  int rowIndex = 0;
+  for (std::vector<vtkMRMLNode*>::iterator it = sceneViewNodes.begin(); it != sceneViewNodes.end(); ++it)
+    {
+    vtkMRMLSceneViewNode* sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(*it);
+    if (!sceneViewNode)
+      {
+      continue;
+      }
+    if (node == sceneViewNode)
+      {
+      // scene view node found
+      this->updateFromMRMLScene();
+      QModelIndex newIndex = d->SceneViewTableWidget->model()->index(rowIndex, SCENE_VIEW_ACTIONS_COLUMN);
+      d->SceneViewTableWidget->setCurrentIndex(newIndex);
+      return true;
+      }
+    ++rowIndex;
+    }
+  // scene view node not found
   return false;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSceneViewsModuleWidget::onSceneViewDoubleClicked(int row, int column)
+{
+  Q_UNUSED(column);
+  Q_D(qSlicerSceneViewsModuleWidget);
+  vtkMRMLNode* sceneViewNode = this->mrmlScene()->GetNthNodeByClass(row, "vtkMRMLSceneViewNode");
+  if (!sceneViewNode || !sceneViewNode->GetID())
+    {
+    return;
+    }
+  this->restoreSceneView(QString(sceneViewNode->GetID()));
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSceneViewsModuleWidget::onRestoreButtonClicked()
+{
+  Q_D(qSlicerSceneViewsModuleWidget);
+  QToolButton* button = qobject_cast<QToolButton*>(this->sender());
+  if (!button)
+    {
+    return;
+    }
+  int rowIndex = button->property(ROW_INDEX_PROPERTY).toInt();
+  vtkMRMLNode* sceneViewNode = this->mrmlScene()->GetNthNodeByClass(rowIndex, "vtkMRMLSceneViewNode");
+  if (!sceneViewNode || !sceneViewNode->GetID())
+    {
+    return;
+    }
+  this->restoreSceneView(QString(sceneViewNode->GetID()));
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSceneViewsModuleWidget::onEditButtonClicked()
+{
+  Q_D(qSlicerSceneViewsModuleWidget);
+  QToolButton* button = qobject_cast<QToolButton*>(this->sender());
+  if (!button)
+    {
+    return;
+    }
+  int rowIndex = button->property(ROW_INDEX_PROPERTY).toInt();
+  vtkMRMLNode* sceneViewNode = this->mrmlScene()->GetNthNodeByClass(rowIndex, "vtkMRMLSceneViewNode");
+  if (!sceneViewNode || !sceneViewNode->GetID())
+    {
+    return;
+    }
+  this->editSceneView(QString(sceneViewNode->GetID()));
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSceneViewsModuleWidget::onDeleteButtonClicked()
+{
+  Q_D(qSlicerSceneViewsModuleWidget);
+  QToolButton* button = qobject_cast<QToolButton*>(this->sender());
+  if (!button)
+    {
+    return;
+    }
+  int rowIndex = button->property(ROW_INDEX_PROPERTY).toInt();
+  vtkMRMLNode* sceneViewNode = this->mrmlScene()->GetNthNodeByClass(rowIndex, "vtkMRMLSceneViewNode");
+  if (!sceneViewNode)
+    {
+    return;
+    }
+  this->mrmlScene()->RemoveNode(sceneViewNode);
 }

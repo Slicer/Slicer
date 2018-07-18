@@ -69,9 +69,9 @@ void vtkMRMLSceneViewNode::WriteXML(ostream& of, int nIndent)
   of << " screenshotType=\"" << this->GetScreenShotType() << "\"";
 
   vtkStdString description = this->GetSceneViewDescription();
-  vtksys::SystemTools::ReplaceString(description,"\n","[br]");
+  vtksys::SystemTools::ReplaceString(description,"\n","<br>");
 
-  of << " sceneViewDescription=\"" << description << "\"";
+  of << " sceneViewDescription=\"" << this->XMLAttributeEncodeString(description) << "\"";
 }
 
 //----------------------------------------------------------------------------

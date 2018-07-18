@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>500</width>
-    <height>705</height>
+    <width>231</width>
+    <height>305</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -46,19 +46,7 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="ctkCollapsibleGroupBox" name="CollapsibleGroupBox">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="title">
-         <string>Create and Edit</string>
-        </property>
-        <layout class="QVBoxLayout" name="CreateAndEditVerticalLayout">
-        </layout>
-       </widget>
+       <widget class="QTableWidget" name="SceneViewTableWidget"/>
       </item>
      </layout>
     </widget>
@@ -76,12 +64,6 @@
    <class>ctkCollapsibleButton</class>
    <extends>QWidget</extends>
    <header>ctkCollapsibleButton.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkCollapsibleGroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>ctkCollapsibleGroupBox.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
