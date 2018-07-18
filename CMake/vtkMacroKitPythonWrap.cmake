@@ -49,9 +49,47 @@ macro(_get_dependencies_recurse module_name dep)
   endforeach()
 endmacro()
 
+#!
+#! vtkMacroKitPythonWrap(
+#!
+#!     # Single value arguments
+#!     KIT_NAME <name>
+#!     KIT_INSTALL_BIN_DIR <dir>
+#!     KIT_INSTALL_LIB_DIR <dir>
+#!     [KIT_MODULE_INSTALL_BIN_DIR <dir>]
+#!     [KIT_MODULE_INSTALL_LIB_DIR <dir>]
+#!
+#!     # Multi-value arguments
+#!     KIT_SRCS <src> [<src> [...]]
+#!     [MY_KIT_PYTHON_EXTRA_SRCS <src> [<src> ...]]
+#!     [KIT_WRAP_HEADERS <header> [<header ...]]
+#!     [KIT_PYTHON_LIBRARIES <lib> [<lib> ...]]
+#!
+#!   )
+#!
+#! Variables that Change Behavior:
+#!
+#!   Slicer_VTK_WRAP_HIERARCHY_DIR:
+#!
+#!     Directory where to ouptut the hierarchy files
+#!     Default is ${Slicer_BINARY_DIR}
+#!
+#!   Slicer_VTK_WRAP_MODULE_INSTALL_COMPONENT_IDENTIFIER:
+#!
+#!     Install component associated with "Python" module. This does not include
+#!     the "PythonD" libraries.
+#!     Default is "RuntimeLibraries" which is the same as the component associated
+#!     with the "PythonD" lilbraries.
+#!
+#!   Slicer_VTK_WRAP_HIERARCHY_TARGETS_PROPERTY_NAME:
+#!
+#!     Name of the global property associated with the list of all wrapped library
+#!     names.
+#!     Default is "SLICER_WRAP_HIERARCHY_TARGETS"
+#!
 macro(vtkMacroKitPythonWrap)
   set(options)
-  set(oneValueArgs KIT_NAME KIT_INSTALL_BIN_DIR KIT_INSTALL_LIB_DIR)
+  set(oneValueArgs KIT_NAME KIT_INSTALL_BIN_DIR KIT_INSTALL_LIB_DIR KIT_MODULE_INSTALL_BIN_DIR KIT_MODULE_INSTALL_LIB_DIR)
   set(multiValueArgs KIT_SRCS KIT_PYTHON_EXTRA_SRCS KIT_WRAP_HEADERS KIT_PYTHON_LIBRARIES)
   cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -71,6 +109,24 @@ macro(vtkMacroKitPythonWrap)
     endif()
   endforeach()
 
+  # Default arguments
+  if("${MY_KIT_MODULE_INSTALL_BIN_DIR}" STREQUAL "")
+    set(MY_KIT_MODULE_INSTALL_BIN_DIR ${MY_KIT_INSTALL_BIN_DIR})
+  endif()
+  if("${MY_KIT_MODULE_INSTALL_LIB_DIR}" STREQUAL "")
+    set(MY_KIT_MODULE_INSTALL_LIB_DIR ${MY_KIT_INSTALL_LIB_DIR})
+  endif()
+  # Default global variables
+  if(NOT DEFINED Slicer_VTK_WRAP_HIERARCHY_DIR)
+    set(Slicer_VTK_WRAP_HIERARCHY_DIR ${Slicer_BINARY_DIR})
+  endif()
+  if(NOT DEFINED Slicer_VTK_WRAP_MODULE_INSTALL_COMPONENT_IDENTIFIER)
+    set(Slicer_VTK_WRAP_MODULE_INSTALL_COMPONENT_IDENTIFIER "RuntimeLibraries")
+  endif()
+  if(NOT DEFINED Slicer_VTK_WRAP_HIERARCHY_TARGETS_PROPERTY_NAME)
+    set(Slicer_VTK_WRAP_HIERARCHY_TARGETS_PROPERTY_NAME "SLICER_WRAP_HIERARCHY_TARGETS")
+  endif()
+
   if(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
 
     # Tell vtkWrapPython.cmake to set VTK_PYTHON_LIBRARIES for us.
@@ -86,7 +142,9 @@ macro(vtkMacroKitPythonWrap)
 
     # Add kit include dirs
     list(APPEND _kit_wrap_include_dirs ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
-    list(APPEND _kit_wrap_include_dirs ${Slicer_Base_INCLUDE_DIRS})
+    if(DEFINED Slicer_Base_INCLUDE_DIRS)
+      list(APPEND _kit_wrap_include_dirs ${Slicer_Base_INCLUDE_DIRS})
+    endif()
     set(_kit_include_dirs ${${MY_KIT_NAME}_INCLUDE_DIRS})
     if(_kit_include_dirs)
       list(APPEND _kit_wrap_include_dirs ${_kit_include_dirs})
@@ -117,27 +175,27 @@ macro(vtkMacroKitPythonWrap)
     list(APPEND VTK_WRAP_INCLUDE_DIRS ${_kit_wrap_include_dirs})
 
     # Generate hierarchy files for VTK8 and later
-    if(NOT ${Slicer_VTK_VERSION_MAJOR} VERSION_LESS 8)
+    if(NOT ${VTK_VERSION_MAJOR} VERSION_LESS 8)
       include(${VTK_CMAKE_DIR}/vtkWrapHierarchy.cmake)
 
       # Set variables for this and future runs of vtk_wrap_hierarchy:
       #  - <module_name>_WRAP_DEPENDS
       #  - <module_name>_WRAP_HIERARCHY_FILE
       set(${MY_KIT_NAME}_WRAP_DEPENDS "${_kit_wrap_depends}" CACHE INTERNAL "${MY_KIT_NAME} wrapping dependencies" FORCE)
-      set(_wrap_hierarchy_file "${Slicer_BINARY_DIR}/${MY_KIT_NAME}Hierarchy.txt")
-      if(${Slicer_VTK_VERSION_MAJOR} VERSION_LESS 9)
+      set(_wrap_hierarchy_file "${Slicer_VTK_WRAP_HIERARCHY_DIR}/${MY_KIT_NAME}Hierarchy.txt")
+      if(${VTK_VERSION_MAJOR} VERSION_LESS 9)
         set(_wrap_hierarchy_stamp_file ${CMAKE_CURRENT_BINARY_DIR}/${MY_KIT_NAME}Hierarchy.stamp.txt)
       endif()
       set(${MY_KIT_NAME}_WRAP_HIERARCHY_FILE "${_wrap_hierarchy_file}" CACHE INTERNAL "${MY_KIT_NAME} wrap hierarchy file" FORCE)
 
-      set_property(GLOBAL APPEND PROPERTY SLICER_WRAP_HIERARCHY_TARGETS ${MY_KIT_NAME})
+      set_property(GLOBAL APPEND PROPERTY ${Slicer_VTK_WRAP_HIERARCHY_TARGETS_PROPERTY_NAME} ${MY_KIT_NAME})
 
       # Set variables for vtk_wrap_python3:
       #   - KIT_HIERARCHY_FILE
       set(KIT_HIERARCHY_FILE "${_wrap_hierarchy_file}")
 
       # Generate hierarchy files
-      vtk_wrap_hierarchy(${MY_KIT_NAME} ${Slicer_BINARY_DIR} "${TMP_WRAP_FILES}")
+      vtk_wrap_hierarchy(${MY_KIT_NAME} ${Slicer_VTK_WRAP_HIERARCHY_DIR} "${TMP_WRAP_FILES}")
     endif()
 
     VTK_WRAP_PYTHON3(${MY_KIT_NAME}Python KitPython_SRCS "${TMP_WRAP_FILES}")
@@ -152,7 +210,7 @@ macro(vtkMacroKitPythonWrap)
     # hierarchy file is created.
     # XXX Use target_sources if cmake_minimum_required >= 3.1
     get_target_property(_kit_srcs ${MY_KIT_NAME} SOURCES)
-    if(${Slicer_VTK_VERSION_MAJOR} VERSION_LESS 9)
+    if(${VTK_VERSION_MAJOR} VERSION_LESS 9)
       list(APPEND _kit_srcs ${_wrap_hierarchy_stamp_file})
     else()
       list(APPEND _kit_srcs ${_wrap_hierarchy_file})
@@ -210,7 +268,9 @@ macro(vtkMacroKitPythonWrap)
     # Create a python module that can be loaded dynamically.  It links to
     # the shared library containing the wrappers for this kit.
     add_library(${MY_KIT_NAME}Python MODULE ${MY_KIT_NAME}PythonInit.cxx)
-    target_link_libraries(${MY_KIT_NAME}Python ${MY_KIT_NAME}PythonD)
+    target_link_libraries(${MY_KIT_NAME}Python
+      ${MY_KIT_NAME}PythonD
+      )
 
     # Python extension modules on Windows must have the extension ".pyd"
     # instead of ".dll" as of Python 2.5.  Older python versions do support
@@ -223,9 +283,9 @@ macro(vtkMacroKitPythonWrap)
     set_target_properties(${MY_KIT_NAME}Python PROPERTIES PREFIX "")
 
     install(TARGETS ${MY_KIT_NAME}Python
-      RUNTIME DESTINATION ${MY_KIT_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
-      LIBRARY DESTINATION ${MY_KIT_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
-      ARCHIVE DESTINATION ${MY_KIT_INSTALL_LIB_DIR} COMPONENT Development
+      RUNTIME DESTINATION ${MY_KIT_MODULE_INSTALL_BIN_DIR} COMPONENT ${Slicer_VTK_WRAP_MODULE_INSTALL_COMPONENT_IDENTIFIER}
+      LIBRARY DESTINATION ${MY_KIT_MODULE_INSTALL_LIB_DIR} COMPONENT ${Slicer_VTK_WRAP_MODULE_INSTALL_COMPONENT_IDENTIFIER}
+      ARCHIVE DESTINATION ${MY_KIT_MODULE_INSTALL_LIB_DIR} COMPONENT Development
       )
   endif()
 
