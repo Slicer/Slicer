@@ -10,7 +10,7 @@ endif()
 # Include dependent projects if any
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
-if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+if(Slicer_USE_SYSTEM_${proj})
   unset(OPENSSL_INCLUDE_DIR CACHE)
   if(UNIX)
     unset(OPENSSL_CRYPTO_LIBRARY CACHE)
@@ -41,7 +41,7 @@ elseif(WIN32)
 endif()
 
 if(NOT DEFINED OPENSSL_LIBRARIES
-   AND NOT (${_has_openssl_libraries}) AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+   AND NOT (${_has_openssl_libraries}) AND NOT Slicer_USE_SYSTEM_${proj})
 
   #------------------------------------------------------------------------------
   if(UNIX)

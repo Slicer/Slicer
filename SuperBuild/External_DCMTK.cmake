@@ -7,7 +7,7 @@ set(${proj}_DEPENDENCIES "zlib")
 # Include dependent projects if any
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
-if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+if(Slicer_USE_SYSTEM_${proj})
   unset(DCMTK_DIR CACHE)
   find_package(DCMTK REQUIRED)
 endif()
@@ -17,7 +17,7 @@ if(DEFINED DCMTK_DIR AND NOT EXISTS ${DCMTK_DIR})
   message(FATAL_ERROR "DCMTK_DIR variable is defined but corresponds to nonexistent directory")
 endif()
 
-if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+if(NOT DEFINED DCMTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 
   if(CTEST_USE_LAUNCHERS)
@@ -53,13 +53,13 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   endif()
 
   ExternalProject_SetIfNotDefined(
-    ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
+    Slicer_${proj}_GIT_REPOSITORY
     "${EP_GIT_PROTOCOL}://github.com/commontk/dcmtk"
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
-    ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
+    Slicer_${proj}_GIT_TAG
     # Official DCMTK master as of 20180621
     # http://git.dcmtk.org/?p=dcmtk.git;a=commit;h=29f9de10c2e8576147f16475b156bba98d14ba7d
     # plus the following patch:
@@ -73,8 +73,8 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    GIT_REPOSITORY "${${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY}"
-    GIT_TAG "${${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG}"
+    GIT_REPOSITORY "${Slicer_${proj}_GIT_REPOSITORY}"
+    GIT_TAG "${Slicer_${proj}_GIT_TAG}"
     SOURCE_DIR ${EP_SOURCE_DIR}
     BINARY_DIR ${EP_BINARY_DIR}
     CMAKE_CACHE_ARGS

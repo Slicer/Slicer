@@ -11,8 +11,8 @@ endif()
 # Include dependent projects if any
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
-if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
-  message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
+if(Slicer_USE_SYSTEM_${proj})
+  message(FATAL_ERROR "Enabling Slicer_USE_SYSTEM_${proj} is not supported !")
 endif()
 
 # Sanity checks
@@ -20,7 +20,7 @@ if(DEFINED SlicerExecutionModel_DIR AND NOT EXISTS ${SlicerExecutionModel_DIR})
   message(FATAL_ERROR "SlicerExecutionModel_DIR variable is defined but corresponds to nonexistent directory")
 endif()
 
-if(NOT DEFINED SlicerExecutionModel_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+if(NOT DEFINED SlicerExecutionModel_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS)
@@ -71,13 +71,13 @@ if(NOT DEFINED SlicerExecutionModel_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM
   endif()
 
   ExternalProject_SetIfNotDefined(
-    ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
+    Slicer_${proj}_GIT_REPOSITORY
     "${EP_GIT_PROTOCOL}://github.com/Slicer/SlicerExecutionModel.git"
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
-    ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
+    Slicer_${proj}_GIT_TAG
     "795e6717600d5241a6fe0e2e48dee741c3fd0918"
     QUIET
     )
@@ -87,8 +87,8 @@ if(NOT DEFINED SlicerExecutionModel_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    GIT_REPOSITORY "${${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY}"
-    GIT_TAG "${${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG}"
+    GIT_REPOSITORY "${Slicer_${proj}_GIT_REPOSITORY}"
+    GIT_TAG "${Slicer_${proj}_GIT_TAG}"
     SOURCE_DIR ${EP_SOURCE_DIR}
     BINARY_DIR ${EP_BINARY_DIR}
     CMAKE_CACHE_ARGS

@@ -13,7 +13,7 @@ endif()
 # Include dependent projects if any
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
-if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+if(Slicer_USE_SYSTEM_${proj})
   unset(ITK_DIR CACHE)
   find_package(ITK 4.6 REQUIRED NO_MODULE)
 endif()
@@ -23,16 +23,16 @@ if(DEFINED ITK_DIR AND NOT EXISTS ${ITK_DIR})
   message(FATAL_ERROR "ITK_DIR variable is defined but corresponds to nonexistent directory")
 endif()
 
-if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+if(NOT DEFINED ITK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
-    ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
+    Slicer_${proj}_GIT_REPOSITORY
     "${EP_GIT_PROTOCOL}://github.com/Slicer/ITK.git"
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
-    ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
+    Slicer_${proj}_GIT_TAG
     "bc0d1723cb4442be2f74ae4585d6c6be1029e3a4" # slicer-v4.13.0-2018-05-25-32608b68bd
 
     QUIET
@@ -82,8 +82,8 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    GIT_REPOSITORY "${${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY}"
-    GIT_TAG "${${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG}"
+    GIT_REPOSITORY "${Slicer_${proj}_GIT_REPOSITORY}"
+    GIT_TAG "${Slicer_${proj}_GIT_TAG}"
     SOURCE_DIR ${EP_SOURCE_DIR}
     BINARY_DIR ${EP_BINARY_DIR}
     CMAKE_CACHE_ARGS

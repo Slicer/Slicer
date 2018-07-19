@@ -4,14 +4,14 @@ set(proj incrTcl)
 # Set dependency list
 set(${proj}_DEPENDENCIES tcl tk)
 
-if(NOT DEFINED ${CMAKE_PROJECT_NAME}_USE_SYSTEM_incrTcl)
-  set(${CMAKE_PROJECT_NAME}_USE_SYSTEM_incrTcl ${${CMAKE_PROJECT_NAME}_USE_SYSTEM_tcl})
+if(NOT DEFINED Slicer_USE_SYSTEM_incrTcl)
+  set(Slicer_USE_SYSTEM_incrTcl ${Slicer_USE_SYSTEM_tcl})
 endif()
 
 # Include dependent projects if any
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
-if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+if(NOT Slicer_USE_SYSTEM_${proj})
 
   set(INCR_TCL_VERSION_DOT "4.0")
   set(INCR_TCL_VERSION "40")

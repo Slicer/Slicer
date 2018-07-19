@@ -1,8 +1,8 @@
 
 set(proj tbb)
 
-if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
-  message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported!")
+if(Slicer_USE_SYSTEM_${proj})
+  message(FATAL_ERROR "Enabling Slicer_USE_SYSTEM_${proj} is not supported!")
 endif()
 
 set(tbb_ver "2018_20171205oss")

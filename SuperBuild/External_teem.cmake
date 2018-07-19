@@ -3,14 +3,14 @@ set(proj teem)
 
 # Set dependency list
 set(${proj}_DEPENDENCIES zlib)
-if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_teem)
+if(NOT Slicer_USE_SYSTEM_teem)
   list(APPEND teem_DEPENDENCIES ${VTK_EXTERNAL_NAME})
 endif()
 
 # Include dependent projects if any
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
-if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+if(Slicer_USE_SYSTEM_${proj})
   unset(Teem_DIR CACHE)
   find_package(Teem REQUIRED NO_MODULE)
 endif()
@@ -20,7 +20,7 @@ if(DEFINED Teem_DIR AND NOT EXISTS ${Teem_DIR})
   message(FATAL_ERROR "Teem_DIR variable is defined but corresponds to nonexistent directory")
 endif()
 
-if(NOT DEFINED Teem_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+if(NOT DEFINED Teem_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 
@@ -45,13 +45,13 @@ if(NOT DEFINED Teem_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   endif()
 
   ExternalProject_SetIfNotDefined(
-    ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
+    Slicer_${proj}_GIT_REPOSITORY
     "${EP_GIT_PROTOCOL}://github.com/Slicer/teem"
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
-    ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
+    Slicer_${proj}_GIT_TAG
     "e4746083c0e1dc0c137124c41eca5d23adf73bfa"
     QUIET
     )
@@ -61,8 +61,8 @@ if(NOT DEFINED Teem_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    GIT_REPOSITORY "${${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY}"
-    GIT_TAG "${${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG}"
+    GIT_REPOSITORY "${Slicer_${proj}_GIT_REPOSITORY}"
+    GIT_TAG "${Slicer_${proj}_GIT_TAG}"
     SOURCE_DIR ${EP_SOURCE_DIR}
     BINARY_DIR ${EP_BINARY_DIR}
     CMAKE_CACHE_ARGS

@@ -3,14 +3,14 @@ set(proj python-GitPython)
 # Set dependency list
 set(${proj}_DEPENDENCIES python python-setuptools python-gitdb)
 
-if(NOT DEFINED ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
-  set(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} ${${CMAKE_PROJECT_NAME}_USE_SYSTEM_python})
+if(NOT DEFINED Slicer_USE_SYSTEM_${proj})
+  set(Slicer_USE_SYSTEM_${proj} ${Slicer_USE_SYSTEM_python})
 endif()
 
 # Include dependent projects if any
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
-if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+if(Slicer_USE_SYSTEM_${proj})
   ExternalProject_FindPythonPackage(
     MODULE_NAME "git"
     REQUIRED
@@ -19,7 +19,7 @@ endif()
 
 
 
-if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+if(NOT Slicer_USE_SYSTEM_${proj})
 
   set(_version "2.1.7")
 

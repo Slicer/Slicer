@@ -7,7 +7,7 @@ set(${proj}_DEPENDENCIES "")
 # Include dependent projects if any
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
-if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+if(Slicer_USE_SYSTEM_${proj})
   unset(TCL_LIBRARY CACHE)
   unset(TCL_INCLUDE_PATH CACHE)
   unset(TK_LIBRARY CACHE)
@@ -18,7 +18,7 @@ if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(TCL_TK_VERSION "85")
 endif()
 
-if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+if(NOT Slicer_USE_SYSTEM_${proj})
 
   set(tcl_SOURCE_DIR "")
   set(tcl_BINARY_DIR "")

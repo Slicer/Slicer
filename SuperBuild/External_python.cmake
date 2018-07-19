@@ -5,7 +5,7 @@ set(proj python)
 
 # Set dependency list
 set(${proj}_DEPENDENCIES "")
-if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_python)
+if(NOT Slicer_USE_SYSTEM_python)
   list(APPEND ${proj}_DEPENDENCIES
     bzip2
     CTKAPPLAUNCHER
@@ -38,7 +38,7 @@ set(PYTHON_SITE_PACKAGES_SUBDIR ${PYTHON_STDLIB_SUBDIR}/site-packages)
 # Include dependent projects if any
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
-if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+if(Slicer_USE_SYSTEM_${proj})
   unset(PYTHON_INCLUDE_DIR CACHE)
   unset(PYTHON_LIBRARY CACHE)
   unset(PYTHON_EXECUTABLE CACHE)
@@ -51,7 +51,7 @@ endif()
 
 if((NOT DEFINED PYTHON_INCLUDE_DIR
    OR NOT DEFINED PYTHON_LIBRARY
-   OR NOT DEFINED PYTHON_EXECUTABLE) AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+   OR NOT DEFINED PYTHON_EXECUTABLE) AND NOT Slicer_USE_SYSTEM_${proj})
 
   set(python_SOURCE_DIR "${CMAKE_BINARY_DIR}/Python-2.7.13")
 
@@ -121,13 +121,13 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
   endif()
 
   ExternalProject_SetIfNotDefined(
-    ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
+    Slicer_${proj}_GIT_REPOSITORY
     "${EP_GIT_PROTOCOL}://github.com/python-cmake-buildsystem/python-cmake-buildsystem.git"
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
-    ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
+    Slicer_${proj}_GIT_TAG
     "c3b8d532242efed85fb3cd77b0e39e424b6db475"
     QUIET
     )
@@ -145,8 +145,8 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    GIT_REPOSITORY "${${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY}"
-    GIT_TAG "${${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG}"
+    GIT_REPOSITORY "${Slicer_${proj}_GIT_REPOSITORY}"
+    GIT_TAG "${Slicer_${proj}_GIT_TAG}"
     SOURCE_DIR ${EP_SOURCE_DIR}
     BINARY_DIR ${EP_BINARY_DIR}
     CMAKE_CACHE_ARGS
@@ -197,7 +197,7 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
     message(FATAL_ERROR "Unknown system !")
   endif()
 
-  if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_python)
+  if(NOT Slicer_USE_SYSTEM_python)
 
     ExternalProject_Add_Step(${proj} configure_python_launcher
       COMMAND ${CMAKE_COMMAND}
@@ -367,7 +367,7 @@ mark_as_superbuild(
   )
 
 mark_as_superbuild(
-  VARS ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj}
+  VARS Slicer_USE_SYSTEM_${proj}
   LABELS "USE_SYSTEM"
   )
 

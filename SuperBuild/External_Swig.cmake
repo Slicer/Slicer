@@ -1,8 +1,8 @@
 
 set(proj Swig)
 
-if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
-  message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
+if(Slicer_USE_SYSTEM_${proj})
+  message(FATAL_ERROR "Enabling Slicer_USE_SYSTEM_${proj} is not supported !")
 endif()
 
 # Sanity checks
@@ -10,7 +10,7 @@ if(DEFINED Swig_DIR AND NOT EXISTS ${Swig_DIR})
   message(FATAL_ERROR "Swig_DIR variable is defined but corresponds to nonexistent directory")
 endif()
 
-if(NOT SWIG_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+if(NOT SWIG_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   set(SWIG_TARGET_VERSION 3.0.10)
   set(SWIG_DOWNLOAD_SOURCE_HASH "bb4ab8047159469add7d00910e203124")

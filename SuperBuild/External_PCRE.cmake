@@ -7,8 +7,8 @@ set(${proj}_DEPENDENCIES "")
 # Include dependent projects if any
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
-if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
-  message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
+if(Slicer_USE_SYSTEM_${proj})
+  message(FATAL_ERROR "Enabling Slicer_USE_SYSTEM_${proj} is not supported !")
 endif()
 
 # Sanity checks
@@ -16,7 +16,7 @@ if(DEFINED PCRE_DIR AND NOT EXISTS ${PCRE_DIR})
   message(FATAL_ERROR "PCRE_DIR variable is defined but corresponds to nonexistent directory")
 endif()
 
-if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+if(NOT Slicer_USE_SYSTEM_${proj})
   #
   #  PCRE (Perl Compatible Regular Expressions)
   #

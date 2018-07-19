@@ -4,7 +4,7 @@ set(proj curl)
 # Set dependency list
 set(${proj}_DEPENDENCIES zlib)
 if(CURL_ENABLE_SSL)
-  if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+  if(NOT Slicer_USE_SYSTEM_${proj})
     list(APPEND ${proj}_DEPENDENCIES OpenSSL)
   else()
     # XXX - Add a test checking if system curl support OpenSSL
@@ -14,14 +14,14 @@ endif()
 # Include dependent projects if any
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
-if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+if(Slicer_USE_SYSTEM_${proj})
   unset(CURL_INCLUDE_DIR CACHE)
   unset(CURL_LIBRARY CACHE)
   find_package(CURL REQUIRED)
 endif()
 
 if((NOT DEFINED CURL_INCLUDE_DIR
-   OR NOT DEFINED CURL_LIBRARY) AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+   OR NOT DEFINED CURL_LIBRARY) AND NOT Slicer_USE_SYSTEM_${proj})
 
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS)
 
@@ -50,13 +50,13 @@ if((NOT DEFINED CURL_INCLUDE_DIR
   endif()
 
   ExternalProject_SetIfNotDefined(
-    ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
+    Slicer_${proj}_GIT_REPOSITORY
     "${EP_GIT_PROTOCOL}://github.com/Slicer/curl.git"
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
-    ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
+    Slicer_${proj}_GIT_TAG
     "0722f23d53927ebe71b6f6126f6cc2014c147c1f"
     QUIET
     )
@@ -74,8 +74,8 @@ if((NOT DEFINED CURL_INCLUDE_DIR
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    GIT_REPOSITORY "${${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY}"
-    GIT_TAG "${${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG}"
+    GIT_REPOSITORY "${Slicer_${proj}_GIT_REPOSITORY}"
+    GIT_TAG "${Slicer_${proj}_GIT_TAG}"
     SOURCE_DIR ${EP_SOURCE_DIR}
     BINARY_DIR ${EP_BINARY_DIR}
     CMAKE_CACHE_ARGS

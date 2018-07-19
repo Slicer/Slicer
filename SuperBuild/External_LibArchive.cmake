@@ -10,18 +10,18 @@ endif()
 # Include dependent projects if any
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
-if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} AND (WIN32 OR APPLE))
-  message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
+if(Slicer_USE_SYSTEM_${proj} AND (WIN32 OR APPLE))
+  message(FATAL_ERROR "Enabling Slicer_USE_SYSTEM_${proj} is not supported !")
 endif()
 
-if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+if(Slicer_USE_SYSTEM_${proj})
   unset(LibArchive_INCLUDE_DIR CACHE)
   unset(LibArchive_LIBRARY CACHE)
   find_package(LibArchive REQUIRED MODULE)
 endif()
 
 if((NOT DEFINED LibArchive_INCLUDE_DIR
-   OR NOT DEFINED LibArchive_LIBRARY) AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+   OR NOT DEFINED LibArchive_LIBRARY) AND NOT Slicer_USE_SYSTEM_${proj})
 
   #
   # NOTE: - a stable, recent release (3.3.2) of LibArchive is now checked out from git
@@ -37,7 +37,7 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
     )
 
   ExternalProject_SetIfNotDefined(
-    ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
+    Slicer_${proj}_GIT_REPOSITORY
     "${EP_GIT_PROTOCOL}://github.com/Slicer/LibArchive.git"
     QUIET
     )
@@ -46,7 +46,7 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
   # - disabling LHA (See #4407)
   # - fixing GCC7 build errors
   ExternalProject_SetIfNotDefined(
-    ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
+    Slicer_${proj}_GIT_TAG
     "944ab1d06a4e190068aadc34e2a10381312412b2"
     QUIET
     )
@@ -57,8 +57,8 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    GIT_REPOSITORY "${${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY}"
-    GIT_TAG "${${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG}"
+    GIT_REPOSITORY "${Slicer_${proj}_GIT_REPOSITORY}"
+    GIT_TAG "${Slicer_${proj}_GIT_TAG}"
     SOURCE_DIR ${EP_SOURCE_DIR}
     BINARY_DIR ${EP_BINARY_DIR}
     INSTALL_DIR ${EP_INSTALL_DIR}
@@ -132,7 +132,7 @@ mark_as_superbuild(
   LABELS "FIND_PACKAGE"
   )
 
-if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+if(Slicer_USE_SYSTEM_${proj})
   ExternalProject_Message(${proj} "LibArchive_INCLUDE_DIR:${LibArchive_INCLUDE_DIR}")
   ExternalProject_Message(${proj} "LibArchive_LIBRARY:${LibArchive_LIBRARY}")
 endif()

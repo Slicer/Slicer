@@ -6,14 +6,14 @@ if(NOT WIN32)
   # Set dependency list
   set(${proj}_DEPENDENCIES tcl)
 
-  if(NOT DEFINED ${CMAKE_PROJECT_NAME}_USE_SYSTEM_tk)
-    set(${CMAKE_PROJECT_NAME}_USE_SYSTEM_tk ${${CMAKE_PROJECT_NAME}_USE_SYSTEM_tcl})
+  if(NOT DEFINED Slicer_USE_SYSTEM_tk)
+    set(Slicer_USE_SYSTEM_tk ${Slicer_USE_SYSTEM_tcl})
   endif()
 
   # Include dependent projects if any
   ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
-  if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_tk)
+  if(NOT Slicer_USE_SYSTEM_tk)
 
     include(ExternalProjectForNonCMakeProject)
 
