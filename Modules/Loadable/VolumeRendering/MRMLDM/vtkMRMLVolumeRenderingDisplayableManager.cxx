@@ -37,6 +37,7 @@
 #include "vtkEventBroker.h"
 
 // VTK includes
+#include <vtkVersion.h> // must precede reference to VTK_MAJOR_VERSION
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkCallbackCommand.h>
@@ -49,7 +50,9 @@
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
+#if VTK_MAJOR_VERSION >= 9
 #include <vtkMultiVolume.h>
+#endif
 #include <vtkVolume.h>
 #include <vtkVolumeProperty.h>
 #include <vtkDoubleArray.h>
@@ -181,11 +184,13 @@ public:
   int Interaction;
 
 private:
+#if VTK_MAJOR_VERSION >= 9
   /// Multi-volume actor using a common mapper for rendering the multiple volumes
   vtkSmartPointer<vtkMultiVolume> MultiVolumeActor;
   /// Common GPU mapper for the multi-volume actor.
   /// Note: vtkMultiVolume only supports the GPU raycast mapper
   vtkSmartPointer<vtkGPUVolumeRayCastMapper> MultiVolumeMapper;
+#endif
 
   friend class vtkMRMLVolumeRenderingDisplayableManager;
 };
@@ -203,6 +208,7 @@ vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::vtkInternal(vtkMRMLVolume
 , OriginalDesiredUpdateRate(0.0) // 0 fps is a special value that means it hasn't been set
 , Interaction(0)
 {
+#if VTK_MAJOR_VERSION >= 9
   this->MultiVolumeActor = vtkSmartPointer<vtkMultiVolume>::New();
   this->MultiVolumeMapper = vtkSmartPointer<vtkGPUVolumeRayCastMapper>::New();
 
@@ -221,6 +227,7 @@ vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::vtkInternal(vtkMRMLVolume
   //  (vtkImageData)
   //
   this->MultiVolumeActor->SetMapper(this->MultiVolumeMapper);
+#endif
 
   this->DisplayObservedEvents = vtkIntArray::New();
   this->DisplayObservedEvents->InsertNextValue(vtkCommand::StartEvent);
@@ -277,10 +284,12 @@ vtkVolumeMapper* vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetVolum
         }
       }
     }
+#if VTK_MAJOR_VERSION >= 9
   else if (displayNode->IsA("vtkMRMLMultiVolumeRenderingDisplayNode"))
     {
     return this->MultiVolumeMapper;
     }
+#endif
   vtkErrorWithObjectMacro(this->External, "GetVolumeMapper: Unsupported display class " << displayNode->GetClassName());
   return NULL;
 };
@@ -416,6 +425,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::AddDisplayNode(vtkMR
     // Add pipeline
     this->DisplayPipelines.insert( std::make_pair(displayNode, pipelineGpu) );
     }
+#if VTK_MAJOR_VERSION >= 9
   else if (displayNode->IsA("vtkMRMLMultiVolumeRenderingDisplayNode"))
     {
     PipelineMultiVolume* pipelineMulti = new PipelineMultiVolume();
@@ -453,6 +463,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::AddDisplayNode(vtkMR
     // Update sample distance considering the new volume
     this->UpdateMultiVolumeMapperSampleDistance();
     }
+#endif
 
   this->External->GetMRMLNodesObserverManager()->AddObjectEvents(displayNode, this->DisplayObservedEvents);
 
@@ -477,6 +488,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::RemoveDisplayNode(vt
     // Remove volume actor from renderer and local cache
     this->External->GetRenderer()->RemoveVolume(pipeline->VolumeActor);
     }
+#if VTK_MAJOR_VERSION >= 9
   else if (displayNode->IsA("vtkMRMLMultiVolumeRenderingDisplayNode"))
     {
     const PipelineMultiVolume* pipelineMulti = dynamic_cast<const PipelineMultiVolume*>(pipeline);
@@ -493,6 +505,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::RemoveDisplayNode(vt
         }
       }
     }
+#endif
 
   delete pipeline;
   this->DisplayPipelines.erase(pipelineIt);
@@ -608,6 +621,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
 
   // Set volume visibility, return if hidden
   pipeline->VolumeActor->SetVisibility(displayNodeVisible);
+#if VTK_MAJOR_VERSION >= 9
   // Workaround for lack of support for Visibility flag in vtkMultiVolume's vtkVolume members
   //TODO: Remove when https://gitlab.kitware.com/vtk/vtk/issues/17302 is fixed in VTK
   if (displayNode->IsA("vtkMRMLMultiVolumeRenderingDisplayNode"))
@@ -628,6 +642,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
         }
       }
     }
+#endif
   if (!displayNodeVisible)
     {
     return;
@@ -797,8 +812,8 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdatePipelineROIs(
 
   // Calculate and set clipping planes
   vtkNew<vtkPlanes> planes;
-  displayNode->GetROINode()->GetTransformedPlanes(planes);
-  volumeMapper->SetClippingPlanes(planes);
+  displayNode->GetROINode()->GetTransformedPlanes(planes.GetPointer());
+  volumeMapper->SetClippingPlanes(planes.GetPointer());
 }
 
 //---------------------------------------------------------------------------
@@ -989,8 +1004,10 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateMultiVolumeMap
       }
     }
 
+#if VTK_MAJOR_VERSION >= 9
   vtkGPUVolumeRayCastMapper* gpuMultiMapper = vtkGPUVolumeRayCastMapper::SafeDownCast(this->MultiVolumeMapper);
   gpuMultiMapper->SetSampleDistance(minimumSampleDistance);
+#endif
 }
 
 //---------------------------------------------------------------------------

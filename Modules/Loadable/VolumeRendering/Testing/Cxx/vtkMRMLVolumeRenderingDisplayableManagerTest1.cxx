@@ -134,10 +134,10 @@ int vtkMRMLVolumeRenderingDisplayableManagerTest1(int argc, char* argv[])
   vrLogic->SetDefaultRenderingMethod("vtkMRMLGPURayCastVolumeRenderingDisplayNode");
   vrLogic->SetMRMLScene(scene);
 
-  vrLogic->CreateDefaultVolumeRenderingNodes(volumeNode);
-  vtkMRMLVolumeRenderingDisplayNode* vrDisplayNode = vrLogic->GetFirstVolumeRenderingDisplayNode(volumeNode);
+  vrLogic->CreateDefaultVolumeRenderingNodes(volumeNode.GetPointer());
+  vtkMRMLVolumeRenderingDisplayNode* vrDisplayNode = vrLogic->GetFirstVolumeRenderingDisplayNode(volumeNode.GetPointer());
 
-  vrLogic->CopyScalarDisplayToVolumeRenderingDisplayNode(vrDisplayNode, volumeDisplayNode);
+  vrLogic->CopyScalarDisplayToVolumeRenderingDisplayNode(vrDisplayNode, volumeDisplayNode.GetPointer());
 
   vrDisplayNode->SetFollowVolumeDisplayNode(1);
   volumeDisplayNode->SetThreshold(128, 245);
@@ -207,7 +207,7 @@ int vtkMRMLVolumeRenderingDisplayableManagerTest1(int argc, char* argv[])
     std::cout << "Saved screenshot: " << screenshootFilename << std::endl;
     }
 
-  vtkGPUVolumeRayCastMapper* mapper = vtkGPUVolumeRayCastMapper::SafeDownCast(vrDisplayableManager->GetVolumeMapper(volumeNode));
+  vtkGPUVolumeRayCastMapper* mapper = vtkGPUVolumeRayCastMapper::SafeDownCast(vrDisplayableManager->GetVolumeMapper(volumeNode.GetPointer()));
   if (mapper)
     {
     CHECK_INT(mapper->GetMaxMemoryInBytes() / 1024 / 1024, 256);
