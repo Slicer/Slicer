@@ -66,9 +66,6 @@ public:
   /// Return chosen conversion parameters
   vtkSegmentationConverterRule::ConversionParameterListType conversionParameters();
 
-  /// Set reference image geometry conversion parameter from the selected volume node \sa onGetReferenceImageGeometryFromVolumeClicked
-  void setReferenceImageGeometryParameterFromVolumeNode(vtkMRMLNode* node);
-
 signals:
   /// Emitted when conversion is done
   void conversionDone();
@@ -90,10 +87,9 @@ protected slots:
   /// Handle editing of generic conversation parameters
   void onParameterChanged(QTableWidgetItem* changedItem);
 
-  /// Handles button click for setting reference image geometry from volume node.
+  /// Show segmentation geometry dialog to specify reference image geometry
   /// The button appears in the row of the reference image geometry conversion parameter, which is a special case.
-  /// Pops up a dialog in which the user can select a volume node. The geometry is set when apply is clicked, sa setReferenceImageGeometryParameterFromVolumeNode
-  void onSetReferenceImageGeometryFromVolumeClicked();
+  void onSpecifyGeometryButtonClicked();
 
   /// Create selected representation
   void applyConversion();

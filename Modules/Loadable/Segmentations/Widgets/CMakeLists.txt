@@ -24,8 +24,12 @@ set(${KIT}_SRCS
   qMRMLSegmentationDisplayNodeWidget.h
   qMRMLSegmentationFileExportWidget.cxx
   qMRMLSegmentationFileExportWidget.h
-  qMRMLDoubleSpinBoxDelegate.cxx
+  qMRMLSegmentationGeometryWidget.cxx
+  qMRMLSegmentationGeometryWidget.h
+  qMRMLSegmentationGeometryDialog.cxx
+  qMRMLSegmentationGeometryDialog.h
   qMRMLDoubleSpinBoxDelegate.h
+  qMRMLDoubleSpinBoxDelegate.cxx
   )
 
 set(${KIT}_MOC_SRCS
@@ -35,6 +39,8 @@ set(${KIT}_MOC_SRCS
   qMRMLSegmentEditorWidget.h
   qMRMLSegmentationDisplayNodeWidget.h
   qMRMLSegmentationFileExportWidget.h
+  qMRMLSegmentationGeometryWidget.h
+  qMRMLSegmentationGeometryDialog.h
   qMRMLDoubleSpinBoxDelegate.h
 )
 
@@ -45,6 +51,7 @@ set(${KIT}_UI_SRCS
   Resources/UI/qMRMLSegmentEditorWidget.ui
   Resources/UI/qMRMLSegmentationDisplayNodeWidget.ui
   Resources/UI/qMRMLSegmentationFileExportWidget.ui
+  Resources/UI/qMRMLSegmentationGeometryWidget.ui
   )
 
 set(${KIT}_RESOURCES

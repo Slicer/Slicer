@@ -47,7 +47,7 @@ class vtkMRMLModelNode;
 class vtkMRMLModelHierarchyNode;
 class vtkSlicerTerminologiesModuleLogic;
 
-/// \ingroup SlicerRt_QtModules_Segmentations
+/// \ingroup Slicer_QtModules_Segmentations
 class VTK_SLICER_SEGMENTATIONS_LOGIC_EXPORT vtkSlicerSegmentationsModuleLogic :
   public vtkSlicerModuleLogic
 {

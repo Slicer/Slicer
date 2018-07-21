@@ -33,7 +33,6 @@
 
 // Terminologies includes
 #include "qSlicerTerminologyItemDelegate.h"
-#include "qSlicerTerminologyNavigatorWidget.h"
 #include "vtkSlicerTerminologiesModuleLogic.h"
 #include "vtkSlicerTerminologyEntry.h"
 #include "vtkSlicerTerminologyCategory.h"
@@ -1195,7 +1194,7 @@ QString qMRMLSegmentsTableView::terminologyTooltipForSegment(vtkSegment* segment
     {
     qCritical() << Q_FUNC_INFO << ": Terminologies module is not found";
     return QString();
-    } 
+    }
 
   std::string serializedTerminology("");
   if (!segment->GetTag(vtkSegment::GetTerminologyEntryTagName(), serializedTerminology))

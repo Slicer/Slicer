@@ -458,14 +458,6 @@ bool vtkOrientedImageDataResample::ResampleOrientedImageToReferenceGeometry(vtkO
   vtkAbstractTransform* inputImageToReferenceImageTransform = referenceImageToInputImageTransform->GetInverse();
   inputImageToReferenceImageTransform->Update();
 
-  // Determine output origin and spacing using vtkOrientedImageData function
-  vtkSmartPointer<vtkOrientedImageData> utilityImageData = vtkSmartPointer<vtkOrientedImageData>::New();
-  utilityImageData->SetGeometryFromImageToWorldMatrix(referenceToWorldMatrix);
-  double outputOrigin[3] = {0.0, 0.0, 0.0};
-  utilityImageData->GetOrigin(outputOrigin);
-  double outputSpacing[3] = {0.0, 0.0, 0.0};
-  utilityImageData->GetSpacing(outputSpacing);
-
   // Calculate output extent in reference frame. Use all bounding box corners
   int outputExtent[6] = {0,-1,0,-1,0,-1};
   vtkOrientedImageDataResample::TransformExtent(effectiveInputExtent, referenceImageToInputImageTransform.GetPointer(), outputExtent);

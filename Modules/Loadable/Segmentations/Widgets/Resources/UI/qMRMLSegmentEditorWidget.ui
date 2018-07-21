@@ -38,26 +38,7 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="SegmentationNodeLabel">
-       <property name="text">
-        <string>Segmentation:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="qMRMLNodeComboBox" name="SegmentationNodeComboBox">
-       <property name="nodeTypes">
-        <stringlist>
-         <string>vtkMRMLSegmentationNode</string>
-        </stringlist>
-       </property>
-       <property name="renameEnabled">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1" colspan="2">
+     <item row="1" column="1">
       <widget class="qMRMLNodeComboBox" name="MasterVolumeNodeComboBox">
        <property name="nodeTypes">
         <stringlist>
@@ -83,19 +64,56 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="2">
-      <widget class="QToolButton" name="SliceRotateWarningButton">
-       <property name="toolTip">
-        <string>Slice views orientation are not aligned with segmentation. Striping artifacts may appear. Click to align slice views to segmentation.</string>
-       </property>
+     <item row="0" column="0">
+      <widget class="QLabel" name="SegmentationNodeLabel">
        <property name="text">
-        <string>Slice rotated</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../qSlicerSegmentationsModuleWidgets.qrc">
-         <normaloff>:/Icons/SlicerRotateWarning.png</normaloff>:/Icons/SlicerRotateWarning.png</iconset>
+        <string>Segmentation:</string>
        </property>
       </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QToolButton" name="SpecifyGeometryButton">
+       <property name="toolTip">
+        <string>Specify geometry (or grid) of the edited labelmap volume</string>
+       </property>
+       <property name="text">
+        <string>Specify geometry of the edited labelmap volume</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../../../Annotations/Resources/qSlicerAnnotationModule.qrc">
+         <normaloff>:/Icons/AnnotationROI.png</normaloff>:/Icons/AnnotationROI.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" colspan="2">
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <item>
+        <widget class="qMRMLNodeComboBox" name="SegmentationNodeComboBox">
+         <property name="nodeTypes">
+          <stringlist>
+           <string>vtkMRMLSegmentationNode</string>
+          </stringlist>
+         </property>
+         <property name="renameEnabled">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="SliceRotateWarningButton">
+         <property name="toolTip">
+          <string>Slice views orientation are not aligned with segmentation. Striping artifacts may appear. Click to align slice views to segmentation.</string>
+         </property>
+         <property name="text">
+          <string>Slice rotated</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../qSlicerSegmentationsModuleWidgets.qrc">
+           <normaloff>:/Icons/SlicerRotateWarning.png</normaloff>:/Icons/SlicerRotateWarning.png</iconset>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>
@@ -519,6 +537,7 @@
  </customwidgets>
  <resources>
   <include location="../qSlicerSegmentationsModuleWidgets.qrc"/>
+  <include location="../../../../Annotations/Resources/qSlicerAnnotationModule.qrc"/>
   <include location="../../../Resources/qSlicerSegmentationsModule.qrc"/>
   <include location="../../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
  </resources>
@@ -578,12 +597,12 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>374</x>
-     <y>454</y>
+     <x>400</x>
+     <y>362</y>
     </hint>
     <hint type="destinationlabel">
-     <x>179</x>
-     <y>506</y>
+     <x>184</x>
+     <y>388</y>
     </hint>
    </hints>
   </connection>

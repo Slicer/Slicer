@@ -28,6 +28,9 @@
 #include "vtkMRMLSegmentationNode.h"
 #include "vtkMRMLSegmentationDisplayNode.h"
 #include "vtkMRMLSegmentEditorNode.h"
+#include "qMRMLSegmentationGeometryDialog.h"
+
+// vtkSegmentationCore Includes
 #include "vtkSegmentation.h"
 #include "vtkSegmentationHistory.h"
 #include "vtkSegment.h"
@@ -355,6 +358,11 @@ void qMRMLSegmentEditorWidgetPrivate::init()
   Q_Q(qMRMLSegmentEditorWidget);
   this->setupUi(q);
 
+  this->SliceRotateWarningButton->setMaximumHeight(this->SegmentationNodeComboBox->sizeHint().height());
+  this->SliceRotateWarningButton->setMaximumWidth(this->SegmentationNodeComboBox->sizeHint().height());
+  this->SpecifyGeometryButton->setMaximumHeight(this->MasterVolumeNodeComboBox->sizeHint().height());
+  this->SpecifyGeometryButton->setMaximumWidth(this->MasterVolumeNodeComboBox->sizeHint().height());
+
   this->MaskModeComboBox->addItem(QObject::tr("Everywhere"), vtkMRMLSegmentEditorNode::PaintAllowedEverywhere);
   this->MaskModeComboBox->addItem(QObject::tr("Inside all segments"), vtkMRMLSegmentEditorNode::PaintAllowedInsideAllSegments);
   this->MaskModeComboBox->addItem(QObject::tr("Inside all visible segments"), vtkMRMLSegmentEditorNode::PaintAllowedInsideVisibleSegments);
@@ -393,6 +401,8 @@ void qMRMLSegmentEditorWidgetPrivate::init()
     q, SLOT(rotateSliceViewsToSegmentation()));
   QObject::connect( this->MasterVolumeNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
     q, SLOT(onMasterVolumeNodeChanged(vtkMRMLNode*)) );
+  QObject::connect( this->SpecifyGeometryButton, SIGNAL(clicked()),
+    q, SLOT(showSegmentationGeometryDialog()));
   QObject::connect( this->SegmentsTableView, SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
     q, SLOT(onSegmentSelectionChanged(QItemSelection,QItemSelection)) );
   QObject::connect( this->SegmentsTableView, SIGNAL(segmentAboutToBeModified(QString)),
@@ -1391,6 +1401,7 @@ void qMRMLSegmentEditorWidget::updateWidgetFromSegmentationNode()
     qvtkReconnect(d->SegmentationNode, segmentationNode, vtkSegmentation::SegmentRemoved, this, SLOT(onSegmentAddedRemoved()));
     qvtkReconnect(d->SegmentationNode, segmentationNode, vtkSegmentation::SegmentModified, this, SLOT(updateMaskingSection()));
     qvtkReconnect(d->SegmentationNode, segmentationNode, vtkMRMLDisplayableNode::DisplayModifiedEvent, this, SLOT(onSegmentationDisplayModified()));
+    qvtkReconnect(d->SegmentationNode, segmentationNode, vtkSegmentation::MasterRepresentationModified, this, SLOT(updateSliceRotateWarningButtonVisibility()));
     d->SegmentationNode = segmentationNode;
 
     bool wasBlocked = d->SegmentationNodeComboBox->blockSignals(true);
@@ -3522,4 +3533,20 @@ void qMRMLSegmentEditorWidget::rotateSliceViewsToSegmentation()
     sliceNode->RotateToAxes(segmentationIJKToRAS.GetPointer());
     }
   this->updateSliceRotateWarningButtonVisibility();
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::showSegmentationGeometryDialog()
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  if (!d->SegmentationNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid segmentation node";
+    return;
+    }
+
+  qMRMLSegmentationGeometryDialog geometryDialog(d->SegmentationNode, this);
+  geometryDialog.setEditEnabled(true);
+  geometryDialog.setResampleLabelmaps(true);
+  bool result = geometryDialog.exec();
 }

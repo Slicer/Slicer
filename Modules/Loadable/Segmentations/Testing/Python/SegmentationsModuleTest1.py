@@ -3,7 +3,7 @@ import unittest
 import vtk, qt, ctk, slicer
 import logging
 
-import vtkSegmentationCorePython as vtkSegmentationCore
+import vtkSegmentationCore
 
 class SegmentationsModuleTest1(unittest.TestCase):
   def setUp(self):

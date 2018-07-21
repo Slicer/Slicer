@@ -24,6 +24,8 @@
 #include "qMRMLSegmentationConversionParametersWidget.h"
 #include "ui_qMRMLSegmentationConversionParametersWidget.h"
 
+#include "qMRMLSegmentationGeometryDialog.h"
+
 #include "vtkMRMLSegmentationNode.h"
 #include "vtkSegmentation.h"
 
@@ -361,11 +363,11 @@ void qMRMLSegmentationConversionParametersWidget::populateParametersTable()
       QLabel* textValueLabel = new QLabel(parameterValue, geometryWidget);
       geometryLayout->addWidget(textValueLabel);
 
-      QPushButton* setGeometryFromVolumeButton = new QPushButton(tr("Set geometry from volume"), geometryWidget);
-      setGeometryFromVolumeButton->setFixedWidth(160);
-      QObject::connect(setGeometryFromVolumeButton, SIGNAL(clicked()),
-                       this, SLOT(onSetReferenceImageGeometryFromVolumeClicked()));
-      geometryLayout->addWidget(setGeometryFromVolumeButton);
+      QPushButton* specifyGeometryButton = new QPushButton(tr("Specify geometry"), geometryWidget);
+      //setGeometryFromVolumeButton->setFixedWidth(160);
+      QObject::connect(specifyGeometryButton, SIGNAL(clicked()),
+                       this, SLOT(onSpecifyGeometryButtonClicked()));
+      geometryLayout->addWidget(specifyGeometryButton);
 
       //QTableWidgetItem* geometryItem = new QTableWidgetItem();
       //geometryItem->setFlags(geometryItem->flags() & ~Qt::ItemIsEditable);
@@ -429,73 +431,23 @@ void qMRMLSegmentationConversionParametersWidget::onParameterChanged(QTableWidge
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSegmentationConversionParametersWidget::onSetReferenceImageGeometryFromVolumeClicked()
+void qMRMLSegmentationConversionParametersWidget::onSpecifyGeometryButtonClicked()
 {
   Q_D(qMRMLSegmentationConversionParametersWidget);
 
   if (!d->SegmentationNode)
     {
-    qWarning() << Q_FUNC_INFO << " failed: segmentation node is invalid";
+    qCritical() << Q_FUNC_INFO << " failed: segmentation node is invalid";
     return;
     }
 
-  QDialog* getGeometryFromVolumeDialog = new QDialog(NULL, Qt::Dialog);
-  QVBoxLayout* geometryLayout = new QVBoxLayout(getGeometryFromVolumeDialog);
-  geometryLayout->setContentsMargins(6, 6, 6, 6);
-  geometryLayout->setSpacing(12);
-
-  QLabel* label = new QLabel(tr("Please select a volume node that defines the geometry of the converted volume representation.\n(If you choose None, then the parameter will remain the same)"), getGeometryFromVolumeDialog);
-  label->setWordWrap(true);
-  geometryLayout->addWidget(label);
-
-  qMRMLNodeComboBox* volumeCombobox = new qMRMLNodeComboBox(getGeometryFromVolumeDialog);
-  volumeCombobox->setNodeTypes( QStringList() << "vtkMRMLScalarVolumeNode" << "vtkMRMLLabelMapVolumeNode" );
-  volumeCombobox->setShowChildNodeTypes(false);
-  volumeCombobox->setNoneEnabled(true);
-  volumeCombobox->setMRMLScene(d->SegmentationNode->GetScene());
-  geometryLayout->addWidget(volumeCombobox);
-
-  QPushButton* applyButton = new QPushButton(tr("Apply"), getGeometryFromVolumeDialog);
-  applyButton->setFixedWidth(96);
-  geometryLayout->addWidget(applyButton);
-  geometryLayout->setAlignment(applyButton, Qt::AlignCenter);
-
-  // Connect conversion done event to dialog close
-  QObject::connect(applyButton, SIGNAL(clicked()),
-                   getGeometryFromVolumeDialog, SLOT(accept()));
-
-  // Show dialog
-  getGeometryFromVolumeDialog->exec();
-
-  // Set geometry from selected volume
-  this->setReferenceImageGeometryParameterFromVolumeNode(volumeCombobox->currentNode());
-
-  // Delete dialog when done
-  delete getGeometryFromVolumeDialog;
+  qMRMLSegmentationGeometryDialog geometryDialog(d->SegmentationNode, this);
+  geometryDialog.setEditEnabled(true);
+  geometryDialog.setResampleLabelmaps(false);
+  geometryDialog.exec();
 
   // Refresh parameters table
   this->populateParametersTable();
-}
-
-//-----------------------------------------------------------------------------
-void qMRMLSegmentationConversionParametersWidget::setReferenceImageGeometryParameterFromVolumeNode(vtkMRMLNode* node)
-{
-  Q_D(qMRMLSegmentationConversionParametersWidget);
-
-  if (!d->SegmentationNode)
-    {
-    qWarning() << Q_FUNC_INFO << " failed: segmentation node is invalid";
-    return;
-    }
-
-  // If selection is 'None', then do not change reference image geometry parameter
-  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(node);
-  if (!volumeNode || !volumeNode->GetImageData())
-  {
-    return;
-  }
-
-  d->SegmentationNode->SetReferenceImageGeometryParameterFromVolumeNode(volumeNode);
 }
 
 //-----------------------------------------------------------------------------

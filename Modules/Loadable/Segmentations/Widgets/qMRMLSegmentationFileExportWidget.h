@@ -41,7 +41,7 @@ class QItemSelection;
 
 /// \brief Qt widget for selecting a single segment from a segmentation.
 ///   If multiple segments are needed, then use \sa qMRMLSegmentsTableView instead in SimpleListMode
-/// \ingroup SlicerRt_QtModules_Segmentations_Widgets
+/// \ingroup Slicer_QtModules_Segmentations_Widgets
 class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentationFileExportWidget : public qMRMLWidget
 {
   Q_OBJECT

@@ -55,10 +55,14 @@ public:
 
   /// Default representation types
   /// In binary and fractional labelmaps values <=0 are considered background voxels (outside), values>0 are foreground (inside).
-  static const char* GetSegmentationBinaryLabelmapRepresentationName() { return "Binary labelmap"; };
+  static const char* GetSegmentationBinaryLabelmapRepresentationName()     { return "Binary labelmap"; };
   static const char* GetSegmentationFractionalLabelmapRepresentationName() { return "Fractional labelmap"; };
-  static const char* GetSegmentationPlanarContourRepresentationName() { return "Planar contour"; };
-  static const char* GetSegmentationClosedSurfaceRepresentationName() { return "Closed surface"; };
+  static const char* GetSegmentationPlanarContourRepresentationName()      { return "Planar contour"; };
+  static const char* GetSegmentationClosedSurfaceRepresentationName()      { return "Closed surface"; };
+  static const char* GetBinaryLabelmapRepresentationName()     { return GetSegmentationBinaryLabelmapRepresentationName(); };
+  static const char* GetFractionalLabelmapRepresentationName() { return GetSegmentationFractionalLabelmapRepresentationName(); };
+  static const char* GetPlanarContourRepresentationName()      { return GetSegmentationPlanarContourRepresentationName(); };
+  static const char* GetClosedSurfaceRepresentationName()      { return GetSegmentationClosedSurfaceRepresentationName(); };
 
   // Common conversion parameters
   // ----------------------------

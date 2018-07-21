@@ -50,7 +50,7 @@ class qSlicerSegmentEditorAbstractEffect;
 class qSlicerAbstractModuleWidget;
 
 /// \brief Qt widget for editing a segment from a segmentation using Editor effects.
-/// \ingroup SlicerRt_QtModules_Segmentations_Widgets
+/// \ingroup Slicer_QtModules_Segmentations_Widgets
 ///
 /// Widget for editing segmentations that can be re-used in any module.
 ///
@@ -368,8 +368,11 @@ protected slots:
   /// Update masking section on the UI
   void updateMaskingSection();
 
-  /// Shows slice rotation warning button if slice views are rotated, hide otherwise
+  /// Show slice rotation warning button if slice views are rotated, hide otherwise
   void updateSliceRotateWarningButtonVisibility();
+
+  /// Show segmentation geometry dialog to specify labelmap geometry
+  void showSegmentationGeometryDialog();
 
 protected:
   /// Callback function invoked when interaction happens

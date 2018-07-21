@@ -815,12 +815,12 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentToRepresentationNode(vtkSeg
 bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToModelHierarchy(vtkMRMLSegmentationNode* segmentationNode,
   std::vector<std::string>& segmentIDs, vtkMRMLModelHierarchyNode* modelHierarchyNode)
 {
-  if (!segmentationNode)
+  if (!segmentationNode || !segmentationNode->GetScene())
     {
     vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::ExportSegmentsToModelHierarchy: Invalid segmentation node");
     return false;
     }
-  if (!modelHierarchyNode)
+  if (!modelHierarchyNode || !modelHierarchyNode->GetScene() || modelHierarchyNode->GetScene() != segmentationNode->GetScene())
     {
     vtkErrorWithObjectMacro(segmentationNode, "ExportSegmentsToModelHierarchy: Invalid model hierarchy node");
     return false;
