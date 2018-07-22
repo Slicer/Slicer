@@ -28,6 +28,187 @@
 
 #include <sstream>
 
+// CSV table field indexes
+static const int FIELD_ID = 0;
+static const int FIELD_XYZ = 1; // 3 values
+static const int FIELD_WXYZ = 4; // 4 values
+static const int FIELD_VISIBILITY = 8;
+static const int FIELD_SELECTED = 9;
+static const int FIELD_LOCKED = 10;
+static const int FIELD_LABEL = 11;
+static const int FIELD_DESCRIPTION = 12;
+static const int FIELD_ASSOCIATED_NODE_ID = 13;
+
+//------------------------------------------------------------------------------
+
+class CsvCodec
+{
+public:
+  CsvCodec() : Separator(',') {};
+  ~CsvCodec() {};
+
+  void ReadFromString(const std::string &row)
+    {
+    CSVState state = CSVState::UnquotedField;
+    this->Fields.clear();
+    std::string currentField;
+    std::string currentFieldExists;
+    size_t i = 0; // index of the current field
+    for (std::string::const_iterator c = row.begin(); c != row.end(); ++c)
+      {
+      switch (state)
+        {
+      case CSVState::UnquotedField:
+        if (*c == this->Separator)
+          {
+          // end of field
+          this->Fields.push_back(currentField);
+          currentField.clear();
+          }
+        else if (*c == '"' && currentField.empty())
+          {
+          // If quote occurs within the field then the quote does
+          // not indicate a quoted field, it simply means a quote character.
+          // Therefore, only switch to quoted-field mode if quote
+          // is the first character in the field.
+          state = CSVState::QuotedField;
+          }
+        else
+          {
+          currentField.push_back(*c);
+          }
+        break;
+      case CSVState::QuotedField:
+        if (*c == '"')
+          {
+          state = CSVState::QuotedQuote;
+          }
+        else
+          {
+          currentField.push_back(*c);
+          }
+        break;
+      case CSVState::QuotedQuote:
+        if (*c == this->Separator)
+          {
+          // , after closing quote
+          this->Fields.push_back(currentField);
+          currentField.clear();
+          state = CSVState::UnquotedField;
+          }
+        else if (*c == '"')
+          {
+          // double-quote ("") in a quoted field means a single quote (")
+          currentField.push_back('"');
+          state = CSVState::QuotedField;
+          }
+        else
+          {
+          // This is an invalid character sequence, such as the last quote
+          // and the following space in this example:
+          //   ...,"This ""is"" a, quoted" field,...
+          // We save the character and revert back to unquoted mode to not lose any data:
+          //   [This "is" a, quoted field]
+          currentField.push_back(*c);
+          state = CSVState::UnquotedField;
+          }
+        break;
+        }
+      }
+    this->Fields.push_back(currentField);
+    }
+
+  char GetSeparator() { return this->Separator; }
+  void SetSeparator(char separator) { this->Separator = separator; }
+
+  std::string GetField(int fieldIndex)
+    {
+    if (fieldIndex < 0 || fieldIndex >= this->Fields.size())
+      {
+      return "";
+      }
+    return this->Fields[fieldIndex];
+    }
+
+
+  bool GetStringField(int fieldIndex, std::string &fieldValue)
+    {
+    if (fieldIndex < 0 || fieldIndex >= this->Fields.size())
+      {
+      return false;
+      }
+    fieldValue = this->Fields[fieldIndex];
+    return true;
+    }
+
+  bool GetDoubleField(int fieldIndex, double &fieldValue)
+    {
+    if (fieldIndex < 0 || fieldIndex >= this->Fields.size())
+      {
+      return false;
+      }
+    vtkVariant v = vtkVariant(this->Fields[fieldIndex]);
+    fieldValue = v.ToDouble();
+    return v.IsValid();
+    }
+
+  bool GetDoubleField(int fieldIndex, double &fieldValue, double defaultValue)
+    {
+    if (fieldIndex < 0 || fieldIndex >= this->Fields.size() || this->Fields[fieldIndex].empty())
+      {
+      fieldValue = defaultValue;
+      return true;
+      }
+    vtkVariant v = vtkVariant(this->Fields[fieldIndex]);
+    fieldValue = v.ToDouble();
+    if (!v.IsValid())
+      {
+      fieldValue = defaultValue;
+      return false;
+      }
+    return true;
+    }
+
+  bool GetIntField(int fieldIndex, int &fieldValue)
+    {
+    if (fieldIndex < 0 || fieldIndex >= this->Fields.size())
+      {
+      return false;
+      }
+    vtkVariant v = vtkVariant(this->Fields[fieldIndex]);
+    fieldValue = v.ToInt();
+    return v.IsValid();
+    }
+
+  bool GetIntField(int fieldIndex, int &fieldValue, int defaultValue)
+    {
+    if (fieldIndex < 0 || fieldIndex >= this->Fields.size() || this->Fields[fieldIndex].empty())
+      {
+      fieldValue = defaultValue;
+      return true;
+      }
+    vtkVariant v = vtkVariant(this->Fields[fieldIndex]);
+    fieldValue = v.ToInt();
+    if (!v.IsValid())
+      {
+      fieldValue = defaultValue;
+      return false;
+      }
+    return true;
+    }
+
+protected:
+  enum CSVState
+    {
+    UnquotedField,
+    QuotedField,
+    QuotedQuote
+    };
+
+  char Separator;
+  std::vector<std::string> Fields;
+};
+
 //------------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLMarkupsFiducialStorageNode);
 
@@ -101,28 +282,22 @@ bool vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString(vtkMRMLMarkupsNode *
     separator = this->FieldDelimiterCharacters[0];
     }
 
-  std::stringstream ss(line);
-  std::string component;
+  CsvCodec parser;
+  parser.SetSeparator(separator);
+  parser.ReadFromString(line);
 
   // ID (if missing, use default)
   std::string id;
-  getline(ss, id, separator);
+  parser.GetStringField(FIELD_ID, id);
 
   // Position
   double xyz[3] = { 0.0, 0.0, 0.0 };
   for (int i = 0; i < 3; i++)
     {
-    getline(ss, component, separator);
-    if (component.empty())
+    if (!parser.GetDoubleField(FIELD_XYZ + i, xyz[i]))
       {
-      vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed: numeric value expected, got empty field");
-      return false;
-      }
-    vtkVariant v = vtkVariant(component);
-    xyz[i] = v.ToDouble();
-    if (!v.IsValid())
-      {
-      vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed: numeric value expected, got " << component);
+      vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed:"
+        << " numeric values expected for xyz, got instead: "<<parser.GetField(FIELD_XYZ + i));
       return false;
       }
     }
@@ -131,96 +306,43 @@ bool vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString(vtkMRMLMarkupsNode *
   double wxyz[4] = { 1.0, 0.0, 0.0, 0.0 };
   for (int i = 0; i < 4; i++)
     {
-    getline(ss, component, separator);
-    if (component.empty())
+    if (!parser.GetDoubleField(FIELD_WXYZ + i, wxyz[i], wxyz[i]))
       {
-      // if missing use default
-      continue;
-      }
-    vtkVariant v = vtkVariant(component);
-    wxyz[i] = v.ToDouble();
-    if (!v.IsValid())
-      {
-      vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed: numeric value expected, got " << component);
+      vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed:"
+        " numeric values expected for wxyz, got instead: " << parser.GetField(FIELD_WXYZ + i));
       return false;
       }
     }
 
   // Flag attributes
-  int visibilitySelectedLocked[3] = { 1, 1, 0 };
-  for (int i = 0; i < 3; i++)
+  int visibility = 1;
+  if (!parser.GetIntField(FIELD_VISIBILITY, visibility, visibility))
     {
-    getline(ss, component, separator);
-    if (component.empty())
-      {
-      continue;
-      }
-    vtkVariant v = vtkVariant(component);
-    visibilitySelectedLocked[i] = (v.ToDouble() > 0.0);
-    if (!v.IsValid())
-      {
-      vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed: numeric value expected, got " << component);
-      return false;
-      }
+    vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed:"
+      " numeric values expected for visibility field, got instead: " << parser.GetField(FIELD_VISIBILITY));
+    return false;
+    }
+  int selected = 1;
+  if (!parser.GetIntField(FIELD_SELECTED, selected, selected))
+    {
+    vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed:"
+      " numeric values expected for selected field, got instead: " << parser.GetField(FIELD_SELECTED));
+    return false;
+    }
+  int locked = 0;
+  if (!parser.GetIntField(FIELD_LOCKED, locked, locked))
+    {
+    vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed:"
+      " numeric values expected for locked field, got instead: " << parser.GetField(FIELD_LOCKED));
+    return false;
     }
 
-  // label
-  // the label may have quotes around it, look for the end quote and comma
-  std::string labelDescID;
-  getline(ss, labelDescID);
-  // if there's no quote at the start of the line, the label was
-  // checked to be sure that there are no commas in it, so extract
-  // to the next comma
-  size_t endCommaPos = 0;
-  if (!labelDescID.empty() && labelDescID[0] != '"')
-    {
-    endCommaPos = labelDescID.find(separator);
-    component = labelDescID.substr(0, endCommaPos);
-    }
-  else
-    {
-    component = this->GetFirstQuotedString(labelDescID, &endCommaPos);
-    }
   std::string label;
-  if (!component.empty())
-    {
-    vtkDebugMacro("Got label = " << component.c_str());
-    label = this->ConvertStringFromStorageFormat(component);
-    }
-
-  // description
-  // get the rest of the string after the label
-  std::string descID = labelDescID.substr(std::min(endCommaPos + 1, labelDescID.size()));
-  // the description may have quotes around it as well
-  if (!descID.empty() && descID[0] != '"')
-    {
-    endCommaPos = descID.find(separator);
-    component = descID.substr(0, endCommaPos);
-    }
-  else
-    {
-    component = this->GetFirstQuotedString(descID, &endCommaPos);
-    }
+  parser.GetStringField(FIELD_LABEL, label);
   std::string description;
-  if (!component.empty())
-    {
-    vtkDebugMacro("Got description = " << component.c_str());
-    description = this->ConvertStringFromStorageFormat(component);
-    }
-
-  // in case the file was written by hand, the associated node id
-  // might be empty
-  size_t associatedNodeIDPos = ss.str().find_last_of(separator);
+  parser.GetStringField(FIELD_DESCRIPTION, description);
   std::string associatedNodeID;
-  if (associatedNodeIDPos != std::string::npos)
-    {
-    component = ss.str().substr(associatedNodeIDPos + 1);
-    if (!component.empty())
-      {
-      vtkDebugMacro("Got associated node id = " << component.c_str());
-      associatedNodeID = component;
-      }
-    }
+  parser.GetStringField(FIELD_ASSOCIATED_NODE_ID, associatedNodeID);
 
   // Set values in markup
 
@@ -250,9 +372,9 @@ bool vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString(vtkMRMLMarkupsNode *
 
   markupsNode->SetNthMarkupOrientation(markupIndex, wxyz[0], wxyz[1], wxyz[2], wxyz[3]);
 
-  markupsNode->SetNthMarkupVisibility(markupIndex, visibilitySelectedLocked[0]);
-  markupsNode->SetNthMarkupSelected(markupIndex, visibilitySelectedLocked[1]);
-  markupsNode->SetNthMarkupLocked(markupIndex, visibilitySelectedLocked[2]);
+  markupsNode->SetNthMarkupVisibility(markupIndex, visibility);
+  markupsNode->SetNthMarkupSelected(markupIndex, selected);
+  markupsNode->SetNthMarkupLocked(markupIndex, locked);
   markupsNode->SetNthMarkupLabel(markupIndex, label);
   markupsNode->SetNthMarkupDescription(markupIndex, description);
   markupsNode->SetNthMarkupAssociatedNodeID(markupIndex, associatedNodeID);

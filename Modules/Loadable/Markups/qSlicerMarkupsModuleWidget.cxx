@@ -2729,8 +2729,8 @@ void qSlicerMarkupsModuleWidget::copySelectedToClipboard()
   QString markupsAsString;
   for (int i = 0; i < rows.size(); ++i)
     {
-    int index = rows.at(i);
-    markupsAsString += (storageNode->GetMarkupAsString(listNode, i).c_str() + QString("\n"));
+    int markupIndex = rows.at(i);
+    markupsAsString += (storageNode->GetMarkupAsString(listNode, markupIndex).c_str() + QString("\n"));
     }
 
   QApplication::clipboard()->setText(markupsAsString);
@@ -2766,27 +2766,16 @@ void qSlicerMarkupsModuleWidget::pasteSelectedFromClipboard()
     }
 
   int wasModifying = listNode->StartModify();
-
-  int markupInsertPosition = listNode->GetNumberOfFiducials();
-  QList<QTableWidgetItem *> selectedItems = d->activeMarkupTableWidget->selectedItems();
-  if ((selectedItems.size() / d->numberOfColumns()) > 0)
-    {
-    markupInsertPosition = selectedItems.at(0)->row();
-    }
-
   foreach(QString line, lines)
     {
     line = line.trimmed();
-    if (line.startsWith('#'))
+    if (line.isEmpty() || line.startsWith('#'))
       {
-      // comment line
+      // empty line or comment line
       continue;
       }
-    if (storageNode->SetMarkupFromString(listNode, listNode->GetNumberOfFiducials(), line.toLatin1()))
-      {
-      listNode->SwapMarkups(markupInsertPosition, listNode->GetNumberOfFiducials() - 1);
-      markupInsertPosition++;
-      }
+    // markup index = listNode->GetNumberOfFiducials() means that a new markup is added
+    storageNode->SetMarkupFromString(listNode, listNode->GetNumberOfFiducials(), line.toLatin1());
     }
 
   listNode->EndModify(wasModifying);
