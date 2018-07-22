@@ -185,13 +185,13 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
     set(slicer_PYTHON_SHARED_LIBRARY_DIR ${python_DIR}/lib)
     set(PYTHON_INCLUDE_DIR ${python_DIR}/include/python2.7)
     set(PYTHON_LIBRARY ${python_DIR}/lib/libpython2.7.${python_IMPORT_SUFFIX})
-    set(PYTHON_EXECUTABLE ${python_DIR}/bin/SlicerPython)
+    set(PYTHON_EXECUTABLE ${python_DIR}/bin/PythonSlicer)
     set(slicer_PYTHON_REAL_EXECUTABLE ${python_DIR}/bin/python)
   elseif(WIN32)
     set(slicer_PYTHON_SHARED_LIBRARY_DIR ${python_DIR}/bin)
     set(PYTHON_INCLUDE_DIR ${python_DIR}/include)
     set(PYTHON_LIBRARY ${python_DIR}/libs/python27.lib)
-    set(PYTHON_EXECUTABLE ${python_DIR}/bin/SlicerPython.exe)
+    set(PYTHON_EXECUTABLE ${python_DIR}/bin/PythonSlicer.exe)
     set(slicer_PYTHON_REAL_EXECUTABLE ${python_DIR}/bin/python.exe)
   else()
     message(FATAL_ERROR "Unknown system !")
@@ -221,7 +221,7 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
       DEPENDEES install
       )
 
-    # Note: Install rules for SlicerPythonLauncherSettingsToInstall.ini and SlicerPython executable
+    # Note: Install rules for PythonSlicerLauncherSettingsToInstall.ini and PythonSlicer executable
     #       are specified in SlicerBlockInstallPython.cmake
 
     if(UNIX AND NOT APPLE)

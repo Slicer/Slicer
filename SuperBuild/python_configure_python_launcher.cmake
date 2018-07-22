@@ -129,12 +129,11 @@ set(PYTHONLAUNCHER_PYTHONPATH_INSTALLED
 #
 # Notes:
 #
-#  * Install rules for SlicerPythonLauncherSettingsToInstall.ini and SlicerPython executable
+#  * Install rules for PythonSlicerLauncherSettingsToInstall.ini and PythonSlicer executable
 #  are specified in SlicerBlockInstallPython.cmake
 #
 
-ctkAppLauncherConfigureForExecutable(
-  APPLICATION_NAME SlicerPython
+set(_python_launcher_config_params
   SPLASHSCREEN_DISABLED
 
   # Additional settings exclude groups
@@ -160,4 +159,18 @@ ctkAppLauncherConfigureForExecutable(
   ENVVARS_INSTALLED "${PYTHONLAUNCHER_ENVVARS_INSTALLED}"
   ADDITIONAL_PATH_ENVVARS_INSTALLED "${PYTHONLAUNCHER_ADDITIONAL_PATH_ENVVARS_INSTALLED}"
   ADDITIONAL_SETTINGS_FILEPATH_INSTALLED "<APPLAUNCHER_SETTINGS_DIR>/SlicerLauncherSettings.ini"
+  )
+
+# Custom Python executable name must start with Python for compatibility with
+# development tools, such as PyCharm.
+ctkAppLauncherConfigureForExecutable(
+  APPLICATION_NAME PythonSlicer
+  ${_python_launcher_config_params}
+  )
+
+# SlicerPython executable name is deprecated and will be removed in the future
+# (name is not compatible with some development environments - see the comment above).
+ctkAppLauncherConfigureForExecutable(
+  APPLICATION_NAME SlicerPython
+  ${_python_launcher_config_params}
   )

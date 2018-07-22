@@ -75,24 +75,32 @@ if(Slicer_USE_PYTHONQT)
   endif()
 
   # Install Slicer python launcher settings
-  install(
-    FILES ${python_bin_dir}/SlicerPythonLauncherSettingsToInstall.ini
-    DESTINATION ${Slicer_INSTALL_BIN_DIR}
-    RENAME SlicerPythonLauncherSettings.ini
-    COMPONENT Runtime
-    )
 
-  # Install Slicer python launcher
-  set(_launcher CTKAppLauncher)
-  if(Slicer_BUILD_WIN32_CONSOLE)
-    set(_launcher CTKAppLauncherW)
-  endif()
-  install(
-    PROGRAMS ${CTKAppLauncher_DIR}/bin/${_launcher}${CMAKE_EXECUTABLE_SUFFIX}
-    DESTINATION ${Slicer_INSTALL_BIN_DIR}
-    RENAME SlicerPython${CMAKE_EXECUTABLE_SUFFIX}
-    COMPONENT Runtime
-    )
+  macro(_install_python_launcher executablename)
+    # Install Slicer python launcher settings
+    install(
+      FILES ${python_bin_dir}/${executablename}LauncherSettingsToInstall.ini
+      DESTINATION ${Slicer_INSTALL_BIN_DIR}
+      RENAME ${executablename}LauncherSettings.ini
+      COMPONENT Runtime
+      )
+    # Install Slicer python launcher
+    set(_launcher CTKAppLauncher)
+    if(Slicer_BUILD_WIN32_CONSOLE)
+      set(_launcher CTKAppLauncherW)
+    endif()
+    install(
+      PROGRAMS ${CTKAppLauncher_DIR}/bin/${_launcher}${CMAKE_EXECUTABLE_SUFFIX}
+      DESTINATION ${Slicer_INSTALL_BIN_DIR}
+      RENAME ${executablename}${CMAKE_EXECUTABLE_SUFFIX}
+      COMPONENT Runtime
+      )
+  endmacro()
+
+  _install_python_launcher(PythonSlicer)
+
+  # SlicerPython executable is deprecated, see details in External_python.cmake
+  _install_python_launcher(SlicerPython)
 
   # Install headers
   set(python_include_subdir /Include/)

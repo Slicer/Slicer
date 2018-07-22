@@ -8,7 +8,7 @@ python="$bin/python-real"
 [ -x "$python" ] || python=python
 
 # Set up environment
-eval $("$bin/SlicerPython" --launcher-show-set-environment-commands)
+eval $("$bin/PythonSlicer" --launcher-show-set-environment-commands)
 
 @EXPORT_GIT_PYTHON_GIT_EXECUTABLE_CONFIG@
 
