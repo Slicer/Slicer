@@ -982,7 +982,8 @@ vtkSlicerVolumesLogic::CreateLabelVolumeFromVolume(vtkMRMLScene *scene,
 vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::CreateScalarVolumeFromVolume(
   vtkMRMLScene *scene, vtkMRMLScalarVolumeNode *outputVolume, vtkMRMLVolumeNode *inputVolume)
 {
-  if (scene == NULL || outputVolume == NULL || inputVolume == NULL)
+  if ( scene == NULL || outputVolume == NULL
+    || inputVolume == NULL || inputVolume->GetImageData() == NULL )
     {
     return NULL;
     }
