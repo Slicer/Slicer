@@ -95,7 +95,8 @@ protected:
   vtkMRMLDisplayableNode* SourceGeometryNode;
 
   /// Flag indicating whether isotropic spacing is requested. Off by default
-  /// Resample the volume so that every voxel is a box. Use smallest spacing. Useful if the volume has elongated voxels.
+  /// Resample the volume to have isotropic spacing, which means the voxels will be cubes.
+  /// Use smallest spacing. Useful if the volume has elongated voxels.
   bool IsotropicSpacing;
 
   /// Oversampling factor:
