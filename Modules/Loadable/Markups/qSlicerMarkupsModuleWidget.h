@@ -199,16 +199,6 @@ public slots:
   /// class name as thisMarkup. Return an empty string list if no other
   /// markups in the scene
   QStringList getOtherMarkupNames(vtkMRMLNode *thisMarkup);
-  /// Right click action slot for copy
-  void onCopyToOtherListActionTriggered();
-  /// Right click action slot for move
-  void onMoveToOtherListActionTriggered();
-  /// Respond to the user selecting another list to copy the selected markup
-  void copySelectedToNamedList(QString listName);
-  /// Respond to the user selecting another list to move selected markups to
-  /// the named list, calls logic method to do the move if it can find both
-  /// markups nodes in the scene
-  void moveSelectedToNamedList(QString listName);
 
   void cutSelectedToClipboard();
   void copySelectedToClipboard();

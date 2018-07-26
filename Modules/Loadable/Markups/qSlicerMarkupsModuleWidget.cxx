@@ -303,6 +303,7 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
                    q, SLOT(onDeleteAllMarkupsInListPushButtonClicked()));
 
   this->cutAction = new QAction(q);
+  this->cutAction->setText(q->tr("Cut"));
   this->cutAction->setIcon(QIcon(":Icons/Medium/SlicerEditCut.png"));
   this->cutAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   this->cutAction->setShortcuts(QKeySequence::Cut);
@@ -312,6 +313,7 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   QObject::connect(this->cutAction, SIGNAL(triggered()), q, SLOT(cutSelectedToClipboard()));
 
   this->copyAction = new QAction(q);
+  this->copyAction->setText(q->tr("Copy"));
   this->copyAction->setIcon(QIcon(":Icons/Medium/SlicerEditCopy.png"));
   this->copyAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   this->copyAction->setShortcuts(QKeySequence::Copy);
@@ -321,6 +323,7 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   QObject::connect(this->copyAction, SIGNAL(triggered()), q, SLOT(copySelectedToClipboard()));
 
   this->pasteAction = new QAction(q);
+  this->pasteAction->setText(q->tr("Paste"));
   this->pasteAction->setIcon(QIcon(":Icons/Medium/SlicerEditPaste.png"));
   this->pasteAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   this->pasteAction->setShortcuts(QKeySequence::Paste);
@@ -2188,6 +2191,7 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCurrentCellChanged(
 //-----------------------------------------------------------------------------
 void qSlicerMarkupsModuleWidget::onRightClickActiveMarkupTableWidget(QPoint pos)
 {
+  Q_D(qSlicerMarkupsModuleWidget);
   Q_UNUSED(pos);
 
   // qDebug() << "onRightClickActiveMarkupTableWidget: pos = " << pos;
@@ -2215,23 +2219,15 @@ void qSlicerMarkupsModuleWidget::onRightClickActiveMarkupTableWidget(QPoint pos)
   QObject::connect(refocusCamerasAction, SIGNAL(triggered()),
                    this, SLOT(onRefocusCamerasActionTriggered()));
 
-  // If there's another list in the scene
-  if (this->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLMarkupsNode") > 1)
+  menu.addSeparator();
+  // get the selected rows
+  QList<QTableWidgetItem *> selectedItems = d->activeMarkupTableWidget->selectedItems();
+  if (!selectedItems.isEmpty())
     {
-    // copy to another list
-    QAction *copyToOtherListAction =
-      new QAction(QString("Copy fiducial to another list"), &menu);
-    menu.addAction(copyToOtherListAction);
-    QObject::connect(copyToOtherListAction, SIGNAL(triggered()),
-                     this, SLOT(onCopyToOtherListActionTriggered()));
-
-    // move to another list
-    QAction *moveToOtherListAction =
-      new QAction(QString("Move fiducial to another list"), &menu);
-    menu.addAction(moveToOtherListAction);
-    QObject::connect(moveToOtherListAction, SIGNAL(triggered()),
-                     this, SLOT(onMoveToOtherListActionTriggered()));
+    menu.addAction(d->cutAction);
+    menu.addAction(d->copyAction);
     }
+  menu.addAction(d->pasteAction);
 
   this->addSelectedCoordinatesToMenu(&menu);
 
@@ -2453,228 +2449,6 @@ QStringList qSlicerMarkupsModuleWidget::getOtherMarkupNames(vtkMRMLNode *thisMar
   col->Delete();
 
   return otherMarkups;
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onCopyToOtherListActionTriggered()
-{
-  Q_D(qSlicerMarkupsModuleWidget);
-
-  if (this->mrmlScene() == 0)
-    {
-    return;
-    }
-
-  // qDebug() << "onCopyToOtherListActionTriggered: " << destinationPosition;
-
-  // get the active list
-  vtkMRMLNode *mrmlNode = d->activeMarkupMRMLNodeComboBox->currentNode();
-  if (!mrmlNode)
-    {
-    return;
-    }
-  vtkMRMLMarkupsNode *markupsNode = vtkMRMLMarkupsNode::SafeDownCast(mrmlNode);
-  if (!markupsNode)
-    {
-    return;
-    }
-
-  QStringList otherLists = this->getOtherMarkupNames(mrmlNode);
-
-  // sanity check: is there another list to copy to?
-  if (otherLists.size() == 0)
-    {
-    qWarning() << "No other list to copy it to! Define another list first.";
-    return;
-    }
-
-  // make a dialog with the other lists to select
-  QInputDialog listDialog;
-  listDialog.setWindowTitle("Pick destination list");
-  listDialog.setLabelText("Destination list:");
-  listDialog.setComboBoxItems(otherLists);
-  listDialog.setInputMode(QInputDialog::TextInput);
-  QObject::connect(&listDialog, SIGNAL(textValueSelected(const QString &)),
-                   this,SLOT(copySelectedToNamedList(const QString &)));
-  listDialog.exec();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::copySelectedToNamedList(QString listName)
-{
-  Q_D(qSlicerMarkupsModuleWidget);
-
-  // qDebug() << "copySelectedToNamedList: " << listName;
-
-  QString destinationPosition = QString("Same");
-  if (sender() != 0)
-    {
-    destinationPosition = sender()->objectName();
-    }
-  // qDebug() << "\tdestinationPosition: " << destinationPosition;
-
-  // get the selected point
-  QList<QTableWidgetItem *> selectedItems = d->activeMarkupTableWidget->selectedItems();
-  int rowNumber = selectedItems.at(0)->row();
-  if (selectedItems.size() / d->numberOfColumns() > 1)
-    {
-    QMessageBox msgBox;
-    msgBox.setText(QString("Copy is only implemented for one row."));
-    msgBox.setInformativeText(QString("Click Ok to copy single markup from row ") + QString::number(rowNumber));
-    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-    int ret = msgBox.exec();
-    if (ret != QMessageBox::Ok)
-      {
-      // bail out
-      return;
-      }
-    }
-
-  if (!this->markupsLogic())
-    {
-    qWarning() << "No markups logic class, unable to copy markup";
-    return;
-    }
-
-  // get the active list
-  vtkMRMLNode *mrmlNode = d->activeMarkupMRMLNodeComboBox->currentNode();
-  if (!mrmlNode)
-    {
-    return;
-    }
-  vtkMRMLMarkupsNode *markupsNode = vtkMRMLMarkupsNode::SafeDownCast(mrmlNode);
-  if (!markupsNode)
-    {
-    return;
-    }
-  // get the new list
-  vtkMRMLNode *newNode = this->mrmlScene()->GetFirstNodeByName(listName.toLatin1());
-  if (!newNode)
-    {
-    qWarning() << "Unable to find list named " << listName << " in scene!";
-    return;
-    }
-  vtkMRMLMarkupsNode *newMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast(newNode);
-
-  // and copy
-  bool retval = false;
-  if (this->markupsLogic())
-    {
-    retval = this->markupsLogic()->CopyNthMarkupToNewList(rowNumber, markupsNode, newMarkupsNode);
-    }
-  if (!retval)
-    {
-    qWarning() << "Failed to copy " << rowNumber << " markup to list named " << listName;
-    }
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onMoveToOtherListActionTriggered()
-{
-  Q_D(qSlicerMarkupsModuleWidget);
-
-  if (this->mrmlScene() == 0)
-    {
-    return;
-    }
-
-  // qDebug() << "onMoveToOtherListActionTriggered";
-
-  // get the active list
-  vtkMRMLNode *mrmlNode = d->activeMarkupMRMLNodeComboBox->currentNode();
-  if (!mrmlNode)
-    {
-    return;
-    }
-  vtkMRMLMarkupsNode *markupsNode = vtkMRMLMarkupsNode::SafeDownCast(mrmlNode);
-  if (!markupsNode)
-    {
-    return;
-    }
-
-  QStringList otherLists = this->getOtherMarkupNames(mrmlNode);
-
-  // sanity check: is there another list to copy to?
-  if (otherLists.size() == 0)
-    {
-    qWarning() << "No other list to move it to! Define another list first.";
-    return;
-    }
-
-  // make a dialog with the other lists to select
-  QInputDialog listDialog;
-  listDialog.setWindowTitle("Pick destination list");
-  listDialog.setLabelText("Destination list:");
-  listDialog.setComboBoxItems(otherLists);
-  listDialog.setInputMode(QInputDialog::TextInput);
-  QObject::connect(&listDialog, SIGNAL(textValueSelected(const QString &)),
-                   this,SLOT(moveSelectedToNamedList(const QString &)));
-  listDialog.exec();
-}
-
-//-----------------------------------------------------------------------------
-  void qSlicerMarkupsModuleWidget::moveSelectedToNamedList(QString listName)
-{
-  Q_D(qSlicerMarkupsModuleWidget);
-
-  // qDebug() << "moveSelectedToNamedList: " << listName;
-
-  // get the selected point
-  QList<QTableWidgetItem *> selectedItems = d->activeMarkupTableWidget->selectedItems();
-  int rowNumber = selectedItems.at(0)->row();
-  if (selectedItems.size() / d->numberOfColumns() > 1)
-    {
-    QMessageBox msgBox;
-    msgBox.setText(QString("Move is only implemented for one row."));
-    msgBox.setInformativeText(QString("Click Ok to move single markup from row ") + QString::number(rowNumber));
-    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-    int ret = msgBox.exec();
-    if (ret != QMessageBox::Ok)
-      {
-      // bail out
-      return;
-      }
-    }
-
-  if (!this->markupsLogic())
-    {
-    qWarning() << "No markups logic class, unable to move markup";
-    return;
-    }
-
-  // get the active list
-  vtkMRMLNode *mrmlNode = d->activeMarkupMRMLNodeComboBox->currentNode();
-  if (!mrmlNode)
-    {
-    return;
-    }
-  vtkMRMLMarkupsNode *markupsNode = vtkMRMLMarkupsNode::SafeDownCast(mrmlNode);
-  if (!markupsNode)
-    {
-    return;
-    }
-  // get the new list
-  vtkMRMLNode *newNode = this->mrmlScene()->GetFirstNodeByName(listName.toLatin1());
-  if (!newNode)
-    {
-    qWarning() << "Unable to find list named " << listName << " in scene!";
-    return;
-    }
-  vtkMRMLMarkupsNode *newMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast(newNode);
-
-  // calculate the index based on the destination position
-  int newIndex = newMarkupsNode->GetNumberOfMarkups();
-
-  // and move
-  bool retval = false;
-  if (this->markupsLogic())
-    {
-    retval = this->markupsLogic()->MoveNthMarkupToNewListAtIndex(rowNumber, markupsNode, newMarkupsNode, newIndex);
-    }
-  if (!retval)
-    {
-    qWarning() << "Failed to move " << rowNumber << " markup to list named " << listName;
-    }
 }
 
 //-----------------------------------------------------------------------------
