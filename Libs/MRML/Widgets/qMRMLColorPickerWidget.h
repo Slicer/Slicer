@@ -48,10 +48,10 @@ public:
 
   /// A color logic is needed to select the color default nodes.
   /// A default color logic is created.
-  void setMRMLColorLogic(vtkMRMLColorLogic* colorLogic);
-  vtkMRMLColorLogic* mrmlColorLogic()const;
+  Q_INVOKABLE void setMRMLColorLogic(vtkMRMLColorLogic* colorLogic);
+  Q_INVOKABLE vtkMRMLColorLogic* mrmlColorLogic()const;
 
-  vtkMRMLColorNode* currentColorNode()const;
+  Q_INVOKABLE vtkMRMLColorNode* currentColorNode()const;
 
   virtual void setMRMLScene(vtkMRMLScene* scene);
   virtual bool eventFilter(QObject* target, QEvent* event);
