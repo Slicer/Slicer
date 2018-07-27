@@ -446,6 +446,7 @@ macro(slicerMacroBuildApplication)
     set(link_flags "-Wl,-rpath,@loader_path/../")
     set_target_properties(${slicerapp_target}
       PROPERTIES
+        MACOSX_BUNDLE_BUNDLE_NAME "${SLICERAPP_APPLICATION_NAME} ${Slicer_VERSION_FULL}"
         MACOSX_BUNDLE_BUNDLE_VERSION "${Slicer_VERSION_FULL}"
         MACOSX_BUNDLE_INFO_PLIST "${Slicer_CMAKE_DIR}/MacOSXBundleInfo.plist.in"
         LINK_FLAGS ${link_flags}
