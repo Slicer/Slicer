@@ -140,7 +140,7 @@
          <item row="1" column="0">
           <widget class="QLabel" name="label_IsotropicSpacing">
            <property name="toolTip">
-            <string>Resample the volume so that every voxel is a box. Use smallest spacing. Useful if the volume has elongated voxels.</string>
+            <string>Resample the volume to have isotropic spacing, which means the voxels will be cubes. Use smallest spacing. Useful if the volume has elongated voxels.</string>
            </property>
            <property name="text">
             <string>Isotropic spacing:</string>
@@ -150,7 +150,7 @@
          <item row="1" column="1">
           <widget class="QCheckBox" name="checkBox_IsotropicSpacing">
            <property name="toolTip">
-            <string>Resample the volume so that every voxel is a box. Use smallest spacing. Useful if the volume has elongated voxels.</string>
+            <string>Resample the volume to have isotropic spacing, which means the voxels will be cubes. Use smallest spacing. Useful if the volume has elongated voxels.</string>
            </property>
            <property name="text">
             <string/>

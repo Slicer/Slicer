@@ -310,7 +310,7 @@ vtkSegmentationConverter::ConversionPathType vtkSegmentationConverter::GetCheape
     {
     if (pathIt->second <= cheapestPathCost)
       {
-      unsigned int numberOfConversions = pathIt->first.size();
+      size_t numberOfConversions = pathIt->first.size();
       if (pathIt->second == cheapestPathCost)
         {
         // If the path cost is exactly the same then compare the number of conversions too
@@ -321,7 +321,7 @@ vtkSegmentationConverter::ConversionPathType vtkSegmentationConverter::GetCheape
           }
         }
       cheapestPathCost = pathIt->second;
-      cheapestPathNumberOfConversions = numberOfConversions;
+      cheapestPathNumberOfConversions = (unsigned int)numberOfConversions;
       cheapestPath = pathIt->first;
       }
     }

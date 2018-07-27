@@ -612,7 +612,7 @@ vtkSegment* vtkSegmentation::GetSegment(std::string segmentId)
 //---------------------------------------------------------------------------
 int vtkSegmentation::GetNumberOfSegments() const
 {
-  return this->SegmentIds.size();
+  return (int)this->SegmentIds.size();
 }
 
 //---------------------------------------------------------------------------
@@ -1154,14 +1154,14 @@ bool vtkSegmentation::IsMasterRepresentationPolyData()
     // Assume the first segment contains the same name of representations as all segments (this should be the case by design)
     vtkSegment* firstSegment = this->Segments.begin()->second;
     vtkDataObject* masterRepresentation = firstSegment->GetRepresentation(this->MasterRepresentationName);
-    return vtkPolyData::SafeDownCast(masterRepresentation);
+    return vtkPolyData::SafeDownCast(masterRepresentation) != NULL;
     }
   else
     {
     // There are no segments, create an empty representation to find out what type it is
     vtkSmartPointer<vtkDataObject> masterRepresentation = vtkSmartPointer<vtkDataObject>::Take(
       vtkSegmentationConverterFactory::GetInstance()->ConstructRepresentationObjectByRepresentation(this->MasterRepresentationName));
-    return vtkPolyData::SafeDownCast(masterRepresentation);
+    return vtkPolyData::SafeDownCast(masterRepresentation) != NULL;
     }
 }
 
@@ -1173,14 +1173,14 @@ bool vtkSegmentation::IsMasterRepresentationImageData()
     // Assume the first segment contains the same name of representations as all segments (this should be the case by design)
     vtkSegment* firstSegment = this->Segments.begin()->second;
     vtkDataObject* masterRepresentation = firstSegment->GetRepresentation(this->MasterRepresentationName);
-    return vtkOrientedImageData::SafeDownCast(masterRepresentation);
+    return vtkOrientedImageData::SafeDownCast(masterRepresentation) != NULL;
     }
   else
     {
     // There are no segments, create an empty representation to find out what type it is
     vtkSmartPointer<vtkDataObject> masterRepresentation = vtkSmartPointer<vtkDataObject>::Take(
       vtkSegmentationConverterFactory::GetInstance()->ConstructRepresentationObjectByRepresentation(this->MasterRepresentationName));
-    return vtkOrientedImageData::SafeDownCast(masterRepresentation);
+    return vtkOrientedImageData::SafeDownCast(masterRepresentation) != NULL;
     }
 }
 

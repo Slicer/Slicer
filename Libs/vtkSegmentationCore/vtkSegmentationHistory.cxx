@@ -145,7 +145,7 @@ bool vtkSegmentationHistory::SaveState()
   this->SegmentationStates.push_back(newSegmentationState);
 
   // Set the current state as last restored state
-  this->LastRestoredState = this->SegmentationStates.size();
+  this->LastRestoredState = (unsigned int)this->SegmentationStates.size();
   this->RemoveAllObsoleteStates();
 
   this->Modified();
@@ -219,7 +219,7 @@ bool vtkSegmentationHistory::RestorePreviousState()
     this->SaveState();
     // this->SegmentationStates.size() - 1 is the state that we've just saved
     // this->SegmentationStates.size() - 2 is the state that was the last saved state before
-    stateToRestore = this->SegmentationStates.size() - 2;
+    stateToRestore = (int)this->SegmentationStates.size() - 2;
     }
   return this->RestoreState(stateToRestore);
 }
@@ -370,7 +370,7 @@ void vtkSegmentationHistory::OnSegmentationModified(vtkObject* vtkNotUsed(caller
   self->RemoveAllNextStates();
   if (self->LastRestoredState != self->SegmentationStates.size())
     {
-    self->LastRestoredState = self->SegmentationStates.size();
+    self->LastRestoredState = (unsigned int)self->SegmentationStates.size();
     self->Modified();
     }
 }

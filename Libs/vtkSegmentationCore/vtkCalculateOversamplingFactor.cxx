@@ -206,7 +206,7 @@ bool vtkCalculateOversamplingFactor::CalculateComplexityMeasure()
 
 //---------------------------------------------------------------------------
 // Fuzzy membership functions:
-// https://www.assembla.com/spaces/slicerrt/documents/bzADACUi8r5kGMdmr6bg7m/download/bzADACUi8r5kGMdmr6bg7m
+// https://github.com/PerkLab/PolySeg/blob/master/doc/images/AutomaticOversampling_FuzzyMemberships.png
 //
 // Fuzzy rules:
 // 1. If RSS is Very small, then Oversampling is Very high

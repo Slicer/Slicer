@@ -53,7 +53,9 @@ class vtkStringArray;
 ///   * Default representations types are
 ///     * Binary labelmap (vtkOrientedImageData)
 ///     * Closed surface (vtkPolyData)
-///     * Additional representations can be defined (SlicerRT adds three: Planar contour, Fractional labelmap, Ribbon model)
+///     * Fractional labelmap (vtkOrientedImageData)
+///     * Additional representations can be defined (SlicerRT adds two: Planar contour, Ribbon model)
+///       (https://github.com/SlicerRt/SlicerRT/tree/master/DicomRtImportExport/ConversionRules)
 ///   * Conversion between representations are driven by a conversion graph in which the nodes are the representations and the edges
 ///     are conversion rules
 ///     * When converting with the default method (\sa CreateRepresentation without specifying a path), then the path with the lowest
