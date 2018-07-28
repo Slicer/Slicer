@@ -38,6 +38,7 @@
 
 // VTK includes
 #include <vtkMatrix4x4.h>
+#include <vtkNew.h>
 #include <vtkTransform.h>
 #include <vtkGeneralTransform.h>
 #include <vtkAddonMathUtilities.h>
@@ -55,8 +56,8 @@ vtkSlicerSegmentationGeometryLogic::vtkSlicerSegmentationGeometryLogic()
 , UserSpacing{ 1.0, 1.0, 1.0 }
 
 {
-  this->InputSegmentationNode = nullptr;
-  this->SourceGeometryNode = nullptr;
+  this->InputSegmentationNode = 0;
+  this->SourceGeometryNode = 0;
   this->OversamplingFactor = 1.0;
   this->IsotropicSpacing = false;
 
@@ -71,7 +72,7 @@ vtkSlicerSegmentationGeometryLogic::~vtkSlicerSegmentationGeometryLogic()
   if (this->OutputGeometryImageData)
     {
     this->OutputGeometryImageData->Delete();
-    this->OutputGeometryImageData = nullptr;
+    this->OutputGeometryImageData = 0;
     }
 }
 
@@ -151,12 +152,12 @@ std::string vtkSlicerSegmentationGeometryLogic::CalculateOutputGeometry()
     vtkNew<vtkMatrix4x4> labelmapIJKToSegmentationMatrix;
     if (sourceVolumeNode && sourceVolumeNode->GetImageData())
       {
-      sourceVolumeNode->GetIJKToRASMatrix(labelmapIJKToSegmentationMatrix);
+      sourceVolumeNode->GetIJKToRASMatrix(labelmapIJKToSegmentationMatrix.GetPointer());
       this->OutputGeometryImageData->SetExtent(sourceVolumeNode->GetImageData()->GetExtent());
       }
     else if (sourceBinaryLabelmap)
       {
-      sourceBinaryLabelmap->GetImageToWorldMatrix(labelmapIJKToSegmentationMatrix);
+      sourceBinaryLabelmap->GetImageToWorldMatrix(labelmapIJKToSegmentationMatrix.GetPointer());
       this->OutputGeometryImageData->SetExtent(sourceBinaryLabelmap->GetExtent());
       }
     else
@@ -168,20 +169,20 @@ std::string vtkSlicerSegmentationGeometryLogic::CalculateOutputGeometry()
     vtkNew<vtkGeneralTransform> inputSegmentationToSourceTransform;
     vtkNew<vtkTransform> inputSegmentationToSourceTransformLinear;
     vtkMRMLTransformNode::GetTransformBetweenNodes(this->InputSegmentationNode->GetParentTransformNode(),
-      this->SourceGeometryNode->GetParentTransformNode(), inputSegmentationToSourceTransform);
-    if (vtkMRMLTransformNode::IsGeneralTransformLinear(inputSegmentationToSourceTransform, inputSegmentationToSourceTransformLinear))
+      this->SourceGeometryNode->GetParentTransformNode(), inputSegmentationToSourceTransform.GetPointer());
+    if (vtkMRMLTransformNode::IsGeneralTransformLinear(inputSegmentationToSourceTransform.GetPointer(), inputSegmentationToSourceTransformLinear.GetPointer()))
       {
       // Transformation between segmentation and source is linear
       vtkNew<vtkMatrix4x4> labelmapIJKToSourceMatrix;
       vtkNew<vtkMatrix4x4> inputSegmentationToSourceMatrix;
-      inputSegmentationToSourceTransformLinear->GetMatrix(inputSegmentationToSourceMatrix);
-      vtkMatrix4x4::Multiply4x4(inputSegmentationToSourceMatrix, labelmapIJKToSegmentationMatrix, labelmapIJKToSourceMatrix);
-      this->OutputGeometryImageData->SetImageToWorldMatrix(labelmapIJKToSourceMatrix);
+      inputSegmentationToSourceTransformLinear->GetMatrix(inputSegmentationToSourceMatrix.GetPointer());
+      vtkMatrix4x4::Multiply4x4(inputSegmentationToSourceMatrix.GetPointer(), labelmapIJKToSegmentationMatrix.GetPointer(), labelmapIJKToSourceMatrix.GetPointer());
+      this->OutputGeometryImageData->SetImageToWorldMatrix(labelmapIJKToSourceMatrix.GetPointer());
       }
     else
       {
       vtkWarningMacro("CalculateOutputGeometry: Ignoring parent transforms because non-linear components have been found");
-      this->OutputGeometryImageData->SetImageToWorldMatrix(labelmapIJKToSegmentationMatrix);
+      this->OutputGeometryImageData->SetImageToWorldMatrix(labelmapIJKToSegmentationMatrix.GetPointer());
       }
 
     // Apply optional settings
@@ -234,12 +235,12 @@ std::string vtkSlicerSegmentationGeometryLogic::CalculateOutputGeometry()
     vtkNew<vtkGeneralTransform> segmentationToSourceTransform;
     vtkNew<vtkTransform> segmentationToSourceTransformLinear;
     vtkMRMLTransformNode::GetTransformBetweenNodes(this->InputSegmentationNode->GetParentTransformNode(),
-      this->SourceGeometryNode->GetParentTransformNode(), segmentationToSourceTransform);
+      this->SourceGeometryNode->GetParentTransformNode(), segmentationToSourceTransform.GetPointer());
     vtkNew<vtkMatrix4x4> segmentationToSourceMatrix;
-    if (vtkMRMLTransformNode::IsGeneralTransformLinear(segmentationToSourceTransform, segmentationToSourceTransformLinear))
+    if (vtkMRMLTransformNode::IsGeneralTransformLinear(segmentationToSourceTransform.GetPointer(), segmentationToSourceTransformLinear.GetPointer()))
       {
       // Transformation between segmentation and source is linear
-      segmentationToSourceTransformLinear->GetMatrix(segmentationToSourceMatrix);
+      segmentationToSourceTransformLinear->GetMatrix(segmentationToSourceMatrix.GetPointer());
       }
     else
       {
@@ -255,14 +256,14 @@ std::string vtkSlicerSegmentationGeometryLogic::CalculateOutputGeometry()
       {
       vtkNew<vtkOrientedImageData> inputBinaryLabelmap;
       std::string geometryString = this->InputSegmentationNode->GetSegmentation()->DetermineCommonLabelmapGeometry();
-      vtkSegmentationConverter::DeserializeImageGeometry(geometryString, inputBinaryLabelmap, false);
+      vtkSegmentationConverter::DeserializeImageGeometry(geometryString, inputBinaryLabelmap.GetPointer(), false);
 
       // Find which labelmap axis corresponds to each source axis, to get the correct spacing value for each source axis
       vtkNew<vtkMatrix4x4> inputLabelmapIJKToInputSegmentation;
-      inputBinaryLabelmap->GetImageToWorldMatrix(inputLabelmapIJKToInputSegmentation);
+      inputBinaryLabelmap->GetImageToWorldMatrix(inputLabelmapIJKToInputSegmentation.GetPointer());
       vtkNew<vtkMatrix4x4> inputLabelmapIJKToSource;
-      vtkMatrix4x4::Multiply4x4(segmentationToSourceMatrix, inputLabelmapIJKToInputSegmentation, inputLabelmapIJKToSource);
-      this->OutputGeometryImageData->SetImageToWorldMatrix(inputLabelmapIJKToSource);
+      vtkMatrix4x4::Multiply4x4(segmentationToSourceMatrix.GetPointer(), inputLabelmapIJKToInputSegmentation.GetPointer(), inputLabelmapIJKToSource.GetPointer());
+      this->OutputGeometryImageData->SetImageToWorldMatrix(inputLabelmapIJKToSource.GetPointer());
 
       outputSpacing[0] = this->UserSpacing[this->InputAxisIndexForSourceAxis[0]];
       outputSpacing[1] = this->UserSpacing[this->InputAxisIndexForSourceAxis[1]];
@@ -272,7 +273,7 @@ std::string vtkSlicerSegmentationGeometryLogic::CalculateOutputGeometry()
     else
       {
       // Directions according to segmentation to source transformation
-      this->OutputGeometryImageData->SetImageToWorldMatrix(segmentationToSourceMatrix);
+      this->OutputGeometryImageData->SetImageToWorldMatrix(segmentationToSourceMatrix.GetPointer());
       // Spacing as specified on the UI
       this->OutputGeometryImageData->SetSpacing(outputSpacing);
       }
@@ -280,16 +281,16 @@ std::string vtkSlicerSegmentationGeometryLogic::CalculateOutputGeometry()
     // Calculate origin according to the bounds
     const double origin_Source[4] = { sourceBounds[0], sourceBounds[2], sourceBounds[4], 1.0 };
     vtkNew<vtkMatrix4x4> sourceToSegmentationMatrix;
-    sourceToSegmentationMatrix->DeepCopy(segmentationToSourceMatrix);
+    sourceToSegmentationMatrix->DeepCopy(segmentationToSourceMatrix.GetPointer());
     sourceToSegmentationMatrix->Invert();
     double origin_Segmentation[4] = { 0.0, 0.0, 0.0, 0.0 };
     sourceToSegmentationMatrix->MultiplyPoint(origin_Source, origin_Segmentation);
 
     vtkNew<vtkMatrix4x4> labelmapIJKToSegmentationMatrix;
-    this->OutputGeometryImageData->GetImageToWorldMatrix(labelmapIJKToSegmentationMatrix);
+    this->OutputGeometryImageData->GetImageToWorldMatrix(labelmapIJKToSegmentationMatrix.GetPointer());
     const double voxelCenter_IJK[4] = { 0.5, 0.5, 0.5, 1.0 };
     vtkNew<vtkMatrix4x4> labelmapIJKToSegmentationDirectionMatrix;
-    labelmapIJKToSegmentationDirectionMatrix->DeepCopy(labelmapIJKToSegmentationMatrix);
+    labelmapIJKToSegmentationDirectionMatrix->DeepCopy(labelmapIJKToSegmentationMatrix.GetPointer());
     labelmapIJKToSegmentationDirectionMatrix->SetElement(0,3,0.0);
     labelmapIJKToSegmentationDirectionMatrix->SetElement(1,3,0.0);
     labelmapIJKToSegmentationDirectionMatrix->SetElement(2,3,0.0);
@@ -323,7 +324,7 @@ void vtkSlicerSegmentationGeometryLogic::ResetGeometryImageData()
 {
   vtkNew<vtkMatrix4x4> identityMatrix;
   identityMatrix->Identity();
-  this->OutputGeometryImageData->SetImageToWorldMatrix(identityMatrix);
+  this->OutputGeometryImageData->SetImageToWorldMatrix(identityMatrix.GetPointer());
   this->OutputGeometryImageData->SetDimensions(0, 0, 0);
 }
 
@@ -348,7 +349,7 @@ bool vtkSlicerSegmentationGeometryLogic::IsSourceSegmentationWithBinaryLabelmapM
 //-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationGeometryLogic::InputSegmentationCanBeResampled()
 {
-  if ( this->InputSegmentationNode != nullptr
+  if ( this->InputSegmentationNode != 0
     &&  this->InputSegmentationNode->GetSegmentation()->GetNumberOfSegments() > 0
     && this->InputSegmentationNode->GetSegmentation()->ContainsRepresentation(
         vtkSegmentationConverter::GetBinaryLabelmapRepresentationName())
@@ -393,12 +394,12 @@ void vtkSlicerSegmentationGeometryLogic::ComputeSourceAxisIndexForInputAxis()
     vtkNew<vtkGeneralTransform> segmentationToSourceTransform;
     vtkNew<vtkTransform> segmentationToSourceTransformLinear;
     vtkMRMLTransformNode::GetTransformBetweenNodes(this->InputSegmentationNode->GetParentTransformNode(),
-      transformableSourceNode->GetParentTransformNode(), segmentationToSourceTransform);
+      transformableSourceNode->GetParentTransformNode(), segmentationToSourceTransform.GetPointer());
     vtkNew<vtkMatrix4x4> segmentationToSourceMatrix;
-    if (vtkMRMLTransformNode::IsGeneralTransformLinear(segmentationToSourceTransform, segmentationToSourceTransformLinear))
+    if (vtkMRMLTransformNode::IsGeneralTransformLinear(segmentationToSourceTransform.GetPointer(), segmentationToSourceTransformLinear.GetPointer()))
       {
       // Transformation between segmentation and source is linear
-      segmentationToSourceTransformLinear->GetMatrix(segmentationToSourceMatrix);
+      segmentationToSourceTransformLinear->GetMatrix(segmentationToSourceMatrix.GetPointer());
       }
     else
       {
@@ -408,17 +409,17 @@ void vtkSlicerSegmentationGeometryLogic::ComputeSourceAxisIndexForInputAxis()
 
     vtkNew<vtkOrientedImageData> inputBinaryLabelmap;
     std::string geometryString = this->InputSegmentationNode->GetSegmentation()->DetermineCommonLabelmapGeometry();
-    vtkSegmentationConverter::DeserializeImageGeometry(geometryString, inputBinaryLabelmap, false);
+    vtkSegmentationConverter::DeserializeImageGeometry(geometryString, inputBinaryLabelmap.GetPointer(), false);
 
     // Find which labelmap axis corresponds to each source axis, to get the correct spacing value for each source axis
     vtkNew<vtkMatrix4x4> inputLabelmapIJKToInputSegmentation;
-    inputBinaryLabelmap->GetImageToWorldMatrix(inputLabelmapIJKToInputSegmentation);
+    inputBinaryLabelmap->GetImageToWorldMatrix(inputLabelmapIJKToInputSegmentation.GetPointer());
     vtkNew<vtkMatrix4x4> inputLabelmapIJKToSource;
-    vtkMatrix4x4::Multiply4x4(segmentationToSourceMatrix, inputLabelmapIJKToInputSegmentation, inputLabelmapIJKToSource);
+    vtkMatrix4x4::Multiply4x4(segmentationToSourceMatrix.GetPointer(), inputLabelmapIJKToInputSegmentation.GetPointer(), inputLabelmapIJKToSource.GetPointer());
 
     // Find the axis that is best aligned with each source axis
     double scale[3] = { 1.0 };
-    vtkAddonMathUtilities::NormalizeOrientationMatrixColumns(inputLabelmapIJKToSource, scale);
+    vtkAddonMathUtilities::NormalizeOrientationMatrixColumns(inputLabelmapIJKToSource.GetPointer(), scale);
     for (int sourceAxisIndex=0; sourceAxisIndex<3; sourceAxisIndex++)
       {
       double largestComponentValue = 0.0;

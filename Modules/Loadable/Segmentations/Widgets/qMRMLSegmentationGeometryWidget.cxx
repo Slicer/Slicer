@@ -41,11 +41,12 @@
 #include "vtkMRMLModelNode.h"
 
 // VTK includes
-#include <vtkWeakPointer.h>
-#include <vtkMatrix4x4.h>
-#include <vtkTransform.h>
-#include <vtkGeneralTransform.h>
 #include <vtkAddonMathUtilities.h>
+#include <vtkGeneralTransform.h>
+#include <vtkMatrix4x4.h>
+#include <vtkNew.h>
+#include <vtkTransform.h>
+#include <vtkWeakPointer.h>
 
 // Qt includes
 #include <QDebug>
@@ -90,7 +91,7 @@ qMRMLSegmentationGeometryWidgetPrivate::~qMRMLSegmentationGeometryWidgetPrivate(
   if (this->Logic)
     {
     this->Logic->Delete();
-    this->Logic = nullptr;
+    this->Logic = 0;
     }
 }
 
@@ -147,7 +148,7 @@ void qMRMLSegmentationGeometryWidgetPrivate::updateGeometryWidgets()
   this->MRMLCoordinatesWidget_Origin->setCoordinates(origin);
 
   vtkNew<vtkMatrix4x4> directions;
-  geometryImageData->GetDirectionMatrix(directions);
+  geometryImageData->GetDirectionMatrix(directions.GetPointer());
   for (int i=0; i<3; ++i)
     {
     for (int j=0; j<3; ++j)
@@ -376,7 +377,7 @@ void qMRMLSegmentationGeometryWidget::updateWidgetFromMRML()
     d->MRMLNodeComboBox_SourceGeometryNode->currentNode() );
   // Get possible source volumes
   vtkMRMLScalarVolumeNode* sourceVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(sourceNode);
-  bool sourceIsVolume = (sourceVolumeNode != nullptr) || d->Logic->IsSourceSegmentationWithBinaryLabelmapMaster();
+  bool sourceIsVolume = (sourceVolumeNode != 0) || d->Logic->IsSourceSegmentationWithBinaryLabelmapMaster();
 
   // If editing is disabled, then hide source node selector and use no source node even if was previously selected
   if (d->EditEnabled)
@@ -386,13 +387,13 @@ void qMRMLSegmentationGeometryWidget::updateWidgetFromMRML()
   else
     {
     d->frame_SourceGeometry->setVisible(false);
-    sourceNode = nullptr;
+    sourceNode = 0;
     }
 
   // If volume node is selected, then show volume spacing options box
-  d->groupBox_VolumeSpacingOptions->setVisible(sourceNode != nullptr && sourceIsVolume);
+  d->groupBox_VolumeSpacingOptions->setVisible(sourceNode != 0 && sourceIsVolume);
   // Otherwise enable spacing widget to allow editing if it's allowed
-  d->MRMLCoordinatesWidget_Spacing->setEnabled(sourceNode != nullptr && !sourceIsVolume && d->EditEnabled);
+  d->MRMLCoordinatesWidget_Spacing->setEnabled(sourceNode != 0 && !sourceIsVolume && d->EditEnabled);
 
   // If no source node is selected, then show the current labelmap geometry
   if (!sourceNode)
