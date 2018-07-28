@@ -45,6 +45,7 @@
 
 // VTK includes
 #include <vtkCollection.h>
+#include <vtkNew.h>
 #include <vtkRenderWindow.h>
 
 //--------------------------------------------------------------------------
