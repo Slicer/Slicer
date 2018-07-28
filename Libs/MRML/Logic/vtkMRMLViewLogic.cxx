@@ -275,13 +275,8 @@ void vtkMRMLViewLogic::EndViewNodeInteraction()
     return;
     }
 
-  // If we have linked controls, then we want to broadcast changes
   if (this->ViewNode->GetLinkedControl())
     {
-    // Need to trigger a final message to broadcast to all the nodes
-    // that are linked
-    this->ViewNode->InteractingOn();
-    this->ViewNode->Modified();
     this->ViewNode->InteractingOff();
     this->ViewNode->SetInteractionFlags(0);
   }
@@ -414,13 +409,8 @@ void vtkMRMLViewLogic::EndCameraNodeInteraction()
     return;
     }
 
-  // If we have linked controls, then we want to broadcast changes
   if (this->ViewNode->GetLinkedControl())
     {
-    // Need to trigger a final message to broadcast to all the nodes
-    // that are linked
-    this->CameraNode->InteractingOn();
-    this->CameraNode->Modified();
     this->CameraNode->InteractingOff();
     this->CameraNode->SetInteractionFlags(0);
     }

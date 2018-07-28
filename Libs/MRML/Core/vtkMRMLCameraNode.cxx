@@ -338,10 +338,9 @@ void vtkMRMLCameraNode::ProcessMRMLEvents ( vtkObject *caller,
 
   if (this->Camera != NULL &&
       this->Camera == vtkCamera::SafeDownCast(caller) &&
-      event ==  vtkCommand::ModifiedEvent)
+      event == vtkCommand::ModifiedEvent)
     {
     this->Modified();
-    this->InvokeCustomModifiedEvent(vtkMRMLCameraNode::CameraModifiedEvent, caller);
     }
 
   vtkMRMLTransformNode *tnode = this->GetParentTransformNode();

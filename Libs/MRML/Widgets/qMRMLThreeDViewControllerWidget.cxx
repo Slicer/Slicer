@@ -329,7 +329,7 @@ void qMRMLThreeDViewControllerWidget::setMRMLViewNode(
   this->updateWidgetFromMRMLView();
 
   d->CameraNode = d->ViewLogic->GetCameraNode(this->mrmlScene(), d->ThreeDViewLabel.toLatin1());
-  this->qvtkReconnect(d->CameraNode, vtkMRMLCameraNode::CameraModifiedEvent,
+  this->qvtkReconnect(d->CameraNode, vtkMRMLCameraNode::CameraInteractionEvent,
                       this, SLOT(updateViewFromMRMLCamera()));
 
   this->updateViewFromMRMLCamera();
@@ -451,9 +451,9 @@ void qMRMLThreeDViewControllerWidget::updateViewFromMRMLCamera()
 {
   Q_D(qMRMLThreeDViewControllerWidget);
 
-   d->ViewLogic->StartCameraNodeInteraction(vtkMRMLCameraNode::vtkCameraFlag);
-   d->CameraNode->Modified();
-   d->ViewLogic->EndCameraNodeInteraction();
+  d->ViewLogic->StartCameraNodeInteraction(vtkMRMLCameraNode::CameraInteractionFlag);
+  d->CameraNode->Modified();
+  d->ViewLogic->EndCameraNodeInteraction();
 }
 
 // --------------------------------------------------------------------------

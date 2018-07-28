@@ -149,7 +149,7 @@ public:
   enum
   {
     ActiveTagModifiedEvent = 30000,
-    CameraModifiedEvent = 31000,
+    CameraInteractionEvent = 31000,
     ResetCameraClippingEvent = 32000,
   };
 
@@ -237,7 +237,7 @@ public:
     ZoomInFlag,
     ZoomOutFlag,
     CenterFlag,
-    vtkCameraFlag,
+    CameraInteractionFlag,
   };
 
   /// Get/Set a flag indicating what parameters are being manipulated

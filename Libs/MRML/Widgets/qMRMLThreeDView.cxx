@@ -46,6 +46,7 @@
 #include <vtkMRMLCrosshairNode.h>
 
 // VTK includes
+#include <vtkCallbackCommand.h>
 #include <vtkCollection.h>
 #include <vtkNew.h>
 #include <vtkRenderer.h>
@@ -220,11 +221,75 @@ void qMRMLThreeDViewPrivate::updateWidgetFromMRML()
 // qMRMLThreeDView methods
 
 // --------------------------------------------------------------------------
+namespace
+{
+void ClickCallbackFunction (
+  vtkObject* caller,
+  long unsigned int eventId,
+  void* vtkNotUsed(clientData),
+  void* vtkNotUsed(callData) )
+{
+  vtkRenderWindowInteractor *iren =
+     static_cast<vtkRenderWindowInteractor*>(caller);
+
+  vtkThreeDViewInteractorStyle* style = vtkThreeDViewInteractorStyle::SafeDownCast
+    (iren ? iren->GetInteractorStyle() : 0);
+  if (!style)
+    {
+    qCritical() << "qMRMLThreeDView::mouseMoveEvent: no valid interactor style.";
+    return;
+    }
+
+  vtkMRMLCameraNode* cam = style->GetCameraNode();
+  if (!cam)
+    {
+    qCritical() << "qMRMLThreeDView::mouseMoveEvent: can not retrieve camera node.";
+    return;
+    }
+
+  switch(eventId)
+    {
+    case vtkCommand::MouseWheelForwardEvent:
+      {
+      cam->InvokeCustomModifiedEvent(vtkMRMLCameraNode::CameraInteractionEvent);
+      }
+    break;
+    case vtkCommand::MouseWheelBackwardEvent:
+      {
+      cam->InvokeCustomModifiedEvent(vtkMRMLCameraNode::CameraInteractionEvent);
+      }
+    break;
+    case vtkCommand::InteractionEvent:
+      {
+      cam->InvokeCustomModifiedEvent(vtkMRMLCameraNode::CameraInteractionEvent);
+      }
+    break;
+    case vtkCommand::KeyPressEvent:
+      {
+      cam->InvokeCustomModifiedEvent(vtkMRMLCameraNode::CameraInteractionEvent);
+      }
+    break;
+    }
+}
+}
+
+// --------------------------------------------------------------------------
 qMRMLThreeDView::qMRMLThreeDView(QWidget* _parent) : Superclass(_parent)
   , d_ptr(new qMRMLThreeDViewPrivate(*this))
 {
   Q_D(qMRMLThreeDView);
   d->init();
+
+  vtkRenderWindowInteractor* renderWindowInteractor = this->interactor();
+
+  vtkSmartPointer<vtkCallbackCommand> clickCallback =
+      vtkSmartPointer<vtkCallbackCommand>::New();
+  clickCallback->SetCallback(ClickCallbackFunction);
+
+  renderWindowInteractor->AddObserver(vtkCommand::MouseWheelForwardEvent, clickCallback);
+  renderWindowInteractor->AddObserver(vtkCommand::MouseWheelBackwardEvent, clickCallback);
+  renderWindowInteractor->AddObserver(vtkCommand::InteractionEvent, clickCallback);
+  renderWindowInteractor->AddObserver(vtkCommand::KeyPressEvent, clickCallback);
 }
 
 // --------------------------------------------------------------------------
@@ -440,7 +505,7 @@ void qMRMLThreeDView::resetFocalPoint()
   if (this->renderer())
     {
     this->renderer()->ResetCameraClippingRange();
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
