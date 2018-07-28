@@ -448,45 +448,46 @@ void vtkCalculateOversamplingFactor::ApplyOversamplingOnImageGeometry(vtkOriente
     || oversamplingFactor > 100.0 )
     {
     vtkWarningWithObjectMacro(imageData, "vtkCalculateOversamplingFactor::ApplyOversamplingOnImageGeometry: Oversampling factor" << oversamplingFactor << "seems unreasonable!");
+    return;
     }
-  // Apply oversampling if needed
-  else if (oversamplingFactor != 1.0)
+  if (oversamplingFactor == 1.0)
     {
-    // Calculate extent and spacing
-    int newExtent[6] = {0,-1,0,-1,0,-1};
-    int extent[6] = {0,-1,0,-1,0,-1};
-    imageData->GetExtent(extent);
-    double newSpacing[3] = {0.0,0.0,0.0};
-    double spacing[3] = {0.0,0.0,0.0};
-    imageData->GetSpacing(spacing);
-    for (unsigned int axis=0; axis<3; ++axis)
-      {
-      int dimension = extent[axis*2+1] - extent[axis*2] + 1;
-      int extentMin = static_cast<int>(ceil(oversamplingFactor * extent[axis * 2]));
-      int extentMax = std::max(extentMin + static_cast<int>(floor(oversamplingFactor*dimension)) - 1, 0);
-      newExtent[axis*2] = extentMin;
-      newExtent[axis*2+1] = extentMax;
-      newSpacing[axis] = spacing[axis]
-        * double(extent[axis * 2 + 1] - extent[axis * 2] + 1)
-        / double(newExtent[axis * 2 + 1] - newExtent[axis * 2] + 1);
-      }
-    imageData->SetExtent(newExtent);
-    imageData->SetSpacing(newSpacing);
-    imageData->AllocateScalars(imageData->GetScalarType(), imageData->GetNumberOfScalarComponents());
-
-    // Origin is given in the center of voxels, but we want to have the corners of the new and old volumes
-    // to be in the same position, so we need to shift the origin by a half voxel size difference
-    vtkSmartPointer<vtkMatrix4x4> imageToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
-    imageData->GetImageToWorldMatrix(imageToWorld);
-    double newOrigin_Image[4] =
-      {
-      0.5 * (1 - spacing[0] / newSpacing[0]),
-      0.5 * (1 - spacing[1] / newSpacing[1]),
-      0.5 * (1 - spacing[2] / newSpacing[2]),
-      1.0
-      };
-    double newOrigin_World[4] = { 0, 0, 0, 1 };
-    imageToWorld->MultiplyPoint(newOrigin_Image, newOrigin_World);
-    imageData->SetOrigin(newOrigin_World);
+    // Oversampling is not needed
+    return;
     }
+  // Calculate extent and spacing
+  int newExtent[6] = {0,-1,0,-1,0,-1};
+  int extent[6] = {0,-1,0,-1,0,-1};
+  imageData->GetExtent(extent);
+  double newSpacing[3] = {0.0,0.0,0.0};
+  double spacing[3] = {0.0,0.0,0.0};
+  imageData->GetSpacing(spacing);
+  for (unsigned int axis=0; axis<3; ++axis)
+    {
+    int dimension = extent[axis*2+1] - extent[axis*2] + 1;
+    int extentMin = static_cast<int>(ceil(oversamplingFactor * extent[axis * 2]));
+    int extentMax = std::max(extentMin + static_cast<int>(floor(oversamplingFactor*dimension)) - 1, 0);
+    newExtent[axis*2] = extentMin;
+    newExtent[axis*2+1] = extentMax;
+    newSpacing[axis] = spacing[axis]
+      * double(extent[axis * 2 + 1] - extent[axis * 2] + 1)
+      / double(newExtent[axis * 2 + 1] - newExtent[axis * 2] + 1);
+    }
+  imageData->SetExtent(newExtent);
+  imageData->SetSpacing(newSpacing);
+
+  // Origin is given in the center of voxels, but we want to have the corners of the new and old volumes
+  // to be in the same position, so we need to shift the origin by a half voxel size difference
+  vtkSmartPointer<vtkMatrix4x4> imageToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
+  imageData->GetImageToWorldMatrix(imageToWorld);
+  double newOrigin_Image[4] =
+    {
+    0.5 * (1.0 - spacing[0] / newSpacing[0]),
+    0.5 * (1.0 - spacing[1] / newSpacing[1]),
+    0.5 * (1.0 - spacing[2] / newSpacing[2]),
+    1.0
+    };
+  double newOrigin_World[4] = { 0.0, 0.0, 0.0, 1.0 };
+  imageToWorld->MultiplyPoint(newOrigin_Image, newOrigin_World);
+  imageData->SetOrigin(newOrigin_World);
 }

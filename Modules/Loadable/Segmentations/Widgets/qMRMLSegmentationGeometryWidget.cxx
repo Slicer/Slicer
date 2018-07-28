@@ -259,6 +259,24 @@ void qMRMLSegmentationGeometryWidget::onSourceNodeChanged(vtkMRMLNode* sourceNod
 
   d->Logic->SetSourceGeometryNode(vtkMRMLDisplayableNode::SafeDownCast(sourceNode));
 
+  // updateWidgetFromMRML() only updates GUI if input is valid, so we need to make sure
+  // that widgets are up-to-date
+
+  // Spacing
+  // When changing source node, current geometry spacing may differ from
+  // the spacing that the user set. By default, show the user spacing.
+  int sourceAxisIndexForInputAxis[3] = { 0 };
+  d->Logic->GetSourceAxisIndexForInputAxis(sourceAxisIndexForInputAxis);
+  double spacing[3] = { 0.0 };
+  d->Logic->GetUserSpacing(spacing);
+  double outputSpacing[3] = {
+    spacing[sourceAxisIndexForInputAxis[0]],
+    spacing[sourceAxisIndexForInputAxis[1]],
+    spacing[sourceAxisIndexForInputAxis[2]] };
+  bool wasBlocked = d->MRMLCoordinatesWidget_Spacing->blockSignals(true);
+  d->MRMLCoordinatesWidget_Spacing->setCoordinates(outputSpacing);
+  d->MRMLCoordinatesWidget_Spacing->blockSignals(wasBlocked);
+
   // Calculate output geometry and update UI
   this->updateWidgetFromMRML();
 }
@@ -371,27 +389,25 @@ void qMRMLSegmentationGeometryWidget::updateWidgetFromMRML()
     sourceNode = nullptr;
     }
 
+  // If volume node is selected, then show volume spacing options box
+  d->groupBox_VolumeSpacingOptions->setVisible(sourceNode != nullptr && sourceIsVolume);
+  // Otherwise enable spacing widget to allow editing if it's allowed
+  d->MRMLCoordinatesWidget_Spacing->setEnabled(sourceNode != nullptr && !sourceIsVolume && d->EditEnabled);
+
   // If no source node is selected, then show the current labelmap geometry
   if (!sourceNode)
     {
     d->groupBox_VolumeSpacingOptions->setVisible(false);
     std::string geometryString = d->SegmentationNode->GetSegmentation()->GetConversionParameter(
       vtkSegmentationConverter::GetReferenceImageGeometryParameterName());
-    if (geometryString.empty())
+    if (!geometryString.empty())
       {
-      d->updateGeometryWidgets();
-      return;
+      vtkOrientedImageData* geometryImageData = d->Logic->GetOutputGeometryImageData();
+      vtkSegmentationConverter::DeserializeImageGeometry(geometryString, geometryImageData, false);
       }
-    vtkOrientedImageData* geometryImageData = d->Logic->GetOutputGeometryImageData();
-    vtkSegmentationConverter::DeserializeImageGeometry(geometryString, geometryImageData, false);
     d->updateGeometryWidgets();
     return;
     }
-
-  // If volume node is selected, then show volume spacing options box
-  d->groupBox_VolumeSpacingOptions->setVisible(sourceNode != nullptr && sourceIsVolume);
-  // Otherwise enable spacing widget to allow editing if it's allowed
-  d->MRMLCoordinatesWidget_Spacing->setEnabled(sourceNode != nullptr && !sourceIsVolume && d->EditEnabled);
 
   // Calculate output geometry based on selection
   std::string errorMessage = d->Logic->CalculateOutputGeometry();
@@ -400,10 +416,18 @@ void qMRMLSegmentationGeometryWidget::updateWidgetFromMRML()
     d->label_Error->setText(errorMessage.c_str());
     d->label_Error->setVisible(true);
     qCritical() << Q_FUNC_INFO << ": " << errorMessage.c_str();
-    }
 
-  // Fill output geometry in the widget
-  d->updateGeometryWidgets();
+    // We must not call d->updateGeometryWidgets() here, because it could
+    // overwrite spacing, which would be very annoying (e.g., the user
+    // enters 0 into one of the spacing fields and all spacing fields
+    // would be reset and because of 0 spacing, directions matrix
+    // would be invalid).
+    }
+  else
+    {
+    // Fill output geometry in the widget
+    d->updateGeometryWidgets();
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -416,10 +440,26 @@ void qMRMLSegmentationGeometryWidget::setReferenceImageGeometryForSegmentationNo
     return;
     }
 
+  // Save reference geometry
   vtkOrientedImageData* geometryImageData = d->Logic->GetOutputGeometryImageData();
   std::string geometryString = vtkSegmentationConverter::SerializeImageGeometry(geometryImageData);
   d->SegmentationNode->GetSegmentation()->SetConversionParameter(
     vtkSegmentationConverter::GetReferenceImageGeometryParameterName(), geometryString );
+
+  // Save reference geometry node (this is shown in Segmentations module
+  // to gives a hint about which node the current geometry is based on)
+  const char* referenceGeometryNodeID = NULL;
+  if (d->Logic->GetSourceGeometryNode())
+    {
+    referenceGeometryNodeID = d->Logic->GetSourceGeometryNode()->GetID();
+    }
+  d->SegmentationNode->SetNodeReferenceID(
+    vtkMRMLSegmentationNode::GetReferenceImageGeometryReferenceRole().c_str(), referenceGeometryNodeID);
+
+  // Note: it could be also useful to save oversampling value and isotropic flag,
+  // we could then allow the user to modify these settings instead of always
+  // setting from scratch.
+
   qDebug() << Q_FUNC_INFO << "Reference image geometry of " << d->SegmentationNode->GetName()
     << " has been set to '" << geometryString.c_str() << "'";
 }

@@ -74,10 +74,10 @@
      <item row="1" column="2">
       <widget class="QToolButton" name="SpecifyGeometryButton">
        <property name="toolTip">
-        <string>Specify geometry (or grid) of the edited labelmap volume</string>
+        <string>Specify geometry (grid origin, spacing, axis directions, and default extent) of the edited labelmap representation</string>
        </property>
        <property name="text">
-        <string>Specify geometry of the edited labelmap volume</string>
+        <string>Specify geometry of the edited labelmap representation</string>
        </property>
        <property name="icon">
         <iconset resource="../../../../Annotations/Resources/qSlicerAnnotationModule.qrc">

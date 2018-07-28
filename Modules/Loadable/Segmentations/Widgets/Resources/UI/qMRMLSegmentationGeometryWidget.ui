@@ -255,6 +255,9 @@
         <property name="decimals">
          <number>2</number>
         </property>
+        <property name="decimalsOption">
+         <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts|ctkDoubleSpinBox::DecimalsByValue|ctkDoubleSpinBox::InsertDecimals|ctkDoubleSpinBox::ReplaceDecimals</set>
+        </property>
         <property name="quantity">
          <string>length</string>
         </property>

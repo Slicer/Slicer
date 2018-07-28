@@ -221,6 +221,10 @@ std::string vtkSlicerSegmentationGeometryLogic::CalculateOutputGeometry()
     outputSpacing[0] = this->UserSpacing[0];
     outputSpacing[1] = this->UserSpacing[1];
     outputSpacing[2] = this->UserSpacing[2];
+    if (outputSpacing[0] <= 0 || outputSpacing[1] <= 0 || outputSpacing[2] <= 0)
+      {
+      return "All spacing values must be larger than 0";
+      }
 
     // Get source bounds
     double sourceBounds[6] = {0, -1, 0, -1, 0, -1};
