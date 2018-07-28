@@ -932,6 +932,7 @@ double* vtkMRMLSegmentationNode::GetSegmentCenter(const std::string& segmentID)
       1.0
       };
     vtkNew<vtkMatrix4x4> imageToWorld;
+    labelmap->GetImageToWorldMatrix(imageToWorld.GetPointer());
     labelmap->GetImageToWorldMatrix(imageToWorld);
     imageToWorld->MultiplyPoint(segmentCenter_Image, this->SegmentCenterTmp);
     }
