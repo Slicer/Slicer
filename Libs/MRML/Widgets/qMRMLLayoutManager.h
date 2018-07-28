@@ -159,6 +159,10 @@ public:
   /// The returned collection object is owned by the layout manager.
   Q_INVOKABLE vtkCollection* mrmlSliceLogics()const;
 
+  /// Return the up-to-date list of vtkMRMLViewLogics associated to the threeD views.
+  /// The returned collection object is owned by the layout manager.
+  Q_INVOKABLE vtkCollection* mrmlViewLogics()const;
+
   Q_INVOKABLE void setMRMLColorLogic(vtkMRMLColorLogic* colorLogic);
   Q_INVOKABLE vtkMRMLColorLogic* mrmlColorLogic()const;
 

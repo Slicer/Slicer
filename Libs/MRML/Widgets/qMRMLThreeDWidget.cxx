@@ -34,6 +34,9 @@
 #include "qMRMLThreeDView.h"
 #include "qMRMLThreeDWidget.h"
 
+// MRML includes
+#include <vtkMRMLScene.h>
+
 // VTK includes
 #include <vtkCollection.h>
 
@@ -89,6 +92,9 @@ void qMRMLThreeDWidgetPrivate::init()
 
   QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    this->ThreeDView, SLOT(setMRMLScene(vtkMRMLScene*)));
+
+  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+                   this->ThreeDController, SLOT(setMRMLScene(vtkMRMLScene*)));
 }
 
 // --------------------------------------------------------------------------
@@ -127,7 +133,15 @@ void qMRMLThreeDWidget::setMRMLViewNode(vtkMRMLViewNode* newViewNode)
 vtkMRMLViewNode* qMRMLThreeDWidget::mrmlViewNode()const
 {
   Q_D(const qMRMLThreeDWidget);
-  return d->ThreeDView->mrmlViewNode();
+    return d->ThreeDView->mrmlViewNode();
+}
+
+// --------------------------------------------------------------------------
+vtkMRMLViewLogic *qMRMLThreeDWidget::viewLogic() const
+{
+  Q_D(const qMRMLThreeDWidget);
+
+  return d->ThreeDController->viewLogic();
 }
 
 // --------------------------------------------------------------------------
@@ -170,6 +184,21 @@ void qMRMLThreeDWidget::setViewColor(const QColor& newViewColor)
 {
   Q_D(qMRMLThreeDWidget);
   d->ThreeDController->setViewColor(newViewColor);
+}
+
+//---------------------------------------------------------------------------
+void qMRMLThreeDWidget::setViewLogics(vtkCollection *logics)
+{
+  Q_D(qMRMLThreeDWidget);
+  d->ThreeDController->setViewLogics(logics);
+}
+
+//---------------------------------------------------------------------------
+void qMRMLThreeDWidget::setMRMLScene(vtkMRMLScene *newScene)
+{
+  Q_D(qMRMLThreeDWidget);
+
+  this->Superclass::setMRMLScene(newScene);
 }
 
 //---------------------------------------------------------------------------

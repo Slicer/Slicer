@@ -44,7 +44,7 @@
 // MRMLLogic includes
 #include <vtkMRMLSliceLogic.h>
 
-/// VTK includes
+// VTK includes
 #include <vtkAlgorithmOutput.h>
 #include <vtkCollection.h>
 #include <vtkImageData.h>

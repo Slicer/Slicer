@@ -69,7 +69,7 @@ public:
   /// \sa setMRMLSliceNode()
   Q_INVOKABLE vtkMRMLSliceNode* mrmlSliceNode()const;
 
-  // \sa qMRMLSliceControllerWidget::sliceLogic()
+  /// \sa qMRMLSliceControllerWidget::sliceLogic()
   Q_INVOKABLE vtkMRMLSliceLogic* sliceLogic()const;
 
   /// \sa qMRMLSliceControllerWidget::sliceOrientation()

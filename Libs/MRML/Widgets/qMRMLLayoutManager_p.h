@@ -162,11 +162,18 @@ class QMRML_WIDGETS_EXPORT qMRMLLayoutThreeDViewFactory
 public:
   typedef qMRMLLayoutViewFactory Superclass;
   qMRMLLayoutThreeDViewFactory(QObject* parent = 0);
+  virtual ~qMRMLLayoutThreeDViewFactory();
 
   virtual QString viewClassName()const;
 
+  vtkCollection* viewLogics()const;
+  void setViewLogics(vtkCollection* viewLogics);
+
 protected:
   virtual QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode);
+  virtual void deleteView(vtkMRMLAbstractViewNode* viewNode);
+
+  vtkCollection* ViewLogics;
 };
 
 //------------------------------------------------------------------------------

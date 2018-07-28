@@ -24,9 +24,11 @@
 // MRMLLogic includes
 #include "vtkMRMLApplicationLogic.h"
 #include "vtkMRMLColorLogic.h"
+#include "vtkMRMLModelHierarchyLogic.h"
 #include "vtkMRMLSliceLogic.h"
 #include "vtkMRMLSliceLinkLogic.h"
-#include "vtkMRMLModelHierarchyLogic.h"
+#include "vtkMRMLViewLogic.h"
+#include "vtkMRMLViewLinkLogic.h"
 
 // MRML includes
 #include "vtkMRMLInteractionNode.h"
@@ -39,6 +41,7 @@
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLSceneViewNode.h"
 #include "vtkMRMLTableViewNode.h"
+#include "vtkMRMLViewNode.h"
 
 // VTK includes
 #include <vtkCollection.h>
@@ -78,7 +81,9 @@ public:
   vtkSmartPointer<vtkMRMLSelectionNode>    SelectionNode;
   vtkSmartPointer<vtkMRMLInteractionNode>  InteractionNode;
   vtkSmartPointer<vtkCollection> SliceLogics;
+  vtkSmartPointer<vtkCollection> ViewLogics;
   vtkSmartPointer<vtkMRMLSliceLinkLogic> SliceLinkLogic;
+  vtkSmartPointer<vtkMRMLViewLinkLogic> ViewLinkLogic;
   vtkSmartPointer<vtkMRMLModelHierarchyLogic> ModelHierarchyLogic;
   vtkSmartPointer<vtkMRMLColorLogic> ColorLogic;
   std::string TemporaryPath;
@@ -93,6 +98,7 @@ vtkMRMLApplicationLogic::vtkInternal::vtkInternal(vtkMRMLApplicationLogic * exte
 {
   this->External = external;
   this->SliceLinkLogic = vtkSmartPointer<vtkMRMLSliceLinkLogic>::New();
+  this->ViewLinkLogic = vtkSmartPointer<vtkMRMLViewLinkLogic>::New();
   this->ModelHierarchyLogic = vtkSmartPointer<vtkMRMLModelHierarchyLogic>::New();
   this->ColorLogic = vtkSmartPointer<vtkMRMLColorLogic>::New();
 }
@@ -151,6 +157,7 @@ vtkMRMLApplicationLogic::vtkMRMLApplicationLogic()
 {
   this->Internal = new vtkInternal(this);
   this->Internal->SliceLinkLogic->SetMRMLApplicationLogic(this);
+  this->Internal->ViewLinkLogic->SetMRMLApplicationLogic(this);
   this->Internal->ModelHierarchyLogic->SetMRMLApplicationLogic(this);
   this->Internal->ColorLogic->SetMRMLApplicationLogic(this);
 }
@@ -296,6 +303,78 @@ GetSliceLogicByModelDisplayNode(vtkMRMLModelDisplayNode* displayNode) const
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::SetViewLogics(vtkCollection *viewLogics)
+{
+  if (viewLogics == this->Internal->ViewLogics)
+    {
+    return;
+    }
+  this->Internal->ViewLogics = viewLogics;
+  this->Modified();
+}
+
+//---------------------------------------------------------------------------
+vtkCollection *vtkMRMLApplicationLogic::GetViewLogics() const
+{
+  return this->Internal->ViewLogics;
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLViewLogic *vtkMRMLApplicationLogic::
+GetViewLogic(vtkMRMLViewNode *viewNode) const
+{
+  if(!viewNode || !this->Internal->ViewLogics)
+    {
+    return 0;
+    }
+
+  vtkMRMLViewLogic* logic = 0;
+  vtkCollectionSimpleIterator it;
+  vtkCollection* logics = this->Internal->ViewLogics;
+
+  for (logics->InitTraversal(it);
+      (logic=vtkMRMLViewLogic::SafeDownCast(logics->GetNextItemAsObject(it)));)
+    {
+    if (logic->GetViewNode() == viewNode)
+      {
+      break;
+      }
+
+    logic = 0;
+    }
+
+  return logic;
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLViewLogic *vtkMRMLApplicationLogic::
+GetViewLogicByLayoutName(const char *layoutName) const
+{
+  if(!layoutName || !this->Internal->ViewLogics)
+    {
+    return 0;
+    }
+
+  vtkMRMLViewLogic* logic = 0;
+  vtkCollectionSimpleIterator it;
+  vtkCollection* logics = this->Internal->ViewLogics;
+
+  for (logics->InitTraversal(it);
+      (logic=vtkMRMLViewLogic::SafeDownCast(logics->GetNextItemAsObject(it)));)
+    {
+    if (logic->GetViewNode())
+      {
+      if ( !strcmp( logic->GetViewNode()->GetLayoutName(), layoutName) )
+        {
+        return logic;
+        }
+      }
+    }
+
+  return 0;
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLApplicationLogic::SetMRMLSceneInternal(vtkMRMLScene *newScene)
 {
   vtkMRMLNode * selectionNode = 0;
@@ -330,6 +409,7 @@ void vtkMRMLApplicationLogic::SetMRMLSceneInternal(vtkMRMLScene *newScene)
   this->Superclass::SetMRMLSceneInternal(newScene);
 
   this->Internal->SliceLinkLogic->SetMRMLScene(newScene);
+  this->Internal->ViewLinkLogic->SetMRMLScene(newScene);
   this->Internal->ModelHierarchyLogic->SetMRMLScene(newScene);
 }
 

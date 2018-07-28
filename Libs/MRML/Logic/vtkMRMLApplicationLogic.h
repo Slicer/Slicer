@@ -35,6 +35,8 @@ class vtkMRMLSelectionNode;
 class vtkMRMLStorableNode;
 class vtkMRMLStorageNode;
 class vtkMRMLInteractionNode;
+class vtkMRMLViewLogic;
+class vtkMRMLViewNode;
 
 // VTK includes
 class vtkCollection;
@@ -65,6 +67,12 @@ public:
   vtkMRMLSliceLogic* GetSliceLogicByLayoutName(const char* layoutName) const;
   /// Get slice logic from slice model display node
   vtkMRMLSliceLogic* GetSliceLogicByModelDisplayNode(vtkMRMLModelDisplayNode* displayNode) const;
+
+  /// All the view logics in the application
+  void SetViewLogics(vtkCollection* viewLogics);
+  vtkCollection* GetViewLogics()const;
+  vtkMRMLViewLogic* GetViewLogic(vtkMRMLViewNode* viewNode) const;
+  vtkMRMLViewLogic* GetViewLogicByLayoutName(const char* layoutName) const;
 
   /// Get ModelHierarchyLogic
   vtkMRMLModelHierarchyLogic* GetModelHierarchyLogic() const;
@@ -215,8 +223,6 @@ protected:
 
   void SaveStorableNodeToSlicerDataBundleDirectory(vtkMRMLStorableNode *storableNode,
                                                  std::string &dataDir);
-
-
 
 private:
 

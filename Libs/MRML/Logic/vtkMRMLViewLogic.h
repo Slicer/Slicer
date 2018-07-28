@@ -1,0 +1,126 @@
+/*=auto=========================================================================
+
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+
+  See COPYRIGHT.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Program:   3D Slicer
+  Module:    $RCSfile: vtkMRMLSliceLogic.h,v $
+  Date:      $Date$
+  Version:   $Revision: 18866
+
+=========================================================================auto=*/
+
+#ifndef __vtkMRMLViewLogic_h
+#define __vtkMRMLViewLogic_h
+
+// MRMLLogic includes
+#include "vtkMRMLAbstractLogic.h"
+
+// STD includes
+#include <vector>
+#include <deque>
+
+class vtkMRMLDisplayNode;
+class vtkMRMLLinearTransformNode;
+class vtkMRMLModelDisplayNode;
+class vtkMRMLModelNode;
+class vtkMRMLViewNode;
+class vtkMRMLCameraNode;
+class vtkMRMLVolumeNode;
+
+class vtkAlgorithmOutput;
+class vtkCollection;
+class vtkImageBlend;
+class vtkTransform;
+class vtkImageData;
+class vtkImageReslice;
+class vtkTransform;
+
+struct SliceLayerInfo;
+struct BlendPipeline;
+
+/// \brief Slicer logic class for view manipulation.
+///
+/// This class manages the logic associated with display of view windows
+/// (but not the GUI).  Features of the class include:
+///  -- manage the linking of the 3D View linking.
+///
+class VTK_MRML_LOGIC_EXPORT vtkMRMLViewLogic : public vtkMRMLAbstractLogic
+{
+public:
+  /// The Usual VTK class functions
+  static vtkMRMLViewLogic *New();
+  vtkTypeMacro(vtkMRMLViewLogic,vtkMRMLAbstractLogic);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+
+  /// Set / Get SliceLogic name
+  vtkSetStringMacro(Name);
+  vtkGetStringMacro(Name);
+
+  /// The MRML View node for this View logic
+  vtkGetObjectMacro (ViewNode, vtkMRMLViewNode);
+  void SetViewNode (vtkMRMLViewNode *newViewNode);
+
+  /// The MRML camera node for this View logic
+  vtkGetObjectMacro (CameraNode, vtkMRMLCameraNode);
+  void SetCameraNode (vtkMRMLCameraNode *newCameraNode);
+
+  /// Indicate an interaction with the camera node is beginning. The
+  /// parameters of the camera node being manipulated are passed as a
+  /// bitmask. See vtkMRMLViewNode::InteractionFlagType.
+  void StartCameraNodeInteraction(unsigned int parameters);
+
+  /// Indicate an interaction with the slice node has been completed
+  void EndCameraNodeInteraction();
+
+  /// Indicate an interaction with the view node is
+  /// beginning. The parameters of the view node being manipulated
+  /// are passed as a bitmask. See vtkMRMLViewNode::InteractionFlagType.
+  void StartViewNodeInteraction(unsigned int parameters);
+
+  /// Indicate an interaction with the view node has been completed
+  void EndViewNodeInteraction();
+
+  /// Manage and syncronise the CameraNode
+  void UpdateCameraNode();
+
+  /// Manage and syncronise the ViewNode
+  void UpdateViewNode();
+
+  /// Convenient method to get the view node from scene and name of the Logic.
+  /// The name of the Logic is the same of the widget one to which it is associated
+  static vtkMRMLViewNode *GetViewNode(vtkMRMLScene* scene,
+                                      const char* layoutName);
+
+  /// Convenient method to get the camera node from scene and name of the Logic.
+  /// The name of the Logic is the same of the widget one to which it is associated
+  static vtkMRMLCameraNode *GetCameraNode(vtkMRMLScene* scene,
+                                          const char* layoutName);
+
+protected:
+
+  vtkMRMLViewLogic();
+  virtual ~vtkMRMLViewLogic();
+
+  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene) VTK_OVERRIDE;
+
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) VTK_OVERRIDE;
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) VTK_OVERRIDE;
+  virtual void UpdateFromMRMLScene() VTK_OVERRIDE;
+
+  void UpdateMRMLNodes();
+
+  char *                      Name;
+  vtkMRMLViewNode *           ViewNode;
+  vtkMRMLCameraNode *         CameraNode;
+
+private:
+
+  vtkMRMLViewLogic(const vtkMRMLViewLogic&);
+  void operator=(const vtkMRMLViewLogic&);
+
+};
+
+#endif

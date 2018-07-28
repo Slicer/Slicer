@@ -208,10 +208,13 @@ void vtkMRMLCameraDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller,
       this->UpdateCameraNode();
       vtkDebugMacro("ProcessingMRML: got a camera node modified event");
       break;
-    case vtkCommand::ResetCameraClippingRangeEvent:
+    case vtkMRMLCameraNode::ResetCameraClippingEvent:
+      assert(vtkMRMLCameraNode::SafeDownCast(caller));
+      vtkDebugMacro("ProcessingMRML: got a camera node modified event");
       if (this->GetRenderer())
         {
         this->GetRenderer()->ResetCameraClippingRange();
+        this->GetRenderer()->UpdateLightsGeometryToFollowCamera();
         }
       else if (this->GetCameraNode() && this->GetCameraNode()->GetCamera())
         {
@@ -284,7 +287,7 @@ void vtkMRMLCameraDisplayableManager::SetAndObserveCameraNode(vtkMRMLCameraNode 
   vtkNew<vtkIntArray> cameraNodeEvents;
   cameraNodeEvents->InsertNextValue(vtkCommand::ModifiedEvent);
   cameraNodeEvents->InsertNextValue(vtkMRMLCameraNode::ActiveTagModifiedEvent);
-  cameraNodeEvents->InsertNextValue(vtkCommand::ResetCameraClippingRangeEvent);
+  cameraNodeEvents->InsertNextValue(vtkMRMLCameraNode::ResetCameraClippingEvent);
 
   vtkSetAndObserveMRMLNodeEventsMacro(
     this->Internal->CameraNode, newCameraNode, cameraNodeEvents.GetPointer());

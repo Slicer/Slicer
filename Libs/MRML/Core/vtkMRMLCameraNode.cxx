@@ -53,6 +53,9 @@ vtkMRMLCameraNode::vtkMRMLCameraNode()
   this->SetAndObserveCamera(camera.GetPointer());
 
   this->AppliedTransform = vtkMatrix4x4::New();
+
+  this->Interacting = 0;
+  this->InteractionFlags = 0;
  }
 
 //----------------------------------------------------------------------------
@@ -214,6 +217,7 @@ void vtkMRMLCameraNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintFloatMacro(ParallelScale);
   vtkMRMLPrintFloatMacro(ViewAngle);
   vtkMRMLPrintStringMacro(ActiveTag);
+  vtkMRMLPrintIntMacro(Interacting);
   vtkMRMLPrintEndMacro();
 
   os << indent << "AppliedTransform: " ;
@@ -337,6 +341,7 @@ void vtkMRMLCameraNode::ProcessMRMLEvents ( vtkObject *caller,
       event ==  vtkCommand::ModifiedEvent)
     {
     this->Modified();
+    this->InvokeCustomModifiedEvent(vtkMRMLCameraNode::CameraModifiedEvent, caller);
     }
 
   vtkMRMLTransformNode *tnode = this->GetParentTransformNode();
@@ -688,4 +693,18 @@ void vtkMRMLCameraNode::Reset(bool resetRotation,
     renderer->UpdateLightsGeometryToFollowCamera();
     }
   this->EndModify(wasModifying);
+}
+
+//-----------------------------------------------------------
+void vtkMRMLCameraNode::SetInteracting(int interacting)
+{
+  // Don't call Modified()
+  this->Interacting = interacting;
+}
+
+//-----------------------------------------------------------
+void vtkMRMLCameraNode::SetInteractionFlags(unsigned int flags)
+{
+  // Don't call Modified()
+  this->InteractionFlags = flags;
 }

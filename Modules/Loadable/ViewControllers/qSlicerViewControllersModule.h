@@ -53,7 +53,7 @@ public:
 
   virtual QStringList categories()const;
   virtual QIcon icon()const;
-
+  virtual QString helpText()const;
   virtual QString acknowledgementText()const;
   virtual QStringList contributors()const;
 

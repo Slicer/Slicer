@@ -61,6 +61,9 @@ vtkMRMLViewNode::vtkMRMLViewNode()
   this->RaycastTechnique = vtkMRMLViewNode::Composite;
   this->VolumeRenderingSurfaceSmoothing = false;
   this->VolumeRenderingOversamplingFactor = 2.0;
+  this->LinkedControl = 0;
+  this->Interacting = 0;
+  this->InteractionFlags = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -105,6 +108,7 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLEnumMacro(raycastTechnique, RaycastTechnique);
   vtkMRMLWriteXMLIntMacro(volumeRenderingSurfaceSmoothing, VolumeRenderingSurfaceSmoothing);
   vtkMRMLWriteXMLFloatMacro(volumeRenderingOversamplingFactor, VolumeRenderingOversamplingFactor);
+  vtkMRMLWriteXMLIntMacro(rockLength, LinkedControl);
   vtkMRMLWriteXMLEndMacro();
 }
 
@@ -140,6 +144,7 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLEnumMacro(raycastTechnique, RaycastTechnique);
   vtkMRMLReadXMLIntMacro(volumeRenderingSurfaceSmoothing, VolumeRenderingSurfaceSmoothing);
   vtkMRMLReadXMLFloatMacro(volumeRenderingOversamplingFactor, VolumeRenderingOversamplingFactor);
+  vtkMRMLReadXMLIntMacro(LinkedControl, LinkedControl)
   vtkMRMLReadXMLEndMacro();
 
   this->EndModify(disabledModify);
@@ -179,6 +184,7 @@ void vtkMRMLViewNode::Copy(vtkMRMLNode *anode)
   vtkMRMLCopyIntMacro(RaycastTechnique);
   vtkMRMLCopyIntMacro(VolumeRenderingSurfaceSmoothing);
   vtkMRMLCopyFloatMacro(VolumeRenderingOversamplingFactor);
+  vtkMRMLCopyIntMacro(LinkedControl);
   vtkMRMLCopyEndMacro();
 
   this->EndModify(disabledModify);
@@ -214,6 +220,8 @@ void vtkMRMLViewNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintIntMacro(RaycastTechnique);
   vtkMRMLPrintIntMacro(VolumeRenderingSurfaceSmoothing);
   vtkMRMLPrintFloatMacro(VolumeRenderingOversamplingFactor);
+  vtkMRMLPrintIntMacro(Interacting);
+  vtkMRMLPrintIntMacro(LinkedControl);
   vtkMRMLPrintEndMacro();
 }
 
@@ -481,4 +489,18 @@ int vtkMRMLViewNode::GetRaycastTechniqueFromString(const char* name)
     }
   // unknown name
   return -1;
+}
+
+//-----------------------------------------------------------
+void vtkMRMLViewNode::SetInteracting(int interacting)
+{
+  // Don't call Modified()
+  this->Interacting = interacting;
+}
+
+//-----------------------------------------------------------
+void vtkMRMLViewNode::SetInteractionFlags(unsigned int flags)
+{
+  // Don't call Modified()
+  this->InteractionFlags = flags;
 }

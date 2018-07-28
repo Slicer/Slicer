@@ -148,7 +148,9 @@ public:
   /// Events
   enum
   {
-    ActiveTagModifiedEvent = 30000
+    ActiveTagModifiedEvent = 30000,
+    CameraModifiedEvent = 31000,
+    ResetCameraClippingEvent = 32000,
   };
 
   /// Mark the active tag node as references.
@@ -213,6 +215,39 @@ public:
              bool resetTranslation = true,
              bool resetDistance = true,
              vtkRenderer* renderer = 0);
+
+  /// Get/Set a flag indicating whether this node is actively being
+  /// manipulated (usually) by a user interface. This flag is used by
+  /// logic classes to determine whether state changes should be
+  /// propagated to other nodes to implement linked controls. Does not
+  /// cause a Modified().
+  void SetInteracting(int);
+  vtkGetMacro(Interacting, int);
+  vtkBooleanMacro(Interacting, int);
+
+  /// Enum identifying the parameters being manipulated with calls to
+  /// InteractionOn() and InteractionOff(). Identifiers are powers of
+  /// two so they can be combined into a bitmask to manipulate
+  /// multiple parameters.
+  /// The meanings for the flags are:
+  enum InteractionFlagType
+  {
+    None = 0,
+    LookFromAxis,
+    ZoomInFlag,
+    ZoomOutFlag,
+    CenterFlag,
+    vtkCameraFlag,
+  };
+
+  /// Get/Set a flag indicating what parameters are being manipulated
+  /// within calls to InteractingOn() and InteractingOff(). These
+  /// fields are used to propagate linked behaviors. This flag is a
+  /// bitfield, with multiple parameters OR'd to compose the
+  /// flag. Does not cause a Modifed().
+  void SetInteractionFlags(unsigned int);
+  vtkGetMacro(InteractionFlags, unsigned int);
+
 protected:
   vtkMRMLCameraNode();
   ~vtkMRMLCameraNode();
@@ -230,6 +265,9 @@ protected:
   char *InternalActiveTag;
 
   vtkMatrix4x4 *AppliedTransform;
+
+  int Interacting;
+  unsigned int InteractionFlags;
 };
 
 //---------------------------------------------------------------------------

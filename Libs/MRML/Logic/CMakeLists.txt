@@ -77,6 +77,8 @@ set(MRMLLogic_SRCS
   vtkMRMLSliceLayerLogic.cxx
   vtkMRMLSliceLogic.cxx
   vtkMRMLSliceLinkLogic.cxx
+  vtkMRMLViewLogic.cxx
+  vtkMRMLViewLinkLogic.cxx
 
   # slicer's vtk extensions (filters)
   vtkImageLabelOutline.cxx

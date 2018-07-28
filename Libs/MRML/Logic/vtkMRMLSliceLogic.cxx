@@ -367,7 +367,6 @@ void vtkMRMLSliceLogic::UpdateSliceNode()
 }
 
 //----------------------------------------------------------------------------
-
 void vtkMRMLSliceLogic::UpdateSliceNodeFromLayout()
 {
   if (this->SliceNode == 0)

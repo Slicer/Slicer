@@ -136,6 +136,10 @@ qSlicerViewControllersModuleWidgetPrivate::createController(vtkMRMLNode *n, qSli
     if (viewWidget)
       {
       widget->setThreeDView( viewWidget->threeDView() );
+      widget->setMRMLScene(q->mrmlScene());
+      // qMRMLThreeDViewControllerWidget needs to know the ViewLogic(s)
+      widget->setViewLogics(layoutManager->mrmlViewLogics());
+      widget->setViewLogic(viewWidget->threeDController()->viewLogic());
       }
 
     // add the widget to the display

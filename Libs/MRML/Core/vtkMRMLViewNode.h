@@ -248,6 +248,51 @@ public:
     ResetFocalPointRequestedEvent,
     };
 
+  /// Get/Set a flag indicating whether this node is actively being
+  /// manipulated (usually) by a user interface. This flag is used by
+  /// logic classes to determine whether state changes should be
+  /// propagated to other nodes to implement linked controls. Does not
+  /// cause a Modified().
+  void SetInteracting(int);
+  vtkGetMacro(Interacting, int);
+  vtkBooleanMacro(Interacting, int);
+
+  /// Enum identifying the parameters being manipulated with calls to
+  /// InteractionOn() and InteractionOff(). Identifiers are powers of
+  /// two so they can be combined into a bitmask to manipulate
+  /// multiple parameters.
+  /// The meanings for the flags are:
+  /// RenderModeFlag - broadcast the RenderMode to all linked viewers
+  enum InteractionFlagType
+  {
+    None = 0,
+    AnimationModeFlag,
+    RenderModeFlag,
+    BoxVisibleFlag,
+    BoxLabelVisibileFlag,
+    BackgroundColorFlag,
+    StereoTypeFlag,
+    OrientationMarkerTypeFlag,
+    OrientationMarkerSizeFlag,
+    RulerTypeFlag,
+    UseDepthPeelingFlag,
+    FPSVisibleFlag,
+  };
+
+  ///
+  /// toggle the view linking
+  vtkGetMacro (LinkedControl, int );
+  vtkSetMacro (LinkedControl, int );
+  vtkBooleanMacro(LinkedControl, int);
+
+  /// Get/Set a flag indicating what parameters are being manipulated
+  /// within calls to InteractingOn() and InteractingOff(). These
+  /// fields are used to propagate linked behaviors. This flag is a
+  /// bitfield, with multiple parameters OR'd to compose the
+  /// flag. Does not cause a Modifed().
+  void SetInteractionFlags(unsigned int);
+  vtkGetMacro(InteractionFlags, unsigned int);
+
 protected:
   vtkMRMLViewNode();
   ~vtkMRMLViewNode();
@@ -323,6 +368,11 @@ protected:
   /// factor.
   /// If \sa VolumeRenderingQuality is set to maximum quality, then a fix oversampling factor of 10 is used.
   double VolumeRenderingOversamplingFactor;
+
+  int LinkedControl;
+  int Interacting;
+  unsigned int InteractionFlags;
+
 };
 
 #endif

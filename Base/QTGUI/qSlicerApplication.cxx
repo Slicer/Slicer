@@ -477,6 +477,8 @@ void qSlicerApplication::setLayoutManager(qSlicerLayoutManager* layoutManager)
     {
     this->applicationLogic()->SetSliceLogics(
       d->LayoutManager? d->LayoutManager.data()->mrmlSliceLogics() : 0);
+    this->applicationLogic()->SetViewLogics(
+      d->LayoutManager? d->LayoutManager.data()->mrmlViewLogics() : 0);
     if (d->LayoutManager)
       {
       d->LayoutManager.data()->setMRMLColorLogic(this->applicationLogic()->GetColorLogic());

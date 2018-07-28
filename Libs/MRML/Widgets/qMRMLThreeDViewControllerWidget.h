@@ -33,6 +33,12 @@ class qMRMLThreeDView;
 // MRML includes
 class vtkMRMLViewNode;
 
+// MRMLLogic includes
+class vtkMRMLViewLogic;
+
+// VTK includes
+class vtkCollection;
+
 class QMRML_WIDGETS_EXPORT qMRMLThreeDViewControllerWidget
   : public qMRMLViewControllerBar
 {
@@ -61,9 +67,27 @@ public:
 
   void setQuadBufferStereoSupportEnabled(bool value);
 
+  /// Get ViewLogic
+  vtkMRMLViewLogic* viewLogic()const;
+
+  /// Set \a newViewLogic
+  /// Use if two instances of the controller need to observe the same logic.
+  void setViewLogic(vtkMRMLViewLogic * newViewLogic);
+
+  /// TODO:
+  /// Ideally the view logics should be retrieved by the viewLogic
+  /// until then, we manually set them.
+  void setViewLogics(vtkCollection* logics);
+
 public slots:
+
+  virtual void setMRMLScene(vtkMRMLScene* newScene);
+
   void setThreeDView(qMRMLThreeDView* threeDView);
   void setMRMLViewNode(vtkMRMLViewNode* viewNode);
+
+  /// Link/Unlink the view controls and the cameras across all viewes
+  void setViewLink(bool linked);
 
   void setOrthographicModeEnabled(bool enabled);
 
@@ -107,7 +131,8 @@ public slots:
   void setRulerType(int type);
 
 protected slots:
-  void updateWidgetFromMRML();
+  void updateWidgetFromMRMLView();
+  void updateViewFromMRMLCamera();
 
 private:
   Q_DECLARE_PRIVATE(qMRMLThreeDViewControllerWidget);
