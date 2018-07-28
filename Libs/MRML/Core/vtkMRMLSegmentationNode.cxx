@@ -926,14 +926,13 @@ double* vtkMRMLSegmentationNode::GetSegmentCenter(const std::string& segmentID)
       }
     double segmentCenter_Image[4] =
       {
-      (labelOrientedImageDataEffectiveExtent[0] + labelOrientedImageDataEffectiveExtent[1]) / 2,
-      (labelOrientedImageDataEffectiveExtent[2] + labelOrientedImageDataEffectiveExtent[3]) / 2,
-      (labelOrientedImageDataEffectiveExtent[4] + labelOrientedImageDataEffectiveExtent[5]) / 2,
+      (labelOrientedImageDataEffectiveExtent[0] + labelOrientedImageDataEffectiveExtent[1]) / 2.0,
+      (labelOrientedImageDataEffectiveExtent[2] + labelOrientedImageDataEffectiveExtent[3]) / 2.0,
+      (labelOrientedImageDataEffectiveExtent[4] + labelOrientedImageDataEffectiveExtent[5]) / 2.0,
       1.0
       };
     vtkNew<vtkMatrix4x4> imageToWorld;
     labelmap->GetImageToWorldMatrix(imageToWorld.GetPointer());
-    labelmap->GetImageToWorldMatrix(imageToWorld);
     imageToWorld->MultiplyPoint(segmentCenter_Image, this->SegmentCenterTmp);
     }
   else
