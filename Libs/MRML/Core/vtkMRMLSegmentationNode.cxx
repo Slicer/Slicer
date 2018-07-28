@@ -65,6 +65,11 @@ vtkMRMLSegmentationNode::vtkMRMLSegmentationNode()
   this->SegmentationModifiedCallbackCommand->SetClientData(reinterpret_cast<void *>(this));
   this->SegmentationModifiedCallbackCommand->SetCallback(vtkMRMLSegmentationNode::SegmentationModifiedCallback);
 
+  this->SegmentCenterTmp[0] = 0.0;
+  this->SegmentCenterTmp[1] = 0.0;
+  this->SegmentCenterTmp[2] = 0.0;
+  this->SegmentCenterTmp[3] = 1.0;
+
   // Create empty segmentations object
   this->Segmentation = NULL;
   vtkSmartPointer<vtkSegmentation> segmentation = vtkSmartPointer<vtkSegmentation>::New();
@@ -892,4 +897,75 @@ bool vtkMRMLSegmentationNode::SetMasterRepresentationToClosedSurface()
     }
   this->Segmentation->SetMasterRepresentationName(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
   return true;
+}
+
+//---------------------------------------------------------------------------
+double* vtkMRMLSegmentationNode::GetSegmentCenter(const std::string& segmentID)
+{
+  if (!this->Segmentation)
+    {
+    vtkErrorMacro("GetSegmentCenter: Invalid segmentation");
+    return NULL;
+    }
+  vtkSegment* currentSegment = this->Segmentation->GetSegment(segmentID);
+  if (!currentSegment)
+    {
+    vtkErrorMacro("GetSegmentCenter: Segment not found: " << segmentID);
+    return NULL;
+    }
+
+  double segmentCenter_Segment[4] = { 0.0, 0.0, 0.0, 1.0 }; // in the segment's coordinate system
+  if (this->Segmentation->ContainsRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName()))
+    {
+    int labelOrientedImageDataEffectiveExtent[6] = { 0, -1, 0, -1, 0, -1 };
+    vtkOrientedImageData* labelmap = this->GetBinaryLabelmapRepresentation(segmentID);
+    if (!vtkOrientedImageDataResample::CalculateEffectiveExtent(labelmap, labelOrientedImageDataEffectiveExtent))
+      {
+      vtkWarningMacro("GetSegmentCenter: segment " << segmentID << " is empty");
+      return NULL;
+      }
+    double segmentCenter_Image[4] =
+      {
+      (labelOrientedImageDataEffectiveExtent[0] + labelOrientedImageDataEffectiveExtent[1]) / 2,
+      (labelOrientedImageDataEffectiveExtent[2] + labelOrientedImageDataEffectiveExtent[3]) / 2,
+      (labelOrientedImageDataEffectiveExtent[4] + labelOrientedImageDataEffectiveExtent[5]) / 2,
+      1.0
+      };
+    vtkNew<vtkMatrix4x4> imageToWorld;
+    labelmap->GetImageToWorldMatrix(imageToWorld);
+    imageToWorld->MultiplyPoint(segmentCenter_Image, this->SegmentCenterTmp);
+    }
+  else
+    {
+    double bounds[6] = { 0.0, -1.0, 0.0, -1.0, 0.0, -1.0 };
+    currentSegment->GetBounds(bounds);
+    if (bounds[0]>bounds[1] || bounds[2]>bounds[3] || bounds[4]>bounds[5])
+      {
+      vtkWarningMacro("GetSegmentCenter: segment " << segmentID << " is empty");
+      return NULL;
+      }
+    this->SegmentCenterTmp[0] = (bounds[0] + bounds[1]) / 2.0;
+    this->SegmentCenterTmp[1] = (bounds[2] + bounds[3]) / 2.0;
+    this->SegmentCenterTmp[2] = (bounds[4] + bounds[5]) / 2.0;
+    }
+
+  return this->SegmentCenterTmp;
+}
+
+
+//---------------------------------------------------------------------------
+double* vtkMRMLSegmentationNode::GetSegmentCenterRAS(const std::string& segmentID)
+{
+  double* segmentCenter_Segment = this->GetSegmentCenter(segmentID);
+  if (!segmentCenter_Segment)
+    {
+    return NULL;
+    }
+
+  // If segmentation node is transformed, apply that transform to get RAS coordinates
+  vtkNew<vtkGeneralTransform> transformSegmentToRas;
+  vtkMRMLTransformNode::GetTransformBetweenNodes(this->GetParentTransformNode(), NULL, transformSegmentToRas.GetPointer());
+  transformSegmentToRas->TransformPoint(segmentCenter_Segment, this->SegmentCenterTmp);
+
+  return this->SegmentCenterTmp;
 }

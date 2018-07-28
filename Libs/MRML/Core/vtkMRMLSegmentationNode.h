@@ -199,6 +199,14 @@ public:
   /// Delete segment from segmentation.
   void RemoveSegment(const std::string& segmentID);
 
+  /// Get position of the segment's center (in the segmentation node's coordinate system)
+  double* GetSegmentCenter(const std::string& segmentID);
+
+  /// Get position of the segment's center in world coordinate system.
+  /// It is the position returned by GetSegmentCenter() transformed by the segmentation node's
+  /// parent transform.
+  double* GetSegmentCenterRAS(const std::string& segmentID);
+
 protected:
   /// Set segmentation object
   vtkSetObjectMacro(Segmentation, vtkSegmentation);
@@ -233,6 +241,10 @@ protected:
 
   /// Command handling events from segmentation object
   vtkSmartPointer<vtkCallbackCommand> SegmentationModifiedCallbackCommand;
+
+  /// Temporary buffer that holds value returned by GetSegmentCenter(...) and GetSegmentCenterRAS(...)
+  /// Has 4 components to allow usage in homogeneous transformations
+  double SegmentCenterTmp[4];
 };
 
 #endif // __vtkMRMLSegmentationNode_h
