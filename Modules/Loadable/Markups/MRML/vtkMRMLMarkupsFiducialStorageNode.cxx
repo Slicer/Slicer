@@ -49,7 +49,7 @@ public:
 
   void ReadFromString(const std::string &row)
     {
-    CSVState state = CSVState::UnquotedField;
+    CSVState state = UnquotedField;
     this->Fields.clear();
     std::string currentField;
     std::string currentFieldExists;
@@ -58,7 +58,7 @@ public:
       {
       switch (state)
         {
-      case CSVState::UnquotedField:
+      case UnquotedField:
         if (*c == this->Separator)
           {
           // end of field
@@ -71,36 +71,36 @@ public:
           // not indicate a quoted field, it simply means a quote character.
           // Therefore, only switch to quoted-field mode if quote
           // is the first character in the field.
-          state = CSVState::QuotedField;
+          state = QuotedField;
           }
         else
           {
           currentField.push_back(*c);
           }
         break;
-      case CSVState::QuotedField:
+      case QuotedField:
         if (*c == '"')
           {
-          state = CSVState::QuotedQuote;
+          state = QuotedQuote;
           }
         else
           {
           currentField.push_back(*c);
           }
         break;
-      case CSVState::QuotedQuote:
+      case QuotedQuote:
         if (*c == this->Separator)
           {
           // , after closing quote
           this->Fields.push_back(currentField);
           currentField.clear();
-          state = CSVState::UnquotedField;
+          state = UnquotedField;
           }
         else if (*c == '"')
           {
           // double-quote ("") in a quoted field means a single quote (")
           currentField.push_back('"');
-          state = CSVState::QuotedField;
+          state = QuotedField;
           }
         else
           {
@@ -110,7 +110,7 @@ public:
           // We save the character and revert back to unquoted mode to not lose any data:
           //   [This "is" a, quoted field]
           currentField.push_back(*c);
-          state = CSVState::UnquotedField;
+          state = UnquotedField;
           }
         break;
         }
