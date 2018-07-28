@@ -108,7 +108,7 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLEnumMacro(raycastTechnique, RaycastTechnique);
   vtkMRMLWriteXMLIntMacro(volumeRenderingSurfaceSmoothing, VolumeRenderingSurfaceSmoothing);
   vtkMRMLWriteXMLFloatMacro(volumeRenderingOversamplingFactor, VolumeRenderingOversamplingFactor);
-  vtkMRMLWriteXMLIntMacro(rockLength, LinkedControl);
+  vtkMRMLWriteXMLIntMacro(linkedControl, LinkedControl);
   vtkMRMLWriteXMLEndMacro();
 }
 
@@ -144,7 +144,7 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLEnumMacro(raycastTechnique, RaycastTechnique);
   vtkMRMLReadXMLIntMacro(volumeRenderingSurfaceSmoothing, VolumeRenderingSurfaceSmoothing);
   vtkMRMLReadXMLFloatMacro(volumeRenderingOversamplingFactor, VolumeRenderingOversamplingFactor);
-  vtkMRMLReadXMLIntMacro(LinkedControl, LinkedControl)
+  vtkMRMLReadXMLIntMacro(linkedControl, LinkedControl)
   vtkMRMLReadXMLEndMacro();
 
   this->EndModify(disabledModify);

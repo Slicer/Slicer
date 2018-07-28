@@ -36,6 +36,7 @@
 
 // qMRML includes
 #include "qMRMLThreeDWidget.h"
+#include "qMRMLThreeDViewControllerWidget.h"
 
 // MRML includes
 #include <vtkMRMLInteractionNode.h>
@@ -98,6 +99,7 @@ int qMRMLThreeDWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
   vtkNew<vtkMRMLViewNode> viewNode;
   scene->AddNode(viewNode.GetPointer());
 
+  widget.setViewLabel("View1");
   widget.setMRMLScene(scene.GetPointer());
   widget.setMRMLViewNode(viewNode.GetPointer());
   etpWidget.addTestCase(&widget,
