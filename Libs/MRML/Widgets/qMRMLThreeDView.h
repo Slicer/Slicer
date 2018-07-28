@@ -57,7 +57,7 @@ public:
   /// vtkMRMLViewDisplayableManager and vtkMRMLModelDisplayableManager are
   /// already registered.
   void addDisplayableManager(const QString& displayableManager);
-  Q_INVOKABLE void getDisplayableManagers(vtkCollection *displayableManagers);
+  Q_INVOKABLE void getDisplayableManagers(vtkCollection* displayableManagers);
 
   /// Get the 3D View node observed by view.
   Q_INVOKABLE vtkMRMLViewNode* mrmlViewNode()const;

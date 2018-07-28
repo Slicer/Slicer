@@ -464,14 +464,14 @@ void qMRMLThreeDViewControllerWidget::setQuadBufferStereoSupportEnabled(bool val
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLViewLogic *qMRMLThreeDViewControllerWidget::viewLogic() const
+vtkMRMLViewLogic* qMRMLThreeDViewControllerWidget::viewLogic() const
 {
   Q_D(const qMRMLThreeDViewControllerWidget);
   return d->ViewLogic;
 }
 
 // --------------------------------------------------------------------------
-void qMRMLThreeDViewControllerWidget::setViewLogic(vtkMRMLViewLogic *newViewLogic)
+void qMRMLThreeDViewControllerWidget::setViewLogic(vtkMRMLViewLogic* newViewLogic)
 {
   Q_D(qMRMLThreeDViewControllerWidget);
   if (d->ViewLogic == newViewLogic)
@@ -488,14 +488,14 @@ void qMRMLThreeDViewControllerWidget::setViewLogic(vtkMRMLViewLogic *newViewLogi
 }
 
 // --------------------------------------------------------------------------
-void qMRMLThreeDViewControllerWidget::setViewLogics(vtkCollection *viewLogics)
+void qMRMLThreeDViewControllerWidget::setViewLogics(vtkCollection* viewLogics)
 {
   Q_D(qMRMLThreeDViewControllerWidget);
   d->ViewLogics = viewLogics;
 }
 
 // --------------------------------------------------------------------------
-void qMRMLThreeDViewControllerWidget::setMRMLScene(vtkMRMLScene *newScene)
+void qMRMLThreeDViewControllerWidget::setMRMLScene(vtkMRMLScene* newScene)
 {
   Q_D(qMRMLThreeDViewControllerWidget);
 
@@ -811,7 +811,8 @@ void qMRMLThreeDViewControllerWidget::setRulerType(int newRulerType)
   d->ViewLogic->EndViewNodeInteraction();
 
   // Switch to orthographic render mode automatically if ruler is enabled
-  if (newRulerType!=vtkMRMLViewNode::RulerTypeNone && d->ViewNode->GetRenderMode()!=vtkMRMLViewNode::Orthographic)
+  if (newRulerType!=vtkMRMLViewNode::RulerTypeNone &&
+      d->ViewNode->GetRenderMode()!=vtkMRMLViewNode::Orthographic)
     {
     d->ViewLogic->StartViewNodeInteraction(vtkMRMLViewNode::RenderModeFlag);
     d->ViewNode->SetRenderMode(vtkMRMLViewNode::Orthographic);

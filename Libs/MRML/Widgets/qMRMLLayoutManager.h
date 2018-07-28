@@ -127,7 +127,7 @@ public:
   /// Get the view widget representing a particular node (can be used
   /// for SliceNodes or ViewNodes, returning qMRMLSliceWidget or
   /// qMRMLThreeDWidget respectively).
-  Q_INVOKABLE QWidget* viewWidget(vtkMRMLNode *n) const;
+  Q_INVOKABLE QWidget* viewWidget(vtkMRMLNode* n) const;
 
   /// Get slice view widget identified by \a name
   Q_INVOKABLE qMRMLSliceWidget* sliceWidget(const QString& name)const;
@@ -244,10 +244,10 @@ public slots:
   void resetSliceViews();
 
 signals:
-  void activeMRMLThreeDViewNodeChanged(vtkMRMLViewNode * newActiveMRMLThreeDViewNode);
-  void activeMRMLChartViewNodeChanged(vtkMRMLChartViewNode * newActiveMRMLChartViewNode);
-  void activeMRMLTableViewNodeChanged(vtkMRMLTableViewNode * newActiveMRMLChartViewNode);
-  void activeMRMLPlotViewNodeChanged(vtkMRMLPlotViewNode * newActiveMRMLPlotViewNode);
+  void activeMRMLThreeDViewNodeChanged(vtkMRMLViewNode* newActiveMRMLThreeDViewNode);
+  void activeMRMLChartViewNodeChanged(vtkMRMLChartViewNode* newActiveMRMLChartViewNode);
+  void activeMRMLTableViewNodeChanged(vtkMRMLTableViewNode* newActiveMRMLChartViewNode);
+  void activeMRMLPlotViewNodeChanged(vtkMRMLPlotViewNode* newActiveMRMLPlotViewNode);
   void activeThreeDRendererChanged(vtkRenderer* newRenderer);
   void activeChartRendererChanged(vtkRenderer* newRenderer);
   void activeTableRendererChanged(vtkRenderer* newRenderer);

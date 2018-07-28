@@ -66,11 +66,11 @@ public:
 
   /// The MRML View node for this View logic
   vtkGetObjectMacro (ViewNode, vtkMRMLViewNode);
-  void SetViewNode (vtkMRMLViewNode *newViewNode);
+  void SetViewNode (vtkMRMLViewNode* newViewNode);
 
   /// The MRML camera node for this View logic
   vtkGetObjectMacro (CameraNode, vtkMRMLCameraNode);
-  void SetCameraNode (vtkMRMLCameraNode *newCameraNode);
+  void SetCameraNode (vtkMRMLCameraNode* newCameraNode);
 
   /// Indicate an interaction with the camera node is beginning. The
   /// parameters of the camera node being manipulated are passed as a
@@ -96,20 +96,19 @@ public:
 
   /// Convenient method to get the view node from scene and name of the Logic.
   /// The name of the Logic is the same of the widget one to which it is associated
-  static vtkMRMLViewNode *GetViewNode(vtkMRMLScene* scene,
+  static vtkMRMLViewNode* GetViewNode(vtkMRMLScene* scene,
                                       const char* layoutName);
 
   /// Convenient method to get the camera node from scene and name of the Logic.
   /// The name of the Logic is the same of the widget one to which it is associated
-  static vtkMRMLCameraNode *GetCameraNode(vtkMRMLScene* scene,
+  static vtkMRMLCameraNode* GetCameraNode(vtkMRMLScene* scene,
                                           const char* layoutName);
 
 protected:
-
   vtkMRMLViewLogic();
   virtual ~vtkMRMLViewLogic();
 
-  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene) VTK_OVERRIDE;
+  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) VTK_OVERRIDE;
 
   virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) VTK_OVERRIDE;
   virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) VTK_OVERRIDE;
@@ -117,12 +116,11 @@ protected:
 
   void UpdateMRMLNodes();
 
-  char *                      Name;
-  vtkMRMLViewNode *           ViewNode;
-  vtkMRMLCameraNode *         CameraNode;
+  char* Name;
+  vtkMRMLViewNode* ViewNode;
+  vtkMRMLCameraNode* CameraNode;
 
 private:
-
   vtkMRMLViewLogic(const vtkMRMLViewLogic&);
   void operator=(const vtkMRMLViewLogic&);
 

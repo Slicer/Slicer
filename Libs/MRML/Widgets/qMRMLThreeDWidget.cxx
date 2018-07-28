@@ -54,7 +54,7 @@ public:
 
   void init();
 
-  qMRMLThreeDView*       ThreeDView;
+  qMRMLThreeDView* ThreeDView;
   qMRMLThreeDViewControllerWidget* ThreeDController;
 };
 
@@ -137,7 +137,7 @@ vtkMRMLViewNode* qMRMLThreeDWidget::mrmlViewNode()const
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLViewLogic *qMRMLThreeDWidget::viewLogic() const
+vtkMRMLViewLogic* qMRMLThreeDWidget::viewLogic() const
 {
   Q_D(const qMRMLThreeDWidget);
 
@@ -152,7 +152,7 @@ qMRMLThreeDView* qMRMLThreeDWidget::threeDView()const
 }
 
 // --------------------------------------------------------------------------
-qMRMLThreeDViewControllerWidget * qMRMLThreeDWidget::threeDController() const
+qMRMLThreeDViewControllerWidget* qMRMLThreeDWidget::threeDController() const
 {
   Q_D(const qMRMLThreeDWidget);
   return d->ThreeDController;
@@ -187,14 +187,14 @@ void qMRMLThreeDWidget::setViewColor(const QColor& newViewColor)
 }
 
 //---------------------------------------------------------------------------
-void qMRMLThreeDWidget::setViewLogics(vtkCollection *logics)
+void qMRMLThreeDWidget::setViewLogics(vtkCollection* logics)
 {
   Q_D(qMRMLThreeDWidget);
   d->ThreeDController->setViewLogics(logics);
 }
 
 //---------------------------------------------------------------------------
-void qMRMLThreeDWidget::setMRMLScene(vtkMRMLScene *newScene)
+void qMRMLThreeDWidget::setMRMLScene(vtkMRMLScene* newScene)
 {
   Q_D(qMRMLThreeDWidget);
 
@@ -209,7 +209,7 @@ QColor qMRMLThreeDWidget::viewColor()const
 }
 
 //------------------------------------------------------------------------------
-void qMRMLThreeDWidget::getDisplayableManagers(vtkCollection *displayableManagers)
+void qMRMLThreeDWidget::getDisplayableManagers(vtkCollection* displayableManagers)
 {
   Q_D(qMRMLThreeDWidget);
   d->ThreeDView->getDisplayableManagers(displayableManagers);

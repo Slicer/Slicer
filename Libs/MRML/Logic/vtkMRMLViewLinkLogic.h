@@ -44,32 +44,29 @@ class vtkMRMLCameraNode;
 class VTK_MRML_LOGIC_EXPORT vtkMRMLViewLinkLogic : public vtkMRMLAbstractLogic
 {
 public:
-
   /// The Usual VTK class functions
   static vtkMRMLViewLinkLogic *New();
   vtkTypeMacro(vtkMRMLViewLinkLogic,vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
 protected:
-
   vtkMRMLViewLinkLogic();
   virtual ~vtkMRMLViewLinkLogic();
 
   // On a change in scene, we need to manage the observations.
-  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene) VTK_OVERRIDE;
+  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) VTK_OVERRIDE;
 
   virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) VTK_OVERRIDE;
   virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) VTK_OVERRIDE;
   virtual void OnMRMLNodeModified(vtkMRMLNode* node) VTK_OVERRIDE;
 
   /// Broadcast a view node to other view nodes.
-  void BroadcastViewNodeEvent(vtkMRMLViewNode *viewNode);
+  void BroadcastViewNodeEvent(vtkMRMLViewNode* viewNode);
 
   /// Broadcast a camera node to other camera nodes
-  void BroadcastCameraNodeEvent(vtkMRMLCameraNode *cameraNode);
+  void BroadcastCameraNodeEvent(vtkMRMLCameraNode* cameraNode);
 
 private:
-
   vtkMRMLViewLinkLogic(const vtkMRMLViewLinkLogic&);
   void operator=(const vtkMRMLViewLinkLogic&);
 

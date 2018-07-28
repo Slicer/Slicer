@@ -505,7 +505,7 @@ void qMRMLThreeDView::resetFocalPoint()
   if (this->renderer())
     {
     this->renderer()->ResetCameraClippingRange();
-  }
+    }
 }
 
 //------------------------------------------------------------------------------

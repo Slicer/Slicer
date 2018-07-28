@@ -57,14 +57,13 @@ vtkMRMLViewLinkLogic::~vtkMRMLViewLinkLogic()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLViewLinkLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
+void vtkMRMLViewLinkLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
   // List of events the slice logics should listen
   vtkNew<vtkIntArray> events;
   vtkNew<vtkFloatArray> priorities;
 
   float normalPriority = 0.0;
-  // float highPriority = 0.5;
 
   // Events that use the default priority.  Don't care the order they
   // are triggered
@@ -171,7 +170,7 @@ void vtkMRMLViewLinkLogic::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLViewLinkLogic::BroadcastCameraNodeEvent(vtkMRMLCameraNode *cameraNode)
+void vtkMRMLViewLinkLogic::BroadcastCameraNodeEvent(vtkMRMLCameraNode* cameraNode)
 {
   // only broadcast a camera node event if we are not already actively
   // broadcasting events and we are actively interacting with the node
@@ -189,13 +188,13 @@ void vtkMRMLViewLinkLogic::BroadcastCameraNodeEvent(vtkMRMLCameraNode *cameraNod
     }
 
   int requiredViewGroup = viewNode->GetViewGroup();
-  vtkMRMLCameraNode* sNode;
+  vtkMRMLCameraNode* sNode = NULL;
   vtkCollectionSimpleIterator it;
   vtkSmartPointer<vtkCollection> nodes;
   nodes.TakeReference(this->GetMRMLScene()->GetNodesByClass("vtkMRMLCameraNode"));
   for (nodes->InitTraversal(it);
       (sNode = vtkMRMLCameraNode::SafeDownCast(nodes->GetNextItemAsObject(it)));)
-    {
+    {  
     if (!sNode || sNode == cameraNode)
       {
       continue;
@@ -209,38 +208,43 @@ void vtkMRMLViewLinkLogic::BroadcastCameraNodeEvent(vtkMRMLCameraNode *cameraNod
       continue;
       }
 
+    vtkCamera* sCamera = sNode->GetCamera();
+    if (!sCamera)
+      {
+      continue;
+      }
+
     // Axis selection
     if (cameraNode->GetInteractionFlags() == vtkMRMLCameraNode::LookFromAxis)
       {
-      vtkCamera* sCamera = sNode->GetCamera();
-      vtkCamera* Camera = cameraNode->GetCamera();
-      if (sCamera && Camera)
+      vtkCamera* camera = cameraNode->GetCamera();
+      if (camera)
         {
         int wasModifying = sNode->StartModify();
 
         if(sNode->GetParentTransformNode())
           {
-          vtkNew<vtkTransform> CameraTransform;
-          vtkNew<vtkMatrix4x4> CameraTransformMatrix;
+          vtkNew<vtkTransform> cameraTransform;
+          vtkNew<vtkMatrix4x4> cameraTransformMatrix;
           // Assumption: mrmlCamera nodes are only linearly transformed
           vtkMRMLTransformNode::GetMatrixTransformBetweenNodes
-            (NULL, sNode->GetParentTransformNode(), CameraTransformMatrix.GetPointer());
-          CameraTransformMatrix->Invert(CameraTransformMatrix, CameraTransformMatrix);
-          CameraTransform->Concatenate(CameraTransformMatrix.GetPointer());
+            (NULL, sNode->GetParentTransformNode(), cameraTransformMatrix.GetPointer());
+          cameraTransformMatrix->Invert(cameraTransformMatrix.GetPointer(), cameraTransformMatrix.GetPointer());
+          cameraTransform->Concatenate(cameraTransformMatrix.GetPointer());
 
-          double Position[3];
-          CameraTransform->Update();
-          CameraTransform->InternalTransformPoint(Camera->GetPosition(), Position);
+          double Position[3] = {0.0};
+          cameraTransform->Update();
+          cameraTransform->InternalTransformPoint(camera->GetPosition(), Position);
           sCamera->SetPosition(Position);
 
-          double ViewUp[3];
-          CameraTransform->TransformNormal(Camera->GetViewUp(), ViewUp);
+          double ViewUp[3] = {0.0};
+          cameraTransform->TransformNormal(camera->GetViewUp(), ViewUp);
           sCamera->SetViewUp(ViewUp);
           }
         else
           {
-          sCamera->SetPosition(Camera->GetPosition());
-          sCamera->SetViewUp(Camera->GetViewUp());
+          sCamera->SetPosition(camera->GetPosition());
+          sCamera->SetViewUp(camera->GetViewUp());
           }
 
         sNode->EndModify(wasModifying);
@@ -250,7 +254,6 @@ void vtkMRMLViewLinkLogic::BroadcastCameraNodeEvent(vtkMRMLCameraNode *cameraNod
     // ZoomIn
     else if (cameraNode->GetInteractionFlags() == vtkMRMLCameraNode::ZoomInFlag)
       {
-      vtkCamera* sCamera = sNode->GetCamera();
       // The zoom factor value is defined in the constructor of ctkVTKRenderView
       double zoomFactor = 0.05;
       if (sCamera)
@@ -273,7 +276,6 @@ void vtkMRMLViewLinkLogic::BroadcastCameraNodeEvent(vtkMRMLCameraNode *cameraNod
     // ZoomOut
     else if (cameraNode->GetInteractionFlags() == vtkMRMLCameraNode::ZoomOutFlag)
       {
-      vtkCamera* sCamera = sNode->GetCamera();
       // The zoom factor value is defined in the constructor of ctkVTKRenderView
       double zoomFactor = -0.05;
       if (sCamera)
@@ -296,30 +298,29 @@ void vtkMRMLViewLinkLogic::BroadcastCameraNodeEvent(vtkMRMLCameraNode *cameraNod
     // Reset Focal Point
     else if (cameraNode->GetInteractionFlags() == vtkMRMLCameraNode::CenterFlag)
       {
-      vtkCamera* sCamera = sNode->GetCamera();
-      vtkCamera* Camera = cameraNode->GetCamera();
-      if (sCamera && Camera)
+      vtkCamera* camera = cameraNode->GetCamera();
+      if (camera)
         {
         int wasModifying = sNode->StartModify();
 
         if(sNode->GetParentTransformNode())
           {
-          vtkNew<vtkTransform> CameraTransform;
-          vtkNew<vtkMatrix4x4> CameraTransformMatrix;
+          vtkNew<vtkTransform> cameraTransform;
+          vtkNew<vtkMatrix4x4> cameraTransformMatrix;
           // Assumption: mrmlCamera nodes are only linearly transformed
           vtkMRMLTransformNode::GetMatrixTransformBetweenNodes
-            (NULL, sNode->GetParentTransformNode(), CameraTransformMatrix.GetPointer());
-          CameraTransformMatrix->Invert(CameraTransformMatrix, CameraTransformMatrix);
-          CameraTransform->Concatenate(CameraTransformMatrix.GetPointer());
+            (NULL, sNode->GetParentTransformNode(), cameraTransformMatrix.GetPointer());
+          cameraTransformMatrix->Invert(cameraTransformMatrix.GetPointer(), cameraTransformMatrix.GetPointer());
+          cameraTransform->Concatenate(cameraTransformMatrix.GetPointer());
 
-          double FocalPoint[3];
-          CameraTransform->Update();
-          CameraTransform->InternalTransformPoint(Camera->GetFocalPoint(), FocalPoint);
+          double FocalPoint[3] = {0.};
+          cameraTransform->Update();
+          cameraTransform->InternalTransformPoint(camera->GetFocalPoint(), FocalPoint);
           sCamera->SetFocalPoint(FocalPoint);
           }
         else
           {
-          sCamera->SetFocalPoint(Camera->GetFocalPoint());
+          sCamera->SetFocalPoint(camera->GetFocalPoint());
           }
 
         sNode->EndModify(wasModifying);
@@ -329,41 +330,40 @@ void vtkMRMLViewLinkLogic::BroadcastCameraNodeEvent(vtkMRMLCameraNode *cameraNod
     // Update vtkCameras (i.e., mouse interactions)
     else if (cameraNode->GetInteractionFlags() == vtkMRMLCameraNode::CameraInteractionFlag)
       {
-      vtkCamera* sCamera = sNode->GetCamera();
-      vtkCamera* Camera = cameraNode->GetCamera();
-      if (sCamera && Camera)
+      vtkCamera* camera = cameraNode->GetCamera();
+      if (camera)
         {
         int wasModifying = sNode->StartModify();
 
         if(sNode->GetParentTransformNode())
           {
-          vtkNew<vtkTransform> CameraTransform;
-          vtkNew<vtkMatrix4x4> CameraTransformMatrix;
+          vtkNew<vtkTransform> cameraTransform;
+          vtkNew<vtkMatrix4x4> cameraTransformMatrix;
           // Assumption: mrmlCamera nodes are only linearly transformed
           vtkMRMLTransformNode::GetMatrixTransformBetweenNodes
-            (NULL, sNode->GetParentTransformNode(), CameraTransformMatrix.GetPointer());
-          CameraTransformMatrix->Invert(CameraTransformMatrix, CameraTransformMatrix);
-          CameraTransform->Concatenate(CameraTransformMatrix.GetPointer());
+            (NULL, sNode->GetParentTransformNode(), cameraTransformMatrix.GetPointer());
+          cameraTransformMatrix->Invert(cameraTransformMatrix.GetPointer(), cameraTransformMatrix.GetPointer());
+          cameraTransform->Concatenate(cameraTransformMatrix.GetPointer());
 
-          double Position[3];
-          CameraTransform->Update();
-          CameraTransform->InternalTransformPoint(Camera->GetPosition(), Position);
+          double Position[3] = {0.0};
+          cameraTransform->Update();
+          cameraTransform->InternalTransformPoint(camera->GetPosition(), Position);
           sCamera->SetPosition(Position);
 
-          double FocalPoint[3];
-          CameraTransform->Update();
-          CameraTransform->InternalTransformPoint(Camera->GetFocalPoint(), FocalPoint);
+          double FocalPoint[3] = {0.0};
+          cameraTransform->Update();
+          cameraTransform->InternalTransformPoint(camera->GetFocalPoint(), FocalPoint);
           sCamera->SetFocalPoint(FocalPoint);
 
-          double ViewUp[3];
-          CameraTransform->TransformNormal(Camera->GetViewUp(), ViewUp);
+          double ViewUp[3] = {0.0};
+          cameraTransform->TransformNormal(camera->GetViewUp(), ViewUp);
           sCamera->SetViewUp(ViewUp);
           }
         else
           {
-          sCamera->SetPosition(Camera->GetPosition());
-          sCamera->SetFocalPoint(Camera->GetFocalPoint());
-          sCamera->SetViewUp(Camera->GetViewUp());
+          sCamera->SetPosition(camera->GetPosition());
+          sCamera->SetFocalPoint(camera->GetFocalPoint());
+          sCamera->SetViewUp(camera->GetViewUp());
           }
 
         sNode->EndModify(wasModifying);
@@ -374,7 +374,7 @@ void vtkMRMLViewLinkLogic::BroadcastCameraNodeEvent(vtkMRMLCameraNode *cameraNod
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLViewLinkLogic::BroadcastViewNodeEvent(vtkMRMLViewNode *viewNode)
+void vtkMRMLViewLinkLogic::BroadcastViewNodeEvent(vtkMRMLViewNode* viewNode)
 {
   // only broadcast a view node event if we are not already actively
   // broadcasting events and we actively interacting with the node
@@ -384,7 +384,7 @@ void vtkMRMLViewLinkLogic::BroadcastViewNodeEvent(vtkMRMLViewNode *viewNode)
     }
 
   int requiredViewGroup = viewNode->GetViewGroup();
-  vtkMRMLViewNode* vNode;
+  vtkMRMLViewNode* vNode = NULL;
   vtkCollectionSimpleIterator it;
   vtkSmartPointer<vtkCollection> nodes;
   nodes.TakeReference(this->GetMRMLScene()->GetNodesByClass("vtkMRMLViewNode"));

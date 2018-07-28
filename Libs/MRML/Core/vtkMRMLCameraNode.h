@@ -50,7 +50,7 @@ public:
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
+  virtual void Copy(vtkMRMLNode* node) VTK_OVERRIDE;
 
   ///
   /// Get node XML tag name (like Volume, Model)
@@ -163,7 +163,7 @@ public:
 
   ///
   /// Update the stored reference to another node in the scene
-  virtual void UpdateReferenceID(const char *oldID, const char *newID) VTK_OVERRIDE;
+  virtual void UpdateReferenceID(const char* oldID, const char* newID) VTK_OVERRIDE;
 
   /// Reset the clipping range just based on its position and focal point
   void ResetClippingRange();
@@ -256,15 +256,15 @@ protected:
 
 
   void SetCamera(vtkCamera* camera);
-  void SetAndObserveCamera(vtkCamera *camera);
-  vtkCamera *Camera;
+  void SetAndObserveCamera(vtkCamera* camera);
+  vtkCamera* Camera;
 
-  vtkMRMLCameraNode* FindActiveTagInScene(const char *tag);
+  vtkMRMLCameraNode* FindActiveTagInScene(const char* tag);
 
   void SetInternalActiveTag(const char* id);
-  char *InternalActiveTag;
+  char* InternalActiveTag;
 
-  vtkMatrix4x4 *AppliedTransform;
+  vtkMatrix4x4* AppliedTransform;
 
   int Interacting;
   unsigned int InteractionFlags;

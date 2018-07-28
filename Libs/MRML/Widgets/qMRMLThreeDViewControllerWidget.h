@@ -72,7 +72,7 @@ public:
 
   /// Set \a newViewLogic
   /// Use if two instances of the controller need to observe the same logic.
-  void setViewLogic(vtkMRMLViewLogic * newViewLogic);
+  void setViewLogic(vtkMRMLViewLogic* newViewLogic);
 
   /// TODO:
   /// Ideally the view logics should be retrieved by the viewLogic

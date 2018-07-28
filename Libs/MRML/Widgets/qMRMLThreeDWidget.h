@@ -71,7 +71,7 @@ public:
 
   /// \sa qMRMLThreeDView::addDisplayableManager
   Q_INVOKABLE void addDisplayableManager(const QString& displayableManager);
-  Q_INVOKABLE void getDisplayableManagers(vtkCollection *displayableManagers);
+  Q_INVOKABLE void getDisplayableManagers(vtkCollection* displayableManagers);
 
   /// \sa qMRMLThreeDViewControllerWidget::viewLabel()
   /// \sa setiewLabel()
@@ -96,7 +96,7 @@ public:
   Q_INVOKABLE void setViewLogics(vtkCollection* logics);
 
 public slots:
-  void setMRMLScene(vtkMRMLScene * newScene);
+  void setMRMLScene(vtkMRMLScene* newScene);
 
   /// Set the current \a viewNode to observe
   void setMRMLViewNode(vtkMRMLViewNode* newViewNode);

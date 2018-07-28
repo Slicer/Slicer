@@ -77,7 +77,7 @@ vtkMRMLViewLogic::~vtkMRMLViewLogic()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLViewLogic::SetMRMLSceneInternal(vtkMRMLScene *newScene)
+void vtkMRMLViewLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
   // Sanity checks
   if (!this->GetName() || strlen(this->GetName()) == 0)
@@ -98,7 +98,7 @@ void vtkMRMLViewLogic::SetMRMLSceneInternal(vtkMRMLScene *newScene)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLViewLogic::OnMRMLSceneNodeAdded(vtkMRMLNode *node)
+void vtkMRMLViewLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
   if (node->IsA("vtkMRMLViewNode") || node->IsA("vtkMRMLCameraNode"))
     {
@@ -107,7 +107,7 @@ void vtkMRMLViewLogic::OnMRMLSceneNodeAdded(vtkMRMLNode *node)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLViewLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode *node)
+void vtkMRMLViewLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
   if (node->IsA("vtkMRMLViewNode") || node->IsA("vtkMRMLCameraNode"))
     {
@@ -136,7 +136,7 @@ void vtkMRMLViewLogic::UpdateMRMLNodes()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLViewNode *vtkMRMLViewLogic::GetViewNode(vtkMRMLScene *scene, const char *layoutName)
+vtkMRMLViewNode* vtkMRMLViewLogic::GetViewNode(vtkMRMLScene* scene, const char* layoutName)
 {
   if (!scene || !layoutName)
     {
@@ -145,7 +145,7 @@ vtkMRMLViewNode *vtkMRMLViewLogic::GetViewNode(vtkMRMLScene *scene, const char *
 
   vtkSmartPointer<vtkCollection> viewNodes = vtkSmartPointer<vtkCollection>::Take
       (scene->GetNodesByClass("vtkMRMLViewNode"));
-  for(int viewNodeIndex = 0; viewNodeIndex < viewNodes->GetNumberOfItems(); viewNodeIndex++)
+  for(int viewNodeIndex = 0; viewNodeIndex < viewNodes->GetNumberOfItems(); ++viewNodeIndex)
     {
     vtkMRMLViewNode* viewNode =
         vtkMRMLViewNode::SafeDownCast(viewNodes->GetItemAsObject(viewNodeIndex));
@@ -160,7 +160,7 @@ vtkMRMLViewNode *vtkMRMLViewLogic::GetViewNode(vtkMRMLScene *scene, const char *
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLCameraNode *vtkMRMLViewLogic::GetCameraNode(vtkMRMLScene *scene, const char *layoutName)
+vtkMRMLCameraNode* vtkMRMLViewLogic::GetCameraNode(vtkMRMLScene* scene, const char* layoutName)
 {
   if (!scene || !layoutName)
     {
@@ -169,7 +169,7 @@ vtkMRMLCameraNode *vtkMRMLViewLogic::GetCameraNode(vtkMRMLScene *scene, const ch
 
   vtkSmartPointer<vtkCollection> cameraNodes = vtkSmartPointer<vtkCollection>::Take
       (scene->GetNodesByClass("vtkMRMLCameraNode"));
-  for (int cameraIndex = 0; cameraIndex < cameraNodes->GetNumberOfItems(); cameraIndex++)
+  for (int cameraIndex = 0; cameraIndex < cameraNodes->GetNumberOfItems(); ++cameraIndex)
     {
     vtkMRMLCameraNode* cameraNode =
         vtkMRMLCameraNode::SafeDownCast(cameraNodes->GetItemAsObject(cameraIndex));
@@ -179,7 +179,7 @@ vtkMRMLCameraNode *vtkMRMLViewLogic::GetCameraNode(vtkMRMLScene *scene, const ch
       }
     vtkSmartPointer<vtkCollection> viewNodes = vtkSmartPointer<vtkCollection>::Take
         (scene->GetNodesByClass("vtkMRMLViewNode"));
-    for(int viewNodeIndex = 0; viewNodeIndex < viewNodes->GetNumberOfItems(); viewNodeIndex++)
+    for(int viewNodeIndex = 0; viewNodeIndex < viewNodes->GetNumberOfItems(); ++viewNodeIndex)
       {
       vtkMRMLViewNode* viewNode =
           vtkMRMLViewNode::SafeDownCast(viewNodes->GetItemAsObject(viewNodeIndex));
@@ -195,7 +195,7 @@ vtkMRMLCameraNode *vtkMRMLViewLogic::GetCameraNode(vtkMRMLScene *scene, const ch
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLViewLogic::SetCameraNode(vtkMRMLCameraNode *newCameraNode)
+void vtkMRMLViewLogic::SetCameraNode(vtkMRMLCameraNode* newCameraNode)
 {
   if (this->CameraNode == newCameraNode)
     {
@@ -209,7 +209,7 @@ void vtkMRMLViewLogic::SetCameraNode(vtkMRMLCameraNode *newCameraNode)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLViewLogic::SetViewNode(vtkMRMLViewNode *newViewNode)
+void vtkMRMLViewLogic::SetViewNode(vtkMRMLViewNode* newViewNode)
 {
   if (this->ViewNode == newViewNode)
     {
@@ -297,7 +297,7 @@ void vtkMRMLViewLogic::UpdateCameraNode()
     }
 
   // find ViewNode in the scene
-  vtkMRMLCameraNode *node = vtkMRMLViewLogic::GetCameraNode(this->GetMRMLScene(), this->GetName());
+  vtkMRMLCameraNode* node = vtkMRMLViewLogic::GetCameraNode(this->GetMRMLScene(), this->GetName());
 
   if (this->CameraNode != 0 && node != 0 &&
       (this->CameraNode->GetID() == 0 ||
@@ -308,7 +308,7 @@ void vtkMRMLViewLogic::UpdateCameraNode()
     }
 
   // find ViewNode in the scene
-  vtkMRMLViewNode *viewNode = vtkMRMLViewLogic::GetViewNode(this->GetMRMLScene(), this->GetName());
+  vtkMRMLViewNode* viewNode = vtkMRMLViewLogic::GetViewNode(this->GetMRMLScene(), this->GetName());
 
   if (this->CameraNode == 0)
     {
@@ -348,7 +348,7 @@ void vtkMRMLViewLogic::UpdateViewNode()
     }
 
   // find ViewNode in the scene
-  vtkMRMLViewNode *node = vtkMRMLViewLogic::GetViewNode(this->GetMRMLScene(), this->GetName());
+  vtkMRMLViewNode* node = vtkMRMLViewLogic::GetViewNode(this->GetMRMLScene(), this->GetName());
 
   if (this->ViewNode != 0 && node != 0 &&
       (this->ViewNode->GetID() == 0 ||
