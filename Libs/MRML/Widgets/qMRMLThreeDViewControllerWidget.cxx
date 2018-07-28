@@ -265,6 +265,26 @@ void qMRMLThreeDViewControllerWidgetPrivate::init()
   q->setViewLogic(defaultLogic.GetPointer());
 }
 
+//---------------------------------------------------------------------------
+vtkMRMLViewLogic *qMRMLThreeDViewControllerWidgetPrivate::viewNodeLogic(vtkMRMLViewNode *node)
+{
+  if (!this->ViewLogics)
+    {
+    return NULL;
+    }
+  vtkMRMLViewLogic* logic = NULL;
+  vtkCollectionSimpleIterator it;
+  for (this->ViewLogics->InitTraversal(it);(logic = static_cast<vtkMRMLViewLogic*>(
+                                               this->ViewLogics->GetNextItemAsObject(it)));)
+    {
+    if (logic->GetViewNode() == node)
+      {
+      return logic;
+      }
+    }
+  return NULL;
+}
+
 // --------------------------------------------------------------------------
 // qMRMLThreeDViewControllerWidget methods
 
