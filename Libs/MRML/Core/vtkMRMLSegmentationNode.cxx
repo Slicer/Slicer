@@ -924,11 +924,13 @@ double* vtkMRMLSegmentationNode::GetSegmentCenter(const std::string& segmentID)
       vtkWarningMacro("GetSegmentCenter: segment " << segmentID << " is empty");
       return NULL;
       }
+    // segmentCenter_Image is floored to put the center exactly in the center of a voxel
+    // (otherwise center position would be set at the boundary between two voxels when extent size is an even number)
     double segmentCenter_Image[4] =
       {
-      (labelOrientedImageDataEffectiveExtent[0] + labelOrientedImageDataEffectiveExtent[1]) / 2.0,
-      (labelOrientedImageDataEffectiveExtent[2] + labelOrientedImageDataEffectiveExtent[3]) / 2.0,
-      (labelOrientedImageDataEffectiveExtent[4] + labelOrientedImageDataEffectiveExtent[5]) / 2.0,
+      floor((labelOrientedImageDataEffectiveExtent[0] + labelOrientedImageDataEffectiveExtent[1]) / 2.0),
+      floor((labelOrientedImageDataEffectiveExtent[2] + labelOrientedImageDataEffectiveExtent[3]) / 2.0),
+      floor((labelOrientedImageDataEffectiveExtent[4] + labelOrientedImageDataEffectiveExtent[5]) / 2.0),
       1.0
       };
     vtkNew<vtkMatrix4x4> imageToWorld;
