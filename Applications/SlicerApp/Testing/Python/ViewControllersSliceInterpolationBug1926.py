@@ -50,6 +50,9 @@ class ViewControllersSliceInterpolationBug1926Widget:
       self.setup()
       self.parent.show()
 
+  def cleanup(self):
+    pass
+
   def setup(self):
     # Instantiate and connect widgets ...
 

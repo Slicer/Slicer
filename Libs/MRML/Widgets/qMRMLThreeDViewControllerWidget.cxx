@@ -471,10 +471,12 @@ void qMRMLThreeDViewControllerWidget::updateWidgetFromMRMLView()
 void qMRMLThreeDViewControllerWidget::updateViewFromMRMLCamera()
 {
   Q_D(qMRMLThreeDViewControllerWidget);
-
-  d->ViewLogic->StartCameraNodeInteraction(vtkMRMLCameraNode::CameraInteractionFlag);
-  d->CameraNode->Modified();
-  d->ViewLogic->EndCameraNodeInteraction();
+  if (d->CameraNode)
+    {
+    d->ViewLogic->StartCameraNodeInteraction(vtkMRMLCameraNode::CameraInteractionFlag);
+    d->CameraNode->Modified();
+    d->ViewLogic->EndCameraNodeInteraction();
+    }
 }
 
 // --------------------------------------------------------------------------
