@@ -114,7 +114,7 @@ if(GIT_EXECUTABLE)
        OUTPUT_VARIABLE ${prefix}_WC_URL
        OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-    execute_process(COMMAND ${GIT_EXECUTABLE} show -s --format="%ci" ${${prefix}_WC_REVISION_HASH}
+    execute_process(COMMAND ${GIT_EXECUTABLE} show -s --format=%ci ${${prefix}_WC_REVISION_HASH}
        WORKING_DIRECTORY ${dir}
        OUTPUT_VARIABLE ${prefix}_show_output
        OUTPUT_STRIP_TRAILING_WHITESPACE)
