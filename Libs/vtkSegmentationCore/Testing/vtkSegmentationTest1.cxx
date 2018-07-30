@@ -87,9 +87,16 @@ int vtkSegmentationTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
     return EXIT_FAILURE;
     }
   std::string defaultGeometryString = vtkSegmentationConverter::SerializeImageGeometry(defaultImageData);
-  if (defaultGeometryString.compare("1;0;0;20.7521629333496;0;1;0;20.7521629333496;0;0;1;20;0;0;0;1;0;59;0;59;0;60;"))
+  std::string expectedDefaultGeometryString =
+    "0.235971522108411;0;0;20.7521629333496;"
+    "0;0.235971522108411;0;20.7521629333496;"
+    "0;0;0.235971522108411;20;"
+    "0;0;0;1;"
+    "0;248;0;248;0;255;";
+  if (defaultGeometryString != expectedDefaultGeometryString)
     {
-    std::cerr << __LINE__ << ": Default reference geometry mismatch!" << std::endl;
+    std::cerr << __LINE__ << ": Default reference geometry mismatch. Expected: "
+      << expectedDefaultGeometryString << ". Actual: " << defaultGeometryString << "." << std::endl;
     return EXIT_FAILURE;
     }
   vtkNew<vtkImageAccumulate> imageAccumulate;
@@ -100,9 +107,11 @@ int vtkSegmentationTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
     std::cerr << __LINE__ << ": Binary labelmap converted without reference geometry has no foreground voxels!" << std::endl;
     return EXIT_FAILURE;
     }
-  if (imageAccumulate->GetVoxelCount() != 219600)
+  int expectedVoxelCount = 15872256;
+  if (imageAccumulate->GetVoxelCount() != expectedVoxelCount)
     {
-    std::cerr << __LINE__ << ": Unexpected binary labelmap extent after converting without reference geometry!" << std::endl;
+    std::cerr << __LINE__ << ": Binary labelmap voxel count mismatch after converting without reference geometry."
+      << " Expected: " << expectedVoxelCount << ". Actual: << " << imageAccumulate->GetVoxelCount() << "." << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -122,9 +131,11 @@ int vtkSegmentationTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
   referenceGeometryMatrix->SetElement(2,2,2.0);
   int referenceGeometryExtent[6] = {0,99,0,99,0,99};
   std::string referenceGeometryString = vtkSegmentationConverter::SerializeImageGeometry(referenceGeometryMatrix.GetPointer(), referenceGeometryExtent);
-  if (referenceGeometryString.compare("2;0;0;0;0;2;0;0;0;0;2;0;0;0;0;1;0;99;0;99;0;99;"))
+  std::string expectedReferenceGeometryString = "2;0;0;0;0;2;0;0;0;0;2;0;0;0;0;1;0;99;0;99;0;99;";
+  if (referenceGeometryString != expectedReferenceGeometryString)
     {
-    std::cerr << __LINE__ << ": Failed to serialize reference geometry!" << std::endl;
+    std::cerr << __LINE__ << ": Failed to serialize reference geometry. Expected: "
+      << expectedReferenceGeometryString << ". Actual: " << referenceGeometryString << "." << std::endl;
     return EXIT_FAILURE;
     }
   sphereSegmentation->SetConversionParameter(

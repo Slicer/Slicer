@@ -130,7 +130,7 @@ class SegmentationsModuleTest1(unittest.TestCase):
     # Create new segment
     sphere = vtk.vtkSphereSource()
     sphere.SetCenter(0,50,0)
-    sphere.SetRadius(50)
+    sphere.SetRadius(80)
     sphere.Update()
     spherePolyData = vtk.vtkPolyData()
     spherePolyData.DeepCopy(sphere.GetOutput())
@@ -154,14 +154,14 @@ class SegmentationsModuleTest1(unittest.TestCase):
     imageStat.SetComponentOrigin(0,0,0)
     imageStat.SetComponentSpacing(1,1,1)
     imageStat.Update()
-    self.assertEqual(imageStat.GetVoxelCount(), 1000)
     imageStatResult = imageStat.GetOutput()
     for i in range(4):
       logging.info("Volume {0}: {1}".format(i, imageStatResult.GetScalarComponentAsDouble(i,0,0,0)))
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(0,0,0,0), 795)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(1,0,0,0), 194)
+    self.assertEqual(imageStat.GetVoxelCount(), 1000)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(0,0,0,0), 786)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(1,0,0,0), 170)
     self.assertEqual(imageStatResult.GetScalarComponentAsDouble(2,0,0,0), 4)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(3,0,0,0), 7)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(3,0,0,0), 40)
 
     # Check if segment reorder is taken into account in merged labelmap generation
     # Change segment order
@@ -171,13 +171,13 @@ class SegmentationsModuleTest1(unittest.TestCase):
     self.inputSegmentationNode.GenerateMergedLabelmapForAllSegments(mergedLabelmap, 0)
     imageStat.SetInputData(mergedLabelmap)
     imageStat.Update()
-    self.assertEqual(imageStat.GetVoxelCount(), 1000)
     imageStatResult = imageStat.GetOutput()
     for i in range(4):
       logging.info("Volume {0}: {1}".format(i, imageStatResult.GetScalarComponentAsDouble(i,0,0,0)))
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(0,0,0,0), 795)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(1,0,0,0), 194)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(2,0,0,0), 6)
+    self.assertEqual(imageStat.GetVoxelCount(), 1000)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(0,0,0,0), 786)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(1,0,0,0), 170)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(2,0,0,0), 39)
     self.assertEqual(imageStatResult.GetScalarComponentAsDouble(3,0,0,0), 5)
 
     # Remove segment from segmentation
@@ -206,7 +206,9 @@ class SegmentationsModuleTest1(unittest.TestCase):
     sphereLabelmap = self.sphereSegment.GetRepresentation(self.binaryLabelmapReprName)
     self.assertIsNotNone(sphereLabelmap)
     sphereLabelmapSpacing = sphereLabelmap.GetSpacing()
-    self.assertTrue(sphereLabelmapSpacing[0] == 1.0 and sphereLabelmapSpacing[1] == 1.0 and sphereLabelmapSpacing[2] == 1.0)
+    self.assertAlmostEqual(sphereLabelmapSpacing[0], 0.629257364931788, 8)
+    self.assertAlmostEqual(sphereLabelmapSpacing[1], 0.629257364931788, 8)
+    self.assertAlmostEqual(sphereLabelmapSpacing[2], 0.629257364931788, 8)
 
     # Create binary labelmap in segmentation that will create the merged labelmap from
     # different geometries so that labelmap is not removed from sphere segment when adding
@@ -217,14 +219,14 @@ class SegmentationsModuleTest1(unittest.TestCase):
     self.assertEqual(self.inputSegmentationNode.GetSegmentation().GetNumberOfSegments(), 3)
 
     # Check merged labelmap
-    # Reference geometry has the tiny patient spacing, and it is oversampled to have smimilar
-    # voxel size as the sphere labelmap with the uniform 1mm spacing
+    # Reference geometry has the tiny patient spacing, and it is oversampled to have similar
+    # voxel size as the sphere labelmap with the uniform 0.629mm spacing
     mergedLabelmap = vtkSegmentationCore.vtkOrientedImageData()
     self.inputSegmentationNode.GenerateMergedLabelmapForAllSegments(mergedLabelmap, 0)
     mergedLabelmapSpacing = mergedLabelmap.GetSpacing()
-    self.assertAlmostEqual(mergedLabelmapSpacing[0], 1.2894736842, 8)
-    self.assertAlmostEqual(mergedLabelmapSpacing[1], 1.2894736842, 8)
-    self.assertAlmostEqual(mergedLabelmapSpacing[2], 0.6052631578, 8)
+    self.assertAlmostEqual(mergedLabelmapSpacing[0], 0.80327868852459, 8)
+    self.assertAlmostEqual(mergedLabelmapSpacing[1], 0.80327868852459, 8)
+    self.assertAlmostEqual(mergedLabelmapSpacing[2], 0.377049180327869, 8)
 
     imageStat = vtk.vtkImageAccumulate()
     imageStat.SetInputData(mergedLabelmap)
@@ -232,14 +234,14 @@ class SegmentationsModuleTest1(unittest.TestCase):
     imageStat.SetComponentOrigin(0,0,0)
     imageStat.SetComponentSpacing(1,1,1)
     imageStat.Update()
-    self.assertEqual(imageStat.GetVoxelCount(), 54872000)
     imageStatResult = imageStat.GetOutput()
     for i in range(5):
       logging.info("Volume {0}: {1}".format(i, imageStatResult.GetScalarComponentAsDouble(i,0,0,0)))
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(0,0,0,0), 43573723)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(1,0,0,0), 10601312)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(2,0,0,0), 251476)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(3,0,0,0), 445489)
+    self.assertEqual(imageStat.GetVoxelCount(), 226981000)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(0,0,0,0), 178838889)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(1,0,0,0), 39705288)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(2,0,0,0), 890883)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(3,0,0,0), 7545940)
     self.assertEqual(imageStatResult.GetScalarComponentAsDouble(4,0,0,0), 0)  # Built from color table and color four is removed in previous test section
 
   #------------------------------------------------------------------------------
@@ -291,13 +293,14 @@ class SegmentationsModuleTest1(unittest.TestCase):
     imageStat.SetComponentOrigin(0,0,0)
     imageStat.SetComponentSpacing(1,1,1)
     imageStat.Update()
-    self.assertEqual(imageStat.GetVoxelCount(), 24198552)
     imageStatResult = imageStat.GetOutput()
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(0,0,0,0), 12900275)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(1,0,0,0), 10601312)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(2,0,0,0), 251476)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(3,0,0,0), 445489)
-
+    for i in range(4):
+      logging.info("Volume {0}: {1}".format(i, imageStatResult.GetScalarComponentAsDouble(i,0,0,0)))
+    self.assertEqual(imageStat.GetVoxelCount(), 127109360)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(0,0,0,0), 78967249)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(1,0,0,0), 39705288)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(2,0,0,0), 890883)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(3,0,0,0), 7545940)
     # Import model to segment
     modelImportSegmentationNode = slicer.vtkMRMLSegmentationNode()
     modelImportSegmentationNode.SetName('ModelImport')
