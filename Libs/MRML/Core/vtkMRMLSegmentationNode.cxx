@@ -547,7 +547,7 @@ bool vtkMRMLSegmentationNode::GenerateMergedLabelmap(
       mergedImageToWorldMatrix->Identity();
       return true;
       }
-    vtkSegmentationConverter::DeserializeImageGeometry(commonGeometryString, commonGeometryImage);
+    vtkSegmentationConverter::DeserializeImageGeometry(commonGeometryString, commonGeometryImage, false);
     }
   commonGeometryImage->GetImageToWorldMatrix(mergedImageToWorldMatrix);
   int referenceDimensions[3] = {0,0,0};
