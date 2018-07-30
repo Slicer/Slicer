@@ -12,7 +12,15 @@ if(Slicer_USE_PYTHONQT)
 
   set(PYTHON_DIR "${Slicer_SUPERBUILD_DIR}/python-install")
   if(NOT EXISTS "${PYTHON_DIR}/${PYTHON_STDLIB_SUBDIR}")
-    message(FATAL_ERROR "Skipping generation of python install rules - Unexistant directory PYTHON_DIR:${PYTHON_DIR}/${PYTHON_STDLIB_SUBDIR}")
+    message(WARNING "###############################################################################
+Skipping generation of python install rules
+
+Unexistant directory PYTHON_DIR:${PYTHON_DIR}/${PYTHON_STDLIB_SUBDIR}
+
+This probably means that you are building Slicer against your own installation of Python.
+
+To create a Slicer package including python libraries, you can *NOT* provide your own version of the python libraries.
+###############################################################################")
     return()
   endif()
 
