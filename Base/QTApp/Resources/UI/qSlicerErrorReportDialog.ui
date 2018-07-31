@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qSlicerAppErrorReportDialog</class>
- <widget class="QDialog" name="qSlicerAppErrorReportDialog">
+ <class>qSlicerErrorReportDialog</class>
+ <widget class="QDialog" name="qSlicerErrorReportDialog">
   <property name="geometry">
    <rect>
     <x>0</x>

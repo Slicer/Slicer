@@ -22,16 +22,16 @@
 #include <QTimer>
 
 // SlicerApp includes
-#include "qSlicerAppErrorReportDialog.h"
 #include "qSlicerApplication.h"
+#include "qSlicerErrorReportDialog.h"
 
 // STD includes
 
-int qSlicerAppErrorReportDialogTest1(int argc, char * argv[] )
+int qSlicerErrorReportDialogTest1(int argc, char * argv[] )
 {
   qSlicerApplication app(argc, argv);
 
-  qSlicerAppErrorReportDialog errorReport;
+  qSlicerErrorReportDialog errorReport;
 
   if (argc < 2 || QString(argv[1]) != "-I")
     {

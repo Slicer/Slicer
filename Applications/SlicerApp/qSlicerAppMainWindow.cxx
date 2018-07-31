@@ -57,13 +57,13 @@
 #include "qSlicerAboutDialog.h"
 #include "qSlicerActionsDialog.h"
 #include "qSlicerApplication.h"
-#include "qSlicerAppErrorReportDialog.h"
 #include "qSlicerAbstractModule.h"
 #if defined Slicer_USE_QtTesting && defined Slicer_BUILD_CLI_SUPPORT
 #include "qSlicerCLIModuleWidgetEventPlayer.h"
 #endif
 #include "qSlicerCommandOptions.h"
 #include "qSlicerCoreCommandOptions.h"
+#include "qSlicerErrorReportDialog.h"
 #include "qSlicerLayoutManager.h"
 #include "qSlicerModuleManager.h"
 #include "qSlicerModulesMenu.h"
@@ -1153,7 +1153,7 @@ void qSlicerAppMainWindow::on_HelpAboutSlicerAppAction_triggered()
 //---------------------------------------------------------------------------
 void qSlicerAppMainWindow::on_HelpReportBugOrFeatureRequestAction_triggered()
 {
-  qSlicerAppErrorReportDialog errorReport(this);
+  qSlicerErrorReportDialog errorReport(this);
   errorReport.exec();
 }
 

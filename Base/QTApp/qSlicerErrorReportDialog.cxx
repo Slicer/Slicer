@@ -26,26 +26,26 @@
 #include <QUrl>
 
 // SlicerApp includes
-#include "qSlicerAppErrorReportDialog.h"
+#include "qSlicerErrorReportDialog.h"
 #include "qSlicerApplication.h"
-#include "ui_qSlicerAppErrorReportDialog.h"
+#include "ui_qSlicerErrorReportDialog.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerAppErrorReportDialogPrivate: public Ui_qSlicerAppErrorReportDialog
+class qSlicerErrorReportDialogPrivate: public Ui_qSlicerErrorReportDialog
 {
 public:
 };
 
 //-----------------------------------------------------------------------------
-// qSlicerAppErrorReportDialogPrivate methods
+// qSlicerErrorReportDialogPrivate methods
 
 //-----------------------------------------------------------------------------
-// qSlicerAppErrorReportDialog methods
-qSlicerAppErrorReportDialog::qSlicerAppErrorReportDialog(QWidget* parentWidget)
+// qSlicerErrorReportDialog methods
+qSlicerErrorReportDialog::qSlicerErrorReportDialog(QWidget* parentWidget)
  :QDialog(parentWidget)
-  , d_ptr(new qSlicerAppErrorReportDialogPrivate)
+  , d_ptr(new qSlicerErrorReportDialogPrivate)
 {
-  Q_D(qSlicerAppErrorReportDialog);
+  Q_D(qSlicerErrorReportDialog);
   d->setupUi(this);
 
   QString instructionsText = d->InstructionsLabel->text();
@@ -70,21 +70,21 @@ qSlicerAppErrorReportDialog::qSlicerAppErrorReportDialog(QWidget* parentWidget)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAppErrorReportDialog::~qSlicerAppErrorReportDialog()
+qSlicerErrorReportDialog::~qSlicerErrorReportDialog()
 {
 }
 
 // --------------------------------------------------------------------------
-void qSlicerAppErrorReportDialog::onLogCopy()
+void qSlicerErrorReportDialog::onLogCopy()
 {
-  Q_D(qSlicerAppErrorReportDialog);
+  Q_D(qSlicerErrorReportDialog);
   QApplication::clipboard()->setText(d->LogText->toPlainText());
 }
 
 // --------------------------------------------------------------------------
-void qSlicerAppErrorReportDialog::onLogFileSelectionChanged()
+void qSlicerErrorReportDialog::onLogFileSelectionChanged()
 {
-  Q_D(qSlicerAppErrorReportDialog);
+  Q_D(qSlicerErrorReportDialog);
   QFile f(d->RecentLogFilesComboBox->currentText());
   if (f.open(QFile::ReadOnly | QFile::Text))
     {
@@ -99,8 +99,8 @@ void qSlicerAppErrorReportDialog::onLogFileSelectionChanged()
 }
 
 // --------------------------------------------------------------------------
-void qSlicerAppErrorReportDialog::onLogFileOpen()
+void qSlicerErrorReportDialog::onLogFileOpen()
 {
-  Q_D(qSlicerAppErrorReportDialog);
+  Q_D(qSlicerErrorReportDialog);
   QDesktopServices::openUrl(QUrl("file:///"+d->RecentLogFilesComboBox->currentText(), QUrl::TolerantMode));
 }

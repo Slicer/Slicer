@@ -3,6 +3,7 @@ set(KIT ${PROJECT_NAME})
 set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 set(KIT_TEST_SRCS
   qSlicerAboutDialogTest1.cxx
+  qSlicerErrorReportDialogTest1.cxx
   )
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   ${KIT_TEST_SRCS}
@@ -21,3 +22,4 @@ set_target_properties(${KIT}CxxTests PROPERTIES FOLDER "Core-Base")
 #
 
 simple_test( qSlicerAboutDialogTest1 )
+simple_test( qSlicerErrorReportDialogTest1 )

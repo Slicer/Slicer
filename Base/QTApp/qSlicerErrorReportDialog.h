@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerAppErrorReportDialog_h
-#define __qSlicerAppErrorReportDialog_h
+#ifndef __qSlicerErrorReportDialog_h
+#define __qSlicerErrorReportDialog_h
 
 // Qt includes
 #include <QDialog>
@@ -27,19 +27,19 @@
 // CTK includes
 #include <ctkPimpl.h>
 
-// SlicerApp includes
-#include "qSlicerAppExport.h"
+// Slicer includes
+#include "qSlicerBaseQTAppExport.h"
 
-class qSlicerAppErrorReportDialogPrivate;
+class qSlicerErrorReportDialogPrivate;
 
 /// Pre-request that a qSlicerApplication has been instanced
-class Q_SLICER_APP_EXPORT qSlicerAppErrorReportDialog :
+class Q_SLICER_BASE_QTAPP_EXPORT qSlicerErrorReportDialog :
   public QDialog
 {
   Q_OBJECT
 public:
-  qSlicerAppErrorReportDialog(QWidget *parentWidget = 0);
-  virtual ~qSlicerAppErrorReportDialog();
+  qSlicerErrorReportDialog(QWidget *parentWidget = 0);
+  virtual ~qSlicerErrorReportDialog();
 
 protected slots:
   void onLogFileOpen();
@@ -47,11 +47,11 @@ protected slots:
   void onLogFileSelectionChanged();
 
 protected:
-  QScopedPointer<qSlicerAppErrorReportDialogPrivate> d_ptr;
+  QScopedPointer<qSlicerErrorReportDialogPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerAppErrorReportDialog);
-  Q_DISABLE_COPY(qSlicerAppErrorReportDialog);
+  Q_DECLARE_PRIVATE(qSlicerErrorReportDialog);
+  Q_DISABLE_COPY(qSlicerErrorReportDialog);
 };
 
 #endif

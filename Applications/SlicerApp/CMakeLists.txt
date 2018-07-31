@@ -19,20 +19,16 @@ set(${PROJECT_NAME}_FOLDER "App-${SlicerApp_APPLICATION_NAME}")
 set(APPLIB_NAME "q${PROJECT_NAME}")
 
 set(APPLIB_SRCS
-  qSlicerAppErrorReportDialog.cxx
-  qSlicerAppErrorReportDialog.h
   qSlicerAppMainWindow.cxx
   qSlicerAppMainWindow.h
   qSlicerAppMainWindow_p.h
   )
 
 set(APPLIB_MOC_SRCS
-  qSlicerAppErrorReportDialog.h
   qSlicerAppMainWindow.h
   )
 
 set(APPLIB_UI_SRCS
-  Resources/UI/qSlicerAppErrorReportDialog.ui
   Resources/UI/qSlicerAppMainWindow.ui
   )
 
