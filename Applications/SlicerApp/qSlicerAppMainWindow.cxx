@@ -24,6 +24,7 @@
 // Qt includes
 #include <QDesktopServices>
 #include <QPixmap>
+#include <QStyle>
 #include <QUrl>
 
 // Slicer includes
