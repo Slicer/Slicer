@@ -345,17 +345,18 @@ public:
   /// Return the libraries of Slicer
   virtual QString libraries()const;
 
-  /// Return the source repository URL associated to this build
+  /// Return the Slicer source repository URL associated with this build
   /// \sa qSlicerCoreApplicationPrivate::discoverRepository
   QString repositoryUrl()const;
 
-  /// Return the source repository Branch associated to this build
+  /// Return the Slicer source repository Branch associated with this build
   /// \sa qSlicerCoreApplicationPrivate::discoverRepository
   QString repositoryBranch()const;
 
-  /// Return the source repository Revision associated to this build
+  /// Return the Slicer source repository Revision associated with this build
   /// \sa qSlicerCoreApplicationPrivate::discoverRepository
   QString repositoryRevision()const;
+
 
   /// Return the Slicer major version number
   int majorVersion() const;

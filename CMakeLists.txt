@@ -424,12 +424,6 @@ include(SlicerDirectories)
 # Slicer version number
 #-----------------------------------------------------------------------------
 include(SlicerVersion)
-mark_as_superbuild(
-  VARS
-    Slicer_VERSION_MAJOR:STRING
-    Slicer_VERSION_MINOR:STRING
-    Slicer_VERSION_PATCH:STRING
-  )
 
 #-----------------------------------------------------------------------------
 # Extension directories

@@ -1,25 +1,44 @@
 #-----------------------------------------------------------------------------
 # Main application
 #-----------------------------------------------------------------------------
+# Slicer supports more than one application (i.e. an application
+# "OtherApp" in addition to "APPLICATION_NAMEApp").
+#
+# In that specific case, it is required to differentiate the two applications
+# and specify which one should be considered as the *Main* one.
+#
+# This is usually done within the top level CMakeLists.txt file by setting the variable
+# Slicer_MAIN_PROJECT.
+#
 if(NOT DEFINED Slicer_MAIN_PROJECT)
-  set(Slicer_MAIN_PROJECT SlicerApp CACHE INTERNAL "Main project name")
+  set(Slicer_MAIN_PROJECT SlicerApp CACHE STRING "Main project name")
 endif()
 mark_as_superbuild(Slicer_MAIN_PROJECT:STRING)
-if(NOT DEFINED ${Slicer_MAIN_PROJECT}_APPLICATION_NAME)
-  set(${Slicer_MAIN_PROJECT}_APPLICATION_NAME Slicer CACHE INTERNAL "Main application name")
-else()
-  if(NOT DEFINED SlicerApp_APPLICATION_NAME)
-    set(SlicerApp_APPLICATION_NAME Slicer)
-  endif()
+
+#-----------------------------------------------------------------------------
+# Applications directory
+#-----------------------------------------------------------------------------
+if(NOT DEFINED Slicer_APPLICATIONS_DIR)
+  set(Slicer_APPLICATIONS_DIR "${Slicer_SOURCE_DIR}/Applications")
 endif()
+mark_as_superbuild(Slicer_APPLICATIONS_DIR:PATH)
 
-set(Slicer_MAIN_PROJECT_APPLICATION_NAME ${${Slicer_MAIN_PROJECT}_APPLICATION_NAME})
+#-----------------------------------------------------------------------------
+# Read application properties
+#-----------------------------------------------------------------------------
+include(SlicerReadApplicationProperties)
 
-# Propagate source directory to support building Slicer-based application
-# that (1) includes Slicer as an external project or (2) add Slicer source
-# tree using 'add_subdirectory()'.
-# Source directory it then used in 'SlicerConfigureVersionHeaderTarget' module.
-mark_as_superbuild(${Slicer_MAIN_PROJECT_APPLICATION_NAME}_SOURCE_DIR)
+SlicerReadApplicationProperties(
+  PROJECT_NAME "${Slicer_MAIN_PROJECT}"
+  PROPERTIES_VAR application_properties
+  )
+
+#-----------------------------------------------------------------------------
+# Set Slicer_MAIN_PROJECT_* variables for each application properties
+#-----------------------------------------------------------------------------
+foreach(property IN LISTS application_properties)
+  set(Slicer_MAIN_PROJECT_${property} "${${Slicer_MAIN_PROJECT}_${property}}")
+endforeach()
 
 #-----------------------------------------------------------------------------
 # Terminal support
@@ -85,9 +104,13 @@ mark_as_superbuild(Slicer_DISCLAIMER_AT_STARTUP)
 message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} text of disclaimer at startup [${Slicer_DISCLAIMER_AT_STARTUP}]")
 
 #-----------------------------------------------------------------------------
-# Applications directory
+# Set Slicer_MAIN_PROJECT_SOURCE_DIR and <Slicer_MAIN_PROJECT_APPLICATION_NAME>_SOURCE_DIR
 #-----------------------------------------------------------------------------
-if(NOT DEFINED Slicer_APPLICATIONS_DIR)
-  set(Slicer_APPLICATIONS_DIR "Applications")
+# Propagate source directory to support building Slicer-based application
+# that (1) includes Slicer as an external project or (2) add Slicer source
+# tree using 'add_subdirectory()'.
+# Source directory it then used in 'SlicerConfigureVersionHeaderTarget' module.
+if(NOT DEFINED ${Slicer_MAIN_PROJECT_APPLICATION_NAME}_SOURCE_DIR)
+  set(${Slicer_MAIN_PROJECT_APPLICATION_NAME}_SOURCE_DIR ${CMAKE_SOURCE_DIR})
 endif()
-mark_as_superbuild(Slicer_APPLICATIONS_DIR:PATH)
+mark_as_superbuild(${Slicer_MAIN_PROJECT_APPLICATION_NAME}_SOURCE_DIR)

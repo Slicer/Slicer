@@ -24,6 +24,7 @@
 #ifndef __vtkSlicerVersionConfigureInternal_h
 #define __vtkSlicerVersionConfigureInternal_h
 
+//-----------------------------------------------------------------------------
 /// \def Slicer_VERSION_MAJOR
 /// Major version number of this project source and binaries.
 #define Slicer_VERSION_MAJOR @Slicer_VERSION_MAJOR@
@@ -36,6 +37,17 @@
 /// Patch version number of this project source and binaries.
 #define Slicer_VERSION_PATCH @Slicer_VERSION_PATCH@
 
+//-----------------------------------------------------------------------------
+/// \def Slicer_MAIN_PROJECT_VERSION_MAJOR
+#define Slicer_MAIN_PROJECT_VERSION_MAJOR @Slicer_MAIN_PROJECT_VERSION_MAJOR@
+
+/// \def Slicer_MAIN_PROJECT_VERSION_MINOR
+#define Slicer_MAIN_PROJECT_VERSION_MINOR @Slicer_MAIN_PROJECT_VERSION_MINOR@
+
+/// \def Slicer_MAIN_PROJECT_VERSION_PATCH
+#define Slicer_MAIN_PROJECT_VERSION_PATCH @Slicer_MAIN_PROJECT_VERSION_PATCH@
+
+//-----------------------------------------------------------------------------
 /// \def Slicer_OS_LINUX_NAME
 /// String describing Linux operating system.
 #define Slicer_OS_LINUX_NAME "@Slicer_OS_LINUX_NAME@"

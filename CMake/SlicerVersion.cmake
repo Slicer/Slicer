@@ -39,6 +39,8 @@ foreach(var ${expected_defined_vars})
   endif()
 endforeach()
 
+message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} release type [${Slicer_RELEASE_TYPE}]")
+
 #-----------------------------------------------------------------------------
 # Update CMake module path
 #-----------------------------------------------------------------------------
@@ -50,21 +52,50 @@ set(CMAKE_MODULE_PATH
 include(SlicerMacroExtractRepositoryInfo)
 
 #-----------------------------------------------------------------------------
-# Slicer version number
+# Slicer main application version number
 #-----------------------------------------------------------------------------
-
 SlicerMacroExtractRepositoryInfo(
-  VAR_PREFIX Slicer
+  VAR_PREFIX Slicer_MAIN_PROJECT
   SOURCE_DIR ${${Slicer_MAIN_PROJECT_APPLICATION_NAME}_SOURCE_DIR}
   )
 
-if(NOT Slicer_FORCED_WC_LAST_CHANGED_DATE STREQUAL "")
+if(NOT "${Slicer_MAIN_PROJECT_FORCED_WC_LAST_CHANGED_DATE}" STREQUAL "")
+  set(Slicer_MAIN_PROJECT_WC_LAST_CHANGED_DATE "${Slicer_MAIN_PROJECT_FORCED_WC_LAST_CHANGED_DATE}")
+endif()
+string(REGEX REPLACE ".*([0-9][0-9][0-9][0-9]\\-[0-9][0-9]\\-[0-9][0-9]).*" "\\1"
+  Slicer_MAIN_PROJECT_BUILDDATE "${Slicer_MAIN_PROJECT_WC_LAST_CHANGED_DATE}")
+
+if(NOT "${Slicer_MAIN_PROJECT_FORCED_WC_REVISION}" STREQUAL "")
+  set(Slicer_MAIN_PROJECT_WC_REVISION "${Slicer_FORCED_WC_REVISION}")
+endif()
+
+set(Slicer_MAIN_PROJECT_VERSION      "${Slicer_MAIN_PROJECT_VERSION_MAJOR}.${Slicer_MAIN_PROJECT_VERSION_MINOR}")
+set(Slicer_MAIN_PROJECT_VERSION_FULL "${Slicer_MAIN_PROJECT_VERSION}.${Slicer_MAIN_PROJECT_VERSION_PATCH}")
+
+if(NOT "${Slicer_RELEASE_TYPE}" STREQUAL "Stable")
+  set(Slicer_MAIN_PROJECT_VERSION_FULL "${Slicer_MAIN_PROJECT_VERSION_FULL}-${Slicer_MAIN_PROJECT_BUILDDATE}")
+endif()
+
+if(NOT "${Slicer_MAIN_PROJECT_APPLICATION_NAME}" STREQUAL "Slicer")
+  message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} version [${Slicer_MAIN_PROJECT_VERSION_FULL}]")
+  message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} revision [${Slicer_MAIN_PROJECT_WC_REVISION}]")
+endif()
+
+#-----------------------------------------------------------------------------
+# Slicer version number
+#-----------------------------------------------------------------------------
+SlicerMacroExtractRepositoryInfo(
+  VAR_PREFIX Slicer
+  SOURCE_DIR ${Slicer_SOURCE_DIR}
+  )
+
+if(NOT "${Slicer_FORCED_WC_LAST_CHANGED_DATE}" STREQUAL "")
   set(Slicer_WC_LAST_CHANGED_DATE "${Slicer_FORCED_WC_LAST_CHANGED_DATE}")
 endif()
 string(REGEX REPLACE ".*([0-9][0-9][0-9][0-9]\\-[0-9][0-9]\\-[0-9][0-9]).*" "\\1"
   Slicer_BUILDDATE "${Slicer_WC_LAST_CHANGED_DATE}")
 
-if(NOT Slicer_FORCED_WC_REVISION STREQUAL "")
+if(NOT "${Slicer_FORCED_WC_REVISION}" STREQUAL "")
   set(Slicer_WC_REVISION "${Slicer_FORCED_WC_REVISION}")
 endif()
 
@@ -75,6 +106,5 @@ if(NOT "${Slicer_RELEASE_TYPE}" STREQUAL "Stable")
   set(Slicer_VERSION_FULL "${Slicer_VERSION_FULL}-${Slicer_BUILDDATE}")
 endif()
 
-message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} version [${Slicer_VERSION_FULL}]")
-message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} revision [${Slicer_WC_REVISION}]")
-message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} release type [${Slicer_RELEASE_TYPE}]")
+message(STATUS "Configuring Slicer version [${Slicer_VERSION_FULL}]")
+message(STATUS "Configuring Slicer revision [${Slicer_WC_REVISION}]")

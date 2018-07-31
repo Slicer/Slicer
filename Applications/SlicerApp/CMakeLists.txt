@@ -1,63 +1,12 @@
 
-set(APPLICATION_NAME "Slicer")
-project(${APPLICATION_NAME}App)
+project(SlicerApp)
 
 include(SlicerMacroBuildApplication)
 
 # --------------------------------------------------------------------------
-# Slicer supports more than one application (i.e. an application
-# "OtherApp" in addition to "APPLICATION_NAMEApp").
-#
-# In that specific case, it is required to differentiate the two applications
-# and specify which one should be considered as the *Main* one.
-#
-# This is usually done within the top level CMakeLists.txt file by setting the variable
-# Slicer_MAIN_PROJECT.
-#
-# Within the Applications/OtherApp/CMakeLists.txt of the secondary application,
-# the project name should be updated, the variable 'SlicerApp_APPLICATION_NAME'
-# could also be optionnally set to a custom value.
-#
-
-# set(SlicerApp_APPLICATION_NAME ${PROJECT_NAME}) # Uncomment and optionnally set this variable using a custom value.
-
-if(${PROJECT_NAME} STREQUAL ${Slicer_MAIN_PROJECT})
-  set(SlicerApp_APPLICATION_NAME ${Slicer_MAIN_PROJECT_APPLICATION_NAME})
-endif()
-
+# Properties
 # --------------------------------------------------------------------------
-# Application metadata
-# --------------------------------------------------------------------------
-
-macro(_set_if_not_defined var defaultvalue)
-  if(NOT DEFINED ${var})
-    set(${var} "${defaultvalue}")
-  endif()
-endmacro()
-
-_set_if_not_defined(SlicerApp_DESCRIPTION_SUMMARY
-  "Medical Visualization and Processing Environment for Research"
-  )
-
-_set_if_not_defined(SlicerApp_DESCRIPTION_FILE
-  ${Slicer_SOURCE_DIR}/README.txt
-  )
-
-_set_if_not_defined(SlicerApp_LAUNCHER_SPLASHSCREEN_FILE
-  "Resources/Images/${SlicerApp_APPLICATION_NAME}-SplashScreen.png"
-  )
-
-_set_if_not_defined(SlicerApp_APPLE_ICON_FILE
-  "Resources/${SlicerApp_APPLICATION_NAME}.icns"
-  )
-
-_set_if_not_defined(SlicerApp_WIN_ICON_FILE
-  "Resources/${SlicerApp_APPLICATION_NAME}.ico"
-  )
-
-_set_if_not_defined(SlicerApp_LICENSE_FILE
-  "${Slicer_SOURCE_DIR}/License.txt"
-  )
+SlicerReadApplicationProperties()
 
 # --------------------------------------------------------------------------
 # Folder
@@ -67,7 +16,6 @@ set(${PROJECT_NAME}_FOLDER "App-${SlicerApp_APPLICATION_NAME}")
 # --------------------------------------------------------------------------
 # Application library
 # --------------------------------------------------------------------------
-
 set(APPLIB_NAME "q${PROJECT_NAME}")
 
 set(APPLIB_SRCS

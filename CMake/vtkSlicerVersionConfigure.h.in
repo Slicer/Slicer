@@ -17,6 +17,11 @@
 
 #include "vtkSlicerVersionConfigureInternal.h"
 
+/// \def Slicer_RELEASE_TYPE
+/// \brief Type of Slicer release: `Experimental`, `Nightly` or `Stable`.
+#define Slicer_RELEASE_TYPE "@Slicer_RELEASE_TYPE@"
+
+//-----------------------------------------------------------------------------
 /// \def Slicer_VERSION
 /// \brief Slicer version string.
 ///
@@ -33,17 +38,39 @@
 /// \brief Build date associated with this project binaries.
 #define Slicer_BUILDDATE "@Slicer_BUILDDATE@"
 
-/// \def Slicer_RELEASE_TYPE
-/// \brief Type of Slicer release: `Experimental`, `Nightly` or `Stable`.
-#define Slicer_RELEASE_TYPE "@Slicer_RELEASE_TYPE@"
-
 /// \def Slicer_WC_URL
-/// \brief Source control management URL identifying this project sources.
+/// \brief Source control management URL identifying Slicer project sources.
 #define Slicer_WC_URL "@Slicer_WC_URL@"
 
 /// \def Slicer_WC_REVISION
 /// \brief Revision identifying this project sources.
 /// \sa Slicer_WC_URL
 #define Slicer_WC_REVISION "@Slicer_WC_REVISION@"
+
+//-----------------------------------------------------------------------------
+/// \def Slicer_MAIN_PROJECT_VERSION
+/// \brief Slicer main project version string.
+///
+/// Format is `<Slicer_MAIN_PROJECT_VERSION_MAJOR>.<Slicer_MAIN_PROJECT_VERSION_MINOR>`.
+#define Slicer_MAIN_PROJECT_VERSION "@Slicer_MAIN_PROJECT_VERSION@"
+
+/// \def Slicer_MAIN_PROJECT_VERSION_FULL
+/// \brief Slicer main project long version string.
+///
+/// Format is `<Slicer_MAIN_PROJECT_VERSION_MAJOR>.<Slicer_MAIN_PROJECT_VERSION_MINOR>.<Slicer_MAIN_PROJECT_VERSION_PATCH>[-<Slicer_MAIN_PROJECT_BUILDDATE>]`
+#define Slicer_MAIN_PROJECT_VERSION_FULL "@Slicer_MAIN_PROJECT_VERSION_FULL@"
+
+/// \def Slicer_MAIN_PROJECT_BUILDDATE
+/// \brief Build date associated with main project binaries.
+#define Slicer_MAIN_PROJECT_BUILDDATE "@Slicer_MAIN_PROJECT_BUILDDATE@"
+
+/// \def Slicer_MAIN_PROJECT_WC_URL
+/// \brief Source control management URL identifying main project sources.
+#define Slicer_MAIN_PROJECT_WC_URL "@Slicer_MAIN_PROJECT_WC_URL@"
+
+/// \def Slicer_MAIN_PROJECT_WC_REVISION
+/// \brief Revision identifying main project sources.
+/// \sa Slicer_MAIN_PROJECT_WC_URL
+#define Slicer_MAIN_PROJECT_WC_REVISION "@Slicer_MAIN_PROJECT_WC_REVISION@"
 
 #endif // __vtkSlicerVersionConfigure_h

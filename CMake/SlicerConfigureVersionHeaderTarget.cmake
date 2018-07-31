@@ -24,21 +24,32 @@
 # It has been designed to be included in the build system of Slicer.
 #
 # The following variables are expected to be defined in the including scope:
+#
 #  GIT_EXECUTABLE
 #  Slicer_BINARY_DIR
 #  Slicer_CMAKE_DIR
+#
 #  Slicer_MAIN_PROJECT_APPLICATION_NAME
 #  <Slicer_MAIN_PROJECT_APPLICATION_NAME>_SOURCE_DIR
+#  Slicer_MAIN_PROJECT_VERSION_MAJOR
+#  Slicer_MAIN_PROJECT_VERSION_MINOR
+#  Slicer_MAIN_PROJECT_VERSION_PATCH
+#
 #  Slicer_RELEASE_TYPE
+#
 #  Slicer_SOURCE_DIR
 #  Slicer_VERSION_MAJOR
 #  Slicer_VERSION_MINOR
 #  Slicer_VERSION_PATCH
+#
 #  Subversion_SVN_EXECUTABLE
 #
 # Optionally, these variable can also be set:
 #  Slicer_FORCED_WC_REVISION (default "")
 #  Slicer_FORCED_WC_LAST_CHANGED_DATE (default ""): Format YYYY-MM-DD
+#
+#  Slicer_MAIN_PROJECT_FORCED_WC_REVISION (default "")
+#  Slicer_MAIN_PROJECT_FORCED_WC_LAST_CHANGED_DATE (default ""): Format YYYY-MM-DD
 #
 
 # --------------------------------------------------------------------------
@@ -48,13 +59,20 @@ set(expected_defined_vars
   GIT_EXECUTABLE
   Slicer_BINARY_DIR
   Slicer_CMAKE_DIR
+
   Slicer_MAIN_PROJECT_APPLICATION_NAME # Used by SlicerVersion.cmake
   ${Slicer_MAIN_PROJECT_APPLICATION_NAME}_SOURCE_DIR
+  Slicer_MAIN_PROJECT_VERSION_MAJOR
+  Slicer_MAIN_PROJECT_VERSION_MINOR
+  Slicer_MAIN_PROJECT_VERSION_PATCH
+
   Slicer_RELEASE_TYPE
+
   Slicer_SOURCE_DIR
   Slicer_VERSION_MAJOR
   Slicer_VERSION_MINOR
   Slicer_VERSION_PATCH
+
   Subversion_SVN_EXECUTABLE
   )
 foreach(var ${expected_defined_vars})
@@ -86,6 +104,10 @@ if(NOT SLICER_CONFIGURE_VERSION_HEADER)
       ${script_args}
       -DSlicer_FORCED_WC_REVISION:STRING=${Slicer_FORCED_WC_REVISION}
       -DSlicer_FORCED_WC_LAST_CHANGED_DATE:STRING=${Slicer_FORCED_WC_LAST_CHANGED_DATE}
+
+      -DSlicer_MAIN_PROJECT_FORCED_WC_REVISION:STRING=${Slicer_MAIN_PROJECT_FORCED_WC_REVISION}
+      -DSlicer_MAIN_PROJECT_FORCED_WC_LAST_CHANGED_DATE:STRING=${Slicer_MAIN_PROJECT_FORCED_WC_LAST_CHANGED_DATE}
+
       -DSLICER_CONFIGURE_VERSION_HEADER=1
       -P ${CMAKE_CURRENT_LIST_FILE}
     COMMENT "Configuring vtkSlicerVersionConfigure.h"
@@ -106,6 +128,12 @@ set(expected_defined_vars
   Slicer_VERSION_FULL
   Slicer_WC_REVISION
   Slicer_WC_URL
+
+  Slicer_MAIN_PROJECT_BUILDDATE
+  Slicer_MAIN_PROJECT_VERSION
+  Slicer_MAIN_PROJECT_VERSION_FULL
+  Slicer_MAIN_PROJECT_WC_REVISION
+  Slicer_MAIN_PROJECT_WC_URL
   )
 foreach(var ${expected_defined_vars})
   if(NOT DEFINED ${var})
