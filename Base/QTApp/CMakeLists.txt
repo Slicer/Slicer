@@ -18,17 +18,21 @@ set(KIT_include_directories
 
 # Source files
 set(KIT_SRCS
+  qSlicerAppAboutDialog.cxx
+  qSlicerAppAboutDialog.h
   qSlicerApplicationHelper.cxx
   qSlicerApplicationHelper.h
   )
 
 # Headers that should run through moc
 set(KIT_MOC_SRCS
+  qSlicerAppAboutDialog.h
   qSlicerApplicationHelper.h
   )
 
 # UI files
 set(KIT_UI_SRCS
+  Resources/UI/qSlicerAppAboutDialog.ui
   )
 
 # Additional Target libraries (QT libs already included)
@@ -61,6 +65,6 @@ SlicerMacroBuildBaseQtLibrary(
 
 # --------------------------------------------------------------------------
 if(BUILD_TESTING)
-#  add_subdirectory(Testing)
+  add_subdirectory(Testing)
 endif()
 

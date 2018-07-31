@@ -2,14 +2,6 @@
 <!DOCTYPE TS>
 <TS version="2.0" language="fr_FR">
 <context>
-    <name>qSlicerAppAboutDialog</name>
-    <message>
-        <location filename="../UI/qSlicerAppAboutDialog.ui" line="435"/>
-        <source>About 3D Slicer</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>qSlicerAppMainWindow</name>
     <message>
         <location filename="../UI/qSlicerAppMainWindow.ui" line="14"/>

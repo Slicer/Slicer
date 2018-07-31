@@ -27,13 +27,13 @@
 // CTK includes
 #include <ctkPimpl.h>
 
-// SlicerApp includes
-#include "qSlicerAppExport.h"
+// Slicer includes
+#include "qSlicerBaseQTAppExport.h"
 
 class qSlicerAppAboutDialogPrivate;
 
 /// Pre-request that a qSlicerApplication has been instanced
-class Q_SLICER_APP_EXPORT qSlicerAppAboutDialog :
+class Q_SLICER_BASE_QTAPP_EXPORT qSlicerAppAboutDialog :
   public QDialog
 {
   Q_OBJECT

@@ -12,7 +12,6 @@ endif()
 
 set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 set(KIT_TEST_SRCS
-  qSlicerAppAboutDialogTest1.cxx
   qSlicerAppErrorReportDialogTest1.cxx
   qSlicerAppMainWindowTest1.cxx
   qSlicerModuleFactoryManagerTest1.cxx
@@ -47,7 +46,6 @@ set_target_properties(${KIT}CxxTests PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER}
 # Add Tests
 #
 
-simple_test( qSlicerAppAboutDialogTest1 )
 if(Slicer_USE_PYTHONQT_WITH_TCL)
   if(Slicer_HAS_CONSOLE_IO_SUPPORT)
     simple_test( qSlicerApplicationTpyclTest1 )
