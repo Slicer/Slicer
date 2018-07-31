@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qSlicerAppMainWindow</class>
- <widget class="QMainWindow" name="qSlicerAppMainWindow">
+ <class>qSlicerMainWindow</class>
+ <widget class="QMainWindow" name="qSlicerMainWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -9,13 +9,6 @@
     <width>835</width>
     <height>570</height>
    </rect>
-  </property>
-  <property name="windowTitle">
-   <string>3D Slicer</string>
-  </property>
-  <property name="windowIcon">
-   <iconset resource="../SlicerApp.qrc">
-    <normaloff>:/Icons/Medium/DesktopIcon.png</normaloff>:/Icons/Medium/DesktopIcon.png</iconset>
   </property>
   <widget class="QWidget" name="CentralWidget"/>
   <widget class="QStatusBar" name="StatusBar"/>
@@ -54,9 +47,6 @@
      </property>
      <item>
       <widget class="QLabel" name="LogoLabel">
-       <property name="pixmap">
-        <pixmap resource="../SlicerApp.qrc">:/ModulePanelLogo.png</pixmap>
-       </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
        </property>
@@ -362,15 +352,6 @@
     <property name="title">
      <string>&amp;Help</string>
     </property>
-    <addaction name="HelpKeyboardShortcutsAction"/>
-    <addaction name="HelpInterfaceDocumentationAction"/>
-    <addaction name="HelpBrowseTutorialsAction"/>
-    <addaction name="separator"/>
-    <addaction name="HelpSlicerPublicationsAction"/>
-    <addaction name="HelpVisualBlogAction"/>
-    <addaction name="separator"/>
-    <addaction name="HelpReportBugOrFeatureRequestAction"/>
-    <addaction name="HelpAboutSlicerAppAction"/>
    </widget>
    <addaction name="FileMenu"/>
    <addaction name="EditMenu"/>
@@ -379,7 +360,7 @@
   </widget>
   <action name="FileLoadSceneAction">
    <property name="icon">
-    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerLoadScene.png</normaloff>:/Icons/Small/SlicerLoadScene.png</iconset>
    </property>
    <property name="text">
@@ -391,7 +372,7 @@
   </action>
   <action name="FileLoadDataAction">
    <property name="icon">
-    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerLoadData.png</normaloff>:/Icons/Small/SlicerLoadData.png</iconset>
    </property>
    <property name="text">
@@ -403,7 +384,7 @@
   </action>
   <action name="LoadDICOMAction">
    <property name="icon">
-    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerLoadDICOM.png</normaloff>:/Icons/Small/SlicerLoadDICOM.png</iconset>
    </property>
    <property name="text">
@@ -415,7 +396,7 @@
   </action>
   <action name="FileImportSceneAction">
    <property name="icon">
-    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Medium/SlicerAddScene.png</normaloff>:/Icons/Medium/SlicerAddScene.png</iconset>
    </property>
    <property name="text">
@@ -427,7 +408,7 @@
   </action>
   <action name="FileAddDataAction">
    <property name="icon">
-    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerLoadData.png</normaloff>:/Icons/Small/SlicerLoadData.png</iconset>
    </property>
    <property name="text">
@@ -442,7 +423,7 @@
   </action>
   <action name="FileAddVolumeAction">
    <property name="icon">
-    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Medium/SlicerAddVolume.png</normaloff>:/Icons/Medium/SlicerAddVolume.png</iconset>
    </property>
    <property name="text">
@@ -454,7 +435,7 @@
   </action>
   <action name="FileAddTransformAction">
    <property name="icon">
-    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Medium/SlicerAddTransform.png</normaloff>:/Icons/Medium/SlicerAddTransform.png</iconset>
    </property>
    <property name="text">
@@ -466,7 +447,7 @@
   </action>
   <action name="FileSaveSceneAction">
    <property name="icon">
-    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerSave.png</normaloff>:/Icons/Small/SlicerSave.png</iconset>
    </property>
    <property name="text">
@@ -481,7 +462,7 @@
   </action>
   <action name="SDBSaveToDirectoryAction">
    <property name="icon">
-    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerSave.png</normaloff>:/Icons/Small/SlicerSave.png</iconset>
    </property>
    <property name="text">
@@ -493,7 +474,7 @@
   </action>
   <action name="SDBSaveToMRBAction">
    <property name="icon">
-    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerSave.png</normaloff>:/Icons/Small/SlicerSave.png</iconset>
    </property>
    <property name="text">
@@ -508,7 +489,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerSave.png</normaloff>:/Icons/Small/SlicerSave.png</iconset>
    </property>
    <property name="text">
@@ -520,7 +501,7 @@
   </action>
   <action name="FileCloseSceneAction">
    <property name="icon">
-    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerCloseScene.png</normaloff>:/Icons/Small/SlicerCloseScene.png</iconset>
    </property>
    <property name="text">
@@ -543,7 +524,7 @@
   </action>
   <action name="EditUndoAction">
    <property name="icon">
-    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerUndo.png</normaloff>:/Icons/Small/SlicerUndo.png</iconset>
    </property>
    <property name="text">
@@ -558,7 +539,7 @@
   </action>
   <action name="EditRedoAction">
    <property name="icon">
-    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerRedo.png</normaloff>:/Icons/Small/SlicerRedo.png</iconset>
    </property>
    <property name="text">
@@ -595,7 +576,7 @@
   </action>
   <action name="ViewExtensionsManagerAction">
    <property name="icon">
-    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/ExtensionDefaultIcon.png</normaloff>:/Icons/ExtensionDefaultIcon.png</iconset>
    </property>
    <property name="text">
@@ -629,7 +610,7 @@
   </action>
   <action name="CutAction">
    <property name="icon">
-    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerEditCut.png</normaloff>:/Icons/Small/SlicerEditCut.png</iconset>
    </property>
    <property name="text">
@@ -644,7 +625,7 @@
   </action>
   <action name="CopyAction">
    <property name="icon">
-    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerEditCopy.png</normaloff>:/Icons/Small/SlicerEditCopy.png</iconset>
    </property>
    <property name="text">
@@ -659,7 +640,7 @@
   </action>
   <action name="PasteAction">
    <property name="icon">
-    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerEditPaste.png</normaloff>:/Icons/Small/SlicerEditPaste.png</iconset>
    </property>
    <property name="text">
@@ -700,51 +681,6 @@
     <string>Ctrl+0</string>
    </property>
   </action>
-  <action name="HelpKeyboardShortcutsAction">
-   <property name="text">
-    <string>&amp;Keyboard Shortcuts</string>
-   </property>
-   <property name="toolTip">
-    <string>Raise a window that lists commonly-used keyboard shortcuts.</string>
-   </property>
-  </action>
-  <action name="HelpBrowseTutorialsAction">
-   <property name="text">
-    <string>Browse tutorials</string>
-   </property>
-   <property name="toolTip">
-    <string>Raise the training pages in your favorite web browser</string>
-   </property>
-  </action>
-  <action name="HelpInterfaceDocumentationAction">
-   <property name="text">
-    <string>Interface Documentation</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+1</string>
-   </property>
-  </action>
-  <action name="HelpSlicerPublicationsAction">
-   <property name="text">
-    <string>Slicer Publications</string>
-   </property>
-  </action>
-  <action name="HelpAboutSlicerAppAction">
-   <property name="text">
-    <string>About 3D Slicer</string>
-   </property>
-   <property name="toolTip">
-    <string>Provides a description of the Slicer effort and its support.</string>
-   </property>
-  </action>
-  <action name="HelpReportBugOrFeatureRequestAction">
-   <property name="text">
-    <string>Report a bug</string>
-   </property>
-   <property name="toolTip">
-    <string>Report error or request enhancement or new feature.</string>
-   </property>
-  </action>
   <action name="FeedbackReportUsabilityIssueAction">
    <property name="text">
     <string>Feedback: report usability issue (www)</string>
@@ -759,14 +695,6 @@
    </property>
    <property name="toolTip">
     <string>Open your Firefox web browser to http://www.na-mic.org/Bug/my_view_page.php so that community feature requests can easily be collected.</string>
-   </property>
-  </action>
-  <action name="HelpVisualBlogAction">
-   <property name="text">
-    <string>Visual Blog</string>
-   </property>
-   <property name="toolTip">
-    <string>Open your favorite web browser to http://www.slicer.org/slicerWiki/index.php/Slicer3:VisualBlog where you can post screenshots of interesting ways you are using the Slicer3 software package in your research and share them with the Slicer community.</string>
    </property>
   </action>
   <action name="DebugLoadModuleAction">
@@ -983,7 +911,7 @@
   </action>
   <action name="ModuleHomeAction">
    <property name="icon">
-    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Medium/SlicerHome.png</normaloff>:/Icons/Medium/SlicerHome.png</iconset>
    </property>
    <property name="text">
@@ -1402,8 +1330,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../SlicerApp.qrc"/>
-  <include location="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
+  <include location="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
   <include location="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc"/>
  </resources>
  <connections/>

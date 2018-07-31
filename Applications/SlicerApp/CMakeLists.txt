@@ -29,7 +29,6 @@ set(APPLIB_MOC_SRCS
   )
 
 set(APPLIB_UI_SRCS
-  Resources/UI/qSlicerAppMainWindow.ui
   )
 
 set(APPLIB_RESOURCES

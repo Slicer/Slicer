@@ -24,6 +24,8 @@ set(KIT_SRCS
   qSlicerApplicationHelper.h
   qSlicerErrorReportDialog.cxx
   qSlicerErrorReportDialog.h
+  qSlicerMainWindow.cxx
+  qSlicerMainWindow.h
   )
 
 # Headers that should run through moc
@@ -31,12 +33,14 @@ set(KIT_MOC_SRCS
   qSlicerAboutDialog.h
   qSlicerApplicationHelper.h
   qSlicerErrorReportDialog.h
+  qSlicerMainWindow.h
   )
 
 # UI files
 set(KIT_UI_SRCS
   Resources/UI/qSlicerAboutDialog.ui
   Resources/UI/qSlicerErrorReportDialog.ui
+  Resources/UI/qSlicerMainWindow.ui
   )
 
 # Additional Target libraries (QT libs already included)

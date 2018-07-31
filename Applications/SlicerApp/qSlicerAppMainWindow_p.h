@@ -21,15 +21,9 @@
 #ifndef __qSlicerAppMainWindow_p_h
 #define __qSlicerAppMainWindow_p_h
 
-// Qt includes
-#include <QQueue>
-class QToolButton;
-
 // Slicer includes
-#include "qSlicerAppExport.h"
 #include "qSlicerAppMainWindow.h"
-#include <qSlicerIO.h>
-#include "ui_qSlicerAppMainWindow.h"
+#include "qSlicerMainWindow_p.h"
 
 class qSlicerModuleSelectorToolBar;
 class qSlicerAppMainWindowPrivate;
@@ -37,50 +31,17 @@ class qSlicerLayoutManager;
 
 //-----------------------------------------------------------------------------
 class Q_SLICER_APP_EXPORT qSlicerAppMainWindowPrivate
-  : public Ui_qSlicerAppMainWindow
+  : public qSlicerMainWindowPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerAppMainWindow);
-protected:
-  qSlicerAppMainWindow* const q_ptr;
-
 public:
-  typedef qSlicerAppMainWindowPrivate Self;
+  typedef qSlicerMainWindowPrivate Superclass;
   qSlicerAppMainWindowPrivate(qSlicerAppMainWindow& object);
   virtual ~qSlicerAppMainWindowPrivate();
 
   virtual void init();
+  /// Reimplemented for custom behavior
   virtual void setupUi(QMainWindow * mainWindow);
-  virtual void setupStatusBar();
-
-  virtual void readSettings();
-  virtual void writeSettings();
-
-  virtual void setupRecentlyLoadedMenu(const QList<qSlicerIO::IOProperties>& fileProperties);
-
-  virtual void filterRecentlyLoadedFileProperties();
-
-  static QList<qSlicerIO::IOProperties> readRecentlyLoadedFiles();
-  static void writeRecentlyLoadedFiles(const QList<qSlicerIO::IOProperties>& fileProperties);
-
-  virtual bool confirmCloseApplication();
-  virtual bool confirmCloseScene();
-
-  void setErrorLogIconHighlighted(bool);
-
-#ifdef Slicer_USE_PYTHONQT
-  QDockWidget*                    PythonConsoleDockWidget;
-  QAction*                        PythonConsoleToggleViewAction;
-#endif
-  ctkErrorLogWidget*              ErrorLogWidget;
-  QToolButton*                    ErrorLogToolButton;
-  qSlicerModuleSelectorToolBar*   ModuleSelectorToolBar;
-  QStringList                     FavoriteModules;
-  qSlicerLayoutManager*           LayoutManager;
-  QQueue<qSlicerIO::IOProperties> RecentlyLoadedFileProperties;
-
-  QByteArray                      StartupState;
-
-  bool                            WindowInitialShowCompleted;
 };
 
 #endif

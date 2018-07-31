@@ -184,7 +184,7 @@ def lookupTopLevelWidget(objectName, verbose = True):
   return None
 
 def mainWindow(verbose = True):
-  return lookupTopLevelWidget('qSlicerAppMainWindow', verbose)
+  return lookupTopLevelWidget('qSlicerMainWindow', verbose)
 
 def pythonShell(verbose = True):
   from slicer import app
