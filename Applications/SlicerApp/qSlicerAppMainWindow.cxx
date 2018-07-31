@@ -1146,6 +1146,7 @@ void qSlicerAppMainWindow::on_HelpSlicerPublicationsAction_triggered()
 void qSlicerAppMainWindow::on_HelpAboutSlicerAppAction_triggered()
 {
   qSlicerAppAboutDialog about(this);
+  about.setLogo(QPixmap(":/Logo.png"));
   about.exec();
 }
 

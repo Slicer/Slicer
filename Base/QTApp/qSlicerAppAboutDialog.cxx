@@ -66,6 +66,13 @@ qSlicerAppAboutDialog::qSlicerAppAboutDialog(QWidget* parentWidget)
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerAppAboutDialog::setLogo(const QPixmap& newLogo)
+{
+  Q_D(qSlicerAppAboutDialog);
+  d->SlicerLabel->setPixmap(newLogo);
+}
+
+//-----------------------------------------------------------------------------
 qSlicerAppAboutDialog::~qSlicerAppAboutDialog()
 {
 }

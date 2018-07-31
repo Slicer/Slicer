@@ -41,6 +41,8 @@ public:
   qSlicerAppAboutDialog(QWidget *parentWidget = 0);
   virtual ~qSlicerAppAboutDialog();
 
+  Q_INVOKABLE void setLogo(const QPixmap& newLogo);
+
 protected:
   QScopedPointer<qSlicerAppAboutDialogPrivate> d_ptr;
 

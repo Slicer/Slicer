@@ -508,9 +508,6 @@
      <property name="textPosition">
       <set>Qt::AlignCenter</set>
      </property>
-     <property name="pixmap">
-      <pixmap resource="../SlicerApp.qrc">:/Logo.png</pixmap>
-     </property>
      <property name="transformationMode">
       <enum>Qt::SmoothTransformation</enum>
      </property>
@@ -551,8 +548,5 @@
    <header>ctkThumbnailLabel.h</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="../SlicerApp.qrc"/>
- </resources>
  <connections/>
 </ui>
