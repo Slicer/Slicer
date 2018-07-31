@@ -228,9 +228,9 @@ qSlicerSegmentEditorPaintEffectPrivate::qSlicerSegmentEditorPaintEffectPrivate(q
   , BrushDiameterSlider(NULL)
   , BrushDiameterRelativeToggle(NULL)
   , BrushSphereCheckbox(NULL)
+  , EditIn3DViewsCheckbox(NULL)
   , ColorSmudgeCheckbox(NULL)
   , EraseAllSegmentsCheckbox(NULL)
-  , EditIn3DViewsCheckbox(NULL)
   , BrushPixelModeCheckbox(NULL)
 {
   this->PaintCoordinates_World = vtkSmartPointer<vtkPoints>::New();
