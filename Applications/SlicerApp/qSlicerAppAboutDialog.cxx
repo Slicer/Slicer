@@ -51,9 +51,12 @@ qSlicerAppAboutDialog::qSlicerAppAboutDialog(QWidget* parentWidget)
   d->CreditsTextBrowser->append("");
   d->CreditsTextBrowser->append(slicer->applicationVersion()+ " " + "r" + slicer->repositoryRevision());
   d->CreditsTextBrowser->append("");
-  d->CreditsTextBrowser->append("");
-  d->CreditsTextBrowser->insertHtml("<a href=\"http://download.slicer.org/\">Download</a> a newer version<br />");
-  d->CreditsTextBrowser->append("");
+  if (slicer->mainApplicationName() == QLatin1String("Slicer"))
+    {
+    d->CreditsTextBrowser->append("");
+    d->CreditsTextBrowser->insertHtml("<a href=\"http://download.slicer.org/\">Download</a> a newer version<br />");
+    d->CreditsTextBrowser->append("");
+    }
   d->CreditsTextBrowser->insertHtml(slicer->acknowledgment());
   d->CreditsTextBrowser->insertHtml(slicer->libraries());
   d->SlicerLinksTextBrowser->insertHtml(slicer->copyrights());
