@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerAppAboutDialog_h
-#define __qSlicerAppAboutDialog_h
+#ifndef __qSlicerAboutDialog_h
+#define __qSlicerAboutDialog_h
 
 // Qt includes
 #include <QDialog>
@@ -30,25 +30,25 @@
 // Slicer includes
 #include "qSlicerBaseQTAppExport.h"
 
-class qSlicerAppAboutDialogPrivate;
+class qSlicerAboutDialogPrivate;
 
 /// Pre-request that a qSlicerApplication has been instanced
-class Q_SLICER_BASE_QTAPP_EXPORT qSlicerAppAboutDialog :
+class Q_SLICER_BASE_QTAPP_EXPORT qSlicerAboutDialog :
   public QDialog
 {
   Q_OBJECT
 public:
-  qSlicerAppAboutDialog(QWidget *parentWidget = 0);
-  virtual ~qSlicerAppAboutDialog();
+  qSlicerAboutDialog(QWidget *parentWidget = 0);
+  virtual ~qSlicerAboutDialog();
 
   Q_INVOKABLE void setLogo(const QPixmap& newLogo);
 
 protected:
-  QScopedPointer<qSlicerAppAboutDialogPrivate> d_ptr;
+  QScopedPointer<qSlicerAboutDialogPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerAppAboutDialog);
-  Q_DISABLE_COPY(qSlicerAppAboutDialog);
+  Q_DECLARE_PRIVATE(qSlicerAboutDialog);
+  Q_DISABLE_COPY(qSlicerAboutDialog);
 };
 
 #endif

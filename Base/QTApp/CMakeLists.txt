@@ -18,21 +18,21 @@ set(KIT_include_directories
 
 # Source files
 set(KIT_SRCS
-  qSlicerAppAboutDialog.cxx
-  qSlicerAppAboutDialog.h
+  qSlicerAboutDialog.cxx
+  qSlicerAboutDialog.h
   qSlicerApplicationHelper.cxx
   qSlicerApplicationHelper.h
   )
 
 # Headers that should run through moc
 set(KIT_MOC_SRCS
-  qSlicerAppAboutDialog.h
+  qSlicerAboutDialog.h
   qSlicerApplicationHelper.h
   )
 
 # UI files
 set(KIT_UI_SRCS
-  Resources/UI/qSlicerAppAboutDialog.ui
+  Resources/UI/qSlicerAboutDialog.ui
   )
 
 # Additional Target libraries (QT libs already included)

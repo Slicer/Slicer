@@ -22,16 +22,16 @@
 #include <QTimer>
 
 // SlicerApp includes
-#include "qSlicerAppAboutDialog.h"
+#include "qSlicerAboutDialog.h"
 #include "qSlicerApplication.h"
 
 // STD includes
 
-int qSlicerAppAboutDialogTest1(int argc, char * argv[] )
+int qSlicerAboutDialogTest1(int argc, char * argv[] )
 {
   qSlicerApplication app(argc, argv);
 
-  qSlicerAppAboutDialog about;
+  qSlicerAboutDialog about;
 
   if (argc < 2 || QString(argv[1]) != "-I")
     {

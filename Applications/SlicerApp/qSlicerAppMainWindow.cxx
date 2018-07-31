@@ -54,9 +54,9 @@
 #include <ctkVTKWidgetsUtils.h>
 
 // SlicerApp includes
+#include "qSlicerAboutDialog.h"
 #include "qSlicerActionsDialog.h"
 #include "qSlicerApplication.h"
-#include "qSlicerAppAboutDialog.h"
 #include "qSlicerAppErrorReportDialog.h"
 #include "qSlicerAbstractModule.h"
 #if defined Slicer_USE_QtTesting && defined Slicer_BUILD_CLI_SUPPORT
@@ -1145,7 +1145,7 @@ void qSlicerAppMainWindow::on_HelpSlicerPublicationsAction_triggered()
 //---------------------------------------------------------------------------
 void qSlicerAppMainWindow::on_HelpAboutSlicerAppAction_triggered()
 {
-  qSlicerAppAboutDialog about(this);
+  qSlicerAboutDialog about(this);
   about.setLogo(QPixmap(":/Logo.png"));
   about.exec();
 }
