@@ -1332,7 +1332,6 @@ void qSlicerMarkupsModuleWidget::onGlyphScaleSliderWidgetChanged(double value)
 {
   Q_D(qSlicerMarkupsModuleWidget);
   // get the active node
-  vtkMRMLNode *mrmlNode = d->activeMarkupMRMLNodeComboBox->currentNode();
   vtkMRMLMarkupsFiducialNode *listNode = vtkMRMLMarkupsFiducialNode::SafeDownCast(d->activeMarkupMRMLNodeComboBox->currentNode());
   // get the display node
   vtkMRMLMarkupsDisplayNode *displayNode = NULL;

@@ -3548,5 +3548,5 @@ void qMRMLSegmentEditorWidget::showSegmentationGeometryDialog()
   qMRMLSegmentationGeometryDialog geometryDialog(d->SegmentationNode, this);
   geometryDialog.setEditEnabled(true);
   geometryDialog.setResampleLabelmaps(true);
-  bool result = geometryDialog.exec();
+  geometryDialog.exec();
 }
