@@ -914,7 +914,6 @@ double* vtkMRMLSegmentationNode::GetSegmentCenter(const std::string& segmentID)
     return NULL;
     }
 
-  double segmentCenter_Segment[4] = { 0.0, 0.0, 0.0, 1.0 }; // in the segment's coordinate system
   if (this->Segmentation->ContainsRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName()))
     {
     int labelOrientedImageDataEffectiveExtent[6] = { 0, -1, 0, -1, 0, -1 };

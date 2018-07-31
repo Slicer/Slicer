@@ -1130,7 +1130,6 @@ void qMRMLSegmentsTableView::jumpSlices()
     qCritical() << Q_FUNC_INFO << ": No current segmentation node";
     return;
     }
-  vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
 
   double* segmentCenterPosition = d->SegmentationNode->GetSegmentCenterRAS(selectedSegmentIDs[0].toLatin1().constData());
   if (!segmentCenterPosition)

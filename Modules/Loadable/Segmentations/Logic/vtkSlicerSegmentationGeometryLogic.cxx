@@ -130,8 +130,6 @@ std::string vtkSlicerSegmentationGeometryLogic::CalculateOutputGeometry()
 
   // Determine source type
   vtkMRMLScalarVolumeNode* sourceVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(this->SourceGeometryNode);
-  vtkMRMLAnnotationROINode* sourceROINode = vtkMRMLAnnotationROINode::SafeDownCast(this->SourceGeometryNode);
-  vtkMRMLModelNode* sourceModelNode = vtkMRMLModelNode::SafeDownCast(this->SourceGeometryNode);
 
   vtkMRMLSegmentationNode* sourceSegmentationNode = vtkMRMLSegmentationNode::SafeDownCast(this->SourceGeometryNode);
   vtkSmartPointer<vtkOrientedImageData> sourceBinaryLabelmap;
