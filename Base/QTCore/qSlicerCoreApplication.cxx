@@ -1357,6 +1357,12 @@ qSlicerCoreCommandOptions* qSlicerCoreApplication::coreCommandOptions()const
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::mainApplicationName()const
+{
+  return QString(Slicer_MAIN_PROJECT_APPLICATION_NAME);
+}
+
+//-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::libraries()const
 {
   QString librariesText(

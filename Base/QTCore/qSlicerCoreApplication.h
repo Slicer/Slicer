@@ -87,6 +87,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
   Q_PROPERTY(QString platform READ platform CONSTANT)
   Q_PROPERTY(QString arch READ arch CONSTANT)
   Q_PROPERTY(QString os READ os CONSTANT)
+  Q_PROPERTY(QString mainApplicationName READ mainApplicationName CONSTANT)
 public:
 
   typedef QApplication Superclass;
@@ -335,6 +336,9 @@ public:
   /// \note It will also instantiate a QSettings object if required.
   /// \sa slicerRevisionSpecificUserSettingsFilePath()
   Q_INVOKABLE QSettings* revisionUserSettings()const;
+
+  /// \brief Return the name of the main application.
+  QString mainApplicationName()const;
 
   /// Return the copyrights of Slicer
   virtual QString copyrights()const;
