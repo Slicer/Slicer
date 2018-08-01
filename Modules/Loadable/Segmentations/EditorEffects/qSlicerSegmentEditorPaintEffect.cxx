@@ -889,7 +889,7 @@ std::string qSlicerSegmentEditorPaintEffectPrivate::segmentAtPosition(qMRMLWidge
   vtkObject* displayableManager = NULL;
   vtkMRMLSegmentationsDisplayableManager2D* segmentationDisplayableManager2D = NULL;
   for (displayableManagerCollection->InitTraversal(it);
-   displayableManager = displayableManagerCollection->GetNextItemAsObject(it);)
+       (displayableManager = displayableManagerCollection->GetNextItemAsObject(it));)
     {
     segmentationDisplayableManager2D = vtkMRMLSegmentationsDisplayableManager2D::SafeDownCast(displayableManager);
     if (segmentationDisplayableManager2D)
