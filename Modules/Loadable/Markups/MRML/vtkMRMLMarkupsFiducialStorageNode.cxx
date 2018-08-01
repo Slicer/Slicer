@@ -44,16 +44,14 @@ static const int FIELD_ASSOCIATED_NODE_ID = 13;
 class CsvCodec
 {
 public:
-  CsvCodec() : Separator(',') {};
-  ~CsvCodec() {};
+  CsvCodec() : Separator(',') {}
+  ~CsvCodec() {}
 
   void ReadFromString(const std::string &row)
     {
     CSVState state = UnquotedField;
     this->Fields.clear();
     std::string currentField;
-    std::string currentFieldExists;
-    size_t i = 0; // index of the current field
     for (std::string::const_iterator c = row.begin(); c != row.end(); ++c)
       {
       switch (state)
@@ -121,9 +119,14 @@ public:
   char GetSeparator() { return this->Separator; }
   void SetSeparator(char separator) { this->Separator = separator; }
 
+  inline int GetNumberOfFields() const
+  {
+    return static_cast<int>(this->Fields.size());
+  }
+
   std::string GetField(int fieldIndex)
     {
-    if (fieldIndex < 0 || fieldIndex >= this->Fields.size())
+    if (fieldIndex < 0 || fieldIndex >= this->GetNumberOfFields())
       {
       return "";
       }
@@ -133,7 +136,7 @@ public:
 
   bool GetStringField(int fieldIndex, std::string &fieldValue)
     {
-    if (fieldIndex < 0 || fieldIndex >= this->Fields.size())
+    if (fieldIndex < 0 || fieldIndex >= this->GetNumberOfFields())
       {
       return false;
       }
@@ -143,7 +146,7 @@ public:
 
   bool GetDoubleField(int fieldIndex, double &fieldValue)
     {
-    if (fieldIndex < 0 || fieldIndex >= this->Fields.size())
+    if (fieldIndex < 0 || fieldIndex >= this->GetNumberOfFields())
       {
       return false;
       }
@@ -154,7 +157,7 @@ public:
 
   bool GetDoubleField(int fieldIndex, double &fieldValue, double defaultValue)
     {
-    if (fieldIndex < 0 || fieldIndex >= this->Fields.size() || this->Fields[fieldIndex].empty())
+    if (fieldIndex < 0 || fieldIndex >= this->GetNumberOfFields() || this->Fields[fieldIndex].empty())
       {
       fieldValue = defaultValue;
       return true;
@@ -171,7 +174,7 @@ public:
 
   bool GetIntField(int fieldIndex, int &fieldValue)
     {
-    if (fieldIndex < 0 || fieldIndex >= this->Fields.size())
+    if (fieldIndex < 0 || fieldIndex >= this->GetNumberOfFields())
       {
       return false;
       }
@@ -182,7 +185,7 @@ public:
 
   bool GetIntField(int fieldIndex, int &fieldValue, int defaultValue)
     {
-    if (fieldIndex < 0 || fieldIndex >= this->Fields.size() || this->Fields[fieldIndex].empty())
+    if (fieldIndex < 0 || fieldIndex >= this->GetNumberOfFields() || this->Fields[fieldIndex].empty())
       {
       fieldValue = defaultValue;
       return true;
