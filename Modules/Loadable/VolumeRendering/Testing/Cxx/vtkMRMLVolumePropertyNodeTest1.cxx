@@ -36,7 +36,7 @@ int piecewiseFunctionFromString();
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLVolumePropertyNodeTest1(int argc, char * argv[] )
+int vtkMRMLVolumePropertyNodeTest1(int argc, char *[] )
 {
   if (argc < 2)
     {
@@ -51,7 +51,6 @@ int vtkMRMLVolumePropertyNodeTest1(int argc, char * argv[] )
   CHECK_EXIT_SUCCESS(readWrite());
   CHECK_EXIT_SUCCESS(piecewiseFunctionFromString());
 
-  const char* sceneFilePath = argv[1];
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkMRMLApplicationLogic> applicationLogic;
   applicationLogic->SetMRMLScene(scene.GetPointer()); // register custom nodes
