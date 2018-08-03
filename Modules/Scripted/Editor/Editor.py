@@ -16,7 +16,7 @@ class Editor(ScriptedLoadableModule):
     ScriptedLoadableModule.__init__(self, parent)
     import string
     parent.title = "Editor"
-    parent.categories = ["", "Segmentation"]
+    parent.categories = ["Legacy"]
     parent.contributors = ["Steve Pieper (Isomics)"]
     parent.helpText = string.Template("""
 The Editor allows label maps to be created and edited. The active label map will be modified by the Editor.
