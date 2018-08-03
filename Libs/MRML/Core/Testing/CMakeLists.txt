@@ -76,6 +76,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLSceneViewNodeStoreSceneTest.cxx
   vtkMRMLSceneViewNodeTest1.cxx
   vtkMRMLSceneViewStorageNodeTest1.cxx
+  vtkMRMLScriptedModuleNodeTest1.cxx
   vtkMRMLSelectionNodeTest1.cxx
   vtkMRMLSliceCompositeNodeTest1.cxx
   vtkMRMLSliceNodeTest1.cxx
