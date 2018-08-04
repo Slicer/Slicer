@@ -2160,6 +2160,12 @@ void vtkMRMLSliceNode::RotateToAxes(vtkMatrix4x4 *referenceToRAS, int sliceNorma
     { 0,  0,  1, 0 },
     { 0,  0, -1, 0 } };
 
+  // To keep left/right handedness of the input referenceToRAS coordinate system,
+  // we need to determine it here and reproduce in the end result later.
+  vtkNew<vtkMatrix3x3> sliceToRasOrientation;
+  vtkAddonMathUtilities::GetOrientationMatrix(this->SliceToRAS, sliceToRasOrientation.GetPointer());
+  bool sliceToRasRightHanded = (sliceToRasOrientation->Determinant() >= 0);
+
   // background is a single-slice volume
   // find combination of volume axis directions that are closest to current slice X, Y
   // axis directions
@@ -2209,8 +2215,15 @@ void vtkMRMLSliceNode::RotateToAxes(vtkMatrix4x4 *referenceToRAS, int sliceNorma
   vtkAddonMathUtilities::GetOrientationMatrixColumn(this->SliceToRAS, 0, sliceXAxisDirection);
   vtkAddonMathUtilities::GetOrientationMatrixColumn(this->SliceToRAS, 1, sliceYAxisDirection);
   // Set slice Z axis
-  double sliceZAxisDirection[3];
-  vtkMath::Cross(sliceXAxisDirection, sliceYAxisDirection, sliceZAxisDirection);
+  double sliceZAxisDirection[3] = { 0.0 };
+  if (sliceToRasRightHanded)
+    {
+    vtkMath::Cross(sliceXAxisDirection, sliceYAxisDirection, sliceZAxisDirection);
+    }
+  else
+    {
+    vtkMath::Cross(sliceYAxisDirection, sliceXAxisDirection, sliceZAxisDirection);
+    }
   vtkAddonMathUtilities::SetOrientationMatrixColumn(this->SliceToRAS, 2, sliceZAxisDirection);
 
   this->UpdateMatrices();
