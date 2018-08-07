@@ -664,6 +664,11 @@ void qMRMLPlotViewPrivate::emitSelection()
         }
       }
     }
+
+  // Repaint the chart scene
+  q->scene()->SetDirty(true);
+  q->update();
+
   // emit the signal
   emit q->dataSelected(mrmlPlotSeriesIDs.GetPointer(), selectionCol.GetPointer());
 }
@@ -690,21 +695,25 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
   switch (interactionMode)
   {
   case vtkMRMLPlotViewNode::InteractionModePanView:
+    q->chart()->SetClickActionToButton(vtkChart::SELECT, vtkContextMouseEvent::LEFT_BUTTON);
     q->chart()->SetActionToButton(vtkChart::PAN, vtkContextMouseEvent::LEFT_BUTTON);
     q->chart()->SetActionToButton(vtkChart::ZOOM, vtkContextMouseEvent::MIDDLE_BUTTON);
     q->chart()->SetActionToButton(vtkChart::ZOOM_AXIS, vtkContextMouseEvent::RIGHT_BUTTON);
     break;
   case vtkMRMLPlotViewNode::InteractionModeSelectPoints:
+    q->chart()->SetClickActionToButton(vtkChart::SELECT, vtkContextMouseEvent::LEFT_BUTTON);
     q->chart()->SetActionToButton(vtkChart::SELECT, vtkContextMouseEvent::LEFT_BUTTON);
     q->chart()->SetActionToButton(vtkChart::PAN, vtkContextMouseEvent::MIDDLE_BUTTON);
     q->chart()->SetActionToButton(vtkChart::ZOOM_AXIS, vtkContextMouseEvent::RIGHT_BUTTON);
     break;
   case vtkMRMLPlotViewNode::InteractionModeFreehandSelectPoints:
+    q->chart()->SetClickActionToButton(vtkChart::SELECT, vtkContextMouseEvent::LEFT_BUTTON);
     q->chart()->SetActionToButton(vtkChart::SELECT_POLYGON, vtkContextMouseEvent::LEFT_BUTTON);
     q->chart()->SetActionToButton(vtkChart::PAN, vtkContextMouseEvent::MIDDLE_BUTTON);
     q->chart()->SetActionToButton(vtkChart::ZOOM_AXIS, vtkContextMouseEvent::RIGHT_BUTTON);
     break;
   case vtkMRMLPlotViewNode::InteractionModeMovePoints:
+    q->chart()->SetClickActionToButton(vtkChart::SELECT, vtkContextMouseEvent::NO_BUTTON);
     q->chart()->SetActionToButton(vtkChart::CLICK_AND_DRAG, vtkContextMouseEvent::LEFT_BUTTON);
     q->chart()->SetActionToButton(vtkChart::PAN, vtkContextMouseEvent::MIDDLE_BUTTON);
     q->chart()->SetActionToButton(vtkChart::ZOOM_AXIS, vtkContextMouseEvent::RIGHT_BUTTON);
@@ -1041,6 +1050,10 @@ void qMRMLPlotView::keyPressEvent(QKeyEvent *event)
     {
     d->RecalculateBounds();
     }
+  if (event->key() == Qt::Key_U)
+    {
+    this->RemovePlotSelections();
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -1058,6 +1071,17 @@ void qMRMLPlotView::fitToContent()
   // Repaint the chart scene
   this->scene()->SetDirty(true);
   this->update();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLPlotView::RemovePlotSelections()
+{
+  if (!this->chart())
+    {
+    return;
+    }
+
+  this->chart()->RemovePlotSelections();
 }
 
 // --------------------------------------------------------------------------

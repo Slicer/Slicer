@@ -73,6 +73,9 @@ public slots:
   /// Change axis limits to show all content.
   void fitToContent();
 
+  /// Unselect all the points
+  void RemovePlotSelections();
+
 signals:
 
   /// When designing custom qMRMLWidget in the designer, you can connect the
