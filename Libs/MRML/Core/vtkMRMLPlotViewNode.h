@@ -32,7 +32,7 @@ class VTK_MRML_EXPORT vtkMRMLPlotViewNode : public vtkMRMLAbstractViewNode
 public:
   static vtkMRMLPlotViewNode *New();
   vtkTypeMacro(vtkMRMLPlotViewNode, vtkMRMLAbstractViewNode);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// Enum of the available plot types
   enum {
