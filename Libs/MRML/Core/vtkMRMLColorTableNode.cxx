@@ -1430,7 +1430,13 @@ void vtkMRMLColorTableNode::Reset(vtkMRMLNode* defaultNode)
 vtkMRMLStorageNode* vtkMRMLColorTableNode::CreateDefaultStorageNode()
 {
   return vtkMRMLColorTableStorageNode::New();
-};
+}
+
+//----------------------------------------------------------------------------
+vtkLookupTable* vtkMRMLColorTableNode::GetLookupTable()
+{
+  return this->LookupTable;
+}
 
 //----------------------------------------------------------------------------
 void vtkMRMLColorTableNode::SetAndObserveLookupTable(vtkLookupTable *lut)

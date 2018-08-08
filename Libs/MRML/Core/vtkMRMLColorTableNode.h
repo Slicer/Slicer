@@ -54,7 +54,7 @@ public:
 
   /// Access lookup table object that stores table values.
   /// \sa SetAndObserveLookupTable()
-  vtkGetObjectMacro(LookupTable, vtkLookupTable);
+  vtkLookupTable* GetLookupTable() VTK_OVERRIDE;
 
   /// Set lookup table object that this object will use.
   /// \sa GetLookupTable()
