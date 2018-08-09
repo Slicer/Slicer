@@ -459,8 +459,16 @@ macro(slicerMacroBuildApplication)
   endif()
 
   get_target_property(_slicerapp_output_dir ${slicerapp_target} RUNTIME_OUTPUT_DIRECTORY)
+  set(_slicerapp_build_subdir "")
 
-  set(SLICERAPP_EXECUTABLE "${_slicerapp_output_dir}/${executable_name}${CMAKE_EXECUTABLE_SUFFIX}")
+  if(APPLE)
+    get_target_property(_is_bundle ${slicerapp_target} MACOSX_BUNDLE)
+    if(_is_bundle)
+      set(_slicerapp_build_subdir "${executable_name}.app/Contents/MacOS/")
+    endif()
+  endif()
+
+  set(SLICERAPP_EXECUTABLE "${_slicerapp_output_dir}/${_slicerapp_build_subdir}${executable_name}${CMAKE_EXECUTABLE_SUFFIX}")
   _set_app_property("EXECUTABLE")
 
   if(WIN32)
