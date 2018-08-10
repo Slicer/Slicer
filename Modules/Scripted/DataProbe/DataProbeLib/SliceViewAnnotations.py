@@ -575,12 +575,13 @@ class SliceAnnotations(VTKObservationMixin):
       #
       # Case I: Both background and foregraound
       if ( backgroundVolume is not None and foregroundVolume is not None):
-        foregroundOpacity = sliceCompositeNode.GetForegroundOpacity()
-        backgroundVolumeName = backgroundVolume.GetName()
-        foregroundVolumeName = foregroundVolume.GetName()
-        self.cornerTexts[0]['3-Background']['text'] = 'B: ' + backgroundVolumeName
-        self.cornerTexts[0]['2-Foreground']['text'] = 'F: ' + foregroundVolumeName +  ' (' + str(
-                 "%d"%(foregroundOpacity*100)) + '%)'
+        if self.bottomLeft:
+          foregroundOpacity = sliceCompositeNode.GetForegroundOpacity()
+          backgroundVolumeName = backgroundVolume.GetName()
+          foregroundVolumeName = foregroundVolume.GetName()
+          self.cornerTexts[0]['3-Background']['text'] = 'B: ' + backgroundVolumeName
+          self.cornerTexts[0]['2-Foreground']['text'] = 'F: ' + foregroundVolumeName +  ' (' + str(
+                   "%d"%(foregroundOpacity*100)) + '%)'
 
         bgUids = backgroundVolume.GetAttribute('DICOM.instanceUIDs')
         fgUids = foregroundVolume.GetAttribute('DICOM.instanceUIDs')
@@ -627,7 +628,7 @@ class SliceAnnotations(VTKObservationMixin):
         else:
           self.dicomVolumeNode = 0
 
-      if (labelVolume is not None):
+      if (labelVolume is not None) and self.bottomLeft:
         labelOpacity = sliceCompositeNode.GetLabelOpacity()
         labelVolumeName = labelVolume.GetName()
         self.cornerTexts[0]['1-Label']['text'] = 'L: ' + labelVolumeName + ' (' + str(
