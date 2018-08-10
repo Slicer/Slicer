@@ -1,6 +1,3 @@
-
-include(SlicerMacroBuildScriptedModule)
-
 set(modules
   DataProbe
   DMRIInstall

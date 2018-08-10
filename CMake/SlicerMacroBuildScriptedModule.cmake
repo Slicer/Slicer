@@ -37,9 +37,9 @@ macro(slicerMacroBuildScriptedModule)
     "${multiValueArgs}"
     ${ARGN}
     )
-    
+
   message(STATUS "Configuring Scripted module: ${MY_SLICER_NAME}")
-  
+
   # --------------------------------------------------------------------------
   # Print information helpful for debugging checks
   # --------------------------------------------------------------------------
@@ -82,6 +82,12 @@ macro(slicerMacroBuildScriptedModule)
       endif()
     endforeach()
   endforeach()
+
+  if(NOT Slicer_USE_PYTHONQT)
+      message(FATAL_ERROR
+        "Attempting to build the Python scripted module '${MY_SLICER_NAME}'"
+        " when Slicer_USE_PYTHONQT is OFF")
+  endif()
 
   set(_no_install_subdir_option NO_INSTALL_SUBDIR)
   set(_destination_subdir "")
