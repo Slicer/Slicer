@@ -50,6 +50,7 @@
 #include <vtkActor2D.h>
 #include <vtkVersion.h>
 #ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+#include <QSurfaceFormat>
 #include <QVTKOpenGLWidget.h>
 #else
 #include <QVTKWidget.h>

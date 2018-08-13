@@ -49,6 +49,7 @@
 #include <vtkObjectFactory.h>
 #include <vtkWeakPointer.h>
 #ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
+#include <QSurfaceFormat>
 #include <QVTKOpenGLWidget.h>
 #endif
 
