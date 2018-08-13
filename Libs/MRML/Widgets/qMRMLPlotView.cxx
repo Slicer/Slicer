@@ -1080,8 +1080,11 @@ void qMRMLPlotView::RemovePlotSelections()
     {
     return;
     }
-
+#if VTK_MAJOR_VERSION < 9
+  vtkWarningWithObjectMacro(this->chart(), "Removing plot selections not available in this version of VTK");
+#else
   this->chart()->RemovePlotSelections();
+#endif
 }
 
 // --------------------------------------------------------------------------
