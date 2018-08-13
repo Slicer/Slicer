@@ -529,12 +529,14 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     flags in each instance (not on multiframe with per-frame positions).
     """
 
-    def __init__(self,cornerEpsilon=1e-3):
+    def __init__(self,cornerEpsilon=1e-3,zeroEpsilon=1e-6):
       """cornerEpsilon sets the threshold for the amount of difference between the
       vtkITK generated volume geometry vs the DICOM geometry.  Any spatial dimension with
       a difference larger than cornerEpsilon will trigger the addtion of a grid transform.
+      Any difference less than zeroEpsilon is assumed to be numerical error.
       """
       self.cornerEpsilon = cornerEpsilon
+      self.zeroEpsilon = zeroEpsilon
 
     def gridTransformFromCorners(self,volumeNode,sourceCorners,targetCorners):
       """Create a grid transform that maps between the current and the desired corners.
@@ -674,8 +676,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             raise Exception("Acquisition transform didn't fix slice corners!")
         else:
           logging.warning(warningText + "  Regularization transform is not added, as the option is disabled.")
-      elif maxError > 0:
-        logging.warning("Irregular volume geometry detected, but maximum error is within tolerance"+
+      elif maxError > 0 and maxError > self.zeroEpsilon:
+        logging.warning("Irregular volume geometry detected, but maximum error non-zero but is within tolerance"+
           " (maximum error of %g mm, tolerance threshold is %g mm)." % (maxError, self.cornerEpsilon))
 
 
