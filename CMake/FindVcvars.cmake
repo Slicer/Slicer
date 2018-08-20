@@ -13,48 +13,241 @@
 #
 
 #.rst:
-# FindVcvars
-# ----------
+#FindVcvars
+#----------
 #
-# Finds the "vcvars" batch script associated
-# with the microsoft compiler version stored in the
-# CMake variable :variable:`MSVC_VERSION`.
+#Finds a "vcvars" batch script.
 #
-# Setting ``Vcvars_ANY_VERSION`` to ``1`` allows to find "vcvars"
-# batch script of any version of Visual Studio installed on the system.
+#The module can be used when configuring a project or when running
+#in cmake -P script mode.
 #
-# This will define the following variables:
+#These variables can be used to choose which "vcvars" batch script is looked up.
 #
-# .. variable:: Vcvars_BATCH_FILE
+#.. variable:: Vcvars_MSVC_ARCH
 #
-#   Path to `vcvars32.bat`, `vcvarsamd64.bat` or `vcvars64.bat`.
+#  Possible values are `32` or `64`
 #
-# .. variable:: Vcvars_WRAPPER_BATCH_FILE
+#  If not explicitly set in the calling scope, the variable is initialized
+#  based on the value of :variable:`CMAKE_SIZEOF_VOID_P` in configuration mode, and
+#  to 64 in script mode.
 #
-#   Path to a generated wrapper script allowing to execute program after
-#   setting environment defined by `Vcvars_BAT`.
+#.. variable:: Vcvars_MSVC_VERSION
 #
-#   For example, it can be used within :module:`ExternalProject` steps
-#   specifying command like this::
+#  Possible values corresponds to :variable:`MSVC_VERSION`.
 #
-#     set(cmd_wrapper)
-#     if(MSVC)
-#       find_package(Vcvars REQUIRED)
-#       set(cmd_wrapper ${Vcvars_WRAPPER_BATCH_FILE})
-#     endif()
+#  If not explicitly set in the calling scope, :variable:`Vcvars_MSVC_VERSION` is
+#  initialized using :variable:`MSVC_VERSION` variable if it is defined, otherwise
+#  the variable :variable:`Vcvars_MSVC_VERSION` is initialized based on the most
+#  recent version of Visual Studio installed on the system.
 #
-#     ExternalProject_Add(AwesomeProject
-#       [...]
-#       BUILD_COMMAND ${cmd_wrapper} <command> arg1 arg2 [...]
-#       [...]
-#       )
+#This will define the following variables:
+#
+#.. variable:: Vcvars_BATCH_FILE
+#
+#  Path to ``vcvars32.bat``, ``vcvarsamd64.bat`` or ``vcvars64.bat``.
+#
+#.. variable:: Vcvars_WRAPPER_BATCH_FILE
+#
+#  Path to a generated wrapper script allowing to execute program after
+#  setting environment defined by `Vcvars_BATCH_FILE`.
+#
+#  It can be used within :module:`ExternalProject` steps
+#  specifying command like this::
+#
+#    set(cmd_wrapper)
+#    if(MSVC)
+#      find_package(Vcvars REQUIRED)
+#      set(cmd_wrapper ${Vcvars_WRAPPER_BATCH_FILE})
+#    endif()
+#
+#    ExternalProject_Add(AwesomeProject
+#      [...]
+#      BUILD_COMMAND ${cmd_wrapper} <command> arg1 arg2 [...]
+#      [...]
+#      )
+#
+#This module also defines the following functions
+#
+#
+#.. command:: Vcvars_GetVisualStudioPaths
+#
+#  The ``Vcvars_GetVisualStudioPaths()`` function returns a list of all
+#  possible Visual Studio registry paths associated with a given ``<msvc_version>``
+#  and ``<msvc_arch>``::
+#
+#    Vcvars_GetVisualStudioPaths(<msvc_version> <msvc_arch> <output_var>)
+#
+#  The options are:
+#
+#  ``<msvc_version>``
+#    Specify the Visual Studio compiler version. See :variable:`MSVC_VERSION`
+#    for possible values.
+#
+#  ``<msvc_arch>``
+#    Specify the Visual Studio architecture. Possible values are `32` or `64`.
+#
+#  ``<output_var>``
+#    The name of the variable to be set with the list of registry paths.
+#
+#
+#.. command:: Vcvars_ConvertMsvcVersionToVsVersion
+#
+#  The ``Vcvars_ConvertMsvcVersionToVsVersion()`` function converts a
+#  :variable:`MSVC_VERSION` of the form ``NNNN`` to a Visual Studio version
+#  of the form ``XX.Y`::
+#
+#    Vcvars_ConvertMsvcVersionToVsVersion(<msvc_version> <output_var>)
+#
+#  The options are:
+#
+#  ``<msvc_version>``
+#    Specify the Visual Studio compiler version. See :variable:`MSVC_VERSION`
+#    for possible values.
+#
+#  ``<output_var>``
+#    The name of the variable to be set with the Visual Studio version.
+#
 #
 
-#
-# Default
-#
-if(NOT DEFINED Vcvars_ANY_VERSION)
-  set(Vcvars_ANY_VERSION 0)
+cmake_minimum_required(VERSION 3.5)
+
+# TODO Support lookup of "Microsoft Visual C++ Compiler for Python 2.7 (x86, amd64)"
+
+# Global variables used only in this script (unset at the end)
+set(_Vcvars_MSVC_ARCH_REGEX "^(32|64)$")
+set(_Vcvars_MSVC_VERSION_REGEX "^[0-9][0-9][0-9][0-9]$")
+set(_Vcvars_SUPPORTED_MSVC_VERSIONS 1914 1913 1912 1911 1910 1900 1800 1700 1600 1500 1400)
+
+function(_vcvars_message)
+  if(NOT Vcvars_FIND_QUIETLY)
+    message(${ARGN})
+  endif()
+endfunction()
+
+function(Vcvars_ConvertMsvcVersionToVsVersion msvc_version output_var)
+  if(NOT msvc_version MATCHES ${_Vcvars_MSVC_VERSION_REGEX})
+    message(FATAL_ERROR "msvc_version is expected to match `${_Vcvars_MSVC_VERSION_REGEX}`")
+  endif()
+  # See https://en.wikipedia.org/wiki/Microsoft_Visual_C%2B%2B#Internal_version_numbering
+  if(msvc_version EQUAL 1914)     # VS 2017
+    set(vs_version "15.7")
+  elseif(msvc_version EQUAL 1913) # VS 2017
+    set(vs_version "15.6")
+  elseif(msvc_version EQUAL 1912) # VS 2017
+    set(vs_version "15.5")
+  elseif(msvc_version EQUAL 1911) # VS 2017
+    set(vs_version "15.3")
+  elseif(msvc_version EQUAL 1910) # VS 2017
+    set(vs_version "15.0")
+  elseif(msvc_version EQUAL 1900) # VS 2015
+    set(vs_version "14.0")
+  elseif(msvc_version EQUAL 1800) # VS 2013
+    set(vs_version "12.0")
+  elseif(msvc_version EQUAL 1700) # VS 2012
+    set(vs_version "11.0")
+  elseif(msvc_version EQUAL 1600) # VS 2010
+    set(vs_version "10.0")
+  elseif(msvc_version EQUAL 1500) # VS 2008
+    set(vs_version "9.0")
+  elseif(msvc_version EQUAL 1400) # VS 2005
+    set(vs_version "8.0")
+  elseif(msvc_version EQUAL 1310) # VS 2003
+    set(vs_version "7.1")
+  elseif(msvc_version EQUAL 1300) # VS 2002
+    set(vs_version "7.0")
+  elseif(msvc_version EQUAL 1200) # VS 6.0
+    set(vs_version "6.0")
+  else()
+    message(FATAL_ERROR "failed to convert msvc_version [${msvc_version}]. It is not a known version number.")
+  endif()
+  set(${output_var} ${vs_version} PARENT_SCOPE)
+endfunction()
+
+function(Vcvars_GetVisualStudioPaths msvc_version msvc_arch output_var)
+
+  if(NOT msvc_version MATCHES ${_Vcvars_MSVC_VERSION_REGEX})
+    message(FATAL_ERROR "msvc_version is expected to match `${_Vcvars_MSVC_VERSION_REGEX}`")
+  endif()
+
+  if(NOT msvc_arch MATCHES ${_Vcvars_MSVC_ARCH_REGEX})
+    message(FATAL_ERROR "msvc_arch argument is expected to match '${_Vcvars_MSVC_ARCH_REGEX}'")
+  endif()
+
+  Vcvars_ConvertMsvcVersionToVsVersion(${msvc_version} vs_version)
+
+  set(_vs_installer_paths "")
+  set(_vs_registry_paths "")
+  if(vs_version VERSION_GREATER_EQUAL "15.0")
+    # Query the VS Installer tool for locations of VS 2017 and above.
+    string(REGEX REPLACE "^([0-9]+)\.[0-9]+$" "\\1" vs_installer_version ${vs_version})
+    cmake_host_system_information(RESULT _vs_dir QUERY VS_${vs_installer_version}_DIR)
+    if(_vs_dir)
+      list(APPEND _vs_installer_paths "${_vs_dir}/VC/Auxiliary/Build")
+    endif()
+  else()
+    # Registry keys for locations of VS 2015 and below
+    set(_hkeys
+      "HKEY_USERS"
+      "HKEY_CURRENT_USER"
+      "HKEY_LOCAL_MACHINE"
+      "HKEY_CLASSES_ROOT"
+      )
+    set(_suffixes
+      ""
+      "_Config"
+      )
+    set(_arch_path "bin/amd64")
+    if(msvc_arch STREQUAL "32")
+      set(_arch_path "bin")
+    endif()
+    set(_vs_registry_paths)
+    foreach(_hkey IN LISTS _hkeys)
+      foreach(_suffix IN LISTS _suffixes)
+        set(_vc "VC")
+        if(_vs_version STREQUAL "6.0")
+          set(_vc "Microsoft Visual C++")
+        endif()
+        list(APPEND _vs_registry_paths
+          "[${_hkey}\\SOFTWARE\\Microsoft\\VisualStudio\\${vs_version}${_suffix}\\Setup\\${_vc};ProductDir]/${_arch_path}"
+          )
+      endforeach()
+    endforeach()
+  endif()
+  set(_vs_installer_paths ${_vs_installer_paths} ${_vs_registry_paths})
+  if(_vs_installer_paths STREQUAL "")
+    set(_vs_installer_paths "${output_var}-${msvc_version}-${msvc_arch}-NOTFOUND")
+  endif()
+  set(${output_var} ${_vs_installer_paths} PARENT_SCOPE)
+endfunction()
+
+# default
+if(NOT DEFINED Vcvars_MSVC_ARCH)
+  if(NOT DEFINED CMAKE_SIZEOF_VOID_P)
+    set(Vcvars_MSVC_ARCH "64")
+    _vcvars_message(STATUS "Setting Vcvars_MSVC_ARCH to '${Vcvars_MSVC_ARCH}' as CMAKE_SIZEOF_VOID_P was none")
+  else()
+    if("${CMAKE_SIZEOF_VOID_P}" EQUAL 4)
+      set(Vcvars_MSVC_ARCH "32")
+    elseif("${CMAKE_SIZEOF_VOID_P}" EQUAL 8)
+      set(Vcvars_MSVC_ARCH "64")
+    else()
+      message(FATAL_ERROR "CMAKE_SIZEOF_VOID_P [${CMAKE_SIZEOF_VOID_P}] is expected to be either 4 or 8")
+    endif()
+    # Display message only once in config mode
+    if(NOT DEFINED Vcvars_BATCH_FILE)
+      _vcvars_message(STATUS "Setting Vcvars_MSVC_ARCH to '${Vcvars_MSVC_ARCH}' as CMAKE_SIZEOF_VOID_P was `${CMAKE_SIZEOF_VOID_P}`")
+    endif()
+  endif()
+endif()
+
+if(NOT DEFINED Vcvars_MSVC_VERSION)
+  if(DEFINED MSVC_VERSION)
+    set(Vcvars_MSVC_VERSION ${MSVC_VERSION})
+    # Display message only once in config mode
+    if(NOT DEFINED Vcvars_BATCH_FILE)
+      _vcvars_message(STATUS "Setting Vcvars_MSVC_VERSION to '${Vcvars_MSVC_VERSION}' as MSVC_VERSION was `${MSVC_VERSION}`")
+    endif()
+  endif()
 endif()
 if(NOT DEFINED Vcvars_BATCH_FILE)
   set(Vcvars_BATCH_FILE "Vcvars_BATCH_FILE-NOTFOUND")
@@ -63,143 +256,59 @@ if(NOT DEFINED Vcvars_WRAPPER_BATCH_FILE)
   set(Vcvars_WRAPPER_BATCH_FILE "Vcvars_WRAPPER_BATCH_FILE-NOTFOUND")
 endif()
 
-#
-# Possible improvements:
-#
-#  * Support lookup of "Microsoft Visual C++ Compiler for Python 2.7 (x86, amd64)"
-#  * Provide a CMake function for easy lookup
-#
-
-# Sanity checks
-if(NOT DEFINED CMAKE_SIZEOF_VOID_P)
-  message(FATAL_ERROR "CMAKE_SIZEOF_VOID_P variable is not defined !")
+# check Vcvars_MSVC_ARCH is propertly set
+if(NOT Vcvars_MSVC_ARCH MATCHES ${_Vcvars_MSVC_ARCH_REGEX})
+  message(FATAL_ERROR "Vcvars_MSVC_ARCH [${Vcvars_MSVC_ARCH}] is expected to match `${_Vcvars_MSVC_ARCH_REGEX}`")
 endif()
 
-set(_vs_versions_installer "")
-set(_vs_versions_registry "")
-
-if(Vcvars_ANY_VERSION)
-
-  foreach(vs RANGE 15 15 -1) # change the first number to the largest supported version
-    list(APPEND _vs_versions_installer ${vs})
-  endforeach()
-
-  set(_vs_versions_registry
-    "14.0"
-    "12.0"
-    "11.0"
-    "10.0"
-    "9.0"
-    "8.0"
-    "7.1"
-    "7.0"
-    "6.0"
-    )
+# which vcvars script ?
+if(Vcvars_MSVC_ARCH STREQUAL "64")
+  set(_Vcvars_SCRIPTS vcvarsamd64.bat vcvars64.bat)
 else()
-
-  # Exit if current generator is different from VisualStudio and vcvars is *not* REQUIRED
-  if(NOT MSVC AND NOT Vcvars_FIND_REQUIRED)
-    return()
-  endif()
-
-  # Sanity checks
-  if(MSVC AND NOT DEFINED MSVC_VERSION)
-    message(FATAL_ERROR "MSVC variable is TRUE but MSVC_VERSION is not defined !")
-  endif()
-
-  if(MSVC_VERSION EQUAL 1910)     # VS 2017
-    set(_vs_versions_installer "15")
-  elseif(MSVC_VERSION EQUAL 1900)     # VS 2015
-    set(_vs_versions_registry "14.0")
-  elseif(MSVC_VERSION EQUAL 1800) # VS 2013
-    set(_vs_versions_registry "12.0")
-  elseif(MSVC_VERSION EQUAL 1700) # VS 2012
-    set(_vs_versions_registry "11.0")
-  elseif(MSVC_VERSION EQUAL 1600) # VS 2010
-    set(_vs_versions_registry "10.0")
-  elseif(MSVC_VERSION EQUAL 1500) # VS 2008
-    set(_vs_versions_registry "9.0")
-  elseif(MSVC_VERSION EQUAL 1400) # VS 2005
-    set(_vs_versions_registry "8.0")
-  elseif(MSVC_VERSION EQUAL 1310) # VS 2003
-    set(_vs_versions_registry "7.1")
-  elseif(MSVC_VERSION EQUAL 1300) # VS 2002
-    set(_vs_versions_registry "7.0")
-  elseif(MSVC_VERSION EQUAL 1200) # VS 6.0
-    set(_vs_versions_registry "6.0")
-  endif()
+  set(_Vcvars_SCRIPTS vcvars32.bat)
 endif()
 
-# Query the VS Installer tool for locations of VS 2017 and above.
-set(_vs_installer_paths "")
-foreach(vs IN LISTS _vs_versions_installer)
-  cmake_host_system_information(RESULT _vs_dir QUERY VS_${vs}_DIR)
-  if(_vs_dir)
-    list(APPEND _vs_installer_paths "${_vs_dir}/VC/Auxiliary/Build")
+# set Vcvars_BATCH_FILE
+if(NOT DEFINED Vcvars_MSVC_VERSION)
+  # auto-discover Vcvars_MSVC_VERSION value
+  _vcvars_message(STATUS "Setting Vcvars_MSVC_VERSION")
+  foreach(_candidate_msvc_version IN LISTS _Vcvars_SUPPORTED_MSVC_VERSIONS)
+    Vcvars_GetVisualStudioPaths(${_candidate_msvc_version} "${Vcvars_MSVC_ARCH}" _paths)
+    Vcvars_ConvertMsvcVersionToVsVersion(${_candidate_msvc_version} _candidate_vs_version)
+    set(_msg "  Visual Studio ${_candidate_vs_version} (${_candidate_msvc_version})")
+    _vcvars_message(STATUS "${_msg}")
+    find_program(Vcvars_BATCH_FILE NAMES ${_Vcvars_SCRIPTS}
+      DOC "Visual Studio ${_candidate_vs_version} ${_Vcvars_SCRIPTS}"
+      PATHS ${_paths}
+      )
+    if(Vcvars_BATCH_FILE)
+      _vcvars_message(STATUS "${_msg} - found")
+      set(Vcvars_MSVC_VERSION ${_candidate_msvc_version})
+      _vcvars_message(STATUS "Setting Vcvars_MSVC_VERSION to '${Vcvars_MSVC_VERSION}' as it was the newest Visual Studio installed providing vcvars scripts")
+      break()
+    else()
+      _vcvars_message(STATUS "${_msg} - not found")
+    endif()
+  endforeach()
+  unset(_candidate_msvc_version)
+  unset(_candidate_vs_version)
+  unset(_paths)
+else()
+  # use provided Vcvars_MSVC_VERSION value
+  if(NOT Vcvars_MSVC_VERSION MATCHES ${_Vcvars_MSVC_VERSION_REGEX})
+    message(FATAL_ERROR "Vcvars_MSVC_VERSION [${Vcvars_MSVC_VERSION}] is expected to match `${_Vcvars_MSVC_VERSION_REGEX}`")
   endif()
-endforeach()
-
-# Registry keys for locations of VS 2015 and below
-set(_hkeys
-  "HKEY_USERS"
-  "HKEY_CURRENT_USER"
-  "HKEY_LOCAL_MACHINE"
-  "HKEY_CLASSES_ROOT"
-  )
-
-set(_suffixes
-  ""
-  "_Config"
-  )
-
-set(_reg_paths)
-foreach(_vs_version IN LISTS _vs_versions_registry)
-  foreach(_hkey IN LISTS _hkeys)
-    foreach(_suffix IN LISTS _suffixes)
-      set(_vc "VC")
-      if(_vs_version STREQUAL "6.0")
-        set(_vc "Microsoft Visual C++")
-      endif()
-      list(APPEND _reg_paths
-        "[${_hkey}\\SOFTWARE\\Microsoft\\VisualStudio\\${_vs_version}${_suffix}\\Setup\\${_vc};ProductDir]"
-        )
-    endforeach()
-  endforeach()
-endforeach()
-
-if(NOT Vcvars_BATCH_FILE AND "${CMAKE_SIZEOF_VOID_P}" EQUAL 4)
-
-  set(_paths ${_vs_installer_paths})
-  foreach(_reg_path IN LISTS _reg_paths)
-    list(APPEND _paths "${_reg_path}/bin")
-  endforeach()
-
-  find_program(Vcvars_BATCH_FILE NAMES vcvars32.bat
-    DOC "Visual Studio vcvars32.bat"
+  Vcvars_GetVisualStudioPaths(${Vcvars_MSVC_VERSION} "${Vcvars_MSVC_ARCH}" _paths)
+  Vcvars_ConvertMsvcVersionToVsVersion(${Vcvars_MSVC_VERSION} _vs_version)
+  find_program(Vcvars_BATCH_FILE NAMES ${_Vcvars_SCRIPTS}
+    DOC "Visual Studio ${_vs_version} ${_Vcvars_SCRIPTS}"
     PATHS ${_paths}
     )
-
-elseif(NOT Vcvars_BATCH_FILE AND "${CMAKE_SIZEOF_VOID_P}" EQUAL 8)
-
-  set(_paths ${_vs_installer_paths})
-  foreach(_reg_path IN LISTS _reg_paths)
-    list(APPEND _paths "${_reg_path}/bin/amd64")
-  endforeach()
-
-  find_program(Vcvars_BATCH_FILE NAMES vcvarsamd64.bat vcvars64.bat
-    DOC "Visual Studio vcvarsamd64.bat"
-    PATHS ${_paths}
-    )
-
+  unset(_paths)
+  unset(_vs_version)
 endif()
 
-# Cleanup
-unset(_vs_installer_paths)
-unset(_vs_versions_installer)
-unset(_vs_versions_registry)
-unset(_paths)
-
-# Configure wrapper script
+# configure wrapper script
 set(Vcvars_WRAPPER_BATCH_FILE)
 if(Vcvars_BATCH_FILE)
 
@@ -212,17 +321,22 @@ if(Vcvars_BATCH_FILE)
   configure_file(${_in} ${_out} @ONLY)
 
   set(Vcvars_WRAPPER_BATCH_FILE ${_out})
-
   unset(_in)
   unset(_out)
 endif()
 
-# Outputs
+# cleanup
+unset(_Vcvars_SCRIPTS)
+
+# outputs
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Vcvars
   FOUND_VAR Vcvars_FOUND
   REQUIRED_VARS
-    MSVC
     Vcvars_BATCH_FILE
+    Vcvars_MSVC_VERSION
+    Vcvars_MSVC_ARCH
     Vcvars_WRAPPER_BATCH_FILE
+  FAIL_MESSAGE
+    "Failed to find vcvars scripts for Vcvars_MSVC_VERSION [${Vcvars_MSVC_VERSION}] and Vcvars_MSVC_ARCH [${Vcvars_MSVC_ARCH}]"
   )
