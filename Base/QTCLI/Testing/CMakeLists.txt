@@ -37,13 +37,21 @@ if(NOT WIN32)
   )
 endif()
 
-#-----------------------------------------------------------------------------
-set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
-create_test_sourcelist(Tests ${KIT}CxxTests.cxx
+set(KIT_TEST_SRCS
   qSlicerCLIExecutableModuleFactoryTest1.cxx
   qSlicerCLILoadableModuleFactoryTest1.cxx
   qSlicerCLIModuleTest1.cxx
-  qSlicerPyCLIModuleTest1.cxx
+  )
+if(Slicer_USE_PYTHONQT)
+  list(APPEND KIT_TEST_SRCS
+    qSlicerPyCLIModuleTest1.cxx
+    )
+endif()
+
+#-----------------------------------------------------------------------------
+set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
+create_test_sourcelist(Tests ${KIT}CxxTests.cxx
+  ${KIT_TEST_SRCS}
   EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
   )
 
@@ -59,4 +67,6 @@ set_target_properties(${KIT}CxxTests PROPERTIES FOLDER "Core-Base")
 simple_test( qSlicerCLIExecutableModuleFactoryTest1 )
 simple_test( qSlicerCLILoadableModuleFactoryTest1 )
 simple_test( qSlicerCLIModuleTest1 )
-simple_test( qSlicerPyCLIModuleTest1 )
+if(Slicer_USE_PYTHONQT)
+  simple_test( qSlicerPyCLIModuleTest1 )
+endif()
