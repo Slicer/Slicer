@@ -27,8 +27,10 @@
 // VTK includes
 #include <vtkCollection.h>
 #include <vtkNew.h>
+#include <vtksys/SystemTools.hxx>
 
 // STD includes
+#include <sstream>
 #include <string>
 
 
@@ -36,13 +38,25 @@
 int SliceLogicsTest();
 int SliceOrientationPresetInitializationTest();
 int TemporaryPathTest();
+int CreateUniqueFileNameTest(std::string tempDir);
 
 //-----------------------------------------------------------------------------
-int vtkMRMLApplicationLogicTest1(int , char * [])
+int vtkMRMLApplicationLogicTest1(int argc, char *argv [])
 {
-  CHECK_INT(SliceLogicsTest(), EXIT_SUCCESS);
-  CHECK_INT(SliceOrientationPresetInitializationTest(), EXIT_SUCCESS);
-  CHECK_INT(TemporaryPathTest(), EXIT_SUCCESS);
+  if (argc != 2)
+    {
+    std::cerr << "Line " << __LINE__
+      << " - Missing parameters!\n"
+      << "Usage: " << argv[0] << " /path/to/temp"
+      << std::endl;
+    return EXIT_FAILURE;
+    }
+  const char* tempDir = argv[1];
+
+  CHECK_EXIT_SUCCESS(SliceLogicsTest());
+  CHECK_EXIT_SUCCESS(SliceOrientationPresetInitializationTest());
+  CHECK_EXIT_SUCCESS(TemporaryPathTest());
+  CHECK_EXIT_SUCCESS(CreateUniqueFileNameTest(tempDir));
   return EXIT_SUCCESS;
 }
 
@@ -166,6 +180,62 @@ int TemporaryPathTest()
       return EXIT_FAILURE;
       }
     }
+
+  return EXIT_SUCCESS;
+}
+
+//-----------------------------------------------------------------------------
+int CreateUniqueFileNameTest(std::string tempDir)
+{
+  vtkNew<vtkMRMLApplicationLogic> appLogic;
+
+  // Clean up all earlier test files
+  vtksys::SystemTools::RemoveFile(tempDir + "/CreateUniqueFileNameTest.txt");
+  vtksys::SystemTools::RemoveFile(tempDir + "/CreateUniqueFileNameTest_1.txt");
+  vtksys::SystemTools::RemoveFile(tempDir + "/CreateUniqueFileNameTest.nii.gz");
+  vtksys::SystemTools::RemoveFile(tempDir + "/CreateUniqueFileNameTest_1.nii.gz");
+
+  // Check if we get the same file name if already unique
+  // existing file: (none)
+  CHECK_STD_STRING(appLogic->CreateUniqueFileName(
+    tempDir + "/CreateUniqueFileNameTest.txt"),
+    tempDir + "/CreateUniqueFileNameTest.txt");
+
+  // Check if we get a suffixed filename if the file exists already
+  vtksys::SystemTools::Touch(tempDir + "/CreateUniqueFileNameTest.txt", true);
+  // existing files: CreateUniqueFileNameTest.txt
+  CHECK_STD_STRING(appLogic->CreateUniqueFileName(
+    tempDir + "/CreateUniqueFileNameTest.txt"),
+    tempDir + "/CreateUniqueFileNameTest_1.txt");
+
+  // Check if a suffix is incremented if the file is already suffixed
+  vtksys::SystemTools::Touch(tempDir + "/CreateUniqueFileNameTest_1.txt", true);
+  // existing files: CreateUniqueFileNameTest.txt, CreateUniqueFileNameTest_1.txt
+  CHECK_STD_STRING(appLogic->CreateUniqueFileName(
+    tempDir + "/CreateUniqueFileNameTest.txt"),
+    tempDir + "/CreateUniqueFileNameTest_2.txt");
+  CHECK_STD_STRING(appLogic->CreateUniqueFileName(
+    tempDir + "/CreateUniqueFileNameTest_1.txt"),
+    tempDir + "/CreateUniqueFileNameTest_2.txt");
+
+  // Check if a suffix is incremented if a composite file extension is used
+
+  // Check if we get a suffixed filename if the file exists already
+  vtksys::SystemTools::Touch(tempDir + "/CreateUniqueFileNameTest.nii.gz", true);
+  // existing files: CreateUniqueFileNameTest.txt
+  CHECK_STD_STRING(appLogic->CreateUniqueFileName(
+    tempDir + "/CreateUniqueFileNameTest.nii.gz", ".nii.gz"),
+    tempDir + "/CreateUniqueFileNameTest_1.nii.gz");
+
+  // Check if a suffix is incremented if the file is already suffixed
+  vtksys::SystemTools::Touch(tempDir + "/CreateUniqueFileNameTest_1.nii.gz", true);
+  // existing files: CreateUniqueFileNameTest.txt, CreateUniqueFileNameTest_1.txt
+  CHECK_STD_STRING(appLogic->CreateUniqueFileName(
+    tempDir + "/CreateUniqueFileNameTest.nii.gz", ".nii.gz"),
+    tempDir + "/CreateUniqueFileNameTest_2.nii.gz");
+  CHECK_STD_STRING(appLogic->CreateUniqueFileName(
+    tempDir + "/CreateUniqueFileNameTest_1.nii.gz", ".nii.gz"),
+    tempDir + "/CreateUniqueFileNameTest_2.nii.gz");
 
   return EXIT_SUCCESS;
 }

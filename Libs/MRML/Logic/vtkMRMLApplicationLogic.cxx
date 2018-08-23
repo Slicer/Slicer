@@ -613,7 +613,7 @@ bool vtkMRMLApplicationLogic::OpenSlicerDataBundle(const char* sdbFilePath, cons
 //----------------------------------------------------------------------------
 std::string vtkMRMLApplicationLogic::PercentEncode(std::string s)
 {
-  std::string validchars = "-_.,@#$%^&()[]{}<>+=";
+  std::string validchars = " -_.,@#$%^&()[]{}<>+=";
   std::ostringstream result;
 
   for (size_t i = 0; i < s.size(); i++)
@@ -740,7 +740,6 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char* s
 
   // change all storage nodes and file names to be unique in the new directory
   // write the new data as we go; save old values
-  this->OriginalStorageNodeDirs.clear();
   this->OriginalStorageNodeFileNames.clear();
 
   std::map<std::string, vtkMRMLNode *> storableNodes;
@@ -875,24 +874,19 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char* s
 
         if (storageNode && this->OriginalStorageNodeFileNames.find( storageNode ) != this->OriginalStorageNodeFileNames.end() )
           {
-          storageNode->SetFileName(this->OriginalStorageNodeFileNames[storageNode][0].c_str());
-          if (this->OriginalStorageNodeFileNames[storageNode].size() > 1)
+          storageNode->ResetFileNameList();
+          std::vector< std::string > &originalFileNames = this->OriginalStorageNodeFileNames[storageNode];
+          for (int i = 0; i < originalFileNames.size(); i++)
             {
-            // set the file list
-            storageNode->ResetFileNameList();
-            for (unsigned int fileNumber = 0;
-                 fileNumber < this->OriginalStorageNodeFileNames[storageNode].size();
-                 ++fileNumber)
+            if (i == 0)
               {
-              // the fileName is also in the file list, but AddFileName does
-              // check for duplicates
-              storageNode->AddFileName(this->OriginalStorageNodeFileNames[storageNode][fileNumber].c_str());
+              storageNode->SetFileName(originalFileNames[i].c_str());
+              }
+            else
+              {
+              storageNode->AddFileName(originalFileNames[i-1].c_str()); // i-1 because the first filename is used by SetFileName
               }
             }
-          }
-        if (storageNode && this->OriginalStorageNodeDirs.find( storageNode ) != this->OriginalStorageNodeDirs.end() )
-          {
-          storageNode->SetDataDirectory(this->OriginalStorageNodeDirs[storageNode].c_str());
           }
         }
       }
@@ -915,10 +909,6 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char* s
             storageNode->AddFileName(this->OriginalStorageNodeFileNames[storageNode][fileNumber].c_str());
             }
           }
-        }
-      if (storageNode && this->OriginalStorageNodeDirs.find( storageNode ) != this->OriginalStorageNodeDirs.end() )
-        {
-        storageNode->SetDataDirectory(this->OriginalStorageNodeDirs[storageNode].c_str());
         }
       }
 
@@ -952,21 +942,23 @@ void vtkMRMLApplicationLogic::SaveStorableNodeToSlicerDataBundleDirectory(vtkMRM
       }
     }
 
-  // save the old values for the storage nodes
-  // - this->OriginalStorageNodeFileNames has the old filenames (absolute paths)
-  // - this->OriginalStorageNodeDirs has old paths
-  // std::cout << "SaveStorableNodeToSlicerDataBundleDirectory: saving old storage node file name of " << storageNode->GetFileName() << "\n\tmodified since read = " << storableNode->GetModifiedSinceRead() << std::endl;
-
+  // Save the original storage filenames (absolute paths) into this->OriginalStorageNodeFileNames
   std::string fileName(storageNode->GetFileName()?storageNode->GetFileName():"");
   this->OriginalStorageNodeFileNames[storageNode].push_back(fileName);
   for (int i = 0; i < storageNode->GetNumberOfFileNames(); ++i)
     {
-    this->OriginalStorageNodeFileNames[storageNode].push_back(storageNode->GetNthFileName(i)?storageNode->GetNthFileName(i):"");
+    this->OriginalStorageNodeFileNames[storageNode].push_back(storageNode->GetNthFileName(i) ? storageNode->GetNthFileName(i) : "");
     }
 
+  // Clear out the additional file list since it's assumed that the default write format needs only a single file
+  // (if more files are needed then storage node must generate appropriate additional file names based on the primary file name).
+  storageNode->ResetFileNameList();
+
+  // Update primary file name (set name from node name if empty, encode special characters, use default file extension)
   if (fileName.empty())
     {
     // Default storage node usually has empty file name (if Save dialog is not opened yet)
+    // file name is encoded to handle : or / characters in the node names
     std::string fileBaseName = this->PercentEncode(std::string(storableNode->GetName()));
     std::string extension = storageNode->GetDefaultWriteFileExtension();
     std::string storageFileName = fileBaseName + std::string(".") + extension;
@@ -975,39 +967,31 @@ void vtkMRMLApplicationLogic::SaveStorableNodeToSlicerDataBundleDirectory(vtkMRM
     }
   else
     {
-    std::vector<std::string> pathComponents;
-    vtksys::SystemTools::SplitPath(fileName.c_str(), pathComponents);
     // new file name is encoded to handle : or / characters in the node names
-    std::string fileBaseName = this->PercentEncode(pathComponents.back());
-    pathComponents.pop_back();
-    this->OriginalStorageNodeDirs[storageNode] = vtksys::SystemTools::JoinPath(pathComponents);
-
-    std::string defaultWriteExtension = std::string(".")
-      + vtksys::SystemTools::LowerCase(storageNode->GetDefaultWriteFileExtension());
-    std::string uniqueFileName = fileBaseName;
-    std::string extension = storageNode->GetSupportedFileExtension(fileBaseName.c_str());
-    if (defaultWriteExtension != extension)
+    std::string storageFileName = this->PercentEncode(vtksys::SystemTools::GetFilenameName(fileName));
+    std::string defaultWriteExtension = std::string(".") + vtksys::SystemTools::LowerCase(storageNode->GetDefaultWriteFileExtension());
+    std::string currentExtension = storageNode->GetSupportedFileExtension(storageFileName.c_str());
+    if (defaultWriteExtension != currentExtension)
       {
       // for saving to MRB all nodes will be written in their default format
-      uniqueFileName = storageNode->GetFileNameWithoutExtension(fileBaseName.c_str()) + defaultWriteExtension;
+      storageFileName = storageNode->GetFileNameWithoutExtension(storageFileName.c_str()) + defaultWriteExtension;
       }
-    storageNode->SetFileName(uniqueFileName.c_str());
+    vtkDebugMacro("updated file name = " << storageFileName.c_str());
+    storageNode->SetFileName(storageFileName.c_str());
     }
 
-  // also clear out the file list since it's assumed that the default write format is a single file one
-  storageNode->ResetFileNameList();
   storageNode->SetDataDirectory(dataDir.c_str());
-  vtkDebugMacro("set data directory to "
-    << dataDir.c_str() << ", storable node " << storableNode->GetID()
+  vtkDebugMacro("Set data directory to " << dataDir.c_str() << ". Storable node " << storableNode->GetID()
     << " file name is now: " << storageNode->GetFileName());
-  // deal with existing files by creating a numeric suffix
-  if (vtksys::SystemTools::FileExists(storageNode->GetFileName(), true))
+
+  // Make sure the filename is unique (default filenames may be the same if for example there are multiple
+  // nodes with the same name).
+  std::string existingFileName = (storageNode->GetFileName() ? storageNode->GetFileName() : "");
+  if (vtksys::SystemTools::FileExists(existingFileName, true))
     {
-    vtkWarningMacro("file " << storageNode->GetFileName() << " already exists, renaming!");
-
-    std::string uniqueFileName = this->CreateUniqueFileName(fileName);
-
-    vtkDebugMacro("found unique file name " << uniqueFileName.c_str());
+    std::string currentExtension = storageNode->GetSupportedFileExtension(existingFileName.c_str());
+    std::string uniqueFileName = this->CreateUniqueFileName(existingFileName, currentExtension);
+    vtkDebugMacro("file " << existingFileName << " already exists, use " << uniqueFileName << " filename instead");
     storageNode->SetFileName(uniqueFileName.c_str());
     }
 
@@ -1015,29 +999,54 @@ void vtkMRMLApplicationLogic::SaveStorableNodeToSlicerDataBundleDirectory(vtkMRM
  }
 
 //----------------------------------------------------------------------------
-std::string vtkMRMLApplicationLogic::CreateUniqueFileName(std::string &filename)
+std::string vtkMRMLApplicationLogic::CreateUniqueFileName(const std::string &filename, const std::string& knownExtension)
 {
-  std::string uniqueFileName;
-  std::string baseName = vtksys::SystemTools::GetFilenameWithoutExtension(filename);
-  std::string extension = vtksys::SystemTools::GetFilenameLastExtension(filename);
-
-  bool uniqueName = false;
-  int v = 1;
-  while (!uniqueName)
+  if (!vtksys::SystemTools::FileExists(filename.c_str()))
     {
-    std::stringstream ss;
-    ss << v;
-    uniqueFileName = baseName + ss.str() + extension;
-    if (vtksys::SystemTools::FileExists(uniqueFileName.c_str()) == 0)
+    // filename is unique already
+    return filename;
+    }
+
+  std::string extension = knownExtension;
+  if (extension.empty())
+    {
+    // if there is no information about the file extension then we
+    // assume it is the last extension
+    extension = vtksys::SystemTools::GetFilenameLastExtension(filename);
+    }
+
+  std::string baseName = filename.substr(0, filename.size()-extension.size());
+
+  // If there is a numeric suffix, separated by underscore (somefile_23)
+  // then use the string before the separator (somefile) as basename and increment the suffix value.
+  int suffix = 0;
+  std::size_t separatorPosition = baseName.find_last_of("_");
+  if (separatorPosition != std::string::npos)
+    {
+    std::string suffixStr = baseName.substr(separatorPosition + 1, baseName.size() - separatorPosition - 1);
+    std::stringstream ss(suffixStr);
+    if (!(ss >> suffix).fail())
       {
-      uniqueName = true;
-      }
-    else
-      {
-      ++v;
+      // numeric suffix found successfully
+      // remove the suffix from the base name
+      baseName = baseName.substr(0, separatorPosition);
       }
     }
-  return uniqueFileName;
+
+  std::string uniqueFilename;
+  while (true)
+    {
+    ++suffix;
+    std::stringstream ss;
+    ss << baseName << "_" << suffix << extension;
+    uniqueFilename = ss.str();
+    if (!vtksys::SystemTools::FileExists(uniqueFilename))
+      {
+      // found unique filename
+      break;
+      }
+    }
+  return uniqueFilename;
 }
 
 //----------------------------------------------------------------------------

@@ -180,8 +180,12 @@ public:
   static int LoadDefaultParameterSets(vtkMRMLScene* scene,
                                       const std::vector<std::string>& directories);
 
-  /// Creates a unique non-existant file name by adding an index after base file name.
-  static std::string CreateUniqueFileName(std::string &filename);
+  /// Creates a unique (non-existent) file name by adding an index after base file name.
+  /// knownExtension specifies the extension the index should be inserted before.
+  /// It is necessary to provide extension, because there is no reliable way of correctly
+  /// determining extension automatically (for example, file extension of some.file.nii.gz
+  /// could be gz, nii.gz, or file.nii.gz and only one of them is correct).
+  static std::string CreateUniqueFileName(const std::string &filename, const std::string& knownExtension="");
 
   /// List of custom events fired by the class.
   enum Events{
@@ -226,7 +230,6 @@ protected:
 
 private:
 
-  std::map<vtkMRMLStorageNode*, std::string> OriginalStorageNodeDirs;
   /// use a map to store the file names from a storage node, the 0th one is by
   /// definition the GetFileName returned value, then the rest are at index n+1
   /// from GetNthFileName(n)
