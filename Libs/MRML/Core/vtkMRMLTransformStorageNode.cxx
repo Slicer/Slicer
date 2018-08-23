@@ -33,12 +33,22 @@ Version:   $Revision: 1.2 $
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLTransformStorageNode);
 
+bool vtkMRMLTransformStorageNode::RegisterInverseTransformTypesCompleted = false;
+
 //----------------------------------------------------------------------------
 vtkMRMLTransformStorageNode::vtkMRMLTransformStorageNode()
 {
   this->PreferITKv3CompatibleTransforms = 0;
   this->DefaultWriteFileExtension = "h5";
-  vtkITKTransformConverter::RegisterInverseTransformTypes();
+
+  // Ensure custom ITK inverse transform classes are registered.
+  // Register them only once to improve performance when many transform nodes
+  // are instantiated.
+  if (!vtkMRMLTransformStorageNode::RegisterInverseTransformTypesCompleted)
+    {
+    vtkITKTransformConverter::RegisterInverseTransformTypes();
+    vtkMRMLTransformStorageNode::RegisterInverseTransformTypesCompleted = true;
+    }
 }
 
 //----------------------------------------------------------------------------
