@@ -284,7 +284,7 @@ def loadUI(path):
   return widget
 
 def setSliceViewerLayers(background='keep-current', foreground='keep-current', label='keep-current',
-                         foregroundOpacity=None, labelOpacity=None):
+                         foregroundOpacity=None, labelOpacity=None, fit=False):
   """ Set the slice views with the given nodes.
   If node ID is not specified (or value is 'keep-current') then the layer will not be modified.
   :param background: node or node ID to be used for the background layer
@@ -292,6 +292,7 @@ def setSliceViewerLayers(background='keep-current', foreground='keep-current', l
   :param label: node or node ID to be used for the label layer
   :param foregroundOpacity: opacity of the foreground layer
   :param labelOpacity: opacity of the label layer
+  :param fit: fit slice views to their content (position&zoom to show all visible layers)
   """
   import slicer
   def _nodeID(nodeOrID):
@@ -313,6 +314,15 @@ def setSliceViewerLayers(background='keep-current', foreground='keep-current', l
           sliceViewer.SetLabelVolumeID(_nodeID(label))
       if labelOpacity is not None:
           sliceViewer.SetLabelOpacity(labelOpacity)
+
+  if fit:
+    layoutManager = slicer.app.layoutManager()
+    if layoutManager is not None:
+      sliceLogics = layoutManager.mrmlSliceLogics()
+      for i in xrange(sliceLogics.GetNumberOfItems()):
+        sliceLogic = sliceLogics.GetItemAsObject(i)
+        if sliceLogic:
+          sliceLogic.FitSliceToAll()
 
 #
 # IO
