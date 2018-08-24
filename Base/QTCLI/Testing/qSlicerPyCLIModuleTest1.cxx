@@ -129,7 +129,7 @@ int qSlicerPyCLIModuleTest1(int argc, char * argv[])
   #else
   QStringList loadPaths;
   loadPaths.append(cliPath);
-  loadPaths.append(app.intDir());
+  loadPaths.append(cliPath + app.intDir());
   #endif
 
   //===========================================================================
