@@ -787,14 +787,17 @@ void vtkMRMLStorageNode::ResetNthFileName(int n, const char* fileName)
     vtkErrorMacro("ResetNthFileName: given file name is null (n = " << n << ")");
     return;
     }
-  if (n >= 0 && this->GetNumberOfFileNames() >= n)
+  if (n < 0)
     {
-    this->FileNameList[n] = std::string(fileName);
+    vtkErrorMacro("ResetNthFileName: invalid file name number (n = " << n << ")");
+    return;
     }
-  else
+  else if (n>=this->GetNumberOfFileNames())
     {
-    vtkErrorMacro("RestNthFileName: file name number " << n << " not already set, returning.");
+    vtkErrorMacro("ResetNthFileName: file name number " << n << " not already set, returning.");
+    return;
     }
+  this->FileNameList[n] = fileName;
 }
 
 //----------------------------------------------------------------------------
