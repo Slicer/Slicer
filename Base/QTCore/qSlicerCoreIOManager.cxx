@@ -60,6 +60,8 @@ public:
   QList<qSlicerFileReader*> Readers;
   QList<qSlicerFileWriter*> Writers;
   QMap<qSlicerIO::IOFileType, QStringList> FileTypes;
+
+  QString DefaultSceneFileType;
 };
 
 //-----------------------------------------------------------------------------
@@ -714,4 +716,18 @@ void qSlicerCoreIOManager::registerIO(qSlicerIO* io)
     {
     io->setParent(this);
     }
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreIOManager::defaultSceneFileType()const
+{
+  Q_D(const qSlicerCoreIOManager);
+  return d->DefaultSceneFileType;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreIOManager::setDefaultSceneFileType(QString fileType)
+{
+  Q_D(qSlicerCoreIOManager);
+  d->DefaultSceneFileType = fileType;
 }

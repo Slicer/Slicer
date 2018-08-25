@@ -46,6 +46,8 @@ class qSlicerFileWriter;
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreIOManager:public QObject
 {
   Q_OBJECT;
+  Q_PROPERTY(QString defaultSceneFileType READ defaultSceneFileType WRITE setDefaultSceneFileType)
+
 public:
   qSlicerCoreIOManager(QObject* parent = 0);
   virtual ~qSlicerCoreIOManager();
@@ -156,6 +158,16 @@ public:
   /// the qSlicerCoreIOManager. It will emit the signal newFileLoaded().
   /// \sa newFileLoaded()
   Q_INVOKABLE void emitNewFileLoaded(const QVariantMap& loadedFileParameters);
+
+  /// Defines the file format that should be offered by default when the scene is saved.
+  Q_INVOKABLE QString defaultSceneFileType()const;
+
+public slots:
+
+  /// Defines the file format that should be offered by default when the scene is saved.
+  /// Valid options are defined in qSlicerSceneWriter (for example, "MRML Scene (.mrml)"
+  /// or "Medical Reality Bundle (.mrb)").
+  void setDefaultSceneFileType(QString);
 
 signals:
 

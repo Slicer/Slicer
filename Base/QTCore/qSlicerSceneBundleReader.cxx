@@ -41,6 +41,10 @@
 // VTKSYS includes
 #include <vtksys/SystemTools.hxx>
 
+// SlicerQt includes
+#include "qSlicerCoreApplication.h"
+#include "qSlicerCoreIOManager.h"
+
 //-----------------------------------------------------------------------------
 qSlicerSceneBundleReader::qSlicerSceneBundleReader(QObject* _parent)
   : Superclass(_parent)
@@ -127,6 +131,10 @@ bool qSlicerSceneBundleReader::load(const qSlicerIO::IOProperties& properties)
     }
 
   qDebug() << "Loaded bundle from " << unpackPath;
+  // Set default scene file format to mrb
+  qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
+  coreIOManager->setDefaultSceneFileType("Medical Reality Bundle (.mrb)");
+
   // since the unpack path has been deleted, reset the scene to where the data bundle is
   QString mrbDirectoryPath = QFileInfo(file).dir().absolutePath();
   QString mrbBaseName = QFileInfo(file).baseName();

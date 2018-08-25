@@ -122,7 +122,6 @@ protected:
 
   vtkMRMLScene* MRMLScene;
   QString MRMLSceneRootDirectoryBeforeSaving;
-  QString LastMRMLSceneFileFormat;
 
   friend class qSlicerFileNameItemDelegate;
 };

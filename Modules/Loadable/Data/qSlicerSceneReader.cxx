@@ -30,6 +30,10 @@
 // MRML includes
 #include <vtkMRMLScene.h>
 
+// SlicerQt includes
+#include "qSlicerCoreApplication.h"
+#include "qSlicerCoreIOManager.h"
+
 class qSlicerSceneReaderPrivate
 {
 public:
@@ -87,6 +91,12 @@ bool qSlicerSceneReader::load(const qSlicerIO::IOProperties& properties)
   if (clear)
     {
     res = this->mrmlScene()->Connect();
+    if (res)
+      {
+      // Set default scene file format to .mrml
+      qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
+      coreIOManager->setDefaultSceneFileType("MRML Scene (.mrml)");
+      }
     }
   else
     {

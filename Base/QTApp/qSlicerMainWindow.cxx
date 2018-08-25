@@ -947,6 +947,9 @@ void qSlicerMainWindow::on_FileCloseSceneAction_triggered()
     // Make sure we don't remember the last scene's filename to prevent
     // accidentally overwriting the scene.
     qSlicerCoreApplication::application()->mrmlScene()->SetURL("");
+    // Set default scene file format to .mrml
+    qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
+    coreIOManager->setDefaultSceneFileType("MRML Scene (.mrml)");
     }
 }
 

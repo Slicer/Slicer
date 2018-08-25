@@ -400,7 +400,7 @@ void qSlicerSaveDataDialogPrivate::populateScene()
   this->updateOptionsWidget(row);
 
   // Set current scene file format based on last successful scene save
-  int lastFormatIndex = sceneComboBoxWidget->findText(this->LastMRMLSceneFileFormat);
+  int lastFormatIndex = sceneComboBoxWidget->findText(coreIOManager->defaultSceneFileType());
   if (lastFormatIndex != -1)
     {
     sceneComboBoxWidget->setCurrentIndex(lastFormatIndex);
@@ -1142,7 +1142,12 @@ bool qSlicerSaveDataDialogPrivate::saveScene()
 
   if (res)
     {
-    this->LastMRMLSceneFileFormat = this->sceneFileFormat();
+    qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
+    Q_ASSERT(coreIOManager);
+    if (coreIOManager)
+      {
+      coreIOManager->setDefaultSceneFileType(this->sceneFileFormat());
+      }
     }
   else
     {
