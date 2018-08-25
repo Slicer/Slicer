@@ -1057,6 +1057,8 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
     {
     // Create new color table node if labelmap node doesn't have a color node or if the existing one is not user type
     vtkSmartPointer<vtkMRMLColorTableNode> newColorTable = vtkSmartPointer<vtkMRMLColorTableNode>::New();
+    // Need to make the color table node visible because only non-hidden storable nodes are offered to be saved
+    newColorTable->SetHideFromEditors(false);
     std::string colorTableNodeName(labelmapNode->GetName());
     colorTableNodeName.append("_ColorTable");
     newColorTable->SetName(colorTableNodeName.c_str());
