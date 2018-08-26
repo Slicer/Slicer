@@ -3234,12 +3234,34 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNod
     if (!firstShNode->Internal->ResolveUnresolvedItems())
       {
       // Remove all subject hierarchy nodes including the invalid one so that it can be rebuilt from scratch
+
+      // When a node is deleted, other nodes may be deleted as a side effect, therefore we retrieve all the node IDs
+      // and look up each node by ID when deleting. This way we can detect if a node has been already deleted
+      // and do not attempt to delete it again.
+
+      // Retrieve node IDs
+      std::vector<std::string> allShNodeIDs;
       std::vector<vtkMRMLNode*> allShNodes;
       scene->GetNodesByClass("vtkMRMLSubjectHierarchyNode", allShNodes);
       for (std::vector<vtkMRMLNode*>::iterator allShNodeIt=allShNodes.begin(); allShNodeIt!=allShNodes.end(); ++allShNodeIt)
         {
-        scene->RemoveNode(*allShNodeIt);
+        const char* nodeID = (*allShNodeIt)->GetID();
+        if (nodeID)
+          {
+          allShNodeIDs.push_back(nodeID);
+          }
         }
+
+      // Delete nodes by node IDs:
+      for (std::vector<std::string>::iterator allShNodeIDIt = allShNodeIDs.begin(); allShNodeIDIt != allShNodeIDs.end(); ++allShNodeIDIt)
+        {
+        vtkMRMLNode* node = scene->GetNodeByID(*allShNodeIDIt);
+        if (node)
+          {
+          scene->RemoveNode(node);
+          }
+        }
+
       vtkErrorWithObjectMacro( scene,
         "vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode: Failed to merge subject hierarchy nodes, re-building subject hierarchy from scratch" );
       return vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(scene);
