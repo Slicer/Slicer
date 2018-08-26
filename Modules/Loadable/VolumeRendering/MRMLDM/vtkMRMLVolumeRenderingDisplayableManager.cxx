@@ -111,18 +111,12 @@ public:
   class PipelineMultiVolume : public Pipeline
   {
   public:
-    PipelineMultiVolume() : Pipeline()
+    PipelineMultiVolume(int actorPortIndex) : Pipeline()
     {
-      this->ActorPortIndex = NextActorPortIndex++;
-    }
-    ~PipelineMultiVolume()
-    {
-      NextActorPortIndex--;
+      this->ActorPortIndex = actorPortIndex;
     }
 
     unsigned int ActorPortIndex;
-    /// Used to determine the port index in the multi-volume actor
-    static unsigned int NextActorPortIndex;
   };
 
   //-------------------------------------------------------------------------
@@ -183,6 +177,9 @@ public:
   /// When interaction is >0, we are in interactive mode (low level of detail)
   int Interaction;
 
+  /// Used to determine the port index in the multi-volume actor
+  unsigned int NextMultiVolumeActorPortIndex;
+
 private:
 #if VTK_MAJOR_VERSION >= 9
   /// Multi-volume actor using a common mapper for rendering the multiple volumes
@@ -195,9 +192,6 @@ private:
   friend class vtkMRMLVolumeRenderingDisplayableManager;
 };
 
-//TODO: Change back to 0 once the VTK issue https://gitlab.kitware.com/vtk/vtk/issues/17325 is fixed
-unsigned int vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::PipelineMultiVolume::NextActorPortIndex = 1;
-
 //---------------------------------------------------------------------------
 // vtkInternal methods
 
@@ -207,6 +201,8 @@ vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::vtkInternal(vtkMRMLVolume
 , AddingVolumeNode(false)
 , OriginalDesiredUpdateRate(0.0) // 0 fps is a special value that means it hasn't been set
 , Interaction(0)
+  //TODO: Change back to 0 once the VTK issue https://gitlab.kitware.com/vtk/vtk/issues/17325 is fixed
+, NextMultiVolumeActorPortIndex(1)
 {
 #if VTK_MAJOR_VERSION >= 9
   this->MultiVolumeActor = vtkSmartPointer<vtkMultiVolume>::New();
@@ -428,7 +424,13 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::AddDisplayNode(vtkMR
 #if VTK_MAJOR_VERSION >= 9
   else if (displayNode->IsA("vtkMRMLMultiVolumeRenderingDisplayNode"))
     {
-    PipelineMultiVolume* pipelineMulti = new PipelineMultiVolume();
+    PipelineMultiVolume* pipelineMulti = new PipelineMultiVolume(this->NextMultiVolumeActorPortIndex++);
+    if (pipelineMulti->ActorPortIndex >= 10)
+      {
+      vtkErrorWithObjectMacro(this->External, "AddDisplayNode: Multi-volume only supports 10 volumes in the pipeline. Cannot add volume "
+        << volumeNode->GetName());
+      return;
+      }
     // Create a dummy volume for port zero if this is the first volume. Necessary because the first transform is ignored,
     // see https://gitlab.kitware.com/vtk/vtk/issues/17325
     //TODO: Remove this workaround when the issue is fixed in VTK
@@ -504,6 +506,9 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::RemoveDisplayNode(vt
         this->External->GetRenderer()->RemoveVolume(this->MultiVolumeActor);
         }
       }
+
+    // Decrease next actor port index
+    this->NextMultiVolumeActorPortIndex--;
     }
 #endif
 
