@@ -653,25 +653,25 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char* s
 
   if (!this->GetMRMLScene())
     {
-    vtkErrorMacro("no scene to bundle!");
+    vtkErrorMacro("SaveSceneToSlicerDataBundleDirectory failed: invalid scene");
     return false;
     }
   if (!sdbDir)
     {
-    vtkErrorMacro("no directory given!");
+    vtkErrorMacro("SaveSceneToSlicerDataBundleDirectory failed: invalid subdirectory");
     return false;
     }
 
   // if the path to the directory is not absolute, return
   if (!vtksys::SystemTools::FileIsFullPath(sdbDir))
     {
-    vtkErrorMacro("given directory is not a full path: " << sdbDir);
+    vtkErrorMacro("SaveSceneToSlicerDataBundleDirectory failed: given directory is not a full path: " << sdbDir);
     return false;
     }
   // is it a directory?
   if (!vtksys::SystemTools::FileIsDirectory(sdbDir))
     {
-    vtkErrorMacro("given directory name is not actually a directory, try again!" << sdbDir);
+    vtkErrorMacro("SaveSceneToSlicerDataBundleDirectory failed: given directory name is not actually a directory" << sdbDir);
     return false;
     }
   std::string rootDir = std::string(sdbDir);
@@ -685,7 +685,7 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char* s
     {
     if (!vtksys::SystemTools::RemoveADirectory(rootDir.c_str()))
       {
-      vtkErrorMacro("Error removing SDB scene directory " << rootDir.c_str() << ", cannot make a fresh archive.");
+      vtkErrorMacro("SaveSceneToSlicerDataBundleDirectory failed: Error removing SDB scene directory " << rootDir.c_str() << ", cannot make a fresh archive.");
       return false;
       }
     }
@@ -694,7 +694,7 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char* s
     {
     if (!vtksys::SystemTools::MakeDirectory(rootDir.c_str()))
       {
-      vtkErrorMacro("Unable to make temporary directory " << rootDir);
+      vtkErrorMacro("SaveSceneToSlicerDataBundleDirectory failed: Unable to make temporary directory " << rootDir);
       return false;
       }
     }
@@ -726,7 +726,7 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char* s
     {
     if (!vtksys::SystemTools::MakeDirectory(dataDir.c_str()))
       {
-      vtkErrorMacro("Unable to make data directory " << dataDir);
+      vtkErrorMacro("SaveSceneToSlicerDataBundleDirectory failed: Unable to make data directory " << dataDir);
       return false;
       }
     }
@@ -750,7 +750,7 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char* s
     vtkMRMLNode* mrmlNode = this->GetMRMLScene()->GetNthNode(i);
     if (!mrmlNode)
       {
-      vtkErrorMacro("unable to get " << i << "th node from scene with " << numNodes << " nodes");
+      vtkErrorMacro("SaveSceneToSlicerDataBundleDirectory: unable to get " << i << "th node from scene with " << numNodes << " nodes");
       continue;
       }
     if (mrmlNode->IsA("vtkMRMLStorableNode"))
@@ -762,46 +762,63 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char* s
       this->SaveStorableNodeToSlicerDataBundleDirectory(storableNode, dataDir);
 
       storableNodes[std::string(storableNode->GetID())] = storableNode;
+      }
     }
-    if (mrmlNode->IsA("vtkMRMLSceneViewNode"))
+  // Update all storage nodes in all scene views.
+  // Nodes that are not present in the main scene are actually saved to file, others just have their paths updated.
+  for (int i = 0; i < numNodes; ++i)
+    {
+    vtkMRMLSceneViewNode* sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(this->GetMRMLScene()->GetNthNode(i));
+    if (!sceneViewNode)
       {
-      // get all additional storable nodes for all scene views
-      vtkMRMLSceneViewNode* sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(mrmlNode);
-      sceneViewNode->SetSceneViewRootDir(this->GetMRMLScene()->GetRootDirectory());
+      continue;
+      }
+    sceneViewNode->SetSceneViewRootDir(this->GetMRMLScene()->GetRootDirectory());
 
-      std::vector<vtkMRMLNode *> snodes;
-      sceneViewNode->GetNodesByClass("vtkMRMLStorableNode", snodes);
-      std::vector<vtkMRMLNode *>::iterator sit;
-      for (sit = snodes.begin(); sit != snodes.end(); sit++)
+    std::vector<vtkMRMLNode *> snodes;
+    sceneViewNode->GetNodesByClass("vtkMRMLStorableNode", snodes);
+    std::vector<vtkMRMLNode *>::iterator sit;
+    for (sit = snodes.begin(); sit != snodes.end(); sit++)
+      {
+      vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(*sit);
+      std::map<std::string, vtkMRMLNode *>::iterator storableNodeIt = storableNodes.find(std::string(storableNode->GetID()));
+      if (storableNodeIt == storableNodes.end())
         {
-        vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(*sit);
-        if (storableNodes.find(std::string(storableNode->GetID())) == storableNodes.end())
+        // this storable node has been deleted from the main scene: save it
+        storableNode->SetAddToScene(1);
+        storableNode->UpdateScene(this->GetMRMLScene());
+        this->SaveStorableNodeToSlicerDataBundleDirectory(storableNode, dataDir);
+        storableNodes[std::string(storableNode->GetID())] = storableNode;
+        storableNode->SetAddToScene(0);
+        }
+      else
+        {
+        // this storable node is still in the main scene, just save and update the path
+        vtkMRMLStorageNode* storageNodeInMainScene = vtkMRMLStorableNode::SafeDownCast(storableNodeIt->second)->GetStorageNode();
+        vtkMRMLStorageNode* storageNode = storableNode->GetStorageNode();
+        if (storageNode)
           {
-          // save only new storable nodes
-          storableNode->SetAddToScene(1);
-          storableNode->UpdateScene(this->GetMRMLScene());
-          this->SaveStorableNodeToSlicerDataBundleDirectory(storableNode, dataDir);
-
-          storableNodes[std::string(storableNode->GetID())] = storableNode;
-          storableNode->SetAddToScene(0);
-          }
-        else
-          {
-          // just do the path save/update since the paths are indexed by the node, not id
-          vtkMRMLStorageNode* storageNode = storableNode->GetStorageNode();
-          if (storageNode)
+          // Save original file names
+          this->OriginalStorageNodeFileNames[storageNode].push_back(storageNode->GetFileName() ? storageNode->GetFileName() : "");
+          for (int i = 0; i < storageNode->GetNumberOfFileNames(); ++i)
             {
-            std::string fileName(storageNode->GetFileName());
-            this->OriginalStorageNodeFileNames[storageNode].push_back(fileName);
-            for (int i = 0; i < storageNode->GetNumberOfFileNames(); ++i)
+            this->OriginalStorageNodeFileNames[storageNode].push_back(storageNode->GetNthFileName(i) ? storageNode->GetNthFileName(i) : "");
+            }
+          // Update file names (to match the file names in the main scene)
+          if (storageNodeInMainScene)
+            {
+            storageNode->SetFileName(storageNodeInMainScene->GetFileName());
+            storageNode->ResetFileNameList();
+            for (int i = 0; i < storageNodeInMainScene->GetNumberOfFileNames(); ++i)
               {
-              this->OriginalStorageNodeFileNames[storageNode].push_back(storageNode->GetNthFileName(i));
+              storageNode->AddFileName(storageNodeInMainScene->GetNthFileName(i));
               }
             }
           }
         }
       }
-  }
+    }
+
   //
   // create a scene view, using the snapshot passed in if any
   //
@@ -884,7 +901,7 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char* s
               }
             else
               {
-              storageNode->AddFileName(originalFileNames[i-1].c_str()); // i-1 because the first filename is used by SetFileName
+              storageNode->AddFileName(originalFileNames[i].c_str());
               }
             }
           }
@@ -897,21 +914,22 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char* s
       if (storageNode && this->OriginalStorageNodeFileNames.find( storageNode ) != this->OriginalStorageNodeFileNames.end() )
         {
         // std::cout << "Resetting filename on storage node " << storageNode->GetID() << " from " << storageNode->GetFileName() << " back to " << this->OriginalStorageNodeFileNames[storageNode][0].c_str() << "\n\tmodified since read = " << storableNode->GetModifiedSinceRead() << std::endl;
-        storageNode->SetFileName(this->OriginalStorageNodeFileNames[storageNode][0].c_str());
-        if (this->OriginalStorageNodeFileNames[storageNode].size() > 1)
+
+        storageNode->ResetFileNameList();
+        std::vector< std::string > &originalFileNames = this->OriginalStorageNodeFileNames[storageNode];
+        for (int i = 0; i < originalFileNames.size(); i++)
           {
-          // set the file list
-          for (unsigned int fileNumber = 0;
-               fileNumber < this->OriginalStorageNodeFileNames[storageNode].size();
-               ++fileNumber)
+          if (i == 0)
             {
-            // the fileName is also in the file list
-            storageNode->AddFileName(this->OriginalStorageNodeFileNames[storageNode][fileNumber].c_str());
+            storageNode->SetFileName(originalFileNames[i].c_str());
+            }
+          else
+            {
+            storageNode->AddFileName(originalFileNames[i].c_str());
             }
           }
         }
       }
-
     }
 
   this->GetMRMLScene()->SetURL(origURL.c_str());

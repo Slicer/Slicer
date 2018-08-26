@@ -769,14 +769,11 @@ void vtkMRMLStorageNode::ResetFileNameList( )
 //----------------------------------------------------------------------------
 const char * vtkMRMLStorageNode::GetNthFileName(int n) const
 {
-  if ((this->GetNumberOfFileNames()-1) < n)
+  if (n < 0 || n >= this->GetNumberOfFileNames())
     {
     return NULL;
     }
-  else
-    {
-    return this->FileNameList[n].c_str();
-    }
+  return this->FileNameList[n].c_str();
 }
 
 //----------------------------------------------------------------------------
@@ -792,7 +789,7 @@ void vtkMRMLStorageNode::ResetNthFileName(int n, const char* fileName)
     vtkErrorMacro("ResetNthFileName: invalid file name number (n = " << n << ")");
     return;
     }
-  else if (n>=this->GetNumberOfFileNames())
+  else if (n >= this->GetNumberOfFileNames())
     {
     vtkErrorMacro("ResetNthFileName: file name number " << n << " not already set, returning.");
     return;
