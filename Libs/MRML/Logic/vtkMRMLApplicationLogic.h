@@ -215,6 +215,10 @@ public:
   /// Set the temporary path the logics can use. The path should be set by the application
   void SetTemporaryPath(const char* path);
 
+  /// Saves the provided image as screenshot of the scene (same filepath as the scene URL but extension is .png instead of .mrml).
+  /// Uses current scene's URL property, so the URL must be up-to-date when calling this method.
+  void SaveSceneScreenshot(vtkImageData* screenshot);
+
 protected:
 
   vtkMRMLApplicationLogic();

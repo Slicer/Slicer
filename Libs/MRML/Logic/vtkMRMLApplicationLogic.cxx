@@ -48,6 +48,7 @@
 #include <vtkImageData.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
+#include <vtkPNGWriter.h>
 #include <vtkSmartPointer.h>
 
 // VTKSYS includes
@@ -638,18 +639,16 @@ std::string vtkMRMLApplicationLogic::PercentEncode(std::string s)
 bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkImageData* screenShot)
 {
 
+  // Overview:
+  // - confirm the arguments are valid and create directories if needed
+  // - save all current file storage paths in the scene
+  // - replace all file storage folders by sdbDir/Data
+  // - create a screenshot of the scene (for allowing preview of scene content without opening in Slicer)
+  // - save the scene (mrml files and all storable nodes)
+  // - revert all file storage paths to the original
   //
-  // first, confirm the arguments are valid and create directories if needed
-  // then, save all paths and filenames in the current scene
-  //  and replace them with paths to the sdbDir
-  // then create a scene view of the contents of the data bundle
-  // then save the scene
-  // -- replace the original paths
-  // -- remove the scene view
-  //
-  // at the end, the scene should be restored to its original state
-  // except that some storables will have default storage nodes
-  //
+  // At the end, the scene should be restored to its original state
+  // except that some storables will have default storage nodes.
 
   if (!this->GetMRMLScene())
     {
@@ -738,6 +737,11 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char* s
   this->GetMRMLScene()->SetRootDirectory(rootDir.c_str());
   this->GetMRMLScene()->SetURL(urlStr.c_str());
 
+  if (screenShot)
+    {
+    this->SaveSceneScreenshot(screenShot);
+    }
+
   // change all storage nodes and file names to be unique in the new directory
   // write the new data as we go; save old values
   this->OriginalStorageNodeFileNames.clear();
@@ -819,33 +823,6 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char* s
       }
     }
 
-  //
-  // create a scene view, using the snapshot passed in if any
-  //
-  vtkNew<vtkMRMLSceneViewNode> newSceneViewNode;
-  newSceneViewNode->SetScene(this->GetMRMLScene());
-  newSceneViewNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("Slicer Data Bundle Scene View"));
-  newSceneViewNode->SetSceneViewDescription("Scene at MRML file save point");
-  // save the scene view
-  newSceneViewNode->StoreScene();
-  this->GetMRMLScene()->AddNode(newSceneViewNode.GetPointer());
-
-  vtkSmartPointer<vtkMRMLStorageNode> newSceneViewStorageNode;
-  if (screenShot)
-    {
-    // assumes has been passed a screen shot of the full layout
-    newSceneViewNode->SetScreenShotType(4);
-    newSceneViewNode->SetScreenShot(screenShot);
-    // set the file name from the node name, using a relative path, it will go
-    // at the same level as the  .mrml file
-    std::string sceneViewFileName = std::string(newSceneViewNode->GetName()) + std::string(".png");
-    // create a storage node
-    newSceneViewNode->AddDefaultStorageNode(sceneViewFileName.c_str());
-    newSceneViewStorageNode = newSceneViewNode->GetStorageNode();
-    // force a write
-    newSceneViewStorageNode->WriteData(newSceneViewNode.GetPointer());
-    }
-
   // write the scene to disk, changes paths to relative
   vtkDebugMacro("calling commit on the scene, to url " << this->GetMRMLScene()->GetURL());
   this->GetMRMLScene()->Commit();
@@ -856,13 +833,6 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char* s
 
   this->GetMRMLScene()->SetURL(origURL.c_str());
   this->GetMRMLScene()->SetRootDirectory(origRootDirectory.c_str());
-
-  // clean up scene views
-  this->GetMRMLScene()->RemoveNode(newSceneViewNode.GetPointer());
-  if (newSceneViewStorageNode)
-    {
-    this->GetMRMLScene()->RemoveNode(newSceneViewStorageNode);
-    }
 
   // reset the storage paths
   numNodes = this->GetMRMLScene()->GetNumberOfNodes();
@@ -1234,4 +1204,31 @@ void vtkMRMLApplicationLogic::SetTemporaryPath(const char* path)
       this->Internal->TemporaryPath = std::string(path);
       }
     this->Modified();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::SaveSceneScreenshot(vtkImageData* screenshot)
+{
+  if (this->GetMRMLScene() == NULL || this->GetMRMLScene()->GetURL() == NULL)
+  {
+    vtkErrorMacro("vtkMRMLApplicationLogic::SaveSceneScreenshot failed: invalid scene or URL");
+    return;
+  }
+  std::string screenshotFilePath = this->GetMRMLScene()->GetURL();
+
+  // Write screenshot with the same name and folder as the mrml file but with .png extension
+
+  // Strip file extension (.mrml)
+  std::string::size_type dot_pos = screenshotFilePath.rfind('.');
+  if (dot_pos != std::string::npos)
+    {
+    screenshotFilePath = screenshotFilePath.substr(0, dot_pos);
+    }
+
+  screenshotFilePath += std::string(".png");
+
+  vtkNew<vtkPNGWriter> screenShotWriter;
+  screenShotWriter->SetInputData(screenshot);
+  screenShotWriter->SetFileName(screenshotFilePath.c_str());
+  screenShotWriter->Write();
 }

@@ -37,8 +37,6 @@
 
 // MRML includes
 #include <vtkMRMLScene.h>
-#include <vtkMRMLSceneViewNode.h>
-#include <vtkMRMLStorageNode.h>
 
 // VTK includes
 #include <vtkCollection.h>
@@ -110,63 +108,6 @@ bool qSlicerSceneWriter::write(const qSlicerIO::IOProperties& properties)
 }
 
 //----------------------------------------------------------------------------
-namespace
-{
-/// Save an explicit default scene view recording the state of the scene when
-/// saved to file.
-void saveDefaultSceneView(vtkMRMLScene* mrmlScene, const qSlicerIO::IOProperties& properties)
-{
-  if (!mrmlScene->IsNodeClassRegistered("vtkMRMLSceneViewNode"))
-    {
-    return;
-    }
-
-  const char *defaultSceneName = "Master Scene View";
-  vtkSmartPointer<vtkMRMLSceneViewNode> sceneViewNode;
-  vtkSmartPointer<vtkCollection> oldSceneViewNodes;
-  oldSceneViewNodes.TakeReference(
-    mrmlScene->GetNodesByClassByName("vtkMRMLSceneViewNode", defaultSceneName));
-  if (oldSceneViewNodes->GetNumberOfItems() == 0)
-    {
-    // make a new one
-    vtkNew<vtkMRMLSceneViewNode> newSceneViewNode;
-    newSceneViewNode->SetName(defaultSceneName);
-    newSceneViewNode->SetSceneViewDescription("Scene at MRML file save point");
-    mrmlScene->AddNode(newSceneViewNode.GetPointer());
-
-    // create a storage node
-    // set the file name from the node name
-    std::string fname = std::string(newSceneViewNode->GetName()) + std::string(".png");
-    newSceneViewNode->AddDefaultStorageNode(fname.c_str());
-
-    // use the new one
-    sceneViewNode = newSceneViewNode.GetPointer();
-    }
-  else
-    {
-    // take the first one and over write it
-    sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(
-      oldSceneViewNodes->GetItemAsObject(0));
-    }
-
-  if (properties.contains("screenShot"))
-    {
-    // take a screen shot of the full layout
-    sceneViewNode->SetScreenShotType(4);
-    QImage screenShot = properties["screenShot"].value<QImage>();
-    // convert to vtkImageData
-    vtkNew<vtkImageData> imageData;
-    qMRMLUtils::qImageToVtkImageData(screenShot, imageData.GetPointer());
-    sceneViewNode->SetScreenShot(imageData.GetPointer());
-    }
-  sceneViewNode->StoreScene();
-
-  // force a write
-  sceneViewNode->GetStorageNode()->WriteData(sceneViewNode);
-}
-}
-
-//----------------------------------------------------------------------------
 bool qSlicerSceneWriter::writeToMRML(const qSlicerIO::IOProperties& properties)
 {
   // set the mrml scene url first
@@ -177,7 +118,18 @@ bool qSlicerSceneWriter::writeToMRML(const qSlicerIO::IOProperties& properties)
   std::string parentDir = vtksys::SystemTools::GetParentDirectory(this->mrmlScene()->GetURL());
   this->mrmlScene()->SetRootDirectory(parentDir.c_str());
 
-  saveDefaultSceneView(this->mrmlScene(), properties);
+
+  if (properties.contains("screenShot"))
+    {
+    // screenshot is provided, save along with the scene mrml file
+    QImage screenShot = properties["screenShot"].value<QImage>();
+    // convert to vtkImageData
+    vtkNew<vtkImageData> imageData;
+    qMRMLUtils::qImageToVtkImageData(screenShot, imageData.GetPointer());
+    vtkSlicerApplicationLogic* applicationLogic = qSlicerCoreApplication::application()->applicationLogic();
+    Q_ASSERT(this->mrmlScene() == applicationLogic->GetMRMLScene());
+    applicationLogic->SaveSceneScreenshot(imageData);
+    }
 
   // write out the mrml file
   bool res = this->mrmlScene()->Commit();
