@@ -42,7 +42,6 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
   def runTest(self):
     self.setUp()
     self.test_SlicerMRBSaveRestoreCheckPaths()
-    self.test_PercentEncode()
 
   #
   # find and return the storable node associated with this storage node.
@@ -168,6 +167,7 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     slicer.util.delayDisplay('Finished saving mrml file %s, mrml url is now %s\n\n\n' % (mrmlFilePath, slicer.mrmlScene.GetURL()))
     slicer.util.delayDisplay('mrml root dir = %s' % slicer.mrmlScene.GetRootDirectory())
     # explicitly save MRHead
+    ioManager.addDefaultStorageNodes()
     mrHeadVolume.GetStorageNode().WriteData(mrHeadVolume)
 
     #

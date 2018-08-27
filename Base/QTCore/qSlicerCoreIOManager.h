@@ -147,6 +147,14 @@ public:
   /// and screenShot set as properties.
   Q_INVOKABLE bool saveScene(const QString& fileName, QImage screenShot);
 
+  /// Create default storage nodes for all storable nodes that are to be saved
+  /// with the scene and do not have a storage node already
+  /// File name is set based on node name, using use default file extension,
+  /// with special characters in the node name percent-encoded.
+  /// This method can be used to ensure a storage node exists before writing
+  /// a storable node to file by calling storableNode->GetStorageNode()->WriteData(storableNode).
+  Q_INVOKABLE void addDefaultStorageNodes();
+
   /// Register the reader/writer \a io
   /// Note also that the IOManager takes ownership of \a io
   void registerIO(qSlicerIO* io);

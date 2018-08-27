@@ -47,7 +47,6 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
   def runTest(self):
     self.setUp()
     self.test_SlicerMRBMultipleSaveRestore()
-    self.test_PercentEncode()
 
 
   def test_SlicerMRBMultipleSaveRestore(self):

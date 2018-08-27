@@ -156,7 +156,7 @@ public:
   /// or similar should be used, but nothing seems to be available.
   /// http://en.wikipedia.org/wiki/Percent-encoding
   /// See http://na-mic.org/Bug/view.php?id=2605
-  std::string PercentEncode(std::string s);
+  static std::string PercentEncode(std::string s);
 
   /// Save the scene into a self contained directory, sdbDir
   /// Called by the qSlicerSceneWriter, which can be accessed via
