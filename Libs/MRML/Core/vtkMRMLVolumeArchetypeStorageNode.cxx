@@ -644,7 +644,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
     return returnString;
     }
 
-  std::string oldName = this->GetFileName();
+  std::string oldName(this->GetFileName() ? this->GetFileName() : "");
   if (oldName.empty())
     {
     vtkErrorMacro("UpdateFileList: File name not specified");
