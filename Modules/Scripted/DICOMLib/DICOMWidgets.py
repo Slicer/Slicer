@@ -417,7 +417,11 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
     if not self.extensionCheckPending:
       self.extensionCheckPending = True
       def timerCallback():
-        self.promptForExtensions()
+        # Prompting for extension may be undesirable in custom applications.
+        # DICOM/PromptForExtensions key can be used to disable this feature.
+        promptForExtensionsEnabled = settingsValue('DICOM/PromptForExtensions', True, converter=toBool)
+        if promptForExtensionsEnabled:
+          self.promptForExtensions()
         self.extensionCheckPending = False
       qt.QTimer.singleShot(0, timerCallback)
 
