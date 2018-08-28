@@ -128,7 +128,7 @@ bool qSlicerSceneWriter::writeToMRML(const qSlicerIO::IOProperties& properties)
     qMRMLUtils::qImageToVtkImageData(screenShot, imageData.GetPointer());
     vtkSlicerApplicationLogic* applicationLogic = qSlicerCoreApplication::application()->applicationLogic();
     Q_ASSERT(this->mrmlScene() == applicationLogic->GetMRMLScene());
-    applicationLogic->SaveSceneScreenshot(imageData);
+    applicationLogic->SaveSceneScreenshot(imageData.GetPointer());
     }
 
   // write out the mrml file
