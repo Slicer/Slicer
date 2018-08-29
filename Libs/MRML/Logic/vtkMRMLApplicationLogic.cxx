@@ -863,15 +863,15 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char* s
           {
           storageNode->ResetFileNameList();
           std::vector< std::string > &originalFileNames = this->OriginalStorageNodeFileNames[storageNode];
-          for (size_t i = 0; i < originalFileNames.size(); i++)
+          for (size_t index = 0; index < originalFileNames.size(); index++)
             {
-            if (i == 0)
+            if (index == 0)
               {
-              storageNode->SetFileName(originalFileNames[i].c_str());
+              storageNode->SetFileName(originalFileNames[index].c_str());
               }
             else
               {
-              storageNode->AddFileName(originalFileNames[i].c_str());
+              storageNode->AddFileName(originalFileNames[index].c_str());
               }
             }
           }
@@ -887,15 +887,15 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char* s
 
         storageNode->ResetFileNameList();
         std::vector< std::string > &originalFileNames = this->OriginalStorageNodeFileNames[storageNode];
-        for (size_t i = 0; i < originalFileNames.size(); i++)
+        for (size_t index = 0; index < originalFileNames.size(); index++)
           {
-          if (i == 0)
+          if (index == 0)
             {
-            storageNode->SetFileName(originalFileNames[i].c_str());
+            storageNode->SetFileName(originalFileNames[index].c_str());
             }
           else
             {
-            storageNode->AddFileName(originalFileNames[i].c_str());
+            storageNode->AddFileName(originalFileNames[index].c_str());
             }
           }
         }
