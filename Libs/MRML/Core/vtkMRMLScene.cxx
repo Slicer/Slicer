@@ -110,7 +110,6 @@ vtkCxxSetObjectMacro(vtkMRMLScene, URIHandlerCollection, vtkCollection)
 vtkMRMLScene::vtkMRMLScene()
 {
   this->NodeIDsMTime = 0;
-  this->SceneModifiedTime = 0;
 
   this->RegisteredNodeClasses.clear();
   this->UniqueIDs.clear();

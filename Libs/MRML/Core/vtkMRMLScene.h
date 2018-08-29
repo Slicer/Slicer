@@ -756,7 +756,6 @@ protected:
   NodeReferencesType::iterator FindNodeReference(const char* referencedId, vtkMRMLNode* referencingNode);
 
   vtkCollection*  Nodes;
-  vtkMTimeType    SceneModifiedTime;
 
   /// data i/o handling members
   vtkCacheManager *  CacheManager;
