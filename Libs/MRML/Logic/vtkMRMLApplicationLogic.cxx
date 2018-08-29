@@ -863,7 +863,7 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char* s
           {
           storageNode->ResetFileNameList();
           std::vector< std::string > &originalFileNames = this->OriginalStorageNodeFileNames[storageNode];
-          for (int i = 0; i < originalFileNames.size(); i++)
+          for (size_t i = 0; i < originalFileNames.size(); i++)
             {
             if (i == 0)
               {
@@ -887,7 +887,7 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char* s
 
         storageNode->ResetFileNameList();
         std::vector< std::string > &originalFileNames = this->OriginalStorageNodeFileNames[storageNode];
-        for (int i = 0; i < originalFileNames.size(); i++)
+        for (size_t i = 0; i < originalFileNames.size(); i++)
           {
           if (i == 0)
             {
