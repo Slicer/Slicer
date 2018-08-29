@@ -1,7 +1,7 @@
 set(proj python-setuptools)
 
 # Set dependency list
-set(${proj}_DEPENDENCIES python python-packaging python-six python-appdirs)
+set(${proj}_DEPENDENCIES python)
 
 if(NOT DEFINED Slicer_USE_SYSTEM_${proj})
   set(Slicer_USE_SYSTEM_${proj} ${Slicer_USE_SYSTEM_python})
@@ -40,10 +40,10 @@ ExternalProject_Execute(${proj} \"easy_install\" \"${PYTHON_EXECUTABLE}\" setup.
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    # slicer-v39.2.0
+    # slicer-v40.2.0
     # - include patch to support parallel build
     GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/Slicer/setuptools.git"
-    GIT_TAG "fcc5fe118a0c9917b3bc05a321818bf5ba4bbeca"
+    GIT_TAG "1b48ec37eddeb39303bc32d217666cd1ba2b9c39"
     DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
     SOURCE_DIR ${EP_SOURCE_DIR}
     BUILD_IN_SOURCE 1

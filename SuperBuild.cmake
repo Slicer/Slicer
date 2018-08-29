@@ -127,6 +127,7 @@ if(Slicer_USE_PYTHONQT AND Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
     python-couchdb
     python-GitPython
     python-pip
+    python-six
     )
   if(Slicer_USE_PYTHONQT_WITH_OPENSSL OR Slicer_USE_SYSTEM_python)
     # python-PyGithub requires SSL support in Python
