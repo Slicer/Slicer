@@ -31,6 +31,7 @@ if(NOT Slicer_USE_SYSTEM_${proj})
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ${PYTHON_EXECUTABLE} setup.py install
+    LOG_INSTALL 1
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
