@@ -279,6 +279,9 @@ void* vtkTeemNRRDWriter::MakeNRRD()
   AttributeMapType::iterator ait;
   for (ait = this->Attributes->begin(); ait != this->Attributes->end(); ++ait)
     {
+    // Don't set `space` as k-v. it is handled above, and needs to be a nrrd *field*.
+    if (ait->first == "space") { continue; }
+
     nrrdKeyValueAdd(nrrd, (*ait).first.c_str(), (*ait).second.c_str());
     }
 
