@@ -113,8 +113,6 @@ protected:
   vtkDoubleArray *DiffusionGradients;
   vtkDoubleArray *BValues;
 
-  vtkImageExtractComponents *ExtractComponents;
-
 };
 
 #endif

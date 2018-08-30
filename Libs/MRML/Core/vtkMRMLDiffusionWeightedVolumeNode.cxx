@@ -20,21 +20,21 @@ Version:   $Revision: 1.14 $
 
 #include <vtkDoubleArray.h>
 #include <vtkImageData.h>
-#include <vtkImageExtractComponents.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
+
+#include <vnl/vnl_double_3.h>
 
 //------------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLDiffusionWeightedVolumeNode);
 
 //----------------------------------------------------------------------------
-vtkMRMLDiffusionWeightedVolumeNode::vtkMRMLDiffusionWeightedVolumeNode()
+vtkMRMLDiffusionWeightedVolumeNode::vtkMRMLDiffusionWeightedVolumeNode() :
+  DiffusionGradients(vtkDoubleArray::New()),
+  BValues(vtkDoubleArray::New())
 {
-  this->DiffusionGradients = vtkDoubleArray::New();
   this->DiffusionGradients->SetNumberOfComponents(3);
-  this->BValues = vtkDoubleArray::New();
-
   this->SetNumberOfGradientsInternal(7); //6 gradients + 1 baseline
 
   for(int i=0; i<3; i++)
@@ -44,8 +44,6 @@ vtkMRMLDiffusionWeightedVolumeNode::vtkMRMLDiffusionWeightedVolumeNode()
       this->MeasurementFrameMatrix[i][j] = (i == j) ? 1.0 : 0.0;
       }
     }
-
-  this->ExtractComponents = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -53,12 +51,6 @@ vtkMRMLDiffusionWeightedVolumeNode::~vtkMRMLDiffusionWeightedVolumeNode()
 {
   this->DiffusionGradients->Delete();
   this->BValues->Delete();
-
-  if (this->ExtractComponents)
-    {
-    this->ExtractComponents->Delete();
-    this->ExtractComponents = NULL;
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -275,24 +267,53 @@ int vtkMRMLDiffusionWeightedVolumeNode::GetNumberOfGradients()
   return this->DiffusionGradients->GetNumberOfTuples();
 }
 
+//------------------------------------------------------------------------------
+
+inline bool valid_grad_length(vnl_double_3 grad) {
+  // returns true if grad length is: within GRAD_EPS of 0.0 or 1.0
+  return (grad.two_norm() < 1e-6) || (fabs(1.0 - grad.two_norm()) < 1e-6);
+}
+
 //----------------------------------------------------------------------------
-void vtkMRMLDiffusionWeightedVolumeNode::SetDiffusionGradient(int num,const double grad[3])
+void vtkMRMLDiffusionWeightedVolumeNode::SetDiffusionGradient(int num, const double grad[3])
 {
-  if (num < 0 || num >= this->DiffusionGradients->GetNumberOfTuples())
+  if ((num < 0) ||
+      (num >= this->DiffusionGradients->GetNumberOfTuples()))
     {
     vtkErrorMacro(<< "Gradient number is out of range. "
                      "Allocate first the number of gradients with SetNumberOfGradients");
     return;
     }
-  this->DiffusionGradients->SetComponent(num,0,grad[0]);
-  this->DiffusionGradients->SetComponent(num,1,grad[1]);
-  this->DiffusionGradients->SetComponent(num,2,grad[2]);
+
+  vnl_double_3 tmp_grad(grad[0], grad[1], grad[2]);
+  if (!valid_grad_length(tmp_grad))
+    {
+    vtkErrorMacro(<< "vtkMRMLDiffusionWeightedVolumeNode only accepts gradient vectors with length 0.0 or 1.0!"
+                  << "  Got vector with length: " << tmp_grad.two_norm());
+    return;
+    }
+
+  this->DiffusionGradients->SetTuple3(num, grad[0], grad[1], grad[2]);
   this->Modified();
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionWeightedVolumeNode::SetDiffusionGradients(vtkDoubleArray *grad)
 {
+  // gradients must all be length 0 (baseline) or 1.
+  vnl_double_3 tmp_grad;
+  for (int i = 0; i < grad->GetNumberOfTuples(); i++)
+    {
+    tmp_grad.copy_in(grad->GetTuple3(i));
+    double grad_norm = tmp_grad.two_norm();
+    if (!valid_grad_length(tmp_grad))
+      {
+      vtkErrorMacro(<< "vtkMRMLDiffusionWeightedVolumeNode only accepts gradient vectors with length 0.0 or 1.0!"
+                    << " Got vector with length: " << tmp_grad.two_norm());
+      return;
+      }
+    }
+
   this->DiffusionGradients->DeepCopy(grad);
   this->Modified();
 }
