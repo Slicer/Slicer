@@ -117,7 +117,7 @@ private:
   void operator=(const vtkTeemNRRDWriter&);  /// Not implemented.
   void vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &nrrdKind, size_t &numComp, int &vtkType, void **buffer);
   int VTKToNrrdPixelType( const int vtkPixelType );
-  int DiffusionWeigthedData;
+  int DiffusionWeightedData;
 };
 
 #endif

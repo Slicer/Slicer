@@ -23,7 +23,7 @@ vtkTeemNRRDWriter::vtkTeemNRRDWriter()
   this->IJKToRASMatrix = vtkMatrix4x4::New();
   this->MeasurementFrameMatrix = vtkMatrix4x4::New();
   this->UseCompression = 1;
-  this->DiffusionWeigthedData = 0;
+  this->DiffusionWeightedData = 0;
   this->FileType = VTK_BINARY;
   this->WriteErrorOff();
   this->Attributes = new AttributeMapType;
@@ -75,7 +75,7 @@ void vtkTeemNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &kind, 
 {
 
   vtkDataArray *array;
-  this->DiffusionWeigthedData = 0;
+  this->DiffusionWeightedData = 0;
   if ((array = static_cast<vtkDataArray *> (in->GetPointData()->GetScalars())))
     {
     numComp = array->GetNumberOfComponents();
@@ -102,7 +102,7 @@ void vtkTeemNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &kind, 
         if (numGrad == numBValues && numGrad == numComp && numGrad>6)
           {
           kind = nrrdKindList;
-          this->DiffusionWeigthedData = 1;
+          this->DiffusionWeightedData = 1;
           }
         else
           {
@@ -300,7 +300,7 @@ void* vtkTeemNRRDWriter::MakeNRRD()
     }
 
   // 2. Take care about diffusion data
-  if (this->DiffusionWeigthedData)
+  if (this->DiffusionWeightedData)
     {
     unsigned int numGrad = this->DiffusionGradients->GetNumberOfTuples();
     unsigned int numBValues = this->BValues->GetNumberOfTuples();

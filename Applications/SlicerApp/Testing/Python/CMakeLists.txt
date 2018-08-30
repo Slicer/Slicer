@@ -289,6 +289,16 @@ slicer_add_python_unittest(
   TESTNAME_PREFIX nomainwindow_
   )
 
+# Test multi-shell DWI I/O
+slicer_add_python_test(
+  SCRIPT DWMRIMultishellIOTests.py
+  SLICER_ARGS --no-main-window --disable-modules
+  SCRIPT_ARGS
+    ${Slicer_SOURCE_DIR}/
+    ${Slicer_BINARY_DIR}/Testing/Temporary/
+  TESTNAME_PREFIX nomainwindow_
+  )
+
 # DCMTKPrivateDictionary test
 slicer_add_python_test(
   SCRIPT DCMTKPrivateDictTest.py
