@@ -191,7 +191,7 @@ public:
   /// Create a new markup with one point, defined in the world coordinate system.
   /// Return index of new markup, -1 on failure.
   int AddPointWorldToNewMarkup(vtkVector3d point, std::string label = std::string());
-  /// Add a point to the nth markup, returning the point index
+  /// Add a point to the nth markup, returning the point index, -1 on failure.
   int AddPointToNthMarkup(vtkVector3d point, int n);
 
   /// Get the position of the pointIndex'th point in markupIndex markup,

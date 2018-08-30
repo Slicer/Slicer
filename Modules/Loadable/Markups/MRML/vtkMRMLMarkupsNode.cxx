@@ -532,11 +532,16 @@ int vtkMRMLMarkupsNode::AddPointWorldToNewMarkup(vtkVector3d pointWorld, std::st
 //-----------------------------------------------------------
 int vtkMRMLMarkupsNode::AddPointToNthMarkup(vtkVector3d point, int n)
 {
-  int pointIndex = 0;
-  if (this->MarkupExists(n))
+  if (!this->MarkupExists(n))
     {
-    this->Markups[n].points.push_back(point);
+    return -1;
     }
+
+  this->Markups[n].points.push_back(point);
+  this->Modified();
+  int pointIndex = static_cast<int>(this->Markups[n].points.size() - 1);
+  this->InvokeCustomModifiedEvent(
+    vtkMRMLMarkupsNode::NthMarkupModifiedEvent, (void*)&pointIndex);
   return pointIndex;
 }
 
