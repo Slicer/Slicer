@@ -32,6 +32,9 @@ Version:   $Revision: 1.6 $
 #include <vtkStringArray.h>
 #include <vtkVersion.h>
 
+// vnl includes
+#include <vnl/vnl_double_3.h>
+
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLNRRDStorageNode);
 
@@ -401,104 +404,164 @@ int vtkMRMLNRRDStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(vtkTeemNRRDReader *reader,vtkDoubleArray *grad,vtkDoubleArray *bvalues)
+// internal
+
+const std::string dwmri_grad_tag("DWMRI_gradient_");
+const std::string dwmri_bvalue_tag("DWMRI_b-value");
+
+bool parse_gradient_key(std::string key, size_t &grad_number, size_t &gradkey_pad_width, std::string err)
 {
-  std::string keys(reader->GetHeaderKeys());
-  std::string key,value,num;
-  std::string tag,tagnex;
-  const char *tmp;
-  vtkNew<vtkDoubleArray> factor;
-  grad->SetNumberOfComponents(3);
-  double g[3];
-  int rep;
+  std::stringstream err_stream;
 
-  // search for modality tag
-  key = "modality";
-  tmp = reader->GetHeaderValue(key.c_str());
-  if (tmp == NULL)
+  // note: Slicer no longer supports NRRDs with DWMRI_NEX_ keys. This was removed
+  //       from Dicom2Nrrd in the following commit:
+  //           Slicer3/4 SVN: r26101, git-svn: 63a18f7d6900a
+  //       and never un-commented in Dicom2Nrrd (or DWIConvert).
+  //       If such a key is found, we print an error and fail.
+  if (key.find("DWMRI_NEX_") != std::string::npos)
     {
-    return 0;
+    err_stream << "DWMRI_NEX_ NRRD tag is no longer supported (since SVN r6101)."
+               << " Please adjust header manually to encode repeat excitations"
+               << " as unique DWMRI_gradient_###N keys, and re-load.";
+    err = err_stream.str();
+    return false;
     }
-  if (strcmp(tmp,"DWMRI") != 0)
+
+  if (key.find(dwmri_grad_tag) == std::string::npos)
     {
-    return 0;
+    return false;
     }
-  // search for tag DWMRI_gradient_
-  tag = "DWMRI_gradient_";
-  tagnex = "DWMRI_NEX_";
-  unsigned int pos = 0;
-  int gbeginpos =0;
-  int gendpos = 0;
-  pos = (unsigned int)keys.find(tag,pos);
-  while ( pos < keys.size() )
-    {
-    num = keys.substr(pos+tag.size(),4);
-    // Insert gradient
-    key = tag+num;
-    tmp = reader->GetHeaderValue(key.c_str());
-    if (tmp == NULL)
-      {
-      continue;
-      }
-    else
-      {
-      value = tmp;
-      }
-    gbeginpos = -1;
-    gendpos = 0;
-    for (int i=0 ;i<3; i++)
-      {
-      do
-        {
-        gbeginpos++;
-        gendpos=(int)value.find(" ",gbeginpos);
-        }
-      while(gendpos==gbeginpos);
-      g[i] = atof(value.substr(gbeginpos,gendpos).c_str());
-      gbeginpos = gendpos;
-      }
-    grad->InsertNextTuple3(g[0],g[1],g[2]);
-    factor->InsertNextValue(sqrt(g[0]*g[0]+g[1]*g[1]+g[2]*g[2]));
-    // find repetitions of this gradient
-    key = tagnex+num;
-    tmp = reader->GetHeaderValue(key.c_str());
-    if (tmp == NULL)
-      {
-      value = "";
-      }
-    else
-      {
-      value = tmp;
-      }
-    if (value.size()>0) {
-      rep = atoi(value.c_str());
-      for (int i=0;i<rep-1;i++) {
-        grad->InsertNextTuple3(g[0],g[1],g[2]);
-        factor->InsertNextValue(sqrt( g[0]*g[0]+g[1]*g[1]+g[2]*g[2] ));
-      }
-    }
-   pos = (unsigned int)keys.find(tag,pos+1);
+  // below here key is: DWMRI_gradient_####
+
+  // padding is the extra zeros to give a specific digit count
+  //   0001
+  //   ^^^  <- zeros here are padding to 4 digits
+  // we enforce the constraint that the padding of the grad keys must be consistent
+  if (gradkey_pad_width == 0) {
+    gradkey_pad_width = key.size() - dwmri_grad_tag.size();
   }
-
-  grad->Modified();
-  factor->Modified();
-  double range[2];
-  // search for tag DWMRI_b-value
-  key = "DWMRI_b-value";
-  tmp = reader->GetHeaderValue(key.c_str());
-  if (tmp == NULL)
+  else if (gradkey_pad_width != key.size() - dwmri_grad_tag.size())
     {
+    err_stream << "DWMRI NRRD gradient key-numbers must have consistent padding (####N)"
+        << " Found tag: '" << key << "' but previous key had padding: " << gradkey_pad_width;
+    err = err_stream.str();
+    return false;
+    }
+
+  // slices key string from `dwmri_grad_tag.size()` to `key.size()`.
+  //   e.g.: "DWMRI_gradient_000001" -> "000001"
+  std::string cur_grad_num_str = key.substr(dwmri_grad_tag.size(), key.size());
+  size_t cur_grad_num = atol(cur_grad_num_str.c_str());
+
+  // enforce monotonic order
+  if (cur_grad_num != grad_number)
+    {
+    err_stream << "DWMRI NRRD gradient key-numbers must be consecutive."
+               << " Found tag: '" << key << "' but previous key was: " << grad_number;
+    err = err_stream.str();
+    return false;
+    }
+
+  grad_number += 1;
+  return true;
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(
+        vtkTeemNRRDReader* reader,
+        vtkDoubleArray* gradients_array,
+        vtkDoubleArray* bvalues_array)
+{
+  // Validate modality tag
+  std::string modality(reader->GetHeaderValue("modality"));
+  if (modality != "DWMRI")
+    {
+    vtkErrorMacro(<< "NRRD header missing 'modality: DWMRI' tag!")
     return 0;
     }
-  double bval = atof(tmp);
-  factor->GetRange(range);
-  bvalues->SetNumberOfTuples(grad->GetNumberOfTuples());
-  for (int i=0; i<grad->GetNumberOfTuples();i++)
+
+  std::map<std::string, std::string> nrrd_keys = reader->GetHeaderKeysMap();
+
+  /*
+      Step 1: get DWMRI_b-value
+  */
+  std::string ref_bvalue_str(reader->GetHeaderValue(dwmri_bvalue_tag.c_str()));
+  if (ref_bvalue_str.empty())
     {
+    vtkErrorMacro(<< "Missing 'DWMRI_b-value' tag!")
+    return 0;
+    }
+  double ref_bvalue = atof(ref_bvalue_str.c_str());
+
+
+  /*
+    Step 2: loop over all keys
+      - for all DWMRI_gradient_ keys, validate
+        - consecutive
+        - consistent padding
+      - save each gradient to tmp_grads
+      - record maximum gradient length
+  */
+  vtkNew<vtkDoubleArray> tmp_grads;
+  tmp_grads->SetNumberOfComponents(3);
+  size_t grad_idx = 0;
+  size_t gradkey_pad_width = 0;
+  double max_grad_norm = 0;
+  std::string err;
+
+  std::map<std::string, std::string>::iterator nrrd_keys_iter = nrrd_keys.begin();
+  for (; nrrd_keys_iter != nrrd_keys.end(); nrrd_keys_iter++)
+    {
+    std::string key = nrrd_keys_iter->first;
+
+    if (!parse_gradient_key(key, grad_idx, gradkey_pad_width, err))
+      {
+      if (err.empty())
+        {
+        continue;
+        }
+      else
+        {
+        vtkErrorMacro(<< err);
+        return 0;
+        }
+      }
+    // parse the gradient vector into double[3]
+    vnl_double_3 cur_grad(0,0,0);
+    std::stringstream grad_value_stream(nrrd_keys_iter->second);
+    grad_value_stream >> cur_grad[0] >> cur_grad[1] >> cur_grad[2];
+
+    max_grad_norm = std::max(cur_grad.two_norm(), max_grad_norm);
+    tmp_grads->InsertNextTuple(cur_grad.data_block());
+    }
+
+  assert(grad_idx == tmp_grads->GetNumberOfTuples());
+
+  /*
+    Step 3: loop over gradients
+      - calculate each b-value based on NA-MIC DWI gradient length-encoding
+      - then normalize each gradient to unit-length
+  */
+  bvalues_array->SetNumberOfTuples(tmp_grads->GetNumberOfTuples());
+  // calculate the b-values
+  for (int i=0; i < tmp_grads->GetNumberOfTuples(); i++)
+    {
+    vnl_double_3 cur_grad(0,0,0);
+    cur_grad.copy_in(tmp_grads->GetTuple3(i));
+
     // note: this is norm^2, per the NA-MIC NRRD DWI convention
     // http://wiki.na-mic.org/Wiki/index.php/NAMIC_Wiki:DTI:Nrrd_format
-    bvalues->SetValue(i, bval * (pow(factor->GetValue(i)/range[1], 2)));
+    double cur_bval = ref_bvalue * pow(cur_grad.two_norm() / max_grad_norm, 2);
+    bvalues_array->SetValue(i, cur_bval);
+
+    // normalize gradient vector to unit-length
+    //   must be done *after* bvalue extraction
+    cur_grad.normalize();
+    tmp_grads->InsertTuple(i, cur_grad.data_block());
     }
+
+  // Step 4: copy tmp_grads to output
+  gradients_array->DeepCopy(tmp_grads);
   return 1;
 }
 

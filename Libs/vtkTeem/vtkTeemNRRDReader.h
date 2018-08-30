@@ -75,7 +75,12 @@ public:
   ///
   /// Get a list of keys in the header. Preferred method to use as it
   /// supports spaces in key names.
-  std::vector<std::string> GetHeaderKeysVector();
+  const std::vector<std::string> GetHeaderKeysVector();
+
+  ///
+  /// Get a map of keys in the header. Preferred method to use as it
+  /// supports spaces in key names.
+  const std::map<std::string, std::string> GetHeaderKeysMap();
 
   ///
   /// Get a value given a key in the header

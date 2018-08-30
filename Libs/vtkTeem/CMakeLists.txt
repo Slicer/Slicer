@@ -87,6 +87,8 @@ set(srcs ${vtkTeem_SRCS})
 add_library(${lib_name} ${srcs})
 
 set(libs
+  itkvnl
+  ITKCommon
   ${Teem_LIBRARIES}
   ${VTK_LIBRARIES}
   )

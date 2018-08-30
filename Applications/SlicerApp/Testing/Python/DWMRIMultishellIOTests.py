@@ -3,10 +3,9 @@ from nose.tools import assert_equal
 from collections import namedtuple
 
 import numpy as np
-from numpy.testing import assert_allclose
+import numpy.testing
+from vtk.util import numpy_support
 import slicer
-
-Context = namedtuple('Ctx', ['data_dir', 'temp_dir'])
 
 #===============================================================================
 
@@ -19,7 +18,6 @@ multishell_dwi_451 = os.path.join(mrmlcore_testdata_path, "multishell-DWI-451dir
 NRRD = namedtuple('NRRD', ['header', 'bvalue', 'gradients'])
 
 def parse_nhdr(path):
-    # TODO: NRRD b-matrix form?
     dwmri_bval_key      = "DWMRI_b-value"
     dwmri_grad_keybase  = "DWMRI_gradient_"
     dwmri_grad_key_n    = "DWMRI_gradient_{:04d}"
@@ -60,62 +58,126 @@ def parse_nhdr(path):
 
 
 #================================================================================
-def test_vtkMRMLNRRDStorageNode(ctx):
-    testnrrd_path = os.path.join(ctx.data_dir, multishell_dwi_451)
+def normalize(vec):
+    norm = np.linalg.norm(vec)
+    if norm == 0.0:
+        return vec
+    else:
+        return vec * 1/norm
+
+
+def test_nrrd_dwi_load(first_file, second_file=None):
+    """
+    - load a DWI NRRD file into Slicer
+    - validate b values and gradient vectors against original header
+        - check the values in the vtkMRMLDiffusionWeightedVolumeNode
+        - check the values in the vtkMRMLDWVNode attribute dictionary
+    """
+    if second_file is None:
+        second_file = first_file
 
     # load NRRD into Slicer
     storagenode = slicer.vtkMRMLNRRDStorageNode()
-    storagenode.SetFileName(testnrrd_path)
+    storagenode.SetFileName(first_file)
     dw_node = slicer.vtkMRMLDiffusionWeightedVolumeNode()
     storagenode.ReadData(dw_node)
 
-    slicer_grads = dw_node.GetDiffusionGradients()
-    slicer_numgrads = slicer_grads.GetNumberOfTuples()
+    slicer_grads = numpy_support.vtk_to_numpy(dw_node.GetDiffusionGradients())
+    slicer_numgrads = slicer_grads.shape[0]
 
-    # load NRRD with direct parser
-    ext_nrrd = parse_nhdr(testnrrd_path)
+    # load NRRD with pure-python parser
+    parsed_nrrd = parse_nhdr(second_file)
 
-    # basic assertions
-    assert( len(ext_nrrd.gradients) == slicer_numgrads )
+    ##################################
+    # 1) check the number of gradients
 
+    assert( len(parsed_nrrd.gradients) == slicer_numgrads )
 
-    _ext_bval = ext_nrrd.bvalue
+    ##################################
+    # 2) check the node b values and gradients are correct
+
     # Note: vtkDataArray.GetMaxNorm gives max for scalar array.
-    _node_bval = dw_node.GetBValues().GetMaxNorm()
-    _attr_bval = float(dw_node.GetAttribute("DWMRI_b-value"))
-    nose.tools.assert_equal(_ext_bval, _node_bval)
-    nose.tools.assert_equal(_ext_bval, _attr_bval)
+    # max b value from the node
+    nose.tools.assert_equal(parsed_nrrd.bvalue, dw_node.GetBValues().GetMaxNorm())
 
-    # Gradients in the node attribute dictionary must exactly
-    #   match those on-disk.
+    max_parsed_grad_norm = np.max(np.apply_along_axis(np.linalg.norm, 1, parsed_nrrd.gradients))
+
     for i in range(0, slicer_numgrads):
-        g_from_nhdr = ext_nrrd.gradients[i]
-        g_from_attr = np.fromstring(
-                        dw_node.GetAttribute("DWMRI_gradient_{:04d}".format(i)),
-                                             sep=" ", dtype=np.float64)
+        g_parsed_raw = parsed_nrrd.gradients[i]
+        g_parsed_normed = normalize(g_parsed_raw)
 
-    assert_allclose(np.linalg.norm(g_from_nhdr - g_from_attr), 0.0, atol=1e-12)
+        bval_parsed = parsed_nrrd.bvalue * pow(np.linalg.norm(g_parsed_raw) / max_parsed_grad_norm, 2)
+        np.testing.assert_almost_equal(bval_parsed, dw_node.GetBValue(i), decimal=7,
+                                       err_msg="MRMLNode b value does not match NRRD header")
 
-    # Gradients in the node DiffusionGradients API must be
-    #   match *normalized* gradient.
+        g_from_node = slicer_grads[i, :]
+
+        # gradients stored in the vtkMRMLDiffusionWeightedVolumeNode must be *normalized*.
+        np.testing.assert_allclose(np.linalg.norm(g_parsed_normed - g_from_node), 0.0, atol=1e-15)
+
+    # b value from the node attribute dictionary
+    np.testing.assert_equal(parsed_nrrd.bvalue, float(dw_node.GetAttribute("DWMRI_b-value")))
+
+    # 3) check gradients in the node attribute dictionary
+    #    gradients must match the value on-disk.
     for i in range(0, slicer_numgrads):
-        _g_tmp = ext_nrrd.gradients[i]
-        _g_tmp_norm = np.linalg.norm(_g_tmp)
-        # normalize
-        g_from_nhdr = _g_tmp if _g_tmp_norm == 0.0       \
-                             else (_g_tmp * 1/_g_tmp_norm)
+        grad_key = "DWMRI_gradient_{:04d}".format(i)
+        parsed_gradient = np.fromstring(parsed_nrrd.header[grad_key], count=3, sep=' ', dtype=np.float64)
+        attr_gradient =   np.fromstring(dw_node.GetAttribute(grad_key), count=3, sep=' ', dtype=np.float64)
 
-        g_from_node = np.array(slicer_grads.GetTuple3(i))
-        print _g_tmp, g_from_nhdr, g_from_node
+        np.testing.assert_array_almost_equal(parsed_gradient, attr_gradient, decimal=12,
+                                             err_msg="NHDR gradient does not match gradient in node attribute dictionary")
 
-        assert_allclose(np.linalg.norm(g_from_nhdr - g_from_node), 0.0, atol=1e-12)
+    return (parsed_nrrd, dw_node)
+
+def test_nrrd_dwi_roundtrip(test_nrrd_path):
+    """DWI NRRD round-trip test
+    - loads and saves a NRRD file via Slicer's I/O, twice
+    - checks the node values against the original file each time
+    """
+
+    import tempfile
+
+    # load and re-save NRRD once
+    storagenode1 = slicer.vtkMRMLNRRDStorageNode()
+    storagenode1.SetFileName(test_nrrd_path)
+    dw_node1 = slicer.vtkMRMLDiffusionWeightedVolumeNode()
+    storagenode1.ReadData(dw_node1)
+    __f_tmp_nrrd1 = tempfile.NamedTemporaryFile(suffix=".nhdr", dir=tmp_dir, delete=False)
+    tmp_nrrd1 = __f_tmp_nrrd1.name
+    storagenode1.SetFileName(tmp_nrrd1)
+    storagenode1.WriteData(dw_node1)
+
+    parsed_nrrd2, dw_node2 = test_nrrd_dwi_load(test_nrrd_path, tmp_nrrd1)
+
+    # re-save NRRD again
+    storagenode2 = slicer.vtkMRMLNRRDStorageNode()
+    __f_tmp_nrrd2 = tempfile.NamedTemporaryFile(suffix=".nhdr", dir=tmp_dir, delete=False)
+    tmp_nrrd2 = __f_tmp_nrrd2.name
+    storagenode2.SetFileName(tmp_nrrd2)
+    storagenode2.WriteData(dw_node2)
+
+    # test twice-saved file against original NRRD
+    parsed_nrrd3, dw_node3 = test_nrrd_dwi_load(test_nrrd_path, tmp_nrrd2)
+
+
+def run_tests(data_dir, tmp_dir):
+    # construct path to test data
+    testnrrd_path = os.path.join(data_dir, multishell_dwi_451)
+
+    test_nrrd_dwi_load(testnrrd_path)
+    test_nrrd_dwi_roundtrip(testnrrd_path)
 
 
 if __name__ == '__main__':
     # TODO make sure data paths exist
-    ctx = Context(data_dir = sys.argv[1],
-                  temp_dir = sys.argv[2])
+    data_dir = sys.argv[1]
+    tmp_dir = sys.argv[2]
 
-    success = test_vtkMRMLNRRDStorageNode(ctx)
+    try:
+        run_tests(data_dir, tmp_dir)
+        exit(slicer.util.EXIT_SUCCESS)
+    except:
+        raise
 
-    sys.exit(success)
+    exit(slicer.util.EXIT_SUCCESS)

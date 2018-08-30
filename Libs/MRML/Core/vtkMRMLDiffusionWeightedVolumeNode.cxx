@@ -305,7 +305,6 @@ void vtkMRMLDiffusionWeightedVolumeNode::SetDiffusionGradients(vtkDoubleArray *g
   for (int i = 0; i < grad->GetNumberOfTuples(); i++)
     {
     tmp_grad.copy_in(grad->GetTuple3(i));
-    double grad_norm = tmp_grad.two_norm();
     if (!valid_grad_length(tmp_grad))
       {
       vtkErrorMacro(<< "vtkMRMLDiffusionWeightedVolumeNode only accepts gradient vectors with length 0.0 or 1.0!"
