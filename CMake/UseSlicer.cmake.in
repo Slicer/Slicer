@@ -336,6 +336,21 @@ set(Slicer_INSTALL_THIRDPARTY_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXT
 set(Slicer_INSTALL_THIRDPARTY_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_THIRDPARTY_LIB_DIR}")
 set(Slicer_INSTALL_THIRDPARTY_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_THIRDPARTY_SHARE_DIR}")
 
+set(Slicer_INSTALL_THIRDPARTY_EXECUTABLE_LINK_FLAGS "")
+set(Slicer_INSTALL_THIRDPARTY_LIBRARY_LINK_FLAGS "")
+if(APPLE)
+  # Since both the Slicer_INSTALL_THIRDPARTY_*_DIR and Slicer_INSTALL_ROOT variables correspond to relative
+  # directory, prepending "/" allow us to use "file(RELATIVE_PATH ..." for computing the loader_path relative
+  # path.
+
+  file(RELATIVE_PATH thirdparty_bin_relative_dir /${Slicer_INSTALL_THIRDPARTY_BIN_DIR} /${Slicer_INSTALL_ROOT})
+  set(Slicer_INSTALL_THIRDPARTY_EXECUTABLE_LINK_FLAGS "-Wl,-rpath,@loader_path/${thirdparty_bin_relative_dir}")
+
+  file(RELATIVE_PATH thirdparty_lib_relative_dir /${Slicer_INSTALL_THIRDPARTY_LIB_DIR} /${Slicer_INSTALL_ROOT})
+  set(Slicer_INSTALL_THIRDPARTY_LIBRARY_LINK_FLAGS "-Wl,-rpath,@loader_path/${thirdparty_lib_relative_dir}")
+endif()
+
+
 #-----------------------------------------------------------------------------
 # Set extension defaults if not already specified
 #-----------------------------------------------------------------------------
