@@ -535,7 +535,7 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(
     tmp_grads->InsertNextTuple(cur_grad.data_block());
     }
 
-  assert(grad_idx == tmp_grads->GetNumberOfTuples());
+  assert(grad_idx == (size_t) tmp_grads->GetNumberOfTuples());
 
   /*
     Step 3: loop over gradients
@@ -561,7 +561,7 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(
     }
 
   // Step 4: copy tmp_grads to output
-  gradients_array->DeepCopy(tmp_grads);
+  gradients_array->DeepCopy(tmp_grads.GetPointer());
   return 1;
 }
 
