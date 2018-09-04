@@ -142,3 +142,24 @@ set(Slicer_INSTALL_QTSCRIPTEDMODULES_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_QTS
 set(Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_QTSCRIPTEDMODULES_LIB_DIR}")
 set(Slicer_INSTALL_QTSCRIPTEDMODULES_INCLUDE_DIR "${Slicer_INSTALL_ROOT}${Slicer_QTSCRIPTEDMODULES_INCLUDE_DIR}")
 set(Slicer_INSTALL_QTSCRIPTEDMODULES_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_QTSCRIPTEDMODULES_SHARE_DIR}")
+
+
+# --------------------------------------------------------------------------
+# ThirdParty: Used to superbuild projects built in Slicer extension.
+# --------------------------------------------------------------------------
+
+# for build tree
+set(Slicer_THIRDPARTY_BIN_DIR ${Slicer_BIN_DIR})
+set(Slicer_THIRDPARTY_LIB_DIR ${Slicer_LIB_DIR})
+set(Slicer_THIRDPARTY_SHARE_DIR ${Slicer_SHARE_DIR})
+
+# for install tree:
+#
+# These variables can be used when configuring extension external projects in
+# two different scenarios: (1) bundled extensions and (2) regular extensions.
+#
+# The values set below corresponds to scenario (1). Value for scenario (2) are set
+# in UseSlicer.cmake.
+set(Slicer_INSTALL_THIRDPARTY_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_THIRDPARTY_BIN_DIR}")
+set(Slicer_INSTALL_THIRDPARTY_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_THIRDPARTY_LIB_DIR}")
+set(Slicer_INSTALL_THIRDPARTY_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_THIRDPARTY_SHARE_DIR}")

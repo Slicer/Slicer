@@ -1004,15 +1004,6 @@ configure_file(
 set(Slicer_EXTENSION_GENERATE_CONFIG ${Slicer_SOURCE_DIR}/CMake/SlicerExtensionGenerateConfig.cmake)
 set(Slicer_EXTENSION_CPACK ${Slicer_SOURCE_DIR}/CMake/SlicerExtensionCPack.cmake)
 
-
-# --------------------------------------------------------------------------
-# ThirdParty: Used to superbuild projects built in Slicer extension.
-# --------------------------------------------------------------------------
-set(Slicer_THIRDPARTY_BIN_DIR ${Slicer_BIN_DIR})
-set(Slicer_THIRDPARTY_LIB_DIR ${Slicer_LIB_DIR})
-set(Slicer_THIRDPARTY_SHARE_DIR  ${Slicer_SHARE_DIR})
-
-
 # --------------------------------------------------------------------------
 # Bundle remote modules and extensions adding source directories.
 # --------------------------------------------------------------------------
