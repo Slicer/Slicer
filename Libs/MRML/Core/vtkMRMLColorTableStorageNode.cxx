@@ -82,7 +82,7 @@ int vtkMRMLColorTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     // because otherwise "User" color node types would be always reverted to
     // read-only "File" type when the scene is saved and reloaded.
     if (colorNode->GetType()<colorNode->GetFirstType()
-      && colorNode->GetType()>colorNode->GetLastType())
+      || colorNode->GetType()>colorNode->GetLastType())
       {
       // no valid type has been set, set it to File
       colorNode->SetTypeToFile();
