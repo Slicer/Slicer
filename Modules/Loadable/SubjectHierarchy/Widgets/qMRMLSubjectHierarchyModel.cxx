@@ -939,10 +939,6 @@ void qMRMLSubjectHierarchyModel::updateItemDataFromSubjectHierarchyItem(QStandar
   // ID column
   if (column == this->idColumn())
     {
-    if (item->data(Qt::WhatsThisRole).toString().isEmpty())
-      {
-      item->setData( "ID", Qt::WhatsThisRole );
-      }
     vtkMRMLNode* dataNode = d->SubjectHierarchyNode->GetItemDataNode(shItemID);
     if (dataNode)
       {

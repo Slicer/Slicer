@@ -415,7 +415,7 @@ Qt::ItemFlags qMRMLSortFilterSubjectHierarchyProxyModel::flags(const QModelIndex
   vtkIdType itemID = this->subjectHierarchyItemFromIndex(index);
   bool isSelectable = this->filterAcceptsItem(itemID, false);
   qMRMLSubjectHierarchyModel* sceneModel = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
-  QStandardItem* item = sceneModel->itemFromSubjectHierarchyItem(itemID);
+  QStandardItem* item = sceneModel->itemFromSubjectHierarchyItem(itemID, index.column());
   if (!item)
     {
     return Qt::ItemFlags();

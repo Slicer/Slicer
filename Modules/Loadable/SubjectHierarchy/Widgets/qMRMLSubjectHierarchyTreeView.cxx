@@ -205,9 +205,6 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init()
     this->Model, SLOT(onRemoveTransformsFromBranchOfCurrentItem()) );
   QObject::connect( this->TransformItemDelegate, SIGNAL(hardenTransformOnBranchOfCurrentItem()),
     this->Model, SLOT(onHardenTransformOnBranchOfCurrentItem()) );
-  // Workaround to disable editing for columns (the ItemIsEditable has no effect for unknown reason) //TODO:
-  q->setItemDelegateForColumn(this->Model->visibilityColumn(), this->TransformItemDelegate);
-  q->setItemDelegateForColumn(this->Model->idColumn(), this->TransformItemDelegate);
 
   // Make connections
   QObject::connect( this->Model, SIGNAL(invalidateFilter()), this->SortFilterModel, SLOT(invalidate()) );

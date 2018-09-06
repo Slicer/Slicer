@@ -100,12 +100,7 @@ QWidget *qMRMLTransformItemDelegate
             this, SLOT(commitAndClose()), Qt::QueuedConnection);
     return transformNodeCombobox;
     }
-  // Workaround to disable editing for columns (the ItemIsEditable has no effect for unknown reason) //TODO:
-  else if ( !index.data(qMRMLSubjectHierarchyModel::VisibilityRole).isNull()
-        || index.data(Qt::WhatsThisRole).toString() == "ID" )
-    {
-    return NULL;
-    }
+
   return this->QStyledItemDelegate::createEditor(parent, option, index);
 }
 
