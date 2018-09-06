@@ -33,6 +33,7 @@ class _ui_LoadModulesDialog(object):
 
     self.addToSearchPaths = qt.QCheckBox()
     vLayout.addWidget(self.addToSearchPaths)
+    self.addToSearchPaths.checked = True
 
     self.enableDeveloperMode = qt.QCheckBox()
     self.enableDeveloperMode.text = "Enable developer mode"
