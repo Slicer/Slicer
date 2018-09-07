@@ -83,7 +83,7 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
                    SIGNAL(currentAxisChanged(ctkAxesWidget::Axis)),
                    q, SLOT(lookFromAxis(ctkAxesWidget::Axis)));
 
-  // ResetFocalPoint button
+  // ViewLink button
   QObject::connect(this->ViewLinkButton, SIGNAL(toggled(bool)),
                    q, SLOT(setViewLink(bool)));
 
