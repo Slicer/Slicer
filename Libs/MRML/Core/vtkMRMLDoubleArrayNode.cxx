@@ -216,22 +216,6 @@ void vtkMRMLDoubleArrayNode::ProcessMRMLEvents( vtkObject *caller, unsigned long
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  //if (this->TargetPlanList && this->TargetPlanList == vtkMRMLFiducialListNode::SafeDownCast(caller) &&
-  //  event ==  vtkCommand::ModifiedEvent)
-  //  {
-  //  //this->InvokeEvent(vtkMRMLVolumeNode::ImageDataModifiedEvent, NULL);
-  //  //this->UpdateFromMRML();
-  //  return;
-  //  }
-  //
-  //if (this->TargetCompletedList && this->TargetCompletedList == vtkMRMLFiducialListNode::SafeDownCast(caller) &&
-  //  event ==  vtkCommand::ModifiedEvent)
-  //  {
-  //  //this->InvokeEvent(vtkMRMLVolumeNode::ImageDataModifiedEvent, NULL);
-  //  //this->UpdateFromMRML();
-  //  return;
-  //  }
-
   return;
 }
 

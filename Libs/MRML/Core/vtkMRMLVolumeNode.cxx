@@ -782,7 +782,7 @@ void vtkMRMLVolumeNode
 
   this->StorableModifiedTime.Modified();
   this->Modified();
-  this->InvokeEvent( vtkMRMLVolumeNode::ImageDataModifiedEvent , this);
+  this->InvokeCustomModifiedEvent(vtkMRMLVolumeNode::ImageDataModifiedEvent);
 }
 
 //---------------------------------------------------------------------------
@@ -853,7 +853,7 @@ void vtkMRMLVolumeNode::ProcessMRMLEvents ( vtkObject *caller,
       this->ImageDataConnection->GetProducer() == vtkAlgorithm::SafeDownCast(caller) &&
     event ==  vtkCommand::ModifiedEvent)
     {
-    this->InvokeEvent(vtkMRMLVolumeNode::ImageDataModifiedEvent, NULL);
+    this->InvokeCustomModifiedEvent(vtkMRMLVolumeNode::ImageDataModifiedEvent);
     return;
     }
 
