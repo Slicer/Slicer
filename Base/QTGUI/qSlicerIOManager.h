@@ -98,6 +98,7 @@ public slots:
   inline bool openAddTransformDialog();
   inline bool openAddColorTableDialog();
   inline bool openAddFiducialDialog();
+  inline bool openAddMarkupsDialog();
   inline bool openAddFiberBundleDialog();
   inline bool openSaveDataDialog();
 
@@ -171,6 +172,12 @@ bool qSlicerIOManager::openAddColorTableDialog()
 bool qSlicerIOManager::openAddFiducialDialog()
 {
   return this->openDialog(QString("FiducialListFile"), qSlicerFileDialog::Read);
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerIOManager::openAddMarkupsDialog()
+{
+  return this->openDialog(QString("MarkupsFiducials"), qSlicerFileDialog::Read);
 }
 
 //-----------------------------------------------------------------------------
