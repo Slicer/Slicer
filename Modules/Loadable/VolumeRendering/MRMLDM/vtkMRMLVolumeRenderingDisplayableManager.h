@@ -59,6 +59,13 @@ public:
   vtkVolumeMapper* GetVolumeMapper(vtkMRMLVolumeNode* volumeNode);
   vtkVolume* GetVolumeActor(vtkMRMLVolumeNode* volumeNode);
 
+  /// Find display node managed by the displayable manager at a specified world RAS position.
+  /// \return Non-zero in case a node is found at the position, 0 otherwise
+  virtual int Pick3D(double ras[3]);
+
+  /// Get the MRML ID of the picked node, returns empty string if no pick
+  virtual const char* GetPickedNodeID();
+
 public:
   static int DefaultGPUMemorySize;
 

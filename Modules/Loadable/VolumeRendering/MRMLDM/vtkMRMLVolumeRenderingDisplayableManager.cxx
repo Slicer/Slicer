@@ -56,6 +56,7 @@
 #include <vtkVolume.h>
 #include <vtkVolumeProperty.h>
 #include <vtkDoubleArray.h>
+#include <vtkVolumePicker.h>
 
 #include <vtkImageData.h> //TODO: Used for workaround. Remove when fixed
 #include <vtkTrivialProducer.h> //TODO: Used for workaround. Remove when fixed
@@ -84,9 +85,11 @@ public:
       this->IJKToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
     }
     virtual ~Pipeline() { };
+
     vtkSmartPointer<vtkVolume> VolumeActor;
     vtkSmartPointer<vtkMatrix4x4> IJKToWorldMatrix;
   };
+
   //-------------------------------------------------------------------------
   class PipelineCPU : public Pipeline
   {
@@ -162,6 +165,8 @@ public:
   /// Calculate minimum sample distance as minimum of that for shown volumes, and set it to multi-volume mapper
   void UpdateMultiVolumeMapperSampleDistance();
 
+  void FindPickedDisplayNodeFromVolumeActor(vtkVolume* volume);
+
 public:
   vtkMRMLVolumeRenderingDisplayableManager* External;
 
@@ -179,6 +184,12 @@ public:
 
   /// Used to determine the port index in the multi-volume actor
   unsigned int NextMultiVolumeActorPortIndex;
+
+  /// Picker of volume in renderer
+  vtkSmartPointer<vtkVolumePicker> VolumePicker;
+
+  /// Last picked volume rendering display node ID
+  std::string PickedNodeID;
 
 private:
 #if VTK_MAJOR_VERSION >= 9
@@ -203,6 +214,7 @@ vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::vtkInternal(vtkMRMLVolume
 , Interaction(0)
   //TODO: Change back to 0 once the VTK issue https://gitlab.kitware.com/vtk/vtk/issues/17325 is fixed
 , NextMultiVolumeActorPortIndex(1)
+, PickedNodeID("")
 {
 #if VTK_MAJOR_VERSION >= 9
   this->MultiVolumeActor = vtkSmartPointer<vtkMultiVolume>::New();
@@ -232,6 +244,9 @@ vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::vtkInternal(vtkMRMLVolume
   this->DisplayObservedEvents->InsertNextValue(vtkCommand::StartInteractionEvent);
   this->DisplayObservedEvents->InsertNextValue(vtkCommand::InteractionEvent);
   this->DisplayObservedEvents->InsertNextValue(vtkCommand::EndInteractionEvent);
+
+  this->VolumePicker = vtkSmartPointer<vtkVolumePicker>::New();
+  this->VolumePicker->SetTolerance(0.005);
 }
 
 //---------------------------------------------------------------------------
@@ -1016,6 +1031,29 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateMultiVolumeMap
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::FindPickedDisplayNodeFromVolumeActor(vtkVolume* volume)
+{
+  this->PickedNodeID = "";
+  if (!volume)
+    {
+    return;
+    }
+
+  PipelinesCacheType::iterator pipelineIt;
+  for (pipelineIt = this->DisplayPipelines.begin(); pipelineIt!=this->DisplayPipelines.end(); ++pipelineIt)
+    {
+    vtkMRMLVolumeRenderingDisplayNode* currentDisplayNode = pipelineIt->first;
+    vtkVolume* currentVolumeActor = pipelineIt->second->VolumeActor.GetPointer();
+    if (currentVolumeActor == volume)
+      {
+      vtkDebugWithObjectMacro(currentDisplayNode, "FindPickedDisplayNodeFromVolumeActor: Found matching volume, pick was on volume "
+        << (currentDisplayNode->GetDisplayableNode() ? currentDisplayNode->GetDisplayableNode()->GetName() : "NULL"));
+      this->PickedNodeID = currentDisplayNode->GetID();
+      }
+    }
+}
+
+//---------------------------------------------------------------------------
 // vtkMRMLVolumeRenderingDisplayableManager methods
 
 //---------------------------------------------------------------------------
@@ -1404,4 +1442,30 @@ vtkVolume* vtkMRMLVolumeRenderingDisplayableManager::GetVolumeActor(vtkMRMLVolum
     }
   vtkErrorMacro("GetVolumeActor: Volume actor not found for volume " << volumeNode->GetName());
   return NULL;
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLVolumeRenderingDisplayableManager::Pick3D(double ras[3])
+{
+  vtkRenderer* ren = this->GetRenderer();
+  if (!ren)
+    {
+    vtkErrorMacro("Pick3D: Unable to get renderer");
+    return 0;
+    }
+
+  if (this->Internal->VolumePicker->Pick3DPoint(ras, ren))
+    {
+    vtkVolume* volume = vtkVolume::SafeDownCast(this->Internal->VolumePicker->GetProp3D());
+    // Find the volume this image data belongs to
+    this->Internal->FindPickedDisplayNodeFromVolumeActor(volume);
+    }
+
+  return 1;
+}
+
+//---------------------------------------------------------------------------
+const char* vtkMRMLVolumeRenderingDisplayableManager::GetPickedNodeID()
+{
+  return this->Internal->PickedNodeID.c_str();
 }

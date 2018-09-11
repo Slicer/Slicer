@@ -63,6 +63,16 @@ protected:
   /// Initialize the displayable manager
   virtual void Create() VTK_OVERRIDE;
 
+  /// Find display node managed by the displayable manager at a specified world RAS position.
+  /// \return Non-zero in case a node is found at the position, 0 otherwise
+  virtual int Pick3D(double ras[3]);
+
+  /// Get the MRML ID of the picked node, returns empty string if no pick
+  virtual const char* GetPickedNodeID();
+
+  /// Get the ID of the picked segment, returns empty string if no pick
+  virtual const char* GetPickedSegmentID();
+
 private:
 
   vtkMRMLSegmentationsDisplayableManager3D(const vtkMRMLSegmentationsDisplayableManager3D&); // Not implemented

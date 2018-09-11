@@ -99,9 +99,13 @@ public:
   /// Get point picker
   vtkPointPicker* GetPointPicker();
 
-  /// Convert an x/y location to a mrml node, 3d RAS point, point id, cell id,
+  /// Convert an x/y location to a MRML node, 3D RAS point, point ID, cell ID,
   /// as appropriate depending what's found under the xy.
   int Pick(int x, int y);
+
+  /// Convert a RAS location to a MRML node, point ID, cell ID,
+  /// as appropriate depending what's found under the position.
+  virtual int Pick3D(double ras[3]);
 
   /// Get/Set tolerance for Pick() method.
   /// it will call vtkCellPicker.Get/SetTolerance()
@@ -110,7 +114,7 @@ public:
 
   ///
   /// Get the MRML ID of the picked node, returns empty string if no pick
-  const char *GetPickedNodeID();
+  virtual const char* GetPickedNodeID();
 
   ///
   /// Get/Set the picked RAS point, returns 0,0,0 if no pick
@@ -212,6 +216,9 @@ protected:
   void RemoveDispalyedID(std::string &id);
 
   vtkMRMLSelectionNode* GetSelectionNode();
+
+  /// Find picked node and cell from mesh and set PickedNodeID and PickedPointID in Internal
+  void FindPickedDisplayNodeFromMesh(vtkPointSet* mesh, double pickedPoint[3]);
 
 private:
 

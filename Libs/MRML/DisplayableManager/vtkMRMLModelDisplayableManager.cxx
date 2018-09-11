@@ -130,7 +130,7 @@ public:
   vtkSmartPointer<vtkPointPicker>      PointPicker;
 
   /// Information about a pick event
-  std::string  PickedNodeID;
+  std::string  PickedDisplayNodeID;
   double       PickedRAS[3];
   vtkIdType    PickedCellID;
   vtkIdType    PickedPointID;
@@ -191,7 +191,7 @@ void vtkMRMLModelDisplayableManager::vtkInternal::CreateClipSlices()
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::vtkInternal::ResetPick()
 {
-  this->PickedNodeID.clear();
+  this->PickedDisplayNodeID.clear();
   for (int i=0; i < 3; i++)
     {
     this->PickedRAS[i] = 0.0;
@@ -253,7 +253,7 @@ void vtkMRMLModelDisplayableManager::PrintSelf ( ostream& os, vtkIndent indent )
   os << indent << "ClippingOn = " << (this->Internal->ClippingOn ? "true" : "false") << "\n";
   os << indent << "ModelHierarchiesPresent = " << this->Internal->ModelHierarchiesPresent << "\n";
 
-  os << indent << "PickedNodeID = " << this->Internal->PickedNodeID.c_str() << "\n";
+  os << indent << "PickedDisplayNodeID = " << this->Internal->PickedDisplayNodeID.c_str() << "\n";
   os << indent << "PickedRAS = (" << this->Internal->PickedRAS[0] << ", "
       << this->Internal->PickedRAS[1] << ", "<< this->Internal->PickedRAS[2] << ")\n";
   os << indent << "PickedCellID = " << this->Internal->PickedCellID << "\n";
@@ -1821,12 +1821,8 @@ int vtkMRMLModelDisplayableManager::Pick(int x, int y)
   // Reset the pick vars
   this->Internal->ResetPick();
 
-  vtkRenderer *ren;
-  if (this->GetRenderer() != 0)
-    {
-    ren = this->GetRenderer();
-    }
-  else
+  vtkRenderer* ren = this->GetRenderer();
+  if (!ren)
     {
     vtkErrorMacro("Pick: unable to get renderer\n");
     return 0;
@@ -1847,56 +1843,8 @@ int vtkMRMLModelDisplayableManager::Pick(int x, int y)
     this->SetPickedCellID(this->Internal->CellPicker->GetCellId());
     // get the pointer to the mesh that the cell was in
     vtkPointSet *mesh = vtkPointSet::SafeDownCast(this->Internal->CellPicker->GetDataSet());
-    if (mesh != 0)
-      {
-      // now find the model this mesh belongs to
-      std::map<std::string, vtkMRMLDisplayNode *>::iterator modelIter;
-      for (modelIter = this->Internal->DisplayedNodes.begin();
-           modelIter != this->Internal->DisplayedNodes.end();
-           modelIter++)
-        {
-        vtkDebugMacro("Checking model " << modelIter->first.c_str() << "'s mesh");
-        if (modelIter->second != 0)
-          {
-          if (vtkMRMLModelDisplayNode::SafeDownCast(modelIter->second) &&
-              vtkMRMLModelDisplayNode::SafeDownCast(modelIter->second)->GetOutputMesh() == mesh)
-            {
-            vtkDebugMacro("Found matching mesh, pick was on model " << modelIter->first.c_str());
-            this->Internal->PickedNodeID = modelIter->first;
-
-            // figure out the closest vertex in the picked cell to the picked RAS
-            // point. Only doing this on model nodes for now.
-            vtkCell *cell = mesh->GetCell(this->GetPickedCellID());
-            if (cell != 0)
-              {
-              int numPoints = cell->GetNumberOfPoints();
-              int closestPointId = -1;
-              double closestDistance = 0.0l;
-              for (int p = 0; p < numPoints; p++)
-                {
-                int pointId = cell->GetPointId(p);
-                double *pointCoords = mesh->GetPoint(pointId);
-                if (pointCoords != 0)
-                  {
-                  double distance = sqrt(pow(pointCoords[0]-pickPoint[0], 2) +
-                                         pow(pointCoords[1]-pickPoint[1], 2) +
-                                         pow(pointCoords[2]-pickPoint[2], 2));
-                  if (p == 0 ||
-                      distance < closestDistance)
-                    {
-                    closestDistance = distance;
-                    closestPointId = pointId;
-                    }
-                  }
-                }
-              vtkDebugMacro("Pick: found closest point id = " << closestPointId << ", distance = " << closestDistance);
-              this->SetPickedPointID(closestPointId);
-              }
-            continue;
-            }
-          }
-        }
-      }
+    // now find the model this mesh belongs to
+    this->FindPickedDisplayNodeFromMesh(mesh, pickPoint);
     }
   else
     {
@@ -1904,22 +1852,6 @@ int vtkMRMLModelDisplayableManager::Pick(int x, int y)
     // TBD: warn the user that they're picking in empty space?
     this->Internal->CellPicker->GetPickPosition(pickPoint);
     }
-  /**
-  if (this->PropPicker->PickProp(x, y, ren))
-    {
-    this->PropPicker->GetPickPosition(pickPoint);
-    }
-  else
-    {
-    return 0;
-    }
-    **/
-
-  // world point picker's Pick always returns 0
-  /**
-  this->WorldPointPicker->Pick(displayPoint, ren);
-  this->WorldPointPicker->GetPickPosition(pickPoint);
-  **/
 
   // translate world to RAS
   for (int p = 0; p < 3; p++)
@@ -1934,12 +1866,94 @@ int vtkMRMLModelDisplayableManager::Pick(int x, int y)
 }
 
 //---------------------------------------------------------------------------
+int vtkMRMLModelDisplayableManager::Pick3D(double ras[3])
+{
+  // Reset the pick vars
+  this->Internal->ResetPick();
+
+  vtkRenderer* ren = this->GetRenderer();
+  if (!ren)
+    {
+    vtkErrorMacro("Pick3D: Unable to get renderer");
+    return 0;
+    }
+
+  if (this->Internal->CellPicker->Pick3DPoint(ras, ren))
+    {
+    this->SetPickedCellID(this->Internal->CellPicker->GetCellId());
+    // Get the pointer to the mesh that the cell was in
+    vtkPointSet *mesh = vtkPointSet::SafeDownCast(this->Internal->CellPicker->GetDataSet());
+    // Find the model this mesh belongs to
+    this->FindPickedDisplayNodeFromMesh(mesh, ras);
+    }
+
+  this->SetPickedRAS(ras);
+
+  return 1;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayableManager::FindPickedDisplayNodeFromMesh(vtkPointSet* mesh, double pickedPoint[3])
+{
+  if (!mesh)
+    {
+    return;
+    }
+
+  std::map<std::string, vtkMRMLDisplayNode *>::iterator modelIter;
+  for ( modelIter = this->Internal->DisplayedNodes.begin();
+        modelIter != this->Internal->DisplayedNodes.end();
+        modelIter++ )
+    {
+    vtkDebugMacro("FindPickedDisplayNodeFromMesh: Checking model " << modelIter->first.c_str() << "'s mesh");
+    if (modelIter->second != 0)
+      {
+      if (vtkMRMLModelDisplayNode::SafeDownCast(modelIter->second) &&
+          vtkMRMLModelDisplayNode::SafeDownCast(modelIter->second)->GetOutputMesh() == mesh)
+        {
+        vtkDebugMacro("FindPickedDisplayNodeFromMesh: Found matching mesh, pick was on model " << modelIter->first.c_str());
+        this->Internal->PickedDisplayNodeID = modelIter->first;
+
+        // Figure out the closest vertex in the picked cell to the picked RAS
+        // point. Only doing this on model nodes for now.
+        vtkCell *cell = mesh->GetCell(this->GetPickedCellID());
+        if (cell != 0)
+          {
+          int numPoints = cell->GetNumberOfPoints();
+          int closestPointId = -1;
+          double closestDistance = 0.0l;
+          for (int p = 0; p < numPoints; p++)
+            {
+            int pointId = cell->GetPointId(p);
+            double *pointCoords = mesh->GetPoint(pointId);
+            if (pointCoords != 0)
+              {
+              double distance = sqrt( pow(pointCoords[0]-pickedPoint[0], 2) +
+                                      pow(pointCoords[1]-pickedPoint[1], 2) +
+                                      pow(pointCoords[2]-pickedPoint[2], 2) );
+              if (p == 0 || distance < closestDistance)
+                {
+                closestDistance = distance;
+                closestPointId = pointId;
+                }
+              }
+            }
+          vtkDebugMacro("FindPickedDisplayNodeFromMesh: found closest point id = " << closestPointId << ", distance = " << closestDistance);
+          this->SetPickedPointID(closestPointId);
+          }
+        continue;
+        }
+      }
+    }
+}
+
+//---------------------------------------------------------------------------
 const char * vtkMRMLModelDisplayableManager::GetPickedNodeID()
 {
-  vtkDebugMacro(<< "returning this->Internal->PickedNodeID of "
-                << (this->Internal->PickedNodeID.empty()?
-                    "(empty)":this->Internal->PickedNodeID));
-  return this->Internal->PickedNodeID.c_str();
+  vtkDebugMacro(<< "returning this->Internal->PickedDisplayNodeID of "
+                << (this->Internal->PickedDisplayNodeID.empty()?
+                    "(empty)":this->Internal->PickedDisplayNodeID));
+  return this->Internal->PickedDisplayNodeID.c_str();
 }
 
 //---------------------------------------------------------------------------

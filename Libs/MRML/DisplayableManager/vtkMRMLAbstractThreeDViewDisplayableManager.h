@@ -39,11 +39,18 @@ public:
 
   static vtkMRMLAbstractThreeDViewDisplayableManager *New();
   void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
-  vtkTypeMacro(vtkMRMLAbstractThreeDViewDisplayableManager,
-                       vtkMRMLAbstractDisplayableManager);
+  vtkTypeMacro(vtkMRMLAbstractThreeDViewDisplayableManager, vtkMRMLAbstractDisplayableManager);
 
   /// Get MRML ViewNode
   vtkMRMLViewNode * GetMRMLViewNode();
+
+
+  /// Find display node managed by the displayable manager at a specified world RAS position.
+  /// \return Non-zero in case a node is found at the position, 0 otherwise
+  virtual int Pick3D(double ras[3]) { return 0; };
+
+  /// Get the MRML ID of the picked node, returns empty string if no pick
+  virtual const char* GetPickedNodeID() { return NULL; };
 
 protected:
 

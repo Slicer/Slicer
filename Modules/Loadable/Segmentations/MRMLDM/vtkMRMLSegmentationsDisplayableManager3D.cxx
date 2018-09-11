@@ -46,6 +46,7 @@
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkGeneralTransform.h>
+#include <vtkCellPicker.h>
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkMRMLSegmentationsDisplayableManager3D );
@@ -54,7 +55,6 @@ vtkStandardNewMacro ( vtkMRMLSegmentationsDisplayableManager3D );
 class vtkMRMLSegmentationsDisplayableManager3D::vtkInternal
 {
 public:
-
   vtkInternal(vtkMRMLSegmentationsDisplayableManager3D* external);
   ~vtkInternal();
 
@@ -80,7 +80,7 @@ public:
     };
 
   typedef std::map<std::string, const Pipeline*> PipelineMapType; // first: segment ID; second: display pipeline
-  typedef std::map < vtkMRMLSegmentationDisplayNode*, PipelineMapType > PipelinesCacheType;
+  typedef std::map<vtkMRMLSegmentationDisplayNode*, PipelineMapType> PipelinesCacheType;
   PipelinesCacheType DisplayPipelines;
 
   typedef std::map < vtkMRMLSegmentationNode*, std::set< vtkMRMLSegmentationDisplayNode* > > SegmentationToDisplayCacheType;
@@ -114,6 +114,18 @@ public:
   bool UseDisplayableNode(vtkMRMLSegmentationNode* node);
   void ClearDisplayableNodes();
 
+  void FindPickedDisplayNodeFromMesh(vtkPointSet* mesh);
+
+public:
+  /// Picker of segment prop in renderer
+  vtkSmartPointer<vtkCellPicker> CellPicker;
+
+  /// Last picked segmentation display node ID
+  std::string PickedDisplayNodeID;
+
+  /// Last picked segment ID
+  std::string PickedSegmentID;
+
 private:
   vtkMRMLSegmentationsDisplayableManager3D* External;
   bool AddingSegmentationNode;
@@ -126,7 +138,11 @@ private:
 vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::vtkInternal(vtkMRMLSegmentationsDisplayableManager3D * external)
 : External(external)
 , AddingSegmentationNode(false)
+, PickedDisplayNodeID("")
+, PickedSegmentID("")
 {
+  this->CellPicker = vtkSmartPointer<vtkCellPicker>::New();
+  this->CellPicker->SetTolerance(0.00001);
 }
 
 //---------------------------------------------------------------------------
@@ -620,6 +636,35 @@ bool vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UseDisplayableNode(v
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::FindPickedDisplayNodeFromMesh(vtkPointSet* mesh)
+{
+  this->PickedDisplayNodeID = "";
+  this->PickedSegmentID = "";
+  if (!mesh)
+    {
+    return;
+    }
+
+  PipelinesCacheType::iterator pipelinesIt;
+  for (pipelinesIt = this->DisplayPipelines.begin(); pipelinesIt!=this->DisplayPipelines.end(); ++pipelinesIt)
+    {
+    vtkMRMLSegmentationDisplayNode* currentDisplayNode = pipelinesIt->first;
+    for (PipelineMapType::iterator pipelineIt=pipelinesIt->second.begin(); pipelineIt!=pipelinesIt->second.end(); ++pipelineIt)
+      {
+      if (pipelineIt->second->ModelWarper->GetOutput() == mesh)
+        {
+        vtkDebugWithObjectMacro(currentDisplayNode, "FindPickedDisplayNodeFromMesh: Found matching mesh, pick was on segment "
+          << pipelineIt->first.c_str() << " of segmentation "
+          << (currentDisplayNode->GetDisplayableNode() ? currentDisplayNode->GetDisplayableNode()->GetName() : "NULL"));
+        this->PickedDisplayNodeID = currentDisplayNode->GetID();
+        this->PickedSegmentID = pipelineIt->first;
+        }
+      }
+    }
+}
+
+
+//---------------------------------------------------------------------------
 // vtkMRMLSegmentationsDisplayableManager3D methods
 
 //---------------------------------------------------------------------------
@@ -636,7 +681,7 @@ vtkMRMLSegmentationsDisplayableManager3D::~vtkMRMLSegmentationsDisplayableManage
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationsDisplayableManager3D::PrintSelf ( ostream& os, vtkIndent indent )
+void vtkMRMLSegmentationsDisplayableManager3D::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf ( os, indent );
   os << indent << "vtkMRMLSegmentationsDisplayableManager3D: " << this->GetClassName() << "\n";
@@ -793,4 +838,36 @@ void vtkMRMLSegmentationsDisplayableManager3D::Create()
 {
   Superclass::Create();
   this->SetUpdateFromMRMLRequested(1);
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLSegmentationsDisplayableManager3D::Pick3D(double ras[3])
+{
+  vtkRenderer* ren = this->GetRenderer();
+  if (!ren)
+    {
+    vtkErrorMacro("Pick3D: Unable to get renderer");
+    return 0;
+    }
+
+  if (this->Internal->CellPicker->Pick3DPoint(ras, ren))
+    {
+    vtkPointSet* mesh = vtkPointSet::SafeDownCast(this->Internal->CellPicker->GetDataSet());
+    // Find the segmentation and segment this mesh belongs to
+    this->Internal->FindPickedDisplayNodeFromMesh(mesh);
+    }
+
+  return 1;
+}
+
+//---------------------------------------------------------------------------
+const char* vtkMRMLSegmentationsDisplayableManager3D::GetPickedNodeID()
+{
+  return this->Internal->PickedDisplayNodeID.c_str();
+}
+
+//---------------------------------------------------------------------------
+const char* vtkMRMLSegmentationsDisplayableManager3D::GetPickedSegmentID()
+{
+  return this->Internal->PickedSegmentID.c_str();
 }
