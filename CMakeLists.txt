@@ -19,7 +19,7 @@ message(STATUS "${_msg} - C++${CMAKE_CXX_STANDARD}")
 #-----------------------------------------------------------------------------
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake" ${CMAKE_MODULE_PATH})
 set(SUPERBUILD_TOPLEVEL_PROJECT Slicer)
-set(EXTERNAL_PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild)
+list(APPEND EXTERNAL_PROJECT_ADDITIONAL_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild)
 include(ExternalProject)
 include(ExternalProjectDependency)
 include(ExternalProjectDependencyForPython)
