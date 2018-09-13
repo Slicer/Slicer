@@ -138,8 +138,6 @@ private:
 vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::vtkInternal(vtkMRMLSegmentationsDisplayableManager3D * external)
 : External(external)
 , AddingSegmentationNode(false)
-, PickedDisplayNodeID("")
-, PickedSegmentID("")
 {
   this->CellPicker = vtkSmartPointer<vtkCellPicker>::New();
   this->CellPicker->SetTolerance(0.00001);
