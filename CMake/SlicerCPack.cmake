@@ -186,19 +186,20 @@ function(slicer_verbose_set varname)
   set(${varname} "${ARGN}" PARENT_SCOPE)
 endfunction()
 
-# Convenience variable used below
-set(project ${${Slicer_MAIN_PROJECT}_APPLICATION_NAME})
+# Convenience variable used below: This is the name of the application (e.g Slicer)
+# whereas Slicer_MAIN_PROJECT is the application project name (e.g SlicerApp, AwesomeApp, ...)
+set(app_name ${${Slicer_MAIN_PROJECT}_APPLICATION_NAME})
 
 macro(slicer_cpack_set varname)
-  if(DEFINED ${project}_${varname})
-    slicer_verbose_set(${varname} ${${project}_${varname}})
+  if(DEFINED ${app_name}_${varname})
+    slicer_verbose_set(${varname} ${${app_name}_${varname}})
   elseif(DEFINED Slicer_${varname})
     slicer_verbose_set(${varname} ${Slicer_${varname}})
   else()
-    if(NOT "Slicer" STREQUAL "${project}")
-      set(_error_msg "Neither Slicer_${varname} or ${project}_${varname} are defined.")
+    if(NOT "Slicer" STREQUAL "${app_name}")
+      set(_error_msg "Neither Slicer_${varname} or ${app_name}_${varname} are defined.")
     else()
-      set(_error_msg "${project}_${varname} is not defined")
+      set(_error_msg "${app_name}_${varname} is not defined")
     endif()
     message(FATAL_ERROR "Failed to set variable ${varname}. ${_error_msg}")
   endif()
@@ -209,7 +210,7 @@ endmacro()
 # -------------------------------------------------------------------------
 set(CPACK_MONOLITHIC_INSTALL ON)
 
-get_property(${project}_CPACK_PACKAGE_NAME GLOBAL PROPERTY ${project}_APPLICATION_NAME)
+get_property(${app_name}_CPACK_PACKAGE_NAME GLOBAL PROPERTY ${app_name}_APPLICATION_NAME)
 slicer_cpack_set("CPACK_PACKAGE_NAME")
 
 set(Slicer_CPACK_PACKAGE_VENDOR ${Slicer_ORGANIZATION_NAME})
@@ -229,19 +230,19 @@ slicer_cpack_set("CPACK_PACKAGE_VERSION")
 
 set(CPACK_SYSTEM_NAME "${Slicer_OS}-${Slicer_ARCHITECTURE}")
 
-set(Slicer_CPACK_PACKAGE_INSTALL_DIRECTORY "${${project}_CPACK_PACKAGE_NAME} ${Slicer_CPACK_PACKAGE_VERSION}")
+set(Slicer_CPACK_PACKAGE_INSTALL_DIRECTORY "${${app_name}_CPACK_PACKAGE_NAME} ${Slicer_CPACK_PACKAGE_VERSION}")
 slicer_cpack_set("CPACK_PACKAGE_INSTALL_DIRECTORY")
 
-get_property(${project}_CPACK_PACKAGE_DESCRIPTION_FILE GLOBAL PROPERTY ${project}_DESCRIPTION_FILE)
+get_property(${app_name}_CPACK_PACKAGE_DESCRIPTION_FILE GLOBAL PROPERTY ${app_name}_DESCRIPTION_FILE)
 slicer_cpack_set("CPACK_PACKAGE_DESCRIPTION_FILE")
 
-get_property(${project}_CPACK_RESOURCE_FILE_LICENSE GLOBAL PROPERTY ${project}_LICENSE_FILE)
+get_property(${app_name}_CPACK_RESOURCE_FILE_LICENSE GLOBAL PROPERTY ${app_name}_LICENSE_FILE)
 slicer_cpack_set("CPACK_RESOURCE_FILE_LICENSE")
 
-get_property(${project}_CPACK_PACKAGE_DESCRIPTION_SUMMARY GLOBAL PROPERTY ${project}_DESCRIPTION_SUMMARY)
+get_property(${app_name}_CPACK_PACKAGE_DESCRIPTION_SUMMARY GLOBAL PROPERTY ${app_name}_DESCRIPTION_SUMMARY)
 slicer_cpack_set("CPACK_PACKAGE_DESCRIPTION_SUMMARY")
 
-get_property(${project}_CPACK_PACKAGE_ICON GLOBAL PROPERTY ${project}_APPLE_ICON_FILE)
+get_property(${app_name}_CPACK_PACKAGE_ICON GLOBAL PROPERTY ${app_name}_APPLE_ICON_FILE)
 if(APPLE)
   slicer_cpack_set("CPACK_PACKAGE_ICON")
 endif()
