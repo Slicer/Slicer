@@ -15,7 +15,7 @@ ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj
 
 if(Slicer_USE_SYSTEM_${proj})
   unset(ITK_DIR CACHE)
-  find_package(ITK 4.6 REQUIRED NO_MODULE)
+  find_package(ITK 4.8.1 REQUIRED NO_MODULE)
 endif()
 
 # Sanity checks
@@ -98,7 +98,7 @@ if(NOT DEFINED ITK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
       -DITK_INSTALL_LIBRARY_DIR:PATH=${Slicer_INSTALL_LIB_DIR}
       -DBUILD_TESTING:BOOL=OFF
       -DBUILD_EXAMPLES:BOOL=OFF
-      -DITK_LEGACY_REMOVE:BOOL=OFF
+      -DITK_LEGACY_REMOVE:BOOL=ON
       -DITKV3_COMPATIBILITY:BOOL=OFF
       -DITK_BUILD_DEFAULT_MODULES:BOOL=ON
       -DModule_ITKReview:BOOL=ON
