@@ -66,6 +66,10 @@
 # include <PythonQtPythonInclude.h>
 #endif
 
+#ifdef _WIN32
+#include <Windows.h> //for SetProcessDPIAware
+#endif
+
 //----------------------------------------------------------------------------
 qSlicerApplicationHelper::qSlicerApplicationHelper(QObject * parent) : Superclass(parent)
 {
