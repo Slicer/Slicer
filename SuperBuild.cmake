@@ -121,12 +121,17 @@ if(Slicer_BUILD_DICOM_SUPPORT AND Slicer_USE_PYTHONQT_WITH_OPENSSL)
   list(APPEND Slicer_DEPENDENCIES python-pydicom)
 endif()
 
+if(Slicer_USE_PYTHONQT)
+  list(APPEND Slicer_DEPENDENCIES
+    python-packaging # This package provides the "packaging.version.parse()" function
+    )
+endif()
+
 if(Slicer_USE_PYTHONQT AND Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND Slicer_DEPENDENCIES
     python-chardet
     python-couchdb
     python-GitPython
-    python-packaging
     python-pip
     python-six
     )
