@@ -105,7 +105,7 @@ public:
 
   /// Convert a RAS location to a MRML node, point ID, cell ID,
   /// as appropriate depending what's found under the position.
-  virtual int Pick3D(double ras[3]);
+  virtual int Pick3D(double ras[3]) VTK_OVERRIDE;
 
   /// Get/Set tolerance for Pick() method.
   /// it will call vtkCellPicker.Get/SetTolerance()
@@ -114,7 +114,7 @@ public:
 
   ///
   /// Get the MRML ID of the picked node, returns empty string if no pick
-  virtual const char* GetPickedNodeID();
+  virtual const char* GetPickedNodeID() VTK_OVERRIDE;
 
   ///
   /// Get/Set the picked RAS point, returns 0,0,0 if no pick

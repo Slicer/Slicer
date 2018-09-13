@@ -61,10 +61,10 @@ public:
 
   /// Find display node managed by the displayable manager at a specified world RAS position.
   /// \return Non-zero in case a node is found at the position, 0 otherwise
-  virtual int Pick3D(double ras[3]);
+  virtual int Pick3D(double ras[3]) VTK_OVERRIDE;
 
   /// Get the MRML ID of the picked node, returns empty string if no pick
-  virtual const char* GetPickedNodeID();
+  virtual const char* GetPickedNodeID() VTK_OVERRIDE;
 
 public:
   static int DefaultGPUMemorySize;
