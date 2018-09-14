@@ -147,6 +147,9 @@ if(WIN32)
   set(CPACK_GENERATOR "ZIP")
 endif()
 
+#------------------------------------------------------------------------------
+# Detect the type of extension
+#------------------------------------------------------------------------------
 set(msg "Checking if extension type is SuperBuild")
 message(STATUS "${msg}")
 if(DEFINED ${EXTENSION_NAME}_SUPERBUILD)
@@ -163,6 +166,9 @@ if(_is_superbuild_extension)
   endif()
 endif()
 
+#------------------------------------------------------------------------------
+# macOS specific configuration used by the "fix-up" script
+#------------------------------------------------------------------------------
 if(APPLE)
   set(fixup_path @rpath)
   set(slicer_extension_cpack_bundle_fixup_directory ${CMAKE_BINARY_DIR}/SlicerExtensionBundle)
@@ -170,11 +176,17 @@ if(APPLE)
   set(EXTENSION_SUPERBUILD_DIR ${EXTENSION_SUPERBUILD_BINARY_DIR})
   get_filename_component(Slicer_SUPERBUILD_DIR ${Slicer_DIR}/.. ABSOLUTE)
 
+  #------------------------------------------------------------------------------
+  # Configure "fix-up" script
+  #------------------------------------------------------------------------------
   configure_file(
     ${Slicer_EXTENSION_CPACK_BUNDLE_FIXUP}
     "${slicer_extension_cpack_bundle_fixup_directory}/SlicerExtensionCPackBundleFixup.cmake"
     @ONLY)
 
+  #------------------------------------------------------------------------------
+  # Add install rule ensuring the "fix-up" script is executed at packaging time
+  #------------------------------------------------------------------------------
   if(NOT _is_superbuild_extension)
 
     message(STATUS "Extension fixup mode: adding <cpack_bundle_fixup_directory>")

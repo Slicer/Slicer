@@ -19,6 +19,9 @@ elseif(WIN32)
 endif()
 
 # -------------------------------------------------------------------------
+# Install standalone executable and plugins
+# -------------------------------------------------------------------------
+
 if(Slicer_USE_PYTHONQT AND NOT Slicer_USE_SYSTEM_python)
   # Python install rules are common to both 'bundled' and 'regular' package
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallPython.cmake)
@@ -63,6 +66,9 @@ if(Slicer_BUILD_DICOM_SUPPORT AND NOT Slicer_USE_SYSTEM_DCMTK)
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallDCMTKApps.cmake)
 endif()
 
+# -------------------------------------------------------------------------
+# Update CPACK_INSTALL_CMAKE_PROJECTS
+# -------------------------------------------------------------------------
 include(${Slicer_CMAKE_DIR}/SlicerBlockInstallExtensionPackages.cmake)
 
 set(CPACK_INSTALL_CMAKE_PROJECTS)
@@ -114,6 +120,9 @@ if(NOT APPLE)
 
 else()
 
+  #------------------------------------------------------------------------------
+  # macOS specific configuration used by the "fix-up" script
+  #------------------------------------------------------------------------------
   set(CMAKE_INSTALL_NAME_TOOL "" CACHE FILEPATH "" FORCE)
 
   if(Slicer_USE_PYTHONQT)
@@ -134,6 +143,9 @@ else()
     set(qt_root_dir "${_dir}/..")
   endif()
 
+  #------------------------------------------------------------------------------
+  # Configure "fix-up" script
+  #------------------------------------------------------------------------------
   set(fixup_path @rpath)
   set(slicer_cpack_bundle_fixup_directory ${Slicer_BINARY_DIR}/CMake/SlicerCPackBundleFixup)
   configure_file(
@@ -148,6 +160,10 @@ else()
   add_subdirectory(${slicer_cpack_bundle_fixup_directory} ${slicer_cpack_bundle_fixup_directory}-binary)
 
 endif()
+
+# -------------------------------------------------------------------------
+# Update CPACK_INSTALL_CMAKE_PROJECTS
+# -------------------------------------------------------------------------
 
 # Install additional projects if any, but also do a find_package to load CPACK
 # variables of the Slicer_MAIN_PROJECT if different from SlicerApp
@@ -175,6 +191,7 @@ set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${Slicer_BINAR
 if(NOT Slicer_INSTALL_NO_DEVELOPMENT)
   set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${Slicer_BINARY_DIR};Slicer;Development;/")
 endif()
+
 # Installation of 'Runtime' should be last to ensure the 'SlicerCPackBundleFixup.cmake' is executed last.
 set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${Slicer_BINARY_DIR};Slicer;Runtime;/")
 
