@@ -278,6 +278,11 @@ function(fixup_bundle_with_plugins app)
     endforeach()
   endif()
 
+  set(extension_libs_path "@EXTENSION_BUNDLE_FIXUP_LIBRARY_DIRECTORIES@")
+  if(extension_libs_path)
+    list(APPEND libs_path ${extension_libs_path})
+  endif()
+
   list(REMOVE_DUPLICATES libs_path)
 
   gp_clear_log()

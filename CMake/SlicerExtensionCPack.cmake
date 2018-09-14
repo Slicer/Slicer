@@ -177,6 +177,31 @@ if(APPLE)
   get_filename_component(Slicer_SUPERBUILD_DIR ${Slicer_DIR}/.. ABSOLUTE)
 
   #------------------------------------------------------------------------------
+  # <ExtensionName>_FIXUP_BUNDLE_LIBRARY_DIRECTORIES
+  #------------------------------------------------------------------------------
+
+  #
+  # Setting this variable in the CMakeLists.txt of an extension allows to update
+  # the list of directories used by the "fix-up" script to look up libraries
+  # that should be copied into the extension package.
+  #
+  # To ensure the extension can be bundled, the variable should be set as a CACHE
+  # variable.
+  #
+  set(EXTENSION_FIXUP_BUNDLE_LIBRARY_DIRECTORIES)
+
+  if(DEFINED ${EXTENSION_NAME}_FIXUP_BUNDLE_LIBRARY_DIRECTORIES)
+    # Exclude system directories.
+    foreach(lib_path IN LISTS ${EXTENSION_NAME}_FIXUP_BUNDLE_LIBRARY_DIRECTORIES)
+      if(lib_path MATCHES "^(/lib|/lib32|/libx32|/lib64|/usr/lib|/usr/lib32|/usr/libx32|/usr/lib64|/usr/X11R6|/usr/bin)"
+          OR lib_path MATCHES "^(/System/Library|/usr/lib)")
+        continue()
+      endif()
+      list(APPEND EXTENSION_FIXUP_BUNDLE_LIBRARY_DIRECTORIES ${lib_path})
+    endforeach()
+  endif()
+
+  #------------------------------------------------------------------------------
   # Configure "fix-up" script
   #------------------------------------------------------------------------------
   configure_file(

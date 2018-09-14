@@ -144,6 +144,28 @@ else()
   endif()
 
   #------------------------------------------------------------------------------
+  # <ExtensionName>_FIXUP_BUNDLE_LIBRARY_DIRECTORIES
+  #------------------------------------------------------------------------------
+
+  #
+  # Setting this variable in the CMakeLists.txt of an extension allows to update
+  # the list of directories used by the "fix-up" script to look up libraries
+  # that should be copied into the Slicer package when the extension is bundled.
+  #
+  # To ensure the extension can be bundled, the variable should be set as a CACHE
+  # variable.
+  #
+
+  set(EXTENSION_BUNDLE_FIXUP_LIBRARY_DIRECTORIES)
+  foreach(project ${Slicer_BUNDLED_EXTENSION_NAMES})
+    if(DEFINED ${project}_FIXUP_BUNDLE_LIBRARY_DIRECTORIES)
+      list(APPEND EXTENSION_BUNDLE_FIXUP_LIBRARY_DIRECTORIES
+        ${${project}_FIXUP_BUNDLE_LIBRARY_DIRECTORIES}
+        )
+    endif()
+  endif()
+
+  #------------------------------------------------------------------------------
   # Configure "fix-up" script
   #------------------------------------------------------------------------------
   set(fixup_path @rpath)
