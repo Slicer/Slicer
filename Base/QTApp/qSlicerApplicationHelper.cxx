@@ -129,7 +129,7 @@ void qSlicerApplicationHelper::preInitializeApplication(
     }
   QCoreApplication::setApplicationName(applicationName);
 
-  QCoreApplication::setApplicationVersion(Slicer_VERSION_FULL);
+  QCoreApplication::setApplicationVersion(Slicer_MAIN_PROJECT_VERSION_FULL);
   //vtkObject::SetGlobalWarningDisplay(false);
   QApplication::setDesktopSettingsAware(false);
   if (style)
