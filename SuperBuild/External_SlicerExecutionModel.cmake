@@ -78,7 +78,7 @@ if(NOT DEFINED SlicerExecutionModel_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "795e6717600d5241a6fe0e2e48dee741c3fd0918"
+    "0dee798848bacf26d6d4c0fc5f5397d72c1a202b"
     QUIET
     )
 
