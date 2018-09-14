@@ -69,8 +69,6 @@ endif()
 # -------------------------------------------------------------------------
 # Update CPACK_INSTALL_CMAKE_PROJECTS
 # -------------------------------------------------------------------------
-include(${Slicer_CMAKE_DIR}/SlicerBlockInstallExtensionPackages.cmake)
-
 set(CPACK_INSTALL_CMAKE_PROJECTS)
 
 # Ensure external project associated with bundled extensions are packaged
@@ -159,11 +157,16 @@ else()
   set(EXTENSION_BUNDLE_FIXUP_LIBRARY_DIRECTORIES)
   foreach(project ${Slicer_BUNDLED_EXTENSION_NAMES})
     if(DEFINED ${project}_FIXUP_BUNDLE_LIBRARY_DIRECTORIES)
-      list(APPEND EXTENSION_BUNDLE_FIXUP_LIBRARY_DIRECTORIES
-        ${${project}_FIXUP_BUNDLE_LIBRARY_DIRECTORIES}
-        )
+      # Exclude system directories.
+      foreach(lib_path IN LISTS ${project}_FIXUP_BUNDLE_LIBRARY_DIRECTORIES)
+        if(lib_path MATCHES "^(/lib|/lib32|/libx32|/lib64|/usr/lib|/usr/lib32|/usr/libx32|/usr/lib64|/usr/X11R6|/usr/bin)"
+            OR lib_path MATCHES "^(/System/Library|/usr/lib)")
+          continue()
+        endif()
+        list(APPEND EXTENSION_BUNDLE_FIXUP_LIBRARY_DIRECTORIES ${lib_path})
+      endforeach()
     endif()
-  endif()
+  endforeach()
 
   #------------------------------------------------------------------------------
   # Configure "fix-up" script
@@ -182,6 +185,8 @@ else()
   add_subdirectory(${slicer_cpack_bundle_fixup_directory} ${slicer_cpack_bundle_fixup_directory}-binary)
 
 endif()
+
+include(${Slicer_CMAKE_DIR}/SlicerBlockInstallExtensionPackages.cmake)
 
 # -------------------------------------------------------------------------
 # Update CPACK_INSTALL_CMAKE_PROJECTS
