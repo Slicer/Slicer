@@ -54,6 +54,7 @@ public:
   mutable qSlicerPythonCppAPI PythonCppAPI;
 
   QString    PythonSource;
+  QString    PythonClassName;
 };
 
 //-----------------------------------------------------------------------------
@@ -128,6 +129,7 @@ bool qSlicerScriptedFileDialog::setPythonSource(const QString& newPythonSource, 
     }
 
   d->PythonCppAPI.setObjectName(className);
+  d->PythonClassName = className;
 
   // Get a reference (or create if needed) the <moduleName> python module
   PyObject * module = PyImport_AddModule(moduleName.toLatin1());
@@ -209,7 +211,14 @@ bool qSlicerScriptedFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
     {
     return false;
     }
-  return true;
+  if (!PyBool_Check(result))
+    {
+    qWarning() << d->PythonSource
+               << " - In" << d->PythonClassName << "class, function 'execDialog' "
+               << "is expected to return a boolean";
+    return false;
+    }
+  return result == Py_True;
 }
 
 //-----------------------------------------------------------------------------
