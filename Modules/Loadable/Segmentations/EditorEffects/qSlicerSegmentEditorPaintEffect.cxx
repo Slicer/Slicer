@@ -133,6 +133,8 @@ public:
 
     this->BrushActor = vtkSmartPointer<vtkActor2D>::New();
     this->BrushActor->SetMapper(this->BrushMapper);
+    vtkProperty2D* brushActorProperty = this->BrushActor->GetProperty();
+    brushActorProperty->SetColor(1.0, 1.0, 0.2);
     this->BrushActor->VisibilityOff();
 
     this->FeedbackCutter = vtkSmartPointer<vtkCutter>::New();
@@ -294,8 +296,12 @@ BrushPipeline* qSlicerSegmentEditorPaintEffectPrivate::brushForWidget(qMRMLWidge
     pipeline->BrushCutter->SetInputConnection(this->WorldOriginToWorldTransformer->GetOutputPort());
     pipeline->FeedbackCutter->SetInputConnection(this->FeedbackGlyphFilter->GetOutputPort());
     this->updateBrush(viewWidget, pipeline);
-    q->addActor2D(viewWidget, pipeline->BrushActor);
+
+    // add brush actor later to make it appear above the feedback actor (feedback actor
+    // shows previous brush positions)
     q->addActor2D(viewWidget, pipeline->FeedbackActor);
+    q->addActor2D(viewWidget, pipeline->BrushActor);
+
     this->BrushPipelines[viewWidget] = pipeline;
     return pipeline;
     }
