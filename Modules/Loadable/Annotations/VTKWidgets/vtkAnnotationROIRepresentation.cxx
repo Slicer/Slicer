@@ -1162,12 +1162,17 @@ int vtkAnnotationROIRepresentation::RenderOpaqueGeometry(vtkViewport *v)
   int count=0;
   this->BuildRepresentation();
 
+  this->HexActor->SetPropertyKeys(this->GetPropertyKeys());
+  this->HexOutline->SetPropertyKeys(this->GetPropertyKeys());
+  this->HexFace->SetPropertyKeys(this->GetPropertyKeys());
+
   count += this->HexActor->RenderOpaqueGeometry(v);
   count += this->HexOutline->RenderOpaqueGeometry(v);
   count += this->HexFace->RenderOpaqueGeometry(v);
   // render the handles
   for (int j=0; j<7; j++)
     {
+    this->Handle[j]->SetPropertyKeys(this->GetPropertyKeys());
     count += this->Handle[j]->RenderOpaqueGeometry(v);
     }
 
@@ -1180,12 +1185,17 @@ int vtkAnnotationROIRepresentation::RenderTranslucentPolygonalGeometry(vtkViewpo
   int count=0;
   this->BuildRepresentation();
 
+  this->HexActor->SetPropertyKeys(this->GetPropertyKeys());
+  this->HexOutline->SetPropertyKeys(this->GetPropertyKeys());
+  this->HexFace->SetPropertyKeys(this->GetPropertyKeys());
+
   count += this->HexActor->RenderTranslucentPolygonalGeometry(v);
   count += this->HexOutline->RenderTranslucentPolygonalGeometry(v);
   count += this->HexFace->RenderTranslucentPolygonalGeometry(v);
   // render the handles
   for (int j=0; j<7; j++)
     {
+    this->Handle[j]->SetPropertyKeys(this->GetPropertyKeys());
     count += this->Handle[j]->RenderTranslucentPolygonalGeometry(v);
     }
 
