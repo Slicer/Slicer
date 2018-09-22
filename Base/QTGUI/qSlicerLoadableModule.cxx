@@ -87,14 +87,14 @@ bool qSlicerLoadableModule::importModulePythonExtensions(
 
   pythonManager->executeString(QString(
         "from slicer.util import importVTKClassesFromDirectory;"
-        "importVTKClassesFromDirectory('%1', 'slicer', filematch='vtkSlicer*ModuleLogicPython.*');"
-        "importVTKClassesFromDirectory('%1', 'slicer', filematch='vtkSlicer*ModuleMRMLPython.*');"
-        "importVTKClassesFromDirectory('%1', 'slicer', filematch='vtkSlicer*ModuleMRMLDisplayableManagerPython.*');"
-        ).arg(scopedCurrentDir.currentPath()));
+        "importVTKClassesFromDirectory(%1, 'slicer', filematch='vtkSlicer*ModuleLogicPython.*');"
+        "importVTKClassesFromDirectory(%1, 'slicer', filematch='vtkSlicer*ModuleMRMLPython.*');"
+        "importVTKClassesFromDirectory(%1, 'slicer', filematch='vtkSlicer*ModuleMRMLDisplayableManagerPython.*');"
+        ).arg(pythonManager->toPythonStringLiteral(scopedCurrentDir.currentPath())));
   pythonManager->executeString(QString(
         "from slicer.util import importQtClassesFromDirectory;"
-        "importQtClassesFromDirectory('%1', 'slicer', filematch='qSlicer*PythonQt.*');"
-        ).arg(scopedCurrentDir.currentPath()));
+        "importQtClassesFromDirectory(%1, 'slicer', filematch='qSlicer*PythonQt.*');"
+        ).arg(pythonManager->toPythonStringLiteral(scopedCurrentDir.currentPath())));
   return !pythonManager->pythonErrorOccured();
 #else
   Q_UNUSED(isEmbedded);

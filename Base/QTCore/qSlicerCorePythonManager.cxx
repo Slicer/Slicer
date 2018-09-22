@@ -110,7 +110,7 @@ void qSlicerCorePythonManager::addVTKObjectToPythonMain(const QString& name, vtk
 void qSlicerCorePythonManager::appendPythonPath(const QString& path)
 {
   // TODO Make sure PYTHONPATH is updated
-  this->executeString(QString("import sys; sys.path.append('%1'); del sys").arg(path));
+  this->executeString(QString("import sys; sys.path.append(%1); del sys").arg(this->toPythonStringLiteral(path)));
 }
 
 //-----------------------------------------------------------------------------
@@ -120,4 +120,13 @@ void qSlicerCorePythonManager::appendPythonPaths(const QStringList& paths)
     {
     this->appendPythonPath(path);
     }
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCorePythonManager::toPythonStringLiteral(QString path)
+{
+  path = path.replace("\\", "\\\\");
+  path = path.replace("'", "\\'");
+  // since we enclose string in single quotes, double-quotes do not require escaping
+  return "'" + path + "'";
 }

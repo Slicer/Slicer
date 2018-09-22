@@ -26,25 +26,32 @@
 // PythonQt includes
 #include <PythonQt.h>
 
+// SlicerQt includes
+#include "qSlicerCoreApplication.h"
+#include "qSlicerCorePythonManager.h"
+
 //-----------------------------------------------------------------------------
 bool qSlicerScriptedUtils::loadSourceAsModule(const QString& moduleName,
                                        const QString& fileName,
                                        PyObject * global_dict,
                                        PyObject * local_dict)
 {
+  qSlicerCorePythonManager * pythonManager = qSlicerCoreApplication::application()->corePythonManager();
   PyObject* pyRes = 0;
   if (fileName.endsWith(".py"))
     {
     pyRes = PyRun_String(
-          QString("import imp;imp.load_source('%2', '%1');del imp;")
-          .arg(fileName).arg(moduleName).toLatin1(),
+          QString("import imp;imp.load_source(%2, %1);del imp;")
+          .arg(pythonManager->toPythonStringLiteral(fileName))
+          .arg(pythonManager->toPythonStringLiteral(moduleName)).toLatin1(),
           Py_file_input, global_dict, local_dict);
     }
   else if (fileName.endsWith(".pyc"))
     {
     pyRes = PyRun_String(
-          QString("with open('%1', 'rb') as f:import imp;imp.load_module('%2', f, '%1', ('.pyc', 'rb', 2));del imp")
-          .arg(fileName).arg(moduleName).toLatin1(),
+          QString("with open(%1, 'rb') as f:import imp;imp.load_module(%2, f, %1, ('.pyc', 'rb', 2));del imp")
+          .arg(pythonManager->toPythonStringLiteral(fileName))
+          .arg(pythonManager->toPythonStringLiteral(moduleName)).toLatin1(),
           Py_file_input, global_dict, local_dict);
     }
   if (!pyRes)

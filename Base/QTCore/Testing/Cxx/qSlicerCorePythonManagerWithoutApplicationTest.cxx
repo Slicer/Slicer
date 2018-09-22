@@ -34,12 +34,25 @@ private:
 
 private slots:
   void testInitialize();
+  void toPythonStringLiteral();
 };
 
 // ----------------------------------------------------------------------------
 void qSlicerCorePythonManagerWithoutApplicationTester::testInitialize()
 {
   this->PythonManager.initialize();
+}
+
+// ----------------------------------------------------------------------------
+void qSlicerCorePythonManagerWithoutApplicationTester::toPythonStringLiteral()
+{
+  QCOMPARE(this->PythonManager.toPythonStringLiteral("simple string"), "'simple string'");
+  QCOMPARE(this->PythonManager.toPythonStringLiteral("C:\\folder1\\folder2"), "'C:\\\\folder1\\\\folder2'");
+  QCOMPARE(this->PythonManager.toPythonStringLiteral("C:/folder1/folder2"), "'C:/folder1/folder2'");
+  QCOMPARE(this->PythonManager.toPythonStringLiteral("this \"special\" string contains double-quotes"), "'this \"special\" string contains double-quotes'");
+  QCOMPARE(this->PythonManager.toPythonStringLiteral("this name O'Neil contains a single-quote"), "'this name O\\'Neil contains a single-quote'");
+  QCOMPARE(this->PythonManager.toPythonStringLiteral("'single-quoted string'"), "'\\\'single-quoted string\\\''");
+  QCOMPARE(this->PythonManager.toPythonStringLiteral("\"double-quoted string\""), "'\"double-quoted string\"'");
 }
 
 // ----------------------------------------------------------------------------

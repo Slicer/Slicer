@@ -40,7 +40,8 @@ function(add_slicer_extensions_index_test testname)
   set(test_binary_dir ${CMAKE_CURRENT_BINARY_DIR}/${testname}-build)
 
   set(testcase "SlicerExtensionBuildSystemTest.SlicerExtensionBuildSystemTest.test_index_${testname}")
-  set(code "import sys; sys.path.append('${Slicer_BINARY_DIR}/bin/Python/slicer');")
+  # single quotes around append were replaced from ' to \" because path may contain a single quote character
+  set(code "import sys; sys.path.append(\"${Slicer_BINARY_DIR}/bin/Python/slicer\");")
   set(code "${code}import testing;")
   set(code "${code}testing.runUnitTest(['${CMAKE_CURRENT_BINARY_DIR}', '${CMAKE_CURRENT_SOURCE_DIR}'], '${testcase}')")
 
