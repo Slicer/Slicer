@@ -275,6 +275,15 @@ public:
   QList< QShortcut* > KeyboardShortcuts;
 
   Qt::ToolButtonStyle EffectButtonStyle;
+
+  // When segmentation node selector is visible then rotate warning is displayed in that row.
+  // However, if the node selector is hidden then the rotation warning button would take
+  // and entire row.
+  // To prevent this, rotation warning button is displayed in the add/remove/etc. segment
+  // button row when segmentation node selector is hidden.
+  // Qt does not have an API to check if a widget is in a layout, therefore we store this
+  // information in this flag.
+  bool RotateWarningInNodeSelectorLayout;
 };
 
 //-----------------------------------------------------------------------------
@@ -295,6 +304,7 @@ qMRMLSegmentEditorWidgetPrivate::qMRMLSegmentEditorWidgetPrivate(qMRMLSegmentEdi
   , AlignedMasterVolumeUpdateSegmentationNodeTransform(NULL)
   , MaskModeComboBoxFixedItemsCount(0)
   , EffectButtonStyle(Qt::ToolButtonTextUnderIcon)
+  , RotateWarningInNodeSelectorLayout(true)
 {
   this->AlignedMasterVolume = vtkOrientedImageData::New();
   this->ModifierLabelmap = vtkOrientedImageData::New();
@@ -2796,6 +2806,20 @@ void qMRMLSegmentEditorWidget::setSegmentationNodeSelectorVisible(bool visible)
   Q_D(qMRMLSegmentEditorWidget);
   d->SegmentationNodeComboBox->setVisible(visible);
   d->SegmentationNodeLabel->setVisible(visible);
+  if (visible != d->RotateWarningInNodeSelectorLayout)
+    {
+    d->RotateWarningInNodeSelectorLayout = visible;
+    if (d->RotateWarningInNodeSelectorLayout)
+      {
+      d->SegmentActionsLayout->removeWidget(d->SliceRotateWarningButton);
+      d->SegmentationNodeSelectorLayout->addWidget(d->SliceRotateWarningButton);
+      }
+    else
+      {
+      d->SegmentationNodeSelectorLayout->removeWidget(d->SliceRotateWarningButton);
+      d->SegmentActionsLayout->addWidget(d->SliceRotateWarningButton);
+      }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -2811,6 +2835,7 @@ void qMRMLSegmentEditorWidget::setMasterVolumeNodeSelectorVisible(bool visible)
   Q_D(qMRMLSegmentEditorWidget);
   d->MasterVolumeNodeComboBox->setVisible(visible);
   d->MasterVolumeNodeLabel->setVisible(visible);
+  d->SpecifyGeometryButton->setVisible(visible);
 }
 
 //-----------------------------------------------------------------------------
