@@ -1033,7 +1033,7 @@ int vtkMRMLThreeDReformatDisplayableManagerTest1(int argc, char* argv[])
     testHelper->AddArguments(argc, const_cast<const char **>(argv));
 
     vtkStdString screenshootFilename = testHelper->GetDataRoot();
-    screenshootFilename += "/Baseline/vtkMRMLCameraDisplayableManagerTest1.png";
+    screenshootFilename += "/Baseline/vtkMRMLThreeDReformatDisplayableManagerTest1.png";
     vtkNew<vtkPNGWriter> writer;
     writer->SetFileName(screenshootFilename.c_str());
     writer->SetInputConnection(windowToImageFilter->GetOutputPort());
