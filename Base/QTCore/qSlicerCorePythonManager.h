@@ -65,7 +65,7 @@ public:
   ///   some " string        => 'some " string'
   ///   some other ' string  => 'some other \' string'
   ///   some backslash \ str => 'some backslash \\ str'
-  Q_INVOKABLE virtual QString toPythonStringLiteral(QString path);
+  Q_INVOKABLE static QString toPythonStringLiteral(QString path);
 
 protected:
 

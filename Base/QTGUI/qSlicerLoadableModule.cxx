@@ -90,11 +90,11 @@ bool qSlicerLoadableModule::importModulePythonExtensions(
         "importVTKClassesFromDirectory(%1, 'slicer', filematch='vtkSlicer*ModuleLogicPython.*');"
         "importVTKClassesFromDirectory(%1, 'slicer', filematch='vtkSlicer*ModuleMRMLPython.*');"
         "importVTKClassesFromDirectory(%1, 'slicer', filematch='vtkSlicer*ModuleMRMLDisplayableManagerPython.*');"
-        ).arg(pythonManager->toPythonStringLiteral(scopedCurrentDir.currentPath())));
+        ).arg(qSlicerCorePythonManager::toPythonStringLiteral(scopedCurrentDir.currentPath())));
   pythonManager->executeString(QString(
         "from slicer.util import importQtClassesFromDirectory;"
         "importQtClassesFromDirectory(%1, 'slicer', filematch='qSlicer*PythonQt.*');"
-        ).arg(pythonManager->toPythonStringLiteral(scopedCurrentDir.currentPath())));
+        ).arg(qSlicerCorePythonManager::toPythonStringLiteral(scopedCurrentDir.currentPath())));
   return !pythonManager->pythonErrorOccured();
 #else
   Q_UNUSED(isEmbedded);

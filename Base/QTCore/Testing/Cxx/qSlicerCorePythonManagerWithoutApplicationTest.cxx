@@ -46,20 +46,20 @@ void qSlicerCorePythonManagerWithoutApplicationTester::testInitialize()
 // ----------------------------------------------------------------------------
 void qSlicerCorePythonManagerWithoutApplicationTester::toPythonStringLiteral()
 {
-  QCOMPARE(this->PythonManager.toPythonStringLiteral("simple string"),
-                                            QString("'simple string'"));
-  QCOMPARE(this->PythonManager.toPythonStringLiteral("C:\\folder1\\folder2"),
-                                            QString("'C:\\\\folder1\\\\folder2'"));
-  QCOMPARE(this->PythonManager.toPythonStringLiteral("C:/folder1/folder2"),
-                                            QString("'C:/folder1/folder2'"));
-  QCOMPARE(this->PythonManager.toPythonStringLiteral("this \"special\" string contains double-quotes"),
-                                            QString("'this \"special\" string contains double-quotes'"));
-  QCOMPARE(this->PythonManager.toPythonStringLiteral("this name O'Neil contains a single-quote"),
-                                            QString("'this name O\\'Neil contains a single-quote'"));
-  QCOMPARE(this->PythonManager.toPythonStringLiteral("'single-quoted string'"),
-                                            QString("'\\\'single-quoted string\\\''"));
-  QCOMPARE(this->PythonManager.toPythonStringLiteral("\"double-quoted string\""),
-                                            QString("'\"double-quoted string\"'"));
+  QCOMPARE(qSlicerCorePythonManager::toPythonStringLiteral("simple string"),
+                                                  QString("'simple string'"));
+  QCOMPARE(qSlicerCorePythonManager::toPythonStringLiteral("C:\\folder1\\folder2"),
+                                                  QString("'C:\\\\folder1\\\\folder2'"));
+  QCOMPARE(qSlicerCorePythonManager::toPythonStringLiteral("C:/folder1/folder2"),
+                                                  QString("'C:/folder1/folder2'"));
+  QCOMPARE(qSlicerCorePythonManager::toPythonStringLiteral("this \"special\" string contains double-quotes"),
+                                                  QString("'this \"special\" string contains double-quotes'"));
+  QCOMPARE(qSlicerCorePythonManager::toPythonStringLiteral("this name O'Neil contains a single-quote"),
+                                                  QString("'this name O\\'Neil contains a single-quote'"));
+  QCOMPARE(qSlicerCorePythonManager::toPythonStringLiteral("'single-quoted string'"),
+                                               QString("'\\\'single-quoted string\\\''"));
+  QCOMPARE(qSlicerCorePythonManager::toPythonStringLiteral("\"double-quoted string\""),
+                                                  QString("'\"double-quoted string\"'"));
 }
 
 // ----------------------------------------------------------------------------
