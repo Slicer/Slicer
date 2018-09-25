@@ -171,6 +171,21 @@ public slots:
   /// See http://doc.qt.io/qt-5/windows-issues.html#fullscreen-opengl-based-windows
   void setHasBorderInFullScreen(bool);
 
+  /// Calls setRenderPaused(pause) on the current layout manager.
+  /// Emits pauseRenderRequested() if pause is true and resumeRenderRequested() if pause is false.
+  /// The caller is responsible for making sure that each setRenderPaused(true) is paired with
+  /// setRenderPaused(false).
+  /// \sa qMRMLLayoutManager::setRenderPaused()
+  void setRenderPaused(bool pause);
+
+  /// Equivalent to setRenderPaused(true)
+  /// \sa setRenderPaused
+  void pauseRender();
+
+  /// Equivalent to setRenderPaused(false)
+  /// \sa setRenderPaused
+  void resumeRender();
+
 signals:
 
   /// Emitted when the startup phase has been completed.
@@ -183,6 +198,12 @@ signals:
   ///
   /// \sa qSlicerAppMainWindow::initialWindowShown()
   void startupCompleted();
+
+  /// Emitted when setRenderPaused() is called.
+  /// This can be used by modules that manage their own viewers
+  /// to pause and resume rendering.
+  /// \sa setRenderPaused
+  void renderPaused(bool);
 
 protected:
   /// Reimplemented from qSlicerCoreApplication

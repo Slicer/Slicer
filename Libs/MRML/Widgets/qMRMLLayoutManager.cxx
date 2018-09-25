@@ -24,6 +24,7 @@
 
 // MRMLWidgets includes
 #include <qMRMLLayoutManager_p.h>
+#include <qMRMLSliceView.h>
 #include <qMRMLSliceWidget.h>
 #include <qMRMLSliceControllerWidget.h>
 #include <qMRMLChartView.h>
@@ -1329,4 +1330,37 @@ QWidget* qMRMLLayoutManager::viewWidget(vtkMRMLNode* viewNode) const
   Q_D(const qMRMLLayoutManager);
 
   return d->viewWidget(viewNode);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLLayoutManager::setRenderPaused(bool pause)
+{
+  // Note: views that are instantiated between pauseRender() calls will not be affected
+  // by the specified pause state
+  Q_D(qMRMLLayoutManager);
+  qMRMLLayoutViewFactory* sliceViewFactory = this->mrmlViewFactory("vtkMRMLSliceNode");
+  foreach(const QString& viewName, sliceViewFactory->viewNodeNames())
+    {
+    ctkVTKAbstractView* view = this->sliceWidget(viewName)->sliceView();
+    view->setRenderPaused(pause);
+    }
+
+  qMRMLLayoutViewFactory* threeDViewFactory = this->mrmlViewFactory("vtkMRMLViewNode");
+  foreach(const QString& viewName, threeDViewFactory->viewNodeNames())
+    {
+    ctkVTKAbstractView* view = this->threeDWidget(viewName)->threeDView();
+    view->setRenderPaused(pause);
+    }
+}
+
+//------------------------------------------------------------------------------
+void qMRMLLayoutManager::pauseRender()
+{
+  this->setRenderPaused(true);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLLayoutManager::resumeRender()
+{
+  this->setRenderPaused(true);
 }

@@ -993,3 +993,28 @@ void qSlicerApplication::logApplicationInformation() const
          additionalModulePaths.isEmpty() ? "(none)" : qPrintable(additionalModulePaths.join(", ")));
 
 }
+
+//-----------------------------------------------------------------------------
+void qSlicerApplication::setRenderPaused(bool pause)
+{
+  Q_D(qSlicerApplication);
+
+  if (d->LayoutManager)
+    {
+    d->LayoutManager->setRenderPaused(pause);
+    }
+
+  emit renderPaused(pause);
+}
+
+//------------------------------------------------------------------------------
+void qSlicerApplication::pauseRender()
+{
+  this->setRenderPaused(true);
+}
+
+//------------------------------------------------------------------------------
+void qSlicerApplication::resumeRender()
+{
+  this->setRenderPaused(false);
+}

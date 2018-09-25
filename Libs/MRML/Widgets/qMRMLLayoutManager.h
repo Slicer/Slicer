@@ -243,6 +243,20 @@ public slots:
   /// \sa qMRMLSliceControllerWidget::fitSliceToBackground(), vtkMRMLSliceLogic::FitSliceToAll()
   void resetSliceViews();
 
+  /// Calls setPauseRender(pause) on all slice and 3D views
+  /// Tracks the previous pause state which is restored using resumeRender()
+  /// Each pauseRender(true) should always be accompanied by a corresponding pauseRender(false) call
+  /// \sa pauseRender
+  void setRenderPaused(bool pause);
+
+  /// Equivalent to setRenderPaused(true)
+  /// \sa setRenderPaused
+  void pauseRender();
+
+  /// Equivalent to setRenderPaused(false)
+  /// \sa setRenderPaused
+  void resumeRender();
+
 signals:
   void activeMRMLThreeDViewNodeChanged(vtkMRMLViewNode* newActiveMRMLThreeDViewNode);
   void activeMRMLChartViewNodeChanged(vtkMRMLChartViewNode* newActiveMRMLChartViewNode);
