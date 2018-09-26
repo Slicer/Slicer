@@ -239,7 +239,7 @@ void qSlicerCoreApplicationPrivate::init()
   appLauncherSettings.setLauncherDir(this->SlicerHome);
   if (!appLauncherSettings.readSettings(q->launcherSettingsFilePath()))
     {
-    qCritical() << "Failed to read launcher settings" << q->launcherSettingsFilePath();
+    q->showConsoleMessage(QString("Failed to read launcher settings %1").arg(q->launcherSettingsFilePath()));
     }
 
   // Regular environment variables
@@ -553,7 +553,7 @@ QString qSlicerCoreApplicationPrivate::discoverSlicerBinDirectory()
   //       to get the path using the "/proc" filesystem.
   if (!QFile::exists(q->applicationDirPath()))
     {
-    qCritical() << "Cannot find Slicer executable" << q->applicationDirPath();
+    q->showConsoleMessage(QString("Cannot find Slicer executable %1").arg(q->applicationDirPath()));
     return slicerBin;
     }
 #ifndef Q_OS_MAC
@@ -645,13 +645,13 @@ void qSlicerCoreApplicationPrivate::parseArguments()
   qSlicerCoreCommandOptions* options = this->CoreCommandOptions.data();
   if (!options)
     {
-    qWarning() << "Failed to parse arguments - "
-                  "it seems you forgot to call setCoreCommandOptions()";
+    q->showConsoleMessage("Failed to parse arguments - "
+                  "it seems you forgot to call setCoreCommandOptions()");
     this->quickExit(EXIT_FAILURE);
     }
   if (!options->parse(q->arguments()))
     {
-    qCritical("Problem parsing command line arguments.  Try with --help.");
+    q->showConsoleMessage("Problem parsing command line arguments.  Try with --help.");
     this->quickExit(EXIT_FAILURE);
     }
 }
@@ -824,8 +824,8 @@ void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
 
   if (!options->settingsDisabled() && options->keepTemporarySettings())
     {
-    qWarning() << "Argument '--keep-temporary-settings' requires "
-                  "'--settings-disabled' to be specified.";
+    this->showConsoleMessage("Argument '--keep-temporary-settings' requires "
+                  "'--settings-disabled' to be specified.");
     }
 
   if (options->isTestingEnabled())
@@ -935,7 +935,7 @@ void qSlicerCoreApplication::handleCommandLineArguments()
         }
       else
         {
-        qWarning() << "Specified python script doesn't exist:" << pythonScript;
+        this->showConsoleMessage(QString("Specified python script doesn't exist: %1").arg(pythonScript));
         }
       }
     QString pythonCode = options->pythonCode();
@@ -1759,4 +1759,18 @@ QStringList qSlicerCoreApplication::allModuleAssociatedNodeTypes() const
   Q_D(const qSlicerCoreApplication);
   QList<QString> nodeClassNames = d->ModulesForNodes.uniqueKeys();
   return nodeClassNames;
+}
+
+// --------------------------------------------------------------------------
+void qSlicerCoreApplication::showConsoleMessage(QString message, bool error/*=true*/) const
+{
+  Q_D(const qSlicerCoreApplication);
+  if (error)
+  {
+    std::cerr << message.toLocal8Bit().constData() << std::endl;
+  }
+  else
+  {
+    std::cout << message.toLocal8Bit().constData() << std::endl;
+  }
 }

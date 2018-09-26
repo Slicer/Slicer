@@ -401,6 +401,10 @@ public:
 
   Q_INVOKABLE int registerResource(const QByteArray& data);
 
+  /// Print message on console.
+  /// If error is true then the message is printed on stderr, otherwise on stdout.
+  Q_INVOKABLE void showConsoleMessage(QString message, bool error=true) const;
+
 public slots:
 
   /// Restart the application with the arguments passed at startup time
