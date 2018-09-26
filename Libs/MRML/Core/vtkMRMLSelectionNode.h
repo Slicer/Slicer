@@ -65,16 +65,19 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   /// the ID of a MRMLVolumeNode (typically background)
   vtkGetStringMacro (ActiveVolumeID);
   void SetActiveVolumeID(const char* id);
+  /// \deprecated Use SetActiveVolumeID instead
   void SetReferenceActiveVolumeID (const char *id) { this->SetActiveVolumeID(id); };
 
   /// the ID of a MRMLVolumeNode (typically foreground)
   vtkGetStringMacro (SecondaryVolumeID);
   void SetSecondaryVolumeID(const char* id);
+  /// \deprecated Use SetSecondaryVolumeID instead
   void SetReferenceSecondaryVolumeID (char *id) { this->SetSecondaryVolumeID(id); };
 
   /// the ID of a MRMLVolumeNode
   vtkGetStringMacro (ActiveLabelVolumeID);
   void SetActiveLabelVolumeID(const char* id);
+  /// \deprecated Use SetActiveLabelVolumeID instead
   void SetReferenceActiveLabelVolumeID (const char *id) { this->SetActiveLabelVolumeID(id); };
 
   /// \deprecated Get the ID of a vtkMRMLFiducialListNode
@@ -122,31 +125,37 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   /// the ID of a MRMLROIList
   vtkGetStringMacro (ActiveROIListID);
   void SetActiveROIListID(const char* id);
+  /// \deprecated Use SetActiveROIListID instead
   void SetReferenceActiveROIListID (const char *id) { this->SetActiveROIListID(id); };
 
   /// the ID of a MRMLCameraNode
   vtkGetStringMacro (ActiveCameraID );
   void SetActiveCameraID(const char* id);
+  /// \deprecated Use SetActiveCameraID instead
   void SetReferenceActiveCameraID (const char *id) { this->SetActiveCameraID(id); };
 
   /// the ID of a MRMLTableNode
   vtkGetStringMacro (ActiveTableID);
   void SetActiveTableID(const char* id);
+  /// \deprecated Use SetActiveTableID instead
   void SetReferenceActiveTableID (char *id) { this->SetActiveTableID(id); };
 
   /// the ID of a MRMLViewNode
   vtkGetStringMacro (ActiveViewID );
   void SetActiveViewID(const char* id );
+  /// \deprecated Use SetActiveViewID instead
   void SetReferenceActiveViewID (const char *id) { this->SetActiveViewID(id); };
 
   /// the ID of a MRMLLayoutNode
   vtkGetStringMacro (ActiveLayoutID );
   void SetActiveLayoutID(const char* id);
+  /// \deprecated Use SetActiveLayoutID instead
   void SetReferenceActiveLayoutID (const char *id) { this->SetActiveLayoutID(id); };
 
   /// the ID of a MRMLPlotChartNode
   vtkGetStringMacro (ActivePlotChartID );
   void SetActivePlotChartID(const char* id);
+  /// \deprecated Use SetActivePlotChartID instead
   void SetReferenceActivePlotChartID (const char *id) { this->SetActivePlotChartID(id); };
 
   /// A list of events that this node can throw

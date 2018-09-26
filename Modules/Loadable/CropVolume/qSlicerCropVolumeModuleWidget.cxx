@@ -393,7 +393,7 @@ void qSlicerCropVolumeModuleWidget::onApply()
       // New output volume is created, show it in slice viewers
       vtkSlicerApplicationLogic *appLogic = this->module()->appLogic();
       vtkMRMLSelectionNode *selectionNode = appLogic->GetSelectionNode();
-      selectionNode->SetReferenceActiveVolumeID(d->ParametersNode->GetOutputVolumeNodeID());
+      selectionNode->SetActiveVolumeID(d->ParametersNode->GetOutputVolumeNodeID());
       appLogic->PropagateVolumeSelection();
       }
     }

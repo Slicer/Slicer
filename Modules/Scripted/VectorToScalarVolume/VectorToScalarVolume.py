@@ -244,7 +244,7 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget, VTKObservationMix
     # make the output volume appear in all the slice views
     if success:
       selectionNode = slicer.app.applicationLogic().GetSelectionNode()
-      selectionNode.SetReferenceActiveVolumeID(self.outputVolumeNode().GetID())
+      selectionNode.SetActiveVolumeID(self.outputVolumeNode().GetID())
       slicer.app.applicationLogic().PropagateVolumeSelection(0)
 
 

@@ -185,11 +185,11 @@ bool qSlicerVolumesReader::load(const IOProperties& properties)
         {
         if (vtkMRMLLabelMapVolumeNode::SafeDownCast(node))
           {
-          selectionNode->SetReferenceActiveLabelVolumeID(node->GetID());
+          selectionNode->SetActiveLabelVolumeID(node->GetID());
           }
         else
           {
-          selectionNode->SetReferenceActiveVolumeID(node->GetID());
+          selectionNode->SetActiveVolumeID(node->GetID());
           }
         if (appLogic)
           {

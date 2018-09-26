@@ -1108,8 +1108,8 @@ class ScreenCaptureTest(ScriptedLoadableModuleTest):
 
     # make the output volume appear in all the slice views
     selectionNode = slicer.app.applicationLogic().GetSelectionNode()
-    selectionNode.SetReferenceActiveVolumeID(self.image1.GetID())
-    selectionNode.SetReferenceSecondaryVolumeID(self.image2.GetID())
+    selectionNode.SetActiveVolumeID(self.image1.GetID())
+    selectionNode.SetSecondaryVolumeID(self.image2.GetID())
     slicer.app.applicationLogic().PropagateVolumeSelection(1)
 
     # Show slice and 3D views

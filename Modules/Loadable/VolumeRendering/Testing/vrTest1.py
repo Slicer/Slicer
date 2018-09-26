@@ -14,7 +14,7 @@ def load_default_volume():
     # automatically select the volume to display
     mrmlLogic = slicer.app.applicationLogic()
     selNode = mrmlLogic.GetSelectionNode()
-    selNode.SetReferenceActiveVolumeID(volumeNode.GetID())
+    selNode.SetActiveVolumeID(volumeNode.GetID())
     mrmlLogic.PropagateVolumeSelection()
 
 

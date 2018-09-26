@@ -590,7 +590,7 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
     currentLayout = slicer.app.layoutManager().layout
     layoutWithTable = slicer.modules.tables.logic().GetLayoutWithTable(currentLayout)
     slicer.app.layoutManager().setLayout(layoutWithTable)
-    slicer.app.applicationLogic().GetSelectionNode().SetReferenceActiveTableID(table.GetID())
+    slicer.app.applicationLogic().GetSelectionNode().SetActiveTableID(table.GetID())
     slicer.app.applicationLogic().PropagateTableSelection()
 
   def exportToString(self, nonEmptyKeysOnly = True):

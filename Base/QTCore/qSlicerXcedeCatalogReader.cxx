@@ -762,20 +762,20 @@ void qSlicerXcedeCatalogReaderPrivate::importVolumeNode(NodeType node)
     }
 
   // if { $labelmap } {
-  //   [[$::slicer3::VolumesGUI GetApplicationLogic] GetSelectionNode] SetReferenceActiveLabelVolumeID [$volumeNode GetID]
+  //   [[$::slicer3::VolumesGUI GetApplicationLogic] GetSelectionNode] SetActiveLabelVolumeID [$volumeNode GetID]
   // } else {
-  //   [[$::slicer3::VolumesGUI GetApplicationLogic] GetSelectionNode] SetReferenceActiveVolumeID [$volumeNode GetID]
+  //   [[$::slicer3::VolumesGUI GetApplicationLogic] GetSelectionNode] SetActiveVolumeID [$volumeNode GetID]
   // }
   // [$::slicer3::VolumesGUI GetApplicationLogic] PropagateVolumeSelection
   if (labelMap)
     {
     this->ColorLogic->GetMRMLApplicationLogic()->GetSelectionNode()
-      ->SetReferenceActiveLabelVolumeID(volumeNodeID.toLatin1());
+      ->SetActiveLabelVolumeID(volumeNodeID.toLatin1());
     }
   else
     {
     this->ColorLogic->GetMRMLApplicationLogic()->GetSelectionNode()
-      ->SetReferenceActiveVolumeID(volumeNodeID.toLatin1());
+      ->SetActiveVolumeID(volumeNodeID.toLatin1());
     }
   this->ColorLogic->GetMRMLApplicationLogic()->PropagateVolumeSelection();
 }

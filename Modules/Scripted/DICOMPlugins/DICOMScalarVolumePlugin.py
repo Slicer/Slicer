@@ -354,7 +354,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
       #
       appLogic = slicer.app.applicationLogic()
       selNode = appLogic.GetSelectionNode()
-      selNode.SetReferenceActiveVolumeID(volumeNode.GetID())
+      selNode.SetActiveVolumeID(volumeNode.GetID())
       appLogic.PropagateVolumeSelection()
 
       #

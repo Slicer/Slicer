@@ -139,7 +139,7 @@ class EditorWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # in the selection node for later calls to PropagateVolumeSelection
         compositeNode = EditUtil.getCompositeNode()
         selectionNode = slicer.app.applicationLogic().GetSelectionNode()
-        selectionNode.SetReferenceSecondaryVolumeID( compositeNode.GetForegroundVolumeID() )
+        selectionNode.SetSecondaryVolumeID( compositeNode.GetForegroundVolumeID() )
         bgID = lbID = ""
         if compositeNode.GetBackgroundVolumeID():
           bgID = compositeNode.GetBackgroundVolumeID()

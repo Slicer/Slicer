@@ -797,10 +797,10 @@ void qSlicerSlicer2SceneReaderPrivate::importVolumeNode(NodeType& node)
   //$logic SetActiveVolumeNode $volumeNode
   //volumesLogic()->SetActiveVolumeNode(volumeNode);
 
-  //[[$::slicer3::VolumesGUI GetApplicationLogic] GetSelectionNode] SetReferenceActiveVolumeID [$volumeNode GetID]
+  //[[$::slicer3::VolumesGUI GetApplicationLogic] GetSelectionNode] SetActiveVolumeID [$volumeNode GetID]
   //[$::slicer3::VolumesGUI GetApplicationLogic] PropagateVolumeSelection
   this->ApplicationLogic->GetSelectionNode()
-    ->SetReferenceActiveVolumeID(volumeNodeID.toLatin1());
+    ->SetActiveVolumeID(volumeNodeID.toLatin1());
   this->ApplicationLogic->PropagateVolumeSelection();
 }
 
@@ -1155,12 +1155,12 @@ void qSlicerSlicer2SceneReaderPrivate::importFiducialsNode(NodeType& node)
   vtkMRMLSelectionNode* selNode =
     this->ApplicationLogic->GetSelectionNode();
   //if { $selNode != "" } {
-  //   $selNode SetReferenceActiveFiducialListID [$fiducialNode GetID]
+  //   $selNode SetActiveFiducialListID [$fiducialNode GetID]
   //   $::slicer3::ApplicationLogic PropagateFiducialListSelection
   //}
   if (selNode != 0)
     {
-    selNode->SetReferenceActiveFiducialListID(fiducialNode->GetID());
+    selNode->SetActiveFiducialListID(fiducialNode->GetID());
     this->ApplicationLogic->PropagateFiducialListSelection();
     }
 }

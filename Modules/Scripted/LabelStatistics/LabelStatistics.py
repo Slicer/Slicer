@@ -199,7 +199,7 @@ class LabelStatisticsWidget(ScriptedLoadableModuleWidget):
     # Add table to the scene and show it
     slicer.mrmlScene.AddNode(table)
     slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutFourUpTableView)
-    slicer.app.applicationLogic().GetSelectionNode().SetReferenceActiveTableID(table.GetID())
+    slicer.app.applicationLogic().GetSelectionNode().SetActiveTableID(table.GetID())
     slicer.app.applicationLogic().PropagateTableSelection()
 
   def onSave(self):

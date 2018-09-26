@@ -68,8 +68,8 @@ class ThresholdThreading(unittest.TestCase):
     volumesLogic = slicer.modules.volumes.logic()
     croppedHeadLabel = volumesLogic.CreateAndAddLabelVolume( slicer.mrmlScene, croppedHead, croppedHead.GetName() + '-label' )
     selectionNode = slicer.app.applicationLogic().GetSelectionNode()
-    selectionNode.SetReferenceActiveVolumeID( croppedHead.GetID() )
-    selectionNode.SetReferenceActiveLabelVolumeID( croppedHeadLabel.GetID() )
+    selectionNode.SetActiveVolumeID( croppedHead.GetID() )
+    selectionNode.SetActiveLabelVolumeID( croppedHeadLabel.GetID() )
     slicer.app.applicationLogic().PropagateVolumeSelection(0)
 
 

@@ -206,8 +206,8 @@ class sceneImport2428Test(unittest.TestCase):
     volumesLogic = slicer.modules.volumes.logic()
     headLabel = volumesLogic.CreateAndAddLabelVolume( slicer.mrmlScene, head, head.GetName() + '-label' )
     selectionNode = slicer.app.applicationLogic().GetSelectionNode()
-    selectionNode.SetReferenceActiveVolumeID( head.GetID() )
-    selectionNode.SetReferenceActiveLabelVolumeID( headLabel.GetID() )
+    selectionNode.SetActiveVolumeID( head.GetID() )
+    selectionNode.SetActiveLabelVolumeID( headLabel.GetID() )
     slicer.app.applicationLogic().PropagateVolumeSelection(0)
 
     #

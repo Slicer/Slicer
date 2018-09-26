@@ -166,7 +166,7 @@ bool qSlicerTablesReader::load(const IOProperties& properties)
     vtkMRMLSelectionNode* selectionNode = appLogic ? appLogic->GetSelectionNode() : 0;
     if (selectionNode)
       {
-      selectionNode->SetReferenceActiveTableID(node->GetID());
+      selectionNode->SetActiveTableID(node->GetID());
       }
     if (appLogic)
       {

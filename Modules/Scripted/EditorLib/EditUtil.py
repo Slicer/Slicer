@@ -180,9 +180,9 @@ class EditUtil(object):
     if isinstance(mergeVolume, basestring):
       mergeVolume = slicer.mrmlScene.GetNodeByID(mergeVolume)
     selectionNode = slicer.app.applicationLogic().GetSelectionNode()
-    selectionNode.SetReferenceActiveVolumeID(masterVolume.GetID())
+    selectionNode.SetActiveVolumeID(masterVolume.GetID())
     if mergeVolume:
-      selectionNode.SetReferenceActiveLabelVolumeID(mergeVolume.GetID())
+      selectionNode.SetActiveLabelVolumeID(mergeVolume.GetID())
     EditUtil.propagateVolumeSelection()
 
   @staticmethod

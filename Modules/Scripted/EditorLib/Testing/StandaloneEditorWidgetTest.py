@@ -32,8 +32,8 @@ class EditorLibTesting(unittest.TestCase):
     headLabel = volumesLogic.CreateAndAddLabelVolume( slicer.mrmlScene, head, head.GetName() + '-segmentation' )
 
     selectionNode = slicer.app.applicationLogic().GetSelectionNode()
-    selectionNode.SetReferenceActiveVolumeID( head.GetID() )
-    selectionNode.SetReferenceActiveLabelVolumeID( headLabel.GetID() )
+    selectionNode.SetActiveVolumeID( head.GetID() )
+    selectionNode.SetActiveLabelVolumeID( headLabel.GetID() )
     slicer.app.applicationLogic().PropagateVolumeSelection(0)
 
     #
