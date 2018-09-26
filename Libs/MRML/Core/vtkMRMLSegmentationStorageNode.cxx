@@ -634,13 +634,31 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
 
     // ID
     const char* headerValue = reader->GetHeaderValue(GetSegmentMetaDataKey(segmentIndex, KEY_SEGMENT_ID).c_str());
-    std::string currentSegmentID = (headerValue ? headerValue : "");
+    std::string currentSegmentID;
     if (headerValue)
       {
       currentSegmentID = headerValue;
       }
     else
       {
+
+      // No segment ID is specified, which may mean that it is an empty segmentation.
+      // We consider a segmentation empty if it has only one scalar component that is empty.
+      if (numberOfFrames == 1)
+        {
+        extractComponents->SetComponents(segmentIndex);
+        extractComponents->Update();
+        vtkImageData* labelmap = extractComponents->GetOutput();
+        double* scalarRange = labelmap->GetScalarRange();
+        if (scalarRange[0] >= scalarRange[1])
+          {
+          // Segmentation contains a single blank segment without segment ID,
+          // which means that it is an empty segmentation.
+          // It may still contain valuable metadata, but we don't create any segments.
+          break;
+          }
+        }
+
       currentSegmentID = segmentation->GenerateUniqueSegmentID("SegmentAuto");
       vtkWarningMacro("Segment ID is missing for segment " << segmentIndex << " adding segment with ID: " << currentSegmentID);
       }
@@ -946,6 +964,12 @@ int vtkMRMLSegmentationStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     return 0;
     }
 
+  if (segmentationNode->GetSegmentation() == NULL)
+    {
+    vtkErrorMacro("Segmentation node does not contain segmentation object. Unable to write node to file.");
+    return 0;
+    }
+
   // Write only master representation
   if (segmentationNode->GetSegmentation()->IsMasterRepresentationImageData())
     {
@@ -956,13 +980,15 @@ int vtkMRMLSegmentationStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     return this->WritePolyDataRepresentation(segmentationNode, fullName);
     }
 
-  return 1;
+  vtkErrorMacro("Segmentation master representation " << segmentationNode->GetSegmentation()->GetMasterRepresentationName()
+    << " cannot be written to file");
+  return 0;
 }
 
 //----------------------------------------------------------------------------
 int vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation(vtkMRMLSegmentationNode* segmentationNode, std::string fullName)
 {
-  if (!segmentationNode || segmentationNode->GetSegmentation()->GetNumberOfSegments() == 0)
+  if (!segmentationNode)
     {
     vtkErrorMacro("WriteBinaryLabelmapRepresentation: Invalid segmentation to write to disk");
     return 0;
@@ -977,23 +1003,26 @@ int vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation(vtkMRMLSeg
     }
 
   // Determine merged labelmap dimensions and properties
-  std::string commonGeometryString = segmentation->DetermineCommonLabelmapGeometry(vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS);
   vtkSmartPointer<vtkOrientedImageData> commonGeometryImage = vtkSmartPointer<vtkOrientedImageData>::New();
-  vtkSegmentationConverter::DeserializeImageGeometry(commonGeometryString, commonGeometryImage, true, VTK_UNSIGNED_CHAR, 1);
   int commonGeometryExtent[6] = { 0, -1, 0, -1, 0, -1 };
-  commonGeometryImage->GetExtent(commonGeometryExtent);
+  if (segmentation->GetNumberOfSegments() > 0)
+    {
+    std::string commonGeometryString = segmentation->DetermineCommonLabelmapGeometry(vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS);
+    vtkSegmentationConverter::DeserializeImageGeometry(commonGeometryString, commonGeometryImage, true, VTK_UNSIGNED_CHAR, 1);
+    commonGeometryImage->GetExtent(commonGeometryExtent);
+    }
   if (commonGeometryExtent[0] > commonGeometryExtent[1]
     || commonGeometryExtent[2] > commonGeometryExtent[3]
     || commonGeometryExtent[4] > commonGeometryExtent[5])
     {
     // common image is empty, which cannot be written to image file
-    // change it to a very small image instead
+    // change it to a 1x1x1 image instead
     commonGeometryExtent[0] = 0;
-    commonGeometryExtent[1] = 9;
+    commonGeometryExtent[1] = 0;
     commonGeometryExtent[2] = 0;
-    commonGeometryExtent[3] = 9;
+    commonGeometryExtent[3] = 0;
     commonGeometryExtent[4] = 0;
-    commonGeometryExtent[5] = 9;
+    commonGeometryExtent[5] = 0;
     commonGeometryImage->SetExtent(commonGeometryExtent);
     commonGeometryImage->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
     }
@@ -1121,11 +1150,19 @@ int vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation(vtkMRMLSeg
     appender->AddInputData(currentBinaryLabelmap);
     } // For each segment
 
+  if (segmentationNode->GetSegmentation()->GetNumberOfSegments() > 0)
+    {
+    appender->Update();
+    writer->SetInputConnection(appender->GetOutputPort());
+    writer->SetVectorAxisKind(nrrdKindList);
+    }
+  else
+    {
+    // If there are no segments, we still write the data so that we can store
+    // various metadata fields.
+    writer->SetInputData(commonGeometryImage);
+    }
 
-  appender->Update();
-
-  writer->SetInputConnection(appender->GetOutputPort());
-  writer->SetVectorAxisKind(nrrdKindList);
   writer->Write();
   int writeFlag = 1;
   if (writer->GetWriteError())
@@ -1308,7 +1345,7 @@ void vtkMRMLSegmentationStorageNode::AddPolyDataFileNames(std::string path, vtkS
 //----------------------------------------------------------------------------
 std::string vtkMRMLSegmentationStorageNode::SerializeContainedRepresentationNames(vtkSegmentation* segmentation)
 {
-  if (!segmentation || segmentation->GetNumberOfSegments() == 0)
+  if (!segmentation)
     {
     vtkErrorMacro("SerializeContainedRepresentationNames: Invalid segmentation!");
     return "";
@@ -1329,14 +1366,19 @@ std::string vtkMRMLSegmentationStorageNode::SerializeContainedRepresentationName
 //----------------------------------------------------------------------------
 void vtkMRMLSegmentationStorageNode::CreateRepresentationsBySerializedNames(vtkSegmentation* segmentation, std::string representationNames)
 {
-  if (!segmentation || segmentation->GetNumberOfSegments() == 0)
+  if (!segmentation)
     {
     vtkErrorMacro("CreateRepresentationsBySerializedNames: Invalid segmentation!");
     return;
     }
+  if (segmentation->GetNumberOfSegments() == 0)
+    {
+    vtkDebugMacro("CreateRepresentationsBySerializedNames: Segmentation is empty, nothing to do");
+    return;
+    }
   if (representationNames.empty())
     {
-    vtkWarningMacro("CreateRepresentationsBySerializedNames: Empty representation names list, nothing to create");
+    vtkDebugMacro("CreateRepresentationsBySerializedNames: Empty representation names list, nothing to create");
     return;
     }
 
