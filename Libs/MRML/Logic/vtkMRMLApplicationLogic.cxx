@@ -1008,8 +1008,21 @@ std::string vtkMRMLApplicationLogic::CreateUniqueFileName(const std::string &fil
   // If there is a numeric suffix, separated by underscore (somefile_23)
   // then use the string before the separator (somefile) as basename and increment the suffix value.
   int suffix = 0;
+
+  std::size_t filenameStartPosition1 = baseName.find_last_of("/");
+  std::size_t filenameStartPosition2 = baseName.find_last_of("\\");
+  std::size_t filenameStartPosition = 0;
+  if (filenameStartPosition1 != std::string::npos && filenameStartPosition < filenameStartPosition1)
+    {
+    filenameStartPosition = filenameStartPosition1;
+    }
+  if (filenameStartPosition2 != std::string::npos && filenameStartPosition < filenameStartPosition2)
+    {
+    filenameStartPosition = filenameStartPosition2;
+    }
+
   std::size_t separatorPosition = baseName.find_last_of("_");
-  if (separatorPosition != std::string::npos)
+  if (separatorPosition != std::string::npos && separatorPosition > filenameStartPosition)
     {
     std::string suffixStr = baseName.substr(separatorPosition + 1, baseName.size() - separatorPosition - 1);
     std::stringstream ss(suffixStr);
