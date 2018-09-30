@@ -343,6 +343,7 @@ void qMRMLModelDisplayNodeWidget::setScalarRangeMode(ControlMode controlMode)
     case LUT: newScalarRangeMode = vtkMRMLDisplayNode::UseColorNodeScalarRange; break;
     case DataType: newScalarRangeMode = vtkMRMLDisplayNode::UseDataTypeScalarRange; break;
     case Manual: newScalarRangeMode = vtkMRMLDisplayNode::UseManualScalarRange; break;
+    case DirectMapping: newScalarRangeMode = vtkMRMLDisplayNode::UseDirectMapping; break;
     }
 
   int currentScalarRangeMode = d->MRMLModelDisplayNode->GetScalarRangeFlag();
@@ -373,6 +374,9 @@ void qMRMLModelDisplayNodeWidget::setScalarRangeMode(int scalarRangeMode)
     case 3:
       this->setScalarRangeMode(qMRMLModelDisplayNodeWidget::Manual);
       break;
+    case 4:
+      this->setScalarRangeMode(qMRMLModelDisplayNodeWidget::DirectMapping);
+      break;
     default:
       break;
     }
@@ -395,6 +399,9 @@ qMRMLModelDisplayNodeWidget::ControlMode qMRMLModelDisplayNodeWidget::scalarRang
       break;
     case 3:
       return qMRMLModelDisplayNodeWidget::Manual;
+      break;
+    case 4:
+      return qMRMLModelDisplayNodeWidget::DirectMapping;
       break;
     default:
       break;
@@ -644,8 +651,7 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
   d->DisplayedScalarRangeWidget->setValues(displayRange[0], displayRange[1]);
   d->DisplayedScalarRangeWidget->setDecimals(decimals);
   d->DisplayedScalarRangeWidget->setSingleStep(precision);
-  bool thresholdEnabled = (d->MRMLModelDisplayNode->GetScalarRangeFlag() == vtkMRMLDisplayNode::UseManualScalarRange);
-  d->DisplayedScalarRangeWidget->setEnabled(thresholdEnabled);
+  d->DisplayedScalarRangeWidget->setEnabled(d->MRMLModelDisplayNode->GetScalarRangeFlag() == vtkMRMLDisplayNode::UseManualScalarRange);
   d->DisplayedScalarRangeWidget->blockSignals(wasBlocking);
 
   double thresholdRange[2] = { 0.0, 0.0 };
@@ -683,6 +689,7 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
     case vtkMRMLDisplayNode::UseColorNodeScalarRange: controlMode = qMRMLModelDisplayNodeWidget::LUT; break;
     case vtkMRMLDisplayNode::UseDataTypeScalarRange: controlMode = qMRMLModelDisplayNodeWidget::DataType; break;
     case vtkMRMLDisplayNode::UseManualScalarRange: controlMode = qMRMLModelDisplayNodeWidget::Manual; break;
+    case vtkMRMLDisplayNode::UseDirectMapping: controlMode = qMRMLModelDisplayNodeWidget::DirectMapping; break;
     }
 
   wasBlocking = d->DisplayedScalarRangeModeComboBox->blockSignals(true);
@@ -716,7 +723,7 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
     d->ScalarsColorNodeComboBox->setCurrentNodeID(
       d->MRMLModelDisplayNode->GetColorNodeID());
     }
-
+  d->ScalarsColorNodeComboBox->setEnabled(d->MRMLModelDisplayNode->GetScalarRangeFlag() != vtkMRMLDisplayNode::UseDirectMapping);
   d->ScalarsColorNodeComboBox->blockSignals(wasBlocking);
   emit displayNodeChanged();
 }

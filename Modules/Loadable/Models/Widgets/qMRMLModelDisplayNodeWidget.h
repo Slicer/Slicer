@@ -72,7 +72,8 @@ public:
     Data = 0,
     LUT = 1,
     DataType = 2,
-    Manual = 3
+    Manual = 3,
+    DirectMapping = 4
   };
 
   /// Set scalar range mode

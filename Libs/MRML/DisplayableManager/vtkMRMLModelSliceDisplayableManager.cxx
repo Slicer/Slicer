@@ -555,33 +555,41 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
       if (vtkMRMLModelDisplayableManager::IsCellScalarsActive(modelDisplayNode, modelNode))
         {
         mapper->SetScalarModeToUseCellData();
-        mapper->SetColorModeToDefault();
         }
       else
         {
         mapper->SetScalarModeToUsePointData();
-        mapper->SetColorModeToMapScalars();
-      }
+        }
 
-      // The renderer uses the lookup table scalar range to
-      // render colors. By default, UseLookupTableScalarRange
-      // is set to false and SetScalarRange can be used on the
-      // mapper to map scalars into the lookup table. When set
-      // to true, SetScalarRange has no effect and it is necessary
-      // to force the scalarRange on the lookup table manually.
-      // Whichever way is used, the look up table range needs
-      // to be changed to render the correct scalar values, thus
-      // one lookup table can not be shared by multiple mappers
-      // if any of those mappers needs to map using its scalar
-      // values range. It is therefore necessary to make a copy
-      // of the colorNode vtkLookupTable in order not to impact
-      // that lookup table original range.
-      vtkLookupTable* dNodeLUT = modelDisplayNode->GetColorNode() ?
-                                 modelDisplayNode->GetColorNode()->GetLookupTable() : NULL;
-      vtkSmartPointer<vtkLookupTable> lut = vtkSmartPointer<vtkLookupTable>::Take(
-        vtkMRMLModelDisplayableManager::CreateLookupTableCopy(dNodeLUT));
-      lut->SetAlpha(displayNode->GetSliceIntersectionOpacity());
-      mapper->SetLookupTable(lut.GetPointer());
+      if (modelDisplayNode->GetScalarRangeFlag() == vtkMRMLDisplayNode::UseDirectMapping)
+        {
+        mapper->SetColorModeToDirectScalars();
+        mapper->SetLookupTable(NULL);
+        }
+      else
+        {
+        mapper->SetColorModeToMapScalars();
+
+        // The renderer uses the lookup table scalar range to
+        // render colors. By default, UseLookupTableScalarRange
+        // is set to false and SetScalarRange can be used on the
+        // mapper to map scalars into the lookup table. When set
+        // to true, SetScalarRange has no effect and it is necessary
+        // to force the scalarRange on the lookup table manually.
+        // Whichever way is used, the look up table range needs
+        // to be changed to render the correct scalar values, thus
+        // one lookup table can not be shared by multiple mappers
+        // if any of those mappers needs to map using its scalar
+        // values range. It is therefore necessary to make a copy
+        // of the colorNode vtkLookupTable in order not to impact
+        // that lookup table original range.
+        vtkLookupTable* dNodeLUT = modelDisplayNode->GetColorNode() ?
+          modelDisplayNode->GetColorNode()->GetLookupTable() : NULL;
+        vtkSmartPointer<vtkLookupTable> lut = vtkSmartPointer<vtkLookupTable>::Take(
+          vtkMRMLModelDisplayableManager::CreateLookupTableCopy(dNodeLUT));
+        lut->SetAlpha(displayNode->GetSliceIntersectionOpacity());
+        mapper->SetLookupTable(lut.GetPointer());
+        }
 
       // Set scalar range
       mapper->SetScalarRange(modelDisplayNode->GetScalarRange());

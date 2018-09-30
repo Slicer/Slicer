@@ -473,7 +473,7 @@
       <item row="3" column="1" colspan="2">
        <widget class="QComboBox" name="DisplayedScalarRangeModeComboBox">
         <property name="toolTip">
-         <string>Set the scalar range mode flag. Data (auto) updates the Display Scalar Range from the scalar range of the data.</string>
+         <string>Set the scalar range mode flag. Data (auto) updates the Display Scalar Range from the scalar range of the data. Direct color mapping option bypasses lookup table and uses scalar values as RGB color.</string>
         </property>
         <item>
          <property name="text">
@@ -493,6 +493,11 @@
         <item>
          <property name="text">
           <string>Manual</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Direct color mapping</string>
          </property>
         </item>
        </widget>

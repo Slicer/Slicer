@@ -1031,6 +1031,7 @@ const char* vtkMRMLDisplayNode
     case UseDataScalarRange: return "UseData";
     case UseColorNodeScalarRange: return "UseColorNode";
     case UseDataTypeScalarRange: return "UseDataType";
+    case UseDirectMapping: return "UseDirectMapping";
     default:
       // invalid id
       return "";

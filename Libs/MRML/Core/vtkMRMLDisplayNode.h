@@ -63,6 +63,7 @@ public:
   /// UseDataScalarRange - use the current min/max of the active data (former auto)
   /// UseColorNodeScalarRange - use the range from the associated color node
   /// UseDataTypeScalarRange - use the min/max of the numerical type of the
+  /// UseDirectMapping - map scalar values directly to RGB values
   /// data, for example minimum integer to maximum integer
   /// UseManualScalarRange - use user defined values
   /// \sa ScalarRangeFlag, GetScalarRangeFlag(), SetScalarRangeFlag(),
@@ -72,6 +73,7 @@ public:
     UseDataScalarRange,
     UseColorNodeScalarRange,
     UseDataTypeScalarRange,
+    UseDirectMapping,
     // insert types above this line
     NUM_SCALAR_RANGE_FLAGS
   } ScalarRangeFlagType;
