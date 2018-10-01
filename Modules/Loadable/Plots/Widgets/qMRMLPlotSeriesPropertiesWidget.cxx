@@ -159,11 +159,13 @@ void qMRMLPlotSeriesPropertiesWidgetPrivate::updateWidgetFromMRML()
       xAxisIndex = this->xAxisComboBox->findData(QString(xAxisName.c_str()));
       }
     this->xAxisComboBox->setCurrentIndex(xAxisIndex);
+    this->xAxisComboBox->setToolTip("");
     }
   else
     {
     this->xAxisComboBox->addItem("(Indexes)", QString());
     this->xAxisComboBox->setCurrentIndex(0);
+    this->xAxisComboBox->setToolTip(tr("This plot type uses indexes as X axis values. Switch to scatter plot type to allow column selection."));
     }
 
   std::string labelsName = this->PlotSeriesNode->GetLabelColumnName();
@@ -189,6 +191,7 @@ void qMRMLPlotSeriesPropertiesWidgetPrivate::updateWidgetFromMRML()
   this->labelsComboBox->blockSignals(labelsBlockSignals);
   this->yAxisComboBox->blockSignals(yAxisBlockSignals);
   this->xAxisComboBox->setEnabled(mrmlTableNode != NULL && this->PlotSeriesNode->IsXColumnRequired());
+
   this->yAxisComboBox->setEnabled(mrmlTableNode != NULL);
 
   // Update the PlotType ComboBox
