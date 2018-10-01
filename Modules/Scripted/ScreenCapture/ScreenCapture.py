@@ -229,6 +229,17 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.videoLengthSliderWidget.setEnabled(False)
     outputFormLayout.addRow("Video length:", self.videoLengthSliderWidget)
 
+    self.videoFrameRateSliderWidget = ctk.ctkSliderWidget()
+    self.videoFrameRateSliderWidget.singleStep = 0.1
+    self.videoFrameRateSliderWidget.minimum = 0.1
+    self.videoFrameRateSliderWidget.maximum = 60
+    self.videoFrameRateSliderWidget.value = 5.0
+    self.videoFrameRateSliderWidget.suffix = "fps"
+    self.videoFrameRateSliderWidget.decimals = 3
+    self.videoFrameRateSliderWidget.setToolTip("Frame rate in frames per second.")
+    self.videoFrameRateSliderWidget.setEnabled(False)
+    outputFormLayout.addRow("Video frame rate:", self.videoFrameRateSliderWidget)
+
     #
     # Advanced area
     #
@@ -322,12 +333,17 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.sequenceEndItemIndexWidget.connect('valueChanged(double)', self.setSequenceItemIndex)
     self.videoExportCheckBox.connect('toggled(bool)', self.fileNamePatternWidget, 'setDisabled(bool)')
     self.videoExportCheckBox.connect('toggled(bool)', self.videoFileNameWidget, 'setEnabled(bool)')
-    self.videoExportCheckBox.connect('toggled(bool)', self.videoLengthSliderWidget, 'setEnabled(bool)')
     self.videoExportCheckBox.connect('toggled(bool)', self.videoFormatWidget, 'setEnabled(bool)')
+    self.videoExportCheckBox.connect('toggled(bool)', self.videoLengthSliderWidget, 'setEnabled(bool)')
+    self.videoExportCheckBox.connect('toggled(bool)', self.videoFrameRateSliderWidget, 'setEnabled(bool)')
     self.videoFormatWidget.connect("currentIndexChanged(int)", self.updateVideoFormat)
     self.singleStepButton.connect('toggled(bool)', self.numberOfStepsSliderWidget, 'setDisabled(bool)')
     self.maxFramesWidget.connect('valueChanged(int)', self.maxFramesChanged)
+    self.videoLengthSliderWidget.connect('valueChanged(double)', self.setVideoLength)
+    self.videoFrameRateSliderWidget.connect('valueChanged(double)', self.setVideoFrameRate)
+    self.numberOfStepsSliderWidget.connect('valueChanged(double)', self.setNumberOfSteps)
 
+    self.setVideoLength() # update frame rate based on video length
     self.updateVideoFormat(0)
     self.updateViewOptions()
 
@@ -457,6 +473,19 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     sliceLogic = self.logic.getSliceLogicFromSliceNode(self.viewNodeSelector.currentNode())
     sliceLogic.SetSliceOffset(offset)
 
+  def setVideoLength(self, lengthSec=None):
+    wasBlocked = self.videoFrameRateSliderWidget.blockSignals(True)
+    self.videoFrameRateSliderWidget.value = self.numberOfStepsSliderWidget.value / self.videoLengthSliderWidget.value
+    self.videoFrameRateSliderWidget.blockSignals(wasBlocked)
+
+  def setVideoFrameRate(self, frameRateFps):
+    wasBlocked = self.videoFrameRateSliderWidget.blockSignals(True)
+    self.videoLengthSliderWidget.value = self.numberOfStepsSliderWidget.value / self.videoFrameRateSliderWidget.value
+    self.videoFrameRateSliderWidget.blockSignals(wasBlocked)
+
+  def setNumberOfSteps(self, frameRateFps):
+    self.setVideoLength()
+
   def setSequenceItemIndex(self, index):
     sequenceBrowserNode = self.sequenceBrowserNodeSelectorWidget.currentNode()
     sequenceBrowserNode.SetSelectedItemNumber(int(index))
@@ -549,7 +578,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
 
       import shutil
 
-      fps = numberOfSteps / self.videoLengthSliderWidget.value
+      fps = self.videoFrameRateSliderWidget.value
 
       if numberOfSteps > 1:
         forwardBackward = self.forwardBackwardCheckBox.checked
