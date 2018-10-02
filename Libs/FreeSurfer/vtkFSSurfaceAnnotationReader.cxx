@@ -90,20 +90,20 @@ int vtkFSSurfaceAnnotationReader::ReadFSAnnotation()
       return -1;
   }
 
-  if (NULL == this->FileName)
+  if (NULL == this->GetFileName())
   {
       vtkErrorMacro(<< "ReadFSAnnotation: fileName not specified.");
       return -1;
   }
 
-  vtkDebugMacro( << "ReadFSAnnotation: Reading surface annotation data... from " << this->FileName << "\n");
+  vtkDebugMacro( << "ReadFSAnnotation: Reading surface annotation data... from " << this->GetFileName() << "\n");
 
   // Try to open the file.
-  annotFile = fopen (this->FileName, "rb");
+  annotFile = fopen (this->GetFileName(), "rb");
   if (NULL == annotFile)
   {
       vtkErrorMacro (<< "\nReadFSAnnotation: could not open file\n "
-                     << this->FileName);
+                     << this->GetFileName());
       return vtkFSSurfaceAnnotationReader::FS_ERROR_LOADING_ANNOTATION;
   }
 
@@ -1086,25 +1086,25 @@ int vtkFSSurfaceAnnotationReader::WriteFSAnnotation()
         vtkErrorMacro(<< "WriteFSAnnotation: color table is null");
         return -1;
     }
-    if (NULL == this->FileName)
+    if (NULL == this->GetFileName())
     {
       vtkErrorMacro(<< "WriteFSAnnotation: fileName not specified.");
       return -1;
     }
 
-    vtkDebugMacro( << "WriteFSAnnotation: Writing surface annotation data to: " << this->FileName << "\n");
+    vtkDebugMacro( << "WriteFSAnnotation: Writing surface annotation data to: " << this->GetFileName() << "\n");
 
     // Try to open the file.
-    annotFile = fopen(this->FileName, "rb");
+    annotFile = fopen(this->GetFileName(), "rb");
     if (annotFile != NULL)
     {
         fclose(annotFile);
     }
-    annotFile = fopen (this->FileName, "wb");
+    annotFile = fopen (this->GetFileName(), "wb");
     if (NULL == annotFile)
     {
         vtkErrorMacro (<< "\nWriteFSAnnotation: could not open file\n "
-                       << this->FileName);
+                       << this->GetFileName());
         return vtkFSSurfaceAnnotationReader::FS_ERROR_LOADING_ANNOTATION;
     }
 

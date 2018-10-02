@@ -117,9 +117,9 @@ int vtkFSSurfaceReader::RequestData(
   vtkDebugMacro(<<"RequestData: Reading vtk polygonal data...");
 
   // Try to open the file.
-  surfaceFile = fopen(this->FileName, "rb") ;
+  surfaceFile = fopen(this->GetFileName(), "rb") ;
   if (!surfaceFile) {
-    vtkErrorMacro (<< "Could not open file " << this->FileName);
+    vtkErrorMacro (<< "Could not open file " << this->GetFileName());
     return 1;
   }
 
@@ -128,7 +128,7 @@ int vtkFSSurfaceReader::RequestData(
   if (magicNumber != vtkFSSurfaceReader::FS_QUAD_FILE_MAGIC_NUMBER &&
       magicNumber != vtkFSSurfaceReader::FS_NEW_QUAD_FILE_MAGIC_NUMBER &&
       magicNumber != vtkFSSurfaceReader::FS_TRIANGLE_FILE_MAGIC_NUMBER) {
-    vtkErrorMacro (<< "vtkFSSurfaceReader.cxx Execute: Wrong file type when loading " << this->FileName << "\n magic number = " << magicNumber << ". Supported ar " << vtkFSSurfaceReader::FS_QUAD_FILE_MAGIC_NUMBER << ", " << vtkFSSurfaceReader::FS_NEW_QUAD_FILE_MAGIC_NUMBER << ", and " << vtkFSSurfaceReader::FS_TRIANGLE_FILE_MAGIC_NUMBER );
+    vtkErrorMacro (<< "vtkFSSurfaceReader.cxx Execute: Wrong file type when loading " << this->GetFileName() << "\n magic number = " << magicNumber << ". Supported ar " << vtkFSSurfaceReader::FS_QUAD_FILE_MAGIC_NUMBER << ", " << vtkFSSurfaceReader::FS_NEW_QUAD_FILE_MAGIC_NUMBER << ", and " << vtkFSSurfaceReader::FS_TRIANGLE_FILE_MAGIC_NUMBER );
     return 1;
   }
 

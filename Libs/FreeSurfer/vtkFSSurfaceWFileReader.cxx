@@ -68,7 +68,7 @@ int vtkFSSurfaceWFileReader::ReadWFile()
     }
   vtkDebugMacro( << "vtkFSSurfaceWFileReader Execute() " << endl);
 
-  if (!this->FileName)
+  if (!this->GetFileName())
     {
     vtkErrorMacro(<<"vtkFSSurfaceWFileReader Execute: FileName not specified.");
     return this->FS_ERROR_W_NO_FILENAME;
@@ -77,10 +77,10 @@ int vtkFSSurfaceWFileReader::ReadWFile()
   vtkDebugMacro(<<"Reading surface WFile data...");
 
   // Try to open the file.
-  wFile = fopen(this->FileName, "rb") ;
+  wFile = fopen(this->GetFileName(), "rb") ;
   if (!wFile)
     {
-    vtkErrorMacro (<< "Could not open file " << this->FileName);
+    vtkErrorMacro (<< "Could not open file " << this->GetFileName());
     return this->FS_ERROR_W_OPEN;
     }
 

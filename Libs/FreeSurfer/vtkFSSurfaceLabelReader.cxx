@@ -59,7 +59,7 @@ int vtkFSSurfaceLabelReader::ReadLabel()
     }
   vtkDebugMacro( << "vtkFSSurfaceLabelReader Execute() " << endl);
 
-  if (!this->FileName)
+  if (!this->GetFileName())
     {
     vtkErrorMacro(<<"vtkFSSurfaceLabelReader Execute: FileName not specified.");
     return this->FS_ERROR_W_NO_FILENAME;
@@ -68,10 +68,10 @@ int vtkFSSurfaceLabelReader::ReadLabel()
   vtkDebugMacro(<<"Reading surface Label data...");
 
   // Try to open the file. It's a plain ascii file
-  labelFile = fopen(this->FileName, "r") ;
+  labelFile = fopen(this->GetFileName(), "r") ;
   if (!labelFile)
     {
-    vtkErrorMacro (<< "Could not open file " << this->FileName);
+    vtkErrorMacro (<< "Could not open file " << this->GetFileName());
     return this->FS_ERROR_W_OPEN;
     }
 
