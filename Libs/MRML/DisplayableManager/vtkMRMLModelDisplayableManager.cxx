@@ -1888,6 +1888,7 @@ int vtkMRMLModelDisplayableManager::Pick3D(double ras[3])
     return 0;
     }
 
+#if VTK_MAJOR_VERSION >= 9
   if (this->Internal->CellPicker->Pick3DPoint(ras, ren))
     {
     this->SetPickedCellID(this->Internal->CellPicker->GetCellId());
@@ -1896,6 +1897,9 @@ int vtkMRMLModelDisplayableManager::Pick3D(double ras[3])
     // Find the model this mesh belongs to
     this->FindPickedDisplayNodeFromMesh(mesh, ras);
     }
+#else
+  vtkErrorMacro("Pick3D: This function is only accessible in newer VTK version");
+#endif
 
   this->SetPickedRAS(ras);
 

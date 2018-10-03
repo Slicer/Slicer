@@ -848,12 +848,16 @@ int vtkMRMLSegmentationsDisplayableManager3D::Pick3D(double ras[3])
     return 0;
     }
 
+#if VTK_MAJOR_VERSION >= 9
   if (this->Internal->CellPicker->Pick3DPoint(ras, ren))
     {
     vtkPointSet* mesh = vtkPointSet::SafeDownCast(this->Internal->CellPicker->GetDataSet());
     // Find the segmentation and segment this mesh belongs to
     this->Internal->FindPickedDisplayNodeFromMesh(mesh);
     }
+#else
+  vtkErrorMacro("Pick3D: This function is only accessible in newer VTK version");
+#endif
 
   return 1;
 }

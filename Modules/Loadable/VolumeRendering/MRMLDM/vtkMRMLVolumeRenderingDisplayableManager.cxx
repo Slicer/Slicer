@@ -1454,12 +1454,16 @@ int vtkMRMLVolumeRenderingDisplayableManager::Pick3D(double ras[3])
     return 0;
     }
 
+#if VTK_MAJOR_VERSION >= 9
   if (this->Internal->VolumePicker->Pick3DPoint(ras, ren))
     {
     vtkVolume* volume = vtkVolume::SafeDownCast(this->Internal->VolumePicker->GetProp3D());
     // Find the volume this image data belongs to
     this->Internal->FindPickedDisplayNodeFromVolumeActor(volume);
     }
+#else
+  vtkErrorMacro("Pick3D: This function is only accessible in newer VTK version");
+#endif
 
   return 1;
 }
