@@ -79,6 +79,16 @@ else()
         )
     endforeach()
 
+    # Qt designer plugin
+    if(Slicer_BUILD_QT_DESIGNER_PLUGINS)
+      find_package(Qt5 REQUIRED COMPONENTS
+        Designer
+        )
+      list(APPEND QT_LIBRARIES
+        "Qt5::Designer"
+        )
+    endif()
+
     # WebEngine Dependencies
     if("Qt5::WebEngine" IN_LIST QT_LIBRARIES)
       install(PROGRAMS ${qt_root_dir}/libexec/QtWebEngineProcess
