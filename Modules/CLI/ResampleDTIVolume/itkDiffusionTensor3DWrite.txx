@@ -121,7 +121,7 @@ DiffusionTensor3DWrite<TData>
     writer->Update();
     return 0;
     }
-  catch( itk::ExceptionObject excep )
+  catch( itk::ExceptionObject &excep )
     {
     std::cerr
     << "DiffusionTensor3DWrite::Write: exception caught !" << std::endl;
