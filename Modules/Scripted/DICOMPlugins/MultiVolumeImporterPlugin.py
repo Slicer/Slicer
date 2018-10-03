@@ -752,6 +752,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       sec = float(hhmmss[0:2])*60.*60.+float(hhmmss[2:4])*60.
     elif len(hhmmss)==2: # HH
       sec = float(hhmmss[0:2])*60.*60.
+    else:
+      raise IOError("Invalid DICOM time string: "+tm+" (failed to parse HHMMSS)")
 
     sec = sec+ssfrac
 
