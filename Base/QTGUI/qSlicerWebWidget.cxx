@@ -46,6 +46,21 @@
 #include "qSlicerWebWidget.h"
 #include "qSlicerWebWidget_p.h"
 
+namespace
+{
+class qSlicerWebEngineView : public QWebEngineView
+{
+public:
+  qSlicerWebEngineView(QWidget *parent = Q_NULLPTR) : QWebEngineView(parent){}
+  virtual ~qSlicerWebEngineView(){}
+  virtual QSize sizeHint() const
+  {
+    // arbitrary values to address https://issues.slicer.org/view.php?id=4613
+    return QSize(150, 150);
+  }
+};
+}
+
 // --------------------------------------------------------------------------
 qSlicerWebWidgetPrivate::qSlicerWebWidgetPrivate(qSlicerWebWidget& object)
   :q_ptr(&object)
@@ -66,7 +81,7 @@ void qSlicerWebWidgetPrivate::init()
 #if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
   this->WebView = new QWebView();
 #else
-  this->WebView = new QWebEngineView();
+  this->WebView = new qSlicerWebEngineView();
 
   QWebEngineProfile *profile = new QWebEngineProfile("MyWebChannelProfile", q);
 
