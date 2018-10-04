@@ -78,10 +78,17 @@ public slots:
 
   void onMessageLogged(const QString& text, ctkErrorLogLevel::LogLevels level);
 
+protected:
+#ifndef Slicer_HAVE_WEBKIT_SUPPORT
+  virtual bool acceptNavigationRequest(const QUrl & url, QWebEnginePage::NavigationType type, bool isMainFrame);
+#endif
+
 protected slots:
   virtual void initJavascript();
   virtual void onLoadFinished(bool ok);
+#ifdef Slicer_HAVE_WEBKIT_SUPPORT
   virtual void onLinkClicked(const QUrl& url);
+#endif
   virtual void onLoadStarted();
 
 private:

@@ -76,6 +76,7 @@ public:
   QString SlicerArch;
 
   bool BrowsingEnabled;
+  bool NavigationRequestAccepted;
 
   ExtensionInstallWidgetWebChannelProxy* InstallWidgetForWebChannel;
 };

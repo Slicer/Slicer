@@ -49,7 +49,8 @@ void ExtensionInstallWidgetWebChannelProxy::refresh()
 qSlicerExtensionsInstallWidgetPrivate::qSlicerExtensionsInstallWidgetPrivate(qSlicerExtensionsInstallWidget& object)
   : qSlicerWebWidgetPrivate(object),
     q_ptr(&object),
-    BrowsingEnabled(true)
+    BrowsingEnabled(true),
+    NavigationRequestAccepted(true)
 {
   Q_Q(qSlicerExtensionsInstallWidget);
   this->ExtensionsManagerModel = 0;
@@ -398,7 +399,7 @@ void qSlicerExtensionsInstallWidget::onLoadFinished(bool ok)
 {
   Q_D(qSlicerExtensionsInstallWidget);
   this->Superclass::onLoadFinished(ok);
-  if(!ok)
+  if(!ok && d->NavigationRequestAccepted)
     {
     d->setFailurePage(QStringList() << QString("Failed to load extension page using this URL: <strong>%1</strong>")
                       .arg(d->extensionsListUrl().toString()));
@@ -406,6 +407,7 @@ void qSlicerExtensionsInstallWidget::onLoadFinished(bool ok)
 }
 
 // --------------------------------------------------------------------------
+#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
 void qSlicerExtensionsInstallWidget::onLinkClicked(const QUrl& url)
 {
   if(url.host() == this->extensionsManagerModel()->serverUrl().host())
@@ -420,3 +422,23 @@ void qSlicerExtensionsInstallWidget::onLinkClicked(const QUrl& url)
       }
     }
 }
+#else
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsInstallWidget::acceptNavigationRequest(const QUrl & url, QWebEnginePage::NavigationType type, bool isMainFrame)
+{
+  Q_D(qSlicerExtensionsInstallWidget);
+  if(url.host() == this->extensionsManagerModel()->serverUrl().host())
+    {
+    d->NavigationRequestAccepted = this->Superclass::acceptNavigationRequest(url, type, isMainFrame);
+    }
+  else
+    {
+    if(!QDesktopServices::openUrl(url))
+      {
+      qWarning() << "Failed to open url:" << url;
+      }
+    d->NavigationRequestAccepted = false;
+    }
+  return d->NavigationRequestAccepted;
+}
+#endif

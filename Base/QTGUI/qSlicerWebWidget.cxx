@@ -46,6 +46,7 @@
 #include "qSlicerWebWidget.h"
 #include "qSlicerWebWidget_p.h"
 
+// --------------------------------------------------------------------------
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
 namespace
 {
@@ -60,6 +61,18 @@ public:
     return QSize(150, 150);
   }
 };
+}
+
+// --------------------------------------------------------------------------
+qSlicerWebEnginePage::qSlicerWebEnginePage(QWebEngineProfile *profile, QObject *parent)
+  : QWebEnginePage(profile, parent),
+    WebWidget(nullptr)
+{
+}
+
+// --------------------------------------------------------------------------
+qSlicerWebEnginePage::~qSlicerWebEnginePage()
+{
 }
 #endif
 
@@ -106,8 +119,9 @@ void qSlicerWebWidgetPrivate::init()
     profile->scripts()->insert(script);
     }
 
-  qSlicerWebEnginePage *myPage = new qSlicerWebEnginePage(profile, this->WebView);
-  this->WebView->setPage(myPage);
+  this->WebEnginePage = new qSlicerWebEnginePage(profile, this->WebView);
+  this->WebEnginePage->WebWidget = q;
+  this->WebView->setPage(this->WebEnginePage);
   this->WebChannel = new QWebChannel(this->WebView->page());
   this->initializeWebChannel(this->WebChannel);
   this->WebView->page()->setWebChannel(this->WebChannel);
@@ -317,10 +331,19 @@ void qSlicerWebWidget::onLoadFinished(bool ok)
 }
 
 // --------------------------------------------------------------------------
+#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
 void qSlicerWebWidget::onLinkClicked(const QUrl& url)
 {
   this->webView()->setUrl(url);
 }
+#else
+bool qSlicerWebWidget::acceptNavigationRequest(const QUrl & url, QWebEnginePage::NavigationType type, bool isMainFrame)
+{
+  Q_D(qSlicerWebWidget);
+  Q_ASSERT(d->WebEnginePage);
+  return d->WebEnginePage->webEnginePageAcceptNavigationRequest(url, type, isMainFrame);
+}
+#endif
 
 // --------------------------------------------------------------------------
 void qSlicerWebWidget::handleSslErrors(QNetworkReply* reply,

@@ -42,18 +42,38 @@ class QWebView;
 
 class qSlicerWebEnginePage: public QWebEnginePage
 {
+  friend class qSlicerWebWidget;
+  friend class qSlicerWebWidgetPrivate;
 public:
-  qSlicerWebEnginePage(QWebEngineProfile *profile, QObject *parent = nullptr)
-    : QWebEnginePage(profile, parent)
-  {
-  }
+  qSlicerWebEnginePage(QWebEngineProfile *profile, QObject *parent = nullptr);
+  virtual ~qSlicerWebEnginePage();
+
 protected:
+  virtual bool acceptNavigationRequest(const QUrl & url, QWebEnginePage::NavigationType type, bool isMainFrame)
+  {
+    Q_ASSERT(this->WebWidget);
+    return this->WebWidget->acceptNavigationRequest(url, type, isMainFrame);
+  }
+
+  bool webEnginePageAcceptNavigationRequest(const QUrl & url, QWebEnginePage::NavigationType type, bool isMainFrame)
+  {
+    return this->QWebEnginePage::acceptNavigationRequest(url, type, isMainFrame);
+  }
+
+  virtual QWebEnginePage *createWindow(QWebEnginePage::WebWindowType type)
+  {
+    qWarning() << "qSlicerWebEnginePage: createWindow not implemented";
+    return nullptr;
+  }
+
   virtual bool certificateError(const QWebEngineCertificateError &certificateError)
   {
     qDebug() << "[SSL] [" << qPrintable(certificateError.url().host().trimmed()) << "]"
              << qPrintable(certificateError.errorDescription());
     return false;
   }
+private:
+  qSlicerWebWidget* WebWidget;
 };
 
 #endif
@@ -92,6 +112,7 @@ public:
 #if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
   QWebView* WebView;
 #else
+  qSlicerWebEnginePage* WebEnginePage;
   QWebEngineView* WebView;
   QWebChannel* WebChannel;
 #endif

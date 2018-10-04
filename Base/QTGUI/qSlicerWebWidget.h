@@ -37,6 +37,7 @@ class QUrl;
 class QWebView;
 #else
 class QWebChannel;
+#include <QWebEnginePage>
 class QWebEngineView;
 #endif
 
@@ -54,6 +55,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebWidget
   : public QWidget
 {
   Q_OBJECT
+  friend class qSlicerWebEnginePage;
 public:
   /// Superclass typedef
   typedef QWidget Superclass;
@@ -86,7 +88,9 @@ protected slots:
   virtual void initJavascript();
   virtual void onLoadStarted();
   virtual void onLoadFinished(bool ok);
+#ifdef Slicer_HAVE_WEBKIT_SUPPORT
   virtual void onLinkClicked(const QUrl& url);
+#endif
   void handleSslErrors(QNetworkReply* reply, const QList<QSslError> &errors);
 
 protected:
@@ -96,6 +100,10 @@ protected:
   /// Event filter used to capture WebView Show and Hide events in order to both set
   /// "document.webkitHidden" property and trigger the associated event.
   bool eventFilter(QObject *obj, QEvent *event);
+
+#ifndef Slicer_HAVE_WEBKIT_SUPPORT
+  virtual bool acceptNavigationRequest(const QUrl & url, QWebEnginePage::NavigationType type, bool isMainFrame);
+#endif
 
 private:
   Q_DECLARE_PRIVATE(qSlicerWebWidget);
