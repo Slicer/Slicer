@@ -66,6 +66,7 @@
 #include <QSurfaceFormat>
 #include <QVTKOpenGLWidget.h>
 #endif
+#include <vtkNew.h>
 
 // PythonQt includes
 #ifdef Slicer_USE_PYTHONQT
