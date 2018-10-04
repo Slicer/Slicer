@@ -46,6 +46,7 @@
 #include "qSlicerWebWidget.h"
 #include "qSlicerWebWidget_p.h"
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
 namespace
 {
 class qSlicerWebEngineView : public QWebEngineView
@@ -60,6 +61,7 @@ public:
   }
 };
 }
+#endif
 
 // --------------------------------------------------------------------------
 qSlicerWebWidgetPrivate::qSlicerWebWidgetPrivate(qSlicerWebWidget& object)
