@@ -1001,7 +1001,7 @@ void qSlicerApplication::setRenderPaused(bool pause)
 
   if (d->LayoutManager)
     {
-    d->LayoutManager->setRenderPaused(pause);
+    d->LayoutManager.data()->setRenderPaused(pause);
     }
 
   emit renderPaused(pause);
