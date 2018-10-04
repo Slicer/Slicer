@@ -857,6 +857,7 @@ int vtkMRMLSegmentationsDisplayableManager3D::Pick3D(double ras[3])
     }
 #else
   vtkErrorMacro("Pick3D: This function is only accessible in newer VTK version");
+  (void)ras; // not used
 #endif
 
   return 1;
