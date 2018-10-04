@@ -6,6 +6,9 @@
 
 // VTK includes
 #include <vtkObject.h>
+#include <vtkSmartPointer.h>
+
+class vtkRenderWindow;
 
 // VTKSYS includes
 #include <vtksys/SystemInformation.hxx>
@@ -59,8 +62,38 @@ public:
   void RunCPUCheck();
   void RunOSCheck();
   void RunMemoryCheck();
+  void RunRenderingCheck();
+
+  enum RenderingCapabilitiesMask
+  {
+    NONE = 0,
+    /// Indicates if onscreen rendering is possible.
+    ONSCREEN_RENDERING = 0x01,
+    /// Indicates if headless rendering using OSMesa is possible.
+    HEADLESS_RENDERING_USES_OSMESA = 0x04,
+    /// Indicates if headless rendering using EGL is possible.
+    HEADLESS_RENDERING_USES_EGL = 0x08,
+    /// Indicates if any headless rendering is possible.
+    HEADLESS_RENDERING = HEADLESS_RENDERING_USES_OSMESA | HEADLESS_RENDERING_USES_EGL,
+    /// Indicates if any rendering is possible.
+    RENDERING = ONSCREEN_RENDERING | HEADLESS_RENDERING,
+    /// If rendering is possible, this indicates that that OpenGL version
+    /// is adequate for basic rendering requirements.
+    /// This flag will only be set if `RENDERING` is set too.
+    OPENGL = 0x10,
+  };
+
+  /// Returns rendering capabilities as bitfield of RenderingCapabilitiesMask values.
+  /// Value is set by calling RunRenderingCheck().
+  vtkGetMacro(RenderingCapabilities, vtkTypeUInt32);
+
+  /// Returns string describing rendering capabilities.
+  /// Value is set by calling RunRenderingCheck().
+  vtkGetMacro(RenderingCapabilitiesDetails, std::string);
 
 protected:
+
+  vtkSmartPointer<vtkRenderWindow> NewOffscreenRenderWindow();
 
   vtkSystemInformation();
   virtual ~vtkSystemInformation();
@@ -71,6 +104,7 @@ protected:
 
   vtksys::SystemInformation SystemInformation;
   std::string StringHolder;
-
+  vtkTypeUInt32 RenderingCapabilities;
+  std::string RenderingCapabilitiesDetails;
 };
 #endif

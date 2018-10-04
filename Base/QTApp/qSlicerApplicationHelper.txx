@@ -74,7 +74,7 @@ void splashMessage(QScopedPointer<QSplashScreen>& splashScreen, const QString& m
 
 //----------------------------------------------------------------------------
 template<typename SlicerMainWindowType>
-void qSlicerApplicationHelper::postInitializeApplication(
+int qSlicerApplicationHelper::postInitializeApplication(
     qSlicerApplication& app,
     QScopedPointer<QSplashScreen>& splashScreen,
     QScopedPointer<SlicerMainWindowType>& window
@@ -92,6 +92,17 @@ void qSlicerApplicationHelper::postInitializeApplication(
   bool enableMainWindow = !app.commandOptions()->noMainWindow();
   enableMainWindow = enableMainWindow && !app.commandOptions()->runPythonAndExit();
   bool showSplashScreen = !app.commandOptions()->noSplash() && enableMainWindow;
+
+
+  if (enableMainWindow && !app.testAttribute(qSlicerCoreApplication::AA_EnableTesting))
+    {
+    // Warn the user if rendering requirements are not met and offer
+    // exiting from the application.
+    if (!qSlicerApplicationHelper::checkRenderingCapabilities())
+      {
+      return 1;
+      }
+    }
 
   if (showSplashScreen)
     {
@@ -197,4 +208,5 @@ void qSlicerApplicationHelper::postInitializeApplication(
   QTimer::singleShot(0, &app, SLOT(handleCommandLineArguments()));
 
   // qSlicerApplicationHelper::showMRMLEventLoggerWidget();
+  return 0;
 }

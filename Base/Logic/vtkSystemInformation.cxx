@@ -1,10 +1,12 @@
 #include "vtkSystemInformation.h"
 #include <vtkObjectFactory.h>
+#include <vtkRenderWindow.h>
 
 vtkStandardNewMacro(vtkSystemInformation);
 
 vtkSystemInformation::vtkSystemInformation()
 {
+  this->RenderingCapabilities = 0;
 }
 
 vtkSystemInformation::~vtkSystemInformation()
@@ -221,4 +223,86 @@ vtkSystemInformation::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "GetAvailableVirtualMemory: " << this->GetAvailableVirtualMemory() << "\n";
   os << indent << "GetTotalPhysicalMemory: " << this->GetTotalPhysicalMemory() << "\n";
   os << indent << "GetAvailablePhysicalMemory: " << this->GetAvailablePhysicalMemory() << "\n";
+}
+
+//----------------------------------------------------------------------------
+void vtkSystemInformation::RunRenderingCheck()
+{
+  this->RenderingCapabilities = 0;
+  this->RenderingCapabilitiesDetails.clear();
+
+  // This method is based on ParaView's capabilities check method in
+  // ParaViewCore\ClientServerCore\Rendering\vtkPVRenderingCapabilitiesInformation.cxx
+
+#if defined(VTK_USE_COCOA) || defined(_WIN32)
+  this->RenderingCapabilities |= ONSCREEN_RENDERING;
+#elif defined(VTK_USE_X)
+  // if using X, need to check if display is accessible.
+  Display* dId = XOpenDisplay((char*)NULL);
+  if (dId)
+  {
+    XCloseDisplay(dId);
+    this->RenderingCapabilities |= ONSCREEN_RENDERING;
+  }
+#endif
+
+#if defined(VTK_OPENGL_HAS_OSMESA)
+  this->RenderingCapabilities |= HEADLESS_RENDERING_USES_OSMESA;
+#endif
+
+#if defined(VTK_OPENGL_HAS_EGL)
+  this->RenderingCapabilities |= HEADLESS_RENDERING_USES_EGL;
+#endif
+
+  if ((this->RenderingCapabilities & RENDERING) != 0)
+    {
+    // now test OpenGL capabilities.
+    vtkSmartPointer<vtkRenderWindow> window =
+      vtkSystemInformation::NewOffscreenRenderWindow();
+    if (window && window->SupportsOpenGL())
+      {
+      this->RenderingCapabilities |= OPENGL;
+      const char* opengl_capabilities = window->ReportCapabilities();
+      this->RenderingCapabilitiesDetails = (opengl_capabilities ? opengl_capabilities : "");
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+vtkSmartPointer<vtkRenderWindow> vtkSystemInformation::NewOffscreenRenderWindow()
+{
+  // This method is based on ParaView's
+  // vtkPVRenderingCapabilitiesInformation::NewOffscreenRenderWindow() method in
+  // ParaViewCore\ClientServerCore\Rendering\vtkPVRenderingCapabilitiesInformation.cxx
+
+  vtkSmartPointer<vtkRenderWindow> window;
+
+  // if headless rendering is supported, let's create the headless render
+  // window.
+#if defined(VTK_OPENGL_HAS_EGL)
+  window.TakeReference(vtkEGLRenderWindow::New());
+  // vtkEGLRenderWindow gets initialized with `VTK_DEFAULT_EGL_DEVICE_INDEX`
+  // CMake variable. If the command line options overrode it, change it.
+  if (window)
+  {
+    int deviceIndex = GetEGLDeviceIndex();
+    if (deviceIndex >= 0)
+    {
+      window->SetDeviceIndex(deviceIndex);
+    }
+  }
+#elif defined(VTK_OPENGL_HAS_OSMESA)
+  window.TakeReference(vtkOSOpenGLRenderWindow::New());
+#endif
+  if (!window)
+  {
+    // if not, let VTK create a default based on CMake flags specified.
+    window = vtkSmartPointer<vtkRenderWindow>::New();
+  }
+
+  window->SetOffScreenRendering(1); // we want to keep the window unmapped.
+                                    // this should be largely unnecessary, but vtkRenderWindow subclasses
+                                    // are fairly inconsistent about this so let's just set it always.
+
+  return window;
 }

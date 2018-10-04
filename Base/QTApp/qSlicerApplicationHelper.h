@@ -46,8 +46,11 @@ public:
 
   static void preInitializeApplication(const char* argv0, ctkProxyStyle* style);
 
+  /// Perform initialization steps on the application.
+  /// \return If return value is non-zero then the application will terminate using
+  /// the returned value as exit code.
   template<typename SlicerMainWindowType>
-  static void postInitializeApplication(
+  static int postInitializeApplication(
       qSlicerApplication& app,
       QScopedPointer<QSplashScreen>& splashScreen,
       QScopedPointer<SlicerMainWindowType>& window);
@@ -55,6 +58,10 @@ public:
   static void setupModuleFactoryManager(qSlicerModuleFactoryManager * moduleFactoryManager);
 
   static void showMRMLEventLoggerWidget();
+
+  /// Display a warning popup if rendering capabilities do not meet requirements.
+  /// If user chooses not to continue then this method returns false.
+  Q_INVOKABLE static bool checkRenderingCapabilities();
 
 private:
   Q_DISABLE_COPY(qSlicerApplicationHelper);

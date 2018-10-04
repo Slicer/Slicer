@@ -22,8 +22,12 @@
 
 // Qt includes
 #include <QFont>
+#include <QLabel>
 #include <QSettings>
 #include <QSysInfo>
+#include <QThread>
+#include <QTimer>
+#include <QVBoxLayout>
 
 // Slicer includes
 #include "qSlicerApplication.h"
@@ -41,7 +45,10 @@
 # include "qSlicerScriptedLoadableModuleFactory.h"
 #endif
 
+#include <vtkSystemInformation.h>
+
 // CTK includes
+#include <ctkMessageBox.h>
 #include <ctkProxyStyle.h>
 #ifdef Slicer_USE_PYTHONQT
 # include <ctkPythonConsole.h>
@@ -253,4 +260,63 @@ void qSlicerApplicationHelper::showMRMLEventLoggerWidget()
                    SLOT(setMRMLScene(vtkMRMLScene*)));
 
   logger->show();
+}
+
+//----------------------------------------------------------------------------
+bool qSlicerApplicationHelper::checkRenderingCapabilities()
+{
+  vtkNew<vtkSystemInformation> systemInfo;
+  systemInfo->RunRenderingCheck();
+  if (systemInfo->GetRenderingCapabilities() & vtkSystemInformation::OPENGL)
+    {
+    return true;
+    }
+
+  qWarning("Graphics capability of this computer is not sufficient to run this application");
+
+  QString message = tr("Graphics capability of this computer is not sufficient to "
+    "run this application. The application most likely will not function properly.");
+
+  QString details = tr(
+    "See more information and help at:\nhttps://www.slicer.org/wiki/Documentation/Nightly/FAQ/General#Slicer_does_not_start \n\n"
+    "Graphics capabilities of this computer:\n\n");
+  details += systemInfo->GetRenderingCapabilitiesDetails().c_str();
+
+  ctkMessageBox *messageBox = new ctkMessageBox(0);
+  messageBox->setAttribute(Qt::WA_DeleteOnClose, true);
+  messageBox->setIcon(QMessageBox::Warning);
+  messageBox->setWindowTitle(tr("Insufficient graphics capability"));
+  messageBox->setText(message);
+  messageBox->setDetailedText(details);
+#if defined(_WIN32)
+  // Older versions of Windows Remote Desktop protocol (RDP) makes the system report lower
+  // OpenGL capability than the actual capability is (when the system is used locally).
+  // On these sytems, Slicer cannot be started while an RDP connection is active,
+  // but an already started Slicer can be operated without problems.
+  // Retry option allows delayed restart of Slicer through remote connection.
+  // There is no need to offer "retry" option on other operating systems.
+  messageBox->setStandardButtons(QMessageBox::Close | QMessageBox::Ignore | QMessageBox::Retry);
+#else
+  messageBox->setStandardButtons(QMessageBox::Close | QMessageBox::Ignore);
+#endif
+  messageBox->setDefaultButton(QMessageBox::Close);
+  int result = messageBox->exec();
+
+  if (result == QMessageBox::Retry)
+    {
+    QDialog* messagePopup = new QDialog();
+    QVBoxLayout* layout = new QVBoxLayout();
+    messagePopup->setLayout(layout);
+    double restartDelaySec = 5.0;
+    QLabel* label = new QLabel(tr("Application will restart in %1 seconds. "
+      "If you are trying to connect through remote desktop, disconnect now "
+      "and reconnect in %1 seconds.").arg(int(restartDelaySec)), messagePopup);
+    layout->addWidget(label);
+    QTimer::singleShot(restartDelaySec*1000, messagePopup, SLOT(close()));
+    messagePopup->exec();
+
+    qSlicerApplication::restart();
+    }
+
+  return (result == QMessageBox::Ignore);
 }
