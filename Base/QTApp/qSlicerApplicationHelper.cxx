@@ -305,17 +305,29 @@ bool qSlicerApplicationHelper::checkRenderingCapabilities()
 
   if (result == QMessageBox::Retry)
     {
-    QDialog* messagePopup = new QDialog();
-    QVBoxLayout* layout = new QVBoxLayout();
-    messagePopup->setLayout(layout);
-    double restartDelaySec = 5.0;
-    QLabel* label = new QLabel(tr("Application will restart in %1 seconds. "
-      "If you are trying to connect through remote desktop, disconnect now "
-      "and reconnect in %1 seconds.").arg(int(restartDelaySec)), messagePopup);
-    layout->addWidget(label);
-    QTimer::singleShot(restartDelaySec*1000, messagePopup, SLOT(close()));
-    messagePopup->exec();
+    // This option is for restarting the application outside of a
+    // remote desktop session (during remote desktop sessions, system
+    // may report lower OpenGL capabilities).
 
+    // Run tscon system tool to create a new session, which terminates
+    // the existing session (closes remote desktop connection).
+    SHELLEXECUTEINFO shExecInfo;
+    shExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+    shExecInfo.fMask = NULL;
+    shExecInfo.hwnd = NULL;
+    // tscon requires administrator access, therefore "runas" verb is needed.
+    // UAC popup will be displayed.
+    shExecInfo.lpVerb = "runas";
+    shExecInfo.lpFile = "tscon.exe";
+    shExecInfo.lpParameters = "1 /dest:console";
+    shExecInfo.lpDirectory = NULL;
+    shExecInfo.nShow = SW_MAXIMIZE;
+    shExecInfo.hInstApp = NULL;
+    ShellExecuteEx(&shExecInfo);
+    QApplication::processEvents();
+
+    // By now the remote desktop session is terminated, we restart
+    // the application in a normal local desktop session.
     qSlicerApplication::restart();
     }
 
