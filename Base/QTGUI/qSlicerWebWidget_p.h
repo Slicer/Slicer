@@ -62,6 +62,7 @@ protected:
 
   virtual QWebEnginePage *createWindow(QWebEnginePage::WebWindowType type)
   {
+    Q_UNUSED(type);
     qWarning() << "qSlicerWebEnginePage: createWindow not implemented";
     return nullptr;
   }
