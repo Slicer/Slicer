@@ -303,6 +303,7 @@ bool qSlicerApplicationHelper::checkRenderingCapabilities()
   messageBox->setDefaultButton(QMessageBox::Close);
   int result = messageBox->exec();
 
+#if defined(_WIN32)
   if (result == QMessageBox::Retry)
     {
     // This option is for restarting the application outside of a
@@ -330,6 +331,7 @@ bool qSlicerApplicationHelper::checkRenderingCapabilities()
     // the application in a normal local desktop session.
     qSlicerApplication::restart();
     }
+#endif
 
   return (result == QMessageBox::Ignore);
 }
