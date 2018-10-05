@@ -61,6 +61,8 @@ public:
 
   /// Display a warning popup if rendering capabilities do not meet requirements.
   /// If user chooses not to continue then this method returns false.
+  /// Known limitation: currently this method only works reliably on Windows operating system.
+  /// See more information at https://issues.slicer.org/view.php?id=4252
   Q_INVOKABLE static bool checkRenderingCapabilities();
 
 private:

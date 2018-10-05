@@ -93,7 +93,10 @@ int qSlicerApplicationHelper::postInitializeApplication(
   enableMainWindow = enableMainWindow && !app.commandOptions()->runPythonAndExit();
   bool showSplashScreen = !app.commandOptions()->noSplash() && enableMainWindow;
 
-
+// qSlicerApplicationHelper::checkRenderingCapabilities() seems only work reliably
+// on Windows, therefore we skip it on other platforms.
+// See details at https://issues.slicer.org/view.php?id=4252
+#if defined(_WIN32)
   if (enableMainWindow && !app.testAttribute(qSlicerCoreApplication::AA_EnableTesting))
     {
     // Warn the user if rendering requirements are not met and offer
@@ -103,6 +106,7 @@ int qSlicerApplicationHelper::postInitializeApplication(
       return 1;
       }
     }
+#endif
 
   if (showSplashScreen)
     {

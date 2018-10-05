@@ -254,18 +254,28 @@ void vtkSystemInformation::RunRenderingCheck()
   this->RenderingCapabilities |= HEADLESS_RENDERING_USES_EGL;
 #endif
 
-  if ((this->RenderingCapabilities & RENDERING) != 0)
+  if (!(this->RenderingCapabilities & RENDERING))
     {
-    // now test OpenGL capabilities.
-    vtkSmartPointer<vtkRenderWindow> window =
-      vtkSystemInformation::NewOffscreenRenderWindow();
-    if (window && window->SupportsOpenGL())
-      {
-      this->RenderingCapabilities |= OPENGL;
-      const char* opengl_capabilities = window->ReportCapabilities();
-      this->RenderingCapabilitiesDetails = (opengl_capabilities ? opengl_capabilities : "");
-      }
+    this->RenderingCapabilitiesDetails = "No suitable renderer found.";
+    return;
     }
+
+  // now test OpenGL capabilities.
+
+  vtkSmartPointer<vtkRenderWindow> window = vtkSystemInformation::NewOffscreenRenderWindow();
+  if (!window)
+    {
+    this->RenderingCapabilitiesDetails = "Failed to create render window.";
+    return;
+    }
+  if (!window->SupportsOpenGL())
+    {
+    this->RenderingCapabilitiesDetails = "Renderer does not support required OpenGL capabilities.";
+    return;
+    }
+  this->RenderingCapabilities |= OPENGL;
+  const char* opengl_capabilities = window->ReportCapabilities();
+  this->RenderingCapabilitiesDetails = (opengl_capabilities ? opengl_capabilities : "");
 }
 
 //----------------------------------------------------------------------------
