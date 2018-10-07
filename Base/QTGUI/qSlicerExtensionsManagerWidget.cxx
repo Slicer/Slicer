@@ -183,6 +183,7 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
   this->setupUi(q);
 
   this->ExtensionsManageBrowser->setBrowsingEnabled(false);
+  this->ExtensionsManageBrowser->webView()->load(QUrl("about:"));
 
   // Back and forward buttons
   qSlicerExtensionsActionsWidget * actionsWidget = new qSlicerExtensionsActionsWidget;
