@@ -13,16 +13,16 @@ endif()
 if(NOT SWIG_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   set(SWIG_TARGET_VERSION 3.0.10)
-  set(SWIG_DOWNLOAD_SOURCE_HASH "bb4ab8047159469add7d00910e203124")
-  set(SWIG_DOWNLOAD_WIN_HASH "f229724fe856aa78df6128ecfefe6e0a")
+  set(SWIG_DOWNLOAD_SOURCE_HASH "599883a08b673cb0975176084fa7a6f5c7e3f6ffa86e8ba600e9d81d80b9d7632668e61c8db519b4c800bdbddcdbf55b0f5ef49f6a80ceafaef864ffcaaa30c1")
+  set(SWIG_DOWNLOAD_WIN_HASH "7aee934e1b62086fe63275013e32a9991dd3a31ceaf2a4cc0f4ced50f5617e3592c9bf89301435d020d4d95b88333690f015cb84725f4e356277f1acdbf01389")
 
   if(WIN32)
     set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/swigwin-${SWIG_TARGET_VERSION})
 
     # swig.exe available as pre-built binary on Windows:
     ExternalProject_Add(Swig
-      URL http://midas3.kitware.com/midas/api/rest?method=midas.bitstream.download&checksum=${SWIG_DOWNLOAD_WIN_HASH}&name=swigwin-${SWIG_TARGET_VERSION}.zip
-      URL_MD5 ${SWIG_DOWNLOAD_WIN_HASH}
+      URL https://data.kitware.com:443/api/v1/file/hashsum/sha512/${SWIG_DOWNLOAD_WIN_HASH}/download # swigwin-${SWIG_TARGET_VERSION}.zip
+      URL_HASH SHA512=${SWIG_DOWNLOAD_WIN_HASH}
       SOURCE_DIR "${EP_BINARY_DIR}"
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
@@ -85,8 +85,8 @@ ExternalProject_Execute(${proj} \"configure\" sh ${EP_SOURCE_DIR}/configure
 ")
 
     ExternalProject_add(Swig
-      URL http://midas3.kitware.com/midas/api/rest?method=midas.bitstream.download&checksum=${SWIG_DOWNLOAD_SOURCE_HASH}&name=swig-${SWIG_TARGET_VERSION}.tar.gz
-      URL_MD5 ${SWIG_DOWNLOAD_SOURCE_HASH}
+      URL https://data.kitware.com:443/api/v1/file/hashsum/sha512/${SWIG_DOWNLOAD_SOURCE_HASH}/download # swig-${SWIG_TARGET_VERSION}.tar.gz
+      URL_HASH SHA512=${SWIG_DOWNLOAD_SOURCE_HASH}
       DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
       SOURCE_DIR ${EP_SOURCE_DIR}
       BINARY_DIR ${EP_BINARY_DIR}
