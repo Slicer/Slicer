@@ -314,7 +314,7 @@ bool qSlicerApplicationHelper::checkRenderingCapabilities()
     // the existing session (closes remote desktop connection).
     SHELLEXECUTEINFO shExecInfo;
     shExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
-    shExecInfo.fMask = NULL;
+    shExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
     shExecInfo.hwnd = NULL;
     // tscon requires administrator access, therefore "runas" verb is needed.
     // UAC popup will be displayed.
@@ -325,6 +325,8 @@ bool qSlicerApplicationHelper::checkRenderingCapabilities()
     shExecInfo.nShow = SW_MAXIMIZE;
     shExecInfo.hInstApp = NULL;
     ShellExecuteEx(&shExecInfo);
+    WaitForSingleObject(shExecInfo.hProcess, INFINITE);
+
     QApplication::processEvents();
 
     // By now the remote desktop session is terminated, we restart
