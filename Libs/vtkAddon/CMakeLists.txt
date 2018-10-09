@@ -18,9 +18,9 @@ endif()
 #
 # VTK
 #
-#find_package(VTK REQUIRED)
-#include(${VTK_USE_FILE})
-
+find_package(VTK REQUIRED)
+include(${VTK_USE_FILE})
+set(vtkAddon_LIBS ${VTK_LIBRARIES})
 
 
 # --------------------------------------------------------------------------
@@ -64,7 +64,22 @@ set(vtkAddon_SRCS
   vtkAddonMathUtilities.h
   vtkAddonMathUtilities.cxx
   vtkAddonSetGet.h
+)
+
+if(Slicer_VTK_RENDERING_USE_OpenGL2_BACKEND)
+  set(vtkAddon_SRCS
+    ${vtkAddon_SRCS}
+    vtkOpenGLTextureImage.cxx
+    vtkOpenGLTextureImage.h
+    vtkOpenGLShaderComputation.cxx
+    vtkOpenGLShaderComputation.h
   )
+  find_package(OpenGL)
+  set(vtkAddon_LIBS
+    ${vtkAddon_LIBS}
+    ${OPENGL_LIBRARIES}
+  )
+endif()
 
 # Abstract/pure virtual classes
 
@@ -97,10 +112,7 @@ set(lib_name ${PROJECT_NAME})
 set(srcs ${vtkAddon_SRCS})
 add_library(${lib_name} ${srcs})
 
-set(libs
-  ${VTK_LIBRARIES}
-  )
-target_link_libraries(${lib_name} ${libs})
+target_link_libraries(${lib_name} ${vtkAddon_LIBS})
 
 # Apply user-defined properties to the library target.
 if(Slicer_LIBRARY_PROPERTIES)
