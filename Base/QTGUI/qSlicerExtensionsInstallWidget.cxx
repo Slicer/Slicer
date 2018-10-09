@@ -159,11 +159,10 @@ void qSlicerExtensionsInstallWidgetPrivate::updateWebChannelScript(QByteArray& w
 #else
   webChannelScript.append(
       "\n"
-      "var extensions_manager_model;"
-      "var extensions_install_widget;"
       "new QWebChannel(qt.webChannelTransport, function(channel) {"
-      " extensions_manager_model = channel.objects.extensions_manager_model;"
-      " extensions_install_widget = channel.objects.extensions_install_widget;"
+      " window.extensions_manager_model = channel.objects.extensions_manager_model;"
+      // See ExtensionInstallWidgetWebChannelProxy
+      " window.extensions_install_widget = channel.objects.extensions_install_widget;"
       "});"
       );
 #endif
