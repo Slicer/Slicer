@@ -841,6 +841,9 @@ void vtkMRMLSegmentationsDisplayableManager3D::Create()
 //---------------------------------------------------------------------------
 int vtkMRMLSegmentationsDisplayableManager3D::Pick3D(double ras[3])
 {
+  this->Internal->PickedDisplayNodeID = "";
+  this->Internal->PickedSegmentID = "";
+
   vtkRenderer* ren = this->GetRenderer();
   if (!ren)
     {

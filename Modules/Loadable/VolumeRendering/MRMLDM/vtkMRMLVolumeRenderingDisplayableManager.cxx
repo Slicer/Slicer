@@ -1447,6 +1447,8 @@ vtkVolume* vtkMRMLVolumeRenderingDisplayableManager::GetVolumeActor(vtkMRMLVolum
 //---------------------------------------------------------------------------
 int vtkMRMLVolumeRenderingDisplayableManager::Pick3D(double ras[3])
 {
+  this->Internal->PickedNodeID = "";
+
   vtkRenderer* ren = this->GetRenderer();
   if (!ren)
     {
