@@ -51,6 +51,7 @@ vtkSlicerScalarBarActor::vtkSlicerScalarBarActor()
 {
   this->Superclass::DrawAnnotationsOff();
   this->UseAnnotationAsLabel = 0;
+  this->CenterLabel = false;
 }
 
 //----------------------------------------------------------------------------
@@ -64,6 +65,7 @@ void vtkSlicerScalarBarActor::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os,indent);
 
   os << indent << "UseAnnotationAsLabel:   " << this->UseAnnotationAsLabel << "\n";
+  os << indent << "CenterLabel:            " << this->CenterLabel << "\n";
 }
 
 //-----------------------------------------------------------------------------
@@ -119,9 +121,19 @@ void vtkSlicerScalarBarActor::LayoutTicks()
       {
       if (this->NumberOfLabels > 1)
         {
-        val = range[0] +
-          static_cast<double>(i)/(this->NumberOfLabels-1)
-          * (range[1]-range[0]);
+        if (this->CenterLabel)
+          {
+          // labels are centered on the middle of a color swatch
+          val = range[0] +
+            (static_cast<double>(i) + 0.5) / this->NumberOfLabels
+            * (range[1] - range[0]);
+          }
+        else
+          {
+          val = range[0] +
+            static_cast<double>(i) / (this->NumberOfLabels - 1)
+            * (range[1] - range[0]);
+          }
         }
       else
         {
@@ -136,17 +148,24 @@ void vtkSlicerScalarBarActor::LayoutTicks()
       {
       if (numberOfAnnotatedValues > 1)
         {
-        double indx = 0.0;
-        int index  = 0;
+        vtkIdType index = 0;
         if (this->NumberOfLabels > 1)
           {
-          indx = static_cast<double>(i)/(this->NumberOfLabels-1)*(numberOfAnnotatedValues-1);
+          if (this->CenterLabel)
+            {
+            index = (static_cast<double>(i) + 0.5) / this->NumberOfLabels*numberOfAnnotatedValues;
+            }
+          else
+            {
+            index = static_cast<double>(i)/(this->NumberOfLabels-1)*(numberOfAnnotatedValues-1)+0.5;
+            }
+          if (index >= numberOfAnnotatedValues)
+            {
+            // make sure we do not attempt to use label index out of range
+            // (this should not happen, but if it did then it would cause crash)
+            index = numberOfAnnotatedValues;
+            }
           }
-        else
-          {
-          indx = 0.5*numberOfAnnotatedValues;
-          }
-        index = static_cast<int>(indx+0.5);
         // try to make sure the label format supports a string
         // TODO issue 3802: replace with a more strict regular expression
         //
@@ -288,4 +307,52 @@ void vtkSlicerScalarBarActor::LayoutTicks()
       }
     }
   this->NumberOfLabelsBuilt = this->NumberOfLabels;
+}
+
+//-----------------------------------------------------------------------------
+void vtkSlicerScalarBarActor::ConfigureTicks()
+{
+  double val;
+  double sizeTextData[2];
+  for (int i = 0; i < this->NumberOfLabelsBuilt; ++i)
+  {
+
+    if (this->CenterLabel)
+    {
+      // labels are centered on the middle of a color swatch
+      val = (this->NumberOfLabelsBuilt > 1 ?
+        (static_cast<double>(i) + 0.5) / this->NumberOfLabelsBuilt : 0.5) *
+        this->P->TickBox.Size[1] + this->P->TickBox.Posn[this->P->TL[1]];
+    }
+    else
+    {
+      val = (this->NumberOfLabelsBuilt > 1 ?
+        static_cast<double>(i) / (this->NumberOfLabelsBuilt - 1) : 0.5) *
+        this->P->TickBox.Size[1] + this->P->TickBox.Posn[this->P->TL[1]];
+    }
+    this->P->TextActors[i]->GetSize(this->P->Viewport, sizeTextData);
+    if (this->Orientation == VTK_ORIENT_VERTICAL)
+    { // VERTICAL
+      this->P->TextActors[i]->GetTextProperty()->SetJustification(
+        this->TextPosition == PrecedeScalarBar ? VTK_TEXT_RIGHT : VTK_TEXT_LEFT);
+      this->P->TextActors[i]->GetTextProperty()
+        ->SetVerticalJustificationToBottom();
+      this->P->TextActors[i]->SetPosition(
+        this->TextPosition == vtkScalarBarActor::PrecedeScalarBar ?
+        this->P->TickBox.Posn[0] + this->P->TickBox.Size[0] :
+        this->P->TickBox.Posn[0],
+        //this->P->TickBox.Posn[0],
+        val - 0.5 * sizeTextData[1]);
+    }
+    else
+    { // HORIZONTAL
+      this->P->TextActors[i]->GetTextProperty()->SetJustificationToCentered();
+      this->P->TextActors[i]->GetTextProperty()->SetVerticalJustification(
+        this->TextPosition == PrecedeScalarBar ? VTK_TEXT_TOP : VTK_TEXT_BOTTOM);
+      this->P->TextActors[i]->SetPosition(val,
+        this->TextPosition == PrecedeScalarBar ?
+        this->P->TickBox.Posn[1] + this->P->TickBox.Size[0] :
+        this->P->TickBox.Posn[1]);
+    }
+  }
 }

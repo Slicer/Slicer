@@ -48,6 +48,7 @@ public slots:
   void setLookupTableRange(double min, double max);
   void copyCurrentColorNode();
   void setUseColorNameAsLabel(bool);
+  void setCenterLabel(bool);
 
 protected slots:
   void onMRMLColorNodeChanged(vtkMRMLNode* newColorNode);

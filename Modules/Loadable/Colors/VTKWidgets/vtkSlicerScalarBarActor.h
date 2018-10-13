@@ -53,6 +53,16 @@ public:
   /// Get/Set for the flag on using VTK6 annotation as label
   vtkBooleanMacro(UseAnnotationAsLabel, int);
 
+  /// Get if label should be centered on color swatches.
+  /// Useful if each displayed color needs a label
+  vtkGetMacro(CenterLabel, bool);
+  /// Set if label should be centered on color swatches.
+  /// Useful if each displayed color needs a label
+  vtkSetMacro(CenterLabel, bool);
+  /// Get/Set if label should be centered on color swatches.
+  /// Useful if each displayed color needs a label
+  vtkBooleanMacro(CenterLabel, bool);
+
 protected:
   vtkSlicerScalarBarActor();
   ~vtkSlicerScalarBarActor();
@@ -65,10 +75,19 @@ protected:
   //
   // The default implementation creates exactly this->NumberOfLabels
   // tick marks, uniformly spaced on a linear or logarithmic scale.
+  //
+  // It centers labels on color swatches instead of placing labels
+  // at the edge.
   virtual void LayoutTicks() VTK_OVERRIDE;
+
+  // It centers labels on color swatches instead of placing labels
+  // at the edge.
+  virtual void ConfigureTicks() VTK_OVERRIDE;
 
   /// flag for setting color name as label
   int UseAnnotationAsLabel;
+
+  bool CenterLabel;
 
 private:
   vtkSlicerScalarBarActor(const vtkSlicerScalarBarActor&);  // Not implemented.

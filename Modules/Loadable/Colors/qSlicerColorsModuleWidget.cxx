@@ -170,6 +170,8 @@ void qSlicerColorsModuleWidget::setup()
     }
   connect(d->UseColorNameAsLabelCheckBox, SIGNAL(toggled(bool)),
           this, SLOT(setUseColorNameAsLabel(bool)));
+  connect(d->CenterLabelCheckBox, SIGNAL(toggled(bool)),
+    this, SLOT(setCenterLabel(bool)));
   qSlicerApplication * app = qSlicerApplication::application();
   if (app && app->layoutManager())
     {
@@ -212,7 +214,7 @@ void qSlicerColorsModuleWidget::setUseColorNameAsLabel(bool useColorName)
   if (useColorName)
     {
     // text string format
-    d->ScalarBarActor->SetLabelFormat(" %.8s");
+    d->ScalarBarActor->SetLabelFormat(" %s");
     }
   else
     {
@@ -220,6 +222,13 @@ void qSlicerColorsModuleWidget::setUseColorNameAsLabel(bool useColorName)
     d->ScalarBarActor->SetLabelFormat(" %#8.3f");
     }
   d->ScalarBarActor->SetUseAnnotationAsLabel(useColorName);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerColorsModuleWidget::setCenterLabel(bool centerLabel)
+{
+  Q_D(qSlicerColorsModuleWidget);
+  d->ScalarBarActor->SetCenterLabel(centerLabel);
 }
 
 //-----------------------------------------------------------------------------
