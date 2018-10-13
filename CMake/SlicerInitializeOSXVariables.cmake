@@ -124,7 +124,7 @@ if(APPLE)
     endif()
   endif()
 
-  if(DEFINED Slicer_SOURCE_DIR AND ("${Slicer_VTK_VERSION_MAJOR}" MATCHES "^(8|9)$" OR DEFINED Qt5_DIR))
+  if(DEFINED Slicer_SOURCE_DIR AND ("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "8" OR DEFINED Qt5_DIR))
     # Require minimum deployment target of 10.9. In 10.9 libc++ replaces libstdc++
     # as the default runtime. Requiring this minimum ensures that all libraries
     # use libc++.

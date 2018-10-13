@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.5)
 set(_msg "Setting C++ standard")
 message(STATUS "${_msg}")
 if(NOT DEFINED CMAKE_CXX_STANDARD)
-  if("${Slicer_VTK_VERSION_MAJOR}" MATCHES "^(8|9)$" OR DEFINED Qt5_DIR)
+  if("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "8" OR DEFINED Qt5_DIR)
     set(CMAKE_CXX_STANDARD 11)
   else()
     set(CMAKE_CXX_STANDARD 98)
@@ -304,12 +304,17 @@ mark_as_superbuild(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT)
 
 set(_default_vtk "7")
 if(DEFINED Qt5_DIR)
-  set(_default_vtk "9")
+  set(_default_vtk "8")
 endif()
-set(Slicer_VTK_VERSION_MAJOR ${_default_vtk} CACHE STRING "The VTK major version (7, 8 or 9).")
-set_property(CACHE Slicer_VTK_VERSION_MAJOR PROPERTY STRINGS "7" "8" "9")
-if(NOT "${Slicer_VTK_VERSION_MAJOR}" MATCHES "^(7|8|9)$")
-  message(FATAL_ERROR "error: Slicer_VTK_VERSION_MAJOR must be 7, 8 or 9.")
+set(Slicer_VTK_VERSION_MAJOR ${_default_vtk} CACHE STRING "The VTK major version (7 or 8).")
+set_property(CACHE Slicer_VTK_VERSION_MAJOR PROPERTY STRINGS "7" "8")
+if(NOT "${Slicer_VTK_VERSION_MAJOR}" MATCHES "^(7|8)$")
+  if("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "9")
+    set(Slicer_VTK_VERSION_MAJOR 8 CACHE STRING "The VTK major version (7 or 8)." FORCE)
+    message(WARNING "Forcing Slicer_VTK_VERSION_MAJOR to 8 because VTK version was changed from 9.0 to 8.2. See http://vtk.1045678.n5.nabble.com/Discussion-OK-to-change-VTK-s-version-number-from-9-0-to-8-2-tt5748702.html")
+  else()
+    message(FATAL_ERROR "error: Slicer_VTK_VERSION_MAJOR must be 7 or 8.")
+  endif()
 endif()
 mark_as_superbuild(Slicer_VTK_VERSION_MAJOR)
 
@@ -435,7 +440,7 @@ set(Slicer_EXTENSIONS_DIRBASENAME "Extensions")
 set(Slicer_EXTENSIONS_DIRNAME "${Slicer_EXTENSIONS_DIRBASENAME}-${Slicer_WC_REVISION}")
 
 #-----------------------------------------------------------------------------
-# VTKv9 - Slicer_VTK_COMPONENTS
+# Slicer VTK Options
 #-----------------------------------------------------------------------------
 if(Slicer_VTK_VERSION_MAJOR STREQUAL "7")
   set(_backend "OpenGL")
@@ -470,6 +475,9 @@ message(STATUS "  Slicer_VTK_RENDERING_BACKEND is ${Slicer_VTK_RENDERING_BACKEND
 message(STATUS "  Slicer_VTK_SMP_IMPLEMENTATION_TYPE is ${Slicer_VTK_SMP_IMPLEMENTATION_TYPE}")
 message(STATUS "  Slicer_VTK_VERSION_MAJOR is ${Slicer_VTK_VERSION_MAJOR}")
 
+#-----------------------------------------------------------------------------
+# Slicer_VTK_COMPONENTS
+#-----------------------------------------------------------------------------
 set(Slicer_VTK_COMPONENTS
   vtkFiltersExtraction
   vtkFiltersFlowPaths
