@@ -707,7 +707,7 @@ void vtkMRMLNodeCallback::PrintSelf(ostream& os, vtkIndent indent)
 void vtkMRMLNodeCallback::Execute(vtkObject *vtkcaller,
   unsigned long eid, void *vtkNotUsed(calldata))
 {
-  // Let's return if an error already occured
+  // Let's return if an error already occurred
   if (this->ErrorString.size() > 0)
     {
     return;

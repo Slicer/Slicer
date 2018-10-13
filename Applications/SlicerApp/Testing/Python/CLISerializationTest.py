@@ -201,7 +201,7 @@ if __name__ == '__main__':
     print("Problem while deserializing the CLI: %s" %deserializeErr)
     exit(EXIT_FAILURE)
 
-  # Finaly compare seeds file
+  # Finally compare seeds file
   with open(serializeSeedsOutFile) as in_file, open(deserializeSeedsOutFile) as out_file:
     in_reader = csv.reader(in_file)
     out_reader = csv.reader(out_file)

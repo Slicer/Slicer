@@ -94,7 +94,7 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
   /// \sa GetSliceOutputPolyData(), GetOutputPolyDataConnection()
   virtual vtkPolyData* GetOutputMesh() VTK_OVERRIDE;
 
-  /// Return the glyph polyData transfomed to slice XY.
+  /// Return the glyph polyData transformed to slice XY.
   /// This is the polydata to use in a 2D slice.
   /// \sa GetOutputPolyData(), GetSliceOutputPort()
   virtual vtkPolyData* GetSliceOutputPolyData();
@@ -109,7 +109,7 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
   /// \sa GetOutputPolyData(), SetInputPolyData()
   virtual void SetSliceImagePort(vtkAlgorithmOutput *imagePort);
   vtkGetObjectMacro(SliceImagePort, vtkAlgorithmOutput);
-  /// Return the glyph output transfomed to slice XY.
+  /// Return the glyph output transformed to slice XY.
   /// Return the output of the glyph producer for the entire volume.
   /// \sa GetSliceOutputPolyData(), GetOutputPolyDataConnection()
   virtual vtkAlgorithmOutput* GetSliceOutputPort();

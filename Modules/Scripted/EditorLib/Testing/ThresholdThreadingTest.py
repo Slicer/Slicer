@@ -31,7 +31,7 @@ class ThresholdThreading(unittest.TestCase):
 
   def test_ThresholdThreading(self):
     """
-    Replicate the issue reported in bug 1822 where spliting
+    Replicate the issue reported in bug 1822 where splitting
     a grow-cut produced volume causes a multi-threading related
     issue on mac release builds
     """

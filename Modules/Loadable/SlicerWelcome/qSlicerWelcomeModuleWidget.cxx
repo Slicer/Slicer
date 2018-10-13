@@ -140,7 +140,7 @@ void qSlicerWelcomeModuleWidget::loadSource(QWidget* widget)
 
     qSlicerCoreApplication* app = qSlicerCoreApplication::application();
 
-    // Update occurences of wiki URLs
+    // Update occurrences of wiki URLs
     QString wikiVersion = "Nightly";
     if (app->releaseType() == "Stable")
       {

@@ -1,5 +1,5 @@
 #
-# This file has been primarly designed for the purpose of Slicer extension development.
+# This file has been primarily designed for the purpose of Slicer extension development.
 #
 # This file is configured by Slicer and used by UseSlicer.cmake module
 # to load Slicer's settings for an external project. External projects

@@ -207,7 +207,7 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
     }
 
   //----------------------------------------------------------------------------
-  // Instanciate DisplayableManagerGroup
+  // Instantiate DisplayableManagerGroup
   vtkMRMLDisplayableManagerGroup * group =
       factory->InstantiateDisplayableManagers(rr.GetPointer());
   if (!group)

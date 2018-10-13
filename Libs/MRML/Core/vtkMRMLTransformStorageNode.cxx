@@ -244,7 +244,7 @@ int vtkMRMLTransformStorageNode::ReadFromImageFile(vtkMRMLNode *refNode)
         )
     {
     // File specified may not contain a grid image. Can we safely
-    // error out quitely?
+    // error out quietely?
     vtkDebugMacro("ITK exception caught reading grid transform image file: " << fullName.c_str() << "\n" << exc);
     return 0;
     }
@@ -546,7 +546,7 @@ int vtkMRMLTransformStorageNode::WriteToImageFile(vtkMRMLNode *refNode)
     return 0;
     }
 
-  // Update is needed bacause it refreshes the inverse flag (the flag may be out-of-date if the transform depends on its inverse)
+  // Update is needed because it refreshes the inverse flag (the flag may be out-of-date if the transform depends on its inverse)
   gridTransform_Ras->Update();
   if (gridTransform_Ras->GetInverseFlag())
     {

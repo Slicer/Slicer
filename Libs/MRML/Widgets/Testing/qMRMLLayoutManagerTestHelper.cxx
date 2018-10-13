@@ -13,7 +13,7 @@ namespace
 bool checkViewArrangement(int line, qMRMLLayoutManager* layoutManager,
                           vtkMRMLLayoutNode * layoutNode, int expectedViewArrangement)
 {
-  // Ignore deprecated arrangments
+  // Ignore deprecated arrangements
   if (expectedViewArrangement == vtkMRMLLayoutNode::SlicerLayoutOneUpSliceView
       || expectedViewArrangement == vtkMRMLLayoutNode::SlicerLayoutLightboxView
       || expectedViewArrangement == vtkMRMLLayoutNode::SlicerLayoutSideBySideLightboxView

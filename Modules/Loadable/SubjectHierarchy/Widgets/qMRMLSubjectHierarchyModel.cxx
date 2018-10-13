@@ -954,7 +954,7 @@ void qMRMLSubjectHierarchyModel::updateItemDataFromSubjectHierarchyItem(QStandar
 
     // It should be fine to set the icon even if it is the same, but due
     // to a bug in Qt (http://bugreports.qt.nokia.com/browse/QTBUG-20248),
-    // it would fire a superflous itemChanged() signal.
+    // it would fire a superfluous itemChanged() signal.
     if ( item->data(VisibilityRole).isNull()
       || item->data(VisibilityRole).toInt() != visible )
       {

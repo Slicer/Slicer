@@ -35,7 +35,7 @@ namespace itk
  * neighborhood of the homologous pixel in the other image. At one voxel, it
  * adds the absolute value of the difference between the different components
  * of the diffusion tensor. It compares the sum to a threshold set by the
- * developper
+ * developer
  *
  * \ingroup IntensityImageFilters   Multithreaded
  */

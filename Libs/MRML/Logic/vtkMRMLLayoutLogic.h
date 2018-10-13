@@ -147,7 +147,7 @@ protected:
   /// Create a vtkMRMLLayoutNode if there is no layout node in the scene
   void UpdateLayoutNode();
 
-  /// Not public as we internally take care of chosing/updating the layout node
+  /// Not public as we internally take care of choosing/updating the layout node
   void SetLayoutNode(vtkMRMLLayoutNode* layoutNode);
 
   /// Update the logic when the layout node is set or modified

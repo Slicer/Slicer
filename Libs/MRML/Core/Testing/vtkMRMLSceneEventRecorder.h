@@ -43,7 +43,7 @@ public:
   static vtkMRMLSceneEventRecorder *New();
   virtual void Execute(vtkObject *caller, unsigned long eventId,
                        void *callData) VTK_OVERRIDE;
-  // List of node that should be updated when NodeAddedEvent is catched
+  // List of node that should be updated when NodeAddedEvent is caught
   std::map<unsigned long, unsigned int> CalledEvents;
   std::map<unsigned long, vtkMTimeType> LastEventMTime;
 protected:

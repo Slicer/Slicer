@@ -312,7 +312,7 @@ int vtkMRMLAnnotationLinesNode::GetNumberOfLines()
     {
     this->ResetLines();
     }
-  // have to do it this way bc  this->PolyData->GetLines() is never null before it is initilized !
+  // have to do it this way bc  this->PolyData->GetLines() is never null before it is initialized !
   return this->GetLines()->GetNumberOfCells();
 }
 

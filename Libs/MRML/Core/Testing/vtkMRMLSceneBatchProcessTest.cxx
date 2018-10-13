@@ -43,7 +43,7 @@ int vtkMRMLSceneBatchProcessTest(
     return EXIT_FAILURE;
     }
   */
-  // Instanciate scene
+  // Instantiate scene
   vtkNew<vtkMRMLScene> scene;
 
   // Configure mrml event callback

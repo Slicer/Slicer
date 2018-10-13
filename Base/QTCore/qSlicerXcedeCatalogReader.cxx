@@ -918,7 +918,7 @@ void qSlicerXcedeCatalogReaderPrivate::importTransformNode(NodeType node)
   //   }
   if (!node["uri"].startsWith("register.dat"))
     {
-    qDebug() << "Unknow file type from name:" << node["uri"]
+    qDebug() << "Unknown file type from name:" << node["uri"]
              << "No transform imported";
     return;
     }
@@ -1174,7 +1174,7 @@ bool qSlicerXcedeCatalogReaderPrivate::computeFIPS2SlicerTransformCorrection()
   //set ::XcedeCatalog_MrmlID(StatisticsToBrainXform) [ $ras2rasT GetID ]
   this->MRMLIdStatisticsToBrainXform = ras2rasT->GetID();
 
-  //--- get access to methods we need thru logic
+  //--- get access to methods we need through logic
   //set volumesLogic [ $::slicer3::VolumesGUI GetLogic ]
 
   //--- compute some matrices.
@@ -1325,7 +1325,7 @@ bool qSlicerXcedeCatalogReader::load(const qSlicerIO::IOProperties& properties)
     return false;
     }
 
-  //--- display to progress guage and status bar.
+  //--- display to progress gauge and status bar.
   //set ::XcedeCatalog_mainWindow [$::slicer3::ApplicationGUI GetMainSlicerWindow]
   //set ::XcedeCatalog_progressGauge [$::XcedeCatalog_mainWindow GetProgressGauge]
   //$::XcedeCatalog_progressGauge SetValue 0

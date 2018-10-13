@@ -171,7 +171,7 @@ class EditBox(VTKObservationMixin):
     # special case for renamed effect
     self.effectIconFiles["Rectangle"] = iconDir + "ImplicitRectangle" + '.png'
 
-    # TOOD: add icons for builtins as resource or installed image directory
+    # TODO: add icons for builtins as resource or installed image directory
     self.effectIconFiles["PaintEffect"] = self.effectIconFiles["Paint"]
     self.effectIconFiles["DrawEffect"] = self.effectIconFiles["Draw"]
     self.effectIconFiles["ThresholdEffect"] = self.effectIconFiles["Threshold"]
@@ -466,7 +466,7 @@ class EditBox(VTKObservationMixin):
 
   def toggleFloatingMode(self):
     """Set or clear the parent of the edit box so that it is a top level
-    window or embeded in the gui as appropriate.  Meant to be associated
+    window or embedded in the gui as appropriate.  Meant to be associated
     with the space bar shortcut for the mainWindow, set in Editor.py"""
     if self.isFloatingMode():
       self.cancelFloatingMode()

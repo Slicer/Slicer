@@ -240,7 +240,7 @@ protected:
   virtual void
   GenerateData() ITK_OVERRIDE;
 
-  /** Determines correspondances between two slices and calls apropriate methods. */
+  /** Determines correspondances between two slices and calls appropriate methods. */
   void
   InterpolateBetweenTwo( int axis,
     TImage* out,

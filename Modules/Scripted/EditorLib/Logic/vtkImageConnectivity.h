@@ -10,7 +10,7 @@
 ///
 ///  The input data type must be shorts.
 /// .SECTION Warning
-/// You need to explicitely call Update
+/// You need to explicitly call Update
 
 #ifndef __vtkImageConnectivity_h
 #define __vtkImageConnectivity_h

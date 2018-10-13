@@ -93,7 +93,7 @@ protected:
   void WriteData() VTK_OVERRIDE;
 
   ///
-  /// Flag to set to on when a write error occured
+  /// Flag to set to on when a write error occurred
   int WriteError;
 
   char *FileName;

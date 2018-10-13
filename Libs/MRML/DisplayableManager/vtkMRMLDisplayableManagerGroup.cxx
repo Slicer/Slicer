@@ -328,7 +328,7 @@ void vtkMRMLDisplayableManagerGroup::SetRenderer(vtkRenderer* newRenderer)
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): "
                 << "initializing DisplayableManagerGroup using Renderer: " << newRenderer);
 
-  // Loop though DisplayableManager and intialize
+  // Loop though DisplayableManager and initialize
   for(size_t i = 0; i < this->Internal->DisplayableManagers.size(); ++i)
     {
     vtkMRMLAbstractDisplayableManager * displayableManager = this->Internal->DisplayableManagers[i];

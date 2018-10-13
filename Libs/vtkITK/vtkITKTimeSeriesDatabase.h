@@ -28,7 +28,7 @@
 #include "vtkITK.h"
 #include "vtkITKUtility.h"
 
-/// \brief Effeciently process large datasets in small memory.
+/// \brief Efficiently process large datasets in small memory.
 ///
 /// TimeSeriesDatabase creates a database on disk from a series of volumes
 /// stored on disk.  The database allows efficient access to volumes,

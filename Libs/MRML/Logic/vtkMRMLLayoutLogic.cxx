@@ -1352,7 +1352,7 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
 
   int wasModifying = this->LayoutNode->StartModify();
 
-  // Horizonal compare viewers
+  // Horizontal compare viewers
   std::stringstream compareView;
   compareView << "<layout type=\"vertical\" split=\"true\" >"
     " <item>"
@@ -1863,7 +1863,7 @@ vtkCollection* vtkMRMLLayoutLogic::GetViewsFromAttributes(const ViewAttributes& 
   vtkCollection* nodes = this->GetMRMLScene()->GetNodesByClass(className.c_str());
   if (nodes == NULL || nodes->GetNumberOfItems() == 0)
     {
-    // It is not necessarilly a bug to not find nodes. It just means they
+    // It is not necessarily a bug to not find nodes. It just means they
     // are not in the scene and will be then created by CreateMissingViews()
     vtkDebugMacro("Couldn't find nodes matching class: " << className);
     if (nodes)
@@ -1979,7 +1979,7 @@ void vtkMRMLLayoutLogic::CreateMissingViews(vtkXMLDataElement* layoutRootElement
     vtkMRMLNode* viewNode = this->GetViewFromElement(viewElement);
     if (viewNode)
       {
-      // View already exisits, just apply the "relayout" properties for
+      // View already exists, just apply the "relayout" properties for
       // the layout
       ViewProperties properties = this->GetViewElementProperties(viewElement);
       this->ApplyProperties(properties, viewNode, "relayout");

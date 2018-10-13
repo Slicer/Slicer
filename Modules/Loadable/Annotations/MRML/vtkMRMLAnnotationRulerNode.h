@@ -55,7 +55,7 @@ public:
   // Get position of the first point
   void GetPosition1(double position[3]);
 
-  // Get position of the first point in world coordinates, including parnts transfroms
+  // Get position of the first point in world coordinates, including parent transforms
   void GetPositionWorldCoordinates1(double position[4])
     {
     double p[4]={0,0,0,1};
@@ -93,7 +93,7 @@ public:
   // Get position of the second point
   void GetPosition2(double position[3]);
 
-  // Get position of the second point in world coordinates, including parnts transfroms
+  // Get position of the second point in world coordinates, including parent transforms
   void GetPositionWorldCoordinates2(double position[4])
     {
     double p[4]={0,0,0,1};

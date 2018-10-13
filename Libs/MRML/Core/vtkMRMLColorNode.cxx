@@ -71,7 +71,7 @@ void vtkMRMLColorNode::WriteXML(ostream& of, int nIndent)
 
   if (this->FileName != NULL)
     {
-    // dont' write it out, it's handled by the storage node
+    // don't write it out, it's handled by the storage node
     }
 }
 

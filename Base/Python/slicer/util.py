@@ -462,11 +462,11 @@ def openSaveDataDialog():
 def saveNode(node, filename, properties={}):
   """Save 'node' data into 'filename'.
 
-  It is the user responsability to provide the appropriate file extension.
+  It is the user responsibility to provide the appropriate file extension.
 
   User has also the possibility to overwrite the fileType internally retrieved using
   method 'qSlicerCoreIOManager::fileWriterFileType(vtkObject*)'. This can be done
-  by specifiying a 'fileType'attribute to the optional 'properties' dictionary.
+  by specifying a 'fileType'attribute to the optional 'properties' dictionary.
   """
   from slicer import app
   properties["nodeID"] = node.GetID();
@@ -784,7 +784,7 @@ def arrayFromVolumeModified(volumeNode):
 
 def arrayFromModelPoints(modelNode):
   """Return point positions of a model node as numpy array.
-  Point coordinates can be modified by modfying the numpy array.
+  Point coordinates can be modified by modifying the numpy array.
   After all modifications has been completed, call :py:meth:`arrayFromModelPointsModified`.
 
   .. warning:: Important: memory area of the returned array is managed by VTK,
@@ -993,7 +993,7 @@ def toVTKString(str):
   return vtkStr
 
 #
-# File Utlities
+# File Utilities
 #
 
 def tempDirectory(key='__SlicerTemp__',tempDir=None,includeDateTime=True):

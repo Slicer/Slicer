@@ -360,7 +360,7 @@ void vtkMRMLMarkupsFiducialDisplayableManager3D::SetNthSeed(int n, vtkMRMLMarkup
       }
     }
 
-  // update the postion
+  // update the position
   bool positionChanged = this->UpdateNthSeedPositionFromMRML(n, seedWidget, fiducialNode);
   if (!positionChanged)
     {

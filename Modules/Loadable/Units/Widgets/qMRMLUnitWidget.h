@@ -72,7 +72,7 @@ class Q_SLICER_MODULE_UNITS_WIDGETS_EXPORT qMRMLUnitWidget : public qMRMLWidget
   Q_PROPERTY(double offset READ offset WRITE setOffset NOTIFY offsetChanged)
 
   /// Set/Get what are the current unit node displayed property by the widget.
-  /// Hidden properties can still be accessed programatically.
+  /// Hidden properties can still be accessed programmatically.
   /// By default, all the properties are visible.
   /// \sa editableProperties
   Q_PROPERTY(UnitProperties displayedProperties READ displayedProperties WRITE setDisplayedProperties)

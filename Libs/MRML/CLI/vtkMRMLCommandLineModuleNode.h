@@ -57,7 +57,7 @@ public:
     /// PolyDataModifiedEvent).
     /// \sa SetParameterAsNode(), ParameterChangedEvent
     InputParameterEvent,
-    /// Event invoked when the AutoRun is triggerd. It takes a request time as
+    /// Event invoked when the AutoRun is triggered. It takes a request time as
     /// call data. 0 when called from CLI node.
     /// \sa SetAutoRun()
     AutoRunEvent,

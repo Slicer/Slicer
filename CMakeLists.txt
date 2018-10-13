@@ -829,7 +829,7 @@ find_package(VTK ${Slicer_VTK_VERSION_MAJOR} COMPONENTS ${Slicer_VTK_COMPONENTS}
 if(NOT TARGET vtkGUISupportQt)
   message(FATAL_ERROR "error: VTK was not configured to use QT, you probably need "
                     "to recompile it with VTK_USE_GUISUPPORT ON, VTK_Group_Qt ON, "
-                    "DESIRED_QT_VERSION 4 and QT_QMAKE_EXECUTABLE set appropriatly. "
+                    "DESIRED_QT_VERSION 4 and QT_QMAKE_EXECUTABLE set appropriately. "
                     "Note that Qt >= ${Slicer_REQUIRED_QT_VERSION} is *required*")
 endif()
 include(${VTK_USE_FILE})

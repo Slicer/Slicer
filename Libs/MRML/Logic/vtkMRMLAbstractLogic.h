@@ -238,11 +238,11 @@ protected:
   /// (RegisterNodes()).
   /// The scene events to observe are already set in SetMRMLSceneInternal().
   /// By default, ObserveMRMLScene() calls UpdateFromMRMLScene().
-  /// Overide for a custom behavior.
+  /// Override for a custom behavior.
   /// \sa SetMRMLSceneInternal, RegisterNodes, UnobserveMRMLScene
   /// \sa UpdateFromMRMLScene
   virtual void ObserveMRMLScene();
-  /// Called everytime the scene has been significantly changed.
+  /// Called every time the scene has been significantly changed.
   /// If the scene BatchProcessState events are observed (in
   /// SetMRMLSceneInternal() ), UpdateFromMRMLScene is called after each
   /// batch process (Close, Import, Restore...). It is also being called by

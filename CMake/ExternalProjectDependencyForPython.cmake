@@ -23,7 +23,7 @@
 # ExternalProjectDependencyForPython
 # ----------------------------------
 #
-# This module provides functions indended to be used in ``External_*.cmake`` files.
+# This module provides functions intended to be used in ``External_*.cmake`` files.
 #
 # .. command:: ExternalProject_FindPythonPackage
 #

@@ -418,7 +418,7 @@ endif()
 
 # Given a variable name, this function will display the text
 #   "-- <varname> ................: ${<varname>}"
-# and will ensure that the message is consistenly padded.
+# and will ensure that the message is consistently padded.
 #
 # If the variable is not defined, it will display:
 #   "-- <varname> ................: <NOT DEFINED>"

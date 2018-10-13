@@ -67,7 +67,7 @@ int main(int argc, char* * argv)
   SFLSRobustStatSegmentor3DLabelMap_c seg;
   seg.setImage(img);
 
-  seg.setNumIter(10000); // a large enough number, s.t. will not be stoped by this creteria.
+  seg.setNumIter(10000); // a large enough number, s.t. will not be stopped by this criteria.
   seg.setMaxVolume(expectedVolume);
   seg.setInputLabelImage(newLabelMap);
 

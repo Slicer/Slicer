@@ -50,7 +50,7 @@ public:
   // Warning, this is not the real "transform, the real can be retrieved
   // by qVTKAbstractMatrixWidget->transform();
   vtkSmartPointer<vtkTransform>                Transform;
-  // Indicates whether the changes come from the user or are programatic
+  // Indicates whether the changes come from the user or are programmatic
   bool                                         UserUpdates;
 };
 

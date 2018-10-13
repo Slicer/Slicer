@@ -884,7 +884,7 @@ void vtkMRMLModelDisplayableManager::UpdateModelsFromMRML()
   for (int n=0; n<nnodes; n++)
     {
     vtkMRMLDisplayableNode *model = vtkMRMLDisplayableNode::SafeDownCast(dnodes[n]);
-    // render slices last so that transparent objects are rendered in fron of them
+    // render slices last so that transparent objects are rendered in front of them
     if (model)
       {
       if (!strcmp(model->GetName(), "Red Volume Slice") ||

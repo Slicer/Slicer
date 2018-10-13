@@ -38,7 +38,7 @@ int vtkMRMLAnnotationTextDisplayNodeTest1(int , char * [] )
   std::string out1 = node1->GetLineWrappedText(in1);
   if (out1.compare(exp1) != 0)
     {
-    std::cerr << "Line wrapping failed! With max " << node1->GetMaxCharactersPerLine() << " characers per line:\n\tinput =\n'" << in1.c_str() << "'\n\toutput =\n'" << out1.c_str() << "'\n\texpected =\n'" << exp1.c_str() << "'" << std::endl;
+    std::cerr << "Line wrapping failed! With max " << node1->GetMaxCharactersPerLine() << " characters per line:\n\tinput =\n'" << in1.c_str() << "'\n\toutput =\n'" << out1.c_str() << "'\n\texpected =\n'" << exp1.c_str() << "'" << std::endl;
     return EXIT_FAILURE;
     }
   std::cout << "Success: wrapped string:\n'" << out1.c_str() << "'" << std::endl;
@@ -49,7 +49,7 @@ int vtkMRMLAnnotationTextDisplayNodeTest1(int , char * [] )
   std::string out2 = node1->GetLineWrappedText(in2);
   if (out2.compare(exp2) != 0)
     {
-    std::cerr << "Line wrapping failed! With max " << node1->GetMaxCharactersPerLine() << " characers per line:\n\tinput =\n'" << in2.c_str() << "'\n\toutput =\n'" << out2.c_str() << "'\n\texpected =\n'" << exp2.c_str() << "'" << std::endl;
+    std::cerr << "Line wrapping failed! With max " << node1->GetMaxCharactersPerLine() << " characters per line:\n\tinput =\n'" << in2.c_str() << "'\n\toutput =\n'" << out2.c_str() << "'\n\texpected =\n'" << exp2.c_str() << "'" << std::endl;
     return EXIT_FAILURE;
     }
   std::cout << "Success: wrapped string:\n'" << out2.c_str() << "'" << std::endl;
@@ -63,7 +63,7 @@ int vtkMRMLAnnotationTextDisplayNodeTest1(int , char * [] )
   std::string out3 = node1->GetLineWrappedText(in3);
   if (out3.compare(exp3) != 0)
     {
-    std::cerr << "Line wrapping failed! With max " << node1->GetMaxCharactersPerLine() << " characers per line:\n\tinput =\n'" << in3.c_str() << "'\n\toutput =\n'" << out3.c_str() << "'\n\texpected =\n'" << exp3.c_str() << "'" << std::endl;
+    std::cerr << "Line wrapping failed! With max " << node1->GetMaxCharactersPerLine() << " characters per line:\n\tinput =\n'" << in3.c_str() << "'\n\toutput =\n'" << out3.c_str() << "'\n\texpected =\n'" << exp3.c_str() << "'" << std::endl;
     return EXIT_FAILURE;
     }
   std::cout << "Success: wrapped string:\n'" << out3.c_str() << "'" << std::endl;

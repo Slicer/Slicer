@@ -84,7 +84,7 @@ class EditColor(VTKObservationMixin):
     self.colorSpin.connect( 'valueChanged(int)', self.updateMRMLFromGUI)
     self.colorPatch.connect( 'clicked()', self.showColorBox )
 
-    # TODO: change this to look for specfic events (added, removed...)
+    # TODO: change this to look for specific events (added, removed...)
     # but this requires being able to access events by number from wrapped code
     self.addObserver(slicer.mrmlScene, vtk.vtkCommand.ModifiedEvent, self.updateParameterNode)
 
@@ -113,7 +113,7 @@ class EditColor(VTKObservationMixin):
   #
   def updateGUIFromMRML(self,caller,event):
     if self.parameterNode.GetParameter(self.parameter) == '':
-      # parameter does not exist - probably intializing
+      # parameter does not exist - probably initializing
       return
     label = int(self.parameterNode.GetParameter(self.parameter))
 

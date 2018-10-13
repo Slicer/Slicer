@@ -88,7 +88,7 @@ public:
   virtual void GenerateOutputInformation(void) ITK_OVERRIDE;
   virtual void GenerateData(void) ITK_OVERRIDE;
 
-  /** A convience method for reading a voxel's time course
+  /** A convenience method for reading a voxel's time course
    * Subsequent calls to voxels in the immediate region of this will be
    * cached for quick access
    */

@@ -128,7 +128,7 @@ void qMRMLAnnotationTreeView::onSelectionChanged(const QItemSelection & selected
 
   // if the user clicked on a hierarchy, set this as the active one
   // this means, new annotations or new user-created hierarchies will be created
-  // as childs of this one
+  // as children of this one
   vtkMRMLNode* newCurrentNode = 0;
   if (selected.indexes().count() > 0)
     {

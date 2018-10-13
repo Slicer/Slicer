@@ -893,7 +893,7 @@ int TestSetAndObserveNodeReferenceID()
     return EXIT_FAILURE;
     }
 
-  // make sure it didnt change the first role references
+  // make sure it didn't change the first role references
   if (!CheckNthNodeReferenceID(__LINE__, "SetAndObserveNthNodeReferenceID", referencingNode.GetPointer(),
                                role1.c_str(),
                                /* n = */ 1,
@@ -2277,7 +2277,7 @@ int TestSetNodeReferenceID()
     return EXIT_FAILURE;
     }
 
-  // make sure it didnt change the first role references
+  // make sure it didn't change the first role references
   if (!CheckNthNodeReferenceID(__LINE__, "SetNthNodeReferenceID", referencingNode.GetPointer(),
                                role1.c_str(),
                                /* n = */ 1,

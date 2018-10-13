@@ -88,7 +88,7 @@ public:
   void SetBackgroundLayer (vtkMRMLSliceLayerLogic *BackgroundLayer);
 
   ///
-  /// The forground slice layer
+  /// The foreground slice layer
   /// TODO: this will eventually be generalized to a list of layers
   vtkGetObjectMacro (ForegroundLayer, vtkMRMLSliceLayerLogic);
   void SetForegroundLayer (vtkMRMLSliceLayerLogic *ForegroundLayer);
@@ -156,7 +156,7 @@ public:
   virtual bool EnterMRMLCallback()const;
 
   ///
-  /// Manage and syncronise the SliceNode
+  /// Manage and synchronise the SliceNode
   void UpdateSliceNode();
 
   ///
@@ -164,7 +164,7 @@ public:
   void UpdateSliceNodeFromLayout();
 
   ///
-  /// Manage and syncronise the SliceCompositeNode
+  /// Manage and synchronise the SliceCompositeNode
   void UpdateSliceCompositeNode();
 
   ///

@@ -29,7 +29,7 @@ namespace itk
  * This filter creates a binary thresholded image that separates an
  * image into foreground and background components. The filter
  * computes the threshold using the OtsuThresholdImageCalculator and
- * applies that theshold to the input image using the
+ * applies that threshold to the input image using the
  * BinaryThresholdImageFilter. The NunberOfHistogram bins can be set
  * for the Calculator. The InsideValue and OutsideValue can be set
  * for the BinaryThresholdImageFilter.

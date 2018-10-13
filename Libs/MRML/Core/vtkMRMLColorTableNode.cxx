@@ -712,7 +712,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       this->GetLookupTable()->SetAlphaRange(1, 1); // not used
       this->GetLookupTable()->Build();
       this->SetNamesFromColors();
-      this->SetDescription("A cyan ramp of 256 values, from black to cyan, complementary ramp to red, layering yeilds gray");
+      this->SetDescription("A cyan ramp of 256 values, from black to cyan, complementary ramp to red, layering yields gray");
       }
     else if (this->Type == this->Magenta)
       {
@@ -725,7 +725,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       this->GetLookupTable()->SetAlphaRange(1, 1); // not used
       this->GetLookupTable()->Build();
       this->SetNamesFromColors();
-      this->SetDescription("A magenta scale of 256 colors from black to magenta, complementary ramp to green, layering yeilds gray ");
+      this->SetDescription("A magenta scale of 256 colors from black to magenta, complementary ramp to green, layering yields gray ");
       }
     else if (this->Type == this->WarmShade1)
       {

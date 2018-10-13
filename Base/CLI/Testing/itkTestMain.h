@@ -319,7 +319,7 @@ int RegressionTestImage(const char *testImageFilename,
   itk::SizeValueType status = itk::NumericTraits<itk::SizeValueType>::ZeroValue();
   status = diff->GetNumberOfPixelsWithDifferences();
 
-  // if there are discrepencies, create an diff image
+  // if there are discrepancies, create an diff image
   if( ( status > numberOfPixelsTolerance ) && reportErrors )
     {
     typedef itk::RescaleIntensityImageFilter<ImageType, OutputType> RescaleType;

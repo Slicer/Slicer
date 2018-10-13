@@ -254,7 +254,7 @@ public:
   /// returns 0 if it's not relative or the input is null, 1 if it is relative
   int IsFilePathRelative(const char * filepath);
 
-  /// Calcualtes and the absolute path to the input file if the input path is
+  /// Calculates and the absolute path to the input file if the input path is
   /// relative and the scene is defined with a root directory. Sets and then
   /// return TempFileName. Returns null if the input path is null or the path
   /// is relative and the scene is not defined. Returns inputPath if it's absolute.
@@ -298,7 +298,7 @@ public:
   /// It always returns lowercase extension.
   static std::string GetLowercaseExtensionFromFileName(const std::string& filename);
 
-  /// Remove suported extension from filename.
+  /// Remove supported extension from filename.
   /// If filename is not specified then the current FileName will be used.
   std::string GetFileNameWithoutExtension(const char* fileName = NULL);
 

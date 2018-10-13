@@ -88,10 +88,10 @@ public:
   /// Indicate an interaction with the view node has been completed
   void EndViewNodeInteraction();
 
-  /// Manage and syncronise the CameraNode
+  /// Manage and synchronise the CameraNode
   void UpdateCameraNode();
 
-  /// Manage and syncronise the ViewNode
+  /// Manage and synchronise the ViewNode
   void UpdateViewNode();
 
   /// Convenient method to get the view node from scene and name of the Logic.

@@ -303,7 +303,7 @@ QString qSlicerUtils::replaceWikiUrlVersion(const QString& text, const QString& 
   while ((pos = rx.indexIn(updatedText, pos)) != -1)
     {
     // Given an URL matching the regular expression reported above, this second
-    // expression will replace the first occurence of "Documentation/<StringWithLetterOrNumberOrDot>/"
+    // expression will replace the first occurrence of "Documentation/<StringWithLetterOrNumberOrDot>/"
     // with "Documentation/<version>/"
     QString updatedURL = rx.cap(0).replace(QRegExp("Documentation\\/[a-zA-Z0-9\\.]+"), "Documentation/" +version);
     updatedText.replace(pos, rx.matchedLength(), updatedURL);

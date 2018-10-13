@@ -227,7 +227,7 @@ int vtkFSSurfaceAnnotationReader::ReadFSAnnotation()
                                       &colorTableNames);
       if (0 != error)
       {
-          vtkDebugMacro( << "ReadFSAnnotation: Got an error on reading embeded colour table " << error << endl);
+          vtkDebugMacro( << "ReadFSAnnotation: Got an error on reading embedded colour table " << error << endl);
           // Return vtkFSSurfaceAnnotationReader::FS_NO_COLOR_TABLE here so that the caller can
           // see that while the annotation file was loaded
           // correctly, there was no embedded color table, so the
@@ -308,7 +308,7 @@ if (labelIndex % 1000 == 0) {
   }
 
   // reset total steps, as have to do stuff for the colour table entries
-  vtkDebugMacro(<<"ReadFSAnnotation: increasing totalSteps " << totalSteps << " by 3 times the number of colour table entries : " << 3*numColorTableEntries << ", thsi step is currently " << thisStep);
+  vtkDebugMacro(<<"ReadFSAnnotation: increasing totalSteps " << totalSteps << " by 3 times the number of colour table entries : " << 3*numColorTableEntries << ", this step is currently " << thisStep);
 
   totalSteps += 3*numColorTableEntries;
 

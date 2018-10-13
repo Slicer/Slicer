@@ -176,7 +176,7 @@ public:
   Q_INVOKABLE QString currentNodeId()const;
 
   /// if true, when the user create a node using "Add node", the node will be
-  /// automatically selected. It doesn't apply if the node is programatically
+  /// automatically selected. It doesn't apply if the node is programmatically
   /// added (when the combobox is populated by the scene).
   bool selectNodeUponCreation()const;
   void setSelectNodeUponCreation(bool value);

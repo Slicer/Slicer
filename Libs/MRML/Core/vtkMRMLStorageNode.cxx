@@ -393,7 +393,7 @@ void vtkMRMLStorageNode::ProcessMRMLEvents ( vtkObject *vtkNotUsed(caller), unsi
 //----------------------------------------------------------------------------
 void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode *refNode )
 {
-  // if the URI is null, or emtpy assume the file name is set and return
+  // if the URI is null, or empty assume the file name is set and return
   if ( this->Scene )
     {
     // this event is being detected by GUI to provide feedback during load

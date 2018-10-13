@@ -28,7 +28,7 @@ preprocessLabelMap(typename itk::Image<pixel_t, 3>::Pointer originalLabelMap, pi
 
     3. if #= 2, if desiredLabel is not there, then return originalLableMap itself
 
-    4. if #= 2, go thru originalLabelMap and fill in a new lable map
+    4. if #= 2, go thru originalLabelMap and fill in a new label map
        with 1 where the label matches.
 
 

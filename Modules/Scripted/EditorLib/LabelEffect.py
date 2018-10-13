@@ -405,7 +405,7 @@ class LabelEffectLogic(Effect.EffectLogic):
     labelIJKToRAS = self.getIJKToRASMatrix(labelNode)
 
     #
-    # create an exract image for undo if it doesn't exist yet.
+    # create an extract image for undo if it doesn't exist yet.
     #
 
     if not self.extractImage:

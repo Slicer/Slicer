@@ -244,7 +244,7 @@ public:
   vtkMRMLNode *GetFirstNodeByName(const char* name);
 
   /// \brief Return the first node in the scene that matches the filtering
-  /// criterias if specified.
+  /// criteria if specified.
   ///
   /// By default, \a byName will be compared using an exact match. If
   /// \a exactNameMatch is set to \a false, the node will be returned if

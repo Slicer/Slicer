@@ -115,7 +115,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
     tdNode.SetEditorVisibility(True)
     self.assertTrue(widget.GetEnabled())
 
-    # Check default widget tranform values
+    # Check default widget transform values
     representation = widget.GetRepresentation()
     defaultTransform = vtk.vtkTransform()
     representation.GetTransform(defaultTransform)
@@ -156,7 +156,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
     #
     # 1- No transform
     #
-    # Check default widget tranform values
+    # Check default widget transform values
     representation = widget.GetRepresentation()
     transform = vtk.vtkTransform()
 
@@ -357,7 +357,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
     #  5. No cubes
     #
 
-    # Check default widget tranform values
+    # Check default widget transform values
     expectedDefaultTransform = [
       [100.0,   0.0,    0.0,    0.0],
       [0.0,   100.0,    0.0,    0.0],

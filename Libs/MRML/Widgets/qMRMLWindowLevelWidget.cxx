@@ -360,7 +360,7 @@ void qMRMLWindowLevelWidget::updateWidgetFromMRMLDisplayNode()
   double min = d->VolumeDisplayNode->GetWindowLevelMin();
   double max = d->VolumeDisplayNode->GetWindowLevelMax();
 
-  // We block here to prevent the widgets to call setWindowLevel wich could
+  // We block here to prevent the widgets to call setWindowLevel which could
   // change the AutoLevel from Auto into Manual.
   bool blocked = d->blockSignals(true);
 

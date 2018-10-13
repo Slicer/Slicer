@@ -88,7 +88,7 @@ public:
     ///
     /// take input scalars and push them through the calculation to get colours
     /// to put int the output array
-    void MapScalarsThroughTable2(void* input, unsigned char* outupt, int inputDataType, int numberOfValues, int inputIncrement, int outputIncrement) VTK_OVERRIDE;
+    void MapScalarsThroughTable2(void* input, unsigned char* output, int inputDataType, int numberOfValues, int inputIncrement, int outputIncrement) VTK_OVERRIDE;
 
     ///
     /// Type constant, can have different types of colour scales

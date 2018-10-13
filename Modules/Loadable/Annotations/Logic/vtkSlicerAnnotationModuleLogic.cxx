@@ -485,7 +485,7 @@ void vtkSlicerAnnotationModuleLogic::OnInteractionModePersistenceChangedEvent(vt
 //---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
-// Set the internal mrml scene adn observe events on it
+// Set the internal mrml scene and observe events on it
 //---------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 {
@@ -2247,7 +2247,7 @@ int vtkSlicerAnnotationModuleLogic::GetAnnotationVisibility(const char * id)
     return annotationNode->GetDisplayVisibility();
     }
 
-  // is it a heirarchy node?
+  // is it a hierarchy node?
   vtkMRMLAnnotationHierarchyNode *hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(node);
   if (hnode && hnode->GetDisplayNode())
     {

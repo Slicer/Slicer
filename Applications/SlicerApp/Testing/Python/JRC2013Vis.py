@@ -118,7 +118,7 @@ class JRC2013VisWidget:
 
   def onReload(self,moduleName="JRC2013Vis"):
     """Generic reload method for any scripted module.
-    ModuleWizard will subsitute correct default moduleName.
+    ModuleWizard will substitute correct default moduleName.
     """
     globals()[moduleName] = slicer.util.reloadScriptedModule(moduleName)
 

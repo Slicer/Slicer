@@ -80,7 +80,7 @@ public:
   /// \sa dropEvent()
   virtual bool isMimeDataAccepted(const QMimeData*mimeData)const;
 
-  /// Handle drop events: populate the dialog with the droped mime data.
+  /// Handle drop events: populate the dialog with the dropped mime data.
   /// Can be reimplemented in subclass to support drag&drop.
   /// Do nothing by default.
   /// If it does something, acceptProposedAction() or accept() must be called.

@@ -166,7 +166,7 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   /// PlaceNodeClassNameListModifiedEvent: this is fired when new place node
   /// class names are added, watched for by the Mouse mode tool bar so that it
   /// can offer the user all the valid types of nodes to place.
-  /// UnitModifiedEvent: Fired everytime a quantity unit node is changed
+  /// UnitModifiedEvent: Fired every time a quantity unit node is changed
   /// or an active quantity unit node is modified. The calldata contains
   /// the node quantity
   /// \sa AddNewPlaceNodeClassNameToList
@@ -249,7 +249,7 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   /// Add display node class for a displayable class.
   /// Controls which display node to apply properties in hierarchy display widgets
   /// affected by setting visibility and other properties.
-  /// This mostly applies to displayable nodes that have mutiple display nodes
+  /// This mostly applies to displayable nodes that have multiple display nodes
   /// For example, parameters of "vtkMRMLFiberbundleNode" , "vtkMRMLFiberbundleTubeDisplayNode"
   /// will change tube visibility
   void AddModelHierarchyDisplayNodeClassName(const std::string& dispayableNodeClass,

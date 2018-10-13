@@ -82,7 +82,7 @@ public slots:
   /// \sa setTitle
   void showTitle(bool show);
 
-  /// Conrtol the diplay of a label along the X-Axis
+  /// Conrtol the display of a label along the X-Axis
   /// \sa setXAxisLabel
   void showXAxisLabel(bool show);
 

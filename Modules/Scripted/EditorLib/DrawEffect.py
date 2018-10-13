@@ -298,7 +298,7 @@ class DrawEffectTool(LabelEffect.LabelEffectTool):
     lines.SetNumberOfCells(1)
 
   def deleteLastPoint(self):
-    """unwind through addPoint list back to empy polydata"""
+    """unwind through addPoint list back to empty polydata"""
 
     pcount = self.rasPoints.GetNumberOfPoints()
     if pcount <= 0: return

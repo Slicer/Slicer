@@ -245,7 +245,7 @@ class ExtensionProject(object):
     ``name``, the result is the raw argument to the last such command. If the
     value consists of more than one argument, only the first is returned.
 
-    If ``substitute`` is ``True``, each occurence of '``${var}``' will be
+    If ``substitute`` is ``True``, each occurrence of '``${var}``' will be
     replaced with the corresponding variable if it has been set. Variable
     references can nest and are evaluated from the inside out,
     e.g. '``${outer_${inner_variable}_variable}``'. If a variable
@@ -258,7 +258,7 @@ class ExtensionProject(object):
 
       Variables set using a nested reference are not supported.
       For example, if the underlying CMake code is ``set(foo \"world\")``
-      and ``set(hello_${foo} \"earth\")``. Occurences of
+      and ``set(hello_${foo} \"earth\")``. Occurrences of
       '``${hello_${foo}}``' will be replaced by '``hello_world-NOTFOUND``'
 
     .. seealso:: :func:`.substituteVariableReferences`

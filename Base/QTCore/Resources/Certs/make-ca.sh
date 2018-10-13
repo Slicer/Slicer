@@ -32,7 +32,7 @@
 #            CKA_TRUST_CLIENT_AUTH
 # 20170119 - Show trust bits on local certs
 #          - Add version output for help2man
-# 20161210 - Add note about --force swich when same version
+# 20161210 - Add note about --force switch when same version
 # 20161126 - Add -D/--destdir switch
 # 20161124 - Add -f/--force switch to bypass version check
 #          - Add multiple switches to allow for alternate localtions
@@ -206,7 +206,7 @@ get_args $@
 
 if test ! -r "${CERTDATA}"; then
   echo "${CERTDATA} was not found. The certdata.txt file must be in the local"
-  echo "directory, or speficied with the --certdata switch."
+  echo "directory, or specified with the --certdata switch."
   exit 1
 fi
 
@@ -248,7 +248,7 @@ for tempfile in ${TEMPDIR}/certs/*.tmp; do
   # Not currently included in NSS certdata.txt
   #caarg="$(convert_trust_arg "${catrust}" ca)"
 
-  # Convert to a PEM formated certificate
+  # Convert to a PEM formatted certificate
   printf $(awk '/^CKA_VALUE/{flag=1;next}/^END/{flag=0}flag{printf $0}' \
   "${tempfile}") | "${OPENSSL}" x509 -text -inform DER -fingerprint \
   > tempfile.crt

@@ -31,7 +31,7 @@
     </integer>
     <integer>
       <name>Import</name>
-      <description><![CDATA[Use this to add DICOM files from your local file system into the DICOM Database.  Selected directories will be searched hierarchically for DICOM files.  A checkbox in the dialog controls whether a copy of these files should be added to the LocalDatabase direcory or if they should be pointed to where they exist.]]></description>
+      <description><![CDATA[Use this to add DICOM files from your local file system into the DICOM Database.  Selected directories will be searched hierarchically for DICOM files.  A checkbox in the dialog controls whether a copy of these files should be added to the LocalDatabase directory or if they should be pointed to where they exist.]]></description>
       <label>Import</label>
     </integer>
     <integer>
@@ -65,7 +65,7 @@
     <description><![CDATA[Move data to/from Slicer and the DICOM database]]></description>
     <integer>
       <name>Load to Slicer</name>
-      <description><![CDATA[Is enabled depending on selected data.  This button will bulk load data to slicer.  Typically each series corresponds to a Slicer volume, however Slicer performs some heuristics to provide options for different loading strategies that might better match the acquisition to the requirements of a Slicer volume (for example, some acquisitions may have multiple time points per-slice within a series, while a Slicer volume requires unique data values at each location).  A study will load mulitple volumes and patient may have multiple studies.]]></description>
+      <description><![CDATA[Is enabled depending on selected data.  This button will bulk load data to slicer.  Typically each series corresponds to a Slicer volume, however Slicer performs some heuristics to provide options for different loading strategies that might better match the acquisition to the requirements of a Slicer volume (for example, some acquisitions may have multiple time points per-slice within a series, while a Slicer volume requires unique data values at each location).  A study will load multiple volumes and patient may have multiple studies.]]></description>
       <label>Load to Slicer</label>
     </integer>
     <integer>

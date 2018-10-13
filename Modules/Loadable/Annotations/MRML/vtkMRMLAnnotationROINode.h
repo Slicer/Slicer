@@ -104,7 +104,7 @@ public:
 
   ///
   /// Get/Set for ROI Position in RAS cooridnates
-  /// Note: The ROI Postion is the center of the ROI
+  /// Note: The ROI Position is the center of the ROI
   /// Old API:
   /// void SetXYZ(double X, double Y, double Z);
   /// void SetXYZ(double* XYZ);
@@ -151,7 +151,7 @@ public:
   vtkSetStringMacro(VolumeNodeID);
 
   /// Get bounding box in global RAS form (xmin,xmax, ymin,ymax, zmin,zmax).
-  /// The deafult implementation in the model node would not work correctly, as the polydata
+  /// The default implementation in the model node would not work correctly, as the polydata
   /// in this class is used for storing the centerpoint position and radius.
   /// \sa GetBounds()
   virtual void GetRASBounds(double bounds[6]) VTK_OVERRIDE;

@@ -1732,7 +1732,7 @@ int vtkMRMLFiducialListNode::MoveFiducialUp(int fidIndex)
   copyFidAbove->SetID(fidAbove->GetID());
   // now replace the one above with this one
   this->FiducialList->ReplaceItem(newIndex, thisFid);
-  // and replace this one withthe one that was above
+  // and replace this one with the one that was above
   this->FiducialList->ReplaceItem(fidIndex, copyFidAbove.GetPointer());
 
   this->Modified();

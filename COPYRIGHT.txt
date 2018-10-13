@@ -80,7 +80,7 @@ Sublicense ("Contribution Agreement").
    your breach of any of the terms of this Agreement.
 
 6. YOU WARRANT THAT TO THE BEST OF YOUR KNOWLEDGE YOUR CONTRIBUTION
-   DOES NOT CONTAIN ANY CODE THAT REQURES OR PRESCRIBES AN "OPEN
+   DOES NOT CONTAIN ANY CODE THAT REQUIRES OR PRESCRIBES AN "OPEN
    SOURCE LICENSE" FOR DERIVATIVE WORKS (by way of non-limiting
    example, the GNU General Public License or other so-called
    "reciprocal" license that requires any derived work to be licensed

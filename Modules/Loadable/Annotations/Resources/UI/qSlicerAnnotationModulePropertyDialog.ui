@@ -57,7 +57,7 @@
        <item>
         <widget class="QCheckBox" name="hierarchyPushCheckBox">
          <property name="toolTip">
-          <string>Propagate changes to all nodes in this list. If not checked, only when the hiearchy is collapsed will the nodes below it use these display properties.</string>
+          <string>Propagate changes to all nodes in this list. If not checked, only when the hierarchy is collapsed will the nodes below it use these display properties.</string>
          </property>
          <property name="layoutDirection">
           <enum>Qt::RightToLeft</enum>

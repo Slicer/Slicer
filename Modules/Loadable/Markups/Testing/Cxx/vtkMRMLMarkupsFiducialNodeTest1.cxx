@@ -105,7 +105,7 @@ int vtkMRMLMarkupsFiducialNodeTest1(int , char * [] )
   double p1[3];
   node1->GetNthFiducialPosition(fidIndex2, p1);
   diff = sqrt(vtkMath::Distance2BetweenPoints(p0, p1));
-  std::cout << "Diff between set nth fiducial postion array and get = " << diff << std::endl;
+  std::cout << "Diff between set nth fiducial position array and get = " << diff << std::endl;
   if (diff > 0.1)
     {
     return EXIT_FAILURE;
@@ -115,7 +115,7 @@ int vtkMRMLMarkupsFiducialNodeTest1(int , char * [] )
   node1->SetNthFiducialPosition(fidIndex2, p0[0], p0[1], p0[2]);
   node1->GetNthFiducialPosition(fidIndex2, p1);
   diff = sqrt(vtkMath::Distance2BetweenPoints(p0, p1));
-  std::cout << "Diff between set nth fiducial postion and get = " << diff << std::endl;
+  std::cout << "Diff between set nth fiducial position and get = " << diff << std::endl;
   if (diff > 0.1)
     {
     return EXIT_FAILURE;

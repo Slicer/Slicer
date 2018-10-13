@@ -51,7 +51,7 @@ class SegmentStatisticsPluginBase(object):
 
   def computeStatistics(self, segmentID):
     """Compute measurements for requested keys on the given segment and return 
-    as dictionary mapping key's to mesurement results
+    as dictionary mapping key's to measurement results
     """
     pass
 

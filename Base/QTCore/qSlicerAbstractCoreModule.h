@@ -102,7 +102,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractCoreModule : public QObject
 
   /// This property holds whether the module is visible to the user.
   /// If the module is hidden, it doesn't appear in the list of modules menu.
-  /// However, the module is programatically accessible.
+  /// However, the module is programmatically accessible.
   /// By default, modules are visible (hidden == false).
   /// \sa isHidden
   Q_PROPERTY(bool hidden READ isHidden)
@@ -135,7 +135,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractCoreModule : public QObject
   /// It is shown in the Acknowledgement page.
   /// If there are multiple contributors, they must be listed in the order
   /// of contribution. For each contributor, the name of the institution
-  /// can succede the author: e.g. John Doe, CompanyName Inc.
+  /// can succeed the author: e.g. John Doe, CompanyName Inc.
   /// \a contributors() must be reimplemented for each module.
   /// \sa helpText, acknowledgementText
   Q_PROPERTY(QStringList contributors READ contributors)

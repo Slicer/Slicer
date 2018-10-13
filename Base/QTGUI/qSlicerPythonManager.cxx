@@ -60,7 +60,7 @@ void qSlicerPythonManager::executeInitializationScripts()
   this->executeFile(app->slicerHome() + "/bin/Python/slicer/slicerqt-with-tcl.py");
 
   // -- event broker
-  // - script handler to pass callback strings to the tcl interpeter
+  // - script handler to pass callback strings to the tcl interpreter
   // - synchronous mode so that redundant events do not get collapsed
   //   (this is compatible with standard vtk event behavior, but adds
   //   the ability to trace event execution and auto cleanup on Delete events).

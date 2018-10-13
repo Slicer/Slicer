@@ -92,7 +92,7 @@ def initLogging(logger):
 # Set up the root logger
 #
 # We initialize the root logger because if somebody just called logging.debug(),
-# logging.info(), etc. then it would create a default root logger with defaut settings
+# logging.info(), etc. then it would create a default root logger with default settings
 # that do not work nicely in Slicer (prints everything in console, messages are
 # not sent to the application log, etc).
 #

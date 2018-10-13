@@ -1,5 +1,5 @@
 if(BUILD_TESTING)
-  # Code specfic to Slicer testing is added here.
+  # Code specific to Slicer testing is added here.
   set(KIT ${PROJECT_NAME})
 
 

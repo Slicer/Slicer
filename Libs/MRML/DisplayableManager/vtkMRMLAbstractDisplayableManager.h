@@ -56,7 +56,7 @@ public:
   bool IsCreated();
 
   /// Set the LightBoxRendererManager proxy. This proxy provides a
-  /// method GetRenderer(int) that returns the renderer for the ith
+  /// method GetRenderer(int) that returns the renderer for the Nth
   /// lightbox pane. The DisplayableManagers use this method to map
   /// coordinates to the proper lightbox pane, e.g. in placing
   /// crosshairs or annotations in the proper renderer.
@@ -69,7 +69,7 @@ public:
   /// Get the default renderer for this displayable manager.
   vtkRenderer* GetRenderer();
 
-  /// Get the renderer for the ith lightbox pane. This method uses the
+  /// Get the renderer for the Nth lightbox pane. This method uses the
   /// LightBoxRendererManagerProxy if one has been configured for the
   /// DisplayableManager. If no LightBoxRendererManagerProxy has been
   /// set, this method returns the default renderer by deferring to
@@ -112,7 +112,7 @@ protected:
   virtual void AdditionalInitializeStep(){}
 
   /// Subclass can overload this method to specify under which InteractionNode modes
-  /// this Displayable Manger InteractorStyle events.
+  /// this Displayable Manager InteractorStyle events.
   /// By default events only arrive when in Place mode (good for annotations)
   /// but if you want a continuous read out of, for example, slice positions while
   /// the mouse moves set this to include Place and ViewTransform

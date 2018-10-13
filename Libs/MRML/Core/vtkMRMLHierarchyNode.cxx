@@ -126,7 +126,7 @@ void vtkMRMLHierarchyNode::ReadXMLAttributes(const char** atts)
     attValue = *(atts++);
     if (!strcmp(attName, "parentNodeRef"))
       {
-      // dont reset SortingValue
+      // don't reset SortingValue
       double sortingValue = this->GetSortingValue();
       this->SetParentNodeID(attValue);
       this->SetSortingValue(sortingValue);

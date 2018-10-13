@@ -80,7 +80,7 @@ class Slicer4MinuteWidget:
 
     # HelloWorld button
     helloWorldButton = qt.QPushButton("Hello world")
-    helloWorldButton.toolTip = "Print 'Hello world' in standard ouput."
+    helloWorldButton.toolTip = "Print 'Hello world' in standard output."
     dummyFormLayout.addWidget(helloWorldButton)
     helloWorldButton.connect('clicked(bool)', self.onHelloWorldButtonClicked)
 
@@ -95,7 +95,7 @@ class Slicer4MinuteWidget:
 
   def onReload(self,moduleName="Slicer4Minute"):
     """Generic reload method for any scripted module.
-    ModuleWizard will subsitute correct default moduleName.
+    ModuleWizard will substitute correct default moduleName.
     """
     globals()[moduleName] = slicer.util.reloadScriptedModule(moduleName)
 

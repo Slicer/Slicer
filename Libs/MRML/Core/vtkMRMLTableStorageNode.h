@@ -34,7 +34,7 @@ class vtkMRMLTableNode;
 ///
 /// If the file extension is .tsv or .txt then it is assumed to be tab-separated.
 /// Values in tab-separated files may not contain tabs but may contain any other
-/// characters (including commas and quotaion marks).
+/// characters (including commas and quotation marks).
 ///
 /// If the file extension is .csv then it is assumed to be comma-separated.
 /// Values in comma-separated files may not contain quotation marks but may contain

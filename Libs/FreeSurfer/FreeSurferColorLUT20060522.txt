@@ -226,14 +226,14 @@
 # created by mri_aparc2aseg in which the aseg cortex label is replaced
 # by the labels in the aparc. It also supports wm labels that will
 # eventually be created by mri_aparc2aseg. Otherwise, the aseg labels
-# do not change from above. The cortical lables are the same as in
+# do not change from above. The cortical labels are the same as in
 # colortable_desikan_killiany.txt, except that left hemisphere has
 # 1000 added to the index and the right has 2000 added.  The label
 # names are also prepended with ctx-lh or ctx-rh. The white matter
 # labels are the same as in colortable_desikan_killiany.txt, except
 # that left hemisphere has 3000 added to the index and the right has
 # 4000 added. The label names are also prepended with wm-lh or wm-rh.
-# Centrum semiovale is also labled with 5001 (left) and 5002 (right).
+# Centrum semiovale is also labeled with 5001 (left) and 5002 (right).
 # Even further below is the color table for aparc.a2005s.
 
 1000  ctx-lh-unknown  25  5  25  255
@@ -384,7 +384,7 @@
 # Below is the color table for the cortical labels of the seg volume
 # created by mri_aparc2aseg (with --a2005 flag) in which the aseg
 # cortex label is replaced by the labels in the aparc.a2005. The
-# cortical lables are the same as in Simple_surface_labels2005.txt,
+# cortical labels are the same as in Simple_surface_labels2005.txt,
 # except that left hemisphere has 1100 added to the index and the
 # right has 2100 added.  The label names are also prepended with
 # ctx-lh or ctx-rh.

@@ -53,7 +53,7 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
 
     ///
     /// Get/Set for Nth ROI node Position in RAS cooridnates
-    /// Note: The ROI Postion is the center of the ROI
+    /// Note: The ROI Position is the center of the ROI
     int SetNthROIXYZ(int n, double x, double y, double z);
     double *GetNthROIXYZ(int n);
     ///
@@ -62,7 +62,7 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
     double *GetNthROIRadiusXYZ(int n);
     ///
     /// Get/Set for Nth ROI node Position in IJK cooridnates
-    /// Note: The ROI Postion is the center of the ROI
+    /// Note: The ROI Position is the center of the ROI
     int SetNthROIIJK(int n, double i, double j, double k);
     double *GetNthROIIJK(int n);
     ///
@@ -161,7 +161,7 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
     void SetAllVolumeNodeID();
 
     ///
-    /// Syncronize the ROI position and radius in IJK
+    /// Synchronize the ROI position and radius in IJK
     /// coordinates according RAS coordinates
     void UpdateIJK();
 

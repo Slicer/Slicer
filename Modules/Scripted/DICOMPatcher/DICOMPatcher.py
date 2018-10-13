@@ -227,7 +227,7 @@ class ForceSamePatientNameIdInEachDirectory(DICOMPatcherRule):
       self.patientName = ds.PatientName
       self.patientID = ds.PatientID
     else:
-      # Set teh same patient name and ID as the first file in the directory
+      # Set the same patient name and ID as the first file in the directory
       ds.PatientName = self.patientName
       ds.PatientID = self.patientID
 

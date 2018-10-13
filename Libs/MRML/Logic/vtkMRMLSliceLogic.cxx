@@ -865,7 +865,7 @@ void vtkMRMLSliceLogic
 {
   vtkMRMLScalarVolumeNode* volumeNode =
     vtkMRMLScalarVolumeNode::SafeDownCast( this->GetLayerVolumeNode (0) );
-    // 0 is background layer, definied in this::GetLayerVolumeNode
+    // 0 is background layer, defined in this::GetLayerVolumeNode
   vtkMRMLScalarVolumeDisplayNode* volumeDisplayNode = NULL;
   if (volumeNode)
     {
@@ -891,7 +891,7 @@ void vtkMRMLSliceLogic
 {
   vtkMRMLScalarVolumeNode* volumeNode =
     vtkMRMLScalarVolumeNode::SafeDownCast( this->GetLayerVolumeNode (1) );
-    // 0 is background layer, definied in this::GetLayerVolumeNode
+    // 0 is background layer, defined in this::GetLayerVolumeNode
   vtkMRMLScalarVolumeDisplayNode* volumeDisplayNode = NULL;
   if (volumeNode)
     {

@@ -354,7 +354,7 @@ void vtkOpenGLShaderComputation::ReleaseResultRenderbuffer()
 //
 void vtkOpenGLShaderComputation::Compute(float slice)
 {
-  // bail out early if we aren't configured corretly
+  // bail out early if we aren't configured correctly
   if (this->VertexShaderSource == NULL || this->FragmentShaderSource == NULL)
     {
     vtkErrorMacro("Both vertex and fragment shaders are needed for a shader computation.");

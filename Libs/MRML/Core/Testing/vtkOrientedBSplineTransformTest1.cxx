@@ -402,14 +402,14 @@ int vtkOrientedBSplineTransformTest1(int , char * [] )
         if ( differenceItkVtk > 1e-6 )
           {
           getTransformedPointDifferenceItkVtk(inputPoint, bsplineItk, bsplineVtk.GetPointer(), true);
-          std::cout << "ERROR: Point transfom result mismatch between ITK and VTK at grid point ("<<i<<","<<j<<","<<k<<")"<< std::endl;
+          std::cout << "ERROR: Point transform result mismatch between ITK and VTK at grid point ("<<i<<","<<j<<","<<k<<")"<< std::endl;
           numberOfItkVtkPointMismatches++;
           }
         double differenceSingleDoubleVtk = getTransformedPointDifferenceSingleDoubleVtk(inputPoint, bsplineVtk.GetPointer(), false);
         if ( differenceSingleDoubleVtk > 1e-4 )
           {
           getTransformedPointDifferenceSingleDoubleVtk(inputPoint, bsplineVtk.GetPointer(), true);
-          std::cout << "ERROR: Point transfom result mismatch between single-precision and double-precision VTK computation at grid point ("<<i<<","<<j<<","<<k<<")"<< std::endl;
+          std::cout << "ERROR: Point transform result mismatch between single-precision and double-precision VTK computation at grid point ("<<i<<","<<j<<","<<k<<")"<< std::endl;
           numberOfSingleDoubleVtkPointMismatches++;
           }
         // Verify VTK derivative

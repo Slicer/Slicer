@@ -59,7 +59,7 @@ public:
   TransformType typeOfTransform() const;
 
   ///
-  /// Convenience method allowing to get which familly of transform is set
+  /// Convenience method allowing to get which family of transform is set
   bool isRotation()const;
   bool isTranslation()const;
 

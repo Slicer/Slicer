@@ -188,7 +188,7 @@ void vtkMRMLChartNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
 
   // Need to manage references to other nodes.  Unregister this node's
-  // currrent references (done implictly when clearing the arrays and properties).
+  // current references (done implictly when clearing the arrays and properties).
   this->ClearArrays();
   this->ClearProperties();
 
@@ -385,7 +385,7 @@ void vtkMRMLChartNode::SetProperty(const char *name,
     {
     if (found)
       {
-      // overwritting the ColorNode ID at this level
+      // overwriting the ColorNode ID at this level
       this->Scene->RemoveReferencedNodeID(oldValue.c_str(), this);
       }
     this->Scene->AddReferencedNodeID(value, this);

@@ -15,7 +15,7 @@ if { [info command ::tpycl::tcl_package] == "" } {
 
 proc ::package {option args} {
   # special purpose version of the package command to import vtk
-  # - not realy general pupose - scripts that make extensive use of tpycl
+  # - not really general pupose - scripts that make extensive use of tpycl
   #   should be aware of things they want to get from python and
   #   call py_package directly
   if { $option == "require" && $args == "vtk" } {

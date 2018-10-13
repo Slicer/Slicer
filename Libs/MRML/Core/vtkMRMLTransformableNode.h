@@ -24,7 +24,7 @@ class vtkMRMLTransformNode;
 class vtkAbstractTransform;
 class vtkMatrix4x4;
 
-/// \brief MRML node for representing a node with a tranform.
+/// \brief MRML node for representing a node with a transform.
 ///
 /// A superclass for other nodes that can have a transform to parent node
 /// like volume, model and transformation nodes.

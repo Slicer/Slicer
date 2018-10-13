@@ -156,7 +156,7 @@ void vtkSlicerMarkupsLogic::ObserveMRMLScene()
 
     selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLMarkupsFiducialNode", ":/Icons/MarkupsMouseModePlace.png", "Fiducial");
 
-    // trigger an upate on the mouse mode toolbar
+    // trigger an update on the mouse mode toolbar
     this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
     }
 

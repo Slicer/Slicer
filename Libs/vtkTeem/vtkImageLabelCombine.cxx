@@ -107,7 +107,7 @@ void vtkImageLabelCombineExecute2(vtkImageLabelCombine *self,
   in2Data->GetContinuousIncrements(outExt, in2IncX, in2IncY, in2IncZ);
   outData->GetContinuousIncrements(outExt, outIncX, outIncY, outIncZ);
 
-  // Loop through ouput pixels
+  // Loop through output pixels
   for (idxZ = 0; idxZ <= maxZ; idxZ++)
     {
     for (idxY = 0; !self->AbortExecute && idxY <= maxY; idxY++)

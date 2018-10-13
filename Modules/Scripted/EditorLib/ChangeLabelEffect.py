@@ -204,7 +204,7 @@ class ChangeLabelEffect(Effect.Effect):
     # name is used to define the name of the icon image resource (e.g. ChangeLabelEffect.png)
     self.name = "ChangeLabelEffect"
     # tool tip is displayed on mouse hover
-    self.toolTip = "ChangeLabelEffect: Change all occurances of one value in the volume to another value"
+    self.toolTip = "ChangeLabelEffect: Change all occurrences of one value in the volume to another value"
 
     self.options = ChangeLabelEffectOptions
     self.tool = ChangeLabelEffectTool

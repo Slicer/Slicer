@@ -154,7 +154,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
 
   this->lockUnlockInterface(locked);
 
-  // load the visiblity status
+  // load the visibility status
   int visible = this->m_logic->GetAnnotationVisibility(this->m_id.c_str());
 
   if (!visible)
@@ -1222,7 +1222,7 @@ void qSlicerAnnotationModulePropertyDialog::onVisibleInvisibleButtonClicked()
 {
   this->m_logic->SetAnnotationVisibility(this->m_id.c_str());
 
-  // load the visiblity status
+  // load the visibility status
   int visible = this->m_logic->GetAnnotationVisibility(this->m_id.c_str());
 
   if (!visible)

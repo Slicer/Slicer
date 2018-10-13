@@ -996,7 +996,7 @@ CSFLSSegmentor3D<TPixel>
   m_insideVolume = m_insideVoxelCount * m_dx * m_dy * m_dz;
 
 //   //debug//
-//   douher::writeImage3<char>(mp_label, "lable.mha");
+//   douher::writeImage3<char>(mp_label, "label.mha");
 //   douher::writeImage3<unsigned char>(mp_mask, "mask.mha");
 //   douher::writeImage3<double>(mp_phi, "phi.mha");
 //   exit(0);

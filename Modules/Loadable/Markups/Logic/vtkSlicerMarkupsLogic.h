@@ -170,9 +170,9 @@ public:
                                    vtkMRMLMarkupsNode *newMarkupsNode, int newIndex);
 
   /// Searches the scene for annotation fidicual nodes, collecting a list
-  /// of annotation hierarchy nodes. Then iterates through those heirarchy nodes
+  /// of annotation hierarchy nodes. Then iterates through those hierarchy nodes
   /// and moves the fiducials that are under them into new markups nodes. Leaves
-  /// the top level heirarchy nodes intact as they may be parents to ruler or
+  /// the top level hierarchy nodes intact as they may be parents to ruler or
   /// ROIs but deletes the 1:1 hierarchy nodes.
   void ConvertAnnotationFiducialsToMarkups();
 
@@ -184,7 +184,7 @@ public:
 
   /// Put the interaction node into place mode, and set the persistence of
   /// place mode according to the persistent flag.
-  /// Return true on sucessfully going into place mode, false otherwise.
+  /// Return true on successfully going into place mode, false otherwise.
   /// \sa SetActiveIDList
   bool StartPlaceMode(bool persistent);
 

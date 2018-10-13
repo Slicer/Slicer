@@ -569,7 +569,7 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::SetNthSeed(int n, vtkMRMLMarkup
   vtkPointHandleRepresentation2D *pointHandleRep =
     vtkPointHandleRepresentation2D::SafeDownCast(seedRepresentation->GetHandleRepresentation(n));
 
-  // update the postion
+  // update the position
   bool positionChanged = this->UpdateNthSeedPositionFromMRML(n, seedWidget, fiducialNode);
   if (!positionChanged)
     {

@@ -66,7 +66,7 @@ public:
   ///
   /// Specify the file names to be used when looking for extra files
   /// that match the archetype in defining the volume to load (e.g.
-  /// other canidate dicom files to look in for matching tags)
+  /// other candidate dicom files to look in for matching tags)
   unsigned int AddFileName( const char* filename );
   const char* GetFileName( unsigned int n );
   void ResetFileNames();
@@ -414,7 +414,7 @@ public:
     return this->ImagePositionPatient.size();
     }
 
-  /// check the existance of given discriminator
+  /// check the existence of given discriminator
   int ExistSeriesInstanceUID( const char* SeriesInstanceUID )
     {
     for (unsigned int k = 0; k < GetNumberOfSeriesInstanceUIDs(); k++)

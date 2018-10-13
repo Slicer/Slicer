@@ -513,7 +513,7 @@ void vtkMRMLScene::RegisterNodeClass(vtkMRMLNode* node, const char* tagName)
   std::string xmlTag(tagName);
   // Replace the previously registered node if any.
   // By doing so we make sure there is no more than 1 node matching a given
-  // XML tag. It allows plugins to MRML to overide default behavior when
+  // XML tag. It allows plugins to MRML to override default behavior when
   // instantiating nodes via XML tags.
   for (unsigned int i = 0; i < this->RegisteredNodeTags.size(); ++i)
     {
@@ -1266,7 +1266,7 @@ vtkMRMLNode* vtkMRMLScene::AddNewNodeByClass(
 {
   if (className.empty())
     {
-    vtkErrorMacro("AddNewNodeByClass: className is an emptry string");
+    vtkErrorMacro("AddNewNodeByClass: className is an empty string");
     return NULL;
     }
   vtkSmartPointer<vtkMRMLNode> nodeToAdd =
@@ -1320,7 +1320,7 @@ void vtkMRMLScene::RemoveNode(vtkMRMLNode *n)
     }
 
 #ifndef NDEBUG
-  // Since calling IsNodePresent cost, let's display a "developper hint" only if build as Debug
+  // Since calling IsNodePresent cost, let's display a "developer hint" only if build as Debug
   // The caller should make sure the node isn't already removed
   if (this->IsNodePresent(n) == 0)
     {
@@ -1449,7 +1449,7 @@ void vtkMRMLScene::RemoveUnusedNodeReferences()
       vtkMRMLNode *currentReferencingNodePtr=this->GetNodeByID(*referringNodesIt);
       if (currentReferencingNodePtr==NULL)
         {
-        // ### Slicer 4.4: Simplify this logic when adding support for C++11 accross all supported platform/compilers
+        // ### Slicer 4.4: Simplify this logic when adding support for C++11 across all supported platform/compilers
         // the node is not in the scene (or in the scene but with a different pointer), remove it
         NodeReferencesType::value_type::second_type::iterator referringNodesItToRemove = referringNodesIt;
         ++referringNodesIt;
@@ -1468,7 +1468,7 @@ void vtkMRMLScene::RemoveUnusedNodeReferences()
     vtkMRMLNode *node = this->GetNodeByID(referenceIt->first);
     if (node==NULL || referenceIt->second.empty())
       {
-      // ### Slicer 4.4: Simplify this logic when adding support for C++11 accross all supported platform/compilers
+      // ### Slicer 4.4: Simplify this logic when adding support for C++11 across all supported platform/compilers
       // the referenced ID is no longer in the scene (or no more references), so remove all related references
       NodeReferencesType::iterator referenceItToBeRemoved = referenceIt;
       ++referenceIt;

@@ -41,8 +41,8 @@ public:
   /// Adds a scale preset to the list of possible scales.
   /// Length: The preset with Length closest to the actual length of the ruler will be used.
   /// If a preset exists with the same length then it will be updated with the new parameters.
-  /// Number of major divisons: how many parts the ruler will be divided to by major ticks.
-  /// Number of minor divisons: how many parts one division will be divided to by minor ticks.
+  /// Number of major divisions: how many parts the ruler will be divided to by major ticks.
+  /// Number of minor divisions: how many parts one division will be divided to by minor ticks.
   /// Displayed unit name: unit name displayed in the label.
   /// Displayed scale: 1 [actual unit] = displayedScale [displayed unit] (e.g., 1 mm = 0.1 cm)
   /// Example: (world coordinate is mm)

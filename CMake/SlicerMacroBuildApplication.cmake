@@ -671,7 +671,7 @@ macro(slicerMacroBuildApplication)
                 --update-resource-ico ${Slicer_BINARY_DIR}/CMakeFiles/${SLICERAPP_APPLICATION_NAME}W${CMAKE_EXECUTABLE_SUFFIX}
                 IDI_ICON1 ${SLICERAPP_WIN_ICON_FILE}
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-            COMMEND ""
+            COMMENT ""
             )
           add_custom_target(${SLICERAPP_APPLICATION_NAME}UpdateLauncherWIcon ALL
             DEPENDS

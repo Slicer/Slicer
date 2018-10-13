@@ -1004,7 +1004,7 @@ bool vtkMRMLMarkupsDisplayableManager2D::IsWidgetDisplayableOnSlice(vtkMRMLMarku
         vtkDebugMacro("Slice node " << sliceNode->GetName()
                       << ": distance to slice = " << distanceToSlice
                       << ", maxDistance = " << maxDistance
-                      << "\n\tslice node dimenions[2] = "
+                      << "\n\tslice node dimensions[2] = "
                       << sliceNode->GetDimensions()[2]);
         if (distanceToSlice < -0.5 || distanceToSlice >= maxDistance)
           {

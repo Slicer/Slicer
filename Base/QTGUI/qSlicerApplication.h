@@ -64,8 +64,8 @@ public:
   /// Return a reference to the application singleton
   static qSlicerApplication* application();
 
-  /// Avoid some crashes due to execeptions thrown during inside event handlers
-  /// (such as slots).  When exceptions are thown from slots, Qt generates this message:
+  /// Avoid some crashes due to exceptions thrown during inside event handlers
+  /// (such as slots).  When exceptions are thrown from slots, Qt generates this message:
   ///
   ///   > Qt has caught an exception thrown from an event handler. Throwing
   ///   > exceptions from an event handler is not supported in Qt. You must

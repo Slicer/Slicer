@@ -95,7 +95,7 @@
   </parameters>
   <parameters>
     <label>File, Directory and Image Parameters</label>
-    <description><![CDATA[Parameters that describe files and direcories.]]></description>
+    <description><![CDATA[Parameters that describe files and directories.]]></description>
     <file fileExtensions=".png,.jpg,.jpeg,.bmp,.tif,.tiff,.gipl,.dcm,.dicom,.nhdr,.nrrd,.mhd,.mha,.mask,.hdr,.nii,.nii.gz,.hdr.gz,.pic,.lsm,.spr,.vtk,.vtkp,.vtki,.stl,.csv,.txt,.xml,.html">
       <longflag>file1</longflag>
       <description><![CDATA[An input file]]></description>

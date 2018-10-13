@@ -95,7 +95,7 @@ public:
   vtkSetMacro(ActionState, int);
 
   /// Enable/disable the specified action (Translate, Zoom, Blend, etc.).
-  /// Multiple actions can be specifed by providing the sum of action ids.
+  /// Multiple actions can be specified by providing the sum of action ids.
   /// Set the value to AllActionsMask to enable/disable all actions.
   /// All actions are enabled by default.
   void SetActionEnabled(int actionsMask, bool enable = true);

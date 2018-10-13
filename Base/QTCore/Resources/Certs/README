@@ -6,7 +6,7 @@ This folder contains "Slicer.crt" file bundling together X.509v3 certificates (*
 of these X.509v3 certificate identifies a Certificate authority.
 
 When establishing a connection with a website served over https, this one will present
-a digitial certificate allowing to confirm the "digitial identity" of its associated public key
+a digital certificate allowing to confirm the "digital identity" of its associated public key
 later used to establish the secured connection [1].
 
 This digital certificate could either be signed or self-signed [2]. By default, the browser

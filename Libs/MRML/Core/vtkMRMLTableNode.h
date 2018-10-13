@@ -249,7 +249,7 @@ public:
 
   ///
   /// Remove all properties defined for the specified column.
-  /// Te remove all properties for all columns, use SetAndObserveScheme(NULL).
+  /// To remove all properties for all columns, use SetAndObserveScheme(NULL).
   void RemoveAllColumnProperties(const std::string& columnName);
   void RemoveAllColumnProperties(int columnIndex);
 

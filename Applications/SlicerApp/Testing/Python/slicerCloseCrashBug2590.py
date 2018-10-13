@@ -94,7 +94,7 @@ class slicerCloseCrashBug2590Widget:
 
   def onReload(self,moduleName="slicerCloseCrashBug2590"):
     """Generic reload method for any scripted module.
-    ModuleWizard will subsitute correct default moduleName.
+    ModuleWizard will substitute correct default moduleName.
     """
     globals()[moduleName] = slicer.util.reloadScriptedModule(moduleName)
 
@@ -254,9 +254,9 @@ class slicerCloseCrashBug2590Test(unittest.TestCase):
       self.delayDisplay('Crosshairs')
       compareWidget = layoutManager.sliceWidget('Compare1')
       style = compareWidget.interactorStyle()
-      interator = style.GetInteractor()
+      interactor = style.GetInteractor()
       for step in xrange(100):
-        interator.SetEventPosition(10,step)
+        interactor.SetEventPosition(10,step)
         style.OnMouseMove()
 
       self.delayDisplay('Zoom')

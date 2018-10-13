@@ -428,7 +428,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       }
     else
       {
-      // include the archtype, file 0, in the storage node's file list
+      // include the archetype, file 0, in the storage node's file list
       for (unsigned int n = 0; n < reader->GetNumberOfFileNames(); n++)
         {
         const char *thisFileName = reader->GetFileName(n);
@@ -858,7 +858,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
     std::copy(++this->FileNameList.begin(), this->FileNameList.end(),
               std::ostream_iterator<std::string>(addedFiles,", "));
     vtkErrorMacro("UpdateFileList: the archetype file '"
-      << newArchetype.c_str() << "' wasn't written out when writting '"
+      << newArchetype.c_str() << "' wasn't written out when writing '"
       << tempName.c_str() << "' in '" << tempDir.c_str() << "'. "
       << "Only those " << dir.GetNumberOfFiles() - 2
       << " file(s) have been written: " << addedFiles.str().c_str() <<". "

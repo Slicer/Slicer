@@ -144,7 +144,7 @@ def versionDataApplicationDirectory(sourceVersion, destVersion, token, communica
     token -- Authentication token.
     communicator -- Midas session communicator.
     applicationID -- ID of Application folder.
-    overwrite -- Boolean indicating whether to overwrite exisiting items."""
+    overwrite -- Boolean indicating whether to overwrite existing items."""
   availableVersions = communicator.folder_children(token, applicationID)
   sourceIndex = _getFolderIndex(availableVersions, sourceVersion)
   if sourceIndex == -1:
@@ -173,7 +173,7 @@ def versionDataModulesDirectory(sourceVersion, destVersion, token, communicator,
     communicator -- Midas session communicator.
     modulesID -- ID of Modules folder.
     ignoreModules -- List of modules to ignore while versioning.
-    overwrite -- Boolean indicating whether to overwrite exisiting items."""
+    overwrite -- Boolean indicating whether to overwrite existing items."""
   availableModules = communicator.folder_children(token, modulesID)
   availableModulesFolders = availableModules["folders"]
   ignore_indices = []
@@ -290,7 +290,7 @@ def versionData(midas_url, email, apikey, sourceVersion, destVersion, data_id, i
     destVersion -- The destination version.
     data_id -- A valid id for the Data folder (NA-MIC/Public/Slicer/Data).
     ignore_modules -- Ignore a module while versioning. To ignore multiple modules, use this option multiple times (e.g.: -g A -g B).
-    overwrite -- Overwrite items if existing. If this flag is provided, duplicates by overwriting existing items. If this flag is not provided, does not duplicate exisiting items.
+    overwrite -- Overwrite items if existing. If this flag is provided, duplicates by overwriting existing items. If this flag is not provided, does not duplicate existing items.
     dry_run -- List modules and exit. If this flag is provided, a list of modules will be printed and nothing else will be done."""
   # Instantiate a communicator and login to get an authentication token
   communicator = pydas.core.Communicator(midas_url)
@@ -354,7 +354,7 @@ def _main():
   parser.add_option("-d", "--dest_version", dest="destVersion", metavar="dest_version", help="[REQUIRED] The destination version. This script creates a directory")
   parser.add_option("-i", "--data_id", dest="data_id", metavar="id", help="A valid id for the Data folder (NA-MIC/Public/Slicer/Data)", type=int, default=9)
   parser.add_option("-g", "--ignore-module", dest="ignore_modules", metavar="module", action="append", help="Ignore a module while versioning. To ignore multiple modules, use this option multiple times (e.g.: -g A -g B)", default=[])
-  parser.add_option("-o", "--overwrite", dest="overwrite", action="store_true", help="Overwrite items if existing. If this flag is provided, duplicates by overwriting existing items. If this flag is not provided, does not duplicate exisiting items.", default=False)
+  parser.add_option("-o", "--overwrite", dest="overwrite", action="store_true", help="Overwrite items if existing. If this flag is provided, duplicates by overwriting existing items. If this flag is not provided, does not duplicate existing items.", default=False)
   parser.add_option("-l", "--dry-run", dest="dry_run", action="store_true", help="Print structure of source version directory and exit. If this flag is provided, a list of folders/items that will be copied by the script will be printed and nothing else will be done.", default=False)
 
   # Parse input arguments

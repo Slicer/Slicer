@@ -89,7 +89,7 @@ set(ENV{VS_UNICODE_OUTPUT} \"\")
   set(ENV{KERNEL_BITS} \"64\")
   # Allow 'sysctl' executable used in OpenSSL config script to be found.
   # This is required when building Slicer using a cronjob where the
-  # default environement is restricted.
+  # default environment is restricted.
   set(ENV{PATH} \"/usr/sbin:\$ENV{PATH}\")
 ")
     endif()
@@ -147,7 +147,7 @@ ExternalProject_Execute(${proj} \"configure\" sh config --with-zlib-lib=${_zlib_
   #------------------------------------------------------------------------------
   elseif(WIN32)
 
-    set(OPENSSL_DOWNLOAD_VERSION "1.0.1h" CACHE STRING "Version of OpenSSL pre-compiled package ot download.")
+    set(OPENSSL_DOWNLOAD_VERSION "1.0.1h" CACHE STRING "Version of OpenSSL pre-compiled package to download.")
     set_property(CACHE OPENSSL_DOWNLOAD_VERSION PROPERTY STRINGS "1.0.1h" "1.0.1l")
 
     set(_qt_version "${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}")

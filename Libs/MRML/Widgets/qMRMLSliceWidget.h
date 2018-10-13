@@ -137,7 +137,7 @@ public slots:
 
   /// \sa qMRMLSliceControllerWidget::setSliceOrientation()
   /// \sa sliceOrientation()
-  void setSliceOrientation(const QString& orienation);
+  void setSliceOrientation(const QString& orientation);
 
   /// Fit slices to background
   void fitSliceToBackground();

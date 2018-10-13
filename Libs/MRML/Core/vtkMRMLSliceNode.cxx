@@ -601,7 +601,7 @@ void vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(vtkMRMLScene* scene)
 }
 
 //----------------------------------------------------------------------------
-//  Set the SliceToRAS matrix by the postion and orientation of the locator
+//  Set the SliceToRAS matrix by the position and orientation of the locator
 //
 void vtkMRMLSliceNode::SetSliceToRASByNTP (double Nx, double Ny, double Nz,
                          double Tx, double Ty, double Tz,
@@ -739,7 +739,7 @@ void vtkMRMLSliceNode::UpdateMatrices()
     }
 
     // the mapping from slice plane coordinates to RAS
-    // (the Orienation as in Axial, Sagittal, Coronal)
+    // (the Orientation as in Axial, Sagittal, Coronal)
     //
     // The combined transform:
     //
@@ -2028,7 +2028,7 @@ double vtkMRMLSliceNode::GetSliceOffset()
   sliceToRAS->DeepCopy( this->GetSliceToRAS() );
   for (int i = 0; i < 3; i++)
     {
-    sliceToRAS->SetElement( i, 3, 0.0 );  // Zero out the tranlation portion
+    sliceToRAS->SetElement( i, 3, 0.0 );  // Zero out the translation portion
     }
   sliceToRAS->Invert();
   double v1[4], v2[4];
@@ -2064,7 +2064,7 @@ void vtkMRMLSliceNode::SetSliceOffset(double offset)
   sliceToRAS->DeepCopy( this->GetSliceToRAS() );
   for (int i = 0; i < 3; i++)
     {
-    sliceToRAS->SetElement( i, 3, 0.0 );  // Zero out the tranlation portion
+    sliceToRAS->SetElement( i, 3, 0.0 );  // Zero out the translation portion
     }
   vtkNew<vtkMatrix4x4> sliceToRASInverted; // inverse sliceToRAS
   sliceToRASInverted->DeepCopy(sliceToRAS.GetPointer());

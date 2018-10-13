@@ -26,7 +26,7 @@ class vtkMatrix4x4;
 ///
 /// Diffusion Weigthed Volume nodes describe data sets that encode diffusion weigthed
 /// images. These images are the basis for computing the diffusion tensor.
-/// The node is a container for the neccesary information to interpert DW images:
+/// The node is a container for the necessary information to interpert DW images:
 /// 1. Gradient information.
 /// 2. B value for each gradient.
 /// 3. Measurement frame that relates the coordinate system where the gradients are given

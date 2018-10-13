@@ -205,7 +205,7 @@ int vtkMRMLTransformNode::DeepCopyTransform(vtkAbstractTransform* dst, vtkAbstra
     vtkNew<vtkCollection> sourceTransformList;
     FlattenGeneralTransform(sourceTransformList.GetPointer(), src);
 
-    // Copy the concatentated transforms
+    // Copy the concatenated transforms
     vtkCollectionSimpleIterator it;
     vtkAbstractTransform* concatenatedTransform = NULL;
     dstGeneral->PreMultiply();

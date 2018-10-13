@@ -1,5 +1,5 @@
 #
-# This file has been primarly designed for the purpose of Slicer extension development.
+# This file has been primarily designed for the purpose of Slicer extension development.
 #
 # It includes the required Slicer macros/functions and sets up compiler
 # settings for a project to use Slicer.

@@ -80,7 +80,7 @@ class SliceLinkLogicWidget:
 
     # HelloWorld button
     helloWorldButton = qt.QPushButton("Hello world")
-    helloWorldButton.toolTip = "Print 'Hello world' in standard ouput."
+    helloWorldButton.toolTip = "Print 'Hello world' in standard output."
     dummyFormLayout.addWidget(helloWorldButton)
     helloWorldButton.connect('clicked(bool)', self.onHelloWorldButtonClicked)
 
@@ -95,7 +95,7 @@ class SliceLinkLogicWidget:
 
   def onReload(self,moduleName="SliceLinkLogic"):
     """Generic reload method for any scripted module.
-    ModuleWizard will subsitute correct default moduleName.
+    ModuleWizard will substitute correct default moduleName.
     """
     globals()[moduleName] = slicer.util.reloadScriptedModule(moduleName)
 
@@ -168,7 +168,7 @@ class SliceLinkLogicTest(unittest.TestCase):
 
   def test_SliceLinkLogic1(self):
     """ Ideally you should have several levels of tests.  At the lowest level
-    tests sould exercise the functionality of the logic with different inputs
+    tests should exercise the functionality of the logic with different inputs
     (both valid and invalid).  At higher levels your tests should emulate the
     way the user would interact with your code and confirm that it still works
     the way you intended.

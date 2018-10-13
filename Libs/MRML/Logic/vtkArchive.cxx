@@ -484,7 +484,7 @@ bool unzip(const char* zipFileName, const char* destinationDirectory)
   // Unziping the archive
   // - check that files and directories exist
   // - cd to destination
-  // - create an extracter from the file
+  // - create an extractor from the file
   // - create a writer to disk
   // - read all headers and data into disk
   // - close up the archives

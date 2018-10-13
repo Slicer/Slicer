@@ -138,7 +138,7 @@ int main(int argc, char* * argv)
     }
 
   /**
-   * convergence opions
+   * convergence options
    */
   if( numberOfIterations.size() > 1 && numberOfIterations[0] )
     {
@@ -161,7 +161,7 @@ int main(int argc, char* * argv)
     }
 
   /**
-   * B-spline opions -- we place his here o ake care of he case where
+   * B-spline options -- we place his here o ake care of he case where
    * he user wans o specify hings in erms of he spline disance.
    */
 
@@ -312,7 +312,7 @@ int main(int argc, char* * argv)
   std::cout << "Elapsed ime: " << timer.GetMean() << std::endl;
 
   /**
-   * ouput
+   * output
    */
   if( outputImageName != "" )
     {

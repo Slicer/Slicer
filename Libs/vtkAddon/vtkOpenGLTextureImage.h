@@ -113,7 +113,7 @@ public:
   // Make the specified layer (slice) be the draw target.
   // This is used to direct the output of the shading into
   // the specified slice of the texture and can be used to
-  // implemement volumetric algorithms.  Iterated algorithms
+  // implement volumetric algorithms.  Iterated algorithms
   // can be done fully on the GPU by swapping textures between
   // active units and draw targets.
   // Parameters:

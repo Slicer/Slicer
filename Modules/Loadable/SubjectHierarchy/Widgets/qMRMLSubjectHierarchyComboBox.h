@@ -52,7 +52,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyCombo
   Q_PROPERTY(bool highlightReferencedItems READ highlightReferencedItems WRITE setHighlightReferencedItems)
   /// Property determining the maximum number of items (rows) shown in the popup tree
   Q_PROPERTY(int maximumNumberOfShownItems READ maximumNumberOfShownItems WRITE setMaximumNumberOfShownItems)
-  /// Property determining the vertical alignement of the popup tree with the combobox.
+  /// Property determining the vertical alignment of the popup tree with the combobox.
   /// If aligned, the popup will shift vertically so that the selected item overlays above the combobox.
   /// Else, the popup tree appears below the combobox, like for a qMRMLNodeComboBox.
   Q_PROPERTY(bool alignPopupVertically READ alignPopupVertically WRITE setAlignPopupVertically)

@@ -259,7 +259,7 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
 
   if( m_featureComputed->GetPixel(idx) )
     {
-    // the feature at this pixel is computed, just retrive
+    // the feature at this pixel is computed, just retrieve
     for( long i = 0; i < m_numberOfFeature; ++i )
       {
       f[i] = (m_featureImageList[i])->GetPixel(idx);

@@ -72,7 +72,7 @@ def texturedPlane():
     Slicer.TkCall( "update" )
 
   endTime = time.time()
-  ellapsed = endTime - startTime
-  hertz = steps/ellapsed
-  print 'ran %d iterations in %g seconds (%g hertz)' % (steps, ellapsed, hertz)
+  elapsed = endTime - startTime
+  hertz = steps/elapsed
+  print 'ran %d iterations in %g seconds (%g hertz)' % (steps, elapsed, hertz)
 

@@ -258,7 +258,7 @@ public:
       {
       // Can't do ID remapping if the two node lists are different
       // sizes. Just import the scene. (This is where we would put to
-      // the code to load into a node heirarchy (with a corresponding
+      // the code to load into a node hierarchy (with a corresponding
       // change in the conditional above)).
       appLogic->GetMRMLScene()->SetURL(m_Filename.c_str());
       appLogic->GetMRMLScene()->Import();
@@ -315,7 +315,7 @@ public:
           target->Copy(source);
           }
 
-        // if the source node is a model hierachy node, then also copy
+        // if the source node is a model hierarchy node, then also copy
         // and remap any child nodes of the target that are not in the
         // target list (nodes that had no source equivalent before the
         // module ran).

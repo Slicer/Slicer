@@ -88,7 +88,7 @@ int DoIt( MetaCommand & command )
     }
   catch( ... )
     {
-    std::cerr << "Intialization failed" << std::endl;
+    std::cerr << "Initialization failed" << std::endl;
     return EXIT_FAILURE;
     }
 

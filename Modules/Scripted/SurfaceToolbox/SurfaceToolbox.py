@@ -528,7 +528,7 @@ class SurfaceToolboxTest(ScriptedLoadableModuleTest):
 
   def test_SurfaceToolbox1(self):
     """ Ideally you should have several levels of tests.  At the lowest level
-    tests sould exercise the functionality of the logic with different inputs
+    tests should exercise the functionality of the logic with different inputs
     (both valid and invalid).  At higher levels your tests should emulate the
     way the user would interact with your code and confirm that it still works
     the way you intended.

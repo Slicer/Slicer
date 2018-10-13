@@ -32,7 +32,7 @@ class qSlicerIOOptionsPrivate;
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerIOOptions
 {
 public:
-  /// Contructor initialize empty properties
+  /// Constructor initialize empty properties
   explicit qSlicerIOOptions();
   virtual ~qSlicerIOOptions();
 

@@ -120,7 +120,7 @@ void PopulateScene(vtkMRMLScene* scene, int numberOfLevels)
 
     vtkNew<vtkMRMLModelHierarchyNode> modelHierarchyNode;
     std::stringstream smhn;
-    smhn << level << " model hiearchy";
+    smhn << level << " model hierarchy";
     modelHierarchyNode->SetName(smhn.str().c_str());
     scene->AddNode(modelHierarchyNode.GetPointer());
 

@@ -323,7 +323,7 @@ class SliceAnnotations(VTKObservationMixin):
 
   def updateGUIFromMRML(self,caller,event):
     if self.parameterNode.GetParameter(self.parameter) == '':
-      # parameter does not exist - probably intializing
+      # parameter does not exist - probably initializing
       return
     self.sliceViewAnnotationsEnabled = int(self.parameterNode.GetParameter(self.parameter))
     self.updateSliceViewFromGUI()

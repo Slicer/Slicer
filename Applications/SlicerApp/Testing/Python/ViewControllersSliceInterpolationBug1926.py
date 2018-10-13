@@ -13,7 +13,7 @@ class ViewControllersSliceInterpolationBug1926:
     parent.dependencies = []
     parent.contributors = ["Jim Miller (GE)"] # replace with "Firstname Lastname (Org)"
     parent.helpText = """
-    Test case for the interaction between the ViewControllers module, linking, slice interpolation, and the selection of background, foreground, and label images. When entering the ViewControllers module, extra View Controllers are created and configured.  If linking is on, then foreground, backgroud, and label selection can be propagated to the other views incorrectly. If the node selectors are bocked from emitting signals, then the viewers maintain their proper volumes. However the slice interpolation widget is then not managed properly.
+    Test case for the interaction between the ViewControllers module, linking, slice interpolation, and the selection of background, foreground, and label images. When entering the ViewControllers module, extra View Controllers are created and configured.  If linking is on, then foreground, background, and label selection can be propagated to the other views incorrectly. If the node selectors are bocked from emitting signals, then the viewers maintain their proper volumes. However the slice interpolation widget is then not managed properly.
     """
     parent.acknowledgementText = """
     This file was originally developed by Jim Miller, GE.  and was partially funded by NIH grant U54EB005149.
@@ -83,7 +83,7 @@ class ViewControllersSliceInterpolationBug1926Widget:
 
     # HelloWorld button
     helloWorldButton = qt.QPushButton("Hello world")
-    helloWorldButton.toolTip = "Print 'Hello world' in standard ouput."
+    helloWorldButton.toolTip = "Print 'Hello world' in standard output."
     dummyFormLayout.addWidget(helloWorldButton)
     helloWorldButton.connect('clicked(bool)', self.onHelloWorldButtonClicked)
 
@@ -98,7 +98,7 @@ class ViewControllersSliceInterpolationBug1926Widget:
 
   def onReload(self,moduleName="ViewControllersSliceInterpolationBug1926"):
     """Generic reload method for any scripted module.
-    ModuleWizard will subsitute correct default moduleName.
+    ModuleWizard will substitute correct default moduleName.
     """
     globals()[moduleName] = slicer.util.reloadScriptedModule(moduleName)
 
@@ -171,7 +171,7 @@ class ViewControllersSliceInterpolationBug1926Test(unittest.TestCase):
 
   def test_ViewControllersSliceInterpolationBug19261(self):
     """ Ideally you should have several levels of tests.  At the lowest level
-    tests sould exercise the functionality of the logic with different inputs
+    tests should exercise the functionality of the logic with different inputs
     (both valid and invalid).  At higher levels your tests should emulate the
     way the user would interact with your code and confirm that it still works
     the way you intended.

@@ -157,7 +157,7 @@ void qSlicerMarkupsModule::setup()
   qSlicerMarkupsModuleWidget* moduleWidget = dynamic_cast<qSlicerMarkupsModuleWidget*>(this->widgetRepresentation());
   if (!moduleWidget)
     {
-    qDebug() << "qSlicerMarkupsModule::setup: unable to get the markups verion of the widget to set default display settings";
+    qDebug() << "qSlicerMarkupsModule::setup: unable to get the markups version of the widget to set default display settings";
     }
   else
     {

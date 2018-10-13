@@ -89,7 +89,7 @@ class sceneImport2428Widget:
 
     # HelloWorld button
     helloWorldButton = qt.QPushButton("Hello world")
-    helloWorldButton.toolTip = "Print 'Hello world' in standard ouput."
+    helloWorldButton.toolTip = "Print 'Hello world' in standard output."
     dummyFormLayout.addWidget(helloWorldButton)
     helloWorldButton.connect('clicked(bool)', self.onHelloWorldButtonClicked)
 
@@ -104,7 +104,7 @@ class sceneImport2428Widget:
 
   def onReload(self,moduleName="sceneImport2428"):
     """Generic reload method for any scripted module.
-    ModuleWizard will subsitute correct default moduleName.
+    ModuleWizard will substitute correct default moduleName.
     """
     globals()[moduleName] = slicer.util.reloadScriptedModule(moduleName)
 
@@ -180,7 +180,7 @@ class sceneImport2428Test(unittest.TestCase):
 
   def test_sceneImport24281(self):
     """ Ideally you should have several levels of tests.  At the lowest level
-    tests sould exercise the functionality of the logic with different inputs
+    tests should exercise the functionality of the logic with different inputs
     (both valid and invalid).  At higher levels your tests should emulate the
     way the user would interact with your code and confirm that it still works
     the way you intended.

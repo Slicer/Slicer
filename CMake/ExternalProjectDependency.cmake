@@ -92,7 +92,7 @@ endif()
 #.rst:
 # .. cmake:variable:: EP_GIT_PROTOCOL
 #
-# The value of this variable is controled by the option ``<SUPERBUILD_TOPLEVEL_PROJECT>_USE_GIT_PROTOCOL``
+# The value of this variable is controlled by the option ``<SUPERBUILD_TOPLEVEL_PROJECT>_USE_GIT_PROTOCOL``
 # automatically defined by including this CMake module. Setting this option allows to update the value of
 # ``EP_GIT_PROTOCOL`` variable.
 #

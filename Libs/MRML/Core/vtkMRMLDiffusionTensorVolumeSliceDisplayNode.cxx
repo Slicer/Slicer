@@ -131,7 +131,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetSlicePositionMatrix(vtkMat
 {
   // We need to call vtkDiffusionTensorGlyph::SetVolumePositionMatrix BEFORE
   // calling Superclass::SetSlicePositionMatrix(matrix)
-  // because the later fire the even Modified() wich will update the pipeline
+  // because the later fire the even Modified() which will update the pipeline
   // and execute the filter that needs to be up-to-date.
   this->DiffusionTensorGlyphFilter->SetVolumePositionMatrix(matrix);
   Superclass::SetSlicePositionMatrix(matrix);

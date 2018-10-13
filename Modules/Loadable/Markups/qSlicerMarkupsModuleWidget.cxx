@@ -342,7 +342,7 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   QObject::connect(this->activeMarkupMRMLNodeComboBox, SIGNAL(nodeAddedByUser(vtkMRMLNode*)),
                    q, SLOT(onActiveMarkupMRMLNodeAdded(vtkMRMLNode*)));
 
-  // Make sure tha the Jump to Slices radio buttons match the default of the
+  // Make sure that the Jump to Slices radio buttons match the default of the
   // MRML slice node
   vtkNew<vtkMRMLSliceNode> sliceNode;
   if (sliceNode->GetJumpMode() == vtkMRMLSliceNode::OffsetJumpSlice)
@@ -881,7 +881,7 @@ void qSlicerMarkupsModuleWidget::updateWidgetFromDisplayNode()
       // glyph scale
       double glyphScale = markupsDisplayNode->GetGlyphScale();
 
-      // make sure that the slider can accomodate this scale
+      // make sure that the slider can accommodate this scale
       if (glyphScale > d->glyphScaleSliderWidget->maximum())
         {
         d->glyphScaleSliderWidget->setMaximum(glyphScale);

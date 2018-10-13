@@ -41,7 +41,7 @@ class tpycl(object):
     if sys.platform == 'win32':
       # Update environment variables set by application - unlike other platforms,
       # on windows this does not happen automatically so we do it here
-      # Note that subsquent env changes will not be reflected
+      # Note that subsequent env changes will not be reflected
       for key in os.environ.keys():
         self.tcl_putenv(key, os.environ[key])
 

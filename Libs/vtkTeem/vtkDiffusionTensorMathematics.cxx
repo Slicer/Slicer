@@ -807,7 +807,7 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
 void vtkDiffusionTensorMathematics::ComputeTensorIncrements(vtkImageData *imageData, vtkIdType incr[3])
 {
   int idx;
-  // make sure we have data before computing incrments to traverse it
+  // make sure we have data before computing increments to traverse it
   if (!imageData->GetPointData()->GetTensors())
     {
     return;

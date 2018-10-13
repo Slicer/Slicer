@@ -1007,7 +1007,7 @@ void qMRMLSceneModel::updateItemDataFromNode(
       }
     // It should be fine to set the icon even if it is the same, but due
     // to a bug in Qt (http://bugreports.qt.nokia.com/browse/QTBUG-20248),
-    // it would fire a superflous itemChanged() signal.
+    // it would fire a superfluous itemChanged() signal.
     if (item->data(VisibilityRole).isNull() ||
         item->data(VisibilityRole).toInt() != visible)
       {
@@ -1669,7 +1669,7 @@ void qMRMLSceneModel::updateColumnCount()
 int qMRMLSceneModel::maxColumnId()const
 {
   Q_D(const qMRMLSceneModel);
-  int maxId = 0; // informations (scene, node uid... ) are stored in the 1st column
+  int maxId = 0; // information (scene, node uid... ) is stored in the 1st column
   maxId = qMax(maxId, d->NameColumn);
   maxId = qMax(maxId, d->IDColumn);
   maxId = qMax(maxId, d->CheckableColumn);

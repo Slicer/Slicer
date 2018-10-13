@@ -98,7 +98,7 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
             if (not self.mrbDeleteFilesAfterLoad) or ('BundleSaveTemp' in absFileName):
               self.numberOfFilesNotFound += 1
             else:
-              print '\t\tMRB files were deleted after load, not counting this file as not foudn for the purposes of this test'
+              print '\t\tMRB files were deleted after load, not counting this file as not found for the purposes of this test'
 
   def checkSceneViewFileNames(self, scene):
     # check for any scene views

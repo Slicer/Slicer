@@ -108,7 +108,7 @@ public:
   /// DisplayableManagerGroup. This caches the proxy and broadcasts
   /// the proxy to all DisplayableManagers in the group. This proxy
   /// provides a method GetRenderer(int) that returns the renderer for
-  /// the ith lightbox pane. The DisplayableManagers use this method
+  /// the Nth lightbox pane. The DisplayableManagers use this method
   /// to map coordinates to the proper lightbox pane, e.g. in placing
   /// crosshairs or annotations in the proper renderer.
   virtual void SetLightBoxRendererManagerProxy(vtkMRMLLightBoxRendererManagerProxy *);

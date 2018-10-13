@@ -135,7 +135,7 @@ public:
   /// Note: Allocator specifies the owner of the created object, so it is important to set the allocator
   ///       of the document where the object will be added
   /// \param code Json object into which the code information is added a members
-  void GetJsonCodeFromIdentifier(rapidjson::Value& code, CodeIdentifier idenfifier, rapidjson::Document::AllocatorType& allocator);
+  void GetJsonCodeFromIdentifier(rapidjson::Value& code, CodeIdentifier identifier, rapidjson::Document::AllocatorType& allocator);
 
   /// Utility function for safe (memory-leak-free) setting of a document pointer in map
   static void SetDocumentInTerminologyMap(TerminologyMap& terminologyMap, const std::string& name, rapidjson::Document* doc)

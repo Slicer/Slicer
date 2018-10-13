@@ -337,7 +337,7 @@ ImageToImageRegistrationMethodTestingHelper<TRegistrationMethod>
     }
   catch( ... )
     {
-    std::cerr << "Unknwon exception" << std::endl;
+    std::cerr << "Unknown exception" << std::endl;
     this->m_ErrorState = true;
     return;
     }

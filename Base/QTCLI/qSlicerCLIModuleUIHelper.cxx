@@ -207,7 +207,7 @@ public:
                                  const QString& defaultValue = QString());
 
   ///
-  /// Initiliaze the maps containing the mapping
+  /// Initialize the maps containing the mapping
   /// parameter type -> MRML node type (classname)
   static void initializeMaps();
 

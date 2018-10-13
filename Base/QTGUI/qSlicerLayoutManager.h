@@ -36,7 +36,7 @@ public:
   /// Constructors
   explicit qSlicerLayoutManager(QWidget* widget = 0);
 
-  /// Set the directory from which build-in scripted
+  /// Set the directory from which built-in scripted
   /// displayableManagers should be sourced from.
   Q_INVOKABLE void setScriptedDisplayableManagerDirectory(const QString& scriptedDisplayableManagerDirectory);
 

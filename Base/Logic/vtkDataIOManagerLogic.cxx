@@ -123,7 +123,7 @@ void vtkDataIOManagerLogic::ProcessDataIOManagerEvents(
     }
   else if ( (node != NULL) && (event == vtkDataIOManager::RemoteWriteEvent ) )
     {
-    vtkDebugMacro("ProcessMRMLEvents: calling queue write on teh node " << node->GetID());
+    vtkDebugMacro("ProcessMRMLEvents: calling queue write on the node " << node->GetID());
     this->QueueWrite ( node );
     node->InvokeEvent ( vtkDataIOManager::RefreshDisplayEvent );
     }

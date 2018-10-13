@@ -75,7 +75,7 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
     f = loadable.files[0]
 
     try:
-      # TODO: this method should work, but not correcly encoded in real tag
+      # TODO: this method should work, but not correctly encoded in real tag
       zipSizeString = slicer.dicomDatabase.fileValue(f, self.tags['zipSize'])
       zipSize = int(zipSizeString)
       # instead use this hack where the number is in the creator string

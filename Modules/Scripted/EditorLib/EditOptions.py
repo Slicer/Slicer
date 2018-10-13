@@ -87,7 +87,7 @@ class EditOptions(VTKObservationMixin):
     # already set)
     self.updateParameterNode(self.parameterNode, vtk.vtkCommand.ModifiedEvent)
 
-    # TODO: change this to look for specfic events (added, removed...)
+    # TODO: change this to look for specific events (added, removed...)
     # but this requires being able to access events by number from wrapped code
     self.addObserver(slicer.mrmlScene, vtk.vtkCommand.ModifiedEvent, self.updateParameterNode)
 
@@ -140,28 +140,28 @@ class EditOptions(VTKObservationMixin):
 
   #
   # update the GUI for the given label
-  # - to be overriden by the subclass
+  # - to be overridden by the subclass
   #
   def updateMRMLFromGUI(self):
     pass
 
   #
   # update the GUI from MRML
-  # - to be overriden by the subclass
+  # - to be overridden by the subclass
   #
   def updateGUIFromMRML(self,caller,event):
     pass
 
   #
   # update the GUI from MRML
-  # - to be overriden by the subclass
+  # - to be overridden by the subclass
   #
   def updateGUI(self):
     self.updateGUIFromMRML(self.parameterNode, vtk.vtkCommand.ModifiedEvent)
 
   #
   # set the default option values
-  # - to be overriden by the subclass
+  # - to be overridden by the subclass
   #
   def setMRMLDefaults(self):
     pass

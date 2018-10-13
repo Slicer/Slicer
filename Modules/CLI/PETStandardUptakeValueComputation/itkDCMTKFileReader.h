@@ -112,7 +112,7 @@ public:
       OFVector<Float64> doubleVals;
       if(dsItem->getFloat64Vector(doubleVals) != EC_Normal)
         {
-        DCMTKException(<< "Cant extract Array from DecimalString " << std::hex
+        DCMTKException(<< "Can't extract Array from DecimalString " << std::hex
                        << group << " " << std::hex
                        << element << std::dec);
         }
@@ -182,21 +182,21 @@ public:
       DcmElement *el;
       if(this->m_Dataset->findAndGetElement(tagkey,el) != EC_Normal)
         {
-        DCMTKException(<< "Cant find tag " << std::hex
+        DCMTKException(<< "Can't find tag " << std::hex
                        << group << " " << std::hex
                        << element << std::dec);
         }
       DcmDecimalString *dsItem = dynamic_cast<DcmDecimalString *>(el);
       if(dsItem == 0)
         {
-        DCMTKException(<< "Cant find DecimalString element " << std::hex
+        DCMTKException(<< "Can't find DecimalString element " << std::hex
                        << group << " " << std::hex
                        << element << std::dec);
         }
       OFVector<Float64> doubleVals;
       if(dsItem->getFloat64Vector(doubleVals) != EC_Normal)
         {
-        DCMTKException(<< "Cant extract Array from DecimalString " << std::hex
+        DCMTKException(<< "Can't extract Array from DecimalString " << std::hex
                        << group << " " << std::hex
                        << element << std::dec);
         }
@@ -229,7 +229,7 @@ public:
       std::string val;
       if(this->GetElementOB(group,element,val) != EXIT_SUCCESS)
         {
-        DCMTKException(<< "Cant find DecimalString element " << std::hex
+        DCMTKException(<< "Can't find DecimalString element " << std::hex
                        << group << " " << std::hex
                        << element << std::dec);
         }

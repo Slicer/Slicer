@@ -486,9 +486,9 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
      
   def getHeaderNames(self, nonEmptyKeysOnly = True):
     # Derive column header names based on: (a) DICOM information if present,
-    # (b) measurement info name if present (c) measurment key as fallback.
+    # (b) measurement info name if present (c) measurement key as fallback.
     # Duplicate names get a postfix [1][2]... to make them unique
-    # Inital and unique column header names are returned
+    # Initial and unique column header names are returned
     keys = self.getNonEmptyKeys() if nonEmptyKeysOnly else self.keys
     statistics = self.getStatistics()
     headerNames = []

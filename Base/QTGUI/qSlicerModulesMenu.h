@@ -44,7 +44,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModulesMenu: public QMenu
   /// module. When duplicateActions is true, the QActions populating the menu are
   /// duplicates from the original module QAction. That way the qSlicerModulesMenu
   /// behaves independently from the other qSlicerModulesMenus.
-  /// Note: this property should be set before moduels are added (addModule()).
+  /// Note: this property should be set before modules are added (addModule()).
   Q_PROPERTY(bool duplicateActions READ duplicateActions WRITE setDuplicateActions)
 
   /// By default (showHiddenModules == false), modules with the hidden property

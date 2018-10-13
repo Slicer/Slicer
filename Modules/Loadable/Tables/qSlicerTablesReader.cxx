@@ -125,7 +125,7 @@ bool qSlicerTablesReader::load(const IOProperties& properties)
   std::string uname = this->mrmlScene()->GetUniqueNameByString(name.toLatin1());
   std::string password;
 
-  // Chek if the file is sqlite
+  // Check if the file is sqlite
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileName.toStdString());
   if( extension.empty() )
     {

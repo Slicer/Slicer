@@ -141,7 +141,7 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *vtkNotUsed(ptr))
     return;
     }
 
-  // Get the pointer to the extact image if available
+  // Get the pointer to the extract image if available
   vtkImageData *extractImage = self->GetExtractImage();
   T *extractPtr = NULL;
   int extracting = 0;
@@ -319,7 +319,7 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *vtkNotUsed(ptr))
           // get here if there's no replace image and the pixel is in the brush radius
           // or corresponds to a non-zero mask value
           // - apply paintOver rule to avoid overwriting existing data
-          // - apply threshold rule to only paint where backround fits constraints
+          // - apply threshold rule to only paint where background fits constraints
           if ( !paintOver && oldValue != 0 )
             {
             // don't write

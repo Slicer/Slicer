@@ -55,7 +55,7 @@ class MakeModelEffectOptions(Effect.EffectOptions):
 
     self.smooth = qt.QCheckBox("Smooth Model", self.frame)
     self.smooth.checked = True
-    self.smooth.setToolTip("When smoothed, the model will look better, but some details of the label map will not be visible on the model.  When not smoothed you will see individual voxel boundaries in the model.  Smoothing here corresponds to Decimation of 0.25 and Smooting iterations of 10.")
+    self.smooth.setToolTip("When smoothed, the model will look better, but some details of the label map will not be visible on the model.  When not smoothed you will see individual voxel boundaries in the model.  Smoothing here corresponds to Decimation of 0.25 and Smoothing iterations of 10.")
     self.frame.layout().addWidget(self.smooth)
     self.widgets.append(self.smooth)
 

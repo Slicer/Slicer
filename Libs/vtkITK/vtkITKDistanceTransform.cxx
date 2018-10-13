@@ -108,7 +108,7 @@ void vtkITKDistanceTransform::SimpleExecute(vtkImageData *input, vtkImageData *o
   vtkDataArray *inScalars=pd->GetScalars();
   if ( inScalars == NULL )
     {
-    vtkErrorMacro(<<"Scalars must be defined for distance tranform");
+    vtkErrorMacro(<<"Scalars must be defined for distance transform");
     return;
     }
 

@@ -73,7 +73,7 @@ public:
   /// vtkSlicerApplicationLogic::SetMRMLSceneDataIO to hook it into a scene.
   virtual void initDataIO();
 
-  /// Instanciate settings object
+  /// Instantiate settings object
   virtual QSettings* newSettings();
   QSettings* instantiateSettings(bool useTmp);
 

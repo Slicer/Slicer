@@ -170,7 +170,7 @@ vtkAnnotationROIRepresentation::vtkAnnotationROIRepresentation()
 
   this->CurrentHandle = NULL;
 
-  // Internal data memebers for performance
+  // Internal data members for performance
   this->Transform = vtkTransform::New();
   this->PlanePoints = vtkPoints::New(VTK_DOUBLE);
   this->PlanePoints->SetNumberOfPoints(6);

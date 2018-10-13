@@ -31,7 +31,7 @@ vtkStandardNewMacro(vtkMRMLModelHierarchyLogic);
 // The number should large enough so smaller branches can be shown/hidden
 // without entering batch processing mode. The number should be small enough
 // so that showing/hiding nodes one-by one doesn't take too long time.
-// 30 nodes seems to be a reasonble compromise.
+// 30 nodes seems to be a reasonable compromise.
 int vtkMRMLModelHierarchyLogic::ChildrenVisibilitySetBatchUpdateThreshold = 30;
 
 //----------------------------------------------------------------------------

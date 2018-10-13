@@ -159,7 +159,7 @@ public:
   void appendEnvironmentVariable(const QString& key, const QString& value, QChar separator = ';');
 
   /// Parse arguments
-  /// \note If exitWhenDone is True, it's your responsability to exit the application
+  /// \note If exitWhenDone is True, it's your responsibility to exit the application
   void parseArguments(bool& exitWhenDone);
 
   enum ReturnCode{
@@ -393,7 +393,7 @@ public:
 
   static void loadLanguage();
 
-  /// Load certicates bundled into '<slicerHome>/<SLICER_SHARE_DIR>/Slicer.crt'.
+  /// Load certificates bundled into '<slicerHome>/<SLICER_SHARE_DIR>/Slicer.crt'.
   /// For more details, see Slicer/Base/QTCore/Resources/Certs/README
   /// Returns \a False if 'Slicer.crt' failed to be loaded.
   /// \sa QSslSocket::defaultCaCertificates()
@@ -441,7 +441,7 @@ protected slots:
   /// Set the ReturnCode flag and call QCoreApplication::exit()
   void terminate(int exitCode = qSlicerCoreApplication::ExitSuccess);
 
-  /// Called when the application logic requests a delayed event invokation.
+  /// Called when the application logic requests a delayed event invocation.
   /// When the singleton application logic fires the RequestInvokeEvent,
   /// \sa invokeEvent(), vtkMRMLApplicationLogic::InvokeRequest
   /// \sa onSlicerApplicationLogicRequest(), processAppLogicModified()

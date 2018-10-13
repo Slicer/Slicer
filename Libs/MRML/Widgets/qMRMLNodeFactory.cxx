@@ -137,7 +137,7 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(vtkMRMLScene* scene, const QString& cl
     {
     factory->addAttribute(key, attributes.value(key));
     }
-  // Instanciate and return the requested node
+  // Instantiate and return the requested node
   return factory->createNode(className);
 }
 

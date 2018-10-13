@@ -394,7 +394,7 @@ int RegressionTestImage(const char *testImageFilename,
     status = diffusiondiff->GetNumberOfPixelsWithDifferences();
     }
 
-  // if there are discrepencies, create an diff image
+  // if there are discrepancies, create an diff image
   if( (status > numberOfPixelsTolerance) && reportErrors )
     {
     typedef itk::RescaleIntensityImageFilter<ImageType, OutputType> RescaleType;

@@ -82,7 +82,7 @@ def vr4():
   vrdn.SetCurrentVolumeMapper(4)
 
 def vrthres(value):
-  print("set theshold to", value)
+  print("set threshold to", value)
   vrdn = getNode('vtkMRMLVolumeRenderingDisplayNode')
   vpn = vrdn.GetVolumePropertyNode()
   vp = vpn.GetVolumeProperty()

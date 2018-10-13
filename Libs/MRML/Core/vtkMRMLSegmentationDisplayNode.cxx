@@ -194,7 +194,7 @@ void vtkMRMLSegmentationDisplayNode::ReadXMLAttributes(const char** atts)
           if (colonIndex == std::string::npos)
             {
             // no colon found, not a valid property, ignore it
-            vtkErrorMacro("Invalid property found in attribue of "<<(this->ID?this->ID:"(unknown)")<<" node: "<<segmentDisplayPropertyString);
+            vtkErrorMacro("Invalid property found in attribute of "<<(this->ID?this->ID:"(unknown)")<<" node: "<<segmentDisplayPropertyString);
             continue;
             }
           std::string propertyName = segmentDisplayPropertyString.substr(0, colonIndex); // "OverrideColorR"

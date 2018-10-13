@@ -68,7 +68,7 @@ QStandardItem* qMRMLSceneCategoryModel::itemFromCategory(const QString& category
     return this->mrmlSceneItem();
     }
   // doesn't search category items recursively.
-  // options to optimize, categories are continous and are the first children
+  // options to optimize, categories are continuous and are the first children
   // of the mrmlSceneItem
   int rowCount = this->mrmlSceneItem()->rowCount();
   for (int i = 0; i < rowCount; ++i)

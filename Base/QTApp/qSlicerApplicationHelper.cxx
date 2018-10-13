@@ -126,7 +126,7 @@ void qSlicerApplicationHelper::preInitializeApplication(
   QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
 
-  // Allow a custom appliction name so that the settings
+  // Allow a custom application name so that the settings
   // can be distinct for differently named applications
   QString applicationName("Slicer");
   if (argv0)
@@ -292,7 +292,7 @@ bool qSlicerApplicationHelper::checkRenderingCapabilities()
 #if defined(_WIN32)
   // Older versions of Windows Remote Desktop protocol (RDP) makes the system report lower
   // OpenGL capability than the actual capability is (when the system is used locally).
-  // On these sytems, Slicer cannot be started while an RDP connection is active,
+  // On these systems, Slicer cannot be started while an RDP connection is active,
   // but an already started Slicer can be operated without problems.
   // Retry option allows delayed restart of Slicer through remote connection.
   // There is no need to offer "retry" option on other operating systems.

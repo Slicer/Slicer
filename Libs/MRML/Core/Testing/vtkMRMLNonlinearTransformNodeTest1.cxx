@@ -355,7 +355,7 @@ int TestRelativeTransforms(const char *filename)
   vtkNew<vtkPoints> transformedPoints;
   vtkNew<vtkPoints> transformedPointsBackToTest;
 
-  // Test if relaive transform between two nodes is consistent (transform is not identity and invertible)
+  // Test if relative transform between two nodes is consistent (transform is not identity and invertible)
   vtkNew<vtkGeneralTransform> compositeToTps;
   compositeTransformNode->GetTransformToNode(tpsTransformNode, compositeToTps.GetPointer());
   std::cout << "Composite transform to tps: " << std::endl;

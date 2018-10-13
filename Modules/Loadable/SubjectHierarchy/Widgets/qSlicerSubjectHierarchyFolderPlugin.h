@@ -70,7 +70,7 @@ class qSlicerSubjectHierarchyFolderPluginPrivate;
 ///
 ///    4. Data node is associated to a hierarchy node
 ///      dataNode.vtkMRMLNode::HierarchyModifiedEvent
-///      (Should only happen if building hierarchy programmaticaly from scratch)
+///      (Should only happen if building hierarchy programmatically from scratch)
 ///         Remove hierarchy node's item from subject hierarchy
 ///         ( folderPlugin::onDataNodeAssociatedToHierarchyNode )
 ///

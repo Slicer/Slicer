@@ -1915,7 +1915,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           stdoutbuffer = stdoutbuffer.append(tbuffer, length);
 
           bool foundTag = false;
-          // search for the last occurence of </filter-progress>
+          // search for the last occurrence of </filter-progress>
           tagend = stdoutbuffer.rfind("</filter-progress>");
           if (tagend != std::string::npos)
             {
@@ -1928,7 +1928,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
               foundTag = true;
               }
             }
-          // search for the last occurence of </filter-stage-progress>
+          // search for the last occurrence of </filter-stage-progress>
           tagend = stdoutbuffer.rfind("</filter-stage-progress>");
           if (tagend != std::string::npos)
             {
@@ -1942,7 +1942,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
               }
             }
 
-          // search for the last occurence of </filter-name>
+          // search for the last occurrence of </filter-name>
           tagend = stdoutbuffer.rfind("</filter-name>");
           if (tagend != std::string::npos)
             {
@@ -1956,7 +1956,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
               }
             }
 
-          // search for the last occurence of </filter-comment>
+          // search for the last occurrence of </filter-comment>
           tagend = stdoutbuffer.rfind("</filter-comment>");
           if (tagend != std::string::npos)
             {

@@ -905,7 +905,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDesiredUpdateR
       }
 
     // VTK is overly cautious when estimates rendering speed.
-    // This ususally results in lower quality and higher frame rates than requested.
+    // This usually results in lower quality and higher frame rates than requested.
     // We update the the desired update rate of the renderer
     // to make the actual update more closely match the desired.
     // desired fps -> correctedFps

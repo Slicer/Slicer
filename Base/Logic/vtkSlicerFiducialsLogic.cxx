@@ -169,7 +169,7 @@ int vtkSlicerFiducialsLogic::AddFiducialPicked (float x, float y, float z, int s
     return this->AddFiducialSelected(x, y, z, selected);
     }
 
-  // otherwise, we have an exisiting list, check to see if there's a transform
+  // otherwise, we have an existing list, check to see if there's a transform
   // on it
   vtkMRMLTransformNode* tnode = flist->GetParentTransformNode();
   vtkNew<vtkMatrix4x4> transformToWorld;

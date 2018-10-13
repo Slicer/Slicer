@@ -333,7 +333,7 @@ class DataProbeInfoWidget(object):
 
   def _createMagnifiedPixmap(self, xyz, inputImageDataConnection, outputSize, crosshairColor, imageZoom=10):
 
-    # Use existing instance of objects to avoid instanciating one at each event.
+    # Use existing instance of objects to avoid instantiating one at each event.
     imageCrop = self.imageCrop
     painter = self.painter
     pen = self.pen
@@ -548,7 +548,7 @@ class DataProbeWidget:
 
   def onReload(self,moduleName="DataProbe"):
     """Generic reload method for any scripted module.
-    ModuleWizard will subsitute correct default moduleName.
+    ModuleWizard will substitute correct default moduleName.
     """
     globals()[moduleName] = slicer.util.reloadScriptedModule(moduleName)
 
@@ -659,7 +659,7 @@ class DataProbeTest(unittest.TestCase):
 
   def test_DataProbe1(self):
     """ Ideally you should have several levels of tests.  At the lowest level
-    tests sould exercise the functionality of the logic with different inputs
+    tests should exercise the functionality of the logic with different inputs
     (both valid and invalid).  At higher levels your tests should emulate the
     way the user would interact with your code and confirm that it still works
     the way you intended.

@@ -57,7 +57,7 @@ typedef struct
 /// rotation. Default is 0.0, 0.0, 0.0, 1.0
 /// Each markup also has an associated node id, set when the markup
 /// is placed on a data set to link the markup to the volume or model.
-/// Each markup can also be individually un/selected, un/locked, in/visibile,
+/// Each markup can also be individually un/selected, un/locked, in/visible,
 /// and have a label (short, shown in the viewers) and description (longer,
 /// shown in the GUI).
 /// \sa vtkMRMLMarkupsDisplayNode

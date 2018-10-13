@@ -860,7 +860,7 @@ void vtkMRMLSliceLayerLogic::UpdateGlyphs()
       {
       vtkMRMLTransformNode* tnode = this->VolumeNode->GetParentTransformNode();
       vtkNew<vtkMatrix4x4> transformToWorld;
-      //transformToWorld->Identity();unnecessary, transformToWorld is already identiy
+      //transformToWorld->Identity();unnecessary, transformToWorld is already identity
       if (tnode != 0 && tnode->IsTransformToWorldLinear())
         {
         tnode->GetMatrixTransformToWorld(transformToWorld.GetPointer());
@@ -873,7 +873,7 @@ void vtkMRMLSliceLayerLogic::UpdateGlyphs()
       double dirs[3][3];
       this->VolumeNode->GetIJKToRASDirections(dirs);
       vtkNew<vtkMatrix4x4> trot;
-      //trot->Identity(); unnecessary, trot is already identiy
+      //trot->Identity(); unnecessary, trot is already identity
       for (int i=0; i<3; i++)
         {
         for (int j=0; j<3; j++)

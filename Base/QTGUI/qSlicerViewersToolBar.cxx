@@ -539,7 +539,7 @@ void qSlicerViewersToolBarPrivate::OnMRMLSceneEndClose()
     {
     return;
     }
-  // reenable it and update
+  // re-enable it and update
   q->setEnabled(true);
   this->updateWidgetFromMRML();
 }

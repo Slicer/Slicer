@@ -60,7 +60,7 @@ public:
   virtual QImage logo()const;
 
   /// Returns then associated QAction of the module. It contains all the
-  /// informations relative to the module. The text (QAction::text()) and icon
+  /// information relative to the module. The text (QAction::text()) and icon
   /// (QAction::icon()) are the module title and icon; the name of the module
   ///  is saved in the QAction's data (QAction::data().toString()) and the
   /// module index is the QAction property "index"

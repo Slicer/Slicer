@@ -47,7 +47,7 @@ public:
 
   /// the supported properties are:
   /// QString fileName: the path of the mrml scene to load
-  /// bool clear: wether the current should be cleared or not
+  /// bool clear: whether the current should be cleared or not
   virtual bool load(const qSlicerIO::IOProperties& properties);
 };
 

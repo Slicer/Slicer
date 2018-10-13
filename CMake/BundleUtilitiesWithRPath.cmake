@@ -473,7 +473,7 @@ function(set_bundle_key_values keys_var context item exepath dirs copyflag)
       if(APPLE)
         # For executables inside the bundle, extract the expected path.
         # This remove the hack introduced in commit 6f8bdd27 consisting in
-        # reseting the value of 'resolved_embedded_item' with 'resolved_item'.
+        # resetting the value of 'resolved_embedded_item' with 'resolved_item'.
         get_dotapp_dir("${exepath}" exe_dotapp_dir)
         if(NOT DEFINED gp_bundle_executables)
           get_bundle_all_executables("${exe_dotapp_dir}" gp_bundle_executables)

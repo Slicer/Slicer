@@ -57,12 +57,12 @@ public:
   /// The main interface which triggers the writer to start.
   void Write();
 
-  /// Set orienation matrix
+  /// Set orientation matrix
   void SetRasToIJKMatrix( vtkMatrix4x4* mat) {
     RasToIJKMatrix = mat;
   }
 
-  /// Set orienation matrix
+  /// Set orientation matrix
   void SetMeasurementFrameMatrix( vtkMatrix4x4* mat) {
     MeasurementFrameMatrix = mat;
   }

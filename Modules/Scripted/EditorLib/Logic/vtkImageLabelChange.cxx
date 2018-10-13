@@ -46,7 +46,7 @@ static void vtkImageLabelChangeExecute(vtkImageLabelChange *self,
     maxY = outExt[3] - outExt[2];
     maxZ = outExt[5] - outExt[4];
 
-    // Loop through ouput pixels
+    // Loop through output pixels
     for (idxZ = 0; idxZ <= maxZ; idxZ++) {
         for (idxY = 0; !self->AbortExecute && idxY <= maxY; idxY++) {
             for (idxX = 0; idxX <= maxX; idxX++) {

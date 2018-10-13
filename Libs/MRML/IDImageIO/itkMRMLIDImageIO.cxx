@@ -238,7 +238,7 @@ MRMLIDImageIO
       }
     if (node->GetImageData()->GetDimensions() == NULL)
       {
-      itkWarningMacro("itkMRMLIDImageIO: ReadImageInformation: node image data has null dimentions");
+      itkWarningMacro("itkMRMLIDImageIO: ReadImageInformation: node image data has null dimensions");
       return;
       }
     this->SetDimensions(0, node->GetImageData()->GetDimensions()[0]);
@@ -654,7 +654,7 @@ MRMLIDImageIO
       // Allocate tensor image (number of components set in WriteInformation())
       img->GetPointData()->GetTensors()->SetNumberOfTuples(imagesizeinpixels);
 
-      // Tensors comming from ITK will be 6 components.  Need to
+      // Tensors coming from ITK will be 6 components.  Need to
       // convert to 9 components for VTK
       void *mptr = img->GetPointData()->GetTensors()->GetVoidPointer(0);
       const void *bptr = buffer;

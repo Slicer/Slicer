@@ -1026,7 +1026,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
                 linePattern = 0xFF00;
                 }
 
-              // TODO: Modifiy pattern to have spaced dot line when further from plane, smaller space when closer
+              // TODO: Modify pattern to have spaced dot line when further from plane, smaller space when closer
               // 0x0001 + (0x0001 + 1) = 0x0003 (0000 0000 0000 0011)
               // 0x0003 + (0x0003 + 1) = 0x0007 (0000 0000 0000 0111)
               // 0x0007 + (0x0007 + 1) = 0x000F (0000 0000 0000 1111)
@@ -1443,7 +1443,7 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
         vtkDebugMacro("Slice node " << this->GetSliceNode()->GetName()
                       << ": distance to slice = " << distanceToSlice
                       << ", maxDistance = " << maxDistance
-                      << "\n\tslice node dimenions[2] = " << sliceNode->GetDimensions()[2]);
+                      << "\n\tslice node dimensions[2] = " << sliceNode->GetDimensions()[2]);
         if (distanceToSlice < -0.5 || distanceToSlice >= maxDistance)
           {
           // if the distance to the slice is more than 0.5mm, we know that at least one coordinate of the widget is outside the current activeSlice

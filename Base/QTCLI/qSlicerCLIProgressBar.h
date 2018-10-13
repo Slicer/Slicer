@@ -73,10 +73,10 @@ public:
     VisibleAfterCompletion
   };
 
-  /// Visiblity of the module name.
+  /// Visibility of the module name.
   /// \sa nameVisibility
   Visibility nameVisibility()const;
-  /// Visiblity of the status label.
+  /// Visibility of the status label.
   /// \sa statusVisibility
   Visibility statusVisibility()const;
   /// Visibility of the progress bar.

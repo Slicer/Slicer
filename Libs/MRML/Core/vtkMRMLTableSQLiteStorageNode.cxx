@@ -98,7 +98,7 @@ int vtkMRMLTableSQLiteStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 
   if (!database.GetPointer() || !database->Open(this->GetPassword(), vtkSQLiteDatabase::USE_EXISTING))
     {
-    vtkErrorMacro("ReadData: database file '" << fullName << "cannot be openned");
+    vtkErrorMacro("ReadData: database file '" << fullName << "cannot be opened");
     return 0;
     }
 
@@ -156,7 +156,7 @@ int vtkMRMLTableSQLiteStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 
   if (!database || !database->Open(this->GetPassword(), vtkSQLiteDatabase::USE_EXISTING_OR_CREATE))
     {
-    vtkErrorMacro("ReadData: database file '" << fullName << "cannot be openned");
+    vtkErrorMacro("ReadData: database file '" << fullName << "cannot be opened");
     return 0;
     }
 
@@ -277,7 +277,7 @@ int vtkMRMLTableSQLiteStorageNode::DropTable(char *tableName, vtkSQLiteDatabase*
 
   if (!database)
     {
-    std::cerr << "No databse specified!";
+    std::cerr << "No database specified!";
     return 0;
     }
 

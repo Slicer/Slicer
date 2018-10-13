@@ -503,7 +503,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
     pipeline->Transformer->SetInputConnection(pipeline->Cutter->GetOutputPort());
 
     // optimization for slice to slice intersections which are 1 quad polydatas
-    // no need for 50^3 default locator divisons
+    // no need for 50^3 default locator divisions
     if (pointSet->GetPoints() != NULL && pointSet->GetNumberOfPoints() <= 4)
     {
       vtkNew<vtkPointLocator> locator;

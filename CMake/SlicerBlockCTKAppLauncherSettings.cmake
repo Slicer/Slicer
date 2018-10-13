@@ -42,7 +42,7 @@
 #
 
 #
-# Usually, if you are building on a system handling multiple build configrations
+# Usually, if you are building on a system handling multiple build configurations
 # (i.e Visual studio with Debug, Release, ...), the libraries and executables could be built in a
 # subdirectory matching the active configuration.
 #

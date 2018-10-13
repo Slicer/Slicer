@@ -1,4 +1,4 @@
-# Adapated from ITKv4/CMake/PreventInSourceBuilds.cmake
+# Adapted from ITKv4/CMake/PreventInSourceBuilds.cmake
 #
 # This function will prevent in-source builds
 function(AssureOutOfSourceBuilds)

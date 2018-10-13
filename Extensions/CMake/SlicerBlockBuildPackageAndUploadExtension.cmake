@@ -185,7 +185,7 @@ if(EXISTS ${EXTENSION_SUPERBUILD_BINARY_DIR}/CMakeCache.txt)
   file(READ ${EXTENSION_SUPERBUILD_BINARY_DIR}/CMakeCache.txt cmakecache_current)
 endif()
 if(NOT "${cmakecache_content}" STREQUAL "${cmakecache_current}")
-  message(STATUS "Writting ${EXTENSION_SUPERBUILD_BINARY_DIR}/CMakeCache.txt")
+  message(STATUS "Writing ${EXTENSION_SUPERBUILD_BINARY_DIR}/CMakeCache.txt")
   file(WRITE ${EXTENSION_SUPERBUILD_BINARY_DIR}/CMakeCache.txt "${cmakecache_content}")
 endif()
 
@@ -245,7 +245,7 @@ endif()
 #-----------------------------------------------------------------------------
 # Package extension
 if(build_errors GREATER "0")
-  message(WARNING "Skip extension packaging: ${build_errors} build error(s) occured !")
+  message(WARNING "Skip extension packaging: ${build_errors} build error(s) occurred !")
 else()
   message("Packaging and uploading extension ${EXTENSION_NAME} to midas ...")
   set(package_list)

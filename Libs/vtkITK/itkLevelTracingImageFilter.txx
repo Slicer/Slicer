@@ -349,7 +349,7 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
   // if no 4 connected neighbor is background, look for an 8 connected
   // neighbor that is background. Then adjust the seed point to be one
   // of the 4 connected neighbors to the original seed point that is 4
-  // connected to this 8 connected neighbor ofthe original seed.
+  // connected to this 8 connected neighbor of the original seed.
   if (!found)
     {
     // only need to check the corners since we already checked the 4

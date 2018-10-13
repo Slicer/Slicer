@@ -257,7 +257,7 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
         self.scriptedEffect.modifySelectedSegmentByLabelmap(selectedSegmentLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet)
 
     else:
-      logging.error("Uknown operation: {0}".format(operation))
+      logging.error("Unknown operation: {0}".format(operation))
 
 LOGICAL_COPY = 'COPY'
 LOGICAL_UNION = 'UNION'

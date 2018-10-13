@@ -35,7 +35,7 @@ public:
 
   ///
   /// Portion of the SetReleaseDataFlag implementation can be
-  /// implemented at this level of the hierachy.
+  /// implemented at this level of the hierarchy.
   virtual void SetReleaseDataFlag(int f) VTK_OVERRIDE
     {
       Superclass::SetReleaseDataFlag(f);

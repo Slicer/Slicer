@@ -75,7 +75,7 @@ class RSNA2012ProstateDemoWidget:
 
   def onReload(self,moduleName="RSNA2012ProstateDemo"):
     """Generic reload method for any scripted module.
-    ModuleWizard will subsitute correct default moduleName.
+    ModuleWizard will substitute correct default moduleName.
     """
     globals()[moduleName] = slicer.util.reloadScriptedModule(moduleName)
 

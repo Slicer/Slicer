@@ -167,7 +167,7 @@
       </sizepolicy>
      </property>
      <property name="toolTip">
-      <string>To limit memory consumption, loading executable CLIs is prefered as they don't load in Slicer's memory</string>
+      <string>To limit memory consumption, loading executable CLIs is preferred as they don't load in Slicer's memory</string>
      </property>
      <property name="text">
       <string>Prefer Executable CLIs:</string>

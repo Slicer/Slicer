@@ -303,7 +303,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   //----------------------------------------------------------------------------
   // Layout Manager
   //----------------------------------------------------------------------------
-  // Instanciate and assign the layout manager to the slicer application
+  // Instantiate and assign the layout manager to the slicer application
   this->LayoutManager = new qSlicerLayoutManager(layoutFrame);
   this->LayoutManager->setScriptedDisplayableManagerDirectory(
       qSlicerApplication::application()->slicerHome() + "/bin/Python/mrmlDisplayableManager");
@@ -702,7 +702,7 @@ bool qSlicerMainWindowPrivate::confirmCloseScene()
   confirmCloseMsgBox->setWindowTitle(q->tr("Save before closing scene?"));
   confirmCloseMsgBox->setText(question);
 
-  // Use AcceptRole&RejectRole instead of Save&Discard becuase we would
+  // Use AcceptRole&RejectRole instead of Save&Discard because we would
   // like discard changes to be the default behavior.
   confirmCloseMsgBox->addButton(q->tr("Close scene (discard modifications)"), QMessageBox::AcceptRole);
   confirmCloseMsgBox->addButton(q->tr("Save scene"), QMessageBox::RejectRole);
@@ -1102,7 +1102,7 @@ void qSlicerMainWindow::closeEvent(QCloseEvent *event)
   if (d->confirmCloseApplication())
     {
     // Exit current module to leave it a chance to change the UI (e.g. layout)
-    // before writting settings.
+    // before writing settings.
     d->ModuleSelectorToolBar->selectModule("");
 
     d->writeSettings();

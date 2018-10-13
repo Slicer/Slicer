@@ -32,7 +32,7 @@ static void PrintNames(std::vector< vtkMRMLHierarchyNode *> kids)
     }
 }
 
-// test more ordered node hierachy uses
+// test more ordered node hierarchy uses
 int vtkMRMLHierarchyNodeTest3(int , char * [] )
 {
 
@@ -130,7 +130,7 @@ int vtkMRMLHierarchyNodeTest3(int , char * [] )
   PrintNames(allChildren);
   if (allChildren.size() != 1 + numModels)
     {
-    std::cerr << "ERROR: Top level hiearchy returned  " << allChildren.size() << " total children instead of " << 1 + numModels << std::endl;
+    std::cerr << "ERROR: Top level hierarchy returned  " << allChildren.size() << " total children instead of " << 1 + numModels << std::endl;
     return EXIT_FAILURE;
     }
   else
@@ -159,7 +159,7 @@ int vtkMRMLHierarchyNodeTest3(int , char * [] )
   PrintNames(allChildren2);
   if (allChildren2.size() != numModels)
     {
-    std::cerr << "ERROR: Second level hierarchy has " << allChildren2.size() << " total children insted of " << numModels << std::endl;
+    std::cerr << "ERROR: Second level hierarchy has " << allChildren2.size() << " total children instead of " << numModels << std::endl;
     return EXIT_FAILURE;
     }
   else
@@ -173,7 +173,7 @@ int vtkMRMLHierarchyNodeTest3(int , char * [] )
   PrintNames(immediateChildren2);
   if (immediateChildren2.size() != numModels)
     {
-    std::cerr<< "ERROR: Second level hierarachy has " << immediateChildren2.size() << " immediate children instead of " << numModels << std::endl;
+    std::cerr<< "ERROR: Second level hierarchy has " << immediateChildren2.size() << " immediate children instead of " << numModels << std::endl;
     return EXIT_FAILURE;
     }
   else

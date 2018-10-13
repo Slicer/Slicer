@@ -351,7 +351,7 @@ void vtkMRMLCameraNode::ProcessMRMLEvents ( vtkObject* caller,
 
     /*
      * calculate the delta transform Td, which is the incremental transform
-     * that has not yet been applied to the current camera paramters.
+     * that has not yet been applied to the current camera parameters.
      *
      * We started with Po (original parameter)
      * We have Pa = param with Ta (AppliedTransform applied)

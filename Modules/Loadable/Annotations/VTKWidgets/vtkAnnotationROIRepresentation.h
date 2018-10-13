@@ -82,7 +82,7 @@ public:
   void GetPlanes(vtkPlanes *planes);
 
   ///
-  /// Set/Get the InsideOut flag. This data memeber is used in conjunction
+  /// Set/Get the InsideOut flag. This data member is used in conjunction
   /// with the GetPlanes() method. When off, the normals point out of the
   /// box. When on, the normals point into the hexahedron.  InsideOut is off
   /// by default.
@@ -90,7 +90,7 @@ public:
   vtkGetMacro(InsideOut,int);
   vtkBooleanMacro(InsideOut,int);
 
-  /// Get/Set optional world to local coordiante system transformation
+  /// Get/Set optional world to local coordinate system transformation
   void SetWorldToLocalMatrix(vtkMatrix4x4 *worldToLocalMatrix);
   vtkGetObjectMacro(WorldToLocalMatrix,vtkMatrix4x4);
 

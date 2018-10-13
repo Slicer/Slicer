@@ -344,7 +344,7 @@ int vtkFSSurfaceReader::RequestData(
 #if FS_CALC_NORMALS
         // Fill out connectivity info for this face. Get the vertex from
         // the vertex index and add this face index to its list of
-        // faces. Then add this vertex index to the list of indicies in
+        // faces. Then add this vertex index to the list of indices in
         // the face.
         if (NULL != vertices && NULL != faces) {
             v = &vertices[tmpfIndex];
@@ -389,9 +389,9 @@ int vtkFSSurfaceReader::RequestData(
 
               // Get this face. fv1->indicesInFace tells us which index,
               // 0 - numVerticesPerFace-1, it is in the face. Get the two
-              // indicies surrounding it so we can get the vertices
+              // indices surrounding it so we can get the vertices
               // surrounding it. Now we have fv0, fv1, and fv2 which are all
-              // adjacent in the face, with fv1 being the orignal vertex.
+              // adjacent in the face, with fv1 being the original vertex.
               f = &faces[fv1->faces[fIndex]];
               fvIndex1 = fv1->indicesInFace[fIndex];
               if (0 == fvIndex1)

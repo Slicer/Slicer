@@ -20,7 +20,7 @@
 /// \brief MRML node for model storage on disk.
 ///
 /// Storage nodes has methods to read/write vtkPolyData to/from disk
-/// It uses the superclass vtkMRMLModelStorageNode for writting
+/// It uses the superclass vtkMRMLModelStorageNode for writing
 /// (same file format supported).
 class VTK_MRML_EXPORT vtkMRMLFreeSurferModelStorageNode : public vtkMRMLModelStorageNode
 {

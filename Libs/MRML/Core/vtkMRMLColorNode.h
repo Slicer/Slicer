@@ -177,7 +177,7 @@ public:
   vtkSetStringMacro(NoName);
 
   ///
-  /// Get/Set for the flag on names array having been initalised
+  /// Get/Set for the flag on names array having been initialised
   vtkGetMacro(NamesInitialised, int);
   vtkSetMacro(NamesInitialised, int);
   vtkBooleanMacro(NamesInitialised, int);

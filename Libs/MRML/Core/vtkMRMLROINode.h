@@ -61,7 +61,7 @@ public:
 
   ///
   /// Get/Set for ROI Position in RAS cooridnates
-  /// Note: The ROI Postion is the center of the ROI
+  /// Note: The ROI Position is the center of the ROI
   void SetXYZ(double X, double Y, double Z);
   void SetXYZ(double* XYZ);
   vtkGetVectorMacro(XYZ,double,3);
@@ -85,7 +85,7 @@ public:
   vtkGetVectorMacro(RadiusIJK,double,3);
 
   ///
-  /// Set/Get the InsideOut flag. This data memeber is used in conjunction
+  /// Set/Get the InsideOut flag. This data member is used in conjunction
   /// with the GetPlanes() method. When off, the normals point out of the
   /// box. When on, the normals point into the hexahedron.  InsideOut is off
   /// by default.
@@ -122,14 +122,14 @@ protected:
 
   ///
   /// The location of the ROI centroid in RAS space
-  /// Note: The ROI Postion is the center of the ROI
+  /// Note: The ROI Position is the center of the ROI
   double XYZ[3];
   ///
   /// The raidus of  of the ROI box in RAS space
   double RadiusXYZ[3];
   ///
   /// The location of the ROI centroid in IJK space
-  /// Note: The ROI Postion is the center of the ROI
+  /// Note: The ROI Position is the center of the ROI
   double IJK[3];
   ///
   /// The radius of the ROI box in IJK space

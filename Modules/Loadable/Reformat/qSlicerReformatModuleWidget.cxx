@@ -560,7 +560,7 @@ void qSlicerReformatModuleWidget::setNormalToCamera()
     }
 
   // NOTE: We use the first Camera because there is no notion of active scene
-  // Code to be changed when methods avaible.
+  // Code to be changed when methods available.
   vtkMRMLCameraNode* cameraNode = vtkMRMLCameraNode::SafeDownCast(
     reformatLogic->GetMRMLScene()->GetFirstNodeByClass("vtkMRMLCameraNode"));
 

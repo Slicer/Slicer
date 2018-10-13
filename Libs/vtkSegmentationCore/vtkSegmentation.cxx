@@ -691,7 +691,7 @@ void vtkSegmentation::ReorderSegments(std::vector<std::string> segmentIdsToMove,
     if (foundSegmentIdToMove != segmentIdsToMove.end())
       {
       // this segment gets a new position, so remove it from current position
-      // ### Slicer 4.4: Simplify this logic when adding support for C++11 accross all supported platform/compilers
+      // ### Slicer 4.4: Simplify this logic when adding support for C++11 across all supported platform/compilers
       std::deque< std::string >::iterator segmentIdItToRemove = segmentIdIt;
       ++segmentIdIt;
       this->SegmentIds.erase(segmentIdItToRemove);

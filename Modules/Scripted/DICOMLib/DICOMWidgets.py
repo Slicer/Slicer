@@ -480,7 +480,7 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
       return
 
     # 2 - get series info
-    #  - iterate though metatdata - should be fast even with large database
+    #  - iterate though metadata - should be fast even with large database
     #  - the fileValue call checks the tag cache so it's fast
     modalityTag = "0008,0060"
     sopClassUIDTag = "0008,0016"

@@ -276,7 +276,7 @@ void qSlicerCropVolumeModuleWidget::enter()
 {
   Q_D(qSlicerCropVolumeModuleWidget);
 
-  // For user's convenience, create a deafult ROI parameter node if
+  // For user's convenience, create a default ROI parameter node if
   // none exists yet.
   vtkMRMLScene* scene = this->mrmlScene();
   if (!scene)

@@ -32,7 +32,7 @@
     </parameter>
     <parameter>
       <label>Reset</label>
-      <description><![CDATA[Reset the slice to transformation to the coresponding orientation -- The orientation could be either "Axial, "Sagittal", "Coronal" or "Reformat".]]></description>
+      <description><![CDATA[Reset the slice to transformation to the corresponding orientation -- The orientation could be either "Axial, "Sagittal", "Coronal" or "Reformat".]]></description>
     </parameter>
     <parameter>
       <label>Normal X</label>

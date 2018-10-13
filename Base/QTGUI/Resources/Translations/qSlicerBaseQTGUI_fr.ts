@@ -750,7 +750,7 @@ Do you want to continue saving?</source>
     </message>
     <message>
         <location filename="../UI/qSlicerSettingsModulesPanel.ui" line="529"/>
-        <source>To limit memory consumption, loading executable CLIs is prefered as they don&apos;t load in Slicer&apos;s memory</source>
+        <source>To limit memory consumption, loading executable CLIs is preferred as they don&apos;t load in Slicer&apos;s memory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

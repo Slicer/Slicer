@@ -82,7 +82,7 @@ public:
   /// Reset the GUI elements: clear out the table
   void clearGUI();
 
-  /// Set up the logic default display settings from the appplication settings
+  /// Set up the logic default display settings from the application settings
   void updateLogicFromSettings();
 
   /// Query the logic as to the state of the slice intersection visibility on
@@ -114,7 +114,7 @@ public slots:
   void onPKeyActivated();
 
   /// Called from enter and on import/add mrml events to ask if the user
-  /// wishes to convert annotation fiducial heirarchies into markups list nodes.
+  /// wishes to convert annotation fiducial hierarchies into markups list nodes.
   /// \sa enter(), onMRMLSceneEndImportEvent(), onMRMLSceneEndBatchProcessEvent()
   void checkForAnnotationFiducialConversion();
   /// Uses the Logic to do the conversion from annotation fiducials, moving
@@ -219,7 +219,7 @@ public slots:
   void onActiveMarkupsNodeNthMarkupModifiedEvent(vtkObject *caller, vtkObject *callData);
   /// Update the display properties widgets when the display node is modified
   void onActiveMarkupsNodeDisplayModifiedEvent();
-  /// Update the transform related elemetns of the gui when the transform node is modified
+  /// Update the transform related elements of the gui when the transform node is modified
   void onActiveMarkupsNodeTransformModifiedEvent();
 
   /// Create a new markups node and copy the display node settings from the

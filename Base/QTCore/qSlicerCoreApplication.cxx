@@ -179,7 +179,7 @@ void qSlicerCoreApplicationPrivate::init()
   // operation. See http://doc.qt.nokia.com/4.7/qprocessenvironment.html#systemEnvironment
   // Note also that since environment variables are set using 'setEnvironmentVariable()',
   // 'Environment' is maintained 'up-to-date'. Nevertheless, if the environment
-  // is udpated solely using 'putenv(...)' function, 'Environment' won't be updated.
+  // is updated solely using 'putenv(...)' function, 'Environment' won't be updated.
   this->Environment = QProcessEnvironment::systemEnvironment();
 
   // Set the locale to be "C" to avoid issues related to reading and writing

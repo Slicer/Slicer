@@ -206,7 +206,7 @@ bool vtkImageGrowCutSegment::vtkInternal::InitializationAHP(
       }
 
     // Determine neighborhood size for computation at each voxel.
-    // The neighborhood size is everwhere the same (size of m_NeighborIndexOffsets)
+    // The neighborhood size is everywhere the same (size of m_NeighborIndexOffsets)
     // except at the edges of the volume, where the neighborhood size is 0.
     m_NumberOfNeighbors.resize(dimXYZ);
     const unsigned char numberOfNeighbors = m_NeighborIndexOffsets.size();

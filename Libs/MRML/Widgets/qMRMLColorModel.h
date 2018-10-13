@@ -126,7 +126,7 @@ public:
   /// \sa nameFromColor(), colorFromIndex(), colorFromItem()
   int colorFromName(const QString& name)const;
 
-  /// Overload the header data method for the veritical header
+  /// Overload the header data method for the vertical header
   /// so that can return the color index rather than the row
   virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 

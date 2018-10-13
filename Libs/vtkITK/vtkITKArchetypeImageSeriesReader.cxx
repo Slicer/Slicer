@@ -694,7 +694,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
       {
       if (imageIO.GetPointer() == NULL)
         {
-        scalarType = VTK_SHORT; // TODO - figure out why multi-file series doen't have an imageIO
+        scalarType = VTK_SHORT; // TODO - figure out why multi-file series doesn't have an imageIO
         }
       else if (imageIO->GetComponentType() == itk::ImageIOBase::UCHAR)
         {
@@ -1467,7 +1467,7 @@ int vtkITKArchetypeImageSeriesReader::AssembleVolumeContainingArchetype( )
   //   the files based on this information
   this->FileNames.resize(0);
 
-  // Note: Since IndexArchetype is unsigned int, it's always postive
+  // Note: Since IndexArchetype is unsigned int, it's always positive
   if (this->IndexArchetype >= this->IndexSeriesInstanceUIDs.size()
       || this->IndexArchetype >= this->IndexTriggerTime.size()
       || this->IndexArchetype >= this->IndexDiffusionGradientOrientation.size()

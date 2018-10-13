@@ -461,7 +461,7 @@ void qMRMLThreeDView::resetFocalPoint()
   bool savedAxisLabelVisible = true;
   if (d->MRMLViewNode)
     {
-    // Save current visiblity state of Box and AxisLabel
+    // Save current visibility state of Box and AxisLabel
     savedBoxVisibile = d->MRMLViewNode->GetBoxVisible();
     savedAxisLabelVisible = d->MRMLViewNode->GetAxisLabelsVisible();
 

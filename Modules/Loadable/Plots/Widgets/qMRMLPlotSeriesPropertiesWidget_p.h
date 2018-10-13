@@ -103,7 +103,7 @@ public slots:
   /// Change line style for Line and Scatter plots.
   void onLineStyleChanged(const QString &style);
 
-  /// Change line widht for Line and Scatter plots.
+  /// Change line width for Line and Scatter plots.
   void onLineWidthChanged(double width);
 
   /// Change the color of a single PlotSeriesNode.

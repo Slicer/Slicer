@@ -24,7 +24,7 @@
 // QT includes
 #include "QModelIndexList"
 
-// QtTesting inlcudes
+// QtTesting includes
 #include <pqWidgetEventTranslator.h>
 
 // qMRML includes

@@ -100,7 +100,7 @@ int qMRMLNodeComboBoxTest9( int argc, char * argv [] )
   std::cout << "Passed with removing attribute before anything\n" << std::endl;
   nodeSelectorA.show();
 
-  // a node selector with a defined filtering attribute that doens't match any
+  // a node selector with a defined filtering attribute that doesn't match any
   // volumes, count should be zero
   qMRMLNodeComboBox nodeSelectorB;
   nodeSelectorB.setNodeTypes(QStringList("vtkMRMLScalarVolumeNode"));

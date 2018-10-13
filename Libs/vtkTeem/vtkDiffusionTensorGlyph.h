@@ -51,7 +51,7 @@ class vtkMatrix4x4;
 /// This allows additional capability over the vtkGlyph3D object. That is, the
 /// glyph can be oriented in three directions instead of one.
 ///
-/// To accomodate display in another coordinate system besides the ijk
+/// To accommodate display in another coordinate system besides the ijk
 /// coordinate system of the volume array, two matrices are provided.
 /// The VolumePosition matrix positions each tensor in the correct location
 /// to account for voxel translation and rotation of the volume.

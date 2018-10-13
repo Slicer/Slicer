@@ -135,7 +135,7 @@ class FiducialLayoutSwitchBug1914Widget:
 
   def onReload(self,moduleName="FiducialLayoutSwitchBug1914"):
     """Generic reload method for any scripted module.
-    ModuleWizard will subsitute correct default moduleName.
+    ModuleWizard will substitute correct default moduleName.
     """
     globals()[moduleName] = slicer.util.reloadScriptedModule(moduleName)
 

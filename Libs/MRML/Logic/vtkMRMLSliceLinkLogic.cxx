@@ -430,7 +430,7 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
         sNode->UpdateMatrices();
         }
 
-      // Reseting the field of view does not require the
+      // Resetting the field of view does not require the
       // orientations to match
       if ((sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier()
           & vtkMRMLSliceNode::ResetFieldOfViewFlag)

@@ -155,7 +155,7 @@ static void vtkImageBimodalAnalysisExecute(vtkImageBimodalAnalysis *self,
     x++;
     }
 
-  // Compute centroid of the histogram that PRECEEDS the trough
+  // Compute centroid of the histogram that PRECEDES the trough
   // (noise lobe)
   wsum = sum = 0;
   for (x=min; x <= trough; x++)

@@ -244,7 +244,7 @@ public:
   /// within calls to InteractingOn() and InteractingOff(). These
   /// fields are used to propagate linked behaviors. This flag is a
   /// bitfield, with multiple parameters OR'd to compose the
-  /// flag. Does not cause a Modifed().
+  /// flag. Does not cause a Modified().
   void SetInteractionFlags(unsigned int);
   vtkGetMacro(InteractionFlags, unsigned int);
 

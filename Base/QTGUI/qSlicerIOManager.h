@@ -54,7 +54,7 @@ public:
   const QList<QUrl>& favorites()const;
 
   /// Takes ownership. Any previously set dialog corresponding to the same
-  /// fileType (only 1 dialog per filetype) is overriden.
+  /// fileType (only 1 dialog per filetype) is overridden.
   void registerDialog(qSlicerFileDialog* dialog);
 
   /// Displays a progress dialog if it takes too long to load

@@ -77,7 +77,7 @@ public:
   /// Convert between user input strings and strings safe to be
   /// written to the storage file. Since the current storage node
   /// file format is CSV, puts double quotes around strings if there
-  /// there are commas or double quotes in them, and replace occurences
+  /// there are commas or double quotes in them, and replace occurrences
   /// of double quotes with two double quotes
   std::string ConvertStringToStorageFormat(std::string input);
   std::string ConvertStringFromStorageFormat(std::string input);

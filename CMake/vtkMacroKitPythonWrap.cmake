@@ -71,7 +71,7 @@ endmacro()
 #!
 #!   Slicer_VTK_WRAP_HIERARCHY_DIR:
 #!
-#!     Directory where to ouptut the hierarchy files
+#!     Directory where to output the hierarchy files
 #!     Default is ${Slicer_BINARY_DIR}
 #!
 #!   Slicer_VTK_WRAP_MODULE_INSTALL_COMPONENT_IDENTIFIER:

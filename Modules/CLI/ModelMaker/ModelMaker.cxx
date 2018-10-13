@@ -244,7 +244,7 @@ int main(int argc, char * argv[])
     }
 
 
-  // if have a color hiearchy node, make it a child of the passed in model hiearchy
+  // if have a color hierarchy node, make it a child of the passed in model hierarchy
   if (topColorHierarchyNode != NULL)
     {
     topColorHierarchyNode->SetParentNodeID(rtnd->GetID());
@@ -524,7 +524,7 @@ int main(int argc, char * argv[])
   modelScene->AddNode(dnd.GetPointer());
   rtnd->SetAndObserveDisplayNodeID(dnd->GetID());
 
-  // If making mulitple models, figure out which labels have voxels
+  // If making multiple models, figure out which labels have voxels
   if (makeMultiple)
     {
     hist = vtkSmartPointer<vtkImageAccumulate>::New();

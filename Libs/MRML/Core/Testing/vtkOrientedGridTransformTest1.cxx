@@ -359,7 +359,7 @@ int vtkOrientedGridTransformTest1(int , char * [] )
         if ( differenceItkVtk > 1e-2 )
           {
           getTransformedPointDifferenceItkVtk(inputPoint, gridItk, gridVtk.GetPointer(), true);
-          std::cout << "ERROR: Point transfom result mismatch between ITK and VTK at grid point ("<<i<<","<<j<<","<<k<<") with linear interpolation"<< std::endl;
+          std::cout << "ERROR: Point transform result mismatch between ITK and VTK at grid point ("<<i<<","<<j<<","<<k<<") with linear interpolation"<< std::endl;
           numberOfItkVtkPointMismatches++;
           }
         }
@@ -385,7 +385,7 @@ int vtkOrientedGridTransformTest1(int , char * [] )
         if ( differenceItkVtk > averageSpacing*0.20 )
           {
           getTransformedPointDifferenceItkVtk(inputPoint, gridItk, gridVtk.GetPointer(), true);
-          std::cout << "ERROR: Point transfom result mismatch between ITK and VTK at grid point ("<<i<<","<<j<<","<<k<<") with cubic interpolation"<< std::endl;
+          std::cout << "ERROR: Point transform result mismatch between ITK and VTK at grid point ("<<i<<","<<j<<","<<k<<") with cubic interpolation"<< std::endl;
           numberOfItkVtkPointMismatches++;
           }
         // Verify single/double-precision computation difference
@@ -393,7 +393,7 @@ int vtkOrientedGridTransformTest1(int , char * [] )
         if ( differenceSingleDoubleVtk > 1e-4 )
           {
           getTransformedPointDifferenceSingleDoubleVtk(inputPoint, gridVtk.GetPointer(), true);
-          std::cout << "ERROR: Point transfom result mismatch between single-precision and double-precision VTK computation at grid point ("<<i<<","<<j<<","<<k<<")"<< std::endl;
+          std::cout << "ERROR: Point transform result mismatch between single-precision and double-precision VTK computation at grid point ("<<i<<","<<j<<","<<k<<")"<< std::endl;
           numberOfSingleDoubleVtkPointMismatches++;
           }
         // Verify VTK derivative

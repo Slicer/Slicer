@@ -1525,7 +1525,7 @@ QString qMRMLChartViewPrivate::seriesBoxDataString(vtkMRMLDoubleArrayNode *dn, u
       // odd number of elements, just select median
       median = *medIt;
 
-      // median is a datum, include it in both halfs
+      // median is a datum, include it in both halves
       q1BeginIt = values.begin();
       q1EndIt = medIt + 1; // one past median so median is included
 
@@ -1538,7 +1538,7 @@ QString qMRMLChartViewPrivate::seriesBoxDataString(vtkMRMLDoubleArrayNode *dn, u
       // two items
       median = (*medIt + *(medIt-1))/2.0;
 
-      // median is not a datum, exclude it from both halfs
+      // median is not a datum, exclude it from both halves
       q1BeginIt = values.begin();
       q1EndIt = medIt; // excludes the median
 

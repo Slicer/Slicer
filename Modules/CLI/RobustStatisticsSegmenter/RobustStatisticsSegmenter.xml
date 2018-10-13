@@ -27,7 +27,7 @@
   </parameters>
   <parameters>
     <label>Auxiliary Parameters</label>
-    <description><![CDATA[Some auxillary parameters to control the stop criteria.]]></description>
+    <description><![CDATA[Some auxiliary parameters to control the stop criteria.]]></description>
     <double>
       <name>intensityHomogeneity</name>
       <longflag>intensityHomogeneity</longflag>

@@ -67,7 +67,7 @@ int vtkSlicerMarkupsLogicTest2(int , char * [] )
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   if (logic1->MoveNthMarkupToNewListAtIndex(0, source, dest, 0))
     {
-    std::cerr << "MoveNthMarkupToNewListAtIndex: Failed to return false when passed emtpy source and dest list" << std::endl;
+    std::cerr << "MoveNthMarkupToNewListAtIndex: Failed to return false when passed empty source and dest list" << std::endl;
     return EXIT_FAILURE;
     }
   TESTING_OUTPUT_ASSERT_ERRORS_END();
@@ -242,7 +242,7 @@ int vtkSlicerMarkupsLogicTest2(int , char * [] )
               << destStartSize + 3 << std::endl;
     return EXIT_FAILURE;
     }
-  // check that index 8 has the rigth label in dest
+  // check that index 8 has the right label in dest
   newLabel = dest->GetNthMarkupLabel(8);
   if (newLabel.compare("S2") != 0)
     {

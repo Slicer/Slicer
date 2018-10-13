@@ -275,7 +275,7 @@ void qMRMLVolumeThresholdWidget::updateWidgetFromMRMLDisplayNode()
 
   // We don't want the slider to fire signals saying that the threshold values
   // have changed, it would set the AutoThrehold mode to Manual automatically
-  // even if the values have been just set programatically/automatically.
+  // even if the values have been just set programmatically/automatically.
   bool wasBlocking = d->VolumeThresholdRangeWidget->blockSignals(true);
 
   const int autoThresh = d->VolumeDisplayNode->GetAutoThreshold();

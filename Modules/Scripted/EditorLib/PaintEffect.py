@@ -560,7 +560,7 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
   def paintBrush(self, x, y):
     """
     paint with a brush that is circular (or optionally spherical) in XY space
-     (could be streched or rotate when transformed to IJK)
+     (could be stretched or rotate when transformed to IJK)
      - make sure to hit every pixel in IJK space
      - apply the threshold if selected
     """

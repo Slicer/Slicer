@@ -33,7 +33,7 @@ public:
    */
   InvalidImageRegionMomentsError(const char *file, unsigned int lineNumber) : ExceptionObject(file, lineNumber)
   {
-    this->SetDescription("No valid image moments are availble.");
+    this->SetDescription("No valid image moments are available.");
   }
 
   /*
@@ -41,7 +41,7 @@ public:
    */
   InvalidImageRegionMomentsError(const std::string& file, unsigned int lineNumber) : ExceptionObject(file, lineNumber)
   {
-    this->SetDescription("No valid image moments are availble.");
+    this->SetDescription("No valid image moments are available.");
   }
 
   itkTypeMacro(InvalidImageRegionMomentsError, ExceptionObject);

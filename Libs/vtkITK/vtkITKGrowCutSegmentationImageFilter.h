@@ -13,7 +13,7 @@ class vtkImageData;
 /// \brief- Wrapper class around itk::GrowCutSegmentationImageFilter
 ///
 /// GrowCutSegmentationImageFilter produces segmentation of regions on an image interactively.
-/// It uses the postive and  negative gestures (strokes/ lines/points marked by the user on the region of interest (positive),
+/// It uses the positive and  negative gestures (strokes/ lines/points marked by the user on the region of interest (positive),
 /// and outside the object (negative) to automatically generate the segmentation
 ///
 /// Usage: SetInput1 is the input feature/intensity image (required)

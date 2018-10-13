@@ -168,7 +168,7 @@ public:
   /// Return true if a module has been registered, false otherwise
   Q_INVOKABLE bool isRegistered(const QString& name)const;
 
-  /// Instanciate all previously registered modules.
+  /// Instantiate all previously registered modules.
   virtual void instantiateModules();
 
   /// List of registered and instantiated modules

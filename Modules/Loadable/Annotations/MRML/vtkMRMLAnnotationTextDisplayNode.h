@@ -64,7 +64,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationTextDisplayNod
   vtkGetMacro(UseLineWrap,int);
   vtkBooleanMacro(UseLineWrap,int);
 
-  /// Set teh maximum number of characters in a text line, used if UseLineWrap is true
+  /// Set the maximum number of characters in a text line, used if UseLineWrap is true
   vtkSetMacro(MaxCharactersPerLine, unsigned int);
   vtkGetMacro(MaxCharactersPerLine, unsigned int);
 

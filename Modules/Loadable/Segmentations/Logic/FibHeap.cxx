@@ -10,7 +10,7 @@
 // data structure is the Fibonacci heap.  The constants are a little
 // high so the real speed gain will not be seen until larger data sets
 // are required, but in most cases, if the data set is small, then the
-// run-time will be neglible anyway.
+// run-time will be negligible anyway.
 //
 // To use this heap class you need do only two things.  First, subclass
 // the FibHeapNode class to create the class of objects that you'd

@@ -28,7 +28,7 @@
 #include "ctkCheckableModelHelper.h"
 #include "ctkComboBox.h"
 
-// qMRML inlcudes
+// qMRML includes
 #include "qMRMLNodeComboBox.h"
 #include "qMRMLNodeComboBoxEventTranslator.h"
 

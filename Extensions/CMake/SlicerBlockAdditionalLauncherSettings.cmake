@@ -45,7 +45,7 @@ if(NOT TARGET ConfigureAdditionalLauncherSettings AND _configure_additional_laun
       if (NOT "${dep}" STREQUAL "NA")
         find_package(${dep} QUIET)
         if (NOT ${dep}_FOUND)
-          message(WARNING "Dependent extension ${dep} cannot be found by CMake find_package(), therefore paths variables cannot be imported from this extension. The problem can be resolved by generating ${dep}Config.cmake by adding include(\${Slicer_EXTENSION_GENERATE_CONFIG}) to the top-level CMakeLists.txt of the dependent exension.")
+          message(WARNING "Dependent extension ${dep} cannot be found by CMake find_package(), therefore paths variables cannot be imported from this extension. The problem can be resolved by generating ${dep}Config.cmake by adding include(\${Slicer_EXTENSION_GENERATE_CONFIG}) to the top-level CMakeLists.txt of the dependent extension.")
         endif()
       endif()
     endforeach()

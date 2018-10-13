@@ -532,7 +532,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     def __init__(self,cornerEpsilon=1e-3,zeroEpsilon=1e-6):
       """cornerEpsilon sets the threshold for the amount of difference between the
       vtkITK generated volume geometry vs the DICOM geometry.  Any spatial dimension with
-      a difference larger than cornerEpsilon will trigger the addtion of a grid transform.
+      a difference larger than cornerEpsilon will trigger the addition of a grid transform.
       Any difference less than zeroEpsilon is assumed to be numerical error.
       """
       self.cornerEpsilon = cornerEpsilon

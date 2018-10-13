@@ -235,7 +235,7 @@ int main(int argc, char * argv[])
     {
     if( debugSwitch )
       {
-      std::cout << "setting matix on outnode, and committing scene " << OutputTransformFilename.c_str() << std::endl;
+      std::cout << "setting matrix on outnode, and committing scene " << OutputTransformFilename.c_str() << std::endl;
       }
     outNode->SetMatrixTransformToParent(transformToApply->GetMatrix() );
     scene->Commit( OutputTransformFilename.c_str() );

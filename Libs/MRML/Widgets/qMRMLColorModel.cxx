@@ -93,7 +93,7 @@ void qMRMLColorModelPrivate::updateColumnCount()
 //------------------------------------------------------------------------------
 int qMRMLColorModelPrivate::maxColumnId()const
 {
-  int maxId = 0; // informations (scene, node uid... ) are stored in the 1st column
+  int maxId = 0; // information (scene, node uid... ) are stored in the 1st column
   maxId = qMax(maxId, this->ColorColumn);
   maxId = qMax(maxId, this->LabelColumn);
   maxId = qMax(maxId, this->OpacityColumn);

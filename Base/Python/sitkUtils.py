@@ -81,7 +81,7 @@ def EnsureRegistration():
 
 def CloneSlicerNode( NodeName, NewNodeNamePrefix ):
     """ Create a new node in slicer by cloning
-            from an exising node.
+            from an existing node.
         The method is deprecated and will be removed in the future.
     """
 

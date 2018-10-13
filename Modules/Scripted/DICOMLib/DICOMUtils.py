@@ -486,7 +486,7 @@ def getSortedImageFiles(filePaths, epsilon=0.01):
           warningText += "  Slicer will apply a transform to this series trying to regularize the volume. Please use caution.\n"
         else:
           warningText += ("  If loaded image appears distorted, enable 'Acquisition geometry regularization'"
-            " in Application settins / DICOM / DICOMScalarVolumePlugin. Please use caution.\n")
+            " in Application settings / DICOM / DICOMScalarVolumePlugin. Please use caution.\n")
         break
       n += 1
 

@@ -70,7 +70,7 @@ public slots:
 
 signals:
   /// Fired anytime the scalar invariant is changed (by the user,
-  /// programatically or via the node)
+  /// programmatically or via the node)
   void scalarInvariantChanged(int scalarInvariant);
 
 protected slots:

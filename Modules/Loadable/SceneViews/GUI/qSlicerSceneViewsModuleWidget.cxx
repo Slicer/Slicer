@@ -271,7 +271,7 @@ void qSlicerSceneViewsModuleWidget::restoreSceneView(const QString& mrmlId)
     this->mrmlScene()->SetErrorCode(0);
     this->mrmlScene()->SetErrorMessage("");
 
-    // ask if the user wishes to save the current scene nodes, retore and delete them or cancel
+    // ask if the user wishes to save the current scene nodes, restore and delete them or cancel
     ctkMessageBox missingNodesMsgBox;
     missingNodesMsgBox.setWindowTitle("Data missing from Scene View");
     vtkMRMLSceneViewNode* viewNode = vtkMRMLSceneViewNode::SafeDownCast(this->mrmlScene()->GetNodeByID(mrmlId.toLatin1()));

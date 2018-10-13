@@ -95,7 +95,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSortFilterProxyModel : public QSortFilterProxyMo
 
   /// This property forces nodes to be hidden despite their ability to be
   /// visible. Only \a filterType takes precedence or \a hiddenNodeIDs.
-  /// It takes precendence over \a visibleNodeIDs.
+  /// It takes precedence over \a visibleNodeIDs.
   /// \sa visibleNodeIDs, filterType, showHidden
   Q_PROPERTY(QStringList hiddenNodeIDs READ hiddenNodeIDs WRITE setHiddenNodeIDs)
 

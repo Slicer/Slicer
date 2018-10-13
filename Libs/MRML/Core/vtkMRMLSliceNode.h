@@ -67,7 +67,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
 
   ///
   /// Mapping from RAS space onto the slice plane
-  /// This matrix is allowed to be modified from outside, for exmple
+  /// This matrix is allowed to be modified from outside, for example
   /// by calling sliceNode->GetSliceToRAS->DeepCopy(...).
   /// TODO: maybe this should be a quaternion and a translate to avoid shears/scales
   virtual vtkMatrix4x4 *GetSliceToRAS();
@@ -456,7 +456,7 @@ public:
   /// within calls to InteractingOn() and InteractingOff(). These
   /// fields are used to propagate linked behaviors. This flag is a
   /// bitfield, with multiple parameters OR'd to compose the
-  /// flag. Does not cause a Modifed().
+  /// flag. Does not cause a Modified().
   void SetInteractionFlags(unsigned int);
   vtkGetMacro(InteractionFlags, unsigned int);
 
