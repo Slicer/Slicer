@@ -25,7 +25,7 @@
 #include <vtkVersion.h> // must precede reference to VTK_MAJOR_VERSION
 #include <vtkObjectFactory.h>
 #include <vtkPolyData.h>
-#if VTK_MAJOR_VERSION >= 9
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   #include <vtkFlyingEdges3D.h>
 #else
   #include <vtkMarchingCubes.h>
@@ -177,7 +177,7 @@ bool vtkFractionalLabelmapToClosedSurfaceConversionRule::Convert(vtkDataObject* 
   imageResize->InterpolateOn();
 
   // Run marching cubes
-#if VTK_MAJOR_VERSION >= 9
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   vtkSmartPointer<vtkFlyingEdges3D> marchingCubes = vtkSmartPointer<vtkFlyingEdges3D>::New();
 #else
   vtkSmartPointer<vtkMarchingCubes> marchingCubes = vtkSmartPointer<vtkMarchingCubes>::New();

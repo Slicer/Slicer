@@ -56,7 +56,7 @@
 #include <vtkPointLocator.h>
 
 // VTK includes: customization
-#if VTK_MAJOR_VERSION >= 9
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   #include <vtkCompositeDataGeometryFilter.h>
   #include <vtkPlaneCutter.h>
 #else
@@ -85,7 +85,7 @@ public:
     vtkSmartPointer<vtkDataSetSurfaceFilter> SurfaceExtractor;
     vtkSmartPointer<vtkTransformFilter> ModelWarper;
     vtkSmartPointer<vtkPlane> Plane;
-#if VTK_MAJOR_VERSION >= 9
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
     vtkSmartPointer<vtkPlaneCutter> Cutter;
     vtkSmartPointer<vtkCompositeDataGeometryFilter> GeometryFilter; // appends multiple cut pieces into a single polydata
 #else
@@ -348,7 +348,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
   // Create pipeline
   Pipeline* pipeline = new Pipeline();
   pipeline->Actor = actor.GetPointer();
-#if VTK_MAJOR_VERSION >= 9
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   pipeline->Cutter = vtkSmartPointer<vtkPlaneCutter>::New();
   pipeline->GeometryFilter = vtkSmartPointer<vtkCompositeDataGeometryFilter>::New();
 #else
@@ -364,7 +364,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
 
   // Set up pipeline
   pipeline->Transformer->SetTransform(pipeline->TransformToSlice);
-#if VTK_MAJOR_VERSION >= 9
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   pipeline->Transformer->SetInputConnection(pipeline->GeometryFilter->GetOutputPort());
   pipeline->Cutter->SetPlane(pipeline->Plane);
   pipeline->Cutter->BuildTreeOff(); // the cutter crashes for complex geometries if build tree is enabled
@@ -497,7 +497,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
     {
     // show intersection in the slice view
     // include clipper in the pipeline
-#if VTK_MAJOR_VERSION >= 9
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
     pipeline->Transformer->SetInputConnection(pipeline->GeometryFilter->GetOutputPort());
 #else
     pipeline->Transformer->SetInputConnection(pipeline->Cutter->GetOutputPort());

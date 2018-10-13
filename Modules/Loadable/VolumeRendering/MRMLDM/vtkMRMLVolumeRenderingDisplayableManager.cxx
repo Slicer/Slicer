@@ -50,7 +50,7 @@
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
-#if VTK_MAJOR_VERSION >= 9
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
 #include <vtkMultiVolume.h>
 #endif
 #include <vtkVolume.h>
@@ -192,7 +192,7 @@ public:
   std::string PickedNodeID;
 
 private:
-#if VTK_MAJOR_VERSION >= 9
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   /// Multi-volume actor using a common mapper for rendering the multiple volumes
   vtkSmartPointer<vtkMultiVolume> MultiVolumeActor;
   /// Common GPU mapper for the multi-volume actor.
@@ -216,7 +216,7 @@ vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::vtkInternal(vtkMRMLVolume
 , NextMultiVolumeActorPortIndex(1)
 , PickedNodeID("")
 {
-#if VTK_MAJOR_VERSION >= 9
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   this->MultiVolumeActor = vtkSmartPointer<vtkMultiVolume>::New();
   this->MultiVolumeMapper = vtkSmartPointer<vtkGPUVolumeRayCastMapper>::New();
 
@@ -295,7 +295,7 @@ vtkVolumeMapper* vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetVolum
         }
       }
     }
-#if VTK_MAJOR_VERSION >= 9
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   else if (displayNode->IsA("vtkMRMLMultiVolumeRenderingDisplayNode"))
     {
     return this->MultiVolumeMapper;
@@ -436,7 +436,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::AddDisplayNode(vtkMR
     // Add pipeline
     this->DisplayPipelines.insert( std::make_pair(displayNode, pipelineGpu) );
     }
-#if VTK_MAJOR_VERSION >= 9
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   else if (displayNode->IsA("vtkMRMLMultiVolumeRenderingDisplayNode"))
     {
     PipelineMultiVolume* pipelineMulti = new PipelineMultiVolume(this->NextMultiVolumeActorPortIndex++);
@@ -505,7 +505,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::RemoveDisplayNode(vt
     // Remove volume actor from renderer and local cache
     this->External->GetRenderer()->RemoveVolume(pipeline->VolumeActor);
     }
-#if VTK_MAJOR_VERSION >= 9
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   else if (displayNode->IsA("vtkMRMLMultiVolumeRenderingDisplayNode"))
     {
     const PipelineMultiVolume* pipelineMulti = dynamic_cast<const PipelineMultiVolume*>(pipeline);
@@ -641,7 +641,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
 
   // Set volume visibility, return if hidden
   pipeline->VolumeActor->SetVisibility(displayNodeVisible);
-#if VTK_MAJOR_VERSION >= 9
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   // Workaround for lack of support for Visibility flag in vtkMultiVolume's vtkVolume members
   //TODO: Remove when https://gitlab.kitware.com/vtk/vtk/issues/17302 is fixed in VTK
   if (displayNode->IsA("vtkMRMLMultiVolumeRenderingDisplayNode"))
@@ -1024,7 +1024,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateMultiVolumeMap
       }
     }
 
-#if VTK_MAJOR_VERSION >= 9
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   vtkGPUVolumeRayCastMapper* gpuMultiMapper = vtkGPUVolumeRayCastMapper::SafeDownCast(this->MultiVolumeMapper);
   gpuMultiMapper->SetSampleDistance(minimumSampleDistance);
 #endif
@@ -1456,7 +1456,7 @@ int vtkMRMLVolumeRenderingDisplayableManager::Pick3D(double ras[3])
     return 0;
     }
 
-#if VTK_MAJOR_VERSION >= 9
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   if (this->Internal->VolumePicker->Pick3DPoint(ras, ren))
     {
     vtkVolume* volume = vtkVolume::SafeDownCast(this->Internal->VolumePicker->GetProp3D());

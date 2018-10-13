@@ -501,7 +501,7 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
       fullNameWithoutExtension.erase(fullNameWithoutExtension.size() - 4);
       }
     exporter->SetFilePrefix(fullNameWithoutExtension.c_str());
-#if VTK_MAJOR_VERSION >= 9
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
     std::string header = std::string("3D Slicer output. ") + coordinateSytemSpecification;
     exporter->SetOBJFileComment(header.c_str());
 #endif

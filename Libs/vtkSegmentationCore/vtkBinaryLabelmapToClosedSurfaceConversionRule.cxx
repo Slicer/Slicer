@@ -26,7 +26,7 @@
 // VTK includes
 #include <vtkVersion.h> // must precede reference to VTK_MAJOR_VERSION
 #include <vtkDecimatePro.h>
-#if VTK_MAJOR_VERSION >= 9
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   #include <vtkDiscreteFlyingEdges3D.h>
 #else
   #include <vtkDiscreteMarchingCubes.h>
@@ -173,7 +173,7 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkDataObject* sour
 
   // Run marching cubes
 
-#if VTK_MAJOR_VERSION >= 9
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   // Normals computation in vtkDiscreteFlyingEdges3D is faster than computing normals in a subsequent
   // vtkPolyDataNormals filter. However, if smoothing step is applied after vtkDiscreteFlyingEdges3D then
   // computing normals after smoothing provides smoother surfaces.

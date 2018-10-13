@@ -713,7 +713,7 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::SetNthSeed(int n, vtkMRMLMarkup
       {
       handleRep->VisibilityOn();
       handleRep->HandleVisibilityOn();
-#if VTK_MAJOR_VERSION < 9
+#if VTK_MAJOR_VERSION <= 7 || (VTK_MAJOR_VERSION <= 8 && VTK_MINOR_VERSION <= 1)
       handleRep->EnablePicking();
 #endif
       if (textString.compare("") != 0)
@@ -736,7 +736,7 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::SetNthSeed(int n, vtkMRMLMarkup
       // If mouse pointer is over a markup when switching to a different slice,
       // its interaction state would stuck in vtkHandleRepresentation::NearSeed.
       handleRep->SetInteractionState(vtkHandleRepresentation::Outside);
-#if VTK_MAJOR_VERSION < 9
+#if VTK_MAJOR_VERSION <= 7 || (VTK_MAJOR_VERSION <= 8 && VTK_MINOR_VERSION <= 1)
       // XXX This was part of commits:
       // * r23648 (BUG: fixes for 3808 fiducial picking issue)
       // * r24726 (BUG: Disable fiducials in light box mode. See #1690)
@@ -1071,7 +1071,7 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::PropagateMRMLToWidget(vtkMRMLMa
 
   vtkDebugMacro("Fids PropagateMRMLToWidget, node num markups = " << numberOfFiducials);
 
-#if VTK_MAJOR_VERSION < 9
+#if VTK_MAJOR_VERSION <= 7 || (VTK_MAJOR_VERSION <= 8 && VTK_MINOR_VERSION <= 1)
   // XXX This was part of commits:
   // * r23648 (BUG: fixes for 3808 fiducial picking issue)
   // * r23656 (3808: fix failing test - add some pointer checks)

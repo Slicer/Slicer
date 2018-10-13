@@ -38,7 +38,7 @@
 
 // VTK includes
 #include <vtkVersion.h> // must precede reference to VTK_MAJOR_VERSION
-#if VTK_MAJOR_VERSION >= 9
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
 #include <vtkCompositeDataGeometryFilter.h>
   #include <vtkPlaneCutter.h>
 #else
@@ -146,7 +146,7 @@ public:
       // Create poly data pipeline
       this->PolyDataOutlineActor = vtkSmartPointer<vtkActor2D>::New();
       this->PolyDataFillActor = vtkSmartPointer<vtkActor2D>::New();
-#if VTK_MAJOR_VERSION >= 9
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
       this->Cutter = vtkSmartPointer<vtkPlaneCutter>::New();
 #else
       this->Cutter = vtkSmartPointer<vtkCutter>::New();
@@ -158,7 +158,7 @@ public:
       this->TriangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
 
       // Set up poly data outline pipeline
-#if VTK_MAJOR_VERSION >= 9
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
       this->Cutter->SetInputConnection(this->ModelWarper->GetOutputPort());
       this->Cutter->SetPlane(this->Plane);
       this->Cutter->BuildTreeOff(); // the cutter crashes for complex geometries if build tree is enabled
@@ -179,7 +179,7 @@ public:
       this->PolyDataOutlineActor->SetVisibility(0);
 
       // Set up poly data fill pipeline
-#if VTK_MAJOR_VERSION >= 9
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
       vtkNew<vtkCleanPolyData> pointMerger;
       pointMerger->PointMergingOn();
       pointMerger->SetInputConnection(geometryFilter->GetOutputPort());
@@ -267,7 +267,7 @@ public:
     vtkSmartPointer<vtkActor2D> PolyDataFillActor;
     vtkSmartPointer<vtkTransformPolyDataFilter> ModelWarper;
     vtkSmartPointer<vtkPlane> Plane;
-#if VTK_MAJOR_VERSION >= 9
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
     vtkSmartPointer<vtkPlaneCutter> Cutter;
 #else
     vtkSmartPointer<vtkCutter> Cutter;

@@ -17,7 +17,7 @@ Version:   $Revision$
 #include <vtkVersion.h> // must precede reference to VTK_MAJOR_VERSION
 #include "vtkITKArchetypeImageSeriesScalarReader.h"
 #include "vtkImageData.h"
-#if VTK_MAJOR_VERSION >= 9
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   #include <vtkFlyingEdges3D.h>
 #else
   #include <vtkMarchingCubes.h>
@@ -73,7 +73,7 @@ int main(int argc, char * argv[])
   vtkImageData *                    image;
   vtkWindowedSincPolyDataFilter *   smootherSinc = NULL;
   vtkDecimatePro *                  decimator = NULL;
-#if VTK_MAJOR_VERSION >= 9
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   vtkFlyingEdges3D *                mcubes = NULL;
 #else
   vtkMarchingCubes *                mcubes = NULL;
@@ -148,7 +148,7 @@ int main(int argc, char * argv[])
     transformIJKtoRAS->GetMatrix()->Print(std::cout);
     }
   transformIJKtoRAS->Inverse();
-#if VTK_MAJOR_VERSION >= 9
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   mcubes = vtkFlyingEdges3D::New();
 #else
   mcubes = vtkMarchingCubes::New();
