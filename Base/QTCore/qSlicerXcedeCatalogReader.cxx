@@ -651,7 +651,7 @@ void qSlicerXcedeCatalogReaderPrivate::importVolumeNode(NodeType node)
   //if { [info exists n(description) ] } {
   //  $volumeNode SetDescription $n(description)
   //}
-  if (node.contains("decription"))
+  if (node.contains("description"))
     {
     volumeNode->SetDescription(node["description"].toLatin1());
     }
