@@ -30,7 +30,7 @@ class QWebView;
 #else
 #include <QWebEngineCertificateError>
 #include <QWebEnginePage>
-#include <QWebEngineProfile>
+class QWebEngineProfile;
 #endif
 
 // QtGUI includes
@@ -97,7 +97,23 @@ public:
   /// Convenient function to return the mainframe
   QWebFrame* mainFrame();
 #else
+  /// \brief Update \c profile injecting a qtwebchannel script.
+  ///
+  /// A QWebEngineScript named ``qwebchannel_appended.js`` is created by
+  /// copying the Qt resource ``qrc:/qtwebchannel/qwebchannel.js``. It is
+  /// initialized with the following properties:
+  /// * WorldId set to QWebEngineScript::MainWorld.
+  /// * InjectionPoint set to QWebEngineScript::DocumentCreation.
+  /// * RunsOnSubFrames set to false.
+  ///
+  /// Prior creating the script the function updateWebChannelScript(QByteArray)
+  /// is called to allow further customization by sub-classes by appending additional
+  /// script content.
+  virtual void initializeWebEngineProfile(QWebEngineProfile* profile);
+
+  /// \sa initializeWebEngineProfile(QWebEngineProfile*)
   virtual void updateWebChannelScript(QByteArray& /* webChannelScript */){}
+
   virtual void initializeWebChannel(QWebChannel* /* webChannel */){}
 #endif
 

@@ -102,25 +102,7 @@ void qSlicerWebWidgetPrivate::init()
   this->WebView = new qSlicerWebEngineView();
 
   QWebEngineProfile *profile = new QWebEngineProfile("MyWebChannelProfile", q);
-
-  QFile webChannelJsFile(":/qtwebchannel/qwebchannel.js");
-
-  if (!webChannelJsFile.open(QIODevice::ReadOnly))
-    {
-    qWarning() << QString("Couldn't open qwebchannel.js file: %1").arg(webChannelJsFile.errorString());
-    }
-  else
-    {
-    QByteArray webChannelJs = webChannelJsFile.readAll();
-    this->updateWebChannelScript(webChannelJs);
-    QWebEngineScript script;
-    script.setSourceCode(webChannelJs);
-    script.setName("qwebchannel_appended.js");
-    script.setWorldId(QWebEngineScript::MainWorld);
-    script.setInjectionPoint(QWebEngineScript::DocumentCreation);
-    script.setRunsOnSubFrames(false);
-    profile->scripts()->insert(script);
-    }
+  this->initializeWebEngineProfile(profile);
 
   this->WebEnginePage = new qSlicerWebEnginePage(profile, this->WebView);
   this->WebEnginePage->WebWidget = q;
@@ -198,6 +180,42 @@ void qSlicerWebWidgetPrivate::onAppAboutToQuit()
     }
 #endif
 }
+
+// --------------------------------------------------------------------------
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
+void qSlicerWebWidgetPrivate::initializeWebEngineProfile(QWebEngineProfile* profile)
+{
+  if (!profile)
+    {
+    qWarning() << Q_FUNC_INFO << "Invalid profile";
+    return;
+    }
+
+  if (!profile->scripts()->findScript("qwebchannel_appended.js").isNull())
+    {
+    return;
+    }
+
+  QFile webChannelJsFile(":/qtwebchannel/qwebchannel.js");
+
+  if (!webChannelJsFile.open(QIODevice::ReadOnly))
+    {
+    qWarning() << QString("Couldn't open qwebchannel.js file: %1").arg(webChannelJsFile.errorString());
+    }
+  else
+    {
+    QByteArray webChannelJs = webChannelJsFile.readAll();
+    this->updateWebChannelScript(webChannelJs);
+    QWebEngineScript script;
+    script.setSourceCode(webChannelJs);
+    script.setName("qwebchannel_appended.js");
+    script.setWorldId(QWebEngineScript::MainWorld);
+    script.setInjectionPoint(QWebEngineScript::DocumentCreation);
+    script.setRunsOnSubFrames(false);
+    profile->scripts()->insert(script);
+    }
+}
+#endif
 
 // --------------------------------------------------------------------------
 void qSlicerWebWidgetPrivate::setDocumentWebkitHidden(bool value)
