@@ -101,7 +101,7 @@ void qSlicerWebWidgetPrivate::init()
 #else
   this->WebView = new qSlicerWebEngineView();
 
-  QWebEngineProfile *profile = new QWebEngineProfile("MyWebChannelProfile", q);
+  QWebEngineProfile* profile = QWebEngineProfile::defaultProfile();
   this->initializeWebEngineProfile(profile);
 
   this->WebEnginePage = new qSlicerWebEnginePage(profile, this->WebView);
