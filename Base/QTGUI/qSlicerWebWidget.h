@@ -55,6 +55,8 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebWidget
   : public QWidget
 {
   Q_OBJECT
+  Q_PROPERTY(bool handleExternalUrlWithDesktopService READ handleExternalUrlWithDesktopService WRITE setHandleExternalUrlWithDesktopService)
+  Q_PROPERTY(QStringList internalHosts READ internalHosts WRITE setInternalHosts)
   friend class qSlicerWebEnginePage;
 public:
   /// Superclass typedef
@@ -65,6 +67,26 @@ public:
 
   /// Destructor
   virtual ~qSlicerWebWidget();
+
+  /// \brief Return true if external URL should be open with desktop service.
+  ///
+  /// Setting both this property to true and at least one internal host will
+  /// ensure URLs not matching an internal host are open with the current desktop
+  /// browser.
+  ///
+  /// \sa setInternalHost(const QString&)
+  /// \sa QDesktopServices::openUrl
+  bool handleExternalUrlWithDesktopService() const;
+  void setHandleExternalUrlWithDesktopService(bool enable);
+
+  /// \brief Set/Get internal host.
+  ///
+  /// \sa setHandleExternalUrlWithDesktopService(bool)
+  QStringList internalHosts() const;
+  void setInternalHosts(const QStringList& hosts);
+
+//  QWebEngineProfile* profile()const;
+//  void setProfile(QWebEngineProfile* profile);
 
   /// Return a reference to the QWebView used internally.
 #ifdef Slicer_HAVE_WEBKIT_SUPPORT

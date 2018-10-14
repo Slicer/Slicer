@@ -110,6 +110,9 @@ protected slots:
 public:
 
   QTime DownloadTime;
+  bool HandleExternalUrlWithDesktopService;
+  bool NavigationRequestAccepted;
+  QStringList InternalHosts;
 #if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
   QWebView* WebView;
 #else

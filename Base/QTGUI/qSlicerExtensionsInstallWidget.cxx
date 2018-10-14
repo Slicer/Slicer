@@ -49,13 +49,13 @@ void ExtensionInstallWidgetWebChannelProxy::refresh()
 qSlicerExtensionsInstallWidgetPrivate::qSlicerExtensionsInstallWidgetPrivate(qSlicerExtensionsInstallWidget& object)
   : qSlicerWebWidgetPrivate(object),
     q_ptr(&object),
-    BrowsingEnabled(true),
-    NavigationRequestAccepted(true)
+    BrowsingEnabled(true)
 {
   Q_Q(qSlicerExtensionsInstallWidget);
   this->ExtensionsManagerModel = 0;
   this->InstallWidgetForWebChannel = new ExtensionInstallWidgetWebChannelProxy;
   this->InstallWidgetForWebChannel->InstallWidget = q;
+  this->HandleExternalUrlWithDesktopService = true;
 }
 
 // --------------------------------------------------------------------------
@@ -409,35 +409,16 @@ void qSlicerExtensionsInstallWidget::onLoadFinished(bool ok)
 #if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
 void qSlicerExtensionsInstallWidget::onLinkClicked(const QUrl& url)
 {
-  if(url.host() == this->extensionsManagerModel()->serverUrl().host())
-    {
-    this->Superclass::onLinkClicked(url);
-    }
-  else
-    {
-    if(!QDesktopServices::openUrl(url))
-      {
-      qWarning() << "Failed to open url:" << url;
-      }
-    }
+  Q_D(qSlicerExtensionsInstallWidget);
+  d->InternalHosts = QStringList() << this->extensionsManagerModel()->serverUrl().host();
+  return Superclass::onLinkClicked(url);
 }
 #else
 // --------------------------------------------------------------------------
 bool qSlicerExtensionsInstallWidget::acceptNavigationRequest(const QUrl & url, QWebEnginePage::NavigationType type, bool isMainFrame)
 {
   Q_D(qSlicerExtensionsInstallWidget);
-  if(url.host() == this->extensionsManagerModel()->serverUrl().host())
-    {
-    d->NavigationRequestAccepted = this->Superclass::acceptNavigationRequest(url, type, isMainFrame);
-    }
-  else
-    {
-    if(!QDesktopServices::openUrl(url))
-      {
-      qWarning() << "Failed to open url:" << url;
-      }
-    d->NavigationRequestAccepted = false;
-    }
-  return d->NavigationRequestAccepted;
+  d->InternalHosts = QStringList() << this->extensionsManagerModel()->serverUrl().host();
+  return Superclass::acceptNavigationRequest(url, type, isMainFrame);
 }
 #endif

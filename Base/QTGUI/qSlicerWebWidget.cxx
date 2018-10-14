@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QDesktopServices>
 #include <QNetworkCookieJar>
 #include <QNetworkReply>
 #include <QTime>
@@ -79,6 +80,8 @@ qSlicerWebEnginePage::~qSlicerWebEnginePage()
 // --------------------------------------------------------------------------
 qSlicerWebWidgetPrivate::qSlicerWebWidgetPrivate(qSlicerWebWidget& object)
   :q_ptr(&object)
+  , HandleExternalUrlWithDesktopService(false)
+  , NavigationRequestAccepted(true)
 {
 }
 
@@ -226,6 +229,34 @@ qSlicerWebWidget::~qSlicerWebWidget()
 }
 
 // --------------------------------------------------------------------------
+bool qSlicerWebWidget::handleExternalUrlWithDesktopService() const
+{
+  Q_D(const qSlicerWebWidget);
+  return d->HandleExternalUrlWithDesktopService;
+}
+
+// --------------------------------------------------------------------------
+void qSlicerWebWidget::setHandleExternalUrlWithDesktopService(bool enable)
+{
+  Q_D(qSlicerWebWidget);
+  d->HandleExternalUrlWithDesktopService = enable;
+}
+
+// --------------------------------------------------------------------------
+QStringList qSlicerWebWidget::internalHosts() const
+{
+  Q_D(const qSlicerWebWidget);
+  return d->InternalHosts;
+}
+
+// --------------------------------------------------------------------------
+void qSlicerWebWidget::setInternalHosts(const QStringList& hosts)
+{
+  Q_D(qSlicerWebWidget);
+  d->InternalHosts = hosts;
+}
+
+// --------------------------------------------------------------------------
 #if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
 QWebView *
 #else
@@ -334,14 +365,37 @@ void qSlicerWebWidget::onLoadFinished(bool ok)
 #if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
 void qSlicerWebWidget::onLinkClicked(const QUrl& url)
 {
-  this->webView()->setUrl(url);
+  Q_D(qSlicerWebWidget);
+  if(d->InternalHosts.contains(url.host()) || !d->HandleExternalUrlWithDesktopService)
+    {
+    this->webView()->setUrl(url);
+    }
+  else
+    {
+    if(!QDesktopServices::openUrl(url))
+      {
+      qWarning() << "Failed to open url:" << url;
+      }
+    }
 }
 #else
 bool qSlicerWebWidget::acceptNavigationRequest(const QUrl & url, QWebEnginePage::NavigationType type, bool isMainFrame)
 {
   Q_D(qSlicerWebWidget);
   Q_ASSERT(d->WebEnginePage);
-  return d->WebEnginePage->webEnginePageAcceptNavigationRequest(url, type, isMainFrame);
+  if(d->InternalHosts.contains(url.host()) || !d->HandleExternalUrlWithDesktopService)
+    {
+    d->NavigationRequestAccepted = d->WebEnginePage->webEnginePageAcceptNavigationRequest(url, type, isMainFrame);
+    }
+  else
+    {
+    if(!QDesktopServices::openUrl(url))
+      {
+      qWarning() << "Failed to open url:" << url;
+      }
+    d->NavigationRequestAccepted = false;
+    }
+  return d->NavigationRequestAccepted;
 }
 #endif
 
