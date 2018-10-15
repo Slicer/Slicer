@@ -34,13 +34,14 @@ class QWebEngineProfile;
 #endif
 
 // QtGUI includes
+#include "qSlicerBaseQTGUIExport.h"
 #include "qSlicerWebWidget.h"
 #include "ui_qSlicerWebWidget.h"
 
 //-----------------------------------------------------------------------------
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
 
-class qSlicerWebEnginePage: public QWebEnginePage
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebEnginePage: public QWebEnginePage
 {
   friend class qSlicerWebWidget;
   friend class qSlicerWebWidgetPrivate;
@@ -80,7 +81,7 @@ private:
 #endif
 
 //-----------------------------------------------------------------------------
-class qSlicerWebWidgetPrivate: public QObject, Ui_qSlicerWebWidget
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebWidgetPrivate: public QObject, Ui_qSlicerWebWidget
 {
   Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerWebWidget);
