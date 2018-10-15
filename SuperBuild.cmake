@@ -86,7 +86,7 @@ mark_as_superbuild(
 
 set(ITK_EXTERNAL_NAME ITKv4)
 
-set(VTK_EXTERNAL_NAME VTKv9)
+set(VTK_EXTERNAL_NAME VTK)
 
 set(Slicer_DEPENDENCIES
   curl

@@ -1,5 +1,5 @@
 
-set(proj VTKv9)
+set(proj VTK)
 
 # Set dependency list
 set(${proj}_DEPENDENCIES "zlib")
