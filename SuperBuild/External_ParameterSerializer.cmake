@@ -2,7 +2,7 @@
 set( proj ParameterSerializer )
 
 # Set dependency list
-set(${proj}_DEPENDENCIES JsonCpp ITKv4)
+set(${proj}_DEPENDENCIES JsonCpp ITK)
 
 # Include dependent projects if any
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)

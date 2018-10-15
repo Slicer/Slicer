@@ -84,7 +84,7 @@ mark_as_superbuild(
 # Slicer dependency list
 #------------------------------------------------------------------------------
 
-set(ITK_EXTERNAL_NAME ITKv4)
+set(ITK_EXTERNAL_NAME ITK)
 
 set(VTK_EXTERNAL_NAME VTK)
 
