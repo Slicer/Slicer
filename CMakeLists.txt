@@ -1085,6 +1085,7 @@ endforeach()
 # Add target configuring 'vtkSlicerVersionConfigure.h' at build time.
 include(SlicerConfigureVersionHeaderTarget)
 add_dependencies(SlicerBaseLogic SlicerConfigureVersionHeader)
+add_dependencies(MRMLCore SlicerConfigureVersionHeader)
 
 list(APPEND files ${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerVersionConfigure.h)
 
