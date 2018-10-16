@@ -231,18 +231,16 @@ endif()
   if(NOT APPLE)
     # This is not required for macOS where VTK python package is installed
     # in a standard location using CMake/SlicerBlockInstallExternalPythonModules.cmake
-    if(Slicer_VTK_VERSION_MAJOR VERSION_GREATER 8)
-      if(UNIX)
-        set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
-          <APPLAUNCHER_SETTINGS_DIR>/../${Slicer_INSTALL_LIB_DIR}/python2.7/site-packages
-          )
-      else()
-        set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
-          <APPLAUNCHER_SETTINGS_DIR>/../${Slicer_INSTALL_BIN_DIR}/Lib/site-packages
-          )
-      endif()
+    if(UNIX)
+      set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
+        <APPLAUNCHER_SETTINGS_DIR>/../${Slicer_INSTALL_LIB_DIR}/python2.7/site-packages
+        )
     else()
       set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
+        <APPLAUNCHER_SETTINGS_DIR>/../${Slicer_INSTALL_BIN_DIR}/Lib/site-packages
+        # Adding the following line is needed only for (<VTK_MAJOR_VERSION>.<VTK_MINOR_VERSION> <= 8.1),
+        # but since we only have Slicer_VTK_VERSION_MAJOR variable, following the update of VTK
+        # version from 9.0 to 8.2, there is no way to discriminate between 8.1 and 8.2.
         <APPLAUNCHER_SETTINGS_DIR>/../${Slicer_INSTALL_LIB_DIR}/python2.7/site-packages
         )
     endif()
