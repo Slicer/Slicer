@@ -95,8 +95,9 @@ else()
         DESTINATION ${Slicer_INSTALL_ROOT}/libexec COMPONENT Runtime
         )
       # XXX Workaround for QTBUG-66346 fixed in Qt >= 5.11 (See https://github.com/Slicer/Slicer/pull/944)
+      set(qt_conf_contents "[Paths]\nPrefix = ..\nTranslations = share/QtTranslations")
       install(
-        CODE "file(WRITE \"\${CMAKE_INSTALL_PREFIX}/libexec/qt.conf\" \"[Paths]\nPrefix=../resources\")"
+        CODE "file(WRITE \"\${CMAKE_INSTALL_PREFIX}/libexec/qt.conf\" \"${qt_conf_contents}\")"
         COMPONENT Runtime)
     endif()
 
