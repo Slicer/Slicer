@@ -42,6 +42,9 @@ vtkMRMLVolumePropertyNode::vtkMRMLVolumePropertyNode()
   this->ObservedEvents->InsertNextValue(vtkCommand::EndInteractionEvent);
 
   vtkVolumeProperty* property = vtkVolumeProperty::New();
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
+  property->SetUseClippedVoxelIntensity(true);
+#endif
   vtkSetAndObserveMRMLObjectEventsMacro(this->VolumeProperty, property, this->ObservedEvents);
   property->Delete();
 
@@ -159,6 +162,9 @@ void vtkMRMLVolumePropertyNode::CopyParameterSet(vtkMRMLNode *anode)
   // VolumeProperty
   this->VolumeProperty->SetIndependentComponents(node->VolumeProperty->GetIndependentComponents());
   this->VolumeProperty->SetInterpolationType(node->VolumeProperty->GetInterpolationType());
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
+  this->VolumeProperty->SetUseClippedVoxelIntensity(node->VolumeProperty->GetUseClippedVoxelIntensity());
+#endif
 
   for (int i=0; i<VTK_MAX_VRCOMP; i++)
     {
