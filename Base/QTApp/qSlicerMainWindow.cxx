@@ -1129,7 +1129,8 @@ void qSlicerMainWindow::showEvent(QShowEvent *event)
     this->disclaimer();
     this->pythonConsoleInitialDisplay();
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-    qSlicerApplication::application()->gatherExtensionsHistoryInformationOnStartup();
+    // See https://issues.slicer.org/view.php?id=4641
+    // qSlicerApplication::application()->gatherExtensionsHistoryInformationOnStartup();
 #endif
     emit initialWindowShown();
     }

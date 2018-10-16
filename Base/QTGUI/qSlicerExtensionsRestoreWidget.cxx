@@ -182,6 +182,10 @@ void qSlicerExtensionsRestoreWidgetPrivate
   this->checkOnStartup->setText(QObject::tr("Check previous extensions on startup"));
   this->silentInstallOnStartup->setText(QObject::tr("Install previous extensions without request"));
 
+  // See https://issues.slicer.org/view.php?id=4641
+  this->checkOnStartup->setVisible(false);
+  this->silentInstallOnStartup->setVisible(false);
+
   this->progressDialog->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
   this->progressDialog->close();
 
