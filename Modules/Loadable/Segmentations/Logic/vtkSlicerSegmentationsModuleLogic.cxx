@@ -1083,6 +1083,7 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
     exportedSegmentIDs = segmentIDs;
     }
   colorTableNode->SetNumberOfColors(exportedSegmentIDs.size() + 1);
+  colorTableNode->GetLookupTable()->SetRange(0, exportedSegmentIDs.size());
   colorTableNode->GetLookupTable()->SetNumberOfTableValues(exportedSegmentIDs.size() + 1);
   colorTableNode->SetColor(0, "Background", 0.0, 0.0, 0.0, 0.0);
   short colorIndex = 1;
