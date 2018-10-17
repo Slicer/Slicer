@@ -32,10 +32,17 @@ public:
   Q_INVOKABLE qSlicerExtensionsManagerModel* extensionsManagerModel()const;
   Q_INVOKABLE void setExtensionsManagerModel(qSlicerExtensionsManagerModel* model);
 
+  // Actions
+  QAction* selectAllAction() const;
+  QAction* deselectAllAction() const;
+  QAction* installSelectedAction() const;
+
   // Events
   void showEvent(QShowEvent* event);
 
-  protected slots :
+protected slots :
+  void onSelectAllExtensionsTriggered();
+  void onDeselectAllExtensionsTriggered();
   void onInstallSelectedExtensionsTriggered();
   void onCheckOnStartupChanged(int state);
   void onSilentInstallOnStartupChanged(int state);

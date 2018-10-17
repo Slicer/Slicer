@@ -99,6 +99,49 @@
     </item>
    </layout>
   </widget>
+  <widget class="QWidget" name="RestorePage">
+   <layout class="QHBoxLayout" name="restoreLayout">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>2</number>
+    </property>
+    <item>
+     <widget class="QToolButton" name="RestoreConfigureButton">
+      <property name="icon">
+       <iconset resource="../qSlicerBaseQTGUI.qrc">
+        <normaloff>:/Icons/Small/SlicerConfigure.png</normaloff>:/Icons/Small/SlicerConfigure.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>22</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="popupMode">
+       <enum>QToolButton::InstantPopup</enum>
+      </property>
+      <property name="autoRaise">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="ctkSearchBox" name="RestoreSearchBox">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
   <action name="CheckForUpdatesAction">
    <property name="icon">
     <iconset resource="../qSlicerBaseQTGUI.qrc">

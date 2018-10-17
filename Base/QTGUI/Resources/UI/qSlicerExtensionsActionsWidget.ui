@@ -94,6 +94,22 @@
     </item>
    </layout>
   </widget>
+  <widget class="QWidget" name="RestorePage">
+   <layout class="QHBoxLayout" name="RestoreLayout">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>2</number>
+    </property>
+   </layout>
+  </widget>
  </widget>
  <resources/>
  <connections/>

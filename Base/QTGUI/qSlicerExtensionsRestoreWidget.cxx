@@ -1,4 +1,5 @@
-//QT includes
+// Qt includes
+#include <QAction>
 #include <QPushButton>
 #include <QProgressBar>
 #include <QLayout>
@@ -15,6 +16,7 @@
 #include <QApplication>
 #include <qSlicerApplication.h>
 #include <QCheckBox>
+#include <QToolButton>
 
 // QtGUI includes
 #include "qSlicerExtensionsRestoreWidget.h"
@@ -137,6 +139,12 @@ public:
   qSlicerExtensionsManagerModel *ExtensionsManagerModel;
   QProgressBar *progressBar;
   QProgressDialog *progressDialog;
+  QToolButton* selectAllButton;
+  QAction* selectAllAction;
+  QToolButton* deselectAllButton;
+  QAction* deselectAllAction;
+  QToolButton* installSelectedButton;
+  QAction* installSelectedAction;
   QCheckBox *checkOnStartup;
   QCheckBox *silentInstallOnStartup;
   QListWidget *extensionList;
@@ -182,12 +190,29 @@ void qSlicerExtensionsRestoreWidgetPrivate
   QVBoxLayout *mainLayout = new QVBoxLayout;
   QHBoxLayout *layoutForProgressAndButton = new QHBoxLayout;
   QHBoxLayout *layoutForSettings= new QHBoxLayout;
-  QPushButton *installButton = new QPushButton;
   this->checkOnStartup = new QCheckBox;
   this->silentInstallOnStartup = new QCheckBox;
   this->progressDialog = new QProgressDialog;
   this->extensionList = new QListWidget;
   this->progressBar = new QProgressBar;
+
+  this->selectAllAction = new QAction(q);
+  this->selectAllAction->setText(QObject::tr("Select All"));
+
+  this->selectAllButton = new QToolButton(q);
+  this->selectAllButton->setDefaultAction(this->selectAllAction);
+
+  this->deselectAllAction = new QAction(q);
+  this->deselectAllAction->setText(QObject::tr("Deselect All"));
+
+  this->deselectAllButton = new QToolButton(q);
+  this->deselectAllButton->setDefaultAction(this->deselectAllAction);
+
+  this->installSelectedAction = new QAction(q);
+  this->installSelectedAction->setText(QObject::tr("&Install Selected..."));
+
+  this->installSelectedButton = new QToolButton(q);
+  this->installSelectedButton->setDefaultAction(this->installSelectedAction);
 
   this->extensionList->setAlternatingRowColors(true);
   this->extensionList->setItemDelegate(new qSlicerRestoreExtensionsItemDelegate(q));
@@ -201,9 +226,10 @@ void qSlicerExtensionsRestoreWidgetPrivate
   this->progressDialog->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
   this->progressDialog->close();
 
-  installButton->setText(QObject::tr("Install Selected"));
   layoutForProgressAndButton->addWidget(this->progressBar);
-  layoutForProgressAndButton->addWidget(installButton);
+  layoutForProgressAndButton->addWidget(this->selectAllButton);
+  layoutForProgressAndButton->addWidget(this->deselectAllButton);
+  layoutForProgressAndButton->addWidget(this->installSelectedButton);
   layoutForSettings->addWidget(this->checkOnStartup);
   layoutForSettings->addWidget(this->silentInstallOnStartup);
   mainLayout->addWidget(this->extensionList);
@@ -213,13 +239,17 @@ void qSlicerExtensionsRestoreWidgetPrivate
   checkOnStartupSettingsKey = "ExtensionCheckOnStartup/dontCheck";
   silentInstallOnStartUpSettingsKey = "ExtensionCheckOnStartup/ifCheckInstallWithoutDialog";
 
-  QObject::connect(installButton, SIGNAL(clicked()),
-    q, SLOT(onInstallSelectedExtensionsTriggered()));
+  QObject::connect(this->selectAllAction, SIGNAL(triggered(bool)),
+      q, SLOT(onSelectAllExtensionsTriggered()));
+  QObject::connect(this->deselectAllAction, SIGNAL(triggered(bool)),
+      q, SLOT(onDeselectAllExtensionsTriggered()));
+  QObject::connect(this->installSelectedAction, SIGNAL(triggered(bool)),
+      q, SLOT(onInstallSelectedExtensionsTriggered()));
+
   QObject::connect(checkOnStartup, SIGNAL(stateChanged(int)),
     q, SLOT(onCheckOnStartupChanged(int)));
   QObject::connect(silentInstallOnStartup, SIGNAL(stateChanged(int)),
     q, SLOT(onSilentInstallOnStartupChanged(int)));
-
 }
 
 // --------------------------------------------------------------------------
@@ -301,14 +331,27 @@ void qSlicerExtensionsRestoreWidgetPrivate
     bool wasInstalledInLastRevision = currentInfo.value("WasInstalledInLastRevision").toBool();
     bool isItemEnabled              = isCompatible && !isInstalled;
     bool isItemChecked              = isItemEnabled && wasInstalledInLastRevision;
-    QString description =
-      (isInstalled
-       ? QObject::tr("currently installed")
-       : (isCompatible
-          ? (wasInstalledInLastRevision
-             ? QObject::tr("was used in previously installed Slicer version (%1)").arg(usedLastInRevision)
-             : QObject::tr("was last used in Slicer version %1").arg(usedLastInRevision))
-          : QObject::tr("not compatible with current Slicer version (was last used in Slicer version %1)").arg(usedLastInRevision)));
+    QString description;
+
+    if (isInstalled)
+      {
+      description = QObject::tr("currently installed");
+      }
+    else if (isCompatible)
+      {
+      if (wasInstalledInLastRevision)
+        {
+        description = QObject::tr("was used in previously installed Slicer version (%1)").arg(usedLastInRevision);
+        }
+      else
+        {
+        description = QObject::tr("was last used in Slicer version %1").arg(usedLastInRevision);
+        }
+      }
+    else
+      {
+      description = QObject::tr("not compatible with current Slicer version (was last used in Slicer version %1)").arg(usedLastInRevision);
+      }
 
     extensionItem->setData(qSlicerRestoreExtensions::IdRole, currentInfo.value("ExtensionId").toString());
     extensionItem->setData(qSlicerRestoreExtensions::CheckedRole, isItemChecked);
@@ -483,6 +526,55 @@ void qSlicerExtensionsRestoreWidget
       this, SLOT(onInstallationFinished(QString)));
     connect(model, SIGNAL(extensionHistoryGatheredOnStartup(QVariantMap)),
       this, SLOT(onExtensionHistoryGatheredOnStartup(QVariantMap)));
+    }
+}
+
+// --------------------------------------------------------------------------
+QAction* qSlicerExtensionsRestoreWidget::selectAllAction() const
+{
+  Q_D(const qSlicerExtensionsRestoreWidget);
+  return d->selectAllAction;
+}
+
+// --------------------------------------------------------------------------
+QAction* qSlicerExtensionsRestoreWidget::deselectAllAction() const
+{
+  Q_D(const qSlicerExtensionsRestoreWidget);
+  return d->deselectAllAction;
+}
+
+// --------------------------------------------------------------------------
+QAction* qSlicerExtensionsRestoreWidget::installSelectedAction() const
+{
+  Q_D(const qSlicerExtensionsRestoreWidget);
+  return d->installSelectedAction;
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsRestoreWidget::onSelectAllExtensionsTriggered()
+{
+  Q_D(qSlicerExtensionsRestoreWidget);
+  for (int index = 0; index < d->extensionList->count(); index++)
+    {
+    if (!d->extensionList->item(index)->data(qSlicerRestoreExtensions::EnabledRole).toBool())
+      {
+      continue;
+      }
+    d->extensionList->item(index)->setData(qSlicerRestoreExtensions::CheckedRole, true);
+    }
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsRestoreWidget::onDeselectAllExtensionsTriggered()
+{
+  Q_D(qSlicerExtensionsRestoreWidget);
+  for (int index = 0; index < d->extensionList->count(); index++)
+    {
+    if (!d->extensionList->item(index)->data(qSlicerRestoreExtensions::EnabledRole).toBool())
+      {
+      continue;
+      }
+    d->extensionList->item(index)->setData(qSlicerRestoreExtensions::CheckedRole, false);
     }
 }
 

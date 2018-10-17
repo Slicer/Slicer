@@ -111,6 +111,7 @@ public:
 
     setThemeIcon(this->ManageConfigureButton, "configure");
     setThemeIcon(this->InstallConfigureButton, "configure");
+    setThemeIcon(this->RestoreConfigureButton, "configure");
     setThemeIcon(this->CheckForUpdatesAction, "view-refresh");
 
     const QIcon searchIcon =
@@ -134,6 +135,12 @@ public:
     this->InstallSearchBox->setShowSearchIcon(true);
     this->InstallSearchBox->setFixedWidth(searchWidth);
 
+    this->RestoreSearchBox->setClearIcon(clearIcon);
+    this->RestoreSearchBox->setSearchIcon(searchIcon);
+    this->RestoreSearchBox->setShowSearchIcon(true);
+    this->RestoreSearchBox->setFixedWidth(searchWidth);
+
+    // manage
     QMenu * manageConfigureMenu = new QMenu(this);
     manageConfigureMenu->addAction(this->CheckForUpdatesAction);
     manageConfigureMenu->addAction(this->AutoUpdateAction);
@@ -143,12 +150,21 @@ public:
     this->ManageConfigureButton->setMenu(manageConfigureMenu);
     invalidateSizeHint(this->ManageConfigureButton);
 
+    // install
     QMenu * installConfigureMenu = new QMenu(this);
     installConfigureMenu->addAction(this->InstallFromFileAction);
 
     this->InstallConfigureButton->setMenu(installConfigureMenu);
     invalidateSizeHint(this->InstallConfigureButton);
+
+    // restore
+    this->RestoreConfigureMenu = new QMenu(this);
+
+    this->RestoreConfigureButton->setMenu(this->RestoreConfigureMenu);
+    invalidateSizeHint(this->RestoreConfigureButton);
   }
+
+  QMenu* RestoreConfigureMenu;
 };
 
 }
@@ -203,6 +219,10 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
 
   // Search field and configure button
   this->toolsWidget = new qSlicerExtensionsToolsWidget;
+  this->toolsWidget->RestoreConfigureMenu->addAction(this->ExtensionsRestoreWidget->selectAllAction());
+  this->toolsWidget->RestoreConfigureMenu->addAction(this->ExtensionsRestoreWidget->deselectAllAction());
+  this->toolsWidget->RestoreConfigureMenu->addSeparator();
+  this->toolsWidget->RestoreConfigureMenu->addAction(this->ExtensionsRestoreWidget->installSelectedAction());
 
   QSettings settings;
   this->toolsWidget->AutoUpdateAction->setChecked(
