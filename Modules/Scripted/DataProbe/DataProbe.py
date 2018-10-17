@@ -219,13 +219,13 @@ class DataProbeInfoWidget(object):
       self.viewerColor.hide()
       self.viewInfo.hide()
       self.viewerFrame.hide()
-      self.showImageBox.show()
+      self.showImageFrame.show()
       return
 
     self.viewerColor.show()
     self.viewInfo.show()
     self.viewerFrame.show()
-    self.showImageBox.hide()
+    self.showImageFrame.hide()
 
     # populate the widgets
     self.viewerColor.setText( " " )
@@ -391,9 +391,16 @@ class DataProbeInfoWidget(object):
     # hide this for now - there's not much to see in the module itself
     self.goToModule.hide()
 
-    # image view
-    self.showImageBox = qt.QCheckBox('Show Zoomed Slice', self.frame)
-    self.frame.layout().addWidget(self.showImageBox)
+    # image view: To ensure the height of the checkbox matches the height of the
+    # viewerFrame, it is added to a frame setting the layout and hard-coding the
+    # content margins.
+    # TODO: Revisit the approach and avoid hard-coding content margins
+    self.showImageFrame = qt.QFrame(self.frame)
+    self.frame.layout().addWidget(self.showImageFrame)
+    self.showImageFrame.setLayout(qt.QHBoxLayout())
+    self.showImageFrame.layout().setContentsMargins(0, 3, 0, 3)
+    self.showImageBox = qt.QCheckBox('Show Zoomed Slice', self.showImageFrame)
+    self.showImageFrame.layout().addWidget(self.showImageBox)
     self.showImageBox.connect("toggled(bool)", self.onShowImage)
     self.showImageBox.setChecked(False)
 
