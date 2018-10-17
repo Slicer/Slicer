@@ -21,6 +21,19 @@
 #include "qSlicerExtensionsManagerModel.h"
 
 // --------------------------------------------------------------------------
+namespace qSlicerRestoreExtensions
+{
+enum ItemDataRole {
+  IdRole = Qt::UserRole,
+  CheckedRole,
+  DescriptionRole,
+  EnabledRole,
+  RestoreCandidateRole,
+  InstalledRole
+  };
+};
+
+// --------------------------------------------------------------------------
 class qSlicerRestoreExtensionsItemDelegate : public QStyledItemDelegate
 {
 public:
@@ -32,12 +45,12 @@ public:
     const QStyleOptionViewItem &option,
     const QModelIndex &index)
   {
-    bool isEnabled = index.data(Qt::UserRole + 3).toBool();
+    bool isEnabled = index.data(qSlicerRestoreExtensions::EnabledRole).toBool();
 
     if (event->type() == QEvent::MouseButtonRelease && isEnabled)
       {
-      bool value = index.data(Qt::UserRole + 1).toBool();
-      model->setData(index, !value, Qt::UserRole + 1);
+      bool value = index.data(qSlicerRestoreExtensions::CheckedRole).toBool();
+      model->setData(index, !value, qSlicerRestoreExtensions::CheckedRole);
       return true;
       }
 
@@ -56,11 +69,11 @@ public:
 
     //GET DATA
     const QString& title            = index.data(Qt::DisplayRole).toString();
-    const bool isChecked            = index.data(Qt::UserRole + 1).toBool();
-    const QString& description      = index.data(Qt::UserRole + 2).toString();
-    const bool isEnabled            = index.data(Qt::UserRole + 3).toBool();
-    const bool isRestoreCandidate   = index.data(Qt::UserRole + 4).toBool();
-    const bool isInstalled          = index.data(Qt::UserRole + 5).toBool();
+    const bool isChecked            = index.data(qSlicerRestoreExtensions::CheckedRole).toBool();
+    const QString& description      = index.data(qSlicerRestoreExtensions::DescriptionRole).toString();
+    const bool isEnabled            = index.data(qSlicerRestoreExtensions::EnabledRole).toBool();
+    const bool isRestoreCandidate   = index.data(qSlicerRestoreExtensions::RestoreCandidateRole).toBool();
+    const bool isInstalled          = index.data(qSlicerRestoreExtensions::InstalledRole).toBool();
 
     //TITLE
     painter->setPen((isEnabled ? enabledPen : disabledPen));
@@ -134,7 +147,6 @@ public:
   int nrOfExtensionsToInstall;
   int currentExtensionToInstall;
   bool headlessMode;
-
 };
 
 // --------------------------------------------------------------------------
@@ -298,12 +310,12 @@ void qSlicerExtensionsRestoreWidgetPrivate
              : QObject::tr("was last used in Slicer version %1").arg(usedLastInRevision))
           : QObject::tr("not compatible with current Slicer version (was last used in Slicer version %1)").arg(usedLastInRevision)));
 
-    extensionItem->setData(Qt::UserRole, currentInfo.value("ExtensionId").toString());
-    extensionItem->setData(Qt::UserRole + 1, isItemChecked);
-    extensionItem->setData(Qt::UserRole + 2, description);
-    extensionItem->setData(Qt::UserRole + 3, isItemEnabled);
-    extensionItem->setData(Qt::UserRole + 4, wasInstalledInLastRevision); //details added for color coding
-    extensionItem->setData(Qt::UserRole + 5, isInstalled);
+    extensionItem->setData(qSlicerRestoreExtensions::IdRole, currentInfo.value("ExtensionId").toString());
+    extensionItem->setData(qSlicerRestoreExtensions::CheckedRole, isItemChecked);
+    extensionItem->setData(qSlicerRestoreExtensions::DescriptionRole, description);
+    extensionItem->setData(qSlicerRestoreExtensions::EnabledRole, isItemEnabled);
+    extensionItem->setData(qSlicerRestoreExtensions::RestoreCandidateRole, wasInstalledInLastRevision); //details added for color coding
+    extensionItem->setData(qSlicerRestoreExtensions::InstalledRole, isInstalled);
     extensionItem->setText(title);
 
     extensionList->addItem(extensionItem);
@@ -318,9 +330,9 @@ QStringList qSlicerExtensionsRestoreWidgetPrivate
   for (int i = 0; i < extensionList->count(); i++)
     {
     QListWidgetItem* currentItem = extensionList->item(i);
-    if (currentItem->data(Qt::UserRole + 1).toBool())
+    if (currentItem->data(qSlicerRestoreExtensions::CheckedRole).toBool())
       {
-      selectedExtensions.append(currentItem->data(Qt::UserRole).toString());
+      selectedExtensions.append(currentItem->data(qSlicerRestoreExtensions::IdRole).toString());
       }
     }
   return selectedExtensions;
