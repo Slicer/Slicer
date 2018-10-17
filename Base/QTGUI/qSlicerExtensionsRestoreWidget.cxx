@@ -67,15 +67,15 @@ public:
     QPen candidatePen(QColor::fromRgb(0, 200, 50), 1, Qt::SolidLine);
     QPen installedPen(QColor::fromRgb(0, 50, 200), 1, Qt::SolidLine);
 
-    //GET DATA
-    const QString& title            = index.data(Qt::DisplayRole).toString();
-    const bool isChecked            = index.data(qSlicerRestoreExtensions::CheckedRole).toBool();
-    const QString& description      = index.data(qSlicerRestoreExtensions::DescriptionRole).toString();
-    const bool isEnabled            = index.data(qSlicerRestoreExtensions::EnabledRole).toBool();
-    const bool isRestoreCandidate   = index.data(qSlicerRestoreExtensions::RestoreCandidateRole).toBool();
-    const bool isInstalled          = index.data(qSlicerRestoreExtensions::InstalledRole).toBool();
+    // GET DATA
+    QString title             = index.data(Qt::DisplayRole).toString();
+    bool isChecked            = index.data(qSlicerRestoreExtensions::CheckedRole).toBool();
+    QString description       = index.data(qSlicerRestoreExtensions::DescriptionRole).toString();
+    bool isEnabled            = index.data(qSlicerRestoreExtensions::EnabledRole).toBool();
+    bool isRestoreCandidate   = index.data(qSlicerRestoreExtensions::RestoreCandidateRole).toBool();
+    bool isInstalled          = index.data(qSlicerRestoreExtensions::InstalledRole).toBool();
 
-    //TITLE
+    // TITLE
     painter->setPen((isEnabled ? enabledPen : disabledPen));
     r = option.rect.adjusted(55, 10, 0, 0);
     painter->setFont(QFont("Arial", 13, QFont::Bold));
@@ -229,7 +229,7 @@ QStringList qSlicerExtensionsRestoreWidgetPrivate
   QStringList candidateIds;
   foreach(QString extensionName, extensionHistoryInformation.keys())
     {
-    const QVariantMap& currentInfo = extensionHistoryInformation.value(extensionName).toMap();
+    QVariantMap currentInfo = extensionHistoryInformation.value(extensionName).toMap();
     if (currentInfo.value("WasInstalledInLastRevision").toBool() && currentInfo.value("IsCompatible").toBool() && !currentInfo.value("IsInstalled").toBool())
       {
       candidateIds.append(currentInfo.value("ExtensionId").toString());
@@ -248,7 +248,7 @@ void qSlicerExtensionsRestoreWidgetPrivate
 
   if (checkOnStartup)
     {
-    const QStringList& candidateIds = extractInstallationCandidates(extensionHistoryInformation);
+    QStringList candidateIds = extractInstallationCandidates(extensionHistoryInformation);
 
     if (candidateIds.length() > 0)
       {
@@ -259,7 +259,7 @@ void qSlicerExtensionsRestoreWidgetPrivate
         }
       else
         {
-        const QString& text = QObject::tr(
+        QString text = QObject::tr(
           "%1 compatible extension(s) from a previous Slicer installation found. Do you want to install? "
           "(For details see: Extension Manager > Restore Extensions)").arg(candidateIds.length());
 
@@ -294,14 +294,14 @@ void qSlicerExtensionsRestoreWidgetPrivate
 
     QVariantMap currentInfo = extensionInfo.value(extensionName).toMap();
 
-    const QString& title                  = extensionName;
-    const bool isCompatible               = currentInfo.value("IsCompatible").toBool();
-    const bool isInstalled                = currentInfo.value("IsInstalled").toBool();
-    const QString& usedLastInRevision     = currentInfo.value("UsedLastInRevision").toString();
-    const bool wasInstalledInLastRevision = currentInfo.value("WasInstalledInLastRevision").toBool();
-    const bool isItemEnabled              = isCompatible && !isInstalled;
-    const bool isItemChecked              = isItemEnabled && wasInstalledInLastRevision;
-    const QString& description =
+    QString title                   = extensionName;
+    bool isCompatible               = currentInfo.value("IsCompatible").toBool();
+    bool isInstalled                = currentInfo.value("IsInstalled").toBool();
+    QString usedLastInRevision      = currentInfo.value("UsedLastInRevision").toString();
+    bool wasInstalledInLastRevision = currentInfo.value("WasInstalledInLastRevision").toBool();
+    bool isItemEnabled              = isCompatible && !isInstalled;
+    bool isItemChecked              = isItemEnabled && wasInstalledInLastRevision;
+    QString description =
       (isInstalled
        ? QObject::tr("currently installed")
        : (isCompatible
