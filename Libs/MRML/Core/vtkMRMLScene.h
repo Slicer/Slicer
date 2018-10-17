@@ -93,8 +93,12 @@ public:
   /// Returns nonzero on success
   int Commit(const char* url=NULL);
 
-  /// Remove nodes and clear undo/redo stacks
-  void Clear(int removeSingletons);
+  /// Remove nodes and clear undo/redo stacks.
+  /// \param removeSingletons If set to true then it removes
+  /// all singleton nodes (interaction, color, view nodes etc.)
+  /// from the scene. If it is set to false then it just resets
+  /// singleton nodes to their default state.
+  void Clear(int removeSingletons=0);
 
   /// Reset all nodes to their constructor's state
   void ResetNodes();
