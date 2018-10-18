@@ -592,6 +592,7 @@ Subversion_SVN_EXECUTABLE:FILEPATH=${CTEST_SVN_COMMAND}")
       # Write initial cache.
       #-----------------------------------------------------------------------------
       file(WRITE "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt" "
+CDASH_PROJECT_NAME:STRING=${CDASH_PROJECT_NAME}
 CTEST_MODEL:STRING=${model}
 CTEST_SITE:STRING=${CTEST_SITE}
 Slicer_EXTENSIONS_TRACK_QUALIFIER:STRING=${EXTENSIONS_TRACK_QUALIFIER}
