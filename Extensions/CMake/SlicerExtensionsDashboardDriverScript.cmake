@@ -307,6 +307,8 @@ setIfNotDefined(CTEST_DROP_SITE "slicer.cdash.org")
 #-----------------------------------------------------------------------------
 # The following variable can be used to disable specific steps
 #-----------------------------------------------------------------------------
+
+# Variables influencing the top-level CMake project
 setIfNotDefined(run_ctest_submit TRUE)
 setIfNotDefined(run_ctest_with_disable_clean FALSE)
 setIfNotDefined(run_ctest_with_update TRUE)
@@ -314,6 +316,13 @@ setIfNotDefined(run_ctest_with_configure TRUE)
 setIfNotDefined(run_ctest_with_build TRUE)
 setIfNotDefined(run_ctest_with_notes TRUE)
 setIfNotDefined(Slicer_UPLOAD_EXTENSIONS TRUE)
+
+# Variables influencing each extension CMake project
+setIfNotDefined(run_extension_ctest_submit ${run_ctest_submit})
+setIfNotDefined(run_extension_ctest_with_configure TRUE)
+setIfNotDefined(run_extension_ctest_with_build TRUE)
+setIfNotDefined(run_extension_ctest_with_test TRUE)
+setIfNotDefined(run_extension_ctest_with_packages TRUE)
 
 #-----------------------------------------------------------------------------
 # CDash Project Name
