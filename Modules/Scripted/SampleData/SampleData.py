@@ -369,7 +369,7 @@ class SampleDataLogic:
       nodes = self.downloadFromSource(source)
     return nodes
 
-  def logMessage(self,message):
+  def logMessage(self,message,logLevel=logging.INFO):
     print(message)
 
   """Utility methods for backwards compatibility"""
