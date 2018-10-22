@@ -174,7 +174,7 @@ class Wiki(object):
     return {
       "previous": self.current_version(),
       "current": target_release_version,
-      "next": "%d.%d" % (target_major, target_minor + 1)
+      "next": "%d.%d" % (target_major, target_minor + 2)
     }
 
   def update_version_info_pages(self, release_version):
