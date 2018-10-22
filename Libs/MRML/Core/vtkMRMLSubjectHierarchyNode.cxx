@@ -1431,6 +1431,9 @@ public:
   /// Copy all items from another subject hierarchy nodes to the unresolved list of this node
   void CopyAsUnresolved(vtkMRMLSubjectHierarchyNode* otherShNode);
 
+  /// Add item and data node observers (if observers has not been added yet)
+  void AddItemObservers(vtkSubjectHierarchyItem* item);
+
 public:
   /// Scene subject hierarchy item. This is the ancestor of all subject hierarchy items in the tree
   vtkSubjectHierarchyItem* SceneItem;
@@ -1628,11 +1631,7 @@ bool vtkMRMLSubjectHierarchyNode::vtkInternal::ResolveUnresolvedItems()
         }
 
       // Create remaining observations for added item
-      item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAboutToBeRemovedEvent, this->External->ItemEventCallbackCommand);
-      item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemRemovedEvent, this->External->ItemEventCallbackCommand);
-      item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemUIDAddedEvent, this->External->ItemEventCallbackCommand);
-      item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemOwnerPluginSearchRequested, this->External->ItemEventCallbackCommand);
-      item->AddObserver(vtkCommand::ModifiedEvent, this->External->ItemEventCallbackCommand);
+      this->AddItemObservers(item);
 
       // Clear temporary ID now that it is resolved
       item->TemporaryID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
@@ -1657,6 +1656,59 @@ bool vtkMRMLSubjectHierarchyNode::vtkInternal::ResolveUnresolvedItems()
   this->IsResolving = wasResolving;
 
   return true;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSubjectHierarchyNode::vtkInternal::AddItemObservers(vtkSubjectHierarchyItem* item)
+{
+  if (!item)
+    {
+    return;
+    }
+
+  // Observe item changes
+  if (!item->HasObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAddedEvent, this->External->ItemEventCallbackCommand))
+    {
+    item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAddedEvent, this->External->ItemEventCallbackCommand);
+    }
+  if (!item->HasObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAboutToBeRemovedEvent, this->External->ItemEventCallbackCommand))
+    {
+    item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAboutToBeRemovedEvent, this->External->ItemEventCallbackCommand);
+    }
+  if (!item->HasObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemRemovedEvent, this->External->ItemEventCallbackCommand))
+    {
+    item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemRemovedEvent, this->External->ItemEventCallbackCommand);
+    }
+  if (!item->HasObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemUIDAddedEvent, this->External->ItemEventCallbackCommand))
+    {
+    item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemUIDAddedEvent, this->External->ItemEventCallbackCommand);
+    }
+  if (!item->HasObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemOwnerPluginSearchRequested, this->External->ItemEventCallbackCommand))
+    {
+    item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemOwnerPluginSearchRequested, this->External->ItemEventCallbackCommand);
+    }
+  if (!item->HasObserver(vtkCommand::ModifiedEvent, this->External->ItemEventCallbackCommand))
+    {
+    item->AddObserver(vtkCommand::ModifiedEvent, this->External->ItemEventCallbackCommand);
+    }
+
+  // Observe associated data node changes
+  vtkMRMLNode* dataNode = item->DataNode;
+  if (dataNode)
+    {
+    if (!dataNode->HasObserver(vtkCommand::ModifiedEvent, this->External->ItemEventCallbackCommand))
+      {
+      dataNode->AddObserver(vtkCommand::ModifiedEvent, this->External->ItemEventCallbackCommand);
+      }
+    if (!dataNode->HasObserver(vtkMRMLTransformableNode::TransformModifiedEvent, this->External->ItemEventCallbackCommand))
+      {
+      dataNode->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent, this->External->ItemEventCallbackCommand);
+      }
+    if (!dataNode->HasObserver(vtkMRMLDisplayableNode::DisplayModifiedEvent, this->External->ItemEventCallbackCommand))
+      {
+      dataNode->AddObserver(vtkMRMLDisplayableNode::DisplayModifiedEvent, this->External->ItemEventCallbackCommand);
+      }
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -2193,23 +2245,13 @@ vtkIdType vtkMRMLSubjectHierarchyNode::CreateItem(vtkIdType parentItemID, vtkMRM
     vtkSmartPointer<vtkSubjectHierarchyItem> item = vtkSmartPointer<vtkSubjectHierarchyItem>::New();
 
     // Make item connections
-    item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAddedEvent, this->ItemEventCallbackCommand);
-    item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAboutToBeRemovedEvent, this->ItemEventCallbackCommand);
-    item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemRemovedEvent, this->ItemEventCallbackCommand);
-    item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemUIDAddedEvent, this->ItemEventCallbackCommand);
-    item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemOwnerPluginSearchRequested, this->ItemEventCallbackCommand);
-    item->AddObserver(vtkCommand::ModifiedEvent, this->ItemEventCallbackCommand);
-
-    // Observe data node events
-    if (dataNode)
-      {
-      dataNode->AddObserver(vtkCommand::ModifiedEvent, this->ItemEventCallbackCommand);
-      dataNode->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent, this->ItemEventCallbackCommand);
-      dataNode->AddObserver(vtkMRMLDisplayableNode::DisplayModifiedEvent, this->ItemEventCallbackCommand);
-      }
+    this->Internal->AddItemObservers(item);
 
     // Add item to the tree
     itemID = item->AddToTree(parentItem, dataNode);
+
+    // Add observers now that the data node is set
+    this->Internal->AddItemObservers(item);
     }
 
   // Request owner plugin search (it may depend on the parent, data node etc.)
@@ -2232,12 +2274,7 @@ vtkIdType vtkMRMLSubjectHierarchyNode::CreateHierarchyItem(vtkIdType parentItemI
   vtkSmartPointer<vtkSubjectHierarchyItem> item = vtkSmartPointer<vtkSubjectHierarchyItem>::New();
 
   // Make item connections
-  item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAddedEvent, this->ItemEventCallbackCommand);
-  item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAboutToBeRemovedEvent, this->ItemEventCallbackCommand);
-  item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemRemovedEvent, this->ItemEventCallbackCommand);
-  item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemUIDAddedEvent, this->ItemEventCallbackCommand);
-  item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemOwnerPluginSearchRequested, this->ItemEventCallbackCommand);
-  item->AddObserver(vtkCommand::ModifiedEvent, this->ItemEventCallbackCommand);
+  this->Internal->AddItemObservers(item);
 
   // Add item to the tree
   vtkIdType itemID = item->AddToTree(parentItem, name, level);
