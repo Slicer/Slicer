@@ -38,6 +38,7 @@
 #include <vtkObjectFactory.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
+#include <vtkProp3DCollection.h>
 #include <vtkProperty.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
@@ -114,7 +115,10 @@ public:
   bool UseDisplayableNode(vtkMRMLSegmentationNode* node);
   void ClearDisplayableNodes();
 
+  /// Find picked node from mesh and set PickedNodeID in Internal
   void FindPickedDisplayNodeFromMesh(vtkPointSet* mesh);
+  /// Find first picked node from prop3Ds in cell picker and set PickedNodeID in Internal
+  void FindFirstPickedDisplayNodeFromPickerProp3Ds();
 
 public:
   /// Picker of segment prop in renderer
@@ -651,11 +655,45 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::FindPickedDisplayNod
       {
       if (pipelineIt->second->ModelWarper->GetOutput() == mesh)
         {
-        vtkDebugWithObjectMacro(currentDisplayNode, "FindPickedDisplayNodeFromMesh: Found matching mesh, pick was on segment "
-          << pipelineIt->first.c_str() << " of segmentation "
-          << (currentDisplayNode->GetDisplayableNode() ? currentDisplayNode->GetDisplayableNode()->GetName() : "NULL"));
         this->PickedDisplayNodeID = currentDisplayNode->GetID();
         this->PickedSegmentID = pipelineIt->first;
+        return; // Display node and segment found
+        }
+      }
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::FindFirstPickedDisplayNodeFromPickerProp3Ds()
+{
+  this->PickedDisplayNodeID = "";
+  this->PickedSegmentID = "";
+  if (!this->CellPicker)
+    {
+    return;
+    }
+
+  vtkProp3DCollection* props = this->CellPicker->GetProp3Ds();
+  for (int propIndex=0; propIndex<props->GetNumberOfItems(); ++propIndex)
+    {
+    vtkProp3D* pickedProp = vtkProp3D::SafeDownCast(props->GetItemAsObject(propIndex));
+    if (!pickedProp)
+      {
+      continue;
+      }
+
+    PipelinesCacheType::iterator pipelinesIt;
+    for (pipelinesIt = this->DisplayPipelines.begin(); pipelinesIt!=this->DisplayPipelines.end(); ++pipelinesIt)
+      {
+      vtkMRMLSegmentationDisplayNode* currentDisplayNode = pipelinesIt->first;
+      for (PipelineMapType::iterator pipelineIt=pipelinesIt->second.begin(); pipelineIt!=pipelinesIt->second.end(); ++pipelineIt)
+        {
+        if (pipelineIt->second->Actor.GetPointer() == pickedProp)
+          {
+          this->PickedDisplayNodeID = currentDisplayNode->GetID();
+          this->PickedSegmentID = pipelineIt->first;
+          return; // Display node and segment found
+          }
         }
       }
     }
@@ -854,9 +892,10 @@ int vtkMRMLSegmentationsDisplayableManager3D::Pick3D(double ras[3])
 #if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   if (this->Internal->CellPicker->Pick3DPoint(ras, ren))
     {
-    vtkPointSet* mesh = vtkPointSet::SafeDownCast(this->Internal->CellPicker->GetDataSet());
-    // Find the segmentation and segment this mesh belongs to
-    this->Internal->FindPickedDisplayNodeFromMesh(mesh);
+    // Find first picked segmentation and segment from picker
+    // Note: Getting the mesh using GetDataSet is not a good solution as the dataset is the first
+    //   one that is picked and it may be of different type (volume, model, etc.)
+    this->Internal->FindFirstPickedDisplayNodeFromPickerProp3Ds();
     }
 #else
   vtkErrorMacro("Pick3D: This function is only accessible in newer VTK version");

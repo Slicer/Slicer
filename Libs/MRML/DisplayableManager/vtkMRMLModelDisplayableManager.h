@@ -149,8 +149,10 @@ public:
   static vtkLookupTable* CreateLookupTableCopy(vtkLookupTable* source);
 
   /// Helper function for determining what type of scalar is active.
-  static bool IsCellScalarsActive(vtkMRMLDisplayNode* displayNode,
-    vtkMRMLModelNode* model = 0);
+  /// \return True if attribute location in display node is vtkAssignAttribute::CELL_DATA
+  ///   or active cell scalar name in the model node is vtkDataSetAttributes::SCALARS.
+  ///   False otherwise.
+  static bool IsCellScalarsActive(vtkMRMLDisplayNode* displayNode, vtkMRMLModelNode* model = 0);
 
 protected:
 
@@ -216,9 +218,6 @@ protected:
   void RemoveDispalyedID(std::string &id);
 
   vtkMRMLSelectionNode* GetSelectionNode();
-
-  /// Find picked node and cell from mesh and set PickedNodeID and PickedPointID in Internal
-  void FindPickedDisplayNodeFromMesh(vtkPointSet* mesh, double pickedPoint[3]);
 
 private:
 
