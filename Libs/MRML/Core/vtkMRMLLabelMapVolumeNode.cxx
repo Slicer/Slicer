@@ -71,8 +71,8 @@ void vtkMRMLLabelMapVolumeNode::CreateDefaultDisplayNodes()
     vtkErrorMacro("vtkMRMLLabelMapVolumeNode::CreateDefaultDisplayNodes failed: scene is invalid");
     return;
     }
-  vtkNew<vtkMRMLLabelMapVolumeDisplayNode> dispNode;
-  this->GetScene()->AddNode(dispNode.GetPointer());
+  vtkMRMLLabelMapVolumeDisplayNode* dispNode = vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(
+    this->GetScene()->AddNewNodeByClass("vtkMRMLLabelMapVolumeDisplayNode") );
   dispNode->SetDefaultColorMap();
   this->SetAndObserveDisplayNodeID(dispNode->GetID());
 }

@@ -188,9 +188,6 @@ int ExerciseBasicMRMLMethods(vtkMRMLNode* node)
   node1->SetName("copywithscenewithsinglemodified");
   node->CopyWithSceneWithSingleModifiedEvent(node1);
 
-  //  Test GetScene()
-  CHECK_NULL(node->GetScene());
-
   //  Test UpdateReferences()
   node->UpdateReferences();
   node->UpdateReferenceID("oldID", "newID");
@@ -201,7 +198,6 @@ int ExerciseBasicMRMLMethods(vtkMRMLNode* node)
 
   //  Test ReadXMLAttributes()
   const char *atts[] = {
-            "id", "vtkMRMLNodeTest1",
             "name", "MyName",
             "description", "Testing a mrml node",
             "hideFromEditors", "false",
@@ -209,8 +205,6 @@ int ExerciseBasicMRMLMethods(vtkMRMLNode* node)
             "selected", "true",
             NULL};
   node->ReadXMLAttributes(atts);
-
-  CHECK_STRING(node->GetID(), "vtkMRMLNodeTest1");
 
   //  Test WriteXML
   std::cout << "WriteXML output:" << std::endl << "------------------" << std::endl;

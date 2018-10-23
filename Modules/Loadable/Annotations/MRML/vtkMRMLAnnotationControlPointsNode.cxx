@@ -482,7 +482,14 @@ const char *vtkMRMLAnnotationControlPointsNode::GetAttributeTypesEnumAsString(in
 //-------------------------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLAnnotationControlPointsNode::CreateDefaultStorageNode()
 {
-  return vtkMRMLStorageNode::SafeDownCast(vtkMRMLAnnotationControlPointsStorageNode::New());
+  vtkMRMLScene* scene = this->GetScene();
+  if (scene == NULL)
+    {
+    vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
+    return NULL;
+    }
+  return vtkMRMLStorageNode::SafeDownCast(
+    scene->CreateNodeByClass("vtkMRMLAnnotationControlPointsStorageNode"));
 }
 
 //---------------------------------------------------------------------------

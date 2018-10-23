@@ -1,14 +1,18 @@
-#include <sstream>
-
+//MRML includes
 #include "vtkMRMLAnnotationAngleNode.h"
 #include "vtkMRMLAnnotationTextDisplayNode.h"
 #include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkMRMLAnnotationLineDisplayNode.h"
 #include "vtkMRMLAnnotationAngleStorageNode.h"
+#include "vtkMRMLScene.h"
 
+// VTK includes
 #include <vtkAbstractTransform.h>
 #include <vtkObjectFactory.h>
 #include <vtkMatrix4x4.h>
+
+// STD includes
+#include <sstream>
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLAnnotationAngleNode);
@@ -492,7 +496,14 @@ void vtkMRMLAnnotationAngleNode::ApplyTransform(vtkAbstractTransform* transform)
 //-------------------------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLAnnotationAngleNode::CreateDefaultStorageNode()
 {
-  return vtkMRMLStorageNode::SafeDownCast(vtkMRMLAnnotationAngleStorageNode::New());
+  vtkMRMLScene* scene = this->GetScene();
+  if (scene == NULL)
+    {
+    vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
+    return NULL;
+    }
+  return vtkMRMLStorageNode::SafeDownCast(
+    scene->CreateNodeByClass("vtkMRMLAnnotationAngleStorageNode"));
 }
 
 //---------------------------------------------------------------------------

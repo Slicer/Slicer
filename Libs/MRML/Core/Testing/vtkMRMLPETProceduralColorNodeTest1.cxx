@@ -12,10 +12,13 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLPETProceduralColorNode.h"
+#include "vtkMRMLScene.h"
 
 int vtkMRMLPETProceduralColorNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLPETProceduralColorNode> node1;
+  vtkNew<vtkMRMLScene> scene;
+  scene->AddNode(node1);
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

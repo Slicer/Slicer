@@ -437,9 +437,15 @@ const char *vtkMRMLAnnotationLinesNode::GetAttributeTypesEnumAsString(int val)
 //-------------------------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLAnnotationLinesNode::CreateDefaultStorageNode()
 {
-  return vtkMRMLStorageNode::SafeDownCast(vtkMRMLAnnotationLinesStorageNode::New());
+  vtkMRMLScene* scene = this->GetScene();
+  if (scene == NULL)
+    {
+    vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
+    return NULL;
+    }
+  return vtkMRMLStorageNode::SafeDownCast(
+    scene->CreateNodeByClass("vtkMRMLAnnotationLinesStorageNode"));
 }
-
 
 //---------------------------------------------------------------------------
 int  vtkMRMLAnnotationLinesNode::SetLine(int id, int ctrlPtIdStart, int ctrlPtIdEnd,int selectedFlag, int visibleFlag)

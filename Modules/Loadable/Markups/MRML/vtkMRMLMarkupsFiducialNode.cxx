@@ -134,7 +134,14 @@ void vtkMRMLMarkupsFiducialNode::PrintSelf(ostream& os, vtkIndent indent)
 //-------------------------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLMarkupsFiducialNode::CreateDefaultStorageNode()
 {
-  return vtkMRMLStorageNode::SafeDownCast(vtkMRMLMarkupsFiducialStorageNode::New());
+  vtkMRMLScene* scene = this->GetScene();
+  if (scene == NULL)
+    {
+    vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
+    return NULL;
+    }
+  return vtkMRMLStorageNode::SafeDownCast(
+    scene->CreateNodeByClass("vtkMRMLMarkupsFiducialStorageNode"));
 }
 
 //-------------------------------------------------------------------------
@@ -151,8 +158,8 @@ void vtkMRMLMarkupsFiducialNode::CreateDefaultDisplayNodes()
     vtkErrorMacro("vtkMRMLMarkupsFiducialNode::CreateDefaultDisplayNodes failed: scene is invalid");
     return;
     }
-  vtkNew<vtkMRMLMarkupsDisplayNode> dispNode;
-  this->GetScene()->AddNode(dispNode.GetPointer());
+  vtkMRMLMarkupsDisplayNode* dispNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(
+    this->GetScene()->AddNewNodeByClass("vtkMRMLMarkupsDisplayNode") );
   this->SetAndObserveDisplayNodeID(dispNode->GetID());
 }
 

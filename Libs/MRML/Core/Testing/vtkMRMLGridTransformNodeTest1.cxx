@@ -12,10 +12,13 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLGridTransformNode.h"
+#include "vtkMRMLScene.h"
 
 int vtkMRMLGridTransformNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLGridTransformNode> node1;
+  vtkNew<vtkMRMLScene> scene;
+  scene->AddNode(node1);
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

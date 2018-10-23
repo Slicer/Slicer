@@ -377,7 +377,14 @@ void vtkMRMLSegmentationNode::OnSubjectHierarchyUIDAdded(
 //----------------------------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLSegmentationNode::CreateDefaultStorageNode()
 {
-  return vtkMRMLSegmentationStorageNode::New();
+  vtkMRMLScene* scene = this->GetScene();
+  if (scene == NULL)
+    {
+    vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
+    return NULL;
+    }
+  return vtkMRMLStorageNode::SafeDownCast(
+    scene->CreateNodeByClass("vtkMRMLSegmentationStorageNode"));
 }
 
 //----------------------------------------------------------------------------
@@ -393,8 +400,8 @@ void vtkMRMLSegmentationNode::CreateDefaultDisplayNodes()
     vtkErrorMacro("vtkMRMLSegmentationNode::CreateDefaultDisplayNodes failed: Scene is invalid");
     return;
     }
-  vtkNew<vtkMRMLSegmentationDisplayNode> displayNode;
-  this->GetScene()->AddNode(displayNode.GetPointer());
+  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(
+    this->GetScene()->AddNewNodeByClass("vtkMRMLSegmentationDisplayNode") );
   this->SetAndObserveDisplayNodeID(displayNode->GetID());
 }
 

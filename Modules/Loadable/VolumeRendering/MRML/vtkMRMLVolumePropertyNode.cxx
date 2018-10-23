@@ -1,5 +1,5 @@
-
 // MRML includes
+#include "vtkMRMLScene.h"
 #include "vtkMRMLVolumePropertyNode.h"
 #include "vtkMRMLVolumePropertyStorageNode.h"
 
@@ -364,7 +364,14 @@ double vtkMRMLVolumePropertyNode::HigherAndUnique(double value, double &previous
 //---------------------------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLVolumePropertyNode::CreateDefaultStorageNode()
 {
-  return vtkMRMLVolumePropertyStorageNode::New();
+  vtkMRMLScene* scene = this->GetScene();
+  if (scene == NULL)
+    {
+    vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
+    return NULL;
+    }
+  return vtkMRMLStorageNode::SafeDownCast(
+    scene->CreateNodeByClass("vtkMRMLVolumePropertyStorageNode"));
 }
 
 //---------------------------------------------------------------------------

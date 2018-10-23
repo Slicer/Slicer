@@ -345,7 +345,14 @@ void vtkMRMLMarkupsNode::RemoveAllTexts()
 //-------------------------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLMarkupsNode::CreateDefaultStorageNode()
 {
-  return vtkMRMLStorageNode::SafeDownCast(vtkMRMLMarkupsStorageNode::New());
+  vtkMRMLScene* scene = this->GetScene();
+  if (scene == NULL)
+    {
+    vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
+    return NULL;
+    }
+  return vtkMRMLStorageNode::SafeDownCast(
+    scene->CreateNodeByClass("vtkMRMLMarkupsStorageNode"));
 }
 
 //---------------------------------------------------------------------------

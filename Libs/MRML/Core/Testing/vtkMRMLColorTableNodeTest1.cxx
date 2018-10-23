@@ -27,7 +27,11 @@ using namespace vtkMRMLCoreTestingUtilities;
 int vtkMRMLColorTableNodeTest1(int argc, char * argv[])
 {
   vtkNew<vtkMRMLColorTableNode> node1;
-  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
+  {
+    vtkNew<vtkMRMLScene> scene;
+    scene->AddNode(node1);
+    EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
+  }
 
   if (argc != 2)
     {
@@ -57,15 +61,15 @@ int vtkMRMLColorTableNodeTest1(int argc, char * argv[])
     colorNode->SetColor(2, "two", 0.0, 1.0, 0.0, 1.0);
     colorNode->NamesInitialisedOn();
 
-    vtkSmartPointer<vtkMRMLStorageNode> colorStorageNode =
-        vtkSmartPointer<vtkMRMLStorageNode>::Take(colorNode->CreateDefaultStorageNode());
-
     // add node to the scene
     vtkNew<vtkMRMLScene> scene;
     scene->SetRootDirectory(tempDir);
     CHECK_NOT_NULL(scene->AddNode(colorNode.GetPointer()));
 
     // add storage node to the scene
+    vtkSmartPointer<vtkMRMLStorageNode> colorStorageNode =
+        vtkSmartPointer<vtkMRMLStorageNode>::Take(colorNode->CreateDefaultStorageNode());
+
     scene->AddNode(colorStorageNode);
     colorNode->SetAndObserveStorageNodeID(colorStorageNode->GetID());
 

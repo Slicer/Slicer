@@ -15,6 +15,7 @@ Version:   $Revision: 1.0 $
 // MRML includes
 #include "vtkMRMLProceduralColorNode.h"
 #include "vtkMRMLProceduralColorStorageNode.h"
+#include "vtkMRMLScene.h"
 
 // VTK includes
 #include <vtkColorTransferFunction.h>
@@ -262,7 +263,14 @@ bool vtkMRMLProceduralColorNode::GetColor(int entry, double color[4])
 //---------------------------------------------------------------------------
 vtkMRMLStorageNode * vtkMRMLProceduralColorNode::CreateDefaultStorageNode()
 {
-  return vtkMRMLProceduralColorStorageNode::New();
+  vtkMRMLScene* scene = this->GetScene();
+  if (scene == NULL)
+    {
+    vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
+    return NULL;
+    }
+  return vtkMRMLStorageNode::SafeDownCast(
+    scene->CreateNodeByClass("vtkMRMLProceduralColorStorageNode"));
 }
 
 //----------------------------------------------------------------------------

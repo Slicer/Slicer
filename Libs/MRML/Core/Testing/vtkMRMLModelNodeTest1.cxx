@@ -13,6 +13,7 @@
 // MRML includes
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLModelNode.h"
+#include "vtkMRMLScene.h"
 
 // VTK includes
 #include <vtkDataSetAttributes.h>
@@ -38,6 +39,8 @@ int vtkMRMLModelNodeTest1(int , char * [] )
 int ExerciseBasicMethods()
 {
   vtkNew<vtkMRMLModelNode> node1;
+  vtkNew<vtkMRMLScene> scene;
+  scene->AddNode(node1);
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

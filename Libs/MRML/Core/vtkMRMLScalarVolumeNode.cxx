@@ -152,7 +152,14 @@ void vtkMRMLScalarVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
 //---------------------------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLScalarVolumeNode::CreateDefaultStorageNode()
 {
-  return vtkMRMLVolumeArchetypeStorageNode::New();
+  vtkMRMLScene* scene = this->GetScene();
+  if (scene == NULL)
+    {
+    vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
+    return NULL;
+    }
+  return vtkMRMLStorageNode::SafeDownCast(
+    scene->CreateNodeByClass("vtkMRMLVolumeArchetypeStorageNode"));
 }
 
 //----------------------------------------------------------------------------
@@ -168,8 +175,8 @@ void vtkMRMLScalarVolumeNode::CreateDefaultDisplayNodes()
     vtkErrorMacro("vtkMRMLScalarVolumeNode::CreateDefaultDisplayNodes failed: scene is invalid");
     return;
     }
-  vtkNew<vtkMRMLScalarVolumeDisplayNode> dispNode;
-  this->GetScene()->AddNode(dispNode.GetPointer());
+  vtkMRMLScalarVolumeDisplayNode* dispNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
+    this->GetScene()->AddNewNodeByClass("vtkMRMLScalarVolumeDisplayNode") );
   dispNode->SetDefaultColorMap();
   this->SetAndObserveDisplayNodeID(dispNode->GetID());
 }
