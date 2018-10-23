@@ -203,7 +203,9 @@ public slots:
   void setSegmentationNode(vtkMRMLNode* node);
   /// Set segmentation MRML node by its ID
   void setSegmentationNodeID(const QString& nodeID);
-  /// Set master volume MRML node
+  /// Set master volume MRML node.
+  /// If master volume has multiple scalar components
+  /// then only the first scalar component is used.
   void setMasterVolumeNode(vtkMRMLNode* node);
   /// Set master volume MRML node by its ID
   void setMasterVolumeNodeID(const QString& nodeID);

@@ -52,6 +52,7 @@
 #include <vtkDataArray.h>
 #include <vtkGeneralTransform.h>
 #include <vtkImageThreshold.h>
+#include <vtkImageExtractComponents.h>
 #include <vtkInteractorObserver.h>
 #include <vtkNew.h>
 #include <vtkPointData.h>
@@ -659,7 +660,19 @@ bool qMRMLSegmentEditorWidgetPrivate::updateAlignedMasterVolume()
 
   // Get a read-only version of masterVolume as a vtkOrientedImageData
   vtkNew<vtkOrientedImageData> masterVolume;
-  masterVolume->vtkImageData::ShallowCopy(masterVolumeNode->GetImageData());
+
+  if (masterVolumeNode->GetImageData()->GetNumberOfScalarComponents() == 1)
+    {
+    masterVolume->vtkImageData::ShallowCopy(masterVolumeNode->GetImageData());
+    }
+  else
+    {
+    vtkNew<vtkImageExtractComponents> extract;
+    extract->SetInputData(masterVolumeNode->GetImageData());
+    extract->Update();
+    extract->SetComponents(0); // TODO: allow user to configure this
+    masterVolume->vtkImageData::ShallowCopy(extract->GetOutput());
+    }
   vtkSmartPointer<vtkMatrix4x4> ijkToRasMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
   masterVolumeNode->GetIJKToRASMatrix(ijkToRasMatrix);
   masterVolume->SetGeometryFromImageToWorldMatrix(ijkToRasMatrix);
