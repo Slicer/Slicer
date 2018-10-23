@@ -97,9 +97,32 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget, VTKObservationMix
     # This will use createParameterNode with the provided default options
     self.setParameterNode(self.logic.getParameterNode())
 
-    # Collapsible button
+    self.parameterSetSelectionCollapsibleButton = ctk.ctkCollapsibleButton()
+    self.parameterSetSelectionCollapsibleButton.text = "Parameter set"
+    self.layout.addWidget(self.parameterSetSelectionCollapsibleButton)
+
+    # Layout within the "Selection" collapsible button
+    parameterSetSelectionFormLayout = qt.QFormLayout(self.parameterSetSelectionCollapsibleButton)
+
+    # Parameter set selector (inspired by SegmentStatistics.py)
+    self.parameterNodeSelector = slicer.qMRMLNodeComboBox()
+    self.parameterNodeSelector.nodeTypes = (("vtkMRMLScriptedModuleNode"), "")
+    self.parameterNodeSelector.addAttribute("vtkMRMLScriptedModuleNode", "ModuleName", "VectorToScalarVolume")
+    self.parameterNodeSelector.selectNodeUponCreation = True
+    self.parameterNodeSelector.addEnabled = True
+    self.parameterNodeSelector.renameEnabled = True
+    self.parameterNodeSelector.removeEnabled = True
+    self.parameterNodeSelector.noneEnabled = False
+    self.parameterNodeSelector.showHidden = True
+    self.parameterNodeSelector.showChildNodeTypes = False
+    self.parameterNodeSelector.baseName = "VectorToScalarVolume"
+    self.parameterNodeSelector.setMRMLScene(slicer.mrmlScene)
+    self.parameterNodeSelector.toolTip = "Pick parameter set"
+    parameterSetSelectionFormLayout.addRow("Parameter set: ", self.parameterNodeSelector)
+
+    # Parameters
     self.selectionCollapsibleButton = ctk.ctkCollapsibleButton()
-    self.selectionCollapsibleButton.text = "Selection"
+    self.selectionCollapsibleButton.text = "Conversion settings"
     self.layout.addWidget(self.selectionCollapsibleButton)
 
     # Layout within the "Selection" collapsible button
@@ -134,22 +157,6 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget, VTKObservationMix
     self.applyButton.toolTip = "Run Convert the vector to scalar."
     parametersFormLayout.addRow(self.applyButton)
 
-    # Parameter set selector (inspired by SegmentStatistics.py)
-    self.parameterNodeSelector = slicer.qMRMLNodeComboBox()
-    self.parameterNodeSelector.nodeTypes = (("vtkMRMLScriptedModuleNode"), "")
-    self.parameterNodeSelector.addAttribute("vtkMRMLScriptedModuleNode", "ModuleName", "VectorToScalarVolume")
-    self.parameterNodeSelector.selectNodeUponCreation = True
-    self.parameterNodeSelector.addEnabled = True
-    self.parameterNodeSelector.renameEnabled = True
-    self.parameterNodeSelector.removeEnabled = True
-    self.parameterNodeSelector.noneEnabled = False
-    self.parameterNodeSelector.showHidden = True
-    self.parameterNodeSelector.showChildNodeTypes = False
-    self.parameterNodeSelector.baseName = "VectorToScalarVolume"
-    self.parameterNodeSelector.setMRMLScene(slicer.mrmlScene)
-    self.parameterNodeSelector.toolTip = "Pick parameter set"
-    parametersFormLayout.addRow("Parameter set: ", self.parameterNodeSelector)
-
     # Add vertical spacer
     self.layout.addStretch(1)
 
@@ -164,12 +171,6 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget, VTKObservationMix
     self.applyButton.connect('clicked(bool)', self.onApply)
 
     # conversion widget
-    self.conversionMethodWidget.methodSelectorComboBox.connect('currentIndexChanged(int)',
-                                        lambda currentIndex:
-                                        self.conversionMethodWidget.setGuiBasedOnOptions(
-                                          self.conversionMethodWidget.methodSelectorComboBox.itemData(currentIndex),
-                                          self.inputVolumeNode())
-                                        )
     self.conversionMethodWidget.methodSelectorComboBox.connect('currentIndexChanged(int)', self.updateParameterNodeFromGui)
     self.conversionMethodWidget.componentsComboBox.connect('currentIndexChanged(int)', self.updateParameterNodeFromGui)
 
@@ -207,13 +208,44 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget, VTKObservationMix
       node = getNode(node)
     self.outputSelector.setCurrentNode(node)
 
+  def updateButtonStates(self):
+
+    isMethodSingleComponent = self._parameterNode.GetParameter("ConversionMethod") == VectorToScalarVolumeLogic.SINGLE_COMPONENT
+
+    # Update apply button state and tooltip
+    applyErrorMessage = ""
+    if not self.inputVolumeNode():
+      applyErrorMessage = "Please select Input Vector Volume"
+    elif not self.outputVolumeNode():
+      applyErrorMessage = "Please select Output Scalar Volume"
+    elif not self.parameterNode():
+      applyErrorMessage = "Please select Parameter set"
+    elif isMethodSingleComponent and (int(self._parameterNode.GetParameter("ComponentToExtract")) < 0):
+      applyErrorMessage = "Please select a component to extract"
+
+    self.applyButton.enabled = (not applyErrorMessage)
+    self.applyButton.toolTip = applyErrorMessage
+
+    self.conversionMethodWidget.componentsComboBox.visible = isMethodSingleComponent
+
+    if (self.inputVolumeNode() is not None) and isMethodSingleComponent:
+      imageComponents = self.inputVolumeNode().GetImageData().GetNumberOfScalarComponents()
+      wasBlocked = self.conversionMethodWidget.componentsComboBox.blockSignals(True)
+      if self.conversionMethodWidget.componentsComboBox.count != imageComponents:
+        self.conversionMethodWidget.componentsComboBox.clear()
+        for comp in range(imageComponents):
+          self.conversionMethodWidget.componentsComboBox.insertItem(comp, str(comp))
+      self.conversionMethodWidget.componentsComboBox.blockSignals(wasBlocked)
+
   def updateGuiFromMRML(self, caller=None, event=None):
     """
     Query all the parameters in the parameterNode,
     and update the GUI state accordingly if something has changed.
     """
-    self.applyButton.enabled = all([self.inputVolumeNode(), self.outputVolumeNode(), self.parameterNode()])
-    if self.parameterNode is None:
+
+    self.updateButtonStates()
+
+    if not self.parameterNode():
       return
 
     self.setInputVolumeNode(self._parameterNode.GetParameter("InputVectorVolume"))
@@ -226,7 +258,8 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget, VTKObservationMix
 
   def updateParameterNodeFromGui(self):
 
-    self.applyButton.enabled = all([self.inputVolumeNode(), self.outputVolumeNode(), self.parameterNode()])
+    self.updateButtonStates()
+
     if self._parameterNode is None:
       return
 
@@ -264,22 +297,22 @@ class VectorToScalarVolumeConversionMethodWidget(qt.QWidget):
 
   def setup(self):
     self.methodLayout = qt.QHBoxLayout(self)
+    self.methodLayout.setContentsMargins(0,0,0,0)
     self.methodSelectorComboBox = qt.QComboBox()
-    self.methodSelectorComboBox.insertItem(1, "Single Component Extraction", VectorToScalarVolumeLogic.SINGLE_COMPONENT)
-    self.methodSelectorComboBox.setItemData(1, 'Extract single component', qt.Qt.ToolTipRole)
-    self.methodSelectorComboBox.insertItem(2, "Luminance", VectorToScalarVolumeLogic.LUMINANCE)
-    self.methodSelectorComboBox.setItemData(2, '(RGB,RGBA) Luminance from first three components: 0.30*R + 0.59*G + 0.11*B + 0.0*A)', qt.Qt.ToolTipRole)
-    self.methodSelectorComboBox.insertItem(3, "Average", VectorToScalarVolumeLogic.AVERAGE)
-    self.methodSelectorComboBox.setItemData(3, 'Average all the components.', qt.Qt.ToolTipRole)
+
+    self.methodSelectorComboBox.addItem("Luminance", VectorToScalarVolumeLogic.LUMINANCE)
+    self.methodSelectorComboBox.setItemData(0, '(RGB,RGBA) Luminance from first three components: 0.30*R + 0.59*G + 0.11*B + 0.0*A)', qt.Qt.ToolTipRole)
+    self.methodSelectorComboBox.addItem("Average", VectorToScalarVolumeLogic.AVERAGE)
+    self.methodSelectorComboBox.setItemData(1, 'Average all the components.', qt.Qt.ToolTipRole)
+    self.methodSelectorComboBox.addItem("Single Component Extraction", VectorToScalarVolumeLogic.SINGLE_COMPONENT)
+    self.methodSelectorComboBox.setItemData(2, 'Extract single component', qt.Qt.ToolTipRole)
 
     self.methodLayout.addWidget(self.methodSelectorComboBox)
-    self.methodLayout.addItem(qt.QSpacerItem(40, 20, qt.QSizePolicy.Expanding, qt.QSizePolicy.Minimum))
 
     # ComponentToExtract
     singleComponentLayout = qt.QHBoxLayout()
     self.componentsComboBox = qt.QComboBox()
     singleComponentLayout.addWidget(self.componentsComboBox)
-    singleComponentLayout.addItem(qt.QSpacerItem(40, 20, qt.QSizePolicy.Expanding, qt.QSizePolicy.Minimum))
     self.methodLayout.addLayout(singleComponentLayout)
 
   def componentToExtract(self):
@@ -289,31 +322,6 @@ class VectorToScalarVolumeConversionMethodWidget(qt.QWidget):
   def conversionMethod(self):
     " returns data (str)"
     return self.methodSelectorComboBox.currentData
-
-  def setGuiBasedOnOptions(self, method, inputVolumeNode=None):
-    """
-    Modify the GUI depending on the input volume and the conversion method.
-    method is data (Qt::UserRole) associated to the index in the combo box.
-    """
-    if method not in VectorToScalarVolumeLogic.CONVERSION_METHODS:
-      logging.warning("trying to set a not valid method: %s" % method)
-      return
-
-    methodIndex = self.methodSelectorComboBox.findData(method)
-    self.methodSelectorComboBox.setCurrentIndex(methodIndex)
-
-    self.componentsComboBox.enabled = (method == VectorToScalarVolumeLogic.SINGLE_COMPONENT)
-    self.componentsComboBox.clear()
-
-    if method == VectorToScalarVolumeLogic.SINGLE_COMPONENT:
-      # Check and display number of components
-      if inputVolumeNode is not None:
-        imageComponents = inputVolumeNode.GetImageData().GetNumberOfScalarComponents()
-        for comp in range(imageComponents):
-          self.componentsComboBox.insertItem(comp, str(comp))
-    else:
-      # Disable other combo box.
-      self.componentsComboBox.enabled = False # insertItem(-1, "None")
 
 #
 # VectorToScalarVolumeLogic
