@@ -425,6 +425,9 @@ public:
   /// \brief Return collection of all nodes referenced directly or indirectly by
   /// \a node.
   ///
+  /// \param recursive All referenced nodes recursively if true,
+  ///   only directly referenced nodes if false. Default is true.
+  ///
   /// The node itself is in first place in the collection. No doublon in the
   /// list.
   /// For a node to be referenced by another node, the latter must call
@@ -433,7 +436,7 @@ public:
   /// \warning You are responsible for deleting the returned collection.
   ///
   /// \sa GetReferencedSubScene()
-  vtkCollection* GetReferencedNodes(vtkMRMLNode *node);
+  vtkCollection* GetReferencedNodes(vtkMRMLNode *node, bool recursive=true);
 
   /// Get vector of nodes containing references to an input node
   void GetReferencingNodes(vtkMRMLNode* referencedNode, std::vector<vtkMRMLNode *> &referencingNodes);
@@ -719,7 +722,10 @@ protected:
   /// \warning Use with extreme caution as it might unsynchronize observer.
   vtkMRMLNode* AddNodeNoNotify(vtkMRMLNode *n);
 
-  void AddReferencedNodes(vtkMRMLNode *node, vtkCollection *refNodes);
+  /// Get referenced nodes
+  /// \param recursive All referenced nodes recursively if true,
+  ///   only directly referenced nodes if false. Default is true.
+  void AddReferencedNodes(vtkMRMLNode *node, vtkCollection *refNodes, bool recursive=true);
 
   /// Handle vtkMRMLScene::DeleteEvent: clear the scene.
   static void SceneCallback( vtkObject *caller, unsigned long eid,

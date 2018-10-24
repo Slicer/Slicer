@@ -1239,6 +1239,12 @@ void qMRMLSubjectHierarchyTreeView::applyReferenceHighlightForItems(QList<vtkIdT
     qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
     return;
     }
+  vtkMRMLScene* scene = this->mrmlScene();
+  if (!scene)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid MRML scene";
+    return;
+    }
 
   // Get scene model and column to highlight
   qMRMLSubjectHierarchyModel* sceneModel = qobject_cast<qMRMLSubjectHierarchyModel*>(this->model());
@@ -1262,23 +1268,27 @@ void qMRMLSubjectHierarchyTreeView::applyReferenceHighlightForItems(QList<vtkIdT
       {
       continue;
       }
+    vtkMRMLNode* node = d->SubjectHierarchyNode->GetItemDataNode(itemID);
+
+    // Get items referenced recursively by argument node by MRML
+    vtkSmartPointer<vtkCollection> recursivelyReferencedNodes;
+    recursivelyReferencedNodes.TakeReference(scene->GetReferencedNodes(node));
 
     // Get items referenced by argument node by DICOM
-    std::vector<vtkIdType> referencedItems = d->SubjectHierarchyNode->GetItemsReferencedFromItemByDICOM(itemID);
-    // Get items referenced by argument node by MRML
-    vtkMRMLNode* node = d->SubjectHierarchyNode->GetItemDataNode(itemID);
-    if (node && this->mrmlScene())
+    std::vector<vtkIdType> directlyReferencedItems = d->SubjectHierarchyNode->GetItemsReferencedFromItemByDICOM(itemID);
+    // Get items referenced directly by argument node by MRML
+    if (node)
       {
       vtkSmartPointer<vtkCollection> referencedNodes;
-      referencedNodes.TakeReference(this->mrmlScene()->GetReferencedNodes(node));
+      referencedNodes.TakeReference(scene->GetReferencedNodes(node, false));
       for (int index=0; index!=referencedNodes->GetNumberOfItems(); ++index)
         {
         vtkIdType nodeItemID = d->SubjectHierarchyNode->GetItemByDataNode(
           vtkMRMLNode::SafeDownCast(referencedNodes->GetItemAsObject(index)) );
         if ( nodeItemID && nodeItemID != itemID
-          && (std::find(referencedItems.begin(), referencedItems.end(), nodeItemID) == referencedItems.end()) )
+          && (std::find(directlyReferencedItems.begin(), directlyReferencedItems.end(), nodeItemID) == directlyReferencedItems.end()) )
           {
-          referencedItems.push_back(nodeItemID);
+          directlyReferencedItems.push_back(nodeItemID);
           }
         }
       }
@@ -1286,10 +1296,10 @@ void qMRMLSubjectHierarchyTreeView::applyReferenceHighlightForItems(QList<vtkIdT
     // Get items referencing the argument node by DICOM
     std::vector<vtkIdType> referencingItems = d->SubjectHierarchyNode->GetItemsReferencingItemByDICOM(itemID);
     // Get items referencing the argument node by MRML
-    if (node && this->mrmlScene())
+    if (node)
       {
       std::vector<vtkMRMLNode*> referencingNodes;
-      this->mrmlScene()->GetReferencingNodes(node, referencingNodes);
+      scene->GetReferencingNodes(node, referencingNodes);
       for (std::vector<vtkMRMLNode*>::iterator refNodeIt=referencingNodes.begin(); refNodeIt!=referencingNodes.end(); refNodeIt++)
         {
         vtkIdType nodeItemID = d->SubjectHierarchyNode->GetItemByDataNode(*refNodeIt);
@@ -1301,16 +1311,30 @@ void qMRMLSubjectHierarchyTreeView::applyReferenceHighlightForItems(QList<vtkIdT
         }
       }
 
-    // Highlight referenced items
+    // Highlight recursively referenced items
+    for (int index=0; index!=recursivelyReferencedNodes->GetNumberOfItems(); ++index)
+      {
+      vtkIdType referencedItem = d->SubjectHierarchyNode->GetItemByDataNode(
+        vtkMRMLNode::SafeDownCast(recursivelyReferencedNodes->GetItemAsObject(index)) );
+      if (referencedItem && referencedItem != itemID)
+        {
+        QStandardItem* item = sceneModel->itemFromSubjectHierarchyItem(referencedItem, nameColumn);
+        if (item && !d->HighlightedItems.contains(referencedItem))
+          {
+          item->setBackground(QColor::fromRgb(255, 255, 170));
+          d->HighlightedItems.append(referencedItem);
+          }
+        }
+      }
+    // Highlight directly referenced items
     std::vector<vtkIdType>::iterator itemIt;
-    for (itemIt=referencedItems.begin(); itemIt!=referencedItems.end(); ++itemIt)
+    for (itemIt=directlyReferencedItems.begin(); itemIt!=directlyReferencedItems.end(); ++itemIt)
       {
       vtkIdType referencedItem = (*itemIt);
       QStandardItem* item = sceneModel->itemFromSubjectHierarchyItem(referencedItem, nameColumn);
-      if (item && !d->HighlightedItems.contains(referencedItem))
+      if (item) // Note: these items have been added as the recursively referenced items already
         {
         item->setBackground(Qt::yellow);
-        d->HighlightedItems.append(referencedItem);
         }
       }
     // Highlight referencing items
@@ -1320,7 +1344,7 @@ void qMRMLSubjectHierarchyTreeView::applyReferenceHighlightForItems(QList<vtkIdT
       QStandardItem* item = sceneModel->itemFromSubjectHierarchyItem(referencingItem, nameColumn);
       if (item && !d->HighlightedItems.contains(referencingItem))
         {
-        item->setBackground(QColor::fromRgb(255, 221, 0));
+        item->setBackground(QColor::fromRgb(69, 204, 69));
         d->HighlightedItems.append(referencingItem);
         }
       }

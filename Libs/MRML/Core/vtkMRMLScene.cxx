@@ -2949,7 +2949,7 @@ void vtkMRMLScene::UpdateNodeReferences(vtkCollection* checkNodes/*=NULL*/)
 }
 
 //------------------------------------------------------------------------------
-void vtkMRMLScene::AddReferencedNodes(vtkMRMLNode *node, vtkCollection *refNodes)
+void vtkMRMLScene::AddReferencedNodes(vtkMRMLNode *node, vtkCollection *refNodes, bool recursive/*=true*/)
 {
   if (!node || !node->GetID() || !refNodes)
     {
@@ -2977,23 +2977,26 @@ void vtkMRMLScene::AddReferencedNodes(vtkMRMLNode *node, vtkCollection *refNodes
       }
     }
 
-  // recursively add all the referenced nodes' referenced nodes
-  for (std::deque<vtkMRMLNode*>::iterator newReferencedNodeIt=newFoundReferencedNodes.begin();
-    newReferencedNodeIt!=newFoundReferencedNodes.end();
-    ++newReferencedNodeIt)
+  if (recursive)
     {
-    this->AddReferencedNodes(*newReferencedNodeIt, refNodes);
+    // recursively add all the referenced nodes' referenced nodes
+    for (std::deque<vtkMRMLNode*>::iterator newReferencedNodeIt=newFoundReferencedNodes.begin();
+      newReferencedNodeIt!=newFoundReferencedNodes.end();
+      ++newReferencedNodeIt)
+      {
+      this->AddReferencedNodes(*newReferencedNodeIt, refNodes);
+      }
     }
 }
 
 //------------------------------------------------------------------------------
-vtkCollection* vtkMRMLScene::GetReferencedNodes(vtkMRMLNode *node)
+vtkCollection* vtkMRMLScene::GetReferencedNodes(vtkMRMLNode *node, bool recursive/*=true*/)
 {
   vtkCollection* nodes = vtkCollection::New();
   if (node != NULL)
     {
     nodes->AddItem(node);
-    this->AddReferencedNodes(node, nodes);
+    this->AddReferencedNodes(node, nodes, recursive);
     }
   return nodes;
 }
