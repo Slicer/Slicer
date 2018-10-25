@@ -31,44 +31,15 @@ vtkStandardNewMacro(vtkFSSurfaceReader);
 //-------------------------------------------------------------------------
 vtkFSSurfaceReader::vtkFSSurfaceReader()
 {
-  vtkPolyData *output = vtkPolyData::New();
-  this->SetOutput(output);
-
-  // Releasing data for pipeline parallism.
-  // Filters will know it is empty.
-  output->ReleaseData();
-  output->Delete();
-  this->ExecutePiece = this->ExecuteNumberOfPieces = 0;
-  this->ExecuteGhostLevel = 0;
+  this->FileName = NULL;
+  this->SetNumberOfInputPorts(0);
 }
 
 //-------------------------------------------------------------------------
 vtkFSSurfaceReader::~vtkFSSurfaceReader()
 {
-}
-
-//----------------------------------------------------------------------------
-vtkPolyData *vtkFSSurfaceReader::GetOutput()
-{
-  int numberOfOutputs = this->GetNumberOfOutputPorts();
-
-  if (numberOfOutputs < 1)
-    {
-    return NULL;
-    }
-  return this->GetOutput(0);
-}
-
-//----------------------------------------------------------------------------
-vtkPolyData *vtkFSSurfaceReader::GetOutput(int idx)
-{
-  return vtkPolyData::SafeDownCast(this->GetOutputDataObject(idx));
-}
-
-//----------------------------------------------------------------------------
-void vtkFSSurfaceReader::SetOutput(vtkPolyData *output)
-{
-  this->GetExecutive()->SetOutputData(0, output);
+  delete[] this->FileName;
+  this->FileName = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -77,9 +48,13 @@ int vtkFSSurfaceReader::RequestData(
         vtkInformationVector **,
         vtkInformationVector *outputVector)
 {
+  // get the info object
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
+  // get the output
   vtkPolyData *output = vtkPolyData::SafeDownCast(
-        outInfo->Get(vtkDataObject::DATA_OBJECT()));
+    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+
   FILE* surfaceFile;
   int magicNumber;
   char line[256];
@@ -495,16 +470,9 @@ int vtkFSSurfaceReader::RequestData(
 
   return 1;
 }
-//----------------------------------------------------------------------------
-int vtkFSSurfaceReader::FillOutputPortInformation(int,
-                                                 vtkInformation* info)
-{
-  info->Set(vtkDataObject::DATA_TYPE_NAME(), "vtkPolyData");
-  return 1;
-}
 
 //----------------------------------------------------------------------------
 void vtkFSSurfaceReader::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 }
