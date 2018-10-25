@@ -170,7 +170,7 @@ public:
   /// made to store all information in the MRML node (vtkMRMLVolumeNode::Origin,
   /// vtkMRMLVolumeNode::Spacing, and vtkMRMLVolumeNode::IJKToRASDirections).
   /// \sa GetImageData(), SetImageDataConnection()
-  void SetAndObserveImageData(vtkImageData *ImageData);
+  virtual void SetAndObserveImageData(vtkImageData *ImageData);
   virtual vtkImageData* GetImageData();
   /// Set and observe image data pipeline.
   /// It is propagated to the display nodes.
