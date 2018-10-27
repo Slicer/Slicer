@@ -155,7 +155,7 @@ vtkStreamingVolumeCodec* vtkMRMLStreamingVolumeNode::GetCodec()
       (this->Codec &&
        this->Codec->GetFourCC() != this->GetCodecFourCC()))
     {
-    this->Codec = vtkStreamingVolumeCodecFactory::GetInstance()->CreateCodecByFourCC(this->GetCodecFourCC());
+    this->Codec = vtkSmartPointer<vtkStreamingVolumeCodec>::Take(vtkStreamingVolumeCodecFactory::GetInstance()->CreateCodecByFourCC(this->GetCodecFourCC()));
     }
   return this->Codec;
 }

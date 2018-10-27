@@ -20,11 +20,14 @@ Care Ontario.
 
 // MRML includes
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLScene.h"
 #include "vtkMRMLStreamingVolumeNode.h"
 
 int vtkMRMLStreamingVolumeNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLStreamingVolumeNode> node1;
+  vtkNew<vtkMRMLScene> scene;
+  scene->AddNode(node1);
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   int width = 10;
