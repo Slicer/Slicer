@@ -41,7 +41,7 @@ int vtkMRMLDoubleArrayNodeTest1(int argc, char * argv[])
 {
   vtkNew<vtkMRMLDoubleArrayNode> node1;
   vtkNew<vtkMRMLScene> scene;
-  scene->AddNode(node1);
+  scene->AddNode(node1.GetPointer());
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   if (argc != 3)

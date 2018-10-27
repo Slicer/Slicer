@@ -35,11 +35,11 @@ int vtkMRMLTableNodeTest1(int , char * [] )
   vtkNew<vtkMRMLScene> scene;
 
   vtkNew<vtkMRMLTableNode> node1;
-  scene->AddNode(node1);
+  scene->AddNode(node1.GetPointer());
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   vtkNew<vtkMRMLTableNode> node2;
-  scene->AddNode(node2);
+  scene->AddNode(node2.GetPointer());
 
   vtkTable* table = node2->GetTable();
   CHECK_NOT_NULL(table);

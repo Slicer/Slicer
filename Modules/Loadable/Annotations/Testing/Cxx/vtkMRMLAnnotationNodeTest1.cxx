@@ -19,21 +19,21 @@ int vtkMRMLAnnotationNodeTest1(int , char * [] )
 
   vtkNew<vtkMRMLScene> mrmlScene;
   vtkNew<vtkMRMLAnnotationNode> node1;
-  mrmlScene->AddNode(node1);
+  mrmlScene->AddNode(node1.GetPointer());
 
   node1->UpdateReferences();
-  node2->Copy(node1);
+  node2->Copy(node1.GetPointer());
 
-  mrmlScene->RegisterNodeClass(node1);
-  mrmlScene->AddNode(node2);
+  mrmlScene->RegisterNodeClass(node1.GetPointer());
+  mrmlScene->AddNode(node2.GetPointer());
 
   vtkNew<vtkMRMLAnnotationStorageNode> prototypeStorageNode;
-  mrmlScene->RegisterNodeClass(prototypeStorageNode);
+  mrmlScene->RegisterNodeClass(prototypeStorageNode.GetPointer());
   vtkMRMLAnnotationStorageNode *storNode = vtkMRMLAnnotationStorageNode::SafeDownCast(
     node2->CreateDefaultStorageNode());
 
-  EXERCISE_ALL_BASIC_MRML_METHODS(node1);
-  mrmlScene->RemoveNode(node1);
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
+  mrmlScene->RemoveNode(node1.GetPointer());
 
   if( !storNode )
     {

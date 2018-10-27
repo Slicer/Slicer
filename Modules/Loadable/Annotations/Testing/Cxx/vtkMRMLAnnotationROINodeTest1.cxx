@@ -32,16 +32,16 @@ int vtkMRMLAnnotationROINodeTest1(int , char * [] )
   vtkNew<vtkMRMLScene> mrmlScene;
 
   vtkNew<vtkMRMLAnnotationROINode> node1;
-  mrmlScene->AddNode(node1);
+  mrmlScene->AddNode(node1.GetPointer());
 
   node1->UpdateReferences();
   node2->Copy(node1.GetPointer());
 
   mrmlScene->RegisterNodeClass(node1.GetPointer());
-  mrmlScene->AddNode(node2);
+  mrmlScene->AddNode(node2.GetPointer());
 
-  EXERCISE_ALL_BASIC_MRML_METHODS(node1);
-  mrmlScene->RemoveNode(node1);
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
+  mrmlScene->RemoveNode(node1.GetPointer());
 
   // ======================
   // Modify Properties
@@ -82,7 +82,7 @@ int vtkMRMLAnnotationROINodeTest1(int , char * [] )
 
   CHECK_INT(spy->GetNumberOfEvents(vtkCommand::ModifiedEvent), 1);
 
-  CHECK_EXIT_SUCCESS(TestGetTransformedPlanes(mrmlScene, node2));
+  CHECK_EXIT_SUCCESS(TestGetTransformedPlanes(mrmlScene.GetPointer(), node2.GetPointer()));
 
   return EXIT_SUCCESS;
 }

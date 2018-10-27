@@ -30,9 +30,9 @@ int vtkMRMLAnnotationLinesNodeTest1(int , char * [] )
 {
   vtkNew< vtkMRMLAnnotationLinesNode > node1;
   vtkNew<vtkMRMLScene> mrmlScene;
-  mrmlScene->AddNode(node1);
-  EXERCISE_ALL_BASIC_MRML_METHODS(node1);
-  mrmlScene->RemoveNode(node1);
+  mrmlScene->AddNode(node1.GetPointer());
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
+  mrmlScene->RemoveNode(node1.GetPointer());
 
   // ======================
   // Basic Setup

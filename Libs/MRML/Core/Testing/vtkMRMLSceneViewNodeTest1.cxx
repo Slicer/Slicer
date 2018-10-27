@@ -32,7 +32,7 @@ int vtkMRMLSceneViewNodeTest1(int , char * [] )
 
   // make a scene and test again
   vtkNew<vtkMRMLScene> scene;
-  scene->AddNode(node1);
+  scene->AddNode(node1.GetPointer());
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   node1->StoreScene();
 

@@ -39,7 +39,7 @@ int vtkMRMLTransformNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLTransformNode> node1;
   vtkNew<vtkMRMLScene> scene;
-  scene->AddNode(node1);
+  scene->AddNode(node1.GetPointer());
   vtkNew<vtkMatrix4x4> linearTransform;
   node1->SetMatrixTransformToParent(linearTransform.GetPointer());
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
