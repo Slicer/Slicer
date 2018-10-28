@@ -60,6 +60,9 @@ public:
   /// unsynchronize the view from the nodes/logics.
   Q_INVOKABLE qMRMLPlotView* plotView()const;
 
+    /// Get plot view controller widget
+  Q_INVOKABLE qMRMLPlotViewControllerWidget* plotController()const;
+
   /// Get the view label for the Plot.
   /// \sa qMRMLPlotControllerWidget::PlotViewLabel()
   /// \sa setPlotViewLabel()

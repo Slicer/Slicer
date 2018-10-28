@@ -137,6 +137,13 @@ qMRMLPlotView* qMRMLPlotWidget::plotView()const
   return d->PlotView;
 }
 
+// --------------------------------------------------------------------------
+qMRMLPlotViewControllerWidget* qMRMLPlotWidget::plotController()const
+{
+  Q_D(const qMRMLPlotWidget);
+  return d->PlotController;
+}
+
 //---------------------------------------------------------------------------
 void qMRMLPlotWidget::setViewLabel(const QString& newPlotViewLabel)
 {
