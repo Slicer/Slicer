@@ -369,6 +369,7 @@ int vtkMRMLNRRDStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   writer->SetFileName(fullName.c_str());
   writer->SetInputConnection(volNode->GetImageDataConnection());
   writer->SetUseCompression(this->GetUseCompression());
+  writer->SetCompressionLevel(this->GetCompressionLevel());
 
   // set volume attributes
   writer->SetIJKToRASMatrix(ijkToRas.GetPointer());
