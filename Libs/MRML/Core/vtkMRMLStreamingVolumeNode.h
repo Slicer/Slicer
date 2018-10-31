@@ -51,7 +51,7 @@ public:
 
   virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
 
-  virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
+  virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData) VTK_OVERRIDE;
 
   /// Set node attributes
   virtual void ReadXMLAttributes(const char** atts) VTK_OVERRIDE;
