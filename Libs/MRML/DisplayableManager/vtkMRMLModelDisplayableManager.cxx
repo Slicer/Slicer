@@ -208,7 +208,7 @@ void vtkMRMLModelDisplayableManager::vtkInternal::ResetPick()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayableManager::vtkInternal::FindPickedDisplayNodeFromMesh(vtkPointSet* mesh, double pickedPoint[3])
+void vtkMRMLModelDisplayableManager::vtkInternal::FindPickedDisplayNodeFromMesh(vtkPointSet* mesh, double vtkNotUsed(pickedPoint)[3])
 {
   if (!mesh)
     {
