@@ -41,7 +41,7 @@ int main( int argc, char * argv[] )
   PARSE_ARGS;
 
   unsigned int numberOfLayers = 2;
-  unsigned int boundingBoxPadding = vnl_math_max( (unsigned int)(std::ceil(4.0 * gaussianSigma) ), numberOfLayers);
+  unsigned int boundingBoxPadding = std::max( (unsigned int)(std::ceil(4.0 * gaussianSigma) ), numberOfLayers);
 
 // Image Types
   const unsigned short ImageDimension = 3;
@@ -132,8 +132,8 @@ int main( int argc, char * argv[] )
     UCharImageType::IndexType            regionIndex;
     for( unsigned int i = 0; i < ImageDimension; i++ )
       {
-      boundingBox[2 * i] = vnl_math_max(0, (int)(boundingBox[2 * i] - boundingBoxPadding) );
-      boundingBox[2 * i + 1] = vnl_math_min( (int)(imageSize[i] - 1), (int)(boundingBox[2 * i + 1] + boundingBoxPadding) );
+      boundingBox[2 * i] = std::max(0, (int)(boundingBox[2 * i] - boundingBoxPadding) );
+      boundingBox[2 * i + 1] = std::min( (int)(imageSize[i] - 1), (int)(boundingBox[2 * i + 1] + boundingBoxPadding) );
       regionIndex[i] = boundingBox[2 * i];
       regionSize[i] = boundingBox[2 * i + 1] - boundingBox[2 * i] + 1;
       }
