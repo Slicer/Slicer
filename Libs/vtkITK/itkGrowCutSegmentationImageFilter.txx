@@ -23,7 +23,6 @@
 #include <map>
 #include <string>
 #include <cmath>
-#include <vcl_compiler.h>
 #include <iostream>
 #include <algorithm>
 #include <utility>
