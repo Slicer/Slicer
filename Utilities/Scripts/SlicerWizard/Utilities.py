@@ -6,12 +6,23 @@ import os
 import sys
 import textwrap
 
-try:
-  import git
-  _haveGit = True
+#-----------------------------------------------------------------------------
+def haveGit():
+  """Return True if git is available.
 
-except ImportError:
-  _haveGit = False
+  A side effect of `import git` is that it shows a popup window on
+  MacOSX, asking the user to install XCode (if git is not installed already),
+  therefore this method should only be called if git is actually needed.
+  """
+
+  try:
+    import git
+    _haveGit = True
+
+  except ImportError:
+    _haveGit = False
+
+  return _haveGit
 
 try:
   import chardet
@@ -311,7 +322,7 @@ def createEmptyRepo(path, tool=None):
   """
 
   # Check that the requested tool is supported
-  if not _haveGit or tool not in (None, "git"):
+  if not haveGit() or tool not in (None, "git"):
     raise Exception("unable to create %r repository" % tool)
 
   # Create a repository at the specified location
@@ -319,6 +330,7 @@ def createEmptyRepo(path, tool=None):
     raise Exception("refusing to create repository in non-empty directory")
 
   os.makedirs(path)
+  import git
   return git.Repo.init(path)
 
 #-----------------------------------------------------------------------------
@@ -386,8 +398,9 @@ def getRepo(path, tool=None, create=False):
   from . import Subversion
 
   # Try to obtain git repository
-  if _haveGit and tool in (None, "git"):
+  if haveGit() and tool in (None, "git"):
     try:
+      import git
       repo = git.Repo(path)
       return repo
 
@@ -409,7 +422,8 @@ def getRepo(path, tool=None, create=False):
     if callable(create):
       return create(path, tool)
 
-    elif _haveGit and tool in (None, "git"):
+    elif haveGit() and tool in (None, "git"):
+      import git
       return git.Repo.init(path)
 
     else:

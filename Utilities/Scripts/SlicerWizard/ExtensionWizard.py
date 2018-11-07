@@ -7,21 +7,32 @@ import textwrap
 
 from urlparse import urlparse
 
-# If Python is not built with SSL support then do not even try to import
-# GithubHelper (it would throw missing attribute error for HTTPSConnection)
-import httplib
-if hasattr(httplib, "HTTPSConnection"):
-  # SSL is available
-  try:
-    import git
-    from . import GithubHelper
-    from .GithubHelper import NotSet
-    _haveGit = True
-  except ImportError:
+#-----------------------------------------------------------------------------
+def haveGit():
+  """Return True if git is available.
+
+  A side effect of `import git` is that it shows a popup window on
+  MacOSX, asking the user to install XCode (if git is not installed already),
+  therefore this method should only be called if git is actually needed.
+  """
+
+  # If Python is not built with SSL support then do not even try to import
+  # GithubHelper (it would throw missing attribute error for HTTPSConnection)
+  import httplib
+  if hasattr(httplib, "HTTPSConnection"):
+    # SSL is available
+    try:
+      import git
+      from . import GithubHelper
+      from .GithubHelper import NotSet
+      _haveGit = True
+    except ImportError:
+      _haveGit = False
+  else:
+    logging.debug("ExtensionWizard: git support is disabled because httplib.HTTPSConnection is not available")
     _haveGit = False
-else:
-  logging.debug("ExtensionWizard: git support is disabled because httplib.HTTPSConnection is not available")
-  _haveGit = False
+
+  return _haveGit
 
 from . import __version__, __version_info__
 
@@ -207,6 +218,7 @@ class ExtensionWizard(object):
 
     if r is None:
       # Create new git repository
+      import git
       r = git.Repo.init(args.destination)
       createdRepo = True
 
@@ -271,6 +283,7 @@ class ExtensionWizard(object):
       p.save()
 
       # Commit the initial commit or updated meta-information
+      import git
       r.git.add(":/CMakeLists.txt")
       if createdRepo:
         logging.info("preparing initial commit")
@@ -444,6 +457,7 @@ class ExtensionWizard(object):
 
       # Update the index repository and get the base branch
       logging.info("updating local index clone")
+      import git
       xiRepo.git.fetch(xiUpstream)
       if not args.target in xiUpstream.refs:
         die("target branch '%s' does not exist" % args.target)
@@ -615,8 +629,8 @@ class ExtensionWizard(object):
     args = parser.parse_args(args)
     initLogging(logging.getLogger(), args)
 
-    # The following arguments are only available if _haveGit is True
-    if not _haveGit and (args.publish or args.contribute):
+    # The following arguments are only available if haveGit() is True
+    if not haveGit() and (args.publish or args.contribute):
         option = "--publish"
         if args.contribute:
             option = "--contribute"
