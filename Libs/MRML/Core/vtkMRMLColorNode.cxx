@@ -450,7 +450,7 @@ int vtkMRMLColorNode::SetColorName(int ind, const char *name)
     {
     this->Names[ind] = newName;
     this->StorableModifiedTime.Modified();
-    // TBD: fire Modified?
+    this->Modified();
     }
   return 1;
 }
