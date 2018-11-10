@@ -48,7 +48,7 @@ vtkMRMLVolumePropertyNode::vtkMRMLVolumePropertyNode()
   // will change primarily between the two sides of the clipping plane.
   // Default value is -10e37, which does not result in smooth clipped surface (most probably
   // due to numerical errors), but -1e10 works robustly.
-  property->vp.SetClippedVoxelIntensity(-1e10);
+  property->SetClippedVoxelIntensity(-1e10);
 #endif
   vtkSetAndObserveMRMLObjectEventsMacro(this->VolumeProperty, property, this->ObservedEvents);
   property->Delete();
