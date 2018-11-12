@@ -426,6 +426,22 @@ include(SlicerApplicationOptions)
 #-----------------------------------------------------------------------------
 include(SlicerDirectories)
 
+# SlicerExecutionModel output directories
+if(Slicer_SUPERBUILD)
+  set(_sem_output_dir ${CMAKE_BINARY_DIR}/${Slicer_BINARY_INNER_SUBDIR})
+else()
+  set(_sem_output_dir ${CMAKE_BINARY_DIR})
+endif()
+if(NOT DEFINED SlicerExecutionModel_DEFAULT_CLI_RUNTIME_OUTPUT_DIRECTORY)
+  set(SlicerExecutionModel_DEFAULT_CLI_RUNTIME_OUTPUT_DIRECTORY ${_sem_output_dir}/${Slicer_CLIMODULES_BIN_DIR})
+endif()
+if(NOT DEFINED SlicerExecutionModel_DEFAULT_CLI_LIBRARY_OUTPUT_DIRECTORY)
+  set(SlicerExecutionModel_DEFAULT_CLI_LIBRARY_OUTPUT_DIRECTORY ${_sem_output_dir}/${Slicer_CLIMODULES_LIB_DIR})
+endif()
+if(NOT DEFINED SlicerExecutionModel_DEFAULT_CLI_ARCHIVE_OUTPUT_DIRECTORY)
+  set(SlicerExecutionModel_DEFAULT_CLI_ARCHIVE_OUTPUT_DIRECTORY ${_sem_output_dir}/${Slicer_CLIMODULES_LIB_DIR})
+endif()
+
 #-----------------------------------------------------------------------------
 # Slicer version number
 #-----------------------------------------------------------------------------
