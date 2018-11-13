@@ -1254,15 +1254,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLNodesEvents(vtkObject*
            || (event == vtkMRMLTransformableNode::TransformModifiedEvent) )
       {
       this->Internal->UpdatePipelineTransforms(volumeNode);
-
-      // Reset ROI
-      std::set< vtkMRMLVolumeRenderingDisplayNode* > displayNodes = this->Internal->VolumeToDisplayNodes[volumeNode];
-      std::set< vtkMRMLVolumeRenderingDisplayNode* >::iterator displayNodeIt;
-      for (displayNodeIt = displayNodes.begin(); displayNodeIt != displayNodes.end(); displayNodeIt++)
-        {
-        this->VolumeRenderingLogic->FitROIToVolume(*displayNodeIt);
-        }
-
+      // ROI must not be reset, as it would make it impossible to replay clipped volume sequences
       this->RequestRender();
       }
     else if (event == vtkMRMLScalarVolumeNode::ImageDataModifiedEvent)
