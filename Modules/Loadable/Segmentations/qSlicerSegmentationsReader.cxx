@@ -36,6 +36,8 @@
 
 // VTK includes
 #include <vtkNew.h>
+#include <vtkOBJReader.h>
+#include <vtkPointData.h>
 #include <vtkSmartPointer.h>
 #include <vtkSTLReader.h>
 
@@ -90,7 +92,8 @@ qSlicerIO::IOFileType qSlicerSegmentationsReader::fileType()const
 QStringList qSlicerSegmentationsReader::extensions()const
 {
   return QStringList() << "Segmentation (*.seg.nrrd)" << "Segmentation (*.seg.vtm)"
-    << "Segmentation (*.nrrd)" << "Segmentation (*.vtm)" << "Segmentation (*.stl)";
+    << "Segmentation (*.nrrd)" << "Segmentation (*.vtm)"
+    << "Segmentation (*.stl)" << "Segmentation (*.obj)";
 }
 
 //-----------------------------------------------------------------------------
@@ -116,14 +119,35 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
 
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileName.toStdString());
 
-  if (extension.compare(".stl") == 0)
+  if (extension.compare(".stl") == 0 || extension.compare(".obj") == 0)
     {
-    // Create segmentation from STL file
-    vtkNew<vtkSTLReader> reader;
-    reader->SetFileName(fileName.toStdString().c_str());
-    reader->Update();
-    vtkPolyData* closedSurfaceRepresentation = reader->GetOutput();
-    if (!closedSurfaceRepresentation)
+    vtkSmartPointer<vtkPolyData> closedSurfaceRepresentation;
+    if (extension.compare(".stl") == 0)
+      {
+      // Create segmentation from STL file
+      vtkNew<vtkSTLReader> reader;
+      reader->SetFileName(fileName.toStdString().c_str());
+      reader->Update();
+      closedSurfaceRepresentation = reader->GetOutput();
+      }
+    else
+      {
+      vtkNew<vtkOBJReader> reader;
+      reader->SetFileName(fileName.toStdString().c_str());
+      reader->Update();
+      closedSurfaceRepresentation = reader->GetOutput();
+      // Remove all arrays, because they could slow down all further processing
+      // and consume significant amount of memory.
+      if (closedSurfaceRepresentation != NULL && closedSurfaceRepresentation->GetPointData() != NULL)
+        {
+        vtkPointData* pointData = closedSurfaceRepresentation->GetPointData();
+        while (pointData->GetNumberOfArrays()>0)
+          {
+          pointData->RemoveArray(0);
+          }
+        }
+      }
+    if (closedSurfaceRepresentation == NULL)
       {
       return false;
       }
