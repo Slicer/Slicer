@@ -381,11 +381,6 @@ std::string vtkClosedSurfaceToBinaryLabelmapConversionRule::GetDefaultImageGeome
   geometryMatrix->SetElement(1,3,bounds[2]);
   geometryMatrix->SetElement(2,3,bounds[4]);
 
-  // Set extent
-  int extent[6] = { 0, (int)(bounds[1]-bounds[0]+1),
-                    0, (int)(bounds[3]-bounds[2]+1),
-                    0, (int)(bounds[5]-bounds[4]+1) };
-
   // set spacing to have an approxmately 250^3 volume
   // this size is not too large for average computing hardware yet
   // it is sufficiently detailed for many applications
@@ -395,6 +390,14 @@ std::string vtkClosedSurfaceToBinaryLabelmapConversionRule::GetDefaultImageGeome
   geometryMatrix->SetElement(0, 0, spacing);
   geometryMatrix->SetElement(1, 1, spacing);
   geometryMatrix->SetElement(2, 2, spacing);
+
+  // Set extent
+  int extent[6] =
+    {
+    0, (int)((bounds[1] - bounds[0]) / spacing),
+    0, (int)((bounds[3] - bounds[2]) / spacing),
+    0, (int)((bounds[5] - bounds[4]) / spacing)
+    };
 
   // Serialize geometry
   std::string serializedGeometry = vtkSegmentationConverter::SerializeImageGeometry(geometryMatrix, extent);
