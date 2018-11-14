@@ -49,12 +49,17 @@ qSlicerAboutDialog::qSlicerAboutDialog(QWidget* parentWidget)
   d->CreditsTextBrowser->append(slicer->applicationName());
   d->CreditsTextBrowser->setFontPointSize(11);
   d->CreditsTextBrowser->append("");
-  d->CreditsTextBrowser->append(slicer->applicationVersion()+ " " + "r" + slicer->repositoryRevision());
-  d->CreditsTextBrowser->append("");
-  if (slicer->mainApplicationName() == QLatin1String("Slicer"))
+  if (!slicer->isCustomMainApplication())
     {
+    d->CreditsTextBrowser->append(slicer->applicationVersion() + " " + "r" + slicer->repositoryRevision());
+    d->CreditsTextBrowser->append("");
     d->CreditsTextBrowser->append("");
     d->CreditsTextBrowser->insertHtml("<a href=\"http://download.slicer.org/\">Download</a> a newer version<br />");
+    d->CreditsTextBrowser->append("");
+    }
+  else
+    {
+    d->CreditsTextBrowser->append(slicer->applicationVersion() + " (" + slicer->mainApplicationRepositoryRevision() + ")");
     d->CreditsTextBrowser->append("");
     }
   d->CreditsTextBrowser->insertHtml(slicer->acknowledgment());
