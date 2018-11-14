@@ -284,7 +284,7 @@ void qMRMLModelDisplayNodeWidget::setActiveScalarName(const QString& arrayName)
   if (!arrayName.isEmpty() &&
       d->MRMLModelDisplayNode->GetColorNodeID() == NULL)
     {
-    const char *colorNodeID = "vtkMRMLColorTableNodeRainbow";
+    const char *colorNodeID = "vtkMRMLColorTableNodeFileViridis.txt";
 
     d->MRMLModelDisplayNode->SetAndObserveColorNodeID(colorNodeID);
     }
