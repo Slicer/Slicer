@@ -46,7 +46,6 @@ vtkMRMLStorageNode::vtkMRMLStorageNode()
   this->URI = NULL;
   this->URIHandler = NULL;
   this->UseCompression = 1;
-  this->CompressionLevel = -1;
   this->ReadState = this->Idle;
   this->WriteState = this->Idle;
   this->URIHandler = NULL;
@@ -186,20 +185,10 @@ void vtkMRMLStorageNode::WriteXML(ostream& of, int nIndent)
   ss << this->UseCompression;
   of << " useCompression=\"" << ss.str() << "\"";
 
-  ss.clear();
-  ss.str(std::string());
-  {
-    of << " compressionLevel=\"";
-    if (this->CompressionLevel == -1)
-      {
-      of << vtkMRMLStorageNode::CompressionLevelDefault;
-      }
-    else
-      {
-      of << this->CompressionLevel;
-      }
-    of << "\"";
-  }
+  if (!this->CompressionParameter.empty())
+    {
+    of << " compressionParameter=\"" << this->XMLAttributeEncodeString(this->CompressionParameter) << "\"";
+    }
 
   if (this->GetDefaultWriteFileExtension() != NULL)
     {
@@ -320,11 +309,9 @@ void vtkMRMLStorageNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >> this->UseCompression;
       }
-    else if (!strcmp(attName, "compressionLevel"))
+    else if (!strcmp(attName, "compressionParameter"))
       {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->CompressionLevel;
+      this->CompressionParameter = attValue;
       }
     else if (!strcmp(attName, "readState"))
       {
@@ -361,6 +348,7 @@ void vtkMRMLStorageNode::Copy(vtkMRMLNode *anode)
     this->AddURI(node->GetNthURI(i));
     }
   this->SetUseCompression(node->UseCompression);
+  this->SetCompressionParameter(node->CompressionParameter);
   this->SetReadState(node->ReadState);
   this->SetWriteState(node->WriteState);
   this->SetDefaultWriteFileExtension(node->GetDefaultWriteFileExtension());
@@ -387,7 +375,11 @@ void vtkMRMLStorageNode::PrintSelf(ostream& os, vtkIndent indent)
     os << indent << "URIListMember: " << this->GetNthURI(i) << "\n";
     }
   os << indent << "UseCompression:   " << this->UseCompression << "\n";
-  os << indent << "CompressionLevel:   " << this->CompressionLevel << "\n";
+  if (!this->CompressionParameter.empty())
+    {
+    os << indent << "CompressionParameter:   " << this->CompressionParameter << "\n";
+    }
+
   os << indent << "ReadState:  " << this->GetReadStateAsString() << "\n";
   os << indent << "WriteState: " << this->GetWriteStateAsString() << "\n";
   os << indent << "SupportedWriteFileTypes: \n";
@@ -1296,4 +1288,74 @@ std::string vtkMRMLStorageNode::GetFileNameWithoutExtension(const char* filePath
     return fileName;
     }
   return fileName.substr(0, fileName.length() - extension.length());
+}
+
+//------------------------------------------------------------------------------
+void vtkMRMLStorageNode::UpdateCompressionPresets()
+{
+}
+
+//------------------------------------------------------------------------------
+int vtkMRMLStorageNode::GetNumberOfCompressionPresets()
+{
+  this->UpdateCompressionPresets();
+  return this->CompressionPresets.size();
+}
+
+//------------------------------------------------------------------------------
+std::vector<std::string> vtkMRMLStorageNode::GetCompressionPresetDisplayNames()
+{
+  this->UpdateCompressionPresets();
+  std::vector<std::string> names;
+  std::vector<CompressionPreset>::iterator compressionPresetIt;
+  for (compressionPresetIt = this->CompressionPresets.begin(); compressionPresetIt != this->CompressionPresets.end(); ++compressionPresetIt)
+    {
+    names.push_back(compressionPresetIt->DisplayName);
+    }
+  return names;
+}
+
+//------------------------------------------------------------------------------
+std::string vtkMRMLStorageNode::GetCompressionParameterFromDisplayName(const std::string& name)
+{
+  this->UpdateCompressionPresets();
+  std::vector<CompressionPreset>::iterator compressionPresetIt;
+  for (compressionPresetIt = this->CompressionPresets.begin(); compressionPresetIt != this->CompressionPresets.end(); ++compressionPresetIt)
+    {
+    if (compressionPresetIt->DisplayName == name)
+      {
+      break;
+      }
+    }
+  if (compressionPresetIt == this->CompressionPresets.end())
+    {
+    return "";
+    }
+  return compressionPresetIt->CompressionParameter;
+}
+
+//------------------------------------------------------------------------------
+std::string vtkMRMLStorageNode::GetDisplayNameFromCompressionParameter(const std::string& parameter)
+{
+  this->UpdateCompressionPresets();
+  std::vector<CompressionPreset>::iterator compressionPresetIt;
+  for (compressionPresetIt = this->CompressionPresets.begin(); compressionPresetIt != this->CompressionPresets.end(); ++compressionPresetIt)
+    {
+    if (compressionPresetIt->CompressionParameter == parameter)
+      {
+      break;
+      }
+    }
+  if (compressionPresetIt == this->CompressionPresets.end())
+    {
+    return "";
+    }
+  return compressionPresetIt->DisplayName;
+}
+
+//------------------------------------------------------------------------------
+const std::vector<vtkMRMLStorageNode::CompressionPreset> vtkMRMLStorageNode::GetCompressionPresets()
+{
+  this->UpdateCompressionPresets();
+  return this->CompressionPresets;
 }

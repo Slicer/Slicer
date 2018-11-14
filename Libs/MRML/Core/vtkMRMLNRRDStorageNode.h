@@ -66,6 +66,13 @@ class VTK_MRML_EXPORT vtkMRMLNRRDStorageNode : public vtkMRMLStorageNode
   /// instance to turn off compression.
   virtual void ConfigureForDataExchange() VTK_OVERRIDE;
 
+  /// Compression parameter corresponding to minimum compression (fast)
+  std::string GetCompressionParameterFastest() { return "gzip_fastest"; };
+  /// Compression parameter corresponding to normal compression
+  std::string GetCompressionParameterNormal() { return "gzip_normal"; };
+  /// Compression parameter corresponding to maximum compression (slow)
+  std::string GetCompressionParameterMinimumSize() { return "gzip_minimum_size"; };
+
 protected:
   vtkMRMLNRRDStorageNode();
   ~vtkMRMLNRRDStorageNode();
@@ -84,8 +91,10 @@ protected:
   /// Write data from a  referenced node
   virtual int WriteDataInternal(vtkMRMLNode *refNode) VTK_OVERRIDE;
 
-  int CenterImage;
+  /// Convert compression parameter string to gzip compression level
+  int GetGzipCompressionLevelFromCompressionParameter(std::string parameter);
 
+  int CenterImage;
 };
 
 #endif

@@ -207,3 +207,51 @@ void vtkStreamingVolumeCodec::PrintSelf(ostream& os, vtkIndent indent)
     os << indent << codecParameterIt->first << "=\"" << codecParameterIt->second << "\"";
     }
 }
+
+//------------------------------------------------------------------------------
+std::vector<std::string> vtkStreamingVolumeCodec::GetParameterPresetNames() const
+{
+  std::vector<std::string> names;
+  std::vector<ParameterPreset>::const_iterator presetIt;
+  for (presetIt = this->ParameterPresets.begin(); presetIt != this->ParameterPresets.end(); ++presetIt)
+    {
+    names.push_back(presetIt->Name);
+    }
+  return names;
+}
+
+//------------------------------------------------------------------------------
+std::string vtkStreamingVolumeCodec::GetParameterPreset(const std::string& name) const
+{
+  std::vector<ParameterPreset>::const_iterator presetIt;
+  for (presetIt = this->ParameterPresets.begin(); presetIt != this->ParameterPresets.end(); ++presetIt)
+    {
+    if (presetIt->Name == name)
+      {
+      break;
+      }
+    }
+  if (presetIt == this->ParameterPresets.end())
+    {
+    return "";
+    }
+  return presetIt->Parameter;
+}
+
+//------------------------------------------------------------------------------
+std::string vtkStreamingVolumeCodec::GetParameterPresetName(const std::string& parameter) const
+{
+  std::vector<ParameterPreset>::const_iterator presetIt;
+  for (presetIt = this->ParameterPresets.begin(); presetIt != this->ParameterPresets.end(); ++presetIt)
+    {
+    if (presetIt->Parameter == parameter)
+      {
+      break;
+      }
+    }
+  if (presetIt == this->ParameterPresets.end())
+    {
+    return "";
+    }
+  return presetIt->Name;
+}

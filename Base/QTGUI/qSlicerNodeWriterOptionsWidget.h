@@ -47,6 +47,8 @@ public slots:
 
 protected slots:
   virtual void setUseCompression(bool use);
+  virtual void setCompressionParameter(int index);
+  virtual void setCompressionParameter(QString parameter);
 
 private:
   Q_DECLARE_PRIVATE_D(qGetPtrHelper(qSlicerIOOptions::d_ptr), qSlicerNodeWriterOptionsWidget);

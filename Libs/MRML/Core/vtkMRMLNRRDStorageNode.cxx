@@ -43,6 +43,12 @@ vtkMRMLNRRDStorageNode::vtkMRMLNRRDStorageNode()
 {
   this->CenterImage = 0;
   this->DefaultWriteFileExtension = "nhdr";
+
+  this->CompressionPresets.push_back(vtkMRMLStorageNode::CompressionPreset(this->GetCompressionParameterFastest(), "Fastest"));
+  this->CompressionPresets.push_back(vtkMRMLStorageNode::CompressionPreset(this->GetCompressionParameterNormal(), "Normal"));
+  this->CompressionPresets.push_back(vtkMRMLStorageNode::CompressionPreset(this->GetCompressionParameterMinimumSize(), "Minimum size"));
+
+  this->CompressionParameter = this->GetCompressionParameterFastest();
 }
 
 //----------------------------------------------------------------------------
@@ -369,7 +375,7 @@ int vtkMRMLNRRDStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   writer->SetFileName(fullName.c_str());
   writer->SetInputConnection(volNode->GetImageDataConnection());
   writer->SetUseCompression(this->GetUseCompression());
-  writer->SetCompressionLevel(this->GetCompressionLevel());
+  writer->SetCompressionLevel(this->GetGzipCompressionLevelFromCompressionParameter(this->CompressionParameter));
 
   // set volume attributes
   writer->SetIJKToRASMatrix(ijkToRas.GetPointer());
@@ -578,6 +584,24 @@ void vtkMRMLNRRDStorageNode::InitializeSupportedWriteFileTypes()
 {
   this->SupportedWriteFileTypes->InsertNextValue("NRRD (.nrrd)");
   this->SupportedWriteFileTypes->InsertNextValue("NRRD (.nhdr)");
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLNRRDStorageNode::GetGzipCompressionLevelFromCompressionParameter(std::string compressionParameter)
+{
+  if (compressionParameter == this->GetCompressionParameterFastest())
+    {
+    return 1;
+    }
+  else if(compressionParameter == this->GetCompressionParameterNormal())
+    {
+    return 6;
+    }
+  else if (compressionParameter == this->GetCompressionParameterMinimumSize())
+    {
+    return 9;
+    }
+  return 1;
 }
 
 //----------------------------------------------------------------------------

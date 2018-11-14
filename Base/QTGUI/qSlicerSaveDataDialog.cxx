@@ -26,6 +26,7 @@
 #include <QMessageBox>
 #include <QRegExp>
 #include <QRegExpValidator>
+#include <QSettings>
 
 /// CTK includes
 #include <ctkCheckableHeaderView.h>
@@ -59,6 +60,11 @@
 
 // STD includes
 #include <cstring> // for strlen
+
+namespace
+{
+  const char SHOW_OPTIONS_SETTINGS_KEY[]="ioManager/SaveDataDialogShowOptions";
+}
 
 //-----------------------------------------------------------------------------
 qSlicerFileNameItemDelegate::qSlicerFileNameItemDelegate( QObject * parent )
@@ -191,6 +197,12 @@ qSlicerSaveDataDialogPrivate::qSlicerSaveDataDialogPrivate(QWidget* parentWidget
           this, SLOT(saveSceneAsDataBundle()));
   connect(this->ShowMoreCheckBox, SIGNAL(toggled(bool)),
           this, SLOT(showMoreColumns(bool)));
+
+  if (!qSlicerApplication::application()->userSettings()->contains(SHOW_OPTIONS_SETTINGS_KEY))
+    {
+    qSlicerApplication::application()->userSettings()->setValue(SHOW_OPTIONS_SETTINGS_KEY, false);
+    }
+  this->ShowMoreCheckBox->setChecked(qSlicerApplication::application()->userSettings()->value(SHOW_OPTIONS_SETTINGS_KEY).toBool());
   this->showMoreColumns(this->ShowMoreCheckBox->isChecked());
 }
 
@@ -1311,6 +1323,8 @@ void qSlicerSaveDataDialogPrivate::showMoreColumns(bool show)
   this->FileWidget->setColumnHidden(NodeTypeColumn, !show);
   this->FileWidget->setColumnHidden(NodeStatusColumn, !show);
   this->updateSize();
+
+  qSlicerApplication::application()->userSettings()->setValue(SHOW_OPTIONS_SETTINGS_KEY, show);
 }
 
 //-----------------------------------------------------------------------------
