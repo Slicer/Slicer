@@ -330,6 +330,9 @@ list_conditional_append(Slicer_BUILD_LandmarkRegistration Slicer_REMOTE_DEPENDEN
 # Superbuild-type bundled extensions
 #------------------------------------------------------------------------------
 
+# The following logic is documented in the "Bundle remote modules and extensions adding source directories."
+# section found in the top-level CMakeLists.txt
+
 set(_extension_depends )
 
 # Build only inner-build for superbuild-type extensions
