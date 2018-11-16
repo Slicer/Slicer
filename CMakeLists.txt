@@ -1060,6 +1060,9 @@ configure_file(
 #   "<extension_dir>/SuperBuild" or "<extension_dir>/Superbuild" exists.
 #   Corresponding directory is appended to EXTERNAL_PROJECT_ADDITIONAL_DIRS.
 #
+# * If variable "<extension_name>_EXTERNAL_PROJECT_EXCLUDE_ALL" is set to TRUE, corresponding SuperBuild directory
+#   is not appended to EXTERNAL_PROJECT_ADDITIONAL_DIRS.
+#
 # * Associated external projects are globbed using expression of the form
 #   "<extension_dir>/(SuperBuild|Superbuild)/External_*.cmake".
 #
