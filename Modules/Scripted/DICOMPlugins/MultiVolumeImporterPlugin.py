@@ -509,6 +509,10 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         loadable.tooltip = loadable.name
         loadable.selected = True
         loadable.multivolume = mvNode
+        if tagName == 'TemporalPositionIdentifier':
+          loadable.confidence = 0.9
+        else:
+          loadable.confidence = 1.
         loadables.append(loadable)
 
     return loadables
