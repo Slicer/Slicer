@@ -64,7 +64,8 @@ if(NOT DEFINED DCMTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
     # http://git.dcmtk.org/?p=dcmtk.git;a=commit;h=29f9de10c2e8576147f16475b156bba98d14ba7d
     # plus the following patch:
     # * Set CMP0067 to ensure try_compile work as expected
-    "e79118cd2f40b77654630a56bbb17fe0bccc354c" # v3.6.3_20180621
+    # * Backport fix for DICOM TR support for along-track measurements
+    "22f253424f70d6c6d8ea91a11fcc07231e6ac2bf" # v3.6.3_20180621
     QUIET
     )
 
