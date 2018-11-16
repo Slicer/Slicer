@@ -1183,18 +1183,16 @@ class DICOMLoadableTable(qt.QTableWidget):
     self.setRowCount(0)
     self.loadables = {}
 
+    # For each plugin, keep only a single loadable selected for the same file set
+    # to prevent loading same data multiple times.
     for plugin in loadablesByPlugin:
       for thisLoadableId in xrange(len(loadablesByPlugin[plugin])):
         for prevLoadableId in xrange(0, thisLoadableId):
           thisLoadable = loadablesByPlugin[plugin][thisLoadableId]
           prevLoadable = loadablesByPlugin[plugin][prevLoadableId]
-          if len(thisLoadable.files) == 1 and len(prevLoadable.files) == 1:
-            # needed because of the tuple-sequence comparison does not work,
-            # and sometimes tuples are created by some reason
-            if thisLoadable.files[0] == prevLoadable.files[0]:
-              thisLoadable.selected = False
-              break
-          elif thisLoadable.files == prevLoadable.files:
+          # fileDifferences will contain all the files that only present in one or the other list (or tuple)
+          fileDifferences = set(thisLoadable.files).symmetric_difference(set(prevLoadable.files))
+          if (not fileDifferences) and (prevLoadable.selected):
             thisLoadable.selected = False
             break
 
