@@ -9,8 +9,8 @@ set(${proj}_DEPENDS
 # Include dependent projects if any
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj)
 
-if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
-  message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
+if(${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${proj})
+  message(FATAL_ERROR "Enabling ${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${proj} is not supported !")
 endif()
 
 # Sanity checks
@@ -18,16 +18,16 @@ if(DEFINED Foo_DIR AND NOT EXISTS ${Foo_DIR})
   message(FATAL_ERROR "Foo_DIR [${Foo_DIR}] variable is defined but corresponds to nonexistent directory")
 endif()
 
-if(NOT DEFINED ${proj}_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+if(NOT DEFINED ${proj}_DIR AND NOT ${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${proj})
 
   #ExternalProject_SetIfNotDefined(
-  #  ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
+  #  ${SUPERBUILD_TOPLEVEL_PROJECT}_${proj}_GIT_REPOSITORY
   #  "${EP_GIT_PROTOCOL}://github.com/Foo/Foo.git"
   #  QUIET
   #  )
 
   #ExternalProject_SetIfNotDefined(
-  #  ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
+  #  ${SUPERBUILD_TOPLEVEL_PROJECT}_${proj}_GIT_TAG
   #  "1e823001cb41c92667299635643f1007876d09f6"
   #  QUIET
   #  )
@@ -37,8 +37,8 @@ if(NOT DEFINED ${proj}_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    #GIT_REPOSITORY "${${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY}"
-    #GIT_TAG "${${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG}"
+    #GIT_REPOSITORY "${${SUPERBUILD_TOPLEVEL_PROJECT}_${proj}_GIT_REPOSITORY}"
+    #GIT_TAG "${${SUPERBUILD_TOPLEVEL_PROJECT}_${proj}_GIT_TAG}"
     DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo "Remove this line and uncomment GIT_REPOSITORY and GIT_TAG"
     SOURCE_DIR ${EP_SOURCE_DIR}
     BINARY_DIR ${EP_BINARY_DIR}
