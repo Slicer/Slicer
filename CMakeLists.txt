@@ -1068,6 +1068,8 @@ configure_file(
 #
 # * List of external project names is extracted from the "External_<projectName>.cmake"
 #   files and appended to Slicer_DEPENDENCIES. This ensures they are build before Slicer inner build.
+#   Setting variable "<extension_name>_EXTERNAL_PROJECT_DEPENDENCIES" to a list of <projectName> allows
+#   to override the list of <projectName> appended to Slicer_DEPENDENCIES.
 #
 # * Variable Slicer_BUNDLED_EXTENSION_NAMES is updated with the names of external project
 #   and passed to Slicer inner build. It is then used in SlicerCPack. to package associated
