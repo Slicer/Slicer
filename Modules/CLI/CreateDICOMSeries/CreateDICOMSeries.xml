@@ -14,21 +14,21 @@
     <string>
       <name>patientName</name>
       <longflag>--patientName</longflag>
-      <description><![CDATA[The name of the patient [0010-0010]]]></description>
+      <description><![CDATA[The name of the patient (0010,0010)]]></description>
       <label>Patient Name</label>
       <default>Anonymous</default>
     </string>
     <string>
       <name>patientID</name>
       <longflag>--patientID</longflag>
-      <description><![CDATA[The patient ID [0010-0020]]]></description>
+      <description><![CDATA[The patient ID (0010,0020)]]></description>
       <label>Patient ID</label>
       <default>123456</default>
     </string>
     <string>
       <name>patientComments</name>
       <longflag>--patientComments</longflag>
-      <description><![CDATA[Patient comments [0010-4000]]]></description>
+      <description><![CDATA[Patient comments (0010,4000)]]></description>
       <label>Patient Comments</label>
       <default>None</default>
     </string>
@@ -39,49 +39,56 @@
     <string>
       <name>studyID</name>
       <longflag>--studyID</longflag>
-      <description><![CDATA[The study ID [0020-0010]]]></description>
+      <description><![CDATA[The study ID (0020,0010)]]></description>
       <label>Study ID</label>
       <default>123456</default>
     </string>
     <string>
       <name>studyDate</name>
       <longflag>--studyDate</longflag>
-      <description><![CDATA[The date of the study [0008-0020]]]></description>
+      <description><![CDATA[The date of the study (0008,0020)]]></description>
       <label>Study Date</label>
       <default>20060101</default>
     </string>
     <string>
+      <name>studyTime</name>
+      <longflag>--studyTime</longflag>
+      <description><![CDATA[The time of the study (0008,0030)]]></description>
+      <label>Study Time</label>
+      <default></default>
+    </string>
+    <string>
       <name>studyComments</name>
       <longflag>--studyComments</longflag>
-      <description><![CDATA[Study comments[0032-4000]]]></description>
+      <description><![CDATA[Study comments (0032,4000)]]></description>
       <label>Study Comments</label>
       <default>None</default>
     </string>
     <string>
       <name>studyDescription</name>
       <longflag>--studyDescription</longflag>
-      <description><![CDATA[Study description[0008-1030]]]></description>
+      <description><![CDATA[Study description (0008,1030)]]></description>
       <label>Study Descriptions</label>
       <default>None</default>
     </string>
     <string>
       <name>modality</name>
       <longflag>--modality</longflag>
-      <description><![CDATA[Modality [0008-0060]]]></description>
+      <description><![CDATA[Modality (0008,0060)]]></description>
       <label>Modality</label>
       <default>CT</default>
     </string>
     <string>
       <name>manufacturer</name>
       <longflag>--manufacturer</longflag>
-      <description><![CDATA[Manufacturer [0008-0070]]]></description>
+      <description><![CDATA[Manufacturer (0008,0070)]]></description>
       <label>Manufacturer</label>
       <default>GE Medical Systems</default>
     </string>
     <string>
       <name>model</name>
       <longflag>--model</longflag>
-      <description><![CDATA[model [0008-1090]]]></description>
+      <description><![CDATA[model (0008,1090)]]></description>
       <label>Model</label>
       <default>None</default>
     </string>
@@ -92,16 +99,30 @@
     <string>
       <name>seriesNumber</name>
       <longflag>--seriesNumber</longflag>
-      <description><![CDATA[The series number [0020-0011]]]></description>
+      <description><![CDATA[The series number (0020,0011)]]></description>
       <label>Series Number</label>
       <default>123456</default>
     </string>
     <string>
       <name>seriesDescription</name>
       <longflag>--seriesDescription</longflag>
-      <description><![CDATA[Series description [0008-103E]]]></description>
+      <description><![CDATA[Series description (0008,103E)]]></description>
       <label>Series Description</label>
       <default>None</default>
+    </string>
+    <string>
+      <name>seriesDate</name>
+      <longflag>--seriesDate</longflag>
+      <description><![CDATA[The date of the series (0008,0021)]]></description>
+      <label>Series Date</label>
+      <default></default>
+    </string>
+    <string>
+      <name>seriesTime</name>
+      <longflag>--seriesTime</longflag>
+      <description><![CDATA[The time of the series (0008,0031)]]></description>
+      <label>Series Time</label>
+      <default></default>
     </string>
   </parameters>
   <parameters advanced="true">
@@ -111,16 +132,55 @@
       <label>Rescale intercept</label>
       <name>rescaleIntercept</name>
       <longflag>--rescaleIntercept</longflag>
-      <description><![CDATA[Rescale interscept [0028-1052]. Converts pixel values on disk to pixel values in memory. (Pixel value in memory) = (Pixel value on disk) * rescaleSlope + rescaleIntercept.  Default is 0.0. Data values are converted on write (the data is scaled and shifted so that the slope and interscept will bring it back to the current intensity range).]]></description>
+      <description><![CDATA[Rescale interscept (0028,1052). Converts pixel values on disk to pixel values in memory. (Pixel value in memory) = (Pixel value on disk) * rescaleSlope + rescaleIntercept.  Default is 0.0. Data values are converted on write (the data is scaled and shifted so that the slope and interscept will bring it back to the current intensity range).]]></description>
       <default>0.0000</default>
     </double>
     <double>
       <label>Rescale slope</label>
       <name>rescaleSlope</name>
       <longflag>--rescaleSlope</longflag>
-      <description><![CDATA[Rescale slope [0028-1053]. Converts pixel values on disk to pixel values in memory. (Pixel value in memory) = (Pixel value on disk) * rescaleSlope + rescaleInterscept.  Default is 1.0. Data values are converted on write (the data is scaled and shifted so that the slope and interscept will bring it back to the current intensity range).]]></description>
+      <description><![CDATA[Rescale slope (0028,1053). Converts pixel values on disk to pixel values in memory. (Pixel value in memory) = (Pixel value on disk) * rescaleSlope + rescaleInterscept.  Default is 1.0. Data values are converted on write (the data is scaled and shifted so that the slope and interscept will bring it back to the current intensity range).]]></description>
       <default>1.0000</default>
     </double>
+    <string>
+      <name>contentDate</name>
+      <longflag>--contentDate</longflag>
+      <description><![CDATA[The date of the image content (0008,0023)]]></description>
+      <label>Content Date</label>
+      <default></default>
+    </string>
+    <string>
+      <name>contentTime</name>
+      <longflag>--contentTime</longflag>
+      <description><![CDATA[The time of the image content (0008,0033)]]></description>
+      <label>Content Time</label>
+      <default></default>
+    </string>
+  </parameters>
+  <parameters advanced="true">
+    <label>Unique Identifiers (UIDs)</label>
+    <description><![CDATA[Unique identifiers (UIDs) that allow appending frames to existing studies or series. To generate UIDs automatically, leave all of them blank.]]></description>
+    <string>
+      <name>studyInstanceUID</name>
+      <longflag>--studyInstanceUID</longflag>
+      <description><![CDATA[The study instance UID (0020,000d)]]></description>
+      <label>Study Instance UID</label>
+      <default></default>
+    </string>
+    <string>
+      <name>seriesInstanceUID</name>
+      <longflag>--seriesInstanceUID</longflag>
+      <description><![CDATA[The series instance UID (0020,000e)]]></description>
+      <label>Series Instance UID</label>
+      <default></default>
+    </string>
+    <string>
+      <name>frameOfReferenceInstanceUID</name>
+      <longflag>--frameOfReferenceInstanceUID</longflag>
+      <description><![CDATA[The frame of reference instance UID (0020,0052)]]></description>
+      <label>Frame of Reference Instance UID</label>
+      <default></default>
+    </string>
   </parameters>
   <parameters>
     <label>Input</label>
