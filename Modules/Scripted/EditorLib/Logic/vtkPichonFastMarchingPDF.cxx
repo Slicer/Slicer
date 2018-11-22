@@ -10,38 +10,53 @@
 // EditorLib includes
 #include "vtkPichonFastMarchingPDF.h"
 
+#ifdef _WIN32 // WINDOWS
+
+  #include <float.h>
+  #define finite(x) _finite(x)
+
+  #ifndef min
+  #define min(a,b) (((a)<(b))?(a):(b))
+  #endif
+
+  #ifndef M_PI
+  #define M_PI 3.1415926535898
+  #endif
+
+#else // UNIX
+
+  #if defined(sun) || defined(__sun)
+  #include <math.h>
+  #include <ieeefp.h>
+  #endif
+
+#endif
+
 // VTK includes
 #include <vtkMath.h>
-#include <vtkObjectFactory.h>
 
-vtkPichonFastMarchingPDF::vtkPichonFastMarchingPDF( int _realizationMax )
+PichonFastMarchingPDF::PichonFastMarchingPDF( int _realizationMax )
 {
   sigma2SmoothPDF=0.25;
 
   this->realizationMax=_realizationMax;
 
   bins = new int [realizationMax+1];
-  //  assert( bins!=NULL );
-  if(!(bins!=NULL))
+  if(bins==NULL)
     {
-      vtkErrorMacro("Error in vtkFastMarching, vtkPichonFastMarchingPDF::vtkPichonFastMarchingPDF(...), not enough memory for allocation of 'bins'");
-      return;
+    vtkGenericWarningMacro("Error in vtkFastMarching, PichonFastMarchingPDF::PichonFastMarchingPDF(...), not enough memory for allocation of 'bins'");
     }
 
   smoothedBins = new double [realizationMax+1];
-  //  assert( smoothedBins!=NULL );
-  if(!(smoothedBins!=NULL))
+  if(smoothedBins==NULL)
     {
-      vtkErrorMacro("Error in vtkFastMarching, vtkPichonFastMarchingPDF::vtkPichonFastMarchingPDF(...), not enough memory for allocation of 'smoothedBins'");
-      return;
+    vtkGenericWarningMacro("Error in vtkFastMarching, PichonFastMarchingPDF::PichonFastMarchingPDF(...), not enough memory for allocation of 'smoothedBins'");
     }
 
   coefGauss = new double[realizationMax+1];
-  //  assert( coefGauss!=NULL );
-  if(!(bins!=NULL))
+  if(bins==NULL)
     {
-      vtkErrorMacro("Error in vtkFastMarching, vtkPichonFastMarchingPDF::vtkPichonFastMarchingPDF(...), not enough memory for allocation of 'bins'");
-      return;
+    vtkGenericWarningMacro("Error in vtkFastMarching, PichonFastMarchingPDF::PichonFastMarchingPDF(...), not enough memory for allocation of 'bins'");
     }
 
   reset();
@@ -51,10 +66,7 @@ vtkPichonFastMarchingPDF::vtkPichonFastMarchingPDF( int _realizationMax )
   updateRate=1000;
 }
 
-//----------------------------------------------------------------------------
-vtkStandardNewMacro(vtkPichonFastMarchingPDF);
-
-vtkPichonFastMarchingPDF::~vtkPichonFastMarchingPDF()
+PichonFastMarchingPDF::~PichonFastMarchingPDF()
 {
   reset(); // to empty the containers
 
@@ -63,15 +75,12 @@ vtkPichonFastMarchingPDF::~vtkPichonFastMarchingPDF()
   delete [] coefGauss;
 }
 
-void vtkPichonFastMarchingPDF::reset( void )
+void PichonFastMarchingPDF::reset( void )
 {
   counter=0;
 
-  while( inBins.size()>0 )
-    inBins.pop_back();
-
-  while( toBeAdded.size()>0 )
-    toBeAdded.pop_back();
+  inBins.clear();
+  toBeAdded.clear();
 
   m1=m2=0.0;
   sigma2=mean=0.0;
@@ -82,16 +91,16 @@ void vtkPichonFastMarchingPDF::reset( void )
   nRealInBins=0;
 }
 
-bool vtkPichonFastMarchingPDF::willUseGaussian( void )
+bool PichonFastMarchingPDF::willUseGaussian( void )
 {
   return nRealInBins<50*sqrt(sigma2);
 }
 
-double vtkPichonFastMarchingPDF::value( int k )
+double PichonFastMarchingPDF::value( int k )
 {
   if( !( (k>=0) && (k<=realizationMax) ) )
     {
-      vtkErrorMacro( "Error in vtkPichonFastMarchingPDF::value(k)!" << endl
+      vtkGenericWarningMacro( "Error in PichonFastMarchingPDF::value(k)!" << endl
              << "k=" << k << " realizationMax="
              << realizationMax << endl );
 
@@ -106,17 +115,17 @@ double vtkPichonFastMarchingPDF::value( int k )
   return valueGauss( k );
 }
 
-double vtkPichonFastMarchingPDF::valueGauss( int k )
+double PichonFastMarchingPDF::valueGauss( int k )
 {
   return 1.0/sqrt(2*M_PI*sigma2)*exp( -0.5*(double(k)-mean)*(double(k)-mean)/sigma2 );
 }
 
-double vtkPichonFastMarchingPDF::valueHisto( int k )
+double PichonFastMarchingPDF::valueHisto( int k )
 {
   return smoothedBins[k];
 }
 
-void vtkPichonFastMarchingPDF::update( void )
+void PichonFastMarchingPDF::update( void )
 {
   int r;
 
@@ -152,8 +161,8 @@ void vtkPichonFastMarchingPDF::update( void )
   //assert( nRealInBins>0 );
   if(!( nRealInBins>0 ))
     {
-      vtkErrorMacro("Error in vtkFastMarching, vtkPichonFastMarchingPDF::vtkPichonFastMarchingPDF(...), !nRealInBins>0");
-      return;
+    vtkGenericWarningMacro("Error in vtkFastMarching, PichonFastMarchingPDF::PichonFastMarchingPDF(...), !nRealInBins>0");
+    return;
     }
 
 
@@ -192,13 +201,13 @@ void vtkPichonFastMarchingPDF::update( void )
   }
 }
 
-void vtkPichonFastMarchingPDF::addRealization( int k )
+void PichonFastMarchingPDF::addRealization( int k )
 {
   //assert(vtkMath::IsFinite(k)!=0);
   if(!(vtkMath::IsFinite(k)!=0))
     {
-      vtkErrorMacro("Error in vtkFastMarching, vtkPichonFastMarchingPDF::vtkPichonFastMarchingPDF(...), !(vtkMath::IsFinite(k)!=0)");
-      return;
+    vtkGenericWarningMacro("Error in vtkFastMarching, PichonFastMarchingPDF::PichonFastMarchingPDF(...), !(vtkMath::IsFinite(k)!=0)");
+    return;
     }
 
   toBeAdded.push_front(k);
@@ -216,18 +225,18 @@ void vtkPichonFastMarchingPDF::addRealization( int k )
 }
 
 /*
-bool vtkPichonFastMarchingPDF::isUnlikelyGauss( double k )
+bool PichonFastMarchingPDF::isUnlikelyGauss( double k )
 {
   return fabs( k-getMean() )>3.0*sqrt( getSigma2() );
 }
 
-bool vtkPichonFastMarchingPDF::isUnlikelyBigGauss( double k )
+bool PichonFastMarchingPDF::isUnlikelyBigGauss( double k )
 {
   return ( k-getMean() ) > ( 2.0*sqrt( getSigma2() ) );
 }
 */
 
-void vtkPichonFastMarchingPDF::show( void )
+void PichonFastMarchingPDF::show( void )
 {
   cout << "realizationMax=" << realizationMax << endl;
   cout << "nRealInBins=" <<  nRealInBins << endl;
@@ -240,12 +249,12 @@ void vtkPichonFastMarchingPDF::show( void )
   cout << "---" << endl;
 }
 
-void vtkPichonFastMarchingPDF::setMemory( int mem )
+void PichonFastMarchingPDF::setMemory( int mem )
 {
   memorySize=mem;
 }
 
-void vtkPichonFastMarchingPDF::setUpdateRate( int rate )
+void PichonFastMarchingPDF::setUpdateRate( int rate )
 {
   updateRate=rate;
 

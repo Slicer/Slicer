@@ -12,6 +12,7 @@
 
 // EditorLib includes
 #include "vtkPichonFastMarching.h"
+#include "vtkPichonFastMarchingPDF.h"
 
 // VTK includes
 #include <vtkInformation.h>
@@ -168,7 +169,7 @@ inline void vtkPichonFastMarching::getMedianInhomo( int index, int &med, int &in
 
 void vtkPichonFastMarching::initNewExpansion( void )
 {
-  if(somethingReallyWrong)
+  if(invalidInputs)
     return;
 
   pdfIntensityIn->reset();
@@ -237,7 +238,7 @@ void vtkPichonFastMarching::initNewExpansion( void )
 
 int vtkPichonFastMarching::nValidSeeds( void )
 {
-  if(somethingReallyWrong)
+  if(invalidInputs)
     return 0;
 
   return (int)(seedPoints.size()+tree.size());
@@ -245,7 +246,7 @@ int vtkPichonFastMarching::nValidSeeds( void )
 
 int vtkPichonFastMarching::nKnownPoints(void)
 {
-  if(somethingReallyWrong)
+  if(invalidInputs)
     return 0;
   return knownPoints.size();
 }
@@ -255,7 +256,7 @@ void vtkPichonFastMarchingExecute(vtkPichonFastMarching *self,
                 vtkImageData *vtkNotUsed(outData), short *outPtr,
                 int vtkNotUsed(outExt)[6])
 {
-  if(self->somethingReallyWrong)
+  if(self->invalidInputs)
     return;
   int n=0;
   int k;
@@ -270,43 +271,41 @@ void vtkPichonFastMarchingExecute(vtkPichonFastMarching *self,
     int index=0;
     int lastPercentageProgressBarUpdated=-1;
 
-
     for(k=0;k<self->dimZ;k++)
-      for(int j=0;j<self->dimY;j++)
-        for(int i=0;i<self->dimX;i++)
+      {
+      // update progress bar
+      int currentPercentage = GRANULARITY_PROGRESS * index / self->dimXYZ;
+      if (currentPercentage > lastPercentageProgressBarUpdated)
+        {
+        lastPercentageProgressBarUpdated = currentPercentage;
+        self->UpdateProgress(float(currentPercentage) / float(GRANULARITY_PROGRESS));
+        }
+      for (int j = 0; j<self->dimY; j++)
+        for (int i = 0; i<self->dimX; i++)
+        {
+          self->node[index].T = (float)INF;
+
+          if (self->outdata[index] == 0)
+            self->node[index].status = fmsFAR;
+          else
+            self->node[index].status = fmsDONE;
+
+          self->inhomo[index] = -1; // meaning inhomo and median have not been computed there
+
+          if ((i<BAND_OUT) || (j<BAND_OUT) || (k<BAND_OUT) ||
+            (i >= (self->dimX - BAND_OUT)) || (j >= (self->dimY - BAND_OUT)) || (k >= (self->dimZ - BAND_OUT)))
           {
 
-          self->node[index].T=(float)INF;
-
-          if(self->outdata[index]==0)
-            self->node[index].status=fmsFAR;
-          else
-            self->node[index].status=fmsDONE;
-
-          self->inhomo[index]=-1; // meaning inhomo and median have not been computed there
-
-          if( (i<BAND_OUT) || (j<BAND_OUT) ||  (k<BAND_OUT) ||
-            (i>=(self->dimX-BAND_OUT)) || (j>=(self->dimY-BAND_OUT)) || (k>=(self->dimZ-BAND_OUT)) )
-            {
-
-            // update progress bar
-            int currentPercentage = GRANULARITY_PROGRESS*index / self->dimXYZ;
-
-            if( currentPercentage > lastPercentageProgressBarUpdated )
-              {
-              lastPercentageProgressBarUpdated = currentPercentage;
-              self->UpdateProgress(float(currentPercentage)/float(GRANULARITY_PROGRESS));
-              }
-
-            self->node[index].status=fmsOUT;
+            self->node[index].status = fmsOUT;
 
             // we should never have to look at these values anyway !
-            self->inhomo[ index ] = self->depth;
-            self->median[ index ] = 0;
-            }
+            self->inhomo[index] = self->depth;
+            self->median[index] = 0;
+          }
 
           index++;
-          }
+        }
+      }
 
     return;
     }
@@ -319,7 +318,7 @@ void vtkPichonFastMarchingExecute(vtkPichonFastMarching *self,
     //assert(self->seedPoints.size()>0);
     if(!(self->seedPoints.size()>0))
       {
-      self->vtkErrorWrapper( "Error in vtkPichonFastMarchingExecute: !(self->seedPoints.size()>0)" );
+      vtkErrorWithObjectMacro(self, "Error in vtkPichonFastMarchingExecute: !(self->seedPoints.size()>0)" );
       self->firstCall=true; // we did not complete this step
       return;
       }
@@ -429,7 +428,7 @@ void vtkPichonFastMarchingExecute(vtkPichonFastMarching *self,
 
     if( T==INF )
       {
-      self->vtkErrorWrapper( "FastMarching: nowhere else to go. End of evolution." );
+      vtkErrorWithObjectMacro(self, "FastMarching: nowhere else to go. End of evolution." );
       break;
       }
     }
@@ -446,7 +445,7 @@ void vtkPichonFastMarchingExecute(vtkPichonFastMarching *self,
 
 void vtkPichonFastMarching::show(float r)
 {
-  if(somethingReallyWrong)
+  if(invalidInputs)
     return;
 
   //assert( (r>=0) && (r<=1.0) );
@@ -510,8 +509,8 @@ void vtkPichonFastMarching::ExecuteDataWithInformation(vtkDataObject *output, vt
   x1 = this->GetImageDataInput(0)->GetNumberOfScalarComponents();
   if (x1 != 1)
     {
-      vtkErrorMacro(<<"Input has "<<x1<<" instead of 1 scalar component.");
-      somethingReallyWrong = true;
+      vtkErrorMacro("Input has "<<x1<<" instead of 1 scalar component.");
+      invalidInputs = true;
       return;
     }
 
@@ -521,7 +520,7 @@ void vtkPichonFastMarching::ExecuteDataWithInformation(vtkDataObject *output, vt
     {
       vtkErrorMacro("Input scalars are type "<< s
             << " instead of "<< VTK_SHORT);
-      somethingReallyWrong = true;
+      invalidInputs = true;
       return;
     }
 
@@ -723,7 +722,14 @@ FMleaf vtkPichonFastMarching::removeSmallest( void ) {
 vtkPichonFastMarching::vtkPichonFastMarching()
 {
   initialized=false;
-  somethingReallyWrong=true;
+  invalidInputs=true;
+
+  node = NULL;
+  inhomo = NULL;
+  median = NULL;
+
+  pdfIntensityIn = NULL;
+  pdfInhomoIn = NULL;
 }
 
 void vtkPichonFastMarching::init(int _dimX, int _dimY, int _dimZ, double _depth, double _dx, double _dy, double _dz)
@@ -810,56 +816,52 @@ void vtkPichonFastMarching::init(int _dimX, int _dimY, int _dimZ, double _depth,
 
   this->depth = (int) _depth;
 
+  delete[] node;
   node = new FMnode[ dimX*dimY*dimZ ];
-  // assert( node!=NULL );
-  if(!(node!=NULL))
+  if(node==NULL)
     {
       vtkErrorMacro("Error in void vtkPichonFastMarching::init(), not enough memory for allocation of 'node'");
       return;
     }
 
+  delete[] inhomo;
   inhomo = new int[ dimX*dimY*dimZ ];
-  //  assert( inhomo!=NULL );
-  if(!(inhomo!=NULL))
+  if(inhomo==NULL)
     {
       vtkErrorMacro("Error in void vtkPichonFastMarching::init(), not enough memory for allocation of 'inhomo'");
       return;
     }
 
+  delete[] median;
   median = new int[ dimX*dimY*dimZ ];
-  //  assert( median!=NULL );
-  if(!(median!=NULL))
+  if(median==NULL)
     {
       vtkErrorMacro("Error in void vtkPichonFastMarching::init(), not enough memory for allocation of 'median'");
       return;
     }
 
-  pdfIntensityIn = new vtkPichonFastMarchingPDF( (int) _depth );
-  if(!(pdfIntensityIn!=NULL))
+  delete pdfIntensityIn;
+  pdfIntensityIn = new PichonFastMarchingPDF( (int) _depth );
+  if(pdfIntensityIn==NULL)
     {
       vtkErrorMacro("Error in void vtkPichonFastMarching::init(), not enough memory for allocation of 'pdfIntensityIn'");
       return;
     }
-#ifdef VTK_HAS_INITIALIZE_OBJECT_BASE
-  pdfIntensityIn->InitializeObjectBase();
-#endif
 
-  pdfInhomoIn = new vtkPichonFastMarchingPDF( (int) _depth );
-  if(!(pdfInhomoIn!=NULL))
+  delete pdfInhomoIn;
+  pdfInhomoIn = new PichonFastMarchingPDF( (int) _depth );
+  if(pdfInhomoIn==NULL)
     {
       vtkErrorMacro("Error in void vtkPichonFastMarching::init(), not enough memory for allocation of 'pdfInhomoIn'");
       return;
     }
-#ifdef VTK_HAS_INITIALIZE_OBJECT_BASE
-  pdfInhomoIn->InitializeObjectBase();
-#endif
 
   initialized=false; // we will need one pass in the execute
   // function before we are properly initialized
 
   firstCall = true;
 
-  somethingReallyWrong = false; // so far so good
+  invalidInputs = false; // so far so good
 }
 
 void vtkPichonFastMarching::setInData(short* data)
@@ -874,7 +876,17 @@ void vtkPichonFastMarching::setOutData(short* data)
 
 vtkPichonFastMarching::~vtkPichonFastMarching()
 {
-  /* all the delete are done by unInit() */
+  delete[] node;
+  node = NULL;
+  delete[] inhomo;
+  inhomo = NULL;
+  delete[] median;
+  median = NULL;
+
+  delete pdfIntensityIn;
+  pdfIntensityIn = NULL;
+  delete pdfInhomoIn;
+  pdfInhomoIn = NULL;
 }
 
 inline int vtkPichonFastMarching::shiftNeighbor(int n)
@@ -918,7 +930,7 @@ int vtkPichonFastMarching::indexFather(int n )
 
 float vtkPichonFastMarching::step( void )
 {
-  if(somethingReallyWrong)
+  if(invalidInputs)
     return (float)INF;
 
   int indexN;
@@ -1161,8 +1173,8 @@ void vtkPichonFastMarching::setRAStoIJKmatrix
 
 int vtkPichonFastMarching::addSeed( float r, float a, float s )
 {
-  if(somethingReallyWrong){
-    cout << "Something really wrong" << endl;
+  if(invalidInputs){
+    vtkErrorMacro("vtkPichonFastMarching::addSeed failed: no valid inputs specified");
     return 0;
   }
 
@@ -1195,8 +1207,8 @@ int vtkPichonFastMarching::addSeed( float r, float a, float s )
 
 int vtkPichonFastMarching::addSeedIJK( int I, int J, int K )
 {
-  if(somethingReallyWrong){
-    cout << "Something really wrong" << endl;
+  if(invalidInputs){
+    vtkErrorMacro("vtkPichonFastMarching::addSeedIJK failed: no valid inputs specified");
     return 0;
   }
 
@@ -1258,43 +1270,6 @@ int vtkPichonFastMarching::addSeedsFromImage(vtkImageData* label)
 
   return nSeeds;
 }
-
-void vtkPichonFastMarching::unInit( void )
-{
-  //assert( initialized );
-  if(!initialized)
-    {
-      vtkErrorMacro("Error in vtkPichonFastMarching::unInit(): !initialized");
-      return;
-    }
-
-  if(somethingReallyWrong)
-    return;
-
-  delete [] node;
-  delete [] inhomo;
-  delete [] median;
-
-  // these are VTK objects, they should be destroyed by VTK's
-  // garbage collector
-
-  pdfIntensityIn->Delete();
-  pdfInhomoIn->Delete();
-
-  //  delete pdfIntensityIn;
-  //  delete pdfInhomoIn;
-
-  while(tree.size()>0)
-    tree.pop_back();
-
-  while(knownPoints.size()>0)
-    {
-      knownPoints.pop_back();
-    }
-
-  initialized = false;
-}
-
 
 char *vtkPichonFastMarching::cxxVersionString(void)
 {

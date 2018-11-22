@@ -10,7 +10,6 @@
 #define __vtkPichonFastMarching_h
 
 #include "vtkSlicerEditorLibModuleLogicExport.h"
-#include "vtkPichonFastMarchingPDF.h"
 
 // VTK includes
 #include <vtkImageData.h>
@@ -56,6 +55,8 @@ struct FMleaf {
 typedef std::vector<FMleaf> VecFMleaf;
 typedef std::vector<int> VecInt;
 
+class PichonFastMarchingPDF;
+
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 class VTK_SLICER_EDITORLIB_MODULE_LOGIC_EXPORT vtkPichonFastMarching
@@ -65,13 +66,6 @@ public:
   static vtkPichonFastMarching *New();
   vtkTypeMacro(vtkPichonFastMarching,vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
-
-  void vtkErrorWrapper( const char* s)
-    {
-      vtkErrorMacro( << s );
-    };
-
-  void unInit( void );
 
   void init(int dimX, int dimY, int dimZ, double depth, double dx, double dy, double dz);
 
@@ -118,7 +112,7 @@ private:
   //pb wrap  vtkPichonFastMarching()(const vtkPichonFastMarching&);
   //pb wrap  void operator=(const vtkPichonFastMarching&);
 
-  bool somethingReallyWrong;
+  bool invalidInputs;
 
   double powerSpeed;
 
@@ -190,8 +184,8 @@ private:
   VecFMleaf tree;
   ///  vector<FMleaf> tree;
 
-  vtkPichonFastMarchingPDF *pdfIntensityIn;
-  vtkPichonFastMarchingPDF *pdfInhomoIn;
+  PichonFastMarchingPDF *pdfIntensityIn;
+  PichonFastMarchingPDF *pdfInhomoIn;
 
   bool firstPassThroughShow;
 

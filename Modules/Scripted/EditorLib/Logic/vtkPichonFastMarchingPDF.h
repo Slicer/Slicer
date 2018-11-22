@@ -11,34 +11,6 @@
 
 #include "vtkSlicerEditorLibModuleLogicExport.h"
 
-#ifdef _WIN32 /// WINDOWS
-
-#include <float.h>
-#define finite(x) _finite(x)
-
-#ifndef min
-#define min(a,b) (((a)<(b))?(a):(b))
-#endif
-
-#ifndef M_PI
-#define M_PI 3.1415926535898
-#endif
-
-#include <deque>
-
-#else /// UNIX
-
-#if defined(sun) || defined(__sun)
-#include <math.h>
-#include <ieeefp.h>
-#endif
-#include <deque>
-
-#endif
-
-#include <vtkObject.h>
-
-
 /*
 
 This class is used by vtkFastMarching to estimate the probability density function
@@ -46,19 +18,17 @@ of Intensity and Inhomogeneity
 
 */
 
-class VTK_SLICER_EDITORLIB_MODULE_LOGIC_EXPORT vtkPichonFastMarchingPDF : public vtkObject
+#include <deque>
+
+class PichonFastMarchingPDF
 {
 public:
 
   double getMean( void ) { return mean; };
   double getSigma2( void ) { return sigma2; };
 
-
-  vtkPichonFastMarchingPDF(){};
-  vtkPichonFastMarchingPDF( int realizationMax );
-  ~vtkPichonFastMarchingPDF();
-
-  static vtkPichonFastMarchingPDF* New();
+  PichonFastMarchingPDF( int realizationMax );
+  ~PichonFastMarchingPDF();
 
   void setMemory( int mem );
   void setUpdateRate( int rate );
@@ -77,10 +47,6 @@ public:
   */
 
   void show( void );
-
-  const char* GetClassName(void)
-    {return "vtkPichonFastMarchingPDF"; };
-
 
   friend class vtkFastMarching;
 
@@ -117,4 +83,3 @@ public:
 };
 
 #endif
-
