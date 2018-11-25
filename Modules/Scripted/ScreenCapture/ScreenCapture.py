@@ -830,7 +830,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
       # force rendering of all views
       lm = slicer.app.layoutManager()
       for viewIndex in range(lm.threeDViewCount):
-        lm.threeDWidget(0).threeDView().forceRender()
+        lm.threeDWidget(viewIndex).threeDView().forceRender()
       for sliceViewName in lm.sliceViewNames():
         lm.sliceWidget(sliceViewName).sliceView().forceRender()
 
