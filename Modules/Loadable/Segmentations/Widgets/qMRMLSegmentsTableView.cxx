@@ -1274,44 +1274,7 @@ QString qMRMLSegmentsTableView::terminologyTooltipForSegment(vtkSegment* segment
     return QString("Invalid terminology information");
     }
 
-  QString terminology = QString("Terminology:");
-  terminology = terminology + QString("\n  Context: %1").arg(terminologyEntry->GetTerminologyContextName());
-
-  if (terminologyEntry->GetCategoryObject())
-    {
-    terminology = terminology + QString("\n  Category: %1").arg(terminologyEntry->GetCategoryObject()->GetCodeMeaning());
-    }
-  else
-    {
-    terminology = terminology + QString("\n  Category: NONE");
-    }
-  if (terminologyEntry->GetTypeObject())
-    {
-    terminology = terminology + QString("\n  Type: %1").arg(terminologyEntry->GetTypeObject()->GetCodeMeaning());
-    }
-  else
-    {
-    terminology = terminology + QString("\n  Type: NONE");
-    }
-  if (terminologyEntry->GetTypeModifierObject() && terminologyEntry->GetTypeModifierObject()->GetCodeValue())
-    {
-    terminology = terminology + QString("\n    Modifier: %1").arg(terminologyEntry->GetTypeModifierObject()->GetCodeMeaning());
-    }
-
-  // If anatomic region is not selected, then do not show anatomic context name either
-  if (terminologyEntry->GetAnatomicContextName()
-    && terminologyEntry->GetAnatomicRegionObject() && terminologyEntry->GetAnatomicRegionObject()->GetCodeValue() )
-    {
-    terminology = terminology + QString("\n  Anatomic context: %1").arg(terminologyEntry->GetAnatomicContextName());
-    terminology = terminology + QString("\n  Anatomic region: %1").arg(terminologyEntry->GetAnatomicRegionObject()->GetCodeMeaning());
-
-    if (terminologyEntry->GetAnatomicRegionModifierObject() && terminologyEntry->GetAnatomicRegionModifierObject()->GetCodeValue())
-      {
-      terminology = terminology + QString("\n    Modifier: %1").arg(terminologyEntry->GetAnatomicRegionModifierObject()->GetCodeMeaning());
-      }
-    }
-
-  return terminology;
+  return QString(terminologiesLogic->GetInfoStringFromTerminologyEntry(terminologyEntry).c_str());
 }
 
 // --------------------------------------------------------------------------

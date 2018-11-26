@@ -199,6 +199,9 @@ public:
   ///  \return Success flag
   bool DeserializeTerminologyEntry(std::string serializedEntry, vtkSlicerTerminologyEntry* entry);
 
+  /// Assemble human readable info string from a terminology entry, for example for tooltips
+  static std::string GetInfoStringFromTerminologyEntry(vtkSlicerTerminologyEntry* entry);
+
 public:
   vtkGetStringMacro(UserContextsPath);
   vtkSetStringMacro(UserContextsPath);
