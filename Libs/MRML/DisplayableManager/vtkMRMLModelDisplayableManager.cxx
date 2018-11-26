@@ -910,20 +910,29 @@ void vtkMRMLModelDisplayableManager::UpdateModelsFromMRML()
   vtkMRMLScene *scene = this->GetMRMLScene();
   vtkMRMLNode *node = 0;
   std::vector<vtkMRMLDisplayableNode *> slices;
+  static const int NUMBER_OF_SLICE_MODEL_NODES = 3;
+  static const char* SLICE_MODEL_NODE_NAMES[NUMBER_OF_SLICE_MODEL_NODES] = { "Red Volume Slice", "Green Volume Slice", "Yellow Volume Slice" };
 
   // find volume slices
   bool clearDisplayedModels = scene ? false : true;
 
   std::vector<vtkMRMLNode *> dnodes;
   int nnodes = scene ? scene->GetNodesByClass("vtkMRMLDisplayableNode", dnodes) : 0;
-  for (int n = 0; n<nnodes && !clearDisplayedModels; n++)
+  for (int n = 0; n<nnodes; n++)
     {
     node = dnodes[n];
     vtkMRMLDisplayableNode *model = vtkMRMLDisplayableNode::SafeDownCast(node);
     // render slices last so that transparent objects are rendered in front of them
-    if (!strcmp(model->GetName(), "Red Volume Slice") ||
-        !strcmp(model->GetName(), "Green Volume Slice") ||
-        !strcmp(model->GetName(), "Yellow Volume Slice"))
+    bool isSliceNode = false;
+    for (int sliceIndex = 0; sliceIndex < NUMBER_OF_SLICE_MODEL_NODES; sliceIndex++)
+      {
+      if (!strcmp(model->GetName(), SLICE_MODEL_NODE_NAMES[sliceIndex]))
+        {
+        isSliceNode = true;
+        break;
+        }
+      }
+    if (isSliceNode)
       {
       slices.push_back(model);
 
@@ -937,6 +946,12 @@ void vtkMRMLModelDisplayableManager::UpdateModelsFromMRML()
           break;
           }
         }
+      }
+    if (clearDisplayedModels && slices.size() == NUMBER_OF_SLICE_MODEL_NODES)
+      {
+      // We have found all the slice nodes and we'll remove all existing display nodes anyway,
+      // so there is no point in continuing.
+      break;
       }
     }
 
@@ -976,16 +991,22 @@ void vtkMRMLModelDisplayableManager::UpdateModelsFromMRML()
     }
 
   // render the rest of the models
-  //int nmodels = scene->GetNumberOfNodesByClass("vtkMRMLDisplayableNode");
   for (int n=0; n<nnodes; n++)
     {
     vtkMRMLDisplayableNode *model = vtkMRMLDisplayableNode::SafeDownCast(dnodes[n]);
     // render slices last so that transparent objects are rendered in front of them
     if (model)
       {
-      if (!strcmp(model->GetName(), "Red Volume Slice") ||
-          !strcmp(model->GetName(), "Green Volume Slice") ||
-          !strcmp(model->GetName(), "Yellow Volume Slice"))
+      bool isSliceNode = false;
+      for (int sliceIndex = 0; sliceIndex < NUMBER_OF_SLICE_MODEL_NODES; sliceIndex++)
+        {
+        if (!strcmp(model->GetName(), SLICE_MODEL_NODE_NAMES[sliceIndex]))
+          {
+          isSliceNode = true;
+          break;
+          }
+        }
+      if (isSliceNode)
         {
         continue;
         }
