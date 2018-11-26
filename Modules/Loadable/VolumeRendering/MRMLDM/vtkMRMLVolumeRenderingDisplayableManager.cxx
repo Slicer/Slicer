@@ -804,6 +804,8 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
   vtkVolumeProperty* volumeProperty = displayNode->GetVolumePropertyNode() ? displayNode->GetVolumePropertyNode()->GetVolumeProperty() : NULL;
   pipeline->VolumeActor->SetProperty(volumeProperty);
 
+  pipeline->VolumeActor->SetPickable(volumeNode->GetSelectable());
+
   this->UpdateDesiredUpdateRate(displayNode);
 }
 

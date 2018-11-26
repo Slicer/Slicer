@@ -206,6 +206,11 @@ public:
 
   virtual const char* GetDisplayNodeReferenceRole();
 
+  ///
+  /// Override default selectable setting to notify display node
+  /// about the change.
+  virtual void SetSelectable(int) VTK_OVERRIDE;
+
  protected:
   vtkMRMLDisplayableNode();
   ~vtkMRMLDisplayableNode();

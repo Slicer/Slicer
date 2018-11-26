@@ -525,6 +525,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayNodePip
     pipeline->Actor->GetProperty()->SetColor(color[0], color[1], color[2]);
     pipeline->Actor->GetProperty()->SetOpacity(properties.Opacity3D * displayNode->GetOpacity3D());
 
+    pipeline->Actor->SetPickable(segmentationNode->GetSelectable());
     if (displayNode->GetSelected())
       {
       pipeline->Actor->GetProperty()->SetAmbient(displayNode->GetSelectedAmbient());

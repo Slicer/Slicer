@@ -329,3 +329,14 @@ void vtkMRMLDisplayableNode::GetBounds(double bounds[6])
 {
   vtkMath::UninitializeBounds(bounds);
 }
+
+//----------------------------------------------------------------------------
+void vtkMRMLDisplayableNode::SetSelectable(int selectable)
+{
+  bool modified = (selectable != this->Selectable);
+  Superclass::SetSelectable(selectable);
+  if (modified)
+    {
+    this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, this);
+    }
+}
