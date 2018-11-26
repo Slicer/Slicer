@@ -76,6 +76,9 @@ public:
   /// Convenience function to get name for subject hierarchy item
   QString subjectHierarchyItemName(vtkIdType itemID);
 
+  /// Get terminologies module logic. If not found in cache get from module object
+  vtkSlicerTerminologiesModuleLogic* terminologiesModuleLogic();
+
 public:
   vtkSmartPointer<vtkCallbackCommand> CallBack;
   int PendingItemModified;

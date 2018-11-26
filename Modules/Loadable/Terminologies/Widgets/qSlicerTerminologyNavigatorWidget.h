@@ -37,8 +37,9 @@
 
 class qSlicerTerminologyNavigatorWidgetPrivate;
 
-class QTableWidgetItem;
 class QColor;
+class QTableWidgetItem;
+class QItemSelection;
 class vtkSlicerTerminologyCategory;
 class vtkSlicerTerminologyType;
 
@@ -56,7 +57,13 @@ class Q_SLICER_MODULE_TERMINOLOGIES_WIDGETS_EXPORT qSlicerTerminologyNavigatorWi
   enum TerminologyItemDataRole
     {
     CodingSchemeDesignatorRole = Qt::UserRole + 100,
-    CodeValueRole
+    CodeValueRole,
+    // Roles for type items referencing category
+    CategoryCodingSchemeDesignatorRole,
+    CategoryCodeValueRole,
+    CategoryCodeMeaningRole,
+    // Last role (always keep last)
+    LastTerminologyRole
     };
 
 public:
@@ -112,9 +119,11 @@ public slots:
   /// Show/hide anatomic region section section
   void setAnatomicRegionSectionVisible(bool);
 
+protected:
   /// Set current terminology to widget
   void setCurrentTerminology(QString terminologyName);
-  /// Set current category to widget
+  /// Set current category to widget.
+  /// Only used when setting the category from a given entry to the widget!
   /// \return Flag indicating whether the given category was found in the category table
   bool setCurrentCategory(vtkSlicerTerminologyCategory* category);
   /// Set current type to widget
@@ -154,8 +163,8 @@ protected:
 
 protected slots:
   void onTerminologySelectionChanged(int);
-  void onCategorySelected(QTableWidgetItem*,QTableWidgetItem*);
-  void onTypeSelected(QTableWidgetItem*,QTableWidgetItem*);
+  void onCategorySelectionChanged();
+  void onTypeSelected(QTableWidgetItem*, QTableWidgetItem*);
   void onTypeModifierSelectionChanged(int);
   void onCategorySearchTextChanged(QString);
   void onTypeSearchTextChanged(QString);

@@ -177,6 +177,25 @@ QStandardItem* qMRMLSubjectHierarchyModelPrivate::insertSubjectHierarchyItem(vtk
 }
 
 //------------------------------------------------------------------------------
+vtkSlicerTerminologiesModuleLogic* qMRMLSubjectHierarchyModelPrivate::terminologiesModuleLogic()
+{
+  if (this->TerminologiesModuleLogic)
+    {
+    return this->TerminologiesModuleLogic;
+    }
+
+  vtkSlicerTerminologiesModuleLogic* terminologiesLogic = NULL;
+  qSlicerAbstractCoreModule* terminologiesModule =
+    qSlicerCoreApplication::application()->moduleManager()->module("Terminologies");
+  if (terminologiesModule)
+    {
+    terminologiesLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(terminologiesModule->logic());
+    }
+  return terminologiesLogic;
+}
+
+
+//------------------------------------------------------------------------------
 // qMRMLSubjectHierarchyModel
 //------------------------------------------------------------------------------
 qMRMLSubjectHierarchyModel::qMRMLSubjectHierarchyModel(QObject *_parent)
@@ -1016,22 +1035,14 @@ void qMRMLSubjectHierarchyModel::updateItemDataFromSubjectHierarchyItem(QStandar
     item->setData(color, Qt::DecorationRole);
 
     // Assemble and set tooltip
-    vtkSlicerTerminologiesModuleLogic* terminologiesLogic = NULL;
-    qSlicerAbstractCoreModule* terminologiesModule = qSlicerCoreApplication::application()->moduleManager()->module("Terminologies");
-    if (terminologiesModule)
-      {
-      terminologiesLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(terminologiesModule->logic());
-      }
-    else
+    vtkSlicerTerminologiesModuleLogic* terminologiesLogic = d->terminologiesModuleLogic();
+    if (!terminologiesLogic)
       {
       qCritical() << Q_FUNC_INFO << ": Terminologies module is not found";
       }
     vtkSmartPointer<vtkSlicerTerminologyEntry> terminologyEntry = vtkSmartPointer<vtkSlicerTerminologyEntry>::New();
-    if (!terminologiesLogic->DeserializeTerminologyEntry(
-      item->data(qSlicerTerminologyItemDelegate::TerminologyRole).toString().toLatin1().constData(), terminologyEntry))
-      {
-      qCritical() << Q_FUNC_INFO << ": Invalid terminology information";
-      }
+    terminologiesLogic->DeserializeTerminologyEntry(
+      item->data(qSlicerTerminologyItemDelegate::TerminologyRole).toString().toLatin1().constData(), terminologyEntry);
     item->setToolTip(terminologiesLogic->GetInfoStringFromTerminologyEntry(terminologyEntry).c_str());
     }
   // Transform column
@@ -1050,7 +1061,7 @@ void qMRMLSubjectHierarchyModel::updateItemDataFromSubjectHierarchyItem(QStandar
       QString transformNodeId( parentTransformNode ? parentTransformNode->GetID() : "" );
       QString transformNodeName( parentTransformNode ? parentTransformNode->GetName() : "" );
       // Only change item if the transform itself changed
-      if (item->data().compare(transformNodeId))
+      if (item->data().toString().compare(transformNodeId))
         {
         item->setData(transformNodeId, TransformIDRole);
         item->setToolTip( parentTransformNode ? tr("%1 (%2)").arg(parentTransformNode->GetName()).arg(parentTransformNode->GetID()) : "" );
