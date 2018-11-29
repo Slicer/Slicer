@@ -93,8 +93,7 @@ class SegmentEditorSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin
     segmentationNode = editorWidget.parameterSetNode.GetSegmentationNode()
     import vtkSegmentationCorePython as vtkSegmentationCore
     if segmentationNode is None or segmentationNode.GetSegmentation().GetNumberOfSegments() > 0:
-      segmentationNode = slicer.vtkMRMLSegmentationNode()
-      slicer.mrmlScene.AddNode(segmentationNode)
+      segmentationNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentationNode')
       editorWidget.parameterSetNode.SetAndObserveSegmentationNode(segmentationNode)
     # Name segmentation node based on the volume
     segmentationNode.SetName(volumeNode.GetName() + '_Segmentation')

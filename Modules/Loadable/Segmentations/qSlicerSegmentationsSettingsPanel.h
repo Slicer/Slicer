@@ -33,6 +33,7 @@
 
 class QSettings;
 class qSlicerSegmentationsSettingsPanelPrivate;
+class vtkSlicerSegmentationsModuleLogic;
 
 class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsSettingsPanel
   : public ctkSettingsPanel
@@ -45,6 +46,10 @@ public:
   /// Constructor
   explicit qSlicerSegmentationsSettingsPanel(QWidget* parent = 0);
 
+  /// Segmentations logic is used for configuring default settings
+  void setSegmentationsLogic(vtkSlicerSegmentationsModuleLogic* logic);
+  vtkSlicerSegmentationsModuleLogic* segmentationsLogic()const;
+
   /// Destructor
   virtual ~qSlicerSegmentationsSettingsPanel();
 
@@ -52,6 +57,8 @@ public slots:
 
 protected slots:
   void setAutoOpacities(bool on);
+  void setDefaultSurfaceSmoothing(bool on);
+  void updateDefaultSegmentationNodeFromWidget();
 
 protected:
   QScopedPointer<qSlicerSegmentationsSettingsPanelPrivate> d_ptr;

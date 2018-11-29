@@ -36,8 +36,7 @@ class SegmentationWidgetsTest1(unittest.TestCase):
   #------------------------------------------------------------------------------
   def TestSection_01_GenerateInputData(self):
 
-    self.inputSegmentationNode = slicer.vtkMRMLSegmentationNode()
-    slicer.mrmlScene.AddNode(self.inputSegmentationNode)
+    self.inputSegmentationNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentationNode')
 
     # Create new segments
     import random
@@ -141,12 +140,12 @@ class SegmentationWidgetsTest1(unittest.TestCase):
     mrOrientedImageData.UnRegister(None)
 
     # Create segmentation node with binary labelmap master and one segment with MRHead geometry
-    segmentationNode = slicer.vtkMRMLSegmentationNode()
+    segmentationNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentationNode')
     segmentationNode.GetSegmentation().SetMasterRepresentationName(binaryLabelmapReprName)
     geometryStr = vtkSegmentationCore.vtkSegmentationConverter.SerializeImageGeometry(mrOrientedImageData)
     segmentationNode.GetSegmentation().SetConversionParameter(
       vtkSegmentationCore.vtkSegmentationConverter.GetReferenceImageGeometryParameterName(), geometryStr)
-    slicer.mrmlScene.AddNode(segmentationNode)
+
     threshold = vtk.vtkImageThreshold()
     threshold.SetInputData(mrOrientedImageData)
     threshold.ThresholdByUpper(16.0)

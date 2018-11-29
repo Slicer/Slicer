@@ -37,7 +37,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="2">
+   <item row="2" column="0" colspan="2">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -49,6 +49,29 @@
       </size>
      </property>
     </spacer>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="SurfaceSmoothingLabel">
+     <property name="toolTip">
+      <string>Automatically set opacities of the segments when loading from file based on which contains which, so that no segment obscures another</string>
+     </property>
+     <property name="text">
+      <string>Enable surface smoothing by default:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QCheckBox" name="SurfaceSmoothingCheckBox">
+     <property name="toolTip">
+      <string>Enable surface smoothing during binary labelmap to closed surface conversion in new segmentations. Smoothing improves apperance in 3D views and exported models but makes segment editing considerably slower.</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

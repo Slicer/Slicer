@@ -379,9 +379,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
       self.mergedLabelmapGeometryImage.SetExtent(labelsExpandedExtent)
 
       # Create and setup preview node
-      previewNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLSegmentationNode')
-      previewNode.UnRegister(None)
-      previewNode = slicer.mrmlScene.AddNode(previewNode)
+      previewNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSegmentationNode")
       previewNode.CreateDefaultDisplayNodes()
       previewNode.GetDisplayNode().SetVisibility2DOutline(False)
       if segmentationNode.GetParentTransformNode():

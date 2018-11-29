@@ -2266,3 +2266,70 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentatio
 
   return true;
 }
+
+// --------------------------------------------------------------------------
+vtkMRMLSegmentationNode* vtkSlicerSegmentationsModuleLogic::GetDefaultSegmentationNode()
+{
+  vtkMRMLScene* scene = this->GetMRMLScene();
+  if (!scene)
+    {
+    return NULL;
+    }
+
+  // Setup a default segmentation node so that the default settings are propagated to all new segmentation nodess
+  vtkSmartPointer<vtkMRMLNode> defaultNode = scene->GetDefaultNodeByClass("vtkMRMLSegmentationNode");
+  if (!defaultNode)
+    {
+    defaultNode.TakeReference(scene->CreateNodeByClass("vtkMRMLSegmentationNode"));
+    scene->AddDefaultNode(defaultNode);
+    }
+  return vtkMRMLSegmentationNode::SafeDownCast(defaultNode.GetPointer());
+}
+
+// --------------------------------------------------------------------------
+bool vtkSlicerSegmentationsModuleLogic::GetDefaultSurfaceSmoothingEnabled()
+{
+  vtkMRMLSegmentationNode* defaultSegmentationNode = this->GetDefaultSegmentationNode();
+  if (!defaultSegmentationNode || !defaultSegmentationNode->GetSegmentation())
+    {
+    return false;
+    }
+  std::string smoothingFactorStr = defaultSegmentationNode->GetSegmentation()->GetConversionParameter(
+      vtkBinaryLabelmapToClosedSurfaceConversionRule::GetSmoothingFactorParameterName());
+  if (smoothingFactorStr.empty())
+    {
+    return true; // enabled by default
+    }
+  double smoothingFactor = vtkVariant(smoothingFactorStr).ToDouble();
+  return (smoothingFactor > 0);
+}
+
+// --------------------------------------------------------------------------
+void vtkSlicerSegmentationsModuleLogic::SetDefaultSurfaceSmoothingEnabled(bool enabled)
+{
+  vtkMRMLSegmentationNode* defaultSegmentationNode = this->GetDefaultSegmentationNode();
+  if (!defaultSegmentationNode || !defaultSegmentationNode->GetSegmentation())
+    {
+    vtkErrorMacro("vtkSlicerSegmentationsModuleLogic::SetSurfaceSmoothingEnabledByDefault failed: invalid default segmentation node");
+    return;
+    }
+  std::string smoothingFactorStr = defaultSegmentationNode->GetSegmentation()->GetConversionParameter(
+    vtkBinaryLabelmapToClosedSurfaceConversionRule::GetSmoothingFactorParameterName());
+  double smoothingFactor = 0.5;
+  if (smoothingFactorStr.empty())
+    {
+    smoothingFactor = vtkVariant(smoothingFactorStr).ToDouble();
+    }
+  if (smoothingFactor == 0.0)
+    {
+    smoothingFactor = (enabled ? 0.5 : -0.5);
+    }
+  else if ((smoothingFactor > 0.0) != enabled)
+    {
+    smoothingFactor = -smoothingFactor;
+    }
+  smoothingFactorStr = vtkVariant(smoothingFactor).ToString();
+  defaultSegmentationNode->GetSegmentation()->SetConversionParameter(
+    vtkBinaryLabelmapToClosedSurfaceConversionRule::GetSmoothingFactorParameterName(),
+    smoothingFactorStr);
+}
