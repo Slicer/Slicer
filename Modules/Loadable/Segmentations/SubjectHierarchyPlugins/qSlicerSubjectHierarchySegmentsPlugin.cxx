@@ -34,6 +34,7 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSegmentationNode.h"
 #include "vtkMRMLSegmentationDisplayNode.h"
+#include <vtkMRMLSliceNode.h>
 #include "vtkMRMLSubjectHierarchyConstants.h"
 #include "vtkMRMLSubjectHierarchyNode.h"
 
@@ -46,6 +47,8 @@
 
 // SlicerQt includes
 #include "qSlicerApplication.h"
+#include "qSlicerLayoutManager.h"
+#include "qMRMLSliceWidget.h"
 
 // MRML widgets includes
 #include "qMRMLNodeComboBox.h"
@@ -66,6 +69,7 @@ public:
 
   QAction* ShowOnlyCurrentSegmentAction;
   QAction* ShowAllSegmentsAction;
+  QAction* JumpSlicesAction;
 };
 
 //-----------------------------------------------------------------------------
@@ -78,6 +82,7 @@ qSlicerSubjectHierarchySegmentsPluginPrivate::qSlicerSubjectHierarchySegmentsPlu
 {
   this->ShowOnlyCurrentSegmentAction = NULL;
   this->ShowAllSegmentsAction = NULL;
+  this->JumpSlicesAction = NULL;
 }
 
 //------------------------------------------------------------------------------
@@ -92,6 +97,10 @@ void qSlicerSubjectHierarchySegmentsPluginPrivate::init()
   // Show all segments action
   this->ShowAllSegmentsAction = new QAction("Show all segments",q);
   QObject::connect(this->ShowAllSegmentsAction, SIGNAL(triggered()), q, SLOT(showAllSegments()));
+
+  // Jump slices action
+  this->JumpSlicesAction = new QAction("Jump slices",q);
+  QObject::connect(this->JumpSlicesAction, SIGNAL(triggered()), q, SLOT(jumpSlices()));
 }
 
 //-----------------------------------------------------------------------------
@@ -607,7 +616,7 @@ QList<QAction*> qSlicerSubjectHierarchySegmentsPlugin::visibilityContextMenuActi
   Q_D(const qSlicerSubjectHierarchySegmentsPlugin);
 
   QList<QAction*> actions;
-  actions << d->ShowOnlyCurrentSegmentAction << d->ShowAllSegmentsAction;
+  actions << d->ShowOnlyCurrentSegmentAction << d->ShowAllSegmentsAction << d->JumpSlicesAction;
   return actions;
 }
 
@@ -627,6 +636,7 @@ void qSlicerSubjectHierarchySegmentsPlugin::showVisibilityContextMenuActionsForI
     {
     d->ShowOnlyCurrentSegmentAction->setVisible(true);
     d->ShowAllSegmentsAction->setVisible(true);
+    d->JumpSlicesAction->setVisible(true);
     }
 }
 
@@ -761,5 +771,79 @@ void qSlicerSubjectHierarchySegmentsPlugin::showAllSegments()
     displayNode->SetSegmentVisibility(segmentId, true);
     // Trigger update of visibility icon
     shNode->ItemModified(segmentItemID);
+    }
+}
+
+//------------------------------------------------------------------------------
+void qSlicerSubjectHierarchySegmentsPlugin::jumpSlices()
+{
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid current item";
+    return;
+    }
+
+  // Get segmentation node
+  vtkIdType segmentationShItemID = shNode->GetItemParent(currentItemID);
+  if (segmentationShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to find segmentation subject hierarchy item for segment item " << shNode->GetItemName(currentItemID).c_str();
+    return;
+    }
+  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(shNode->GetItemDataNode(segmentationShItemID));
+  if (!segmentationNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Unable to find segmentation node for segment subject hierarchy item " << shNode->GetItemName(currentItemID).c_str();
+    return;
+    }
+
+  // Get segment ID
+  std::string segmentId = shNode->GetItemAttribute(currentItemID, vtkMRMLSegmentationNode::GetSegmentIDAttributeName());
+
+  // Get center position of segment
+  double* segmentCenterPosition = segmentationNode->GetSegmentCenterRAS(segmentId);
+  if (!segmentCenterPosition)
+    {
+    return;
+    }
+
+  qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+  if (!layoutManager)
+    {
+    // Application is closing
+    return;
+    }
+  foreach(QString sliceViewName, layoutManager->sliceViewNames())
+    {
+    // Check if segmentation is visible in this view
+    qMRMLSliceWidget* sliceWidget = layoutManager->sliceWidget(sliceViewName);
+    vtkMRMLSliceNode* sliceNode = sliceWidget->mrmlSliceNode();
+    if (!sliceNode || !sliceNode->GetID())
+      {
+      continue;
+      }
+    bool visibleInView = false;
+    int numberOfDisplayNodes = segmentationNode->GetNumberOfDisplayNodes();
+    for (int displayNodeIndex = 0; displayNodeIndex < numberOfDisplayNodes; displayNodeIndex++)
+      {
+      vtkMRMLDisplayNode* segmentationDisplayNode = segmentationNode->GetNthDisplayNode(displayNodeIndex);
+      if (segmentationDisplayNode->IsDisplayableInView(sliceNode->GetID()))
+        {
+        visibleInView = true;
+        break;
+        }
+      }
+    if (!visibleInView)
+      {
+      continue;
+      }
+    sliceNode->JumpSliceByCentering(segmentCenterPosition[0], segmentCenterPosition[1], segmentCenterPosition[2]);
     }
 }
