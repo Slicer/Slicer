@@ -3689,14 +3689,46 @@ void qMRMLSegmentEditorWidget::rotateSliceViewsToSegmentation()
 void qMRMLSegmentEditorWidget::showSegmentationGeometryDialog()
 {
   Q_D(qMRMLSegmentEditorWidget);
-  if (!d->SegmentationNode)
+  if (!d->SegmentationNode || !d->ParameterSetNode)
     {
-    qCritical() << Q_FUNC_INFO << ": Invalid segmentation node";
+    qCritical() << Q_FUNC_INFO << ": Invalid segmentation or parameter set node";
     return;
     }
 
   qMRMLSegmentationGeometryDialog geometryDialog(d->SegmentationNode, this);
   geometryDialog.setEditEnabled(true);
   geometryDialog.setResampleLabelmaps(true);
-  geometryDialog.exec();
+  if (!geometryDialog.exec())
+    {
+    // cancel clicked
+    return;
+    }
+
+  // If no master volume is selected but a valid geometry is specified then create a blank master volume
+  if (!d->ParameterSetNode->GetMasterVolumeNode())
+    {
+    std::string referenceImageGeometry = d->getReferenceImageGeometryFromSegmentation(d->SegmentationNode->GetSegmentation());
+    vtkNew<vtkMatrix4x4> referenceGeometryMatrix;
+    int referenceExtent[6] = { 0,-1,0,-1,0,-1 };
+    vtkSegmentationConverter::DeserializeImageGeometry(referenceImageGeometry, referenceGeometryMatrix.GetPointer(), referenceExtent);
+    if (referenceExtent[0] <= referenceExtent[1]
+      && referenceExtent[2] <= referenceExtent[3]
+      && referenceExtent[4] <= referenceExtent[5])
+      {
+      // Create new image, allocate memory
+      vtkNew<vtkOrientedImageData> blankImage;
+      vtkSegmentationConverter::DeserializeImageGeometry(referenceImageGeometry, blankImage.GetPointer());
+      vtkOrientedImageDataResample::FillImage(blankImage, 0.0);
+
+      // Create volume node from blank image
+      std::string masterVolumeNodeName = (d->SegmentationNode->GetName() ? d->SegmentationNode->GetName() : "Volume") + std::string(" master volume");
+      vtkMRMLScalarVolumeNode* masterVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(
+        this->mrmlScene()->AddNewNodeByClass("vtkMRMLScalarVolumeNode", masterVolumeNodeName.c_str()));
+      masterVolumeNode->SetAndObserveTransformNodeID(d->SegmentationNode->GetTransformNodeID());
+      vtkSlicerSegmentationsModuleLogic::CopyOrientedImageDataToVolumeNode(blankImage, masterVolumeNode);
+
+      // Use blank volume as master
+      this->setMasterVolumeNode(masterVolumeNode);
+      }
+    }
 }
