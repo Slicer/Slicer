@@ -129,6 +129,8 @@ public slots:
   void renameCurrentItem();
   /// Delete selected subject hierarchy items and associated data nodes
   void deleteSelectedItems();
+  /// Toggle visibility of selected subject hierarchy items
+  void toggleVisibilityOfSelectedItems();
   /// Edit properties of current item
   virtual void editCurrentItem();
 
