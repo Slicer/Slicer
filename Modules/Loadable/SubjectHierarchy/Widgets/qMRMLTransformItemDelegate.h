@@ -31,8 +31,9 @@
 #include "qSlicerSubjectHierarchyModuleWidgetsExport.h"
 
 class vtkMRMLScene;
-class QShowEvent;
+class QActionGroup;
 class QCloseEvent;
+class QShowEvent;
 
 /// \brief Item Delegate for MRML parent transform property
 class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLTransformItemDelegate: public QStyledItemDelegate
@@ -81,6 +82,7 @@ protected slots:
 
 protected:
   vtkMRMLScene* MRMLScene;
+  QActionGroup* TransformActionGroup;
   QAction* NoneAction;
   QAction* HardenAction;
   int FixedRowHeight;
