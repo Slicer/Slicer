@@ -3718,14 +3718,14 @@ void qMRMLSegmentEditorWidget::showSegmentationGeometryDialog()
       // Create new image, allocate memory
       vtkNew<vtkOrientedImageData> blankImage;
       vtkSegmentationConverter::DeserializeImageGeometry(referenceImageGeometry, blankImage.GetPointer());
-      vtkOrientedImageDataResample::FillImage(blankImage, 0.0);
+      vtkOrientedImageDataResample::FillImage(blankImage.GetPointer(), 0.0);
 
       // Create volume node from blank image
       std::string masterVolumeNodeName = (d->SegmentationNode->GetName() ? d->SegmentationNode->GetName() : "Volume") + std::string(" master volume");
       vtkMRMLScalarVolumeNode* masterVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(
         this->mrmlScene()->AddNewNodeByClass("vtkMRMLScalarVolumeNode", masterVolumeNodeName.c_str()));
       masterVolumeNode->SetAndObserveTransformNodeID(d->SegmentationNode->GetTransformNodeID());
-      vtkSlicerSegmentationsModuleLogic::CopyOrientedImageDataToVolumeNode(blankImage, masterVolumeNode);
+      vtkSlicerSegmentationsModuleLogic::CopyOrientedImageDataToVolumeNode(blankImage.GetPointer(), masterVolumeNode);
 
       // Use blank volume as master
       this->setMasterVolumeNode(masterVolumeNode);
