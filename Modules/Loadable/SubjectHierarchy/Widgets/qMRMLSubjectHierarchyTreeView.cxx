@@ -77,6 +77,9 @@ public:
   /// Setup all actions for tree view
   void setupActions();
 
+  /// Get list of enabled plugins \sa PluginWhitelist \sa PluginBlacklist
+  QList<qSlicerSubjectHierarchyAbstractPlugin*> enabledPlugins();
+
 public:
   qMRMLSubjectHierarchyModel* Model;
   qMRMLSortFilterSubjectHierarchyProxyModel* SortFilterModel;
@@ -98,6 +101,8 @@ public:
   QAction* ExpandToDepthAction;
   QMenu* SceneMenu;
   QMenu* VisibilityMenu;
+  QStringList PluginWhitelist;
+  QStringList PluginBlacklist;
 
   qMRMLTransformItemDelegate* TransformItemDelegate;
 
@@ -298,6 +303,25 @@ void qMRMLSubjectHierarchyTreeViewPrivate::setupActions()
 
   // Update actions in owner plugin sub-menu when opened
   QObject::connect( this->SelectPluginSubMenu, SIGNAL(aboutToShow()), q, SLOT(updateSelectPluginActions()) );
+}
+
+//------------------------------------------------------------------------------
+QList<qSlicerSubjectHierarchyAbstractPlugin*> qMRMLSubjectHierarchyTreeViewPrivate::enabledPlugins()
+{
+  QList<qSlicerSubjectHierarchyAbstractPlugin*> enabledPluginList;
+
+  foreach (qSlicerSubjectHierarchyAbstractPlugin* plugin, qSlicerSubjectHierarchyPluginHandler::instance()->allPlugins())
+    {
+    QString pluginName = plugin->name();
+    bool whitelisted = (this->PluginWhitelist.isEmpty() || this->PluginWhitelist.contains(pluginName));
+    bool blacklisted = (!this->PluginBlacklist.isEmpty() && this->PluginBlacklist.contains(pluginName));
+    if ((whitelisted && !blacklisted) || !pluginName.compare("Default"))
+      {
+      enabledPluginList << plugin;
+      }
+    }
+
+  return enabledPluginList;
 }
 
 
@@ -872,7 +896,7 @@ void qMRMLSubjectHierarchyTreeView::onSelectionChanged(const QItemSelection& sel
   // Collect selected subject hierarchy items
   QList<vtkIdType> selectedShItems;
   QList<QModelIndex> selectedIndices = this->selectedIndexes();
-  foreach(QModelIndex index, selectedIndices)
+  foreach (QModelIndex index, selectedIndices)
     {
     // Only consider the first column to avoid duplicates
     if (index.column() != 0)
@@ -958,6 +982,12 @@ void qMRMLSubjectHierarchyTreeView::populateContextMenuForItem(vtkIdType itemID)
     return;
     }
 
+  // Have all plugins hide all context menu actions
+  foreach (qSlicerSubjectHierarchyAbstractPlugin* plugin, qSlicerSubjectHierarchyPluginHandler::instance()->allPlugins())
+    {
+    plugin->hideAllContextMenuActions();
+    }
+
   // Show multi-selection context menu if there are more than one selected items,
   // and right-click didn't happen on the scene or the empty area
   if ( d->SelectedItems.size() > 1
@@ -968,13 +998,6 @@ void qMRMLSubjectHierarchyTreeView::populateContextMenuForItem(vtkIdType itemID)
     d->RenameAction->setVisible(false);
     d->ToggleVisibilityAction->setVisible(true);
     d->SelectPluginSubMenu->menuAction()->setVisible(false);
-
-    // Hide all plugin context menu actions
-    foreach(qSlicerSubjectHierarchyAbstractPlugin* plugin, qSlicerSubjectHierarchyPluginHandler::instance()->allPlugins())
-      {
-      plugin->hideAllContextMenuActions();
-      }
-
     return;
     }
 
@@ -1002,10 +1025,9 @@ void qMRMLSubjectHierarchyTreeView::populateContextMenuForItem(vtkIdType itemID)
     d->SelectPluginSubMenu->menuAction()->setVisible(true);
     }
 
-  // Have all plugins show context menu actions for current item
-  foreach (qSlicerSubjectHierarchyAbstractPlugin* plugin, qSlicerSubjectHierarchyPluginHandler::instance()->allPlugins())
+  // Have all enabled plugins show context menu actions for current item
+  foreach (qSlicerSubjectHierarchyAbstractPlugin* plugin, d->enabledPlugins())
     {
-    plugin->hideAllContextMenuActions();
     plugin->showContextMenuActionsForItem(currentItemID);
     }
 }
@@ -1026,14 +1048,14 @@ void qMRMLSubjectHierarchyTreeView::populateVisibilityContextMenuForItem(vtkIdTy
     return;
     }
 
-  // Add default visibility context menu actions
-  qSlicerSubjectHierarchyPluginHandler::instance()->defaultPlugin()->hideAllContextMenuActions();
-  qSlicerSubjectHierarchyPluginHandler::instance()->defaultPlugin()->showVisibilityContextMenuActionsForItem(itemID);
-
-  // Have all plugins show visibility context menu actions
-  foreach(qSlicerSubjectHierarchyAbstractPlugin* plugin, qSlicerSubjectHierarchyPluginHandler::instance()->allPlugins())
+  // Have all plugins hide all visibility context menu actions
+  foreach (qSlicerSubjectHierarchyAbstractPlugin* plugin, qSlicerSubjectHierarchyPluginHandler::instance()->allPlugins())
     {
     plugin->hideAllContextMenuActions();
+    }
+  // Have all enabled plugins show visibility context menu actions for current item
+  foreach (qSlicerSubjectHierarchyAbstractPlugin* plugin, d->enabledPlugins())
+    {
     plugin->showVisibilityContextMenuActionsForItem(itemID);
     }
 }
@@ -1114,6 +1136,8 @@ void qMRMLSubjectHierarchyTreeView::updateSelectPluginActions()
     }
   QString ownerPluginName = QString(d->SubjectHierarchyNode->GetItemOwnerPluginName(currentItemID).c_str());
 
+  QList<qSlicerSubjectHierarchyAbstractPlugin*> enabledPluginsList = d->enabledPlugins();
+
   foreach (QAction* currentSelectPluginAction, d->SelectPluginActions)
     {
     // Check select plugin action if it's the owner
@@ -1124,7 +1148,10 @@ void qMRMLSubjectHierarchyTreeView::updateSelectPluginActions()
       qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName( currentSelectPluginAction->data().toString() );
     double confidenceNumber = currentPlugin->canOwnSubjectHierarchyItem(currentItemID);
 
-    if (confidenceNumber <= 0.0 && !isOwner)
+    // Do not show plugin in list if confidence is 0, or if it's disabled (by whitelist or blacklist).
+    // Always show owner plugin.
+    if ( (confidenceNumber <= 0.0 || !enabledPluginsList.contains(currentPlugin))
+      && !isOwner )
       {
       currentSelectPluginAction->setVisible(false);
       }
@@ -1317,7 +1344,7 @@ void qMRMLSubjectHierarchyTreeView::applyReferenceHighlightForItems(QList<vtkIdT
   int nameColumn = sceneModel->nameColumn();
 
   // Clear highlight for previously highlighted items
-  foreach(vtkIdType highlightedItemID, d->HighlightedItems)
+  foreach (vtkIdType highlightedItemID, d->HighlightedItems)
     {
     QStandardItem* item = sceneModel->itemFromSubjectHierarchyItem(highlightedItemID, nameColumn);
     if (item)
@@ -1328,7 +1355,7 @@ void qMRMLSubjectHierarchyTreeView::applyReferenceHighlightForItems(QList<vtkIdT
   d->HighlightedItems.clear();
 
   // Go through all given items
-  foreach(vtkIdType itemID, itemIDs)
+  foreach (vtkIdType itemID, itemIDs)
     {
     if (itemID == d->SubjectHierarchyNode->GetSceneItemID())
       {
@@ -1434,6 +1461,27 @@ void qMRMLSubjectHierarchyTreeView::setMultiSelection(bool multiSelectionOn)
 bool qMRMLSubjectHierarchyTreeView::multiSelection()
 {
   return (this->selectionMode() == QAbstractItemView::ExtendedSelection);
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::setPluginWhitelist(QStringList whitelist)
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  d->PluginWhitelist = whitelist;
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::setPluginBlacklist(QStringList blacklist)
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  d->PluginBlacklist = blacklist;
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::disablePlugin(QString plugin)
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  d->PluginBlacklist << plugin;
 }
 
 //-----------------------------------------------------------------------------

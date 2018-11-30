@@ -151,6 +151,18 @@ public slots:
   /// Set multi-selection
   virtual void setMultiSelection(bool multiSelectionOn);
 
+  /// Set list of subject hierarchy plugins that are enabled.
+  /// \param whitelist List of whitelisted subject hierarchy plugin names.
+  ///   Empty whitelist means all plugins are enabled. That is the default.
+  void setPluginWhitelist(QStringList whitelist);
+  /// Set list of subject hierarchy plugins that are disabled.
+  /// \param blacklist List of blacklisted subject hierarchy plugin names.
+  ///   Empty blacklist means all plugins are enabled. That is the default.
+  void setPluginBlacklist(QStringList blacklist);
+  /// Disable subject hierarchy plugin by adding it to the blacklist \sa setPluginBlacklist
+  /// \param plugin Name of the plugin to disable
+  void disablePlugin(QString plugin);
+
   /// Show hint to user about context menus
   /// \param visibility True if visibility context menu hint is to be shown, false for general context menu. False by default
   /// \return Flag indicating whether hint could be shown (i.e. there was an item in the tree is displayable)
