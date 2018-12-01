@@ -19,24 +19,25 @@
 #include "vtkThreeDViewInteractorStyle.h"
 #include "vtkMRMLApplicationLogic.h"
 
-// MRML includes
+// MRML/Slicer includes
 #include <vtkEventBroker.h>
-#include <vtkMRMLDisplayableNode.h>
+#include <vtkFSLookupTable.h>
+#include <vtkMRMLClipModelsNode.h>
+#include <vtkMRMLColorNode.h>
 #include <vtkMRMLDisplayNode.h>
+#include <vtkMRMLDisplayableNode.h>
+#include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLModelHierarchyNode.h>
 #include <vtkMRMLModelNode.h>
-#include <vtkMRMLClipModelsNode.h>
-#include <vtkMRMLColorNode.h>
-#include <vtkMRMLScene.h>
-#include <vtkMRMLSliceNode.h>
-#include <vtkMRMLViewNode.h>
-#include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLModelNode.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLSelectionNode.h>
+#include <vtkMRMLSliceNode.h>
 #include <vtkMRMLTransformNode.h>
+#include <vtkMRMLViewNode.h>
+#include <vtkMRMLVolumeNode.h>
 
-#include <vtkFSLookupTable.h>
 
 // VTK includes
 #include <vtkAlgorithm.h>
@@ -98,6 +99,8 @@ public:
   void ResetPick();
   /// Find picked node from mesh and set PickedNodeID in Internal
   void FindPickedDisplayNodeFromMesh(vtkPointSet* mesh, double pickedPoint[3]);
+  /// Find node in scene from imageData and set PickedNodeID in Internal
+  void FindDisplayNodeFromImageData(vtkMRMLScene* scene, vtkImageData* imageData);
   /// Find picked point index in mesh and picked cell (PickedCellID) and set PickedPointID in Internal
   void FindPickedPointOnMeshAndCell(vtkPointSet* mesh, double pickedPoint[3]);
   /// Find first picked node from prop3Ds in cell picker and set PickedNodeID in Internal
@@ -224,6 +227,37 @@ void vtkMRMLModelDisplayableManager::vtkInternal::FindPickedDisplayNodeFromMesh(
           vtkMRMLModelDisplayNode::SafeDownCast(modelIt->second)->GetOutputMesh() == mesh)
         {
         this->PickedDisplayNodeID = modelIt->first;
+        return; // Display node found
+        }
+      }
+    }
+}
+//
+//---------------------------------------------------------------------------
+// for consistency with other vtkInternal classes this does not have access
+// to the mrmlScene, so it is passed as a parameter
+void vtkMRMLModelDisplayableManager::vtkInternal::FindDisplayNodeFromImageData(vtkMRMLScene *scene, vtkImageData* imageData)
+{
+  if (!scene || !imageData)
+    {
+    return;
+    }
+  // note that this library doesn't link to the VolumeRendering code because it is
+  // a loadable module.  However we can still iterate over volume rendering nodes
+  // and use the superclass abstract methods to confirm that the passed in imageData
+  // corresponds to the display node.
+  std::vector<vtkMRMLNode *> displayNodes;
+  int nodeCount = scene->GetNodesByClass("vtkMRMLVolumeRenderingDisplayNode", displayNodes);
+  for (int nodeIndex=0; nodeIndex < nodeCount; nodeIndex++)
+    {
+    vtkMRMLDisplayNode *displayNode = vtkMRMLDisplayNode::SafeDownCast(displayNodes[nodeIndex]);
+    if (displayNode)
+      {
+      vtkMRMLVolumeNode *volumeNode = vtkMRMLVolumeNode::SafeDownCast(displayNode->GetDisplayableNode());
+      vtkImageData *volumeImageData = vtkImageData::SafeDownCast(volumeNode->GetImageData());
+      if (volumeNode && volumeImageData && volumeImageData == imageData)
+        {
+        this->PickedDisplayNodeID = displayNode->GetID();
         return; // Display node found
         }
       }
@@ -1969,10 +2003,23 @@ int vtkMRMLModelDisplayableManager::Pick(int x, int y)
     {
     this->Internal->CellPicker->GetPickPosition(pickPoint);
     this->SetPickedCellID(this->Internal->CellPicker->GetCellId());
-    // get the pointer to the mesh that the cell was in
+
+    // look for either picked mesh or volume
+    // and set picked display node accordingly
     vtkPointSet *mesh = vtkPointSet::SafeDownCast(this->Internal->CellPicker->GetDataSet());
-    // now find the model this mesh belongs to
-    this->Internal->FindPickedDisplayNodeFromMesh(mesh, pickPoint);
+    if (mesh) 
+      {
+      // get the pointer to the mesh that the cell was in
+      // and then find the model this mesh belongs to
+      this->Internal->FindPickedDisplayNodeFromMesh(mesh, pickPoint);
+      }
+    vtkImageData *imageData = vtkImageData::SafeDownCast(this->Internal->CellPicker->GetDataSet());
+    if (imageData) 
+      {
+      // get the pointer to the picked imageData
+      // and then find the volume this imageData belongs to
+      this->Internal->FindDisplayNodeFromImageData(this->GetMRMLScene(), imageData);
+      }
     }
   else
     {
