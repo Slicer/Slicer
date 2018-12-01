@@ -253,6 +253,51 @@ install(SCRIPT \"${slicer_extension_cpack_bundle_fixup_directory}/SlicerExtensio
 endif()
 
 #-----------------------------------------------------------------------------
+# Configure launcher for starting Slicer and ensure the extension and its dependencies are loaded
+# -------------------------------------------------------------------------
+find_package(CTKAppLauncher REQUIRED)
+
+# Gather extension build directories
+set(extension_build_dirs ${CMAKE_BINARY_DIR})
+if(EXTENSION_DEPENDS)
+  string(REPLACE " " ";" deps ${EXTENSION_DEPENDS})
+  foreach(dep ${deps})
+    if ("${dep}" STREQUAL "NA")
+      continue()
+    endif()
+    list(APPEND extension_build_dirs ${${dep}_DIR})
+  endforeach()
+endif()
+
+# Create list of additional module paths
+set(ADDITIONAL_MODULE_PATHS)
+foreach(extension_build_dir IN LISTS extension_build_dirs)
+  list(APPEND ADDITIONAL_MODULE_PATHS "${extension_build_dir}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}")
+  if(CMAKE_CONFIGURATION_TYPES)
+    foreach(config_type IN LISTS CMAKE_CONFIGURATION_TYPES)
+      list(APPEND ADDITIONAL_MODULE_PATHS
+        "${extension_build_dir}/${Slicer_QTLOADABLEMODULES_LIB_DIR}/${config_type}"
+        "${extension_build_dir}/${Slicer_CLIMODULES_LIB_DIR}/${config_type}"
+        )
+    endforeach()
+  else()
+    list(APPEND ADDITIONAL_MODULE_PATHS
+      "${extension_build_dir}/${Slicer_QTLOADABLEMODULES_LIB_DIR}"
+      "${extension_build_dir}/${Slicer_CLIMODULES_LIB_DIR}"
+      )
+  endif()
+endforeach()
+string(REPLACE ";" " " ADDITIONAL_MODULE_PATHS "${ADDITIONAL_MODULE_PATHS}")
+
+# Configure launcher
+ctkAppLauncherConfigureForExecutable(
+  APPLICATION_NAME SlicerWith${EXTENSION_NAME}
+  APPLICATION_EXECUTABLE ${Slicer_DIR}/${Slicer_MAIN_PROJECT_APPLICATION_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+  APPLICATION_DEFAULT_ARGUMENTS "--launcher-additional-settings ${CMAKE_CURRENT_BINARY_DIR}/AdditionalLauncherSettings.ini --additional-module-paths ${ADDITIONAL_MODULE_PATHS}"
+  DESTINATION_DIR ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+#-----------------------------------------------------------------------------
 include(SlicerExtensionPackageAndUploadTarget)
 
 #-----------------------------------------------------------------------------
