@@ -46,6 +46,7 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QTableWidgetItem>
+#include <QTimer>
 
 //-----------------------------------------------------------------------------
 // TerminologyInfoBundle methods
@@ -1112,7 +1113,7 @@ void qSlicerTerminologyNavigatorWidget::populateTypeTable()
       vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyCategory(category),
       typesInCategory, searchTerm );
 
-    for (idIt=typesInCategory.begin(); idIt!=typesInCategory.end(); ++idIt, ++typeIndex)
+    for (idIt=typesInCategory.begin(); idIt!=typesInCategory.end(); ++idIt)
       {
       // Determine if type already exists in list
       bool duplicate = false;
@@ -1126,13 +1127,16 @@ void qSlicerTerminologyNavigatorWidget::populateTypeTable()
           break;
           }
         }
-      // Add type
       if (!duplicate)
         {
+        // Add type
         types.push_back(*idIt);
+
+        // Store type-category relationship
+        typeIndexToCategoryIndexMap[typeIndex] = categoryIndex;
+
+        typeIndex++;
         }
-      // Store type-category relationship
-      typeIndexToCategoryIndexMap[typeIndex] = categoryIndex;
       }
 
     ++categoryIndex;
@@ -1310,8 +1314,6 @@ void qSlicerTerminologyNavigatorWidget::onTerminologySelectionChanged(int index)
 {
   Q_D(qSlicerTerminologyNavigatorWidget);
 
-  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
-
   // Set current terminology
   QString terminologyName = d->ComboBox_Terminology->itemText(index);
   this->setCurrentTerminology(terminologyName);
@@ -1322,8 +1324,6 @@ void qSlicerTerminologyNavigatorWidget::onTerminologySelectionChanged(int index)
     QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
     settings->setValue("Terminology/LastTerminologyContext", terminologyName);
     }
-
-  QApplication::restoreOverrideCursor();
 }
 
 //-----------------------------------------------------------------------------
@@ -1354,6 +1354,29 @@ bool qSlicerTerminologyNavigatorWidget::setCurrentCategory(vtkSlicerTerminologyC
   d->tableWidget_AnatomicRegion->setCurrentItem(NULL);
   this->populateRegionModifierComboBox();
 
+  // Update widget UI from current category
+  this->updateWidgetFromCurrentCategory();
+
+  // Selection is invalid until type is selected
+  emit selectionValidityChanged(false);
+
+  // Select category if found
+  QTableWidgetItem* categoryItem = d->findTableWidgetItemForCategory(category);
+  //if (categoryItem)
+  //  {
+  //  d->tableWidget_Category->blockSignals(true);
+  //  d->tableWidget_Category->clearSelection();
+  //  d->tableWidget_Category->setCurrentItem(categoryItem);
+  //  d->tableWidget_Category->blockSignals(false);
+  //  }
+  return categoryItem; // Return true if category found and selected
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTerminologyNavigatorWidget::updateWidgetFromCurrentCategory()
+{
+  Q_D(qSlicerTerminologyNavigatorWidget);
+
   // Only enable type table if there are items in it
   if (d->tableWidget_Type->rowCount() == 1) // None item always present
     {
@@ -1371,20 +1394,22 @@ bool qSlicerTerminologyNavigatorWidget::setCurrentCategory(vtkSlicerTerminologyC
   d->tableWidget_AnatomicRegion->setEnabled(d->CurrentCategoryObject->GetShowAnatomy());
   d->SearchBox_AnatomicRegion->setEnabled(d->CurrentCategoryObject->GetShowAnatomy());
   d->ComboBox_AnatomicRegionModifier->setEnabled(false); // Disabled until valid region selection
-
-  // Selection is invalid until type is selected
-  emit selectionValidityChanged(false);
-
-  // Select category if found
-  QTableWidgetItem* categoryItem = d->findTableWidgetItemForCategory(category);
-  //if (categoryItem)
-  //  {
-  //  d->tableWidget_Category->blockSignals(true);
-  //  d->tableWidget_Category->clearSelection();
-  //  d->tableWidget_Category->setCurrentItem(categoryItem);
-  //  d->tableWidget_Category->blockSignals(false);
-  //  }
-  return categoryItem; // Return true if category found and selected
+  if (this->anatomicRegionSectionVisible())
+    {
+    // Always enable expand button if panel is visible
+    d->AnatomicalRegionExpandButton->setEnabled(true);
+    }
+  else
+    {
+    // Only enable expand button if anatomic region is enabled in selected category
+    d->AnatomicalRegionExpandButton->setEnabled(d->CurrentCategoryObject->GetShowAnatomy());
+    // Blink button if anatomic region is enabled to let the user know there are additional options available
+    if (d->CurrentCategoryObject->GetShowAnatomy())
+      {
+      d->AnatomicalRegionExpandButton->setDown(true);
+      QTimer::singleShot(100, this, SLOT(anatomicalRegionExpandButtonUp()));
+      }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -1408,8 +1433,6 @@ void qSlicerTerminologyNavigatorWidget::onCategorySelectionChanged()
   // Reset anatomic region information as well
   d->resetCurrentRegion();
   d->resetCurrentRegionModifier();
-
-  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
 
   // Get current category object
   vtkSlicerTerminologiesModuleLogic* logic = d->terminologyLogic();
@@ -1470,8 +1493,6 @@ void qSlicerTerminologyNavigatorWidget::onCategorySelectionChanged()
     {
     d->setNameFromCurrentTerminology();
     }
-
-  QApplication::restoreOverrideCursor();
 }
 
 //-----------------------------------------------------------------------------
@@ -1548,8 +1569,6 @@ void qSlicerTerminologyNavigatorWidget::onTypeSelected(QTableWidgetItem* current
     return;
     }
 
-  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
-
   // Get category object for selected type object
   vtkSlicerTerminologiesModuleLogic::CodeIdentifier categoryId(
     currentItem->data(CategoryCodingSchemeDesignatorRole).toString().toLatin1().constData(),
@@ -1561,7 +1580,6 @@ void qSlicerTerminologyNavigatorWidget::onTypeSelected(QTableWidgetItem* current
     categoryId, category) )
     {
     qCritical() << Q_FUNC_INFO << ": Failed to find category '" << categoryId.CodeMeaning.c_str();
-    QApplication::restoreOverrideCursor();
     return;
     }
 
@@ -1575,12 +1593,12 @@ void qSlicerTerminologyNavigatorWidget::onTypeSelected(QTableWidgetItem* current
     d->CurrentTerminologyName.toLatin1().constData(), categoryId, typeId, type) )
     {
     qCritical() << Q_FUNC_INFO << ": Failed to find type '" << currentItem->text();
-    QApplication::restoreOverrideCursor();
     return;
     }
 
   // Set current category object for selected type
   d->CurrentCategoryObject->Copy(category);
+  this->updateWidgetFromCurrentCategory();
   // Set type from item
   this->setCurrentType(type);
 
@@ -1600,8 +1618,6 @@ void qSlicerTerminologyNavigatorWidget::onTypeSelected(QTableWidgetItem* current
     {
     d->setRecommendedColorFromCurrentTerminology();
     }
-
-  QApplication::restoreOverrideCursor();
 }
 
 //-----------------------------------------------------------------------------
@@ -1651,8 +1667,6 @@ void qSlicerTerminologyNavigatorWidget::onTypeModifierSelectionChanged(int index
     return;
     }
 
-  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
-
   // Get current modifier object
   vtkSlicerTerminologiesModuleLogic* logic = d->terminologyLogic();
   if (!logic)
@@ -1672,7 +1686,6 @@ void qSlicerTerminologyNavigatorWidget::onTypeModifierSelectionChanged(int index
     modifierId, modifier) )
     {
     qCritical() << Q_FUNC_INFO << ": Failed to find modifier '" << d->ComboBox_TypeModifier->itemText(index);
-    QApplication::restoreOverrideCursor();
     return;
     }
 
@@ -1689,8 +1702,6 @@ void qSlicerTerminologyNavigatorWidget::onTypeModifierSelectionChanged(int index
     {
     d->setRecommendedColorFromCurrentTerminology();
     }
-
-  QApplication::restoreOverrideCursor();
 }
 
 //-----------------------------------------------------------------------------
@@ -2042,8 +2053,6 @@ void qSlicerTerminologyNavigatorWidget::onAnatomicContextSelectionChanged(int in
 {
   Q_D(qSlicerTerminologyNavigatorWidget);
 
-  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
-
   // Set current anatomic context
   QString anatomicContextName = d->ComboBox_AnatomicContext->itemText(index);
   this->setCurrentAnatomicContext(anatomicContextName);
@@ -2054,8 +2063,6 @@ void qSlicerTerminologyNavigatorWidget::onAnatomicContextSelectionChanged(int in
     QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
     settings->setValue("Terminology/LastAnatomicContext", anatomicContextName);
     }
-
-  QApplication::restoreOverrideCursor();
 }
 
 //-----------------------------------------------------------------------------
@@ -2128,14 +2135,11 @@ void qSlicerTerminologyNavigatorWidget::onRegionSelected(QTableWidgetItem* curre
     return;
     }
 
-  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
-
   // Get current region object
   vtkSlicerTerminologiesModuleLogic* logic = d->terminologyLogic();
   if (!logic)
     {
     qCritical() << Q_FUNC_INFO << ": Failed to access terminology logic";
-    QApplication::restoreOverrideCursor();
     return;
     }
   vtkSlicerTerminologiesModuleLogic::CodeIdentifier regionId(
@@ -2148,7 +2152,6 @@ void qSlicerTerminologyNavigatorWidget::onRegionSelected(QTableWidgetItem* curre
     regionId, region) )
     {
     qCritical() << Q_FUNC_INFO << ": Failed to find region '" << currentItem->text();
-    QApplication::restoreOverrideCursor();
     return;
     }
 
@@ -2160,8 +2163,6 @@ void qSlicerTerminologyNavigatorWidget::onRegionSelected(QTableWidgetItem* curre
     {
     d->setNameFromCurrentTerminology();
     }
-
-  QApplication::restoreOverrideCursor();
 }
 
 //-----------------------------------------------------------------------------
@@ -2204,14 +2205,11 @@ void qSlicerTerminologyNavigatorWidget::onRegionModifierSelectionChanged(int ind
     return;
     }
 
-  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
-
   // Get current modifier object
   vtkSlicerTerminologiesModuleLogic* logic = d->terminologyLogic();
   if (!logic)
     {
     qCritical() << Q_FUNC_INFO << ": Failed to access terminology logic";
-    QApplication::restoreOverrideCursor();
     return;
     }
   QMap<QString, QVariant> userData = d->ComboBox_AnatomicRegionModifier->itemData(index).toMap();
@@ -2225,7 +2223,6 @@ void qSlicerTerminologyNavigatorWidget::onRegionModifierSelectionChanged(int ind
     modifierId, modifier) )
     {
     qCritical() << Q_FUNC_INFO << ": Failed to find modifier '" << d->ComboBox_AnatomicRegionModifier->itemText(index);
-    QApplication::restoreOverrideCursor();
     return;
     }
 
@@ -2237,8 +2234,6 @@ void qSlicerTerminologyNavigatorWidget::onRegionModifierSelectionChanged(int ind
     {
     d->setNameFromCurrentTerminology();
     }
-
-  QApplication::restoreOverrideCursor();
 }
 
 //-----------------------------------------------------------------------------
@@ -2259,4 +2254,11 @@ void qSlicerTerminologyNavigatorWidget::onLogicModified()
 
   this->populateAnatomicContextComboBox();
   d->resetCurrentRegion();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTerminologyNavigatorWidget::anatomicalRegionExpandButtonUp()
+{
+  Q_D(qSlicerTerminologyNavigatorWidget);
+  d->AnatomicalRegionExpandButton->setDown(false);
 }

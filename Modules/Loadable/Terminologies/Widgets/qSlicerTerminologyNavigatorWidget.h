@@ -126,6 +126,8 @@ protected:
   /// Only used when setting the category from a given entry to the widget!
   /// \return Flag indicating whether the given category was found in the category table
   bool setCurrentCategory(vtkSlicerTerminologyCategory* category);
+  /// Update widget UI based on the current category selection
+  void updateWidgetFromCurrentCategory();
   /// Set current type to widget
   /// \return Flag indicating whether the given type was found in the type table
   bool setCurrentType(vtkSlicerTerminologyType* type);
@@ -181,6 +183,8 @@ protected slots:
 
   void onLoadTerminologyClicked();
   void onLoadAnatomicContextClicked();
+
+  void anatomicalRegionExpandButtonUp();
 
   void onLogicModified();
 
