@@ -14,6 +14,7 @@ class SegmentEditorGrowFromSeedsEffect(AbstractScriptedSegmentEditorAutoComplete
     scriptedEffect.name = 'Grow from seeds'
     self.minimumNumberOfSegments = 2
     self.clippedMasterImageDataRequired = True # master volume intensities are used by this effect
+    self.clippedMaskImageDataRequired = True # masking is used
     self.growCutFilter = None
 
   def clone(self):
@@ -57,6 +58,7 @@ The effect uses <a href="https://www.spl.harvard.edu/publications/item/view/2761
     if not self.growCutFilter:
       self.growCutFilter = vtkSlicerSegmentationsModuleLogic.vtkImageGrowCutSegment()
       self.growCutFilter.SetIntensityVolume(self.clippedMasterImageData)
+      self.growCutFilter.SetMaskVolume(self.clippedMaskImageData)
 
     self.growCutFilter.SetSeedLabelVolume(mergedImage)
     self.growCutFilter.Update()

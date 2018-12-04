@@ -25,6 +25,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
 
     self.minimumNumberOfSegments = 1
     self.clippedMasterImageDataRequired = False
+    self.clippedMaskImageDataRequired = False
 
     # Stores merged labelmap image geometry (voxel data is not allocated)
     self.mergedLabelmapGeometryImage = None
@@ -396,6 +397,8 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
       inputContainsClosedSurfaceRepresentation = segmentationNode.GetSegmentation().ContainsRepresentation(
         slicer.vtkSegmentationConverter.GetSegmentationClosedSurfaceRepresentationName())
 
+      self.setPreviewShow3D(inputContainsClosedSurfaceRepresentation)
+
       if self.clippedMasterImageDataRequired:
         self.clippedMasterImageData = vtkSegmentationCore.vtkOrientedImageData()
         masterImageClipper = vtk.vtkImageConstantPad()
@@ -404,6 +407,21 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
         masterImageClipper.Update()
         self.clippedMasterImageData.ShallowCopy(masterImageClipper.GetOutput())
         self.clippedMasterImageData.CopyDirections(self.mergedLabelmapGeometryImage)
+
+      self.clippedMaskImageData = None
+      if self.clippedMaskImageDataRequired:
+        self.clippedMaskImageData = vtkSegmentationCore.vtkOrientedImageData()
+        intensityBasedMasking = self.scriptedEffect.parameterSetNode().GetMasterVolumeIntensityMask()
+        success = segmentationNode.GenerateEditMask(self.clippedMaskImageData,
+          self.scriptedEffect.parameterSetNode().GetMaskMode(),
+          self.clippedMasterImageData, # reference geometry
+          "", # edited segment ID
+          self.scriptedEffect.parameterSetNode().GetMaskSegmentID() if self.scriptedEffect.parameterSetNode().GetMaskSegmentID() else "",
+          self.clippedMasterImageData if intensityBasedMasking else None,
+          self.scriptedEffect.parameterSetNode().GetMasterVolumeIntensityMaskRange() if intensityBasedMasking else None)
+        if not success:
+          logging.error("Failed to create edit mask")
+          self.clippedMaskImageData = None
 
     previewNode.SetName(segmentationNode.GetName()+" preview")
 
@@ -448,8 +466,6 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
 
       # Automatically hide result segments that are background (all eight corners are non-zero)
       previewNode.GetDisplayNode().SetSegmentVisibility3D(segmentID, not self.isBackgroundLabelmap(newSegmentLabelmap))
-
-    self.setPreviewShow3D(inputContainsClosedSurfaceRepresentation)
 
     self.updateGUIFromMRML()
 

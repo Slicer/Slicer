@@ -27,6 +27,7 @@
 #include <vtkAppendPolyData.h>
 #include <vtkBoundingBox.h>
 #include <vtkGeneralTransform.h>
+#include <vtkImageMask.h>
 #include <vtkImageReslice.h>
 #include <vtkImageConstantPad.h>
 #include <vtkMatrix4x4.h>
@@ -1321,4 +1322,47 @@ void vtkOrientedImageDataResample::FillImage(vtkImageData* image, double fillVal
   default:
     vtkGenericWarningMacro("vtkOrientedImageDataResample::FillImage: Unknown ScalarType");
     }
+}
+
+//-----------------------------------------------------------------------------
+bool vtkOrientedImageDataResample::ApplyImageMask(vtkOrientedImageData* input, vtkOrientedImageData* mask, double fillValue,
+  bool notMask/*=false*/)
+{
+  if (!input || !mask)
+    {
+    vtkGenericWarningMacro("vtkOrientedImageDataResample::ApplyImageMask failed: Invalid inputs");
+    return false;
+    }
+
+  // Make sure mask has the same lattice as the input labelmap
+  if (!vtkOrientedImageDataResample::DoGeometriesMatch(input, mask))
+    {
+    vtkGenericWarningMacro("vtkOrientedImageDataResample::ApplyImageMask failed: input and mask image geometry mismatch");
+    return false;
+    }
+
+  // Make sure mask has the same extent as the input labelmap
+  vtkSmartPointer<vtkImageConstantPad> padder = vtkSmartPointer<vtkImageConstantPad>::New();
+  padder->SetInputData(mask);
+  padder->SetOutputWholeExtent(input->GetExtent());
+  padder->Update();
+  //mask->DeepCopy(padder->GetOutput());
+
+  // Apply mask
+  vtkNew<vtkImageMask> masker;
+  masker->SetImageInputData(input);
+  //masker->SetMaskInputData(resampledMask);
+  masker->SetMaskInputData(padder->GetOutput());
+  //masker->SetMaskInputData(mask);
+  masker->SetNotMask(notMask);
+  masker->SetMaskedOutputValue(fillValue);
+  masker->Update();
+
+  // Copy masked input to input
+  vtkNew<vtkMatrix4x4> inputImageToWorldMatrix;
+  input->GetImageToWorldMatrix(inputImageToWorldMatrix);
+  input->DeepCopy(masker->GetOutput());
+  input->SetGeometryFromImageToWorldMatrix(inputImageToWorldMatrix);
+
+  return true;
 }

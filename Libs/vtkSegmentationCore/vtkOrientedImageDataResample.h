@@ -152,6 +152,14 @@ public:
   /// Determine if a transform matrix contains shear
   static bool DoesTransformMatrixContainShear(vtkMatrix4x4* matrix);
 
+  /// Apply mask image on an input image
+  /// \param input Input image to apply the mask on
+  /// \param mask Mask to apply
+  /// \param notMask If on, the mask is passed through a boolean not before it is used to mask the image.
+  ///   The effect is to pass the input pixels where the mask is zero, and replace the pixels where the
+  ///   mask is non zero
+  static bool ApplyImageMask(vtkOrientedImageData* input, vtkOrientedImageData* mask, double fillValue, bool notMask = false);
+
 protected:
   vtkOrientedImageDataResample();
   ~vtkOrientedImageDataResample();

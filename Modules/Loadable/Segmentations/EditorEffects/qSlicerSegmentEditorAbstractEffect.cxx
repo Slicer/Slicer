@@ -59,7 +59,6 @@
 
 // VTK includes
 #include <vtkImageConstantPad.h>
-#include <vtkImageMask.h>
 #include <vtkImageShiftScale.h>
 #include <vtkImageThreshold.h>
 #include <vtkMatrix4x4.h>
@@ -201,41 +200,9 @@ void qSlicerSegmentEditorAbstractEffect::setCallbackSlots(QObject* receiver, con
 void qSlicerSegmentEditorAbstractEffect::applyImageMask(vtkOrientedImageData* input, vtkOrientedImageData* mask, double fillValue,
   bool notMask/*=false*/)
 {
-  if (!input || !mask)
-    {
-    qCritical() << Q_FUNC_INFO << " failed: Invalid inputs";
-    return;
-    }
-
-  // Make sure mask has the same lattice as the input labelmap
-  if (!vtkOrientedImageDataResample::DoGeometriesMatch(input, mask))
-    {
-    qCritical() << Q_FUNC_INFO << " failed: input and mask image geometry mismatch";
-    return;
-    }
-
-  // Make sure mask has the same extent as the input labelmap
-  vtkSmartPointer<vtkImageConstantPad> padder = vtkSmartPointer<vtkImageConstantPad>::New();
-  padder->SetInputData(mask);
-  padder->SetOutputWholeExtent(input->GetExtent());
-  padder->Update();
-  //mask->DeepCopy(padder->GetOutput());
-
-  // Apply mask
-  vtkSmartPointer<vtkImageMask> masker = vtkSmartPointer<vtkImageMask>::New();
-  masker->SetImageInputData(input);
-  //masker->SetMaskInputData(resampledMask);
-  masker->SetMaskInputData(padder->GetOutput());
-  //masker->SetMaskInputData(mask);
-  masker->SetNotMask(notMask);
-  masker->SetMaskedOutputValue(fillValue);
-  masker->Update();
-
-  // Copy masked input to input
-  vtkSmartPointer<vtkMatrix4x4> inputImageToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
-  input->GetImageToWorldMatrix(inputImageToWorldMatrix);
-  input->DeepCopy(masker->GetOutput());
-  input->SetGeometryFromImageToWorldMatrix(inputImageToWorldMatrix);
+  // The method is now moved to vtkOrientedImageDataResample::ApplyImageMask but kept here
+  // for a while for backward compatibility.
+  vtkOrientedImageDataResample::ApplyImageMask(input, mask, fillValue, notMask);
 }
 
 //-----------------------------------------------------------------------------
@@ -285,7 +252,7 @@ void qSlicerSegmentEditorAbstractEffect::modifySelectedSegmentByLabelmap(vtkOrie
       maskedModifierLabelmap->DeepCopy(modifierLabelmap);
       modifierLabelmap = maskedModifierLabelmap.GetPointer();
       }
-    this->applyImageMask(modifierLabelmap, maskImage, this->m_EraseValue, true);
+    vtkOrientedImageDataResample::ApplyImageMask(modifierLabelmap, maskImage, this->m_EraseValue, true);
     }
 
   // Apply threshold mask if paint threshold is turned on
@@ -328,7 +295,7 @@ void qSlicerSegmentEditorAbstractEffect::modifySelectedSegmentByLabelmap(vtkOrie
       maskedModifierLabelmap->DeepCopy(modifierLabelmap);
       modifierLabelmap = maskedModifierLabelmap.GetPointer();
       }
-    this->applyImageMask(modifierLabelmap.GetPointer(), thresholdMask, this->m_EraseValue);
+    vtkOrientedImageDataResample::ApplyImageMask(modifierLabelmap.GetPointer(), thresholdMask, this->m_EraseValue);
     }
 
   if (!d->ParameterSetNode)

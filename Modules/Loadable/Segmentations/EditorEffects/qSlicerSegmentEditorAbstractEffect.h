@@ -119,12 +119,9 @@ public:
   Q_INVOKABLE virtual void modifySelectedSegmentByLabelmap(vtkOrientedImageData* modifierLabelmap, ModificationMode modificationMode);
   Q_INVOKABLE virtual void modifySelectedSegmentByLabelmap(vtkOrientedImageData* modifierLabelmap, ModificationMode modificationMode, QList<int> extent);
 
-  /// Apply mask image on an input image
-  /// \param input Input image to apply the mask on
-  /// \param mask Mask to apply
-  /// \param notMask If on, the mask is passed through a boolean not before it is used to mask the image.
-  ///   The effect is to pass the pixels where the input mask is zero, and replace the pixels where the
-  ///   input value is non zero
+  /// Apply mask image on an input image.
+  /// This method is kept here for backward compatibility only and will be removed in the future.
+  /// Use vtkOrientedImageDataResample::ApplyImageMask method instead.
   Q_INVOKABLE static void applyImageMask(vtkOrientedImageData* input, vtkOrientedImageData* mask, double fillValue, bool notMask = false);
 
   /// Create options frame widgets, make connections, and add them to the main options frame using \sa addOptionsWidget
