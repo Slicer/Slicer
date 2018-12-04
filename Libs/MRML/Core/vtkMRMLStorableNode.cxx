@@ -79,6 +79,12 @@ void vtkMRMLStorableNode::SetAndObserveNthStorageNodeID(int n, const char *stora
 }
 
 //----------------------------------------------------------------------------
+bool vtkMRMLStorableNode::HasStorageNodeID(const char* storageNodeID)
+{
+  return this->HasNodeReferenceID(this->GetStorageNodeReferenceRole(), storageNodeID);
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLStorableNode::SetSlicerDataType ( const char *type )
 {
   this->SlicerDataType.clear();

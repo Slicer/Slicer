@@ -78,6 +78,10 @@ public:
   void SetAndObserveNthStorageNodeID(int n, const char *storageNodeID);
 
   ///
+  /// Return true if storageNodeID is in the storage node ID list.
+  bool HasStorageNodeID(const char* storageNodeID);
+
+  ///
   /// This is describes the type of data stored in the nodes storage node(s).
   /// It's an informatics metadata mechanism so that Slicer knows what kinds
   /// of nodes to create to receive downloaded datasets, and works around
