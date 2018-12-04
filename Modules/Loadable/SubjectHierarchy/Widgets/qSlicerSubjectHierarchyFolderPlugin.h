@@ -36,6 +36,8 @@
 
 class qSlicerSubjectHierarchyFolderPluginPrivate;
 
+class vtkMRMLModelDisplayNode;
+
 // Due to some reason the Python wrapping of this class fails, therefore
 // put everything between BTX/ETX to exclude from wrapping.
 // TODO investigate why the wrapping fails:
@@ -119,6 +121,18 @@ public:
   /// Open module belonging to item and set inputs in opened module
   virtual void editProperties(vtkIdType itemID);
 
+  /// Set display color of an owned subject hierarchy item
+  /// In case of folders only color is set but no terminology. The properties are not used directly,
+  /// but only if applied to the branch (similarly to how it worked in model hierarchies).
+  /// \param color Display color to set
+  /// \param terminologyMetaData Map containing terminology meta data. Not used in this plugin
+  virtual void setDisplayColor(vtkIdType itemID, QColor color, QMap<int, QVariant> terminologyMetaData);
+
+  /// Get display color of an owned subject hierarchy item
+  /// In case of folders only color is set but no terminology. The properties are not used directly,
+  /// but only if applied to the branch (similarly to how it worked in model hierarchies).
+  virtual QColor getDisplayColor(vtkIdType itemID, QMap<int, QVariant> &terminologyMetaData)const;
+
   /// Get item context menu item actions to add to tree view
   virtual QList<QAction*> itemContextMenuActions()const;
 
@@ -130,6 +144,14 @@ public:
   /// Show context menu actions valid for a given subject hierarchy item.
   /// \param itemID Subject Hierarchy item to show the context menu items for
   virtual void showContextMenuActionsForItem(vtkIdType itemID);
+
+  /// Get visibility context menu item actions to add to tree view.
+  /// These item visibility context menu actions can be shown in the implementations of \sa showVisibilityContextMenuActionsForItem
+  virtual QList<QAction*> visibilityContextMenuActions()const;
+
+  /// Show visibility context menu actions valid for a given subject hierarchy item.
+  /// \param itemID Subject Hierarchy item to show the visibility context menu items for
+  virtual void showVisibilityContextMenuActionsForItem(vtkIdType itemID);
 
 public:
   /// Determines if a data node can be placed in the hierarchy using the actual plugin,
@@ -189,6 +211,9 @@ public:
   /// Traverses scene for hierarchy nodes, and makes sure the same parents are set in subject hierarchy
   Q_INVOKABLE bool resolveHierarchies();
 
+  /// Name of color attribute in folder subject hierarchy items
+  Q_INVOKABLE QString colorItemAttributeName()const { return "Color"; };
+
 public slots:
   /// Called when hierarchy modified event is invoked for a data node
   /// Ensures that if a hierarchy node gets associated to a data node, then the item for the hierarchy
@@ -206,6 +231,17 @@ protected slots:
   /// Called when child node was added to hierarchy node
   /// Ensures that the hierarchy specified by node hierarchies are mirrored in subject hierarchy
   void onHierarchyNodeChildNodeAdded(vtkObject* parentNodeObject, vtkObject* childNodeObject);
+
+  /// Toggle apply color to branch
+  void onApplyColorToBranchToggled(bool);
+
+protected:
+  /// Retrieve model display node for given item. If the folder item has an associated model display
+  /// node (created by the plugin, then return that). Otherwise see if it has a model hierarchy node
+  /// with a display node.
+  vtkMRMLModelDisplayNode* modelDisplayNodeForItem(vtkIdType itemID)const;
+
+  void callModifiedOnModelNodesInCurrentBranch();
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyFolderPluginPrivate> d_ptr;

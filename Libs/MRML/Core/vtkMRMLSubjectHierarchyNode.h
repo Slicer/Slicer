@@ -109,9 +109,6 @@ public:
   /// Get ID of root subject hierarchy item (which can be interpreted as the scene in terms of hierarchy)
   vtkIdType GetSceneItemID();
   /// Get data node for a subject hierarchy item
-  /// Note: There is no setter function because a subject hierarchy item can be associated to only one data node during
-  ///   its lifetime. This is due to simplicity reasons so that plugin search does not need to re-run when item is modified.
-  ///   It is very easy to create a new item for a new data node if needed using \sa CreateItem
   vtkMRMLNode* GetItemDataNode(vtkIdType itemID);
   /// Set name for a subject hierarchy item
   void SetItemName(vtkIdType itemID, std::string name);
@@ -167,6 +164,13 @@ public:
 
   /// Python accessor for the invalid ID
   static vtkIdType GetInvalidItemID() { return INVALID_ITEM_ID; }
+
+  /// Set data node for a subject hierarchy item
+  /// Note: This function is solely for setting nodes associated to hierarchy items (e.g. folder), and returns
+  ///   with error if a data node is already associated to the item. Does not call item modified event!
+  ///   This is due to simplicity reasons so that plugin search does not need to re-run when item is modified.
+  ///   Should never need to call manually!
+  void SetItemDataNode(vtkIdType itemID, vtkMRMLNode* dataNode);
 
 // Hierarchy related methods
 public:

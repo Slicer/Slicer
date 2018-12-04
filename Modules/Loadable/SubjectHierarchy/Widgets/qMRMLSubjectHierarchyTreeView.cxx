@@ -775,8 +775,9 @@ bool qMRMLSubjectHierarchyTreeView::clickDecoration(QMouseEvent* e)
     return false;
     }
 
-  // Visibility column
-  if (sourceIndex.column() == this->model()->visibilityColumn())
+  // Visibility and color columns
+  if ( sourceIndex.column() == this->model()->visibilityColumn()
+    || sourceIndex.column() == this->model()->colorColumn() )
     {
     vtkIdType itemID = d->SortFilterModel->subjectHierarchyItemFromIndex(index);
     if (!itemID)
@@ -785,7 +786,7 @@ bool qMRMLSubjectHierarchyTreeView::clickDecoration(QMouseEvent* e)
       return false;
       }
 
-    if (e->button() == Qt::LeftButton)
+    if (e->button() == Qt::LeftButton && sourceIndex.column() == this->model()->visibilityColumn())
       {
       // Toggle simple visibility
       this->toggleSubjectHierarchyItemVisibility(itemID);
