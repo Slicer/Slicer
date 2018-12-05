@@ -327,25 +327,6 @@ void vtkSlicerAnnotationModuleLogic::ProcessMRMLNodesEvents(vtkObject *caller,
 
   vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*> (callData);
 
-  vtkMRMLInteractionNode *interactionNode =
-      vtkMRMLInteractionNode::SafeDownCast(caller);
-  if (interactionNode)
-    {
-    switch (event)
-      {
-      case vtkMRMLInteractionNode::InteractionModeChangedEvent:
-        this->OnInteractionModeChangedEvent(interactionNode);
-        break;
-      case vtkMRMLInteractionNode::InteractionModePersistenceChangedEvent:
-        this->OnInteractionModePersistenceChangedEvent(interactionNode);
-        break;
-      default:
-        vtkWarningMacro("ProcessMRMLNodesEvents: unhandled event on interaction node: " << event)
-        ;
-      }
-    return;
-    }
-
   vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(
       node);
   if (annotationNode)
@@ -452,30 +433,6 @@ void vtkSlicerAnnotationModuleLogic::OnMRMLSceneEndClose()
     }
 }
 
-//-----------------------------------------------------------------------------
-void vtkSlicerAnnotationModuleLogic::OnInteractionModeChangedEvent(vtkMRMLInteractionNode *interactionNode)
-{
-  vtkDebugMacro("OnInteractionModeChangedEvent");
-  if (!interactionNode)
-    {
-    return;
-    }
-  // not needed anymore since the annotation buttons were removed
-  //this->m_Widget->updateWidgetFromInteractionMode(interactionNode);
-}
-
-//-----------------------------------------------------------------------------
-void vtkSlicerAnnotationModuleLogic::OnInteractionModePersistenceChangedEvent(vtkMRMLInteractionNode *interactionNode)
-{
-  vtkDebugMacro("OnInteractionModePersistenceChangedEvent");
-  if (!interactionNode)
-    {
-    return;
-    }
-  // not needed anymore since the annotation buttons were removed
-  //this->m_Widget->updateWidgetFromInteractionMode(interactionNode);
-}
-
 //---------------------------------------------------------------------------
 //
 //
@@ -501,25 +458,6 @@ void vtkSlicerAnnotationModuleLogic::SetMRMLSceneInternal(vtkMRMLScene * newScen
 //---------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::ObserveMRMLScene()
 {
-  // also observe the interaction node for changes
-  vtkMRMLInteractionNode *interactionNode =
-    vtkMRMLInteractionNode::SafeDownCast(
-    this->GetMRMLScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
-  if (interactionNode)
-    {
-    vtkNew<vtkIntArray> interactionEvents;
-    interactionEvents->InsertNextValue(
-        vtkMRMLInteractionNode::InteractionModeChangedEvent);
-    interactionEvents->InsertNextValue(
-        vtkMRMLInteractionNode::InteractionModePersistenceChangedEvent);
-    vtkObserveMRMLNodeEventsMacro(interactionNode, interactionEvents.GetPointer());
-    }
-  else
-    {
-    vtkWarningMacro("SetMRMLSceneInternal: No interaction node!");
-    }
-  vtkDebugMacro("SetMRMLSceneInternal: listeners added");
-
   // add known annotation types to the selection node
   vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(
       this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));

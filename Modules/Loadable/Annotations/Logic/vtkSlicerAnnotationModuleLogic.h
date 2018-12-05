@@ -284,8 +284,6 @@ protected:
                                       unsigned long event,
                                       void *callData ) VTK_OVERRIDE;
   virtual void OnMRMLAnnotationNodeModifiedEvent(vtkMRMLNode* node);
-  virtual void OnInteractionModeChangedEvent(vtkMRMLInteractionNode *interactionNode);
-  virtual void OnInteractionModePersistenceChangedEvent(vtkMRMLInteractionNode *interactionNode);
 
 private:
 
