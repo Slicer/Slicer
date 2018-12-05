@@ -72,8 +72,13 @@ class SampleDataSource:
   or lists as used in the logic below.
   e.g.
 
-    dataSource = SampleData.SampleDataSource('fixed', 'http://slicer.kitware.com/midas3/download/item/157188/small-mr-eye-fixed.nrrd', 'fixed.nrrd', 'fixed')
-    fixed = sampleDataLogic.downloadFromSource(dataSource)[0]
+    import SampleData
+    dataSource = SampleData.SampleDataSource(
+      nodeNames='fixed',
+      fileNames='fixed.nrrd',
+      uris='http://slicer.kitware.com/midas3/download/item/157188/small-mr-eye-fixed.nrrd')
+    loadedNode = SampleData.SampleDataLogic().downloadFromSource(dataSource)[0]
+
   """
 
   def __init__(self, sampleName=None, uris=None, fileNames=None, nodeNames=None,
