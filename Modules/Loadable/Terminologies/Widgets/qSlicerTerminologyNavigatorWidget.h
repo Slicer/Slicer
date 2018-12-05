@@ -185,6 +185,7 @@ protected slots:
   void onLoadAnatomicContextClicked();
 
   void anatomicalRegionExpandButtonUp();
+  void anatomicalRegionExpandButtonDown();
 
   void onLogicModified();
 
