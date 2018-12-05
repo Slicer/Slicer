@@ -217,8 +217,6 @@ protected:
 
   void RemoveDispalyedID(std::string &id);
 
-  vtkMRMLSelectionNode* GetSelectionNode();
-
 private:
 
   vtkMRMLModelDisplayableManager(const vtkMRMLModelDisplayableManager&); // Not implemented

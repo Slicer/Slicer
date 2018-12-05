@@ -2351,18 +2351,6 @@ void vtkMRMLModelDisplayableManager::OnInteractorStyleEvent(int eventid)
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLSelectionNode* vtkMRMLModelDisplayableManager::GetSelectionNode()
-{
-  // If selection node is set then use that, otherwise find selection node in the scene
-  if (this->Internal->SelectionNode == 0)
-    {
-    this->Internal->SelectionNode = vtkMRMLSelectionNode::SafeDownCast(
-          this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
-    }
-  return this->Internal->SelectionNode;
-}
-
-//---------------------------------------------------------------------------
 vtkLookupTable* vtkMRMLModelDisplayableManager::CreateLookupTableCopy(vtkLookupTable* sourceLut)
 {
   vtkLookupTable* copiedLut = NULL;

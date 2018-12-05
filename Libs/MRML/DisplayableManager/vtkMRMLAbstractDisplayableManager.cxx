@@ -126,7 +126,6 @@ public:
   vtkRenderer*                              Renderer;
   vtkMRMLNode*                              MRMLDisplayableNode;
   vtkSmartPointer<vtkIntArray>              MRMLDisplayableNodeObservableEvents;
-  vtkMRMLSelectionNode*                     MRMLSelectionNode;
   vtkMRMLInteractionNode*                   MRMLInteractionNode;
   vtkSmartPointer<vtkCallbackCommand>       MRMLInteractionNodeCallBackCommand;
   vtkMRMLDisplayableManagerGroup*           DisplayableManagerGroup;
@@ -585,14 +584,6 @@ void vtkMRMLAbstractDisplayableManager::CreateIfPossible()
       vtkWarningMacro( << "CreateIfPossible - MRMLScene does NOT contain any InteractionNode");
       }
 
-    // Look for SelectionNode
-    this->Internal->MRMLSelectionNode = vtkMRMLSelectionNode::SafeDownCast(
-        this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
-    if (!this->Internal->MRMLSelectionNode)
-      {
-      vtkWarningMacro( << "CreateIfPossible - MRMLScene does NOT contain any SelectionNode");
-      }
-
     this->Create();
     this->Internal->Created = true;
     }
@@ -690,7 +681,7 @@ vtkMRMLInteractionNode* vtkMRMLAbstractDisplayableManager::GetInteractionNode()
 //---------------------------------------------------------------------------
 vtkMRMLSelectionNode* vtkMRMLAbstractDisplayableManager::GetSelectionNode()
 {
-  return this->Internal->MRMLSelectionNode;
+  return vtkMRMLSelectionNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
 }
 
 //---------------------------------------------------------------------------
