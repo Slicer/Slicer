@@ -150,7 +150,6 @@ void qSlicerDataModuleWidget::setup()
   qMRMLSubjectHierarchyModel* sceneModel = (qMRMLSubjectHierarchyModel*)d->SubjectHierarchyTreeView->model();
   d->SubjectHierarchyTreeView->expandToDepth(4);
   d->SubjectHierarchyTreeView->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
-  d->SubjectHierarchyTreeView->header()->resizeSection(sceneModel->transformColumn(), 60);
   // Make subject hierarchy item info label text selectable
   d->SubjectHierarchyItemInfoLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
