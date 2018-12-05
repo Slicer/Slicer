@@ -1667,7 +1667,17 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
       if ( currentFolderID && shNode->HasItemAttribute(currentFolderID,
           vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyApplyColorToBranchAttributeName()) )
         {
-        folderDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(shNode->GetItemDataNode(currentFolderID));
+        vtkMRMLNode* dataNode = shNode->GetItemDataNode(currentFolderID);
+        vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(dataNode);
+        if (modelDisplayNode)
+          {
+          folderDisplayNode = modelDisplayNode;
+          }
+        vtkMRMLModelHierarchyNode* modelHierarchyNode = vtkMRMLModelHierarchyNode::SafeDownCast(dataNode);
+        if (modelHierarchyNode)
+          {
+          folderDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(modelHierarchyNode->GetDisplayNode());
+          }
         }
       }
     }
