@@ -181,7 +181,7 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
     # tool row at top, with commands and database
     self.toolFrame = qt.QWidget()
     self.toolFrame.setMaximumHeight(40)
-    self.toolFrame.setContentsMargins(-5, -5, -5, -5)
+    self.toolFrame.setContentsMargins(0,0,0,0)
     self.toolLayout = qt.QHBoxLayout(self.toolFrame)
     self.layout().addWidget(self.toolFrame)
     self.toolLayout.addWidget(self.toolBar)
