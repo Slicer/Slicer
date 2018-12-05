@@ -39,6 +39,7 @@
 #include <vtkMRMLLayoutLogic.h>
 #include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLSliceNode.h>
+#include <vtkMRMLViewNode.h>
 
 //---------------------------------------------------------------------------
 // qSlicerMouseModeToolBarPrivate methods
@@ -460,41 +461,32 @@ void qSlicerMouseModeToolBar::changeCursorTo(QCursor cursor)
     return;
     }
 
-  // loop through all existing threeDViews
+  // Updated all mapped 3D viewers
   for (int i=0; i < layoutManager->threeDViewCount(); ++i)
     {
-    layoutManager->threeDWidget(i)->threeDView()->setCursor(cursor);
+    qMRMLThreeDView* threeDView = layoutManager->threeDWidget(i)->threeDView();
+    if (!threeDView->mrmlViewNode()->IsMappedInLayout())
+      {
+      return;
+      }
+    threeDView->setCursor(cursor);
 #if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
-    layoutManager->threeDWidget(i)->threeDView()->VTKWidget()->setQVTKCursor(cursor);
+    threeDView->VTKWidget()->setQVTKCursor(cursor);
 #endif
     }
 
-  // the slice viewers
-  vtkMRMLLayoutLogic *layoutLogic = layoutManager->layoutLogic();
-  if (!layoutLogic)
+  // Updated all mapped slicer viewers
+  foreach(const QString& viewerName, layoutManager->sliceViewNames())
     {
-    return;
-    }
-  // the view nodes list is kept up to date with the currently mapped viewers
-  vtkCollection *visibleViews = layoutLogic->GetViewNodes();
-  // iterate through the view nodes, getting the layout name to get the slice
-  // widget
-  int numViews = visibleViews->GetNumberOfItems();
-  for (int v = 0; v < numViews; v++)
-    {
-    // item 0 is usually a vtkMRMLViewNode for the 3d window
-    vtkMRMLSliceNode *sliceNode = vtkMRMLSliceNode::SafeDownCast(visibleViews->GetItemAsObject(v));
-    if (sliceNode)
+    qMRMLSliceView* sliceView = layoutManager->sliceWidget(viewerName)->sliceView();
+    if (!sliceView->mrmlSliceNode()->IsMappedInLayout())
       {
-      qMRMLSliceWidget *sliceWidget = layoutManager->sliceWidget(sliceNode->GetName());
-      if (sliceWidget && sliceWidget->sliceView())
-        {
-        sliceWidget->sliceView()->setCursor(cursor);
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
-        sliceWidget->sliceView()->VTKWidget()->setQVTKCursor(cursor);
-#endif
-        }
+      return;
       }
+    sliceView->setCursor(cursor);
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
+    sliceView->VTKWidget()->setQVTKCursor(cursor);
+#endif
     }
 }
 
