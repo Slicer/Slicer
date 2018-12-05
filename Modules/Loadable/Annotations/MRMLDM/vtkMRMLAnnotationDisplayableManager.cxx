@@ -168,21 +168,15 @@ void vtkMRMLAnnotationDisplayableManager::AddObserversToInteractionNode()
     return;
     }
   // also observe the interaction node for changes
-  vtkMRMLInteractionNode *interactionNode =
-      vtkMRMLInteractionNode::SafeDownCast(
-          this->GetMRMLScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
+  vtkMRMLInteractionNode *interactionNode = this->GetInteractionNode();
   if (interactionNode)
     {
-
-    //if (!interactionNode->HasObserver(vtkMRMLInteractionNode::InteractionModePersistenceChangedEvent))
-    //  {
       vtkDebugMacro("AddObserversToInteractionNode: interactionNode found")
       vtkNew<vtkIntArray> interactionEvents;
       interactionEvents->InsertNextValue(vtkMRMLInteractionNode::InteractionModeChangedEvent);
       interactionEvents->InsertNextValue(vtkMRMLInteractionNode::InteractionModePersistenceChangedEvent);
       interactionEvents->InsertNextValue(vtkMRMLInteractionNode::EndPlacementEvent);
       vtkObserveMRMLNodeEventsMacro(interactionNode, interactionEvents.GetPointer());
-    //  }
     }
   else { vtkDebugMacro("AddObserversToInteractionNode: No interaction node!"); }
 }
@@ -196,8 +190,7 @@ void vtkMRMLAnnotationDisplayableManager::RemoveObserversFromInteractionNode()
     }
 
   // find the interaction node
-  vtkMRMLInteractionNode *interactionNode =
-    vtkMRMLInteractionNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
+  vtkMRMLInteractionNode *interactionNode = this->GetInteractionNode();
   if (interactionNode)
     {
     vtkUnObserveMRMLNodeMacro(interactionNode);
@@ -212,9 +205,7 @@ void vtkMRMLAnnotationDisplayableManager::AddObserversToSelectionNode()
     return;
     }
 
-  vtkMRMLSelectionNode* selectionNode =
-    vtkMRMLSelectionNode::SafeDownCast(
-      this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
+  vtkMRMLSelectionNode* selectionNode = this->GetSelectionNode();
   if (selectionNode)
     {
     vtkDebugMacro("AddObserversToSelectionNode: selectionNode found")
@@ -236,9 +227,7 @@ void vtkMRMLAnnotationDisplayableManager::RemoveObserversFromSelectionNode()
     return;
     }
 
-  vtkMRMLSelectionNode* selectionNode =
-    vtkMRMLSelectionNode::SafeDownCast(
-      this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
+  vtkMRMLSelectionNode* selectionNode = this->GetSelectionNode();
   if (selectionNode)
     {
     vtkUnObserveMRMLNodeMacro(selectionNode);
@@ -469,8 +458,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node
   // Remove all placed seeds
   this->Helper->RemoveSeeds();
 
-  vtkMRMLInteractionNode* interactionNode = vtkMRMLInteractionNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
-  this->Helper->UpdateLockedAllWidgetsFromInteractionNode(interactionNode);
+  this->Helper->UpdateLockedAllWidgetsFromInteractionNode(this->GetInteractionNode());
 
   // and render again after seeds were removed
   this->RequestRender();
@@ -1956,8 +1944,7 @@ bool vtkMRMLAnnotationDisplayableManager::GetWorldCoordinatesChanged(double * wo
 bool vtkMRMLAnnotationDisplayableManager::IsCorrectDisplayableManager()
 {
 
-  vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(
-        this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
+  vtkMRMLSelectionNode *selectionNode = this->GetSelectionNode();
   if ( selectionNode == 0 )
     {
     vtkErrorMacro ( "IsCorrectDisplayableManager: No selection node in the scene." );
