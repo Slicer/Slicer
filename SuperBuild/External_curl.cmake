@@ -57,7 +57,7 @@ if((NOT DEFINED CURL_INCLUDE_DIR
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "0722f23d53927ebe71b6f6126f6cc2014c147c1f"
+    "c5e0ea129b9d187214156f0f704e43ef45ff1aec" # curl-7_34_0-maint
     QUIET
     )
 
