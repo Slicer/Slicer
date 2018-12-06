@@ -35,8 +35,9 @@
 class qMRMLSubjectHierarchyTreeViewPrivate;
 class qMRMLSortFilterSubjectHierarchyProxyModel;
 class qMRMLSubjectHierarchyModel;
-class vtkMRMLSubjectHierarchyNode;
+class vtkMRMLNode;
 class vtkMRMLScene;
+class vtkMRMLSubjectHierarchyNode;
 class vtkIdList;
 
 /// \ingroup Slicer_QtModules_SubjectHierarchy
@@ -58,6 +59,8 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyTreeV
   Q_PROPERTY(bool contextMenuEnabled READ contextMenuEnabled WRITE setContextMenuEnabled)
   /// This property controls whether the Edit properties context menu action is visible. Visible by default
   Q_PROPERTY(bool editMenuActionVisible READ editMenuActionVisible WRITE setEditMenuActionVisible)
+  /// This property controls whether the Select role context menu sub-menu is visible. Visible by default
+  Q_PROPERTY(bool selectRoleSubMenuVisible READ selectRoleSubMenuVisible WRITE setSelectRoleSubMenuVisible)
   /// Flag determining whether multiple items can be selected
   Q_PROPERTY(bool multiSelection READ multiSelection WRITE setMultiSelection)
 
@@ -98,6 +101,11 @@ public:
   Q_INVOKABLE void setLevelFilter(QString &levelFilter);
   /// Set name filter that allows showing only items containing a specified string (case-insensitive). Show all items if empty
   Q_INVOKABLE void setNameFilter(QString &nameFilter);
+  /// Set node type filter that allows showing only data nodes of a certain type. Show all data nodes if empty
+  Q_INVOKABLE void setNodeTypes(const QStringList& types);
+  /// Set child node types filter that allows hiding certain data node subclasses that would otherwise be
+  /// accepted by the data node type filter. Show all data nodes if empty
+  Q_INVOKABLE void setHideChildNodeTypes(const QStringList& types);
 
   Q_INVOKABLE qMRMLSortFilterSubjectHierarchyProxyModel* sortFilterProxyModel()const;
   Q_INVOKABLE qMRMLSubjectHierarchyModel* model()const;
@@ -108,6 +116,7 @@ public:
   bool highlightReferencedItems()const;
   bool contextMenuEnabled()const;
   bool editMenuActionVisible()const;
+  bool selectRoleSubMenuVisible()const;
 
 public slots:
   /// Set MRML scene
@@ -119,6 +128,8 @@ public slots:
   virtual void setCurrentItems(QList<vtkIdType> items);
   /// Python compatibility function to set current (=selected) subject hierarchy items
   virtual void setCurrentItems(vtkIdList* items);
+  /// Convenience method to set current item by associated data node
+  virtual void setCurrentNode(vtkMRMLNode* node);
 
   /// Set subject hierarchy item to be the root in the shown tree
   virtual void setRootItem(vtkIdType itemID);
@@ -171,6 +182,7 @@ public slots:
   void setHighlightReferencedItems(bool highlightOn);
   void setContextMenuEnabled(bool enabled);
   void setEditMenuActionVisible(bool visible);
+  void setSelectRoleSubMenuVisible(bool visible);
 
 signals:
   void currentItemChanged(vtkIdType);

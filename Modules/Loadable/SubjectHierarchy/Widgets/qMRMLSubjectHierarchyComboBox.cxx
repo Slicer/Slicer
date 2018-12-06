@@ -287,6 +287,20 @@ void qMRMLSubjectHierarchyComboBox::setLevelFilter(QString &levelFilter)
 }
 
 //--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyComboBox::setNodeTypes(const QStringList& types)
+{
+  Q_D(qMRMLSubjectHierarchyComboBox);
+  d->TreeView->setNodeTypes(types);
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyComboBox::setHideChildNodeTypes(const QStringList& types)
+{
+  Q_D(qMRMLSubjectHierarchyComboBox);
+  d->TreeView->setHideChildNodeTypes(types);
+}
+
+//--------------------------------------------------------------------------
 int qMRMLSubjectHierarchyComboBox::maximumNumberOfShownItems()const
 {
   Q_D(const qMRMLSubjectHierarchyComboBox);

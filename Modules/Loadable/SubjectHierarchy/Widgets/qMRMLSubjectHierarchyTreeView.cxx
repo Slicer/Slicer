@@ -89,6 +89,7 @@ public:
 
   bool ContextMenuEnabled;
   bool EditActionVisible;
+  bool SelectRoleSubMenuVisible;
 
   QMenu* NodeMenu;
   QAction* RenameAction;
@@ -495,6 +496,25 @@ void qMRMLSubjectHierarchyTreeView::setCurrentItems(vtkIdList* items)
     }
 }
 
+//------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::setCurrentNode(vtkMRMLNode* node)
+{
+  Q_D(const qMRMLSubjectHierarchyTreeView);
+  if (!node || !d->SubjectHierarchyNode)
+    {
+    return;
+    }
+
+  vtkIdType itemID = d->SubjectHierarchyNode->GetItemByDataNode(node);
+  if (!itemID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Unable to find subject hierarchy item by data node " << node->GetName();
+    return;
+    }
+
+  this->setCurrentItem(itemID);
+}
+
 //--------------------------------------------------------------------------
 qMRMLSortFilterSubjectHierarchyProxyModel* qMRMLSubjectHierarchyTreeView::sortFilterProxyModel()const
 {
@@ -685,6 +705,20 @@ void qMRMLSubjectHierarchyTreeView::setEditMenuActionVisible(bool visible)
 }
 
 //--------------------------------------------------------------------------
+bool qMRMLSubjectHierarchyTreeView::selectRoleSubMenuVisible()const
+{
+  Q_D(const qMRMLSubjectHierarchyTreeView);
+  return d->SelectRoleSubMenuVisible;
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::setSelectRoleSubMenuVisible(bool visible)
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  d->SelectRoleSubMenuVisible = visible;
+}
+
+//--------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeView::setAttributeFilter(const QString& attributeName, const QVariant& attributeValue/*=QVariant()*/)
 {
   this->sortFilterProxyModel()->setAttributeNameFilter(attributeName);
@@ -717,6 +751,24 @@ void qMRMLSubjectHierarchyTreeView::setLevelFilter(QString &levelFilter)
 void qMRMLSubjectHierarchyTreeView::setNameFilter(QString &nameFilter)
 {
   this->sortFilterProxyModel()->setNameFilter(nameFilter);
+
+  // Reset root item, as it may have been corrupted, when tree became empty due to the filter
+  this->setRootItem(this->rootItem());
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::setNodeTypes(const QStringList& types)
+{
+  this->sortFilterProxyModel()->setNodeTypes(types);
+
+  // Reset root item, as it may have been corrupted, when tree became empty due to the filter
+  this->setRootItem(this->rootItem());
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::setHideChildNodeTypes(const QStringList& types)
+{
+  this->sortFilterProxyModel()->setHideChildNodeTypes(types);
 
   // Reset root item, as it may have been corrupted, when tree became empty due to the filter
   this->setRootItem(this->rootItem());
@@ -1023,7 +1075,7 @@ void qMRMLSubjectHierarchyTreeView::populateContextMenuForItem(vtkIdType itemID)
     d->EditAction->setVisible(d->EditActionVisible);
     d->RenameAction->setVisible(true);
     d->ToggleVisibilityAction->setVisible(false);
-    d->SelectPluginSubMenu->menuAction()->setVisible(true);
+    d->SelectPluginSubMenu->menuAction()->setVisible(d->SelectRoleSubMenuVisible);
     }
 
   // Have all enabled plugins show context menu actions for current item
