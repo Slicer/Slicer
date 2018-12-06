@@ -17,19 +17,6 @@ class TablesSelfTest(ScriptedLoadableModule):
     self.parent.helpText = """This is a self test for Table node and widgets."""
     parent.acknowledgementText = """This file was originally developed by Andras Lasso, PerkLab, Queen's University and was supported through the Applied Cancer Research Unit program of Cancer Care Ontario with funds provided by the Ontario Ministry of Health and Long-Term Care"""
 
-    # Add this test to the SelfTest module's list for discovery when the module
-    # is created.  Since this module may be discovered before SelfTests itself,
-    # create the list if it doesn't already exist.
-    try:
-      slicer.selfTests
-    except AttributeError:
-      slicer.selfTests = {}
-    slicer.selfTests['TablesSelfTest'] = self.runTest
-
-  def runTest(self):
-    tester = TablesSelfTestTest()
-    tester.runTest()
-
 #
 # TablesSelfTestWidget
 #

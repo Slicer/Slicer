@@ -2,14 +2,16 @@ import os
 import unittest
 import math
 import vtk, qt, ctk, slicer
+from slicer.ScriptedLoadableModule import *
 import logging
 
 #
 # FiducialLayoutSwitchBug1914
 #
 
-class FiducialLayoutSwitchBug1914:
+class FiducialLayoutSwitchBug1914(ScriptedLoadableModule):
   def __init__(self, parent):
+    ScriptedLoadableModule.__init__(self, parent)
     parent.title = "FiducialLayoutSwitchBug1914"
     parent.categories = ["Testing.TestCases"]
     parent.dependencies = []
@@ -20,65 +22,18 @@ class FiducialLayoutSwitchBug1914:
     parent.acknowledgementText = """
     This file was originally developed by Nicole Aucoin, BWH  and was partially funded by NIH grant 3P41RR013218-12S1.
 """
-    self.parent = parent
 
-    # Add this test to the SelfTest module's list for discovery when the module
-    # is created.  Since this module may be discovered before SelfTests itself,
-    # create the list if it doesn't already exist.
-    try:
-      slicer.selfTests
-    except AttributeError:
-      slicer.selfTests = {}
-    slicer.selfTests['FiducialLayoutSwitchBug1914'] = self.runTest
-
-  def runTest(self):
-    tester = FiducialLayoutSwitchBug1914Test()
-    tester.runTest()
 
 #
 # qFiducialLayoutSwitchBug1914Widget
 #
 
-class FiducialLayoutSwitchBug1914Widget:
-  def __init__(self, parent = None):
-    if not parent:
-      self.parent = slicer.qMRMLWidget()
-      self.parent.setLayout(qt.QVBoxLayout())
-      self.parent.setMRMLScene(slicer.mrmlScene)
-    else:
-      self.parent = parent
-    self.layout = self.parent.layout()
-    if not parent:
-      self.setup()
-      self.parent.show()
+class FiducialLayoutSwitchBug1914Widget(ScriptedLoadableModuleWidget):
 
   def setup(self):
+    ScriptedLoadableModuleWidget.setup(self)
+
     # Instantiate and connect widgets ...
-
-    #
-    # Reload and Test area
-    #
-    reloadCollapsibleButton = ctk.ctkCollapsibleButton()
-    reloadCollapsibleButton.text = "Reload && Test"
-    self.layout.addWidget(reloadCollapsibleButton)
-    reloadFormLayout = qt.QFormLayout(reloadCollapsibleButton)
-
-    # reload button
-    # (use this during development, but remove it when delivering
-    #  your module to users)
-    self.reloadButton = qt.QPushButton("Reload")
-    self.reloadButton.toolTip = "Reload this module."
-    self.reloadButton.name = "FiducialLayoutSwitchBug1914 Reload"
-    reloadFormLayout.addWidget(self.reloadButton)
-    self.reloadButton.connect('clicked()', self.onReload)
-
-    # reload and test button
-    # (use this during development, but remove it when delivering
-    #  your module to users)
-    self.reloadAndTestButton = qt.QPushButton("Reload and Test")
-    self.reloadAndTestButton.toolTip = "Reload this module and then run the self tests."
-    reloadFormLayout.addWidget(self.reloadAndTestButton)
-    self.reloadAndTestButton.connect('clicked()', self.onReloadAndTest)
 
     #
     # Parameters Area
@@ -133,30 +88,12 @@ class FiducialLayoutSwitchBug1914Widget:
     print("Run the algorithm")
     logic.run(enableScreenshotsFlag,screenshotScaleFactor)
 
-  def onReload(self,moduleName="FiducialLayoutSwitchBug1914"):
-    """Generic reload method for any scripted module.
-    ModuleWizard will substitute correct default moduleName.
-    """
-    globals()[moduleName] = slicer.util.reloadScriptedModule(moduleName)
-
-  def onReloadAndTest(self,moduleName="FiducialLayoutSwitchBug1914"):
-    try:
-      self.onReload()
-      evalString = 'globals()["%s"].%sTest()' % (moduleName, moduleName)
-      tester = eval(evalString)
-      tester.runTest()
-    except Exception, e:
-      import traceback
-      traceback.print_exc()
-      slicer.util.warningDisplay("Reload and Test", 'Exception!\n\n' + str(e) +
-                                 "\n\nSee Python Console for Stack Trace")
-
 
 #
 # FiducialLayoutSwitchBug1914Logic
 #
 
-class FiducialLayoutSwitchBug1914Logic:
+class FiducialLayoutSwitchBug1914Logic(ScriptedLoadableModuleLogic):
   """This class should implement all the actual
   computation done by your module.  The interface
   should be such that other python code can import
@@ -164,6 +101,7 @@ class FiducialLayoutSwitchBug1914Logic:
   requiring an instance of the Widget
   """
   def __init__(self):
+    ScriptedLoadableModuleLogic.__init__(self)
     # test difference in display location and then in RAS if this is too fine
     self.maximumDisplayDifference = 1.0
     # for future testing: take into account the volume voxel size
@@ -171,7 +109,7 @@ class FiducialLayoutSwitchBug1914Logic:
 
   def takeScreenshot(self,name,description,type=-1):
     # show the message even if not taking a screen shot
-    slicer.util.delayDisplay(description)
+    self.delayDisplay(description)
 
     if self.enableScreenshots == 0:
       return
@@ -224,7 +162,7 @@ class FiducialLayoutSwitchBug1914Logic:
     Run the actual algorithm
     """
 
-    slicer.util.delayDisplay('Running the algorithm',500)
+    self.delayDisplay('Running the algorithm',500)
 
     self.enableScreenshots = enableScreenshots
     self.screenshotScaleFactor = screenshotScaleFactor
@@ -234,7 +172,7 @@ class FiducialLayoutSwitchBug1914Logic:
     lm.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalView)
     # without this delayed display, when running from the cmd line Slicer starts
     # up in a different layout and the seed won't get rendered in the right spot
-    slicer.util.delayDisplay("Conventional view",500)
+    self.delayDisplay("Conventional view",500)
 
     # Download MRHead from sample data
     import SampleData
@@ -248,7 +186,7 @@ class FiducialLayoutSwitchBug1914Logic:
     fidIndex = markupsLogic.AddFiducial(eye[0], eye[1], eye[2])
     fidID = markupsLogic.GetActiveListID()
     fidNode = slicer.mrmlScene.GetNodeByID(fidID)
-    slicer.util.delayDisplay("Placed a fiducial at %g, %g, %g" % (eye[0], eye[1], eye[2]),500)
+    self.delayDisplay("Placed a fiducial at %g, %g, %g" % (eye[0], eye[1], eye[2]),500)
 
     # Pan and zoom
     sliceWidget = slicer.app.layoutManager().sliceWidget('Red')
@@ -257,7 +195,7 @@ class FiducialLayoutSwitchBug1914Logic:
     sliceNode = sliceLogic.GetSliceNode()
     sliceNode.SetXYZOrigin(-71.7, 129.7, 0.0)
     sliceNode.SetFieldOfView(98.3, 130.5, 1.0)
-    slicer.util.delayDisplay("Panned and zoomed",500)
+    self.delayDisplay("Panned and zoomed",500)
 
     # Get the seed widget seed location
     startingSeedDisplayCoords = [0.0, 0.0, 0.0]
@@ -272,13 +210,13 @@ class FiducialLayoutSwitchBug1914Logic:
 
     # Switch to red slice only
     lm.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutOneUpRedSliceView)
-    slicer.util.delayDisplay("Red Slice only",500)
+    self.delayDisplay("Red Slice only",500)
 
     # Switch to conventional layout
     print 'Calling set layout back to conventional'
     lm.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalView)
     print 'Done calling set layout back to conventional'
-    slicer.util.delayDisplay("Conventional layout",500)
+    self.delayDisplay("Conventional layout",500)
 
     # Get the current seed widget seed location
     endingSeedDisplayCoords = [0.0, 0.0, 0.0]
@@ -295,7 +233,7 @@ class FiducialLayoutSwitchBug1914Logic:
     diff = math.pow((startingSeedDisplayCoords[0] - endingSeedDisplayCoords[0]),2) + math.pow((startingSeedDisplayCoords[1] - endingSeedDisplayCoords[1]),2) + math.pow((startingSeedDisplayCoords[2] - endingSeedDisplayCoords[2]),2)
     if diff != 0.0:
       diff = math.sqrt(diff)
-    slicer.util.delayDisplay("Difference between starting and ending seed display coordinates = %g" % diff)
+    self.delayDisplay("Difference between starting and ending seed display coordinates = %g" % diff)
 
     if diff > self.maximumDisplayDifference:
       # double check against the RAS coordinates of the underlying volume since the display could have changed with a FOV adjustment.
@@ -308,10 +246,10 @@ class FiducialLayoutSwitchBug1914Logic:
         rasDiff = math.sqrt(rasDiff)
       print 'Checking the difference between fiducial RAS position',seedRAS,'and volume RAS as derived from the fiducial display position',volumeRAS,': ',rasDiff
       if rasDiff > self.maximumRASDifference:
-        slicer.util.delayDisplay("RAS coordinate difference is too large as well!\nExpected < %g but got %g" % (self.maximumRASDifference, rasDiff))
+        self.delayDisplay("RAS coordinate difference is too large as well!\nExpected < %g but got %g" % (self.maximumRASDifference, rasDiff))
         return False
       else:
-        slicer.util.delayDisplay("RAS coordinate difference is %g which is < %g, test passes." % (rasDiff, self.maximumRASDifference))
+        self.delayDisplay("RAS coordinate difference is %g which is < %g, test passes." % (rasDiff, self.maximumRASDifference))
 
     if enableScreenshots == 1:
       # compare the screen snapshots
@@ -334,17 +272,17 @@ class FiducialLayoutSwitchBug1914Logic:
       imageStats.GenerateHistogramImageOff()
       imageStats.Update()
       meanVal = imageStats.GetMean()
-      slicer.util.delayDisplay("Mean of image difference = %g" % meanVal)
+      self.delayDisplay("Mean of image difference = %g" % meanVal)
       if meanVal > 5.0:
         # raise Exception("Image difference is too great!\nExpected <= 5.0, but got %g" % (meanVal))
         print("Image difference is too great!\nExpected <= 5.0, but got %g" % (meanVal))
         return False
 
-    slicer.util.delayDisplay('Test passed!')
+    self.delayDisplay('Test passed!')
     return True
 
 
-class FiducialLayoutSwitchBug1914Test(unittest.TestCase):
+class FiducialLayoutSwitchBug1914Test(ScriptedLoadableModuleTest):
   """
   This is the test case for your scripted module.
   """
@@ -365,9 +303,9 @@ class FiducialLayoutSwitchBug1914Test(unittest.TestCase):
     logic = FiducialLayoutSwitchBug1914Logic()
     returnFlag = logic.run()
     if returnFlag == True:
-      slicer.util.delayDisplay('Test passed!')
+      self.delayDisplay('Test passed!')
     else:
-      slicer.util.delayDisplay('Test failed!')
+      self.delayDisplay('Test failed!')
     self.assertTrue(returnFlag)
 
 

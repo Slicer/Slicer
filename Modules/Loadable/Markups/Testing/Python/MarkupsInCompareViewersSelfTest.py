@@ -2,13 +2,15 @@ import os
 import time
 import unittest
 import vtk, qt, ctk, slicer
+from slicer.ScriptedLoadableModule import *
 
 #
 # MarkupsInCompareViewersSelfTest
 #
 
-class MarkupsInCompareViewersSelfTest:
+class MarkupsInCompareViewersSelfTest(ScriptedLoadableModule):
   def __init__(self, parent):
+    ScriptedLoadableModule.__init__(self, parent)
     parent.title = "MarkupsInCompareViewersSelfTest"
     parent.categories = ["Testing.TestCases"]
     parent.dependencies = []
@@ -19,65 +21,17 @@ class MarkupsInCompareViewersSelfTest:
     parent.acknowledgementText = """
     This file was originally developed by Nicole Aucoin, BWH and was partially funded by NIH grant 3P41RR013218-12S1.
 """
-    self.parent = parent
-
-    # Add this test to the SelfTest module's list for discovery when the module
-    # is created.  Since this module may be discovered before SelfTests itself,
-    # create the list if it doesn't already exist.
-    try:
-      slicer.selfTests
-    except AttributeError:
-      slicer.selfTests = {}
-    slicer.selfTests['MarkupsInCompareViewersSelfTest'] = self.runTest
-
-  def runTest(self):
-    tester = MarkupsInCompareViewersSelfTestTest()
-    tester.runTest()
 
 #
 # qMarkupsInCompareViewersSelfTestWidget
 #
 
-class MarkupsInCompareViewersSelfTestWidget:
-  def __init__(self, parent = None):
-    if not parent:
-      self.parent = slicer.qMRMLWidget()
-      self.parent.setLayout(qt.QVBoxLayout())
-      self.parent.setMRMLScene(slicer.mrmlScene)
-    else:
-      self.parent = parent
-    self.layout = self.parent.layout()
-    if not parent:
-      self.setup()
-      self.parent.show()
+class MarkupsInCompareViewersSelfTestWidget(ScriptedLoadableModuleWidget):
 
   def setup(self):
+    ScriptedLoadableModuleWidget.setup(self)
+
     # Instantiate and connect widgets ...
-
-    #
-    # Reload and Test area
-    #
-    reloadCollapsibleButton = ctk.ctkCollapsibleButton()
-    reloadCollapsibleButton.text = "Reload && Test"
-    self.layout.addWidget(reloadCollapsibleButton)
-    reloadFormLayout = qt.QFormLayout(reloadCollapsibleButton)
-
-    # reload button
-    # (use this during development, but remove it when delivering
-    #  your module to users)
-    self.reloadButton = qt.QPushButton("Reload")
-    self.reloadButton.toolTip = "Reload this module."
-    self.reloadButton.name = "MarkupsInCompareViewersSelfTest Reload"
-    reloadFormLayout.addWidget(self.reloadButton)
-    self.reloadButton.connect('clicked()', self.onReload)
-
-    # reload and test button
-    # (use this during development, but remove it when delivering
-    #  your module to users)
-    self.reloadAndTestButton = qt.QPushButton("Reload and Test")
-    self.reloadAndTestButton.toolTip = "Reload this module and then run the self tests."
-    reloadFormLayout.addWidget(self.reloadAndTestButton)
-    self.reloadAndTestButton.connect('clicked()', self.onReloadAndTest)
 
     #
     # Parameters Area
@@ -109,45 +63,12 @@ class MarkupsInCompareViewersSelfTestWidget:
     logic = MarkupsInCompareViewersSelfTestLogic()
     logic.run()
 
-  def onReload(self,moduleName="MarkupsInCompareViewersSelfTest"):
-    """Generic reload method for any scripted module.
-    ModuleWizard will substitute correct default moduleName.
-    """
-    globals()[moduleName] = slicer.util.reloadScriptedModule(moduleName)
-
-  def onReloadAndTest(self,moduleName="MarkupsInCompareViewersSelfTest"):
-    try:
-      self.onReload()
-      evalString = 'globals()["%s"].%sTest()' % (moduleName, moduleName)
-      tester = eval(evalString)
-      tester.runTest()
-    except Exception, e:
-      import traceback
-      traceback.print_exc()
-      slicer.util.warningDisplay('Exception!\n\n' + str(e) + "\n\nSee Python Console for Stack Trace",
-                                 windowTitle="Reload and Test")
-
 
 #
 # MarkupsInCompareViewersSelfTestLogic
 #
 
-class MarkupsInCompareViewersSelfTestLogic:
-
-  def __init__(self):
-    pass
-
-  def logicDelayDisplay(self,message,msec=1000):
-    """This utility method displays a small dialog and waits.
-    """
-    print(message)
-    self.info = qt.QDialog()
-    self.infoLayout = qt.QVBoxLayout()
-    self.info.setLayout(self.infoLayout)
-    self.label = qt.QLabel(message,self.info)
-    self.infoLayout.addWidget(self.label)
-    qt.QTimer.singleShot(msec, self.info.close)
-    self.info.exec_()
+class MarkupsInCompareViewersSelfTestLogic(ScriptedLoadableModuleLogic):
 
   def run(self):
     """
@@ -206,13 +127,13 @@ class MarkupsInCompareViewersSelfTestLogic:
     index = fidNode.AddFiducialFromArray(nose)
     fidNode.SetNthFiducialLabel(index, "nose")
 
-    self.logicDelayDisplay("Placed 3 fiducials")
+    self.delayDisplay("Placed 3 fiducials")
 
     #
     # switch to 2 viewers compare layout
     #
     lm.setLayout(12)
-    self.logicDelayDisplay("Switched to Compare 2 viewers")
+    self.delayDisplay("Switched to Compare 2 viewers")
 
     #
     # get compare slice composite node
@@ -232,7 +153,7 @@ class MarkupsInCompareViewersSelfTestLogic:
     compareLogic1.StartSliceOffsetInteraction()
     compareLogic1.SetSliceOffset(eye1[2])
     compareLogic1.EndSliceOffsetInteraction()
-    self.logicDelayDisplay("MH Head in background, scrolled to a fiducial")
+    self.delayDisplay("MH Head in background, scrolled to a fiducial")
 
     # scroll around through the range of points
     offset = nose[2]
@@ -241,46 +162,29 @@ class MarkupsInCompareViewersSelfTestLogic:
       compareLogic1.SetSliceOffset(offset)
       compareLogic1.EndSliceOffsetInteraction()
       msg = "Scrolled to " + str(offset)
-      self.logicDelayDisplay(msg,250)
+      self.delayDisplay(msg,250)
       offset += 1.0
 
     # switch back to conventional
     lm.setLayout(2)
-    self.logicDelayDisplay("Switched back to conventional layout")
+    self.delayDisplay("Switched back to conventional layout")
 
     # switch to compare grid
     lm.setLayout(23)
     compareLogic1.FitSliceToAll()
-    self.logicDelayDisplay("Switched to Compare grid")
+    self.delayDisplay("Switched to Compare grid")
 
     # switch back to conventional
     lm.setLayout(2)
-    self.logicDelayDisplay("Switched back to conventional layout")
+    self.delayDisplay("Switched back to conventional layout")
 
     return True
 
 
-class MarkupsInCompareViewersSelfTestTest(unittest.TestCase):
+class MarkupsInCompareViewersSelfTestTest(ScriptedLoadableModuleTest):
   """
   This is the test case for your scripted module.
   """
-
-  def delayDisplay(self,message,msec=1000):
-    """This utility method displays a small dialog and waits.
-    This does two things: 1) it lets the event loop catch up
-    to the state of the test so that rendering and widget updates
-    have all taken place before the test continues and 2) it
-    shows the user/developer/tester the state of the test
-    so that we'll know when it breaks.
-    """
-    print(message)
-    self.info = qt.QDialog()
-    self.infoLayout = qt.QVBoxLayout()
-    self.info.setLayout(self.infoLayout)
-    self.label = qt.QLabel(message,self.info)
-    self.infoLayout.addWidget(self.label)
-    qt.QTimer.singleShot(msec, self.info.close)
-    self.info.exec_()
 
   def setUp(self):
     """ Do whatever is needed to reset the state - typically a scene clear will be enough.
