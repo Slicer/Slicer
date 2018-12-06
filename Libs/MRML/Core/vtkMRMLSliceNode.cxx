@@ -93,6 +93,7 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
 
   this->SliceVisible = 0;
   this->WidgetVisible = 0;
+  this->WidgetOutlineVisible = 1;
   this->WidgetNormalLockedToCamera = 0;
   this->UseLabelOutline = 0;
 
@@ -895,6 +896,7 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
   of << " jumpMode=\"" << this->JumpMode << "\"";
   of << " sliceVisibility=\"" << (this->SliceVisible ? "true" : "false") << "\"";
   of << " widgetVisibility=\"" << (this->WidgetVisible ? "true" : "false") << "\"";
+  of << " widgetOutlineVisibility=\"" << (this->WidgetOutlineVisible ? "true" : "false") << "\"";
   of << " useLabelOutline=\"" << (this->UseLabelOutline ? "true" : "false") << "\"";
   of << " sliceSpacingMode=\"" << this->SliceSpacingMode << "\"";
   of << " prescribedSliceSpacing=\""
@@ -1076,6 +1078,17 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
       else
         {
         this->WidgetVisible = 0;
+        }
+      }
+    else if (!strcmp(attName, "widgetOutlineVisibility"))
+      {
+      if (!strcmp(attValue,"true"))
+        {
+        this->WidgetOutlineVisible = 1;
+        }
+      else
+        {
+        this->WidgetOutlineVisible = 0;
         }
       }
     else if (!strcmp(attName, "useLabelOutline"))
@@ -1293,6 +1306,7 @@ void vtkMRMLSliceNode::Copy(vtkMRMLNode *anode)
   this->SliceSpacingMode = node->SliceSpacingMode;
 
   this->WidgetVisible = node->WidgetVisible;
+  this->WidgetOutlineVisible = node->WidgetOutlineVisible;
   this->UseLabelOutline = node->UseLabelOutline;
 
   this->SliceResolutionMode = node->SliceResolutionMode;
@@ -1393,6 +1407,8 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
     (this->SliceVisible ? "true" : "false") << "\n";
   os << indent << "WidgetVisible: " <<
     (this->WidgetVisible ? "true" : "false") << "\n";
+  os << indent << "WidgetOutlineVisible: " <<
+    (this->WidgetOutlineVisible ? "true" : "false") << "\n";
   os << indent << "UseLabelOutline: " <<
     (this->UseLabelOutline ? "true" : "false") << "\n";
 

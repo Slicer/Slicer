@@ -82,6 +82,10 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   vtkGetMacro(WidgetVisible, int);
   vtkSetMacro(WidgetVisible, int);
 
+  /// The visibility of the slice plane widget outline in the 3DViewer.
+  vtkGetMacro(WidgetOutlineVisible, int);
+  vtkSetMacro(WidgetOutlineVisible, int);
+
   /// Add View Node ID for the view to display this node in.
   /// \sa ViewNodeIDs, RemoveViewNodeID(), RemoveAllViewNodeIDs()
   void AddThreeDViewID(const char* viewNodeID);
@@ -512,6 +516,7 @@ protected:
 
   int SliceVisible;
   int WidgetVisible;
+  int WidgetOutlineVisible;
   int WidgetNormalLockedToCamera;
   int UseLabelOutline;
 
