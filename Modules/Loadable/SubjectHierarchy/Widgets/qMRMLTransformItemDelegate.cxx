@@ -45,6 +45,7 @@ DelegateMenu::DelegateMenu(QWidget* parent)
 
 void DelegateMenu::showEvent(QShowEvent* event)
 {
+  Q_UNUSED(event);
   this->move(QCursor::pos());
 }
 

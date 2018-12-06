@@ -217,6 +217,7 @@ QIcon qSlicerSubjectHierarchyFolderPlugin::visibilityIcon(int visible)
 //-----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyFolderPlugin::setDisplayColor(vtkIdType itemID, QColor color, QMap<int, QVariant> terminologyMetaData)
 {
+  Q_UNUSED(terminologyMetaData);
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
