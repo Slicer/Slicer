@@ -185,8 +185,9 @@ public:
   /// Put the interaction node into place mode, and set the persistence of
   /// place mode according to the persistent flag.
   /// Return true on successfully going into place mode, false otherwise.
+  /// By default, the default interaction node is updated.
   /// \sa SetActiveIDList
-  bool StartPlaceMode(bool persistent);
+  bool StartPlaceMode(bool persistent, vtkMRMLInteractionNode* interactionNode = NULL);
 
   /// Inspect all the slice composite nodes in the scene. Return 1 if all have
   /// SliceIntersectionVisibility set to true, 0 if all have it set to false,

@@ -54,10 +54,10 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
   vtkTypeMacro(vtkMRMLApplicationLogic, vtkMRMLAbstractLogic);
 
-  /// Get current Selection node
+  /// Get default Selection node
   vtkMRMLSelectionNode* GetSelectionNode()const;
 
-  /// Get current Interaction node
+  /// Get default Interaction node
   vtkMRMLInteractionNode* GetInteractionNode()const;
 
   /// All the slice logics in the application

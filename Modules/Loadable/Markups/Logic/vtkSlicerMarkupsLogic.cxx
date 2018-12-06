@@ -338,10 +338,15 @@ void vtkSlicerMarkupsLogic::SetActiveListID(vtkMRMLMarkupsNode *markupsNode)
     if (activePlaceNodeClassName && strcmp(activePlaceNodeClassName, "vtkMRMLMarkupsFiducialNode") == 0)
       {
       selectionNode->SetActivePlaceNodeID(NULL);
-      vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
-      if (interactionNode && interactionNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place)
+      vtkSmartPointer<vtkCollection> interactionNodes = vtkSmartPointer<vtkCollection>::Take
+            (this->GetMRMLScene()->GetNodesByClass("vtkMRMLInteractionNode"));
+      for(int interactionNodeIndex = 0; interactionNodeIndex < interactionNodes->GetNumberOfItems(); ++interactionNodeIndex)
         {
-        interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
+        vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast(interactionNodes->GetItemAsObject(interactionNodeIndex));
+        if (interactionNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place)
+          {
+          interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
+          }
         }
       }
     return;
@@ -1298,7 +1303,7 @@ void vtkSlicerMarkupsLogic::RenameAllMarkupsFromCurrentFormat(vtkMRMLMarkupsNode
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerMarkupsLogic::StartPlaceMode(bool persistent)
+bool vtkSlicerMarkupsLogic::StartPlaceMode(bool persistent, vtkMRMLInteractionNode* interactionNode)
 {
   if (!this->GetMRMLScene())
     {
@@ -1318,9 +1323,11 @@ bool vtkSlicerMarkupsLogic::StartPlaceMode(bool persistent)
   selectionNode->SetReferenceActivePlaceNodeClassName("vtkMRMLMarkupsFiducialNode");
 
   // now go into place mode with the persistece flag set
-  vtkMRMLInteractionNode *interactionNode =
-    vtkMRMLInteractionNode::SafeDownCast(
-      this->GetMRMLScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
+  if (!interactionNode)
+    {
+    interactionNode = vtkMRMLInteractionNode::SafeDownCast(
+          this->GetMRMLScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
+    }
   if (!interactionNode)
     {
     vtkErrorMacro ("StartPlaceMode: No interaction node in the scene." );

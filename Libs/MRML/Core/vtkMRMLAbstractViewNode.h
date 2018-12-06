@@ -27,6 +27,7 @@
 // MRML includes
 #include "vtkMRMLNode.h"
 
+class vtkMRMLInteractionNode;
 class vtkMRMLModelNode;
 class vtkStringArray;
 
@@ -98,6 +99,32 @@ public:
   vtkGetMacro(Visibility, int);
   vtkSetMacro(Visibility, int);
 
+  /// \brief Get interaction node.
+  ///
+  /// If no node reference has been explicitly set using SetInteractionNode()
+  /// or SetInteractionNodeID(), return the singleton interaction node.
+  ///
+  /// The singleton interaction node is considered to be the default interaction node. Associating
+  /// a specific interaction node to one or a multiple views allows to control the interaction mode
+  /// associated with these views.
+  ///
+  /// Since by default, the interaction node is a singleton, a new interaction node may be
+  /// created doing the following:
+  ///
+  /// \code{.cpp}
+  /// vtkNew<vtkMRMLInteractionNode> interactionNode;
+  /// interactionNode->SetSingletonOff();
+  /// this->GetMRMLScene()->AddNode(interactionNode.GetPointer());
+  /// \endcode
+  ///
+  /// \sa SetInteractionNodeID() SetInteractionNode()
+  vtkMRMLInteractionNode* GetInteractionNode();
+  /// Set interaction node reference.
+  /// \sa GetInteractionNode()
+  bool SetInteractionNodeID(const char *interactionNodeId);
+  /// Set interaction node reference.
+  /// \sa GetInteractionNode()
+  bool SetInteractionNode(vtkMRMLNode* node);
 
   /// Indicates whether or not the view is mapped in the current layout.
   /// \sa GetVisibility()
@@ -286,6 +313,7 @@ protected:
   vtkSmartPointer<vtkStringArray> AxisLabels;
 
   static const char* ParentLayoutNodeReferenceRole;
+  static const char* InteractionNodeReferenceRole;
 };
 
 //------------------------------------------------------------------------------
