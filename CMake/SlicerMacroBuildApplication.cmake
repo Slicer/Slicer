@@ -538,7 +538,7 @@ macro(slicerMacroBuildApplication)
       if(${Slicer_REQUIRED_QT_VERSION} VERSION_GREATER_EQUAL 5 AND NOT QT_DESIGNER_EXECUTABLE)
         # Since Qt only provides a CMake module to find the designer library, we work
         # around this limitation by finding the designer executable.
-        find_program(QT_DESIGNER_EXECUTABLE designer Designer "${QT_BINARY_DIR}")
+        find_program(QT_DESIGNER_EXECUTABLE designer Designer HINTS "${QT_BINARY_DIR}" NO_DEFAULT_PATH)
       endif()
 
       if(EXISTS ${QT_DESIGNER_EXECUTABLE})
