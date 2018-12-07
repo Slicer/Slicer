@@ -398,7 +398,7 @@ bool qSlicerApplication::notify(QObject *receiver, QEvent *event)
   catch( std::exception& exception )
     {
     QString errorMessage;
-    errorMessage = tr("Slicer has caught an internal error.\n\n");
+    errorMessage = tr("%1 has caught an internal error.\n\n").arg(this->applicationName());
     errorMessage += tr("You may be able to continue from this point, but results are undefined.\n\n");
     errorMessage += tr("Suggested action is to save your work and restart.");
     errorMessage += tr("\n\nIf you have a repeatable sequence of steps that causes this message, ");
