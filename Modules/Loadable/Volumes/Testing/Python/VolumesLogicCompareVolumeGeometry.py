@@ -1,8 +1,10 @@
 import unittest
-from  __main__ import vtk, qt, ctk, slicer
+import vtk, qt, ctk, slicer
+from slicer.ScriptedLoadableModule import *
 
 
-class VolumesLogicCompareVolumeGeometryTesting(unittest.TestCase):
+class VolumesLogicCompareVolumeGeometryTesting(ScriptedLoadableModuleTest):
+
   def setUp(self):
     pass
 
@@ -11,6 +13,7 @@ class VolumesLogicCompareVolumeGeometryTesting(unittest.TestCase):
     Load a volume, then call the compare volume geometry test with
     different values of epsilon and precision.
     """
+    self.delayDisplay("Starting the test")
 
     #
     # first, get some sample data
@@ -116,5 +119,7 @@ class VolumesLogicCompareVolumeGeometryTesting(unittest.TestCase):
       return False
     warningString = volumesLogic.CompareVolumeGeometry(head,head2)
     print warningString
+
+    self.delayDisplay('Test passed')
 
     return True

@@ -4,27 +4,44 @@ import qt
 import slicer
 import EditorLib
 from EditorLib.EditUtil import EditUtil
+from slicer.ScriptedLoadableModule import *
 
-class ThresholdThreading(unittest.TestCase):
-  def setUp(self):
-    pass
+#
+# ThresholdThreadingTest
+#
 
-  def delayDisplay(self,message,msec=1000):
-    """This utility method displays a small dialog and waits.
-    This does two things: 1) it lets the event loop catch up
-    to the state of the test so that rendering and widget updates
-    have all taken place before the test continues and 2) it
-    shows the user/developer/tester the state of the test
-    so that we'll know when it breaks.
+class ThresholdThreadingTest(ScriptedLoadableModule):
+  def __init__(self, parent):
+    ScriptedLoadableModule.__init__(self, parent)
+    parent.title = "ThresholdThreadingTest"
+    parent.categories = ["Testing.TestCases"]
+    parent.contributors = ["Steve Pieper (Isomics Inc.)"]
+    parent.helpText = """
+    Self test for the editor.
+    No module interface here, only used in SelfTests module
     """
-    print(message)
-    self.info = qt.QDialog()
-    self.infoLayout = qt.QVBoxLayout()
-    self.info.setLayout(self.infoLayout)
-    self.label = qt.QLabel(message,self.info)
-    self.infoLayout.addWidget(self.label)
-    qt.QTimer.singleShot(msec, self.info.close)
-    self.info.exec_()
+    parent.acknowledgementText = """
+    This DICOM Plugin was developed by
+    Steve Pieper, Isomics, Inc.
+    and was partially funded by NIH grant 3P41RR013218.
+    """
+
+#
+# ThresholdThreadingTestWidget
+#
+
+class ThresholdThreadingTestWidget(ScriptedLoadableModuleWidget):
+
+  def setup(self):
+    ScriptedLoadableModuleWidget.setup(self)
+
+
+class ThresholdThreadingTestTest(ScriptedLoadableModuleTest):
+
+  def setUp(self):
+    """ Do whatever is needed to reset the state - typically a scene clear will be enough.
+    """
+    slicer.mrmlScene.Clear(0)
 
   def runTest(self):
     self.test_ThresholdThreading()
@@ -35,6 +52,7 @@ class ThresholdThreading(unittest.TestCase):
     a grow-cut produced volume causes a multi-threading related
     issue on mac release builds
     """
+    self.delayDisplay("Starting the test")
 
     #
     # first, get some sample data
@@ -118,64 +136,3 @@ class ThresholdThreading(unittest.TestCase):
     self.assertEqual((postArray - preArray).max(), 0)
 
     self.delayDisplay("Test passed!")
-
-#
-# ThresholdThreadingTest
-#
-
-class ThresholdThreadingTest:
-  """
-  This class is the 'hook' for slicer to detect and recognize the test
-  as a loadable scripted module (with a hidden interface)
-  """
-  def __init__(self, parent):
-    parent.title = "ThresholdThreadingTest"
-    parent.categories = ["Testing"]
-    parent.contributors = ["Steve Pieper (Isomics Inc.)"]
-    parent.helpText = """
-    Self test for the editor.
-    No module interface here, only used in SelfTests module
-    """
-    parent.acknowledgementText = """
-    This DICOM Plugin was developed by
-    Steve Pieper, Isomics, Inc.
-    and was partially funded by NIH grant 3P41RR013218.
-    """
-
-    # don't show this module
-    parent.hidden = True
-
-    # Add this test to the SelfTest module's list for discovery when the module
-    # is created.  Since this module may be discovered before SelfTests itself,
-    # create the list if it doesn't already exist.
-    try:
-      slicer.selfTests
-    except AttributeError:
-      slicer.selfTests = {}
-    slicer.selfTests['ThresholdThreadingTest'] = self.runTest
-
-  def runTest(self):
-    tester = ThresholdThreading()
-    tester.setUp()
-    tester.runTest()
-
-
-#
-# EditorLibSelfTestWidget
-#
-
-class EditorLibSelfTestWidget:
-  def __init__(self, parent = None):
-    self.parent = parent
-
-  def setup(self):
-    # don't display anything for this widget - it will be hidden anyway
-    pass
-
-  def enter(self):
-    pass
-
-  def exit(self):
-    pass
-
-

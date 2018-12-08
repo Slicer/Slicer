@@ -50,8 +50,6 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
     """
     slicer.mrmlScene.Clear(0)
 
-    self.delayMs = 700
-
   def runTest(self):
     """Run as few or as many tests as needed here.
     """
@@ -68,7 +66,7 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
     self.section_TableProperties()
     self.section_TableWidgetButtons()
     self.section_CliTableInputOutput()
-    self.delayDisplay("Test passed",self.delayMs)
+    self.delayDisplay("Test passed")
 
   # ------------------------------------------------------------------------------
   def section_SetupPathsAndNames(self):
@@ -77,7 +75,7 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
 
   # ------------------------------------------------------------------------------
   def section_CreateTable(self):
-    self.delayDisplay("Create table",self.delayMs)
+    self.delayDisplay("Create table")
 
     # Create sample table node
     tableNode = slicer.vtkMRMLTableNode()
@@ -101,7 +99,7 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
 
   # ------------------------------------------------------------------------------
   def section_TableProperties(self):
-    self.delayDisplay("Table properties",self.delayMs)
+    self.delayDisplay("Table properties")
 
     tableNode = slicer.util.getNode(self.sampleTableName)
 
@@ -114,7 +112,7 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
 
   # ------------------------------------------------------------------------------
   def section_TableWidgetButtons(self):
-    self.delayDisplay("Test widget buttons",self.delayMs)
+    self.delayDisplay("Test widget buttons")
 
     slicer.util.selectModule('Tables')
 
@@ -143,7 +141,7 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
     initialNumberOfRows = tableNode.GetNumberOfRows()
 
     #############
-    self.delayDisplay("Test add rows/columns",self.delayMs)
+    self.delayDisplay("Test add rows/columns")
 
     addRowButton.click()
     self.assertTrue( tableNode.GetNumberOfRows() == initialNumberOfRows+1 )
@@ -152,7 +150,7 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
     self.assertTrue( tableNode.GetNumberOfColumns() == initialNumberOfColumns+1 )
 
     #############
-    self.delayDisplay("Test lock first row/column",self.delayMs)
+    self.delayDisplay("Test lock first row/column")
 
     self.assertTrue( tableModel.data(tableModel.index(0,0)) == 'Column 1' )
     lockFirstRowButton.click()
@@ -163,7 +161,7 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
     lockFirstColumnButton.click()
 
     #############
-    self.delayDisplay("Test delete row/column",self.delayMs)
+    self.delayDisplay("Test delete row/column")
 
     tableView.selectionModel().select(tableModel.index(1,1),qt.QItemSelectionModel.Select) # Select second item in second column
     deleteColumnButton.click()
@@ -174,7 +172,7 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
     self.assertTrue( tableNode.GetNumberOfRows() == initialNumberOfRows )
 
     #############
-    self.delayDisplay("Test if buttons are disabled",self.delayMs)
+    self.delayDisplay("Test if buttons are disabled")
 
     lockTableButton.click()
 
@@ -201,7 +199,7 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
     lockTableButton.click()
 
     #############
-    self.delayDisplay("Test copy/paste",self.delayMs)
+    self.delayDisplay("Test copy/paste")
 
     tableView.selectColumn(0)
     copyButton.click()
@@ -220,7 +218,7 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
 
   # ------------------------------------------------------------------------------
   def section_CliTableInputOutput(self):
-    self.delayDisplay("Test table writing and reading by CLI module",self.delayMs)
+    self.delayDisplay("Test table writing and reading by CLI module")
 
     # Create input and output nodes
 
@@ -242,7 +240,7 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
 
     # Run CLI module
 
-    self.delayDisplay("Run CLI module",self.delayMs)
+    self.delayDisplay("Run CLI module")
     parameters = {}
     parameters["arg0"] = self.createDummyVolume().GetID()
     parameters["arg1"] = self.createDummyVolume().GetID()
@@ -254,7 +252,7 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
 
     # Verify the output table content
 
-    self.delayDisplay("Verify results",self.delayMs)
+    self.delayDisplay("Verify results")
     # the ExecutionModelTour module copies the input table to the output exxcept the first two rows
     # of the first column, which is set to "Computed first" and "Computed second" strings
     for row in range(3):

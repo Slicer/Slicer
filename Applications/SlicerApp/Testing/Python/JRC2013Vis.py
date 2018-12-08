@@ -2,13 +2,15 @@ import os
 import unittest
 import vtk, qt, ctk, slicer
 from DICOMLib import DICOMUtils
+from slicer.ScriptedLoadableModule import *
 
 #
 # JRC2013Vis
 #
 
-class JRC2013Vis:
+class JRC2013Vis(ScriptedLoadableModule):
   def __init__(self, parent):
+    ScriptedLoadableModule.__init__(self, parent)
     parent.title = "JRC2013Vis" # TODO make this more human readable by adding spaces
     parent.categories = ["Testing.TestCases"]
     parent.dependencies = []
@@ -19,57 +21,16 @@ class JRC2013Vis:
     parent.acknowledgementText = """
     This file was originally developed by Steve Pieper, Isomics, Inc.  and was partially funded by NIH grant 3P41RR013218-12S1.
 """ # replace with organization, grant and thanks.
-    self.parent = parent
-
-    # Add this test to the SelfTest module's list for discovery when the module
-    # is created.  Since this module may be discovered before SelfTests itself,
-    # create the list if it doesn't already exist.
-    try:
-      slicer.selfTests
-    except AttributeError:
-      slicer.selfTests = {}
-    slicer.selfTests['JRC2013Vis'] = self.runTest
-
-  def runTest(self):
-    tester = JRC2013VisTest()
-    tester.runTest()
 
 #
 # qJRC2013VisWidget
 #
 
-class JRC2013VisWidget:
-  def __init__(self, parent = None):
-    if not parent:
-      self.parent = slicer.qMRMLWidget()
-      self.parent.setLayout(qt.QVBoxLayout())
-      self.parent.setMRMLScene(slicer.mrmlScene)
-    else:
-      self.parent = parent
-    self.layout = self.parent.layout()
-    if not parent:
-      self.setup()
-      self.parent.show()
+class JRC2013VisWidget(ScriptedLoadableModuleWidget):
 
   def setup(self):
+    ScriptedLoadableModuleWidget.setup(self)
     # Instantiate and connect widgets ...
-
-    # reload button
-    # (use this during development, but remove it when delivering
-    #  your module to users)
-    self.reloadButton = qt.QPushButton("Reload")
-    self.reloadButton.toolTip = "Reload this module."
-    self.reloadButton.name = "JRC2013Vis Reload"
-    self.layout.addWidget(self.reloadButton)
-    self.reloadButton.connect('clicked()', self.onReload)
-
-    # reload and test button
-    # (use this during development, but remove it when delivering
-    #  your module to users)
-    self.reloadAndTestButton = qt.QPushButton("Reload and Test")
-    self.reloadAndTestButton.toolTip = "Reload this module and then run the self tests."
-    self.layout.addWidget(self.reloadAndTestButton)
-    self.reloadAndTestButton.connect('clicked()', self.onReloadAndTest)
 
     # start/stop DICOM peer
     self.startStopDicomPeerButton = qt.QPushButton("Start/Stop DICOM peer")
@@ -97,36 +58,24 @@ class JRC2013VisWidget:
     self.layout.addStretch(1)
 
   def onPart1DICOM(self):
-    tester = JRC2013VisTest()
+    tester = JRC2013VisTestTest()
     tester.setUp()
     tester.test_Part1DICOM()
 
   def onPart2Head(self):
-    tester = JRC2013VisTest()
+    tester = JRC2013VisTestTest()
     tester.setUp()
     tester.test_Part2Head()
 
   def onPart3Liver(self):
-    tester = JRC2013VisTest()
+    tester = JRC2013VisTestTest()
     tester.setUp()
     tester.test_Part3Liver()
 
   def onPart4Lung(self):
-    tester = JRC2013VisTest()
+    tester = JRC2013VisTestTest()
     tester.setUp()
     tester.test_Part4Lung()
-
-  def onReload(self,moduleName="JRC2013Vis"):
-    """Generic reload method for any scripted module.
-    ModuleWizard will substitute correct default moduleName.
-    """
-    globals()[moduleName] = slicer.util.reloadScriptedModule(moduleName)
-
-  def onReloadAndTest(self,moduleName="JRC2013Vis"):
-    self.onReload()
-    evalString = 'globals()["%s"].%sTest()' % (moduleName, moduleName)
-    tester = eval(evalString)
-    tester.runTest()
 
   def onStartStopDicomPeer(self,flag):
     if flag:
@@ -191,51 +140,20 @@ class JRC2013VisWidget:
 # JRC2013VisLogic
 #
 
-class JRC2013VisLogic:
+class JRC2013VisLogic(ScriptedLoadableModuleLogic):
   """This class should implement all the actual
   computation done by your module.  The interface
   should be such that other python code can import
   this class and make use of the functionality without
   requiring an instance of the Widget
   """
-  def __init__(self):
-    pass
-
-  def hasImageData(self,volumeNode):
-    """This is a dummy logic method that
-    returns true if the passed in volume
-    node has valid image data
-    """
-    if not volumeNode:
-      print('no volume node')
-      return False
-    if volumeNode.GetImageData() is None:
-      print('no image data')
-      return False
-    return True
+  pass
 
 
-class JRC2013VisTest(unittest.TestCase):
+class JRC2013VisTestTest(ScriptedLoadableModuleTest):
   """
   This is the test case for your scripted module.
   """
-
-  def delayDisplay(self,message,msec=1000):
-    """This utility method displays a small dialog and waits.
-    This does two things: 1) it lets the event loop catch up
-    to the state of the test so that rendering and widget updates
-    have all taken place before the test continues and 2) it
-    shows the user/developer/tester the state of the test
-    so that we'll know when it breaks.
-    """
-    print(message)
-    self.info = qt.QDialog()
-    self.infoLayout = qt.QVBoxLayout()
-    self.info.setLayout(self.infoLayout)
-    self.label = qt.QLabel(message,self.info)
-    self.infoLayout.addWidget(self.label)
-    qt.QTimer.singleShot(msec, self.info.close)
-    self.info.exec_()
 
   def setUp(self):
     """ Do whatever is needed to reset the state - typically a scene clear will be enough.
@@ -574,7 +492,6 @@ class JRC2013VisTest(unittest.TestCase):
     self.delayDisplay('Finished with download and loading\n')
 
     try:
-      logic = JRC2013VisLogic()
       mainWindow = slicer.util.mainWindow()
       layoutManager = slicer.app.layoutManager()
       threeDView = layoutManager.threeDWidget(0).threeDView()

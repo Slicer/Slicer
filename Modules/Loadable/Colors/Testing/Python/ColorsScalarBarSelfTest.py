@@ -3,6 +3,7 @@ import time
 import unittest
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
+import logging
 
 #
 # ColorsScalarBarSelfTest
@@ -67,7 +68,7 @@ class ColorsScalarBarSelfTestWidget(ScriptedLoadableModuleWidget):
     logic.run()
 
 #
-#ColorsScalarBarSelfTestLogic
+# ColorsScalarBarSelfTestLogic
 #
 
 class ColorsScalarBarSelfTestLogic(ScriptedLoadableModuleLogic):
@@ -76,6 +77,8 @@ class ColorsScalarBarSelfTestLogic(ScriptedLoadableModuleLogic):
     """
     Run the actual algorithm
     """
+    logging.info('Processing started')
+
     # start in the colors module
     m = slicer.util.mainWindow()
     m.moduleSelector().selectModule('Colors')
@@ -94,12 +97,14 @@ class ColorsScalarBarSelfTestLogic(ScriptedLoadableModuleLogic):
       colorNode = slicer.mrmlScene.GetNthNodeByClass(n, 'vtkMRMLColorNode')
       useColorNameAsLabelCheckbox.setChecked(checked)
       print("%d/%d" % (n, numColorNodes-1))
-      self.delayDisplay('Setting Color Node To %s' % colorNode.GetName(), 100)
+      self.delayDisplay('Setting Color Node To %s' % colorNode.GetName())
       activeColorNodeSelector.setCurrentNodeID(colorNode.GetID())
       # use the delay display here to ensure a render
-      self.delayDisplay('Set Color Node To %s' % colorNode.GetName(), 500)
+      self.delayDisplay('Set Color Node To %s' % colorNode.GetName())
       useColorNameAsLabelCheckbox.setChecked(not checked)
-      self.delayDisplay('Toggled using names as labels', 500)
+      self.delayDisplay('Toggled using names as labels')
+
+    logging.info('Processing completed')
 
     return True
 
@@ -123,7 +128,7 @@ class ColorsScalarBarSelfTestTest(ScriptedLoadableModuleTest):
 
     self.delayDisplay("Starting the scalarbar test")
 
-    logic =ColorsScalarBarSelfTestLogic()
+    logic = ColorsScalarBarSelfTestLogic()
     logic.run()
 
     self.delayDisplay('Test passed!')

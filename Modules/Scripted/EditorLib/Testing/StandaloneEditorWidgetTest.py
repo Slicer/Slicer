@@ -2,10 +2,20 @@
 import unittest
 import slicer
 import EditorLib
+from slicer.ScriptedLoadableModule import *
 
-class EditorLibTesting(unittest.TestCase):
+
+class EditorLibTesting(ScriptedLoadableModuleTest):
+  """
+  This is the test case for your scripted module.
+  Uses ScriptedLoadableModuleTest base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+  """
+
   def setUp(self):
-    pass
+    """ Do whatever is needed to reset the state - typically a scene clear will be enough.
+    """
+    slicer.mrmlScene.Clear(0)
 
   def runTest(self):
     self.test_ThresholdThreading()
@@ -15,6 +25,7 @@ class EditorLibTesting(unittest.TestCase):
     Test for issue 2329, using the slicer EditorLib components
     in outside of the editor.
     """
+    self.delayDisplay("Starting the test")
 
     #
     # first, get some sample data
@@ -41,3 +52,5 @@ class EditorLibTesting(unittest.TestCase):
     #
     from Editor import EditorWidget
     editorWidget = EditorWidget(showVolumesFrame=False)
+
+    self.delayDisplay("Test passed!")

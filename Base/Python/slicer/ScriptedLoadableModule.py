@@ -51,7 +51,7 @@ This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colon
       self.parent.slicerWikiUrl, slicer.app.majorVersion, slicer.app.minorVersion, docPage)
     return linkText
 
-  def runTest(self):
+  def runTest(self, msec=100):
     # Name of the test case class is expected to be <ModuleName>Test
     module = importlib.import_module(self.__module__)
     className = self.moduleName + 'Test'
@@ -62,6 +62,7 @@ This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colon
       raise AssertionError('Test case class not found: %s.%s ' % (self.__module__, className))
 
     testCase = TestCaseClass()
+    testCase.messageDelay = msec
     testCase.runTest()
 
 class ScriptedLoadableModuleWidget:
@@ -152,6 +153,17 @@ class ScriptedLoadableModuleWidget:
 
     reloadFormLayout.addWidget(createHLayout([self.reloadButton, self.reloadAndTestButton, self.editSourceButton, self.restartButton]))
 
+    # message delay
+    self.messageDelaySlider = ctk.ctkSliderWidget()
+    self.messageDelaySlider.decimals = 0
+    self.messageDelaySlider.minimum = 0
+    self.messageDelaySlider.maximum = 2000
+    self.messageDelaySlider.singleStep = 10
+    self.messageDelaySlider.pageStep = 100
+    self.messageDelaySlider.suffix = "ms"
+    self.messageDelaySlider.value = 750
+
+    reloadFormLayout.addRow("Message delay:", self.messageDelaySlider)
 
   def setup(self):
     # Instantiate and connect default widgets ...
@@ -178,7 +190,7 @@ class ScriptedLoadableModuleWidget:
     try:
       self.onReload()
       test = slicer.selfTests[self.moduleName]
-      test()
+      test(msec=int(self.messageDelaySlider.value))
     except Exception, e:
       import traceback
       traceback.print_exc()
@@ -323,24 +335,32 @@ class ScriptedLoadableModuleLogic():
 class ScriptedLoadableModuleTest(unittest.TestCase):
   """
   Base class for module tester class.
-  Setting messageDelay to something small, like 50 allows
+  Setting messageDelay to something small, like 50ms allows
   faster development time.
   """
 
   def __init__(self, *args, **kwargs):
     super(ScriptedLoadableModuleTest, self).__init__(*args, **kwargs)
 
-  def delayDisplay(self,message,requestedDelay=None):
+  def delayDisplay(self,message,requestedDelay=None,msec=None):
     """
     Display messages to the user/tester during testing.
+
+    By default, the delay is 50ms.
+
+    The function accepts the keyword arguments ``requestedDelay`` or ``msec``. If both
+    are specified, the value associated with ``msec`` is used.
+
     This method can be temporarily overridden to allow tests running
     with longer or shorter message display time.
+
     Displaying a dialog and waiting does two things:
     1) it lets the event loop catch up to the state of the test so
     that rendering and widget updates have all taken place before
     the test continues and
     2) it shows the user/developer/tester the state of the test
     so that we'll know when it breaks.
+
     Note:
     Information that might be useful (but not important enough to show
     to the user) can be logged using logging.info() function
@@ -350,11 +370,12 @@ class ScriptedLoadableModuleTest(unittest.TestCase):
     and displayed to user by slicer.util.errorDisplay function.
     """
     if hasattr(self, "messageDelay"):
-        msec = self.messageDelay
-    else:
-        msec = 1000
-    if requestedDelay:
+      msec = self.messageDelay
+    if msec is None:
       msec = requestedDelay
+    if msec is None:
+      msec = 100
+
     slicer.util.delayDisplay(message, msec)
 
   def runTest(self):

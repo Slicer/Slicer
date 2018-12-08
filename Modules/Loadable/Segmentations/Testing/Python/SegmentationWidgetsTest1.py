@@ -2,10 +2,13 @@ import os
 import unittest
 import vtk, qt, ctk, slicer
 import logging
+from slicer.ScriptedLoadableModule import *
 
 import vtkSegmentationCorePython as vtkSegmentationCore
 
-class SegmentationWidgetsTest1(unittest.TestCase):
+
+class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
+
   def setUp(self):
     """ Do whatever is needed to reset the state - typically a scene clear will be enough.
     """

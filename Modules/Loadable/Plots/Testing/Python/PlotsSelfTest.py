@@ -51,8 +51,6 @@ class PlotsSelfTestTest(ScriptedLoadableModuleTest):
     """
     slicer.mrmlScene.Clear(0)
 
-    self.delayMs = 700
-
   def runTest(self):
     """Run as few or as many tests as needed here.
     """
@@ -68,7 +66,7 @@ class PlotsSelfTestTest(ScriptedLoadableModuleTest):
     self.section_CreateTable()
     self.section_CreatePlots()
     self.section_TestPlotView()
-    self.delayDisplay("Test passed",self.delayMs)
+    self.delayDisplay("Test passed")
 
   # ------------------------------------------------------------------------------
   def section_SetupPathsAndNames(self):
@@ -85,7 +83,7 @@ class PlotsSelfTestTest(ScriptedLoadableModuleTest):
 
   # ------------------------------------------------------------------------------
   def section_CreateTable(self):
-    self.delayDisplay("Create table",self.delayMs)
+    self.delayDisplay("Create table")
 
     tableNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode", self.tableName)
     self.assertIsNotNone(tableNode)
@@ -118,7 +116,7 @@ class PlotsSelfTestTest(ScriptedLoadableModuleTest):
 
   # ------------------------------------------------------------------------------
   def section_CreatePlots(self):
-    self.delayDisplay("Create plots",self.delayMs)
+    self.delayDisplay("Create plots")
 
     tableNode = slicer.util.getNode(self.tableName)
 
@@ -147,7 +145,7 @@ class PlotsSelfTestTest(ScriptedLoadableModuleTest):
 
   # ------------------------------------------------------------------------------
   def section_TestPlotView(self):
-    self.delayDisplay("Test plot view",self.delayMs)
+    self.delayDisplay("Test plot view")
 
     plotChartNode = slicer.util.getNode(self.chartName)
 
