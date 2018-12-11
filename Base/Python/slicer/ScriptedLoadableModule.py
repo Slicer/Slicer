@@ -178,7 +178,7 @@ class ScriptedLoadableModuleWidget:
     try:
       self.onReload()
       test = slicer.selfTests[self.moduleName]
-      test(msec=slicer.app.userSettings().value("Developer/SelfTestDisplayMessageDelay"))
+      test(msec=int(slicer.app.userSettings().value("Developer/SelfTestDisplayMessageDelay")))
     except Exception, e:
       import traceback
       traceback.print_exc()
