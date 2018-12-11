@@ -29,7 +29,7 @@ ImageToImageRegistrationMethod<TImage>
 {
   this->SetNumberOfRequiredOutputs( 1 ); // the transform
 
-  this->m_Transform = 0;
+  this->m_Transform = ITK_NULLPTR;
   typename TransformOutputType::Pointer transformDecorator =
     static_cast<TransformOutputType *>
     ( this->MakeOutput(static_cast<DataObjectPointerArraySizeType>(0)).GetPointer() );
@@ -39,13 +39,13 @@ ImageToImageRegistrationMethod<TImage>
   this->m_RegistrationNumberOfThreads = this->GetNumberOfThreads();
   this->GetMultiThreader()->SetNumberOfThreads( this->m_RegistrationNumberOfThreads );
 
-  this->m_FixedImage = 0;
-  this->m_MovingImage = 0;
+  this->m_FixedImage = ITK_NULLPTR;
+  this->m_MovingImage = ITK_NULLPTR;
   this->m_UseFixedImageMaskObject = false;
-  this->m_FixedImageMaskObject = 0;
+  this->m_FixedImageMaskObject = ITK_NULLPTR;
   this->m_UseMovingImageMaskObject = false;
-  this->m_MovingImageMaskObject = 0;
-  this->m_Observer = 0;
+  this->m_MovingImageMaskObject = ITK_NULLPTR;
+  this->m_Observer = ITK_NULLPTR;
   this->m_ReportProgress = false;
 
   this->m_UseRegionOfInterest = false;
@@ -164,7 +164,7 @@ ImageToImageRegistrationMethod<TImage>
     default:
       itkExceptionMacro(
         "MakeOutput request for an output number larger than the expected number of outputs" );
-      return 0;
+      return ITK_NULLPTR;
     }
 }
 

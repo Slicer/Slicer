@@ -182,7 +182,7 @@ int vtkMRMLTransformStorageNode::ReadFromITKv3BSplineTransformFile(vtkMRMLNode *
     return 0;
     }
   ++it;
-  TransformType::Pointer transform2=0;
+  TransformType::Pointer transform2=ITK_NULLPTR;
   if( it != (*transforms).end() )
     {
     transform2 = (*it);
@@ -226,7 +226,7 @@ int vtkMRMLTransformStorageNode::ReadFromImageFile(vtkMRMLNode *refNode)
     return 0;
     }
 
-  GridImageDoubleType::Pointer gridImage_Lps = 0;
+  GridImageDoubleType::Pointer gridImage_Lps = ITK_NULLPTR;
 
   typedef itk::ImageFileReader< GridImageDoubleType >  ReaderType;
   std::string fullName =  this->GetFullNameFromFileName();
