@@ -66,9 +66,8 @@ class SegmentEditorScriptedSegmentEditorEffectModuleTemplateTest(ScriptedLoadabl
     ##################################
     self.delayDisplay("Load master volume")
 
-    import SampleData
-    sampleDataLogic = SampleData.SampleDataLogic()
-    masterVolumeNode = sampleDataLogic.downloadMRBrainTumor1()
+    from SampleData import SampleDataLogic
+    masterVolumeNode = SampleDataLogic().downloadMRBrainTumor1()
 
     ##################################
     self.delayDisplay("Create segmentation containing a few spheres")

@@ -54,11 +54,10 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
     self.layout.addStretch(1)
 
   def downloadMRHead(self):
-    import SampleData
-    sampleDataLogic = SampleData.SampleDataLogic()
+    from SampleData import SampleDataLogic
     self.log.insertHtml('<b>Requesting downloading MRHead')
     self.log.repaint()
-    mrHeadVolume = sampleDataLogic.downloadMRHead()
+    mrHeadVolume = SampleDataLogic().downloadMRHead()
     if mrHeadVolume:
       self.log.insertHtml('<i>finished.</i>\n')
       self.log.insertPlainText('\n')

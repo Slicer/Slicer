@@ -60,15 +60,13 @@ class SegmentEditorTemplateKeyTest(ScriptedLoadableModuleTest):
 
     import vtkSegmentationCorePython as vtkSegmentationCore
     import vtkSlicerSegmentationsModuleLogicPython as vtkSlicerSegmentationsModuleLogic
-    import SampleData
+    from SampleData import SampleDataLogic
     from SegmentStatistics import SegmentStatisticsLogic
 
     ##################################
     self.delayDisplay("Load master volume")
 
-    import SampleData
-    sampleDataLogic = SampleData.SampleDataLogic()
-    masterVolumeNode = sampleDataLogic.downloadMRBrainTumor1()
+    masterVolumeNode = SampleDataLogic().downloadMRBrainTumor1()
 
     ##################################
     self.delayDisplay("Create segmentation containing a few spheres")

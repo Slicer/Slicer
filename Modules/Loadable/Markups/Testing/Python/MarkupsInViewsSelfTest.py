@@ -134,10 +134,9 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
     #
     # first load the data
     #
-    import SampleData
-    sampleDataLogic = SampleData.SampleDataLogic()
     print("Getting MR Head Volume")
-    mrHeadVolume = sampleDataLogic.downloadMRHead()
+    from SampleData import SampleDataLogic
+    mrHeadVolume = SampleDataLogic().downloadMRHead()
 
     #
     # link the viewers

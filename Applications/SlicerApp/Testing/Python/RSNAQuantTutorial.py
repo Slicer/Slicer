@@ -158,9 +158,8 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
     #
     # first, get some data
     #
-    import SampleData
-    sampleDataLogic = SampleData.SampleDataLogic()
-    tumor = sampleDataLogic.downloadMRBrainTumor1()
+    from SampleData import SampleDataLogic
+    tumor = SampleDataLogic().downloadMRBrainTumor1()
 
     try:
       # four up view

@@ -135,9 +135,8 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
     """
     logic = SlicerTransformInteractionTest1Logic()
 
-    import SampleData
-    sampleDataLogic = SampleData.SampleDataLogic()
-    volume = sampleDataLogic.downloadAbdominalCTVolume()
+    from SampleData import SampleDataLogic
+    volume = SampleDataLogic().downloadAbdominalCTVolume()
 
     #self.delayDisplay("Starting test_3D_interactionVolume")
     logic = SlicerTransformInteractionTest1Logic()

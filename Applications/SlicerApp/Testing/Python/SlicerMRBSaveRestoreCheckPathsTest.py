@@ -134,10 +134,9 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     #
     # first, get the volume data
     #
-    import SampleData
-    sampleDataLogic = SampleData.SampleDataLogic()
     print("Getting MR Head Volume")
-    mrHeadVolume = sampleDataLogic.downloadMRHead()
+    from SampleData import SampleDataLogic
+    mrHeadVolume = SampleDataLogic().downloadMRHead()
 
     slicer.util.delayDisplay('Finished with download of volume')
 

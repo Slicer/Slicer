@@ -517,10 +517,9 @@ class LabelStatisticsTest(ScriptedLoadableModuleTest):
     #
     # first, get some data
     #
-    import SampleData
-    sampleDataLogic = SampleData.SampleDataLogic()
-    mrHead = sampleDataLogic.downloadMRHead()
-    ctChest = sampleDataLogic.downloadCTChest()
+    from SampleData import SampleDataLogic
+    mrHead = SampleDataLogic().downloadMRHead()
+    ctChest = SampleDataLogic().downloadCTChest()
     self.delayDisplay('Two data sets loaded')
 
     volumesLogic = slicer.modules.volumes.logic()
