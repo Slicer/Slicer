@@ -1287,6 +1287,11 @@ void qMRMLSubjectHierarchyTreeView::deleteSelectedItems()
   QList<vtkIdType> currentItemIDs = d->SelectedItems;
   foreach (vtkIdType itemID, currentItemIDs)
     {
+    if (itemID == d->SubjectHierarchyNode->GetSceneItemID())
+      {
+      // Do not delete scene (if no item is selected then the scene will be marked as selected)
+      continue;
+      }
     // Ask the user whether to delete all the item's children
     bool deleteChildren = false;
     QMessageBox::StandardButton answer = QMessageBox::Yes;
