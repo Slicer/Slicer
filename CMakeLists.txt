@@ -161,7 +161,7 @@ mark_as_superbuild(Patch_EXECUTABLE)
 #-----------------------------------------------------------------------------
 if(NOT DEFINED Slicer_REQUIRED_QT_VERSION)
   set(_required_qt_version "4.7.4")
-  if(DEFINED Qt5_DIR OR "${Slicer_VTK_VERSION_MAJOR}" MATCHES "^(8|9)$")
+  if(DEFINED Qt5_DIR OR "${Slicer_VTK_VERSION_MAJOR}" MATCHES "^(8|9)$" OR CMAKE_CXX_STANDARD MATCHES "^([1][0-9])$")
     set(_required_qt_version "5.6.0")
   endif()
   set(Slicer_REQUIRED_QT_VERSION ${_required_qt_version} CACHE STRING "Minimum required Qt version" FORCE)
@@ -303,7 +303,7 @@ option(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT "Build Slicer with parameter ser
 mark_as_superbuild(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT)
 
 set(_default_vtk "7")
-if(DEFINED Qt5_DIR)
+if(DEFINED Qt5_DIR OR CMAKE_CXX_STANDARD MATCHES "^([1][0-9])$")
   set(_default_vtk "8")
 endif()
 set(Slicer_VTK_VERSION_MAJOR ${_default_vtk} CACHE STRING "The VTK major version (7 or 8).")
