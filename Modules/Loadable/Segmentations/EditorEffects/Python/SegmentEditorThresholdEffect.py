@@ -16,6 +16,10 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     AbstractScriptedSegmentEditorEffect.__init__(self, scriptedEffect)
     scriptedEffect.name = 'Threshold'
 
+    self.segment2DFillOpacity = None
+    self.segment2DOutlineOpacity = None
+    self.previewedSegmentID = None
+
     # Effect-specific members
     import vtkITK
     self.autoThresholdCalculator = vtkITK.vtkITKImageThresholdCalculator()
@@ -49,15 +53,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
 </ul><p></html>"""
 
   def activate(self):
-    # Save segment opacity and set it to zero
-    segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
-    segmentID = self.scriptedEffect.parameterSetNode().GetSelectedSegmentID()
-    displayNode = segmentationNode.GetDisplayNode()
-    if displayNode is not None:
-      self.segment2DFillOpacity = displayNode.GetSegmentOpacity2DFill(segmentID)
-      self.segment2DOutlineOpacity = displayNode.GetSegmentOpacity2DOutline(segmentID)
-      displayNode.SetSegmentOpacity2DFill(segmentID, 0)
-      displayNode.SetSegmentOpacity2DOutline(segmentID, 0)
+    self.setCurrentSegmentTransparent()
 
     # Update intensity range
     self.masterVolumeNodeChanged()
@@ -67,18 +63,59 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     self.timer.start(200)
 
   def deactivate(self):
-    # Restore segment opacity
-    segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
-    if segmentationNode:
-      segmentID = self.scriptedEffect.parameterSetNode().GetSelectedSegmentID()
-      displayNode = segmentationNode.GetDisplayNode()
-      if (displayNode is not None) and (segmentID is not None):
-        displayNode.SetSegmentOpacity2DFill(segmentID, self.segment2DFillOpacity)
-        displayNode.SetSegmentOpacity2DOutline(segmentID, self.segment2DOutlineOpacity)
+    self.restorePreviewedSegmentTransparency()
 
     # Clear preview pipeline and stop timer
     self.clearPreviewDisplay()
     self.timer.stop()
+
+  def setCurrentSegmentTransparent(self):
+    """Save current segment opacity and set it to zero
+    to temporarily hide the segment so that threshold preview
+    can be seen better.
+    It also restores opacity of previously previewed segment.
+    Call restorePreviewedSegmentTransparency() to restore original
+    opacity.
+    """
+    segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
+    if not segmentationNode:
+      return
+    displayNode = segmentationNode.GetDisplayNode()
+    if not displayNode:
+      return
+    segmentID = self.scriptedEffect.parameterSetNode().GetSelectedSegmentID()
+
+    if segmentID == self.previewedSegmentID:
+      # already previewing the current segment
+      return
+
+    # If an other segment was previewed before, restore that.
+    if self.previewedSegmentID:
+      self.restorePreviewedSegmentTransparency()
+
+    # Make current segment fully transparent
+    if segmentID:
+      self.segment2DFillOpacity = displayNode.GetSegmentOpacity2DFill(segmentID)
+      self.segment2DOutlineOpacity = displayNode.GetSegmentOpacity2DOutline(segmentID)
+      self.previewedSegmentID = segmentID
+      displayNode.SetSegmentOpacity2DFill(segmentID, 0)
+      displayNode.SetSegmentOpacity2DOutline(segmentID, 0)
+
+  def restorePreviewedSegmentTransparency(self):
+    """Restore previewed segment's opacity that was temporarily
+    made transparen by calling setCurrentSegmentTransparent()."""
+    segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
+    if not segmentationNode:
+      return
+    displayNode = segmentationNode.GetDisplayNode()
+    if not displayNode:
+      return
+    if not self.previewedSegmentID:
+      # already previewing the current segment
+      return
+    displayNode.SetSegmentOpacity2DFill(self.previewedSegmentID, self.segment2DFillOpacity)
+    displayNode.SetSegmentOpacity2DOutline(self.previewedSegmentID, self.segment2DOutlineOpacity)
+    self.previewedSegmentID = None
 
   def setupOptionsFrame(self):
     self.thresholdSliderLabel = qt.QLabel("Threshold Range:")
@@ -383,6 +420,11 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
       logging.error("preview: Invalid segmentation display node!")
       color = [0.5,0.5,0.5]
     segmentID = self.scriptedEffect.parameterSetNode().GetSelectedSegmentID()
+
+    # Make sure we keep the currently selected segment hidden (the user may have changed selection)
+    if segmentID != self.previewedSegmentID:
+      self.setCurrentSegmentTransparent()
+
     r,g,b = segmentationNode.GetSegmentation().GetSegment(segmentID).GetColor()
 
     # Set values to pipelines
