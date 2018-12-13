@@ -1,21 +1,53 @@
 
 import os
-import unittest
-import ctk
-import vtk
-import qt
-import slicer
-import EditorLib
+import vtk, qt, ctk, slicer
+from slicer.ScriptedLoadableModule import *
 
-class SlicerMRBMultipleSaveRestoreLoop(unittest.TestCase):
-  """ Test for slicer data bundle with scene restore and multiple saves.
+#
+# SlicerMRBMultipleSaveRestoreLoopTest
+#
 
-Run manually from within slicer by pasting an version of this with the correct path into the python console:
-execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Python/SlicerMRBMultipleSaveRestoreLoopTest.py'); t = SlicerMRBMultipleSaveRestoreLoop(); t.setUp(); t.runTest()
-
+class SlicerMRBMultipleSaveRestoreLoopTest(ScriptedLoadableModule):
+  """Uses ScriptedLoadableModule base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
 
-  def __init__(self,methodName='runTest', numberOfIterations=5, uniqueDirectory=True, strict=False):
+  def __init__(self, parent):
+    ScriptedLoadableModule.__init__(self, parent)
+    parent.title = "SlicerMRBMultipleSaveRestoreLoopTest"
+    parent.categories = ["Testing.TestCases"]
+    parent.contributors = ["Nicole Aucoin (BWH)"]
+    parent.helpText = """
+    Self test for MRB and Scene Views multiple save.
+    No module interface here, only used in SelfTests module
+    """
+    parent.acknowledgementText = """
+    This test was developed by
+    Nicole Aucoin, BWH
+    and was partially funded by NIH grant 3P41RR013218.
+    """
+
+#
+# SlicerMRBMultipleSaveRestoreLoopTestWidget
+#
+
+class SlicerMRBMultipleSaveRestoreLoopTestWidget(ScriptedLoadableModuleWidget):
+  """Uses ScriptedLoadableModuleWidget base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+  """
+
+  def setup(self):
+    ScriptedLoadableModuleWidget.setup(self)
+
+
+class SlicerMRBMultipleSaveRestoreLoop(ScriptedLoadableModuleTest):
+  """
+  This is the test case for your scripted module.
+  Uses ScriptedLoadableModuleTest base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+  """
+
+  def __init__(self, methodName='runTest', numberOfIterations=5, uniqueDirectory=True, strict=False):
     """
     Tests the use of mrml and mrb save formats with volumes and fiducials.
     Checks that scene views are saved and restored as expected after multiple
@@ -29,21 +61,10 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
                      True then check every detail
                      False then confirm basic operation, but allow non-critical issues to pass
     """
-    unittest.TestCase.__init__(self,methodName)
-    print 'Setting number of iterations to ',numberOfIterations
+    ScriptedLoadableModuleTest.__init__(self, methodName)
     self.numberOfIterations = numberOfIterations
     self.uniqueDirectory = uniqueDirectory
     self.strict = strict
-
-  def delayDisplay(self,message,msec=1000):
-    print(message)
-    self.info = qt.QDialog()
-    self.infoLayout = qt.QVBoxLayout()
-    self.info.setLayout(self.infoLayout)
-    self.label = qt.QLabel(message,self.info)
-    self.infoLayout.addWidget(self.label)
-    qt.QTimer.singleShot(msec, self.info.close)
-    self.info.exec_()
 
   def setUp(self):
     slicer.mrmlScene.Clear(0)
@@ -79,19 +100,19 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     fidNode = slicer.mrmlScene.GetNodeByID(fidID)
 
 
-    self.delayDisplay('Finished with download and placing fiducials\n')
+    self.delayDisplay('Finished with download and placing fiducials')
 
     ioManager = slicer.app.ioManager()
     widget = slicer.app.layoutManager().viewport()
     self.fiducialPosition = fid1
     for i in range(self.numberOfIterations):
 
-      print '\n\nIteration',i
+      print('\n\nIteration %s' % i)
       #
       # save the mrml scene to an mrb
       #
-      sceneSaveDirectory = self.tempDirectory('__scene__')
-      mrbFilePath = self.tempDirectory('__mrb__') + '/SlicerMRBMultipleSaveRestoreLoop-' + str(i) + '.mrb'
+      sceneSaveDirectory = slicer.util.tempDirectory('__scene__')
+      mrbFilePath = slicer.util.tempDirectory('__mrb__') + '/SlicerMRBMultipleSaveRestoreLoop-' + str(i) + '.mrb'
       self.delayDisplay("Saving mrb to: %s" % mrbFilePath)
       screenShot = ctk.ctkWidgetsUtils.grabWidget(widget)
       self.assertTrue(
@@ -123,93 +144,15 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
 
       # adjust the fid list location
       self.fiducialPosition = [i, i, i]
-      print i, ': reset fiducial position array to ', self.fiducialPosition
+      print(i, ': reset fiducial position array to ', self.fiducialPosition)
       fidNode.SetNthFiducialPositionFromArray(0, self.fiducialPosition)
     self.delayDisplay("Loop Finished")
 
-    print 'Fiducial position from loop = ',self.fiducialPosition
+    print('Fiducial position from loop = ',self.fiducialPosition)
     fidNode = slicer.util.getNode('F')
     finalFiducialPosition = [ 0,0,0 ]
     fidNode.GetNthFiducialPosition(0, finalFiducialPosition)
-    print 'Final fiducial scene pos = ',finalFiducialPosition
+    print('Final fiducial scene pos = ',finalFiducialPosition)
     self.assertEqual(self.fiducialPosition, finalFiducialPosition)
 
     self.delayDisplay("Test Finished")
-
-  def tempDirectory(self,key='__SlicerTestTemp__',tempDir=None):
-    """Come up with a unique directory name in the temp dir and make it and return it
-    # TODO: switch to QTemporaryDir in Qt5.
-    # For now, create a named directory if uniqueDirectory attribute is true
-    Note: this directory is not automatically cleaned up
-    """
-    if not tempDir:
-      tempDir = qt.QDir(slicer.app.temporaryPath)
-    tempDirName = key
-    if self.uniqueDirectory:
-      key += qt.QDateTime().currentDateTime().toString("yyyy-MM-dd_hh+mm+ss.zzz")
-    fileInfo = qt.QFileInfo(qt.QDir(tempDir), tempDirName)
-    dirPath = fileInfo.absoluteFilePath()
-    qt.QDir().mkpath(dirPath)
-    return dirPath
-
-
-#
-# SlicerMRBMultipleSaveRestoreLoopTest
-#
-
-class SlicerMRBMultipleSaveRestoreLoopTest:
-  """
-  This class is the 'hook' for slicer to detect and recognize the test
-  as a loadable scripted module (with a hidden interface)
-  """
-  def __init__(self, parent):
-    parent.title = "SlicerMRBMultipleSaveRestoreLoopTest"
-    parent.categories = ["Testing"]
-    parent.contributors = ["Nicole Aucoin (BWH)"]
-    parent.helpText = """
-    Self test for MRB and Scene Views multiple save.
-    No module interface here, only used in SelfTests module
-    """
-    parent.acknowledgementText = """
-    This test was developed by
-    Nicole Aucoin, BWH
-    and was partially funded by NIH grant 3P41RR013218.
-    """
-
-    # don't show this module
-    parent.hidden = True
-
-    # Add this test to the SelfTest module's list for discovery when the module
-    # is created.  Since this module may be discovered before SelfTests itself,
-    # create the list if it doesn't already exist.
-    try:
-      slicer.selfTests
-    except AttributeError:
-      slicer.selfTests = {}
-    slicer.selfTests['SlicerMRBMultipleSaveRestoreLoopTest'] = self.runTest
-
-  def runTest(self):
-    tester = SlicerMRBMultipleSaveRestoreLoop()
-    tester.setUp()
-    tester.runTest()
-
-
-#
-# SlicerMRBMultipleSaveRestoreLoopTestWidget
-#
-
-class SlicerMRBMultipleSaveRestoreLoopTestWidget:
-  def __init__(self, parent = None):
-    self.parent = parent
-
-  def setup(self):
-    # don't display anything for this widget - it will be hidden anyway
-    pass
-
-  def enter(self):
-    pass
-
-  def exit(self):
-    pass
-
-

@@ -1,20 +1,54 @@
 
 import os
-import unittest
-import vtk
-import qt
-import slicer
-import EditorLib
+import vtk, qt, ctk, slicer
+from slicer.ScriptedLoadableModule import *
 
-class SlicerMRBMultipleSaveRestore(unittest.TestCase):
-  """ Test for slicer data bundle with scene restore and multiple saves.
+#
+# SlicerMRBMultipleSaveRestoreTest
+#
 
-Run manually from within slicer by pasting an version of this with the correct path into the python console:
-execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Python/SlicerMRBMultipleSaveRestoreTest.py'); t = SlicerMRBMultipleSaveRestore(); t.setUp(); t.runTest()
-
+class SlicerMRBMultipleSaveRestoreTest(ScriptedLoadableModule):
+  """Uses ScriptedLoadableModule base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
 
-  def __init__(self,methodName='runTest', uniqueDirectory=True,strict=False):
+  def __init__(self, parent):
+    ScriptedLoadableModule.__init__(self, parent)
+    parent.title = "SlicerMRBMultipleSaveRestoreTest"
+    parent.categories = ["Testing.TestCases"]
+    parent.contributors = ["Nicole Aucoin (BWH)"]
+    parent.helpText = """
+    Self test for MRB and Scene Views multiple save.
+    No module interface here, only used in SelfTests module
+    """
+    parent.acknowledgementText = """
+    This tes was developed by
+    Nicole Aucoin, BWH
+    and was partially funded by NIH grant 3P41RR013218.
+    """
+
+
+#
+# SlicerMRBMultipleSaveRestoreTestWidget
+#
+
+class SlicerMRBMultipleSaveRestoreTestWidget(ScriptedLoadableModuleWidget):
+  """Uses ScriptedLoadableModuleWidget base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+  """
+
+  def setup(self):
+    ScriptedLoadableModuleWidget.setup(self)
+
+
+class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
+  """
+  This is the test case for your scripted module.
+  Uses ScriptedLoadableModuleTest base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+  """
+
+  def __init__(self,methodName='runTest',uniqueDirectory=True,strict=False):
     """
     Tests the use of mrml and mrb save formats with volumes and fiducials.
     Checks that scene views are saved and restored as expected.
@@ -27,19 +61,9 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
                      True then check every detail
                      False then confirm basic operation, but allow non-critical issues to pass
     """
-    unittest.TestCase.__init__(self,methodName)
+    ScriptedLoadableModuleTest.__init__(self, methodName)
     self.uniqueDirectory = uniqueDirectory
     self.strict = strict
-
-  def delayDisplay(self,message,msec=1000):
-    print(message)
-    self.info = qt.QDialog()
-    self.infoLayout = qt.QVBoxLayout()
-    self.info.setLayout(self.infoLayout)
-    self.label = qt.QLabel(message,self.info)
-    self.infoLayout.addWidget(self.label)
-    qt.QTimer.singleShot(msec, self.info.close)
-    self.info.exec_()
 
   def setUp(self):
     slicer.mrmlScene.Clear(0)
@@ -47,7 +71,6 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
   def runTest(self):
     self.setUp()
     self.test_SlicerMRBMultipleSaveRestore()
-
 
   def test_SlicerMRBMultipleSaveRestore(self):
     """
@@ -97,8 +120,8 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     # save the mrml scene to a temp directory, then zip it
     #
     applicationLogic = slicer.app.applicationLogic()
-    sceneSaveDirectory = self.tempDirectory('__scene__')
-    mrbFilePath= self.tempDirectory('__mrb__') + '/SlicerMRBMultipleSaveRestore-1.mrb'
+    sceneSaveDirectory = slicer.util.tempDirectory('__scene__')
+    mrbFilePath = slicer.util.tempDirectory('__mrb__') + '/SlicerMRBMultipleSaveRestore-1.mrb'
     self.delayDisplay("Saving scene to: %s\n" % sceneSaveDirectory + "Saving mrb to: %s" % mrbFilePath)
     self.assertTrue(
         applicationLogic.SaveSceneToSlicerDataBundleDirectory(sceneSaveDirectory, None)
@@ -114,7 +137,7 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     # reload the mrb and restore a scene view
     #
     slicer.mrmlScene.Clear(0)
-    mrbExtractPath = self.tempDirectory('__mrb_extract__')
+    mrbExtractPath = slicer.util.tempDirectory('__mrb_extract__')
     self.delayDisplay('Now, reload the saved MRB')
     mrbLoaded = applicationLogic.OpenSlicerDataBundle(mrbFilePath, mrbExtractPath)
     # load can return false even though it succeeded - only fail if in strict mode
@@ -148,8 +171,8 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     #
     # Save it again
     #
-    sceneSaveDirectory = self.tempDirectory('__scene2__')
-    mrbFilePath= self.tempDirectory('__mrb__') + '/SlicerMRBMultipleSaveRestore-2.mrb'
+    sceneSaveDirectory = slicer.util.tempDirectory('__scene2__')
+    mrbFilePath= slicer.util.tempDirectory('__mrb__') + '/SlicerMRBMultipleSaveRestore-2.mrb'
     self.delayDisplay("Saving scene to: %s\n" % sceneSaveDirectory + "Saving mrb to: %s" % mrbFilePath)
     self.assertTrue(
         applicationLogic.SaveSceneToSlicerDataBundleDirectory(sceneSaveDirectory, None)
@@ -166,7 +189,7 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     # reload the second mrb and test
     #
     slicer.mrmlScene.Clear(0)
-    mrbExtractPath = self.tempDirectory('__mrb_extract2__')
+    mrbExtractPath = slicer.util.tempDirectory('__mrb_extract2__')
     self.delayDisplay('Now, reload the second saved MRB %s' % mrbFilePath)
     mrbLoaded = applicationLogic.OpenSlicerDataBundle(mrbFilePath, mrbExtractPath)
     # load can return false even though it succeeded - only fail if in strict mode
@@ -191,9 +214,6 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
 
     self.delayDisplay("Test Finished")
 
-  
-
-  
   def storeSceneView(self,name,description=""):
     """  Store a scene view into the current scene.
     TODO: this might move to slicer.util
@@ -217,81 +237,3 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     sceneViewNode.StoreScene()
 
     return sceneViewNode
-
-  def tempDirectory(self,key='__SlicerTestTemp__',tempDir=None):
-    """Come up with a unique directory name in the temp dir and make it and return it
-    # TODO: switch to QTemporaryDir in Qt5.
-    # For now, create a named directory if uniqueDirectory attribute is true
-    Note: this directory is not automatically cleaned up
-    """
-    if not tempDir:
-      tempDir = qt.QDir(slicer.app.temporaryPath)
-    tempDirName = key
-    if self.uniqueDirectory:
-      key += qt.QDateTime().currentDateTime().toString("yyyy-MM-dd_hh+mm+ss.zzz")
-    fileInfo = qt.QFileInfo(qt.QDir(tempDir), tempDirName)
-    dirPath = fileInfo.absoluteFilePath()
-    qt.QDir().mkpath(dirPath)
-    return dirPath
-
-
-#
-# SlicerMRBMultipleSaveRestoreTest
-#
-
-class SlicerMRBMultipleSaveRestoreTest:
-  """
-  This class is the 'hook' for slicer to detect and recognize the test
-  as a loadable scripted module (with a hidden interface)
-  """
-  def __init__(self, parent):
-    parent.title = "SlicerMRBMultipleSaveRestoreTest"
-    parent.categories = ["Testing"]
-    parent.contributors = ["Nicole Aucoin (BWH)"]
-    parent.helpText = """
-    Self test for MRB and Scene Views multiple save.
-    No module interface here, only used in SelfTests module
-    """
-    parent.acknowledgementText = """
-    This tes was developed by
-    Nicole Aucoin, BWH 
-    and was partially funded by NIH grant 3P41RR013218.
-    """
-
-    # don't show this module
-    parent.hidden = True
-
-    # Add this test to the SelfTest module's list for discovery when the module
-    # is created.  Since this module may be discovered before SelfTests itself,
-    # create the list if it doesn't already exist.
-    try:
-      slicer.selfTests
-    except AttributeError:
-      slicer.selfTests = {}
-    slicer.selfTests['SlicerMRBMultipleSaveRestoreTest'] = self.runTest
-
-  def runTest(self):
-    tester = SlicerMRBMultipleSaveRestore()
-    tester.setUp()
-    tester.runTest()
-
-
-#
-# SlicerMRBMultipleSaveRestoreTestWidget
-#
-
-class SlicerMRBMultipleSaveRestoreTestWidget:
-  def __init__(self, parent = None):
-    self.parent = parent
-
-  def setup(self):
-    # don't display anything for this widget - it will be hidden anyway
-    pass
-
-  def enter(self):
-    pass
-
-  def exit(self):
-    pass
-
-

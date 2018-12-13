@@ -1,21 +1,40 @@
 
 import os
-import unittest
-import ctk
-import vtk
-import qt
-import slicer
-# import EditorLib
+import vtk, qt, ctk, slicer
+from slicer.ScriptedLoadableModule import *
 
-class SlicerMRBSaveRestoreCheckPaths(unittest.TestCase):
-  """ Test for slicer data bundle with save and load and save to ensure file paths are okay.
+#
+# SlicerMRBSaveRestoreCheckPathsTest
+#
 
-Run manually from within slicer by pasting an version of this with the correct path into the python console:
-execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Python/SlicerMRBSaveRestoreCheckPathsTest.py'); t = SlicerMRBSaveRestoreCheckPaths(); t.setUp(); t.runTest()
-
+class SlicerMRBSaveRestoreCheckPathsTest(ScriptedLoadableModule):
+  """Uses ScriptedLoadableModule base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
 
-  def __init__(self,methodName='runTest', uniqueDirectory=True,strict=False):
+  def __init__(self, parent):
+    ScriptedLoadableModule.__init__(self, parent)
+    parent.title = "SlicerMRBSaveRestoreCheckPathsTest"
+    parent.categories = ["Testing.TestCases"]
+    parent.contributors = ["Nicole Aucoin (BWH)"]
+    parent.helpText = """
+    Self test for MRB multiple save file paths.
+    No module interface here, only used in SelfTests module
+    """
+    parent.acknowledgementText = """
+    This test was developed by
+    Nicole Aucoin, BWH
+    and was partially funded by NIH grant 3P41RR013218.
+    """
+
+class SlicerMRBSaveRestoreCheckPaths(ScriptedLoadableModuleTest):
+  """
+  This is the test case for your scripted module.
+  Uses ScriptedLoadableModuleTest base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+  """
+
+  def __init__(self, uniqueDirectory=True, strict=False):
     """
     Tests the use of mrml and mrb save formats with volumes.
     Checks that after reopening an MRB and trying to save it again that the file paths are all correct.
@@ -27,7 +46,7 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
                      True then check every detail
                      False then confirm basic operation, but allow non-critical issues to pass
     """
-    unittest.TestCase.__init__(self,methodName)
+    ScriptedLoadableModuleTest.__init__(self)
     self.uniqueDirectory = uniqueDirectory
     self.strict = strict
     # this flag will need to be updated if the code in
@@ -156,7 +175,7 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     # the storage node, commit the scene to get to a more stable starting
     # point with the volume saved in a regular directory
     #
-    tempDir = self.tempDirectory('__mrml__')
+    tempDir = slicer.util.tempDirectory('__mrml__')
     slicer.util.delayDisplay('Temp dir = %s ' % tempDir)
     mrmlFilePath = tempDir + '/SlicerMRBSaveRestoreCheckPath.mrml'
     slicer.mrmlScene.SetURL(mrmlFilePath)
@@ -177,7 +196,7 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     #
     # save the mrb
     #
-    mrbFilePath= self.tempDirectory('__mrb__') + '/SlicerMRBSaveRestoreCheckPaths-1.mrb'
+    mrbFilePath= slicer.util.tempDirectory('__mrb__') + '/SlicerMRBSaveRestoreCheckPaths-1.mrb'
     slicer.util.delayDisplay("\n\n\nSaving mrb to: %s" % mrbFilePath)
     self.assertTrue(
         ioManager.saveScene(mrbFilePath, screenShot)
@@ -207,7 +226,7 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     #
     # Save it again
     #
-    mrbFilePath= self.tempDirectory('__mrb__') + '/SlicerMRBSaveRestoreCheckPaths-2.mrb'
+    mrbFilePath= slicer.util.tempDirectory('__mrb__') + '/SlicerMRBSaveRestoreCheckPaths-2.mrb'
     slicer.util.delayDisplay("Saving second mrb to: %s\n\n\n\n" % mrbFilePath)
     self.assertTrue(
         ioManager.saveScene(mrbFilePath, screenShot)
@@ -220,60 +239,3 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     self.checkAllFileNames(slicer.mrmlScene)
 
     slicer.util.delayDisplay("Test Finished")
-
-  def tempDirectory(self,key='__SlicerTestTemp__',tempDir=None):
-    """Come up with a unique directory name in the temp dir and make it and return it
-    # TODO: switch to QTemporaryDir in Qt5.
-    # For now, create a named directory if uniqueDirectory attribute is true
-    Note: this directory is not automatically cleaned up
-    """
-    if not tempDir:
-      tempDir = qt.QDir(slicer.app.temporaryPath)
-    tempDirName = key
-    if self.uniqueDirectory:
-      key += qt.QDateTime().currentDateTime().toString("yyyy-MM-dd_hh+mm+ss.zzz")
-    fileInfo = qt.QFileInfo(qt.QDir(tempDir), tempDirName)
-    dirPath = fileInfo.absoluteFilePath()
-    qt.QDir().mkpath(dirPath)
-    return dirPath
-
-
-#
-# SlicerMRBSaveRestoreCheckPathsTest
-#
-
-class SlicerMRBSaveRestoreCheckPathsTest:
-  """
-  This class is the 'hook' for slicer to detect and recognize the test
-  as a loadable scripted module (with a hidden interface)
-  """
-  def __init__(self, parent):
-    parent.title = "SlicerMRBSaveRestoreCheckPathsTest"
-    parent.categories = ["Testing"]
-    parent.contributors = ["Nicole Aucoin (BWH)"]
-    parent.helpText = """
-    Self test for MRB multiple save file paths.
-    No module interface here, only used in SelfTests module
-    """
-    parent.acknowledgementText = """
-    This test was developed by
-    Nicole Aucoin, BWH
-    and was partially funded by NIH grant 3P41RR013218.
-    """
-
-    # don't show this module
-    parent.hidden = True
-
-    # Add this test to the SelfTest module's list for discovery when the module
-    # is created.  Since this module may be discovered before SelfTests itself,
-    # create the list if it doesn't already exist.
-    try:
-      slicer.selfTests
-    except AttributeError:
-      slicer.selfTests = {}
-    slicer.selfTests['SlicerMRBSaveRestoreCheckPathsTest'] = self.runTest
-
-  def runTest(self):
-    tester = SlicerMRBSaveRestoreCheckPaths()
-    tester.setUp()
-    tester.runTest()
