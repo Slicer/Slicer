@@ -118,7 +118,7 @@ class SlicerMRBMultipleSaveRestoreLoop(ScriptedLoadableModuleTest):
       self.assertTrue(
         ioManager.saveScene(mrbFilePath, screenShot)
         )
-      self.delayDisplay("Finished saving MRB",i)
+      self.delayDisplay("Finished saving MRB %s" % i)
 
       #
       # reload the mrb
