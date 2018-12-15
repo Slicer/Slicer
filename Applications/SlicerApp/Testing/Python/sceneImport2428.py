@@ -163,11 +163,7 @@ class sceneImport2428Test(ScriptedLoadableModuleTest):
 
     modelMaker = slicer.modules.modelmaker
     self.CLINode = None
-    self.CLINode = slicer.cli.run(modelMaker, self.CLINode, parameters, delete_temporary_files=False)
-    waitCount = 0
-    while self.CLINode.GetStatusString() != 'Completed' and waitCount < 100:
-      self.delayDisplay( "Making models... %d" % waitCount )
-      waitCount += 1
+    self.CLINode = slicer.cli.runSync(modelMaker, self.CLINode, parameters, delete_temporary_files=False)
 
     self.delayDisplay("Models built")
 
