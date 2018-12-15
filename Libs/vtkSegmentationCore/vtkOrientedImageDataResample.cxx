@@ -1360,9 +1360,9 @@ bool vtkOrientedImageDataResample::ApplyImageMask(vtkOrientedImageData* input, v
 
   // Copy masked input to input
   vtkNew<vtkMatrix4x4> inputImageToWorldMatrix;
-  input->GetImageToWorldMatrix(inputImageToWorldMatrix);
+  input->GetImageToWorldMatrix(inputImageToWorldMatrix.GetPointer());
   input->DeepCopy(masker->GetOutput());
-  input->SetGeometryFromImageToWorldMatrix(inputImageToWorldMatrix);
+  input->SetGeometryFromImageToWorldMatrix(inputImageToWorldMatrix.GetPointer());
 
   return true;
 }

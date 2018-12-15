@@ -779,7 +779,7 @@ bool vtkMRMLSegmentationNode::GenerateEditMask(vtkOrientedImageData* maskImage, 
   maskImage->SetExtent(extent);
   vtkNew<vtkMatrix4x4> referenceImageToWorldMatrix;
   referenceGeometry->GetImageToWorldMatrix(referenceImageToWorldMatrix.GetPointer());
-  maskImage->SetImageToWorldMatrix(referenceImageToWorldMatrix);
+  maskImage->SetImageToWorldMatrix(referenceImageToWorldMatrix.GetPointer());
 
   if (maskSegmentIDs.empty())
     {
@@ -802,7 +802,7 @@ bool vtkMRMLSegmentationNode::GenerateEditMask(vtkOrientedImageData* maskImage, 
     threshold->SetOutputScalarType(VTK_UNSIGNED_CHAR);
     threshold->Update();
     maskImage->DeepCopy(threshold->GetOutput());
-    maskImage->SetImageToWorldMatrix(referenceImageToWorldMatrix);
+    maskImage->SetImageToWorldMatrix(referenceImageToWorldMatrix.GetPointer());
     }
 
   // Apply threshold mask if paint threshold is turned on
