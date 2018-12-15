@@ -81,7 +81,7 @@ class MarkupsInCompareViewersSelfTestLogic(ScriptedLoadableModuleLogic):
     #
     print("Getting MR Head Volume")
     import SampleData
-    mrHeadVolume = SampleData.downloadSample("MRHead")[0]
+    mrHeadVolume = SampleData.downloadSample("MRHead")
 
     #
     # link the viewers

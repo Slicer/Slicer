@@ -133,7 +133,7 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
 
     # Use MRHead and Tinypatient for testing
     import SampleData
-    mrVolumeNode = SampleData.downloadSample("MRHead")[0]
+    mrVolumeNode = SampleData.downloadSample("MRHead")
     [tinyVolumeNode, tinySegmentationNode] = SampleData.downloadSample('TinyPatient')
 
     # Convert MRHead to oriented image data

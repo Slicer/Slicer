@@ -1366,7 +1366,7 @@ def plot(narray, xColumnIndex = -1, columnNames = None, title = None, show = Tru
     # Get sample data
     import numpy as np
     import SampleData
-    volumeNode = SampleData.downloadSample("MRHead")[0]
+    volumeNode = SampleData.downloadSample("MRHead")
 
     # Create new plot
     histogram = np.histogram(arrayFromVolume(volumeNode), bins=50)
@@ -1383,7 +1383,7 @@ def plot(narray, xColumnIndex = -1, columnNames = None, title = None, show = Tru
     # Get sample data
     import numpy as np
     import SampleData
-    volumeNode = SampleData.downloadSample("MRHead")[0]
+    volumeNode = SampleData.downloadSample("MRHead")
 
     # Create variable that will store plot nodes (chart, table, series)
     plotNodes = {}

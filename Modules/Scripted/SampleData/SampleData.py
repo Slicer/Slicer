@@ -41,8 +41,14 @@ def downloadFromURL(uris=None, fileNames=None, nodeNames=None, loadFiles=None,
 
 def downloadSample(sampleName):
   """For a given sample name this will search the available sources
+  and load it if it is available.  Returns the first loaded node."""
+  return SampleDataLogic().downloadSamples(sampleName)[0]
+
+
+def downloadSamples(sampleName):
+  """For a given sample name this will search the available sources
   and load it if it is available.  Returns the loaded nodes."""
-  return SampleDataLogic().downloadSample(sampleName)
+  return SampleDataLogic().downloadSamples(sampleName)
 
 #
 # SampleData
@@ -551,6 +557,11 @@ class SampleDataLogic(object):
 
   def downloadSample(self,sampleName):
     """For a given sample name this will search the available sources
+    and load it if it is available.  Returns the first loaded node."""
+    return self.downloadSamples(sampleName)[0]
+
+  def downloadSamples(self,sampleName):
+    """For a given sample name this will search the available sources
     and load it if it is available.  Returns the loaded nodes."""
     source = self.sourceForSampleName(sampleName)
     nodes = []
@@ -563,42 +574,42 @@ class SampleDataLogic(object):
 
   """Utility methods for backwards compatibility"""
   def downloadMRHead(self):
-    return self.downloadSample('MRHead')[0]
+    return self.downloadSample('MRHead')
 
   def downloadCTChest(self):
-    return self.downloadSample('CTChest')[0]
+    return self.downloadSample('CTChest')
 
   def downloadCTACardio(self):
-    return self.downloadSample('CTACardio')[0]
+    return self.downloadSample('CTACardio')
 
   def downloadDTIBrain(self):
-    return self.downloadSample('DTIBrain')[0]
+    return self.downloadSample('DTIBrain')
 
   def downloadMRBrainTumor1(self):
-    return self.downloadSample('MRBrainTumor1')[0]
+    return self.downloadSample('MRBrainTumor1')
 
   def downloadMRBrainTumor2(self):
-    return self.downloadSample('MRBrainTumor2')[0]
+    return self.downloadSample('MRBrainTumor2')
 
   def downloadWhiteMatterExplorationBaselineVolume(self):
-    return self.downloadSample('BaselineVolume')[0]
+    return self.downloadSample('BaselineVolume')
 
   def downloadWhiteMatterExplorationDTIVolume(self):
-    return self.downloadSample('DTIVolume')[0]
+    return self.downloadSample('DTIVolume')
 
   def downloadDiffusionMRIDWIVolume(self):
-    return self.downloadSample('DWIVolume')[0]
+    return self.downloadSample('DWIVolume')
 
   def downloadAbdominalCTVolume(self):
-    return self.downloadSample('CTA abdomen\n(Panoramix)')[0]
+    return self.downloadSample('CTA abdomen\n(Panoramix)')
 
   def downloadDentalSurgery(self):
     # returns list since that's what earlier method did
-    return self.downloadSample('CBCTDentalSurgery')
+    return self.downloadSamples('CBCTDentalSurgery')
 
   def downloadMRUSPostate(self):
     # returns list since that's what earlier method did
-    return self.downloadSample('MR-US Prostate')
+    return self.downloadSamples('MR-US Prostate')
 
   def humanFormatSize(self,size):
     """ from http://stackoverflow.com/questions/1094841/reusable-library-to-get-human-readable-version-of-file-size"""

@@ -101,7 +101,7 @@ class SlicerOrientationSelectorTestTest(ScriptedLoadableModuleTest):
 
     self.delayDisplay("Starting the test")
     import SampleData
-    mrHeadVolume = SampleData.downloadSample("MRHead")[0]
+    mrHeadVolume = SampleData.downloadSample("MRHead")
 
     slicer.util.selectModule('Reformat')
 

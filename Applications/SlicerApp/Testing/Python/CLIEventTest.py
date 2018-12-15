@@ -220,7 +220,7 @@ class CLIEventTestTest(ScriptedLoadableModuleTest):
 
     self.delayDisplay('Load input volume')
     import SampleData
-    inputVolume = SampleData.downloadSample("MRHead")[0]
+    inputVolume = SampleData.downloadSample("MRHead")
 
     self.delayDisplay('Create subject hierarchy of input volume')
     shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)

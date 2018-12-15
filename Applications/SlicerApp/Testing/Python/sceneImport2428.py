@@ -98,7 +98,7 @@ class sceneImport2428Test(ScriptedLoadableModuleTest):
     #
     self.delayDisplay("Getting Data")
     import SampleData
-    head = SampleData.downloadSample("MRHead")[0]
+    head = SampleData.downloadSample("MRHead")
 
     #
     # create a label map and set it for editing
