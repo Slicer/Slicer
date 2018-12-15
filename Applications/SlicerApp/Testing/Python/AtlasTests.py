@@ -229,15 +229,15 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
           hierarchyOriginalExpanded = mh.GetExpanded()
           # collapse and change the colour on the hierarchy to full red
           mh.SetExpanded(0)
-          self.delayDisplay("Model hierarchy " + mh.GetName() + ": expanded = false",msec=10)
+          self.delayDisplay("Model hierarchy " + mh.GetName() + ": expanded = false")
           mhd.SetColor(1,0,0)
-          self.delayDisplay("Model hierarchy " + mh.GetName() + ": color = red",msec=10)
+          self.delayDisplay("Model hierarchy " + mh.GetName() + ": color = red")
           # set the collapsed visibility to 0
           mhd.SetVisibility(0)
-          self.delayDisplay("Model hierarchy " + mh.GetName() + ": visibility = off",msec=10)
+          self.delayDisplay("Model hierarchy " + mh.GetName() + ": visibility = off")
           # expand, should see all models in correct colour
           mh.SetExpanded(1)
-          self.delayDisplay("Model hierarchy " + mh.GetName() + ": expanded = true",msec=10)
+          self.delayDisplay("Model hierarchy " + mh.GetName() + ": expanded = true")
           # reset the hierarchy
           mhd.SetVisibility(hierarchyOriginalVisibility)
           mhd.SetColor(hierarchyOriginalColour)
@@ -251,7 +251,7 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
     numSceneViews = slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLSceneViewNode")
     for s in range(numSceneViews):
       sv = slicer.mrmlScene.GetNthNodeByClass(s, "vtkMRMLSceneViewNode")
-      self.delayDisplay("Restoring scene " + sv.GetName() + " (" + str(s+1) + "/" + str(numSceneViews) + ")",msec=500)
+      self.delayDisplay("Restoring scene " + sv.GetName() + " (" + str(s+1) + "/" + str(numSceneViews) + ")")
       sv.RestoreScene()
 
     self.delayDisplay('Test passed!')
