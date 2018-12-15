@@ -181,7 +181,7 @@ macro(list_conditional_append cond list)
 endmacro()
 
 Slicer_Remote_Add(jqPlot
-  URL http://slicer.kitware.com/midas3/download?items=15065&dummy=jquery.jqplot.1.0.4r1120.tar.gz
+  URL https://github.com/Slicer/SlicerBinaryDependencies/releases/download/jqplot/jquery.jqplot.1.0.4r1115.tar.gz
   URL_MD5 5c5d73730145c3963f09e1d3ca355580
   LICENSE_FILES "MIT-LICENSE.txt"
   VERSION "1.0.4"
