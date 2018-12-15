@@ -152,6 +152,7 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
     self.delayDisplay('Running Abdominal Atlas Test')
     downloads = {
       'fileNames': 'Abdominal_Atlas_2012.mrb',
+      'loadFiles': True,
       'uris': 'http://slicer.kitware.com/midas3/download?items=8301'
       }
     self.perform_AtlasTest(downloads,'I')
@@ -160,6 +161,7 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
     self.delayDisplay('Running Brain Atlas Test')
     downloads = {
       'fileNames': 'BrainAtlas2012.mrb',
+      'loadFiles': True,
       'uris': 'http://slicer.kitware.com/midas3/download?items=10937'
       }
     self.perform_AtlasTest(downloads,'A1_grayT1')
@@ -168,6 +170,7 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
     self.delayDisplay('Running Knee Atlas Test')
     downloads = {
       'fileNames': 'KneeAtlas2012.mrb',
+      'loadFiles': True,
       'uris': 'http://slicer.kitware.com/midas3/download?items=9912'
       }
     self.perform_AtlasTest(downloads,'I')

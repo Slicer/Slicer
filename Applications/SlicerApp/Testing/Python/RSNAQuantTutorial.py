@@ -326,6 +326,7 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
     import SampleData
     SampleData.downloadFromURL(
       fileNames='ChangeTrackerScene.mrb',
+      loadFiles=True,
       uris='http://slicer.kitware.com/midas3/download?items=124184')
     logic.takeScreenshot('ChangeTracker-Loaded','Finished with download and loading',-1)
 
