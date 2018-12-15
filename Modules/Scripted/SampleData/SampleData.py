@@ -582,7 +582,7 @@ class SampleDataLogic(object):
     return self.downloadSample('DTIVolume')[0]
 
   def downloadDiffusionMRIDWIVolume(self):
-    return self.downloadSample('dwi')[0]
+    return self.downloadSample('DWIVolume')[0]
 
   def downloadAbdominalCTVolume(self):
     return self.downloadSample('CTA abdomen\n(Panoramix)')[0]
