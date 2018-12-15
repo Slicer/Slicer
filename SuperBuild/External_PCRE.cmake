@@ -51,7 +51,7 @@ ExternalProject_Execute(${proj} \"configure\" sh ${EP_SOURCE_DIR}/configure
 
   ExternalProject_add(PCRE
     ${${proj}_EP_ARGS}
-    URL http://slicer.kitware.com/midas3/download/item/263369/pcre-${_version}.tar.gz
+    URL https://github.com/Slicer/SlicerBinaryDependencies/releases/download/PCRE/pcre-${_version}.tar.gz
     URL_MD5 8a353fe1450216b6655dfcf3561716d9
     DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
     SOURCE_DIR ${EP_SOURCE_DIR}
