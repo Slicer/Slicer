@@ -183,23 +183,10 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
     #
     # first, get the data - a zip file of dicom data
     #
-    import urllib
-    downloads = (
-        ('http://slicer.kitware.com/midas3/download?items=124183', 'dataset1_Thorax_Abdomen.zip'),
-        )
-
-    self.delayDisplay("Downloading")
-    for url,name in downloads:
-      filePath = slicer.app.temporaryPath + '/' + name
-      if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
-        self.delayDisplay('Requesting download %s from %s...\n' % (name, url))
-        urllib.urlretrieve(url, filePath)
-    self.delayDisplay('Finished with download\n')
-
-    self.delayDisplay("Unzipping")
-    dicomFilesDirectory = slicer.app.temporaryPath + '/dicomFiles'
-    qt.QDir().mkpath(dicomFilesDirectory)
-    slicer.app.applicationLogic().Unzip(filePath, dicomFilesDirectory)
+    import SampleData
+    dicomFilesDirectory = SampleData.downloadFromURL(
+      fileNames='dataset1_Thorax_Abdomen.zip',
+      uris='http://slicer.kitware.com/midas3/download?items=124183')[0]
 
     try:
       self.delayDisplay("Switching to temp database directory")
@@ -319,19 +306,11 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
     #
     # first, get some data
     #
-    import urllib
-    downloads = (
-        ('http://slicer.kitware.com/midas3/download?items=124180', 'Head_Scene.mrb', slicer.util.loadScene),
-        )
+    import SampleData
+    SampleData.downloadFromURL(
+      fileNames='Head_Scene.mrb',
+      uris='http://slicer.kitware.com/midas3/download?items=124180')
 
-    for url,name,loader in downloads:
-      filePath = slicer.app.temporaryPath + '/' + name
-      if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
-        print('Requesting download %s from %s...\n' % (name, url))
-        urllib.urlretrieve(url, filePath)
-      if loader:
-        print('Loading %s...\n' % (name,))
-        loader(filePath)
     logic.takeScreenshot('Head-Downloaded','Finished with download and loading',-1)
 
     try:
@@ -426,19 +405,10 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
     #
     # first, get some data
     #
-    import urllib
-    downloads = (
-        ('http://slicer.kitware.com/midas3/download?items=124181', 'LiverSegments_Scene.mrb', slicer.util.loadScene),
-        )
-
-    for url,name,loader in downloads:
-      filePath = slicer.app.temporaryPath + '/' + name
-      if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
-        print('Requesting download %s from %s...\n' % (name, url))
-        urllib.urlretrieve(url, filePath)
-      if loader:
-        print('Loading %s...\n' % (name,))
-        loader(filePath)
+    import SampleData
+    SampleData.downloadFromURL(
+      fileNames='LiverSegments_Scene.mrb',
+      uris='http://slicer.kitware.com/midas3/download?items=124181')
 
     logic.takeScreenshot('Liver-Loaded','Loaded Liver scene',-1)
 
@@ -507,19 +477,11 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
     #
     # first, get some data
     #
-    import urllib
-    downloads = (
-        ('http://slicer.kitware.com/midas3/download?items=124182', 'LungSegments_Scene.mrb', slicer.util.loadScene),
-        )
+    import SampleData
+    SampleData.downloadFromURL(
+      fileNames='LungSegments_Scene.mrb',
+      uris='http://slicer.kitware.com/midas3/download?items=124182')
 
-    for url,name,loader in downloads:
-      filePath = slicer.app.temporaryPath + '/' + name
-      if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
-        print('Requesting download %s from %s...\n' % (name, url))
-        urllib.urlretrieve(url, filePath)
-      if loader:
-        print('Loading %s...\n' % (name,))
-        loader(filePath)
     logic.takeScreenshot('Lung-Loaded','Finished with download and loading',-1)
 
     try:

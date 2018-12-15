@@ -88,20 +88,10 @@ class slicerCloseCrashBug2590Test(ScriptedLoadableModuleTest):
     #
     self.delayDisplay("Starting the test")
 
-    import urllib
-    downloads = (
-        ('http://slicer.kitware.com/midas3/download?items=8986', 'RSNA2011_ChangeTracker_data.zip', slicer.util.loadScene),
-        )
-
-    for url,name,loader in downloads:
-      filePath = slicer.app.temporaryPath + '/' + name
-      if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
-        print('Requesting download %s from %s...\n' % (name, url))
-        urllib.urlretrieve(url, filePath)
-      if loader:
-        print('Loading %s...\n' % (name,))
-        loader(filePath)
-    self.delayDisplay('Finished with download and loading\n')
+    import SampleData
+    SampleData.downloadFromURL(
+      fileNames='RSNA2011_ChangeTracker_data.zip',
+      uris='http://slicer.kitware.com/midas3/download?items=8986')
 
     try:
       mainWindow = slicer.util.mainWindow()

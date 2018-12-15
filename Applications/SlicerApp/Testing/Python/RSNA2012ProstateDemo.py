@@ -64,22 +64,10 @@ class RSNA2012ProstateDemoTest(ScriptedLoadableModuleTest):
 
     print("Running RSNA2012ProstateDemo Test case:")
 
-    import urllib
-
-    # perform the downloads if needed, then load
-    filePath = slicer.app.temporaryPath + '/RSNA2012ProstateDemo.mrb'
-    urlPath = 'http://slicer.kitware.com/midas3/download?items=10697'
-    if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
-      self.delayDisplay('Downloading MRB from %s to %s...\n' % (urlPath, filePath))
-      urllib.urlretrieve(urlPath, filePath)
-    else:
-      self.delayDisplay('Using existing %s...\n' % filePath)
-    slicer.mrmlScene.Clear(0)
-    appLogic = slicer.app.applicationLogic()
-    self.delayDisplay('Done loading data! Will now open the bundle')
-    mrbExtractPath = self.tempDirectory('__prostate_mrb_extract__')
-    mrbLoaded = appLogic.OpenSlicerDataBundle(filePath, mrbExtractPath)
-    slicer.app.processEvents()
+    import SampleData
+    SampleData.downloadFromURL(
+      fileNames='RSNA2012ProstateDemo.mrb',
+      uris='http://slicer.kitware.com/midas3/download?items=10697')
 
     # get all scene view nodes and test switching
     svns = slicer.util.getNodes('vtkMRMLSceneViewNode*')
@@ -93,18 +81,3 @@ class RSNA2012ProstateDemoTest(ScriptedLoadableModuleTest):
     self.delayDisplay('Done testing scene views, will clear the scene')
     slicer.mrmlScene.Clear(0)
     self.delayDisplay('Test passed')
-
-  def tempDirectory(self,key='__SlicerTestTemp__',tempDir=None,includeDateTime=False):
-    """Come up with a unique directory name in the temp dir and make it and return it
-    # TODO: switch to QTemporaryDir in Qt5.
-    Note: this directory is not automatically cleaned up
-    """
-    if not tempDir:
-      tempDir = qt.QDir(slicer.app.temporaryPath)
-    tempDirName = key
-    if includeDateTime:
-      key += qt.QDateTime().currentDateTime().toString("yyyy-MM-dd_hh+mm+ss.zzz")
-    fileInfo = qt.QFileInfo(qt.QDir(tempDir), tempDirName)
-    dirPath = fileInfo.absoluteFilePath()
-    qt.QDir().mkpath(dirPath)
-    return dirPath

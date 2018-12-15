@@ -93,28 +93,15 @@ class SlicerRestoreSceneViewCrashIssue3445Test(ScriptedLoadableModuleTest):
     #
     # first, get some data
     #
-    import urllib
-    downloads = (
-        ('http://slicer.kitware.com/midas3/download?items=10937', 'BrainAtlas2012.mrb', None),
-        )
+    import SampleData
+    filePath = SampleData.downloadFromURL(
+      fileNames='BrainAtlas2012.mrb',
+      uris='http://slicer.kitware.com/midas3/download?items=10937')[0]
 
-    filePaths = []
-    for url,name,loader in downloads:
-      filePath = slicer.app.temporaryPath + '/' + name
-      if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
-        logging.info('Requesting download %s from %s...\n' % (name, url))
-        urllib.urlretrieve(url, filePath)
-      filePaths.append(filePath)
-      if loader:
-        logging.info('Loading %s...' % (name,))
-        loader(filePath)
     self.delayDisplay('Finished with download')
-
-    filePath = filePaths[0]
 
     ioManager = slicer.app.ioManager()
 
-    ioManager.loadFile(filePath)
     ioManager.loadFile(filePath)
 
     slicer.mrmlScene.Clear(0)

@@ -119,19 +119,10 @@ class Slicer4MinuteTest(ScriptedLoadableModuleTest):
     #
     # first, get some data
     #
-    import urllib
-    downloads = (
-        ('http://slicer.kitware.com/midas3/download?items=8466', 'slicer4minute.mrb', slicer.util.loadScene),
-        )
-
-    for url,name,loader in downloads:
-      filePath = slicer.app.temporaryPath + '/' + name
-      if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
-        print('Requesting download %s from %s...\n' % (name, url))
-        urllib.urlretrieve(url, filePath)
-      if loader:
-        print('Loading %s...\n' % (name,))
-        loader(filePath)
+    import SampleData
+    SampleData.downloadFromURL(
+      fileNames='slicer4minute.mrb',
+      uris='http://slicer.kitware.com/midas3/download?items=8466')
     self.delayDisplay('Finished with download and loading')
 
     # Testing "Part 2" of Tutorial

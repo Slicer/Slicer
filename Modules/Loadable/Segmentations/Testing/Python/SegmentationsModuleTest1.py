@@ -64,28 +64,8 @@ class SegmentationsModuleTest1(unittest.TestCase):
   #------------------------------------------------------------------------------
   def TestSection_RetrieveInputData(self):
     try:
-      import urllib
-      downloads = (
-          ('http://slicer.kitware.com/midas3/download/folder/3763/TinyPatient_Seg.zip', self.dataZipFilePath),
-          )
-
-      downloaded = 0
-      for url,filePath in downloads:
-        if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
-          if downloaded == 0:
-            logging.info('Downloading input data to folder\n' + self.dataZipFilePath)
-          logging.info('Requesting download from %s...' % (url))
-          urllib.urlretrieve(url, filePath)
-          downloaded += 1
-        else:
-          logging.info('Input data has been found in folder ' + self.dataZipFilePath)
-      if downloaded > 0:
-        logging.info('Downloading input data finished')
-
-      numOfFilesInDataDir = len([name for name in os.listdir(self.dataDir) if os.path.isfile(self.dataDir + '/' + name)])
-      if (numOfFilesInDataDir != self.expectedNumOfFilesInDataDir):
-        slicer.app.applicationLogic().Unzip(self.dataZipFilePath, self.segmentationsModuleTestDir)
-        logging.info("Unzipping done")
+      slicer.util.downloadAndExtractArchive(
+        'http://slicer.kitware.com/midas3/download/folder/3763/TinyPatient_Seg.zip', self.dataZipFilePath, self.segmentationsModuleTestDir)
 
       numOfFilesInDataDirTest = len([name for name in os.listdir(self.dataDir) if os.path.isfile(self.dataDir + '/' + name)])
       self.assertEqual( numOfFilesInDataDirTest, self.expectedNumOfFilesInDataDir )

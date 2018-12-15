@@ -217,27 +217,10 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
     #
     # first, get some data
     #
-    import urllib
-    downloads = (
-        ('http://slicer.kitware.com/midas3/download?items=124185', 'dataset3_PETCT.zip'),
-        )
-
-    self.delayDisplay("Downloading")
-
-    for url,name in downloads:
-      filePath = slicer.app.temporaryPath + '/' + name
-      if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
-        print('Requesting download %s from %s...\n' % (name, url))
-        urllib.urlretrieve(url, filePath)
-    self.delayDisplay('Finished with download\n')
-
-    self.delayDisplay("Unzipping to  %s" % (slicer.app.temporaryPath))
-    zipFilePath = slicer.app.temporaryPath + '/' + 'dataset3_PETCT.zip'
-    extractPath = slicer.app.temporaryPath + '/' + 'dataset3_PETCT'
-    qt.QDir().mkpath(extractPath)
-    self.delayDisplay("Using extract path  %s" % (extractPath))
-    applicationLogic = slicer.app.applicationLogic()
-    applicationLogic.Unzip(zipFilePath, extractPath)
+    import SampleData
+    extractPath = SampleData.downloadFromURL(
+      fileNames='dataset3_PETCT.zip',
+      uris='http://slicer.kitware.com/midas3/download?items=124185')[0]
 
     self.delayDisplay("Loading PET_CT_pre-treatment.mrb")
     preTreatmentPath = extractPath + '/PET_CT_pre-treatment.mrb'
@@ -340,19 +323,10 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
     #
     # first, get some data
     #
-    import urllib
-    downloads = (
-        ('http://slicer.kitware.com/midas3/download?items=124184', 'ChangeTrackerScene.mrb', slicer.util.loadScene),
-        )
-
-    for url,name,loader in downloads:
-      filePath = slicer.app.temporaryPath + '/' + name
-      if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
-        print('Requesting download %s from %s...\n' % (name, url))
-        urllib.urlretrieve(url, filePath)
-      if loader:
-        print('Loading %s...\n' % (name,))
-        loader(filePath)
+    import SampleData
+    SampleData.downloadFromURL(
+      fileNames='ChangeTrackerScene.mrb',
+      uris='http://slicer.kitware.com/midas3/download?items=124184')
     logic.takeScreenshot('ChangeTracker-Loaded','Finished with download and loading',-1)
 
     try:
