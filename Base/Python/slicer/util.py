@@ -1030,6 +1030,9 @@ def delayDisplay(message,autoCloseMsec=1000):
   import qt, slicer
   import logging
   logging.info(message)
+  if autoCloseMsec < 400:
+    slicer.app.processEvents()
+    return
   messagePopup = qt.QDialog()
   layout = qt.QVBoxLayout()
   messagePopup.setLayout(layout)
