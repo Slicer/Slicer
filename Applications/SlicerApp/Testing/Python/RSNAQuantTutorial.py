@@ -276,11 +276,7 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
 
       suvComputation = slicer.modules.petstandarduptakevaluecomputation
       self.CLINode1 = None
-      self.CLINode1 = slicer.cli.run(suvComputation, self.CLINode1, parameters, delete_temporary_files=False)
-      waitCount = 0
-      while self.CLINode1.GetStatusString() != 'Completed' and waitCount < 100:
-        self.delayDisplay( "Running SUV Computation... %d" % waitCount )
-        waitCount += 1
+      self.CLINode1 = slicer.cli.runSync(suvComputation, self.CLINode1, parameters, delete_temporary_files=False)
 
       # close the scene
       slicer.mrmlScene.Clear(0)
