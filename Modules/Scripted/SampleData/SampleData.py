@@ -126,11 +126,12 @@ class SampleDataSource(object):
     loadedNode = SampleData.SampleDataLogic().downloadFromSource(dataSource)[0]
   """
 
-  def __init__(self, sampleName=None, uris=None, fileNames=None, nodeNames=None, loadFiles=None,
+  def __init__(self, sampleName=None, sampleDescription=None, uris=None, fileNames=None, nodeNames=None, loadFiles=None,
     customDownloader=None, thumbnailFileName=None,
     loadFileType=None, loadFileProperties={}):
     """
-    :param sampleName: Displayed name of data set in SampleData module GUI.
+    :param sampleName: Name identifying the data set.
+    :param sampleDescription: Displayed name of data set in SampleData module GUI. (default is ``sampleName``)
     :param thumbnailFileName: Displayed thumbnail of data set in SampleData module GUI,
     :param uris: Download URL(s).
     :param fileNames: File name(s) that will be downloaded (and loaded).
@@ -141,6 +142,9 @@ class SampleDataSource(object):
     :param loadFileProperties: custom properties passed to the IO plugin.
     """
     self.sampleName = sampleName
+    if sampleDescription is None:
+      sampleDescription = sampleName
+    self.sampleDescription = sampleDescription
     if (isinstance(uris, list) or isinstance(uris, tuple)):
       if isinstance(loadFileType, basestring) or loadFileType is None:
         loadFileType = [loadFileType] * len(uris)
@@ -184,6 +188,7 @@ class SampleDataSource(object):
   def __str__(self):
     output = [
       "sampleName        : %s" % self.sampleName,
+      "sampleDescription : %s" % self.sampleDescription,
       "thumbnailFileName : %s" % self.thumbnailFileName,
       "loadFileProperties: %s" % self.loadFileProperties,
       "customDownloader  : %s" % self.customDownloader,
@@ -243,7 +248,7 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
       columnIndex = 0
       rowIndex = 0
       for source in slicer.modules.sampleDataSources[category]:
-        name = source.sampleName
+        name = source.sampleDescription
         if not name:
           name = source.nodeNames[0]
 
@@ -370,29 +375,30 @@ class SampleDataLogic(object):
   def registerBuiltInSampleDataSources(self):
     """Fills in the pre-define sample data sources"""
     sourceArguments = (
-        ('MRHead', 'http://slicer.kitware.com/midas3/download/item/292308/MR-head.nrrd', 'MR-head.nrrd', 'MRHead'),
-        ('CTChest', 'http://slicer.kitware.com/midas3/download/item/292307/CT-chest.nrrd', 'CT-chest.nrrd', 'CTChest'),
-        ('CTACardio', 'http://slicer.kitware.com/midas3/download/item/292309/CTA-cardio.nrrd', 'CTA-cardio.nrrd', 'CTACardio'),
-        ('DTIBrain', 'http://slicer.kitware.com/midas3/download/item/292310/DTI-brain.nrrd', 'DTI-Brain.nrrd', 'DTIBrain'),
-        ('MRBrainTumor1', 'http://slicer.kitware.com/midas3/download/item/292312/RegLib_C01_1.nrrd', 'RegLib_C01_1.nrrd', 'MRBrainTumor1'),
-        ('MRBrainTumor2', 'http://slicer.kitware.com/midas3/download/item/292313/RegLib_C01_2.nrrd', 'RegLib_C01_2.nrrd', 'MRBrainTumor2'),
-        ('BaselineVolume', 'http://slicer.kitware.com/midas3/download/?items=2009,1', 'BaselineVolume.nrrd', 'BaselineVolume'),
-        ('DTIVolume',
+        ('MRHead', None, 'http://slicer.kitware.com/midas3/download/item/292308/MR-head.nrrd', 'MR-head.nrrd', 'MRHead'),
+        ('CTChest', None, 'http://slicer.kitware.com/midas3/download/item/292307/CT-chest.nrrd', 'CT-chest.nrrd', 'CTChest'),
+        ('CTACardio', None, 'http://slicer.kitware.com/midas3/download/item/292309/CTA-cardio.nrrd', 'CTA-cardio.nrrd', 'CTACardio'),
+        ('DTIBrain', None, 'http://slicer.kitware.com/midas3/download/item/292310/DTI-brain.nrrd', 'DTI-Brain.nrrd', 'DTIBrain'),
+        ('MRBrainTumor1', None, 'http://slicer.kitware.com/midas3/download/item/292312/RegLib_C01_1.nrrd', 'RegLib_C01_1.nrrd', 'MRBrainTumor1'),
+        ('MRBrainTumor2', None, 'http://slicer.kitware.com/midas3/download/item/292313/RegLib_C01_2.nrrd', 'RegLib_C01_2.nrrd', 'MRBrainTumor2'),
+        ('BaselineVolume', None, 'http://slicer.kitware.com/midas3/download/?items=2009,1', 'BaselineVolume.nrrd', 'BaselineVolume'),
+        ('DTIVolume', None,
           ('http://slicer.kitware.com/midas3/download/?items=2011,1',
             'http://slicer.kitware.com/midas3/download/?items=2010,1', ),
           ('DTIVolume.raw.gz', 'DTIVolume.nhdr'), (None, 'DTIVolume')),
-        ('DWIVolume', ('http://slicer.kitware.com/midas3/download/?items=2142,1', 'http://slicer.kitware.com/midas3/download/?items=2141,1'),
+        ('DWIVolume', None,
+          ('http://slicer.kitware.com/midas3/download/?items=2142,1', 'http://slicer.kitware.com/midas3/download/?items=2141,1'),
           ('dwi.raw.gz', 'dwi.nhdr'), (None, 'dwi')),
-        ('CTA abdomen\n(Panoramix)', 'http://slicer.kitware.com/midas3/download/?items=9073,1', 'Panoramix-cropped.nrrd', 'Panoramix-cropped'),
-        ('CBCTDentalSurgery',
+        ('CTAAbdomenPanoramix', 'CTA abdomen\n(Panoramix)', 'http://slicer.kitware.com/midas3/download/?items=9073,1', 'Panoramix-cropped.nrrd', 'Panoramix-cropped'),
+        ('CBCTDentalSurgery', None,
           ('http://slicer.kitware.com/midas3/download/item/94510/Greyscale_presurg.gipl.gz',
             'http://slicer.kitware.com/midas3/download/item/94509/Greyscale_postsurg.gipl.gz',),
           ('PreDentalSurgery.gipl.gz', 'PostDentalSurgery.gipl.gz'), ('PreDentalSurgery', 'PostDentalSurgery')),
-        ('MR-US Prostate',
+        ('MRUSProstate', 'MR-US Prostate',
           ('http://slicer.kitware.com/midas3/download/item/142475/Case10-MR.nrrd',
             'http://slicer.kitware.com/midas3/download/item/142476/case10_US_resampled.nrrd',),
           ('Case10-MR.nrrd', 'case10_US_resampled.nrrd'), ('MRProstate', 'USProstate')),
-        ('CT-MR Brain',
+        ('CTMRBrain', 'CT-MR Brain',
           ('http://slicer.kitware.com/midas3/download/item/284192/CTBrain.nrrd',
            'http://slicer.kitware.com/midas3/download/item/330508/MRBrainT1.nrrd',
            'http://slicer.kitware.com/midas3/download/item/330509/MRBrainT2.nrrd',),
@@ -601,7 +607,7 @@ class SampleDataLogic(object):
     return self.downloadSample('DWIVolume')
 
   def downloadAbdominalCTVolume(self):
-    return self.downloadSample('CTA abdomen\n(Panoramix)')
+    return self.downloadSample('CTAAbdomenPanoramix')
 
   def downloadDentalSurgery(self):
     # returns list since that's what earlier method did
@@ -609,7 +615,7 @@ class SampleDataLogic(object):
 
   def downloadMRUSPostate(self):
     # returns list since that's what earlier method did
-    return self.downloadSamples('MR-US Prostate')
+    return self.downloadSamples('MRUSProstate')
 
   def humanFormatSize(self,size):
     """ from http://stackoverflow.com/questions/1094841/reusable-library-to-get-human-readable-version-of-file-size"""
