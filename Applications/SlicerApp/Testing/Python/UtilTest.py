@@ -96,11 +96,11 @@ class UtilTestTest(ScriptedLoadableModuleTest):
     self.assertIsNone(redSliceCompositeNode.GetForegroundVolumeID())
     self.assertIsNone(redSliceCompositeNode.GetLabelVolumeID())
 
-    from SampleData import SampleDataLogic
+    import SampleData
 
-    backgroundNode = SampleDataLogic().downloadMRHead()
+    backgroundNode = SampleData.downloadSample("MRHead")[0]
     backgroundNode.SetName('Background')
-    foregroundNode = SampleDataLogic().downloadMRHead()
+    foregroundNode = SampleData.downloadSample("MRHead")[0]
     foregroundNode.SetName('Foreground')
 
     volumesLogic = slicer.modules.volumes.logic()
@@ -133,9 +133,9 @@ class UtilTestTest(ScriptedLoadableModuleTest):
     self.assertEqual(redSliceCompositeNode.GetLabelOpacity(), 0.1)
 
     # Try to reset
-    otherBackgroundNode = SampleDataLogic().downloadMRHead()
+    otherBackgroundNode = SampleData.downloadSample("MRHead")[0]
     otherBackgroundNode.SetName('OtherBackground')
-    otherForegroundNode = SampleDataLogic().downloadMRHead()
+    otherForegroundNode = SampleData.downloadSample("MRHead")[0]
     otherForegroundNode.SetName('OtherForeground')
     otherLabelmapNode = volumesLogic.CreateAndAddLabelVolume( slicer.mrmlScene, backgroundNode, 'OtherLabelmap' )
 
@@ -199,8 +199,8 @@ class UtilTestTest(ScriptedLoadableModuleTest):
     # Test if retrieving voxels as a numpy array works
 
     self.delayDisplay('Download sample data')
-    from SampleData import SampleDataLogic
-    volumeNode = SampleDataLogic().downloadMRHead()
+    import SampleData
+    volumeNode = SampleData.downloadSample("MRHead")[0]
 
     self.delayDisplay('Test voxel value read')
     voxelPos = [120,135,89]
@@ -221,8 +221,8 @@ class UtilTestTest(ScriptedLoadableModuleTest):
     # Test if updating voxels from a numpy array works
 
     self.delayDisplay('Download sample data')
-    from SampleData import SampleDataLogic
-    volumeNode = SampleDataLogic().downloadMRHead()
+    import SampleData
+    volumeNode = SampleData.downloadSample("MRHead")[0]
 
     import numpy as np
     import math
@@ -254,8 +254,8 @@ class UtilTestTest(ScriptedLoadableModuleTest):
     self.assertEqual(tableNode1.GetNumberOfRows(), 3)
 
     self.delayDisplay('Download sample data')
-    from SampleData import SampleDataLogic
-    volumeNode = SampleDataLogic().downloadMRHead()
+    import SampleData
+    volumeNode = SampleData.downloadSample("MRHead")[0]
 
     self.delayDisplay('Compute histogram')
     histogram = np.histogram(slicer.util.arrayFromVolume(volumeNode))
@@ -290,8 +290,8 @@ class UtilTestTest(ScriptedLoadableModuleTest):
     # Test if convenience function of getting numpy array from various nodes works
 
     self.delayDisplay('Test array with scalar image')
-    from SampleData import SampleDataLogic
-    volumeNode = SampleDataLogic().downloadMRHead()
+    import SampleData
+    volumeNode = SampleData.downloadSample("MRHead")[0]
     voxelPos = [120,135,89]
     voxelValueVtk = volumeNode.GetImageData().GetScalarComponentAsDouble(voxelPos[0], voxelPos[1], voxelPos[2], 0)
     narray = slicer.util.arrayFromVolume(volumeNode)
@@ -299,7 +299,7 @@ class UtilTestTest(ScriptedLoadableModuleTest):
     self.assertEqual(voxelValueVtk, voxelValueNumpy)
 
     self.delayDisplay('Test array with tensor image')
-    tensorVolumeNode = SampleDataLogic().downloadDTIBrain()
+    tensorVolumeNode = SampleData.downloadSample('DTIBrain')[0]
     narray = slicer.util.array(tensorVolumeNode.GetName())
     self.assertEqual(narray.shape, (85, 144, 144, 3, 3))
 

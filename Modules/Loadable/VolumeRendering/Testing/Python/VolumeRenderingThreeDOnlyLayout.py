@@ -34,8 +34,8 @@ class VolumeRenderingThreeDOnlyLayout(ScriptedLoadableModuleTest):
         layoutManager.setMRMLScene(mrmlScene)
 
         # Load MRHead volume
-        from SampleData import SampleDataLogic
-        SampleDataLogic().downloadMRHead()
+        import SampleData
+        SampleData.downloadSample("MRHead")[0]
 
         # Enter the volume rendering module
         slicer.util.mainWindow().moduleSelector().selectModule('VolumeRendering')

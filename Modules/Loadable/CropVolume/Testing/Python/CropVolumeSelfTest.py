@@ -58,9 +58,9 @@ class CropVolumeSelfTestTest(ScriptedLoadableModuleTest):
 
     print("Running CropVolumeSelfTest Test case:")
 
-    from SampleData import SampleDataLogic
+    import SampleData
 
-    vol = SampleDataLogic().downloadMRHead()
+    vol = SampleData.downloadSample("MRHead")[0]
     roi = slicer.vtkMRMLAnnotationROINode()
     roi.Initialize(slicer.mrmlScene)
 
@@ -87,7 +87,7 @@ class CropVolumeSelfTestTest(ScriptedLoadableModuleTest):
     mainWindow.moduleSelector().selectModule('Transforms')
     mainWindow.moduleSelector().selectModule('CropVolume')
     cropVolumeNode = slicer.mrmlScene.GetNodeByID('vtkMRMLCropVolumeParametersNode1')
-    vol = SampleDataLogic().downloadMRHead()
+    vol = SampleData.downloadSample("MRHead")[0]
     roi = slicer.vtkMRMLAnnotationROINode()
     roi.Initialize(slicer.mrmlScene)
     cropVolumeNode.SetInputVolumeNodeID(vol.GetID())

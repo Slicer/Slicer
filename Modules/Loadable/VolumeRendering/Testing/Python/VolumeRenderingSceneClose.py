@@ -97,8 +97,8 @@ class VolumeRenderingSceneCloseLogic(ScriptedLoadableModuleLogic):
 
     self.delayDisplay('Running the aglorithm')
 
-    from SampleData import SampleDataLogic
-    ctVolume = SampleDataLogic().downloadCTChest()
+    import SampleData
+    ctVolume = SampleData.downloadSample('CTChest')[0]
     self.delayDisplay('Downloaded CT sample data')
 
     # go to the volume rendering module

@@ -86,8 +86,8 @@ class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
     # first, get the data
     #
     print("Getting MR Head Volume")
-    from SampleData import SampleDataLogic
-    mrHeadVolume = SampleDataLogic().downloadMRHead()
+    import SampleData
+    mrHeadVolume = SampleData.downloadSample("MRHead")[0]
 
     # Place a fiducial
     markupsLogic = slicer.modules.markups.logic()

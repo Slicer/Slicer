@@ -154,8 +154,8 @@ class SlicerMRBSaveRestoreCheckPaths(ScriptedLoadableModuleTest):
     # first, get the volume data
     #
     print("Getting MR Head Volume")
-    from SampleData import SampleDataLogic
-    mrHeadVolume = SampleDataLogic().downloadMRHead()
+    import SampleData
+    mrHeadVolume = SampleData.downloadSample("MRHead")[0]
 
     slicer.util.delayDisplay('Finished with download of volume')
 

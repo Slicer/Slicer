@@ -645,12 +645,12 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
     self.delayDisplay("Starting test_SegmentStatisticsBasic")
 
     import vtkSegmentationCorePython as vtkSegmentationCore
-    from SampleData import SampleDataLogic
+    import SampleData
     from SegmentStatistics import SegmentStatisticsLogic
 
     self.delayDisplay("Load master volume")
 
-    masterVolumeNode = SampleDataLogic().downloadMRBrainTumor1()
+    masterVolumeNode = SampleData.downloadSample('MRBrainTumor1')[0]
 
     self.delayDisplay("Create segmentation containing a few spheres")
 
@@ -703,12 +703,12 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
     self.delayDisplay("Starting test_SegmentStatisticsPlugins")
 
     import vtkSegmentationCorePython as vtkSegmentationCore
-    from SampleData import SampleDataLogic
+    import SampleData
     from SegmentStatistics import SegmentStatisticsLogic
 
     self.delayDisplay("Load master volume")
 
-    masterVolumeNode = SampleDataLogic().downloadMRBrainTumor1()
+    masterVolumeNode = SampleData.downloadSample('MRBrainTumor1')[0]
 
     self.delayDisplay("Create segmentation containing a few spheres")
 
