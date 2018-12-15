@@ -26,9 +26,8 @@ if(NOT DEFINED CTKResEdit_EXECUTABLE)
   set(CTKResEdit_ARCHITECTURE "i386")
 
   set(CTKResEdit_VERSION "0.1.0")
-  set(item_id "5164")
-  set(url "http://packages.kitware.com/api/rest?method=midas.item.download")
-  set(url "${url}&id=${item_id}&dummy=CTKResEdit-${CTKResEdit_VERSION}-${CTKResEdit_OS}-${CTKResEdit_ARCHITECTURE}.tar.gz")
+  set(url "https://github.com/jcfr/ResEdit/releases/download")
+  set(url "${url}/v0.1.0-20140331-c157b7c/CTKResEdit-${CTKResEdit_VERSION}-gc157-${CTKResEdit_OS}-${CTKResEdit_ARCHITECTURE}.tar.gz")
   set(md5 "f59547c480420199081b94e96df292ec")
 
   set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj})
