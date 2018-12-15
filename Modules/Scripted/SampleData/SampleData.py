@@ -8,7 +8,7 @@ import logging
 # SampleData methods
 #
 
-def downloadFromURL(uris, fileNames, nodeNames=None,
+def downloadFromURL(uris=None, fileNames=None, nodeNames=None,
   customDownloader=None, loadFileTypes=None, loadFileProperties={}):
   """Download and optionally load data into the application.
 
@@ -25,9 +25,6 @@ def downloadFromURL(uris, fileNames, nodeNames=None,
 
   If not explicitly provided or if set to ``None``, the ``loadFileTypes`` are
   guessed based on the corresponding filename extensions.
-
-  If not explicitly provided or if set to ``None``, the ``nodeNames`` are
-  set based on the corresponding filename basename.
 
   The ``loadFileProperties`` are common for all files. If different properties
   need to be associated with files of different types, downloadFromURL must
@@ -100,13 +97,14 @@ use it for commercial purposes.</p>
 #
 # SampleDataSource
 #
-class SampleDataSource:
+class SampleDataSource(object):
   """Describe a set of sample data associated with one or multiple URIs and filenames.
 
   Example::
 
     import SampleData
     dataSource = SampleData.SampleDataSource(
+      nodeNames='fixed',
       fileNames='fixed.nrrd',
       uris='http://slicer.kitware.com/midas3/download/item/157188/small-mr-eye-fixed.nrrd')
     loadedNode = SampleData.SampleDataLogic().downloadFromSource(dataSource)[0]
@@ -122,13 +120,15 @@ class SampleDataSource:
     :param fileNames: File name(s) that will be loaded.
     :param nodeNames: Node name(s) in the scene.
     :param customDownloader: Custom function for downloading.
-    :param loadFileType: file format name(s) ('VolumeFile' by default).
+    :param loadFileType: file format name(s) ('VolumeFile' by default if node name is specified).
     :param loadFileProperties: custom properties passed to the IO plugin.
     """
     self.sampleName = sampleName
     if (isinstance(uris, list) or isinstance(uris, tuple)):
       if isinstance(loadFileType, basestring) or loadFileType is None:
         loadFileType = [loadFileType] * len(uris)
+      if nodeNames is None:
+        nodeNames = [None] * len(uris)
     elif isinstance(uris, basestring):
       uris = [uris,]
       fileNames = [fileNames,]
@@ -136,32 +136,28 @@ class SampleDataSource:
       loadFileType = [loadFileType,]
 
     updatedFileType = []
-    updatedNodeNames = []
     for fileName, nodeName, fileType in zip(fileNames, nodeNames, loadFileType):
       # If not explicitly specified, attempt to guess fileType
       if fileType is None:
-        # TODO: Use method from Slicer IO logic ?
-        ext = os.path.splitext(fileName.lower())[1]
-        if ext in [".mrml", ".mrb"]:
-          fileType = "SceneFile"
-        elif ext in [".zip"]:
-          fileType = "ZipFile"
-        else:
+        if nodeName is not None:
+          # TODO: Use method from Slicer IO logic ?
           fileType = "VolumeFile"
+        else:
+          ext = os.path.splitext(fileName.lower())[1]
+          if ext in [".mrml", ".mrb"]:
+            fileType = "SceneFile"
+          elif ext in [".zip"]:
+            fileType = "ZipFile"
       updatedFileType.append(fileType)
-      # If not explicitly specified, attempt to guess nodeName
-      if nodeName is None and fileType not in ["SceneFile", "ZipFile"]:
-        nodeName = fileName.split(".")[0]
-      updatedNodeNames.append(nodeName)
 
     self.uris = uris
     self.fileNames = fileNames
-    self.nodeNames = updatedNodeNames
+    self.nodeNames = nodeNames
     self.customDownloader = customDownloader
     self.thumbnailFileName = thumbnailFileName
     self.loadFileType = updatedFileType
     self.loadFileProperties = loadFileProperties
-    if len(uris) != len(fileNames) or len(uris) != len(updatedNodeNames) or len(uris) != len(updatedFileType):
+    if len(uris) != len(fileNames) or len(uris) != len(nodeNames) or len(uris) != len(updatedFileType):
       raise Exception("All fields of sample data source must have the same length")
 
 
@@ -278,7 +274,7 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
 # SampleData logic
 #
 
-class SampleDataLogic:
+class SampleDataLogic(object):
   """Manage the slicer.modules.sampleDataSources dictionary.
   The dictionary keys are categories of sample data sources.
   The BuiltIn category is managed here.  Modules or extensions can
@@ -405,19 +401,24 @@ class SampleDataLogic:
 
     The function always returns a list.
 
-    Based on the file type associated with the source, different values may
-    be returned.
+    Based on the filetype(s) and nodename(s) associated with the source, different
+    values may be returned.
 
-      - for ``SceneFile``, returns path of downloaded file
-      - for ``VolumeFile`` or any other type supported by Slicer, returns associated node
-      - for ``ZipFile``, returns directory of extracted archive
+      - if nodename is specified, returns loaded nodes
+      - if filetype is ``SceneFile``, returns path of downloaded file
+      - if filetype is ``ZipFile``, returns directory of extracted archive
+
+    If no nodenames and no filetypes are specified, returns the list of all
+    downloaded filepaths.
     """
     nodes = []
+    filePaths = []
 
     for uri,fileName,nodeName,loadFileType in zip(source.uris,source.fileNames,source.nodeNames,source.loadFileType):
 
       current_source = SampleDataSource(uris=uri, fileNames=fileName, nodeNames=nodeName, loadFileType=loadFileType, loadFileProperties=source.loadFileProperties)
       filePath = self.downloadFileIntoCache(uri, fileName)
+      filePaths.append(filePath)
 
       if loadFileType == 'ZipFile':
         outputDir = slicer.mrmlScene.GetCacheManager().GetRemoteCacheDirectory() + "/" + os.path.splitext(os.path.basename(filePath))[0]
@@ -460,7 +461,10 @@ class SampleDataLogic:
           loadedNode = self.downloadFromSource(current_source,attemptCount)[0]
         nodes.append(loadedNode)
 
-    return nodes
+    if nodes:
+      return nodes
+    else:
+      return filePaths
 
   def sourceForSampleName(self,sampleName):
     """For a given sample name this will search the available sources.
@@ -471,7 +475,7 @@ class SampleDataLogic:
           return source
     return None
 
-  def downloadFromURL(self, uris, fileNames, nodeNames=None,
+  def downloadFromURL(self, uris=None, fileNames=None, nodeNames=None,
     customDownloader=None, loadFileTypes=None, loadFileProperties={}):
     """Download and optionally load data into the application.
 
@@ -488,9 +492,6 @@ class SampleDataLogic:
 
     If not explicitly provided or if set to ``None``, the ``loadFileTypes`` are
     guessed based on the corresponding filename extensions.
-
-    If not explicitly provided or if set to ``None``, the ``nodeNames`` are
-    set based on the corresponding filename basename.
 
     The ``loadFileProperties`` are common for all files. If different properties
     need to be associated with files of different types, downloadFromURL must
@@ -623,3 +624,103 @@ class SampleDataLogic:
       loadedNode.SetAndObserveStorageNodeID(None)
 
     return loadedNodes.GetItemAsObject(0)
+
+
+class SampleDataTest(ScriptedLoadableModuleTest):
+  """
+  This is the test case for your scripted module.
+  Uses ScriptedLoadableModuleTest base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+  """
+
+  def setUp(self):
+    slicer.mrmlScene.Clear(0)
+
+  def runTest(self):
+    self.setUp()
+    self.test_downloadFromSource_downloadFiles()
+
+    self.setUp()
+    self.test_downloadFromSource_downloadZipFile()
+
+    self.setUp()
+    self.test_downloadFromSource_loadSceneFile()
+
+    self.setUp()
+    self.test_downloadFromSource_loadNode()
+
+    self.setUp()
+    self.test_downloadFromSource_loadNodeFromMultipleFiles()
+
+    self.setUp()
+    self.test_downloadFromSource_loadNodes()
+
+
+  def test_downloadFromSource_downloadFiles(self):
+    """Specifying URIs and fileNames without nodeNames is expected to download the files
+    without loading into Slicer.
+    """
+    logic = SampleDataLogic()
+
+    sceneMTime = slicer.mrmlScene.GetMTime()
+    filePaths = logic.downloadFromSource(SampleDataSource(
+      uris='http://slicer.kitware.com/midas3/download/item/292308/MR-head.nrrd', fileNames='MR-head.nrrd'))
+    self.assertEqual(len(filePaths), 1)
+    self.assertTrue(os.path.exists(filePaths[0]))
+    self.assertTrue(os.path.isfile(filePaths[0]))
+    self.assertEqual(sceneMTime, slicer.mrmlScene.GetMTime())
+
+    sceneMTime = slicer.mrmlScene.GetMTime()
+    filePaths = logic.downloadFromSource(SampleDataSource(
+      uris=['http://slicer.kitware.com/midas3/download/item/292308/MR-head.nrrd', 'http://slicer.kitware.com/midas3/download/item/292307/CT-chest.nrrd'],
+      fileNames=['MR-head.nrrd', 'CT-chest.nrrd']))
+    self.assertEqual(len(filePaths), 2)
+    self.assertTrue(os.path.exists(filePaths[0]))
+    self.assertTrue(os.path.isfile(filePaths[0]))
+    self.assertTrue(os.path.exists(filePaths[1]))
+    self.assertTrue(os.path.isfile(filePaths[1]))
+    self.assertEqual(sceneMTime, slicer.mrmlScene.GetMTime())
+
+  def test_downloadFromSource_downloadZipFile(self):
+    logic = SampleDataLogic()
+    sceneMTime = slicer.mrmlScene.GetMTime()
+    filePaths = logic.downloadFromSource(SampleDataSource(
+      uris='http://slicer.kitware.com/midas3/download/folder/3763/TinyPatient_Seg.zip', fileNames='TinyPatient_Seg.zip'))
+    self.assertEqual(len(filePaths), 1)
+    self.assertTrue(os.path.exists(filePaths[0]))
+    self.assertTrue(os.path.isdir(filePaths[0]))
+    self.assertEqual(sceneMTime, slicer.mrmlScene.GetMTime())
+
+  def test_downloadFromSource_loadSceneFile(self):
+    logic = SampleDataLogic()
+    filePaths = logic.downloadFromSource(SampleDataSource(
+      uris='http://slicer.kitware.com/midas3/download?items=8466', fileNames='slicer4minute.mrb'))
+    self.assertEqual(len(filePaths), 1)
+    self.assertTrue(os.path.exists(filePaths[0]))
+    self.assertTrue(os.path.isfile(filePaths[0]))
+
+  def test_downloadFromSource_loadNode(self):
+    logic = SampleDataLogic()
+    nodes = logic.downloadFromSource(SampleDataSource(
+      uris='http://slicer.kitware.com/midas3/download/item/292308/MR-head.nrrd', fileNames='MR-head.nrrd', nodeNames='MRHead'))
+    self.assertEqual(len(nodes), 1)
+    self.assertEqual(nodes[0], slicer.mrmlScene.GetFirstNodeByName("MRHead"))
+
+  def test_downloadFromSource_loadNodeFromMultipleFiles(self):
+    logic = SampleDataLogic()
+    nodes = logic.downloadFromSource(SampleDataSource(
+      uris=['http://slicer.kitware.com/midas3/download/?items=2011,1', 'http://slicer.kitware.com/midas3/download/?items=2010,1'],
+      fileNames=['DTIVolume.raw.gz', 'DTIVolume.nhdr'],
+      nodeNames=[None, 'DTIVolume']))
+    self.assertEqual(len(nodes), 1)
+    self.assertEqual(nodes[0], slicer.mrmlScene.GetFirstNodeByName("DTIVolume"))
+
+  def test_downloadFromSource_loadNodes(self):
+    logic = SampleDataLogic()
+    nodes = logic.downloadFromSource(SampleDataSource(
+      uris=['http://slicer.kitware.com/midas3/download/item/292308/MR-head.nrrd', 'http://slicer.kitware.com/midas3/download/item/292307/CT-chest.nrrd'],
+      fileNames=['MR-head.nrrd', 'CT-chest.nrrd'],
+      nodeNames=['MRHead', 'CTChest']))
+    self.assertEqual(len(nodes), 2)
+    self.assertEqual(nodes[0], slicer.mrmlScene.GetFirstNodeByName("MRHead"))
+    self.assertEqual(nodes[1], slicer.mrmlScene.GetFirstNodeByName("CTChest"))

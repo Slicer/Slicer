@@ -585,6 +585,7 @@ class DataProbeTest(ScriptedLoadableModuleTest):
     #
     import SampleData
     SampleData.downloadFromURL(
+      nodeNames='FA',
       fileNames='FA.nrrd',
       uris='http://slicer.kitware.com/midas3/download?items=5767')
     self.delayDisplay('Finished with download and loading')
