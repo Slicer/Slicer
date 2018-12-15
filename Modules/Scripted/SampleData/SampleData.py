@@ -68,9 +68,9 @@ use it for commercial purposes.</p>
 # SampleDataSource
 #
 class SampleDataSource:
-  """Can be a passed a simple strings
-  or lists as used in the logic below.
-  e.g.
+  """Describe a set of sample data associated with one or multiple URIs and filenames.
+
+  Example::
 
     import SampleData
     dataSource = SampleData.SampleDataSource(
@@ -78,16 +78,27 @@ class SampleDataSource:
       fileNames='fixed.nrrd',
       uris='http://slicer.kitware.com/midas3/download/item/157188/small-mr-eye-fixed.nrrd')
     loadedNode = SampleData.SampleDataLogic().downloadFromSource(dataSource)[0]
-
   """
 
   def __init__(self, sampleName=None, uris=None, fileNames=None, nodeNames=None,
     customDownloader=None, thumbnailFileName=None,
     loadFileType='VolumeFile', loadFileProperties={}):
-
+    """
+    :param sampleName: Displayed name of data set in SampleData module GUI.
+    :param thumbnailFileName: Displayed thumbnail of data set in SampleData module GUI,
+    :param uris: Download URL(s).
+    :param fileNames: File name(s) that will be loaded.
+    :param nodeNames: Node name(s) in the scene.
+    :param customDownloader: Custom function for downloading.
+    :param loadFileType: file format name(s) ('VolumeFile' by default).
+    :param loadFileProperties: custom properties passed to the IO plugin.
+    """
     self.sampleName = sampleName
-    if (isinstance(uris, list) or isinstance(uris, tuple)) and isinstance(loadFileType, basestring):
-      loadFileType = [loadFileType] * len(uris)
+    if (isinstance(uris, list) or isinstance(uris, tuple)):
+      if isinstance(loadFileType, basestring):
+        loadFileType = [loadFileType] * len(uris)
+      if nodeNames is None:
+        nodeNames = [os.path.splitext(fileName) for fileName in fileNames]
     elif isinstance(uris, basestring):
       uris = [uris,]
       fileNames = [fileNames,]
@@ -238,9 +249,9 @@ class SampleDataLogic:
     :param thumbnailFileName: Displayed thumbnail of data set in SampleData module GUI,
     :param uris: Download URL(s).
     :param fileNames: File name(s) that will be loaded.
-    :param nodeNames: Node name in the scene.
+    :param nodeNames: Node name(s) in the scene.
     :param customDownloader: Custom function for downloading.
-    :param loadFileType: file format name ('VolumeFile' by default).
+    :param loadFileType: file format name(s) ('VolumeFile' by default).
     :param loadFileProperties: custom properties passed to the IO plugin.
     """
 
@@ -309,6 +320,7 @@ class SampleDataLogic:
       slicer.modules.sampleDataSources[self.builtInCategoryName].append(SampleDataSource(*sourceArgument))
 
   def registerDevelopmentSampleDataSources(self):
+    """Fills in the sample data sources displayed only if developer mode is enabled."""
     iconPath = os.path.join(os.path.dirname(__file__).replace('\\','/'), 'Resources','Icons')
     self.registerCustomSampleDataSource(
       category=self.developmentCategoryName, sampleName='TinyPatient',
@@ -337,23 +349,72 @@ class SampleDataLogic:
       filePaths.append(self.downloadFileIntoCache(uri, fileName))
     return filePaths
 
+  def downloadFromSources(self,sources,attemptCount=0):
+    """Given one or multiple instances of SampleDataSource, downloads the associated data and
+    load them into Slicer if it applies."""
+    return [self.downloadFromSource(source, attemptCount=attemptCount) for source in sources]
+
   def downloadFromSource(self,source,attemptCount=0):
-    """Given an instance of SampleDataSource, downloads the data
-    if needed and loads the results in slicer"""
+    """Given an instance of SampleDataSource, downloads the associated data and
+    load them into Slicer if it applies.
+
+    The function always returns a list.
+
+    Based on the file type associated with the source, different values may
+    be returned.
+
+      - for ``SceneFile``, returns path of downloaded file
+      - for ``VolumeFile`` or any other type supported by Slicer, returns associated node
+      - for ``ZipFile``, returns directory of extracted archive
+    """
     nodes = []
+
     for uri,fileName,nodeName,loadFileType in zip(source.uris,source.fileNames,source.nodeNames,source.loadFileType):
+
+      current_source = SampleDataSource(uris=uri, fileNames=fileName, nodeNames=nodeName, loadFileType=loadFileType, loadFileProperties=source.loadFileProperties)
       filePath = self.downloadFileIntoCache(uri, fileName)
-      if nodeName:
-        loadedNode = self.loadNode(filePath, nodeName, loadFileType, source.loadFileProperties)
-        if loadedNode is None and attemptCount < 5:
+
+      if loadFileType == 'ZipFile':
+        outputDir = slicer.mrmlScene.GetCacheManager().GetRemoteCacheDirectory() + "/" + os.path.splitext(os.path.basename(filePath))[0]
+        qt.QDir().mkpath(outputDir)
+        success = slicer.util.extractArchive(filePath, outputDir)
+        if not success and attemptCount < 5:
           attemptCount += 1
-          self.logMessage('<b>Load failed! Trying to download again...</b>', logging.ERROR)
+          self.logMessage('<b>Load failed! Trying to download again (%d of 5 attempts)...</b>' % (attemptCount), logging.ERROR)
           file = qt.QFile(filePath)
           if not file.remove():
             self.logMessage('<b>Load failed! Unable to delete and try again loading %s!</b>' % filePath, logging.ERROR)
-            return None
-          return self.downloadFromSource(source,attemptCount)
+            nodes.append(None)
+            break
+          outputDir = self.downloadFromSource(current_source,attemptCount)[0]
+        nodes.append(outputDir)
+
+      elif loadFileType == 'SceneFile':
+        success = self.loadScene(filePath, source.loadFileProperties)
+        if not success and attemptCount < 5:
+          attemptCount += 1
+          self.logMessage('<b>Load failed! Trying to download again (%d of 5 attempts)...</b>' % (attemptCount), logging.ERROR)
+          file = qt.QFile(filePath)
+          if not file.remove():
+            self.logMessage('<b>Load failed! Unable to delete and try again loading %s!</b>' % filePath, logging.ERROR)
+            nodes.append(None)
+            break
+          filePath = self.downloadFromSource(current_source,attemptCount)[0]
+        nodes.append(filePath)
+
+      elif nodeName:
+        loadedNode = self.loadNode(filePath, nodeName, loadFileType, source.loadFileProperties)
+        if loadedNode is None and attemptCount < 5:
+          attemptCount += 1
+          self.logMessage('<b>Load failed! Trying to download again (%d of 5 attempts)...</b>' % (attemptCount), logging.ERROR)
+          file = qt.QFile(filePath)
+          if not file.remove():
+            self.logMessage('<b>Load failed! Unable to delete and try again loading %s!</b>' % filePath, logging.ERROR)
+            loadedNode.append(None)
+            break
+          loadedNode = self.downloadFromSource(current_source,attemptCount)[0]
         nodes.append(loadedNode)
+
     return nodes
 
   def sourceForSampleName(self,sampleName):
@@ -449,6 +510,16 @@ class SampleDataLogic:
     else:
       self.logMessage('<b>File already exists in cache - reusing it.</b>')
     return filePath
+
+  def loadScene(self, uri,  fileProperties = {}):
+    self.logMessage('<b>Requesting load</b> %s...' % uri)
+    fileProperties['fileName'] = uri
+    success = slicer.app.coreIOManager().loadNodes('SceneFile', fileProperties)
+    if not success:
+      self.logMessage('<b>\tLoad failed!</b>', logging.ERROR)
+      return False
+    self.logMessage('<b>Load finished</b>')
+    return True
 
   def loadNode(self, uri, name, fileType = 'VolumeFile', fileProperties = {}):
     self.logMessage('<b>Requesting load</b> <i>%s</i> from %s...' % (name, uri))
