@@ -389,9 +389,9 @@ void vtkMRMLAnnotationNode::SetAnnotationAttribute(vtkIdType id, int att, double
     {
       return;
     }
-  if (id < 0 || id >= attArray->GetSize())
+  if (id < 0 || id >= attArray->GetNumberOfValues())
     {
-      vtkErrorMacro("SetAnnotationAttribute: id is out of range: id " << id << " Size: " <<  attArray->GetSize())
+      vtkErrorMacro("SetAnnotationAttribute: id is out of range: id " << id << " Size: " <<  attArray->GetNumberOfValues())
       return ;
     }
   attArray->SetValue(id,value);
@@ -406,7 +406,7 @@ int vtkMRMLAnnotationNode::DeleteAttribute(vtkIdType idEntry, vtkIdType idAtt)
       vtkErrorMacro("Annotation " << this->GetName() << " Attribute " << idAtt << " does not exist")
       return 0;
     }
-  int n = dataArray->GetSize();
+  int n = dataArray->GetNumberOfValues();
   if (idEntry < 0 || idEntry >= n)
     {
       vtkErrorMacro("Annotation " << this->GetName() << " Annotation out of range")

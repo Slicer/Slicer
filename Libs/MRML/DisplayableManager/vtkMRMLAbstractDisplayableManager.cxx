@@ -793,7 +793,7 @@ void vtkMRMLAbstractDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* newSc
 //---------------------------------------------------------------------------
 void vtkMRMLAbstractDisplayableManager::AddMRMLDisplayableManagerEvent(int eventId)
 {
-  for(int i = 0; i < this->Internal->MRMLDisplayableNodeObservableEvents->GetSize(); ++i)
+  for(int i = 0; i < this->Internal->MRMLDisplayableNodeObservableEvents->GetNumberOfValues(); ++i)
     {
     if (eventId == this->Internal->MRMLDisplayableNodeObservableEvents->GetValue(i))
       {
