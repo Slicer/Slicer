@@ -134,7 +134,7 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     # Use MRHead and Tinypatient for testing
     import SampleData
     mrVolumeNode = SampleData.downloadSample("MRHead")
-    [tinyVolumeNode, tinySegmentationNode] = SampleData.downloadSample('TinyPatient')
+    [tinyVolumeNode, tinySegmentationNode] = SampleData.downloadSamples('TinyPatient')
 
     # Convert MRHead to oriented image data
     import vtkSlicerSegmentationsModuleLogicPython as vtkSlicerSegmentationsModuleLogic
