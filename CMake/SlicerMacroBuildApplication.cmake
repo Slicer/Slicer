@@ -510,16 +510,21 @@ macro(slicerMacroBuildApplication)
 
   if(DEFINED SLICERAPP_DEFAULT_SETTINGS_FILE)
     get_filename_component(default_settings_filename ${SLICERAPP_DEFAULT_SETTINGS_FILE} NAME)
+    set(dest_default_settings_filename ${default_settings_filename})
+    if(NOT ${default_settings_filename} MATCHES "^${SLICERAPP_APPLICATION_NAME}")
+      set(dest_default_settings_filename ${SLICERAPP_APPLICATION_NAME}${default_settings_filename})
+    endif()
     set(default_settings_build_dir ${CMAKE_BINARY_DIR}/${Slicer_SHARE_DIR})
-    message(STATUS "Copying '${default_settings_filename}' to '${default_settings_build_dir}'")
+    message(STATUS "Copying '${default_settings_filename}' to '${default_settings_build_dir}/${dest_default_settings_filename}'")
     configure_file(
       ${SLICERAPP_DEFAULT_SETTINGS_FILE}
-      ${default_settings_build_dir}/${default_settings_filename}
+      ${default_settings_build_dir}/${dest_default_settings_filename}
       COPYONLY
       )
     install(FILES
       ${SLICERAPP_DEFAULT_SETTINGS_FILE}
       DESTINATION ${Slicer_INSTALL_SHARE_DIR} COMPONENT Runtime
+      RENAME ${dest_default_settings_filename}
       )
   endif()
 
