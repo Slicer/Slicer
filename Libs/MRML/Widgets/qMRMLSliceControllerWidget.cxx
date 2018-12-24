@@ -1897,6 +1897,13 @@ void qMRMLSliceControllerWidget::setSliceOffsetResolution(double resolution)
   d->SliceOffsetSlider->setPageStep(resolution);
 }
 
+//---------------------------------------------------------------------------
+double qMRMLSliceControllerWidget::sliceOffsetResolution()
+{
+  Q_D(qMRMLSliceControllerWidget);
+  return d->SliceOffsetSlider->singleStep();
+}
+
 // --------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setSliceOffsetValue(double offset)
 {
@@ -2781,4 +2788,18 @@ void qMRMLSliceControllerWidget::updateSegmentationControlsVisibility()
   d->SegmentationOpacitySlider->setVisible(visible);
   d->SegmentationOutlineButton->setVisible(visible);
   d->SegmentSelectorWidget->setVisible(visible);
+}
+
+// --------------------------------------------------------------------------
+qMRMLSliderWidget* qMRMLSliceControllerWidget::sliceOffsetSlider()
+{
+  Q_D(qMRMLSliceControllerWidget);
+  return d->SliceOffsetSlider;
+}
+
+// --------------------------------------------------------------------------
+QToolButton* qMRMLSliceControllerWidget::fitToWindowToolButton()
+{
+  Q_D(qMRMLSliceControllerWidget);
+  return d->FitToWindowToolButton;
 }
