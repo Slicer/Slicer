@@ -35,7 +35,7 @@ Supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.
     import SubjectHierarchyPlugins
     scriptedPlugin = slicer.qSlicerSubjectHierarchyScriptedPlugin(None)
     scriptedPlugin.setPythonSource(SubjectHierarchyPlugins.SegmentStatisticsSubjectHierarchyPlugin.filePath)
-    
+
     import SegmentStatisticsPlugins
 
 
@@ -55,6 +55,22 @@ class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
 
     # Instantiate and connect widgets ...
     #
+
+    # Parameter set selector
+    self.parameterNodeSelector = slicer.qMRMLNodeComboBox()
+    self.parameterNodeSelector.nodeTypes = ["vtkMRMLScriptedModuleNode"]
+    self.parameterNodeSelector.addAttribute( "vtkMRMLScriptedModuleNode", "ModuleName", "SegmentStatistics" )
+    self.parameterNodeSelector.selectNodeUponCreation = True
+    self.parameterNodeSelector.addEnabled = True
+    self.parameterNodeSelector.renameEnabled = True
+    self.parameterNodeSelector.removeEnabled = True
+    self.parameterNodeSelector.noneEnabled = False
+    self.parameterNodeSelector.showHidden = True
+    self.parameterNodeSelector.showChildNodeTypes = False
+    self.parameterNodeSelector.baseName = "SegmentStatistics"
+    self.parameterNodeSelector.setMRMLScene( slicer.mrmlScene )
+    self.parameterNodeSelector.setToolTip( "Pick parameter set" )
+    self.layout.addWidget(self.parameterNodeSelector)
 
     # Inputs
     inputsCollapsibleButton = ctk.ctkCollapsibleButton()
@@ -91,44 +107,25 @@ class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
     outputFormLayout = qt.QFormLayout(outputCollapsibleButton)
 
     self.outputTableSelector = slicer.qMRMLNodeComboBox()
+    self.outputTableSelector.noneDisplay = "Create new table"
+    self.outputTableSelector.setMRMLScene(slicer.mrmlScene)
     self.outputTableSelector.nodeTypes = ["vtkMRMLTableNode"]
     self.outputTableSelector.addEnabled = True
     self.outputTableSelector.selectNodeUponCreation = True
     self.outputTableSelector.renameEnabled = True
     self.outputTableSelector.removeEnabled = True
-    self.outputTableSelector.noneEnabled = False
-    self.outputTableSelector.setMRMLScene( slicer.mrmlScene )
-    self.outputTableSelector.setToolTip( "Select the table where statistics will be saved into")
-    outputFormLayout.addRow("Output table:", self.outputTableSelector)
+    self.outputTableSelector.noneEnabled = True
+    self.outputTableSelector.setToolTip("Select the table where statistics will be saved into")
+    self.outputTableSelector.setCurrentNode(None)
 
-    # Apply Button
-    self.applyButton = qt.QPushButton("Apply")
-    self.applyButton.toolTip = "Calculate Statistics."
-    self.applyButton.enabled = False
-    self.parent.layout().addWidget(self.applyButton)
+    outputFormLayout.addRow("Output table:", self.outputTableSelector)
 
     # Parameter set
     parametersCollapsibleButton = ctk.ctkCollapsibleButton()
-    parametersCollapsibleButton.text = "Parameters"
-    #parametersCollapsibleButton.collapsed = True
+    parametersCollapsibleButton.text = "Advanced"
+    parametersCollapsibleButton.collapsed = True
     self.layout.addWidget(parametersCollapsibleButton)
     self.parametersLayout = qt.QFormLayout(parametersCollapsibleButton)
-
-    # Parameter set selector
-    self.parameterNodeSelector = slicer.qMRMLNodeComboBox()
-    self.parameterNodeSelector.nodeTypes = ( ("vtkMRMLScriptedModuleNode"), "" )
-    self.parameterNodeSelector.addAttribute( "vtkMRMLScriptedModuleNode", "ModuleName", "SegmentStatistics" )
-    self.parameterNodeSelector.selectNodeUponCreation = True
-    self.parameterNodeSelector.addEnabled = True
-    self.parameterNodeSelector.renameEnabled = True
-    self.parameterNodeSelector.removeEnabled = True
-    self.parameterNodeSelector.noneEnabled = False
-    self.parameterNodeSelector.showHidden = True
-    self.parameterNodeSelector.showChildNodeTypes = False
-    self.parameterNodeSelector.baseName = "SegmentStatistics"
-    self.parameterNodeSelector.setMRMLScene( slicer.mrmlScene )
-    self.parameterNodeSelector.setToolTip( "Pick parameter set" )
-    self.parametersLayout.addRow("Parameter set: ", self.parameterNodeSelector)
 
     # Edit parameter set button to open SegmentStatisticsParameterEditorDialog
     # Note: we add the plugins' option widgets to the module widget instead of using the editor dialog
@@ -138,6 +135,12 @@ class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
     #self.editParametersButton.connect('clicked()', self.onEditParameters)
     # add caclulator's option widgets
     self.addPluginOptionWidgets()
+
+    # Apply Button
+    self.applyButton = qt.QPushButton("Apply")
+    self.applyButton.toolTip = "Calculate Statistics."
+    self.applyButton.enabled = False
+    self.parent.layout().addWidget(self.applyButton)
 
     # Add vertical spacer
     self.parent.layout().addStretch(1)
@@ -154,13 +157,23 @@ class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
     self.onNodeSelectionChanged()
     self.onParameterSetSelected()
 
+  def enter(self):
+    """Runs whenever the module is reopened
+    """
+    if self.parameterNodeSelector.currentNode() is None:
+      parameterNode = self.logic.getParameterNode()
+      slicer.mrmlScene.AddNode(parameterNode)
+      self.parameterNodeSelector.setCurrentNode(parameterNode)
+    if self.segmentationSelector.currentNode() is None:
+      segmentationNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLSegmentationNode")
+      self.segmentationSelector.setCurrentNode(segmentationNode)
+
   def cleanup(self):
     if self.parameterNode and self.parameterNodeObserver:
       self.parameterNode.RemoveObserver(self.parameterNodeObserver)
 
   def onNodeSelectionChanged(self):
     self.applyButton.enabled = (self.segmentationSelector.currentNode() is not None and
-                                self.outputTableSelector.currentNode() is not None and
                                 self.parameterNodeSelector.currentNode() is not None)
     if self.segmentationSelector.currentNode():
       self.outputTableSelector.baseName = self.segmentationSelector.currentNode().GetName() + ' statistics'
@@ -168,6 +181,9 @@ class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
   def onApply(self):
     """Calculate the label statistics
     """
+    if not self.outputTableSelector.currentNode():
+      newTable = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode")
+      self.outputTableSelector.setCurrentNode(newTable)
     # Lock GUI
     self.applyButton.text = "Working..."
     self.applyButton.setEnabled(False)
@@ -483,7 +499,7 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
           nonEmptyKeys.append(key)
           break
     return nonEmptyKeys
-     
+
   def getHeaderNames(self, nonEmptyKeysOnly = True):
     # Derive column header names based on: (a) DICOM information if present,
     # (b) measurement info name if present (c) measurement key as fallback.
@@ -493,8 +509,8 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
     statistics = self.getStatistics()
     headerNames = []
     for key in keys:
-      name = key 
-      info = statistics['MeasurementInfo'][key] if key in statistics['MeasurementInfo'] else {}       
+      name = key
+      info = statistics['MeasurementInfo'][key] if key in statistics['MeasurementInfo'] else {}
       entry = slicer.vtkCodedEntry()
       dicomBasedName = False
       if info:
@@ -536,11 +552,11 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
 
     keys = self.getNonEmptyKeys() if nonEmptyKeysOnly else self.keys
     columnHeaderNames, uniqueColumnHeaderNames = self.getHeaderNames(nonEmptyKeysOnly)
-     
+
     # Define table columns
     statistics = self.getStatistics()
     for key in keys:
-      # create table column appropriate for data type; currently supported: float, int, long, string   
+      # create table column appropriate for data type; currently supported: float, int, long, string
       measurements = [statistics[segmentID, key] for segmentID in statistics["SegmentIDs"] if
                       statistics.has_key((segmentID, key))]
       if len(measurements)==0: # there were not measurements and therefore use the default "string" representation
