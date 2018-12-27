@@ -297,6 +297,11 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
       "Maximum number of images to be captured (without backward steps and repeating).")
     advancedFormLayout.addRow("Maximum number of images:", self.maxFramesWidget)
 
+    self.transparentBackgroundCheckBox = qt.QCheckBox(" ")
+    self.transparentBackgroundCheckBox.checked = False
+    self.transparentBackgroundCheckBox.setToolTip("If checked, images will be captured with transparent background.")
+    advancedFormLayout.addRow("Transparent background:", self.transparentBackgroundCheckBox)
+
     # Capture button
     self.captureButtonLabelCapture = "Capture"
     self.captureButtonLabelCancel = "Cancel"
@@ -549,6 +554,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.captureButton.text = self.captureButtonLabelCancel
     slicer.app.setOverrideCursor(qt.Qt.WaitCursor)
     captureAllViews = self.captureAllViewsCheckBox.checked
+    transparentBackground = self.transparentBackgroundCheckBox.checked
     if captureAllViews:
       self.logic.showViewControllers(False)
     try:
@@ -557,22 +563,26 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
           self.snapshotIndex = 0
         [filename, self.snapshotIndex] = self.logic.getNextAvailableFileName(outputDir, imageFileNamePattern, self.snapshotIndex)
         view = None if captureAllViews else self.logic.viewFromNode(viewNode)
-        self.logic.captureImageFromView(view, filename)
+        self.logic.captureImageFromView(view, filename, transparentBackground)
         self.logic.addLog("Write "+filename)
       elif self.animationModeWidget.currentText == "slice sweep":
         self.logic.captureSliceSweep(viewNode, self.sliceStartOffsetSliderWidget.value,
-          self.sliceEndOffsetSliderWidget.value, numberOfSteps, outputDir, imageFileNamePattern, captureAllViews = captureAllViews)
+          self.sliceEndOffsetSliderWidget.value, numberOfSteps, outputDir, imageFileNamePattern,
+          captureAllViews = captureAllViews, transparentBackground = transparentBackground)
       elif self.animationModeWidget.currentText == "slice fade":
-        self.logic.captureSliceFade(viewNode, numberOfSteps, outputDir, imageFileNamePattern, captureAllViews = captureAllViews)
+        self.logic.captureSliceFade(viewNode, numberOfSteps, outputDir, imageFileNamePattern,
+        captureAllViews = captureAllViews, transparentBackground = transparentBackground)
       elif self.animationModeWidget.currentText == "3D rotation":
         self.logic.capture3dViewRotation(viewNode, self.rotationSliderWidget.minimumValue,
           self.rotationSliderWidget.maximumValue, numberOfSteps,
           self.rotationAxisWidget.itemData(self.rotationAxisWidget.currentIndex),
-          outputDir, imageFileNamePattern, captureAllViews = captureAllViews)
+          outputDir, imageFileNamePattern,
+          captureAllViews = captureAllViews, transparentBackground = transparentBackground)
       elif self.animationModeWidget.currentText == "sequence":
         self.logic.captureSequence(viewNode, self.sequenceBrowserNodeSelectorWidget.currentNode(),
           self.sequenceStartItemIndexWidget.value, self.sequenceEndItemIndexWidget.value,
-          numberOfSteps, outputDir, imageFileNamePattern, captureAllViews = captureAllViews)
+          numberOfSteps, outputDir, imageFileNamePattern,
+          captureAllViews = captureAllViews, transparentBackground = transparentBackground)
       else:
         raise ValueError('Unsupported view node type.')
 
@@ -821,7 +831,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
     return sliceOffsetResolution
 
-  def captureImageFromView(self, view, filename):
+  def captureImageFromView(self, view, filename, transparentBackground=False):
 
     slicer.app.processEvents()
     if view:
@@ -835,6 +845,9 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
         lm.sliceWidget(sliceViewName).sliceView().forceRender()
 
     if view is None:
+      if transparentBackground:
+        logging.warning("Transparent background is only available for single-view capture")
+
       # no view is specified, capture the entire view layout
 
       # Simply using grabwidget on the view layout frame would grab the screen without background:
@@ -862,8 +875,23 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
     rw = view.renderWindow()
     wti = vtk.vtkWindowToImageFilter()
+
+    if transparentBackground:
+      originalAlphaBitPlanes = rw.GetAlphaBitPlanes()
+      rw.SetAlphaBitPlanes(1)
+      ren=rw.GetRenderers().GetFirstRenderer()
+      originalGradientBackground = ren.GetGradientBackground()
+      ren.SetGradientBackground(False)
+      wti.SetInputBufferTypeToRGBA()
+      rw.Render() # need to render after changing bit planes
+
     wti.SetInput(rw)
     wti.Update()
+
+    if transparentBackground:
+      rw.SetAlphaBitPlanes(originalAlphaBitPlanes)
+      ren.SetGradientBackground(originalGradientBackground)
+
     writer = vtk.vtkPNGWriter()
     writer.SetFileName(filename)
     outputImage = wti.GetOutput()
@@ -908,7 +936,8 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
     else:
       raise ValueError('Invalid view node.')
 
-  def captureSliceSweep(self, sliceNode, startSliceOffset, endSliceOffset, numberOfImages, outputDir, outputFilenamePattern, captureAllViews = None):
+  def captureSliceSweep(self, sliceNode, startSliceOffset, endSliceOffset, numberOfImages,
+                        outputDir, outputFilenamePattern, captureAllViews = None, transparentBackground = False):
 
     self.cancelRequested = False
 
@@ -929,7 +958,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
       filename = filePathPattern % offsetIndex
       self.addLog("Write "+filename)
       sliceLogic.SetSliceOffset(startSliceOffset+offsetIndex*offsetStepSize)
-      self.captureImageFromView(None if captureAllViews else sliceView, filename)
+      self.captureImageFromView(None if captureAllViews else sliceView, filename, transparentBackground)
       if self.cancelRequested:
         break
 
@@ -938,7 +967,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
       raise ValueError('User requested cancel.')
 
   def captureSliceFade(self, sliceNode, numberOfImages, outputDir,
-                        outputFilenamePattern, captureAllViews = None):
+                        outputFilenamePattern, captureAllViews = None, transparentBackground = False):
 
     self.cancelRequested = False
     
@@ -960,7 +989,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
       filename = filePathPattern % offsetIndex
       self.addLog("Write "+filename)
       compositeNode.SetForegroundOpacity(startForegroundOpacity + offsetIndex * opacityStepSize)
-      self.captureImageFromView(None if captureAllViews else sliceView, filename)
+      self.captureImageFromView(None if captureAllViews else sliceView, filename, transparentBackground)
       if self.cancelRequested:
         break
 
@@ -970,7 +999,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
       raise ValueError('User requested cancel.')
 
   def capture3dViewRotation(self, viewNode, startRotation, endRotation, numberOfImages, rotationAxis,
-    outputDir, outputFilenamePattern, captureAllViews = None):
+    outputDir, outputFilenamePattern, captureAllViews = None, transparentBackground = False):
     """
     Acquire a set of screenshots of the 3D view while rotating it.
     """
@@ -1005,7 +1034,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
       if not self.cancelRequested:
         filename = filePathPattern % offsetIndex
         self.addLog("Write " + filename)
-        self.captureImageFromView(None if captureAllViews else renderView, filename)
+        self.captureImageFromView(None if captureAllViews else renderView, filename, transparentBackground)
       if rotationAxis == AXIS_YAW:
         renderView.yaw()
       else:
@@ -1031,7 +1060,8 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
       raise ValueError('User requested cancel.')
 
   def captureSequence(self, viewNode, sequenceBrowserNode, sequenceStartIndex,
-                        sequenceEndIndex, numberOfImages, outputDir, outputFilenamePattern, captureAllViews = None):
+                        sequenceEndIndex, numberOfImages, outputDir, outputFilenamePattern,
+                        captureAllViews = None, transparentBackground = False):
     """
     Acquire a set of screenshots of a view while iterating through a sequence.
     """
@@ -1050,7 +1080,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
       sequenceBrowserNode.SetSelectedItemNumber(int(sequenceStartIndex+offsetIndex*stepSize))
       filename = filePathPattern % offsetIndex
       self.addLog("Write " + filename)
-      self.captureImageFromView(None if captureAllViews else renderView, filename)
+      self.captureImageFromView(None if captureAllViews else renderView, filename, transparentBackground)
       if self.cancelRequested:
         break
 
