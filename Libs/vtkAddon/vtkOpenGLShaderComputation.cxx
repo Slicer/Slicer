@@ -38,6 +38,7 @@ vtkStandardNewMacro(vtkOpenGLShaderComputation);
 vtkOpenGLShaderComputation::vtkOpenGLShaderComputation()
 {
   this->Initialized = false;
+  this->ErrorOccurred = false;
   this->VertexShaderSource = NULL;
   this->FragmentShaderSource = NULL;
   this->ResultImageData = NULL;
@@ -86,6 +87,59 @@ void vtkOpenGLShaderComputation::MakeCurrent()
   else
     {
     vtkErrorMacro ( "Trying to make current but render window is null" );
+    this->ErrorOccurred = true;
+    }
+}
+
+//----------------------------------------------------------------------------
+// Make sure the framebuffer is okay
+//
+bool vtkOpenGLShaderComputation::FramebufferComplete()
+{
+  if (!this->RenderWindow)
+    {
+    vtkErrorMacro ( "Need a RenderWindow to check the framebuffer" );
+    return false;
+    }
+
+  GLenum status;
+  status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+  if (status == GL_FRAMEBUFFER_COMPLETE)
+    {
+    return true;
+    }
+  else
+    {
+    switch(status)
+      { // TODO: this mapping (macro to text) could be factored out for reuse elsewhere
+      case GL_FRAMEBUFFER_UNDEFINED:
+        vtkErrorMacro("Incompete framebuffer; GL_FRAMEBUFFER_UNDEFINED, status is: " << status);
+        break;
+      case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+        vtkErrorMacro("Incompete framebuffer; GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT, status is: " << status);
+        break;
+      case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+        vtkErrorMacro("Incompete framebuffer; GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT, status is: " << status);
+        break;
+      case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
+        vtkErrorMacro("Incompete framebuffer; GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER, status is: " << status);
+        break;
+      case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
+        vtkErrorMacro("Incompete framebuffer; GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER, status is: " << status);
+        break;
+      case GL_FRAMEBUFFER_UNSUPPORTED:
+        vtkErrorMacro("Incompete framebuffer; GL_FRAMEBUFFER_UNSUPPORTED, status is: " << status);
+        break;
+      case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
+        vtkErrorMacro("Incompete framebuffer; GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE, status is: " << status);
+        break;
+      case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:
+        vtkErrorMacro("Incompete framebuffer; GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS, status is: " << status);
+        break;
+      default:
+        vtkErrorMacro("Incompete framebuffer; status is: " << status);
+      }
+    return false;
     }
 }
 
@@ -215,6 +269,7 @@ bool vtkOpenGLShaderComputation::UpdateProgram()
 
       glGetProgramInfoLog ( this->ProgramObject, infoLen, NULL, infoLog );
       vtkErrorMacro ( "Error linking program\n" << infoLog );
+      this->ErrorOccurred = true;
 
       free ( infoLog );
       }
@@ -241,6 +296,7 @@ void vtkOpenGLShaderComputation::Initialize(vtkRenderWindow *renderWindow)
   if (!openGLRenderWindow)
     {
     vtkErrorMacro("Bad render window");
+    this->ErrorOccurred = true;
     return;
     }
 
@@ -302,16 +358,12 @@ bool vtkOpenGLShaderComputation::AcquireResultRenderbuffer()
   //
   // Does the GPU support current Framebuffer configuration?
   //
-  GLenum status;
-  status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-  switch(status)
+  if (!this->FramebufferComplete())
     {
-    case GL_FRAMEBUFFER_COMPLETE:
-      break;
-    default:
-      vtkOpenGLCheckErrorMacro("after bad framebuffer status");
-      vtkErrorMacro("Bad framebuffer configuration, status is: " << status);
-      return false;
+    this->ErrorOccurred = true;
+    vtkOpenGLCheckErrorMacro("after bad framebuffer status");
+    vtkErrorMacro("Bad framebuffer configuration");
+    return false;
     }
 
   //
@@ -358,6 +410,7 @@ void vtkOpenGLShaderComputation::Compute(float slice)
   if (this->VertexShaderSource == NULL || this->FragmentShaderSource == NULL)
     {
     vtkErrorMacro("Both vertex and fragment shaders are needed for a shader computation.");
+    this->ErrorOccurred = true;
     return;
     }
 
@@ -368,20 +421,19 @@ void vtkOpenGLShaderComputation::Compute(float slice)
   // Does the GPU support current Framebuffer configuration?
   //
   GLenum status;
-  status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-  switch(status)
+  if (!this->FramebufferComplete())
     {
-    case GL_FRAMEBUFFER_COMPLETE:
-      break;
-    default:
-      vtkErrorMacro("Can't compute in incompete framebuffer; status is: " << status);
-      return;
+    vtkErrorMacro("Framebuffer is not complete.");
+    this->ErrorOccurred = true;
+    return;
     }
+
 
   // Configure the program and the input data
   if (!this->UpdateProgram())
     {
     vtkErrorMacro("Could not update shader program.");
+    this->ErrorOccurred = true;
     return;
     }
 
@@ -505,6 +557,7 @@ void vtkOpenGLShaderComputation::ReadResult()
       this->ResultImageData->GetPointData()->GetScalars()->GetVoidPointer(0) == NULL)
     {
     vtkErrorMacro("Result image data is not correctly set up.");
+    this->ErrorOccurred = true;
     return;
     }
   int resultDimensions[3];
@@ -533,6 +586,7 @@ void vtkOpenGLShaderComputation::ReadResult()
   else
     {
     vtkErrorMacro("Must have 1, 3 or 4 component image data for texture");
+    this->ErrorOccurred = true;
     return;
     }
 
