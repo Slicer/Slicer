@@ -2,8 +2,16 @@
 <ui version="4.0">
  <class>qSlicerSettingsModulesPanel</class>
  <widget class="ctkSettingsPanel" name="qSlicerSettingsModulesPanel">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>398</width>
+    <height>506</height>
+   </rect>
+  </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+   <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -12,18 +20,6 @@
    <string>Module</string>
   </property>
   <layout class="QFormLayout" name="formLayout">
-   <property name="leftMargin">
-    <number>22</number>
-   </property>
-   <property name="topMargin">
-    <number>22</number>
-   </property>
-   <property name="rightMargin">
-    <number>22</number>
-   </property>
-   <property name="bottomMargin">
-    <number>22</number>
-   </property>
    <item row="3" column="0">
     <widget class="QLabel" name="LoadBuildInModulesLabel">
      <property name="sizePolicy">
@@ -272,7 +268,7 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_8">
       <item>
-       <widget class="ctkDirectoryButton" name="TemporaryDirectoryButton" native="true"/>
+       <widget class="ctkDirectoryButton" name="TemporaryDirectoryButton"/>
       </item>
      </layout>
     </widget>
@@ -296,9 +292,9 @@
    <item row="7" column="1">
     <widget class="QWidget" name="AdditionalModulePathsWidget" native="true">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
-       <verstretch>1</verstretch>
+       <verstretch>0</verstretch>
       </sizepolicy>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -315,12 +311,12 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="qSlicerDirectoryListView" name="AdditionalModulePathsView" native="true">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
+       <widget class="qSlicerDirectoryListView" name="AdditionalModulePathsView">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>100</height>
+         </size>
         </property>
        </widget>
       </item>
@@ -365,7 +361,7 @@
         <property name="checked">
          <bool>false</bool>
         </property>
-        <property name="mirrorOnExpand" stdset="0">
+        <property name="mirrorOnExpand">
          <bool>true</bool>
         </property>
        </widget>
@@ -397,7 +393,7 @@
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>
-       <verstretch>2</verstretch>
+       <verstretch>1</verstretch>
       </sizepolicy>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
@@ -415,11 +411,11 @@
       </property>
       <item>
        <widget class="qSlicerModulesListView" name="DisableModulesListView">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>140</height>
-         </size>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>1</verstretch>
+         </sizepolicy>
         </property>
         <property name="horizontalScrollBarPolicy">
          <enum>Qt::ScrollBarAlwaysOff</enum>
@@ -433,13 +429,19 @@
         <property name="alternatingRowColors">
          <bool>false</bool>
         </property>
-        <property name="checkBoxVisible" stdset="0">
+        <property name="checkBoxVisible">
          <bool>true</bool>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QGroupBox" name="FilterGroupBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>1</verstretch>
+         </sizepolicy>
+        </property>
         <property name="title">
          <string>Filter</string>
         </property>
@@ -461,10 +463,10 @@
            <property name="checked">
             <bool>true</bool>
            </property>
-           <property name="checkBoxControlsButton" stdset="0">
+           <property name="checkBoxControlsButton">
             <bool>false</bool>
            </property>
-           <property name="checkBoxUserCheckable" stdset="0">
+           <property name="checkBoxUserCheckable">
             <bool>false</bool>
            </property>
           </widget>
@@ -483,10 +485,10 @@
            <property name="checked">
             <bool>true</bool>
            </property>
-           <property name="checkBoxControlsButton" stdset="0">
+           <property name="checkBoxControlsButton">
             <bool>false</bool>
            </property>
-           <property name="checkBoxUserCheckable" stdset="0">
+           <property name="checkBoxUserCheckable">
             <bool>false</bool>
            </property>
           </widget>
@@ -621,7 +623,7 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="showSearchIcon" stdset="0">
+           <property name="showSearchIcon">
             <bool>true</bool>
            </property>
           </widget>
@@ -644,10 +646,16 @@
       </item>
       <item>
        <widget class="ctkExpandButton" name="FilterMoreButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="checked">
          <bool>false</bool>
         </property>
-        <property name="mirrorOnExpand" stdset="0">
+        <property name="mirrorOnExpand">
          <bool>true</bool>
         </property>
        </widget>
@@ -832,7 +840,7 @@
         <property name="checked">
          <bool>false</bool>
         </property>
-        <property name="mirrorOnExpand" stdset="0">
+        <property name="mirrorOnExpand">
          <bool>true</bool>
         </property>
        </widget>
@@ -844,13 +852,19 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>qSlicerDirectoryListView</class>
+   <extends>QWidget</extends>
+   <header>qSlicerDirectoryListView.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>qSlicerModulesListView</class>
    <extends>QListView</extends>
    <header>qSlicerModulesListView.h</header>
   </customwidget>
   <customwidget>
    <class>ctkCheckablePushButton</class>
-   <extends>QPushButton</extends>
+   <extends>ctkPushButton</extends>
    <header>ctkCheckablePushButton.h</header>
   </customwidget>
   <customwidget>
@@ -864,6 +878,11 @@
    <header>ctkExpandButton.h</header>
   </customwidget>
   <customwidget>
+   <class>ctkPushButton</class>
+   <extends>QPushButton</extends>
+   <header>ctkPushButton.h</header>
+  </customwidget>
+  <customwidget>
    <class>ctkSearchBox</class>
    <extends>QLineEdit</extends>
    <header>ctkSearchBox.h</header>
@@ -872,12 +891,6 @@
    <class>ctkSettingsPanel</class>
    <extends>QWidget</extends>
    <header>ctkSettingsPanel.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>qSlicerDirectoryListView</class>
-   <extends>QWidget</extends>
-   <header>qSlicerDirectoryListView.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
