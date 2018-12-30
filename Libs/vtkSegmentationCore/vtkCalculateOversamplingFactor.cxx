@@ -163,17 +163,15 @@ bool vtkCalculateOversamplingFactor::CalculateRelativeStructureSize()
     vtkDebugMacro("CalculateRelativeStructureSize: Computed structure volume may be invalid according to difference in calculated projected and normal volumes.");
     }
 
-  // Calculate reference volume in mm^3
-  int dimensions[3] = {0,0,0};
-  this->ReferenceGeometryImageData->GetDimensions(dimensions);
+  // Calculate voxel volume in mm^3
   double spacing[3] = {0.0,0.0,0.0};
   this->ReferenceGeometryImageData->GetSpacing(spacing);
-  double volumeVolume = dimensions[0]*dimensions[1]*dimensions[2] * spacing[0]*spacing[1]*spacing[2]; // Number of voxels * volume of one voxel
+  double voxelVolume = spacing[0]*spacing[1]*spacing[2];
 
-  double relativeStructureSize = structureVolume / volumeVolume;
+  double relativeStructureSize = structureVolume / voxelVolume;
 
   // Map raw measurement to the fuzzy input scale
-  this->OutputRelativeStructureSize = (-1.0) * log10(relativeStructureSize);
+  this->OutputRelativeStructureSize = pow(relativeStructureSize, 1.0/3.0);
   vtkDebugMacro("CalculateRelativeStructureSize: Structure size fraction: " << relativeStructureSize << ", relative structure size: " << this->OutputRelativeStructureSize);
 
   return true;
@@ -225,22 +223,22 @@ double vtkCalculateOversamplingFactor::DetermineOversamplingFactor()
     }
 
   // Define input membership functions for relative structure size
-  vtkSmartPointer<vtkPiecewiseFunction> sizeLarge = vtkSmartPointer<vtkPiecewiseFunction>::New();
-  sizeLarge->AddPoint(0.5, 1);
-  sizeLarge->AddPoint(2, 0);
-  vtkSmartPointer<vtkPiecewiseFunction> sizeMedium = vtkSmartPointer<vtkPiecewiseFunction>::New();
-  sizeMedium->AddPoint(0.5, 0);
-  sizeMedium->AddPoint(2, 1);
-  sizeMedium->AddPoint(2.5, 1);
-  sizeMedium->AddPoint(3, 0);
-  vtkSmartPointer<vtkPiecewiseFunction> sizeSmall = vtkSmartPointer<vtkPiecewiseFunction>::New();
-  sizeSmall->AddPoint(2.5, 0);
-  sizeSmall->AddPoint(3, 1);
-  sizeSmall->AddPoint(3.25, 1);
-  sizeSmall->AddPoint(3.75, 0);
   vtkSmartPointer<vtkPiecewiseFunction> sizeVerySmall = vtkSmartPointer<vtkPiecewiseFunction>::New();
-  sizeVerySmall->AddPoint(3.25, 0);
-  sizeVerySmall->AddPoint(3.75, 1);
+  sizeVerySmall->AddPoint(7, 1);
+  sizeVerySmall->AddPoint(12, 0);
+  vtkSmartPointer<vtkPiecewiseFunction> sizeSmall = vtkSmartPointer<vtkPiecewiseFunction>::New();
+  sizeSmall->AddPoint(7, 0);
+  sizeSmall->AddPoint(12, 1);
+  sizeSmall->AddPoint(14, 1);
+  sizeSmall->AddPoint(18, 0);
+  vtkSmartPointer<vtkPiecewiseFunction> sizeMedium = vtkSmartPointer<vtkPiecewiseFunction>::New();
+  sizeMedium->AddPoint(14, 0);
+  sizeMedium->AddPoint(18, 1);
+  sizeMedium->AddPoint(36, 1);
+  sizeMedium->AddPoint(72, 0);
+  vtkSmartPointer<vtkPiecewiseFunction> sizeLarge = vtkSmartPointer<vtkPiecewiseFunction>::New();
+  sizeLarge->AddPoint(36, 0);
+  sizeLarge->AddPoint(72, 1);
 
   // Define input membership functions for complexity measure
   vtkSmartPointer<vtkPiecewiseFunction> complexityLow = vtkSmartPointer<vtkPiecewiseFunction>::New();
@@ -272,10 +270,10 @@ double vtkCalculateOversamplingFactor::DetermineOversamplingFactor()
   oversamplingVeryHigh->AddPoint(2.25, 1);
 
   // Fuzzify inputs
-  double sizeLargeMembership = sizeLarge->GetValue(this->OutputRelativeStructureSize);
-  double sizeMediumMembership = sizeMedium->GetValue(this->OutputRelativeStructureSize);
-  double sizeSmallMembership = sizeSmall->GetValue(this->OutputRelativeStructureSize);
   double sizeVerySmallMembership = sizeVerySmall->GetValue(this->OutputRelativeStructureSize);
+  double sizeSmallMembership = sizeSmall->GetValue(this->OutputRelativeStructureSize);
+  double sizeMediumMembership = sizeMedium->GetValue(this->OutputRelativeStructureSize);
+  double sizeLargeMembership = sizeLarge->GetValue(this->OutputRelativeStructureSize);
 
   double complexityLowMembership = complexityLow->GetValue(this->OutputComplexityMeasure);
   double complexityHighMembership = complexityHigh->GetValue(this->OutputComplexityMeasure);
