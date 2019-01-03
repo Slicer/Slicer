@@ -44,6 +44,8 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     self.delayedAutoUpdateTimer.interval = autoUpdateDelaySec * 1000
     self.delayedAutoUpdateTimer.connect('timeout()', self.onPreview)
 
+    self.extentGrowthRatio = 0.1  # extent of seed region will be grown outside by this much
+
 
   def __del__(self, scriptedEffect):
     super(SegmentEditorAutoCompleteEffect,self).__del__()
@@ -369,7 +371,12 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
 
       masterImageExtent = masterImageData.GetExtent()
       labelsEffectiveExtent = self.mergedLabelmapGeometryImage.GetExtent()
-      margin = [17, 17, 17]
+      # Margin size is relative to combined seed region size, but minimum of 3 voxels
+      print("self.extentGrowthRatio = {0}".format(self.extentGrowthRatio))
+      margin = [
+        int(max(3, self.extentGrowthRatio * (labelsEffectiveExtent[1]-labelsEffectiveExtent[0]))),
+        int(max(3, self.extentGrowthRatio * (labelsEffectiveExtent[3]-labelsEffectiveExtent[2]))),
+        int(max(3, self.extentGrowthRatio * (labelsEffectiveExtent[5]-labelsEffectiveExtent[4]))) ]
       labelsExpandedExtent = [
         max(masterImageExtent[0], labelsEffectiveExtent[0]-margin[0]),
         min(masterImageExtent[1], labelsEffectiveExtent[1]+margin[0]),
@@ -377,6 +384,9 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
         min(masterImageExtent[3], labelsEffectiveExtent[3]+margin[1]),
         max(masterImageExtent[4], labelsEffectiveExtent[4]-margin[2]),
         min(masterImageExtent[5], labelsEffectiveExtent[5]+margin[2]) ]
+      print("masterImageExtent = "+repr(masterImageExtent))
+      print("labelsEffectiveExtent = "+repr(labelsEffectiveExtent))
+      print("labelsExpandedExtent = "+repr(labelsExpandedExtent))
       self.mergedLabelmapGeometryImage.SetExtent(labelsExpandedExtent)
 
       # Create and setup preview node

@@ -42,7 +42,7 @@ Paint or other effects and add more seeds in the misclassified region. Full segm
 updated automatically within a few seconds</li>
 <li>Click <dfn>Apply</dfn> to update segmentation with the previewed result.</li>
 </ul><p>
-Masking settings are bypassed. If segments overlap, segment higher in the segments table will have priority.
+If segments overlap, segment higher in the segments table will have priority.
 The effect uses <a href="https://www.spl.harvard.edu/publications/item/view/2761">fast grow-cut method</a>.
 <p></html>"""
 
@@ -59,6 +59,17 @@ The effect uses <a href="https://www.spl.harvard.edu/publications/item/view/2761
       self.growCutFilter = vtkSlicerSegmentationsModuleLogic.vtkImageGrowCutSegment()
       self.growCutFilter.SetIntensityVolume(self.clippedMasterImageData)
       self.growCutFilter.SetMaskVolume(self.clippedMaskImageData)
+      maskExtent = self.clippedMaskImageData.GetExtent() if self.clippedMaskImageData else None
+      if maskExtent is not None and maskExtent[0] <= maskExtent[1] and maskExtent[2] <= maskExtent[3] and maskExtent[4] <= maskExtent[5]:
+        # Mask is used.
+        # Grow the extent more, as background segment does not surround region of interest.
+        self.extentGrowthRatio = 0.50
+      else:
+        # No masking is used.
+        # Background segment is expected to surround region of interest, so narrower margin is enough.
+        self.extentGrowthRatio = 0.20
+
+      self.extentGrowthRatio
 
     self.growCutFilter.SetSeedLabelVolume(mergedImage)
     self.growCutFilter.Update()
