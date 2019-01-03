@@ -40,6 +40,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     self.tags['windowCenter'] = "0028,1050"
     self.tags['windowWidth'] = "0028,1051"
     self.tags['classUID'] = "0008,0016"
+    self.tags['rows'] = "0028,0010"
+    self.tags['columns'] = "0028,0011"
 
   @staticmethod
   def readerApproaches():
