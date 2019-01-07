@@ -218,18 +218,15 @@ class ForceSamePatientNameIdInEachDirectory(DICOMPatcherRule):
   def processDataSet(self, ds):
     import dicom
     if self.firstFileInDirectory:
-      # Get patient name and ID and save it
+      # Get patient name and ID for this folder and save it
       self.firstFileInDirectory = False
       if ds.PatientName == '':
-        ds.PatientName = "Unspecified Patient " + str(patientIndex)
+        self.patientName = "Unspecified Patient " + str(self.patientIndex)
       if ds.PatientID == '':
-        ds.PatientID = dicom.UID.generate_uid(None)
-      self.patientName = ds.PatientName
-      self.patientID = ds.PatientID
-    else:
-      # Set the same patient name and ID as the first file in the directory
-      ds.PatientName = self.patientName
-      ds.PatientID = self.patientID
+        self.patientID = dicom.UID.generate_uid(None)
+    # Set the same patient name and ID as the first file in the directory
+    ds.PatientName = self.patientName
+    ds.PatientID = self.patientID
 
 class GenerateMissingIDs(DICOMPatcherRule):
   def __init__(self):
