@@ -127,9 +127,9 @@ public:
   /// Set selected segment ID
   vtkSetStringMacro(SelectedSegmentID);
 
-  /// Get active effect name
+  /// Get name of the active effect.
   vtkGetStringMacro(ActiveEffectName);
-  /// Set active effect name
+  /// Select the active effect.
   vtkSetStringMacro(ActiveEffectName);
 
   /// Defines which areas are editable.
