@@ -15,6 +15,7 @@ class SegmentEditorLevelTracingEffect(AbstractScriptedSegmentEditorLabelEffect):
 
     # Effect-specific members
     self.levelTracingPipelines = {}
+    self.lastXY = None
 
   def clone(self):
     import qSlicerSegmentationsEditorEffectsPythonQt as effects
@@ -41,6 +42,7 @@ follows the same intensity value back to the starting point within the current s
     for sliceWidget, pipeline in self.levelTracingPipelines.iteritems():
       self.scriptedEffect.removeActor2D(sliceWidget, pipeline.actor)
     self.levelTracingPipelines = {}
+    self.lastXY = None
 
   def processInteractionEvents(self, callerInteractor, eventId, viewWidget):
     abortEvent = False
@@ -70,6 +72,7 @@ follows the same intensity value back to the starting point within the current s
         xy = callerInteractor.GetEventPosition()
         pipeline.preview(xy)
         abortEvent = True
+        self.lastXY = xy
     elif eventId == vtk.vtkCommand.RightButtonPressEvent or eventId == vtk.vtkCommand.MiddleButtonPressEvent:
       pipeline.actionState = 'interacting'
     elif eventId == vtk.vtkCommand.RightButtonReleaseEvent or eventId == vtk.vtkCommand.MiddleButtonReleaseEvent:
@@ -78,8 +81,21 @@ follows the same intensity value back to the starting point within the current s
       pipeline.actor.VisibilityOn()
     elif eventId == vtk.vtkCommand.LeaveEvent:
       pipeline.actor.VisibilityOff()
+      self.lastXY = None
 
     return abortEvent
+
+  def processViewNodeEvents(self, callerViewNode, eventId, viewWidget):
+    if callerViewNode and callerViewNode.IsA('vtkMRMLSliceNode'):
+      # Get draw pipeline for current slice
+      pipeline = self.pipelineForWidget(viewWidget)
+      if pipeline is None:
+        logging.error('processViewNodeEvents: Invalid pipeline')
+        return
+
+      # Update the preview to the new slice
+      if pipeline.actionState == '' and self.lastXY:
+        pipeline.preview(self.lastXY)
 
   def pipelineForWidget(self, sliceWidget):
     if sliceWidget in self.levelTracingPipelines:
