@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QMainWindow>
 
 // CTK includes
 #include "ctkMessageBox.h"
@@ -30,15 +31,21 @@
 #include "qSlicerWebPythonProxy.h"
 
 // --------------------------------------------------------------------------
-qSlicerWebPythonProxy::qSlicerWebPythonProxy(QWidget *parent)
-  : QWidget(parent)
+qSlicerWebPythonProxy::qSlicerWebPythonProxy(QObject *parent)
+  : QObject(parent)
 {
+  this->userSaidOK = false;
 }
 
 // --------------------------------------------------------------------------
-QString qSlicerWebPythonProxy::evalPython(const QString &python)
+bool qSlicerWebPythonProxy::okayToUsePython()
 {
-  ctkMessageBox* confirmationBox = new ctkMessageBox(this);
+  if (this->userSaidOK)
+    {
+    return true;
+    }
+
+  ctkMessageBox* confirmationBox = new ctkMessageBox(qSlicerApplication::application()->mainWindow());
   confirmationBox->setAttribute(Qt::WA_DeleteOnClose);
   confirmationBox->setWindowTitle(tr("Allow Python execution?"));
   confirmationBox->setText("Allow the web page has asked to execute code using Slicer's python?");
@@ -51,8 +58,19 @@ QString qSlicerWebPythonProxy::evalPython(const QString &python)
   confirmationBox->setIcon(QMessageBox::Question);
   int resultCode = confirmationBox->exec();
 
-  QString result;
   if (resultCode == QMessageBox::AcceptRole)
+    {
+    this->userSaidOK = true;
+    }
+
+  return this->userSaidOK;
+}
+
+// --------------------------------------------------------------------------
+QString qSlicerWebPythonProxy::evalPython(const QString &python)
+{
+  QString result;
+  if (this->okayToUsePython())
     {
     qSlicerPythonManager *pythonManager = qSlicerApplication::application()->pythonManager();
     result = pythonManager->executeString(python).toString();

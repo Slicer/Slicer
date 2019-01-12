@@ -22,21 +22,21 @@
 #define __qSlicerWebPythonProxy_h
 
 // Qt includes
-#include <QWidget>
+#include <QObject>
 
 // QtGUI includes
 #include "qSlicerBaseQTGUIExport.h"
 
 
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebPythonProxy
-  : public QWidget
+  : public QObject
 {
   Q_OBJECT
 
 public:
 
   /// Constructor
-  explicit qSlicerWebPythonProxy(QWidget *parent = 0);
+  explicit qSlicerWebPythonProxy(QObject *parent = 0);
 
 public slots:
 
@@ -53,6 +53,11 @@ public slots:
   ///
   /// \sa qSlicerWebWidget::initializeWebEngineProfile
   QString evalPython(const QString &python);
+
+private:
+  /// Keep track of user response to avoid going through ctk dialog to check
+  bool okayToUsePython();
+  bool userSaidOK;
 
 };
 
