@@ -25,7 +25,6 @@
 #include <QDialog>
 class QWebEngineDownloadItem;
 
-
 // CTK
 class ctkPathLineEdit;
 
