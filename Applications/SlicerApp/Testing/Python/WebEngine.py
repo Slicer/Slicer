@@ -121,6 +121,16 @@ class WebEngineTest(ScriptedLoadableModuleTest):
     self.setUp()
     self.test_WebEngine1()
 
+  def onEvalResult(self, js, result):
+    if js == "valueFromSlicer;":
+      if result != "42":
+        Exception("Did not get back expected result!")
+      self.delayDisplay("Got the expected result back from JavaScript")
+    else:
+      self.delayDisplay("Got a result back from JavaScript")
+      print(js, result)
+
+
   def test_WebEngine1(self):
     """ Testing WebEngine
     """
@@ -133,15 +143,19 @@ class WebEngineTest(ScriptedLoadableModuleTest):
     webWidget.show()
     self.delayDisplay('Showing widget')
 
+    webWidget.connect("evalResult(QString,QString)", self.onEvalResult)
+
     webWidget.evalJS("""
         const paragraph = document.createElement('p');
         paragraph.innerText = 'Hello from Slicer!';
         document.body.appendChild(paragraph);
     """)
 
-    slicer.modules.WebEngineInstance.webWidget = webWidget
-
-
     self.delayDisplay('Slicer should be saying hello!')
+
+    self.delayDisplay('Slicer setting a javascript value')
+
+    webWidget.evalJS("const valueFromSlicer = 42;")
+    webWidget.evalJS("valueFromSlicer;");
 
     self.delayDisplay('Test passed!')
