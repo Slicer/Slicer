@@ -36,6 +36,7 @@ class QWebEngineDownloadItem;
 
 // QtGUI includes
 #include "qSlicerBaseQTGUIExport.h"
+#include "qSlicerWebPythonProxy.h"
 #include "qSlicerWebWidget.h"
 #include "ui_qSlicerWebWidget.h"
 
@@ -141,6 +142,7 @@ public:
   qSlicerWebEnginePage* WebEnginePage;
   QWebEngineView* WebView;
   QWebChannel* WebChannel;
+  qSlicerWebPythonProxy* PythonProxy;
 #endif
 
 private:

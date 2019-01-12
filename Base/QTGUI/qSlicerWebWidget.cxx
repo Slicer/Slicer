@@ -50,9 +50,8 @@
 #include "qSlicerWebWidget_p.h"
 
 // Slicer includes
-#include "qSlicerApplication.h"
-#include "qSlicerPythonManager.h"
 #include "qSlicerWebDownloadWidget.h"
+#include "qSlicerWebPythonProxy.h"
 
 // --------------------------------------------------------------------------
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
@@ -103,9 +102,7 @@ void qSlicerWebWidgetPrivate::initializeWebChannel(QWebChannel* webChannel)
 #if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
   Q_UNUSED(webChannel);
 #else
-  Q_Q(qSlicerWebWidget);
-  // TODO: register a proxy object allowing javascript to conditionally access Slicer.
-  // webChannel->registerObject("slicerApplication", qSlicerApplication::application());
+  webChannel->registerObject("slicerPython", this->PythonProxy);
 #endif
 }
 
@@ -131,6 +128,7 @@ void qSlicerWebWidgetPrivate::init()
       }
     }
 
+  this->PythonProxy = new qSlicerWebPythonProxy(q);
   QWebEngineProfile* profile = QWebEngineProfile::defaultProfile();
   this->initializeWebEngineProfile(profile);
 
@@ -141,6 +139,7 @@ void qSlicerWebWidgetPrivate::init()
   this->WebChannel = new QWebChannel(this->WebView->page());
   this->initializeWebChannel(this->WebChannel);
   this->WebView->page()->setWebChannel(this->WebChannel);
+
 
   // XXX Since relying on automatic deletion of QWebEngineView when the application
   // exit causes the application to crash. This is a workaround for explicitly
@@ -357,6 +356,7 @@ QString qSlicerWebWidget::evalJS(const QString &js)
 #endif
 
 }
+
 
 // --------------------------------------------------------------------------
 void qSlicerWebWidget::onDownloadStarted(QNetworkReply* reply)
