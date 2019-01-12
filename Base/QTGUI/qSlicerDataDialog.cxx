@@ -24,10 +24,16 @@
 #include <QDropEvent>
 #include <QFileDialog>
 #include <QMimeData>
+#include <QMessageBox>
+#include <QTemporaryDir>
 
 /// CTK includes
 #include <ctkCheckableHeaderView.h>
 #include <ctkCheckableModelHelper.h>
+
+/// Slicer includes
+#include "vtkArchive.h"
+#include "vtkMRMLApplicationLogic.h"
 
 /// SlicerQt includes
 #include "qSlicerApplication.h"
@@ -183,6 +189,19 @@ void qSlicerDataDialogPrivate::addFile(const QFileInfo& file)
     {
     return; // file already exists
     }
+
+
+  //
+  // check for archive, and optionally open it
+  //
+  if (this->checkAndHandleArchive(file))
+    {
+    return; // file was an archive
+    }
+
+  //
+  // use the IOManager to check for ways to load the data
+  //
   qSlicerCoreIOManager* coreIOManager =
     qSlicerCoreApplication::application()->coreIOManager();
   QStringList fileDescriptions =
@@ -192,6 +211,9 @@ void qSlicerDataDialogPrivate::addFile(const QFileInfo& file)
     return;
     }
 
+  //
+  // add the file to the dialog
+  //
   bool sortingEnabled = this->FileWidget->isSortingEnabled();
   this->FileWidget->setSortingEnabled(false);
   int row = this->FileWidget->rowCount();
@@ -389,6 +411,28 @@ bool qSlicerDataDialogPrivate::propagateChange(int changedRow)const
     && (QApplication::keyboardModifiers() & Qt::ShiftModifier);
 }
 
+//-----------------------------------------------------------------------------
+bool qSlicerDataDialogPrivate::checkAndHandleArchive(const QFileInfo& file)
+{
+  if (file.suffix() == "zip")
+    {
+    if (QMessageBox::question(this, tr("Open archive?"), tr("The selected file is a .zip archive, open it and load contents?")))
+      {
+      this->temporaryArchiveDirectory.reset(new QTemporaryDir());
+      if (this->temporaryArchiveDirectory->isValid())
+        {
+        // C function in vtkArchive
+        if (unzip(file.absoluteFilePath().toStdString().c_str(), this->temporaryArchiveDirectory->path().toStdString().c_str()))
+          {
+          this->addDirectory(QDir(this->temporaryArchiveDirectory->path()));
+          return true;
+          }
+        }
+      }
+    }
+  return false;
+}
+
 /*
 //-----------------------------------------------------------------------------
 void qSlicerDataDialogPrivate::updateCheckBoxes(Qt::Orientation orientation, int first, int last)
@@ -531,3 +575,16 @@ bool qSlicerDataDialog::exec(const qSlicerIO::IOProperties& readerProperties)
   return res;
 }
 
+//-----------------------------------------------------------------------------
+void qSlicerDataDialog::addFile(const QString filePath)
+{
+  Q_D(qSlicerDataDialog);
+  d->addFile(QFileInfo(filePath));
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerDataDialog::addDirectory(const QString directoryPath)
+{
+  Q_D(qSlicerDataDialog);
+  d->addDirectory(QDir(directoryPath));
+}
