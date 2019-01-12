@@ -48,7 +48,7 @@ void qSlicerWebDownloadWidget::handleDownload(QWebEngineDownloadItem *download)
 
 // This code uses C++11 lambdas, which are only available when
 // Qt5 is used.  This code will never actually be called unless
-// QWebEngine is used, to it doesn't need to do anything in the
+// QWebEngine is used, so it doesn't need to do anything in the
 // non-Qt5 case.
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 
