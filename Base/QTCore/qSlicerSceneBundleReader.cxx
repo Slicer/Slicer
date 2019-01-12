@@ -109,6 +109,11 @@ bool qSlicerSceneBundleReader::load(const qSlicerIO::IOProperties& properties)
   std::string mrmlFile = appLogic->UnpackSlicerDataBundle(
                                           file.toLatin1(), unpackPath.toLatin1() );
 
+  if (mrmlFile.empty())
+    {
+    return false;
+    }
+
   this->mrmlScene()->SetURL(mrmlFile.c_str());
 
   bool clear = false;
