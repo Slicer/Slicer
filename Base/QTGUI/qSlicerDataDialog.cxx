@@ -414,7 +414,7 @@ bool qSlicerDataDialogPrivate::propagateChange(int changedRow)const
 //-----------------------------------------------------------------------------
 bool qSlicerDataDialogPrivate::checkAndHandleArchive(const QFileInfo& file)
 {
-  if (file.suffix() == "zip")
+  if (file.suffix().toLower() == "zip")
     {
     if (QMessageBox::question(this, tr("Open archive?"), tr("The selected file is a .zip archive, open it and load contents?")))
       {
