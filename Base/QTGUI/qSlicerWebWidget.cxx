@@ -306,16 +306,15 @@ QString qSlicerWebWidget::evalJS(const QString &js)
 #if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
   return d->mainFrame()->evaluateJavaScript(js).toString();
 #else
-  // NOTE: Beginning Qt5.7, the call to runJavaScript becomes asynchronous,
-  // and generally it takes a function lambda which is called once
-  // the script evaluation is completed. This takes in the result string
-  // as an argument.
-  // Since the result of JavaScript evaluation is not used anywhere
-  // in the code base, the function lambda is not supplied here,
-  // and an empty string is returned instead.
-  // When the need arises to use the result string, function lambdas
-  // and resulting infrastructure will have to be provided.
-  d->WebView->page()->runJavaScript(js);
+  // NOTE: Beginning Qt5.7, the call to runJavaScript are asynchronous,
+  // and take a function (lambda) which is called once
+  // the script evaluation is completed.
+  // Connect to the "evalResult(QString,QString)" signal to get
+  // results from the WebView.
+  d->WebView->page()->runJavaScript(js, [this,js](const QVariant &v) {
+    qDebug() << js << " returns " << v.toString();
+    emit evalResult(js, v.toString());
+  });
   return QString();
 #endif
 

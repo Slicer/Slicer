@@ -106,6 +106,10 @@ public slots:
 
   void onDownloadFinished(QNetworkReply* reply);
 
+signals:
+  /// emited with result of evalJS
+  void evalResult(QString js, QString result);
+
 protected slots:
   virtual void initJavascript();
   virtual void onLoadStarted();
