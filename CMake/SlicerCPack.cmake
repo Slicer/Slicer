@@ -66,29 +66,52 @@ if(Slicer_BUILD_DICOM_SUPPORT AND NOT Slicer_USE_SYSTEM_DCMTK)
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallDCMTKApps.cmake)
 endif()
 
-# Get Qt root directory
-set(qt_root_dir "")
-if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER "5")
-  get_property(_filepath TARGET "Qt5::Core" PROPERTY LOCATION_RELEASE)
-  get_filename_component(_dir ${_filepath} PATH)
-  set(qt_root_dir "${_dir}/..")
-endif()
-
-# Qt designer
-if(Slicer_BUILD_QT_DESIGNER_PLUGINS AND Slicer_REQUIRED_QT_VERSION VERSION_GREATER "5")
-  install(PROGRAMS ${qt_root_dir}/bin/designer${CMAKE_EXECUTABLE_SUFFIX}
-    DESTINATION ${Slicer_INSTALL_ROOT}/bin COMPONENT Runtime
-    )
+# Install Qt designer launcher
+if(Slicer_BUILD_QT_DESIGNER_PLUGINS AND ${Slicer_REQUIRED_QT_VERSION} VERSION_GREATER_EQUAL 5)
+  set(executablename "SlicerDesigner")
+  set(build_designer_executable "${QT_BINARY_DIR}/designer${CMAKE_EXECUTABLE_SUFFIX}")
   if(APPLE)
-    set(dollar "$")
-    install(CODE
-      "set(app ${Slicer_INSTALL_BIN_DIR}/designer)
-       set(appfilepath \"${dollar}ENV{DESTDIR}${dollar}{CMAKE_INSTALL_PREFIX}/${dollar}{app}\")
-       message(\"CPack: - Adding rpath to ${dollar}{app}\")
-       execute_process(COMMAND install_name_tool -add_rpath @loader_path/..  ${dollar}{appfilepath})"
-      COMPONENT Runtime
-      )
+    set(build_designer_executable "${QT_BINARY_DIR}/Designer.app/Contents/MacOS/designer")
   endif()
+  set(installed_designer_executable "designer-real${CMAKE_EXECUTABLE_SUFFIX}")
+  set(installed_designer_subdir ".")
+  if(APPLE)
+    set(installed_designer_executable "Designer")
+    set(installed_designer_subdir "Designer.app/Contents/MacOS/designer")
+  endif()
+  find_package(CTKAppLauncher REQUIRED)
+  ctkAppLauncherConfigureForExecutable(
+    APPLICATION_NAME ${executablename}
+    SPLASHSCREEN_DISABLED
+    # Additional settings exclude groups
+    ADDITIONAL_SETTINGS_EXCLUDE_GROUPS "General,Application,ExtraApplicationToLaunch"
+    # Launcher settings specific to build tree
+    APPLICATION_EXECUTABLE ${build_designer_executable}
+    DESTINATION_DIR ${CMAKE_BINARY_DIR}/${Slicer_BIN_DIR}
+    ADDITIONAL_SETTINGS_FILEPATH_BUILD "${Slicer_BINARY_DIR}/${Slicer_BINARY_INNER_SUBDIR}/SlicerLauncherSettings.ini"
+    # Launcher settings specific to install tree
+    APPLICATION_INSTALL_EXECUTABLE_NAME designer-real${CMAKE_EXECUTABLE_SUFFIX}
+    APPLICATION_INSTALL_SUBDIR "${installed_designer_subdir}"
+    ADDITIONAL_SETTINGS_FILEPATH_INSTALLED "<APPLAUNCHER_SETTINGS_DIR>/SlicerLauncherSettings.ini"
+    )
+  # Install designer launcher settings
+  install(
+    FILES ${CMAKE_BINARY_DIR}/${Slicer_BIN_DIR}/${executablename}LauncherSettingsToInstall.ini
+    DESTINATION ${Slicer_INSTALL_BIN_DIR}
+    RENAME ${executablename}LauncherSettings.ini
+    COMPONENT Runtime
+    )
+  # Install designer launcher
+  set(_launcher CTKAppLauncher)
+  if(Slicer_BUILD_WIN32_CONSOLE)
+    set(_launcher CTKAppLauncherW)
+  endif()
+  install(
+    PROGRAMS ${CTKAppLauncher_DIR}/bin/${_launcher}${CMAKE_EXECUTABLE_SUFFIX}
+    DESTINATION ${Slicer_INSTALL_BIN_DIR}
+    RENAME ${executablename}${CMAKE_EXECUTABLE_SUFFIX}
+    COMPONENT Runtime
+    )
 endif()
 
 # -------------------------------------------------------------------------

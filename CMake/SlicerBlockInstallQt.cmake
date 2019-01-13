@@ -30,10 +30,6 @@ if(Slicer_REQUIRED_QT_VERSION VERSION_LESS "5")
 
 else()
 
-  if(NOT EXISTS ${qt_root_dir})
-    message(FATAL_ERROR "qt_root_dir set to nonexistent directory [${qt_root_dir}]")
-  endif()
-
   list(APPEND QT_LIBRARIES
     "Qt5::Gui"
     )
@@ -56,6 +52,11 @@ else()
   endif()
 
   if(UNIX)
+
+    # Get root directory
+    get_property(_filepath TARGET "Qt5::Core" PROPERTY LOCATION_RELEASE)
+    get_filename_component(_dir ${_filepath} PATH)
+    set(qt_root_dir "${_dir}/..")
 
     find_package(Qt5 REQUIRED COMPONENTS
       DBus
@@ -183,6 +184,14 @@ else()
         execute_process(COMMAND \"${windeployqt}\" ${_args} \"\${CMAKE_INSTALL_PREFIX}/bin/${executable}\")
       "
       COMPONENT Runtime
+      )
+  endif()
+
+  # Qt designer
+  if(Slicer_BUILD_QT_DESIGNER_PLUGINS)
+    install(PROGRAMS ${qt_root_dir}/bin/designer${CMAKE_EXECUTABLE_SUFFIX}
+      DESTINATION ${Slicer_INSTALL_ROOT}/bin COMPONENT Runtime
+      RENAME designer-real${CMAKE_EXECUTABLE_SUFFIX}
       )
   endif()
 endif()

@@ -604,11 +604,11 @@ macro(slicerMacroBuildApplication)
         endif()
       endforeach()
 
-      if(${Slicer_REQUIRED_QT_VERSION} VERSION_GREATER_EQUAL 5 AND EXISTS ${QT_DESIGNER_EXECUTABLE})
+      if(${Slicer_REQUIRED_QT_VERSION} VERSION_GREATER_EQUAL 5 AND EXISTS ${QT_DESIGNER_EXECUTABLE} AND NOT APPLE)
         ctkAppLauncherAppendExtraAppToLaunchToList(
           LONG_ARG designer
           HELP "Start Qt designer using Slicer plugins"
-          PATH "<APPLAUNCHER_SETTINGS_DIR>/../bin/designer${CMAKE_EXECUTABLE_SUFFIX}"
+          PATH "<APPLAUNCHER_SETTINGS_DIR>/../bin/designer-real${CMAKE_EXECUTABLE_SUFFIX}"
           OUTPUTVAR extraApplicationToLaunchListForInstallTree
           )
       endif()
