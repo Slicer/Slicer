@@ -66,6 +66,31 @@ if(Slicer_BUILD_DICOM_SUPPORT AND NOT Slicer_USE_SYSTEM_DCMTK)
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallDCMTKApps.cmake)
 endif()
 
+# Get Qt root directory
+set(qt_root_dir "")
+if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER "5")
+  get_property(_filepath TARGET "Qt5::Core" PROPERTY LOCATION_RELEASE)
+  get_filename_component(_dir ${_filepath} PATH)
+  set(qt_root_dir "${_dir}/..")
+endif()
+
+# Qt designer
+if(Slicer_BUILD_QT_DESIGNER_PLUGINS AND Slicer_REQUIRED_QT_VERSION VERSION_GREATER "5")
+  install(PROGRAMS ${qt_root_dir}/bin/designer${CMAKE_EXECUTABLE_SUFFIX}
+    DESTINATION ${Slicer_INSTALL_ROOT}/bin COMPONENT Runtime
+    )
+  if(APPLE)
+    set(dollar "$")
+    install(CODE
+      "set(app ${Slicer_INSTALL_BIN_DIR}/designer)
+       set(appfilepath \"${dollar}ENV{DESTDIR}${dollar}{CMAKE_INSTALL_PREFIX}/${dollar}{app}\")
+       message(\"CPack: - Adding rpath to ${dollar}{app}\")
+       execute_process(COMMAND install_name_tool -add_rpath @loader_path/..  ${dollar}{appfilepath})"
+      COMPONENT Runtime
+      )
+  endif()
+endif()
+
 # -------------------------------------------------------------------------
 # Update CPACK_INSTALL_CMAKE_PROJECTS
 # -------------------------------------------------------------------------
@@ -132,14 +157,6 @@ else()
     find_package(SlicerExecutionModel REQUIRED)
   endif()
   set(VTK_LIBRARY_DIRS "${VTK_DIR}/lib")
-
-  # Get Qt root directory
-  set(qt_root_dir "")
-  if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER "5")
-    get_property(_filepath TARGET "Qt5::Core" PROPERTY LOCATION_RELEASE)
-    get_filename_component(_dir ${_filepath} PATH)
-    set(qt_root_dir "${_dir}/..")
-  endif()
 
   #------------------------------------------------------------------------------
   # <ExtensionName>_FIXUP_BUNDLE_LIBRARY_DIRECTORIES
