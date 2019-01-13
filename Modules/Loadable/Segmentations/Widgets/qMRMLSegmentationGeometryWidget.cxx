@@ -486,6 +486,7 @@ void qMRMLSegmentationGeometryWidget::resampleLabelmapsInSegmentationNode()
     return;
     }
 
+  int wasModified = d->SegmentationNode->StartModify();
   std::vector< std::string > segmentIDs;
   d->SegmentationNode->GetSegmentation()->GetSegmentIDs(segmentIDs);
   for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
@@ -520,6 +521,8 @@ void qMRMLSegmentationGeometryWidget::resampleLabelmapsInSegmentationNode()
 
   // Trigger display update
   d->SegmentationNode->Modified();
+
+  d->SegmentationNode->EndModify(wasModified);
 }
 
 //-----------------------------------------------------------------------------
