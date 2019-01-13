@@ -98,8 +98,7 @@ class WebEngineWidget(ScriptedLoadableModuleWidget):
     slicerGeometry = slicer.util.mainWindow().geometry
     webWidget.size = qt.QSize(1536,1024)
     webWidget.pos = qt.QPoint(slicerGeometry.x() + 256, slicerGeometry.y() + 128)
-    webView = webWidget.webView()
-    webView.url = qt.QUrl(site["url"])
+    webWidget.url = site["url"]
     webWidget.show()
     self.webWidgets.append(webWidget)
 

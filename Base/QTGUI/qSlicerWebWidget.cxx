@@ -358,6 +358,21 @@ QString qSlicerWebWidget::evalJS(const QString &js)
 
 }
 
+//-----------------------------------------------------------------------------
+void qSlicerWebWidget::setUrl(const QString &url)
+{
+  Q_D(qSlicerWebWidget);
+
+  d->WebView->setUrl(QUrl(url));
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerWebWidget::url()
+{
+  Q_D(qSlicerWebWidget);
+
+  return d->WebView->url().toString();
+}
 
 // --------------------------------------------------------------------------
 void qSlicerWebWidget::onDownloadStarted(QNetworkReply* reply)
