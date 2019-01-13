@@ -285,14 +285,14 @@ def loadUI(path):
 
 def startQtDesigner(args = None):
   """ Start Qt Designer application to allow editing UI files.
-  This only works if the launcher has properly configured with --designer option,
-  which is currently only available in the build tree, not in installed applications.
   """
-
+  import os
   import slicer
   import subprocess
-  executableFilePath = slicer.app.launcherExecutableFilePath
-  cmdLineArguments = ['--designer']
+  executableFilePath = os.path.join(slicer.app.slicerHome, "bin", "SlicerDesigner")
+  if slicer.app.os == 'win':
+    executableFilePath += ".exe"
+  cmdLineArguments = []
   if args is not None:
     if isinstance(args, basestring):
       cmdLineArguments.append(args)
