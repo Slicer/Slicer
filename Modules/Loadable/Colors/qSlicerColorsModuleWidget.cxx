@@ -47,6 +47,7 @@
 #include <vtkMRMLScene.h>
 
 // VTK includes
+#include <vtkBorderRepresentation.h>
 #include <vtkColorTransferFunction.h>
 #include <vtkLookupTable.h>
 #include <vtkNew.h>
@@ -86,6 +87,21 @@ qSlicerColorsModuleWidgetPrivate::qSlicerColorsModuleWidgetPrivate(qSlicerColors
   this->ScalarBarActor->SetPosition(0.1, 0.1);
   this->ScalarBarActor->SetWidth(0.1);
   this->ScalarBarActor->SetHeight(0.8);
+
+  // By default, color swatch is too wide (especially when showing long color names),
+  // therefore, set it to a bit narrower.
+  this->ScalarBarActor->SetBarRatio(0.15);
+
+  // Allow resizing by clicking at the widget border
+  vtkBorderRepresentation* border = this->ScalarBarWidget->GetBorderRepresentation();
+  if (border)
+    {
+    border->SetShowHorizontalBorder(true);
+    border->SetShowVerticalBorder(true);
+    // only show the border when hovering over with the mouse
+    border->SetShowBorderToActive();
+    }
+
 }
 
 //-----------------------------------------------------------------------------
@@ -456,4 +472,11 @@ bool qSlicerColorsModuleWidget::setEditedNode(vtkMRMLNode* node,
     }
 
   return false;
+}
+
+//-----------------------------------------------------------
+vtkScalarBarWidget* qSlicerColorsModuleWidget::scalarBar()
+{
+  Q_D(qSlicerColorsModuleWidget);
+  return d->ScalarBarWidget;
 }
