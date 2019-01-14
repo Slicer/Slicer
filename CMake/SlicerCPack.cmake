@@ -181,6 +181,14 @@ else()
   endif()
   set(VTK_LIBRARY_DIRS "${VTK_DIR}/lib")
 
+  # Get Qt root directory
+  set(qt_root_dir "")
+  if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER "4")
+    get_property(_filepath TARGET "Qt5::Core" PROPERTY LOCATION_RELEASE)
+    get_filename_component(_dir ${_filepath} PATH)
+    set(qt_root_dir "${_dir}/..")
+  endif()
+
   #------------------------------------------------------------------------------
   # <ExtensionName>_FIXUP_BUNDLE_LIBRARY_DIRECTORIES
   #------------------------------------------------------------------------------
