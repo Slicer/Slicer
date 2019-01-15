@@ -77,7 +77,7 @@ if(Slicer_BUILD_QT_DESIGNER_PLUGINS AND ${Slicer_REQUIRED_QT_VERSION} VERSION_GR
   set(installed_designer_subdir ".")
   if(APPLE)
     set(installed_designer_executable "Designer")
-    set(installed_designer_subdir "Designer.app/Contents/MacOS/designer")
+    set(installed_designer_subdir "Designer.app/Contents/MacOS")
   endif()
   find_package(CTKAppLauncher REQUIRED)
   ctkAppLauncherConfigureForExecutable(
@@ -90,7 +90,7 @@ if(Slicer_BUILD_QT_DESIGNER_PLUGINS AND ${Slicer_REQUIRED_QT_VERSION} VERSION_GR
     DESTINATION_DIR ${CMAKE_BINARY_DIR}/${Slicer_BIN_DIR}
     ADDITIONAL_SETTINGS_FILEPATH_BUILD "${Slicer_BINARY_DIR}/${Slicer_BINARY_INNER_SUBDIR}/SlicerLauncherSettings.ini"
     # Launcher settings specific to install tree
-    APPLICATION_INSTALL_EXECUTABLE_NAME designer-real${CMAKE_EXECUTABLE_SUFFIX}
+    APPLICATION_INSTALL_EXECUTABLE_NAME "${installed_designer_executable}"
     APPLICATION_INSTALL_SUBDIR "${installed_designer_subdir}"
     ADDITIONAL_SETTINGS_FILEPATH_INSTALLED "<APPLAUNCHER_SETTINGS_DIR>/SlicerLauncherSettings.ini"
     )
