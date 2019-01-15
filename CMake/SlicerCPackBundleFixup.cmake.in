@@ -367,12 +367,14 @@ function(fixup_bundle_with_plugins app)
     endif()
 
    # Since BundleUtilities module does not know how to install .app directory withing
-   # an existing app, the following explicitly install the designer application.
+   # an existing app, the following explicitly install the designer application as well
+   # as the QtDesignerComponents.framework.
    set(Slicer_BUILD_QT_DESIGNER_PLUGINS "@Slicer_BUILD_QT_DESIGNER_PLUGINS@")
    set(designer_app_subdir "Designer.app")
    set(designer_src_dir "${qt_root_dir}/../bin/${designer_app_subdir}")
    set(designer_dest_dir "${app_dir}/Contents/bin/${designer_app_subdir}")
    if(Slicer_BUILD_QT_DESIGNER_PLUGINS AND EXISTS ${designer_src_dir})
+     # Designer
      file(COPY "${designer_src_dir}/Contents" DESTINATION "${designer_dest_dir}/" USE_SOURCE_PERMISSIONS)
      set(designer_executable "${designer_dest_dir}/Contents/MacOS/Designer")
      # Collect list of Qt framework dependencies
@@ -395,6 +397,32 @@ function(fixup_bundle_with_plugins app)
      execute_process(COMMAND install_name_tool
        -rpath "@executable_path/Frameworks" "@loader_path/../../../../"
        ${changes} "${designer_executable}"
+       )
+     # Generate qt.conf file to override plugin paths and ensure plugins provided
+     # by Slicer package are loaded
+     file(WRITE "${designer_dest_dir}/Contents/Resources/qt.conf" "[Paths]
+Plugins=../../../@Slicer_QtPlugins_DIR@
+")
+
+     # QtDesignerComponents.framework
+     set(resolved_item "${qt_root_dir}/QtDesignerComponents.framework/Versions/5/QtDesignerComponents")
+     set(resolved_embedded_item "${app_dir}/Contents/Frameworks/QtDesignerComponents.framework/Versions/5/QtDesignerComponents")
+     copy_resolved_framework_into_bundle("${resolved_item}" "${resolved_embedded_item}")
+     # Collect list of Qt framework dependencies
+     set(prereqs )
+     get_prerequisites(${resolved_embedded_item} "prereqs" 1 0 "" "")
+     # Generate list of "-change" arguments
+     set(changes "")
+     foreach(item ${prereqs})
+       gp_item_default_embedded_path_override("${item}" path)
+       get_filename_component(item_name "${item}" NAME)
+       string(REGEX REPLACE "^.*(${item_name}.framework/.*/?${item_name}).*$" "${path}/\\1" embedded_item "${item}")
+       set(changes ${changes} "-change" "${item}" "${embedded_item}")
+     endforeach()
+     # Update executable
+     execute_process(COMMAND install_name_tool
+       ${changes} -id "@rpath/Frameworks/QtDesignerComponents.framework/Versions/5/QtDesignerComponents"
+       "${resolved_embedded_item}"
        )
    endif()
   endif()
