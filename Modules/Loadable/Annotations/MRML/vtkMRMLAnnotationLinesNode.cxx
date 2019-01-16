@@ -363,7 +363,7 @@ void vtkMRMLAnnotationLinesNode::DeleteLine(int id)
   for (int j = NUM_CP_ATTRIBUTE_TYPES ; j < NUM_LINE_ATTRIBUTE_TYPES; j ++)
     {
       vtkBitArray *dataArray = dynamic_cast <vtkBitArray *> (this->GetAnnotationAttributes(j));
-      if (!dataArray || dataArray->GetSize() != n)
+      if (!dataArray || dataArray->GetNumberOfValues() != n)
         {
           vtkErrorMacro("Annotation " << this->GetName() << " Attribute " << this->GetAttributeTypesEnumAsString(j) << " is out of sync with number of lines" );
         }
