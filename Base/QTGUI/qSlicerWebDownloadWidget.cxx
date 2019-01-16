@@ -46,6 +46,12 @@ qSlicerWebDownloadWidget::qSlicerWebDownloadWidget(QWidget *parent)
 void qSlicerWebDownloadWidget::handleDownload(QWebEngineDownloadItem *download)
 {
 
+// This code uses C++11 lambdas, which are only available when
+// Qt5 is used.  This code will never actually be called unless
+// QWebEngine is used, to it doesn't need to do anything in the
+// non-Qt5 case.
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+
   // need to use a modal dialog here because 'download' will be deleted
   // if we don't return 'accept from this slot
   QMessageBox *messageBox = new QMessageBox(this);
@@ -138,4 +144,5 @@ void qSlicerWebDownloadWidget::handleDownload(QWebEngineDownloadItem *download)
       QMessageBox::information(this, tr("Web download"), tr("Download complete"));
       }
   });
+#endif
 }

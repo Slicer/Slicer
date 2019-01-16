@@ -34,13 +34,13 @@
 qSlicerWebPythonProxy::qSlicerWebPythonProxy(QObject *parent)
   : QObject(parent)
 {
-  this->userSaidOK = false;
+  this->pythonEvaluationAllowed = false;
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerWebPythonProxy::okayToUsePython()
+bool qSlicerWebPythonProxy::isPythonEvaluationAllowed()
 {
-  if (this->userSaidOK)
+  if (this->pythonEvaluationAllowed)
     {
     return true;
     }
@@ -60,17 +60,17 @@ bool qSlicerWebPythonProxy::okayToUsePython()
 
   if (resultCode == QMessageBox::AcceptRole)
     {
-    this->userSaidOK = true;
+    this->pythonEvaluationAllowed = true;
     }
 
-  return this->userSaidOK;
+  return this->pythonEvaluationAllowed;
 }
 
 // --------------------------------------------------------------------------
 QString qSlicerWebPythonProxy::evalPython(const QString &python)
 {
   QString result;
-  if (this->okayToUsePython())
+  if (this->isPythonEvaluationAllowed())
     {
     qSlicerPythonManager *pythonManager = qSlicerApplication::application()->pythonManager();
     result = pythonManager->executeString(python).toString();

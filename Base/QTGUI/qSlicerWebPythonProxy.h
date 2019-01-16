@@ -56,8 +56,8 @@ public slots:
 
 private:
   /// Keep track of user response to avoid going through ctk dialog to check
-  bool okayToUsePython();
-  bool userSaidOK;
+  bool isPythonEvaluationAllowed();
+  bool pythonEvaluationAllowed;
 
 };
 
