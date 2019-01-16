@@ -1713,6 +1713,7 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
         actorProperties->SetFrontfaceCulling(modelDisplayNode->GetFrontfaceCulling());
         actorProperties->SetBackfaceCulling(modelDisplayNode->GetBackfaceCulling());
 
+        actor->SetPickable(model->GetSelectable());
         if (modelDisplayNode->GetSelected())
           {
           vtkDebugMacro("Model display node " << modelDisplayNode->GetName() << " is selected...");
