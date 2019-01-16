@@ -64,6 +64,14 @@ set(vtkAddon_SRCS
   vtkAddonMathUtilities.h
   vtkAddonMathUtilities.cxx
   vtkAddonSetGet.h
+  vtkStreamingVolumeCodec.cxx
+  vtkStreamingVolumeCodec.h
+  vtkStreamingVolumeFrame.cxx
+  vtkStreamingVolumeFrame.h
+  vtkStreamingVolumeCodecFactory.cxx
+  vtkStreamingVolumeCodecFactory.h
+  vtkRawRGBVolumeCodec.cxx
+  vtkRawRGBVolumeCodec.h
 )
 
 if(Slicer_VTK_RENDERING_USE_OpenGL2_BACKEND)

@@ -83,6 +83,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLSnapshotClipNodeTest1.cxx
   vtkMRMLStorableNodeTest1.cxx
   vtkMRMLStorageNodeTest1.cxx
+  vtkMRMLStreamingVolumeNodeTest1.cxx
   vtkMRMLTableNodeTest1.cxx
   vtkMRMLTableStorageNodeTest1.cxx
   vtkMRMLTableSQLiteStorageNodeTest.cxx
@@ -198,6 +199,7 @@ simple_test( vtkMRMLSliceNodeTest1 )
 simple_test( vtkMRMLSnapshotClipNodeTest1 )
 simple_test( vtkMRMLStorableNodeTest1 )
 simple_test( vtkMRMLStorageNodeTest1 )
+simple_test( vtkMRMLStreamingVolumeNodeTest1 )
 simple_test( vtkMRMLTableNodeTest1 )
 simple_test( vtkMRMLTableStorageNodeTest1 ${TEMP})
 simple_test( vtkMRMLTableViewNodeTest1 )
