@@ -330,7 +330,7 @@ function(fixup_bundle_with_plugins app)
     set(qt_root_dir "@qt_root_dir@")
     set(qtwebenginecore_app_subdir "Helpers/QtWebEngineProcess.app")
     set(qtwebenginecore_src_dir "${qt_root_dir}/QtWebEngineCore.framework/${qtwebenginecore_app_subdir}")
-    set(qtwebenginecore_dest_dir "${app_dir}/Contents/Frameworks/QtWebEngineCore.framework/${qtwebenginecore_app_subdir}")
+    set(qtwebenginecore_dest_dir "${app_dir}/Contents/Frameworks/QtWebEngineCore.framework/Versions/Current/${qtwebenginecore_app_subdir}")
     if(EXISTS ${qtwebenginecore_src_dir})
       file(COPY "${qtwebenginecore_src_dir}/Contents" DESTINATION "${qtwebenginecore_dest_dir}/" USE_SOURCE_PERMISSIONS)
       set(qtwebengineprocess_executable "${qtwebenginecore_dest_dir}/Contents/MacOS/QtWebEngineProcess")
@@ -352,8 +352,16 @@ function(fixup_bundle_with_plugins app)
       endforeach()
       # Update executable
       execute_process(COMMAND install_name_tool
-        -rpath "@executable_path/Frameworks" "@loader_path/../../../../../../"
+        -rpath "@executable_path/Frameworks" "@loader_path/../../../../../../../../"
         ${changes} "${qtwebengineprocess_executable}"
+        )
+      # Create relative symlinks in <package_root>/Contents/Frameworks/QtWebEngineCore.framework
+      #  from Versions/Current/Helpers
+      #    to Helpers
+      execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink
+        "Versions/Current/Helpers"
+        "Helpers"
+        WORKING_DIRECTORY "${app_dir}/Contents/Frameworks/QtWebEngineCore.framework"
         )
     endif()
   endif()
