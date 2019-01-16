@@ -42,16 +42,35 @@ foreach(var ${expected_existing_vars})
 endforeach()
 
 #-----------------------------------------------------------------------------
+# Macro allowing to set a variable to its default value if not already defined.
+# If defined, the default value is set with the value of environment variable <var>.
+# Otherwise, it is set with the value passed as a parameter.
+macro(_set_if_env_not_defined var defaultvalue)
+  if(DEFINED ENV{${var}})
+    set(_value "$ENV{${var}}")
+    message(STATUS "Setting '${var}' variable with environment variable value '${_value}'")
+    set(${var} $ENV{${var}})
+  else()
+    set(_value "${defaultvalue}")
+    message(STATUS "Setting '${var}' variable with default value '${_value}'")
+    set(${var} "${defaultvalue}")
+  endif()
+endmacro()
+
+#-----------------------------------------------------------------------------
 # The following variable can be used while testing the script
 #-----------------------------------------------------------------------------
 set(CTEST_EXTRA_VERBOSE TRUE)
-if(NOT DEFINED RUN_CTEST_CONFIGURE)
-  set(RUN_CTEST_CONFIGURE TRUE)
-endif()
-set(RUN_CTEST_BUILD TRUE)
-set(RUN_CTEST_TEST TRUE)
-set(RUN_CTEST_PACKAGES TRUE)
-set(RUN_CTEST_SUBMIT TRUE)
+_set_if_env_not_defined(run_extension_ctest_with_configure TRUE)
+_set_if_env_not_defined(run_extension_ctest_with_build TRUE)
+_set_if_env_not_defined(run_extension_ctest_with_test TRUE)
+_set_if_env_not_defined(run_extension_ctest_with_packages TRUE)
+_set_if_env_not_defined(run_extension_ctest_submit TRUE)
+set(RUN_CTEST_CONFIGURE ${run_extension_ctest_with_configure})
+set(RUN_CTEST_BUILD ${run_extension_ctest_with_build})
+set(RUN_CTEST_TEST ${run_extension_ctest_with_test})
+set(RUN_CTEST_PACKAGES ${run_extension_ctest_with_packages})
+set(RUN_CTEST_SUBMIT ${run_extension_ctest_submit})
 
 #-----------------------------------------------------------------------------
 # Prepare external project configuration arguments
