@@ -27,6 +27,7 @@
 #include "qSlicerLayoutManager.h"
 #include "qMRMLThreeDView.h"
 #include "qMRMLThreeDWidget.h"
+#include "qMRMLSliceView.h"
 #include "qMRMLSliceWidget.h"
 #include "qSlicerMouseModeToolBar_p.h"
 
@@ -463,6 +464,9 @@ void qSlicerMouseModeToolBar::changeCursorTo(QCursor cursor)
   for (int i=0; i < layoutManager->threeDViewCount(); ++i)
     {
     layoutManager->threeDWidget(i)->threeDView()->setCursor(cursor);
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
+    layoutManager->threeDWidget(i)->threeDView()->VTKWidget()->setQVTKCursor(cursor);
+#endif
     }
 
   // the slice viewers
@@ -482,10 +486,13 @@ void qSlicerMouseModeToolBar::changeCursorTo(QCursor cursor)
     vtkMRMLSliceNode *sliceNode = vtkMRMLSliceNode::SafeDownCast(visibleViews->GetItemAsObject(v));
     if (sliceNode)
       {
-      qMRMLSliceWidget *sliceView = layoutManager->sliceWidget(sliceNode->GetName());
+      qMRMLSliceView *sliceView = layoutManager->sliceWidget(sliceNode->GetName())->sliceView();
       if (sliceView)
         {
         sliceView->setCursor(cursor);
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
+        sliceView->VTKWidget()->setQVTKCursor(cursor);
+#endif
         }
       }
     }
