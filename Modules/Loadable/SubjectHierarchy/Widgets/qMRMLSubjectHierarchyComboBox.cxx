@@ -245,6 +245,27 @@ void qMRMLSubjectHierarchyComboBox::setHighlightReferencedItems(bool highlightOn
 }
 
 //--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyComboBox::setPluginWhitelist(QStringList whitelist)
+{
+  Q_D(qMRMLSubjectHierarchyComboBox);
+  d->TreeView->setPluginWhitelist(whitelist);
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyComboBox::setPluginBlacklist(QStringList blacklist)
+{
+  Q_D(qMRMLSubjectHierarchyComboBox);
+  d->TreeView->setPluginBlacklist(blacklist);
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyComboBox::disablePlugin(QString plugin)
+{
+  Q_D(qMRMLSubjectHierarchyComboBox);
+  d->TreeView->disablePlugin(plugin);
+}
+
+//--------------------------------------------------------------------------
 void qMRMLSubjectHierarchyComboBox::setAttributeFilter(const QString& attributeName, const QVariant& attributeValue/*=QVariant()*/)
 {
   Q_D(qMRMLSubjectHierarchyComboBox);
