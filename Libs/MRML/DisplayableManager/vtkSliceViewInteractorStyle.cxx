@@ -598,7 +598,7 @@ void vtkSliceViewInteractorStyle::OnMouseWheelForward()
 //----------------------------------------------------------------------------
 void vtkSliceViewInteractorStyle::OnMouseWheelBackward()
 {
-  if (this->Interactor->GetControlKey() && this->GetActionEnabled(vtkSliceViewInteractorStyle::BrowseSlice))
+  if (this->Interactor->GetControlKey() && this->GetActionEnabled(vtkSliceViewInteractorStyle::Zoom))
     {
     this->ScaleZoom(1.2);
     }
