@@ -1005,7 +1005,7 @@ bool vtkSubjectHierarchyItem::Move(vtkSubjectHierarchyItem* beforeItem)
   // Prevent deletion of the item from memory until the events are processed
   vtkSmartPointer<vtkSubjectHierarchyItem> thisPointer = this;
 
-  // Remove item from former parent
+  // Remove from parent before re-adding in new position
   this->Parent->Children.erase(removedIt);
 
   // Re-insert item to the requested position (before beforeItem)

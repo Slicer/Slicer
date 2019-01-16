@@ -47,6 +47,8 @@ public:
   QString AttributeNameFilter;
   QString AttributeValueFilter;
   QString LevelFilter;
+  QStringList NodeTypes;
+  QStringList HideChildNodeTypes;
   vtkIdType HideItemsUnaffiliatedWithItemID;
 };
 
@@ -56,6 +58,8 @@ qMRMLSortFilterSubjectHierarchyProxyModelPrivate::qMRMLSortFilterSubjectHierarch
   , AttributeNameFilter(QString())
   , AttributeValueFilter(QString())
   , LevelFilter(QString())
+  , NodeTypes(QStringList())
+  , HideChildNodeTypes(QStringList())
   , HideItemsUnaffiliatedWithItemID(vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
 {
 }
@@ -68,6 +72,8 @@ CTK_GET_CPP(qMRMLSortFilterSubjectHierarchyProxyModel, QString, nameFilter, Name
 CTK_GET_CPP(qMRMLSortFilterSubjectHierarchyProxyModel, QString, attributeNameFilter, AttributeNameFilter);
 CTK_GET_CPP(qMRMLSortFilterSubjectHierarchyProxyModel, QString, attributeValueFilter, AttributeValueFilter);
 CTK_GET_CPP(qMRMLSortFilterSubjectHierarchyProxyModel, QString, levelFilter, LevelFilter);
+CTK_GET_CPP(qMRMLSortFilterSubjectHierarchyProxyModel, QStringList, nodeTypes, NodeTypes);
+CTK_GET_CPP(qMRMLSortFilterSubjectHierarchyProxyModel, QStringList, hideChildNodeTypes, HideChildNodeTypes);
 
 //------------------------------------------------------------------------------
 qMRMLSortFilterSubjectHierarchyProxyModel::qMRMLSortFilterSubjectHierarchyProxyModel(QObject *vparent)
@@ -155,6 +161,30 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setLevelFilter(QString filter)
     return;
     }
   d->LevelFilter = filter;
+  this->invalidateFilter();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSortFilterSubjectHierarchyProxyModel::setNodeTypes(const QStringList& types)
+{
+  Q_D(qMRMLSortFilterSubjectHierarchyProxyModel);
+  if (d->NodeTypes == types)
+    {
+    return;
+    }
+  d->NodeTypes = types;
+  this->invalidateFilter();
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSortFilterSubjectHierarchyProxyModel::setHideChildNodeTypes(const QStringList& types)
+{
+  Q_D(qMRMLSortFilterSubjectHierarchyProxyModel);
+  if (d->HideChildNodeTypes == types)
+    {
+    return;
+    }
+  d->HideChildNodeTypes = types;
   this->invalidateFilter();
 }
 
@@ -312,7 +342,48 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType item
       {
       return false;
       }
-    }
+
+    // Filter by node type
+    bool nodeTypeAccepted = false;
+    if (!d->NodeTypes.isEmpty())
+      {
+      QString dataNodeClass(dataNode->GetClassName());
+      foreach (const QString& nodeType, d->NodeTypes)
+        {
+        if (dataNode->IsA(nodeType.toLatin1().data()))
+          {
+          nodeTypeAccepted = true;
+          break;
+          }
+        }
+      }
+    else
+      {
+      nodeTypeAccepted = true;
+      }
+    if (nodeTypeAccepted)
+      {
+      foreach (const QString& hideChildNodeType, d->HideChildNodeTypes)
+        {
+        if (dataNode->IsA(hideChildNodeType.toLatin1().data()))
+          {
+          nodeTypeAccepted = false;
+          }
+        }
+      }
+    if (!nodeTypeAccepted)
+      {
+      if (canAcceptIfAnyChildIsAccepted)
+        {
+        // If node type was requested but is different, then only show if any of its children are shown
+        onlyAcceptIfAnyChildIsAccepted = true;
+        }
+      else
+        {
+        return false;
+        }
+      }
+    } // If data node
 
   // Filter by level
   if (!d->LevelFilter.isEmpty())
@@ -322,13 +393,23 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType item
       {
       if (canAcceptIfAnyChildIsAccepted)
         {
-        // If level was requested but different, then only show if any of its children are shown
+        // If level was requested but is different, then only show if any of its children are shown
         onlyAcceptIfAnyChildIsAccepted = true;
         }
       else
         {
         return false;
         }
+      }
+    }
+
+  // Do not show items in virtual branches if their parent is not accepted for any reason
+  vtkIdType parentItemID = shNode->GetItemParent(itemID);
+  if (parentItemID && shNode->IsItemVirtualBranchParent(parentItemID))
+    {
+    if (!this->filterAcceptsItem(parentItemID, false))
+      {
+      return false;
       }
     }
 
