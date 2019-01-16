@@ -332,6 +332,8 @@ bool vtkMRMLThreeDReformatDisplayableManager::vtkInternal
                  sliceToRAS->GetElement(1,3),
                  sliceToRAS->GetElement(2,3));
 
+  rep->SetDrawOutline(sliceNode->GetWidgetOutlineVisible());
+
   // Update the widget itself if necessary
   bool visible =
     sliceNode->IsDisplayableInThreeDView(this->External->GetMRMLViewNode()->GetID())
