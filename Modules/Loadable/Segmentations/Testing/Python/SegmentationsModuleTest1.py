@@ -50,7 +50,7 @@ class SegmentationsModuleTest1(unittest.TestCase):
     self.dataZipFilePath = self.segmentationsModuleTestDir + '/TinyPatient_Seg.zip'
 
     # Define variables
-    self.expectedNumOfFilesInDataDir = 2
+    self.expectedNumOfFilesInDataDir = 4
     self.expectedNumOfFilesInDataSegDir = 2
     self.inputSegmentationNode = None
     self.bodySegmentName = 'Body_Contour'
