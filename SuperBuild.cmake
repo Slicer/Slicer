@@ -333,7 +333,7 @@ list_conditional_append(Slicer_BUILD_LandmarkRegistration Slicer_REMOTE_DEPENDEN
 # The following logic is documented in the "Bundle remote modules and extensions adding source directories."
 # section found in the top-level CMakeLists.txt
 
-set(_extension_depends )
+set(_all_extension_depends )
 
 # Build only inner-build for superbuild-type extensions
 set(Slicer_BUNDLED_EXTENSION_NAMES)
@@ -347,6 +347,8 @@ foreach(extension_dir ${Slicer_EXTENSION_SOURCE_DIRS})
     list(APPEND EXTERNAL_PROJECT_ADDITIONAL_DIRS "${extension_dir}/SuperBuild")
     list(APPEND EXTERNAL_PROJECT_ADDITIONAL_DIRS "${extension_dir}/Superbuild")
 
+    set(_external_project_cmake_files)
+
     # SuperBuild
     file(GLOB _external_project_cmake_files1 RELATIVE "${extension_dir}/SuperBuild" "${extension_dir}/SuperBuild/External_*.cmake")
     list(APPEND _external_project_cmake_files ${_external_project_cmake_files1})
@@ -357,6 +359,7 @@ foreach(extension_dir ${Slicer_EXTENSION_SOURCE_DIRS})
 
     list(REMOVE_DUPLICATES _external_project_cmake_files)
 
+    set(_extension_depends)
     foreach (_external_project_cmake_file ${_external_project_cmake_files})
       string(REGEX MATCH "External_(.+)\.cmake" _match ${_external_project_cmake_file})
       set(_additional_project_name "${CMAKE_MATCH_1}")
@@ -367,10 +370,12 @@ foreach(extension_dir ${Slicer_EXTENSION_SOURCE_DIRS})
 
     message(STATUS "SuperBuild - ${extension_name} extension => ${_extension_depends}")
 
+    list(APPEND _all_extension_depends ${_extension_depends})
   endif()
 endforeach()
 
-list(APPEND Slicer_DEPENDENCIES ${_extension_depends})
+list(REMOVE_DUPLICATES _all_extension_depends)
+list(APPEND Slicer_DEPENDENCIES ${_all_extension_depends})
 
 mark_as_superbuild(Slicer_BUNDLED_EXTENSION_NAMES:STRING)
 
