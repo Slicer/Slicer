@@ -51,7 +51,10 @@ This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colon
       self.parent.slicerWikiUrl, slicer.app.majorVersion, slicer.app.minorVersion, docPage)
     return linkText
 
-  def runTest(self, msec=100):
+  def runTest(self, msec=100, **kwargs):
+    """
+    :param msec: delay to associate with :func:`ScriptedLoadableModuleTest.delayDisplay()`.
+    """
     # Name of the test case class is expected to be <ModuleName>Test
     module = importlib.import_module(self.__module__)
     className = self.moduleName + 'Test'
@@ -63,7 +66,7 @@ This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colon
 
     testCase = TestCaseClass()
     testCase.messageDelay = msec
-    testCase.runTest()
+    testCase.runTest(**kwargs)
 
 class ScriptedLoadableModuleWidget:
   def __init__(self, parent = None):
@@ -159,8 +162,7 @@ class ScriptedLoadableModuleWidget:
 
   def onReload(self):
     """
-    ModuleWizard will substitute correct default moduleName.
-    Generic reload method for any scripted module.
+    Reload scripted module widget representation.
     """
 
     # Print a clearly visible separator to make it easier
@@ -174,11 +176,14 @@ class ScriptedLoadableModuleWidget:
 
     slicer.util.reloadScriptedModule(self.moduleName)
 
-  def onReloadAndTest(self):
+  def onReloadAndTest(self, **kwargs):
+    """Reload scripted module widget representation and call :func:`ScriptedLoadableModuleTest.runTest()`
+    passing ``kwargs``.
+    """
     try:
       self.onReload()
       test = slicer.selfTests[self.moduleName]
-      test(msec=int(slicer.app.userSettings().value("Developer/SelfTestDisplayMessageDelay")))
+      test(msec=int(slicer.app.userSettings().value("Developer/SelfTestDisplayMessageDelay")), **kwargs)
     except Exception, e:
       import traceback
       traceback.print_exc()
