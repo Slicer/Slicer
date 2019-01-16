@@ -430,9 +430,14 @@ class SampleDataLogic(object):
     """Given a uri and and a filename, download the data into
     a file of the given name in the scene's cache"""
     destFolderPath = slicer.mrmlScene.GetCacheManager().GetRemoteCacheDirectory()
+
     if not os.access(destFolderPath, os.W_OK):
-      errorMessage = '<b>Cache folder %s is not writable!</b>' % destFolderPath
-      self.logMessage(errorMessage, logging.ERROR)
+      try:
+        os.mkdir(destFolderPath)
+      except:
+        self.logMessage('<b>Failed to create cache folder %s</b>' % destFolderPath, logging.ERROR)
+      if not os.access(destFolderPath, os.W_OK):
+        self.logMessage('<b>Cache folder %s is not writable</b>' % destFolderPath, logging.ERROR)
     return self.downloadFile(uri, destFolderPath, name)
 
   def downloadSourceIntoCache(self, source):
@@ -476,13 +481,13 @@ class SampleDataLogic(object):
         qt.QDir().mkpath(outputDir)
         success = slicer.util.extractArchive(filePath, outputDir)
         if not success and attemptCount < 5:
-          attemptCount += 1
-          self.logMessage('<b>Load failed! Trying to download again (%d of 5 attempts)...</b>' % (attemptCount), logging.ERROR)
           file = qt.QFile(filePath)
           if not file.remove():
             self.logMessage('<b>Load failed! Unable to delete and try again loading %s!</b>' % filePath, logging.ERROR)
             nodes.append(None)
             break
+          attemptCount += 1
+          self.logMessage('<b>Load failed! Trying to download again (%d of 5 attempts)...</b>' % (attemptCount), logging.ERROR)
           outputDir = self.downloadFromSource(current_source,attemptCount)[0]
         nodes.append(outputDir)
 
@@ -492,13 +497,13 @@ class SampleDataLogic(object):
           continue
         success = self.loadScene(filePath, source.loadFileProperties)
         if not success and attemptCount < 5:
-          attemptCount += 1
-          self.logMessage('<b>Load failed! Trying to download again (%d of 5 attempts)...</b>' % (attemptCount), logging.ERROR)
           file = qt.QFile(filePath)
           if not file.remove():
             self.logMessage('<b>Load failed! Unable to delete and try again loading %s!</b>' % filePath, logging.ERROR)
             nodes.append(None)
             break
+          attemptCount += 1
+          self.logMessage('<b>Load failed! Trying to download again (%d of 5 attempts)...</b>' % (attemptCount), logging.ERROR)
           filePath = self.downloadFromSource(current_source,attemptCount)[0]
         nodes.append(filePath)
 
@@ -508,13 +513,13 @@ class SampleDataLogic(object):
           continue
         loadedNode = self.loadNode(filePath, nodeName, loadFileType, source.loadFileProperties)
         if loadedNode is None and attemptCount < 5:
-          attemptCount += 1
-          self.logMessage('<b>Load failed! Trying to download again (%d of 5 attempts)...</b>' % (attemptCount), logging.ERROR)
           file = qt.QFile(filePath)
           if not file.remove():
             self.logMessage('<b>Load failed! Unable to delete and try again loading %s!</b>' % filePath, logging.ERROR)
-            loadedNode.append(None)
+            nodes.append(None)
             break
+          attemptCount += 1
+          self.logMessage('<b>Load failed! Trying to download again (%d of 5 attempts)...</b>' % (attemptCount), logging.ERROR)
           loadedNode = self.downloadFromSource(current_source,attemptCount)[0]
         nodes.append(loadedNode)
 
