@@ -768,9 +768,18 @@ bool qMRMLSubjectHierarchyTreeView::clickDecoration(QMouseEvent* e)
       }
     else if (e->button() == Qt::RightButton)
       {
-      // Populate then show visibility context menu
-      this->populateVisibilityContextMenuForItem(itemID);
-      d->VisibilityMenu->exec(e->globalPos());
+      // If multiple items are selected then show the node menu instead of the visibility menu
+      if (d->SelectedItems.size() > 1)
+        {
+        this->populateContextMenuForItem(itemID);
+        d->NodeMenu->exec(e->globalPos());
+        }
+      else
+        {
+        // Populate then show visibility context menu if only one item is selected
+        this->populateVisibilityContextMenuForItem(itemID);
+        d->VisibilityMenu->exec(e->globalPos());
+        }
       }
 
     return true;
