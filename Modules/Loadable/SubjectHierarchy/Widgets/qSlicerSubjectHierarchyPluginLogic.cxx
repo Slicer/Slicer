@@ -34,6 +34,7 @@
 #include "qSlicerSubjectHierarchyParseLocalDataPlugin.h"
 #include "qSlicerSubjectHierarchyRegisterPlugin.h"
 #include "qSlicerSubjectHierarchyFolderPlugin.h"
+#include "qSlicerSubjectHierarchyOpacityPlugin.h"
 
 // Qt includes
 #include <QDebug>
@@ -99,6 +100,8 @@ void qSlicerSubjectHierarchyPluginLogic::registerCorePlugins()
     new qSlicerSubjectHierarchyChartsPlugin());
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
     new qSlicerSubjectHierarchyRegisterPlugin());
+  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
+    new qSlicerSubjectHierarchyOpacityPlugin());
 }
 
 //-----------------------------------------------------------------------------
