@@ -16,7 +16,7 @@ def downloadFromURL(uris=None, fileNames=None, nodeNames=None, loadFiles=None,
   :param uris: Download URL(s).
   :param fileNames: File name(s) that will be downloaded (and loaded).
   :param nodeNames: Node name(s) in the scene.
-  :param loadFiles: Indicate if file(s) should be loaded. By default, the function decides.
+  :param loadFiles: Boolean indicating if file(s) should be loaded. By default, the function decides.
   :param customDownloader: Custom function for downloading.
   :param loadFileTypes: file format name(s) ('VolumeFile' by default).
   :param loadFileProperties: custom properties passed to the IO plugin.
@@ -136,7 +136,7 @@ class SampleDataSource(object):
     :param uris: Download URL(s).
     :param fileNames: File name(s) that will be downloaded (and loaded).
     :param nodeNames: Node name(s) in the scene.
-    :param loadFiles: Indicate if file(s) should be loaded.
+    :param loadFiles: Boolean indicating if file(s) should be loaded.
     :param customDownloader: Custom function for downloading.
     :param loadFileType: file format name(s) ('VolumeFile' by default if node name is specified).
     :param loadFileProperties: custom properties passed to the IO plugin.
@@ -333,7 +333,7 @@ class SampleDataLogic(object):
   def registerCustomSampleDataSource(category='Custom',
     sampleName=None, uris=None, fileNames=None, nodeNames=None,
     customDownloader=None, thumbnailFileName=None,
-    loadFileType='VolumeFile', loadFileProperties={}):
+    loadFileType='VolumeFile', loadFiles=None, loadFileProperties={}):
     """Adds custom data sets to SampleData.
     :param category: Section title of data set in SampleData module GUI.
     :param sampleName: Displayed name of data set in SampleData module GUI.
@@ -343,6 +343,7 @@ class SampleDataLogic(object):
     :param nodeNames: Node name(s) in the scene.
     :param customDownloader: Custom function for downloading.
     :param loadFileType: file format name(s) ('VolumeFile' by default).
+    :param loadFiles: Boolean indicating if file(s) should be loaded. By default, the function decides.
     :param loadFileProperties: custom properties passed to the IO plugin.
     """
 
@@ -361,6 +362,7 @@ class SampleDataLogic(object):
       nodeNames=nodeNames,
       thumbnailFileName=thumbnailFileName,
       loadFileType=loadFileType,
+      loadFiles=loadFiles,
       loadFileProperties=loadFileProperties
       ))
 
@@ -537,7 +539,7 @@ class SampleDataLogic(object):
     :param uris: Download URL(s).
     :param fileNames: File name(s) that will be downloaded (and loaded).
     :param nodeNames: Node name(s) in the scene.
-    :param loadFiles: Indicate if file(s) should be loaded. By default, the function decides.
+    :param loadFiles: Boolean indicating if file(s) should be loaded. By default, the function decides.
     :param customDownloader: Custom function for downloading.
     :param loadFileTypes: file format name(s) ('VolumeFile' by default).
     :param loadFileProperties: custom properties passed to the IO plugin.
