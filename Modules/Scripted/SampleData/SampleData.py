@@ -723,6 +723,14 @@ class SampleDataTest(ScriptedLoadableModuleTest):
       self.setUp()
       test()
 
+  @staticmethod
+  def path2uri(path):
+    """Gets an ur from a local file path.
+    Typically it prefixes the received path by file:// or file:///.
+    """
+    import urlparse, urllib
+    return urlparse.urljoin('file:', urllib.pathname2url(path))
+
   def test_downloadFromSource_downloadFiles(self):
     """Specifying URIs and fileNames without nodeNames is expected to download the files
     without loading into Slicer.
@@ -780,12 +788,11 @@ class SampleDataTest(ScriptedLoadableModuleTest):
     tempFile.close()
     sceneMTime = slicer.mrmlScene.GetMTime()
     filePaths = logic.downloadFromSource(SampleDataSource(
-      uris='file://' + tempFile.fileName(), loadFiles=True, fileNames='scene.mrml'))
+      uris=self.path2uri(tempFile.fileName()), loadFiles=True, fileNames='scene.mrml'))
     self.assertEqual(len(filePaths), 1)
     self.assertTrue(os.path.exists(filePaths[0]))
     self.assertTrue(os.path.isfile(filePaths[0]))
     self.assertTrue(sceneMTime < slicer.mrmlScene.GetMTime())
-    os.remove(tempFile.fileName())
 
   def test_downloadFromSource_downloadMRBFile(self):
     logic = SampleDataLogic()
@@ -809,12 +816,11 @@ class SampleDataTest(ScriptedLoadableModuleTest):
     tempFile.close()
     sceneMTime = slicer.mrmlScene.GetMTime()
     filePaths = logic.downloadFromSource(SampleDataSource(
-      uris='file://' + tempFile.fileName(), fileNames='scene.mrml'))
+      uris=self.path2uri(tempFile.fileName()), fileNames='scene.mrml'))
     self.assertEqual(len(filePaths), 1)
     self.assertTrue(os.path.exists(filePaths[0]))
     self.assertTrue(os.path.isfile(filePaths[0]))
     self.assertEqual(sceneMTime, slicer.mrmlScene.GetMTime())
-    os.remove(tempFile.fileName())
 
   def test_downloadFromSource_loadNode(self):
     logic = SampleDataLogic()
