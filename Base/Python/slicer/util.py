@@ -283,6 +283,46 @@ def loadUI(path):
     raise RuntimeError(errorMessage)
   return widget
 
+def startQtDesigner(args = None):
+  """ Start Qt Designer application to allow editing UI files.
+  This only works if the launcher has properly configured with --designer option,
+  which is currently only available in the build tree, not in installed applications.
+  """
+
+  import slicer
+  import subprocess
+  executableFilePath = slicer.app.launcherExecutableFilePath
+  cmdLineArguments = ['--designer']
+  if args is not None:
+    if isinstance(args, basestring):
+      cmdLineArguments.append(args)
+    else:
+      cmdLineArguments.extend(args)
+  return subprocess.Popen([executableFilePath] + cmdLineArguments, env=startupEnvironment())
+
+def childWidgetVariables(widget):
+  """ Get child widgets as attributes of an object.
+  Each named child widget is accessible as an attribute of the returned object,
+  with the attribute name matching the child widget name.
+  This function provides convenient access to widgets in a loaded UI file.
+
+  Example:
+
+  .. code-block:: python
+
+    uiWidget = slicer.util.loadUI(myUiFilePath)
+    self.ui = slicer.util.childWidgetVariables(uiWidget)
+    self.ui.inputSelector.setMRMLScene(slicer.mrmlScene)
+    self.ui.outputSelector.setMRMLScene(slicer.mrmlScene)
+
+  """
+  ui = type('', (), {})() # empty object
+  childWidgets = findChildren(widget)
+  for childWidget in childWidgets:
+    if hasattr(childWidget, "name"):
+      setattr(ui, childWidget.name, childWidget)
+  return ui
+
 def setSliceViewerLayers(background='keep-current', foreground='keep-current', label='keep-current',
                          foregroundOpacity=None, labelOpacity=None, fit=False):
   """ Set the slice views with the given nodes.

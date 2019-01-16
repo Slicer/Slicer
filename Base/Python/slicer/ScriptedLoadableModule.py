@@ -91,6 +91,10 @@ class ScriptedLoadableModuleWidget:
     slicer.app.moduleManager().connect(
       'moduleAboutToBeUnloaded(QString)', self._onModuleAboutToBeUnloaded)
 
+  def resourcePath(self, filename):
+    scriptedModulesPath = os.path.dirname(slicer.util.modulePath(self.moduleName))
+    return os.path.join(scriptedModulesPath, 'Resources', filename)
+
   def cleanup(self):
     """Override this function to implement module widget specific cleanup.
 
@@ -114,17 +118,16 @@ class ScriptedLoadableModuleWidget:
       return
 
     def createHLayout(elements):
-      widget = qt.QWidget()
       rowLayout = qt.QHBoxLayout()
-      widget.setLayout(rowLayout)
       for element in elements:
         rowLayout.addWidget(element)
-      return widget
+      return rowLayout
 
     #
     # Reload and Test area
     # Used during development, but hidden when delivering
     # developer mode is turned off.
+
     self.reloadCollapsibleButton = ctk.ctkCollapsibleButton()
     self.reloadCollapsibleButton.text = "Reload && Test"
     self.layout.addWidget(self.reloadCollapsibleButton)
@@ -146,6 +149,20 @@ class ScriptedLoadableModuleWidget:
     self.editSourceButton.toolTip = "Edit the module's source code."
     self.editSourceButton.connect('clicked()', self.onEditSource)
 
+    self.editModuleUiButton = None
+    # Current limitation: Qt Designer is only availabe in the build tree,
+    # not bundled with the installed application. Therefore, the "Edit UI"
+    # button may only shown if the application is not installed.
+    if not slicer.app.isInstalled:
+      moduleUiFileName = self.resourcePath('UI/%s.ui' % self.moduleName)
+      print(moduleUiFileName)
+      import os.path
+      if os.path.isfile(moduleUiFileName):
+        # Module UI file exists
+        self.editModuleUiButton = qt.QPushButton("Edit UI")
+        self.editModuleUiButton.toolTip = "Edit the module's .ui file."
+        self.editModuleUiButton.connect('clicked()', lambda filename=moduleUiFileName: slicer.util.startQtDesigner(moduleUiFileName))
+
     # restart Slicer button
     # (use this during development, but remove it when delivering
     #  your module to users)
@@ -154,7 +171,12 @@ class ScriptedLoadableModuleWidget:
     self.restartButton.name = "ScriptedLoadableModuleTemplate Restart"
     self.restartButton.connect('clicked()', slicer.app.restart)
 
-    reloadFormLayout.addWidget(createHLayout([self.reloadButton, self.reloadAndTestButton, self.editSourceButton, self.restartButton]))
+    if self.editModuleUiButton:
+      # There are many buttons, distribute them in two rows
+      reloadFormLayout.addRow(createHLayout([self.reloadButton, self.reloadAndTestButton, self.restartButton]))
+      reloadFormLayout.addRow(createHLayout([self.editSourceButton, self.editModuleUiButton]))
+    else:
+      reloadFormLayout.addRow(createHLayout([self.reloadButton, self.reloadAndTestButton, self.editSourceButton, self.restartButton]))
 
   def setup(self):
     # Instantiate and connect default widgets ...
