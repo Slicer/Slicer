@@ -193,6 +193,20 @@ void qSlicerSimpleMarkupsWidget::setCurrentNode(vtkMRMLNode* currentNode)
 }
 
 //-----------------------------------------------------------------------------
+vtkMRMLInteractionNode* qSlicerSimpleMarkupsWidget::interactionNode()const
+{
+  Q_D(const qSlicerSimpleMarkupsWidget);
+  return d->MarkupsPlaceWidget->interactionNode();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSimpleMarkupsWidget::setInteractionNode(vtkMRMLInteractionNode* interactionNode)
+{
+  Q_D(qSlicerSimpleMarkupsWidget);
+  d->MarkupsPlaceWidget->setInteractionNode(interactionNode);
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerSimpleMarkupsWidget::setNodeBaseName(QString newNodeBaseName)
 {
   Q_D(qSlicerSimpleMarkupsWidget);

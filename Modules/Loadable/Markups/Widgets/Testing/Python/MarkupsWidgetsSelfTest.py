@@ -107,7 +107,7 @@ class MarkupsWidgetsSelfTestTest(ScriptedLoadableModuleTest):
 
     simpleMarkupsWidget = slicer.qSlicerSimpleMarkupsWidget()
     nodeSelector = slicer.util.findChildren(simpleMarkupsWidget,"MarkupsFiducialNodeComboBox")[0]
-
+    self.assertIsNone(simpleMarkupsWidget.interactionNode())
     simpleMarkupsWidget.setMRMLScene(slicer.mrmlScene)
     simpleMarkupsWidget.show()
 
@@ -157,11 +157,19 @@ class MarkupsWidgetsSelfTestTest(ScriptedLoadableModuleTest):
     tableWidget = simpleMarkupsWidget.tableWidget()
     self.assertEqual(tableWidget.rowCount, numberOfFiducialsAdded)
 
+    self.assertEqual(simpleMarkupsWidget.interactionNode(), slicer.app.applicationLogic().GetInteractionNode())
+    otherInteractionNode = slicer.vtkMRMLInteractionNode()
+    otherInteractionNode.SetSingletonOff()
+    slicer.mrmlScene.AddNode(otherInteractionNode)
+    simpleMarkupsWidget.setInteractionNode(otherInteractionNode)
+    self.assertEqual(simpleMarkupsWidget.interactionNode(), otherInteractionNode)
+
   # ------------------------------------------------------------------------------
   def section_MarkupsPlaceWidget(self):
     self.delayDisplay("Test MarkupsPlaceWidget",self.delayMs)
 
     placeWidget = slicer.qSlicerMarkupsPlaceWidget()
+    self.assertIsNone(placeWidget.interactionNode())
     placeWidget.setMRMLScene(slicer.mrmlScene)
     placeWidget.setCurrentNode(self.markupsNode1)
     placeWidget.show()
@@ -189,3 +197,10 @@ class MarkupsWidgetsSelfTestTest(ScriptedLoadableModuleTest):
     placeWidget.placeModeEnabled = False
     placeWidget.placeModeEnabled = True
     self.assertTrue(placeWidget.placeModePersistency)
+
+    self.assertEqual(placeWidget.interactionNode(), slicer.app.applicationLogic().GetInteractionNode())
+    otherInteractionNode = slicer.vtkMRMLInteractionNode()
+    otherInteractionNode.SetSingletonOff()
+    slicer.mrmlScene.AddNode(otherInteractionNode)
+    placeWidget.setInteractionNode(otherInteractionNode)
+    self.assertEqual(placeWidget.interactionNode(), otherInteractionNode)

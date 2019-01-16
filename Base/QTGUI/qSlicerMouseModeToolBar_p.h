@@ -53,6 +53,7 @@
 
 // VTK includes
 #include <vtkSmartPointer.h>
+#include <vtkWeakPointer.h>
 
 class qSlicerMouseModeToolBarPrivate;
 class QAction;
@@ -92,6 +93,7 @@ public:
 
   vtkSmartPointer<vtkMRMLScene>            MRMLScene;
   vtkSmartPointer<vtkMRMLApplicationLogic> MRMLAppLogic;
+  vtkWeakPointer<vtkMRMLInteractionNode>   InteractionNode;
 
   /// PlaceMode button and menu
   QToolButton *CreateAndPlaceToolButton;

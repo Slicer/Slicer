@@ -39,6 +39,7 @@
 #include <cstdlib>
 
 class vtkMRMLNode;
+class vtkMRMLInteractionNode;
 class vtkMRMLSegmentationNode;
 class vtkMRMLSegmentEditorNode;
 class vtkMRMLVolumeNode;
@@ -189,6 +190,10 @@ public:
   Q_INVOKABLE void masterVolumeNodeSelectorRemoveAttribute(const QString& nodeType,
     const QString& attributeName);
 
+  /// Get current interaction node.
+  /// \sa SetInteractionNode()
+  Q_INVOKABLE vtkMRMLInteractionNode* interactionNode() const;
+
 public slots:
   /// Set the MRML \a scene associated with the widget
   virtual void setMRMLScene(vtkMRMLScene* newScene);
@@ -285,6 +290,10 @@ public slots:
   /// Rotate slice views to be aligned with segmentation node's internal
   /// labelmap representation axes.
   void rotateSliceViewsToSegmentation();
+
+  /// Set node used to notify active effect about interaction node changes.
+  /// \sa interactionNode()
+  void setInteractionNode(vtkMRMLInteractionNode* interactionNode);
 
 signals:
   /// Emitted if different segment is selected in the segment list.

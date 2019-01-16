@@ -1761,6 +1761,25 @@ void qMRMLSegmentEditorWidget::setMRMLSegmentEditorNode(vtkMRMLSegmentEditorNode
   this->updateWidgetFromMRML();
 }
 
+//-----------------------------------------------------------------------------
+vtkMRMLInteractionNode* qMRMLSegmentEditorWidget::interactionNode()const
+{
+  Q_D(const qMRMLSegmentEditorWidget);
+  return d->InteractionNode;
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::setInteractionNode(vtkMRMLInteractionNode* interactionNode)
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  if (d->InteractionNode == interactionNode)
+    {
+    return;
+    }
+  this->qvtkReconnect(d->InteractionNode, interactionNode, vtkCommand::ModifiedEvent, this, SLOT(onInteractionNodeModified()));
+  d->InteractionNode = interactionNode;
+}
+
 //------------------------------------------------------------------------------
 void qMRMLSegmentEditorWidget::initializeParameterSetNode()
 {

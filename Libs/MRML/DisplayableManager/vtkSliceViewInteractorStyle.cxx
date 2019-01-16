@@ -340,9 +340,12 @@ int vtkSliceViewInteractorStyle::GetMouseInteractionMode()
     vtkErrorMacro("vtkSliceViewInteractorStyle::GetMouseInteractionMode: failed to get scene");
     return vtkMRMLInteractionNode::ViewTransform;
     }
-  vtkMRMLScene* scene = this->SliceLogic->GetMRMLScene();
-
-  vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast(scene->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
+  if ( this->SliceLogic->GetSliceNode() == 0 )
+    {
+    vtkErrorMacro("vtkSliceViewInteractorStyle::GetMouseInteractionMode: failed to get slice view node");
+    return vtkMRMLInteractionNode::ViewTransform;
+    }
+  vtkMRMLInteractionNode *interactionNode = this->SliceLogic->GetSliceNode()->GetInteractionNode();
   if (interactionNode == 0)
     {
     vtkErrorMacro("vtkSliceViewInteractorStyle::GetMouseInteractionMode: failed to get interaction node");

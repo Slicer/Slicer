@@ -57,6 +57,10 @@ public:
   /// Deprecated. Use currentNode() instead.
   Q_INVOKABLE vtkMRMLNode* getCurrentNode();
 
+  /// Get interaction node.
+  /// \sa setInteractionNode()
+  Q_INVOKABLE vtkMRMLInteractionNode* interactionNode()const;
+
   /// Get the markups table widget
   Q_INVOKABLE QTableWidget* tableWidget() const;
 
@@ -101,6 +105,10 @@ public slots:
 
   /// Set the default name of the markups node created in the combo box.
   void setNodeBaseName(QString newNodeBaseName);
+
+  /// Set interaction node used to update the widget.
+  /// \sa interactionNode()
+  void setInteractionNode(vtkMRMLInteractionNode* interactionNode);
 
   /// Accessors to control place mode behavior
   void setEnterPlaceModeOnNodeChange(bool);

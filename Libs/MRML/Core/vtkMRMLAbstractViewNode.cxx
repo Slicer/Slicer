@@ -23,6 +23,7 @@
 
 // MRML includes
 #include "vtkMRMLAbstractViewNode.h"
+#include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLScene.h"
 
@@ -31,6 +32,7 @@
 
 const char* vtkMRMLAbstractViewNode::OrientationMarkerHumanModelReferenceRole = "OrientationMarkerHumanModel";
 const char* vtkMRMLAbstractViewNode::ParentLayoutNodeReferenceRole = "ParentLayoutNodeRef";
+const char* vtkMRMLAbstractViewNode::InteractionNodeReferenceRole = "InteractionNodeRef";
 const int vtkMRMLAbstractViewNode::AxisLabelsCount = 6;
 static const char* DEFAULT_AXIS_LABELS[vtkMRMLAbstractViewNode::AxisLabelsCount] = {"L", "R", "P", "A", "I", "S"};
 
@@ -293,6 +295,40 @@ void vtkMRMLAbstractViewNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //------------------------------------------------------------------------------
+vtkMRMLInteractionNode* vtkMRMLAbstractViewNode::GetInteractionNode()
+{
+  vtkMRMLInteractionNode * interactionNode =
+      vtkMRMLInteractionNode::SafeDownCast(this->GetNodeReference(this->InteractionNodeReferenceRole));
+  if (this->GetScene() && !interactionNode)
+    {
+    interactionNode = vtkMRMLInteractionNode::SafeDownCast (
+          this->GetScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
+    }
+  return interactionNode;
+}
+
+//------------------------------------------------------------------------------
+bool vtkMRMLAbstractViewNode::SetInteractionNodeID(const char *interactionNodeId)
+{
+  if (!interactionNodeId)
+    {
+    return false;
+    }
+  this->SetNodeReferenceID(this->InteractionNodeReferenceRole, interactionNodeId);
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool vtkMRMLAbstractViewNode::SetInteractionNode(vtkMRMLNode* node)
+{
+  if (node && this->Scene != node->GetScene())
+    {
+    vtkErrorMacro("Cannot set reference: the referenced and referencing node are not in the same scene");
+    return false;
+    }
+  return this->SetInteractionNodeID(node ? node->GetID() : NULL);
+}
+
 int vtkMRMLAbstractViewNode::IsMappedInLayout()
 {
   if (!this->GetAttribute("MappedInLayout"))

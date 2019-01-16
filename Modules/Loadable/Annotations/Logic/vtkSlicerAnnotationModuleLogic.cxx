@@ -319,7 +319,7 @@ char *vtkSlicerAnnotationModuleLogic::AddFiducial(double r, double a, double s,
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void vtkSlicerAnnotationModuleLogic::ProcessMRMLNodesEvents(vtkObject *caller,
+void vtkSlicerAnnotationModuleLogic::ProcessMRMLNodesEvents(vtkObject *vtkNotUsed(caller),
                                                             unsigned long event,
                                                             void *callData)
 {
@@ -510,11 +510,9 @@ void vtkSlicerAnnotationModuleLogic::AddAnnotationNode(const char * nodeDescript
 //---------------------------------------------------------------------------
 // Start the place mouse mode
 //---------------------------------------------------------------------------
-void vtkSlicerAnnotationModuleLogic::StartPlaceMode(bool persistent)
+void vtkSlicerAnnotationModuleLogic::StartPlaceMode(bool persistent, vtkMRMLInteractionNode* interactionNode)
 {
-
-  vtkMRMLInteractionNode *interactionNode = NULL;
-  if ( this->GetMRMLScene())
+  if (!interactionNode && this->GetMRMLScene())
     {
     interactionNode = vtkMRMLInteractionNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
     }
@@ -558,7 +556,7 @@ void vtkSlicerAnnotationModuleLogic::AddNodeCompleted(vtkMRMLAnnotationNode* ann
 //---------------------------------------------------------------------------
 // Exit the place mode
 //---------------------------------------------------------------------------
-void vtkSlicerAnnotationModuleLogic::StopPlaceMode(bool persistent)
+void vtkSlicerAnnotationModuleLogic::StopPlaceMode(bool persistent, vtkMRMLInteractionNode* interactionNode)
 {
 
   vtkMRMLSelectionNode *selectionNode = NULL;
@@ -573,9 +571,10 @@ void vtkSlicerAnnotationModuleLogic::StopPlaceMode(bool persistent)
     return;
     }
 
-  vtkMRMLInteractionNode *interactionNode =
-      vtkMRMLInteractionNode::SafeDownCast(
-          this->GetMRMLScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
+  if (!interactionNode && this->GetMRMLScene())
+    {
+    interactionNode = vtkMRMLInteractionNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
+    }
   if (interactionNode == NULL)
     {
     vtkErrorMacro ( "StopPlaceMode: No interaction node in the scene." );
@@ -609,15 +608,12 @@ void vtkSlicerAnnotationModuleLogic::StopPlaceMode(bool persistent)
 //---------------------------------------------------------------------------
 // Cancel the current placement or remove the last placed node
 //---------------------------------------------------------------------------
-void vtkSlicerAnnotationModuleLogic::CancelCurrentOrRemoveLastAddedAnnotationNode()
+void vtkSlicerAnnotationModuleLogic::CancelCurrentOrRemoveLastAddedAnnotationNode(vtkMRMLInteractionNode* interactionNode)
 {
-
-  vtkMRMLInteractionNode *interactionNode = NULL;
-  if (this->GetMRMLScene())
+  if (!interactionNode && this->GetMRMLScene())
     {
     interactionNode = vtkMRMLInteractionNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
     }
-
   if (!interactionNode)
     {
     vtkErrorMacro("CancelCurrentOrRemoveLastAddedAnnotationNode: No interaction node")

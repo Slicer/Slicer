@@ -32,6 +32,7 @@
 
 
 class qSlicerMarkupsPlaceWidgetPrivate;
+class vtkMRMLInteractionNode;
 class vtkMRMLMarkupsFiducialNode;
 
 /// \ingroup Slicer_QtModules_CreateModels
@@ -67,6 +68,10 @@ public:
   Q_INVOKABLE vtkMRMLNode* currentNode() const;
 
   Q_INVOKABLE vtkMRMLMarkupsFiducialNode* currentMarkupsFiducialNode() const;
+
+  /// Get interaction node.
+  /// \sa setInteractionNode()
+  Q_INVOKABLE vtkMRMLInteractionNode* interactionNode()const;
 
   /// Returns true if the current markups node is the active markups node in the scene.
   bool currentNodeActive() const;
@@ -105,6 +110,10 @@ public slots:
 
   /// Set the currently selected markups node to be the active markups node in the Slicer scene. Does not change place mode.
   void setCurrentNodeActive(bool active);
+
+  /// Set interaction node used to update the widget.
+  /// \sa interactionNode()
+  void setInteractionNode(vtkMRMLInteractionNode* interactionNode);
 
   void setDefaultNodeColor(QColor color);
 

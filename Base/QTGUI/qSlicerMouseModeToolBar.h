@@ -29,6 +29,7 @@
 #include "qSlicerBaseQTGUIExport.h"
 
 class qSlicerMouseModeToolBarPrivate;
+class vtkMRMLInteractionNode;
 class vtkMRMLScene;
 class vtkSlicerApplicationLogic;
 
@@ -58,6 +59,10 @@ public:
   QString defaultPlaceClassName()const;
   void setDefaultPlaceClassName(const QString& className);
 
+  /// Get interaction node.
+  /// \sa setInteractionNode()
+  Q_INVOKABLE vtkMRMLInteractionNode* interactionNode()const;
+
 public slots:
 
   /// Set the application logic. It is used to retrieve the selection and
@@ -76,6 +81,10 @@ public slots:
 
   /// Update the interaction node's persistent place mode from the UI
   void setPersistence(bool persistent);
+
+  /// Set interaction node used to update the toolbar.
+  /// \sa interactionNode()
+  void setInteractionNode(vtkMRMLInteractionNode* interactionNode);
 
 protected:
   QScopedPointer<qSlicerMouseModeToolBarPrivate> d_ptr;

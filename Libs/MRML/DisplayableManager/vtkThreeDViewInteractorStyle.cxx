@@ -325,8 +325,14 @@ void vtkThreeDViewInteractorStyle::OnLeftButtonDown()
   if ( this->GetCameraNode() != 0 &&
        this->GetCameraNode()->GetScene() != 0 )
     {
-    interactionNode = vtkMRMLInteractionNode::SafeDownCast(
-        this->GetCameraNode()->GetScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
+    vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(
+        this->GetCameraNode()->GetScene()->GetNodeByID(this->GetCameraNode()->GetActiveTag()));
+    if (!viewNode)
+      {
+      vtkErrorMacro("OnLeftButtonDown: failed to lookup view node associated with camera node = "
+                    << this->GetCameraNode()->GetID());
+      }
+    interactionNode = viewNode ? viewNode->GetInteractionNode() : 0;
 
     if (interactionNode != 0)
       {
@@ -399,8 +405,14 @@ void vtkThreeDViewInteractorStyle::OnLeftButtonUp()
   if ( this->GetCameraNode() != 0 &&
        this->GetCameraNode()->GetScene() != 0 )
     {
-    interactionNode = vtkMRMLInteractionNode::SafeDownCast(
-        this->GetCameraNode()->GetScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
+    vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(
+        this->GetCameraNode()->GetScene()->GetNodeByID(this->GetCameraNode()->GetActiveTag()));
+    if (!viewNode)
+      {
+      vtkErrorMacro("OnLeftButtonUp: failed to lookup view node associated with camera node = "
+                    << this->GetCameraNode()->GetID());
+      }
+    interactionNode = viewNode ? viewNode->GetInteractionNode() : 0;
 
     if (interactionNode != 0)
       {

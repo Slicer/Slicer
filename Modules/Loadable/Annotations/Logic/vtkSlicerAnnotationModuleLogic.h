@@ -28,11 +28,13 @@ public:
   vtkTypeMacro(vtkSlicerAnnotationModuleLogic,vtkSlicerModuleLogic);
   virtual void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
-  // Start the place mode for annotations
-  void StartPlaceMode(bool persistent=false);
+  /// Start the place mode for annotations.
+  /// By default, the singleton interaction node is updated.
+  void StartPlaceMode(bool persistent=false, vtkMRMLInteractionNode* interactionNode = NULL);
 
-  // Exit the place mode for annotations
-  void StopPlaceMode(bool persistent=false);
+  /// Exit the place mode for annotations.
+  /// By default, the singleton interaction node is updated.
+  void StopPlaceMode(bool persistent=false, vtkMRMLInteractionNode* interactionNode = NULL);
 
   // Start adding a new annotation Node
   void AddAnnotationNode(const char * nodeDescriptor, bool persistent=false);
@@ -40,8 +42,9 @@ public:
   // After a node was added, propagate to widget
   void AddNodeCompleted(vtkMRMLAnnotationNode* annotationNode);
 
-  // Cancel the current annotation placement or remove last annotation node
-  void CancelCurrentOrRemoveLastAddedAnnotationNode();
+  /// Cancel the current annotation placement or remove last annotation node.
+  /// By default, the singleton interaction node is updated.
+  void CancelCurrentOrRemoveLastAddedAnnotationNode(vtkMRMLInteractionNode* interactionNode = NULL);
 
   /// Remove an AnnotationNode and also its 1-1 IS-A hierarchyNode, if found.
   void RemoveAnnotationNode(vtkMRMLAnnotationNode* annotationNode);
