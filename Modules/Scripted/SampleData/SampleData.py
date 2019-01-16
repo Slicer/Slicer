@@ -160,6 +160,24 @@ class SampleDataSource(object):
     if len(uris) != len(fileNames) or len(uris) != len(nodeNames) or len(uris) != len(updatedFileType):
       raise Exception("All fields of sample data source must have the same length")
 
+  def __str__(self):
+    output = [
+      "sampleName        : %s" % self.sampleName,
+      "thumbnailFileName : %s" % self.thumbnailFileName,
+      "loadFileProperties: %s" % self.loadFileProperties,
+      "customDownloader  : %s" % self.customDownloader,
+      ""
+    ]
+    for fileName, uri, nodeName, fileType in zip(self.fileNames, self.uris, self.nodeNames, self.loadFileType):
+      output.extend([
+        "fileName    : %s" % fileName,
+        "uri         : %s" % uri,
+        "nodeName    : %s" % nodeName,
+        "loadFileType: %s" % fileType,
+        ""
+      ])
+    return "\n".join(output)
+
 
 #
 # SampleData widget
