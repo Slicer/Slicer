@@ -67,10 +67,10 @@ int main(int argc, char* * argv)
 
   PARSE_ARGS;
 
-  ImageType::Pointer inputImage = NULL;
+  ImageType::Pointer inputImage = ITK_NULLPTR;
 
   typedef itk::Image<unsigned char, ImageDimension> MaskImageType;
-  MaskImageType::Pointer maskImage = NULL;
+  MaskImageType::Pointer maskImage = ITK_NULLPTR;
 
   typedef    itk::N4BiasFieldCorrectionImageFilter<ImageType, MaskImageType, ImageType> CorrecterType;
   CorrecterType::Pointer correcter = CorrecterType::New();
@@ -126,7 +126,7 @@ int main(int argc, char* * argv)
     maskImage = otsu->GetOutput();
     }
 
-  ImageType::Pointer weightImage = NULL;
+  ImageType::Pointer weightImage = ITK_NULLPTR;
 
   if( weightImageName != "" )
     {

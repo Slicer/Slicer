@@ -55,11 +55,11 @@ vtkStandardNewMacro(vtkITKArchetypeImageSeriesReader);
 //----------------------------------------------------------------------------
 vtkITKArchetypeImageSeriesReader::vtkITKArchetypeImageSeriesReader()
 {
-  this->Archetype  = NULL;
+  this->Archetype  = ITK_NULLPTR;
   this->IndexArchetype = 0;
   this->SingleFile = 1;
   this->UseOrientationFromFile = 1;
-  this->RasToIjkMatrix = NULL;
+  this->RasToIjkMatrix = ITK_NULLPTR;
   this->MeasurementFrameMatrix = vtkMatrix4x4::New();
   this->MeasurementFrameMatrix->Identity();
   this->SetDesiredCoordinateOrientationToAxial();
@@ -114,17 +114,17 @@ vtkITKArchetypeImageSeriesReader::~vtkITKArchetypeImageSeriesReader()
   if (this->Archetype)
     {
     delete [] this->Archetype;
-    this->Archetype = NULL;
+    this->Archetype = ITK_NULLPTR;
     }
  if (RasToIjkMatrix)
    {
    RasToIjkMatrix->Delete();
-   RasToIjkMatrix = NULL;
+   RasToIjkMatrix = ITK_NULLPTR;
    }
   if (MeasurementFrameMatrix)
    {
    MeasurementFrameMatrix->Delete();
-   MeasurementFrameMatrix = NULL;
+   MeasurementFrameMatrix = ITK_NULLPTR;
    }
 
 }
@@ -184,7 +184,7 @@ void vtkITKArchetypeImageSeriesReader::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 int vtkITKArchetypeImageSeriesReader::CanReadFile(const char* vtkNotUsed(filename))
 {
-  if (this->Archetype == NULL)
+  if (this->Archetype == ITK_NULLPTR)
     {
     return false;
     }
@@ -462,7 +462,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
   double origin[3];
 
 
-  itk::ImageIOBase::Pointer imageIO = NULL;
+  itk::ImageIOBase::Pointer imageIO = ITK_NULLPTR;
 
   try
     {
@@ -548,7 +548,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
 
 
       imageIO = imageReader->GetImageIO();
-      if (imageIO.GetPointer() == NULL)
+      if (imageIO.GetPointer() == ITK_NULLPTR)
         {
           vtkErrorMacro( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: ImageIO for file " << fileNameCollapsed.c_str() << " does not exist.");
           this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
@@ -692,7 +692,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
     // If there is only one file in the series
     if (this->FileNames.size() == 1)
       {
-      if (imageIO.GetPointer() == NULL)
+      if (imageIO.GetPointer() == ITK_NULLPTR)
         {
         scalarType = VTK_SHORT; // TODO - figure out why multi-file series doesn't have an imageIO
         }
@@ -872,7 +872,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
     }
 
   int numberOfComponents = 1;
-  if (imageIO.GetPointer() != NULL)
+  if (imageIO.GetPointer() != ITK_NULLPTR)
     {
     numberOfComponents = imageIO->GetNumberOfComponents();
     }
@@ -885,7 +885,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
                                               numberOfComponents);
 
   // Copy the MetaDataDictionary from the ITK layer to the VTK layer
-  if (imageIO.GetPointer() != NULL)
+  if (imageIO.GetPointer() != ITK_NULLPTR)
     {
     this->Dictionary = imageIO->GetMetaDataDictionary();
     }
@@ -949,7 +949,7 @@ void vtkITKArchetypeImageSeriesReader::GetScalarRangeMetaDataKeys(itk::ImageIOBa
 //----------------------------------------------------------------------------
 void vtkITKArchetypeImageSeriesReader::SetMetaDataScalarRangeToPointDataInfo( vtkImageData* data )
 {
-    if (data == NULL)
+    if (data == ITK_NULLPTR)
       {
       vtkWarningMacro("No image data specified, can't set scalar range information.")
       return;
@@ -973,8 +973,8 @@ void vtkITKArchetypeImageSeriesReader::SetMetaDataScalarRangeToPointDataInfo( vt
 
     // Check that scalar info exists
     vtkDataArray* scalars = data->GetPointData()->GetScalars();
-    vtkInformation* scalarInfo = scalars ? scalars->GetInformation() : NULL;
-    if (scalarInfo == NULL)
+    vtkInformation* scalarInfo = scalars ? scalars->GetInformation() : ITK_NULLPTR;
+    if (scalarInfo == ITK_NULLPTR)
       {
       return;
       }
@@ -1012,7 +1012,7 @@ void vtkITKArchetypeImageSeriesReader::AssembleNthVolume ( int n )
   for (unsigned int k = 0; k < nSlices; k++)
   {
     const char* name = GetNthFileName( 0, -1, -1, -1, 0, k, 0, n );
-    if (name == NULL)
+    if (name == ITK_NULLPTR)
     {
       continue;
     }
@@ -1076,7 +1076,7 @@ const char* vtkITKArchetypeImageSeriesReader::GetNthFileName ( int idxSeriesInst
       }
     }
   }
-  return NULL;
+  return ITK_NULLPTR;
 }
 
 //----------------------------------------------------------------------------
@@ -1395,7 +1395,7 @@ const char* vtkITKArchetypeImageSeriesReader::GetNthKey( unsigned int n )
 {
   if (n >= this->Tags.size())
   {
-    return NULL;
+    return ITK_NULLPTR;
   }
   return this->Tags[n].c_str();
 }
@@ -1405,7 +1405,7 @@ const char* vtkITKArchetypeImageSeriesReader::GetNthValue( unsigned int n )
 {
   if (n >= this->TagValues.size())
   {
-    return NULL;
+    return ITK_NULLPTR;
   }
   return this->TagValues[n].c_str();
 }
@@ -1421,7 +1421,7 @@ const char* vtkITKArchetypeImageSeriesReader::GetTagValue( char* tag )
       return this->TagValues[k].c_str();
     }
   }
-  return NULL;
+  return ITK_NULLPTR;
 }
 
 //----------------------------------------------------------------------------
@@ -1429,7 +1429,7 @@ const char* vtkITKArchetypeImageSeriesReader::GetFileName( unsigned int n )
 {
   if ( n >= this->GetNumberOfFileNames() )
   {
-    return NULL;
+    return ITK_NULLPTR;
   }
 
   return this->FileNames[n].c_str();
