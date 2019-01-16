@@ -673,7 +673,11 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
 
   outInfo->Set(vtkDataObject::SPACING(), spacing, 3);
   outInfo->Set(vtkDataObject::ORIGIN(), origin, 3);
+
+  // TODO: this may corrupt the slice spacig in multiframe DICOM files,
+  // so probably it would be better to remove it.
   RasToIjkMatrix->SetElement(3,3,1.0);
+
   IjkToLpsMatrix->Delete();
 
   if ( !this->GetUseOrientationFromFile() )
