@@ -842,10 +842,14 @@ void qSlicerApplication::logApplicationInformation() const
         this->commandOptions()->displayApplicationInformation() ?
           this->errorLogModel()->terminalOutputs() : ctkErrorLogTerminalOutput::None);
 
-  QStringList titles = QStringList()
-      << "Session start time "
-      << "Slicer version "
-      << "Operating system "
+  QStringList titles = QStringList();
+  titles << "Session start time "
+    << "Slicer version ";
+  if (this->isCustomMainApplication())
+    {
+    titles << (QString(Slicer_MAIN_PROJECT_APPLICATION_NAME) + " version ");
+    }
+  titles << "Operating system "
       << "Memory "
       << "CPU "
       << "VTK configuration "
@@ -863,14 +867,15 @@ void qSlicerApplication::logApplicationInformation() const
     }
   titleWidth += 2;
 
+  int titleIndex = 0;
   // Session start time
   qDebug("%s: %s",
-         qPrintable(titles.at(0).leftJustified(titleWidth, '.')),
+         qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
          qPrintable(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")));
 
   // Slicer version
   qDebug("%s: %s (revision %s) %s - %s %s",
-         qPrintable(titles.at(1).leftJustified(titleWidth, '.')),
+         qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
          Slicer_VERSION_FULL, qPrintable(this->repositoryRevision()),
          qPrintable(this->platform()),
          this->isInstalled() ? "installed" : "not installed",
@@ -881,6 +886,14 @@ void qSlicerApplication::logApplicationInformation() const
 #endif
          );
 
+  // Custo application version
+  if (this->isCustomMainApplication())
+    {
+    qDebug("%s: %s (revision %s)",
+      qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
+      Slicer_MAIN_PROJECT_VERSION_FULL, qPrintable(Slicer_MAIN_PROJECT_WC_REVISION));
+    }
+
   // Operating system
   vtkNew<vtkSystemInformation> systemInfo;
   systemInfo->RunCPUCheck();
@@ -888,7 +901,7 @@ void qSlicerApplication::logApplicationInformation() const
   systemInfo->RunMemoryCheck();
 
   qDebug("%s: %s / %s / %s - %s",
-         qPrintable(titles.at(2).leftJustified(titleWidth, '.')),
+         qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
          systemInfo->GetOSName() ? systemInfo->GetOSName() : "unknown",
          systemInfo->GetOSRelease() ? systemInfo->GetOSRelease() : "unknown",
          systemInfo->GetOSVersion() ? systemInfo->GetOSVersion() : "unknown" ,
@@ -924,7 +937,7 @@ void qSlicerApplication::logApplicationInformation() const
 #endif
 #endif
   qDebug() << qPrintable(QString("%0: %1 MB physical, %2 MB virtual")
-                         .arg(titles.at(3).leftJustified(titleWidth, '.'))
+                         .arg(titles.at(titleIndex++).leftJustified(titleWidth, '.'))
                          .arg(totalPhysicalMemoryMb)
                          .arg(totalVirtualMemoryMb));
 
@@ -942,13 +955,13 @@ void qSlicerApplication::logApplicationInformation() const
   unsigned int numberOfLogicalCPU = systemInfo->GetNumberOfLogicalCPU();
 
   qDebug("%s: %s %s, %d cores, %d logical processors",
-         qPrintable(titles.at(4).leftJustified(titleWidth, '.')),
+         qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
          systemInfo->GetVendorString() ? systemInfo->GetVendorString() : "unknown",
          systemInfo->GetModelName() ? systemInfo->GetModelName() : "unknown",
          numberOfPhysicalCPU, numberOfLogicalCPU);
 
   qDebug("%s: %s rendering, %s threading",
-    qPrintable(titles.at(5).leftJustified(titleWidth, '.')),
+    qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
 #ifdef Slicer_VTK_RENDERING_USE_OpenGL2_BACKEND
     "OpenGL2",
 #else
@@ -961,13 +974,13 @@ void qSlicerApplication::logApplicationInformation() const
   // Developer mode enabled
   bool developerModeEnabled = settings.value("Developer/DeveloperMode", false).toBool();
   qDebug("%s: %s",
-         qPrintable(titles.at(6).leftJustified(titleWidth, '.')),
+         qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
          developerModeEnabled ? "yes" : "no");
 
   // Prefer executable CLI
   bool preferExecutableCli = settings.value("Modules/PreferExecutableCLI", Slicer_CLI_PREFER_EXECUTABLE_DEFAULT).toBool();
   qDebug("%s: %s",
-         qPrintable(titles.at(7).leftJustified(titleWidth, '.')),
+         qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
          preferExecutableCli ? "yes" : "no");
 
   // Additional module paths
@@ -989,7 +1002,7 @@ void qSlicerApplication::logApplicationInformation() const
     }
 
   qDebug("%s: %s",
-         qPrintable(titles.at(8).leftJustified(titleWidth, '.')),
+         qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
          additionalModulePaths.isEmpty() ? "(none)" : qPrintable(additionalModulePaths.join(", ")));
 
 }

@@ -87,7 +87,14 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
   Q_PROPERTY(QString platform READ platform CONSTANT)
   Q_PROPERTY(QString arch READ arch CONSTANT)
   Q_PROPERTY(QString os READ os CONSTANT)
+  Q_PROPERTY(bool isCustomMainApplication READ isCustomMainApplication CONSTANT)
   Q_PROPERTY(QString mainApplicationName READ mainApplicationName CONSTANT)
+  Q_PROPERTY(QString mainApplicationRepositoryUrl READ mainApplicationRepositoryUrl CONSTANT)
+  Q_PROPERTY(QString mainApplicationRepositoryRevision READ mainApplicationRepositoryRevision CONSTANT)
+  Q_PROPERTY(int mainApplicationMajorVersion READ mainApplicationMajorVersion CONSTANT)
+  Q_PROPERTY(int mainApplicationMinorVersion READ mainApplicationMinorVersion CONSTANT)
+  Q_PROPERTY(int mainApplicationPatchVersion READ mainApplicationPatchVersion CONSTANT)
+
 public:
 
   typedef QApplication Superclass;
@@ -337,8 +344,33 @@ public:
   /// \sa slicerRevisionSpecificUserSettingsFilePath()
   Q_INVOKABLE QSettings* revisionUserSettings()const;
 
+  /// \brief Return if main application is custom application (not Slicer).
+  bool isCustomMainApplication()const;
+
   /// \brief Return the name of the main application.
   QString mainApplicationName()const;
+
+  /// Return the main application's source repository URL associated with this build.
+  /// Useful for custom applications.
+  /// \sa qSlicerCoreApplicationPrivate::discoverRepository
+  QString mainApplicationRepositoryUrl()const;
+
+  /// Return the main application's source repository Revision associated with this build.
+  /// Useful for custom applications.
+  /// \sa qSlicerCoreApplicationPrivate::discoverRepository
+  QString mainApplicationRepositoryRevision()const;
+
+  /// Return the main application's major version number.
+  /// Useful for custom applications.
+  int mainApplicationMajorVersion() const;
+
+  /// Return the main application's minor version number.
+  /// Useful for custom applications.
+  int mainApplicationMinorVersion() const;
+
+  /// Return the main application's patch version number.
+  /// Useful for custom applications.
+  int mainApplicationPatchVersion() const;
 
   /// Return the copyrights of Slicer
   virtual QString copyrights()const;

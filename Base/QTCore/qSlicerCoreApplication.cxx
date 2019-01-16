@@ -1362,9 +1362,45 @@ qSlicerCoreCommandOptions* qSlicerCoreApplication::coreCommandOptions()const
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerCoreApplication::isCustomMainApplication()const
+{
+  return (this->mainApplicationName() != QString("Slicer"));
+}
+
+//-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::mainApplicationName()const
 {
   return QString(Slicer_MAIN_PROJECT_APPLICATION_NAME);
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::mainApplicationRepositoryUrl()const
+{
+  return QString(Slicer_MAIN_PROJECT_WC_URL);
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::mainApplicationRepositoryRevision()const
+{
+  return QString(Slicer_MAIN_PROJECT_WC_REVISION);
+}
+
+//-----------------------------------------------------------------------------
+int qSlicerCoreApplication::mainApplicationMajorVersion()const
+{
+  return Slicer_MAIN_PROJECT_VERSION_MAJOR;
+}
+
+//-----------------------------------------------------------------------------
+int qSlicerCoreApplication::mainApplicationMinorVersion()const
+{
+  return Slicer_MAIN_PROJECT_VERSION_MINOR;
+}
+
+//-----------------------------------------------------------------------------
+int qSlicerCoreApplication::mainApplicationPatchVersion()const
+{
+  return Slicer_MAIN_PROJECT_VERSION_PATCH;
 }
 
 //-----------------------------------------------------------------------------
