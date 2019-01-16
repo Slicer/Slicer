@@ -22,6 +22,7 @@
 
 // QT includes
 #include <QAction>
+#include <QActionGroup>
 #include <QApplication>
 #include <QCloseEvent>
 #include <QDebug>
@@ -57,8 +58,12 @@ qMRMLTransformItemDelegate::qMRMLTransformItemDelegate(QObject *parent)
   this->FixedRowHeight = -1;
 
   this->NoneAction = new QAction("None", this);
+  this->NoneAction->setCheckable(true);
   this->NoneAction->setToolTip(tr("Remove parent transform from all the nodes in this branch"));
   connect(this->NoneAction, SIGNAL(triggered()), this, SIGNAL(removeTransformsFromBranchOfCurrentItem()));
+
+  this->TransformActionGroup = new QActionGroup(this);
+  this->TransformActionGroup->addAction(this->NoneAction);
 
   this->HardenAction = new QAction("Harden transform", this);
   this->HardenAction->setToolTip(tr("Harden parent transforms on all the nodes in this branch"));
@@ -98,6 +103,7 @@ QWidget *qMRMLTransformItemDelegate::createEditor(
     {
     DelegateMenu* menu = new DelegateMenu(parent->parentWidget());
     menu->setAttribute(Qt::WA_DeleteOnClose, true);
+
     menu->addAction(this->NoneAction);
 
     std::vector<vtkMRMLNode*> transformNodes;
@@ -111,8 +117,10 @@ QWidget *qMRMLTransformItemDelegate::createEditor(
         }
       QAction* nodeAction = new QAction(transformNode->GetName(), menu);
       nodeAction->setData(QString(transformNode->GetID()));
+      nodeAction->setCheckable(true);
       connect(nodeAction, SIGNAL(triggered()), this, SLOT(transformActionSelected()), Qt::DirectConnection);
       menu->addAction(nodeAction);
+      this->TransformActionGroup->addAction(nodeAction);
       }
 
     menu->addSeparator();
@@ -150,12 +158,9 @@ void qMRMLTransformItemDelegate::setEditorData(QWidget *editor, const QModelInde
         if (!action->data().toString().compare(transformNodeID))
           {
           actionForTransform = action;
-          actionForTransform->setCheckable(true);
-          actionForTransform->setChecked(true);
           }
         else
           {
-          action->setCheckable(false);
           action->setChecked(false);
           }
         }
@@ -165,6 +170,8 @@ void qMRMLTransformItemDelegate::setEditorData(QWidget *editor, const QModelInde
         return;
         }
       }
+    actionForTransform->setChecked(true);
+
     menu->blockSignals(true);
     menu->setActiveAction(actionForTransform);
     menu->SelectedTransformNodeID = transformNodeID;
@@ -202,6 +209,15 @@ void qMRMLTransformItemDelegate::commitAndClose()
   QWidget* editor = qobject_cast<QWidget*>(this->sender());
   emit commitData(editor);
   emit closeEditor(editor);
+
+  QList<QAction*> actionGroupActions = this->TransformActionGroup->actions();
+  foreach (QAction* action, actionGroupActions)
+    {
+    if (action != this->NoneAction)
+      {
+      this->TransformActionGroup->removeAction(action);
+      }
+    }
 }
 
 //------------------------------------------------------------------------------
