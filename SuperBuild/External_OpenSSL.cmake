@@ -49,13 +49,13 @@ if(NOT DEFINED OPENSSL_LIBRARIES
     set(OPENSSL_DOWNLOAD_VERSION "1.0.2n" CACHE STRING "Version of OpenSSL source package to download")
     set_property(CACHE OPENSSL_DOWNLOAD_VERSION PROPERTY STRINGS "1.0.1e" "1.0.1l" "1.0.2n")
 
-    set(OpenSSL_1.0.1e_URL http://packages.kitware.com/download/item/6172/openssl-1.0.1e.tar.gz)
+    set(OpenSSL_1.0.1e_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/sources/openssl-1.0.1e.tar.gz)
     set(OpenSSL_1.0.1e_MD5 66bf6f10f060d561929de96f9dfe5b8c)
 
-    set(OpenSSL_1.0.1l_URL http://packages.kitware.com/download/item/7669/openssl-1.0.1l.tar.gz)
+    set(OpenSSL_1.0.1l_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/sources/openssl-1.0.1l.tar.gz)
     set(OpenSSL_1.0.1l_MD5 cdb22925fc9bc97ccbf1e007661f2aa6)
 
-    set(OpenSSL_1.0.2n_URL https://packages.kitware.com/download/item/10337/openssl-1.0.2n.tar.gz)
+    set(OpenSSL_1.0.2n_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/sources/openssl-1.0.2n.tar.gz)
     set(OpenSSL_1.0.2n_MD5 13bdc1b1d1ff39b6fd42a255e74676a4)
 
     if(NOT DEFINED OpenSSL_${OPENSSL_DOWNLOAD_VERSION}_URL)
@@ -190,24 +190,24 @@ this version of visual studio [${MSVC_VERSION}]. You could either:
 
       # OpenSSL 1.0.1h
       # VS2008
-      set(OpenSSL_1.0.1h_1500_URL http://packages.kitware.com/download/item/6093/OpenSSL_1_0_1h-install-msvc1500-32.tar.gz)
+      set(OpenSSL_1.0.1h_1500_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.0.1h/OpenSSL_1_0_1h-install-msvc1500-32.tar.gz)
       set(OpenSSL_1.0.1h_1500_MD5 8b110bb48063223c3b9f3a99f1fa9067)
       # VS2010
-      set(OpenSSL_1.0.1h_1600_URL http://packages.kitware.com/download/item/6096/OpenSSL_1_0_1h-install-msvc1600-32.tar.gz)
+      set(OpenSSL_1.0.1h_1600_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.0.1h/OpenSSL_1_0_1h-install-msvc1600-32.tar.gz)
       set(OpenSSL_1.0.1h_1600_MD5 e80269ae7969276977a342cccc1df5c5)
       # VS2013
-      set(OpenSSL_1.0.1h_1800_URL http://packages.kitware.com/download/bitstream/8918/OpenSSL_1_0_1h-install-msvc1800-32.tar.gz)
+      set(OpenSSL_1.0.1h_1800_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.0.1h/OpenSSL_1_0_1h-install-msvc1800-32.tar.gz)
       set(OpenSSL_1.0.1h_1800_MD5 f10ceb422ab37f2b0bd5e225c74fd1d4)
       # VS2015
-      set(OpenSSL_1.0.1h_1900_URL https://packages.kitware.com/download/item/10334/OpenSSL_1_0_1h-install-msvc1900-32.tar.gz)
+      set(OpenSSL_1.0.1h_1900_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.0.1h/OpenSSL_1_0_1h-install-msvc1900-32.tar.gz)
       set(OpenSSL_1.0.1h_1900_MD5 e0e26ae6ac5693d266c804e738d7aa14)
 
       # OpenSSL 1.0.1l
       # VS2008
-      set(OpenSSL_1.0.1l_1500_URL http://packages.kitware.com/download/item/7689/OpenSSL_1_0_1l-install-msvc1500-32.tar.gz)
+      set(OpenSSL_1.0.1l_1500_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.0.1l/OpenSSL_1_0_1l-install-msvc1500-32.tar.gz)
       set(OpenSSL_1.0.1l_1500_MD5 85218e0ea7bd15457f66cc04170560d5)
       # VS2010
-      set(OpenSSL_1.0.1l_1600_URL http://packages.kitware.com/download/item/7692/OpenSSL_1_0_1l-install-msvc1600-32.tar.gz)
+      set(OpenSSL_1.0.1l_1600_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.0.1l/OpenSSL_1_0_1l-install-msvc1600-32.tar.gz)
       set(OpenSSL_1.0.1l_1600_MD5 3f756fc731fb95f919ea24f2ec979732)
 
     #--------------------
@@ -215,24 +215,24 @@ this version of visual studio [${MSVC_VERSION}]. You could either:
 
       # OpenSSL 1.0.1h
       # VS2008
-      set(OpenSSL_1.0.1h_1500_URL http://packages.kitware.com/download/item/6090/OpenSSL_1_0_1h-install-msvc1500-64.tar.gz)
+      set(OpenSSL_1.0.1h_1500_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.0.1h/OpenSSL_1_0_1h-install-msvc1500-64.tar.gz)
       set(OpenSSL_1.0.1h_1500_MD5 dab0c026ab56fd0fbfe2843d14218fad)
       # VS2010
-      set(OpenSSL_1.0.1h_1600_URL http://packages.kitware.com/download/item/6099/OpenSSL_1_0_1h-install-msvc1600-64.tar.gz)
+      set(OpenSSL_1.0.1h_1600_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.0.1h/OpenSSL_1_0_1h-install-msvc1600-64.tar.gz)
       set(OpenSSL_1.0.1h_1600_MD5 b54a0a4b396397fdf96e55f0f7345dd1)
       # VS2013
-      set(OpenSSL_1.0.1h_1800_URL http://packages.kitware.com/download/bitstream/8915/OpenSSL_1_0_1h-install-msvc1800-64.tar.gz)
+      set(OpenSSL_1.0.1h_1800_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.0.1h/OpenSSL_1_0_1h-install-msvc1800-64.tar.gz)
       set(OpenSSL_1.0.1h_1800_MD5 7aefdd94babefbe603cca48ff86da768)
       # VS2015
-      set(OpenSSL_1.0.1h_1900_URL https://packages.kitware.com/download/item/10331/OpenSSL_1_0_1h-install-msvc1900-64.tar.gz)
+      set(OpenSSL_1.0.1h_1900_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.0.1h/OpenSSL_1_0_1h-install-msvc1900-64.tar.gz)
       set(OpenSSL_1.0.1h_1900_MD5 f93d266def384926015550452573e824)
 
       # OpenSSL 1.0.1l
       # VS2008
-      set(OpenSSL_1.0.1l_1500_URL http://packages.kitware.com/download/item/7686/OpenSSL_1_0_1l-install-msvc1500-64.tar.gz)
+      set(OpenSSL_1.0.1l_1500_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.0.1l/OpenSSL_1_0_1l-install-msvc1500-64.tar.gz)
       set(OpenSSL_1.0.1l_1500_MD5 ce819931504f8e7c5d9024215b2cc9cf)
       # VS2010
-      set(OpenSSL_1.0.1l_1600_URL http://packages.kitware.com/download/item/7700/OpenSSL_1_0_1l-install-msvc1600-64.tar.gz)
+      set(OpenSSL_1.0.1l_1600_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.0.1l/OpenSSL_1_0_1l-install-msvc1600-64.tar.gz)
       set(OpenSSL_1.0.1l_1600_MD5 07d259e1a467d9c7a7d9cddfd77e8915)
 
     endif()
