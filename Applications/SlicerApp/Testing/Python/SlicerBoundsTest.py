@@ -72,7 +72,7 @@ class SlicerBoundsTestTest(ScriptedLoadableModuleTest):
     """
     #self.delayDisplay("Starting test_Volume")
     import SampleData
-    volumeNode = SampleData.downloadSample('CTA abdomen\n(Panoramix)')[0]
+    volumeNode = SampleData.downloadSample('CTA abdomen\n(Panoramix)')
 
     bounds = range(6)
     volumeNode.GetRASBounds(bounds)

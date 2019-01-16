@@ -31,7 +31,7 @@ class EditorLibTesting(ScriptedLoadableModuleTest):
     # first, get some sample data
     #
     import SampleData
-    head = SampleData.downloadSample("MRHead")[0]
+    head = SampleData.downloadSample("MRHead")
 
     #
     # create a label map and set it for editing

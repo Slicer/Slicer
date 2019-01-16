@@ -66,7 +66,7 @@ class SegmentEditorTemplateKeyTest(ScriptedLoadableModuleTest):
     ##################################
     self.delayDisplay("Load master volume")
 
-    masterVolumeNode = SampleData.downloadSample('MRBrainTumor1')[0]
+    masterVolumeNode = SampleData.downloadSample('MRBrainTumor1')
 
     ##################################
     self.delayDisplay("Create segmentation containing a few spheres")

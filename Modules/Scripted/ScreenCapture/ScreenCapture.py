@@ -1131,8 +1131,8 @@ class ScreenCaptureTest(ScriptedLoadableModuleTest):
     """
     slicer.mrmlScene.Clear(0)
     import SampleData
-    self.image1 = SampleData.downloadSample('MRBrainTumor1')[0]
-    self.image2 = SampleData.downloadSample('MRBrainTumor2')[0]
+    self.image1 = SampleData.downloadSample('MRBrainTumor1')
+    self.image2 = SampleData.downloadSample('MRBrainTumor2')
 
     # make the output volume appear in all the slice views
     selectionNode = slicer.app.applicationLogic().GetSelectionNode()

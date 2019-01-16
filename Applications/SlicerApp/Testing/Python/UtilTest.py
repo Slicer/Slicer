@@ -98,9 +98,9 @@ class UtilTestTest(ScriptedLoadableModuleTest):
 
     import SampleData
 
-    backgroundNode = SampleData.downloadSample("MRHead")[0]
+    backgroundNode = SampleData.downloadSample("MRHead")
     backgroundNode.SetName('Background')
-    foregroundNode = SampleData.downloadSample("MRHead")[0]
+    foregroundNode = SampleData.downloadSample("MRHead")
     foregroundNode.SetName('Foreground')
 
     volumesLogic = slicer.modules.volumes.logic()
@@ -133,9 +133,9 @@ class UtilTestTest(ScriptedLoadableModuleTest):
     self.assertEqual(redSliceCompositeNode.GetLabelOpacity(), 0.1)
 
     # Try to reset
-    otherBackgroundNode = SampleData.downloadSample("MRHead")[0]
+    otherBackgroundNode = SampleData.downloadSample("MRHead")
     otherBackgroundNode.SetName('OtherBackground')
-    otherForegroundNode = SampleData.downloadSample("MRHead")[0]
+    otherForegroundNode = SampleData.downloadSample("MRHead")
     otherForegroundNode.SetName('OtherForeground')
     otherLabelmapNode = volumesLogic.CreateAndAddLabelVolume( slicer.mrmlScene, backgroundNode, 'OtherLabelmap' )
 
@@ -200,7 +200,7 @@ class UtilTestTest(ScriptedLoadableModuleTest):
 
     self.delayDisplay('Download sample data')
     import SampleData
-    volumeNode = SampleData.downloadSample("MRHead")[0]
+    volumeNode = SampleData.downloadSample("MRHead")
 
     self.delayDisplay('Test voxel value read')
     voxelPos = [120,135,89]
@@ -222,7 +222,7 @@ class UtilTestTest(ScriptedLoadableModuleTest):
 
     self.delayDisplay('Download sample data')
     import SampleData
-    volumeNode = SampleData.downloadSample("MRHead")[0]
+    volumeNode = SampleData.downloadSample("MRHead")
 
     import numpy as np
     import math
@@ -255,7 +255,7 @@ class UtilTestTest(ScriptedLoadableModuleTest):
 
     self.delayDisplay('Download sample data')
     import SampleData
-    volumeNode = SampleData.downloadSample("MRHead")[0]
+    volumeNode = SampleData.downloadSample("MRHead")
 
     self.delayDisplay('Compute histogram')
     histogram = np.histogram(slicer.util.arrayFromVolume(volumeNode))
@@ -291,7 +291,7 @@ class UtilTestTest(ScriptedLoadableModuleTest):
 
     self.delayDisplay('Test array with scalar image')
     import SampleData
-    volumeNode = SampleData.downloadSample("MRHead")[0]
+    volumeNode = SampleData.downloadSample("MRHead")
     voxelPos = [120,135,89]
     voxelValueVtk = volumeNode.GetImageData().GetScalarComponentAsDouble(voxelPos[0], voxelPos[1], voxelPos[2], 0)
     narray = slicer.util.arrayFromVolume(volumeNode)
@@ -299,7 +299,7 @@ class UtilTestTest(ScriptedLoadableModuleTest):
     self.assertEqual(voxelValueVtk, voxelValueNumpy)
 
     self.delayDisplay('Test array with tensor image')
-    tensorVolumeNode = SampleData.downloadSample('DTIBrain')[0]
+    tensorVolumeNode = SampleData.downloadSample('DTIBrain')
     narray = slicer.util.array(tensorVolumeNode.GetName())
     self.assertEqual(narray.shape, (85, 144, 144, 3, 3))
 

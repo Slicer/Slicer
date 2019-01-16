@@ -57,7 +57,7 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
     import SampleData
     self.log.insertHtml('<b>Requesting downloading MRHead')
     self.log.repaint()
-    mrHeadVolume = SampleData.downloadSample("MRHead")[0]
+    mrHeadVolume = SampleData.downloadSample("MRHead")
     if mrHeadVolume:
       self.log.insertHtml('<i>finished.</i>\n')
       self.log.insertPlainText('\n')
