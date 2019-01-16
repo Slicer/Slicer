@@ -486,12 +486,12 @@ void qSlicerMouseModeToolBar::changeCursorTo(QCursor cursor)
     vtkMRMLSliceNode *sliceNode = vtkMRMLSliceNode::SafeDownCast(visibleViews->GetItemAsObject(v));
     if (sliceNode)
       {
-      qMRMLSliceView *sliceView = layoutManager->sliceWidget(sliceNode->GetName())->sliceView();
-      if (sliceView)
+      qMRMLSliceWidget *sliceWidget = layoutManager->sliceWidget(sliceNode->GetName());
+      if (sliceWidget && sliceWidget->sliceView())
         {
-        sliceView->setCursor(cursor);
+        sliceWidget->sliceView()->setCursor(cursor);
 #if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
-        sliceView->VTKWidget()->setQVTKCursor(cursor);
+        sliceWidget->sliceView()->VTKWidget()->setQVTKCursor(cursor);
 #endif
         }
       }
