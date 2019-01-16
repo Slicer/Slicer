@@ -344,8 +344,13 @@ foreach(extension_dir ${Slicer_EXTENSION_SOURCE_DIRS})
     set(${extension_name}_SUPERBUILD 0)
     mark_as_superbuild(${extension_name}_SUPERBUILD:BOOL)
 
-    list(APPEND EXTERNAL_PROJECT_ADDITIONAL_DIRS "${extension_dir}/SuperBuild")
-    list(APPEND EXTERNAL_PROJECT_ADDITIONAL_DIRS "${extension_dir}/Superbuild")
+    if(NOT DEFINED ${extension_name}_EXTERNAL_PROJECT_EXCLUDE_ALL)
+      set(${extension_name}_EXTERNAL_PROJECT_EXCLUDE_ALL FALSE)
+    endif()
+    if(NOT ${extension_name}_EXTERNAL_PROJECT_EXCLUDE_ALL)
+      list(APPEND EXTERNAL_PROJECT_ADDITIONAL_DIRS "${extension_dir}/SuperBuild")
+      list(APPEND EXTERNAL_PROJECT_ADDITIONAL_DIRS "${extension_dir}/Superbuild")
+    endif()
 
     set(_external_project_cmake_files)
 
@@ -360,21 +365,30 @@ foreach(extension_dir ${Slicer_EXTENSION_SOURCE_DIRS})
     list(REMOVE_DUPLICATES _external_project_cmake_files)
 
     set(_extension_depends)
+    set(_msg_extension_depends)
     foreach (_external_project_cmake_file ${_external_project_cmake_files})
       string(REGEX MATCH "External_(.+)\.cmake" _match ${_external_project_cmake_file})
       set(_additional_project_name "${CMAKE_MATCH_1}")
-      list(APPEND _extension_depends ${_additional_project_name})
+      if(NOT ${extension_name}_EXTERNAL_PROJECT_EXCLUDE_ALL)
+        list(APPEND _extension_depends ${_additional_project_name})
+        list(APPEND _msg_extension_depends ${_additional_project_name})
+      else()
+        list(APPEND _msg_extension_depends "ignore(${_additional_project_name})")
+      endif()
     endforeach()
 
     list(APPEND Slicer_BUNDLED_EXTENSION_NAMES ${extension_name})
 
-    message(STATUS "SuperBuild - ${extension_name} extension => ${_extension_depends}")
+    message(STATUS "SuperBuild - ${extension_name} extension => ${_msg_extension_depends}")
 
     list(APPEND _all_extension_depends ${_extension_depends})
   endif()
 endforeach()
 
-list(REMOVE_DUPLICATES _all_extension_depends)
+if(_all_extension_depends)
+  list(REMOVE_DUPLICATES _all_extension_depends)
+endif()
+
 list(APPEND Slicer_DEPENDENCIES ${_all_extension_depends})
 
 mark_as_superbuild(Slicer_BUNDLED_EXTENSION_NAMES:STRING)
