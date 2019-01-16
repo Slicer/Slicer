@@ -537,14 +537,14 @@ vtkMRMLVolumeNode* vtkSlicerTransformLogic::CreateDisplacementVolumeFromTransfor
     {
       vtkNew<vtkMRMLScalarVolumeDisplayNode> displayNode;
       scene->AddNode(displayNode.GetPointer());
-      displayNode->SetAndObserveColorNodeID("vtkMRMLColorTableNodeRainbow");
+      displayNode->SetAndObserveColorNodeID("vtkMRMLColorTableNodeFileViridis.txt");
       outputVolumeNode->SetAndObserveNthDisplayNodeID(0, displayNode->GetID());
     }
     else
     {
       vtkNew<vtkMRMLVectorVolumeDisplayNode> displayNode;
       scene->AddNode(displayNode.GetPointer());
-      displayNode->SetAndObserveColorNodeID("vtkMRMLColorTableNodeRainbow");
+      displayNode->SetAndObserveColorNodeID("vtkMRMLColorTableNodeFileViridis.txt");
       outputVolumeNode->SetAndObserveNthDisplayNodeID(0, displayNode->GetID());
     }
   }
