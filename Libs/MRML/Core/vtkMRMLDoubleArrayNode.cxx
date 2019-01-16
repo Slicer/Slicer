@@ -15,6 +15,7 @@ Version:   $Revision: 1.2 $
 // MRML includes
 #include "vtkMRMLDoubleArrayNode.h"
 #include "vtkMRMLDoubleArrayStorageNode.h"
+#include "vtkMRMLScene.h"
 
 // VTK includes
 #include <vtkDoubleArray.h>
@@ -298,10 +299,10 @@ int vtkMRMLDoubleArrayNode::GetXYValue(int index, double* x, double* y)
 
   std::vector<double> tuple(this->Array->GetNumberOfComponents());
   int success = this->GetValues(index, &tuple[0]);
-  
+
   *x = tuple[0];
   *y = tuple[1];
-  
+
   return success;
 }
 
@@ -624,11 +625,13 @@ void vtkMRMLDoubleArrayNode::GetYRange(double* range, int fIncludeError)
 
 }
 
+//---------------------------------------------------------------------------
 void vtkMRMLDoubleArrayNode::SetLabels(const LabelsVectorType &labels)
 {
    this->Labels = labels;
 }
 
+//---------------------------------------------------------------------------
 const vtkMRMLDoubleArrayNode::LabelsVectorType & vtkMRMLDoubleArrayNode::GetLabels() const
 {
     return this->Labels;
@@ -638,5 +641,12 @@ const vtkMRMLDoubleArrayNode::LabelsVectorType & vtkMRMLDoubleArrayNode::GetLabe
 //---------------------------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLDoubleArrayNode::CreateDefaultStorageNode()
 {
-  return vtkMRMLDoubleArrayStorageNode::New();
-};
+  vtkMRMLScene* scene = this->GetScene();
+  if (scene == NULL)
+    {
+    vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
+    return NULL;
+    }
+  return vtkMRMLStorageNode::SafeDownCast(
+    scene->CreateNodeByClass("vtkMRMLDoubleArrayStorageNode"));
+}

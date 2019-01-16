@@ -803,7 +803,14 @@ void vtkMRMLModelNode::TransformBoundsToRAS(double inputBounds_Local[6], double 
 //---------------------------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLModelNode::CreateDefaultStorageNode()
 {
-  return vtkMRMLStorageNode::SafeDownCast(vtkMRMLModelStorageNode::New());
+  vtkMRMLScene* scene = this->GetScene();
+  if (scene == NULL)
+    {
+    vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
+    return NULL;
+    }
+  return vtkMRMLStorageNode::SafeDownCast(
+    scene->CreateNodeByClass("vtkMRMLModelStorageNode"));
 }
 
 //---------------------------------------------------------------------------
@@ -835,12 +842,14 @@ void vtkMRMLModelNode::CreateDefaultDisplayNodes()
     // display node already exists
     return;
     }
-  if (this->GetScene()==NULL)
+  vtkMRMLScene* scene = this->GetScene();
+  if (scene == NULL)
     {
     vtkErrorMacro("vtkMRMLModelNode::CreateDefaultDisplayNodes failed: scene is invalid");
     return;
     }
-  vtkNew<vtkMRMLModelDisplayNode> dispNode;
+  vtkMRMLModelDisplayNode* dispNode = vtkMRMLModelDisplayNode::SafeDownCast(
+    scene->AddNewNodeByClass("vtkMRMLModelDisplayNode") );
 
   if (this->GetMesh())
     {
@@ -859,7 +868,6 @@ void vtkMRMLModelNode::CreateDefaultDisplayNodes()
     dispNode->SetAndObserveColorNodeID("vtkMRMLFreeSurferProceduralColorNodeRedGreen");
     }
 
-  this->GetScene()->AddNode( dispNode.GetPointer() );
   this->SetAndObserveDisplayNodeID( dispNode->GetID() );
 }
 

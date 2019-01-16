@@ -14,8 +14,9 @@ Version:   $Revision: 1.14 $
 
 // MRML includes
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
-#include "vtkMRMLTensorVolumeNode.h"
 #include "vtkMRMLNRRDStorageNode.h"
+#include "vtkMRMLScene.h"
+#include "vtkMRMLTensorVolumeNode.h"
 
 // VTK includes
 #include <vtkImageData.h>
@@ -217,6 +218,12 @@ void vtkMRMLTensorVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLTensorVolumeNode::CreateDefaultStorageNode()
 {
-  return vtkMRMLNRRDStorageNode::New();
+  vtkMRMLScene* scene = this->GetScene();
+  if (scene == NULL)
+    {
+    vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
+    return NULL;
+    }
+  return vtkMRMLStorageNode::SafeDownCast(
+    scene->CreateNodeByClass("vtkMRMLNRRDStorageNode"));
 }
-

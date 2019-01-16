@@ -9,12 +9,14 @@
 int vtkMRMLAnnotationFiducialNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLAnnotationFiducialNode> node1;
+  vtkNew<vtkMRMLScene> mrmlScene;
+  mrmlScene->AddNode(node1);
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
+  mrmlScene->RemoveNode(node1);
 
   // ======================
   // Basic Setup
   // ======================
-  vtkNew<vtkMRMLScene> mrmlScene;
   mrmlScene->RegisterNodeClass(vtkSmartPointer<vtkMRMLAnnotationFiducialNode>::New());
   mrmlScene->RegisterNodeClass(vtkSmartPointer<vtkMRMLAnnotationPointDisplayNode>::New());
 

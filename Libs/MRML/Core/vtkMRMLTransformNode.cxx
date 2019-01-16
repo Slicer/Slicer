@@ -782,7 +782,14 @@ bool vtkMRMLTransformNode::IsAbstractTransformComputedFromInverse(vtkAbstractTra
 //----------------------------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLTransformNode::CreateDefaultStorageNode()
 {
-  return vtkMRMLTransformStorageNode::New();
+  vtkMRMLScene* scene = this->GetScene();
+  if (scene == NULL)
+    {
+    vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
+    return NULL;
+    }
+  return vtkMRMLStorageNode::SafeDownCast(
+    scene->CreateNodeByClass("vtkMRMLTransformStorageNode"));
 }
 
 //----------------------------------------------------------------------------
@@ -798,8 +805,8 @@ void vtkMRMLTransformNode::CreateDefaultDisplayNodes()
     vtkErrorMacro("vtkMRMLTransformNode::CreateDefaultDisplayNodes failed: scene is invalid");
     return;
     }
-  vtkNew<vtkMRMLTransformDisplayNode> dispNode;
-  this->GetScene()->AddNode(dispNode.GetPointer());
+  vtkMRMLTransformDisplayNode* dispNode = vtkMRMLTransformDisplayNode::SafeDownCast(
+    this->GetScene()->AddNewNodeByClass("vtkMRMLTransformDisplayNode") );
   this->SetAndObserveDisplayNodeID(dispNode->GetID());
 }
 

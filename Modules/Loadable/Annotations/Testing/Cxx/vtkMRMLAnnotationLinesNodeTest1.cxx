@@ -29,12 +29,14 @@ void SetControlPointsAndText(vtkMRMLAnnotationLinesNode* node2)
 int vtkMRMLAnnotationLinesNodeTest1(int , char * [] )
 {
   vtkNew< vtkMRMLAnnotationLinesNode > node1;
-  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
+  vtkNew<vtkMRMLScene> mrmlScene;
+  mrmlScene->AddNode(node1);
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1);
+  mrmlScene->RemoveNode(node1);
 
   // ======================
   // Basic Setup
   // ======================
-  vtkNew<vtkMRMLScene> mrmlScene;
   mrmlScene->RegisterNodeClass(vtkSmartPointer<vtkMRMLAnnotationLinesNode>::New());
   mrmlScene->RegisterNodeClass(vtkSmartPointer<vtkMRMLAnnotationLineDisplayNode>::New());
 

@@ -38,6 +38,8 @@ vtkMatrix4x4* CreateTransformMatrix(double translateX, double translateY, double
 int vtkMRMLTransformNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLTransformNode> node1;
+  vtkNew<vtkMRMLScene> scene;
+  scene->AddNode(node1);
   vtkNew<vtkMatrix4x4> linearTransform;
   node1->SetMatrixTransformToParent(linearTransform.GetPointer());
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
@@ -64,7 +66,7 @@ int vtkMRMLTransformNodeTest1(int , char * [] )
   qTransform->SetMatrixTransformToParent(b_from_q_mx.GetPointer());
   rTransform->SetMatrixTransformToParent(q_from_r_mx.GetPointer());
 
-  // Create transfor hierarchy in the scene
+  // Create transform hierarchy in the scene
   //
   // WORLD -> w coordinate system
   //  |-- bTransform
@@ -74,7 +76,6 @@ int vtkMRMLTransformNodeTest1(int , char * [] )
   //         |-- qTransform
   //                |-- rTransform
   //
-  vtkNew<vtkMRMLScene> scene;
   scene->AddNode(bTransform.GetPointer());
   scene->AddNode(cTransform.GetPointer());
   scene->AddNode(dTransform.GetPointer());

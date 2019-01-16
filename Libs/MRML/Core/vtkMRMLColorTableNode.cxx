@@ -1429,7 +1429,13 @@ void vtkMRMLColorTableNode::Reset(vtkMRMLNode* defaultNode)
 //---------------------------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLColorTableNode::CreateDefaultStorageNode()
 {
-  return vtkMRMLColorTableStorageNode::New();
+  vtkMRMLScene* scene = this->GetScene();
+  if (scene == NULL)
+    {
+    vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
+    return NULL;
+    }
+  return vtkMRMLStorageNode::SafeDownCast(scene->CreateNodeByClass("vtkMRMLColorTableStorageNode"));
 }
 
 //----------------------------------------------------------------------------

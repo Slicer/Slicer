@@ -14,6 +14,7 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLDoubleArrayNode.h"
 #include "vtkMRMLDoubleArrayStorageNode.h"
+#include "vtkMRMLScene.h"
 
 // VTK includes
 #include <vtkNew.h>
@@ -39,6 +40,8 @@ bool TestReadOldFile(std::string filepath);
 int vtkMRMLDoubleArrayNodeTest1(int argc, char * argv[])
 {
   vtkNew<vtkMRMLDoubleArrayNode> node1;
+  vtkNew<vtkMRMLScene> scene;
+  scene->AddNode(node1);
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   if (argc != 3)

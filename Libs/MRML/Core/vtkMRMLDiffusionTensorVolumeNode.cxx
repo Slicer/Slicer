@@ -66,7 +66,14 @@ vtkMRMLDiffusionTensorVolumeDisplayNode* vtkMRMLDiffusionTensorVolumeNode
 //----------------------------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLDiffusionTensorVolumeNode::CreateDefaultStorageNode()
 {
-  return vtkMRMLNRRDStorageNode::New();
+  vtkMRMLScene* scene = this->GetScene();
+  if (scene == NULL)
+    {
+    vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
+    return NULL;
+    }
+  return vtkMRMLStorageNode::SafeDownCast(
+    scene->CreateNodeByClass("vtkMRMLNRRDStorageNode"));
 }
 
 //----------------------------------------------------------------------------
@@ -82,8 +89,8 @@ void vtkMRMLDiffusionTensorVolumeNode::CreateDefaultDisplayNodes()
     vtkErrorMacro("vtkMRMLDiffusionTensorVolumeNode::CreateDefaultDisplayNodes failed: scene is invalid");
     return;
     }
-  vtkNew<vtkMRMLDiffusionTensorVolumeDisplayNode> dispNode;
-  this->GetScene()->AddNode(dispNode.GetPointer());
+  vtkMRMLDiffusionTensorVolumeDisplayNode* dispNode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(
+    this->GetScene()->AddNewNodeByClass("vtkMRMLDiffusionTensorVolumeDisplayNode") );
   dispNode->SetDefaultColorMap();
   this->SetAndObserveDisplayNodeID(dispNode->GetID());
   // add slice display nodes

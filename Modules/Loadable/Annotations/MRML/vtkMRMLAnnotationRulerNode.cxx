@@ -1,15 +1,19 @@
-#include <sstream>
-
+// MRML includes
 #include "vtkMRMLAnnotationRulerNode.h"
 #include "vtkMRMLAnnotationTextDisplayNode.h"
 #include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkMRMLAnnotationLineDisplayNode.h"
 #include "vtkMRMLAnnotationRulerStorageNode.h"
+#include "vtkMRMLScene.h"
 
+// VTK includes
 #include <vtkAbstractTransform.h>
 #include <vtkObjectFactory.h>
 #include <vtkMath.h>
 #include <vtkMatrix4x4.h>
+
+// STD includes
+#include <sstream>
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLAnnotationRulerNode);
@@ -365,7 +369,14 @@ void vtkMRMLAnnotationRulerNode::ApplyTransform(vtkAbstractTransform* transform)
 //---------------------------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLAnnotationRulerNode::CreateDefaultStorageNode()
 {
-  return vtkMRMLStorageNode::SafeDownCast(vtkMRMLAnnotationRulerStorageNode::New());
+  vtkMRMLScene* scene = this->GetScene();
+  if (scene == NULL)
+    {
+    vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
+    return NULL;
+    }
+  return vtkMRMLStorageNode::SafeDownCast(
+    scene->CreateNodeByClass("vtkMRMLAnnotationRulerStorageNode"));
 }
 
 //---------------------------------------------------------------------------

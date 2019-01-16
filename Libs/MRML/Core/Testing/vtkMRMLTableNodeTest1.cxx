@@ -20,6 +20,7 @@
 
 ==============================================================================*/
 
+#include "vtkMRMLScene.h"
 #include "vtkMRMLTableNode.h"
 #include "vtkMRMLTableStorageNode.h"
 
@@ -31,10 +32,14 @@
 
 int vtkMRMLTableNodeTest1(int , char * [] )
 {
+  vtkNew<vtkMRMLScene> scene;
+
   vtkNew<vtkMRMLTableNode> node1;
+  scene->AddNode(node1);
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   vtkNew<vtkMRMLTableNode> node2;
+  scene->AddNode(node2);
 
   vtkTable* table = node2->GetTable();
   CHECK_NOT_NULL(table);

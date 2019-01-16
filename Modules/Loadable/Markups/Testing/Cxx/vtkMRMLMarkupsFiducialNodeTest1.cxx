@@ -19,6 +19,7 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMarkupsFiducialNode.h"
+#include "vtkMRMLScene.h"
 #include "vtkURIHandler.h"
 
 // VTK includes
@@ -28,7 +29,9 @@
 int vtkMRMLMarkupsFiducialNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLMarkupsFiducialNode> node1;
-  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
+  vtkNew<vtkMRMLScene> scene;
+  scene->AddNode(node1);
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1);
 
   vtkMRMLMarkupsDisplayNode *dispNode = node1->GetMarkupsDisplayNode();
   std::cout << "Get MarkupsDisplayNode returned " << (dispNode ? "valid" : "null") << " pointer" << std::endl;

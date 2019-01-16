@@ -24,26 +24,24 @@ int TestGetTransformedPlanes(vtkMRMLScene* scene, vtkMRMLAnnotationROINode* node
 //----------------------------------------------------------------------------
 int vtkMRMLAnnotationROINodeTest1(int , char * [] )
 {
-
   // ======================
   // Basic Setup
   // ======================
 
-  vtkSmartPointer<vtkMRMLAnnotationROINode > node2 = vtkSmartPointer< vtkMRMLAnnotationROINode >::New();
-  vtkSmartPointer<vtkMRMLScene> mrmlScene = vtkSmartPointer<vtkMRMLScene>::New();
+  vtkNew<vtkMRMLAnnotationROINode> node2;
+  vtkNew<vtkMRMLScene> mrmlScene;
 
-  {
+  vtkNew<vtkMRMLAnnotationROINode> node1;
+  mrmlScene->AddNode(node1);
 
-    vtkNew<vtkMRMLAnnotationROINode> node1;
+  node1->UpdateReferences();
+  node2->Copy(node1.GetPointer());
 
-    EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
+  mrmlScene->RegisterNodeClass(node1.GetPointer());
+  mrmlScene->AddNode(node2);
 
-    node1->UpdateReferences();
-    node2->Copy(node1.GetPointer());
-
-    mrmlScene->RegisterNodeClass(node1.GetPointer());
-    mrmlScene->AddNode(node2);
-  }
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1);
+  mrmlScene->RemoveNode(node1);
 
   // ======================
   // Modify Properties

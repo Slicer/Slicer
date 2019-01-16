@@ -1,6 +1,7 @@
 // MRML includes
 #include "vtkMRMLAnnotationSnapshotNode.h"
 #include "vtkMRMLAnnotationSnapshotStorageNode.h"
+#include "vtkMRMLScene.h"
 
 // VTKsys includes
 #include <vtksys/SystemTools.hxx>
@@ -97,7 +98,14 @@ void vtkMRMLAnnotationSnapshotNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLAnnotationSnapshotNode::CreateDefaultStorageNode()
 {
-  return vtkMRMLAnnotationSnapshotStorageNode::New();
+  vtkMRMLScene* scene = this->GetScene();
+  if (scene == NULL)
+    {
+    vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
+    return NULL;
+    }
+  return vtkMRMLStorageNode::SafeDownCast(
+    scene->CreateNodeByClass("vtkMRMLAnnotationSnapshotStorageNode"));
 }
 
 //----------------------------------------------------------------------------

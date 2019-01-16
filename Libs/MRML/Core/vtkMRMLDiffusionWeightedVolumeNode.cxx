@@ -446,7 +446,14 @@ vtkMRMLDiffusionWeightedVolumeDisplayNode* vtkMRMLDiffusionWeightedVolumeNode::G
 //----------------------------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLDiffusionWeightedVolumeNode::CreateDefaultStorageNode()
 {
-  return vtkMRMLNRRDStorageNode::New();
+  vtkMRMLScene* scene = this->GetScene();
+  if (scene == NULL)
+    {
+    vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
+    return NULL;
+    }
+  return vtkMRMLStorageNode::SafeDownCast(
+    scene->CreateNodeByClass("vtkMRMLNRRDStorageNode"));
 }
 
 //----------------------------------------------------------------------------
@@ -462,8 +469,8 @@ void vtkMRMLDiffusionWeightedVolumeNode::CreateDefaultDisplayNodes()
     vtkErrorMacro("vtkMRMLDiffusionWeightedVolumeNode::CreateDefaultDisplayNodes failed: scene is invalid");
     return;
     }
-  vtkNew<vtkMRMLDiffusionWeightedVolumeDisplayNode> dispNode;
-  this->GetScene()->AddNode(dispNode.GetPointer());
+  vtkMRMLDiffusionWeightedVolumeDisplayNode* dispNode = vtkMRMLDiffusionWeightedVolumeDisplayNode::SafeDownCast(
+    this->GetScene()->AddNewNodeByClass("vtkMRMLDiffusionWeightedVolumeDisplayNode") );
   dispNode->SetDefaultColorMap();
   this->SetAndObserveDisplayNodeID(dispNode->GetID());
 }

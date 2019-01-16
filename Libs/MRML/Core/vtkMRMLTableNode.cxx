@@ -21,6 +21,7 @@
 ==============================================================================*/
 
 // MRML includes
+#include "vtkMRMLScene.h"
 #include "vtkMRMLTableNode.h"
 #include "vtkMRMLTableStorageNode.h"
 
@@ -238,7 +239,14 @@ void vtkMRMLTableNode::PrintSelf(ostream& os, vtkIndent indent)
 //---------------------------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLTableNode::CreateDefaultStorageNode()
 {
-  return vtkMRMLStorageNode::SafeDownCast(vtkMRMLTableStorageNode::New());
+  vtkMRMLScene* scene = this->GetScene();
+  if (scene == NULL)
+    {
+    vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
+    return NULL;
+    }
+  return vtkMRMLStorageNode::SafeDownCast(
+    scene->CreateNodeByClass("vtkMRMLTableStorageNode"));
 }
 
 //----------------------------------------------------------------------------
