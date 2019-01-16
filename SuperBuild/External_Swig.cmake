@@ -21,7 +21,7 @@ if(NOT SWIG_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
     # swig.exe available as pre-built binary on Windows:
     ExternalProject_Add(Swig
-      URL https://data.kitware.com:443/api/v1/file/hashsum/sha512/${SWIG_DOWNLOAD_WIN_HASH}/download # swigwin-${SWIG_TARGET_VERSION}.zip
+      URL https://github.com/Slicer/SlicerBinaryDependencies/releases/download/swig/swigwin-${SWIG_TARGET_VERSION}.zip
       URL_HASH SHA512=${SWIG_DOWNLOAD_WIN_HASH}
       SOURCE_DIR "${EP_BINARY_DIR}"
       CONFIGURE_COMMAND ""
@@ -85,7 +85,7 @@ ExternalProject_Execute(${proj} \"configure\" sh ${EP_SOURCE_DIR}/configure
 ")
 
     ExternalProject_add(Swig
-      URL https://data.kitware.com:443/api/v1/file/hashsum/sha512/${SWIG_DOWNLOAD_SOURCE_HASH}/download # swig-${SWIG_TARGET_VERSION}.tar.gz
+      URL https://github.com/Slicer/SlicerBinaryDependencies/releases/download/swig/swig-${SWIG_TARGET_VERSION}.tar.gz
       URL_HASH SHA512=${SWIG_DOWNLOAD_SOURCE_HASH}
       DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
       SOURCE_DIR ${EP_SOURCE_DIR}
