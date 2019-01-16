@@ -175,6 +175,7 @@ void qSlicerExtensionsInstallWidgetPrivate::initializeWebChannel(QWebChannel* we
   Q_UNUSED(webChannel);
   // This is done in qSlicerExtensionsInstallWidget::initJavascript()
 #else
+  this->Superclass::initializeWebChannel(webChannel);
   webChannel->registerObject(
         "extensions_install_widget", this->InstallWidgetForWebChannel);
 #endif

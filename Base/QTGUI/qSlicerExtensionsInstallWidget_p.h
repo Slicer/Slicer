@@ -56,6 +56,7 @@ protected:
   qSlicerExtensionsInstallWidget* const q_ptr;
 
 public:
+  typedef qSlicerWebWidgetPrivate Superclass;
   qSlicerExtensionsInstallWidgetPrivate(qSlicerExtensionsInstallWidget& object);
   virtual ~qSlicerExtensionsInstallWidgetPrivate();
 
