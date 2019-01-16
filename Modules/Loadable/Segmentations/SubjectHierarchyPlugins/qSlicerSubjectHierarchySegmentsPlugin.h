@@ -123,6 +123,9 @@ protected slots:
   /// Show all segments in segmentation
   void showAllSegments();
 
+  /// Jump to slices in slice views to show current segment
+  void jumpSlices();
+
 protected:
   QScopedPointer<qSlicerSubjectHierarchySegmentsPluginPrivate> d_ptr;
 
