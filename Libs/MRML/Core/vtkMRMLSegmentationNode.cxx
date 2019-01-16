@@ -819,10 +819,10 @@ bool vtkMRMLSegmentationNode::GenerateEditMask(vtkOrientedImageData* maskImage, 
     vtkNew<vtkOrientedImageData> thresholdMask; //  == 0 in editable region
     thresholdMask->ShallowCopy(threshold->GetOutput());
     vtkNew<vtkMatrix4x4> masterVolumeToWorldMatrix;
-    masterVolume->GetImageToWorldMatrix(masterVolumeToWorldMatrix);
-    thresholdMask->SetImageToWorldMatrix(masterVolumeToWorldMatrix);
+    masterVolume->GetImageToWorldMatrix(masterVolumeToWorldMatrix.GetPointer());
+    thresholdMask->SetImageToWorldMatrix(masterVolumeToWorldMatrix.GetPointer());
 
-    if (!vtkOrientedImageDataResample::ApplyImageMask(maskImage, thresholdMask, 1))
+    if (!vtkOrientedImageDataResample::ApplyImageMask(maskImage, thresholdMask.GetPointer(), 1))
       {
       vtkErrorMacro("vtkMRMLSegmentationNode::GenerateEditMask: failed to apply intensity mask");
       return false;
