@@ -1053,6 +1053,27 @@ configure_file(
 #  cmake -DSlicer_EXTENSION_SOURCE_DIRS:STRING=/path/to/ExtensionA;/path/to/ExtensionB /path/to/source/Slicer
 #
 
+#
+# Support for "SuperBuild-type" extension:
+#
+# * An extension is considered to be of type "SuperBuild" if a directory
+#   "<extension_dir>/SuperBuild" or "<extension_dir>/Superbuild" exists.
+#   Corresponding directory is appended to EXTERNAL_PROJECT_ADDITIONAL_DIRS.
+#
+# * Associated external projects are globbed using expression of the form
+#   "<extension_dir>/(SuperBuild|Superbuild)/External_*.cmake".
+#
+# * List of external project names is extracted from the "External_<projectName>.cmake"
+#   files and appended to Slicer_DEPENDENCIES. This ensures they are build before Slicer inner build.
+#
+# * Variable Slicer_BUNDLED_EXTENSION_NAMES is updated with the names of external project
+#   and passed to Slicer inner build. It is then used in SlicerCPack. to package associated
+#   external projects if the cache variable <extensionName>_CPACK_INSTALL_CMAKE_PROJECTS
+#   was defined in the extension sources.
+#
+# Corresponding logic is implemented in SuperBuild.cmake
+#
+
 function(_add_extension_source_dir extension_source_dir what)
   get_filename_component(extension_source_dir ${extension_source_dir} REALPATH)
   get_filename_component(extension_source_dirname ${extension_source_dir} NAME_WE)
