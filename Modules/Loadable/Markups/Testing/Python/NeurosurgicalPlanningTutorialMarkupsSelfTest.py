@@ -136,7 +136,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic(ScriptedLoadableModuleLo
     """
     Run the actual algorithm
     """
-    slicer.util.delayDisplay('Running test of the Neurosurgical Planning tutorial')
+    self.delayDisplay('Running test of the Neurosurgical Planning tutorial')
 
     # conventional layout
     lm = slicer.app.layoutManager()
@@ -148,7 +148,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic(ScriptedLoadableModuleLo
     if self.enableScreenshots:
       # for the tutorial, do it through the welcome module
       slicer.util.selectModule('Welcome')
-      slicer.util.delayDisplay("Screenshot")
+      self.delayDisplay("Screenshot")
       self.takeScreenshot('NeurosurgicalPlanning-Welcome','Welcome module')
     else:
       # otherwise show the sample data module
@@ -158,7 +158,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic(ScriptedLoadableModuleLo
     import SampleData
     sampleDataLogic = SampleData.SampleDataLogic()
 
-    slicer.util.delayDisplay("Getting Baseline volume")
+    self.delayDisplay("Getting Baseline volume")
     baselineVolume = sampleDataLogic.downloadWhiteMatterExplorationBaselineVolume()
 
     self.takeScreenshot('NeurosurgicalPlanning-Loaded','Data loaded')
@@ -371,7 +371,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic(ScriptedLoadableModuleLo
     return True
 
 
-class NeurosurgicalPlanningTutorialMarkupsSelfTestTest(unittest.TestCase):
+class NeurosurgicalPlanningTutorialMarkupsSelfTestTest(ScriptedLoadableModuleTest):
   """
   This is the test case for your scripted module.
   """
@@ -392,7 +392,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestTest(unittest.TestCase):
 
   def test_NeurosurgicalPlanningTutorialMarkupsSelfTest1(self):
 
-    slicer.util.delayDisplay("Starting the Neurosurgical Planning Tutorial Markups test")
+    self.delayDisplay("Starting the Neurosurgical Planning Tutorial Markups test")
 
     # start in the welcome module
     m = slicer.util.mainWindow()
@@ -401,4 +401,4 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestTest(unittest.TestCase):
     logic = NeurosurgicalPlanningTutorialMarkupsSelfTestLogic()
     logic.run()
 
-    slicer.util.delayDisplay('Test passed!')
+    self.delayDisplay('Test passed!')

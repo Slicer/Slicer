@@ -176,7 +176,7 @@ class ScriptedLoadableModuleTemplateLogic(ScriptedLoadableModuleLogic):
 
   def takeScreenshot(self,name,description,type=-1):
     # show the message even if not taking a screen shot
-    slicer.util.delayDisplay('Take screenshot: '+description+'.\nResult is available in the Annotations module.', 3000)
+    self.delayDisplay('Take screenshot: '+description+'.\nResult is available in the Annotations module.', 3000)
 
     lm = slicer.app.layoutManager()
     # switch on the type to get the requested window

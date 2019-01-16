@@ -2,13 +2,15 @@ import os
 import time
 import unittest
 import vtk, qt, ctk, slicer
+from slicer.ScriptedLoadableModule import *
 
 #
 # MarkupsInViewsSelfTest
 #
 
-class MarkupsInViewsSelfTest:
+class MarkupsInViewsSelfTest(ScriptedLoadableModule):
   def __init__(self, parent):
+    ScriptedLoadableModule.__init__(self, parent)
     parent.title = "MarkupsInViewsSelfTest"
     parent.categories = ["Testing.TestCases"]
     parent.dependencies = []
@@ -19,65 +21,17 @@ class MarkupsInViewsSelfTest:
     parent.acknowledgementText = """
     This file was originally developed by Nicole Aucoin, BWH and was partially funded by NIH grant 3P41RR013218-12S1.
 """
-    self.parent = parent
-
-    # Add this test to the SelfTest module's list for discovery when the module
-    # is created.  Since this module may be discovered before SelfTests itself,
-    # create the list if it doesn't already exist.
-    try:
-      slicer.selfTests
-    except AttributeError:
-      slicer.selfTests = {}
-    slicer.selfTests['MarkupsInViewsSelfTest'] = self.runTest
-
-  def runTest(self):
-    tester = MarkupsInViewsSelfTestTest()
-    tester.runTest()
 
 #
 # qMarkupsInViewsSelfTestWidget
 #
 
-class MarkupsInViewsSelfTestWidget:
-  def __init__(self, parent = None):
-    if not parent:
-      self.parent = slicer.qMRMLWidget()
-      self.parent.setLayout(qt.QVBoxLayout())
-      self.parent.setMRMLScene(slicer.mrmlScene)
-    else:
-      self.parent = parent
-    self.layout = self.parent.layout()
-    if not parent:
-      self.setup()
-      self.parent.show()
+class MarkupsInViewsSelfTestWidget(ScriptedLoadableModuleWidget):
 
   def setup(self):
+    ScriptedLoadableModuleWidget.setup(self)
+
     # Instantiate and connect widgets ...
-
-    #
-    # Reload and Test area
-    #
-    reloadCollapsibleButton = ctk.ctkCollapsibleButton()
-    reloadCollapsibleButton.text = "Reload && Test"
-    self.layout.addWidget(reloadCollapsibleButton)
-    reloadFormLayout = qt.QFormLayout(reloadCollapsibleButton)
-
-    # reload button
-    # (use this during development, but remove it when delivering
-    #  your module to users)
-    self.reloadButton = qt.QPushButton("Reload")
-    self.reloadButton.toolTip = "Reload this module."
-    self.reloadButton.name = "MarkupsInViewsSelfTest Reload"
-    reloadFormLayout.addWidget(self.reloadButton)
-    self.reloadButton.connect('clicked()', self.onReload)
-
-    # reload and test button
-    # (use this during development, but remove it when delivering
-    #  your module to users)
-    self.reloadAndTestButton = qt.QPushButton("Reload and Test")
-    self.reloadAndTestButton.toolTip = "Reload this module and then run the self tests."
-    reloadFormLayout.addWidget(self.reloadAndTestButton)
-    self.reloadAndTestButton.connect('clicked()', self.onReloadAndTest)
 
     #
     # Parameters Area
@@ -111,45 +65,12 @@ class MarkupsInViewsSelfTestWidget:
     logic = MarkupsInViewsSelfTestLogic()
     logic.run()
 
-  def onReload(self,moduleName="MarkupsInViewsSelfTest"):
-    """Generic reload method for any scripted module.
-    ModuleWizard will substitute correct default moduleName.
-    """
-    globals()[moduleName] = slicer.util.reloadScriptedModule(moduleName)
-
-  def onReloadAndTest(self,moduleName="MarkupsInViewsSelfTest"):
-    try:
-      self.onReload()
-      evalString = 'globals()["%s"].%sTest()' % (moduleName, moduleName)
-      tester = eval(evalString)
-      tester.runTest()
-    except Exception, e:
-      import traceback
-      traceback.print_exc()
-      slicer.util.warningDisplay('Exception!\n\n' + str(e) + "\n\nSee Python Console for Stack Trace",
-                                 windowTitle="Reload and Test")
-
 
 #
 # MarkupsInViewsSelfTestLogic
 #
 
-class MarkupsInViewsSelfTestLogic:
-
-  def __init__(self):
-    pass
-
-  def logicDelayDisplay(self,message,msec=1000):
-    """This utility method displays a small dialog and waits.
-    """
-    print(message)
-    self.info = qt.QDialog()
-    self.infoLayout = qt.QVBoxLayout()
-    self.info.setLayout(self.infoLayout)
-    self.label = qt.QLabel(message,self.info)
-    self.infoLayout.addWidget(self.label)
-    qt.QTimer.singleShot(msec, self.info.close)
-    self.info.exec_()
+class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
 
   def widgetVisible(self, fidNode, viewNodeID):
     lm = slicer.app.layoutManager()
@@ -263,12 +184,12 @@ class MarkupsInViewsSelfTestLogic:
     index = fidNode.AddFiducialFromArray(nose)
     fidNode.SetNthFiducialLabel(index, "nose")
 
-    self.logicDelayDisplay("Placed 3 fiducials")
+    self.delayDisplay("Placed 3 fiducials")
 
     # self.printViewAndSliceNodes()
 
     if self.widgetVisible(fidNode, 'vtkMRMLViewNode1') == 0:
-      self.logicDelayDisplay("Test failed: widget is not visible in view 1")
+      self.delayDisplay("Test failed: widget is not visible in view 1")
       # self.printViewNodeIDs(displayNode)
       return False
 
@@ -276,11 +197,11 @@ class MarkupsInViewsSelfTestLogic:
     # switch to 2 3D views layout
     #
     lm.setLayout(15)
-    self.logicDelayDisplay("Switched to 2 3D views")
+    self.delayDisplay("Switched to 2 3D views")
     # self.printViewAndSliceNodes()
 
     if self.widgetVisible(fidNode, 'vtkMRMLViewNode1') == 0 or self.widgetVisible(fidNode, 'vtkMRMLViewNode2') == 0:
-      self.logicDelayDisplay("Test failed: widget is not visible in view 1 and 2")
+      self.delayDisplay("Test failed: widget is not visible in view 1 and 2")
       # self.printViewNodeIDs(displayNode)
       return False
 
@@ -288,13 +209,13 @@ class MarkupsInViewsSelfTestLogic:
     # show only in view 2
     #
     displayNode.AddViewNodeID("vtkMRMLViewNode2")
-    self.logicDelayDisplay("Showing only in view 2")
+    self.delayDisplay("Showing only in view 2")
     if self.widgetVisible(fidNode, 'vtkMRMLViewNode1') == 1:
-      self.logicDelayDisplay("Test failed: widget is not supposed to be visible in view 1")
+      self.delayDisplay("Test failed: widget is not supposed to be visible in view 1")
       # self.printViewNodeIDs(displayNode)
       return False
     if self.widgetVisible(fidNode, 'vtkMRMLViewNode2') == 0:
-      self.logicDelayDisplay("Test failed: widget is not visible in view 2")
+      self.delayDisplay("Test failed: widget is not visible in view 2")
       # self.printViewNodeIDs(displayNode)
       return False
 
@@ -302,9 +223,9 @@ class MarkupsInViewsSelfTestLogic:
     # remove it so show in all
     #
     displayNode.RemoveAllViewNodeIDs()
-    self.logicDelayDisplay("Showing in both views")
+    self.delayDisplay("Showing in both views")
     if self.widgetVisible(fidNode, 'vtkMRMLViewNode1') == 0 or self.widgetVisible(fidNode, 'vtkMRMLViewNode2') == 0:
-      self.logicDelayDisplay("Test failed: widget is not visible in view 1 and 2")
+      self.delayDisplay("Test failed: widget is not visible in view 1 and 2")
       self.printViewNodeIDs(displayNode)
       return False
 
@@ -312,19 +233,19 @@ class MarkupsInViewsSelfTestLogic:
     # show only in view 1
     #
     displayNode.AddViewNodeID("vtkMRMLViewNode1")
-    self.logicDelayDisplay("Showing only in view 1")
+    self.delayDisplay("Showing only in view 1")
     if self.widgetVisible(fidNode, 'vtkMRMLViewNode2') == 1:
-      self.logicDelayDisplay("Test failed: widget is not supposed to be visible in view 2")
+      self.delayDisplay("Test failed: widget is not supposed to be visible in view 2")
       # self.printViewNodeIDs(displayNode)
       return False
     if self.widgetVisible(fidNode, 'vtkMRMLViewNode1') == 0:
-      self.logicDelayDisplay("Test failed: widget is not visible in view 1")
+      self.delayDisplay("Test failed: widget is not visible in view 1")
       # self.printViewNodeIDs(displayNode)
       return False
 
     # switch back to conventional
     lm.setLayout(2)
-    self.logicDelayDisplay("Switched back to conventional layout")
+    self.delayDisplay("Switched back to conventional layout")
     # self.printViewAndSliceNodes()
 
     # test of the visibility in slice views
@@ -337,9 +258,9 @@ class MarkupsInViewsSelfTestLogic:
 
     # show only in red
     displayNode.AddViewNodeID('vtkMRMLSliceNodeRed')
-    self.logicDelayDisplay("Show only in red slice")
+    self.delayDisplay("Show only in red slice")
     if self.widgetVisibleOnSlice(fidNode,'vtkMRMLSliceNodeRed') != 1:
-      self.logicDelayDisplay("Test failed: widget not displayed on red slice")
+      self.delayDisplay("Test failed: widget not displayed on red slice")
       # self.printViewNodeIDs(displayNode)
       return False
 
@@ -350,9 +271,9 @@ class MarkupsInViewsSelfTestLogic:
     # print 'after removed all'
     # self.printViewNodeIDs(displayNode)
     displayNode.AddViewNodeID('vtkMRMLSliceNodeGreen')
-    self.logicDelayDisplay('Show only in green slice')
+    self.delayDisplay('Show only in green slice')
     if self.widgetVisibleOnSlice(fidNode,'vtkMRMLSliceNodeRed') != 0 or self.widgetVisibleOnSlice(fidNode,'vtkMRMLSliceNodeGreen') != 1:
-      self.logicDelayDisplay("Test failed: widget not displayed only on green slice")
+      self.delayDisplay("Test failed: widget not displayed only on green slice")
       print '\tred = ',self.widgetVisibleOnSlice(fidNode,'vtkMRMLSliceNodeRed')
       print '\tgreen =',self.widgetVisibleOnSlice(fidNode,'vtkMRMLSliceNodeGreen')
       self.printViewNodeIDs(displayNode)
@@ -361,27 +282,10 @@ class MarkupsInViewsSelfTestLogic:
     return True
 
 
-class MarkupsInViewsSelfTestTest(unittest.TestCase):
+class MarkupsInViewsSelfTestTest(ScriptedLoadableModuleTest):
   """
   This is the test case for your scripted module.
   """
-
-  def delayDisplay(self,message,msec=1000):
-    """This utility method displays a small dialog and waits.
-    This does two things: 1) it lets the event loop catch up
-    to the state of the test so that rendering and widget updates
-    have all taken place before the test continues and 2) it
-    shows the user/developer/tester the state of the test
-    so that we'll know when it breaks.
-    """
-    print(message)
-    self.info = qt.QDialog()
-    self.infoLayout = qt.QVBoxLayout()
-    self.info.setLayout(self.infoLayout)
-    self.label = qt.QLabel(message,self.info)
-    self.infoLayout.addWidget(self.label)
-    qt.QTimer.singleShot(msec, self.info.close)
-    self.info.exec_()
 
   def setUp(self):
     """ Do whatever is needed to reset the state - typically a scene clear will be enough.
