@@ -91,6 +91,7 @@ public:
   QAction* RenameAction;
   QAction* DeleteAction;
   QAction* EditAction;
+  QAction* ToggleVisibilityAction;
   QList<QAction*> SelectPluginActions;
   QMenu* SelectPluginSubMenu;
   QActionGroup* SelectPluginActionGroup;
@@ -130,6 +131,7 @@ qMRMLSubjectHierarchyTreeViewPrivate::qMRMLSubjectHierarchyTreeViewPrivate(qMRML
   , RenameAction(NULL)
   , DeleteAction(NULL)
   , EditAction(NULL)
+  , ToggleVisibilityAction(NULL)
   , SelectPluginSubMenu(NULL)
   , SelectPluginActionGroup(NULL)
   , ExpandToDepthAction(NULL)
@@ -194,6 +196,10 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init()
   this->EditAction = new QAction("Edit properties...", this->NodeMenu);
   this->NodeMenu->addAction(this->EditAction);
   QObject::connect(this->EditAction, SIGNAL(triggered()), q, SLOT(editCurrentItem()));
+
+  this->ToggleVisibilityAction = new QAction("Toggle visibility", this->NodeMenu);
+  this->NodeMenu->addAction(this->ToggleVisibilityAction);
+  QObject::connect(this->ToggleVisibilityAction, SIGNAL(triggered()), q, SLOT(toggleVisibilityOfSelectedItems()));
 
   this->SceneMenu = new QMenu(q);
   this->SceneMenu->setObjectName("sceneMenuTreeView");
@@ -948,9 +954,10 @@ void qMRMLSubjectHierarchyTreeView::populateContextMenuForItem(vtkIdType itemID)
   if ( d->SelectedItems.size() > 1
     && itemID && itemID != d->SubjectHierarchyNode->GetSceneItemID() )
     {
-    // Multi-selection: only show delete action
+    // Multi-selection: only show delete and toggle visibility actions
     d->EditAction->setVisible(false);
     d->RenameAction->setVisible(false);
+    d->ToggleVisibilityAction->setVisible(true);
     d->SelectPluginSubMenu->menuAction()->setVisible(false);
 
     // Hide all plugin context menu actions
@@ -974,11 +981,15 @@ void qMRMLSubjectHierarchyTreeView::populateContextMenuForItem(vtkIdType itemID)
   if (!currentItemID || currentItemID == d->SubjectHierarchyNode->GetSceneItemID())
     {
     d->EditAction->setVisible(false);
+    d->RenameAction->setVisible(false);
+    d->ToggleVisibilityAction->setVisible(false);
     d->SelectPluginSubMenu->menuAction()->setVisible(false);
     }
   else
     {
     d->EditAction->setVisible(d->EditActionVisible);
+    d->RenameAction->setVisible(true);
+    d->ToggleVisibilityAction->setVisible(false);
     d->SelectPluginSubMenu->menuAction()->setVisible(true);
     }
 
@@ -1220,6 +1231,45 @@ void qMRMLSubjectHierarchyTreeView::deleteSelectedItems()
       qWarning() << Q_FUNC_INFO << ": Failed to remove subject hierarchy item (ID:"
         << itemID << ", name:" << d->SubjectHierarchyNode->GetItemName(itemID).c_str() << ")";
       }
+    }
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::toggleVisibilityOfSelectedItems()
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  if (!d->SubjectHierarchyNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
+    return;
+    }
+
+  // Remove items from the list whose ancestor item is also contained
+  // to prevent toggling visibility multiple times on the same item
+  QList<vtkIdType> consolidatedItemIDs(d->SelectedItems);
+  foreach (vtkIdType itemID, d->SelectedItems)
+    {
+    // Get children recursively for current item
+    std::vector<vtkIdType> childItemIDs;
+    d->SubjectHierarchyNode->GetItemChildren(itemID, childItemIDs, true);
+
+    // If any of the current item's children is also in the list,
+    // then remove that child item from the consolidated list
+    std::vector<vtkIdType>::iterator childIt;
+    for (childIt=childItemIDs.begin(); childIt!=childItemIDs.end(); ++childIt)
+      {
+      vtkIdType childItemID = (*childIt);
+      if (d->SelectedItems.contains(childItemID))
+        {
+        consolidatedItemIDs.removeOne(childItemID);
+        }
+      }
+    }
+
+  // Toggle visibility on the remaining items
+  foreach (vtkIdType itemID, consolidatedItemIDs)
+    {
+    this->toggleSubjectHierarchyItemVisibility(itemID);
     }
 }
 
