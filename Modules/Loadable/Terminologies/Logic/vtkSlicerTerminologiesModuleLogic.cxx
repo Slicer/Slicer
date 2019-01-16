@@ -1880,6 +1880,10 @@ bool vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(std::string 
     {
     return false;
     }
+  if (!entryComponents[1].compare("^^"))
+    {
+    return false; // Empty category (none selection)
+    }
 
   // Terminology context name
   if (entryComponents[0].empty())
@@ -1983,7 +1987,8 @@ std::string vtkSlicerTerminologiesModuleLogic::GetInfoStringFromTerminologyEntry
     {
     return "Invalid terminology";
     }
-  if (!entry->GetTerminologyContextName())
+  if ( !entry->GetTerminologyContextName()
+    || !entry->GetCategoryObject() || !entry->GetCategoryObject()->GetCodeValue() )
     {
     return "No terminology information";
     }
@@ -1991,7 +1996,7 @@ std::string vtkSlicerTerminologiesModuleLogic::GetInfoStringFromTerminologyEntry
   std::string terminologyStr("Terminology:");
   terminologyStr = terminologyStr + std::string("\n  Context: ") + std::string(entry->GetTerminologyContextName());
 
-  if (entry->GetCategoryObject())
+  if (entry->GetCategoryObject() && entry->GetCategoryObject()->GetCodeValue())
     {
     terminologyStr = terminologyStr + std::string("\n  Category: ") + std::string(entry->GetCategoryObject()->GetCodeMeaning());
     }
@@ -1999,7 +2004,7 @@ std::string vtkSlicerTerminologiesModuleLogic::GetInfoStringFromTerminologyEntry
     {
     terminologyStr = terminologyStr + std::string("\n  Category: NONE");
     }
-  if (entry->GetTypeObject())
+  if (entry->GetTypeObject() && entry->GetTypeObject()->GetCodeValue())
     {
     terminologyStr = terminologyStr + std::string("\n  Type: ") + std::string(entry->GetTypeObject()->GetCodeMeaning());
     }
@@ -2013,7 +2018,7 @@ std::string vtkSlicerTerminologiesModuleLogic::GetInfoStringFromTerminologyEntry
     }
 
   // If anatomic region is not selected, then do not show anatomic context name either
-  if (entry->GetAnatomicContextName()
+  if ( entry->GetAnatomicContextName()
     && entry->GetAnatomicRegionObject() && entry->GetAnatomicRegionObject()->GetCodeValue() )
     {
     terminologyStr = terminologyStr + std::string("\n  Anatomic context: ") + std::string(entry->GetAnatomicContextName());

@@ -79,14 +79,15 @@ void qSlicerTerminologySelectorDialogPrivate::init()
 
   QHBoxLayout* buttonsLayout = new QHBoxLayout();
   buttonsLayout->setSpacing(4);
-  buttonsLayout->setContentsMargins(4, 0, 4, 0);
+  buttonsLayout->setContentsMargins(4, 4, 4, 4);
 
   this->SelectButton = new QPushButton("Select");
+  this->SelectButton->setDefault(true);
   this->SelectButton->setEnabled(false); // Disabled until terminology selection becomes valid
-  buttonsLayout->addWidget(this->SelectButton);
+  buttonsLayout->addWidget(this->SelectButton, 2);
 
   this->CancelButton = new QPushButton("Cancel");
-  buttonsLayout->addWidget(this->CancelButton);
+  buttonsLayout->addWidget(this->CancelButton, 1);
 
   layout->addLayout(buttonsLayout);
 
