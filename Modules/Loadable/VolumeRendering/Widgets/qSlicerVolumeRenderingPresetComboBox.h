@@ -13,7 +13,7 @@
   limitations under the License.
 
   This file was originally developed by Csaba Pinter, PerkLab, Queen's University
-  and was supported through CANARIE’s Research Software Program, and Cancer
+  and was supported through CANARIE's Research Software Program, and Cancer
   Care Ontario.
 
 ==============================================================================*/
