@@ -18,7 +18,6 @@ Care Ontario.
 
 ==============================================================================*/
 
-
 #ifndef __vtkStreamingVolumeCodecFactory_h
 #define __vtkStreamingVolumeCodecFactory_h
 
