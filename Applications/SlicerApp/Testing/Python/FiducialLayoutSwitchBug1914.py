@@ -135,10 +135,8 @@ class FiducialLayoutSwitchBug1914Logic(ScriptedLoadableModuleLogic):
     self.delayDisplay("Conventional view")
 
     # Download MRHead from sample data
-    import SampleData
-    sampleDataLogic = SampleData.SampleDataLogic()
-    print("Getting MR Head Volume")
-    mrHeadVolume = sampleDataLogic.downloadMRHead()
+    from SampleData import SampleDataLogic
+    mrHeadVolume = SampleDataLogic().downloadMRHead()
 
     # Place a fiducial on the red slice
     markupsLogic = slicer.modules.markups.logic()

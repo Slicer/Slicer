@@ -30,9 +30,8 @@ class EditorLibTesting(ScriptedLoadableModuleTest):
     #
     # first, get some sample data
     #
-    import SampleData
-    sampleDataLogic = SampleData.SampleDataLogic()
-    head = sampleDataLogic.downloadMRHead()
+    from SampleData import SampleDataLogic
+    head = SampleDataLogic().downloadMRHead()
 
     #
     # create a label map and set it for editing

@@ -96,12 +96,11 @@ class UtilTestTest(ScriptedLoadableModuleTest):
     self.assertIsNone(redSliceCompositeNode.GetForegroundVolumeID())
     self.assertIsNone(redSliceCompositeNode.GetLabelVolumeID())
 
-    import SampleData
-    sampleDataLogic = SampleData.SampleDataLogic()
+    from SampleData import SampleDataLogic
 
-    backgroundNode = sampleDataLogic.downloadMRHead()
+    backgroundNode = SampleDataLogic().downloadMRHead()
     backgroundNode.SetName('Background')
-    foregroundNode = sampleDataLogic.downloadMRHead()
+    foregroundNode = SampleDataLogic().downloadMRHead()
     foregroundNode.SetName('Foreground')
 
     volumesLogic = slicer.modules.volumes.logic()

@@ -16,10 +16,9 @@ note that from the 't' variable in the console you can access the readers and ot
 
 class vtkITKReaderAgainstNRRDReader(unittest.TestCase):
     def setUp(self):
-        import SampleData
-        sampleDataLogic = SampleData.SampleDataLogic()
-        brainSource = sampleDataLogic.sourceForSampleName('MRHead')
-        self.file_name = sampleDataLogic.downloadSourceIntoCache(brainSource)[0]
+        from SampleData import SampleDataLogic
+        brainSource = SampleDataLogic().sourceForSampleName('MRHead')
+        self.file_name = SampleDataLogic().downloadSourceIntoCache(brainSource)[0]
 
         self.ritk = vtkITK.vtkITKArchetypeImageSeriesScalarReader()
         self.ritk.SetUseOrientationFromFile(True)

@@ -142,11 +142,9 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic(ScriptedLoadableModuleLo
       slicer.util.selectModule('SampleData')
 
     # use the sample data module logic to load data for the self test
-    import SampleData
-    sampleDataLogic = SampleData.SampleDataLogic()
-
     self.delayDisplay("Getting Baseline volume")
-    baselineVolume = sampleDataLogic.downloadWhiteMatterExplorationBaselineVolume()
+    from SampleData import SampleDataLogic
+    baselineVolume = SampleDataLogic().downloadWhiteMatterExplorationBaselineVolume()
 
     self.takeScreenshot('NeurosurgicalPlanning-Loaded','Data loaded')
 

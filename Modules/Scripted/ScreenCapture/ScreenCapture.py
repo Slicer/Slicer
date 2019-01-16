@@ -1130,10 +1130,9 @@ class ScreenCaptureTest(ScriptedLoadableModuleTest):
     """ Do whatever is needed to reset the state - typically a scene clear will be enough.
     """
     slicer.mrmlScene.Clear(0)
-    import SampleData
-    sampleDataLogic = SampleData.SampleDataLogic()
-    self.image1 = sampleDataLogic.downloadMRBrainTumor1()
-    self.image2 = sampleDataLogic.downloadMRBrainTumor2()
+    from SampleData import SampleDataLogic
+    self.image1 = SampleDataLogic().downloadMRBrainTumor1()
+    self.image2 = SampleDataLogic().downloadMRBrainTumor2()
 
     # make the output volume appear in all the slice views
     selectionNode = slicer.app.applicationLogic().GetSelectionNode()
