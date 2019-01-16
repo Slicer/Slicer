@@ -75,6 +75,7 @@ function(slicerInstallLibrary)
     install(DIRECTORY ${lib_dir}/
       DESTINATION ${_slicerInstallLibrary_DESTINATION} COMPONENT ${_slicerInstallLibrary_COMPONENT}
       FILES_MATCHING PATTERN "${lib_name}*" ${install_permissions}
-      PATTERN "${lib_name}*.a" EXCLUDE)
+      PATTERN "${lib_name}*.a" EXCLUDE
+      PATTERN "${lib_name}*.debug" EXCLUDE)
   endif()
 endfunction()
