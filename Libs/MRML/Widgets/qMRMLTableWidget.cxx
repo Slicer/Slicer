@@ -139,6 +139,13 @@ qMRMLTableView* qMRMLTableWidget::tableView()const
   return d->TableView;
 }
 
+// --------------------------------------------------------------------------
+qMRMLTableViewControllerWidget* qMRMLTableWidget::tableController()const
+{
+  Q_D(const qMRMLTableWidget);
+  return d->TableController;
+}
+
 //---------------------------------------------------------------------------
 void qMRMLTableWidget::setViewLabel(const QString& newTableViewLabel)
 {

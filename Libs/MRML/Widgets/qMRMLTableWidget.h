@@ -62,6 +62,9 @@ public:
   /// unsynchronize the view from the nodes/logics.
   Q_INVOKABLE qMRMLTableView* tableView()const;
 
+  /// Get table view controller widget
+  Q_INVOKABLE qMRMLTableViewControllerWidget* tableController()const;
+
   /// Get the view label for the table.
   /// \sa qMRMLTableControllerWidget::tableViewLabel()
   /// \sa setTableViewLabel()
