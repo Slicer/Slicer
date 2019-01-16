@@ -156,10 +156,10 @@ class Slicer4MinuteTest(ScriptedLoadableModuleTest):
     cam.GetCamera().Elevation(20)
 
     # turn off skin and skull
-    skin = slicer.util.getNode(pattern='Skin.vtk')
+    skin = slicer.util.getNode(pattern='Skin')
     skin.GetDisplayNode().SetVisibility(0)
 
-    skull = slicer.util.getNode(pattern='skull_bone.vtk')
+    skull = slicer.util.getNode(pattern='skull_bone')
     skull.GetDisplayNode().SetVisibility(0)
 
     # clip the model hemispheric_white_matter.vtk
@@ -169,7 +169,7 @@ class Slicer4MinuteTest(ScriptedLoadableModuleTest):
     models = slicer.util.getModule('Models')
     logic = models.logic()
 
-    hemispheric_white_matter = slicer.util.getNode(pattern='hemispheric_white_matter.vtk')
+    hemispheric_white_matter = slicer.util.getNode(pattern='hemispheric_white_matter')
     hemispheric_white_matter.GetDisplayNode().SetClipping(1)
 
     clip = slicer.util.getNode('ClipModelsParameters1')
