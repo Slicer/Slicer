@@ -268,6 +268,7 @@ void qSlicerWebWidgetPrivate::handleDownload(QWebEngineDownloadItem* download)
   Q_Q(qSlicerWebWidget);
 
   qSlicerWebDownloadWidget *downloader = new qSlicerWebDownloadWidget(q);
+  downloader->setAttribute(Qt::WA_DeleteOnClose);
   downloader->show();
   downloader->handleDownload(download);
 }
