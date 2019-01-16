@@ -96,10 +96,15 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     self.previewOpacitySlider.pageStep = 0.1
     self.previewOpacitySlider.spinBoxVisible = False
 
+    self.previewShow3DButton = qt.QPushButton("Show 3D")
+    self.previewShow3DButton.setToolTip("Preview results in 3D.")
+    self.previewShow3DButton.setCheckable(True)
+
     displayFrame = qt.QHBoxLayout()
     displayFrame.addWidget(qt.QLabel("inputs"))
     displayFrame.addWidget(self.previewOpacitySlider)
     displayFrame.addWidget(qt.QLabel("results"))
+    displayFrame.addWidget(self.previewShow3DButton)
     self.scriptedEffect.addLabeledOptionsWidget("Display:", displayFrame)
 
     self.cancelButton = qt.QPushButton("Cancel")
@@ -119,6 +124,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     self.cancelButton.connect('clicked()', self.onCancel)
     self.applyButton.connect('clicked()', self.onApply)
     self.previewOpacitySlider.connect("valueChanged(double)", self.updateMRMLFromGUI)
+    self.previewShow3DButton.connect("toggled(bool)", self.updateMRMLFromGUI)
     self.autoUpdateCheckBox.connect("stateChanged(int)", self.updateMRMLFromGUI)
 
   def createCursor(self, widget):
@@ -208,11 +214,14 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
       self.previewOpacitySlider.value = self.getPreviewOpacity()
       self.previewOpacitySlider.blockSignals(wasBlocked)
       self.previewButton.text = "Update"
+      self.previewShow3DButton.setEnabled(True)
+      self.previewShow3DButton.setChecked(self.getPreviewShow3D())
       self.autoUpdateCheckBox.setEnabled(True)
       self.observeSegmentation(self.autoUpdateCheckBox.isChecked())
     else:
       self.previewButton.text = "Initialize"
       self.autoUpdateCheckBox.setEnabled(False)
+      self.previewShow3DButton.setEnabled(False)
       self.delayedAutoUpdateTimer.stop()
       self.observeSegmentation(False)
 
@@ -226,6 +235,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     previewNode = self.getPreviewNode()
     if previewNode:
       self.setPreviewOpacity(self.previewOpacitySlider.value)
+      self.setPreviewShow3D(self.previewShow3DButton.checked)
 
     autoUpdate = 1 if self.autoUpdateCheckBox.isChecked() else 0
     self.scriptedEffect.setParameter("AutoUpdate", autoUpdate)
@@ -269,6 +279,9 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
 
     self.scriptedEffect.saveStateForUndo()
 
+    previewContainsClosedSurfaceRepresentation = previewNode.GetSegmentation().ContainsRepresentation(
+      slicer.vtkSegmentationConverter.GetSegmentationClosedSurfaceRepresentationName())
+
     # Move segments from preview into current segmentation
     segmentIDs = vtk.vtkStringArray()
     previewNode.GetSegmentation().GetSegmentIDs(segmentIDs)
@@ -282,6 +295,9 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
         segmentationDisplayNode.SetSegmentVisibility(segmentID, False)
       previewNode.GetSegmentation().RemoveSegment(segmentID) # delete now to limit memory usage
 
+    if previewContainsClosedSurfaceRepresentation:
+      segmentationNode.CreateClosedSurfaceRepresentation()
+
     self.reset()
 
   def setPreviewOpacity(self, opacity):
@@ -290,6 +306,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     previewNode = self.getPreviewNode()
     if previewNode:
       previewNode.GetDisplayNode().SetOpacity(opacity)
+      previewNode.GetDisplayNode().SetOpacity3D(opacity)
 
     # Make sure the GUI is up-to-date
     wasBlocked = self.previewOpacitySlider.blockSignals(True)
@@ -300,6 +317,27 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     previewNode = self.getPreviewNode()
     return previewNode.GetDisplayNode().GetOpacity() if previewNode else 0.6 # default opacity for preview
 
+  def setPreviewShow3D(self, show):
+    previewNode = self.getPreviewNode()
+    if previewNode:
+      if show:
+        previewNode.CreateClosedSurfaceRepresentation()
+      else:
+        previewNode.RemoveClosedSurfaceRepresentation()
+
+    # Make sure the GUI is up-to-date
+    wasBlocked = self.previewShow3DButton.blockSignals(True)
+    self.previewShow3DButton.checked = show
+    self.previewShow3DButton.blockSignals(wasBlocked)
+
+  def getPreviewShow3D(self):
+    previewNode = self.getPreviewNode()
+    if not previewNode:
+      return False
+    containsClosedSurfaceRepresentation = previewNode.GetSegmentation().ContainsRepresentation(
+      slicer.vtkSegmentationConverter.GetSegmentationClosedSurfaceRepresentationName())
+    return containsClosedSurfaceRepresentation
+
   def preview(self):
     # Get master volume image data
     import vtkSegmentationCorePython as vtkSegmentationCore
@@ -309,8 +347,9 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
 
     previewNode = self.getPreviewNode()
-    if not previewNode or not self.mergedLabelmapGeometryImage \
-      or (self.clippedMasterImageDataRequired and not self.clippedMasterImageData):
+    if (not previewNode or not self.mergedLabelmapGeometryImage
+      or (self.clippedMasterImageDataRequired and not self.clippedMasterImageData)):
+
       self.reset()
       # Compute merged labelmap extent (effective extent slightly expanded)
       self.selectedSegmentIds = vtk.vtkStringArray()
@@ -350,6 +389,14 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
       self.scriptedEffect.parameterSetNode().SetNodeReferenceID(ResultPreviewNodeReferenceRole, previewNode.GetID())
       self.scriptedEffect.setCommonParameter("SegmentationResultPreviewOwnerEffect", self.scriptedEffect.name)
       self.setPreviewOpacity(0.6)
+
+      # Disable smoothing for closed surface generation to make it fast
+      previewNode.GetSegmentation().SetConversionParameter(
+        slicer.vtkBinaryLabelmapToClosedSurfaceConversionRule.GetSmoothingFactorParameterName(),
+        "-0.5");
+
+      inputContainsClosedSurfaceRepresentation = segmentationNode.GetSegmentation().ContainsRepresentation(
+        slicer.vtkSegmentationConverter.GetSegmentationClosedSurfaceRepresentationName())
 
       if self.clippedMasterImageDataRequired:
         self.clippedMasterImageData = vtkSegmentationCore.vtkOrientedImageData()
@@ -400,6 +447,11 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
         newSegment.SetColor(color)
         previewNode.GetSegmentation().AddSegment(newSegment, segmentID)
       slicer.vtkSlicerSegmentationsModuleLogic.SetBinaryLabelmapToSegment(newSegmentLabelmap, previewNode, segmentID)
+
+      # Automatically hide result segments that are background (all eight corners are non-zero)
+      previewNode.GetDisplayNode().SetSegmentVisibility3D(segmentID, not self.isBackgroundLabelmap(newSegmentLabelmap))
+
+    self.setPreviewShow3D(inputContainsClosedSurfaceRepresentation)
 
     self.updateGUIFromMRML()
 
