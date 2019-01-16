@@ -452,7 +452,16 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     exportable.setTag('Modality', 'CT')
     exportable.setTag('Manufacturer', 'Unknown manufacturer')
     exportable.setTag('Model', 'Unknown model')
+    exportable.setTag('StudyDate', '')
+    exportable.setTag('StudyTime', '')
+    exportable.setTag('StudyInstanceUID', '')
+    exportable.setTag('SeriesDate', '')
+    exportable.setTag('SeriesTime', '')
+    exportable.setTag('ContentDate', '')
+    exportable.setTag('ContentTime', '')
     exportable.setTag('SeriesNumber', '1')
+    exportable.setTag('SeriesInstanceUID', '')
+    exportable.setTag('FrameOfReferenceInstanceUID', '')
 
     return [exportable]
 
@@ -499,12 +508,21 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
       tags['Patient Comments'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientCommentsTagName())
       tags['Study ID'] = self.defaultStudyID
       tags['Study Date'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDateTagName())
+      tags['Study Time'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyTimeTagName())
       tags['Study Description'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDescriptionTagName())
       tags['Modality'] = exportable.tag('Modality')
       tags['Manufacturer'] = exportable.tag('Manufacturer')
       tags['Model'] = exportable.tag('Model')
       tags['Series Description'] = exportable.tag('SeriesDescription')
       tags['Series Number'] = exportable.tag('SeriesNumber')
+      tags['Series Date'] = exportable.tag('SeriesDate')
+      tags['Series Time'] = exportable.tag('SeriesTime')
+      tags['Content Date'] = exportable.tag('ContentDate')
+      tags['Content Time'] = exportable.tag('ContentTime')
+
+      tags['Study Instance UID'] = exportable.tag('StudyInstanceUID')
+      tags['Series Instance UID'] = exportable.tag('SeriesInstanceUID')
+      tags['Frame of Reference Instance UID'] = exportable.tag('FrameOfReferenceInstanceUID')
 
       # Validate tags
       if tags['Modality'] == "":
