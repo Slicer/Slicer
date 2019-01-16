@@ -13,8 +13,8 @@ class SitkUtilsTests(unittest.TestCase):
 
         """ Download the MRHead node
         """
-        from SampleData import SampleDataLogic
-        SampleDataLogic().downloadMRHead()
+        import SampleData
+        SampleData.downloadSample("MRHead")[0]
         volumeNode1 = slicer.util.getNode('MRHead')
         self.assertEqual(volumeNode1.GetName(), "MRHead")
 
@@ -86,8 +86,8 @@ class SitkUtilsTests(unittest.TestCase):
 
         """ Download the MRHead node
         """
-        from SampleData import SampleDataLogic
-        SampleDataLogic().downloadMRHead()
+        import SampleData
+        SampleData.downloadSample("MRHead")[0]
         volumeNode1 = slicer.util.getNode('MRHead')
         self.assertEqual(volumeNode1.GetName(), "MRHead")
 

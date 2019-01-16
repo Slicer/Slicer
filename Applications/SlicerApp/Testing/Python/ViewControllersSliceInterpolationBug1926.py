@@ -96,9 +96,9 @@ class ViewControllersSliceInterpolationBug1926Test(ScriptedLoadableModuleTest):
     # first, get some data
     #
     self.delayDisplay("Getting Data")
-    from SampleData import SampleDataLogic
-    head = SampleDataLogic().downloadMRHead()
-    tumor = SampleDataLogic().downloadMRBrainTumor1()
+    import SampleData
+    head = SampleData.downloadSample("MRHead")[0]
+    tumor = SampleData.downloadSample('MRBrainTumor1')[0]
 
     # Change to a CompareView
     ln = slicer.util.getNode(pattern='vtkMRMLLayoutNode*')

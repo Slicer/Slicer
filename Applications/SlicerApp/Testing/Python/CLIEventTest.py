@@ -219,8 +219,8 @@ class CLIEventTestTest(ScriptedLoadableModuleTest):
     self.delayDisplay('Test that output node moved to referenced node location in subject hierarchy')
 
     self.delayDisplay('Load input volume')
-    from SampleData import SampleDataLogic
-    inputVolume = SampleDataLogic().downloadMRHead()
+    import SampleData
+    inputVolume = SampleData.downloadSample("MRHead")[0]
 
     self.delayDisplay('Create subject hierarchy of input volume')
     shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)

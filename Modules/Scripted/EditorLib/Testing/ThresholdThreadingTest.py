@@ -58,8 +58,8 @@ class ThresholdThreadingTestTest(ScriptedLoadableModuleTest):
     # first, get some sample data
     #
     self.delayDisplay("Get some data")
-    from SampleData import SampleDataLogic
-    head = SampleDataLogic().downloadMRHead()
+    import SampleData
+    head = SampleData.downloadSample("MRHead")[0]
 
     #
     # now, define an ROI in it

@@ -132,9 +132,9 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     closedSurfaceReprName = vtkSegmentationCore.vtkSegmentationConverter.GetClosedSurfaceRepresentationName()
 
     # Use MRHead and Tinypatient for testing
-    from SampleData import SampleDataLogic
-    mrVolumeNode = SampleDataLogic().downloadMRHead()
-    [tinyVolumeNode, tinySegmentationNode] = SampleDataLogic().downloadSample('TinyPatient')
+    import SampleData
+    mrVolumeNode = SampleData.downloadSample("MRHead")[0]
+    [tinyVolumeNode, tinySegmentationNode] = SampleData.downloadSample('TinyPatient')
 
     # Convert MRHead to oriented image data
     import vtkSlicerSegmentationsModuleLogicPython as vtkSlicerSegmentationsModuleLogic

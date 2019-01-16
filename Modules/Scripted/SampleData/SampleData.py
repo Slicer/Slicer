@@ -39,6 +39,11 @@ def downloadFromURL(uris=None, fileNames=None, nodeNames=None, loadFiles=None,
     uris, fileNames, nodeNames, loadFiles, customDownloader, loadFileTypes, loadFileProperties)
 
 
+def downloadSample(sampleName):
+  """For a given sample name this will search the available sources
+  and load it if it is available.  Returns the loaded nodes."""
+  return SampleDataLogic().downloadSample(sampleName)
+
 #
 # SampleData
 #

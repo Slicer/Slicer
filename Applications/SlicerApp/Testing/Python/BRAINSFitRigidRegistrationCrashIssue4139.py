@@ -103,12 +103,12 @@ class BRAINSFitRigidRegistrationCrashIssue4139Test(ScriptedLoadableModuleTest):
 
     logic = BRAINSFitRigidRegistrationCrashIssue4139Logic()
 
-    from SampleData import SampleDataLogic
+    import SampleData
 
-    fixed = SampleDataLogic().downloadMRBrainTumor1()
+    fixed = SampleData.downloadSample('MRBrainTumor1')[0]
     self.assertIsNotNone(logic.hasImageData(fixed))
 
-    moving = SampleDataLogic().downloadMRBrainTumor2()
+    moving = SampleData.downloadSample('MRBrainTumor2')[0]
     self.assertIsNotNone(logic.hasImageData(moving))
 
     self.delayDisplay('Finished with download and loading')

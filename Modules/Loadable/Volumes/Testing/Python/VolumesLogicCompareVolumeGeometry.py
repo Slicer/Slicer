@@ -18,8 +18,8 @@ class VolumesLogicCompareVolumeGeometryTesting(ScriptedLoadableModuleTest):
     #
     # first, get some sample data
     #
-    from SampleData import SampleDataLogic
-    head = SampleDataLogic().downloadMRHead()
+    import SampleData
+    head = SampleData.downloadSample("MRHead")[0]
 
     #
     # get the volumes logic and print out default epsilon and precision
