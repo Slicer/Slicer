@@ -49,12 +49,13 @@ public:
   virtual void dropEvent(QDropEvent *event);
 
   /// run the dialog to select the file/files/directory
-  virtual bool exec(const qSlicerIO::IOProperties& readerProperties =
+  Q_INVOKABLE virtual bool exec(const qSlicerIO::IOProperties& readerProperties =
                     qSlicerIO::IOProperties());
 
+public Q_SLOTS:
   /// for programmatic population of dialog
-  Q_INVOKABLE virtual void addFile(const QString filePath);
-  Q_INVOKABLE virtual void addDirectory(const QString directoryPath);
+  virtual void addFile(const QString filePath);
+  virtual void addDirectory(const QString directoryPath);
 
 protected:
   QScopedPointer<qSlicerDataDialogPrivate> d_ptr;
