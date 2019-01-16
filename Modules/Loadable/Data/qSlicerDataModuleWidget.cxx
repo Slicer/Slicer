@@ -147,7 +147,6 @@ void qSlicerDataModuleWidget::setup()
            this, SLOT(setTransformsVisible(bool)) );
 
   // Set up tree view
-  qMRMLSubjectHierarchyModel* sceneModel = (qMRMLSubjectHierarchyModel*)d->SubjectHierarchyTreeView->model();
   d->SubjectHierarchyTreeView->expandToDepth(4);
   d->SubjectHierarchyTreeView->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
   // Make subject hierarchy item info label text selectable
