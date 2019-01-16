@@ -26,6 +26,7 @@
 
 class QDragEnterEvent;
 class QDropEvent;
+class QTemporaryDir;
 
 //-----------------------------------------------------------------------------
 class qSlicerDataDialogPrivate
@@ -70,6 +71,12 @@ protected:
   /// Return true if the 2 items have the same filetype options.
   /// I.e. same items int the TypeColumn combobox.
   bool haveSameTypeOption(int row1, int row2)const;
+  /// check if file is an archive, and if so, give the user
+  /// the option to unpack it and load the contents.
+  /// Currently only zip files with the extension .zip are handled.
+  bool checkAndHandleArchive(const QFileInfo &file);
+  /// A holder for the temporary directory so that it doesn't go out of scope before loading.
+  QScopedPointer<QTemporaryDir> temporaryArchiveDirectory;
 private:
   friend class qSlicerDataDialog;
 };

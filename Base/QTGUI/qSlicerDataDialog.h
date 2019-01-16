@@ -52,6 +52,10 @@ public:
   virtual bool exec(const qSlicerIO::IOProperties& readerProperties =
                     qSlicerIO::IOProperties());
 
+  /// for programmatic population of dialog
+  Q_INVOKABLE virtual void addFile(const QString filePath);
+  Q_INVOKABLE virtual void addDirectory(const QString directoryPath);
+
 protected:
   QScopedPointer<qSlicerDataDialogPrivate> d_ptr;
 
