@@ -15,7 +15,7 @@ ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj
 
 if(Slicer_USE_SYSTEM_${proj})
   unset(ITK_DIR CACHE)
-  find_package(ITK 4.8.1 REQUIRED NO_MODULE)
+  find_package(ITK 4.13.1 REQUIRED NO_MODULE)
 endif()
 
 # Sanity checks
