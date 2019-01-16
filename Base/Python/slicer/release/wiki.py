@@ -156,7 +156,7 @@ class Wiki(object):
 
   def version_info(self, page_name):
     content = self.page_content(page_name)
-    result = re.match(r"<includeonly>([0-9]\.[0-9])</includeonly>", content)
+    result = re.match(r"<includeonly>([0-9]\.[0-9]+)</includeonly>", content)
     return result.group(1)
 
   def previous_version(self):
@@ -240,31 +240,6 @@ class Wiki(object):
       "Template:Documentation/acknowledgments-versionlist")
     return re.findall(
       r"\[\[Documentation/(?:[.\w]+)/Acknowledgments\|([.\w]+)\]\]", content)[0]
-
-  def update_acknowledgments_main_version(self, release_version):
-    # check if update is needed
-    current_version = self.acknowledgments_main_version()
-    page_name = "Template:Documentation/acknowledgments-versionlist"
-    if current_version == release_version:
-      log.info("skipping %s: version is %s" % (page_name, release_version))
-      return
-    # update page
-    content = self.page_content(page_name)
-    template = "[[Documentation/%s/Acknowledgments|%s]]"
-    log.debug("replacing %s" % (template % (current_version, current_version)))
-    content = content.replace(
-      template % (current_version, current_version),
-      template % (release_version, release_version)
-    )
-    summary = "Update acknowledgments main version from %s to %s" % (
-      current_version, release_version)
-    self.set_page_content(page_name, content, summary)
-    # Sanity check
-    current_version = self.acknowledgments_main_version()
-    if current_version != release_version:
-      raise RuntimeError(
-        "Failed to update %s: version is %s" % (
-          page_name, current_version))
 
   REDIRECT_PAGES = [
     "FAQ",
@@ -369,7 +344,6 @@ def handle_query(wiki, args):
     display_version_info()
     display_next_version_info()
     display_version_list()
-    display_acknowledgments_main_version()
     display_redirect_pages_version()
 
   query_args = []
@@ -386,9 +360,6 @@ def handle_query(wiki, args):
 
   if _check('version_list'):
     display_version_list()
-
-  if _check('acknowledgments_main_version'):
-    display_acknowledgments_main_version()
 
   if _check('redirect_pages_version'):
     display_redirect_pages_version()
@@ -426,9 +397,6 @@ def handle_update(wiki, args):
   if _check('version_list'):
     wiki.update_version_list(release_version)
 
-  if _check('acknowledgments_main_version'):
-    wiki.update_acknowledgments_main_version(release_version)
-
   if _check('top_level_documentation_page'):
     wiki.update_top_level_documentation_page(release_version)
 
@@ -436,7 +404,6 @@ def handle_update(wiki, args):
     wiki.update_version_info_pages(release_version)
     wiki.update_redirect_pages(release_version)
     wiki.update_version_list(release_version)
-    wiki.update_acknowledgments_main_version(release_version)
     wiki.update_top_level_documentation_page(release_version)
 
 
