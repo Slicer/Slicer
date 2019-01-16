@@ -13,12 +13,12 @@ int vtkMRMLAnnotationRulerNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLAnnotationRulerNode> node1;
   vtkNew<vtkMRMLScene> mrmlScene;
-  mrmlScene->AddNode(node1);
+  mrmlScene->AddNode(node1.GetPointer());
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   TESTING_OUTPUT_ASSERT_ERRORS(4); // write XML fails for a ruler without points defined
   TESTING_OUTPUT_ASSERT_ERRORS_END();
-  mrmlScene->RemoveNode(node1);
+  mrmlScene->RemoveNode(node1.GetPointer());
 
   // ======================
   // Basic Setup

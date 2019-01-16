@@ -19,7 +19,7 @@ int vtkMRMLLinearTransformNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLLinearTransformNode> node1;
   vtkNew<vtkMRMLScene> scene;
-  scene->AddNode(node1);
+  scene->AddNode(node1.GetPointer());
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }
