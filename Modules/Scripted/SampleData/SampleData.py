@@ -3,6 +3,7 @@ import unittest
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 import logging
+import textwrap
 
 #
 # SampleData methods
@@ -678,30 +679,20 @@ class SampleDataTest(ScriptedLoadableModuleTest):
     slicer.mrmlScene.Clear(0)
 
   def runTest(self):
-    self.setUp()
-    self.test_downloadFromSource_downloadFiles()
-
-    self.setUp()
-    self.test_downloadFromSource_downloadZipFile()
-
-    self.setUp()
-    self.test_downloadFromSource_loadSceneFile()
-
-    self.setUp()
-    self.test_downloadFromSource_downloadSceneFile()
-
-    self.setUp()
-    self.test_downloadFromSource_loadNode()
-
-    self.setUp()
-    self.test_downloadFromSource_loadNodeFromMultipleFiles()
-
-    self.setUp()
-    self.test_downloadFromSource_loadNodes()
-
-    self.setUp()
-    self.test_downloadFromSource_loadNodesWithLoadFileFalse()
-
+    for test in [
+      self.test_downloadFromSource_downloadFiles,
+      self.test_downloadFromSource_downloadZipFile,
+      self.test_downloadFromSource_loadMRBFile,
+      self.test_downloadFromSource_loadMRMLFile,
+      self.test_downloadFromSource_downloadMRBFile,
+      self.test_downloadFromSource_downloadMRMLFile,
+      self.test_downloadFromSource_loadNode,
+      self.test_downloadFromSource_loadNodeFromMultipleFiles,
+      self.test_downloadFromSource_loadNodes,
+      self.test_downloadFromSource_loadNodesWithLoadFileFalse
+    ]:
+      self.setUp()
+      test()
 
   def test_downloadFromSource_downloadFiles(self):
     """Specifying URIs and fileNames without nodeNames is expected to download the files
@@ -738,7 +729,7 @@ class SampleDataTest(ScriptedLoadableModuleTest):
     self.assertTrue(os.path.isdir(filePaths[0]))
     self.assertEqual(sceneMTime, slicer.mrmlScene.GetMTime())
 
-  def test_downloadFromSource_loadSceneFile(self):
+  def test_downloadFromSource_loadMRBFile(self):
     logic = SampleDataLogic()
     sceneMTime = slicer.mrmlScene.GetMTime()
     filePaths = logic.downloadFromSource(SampleDataSource(
@@ -748,7 +739,26 @@ class SampleDataTest(ScriptedLoadableModuleTest):
     self.assertTrue(os.path.isfile(filePaths[0]))
     self.assertTrue(sceneMTime < slicer.mrmlScene.GetMTime())
 
-  def test_downloadFromSource_downloadSceneFile(self):
+  def test_downloadFromSource_loadMRMLFile(self):
+    logic = SampleDataLogic()
+    tempFile = qt.QTemporaryFile(slicer.app.temporaryPath + "/SampleDataTest-loadSceneFile-XXXXXX.mrml");
+    tempFile.open()
+    tempFile.write(textwrap.dedent("""
+      <?xml version="1.0" encoding="ISO-8859-1"?>
+      <MRML  version="Slicer4.4.0" userTags="">
+      </MRML>
+      """).strip())
+    tempFile.close()
+    sceneMTime = slicer.mrmlScene.GetMTime()
+    filePaths = logic.downloadFromSource(SampleDataSource(
+      uris='file://' + tempFile.fileName(), loadFiles=True, fileNames='scene.mrml'))
+    self.assertEqual(len(filePaths), 1)
+    self.assertTrue(os.path.exists(filePaths[0]))
+    self.assertTrue(os.path.isfile(filePaths[0]))
+    self.assertTrue(sceneMTime < slicer.mrmlScene.GetMTime())
+    os.remove(tempFile.fileName())
+
+  def test_downloadFromSource_downloadMRBFile(self):
     logic = SampleDataLogic()
     sceneMTime = slicer.mrmlScene.GetMTime()
     filePaths = logic.downloadFromSource(SampleDataSource(
@@ -757,6 +767,25 @@ class SampleDataTest(ScriptedLoadableModuleTest):
     self.assertTrue(os.path.exists(filePaths[0]))
     self.assertTrue(os.path.isfile(filePaths[0]))
     self.assertEqual(sceneMTime, slicer.mrmlScene.GetMTime())
+
+  def test_downloadFromSource_downloadMRMLFile(self):
+    logic = SampleDataLogic()
+    tempFile = qt.QTemporaryFile(slicer.app.temporaryPath + "/SampleDataTest-loadSceneFile-XXXXXX.mrml");
+    tempFile.open()
+    tempFile.write(textwrap.dedent("""
+      <?xml version="1.0" encoding="ISO-8859-1"?>
+      <MRML  version="Slicer4.4.0" userTags="">
+      </MRML>
+      """).strip())
+    tempFile.close()
+    sceneMTime = slicer.mrmlScene.GetMTime()
+    filePaths = logic.downloadFromSource(SampleDataSource(
+      uris='file://' + tempFile.fileName(), fileNames='scene.mrml'))
+    self.assertEqual(len(filePaths), 1)
+    self.assertTrue(os.path.exists(filePaths[0]))
+    self.assertTrue(os.path.isfile(filePaths[0]))
+    self.assertEqual(sceneMTime, slicer.mrmlScene.GetMTime())
+    os.remove(tempFile.fileName())
 
   def test_downloadFromSource_loadNode(self):
     logic = SampleDataLogic()
