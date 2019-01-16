@@ -111,27 +111,44 @@ public:
   /// \param parameters Map containing the parameters and values to be set
   virtual void SetParameters(std::map<std::string, std::string> parameters);
 
-  /// Returns a list of the names of the supported parameter presets
+  /// Returns a list of the human readable names of the supported parameter presets
   std::vector<std::string> GetParameterPresetNames() const;
 
-  /// Returns a string representing the specified parameter
-  std::string GetParameterPreset(const std::string& name) const;
+  /// Get the string representing the preset value given the name of the parameter
+  /// \param presetName String containing the name of the preset
+  /// Returns a string representing the preset value
+  std::string GetParameterPresetValue(const std::string& presetName) const;
 
-  /// Returns the name of the specified parameter
-  std::string GetParameterPresetName(const std::string& preset) const;
+  /// Get the human readable preset name given the parameter value string
+  /// \param presetValue String representing the preset value
+  /// Returns the human readable name of the preset value
+  std::string GetParameterPresetName(const std::string& presetValue) const;
 
   /// Get the number of parameter presets
   int GetNumberOfParameterPresets() const { return this->ParameterPresets.size(); };
 
   struct ParameterPreset
   {
+    /// Displayable human-readable name
+    /// (for example "maximum compression").
     std::string Name;
-    std::string Parameter;
+    /// Machine-readable code, identifier, and/or parameter list that the codec can interpret
+    /// (for example "ZLIB_9", referring to zlib compression with compression factor 9).
+    std::string Value;
   };
   // Get a list of all supported parameter presets for the codec
   vtkGetStdVectorMacro(ParameterPresets, const std::vector<ParameterPreset>);
 
-  virtual void SetParametersFromPreset(std::string vtkNotUsed(preset)) {};
+  /// Set the current parameters of the codec based on the specified preset value.
+  /// The method must be overridden in child classes that support presets.
+  /// \param presetValue String representing the preset value
+  /// Returns true on success.
+  virtual bool SetParametersFromPresetValue(const std::string& presetValue);
+
+  /// Get the default preset parameter value
+  /// The human readable name of the parameter can be retreived using GetParameterPresetName()
+  /// \sa GetParameterPresetName()
+  vtkGetMacro(DefaultParameterPresetValue, std::string);
 
 protected:
 
@@ -170,6 +187,7 @@ protected:
   vtkSmartPointer<vtkStreamingVolumeFrame>  LastDecodedFrame;
   std::map<std::string, std::string>        Parameters;
   std::vector<ParameterPreset>              ParameterPresets;
+  std::string                               DefaultParameterPresetValue;
 };
 
 #endif
