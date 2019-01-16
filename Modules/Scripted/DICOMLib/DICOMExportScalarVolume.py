@@ -22,11 +22,15 @@ class DICOMExportScalarVolume(object):
   TODO: delete temp directories and files
   """
 
-  def __init__(self,studyUID,volumeNode,tags,directory):
+  def __init__(self,studyUID,volumeNode,tags,directory,filenamePrefix=None):
+    """
+    studyUID parameter is not used (studyUID is retrieved from tags).
+    """
     self.studyUID = studyUID
     self.volumeNode = volumeNode
     self.tags = tags
     self.directory = directory
+    self.filenamePrefix = filenamePrefix if filenamePrefix else "IMG"
     #self.referenceFile = None
 
   #TODO: May come in use when appending to existing study
@@ -101,21 +105,36 @@ class DICOMExportScalarVolume(object):
     mechanism for creating the DICOM files
     """
     cliparameters = {}
+    # Patient
     cliparameters['patientName'] = self.tags['Patient Name']
     cliparameters['patientID'] = self.tags['Patient ID']
     cliparameters['patientComments'] = self.tags['Patient Comments']
+    # Study
     cliparameters['studyID'] = self.tags['Study ID']
     cliparameters['studyDate'] = self.tags['Study Date']
+    cliparameters['studyTime'] = self.tags['Study Time']
     cliparameters['studyDescription'] = self.tags['Study Description']
     cliparameters['modality'] = self.tags['Modality']
     cliparameters['manufacturer'] = self.tags['Manufacturer']
     cliparameters['model'] = self.tags['Model']
+    # Series
     cliparameters['seriesDescription'] = self.tags['Series Description']
     cliparameters['seriesNumber'] = self.tags['Series Number']
+    cliparameters['seriesDate'] = self.tags['Series Date']
+    cliparameters['seriesTime'] = self.tags['Series Time']
+    # Image
+    cliparameters['contentDate'] = self.tags['Content Date']
+    cliparameters['contentTime'] = self.tags['Content Time']
+
+    # UIDs
+    cliparameters['studyInstanceUID'] = self.tags['Study Instance UID']
+    cliparameters['seriesInstanceUID'] = self.tags['Series Instance UID']
+    cliparameters['frameOfReferenceInstanceUID'] = self.tags['Frame of Reference Instance UID']
 
     cliparameters['inputVolume'] = self.volumeNode.GetID()
 
     cliparameters['dicomDirectory'] = self.directory
+    cliparameters['dicomPrefix'] = self.filenamePrefix
 
     #
     # run the task (in the background)

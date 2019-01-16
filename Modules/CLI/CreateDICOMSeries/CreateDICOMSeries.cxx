@@ -114,113 +114,158 @@ int DoIt( int argc, char * argv[])
               << std::endl
               << std::flush;
 
+    // Set all required DICOM fields
+    std::ostringstream value;
+
+    // Image Position (Patient)
     typename Image3DType::PointType    origin;
     typename Image3DType::IndexType    index;
     index.Fill(0);
     index[2] = i;
     image->TransformIndexToPhysicalPoint(index, origin);
-
-    std::ostringstream value;
-    // Set all required DICOM fields
     value.str("");
     value << origin[0] << "\\" << origin[1] << "\\" << origin[2];
     itk::EncapsulateMetaData<std::string>(dictionary, "0020|0032", value.str() );
 
+    // Image Orientation (Patient)
+    value.str("");
+    value << oMatrix[0][0] << "\\" << oMatrix[1][0] << "\\" << oMatrix[2][0] << "\\";
+    value << oMatrix[0][1] << "\\" << oMatrix[1][1] << "\\" << oMatrix[2][1];
+    itk::EncapsulateMetaData<std::string>(dictionary, "0020|0037", value.str() );
+
+    // Slice Thickness
+    value.str("");
+    value << spacing[2];
+    itk::EncapsulateMetaData<std::string>(dictionary, "0018|0050", value.str() );
+
+    // Instance Number
     value.str("");
     value << i + 1;
     itk::EncapsulateMetaData<std::string>(dictionary, "0020|0013", value.str() );
 
-    itk::EncapsulateMetaData<std::string>(dictionary, "0008|0008", std::string("ORIGINAL\\PRIMARY\\AXIAL") );  // Image
-                                                                                                               // Type
-    itk::EncapsulateMetaData<std::string>(dictionary, "0008|0016", std::string("1.2.840.10008.5.1.4.1.1.2") ); // SOP
-                                                                                                               // Class
-                                                                                                               // UID
-    itk::EncapsulateMetaData<std::string>(dictionary, "0010|0030", std::string("20060101") );                  //
-                                                                                                               // Patient's
-                                                                                                               // Birthdate
-    itk::EncapsulateMetaData<std::string>(dictionary, "0010|0032", std::string("010100.000000") );             //
-                                                                                                               // Patient's
-                                                                                                               // Birth
-                                                                                                               // Time
-    itk::EncapsulateMetaData<std::string>(dictionary, "0010|0040", std::string("M") );                         //
-                                                                                                               // Patient's
-                                                                                                               // Sex
-    itk::EncapsulateMetaData<std::string>(dictionary, "0008|0020", std::string("20050101") );                  // Study
-                                                                                                               // Date
-    itk::EncapsulateMetaData<std::string>(dictionary, "0008|0030", std::string("010100.000000") );             // Study
-                                                                                                               // Time
-    itk::EncapsulateMetaData<std::string>(dictionary, "0008|0050", std::string("1") );                         //
-                                                                                                               // Accession
-                                                                                                               // Number
-    itk::EncapsulateMetaData<std::string>(dictionary, "0008|0090", std::string("Unknown") );                   //
-                                                                                                               // Referring
-                                                                                                               // Physician's
-                                                                                                               // Name
-    itk::EncapsulateMetaData<std::string>(dictionary, "0018|5100", std::string("HFS") );                       //
-                                                                                                               // Patient
-                                                                                                               // Position
-    itk::EncapsulateMetaData<std::string>(dictionary, "0020|1040", std::string("SN") );                        //
-                                                                                                               // Position
-                                                                                                               // Reference
-                                                                                                               // Indicator
-    // itk::EncapsulateMetaData<std::string>(dictionary,"0020|0037",
-    // std::string("1.000000\\0.000000\\0.000000\\0.000000\\1.000000\\0.000000")); // Image Orientation (Patient)
-    value.str("");
-    value << oMatrix[0][0] << "\\" << oMatrix[1][0] << "\\" << oMatrix[2][0] << "\\";
-    value << oMatrix[0][1] << "\\" << oMatrix[1][1] << "\\" << oMatrix[2][1];
-    itk::EncapsulateMetaData<std::string>(dictionary, "0020|0037", value.str() ); // Image Orientation (Patient)
-    value.str("");
-    value << spacing[2];
-    itk::EncapsulateMetaData<std::string>(dictionary, "0018|0050", value.str() ); // Slice Thickness
+    // SOP class UID
+    std::string sopClassUID;
+    if      (modality=="CT")  { sopClassUID = "1.2.840.10008.5.1.4.1.1.2"; }
+    else if (modality=="MR")  { sopClassUID = "1.2.840.10008.5.1.4.1.1.4"; }
+    else if (modality=="CR")  { sopClassUID = "1.2.840.10008.5.1.4.1.1.1"; }
+    else if (modality=="NM")  { sopClassUID = "1.2.840.10008.5.1.4.1.1.20"; }
+    else if (modality=="US")  { sopClassUID = "1.2.840.10008.5.1.4.1.1.6.1"; }
+    else
+      {
+      std::cerr << "Unknown modality: " << modality << ". Using CT Image Storage SOP class UID." << std::endl;
+      sopClassUID = "1.2.840.10008.5.1.4.1.1.2"; // CT Image Storage
+      }
+    itk::EncapsulateMetaData<std::string>(dictionary, "0008|0016", sopClassUID);
+
+    // Image type
+    itk::EncapsulateMetaData<std::string>(dictionary, "0008|0008", std::string("ORIGINAL\\PRIMARY\\AXIAL") );
+    // Patient's Birthdate
+    itk::EncapsulateMetaData<std::string>(dictionary, "0010|0030", std::string("20060101") );
+    // Patient's Birth Time
+    itk::EncapsulateMetaData<std::string>(dictionary, "0010|0032", std::string("010100.000000") );
+    // Patient's Sex
+    itk::EncapsulateMetaData<std::string>(dictionary, "0010|0040", std::string("M") );
+    // Study Date
+    itk::EncapsulateMetaData<std::string>(dictionary, "0008|0020", std::string("20050101") );
+    // Study Time
+    itk::EncapsulateMetaData<std::string>(dictionary, "0008|0030", std::string("010100.000000") );
+    // Accession Number
+    itk::EncapsulateMetaData<std::string>(dictionary, "0008|0050", std::string("1") );
+    // Referring Physician's Name
+    itk::EncapsulateMetaData<std::string>(dictionary, "0008|0090", std::string("Unknown") );
+    // Patient Position
+    itk::EncapsulateMetaData<std::string>(dictionary, "0018|5100", std::string("HFS") );
+    // Position Reference Indicator
+    itk::EncapsulateMetaData<std::string>(dictionary, "0020|1040", std::string("SN") );
 
     // Parameters from the command line
-    if( patientName.size() > 0 )
+    if (!patientName.empty())
       {
       itk::EncapsulateMetaData<std::string>(dictionary, "0010|0010", patientName);
       }
-    if( patientID.size() > 0 )
+    if (!patientID.empty())
       {
       itk::EncapsulateMetaData<std::string>(dictionary, "0010|0020", patientID);
       }
-    if( patientComments.size() > 0 )
+    if (!patientComments.empty())
       {
       itk::EncapsulateMetaData<std::string>(dictionary, "0010|4000", patientComments);
       }
-    if( studyID.size() > 0 )
+    if (!studyID.empty())
       {
       itk::EncapsulateMetaData<std::string>(dictionary, "0020|0010", studyID);
       }
-    if( studyDate.size() > 0 )
+    if (!studyDate.empty())
       {
       itk::EncapsulateMetaData<std::string>(dictionary, "0008|0020", studyDate);
       }
-    if( studyComments.size() > 0 )
+    if (!studyTime.empty())
+      {
+      itk::EncapsulateMetaData<std::string>(dictionary, "0008|0030", studyTime);
+      }
+    if (!studyComments.empty())
       {
       itk::EncapsulateMetaData<std::string>(dictionary, "0032|4000", studyComments);
       }
-    if( studyDescription.size() > 0 )
+    if (!studyDescription.empty())
       {
       itk::EncapsulateMetaData<std::string>(dictionary, "0008|1030", studyDescription);
       }
-    if( modality.size() > 0 )
+    if (!modality.empty())
       {
       itk::EncapsulateMetaData<std::string>(dictionary, "0008|0060", modality);
       }
-    if( manufacturer.size() > 0 )
+    if (!manufacturer.empty())
       {
       itk::EncapsulateMetaData<std::string>(dictionary, "0008|0070", manufacturer);
       }
-    if( model.size() > 0 )
+    if (!model.empty())
       {
       itk::EncapsulateMetaData<std::string>(dictionary, "0008|1090", model);
       }
-    if( seriesNumber.size() > 0 )
+    if (!seriesNumber.empty())
       {
       itk::EncapsulateMetaData<std::string>(dictionary, "0020|0011", seriesNumber);
       }
-    if( seriesDescription.size() > 0 )
+    if (!seriesDescription.empty())
       {
       itk::EncapsulateMetaData<std::string>(dictionary, "0008|103e", seriesDescription);
+      }
+    if (!seriesDate.empty())
+      {
+      itk::EncapsulateMetaData<std::string>(dictionary, "0008|0021", seriesDate);
+      }
+    if (!seriesTime.empty())
+      {
+      itk::EncapsulateMetaData<std::string>(dictionary, "0008|0031", seriesTime);
+      }
+    if (!contentDate.empty())
+      {
+      itk::EncapsulateMetaData<std::string>(dictionary, "0008|0023", contentDate);
+      }
+    if (!contentTime.empty())
+      {
+      itk::EncapsulateMetaData<std::string>(dictionary, "0008|0033", contentTime);
+      }
+
+    if (studyInstanceUID.empty() && seriesInstanceUID.empty() && frameOfReferenceInstanceUID.empty())
+      {
+      // No UIDs are specified, so we ask ITK DICOM IO to generate them.
+      gdcmIO->SetKeepOriginalUID(false);
+      }
+    else
+      {
+      // ITK DICOM IO either sets all UIDs or none of them, so we return with error if not all UIDs are specified
+      if (studyInstanceUID.empty() || seriesInstanceUID.empty() || frameOfReferenceInstanceUID.empty())
+        {
+        std::cerr << "If any of UIDs (studyInstanceUID, seriesInstanceUID, and frameOfReferenceInstanceUID)"
+          << " are specified then all of them must be specified." << std::endl;
+        return EXIT_FAILURE;
+        }
+      gdcmIO->SetKeepOriginalUID(true);
+      itk::EncapsulateMetaData<std::string>(dictionary, "0020|000d", studyInstanceUID);
+      itk::EncapsulateMetaData<std::string>(dictionary, "0020|000e", seriesInstanceUID);
+      itk::EncapsulateMetaData<std::string>(dictionary, "0020|0052", frameOfReferenceInstanceUID);
       }
 
     // Always set the rescale interscept and rescale slope (even if
