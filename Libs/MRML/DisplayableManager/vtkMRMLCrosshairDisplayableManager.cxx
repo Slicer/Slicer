@@ -564,9 +564,19 @@ void vtkMRMLCrosshairDisplayableManager::OnMRMLSliceNodeModifiedEvent()
 {
   if (this->Internal->CrosshairNode)
     {
-    // slice position may have changed,
+    // slice position may have changed
+
     // change last crosshair position to force a position update
     this->Internal->CrosshairPosition[0] += 100;
+
+    // update cursor RAS position from XYZ (normalized screen) position
+    double xyz[3] = { 0.0 };
+    vtkMRMLSliceNode *crosshairSliceNode = this->Internal->CrosshairNode->GetCursorPositionXYZ(xyz);
+    if (crosshairSliceNode != NULL && crosshairSliceNode == this->Internal->GetSliceNode())
+      {
+      this->Internal->CrosshairNode->SetCursorPositionXYZ(xyz, crosshairSliceNode);
+      }
+
     this->OnMRMLNodeModified(this->Internal->CrosshairNode);
     }
 }
