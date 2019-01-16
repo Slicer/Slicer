@@ -27,7 +27,7 @@ class vtkStringArray;
 // STD includes
 #include <vector>
 
-/// \brief A supercalss for other storage nodes.
+/// \brief A superclass for other storage nodes.
 ///
 /// A superclass for other storage nodes like volume and model.
 class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
