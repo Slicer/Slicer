@@ -93,6 +93,8 @@ set(KIT_SRCS
   qSlicerViewersToolBar.cxx
   qSlicerViewersToolBar.h
   qSlicerViewersToolBar_p.h
+  qSlicerWebDownloadWidget.cxx
+  qSlicerWebDownloadWidget.h
   qSlicerWebWidget.cxx
   qSlicerWebWidget.h
   qSlicerWebWidget_p.h
@@ -199,6 +201,7 @@ set(KIT_MOC_SRCS
   qSlicerStyle.h
   qSlicerViewersToolBar.h
   qSlicerViewersToolBar_p.h
+  qSlicerWebDownloadWidget.h
   qSlicerWebWidget.h
   qSlicerWebWidget_p.h
   qSlicerWidget.h

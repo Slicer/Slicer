@@ -34,6 +34,7 @@
 #include <QCoreApplication>
 #include <QWebEngineView>
 #include <QWebChannel>
+#include <QWebEngineDownloadItem>
 #include <QWebEngineScript>
 #include <QWebEnginePage>
 #include <QWebEngineProfile>
@@ -47,6 +48,11 @@
 // QtGUI includes
 #include "qSlicerWebWidget.h"
 #include "qSlicerWebWidget_p.h"
+
+// Slicer includes
+#include "qSlicerApplication.h"
+#include "qSlicerPythonManager.h"
+#include "qSlicerWebDownloadWidget.h"
 
 // --------------------------------------------------------------------------
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
@@ -92,6 +98,18 @@ qSlicerWebWidgetPrivate::~qSlicerWebWidgetPrivate()
 }
 
 // --------------------------------------------------------------------------
+void qSlicerWebWidgetPrivate::initializeWebChannel(QWebChannel* webChannel)
+{
+#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
+  Q_UNUSED(webChannel);
+#else
+  Q_Q(qSlicerWebWidget);
+  // TODO: register a proxy object allowing javascript to conditionally access Slicer.
+  // webChannel->registerObject("slicerApplication", qSlicerApplication::application());
+#endif
+}
+
+// --------------------------------------------------------------------------
 void qSlicerWebWidgetPrivate::init()
 {
   Q_Q(qSlicerWebWidget);
@@ -119,6 +137,7 @@ void qSlicerWebWidgetPrivate::init()
   this->WebEnginePage = new qSlicerWebEnginePage(profile, this->WebView);
   this->WebEnginePage->WebWidget = q;
   this->WebView->setPage(this->WebEnginePage);
+
   this->WebChannel = new QWebChannel(this->WebView->page());
   this->initializeWebChannel(this->WebChannel);
   this->WebView->page()->setWebChannel(this->WebChannel);
@@ -144,6 +163,7 @@ void qSlicerWebWidgetPrivate::init()
                    this->ProgressBar, SLOT(setValue(int)));
 
   this->ProgressBar->setVisible(false);
+
 
 #if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
   QNetworkAccessManager * networkAccessManager = this->WebView->page()->networkAccessManager();
@@ -205,6 +225,7 @@ void qSlicerWebWidgetPrivate::initializeWebEngineProfile(QWebEngineProfile* prof
 
   if (!profile->scripts()->findScript("qwebchannel_appended.js").isNull())
     {
+    // profile is already initialized
     return;
     }
 
@@ -226,6 +247,11 @@ void qSlicerWebWidgetPrivate::initializeWebEngineProfile(QWebEngineProfile* prof
     script.setRunsOnSubFrames(false);
     profile->scripts()->insert(script);
     }
+
+  // setup default download handler shared across all widgets
+  QObject::connect(profile, SIGNAL(downloadRequested(QWebEngineDownloadItem*)),
+                    this, SLOT(handleDownload(QWebEngineDownloadItem*)));
+
 }
 #endif
 
@@ -235,6 +261,18 @@ void qSlicerWebWidgetPrivate::setDocumentWebkitHidden(bool value)
   Q_Q(qSlicerWebWidget);
   q->evalJS(QString("document.webkitHidden = %1").arg(value ? "true" : "false"));
 }
+
+// --------------------------------------------------------------------------
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
+void qSlicerWebWidgetPrivate::handleDownload(QWebEngineDownloadItem* download)
+{
+  Q_Q(qSlicerWebWidget);
+
+  qSlicerWebDownloadWidget *downloader = new qSlicerWebDownloadWidget(q);
+  downloader->show();
+  downloader->handleDownload(download);
+}
+#endif
 
 // --------------------------------------------------------------------------
 qSlicerWebWidget::qSlicerWebWidget(QWidget* _parent)

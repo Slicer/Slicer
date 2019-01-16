@@ -31,6 +31,7 @@ class QWebView;
 #include <QWebEngineCertificateError>
 #include <QWebEnginePage>
 class QWebEngineProfile;
+class QWebEngineDownloadItem;
 #endif
 
 // QtGUI includes
@@ -115,9 +116,13 @@ public:
   /// \sa initializeWebEngineProfile(QWebEngineProfile*)
   virtual void updateWebChannelScript(QByteArray& /* webChannelScript */){}
 
-  virtual void initializeWebChannel(QWebChannel* /* webChannel */){}
+  virtual void initializeWebChannel(QWebChannel* /* webChannel */);
+
+protected slots:
+  virtual void handleDownload(QWebEngineDownloadItem *download);
 #endif
 
+public:
   /// Convenient method to set "document.webkitHidden" property
   void setDocumentWebkitHidden(bool value);
 
