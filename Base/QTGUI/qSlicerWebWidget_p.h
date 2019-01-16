@@ -114,8 +114,21 @@ public:
   /// script content.
   virtual void initializeWebEngineProfile(QWebEngineProfile* profile);
 
+  /// \brief Append additional script content to ``qwebchannel_appended.js``.
+  ///
+  /// The default implementation instantiates a ``QWebChannel`` JS object and
+  /// call initializeWebChannelTransport() to provide derived classes with an
+  /// opportunity to further customize the WebChannelTransport initialization
+  /// callback code.
+  ///
   /// \sa initializeWebEngineProfile(QWebEngineProfile*)
-  virtual void updateWebChannelScript(QByteArray& /* webChannelScript */){}
+  virtual void updateWebChannelScript(QByteArray& /* webChannelScript */);
+
+  /// \brief Append additional script content to the WebChannelTransport initialization
+  /// callback associated with the default QWebChannel.
+  ///
+  /// \sa updateWebChannelScript()
+  virtual void initializeWebChannelTransport(QByteArray& /* webChannelScript */);
 
   virtual void initializeWebChannel(QWebChannel* /* webChannel */);
 
