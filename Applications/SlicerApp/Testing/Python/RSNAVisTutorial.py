@@ -309,6 +309,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
     import SampleData
     SampleData.downloadFromURL(
       fileNames='Head_Scene.mrb',
+      loadFiles=True,
       uris='http://slicer.kitware.com/midas3/download?items=124180')
 
     logic.takeScreenshot('Head-Downloaded','Finished with download and loading',-1)
@@ -408,6 +409,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
     import SampleData
     SampleData.downloadFromURL(
       fileNames='LiverSegments_Scene.mrb',
+      loadFiles=True,
       uris='http://slicer.kitware.com/midas3/download?items=124181')
 
     logic.takeScreenshot('Liver-Loaded','Loaded Liver scene',-1)
@@ -480,6 +482,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
     import SampleData
     SampleData.downloadFromURL(
       fileNames='LungSegments_Scene.mrb',
+      loadFiles=True,
       uris='http://slicer.kitware.com/midas3/download?items=124182')
 
     logic.takeScreenshot('Lung-Loaded','Finished with download and loading',-1)

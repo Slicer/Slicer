@@ -122,6 +122,7 @@ class Slicer4MinuteTest(ScriptedLoadableModuleTest):
     import SampleData
     SampleData.downloadFromURL(
       fileNames='slicer4minute.mrb',
+      loadFiles=True,
       uris='http://slicer.kitware.com/midas3/download?items=8466')
     self.delayDisplay('Finished with download and loading')
 

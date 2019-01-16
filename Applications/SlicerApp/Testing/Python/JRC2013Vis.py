@@ -297,6 +297,7 @@ class JRC2013VisTestTest(ScriptedLoadableModuleTest):
     import SampleData
     SampleData.downloadFromURL(
       fileNames='3DHeadData.mrb',
+      loadFiles=True,
       uris='http://slicer.kitware.com/midas3/download?items=8609')
     self.delayDisplay('Finished with download and loading\n')
 
@@ -369,6 +370,7 @@ class JRC2013VisTestTest(ScriptedLoadableModuleTest):
     import SampleData
     SampleData.downloadFromURL(
       fileNames='LiverData.mrb',
+      loadFiles=True,
       uris='http://slicer.kitware.com/midas3/download?items=8611')
     self.delayDisplay('Finished with download and loading\n')
 
@@ -436,6 +438,7 @@ class JRC2013VisTestTest(ScriptedLoadableModuleTest):
     import SampleData
     SampleData.downloadFromURL(
       fileNames='LungData.mrb',
+      loadFiles=True,
       uris='http://slicer.kitware.com/midas3/download?items=8612')
     self.delayDisplay('Finished with download and loading\n')
 

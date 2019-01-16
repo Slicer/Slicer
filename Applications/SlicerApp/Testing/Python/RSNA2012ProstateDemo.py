@@ -67,6 +67,7 @@ class RSNA2012ProstateDemoTest(ScriptedLoadableModuleTest):
     import SampleData
     SampleData.downloadFromURL(
       fileNames='RSNA2012ProstateDemo.mrb',
+      loadFiles=True,
       uris='http://slicer.kitware.com/midas3/download?items=10697')
 
     # get all scene view nodes and test switching
