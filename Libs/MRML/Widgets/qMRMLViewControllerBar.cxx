@@ -262,3 +262,17 @@ QWidget* qMRMLViewControllerBar::barWidget()
 
   return d->BarWidget;
 }
+
+// --------------------------------------------------------------------------
+QToolButton* qMRMLViewControllerBar::pinButton()
+{
+  Q_D(qMRMLViewControllerBar);
+  return d->PinButton;
+}
+
+// --------------------------------------------------------------------------
+QLabel* qMRMLViewControllerBar::viewLabel()
+{
+  Q_D(qMRMLViewControllerBar);
+  return d->ViewLabel;
+}

@@ -22,7 +22,9 @@
 #define __qMRMLViewControllerBar_h
 
 // QT includes
+class QLabel;
 class QLayout;
+class QToolButton;
 
 // qMRMLWidget includes
 #include "qMRMLWidget.h"
@@ -63,18 +65,26 @@ public:
     Panel
   };
 
-  /// set the behavior of the controller, i.e. should it be a popup or
+  /// Set the behavior of the controller, i.e. should it be a popup or
   /// should it occupy space within the widget? (not certain that this
   /// method can be called multiple times to toggle between the behaviors)
-  void setLayoutBehavior(LayoutBehavior behavior);
+  Q_INVOKABLE void setLayoutBehavior(LayoutBehavior behavior);
 
-  // get the layout for the "bar" in the view controller. this layout
-  // is an HBoxLayout. It itself is packed in a VBoxLayout that
-  // contains the "bar" and other controllers.
-  QLayout* barLayout();
+  /// Get the layout for the "bar" in the view controller.
+  /// This layout is an HBoxLayout. It is packed in a VBoxLayout that
+  /// contains the "bar" and other controllers.
+  Q_INVOKABLE QLayout* barLayout();
 
-  // get the widget for the "bar" in the view controller.
-  QWidget* barWidget();
+  /// Get the widget for the "bar" in the view controller.
+  /// This is the part of the controller that is visible
+  /// even when view controller is not pinned.
+  Q_INVOKABLE QWidget* barWidget();
+
+  /// Push-pin icon that shows additional options when clicked.
+  Q_INVOKABLE QToolButton* pinButton();
+
+  /// Label that displays the view's name.
+  Q_INVOKABLE QLabel* viewLabel();
 
 protected:
   QScopedPointer<qMRMLViewControllerBarPrivate> d_ptr;
