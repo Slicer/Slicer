@@ -81,8 +81,6 @@ protected slots:
   void onCurrentTabChanged(int tabIndex);
   void onHelpButtonClicked();
 
-  void showContextMenuHint();
-
 protected:
   virtual void setup();
 
