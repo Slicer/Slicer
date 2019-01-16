@@ -69,12 +69,19 @@ bool qSlicerWebPythonProxy::isPythonEvaluationAllowed()
 // --------------------------------------------------------------------------
 QString qSlicerWebPythonProxy::evalPython(const QString &python)
 {
+
   QString result;
-  if (this->isPythonEvaluationAllowed())
+#ifdef Slicer_USE_PYTHONQT
+  qSlicerCoreApplication * app = qSlicerCoreApplication::application();
+  if (app && !qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
     {
-    qSlicerPythonManager *pythonManager = qSlicerApplication::application()->pythonManager();
-    result = pythonManager->executeString(python).toString();
+    if (this->isPythonEvaluationAllowed())
+      {
+      qSlicerPythonManager *pythonManager = qSlicerApplication::application()->pythonManager();
+      result = pythonManager->executeString(python).toString();
+      }
+    qDebug() << "Running " << python << " result is " << result;
     }
-  qDebug() << "Running " << python << " result is " << result;
+#endif
   return result;
 }
