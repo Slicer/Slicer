@@ -2894,7 +2894,7 @@ int TestReadWriteXMLProperties()
 
   std::stringstream ss;
   ss << "<MRMLNode ";
-  node1->WriteXML(ss, NULL);
+  node1->WriteXML(ss, 0);
   ss << " />";
   vtkSmartPointer<vtkXMLDataElement> element = vtkSmartPointer<vtkXMLDataElement>::Take(vtkXMLUtilities::ReadElementFromStream(ss));
 
