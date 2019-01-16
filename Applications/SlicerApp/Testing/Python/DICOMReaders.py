@@ -2,7 +2,6 @@ import logging
 import numpy
 import os
 import unittest
-import urllib
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 from DICOMLib import DICOMUtils
@@ -66,24 +65,24 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
     import os, json
     self.delayDisplay("Starting the DICOM test")
 
-    referenceData = json.JSONDecoder().decode('''[
-      { "url": "http://slicer.kitware.com/midas3/download/item/292839/Mouse-MR-example-where-GDCM_fails.zip",
+    referenceData = [
+      { "url": "http://slicer.kitware.com/midas3/download?items=292839",
         "fileName": "Mouse-MR-example-where-GDCM_fails.zip",
         "name": "Mouse-MR-example-where-GDCM_fails",
         "seriesUID": "1.3.6.1.4.1.9590.100.1.2.366426457713813178933224342280246227461",
         "expectedFailures": ["GDCM", "Archetype"],
-        "voxelValueQuantity": "(110852, DCM, \\"MR signal intensity\\")",
-        "voxelValueUnits": "(1, UCUM, \\"no units\\")"
+        "voxelValueQuantity": "(110852, DCM, \"MR signal intensity\")",
+        "voxelValueUnits": "(1, UCUM, \"no units\")"
       },
-      { "url": "http://slicer.kitware.com/midas3/download/item/294857/deidentifiedMRHead-dcm-one-series.zip",
+      { "url": "http://slicer.kitware.com/midas3/download?items=294857",
         "fileName": "deidentifiedMRHead-dcm-one-series.zip",
         "name": "deidentifiedMRHead-dcm-one-series",
         "seriesUID": "1.3.6.1.4.1.5962.99.1.3814087073.479799962.1489872804257.270.0",
         "expectedFailures": [],
-        "voxelValueQuantity": "(110852, DCM, \\"MR signal intensity\\")",
-        "voxelValueUnits": "(1, UCUM, \\"no units\\")"
+        "voxelValueQuantity": "(110852, DCM, \"MR signal intensity\")",
+        "voxelValueUnits": "(1, UCUM, \"no units\")"
       }
-    ]''')
+    ]
 
     # another dataset that could be added in the future - currently fails for all readers
     # due to invalid format - see https://issues.slicer.org/view.php?id=3569
@@ -101,16 +100,10 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
     self.delayDisplay("Downloading")
     for dataset in referenceData:
       try:
-        filePath = slicer.app.temporaryPath + '/' + dataset['fileName']
-        if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
-          self.delayDisplay('Requesting download %s from %s...\n' % (dataset['fileName'], dataset['url']))
-          urllib.urlretrieve(dataset['url'], filePath)
-        self.delayDisplay('Finished with download\n')
-
-        self.delayDisplay("Unzipping")
-        dicomFilesDirectory = slicer.app.temporaryPath + dataset['name']
-        qt.QDir().mkpath(dicomFilesDirectory)
-        slicer.app.applicationLogic().Unzip(filePath, dicomFilesDirectory)
+        import SampleData
+        dicomFilesDirectory = SampleData.downloadFromURL(
+          fileNames=dataset['fileName'], uris=dataset['url'])[0]
+        self.delayDisplay('Finished with download')
 
         #
         # insert the data into th database
@@ -211,9 +204,12 @@ reloadScriptedModule('DICOMReaders'); import DICOMReaders; tester = DICOMReaders
     import os, json
     self.delayDisplay("Starting the DICOM test")
 
-    datasetURL = "http://slicer.kitware.com/midas3/download/item/294857/deidentifiedMRHead-dcm-one-series.zip"
-    fileName = "deidentifiedMRHead-dcm-one-series.zip"
-    filePath = os.path.join(slicer.app.temporaryPath,fileName)
+    import SampleData
+    dicomFilesDirectory = SampleData.downloadFromURL(
+      fileNames='deidentifiedMRHead-dcm-one-series.zip',
+      uris='http://slicer.kitware.com/midas3/download?items=294857')[0]
+    self.delayDisplay('Finished with download\n')
+
     seriesUID = "1.3.6.1.4.1.5962.99.1.3814087073.479799962.1489872804257.270.0"
     seriesRASBounds = [-87.29489517211913, 81.70450973510744,
                        -121.57139587402344, 134.42860412597656,
@@ -241,15 +237,6 @@ reloadScriptedModule('DICOMReaders'); import DICOMReaders; tester = DICOMReaders
     ]
 
     try:
-      if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
-        self.delayDisplay('Requesting download %s from %s...\n' % (fileName, datasetURL))
-        urllib.urlretrieve(datasetURL, filePath)
-      self.delayDisplay('Finished with download\n')
-
-      self.delayDisplay("Unzipping")
-      dicomFilesDirectory = slicer.app.temporaryPath + 'MRhead'
-      qt.QDir().mkpath(dicomFilesDirectory)
-      slicer.app.applicationLogic().Unzip(filePath, dicomFilesDirectory)
 
       print('Removing %d files from the middle of the series' % len(filesToRemove))
       for file in filesToRemove:

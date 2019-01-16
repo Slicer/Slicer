@@ -91,22 +91,10 @@ class JRC2013VisWidget(ScriptedLoadableModuleWidget):
         configFilePath = dicomFilesDirectory + '/dcmqrscp.cfg'
         processCurrentPath = dicomFilesDirectory
       else:
-        downloads = (
-          ('http://slicer.kitware.com/midas3/download?items=18822', 'Dcmtk-db.zip'),
-          )
-        print 'Downloading'
-
-        import urllib
-        for url,name in downloads:
-          filePath = slicer.app.temporaryPath + '/' + name
-          if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
-            print 'Requesting download %s from %s...\n' % (name, url)
-            urllib.urlretrieve(url, filePath)
-        print 'Finished with download'
-
-        print 'Unzipping'
-        qt.QDir().mkpath(dicomFilesDirectory)
-        slicer.app.applicationLogic().Unzip(filePath, dicomFilesDirectory)
+        import SampleData
+        SampleData.downloadFromURL(
+          fileNames='Dcmtk-db.zip',
+          uris='http://slicer.kitware.com/midas3/download?items=18822')[0]
 
       import subprocess
       dcmqrscpExeOptions = (
@@ -184,23 +172,10 @@ class JRC2013VisTestTest(ScriptedLoadableModuleTest):
     #
     # first, get the data - a zip file of dicom data
     #
-    import urllib
-    downloads = (
-        ('http://slicer.kitware.com/midas3/download?items=18822', 'Dcmtk-db.zip'),
-        )
-
-    self.delayDisplay("Downloading")
-    for url,name in downloads:
-      filePath = slicer.app.temporaryPath + '/' + name
-      if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
-        self.delayDisplay('Requesting download %s from %s...\n' % (name, url))
-        urllib.urlretrieve(url, filePath)
-    self.delayDisplay('Finished with download\n')
-
-    self.delayDisplay("Unzipping")
-    dicomFilesDirectory = slicer.app.temporaryPath + '/dicomFiles'
-    qt.QDir().mkpath(dicomFilesDirectory)
-    slicer.app.applicationLogic().Unzip(filePath, dicomFilesDirectory)
+    import SampleData
+    SampleData.downloadFromURL(
+      fileNames='Dcmtk-db.zip',
+      uris='http://slicer.kitware.com/midas3/download?items=18822')[0]
 
     try:
       self.delayDisplay("Switching to temp database directory")
@@ -319,19 +294,10 @@ class JRC2013VisTestTest(ScriptedLoadableModuleTest):
     #
     # first, get some data
     #
-    import urllib
-    downloads = (
-        ('http://slicer.kitware.com/midas3/download?items=8609', '3DHeadData.mrb', slicer.util.loadScene),
-        )
-
-    for url,name,loader in downloads:
-      filePath = slicer.app.temporaryPath + '/' + name
-      if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
-        print('Requesting download %s from %s...\n' % (name, url))
-        urllib.urlretrieve(url, filePath)
-      if loader:
-        print('Loading %s...\n' % (name,))
-        loader(filePath)
+    import SampleData
+    SampleData.downloadFromURL(
+      fileNames='3DHeadData.mrb',
+      uris='http://slicer.kitware.com/midas3/download?items=8609')
     self.delayDisplay('Finished with download and loading\n')
 
     try:
@@ -400,19 +366,10 @@ class JRC2013VisTestTest(ScriptedLoadableModuleTest):
     #
     # first, get some data
     #
-    import urllib
-    downloads = (
-        ('http://slicer.kitware.com/midas3/download?items=8611', 'LiverData.mrb', slicer.util.loadScene),
-        )
-
-    for url,name,loader in downloads:
-      filePath = slicer.app.temporaryPath + '/' + name
-      if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
-        print('Requesting download %s from %s...\n' % (name, url))
-        urllib.urlretrieve(url, filePath)
-      if loader:
-        print('Loading %s...\n' % (name,))
-        loader(filePath)
+    import SampleData
+    SampleData.downloadFromURL(
+      fileNames='LiverData.mrb',
+      uris='http://slicer.kitware.com/midas3/download?items=8611')
     self.delayDisplay('Finished with download and loading\n')
 
     try:
@@ -476,19 +433,10 @@ class JRC2013VisTestTest(ScriptedLoadableModuleTest):
     #
     # first, get some data
     #
-    import urllib
-    downloads = (
-        ('http://slicer.kitware.com/midas3/download?items=8612', 'LungData.mrb', slicer.util.loadScene),
-        )
-
-    for url,name,loader in downloads:
-      filePath = slicer.app.temporaryPath + '/' + name
-      if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
-        print('Requesting download %s from %s...\n' % (name, url))
-        urllib.urlretrieve(url, filePath)
-      if loader:
-        print('Loading %s...\n' % (name,))
-        loader(filePath)
+    import SampleData
+    SampleData.downloadFromURL(
+      fileNames='LungData.mrb',
+      uris='http://slicer.kitware.com/midas3/download?items=8612')
     self.delayDisplay('Finished with download and loading\n')
 
     try:

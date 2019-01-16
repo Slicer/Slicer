@@ -150,30 +150,33 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
 
   def test_AbdominalAtlasTest(self):
     self.delayDisplay('Running Abdominal Atlas Test')
-    downloads = (
-        ('http://slicer.kitware.com/midas3/download?items=8301', 'Abdominal_Atlas_2012.mrb', slicer.util.loadScene),
-        )
+    downloads = {
+      'fileNames': 'Abdominal_Atlas_2012.mrb',
+      'uris': 'http://slicer.kitware.com/midas3/download?items=8301'
+      }
     self.perform_AtlasTest(downloads,'I')
 
   def test_BrainAtlasTest(self):
     self.delayDisplay('Running Brain Atlas Test')
-    downloads = (
-        ('http://slicer.kitware.com/midas3/download?items=10937', 'BrainAtlas2012.mrb', slicer.util.loadScene),
-        )
+    downloads = {
+      'fileNames': 'BrainAtlas2012.mrb',
+      'uris': 'http://slicer.kitware.com/midas3/download?items=10937'
+      }
     self.perform_AtlasTest(downloads,'A1_grayT1')
 
   def test_KneeAtlasTest(self):
     self.delayDisplay('Running Knee Atlas Test')
-    downloads = (
-        ('http://slicer.kitware.com/midas3/download?items=9912', 'KneeAtlas2012.mrb', slicer.util.loadScene),
-        )
+    downloads = {
+      'fileNames': 'KneeAtlas2012.mrb',
+      'uris': 'http://slicer.kitware.com/midas3/download?items=9912'
+      }
     self.perform_AtlasTest(downloads,'I')
 
-  def perform_AtlasTest(self, downloads,testVolumePattern):
+  def perform_AtlasTest(self, downloads, testVolumePattern):
     """ Perform the actual atlas test.
     This includes: download and load the given data, touch all
     model hierarchies, and restore all scene views.
-    downloads : list of lists of: url, file save name, load callable
+    downloads : dictionnary of URIs and fileNames
     testVolumePattern : volume name/id that is tested for valid load
     """
 
@@ -181,16 +184,8 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
     #
     # first, get some data
     #
-    import urllib
-
-    for url,name,loader in downloads:
-      filePath = slicer.app.temporaryPath + '/' + name
-      if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
-        print('Requesting download %s from %s...\n' % (name, url))
-        urllib.urlretrieve(url, filePath)
-      if loader:
-        print('Loading %s...\n' % (name,))
-        loader(filePath)
+    import SampleData
+    SampleData.downloadFromURL(**downloads)
     self.delayDisplay('Finished with download and loading\n')
 
     volumeNode = slicer.util.getNode(pattern=testVolumePattern)

@@ -5,6 +5,39 @@ from slicer.ScriptedLoadableModule import *
 import logging
 
 #
+# SampleData methods
+#
+
+def downloadFromURL(uris, fileNames, nodeNames=None,
+  customDownloader=None, loadFileTypes=None, loadFileProperties={}):
+  """Download and optionally load data into the application.
+
+  :param uris: Download URL(s).
+  :param fileNames: File name(s) that will be loaded.
+  :param nodeNames: Node name(s) in the scene.
+  :param customDownloader: Custom function for downloading.
+  :param loadFileTypes: file format name(s) ('VolumeFile' by default).
+  :param loadFileProperties: custom properties passed to the IO plugin.
+
+  If the given ``fileNames`` are not found in the application cache directory, they
+  are downloaded using the associated URIs.
+  See ``slicer.mrmlScene.GetCacheManager().GetRemoteCacheDirectory()``
+
+  If not explicitly provided or if set to ``None``, the ``loadFileTypes`` are
+  guessed based on the corresponding filename extensions.
+
+  If not explicitly provided or if set to ``None``, the ``nodeNames`` are
+  set based on the corresponding filename basename.
+
+  The ``loadFileProperties`` are common for all files. If different properties
+  need to be associated with files of different types, downloadFromURL must
+  be called for each.
+  """
+  return SampleDataLogic().downloadFromURL(
+    uris, fileNames, nodeNames, customDownloader, loadFileTypes, loadFileProperties)
+
+
+#
 # SampleData
 #
 
@@ -74,7 +107,6 @@ class SampleDataSource:
 
     import SampleData
     dataSource = SampleData.SampleDataSource(
-      nodeNames='fixed',
       fileNames='fixed.nrrd',
       uris='http://slicer.kitware.com/midas3/download/item/157188/small-mr-eye-fixed.nrrd')
     loadedNode = SampleData.SampleDataLogic().downloadFromSource(dataSource)[0]
@@ -82,7 +114,7 @@ class SampleDataSource:
 
   def __init__(self, sampleName=None, uris=None, fileNames=None, nodeNames=None,
     customDownloader=None, thumbnailFileName=None,
-    loadFileType='VolumeFile', loadFileProperties={}):
+    loadFileType=None, loadFileProperties={}):
     """
     :param sampleName: Displayed name of data set in SampleData module GUI.
     :param thumbnailFileName: Displayed thumbnail of data set in SampleData module GUI,
@@ -95,23 +127,41 @@ class SampleDataSource:
     """
     self.sampleName = sampleName
     if (isinstance(uris, list) or isinstance(uris, tuple)):
-      if isinstance(loadFileType, basestring):
+      if isinstance(loadFileType, basestring) or loadFileType is None:
         loadFileType = [loadFileType] * len(uris)
-      if nodeNames is None:
-        nodeNames = [os.path.splitext(fileName) for fileName in fileNames]
     elif isinstance(uris, basestring):
       uris = [uris,]
       fileNames = [fileNames,]
       nodeNames = [nodeNames,]
       loadFileType = [loadFileType,]
+
+    updatedFileType = []
+    updatedNodeNames = []
+    for fileName, nodeName, fileType in zip(fileNames, nodeNames, loadFileType):
+      # If not explicitly specified, attempt to guess fileType
+      if fileType is None:
+        # TODO: Use method from Slicer IO logic ?
+        ext = os.path.splitext(fileName.lower())[1]
+        if ext in [".mrml", ".mrb"]:
+          fileType = "SceneFile"
+        elif ext in [".zip"]:
+          fileType = "ZipFile"
+        else:
+          fileType = "VolumeFile"
+      updatedFileType.append(fileType)
+      # If not explicitly specified, attempt to guess nodeName
+      if nodeName is None and fileType not in ["SceneFile", "ZipFile"]:
+        nodeName = fileName.split(".")[0]
+      updatedNodeNames.append(nodeName)
+
     self.uris = uris
     self.fileNames = fileNames
-    self.nodeNames = nodeNames
+    self.nodeNames = updatedNodeNames
     self.customDownloader = customDownloader
     self.thumbnailFileName = thumbnailFileName
-    self.loadFileType = loadFileType
+    self.loadFileType = updatedFileType
     self.loadFileProperties = loadFileProperties
-    if len(uris) != len(fileNames) or len(uris) != len(nodeNames) or len(uris) != len(loadFileType):
+    if len(uris) != len(fileNames) or len(uris) != len(updatedNodeNames) or len(uris) != len(updatedFileType):
       raise Exception("All fields of sample data source must have the same length")
 
 
@@ -349,11 +399,6 @@ class SampleDataLogic:
       filePaths.append(self.downloadFileIntoCache(uri, fileName))
     return filePaths
 
-  def downloadFromSources(self,sources,attemptCount=0):
-    """Given one or multiple instances of SampleDataSource, downloads the associated data and
-    load them into Slicer if it applies."""
-    return [self.downloadFromSource(source, attemptCount=attemptCount) for source in sources]
-
   def downloadFromSource(self,source,attemptCount=0):
     """Given an instance of SampleDataSource, downloads the associated data and
     load them into Slicer if it applies.
@@ -425,6 +470,36 @@ class SampleDataLogic:
         if sampleName == source.sampleName:
           return source
     return None
+
+  def downloadFromURL(self, uris, fileNames, nodeNames=None,
+    customDownloader=None, loadFileTypes=None, loadFileProperties={}):
+    """Download and optionally load data into the application.
+
+    :param uris: Download URL(s).
+    :param fileNames: File name(s) that will be loaded.
+    :param nodeNames: Node name(s) in the scene.
+    :param customDownloader: Custom function for downloading.
+    :param loadFileTypes: file format name(s) ('VolumeFile' by default).
+    :param loadFileProperties: custom properties passed to the IO plugin.
+
+    If the given ``fileNames`` are not found in the application cache directory, they
+    are downloaded using the associated URIs.
+    See ``slicer.mrmlScene.GetCacheManager().GetRemoteCacheDirectory()``
+
+    If not explicitly provided or if set to ``None``, the ``loadFileTypes`` are
+    guessed based on the corresponding filename extensions.
+
+    If not explicitly provided or if set to ``None``, the ``nodeNames`` are
+    set based on the corresponding filename basename.
+
+    The ``loadFileProperties`` are common for all files. If different properties
+    need to be associated with files of different types, downloadFromURL must
+    be called for each.
+    """
+    return self.downloadFromSource(SampleDataSource(
+      uris=uris, fileNames=fileNames, nodeNames=nodeNames,
+      loadFileType=loadFileTypes, loadFileProperties=loadFileProperties
+    ))
 
   def downloadSample(self,sampleName):
     """For a given sample name this will search the available sources
