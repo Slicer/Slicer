@@ -132,7 +132,7 @@ class WebEngineTest(ScriptedLoadableModuleTest):
     if js == "valueFromSlicer;":
       self.delayDisplay("Got Slicer result back from JavaScript")
       self.gotResponse = True
-      if result == "442":
+      if result == "42":
         self.gotCorrectResponse = True
         self.delayDisplay("Got the expected result back from JavaScript")
     else:
