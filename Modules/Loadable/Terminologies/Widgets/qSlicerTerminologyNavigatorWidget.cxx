@@ -1407,7 +1407,11 @@ void qSlicerTerminologyNavigatorWidget::updateWidgetFromCurrentCategory()
     if (d->CurrentCategoryObject->GetShowAnatomy())
       {
       d->AnatomicalRegionExpandButton->setDown(true);
-      QTimer::singleShot(100, this, SLOT(anatomicalRegionExpandButtonUp()));
+      QTimer::singleShot(50, this, SLOT(anatomicalRegionExpandButtonUp()));
+      QTimer::singleShot(100, this, SLOT(anatomicalRegionExpandButtonDown()));
+      QTimer::singleShot(150, this, SLOT(anatomicalRegionExpandButtonUp()));
+      QTimer::singleShot(200, this, SLOT(anatomicalRegionExpandButtonDown()));
+      QTimer::singleShot(250, this, SLOT(anatomicalRegionExpandButtonUp()));
       }
     }
 }
@@ -2261,4 +2265,11 @@ void qSlicerTerminologyNavigatorWidget::anatomicalRegionExpandButtonUp()
 {
   Q_D(qSlicerTerminologyNavigatorWidget);
   d->AnatomicalRegionExpandButton->setDown(false);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTerminologyNavigatorWidget::anatomicalRegionExpandButtonDown()
+{
+  Q_D(qSlicerTerminologyNavigatorWidget);
+  d->AnatomicalRegionExpandButton->setDown(true);
 }
