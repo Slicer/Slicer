@@ -17,6 +17,8 @@
 
 // MRML includes
 #include "vtkMRMLNode.h"
+class vtkMRMLStorableNode;
+
 class vtkURIHandler;
 
 // VTK includes
@@ -35,6 +37,10 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE = 0;
+
+  /// Returns the first storable node that is associated to this storage node
+  /// \sa vtkMRMLStorableNode
+  virtual vtkMRMLStorableNode* GetStorableNode();
 
   ///
   /// Read node attributes from XML file
@@ -407,6 +413,8 @@ protected:
   /// Can be reset with InvalidateFile.
   /// \sa InvalidateFile
   vtkTimeStamp* StoredTime;
+
+  vtkWeakPointer<vtkMRMLStorableNode> LastFoundStorableNode;
 };
 
 #endif

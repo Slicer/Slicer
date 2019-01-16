@@ -22,6 +22,7 @@ Version:   $Revision: 1.1.1.1 $
 #include "vtkMRMLScene.h"
 
 // VTK includes
+#include <vtkCollection.h>
 #include <vtkCommand.h>
 #include <vtkNew.h>
 #include <vtkStringArray.h>
@@ -1358,4 +1359,40 @@ const std::vector<vtkMRMLStorageNode::CompressionPreset> vtkMRMLStorageNode::Get
 {
   this->UpdateCompressionPresets();
   return this->CompressionPresets;
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLStorableNode* vtkMRMLStorageNode::GetStorableNode()
+{
+  if (this->Scene == NULL)
+    {
+    return NULL;
+    }
+  // It is an expensive operation to determine the storable node
+  // (need to iterate through the scene), so the last found value
+  // is cached. If it is still valid then we use it.
+  if (this->LastFoundStorableNode != NULL)
+    {
+    if (this->LastFoundStorableNode->GetScene() == this->Scene
+      && this->LastFoundStorableNode->HasStorageNodeID(this->GetID()))
+      {
+      return this->LastFoundStorableNode;
+      }
+    }
+  vtkMRMLNode* node = NULL;
+  vtkCollectionSimpleIterator it;
+  vtkCollection* sceneNodes = this->Scene->GetNodes();
+  for (sceneNodes->InitTraversal(it);
+    (node = vtkMRMLNode::SafeDownCast(sceneNodes->GetNextItemAsObject(it)));)
+    {
+    vtkMRMLStorableNode* storableNode =
+      vtkMRMLStorableNode::SafeDownCast(node);
+    if (storableNode && storableNode->HasStorageNodeID(this->GetID()))
+      {
+      this->LastFoundStorableNode = storableNode;
+      return storableNode;
+      }
+    }
+  this->LastFoundStorableNode = NULL;
+  return NULL;
 }
