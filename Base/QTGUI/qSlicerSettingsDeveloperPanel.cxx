@@ -60,6 +60,7 @@ void qSlicerSettingsDeveloperPanelPrivate::init()
 
   // Default values
   this->DeveloperModeEnabledCheckBox->setChecked(false);
+  this->SelfTestMessageDelaySlider->setValue(750);
   this->QtTestingEnabledCheckBox->setChecked(false);
 #ifndef Slicer_USE_QtTesting
   this->QtTestingEnabledCheckBox->hide();
@@ -71,7 +72,10 @@ void qSlicerSettingsDeveloperPanelPrivate::init()
                       "checked", SIGNAL(toggled(bool)),
                       "Enable/Disable developer mode", ctkSettingsPanel::OptionRequireRestart);
 
-  // Register settings
+  q->registerProperty("Developer/SelfTestDisplayMessageDelay", this->SelfTestMessageDelaySlider,
+                      "value", SIGNAL(valueChanged(double)),
+                      "Time to wait before resuming self-test execution and hiding messages displayed to the user");
+
   q->registerProperty("QtTesting/Enabled", this->QtTestingEnabledCheckBox,
                       "checked", SIGNAL(toggled(bool)),
                       "Enable/Disable QtTesting", ctkSettingsPanel::OptionRequireRestart);
@@ -81,7 +85,6 @@ void qSlicerSettingsDeveloperPanelPrivate::init()
                    q, SLOT(enableDeveloperMode(bool)));
   QObject::connect(this->QtTestingEnabledCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(enableQtTesting(bool)));
-
 }
 
 // --------------------------------------------------------------------------

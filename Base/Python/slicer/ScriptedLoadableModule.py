@@ -153,18 +153,6 @@ class ScriptedLoadableModuleWidget:
 
     reloadFormLayout.addWidget(createHLayout([self.reloadButton, self.reloadAndTestButton, self.editSourceButton, self.restartButton]))
 
-    # message delay
-    self.messageDelaySlider = ctk.ctkSliderWidget()
-    self.messageDelaySlider.decimals = 0
-    self.messageDelaySlider.minimum = 0
-    self.messageDelaySlider.maximum = 2000
-    self.messageDelaySlider.singleStep = 10
-    self.messageDelaySlider.pageStep = 100
-    self.messageDelaySlider.suffix = "ms"
-    self.messageDelaySlider.value = 750
-
-    reloadFormLayout.addRow("Message delay:", self.messageDelaySlider)
-
   def setup(self):
     # Instantiate and connect default widgets ...
     self.setupDeveloperSection()
@@ -190,7 +178,7 @@ class ScriptedLoadableModuleWidget:
     try:
       self.onReload()
       test = slicer.selfTests[self.moduleName]
-      test(msec=int(self.messageDelaySlider.value))
+      test(msec=slicer.app.userSettings().value("Developer/SelfTestDisplayMessageDelay"))
     except Exception, e:
       import traceback
       traceback.print_exc()
