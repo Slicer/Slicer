@@ -291,6 +291,10 @@ void qSlicerCoreApplicationPrivate::init()
         {
         q->userSettings()->setValue(key, q->defaultSettings()->value(key));
         }
+      if (!q->revisionUserSettings()->contains(key))
+        {
+        q->revisionUserSettings()->setValue(key, q->defaultSettings()->value(key));
+        }
       }
     }
 
