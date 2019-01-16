@@ -150,18 +150,14 @@ class ScriptedLoadableModuleWidget:
     self.editSourceButton.connect('clicked()', self.onEditSource)
 
     self.editModuleUiButton = None
-    # Current limitation: Qt Designer is only availabe in the build tree,
-    # not bundled with the installed application. Therefore, the "Edit UI"
-    # button may only shown if the application is not installed.
-    if not slicer.app.isInstalled:
-      moduleUiFileName = self.resourcePath('UI/%s.ui' % self.moduleName)
-      print(moduleUiFileName)
-      import os.path
-      if os.path.isfile(moduleUiFileName):
-        # Module UI file exists
-        self.editModuleUiButton = qt.QPushButton("Edit UI")
-        self.editModuleUiButton.toolTip = "Edit the module's .ui file."
-        self.editModuleUiButton.connect('clicked()', lambda filename=moduleUiFileName: slicer.util.startQtDesigner(moduleUiFileName))
+    moduleUiFileName = self.resourcePath('UI/%s.ui' % self.moduleName)
+    print(moduleUiFileName)
+    import os.path
+    if os.path.isfile(moduleUiFileName):
+      # Module UI file exists
+      self.editModuleUiButton = qt.QPushButton("Edit UI")
+      self.editModuleUiButton.toolTip = "Edit the module's .ui file."
+      self.editModuleUiButton.connect('clicked()', lambda filename=moduleUiFileName: slicer.util.startQtDesigner(moduleUiFileName))
 
     # restart Slicer button
     # (use this during development, but remove it when delivering
