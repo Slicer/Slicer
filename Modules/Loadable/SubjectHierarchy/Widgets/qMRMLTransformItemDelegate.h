@@ -25,11 +25,14 @@
 
 // Qt includes
 #include <QStyledItemDelegate>
+#include <QMenu>
 
 // SubjectHierarchy includes
 #include "qSlicerSubjectHierarchyModuleWidgetsExport.h"
 
 class vtkMRMLScene;
+class QShowEvent;
+class QCloseEvent;
 
 /// \brief Item Delegate for MRML parent transform property
 class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLTransformItemDelegate: public QStyledItemDelegate
@@ -74,11 +77,31 @@ signals:
 protected slots:
   void commitAndClose();
 
+  void transformActionSelected();
+
 protected:
   vtkMRMLScene* MRMLScene;
-  QAction* RemoveTransformAction;
+  QAction* NoneAction;
   QAction* HardenAction;
   int FixedRowHeight;
+};
+
+//------------------------------------------------------------------------------
+/// \brief Special menu class that repositions itself to the cursor position when shown
+///
+/// This is needed because after creating the editor widget, the show function is called
+/// by the delegate mechanism. However, the menu shows up in global position instead of
+/// local and need to be moved. The cursor position is a convenient place to move it to.
+class DelegateMenu : public QMenu
+{
+  Q_OBJECT
+public:
+  explicit DelegateMenu(QWidget* parent = 0);
+  QString SelectedTransformNodeID;
+protected:
+  virtual void showEvent(QShowEvent* event);
+signals:
+  void closed();
 };
 
 #endif

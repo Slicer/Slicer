@@ -47,6 +47,9 @@
 #include "qSlicerSubjectHierarchyAbstractPlugin.h"
 #include "qSlicerSubjectHierarchyDefaultPlugin.h"
 
+// Terminologies includes
+#include "qSlicerTerminologyItemDelegate.h"
+
 // MRML includes
 #include <vtkMRMLScene.h>
 #include <vtkMRMLScalarVolumeNode.h>
@@ -162,12 +165,14 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init()
 #if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
   q->header()->setResizeMode(this->Model->nameColumn(), QHeaderView::Stretch);
   q->header()->setResizeMode(this->Model->visibilityColumn(), QHeaderView::ResizeToContents);
-  q->header()->setResizeMode(this->Model->transformColumn(), QHeaderView::Interactive);
+  q->header()->setResizeMode(this->Model->colorColumn(), QHeaderView::ResizeToContents);
+  q->header()->setResizeMode(this->Model->transformColumn(), QHeaderView::ResizeToContents);
   q->header()->setResizeMode(this->Model->idColumn(), QHeaderView::ResizeToContents);
 #else
   q->header()->setSectionResizeMode(this->Model->nameColumn(), QHeaderView::Stretch);
   q->header()->setSectionResizeMode(this->Model->visibilityColumn(), QHeaderView::ResizeToContents);
-  q->header()->setSectionResizeMode(this->Model->transformColumn(), QHeaderView::Interactive);
+  q->header()->setSectionResizeMode(this->Model->colorColumn(), QHeaderView::ResizeToContents);
+  q->header()->setSectionResizeMode(this->Model->transformColumn(), QHeaderView::ResizeToContents);
   q->header()->setSectionResizeMode(this->Model->idColumn(), QHeaderView::ResizeToContents);
 #endif
 
@@ -196,9 +201,11 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init()
   this->VisibilityMenu = new QMenu(q);
   this->VisibilityMenu->setObjectName("visibilityMenuTreeView");
 
-  // Set item delegate (that creates widgets for certain types of data)
+  // Set item delegate for color column
+  q->setItemDelegateForColumn(this->Model->colorColumn(), new qSlicerTerminologyItemDelegate(q));
+
+  // Set item delegate for transform column (that creates widgets for certain types of data)
   this->TransformItemDelegate = new qMRMLTransformItemDelegate(q);
-  this->TransformItemDelegate->setFixedRowHeight(16);
   this->TransformItemDelegate->setMRMLScene(q->mrmlScene());
   q->setItemDelegateForColumn(this->Model->transformColumn(), this->TransformItemDelegate);
   QObject::connect( this->TransformItemDelegate, SIGNAL(removeTransformsFromBranchOfCurrentItem()),
@@ -1373,8 +1380,9 @@ bool qMRMLSubjectHierarchyTreeView::multiSelection()
 //-----------------------------------------------------------------------------
 vtkIdType qMRMLSubjectHierarchyTreeView::firstSelectedSubjectHierarchyItemInBranch(vtkIdType itemID)
 {
-  // Check if item itself is selected
   Q_D(qMRMLSubjectHierarchyTreeView);
+
+  // Check if item itself is selected
   if (d->SelectedItems.contains(itemID))
     {
     return itemID;
@@ -1400,6 +1408,8 @@ vtkIdType qMRMLSubjectHierarchyTreeView::firstSelectedSubjectHierarchyItemInBran
 //-----------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeView::onSubjectHierarchyItemModified(vtkObject *caller, void *callData)
 {
+  Q_D(qMRMLSubjectHierarchyTreeView);
+
   vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(caller);
   if (!shNode)
     {
@@ -1416,6 +1426,14 @@ void qMRMLSubjectHierarchyTreeView::onSubjectHierarchyItemModified(vtkObject *ca
       {
       itemID = *itemIdPtr;
       }
+    }
+
+  // Highlight items referenced by DICOM in case of single-selection
+  //   Referenced SOP instance UIDs (in attribute named vtkMRMLSubjectHierarchyConstants::GetDICOMReferencedInstanceUIDsAttributeName())
+  //   -> SH item instance UIDs (serialized string lists in subject hierarchy UID vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName())
+  if (this->highlightReferencedItems() && d->SelectedItems.count() == 1)
+    {
+    this->applyReferenceHighlightForItems(d->SelectedItems);
     }
 
   // Forward `currentItemModified` if the modified item or one of
@@ -1538,11 +1556,12 @@ bool qMRMLSubjectHierarchyTreeView::showContextMenuHint(bool visibility/*=false*
 
     // Show visibility tooltip
     QString visibilityTooltip = QString(
-      "<div align=\"left\" style=\"font-size:10pt;\"><!--&uarr;<br/>-->Right-click the visibility<br/>button of an item to<br/>access additional<br/>visibility options</div><br/>")
+      "<div align=\"left\" style=\"font-size:10pt;\"><!--&uarr;<br/>-->Right-click the visibility<br/>"
+      "button of an item to<br/>access additional<br/>visibility options</div><br/>")
       + iconHtml;
     QToolTip::showText( this->mapToGlobal( QPoint( visibilityRect.x() + visibilityRect.width()/2, visibilityRect.y() + visibilityRect.height() ) ),
       visibilityTooltip );
     }
- 
+
   return true;
 }

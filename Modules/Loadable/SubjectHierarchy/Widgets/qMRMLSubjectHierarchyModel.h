@@ -94,6 +94,9 @@ public:
   int visibilityColumn()const;
   void setVisibilityColumn(int column);
 
+  int colorColumn()const;
+  void setColorColumn(int column);
+
   int transformColumn()const;
   void setTransformColumn(int column);
 

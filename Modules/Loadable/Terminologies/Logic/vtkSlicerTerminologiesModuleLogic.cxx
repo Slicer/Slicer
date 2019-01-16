@@ -734,7 +734,7 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
     recommendedDisplayRGBValueArray.PushBack(segmentRecommendedDisplayRGBValue[0].GetInt(), allocator);
     recommendedDisplayRGBValueArray.PushBack(segmentRecommendedDisplayRGBValue[1].GetInt(), allocator);
     recommendedDisplayRGBValueArray.PushBack(segmentRecommendedDisplayRGBValue[2].GetInt(), allocator);
-    
+
     // Add modifier if specified in descriptor and does not yet exist in terminology
     if (segmentAttributes.HasMember("SegmentedPropertyTypeModifierCodeSequence"))
       {
@@ -1783,7 +1783,7 @@ std::string vtkSlicerTerminologiesModuleLogic::SerializeTerminologyEntry(vtkSlic
     return "";
     }
 
-  // Serialized terminology entry consists of the following: terminologyContextName, category (codingScheme,  
+  // Serialized terminology entry consists of the following: terminologyContextName, category (codingScheme,
   // codeValue, codeMeaning triple), type, typeModifier, anatomicContextName, anatomicRegion, anatomicRegionModifier
   std::string serializedEntry;
   serializedEntry += std::string(entry->GetTerminologyContextName()) + "~";
@@ -1872,7 +1872,7 @@ bool vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(std::string 
     return false;
     }
 
-  // Serialized terminology entry consists of the following: terminologyContextName, category (codingScheme,  
+  // Serialized terminology entry consists of the following: terminologyContextName, category (codingScheme,
   // codeValue, codeMeaning triple), type, typeModifier, anatomicContextName, anatomicRegion, anatomicRegionModifier
   std::vector<std::string> entryComponents;
   vtksys::SystemTools::Split(serializedEntry, entryComponents, '~');
@@ -1974,6 +1974,58 @@ bool vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(std::string 
     }
 
   return true;
+}
+
+//-----------------------------------------------------------------------------
+std::string vtkSlicerTerminologiesModuleLogic::GetInfoStringFromTerminologyEntry(vtkSlicerTerminologyEntry* entry)
+{
+  if (!entry)
+    {
+    return "Invalid terminology";
+    }
+  if (!entry->GetTerminologyContextName())
+    {
+    return "No terminology information";
+    }
+
+  std::string terminologyStr("Terminology:");
+  terminologyStr = terminologyStr + std::string("\n  Context: ") + std::string(entry->GetTerminologyContextName());
+
+  if (entry->GetCategoryObject())
+    {
+    terminologyStr = terminologyStr + std::string("\n  Category: ") + std::string(entry->GetCategoryObject()->GetCodeMeaning());
+    }
+  else
+    {
+    terminologyStr = terminologyStr + std::string("\n  Category: NONE");
+    }
+  if (entry->GetTypeObject())
+    {
+    terminologyStr = terminologyStr + std::string("\n  Type: ") + std::string(entry->GetTypeObject()->GetCodeMeaning());
+    }
+  else
+    {
+    terminologyStr = terminologyStr + std::string("\n  Type: NONE");
+    }
+  if (entry->GetTypeModifierObject() && entry->GetTypeModifierObject()->GetCodeValue())
+    {
+    terminologyStr = terminologyStr + std::string("\n    Modifier: ") + std::string(entry->GetTypeModifierObject()->GetCodeMeaning());
+    }
+
+  // If anatomic region is not selected, then do not show anatomic context name either
+  if (entry->GetAnatomicContextName()
+    && entry->GetAnatomicRegionObject() && entry->GetAnatomicRegionObject()->GetCodeValue() )
+    {
+    terminologyStr = terminologyStr + std::string("\n  Anatomic context: ") + std::string(entry->GetAnatomicContextName());
+    terminologyStr = terminologyStr + std::string("\n  Anatomic region: ") + std::string(entry->GetAnatomicRegionObject()->GetCodeMeaning());
+
+    if (entry->GetAnatomicRegionModifierObject() && entry->GetAnatomicRegionModifierObject()->GetCodeValue())
+      {
+      terminologyStr = terminologyStr + std::string("\n    Modifier: ") + std::string(entry->GetAnatomicRegionModifierObject()->GetCodeMeaning());
+      }
+    }
+
+  return terminologyStr;
 }
 
 //-----------------------------------------------------------------------------
@@ -2082,7 +2134,7 @@ bool vtkSlicerTerminologiesModuleLogic::FindTypeInTerminologyBy3dSlicerLabel(std
                   }
                 ++typeModifierIndex;
                 } // For all type modifiers
-                
+
               if (found)
                 {
                 break;

@@ -20,20 +20,22 @@
 
 // Segmentations includes
 #include "qSlicerSubjectHierarchySegmentsPlugin.h"
-
 #include "qSlicerSubjectHierarchySegmentationsPlugin.h"
-#include "vtkMRMLScene.h"
-#include "vtkMRMLSegmentationNode.h"
-#include "vtkMRMLSegmentationDisplayNode.h"
 #include "vtkSlicerSegmentationsModuleLogic.h"
-
-// SubjectHierarchy MRML includes
-#include "vtkMRMLSubjectHierarchyConstants.h"
-#include "vtkMRMLSubjectHierarchyNode.h"
 
 // SubjectHierarchy Plugins includes
 #include "qSlicerSubjectHierarchyPluginHandler.h"
 #include "qSlicerSubjectHierarchyDefaultPlugin.h"
+
+// Terminologies includes
+#include "qSlicerTerminologyItemDelegate.h"
+
+// MRML includes
+#include "vtkMRMLScene.h"
+#include "vtkMRMLSegmentationNode.h"
+#include "vtkMRMLSegmentationDisplayNode.h"
+#include "vtkMRMLSubjectHierarchyConstants.h"
+#include "vtkMRMLSubjectHierarchyNode.h"
 
 // Qt includes
 #include <QDebug>
@@ -195,7 +197,8 @@ bool qSlicerSubjectHierarchySegmentsPlugin::reparentItemInsideSubjectHierarchy(v
     // If the two master representations are the same, then probably the segment IDs were duplicate
     if (fromSegmentationNode->GetSegmentation()->GetMasterRepresentationName() == toSegmentationNode->GetSegmentation()->GetMasterRepresentationName())
       {
-      QString message = QString("Segment ID of the moved segment (%1) might exist in the target segmentation.\nPlease check the error window for details.").arg(segmentId.c_str());
+      QString message = QString("Segment ID of the moved segment (%1) might exist in the target segmentation.\n"
+        "Please check the error window for details.").arg(segmentId.c_str());
       QMessageBox::warning(NULL, tr("Failed to move segment between segmentations"), message);
       return false;
       }
@@ -218,7 +221,7 @@ bool qSlicerSubjectHierarchySegmentsPlugin::reparentItemInsideSubjectHierarchy(v
         fromSegmentationNode->GetSegmentation()->GetMasterRepresentationName() );
       if (!successfulConversion)
         {
-        QString message = QString("Failed to convert %1 to %2!").arg(toSegmentationNode->GetName())
+        QString message = QString("Failed to convert %1 to %2").arg(toSegmentationNode->GetName())
           .arg(fromSegmentationNode->GetSegmentation()->GetMasterRepresentationName().c_str());
         QMessageBox::warning(NULL, tr("Conversion failed"), message);
         return false;
@@ -270,8 +273,13 @@ const QString qSlicerSubjectHierarchySegmentsPlugin::roleForPlugin()const
 //---------------------------------------------------------------------------
 const QString qSlicerSubjectHierarchySegmentsPlugin::helpText()const
 {
-  //return QString("<p style=\" margin-top:4px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'sans-serif'; font-size:9pt; font-weight:600; color:#000000;\">Create new Contour set from scratch</span></p>"
-  //  "<p style=\" margin-top:0px; margin-bottom:11px; margin-left:26px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'sans-serif'; font-size:9pt; color:#000000;\">Right-click on an existing Study node and select 'Create child contour set'. This menu item is only available for Study level nodes</span></p>");
+  //return QString("<p style=\" margin-top:4px; margin-bottom:1px; margin-left:0px; margin-right:0px; "
+  //  "-qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'sans-serif'; font-size:9pt; "
+  //  "font-weight:600; color:#000000;\">Create new Contour set from scratch</span></p>"
+  //  "<p style=\" margin-top:0px; margin-bottom:11px; margin-left:26px; margin-right:0px; "
+  //  "-qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'sans-serif'; "
+  //  "font-size:9pt; color:#000000;\">Right-click on an existing Study node and select 'Create child contour set'. "
+  //  "This menu item is only available for Study level nodes</span></p>");
   //TODO:
   return QString();
 }
@@ -282,19 +290,19 @@ QString qSlicerSubjectHierarchySegmentsPlugin::tooltip(vtkIdType itemID)const
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
-    return QString("Invalid!");
+    return QString("Invalid");
     }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
     {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
-    return QString("Invalid!");
+    return QString("Invalid");
     }
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
   if (!scene)
     {
-    qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
-    return QString("Invalid!");
+    qCritical() << Q_FUNC_INFO << ": Invalid MRML scene";
+    return QString("Invalid");
     }
 
   // Get basic tooltip from abstract plugin
@@ -415,7 +423,7 @@ void qSlicerSubjectHierarchySegmentsPlugin::setDisplayVisibility(vtkIdType itemI
     segmentationNode->GetDisplayNode() );
   if (!displayNode)
     {
-    qCritical() << Q_FUNC_INFO << ": No display node for segmentation!";
+    qCritical() << Q_FUNC_INFO << ": No display node for segmentation";
     return;
     }
 
@@ -446,7 +454,7 @@ int qSlicerSubjectHierarchySegmentsPlugin::getDisplayVisibility(vtkIdType itemID
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
   if (!scene)
     {
-    qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
+    qCritical() << Q_FUNC_INFO << ": Invalid MRML scene";
     return -1;
     }
 
@@ -469,7 +477,7 @@ int qSlicerSubjectHierarchySegmentsPlugin::getDisplayVisibility(vtkIdType itemID
     segmentationNode->GetDisplayNode() );
   if (!displayNode)
     {
-    qCritical() << Q_FUNC_INFO << ": No display node for segmentation!";
+    qCritical() << Q_FUNC_INFO << ": No display node for segmentation";
     return -1;
     }
 
@@ -478,6 +486,119 @@ int qSlicerSubjectHierarchySegmentsPlugin::getDisplayVisibility(vtkIdType itemID
 
   // Get visibility
   return (displayNode->GetSegmentVisibility(segmentId) ? 1 : 0);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchySegmentsPlugin::setDisplayColor(vtkIdType itemID, QColor color, QMap<int, QVariant> terminologyMetaData)
+{
+  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid input item";
+    return;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
+  if (!scene)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid MRML scene";
+    return;
+    }
+
+  // Get segment
+  vtkSegment* segment = vtkSlicerSegmentationsModuleLogic::GetSegmentForSegmentSubjectHierarchyItem(itemID, scene);
+  if (!segment)
+    {
+    qCritical() << Q_FUNC_INFO << ": Unable to get segment for segment subject hierarchy item " << shNode->GetItemName(itemID).c_str();
+    return;
+    }
+
+  // Set terminology metadata
+  if (terminologyMetaData.contains(qSlicerTerminologyItemDelegate::TerminologyRole))
+    {
+    segment->SetTag(vtkSegment::GetTerminologyEntryTagName(),
+      terminologyMetaData[qSlicerTerminologyItemDelegate::TerminologyRole].toString().toLatin1().constData() );
+    }
+  if (terminologyMetaData.contains(qSlicerTerminologyItemDelegate::NameRole))
+    {
+    segment->SetName(
+      terminologyMetaData[qSlicerTerminologyItemDelegate::NameRole].toString().toLatin1().constData() );
+    }
+  if (terminologyMetaData.contains(qSlicerTerminologyItemDelegate::NameAutoGeneratedRole))
+    {
+    segment->SetNameAutoGenerated(
+      terminologyMetaData[qSlicerTerminologyItemDelegate::NameAutoGeneratedRole].toBool() );
+    }
+  if (terminologyMetaData.contains(qSlicerTerminologyItemDelegate::ColorAutoGeneratedRole))
+    {
+    segment->SetColorAutoGenerated(
+      terminologyMetaData[qSlicerTerminologyItemDelegate::ColorAutoGeneratedRole].toBool() );
+    }
+
+  // Set color
+  double* oldColorArray = segment->GetColor();
+  QColor oldColor = QColor::fromRgbF(oldColorArray[0], oldColorArray[1], oldColorArray[2]);
+  if (oldColor != color)
+    {
+    segment->SetColor(color.redF(), color.greenF(), color.blueF());
+
+    // Trigger update of color swatch
+    shNode->ItemModified(itemID);
+    }
+}
+
+//-----------------------------------------------------------------------------
+QColor qSlicerSubjectHierarchySegmentsPlugin::getDisplayColor(vtkIdType itemID, QMap<int, QVariant> &terminologyMetaData)const
+{
+  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid input item";
+    return QColor(0,0,0,0);
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return QColor(0,0,0,0);
+    }
+  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
+  if (!scene)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid MRML scene";
+    return QColor(0,0,0,0);
+    }
+
+  if (scene->IsImporting())
+    {
+    // During import SH node may be created before the segmentation is read into the scene,
+    // so don't attempt to access the segment yet
+    return QColor(0,0,0,0);
+    }
+
+  // Get segment
+  vtkSegment* segment = vtkSlicerSegmentationsModuleLogic::GetSegmentForSegmentSubjectHierarchyItem(itemID, scene);
+  if (!segment)
+    {
+    qCritical() << Q_FUNC_INFO << ": Unable to get segment for segment subject hierarchy item " << shNode->GetItemName(itemID).c_str();
+    return QColor(0,0,0,0);
+    }
+
+  // Get terminology metadata
+  terminologyMetaData.clear();
+  std::string tagValue;
+  terminologyMetaData[qSlicerTerminologyItemDelegate::TerminologyRole] =
+    QVariant( segment->GetTag(vtkSegment::GetTerminologyEntryTagName(), tagValue) ? QString(tagValue.c_str()) : QString() );
+  terminologyMetaData[qSlicerTerminologyItemDelegate::NameRole] = segment->GetName();
+  terminologyMetaData[qSlicerTerminologyItemDelegate::NameAutoGeneratedRole] = segment->GetNameAutoGenerated();
+  terminologyMetaData[qSlicerTerminologyItemDelegate::ColorAutoGeneratedRole] = segment->GetColorAutoGenerated();
+
+  // Get and return color
+  double* colorArray = segment->GetColor();
+  return QColor::fromRgbF(colorArray[0], colorArray[1], colorArray[2]);
 }
 
 //---------------------------------------------------------------------------
@@ -543,7 +664,7 @@ void qSlicerSubjectHierarchySegmentsPlugin::showOnlyCurrentSegment()
   vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
-    qCritical() << Q_FUNC_INFO << ": Invalid current item!";
+    qCritical() << Q_FUNC_INFO << ": Invalid current item";
     return;
     }
 
@@ -564,7 +685,7 @@ void qSlicerSubjectHierarchySegmentsPlugin::showOnlyCurrentSegment()
     segmentationNode->GetDisplayNode() );
   if (!displayNode)
     {
-    qCritical() << Q_FUNC_INFO << ": No display node for segmentation!";
+    qCritical() << Q_FUNC_INFO << ": No display node for segmentation";
     return;
     }
 
@@ -602,7 +723,7 @@ void qSlicerSubjectHierarchySegmentsPlugin::showAllSegments()
   vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
-    qCritical() << Q_FUNC_INFO << ": Invalid current item!";
+    qCritical() << Q_FUNC_INFO << ": Invalid current item";
     return;
     }
 
@@ -623,7 +744,7 @@ void qSlicerSubjectHierarchySegmentsPlugin::showAllSegments()
     segmentationNode->GetDisplayNode() );
   if (!displayNode)
     {
-    qCritical() << Q_FUNC_INFO << ": No display node for segmentation!";
+    qCritical() << Q_FUNC_INFO << ": No display node for segmentation";
     return;
     }
 

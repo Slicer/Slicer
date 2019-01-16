@@ -21,22 +21,33 @@
 ==============================================================================*/
 
 // QT includes
-#include <QApplication>
-#include <QEvent>
-#include <QHBoxLayout>
-#include <QDebug>
-#include <QSpinBox>
 #include <QAction>
+#include <QApplication>
+#include <QCloseEvent>
+#include <QDebug>
+#include <QShowEvent>
 
 // MRML includes
 #include "vtkMRMLScene.h"
-
-// MRML Widgets includes
-#include "qMRMLNodeComboBox.h"
+#include "vtkMRMLTransformNode.h"
 
 // Subject hierarchy widgets includes
 #include "qMRMLSubjectHierarchyModel.h"
 #include "qMRMLTransformItemDelegate.h"
+
+//------------------------------------------------------------------------------
+DelegateMenu::DelegateMenu(QWidget* parent)
+  : QMenu(parent)
+  , SelectedTransformNodeID(QString())
+{
+}
+
+void DelegateMenu::showEvent(QShowEvent* event)
+{
+  this->move(QCursor::pos());
+}
+
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 qMRMLTransformItemDelegate::qMRMLTransformItemDelegate(QObject *parent)
@@ -45,10 +56,12 @@ qMRMLTransformItemDelegate::qMRMLTransformItemDelegate(QObject *parent)
   this->MRMLScene = NULL;
   this->FixedRowHeight = -1;
 
-  this->RemoveTransformAction = new QAction("Remove transforms from branch", this);
-  connect(this->RemoveTransformAction, SIGNAL(triggered()), this, SIGNAL(removeTransformsFromBranchOfCurrentItem()));
+  this->NoneAction = new QAction("None", this);
+  this->NoneAction->setToolTip(tr("Remove parent transform from all the nodes in this branch"));
+  connect(this->NoneAction, SIGNAL(triggered()), this, SIGNAL(removeTransformsFromBranchOfCurrentItem()));
 
-  this->HardenAction = new QAction("Harden transform on branch", this);
+  this->HardenAction = new QAction("Harden transform", this);
+  this->HardenAction->setToolTip(tr("Harden parent transforms on all the nodes in this branch"));
   connect(this->HardenAction, SIGNAL(triggered()), this, SIGNAL(hardenTransformOnBranchOfCurrentItem()));
 }
 
@@ -78,48 +91,84 @@ bool qMRMLTransformItemDelegate::isTransform(const QModelIndex& index)const
 }
 
 //------------------------------------------------------------------------------
-QWidget *qMRMLTransformItemDelegate
-::createEditor(QWidget *parent, const QStyleOptionViewItem &option,
-               const QModelIndex &index) const
+QWidget *qMRMLTransformItemDelegate::createEditor(
+  QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
   if (this->isTransform(index))
     {
-    qMRMLNodeComboBox* transformNodeCombobox = new qMRMLNodeComboBox(parent);
-    QStringList nodeTypes;
-    nodeTypes << QString("vtkMRMLTransformNode");
-    transformNodeCombobox->setMaximumHeight(16);
-    transformNodeCombobox->setNodeTypes(nodeTypes);
-    transformNodeCombobox->setNoneEnabled(true);
-    transformNodeCombobox->setRemoveEnabled(false);
-    transformNodeCombobox->setRenameEnabled(false);
-    transformNodeCombobox->setAddEnabled(false);
-    transformNodeCombobox->addMenuAction(this->RemoveTransformAction);
-    transformNodeCombobox->addMenuAction(this->HardenAction);
-    transformNodeCombobox->setMRMLScene(this->MRMLScene);
-    connect(transformNodeCombobox, SIGNAL(currentNodeIDChanged(QString)),
-            this, SLOT(commitAndClose()), Qt::QueuedConnection);
-    return transformNodeCombobox;
+    DelegateMenu* menu = new DelegateMenu(parent->parentWidget());
+    menu->setAttribute(Qt::WA_DeleteOnClose, true);
+    menu->addAction(this->NoneAction);
+
+    std::vector<vtkMRMLNode*> transformNodes;
+    this->MRMLScene->GetNodesByClass("vtkMRMLTransformNode", transformNodes);
+    for (std::vector<vtkMRMLNode*>::iterator it = transformNodes.begin(); it != transformNodes.end(); ++it)
+      {
+      vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(*it);
+      if (!transformNode || transformNode->GetHideFromEditors())
+        {
+        continue;
+        }
+      QAction* nodeAction = new QAction(transformNode->GetName(), menu);
+      nodeAction->setData(QString(transformNode->GetID()));
+      connect(nodeAction, SIGNAL(triggered()), this, SLOT(transformActionSelected()), Qt::DirectConnection);
+      menu->addAction(nodeAction);
+      }
+
+    menu->addSeparator();
+    menu->addAction(this->HardenAction);
+
+    menu->setMinimumWidth(menu->sizeHint().width());
+    menu->setMinimumHeight(menu->sizeHint().height());
+    return menu;
     }
 
   return this->QStyledItemDelegate::createEditor(parent, option, index);
 }
 
 //------------------------------------------------------------------------------
-void qMRMLTransformItemDelegate::setEditorData(QWidget *editor,
-                                      const QModelIndex &index) const
+void qMRMLTransformItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
   if (this->isTransform(index))
     {
     QString transformNodeID = index.data(qMRMLSubjectHierarchyModel::TransformIDRole).toString();
-    qMRMLNodeComboBox* transformNodeCombobox = qobject_cast<qMRMLNodeComboBox*>(editor);
-    if (!transformNodeCombobox)
+    DelegateMenu* menu = dynamic_cast<DelegateMenu*>(editor);
+    if (!menu)
       {
-      qCritical() << Q_FUNC_INFO << ": Invalid editor widget!";
+      qCritical() << Q_FUNC_INFO << ": Invalid editor widget";
       return;
       }
-    transformNodeCombobox->blockSignals(true);
-    transformNodeCombobox->setCurrentNodeID(transformNodeID);
-    transformNodeCombobox->blockSignals(false);
+    QAction* actionForTransform = NULL;
+    if (transformNodeID.isEmpty())
+      {
+      actionForTransform = this->NoneAction;
+      }
+    else
+      {
+      foreach (QAction* action, menu->actions())
+        {
+        if (!action->data().toString().compare(transformNodeID))
+          {
+          actionForTransform = action;
+          actionForTransform->setCheckable(true);
+          actionForTransform->setChecked(true);
+          }
+        else
+          {
+          action->setCheckable(false);
+          action->setChecked(false);
+          }
+        }
+      if (!actionForTransform)
+        {
+        qCritical() << Q_FUNC_INFO << ": Failed to find action for transform '" << transformNodeID << "'";
+        return;
+        }
+      }
+    menu->blockSignals(true);
+    menu->setActiveAction(actionForTransform);
+    menu->SelectedTransformNodeID = transformNodeID;
+    menu->blockSignals(false);
     }
   else
     {
@@ -128,19 +177,18 @@ void qMRMLTransformItemDelegate::setEditorData(QWidget *editor,
 }
 
 //------------------------------------------------------------------------------
-void qMRMLTransformItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
-                                   const QModelIndex &index) const
+void qMRMLTransformItemDelegate::setModelData(
+  QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
   if (this->isTransform(index))
     {
-    qMRMLNodeComboBox* transformNodeCombobox = qobject_cast<qMRMLNodeComboBox*>(editor);
-    if (!transformNodeCombobox)
+    DelegateMenu* menu = dynamic_cast<DelegateMenu*>(editor);
+    if (!menu)
       {
-      qCritical() << Q_FUNC_INFO << ": Invalid editor widget!";
+      qCritical() << Q_FUNC_INFO << ": Invalid editor widget";
       return;
       }
-    QString transformNodeID = transformNodeCombobox->currentNodeID();
-    model->setData(index, transformNodeID, qMRMLSubjectHierarchyModel::TransformIDRole);
+    model->setData(index, menu->SelectedTransformNodeID, qMRMLSubjectHierarchyModel::TransformIDRole);
     }
   else
     {
@@ -157,9 +205,23 @@ void qMRMLTransformItemDelegate::commitAndClose()
 }
 
 //------------------------------------------------------------------------------
-QSize qMRMLTransformItemDelegate
-::sizeHint(const QStyleOptionViewItem &option,
-           const QModelIndex &index) const
+void qMRMLTransformItemDelegate::transformActionSelected()
+{
+  QAction* action = qobject_cast<QAction*>(this->sender());
+  DelegateMenu* menu = dynamic_cast<DelegateMenu*>(action->parent());
+  if (!menu)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid editor widget";
+    return;
+    }
+  menu->SelectedTransformNodeID = action->data().toString();
+
+  emit commitData(menu);
+}
+
+//------------------------------------------------------------------------------
+QSize qMRMLTransformItemDelegate::sizeHint(
+  const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
   // Get default size hint
   QSize resultSizeHint = this->QStyledItemDelegate::sizeHint(option, index);
@@ -176,9 +238,8 @@ QSize qMRMLTransformItemDelegate
 }
 
 //------------------------------------------------------------------------------
-void qMRMLTransformItemDelegate
-::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option,
-                       const QModelIndex &index) const
+void qMRMLTransformItemDelegate::updateEditorGeometry(
+  QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
   if (this->isTransform(index))
     {
@@ -193,7 +254,7 @@ void qMRMLTransformItemDelegate
 //------------------------------------------------------------------------------
 bool qMRMLTransformItemDelegate::eventFilter(QObject *object, QEvent *event)
 {
-  qMRMLNodeComboBox* editor = qobject_cast<qMRMLNodeComboBox*>(object);
+  QMenu* editor = qobject_cast<QMenu*>(object);
   if (editor &&
       (event->type() == QEvent::FocusOut ||
       (event->type() == QEvent::Hide && editor->isWindow())))
@@ -204,8 +265,8 @@ bool qMRMLTransformItemDelegate::eventFilter(QObject *object, QEvent *event)
       QWidget* widget = QApplication::focusWidget();
       while (widget)
         {
-        qMRMLNodeComboBox* transformNodeCombobox = qobject_cast<qMRMLNodeComboBox*>(editor);
-        if (transformNodeCombobox && transformNodeCombobox == editor)
+        QMenu* menu = qobject_cast<QMenu*>(editor);
+        if (menu && menu == editor)
           {
           return false;
           }

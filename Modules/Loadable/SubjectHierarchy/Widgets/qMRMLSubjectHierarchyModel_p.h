@@ -35,7 +35,6 @@
 //
 
 // Qt includes
-class QStandardItemModel;
 #include <QFlags>
 #include <QMap>
 
@@ -51,6 +50,9 @@ class QStandardItemModel;
 // VTK includes
 #include <vtkCallbackCommand.h>
 #include <vtkSmartPointer.h>
+
+class QStandardItemModel;
+class vtkSlicerTerminologiesModuleLogic;
 
 //------------------------------------------------------------------------------
 // qMRMLSubjectHierarchyModelPrivate
@@ -81,6 +83,7 @@ public:
   int NameColumn;
   int IDColumn;
   int VisibilityColumn;
+  int ColorColumn;
   int TransformColumn;
 
   QIcon VisibleIcon;
@@ -90,10 +93,15 @@ public:
   QIcon UnknownIcon;
   QIcon WarningIcon;
 
+  QIcon LinearTransformIcon;
+  QIcon DeformableTransformIcon;
+
   /// Subject hierarchy node
   vtkWeakPointer<vtkMRMLSubjectHierarchyNode> SubjectHierarchyNode;
   /// MRML scene (to get new subject hierarchy node if the stored one is deleted)
   vtkWeakPointer<vtkMRMLScene> MRMLScene;
+  /// Terminology module logic. Needed to generate the terminology tooltip in the color column
+  vtkSlicerTerminologiesModuleLogic* TerminologiesModuleLogic;
 
   mutable QList<vtkIdType> DraggedSubjectHierarchyItems;
   bool DelayedItemChangedInvoked;

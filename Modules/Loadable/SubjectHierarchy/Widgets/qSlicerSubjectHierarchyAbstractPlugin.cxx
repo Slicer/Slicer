@@ -28,6 +28,7 @@
 #include <QDebug>
 #include <QStandardItem>
 #include <QAction>
+#include <QColor>
 
 // SlicerQt includes
 #include "qSlicerApplication.h"
@@ -59,7 +60,7 @@ QString qSlicerSubjectHierarchyAbstractPlugin::name()const
 {
   if (m_Name.isEmpty())
     {
-    qCritical() << Q_FUNC_INFO << ": Empty plugin name!";
+    qCritical() << Q_FUNC_INFO << ": Empty plugin name";
     }
   return this->m_Name;
 }
@@ -68,7 +69,7 @@ QString qSlicerSubjectHierarchyAbstractPlugin::name()const
 void qSlicerSubjectHierarchyAbstractPlugin::setName(QString name)
 {
   Q_UNUSED(name);
-  qCritical() << Q_FUNC_INFO << ": Cannot set plugin name by method, only in constructor!";
+  qCritical() << Q_FUNC_INFO << ": Cannot set plugin name by method, only in constructor";
 }
 
 //---------------------------------------------------------------------------
@@ -276,6 +277,24 @@ int qSlicerSubjectHierarchyAbstractPlugin::getDisplayVisibility(vtkIdType itemID
   return shNode->GetDisplayVisibilityForBranch(itemID);
 }
 
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyAbstractPlugin::setDisplayColor(vtkIdType itemID, QColor color, QMap<int, QVariant> terminologyMetaData)
+{
+  Q_UNUSED(itemID);
+  Q_UNUSED(color);
+  Q_UNUSED(terminologyMetaData);
+}
+
+//-----------------------------------------------------------------------------
+QColor qSlicerSubjectHierarchyAbstractPlugin::getDisplayColor(vtkIdType itemID, QMap<int, QVariant> &terminologyMetaData)const
+{
+  Q_UNUSED(itemID);
+  Q_UNUSED(terminologyMetaData);
+
+  // Default is transparent
+  return QColor(0,0,0,0);
+}
+
 //--------------------------------------------------------------------------
 bool qSlicerSubjectHierarchyAbstractPlugin::isThisPluginOwnerOfItem(vtkIdType itemID)const
 {
@@ -297,7 +316,7 @@ qSlicerAbstractModuleWidget* qSlicerSubjectHierarchyAbstractPlugin::switchToModu
   qSlicerAbstractModule* moduleWithAction = qobject_cast<qSlicerAbstractModule*>(module);
   if (!moduleWithAction)
     {
-    qCritical() << Q_FUNC_INFO << ": Module with name '" << moduleName << "' not found!";
+    qCritical() << Q_FUNC_INFO << ": Module with name '" << moduleName << "' not found";
     return NULL;
     }
 
