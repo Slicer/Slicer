@@ -44,6 +44,11 @@ public:
   void Initialize(vtkRenderWindow *renderWindow);
 
   // Description:
+  // Checks the framebuffer and prints error if bad.
+  // Return true if framebuffer is complete.
+  bool FramebufferComplete();
+
+  // Description:
   // Make this the target for OpenGL operations
   void MakeCurrent();
 
@@ -97,6 +102,12 @@ public:
   // Has the context been set up with a render window?
   vtkGetMacro(Initialized, bool);
 
+  // Description:
+  // Has there been an error since the class was created.
+  // After an error, generally the cleanest thing to do is delete the class,
+  // and create a new instance.
+  vtkGetMacro(ErrorOccurred, bool);
+
 protected:
   vtkOpenGLShaderComputation();
   ~vtkOpenGLShaderComputation();
@@ -106,6 +117,7 @@ private:
   void operator=(const vtkOpenGLShaderComputation&);  // Not implemented.
 
   bool Initialized;
+  bool ErrorOccurred;
   char *VertexShaderSource;
   char *FragmentShaderSource;
   vtkImageData *ResultImageData;
