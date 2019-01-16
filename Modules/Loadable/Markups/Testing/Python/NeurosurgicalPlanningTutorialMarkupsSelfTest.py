@@ -21,19 +21,6 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTest(ScriptedLoadableModule):
       Andras Lasso, PerkLab, Queen's University and was supported through the Applied Cancer Research Unit program
       of Cancer Care Ontario with funds provided by the Ontario Ministry of Health and Long-Term Care"""
 
-    # Add this test to the SelfTest module's list for discovery when the module
-    # is created.  Since this module may be discovered before SelfTests itself,
-    # create the list if it doesn't already exist.
-    try:
-      slicer.selfTests
-    except AttributeError:
-      slicer.selfTests = {}
-    slicer.selfTests['NeurosurgicalPlanningTutorialMarkupsSelfTest'] = self.runTest
-
-  def runTest(self):
-    tester = NeurosurgicalPlanningTutorialMarkupsSelfTestTest()
-    tester.runTest()
-
 #
 # qNeurosurgicalPlanningTutorialMarkupsSelfTestWidget
 #

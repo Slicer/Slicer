@@ -23,7 +23,6 @@ class FiducialLayoutSwitchBug1914(ScriptedLoadableModule):
     This file was originally developed by Nicole Aucoin, BWH  and was partially funded by NIH grant 3P41RR013218-12S1.
 """
 
-
 #
 # qFiducialLayoutSwitchBug1914Widget
 #
@@ -107,45 +106,6 @@ class FiducialLayoutSwitchBug1914Logic(ScriptedLoadableModuleLogic):
     # for future testing: take into account the volume voxel size
     self.maximumRASDifference = 1.0;
 
-  def takeScreenshot(self,name,description,type=-1):
-    # show the message even if not taking a screen shot
-    self.delayDisplay(description)
-
-    if self.enableScreenshots == 0:
-      return
-
-    lm = slicer.app.layoutManager()
-    # switch on the type to get the requested window
-    widget = 0
-    if type == slicer.qMRMLScreenShotDialog.FullLayout:
-      # full layout
-      widget = lm.viewport()
-    elif type == slicer.qMRMLScreenShotDialog.ThreeD:
-      # just the 3D window
-      widget = lm.threeDWidget(0).threeDView()
-    elif type == slicer.qMRMLScreenShotDialog.Red:
-      # red slice window
-      widget = lm.sliceWidget("Red")
-    elif type == slicer.qMRMLScreenShotDialog.Yellow:
-      # yellow slice window
-      widget = lm.sliceWidget("Yellow")
-    elif type == slicer.qMRMLScreenShotDialog.Green:
-      # green slice window
-      widget = lm.sliceWidget("Green")
-    else:
-      # default to using the full window
-      widget = slicer.util.mainWindow()
-      # reset the type so that the node is set correctly
-      type = slicer.qMRMLScreenShotDialog.FullLayout
-
-    # grab and convert to vtk image data
-    qimage = ctk.ctkWidgetsUtils.grabWidget(widget)
-    imageData = vtk.vtkImageData()
-    slicer.qMRMLUtils().qImageToVtkImageData(qimage,imageData)
-
-    annotationLogic = slicer.modules.annotations.logic()
-    annotationLogic.CreateSnapShot(name, description, type, self.screenshotScaleFactor, imageData)
-
   def getFiducialSliceDisplayableManagerHelper(self,sliceName='Red'):
     sliceWidget = slicer.app.layoutManager().sliceWidget(sliceName)
     sliceView = sliceWidget.sliceView()
@@ -162,7 +122,7 @@ class FiducialLayoutSwitchBug1914Logic(ScriptedLoadableModuleLogic):
     Run the actual algorithm
     """
 
-    self.delayDisplay('Running the algorithm',500)
+    self.delayDisplay('Running the algorithm')
 
     self.enableScreenshots = enableScreenshots
     self.screenshotScaleFactor = screenshotScaleFactor
@@ -172,7 +132,7 @@ class FiducialLayoutSwitchBug1914Logic(ScriptedLoadableModuleLogic):
     lm.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalView)
     # without this delayed display, when running from the cmd line Slicer starts
     # up in a different layout and the seed won't get rendered in the right spot
-    self.delayDisplay("Conventional view",500)
+    self.delayDisplay("Conventional view")
 
     # Download MRHead from sample data
     import SampleData
@@ -186,7 +146,7 @@ class FiducialLayoutSwitchBug1914Logic(ScriptedLoadableModuleLogic):
     fidIndex = markupsLogic.AddFiducial(eye[0], eye[1], eye[2])
     fidID = markupsLogic.GetActiveListID()
     fidNode = slicer.mrmlScene.GetNodeByID(fidID)
-    self.delayDisplay("Placed a fiducial at %g, %g, %g" % (eye[0], eye[1], eye[2]),500)
+    self.delayDisplay("Placed a fiducial at %g, %g, %g" % (eye[0], eye[1], eye[2]))
 
     # Pan and zoom
     sliceWidget = slicer.app.layoutManager().sliceWidget('Red')
@@ -195,7 +155,7 @@ class FiducialLayoutSwitchBug1914Logic(ScriptedLoadableModuleLogic):
     sliceNode = sliceLogic.GetSliceNode()
     sliceNode.SetXYZOrigin(-71.7, 129.7, 0.0)
     sliceNode.SetFieldOfView(98.3, 130.5, 1.0)
-    self.delayDisplay("Panned and zoomed",500)
+    self.delayDisplay("Panned and zoomed")
 
     # Get the seed widget seed location
     startingSeedDisplayCoords = [0.0, 0.0, 0.0]
@@ -210,13 +170,13 @@ class FiducialLayoutSwitchBug1914Logic(ScriptedLoadableModuleLogic):
 
     # Switch to red slice only
     lm.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutOneUpRedSliceView)
-    self.delayDisplay("Red Slice only",500)
+    self.delayDisplay("Red Slice only")
 
     # Switch to conventional layout
     print 'Calling set layout back to conventional'
     lm.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalView)
     print 'Done calling set layout back to conventional'
-    self.delayDisplay("Conventional layout",500)
+    self.delayDisplay("Conventional layout")
 
     # Get the current seed widget seed location
     endingSeedDisplayCoords = [0.0, 0.0, 0.0]

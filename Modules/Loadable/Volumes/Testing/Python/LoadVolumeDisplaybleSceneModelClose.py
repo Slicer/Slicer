@@ -1,8 +1,9 @@
 import unittest
-from  __main__ import vtk, qt, ctk, slicer
+import vtk, qt, ctk, slicer
+from slicer.ScriptedLoadableModule import *
 
+class VolumesLoadSceneCloseTesting(ScriptedLoadableModuleTest):
 
-class VolumesLoadSceneCloseTesting(unittest.TestCase):
   def setUp(self):
     pass
 
@@ -11,6 +12,7 @@ class VolumesLoadSceneCloseTesting(unittest.TestCase):
     Load a volume, go to a module that has a displayable scene model set for the tree view, then close the scene.
     Tests the case of closing a scene with a displayable node in it while a GUI is up that is showing a tree view with a displayable scene model (display nodes are set to null during scene closing and can trigger events).
     """
+    self.delayDisplay("Starting the test")
 
     #
     # first, get some sample data
@@ -29,3 +31,5 @@ class VolumesLoadSceneCloseTesting(unittest.TestCase):
     # close the scene
     #
     slicer.mrmlScene.Clear(0)
+
+    self.delayDisplay('Test passed')

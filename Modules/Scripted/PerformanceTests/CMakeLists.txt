@@ -17,3 +17,5 @@ slicerMacroBuildScriptedModule(
   RESOURCES ${MODULE_PYTHON_RESOURCES}
   WITH_GENERIC_TESTS
   )
+
+slicer_add_python_unittest(SCRIPT PerformanceTests.py)

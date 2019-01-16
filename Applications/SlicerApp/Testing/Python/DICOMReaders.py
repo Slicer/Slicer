@@ -24,20 +24,6 @@ class DICOMReaders(ScriptedLoadableModule):
     parent.acknowledgementText = """This work is supported primarily by the National Institutes of Health, National Cancer Institute, Informatics Technology for Cancer Research (ITCR) program, grant Quantitative Image Informatics for Cancer Research (QIICR) (U24 CA180918, PIs Kikinis and Fedorov). We also acknowledge support of the following grants: Neuroimage Analysis Center (NAC) (P41 EB015902, PI Kikinis) and National Center for Image Guided Therapy (NCIGT) (P41 EB015898, PI Tempany).
     This file was originally developed by Steve Pieper, Isomics, Inc.
 """ # replace with organization, grant and thanks.
-    self.parent = parent
-
-    # Add this test to the SelfTest module's list for discovery when the module
-    # is created.  Since this module may be discovered before SelfTests itself,
-    # create the list if it doesn't already exist.
-    try:
-      slicer.selfTests
-    except AttributeError:
-      slicer.selfTests = {}
-    slicer.selfTests['DICOMReaders'] = self.runTest
-
-  def runTest(self):
-    tester = DICOMReadersTest()
-    tester.runTest()
 
 #
 # qDICOMReadersWidget
@@ -51,20 +37,6 @@ class DICOMReadersWidget(ScriptedLoadableModuleWidget):
 
     self.layout.addStretch(1)
 
-#
-# DICOMReadersLogic
-#
-
-class DICOMReadersLogic(ScriptedLoadableModuleLogic):
-  """This class should implement all the actual
-  computation done by your module.  The interface
-  should be such that other python code can import
-  this class and make use of the functionality without
-  requiring an instance of the Widget
-  """
-  def __init__(self):
-    ScriptedLoadableModuleLogic.__init__(self)
-
 
 class DICOMReadersTest(ScriptedLoadableModuleTest):
   """
@@ -74,7 +46,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
   def setUp(self):
     """ Do whatever is needed to reset the state - typically a scene clear will be enough.
     """
-    self.delayDisplay("Closing the scene", 10)
+    self.delayDisplay("Closing the scene")
     layoutManager = slicer.app.layoutManager()
     layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalView)
     slicer.mrmlScene.Clear(0)
@@ -92,7 +64,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
     """
     testPass = True
     import os, json
-    self.delayDisplay("Starting the DICOM test", 100)
+    self.delayDisplay("Starting the DICOM test")
 
     referenceData = json.JSONDecoder().decode('''[
       { "url": "http://slicer.kitware.com/midas3/download/item/292839/Mouse-MR-example-where-GDCM_fails.zip",
@@ -126,16 +98,16 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
     #
     # first, get the data - a zip file of dicom data
     #
-    self.delayDisplay("Downloading", 100)
+    self.delayDisplay("Downloading")
     for dataset in referenceData:
       try:
         filePath = slicer.app.temporaryPath + '/' + dataset['fileName']
         if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
-          self.delayDisplay('Requesting download %s from %s...\n' % (dataset['fileName'], dataset['url']), 100)
+          self.delayDisplay('Requesting download %s from %s...\n' % (dataset['fileName'], dataset['url']))
           urllib.urlretrieve(dataset['url'], filePath)
-        self.delayDisplay('Finished with download\n', 100)
+        self.delayDisplay('Finished with download\n')
 
-        self.delayDisplay("Unzipping", 100)
+        self.delayDisplay("Unzipping")
         dicomFilesDirectory = slicer.app.temporaryPath + dataset['name']
         qt.QDir().mkpath(dicomFilesDirectory)
         slicer.app.applicationLogic().Unzip(filePath, dicomFilesDirectory)
@@ -143,10 +115,10 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
         #
         # insert the data into th database
         #
-        self.delayDisplay("Switching to temp database directory", 100)
+        self.delayDisplay("Switching to temp database directory")
         originalDatabaseDirectory = DICOMUtils.openTemporaryDatabase('tempDICOMDatabase')
 
-        self.delayDisplay('Importing DICOM', 100)
+        self.delayDisplay('Importing DICOM')
         mainWindow = slicer.util.mainWindow()
         mainWindow.moduleSelector().selectModule('DICOM')
 
@@ -173,7 +145,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
         basename = loadable.name
         volumesByApproach = {}
         for readerApproach in readerApproaches:
-          self.delayDisplay('Loading Selection with approach: %s' % readerApproach, 100)
+          self.delayDisplay('Loading Selection with approach: %s' % readerApproach)
           loadable.name = basename + "-" + readerApproach
           volumeNode = scalarVolumePlugin.load(loadable,readerApproach)
           if not volumeNode and readerApproach not in dataset['expectedFailures']:
@@ -212,15 +184,15 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
         if len(failedComparisons.keys()) > 0:
           raise Exception("Loaded volumes don't match: %s" % failedComparisons)
 
-        self.delayDisplay('%s Test passed!' % dataset['name'], 200)
+        self.delayDisplay('%s Test passed!' % dataset['name'])
 
       except Exception, e:
         import traceback
         traceback.print_exc()
-        self.delayDisplay('%s Test caused exception!\n' % dataset['name'] + str(e), 2000)
+        self.delayDisplay('%s Test caused exception!\n' % dataset['name'] + str(e))
         testPass = False
 
-    self.delayDisplay("Restoring original database directory", 200)
+    self.delayDisplay("Restoring original database directory")
     mainWindow.moduleSelector().selectModule('DICOMReaders')
 
     logging.info(loadingResult)
@@ -237,7 +209,7 @@ reloadScriptedModule('DICOMReaders'); import DICOMReaders; tester = DICOMReaders
     """
     testPass = True
     import os, json
-    self.delayDisplay("Starting the DICOM test", 100)
+    self.delayDisplay("Starting the DICOM test")
 
     datasetURL = "http://slicer.kitware.com/midas3/download/item/294857/deidentifiedMRHead-dcm-one-series.zip"
     fileName = "deidentifiedMRHead-dcm-one-series.zip"
@@ -270,11 +242,11 @@ reloadScriptedModule('DICOMReaders'); import DICOMReaders; tester = DICOMReaders
 
     try:
       if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
-        self.delayDisplay('Requesting download %s from %s...\n' % (fileName, datasetURL), 100)
+        self.delayDisplay('Requesting download %s from %s...\n' % (fileName, datasetURL))
         urllib.urlretrieve(datasetURL, filePath)
-      self.delayDisplay('Finished with download\n', 100)
+      self.delayDisplay('Finished with download\n')
 
-      self.delayDisplay("Unzipping", 100)
+      self.delayDisplay("Unzipping")
       dicomFilesDirectory = slicer.app.temporaryPath + 'MRhead'
       qt.QDir().mkpath(dicomFilesDirectory)
       slicer.app.applicationLogic().Unzip(filePath, dicomFilesDirectory)
@@ -287,10 +259,10 @@ reloadScriptedModule('DICOMReaders'); import DICOMReaders; tester = DICOMReaders
       #
       # insert the data into the database
       #
-      self.delayDisplay("Switching to temp database directory", 100)
+      self.delayDisplay("Switching to temp database directory")
       originalDatabaseDirectory = DICOMUtils.openTemporaryDatabase('tempDICOMDatabase')
 
-      self.delayDisplay('Importing DICOM', 100)
+      self.delayDisplay('Importing DICOM')
       mainWindow = slicer.util.mainWindow()
       mainWindow.moduleSelector().selectModule('DICOM')
 
@@ -320,15 +292,15 @@ reloadScriptedModule('DICOMReaders'); import DICOMReaders; tester = DICOMReaders
       if not numpy.allclose(scalarVolumePlugin.acquisitionModeling.fixedCorners[-1], lastSliceCorners):
         raise Exception("Acquisition transform didn't fix slice corners!")
 
-      self.delayDisplay('test_MissingSlices passed!', 200)
+      self.delayDisplay('test_MissingSlices passed!')
 
     except Exception, e:
       import traceback
       traceback.print_exc()
-      self.delayDisplay('Missing Slices Test caused exception!\n' + str(e), 2000)
+      self.delayDisplay('Missing Slices Test caused exception!\n' + str(e))
       testPass = False
 
-    self.delayDisplay("Restoring original database directory", 200)
+    self.delayDisplay("Restoring original database directory")
     mainWindow.moduleSelector().selectModule('DICOMReaders')
 
     return testPass

@@ -1,8 +1,14 @@
 import unittest
 import slicer
+from slicer.ScriptedLoadableModule import *
 
 
-class VolumeRenderingThreeDOnlyLayout(unittest.TestCase):
+class VolumeRenderingThreeDOnlyLayout(ScriptedLoadableModuleTest):
+    """
+    This is the test case for your scripted module.
+    Uses ScriptedLoadableModuleTest base class, available at:
+    https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+    """
     def setUp(self):
         pass
 
@@ -16,6 +22,8 @@ class VolumeRenderingThreeDOnlyLayout(unittest.TestCase):
         - Load volume
         - Enter the volume rendering module
         """
+        self.delayDisplay("Starting the test")
+
         # Set 3D-only layout
         layoutManager = slicer.app.layoutManager()
         layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutOneUp3DView)
@@ -31,3 +39,5 @@ class VolumeRenderingThreeDOnlyLayout(unittest.TestCase):
 
         # Enter the volume rendering module
         slicer.util.mainWindow().moduleSelector().selectModule('VolumeRendering')
+
+        self.delayDisplay('Test passed!')

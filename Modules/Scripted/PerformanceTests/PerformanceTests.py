@@ -1,13 +1,15 @@
 import vtk, qt, ctk, slicer
+from slicer.ScriptedLoadableModule import *
 
 #
 # PerformanceTests
 #
 
-class PerformanceTests:
+class PerformanceTests(ScriptedLoadableModule):
   def __init__(self, parent):
+    ScriptedLoadableModule.__init__(self, parent)
     parent.title = "Performance Tests"
-    parent.categories = ["Testing"]
+    parent.categories = ["Testing.TestCases"]
     parent.contributors = ["Steve Pieper (Isomics)"]
     parent.helpText = """
     Module to run interactive performance tests on the core of slicer.
@@ -23,20 +25,9 @@ and others.  This work was partially funded by NIH grant 3P41RR013218-12S1.
 # qPerformanceTestsWidget
 #
 
-class PerformanceTestsWidget:
-  def __init__(self, parent = None):
-    if not parent:
-      self.parent = slicer.qMRMLWidget()
-      self.parent.setLayout(qt.QVBoxLayout())
-      self.parent.setMRMLScene(slicer.mrmlScene)
-    else:
-      self.parent = parent
-    self.layout = self.parent.layout()
-    if not parent:
-      self.setup()
-      self.parent.show()
-
+class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
   def setup(self):
+    ScriptedLoadableModuleWidget.setup(self)
     tests = (
         ( 'Get Sample Data', self.downloadMRHead ),
         ( 'Reslicing', self.reslicing ),
@@ -320,11 +311,6 @@ class PerformanceTestsWidget:
       return
     self.sysInfoWindow.show()
     self.memoryCallback()
-
-
-
-
-
 
 
 class sliceLogicTest:

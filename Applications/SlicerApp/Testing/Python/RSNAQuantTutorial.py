@@ -1,13 +1,18 @@
 import os
 import unittest
 import vtk, qt, ctk, slicer
+from slicer.ScriptedLoadableModule import *
 
 #
 # RSNAQuantTutorial
 #
 
-class RSNAQuantTutorial:
+class RSNAQuantTutorial(ScriptedLoadableModule):
+  """Uses ScriptedLoadableModule base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+  """
   def __init__(self, parent):
+    ScriptedLoadableModule.__init__(self, parent)
     parent.title = "RSNAQuantTutorial" # TODO make this more human readable by adding spaces
     parent.categories = ["Testing.TestCases"]
     parent.dependencies = []
@@ -18,57 +23,19 @@ class RSNAQuantTutorial:
     parent.acknowledgementText = """
     This file was originally developed by Steve Pieper, Isomics, Inc.  and was partially funded by NIH grant 3P41RR013218-12S1.
 """ # replace with organization, grant and thanks.
-    self.parent = parent
-
-    # Add this test to the SelfTest module's list for discovery when the module
-    # is created.  Since this module may be discovered before SelfTests itself,
-    # create the list if it doesn't already exist.
-    try:
-      slicer.selfTests
-    except AttributeError:
-      slicer.selfTests = {}
-    slicer.selfTests['RSNAQuantTutorial'] = self.runTest
-
-  def runTest(self):
-    tester = RSNAQuantTutorialTest()
-    tester.runTest()
 
 #
 # qRSNAQuantTutorialWidget
 #
 
-class RSNAQuantTutorialWidget:
-  def __init__(self, parent = None):
-    if not parent:
-      self.parent = slicer.qMRMLWidget()
-      self.parent.setLayout(qt.QVBoxLayout())
-      self.parent.setMRMLScene(slicer.mrmlScene)
-    else:
-      self.parent = parent
-    self.layout = self.parent.layout()
-    if not parent:
-      self.setup()
-      self.parent.show()
+class RSNAQuantTutorialWidget(ScriptedLoadableModuleWidget):
+  """Uses ScriptedLoadableModuleWidget base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+  """
 
   def setup(self):
+    ScriptedLoadableModuleWidget.setup(self)
     # Instantiate and connect widgets ...
-
-    # reload button
-    # (use this during development, but remove it when delivering
-    #  your module to users)
-    self.reloadButton = qt.QPushButton("Reload")
-    self.reloadButton.toolTip = "Reload this module."
-    self.reloadButton.name = "RSNAQuantTutorial Reload"
-    self.layout.addWidget(self.reloadButton)
-    self.reloadButton.connect('clicked()', self.onReload)
-
-    # reload and test button
-    # (use this during development, but remove it when delivering
-    #  your module to users)
-    self.reloadAndTestButton = qt.QPushButton("Reload and Test")
-    self.reloadAndTestButton.toolTip = "Reload this module and then run the self tests."
-    self.layout.addWidget(self.reloadAndTestButton)
-    self.reloadAndTestButton.connect('clicked()', self.onReloadAndTest)
 
     # Collapsible button
     testsCollapsibleButton = ctk.ctkCollapsibleButton()
@@ -140,106 +107,26 @@ class RSNAQuantTutorialWidget:
     tester.setUp()
     tester.test_Part3PETCT(enableScreenshotsFlag,screenshotScaleFactor)
 
-  def onReload(self,moduleName="RSNAQuantTutorial"):
-    """Generic reload method for any scripted module.
-    ModuleWizard will substitute correct default moduleName.
-    """
-    globals()[moduleName] = slicer.util.reloadScriptedModule(moduleName)
-
-  def onReloadAndTest(self,moduleName="RSNAQuantTutorial"):
-    self.onReload()
-    evalString = 'globals()["%s"].%sTest()' % (moduleName, moduleName)
-    tester = eval(evalString)
-    tester.runTest()
-
 #
 # RSNAQuantTutorialLogic
 #
 
-class RSNAQuantTutorialLogic:
+class RSNAQuantTutorialLogic(ScriptedLoadableModuleLogic):
   """This class should implement all the actual
   computation done by your module.  The interface
   should be such that other python code can import
   this class and make use of the functionality without
   requiring an instance of the Widget
   """
-  def __init__(self):
-    pass
-
-  def hasImageData(self,volumeNode):
-    """This is a dummy logic method that
-    returns true if the passed in volume
-    node has valid image data
-    """
-    if not volumeNode:
-      print('no volume node')
-      return False
-    if volumeNode.GetImageData() is None:
-      print('no image data')
-      return False
-    return True
+  pass
 
 
-class RSNAQuantTutorialTest(unittest.TestCase):
+class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
   """
   This is the test case for your scripted module.
+  Uses ScriptedLoadableModuleTest base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
-
-  def delayDisplay(self,message,msec=1000):
-    """This utility method displays a small dialog and waits.
-    This does two things: 1) it lets the event loop catch up
-    to the state of the test so that rendering and widget updates
-    have all taken place before the test continues and 2) it
-    shows the user/developer/tester the state of the test
-    so that we'll know when it breaks.
-    """
-    print(message)
-    self.info = qt.QDialog()
-    self.infoLayout = qt.QVBoxLayout()
-    self.info.setLayout(self.infoLayout)
-    self.label = qt.QLabel(message,self.info)
-    self.infoLayout.addWidget(self.label)
-    qt.QTimer.singleShot(msec, self.info.close)
-    self.info.exec_()
-
-  def takeScreenshot(self,name,description,type=-1):
-    # show the message even if not taking a screen shot
-    self.delayDisplay(description)
-
-    if self.enableScreenshots == 0:
-      return
-
-    lm = slicer.app.layoutManager()
-    # switch on the type to get the requested window
-    widget = 0
-    if type == slicer.qMRMLScreenShotDialog.FullLayout:
-      # full layout
-      widget = lm.viewport()
-    elif type == slicer.qMRMLScreenShotDialog.ThreeD:
-      # just the 3D window
-      widget = lm.threeDWidget(0).threeDView()
-    elif type == slicer.qMRMLScreenShotDialog.Red:
-      # red slice window
-      widget = lm.sliceWidget("Red")
-    elif type == slicer.qMRMLScreenShotDialog.Yellow:
-      # yellow slice window
-      widget = lm.sliceWidget("Yellow")
-    elif type == slicer.qMRMLScreenShotDialog.Green:
-      # green slice window
-      widget = lm.sliceWidget("Green")
-    else:
-      # default to using the full window
-      widget = slicer.util.mainWindow()
-      # reset the type so that the node is set correctly
-      type = slicer.qMRMLScreenShotDialog.FullLayout
-
-    # grab and convert to vtk image data
-    qimage = ctk.ctkWidgetsUtils.grabWidget(widget)
-    imageData = vtk.vtkImageData()
-    slicer.qMRMLUtils().qImageToVtkImageData(qimage,imageData)
-
-    annotationLogic = slicer.modules.annotations.logic()
-    annotationLogic.CreateSnapShot(name, description, type, self.screenshotScaleFactor, imageData)
 
   def setUp(self):
     """ Do whatever is needed to reset the state - typically a scene clear will be enough.
@@ -262,8 +149,9 @@ class RSNAQuantTutorialTest(unittest.TestCase):
   def test_Part1Ruler(self,enableScreenshotsFlag=0,screenshotScaleFactor=1):
     """ Test using rulers
     """
-    self.enableScreenshots = enableScreenshotsFlag
-    self.screenshotScaleFactor = screenshotScaleFactor
+    logic = RSNAQuantTutorialLogic()
+    logic.enableScreenshots = enableScreenshotsFlag
+    logic.screenshotScaleFactor = screenshotScaleFactor
 
     self.delayDisplay("Starting the test")
 
@@ -309,8 +197,9 @@ class RSNAQuantTutorialTest(unittest.TestCase):
       redWidget.sliceController().setSliceVisible(True);
 
 
-      self.takeScreenshot('Ruler','Ruler used to measure tumor diameter',-1)
+      logic.takeScreenshot('Ruler','Ruler used to measure tumor diameter',-1)
 
+      self.delayDisplay('Test passed!')
     except Exception, e:
       import traceback
       traceback.print_exc()
@@ -320,9 +209,9 @@ class RSNAQuantTutorialTest(unittest.TestCase):
   def test_Part3PETCT(self,enableScreenshotsFlag=0,screenshotScaleFactor=1):
     """ Test using the PETCT module
     """
-
-    self.enableScreenshots = enableScreenshotsFlag
-    self.screenshotScaleFactor = screenshotScaleFactor
+    logic = RSNAQuantTutorialLogic()
+    logic.enableScreenshots = enableScreenshotsFlag
+    logic.screenshotScaleFactor = screenshotScaleFactor
 
     self.delayDisplay("Starting the test")
 
@@ -354,10 +243,9 @@ class RSNAQuantTutorialTest(unittest.TestCase):
     self.delayDisplay("Loading PET_CT_pre-treatment.mrb")
     preTreatmentPath = extractPath + '/PET_CT_pre-treatment.mrb'
     slicer.util.loadScene(preTreatmentPath)
-    self.takeScreenshot('PETCT-LoadedPre','Loaded pre-treatement scene',-1)
+    logic.takeScreenshot('PETCT-LoadedPre','Loaded pre-treatement scene',-1)
 
     try:
-      logic = RSNAQuantTutorialLogic()
       mainWindow = slicer.util.mainWindow()
       layoutManager = slicer.app.layoutManager()
       threeDView = layoutManager.threeDWidget(0).threeDView()
@@ -377,19 +265,19 @@ class RSNAQuantTutorialTest(unittest.TestCase):
       slicer.util.clickAndDrag(threeDView,button='Right')
       redWidget.sliceController().setSliceVisible(True)
       yellowWidget.sliceController().setSliceVisible(True)
-      self.takeScreenshot('PETCT-ConfigureView','Configure View',-1)
+      logic.takeScreenshot('PETCT-ConfigureView','Configure View',-1)
 
       mainWindow.moduleSelector().selectModule('Volumes')
       compositNode = redWidget.mrmlSliceCompositeNode()
       compositNode.SetForegroundOpacity(0.2)
-      self.takeScreenshot('PETCT-ShowVolumes','Show Volumes with lesion',-1)
+      logic.takeScreenshot('PETCT-ShowVolumes','Show Volumes with lesion',-1)
 
       compositNode.SetForegroundOpacity(0.5)
-      self.takeScreenshot('PETCT-CTOpacity','CT1 volume opacity to 0.5',-1)
+      logic.takeScreenshot('PETCT-CTOpacity','CT1 volume opacity to 0.5',-1)
 
       yellowWidget.sliceController().setSliceVisible(False)
       greenWidget.sliceController().setSliceVisible(True)
-      self.takeScreenshot('PETCT-ShowSlices','Show axial and sagittal slices',-1)
+      logic.takeScreenshot('PETCT-ShowSlices','Show axial and sagittal slices',-1)
 
       self.delayDisplay('SUV Computation')
       if not hasattr(slicer.modules, 'petstandarduptakevaluecomputation'):
@@ -418,16 +306,16 @@ class RSNAQuantTutorialTest(unittest.TestCase):
       self.delayDisplay("Loading PET_CT_post-treatment.mrb")
       postTreatmentPath = extractPath + '/PET_CT_post-treatment.mrb'
       slicer.util.loadScene(postTreatmentPath)
-      self.takeScreenshot('PETCT-LoadedPost','Loaded post-treatement scene',-1)
+      logic.takeScreenshot('PETCT-LoadedPost','Loaded post-treatement scene',-1)
 
       compositNode.SetForegroundOpacity(0.5)
-      self.takeScreenshot('PETCT-CT2Opacity','CT2 volume opacity to 0.5',-1)
+      logic.takeScreenshot('PETCT-CT2Opacity','CT2 volume opacity to 0.5',-1)
 
       redController.setSliceOffsetValue(-165.01)
-      self.takeScreenshot('PETCT-LarynxUptake','Mild uptake in the larynx and pharynx',-1)
+      logic.takeScreenshot('PETCT-LarynxUptake','Mild uptake in the larynx and pharynx',-1)
 
       redController.setSliceOffsetValue(-106.15)
-      self.takeScreenshot('PETCT-TumorUptake','No uptake in the area of the primary tumor',-1)
+      logic.takeScreenshot('PETCT-TumorUptake','No uptake in the area of the primary tumor',-1)
 
       self.delayDisplay('Test passed!')
     except Exception, e:
@@ -440,8 +328,9 @@ class RSNAQuantTutorialTest(unittest.TestCase):
     """ Test the ChangeTracker module
     """
 
-    self.enableScreenshots = enableScreenshotsFlag
-    self.screenshotScaleFactor = screenshotScaleFactor
+    logic = RSNAQuantTutorialLogic()
+    logic.enableScreenshots = enableScreenshotsFlag
+    logic.screenshotScaleFactor = screenshotScaleFactor
 
     self.delayDisplay("Starting the test")
 
@@ -465,10 +354,9 @@ class RSNAQuantTutorialTest(unittest.TestCase):
       if loader:
         print('Loading %s...\n' % (name,))
         loader(filePath)
-    self.takeScreenshot('ChangeTracker-Loaded','Finished with download and loading',-1)
+    logic.takeScreenshot('ChangeTracker-Loaded','Finished with download and loading',-1)
 
     try:
-      logic = RSNAQuantTutorialLogic()
       mainWindow = slicer.util.mainWindow()
       layoutManager = slicer.app.layoutManager()
       threeDView = layoutManager.threeDWidget(0).threeDView()
@@ -482,7 +370,7 @@ class RSNAQuantTutorialTest(unittest.TestCase):
 
       self.delayDisplay('Configure Module')
       mainWindow.moduleSelector().selectModule('ChangeTracker')
-      self.takeScreenshot('ChangeTracker-ModuleGUI','Select the ChangeTracker module',-1)
+      logic.takeScreenshot('ChangeTracker-ModuleGUI','Select the ChangeTracker module',-1)
 
       changeTracker = slicer.modules.changetracker.widgetRepresentation().self()
 
@@ -490,53 +378,53 @@ class RSNAQuantTutorialTest(unittest.TestCase):
       followupNode = slicer.util.getNode('2007-spgr1')
       changeTracker.selectScansStep._ChangeTrackerSelectScansStep__baselineVolumeSelector.setCurrentNode(baselineNode)
       changeTracker.selectScansStep._ChangeTrackerSelectScansStep__followupVolumeSelector.setCurrentNode(followupNode)
-      self.takeScreenshot('ChangeTracker-SetInputs','Select input scans',-1)
+      logic.takeScreenshot('ChangeTracker-SetInputs','Select input scans',-1)
 
       changeTracker.workflow.goForward()
-      self.takeScreenshot('ChangeTracker-GoForward','Go Forward',-1)
+      logic.takeScreenshot('ChangeTracker-GoForward','Go Forward',-1)
 
       slicer.util.clickAndDrag(redWidget,button='Right')
-      self.takeScreenshot('ChangeTracker-Zoom','Inspect - zoom',-1)
+      logic.takeScreenshot('ChangeTracker-Zoom','Inspect - zoom',-1)
 
       slicer.util.clickAndDrag(redWidget,button='Middle')
-      self.takeScreenshot('ChangeTracker-Pan','Inspect - pan',-1)
+      logic.takeScreenshot('ChangeTracker-Pan','Inspect - pan',-1)
 
       for offset in xrange(-20,20,2):
         redController.setSliceOffsetValue(offset)
-      self.takeScreenshot('ChangeTracker-Scroll','Inspect - scroll',-1)
+      logic.takeScreenshot('ChangeTracker-Scroll','Inspect - scroll',-1)
 
       self.delayDisplay('Set ROI')
       roi = changeTracker.defineROIStep._ChangeTrackerDefineROIStep__roi
       roi.SetXYZ(-2.81037, 28.7629, 28.4536)
-      self.takeScreenshot('ChangeTracker-SetROICenter','Center VOI',-1)
+      logic.takeScreenshot('ChangeTracker-SetROICenter','Center VOI',-1)
       roi.SetRadiusXYZ(22.6467, 22.6804, 22.9897)
-      self.takeScreenshot('ChangeTracker-SetROIExtent','Resize the VOI',-1)
+      logic.takeScreenshot('ChangeTracker-SetROIExtent','Resize the VOI',-1)
 
       layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalWidescreenView)
-      self.takeScreenshot('ChangeTracker-ConventionalWidescreen','Select the viewing mode Conventional Widescreen',-1)
+      logic.takeScreenshot('ChangeTracker-ConventionalWidescreen','Select the viewing mode Conventional Widescreen',-1)
 
       slicer.util.clickAndDrag(redWidget,button='Right')
-      self.takeScreenshot('ChangeTracker-ZoomVOI','Zoom',-1)
+      logic.takeScreenshot('ChangeTracker-ZoomVOI','Zoom',-1)
 
       layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutFourUpView)
-      self.takeScreenshot('ChangeTracker-FourUpLayout','Go back to Four-Up layout',-1)
+      logic.takeScreenshot('ChangeTracker-FourUpLayout','Go back to Four-Up layout',-1)
 
       changeTracker.workflow.goForward()
-      self.takeScreenshot('ChangeTracker-GoForward','Go Forward',-1)
+      logic.takeScreenshot('ChangeTracker-GoForward','Go Forward',-1)
 
       changeTracker.segmentROIStep._ChangeTrackerSegmentROIStep__threshRange.minimumValue = 120
-      self.takeScreenshot('ChangeTracker-Threshold','Set threshold',-1)
+      logic.takeScreenshot('ChangeTracker-Threshold','Set threshold',-1)
 
       changeTracker.workflow.goForward()
-      self.takeScreenshot('ChangeTracker-GoForward','Go Forward',-1)
+      logic.takeScreenshot('ChangeTracker-GoForward','Go Forward',-1)
 
       checkList = changeTracker.analyzeROIStep._ChangeTrackerAnalyzeROIStep__metricCheckboxList
       index = checkList.values().index('IntensityDifferenceMetric')
       checkList.keys()[index].checked = True
-      self.takeScreenshot('ChangeTracker-PickMetric','Select the ROI analysis method',-1)
+      logic.takeScreenshot('ChangeTracker-PickMetric','Select the ROI analysis method',-1)
 
       changeTracker.workflow.goForward()
-      self.takeScreenshot('ChangeTracker-GoForward','Go Forward',-1)
+      logic.takeScreenshot('ChangeTracker-GoForward','Go Forward',-1)
 
       self.delayDisplay('Look!')
       redWidget.sliceController().setSliceVisible(True);
@@ -561,7 +449,7 @@ class RSNAQuantTutorialTest(unittest.TestCase):
       for offset in xrange(10,30,2):
         compareController.setSliceOffsetValue(offset)
 
-      self.takeScreenshot('ChangeTracker-InspectResults','Inspected results',-1)
+      logic.takeScreenshot('ChangeTracker-InspectResults','Inspected results',-1)
 
       self.delayDisplay('Test passed!')
     except Exception, e:

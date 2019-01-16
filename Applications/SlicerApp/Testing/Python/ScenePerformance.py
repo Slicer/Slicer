@@ -1,13 +1,15 @@
 import os
 import unittest
 import vtk, qt, ctk, slicer
+from slicer.ScriptedLoadableModule import *
 
 #
 # ScenePerformance
 #
 
-class ScenePerformance:
+class ScenePerformance(ScriptedLoadableModule):
   def __init__(self, parent):
+    ScriptedLoadableModule.__init__(self, parent)
     parent.title = "Scene Performance"
     parent.categories = ["Testing.TestCases"]
     parent.dependencies = []
@@ -18,49 +20,21 @@ class ScenePerformance:
     parent.acknowledgementText = """
     This file was originally developed by Julien Finet, Kitware, Inc.  and was partially funded by NIH grant 3P41RR013218-12S1.
     """
-    self.parent = parent
 
-    # Add this test to the SelfTest module's list for discovery when the module
-    # is created.  Since this module may be discovered before SelfTests itself,
-    # create the list if it doesn't already exist.
-    try:
-      slicer.selfTests
-    except AttributeError:
-      slicer.selfTests = {}
-    slicer.selfTests['ScenePerformance'] = self.runTest
-
-  def runTest(self):
-    tester = ScenePerformanceTest()
-    tester.testAll()
 #
 # ScenePerformanceWidget
 #
-class ScenePerformanceWidget:
-  def __init__(self, parent = None):
-    if parent:
-      self.parent = parent
-    if not parent:
-      self.setup()
-      self.parent.show()
+class ScenePerformanceWidget(ScriptedLoadableModuleWidget):
 
   def setup(self):
+    ScriptedLoadableModuleWidget.setup(self)
 
-    loader = qt.QUiLoader()
     moduleName = 'ScenePerformance'
     scriptedModulesPath = os.path.dirname(slicer.util.modulePath(moduleName))
     path = os.path.join(scriptedModulesPath, 'Resources', 'UI', 'ScenePerformance.ui')
-
-    qfile = qt.QFile(path)
-    qfile.open(qt.QFile.ReadOnly)
-    widget = loader.load( qfile, self.parent )
+    widget = slicer.util.loadUI(path)
     self.layout = self.parent.layout()
     self.layout.addWidget(widget)
-
-    self.reloadButton = qt.QPushButton("Reload")
-    self.reloadButton.toolTip = "Reload this module."
-    self.reloadButton.name = "ScenePerformance Reload"
-    self.layout.addWidget(self.reloadButton)
-    self.reloadButton.connect('clicked()', self.reloadModule)
 
     self.runTestsButton = qt.QPushButton("Run tests")
     self.runTestsButton.toolTip = "Run all the tests."
@@ -85,6 +59,10 @@ class ScenePerformanceWidget:
     self.TimePushButton.connect('clicked()', self.timeAction)
     self.ActionComboBox.connect('currentIndexChanged(int)', self.updateActionProperties)
     self.updateActionProperties()
+
+  def runTests(self):
+    tester = ScenePerformanceTest()
+    tester.testAll()
 
   def timeAction(self):
     tester = ScenePerformanceTest()
@@ -126,44 +104,12 @@ class ScenePerformanceWidget:
     self.MRMLNodeComboBox.setEnabled(True if self.ActionComboBox.currentIndex == 4 or self.ActionComboBox.currentIndex == 5 else False)
 
   def findWidget(self, widget, objectName):
-    if widget.objectName == objectName:
-        return widget
-    else:
-        children = []
-        for w in widget.children():
-            resulting_widget = self.findWidget(w, objectName)
-            if resulting_widget:
-                return resulting_widget
-        return None
-
-  def runTests(self):
-    tester = ScenePerformanceTest()
-    tester.testAll()
-
-  def reloadModule(self,moduleName="ScenePerformance"):
-    """Generic reload method for any scripted module.
-    ModuleWizard will substitute correct default moduleName.
-    """
-    globals()[moduleName] = slicer.util.reloadScriptedModule(moduleName)
-
-
+    return slicer.util.findChildren(widget, objectName)[0]
 
 #
 # ScenePerformanceLogic
 #
-class ScenePerformanceLogic:
-  def __init__(self):
-    pass
-
-
-  def hasImageData(self,volumeNode):
-    if not volumeNode:
-      print('no volume node')
-      return False
-    if volumeNode.GetImageData() is None:
-      print('no image data')
-      return False
-    return True
+class ScenePerformanceLogic(ScriptedLoadableModuleLogic):
 
   def downloadFile(self, downloadURL, downloadFileName):
     downloads = (
@@ -184,17 +130,7 @@ class ScenePerformanceLogic:
   def stopTiming(self):
     return self.Timer.elapsed()
 
-class ScenePerformanceTest(unittest.TestCase):
-
-  def delayDisplay(self,message,msec=1000):
-    print(message)
-    self.info = qt.QDialog()
-    self.infoLayout = qt.QVBoxLayout()
-    self.info.setLayout(self.infoLayout)
-    self.label = qt.QLabel(message,self.info)
-    self.infoLayout.addWidget(self.label)
-    qt.QTimer.singleShot(msec, self.info.close)
-    self.info.exec_()
+class ScenePerformanceTest(ScriptedLoadableModuleTest):
 
   def setUp(self):
     self.Repeat = 1
