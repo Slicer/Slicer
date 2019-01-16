@@ -93,7 +93,7 @@ public:
   /// Get parameter description as a string
   /// \param parameterName String containing the name of the parameter
   /// Returns the description of the parameter as a string, and returns an empty string if the parameter name is invalid
-  virtual std::string GetParameterDescription(std::string parameterName) { return ""; };
+  virtual std::string GetParameterDescription(std::string parameterName) = 0;
 
   /// Set a parameter for the codec
   /// \param parameterName String containing the name of the parameter

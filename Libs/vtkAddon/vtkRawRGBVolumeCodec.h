@@ -51,6 +51,10 @@ protected:
   /// There are no parameters to update within this codec
   virtual bool UpdateParameterInternal(std::string vtkNotUsed(parameterValue), std::string vtkNotUsed(parameterName)) { return false; };
 
+  /// Return the codec parameter description
+  /// There are no parameters to update within this codec
+  virtual std::string GetParameterDescription(std::string vtkNotUsed(parameterName)) { return ""; };
+
 private:
   vtkRawRGBVolumeCodec(const vtkRawRGBVolumeCodec&);
   void operator=(const vtkRawRGBVolumeCodec&);
