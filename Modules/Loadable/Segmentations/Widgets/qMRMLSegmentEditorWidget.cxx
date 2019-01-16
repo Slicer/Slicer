@@ -105,9 +105,11 @@
 #include <QShortcut>
 #include <QToolButton>
 #include <QVBoxLayout>
+#include <QWidgetAction>
 
 // CTK includes
 #include <ctkFlowLayout.h>
+#include <ctkSliderWidget.h>
 #include <ctkCollapsibleButton.h>
 
 static const int BINARY_LABELMAP_SCALAR_TYPE = VTK_UNSIGNED_CHAR;
@@ -205,6 +207,10 @@ public:
   /// then false is returned;
   bool segmentationIJKToRAS(vtkMatrix4x4* ijkToRas);
 
+  /// Updates surface smoothing factor in segmentation node and updates surface representation
+  /// if it is enabled.
+  bool setSurfaceSmoothingFactor(double smoothingFactor);
+
 public:
   /// Segment editor parameter set node containing all selections and working images
   vtkWeakPointer<vtkMRMLSegmentEditorNode> ParameterSetNode;
@@ -285,6 +291,9 @@ public:
   // Qt does not have an API to check if a widget is in a layout, therefore we store this
   // information in this flag.
   bool RotateWarningInNodeSelectorLayout;
+
+  QAction* SurfaceSmoothingEnabledAction;
+  ctkSliderWidget* SurfaceSmoothingSlider;
 };
 
 //-----------------------------------------------------------------------------
@@ -400,9 +409,32 @@ void qMRMLSegmentEditorWidgetPrivate::init()
   this->SwitchToSegmentationsButton->setMenu(segmentationsButtonMenu);
 
   QMenu* show3DButtonMenu = new QMenu(q->tr("Show 3D"), this->Show3DButton);
-  QAction* setSurfaceSmoothingAction = new QAction("Set surface smoothing...", show3DButtonMenu);
-  show3DButtonMenu->addAction(setSurfaceSmoothingAction);
-  QObject::connect(setSurfaceSmoothingAction, SIGNAL(triggered()), q, SLOT(onSetSurfaceSmoothingClicked()));
+
+  this->SurfaceSmoothingEnabledAction = new QAction(q->tr("Surface smoothing"), show3DButtonMenu);
+  this->SurfaceSmoothingEnabledAction->setToolTip(q->tr("Apply smoothing when converting binary lablemap to closed surface representation."));
+  this->SurfaceSmoothingEnabledAction->setCheckable(true);
+  show3DButtonMenu->addAction(this->SurfaceSmoothingEnabledAction);
+  QObject::connect(this->SurfaceSmoothingEnabledAction, SIGNAL(toggled(bool)), q, SLOT(onEnableSurfaceSmoothingToggled(bool)));
+
+  QMenu* surfaceSmoothingFactorMenu = new QMenu(q->tr("Smoothing factor"), show3DButtonMenu);
+  surfaceSmoothingFactorMenu->setObjectName("slicerSpacingManualMode");
+  surfaceSmoothingFactorMenu->setIcon(QIcon(":/Icon/SlicerManualSliceSpacing.png"));
+
+  this->SurfaceSmoothingSlider = new ctkSliderWidget(surfaceSmoothingFactorMenu);
+  this->SurfaceSmoothingSlider->setToolTip(q->tr("Higher value means stronger smoothing during closed surface representation conversion."));
+  this->SurfaceSmoothingSlider->setDecimals(2);
+  this->SurfaceSmoothingSlider->setRange(0.0, 1.0);
+  this->SurfaceSmoothingSlider->setSingleStep(0.1);
+  this->SurfaceSmoothingSlider->setValue(0.5);
+  this->SurfaceSmoothingSlider->setTracking(false);
+  QObject::connect(this->SurfaceSmoothingSlider, SIGNAL(valueChanged(double)),
+    q, SLOT(onSurfaceSmoothingFactorChanged(double)));
+  QWidgetAction* sliceSpacingAction = new QWidgetAction(surfaceSmoothingFactorMenu);
+  sliceSpacingAction->setCheckable(true);
+  sliceSpacingAction->setDefaultWidget(this->SurfaceSmoothingSlider);
+  surfaceSmoothingFactorMenu->addAction(sliceSpacingAction);
+  show3DButtonMenu->addMenu(surfaceSmoothingFactorMenu);
+
   this->Show3DButton->setMenu(show3DButtonMenu);
 
   // Make connections
@@ -1038,6 +1070,36 @@ bool qMRMLSegmentEditorWidgetPrivate::segmentationIJKToRAS(vtkMatrix4x4* ijkToRa
 }
 
 //-----------------------------------------------------------------------------
+bool qMRMLSegmentEditorWidgetPrivate::setSurfaceSmoothingFactor(double smoothingFactor)
+{
+  if (!this->ParameterSetNode)
+    {
+    return false;
+    }
+  vtkMRMLSegmentationNode* segmentationNode = this->ParameterSetNode->GetSegmentationNode();
+  if (!segmentationNode || !segmentationNode->GetSegmentation())
+    {
+    return false;
+    }
+
+  segmentationNode->GetSegmentation()->SetConversionParameter(
+    vtkBinaryLabelmapToClosedSurfaceConversionRule::GetSmoothingFactorParameterName(),
+    QVariant(smoothingFactor).toString().toLatin1().constData());
+
+  bool closedSurfacePresent = segmentationNode->GetSegmentation()->ContainsRepresentation(
+    vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
+  if (closedSurfacePresent)
+    {
+    QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+    segmentationNode->GetSegmentation()->CreateRepresentation(
+      vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName(), true);
+    segmentationNode->Modified();
+    QApplication::restoreOverrideCursor();
+    }
+  return true;
+}
+
+//-----------------------------------------------------------------------------
 // qMRMLSegmentEditorWidget methods
 
 //-----------------------------------------------------------------------------
@@ -1190,6 +1252,17 @@ void qMRMLSegmentEditorWidget::updateWidgetFromMRML()
   d->MaskingGroupBox->setEnabled(d->SegmentationNode != NULL);
   d->EffectsOptionsFrame->setEnabled(d->SegmentationNode != NULL);
   d->MasterVolumeNodeComboBox->setEnabled(d->SegmentationNode != NULL);
+
+  double surfaceSmoothingFactor = 0;
+  if (d->SegmentationNode && d->SegmentationNode->GetSegmentation())
+  {
+    surfaceSmoothingFactor = QString(d->SegmentationNode->GetSegmentation()->GetConversionParameter(
+      vtkBinaryLabelmapToClosedSurfaceConversionRule::GetSmoothingFactorParameterName()).c_str()).toDouble();
+  }
+  bool wasBlocked = d->SurfaceSmoothingEnabledAction->blockSignals(true);
+  d->SurfaceSmoothingEnabledAction->setChecked(surfaceSmoothingFactor >= 0.0);
+  d->SurfaceSmoothingEnabledAction->blockSignals(wasBlocked);
+  d->SurfaceSmoothingSlider->setEnabled(surfaceSmoothingFactor >= 0.0);
 
   QString selectedSegmentID;
   if (d->ParameterSetNode->GetSelectedSegmentID())
@@ -3287,7 +3360,7 @@ void qMRMLSegmentEditorWidget::updateEffectLayouts()
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSegmentEditorWidget::onSetSurfaceSmoothingClicked()
+void qMRMLSegmentEditorWidget::onEnableSurfaceSmoothingToggled(bool smoothingEnabled)
 {
   Q_D(qMRMLSegmentEditorWidget);
 
@@ -3301,35 +3374,74 @@ void qMRMLSegmentEditorWidget::onSetSurfaceSmoothingClicked()
     {
     qCritical() << Q_FUNC_INFO << ": Invalid segment editor parameter set node";
     }
-  if (!segmentationNode)
+  if (!segmentationNode || !segmentationNode->GetSegmentation())
     {
     qCritical() << Q_FUNC_INFO << ": No segmentation selected";
+    return;
+    }
+
+  // Get smoothing factor
+  double originalSmoothingFactor = QString( segmentationNode->GetSegmentation()->GetConversionParameter(
+    vtkBinaryLabelmapToClosedSurfaceConversionRule::GetSmoothingFactorParameterName() ).c_str() ).toDouble();
+  double newSmoothingFactor = fabs(originalSmoothingFactor);
+  if (originalSmoothingFactor == 0.0)
+    {
+    // if original smoothing factor was 0 then we cannot toggle smoothing
+    // therefore we reset it to the default
+    newSmoothingFactor = 0.5;
+    }
+  if (!smoothingEnabled)
+    {
+    newSmoothingFactor *= -1;
+    }
+
+  // Set smoothing factor
+  if (newSmoothingFactor != originalSmoothingFactor)
+    {
+    d->setSurfaceSmoothingFactor(newSmoothingFactor);
+    this->updateWidgetFromMRML();
+    }
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::onSurfaceSmoothingFactorChanged(double newSmoothingFactor)
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  // Get segmentation node
+  vtkMRMLSegmentationNode* segmentationNode = NULL;
+  if (d->ParameterSetNode)
+    {
+    segmentationNode = d->ParameterSetNode->GetSegmentationNode();
+    }
+  else
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid segment editor parameter set node";
+    }
+  if (!segmentationNode || !segmentationNode->GetSegmentation())
+    {
+    qCritical() << Q_FUNC_INFO << ": No segmentation selected";
+    return;
     }
 
   // Get smoothing factor
   double originalSmoothingFactor = QString( segmentationNode->GetSegmentation()->GetConversionParameter(
     vtkBinaryLabelmapToClosedSurfaceConversionRule::GetSmoothingFactorParameterName() ).c_str() ).toDouble();
 
-  // Pop up dialog to choose smoothing factor
-  bool ok = false;
-  double newSmoothingFactor = QInputDialog::getDouble(NULL, tr("Set surface smoothing"),
-    tr("Enter value between 0 (no smoothing)\n and 1 (maximum smoothing)"), originalSmoothingFactor, 0.0, 1.0, 2, &ok);
-  if (!ok)
-    {
-    qWarning() << Q_FUNC_INFO << ": Failed to get valid dose unit value from dialog. Check study node attributes.";
-    }
+  // Sign of smoothing factor is used to indicate that smoothing is enabled or not.
+  // if smoothing factor is negative then it means smoothing is disabled.
+  // Here we allow changing the absolute value fo the smoothing factor, while maintaining its sign.
 
   // Set smoothing factor
-  if (newSmoothingFactor != originalSmoothingFactor)
+  if (newSmoothingFactor != fabs(originalSmoothingFactor))
     {
-    segmentationNode->GetSegmentation()->SetConversionParameter(
-      vtkBinaryLabelmapToClosedSurfaceConversionRule::GetSmoothingFactorParameterName(),
-      QVariant(newSmoothingFactor).toString().toLatin1().constData() );
-    segmentationNode->GetSegmentation()->CreateRepresentation(
-      vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName(), true );
-    segmentationNode->Modified();
+    if (originalSmoothingFactor < 0.0)
+      {
+      newSmoothingFactor = -newSmoothingFactor;
+      }
+    d->setSurfaceSmoothingFactor(newSmoothingFactor);
     }
 }
+
 
 //-----------------------------------------------------------------------------
 void qMRMLSegmentEditorWidget::onImportExportActionClicked()

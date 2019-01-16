@@ -360,8 +360,9 @@ protected slots:
   /// Update layout after expanding/collapsing the help text browser
   void anchorClicked(const QUrl &url);
 
-  /// Show surface smoothing option
-  void onSetSurfaceSmoothingClicked();
+  /// Enable/disable surface smoothing
+  void onEnableSurfaceSmoothingToggled(bool enabled);
+  void onSurfaceSmoothingFactorChanged(double newSmoothingFactor);
   /// Switch to Segmentations module and jump to Import/Export section
   void onImportExportActionClicked();
   /// Open Export to files dialog
