@@ -337,7 +337,7 @@ set(Slicer_BUNDLED_EXTENSION_NAMES)
 foreach(extension_dir ${Slicer_EXTENSION_SOURCE_DIRS})
   get_filename_component(extension_dir ${extension_dir} ABSOLUTE)
   get_filename_component(extension_name ${extension_dir} NAME) # The assumption is that source directories are named after the extension project
-  if(EXISTS ${extension_dir}/SuperBuild OR ${extension_dir}/Superbuild)
+  if(EXISTS ${extension_dir}/SuperBuild OR EXISTS ${extension_dir}/Superbuild)
     set(${extension_name}_SUPERBUILD 0)
     mark_as_superbuild(${extension_name}_SUPERBUILD:BOOL)
 
