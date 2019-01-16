@@ -96,6 +96,7 @@ public:
 #endif
 
   /// Convenient function to evaluate JS in main frame context
+  /// from C++ or Python code
   Q_INVOKABLE QString evalJS(const QString &js);
 
 public slots:
