@@ -322,12 +322,13 @@ function(fixup_bundle_with_plugins app)
     "${libs_path}"
     )
 
-  # Since BundleUtilities function do not copy the "Helpers" directory found
-  # in frameworks. The following will explicitly copy and fixup
-  # QtWebEngineCore.framework/Versions/5/Helpers/QtWebEngineProcess.app
   set(Slicer_USE_SYSTEM_QT "@Slicer_USE_SYSTEM_QT@")
   if(NOT Slicer_USE_SYSTEM_QT)
     set(qt_root_dir "@qt_root_dir@")
+
+    # Since BundleUtilities function do not copy the "Helpers" directory found
+    # in frameworks. The following will explicitly copy and fixup
+    # QtWebEngineCore.framework/Versions/5/Helpers/QtWebEngineProcess.app
     set(qtwebenginecore_app_subdir "Helpers/QtWebEngineProcess.app")
     set(qtwebenginecore_src_dir "${qt_root_dir}/QtWebEngineCore.framework/${qtwebenginecore_app_subdir}")
     set(qtwebenginecore_dest_dir "${app_dir}/Contents/Frameworks/QtWebEngineCore.framework/Versions/Current/${qtwebenginecore_app_subdir}")
@@ -364,6 +365,38 @@ function(fixup_bundle_with_plugins app)
         WORKING_DIRECTORY "${app_dir}/Contents/Frameworks/QtWebEngineCore.framework"
         )
     endif()
+
+   # Since BundleUtilities module does not know how to install .app directory withing
+   # an existing app, the following explicitly install the designer application.
+   set(Slicer_BUILD_QT_DESIGNER_PLUGINS "@Slicer_BUILD_QT_DESIGNER_PLUGINS@")
+   set(designer_app_subdir "Designer.app")
+   set(designer_src_dir "${qt_root_dir}/../bin/${designer_app_subdir}")
+   set(designer_dest_dir "${app_dir}/Contents/bin/${designer_app_subdir}")
+   if(Slicer_BUILD_QT_DESIGNER_PLUGINS AND EXISTS ${designer_src_dir})
+     file(COPY "${designer_src_dir}/Contents" DESTINATION "${designer_dest_dir}/" USE_SOURCE_PERMISSIONS)
+     set(designer_executable "${designer_dest_dir}/Contents/MacOS/Designer")
+     # Collect list of Qt framework dependencies
+     set(prereqs )
+     get_prerequisites(${designer_executable} "prereqs" 1 0 "" "")
+     # Generate list of "-change" arguments
+     set(changes "")
+     foreach(item ${prereqs})
+       gp_item_default_embedded_path_override("${item}" path)
+       get_filename_component(item_name "${item}" NAME)
+       # Examples of values:
+       #  item          : /Volumes/Dashboards/Support/qt-everywhere-build-5.10.0/lib/QtNetwork.framework/Versions/5/QtNetwork
+       #  item_name     : QtNetwork
+       #  path          : @rpath/Frameworks
+       #  embedded_item : @rpath/Frameworks/QtNetwork.framework/Versions/5/QtNetwork
+       string(REGEX REPLACE "^.*(${item_name}.framework/.*/?${item_name}).*$" "${path}/\\1" embedded_item "${item}")
+       set(changes ${changes} "-change" "${item}" "${embedded_item}")
+     endforeach()
+     # Update executable
+     execute_process(COMMAND install_name_tool
+       -rpath "@executable_path/Frameworks" "@loader_path/../../../../"
+       ${changes} "${designer_executable}"
+       )
+   endif()
   endif()
 
 endfunction()
