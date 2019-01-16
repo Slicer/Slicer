@@ -12,8 +12,6 @@
 
 ==========================================================================*/
 
-// MRMLLogic includes
-
 // MRMLDisplayableManager includes
 #include "vtkMRMLModelDisplayableManager.h"
 #include "vtkThreeDViewInteractorStyle.h"
@@ -30,10 +28,11 @@
 #include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLModelHierarchyNode.h>
 #include <vtkMRMLModelNode.h>
-#include <vtkMRMLModelNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLSliceNode.h>
+#include <vtkMRMLSubjectHierarchyConstants.h>
+#include <vtkMRMLSubjectHierarchyNode.h>
 #include <vtkMRMLTransformNode.h>
 #include <vtkMRMLViewNode.h>
 #include <vtkMRMLVolumeNode.h>
@@ -73,15 +72,12 @@
 #include <vtkVersion.h>
 #include <vtkWeakPointer.h>
 
-// for picking
+// For picking
 #include <vtkCellPicker.h>
 #include <vtkPointPicker.h>
 #include <vtkPropPicker.h>
 #include <vtkRendererCollection.h>
 #include <vtkWorldPointPicker.h>
-
-// STD includes
-#include <cassert>
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLModelDisplayableManager );
@@ -1058,8 +1054,7 @@ void vtkMRMLModelDisplayableManager::UpdateModifiedModel(vtkMRMLDisplayableNode 
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayableManager
-::UpdateModelMesh(vtkMRMLDisplayableNode *displayableNode)
+void vtkMRMLModelDisplayableManager::UpdateModelMesh(vtkMRMLDisplayableNode *displayableNode)
 {
   int ndnodes = displayableNode->GetNumberOfDisplayNodes();
   int i;
@@ -1444,7 +1439,7 @@ void vtkMRMLModelDisplayableManager::UpdateModelHierarchyDisplay(vtkMRMLDisplaya
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLDisplayNode*  vtkMRMLModelDisplayableManager::GetHierarchyDisplayNode(vtkMRMLDisplayableNode *model)
+vtkMRMLDisplayNode* vtkMRMLModelDisplayableManager::GetHierarchyDisplayNode(vtkMRMLDisplayableNode *model)
 {
   vtkMRMLDisplayNode* dnode = 0;
   if (this->Internal->ModelHierarchiesPresent)
@@ -1658,168 +1653,187 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
   int ndnodes = model->GetNumberOfDisplayNodes();
   vtkMRMLDisplayNode *hierarchyDisplayNode = this->GetHierarchyDisplayNode(model);
 
+  // Get model hierarchy node from subject hierarchy folder if any
+  vtkMRMLModelDisplayNode* folderDisplayNode = NULL;
+  vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(this->GetMRMLScene());
+  if (shNode)
+    {
+    vtkIdType modelShItemID = shNode->GetItemByDataNode(model);
+    vtkIdType currentFolderID = modelShItemID;
+    while (!folderDisplayNode && currentFolderID)
+      {
+      currentFolderID = shNode->GetItemAncestorAtLevel(
+        currentFolderID, vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder() );
+      if ( currentFolderID && shNode->HasItemAttribute(currentFolderID,
+          vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyApplyColorToBranchAttributeName()) )
+        {
+        folderDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(shNode->GetItemDataNode(currentFolderID));
+        }
+      }
+    }
+
   for (int i=0; i<ndnodes; i++)
     {
-    vtkMRMLDisplayNode *mrmlDisplayNode = model->GetNthDisplayNode(i);
-    vtkMRMLModelDisplayNode *modelDisplayNode =
-      vtkMRMLModelDisplayNode::SafeDownCast(mrmlDisplayNode);
-    if (mrmlDisplayNode != 0)
+    vtkMRMLModelDisplayNode *modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(model->GetNthDisplayNode(i));
+    if (!modelDisplayNode)
       {
-      vtkProp3D *prop = this->GetActorByID(mrmlDisplayNode->GetID());
-      if (prop == 0)
-        {
-        continue;
-        }
-      // use hierarchy display node if it exists
-      if (hierarchyDisplayNode)
-        {
-        // process selection display node filter
-        if (this->GetSelectionNode())
-          {
-          std::string displayNode = this->GetSelectionNode()->GetModelHierarchyDisplayNodeClassName(
-                                    model->GetClassName());
-          if (!displayNode.empty() && !mrmlDisplayNode->IsA(displayNode.c_str()) )
-            {
-            continue;
-            }
-          }
+      continue;
+      }
+    vtkProp3D *prop = this->GetActorByID(modelDisplayNode->GetID());
+    if (prop == 0)
+      {
+      continue;
+      }
 
-        mrmlDisplayNode = hierarchyDisplayNode;
-        modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(hierarchyDisplayNode);
-        if (!modelDisplayNode)
+    // Use subject hierarchy folder display node if any
+    if (folderDisplayNode)
+      {
+      modelDisplayNode = folderDisplayNode;
+      }
+    // Use hierarchy display node if it exists
+    else if (hierarchyDisplayNode)
+      {
+      // process selection display node filter
+      if (this->GetSelectionNode())
+        {
+        std::string displayNode = this->GetSelectionNode()->GetModelHierarchyDisplayNodeClassName(
+                                  model->GetClassName());
+        if (!displayNode.empty() && !modelDisplayNode->IsA(displayNode.c_str()) )
           {
-          vtkErrorMacro("Unable to convert hierarchy display node "
-                        << " to a model display node, at the "
-                        << i << "th display node on model "
-                        << model->GetName());
           continue;
           }
         }
 
-      vtkActor *actor = vtkActor::SafeDownCast(prop);
-      vtkImageActor *imageActor = vtkImageActor::SafeDownCast(prop);
-      prop->SetUserMatrix(matrixTransformToWorld.GetPointer());
-
-      bool visible = modelDisplayNode->GetVisibility(this->GetMRMLViewNode()->GetID());
-      prop->SetVisibility(visible);
-      this->Internal->DisplayedVisibility[modelDisplayNode->GetID()] = visible;
-
-      vtkMapper* mapper = actor ? actor->GetMapper() : NULL;
-      if (mapper)
+      modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(hierarchyDisplayNode);
+      if (!modelDisplayNode)
         {
-        mapper->SetScalarVisibility(modelDisplayNode->GetScalarVisibility());
-        // if the scalars are visible, set active scalars, the lookup table
-        // and the scalar range
-        if (visible && modelDisplayNode->GetScalarVisibility())
+        vtkErrorMacro("Unable to convert hierarchy display node to a model display node, at the "
+                      << i << "th display node on model " << model->GetName());
+        continue;
+        }
+      }
+
+    vtkActor *actor = vtkActor::SafeDownCast(prop);
+    vtkImageActor *imageActor = vtkImageActor::SafeDownCast(prop);
+    prop->SetUserMatrix(matrixTransformToWorld.GetPointer());
+
+    bool visible = modelDisplayNode->GetVisibility(this->GetMRMLViewNode()->GetID());
+    prop->SetVisibility(visible);
+    this->Internal->DisplayedVisibility[modelDisplayNode->GetID()] = visible;
+
+    vtkMapper* mapper = actor ? actor->GetMapper() : NULL;
+    if (mapper)
+      {
+      mapper->SetScalarVisibility(modelDisplayNode->GetScalarVisibility());
+      // if the scalars are visible, set active scalars, the lookup table
+      // and the scalar range
+      if (visible && modelDisplayNode->GetScalarVisibility())
+        {
+        // Check if using point data or cell data
+        vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(model);
+        if (this->IsCellScalarsActive(modelDisplayNode, modelNode))
           {
-          // Check if using point data or cell data
-          vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(model);
-          if (this->IsCellScalarsActive(modelDisplayNode, modelNode))
-            {
-            mapper->SetScalarModeToUseCellData();
-            }
-          else
-            {
-            mapper->SetScalarModeToUsePointData();
-            }
-
-          if (modelDisplayNode->GetScalarRangeFlag() == vtkMRMLDisplayNode::UseDirectMapping)
-            {
-            mapper->UseLookupTableScalarRangeOn(); // avoid warning about bad table range
-            mapper->SetColorModeToDirectScalars();
-            mapper->SetLookupTable(NULL);
-            }
-          else
-            {
-            mapper->UseLookupTableScalarRangeOff();
-            mapper->SetColorModeToMapScalars();
-
-            // The renderer uses the lookup table scalar range to
-            // render colors. By default, UseLookupTableScalarRange
-            // is set to false and SetScalarRange can be used on the
-            // mapper to map scalars into the lookup table. When set
-            // to true, SetScalarRange has no effect and it is necessary
-            // to force the scalarRange on the lookup table manually.
-            // Whichever way is used, the look up table range needs
-            // to be changed to render the correct scalar values, thus
-            // one lookup table can not be shared by multiple mappers
-            // if any of those mappers needs to map using its scalar
-            // values range. It is therefore necessary to make a copy
-            // of the colorNode vtkLookupTable in order not to impact
-            // that lookup table original range.
-            vtkLookupTable* dNodeLUT = modelDisplayNode->GetColorNode() ?
-              modelDisplayNode->GetColorNode()->GetLookupTable() : NULL;
-            vtkSmartPointer<vtkLookupTable> lut = vtkSmartPointer<vtkLookupTable>::Take(
-              vtkMRMLModelDisplayableManager::CreateLookupTableCopy(dNodeLUT));
-            mapper->SetLookupTable(lut.GetPointer());
-            }
-
-          // Set scalar range
-          mapper->SetScalarRange(modelDisplayNode->GetScalarRange());
-          }
-
-        vtkProperty* actorProperties = actor->GetProperty();
-        actorProperties->SetRepresentation(modelDisplayNode->GetRepresentation());
-        actorProperties->SetPointSize(modelDisplayNode->GetPointSize());
-        actorProperties->SetLineWidth(modelDisplayNode->GetLineWidth());
-        actorProperties->SetLighting(modelDisplayNode->GetLighting());
-        actorProperties->SetInterpolation(modelDisplayNode->GetInterpolation());
-        actorProperties->SetShading(modelDisplayNode->GetShading());
-        actorProperties->SetFrontfaceCulling(modelDisplayNode->GetFrontfaceCulling());
-        actorProperties->SetBackfaceCulling(modelDisplayNode->GetBackfaceCulling());
-
-        actor->SetPickable(model->GetSelectable());
-        if (modelDisplayNode->GetSelected())
-          {
-          vtkDebugMacro("Model display node " << modelDisplayNode->GetName() << " is selected...");
-          actorProperties->SetColor(modelDisplayNode->GetSelectedColor());
-          actorProperties->SetAmbient(modelDisplayNode->GetSelectedAmbient());
-          actorProperties->SetSpecular(modelDisplayNode->GetSelectedSpecular());
+          mapper->SetScalarModeToUseCellData();
           }
         else
           {
-          //vtkWarningMacro("Model display node " << modelDisplayNode->GetName() << " is not selected...");
-          actorProperties->SetColor(modelDisplayNode->GetColor());
-          actorProperties->SetAmbient(modelDisplayNode->GetAmbient());
-          actorProperties->SetSpecular(modelDisplayNode->GetSpecular());
+          mapper->SetScalarModeToUsePointData();
           }
-        actorProperties->SetOpacity(modelDisplayNode->GetOpacity());
-        actorProperties->SetDiffuse(modelDisplayNode->GetDiffuse());
-        actorProperties->SetSpecularPower(modelDisplayNode->GetPower());
-        actorProperties->SetEdgeVisibility(modelDisplayNode->GetEdgeVisibility());
-        actorProperties->SetEdgeColor(modelDisplayNode->GetEdgeColor());
-        if (modelDisplayNode->GetTextureImageDataConnection() != 0)
-          {
-          if (actor->GetTexture() == 0)
-            {
-            vtkTexture *texture = vtkTexture::New();
-            actor->SetTexture(texture);
-            texture->Delete();
-            }
-          actor->GetTexture()->SetInputConnection(modelDisplayNode->GetTextureImageDataConnection());
-          actor->GetTexture()->SetInterpolate(modelDisplayNode->GetInterpolateTexture());
-          actorProperties->SetColor(1., 1., 1.);
 
-          // Force actors to be treated as opaque. Otherwise, transparent
-          // elements in the texture cause the actor to be treated as
-          // translucent, i.e. rendered without writing to the depth buffer.
-          // See http://www.na-mic.org/Bug/view.php?id=4253.
-          if (actorProperties->GetOpacity() == 1.0)
-            {
-            actor->ForceOpaqueOn();
-            }
+        if (modelDisplayNode->GetScalarRangeFlag() == vtkMRMLDisplayNode::UseDirectMapping)
+          {
+          mapper->UseLookupTableScalarRangeOn(); // avoid warning about bad table range
+          mapper->SetColorModeToDirectScalars();
+          mapper->SetLookupTable(NULL);
           }
         else
           {
-          actor->SetTexture(0);
-          actor->ForceOpaqueOff();
+          mapper->UseLookupTableScalarRangeOff();
+          mapper->SetColorModeToMapScalars();
+
+          // The renderer uses the lookup table scalar range to
+          // render colors. By default, UseLookupTableScalarRange
+          // is set to false and SetScalarRange can be used on the
+          // mapper to map scalars into the lookup table. When set
+          // to true, SetScalarRange has no effect and it is necessary
+          // to force the scalarRange on the lookup table manually.
+          // Whichever way is used, the look up table range needs
+          // to be changed to render the correct scalar values, thus
+          // one lookup table can not be shared by multiple mappers
+          // if any of those mappers needs to map using its scalar
+          // values range. It is therefore necessary to make a copy
+          // of the colorNode vtkLookupTable in order not to impact
+          // that lookup table original range.
+          vtkLookupTable* dNodeLUT = modelDisplayNode->GetColorNode() ?
+            modelDisplayNode->GetColorNode()->GetLookupTable() : NULL;
+          vtkSmartPointer<vtkLookupTable> lut = vtkSmartPointer<vtkLookupTable>::Take(
+            vtkMRMLModelDisplayableManager::CreateLookupTableCopy(dNodeLUT));
+          mapper->SetLookupTable(lut.GetPointer());
+          }
+
+        // Set scalar range
+        mapper->SetScalarRange(modelDisplayNode->GetScalarRange());
+        }
+
+      vtkProperty* actorProperties = actor->GetProperty();
+      actorProperties->SetRepresentation(modelDisplayNode->GetRepresentation());
+      actorProperties->SetPointSize(modelDisplayNode->GetPointSize());
+      actorProperties->SetLineWidth(modelDisplayNode->GetLineWidth());
+      actorProperties->SetLighting(modelDisplayNode->GetLighting());
+      actorProperties->SetInterpolation(modelDisplayNode->GetInterpolation());
+      actorProperties->SetShading(modelDisplayNode->GetShading());
+      actorProperties->SetFrontfaceCulling(modelDisplayNode->GetFrontfaceCulling());
+      actorProperties->SetBackfaceCulling(modelDisplayNode->GetBackfaceCulling());
+
+      actor->SetPickable(model->GetSelectable());
+      if (modelDisplayNode->GetSelected())
+        {
+        actorProperties->SetColor(modelDisplayNode->GetSelectedColor());
+        actorProperties->SetAmbient(modelDisplayNode->GetSelectedAmbient());
+        actorProperties->SetSpecular(modelDisplayNode->GetSelectedSpecular());
+        }
+      else
+        {
+        actorProperties->SetColor(modelDisplayNode->GetColor());
+        actorProperties->SetAmbient(modelDisplayNode->GetAmbient());
+        actorProperties->SetSpecular(modelDisplayNode->GetSpecular());
+        }
+      actorProperties->SetOpacity(modelDisplayNode->GetOpacity());
+      actorProperties->SetDiffuse(modelDisplayNode->GetDiffuse());
+      actorProperties->SetSpecularPower(modelDisplayNode->GetPower());
+      actorProperties->SetEdgeVisibility(modelDisplayNode->GetEdgeVisibility());
+      actorProperties->SetEdgeColor(modelDisplayNode->GetEdgeColor());
+      if (modelDisplayNode->GetTextureImageDataConnection() != 0)
+        {
+        if (actor->GetTexture() == 0)
+          {
+          vtkTexture *texture = vtkTexture::New();
+          actor->SetTexture(texture);
+          texture->Delete();
+          }
+        actor->GetTexture()->SetInputConnection(modelDisplayNode->GetTextureImageDataConnection());
+        actor->GetTexture()->SetInterpolate(modelDisplayNode->GetInterpolateTexture());
+        actorProperties->SetColor(1., 1., 1.);
+
+        // Force actors to be treated as opaque. Otherwise, transparent
+        // elements in the texture cause the actor to be treated as
+        // translucent, i.e. rendered without writing to the depth buffer.
+        // See http://www.na-mic.org/Bug/view.php?id=4253.
+        if (actorProperties->GetOpacity() == 1.0)
+          {
+          actor->ForceOpaqueOn();
           }
         }
-      else if (imageActor)
+      else
         {
-        imageActor->GetMapper()->SetInputConnection(modelDisplayNode->GetTextureImageDataConnection());
-        imageActor->SetDisplayExtent(-1, 0, 0, 0, 0, 0);
+        actor->SetTexture(0);
+        actor->ForceOpaqueOff();
         }
+      }
+    else if (imageActor)
+      {
+      imageActor->GetMapper()->SetInputConnection(modelDisplayNode->GetTextureImageDataConnection());
+      imageActor->SetDisplayExtent(-1, 0, 0, 0, 0, 0);
       }
     }
 }
@@ -2007,14 +2021,14 @@ int vtkMRMLModelDisplayableManager::Pick(int x, int y)
     // look for either picked mesh or volume
     // and set picked display node accordingly
     vtkPointSet *mesh = vtkPointSet::SafeDownCast(this->Internal->CellPicker->GetDataSet());
-    if (mesh) 
+    if (mesh)
       {
       // get the pointer to the mesh that the cell was in
       // and then find the model this mesh belongs to
       this->Internal->FindPickedDisplayNodeFromMesh(mesh, pickPoint);
       }
     vtkImageData *imageData = vtkImageData::SafeDownCast(this->Internal->CellPicker->GetDataSet());
-    if (imageData) 
+    if (imageData)
       {
       // get the pointer to the picked imageData
       // and then find the volume this imageData belongs to

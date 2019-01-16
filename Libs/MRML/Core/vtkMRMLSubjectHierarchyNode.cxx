@@ -1405,7 +1405,6 @@ vtkSubjectHierarchyItem* vtkSubjectHierarchyItem::GetAncestorAtLevel(std::string
       }
     }
 
-  vtkWarningMacro("GetAncestorAtLevel: No ancestor found for item '" << this->GetName() << "' at level '" << level);
   return NULL;
 }
 
@@ -1885,6 +1884,29 @@ void vtkMRMLSubjectHierarchyNode::Copy(vtkMRMLNode *anode)
 vtkIdType vtkMRMLSubjectHierarchyNode::GetSceneItemID()
 {
   return this->Internal->SceneItemID;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSubjectHierarchyNode::SetItemDataNode(vtkIdType itemID, vtkMRMLNode* dataNode)
+{
+  vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
+  if (!item)
+    {
+    vtkErrorMacro("SetItemDataNode: Failed to find subject hierarchy item by ID " << itemID);
+    return;
+    }
+  if (item->DataNode == dataNode)
+    {
+    return;
+    }
+  if (item->DataNode)
+    {
+    vtkErrorMacro("SetItemDataNode: Data node is already associated to item with " << itemID
+      << ". This function cannot be used to replace data nodes for items");
+    return;
+    }
+
+  item->DataNode = dataNode;
 }
 
 //----------------------------------------------------------------------------
