@@ -67,7 +67,7 @@ public:
     MarkerStyle_Last // must be last
     };
 
-  /// Enumerated values for SetMarkerStyle/GetMarkerStyle
+  /// Enumerated values for SetLineStyle/GetLineStyle
   enum
     {
     LineStyleNone,
@@ -111,7 +111,7 @@ public:
   virtual void SetAndObserveTableNodeID(const std::string& tableNodeID);
 
   ///
-  /// Get associated Table MRML noide.
+  /// Get associated Table MRML node.
   virtual vtkMRMLTableNode* GetTableNode();
 
   ///
