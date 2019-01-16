@@ -8,13 +8,13 @@ endif()
 set(tbb_ver "2018_20171205oss")
 if (WIN32)
   set(tbb_file "tbb${tbb_ver}_win.zip")
-  #set(tbb_md5 "e7bbf293cdb5a50ca81347c80168956d")
+  set(tbb_md5 "e7bbf293cdb5a50ca81347c80168956d")
 elseif (APPLE)
   set(tbb_file "tbb${tbb_ver}_mac.tgz")
-  #set(tbb_md5 "a767d7a8b375e6b054e44e2317d806b8")
+  set(tbb_md5 "a767d7a8b375e6b054e44e2317d806b8")
 else ()
   set(tbb_file "tbb${tbb_ver}_lin.tgz")
-  #set(tbb_md5 "ab5df80a65adf423b14637a1f35814b2")
+  set(tbb_md5 "d637d29f59ee31fe5830a0366e2e973a")
 endif ()
 
 #------------------------------------------------------------------------------
@@ -23,8 +23,8 @@ ExternalProject_Message(${proj} "TBB_INSTALL_DIR:${TBB_INSTALL_DIR}")
 
 ExternalProject_Add(${proj}
   ${${proj}_EP_ARGS}
-  URL https://www.paraview.org/files/dependencies/${tbb_file}
-  #URL_MD5 ${tbb_md5}
+  URL https://github.com/Slicer/SlicerBinaryDependencies/releases/download/tbb/${tbb_file}
+  URL_MD5 ${tbb_md5}
   DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
   SOURCE_DIR ${TBB_INSTALL_DIR}
   BUILD_IN_SOURCE 1
