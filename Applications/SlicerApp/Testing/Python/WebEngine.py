@@ -120,6 +120,7 @@ class WebEngineTest(ScriptedLoadableModuleTest):
     """ Do whatever is needed to reset the state - typically a scene clear will be enough.
     """
     self.gotResponse = False
+    self.gotCorrectResponse = False
 
   def runTest(self):
     """Run as few or as many tests as needed here.
@@ -129,12 +130,13 @@ class WebEngineTest(ScriptedLoadableModuleTest):
 
   def onEvalResult(self, js, result):
     if js == "valueFromSlicer;":
-      if result != "42":
-        Exception("Did not get back expected result!")
-      self.delayDisplay("Got the expected result back from JavaScript")
+      self.delayDisplay("Got Slicer result back from JavaScript")
+      self.gotResponse = True
+      if result == "442":
+        self.gotCorrectResponse = True
+        self.delayDisplay("Got the expected result back from JavaScript")
     else:
       self.delayDisplay("Got a result back from JavaScript")
-      self.gotResponse = True
       print(js, result)
 
 
@@ -171,10 +173,14 @@ class WebEngineTest(ScriptedLoadableModuleTest):
     iteration = 0
     while not self.gotResponse:
       self.delayDisplay('Waiting for response...')
+      iteration += 1
     webWidget.disconnect("evalResult(QString,QString)", self.onEvalResult)
 
     if iteration >= 10:
-      raise Exception("Never got response from evalJS")
+      raise RuntimeError("Never got response from evalJS")
+
+    if not self.gotCorrectResponse:
+      raise AssertionError("Did not get back expected result!")
 
 
     #
@@ -214,12 +220,12 @@ class WebEngineTest(ScriptedLoadableModuleTest):
         """)
 
         iteration = 0
-        while not hasattr(slicer.modules, 'slicerPythonValueFromJS') and iteration < 5:
+        while iteration < 5 and not hasattr(slicer.modules, 'slicerPythonValueFromJS'):
           self.delayDisplay('Waiting for python value from JS...')
           iteration += 1
 
         if iteration >= 5:
-          raise Exception("Couldn't get python value back from JS")
+          raise RuntimeError("Couldn't get python value back from JS")
 
         del slicer.modules.slicerPythonValueFromJS
 
