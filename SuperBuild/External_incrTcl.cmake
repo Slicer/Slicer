@@ -52,7 +52,7 @@ ExternalProject_Execute(${proj} \"install\" make install)
 
     ExternalProject_Add(${proj}
       ${${proj}_EP_ARGS}
-      URL "http://slicer.kitware.com/midas3/download/item/155632/itcl4.0.1.tar.gz"
+      URL "https://github.com/Slicer/SlicerBinaryDependencies/releases/download/incrTcl/itcl4.0.1.tar.gz"
       URL_MD5 "8d71d4247b19ad5d6bcbb776590ced55"
       DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
       UPDATE_COMMAND "" # Disable update

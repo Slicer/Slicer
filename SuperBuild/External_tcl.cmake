@@ -38,10 +38,10 @@ if(NOT Slicer_USE_SYSTEM_${proj})
     set(INCR_TCL_VERSION_DOT "3.4")
     set(INCR_TCL_VERSION "34")
     if("${CMAKE_SIZEOF_VOID_P}" EQUAL 8)
-      set(tcl_URL "http://slicer.kitware.com/midas3/download/item/159433/tcl85-x64-build.zip")
+      set(tcl_URL "https://github.com/Slicer/SlicerBinaryDependencies/releases/download/tcl/tcl85-x64-build.zip")
       set(tcl_MD5 "10f0a12590acaaef924dc22e80c9d70a")
     else()
-      set(tcl_URL "http://slicer.kitware.com/midas3/download/item/159432/tcl85-build.zip")
+      set(tcl_URL "https://github.com/Slicer/SlicerBinaryDependencies/releases/download/tcl/tcl85-build.zip")
       set(tcl_MD5 "07401cf7128a9a79403c8d9b745024a6")
     endif()
     set(tcl_DOWNLOAD_COMMAND
@@ -109,7 +109,7 @@ if(NOT Slicer_USE_SYSTEM_${proj})
     set(tcl_BUILD_IN_SOURCE 1)
 
     set(tcl_DOWNLOAD_COMMAND
-      URL "http://slicer.kitware.com/midas3/download/item/155630/tcl8.6.1-src.tar.gz"
+      URL "https://github.com/Slicer/SlicerBinaryDependencies/releases/download/tcl/tcl8.6.1-src.tar.gz"
       URL_MD5 "aae4b701ee527c6e4e1a6f9c7399882e"
       )
 
