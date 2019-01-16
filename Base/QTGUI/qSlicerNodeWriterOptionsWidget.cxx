@@ -50,6 +50,8 @@ void qSlicerNodeWriterOptionsWidgetPrivate::setupUi(QWidget* widget)
   this->Ui_qSlicerNodeWriterOptionsWidget::setupUi(widget);
   QObject::connect(this->UseCompressionCheckBox, SIGNAL(toggled(bool)),
                    widget, SLOT(setUseCompression(bool)));
+  QObject::connect(this->CompressionParameterSelector, SIGNAL(currentIndexChanged(int)),
+                   widget, SLOT(setCompressionParameter(int)));
 }
 
 //------------------------------------------------------------------------------
@@ -92,7 +94,20 @@ void qSlicerNodeWriterOptionsWidget::setObject(vtkObject* object)
     {
     d->UseCompressionCheckBox->setChecked(
       (storageNode->GetUseCompression() == 1));
+
+    std::vector<vtkMRMLStorageNode::CompressionPreset> presets = storageNode->GetCompressionPresets();
+    d->CompressionParameterSelector->clear();
+    std::vector<vtkMRMLStorageNode::CompressionPreset>::iterator presetIt;
+    for (presetIt = presets.begin(); presetIt != presets.end(); ++presetIt)
+      {
+      QString name = QString::fromStdString(presetIt->DisplayName);
+      QString parameter = QString::fromStdString(presetIt->CompressionParameter);
+      d->CompressionParameterSelector->addItem(name, parameter);
+      }
+    this->setCompressionParameter(QString::fromStdString(storageNode->GetCompressionParameter()));
     }
+  d->CompressionParameterSelector->setVisible(d->CompressionParameterSelector->count() > 0);
+  d->CompressionParameterSelector->setEnabled(storageNode != 0 && d->UseCompressionCheckBox->isChecked());
 
   this->updateValid();
 }
@@ -102,6 +117,7 @@ void qSlicerNodeWriterOptionsWidget::setUseCompression(bool use)
 {
   Q_D(qSlicerNodeWriterOptionsWidget);
   d->Properties["useCompression"] = (use ? 1 : 0);
+  d->CompressionParameterSelector->setEnabled(d->UseCompressionCheckBox->isChecked());
 }
 
 //------------------------------------------------------------------------------
@@ -116,5 +132,25 @@ bool qSlicerNodeWriterOptionsWidget::showUseCompression()const
 void qSlicerNodeWriterOptionsWidget::setShowUseCompression(bool show)
 {
   Q_D(qSlicerNodeWriterOptionsWidget);
-  return d->UseCompressionCheckBox->setVisible(show);
+  d->UseCompressionCheckBox->setVisible(show);
+  d->CompressionParameterSelector->setVisible(show && d->CompressionParameterSelector->count() > 0);
+}
+
+//------------------------------------------------------------------------------
+void qSlicerNodeWriterOptionsWidget::setCompressionParameter(int index)
+{
+  Q_D(qSlicerNodeWriterOptionsWidget);
+
+  QString parameter = d->CompressionParameterSelector->itemData(index).toString();
+  d->Properties["compressionParameter"] = parameter;
+}
+
+//------------------------------------------------------------------------------
+void qSlicerNodeWriterOptionsWidget::setCompressionParameter(QString parameter)
+{
+  Q_D(qSlicerNodeWriterOptionsWidget);
+
+  int index = d->CompressionParameterSelector->findData(parameter);
+  d->CompressionParameterSelector->setCurrentIndex(index);
+  d->Properties["compressionParameter"] = parameter;
 }

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>94</width>
+    <width>145</width>
     <height>17</height>
    </rect>
   </property>
@@ -21,6 +21,16 @@
     <widget class="QCheckBox" name="UseCompressionCheckBox">
      <property name="text">
       <string>Compress</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QComboBox" name="CompressionParameterSelector">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
     </widget>
    </item>

@@ -156,6 +156,10 @@ bool qSlicerNodeWriter::write(const qSlicerIO::IOProperties& properties)
   if (properties.contains("useCompression"))
     {
     snode->SetUseCompression(properties["useCompression"].toInt());
+    if (properties.contains("compressionParameter"))
+      {
+      snode->SetCompressionParameter(properties["compressionParameter"].toString().toStdString());
+      }
     }
   bool res = snode->WriteData(node);
 

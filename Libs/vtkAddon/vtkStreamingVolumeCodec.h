@@ -108,8 +108,30 @@ public:
   virtual bool GetParameter(std::string parameterName, std::string& parameterValue);
 
   /// Sets all of the specified parameters in the codec
-  /// \parameters Map containing the parameters and values to be set
+  /// \param parameters Map containing the parameters and values to be set
   virtual void SetParameters(std::map<std::string, std::string> parameters);
+
+  /// Returns a list of the names of the supported parameter presets
+  std::vector<std::string> GetParameterPresetNames() const;
+
+  /// Returns a string representing the specified parameter
+  std::string GetParameterPreset(const std::string& name) const;
+
+  /// Returns the name of the specified parameter
+  std::string GetParameterPresetName(const std::string& preset) const;
+
+  /// Get the number of parameter presets
+  int GetNumberOfParameterPresets() const { return this->ParameterPresets.size(); };
+
+  struct ParameterPreset
+  {
+    std::string Name;
+    std::string Parameter;
+  };
+  // Get a list of all supported parameter presets for the codec
+  vtkGetStdVectorMacro(ParameterPresets, const std::vector<ParameterPreset>);
+
+  virtual void SetParametersFromPreset(std::string vtkNotUsed(preset)) {};
 
 protected:
 
@@ -144,9 +166,10 @@ private:
   void operator=(const vtkStreamingVolumeCodec&);
 
 protected:
-  std::vector<std::string>                     AvailiableParameterNames;
-  vtkSmartPointer<vtkStreamingVolumeFrame>     LastDecodedFrame;
-  std::map<std::string, std::string>           Parameters;
+  std::vector<std::string>                  AvailiableParameterNames;
+  vtkSmartPointer<vtkStreamingVolumeFrame>  LastDecodedFrame;
+  std::map<std::string, std::string>        Parameters;
+  std::vector<ParameterPreset>              ParameterPresets;
 };
 
 #endif
