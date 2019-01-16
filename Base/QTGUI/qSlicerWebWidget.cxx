@@ -23,6 +23,7 @@
 #include <QDesktopServices>
 #include <QNetworkCookieJar>
 #include <QNetworkReply>
+#include <QSettings>
 #include <QTime>
 #include <QUrl>
 #include <QVBoxLayout>
@@ -100,6 +101,17 @@ void qSlicerWebWidgetPrivate::init()
   this->WebView = new QWebView();
 #else
   this->WebView = new qSlicerWebEngineView();
+
+  QSettings settings;
+  bool developerModeEnabled = settings.value("Developer/DeveloperMode", false).toBool();
+  if (developerModeEnabled)
+    {
+    // Enable dev tools by default for the test browser
+    if (qgetenv("QTWEBENGINE_REMOTE_DEBUGGING").isNull())
+      {
+      qputenv("QTWEBENGINE_REMOTE_DEBUGGING", "1337");
+      }
+    }
 
   QWebEngineProfile* profile = QWebEngineProfile::defaultProfile();
   this->initializeWebEngineProfile(profile);
