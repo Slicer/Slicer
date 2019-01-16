@@ -1064,7 +1064,8 @@ def unicodeify(s):
 
 def delayDisplay(message,autoCloseMsec=1000):
   """Display an information message in a popup window for a short time.
-  If autoCloseMsec>0 then the window is closed after waiting for autoCloseMsec milliseconds
+  If autoCloseMsec<400, then only slicer.app.processEvents() is called.
+  If autoCloseMsec>=400 then the window is closed after waiting for autoCloseMsec milliseconds
   If autoCloseMsec=0 then the window is not closed until the user clicks on it.
   """
   import qt, slicer
