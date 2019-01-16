@@ -9,8 +9,6 @@
 
 //#include "itkGrowCutSegmentationUpdateFilter.h"
 
-#include <vcl_compiler.h>
-
 #include <iostream>
 #include <list>
 #include <vector>
