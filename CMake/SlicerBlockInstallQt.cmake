@@ -30,6 +30,10 @@ if(Slicer_REQUIRED_QT_VERSION VERSION_LESS "5")
 
 else()
 
+  if(NOT EXISTS ${qt_root_dir})
+    message(FATAL_ERROR "qt_root_dir set to nonexistent directory [${qt_root_dir}]")
+  endif()
+
   list(APPEND QT_LIBRARIES
     "Qt5::Gui"
     )
@@ -52,11 +56,6 @@ else()
   endif()
 
   if(UNIX)
-
-    # Get root directory
-    get_property(_filepath TARGET "Qt5::Core" PROPERTY LOCATION_RELEASE)
-    get_filename_component(_dir ${_filepath} PATH)
-    set(qt_root_dir "${_dir}/..")
 
     find_package(Qt5 REQUIRED COMPONENTS
       DBus
@@ -86,6 +85,15 @@ else()
         )
       list(APPEND QT_LIBRARIES
         "Qt5::Designer"
+        )
+    endif()
+
+    # Qt designer
+    if(Slicer_BUILD_QT_DESIGNER_PLUGINS)
+      # Needed by designer. It is explicitly installed because there is
+      # no corresponding CMake module.
+      slicerInstallLibrary(FILE ${qt_root_dir}/lib/libQt5DesignerComponents.so
+        DESTINATION ${QT_INSTALL_LIB_DIR} COMPONENT Runtime
         )
     endif()
 
@@ -159,6 +167,13 @@ else()
       string(TOLOWER ${module} module_lc)
       set(_args "${_args} -${module_lc}")
     endforeach()
+
+    # Qt designer
+    if(Slicer_BUILD_QT_DESIGNER_PLUGINS)
+      # Needed by designer. It is explicitly specified because there is
+      # no corresponding CMake module.
+      set(_args "${_args} -designercomponents")
+    endif()
 
     set(executable "${Slicer_MAIN_PROJECT_APPLICATION_NAME}App-real.exe")
 
