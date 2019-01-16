@@ -57,6 +57,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebWidget
   Q_OBJECT
   Q_PROPERTY(bool handleExternalUrlWithDesktopService READ handleExternalUrlWithDesktopService WRITE setHandleExternalUrlWithDesktopService)
   Q_PROPERTY(QStringList internalHosts READ internalHosts WRITE setInternalHosts)
+  Q_PROPERTY(QString url READ url WRITE setUrl)
   friend class qSlicerWebEnginePage;
 public:
   /// Superclass typedef
@@ -99,7 +100,13 @@ public:
   /// from C++ or Python code
   Q_INVOKABLE QString evalJS(const QString &js);
 
+  /// Convenience for setting the internal webView QUrl from a QString
+  Q_INVOKABLE QString url();
+
 public slots:
+
+  /// Convenience for setting the internal webView QUrl from a QString
+  void setUrl(const QString &url);
 
   void onDownloadStarted(QNetworkReply* reply);
 
