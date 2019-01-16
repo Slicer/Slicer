@@ -169,7 +169,7 @@ class SlicerBoundsTestTest(ScriptedLoadableModuleTest):
     modelNode = slicer.mrmlScene.AddNode(slicer.vtkMRMLModelNode())
     modelNode.SetPolyDataConnection(applyTransform.GetOutputPort())
 
-    segmentationNode = slicer.mrmlScene.AddNode(slicer.vtkMRMLSegmentationNode())
+    segmentationNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSegmentationNode")
     segmentationLogic = slicer.modules.segmentations.logic()
     segmentationLogic.ImportModelToSegmentationNode(modelNode, segmentationNode)
 

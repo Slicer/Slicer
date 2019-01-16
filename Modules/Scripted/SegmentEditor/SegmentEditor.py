@@ -134,8 +134,7 @@ class SegmentEditorWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     if not self.editor.segmentationNodeID():
       segmentationNode = slicer.mrmlScene.GetFirstNode(None, "vtkMRMLSegmentationNode")
       if not segmentationNode:
-        segmentationNode = slicer.vtkMRMLSegmentationNode()
-        slicer.mrmlScene.AddNode(segmentationNode)
+        segmentationNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentationNode')
       self.editor.setSegmentationNode(segmentationNode)
       if not self.editor.masterVolumeNodeID():
         masterVolumeNodeID = self.getDefaultMasterVolumeNodeID()

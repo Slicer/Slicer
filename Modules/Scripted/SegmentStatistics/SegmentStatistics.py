@@ -655,8 +655,7 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
 
     self.delayDisplay("Create segmentation containing a few spheres")
 
-    segmentationNode = slicer.vtkMRMLSegmentationNode()
-    slicer.mrmlScene.AddNode(segmentationNode)
+    segmentationNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentationNode')
     segmentationNode.CreateDefaultDisplayNodes()
     segmentationNode.SetReferenceImageGeometryParameterFromVolumeNode(masterVolumeNode)
 
@@ -715,8 +714,7 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
 
     self.delayDisplay("Create segmentation containing a few spheres")
 
-    segmentationNode = slicer.vtkMRMLSegmentationNode()
-    slicer.mrmlScene.AddNode(segmentationNode)
+    segmentationNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentationNode')
     segmentationNode.CreateDefaultDisplayNodes()
     segmentationNode.SetReferenceImageGeometryParameterFromVolumeNode(masterVolumeNode)
 

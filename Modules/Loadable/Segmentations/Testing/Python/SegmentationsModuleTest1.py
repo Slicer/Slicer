@@ -194,10 +194,8 @@ class SegmentationsModuleTest1(unittest.TestCase):
     self.assertIsNone(self.sphereSegment.GetRepresentation(self.binaryLabelmapReprName))
 
     # Create new segmentation with sphere segment
-    self.secondSegmentationNode = slicer.vtkMRMLSegmentationNode()
-    self.secondSegmentationNode.SetName('Second')
+    self.secondSegmentationNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentationNode', 'Second')
     self.secondSegmentationNode.GetSegmentation().SetMasterRepresentationName(self.binaryLabelmapReprName)
-    slicer.mrmlScene.AddNode(self.secondSegmentationNode)
 
     self.secondSegmentationNode.GetSegmentation().AddSegment(self.sphereSegment)
 
@@ -302,29 +300,23 @@ class SegmentationsModuleTest1(unittest.TestCase):
     self.assertEqual(imageStatResult.GetScalarComponentAsDouble(2,0,0,0), 890883)
     self.assertEqual(imageStatResult.GetScalarComponentAsDouble(3,0,0,0), 7545940)
     # Import model to segment
-    modelImportSegmentationNode = slicer.vtkMRMLSegmentationNode()
-    modelImportSegmentationNode.SetName('ModelImport')
+    modelImportSegmentationNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentationNode', 'ModelImport')
     modelImportSegmentationNode.GetSegmentation().SetMasterRepresentationName(self.closedSurfaceReprName)
-    slicer.mrmlScene.AddNode(modelImportSegmentationNode)
     modelSegment = slicer.vtkSlicerSegmentationsModuleLogic.CreateSegmentFromModelNode(bodyModelNode)
     modelSegment.UnRegister(None) # Need to release ownership
     self.assertIsNotNone(modelSegment)
     self.assertIsNotNone(modelSegment.GetRepresentation(self.closedSurfaceReprName))
 
     # Import multi-label labelmap to segmentation
-    multiLabelImportSegmentationNode = slicer.vtkMRMLSegmentationNode()
-    multiLabelImportSegmentationNode.SetName('MultiLabelImport')
+    multiLabelImportSegmentationNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentationNode', 'MultiLabelImport')
     multiLabelImportSegmentationNode.GetSegmentation().SetMasterRepresentationName(self.binaryLabelmapReprName)
-    slicer.mrmlScene.AddNode(multiLabelImportSegmentationNode)
     result = slicer.vtkSlicerSegmentationsModuleLogic.ImportLabelmapToSegmentationNode(allSegmentsLabelmapNode, multiLabelImportSegmentationNode)
     self.assertTrue(result)
     self.assertEqual(multiLabelImportSegmentationNode.GetSegmentation().GetNumberOfSegments(), 3)
 
     # Import labelmap into single segment
-    singleLabelImportSegmentationNode = slicer.vtkMRMLSegmentationNode()
-    singleLabelImportSegmentationNode.SetName('SingleLabelImport')
+    singleLabelImportSegmentationNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentationNode', 'SingleLabelImport')
     singleLabelImportSegmentationNode.GetSegmentation().SetMasterRepresentationName(self.binaryLabelmapReprName)
-    slicer.mrmlScene.AddNode(singleLabelImportSegmentationNode)
     # Should not import multi-label labelmap to segment
     nullSegment = slicer.vtkSlicerSegmentationsModuleLogic.CreateSegmentFromLabelmapVolumeNode(allSegmentsLabelmapNode)
     self.assertIsNone(nullSegment)
@@ -385,10 +377,8 @@ class SegmentationsModuleTest1(unittest.TestCase):
     modelTransformedImportSegmentationTransformNode.ApplyTransformMatrix(modelTransformedImportSegmentationTransform.GetMatrix())
 
     # Import transformed model to segment in transformed segmentation
-    modelTransformedImportSegmentationNode = slicer.vtkMRMLSegmentationNode()
-    modelTransformedImportSegmentationNode.SetName('ModelImportTransformed')
+    modelTransformedImportSegmentationNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentationNode', 'ModelImportTransformed')
     modelTransformedImportSegmentationNode.GetSegmentation().SetMasterRepresentationName(self.closedSurfaceReprName)
-    slicer.mrmlScene.AddNode(modelTransformedImportSegmentationNode)
     modelTransformedImportSegmentationNode.SetAndObserveTransformNodeID(modelTransformedImportSegmentationTransformNode.GetID())
     modelSegmentTranformed = slicer.vtkSlicerSegmentationsModuleLogic.CreateSegmentFromModelNode(bodyModelNodeTransformed, modelTransformedImportSegmentationNode)
     modelSegmentTranformed.UnRegister(None) # Need to release ownership

@@ -330,6 +330,13 @@ public:
   bool SetTerminologyToSegmentationFromLabelmapNode(vtkMRMLSegmentationNode* segmentationNode,
     vtkMRMLLabelMapVolumeNode* labelmapNode, std::string terminologyContextName);
 
+  /// Get default segmentation node. All new segmentation nodes are initialized to the content of this node.
+  vtkMRMLSegmentationNode* GetDefaultSegmentationNode();
+
+  /// Get/Set default closed surface smoothing enabled flag for new segmentation nodes.
+  bool GetDefaultSurfaceSmoothingEnabled();
+  void SetDefaultSurfaceSmoothingEnabled(bool enabled);
+
 public:
   /// Set Terminologies module logic
   void SetTerminologiesLogic(vtkSlicerTerminologiesModuleLogic* terminologiesLogic);

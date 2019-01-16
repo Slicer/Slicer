@@ -28,6 +28,9 @@
 #include "qSlicerSegmentationsSettingsPanel.h"
 #include "ui_qSlicerSegmentationsSettingsPanel.h"
 
+// Logic includes
+#include <vtkSlicerSegmentationsModuleLogic.h>
+
 // --------------------------------------------------------------------------
 // qSlicerSegmentationsSettingsPanelPrivate
 
@@ -41,6 +44,8 @@ protected:
 public:
   qSlicerSegmentationsSettingsPanelPrivate(qSlicerSegmentationsSettingsPanel& object);
   void init();
+
+  vtkWeakPointer<vtkSlicerSegmentationsModuleLogic> SegmentationsLogic;
 };
 
 // --------------------------------------------------------------------------
@@ -62,15 +67,25 @@ void qSlicerSegmentationsSettingsPanelPrivate::init()
 
   // Default values
   this->AutoOpacitiesCheckBox->setChecked(true);
+  this->SurfaceSmoothingCheckBox->setChecked(true);
 
   // Register settings
   q->registerProperty("Segmentations/AutoOpacities", this->AutoOpacitiesCheckBox,
                       "checked", SIGNAL(toggled(bool)),
                       "Automatically set opacities of the segments based on which contains which, so that no segment obscures another", ctkSettingsPanel::OptionNone);
+  q->registerProperty("Segmentations/DefaultSurfaceSmoothing", this->SurfaceSmoothingCheckBox,
+                      "checked", SIGNAL(toggled(bool)),
+                      "Enable closed surface representation smoothing by default", ctkSettingsPanel::OptionNone);
 
   // Actions to propagate to the application when settings are changed
   QObject::connect(this->AutoOpacitiesCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(setAutoOpacities(bool)));
+  QObject::connect(this->SurfaceSmoothingCheckBox, SIGNAL(toggled(bool)),
+                   q, SLOT(setDefaultSurfaceSmoothing(bool)));
+
+  // Update default segmentation node from settings when startup completed.
+  QObject::connect(qSlicerApplication::application(), SIGNAL(startupCompleted()),
+    q, SLOT(updateDefaultSegmentationNodeFromWidget()));
 }
 
 // --------------------------------------------------------------------------
@@ -91,7 +106,39 @@ qSlicerSegmentationsSettingsPanel::~qSlicerSegmentationsSettingsPanel()
 }
 
 // --------------------------------------------------------------------------
+vtkSlicerSegmentationsModuleLogic* qSlicerSegmentationsSettingsPanel::segmentationsLogic()const
+{
+  Q_D(const qSlicerSegmentationsSettingsPanel);
+  return d->SegmentationsLogic;
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSegmentationsSettingsPanel::setSegmentationsLogic(vtkSlicerSegmentationsModuleLogic* logic)
+{
+  Q_D(qSlicerSegmentationsSettingsPanel);
+  d->SegmentationsLogic = logic;
+}
+
+// --------------------------------------------------------------------------
 void qSlicerSegmentationsSettingsPanel::setAutoOpacities(bool on)
 {
   Q_UNUSED(on);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSegmentationsSettingsPanel::setDefaultSurfaceSmoothing(bool on)
+{
+  Q_UNUSED(on);
+  if (this->segmentationsLogic())
+    {
+    this->segmentationsLogic()->SetDefaultSurfaceSmoothingEnabled(on);
+    }
+}
+
+
+// --------------------------------------------------------------------------
+void qSlicerSegmentationsSettingsPanel::updateDefaultSegmentationNodeFromWidget()
+{
+  Q_D(qSlicerSegmentationsSettingsPanel);
+  this->setDefaultSurfaceSmoothing(d->SurfaceSmoothingCheckBox->isChecked());
 }
