@@ -547,8 +547,9 @@ int vtkMRMLMarkupsNode::AddPointToNthMarkup(vtkVector3d point, int n)
   this->Markups[n].points.push_back(point);
   this->Modified();
   int pointIndex = static_cast<int>(this->Markups[n].points.size() - 1);
+  int markupIndex = n;
   this->InvokeCustomModifiedEvent(
-    vtkMRMLMarkupsNode::NthMarkupModifiedEvent, (void*)&pointIndex);
+    vtkMRMLMarkupsNode::NthMarkupModifiedEvent, (void*)&markupIndex);
   return pointIndex;
 }
 
