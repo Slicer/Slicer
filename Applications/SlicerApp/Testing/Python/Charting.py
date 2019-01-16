@@ -19,7 +19,7 @@ class Charting(ScriptedLoadableModule):
 
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
-    parent.title = "Charting" # TODO make this more human readable by adding spaces
+    parent.title = "Charting"
     parent.categories = ["Testing.TestCases"]
     parent.dependencies = []
     parent.contributors = ["Jim Miller (GE)"] # replace with "Firstname Lastname (Org)"

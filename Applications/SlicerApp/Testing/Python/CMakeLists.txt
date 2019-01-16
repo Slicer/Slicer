@@ -375,6 +375,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
   slicer_add_python_unittest(SCRIPT Slicer4Minute.py)
   slicer_add_python_unittest(SCRIPT SlicerBoundsTest.py)
   slicer_add_python_unittest(SCRIPT Charting.py)
+  slicer_add_python_unittest(SCRIPT WebEngine.py)
   slicer_add_python_unittest(SCRIPT SliceLinkLogic.py)
   slicer_add_python_unittest(SCRIPT ScenePerformance.py)
   slicer_add_python_unittest(SCRIPT SlicerCreateRulerCrashIssue4199.py)
@@ -402,6 +403,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
     Slicer4Minute.py
     SlicerBoundsTest.py
     Charting.py
+    WebEngine.py
     SliceLinkLogic.py
     ScenePerformance.py
     RSNAVisTutorial.py
