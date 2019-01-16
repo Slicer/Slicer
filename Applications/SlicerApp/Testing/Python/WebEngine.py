@@ -57,26 +57,31 @@ class WebEngineWidget(ScriptedLoadableModuleWidget):
 
     # site buttons
     buttons = []
-    self.sites = {
-      'ccc': {
-        "label": "Crowds Cure Cancer", "url": "http://cancer.crowds-cure.org"
-      },
-      'slicer': {
-        "label": "Slicer Home Page", "url": "http://slicer.org"
-      },
-      'morphosource': {
-        "label": "MorphoSource", "url": "https://www.morphosource.org"
-      },
-      'console': {
+    self.sites = [
+      {
         "label": "Web Console", "url": "http://localhost:1337"
       },
-    }
-    for siteKey in self.sites.keys():
-      site = self.sites[siteKey]
+      {
+        "label": "Crowds Cure Cancer", "url": "http://cancer.crowds-cure.org"
+      },
+      {
+        "label": "Slicer Home Page", "url": "http://slicer.org"
+      },
+      {
+        "label": "MorphoSource", "url": "https://www.morphosource.org"
+      },
+      {
+        "label": "Slicer SampleData", "url": "https://www.slicer.org/wiki/SampleData"
+      },
+      {
+        "label": "SlicerMorph", "url": "https://slicermorph.github.io"
+      },
+    ]
+    for site in self.sites:
       button = qt.QPushButton(site["label"])
       button.toolTip = "Open %s" % site["url"]
       sitesFormLayout.addWidget(button)
-      onClick = lambda click, siteKey=siteKey: self.onSiteButtonClicked(siteKey)
+      onClick = lambda click, site=site: self.onSiteButtonClicked(site)
       button.connect('clicked(bool)', onClick)
       buttons.append(button)
 
@@ -88,10 +93,11 @@ class WebEngineWidget(ScriptedLoadableModuleWidget):
     # Add vertical spacer
     self.layout.addStretch(1)
 
-  def onSiteButtonClicked(self, siteKey):
-    site = self.sites[siteKey]
+  def onSiteButtonClicked(self, site):
     webWidget = slicer.qSlicerWebWidget()
-    webWidget.size = qt.QSize(1024,512)
+    slicerGeometry = slicer.util.mainWindow().geometry
+    webWidget.size = qt.QSize(1536,1024)
+    webWidget.pos = qt.QPoint(slicerGeometry.x() + 256, slicerGeometry.y() + 128)
     webView = webWidget.webView()
     webView.url = qt.QUrl(site["url"])
     webWidget.show()
@@ -113,7 +119,7 @@ class WebEngineTest(ScriptedLoadableModuleTest):
   def setUp(self):
     """ Do whatever is needed to reset the state - typically a scene clear will be enough.
     """
-    pass
+    self.gotResponse = False
 
   def runTest(self):
     """Run as few or as many tests as needed here.
@@ -128,6 +134,7 @@ class WebEngineTest(ScriptedLoadableModuleTest):
       self.delayDisplay("Got the expected result back from JavaScript")
     else:
       self.delayDisplay("Got a result back from JavaScript")
+      self.gotResponse = True
       print(js, result)
 
 
@@ -157,5 +164,9 @@ class WebEngineTest(ScriptedLoadableModuleTest):
 
     webWidget.evalJS("const valueFromSlicer = 42;")
     webWidget.evalJS("valueFromSlicer;");
+
+    while not self.gotResponse:
+      self.delayDisplay('Waiting for response...')
+    webWidget.disconnect("evalResult(QString,QString)", self.onEvalResult)
 
     self.delayDisplay('Test passed!')
