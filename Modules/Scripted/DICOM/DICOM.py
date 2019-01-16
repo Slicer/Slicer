@@ -199,10 +199,38 @@ class DICOMFileDialog:
           self.directoriesToAdd.append(localPath)
     self.qSlicerFileDialog.acceptMimeData(len(self.directoriesToAdd) != 0)
 
+  def validDirectories(self, directoriesToAdd):
+    """Return True if the directory names are acceptable for input.
+    If path contains non-ASCII characters then they are rejected because
+    DICOM module cannot reliable read files form folders that contain
+    special characters in the name.
+    """
+    for directoryName in directoriesToAdd:
+      if isinstance(directoryName, unicode):
+        try:
+          directoryName.encode('ascii')
+        except UnicodeEncodeError:
+          # encoding as ascii failed, therefore it was not an ascii string
+          return False
+      else:
+        try:
+          directoryName.decode('ascii')
+        except UnicodeDecodeError:
+          # decoding to ascii failed, therefore it was not an ascii string
+          return False
+    return True
+
   def dropEvent(self):
+    if not self.validDirectories(self.directoriesToAdd):
+      if not slicer.util.confirmYesNoDisplay("Import from folders with special (non-ASCII) characters in the name is not supported."
+          " It is recommended to move files into a different folder and retry. Try to import from current location anyway?"):
+        self.directoriesToAdd = []
+        return
+
     mainWindow = slicer.util.mainWindow()
     mainWindow.moduleSelector().selectModule('DICOM')
     dicomWidget = slicer.modules.DICOMWidget
+
     dicomWidget.detailsPopup.dicomBrowser.importDirectories(self.directoriesToAdd)
     self.directoriesToAdd = []
 
