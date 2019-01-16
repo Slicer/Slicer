@@ -41,6 +41,7 @@
 #include <vtkCallbackCommand.h>
 #include <vtkGeneralTransform.h>
 #include <vtkHomogeneousTransform.h>
+#include <vtkImageThreshold.h>
 #include <vtkIntArray.h>
 #include <vtkLookupTable.h>
 #include <vtkMath.h>
@@ -661,6 +662,174 @@ bool vtkMRMLSegmentationNode::GenerateMergedLabelmapForAllSegments(vtkOrientedIm
       }
     }
   return this->GenerateMergedLabelmap(mergedImageData, extentComputationMode, mergedLabelmapGeometry, segmentIDsVector);
+}
+
+//-----------------------------------------------------------------------------
+bool vtkMRMLSegmentationNode::GenerateEditMask(vtkOrientedImageData* maskImage, int editMode,
+  vtkOrientedImageData* referenceGeometry,
+  std::string editedSegmentID/*=""*/, std::string maskSegmentID/*=""*/,
+  vtkOrientedImageData* masterVolume/*=NULL*/, double editableIntensityRange[2]/*=NULL*/,
+  vtkMRMLSegmentationDisplayNode* displayNode/*=NULL*/)
+{
+  if (!maskImage)
+    {
+    vtkErrorMacro("vtkMRMLSegmentationNode::GenerateEditMask: Invalid input mask image");
+    return false;
+    }
+  int extent[6] = { 0, -1, 0, -1, 0, -1 };
+  maskImage->SetExtent(extent);
+
+  if (!referenceGeometry)
+    {
+    vtkErrorMacro("vtkMRMLSegmentationNode::GenerateEditMask: Invalid reference geometry");
+    return false;
+    }
+  referenceGeometry->GetExtent(extent);
+  if (extent[0] > extent[1]
+    || extent[2] > extent[3]
+    || extent[4] > extent[5])
+    {
+    // input reference geometry is empty, so we don't need to generate a mask
+    return true;
+    }
+
+  std::vector<std::string> allSegmentIDs;
+  this->GetSegmentation()->GetSegmentIDs(allSegmentIDs);
+
+  std::vector<std::string> visibleSegmentIDs;
+  if (editMode == vtkMRMLSegmentationNode::EditAllowedInsideVisibleSegments
+    || editMode == vtkMRMLSegmentationNode::EditAllowedOutsideVisibleSegments)
+    {
+    if (!displayNode)
+      {
+      displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(this->GetDisplayNode());
+      }
+    if (displayNode)
+      {
+      for (std::vector<std::string>::iterator segmentIDIt = allSegmentIDs.begin(); segmentIDIt != allSegmentIDs.end(); ++segmentIDIt)
+        {
+        if (displayNode->GetSegmentVisibility(*segmentIDIt))
+          {
+          visibleSegmentIDs.push_back(*segmentIDIt);
+          }
+        }
+      }
+    else
+      {
+      vtkErrorMacro("vtkMRMLSegmentationNode::GenerateEditMask: Could not find valid display node");
+      return false;
+      }
+    }
+
+  std::vector<std::string> maskSegmentIDs;
+  bool paintInsideSegments = false;
+  switch (editMode)
+    {
+  case vtkMRMLSegmentationNode::EditAllowedEverywhere:
+    paintInsideSegments = false;
+    break;
+  case vtkMRMLSegmentationNode::EditAllowedInsideAllSegments:
+    paintInsideSegments = true;
+    maskSegmentIDs = allSegmentIDs;
+    break;
+  case vtkMRMLSegmentationNode::EditAllowedInsideVisibleSegments:
+    paintInsideSegments = true;
+    maskSegmentIDs = visibleSegmentIDs;
+    break;
+  case vtkMRMLSegmentationNode::EditAllowedOutsideAllSegments:
+    paintInsideSegments = false;
+    maskSegmentIDs = allSegmentIDs;
+    break;
+  case vtkMRMLSegmentationNode::EditAllowedOutsideVisibleSegments:
+    paintInsideSegments = false;
+    maskSegmentIDs = visibleSegmentIDs;
+    break;
+  case vtkMRMLSegmentationNode::EditAllowedInsideSingleSegment:
+    paintInsideSegments = true;
+    if (!maskSegmentID.empty())
+      {
+      maskSegmentIDs.push_back(maskSegmentID);
+      }
+    else
+      {
+      vtkWarningMacro("vtkMRMLSegmentationNode::GenerateEditMask: PaintAllowedInsideSingleSegment selected but no mask segment is specified");
+      }
+    break;
+  default:
+    vtkErrorMacro("vtkMRMLSegmentationNode::GenerateEditMask: unknown mask mode");
+    return false;
+    }
+
+  // Always allow paint inside edited segment
+  if (paintInsideSegments)
+    {
+    // include edited segment in "inside" mask
+    if (std::find(maskSegmentIDs.begin(), maskSegmentIDs.end(), editedSegmentID) == maskSegmentIDs.end())
+      {
+      // add it if it's not in the segment list already
+      maskSegmentIDs.push_back(editedSegmentID);
+      }
+    }
+  else
+    {
+    // exclude edited segment from "outside" mask
+    maskSegmentIDs.erase(std::remove(maskSegmentIDs.begin(), maskSegmentIDs.end(), editedSegmentID), maskSegmentIDs.end());
+    }
+
+  maskImage->SetExtent(extent);
+  vtkNew<vtkMatrix4x4> referenceImageToWorldMatrix;
+  referenceGeometry->GetImageToWorldMatrix(referenceImageToWorldMatrix.GetPointer());
+  maskImage->SetImageToWorldMatrix(referenceImageToWorldMatrix);
+
+  if (maskSegmentIDs.empty())
+    {
+    // If we passed empty segment list to GenerateMergedLabelmap then it would use all segment IDs,
+    // instead of filling the volume with a single value. Therefore, we need to handle this special case separately here.
+    maskImage->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
+    vtkOrientedImageDataResample::FillImage(maskImage, paintInsideSegments ? 1 : 0);
+    }
+  else
+    {
+    maskImage->AllocateScalars(VTK_SHORT, 1); // Change scalar type from unsigned int back to short for merged labelmap generation
+    this->GenerateMergedLabelmap(maskImage, vtkSegmentation::EXTENT_UNION_OF_SEGMENTS, referenceGeometry, maskSegmentIDs);
+
+    vtkNew<vtkImageThreshold> threshold;
+    threshold->SetInputData(maskImage);
+    threshold->SetInValue(paintInsideSegments ? 1 : 0);
+    threshold->SetOutValue(paintInsideSegments ? 0 : 1);
+    threshold->ReplaceInOn();
+    threshold->ThresholdByLower(0);
+    threshold->SetOutputScalarType(VTK_UNSIGNED_CHAR);
+    threshold->Update();
+    maskImage->DeepCopy(threshold->GetOutput());
+    maskImage->SetImageToWorldMatrix(referenceImageToWorldMatrix);
+    }
+
+  // Apply threshold mask if paint threshold is turned on
+  if (masterVolume != NULL && editableIntensityRange != NULL)
+    {
+    // Create threshold image
+    vtkNew<vtkImageThreshold> threshold;
+    threshold->SetInputData(masterVolume);
+    threshold->ThresholdBetween(editableIntensityRange[0], editableIntensityRange[1]);
+    threshold->SetInValue(1);
+    threshold->SetOutValue(0);
+    threshold->SetOutputScalarType(VTK_UNSIGNED_CHAR);
+    threshold->Update();
+    vtkNew<vtkOrientedImageData> thresholdMask; //  == 0 in editable region
+    thresholdMask->ShallowCopy(threshold->GetOutput());
+    vtkNew<vtkMatrix4x4> masterVolumeToWorldMatrix;
+    masterVolume->GetImageToWorldMatrix(masterVolumeToWorldMatrix);
+    thresholdMask->SetImageToWorldMatrix(masterVolumeToWorldMatrix);
+
+    if (!vtkOrientedImageDataResample::ApplyImageMask(maskImage, thresholdMask, 1))
+      {
+      vtkErrorMacro("vtkMRMLSegmentationNode::GenerateEditMask: failed to apply intensity mask");
+      return false;
+      }
+    }
+
+  return true;
 }
 
 //---------------------------------------------------------------------------

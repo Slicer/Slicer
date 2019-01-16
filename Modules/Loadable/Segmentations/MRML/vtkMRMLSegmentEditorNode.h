@@ -54,6 +54,8 @@ public:
     EffectParameterModified = 62200
     };
 
+  /// These enums are kept here only for backward compatibility and will be removed in the future.
+  /// Use vtkMRMLSegmentationNode EditAllowed... enums instead.
   enum
     {
     /// Modification is allowed everywhere.
@@ -68,8 +70,8 @@ public:
     PaintAllowedOutsideVisibleSegments,
     /// Modification is allowed only over the area covered by segment specified in MaskSegmentID.
     PaintAllowedInsideSingleSegment,
-
-    PaintAllowed_Last /// Insert valid types above this line
+    /// Insert valid types above this line
+    PaintAllowed_Last
     };
 
   enum

@@ -34,6 +34,7 @@
 
 class vtkCallbackCommand;
 class vtkMRMLScene;
+class vtkMRMLSegmentationDisplayNode;
 class vtkMRMLSubjectHierarchyNode;
 class vtkMRMLScalarVolumeNode;
 class vtkPolyData;
@@ -141,6 +142,41 @@ public:
   virtual bool GenerateMergedLabelmapForAllSegments(vtkOrientedImageData* mergedImageData,
     int extentComputationMode = vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS,
     vtkOrientedImageData* mergedLabelmapGeometry = NULL, vtkStringArray* segmentIDs = NULL);
+
+  enum
+    {
+    /// Modification is allowed everywhere.
+    EditAllowedEverywhere = 0,
+    /// Modification is allowed inside all segments.
+    EditAllowedInsideAllSegments,
+    /// Modification is allowed inside all visible segments.
+    EditAllowedInsideVisibleSegments,
+    /// Modification is allowed outside all segments.
+    EditAllowedOutsideAllSegments,
+    /// Modification is allowed outside all visible segments.
+    EditAllowedOutsideVisibleSegments,
+    /// Modification is allowed only over the area covered by segment specified in MaskSegmentID.
+    EditAllowedInsideSingleSegment,
+    /// Insert valid types above this line
+    EditAllowed_Last
+    };
+
+  /// Generates an edit mask image.
+  /// If a mask voxel is non-zero it means that the image at that position is editable.
+  /// \param maskImage output image, contains non-zero voxels where editing is not allowed
+  /// \param editMode defines editable regions based on existing segments
+  /// \param referenceGeometry defines image geometry (extent and IJK to world matrix) of the output
+  /// \param editedSegmentID this segment will be always editable (regardless of editMode), optional
+  /// \param masterVolume used for intensity-based masking
+  /// \param editableIntensityRange used for intensity-based masking
+  /// \param displayNode used when edit mode refers to visible segments.
+  ///   If not specified then the first display node is used.
+  /// \return Returns true is mask is successfully generated.
+  virtual bool GenerateEditMask(vtkOrientedImageData* maskImage, int editMode,
+    vtkOrientedImageData* referenceGeometry,
+    std::string editedSegmentID="", std::string maskSegmentID="",
+    vtkOrientedImageData* masterVolume = NULL, double editableIntensityRange[2] = NULL,
+    vtkMRMLSegmentationDisplayNode* displayNode = NULL);
 
   /// Expose reference identifier to get the volume node defining the reference image geometry if any
   static std::string GetReferenceImageGeometryReferenceRole() { return "referenceImageGeometryRef"; };

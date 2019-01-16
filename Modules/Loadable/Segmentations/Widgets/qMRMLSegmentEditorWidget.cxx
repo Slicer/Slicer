@@ -190,7 +190,10 @@ public:
   /// Updates a resampled master volume in a geometry aligned with default modifierLabelmap.
   bool updateAlignedMasterVolume();
 
-  /// Updates mask labelmap aligned with default modifierLabelmap.
+  /// Updates mask labelmap.
+  /// Geometry of mask will be the same as current modifierLabelmap.
+  /// This mask only considers segment-based regions (and ignores masking based on
+  /// master volume intensity).
   bool updateMaskLabelmap();
 
   bool updateReferenceGeometryImage();
@@ -730,116 +733,22 @@ bool qMRMLSegmentEditorWidgetPrivate::updateMaskLabelmap()
     qCritical() << Q_FUNC_INFO << ": Invalid segment editor parameter set node";
     return false;
     }
-
-  vtkOrientedImageData* maskImage = this->MaskLabelmap;
   vtkMRMLSegmentationNode* segmentationNode = this->ParameterSetNode->GetSegmentationNode();
-  if (!this->ModifierLabelmap || !segmentationNode)
+  if (!segmentationNode)
     {
-    qCritical() << Q_FUNC_INFO << ": Invalid segment selection";
+    qCritical() << Q_FUNC_INFO << ": Invalid segmentation node, modifier labelmap, or mask labelmap";
     return false;
     }
-  if (!this->ParameterSetNode->GetSelectedSegmentID())
+  // GenerateEditMask can add intensity range based mask, too. We do not use it here, as currently
+  // editable intensity range is taken into account in qSlicerSegmentEditorAbstractEffect::modifySelectedSegmentByLabelmap.
+  // It would simplify implementation if we passed master volume and intensity range to GenerateEditMask here
+  // and removed intensity range based masking from modifySelectedSegmentByLabelmap.
+  if (!segmentationNode->GenerateEditMask(this->MaskLabelmap, this->ParameterSetNode->GetMaskMode(), this->ModifierLabelmap,
+    this->ParameterSetNode->GetSelectedSegmentID() ? this->ParameterSetNode->GetSelectedSegmentID() : "",
+    this->ParameterSetNode->GetMaskSegmentID() ? this->ParameterSetNode->GetMaskSegmentID() : ""))
     {
+    qCritical() << Q_FUNC_INFO << ": Mask generation failed";
     return false;
-    }
-
-  std::vector<std::string> allSegmentIDs;
-  segmentationNode->GetSegmentation()->GetSegmentIDs(allSegmentIDs);
-
-  std::vector<std::string> visibleSegmentIDs;
-  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
-  if (displayNode)
-    {
-    for (std::vector<std::string>::iterator segmentIDIt = allSegmentIDs.begin(); segmentIDIt != allSegmentIDs.end(); ++segmentIDIt)
-      {
-      if (displayNode->GetSegmentVisibility(*segmentIDIt))
-        {
-        visibleSegmentIDs.push_back(*segmentIDIt);
-        }
-      }
-    }
-
-  std::string editedSegmentID(this->ParameterSetNode->GetSelectedSegmentID());
-
-  std::vector<std::string> maskSegmentIDs;
-  bool paintInsideSegments = false;
-  switch (this->ParameterSetNode->GetMaskMode())
-    {
-  case vtkMRMLSegmentEditorNode::PaintAllowedEverywhere:
-    paintInsideSegments = false;
-    break;
-  case vtkMRMLSegmentEditorNode::PaintAllowedInsideAllSegments:
-    paintInsideSegments = true;
-    maskSegmentIDs = allSegmentIDs;
-    break;
-  case vtkMRMLSegmentEditorNode::PaintAllowedInsideVisibleSegments:
-    paintInsideSegments = true;
-    maskSegmentIDs = visibleSegmentIDs;
-    break;
-  case vtkMRMLSegmentEditorNode::PaintAllowedOutsideAllSegments:
-    paintInsideSegments = false;
-    maskSegmentIDs = allSegmentIDs;
-    break;
-  case vtkMRMLSegmentEditorNode::PaintAllowedOutsideVisibleSegments:
-    paintInsideSegments = false;
-    maskSegmentIDs = visibleSegmentIDs;
-    break;
-  case vtkMRMLSegmentEditorNode::PaintAllowedInsideSingleSegment:
-    paintInsideSegments = true;
-    if (this->ParameterSetNode->GetMaskSegmentID())
-      {
-      maskSegmentIDs.push_back(this->ParameterSetNode->GetMaskSegmentID());
-      }
-    else
-      {
-      qWarning() << Q_FUNC_INFO << ": PaintAllowedInsideSingleSegment selected but no mask segment is specified";
-      }
-    break;
-  default:
-    qWarning() << Q_FUNC_INFO << ": unknown mask mode";
-    }
-
-  // Always allow paint inside edited segment
-  if (paintInsideSegments)
-    {
-    // include edited segment in "inside" mask
-    if (std::find(maskSegmentIDs.begin(), maskSegmentIDs.end(), editedSegmentID) == maskSegmentIDs.end())
-      {
-      // add it if it's not in the segment list already
-      maskSegmentIDs.push_back(editedSegmentID);
-      }
-    }
-  else
-    {
-    // exclude edited segment from "outside" mask
-    maskSegmentIDs.erase(std::remove(maskSegmentIDs.begin(), maskSegmentIDs.end(), editedSegmentID), maskSegmentIDs.end());
-    }
-
-  // Update mask if modifier labelmap is valid
-  int modifierLabelmapExtent[6] = { 0, -1, 0, -1, 0, -1 };
-  this->ModifierLabelmap->GetExtent(modifierLabelmapExtent);
-  if (modifierLabelmapExtent[0] <= modifierLabelmapExtent[1]
-    && modifierLabelmapExtent[2] <= modifierLabelmapExtent[3]
-    && modifierLabelmapExtent[4] <= modifierLabelmapExtent[5])
-    {
-    maskImage->SetExtent(modifierLabelmapExtent);
-    maskImage->AllocateScalars(VTK_SHORT, 1); // Change scalar type from unsigned int back to short for merged labelmap generation
-
-    segmentationNode->GenerateMergedLabelmap(maskImage, vtkSegmentation::EXTENT_UNION_OF_SEGMENTS, this->ModifierLabelmap, maskSegmentIDs);
-    vtkSmartPointer<vtkMatrix4x4> mergedImageToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
-    maskImage->GetImageToWorldMatrix(mergedImageToWorldMatrix);
-
-    vtkSmartPointer<vtkImageThreshold> threshold = vtkSmartPointer<vtkImageThreshold>::New();
-    threshold->SetInputData(maskImage);
-    threshold->SetInValue(paintInsideSegments ? 1 : 0);
-    threshold->SetOutValue(paintInsideSegments ? 0 : 1);
-    threshold->ReplaceInOn();
-    threshold->ThresholdByLower(0);
-    threshold->SetOutputScalarType(VTK_UNSIGNED_CHAR);
-    threshold->Update();
-
-    maskImage->DeepCopy(threshold->GetOutput());
-    maskImage->SetImageToWorldMatrix(mergedImageToWorldMatrix);
     }
   return true;
 }
