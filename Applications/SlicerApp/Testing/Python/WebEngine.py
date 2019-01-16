@@ -170,12 +170,14 @@ class WebEngineTest(ScriptedLoadableModuleTest):
     webWidget.evalJS("valueFromSlicer;");
 
     iteration = 0
-    while not self.gotResponse:
-      self.delayDisplay('Waiting for response...')
+    while not self.gotResponse and iteration < 3:
+      # Specify an explicit delay to ensure async execution by the
+      # webengine has completed.
+      self.delayDisplay('Waiting for response...', msec=500)
       iteration += 1
     webWidget.disconnect("evalResult(QString,QString)", self.onEvalResult)
 
-    if iteration >= 10:
+    if not self.gotResponse:
       raise RuntimeError("Never got response from evalJS")
 
     if not self.gotCorrectResponse:
