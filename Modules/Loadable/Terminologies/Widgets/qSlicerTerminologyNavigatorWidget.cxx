@@ -1112,13 +1112,29 @@ void qSlicerTerminologyNavigatorWidget::populateTypeTable()
       vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyCategory(category),
       typesInCategory, searchTerm );
 
-    // Store type-category relationship
     for (idIt=typesInCategory.begin(); idIt!=typesInCategory.end(); ++idIt, ++typeIndex)
       {
+      // Determine if type already exists in list
+      bool duplicate = false;
+      std::vector<vtkSlicerTerminologiesModuleLogic::CodeIdentifier>::iterator typeIt;
+      for (typeIt=types.begin(); typeIt!=types.end(); ++typeIt)
+        {
+        if ( !idIt->CodeValue.compare(typeIt->CodeValue)
+          && !idIt->CodingSchemeDesignator.compare(typeIt->CodingSchemeDesignator) )
+          {
+          duplicate = true;
+          break;
+          }
+        }
+      // Add type
+      if (!duplicate)
+        {
+        types.push_back(*idIt);
+        }
+      // Store type-category relationship
       typeIndexToCategoryIndexMap[typeIndex] = categoryIndex;
       }
 
-    types.insert(types.end(), typesInCategory.begin(), typesInCategory.end());
     ++categoryIndex;
     }
 
@@ -1692,7 +1708,6 @@ void qSlicerTerminologyNavigatorWidget::onTypeSearchTextChanged(QString search)
 
   this->populateTypeTable();
 }
-
 
 //-----------------------------------------------------------------------------
 void qSlicerTerminologyNavigatorWidget::onNameChanged(QString name)
