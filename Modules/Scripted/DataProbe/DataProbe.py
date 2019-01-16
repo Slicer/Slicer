@@ -1,16 +1,18 @@
 import os
 import unittest
-import qt, vtk, ctk
-import slicer
+import vtk, qt, ctk, slicer
 import teem
 import DataProbeLib
+from slicer.ScriptedLoadableModule import *
+import logging
 
 #
 # DataProbe
 #
 
-class DataProbe:
+class DataProbe(ScriptedLoadableModule):
   def __init__(self, parent):
+    ScriptedLoadableModule.__init__(self, parent)
     import string
     parent.title = "DataProbe"
     parent.categories = ["Quantification"]
@@ -24,7 +26,6 @@ See <a>http://www.slicer.org</a> for details.  Module implemented by Steve Piepe
     """
     # TODO: need a DataProbe icon
     #parent.icon = qt.QIcon(':Icons/XLarge/SlicerDownloadMRHead.png')
-    self.parent = parent
     self.infoWidget = None
 
     if slicer.mrmlScene.GetTagByClassName( "vtkMRMLScriptedModuleNode" ) != 'ScriptedModule':
@@ -33,19 +34,6 @@ See <a>http://www.slicer.org</a> for details.  Module implemented by Steve Piepe
     # Trigger the menu to be added when application has started up
     if not slicer.app.commandOptions().noMainWindow :
       slicer.app.connect("startupCompleted()", self.addView)
-
-    # Add this test to the SelfTest module's list for discovery when the module
-    # is created.  Since this module may be discovered before SelfTests itself,
-    # create the list if it doesn't already exist.
-    try:
-      slicer.selfTests
-    except AttributeError:
-      slicer.selfTests = {}
-    slicer.selfTests['DataProbe'] = self.runTest
-
-  def runTest(self):
-    tester = DataProbeTest()
-    tester.runTest()
 
   def __del__(self):
     if self.infoWidget:
@@ -496,23 +484,7 @@ class DataProbeInfoWidget(object):
 # DataProbe widget
 #
 
-class DataProbeWidget:
-  """This builds the module contents - nothing here"""
-  # TODO: Since this is empty for now, it should be hidden
-  # from the Modules menu.
-
-  def __init__(self, parent=None):
-    self.observerTags = []
-    if not parent:
-      self.parent = slicer.qMRMLWidget()
-      self.parent.setLayout(qt.QVBoxLayout())
-      self.parent.setMRMLScene(slicer.mrmlScene)
-      self.layout = self.parent.layout()
-      self.setup()
-      self.parent.show()
-    else:
-      self.parent = parent
-      self.layout = parent.layout()
+class DataProbeWidget(ScriptedLoadableModuleWidget):
 
   def enter(self):
     pass
@@ -524,23 +496,8 @@ class DataProbeWidget:
     pass
 
   def setup(self):
-
-    # reload button
-    # (use this during development, but remove it when delivering
-    #  your module to users)
-    self.reloadButton = qt.QPushButton("Reload")
-    self.reloadButton.toolTip = "Reload this module."
-    self.reloadButton.name = "DataProbe Reload"
-    #self.layout.addWidget(self.reloadButton)
-    self.reloadButton.connect('clicked()', self.onReload)
-
-    # reload and test button
-    # (use this during development, but remove it when delivering
-    #  your module to users)
-    self.reloadAndTestButton = qt.QPushButton("Reload and Test")
-    self.reloadAndTestButton.toolTip = "Reload this module and then run the self tests."
-    #self.layout.addWidget(self.reloadAndTestButton)
-    self.reloadAndTestButton.connect('clicked()', self.onReloadAndTest)
+    ScriptedLoadableModuleWidget.setup(self)
+    # Instantiate and connect widgets ...
 
     settingsCollapsibleButton = ctk.ctkCollapsibleButton()
     settingsCollapsibleButton.text = "Slice View Annotations Settings"
@@ -553,20 +510,8 @@ class DataProbeWidget:
 
     self.parent.layout().addStretch(1)
 
-  def onReload(self,moduleName="DataProbe"):
-    """Generic reload method for any scripted module.
-    ModuleWizard will substitute correct default moduleName.
-    """
-    globals()[moduleName] = slicer.util.reloadScriptedModule(moduleName)
 
-  def onReloadAndTest(self,moduleName="DataProbe"):
-    self.onReload()
-    evalString = 'globals()["%s"].%sTest()' % (moduleName, moduleName)
-    tester = eval(evalString)
-    tester.runTest()
-
-
-class CalculateTensorScalars:
+class CalculateTensorScalars(object):
     def __init__(self):
         self.dti_math = teem.vtkDiffusionTensorMathematics()
 
@@ -603,55 +548,12 @@ class CalculateTensorScalars:
             return None
 
 
-#
-# DataProbeLogic
-#
-
-class DataProbeLogic:
-  """This class should implement all the actual
-  computation done by your module.  The interface
-  should be such that other python code can import
-  this class and make use of the functionality without
-  requiring an instance of the Widget
-  """
-  def __init__(self):
-    pass
-
-  def hasImageData(self,volumeNode):
-    """This is a dummy logic method that
-    returns true if the passed in volume
-    node has valid image data
-    """
-    if not volumeNode:
-      print('no volume node')
-      return False
-    if volumeNode.GetImageData() is None:
-      print('no image data')
-      return False
-    return True
-
-
-class DataProbeTest(unittest.TestCase):
+class DataProbeTest(ScriptedLoadableModuleTest):
   """
   This is the test case for your scripted module.
+  Uses ScriptedLoadableModuleTest base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
-
-  def delayDisplay(self,message,msec=1000):
-    """This utility method displays a small dialog and waits.
-    This does two things: 1) it lets the event loop catch up
-    to the state of the test so that rendering and widget updates
-    have all taken place before the test continues and 2) it
-    shows the user/developer/tester the state of the test
-    so that we'll know when it breaks.
-    """
-    print(message)
-    self.info = qt.QDialog()
-    self.infoLayout = qt.QVBoxLayout()
-    self.info.setLayout(self.infoLayout)
-    self.label = qt.QLabel(message,self.info)
-    self.infoLayout.addWidget(self.label)
-    qt.QTimer.singleShot(msec, self.info.close)
-    self.info.exec_()
 
   def setUp(self):
     """ Do whatever is needed to reset the state - typically a scene clear will be enough.
@@ -677,24 +579,24 @@ class DataProbeTest(unittest.TestCase):
     """
 
     self.delayDisplay("Starting the test")
+
     #
     # first, get some data
     #
-    if not slicer.util.getNode('FA'):
-      import urllib
-      downloads = (
-          ('http://slicer.kitware.com/midas3/download?items=5767', 'FA.nrrd', slicer.util.loadVolume),
-          )
+    import urllib
+    downloads = (
+        ('http://slicer.kitware.com/midas3/download?items=5767', 'FA.nrrd', slicer.util.loadVolume),
+        )
 
-      for url,name,loader in downloads:
-        filePath = slicer.app.temporaryPath + '/' + name
-        if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
-          print('Requesting download %s from %s...\n' % (name, url))
-          urllib.urlretrieve(url, filePath)
-        if loader:
-          print('Loading %s...\n' % (name,))
-          loader(filePath)
-    self.delayDisplay('Finished with download and loading\n')
+    for url,name,loader in downloads:
+      filePath = slicer.app.temporaryPath + '/' + name
+      if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
+        logging.info('Requesting download %s from %s...\n' % (name, url))
+        urllib.urlretrieve(url, filePath)
+      if loader:
+        logging.info('Loading %s...' % (name,))
+        loader(filePath)
+    self.delayDisplay('Finished with download and loading')
 
     self.widget = DataProbeInfoWidget()
     self.widget.frame.show()
