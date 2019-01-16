@@ -63,6 +63,7 @@
 #include <vtkPointData.h>
 #include <vtkPointSet.h>
 #include <vtkPolyDataMapper.h>
+#include <vtkProp3DCollection.h>
 #include <vtkProperty.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkSmartPointer.h>
@@ -95,6 +96,12 @@ public:
 
   /// Reset all the pick vars
   void ResetPick();
+  /// Find picked node from mesh and set PickedNodeID in Internal
+  void FindPickedDisplayNodeFromMesh(vtkPointSet* mesh, double pickedPoint[3]);
+  /// Find picked point index in mesh and picked cell (PickedCellID) and set PickedPointID in Internal
+  void FindPickedPointOnMeshAndCell(vtkPointSet* mesh, double pickedPoint[3]);
+  /// Find first picked node from prop3Ds in cell picker and set PickedNodeID in Internal
+  void FindFirstPickedDisplayNodeFromPickerProp3Ds();
 
   std::map<std::string, vtkProp3D *>               DisplayedActors;
   std::map<std::string, vtkMRMLDisplayNode *>      DisplayedNodes;
@@ -121,8 +128,8 @@ public:
   int                     ClippingMethod;
   bool                    ClippingOn;
 
-  bool                         ModelHierarchiesPresent;
-  bool                         UpdateHierachyRequested;
+  bool                    ModelHierarchiesPresent;
+  bool                    UpdateHierachyRequested;
 
   vtkSmartPointer<vtkWorldPointPicker> WorldPointPicker;
   vtkSmartPointer<vtkPropPicker>       PropPicker;
@@ -137,7 +144,7 @@ public:
 
   // Used for caching the node pointer so that we do not have to search in the scene each time.
   // We do not add an observer therefore we can let the selection node deleted without our knowledge.
-  vtkWeakPointer<vtkMRMLSelectionNode>   SelectionNode;
+  vtkWeakPointer<vtkMRMLSelectionNode> SelectionNode;
 };
 
 //---------------------------------------------------------------------------
@@ -198,6 +205,95 @@ void vtkMRMLModelDisplayableManager::vtkInternal::ResetPick()
     }
   this->PickedCellID = -1;
   this->PickedPointID = -1;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayableManager::vtkInternal::FindPickedDisplayNodeFromMesh(vtkPointSet* mesh, double pickedPoint[3])
+{
+  if (!mesh)
+    {
+    return;
+    }
+
+  std::map<std::string, vtkMRMLDisplayNode *>::iterator modelIt;
+  for (modelIt = this->DisplayedNodes.begin(); modelIt != this->DisplayedNodes.end(); modelIt++)
+    {
+    if (modelIt->second != 0)
+      {
+      if (vtkMRMLModelDisplayNode::SafeDownCast(modelIt->second) &&
+          vtkMRMLModelDisplayNode::SafeDownCast(modelIt->second)->GetOutputMesh() == mesh)
+        {
+        this->PickedDisplayNodeID = modelIt->first;
+        return; // Display node found
+        }
+      }
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayableManager::vtkInternal::FindPickedPointOnMeshAndCell(vtkPointSet* mesh, double pickedPoint[3])
+{
+  if (!mesh || this->PickedCellID < 0)
+    {
+    return;
+    }
+
+  // Figure out the closest vertex in the picked cell to the picked RAS
+  // point. Only doing this on model nodes for now.
+  vtkCell *cell = mesh->GetCell(this->PickedCellID);
+  if (!cell)
+    {
+    return;
+    }
+
+  int numPoints = cell->GetNumberOfPoints();
+  int closestPointId = -1;
+  double closestDistance = 0.0l;
+  for (int p = 0; p < numPoints; p++)
+    {
+    int pointId = cell->GetPointId(p);
+    double *pointCoords = mesh->GetPoint(pointId);
+    if (pointCoords != 0)
+      {
+      double distance = sqrt( pow(pointCoords[0]-pickedPoint[0], 2) +
+                              pow(pointCoords[1]-pickedPoint[1], 2) +
+                              pow(pointCoords[2]-pickedPoint[2], 2) );
+      if (p == 0 || distance < closestDistance)
+        {
+        closestDistance = distance;
+        closestPointId = pointId;
+        }
+      }
+    }
+  this->PickedPointID = closestPointId;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayableManager::vtkInternal::FindFirstPickedDisplayNodeFromPickerProp3Ds()
+{
+  if (!this->CellPicker)
+    {
+    return;
+    }
+
+  vtkProp3DCollection* props = this->CellPicker->GetProp3Ds();
+  for (int propIndex=0; propIndex<props->GetNumberOfItems(); ++propIndex)
+    {
+    vtkProp3D* pickedProp = vtkProp3D::SafeDownCast(props->GetItemAsObject(propIndex));
+    if (!pickedProp)
+      {
+      continue;
+      }
+    std::map<std::string, vtkProp3D*>::iterator propIt;
+    for (propIt = this->DisplayedActors.begin(); propIt != this->DisplayedActors.end(); propIt++)
+      {
+      if (pickedProp == propIt->second)
+        {
+        this->PickedDisplayNodeID = propIt->first;
+        return; // Display node found
+        }
+      }
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -1854,7 +1950,7 @@ int vtkMRMLModelDisplayableManager::Pick(int x, int y)
     // get the pointer to the mesh that the cell was in
     vtkPointSet *mesh = vtkPointSet::SafeDownCast(this->Internal->CellPicker->GetDataSet());
     // now find the model this mesh belongs to
-    this->FindPickedDisplayNodeFromMesh(mesh, pickPoint);
+    this->Internal->FindPickedDisplayNodeFromMesh(mesh, pickPoint);
     }
   else
     {
@@ -1892,73 +1988,27 @@ int vtkMRMLModelDisplayableManager::Pick3D(double ras[3])
   if (this->Internal->CellPicker->Pick3DPoint(ras, ren))
     {
     this->SetPickedCellID(this->Internal->CellPicker->GetCellId());
-    // Get the pointer to the mesh that the cell was in
-    vtkPointSet *mesh = vtkPointSet::SafeDownCast(this->Internal->CellPicker->GetDataSet());
-    // Find the model this mesh belongs to
-    this->FindPickedDisplayNodeFromMesh(mesh, ras);
+
+    // Find first picked model from picker
+    // Note: Getting the mesh using GetDataSet is not a good solution as the dataset is the first
+    //   one that is picked and it may be of different type (volume, segmentation, etc.)
+    this->Internal->FindFirstPickedDisplayNodeFromPickerProp3Ds();
+    // Find picked point in mesh
+    vtkMRMLModelDisplayNode* displayNode = vtkMRMLModelDisplayNode::SafeDownCast(
+      this->GetMRMLScene()->GetNodeByID(this->Internal->PickedDisplayNodeID.c_str()) );
+    if (displayNode)
+      {
+      this->Internal->FindPickedPointOnMeshAndCell(displayNode->GetOutputMesh(), ras);
+      }
+
+    this->SetPickedRAS(ras);
     }
 #else
   vtkErrorMacro("Pick3D: This function is only accessible in newer VTK version");
+  (void)ras; // not used
 #endif
 
-  this->SetPickedRAS(ras);
-
   return 1;
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLModelDisplayableManager::FindPickedDisplayNodeFromMesh(vtkPointSet* mesh, double pickedPoint[3])
-{
-  if (!mesh)
-    {
-    return;
-    }
-
-  std::map<std::string, vtkMRMLDisplayNode *>::iterator modelIter;
-  for ( modelIter = this->Internal->DisplayedNodes.begin();
-        modelIter != this->Internal->DisplayedNodes.end();
-        modelIter++ )
-    {
-    vtkDebugMacro("FindPickedDisplayNodeFromMesh: Checking model " << modelIter->first.c_str() << "'s mesh");
-    if (modelIter->second != 0)
-      {
-      if (vtkMRMLModelDisplayNode::SafeDownCast(modelIter->second) &&
-          vtkMRMLModelDisplayNode::SafeDownCast(modelIter->second)->GetOutputMesh() == mesh)
-        {
-        vtkDebugMacro("FindPickedDisplayNodeFromMesh: Found matching mesh, pick was on model " << modelIter->first.c_str());
-        this->Internal->PickedDisplayNodeID = modelIter->first;
-
-        // Figure out the closest vertex in the picked cell to the picked RAS
-        // point. Only doing this on model nodes for now.
-        vtkCell *cell = mesh->GetCell(this->GetPickedCellID());
-        if (cell != 0)
-          {
-          int numPoints = cell->GetNumberOfPoints();
-          int closestPointId = -1;
-          double closestDistance = 0.0l;
-          for (int p = 0; p < numPoints; p++)
-            {
-            int pointId = cell->GetPointId(p);
-            double *pointCoords = mesh->GetPoint(pointId);
-            if (pointCoords != 0)
-              {
-              double distance = sqrt( pow(pointCoords[0]-pickedPoint[0], 2) +
-                                      pow(pointCoords[1]-pickedPoint[1], 2) +
-                                      pow(pointCoords[2]-pickedPoint[2], 2) );
-              if (p == 0 || distance < closestDistance)
-                {
-                closestDistance = distance;
-                closestPointId = pointId;
-                }
-              }
-            }
-          vtkDebugMacro("FindPickedDisplayNodeFromMesh: found closest point id = " << closestPointId << ", distance = " << closestDistance);
-          this->SetPickedPointID(closestPointId);
-          }
-        continue;
-        }
-      }
-    }
 }
 
 //---------------------------------------------------------------------------
