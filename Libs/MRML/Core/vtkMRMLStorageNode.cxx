@@ -46,6 +46,7 @@ vtkMRMLStorageNode::vtkMRMLStorageNode()
   this->URI = NULL;
   this->URIHandler = NULL;
   this->UseCompression = 1;
+  this->CompressionLevel = -1;
   this->ReadState = this->Idle;
   this->WriteState = this->Idle;
   this->URIHandler = NULL;
@@ -185,6 +186,21 @@ void vtkMRMLStorageNode::WriteXML(ostream& of, int nIndent)
   ss << this->UseCompression;
   of << " useCompression=\"" << ss.str() << "\"";
 
+  ss.clear();
+  ss.str(std::string());
+  {
+    of << " compressionLevel=\"";
+    if (this->CompressionLevel == -1)
+      {
+      of << vtkMRMLStorageNode::CompressionLevelDefault;
+      }
+    else
+      {
+      of << this->CompressionLevel;
+      }
+    of << "\"";
+  }
+
   if (this->GetDefaultWriteFileExtension() != NULL)
     {
     of << " defaultWriteFileExtension=\"" << this->GetDefaultWriteFileExtension() << "\"";
@@ -304,6 +320,12 @@ void vtkMRMLStorageNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >> this->UseCompression;
       }
+    else if (!strcmp(attName, "compressionLevel"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->CompressionLevel;
+      }
     else if (!strcmp(attName, "readState"))
       {
       std::stringstream ss;
@@ -365,6 +387,7 @@ void vtkMRMLStorageNode::PrintSelf(ostream& os, vtkIndent indent)
     os << indent << "URIListMember: " << this->GetNthURI(i) << "\n";
     }
   os << indent << "UseCompression:   " << this->UseCompression << "\n";
+  os << indent << "CompressionLevel:   " << this->CompressionLevel << "\n";
   os << indent << "ReadState:  " << this->GetReadStateAsString() << "\n";
   os << indent << "WriteState: " << this->GetWriteStateAsString() << "\n";
   os << indent << "SupportedWriteFileTypes: \n";
