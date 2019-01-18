@@ -233,14 +233,20 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
   #
   set(build_extension_wrapper_script
     ${CMAKE_CURRENT_BINARY_DIR}/build_${proj}_wrapper_script.cmake)
+  set(build_output_file "${CMAKE_CURRENT_BINARY_DIR}/build_${proj}output.txt")
+  set(build_error_file "${CMAKE_CURRENT_BINARY_DIR}/build_${proj}_error.txt")
   #message(STATUS "Configuring extension upload wrapper script: ${build_extension_wrapper_script}")
   file(WRITE ${build_extension_wrapper_script} "
     execute_process(
       COMMAND ${wrapper_command}
       WORKING_DIR \"${EXTENSION_SUPERBUILD_BINARY_DIR}\"
+      OUTPUT_FILE \"${build_output_file}\"
+      ERROR_FILE \"${build_error_file}\"
       RESULT_VARIABLE result
       )
     message(STATUS \"build_${proj}_wrapper_script: Ignoring result \${result}\")
+    message(STATUS \"build_${proj}_output_file: ${build_output_file}\")
+    message(STATUS \"build_${proj}_error_file: ${build_error_file}\")
     ")
 
   # Add extension external project
