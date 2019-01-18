@@ -47,7 +47,10 @@ function(add_slicer_extensions_index_test testname)
 
   add_test(
     NAME py_${prefix}${testname}
-    COMMAND ${PYTHON_EXECUTABLE} -c "${code}" ${CMAKE_CFG_INTDIR}
+    # Test assume the CMake based midas client is used.
+    # See Extensions/CMake/SlicerExtensionPackageAndUploadTarget.cmake
+    COMMAND ${CMAKE_COMMAND} -E env --unset=SLICER_EXTENSION_MANAGER_SKIP_MIDAS_UPLOAD
+      ${PYTHON_EXECUTABLE} -c "${code}" ${CMAKE_CFG_INTDIR}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
 
