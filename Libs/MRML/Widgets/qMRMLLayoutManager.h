@@ -107,7 +107,7 @@ public:
   /// If the registered view factory is a qMRMLLayoutViewFactory, then set
   /// its layoutManager and its mrmlScene.
   /// \sa ctkLayoutFactory::registerViewFactory(), unregisterViewFactory()
-  virtual void registerViewFactory(ctkLayoutViewFactory* viewFactory);
+  Q_INVOKABLE virtual void registerViewFactory(ctkLayoutViewFactory* viewFactory);
 
   /// Return the list of registered MRML view factories.
   /// \sa registeredViewFactories(), registerViewFactory(),

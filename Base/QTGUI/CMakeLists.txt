@@ -102,6 +102,9 @@ set(KIT_SRCS
   qSlicerWebWidget_p.h
   qSlicerWidget.cxx
   qSlicerWidget.h
+
+  qSlicerSingletonViewFactory.cxx
+  qSlicerSingletonViewFactory.h
   )
 
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
@@ -208,6 +211,8 @@ set(KIT_MOC_SRCS
   qSlicerWebWidget.h
   qSlicerWebWidget_p.h
   qSlicerWidget.h
+
+  qSlicerSingletonViewFactory.h
   )
 
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
