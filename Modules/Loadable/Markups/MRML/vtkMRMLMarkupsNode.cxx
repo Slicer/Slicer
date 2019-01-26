@@ -554,6 +554,24 @@ int vtkMRMLMarkupsNode::AddPointToNthMarkup(vtkVector3d point, int n)
 }
 
 //-----------------------------------------------------------
+bool vtkMRMLMarkupsNode::RemovePointFromNthMarkup(int pointIndex, int n)
+{
+  if (!this->MarkupExists(n))
+    {
+    return false;
+    }
+  if (pointIndex < 0 || pointIndex >= static_cast<int>(this->Markups[n].points.size()))
+    {
+    return false;
+    }
+  this->Markups[n].points.erase(this->Markups[n].points.begin() + pointIndex);
+  int markupIndex = n;
+  this->InvokeCustomModifiedEvent(
+    vtkMRMLMarkupsNode::NthMarkupModifiedEvent, (void*)&markupIndex);
+  return true;
+}
+
+//-----------------------------------------------------------
 vtkVector3d vtkMRMLMarkupsNode::GetMarkupPointVector(int markupIndex, int pointIndex)
 {
   vtkVector3d point;

@@ -193,6 +193,8 @@ public:
   int AddPointWorldToNewMarkup(vtkVector3d point, std::string label = std::string());
   /// Add a point to the nth markup, returning the point index, -1 on failure.
   int AddPointToNthMarkup(vtkVector3d point, int n);
+  /// Remove a point from nth markup, returning true on success.
+  bool RemovePointFromNthMarkup(int pointIndex, int n);
 
   /// Get the position of the pointIndex'th point in markupIndex markup,
   /// returning it as a vtkVector3d

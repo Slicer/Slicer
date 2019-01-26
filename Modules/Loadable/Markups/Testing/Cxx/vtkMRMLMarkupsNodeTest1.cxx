@@ -221,10 +221,10 @@ int vtkMRMLMarkupsNodeTest1(int , char * [] )
   // now add some markups
   //
   std::cout << "Adding markups with points" << std::endl;
-  node1->AddMarkupWithNPoints(1);
-  node1->AddMarkupWithNPoints(2);
-  node1->AddMarkupWithNPoints(3);
-  node1->AddMarkupWithNPoints(6);
+  node1->AddMarkupWithNPoints(1); // markupIndex 0
+  node1->AddMarkupWithNPoints(2); // markupIndex 1
+  node1->AddMarkupWithNPoints(3); // markupIndex 2
+  node1->AddMarkupWithNPoints(6); // markupIndex 3
 
   numMarkups = node1->GetNumberOfMarkups();
   if (numMarkups != 4)
@@ -547,6 +547,38 @@ int vtkMRMLMarkupsNodeTest1(int , char * [] )
               << " Expected to see " << multipleFalseExpectedSize << " points." << std::endl;
     return EXIT_FAILURE;
     }
+
+  // Test RemovePointFromNthMarkup
+  std::cout << "Test RemovePointFromNthMarkup" << std::endl;
+  int markupIndex = 2;
+
+  {
+    double point0[3] = {0.0, 0.1, 0.2};
+    node1->SetMarkupPointFromArray(markupIndex, 0, point0);
+    double point1[3] = {1.0, 1.1, 1.2};
+    node1->SetMarkupPointFromArray(markupIndex, 1, point1);
+    double point2[3] = {2.0, 2.1, 2.2};
+    node1->SetMarkupPointFromArray(markupIndex, 2, point2);
+
+    CHECK_INT(node1->GetNumberOfPointsInNthMarkup(markupIndex), 3);
+  }
+
+  node1->RemovePointFromNthMarkup(1, markupIndex);
+  CHECK_INT(node1->GetNumberOfPointsInNthMarkup(markupIndex), 2);
+
+  {
+    double point0[3] = {0., 0., 0.};
+    node1->GetMarkupPoint(markupIndex, 0, point0);
+    CHECK_DOUBLE(point0[0], 0.0);
+    CHECK_DOUBLE(point0[1], 0.1);
+    CHECK_DOUBLE(point0[2], 0.2);
+
+    double point1[3] = {0., 0., 0.};
+    node1->GetMarkupPoint(markupIndex, 1, point1);
+    CHECK_DOUBLE(point1[0], 2.0);
+    CHECK_DOUBLE(point1[1], 2.1);
+    CHECK_DOUBLE(point1[2], 2.2);
+  }
 
   return EXIT_SUCCESS;
 }
