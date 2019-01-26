@@ -512,7 +512,7 @@ vtkMRMLCameraNode* vtkMRMLCameraNode::FindActiveTagInScene(const char* tag)
 //---------------------------------------------------------------------------
 void vtkMRMLCameraNode::ResetClippingRange()
 {
-  this->InvokeEvent(vtkCommand::ResetCameraClippingRangeEvent);
+  this->InvokeEvent(vtkMRMLCameraNode::ResetCameraClippingEvent);
 }
 
 //---------------------------------------------------------------------------
