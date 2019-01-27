@@ -2611,7 +2611,6 @@ void qMRMLSegmentEditorWidget::setupViewObservations()
       }
     }
 
-  d->ObservedViewNodeIDs.clear();
   this->updateSliceRotateWarningButtonVisibility();
 
   d->ViewsObserved = true;
