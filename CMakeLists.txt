@@ -435,7 +435,8 @@ include(SlicerFunctionAddPythonQtResources)
 #-----------------------------------------------------------------------------
 if(Slicer_BUILD_I18N_SUPPORT)
   set(Slicer_LANGUAGES
-    "fr"
+  "es_Es"
+  "fr_FR"
     )
   set_property(GLOBAL PROPERTY Slicer_LANGUAGES ${Slicer_LANGUAGES})
 endif()
@@ -1218,10 +1219,16 @@ ExternalData_Add_Target(${Slicer_ExternalData_DATA_MANAGEMENT_TARGET})
 #-----------------------------------------------------------------------------
 # Create targets CopySlicerPython{Resource, Script}Files, CompileSlicerPythonFiles
 if(Slicer_USE_PYTHONQT)
+
   slicerFunctionAddPythonQtResourcesTargets(SlicerPythonResources)
   ctkFunctionAddCompilePythonScriptTargets(
     ${CTK_COMPILE_PYTHON_SCRIPTS_GLOBAL_TARGET_NAME}
-    DEPENDS SlicerPythonResources
+    DEPENDS
+      SlicerPythonResources
+    )
+
+  SlicerFunctionAddPythonScriptTrFilesTargets(
+    ${CTK_COMPILE_PYTHON_SCRIPTS_GLOBAL_TARGET_NAME}
     )
 
   set(_python_dir ${Slicer_SUPERBUILD_DIR}/python-install)

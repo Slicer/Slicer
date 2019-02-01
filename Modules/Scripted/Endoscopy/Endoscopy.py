@@ -4,6 +4,8 @@ import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 import logging
 
+from slicer.i18n import tr
+
 #
 # Endoscopy
 #
@@ -63,7 +65,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
 
     # Path collapsible button
     pathCollapsibleButton = ctk.ctkCollapsibleButton()
-    pathCollapsibleButton.text = "Path"
+    pathCollapsibleButton.text = tr("EndoscopyWidget", "Path")
     self.layout.addWidget(pathCollapsibleButton)
 
     # Layout within the path collapsible button
@@ -79,7 +81,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
     cameraNodeSelector.removeEnabled = False
     cameraNodeSelector.connect('currentNodeChanged(bool)', self.enableOrDisableCreateButton)
     cameraNodeSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.setCameraNode)
-    pathFormLayout.addRow("Camera:", cameraNodeSelector)
+    pathFormLayout.addRow(tr("EndoscopyWidget", "Camera:"), cameraNodeSelector)
 
     # Input fiducials node selector
     inputFiducialsNodeSelector = slicer.qMRMLNodeComboBox()
@@ -91,7 +93,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
     inputFiducialsNodeSelector.addEnabled = False
     inputFiducialsNodeSelector.removeEnabled = False
     inputFiducialsNodeSelector.connect('currentNodeChanged(bool)', self.enableOrDisableCreateButton)
-    pathFormLayout.addRow("Input Fiducials:", inputFiducialsNodeSelector)
+    pathFormLayout.addRow(tr("EndoscopyWidget", "Input Fiducials:"), inputFiducialsNodeSelector)
 
     # Output path node selector
     outputPathNodeSelector = slicer.qMRMLNodeComboBox()
@@ -106,7 +108,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
     pathFormLayout.addRow("Output Path:", outputPathNodeSelector)
 
     # CreatePath button
-    createPathButton = qt.QPushButton("Create path")
+    createPathButton = qt.QPushButton(tr("EndoscopyWidget", "Create path"))
     createPathButton.toolTip = "Create the path."
     createPathButton.enabled = False
     pathFormLayout.addRow(createPathButton)
@@ -115,7 +117,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
 
     # Flythrough collapsible button
     flythroughCollapsibleButton = ctk.ctkCollapsibleButton()
-    flythroughCollapsibleButton.text = "Flythrough"
+    flythroughCollapsibleButton.text = tr("EndoscopyWidget", "Flythrough")
     flythroughCollapsibleButton.enabled = False
     self.layout.addWidget(flythroughCollapsibleButton)
 

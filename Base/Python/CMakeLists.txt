@@ -6,6 +6,7 @@ set(Slicer_PYTHON_SCRIPTS
   slicer/slicerqt
   slicer/testing
   slicer/util
+  slicer/i18n
   mrml
   vtkAddon
   vtkITK

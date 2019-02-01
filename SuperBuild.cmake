@@ -155,6 +155,10 @@ if(Slicer_USE_PYTHONQT)
   endif()
 endif()
 
+if(Slicer_BUILD_I18N_SUPPORT AND Slicer_USE_PYTHONQT)
+  list(APPEND Slicer_DEPENDENCIES python-astor)
+endif()
+
 if(Slicer_USE_TBB)
   list(APPEND Slicer_DEPENDENCIES tbb)
 endif()

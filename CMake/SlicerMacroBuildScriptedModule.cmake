@@ -97,6 +97,9 @@ macro(slicerMacroBuildScriptedModule)
     set(_no_install_subdir_option "")
   endif()
 
+  # --------------------------------------------------------------------------
+  # Copy and/or compile scripts and associated resources
+  # --------------------------------------------------------------------------
   ctkMacroCompilePythonScript(
     TARGET_NAME ${MY_SLICER_NAME}
     SCRIPTS "${MY_SLICER_SCRIPTS}"
@@ -106,6 +109,16 @@ macro(slicerMacroBuildScriptedModule)
     ${_no_install_subdir_option}
     )
 
+  # --------------------------------------------------------------------------
+  # Translations
+  # --------------------------------------------------------------------------
+  if("${CTK_COMPILE_PYTHON_SCRIPTS_GLOBAL_TARGET_NAME}" STREQUAL "")
+    SlicerFunctionAddPythonScriptTrFilesTargets(${MY_SLICER_NAME})
+  endif()
+
+  # --------------------------------------------------------------------------
+  # Tests
+  # --------------------------------------------------------------------------
   if(BUILD_TESTING AND MY_SLICER_WITH_GENERIC_TESTS)
     set(_generic_unitest_scripts)
     SlicerMacroConfigureGenericPythonModuleTests("${MY_SLICER_NAME}" _generic_unitest_scripts)
@@ -122,3 +135,56 @@ macro(slicerMacroBuildScriptedModule)
 
 endmacro()
 
+function(SlicerFunctionAddPythonScriptTrFilesTargets target)
+
+  set(rewrite_script "${Slicer_CMAKE_DIR}/RewriteTr.py")
+  if(NOT EXISTS ${rewrite_script})
+    message(FATAL_ERROR "Rewrite script does not exist [${rewrite_script}]")
+  endif()
+
+  set(TS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Resources/Translations/")
+
+  #get_property(Slicer_LANGUAGES GLOBAL PROPERTY Slicer_LANGUAGES)
+
+  get_property(_CTK_${target}_PYTHON_SCRIPTS GLOBAL PROPERTY _CTK_${target}_PYTHON_SCRIPTS)
+
+  set(rewritten_srcs)
+  foreach(entry IN LISTS _CTK_${target}_PYTHON_SCRIPTS)
+    string(REPLACE "|" ";" tuple "${entry}")
+    list(GET tuple 0 src)
+    list(GET tuple 1 tgt_file)
+    list(GET tuple 2 dest_dir)
+
+    set(rewritten_src_file "${tgt_file}.tr")
+    set(rewritten_src "${dest_dir}/${rewritten_src_file}")
+
+    add_custom_command(DEPENDS ${src}
+                       COMMAND ${PYTHON_EXECUTABLE}
+                         ${rewrite_script} -i ${src} -o ${rewritten_src}
+                       OUTPUT ${rewritten_src}
+                       COMMENT "Generating .py.tr file into binary directory: ${rewritten_src_file}")
+
+    list(APPEND rewritten_srcs ${rewritten_src})
+  endforeach()
+
+  include(SlicerMacroTranslation)
+  SlicerMacroTranslation(
+    SRCS ${rewritten_srcs}
+    TS_DIR ${TS_DIR}
+    TS_BASEFILENAME ${target}
+    TS_LANGUAGES ${Slicer_LANGUAGES}
+    QM_OUTPUT_DIR_VAR QM_OUTPUT_DIR
+    QM_OUTPUT_FILES_VAR QM_OUTPUT_FILES
+    )
+
+  # store the paths where the qm files are located
+  set_property(GLOBAL APPEND PROPERTY Slicer_QM_OUTPUT_DIRS ${QM_OUTPUT_DIR})
+
+  # store the qm files associated with scripted modules
+  set_property(GLOBAL APPEND PROPERTY QM_SCRIPTED_MODULE_FILES ${QM_OUTPUT_FILES})
+
+  set(target_name Add${target}PythonScriptTrFiles)
+  if(NOT TARGET ${target_name})
+    add_custom_target(${target_name} DEPENDS ${rewritten_srcs} ${ARGN})
+  endif()
+endfunction()
