@@ -1152,9 +1152,15 @@ endforeach()
 unset(Slicer_DIR)
 
 # --------------------------------------------------------------------------
-# Recover the QM output directories
+# Create target GenerateSlicerTranslationQMFiles (Slicer_QM_OUTPUT_DIRS is used in vtkSlicerConfigure.h)
 # --------------------------------------------------------------------------
-get_property(Slicer_QM_OUTPUT_DIRS GLOBAL PROPERTY Slicer_QM_OUTPUT_DIRS)
+if(Slicer_BUILD_I18N_SUPPORT)
+  SlicerFunctionAddGenerateSlicerTranslationQMFilesTarget(
+    QM_OUTPUT_DIRS_VAR Slicer_QM_OUTPUT_DIRS
+    )
+else()
+  set(Slicer_QM_OUTPUT_DIRS)
+endif()
 
 # --------------------------------------------------------------------------
 # Configure and install headers
@@ -1254,8 +1260,9 @@ endif()
 # This must come after all tests have been added that reference the group, so we put it last.
 ExternalData_Add_Target(${Slicer_ExternalData_DATA_MANAGEMENT_TARGET})
 
-#-----------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 # Create targets CopySlicerPython{Resource, Script}Files, CompileSlicerPythonFiles
+# --------------------------------------------------------------------------
 if(Slicer_USE_PYTHONQT)
   slicerFunctionAddPythonQtResourcesTargets(SlicerPythonResources)
   ctkFunctionAddCompilePythonScriptTargets(
