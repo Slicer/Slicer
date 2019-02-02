@@ -68,7 +68,8 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   ///
   /// Mapping from RAS space onto the slice plane
   /// This matrix is allowed to be modified from outside, for example
-  /// by calling sliceNode->GetSliceToRAS->DeepCopy(...).
+  /// by calling sliceNode->GetSliceToRAS->DeepCopy(...)
+  /// followed by sliceNode->UpdateMatrices().
   /// TODO: maybe this should be a quaternion and a translate to avoid shears/scales
   virtual vtkMatrix4x4 *GetSliceToRAS();
 
