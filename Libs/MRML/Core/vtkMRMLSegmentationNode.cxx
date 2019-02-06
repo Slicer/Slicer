@@ -424,6 +424,7 @@ void vtkMRMLSegmentationNode::ApplyTransform(vtkAbstractTransform* transform)
     }
 
   // Apply transform on segmentation
+  bool wasEnabled = this->Segmentation->SetMasterRepresentationModifiedEnabled(false);
   vtkSmartPointer<vtkTransform> linearTransform = vtkSmartPointer<vtkTransform>::New();
   if (vtkOrientedImageDataResample::IsTransformLinear(transform, linearTransform))
     {
@@ -433,6 +434,8 @@ void vtkMRMLSegmentationNode::ApplyTransform(vtkAbstractTransform* transform)
     {
     this->Segmentation->ApplyNonLinearTransform(transform);
     }
+  this->Segmentation->SetMasterRepresentationModifiedEnabled(wasEnabled);
+  this->Segmentation->InvalidateNonMasterRepresentations();
 
   // Make sure preferred display representations exist after transformation
   // (it is invalidated in the process unless it is the master representation)
