@@ -1,7 +1,7 @@
 set(proj python-requests)
 
 # Set dependency list
-set(${proj}_DEPENDENCIES python python-setuptools)
+set(${proj}_DEPENDENCIES python python-setuptools python-certifi python-idna python-chardet python-urllib3)
 
 if(NOT DEFINED Slicer_USE_SYSTEM_${proj})
   set(Slicer_USE_SYSTEM_${proj} ${Slicer_USE_SYSTEM_python})
