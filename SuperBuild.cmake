@@ -118,6 +118,7 @@ if(Slicer_BUILD_DICOM_SUPPORT)
 endif()
 
 if(Slicer_BUILD_DICOM_SUPPORT AND Slicer_USE_PYTHONQT_WITH_OPENSSL)
+  list(APPEND Slicer_DEPENDENCIES python-pydicom1)
   list(APPEND Slicer_DEPENDENCIES python-pydicom)
 endif()
 

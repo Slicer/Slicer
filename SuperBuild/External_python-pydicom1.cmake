@@ -1,4 +1,4 @@
-set(proj python-pydicom)
+set(proj python-pydicom1)
 
 # Set dependency list
 set(${proj}_DEPENDENCIES python python-setuptools)
@@ -12,19 +12,19 @@ ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj
 
 if(Slicer_USE_SYSTEM_${proj})
   ExternalProject_FindPythonPackage(
-    MODULE_NAME "pydicom"
+    MODULE_NAME "dicom"
     REQUIRED
     )
 endif()
 
 if(NOT Slicer_USE_SYSTEM_${proj})
 
-  set(_version "1.2.2")
+  set(_version "0.9.9")
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    URL "https://files.pythonhosted.org/packages/65/60/403e8ba7f2aa41803c4c91f523e236644fc62438e0f292eda8e8eb681408/pydicom-1.2.2.tar.gz"
-    URL_HASH "SHA256=aab3979cbd985feb6a44a3e751805d913629de82c4810ee94c35b9399aeaf0d7"
+    URL "https://pypi.python.org/packages/5d/1d/dd9716ef3a0ac60c23035a9b333818e34dec2e853733d03f502533af9b84/pydicom-${_version}.tar.gz"
+    URL_MD5 "a66ca6728e69ba565ab9c8a21740eee8"
     DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BUILD_IN_SOURCE 1
