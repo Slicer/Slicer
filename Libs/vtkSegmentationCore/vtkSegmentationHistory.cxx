@@ -262,7 +262,8 @@ bool vtkSegmentationHistory::RestoreState(unsigned int stateIndex)
       {
       vtkSmartPointer<vtkSegment> newSegment = vtkSmartPointer<vtkSegment>::New();
       newSegment->DeepCopy(restoredSegmentsIt->second);
-      this->Segmentation->AddSegment(newSegment);
+      // we must specify the segment ID to prevent re-generation of a new ID
+      this->Segmentation->AddSegment(newSegment, restoredSegmentsIt->first);
       }
     }
 
