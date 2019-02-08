@@ -1,4 +1,4 @@
-set(proj python-chardet)
+set(proj python-urllib3)
 
 # Set dependency list
 set(${proj}_DEPENDENCIES python python-setuptools)
@@ -12,19 +12,19 @@ ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj
 
 if(Slicer_USE_SYSTEM_${proj})
   ExternalProject_FindPythonPackage(
-    MODULE_NAME "chardet"
+    MODULE_NAME "urllib3"
     REQUIRED
     )
 endif()
 
 if(NOT Slicer_USE_SYSTEM_${proj})
 
-  set(_version "2.21.0")
+  set(_version "1.24.1")
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    URL "https://files.pythonhosted.org/packages/fc/bb/a5768c230f9ddb03acc9ef3f0d4a3cf93462473795d18e9535498c8f929d/chardet-3.0.4.tar.gz"
-    URL_HASH "SHA256=84ab92ed1c4d4f16916e05906b6b75a6c0fb5db821cc65e70cbd64a3e2a5eaae"
+    URL "https://files.pythonhosted.org/packages/b1/53/37d82ab391393565f2f831b8eedbffd57db5a718216f82f1a8b4d381a1c1/urllib3-1.24.1.tar.gz"
+    URL_HASH "SHA256=de9529817c93f27c8ccbfead6985011db27bd0ddfcdb2d86f3f663385c6a9c22"
     DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BUILD_IN_SOURCE 1
