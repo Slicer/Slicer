@@ -41,6 +41,11 @@ public:
   qSlicerVolumesIOOptionsWidget(QWidget *parent=0);
   virtual ~qSlicerVolumesIOOptionsWidget();
 
+  /// Allows custom handling of image sets as volumes
+  /// \sa qSlicerVolumesReader
+  /// \sa qSlicerDataDialog::addDirectory
+  void updateGUI(const qSlicerIO::IOProperties& ioProperties);
+
 public slots:
   virtual void setFileName(const QString& fileName);
   virtual void setFileNames(const QStringList& fileNames);

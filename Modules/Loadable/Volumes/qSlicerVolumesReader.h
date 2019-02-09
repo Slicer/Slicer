@@ -47,6 +47,12 @@ public:
   virtual qSlicerIOOptions* options()const;
 
   virtual bool load(const IOProperties& properties);
+
+  /// Implements the file list examination for the corresponding method in the core
+  /// IO manager.
+  /// \sa qSlicerCoreIOManager
+  virtual bool examineFileInfoList(QFileInfoList &fileInfoList, QFileInfo &archetypeFileInfo, qSlicerIO::IOProperties &ioProperties)const;
+
 protected:
   QScopedPointer<qSlicerVolumesReaderPrivate> d_ptr;
 

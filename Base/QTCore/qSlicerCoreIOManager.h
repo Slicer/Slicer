@@ -22,8 +22,9 @@
 #define __qSlicerCoreIOManager_h
 
 // Qt includes
-#include <QList>
+#include <QFileInfo>
 #include <QImage>
+#include <QList>
 #include <QMap>
 #include <QObject>
 #include <QVariantMap>
@@ -169,6 +170,21 @@ public:
 
   /// Defines the file format that should be offered by default when the scene is saved.
   Q_INVOKABLE QString defaultSceneFileType()const;
+
+  /// Iterates through readers looking at the fileInfoList to see if there is an entry that can serve as
+  /// an archetype for loading multiple fileInfos.  If so, the reader removes the recognized
+  /// fileInfos from the list and sets the ioProperties so that the corresponding
+  /// loader will read these files. The archetypeEntry will contain the fileInfo
+  /// for the archetype and the method returns true.  If no pattern is recognized
+  /// the method returns false.
+  /// The specific motivating use case is when the file
+  /// list contains a set of related files, such as a list of image files that
+  /// are recognized as a volume. But other cases could also make sense, such as when
+  /// a file format has a set or related files such as textures or material files
+  /// for a surface model.
+  /// \sa qSlicerDataDialog
+  /// \sa qSlicerFileReader
+  Q_INVOKABLE bool examineFileInfoList(QFileInfoList &fileInfoList, QFileInfo &archetypeEntry, QString &readerDescription, qSlicerIO::IOProperties &ioProperties)const;
 
 public slots:
 

@@ -21,6 +21,9 @@
 #ifndef __qSlicerFileReader_h
 #define __qSlicerFileReader_h
 
+// Qt includes
+#include <QFileInfo>
+
 // QtCore includes
 #include "qSlicerIO.h"
 #include "qSlicerBaseQTCoreExport.h"
@@ -63,6 +66,11 @@ public:
   /// Empty list of load() failed
   /// \sa setLoadedNodes(), load()
   QStringList loadedNodes()const;
+
+  /// Implements the file list examination for the corresponding method in the core
+  /// IO manager.
+  /// \sa qSlicerCoreIOManager
+  virtual bool examineFileInfoList(QFileInfoList &fileInfoList, QFileInfo &archetypeFileInfo, qSlicerIO::IOProperties &ioProperties)const;
 
 protected:
   /// Must be called in load() on success with the list of nodes added into the

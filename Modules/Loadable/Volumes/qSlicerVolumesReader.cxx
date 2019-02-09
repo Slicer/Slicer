@@ -18,7 +18,12 @@
 
 ==============================================================================*/
 
+// std includes
+#include <vector>
+#include <algorithm>
+
 // Qt includes
+#include <QDebug>
 #include <QFileInfo>
 
 // SlicerQt includes
@@ -38,6 +43,9 @@
 // VTK includes
 #include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
+
+// ITK includes
+#include <itkArchetypeSeriesFileNames.h>
 
 //-----------------------------------------------------------------------------
 class qSlicerVolumesReaderPrivate
@@ -204,4 +212,41 @@ bool qSlicerVolumesReader::load(const IOProperties& properties)
     this->setLoadedNodes(QStringList());
     }
   return node != 0;
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerVolumesReader::examineFileInfoList(QFileInfoList &fileInfoList, QFileInfo &archetypeFileInfo, qSlicerIO::IOProperties &ioProperties)const
+{
+
+  //
+  // Check each file to see if it's recognzied as part of a series.  If so,
+  // keep it as the archetype and remove all the others from the list
+  //
+  foreach(QFileInfo fileInfo, fileInfoList)
+    {
+    itk::ArchetypeSeriesFileNames::Pointer seriesNames = itk::ArchetypeSeriesFileNames::New();
+    std::vector<std::string> candidateFiles;
+    seriesNames->SetArchetype(fileInfo.absoluteFilePath().toStdString());
+    candidateFiles = seriesNames->GetFileNames();
+    if (candidateFiles.size() > 1)
+      {
+      archetypeFileInfo = fileInfo;
+      QMutableListIterator<QFileInfo> fileInfoIterator(fileInfoList);
+      while (fileInfoIterator.hasNext())
+        {
+        const QString &path = fileInfoIterator.next().absoluteFilePath();
+        if (path == archetypeFileInfo.absoluteFilePath())
+          {
+          continue;
+          }
+        if (std::find(candidateFiles.begin(), candidateFiles.end(), path.toStdString()) != candidateFiles.end())
+          {
+          fileInfoIterator.remove();
+          }
+        }
+      ioProperties["singleFile"] = false;
+      return true;
+      }
+    }
+  return false;
 }

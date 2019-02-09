@@ -119,3 +119,9 @@ QStringList qSlicerFileReader::loadedNodes()const
   Q_D(const qSlicerFileReader);
   return d->LoadedNodes;
 }
+
+//----------------------------------------------------------------------------
+bool qSlicerFileReader::examineFileInfoList(QFileInfoList &fileInfoList, QFileInfo &archetypeFileInfo, qSlicerIO::IOProperties &ioProperties)const
+{
+  return(false);
+}

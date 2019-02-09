@@ -223,3 +223,14 @@ void qSlicerVolumesIOOptionsWidget::updateColorSelector()
       }
     }
 }
+
+//------------------------------------------------------------------------------
+void qSlicerVolumesIOOptionsWidget::updateGUI(const qSlicerIO::IOProperties& ioProperties)
+{
+  Q_D(qSlicerVolumesIOOptionsWidget);
+  qSlicerIOOptionsWidget::updateGUI(ioProperties);
+  if (ioProperties.contains("singleFile"))
+    {
+    d->SingleFileCheckBox->setChecked(ioProperties["singleFile"].toBool());
+    }
+}

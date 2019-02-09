@@ -163,7 +163,43 @@ void qSlicerDataDialogPrivate::addDirectory(const QDir& directory)
   bool recursive = true;
   QDir::Filters filters =
     QDir::AllDirs | QDir::Files | QDir::Readable | QDir::NoDotAndDotDot;
-  foreach(QFileInfo entry, directory.entryInfoList(filters))
+  QFileInfoList fileInfoList = directory.entryInfoList(filters);
+
+  //
+  // check to see if any readers recognize the directory contents
+  // and provide an archetype.
+  //
+  qSlicerCoreIOManager* coreIOManager =
+    qSlicerCoreApplication::application()->coreIOManager();
+  QString readerDescription;
+  qSlicerIO::IOProperties ioProperties;
+  QFileInfo archetypeEntry;
+  if (coreIOManager->examineFileInfoList(fileInfoList, archetypeEntry, readerDescription, ioProperties))
+    {
+    this->addFile(archetypeEntry);
+    QString filePath = archetypeEntry.absoluteFilePath();
+    QList<QTableWidgetItem *> items = this->FileWidget->findItems(filePath, Qt::MatchExactly);
+    if (items.isEmpty())
+      {
+      qWarning() << "Couldn't add archetype widget for file: " << filePath;
+      }
+    else
+      {
+      QTableWidgetItem *item = items[0];
+      QWidget *cellWidget = this->FileWidget->cellWidget(item->row(), TypeColumn);
+      QComboBox *descriptionComboBox = dynamic_cast<QComboBox *>(cellWidget);
+      descriptionComboBox->setCurrentIndex(descriptionComboBox->findText(readerDescription));
+      cellWidget = this->FileWidget->cellWidget(item->row(), OptionsColumn);
+      qSlicerIOOptionsWidget *ioOptionsWidget = dynamic_cast<qSlicerIOOptionsWidget *> (cellWidget);
+      ioOptionsWidget->updateGUI(ioProperties);
+      }
+    }
+
+  //
+  // now add any files and directories that weren't filtered
+  // out by the ioManager
+  //
+  foreach(QFileInfo entry, fileInfoList)
     {
     if (entry.isFile())
       {

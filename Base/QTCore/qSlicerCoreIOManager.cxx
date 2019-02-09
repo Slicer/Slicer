@@ -781,3 +781,19 @@ void qSlicerCoreIOManager::setDefaultSceneFileType(QString fileType)
   Q_D(qSlicerCoreIOManager);
   d->DefaultSceneFileType = fileType;
 }
+
+//-----------------------------------------------------------------------------
+bool qSlicerCoreIOManager::examineFileInfoList(QFileInfoList &fileInfoList, QFileInfo &archetypeFileInfo, QString &readerDescription, qSlicerIO::IOProperties &ioProperties)const
+{
+  Q_D(const qSlicerCoreIOManager);
+  QList<qSlicerFileReader*> res;
+  foreach(qSlicerFileReader* reader, d->Readers)
+    {
+    if (reader->examineFileInfoList(fileInfoList, archetypeFileInfo, ioProperties))
+      {
+      readerDescription = reader->description();
+      return (true);
+      }
+    }
+  return (false);
+}
