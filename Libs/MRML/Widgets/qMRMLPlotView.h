@@ -76,6 +76,10 @@ public slots:
   /// Unselect all the points
   void RemovePlotSelections();
 
+  /// save the current plot as svg
+  void saveAsSVG(const QString &filePathPrefix);
+
+
 signals:
 
   /// When designing custom qMRMLWidget in the designer, you can connect the

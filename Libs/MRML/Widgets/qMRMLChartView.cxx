@@ -1804,8 +1804,3 @@ QSize qMRMLChartView::sizeHint()const
   // return a default size hint (invalid size)
   return QSize();
 }
-
-
-
-
-

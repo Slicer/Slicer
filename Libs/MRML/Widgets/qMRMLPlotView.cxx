@@ -55,6 +55,7 @@
 #include <vtkContextMouseEvent.h>
 #include <vtkContextScene.h>
 #include <vtkContextView.h>
+#include <vtkGL2PSExporter.h>
 #include <vtkNew.h>
 #include <vtkPen.h>
 #include <vtkPlot.h>
@@ -1116,4 +1117,16 @@ void qMRMLPlotView::updateMRMLChartAxisRangeFromWidget()
     d->MRMLPlotChartNode->SetYAxisRange(range);
     }
   d->MRMLPlotChartNode->EndModify(wasModified);
+}
+
+// ----------------------------------------------------------------------------
+void qMRMLPlotView::saveAsSVG(const QString &filePathPrefix)
+{
+  vtkNew<vtkGL2PSExporter> exporter;
+
+  exporter->SetFileFormatToSVG();
+  exporter->CompressOff();
+  exporter->SetRenderWindow(this->GetRenderWindow());
+  exporter->SetFilePrefix(filePathPrefix.toStdString().c_str());
+  exporter->Update();
 }
