@@ -93,7 +93,6 @@ QStringList qSlicerScalarOverlayReader::extensions()const
 qSlicerIOOptions* qSlicerScalarOverlayReader::options()const
 {
   qSlicerIOOptionsWidget* options = new qSlicerScalarOverlayIOOptionsWidget;
-  qDebug() << "qSlicerScalarOverlayReader::options():" << this->mrmlScene();
   options->setMRMLScene(this->mrmlScene());
   return options;
 }
