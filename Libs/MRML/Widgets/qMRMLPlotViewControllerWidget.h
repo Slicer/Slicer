@@ -71,6 +71,9 @@ public slots:
   /// the extent of the chart axes.
   void fitPlotToAxes();
 
+  /// Save the selected plot to a file
+  void onSaveButton();
+
 protected slots:
   void updateWidgetFromMRML();
 

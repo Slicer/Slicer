@@ -20,7 +20,7 @@
 // Qt includes
 #include <QActionGroup>
 #include <QDebug>
-#include <QInputDialog>
+#include <QFileDialog>
 #include <QLabel>
 #include <QMenu>
 #include <QMessageBox>
@@ -101,6 +101,8 @@ void qMRMLPlotViewControllerWidgetPrivate::setupPopupUi()
   this->connect(this->plotTypeComboBox, SIGNAL(currentIndexChanged(int)), SLOT(onPlotTypeChanged(int)));
   this->connect(this->interactionModeComboBox, SIGNAL(currentIndexChanged(int)), SLOT(onInteractionModeChanged(int)));
   QObject::connect(this->actionFit_to_window, SIGNAL(triggered()), q, SLOT(fitPlotToAxes()));
+
+  QObject::connect(this->savePushButton, SIGNAL(clicked()), q, SLOT(onSaveButton()));
 
   // Connect the scene
   QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), this->plotChartComboBox, SLOT(setMRMLScene(vtkMRMLScene*)));
@@ -316,6 +318,33 @@ void qMRMLPlotViewControllerWidget::fitPlotToAxes()
     return;
     }
   d->PlotView->fitToContent();
+}
+
+//---------------------------------------------------------------------------
+void qMRMLPlotViewControllerWidget::onSaveButton()
+{
+  Q_D(qMRMLPlotViewControllerWidget);
+  if(!d->PlotView || !d->PlotViewNode)
+    {
+    return;
+    }
+
+  vtkMRMLPlotChartNode* mrmlPlotChartNode = d->GetPlotChartNodeFromView();
+
+  QString name;
+  if (mrmlPlotChartNode)
+    {
+    name = mrmlPlotChartNode->GetName();
+    }
+
+  QString fileName = QFileDialog::getSaveFileName(this, tr("Save as SVG"),
+    name, tr("Scalable Vector Graphics (*.svg)"));
+  if (!fileName.isEmpty())
+    {
+    QFileInfo fileInfo(fileName);
+    QString filePathPrefix = fileInfo.absoluteFilePath() + "/" + fileInfo.completeBaseName();
+    d->PlotView->saveAsSVG(filePathPrefix);
+    }
 }
 
 //---------------------------------------------------------------------------
