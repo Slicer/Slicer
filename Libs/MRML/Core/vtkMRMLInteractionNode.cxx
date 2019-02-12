@@ -308,10 +308,12 @@ void vtkMRMLInteractionNode::SwitchToPersistentPlaceMode()
     {
     return;
     }
+  int disabledModify = this->StartModify();
   this->NormalizeAllMouseModes();
   this->SetLastInteractionMode(this->GetCurrentInteractionMode());
   this->SetPlaceModePersistence(1);
   this->SetCurrentInteractionMode(vtkMRMLInteractionNode::Place);
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
@@ -322,10 +324,12 @@ void vtkMRMLInteractionNode::SwitchToSinglePlaceMode()
     {
     return;
     }
+  int disabledModify = this->StartModify();
   this->NormalizeAllMouseModes();
   this->SetLastInteractionMode(this->GetCurrentInteractionMode());
   this->SetPlaceModePersistence(0);
   this->SetCurrentInteractionMode(vtkMRMLInteractionNode::Place);
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
@@ -336,9 +340,11 @@ void vtkMRMLInteractionNode::SwitchToViewTransformMode()
     {
     return;
     }
+  int disabledModify = this->StartModify();
   this->SetLastInteractionMode(this->GetCurrentInteractionMode());
   // only set transform mode persistence, keep the state of the pick and place
   // mode persistence
   this->SetTransformModePersistence(1);
   this->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
+  this->EndModify(disabledModify);
 }
