@@ -24,6 +24,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     self.acquisitionModeling = None
     self.defaultStudyID = 'SLICER10001' #TODO: What should be the new study ID?
 
+    self.tags['sopClassUID'] = "0008,0016"
     self.tags['seriesDescription'] = "0008,103e"
     self.tags['seriesUID'] = "0020,000E"
     self.tags['seriesNumber'] = "0020,0011"
@@ -217,15 +218,23 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
           loadables.append(loadable)
 
     # remove any files from loadables that don't have pixel data (no point sending them to ITK for reading)
+    # also remove DICOM SEG, since it is not handled by ITK readers
     newLoadables = []
+    segLoadables = []
     for loadable in loadables:
       newFiles = []
+      segLoadable = False
       for file in loadable.files:
         if slicer.dicomDatabase.fileValue(file,self.tags['pixelData'])!='':
           newFiles.append(file)
-      if len(newFiles) > 0:
+        if slicer.dicomDatabase.fileValue(file,self.tags['sopClassUID'])=='1.2.840.10008.5.1.4.1.1.66.4':
+          segLoadable = True
+          logging.error('Please install Quantitative Reporting extension to enable loading of DICOM Segmentation objects')
+      if len(newFiles) > 0 and not segLoadable:
         loadable.files = newFiles
         newLoadables.append(loadable)
+      elif segLoadable:
+        continue
       else:
         # here all files in have no pixel data, so they might be
         # secondary capture images which will read, so let's pass
