@@ -335,13 +335,15 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
           d->LoadedNodes << node->GetID();
           }
         }
+      res = !d->LoadedNodes.isEmpty();
       }
     else if(d->Action == qSlicerFileDialog::Write)
       {
-      ioManager->saveNodes(this->fileType(), properties);
+      res = ioManager->saveNodes(this->fileType(), properties);
       }
     else
       {
+      res = false;
       Q_ASSERT(d->Action == qSlicerFileDialog::Read ||
                d->Action == qSlicerFileDialog::Write);
       }
