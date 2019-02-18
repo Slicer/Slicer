@@ -35,7 +35,6 @@
 // Qt includes
 #include <QAction>
 #include <QDebug>
-#include <QStandardItem>
 #include <QVariant>
 
 // MRML includes
@@ -215,6 +214,43 @@ QIcon qSlicerSubjectHierarchyFolderPlugin::visibilityIcon(int visible)
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyFolderPlugin::setDisplayVisibility(vtkIdType itemID, int visible)
+{
+  if (this->isApplyColorToBranchEnabledForItem(itemID))
+    {
+    // Use only the folder display node when apply color on branch is enabled.
+    // This is necessary because the displayable manager considers this display node if the setting is turned on.
+    vtkMRMLModelDisplayNode* modelDisplayNode = this->modelDisplayNodeForItem(itemID);
+    if (!modelDisplayNode)
+      {
+      modelDisplayNode = this->createModelDisplayNodeForItem(itemID);
+      }
+    modelDisplayNode->SetVisibility(visible);
+    }
+  else
+    {
+    qSlicerSubjectHierarchyPluginHandler::instance()->defaultPlugin()->setDisplayVisibility(itemID, visible);
+    }
+}
+
+//-----------------------------------------------------------------------------
+int qSlicerSubjectHierarchyFolderPlugin::getDisplayVisibility(vtkIdType itemID)const
+{
+  if (this->isApplyColorToBranchEnabledForItem(itemID))
+    {
+    // Use only the folder display node when apply color on branch is enabled
+    // This is necessary because the displayable manager considers this display node if the setting is turned on.
+    vtkMRMLModelDisplayNode* modelDisplayNode = this->modelDisplayNodeForItem(itemID);
+    if (modelDisplayNode)
+      {
+      return modelDisplayNode->GetVisibility();
+      }
+    }
+
+  return qSlicerSubjectHierarchyPluginHandler::instance()->defaultPlugin()->getDisplayVisibility(itemID);
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyFolderPlugin::setDisplayColor(vtkIdType itemID, QColor color, QMap<int, QVariant> terminologyMetaData)
 {
   Q_UNUSED(terminologyMetaData);
@@ -238,19 +274,22 @@ void qSlicerSubjectHierarchyFolderPlugin::setDisplayColor(vtkIdType itemID, QCol
     vtkMRMLModelDisplayNode* modelDisplayNode = this->modelDisplayNodeForItem(itemID);
     if (!modelDisplayNode)
       {
-      modelDisplayNode = vtkMRMLModelDisplayNode::New();
-      modelDisplayNode->SetHideFromEditors(0);
-      modelDisplayNode->SetName(shNode->GetItemName(itemID).c_str());
-      shNode->GetScene()->AddNode(modelDisplayNode);
-      modelDisplayNode->Delete(); // Release ownership to scene only
-      shNode->SetItemDataNode(itemID, modelDisplayNode);
+      modelDisplayNode = this->createModelDisplayNodeForItem(itemID);
       }
 
     modelDisplayNode->SetColor(color.redF(), color.greenF(), color.blueF());
 
+    // Call modified on the folder item
+    shNode->ItemModified(itemID);
     // Call modified on child model nodes
-    this->callModifiedOnModelNodesInCurrentBranch();
-   }
+    this->callModifiedOnModelNodesInBranch(itemID);
+
+    // If apply color to branch is not active then ask user if they want to enable that option
+    if (!this->isApplyColorToBranchEnabledForItem(itemID))
+      {
+      this->setApplyColorToBranchEnabledForItem(itemID, true);
+      }
+   } // If color changed
 }
 
 //-----------------------------------------------------------------------------
@@ -374,14 +413,7 @@ void qSlicerSubjectHierarchyFolderPlugin::showVisibilityContextMenuActionsForIte
   // Folder
   if (this->canOwnSubjectHierarchyItem(itemID))
     {
-    bool applyColorToBranch = false;
-    if (shNode->HasItemAttribute(itemID, vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyApplyColorToBranchAttributeName()))
-      {
-      QString applyColorToBranchStr( shNode->GetItemAttribute(
-          itemID, vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyApplyColorToBranchAttributeName()).c_str() );
-      QVariant applyColorToBranchVar = QVariant(applyColorToBranchStr);
-      applyColorToBranch = applyColorToBranchVar.toBool();
-      }
+    bool applyColorToBranch = this->isApplyColorToBranchEnabledForItem(itemID);
 
     d->ApplyColorToBranchAction->blockSignals(true);
     d->ApplyColorToBranchAction->setChecked(applyColorToBranch);
@@ -870,23 +902,17 @@ void qSlicerSubjectHierarchyFolderPlugin::onApplyColorToBranchToggled(bool on)
     return;
     }
 
-  std::string attributeName = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyApplyColorToBranchAttributeName();
-  if (on)
-    {
-    shNode->SetItemAttribute(currentItemID, attributeName, "1" );
-    }
-  else
-    {
-    shNode->RemoveItemAttribute(currentItemID, attributeName);
-    }
-
-  // Call modified on child model nodes
-  this->callModifiedOnModelNodesInCurrentBranch();
+  this->setApplyColorToBranchEnabledForItem(currentItemID, on);
 }
 
 //-----------------------------------------------------------------------------
 vtkMRMLModelDisplayNode* qSlicerSubjectHierarchyFolderPlugin::modelDisplayNodeForItem(vtkIdType itemID)const
 {
+  if (!itemID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid input item";
+    return NULL;
+    }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
     {
@@ -909,23 +935,69 @@ vtkMRMLModelDisplayNode* qSlicerSubjectHierarchyFolderPlugin::modelDisplayNodeFo
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyFolderPlugin::callModifiedOnModelNodesInCurrentBranch()
+vtkMRMLModelDisplayNode* qSlicerSubjectHierarchyFolderPlugin::createModelDisplayNodeForItem(vtkIdType itemID)
 {
+  if (!itemID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid input item";
+    return NULL;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return NULL;
+    }
+
+  vtkNew<vtkMRMLModelDisplayNode> modelDisplayNode;
+  modelDisplayNode->SetName(shNode->GetItemName(itemID).c_str());
+  shNode->GetScene()->AddNode(modelDisplayNode);
+
+  vtkMRMLNode* dataNode = shNode->GetItemDataNode(itemID);
+  vtkMRMLModelHierarchyNode* modelHierarchyNode = vtkMRMLModelHierarchyNode::SafeDownCast(dataNode);
+  if (modelHierarchyNode)
+    {
+    // If folder item has a model hierarchy node then associate the display node to that
+    modelHierarchyNode->SetAndObserveDisplayNodeID(modelDisplayNode->GetID());
+    }
+  else if (!dataNode)
+    {
+    // If there is no associated data node then associate display node to folder item
+    modelDisplayNode->SetHideFromEditors(0); // Need to set this so that the folder shows up in SH
+    shNode->SetItemDataNode(itemID, modelDisplayNode);
+
+    // Observe display node modified to trigger updates
+    qvtkConnect( modelDisplayNode, vtkCommand::ModifiedEvent, this, SLOT( onDisplayNodeModified(vtkObject*) ) );
+    }
+  else
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid associated data node " << dataNode->GetName()
+      << " for folder item " << shNode->GetItemName(itemID).c_str();
+    shNode->GetScene()->RemoveNode(modelDisplayNode);
+    return NULL;
+    }
+
+  shNode->ItemModified(itemID);
+  return modelDisplayNode;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyFolderPlugin::callModifiedOnModelNodesInBranch(vtkIdType itemID)
+{
+  if (!itemID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid input item";
+    return;
+    }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
     {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
     }
-  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
-  if (!currentItemID)
-    {
-    qCritical() << Q_FUNC_INFO << ": Invalid current item";
-    return;
-    }
 
   std::vector<vtkIdType> childItemIDs;
-  shNode->GetItemChildren(currentItemID, childItemIDs, true);
+  shNode->GetItemChildren(itemID, childItemIDs, true);
   std::vector<vtkIdType>::iterator childIt;
   for (childIt=childItemIDs.begin(); childIt!=childItemIDs.end(); ++childIt)
     {
@@ -935,5 +1007,107 @@ void qSlicerSubjectHierarchyFolderPlugin::callModifiedOnModelNodesInCurrentBranc
       {
       modelNode->GetDisplayNode()->Modified();
       }
+    }
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerSubjectHierarchyFolderPlugin::isApplyColorToBranchEnabledForItem(vtkIdType itemID)const
+{
+  if (!itemID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid input item";
+    return false;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return false;
+    }
+
+  bool applyColorToBranch = false;
+  vtkMRMLModelHierarchyNode* modelHierarchyNode = vtkMRMLModelHierarchyNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+  if (modelHierarchyNode)
+    {
+    // If folder item has a model hierarchy node then get Expanded property from it, as it is used by
+    // the displayable manager for model hierarchy nodes
+    //TODO: All model hierarchy usage will be removed after 4.10.1, including this one
+    applyColorToBranch = (!modelHierarchyNode->GetExpanded());
+    }
+  else if (shNode->HasItemAttribute(itemID, vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyApplyColorToBranchAttributeName()))
+    {
+    // If there is no model hierarchy node then use the attribute
+    QString applyColorToBranchStr( shNode->GetItemAttribute(
+        itemID, vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyApplyColorToBranchAttributeName()).c_str() );
+    QVariant applyColorToBranchVar = QVariant(applyColorToBranchStr);
+    applyColorToBranch = applyColorToBranchVar.toBool();
+    }
+
+  return applyColorToBranch;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyFolderPlugin::setApplyColorToBranchEnabledForItem(vtkIdType itemID, bool enabled)
+{
+  if (!itemID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid input item";
+    return;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+
+  vtkMRMLModelHierarchyNode* modelHierarchyNode = vtkMRMLModelHierarchyNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+  if (modelHierarchyNode)
+    {
+    // If folder item has a model hierarchy node then set Expanded property from it, as it is used by
+    // the displayable manager for model hierarchy nodes
+    //TODO: All model hierarchy usage will be removed after 4.10.1, including this one
+    modelHierarchyNode->SetExpanded(!enabled);
+    }
+  else
+    {
+    std::string attributeName = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyApplyColorToBranchAttributeName();
+    if (enabled)
+      {
+      shNode->SetItemAttribute(itemID, attributeName, "1" );
+      }
+    else
+      {
+      shNode->RemoveItemAttribute(itemID, attributeName);
+      }
+    }
+
+  // Call modified on child model nodes
+  this->callModifiedOnModelNodesInBranch(itemID);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyFolderPlugin::onDisplayNodeModified(vtkObject* nodeObject)
+{
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+
+  vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(nodeObject);
+  if (modelDisplayNode)
+    {
+    vtkIdType itemID = shNode->GetItemByDataNode(modelDisplayNode);
+    if (!itemID)
+      {
+      qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy item for node " << modelDisplayNode->GetName();
+      return;
+      }
+    // Call modified on the folder item
+    shNode->ItemModified(itemID);
+    // Call modified on child model nodes
+    this->callModifiedOnModelNodesInBranch(itemID);
     }
 }

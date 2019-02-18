@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>615</width>
-    <height>664</height>
+    <height>790</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -20,7 +20,16 @@
    <string>Models</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -28,11 +37,20 @@
      <property name="orientations">
       <set>Qt::Vertical</set>
      </property>
-     <property name="sizeGripInside" stdset="0">
+     <property name="sizeGripInside">
       <bool>false</bool>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_5">
-      <property name="margin">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
        <number>0</number>
       </property>
       <item>
@@ -99,11 +117,11 @@
          </spacer>
         </item>
         <item>
-         <widget class="ctkSearchBox" name="ScrollToModelSearchBox">
+         <widget class="ctkSearchBox" name="FilterModelSearchBox">
           <property name="placeholderText">
-           <string>Scroll to...</string>
+           <string>Filter by name...</string>
           </property>
-          <property name="showSearchIcon" stdset="0">
+          <property name="showSearchIcon">
            <bool>true</bool>
           </property>
          </widget>
@@ -139,39 +157,18 @@
        </layout>
       </item>
       <item>
-       <widget class="qMRMLTreeView" name="ModelHierarchyTreeView">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
+       <widget class="qMRMLSubjectHierarchyTreeView" name="SubjectHierarchyTreeView">
         <property name="dragDropMode">
          <enum>QAbstractItemView::InternalMove</enum>
         </property>
-        <property name="selectionMode">
-         <enum>QAbstractItemView::ExtendedSelection</enum>
+        <property name="indentation">
+         <number>12</number>
         </property>
-        <property name="headerHidden">
+        <property name="editMenuActionVisible">
+         <bool>false</bool>
+        </property>
+        <property name="multiSelection">
          <bool>true</bool>
-        </property>
-        <property name="showHidden" stdset="0">
-         <bool>false</bool>
-        </property>
-        <property name="sceneModelType" stdset="0">
-         <string>ModelHierarchy</string>
-        </property>
-        <property name="nodeTypes" stdset="0">
-         <stringlist>
-          <string>vtkMRMLModelHierarchyNode</string>
-          <string>vtkMRMLModelNode</string>
-         </stringlist>
-        </property>
-        <property name="renameMenuActionVisible" stdset="0">
-         <bool>false</bool>
-        </property>
-        <property name="deleteMenuActionVisible" stdset="0">
-         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -179,37 +176,37 @@
     </widget>
    </item>
    <item>
-    <widget class="ctkCollapsibleButton" name="InformationButton" native="true">
-     <property name="text" stdset="0">
+    <widget class="ctkCollapsibleButton" name="InformationButton">
+     <property name="text">
       <string>Information</string>
      </property>
-     <property name="collapsed" stdset="0">
+     <property name="collapsed">
       <bool>true</bool>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="qMRMLModelInfoWidget" name="MRMLModelInfoWidget" native="true"/>
+       <widget class="qMRMLModelInfoWidget" name="MRMLModelInfoWidget"/>
       </item>
      </layout>
     </widget>
    </item>
    <item>
-    <widget class="ctkCollapsibleButton" name="DisplayButton" native="true">
+    <widget class="ctkCollapsibleButton" name="DisplayButton">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="text" stdset="0">
+     <property name="text">
       <string>Display</string>
      </property>
-     <property name="collapsed" stdset="0">
+     <property name="collapsed">
       <bool>false</bool>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
-       <widget class="qMRMLModelDisplayNodeWidget" name="ModelDisplayWidget" native="true">
+       <widget class="qMRMLModelDisplayNodeWidget" name="ModelDisplayWidget">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -225,29 +222,29 @@
     </widget>
    </item>
    <item>
-    <widget class="qMRMLNodeComboBox" name="ClipModelsNodeComboBox" native="true">
-     <property name="nodeTypes" stdset="0">
+    <widget class="qMRMLNodeComboBox" name="ClipModelsNodeComboBox">
+     <property name="nodeTypes">
       <stringlist>
        <string>vtkMRMLClipModelsNode</string>
       </stringlist>
      </property>
-     <property name="showHidden" stdset="0">
+     <property name="showHidden">
       <bool>true</bool>
      </property>
-     <property name="addEnabled" stdset="0">
+     <property name="addEnabled">
       <bool>false</bool>
      </property>
-     <property name="removeEnabled" stdset="0">
+     <property name="removeEnabled">
       <bool>false</bool>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="ctkCollapsibleButton" name="ClippingButton" native="true">
-     <property name="text" stdset="0">
+    <widget class="ctkCollapsibleButton" name="ClippingButton">
+     <property name="text">
       <string>Clipping Planes</string>
      </property>
-     <property name="collapsed" stdset="0">
+     <property name="collapsed">
       <bool>true</bool>
      </property>
      <layout class="QFormLayout" name="formLayout">
@@ -309,14 +306,6 @@
    <header>qMRMLNodeComboBox.h</header>
   </customwidget>
   <customwidget>
-   <class>qMRMLTreeView</class>
-   <extends>QTreeView</extends>
-   <header>qMRMLTreeView.h</header>
-   <slots>
-    <slot>setSceneModel(int)</slot>
-   </slots>
-  </customwidget>
-  <customwidget>
    <class>qSlicerWidget</class>
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
@@ -326,6 +315,11 @@
    <class>qMRMLModelDisplayNodeWidget</class>
    <extends>QWidget</extends>
    <header>qMRMLModelDisplayNodeWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLSubjectHierarchyTreeView</class>
+   <extends>QTreeView</extends>
+   <header>qMRMLSubjectHierarchyTreeView.h</header>
   </customwidget>
   <customwidget>
    <class>ctkCollapsibleButton</class>
@@ -348,54 +342,6 @@
  <resources/>
  <connections>
   <connection>
-   <sender>ModelHierarchyTreeView</sender>
-   <signal>currentNodeChanged(vtkMRMLNode*)</signal>
-   <receiver>MRMLModelInfoWidget</receiver>
-   <slot>setMRMLModelNode(vtkMRMLNode*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>138</x>
-     <y>70</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>166</x>
-     <y>178</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ModelHierarchyTreeView</sender>
-   <signal>currentNodeChanged(vtkMRMLNode*)</signal>
-   <receiver>ModelDisplayWidget</receiver>
-   <slot>setMRMLModelOrHierarchyNode(vtkMRMLNode*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>200</x>
-     <y>70</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>231</x>
-     <y>234</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>qSlicerModelsModuleWidget</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>ModelHierarchyTreeView</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>414</x>
-     <y>75</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>354</x>
-     <y>70</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>qSlicerModelsModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>ClipModelsNodeComboBox</receiver>
@@ -407,7 +353,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>465</x>
-     <y>316</y>
+     <y>740</y>
     </hint>
    </hints>
   </connection>
@@ -419,11 +365,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>255</x>
-     <y>316</y>
+     <y>740</y>
     </hint>
     <hint type="destinationlabel">
-     <x>256</x>
-     <y>326</y>
+     <x>265</x>
+     <y>780</y>
     </hint>
    </hints>
   </connection>
@@ -434,8 +380,8 @@
    <slot>hideAllModels()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>115</x>
-     <y>10</y>
+     <x>579</x>
+     <y>11</y>
     </hint>
     <hint type="destinationlabel">
      <x>207</x>
@@ -450,8 +396,8 @@
    <slot>showAllModels()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>479</x>
-     <y>12</y>
+     <x>613</x>
+     <y>13</y>
     </hint>
     <hint type="destinationlabel">
      <x>528</x>
@@ -460,34 +406,18 @@
    </hints>
   </connection>
   <connection>
-   <sender>ScrollToModelSearchBox</sender>
-   <signal>textChanged(QString)</signal>
-   <receiver>ModelHierarchyTreeView</receiver>
-   <slot>scrollTo(QString)</slot>
+   <sender>qSlicerModelsModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>SubjectHierarchyTreeView</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>311</x>
-     <y>17</y>
+     <x>267</x>
+     <y>157</y>
     </hint>
     <hint type="destinationlabel">
-     <x>296</x>
-     <y>84</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ScrollToModelSearchBox</sender>
-   <signal>returnPressed()</signal>
-   <receiver>ModelHierarchyTreeView</receiver>
-   <slot>scrollToNext()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>335</x>
-     <y>14</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>333</x>
-     <y>71</y>
+     <x>288</x>
+     <y>56</y>
     </hint>
    </hints>
   </connection>

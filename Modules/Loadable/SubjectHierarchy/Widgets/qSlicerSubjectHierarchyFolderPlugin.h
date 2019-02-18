@@ -121,6 +121,13 @@ public:
   /// Open module belonging to item and set inputs in opened module
   virtual void editProperties(vtkIdType itemID);
 
+  /// Set display visibility of an owned subject hierarchy item
+  virtual void setDisplayVisibility(vtkIdType itemID, int visible);
+
+  /// Get display visibility of an owned subject hierarchy item
+  /// \return Display visibility (0: hidden, 1: shown, 2: partially shown)
+  virtual int getDisplayVisibility(vtkIdType itemID)const;
+
   /// Set display color of an owned subject hierarchy item
   /// In case of folders only color is set but no terminology. The properties are not used directly,
   /// but only if applied to the branch (similarly to how it worked in model hierarchies).
@@ -235,13 +242,25 @@ protected slots:
   /// Toggle apply color to branch
   void onApplyColorToBranchToggled(bool);
 
+  /// Called when the display nodes created by the plugin are modified. Triggers updates
+  void onDisplayNodeModified(vtkObject* nodeObject);
+
 protected:
   /// Retrieve model display node for given item. If the folder item has an associated model display
-  /// node (created by the plugin, then return that). Otherwise see if it has a model hierarchy node
+  /// node (created by the plugin), then return that. Otherwise see if it has a model hierarchy node
   /// with a display node.
   vtkMRMLModelDisplayNode* modelDisplayNodeForItem(vtkIdType itemID)const;
 
-  void callModifiedOnModelNodesInCurrentBranch();
+  /// Create model display node for given item. If the folder item has an associated model hierarchy
+  /// node, then create a display node associated to that. Otherwise create display node for folder item
+  vtkMRMLModelDisplayNode* createModelDisplayNodeForItem(vtkIdType itemID);
+
+  /// Determine if apply color to branch option is enabled to a given item or not
+  bool isApplyColorToBranchEnabledForItem(vtkIdType itemID)const;
+  /// Determine if apply color to branch option is enabled to a given item or not
+  void setApplyColorToBranchEnabledForItem(vtkIdType itemID, bool enabled);
+
+  void callModifiedOnModelNodesInBranch(vtkIdType itemID);
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyFolderPluginPrivate> d_ptr;

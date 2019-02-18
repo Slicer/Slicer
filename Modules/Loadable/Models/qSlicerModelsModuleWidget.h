@@ -21,6 +21,9 @@
 #ifndef __qSlicerModelsModuleWidget_h
 #define __qSlicerModelsModuleWidget_h
 
+// CTK includes
+#include "ctkVTKObject.h"
+
 // SlicerQt includes
 #include "qSlicerAbstractModuleWidget.h"
 
@@ -28,32 +31,31 @@
 
 class qSlicerModelsModuleWidgetPrivate;
 class vtkMRMLNode;
-class QModelIndex;
 class vtkMRMLSelectionNode;
 
 /// \ingroup Slicer_QtModules_Models
-class Q_SLICER_QTMODULES_MODELS_EXPORT qSlicerModelsModuleWidget
-  : public qSlicerAbstractModuleWidget
+class Q_SLICER_QTMODULES_MODELS_EXPORT qSlicerModelsModuleWidget : public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
+  QVTK_OBJECT
 
 public:
-
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerModelsModuleWidget(QWidget *parent=0);
   virtual ~qSlicerModelsModuleWidget();
 
-  vtkMRMLSelectionNode* getSelectionNode();
-
+  virtual void enter();
+  virtual void exit();
   virtual bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString());
+
+  vtkMRMLSelectionNode* getSelectionNode();
 
 public slots:
   virtual void setMRMLScene(vtkMRMLScene* scene);
 
-  void insertHierarchyNode();
-  void deleteMultipleModels();
-  void renameMultipleModels();
-  void onCurrentNodeChanged(vtkMRMLNode* newCurrentNode);
+  /// Set current node associated to the selected subject hierarchy item to the widgets
+  void setCurrentNodeFromSubjectHierarchyItem(vtkIdType itemID);
+
   void includeFiberBundles(bool include);
   void onDisplayClassChanged(int index);
   void onClippingConfigurationButtonClicked();
@@ -67,14 +69,18 @@ public slots:
   void hideAllModels();
   void showAllModels();
 
-protected:
-  QScopedPointer<qSlicerModelsModuleWidgetPrivate> d_ptr;
+protected slots:
+  /// Called when a subject hierarchy item is modified.
+  /// Updates current item selection to reflect changes in item (such as display node creation)
+  void onSubjectHierarchyItemModified(vtkObject* caller, void* callData);
 
+protected:
   virtual void setup();
 
   void updateWidgetFromSelectionNode();
 
-  void updateTreeViewModel();
+protected:
+  QScopedPointer<qSlicerModelsModuleWidgetPrivate> d_ptr;
 
 private:
   Q_DECLARE_PRIVATE(qSlicerModelsModuleWidget);
