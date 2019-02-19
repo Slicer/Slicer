@@ -62,6 +62,7 @@
 #include <vtkTriangleFilter.h>
 #include <vtkTrivialProducer.h>
 #include <vtksys/SystemTools.hxx>
+#include <vtksys/RegularExpression.hxx>
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -2117,7 +2118,8 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentatio
     vtkNew<vtkTransformPolyDataFilter> transformPolyDataToOutput;
     transformPolyDataToOutput->SetTransform(transformRasToLps.GetPointer());
     transformPolyDataToOutput->SetInputConnection(appendPolyData->GetOutputPort());
-    std::string filePath = destinationFolder + "/" + segmentationNode->GetName() + ".stl";
+    std::string safeFileName = vtkSlicerSegmentationsModuleLogic::GetSafeFileName(segmentationNode->GetName());
+    std::string filePath = destinationFolder + "/" + safeFileName + ".stl";
     triangulator->SetInputConnection(transformPolyDataToOutput->GetOutputPort());
     writer->SetFileName(filePath.c_str());
     try
@@ -2157,7 +2159,8 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentatio
       transformPolyDataToOutput->SetTransform(transformRasToLps.GetPointer());
       transformPolyDataToOutput->SetInputData(segmentPolyData.GetPointer());
       std::string segmentName = segmentationNode->GetSegmentation()->GetSegment(*segmentIdIt)->GetName();
-      std::string filePath = destinationFolder + "/" + segmentationNode->GetName() + "_" + segmentName + ".stl";
+      std::string safeFileName = vtkSlicerSegmentationsModuleLogic::GetSafeFileName(segmentationNode->GetName());
+      std::string filePath = destinationFolder + "/" + safeFileName + "_" + segmentName + ".stl";
       triangulator->SetInputConnection(transformPolyDataToOutput->GetOutputPort());
       writer->SetFileName(filePath.c_str());
       try
@@ -2235,7 +2238,8 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentatio
 
   vtkNew<vtkOBJExporter> exporter;
   exporter->SetRenderWindow(renderWindow.GetPointer());
-  std::string fullNameWithoutExtension = destinationFolder + "/" + segmentationNode->GetName();
+  std::string safeFileName = vtkSlicerSegmentationsModuleLogic::GetSafeFileName(segmentationNode->GetName());
+  std::string fullNameWithoutExtension = destinationFolder + "/" + safeFileName;
   exporter->SetFilePrefix(fullNameWithoutExtension.c_str());
 
 #if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
@@ -2276,7 +2280,7 @@ vtkMRMLSegmentationNode* vtkSlicerSegmentationsModuleLogic::GetDefaultSegmentati
     return NULL;
     }
 
-  // Setup a default segmentation node so that the default settings are propagated to all new segmentation nodess
+  // Setup a default segmentation node so that the default settings are propagated to all new segmentation nodes
   vtkSmartPointer<vtkMRMLNode> defaultNode = scene->GetDefaultNodeByClass("vtkMRMLSegmentationNode");
   if (!defaultNode)
     {
@@ -2332,4 +2336,24 @@ void vtkSlicerSegmentationsModuleLogic::SetDefaultSurfaceSmoothingEnabled(bool e
   defaultSegmentationNode->GetSegmentation()->SetConversionParameter(
     vtkBinaryLabelmapToClosedSurfaceConversionRule::GetSmoothingFactorParameterName(),
     smoothingFactorStr);
+}
+
+// --------------------------------------------------------------------------
+std::string vtkSlicerSegmentationsModuleLogic::GetSafeFileName(std::string originalName)
+{
+  // Remove characters from node name that cannot be used in file names
+  // (same method as in qSlicerFileNameItemDelegate::fixupFileName)
+  std::string safeName("");
+  vtksys::RegularExpression regExp("[A-Za-z0-9\\ \\-\\_\\.\\(\\)\\$\\!\\~\\#\\'\\%\\^\\{\\}]");
+  for (int i=0; i<originalName.size(); ++i)
+    {
+    std::string currentCharStr("");
+    currentCharStr += originalName[i];
+    if (regExp.find(currentCharStr))
+      {
+      safeName += currentCharStr;
+      }
+    }
+
+  return safeName;
 }
