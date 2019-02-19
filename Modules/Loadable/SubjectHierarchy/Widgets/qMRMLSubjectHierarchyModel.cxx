@@ -235,7 +235,7 @@ void qMRMLSubjectHierarchyModel::setMRMLScene(vtkMRMLScene* scene)
     }
 
   d->MRMLScene = scene;
-  this->setSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(scene));
+  this->setSubjectHierarchyNode(scene ? vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(scene) : NULL);
 
   if (scene)
     {
@@ -244,10 +244,6 @@ void qMRMLSubjectHierarchyModel::setMRMLScene(vtkMRMLScene* scene)
     scene->AddObserver(vtkMRMLScene::StartBatchProcessEvent, d->CallBack);
     scene->AddObserver(vtkMRMLScene::EndBatchProcessEvent, d->CallBack);
     scene->AddObserver(vtkMRMLScene::NodeRemovedEvent, d->CallBack);
-    }
-  else
-    {
-    qWarning() << Q_FUNC_INFO << ": Invalid MRML scene set";
     }
 }
 

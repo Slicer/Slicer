@@ -29,12 +29,14 @@
 #include "vtkSlicerModelsLogic.h"
 
 // MRML includes
-#include <qMRMLTreeView.h>
 #include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLModelHierarchyNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLViewNode.h>
+
+// Subject hierarchy widgets
+#include <qMRMLSubjectHierarchyTreeView.h>
 
 // VTK includes
 #include <vtkNew.h>
@@ -84,7 +86,7 @@ void qSlicerModelsModuleWidgetTester::testClearCurrentNode()
   moduleWidget->show();
 
   // Make the model item current
-  qMRMLTreeView* view = moduleWidget->findChild<qMRMLTreeView*>();
+  qMRMLSubjectHierarchyTreeView* view = moduleWidget->findChild<qMRMLSubjectHierarchyTreeView*>();
   view->setCurrentNode(modelNode);
 
   // When the scene is cleared (EndCloseEvent), only the top-level nodes are
