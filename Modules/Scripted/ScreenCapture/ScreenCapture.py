@@ -851,7 +851,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
       # no view is specified, capture the entire view layout
 
       # Simply using grabwidget on the view layout frame would grab the screen without background:
-      # img = qt.QPixmap.grabWidget(slicer.app.layoutManager().viewport())
+      # img = ctk.ctkWidgetsUtils.grabWidget(slicer.app.layoutManager().viewport())
 
       # Grab the main window and use only the viewport's area
       allViews = slicer.app.layoutManager().viewport()
@@ -869,7 +869,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
       if (imageSize.y() & 1 == 1):
         imageSize.setY(imageSize.y()-1)
 
-      img = qt.QPixmap.grabWidget(slicer.util.mainWindow(), topLeft.x(), topLeft.y(), imageSize.x(), imageSize.y())
+      img = ctk.ctkWidgetsUtils.grabWidget(slicer.util.mainWindow(), qt.QRect(topLeft.x(), topLeft.y(), imageSize.x(), imageSize.y()))
       img.save(filename)
       return
 
@@ -970,7 +970,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
                         outputFilenamePattern, captureAllViews = None, transparentBackground = False):
 
     self.cancelRequested = False
-    
+
     if not captureAllViews and not sliceNode.IsMappedInLayout():
       raise ValueError('Selected slice view is not visible in the current layout.')
 
