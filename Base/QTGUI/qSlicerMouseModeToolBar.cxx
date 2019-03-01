@@ -472,10 +472,7 @@ void qSlicerMouseModeToolBar::changeCursorTo(QCursor cursor)
       {
       continue;
       }
-    threeDView->setCursor(cursor);
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
-    threeDView->VTKWidget()->setQVTKCursor(cursor);
-#endif
+    threeDView->setViewCursor(cursor);
     }
 
   // Updated all mapped slicer viewers

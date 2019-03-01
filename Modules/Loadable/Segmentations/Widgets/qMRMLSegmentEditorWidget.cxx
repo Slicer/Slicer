@@ -805,7 +805,7 @@ void qMRMLSegmentEditorWidgetPrivate::setEffectCursor(qSlicerSegmentEditorAbstra
       }
     if (effect && effect->showEffectCursorInSliceView())
       {
-      sliceWidget->sliceView()->setCursor(effect->createCursor(sliceWidget));
+      sliceWidget->sliceView()->setViewCursor(effect->createCursor(sliceWidget));
       }
     else
       {
@@ -821,7 +821,7 @@ void qMRMLSegmentEditorWidgetPrivate::setEffectCursor(qSlicerSegmentEditorAbstra
       }
     if (effect && effect->showEffectCursorInThreeDView())
       {
-      threeDWidget->threeDView()->setCursor(effect->createCursor(threeDWidget));
+      threeDWidget->threeDView()->setViewCursor(effect->createCursor(threeDWidget));
       }
     else
       {
