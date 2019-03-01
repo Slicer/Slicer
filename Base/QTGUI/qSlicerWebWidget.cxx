@@ -155,6 +155,9 @@ void qSlicerWebWidgetPrivate::init()
   QObject::connect(this->WebView, SIGNAL(loadStarted()),
                    q, SLOT(onLoadStarted()));
 
+  QObject::connect(this->WebView, SIGNAL(loadProgress(int)),
+                   q, SLOT(onLoadProgress(int)));
+
   QObject::connect(this->WebView, SIGNAL(loadFinished(bool)),
                    q, SLOT(onLoadFinished(bool)));
 
@@ -456,6 +459,13 @@ void qSlicerWebWidget::onLoadStarted()
   Q_D(qSlicerWebWidget);
   d->ProgressBar->setFormat("%p%");
   d->ProgressBar->setVisible(true);
+  emit loadStarted();
+}
+
+// --------------------------------------------------------------------------
+void qSlicerWebWidget::onLoadProgress(int progress)
+{
+  emit loadProgress(progress);
 }
 
 // --------------------------------------------------------------------------
@@ -465,6 +475,7 @@ void qSlicerWebWidget::onLoadFinished(bool ok)
   Q_D(qSlicerWebWidget);
   d->ProgressBar->reset();
   d->ProgressBar->setVisible(false);
+  emit loadFinished(ok);
 }
 
 // --------------------------------------------------------------------------
