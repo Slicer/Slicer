@@ -19,12 +19,12 @@ endif()
 
 if(NOT Slicer_USE_SYSTEM_${proj})
 
-  set(_version "2.0.3")
+  set(_version "2.0.5")
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    URL "https://pypi.python.org/packages/48/d8/25d9b4b875ab3c2400ec7794ceda8093b51101a9d784da608bf65ab5f5f5/smmap2-${_version}.tar.gz"
-    URL_MD5 "2d07872c7439040678670860d579b4c4"
+    URL "https://files.pythonhosted.org/packages/3b/ba/e49102b3e8ffff644edded25394b2d22ebe3e645f3f6a8139129c4842ffe/smmap2-${_version}.tar.gz"
+    URL_HASH "SHA256=29a9ffa0497e7f2be94ca0ed1ca1aa3cd4cf25a1f6b4f5f87f74b46ed91d609a"
     DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BUILD_IN_SOURCE 1
