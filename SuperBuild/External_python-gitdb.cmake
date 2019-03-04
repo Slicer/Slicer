@@ -34,12 +34,12 @@ set(${proj}_WORKING_DIR \"${CMAKE_BINARY_DIR}/${proj}\")
 ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py install)
 ")
 
-  set(_version "2.0.3")
+  set(_version "2.0.5")
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    URL "https://pypi.python.org/packages/84/11/22e68bd46fd545b17d0a0b200cf75c20e9e7b817726a69ad5f3070fd0d3c/gitdb2-${_version}.tar.gz"
-    URL_MD5 "d5217eb94ebd36fcec62b929d1f72b00"
+    URL "https://files.pythonhosted.org/packages/c4/5c/579abccd59187eaf6b3c8a4a6ecd86fce1dfd818155bfe4c52ac28dca6b7/gitdb2-${_version}.tar.gz"
+    URL_HASH "SHA256=83361131a1836661a155172932a13c08bda2db3674e4caa32368aa6eb02f38c2"
     DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BUILD_IN_SOURCE 1
