@@ -19,12 +19,12 @@ endif()
 
 if(NOT Slicer_USE_SYSTEM_${proj})
 
-  set(_version "0.31.1")
+  set(_version "0.33.1")
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    URL "https://pypi.python.org/packages/2a/fb/aefe5d5dbc3f4fe1e815bcdb05cbaab19744d201bbc9b59cfa06ec7fc789/wheel-${_version}.tar.gz"
-    URL_HASH "SHA256=0a2e54558a0628f2145d2fc822137e322412115173e8a2ddbe1c9024338ae83c"
+    URL "https://files.pythonhosted.org/packages/b7/cf/1ea0f5b3ce55cacde1e84cdde6cee1ebaff51bd9a3e6c7ba4082199af6f6/wheel-${_version}.tar.gz"
+    URL_HASH "SHA256=66a8fd76f28977bb664b098372daef2b27f60dc4d1688cfab7b37a09448f0e9d"
     DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BUILD_IN_SOURCE 1
