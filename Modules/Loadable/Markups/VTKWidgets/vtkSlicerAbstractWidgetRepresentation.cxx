@@ -548,8 +548,8 @@ void vtkSlicerAbstractWidgetRepresentation::AddActorsBounds(vtkBoundingBox& boun
 
 //-----------------------------------------------------------------------------
 void vtkSlicerAbstractWidgetRepresentation::CanInteract(
-  const int displayPosition[2], const double position[3],
-  int &foundComponentType, int &foundComponentIndex, double &closestDistance2)
+  const int vtkNotUsed(displayPosition)[2], const double vtkNotUsed(position)[3],
+  int &foundComponentType, int &vtkNotUsed(foundComponentIndex), double &vtkNotUsed(closestDistance2))
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
 }
@@ -648,7 +648,8 @@ void vtkSlicerAbstractWidgetRepresentation::BuildLine(vtkPolyData* linePolyData,
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerAbstractWidgetRepresentation::UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData)
+void vtkSlicerAbstractWidgetRepresentation::UpdateFromMRML(
+    vtkMRMLNode* vtkNotUsed(caller), unsigned long event, void *vtkNotUsed(callData))
 {
   if (!event || event == vtkMRMLTransformableNode::TransformModifiedEvent)
     {

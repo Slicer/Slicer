@@ -158,7 +158,7 @@ vtkSlicerAbstractWidgetRepresentation3D::~vtkSlicerAbstractWidgetRepresentation3
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerAbstractWidgetRepresentation3D::UpdateNthPointAndLabelFromMRML(int n)
+void vtkSlicerAbstractWidgetRepresentation3D::UpdateNthPointAndLabelFromMRML(int vtkNotUsed(n))
 {
   /*
   TODO: implement this for better performance
@@ -282,7 +282,7 @@ void vtkSlicerAbstractWidgetRepresentation3D::UpdateAllPointsAndLabelsFromMRML()
 
 //----------------------------------------------------------------------
 void vtkSlicerAbstractWidgetRepresentation3D::CanInteract(
-  const int displayPosition[2], const double worldPosition[3],
+  const int displayPosition[2], const double vtkNotUsed(worldPosition)[3],
   int &foundComponentType, int &foundComponentIndex, double &closestDistance2)
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
@@ -316,11 +316,6 @@ void vtkSlicerAbstractWidgetRepresentation3D::CanInteract(
   }
 
   vtkIdType numberOfPoints = markupsNode->GetNumberOfControlPoints();
-  double displayCoordinates[4], worldCoordinates[4];
-
-  double pointDisplayPos[4] = { 0.0, 0.0, 0.0, 1.0 };
-  double pointWorldPos[4] = { 0.0, 0.0, 0.0, 1.0 };
-
   for (int i = 0; i < numberOfPoints; i++)
   {
     if (!markupsNode->GetNthControlPointVisibility(i))
@@ -360,7 +355,7 @@ void vtkSlicerAbstractWidgetRepresentation3D::CanInteract(
 
 //----------------------------------------------------------------------
 void vtkSlicerAbstractWidgetRepresentation3D::CanInteractWithLine(
-  const int displayPosition[2], const double worldPosition[3],
+  const int vtkNotUsed(displayPosition)[2], const double worldPosition[3],
   int &foundComponentType, int &foundComponentIndex, double &closestDistance2)
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
@@ -652,7 +647,7 @@ bool vtkSlicerAbstractWidgetRepresentation3D::AccuratePick(int x, int y, double 
     }
 
   vtkPoints* pickPositions = this->AccuratePicker->GetPickedPositions();
-  int numberOfPickedPositions = pickPositions->GetNumberOfPoints();
+  vtkIdType numberOfPickedPositions = pickPositions->GetNumberOfPoints();
   if (numberOfPickedPositions<1)
     {
     return false;
@@ -663,7 +658,7 @@ bool vtkSlicerAbstractWidgetRepresentation3D::AccuratePick(int x, int y, double 
   this->Renderer->GetActiveCamera()->GetPosition(cameraPosition);
   pickPositions->GetPoint(0, pickPoint);
   double minDist2 = vtkMath::Distance2BetweenPoints(pickPoint, cameraPosition);
-  for (int i = 1; i<numberOfPickedPositions; i++)
+  for (vtkIdType i = 1; i < numberOfPickedPositions; i++)
     {
     double currentMinDist2 = vtkMath::Distance2BetweenPoints(pickPositions->GetPoint(i), cameraPosition);
     if (currentMinDist2<minDist2)

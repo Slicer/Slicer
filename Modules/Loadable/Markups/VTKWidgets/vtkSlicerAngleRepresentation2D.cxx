@@ -258,7 +258,6 @@ void vtkSlicerAngleRepresentation2D::CanInteract(
   double pixelTolerance2 = this->PixelTolerance * this->PixelTolerance;
 
   vtkIdType numberOfPoints = markupsNode->GetNumberOfControlPoints();
-  double sliceCoordinates[4], worldCoordinates[4];
 
   double pointDisplayPos1[4] = { 0.0, 0.0, 0.0, 1.0 };
   double pointWorldPos1[4] = { 0.0, 0.0, 0.0, 1.0 };

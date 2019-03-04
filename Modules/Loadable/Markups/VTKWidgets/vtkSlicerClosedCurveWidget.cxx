@@ -75,7 +75,7 @@ void vtkSlicerClosedCurveWidget::CreateDefaultRepresentation(
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerClosedCurveWidget::AddPointOnCurveAction(vtkAbstractWidget *w)
+void vtkSlicerClosedCurveWidget::AddPointOnCurveAction(vtkAbstractWidget *vtkNotUsed(w))
 {
   /* TODO: implement this
 

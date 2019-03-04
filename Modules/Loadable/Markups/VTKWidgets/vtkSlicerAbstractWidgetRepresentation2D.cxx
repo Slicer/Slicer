@@ -262,8 +262,6 @@ void vtkSlicerAbstractWidgetRepresentation2D::UpdateAllPointsAndLabelsFromMRML(d
       }
 
       double slicePos[3] = { 0.0 };
-      double worldOrient[9] = { 0.0 };
-      double orientation[4] = { 0.0 };
       this->GetNthNodeDisplayPosition(pointIndex, slicePos);
 
       controlPoints->ControlPoints->InsertNextPoint(slicePos);
@@ -414,7 +412,7 @@ void vtkSlicerAbstractWidgetRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller
 
 //----------------------------------------------------------------------
 void vtkSlicerAbstractWidgetRepresentation2D::CanInteract(
-  const int displayPosition[2], const double position[3],
+  const int displayPosition[2], const double vtkNotUsed(position)[3],
   int &foundComponentType, int &foundComponentIndex, double &closestDistance2)
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
@@ -450,7 +448,6 @@ void vtkSlicerAbstractWidgetRepresentation2D::CanInteract(
     }
 
   vtkIdType numberOfPoints = markupsNode->GetNumberOfControlPoints();
-  double sliceCoordinates[4], worldCoordinates[4];
 
   double pointDisplayPos[4] = { 0.0, 0.0, 0.0, 1.0 };
   double pointWorldPos[4] = { 0.0, 0.0, 0.0, 1.0 };
@@ -477,7 +474,7 @@ void vtkSlicerAbstractWidgetRepresentation2D::CanInteract(
 
 //----------------------------------------------------------------------
 void vtkSlicerAbstractWidgetRepresentation2D::CanInteractWithLine(
-  const int displayPosition[2], const double worldPosition[3],
+  const int displayPosition[2], const double vtkNotUsed(worldPosition)[3],
   int &foundComponentType, int &foundComponentIndex, double &closestDistance2)
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
@@ -495,7 +492,6 @@ void vtkSlicerAbstractWidgetRepresentation2D::CanInteractWithLine(
   double pixelTolerance2 = this->PixelTolerance * this->PixelTolerance;
 
   vtkIdType numberOfPoints = markupsNode->GetNumberOfControlPoints();
-  double sliceCoordinates[4], worldCoordinates[4];
 
   double pointDisplayPos1[4] = { 0.0, 0.0, 0.0, 1.0 };
   double pointWorldPos1[4] = { 0.0, 0.0, 0.0, 1.0 };
