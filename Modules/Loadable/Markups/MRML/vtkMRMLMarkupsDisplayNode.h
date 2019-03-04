@@ -27,6 +27,7 @@
 #include "vtkSlicerMarkupsModuleMRMLExport.h"
 
 #include "vtkMRMLDisplayNode.h"
+#include "vtkMRMLMarkupsNode.h"
 
 /// \ingroup Slicer_QtModules_Markups
 class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsDisplayNode : public vtkMRMLDisplayNode
@@ -63,14 +64,56 @@ public:
                                    unsigned long /*event*/,
                                    void * /*callData*/ ) VTK_OVERRIDE;
 
+  /// Convenienve function for getting the displayable markups node
+  vtkMRMLMarkupsNode* GetMarkupsNode();
+
+  /// Active item (item that the mouse is hovered over).
+  /// This propoerty is computed on-the-fly and saved to file.
+  vtkGetMacro(ActiveComponentType, int);
+  enum ComponentType
+    {
+    ComponentNone = 0,
+    ComponentControlPoint,
+    ComponentCenterPoint,
+    ComponentLine
+    };
+
+  /// Index of active item (item that the mouse is hovered over).
+  /// This propoerty is computed on-the-fly and saved to file.
+  vtkGetMacro(ActiveComponentIndex, int);
+
+  /// Set active component type and index.
+  void SetActiveComponent(int componentType, int componentIndex);
+
+  /// Set active component index to the provided value and component type to ComponentControlPoint.
+  void SetActiveControlPoint(int controlPointIndex);
+
+  /// Convenience method to perform several update operations at once, with minimum number of modified events.
+  /// It updates the active control point index (if controlPointIndex<0 then it creates a new point) and
+  /// updates its position and orientation.
+  /// Returns the control point index (different from the input if the input was < 0).
+  int UpdateActiveControlPointWorld(int controlPointIndex, double accurateWorldPos[3],
+    double accurateWorldOrientationMatrix[9], const char* viewNodeID, const char* associatedNodeID);
+
+  /// Returns index of active control point if active component type is ComponentControlPoint,
+  /// -1 otherwise.
+  int GetActiveControlPoint();
+
   /// Set the text scale of the associated text.
   vtkGetMacro(TextScale,double);
   vtkSetMacro(TextScale,double);
 
+  /// Set the text visibility of the display node.
+  vtkSetMacro(TextVisibility, bool);
+  /// Get the text visibility of the display node.
+  vtkGetMacro(TextVisibility, bool);
+  /// Set the text visibility of the display node.
+  vtkBooleanMacro(TextVisibility, bool);
+
   /// Which kind of glyph should be used to display this markup?
   /// Vertex2D is supposed to start at 1
   enum GlyphShapes
-  {
+    {
     GlyphMin = 1,
     Vertex2D = GlyphMin,
     Dash2D,
@@ -87,7 +130,7 @@ public:
     Sphere3D,
     Diamond3D,
     GlyphMax = Sphere3D,
-  };
+    };
   /// Return the min/max glyph types, for iterating over them in tcl
   int GetMinimumGlyphType() { return vtkMRMLMarkupsDisplayNode::GlyphMin; };
   int GetMaximumGlyphType() { return vtkMRMLMarkupsDisplayNode::GlyphMax; };
@@ -111,9 +154,10 @@ public:
   /// An event that lets the markups logic know to reset this node to the
   /// default values
   enum
-  {
+    {
     ResetToDefaultsEvent = 19001,
-  };
+    JumpToPointEvent, // request jump to a selected control point, request completed by markups logic
+    };
 
   /// Set SliceProjection flag that controls if the projection of markups
   /// is visible or not in 2D viewers on slices on which it is normally
@@ -183,6 +227,11 @@ protected:
   vtkMRMLMarkupsDisplayNode( const vtkMRMLMarkupsDisplayNode& );
   void operator= ( const vtkMRMLMarkupsDisplayNode& );
 
+  // current active point or widget part (hovered by the mouse)
+  int ActiveComponentType;
+  int ActiveComponentIndex;
+
+  bool TextVisibility;
   double TextScale;
   int GlyphType;
   double GlyphScale;

@@ -111,12 +111,12 @@ int vtkSlicerMarkupsLogicTest1(int , char * [] )
     return EXIT_FAILURE;
     }
   // test the list stuff
-  logic1->SetAllMarkupsVisibility(NULL, true);
-  logic1->ToggleAllMarkupsVisibility(NULL);
-  logic1->SetAllMarkupsLocked(NULL, false);
-  logic1->ToggleAllMarkupsLocked(NULL);
-  logic1->SetAllMarkupsSelected(NULL, true);
-  logic1->ToggleAllMarkupsSelected(NULL);
+  logic1->SetAllMarkupsVisibility(nullptr, true);
+  logic1->ToggleAllMarkupsVisibility(nullptr);
+  logic1->SetAllMarkupsLocked(nullptr, false);
+  logic1->ToggleAllMarkupsLocked(nullptr);
+  logic1->SetAllMarkupsSelected(nullptr, true);
+  logic1->ToggleAllMarkupsSelected(nullptr);
 
   // no points
   logic1->SetAllMarkupsVisibility(markupsNode, false);
@@ -130,7 +130,7 @@ int vtkSlicerMarkupsLogicTest1(int , char * [] )
   logic1->ToggleAllMarkupsSelected(markupsNode);
 
   // add some points
-  markupsNode->AddMarkupWithNPoints(5);
+  markupsNode->AddNControlPoints(5);
   logic1->SetAllMarkupsVisibility(markupsNode, false);
   logic1->SetAllMarkupsVisibility(markupsNode, true);
   logic1->ToggleAllMarkupsVisibility(markupsNode);
@@ -257,7 +257,7 @@ int vtkSlicerMarkupsLogicTest1(int , char * [] )
   // test the renaming
   std::string activeListID = logic1->GetActiveListID();
   mrmlNode = scene->GetNodeByID(activeListID.c_str());
-  vtkMRMLMarkupsNode *activeMarkupsNode = NULL;
+  vtkMRMLMarkupsNode *activeMarkupsNode = nullptr;
   if (mrmlNode)
     {
     activeMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast(mrmlNode);
@@ -269,15 +269,15 @@ int vtkSlicerMarkupsLogicTest1(int , char * [] )
     }
 
   std::cout << "Before renaming:" << std::endl;
-  for (int i = 0; i < activeMarkupsNode->GetNumberOfMarkups(); ++i)
+  for (int i = 0; i < activeMarkupsNode->GetNumberOfControlPoints(); ++i)
     {
     std::cout << "Markup " << i << " label = "
-              << activeMarkupsNode->GetNthMarkupLabel(i).c_str() << std::endl;
+              << activeMarkupsNode->GetNthControlPointLabel(i).c_str() << std::endl;
     }
   activeMarkupsNode->SetName("RenamingTest");
   activeMarkupsNode->SetMarkupLabelFormat("T %d %N");
   logic1->RenameAllMarkupsFromCurrentFormat(activeMarkupsNode);
-  std::string newLabel = activeMarkupsNode->GetNthMarkupLabel(0);
+  std::string newLabel = activeMarkupsNode->GetNthControlPointLabel(0);
   std::string expectedLabel = std::string("T 1 RenamingTest");
   if (newLabel.compare(expectedLabel) != 0)
     {
@@ -286,10 +286,10 @@ int vtkSlicerMarkupsLogicTest1(int , char * [] )
     return EXIT_FAILURE;
     }
   std::cout << "After renaming:" << std::endl;
-  for (int i = 0; i < activeMarkupsNode->GetNumberOfMarkups(); ++i)
+  for (int i = 0; i < activeMarkupsNode->GetNumberOfControlPoints(); ++i)
     {
     std::cout << "Markup " << i << " label = "
-              << activeMarkupsNode->GetNthMarkupLabel(i).c_str() << std::endl;
+              << activeMarkupsNode->GetNthControlPointLabel(i).c_str() << std::endl;
     }
 
   // test setting active list id

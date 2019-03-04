@@ -124,6 +124,8 @@ vtkMRMLRulerDisplayableManager::vtkInternal::vtkInternal(vtkMRMLRulerDisplayable
   this->RendererUpdateObservationId = 0;
   this->ActorsAddedToRenderer = false;
   this->MarkerRenderer = vtkSmartPointer<vtkRenderer>::New();
+  // Prevent erasing Z-buffer (important for quick picking and markup label visibility assessment)
+  this->MarkerRenderer->EraseOff();
   this->RulerLineActor = vtkSmartPointer<vtkAxisActor2D>::New();
   this->RulerTextActor = vtkSmartPointer<vtkTextActor>::New();
 }

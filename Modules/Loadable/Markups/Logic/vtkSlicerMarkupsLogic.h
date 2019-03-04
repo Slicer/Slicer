@@ -91,10 +91,10 @@ public:
   /// jump the slice windows to the given coordinate
   /// If viewGroup is -1 then all all slice views are updated, otherwise only those views
   /// that are in the specified group.
-  void JumpSlicesToLocation(double x, double y, double z, bool centered, int viewGroup = -1);
+  void JumpSlicesToLocation(double x, double y, double z, bool centered, int viewGroup = -1, vtkMRMLSliceNode* exclude = NULL);
   /// jump the slice windows to the nth markup with the mrml id id
   /// \sa JumpSlicesToLocation
-  void JumpSlicesToNthPointInMarkup(const char *id, int n, bool centered = false, int viewGroup = -1);
+  void JumpSlicesToNthPointInMarkup(const char *id, int n, bool centered = false, int viewGroup = -1, vtkMRMLSliceNode* exclude = NULL);
   /// refocus all of the 3D cameras to the nth markup with the mrml id id
   /// \sa FocusCameraOnNthPointInMarkup
   void FocusCamerasOnNthPointInMarkup(const char *id, int n);
@@ -152,22 +152,36 @@ public:
   /// utility method to set up a display node from the defaults
   void SetDisplayNodeToDefaults(vtkMRMLMarkupsDisplayNode *displayNode);
 
-  /// utility method to copy a markup from one list to another, adding it
+  /// utility method to copy a control point from one list to another, adding it
   /// to the end of the new list
-  /// \sa vtkMRMLMarkupsNode::AddMarkup
+  /// \sa vtkMRMLMarkupsNode::AddControlPoint
   /// Returns true on success, false on failure
-  bool CopyNthMarkupToNewList(int n, vtkMRMLMarkupsNode *markupsNode,
+  bool CopyNthControlPointToNewList(int n, vtkMRMLMarkupsNode *markupsNode,
                               vtkMRMLMarkupsNode *newMarkupsNode);
 
-  /// utility method to move a markup from one list to another, trying to
+  /// Deprecated, use CopyNthControlPointToNewList instead.
+  bool CopyNthMarkupToNewList(int n, vtkMRMLMarkupsNode *markupsNode,
+                              vtkMRMLMarkupsNode *newMarkupsNode)
+    {
+    return this->CopyNthControlPointToNewList(n, markupsNode, newMarkupsNode);
+    }
+
+  /// utility method to move a control point from one list to another, trying to
   /// insert it at the given new index. If the new index is larger than the
-  /// number of markups in the list, adds it to the end. If new index is
+  /// number of control points in the list, adds it to the end. If new index is
   /// smaller than 0, adds it at the beginning. Otherwise inserts at
   /// that index.
-  /// \sa vtkMRMLMarkupsNode::InsertMarkup
+  /// \sa vtkMRMLMarkupsNode::InsertControlPoint
   /// Returns true on success, false on failure
-  bool MoveNthMarkupToNewListAtIndex(int n, vtkMRMLMarkupsNode *markupsNode,
+  bool MoveNthControlPointToNewListAtIndex(int n, vtkMRMLMarkupsNode *markupsNode,
                                    vtkMRMLMarkupsNode *newMarkupsNode, int newIndex);
+
+  /// Deprecated, use MoveNthControlPointToNewList instead.
+  bool MoveNthMarkupToNewList(int n, vtkMRMLMarkupsNode *markupsNode,
+                              vtkMRMLMarkupsNode *newMarkupsNode, int newIndex)
+    {
+    return this->MoveNthControlPointToNewListAtIndex(n, markupsNode, newMarkupsNode, newIndex);
+    }
 
   /// Searches the scene for annotation fidicual nodes, collecting a list
   /// of annotation hierarchy nodes. Then iterates through those hierarchy nodes
@@ -196,6 +210,9 @@ public:
   /// Set the slice intersections visbility on all the slice composite nodes
   /// in the scene
   void SetSliceIntersectionsVisibility(bool flag);
+
+  /// Get the index of teh closest control point to the world coordinates
+  int GetClosestControlPointIndexToPositionWorld(vtkMRMLMarkupsNode *markupsNode, double pos[3]);
 
 protected:
   vtkSlicerMarkupsLogic();

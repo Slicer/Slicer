@@ -28,45 +28,23 @@ int vtkMRMLMarkupsNodeTest2(int , char * [] )
   vtkNew<vtkMRMLMarkupsNode> node1;
   vtkIndent indent;
 
-  std::cout << "Trying copy markup with null pointers" << std::endl;
-  node1->CopyMarkup(NULL, NULL);
   // now try with some data
-  Markup markup1, markup2;
-  node1->InitMarkup(&markup1);
+  vtkMRMLMarkupsNode::ControlPoint markup1, markup2;
   markup2.Label = std::string("Markup number two");
   markup2.Description = std::string("Description for two");
   markup2.AssociatedNodeID = std::string("vtkMRMLVolumeNode333");
   markup2.Selected = false;
   markup2.Locked = true;
   markup2.Visibility = false;
-  vtkVector3d point;
-  point.SetX(2.0);
-  point.SetY(-5.0);
-  point.SetZ(15.6);
-  markup2.points.push_back(point);
-  std::cout << "Before copy, markup1 = " << std::endl;
-  node1->PrintMarkup(std::cout, indent, &markup1);
-  std::cout << "Before copy, markup2 = " << std::endl;
-  node1->PrintMarkup(std::cout, indent, &markup2);
+  markup2.Position[0] = 2.0;
+  markup2.Position[1] = -5.0;
+  markup2.Position[2] = 15.6;
 
-  node1->CopyMarkup(&markup2, &markup1);
+  markup1 = markup2;
 
-  std::cout << "After copy, markup1 = " << std::endl;
-  node1->PrintMarkup(std::cout, indent, &markup1);
-  std::cout << "After copy, markup2 = " << std::endl;
-  node1->PrintMarkup(std::cout, indent, &markup2);
-
-  if (markup1.points.size() != markup2.points.size())
-    {
-    std::cerr << "After copy, number of points in markups doesn't match."
-              << " markup1 has " << markup1.points.size()
-              << " points which is != markup2 number of points "
-              << markup2.points.size() << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (markup1.points[0].GetX() != markup2.points[0].GetX() ||
-      markup1.points[0].GetY() != markup2.points[0].GetY() ||
-      markup1.points[0].GetZ() != markup2.points[0].GetZ())
+  if (markup1.Position[0] != markup2.Position[0] ||
+      markup1.Position[1] != markup2.Position[1] ||
+      markup1.Position[2] != markup2.Position[2])
     {
     std::cerr << "After copy, point 0 doesn't match in markups" << std::endl;
     return EXIT_FAILURE;
@@ -74,39 +52,39 @@ int vtkMRMLMarkupsNodeTest2(int , char * [] )
 
   // test swap
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  node1->SwapMarkups(-1,100);
+  node1->SwapControlPoints(-1,100);
   TESTING_OUTPUT_ASSERT_ERRORS_END();
   std::cout << "Adding a markup with 1 point" << std::endl;
-  node1->AddMarkupWithNPoints(1);
+  node1->AddNControlPoints(1);
   double pos0[3];
   pos0[0] = 3.0;
   pos0[1] = 5.5;
   pos0[2] = -2.6;
-  node1->SetMarkupPointFromArray(0, 0, pos0);
+  node1->SetNthControlPointPositionFromArray(0, pos0);
 
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  node1->SwapMarkups(-1,100);
-  node1->SwapMarkups(-1,1);
-  node1->SwapMarkups(1,-1);
-  node1->SwapMarkups(1,100);
-  node1->SwapMarkups(100,1);
+  node1->SwapControlPoints(-1,100);
+  node1->SwapControlPoints(-1,1);
+  node1->SwapControlPoints(1,-1);
+  node1->SwapControlPoints(1,100);
+  node1->SwapControlPoints(100,1);
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   std::cout << "Adding another markup with 1 point" << std::endl;
-  node1->AddMarkupWithNPoints(1);
+  node1->AddNControlPoints(1);
   double pos1[3];
   pos1[0] = -3.9;
   pos1[1] = 15.5;
   pos1[2] = 2.666;
-  node1->SetMarkupPointFromArray(1, 0, pos1);
+  node1->SetNthControlPointPositionFromArray(1, pos1);
 
-  std::cout << "Swapping markups 0 and 1, num markups = " << node1->GetNumberOfMarkups() << std::endl;
+  std::cout << "Swapping markups 0 and 1, num markups = " << node1->GetNumberOfControlPoints() << std::endl;
   node1->PrintSelf(std::cout, indent);
 
-  node1->SwapMarkups(0, 1);
+  node1->SwapControlPoints(0, 1);
 
   double pos0New[3], pos1New[3];
-  node1->GetMarkupPoint(0, 0, pos0New);
+  node1->GetNthControlPointPosition(0, pos0New);
   if (pos0New[0] != pos1[0] ||
       pos0New[1] != pos1[1] ||
       pos0New[2] != pos1[2])
@@ -118,7 +96,7 @@ int vtkMRMLMarkupsNodeTest2(int , char * [] )
               << std::endl;
     return EXIT_FAILURE;
     }
-  node1->GetMarkupPoint(1, 0, pos1New);
+  node1->GetNthControlPointPosition(1, pos1New);
   if (pos1New[0] != pos0[0] ||
       pos1New[1] != pos0[1] ||
       pos1New[2] != pos0[2])
@@ -136,8 +114,8 @@ int vtkMRMLMarkupsNodeTest2(int , char * [] )
   pos1New[0] = pos1New[0] * 0.33;
   pos1New[1] = pos1New[1] * 100.5;
   pos1New[2] = pos1New[2] * -10.67;
-  node1->SetMarkupPointFromArray(1, 0, pos1New);
-  node1->GetMarkupPoint(0, 0, pos0New);
+  node1->SetNthControlPointPositionFromArray(1, pos1New);
+  node1->GetNthControlPointPosition(0, pos0New);
   if (pos0New[0] != pos1[0] ||
       pos0New[1] != pos1[1] ||
       pos0New[2] != pos1[2])
@@ -151,12 +129,12 @@ int vtkMRMLMarkupsNodeTest2(int , char * [] )
     }
 
   // Check if ID returned is valid
-  if (node1->GetNumberOfMarkups() > 0)
+  if (node1->GetNumberOfControlPoints() > 0)
     {
-    Markup* markup = node1->GetNthMarkup(0);
+    vtkMRMLMarkupsNode::ControlPoint* markup = node1->GetNthControlPoint(0);
     const char* markupID = markup->ID.c_str();
-    int markupIndex = node1->GetMarkupIndexByID(markupID);
-    if (node1->GetMarkupByID(markupID) != markup)
+    int markupIndex = node1->GetNthControlPointIndexByID(markupID);
+    if (node1->GetNthControlPointByID(markupID) != markup)
       {
       std::cerr << "Get Markup by ID failed" << std::endl;
       return EXIT_FAILURE;
@@ -170,8 +148,8 @@ int vtkMRMLMarkupsNodeTest2(int , char * [] )
     }
 
   // Check returned value with a NULL ID
-  Markup* markupNull = node1->GetMarkupByID(NULL);
-  int indexNull = node1->GetMarkupIndexByID(NULL);
+  vtkMRMLMarkupsNode::ControlPoint* markupNull = node1->GetNthControlPointByID(nullptr);
+  int indexNull = node1->GetNthControlPointIndexByID(nullptr);
   if (markupNull)
     {
     std::cerr << "Get Markup by ID with NULL parameters failed" << std::endl;
@@ -184,8 +162,8 @@ int vtkMRMLMarkupsNodeTest2(int , char * [] )
     }
 
   // Check returned value with an invalid ID
-  Markup* markupInvalid = node1->GetMarkupByID("Invalid");
-  int indexInvalid = node1->GetMarkupIndexByID("Invalid");
+  vtkMRMLMarkupsNode::ControlPoint* markupInvalid = node1->GetNthControlPointByID("Invalid");
+  int indexInvalid = node1->GetNthControlPointIndexByID("Invalid");
   if (markupInvalid)
     {
     std::cerr << "Get Markup by ID with invalid ID failed" << std::endl;

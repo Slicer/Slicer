@@ -17,6 +17,8 @@
 // MRML includes
 #include "vtkMRMLCrosshairDisplayableManager.h"
 #include "vtkMRMLCrosshairNode.h"
+#include "vtkMRMLInteractionEventData.h"
+#include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLModelDisplayableManager.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSliceNode.h"
@@ -25,12 +27,13 @@
 #include <vtkCamera.h>
 #include <vtkCellPicker.h>
 #include <vtkCallbackCommand.h>
+#include <vtkEvent.h>
 #include <vtkMath.h>
 #include <vtkObjectFactory.h>
 #include <vtkPoints.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
-#include <vtkMRMLInteractionNode.h>
+#include <vtkWorldPointPicker.h>
 
 
 vtkStandardNewMacro(vtkThreeDViewInteractorStyle);
@@ -38,14 +41,18 @@ vtkStandardNewMacro(vtkThreeDViewInteractorStyle);
 //----------------------------------------------------------------------------
 vtkThreeDViewInteractorStyle::vtkThreeDViewInteractorStyle()
 {
-  this->MotionFactor = 10.0;
+  this->EventCallbackCommand->SetCallback(vtkThreeDViewInteractorStyle::ThreeDViewProcessEvents);
+  this->FocusedDisplayableManager = nullptr;
   this->ShiftKeyUsedForPreviousAction = false;
+  this->MouseMovedSinceButtonDown = false;
+
+  this->MotionFactor = 10.0;
+
   this->CameraNode = 0;
-  this->NumberOfPlaces= 0;
-  this->NumberOfTransientPlaces = 1;
   this->ModelDisplayableManager = 0;
-  this->CellPicker = vtkSmartPointer<vtkCellPicker>::New();
-  this->CellPicker->SetTolerance( .005 );
+  this->AccuratePicker = vtkSmartPointer<vtkCellPicker>::New();
+  this->AccuratePicker->SetTolerance( .005 );
+  this->QuickPicker = vtkSmartPointer<vtkWorldPointPicker>::New();
 }
 
 //----------------------------------------------------------------------------
@@ -53,32 +60,17 @@ vtkThreeDViewInteractorStyle::~vtkThreeDViewInteractorStyle()
 {
   this->SetCameraNode(0);
   this->SetModelDisplayableManager(0);
-  this->NumberOfPlaces = 0;
 }
 
 //----------------------------------------------------------------------------
-void vtkThreeDViewInteractorStyle::OnChar()
+void vtkThreeDViewInteractorStyle::PrintSelf(ostream& os, vtkIndent indent)
 {
-  if (!this->Interactor->GetKeySym())
-    {
-    vtkErrorMacro("OnChar: could not retrieve KeySym");
-    return;
-    }
-
-  // Ignore KeyPad strokes, they are handled by OnKeyPress instead.
-  if (strncmp(this->Interactor->GetKeySym(), "KP_", 3) == 0 ||
-      this->Interactor->GetKeyCode() == '3')
-    {
-    return;
-    }
-  this->Superclass::OnChar();
+  this->Superclass::PrintSelf(os,indent);
 }
 
 //----------------------------------------------------------------------------
 void vtkThreeDViewInteractorStyle::OnKeyPress()
 {
-  this->Superclass::OnKeyPress();
-
   if(!this->CameraNode)
     {
     vtkErrorMacro("OnKeyPress: camera node is null");
@@ -196,7 +188,26 @@ void vtkThreeDViewInteractorStyle::OnKeyPress()
     {
     this->ShiftKeyUsedForPreviousAction = false;
     }
-  this->Superclass::OnKeyRelease();
+}
+
+//----------------------------------------------------------------------------
+void vtkThreeDViewInteractorStyle::OnChar()
+{
+  if (!this->Interactor->GetKeySym())
+    {
+    vtkErrorMacro("OnChar: could not retrieve KeySym");
+    return;
+    }
+
+  if (strncmp(this->Interactor->GetKeySym(), "KP_", 3) == 0 ||
+      this->Interactor->GetKeyCode() == '3')
+    {
+    // Ignore KeyPad strokes, they are handled by OnKeyPress instead.
+    }
+  else
+    {
+    this->Superclass::OnChar();
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -241,7 +252,7 @@ void vtkThreeDViewInteractorStyle::OnMouseMove()
            (this->GetCameraNode() != 0) && (this->GetCameraNode()->GetScene() != 0) )
         {
         double pickedRAS[3]={0,0,0};
-        bool picked = this->Pick(this->Interactor->GetEventPosition()[0], this->Interactor->GetEventPosition()[1], pickedRAS);
+        bool picked = this->AccuratePick(this->Interactor->GetEventPosition()[0], this->Interactor->GetEventPosition()[1], pickedRAS);
         if (picked)
           {
           vtkMRMLScene* scene = this->GetCameraNode()->GetScene();
@@ -274,34 +285,71 @@ void vtkThreeDViewInteractorStyle::OnMouseMove()
             }
           }
         }
-      else
-        {
-        this->InvokeEvent(vtkCommand::MouseMoveEvent, 0);
-        }
       break;
     }
 
   if (this->CameraNode)
     {
     this->CameraNode->EndModify(disabledModify);
+  }
+}
+
+//----------------------------------------------------------------------------
+void vtkThreeDViewInteractorStyle::OnRightButtonDown()
+{
+  this->FindPokedRenderer(this->Interactor->GetEventPosition()[0],
+                          this->Interactor->GetEventPosition()[1]);
+  if (this->CurrentRenderer == 0)
+    {
+    return;
+    }
+
+  this->GrabFocus(this->EventCallbackCommand);
+  this->StartDolly();
+}
+
+//----------------------------------------------------------------------------
+void vtkThreeDViewInteractorStyle::OnRightButtonUp()
+{
+  switch (this->State)
+    {
+    case VTKIS_DOLLY:
+      this->EndDolly();
+      if ( this->Interactor )
+        {
+        this->ReleaseFocus();
+        }
+      break;
     }
 }
 
 //----------------------------------------------------------------------------
-void vtkThreeDViewInteractorStyle::OnLeave()
+void vtkThreeDViewInteractorStyle::OnMiddleButtonDown()
 {
-  if (this->GetCameraNode() == NULL || this->GetCameraNode()->GetScene() == NULL)
+  this->MouseMovedSinceButtonDown = false;
+  this->FindPokedRenderer(this->Interactor->GetEventPosition()[0],
+                          this->Interactor->GetEventPosition()[1]);
+  if (this->CurrentRenderer == 0)
     {
-    // interactor is not initialized
     return;
     }
-  vtkMRMLScene* scene = this->GetCameraNode()->GetScene();
-  vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairDisplayableManager::FindCrosshairNode(scene);
-  if (crosshairNode)
+  this->GrabFocus(this->EventCallbackCommand);
+  this->StartPan();
+}
+
+//----------------------------------------------------------------------------
+void vtkThreeDViewInteractorStyle::OnMiddleButtonUp()
+{
+  switch (this->State)
     {
-    crosshairNode->SetCursorPositionInvalid();
+    case VTKIS_PAN:
+      this->EndPan();
+      if ( this->Interactor )
+        {
+        this->ReleaseFocus();
+        }
+      break;
     }
-  this->Superclass::OnLeave();
 }
 
 //----------------------------------------------------------------------------
@@ -386,10 +434,6 @@ void vtkThreeDViewInteractorStyle::OnLeftButtonDown()
 #endif
           vtkDebugMacro("MouseMode Place or PickManipulate:: got x = " << x << ", y = " << y << " (raw y = " << rawY << ")\n");
           }
-        if (mouseInteractionMode == vtkMRMLInteractionNode::Place)
-          {
-          this->NumberOfPlaces++;
-          }
         }
       }
     }
@@ -426,103 +470,61 @@ void vtkThreeDViewInteractorStyle::OnLeftButtonUp()
       }
     }
 
-  // now throw the events if mouse mode is transient.
-  if (mouseInteractionMode == vtkMRMLInteractionNode::Place)
-    {
-    //--- count the number of picks and
-    //--- drop the interaction mode back to
-    //--- the default (transform) if mouse mode
-    //--- is transient.
-    if ( (this->NumberOfPlaces >= this->NumberOfTransientPlaces ) &&
-         (placeModePersistence == 0 ) && (interactionNode != 0) )
-      {
-      interactionNode->NormalizeAllMouseModes();
-      interactionNode->SetLastInteractionMode ( mouseInteractionMode );
-      interactionNode->SetCurrentInteractionMode ( vtkMRMLInteractionNode::ViewTransform );
-      // reset the number of place events.
-      this->NumberOfPlaces = 0;
-      }
-    }
+
   switch (this->State)
     {
     case VTKIS_DOLLY:
       this->EndDolly();
+      if ( this->Interactor )
+        {
+        this->ReleaseFocus();
+        }
       break;
 
     case VTKIS_PAN:
       this->EndPan();
+      if ( this->Interactor )
+        {
+        this->ReleaseFocus();
+        }
       break;
 
     case VTKIS_SPIN:
       this->EndSpin();
+      if ( this->Interactor )
+        {
+        this->ReleaseFocus();
+        }
       break;
 
     case VTKIS_ROTATE:
       this->EndRotate();
+      if ( this->Interactor )
+        {
+        this->ReleaseFocus();
+        }
       break;
-    }
-
-  if ( this->Interactor )
-    {
-    this->ReleaseFocus();
     }
 }
 
 //----------------------------------------------------------------------------
-void vtkThreeDViewInteractorStyle::OnMiddleButtonDown()
+void vtkThreeDViewInteractorStyle::OnEnter()
 {
-  this->FindPokedRenderer(this->Interactor->GetEventPosition()[0],
-                          this->Interactor->GetEventPosition()[1]);
-  if (this->CurrentRenderer == 0)
+}
+
+//----------------------------------------------------------------------------
+void vtkThreeDViewInteractorStyle::OnLeave()
+{
+  if (this->GetCameraNode() == NULL || this->GetCameraNode()->GetScene() == NULL)
     {
+    // interactor is not initialized
     return;
     }
-
-  this->GrabFocus(this->EventCallbackCommand);
-  this->StartPan();
-}
-
-//----------------------------------------------------------------------------
-void vtkThreeDViewInteractorStyle::OnMiddleButtonUp()
-{
-  switch (this->State)
+  vtkMRMLScene* scene = this->GetCameraNode()->GetScene();
+  vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairDisplayableManager::FindCrosshairNode(scene);
+  if (crosshairNode)
     {
-    case VTKIS_PAN:
-      this->EndPan();
-      break;
-    }
-  if ( this->Interactor )
-    {
-    this->ReleaseFocus();
-    }
-}
-
-//----------------------------------------------------------------------------
-void vtkThreeDViewInteractorStyle::OnRightButtonDown()
-{
-  this->FindPokedRenderer(this->Interactor->GetEventPosition()[0],
-                          this->Interactor->GetEventPosition()[1]);
-  if (this->CurrentRenderer == 0)
-    {
-    return;
-    }
-
-  this->GrabFocus(this->EventCallbackCommand);
-  this->StartDolly();
-}
-
-//----------------------------------------------------------------------------
-void vtkThreeDViewInteractorStyle::OnRightButtonUp()
-{
-  switch (this->State)
-    {
-    case VTKIS_DOLLY:
-      this->EndDolly();
-      break;
-    }
-  if ( this->Interactor )
-    {
-    this->ReleaseFocus();
+    crosshairNode->SetCursorPositionInvalid();
     }
 }
 
@@ -554,7 +556,6 @@ void vtkThreeDViewInteractorStyle::OnMouseWheelBackward()
     {
     return;
     }
-
   this->GrabFocus(this->EventCallbackCommand);
   this->StartDolly();
   double factor = this->MotionFactor * -0.2 * this->MouseWheelMotionFactor;
@@ -567,10 +568,108 @@ void vtkThreeDViewInteractorStyle::OnMouseWheelBackward()
 //----------------------------------------------------------------------------
 void vtkThreeDViewInteractorStyle::OnExpose()
 {
+  /*
   if ( this->GetModelDisplayableManager() != 0 )
     {
     this->GetModelDisplayableManager()->RequestRender();
     }
+    */
+}
+
+//----------------------------------------------------------------------------
+void vtkThreeDViewInteractorStyle::OnConfigure()
+{
+}
+//----------------------------------------------------------------------------
+void vtkThreeDViewInteractorStyle::SetDisplayableManagers(vtkMRMLDisplayableManagerGroup* displayableManagerGroup)
+{
+  this->DisplayableManagers = displayableManagerGroup;
+}
+
+//----------------------------------------------------------------------------
+bool vtkThreeDViewInteractorStyle::ForwardInteractionEventToDisplayableManagers(unsigned long event)
+{
+  if (!this->DisplayableManagers)
+    {
+    return false;
+    }
+  double canProcessEvent = false;
+  double closestDistance2 = VTK_DOUBLE_MAX;
+  vtkMRMLAbstractDisplayableManager* closestDisplayableManager = NULL;
+  int numberOfDisplayableManagers = this->DisplayableManagers->GetDisplayableManagerCount();
+
+  // Get display and world position
+  int* displayPositionInt = this->GetInteractor()->GetEventPosition();
+  vtkRenderer* pokedRenderer = this->GetInteractor()->FindPokedRenderer(displayPositionInt[0], displayPositionInt[1]);
+  double displayPosition[4] =
+    {
+    static_cast<double>(displayPositionInt[0] - pokedRenderer->GetOrigin()[0]),
+    static_cast<double>(displayPositionInt[1] - pokedRenderer->GetOrigin()[1]),
+    0.0,
+    1.0
+    };
+
+  vtkNew<vtkMRMLInteractionEventData> ed;
+  ed->SetType(event);
+  int displayPositionCorrected[2] = { displayPositionInt[0] - pokedRenderer->GetOrigin()[0], displayPositionInt[1] - pokedRenderer->GetOrigin()[1] };
+  ed->SetDisplayPosition(displayPositionCorrected);
+  double worldPosition[4] = { 0.0, 0.0, 0.0, 1.0 };
+  if (this->QuickPick(displayPositionInt[0], displayPositionInt[1], worldPosition))
+    {
+    ed->SetWorldPosition(worldPosition);
+    }
+
+  ed->SetAttributesFromInteractor(this->GetInteractor());
+
+  // Find the most suitable displayable manager
+  for (int displayableManagerIndex = 0; displayableManagerIndex < numberOfDisplayableManagers; ++displayableManagerIndex)
+    {
+    vtkMRMLAbstractDisplayableManager* displayableManager = vtkMRMLAbstractDisplayableManager::SafeDownCast(
+      this->DisplayableManagers->GetNthDisplayableManager(displayableManagerIndex));
+    if (!displayableManager)
+      {
+      continue;
+      }
+    double distance2 = VTK_DOUBLE_MAX;
+    if (displayableManager->CanProcessInteractionEvent(ed, distance2))
+      {
+      if (!canProcessEvent || (distance2 < closestDistance2))
+        {
+        canProcessEvent = true;
+        closestDisplayableManager = displayableManager;
+        closestDistance2 = distance2;
+        }
+      }
+    }
+
+  if (!canProcessEvent)
+    {
+    // none of the displayable managers can process the event, just ignore it
+    return false;
+    }
+
+  // Notify displayable managers about focus change
+  vtkMRMLAbstractDisplayableManager* oldFocusedDisplayableManager = this->FocusedDisplayableManager;
+  if (oldFocusedDisplayableManager != closestDisplayableManager)
+    {
+    if (oldFocusedDisplayableManager != nullptr)
+      {
+      oldFocusedDisplayableManager->SetHasFocus(false);
+      }
+    this->FocusedDisplayableManager = closestDisplayableManager;
+    if (closestDisplayableManager != nullptr)
+      {
+      closestDisplayableManager->SetHasFocus(true);
+      }
+    }
+
+  // Process event with new displayable manager
+  if (!this->FocusedDisplayableManager)
+    {
+    return false;
+    }
+
+  return this->FocusedDisplayableManager->ProcessInteractionEvent(ed);
 }
 
 //----------------------------------------------------------------------------
@@ -811,12 +910,6 @@ void vtkThreeDViewInteractorStyle::Dolly(double factor)
 }
 
 //----------------------------------------------------------------------------
-void vtkThreeDViewInteractorStyle::PrintSelf(ostream& os, vtkIndent indent)
-{
-  this->Superclass::PrintSelf(os,indent);
-}
-
-//----------------------------------------------------------------------------
 void vtkThreeDViewInteractorStyle::SetModelDisplayableManager(
     vtkMRMLModelDisplayableManager * modelDisplayableManager)
 {
@@ -836,7 +929,7 @@ void vtkThreeDViewInteractorStyle::SetInteractor(vtkRenderWindowInteractor *inte
 }
 
 //---------------------------------------------------------------------------
-bool vtkThreeDViewInteractorStyle::Pick(int x, int y, double pickPoint[3])
+bool vtkThreeDViewInteractorStyle::AccuratePick(int x, int y, double pickPoint[3])
 {
   this->FindPokedRenderer(x, y);
   if (this->CurrentRenderer == 0)
@@ -845,12 +938,12 @@ bool vtkThreeDViewInteractorStyle::Pick(int x, int y, double pickPoint[3])
     return false;
     }
 
-  if (!this->CellPicker->Pick(x, y, 0, this->CurrentRenderer))
+  if (!this->AccuratePicker->Pick(x, y, 0, this->CurrentRenderer))
     {
     return false;
     }
 
-  vtkPoints* pickPositions = this->CellPicker->GetPickedPositions();
+  vtkPoints* pickPositions = this->AccuratePicker->GetPickedPositions();
   int numberOfPickedPositions = pickPositions->GetNumberOfPoints();
   if (numberOfPickedPositions<1)
     {
@@ -872,4 +965,69 @@ bool vtkThreeDViewInteractorStyle::Pick(int x, int y, double pickPoint[3])
     }
   }
   return true;
+}
+
+//---------------------------------------------------------------------------
+bool vtkThreeDViewInteractorStyle::QuickPick(int x, int y, double pickPoint[3])
+{
+  this->FindPokedRenderer(x, y);
+  if (this->CurrentRenderer == 0)
+  {
+    vtkDebugMacro("Pick: couldn't find the poked renderer at event position " << x << ", " << y);
+    return false;
+  }
+
+  this->QuickPicker->Pick(x, y, 0, this->CurrentRenderer);
+
+  this->QuickPicker->GetPickPosition(pickPoint);
+
+  return true;
+}
+
+//----------------------------------------------------------------------------
+void vtkThreeDViewInteractorStyle::ThreeDViewProcessEvents(vtkObject* object,
+  unsigned long event, void* clientdata, void* calldata)
+{
+  vtkThreeDViewInteractorStyle* self
+    = reinterpret_cast<vtkThreeDViewInteractorStyle *>(clientdata);
+
+  // Save info for button click detection
+  if (event == vtkCommand::LeftButtonPressEvent
+    || event == vtkCommand::RightButtonPressEvent
+    || event == vtkCommand::MiddleButtonPressEvent)
+    {
+    self->MouseMovedSinceButtonDown = false;
+    }
+  if (event == vtkCommand::MouseMoveEvent)
+    {
+    self->MouseMovedSinceButtonDown = true;
+    }
+
+  // Displayable managers add interactor style observers and those observers
+  // replace callback method calls. We make sure here that displayable managers
+  // get the chance to process the events first (except when we are in an
+  // interaction state - such as zooming, panning, etc).
+  if (self->State != VTKIS_NONE
+    || !self->ForwardInteractionEventToDisplayableManagers(event))
+    {
+    // Displayable managers did not processed it
+    Superclass::ProcessEvents(object, event, clientdata, calldata);
+    }
+
+  // Detect click events
+  if (!self->MouseMovedSinceButtonDown)
+    {
+    if (event == vtkCommand::LeftButtonReleaseEvent)
+      {
+      self->ForwardInteractionEventToDisplayableManagers(vtkMRMLInteractionEventData::LeftButtonClickEvent);
+      }
+    else if (event == vtkCommand::MiddleButtonReleaseEvent)
+      {
+      self->ForwardInteractionEventToDisplayableManagers(vtkMRMLInteractionEventData::MiddleButtonClickEvent);
+      }
+    else if (event == vtkCommand::RightButtonReleaseEvent)
+      {
+      self->ForwardInteractionEventToDisplayableManagers(vtkMRMLInteractionEventData::RightButtonClickEvent);
+      }
+    }
 }

@@ -18,13 +18,15 @@
 
 // VTK includes
 #include "vtkInteractorStyleUser.h"
-#include "vtkMatrix4x4.h"
+#include "vtkWeakPointer.h"
 
 // MRML includes
 #include "vtkMRMLDisplayableManagerExport.h"
 
+class vtkMRMLAbstractDisplayableManager;
 class vtkMRMLSegmentationDisplayNode;
 class vtkMRMLSliceLogic;
+class vtkMRMLDisplayableManagerGroup;
 
 /// \brief Provides customizable interaction routines.
 ///
@@ -35,7 +37,8 @@ class vtkMRMLSliceLogic;
 /// * Do we need Rotate Mode?  Probably better to just rely on the reformat widget
 /// * Do we need to set the slice spacing on EnterEvent (I say no, nothing to do
 ///   with linked slices should go in here)
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkSliceViewInteractorStyle : public vtkInteractorStyleUser
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkSliceViewInteractorStyle :
+  public vtkInteractorStyleUser
 {
 public:
   static vtkSliceViewInteractorStyle *New();
@@ -47,29 +50,32 @@ public:
   /// and composite node (sometimes using the logic's methods) or
   /// they are passed to the vtkInteractorStyleUser, which conditionally
   /// passes them to observers if there are any.
-  ///
-  /// Generic event bindings
   virtual void OnMouseMove() VTK_OVERRIDE;
+  virtual void OnEnter() VTK_OVERRIDE;
+  virtual void OnLeave() VTK_OVERRIDE;
   virtual void OnLeftButtonDown() VTK_OVERRIDE;
   virtual void OnLeftButtonUp() VTK_OVERRIDE;
   virtual void OnMiddleButtonDown() VTK_OVERRIDE;
   virtual void OnMiddleButtonUp() VTK_OVERRIDE;
   virtual void OnRightButtonDown() VTK_OVERRIDE;
   virtual void OnRightButtonUp() VTK_OVERRIDE;
-  /// MouseWheel callbacks added for slicer
   virtual void OnMouseWheelForward() VTK_OVERRIDE;
   virtual void OnMouseWheelBackward() VTK_OVERRIDE;
-  ///
+
   /// Keyboard functions
   virtual void OnChar() VTK_OVERRIDE;
   virtual void OnKeyPress() VTK_OVERRIDE;
   virtual void OnKeyRelease() VTK_OVERRIDE;
-  ///
+
   /// These are more esoteric events, but are useful in some cases.
   virtual void OnExpose() VTK_OVERRIDE;
   virtual void OnConfigure() VTK_OVERRIDE;
-  virtual void OnEnter() VTK_OVERRIDE;
-  virtual void OnLeave() VTK_OVERRIDE;
+
+  void SetDisplayableManagers(vtkMRMLDisplayableManagerGroup* displayableManagers);
+
+  /// Give a chance to displayable managers to process the event.
+  /// Return true if the event is processed.
+  bool ForwardInteractionEventToDisplayableManagers(unsigned long event);
 
   /// Internal state management for multi-event sequences (like click-drag-release)
 
@@ -116,6 +122,9 @@ public:
   /// Adjust zoom factor. If zoomScaleFactor>1 then view is zoomed in,
   /// if 0<zoomScaleFactor<1 then view is zoomed out.
   void ScaleZoom(double zoomScaleFactor);
+  void DoZoom();
+
+  void DoRotate();
 
   /// Collect some boilerplate management steps so they can be used
   /// in more than one place
@@ -125,11 +134,13 @@ public:
   /// Enter a mode where the mouse moves are used to change the foreground
   /// or labelmap opacity.
   void StartBlend();
+  void DoBlend();
   void EndBlend();
 
   /// Enter a mode where the mouse moves are used to change the window/level
   /// setting.
   void StartAdjustWindowLevel();
+  void DoAdjustWindowLevel();
   void EndAdjustWindowLevel();
 
   /// Convert event coordinates (with respect to viewport) into
@@ -157,8 +168,8 @@ public:
   void SetLabelOpacity(double opacity);
   double GetLabelOpacity();
 
-protected:
 
+protected:
   vtkSliceViewInteractorStyle();
   ~vtkSliceViewInteractorStyle();
 
@@ -175,10 +186,6 @@ protected:
   int ActionState;
   int ActionsEnabled;
 
-  /// Indicates whether the shift key was used during the previous action.
-  /// This is used to require shift-up before returning to default mode.
-  bool ShiftKeyUsedForPreviousAction;
-
   int StartActionEventPosition[2];
   double StartActionFOV[3];
   double VolumeScalarRange[2];
@@ -190,6 +197,15 @@ protected:
   double LastVolumeWindowLevel[2];
 
   vtkMRMLSliceLogic *SliceLogic;
+
+  bool MouseMovedSinceButtonDown;
+
+  /// Indicates whether the shift key was used during the previous action.
+  /// This is used to require shift-up before returning to default mode.
+  bool ShiftKeyUsedForPreviousAction;
+
+  vtkWeakPointer<vtkMRMLDisplayableManagerGroup> DisplayableManagers;
+  vtkMRMLAbstractDisplayableManager* FocusedDisplayableManager;
 
 private:
   vtkSliceViewInteractorStyle(const vtkSliceViewInteractorStyle&);  /// Not implemented.

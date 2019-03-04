@@ -988,3 +988,33 @@ vtkRenderer* vtkMRMLAbstractDisplayableManager::GetRenderer(int idx)
     }
 }
 
+//---------------------------------------------------------------------------
+bool vtkMRMLAbstractDisplayableManager::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &distance2)
+{
+  distance2 = VTK_DOUBLE_MAX;
+  return false;
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLAbstractDisplayableManager::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
+{
+  return false;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAbstractDisplayableManager::SetHasFocus(bool hasFocus)
+{
+  return;
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLAbstractDisplayableManager::GetGrabFocus()
+{
+  return false;
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLAbstractDisplayableManager::GetInteractive()
+{
+  return false;
+}

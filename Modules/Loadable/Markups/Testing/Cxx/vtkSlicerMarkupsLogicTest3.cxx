@@ -62,7 +62,7 @@ int vtkSlicerMarkupsLogicTest3(int , char * [] )
     {
     vtkNew<vtkMRMLAnnotationFiducialNode> annotFid;
     double p1[3] = {1.1, -2.2, 3.3};
-    p1[0] = (double)n;
+    p1[0] = static_cast<double>(n);
     annotFid->SetFiducialCoordinates(p1);
     annotFid->Initialize(scene.GetPointer());
     }
@@ -75,7 +75,7 @@ int vtkSlicerMarkupsLogicTest3(int , char * [] )
     {
     vtkNew<vtkMRMLAnnotationFiducialNode> annotFid;
     double p1[3] = {5.5, -6.6, 0.0};
-    p1[2] = (double)n;
+    p1[2] = static_cast<double>(n);
     annotFid->SetFiducialCoordinates(p1);
     annotFid->Initialize(scene.GetPointer());
     if (n == 3)
@@ -116,9 +116,9 @@ int vtkSlicerMarkupsLogicTest3(int , char * [] )
 //    }
 
   // clean up before testing
-  applicationLogic->SetMRMLScene(NULL);
-  logic1->SetMRMLScene(NULL);
-  annotLogic->SetMRMLScene(NULL);
+  applicationLogic->SetMRMLScene(nullptr);
+  logic1->SetMRMLScene(nullptr);
+  annotLogic->SetMRMLScene(nullptr);
   applicationLogic->Delete();
 
   // check the second list
@@ -128,14 +128,14 @@ int vtkSlicerMarkupsLogicTest3(int , char * [] )
     vtkMRMLMarkupsFiducialNode *markupsFid = vtkMRMLMarkupsFiducialNode::SafeDownCast(mrmlNode);
     if (markupsFid)
       {
-      std::string desc = markupsFid->GetNthMarkupDescription(3);
+      std::string desc = markupsFid->GetNthControlPointDescription(3);
       if (desc.compare("testing description") != 0)
         {
         std::cerr << "Failed to get the expected description on markup 3, got: "
                   << desc.c_str() << std::endl;
         return EXIT_FAILURE;
         }
-      std::string assocNodeID = markupsFid->GetNthMarkupAssociatedNodeID(4);
+      std::string assocNodeID = markupsFid->GetNthControlPointAssociatedNodeID(4);
       if (assocNodeID.compare("vtkMRMLScalarVolumeNode4") != 0)
         {
         std::cerr << "Failed to get the expected associated node id on markup 4, got: "

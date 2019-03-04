@@ -28,52 +28,93 @@
 #include <vtkSmartPointer.h>
 #include <vtkVector.h>
 
-class vtkStringArray;
-class vtkMatrix4x4;
-
-/// see doxygen enabled comment in class description
-typedef struct
-{
-  std::string ID;
-  std::string Label;
-  std::string Description;
-  std::string AssociatedNodeID;
-  std::vector < vtkVector3d> points;
-  double OrientationWXYZ[4];
-  bool Selected;
-  bool Locked;
-  bool Visibility;
-} Markup;
-
-/// \brief MRML node to represent a list of markups
-/// Markups nodes contains a list of markups that each contain a list of points.
+/// \brief MRML node to represent an interactive widget.
+/// MarkupsNodes contains a list of points (ControlPoint).
+/// Each markupNode is defined by a certain number of control points:
+/// N for fiducials, 2 for rulers, 3 for angles and N for curves.
+/// MarkupNodes are stricly connected with the VTKWidget representations. For each
+/// MarkupNode there is a representation in each view. The representations are handled
+/// by the VTKWidget (there is one widget for each MRMLMarkupsNode per view).
 /// Visualization parameters for these nodes are controlled by the
 /// vtkMRMLMarkupsDisplayNode class.
-/// Each markup has a unique ID.
-/// Each markup is defined by a certain number of RAS points,
-/// 1 for fiducials, 2 for rulers, 3 for angles, etc.
-/// Each markup has an orientation defined by a quaternion. It's represented
-/// by a 4 element vector: [0] = the angle of rotation, [1,2,3] = the axis of
-/// rotation. Default is 0.0, 0.0, 0.0, 1.0
-/// Each markup also has an associated node id, set when the markup
-/// is placed on a data set to link the markup to the volume or model.
-/// Each markup can also be individually un/selected, un/locked, in/visible,
+/// Each ControlPoint has a unique ID.
+/// Each ControlPoint has an orientation defined by a by a 4 element vector:
+/// [0] = the angle of rotation in degrees, [1,2,3] = the axis of rotation.
+/// Default is 0.0, 0.0, 0.0, 1.0.
+/// Each ControlPoint also has an associated node id, set when the ControlPoint
+/// is placed on a data set to link the ControlPoint to the volume or model.
+/// Each ControlPoint can also be individually un/selected, un/locked, in/visible,
 /// and have a label (short, shown in the viewers) and description (longer,
 /// shown in the GUI).
+///
 /// \sa vtkMRMLMarkupsDisplayNode
 /// \ingroup Slicer_QtModules_Markups
+
+class vtkAlgorithmOutput;
+class vtkCurveGenerator;
+class vtkGeneralTransform;
+class vtkMatrix4x4;
+class vtkMRMLMarkupsDisplayNode;
+class vtkPolyData;
+class vtkStringArray;
+class vtkTransformPolyDataFilter;
+
 class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsNode : public vtkMRMLDisplayableNode
 {
-  /// Make the storage node a friend so that ReadDataInternal can set the markup
-  /// ids
+  /// Make the storage node a friend so that ReadDataInternal can set the ControlPoint ids
   friend class vtkMRMLMarkupsStorageNode;
   friend class vtkMRMLMarkupsFiducialStorageNode;
 
 public:
+  struct ControlPoint
+    {
+    ControlPoint()
+      {
+      // position is 0
+      this->Position[0] = 0.0;
+      this->Position[1] = 0.0;
+      this->Position[2] = 0.0;
+
+      this->OrientationMatrix[0] = 1.0;
+      this->OrientationMatrix[1] = 0.0;
+      this->OrientationMatrix[2] = 0.0;
+
+      this->OrientationMatrix[3] = 0.0;
+      this->OrientationMatrix[4] = 1.0;
+      this->OrientationMatrix[5] = 0.0;
+
+      this->OrientationMatrix[6] = 0.0;
+      this->OrientationMatrix[7] = 0.0;
+      this->OrientationMatrix[8] = 1.0;
+
+      Selected = true;
+      Locked = false;
+      Visibility = true;
+      }
+
+    // Positions and orientation in local coordinates.
+    // If transform is applied to the markup node then world
+    // coordinates may be obtained by applying "to world" transform.
+    double Position[3];
+    // Orientation of x axis (0, 1, 2), y axis (3, 4, 5), and z axis (6, 7, 8).
+    // This memory layout is chosen so that the normal (z axis) can be retrieved quickly.
+    double OrientationMatrix[9];
+
+    std::string ID;
+    std::string Label;
+    std::string Description;
+    std::string AssociatedNodeID;
+
+    bool Selected;
+    bool Locked;
+    bool Visibility;
+    };
+
+  typedef std::vector<ControlPoint*> ControlPointsListType;
+
   static vtkMRMLMarkupsNode *New();
   vtkTypeMacro(vtkMRMLMarkupsNode,vtkMRMLDisplayableNode);
 
-  void PrintMarkup(ostream&  os, vtkIndent indent, Markup *markup);
   void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   virtual const char* GetIcon() {return "";};
@@ -95,16 +136,13 @@ public:
   /// Write this node's information to a vector of strings for passing to a CLI,
   /// precede each datum with the prefix if not an empty string
   /// coordinateSystemFlag = 0 for RAS, 1 for LPS
-  /// multipleFlag = 1 for the whole list, 1 for the first selected markup
+  /// multipleFlag = 1 for the whole list, 1 for the first selected control point
   virtual void WriteCLI(std::vector<std::string>& commandLine,
                         std::string prefix, int coordinateSystem = 0,
                         int multipleFlag = 1) VTK_OVERRIDE;
 
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
-
-  /// Currently only calls superclass UpdateScene
-  void UpdateScene(vtkMRMLScene *scene) VTK_OVERRIDE;
 
   /// Alternative method to propagate events generated in Display nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
@@ -115,6 +153,9 @@ public:
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode() VTK_OVERRIDE;
 
+  /// Create and observe default display node(s)
+  virtual void CreateDefaultDisplayNodes() VTK_OVERRIDE;
+
   /// Access to a VTK string array, not currently used
   int AddText(const char *newText);
   void SetText(int id, const char *newText);
@@ -123,196 +164,261 @@ public:
   int GetNumberOfTexts();
   void RemoveAllTexts();
 
-  /// Invoke events when markups change, passing the markup index if applicable.
-  /// Invoke the lock modified event when a markup's lock status is changed.
-  /// Invoke the label format modified event when markup label format changes.
-  /// Invoke the point start interaction event when starting interacting with a point.
-  /// Invoke the point modified event when a markup's location changes.
-  /// Invoke the point end interaction event when an interaction process finishes.
-  /// Invoke the point clicked event when user clicked a markup
-  /// (pressed and released the moues button without moving the mouse cursor).
-  /// Invoke the NthMarkupModifiedEvent event when a markup's non location value.
-  /// Invoke the markup added event when adding a new markup to a markups node.
-  /// Invoke the markup removed event when removing one or all markups from a node
+  /// Invoke events when control points change, passing the control point index if applicable.
+  /// Invoke the LockModifiedEvent when a markupNode lock status is changed.
+  /// Invoke the LabelFormatModifiedEvent when markupNode label format changes.
+  /// Invoke the PointAddedEvent when adding a new control point to a markups node, event callData is control point index address (int*).
+  /// Invoke the PointRemovedEvent when removing one control point, event callData is control point index address (int*).
+  /// Invoke the AllPointsRemovedEvent when removing all control points.
+  //  Invoke the PointModifiedEvent when any property of a control point is modified, event callData is control point index address (int*).
+  /// Invoke the PointStartInteractionEvent when starting interacting with a control point.
+  /// Invoke the PointEndInteractionEvent when an interaction eith a control point process finishes.
+  /// Invoke the point clicked events when user clicked a control point.
   /// (caught by the displayable manager to make sure the widgets match the node).
   enum
   {
     LockModifiedEvent = 19000,
     LabelFormatModifiedEvent,
+    PointAddedEvent,
+    PointRemovedEvent,
+    AllPointsRemovedEvent,
     PointModifiedEvent,
-    PointStartInteractionEvent,
-    PointEndInteractionEvent,
-    PointClickedEvent,
-    NthMarkupModifiedEvent,
+    PointStartInteractionEvent, // deprecated (GUI events are moved to display node)
+    PointEndInteractionEvent, // deprecated (GUI events are moved to display node)
+    PointClickedEvent, // deprecated (GUI events are moved to display node)
+    // Event IDs related to markups but used outside
     MarkupAddedEvent,
     MarkupRemovedEvent,
   };
 
-  /// Clear out the node of all markups
-  virtual void RemoveAllMarkups();
+  /// Clear out the node of all control points
+  virtual void RemoveAllControlPoints();
 
-  /// Get the Locked property on the markup node/list of markups.
+  /// Get the Locked property on the markupNode/list of control points.
   vtkGetMacro(Locked, int);
-  /// Set the Locked property on the markup node/list of markups
+  /// Set the Locked property on the markupNode/list of control points
   /// If set to 1 then parameters should not be changed, and dragging the
-  /// markups is disabled in 2d and 3d.
-  /// Overrides the Locked flag on individual Markups in that when the node is
-  /// set to be locked, all the markups in the list are locked. When the node
-  /// is unlocked, use the locked flag on the individual markups to determine
+  /// control points is disabled in 2d and 3d.
+  /// Overrides the Locked flag on individual control points in that when the node is
+  /// set to be locked, all the control points in the list are locked. When the node
+  /// is unlocked, use the locked flag on the individual control points to determine
   /// their locked state.
   void SetLocked(int locked);
-  /// Get/Set the Locked property on the markup.
+  /// Get/Set the Locked property on the markupNode.
   /// If set to 1 then parameters should not be changed
   vtkBooleanMacro(Locked, int);
 
-  /// Return true if n is a valid markup, false otherwise
-  bool MarkupExists(int n);
-  /// Return the number of markups that are stored in this node
-  int GetNumberOfMarkups();
-  /// Return true if p is a valid point in a valid markup n, false otherwise
-  bool PointExistsInMarkup(int p, int n);
-  /// Return the number of points in a markup, 0 if n is invalid
-  int GetNumberOfPointsInNthMarkup(int n);
-  /// Return a pointer to the nth markup stored in this node, null if n is out of bounds
-  Markup * GetNthMarkup(int n);
-  /// Initialise a markup to default values
-  void InitMarkup(Markup *markup);
-  /// Add a markup to the end of the list. Return index
-  /// of new markup, -1 on failure.
-  int AddMarkup(Markup markup);
-  /// Create a new markup with n points.
-  /// If point is specified then all markup positions will be initialized to that position,
-  /// otherwise markup positions are initialized to (0,0,0).
-  /// Return index of new markup, -1 on failure.
-  int AddMarkupWithNPoints(int n, std::string label = std::string(), vtkVector3d* point = NULL);
-  /// Create a new markup with one point.
-  /// Return index of new markup, -1 on failure.
-  int AddPointToNewMarkup(vtkVector3d point, std::string label = std::string());
-  /// Create a new markup with one point, defined in the world coordinate system.
-  /// Return index of new markup, -1 on failure.
-  int AddPointWorldToNewMarkup(vtkVector3d point, std::string label = std::string());
-  /// Add a point to the nth markup, returning the point index, -1 on failure.
-  int AddPointToNthMarkup(vtkVector3d point, int n);
-  /// Remove a point from nth markup, returning true on success.
-  bool RemovePointFromNthMarkup(int pointIndex, int n);
+  /// Return a cast display node, returns null if none
+  vtkMRMLMarkupsDisplayNode *GetMarkupsDisplayNode();
 
-  /// Get the position of the pointIndex'th point in markupIndex markup,
-  /// returning it as a vtkVector3d
-  vtkVector3d GetMarkupPointVector(int markupIndex, int pointIndex);
-  /// Get the position of the pointIndex'th point in markupIndex markup,
+  /// Return true if n is a valid control point, false otherwise
+  /// If failedMethodName is specified and the control point does not exist
+  /// then an error is logged.
+  bool ControlPointExists(int n, const char* failedMethodName = NULL);
+  /// Return the number of control points that are stored in this node
+  int GetNumberOfControlPoints();
+  /// Deprecated. Use GetNumberOfControlPoints() instead.
+  int GetNumberOfMarkups() { return this->GetNumberOfControlPoints(); };
+  /// Return a pointer to the Nth control point stored in this node, null if n is out of bounds
+  ControlPoint* GetNthControlPoint(int n);
+  /// Return a pointer to the std::vector of control points stored in this node
+  std::vector<ControlPoint*>* GetControlPoints();
+  /// Add n control points.
+  /// If point is specified then all control point positions will be initialized to that position,
+  /// otherwise control poin positions are initialized to (0,0,0).
+  /// Return index of the last placed control point, -1 on failure.
+  int AddNControlPoints(int n, std::string label = std::string(), vtkVector3d* point = NULL);
+  /// Add a new control point, defined in the world coordinate system.
+  /// Return index of point index, -1 on failure.
+  int AddControlPointWorld(vtkVector3d point, std::string label = std::string());
+  /// Add a new control point, returning the point index, -1 on failure.
+  int AddControlPoint(vtkVector3d point, std::string label = std::string());
+  /// Add a controlPoint to the end of the list. Return index
+  /// of new controlPoint, -1 on failure.
+  /// Markups node takes over ownership of the pointer (markups node will delete it).
+  int AddControlPoint(ControlPoint *controlPoint);
+
+  /// Get the position of the Nth control point
+  /// returning it as a vtkVector3d, return (0,0,0) if not found
+  vtkVector3d GetNthControlPointPositionVector(int pointIndex);
+
+  /// Deprecated. Use GetNthControlPointPositionVector() method instead.
+  vtkVector3d GetMarkupPointVector(int markupIndex, int) { return this->GetNthControlPointPositionVector(markupIndex); };
+
+  /// Get the position of the Nth control point
   /// setting the elements of point
-  void GetMarkupPoint(int markupIndex, int pointIndex, double point[3]);
-  /// Get points in LPS coordinate system
-  void GetMarkupPointLPS(int markupIndex, int pointIndex, double point[3]);
-  /// Return a three element double giving the world position (any parent
-  /// transform on the markup applied to the return of GetMarkupPoint.
+  void GetNthControlPointPosition(int pointIndex, double point[3]);
+  /// Get the position of the Nth control point in World coordinate system
   /// Returns 0 on failure, 1 on success.
-  int GetMarkupPointWorld(int markupIndex, int pointIndex, double worldxyz[4]);
+  int GetNthControlPointPositionWorld(int pointIndex, double worldxyz[3]);
 
-  /// Remove a markup
-  void RemoveMarkup(int m);
+  /// Remove Nth Control Point
+  void RemoveNthControlPoint(int pointIndex);
 
-  /// Insert a markup in this list at targetIndex.
+  /// Deprecated. Use RemoveNthControlPoint instead.
+  void RemoveMarkup(int pointIndex) { this->RemoveNthControlPoint(pointIndex); };
+
+  /// Insert a control point in this list at targetIndex.
   /// If targetIndex is < 0, insert at the start of the list.
   /// If targetIndex is > list size - 1, append to end of list.
+  /// If the insertion is successful, ownership of the controlPoint
+  /// is transferred to the markups node.
   /// Returns true on success, false on failure.
-  bool InsertMarkup(Markup m, int targetIndex);
+  bool InsertControlPoint(ControlPoint* controlPoint, int targetIndex);
 
-  /// Copy settings from source markup to target markup
-  void CopyMarkup(Markup *source, Markup *target);
+  /// Swap the position of two control points
+  void SwapControlPoints(int m1, int m2);
 
-  /// Swap the position of two markups
-  void SwapMarkups(int m1, int m2);
+  /// Set of the Nth control point position from a pointer to an array
+  /// \sa SetNthControlPointPosition
+  void SetNthControlPointPositionFromPointer(const int pointIndex, const double *pos);
+  /// Set of the Nth control point position from an array
+  /// \sa SetNthControlPointPosition
+  void SetNthControlPointPositionFromArray(const int pointIndex, const double pos[3]);
+  /// Set of the Nth control point position from coordinates
+  /// \sa SetNthControlPointPositionFromPointer, SetNthControlPointPositionFromArray
+  void SetNthControlPointPosition(const int pointIndex, const double x, const double y, const double z);
+  /// Set of the Nth control point position using World coordinate system
+  /// Calls SetNthControlPointPosition after transforming the passed in coordinate
+  /// \sa SetNthControlPointPosition
+  void SetNthControlPointPositionWorld(const int pointIndex, const double x, const double y, const double z);
+  /// Set of the Nth control point position from an array using World coordinate system
+  /// \sa SetNthControlPointPosition
+  void SetNthControlPointPositionWorldFromArray(const int pointIndex, const double pos[3]);
+  /// Set of the Nth control point position and orientation from an array using World coordinate system.
+  /// \sa SetNthControlPointPosition
+  void SetNthControlPointPositionOrientationWorldFromArray(const int pointIndex,
+    const double pos[3], const double orientationMatrix[9], const char* associatedNodeID);
 
-  /// Set a point in a markup from a pointer to an array
-  /// \sa SetMarkupPoint
-  void SetMarkupPointFromPointer(const int markupIndex, const int pointIndex, const double * pos);
-  /// Set a point in a markup from an array
-  /// \sa SetMarkupPoint
-  void SetMarkupPointFromArray(const int markupIndex, const int pointIndex, const double pos[3]);
-  /// Set a point in a markup from coordinates
-  /// \sa SetMarkupPointFromPointer, SetMarkupPointFromArray
-  void SetMarkupPoint(const int markupIndex, const int pointIndex, const double x, const double y, const double z);
-  /// Set a point in a markup using LPS coordinate system, converting to RAS
-  /// \sa SetMarkupPoint
-  void SetMarkupPointLPS(const int markupIndex, const int pointIndex, const double x, const double y, const double z);
-  /// Set the markupIndex markup's point pointIndex to xyz transformed
-  /// by the inverse of the transform to world for the node.
-  /// Calls SetMarkupPoint after transforming the passed in coordinate
-  /// \sa SetMarkupPoint
-  void SetMarkupPointWorld(const int markupIndex, const int pointIndex, const double x, const double y, const double z);
+  /// Get the position of the center
+  /// returning it as a vtkVector3d, return (0,0,0) if not found
+  vtkVector3d GetCenterPositionVector();
+  /// Get the position of the center
+  /// setting the elements of point
+  void GetCenterPosition(double point[3]);
+  /// Get the position of the center in World coordinate system
+  /// Returns 0 on failure, 1 on success.
+  int GetCenterPositionWorld(double worldxyz[3]);
+  /// Set the center position from a pointer to an array
+  /// \sa SetCenterPosition
+  void SetCenterPositionFromPointer(const double *pos);
+  /// Set the center position position from an array
+  /// \sa SetCenterPosition
+  void SetCenterPositionFromArray(const double pos[3]);
+  /// Set the center position position from coordinates
+  /// \sa SetCenterPositionFromPointer, SetCenterPositionFromArray
+  void SetCenterPosition(const double x, const double y, const double z);
+  /// Set the center position position using World coordinate system
+  /// Calls SetCenterPosition after transforming the passed in coordinate
+  /// \sa SetCenterPosition
+  void SetCenterPositionWorld(const double x, const double y, const double z);
 
-  /// Set the orientation for a markup from a pointer to a double array
-  void SetNthMarkupOrientationFromPointer(int n, const double *orientation);
-  /// Set the orientation for a markup from a double array
-  void SetNthMarkupOrientationFromArray(int n, const double orientation[4]);
-  /// Set the orientation for a markup from passed parameters
-  void SetNthMarkupOrientation(int n, double w, double x, double y, double z);
-  /// Get the orientation quaternion for a markup
-  void GetNthMarkupOrientation(int n, double orientation[4]);
+  /// Set the orientation for the Nth control point from a pointer to a double array WXYZ
+  void SetNthControlPointOrientationFromPointer(int n, const double *orientationWXYZ);
+  /// Set the orientation for the Nth control point from a double array WXYZ
+  void SetNthControlPointOrientationFromArray(int n, const double orientationWXYZ[4]);
+  /// Set the orientation for the Nth control point from passed parameters
+  void SetNthControlPointOrientation(int n, double w, double x, double y, double z);
+  /// Get the WXYZ orientation for the Nth control point
+  void GetNthControlPointOrientation(int n, double orientationWXYZ[4]);
+  /// Get orientation as 9 values: x, y, and z axis directions, respectively.
+  double* GetNthControlPointOrientationMatrix(int n);
+  /// Set orientation as 9 values: x, y, and z axis directions, respectively.
+  void SetNthControlPointOrientationMatrix(int n, double orientationMatrix[9]);
+  /// Set orientation as 9 values: x, y, and z axis directions, respectively.
+  /// Important: this method just calls SetNthControlPointOrientationMatrix and
+  /// does not convert from world coordinate yet.
+  void SetNthControlPointOrientationMatrixWorld(int n, double orientationMatrix[9]);
+  /// Get normal direction (orientation of z axis) in local coordinate system.
+  double* GetNthControlPointNormal(int n);
+  /// Get normal direction (orientation of z axis) in world coordinate system.
+  void GetNthControlPointNormalWorld(int n, double normalWorld[3]);
+  /// Get the WXYZ orientation for the Nth control point
+  /// returning it as a vtkVector4d, return (0,0,0,0) if not found.
+  /// Note that vtkVector4d stores components in the order XYZW
+  /// (in all other methods we get/set components in WXYZ order).
+  vtkVector4d GetNthControlPointOrientationVector(int pointIndex);
 
-  /// Get/Set the associated node id for the nth markup
-  std::string GetNthMarkupAssociatedNodeID(int n = 0);
-  void SetNthMarkupAssociatedNodeID(int n, std::string id);
+  /// Get/Set the associated node id for the Nth control point
+  std::string GetNthControlPointAssociatedNodeID(int n = 0);
+  void SetNthControlPointAssociatedNodeID(int n, std::string id);
 
-  /// Get the id for the nth markup
-  std::string GetNthMarkupID(int n = 0);
-  /// Get Markup index based on it's ID
-  int GetMarkupIndexByID(const char* markupID);
-  /// Get Markup based on it's ID
-  Markup* GetMarkupByID(const char* markupID);
+  /// Deprecated. Use GetNthControlPointAssociatedNodeID instead.
+  std::string GetNthMarkupAssociatedNodeID(int n = 0) { return this->GetNthControlPointAssociatedNodeID(n); }
+  /// Deprecated. Use SetNthControlPointAssociatedNodeID instead.
+  void SetNthMarkupAssociatedNodeID(int n, std::string id) { this->SetNthControlPointAssociatedNodeID(n,id); }
 
-  /// Get the Selected flag on the nth markup, returns false if markup doesn't
-  /// exist
-  bool GetNthMarkupSelected(int n = 0);
-  /// Set the Selected flag on the Nth markup
+  /// Get the id for the Nth control point
+  std::string GetNthControlPointID(int n = 0);
+  /// Get the Nth control point index based on it's ID
+  int GetNthControlPointIndexByID(const char* controlPointID);
+  /// Get the Nth control point based on it's ID
+  ControlPoint* GetNthControlPointByID(const char* controlPointID);
+
+  /// Get the Selected flag on the Nth control point,
+  /// returns false if control point doesn't exist
+  bool GetNthControlPointSelected(int n = 0);
+  /// Set the Selected flag on the Nth control point
   /// \sa vtkMRMLNode::SetSelected
-  void SetNthMarkupSelected(int n, bool flag);
-  /// Get the Locked flag on the Nth markup, returns false if markup doesn't
-  /// exist
-  bool GetNthMarkupLocked(int n = 0);
-  /// Set Locked property on Nth markup. If locked is set to
-  /// true on the node/list as a whole, the nth markup locked flag is used to
+  void SetNthControlPointSelected(int n, bool flag);
+
+  /// Get the Lock flag on the Nth control point,
+  /// returns false if control point doesn't exist
+  bool GetNthControlPointLocked(int n = 0);
+  /// Set Locked property on Nth control point. If locked is set to
+  /// true on the node/list as a whole, the Nth control point locked flag is used to
   /// determine if it is locked. If the locked flag is set to false on the node
-  /// as a whole, all markups are locked but keep this value for when the
+  /// as a whole, all control point are locked but keep this value for when the
   /// list as a whole is turned unlocked.
   /// \sa vtMRMLMarkupsNode::SetLocked
-  void SetNthMarkupLocked(int n, bool flag);
-  /// Get the Visibility flag of the Nth markup, returns false if markup doesn't
-  /// exist
-  bool GetNthMarkupVisibility(int n = 0);
-  /// Set Visibility property on Nth markup. If the visibility is set to
-  /// true on the node/list as a whole, the nth markup visibility is used to
+  void SetNthControlPointLocked(int n, bool flag);
+
+
+  /// Deprecated. Use GetNthControlPointLocked instead.
+  bool GetNthMarkupLocked(int n = 0) { return this->GetNthControlPointLocked(n); };
+  /// Deprecated. Use SetNthControlPointLocked instead.
+  void SetNthMarkupLocked(int n, bool flag) { this->SetNthControlPointLocked(n, flag);  }
+
+  /// Get the Visibility flag on the Nth control point,
+  /// returns false if control point doesn't exist
+  bool GetNthControlPointVisibility(int n = 0);
+  /// Set Visibility property on Nth control point. If the visibility is set to
+  /// true on the node/list as a whole, the Nth control point visibility is used to
   /// determine if it is visible. If the visibility is set to false on the node
-  /// as a whole, all markups are hidden but keep this value for when the
+  /// as a whole, all control points are hidden but keep this value for when the
   /// list as a whole is turned visible.
   /// \sa vtkMRMLDisplayableNode::SetDisplayVisibility
   /// \sa vtkMRMLDisplayNode::SetVisibility
-  void SetNthMarkupVisibility(int n, bool flag);
-  /// Get the Label on the nth markup, returns an empty string if the
-  /// markup doesn't exist
-  std::string GetNthMarkupLabel(int n = 0);
-  /// Set the Label on the nth markup
-  void SetNthMarkupLabel(int n, std::string label);
-  /// Get the Description on the nth markup, returns an empty string if the
-  /// markup doesn't exist
-  std::string GetNthMarkupDescription(int n = 0);
-  /// Set the Description on the nth markup
-  void SetNthMarkupDescription(int n, std::string description);
+  void SetNthControlPointVisibility(int n, bool flag);
 
-  // Transform utility functions
+  /// Get the Label on the Nth control point,
+  /// returns false if control point doesn't exist
+  std::string GetNthControlPointLabel(int n = 0);
+  /// Set the Label on the Nth control point
+  void SetNthControlPointLabel(int n, std::string label);
+
+  /// Deprecated. Use GetNthControlPointLabel instead.
+  std::string GetNthMarkupLabel(int n = 0) { return this->GetNthControlPointLabel(n); }
+  /// Deprecated. Use SetNthControlPointLabel instead.
+  void SetNthMarkupLabel(int n, std::string label) { this->SetNthControlPointLabel(n, label); }
+
+  /// Get the Description flag on the Nth control point,
+  /// returns false if control point doesn't exist
+  std::string GetNthControlPointDescription(int n = 0);
+  /// Set the Description on the Nth control point
+  void SetNthControlPointDescription(int n, std::string description);
 
   /// Returns true since can apply non linear transforms
   /// \sa ApplyTransform
   virtual bool CanApplyNonLinearTransforms()const VTK_OVERRIDE;
-  /// Apply the passed transformation to all of the markup points
+  /// Apply the passed transformation to all of the control points
   /// \sa CanApplyNonLinearTransforms
   virtual void ApplyTransform(vtkAbstractTransform* transform) VTK_OVERRIDE;
 
-  /// Get the markup label format string that defines the markup names.
+  /// Get the markup node label format string that defines the markup names.
   /// \sa SetMarkupLabelFormat
   std::string GetMarkupLabelFormat();
-  /// Set the markup label format strign that defines the markup names,
+  /// Set the markup node label format strign that defines the markup names,
   /// then invoke the LabelFormatModifedEvent
   /// In standard printf notation, with the addition of %N being replaced
   /// by the list name.
@@ -338,10 +444,42 @@ public:
   /// \sa vtkMRMLStorableNode::GetModifiedSinceRead()
   virtual bool GetModifiedSinceRead() VTK_OVERRIDE;
 
-  /// Reset the id of the nth markup according to the local policy
+  /// Reset the id of the Nth control point according to the local policy
   /// Called after an already initialised markup has been added to the
   /// scene. Returns false if n out of bounds, true on success.
-  bool ResetNthMarkupID(int n);
+  bool ResetNthControlPointID(int n);
+
+  /// Return the number of control points that are required for defining this widget.
+  /// Interaction mode remains in "place" mode until this number is reached.
+  /// If the number is set to 0 then no it means there is no preference (this is the default value).
+  vtkGetMacro(RequiredNumberOfControlPoints, int);
+
+  /// Maximum number of control points limits the number of markups allowed in the node.
+  /// If maximum number of control points is set to 0 then no it means there
+  /// is no limit (this is the default value).
+  /// The value is an indication to the user interface and does not affect
+  /// prevent adding markups to a node programmatically.
+  /// If value is set to lower value than the number of markups in the node, then
+  /// existing markups are not deleted.
+  /// 2 for line, and 3 for angle Markups
+  vtkGetMacro(MaximumNumberOfControlPoints, int);
+
+  // WXYZ: W rotation angle in degrees, XYZ is rotation axis.
+  static void ConvertOrientationMatrixToWXYZ(const double orientationMatrix[9], double orientationWXYZ[4]);
+  static void ConvertOrientationWXYZToMatrix(double orientationWXYZ[4], double orientationMatrix[9]);
+
+  vtkPoints* GetCurvePointsWorld();
+
+  vtkPolyData* GetCurveWorld();
+
+  vtkAlgorithmOutput* GetCurveWorldConnection();
+
+  vtkGetMacro(CurveClosed, bool);
+
+  int GetControlPointIndexFromInterpolatedPointIndex(vtkIdType interpolatedPointIndex);
+
+  virtual void GetRASBounds(double bounds[6]) VTK_OVERRIDE;
+  virtual void GetBounds(double bounds[6]) VTK_OVERRIDE;
 
 protected:
   vtkMRMLMarkupsNode();
@@ -349,31 +487,61 @@ protected:
   vtkMRMLMarkupsNode(const vtkMRMLMarkupsNode&);
   void operator=(const vtkMRMLMarkupsNode&);
 
-  vtkStringArray *TextList;
+  vtkSmartPointer<vtkStringArray> TextList;
 
-  /// Set the id of the nth markup.
+  /// Set the id of the nth control point.
   /// The goal is to keep this ID unique, so it's
   /// managed by the markups node.
-  void SetNthMarkupID(int n, std::string id);
+  void SetNthControlPointID(int n, std::string id);
 
-  /// Generate a scene unique ID for a markup. If the scene is not set,
-  /// returns a number based on the max number of markups that
+  /// Generate a scene unique ID for a ControlPoint. If the scene is not set,
+  /// returns a number based on the max number of ControlPoints that
   /// have been in this list
-  std::string GenerateUniqueMarkupID();;
+  std::string GenerateUniqueControlPointID();
 
-private:
-  /// Vector of point sets, each markup can have N markups of the same type
-  /// saved in the vector.
-  std::vector < Markup > Markups;
+  std::string GenerateControlPointLabel(int controlPointIndex);
 
+  virtual void UpdateCurvePolyFromControlPoints();
+
+  virtual void UpdateCurvePolyFromCurveInputPoly();
+
+  // Used for limiting number of markups that may be placed.
+  int MaximumNumberOfControlPoints;
+  int RequiredNumberOfControlPoints;
+
+  bool CurveClosed;
+
+  // Vector of control points
+  ControlPointsListType ControlPoints;
+
+  // Converts curve control points to curve points.
+  vtkSmartPointer<vtkCurveGenerator> CurveGenerator;
+
+  // Stores control point positions in a polydata (in local coordinate system).
+  // Line cells connect all points into a curve.
+  vtkSmartPointer<vtkPolyData> CurveInputPoly;
+
+  // Points store interpolated/approximated point positions (in local coordinate system).
+  // Line cells connect all points into a curve.
+  vtkSmartPointer<vtkPolyData> CurvePoly;
+
+  vtkSmartPointer<vtkTransformPolyDataFilter> CurvePolyToWorldTransformer;
+  vtkSmartPointer<vtkGeneralTransform> CurvePolyToWorldTransform;
+
+  // Locks all the points and GUI
   int Locked;
 
   std::string MarkupLabelFormat;
 
   // Keep track of the number of markups that were added to the list, always
   // incrementing, not decreasing when they're removed. Used to help create
-  // unique names and ids. Reset to 0 when \sa RemoveAllMarkups called
-  int MaximumNumberOfMarkups;
+  // unique names and ids. Reset to 0 when \sa RemoveAllControlPoints called
+  int LastUsedControlPointNumber;
+
+  // Markup centerpoint (in local coordinates).
+  // It may be used as rotation center or as a handle to grab the widget by.
+  vtkVector3d CenterPos;
+
 };
 
 #endif

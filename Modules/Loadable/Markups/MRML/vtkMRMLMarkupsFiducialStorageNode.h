@@ -56,11 +56,9 @@ public:
 
   virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode) VTK_OVERRIDE;
 
-  // If markupIndex >= number of existing markups then a new markup node is appended.
-  // Returns true on success.
-  virtual bool SetMarkupFromString(vtkMRMLMarkupsNode *markupsNode, int markupIndex, const char* str);
+  virtual bool SetPointFromString(vtkMRMLMarkupsNode *markupsNode, int pointIndex, const char* str);
 
-  virtual std::string GetMarkupAsString(vtkMRMLMarkupsNode *markupsNode, int markupIndex);
+  virtual std::string GetPointAsString(vtkMRMLMarkupsNode *markupsNode, int pointIndex);
 
   /// Characters that separate between fields in the written file.
   /// Comma by default.

@@ -103,7 +103,7 @@ qSlicerSimpleMarkupsWidget::qSlicerSimpleMarkupsWidget(QWidget* parentWidget) : 
 //-----------------------------------------------------------------------------
 qSlicerSimpleMarkupsWidget::~qSlicerSimpleMarkupsWidget()
 {
-  this->setCurrentNode(NULL);
+  this->setCurrentNode(nullptr);
 }
 
 //-----------------------------------------------------------------------------
@@ -112,16 +112,16 @@ void qSlicerSimpleMarkupsWidget::setup()
   Q_D(qSlicerSimpleMarkupsWidget);
 
   // This cannot be called by the constructor, because Slicer may not exist when the constructor is called
-  d->MarkupsLogic = NULL;
-  if (qSlicerApplication::application() != NULL && qSlicerApplication::application()->moduleManager() != NULL)
+  d->MarkupsLogic = nullptr;
+  if (qSlicerApplication::application() != nullptr && qSlicerApplication::application()->moduleManager() != nullptr)
     {
     qSlicerAbstractCoreModule* markupsModule = qSlicerApplication::application()->moduleManager()->module( "Markups" );
-    if ( markupsModule != NULL )
+    if ( markupsModule != nullptr )
       {
       d->MarkupsLogic = vtkSlicerMarkupsLogic::SafeDownCast( markupsModule->logic() );
       }
     }
-  if (d->MarkupsLogic == NULL)
+  if (d->MarkupsLogic == nullptr)
     {
     qCritical("qSlicerSimpleMarkupsWidget::setup: Markups module is not found, some markup manipulation features will not be available");
     }
@@ -184,7 +184,7 @@ void qSlicerSimpleMarkupsWidget::setCurrentNode(vtkMRMLNode* currentNode)
 
   // Reconnect the appropriate nodes
   this->qvtkReconnect(d->CurrentMarkupsNode, currentMarkupsNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidget()));
-  this->qvtkReconnect(d->CurrentMarkupsNode, currentMarkupsNode, vtkMRMLMarkupsNode::MarkupAddedEvent, d->MarkupsFiducialTableWidget, SLOT(scrollToBottom()));
+  this->qvtkReconnect(d->CurrentMarkupsNode, currentMarkupsNode, vtkMRMLMarkupsNode::PointAddedEvent, d->MarkupsFiducialTableWidget, SLOT(scrollToBottom()));
   d->CurrentMarkupsNode = currentMarkupsNode;
 
   this->updateWidget();
@@ -357,7 +357,7 @@ void qSlicerSimpleMarkupsWidget::onMarkupsFiducialNodeChanged()
 
   if (d->EnterPlaceModeOnNodeChange)
     {
-    d->MarkupsPlaceWidget->setPlaceModeEnabled(currentMarkupsNode!=NULL);
+    d->MarkupsPlaceWidget->setPlaceModeEnabled(currentMarkupsNode!=nullptr);
     }
 }
 
@@ -366,14 +366,14 @@ void qSlicerSimpleMarkupsWidget::onMarkupsFiducialNodeAdded( vtkMRMLNode* newNod
 {
   Q_D(qSlicerSimpleMarkupsWidget);
 
-  if (d->MarkupsLogic == NULL)
+  if (d->MarkupsLogic == nullptr)
     {
     qCritical("qSlicerSimpleMarkupsWidget::onMarkupsFiducialNodeAdded failed: Markups module logic is invalid");
     return;
     }
 
   vtkMRMLMarkupsFiducialNode* newMarkupsFiducialNode = vtkMRMLMarkupsFiducialNode::SafeDownCast( newNode );
-  if (newMarkupsFiducialNode->GetDisplayNode()==NULL)
+  if (newMarkupsFiducialNode->GetDisplayNode()==nullptr)
     {
     // Make sure there is an associated display node
     d->MarkupsLogic->AddNewDisplayNodeForMarkupsNode( newMarkupsFiducialNode );
@@ -388,7 +388,7 @@ void qSlicerSimpleMarkupsWidget::onMarkupsFiducialTableContextMenu(const QPoint&
 {
   Q_D(qSlicerSimpleMarkupsWidget);
 
-  if (d->MarkupsLogic == NULL)
+  if (d->MarkupsLogic == nullptr)
     {
     qCritical("qSlicerSimpleMarkupsWidget::onMarkupsFiducialTableContextMenu failed: Markups module logic is invalid");
     return;
@@ -412,7 +412,7 @@ void qSlicerSimpleMarkupsWidget::onMarkupsFiducialTableContextMenu(const QPoint&
   int currentFiducial = d->MarkupsFiducialTableWidget->currentRow();
   vtkMRMLMarkupsFiducialNode* currentNode = vtkMRMLMarkupsFiducialNode::SafeDownCast( d->MarkupsFiducialNodeComboBox->currentNode() );
 
-  if ( currentNode == NULL )
+  if ( currentNode == nullptr )
     {
     return;
     }
@@ -433,9 +433,10 @@ void qSlicerSimpleMarkupsWidget::onMarkupsFiducialTableContextMenu(const QPoint&
     // Do this in batch mode
     int wasModifying = currentNode->StartModify();
     //Traversing this way should be more efficient and correct
-    for ( int i = deleteFiducials.size() - 1; i >= 0; i-- )
+    for ( int i = static_cast<int>(deleteFiducials.size()) - 1; i >= 0; i-- )
       {
-      currentNode->RemoveMarkup( deleteFiducials.at( i ) );
+      // remove the point at that row
+      currentNode->RemoveNthControlPoint(deleteFiducials.at( static_cast<size_t>(i) ));
       }
     currentNode->EndModify(wasModifying);
     }
@@ -445,7 +446,7 @@ void qSlicerSimpleMarkupsWidget::onMarkupsFiducialTableContextMenu(const QPoint&
     {
     if ( currentFiducial > 0 )
       {
-      currentNode->SwapMarkups( currentFiducial, currentFiducial - 1 );
+      currentNode->SwapControlPoints(currentFiducial, currentFiducial - 1 );
       }
     }
 
@@ -453,7 +454,7 @@ void qSlicerSimpleMarkupsWidget::onMarkupsFiducialTableContextMenu(const QPoint&
     {
     if ( currentFiducial < currentNode->GetNumberOfFiducials() - 1 )
       {
-      currentNode->SwapMarkups( currentFiducial, currentFiducial + 1 );
+      currentNode->SwapControlPoints( currentFiducial, currentFiducial + 1 );
       }
     }
 
@@ -474,11 +475,11 @@ void qSlicerSimpleMarkupsWidget::onMarkupsFiducialSelected(int row, int column)
   if (d->JumpToSliceEnabled)
     {
     vtkMRMLMarkupsFiducialNode* currentMarkupsFiducialNode = vtkMRMLMarkupsFiducialNode::SafeDownCast( this->currentNode() );
-    if ( currentMarkupsFiducialNode == NULL )
+    if ( currentMarkupsFiducialNode == nullptr )
       {
       return;
       }
-    if (d->MarkupsLogic == NULL)
+    if (d->MarkupsLogic == nullptr)
       {
       qCritical("qSlicerSimpleMarkupsWidget::onMarkupsFiducialSelected failed: Cannot jump, markups module logic is invalid");
       return;
@@ -496,7 +497,7 @@ void qSlicerSimpleMarkupsWidget::onMarkupsFiducialEdited(int row, int column)
 
   vtkMRMLMarkupsFiducialNode* currentMarkupsFiducialNode = vtkMRMLMarkupsFiducialNode::SafeDownCast( this->currentNode() );
 
-  if ( currentMarkupsFiducialNode == NULL )
+  if ( currentMarkupsFiducialNode == nullptr )
     {
     return;
     }
@@ -542,13 +543,13 @@ void qSlicerSimpleMarkupsWidget::updateWidget()
 {
   Q_D(qSlicerSimpleMarkupsWidget);
 
-  if (d->MarkupsLogic == NULL || this->mrmlScene() == NULL)
+  if (d->MarkupsLogic == nullptr || this->mrmlScene() == nullptr)
     {
     qCritical("qSlicerSimpleMarkupsWidget::updateWidget failed: Markups module logic or scene is invalid");
     }
 
   vtkMRMLMarkupsFiducialNode* currentMarkupsFiducialNode = vtkMRMLMarkupsFiducialNode::SafeDownCast( d->MarkupsFiducialNodeComboBox->currentNode() );
-  if ( currentMarkupsFiducialNode == NULL || d->MarkupsLogic == NULL)
+  if ( currentMarkupsFiducialNode == nullptr || d->MarkupsLogic == nullptr)
     {
     d->MarkupsFiducialTableWidget->clear();
     d->MarkupsFiducialTableWidget->setRowCount( 0 );

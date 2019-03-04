@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>593</width>
-    <height>587</height>
+    <height>993</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -30,22 +30,26 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="qMRMLNodeComboBox" name="activeMarkupMRMLNodeComboBox">
+      <widget class="qMRMLNodeComboBox" name="activeMarkupMRMLNodeComboBox" native="true">
        <property name="toolTip">
         <string>Select or create a markups list</string>
        </property>
-       <property name="nodeTypes">
+       <property name="nodeTypes" stdset="0">
         <stringlist>
          <string>vtkMRMLMarkupsFiducialNode</string>
+         <string>vtkMRMLMarkupsLineNode</string>
+         <string>vtkMRMLMarkupsAngleNode</string>
+         <string>vtkMRMLMarkupsCurveNode</string>
+         <string>vtkMRMLMarkupsClosedCurveNode</string>
         </stringlist>
        </property>
-       <property name="baseName">
-        <string>F</string>
+       <property name="baseName" stdset="0">
+        <string>M</string>
        </property>
-       <property name="addEnabled">
+       <property name="addEnabled" stdset="0">
         <bool>true</bool>
        </property>
-       <property name="renameEnabled">
+       <property name="renameEnabled" stdset="0">
         <bool>true</bool>
        </property>
       </widget>
@@ -58,17 +62,17 @@
       </widget>
      </item>
      <item row="1" column="1" colspan="3">
-      <widget class="ctkSliderWidget" name="markupScaleSliderWidget">
+      <widget class="ctkSliderWidget" name="markupScaleSliderWidget" native="true">
        <property name="toolTip">
         <string>Set both the glyph and text size to the same value for all markups in the list.</string>
        </property>
-       <property name="singleStep">
+       <property name="singleStep" stdset="0">
         <double>0.100000000000000</double>
        </property>
-       <property name="maximum">
+       <property name="maximum" stdset="0">
         <double>20.000000000000000</double>
        </property>
-       <property name="value">
+       <property name="value" stdset="0">
         <double>3.000000000000000</double>
        </property>
       </widget>
@@ -312,7 +316,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="../qSlicerMarkupsModule.qrc">
          <normaloff>:/Icons/MarkupsDeleteSelectedRows.png</normaloff>:/Icons/MarkupsDeleteSelectedRows.png</iconset>
        </property>
       </widget>
@@ -344,7 +348,7 @@
         <string>Remove all markups from the active list</string>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="../qSlicerMarkupsModule.qrc">
          <normaloff>:/Icons/MarkupsDeleteAllRows.png</normaloff>:/Icons/MarkupsDeleteAllRows.png</iconset>
        </property>
       </widget>
@@ -457,7 +461,7 @@
      <property name="title">
       <string>Advanced</string>
      </property>
-     <property name="collapsed">
+     <property name="collapsed" stdset="0">
       <bool>true</bool>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
@@ -490,7 +494,7 @@
            <string/>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="../qSlicerMarkupsModule.qrc">
             <normaloff>:/Icons/MarkupsMoveUp.png</normaloff>:/Icons/MarkupsMoveUp.png</iconset>
           </property>
          </widget>
@@ -522,7 +526,7 @@
            <string/>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="../qSlicerMarkupsModule.qrc">
             <normaloff>:/Icons/MarkupsMoveDown.png</normaloff>:/Icons/MarkupsMoveDown.png</iconset>
           </property>
          </widget>
@@ -551,7 +555,7 @@
            <string>Add a new markup to the active list, at origin</string>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="../qSlicerMarkupsModule.qrc">
             <normaloff>:/Icons/MarkupsAddFiducial.png</normaloff>:/Icons/MarkupsAddFiducial.png</iconset>
           </property>
          </widget>
@@ -622,10 +626,10 @@
         <property name="title">
          <string>Display Properties</string>
         </property>
-        <property name="collapsed">
+        <property name="collapsed" stdset="0">
          <bool>false</bool>
         </property>
-        <property name="collapsedHeight">
+        <property name="collapsedHeight" stdset="0">
          <number>10</number>
         </property>
         <layout class="QFormLayout" name="formLayout_2">
@@ -651,7 +655,7 @@
          </item>
          <item row="2" column="1">
           <widget class="ctkColorPickerButton" name="selectedColorPickerButton">
-           <property name="displayColorName">
+           <property name="displayColorName" stdset="0">
             <bool>false</bool>
            </property>
           </widget>
@@ -665,7 +669,7 @@
          </item>
          <item row="3" column="1">
           <widget class="ctkColorPickerButton" name="unselectedColorPickerButton">
-           <property name="displayColorName">
+           <property name="displayColorName" stdset="0">
             <bool>false</bool>
            </property>
           </widget>
@@ -678,11 +682,11 @@
           </widget>
          </item>
          <item row="4" column="1">
-          <widget class="ctkSliderWidget" name="glyphScaleSliderWidget">
-           <property name="singleStep">
+          <widget class="ctkSliderWidget" name="glyphScaleSliderWidget" native="true">
+           <property name="singleStep" stdset="0">
             <double>0.100000000000000</double>
            </property>
-           <property name="maximum">
+           <property name="maximum" stdset="0">
             <double>20.000000000000000</double>
            </property>
           </widget>
@@ -695,11 +699,11 @@
           </widget>
          </item>
          <item row="5" column="1">
-          <widget class="ctkSliderWidget" name="textScaleSliderWidget">
-           <property name="singleStep">
+          <widget class="ctkSliderWidget" name="textScaleSliderWidget" native="true">
+           <property name="singleStep" stdset="0">
             <double>0.100000000000000</double>
            </property>
-           <property name="maximum">
+           <property name="maximum" stdset="0">
             <double>20.000000000000000</double>
            </property>
           </widget>
@@ -712,11 +716,11 @@
           </widget>
          </item>
          <item row="6" column="1">
-          <widget class="ctkSliderWidget" name="opacitySliderWidget">
-           <property name="singleStep">
+          <widget class="ctkSliderWidget" name="opacitySliderWidget" native="true">
+           <property name="singleStep" stdset="0">
             <double>0.100000000000000</double>
            </property>
-           <property name="maximum">
+           <property name="maximum" stdset="0">
             <double>1.000000000000000</double>
            </property>
           </widget>
@@ -744,20 +748,20 @@
          <item row="9" column="0" colspan="2">
           <widget class="ctkCollapsibleGroupBox" name="pointFiducialProjectionPropertiesGroupBox">
            <property name="title">
-            <string>Fiducial Projection</string>
+            <string>Projection</string>
            </property>
-           <property name="collapsed">
+           <property name="collapsed" stdset="0">
             <bool>true</bool>
            </property>
            <layout class="QVBoxLayout" name="pointFiducialProjectionVerticalLayout">
             <item>
-             <widget class="qMRMLMarkupsFiducialProjectionPropertyWidget" name="pointFiducialProjectionWidget"/>
+             <widget class="qMRMLMarkupsFiducialProjectionPropertyWidget" name="pointFiducialProjectionWidget" native="true"/>
             </item>
            </layout>
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="qMRMLDisplayNodeViewComboBox" name="listDisplayNodeViewComboBox">
+          <widget class="qMRMLDisplayNodeViewComboBox" name="listDisplayNodeViewComboBox" native="true">
            <property name="toolTip">
             <string>Select 3D views in which to show this list. All unchecked shows in all 3D and 2D views.</string>
            </property>
@@ -780,25 +784,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qMRMLCheckableNodeComboBox</class>
-   <extends>qMRMLNodeComboBox</extends>
-   <header>qMRMLCheckableNodeComboBox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLDisplayNodeViewComboBox</class>
-   <extends>qMRMLCheckableNodeComboBox</extends>
-   <header>qMRMLDisplayNodeViewComboBox.h</header>
-  </customwidget>
-  <customwidget>
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLWidget</class>
-   <extends>QWidget</extends>
-   <header>qMRMLWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -808,14 +796,31 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qMRMLMarkupsFiducialProjectionPropertyWidget</class>
-   <extends>qMRMLWidget</extends>
-   <header>qMRMLMarkupsFiducialProjectionPropertyWidget.h</header>
+   <class>ctkColorPickerButton</class>
+   <extends>QPushButton</extends>
+   <header>ctkColorPickerButton.h</header>
   </customwidget>
   <customwidget>
    <class>ctkCheckBox</class>
    <extends>QCheckBox</extends>
    <header>ctkCheckBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkSliderWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkSliderWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLMarkupsFiducialProjectionPropertyWidget</class>
+   <extends>qMRMLWidget</extends>
+   <header>qMRMLMarkupsFiducialProjectionPropertyWidget.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>ctkCollapsibleGroupBox</class>
@@ -824,22 +829,26 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ctkColorPickerButton</class>
-   <extends>QPushButton</extends>
-   <header>ctkColorPickerButton.h</header>
-  </customwidget>
-  <customwidget>
    <class>ctkMenuButton</class>
    <extends>QPushButton</extends>
    <header>ctkMenuButton.h</header>
   </customwidget>
   <customwidget>
-   <class>ctkSliderWidget</class>
-   <extends>QWidget</extends>
-   <header>ctkSliderWidget.h</header>
+   <class>qMRMLCheckableNodeComboBox</class>
+   <extends>qMRMLNodeComboBox</extends>
+   <header>qMRMLCheckableNodeComboBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLDisplayNodeViewComboBox</class>
+   <extends>qMRMLCheckableNodeComboBox</extends>
+   <header>qMRMLDisplayNodeViewComboBox.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../qSlicerMarkupsModule.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>qSlicerMarkupsModule</sender>

@@ -14,10 +14,7 @@ set(${KIT}_INCLUDE_DIRECTORIES
 )
 
 set(displayable_manager_SRCS
-  vtkMRML${MODULE_NAME}DisplayableManager3D.cxx
-  vtkMRML${MODULE_NAME}DisplayableManager2D.cxx
-  vtkMRML${MODULE_NAME}FiducialDisplayableManager3D.cxx
-  vtkMRML${MODULE_NAME}FiducialDisplayableManager2D.cxx
+  vtkMRML${MODULE_NAME}DisplayableManager.cxx
   )
 
 SlicerConfigureDisplayableManagerObjectFactory(
@@ -32,7 +29,6 @@ set(${KIT}_SRCS
   ${displayable_manager_instantiator_SRCS}
   ${displayable_manager_SRCS}
   vtkMRML${MODULE_NAME}DisplayableManagerHelper.cxx
-  vtkMRML${MODULE_NAME}ClickCounter.cxx
   )
 
 set(${KIT}_TARGET_LIBRARIES

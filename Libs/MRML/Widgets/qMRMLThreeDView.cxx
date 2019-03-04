@@ -101,6 +101,7 @@ void qMRMLThreeDViewPrivate::init()
   q->setYawDirection(ctkVTKRenderView::YawLeft);
 
   this->initDisplayableManagers();
+  interactorStyle->SetDisplayableManagers(this->DisplayableManagerGroup);
 }
 
 //---------------------------------------------------------------------------

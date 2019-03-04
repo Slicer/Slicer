@@ -156,6 +156,7 @@ void qMRMLSliceViewPrivate::init()
   this->LightBoxRendererManagerProxy->SetLightBoxRendererManager(
     q->lightBoxRendererManager());
   this->initDisplayableManagers();
+  interactorStyle->SetDisplayableManagers(this->DisplayableManagerGroup);
 
   // Force an initial render to ensure that the render window creates an OpenGL
   // context. If operations that require a context--such as hardware

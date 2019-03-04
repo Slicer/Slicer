@@ -134,10 +134,16 @@ public slots:
   /// Set place mode to persistent (remains active until deactivated). Does not enable or disable placement mode.
   void setPlaceModePersistency(bool);
 
-  /// Delete a markup fiducial from the list.
+  /// Delete a point from fiducial from the list.
+  void deleteLastPoint();
+
+  /// Delete all points from the current fiducial markups node.
+  void deleteAllPoints();
+
+  /// Deprecated. Use deleteLastPoint instead.
   void deleteLastMarkup();
 
-  /// Delete all markup fiducials from the current markups node.
+  /// Deprecated. Use deleteLastPoint instead.
   void deleteAllMarkups();
 
 protected slots:

@@ -70,9 +70,9 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
   this->Power = 1;
 
   // markup display node settings
-  this->TextScale = 3.4;
+  this->TextScale = 3;
   this->GlyphType = vtkMRMLMarkupsDisplayNode::Sphere3D;
-  this->GlyphScale = 2.1;
+  this->GlyphScale = 3;
 
   // projection settings
   this->SliceProjection = (vtkMRMLMarkupsDisplayNode::ProjectionOff |
@@ -82,6 +82,11 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
   this->SliceProjectionColor[1] = 1.0;
   this->SliceProjectionColor[2] = 1.0;
   this->SliceProjectionOpacity = 0.6;
+
+  this->TextVisibility = true;
+
+  this->ActiveComponentType = ComponentNone;
+  this->ActiveComponentIndex = -1;
 }
 
 //----------------------------------------------------------------------------
@@ -116,7 +121,7 @@ void vtkMRMLMarkupsDisplayNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -176,7 +181,7 @@ void vtkMRMLMarkupsDisplayNode::Copy(vtkMRMLNode *anode)
 
   Superclass::Copy(anode);
 
-  vtkMRMLMarkupsDisplayNode *node = (vtkMRMLMarkupsDisplayNode *)anode;
+  vtkMRMLMarkupsDisplayNode *node = vtkMRMLMarkupsDisplayNode::SafeDownCast(anode);
 
   this->SetTextScale(node->TextScale);
   this->SetGlyphType(node->GlyphType);
@@ -244,9 +249,9 @@ void vtkMRMLMarkupsDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMarkupsDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event,
-                                           void *callData )
+void vtkMRMLMarkupsDisplayNode::ProcessMRMLEvents(vtkObject *caller,
+                                                  unsigned long event,
+                                                  void *callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
   return;
@@ -294,4 +299,116 @@ void vtkMRMLMarkupsDisplayNode::SetGlyphScale(double scale)
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting GlyphScale to " << scale);
   this->GlyphScale = scale;
   this->Modified();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsDisplayNode::SetActiveComponent(int componentType, int componentIndex)
+{
+  if (this->ActiveComponentIndex == componentIndex
+    && this->ActiveComponentType == componentType)
+    {
+    // no change
+    return;
+    }
+  this->ActiveComponentIndex = componentIndex;
+  this->ActiveComponentType = componentType;
+  this->Modified();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsDisplayNode::SetActiveControlPoint(int controlPointIndex)
+{
+  this->SetActiveComponent(ComponentControlPoint, controlPointIndex);
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(
+  int controlPointIndex, double pointWorld[3],
+  double orientationMatrixWorld[9], const char* viewNodeID,
+  const char* associatedNodeID)
+{
+  vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
+  if (!markupsNode)
+    {
+    return -1;
+    }
+
+  bool addNewControlPoint = false;
+  if (controlPointIndex < 0 || controlPointIndex >= markupsNode->GetNumberOfControlPoints())
+    {
+    // Determine new control point index. Now we assuem that new point is added to the end,
+    // but in the future we may place existing points.
+    controlPointIndex = markupsNode->GetNumberOfControlPoints();
+    addNewControlPoint = true;
+    }
+
+  // Update active component but not yet fire modified event
+  // because the control point is not created/updated yet
+  // in the markups node.
+  bool activeComponentChanged = false;
+  if (this->ActiveComponentIndex != controlPointIndex
+    || this->ActiveComponentType != ComponentControlPoint)
+    {
+    this->ActiveComponentType = ComponentControlPoint;
+    this->ActiveComponentIndex = controlPointIndex;
+    activeComponentChanged = true;
+    }
+
+  // AddControlPoint will fire modified events anyway, so we temporarily disable events
+  // to add a new point with a minimum number of events.
+  bool wasDisabled = markupsNode->GetDisableModifiedEvent();
+  markupsNode->DisableModifiedEventOn();
+  markupsNode->SetAttribute("Markups.MovingInSliceView", viewNodeID);
+  std::ostringstream controlPointIndexStr;
+  controlPointIndexStr << controlPointIndex;
+  markupsNode->SetAttribute("Markups.MovingMarkupIndex", controlPointIndexStr.str().c_str());
+  markupsNode->SetDisableModifiedEvent(wasDisabled);
+
+  if (addNewControlPoint)
+    {
+    // Add new control point
+    vtkMRMLMarkupsNode::ControlPoint* controlPoint = new vtkMRMLMarkupsNode::ControlPoint;
+    markupsNode->TransformPointFromWorld(pointWorld, controlPoint->Position);
+    // TODO: transform orientation to world before copying
+    std::copy_n(orientationMatrixWorld, 9, controlPoint->OrientationMatrix);
+    if (associatedNodeID)
+      {
+      controlPoint->AssociatedNodeID = associatedNodeID;
+      }
+
+    markupsNode->AddControlPoint(controlPoint);
+  }
+  else
+    {
+    // Update existing control point
+    markupsNode->SetNthControlPointPositionOrientationWorldFromArray(controlPointIndex,
+      pointWorld, orientationMatrixWorld, associatedNodeID);
+  }
+
+  if (activeComponentChanged)
+    {
+    this->Modified();
+    }
+
+  return controlPointIndex;
+}
+
+
+//---------------------------------------------------------------------------
+int vtkMRMLMarkupsDisplayNode::GetActiveControlPoint()
+{
+  if (this->ActiveComponentType == ComponentControlPoint)
+    {
+    return this->ActiveComponentIndex;
+    }
+  else
+    {
+    return -1;
+    }
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLMarkupsNode* vtkMRMLMarkupsDisplayNode::GetMarkupsNode()
+{
+  return vtkMRMLMarkupsNode::SafeDownCast(this->GetDisplayableNode());
 }

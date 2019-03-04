@@ -254,11 +254,14 @@ void vtkMRMLMarkupsFiducialStorageNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 bool vtkMRMLMarkupsFiducialStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
 {
-  return refNode->IsA("vtkMRMLMarkupsFiducialNode");
+  return refNode->IsA("vtkMRMLMarkupsFiducialNode") ||
+         refNode->IsA("vtkMRMLMarkupsLineNode") ||
+         refNode->IsA("vtkMRMLMarkupsAngleNode") ||
+         refNode->IsA("vtkMRMLMarkupsCurveNode");
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString(vtkMRMLMarkupsNode *markupsNode, int markupIndex, const char* line)
+bool vtkMRMLMarkupsFiducialStorageNode::SetPointFromString(vtkMRMLMarkupsNode *markupsNode, int pointIndex, const char* line)
 {
   if (!markupsNode)
     {
@@ -266,9 +269,9 @@ bool vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString(vtkMRMLMarkupsNode *
     return false;
     }
 
-  if (markupIndex<0)
+  if (pointIndex<0)
     {
-    vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed: invalid markupIndex");
+    vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed: invalid pointIndex");
     return false;
     }
 
@@ -347,47 +350,45 @@ bool vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString(vtkMRMLMarkupsNode *
   std::string associatedNodeID;
   parser.GetStringField(FIELD_ASSOCIATED_NODE_ID, associatedNodeID);
 
-  // Set values in markup
-
-  int wasModified = markupsNode->StartModify();
-  if (markupIndex >= markupsNode->GetNumberOfMarkups())
+  if (pointIndex >= markupsNode->GetNumberOfControlPoints())
     {
-    markupIndex = markupsNode->AddMarkupWithNPoints(1);
+    vtkVector3d point(0, 0, 0);
+    markupsNode->AddControlPoint(point);
     }
 
   if (id.empty())
     {
     if (this->GetScene())
       {
-      id = this->GetScene()->GenerateUniqueName(this->GetID());
+      id = markupsNode->GenerateUniqueControlPointID();
       }
     }
-  markupsNode->SetNthMarkupID(markupIndex, id);
+
+  markupsNode->SetNthControlPointID(pointIndex, id);
 
   if (this->GetCoordinateSystem() == vtkMRMLMarkupsFiducialStorageNode::RAS)
     {
-    markupsNode->SetMarkupPoint(markupIndex, 0, xyz[0], xyz[1], xyz[2]);
+    markupsNode->SetNthControlPointPosition(pointIndex, xyz[0], xyz[1], xyz[2]);
     }
   else if (this->GetCoordinateSystem() == vtkMRMLMarkupsFiducialStorageNode::LPS)
     {
-    markupsNode->SetMarkupPointLPS(markupIndex, 0, xyz[0], xyz[1], xyz[2]);
+    markupsNode->SetNthControlPointPosition(pointIndex, -xyz[0], -xyz[1], xyz[2]);
     }
 
-  markupsNode->SetNthMarkupOrientation(markupIndex, wxyz[0], wxyz[1], wxyz[2], wxyz[3]);
+  markupsNode->SetNthControlPointOrientation(pointIndex, wxyz[0], wxyz[1], wxyz[2], wxyz[3]);
 
-  markupsNode->SetNthMarkupVisibility(markupIndex, visibility);
-  markupsNode->SetNthMarkupSelected(markupIndex, selected);
-  markupsNode->SetNthMarkupLocked(markupIndex, locked);
-  markupsNode->SetNthMarkupLabel(markupIndex, label);
-  markupsNode->SetNthMarkupDescription(markupIndex, description);
-  markupsNode->SetNthMarkupAssociatedNodeID(markupIndex, associatedNodeID);
-  markupsNode->EndModify(wasModified);
+  markupsNode->SetNthControlPointVisibility(pointIndex, visibility);
+  markupsNode->SetNthControlPointSelected(pointIndex, selected);
+  markupsNode->SetNthControlPointLocked(pointIndex, locked);
+  markupsNode->SetNthControlPointLabel(pointIndex, label);
+  markupsNode->SetNthControlPointDescription(pointIndex, description);
+  markupsNode->SetNthControlPointAssociatedNodeID(pointIndex, associatedNodeID);
 
   return true;
 }
 
 //----------------------------------------------------------------------------
-std::string vtkMRMLMarkupsFiducialStorageNode::GetMarkupAsString(vtkMRMLMarkupsNode *markupsNode, int markupIndex)
+std::string vtkMRMLMarkupsFiducialStorageNode::GetPointAsString(vtkMRMLMarkupsNode *markupsNode, int pointIndex)
 {
   if (!markupsNode)
     {
@@ -401,35 +402,32 @@ std::string vtkMRMLMarkupsFiducialStorageNode::GetMarkupAsString(vtkMRMLMarkupsN
     separator = this->FieldDelimiterCharacters[0];
     }
 
-  std::string id = markupsNode->GetNthMarkupID(markupIndex);
+  std::string id = markupsNode->GetNthControlPointID(0);
   vtkDebugMacro("WriteDataInternal: wrote id " << id.c_str());
 
-  int p = 0;
   double xyz[3] = { 0.0, 0.0, 0.0 };
-  if (this->GetCoordinateSystem() == vtkMRMLMarkupsFiducialStorageNode::RAS)
+  markupsNode->GetNthControlPointPosition(pointIndex, xyz);
+  if (this->GetCoordinateSystem() == vtkMRMLMarkupsFiducialStorageNode::LPS)
     {
-    markupsNode->GetMarkupPoint(markupIndex,p,xyz);
+    xyz[0] = -xyz[0];
+    xyz[1] = -xyz[1];
     }
-  else if (this->GetCoordinateSystem() == vtkMRMLMarkupsFiducialStorageNode::LPS)
-    {
-    markupsNode->GetMarkupPointLPS(markupIndex,p,xyz);
-    }
-  else
+  else if (this->GetCoordinateSystem() != vtkMRMLMarkupsFiducialStorageNode::RAS)
     {
     vtkErrorMacro("WriteData: invalid coordinate system index " << this->GetCoordinateSystem());
     return "";
     }
 
   double orientation[4] = { 1.0, 0.0, 0.0, 0.0 };
-  markupsNode->GetNthMarkupOrientation(markupIndex, orientation);
-  bool vis = markupsNode->GetNthMarkupVisibility(markupIndex);
-  bool sel = markupsNode->GetNthMarkupSelected(markupIndex);
-  bool lock = markupsNode->GetNthMarkupLocked(markupIndex);
+  markupsNode->GetNthControlPointOrientation(pointIndex, orientation);
+  bool vis = markupsNode->GetNthControlPointVisibility(pointIndex);
+  bool sel = markupsNode->GetNthControlPointSelected(pointIndex);
+  bool lock = markupsNode->GetNthControlPointLocked(pointIndex);
 
-  std::string label = this->ConvertStringToStorageFormat(markupsNode->GetNthMarkupLabel(markupIndex));
-  std::string desc = this->ConvertStringToStorageFormat(markupsNode->GetNthMarkupDescription(markupIndex));
+  std::string label = this->ConvertStringToStorageFormat(markupsNode->GetNthControlPointLabel(pointIndex));
+  std::string desc = this->ConvertStringToStorageFormat(markupsNode->GetNthControlPointDescription(pointIndex));
 
-  std::string associatedNodeID = markupsNode->GetNthMarkupAssociatedNodeID(markupIndex);
+  std::string associatedNodeID = markupsNode->GetNthControlPointAssociatedNodeID(pointIndex);
 
   std::stringstream of;
   of.precision(3);
@@ -471,7 +469,7 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     }
 
   // get the display node
-  vtkMRMLMarkupsDisplayNode *displayNode = NULL;
+  vtkMRMLMarkupsDisplayNode *displayNode = nullptr;
   vtkMRMLDisplayNode * mrmlNode = markupsNode->GetDisplayNode();
   if (mrmlNode)
     {
@@ -505,10 +503,10 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 
   if (fstr.is_open())
     {
-    if (markupsNode->GetNumberOfMarkups() > 0)
+    if (markupsNode->GetNumberOfControlPoints() > 0)
       {
       // clear out the list
-      markupsNode->RemoveAllMarkups();
+      markupsNode->RemoveAllControlPoints();
       }
 
     char line[MARKUPS_BUFFER_SIZE];
@@ -571,8 +569,8 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
             std::string label = std::string("");
             double x = 0.0, y = 0.0, z = 0.0;
             int sel = 1, vis = 1;
-
-            markupsNode->AddMarkupWithNPoints(1);
+            vtkVector3d point(0, 0, 0);
+            markupsNode->AddControlPoint(point);
 
             std::stringstream ss(line);
             std::string component;
@@ -588,7 +586,7 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
                 // use the file name for the point label
                 std::string filenameName = vtksys::SystemTools::GetFilenameName(this->GetFileName());
                 label = vtksys::SystemTools::GetFilenameWithoutExtension(filenameName);
-                markupsNode->SetNthMarkupLabel(thisMarkupNumber,label);
+                markupsNode->SetNthControlPointLabel(thisMarkupNumber,label);
                 }
 
               // x,y,z
@@ -598,18 +596,18 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
               y = atof(component.c_str());
               getline(ss, component, '|');
               z = atof(component.c_str());
-              markupsNode->SetMarkupPoint(thisMarkupNumber,0,x,y,z);
+              markupsNode->SetNthControlPointPosition(thisMarkupNumber,x,y,z);
 
               // selected
               getline(ss, component, '|');
               sel = atoi(component.c_str());
-              markupsNode->SetNthMarkupSelected(thisMarkupNumber,sel);
+              markupsNode->SetNthControlPointSelected(thisMarkupNumber,sel);
 
               // visibility
               getline(ss, component, '|');
               vtkDebugMacro("component = " << component.c_str());
               vis = atoi(component.c_str());
-              markupsNode->SetNthMarkupVisibility(thisMarkupNumber,vis);
+              markupsNode->SetNthControlPointVisibility(thisMarkupNumber,vis);
               }
             else
               {
@@ -632,7 +630,7 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
                 {
                 vtkDebugMacro("Got label = " << component.c_str());
                 label = component;
-                markupsNode->SetNthMarkupLabel(thisMarkupNumber,label);
+                markupsNode->SetNthControlPointLabel(thisMarkupNumber,label);
                 }
 
               // x,y,z
@@ -642,26 +640,26 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
               y = atof(component.c_str());
               getline(ss, component, separator);
               z = atof(component.c_str());
-              markupsNode->SetMarkupPoint(thisMarkupNumber,0,x,y,z);
+              markupsNode->SetNthControlPointPosition(thisMarkupNumber,x,y,z);
 
               // selected
               getline(ss, component, separator);
               sel = atoi(component.c_str());
-              markupsNode->SetNthMarkupSelected(thisMarkupNumber,sel);
+              markupsNode->SetNthControlPointSelected(thisMarkupNumber,sel);
 
               // visibility
               getline(ss, component, separator);
               vtkDebugMacro("component = " << component.c_str());
               vis = atoi(component.c_str());
-              markupsNode->SetNthMarkupVisibility(thisMarkupNumber,vis);
+              markupsNode->SetNthControlPointVisibility(thisMarkupNumber,vis);
               }
             thisMarkupNumber++;
             }
           else
             {
-            // Slicer 4 markups fiducial file
             vtkDebugMacro("\n\n\n\nVersion = " << version << ", got a line: \n\"" << line << "\"");
-            this->SetMarkupFromString(markupsNode, markupsNode->GetNumberOfMarkups(), line);
+            this->SetPointFromString(markupsNode, markupsNode->GetNumberOfControlPoints(), line);
+
             thisMarkupNumber++;
             } // point line
           }
@@ -690,13 +688,13 @@ int vtkMRMLMarkupsFiducialStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   vtkDebugMacro("WriteDataInternal: have file name " << fullName.c_str());
 
   // cast the input node
-  vtkMRMLMarkupsNode *markupsNode = NULL;
-  if ( refNode->IsA("vtkMRMLMarkupsNode") )
+  vtkMRMLMarkupsNode *markupsNode = nullptr;
+  if (refNode->IsA("vtkMRMLMarkupsNode"))
     {
     markupsNode = dynamic_cast <vtkMRMLMarkupsNode *> (refNode);
     }
 
-  if (markupsNode == NULL)
+  if (markupsNode == nullptr)
     {
     vtkErrorMacro("WriteData: unable to cast input node " << refNode->GetID() << " to a known markups node");
     return 0;
@@ -712,7 +710,6 @@ int vtkMRMLMarkupsFiducialStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     vtkErrorMacro("WriteData: unable to open file " << fullName.c_str() << " for writing");
     return 0;
     }
-  int numberOfMarkups = markupsNode->GetNumberOfMarkups();
 
   // put down a header
   of << "# Markups fiducial file version = " << Slicer_VERSION << endl;
@@ -733,9 +730,9 @@ int vtkMRMLMarkupsFiducialStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   of << "# columns = id" << separator << "x" << separator << "y" << separator << "z" << separator << "ow" << separator
     << "ox" << separator << "oy" << separator << "oz" << separator << "vis" << separator << "sel" << separator
     << "lock" << separator << "label" << separator << "desc" << separator << "associatedNodeID" << endl;
-  for (int i = 0; i < numberOfMarkups; i++)
+  for (int i = 0; i < markupsNode->GetNumberOfControlPoints(); i++)
     {
-    of << this->GetMarkupAsString(markupsNode, i);
+    of << this->GetPointAsString(markupsNode, i);
     of << endl;
     }
 

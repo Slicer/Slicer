@@ -1303,7 +1303,8 @@ void vtkMRMLSliceLogic::CreateSliceModel()
     this->SliceModelNode->SetDisableModifiedEvent(1);
 
     this->SliceModelNode->SetHideFromEditors(1);
-    this->SliceModelNode->SetSelectable(0);
+    // allow point picking (e.g., placing a markups point on the slice node)
+    this->SliceModelNode->SetSelectable(1);
     this->SliceModelNode->SetSaveWithScene(0);
 
     // create plane slice

@@ -167,6 +167,8 @@ vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::vtkInternal(vtkMRMLOrie
   this->RendererUpdateObservationId = 0;
   this->DisplayedActor = NULL;
   this->MarkerRenderer = vtkSmartPointer<vtkRenderer>::New();
+  // Prevent erasing Z-buffer (important for quick picking and markup label visibility assessment)
+  this->MarkerRenderer->EraseOff();
   this->HumanPolyData = vtkSmartPointer<vtkPolyData>::New();
   this->HumanPolyDataMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
   this->AxesActorFontViewportSize = 0.0;

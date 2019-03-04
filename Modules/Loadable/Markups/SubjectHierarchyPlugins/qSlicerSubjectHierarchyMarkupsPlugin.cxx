@@ -120,9 +120,14 @@ double qSlicerSubjectHierarchyMarkupsPlugin::canAddNodeToSubjectHierarchy(
     qCritical() << Q_FUNC_INFO << ": Input node is NULL";
     return 0.0;
     }
-  else if (node->IsA("vtkMRMLMarkupsFiducialNode"))
+  else if (node->IsA("vtkMRMLMarkupsFiducialNode") ||
+           node->IsA("vtkMRMLMarkupsLineNode") ||
+           node->IsA("vtkMRMLMarkupsAngleNode") ||
+           node->IsA("vtkMRMLMarkupsCurveNode") ||
+           node->IsA("vtkMRMLMarkupsClosedCurveNode")
+           )
     {
-    // Item is a markup fiducial
+    // Item is a markup
     return 0.5;
     }
   return 0.0;
@@ -145,9 +150,14 @@ double qSlicerSubjectHierarchyMarkupsPlugin::canOwnSubjectHierarchyItem(vtkIdTyp
 
   // Markup
   vtkMRMLNode* associatedNode = shNode->GetItemDataNode(itemID);
-  if (associatedNode && associatedNode->IsA("vtkMRMLMarkupsFiducialNode"))
+  if (associatedNode &&
+      (associatedNode->IsA("vtkMRMLMarkupsFiducialNode") ||
+       associatedNode->IsA("vtkMRMLMarkupsLineNode") ||
+       associatedNode->IsA("vtkMRMLMarkupsAngleNode") ||
+       associatedNode->IsA("vtkMRMLMarkupsCurveNode") ||
+       associatedNode->IsA("vtkMRMLMarkupsClosedCurveNode")))
     {
-    // Item is a markup fiducial
+    // Item is a markup
     return 0.5;
     }
 

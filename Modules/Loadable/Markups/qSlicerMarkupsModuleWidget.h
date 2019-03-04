@@ -204,19 +204,18 @@ public slots:
   void copySelectedToClipboard();
   void pasteSelectedFromClipboard();
 
+  /// Update table when markups node is modified
+  void onActiveMarkupsNodeModifiedEvent();
   /// Enable/disable editing the table if the markups node is un/locked
   void onActiveMarkupsNodeLockModifiedEvent();
   /// Update the format text entry from the node
   void onActiveMarkupsNodeLabelFormatModifiedEvent();
-  /// Update the table with the modified point information if the node is
-  /// active
+  /// Update the table with the modified point information if the node is active
   void onActiveMarkupsNodePointModifiedEvent(vtkObject *caller, vtkObject *callData);
-  /// Update the table with the new markup if the node is active
-  void onActiveMarkupsNodeMarkupAddedEvent(vtkObject *caller, vtkObject *callData);
-  /// Update the table for the removed markup if the node is active
-  void onActiveMarkupsNodeMarkupRemovedEvent();//vtkMRMLNode *markupsNode);
-  /// Update a table row from a modified markup
-  void onActiveMarkupsNodeNthMarkupModifiedEvent(vtkObject *caller, vtkObject *callData);
+  /// Update the table with the new point information if the node is active
+  void onActiveMarkupsNodePointAddedEvent();
+  /// Update the table for the removed point if the node is active
+  void onActiveMarkupsNodePointRemovedEvent(vtkObject *caller, vtkObject *callData);
   /// Update the display properties widgets when the display node is modified
   void onActiveMarkupsNodeDisplayModifiedEvent();
   /// Update the transform related elements of the gui when the transform node is modified
