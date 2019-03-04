@@ -21,12 +21,12 @@ endif()
 
 if(NOT Slicer_USE_SYSTEM_${proj})
 
-  set(_version "2.1.7")
+  set(_version "2.1.11")
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    URL "https://pypi.python.org/packages/e1/ec/9f2bbc86a0188bf83221212be87fa4b70dc71a9385efcc95a25e9789894e/GitPython-${_version}.tar.gz"
-    URL_MD5 "a63fdd2a650694ea23e268fd0c952034"
+    URL "https://files.pythonhosted.org/packages/4d/e8/98e06d3bc954e3c5b34e2a579ddf26255e762d21eb24fede458eff654c51/GitPython-${_version}.tar.gz"
+    URL_HASH "SHA256=8237dc5bfd6f1366abeee5624111b9d6879393d84745a507de0fda86043b65a8"
     DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BUILD_IN_SOURCE 1
