@@ -40,10 +40,10 @@ ExternalProject_Execute(${proj} \"easy_install\" \"${PYTHON_EXECUTABLE}\" setup.
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    # slicer-v40.2.0
+    # slicer-v40.8.0
     # - include patch to support parallel build
     GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/Slicer/setuptools.git"
-    GIT_TAG "1b48ec37eddeb39303bc32d217666cd1ba2b9c39"
+    GIT_TAG "cb19e30abe623914ad21297ea64838c38c82a2fe"
     DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
     SOURCE_DIR ${EP_SOURCE_DIR}
     BUILD_IN_SOURCE 1
