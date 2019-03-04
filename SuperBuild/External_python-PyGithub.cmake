@@ -1,7 +1,7 @@
 set(proj python-PyGithub)
 
 # Set dependency list
-set(${proj}_DEPENDENCIES python python-setuptools python-pyjwt)
+set(${proj}_DEPENDENCIES python python-setuptools python-pyjwt python-requests)
 
 if(NOT DEFINED Slicer_USE_SYSTEM_${proj})
   set(Slicer_USE_SYSTEM_${proj} ${Slicer_USE_SYSTEM_python})
@@ -20,12 +20,12 @@ endif()
 
 if(NOT Slicer_USE_SYSTEM_${proj})
 
-  set(_version "1.39")
+  set(_version "1.40")
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    URL "https://pypi.python.org/packages/fd/28/c42bdd56111dae8c622c01af69e6d7f3d3ff0a96ad846f221749701f86b1/PyGithub-${_version}.tar.gz"
-    URL_HASH "SHA256=8a87bc0fbd0b70c2f12911f7f25a493cd13371bc1bbac6c548cc61b69e7d006f"
+    URL "https://files.pythonhosted.org/packages/9c/f7/bfd1e1dbb6b78f1485e76c9e5cd34833e69ba9705f9f941c4dc5eac0f0de/PyGithub-${_version}.tar.gz"
+    URL_HASH "SHA256=b9f5cf80197ba0e3848e084de289ffa19ce1c8c279070a58754ad694d364d481"
     DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BUILD_IN_SOURCE 1
