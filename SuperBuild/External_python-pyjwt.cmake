@@ -20,12 +20,12 @@ endif()
 
 if(NOT Slicer_USE_SYSTEM_${proj})
 
-  set(_version "1.6.4")
+  set(_version "1.7.1")
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    URL "https://pypi.python.org/packages/00/5e/b358c9bb24421e6155799d995b4aa3aa3307ffc7ecae4ad9d29fd7e07a73/PyJWT-${_version}.tar.gz"
-    URL_HASH "SHA256=4ee413b357d53fd3fb44704577afac88e72e878716116270d722723d65b42176"
+    URL "https://files.pythonhosted.org/packages/2f/38/ff37a24c0243c5f45f5798bd120c0f873eeed073994133c084e1cf13b95c/PyJWT-${_version}.tar.gz"
+    URL_HASH "SHA256=8d59a976fb773f3e6a39c85636357c4f0e242707394cadadd9814f5cbaa20e96"
     DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BUILD_IN_SOURCE 1
