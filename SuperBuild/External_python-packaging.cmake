@@ -19,12 +19,12 @@ endif()
 
 if(NOT Slicer_USE_SYSTEM_${proj})
 
-  set(_version "17.1")
+  set(_version "19.0")
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    URL "https://pypi.python.org/packages/77/32/439f47be99809c12ef2da8b60a2c47987786d2c6c9205549dd6ef95df8bd/packaging-${_version}.tar.gz"
-    URL_HASH "SHA256=f019b770dd64e585a99714f1fd5e01c7a8f11b45635aa953fd41c689a657375b"
+    URL "https://files.pythonhosted.org/packages/16/51/d72654dbbaa4a4ffbf7cb0ecd7d12222979e0a660bf3f42acc47550bf098/packaging-${_version}.tar.gz"
+    URL_HASH "SHA256=0c98a5d0be38ed775798ece1b9727178c4469d9c3b4ada66e8e6b7849f8732af"
     DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BUILD_IN_SOURCE 1
