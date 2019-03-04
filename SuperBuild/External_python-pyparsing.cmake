@@ -19,12 +19,12 @@ endif()
 
 if(NOT Slicer_USE_SYSTEM_${proj})
 
-  set(_version "2.2.0")
+  set(_version "2.3.1")
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    URL "https://pypi.python.org/packages/3c/ec/a94f8cf7274ea60b5413df054f82a8980523efd712ec55a59e7c3357cf7c/pyparsing-${_version}.tar.gz"
-    URL_MD5 "0214e42d63af850256962b6744c948d9"
+    URL "https://files.pythonhosted.org/packages/b9/b8/6b32b3e84014148dcd60dd05795e35c2e7f4b72f918616c61fdce83d27fc/pyparsing-${_version}.tar.gz"
+    URL_HASH "SHA256=66c9268862641abcac4a96ba74506e594c884e3f57690a696d21ad8210ed667a"
     DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BUILD_IN_SOURCE 1
