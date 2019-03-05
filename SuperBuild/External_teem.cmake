@@ -30,19 +30,13 @@ if(NOT DEFINED Teem_DIR AND NOT Slicer_USE_SYSTEM_${proj})
       "-DCMAKE_PROJECT_Teem_INCLUDE:FILEPATH=${CMAKE_ROOT}/Modules/CTestUseLaunchers.cmake")
   endif()
 
-  if(${CMAKE_VERSION} VERSION_GREATER "2.8.11.2")
-    # Following CMake commit 2a7975398, the FindPNG.cmake module
-    # supports detection of release and debug libraries. Specifying only
-    # the release variable is enough to ensure the variable PNG_LIBRARY
-    # is internally set if the project is built either in Debug or Release.
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
-      -DPNG_LIBRARY_RELEASE:FILEPATH=${PNG_LIBRARY}
-      )
-  else()
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
-      -DPNG_LIBRARY:FILEPATH=${PNG_LIBRARY}
-      )
-  endif()
+  # Following CMake commit 2a7975398, the FindPNG.cmake module
+  # supports detection of release and debug libraries. Specifying only
+  # the release variable is enough to ensure the variable PNG_LIBRARY
+  # is internally set if the project is built either in Debug or Release.
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
+    -DPNG_LIBRARY_RELEASE:FILEPATH=${PNG_LIBRARY}
+    )
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY

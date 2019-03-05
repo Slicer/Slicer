@@ -83,12 +83,6 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" Packaging/s
     # More details here: https://discourse.slicer.org/t/cannot-compile-slicer-on-mac-macos-sierra-clang-9-cmake-3-9-1/1104/9
     #
 
-    if(CMAKE_VERSION VERSION_LESS "3.8.2")
-      message(FATAL_ERROR "Since SimpleITK requires CMP0067 to properly support C++11, "
-                          "CMake >= 3.8.2 is required to configure ${PROJECT_NAME}: "
-                          "Current CMake version is [${CMAKE_VERSION}]")
-    endif()
-
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
       -DCMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD}
       -DCMAKE_CXX_STANDARD_REQUIRED:BOOL=${CMAKE_CXX_STANDARD_REQUIRED}
