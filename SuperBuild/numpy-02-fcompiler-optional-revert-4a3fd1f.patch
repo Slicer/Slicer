@@ -1,6 +1,6 @@
---- numpy-1.13.1/numpy/distutils/fcompiler/__init__.py	2017-07-01 09:18:08.000000000 -0400
-+++ NUMPY/numpy/distutils/fcompiler/__init__.py	2017-09-04 15:17:11.936427258 -0400
-@@ -430,8 +430,8 @@
+--- numpy-1.16.2/numpy/distutils/fcompiler/__init__.py	2019-02-26 11:42:42.000000000 -0400
++++ NUMPY/numpy/distutils/fcompiler/__init__.py	2019-03-04 09:10:00.000000000 -0400
+@@ -428,8 +428,8 @@ class FCompiler(CCompiler):
      def get_version(self, force=False, ok_status=[0]):
          assert self._is_customised
          version = CCompiler.get_version(self, force=force, ok_status=ok_status)
@@ -9,5 +9,3 @@
 +        # if version is None:
 +        #     raise CompilerNotFound()
          return version
- 
-     ############################################################

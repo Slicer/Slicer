@@ -1,13 +1,13 @@
---- numpy-1.13.1/numpy/core/getlimits.py	2017-07-01 09:18:08.000000000 -0400
-+++ NUMPY/numpy/core/getlimits.py	2017-09-04 16:12:45.169686811 -0400
-@@ -167,7 +167,9 @@
- # Ignore runtime error when this is not f128
- with numeric.errstate(all='ignore'):
-     _huge_f128 = (_ld(1) - _epsneg_f128) / _tiny_f128 * _ld(4)
--_float128_ma = MachArLike(_ld,
-+with warnings.catch_warnings():
-+    warnings.simplefilter("ignore")
-+    _float128_ma = MachArLike(_ld,
-                          machep=-112,
-                          negep=-113,
-                          minexp=-16382,
+--- numpy-1.16.2/numpy/core/getlimits.py	2019-02-26 11:42:42.000000000 -0400
++++ NUMPY/numpy/core/getlimits.py	2019-03-04 09:10:00.000000000 -0400
+@@ -161,7 +161,9 @@ def _register_known_types():
+     # Ignore runtime error when this is not f128
+     with numeric.errstate(all='ignore'):
+         huge_f128 = (ld(1) - epsneg_f128) / tiny_f128 * ld(4)
+-    float128_ma = MachArLike(ld,
++    with warnings.catch_warnings():
++        warnings.simplefilter("ignore")
++        float128_ma = MachArLike(ld,
+                              machep=-112,
+                              negep=-113,
+                              minexp=-16382,

@@ -71,7 +71,7 @@ set(${proj}_WORKING_DIR \"${EP_SOURCE_DIR}\")
 ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py install)
 ")
 
-  set(_version "1.13.1")
+  set(_version "1.16.2")
 
   if(CMAKE_CONFIGURATION_TYPES)
     set(_download_stamp "${Slicer_BINARY_DIR}/${proj}-prefix/src/${proj}-stamp/${CMAKE_CFG_INTDIR}/${proj}-download")
@@ -88,8 +88,8 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py in
   #------------------------------------------------------------------------------
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    URL "https://pypi.python.org/packages/c0/3a/40967d9f5675fbb097ffec170f59c2ba19fc96373e73ad47c2cae9a30aed/numpy-${_version}.zip"
-    URL_MD5 "2c3c0f4edf720c3a7b525dacc825b9ae"
+    URL "https://files.pythonhosted.org/packages/cf/8d/6345b4f32b37945fedc1e027e83970005fc9c699068d2f566b82826515f2/numpy-${_version}.zip"
+    URL_HASH "SHA256=6c692e3879dde0b67a9dc78f9bfb6f61c666b4562fd8619632d7043fb5b691b0"
     DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
     SOURCE_DIR ${EP_SOURCE_DIR}
     BUILD_IN_SOURCE 1
