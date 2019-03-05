@@ -2345,7 +2345,7 @@ std::string vtkSlicerSegmentationsModuleLogic::GetSafeFileName(std::string origi
   // (same method as in qSlicerFileNameItemDelegate::fixupFileName)
   std::string safeName("");
   vtksys::RegularExpression regExp("[A-Za-z0-9\\ \\-\\_\\.\\(\\)\\$\\!\\~\\#\\'\\%\\^\\{\\}]");
-  for (int i=0; i<originalName.size(); ++i)
+  for (size_t i=0; i<originalName.size(); ++i)
     {
     std::string currentCharStr("");
     currentCharStr += originalName[i];

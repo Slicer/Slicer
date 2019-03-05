@@ -120,6 +120,7 @@ QStringList qSlicerSingletonViewFactory::supportedElementNames() const
 //---------------------------------------------------------------------------
 QWidget* qSlicerSingletonViewFactory::createViewFromXML(QDomElement layoutElement)
 {
+  Q_UNUSED(layoutElement);
   Q_D(qSlicerSingletonViewFactory);
   if (this->widget()->isVisible())
     {

@@ -505,7 +505,7 @@ void qSlicerModelsModuleWidget::setCurrentNodeFromSubjectHierarchyItem(vtkIdType
 }
 
 //---------------------------------------------------------------------------
-void qSlicerModelsModuleWidget::onSubjectHierarchyItemModified(vtkObject* caller, void* callData)
+void qSlicerModelsModuleWidget::onSubjectHierarchyItemModified(vtkObject* vtkNotUsed(caller), void* vtkNotUsed(callData))
 {
   Q_D(qSlicerModelsModuleWidget);
 

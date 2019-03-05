@@ -290,7 +290,7 @@ void vtkSlicerCurveRepresentation3D::SetMarkupsNode(vtkMRMLMarkupsNode *markupsN
 
 //----------------------------------------------------------------------
 void vtkSlicerCurveRepresentation3D::CanInteractWithCurve(
-  const int displayPosition[2], const double worldPosition[3],
+  const int vtkNotUsed(displayPosition)[2], const double worldPosition[3],
   int &foundComponentType, int &componentIndex, double &closestDistance2)
 {
   if (!this->MarkupsNode)

@@ -505,7 +505,6 @@ void vtkMRMLMarkupsDisplayableManager::OnMRMLSliceNodeModifiedEvent()
   while(it != this->Helper->MarkupsDisplayNodesToWidgets.end())
     {
     // we loop through all widgets
-    vtkMRMLMarkupsDisplayNode * markupsDisplayNode = (it->first);
     vtkSlicerAbstractWidget* widget = (it->second);
     widget->UpdateFromMRML(this->SliceNode, vtkCommand::ModifiedEvent);
     if (widget->GetNeedToRender())
