@@ -49,7 +49,6 @@ protected:
 qSlicerSingletonViewFactoryPrivate
 ::qSlicerSingletonViewFactoryPrivate(qSlicerSingletonViewFactory& object)
   : q_ptr(&object)
-  , Widget(NULL)
 {
 }
 
