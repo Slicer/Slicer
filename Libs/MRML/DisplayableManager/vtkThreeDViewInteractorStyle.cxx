@@ -463,6 +463,11 @@ void vtkThreeDViewInteractorStyle::OnLeftButtonUp()
       mouseInteractionMode = interactionNode->GetCurrentInteractionMode();
       placeModePersistence = interactionNode->GetPlaceModePersistence();
       vtkDebugMacro("OnLeftButtonUp: mouse interaction mode = " << mouseInteractionMode);
+      vtkDebugMacro("OnLeftButtonUp: place persistence mode = " << placeModePersistence);
+#ifdef NDEBUG
+      (void)mouseInteractionMode; // unused
+      (void)placeModePersistence; // unused
+#endif
       }
     else
       {
@@ -601,13 +606,6 @@ bool vtkThreeDViewInteractorStyle::ForwardInteractionEventToDisplayableManagers(
   // Get display and world position
   int* displayPositionInt = this->GetInteractor()->GetEventPosition();
   vtkRenderer* pokedRenderer = this->GetInteractor()->FindPokedRenderer(displayPositionInt[0], displayPositionInt[1]);
-  double displayPosition[4] =
-    {
-    static_cast<double>(displayPositionInt[0] - pokedRenderer->GetOrigin()[0]),
-    static_cast<double>(displayPositionInt[1] - pokedRenderer->GetOrigin()[1]),
-    0.0,
-    1.0
-    };
 
   vtkNew<vtkMRMLInteractionEventData> ed;
   ed->SetType(event);

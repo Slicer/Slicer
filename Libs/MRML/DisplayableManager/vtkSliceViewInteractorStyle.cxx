@@ -252,7 +252,6 @@ void vtkSliceViewInteractorStyle::OnMouseMove()
   this->MouseMovedSinceButtonDown = true;
 
   vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
-  vtkMRMLSliceCompositeNode *sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
   int eventPosition[2] = { 0 };
   this->GetInteractor()->GetEventPosition(eventPosition[0], eventPosition[1]);
 
@@ -802,7 +801,6 @@ void vtkSliceViewInteractorStyle::DoZoom()
   this->GetInteractor()->GetEventPosition(eventPosition[0], eventPosition[1]);
 
   int* windowSize = this->GetInteractor()->GetRenderWindow()->GetSize();
-  double windowMinSize = std::min(windowSize[0], windowSize[1]);
 
   int deltaY = eventPosition[1] - this->StartActionEventPosition[1];
   double percent = (windowSize[1] + deltaY) / (1.0 * windowSize[1]);
