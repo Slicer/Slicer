@@ -1,7 +1,7 @@
 set(proj python-pyparsing)
 
 # Set dependency list
-set(${proj}_DEPENDENCIES python)
+set(${proj}_DEPENDENCIES python python-setuptools)
 
 if(NOT DEFINED Slicer_USE_SYSTEM_${proj})
   set(Slicer_USE_SYSTEM_${proj} ${Slicer_USE_SYSTEM_python})
