@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     {
     vectorReader->Update();
     }
-  catch (itk::ExceptionObject err)
+  catch (itk::ExceptionObject &err)
     {
     std::cout << "Unable to read file '" << argv[1] << "', err = \n" << err << std::endl;
     vectorReader->Delete();

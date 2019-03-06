@@ -420,7 +420,6 @@ void vtkOpenGLShaderComputation::Compute(float slice)
   //
   // Does the GPU support current Framebuffer configuration?
   //
-  GLenum status;
   if (!this->FramebufferComplete())
     {
     vtkErrorMacro("Framebuffer is not complete.");
