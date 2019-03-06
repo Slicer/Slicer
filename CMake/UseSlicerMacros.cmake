@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.13.4)
 
 # Given a variable name, this function will display messages indicating what the current
 # value of the variable.

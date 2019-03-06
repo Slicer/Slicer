@@ -109,7 +109,7 @@
 #
 #
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.13.4)
 
 # TODO Support lookup of "Microsoft Visual C++ Compiler for Python 2.7 (x86, amd64)"
 
