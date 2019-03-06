@@ -456,6 +456,14 @@ set(Slicer_EXTENSIONS_DIRBASENAME "Extensions")
 set(Slicer_EXTENSIONS_DIRNAME "${Slicer_EXTENSIONS_DIRBASENAME}-${Slicer_WC_REVISION}")
 
 #-----------------------------------------------------------------------------
+# Slicer OpenGL Options
+#-----------------------------------------------------------------------------
+if(UNIX AND NOT APPLE)
+  set(OpenGL_GL_PREFERENCE "LEGACY")
+  mark_as_superbuild(OpenGL_GL_PREFERENCE:STRING)
+endif()
+
+#-----------------------------------------------------------------------------
 # Slicer VTK Options
 #-----------------------------------------------------------------------------
 if(Slicer_VTK_VERSION_MAJOR STREQUAL "7")

@@ -99,6 +99,14 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
         -DModule_vtkRenderingFreeTypeFontConfig:BOOL=ON
         )
     endif()
+
+    # OpenGL_GL_PREFERENCE
+    if(NOT "${OpenGL_GL_PREFERENCE}" MATCHES "^(LEGACY|GLVND)$")
+      message(FATAL_ERROR "OpenGL_GL_PREFERENCE variable is expected to be set to LEGACY or GLVND")
+    endif()
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
+      -DOpenGL_GL_PREFERENCE:STRING=${OpenGL_GL_PREFERENCE}
+      )
   endif()
 
   # Disable Tk when Python wrapping is enabled
