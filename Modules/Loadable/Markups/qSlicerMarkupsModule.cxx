@@ -47,12 +47,6 @@
 VTK_MODULE_INIT(vtkSlicerMarkupsModuleMRMLDisplayableManager)
 
 //-----------------------------------------------------------------------------
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
-#include <QtPlugin>
-Q_EXPORT_PLUGIN2(qSlicerMarkupsModule, qSlicerMarkupsModule);
-#endif
-
-//-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Markups
 class qSlicerMarkupsModulePrivate
 {

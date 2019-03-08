@@ -35,12 +35,6 @@
 #include <vtkMRMLViewNode.h>
 
 //-----------------------------------------------------------------------------
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
-#include <QtPlugin>
-Q_EXPORT_PLUGIN2(qSlicerViewControllersModule, qSlicerViewControllersModule);
-#endif
-
-//-----------------------------------------------------------------------------
 class qSlicerViewControllersModulePrivate
 {
 public:

@@ -37,12 +37,6 @@
 #include "qSlicerSubjectHierarchyTablesPlugin.h"
 
 //-----------------------------------------------------------------------------
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
-#include <QtPlugin>
-Q_EXPORT_PLUGIN2(qSlicerTablesModule, qSlicerTablesModule);
-#endif
-
-//-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_ExtensionTemplate
 class qSlicerTablesModulePrivate
 {

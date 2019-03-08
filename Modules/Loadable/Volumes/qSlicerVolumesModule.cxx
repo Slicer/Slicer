@@ -44,13 +44,6 @@
 #include "qSlicerSubjectHierarchyLabelMapsPlugin.h"
 #include "qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin.h"
 
-
-//-----------------------------------------------------------------------------
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
-#include <QtPlugin>
-Q_EXPORT_PLUGIN2(qSlicerVolumesModule, qSlicerVolumesModule);
-#endif
-
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Volumes
 class qSlicerVolumesModulePrivate

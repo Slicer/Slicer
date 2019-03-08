@@ -23,11 +23,7 @@
 
 // QT includes
 #include <QtGlobal>
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
-#include <QDesignerCustomWidgetInterface>
-#else
 #include <QtUiPlugin/QDesignerCustomWidgetInterface>
-#endif
 
 // QTGUI includes
 #include "qSlicerBaseQTGUIDesignerPluginsExport.h"
@@ -35,9 +31,7 @@
 class Q_SLICER_DESIGNER_PLUGINS_EXPORT qSlicerQTGUIAbstractPlugin
   : public QDesignerCustomWidgetInterface
 {
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
   Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QDesignerCustomWidgetInterface")
-#endif
   Q_INTERFACES(QDesignerCustomWidgetInterface);
 public:
 
