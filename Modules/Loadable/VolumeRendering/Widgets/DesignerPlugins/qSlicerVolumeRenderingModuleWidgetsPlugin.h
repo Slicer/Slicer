@@ -21,14 +21,8 @@
 #ifndef __qSlicerVolumeRenderingModuleWidgetsPlugin_h
 #define __qSlicerVolumeRenderingModuleWidgetsPlugin_h
 
-#include "vtkSlicerConfigure.h" // For Slicer_HAVE_QT5
-
 // Qt includes
-#ifdef Slicer_HAVE_QT5
 #include <QtUiPlugin/QDesignerCustomWidgetCollectionInterface>
-#else
-#include <QDesignerCustomWidgetCollectionInterface>
-#endif
 
 // VolumeRendering includes
 #include "qMRMLVolumePropertyNodeWidgetPlugin.h"
@@ -42,9 +36,7 @@ class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_PLUGINS_EXPORT qSlicerVolumeRender
   , public QDesignerCustomWidgetCollectionInterface
 {
   Q_OBJECT
-#ifdef Slicer_HAVE_QT5
   Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QDesignerCustomWidgetCollectionInterface")
-#endif
   Q_INTERFACES(QDesignerCustomWidgetCollectionInterface);
 
 public:

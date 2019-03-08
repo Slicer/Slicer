@@ -21,8 +21,6 @@
 #ifndef __qSlicerStylePlugin_h
 #define __qSlicerStylePlugin_h
 
-#include "vtkSlicerConfigure.h" // For Slicer_HAVE_QT5
-
 // Qt includes
 #include <QStylePlugin>
 #include <QtPlugin>
@@ -35,9 +33,7 @@ class QStyle;
 class Q_SLICER_STYLES_PLUGINS_EXPORT qSlicerStylePlugin : public QStylePlugin
 {
   Q_OBJECT
-#ifdef Slicer_HAVE_QT5
   Q_PLUGIN_METADATA(IID QStyleFactoryInterface_iid FILE "SlicerStyle.json")
-#endif
 public:
   /// Superclass typedef
   typedef QStylePlugin Superclass;
