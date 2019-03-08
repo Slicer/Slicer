@@ -28,9 +28,6 @@ if(NOT DEFINED CTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 
     set(_wrap_qtwebkit 0)
-    if(Qt5_VERSION VERSION_LESS "5.6.0")
-      set(_wrap_qtwebkit ${Slicer_USE_PYTHONQT})
-    endif()
 
   if(Slicer_USE_PYTHONQT)
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS

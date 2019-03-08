@@ -46,11 +46,7 @@ endif()
 # Configure headers
 # --------------------------------------------------------------------------
 set(MRML_WIDGETS_HAVE_QT5 1)
-
-set(MRML_WIDGETS_HAVE_WEBKIT_SUPPORT 1)
-  if(Qt5_VERSION VERSION_GREATER "5.5.0")
     set(MRML_WIDGETS_HAVE_WEBKIT_SUPPORT 0)
-  endif()
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/qMRMLWidgetsConfigure.h.in
@@ -396,9 +392,6 @@ if(Slicer_USE_QtTesting)
 endif()
 
   set(_moc_options OPTIONS -DMRML_WIDGETS_HAVE_QT5)
-  if(MRML_WIDGETS_HAVE_WEBKIT_SUPPORT)
-    set(_moc_options OPTIONS -DMRML_WIDGETS_HAVE_WEBKIT_SUPPORT)
-  endif()
   QT5_WRAP_CPP(MRMLWidgets_MOC_CXX ${MRMLWidgets_MOC_SRCS} ${_moc_options})
   QT5_WRAP_UI(MRMLWidgets_UI_CXX ${MRMLWidgets_UI_SRCS})
   QT5_ADD_RESOURCES(MRMLWidgets_QRC_CXX ${MRMLWidgets_QRC_SRCS})

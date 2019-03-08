@@ -142,9 +142,6 @@ macro(slicerMacroBuildAppLibrary)
   # Sources
   # --------------------------------------------------------------------------
     set(_moc_options OPTIONS -DSlicer_HAVE_QT5)
-    if(Slicer_HAVE_WEBKIT_SUPPORT)
-      set(_moc_options OPTIONS -DSlicer_HAVE_WEBKIT_SUPPORT)
-    endif()
     QT5_WRAP_CPP(SLICERAPPLIB_MOC_OUTPUT ${SLICERAPPLIB_MOC_SRCS} ${_moc_options})
     QT5_WRAP_UI(SLICERAPPLIB_UI_CXX ${SLICERAPPLIB_UI_SRCS})
     if(DEFINED SLICERAPPLIB_RESOURCES)
