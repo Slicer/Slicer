@@ -20,11 +20,9 @@
 
 // Qt includes
 #include <QDebug>
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
 #include <QApplication>
 #include <QMainWindow>
 #include <QWindow>
-#endif
 
 // qMRML includes
 #include "qMRMLSliceWidget_p.h"
@@ -80,12 +78,8 @@ void qMRMLSliceWidgetPrivate::init()
 // --------------------------------------------------------------------------
 void qMRMLSliceWidgetPrivate::setSliceViewSize(const QSize& size)
 {
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
   const QSize scaledSize = size * this->SliceView->devicePixelRatio();
   this->SliceController->setSliceViewSize(scaledSize);
-#else
-  this->SliceController->setSliceViewSize(size);
-#endif
 }
 
 // --------------------------------------------------------------------------
@@ -302,7 +296,6 @@ void qMRMLSliceWidget::showEvent(QShowEvent* event)
 {
   Superclass::showEvent(event);
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
   Q_D(qMRMLSliceWidget);
 
   // Reset slice view size when screen changes to account for a possible change
@@ -322,5 +315,4 @@ void qMRMLSliceWidget::showEvent(QShowEvent* event)
     connect(window, SIGNAL(screenChanged(QScreen*)),
             d, SLOT(resetSliceViewSize()), Qt::UniqueConnection);
     }
-#endif
 }

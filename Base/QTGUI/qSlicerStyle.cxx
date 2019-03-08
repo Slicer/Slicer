@@ -20,11 +20,7 @@
 
 // Qt includes
 #include <QAbstractScrollArea>
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
-#include <QCleanlooksStyle>
-#else
 #include <QStyleFactory>
-#endif
 #include <QDebug>
 #include <QEvent>
 #include <QGroupBox>
@@ -39,11 +35,7 @@
 
 // --------------------------------------------------------------------------
 qSlicerStyle::qSlicerStyle()
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
-  : Superclass(new QCleanlooksStyle)
-#else
   : Superclass(QStyleFactory::create("fusion"))
-#endif
 {
   this->baseStyle()->setParent(this);
 }
@@ -127,11 +119,9 @@ int qSlicerStyle::pixelMetric(PixelMetric metric, const QStyleOption * option,
     case QStyle::PM_SliderLength:
       return 12; // default to 27
       break;
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
     case QStyle::PM_ButtonIconSize:
       return 24; // Like with cleanlooks style
       break;
-#endif
     default:
       return Superclass::pixelMetric(metric, option, widget);
       break;
@@ -151,71 +141,6 @@ QRect qSlicerStyle::subControlRect(ComplexControl control, const QStyleOptionCom
   /// the following code aims at overriding that value by setting it to 4.
   switch(control)
     {
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
-    case CC_GroupBox:
-      if (const QStyleOptionGroupBox *groupBox =
-          qstyleoption_cast<const QStyleOptionGroupBox *>(option))
-        {
-        int topMargin = 0;
-        int topHeight = 0;
-        int verticalAlignment = this->proxy()->styleHint(
-            SH_GroupBox_TextLabelVerticalAlignment, groupBox, widget);
-        bool flat = groupBox->features & QStyleOptionFrameV2::Flat;
-        if (!groupBox->text.isEmpty())
-          {
-          topHeight = groupBox->fontMetrics.height();
-          if (verticalAlignment & Qt::AlignVCenter)
-            {
-            topMargin = topHeight / 2;
-            }
-          else if (verticalAlignment & Qt::AlignTop)
-            {
-            topMargin = topHeight;
-            }
-          }
-        QRect frameRect = groupBox->rect;
-        frameRect.setTop(topMargin);
-        if (subControl == SC_GroupBoxFrame)
-          {
-          return rect;
-          }
-        else if (subControl == SC_GroupBoxContents)
-          {
-          if(flat)
-            {
-            int margin = 0;
-            int leftMarginExtension = 4; // default 16
-            rect = frameRect.adjusted(leftMarginExtension + margin, margin + topHeight, -margin, -margin);
-            }
-          break;
-          }
-        if(flat)
-          {
-          if (const QGroupBox *groupBoxWidget = qobject_cast<const QGroupBox *>(widget))
-            {
-            //Prepare metrics for a bold font
-            QFont font = widget->font();
-            font.setBold(true);
-            QFontMetrics fontMetrics(font);
-
-            QSize textRect = fontMetrics.boundingRect(groupBoxWidget->title()).size() + QSize(2, 2);
-            if (subControl == SC_GroupBoxCheckBox)
-              {
-              int indicatorWidth = proxy()->pixelMetric(PM_IndicatorWidth, option, widget);
-              int indicatorHeight = proxy()->pixelMetric(PM_IndicatorHeight, option, widget);
-              rect.setWidth(indicatorWidth);
-              rect.setHeight(indicatorHeight);
-              rect.moveTop((fontMetrics.height() - indicatorHeight) / 2 + 2);
-              }
-            else if (subControl == SC_GroupBoxLabel)
-              {
-              rect.setSize(textRect);
-              }
-            }
-          }
-        }
-      break;
-#endif
 #ifndef QT_NO_SLIDER
     // <HACK>
     // Reimplemented to work around bug: http://bugreports.qt.nokia.com/browse/QTBUG-13318

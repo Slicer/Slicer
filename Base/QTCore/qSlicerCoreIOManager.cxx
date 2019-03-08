@@ -443,11 +443,7 @@ bool qSlicerCoreIOManager::loadFile(const QString& fileName)
 
 //-----------------------------------------------------------------------------
 bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
-#if QT_VERSION < 0x040700
-                                     const QVariantMap& parameters,
-#else
                                      const qSlicerIO::IOProperties& parameters,
-#endif
                                      vtkCollection* loadedNodes)
 {
   Q_D(qSlicerCoreIOManager);

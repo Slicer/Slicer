@@ -21,9 +21,7 @@
 // Qt includes
 #include <QDebug>
 #include <QDesktopServices>
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
 #include <QUrlQuery>
-#endif
 #if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
 #include <QWebFrame>
 #include <QWebView>
@@ -70,12 +68,8 @@ QUrl qSlicerExtensionsInstallWidgetPrivate::extensionsListUrl()
      QUrl url(this->ExtensionsManagerModel->serverUrlWithExtensionsStorePath());
      //HS Uncomment the following line for debugging and comment above
      //QUrl url("http://10.171.2.133:8080/slicerappstore");
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
-  url.setQueryItems(
-#else
-  QUrlQuery urlQuery;
-  urlQuery.setQueryItems(
-#endif
+     QUrlQuery urlQuery;
+     urlQuery.setQueryItems(
         QList<QPair<QString, QString> >()
         << QPair<QString, QString>("layout", "empty")
         << QPair<QString, QString>("os", this->SlicerOs)
@@ -83,10 +77,8 @@ QUrl qSlicerExtensionsInstallWidgetPrivate::extensionsListUrl()
         << QPair<QString, QString>("revision", this->SlicerRevision));
         //HS Uncomment the following line for debugging and comment above
         //<< QPair<QString, QString>("revision", "19291"));
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-  url.setQuery(urlQuery);
-#endif
-  return url;
+     url.setQuery(urlQuery);
+     return url;
 }
 
 // --------------------------------------------------------------------------

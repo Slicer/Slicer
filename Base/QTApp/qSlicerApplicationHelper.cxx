@@ -93,7 +93,6 @@ void qSlicerApplicationHelper::preInitializeApplication(
     const char* argv0, ctkProxyStyle* style)
 {
   itk::itkFactoryRegistration();
-#if QT_VERSION >= 0x040803
 #ifdef Q_OS_MACX
   if (QSysInfo::MacintoshVersion > QSysInfo::MV_10_8)
     {
@@ -101,7 +100,6 @@ void qSlicerApplicationHelper::preInitializeApplication(
     // https://bugreports.qt-project.org/browse/QTBUG-32789
     QFont::insertSubstitution(".Lucida Grande UI", "Lucida Grande");
     }
-#endif
 #endif
 
 #ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET

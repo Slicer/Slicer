@@ -24,7 +24,7 @@
 #include <QFile>
 #include <QMainWindow>
 
-#if defined(Q_OS_WIN32) && (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+#if defined(Q_OS_WIN32)
   #include <QtPlatformHeaders\QWindowsWindowFunctions> // for setHasBorderInFullScreen
 #endif
 
@@ -127,11 +127,7 @@ public:
   /// ErrorLogModel - It should exist only one instance of the ErrorLogModel
   QSharedPointer<ctkErrorLogModel>            ErrorLogModel;
 
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
-  QWeakPointer<qSlicerLayoutManager> LayoutManager;
-#else
   QPointer<qSlicerLayoutManager> LayoutManager;
-#endif
   ctkToolTipTrapper*      ToolTipTrapper;
   ctkSettingsDialog*      SettingsDialog;
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
@@ -677,7 +673,7 @@ ctkSettingsDialog* qSlicerApplication::settingsDialog()const
 // --------------------------------------------------------------------------
 void qSlicerApplication::setHasBorderInFullScreen(bool hasBorder)
 {
-#if defined(Q_OS_WIN32) && (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+#if defined(Q_OS_WIN32)
   QWindowsWindowFunctions::setHasBorderInFullScreen(this->mainWindow()->windowHandle(), hasBorder);
 #else
   Q_UNUSED(hasBorder);

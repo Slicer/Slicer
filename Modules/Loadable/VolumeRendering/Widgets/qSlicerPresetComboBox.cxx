@@ -22,9 +22,6 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QListView>
-#if QT_VERSION < 0x040700
-#include <QPixmapCache>
-#endif
 
 // CTK includes
 #include <ctkVTKWidgetsUtils.h>
@@ -223,12 +220,7 @@ void qSlicerPresetComboBox::setIconToPreset(vtkMRMLNode* presetNode)
       volumePropertyNode->GetVolumeProperty() ? volumePropertyNode->GetVolumeProperty()->GetRGBTransferFunction() : 0;
     assert(colors && colors->GetRange()[1] > colors->GetRange()[0]);
     QImage img = ctk::scalarsToColorsImage(colors, QSize(previewSize, previewSize));
-#if QT_VERSION >= 0x040700
     QString imgSrc = ctk::base64HTMLImageTagSrc(img);
-#else
-    QString imgSrc = QString(":%1").arg(presetNode->GetName());
-    QPixmapCache::insert(imgSrc, QPixmap::fromImage(img));
-#endif
     QString toolTip = QString("<img src=\"%1\"> %2").arg(imgSrc).arg(presetNode->GetName());
     sceneModel->setData(sceneModel->indexFromNode(presetNode), toolTip, Qt::ToolTipRole);
     }

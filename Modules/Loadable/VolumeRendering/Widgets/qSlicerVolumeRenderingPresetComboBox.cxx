@@ -25,9 +25,6 @@
 
 // Qt includes
 #include <QDebug>
-#if QT_VERSION < 0x040700
-#include <QPixmapCache>
-#endif
 
 // CTK includes
 #include <ctkUtils.h>

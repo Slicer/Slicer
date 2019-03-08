@@ -20,11 +20,7 @@
 // QT includes
 #include <QButtonGroup>
 #include <QMetaProperty>
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
-#include <QWeakPointer>
-#else
 #include <QPointer>
-#endif
 
 // CTK includes
 #include <ctkVTKWidgetsUtils.h>
@@ -61,11 +57,7 @@ public:
   void setupUi(QDialog* dialog);
   void setCheckedRadioButton(int type);
   void setWidgetEnabled(bool state);
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
-  QWeakPointer<qMRMLLayoutManager>   LayoutManager;
-#else
   QPointer<qMRMLLayoutManager>   LayoutManager;
-#endif
   vtkSmartPointer<vtkImageData>      ImageData;
   /// The ID of the associated snapshot node.
   /// This is NULL if the dialog has no associated snapshot node (== new snapshot mode).

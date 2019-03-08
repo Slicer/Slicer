@@ -31,12 +31,7 @@
 #include <QResource>
 #include <QSettings>
 #include <QTranslator>
-
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
-#include <QDesktopServices>
-#else
 #include <QStandardPaths>
-#endif
 
 // For:
 //  - Slicer_QTLOADABLEMODULES_LIB_DIR
@@ -906,11 +901,7 @@ void qSlicerCoreApplication::handleCommandLineArguments()
 
     // Set 'sys.executable' so that Slicer can be used as a "regular" python interpreter
     this->corePythonManager()->executeString(
-          #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
           QString("import sys; sys.executable = '%1'; del sys").arg(QStandardPaths::findExecutable("PythonSlicer"))
-          #else
-          QString("import sys, distutils.spawn; sys.executable = distutils.spawn.find_executable('PythonSlicer'); del sys, distutils")
-          #endif
           );
 
     // Clean memory
@@ -1084,13 +1075,8 @@ QString qSlicerCoreApplication::defaultScenePath() const
 {
   QSettings* appSettings = this->userSettings();
   Q_ASSERT(appSettings);
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
-  QString defaultScenePath = appSettings->value(
-        "DefaultScenePath", QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation)).toString();
-#else
   QString defaultScenePath = appSettings->value(
         "DefaultScenePath", QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)).toString();
-#endif
 
   return defaultScenePath;
 }

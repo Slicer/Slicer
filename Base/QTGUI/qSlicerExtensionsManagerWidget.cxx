@@ -24,9 +24,7 @@
 #include <QMessageBox>
 #include <QTimerEvent>
 #include <QToolButton>
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
 #include <QUrlQuery>
-#endif
 #if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
 #include <QWebFrame>
 #include <QWebHistory>
