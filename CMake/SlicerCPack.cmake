@@ -36,11 +36,6 @@ if(NOT Slicer_USE_SYSTEM_QT)
     imageformats
     sqldrivers
     )
-  if(Slicer_REQUIRED_QT_VERSION VERSION_LESS "5")
-    list(APPEND SlicerBlockInstallQtPlugins_subdirectories
-      designer:qwebview
-      )
-  else()
     list(APPEND SlicerBlockInstallQtPlugins_subdirectories
       designer:webengineview
       )
@@ -58,7 +53,6 @@ if(NOT Slicer_USE_SYSTEM_QT)
         platforms:windows
         )
     endif()
-  endif()
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallQtPlugins.cmake)
 endif()
 
@@ -67,7 +61,7 @@ if(Slicer_BUILD_DICOM_SUPPORT AND NOT Slicer_USE_SYSTEM_DCMTK)
 endif()
 
 # Install Qt designer launcher
-if(Slicer_BUILD_QT_DESIGNER_PLUGINS AND ${Slicer_REQUIRED_QT_VERSION} VERSION_GREATER_EQUAL 5)
+if(Slicer_BUILD_QT_DESIGNER_PLUGINS)
   set(executablename "SlicerDesigner")
   set(build_designer_executable "${QT_BINARY_DIR}/designer${CMAKE_EXECUTABLE_SUFFIX}")
   if(APPLE)
@@ -182,12 +176,9 @@ else()
   set(VTK_LIBRARY_DIRS "${VTK_DIR}/lib")
 
   # Get Qt root directory
-  set(qt_root_dir "")
-  if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER "4")
-    get_property(_filepath TARGET "Qt5::Core" PROPERTY LOCATION_RELEASE)
-    get_filename_component(_dir ${_filepath} PATH)
-    set(qt_root_dir "${_dir}/..")
-  endif()
+  get_property(_filepath TARGET "Qt5::Core" PROPERTY LOCATION_RELEASE)
+  get_filename_component(_dir ${_filepath} PATH)
+  set(qt_root_dir "${_dir}/..")
 
   #------------------------------------------------------------------------------
   # <ExtensionName>_FIXUP_BUNDLE_LIBRARY_DIRECTORIES

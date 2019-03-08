@@ -27,13 +27,10 @@ if(NOT DEFINED CTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 
-  set(_wrap_qtwebkit ${Slicer_USE_PYTHONQT})
-  if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER "4.9")
     set(_wrap_qtwebkit 0)
     if(Qt5_VERSION VERSION_LESS "5.6.0")
       set(_wrap_qtwebkit ${Slicer_USE_PYTHONQT})
     endif()
-  endif()
 
   if(Slicer_USE_PYTHONQT)
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
@@ -50,17 +47,10 @@ if(NOT DEFINED CTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
       )
   endif()
 
-  if(Slicer_REQUIRED_QT_VERSION VERSION_LESS "5")
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
-      -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
-      -DCTK_QT_VERSION:STRING=4
-      )
-  else()
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
       -DQt5_DIR:FILEPATH=${Qt5_DIR}
       -DCTK_QT_VERSION:STRING=5
       )
-  endif()
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY

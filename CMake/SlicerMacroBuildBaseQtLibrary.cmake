@@ -138,19 +138,6 @@ macro(SlicerMacroBuildBaseQtLibrary)
   #-----------------------------------------------------------------------------
   # Sources
   # --------------------------------------------------------------------------
-  if(CTK_QT_VERSION VERSION_LESS "5")
-    set(_moc_options)
-    if(Slicer_HAVE_WEBKIT_SUPPORT)
-      set(_moc_options OPTIONS -DSlicer_HAVE_WEBKIT_SUPPORT)
-    endif()
-    QT4_WRAP_CPP(SLICERQTBASELIB_MOC_OUTPUT ${SLICERQTBASELIB_MOC_SRCS} ${_moc_options})
-    QT4_WRAP_UI(SLICERQTBASELIB_UI_CXX ${SLICERQTBASELIB_UI_SRCS})
-    if(DEFINED SLICERQTBASELIB_RESOURCES)
-      QT4_ADD_RESOURCES(SLICERQTBASELIB_QRC_SRCS ${SLICERQTBASELIB_RESOURCES})
-    endif()
-
-    QT4_ADD_RESOURCES(SLICERQTBASELIB_QRC_SRCS ${Slicer_SOURCE_DIR}/Resources/qSlicer.qrc)
-  else()
     set(_moc_options OPTIONS -DSlicer_HAVE_QT5)
     if(Slicer_HAVE_WEBKIT_SUPPORT)
       set(_moc_options OPTIONS -DSlicer_HAVE_WEBKIT_SUPPORT)
@@ -162,7 +149,6 @@ macro(SlicerMacroBuildBaseQtLibrary)
     endif()
 
     QT5_ADD_RESOURCES(SLICERQTBASELIB_QRC_SRCS ${Slicer_SOURCE_DIR}/Resources/qSlicer.qrc)
-  endif()
 
   set_source_files_properties(
     ${SLICERQTBASELIB_UI_CXX}

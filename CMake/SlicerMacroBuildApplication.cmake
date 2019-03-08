@@ -141,17 +141,6 @@ macro(slicerMacroBuildAppLibrary)
   #-----------------------------------------------------------------------------
   # Sources
   # --------------------------------------------------------------------------
-  if(CTK_QT_VERSION VERSION_LESS "5")
-    set(_moc_options)
-    if(Slicer_HAVE_WEBKIT_SUPPORT)
-      set(_moc_options OPTIONS -DSlicer_HAVE_WEBKIT_SUPPORT)
-    endif()
-    QT4_WRAP_CPP(SLICERAPPLIB_MOC_OUTPUT ${SLICERAPPLIB_MOC_SRCS} ${_moc_options})
-    QT4_WRAP_UI(SLICERAPPLIB_UI_CXX ${SLICERAPPLIB_UI_SRCS})
-    if(DEFINED SLICERAPPLIB_RESOURCES)
-      QT4_ADD_RESOURCES(SLICERAPPLIB_QRC_SRCS ${SLICERAPPLIB_RESOURCES})
-    endif()
-  else()
     set(_moc_options OPTIONS -DSlicer_HAVE_QT5)
     if(Slicer_HAVE_WEBKIT_SUPPORT)
       set(_moc_options OPTIONS -DSlicer_HAVE_WEBKIT_SUPPORT)
@@ -161,7 +150,6 @@ macro(slicerMacroBuildAppLibrary)
     if(DEFINED SLICERAPPLIB_RESOURCES)
       QT5_ADD_RESOURCES(SLICERAPPLIB_QRC_SRCS ${SLICERAPPLIB_RESOURCES})
     endif()
-  endif()
 
   set_source_files_properties(
     ${SLICERAPPLIB_UI_CXX}
@@ -540,7 +528,7 @@ macro(slicerMacroBuildApplication)
       # within the build tree
       set(extraApplicationToLaunchListForBuildTree)
 
-      if(${Slicer_REQUIRED_QT_VERSION} VERSION_GREATER_EQUAL 5 AND NOT QT_DESIGNER_EXECUTABLE)
+      if(NOT QT_DESIGNER_EXECUTABLE)
         # Since Qt only provides a CMake module to find the designer library, we work
         # around this limitation by finding the designer executable.
         find_program(QT_DESIGNER_EXECUTABLE designer Designer HINTS "${QT_BINARY_DIR}" NO_DEFAULT_PATH)
@@ -604,7 +592,7 @@ macro(slicerMacroBuildApplication)
         endif()
       endforeach()
 
-      if(${Slicer_REQUIRED_QT_VERSION} VERSION_GREATER_EQUAL 5 AND EXISTS ${QT_DESIGNER_EXECUTABLE} AND NOT APPLE)
+      if(EXISTS ${QT_DESIGNER_EXECUTABLE} AND NOT APPLE)
         ctkAppLauncherAppendExtraAppToLaunchToList(
           LONG_ARG designer
           HELP "Start Qt designer using Slicer plugins"

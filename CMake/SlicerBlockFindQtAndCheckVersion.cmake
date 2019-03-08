@@ -24,15 +24,6 @@
 #
 
 macro(__SlicerBlockFindQtAndCheckVersion_find_qt)
-  if(Slicer_REQUIRED_QT_VERSION VERSION_LESS "5")
-    find_package(Qt4)
-    set(_found_var QT4_FOUND)
-    set(_error_details "You probably need to set the QT_QMAKE_EXECUTABLE variable.")
-    set(_major ${QT_VERSION_MAJOR})
-    set(_minor ${QT_VERSION_MINOR})
-    set(_patch ${QT_VERSION_PATCH})
-    set(_found_prefix "QT_")
-  else()
     find_package(Qt5 COMPONENTS ${Slicer_REQUIRED_QT_MODULES})
     set(_found_var Qt5_FOUND)
     set(_error_details "You probably need to set the Qt5_DIR variable.")
@@ -40,7 +31,6 @@ macro(__SlicerBlockFindQtAndCheckVersion_find_qt)
     set(_minor ${Qt5_VERSION_MINOR})
     set(_patch ${Qt5_VERSION_PATCH})
     set(_found_prefix "Qt5")
-  endif()
   if(NOT ${_found_var})
     message(FATAL_ERROR "error: Qt ${Slicer_REQUIRED_QT_VERSION} was not found on your system."
                         "${_error_details}")
@@ -57,12 +47,6 @@ macro(__SlicerBlockFindQtAndCheckVersion_find_qt)
   foreach(module ${Slicer_REQUIRED_QT_MODULES})
     if(NOT "${${_found_prefix}${module}_FOUND}")
       message(FATAL_ERROR "error: Missing Qt module named \"${module}\"")
-    endif()
-    if(NOT ${module} STREQUAL "QTCORE"
-        AND NOT ${module} STREQUAL "QTGUI"
-        AND Slicer_REQUIRED_QT_VERSION VERSION_LESS "5"
-        )
-      set(QT_USE_${module} ON)
     endif()
     set(command_separated_module_list "${command_separated_module_list}${module}, ")
   endforeach()
@@ -81,37 +65,11 @@ endforeach()
 
 # Check QT_QMAKE_EXECUTABLE provided by VTK
 set(extra_error_message)
-if(DEFINED VTK_QT_QMAKE_EXECUTABLE AND Slicer_REQUIRED_QT_VERSION VERSION_LESS "5")
-  #message(STATUS "Checking VTK_QT_QMAKE_EXECUTABLE ...")
-  if(NOT EXISTS "${VTK_QT_QMAKE_EXECUTABLE}")
-    message(FATAL_ERROR "error: You should probably re-configure VTK. VTK_QT_QMAKE_EXECUTABLE points to a nonexistent executable: ${VTK_QT_QMAKE_EXECUTABLE}")
-  endif()
-  set(QT_QMAKE_EXECUTABLE ${VTK_QT_QMAKE_EXECUTABLE})
-  set(extra_error_message "You should probably reconfigure VTK.")
-  __SlicerBlockFindQtAndCheckVersion_find_qt()
-endif()
-
-# Check QT_QMAKE_EXECUTABLE provided by CTK
-if(DEFINED CTK_QT_QMAKE_EXECUTABLE AND Slicer_REQUIRED_QT_VERSION VERSION_LESS "5")
-  if(NOT EXISTS "${CTK_QT_QMAKE_EXECUTABLE}")
-    message(FATAL_ERROR "error: You should probably re-configure CTK. CTK_QT_QMAKE_EXECUTABLE points to a nonexistent executable: ${CTK_QT_QMAKE_EXECUTABLE}")
-  endif()
-  set(QT_QMAKE_EXECUTABLE ${CTK_QT_QMAKE_EXECUTABLE})
-  set(extra_error_message "You should probably reconfigure CTK.")
-  __SlicerBlockFindQtAndCheckVersion_find_qt()
-endif()
-
-if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER "4.9")
   if(DEFINED CTK_Qt5_DIR AND NOT EXISTS "${CTK_Qt5_DIR}")
     message(FATAL_ERROR "error: You should probably re-configure CTK. CTK_Qt5_DIR points to a nonexistent directory: ${CTK_Qt5_DIR}")
   endif()
-endif()
 
 __SlicerBlockFindQtAndCheckVersion_find_qt()
-
-if(Slicer_REQUIRED_QT_VERSION VERSION_LESS "5")
-  include(${QT_USE_FILE})
-endif()
 
 set(_project_name ${Slicer_MAIN_PROJECT_APPLICATION_NAME})
 if(NOT Slicer_SOURCE_DIR)
@@ -121,7 +79,6 @@ message(STATUS "Configuring ${_project_name} with Qt ${_major}.${_minor}.${_patc
 
 # Since Qt5 does not set CMake variables for plugins and binary directories,
 # we explicitly set them here.
-if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER "4.9")
   set(QT_PLUGINS_DIR "${Qt5_DIR}/../../../plugins")
   get_filename_component(QT_PLUGINS_DIR ${QT_PLUGINS_DIR} ABSOLUTE)
   message(STATUS "Setting QT_PLUGINS_DIR: ${QT_PLUGINS_DIR}")
@@ -129,4 +86,3 @@ if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER "4.9")
   set(QT_BINARY_DIR "${Qt5_DIR}/../../../bin")
   get_filename_component(QT_BINARY_DIR ${QT_BINARY_DIR} ABSOLUTE)
   message(STATUS "Setting QT_BINARY_DIR: ${QT_BINARY_DIR}")
-endif()
