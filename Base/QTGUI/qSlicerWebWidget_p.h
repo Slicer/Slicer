@@ -24,15 +24,10 @@
 // Qt includes
 #include <QtGlobal>
 #include <QTime>
-#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
-class QWebFrame;
-class QWebView;
-#else
 #include <QWebEngineCertificateError>
 #include <QWebEnginePage>
 class QWebEngineProfile;
 class QWebEngineDownloadItem;
-#endif
 
 // QtGUI includes
 #include "qSlicerBaseQTGUIExport.h"
@@ -41,8 +36,6 @@ class QWebEngineDownloadItem;
 #include "ui_qSlicerWebWidget.h"
 
 //-----------------------------------------------------------------------------
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
-
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebEnginePage: public QWebEnginePage
 {
   friend class qSlicerWebWidget;
@@ -80,8 +73,6 @@ private:
   qSlicerWebWidget* WebWidget;
 };
 
-#endif
-
 //-----------------------------------------------------------------------------
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebWidgetPrivate: public QObject, Ui_qSlicerWebWidget
 {
@@ -96,10 +87,6 @@ public:
 
   virtual void init();
 
-#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
-  /// Convenient function to return the mainframe
-  QWebFrame* mainFrame();
-#else
   /// \brief Update \c profile injecting a qtwebchannel script.
   ///
   /// A QWebEngineScript named ``qwebchannel_appended.js`` is created by
@@ -134,7 +121,6 @@ public:
 
 protected slots:
   virtual void handleDownload(QWebEngineDownloadItem *download);
-#endif
 
 public:
   /// Convenient method to set "document.webkitHidden" property
@@ -149,14 +135,10 @@ public:
   bool HandleExternalUrlWithDesktopService;
   bool NavigationRequestAccepted;
   QStringList InternalHosts;
-#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
-  QWebView* WebView;
-#else
   qSlicerWebEnginePage* WebEnginePage;
   QWebEngineView* WebView;
   QWebChannel* WebChannel;
   qSlicerWebPythonProxy* PythonProxy;
-#endif
 
 private:
   Q_DISABLE_COPY(qSlicerWebWidgetPrivate);

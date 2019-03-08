@@ -20,9 +20,6 @@
 #include <QEvent>
 #include <QFileInfo>
 #include <QHBoxLayout>
-#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
-#include <QWebFrame>
-#endif
 
 // CTK includes
 #include <ctkLogger.h>

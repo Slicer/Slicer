@@ -24,11 +24,7 @@
 // Qt includes
 #include <QObject>
 #include <QUrl>
-#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
-class QWebChannel;
-#else
 #include <QWebChannel>
-#endif
 
 // Slicer includes
 class qSlicerExtensionsInstallWidget;

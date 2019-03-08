@@ -22,12 +22,7 @@
 #include <QDebug>
 #include <QDesktopServices>
 #include <QUrlQuery>
-#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
-#include <QWebFrame>
-#include <QWebView>
-#else
 #include <QWebEngineView>
-#endif
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -146,39 +141,26 @@ void qSlicerExtensionsInstallWidgetPrivate::setFailurePage(const QStringList& er
 // --------------------------------------------------------------------------
 void qSlicerExtensionsInstallWidgetPrivate::initializeWebChannelTransport(QByteArray& webChannelScript)
 {
-#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
-  Q_UNUSED(webChannelScript);
-#else
   this->Superclass::initializeWebChannelTransport(webChannelScript);
   webChannelScript.append(
       " window.extensions_manager_model = channel.objects.extensions_manager_model;\n"
       // See ExtensionInstallWidgetWebChannelProxy
       " window.extensions_install_widget = channel.objects.extensions_install_widget;\n"
       );
-#endif
 }
 
 // --------------------------------------------------------------------------
 void qSlicerExtensionsInstallWidgetPrivate::initializeWebChannel(QWebChannel* webChannel)
 {
-#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
-  Q_UNUSED(webChannel);
-  // This is done in qSlicerExtensionsInstallWidget::initJavascript()
-#else
   this->Superclass::initializeWebChannel(webChannel);
   webChannel->registerObject(
         "extensions_install_widget", this->InstallWidgetForWebChannel);
-#endif
 }
 
 // --------------------------------------------------------------------------
 void qSlicerExtensionsInstallWidgetPrivate::registerExtensionsManagerModel(
     qSlicerExtensionsManagerModel* oldModel, qSlicerExtensionsManagerModel* newModel)
 {
-#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
-  Q_UNUSED(oldModel);
-  Q_UNUSED(newModel);
-#else
   Q_Q(qSlicerExtensionsInstallWidget);
   QWebChannel* webChannel = q->webView()->page()->webChannel();
   if (oldModel)
@@ -189,7 +171,6 @@ void qSlicerExtensionsInstallWidgetPrivate::registerExtensionsManagerModel(
     {
     webChannel->registerObject("extensions_manager_model", newModel);
     }
-#endif
 }
 
 // --------------------------------------------------------------------------
@@ -198,9 +179,6 @@ qSlicerExtensionsInstallWidget::qSlicerExtensionsInstallWidget(QWidget* _parent)
 {
   Q_D(qSlicerExtensionsInstallWidget);
   d->init();
-#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
-  this->webView()->page()->setLinkDelegationPolicy(QWebPage::DelegateExternalLinks);
-#endif
 }
 
 // --------------------------------------------------------------------------
@@ -372,16 +350,8 @@ void qSlicerExtensionsInstallWidget::initJavascript()
 {
   Q_D(qSlicerExtensionsInstallWidget);
   this->Superclass::initJavascript();
-#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
-  this->webView()->page()->mainFrame()->addToJavaScriptWindowObject(
-        "extensions_manager_model", d->ExtensionsManagerModel);
-
-  this->webView()->page()->mainFrame()->addToJavaScriptWindowObject(
-        "extensions_install_widget", this);
-#else
   // This is done in qSlicerExtensionsInstallWidgetPrivate::initializeWebChannel()
   // and qSlicerExtensionsInstallWidgetPrivate::registerExtensionsManagerModel()
-#endif
 }
 
 // --------------------------------------------------------------------------
@@ -397,19 +367,9 @@ void qSlicerExtensionsInstallWidget::onLoadFinished(bool ok)
 }
 
 // --------------------------------------------------------------------------
-#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
-void qSlicerExtensionsInstallWidget::onLinkClicked(const QUrl& url)
-{
-  Q_D(qSlicerExtensionsInstallWidget);
-  d->InternalHosts = QStringList() << this->extensionsManagerModel()->serverUrl().host();
-  return Superclass::onLinkClicked(url);
-}
-#else
-// --------------------------------------------------------------------------
 bool qSlicerExtensionsInstallWidget::acceptNavigationRequest(const QUrl & url, QWebEnginePage::NavigationType type, bool isMainFrame)
 {
   Q_D(qSlicerExtensionsInstallWidget);
   d->InternalHosts = QStringList() << this->extensionsManagerModel()->serverUrl().host();
   return Superclass::acceptNavigationRequest(url, type, isMainFrame);
 }
-#endif

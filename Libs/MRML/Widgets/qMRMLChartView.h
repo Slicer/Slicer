@@ -18,14 +18,8 @@
 #ifndef __qMRMLChartView_h
 #define __qMRMLChartView_h
 
-#include "qMRMLWidgetsConfigure.h" // For MRML_WIDGETS_HAVE_WEBKIT_SUPPORT
-
 // Qt includes
-#ifdef MRML_WIDGETS_HAVE_WEBKIT_SUPPORT
-#include <QWebView>
-#else
 #include <QWebEngineView>
-#endif
 
 #include "qMRMLWidgetsExport.h"
 
@@ -44,20 +38,12 @@ class vtkMRMLScene;
 /// subclass of QWidget and internally a variety of implementations
 /// for charting may be provided.
 class QMRML_WIDGETS_EXPORT qMRMLChartView :
-#ifdef MRML_WIDGETS_HAVE_WEBKIT_SUPPORT
-    public QWebView
-#else
     public QWebEngineView
-#endif
 {
   Q_OBJECT
 public:
   /// Superclass typedef
-#ifdef MRML_WIDGETS_HAVE_WEBKIT_SUPPORT
-  typedef QWebView Superclass;
-#else
   typedef QWebEngineView Superclass;
-#endif
 
   /// Constructors
   explicit qMRMLChartView(QWidget* parent = 0);
