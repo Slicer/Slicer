@@ -111,7 +111,6 @@ void qSlicerApplicationHelper::preInitializeApplication(
   QSurfaceFormat::setDefaultFormat(format);
 #endif
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
 #ifdef _WIN32
   // Qt windows defaults to the PROCESS_PER_MONITOR_DPI_AWARE for DPI display
   // on windows. Unfortunately, this doesn't work well on multi-screens setups.
@@ -122,7 +121,6 @@ void qSlicerApplicationHelper::preInitializeApplication(
 
   // Enable automatic scaling based on the pixel density of the monitor
   QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-#endif
 
   // Allow a custom application name so that the settings
   // can be distinct for differently named applications
