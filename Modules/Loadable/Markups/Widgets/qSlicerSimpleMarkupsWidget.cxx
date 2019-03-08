@@ -133,11 +133,7 @@ void qSlicerSimpleMarkupsWidget::setup()
 
   d->MarkupsFiducialTableWidget->setColumnCount( FIDUCIAL_COLUMNS );
   d->MarkupsFiducialTableWidget->setHorizontalHeaderLabels( QStringList() << "Label" << "X" << "Y" << "Z" );
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
-  d->MarkupsFiducialTableWidget->horizontalHeader()->setResizeMode( QHeaderView::Stretch );
-#else
   d->MarkupsFiducialTableWidget->horizontalHeader()->setSectionResizeMode( QHeaderView::Stretch );
-#endif
   d->MarkupsFiducialTableWidget->setContextMenuPolicy( Qt::CustomContextMenu );
   d->MarkupsFiducialTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows); // only select rows rather than cells
 

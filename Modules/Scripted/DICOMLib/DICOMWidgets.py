@@ -3,8 +3,6 @@ import qt
 import vtk
 import logging
 
-from packaging import version
-
 from ctk import ctkDICOMObjectListWidget, ctkDICOMDatabase, ctkDICOMIndexer, ctkDICOMBrowser, ctkPopupWidget, ctkExpandButton
 import slicer
 from slicer.util import VTKObservationMixin
@@ -1112,13 +1110,6 @@ class DICOMPluginSelector(qt.QWidget):
     return selectedPlugins
 
 
-def _setSectionResizeMode(header, *args, **kwargs):
-  if version.parse(qt.Qt.qVersion()) < version.parse("5.0.0"):
-    header.setResizeMode(*args, **kwargs)
-  else:
-    header.setSectionResizeMode(*args, **kwargs)
-
-
 class DICOMLoadableTable(qt.QTableWidget):
   """Implement the Qt code for a table of
   selectable slicer data to be made from
@@ -1141,10 +1132,10 @@ class DICOMLoadableTable(qt.QTableWidget):
     self.setColumnCount(3)
     self.setHorizontalHeaderLabels(['DICOM Data', 'Reader', 'Warnings'])
     self.setSelectionBehavior(qt.QTableView.SelectRows)
-    _setSectionResizeMode(self.horizontalHeader(), qt.QHeaderView.Stretch)
-    _setSectionResizeMode(self.horizontalHeader(), 0, qt.QHeaderView.ResizeToContents)
-    _setSectionResizeMode(self.horizontalHeader(), 1, qt.QHeaderView.Stretch)
-    _setSectionResizeMode(self.horizontalHeader(), 2, qt.QHeaderView.Stretch)
+    self.horizontalHeader().setSectionResizeMode(qt.QHeaderView.Stretch)
+    self.horizontalHeader().setSectionResizeMode(0, qt.QHeaderView.ResizeToContents)
+    self.horizontalHeader().setSectionResizeMode(1, qt.QHeaderView.Stretch)
+    self.horizontalHeader().setSectionResizeMode(2, qt.QHeaderView.Stretch)
 
   def addLoadableRow(self, loadable, row, reader):
     self.insertRow(row)
@@ -1235,9 +1226,9 @@ class DICOMHeaderWidget(qt.QTableWidget):
   def configure(self):
     self.setColumnCount(2)
     self.setHorizontalHeaderLabels(['Tag', 'Value'])
-    _setSectionResizeMode(self.horizontalHeader(), qt.QHeaderView.Stretch)
-    _setSectionResizeMode(self.horizontalHeader(), 0, qt.QHeaderView.Stretch)
-    _setSectionResizeMode(self.horizontalHeader(), 1, qt.QHeaderView.Stretch)
+    self.horizontalHeader().setSectionResizeMode(qt.QHeaderView.Stretch)
+    self.horizontalHeader().setSectionResizeMode(0, qt.QHeaderView.Stretch)
+    self.horizontalHeader().setSectionResizeMode(1, qt.QHeaderView.Stretch)
 
   def setHeader(self, dcmFile=None):
     #TODO: this method never gets called. Should be called when clicking on items from the SeriesTable

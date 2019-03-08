@@ -112,15 +112,9 @@ void qSlicerSceneViewsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   this->SceneViewTableWidget->setHorizontalHeaderLabels(QStringList() << "Thumbnail" << "Description" << "Actions");
   this->SceneViewTableWidget->horizontalHeader()->hide();
 
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
-  this->SceneViewTableWidget->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
-  this->SceneViewTableWidget->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-  this->SceneViewTableWidget->horizontalHeader()->setResizeMode(SCENE_VIEW_DESCRIPTION_COLUMN, QHeaderView::Stretch);
-#else
   this->SceneViewTableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
   this->SceneViewTableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
   this->SceneViewTableWidget->horizontalHeader()->setSectionResizeMode(SCENE_VIEW_DESCRIPTION_COLUMN, QHeaderView::Stretch);
-#endif
 
   // background of text browser widget is painted by the widget, and images has no background
   // either, so it is easier to just disable selection
