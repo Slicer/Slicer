@@ -81,6 +81,7 @@ public:
   QByteArray                      StartupState;
 
   bool                            WindowInitialShowCompleted;
+  bool                            IsClosing;
 };
 
 #endif
