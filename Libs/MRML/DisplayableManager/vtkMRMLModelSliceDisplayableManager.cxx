@@ -26,6 +26,7 @@
 #include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLModelNode.h>
+#include <vtkMRMLProceduralColorNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceCompositeNode.h>
 #include <vtkMRMLSliceLogic.h>
@@ -37,6 +38,7 @@
 #include <vtkActor2D.h>
 #include <vtkAlgorithmOutput.h>
 #include <vtkCallbackCommand.h>
+#include <vtkColorTransferFunction.h>
 #include <vtkDataSetSurfaceFilter.h>
 #include <vtkEventBroker.h>
 #include <vtkLookupTable.h>
@@ -503,13 +505,26 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
     if (modelDisplayNode->GetSliceDisplayMode() == vtkMRMLModelDisplayNode::SliceDisplayDistanceEncodedProjection)
       {
       vtkMRMLColorNode* colorNode = modelDisplayNode->GetDistanceEncodedProjectionColorNode();
-      vtkLookupTable* dNodeLUT = (colorNode ? colorNode->GetLookupTable() : NULL);
-      if (dNodeLUT)
+      vtkSmartPointer<vtkScalarsToColors> lut = NULL;
+      vtkSmartPointer<vtkMRMLProceduralColorNode> proceduralColor = vtkMRMLProceduralColorNode::SafeDownCast(colorNode);
+      if (proceduralColor)
         {
-        mapper->SetScalarRange(modelDisplayNode->GetScalarRange());
-        vtkSmartPointer<vtkLookupTable> lut = vtkSmartPointer<vtkLookupTable>::Take(
-          vtkMRMLModelDisplayableManager::CreateLookupTableCopy(dNodeLUT));
-        lut->SetAlpha(displayNode->GetSliceIntersectionOpacity());
+        lut = vtkScalarsToColors::SafeDownCast(proceduralColor->GetColorTransferFunction());
+        }
+      else
+        {
+        vtkLookupTable* dNodeLUT = (colorNode ? colorNode->GetLookupTable() : NULL);
+        if (dNodeLUT)
+          {
+          mapper->SetScalarRange(modelDisplayNode->GetScalarRange());
+          lut = vtkSmartPointer<vtkLookupTable>::Take(
+            vtkMRMLModelDisplayableManager::CreateLookupTableCopy(dNodeLUT));
+          lut->SetAlpha(displayNode->GetSliceIntersectionOpacity());
+          }
+        }
+
+      if (lut != NULL)
+        {
         mapper->SetLookupTable(lut.GetPointer());
         mapper->SetScalarRange(lut->GetRange());
         mapper->SetScalarVisibility(true);
