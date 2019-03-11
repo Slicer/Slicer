@@ -38,8 +38,10 @@
 #include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLChartViewNode.h>
 #include <vtkMRMLLayoutNode.h>
+#include <vtkMRMLLayoutLogic.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceNode.h>
+#include <vtkMRMLSliceViewDisplayableManagerFactory.h>
 #include <vtkMRMLTableViewNode.h>
 #include <vtkMRMLViewNode.h>
 
@@ -136,7 +138,7 @@ int qMRMLLayoutManagerTest1(int argc, char * argv[] )
   qMRMLLayoutManager * layoutManager = new qMRMLLayoutManager();
 
   vtkNew<vtkMRMLApplicationLogic> applicationLogic;
-
+  vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->SetMRMLApplicationLogic(applicationLogic);
   {
     vtkNew<vtkMRMLScene> scene;
     applicationLogic->SetMRMLScene(scene.GetPointer());

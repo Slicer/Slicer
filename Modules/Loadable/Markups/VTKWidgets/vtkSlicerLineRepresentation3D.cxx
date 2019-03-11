@@ -18,8 +18,8 @@
 
 #include "vtkSlicerLineRepresentation3D.h"
 #include "vtkCleanPolyData.h"
-#include "vtkOpenGLPolyDataMapper.h"
-#include "vtkOpenGLActor.h"
+#include "vtkPolyDataMapper.h"
+#include "vtkActor.h"
 #include "vtkActor2D.h"
 #include "vtkAssemblyPath.h"
 #include "vtkRenderer.h"
@@ -45,7 +45,6 @@
 #include "vtkCellArray.h"
 #include "vtkSphereSource.h"
 #include "vtkPropPicker.h"
-#include "vtkPickingManager.h"
 #include "vtkAppendPolyData.h"
 #include "vtkStringArray.h"
 #include "vtkTubeFilter.h"
@@ -62,10 +61,10 @@ vtkSlicerLineRepresentation3D::vtkSlicerLineRepresentation3D()
   this->TubeFilter->SetNumberOfSides(20);
   this->TubeFilter->SetRadius(1);
 
-  this->LineMapper = vtkSmartPointer<vtkOpenGLPolyDataMapper>::New();
+  this->LineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
   this->LineMapper->SetInputConnection(this->TubeFilter->GetOutputPort());
 
-  this->LineActor = vtkSmartPointer<vtkOpenGLActor>::New();
+  this->LineActor = vtkSmartPointer<vtkActor>::New();
   this->LineActor->SetMapper(this->LineMapper);
   this->LineActor->SetProperty(this->GetControlPointsPipeline(Unselected)->Property);
 }
@@ -131,13 +130,15 @@ int vtkSlicerLineRepresentation3D::RenderTranslucentPolygonalGeometry(
 //-----------------------------------------------------------------------------
 vtkTypeBool vtkSlicerLineRepresentation3D::HasTranslucentPolygonalGeometry()
 {
-  int result=0;
-  result |= this->Superclass::HasTranslucentPolygonalGeometry();
-  if (this->LineActor->GetVisibility())
-  {
-    result |= this->LineActor->HasTranslucentPolygonalGeometry();
-  }
-  return result;
+  if (this->Superclass::HasTranslucentPolygonalGeometry())
+    {
+    return true;
+    }
+  if (this->LineActor->GetVisibility() && this->LineActor->HasTranslucentPolygonalGeometry())
+    {
+    return true;
+    }
+  return false;
 }
 
 //----------------------------------------------------------------------

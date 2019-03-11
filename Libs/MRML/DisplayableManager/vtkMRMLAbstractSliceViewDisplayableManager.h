@@ -57,6 +57,12 @@ public:
   static void ConvertDeviceToXYZ(vtkRenderWindowInteractor * interactor,
                                  vtkMRMLSliceNode * sliceNode, double x, double y, double xyz[3]);
 
+  /// Convenience function allowing to convert device coordinates (display) to XYZ coordinates (viewport).
+  /// Parameter \a xyz is double[3]
+  static void ConvertDeviceToXYZ(vtkRenderer * renderer,
+    vtkMRMLSliceNode * sliceNode, double x, double y, double xyz[3]);
+
+
   /// Convert RAS to XYZ coordinates (viewport).
   /// Parameters \a ras and \a xyz are double[3]. \a xyz[2] is the lightbox id.
   /// \sa ConvertRASToXYZ(vtkMRMLSliceNode * sliceNode, double ras[3], double xyz[3])

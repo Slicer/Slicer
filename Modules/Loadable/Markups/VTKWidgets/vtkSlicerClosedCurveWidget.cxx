@@ -17,36 +17,24 @@
 =========================================================================*/
 
 #include "vtkSlicerClosedCurveWidget.h"
+
 #include "vtkMRMLSliceNode.h"
 #include "vtkSlicerCurveRepresentation2D.h"
 #include "vtkSlicerCurveRepresentation3D.h"
 #include "vtkCommand.h"
-#include "vtkCallbackCommand.h"
-#include "vtkRenderWindowInteractor.h"
-#include "vtkObjectFactory.h"
-#include "vtkRenderer.h"
-#include "vtkWidgetCallbackMapper.h"
-#include "vtkSphereSource.h"
-#include "vtkProperty.h"
-#include "vtkProperty2D.h"
 #include "vtkEvent.h"
-#include "vtkWidgetEvent.h"
-#include "vtkPolyData.h"
 
 vtkStandardNewMacro(vtkSlicerClosedCurveWidget);
 
 //----------------------------------------------------------------------
 vtkSlicerClosedCurveWidget::vtkSlicerClosedCurveWidget()
 {
-  this->SetEventTranslation(vtkCommand::LeftButtonPressEvent, vtkEvent::AltModifier, WidgetRotateStart);
-  this->SetEventTranslation(vtkCommand::LeftButtonReleaseEvent, vtkEvent::AnyModifier, WidgetRotateEnd);
+  this->SetEventTranslationClickAndDrag(WidgetStateOnWidget, vtkCommand::LeftButtonPressEvent, vtkEvent::AltModifier,
+    WidgetStateRotate, WidgetEventRotateStart, WidgetEventRotateEnd);
+  this->SetEventTranslationClickAndDrag(WidgetStateOnWidget, vtkCommand::RightButtonPressEvent, vtkEvent::AltModifier,
+    WidgetStateScale, WidgetEventScaleStart, WidgetEventScaleEnd);
 
-  this->SetEventTranslation(vtkCommand::RightButtonPressEvent, vtkEvent::AltModifier, WidgetScaleStart);
-  this->SetEventTranslation(vtkCommand::RightButtonReleaseEvent, vtkEvent::AnyModifier, WidgetScaleEnd);
-
-  this->SetEventTranslation(vtkCommand::RightButtonPressEvent, vtkEvent::NoModifier, WidgetPick);
-
-  this->SetEventTranslation(vtkCommand::LeftButtonPressEvent, vtkEvent::ControlModifier, WidgetControlPointInsert);
+  this->SetEventTranslation(WidgetStateOnWidget, vtkCommand::LeftButtonPressEvent, vtkEvent::ControlModifier, WidgetEventControlPointInsert);
 }
 
 //----------------------------------------------------------------------
@@ -58,7 +46,7 @@ vtkSlicerClosedCurveWidget::~vtkSlicerClosedCurveWidget()
 void vtkSlicerClosedCurveWidget::CreateDefaultRepresentation(
   vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer)
 {
-  vtkSmartPointer<vtkSlicerAbstractWidgetRepresentation> rep = NULL;
+  vtkSmartPointer<vtkSlicerMarkupsWidgetRepresentation> rep = NULL;
   if (vtkMRMLSliceNode::SafeDownCast(viewNode))
   {
     rep = vtkSmartPointer<vtkSlicerCurveRepresentation2D>::New();
@@ -85,8 +73,8 @@ void vtkSlicerClosedCurveWidget::AddPointOnCurveAction(vtkAbstractWidget *vtkNot
     return false;
     }
 
-  vtkSlicerAbstractWidgetRepresentation *rep =
-    reinterpret_cast<vtkSlicerAbstractWidgetRepresentation*>(self->WidgetRep);
+  vtkSlicerMarkupsWidgetRepresentation *rep =
+    reinterpret_cast<vtkSlicerMarkupsWidgetRepresentation*>(self->WidgetRep);
 
   int X = self->Interactor->GetEventPosition()[0];
   int Y = self->Interactor->GetEventPosition()[1];

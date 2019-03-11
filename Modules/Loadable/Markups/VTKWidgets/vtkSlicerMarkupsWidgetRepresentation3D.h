@@ -17,21 +17,18 @@
 =========================================================================*/
 
 /**
- * @class   vtkSlicerAbstractWidgetRepresentation3D
- * @brief   Default representation for the slicer markups widget
+ * @class   vtkSlicerMarkupsWidgetRepresentation3D
+ * @brief   Default representation for the markups widget in 3D views
  *
- * This class provides the default concrete representation for the
- * vtkSlicerAbstractWidget. See vtkSlicerAbstractWidget
- * for details.
  * @sa
- * vtkSlicerAbstractWidgetRepresentation2D vtkSlicerAbstractWidget
+ * vtkSlicerMarkupsWidgetRepresentation vtkSlicerMarkupsWidget
 */
 
-#ifndef vtkSlicerAbstractWidgetRepresentation3D_h
-#define vtkSlicerAbstractWidgetRepresentation3D_h
+#ifndef vtkSlicerMarkupsWidgetRepresentation3D_h
+#define vtkSlicerMarkupsWidgetRepresentation3D_h
 
 #include "vtkSlicerMarkupsModuleVTKWidgetsExport.h"
-#include "vtkSlicerAbstractWidgetRepresentation.h"
+#include "vtkSlicerMarkupsWidgetRepresentation.h"
 
 #include "vtkMRMLMarkupsNode.h"
 
@@ -41,24 +38,24 @@ class vtkActor2D;
 class vtkCellPicker;
 class vtkGlyph3D;
 class vtkLabelPlacementMapper;
-class vtkOpenGLActor;
-class vtkOpenGLPolyDataMapper;
+class vtkActor;
+class vtkPolyDataMapper;
 class vtkPointSetToLabelHierarchy;
 class vtkProperty;
 class vtkSelectVisiblePoints;
 class vtkStringArray;
 class vtkTextProperty;
 
-class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerAbstractWidgetRepresentation3D : public vtkSlicerAbstractWidgetRepresentation
+class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerMarkupsWidgetRepresentation3D : public vtkSlicerMarkupsWidgetRepresentation
 {
 public:
   /// Standard methods for instances of this class.
-  vtkTypeMacro(vtkSlicerAbstractWidgetRepresentation3D,vtkSlicerAbstractWidgetRepresentation);
+  vtkTypeMacro(vtkSlicerMarkupsWidgetRepresentation3D, vtkSlicerMarkupsWidgetRepresentation);
   void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   void SetRenderer(vtkRenderer *ren) VTK_OVERRIDE;
 
-  /// Subclasses of vtkSlicerAbstractWidgetRepresentation3D must implement these methods. These
+  /// Subclasses of vtkSlicerMarkupsWidgetRepresentation3D must implement these methods. These
   /// are the methods that the widget and its representation use to
   /// communicate with each other.
   void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = NULL) VTK_OVERRIDE;
@@ -85,8 +82,8 @@ public:
   bool AccuratePick(int x, int y, double pickPoint[3]);
 
 protected:
-  vtkSlicerAbstractWidgetRepresentation3D();
-  ~vtkSlicerAbstractWidgetRepresentation3D() VTK_OVERRIDE;
+  vtkSlicerMarkupsWidgetRepresentation3D();
+  ~vtkSlicerMarkupsWidgetRepresentation3D() VTK_OVERRIDE;
 
   class ControlPointsPipeline3D : public ControlPointsPipeline
   {
@@ -95,8 +92,8 @@ protected:
     virtual ~ControlPointsPipeline3D();
 
     vtkSmartPointer<vtkSelectVisiblePoints> SelectVisiblePoints;
-    vtkSmartPointer<vtkOpenGLActor> Actor;
-    vtkSmartPointer<vtkOpenGLPolyDataMapper> Mapper;
+    vtkSmartPointer<vtkActor> Actor;
+    vtkSmartPointer<vtkPolyDataMapper> Mapper;
     vtkSmartPointer<vtkGlyph3D> Glypher;
     vtkSmartPointer<vtkActor2D> LabelsActor;
     vtkSmartPointer<vtkLabelPlacementMapper> LabelsMapper;
@@ -114,8 +111,8 @@ protected:
   vtkSmartPointer<vtkCellPicker> AccuratePicker;
 
 private:
-  vtkSlicerAbstractWidgetRepresentation3D(const vtkSlicerAbstractWidgetRepresentation3D&) = delete;
-  void operator=(const vtkSlicerAbstractWidgetRepresentation3D&) = delete;
+  vtkSlicerMarkupsWidgetRepresentation3D(const vtkSlicerMarkupsWidgetRepresentation3D&) = delete;
+  void operator=(const vtkSlicerMarkupsWidgetRepresentation3D&) = delete;
 };
 
 #endif

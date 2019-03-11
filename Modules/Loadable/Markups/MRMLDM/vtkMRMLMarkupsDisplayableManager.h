@@ -28,7 +28,7 @@
 #include <vtkMRMLAbstractDisplayableManager.h>
 
 // VTK includes
-#include <vtkSlicerAbstractWidget.h>
+#include <vtkSlicerMarkupsWidget.h>
 
 #include <set>
 
@@ -68,7 +68,7 @@ public:
 
   // Updates markup point preview position.
   // Returns true if the event is processed.
-  vtkSlicerAbstractWidget* GetWidgetForPlacement();
+  vtkSlicerMarkupsWidget* GetWidgetForPlacement();
 
   vtkMRMLMarkupsNode* GetActiveMarkupsNodeForPlacement();
 
@@ -86,7 +86,7 @@ protected:
   vtkMRMLMarkupsDisplayableManager();
   virtual ~vtkMRMLMarkupsDisplayableManager();
 
-  vtkSlicerAbstractWidget* FindClosestWidget(vtkMRMLInteractionEventData *callData, double &closestDistance2);
+  vtkSlicerMarkupsWidget* FindClosestWidget(vtkMRMLInteractionEventData *callData, double &closestDistance2);
 
   virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData) VTK_OVERRIDE;
 
@@ -108,7 +108,7 @@ protected:
   virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) VTK_OVERRIDE;
 
   /// Create a widget.
-  vtkSlicerAbstractWidget* CreateWidget(vtkMRMLMarkupsDisplayNode* node);
+  vtkSlicerMarkupsWidget* CreateWidget(vtkMRMLMarkupsDisplayNode* node);
 
   /// Called after the corresponding MRML View container was modified
   virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller) VTK_OVERRIDE;
@@ -121,7 +121,7 @@ protected:
   void RemoveObserversFromInteractionNode();
 
   /// Get the widget of a node.
-  vtkSlicerAbstractWidget* GetWidget(vtkMRMLMarkupsDisplayNode * node);
+  vtkSlicerMarkupsWidget* GetWidget(vtkMRMLMarkupsDisplayNode * node);
 
   /// Check if it is the right displayManager
   virtual bool IsCorrectDisplayableManager();
@@ -137,7 +137,7 @@ protected:
   /// \sa IsManageable(vtkMRMLNode*), IsCorrectDisplayableManager()
   virtual bool IsManageable(const char* nodeClassName);
 
-  /// Focus of this displayableManager is set to a specific markups type when inherited
+  /// Contains class names of markups nodes that this displayable manager can handle
   std::set<std::string> Focus;
 
   /// Respond to interactor style events
@@ -152,7 +152,7 @@ protected:
 
   vtkMRMLMarkupsNode* CreateNewMarkupsNode(const std::string &markupsNodeClassName);
 
-  vtkWeakPointer<vtkSlicerAbstractWidget> LastActiveWidget;
+  vtkWeakPointer<vtkSlicerMarkupsWidget> LastActiveWidget;
 
 private:
   vtkMRMLMarkupsDisplayableManager(const vtkMRMLMarkupsDisplayableManager&); /// Not implemented

@@ -156,20 +156,20 @@
 #define vtkSlicerLineWidget_h
 
 #include "vtkSlicerMarkupsModuleVTKWidgetsExport.h"
-#include "vtkSlicerAbstractWidget.h"
+#include "vtkSlicerMarkupsWidget.h"
 
-class vtkSlicerAbstractWidgetRepresentation;
+class vtkSlicerMarkupsWidgetRepresentation;
 class vtkPolyData;
 class vtkIdList;
 
-class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerLineWidget : public vtkSlicerAbstractWidget
+class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerLineWidget : public vtkSlicerMarkupsWidget
 {
 public:
   /// Instantiate this class.
   static vtkSlicerLineWidget *New();
 
   /// Standard methods for a VTK class.
-  vtkTypeMacro(vtkSlicerLineWidget,vtkSlicerAbstractWidget);
+  vtkTypeMacro(vtkSlicerLineWidget,vtkSlicerMarkupsWidget);
 
   /// Create the default widget representation and initializes the widget and representation.
   void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer) VTK_OVERRIDE;

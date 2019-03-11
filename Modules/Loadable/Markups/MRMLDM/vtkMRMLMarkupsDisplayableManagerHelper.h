@@ -34,7 +34,7 @@
 #include <vtkMRMLMarkupsNode.h>
 
 // VTK includes
-#include <vtkSlicerAbstractWidget.h>
+#include <vtkSlicerMarkupsWidget.h>
 #include <vtkSmartPointer.h>
 
 // MRML includes
@@ -63,17 +63,17 @@ public:
   /// Set all widget status to manipulate
   //void SetAllWidgetsToManipulate();
 
-  /// Get a vtkSlicerAbstractWidget* given a node
-  vtkSlicerAbstractWidget * GetWidget(vtkMRMLMarkupsDisplayNode * markupsDisplayNode);
+  /// Get a vtkSlicerMarkupsWidget* given a node
+  vtkSlicerMarkupsWidget * GetWidget(vtkMRMLMarkupsDisplayNode * markupsDisplayNode);
   /// Get first visible widget for this markup
-  vtkSlicerAbstractWidget * GetWidget(vtkMRMLMarkupsNode * markupsNode);
+  vtkSlicerMarkupsWidget * GetWidget(vtkMRMLMarkupsNode * markupsNode);
 
   /// Remove all widgets, intersection widgets, nodes
   void RemoveAllWidgetsAndNodes();
 
   /// Map of vtkWidget indexed using associated node ID
-  typedef std::map < vtkSmartPointer<vtkMRMLMarkupsDisplayNode>, vtkSlicerAbstractWidget* > DisplayNodeToWidgetType;
-  typedef std::map < vtkSmartPointer<vtkMRMLMarkupsDisplayNode>, vtkSlicerAbstractWidget* >::iterator DisplayNodeToWidgetIt;
+  typedef std::map < vtkSmartPointer<vtkMRMLMarkupsDisplayNode>, vtkSlicerMarkupsWidget* > DisplayNodeToWidgetType;
+  typedef std::map < vtkSmartPointer<vtkMRMLMarkupsDisplayNode>, vtkSlicerMarkupsWidget* >::iterator DisplayNodeToWidgetIt;
   DisplayNodeToWidgetType MarkupsDisplayNodesToWidgets;  // display nodes with widgets assigned
 
   typedef std::set < vtkSmartPointer<vtkMRMLMarkupsNode> > MarkupsNodesType;
@@ -85,7 +85,7 @@ public:
   void AddDisplayNode(vtkMRMLMarkupsDisplayNode* displayNode);
   void RemoveDisplayNode(vtkMRMLMarkupsDisplayNode* displayNode);
 
-  void DeleteWidget(vtkSlicerAbstractWidget* widget);
+  void DeleteWidget(vtkSlicerMarkupsWidget* widget);
 
   void AddObservations(vtkMRMLMarkupsNode* node);
   void RemoveObservations(vtkMRMLMarkupsNode* node);

@@ -16,7 +16,7 @@
 
 =========================================================================*/
 
-#include "vtkSlicerAbstractWidgetRepresentation.h"
+#include "vtkSlicerMarkupsWidgetRepresentation.h"
 #include "vtkCleanPolyData.h"
 #include "vtkCommand.h"
 #include "vtkGeneralTransform.h"
@@ -51,7 +51,6 @@
 #include "vtkIntArray.h"
 #include "vtkMatrix4x4.h"
 #include "vtkObjectFactory.h"
-#include "vtkPointPlacer.h"
 #include "vtkRenderer.h"
 #include "vtkRenderWindow.h"
 #include "vtkWindow.h"
@@ -64,7 +63,7 @@
 #include <algorithm>
 #include <iterator>
 
-vtkSlicerAbstractWidgetRepresentation::ControlPointsPipeline::ControlPointsPipeline()
+vtkSlicerMarkupsWidgetRepresentation::ControlPointsPipeline::ControlPointsPipeline()
 {
   this->TextProperty = vtkSmartPointer<vtkTextProperty>::New();
   this->TextProperty->SetFontSize(15);
@@ -128,12 +127,12 @@ vtkSlicerAbstractWidgetRepresentation::ControlPointsPipeline::ControlPointsPipel
 
 };
 
-vtkSlicerAbstractWidgetRepresentation::ControlPointsPipeline::~ControlPointsPipeline()
+vtkSlicerMarkupsWidgetRepresentation::ControlPointsPipeline::~ControlPointsPipeline()
 {
 }
 
 //----------------------------------------------------------------------
-vtkSlicerAbstractWidgetRepresentation::vtkSlicerAbstractWidgetRepresentation()
+vtkSlicerMarkupsWidgetRepresentation::vtkSlicerMarkupsWidgetRepresentation()
 {
   this->ViewScaleFactor = 1.0;
 
@@ -155,7 +154,7 @@ vtkSlicerAbstractWidgetRepresentation::vtkSlicerAbstractWidgetRepresentation()
 }
 
 //----------------------------------------------------------------------
-vtkSlicerAbstractWidgetRepresentation::~vtkSlicerAbstractWidgetRepresentation()
+vtkSlicerMarkupsWidgetRepresentation::~vtkSlicerMarkupsWidgetRepresentation()
 {
   for (int i=0; i<NumberOfControlPointTypes; i++)
     {
@@ -167,59 +166,10 @@ vtkSlicerAbstractWidgetRepresentation::~vtkSlicerAbstractWidgetRepresentation()
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerAbstractWidgetRepresentation::UpdateViewScaleFactor()
-{
-  if (!this->Renderer || !this->Renderer->GetActiveCamera())
-    {
-    this->ViewScaleFactor = 1.0;
-    }
-
-  double p1[4], p2[4];
-  this->Renderer->GetActiveCamera()->GetFocalPoint(p1);
-  p1[3] = 1.0;
-  this->Renderer->SetWorldPoint(p1);
-  this->Renderer->WorldToView();
-  this->Renderer->GetViewPoint(p1);
-
-  double depth = p1[2];
-  double aspect[2];
-  this->Renderer->ComputeAspect();
-  this->Renderer->GetAspect(aspect);
-
-  p1[0] = -aspect[0];
-  p1[1] = -aspect[1];
-  this->Renderer->SetViewPoint(p1);
-  this->Renderer->ViewToWorld();
-  this->Renderer->GetWorldPoint(p1);
-
-  p2[0] = aspect[0];
-  p2[1] = aspect[1];
-  p2[2] = depth;
-  p2[3] = 1.0;
-  this->Renderer->SetViewPoint(p2);
-  this->Renderer->ViewToWorld();
-  this->Renderer->GetWorldPoint(p2);
-
-  double distance = sqrt(vtkMath::Distance2BetweenPoints(p1, p2));
-
-  int *size = this->Renderer->GetRenderWindow()->GetSize();
-  double viewport[4];
-  this->Renderer->GetViewport(viewport);
-
-  double x, y, distance2;
-
-  x = size[0] * (viewport[2] - viewport[0]);
-  y = size[1] * (viewport[3] - viewport[1]);
-
-  distance2 = sqrt(x * x + y * y);
-  this->ViewScaleFactor = distance2 / distance;
-}
-
-//----------------------------------------------------------------------
 // The display position for a given world position must be re-computed
 // from the world positions... It should not be queried from the renderer
 // whose camera position may have changed
-int vtkSlicerAbstractWidgetRepresentation::GetNthNodeDisplayPosition(int n, double displayPos[2])
+int vtkSlicerMarkupsWidgetRepresentation::GetNthNodeDisplayPosition(int n, double displayPos[2])
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode || n < 0 || n >= markupsNode->GetNumberOfControlPoints())
@@ -240,7 +190,7 @@ int vtkSlicerAbstractWidgetRepresentation::GetNthNodeDisplayPosition(int n, doub
 }
 
 //----------------------------------------------------------------------
-vtkMRMLMarkupsNode::ControlPoint* vtkSlicerAbstractWidgetRepresentation::GetNthNode(int n)
+vtkMRMLMarkupsNode::ControlPoint* vtkSlicerMarkupsWidgetRepresentation::GetNthNode(int n)
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode || n < 0 || n >= markupsNode->GetNumberOfControlPoints())
@@ -251,7 +201,7 @@ vtkMRMLMarkupsNode::ControlPoint* vtkSlicerAbstractWidgetRepresentation::GetNthN
 }
 
 //----------------------------------------------------------------------
-int vtkSlicerAbstractWidgetRepresentation::FindClosestPointOnWidget(
+int vtkSlicerMarkupsWidgetRepresentation::FindClosestPointOnWidget(
   const int displayPos[2], double closestWorldPos[3], int *idx)
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
@@ -386,26 +336,7 @@ int vtkSlicerAbstractWidgetRepresentation::FindClosestPointOnWidget(
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerAbstractWidgetRepresentation
-::GetRendererComputedDisplayPositionFromWorldPosition(const double worldPos[3],
-                                                      double displayPos[2])
-{
-  double pos[4];
-  pos[0] = worldPos[0];
-  pos[1] = worldPos[1];
-  pos[2] = worldPos[2];
-  pos[3] = 1.0;
-
-  this->Renderer->SetWorldPoint(pos);
-  this->Renderer->WorldToDisplay();
-  this->Renderer->GetDisplayPoint(pos);
-
-  displayPos[0] = static_cast<int>(pos[0]);
-  displayPos[1] = static_cast<int>(pos[1]);
-}
-
-//----------------------------------------------------------------------
-void vtkSlicerAbstractWidgetRepresentation::UpdateCenter()
+void vtkSlicerMarkupsWidgetRepresentation::UpdateCenter()
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode || markupsNode->GetNumberOfControlPoints() < 1)
@@ -431,7 +362,7 @@ void vtkSlicerAbstractWidgetRepresentation::UpdateCenter()
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerAbstractWidgetRepresentation::SetMarkupsDisplayNode(vtkMRMLMarkupsDisplayNode *markupsDisplayNode)
+void vtkSlicerMarkupsWidgetRepresentation::SetMarkupsDisplayNode(vtkMRMLMarkupsDisplayNode *markupsDisplayNode)
 {
   if (this->MarkupsDisplayNode == markupsDisplayNode)
     {
@@ -449,13 +380,13 @@ void vtkSlicerAbstractWidgetRepresentation::SetMarkupsDisplayNode(vtkMRMLMarkups
 }
 
 //----------------------------------------------------------------------
-vtkMRMLMarkupsDisplayNode *vtkSlicerAbstractWidgetRepresentation::GetMarkupsDisplayNode()
+vtkMRMLMarkupsDisplayNode *vtkSlicerMarkupsWidgetRepresentation::GetMarkupsDisplayNode()
 {
   return this->MarkupsDisplayNode;
 }
 
 //----------------------------------------------------------------------
-vtkMRMLMarkupsNode *vtkSlicerAbstractWidgetRepresentation::GetMarkupsNode()
+vtkMRMLMarkupsNode *vtkSlicerMarkupsWidgetRepresentation::GetMarkupsNode()
 {
   if (!this->MarkupsDisplayNode)
     {
@@ -465,48 +396,13 @@ vtkMRMLMarkupsNode *vtkSlicerAbstractWidgetRepresentation::GetMarkupsNode()
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerAbstractWidgetRepresentation::SetMarkupsNode(vtkMRMLMarkupsNode *markupsNode)
+void vtkSlicerMarkupsWidgetRepresentation::SetMarkupsNode(vtkMRMLMarkupsNode *markupsNode)
 {
   this->MarkupsNode = markupsNode;
 }
 
-
 //-----------------------------------------------------------------------------
-void vtkSlicerAbstractWidgetRepresentation::SetRenderer(vtkRenderer *ren)
-{
-  if ( ren == this->Renderer )
-    {
-    return;
-    }
-  this->Renderer = ren;
-  this->Modified();
-}
-
-//-----------------------------------------------------------------------------
-vtkRenderer* vtkSlicerAbstractWidgetRepresentation::GetRenderer()
-{
-  return this->Renderer;
-}
-
-//-----------------------------------------------------------------------------
-void vtkSlicerAbstractWidgetRepresentation::SetViewNode(vtkMRMLAbstractViewNode* viewNode)
-{
-  if (viewNode == this->ViewNode)
-    {
-    return;
-    }
-  this->ViewNode = viewNode;
-  this->Modified();
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLAbstractViewNode* vtkSlicerAbstractWidgetRepresentation::GetViewNode()
-{
-  return this->ViewNode;
-}
-
-//-----------------------------------------------------------------------------
-void vtkSlicerAbstractWidgetRepresentation::PrintSelf(ostream& os,
+void vtkSlicerMarkupsWidgetRepresentation::PrintSelf(ostream& os,
                                                       vtkIndent indent)
 {
   //Superclass typedef defined in vtkTypeMacro() found in vtkSetGet.h
@@ -522,57 +418,16 @@ void vtkSlicerAbstractWidgetRepresentation::PrintSelf(ostream& os,
      << (this->AlwaysOnTop ? "On\n" : "Off\n");
 }
 
-
 //-----------------------------------------------------------------------------
-void vtkSlicerAbstractWidgetRepresentation::AddActorsBounds(vtkBoundingBox& boundingBox,
-  const std::vector<vtkProp*> &actors, double* additionalBounds /*=nullptr*/)
-{
-  for (auto actor : actors)
-    {
-    if (!actor->GetVisibility())
-      {
-      continue;
-      }
-    double* bounds = actor->GetBounds();
-    if (!bounds)
-      {
-      continue;
-      }
-    boundingBox.AddBounds(bounds);
-    }
-  if (additionalBounds)
-    {
-    boundingBox.AddBounds(additionalBounds);
-    }
-}
-
-//-----------------------------------------------------------------------------
-void vtkSlicerAbstractWidgetRepresentation::CanInteract(
+void vtkSlicerMarkupsWidgetRepresentation::CanInteract(
   const int vtkNotUsed(displayPosition)[2], const double vtkNotUsed(position)[3],
   int &foundComponentType, int &vtkNotUsed(foundComponentIndex), double &vtkNotUsed(closestDistance2))
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
 }
 
-//-----------------------------------------------------------------------------
-vtkPointPlacer* vtkSlicerAbstractWidgetRepresentation::GetPointPlacer()
-{
-  return this->PointPlacer;
-}
-
-//-----------------------------------------------------------------------------
-void vtkSlicerAbstractWidgetRepresentation::SetPointPlacer(vtkPointPlacer* placer)
-{
-  if (this->PointPlacer == placer)
-    {
-    return;
-    }
-  this->PointPlacer = placer;
-  this->Modified();
-}
-
 //----------------------------------------------------------------------
-bool vtkSlicerAbstractWidgetRepresentation::GetTransformationReferencePoint(double referencePointWorld[3])
+bool vtkSlicerMarkupsWidgetRepresentation::GetTransformationReferencePoint(double referencePointWorld[3])
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode)
@@ -585,7 +440,7 @@ bool vtkSlicerAbstractWidgetRepresentation::GetTransformationReferencePoint(doub
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerAbstractWidgetRepresentation::BuildLine(vtkPolyData* linePolyData, bool displayPosition)
+void vtkSlicerMarkupsWidgetRepresentation::BuildLine(vtkPolyData* linePolyData, bool displayPosition)
 {
   vtkNew<vtkPoints> points;
   vtkNew<vtkCellArray> line;
@@ -648,7 +503,7 @@ void vtkSlicerAbstractWidgetRepresentation::BuildLine(vtkPolyData* linePolyData,
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerAbstractWidgetRepresentation::UpdateFromMRML(
+void vtkSlicerMarkupsWidgetRepresentation::UpdateFromMRML(
     vtkMRMLNode* vtkNotUsed(caller), unsigned long event, void *vtkNotUsed(callData))
 {
   if (!event || event == vtkMRMLTransformableNode::TransformModifiedEvent)
@@ -667,30 +522,11 @@ void vtkSlicerAbstractWidgetRepresentation::UpdateFromMRML(
     this->SetMarkupsNode(markupsNode);
     }
 
-  this->NeedToRenderOn(); // TODO: call this only if actually needed to improve performance
-}
-
-//-----------------------------------------------------------------------------
-void vtkSlicerAbstractWidgetRepresentation::UpdateRelativeCoincidentTopologyOffsets(vtkMapper* mapper)
-{
-  if (this->AlwaysOnTop)
-    {
-    // max value 65536 so we subtract 66000 to make sure we are
-    // zero or negative
-    mapper->SetRelativeCoincidentTopologyLineOffsetParameters(0, -66000);
-    mapper->SetRelativeCoincidentTopologyPolygonOffsetParameters(0, -66000);
-    mapper->SetRelativeCoincidentTopologyPointOffsetParameter(-66000);
-    }
-  else
-    {
-    mapper->SetRelativeCoincidentTopologyLineOffsetParameters(-1, -1);
-    mapper->SetRelativeCoincidentTopologyPolygonOffsetParameters(-1, -1);
-    mapper->SetRelativeCoincidentTopologyPointOffsetParameter(-1);
-    }
+  this->NeedToRenderOn(); // TODO: to improve performance, call this only if it is actually needed
 }
 
 //----------------------------------------------------------------------
-bool vtkSlicerAbstractWidgetRepresentation::GetAllControlPointsVisible()
+bool vtkSlicerMarkupsWidgetRepresentation::GetAllControlPointsVisible()
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode)
@@ -709,7 +545,7 @@ bool vtkSlicerAbstractWidgetRepresentation::GetAllControlPointsVisible()
 }
 
 //----------------------------------------------------------------------
-bool vtkSlicerAbstractWidgetRepresentation::GetAllControlPointsSelected()
+bool vtkSlicerMarkupsWidgetRepresentation::GetAllControlPointsSelected()
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode)
@@ -728,7 +564,7 @@ bool vtkSlicerAbstractWidgetRepresentation::GetAllControlPointsSelected()
 }
 
 //----------------------------------------------------------------------
-double* vtkSlicerAbstractWidgetRepresentation::GetWidgetColor(int controlPointType)
+double* vtkSlicerMarkupsWidgetRepresentation::GetWidgetColor(int controlPointType)
 {
   static double invalidColor[3] = { 0.5, 0.5, 0.5 }; // gray
   static double activeColor[3] = { 0.4, 1.0, 0. }; // bright green
@@ -747,3 +583,12 @@ double* vtkSlicerAbstractWidgetRepresentation::GetWidgetColor(int controlPointTy
       return invalidColor;
     }
 }
+
+
+
+
+//----------------------------------------------------------------------
+vtkPointPlacer* vtkSlicerMarkupsWidgetRepresentation::GetPointPlacer()
+{
+  return this->PointPlacer;
+};

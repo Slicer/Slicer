@@ -35,6 +35,7 @@
 #include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceNode.h>
+#include <vtkMRMLSliceViewDisplayableManagerFactory.h>
 #include <vtkMRMLVolumeNode.h>
 
 // VTK includes
@@ -66,6 +67,7 @@ int qMRMLSliceWidgetTest1(int argc, char * argv [] )
 
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkMRMLApplicationLogic> applicationLogic;
+  vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->SetMRMLApplicationLogic(applicationLogic);
   applicationLogic->SetMRMLScene(scene.GetPointer());
   scene->SetURL(argv[1]);
   scene->Connect();

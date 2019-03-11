@@ -21,7 +21,7 @@
 #include "vtkCellLocator.h"
 #include "vtkCleanPolyData.h"
 #include "vtkDiscretizableColorTransferFunction.h"
-#include "vtkOpenGLPolyDataMapper2D.h"
+#include "vtkPolyDataMapper2D.h"
 #include "vtkPiecewiseFunction.h"
 #include "vtkActor2D.h"
 #include "vtkAssemblyPath.h"
@@ -49,10 +49,9 @@
 #include "vtkAppendPolyData.h"
 #include "vtkTubeFilter.h"
 #include "vtkStringArray.h"
-#include "vtkPickingManager.h"
 #include "vtkPlane.h"
 #include "vtkVectorText.h"
-#include "vtkOpenGLTextActor.h"
+#include "vtkTextActor.h"
 #include "cmath"
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkSampleImplicitFunctionFilter.h"
@@ -78,7 +77,7 @@ vtkSlicerCurveRepresentation2D::vtkSlicerCurveRepresentation2D()
   this->TubeFilter->SetNumberOfSides(6);
   this->TubeFilter->SetRadius(1);
 
-  this->LineMapper = vtkSmartPointer<vtkOpenGLPolyDataMapper2D>::New();
+  this->LineMapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
   this->LineMapper->SetInputConnection(this->TubeFilter->GetOutputPort());
   this->LineColorMap = vtkSmartPointer<vtkDiscretizableColorTransferFunction>::New();
   this->LineMapper->SetLookupTable(this->LineColorMap);
@@ -301,14 +300,15 @@ int vtkSlicerCurveRepresentation2D::RenderTranslucentPolygonalGeometry(
 //-----------------------------------------------------------------------------
 vtkTypeBool vtkSlicerCurveRepresentation2D::HasTranslucentPolygonalGeometry()
 {
-  int result=0;
-  if (this->LineActor->GetVisibility())
+  if (this->Superclass::HasTranslucentPolygonalGeometry())
     {
-    result |= this->LineActor->HasTranslucentPolygonalGeometry();
+    return true;
     }
-  result |= this->Superclass::HasTranslucentPolygonalGeometry();
-
-  return result;
+  if (this->LineActor->GetVisibility() && this->LineActor->HasTranslucentPolygonalGeometry())
+    {
+    return true;
+    }
+  return false;
 }
 
 //----------------------------------------------------------------------

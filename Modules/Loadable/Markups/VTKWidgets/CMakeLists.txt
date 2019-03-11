@@ -12,14 +12,14 @@ set(${KIT}_INCLUDE_DIRECTORIES
 set(${KIT}_SRCS
   vtk${MODULE_NAME}GlyphSource2D.cxx
   vtk${MODULE_NAME}GlyphSource2D.h
-  vtkSlicerAbstractWidgetRepresentation.cxx
-  vtkSlicerAbstractWidgetRepresentation.h
-  vtkSlicerAbstractWidgetRepresentation3D.cxx
-  vtkSlicerAbstractWidgetRepresentation3D.h
-  vtkSlicerAbstractWidgetRepresentation2D.cxx
-  vtkSlicerAbstractWidgetRepresentation2D.h
-  vtkSlicerAbstractWidget.cxx
-  vtkSlicerAbstractWidget.h
+  vtkSlicerMarkupsWidgetRepresentation.cxx
+  vtkSlicerMarkupsWidgetRepresentation.h
+  vtkSlicerMarkupsWidgetRepresentation3D.cxx
+  vtkSlicerMarkupsWidgetRepresentation3D.h
+  vtkSlicerMarkupsWidgetRepresentation2D.cxx
+  vtkSlicerMarkupsWidgetRepresentation2D.h
+  vtkSlicerMarkupsWidget.cxx
+  vtkSlicerMarkupsWidget.h
   vtkSlicerAngleRepresentation2D.cxx
   vtkSlicerAngleRepresentation2D.h
   vtkSlicerAngleRepresentation3D.cxx

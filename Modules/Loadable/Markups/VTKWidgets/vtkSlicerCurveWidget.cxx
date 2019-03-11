@@ -23,32 +23,18 @@
 #include "vtkSlicerCurveRepresentation2D.h"
 #include "vtkSlicerCurveRepresentation3D.h"
 #include "vtkCommand.h"
-#include "vtkCallbackCommand.h"
-#include "vtkRenderWindowInteractor.h"
-#include "vtkObjectFactory.h"
-#include "vtkRenderer.h"
-#include "vtkWidgetCallbackMapper.h"
-#include "vtkSphereSource.h"
-#include "vtkProperty.h"
-#include "vtkProperty2D.h"
-#include "vtkEvent.h"
-#include "vtkWidgetEvent.h"
-#include "vtkPolyData.h"
 
 vtkStandardNewMacro(vtkSlicerCurveWidget);
 
 //----------------------------------------------------------------------
 vtkSlicerCurveWidget::vtkSlicerCurveWidget()
 {
-  this->SetEventTranslation(vtkCommand::LeftButtonPressEvent, vtkEvent::AltModifier, WidgetRotateStart);
-  this->SetEventTranslation(vtkCommand::LeftButtonReleaseEvent, vtkEvent::AnyModifier, WidgetRotateEnd);
+  this->SetEventTranslationClickAndDrag(WidgetStateOnWidget, vtkCommand::LeftButtonPressEvent, vtkEvent::AltModifier,
+    WidgetStateRotate, WidgetEventRotateStart, WidgetEventRotateEnd);
+  this->SetEventTranslationClickAndDrag(WidgetStateOnWidget, vtkCommand::RightButtonPressEvent, vtkEvent::AltModifier,
+    WidgetStateScale, WidgetEventScaleStart, WidgetEventScaleEnd);
 
-  this->SetEventTranslation(vtkCommand::RightButtonPressEvent, vtkEvent::AltModifier, WidgetScaleStart);
-  this->SetEventTranslation(vtkCommand::RightButtonReleaseEvent, vtkEvent::AnyModifier, WidgetScaleEnd);
-
-  this->SetEventTranslation(vtkCommand::RightButtonPressEvent, vtkEvent::NoModifier, WidgetPick);
-
-  this->SetEventTranslation(vtkCommand::LeftButtonPressEvent, vtkEvent::ControlModifier, WidgetControlPointInsert);
+  this->SetEventTranslation(WidgetStateOnWidget, vtkCommand::LeftButtonPressEvent, vtkEvent::ControlModifier, WidgetEventControlPointInsert);
 }
 
 //----------------------------------------------------------------------
@@ -60,15 +46,15 @@ vtkSlicerCurveWidget::~vtkSlicerCurveWidget()
 void vtkSlicerCurveWidget::CreateDefaultRepresentation(
   vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer)
 {
-  vtkSmartPointer<vtkSlicerAbstractWidgetRepresentation> rep = NULL;
+  vtkSmartPointer<vtkSlicerMarkupsWidgetRepresentation> rep = NULL;
   if (vtkMRMLSliceNode::SafeDownCast(viewNode))
-  {
+    {
     rep = vtkSmartPointer<vtkSlicerCurveRepresentation2D>::New();
-  }
+    }
   else
-  {
+    {
     rep = vtkSmartPointer<vtkSlicerCurveRepresentation3D>::New();
-  }
+    }
   this->SetRenderer(renderer);
   this->SetRepresentation(rep);
   rep->SetViewNode(viewNode);
@@ -139,7 +125,7 @@ bool vtkSlicerCurveWidget::ProcessControlPointInsert(vtkMRMLInteractionEventData
     }
 
   // Activate the control point that has just been inserted
-  this->SetWidgetState(OnWidget);
+  this->SetWidgetState(WidgetStateOnWidget);
   this->GetMarkupsDisplayNode()->SetActiveControlPoint(foundComponentIndex + 1);
 
   return true;
@@ -148,9 +134,10 @@ bool vtkSlicerCurveWidget::ProcessControlPointInsert(vtkMRMLInteractionEventData
 //----------------------------------------------------------------------
 vtkMRMLMarkupsCurveNode* vtkSlicerCurveWidget::GetMarkupsCurveNode()
 {
-  if (!this->WidgetRep)
-  {
+  vtkSlicerMarkupsWidgetRepresentation* rep = this->GetMarkupsRepresentation();
+  if (!rep)
+    {
     return nullptr;
-  }
-  return vtkMRMLMarkupsCurveNode::SafeDownCast(this->WidgetRep->GetMarkupsNode());
+    }
+  return vtkMRMLMarkupsCurveNode::SafeDownCast(rep->GetMarkupsNode());
 }

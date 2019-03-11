@@ -21,10 +21,10 @@
  * @brief   Default representation for the curve widget
  *
   * This class provides the default concrete representation for the
- * vtkSlicerAbstractWidget. See vtkSlicerAbstractWidget
+ * vtkMRMLAbstractWidget. See vtkMRMLAbstractWidget
  * for details.
  * @sa
- * vtkSlicerAbstractWidgetRepresentation3D vtkSlicerAbstractWidget
+ * vtkSlicerMarkupsWidgetRepresentation3D vtkMRMLAbstractWidget
 
 */
 
@@ -32,28 +32,28 @@
 #define vtkSlicerCurveRepresentation3D_h
 
 #include "vtkSlicerMarkupsModuleVTKWidgetsExport.h"
-#include "vtkSlicerAbstractWidgetRepresentation3D.h"
+#include "vtkSlicerMarkupsWidgetRepresentation3D.h"
 
 class vtkAppendPolyData;
 class vtkCellLocator;
-class vtkOpenGLActor;
-class vtkOpenGLPolyDataMapper;
+class vtkActor;
+class vtkPolyDataMapper;
 class vtkPolyData;
 class vtkTubeFilter;
-class vtkOpenGLTextActor;
+class vtkTextActor;
 class vtkArcSource;
 
-class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerCurveRepresentation3D : public vtkSlicerAbstractWidgetRepresentation3D
+class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerCurveRepresentation3D : public vtkSlicerMarkupsWidgetRepresentation3D
 {
 public:
   /// Instantiate this class.
   static vtkSlicerCurveRepresentation3D *New();
 
   /// Standard methods for instances of this class.
-  vtkTypeMacro(vtkSlicerCurveRepresentation3D,vtkSlicerAbstractWidgetRepresentation3D);
+  vtkTypeMacro(vtkSlicerCurveRepresentation3D,vtkSlicerMarkupsWidgetRepresentation3D);
   void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
-  /// Subclasses of vtkSlicerAbstractWidgetRepresentation must implement these methods. These
+  /// Subclasses of vtkMRMLAbstractWidgetRepresentation must implement these methods. These
   /// are the methods that the widget and its representation use to
   /// communicate with each other.
   void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = NULL) VTK_OVERRIDE;
@@ -82,8 +82,8 @@ protected:
   void SetMarkupsNode(vtkMRMLMarkupsNode *markupsNode) VTK_OVERRIDE;
 
   vtkSmartPointer<vtkPolyData> Line;
-  vtkSmartPointer<vtkOpenGLPolyDataMapper> LineMapper;
-  vtkSmartPointer<vtkOpenGLActor> LineActor;
+  vtkSmartPointer<vtkPolyDataMapper> LineMapper;
+  vtkSmartPointer<vtkActor> LineActor;
 
   vtkSmartPointer<vtkTubeFilter> TubeFilter;
 

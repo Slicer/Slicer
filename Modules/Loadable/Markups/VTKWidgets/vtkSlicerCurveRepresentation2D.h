@@ -21,25 +21,25 @@
  * @brief   Default representation for the line widget
  *
  * This class provides the default concrete representation for the
- * vtkSlicerAbstractWidget. See vtkSlicerAbstractWidget
+ * vtkMRMLAbstractWidget. See vtkMRMLAbstractWidget
  * for details.
  * @sa
- * vtkSlicerAbstractWidgetRepresentation2D vtkSlicerAbstractWidget
+ * vtkSlicerMarkupsWidgetRepresentation2D vtkMRMLAbstractWidget
 */
 
 #ifndef vtkSlicerCurveRepresentation2D_h
 #define vtkSlicerCurveRepresentation2D_h
 
 #include "vtkSlicerMarkupsModuleVTKWidgetsExport.h"
-#include "vtkSlicerAbstractWidgetRepresentation2D.h"
+#include "vtkSlicerMarkupsWidgetRepresentation2D.h"
 
 class vtkActor2D;
 class vtkArcSource;
 class vtkAppendPolyData;
 class vtkCellLocator;
 class vtkDiscretizableColorTransferFunction;
-class vtkOpenGLPolyDataMapper2D;
-class vtkOpenGLTextActor;
+class vtkPolyDataMapper2D;
+class vtkTextActor;
 class vtkPlane;
 class vtkPolyData;
 class vtkProperty2D;
@@ -48,14 +48,14 @@ class vtkSampleImplicitFunctionFilter;
 class vtkTubeFilter;
 class vtkVectorText;
 
-class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerCurveRepresentation2D : public vtkSlicerAbstractWidgetRepresentation2D
+class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerCurveRepresentation2D : public vtkSlicerMarkupsWidgetRepresentation2D
 {
 public:
   /// Instantiate this class.
   static vtkSlicerCurveRepresentation2D *New();
 
   /// Standard methods for instances of this class.
-  vtkTypeMacro(vtkSlicerCurveRepresentation2D,vtkSlicerAbstractWidgetRepresentation2D);
+  vtkTypeMacro(vtkSlicerCurveRepresentation2D,vtkSlicerMarkupsWidgetRepresentation2D);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Subclasses of vtkContourCurveRepresentation must implement these methods. These
@@ -86,7 +86,7 @@ protected:
   void SetMarkupsNode(vtkMRMLMarkupsNode *markupsNode) override;
 
   vtkSmartPointer<vtkPolyData>                  Line;
-  vtkSmartPointer<vtkOpenGLPolyDataMapper2D>    LineMapper;
+  vtkSmartPointer<vtkPolyDataMapper2D>    LineMapper;
   vtkSmartPointer<vtkActor2D>                   LineActor;
   vtkSmartPointer<vtkDiscretizableColorTransferFunction> LineColorMap;
 

@@ -17,34 +17,22 @@
 =========================================================================*/
 
 #include "vtkSlicerAngleWidget.h"
+
 #include "vtkMRMLSliceNode.h"
 #include "vtkSlicerAngleRepresentation2D.h"
 #include "vtkSlicerAngleRepresentation3D.h"
 #include "vtkCommand.h"
-#include "vtkCallbackCommand.h"
-#include "vtkRenderWindowInteractor.h"
-#include "vtkObjectFactory.h"
-#include "vtkRenderer.h"
-#include "vtkWidgetCallbackMapper.h"
-#include "vtkSphereSource.h"
-#include "vtkProperty.h"
-#include "vtkProperty2D.h"
 #include "vtkEvent.h"
-#include "vtkWidgetEvent.h"
-#include "vtkPolyData.h"
 
 vtkStandardNewMacro(vtkSlicerAngleWidget);
 
 //----------------------------------------------------------------------
 vtkSlicerAngleWidget::vtkSlicerAngleWidget()
 {
-  this->SetEventTranslation(vtkCommand::LeftButtonPressEvent, vtkEvent::AltModifier, WidgetRotateStart);
-  this->SetEventTranslation(vtkCommand::LeftButtonReleaseEvent, vtkEvent::AnyModifier, WidgetRotateEnd);
-
-  this->SetEventTranslation(vtkCommand::RightButtonPressEvent, vtkEvent::AltModifier, WidgetScaleStart);
-  this->SetEventTranslation(vtkCommand::RightButtonReleaseEvent, vtkEvent::AnyModifier, WidgetScaleEnd);
-
-  this->SetEventTranslation(vtkCommand::RightButtonPressEvent, vtkEvent::NoModifier, WidgetPick);
+  this->SetEventTranslationClickAndDrag(WidgetStateOnWidget, vtkCommand::LeftButtonPressEvent, vtkEvent::AltModifier,
+    WidgetStateRotate, WidgetEventRotateStart, WidgetEventRotateEnd);
+  this->SetEventTranslationClickAndDrag(WidgetStateOnWidget, vtkCommand::RightButtonPressEvent, vtkEvent::AltModifier,
+    WidgetStateScale, WidgetEventScaleStart, WidgetEventScaleEnd);
 }
 
 //----------------------------------------------------------------------
@@ -56,15 +44,15 @@ vtkSlicerAngleWidget::~vtkSlicerAngleWidget()
 void vtkSlicerAngleWidget::CreateDefaultRepresentation(
   vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer)
 {
-  vtkSmartPointer<vtkSlicerAbstractWidgetRepresentation> rep = NULL;
+  vtkSmartPointer<vtkSlicerMarkupsWidgetRepresentation> rep = NULL;
   if (vtkMRMLSliceNode::SafeDownCast(viewNode))
-  {
+    {
     rep = vtkSmartPointer<vtkSlicerAngleRepresentation2D>::New();
-  }
+    }
   else
-  {
+    {
     rep = vtkSmartPointer<vtkSlicerAngleRepresentation3D>::New();
-  }
+    }
   this->SetRenderer(renderer);
   this->SetRepresentation(rep);
   rep->SetViewNode(viewNode);

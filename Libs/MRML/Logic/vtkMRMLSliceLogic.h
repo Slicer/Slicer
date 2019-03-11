@@ -62,6 +62,12 @@ public:
   vtkTypeMacro(vtkMRMLSliceLogic,vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
+  /// CompositeModifiedEvent is generated when slice composite node is modified
+  enum
+    {
+    CompositeModifiedEvent = 18000
+    };
+
   /// Convenient methods allowing to initialize SliceLogic given \a newSliceNode
   /// \note This method should be used when the Logic is "shared" between two widgets
   void Initialize(vtkMRMLSliceNode* newSliceNode);

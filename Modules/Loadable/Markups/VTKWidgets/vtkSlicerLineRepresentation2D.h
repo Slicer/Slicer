@@ -21,34 +21,34 @@
  * @brief   Default representation for the line widget
  *
  * This class provides the default concrete representation for the
- * vtkSlicerAbstractWidget. See vtkSlicerAbstractWidget
+ * vtkMRMLAbstractWidget. See vtkMRMLAbstractWidget
  * for details.
  * @sa
- * vtkSlicerAbstractWidgetRepresentation2D vtkSlicerAbstractWidget
+ * vtkSlicerMarkupsWidgetRepresentation2D vtkMRMLAbstractWidget
 */
 
 #ifndef vtkSlicerLineRepresentation2D_h
 #define vtkSlicerLineRepresentation2D_h
 
 #include "vtkSlicerMarkupsModuleVTKWidgetsExport.h"
-#include "vtkSlicerAbstractWidgetRepresentation2D.h"
+#include "vtkSlicerMarkupsWidgetRepresentation2D.h"
 
 class vtkActor2D;
 class vtkAppendPolyData;
-class vtkOpenGLPolyDataMapper2D;
+class vtkPolyDataMapper2D;
 class vtkPolyData;
 class vtkProperty2D;
 class vtkTubeFilter;
 class vtkPropPicker;
 
-class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerLineRepresentation2D : public vtkSlicerAbstractWidgetRepresentation2D
+class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerLineRepresentation2D : public vtkSlicerMarkupsWidgetRepresentation2D
 {
 public:
   /// Instantiate this class.
   static vtkSlicerLineRepresentation2D *New();
 
   /// Standard methods for instances of this class.
-  vtkTypeMacro(vtkSlicerLineRepresentation2D,vtkSlicerAbstractWidgetRepresentation2D);
+  vtkTypeMacro(vtkSlicerLineRepresentation2D,vtkSlicerMarkupsWidgetRepresentation2D);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Subclasses of vtkContourCurveRepresentation must implement these methods. These
@@ -76,7 +76,7 @@ protected:
   ~vtkSlicerLineRepresentation2D() override;
 
   vtkSmartPointer<vtkPolyData> Line;
-  vtkSmartPointer<vtkOpenGLPolyDataMapper2D> LineMapper;
+  vtkSmartPointer<vtkPolyDataMapper2D> LineMapper;
   vtkSmartPointer<vtkActor2D> LineActor;
 
   vtkSmartPointer<vtkTubeFilter> TubeFilter;

@@ -31,6 +31,7 @@
 // MRML includes
 #include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLScene.h>
+#include <vtkMRMLSliceViewDisplayableManagerFactory.h>
 #include <vtkMRMLVolumeNode.h>
 
 // VTK includes
@@ -64,6 +65,7 @@ int qMRMLVolumeThresholdWidgetTest1(int argc, char * argv [] )
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkMRMLApplicationLogic> applicationLogic;
   applicationLogic->SetMRMLScene(scene.GetPointer());
+  vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->SetMRMLApplicationLogic(applicationLogic);
 
   scene->SetURL(argv[1]);
   scene->Connect();

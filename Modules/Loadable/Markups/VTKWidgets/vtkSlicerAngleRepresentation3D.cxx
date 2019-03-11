@@ -18,8 +18,8 @@
 
 #include "vtkSlicerAngleRepresentation3D.h"
 #include "vtkCleanPolyData.h"
-#include "vtkOpenGLPolyDataMapper.h"
-#include "vtkOpenGLActor.h"
+#include "vtkPolyDataMapper.h"
+#include "vtkActor.h"
 #include "vtkActor2D.h"
 #include "vtkAssemblyPath.h"
 #include "vtkRenderer.h"
@@ -45,11 +45,10 @@
 #include "vtkCellArray.h"
 #include "vtkSphereSource.h"
 #include "vtkPropPicker.h"
-#include "vtkPickingManager.h"
 #include "vtkAppendPolyData.h"
 #include "vtkStringArray.h"
 #include "vtkTubeFilter.h"
-#include "vtkOpenGLTextActor.h"
+#include "vtkTextActor.h"
 #include "cmath"
 #include "vtkArcSource.h"
 #include "vtkTextProperty.h"
@@ -74,21 +73,21 @@ vtkSlicerAngleRepresentation3D::vtkSlicerAngleRepresentation3D()
   this->ArcTubeFilter->SetNumberOfSides(20);
   this->ArcTubeFilter->SetRadius(1);
 
-  this->LineMapper = vtkSmartPointer<vtkOpenGLPolyDataMapper>::New();
+  this->LineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
   this->LineMapper->SetInputConnection(this->TubeFilter->GetOutputPort());
 
-  this->ArcMapper = vtkSmartPointer<vtkOpenGLPolyDataMapper>::New();
+  this->ArcMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
   this->ArcMapper->SetInputConnection(this->ArcTubeFilter->GetOutputPort());
 
-  this->LineActor = vtkSmartPointer<vtkOpenGLActor>::New();
+  this->LineActor = vtkSmartPointer<vtkActor>::New();
   this->LineActor->SetMapper(this->LineMapper);
   this->LineActor->SetProperty(this->GetControlPointsPipeline(Unselected)->Property);
 
-  this->ArcActor = vtkSmartPointer<vtkOpenGLActor>::New();
+  this->ArcActor = vtkSmartPointer<vtkActor>::New();
   this->ArcActor->SetMapper(this->ArcMapper);
   this->ArcActor->SetProperty(this->GetControlPointsPipeline(Unselected)->Property);
 
-  this->TextActor = vtkSmartPointer<vtkOpenGLTextActor>::New();
+  this->TextActor = vtkSmartPointer<vtkTextActor>::New();
   this->TextActor->SetInput("0");
   this->TextActor->SetTextProperty(this->GetControlPointsPipeline(Unselected)->TextProperty);
 
@@ -336,21 +335,23 @@ int vtkSlicerAngleRepresentation3D::RenderTranslucentPolygonalGeometry(
 //-----------------------------------------------------------------------------
 vtkTypeBool vtkSlicerAngleRepresentation3D::HasTranslucentPolygonalGeometry()
 {
-  int result=0;
-  result |= this->Superclass::HasTranslucentPolygonalGeometry();
-  if (this->LineActor->GetVisibility())
+  if (this->Superclass::HasTranslucentPolygonalGeometry())
     {
-    result |= this->LineActor->HasTranslucentPolygonalGeometry();
+    return true;
     }
-  if (this->ArcActor->GetVisibility())
+  if (this->LineActor->GetVisibility() && this->LineActor->HasTranslucentPolygonalGeometry())
     {
-    result |= this->ArcActor->HasTranslucentPolygonalGeometry();
+    return true;
     }
-  if (this->TextActor->GetVisibility())
+  if (this->ArcActor->GetVisibility() && this->ArcActor->HasTranslucentPolygonalGeometry())
     {
-    result |= this->TextActor->HasTranslucentPolygonalGeometry();
+    return true;
     }
-  return result;
+  if (this->TextActor->GetVisibility() && this->TextActor->HasTranslucentPolygonalGeometry())
+    {
+    return true;
+    }
+  return false;
 }
 
 //----------------------------------------------------------------------

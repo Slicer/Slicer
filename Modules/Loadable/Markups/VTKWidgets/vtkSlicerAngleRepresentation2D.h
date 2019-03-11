@@ -21,36 +21,36 @@
  * @brief   Default representation for the line widget
  *
  * This class provides the default concrete representation for the
- * vtkSlicerAbstractWidget. See vtkSlicerAbstractWidget
+ * vtkMRMLAbstractWidget. See vtkMRMLAbstractWidget
  * for details.
  * @sa
- * vtkSlicerAbstractWidgetRepresentation2D vtkSlicerAbstractWidget
+ * vtkSlicerMarkupsWidgetRepresentation2D vtkMRMLAbstractWidget
 */
 
 #ifndef vtkSlicerAngleRepresentation2D_h
 #define vtkSlicerAngleRepresentation2D_h
 
 #include "vtkSlicerMarkupsModuleVTKWidgetsExport.h"
-#include "vtkSlicerAbstractWidgetRepresentation2D.h"
+#include "vtkSlicerMarkupsWidgetRepresentation2D.h"
 
 class vtkActor2D;
 class vtkAppendPolyData;
-class vtkOpenGLPolyDataMapper2D;
+class vtkPolyDataMapper2D;
 class vtkPolyData;
 class vtkProperty2D;
 class vtkTubeFilter;
 class vtkArcSource;
-class vtkOpenGLTextActor;
+class vtkTextActor;
 class vtkVectorText;
 
-class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerAngleRepresentation2D : public vtkSlicerAbstractWidgetRepresentation2D
+class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerAngleRepresentation2D : public vtkSlicerMarkupsWidgetRepresentation2D
 {
 public:
   /// Instantiate this class.
   static vtkSlicerAngleRepresentation2D *New();
 
   /// Standard methods for instances of this class.
-  vtkTypeMacro(vtkSlicerAngleRepresentation2D,vtkSlicerAbstractWidgetRepresentation2D);
+  vtkTypeMacro(vtkSlicerAngleRepresentation2D,vtkSlicerMarkupsWidgetRepresentation2D);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Subclasses of vtkContourCurveRepresentation must implement these methods. These
@@ -79,14 +79,14 @@ protected:
   ~vtkSlicerAngleRepresentation2D() override;
 
   vtkSmartPointer<vtkPolyData>                  Line;
-  vtkSmartPointer<vtkOpenGLPolyDataMapper2D>    LineMapper;
+  vtkSmartPointer<vtkPolyDataMapper2D>    LineMapper;
   vtkSmartPointer<vtkActor2D>                   LineActor;
 
   vtkSmartPointer<vtkArcSource>                 Arc;
-  vtkSmartPointer<vtkOpenGLPolyDataMapper2D>    ArcMapper;
+  vtkSmartPointer<vtkPolyDataMapper2D>    ArcMapper;
   vtkSmartPointer<vtkActor2D>                   ArcActor;
 
-  vtkSmartPointer<vtkOpenGLTextActor>           TextActor;
+  vtkSmartPointer<vtkTextActor>           TextActor;
 
   vtkSmartPointer<vtkTubeFilter>                TubeFilter;
   vtkSmartPointer<vtkTubeFilter>                ArcTubeFilter;

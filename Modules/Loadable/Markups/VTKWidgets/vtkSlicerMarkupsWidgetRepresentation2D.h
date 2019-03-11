@@ -17,21 +17,21 @@
 =========================================================================*/
 
 /**
- * @class   vtkSlicerAbstractWidgetRepresentation2D
+ * @class   vtkSlicerMarkupsWidgetRepresentation2D
  * @brief   Default representation for the slicer markups widget
  *
  * This class provides the default concrete representation for the
- * vtkSlicerAbstractWidget. See vtkSlicerAbstractWidget
+ * vtkMRMLAbstractWidget. See vtkMRMLAbstractWidget
  * for details.
  * @sa
- * vtkSlicerAbstractWidgetRepresentation2D vtkSlicerAbstractWidget
+ * vtkSlicerMarkupsWidgetRepresentation2D vtkMRMLAbstractWidget
 */
 
-#ifndef vtkSlicerAbstractWidgetRepresentation2D_h
-#define vtkSlicerAbstractWidgetRepresentation2D_h
+#ifndef vtkSlicerMarkupsWidgetRepresentation2D_h
+#define vtkSlicerMarkupsWidgetRepresentation2D_h
 
 #include "vtkSlicerMarkupsModuleVTKWidgetsExport.h"
-#include "vtkSlicerAbstractWidgetRepresentation.h"
+#include "vtkSlicerMarkupsWidgetRepresentation.h"
 
 #include "vtkMRMLSliceNode.h"
 
@@ -39,14 +39,14 @@ class vtkActor2D;
 class vtkGlyph2D;
 class vtkLabelPlacementMapper;
 class vtkMarkupsGlyphSource2D;
-class vtkOpenGLPolyDataMapper2D;
+class vtkPolyDataMapper2D;
 class vtkProperty2D;
 
-class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerAbstractWidgetRepresentation2D : public vtkSlicerAbstractWidgetRepresentation
+class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerMarkupsWidgetRepresentation2D : public vtkSlicerMarkupsWidgetRepresentation
 {
 public:
   /// Standard methods for instances of this class.
-  vtkTypeMacro(vtkSlicerAbstractWidgetRepresentation2D,vtkSlicerAbstractWidgetRepresentation);
+  vtkTypeMacro(vtkSlicerMarkupsWidgetRepresentation2D, vtkSlicerMarkupsWidgetRepresentation);
   void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   /// Position is displayed (slice) position
@@ -58,7 +58,7 @@ public:
   void CanInteractWithLine(const int displayPosition[2], const double worldPosition[3],
     int &foundComponentType, int &foundComponentIndex, double &closestDistance2);
 
-  /// Subclasses of vtkSlicerAbstractWidgetRepresentation2D must implement these methods. These
+  /// Subclasses of vtkSlicerMarkupsWidgetRepresentation2D must implement these methods. These
   /// are the methods that the widget and its representation use to
   /// communicate with each other.
   virtual void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData=NULL);
@@ -90,8 +90,8 @@ public:
   vtkGetMacro(ScaleFactor2D, double);
 
 protected:
-  vtkSlicerAbstractWidgetRepresentation2D();
-  ~vtkSlicerAbstractWidgetRepresentation2D() VTK_OVERRIDE;
+  vtkSlicerMarkupsWidgetRepresentation2D();
+  ~vtkSlicerMarkupsWidgetRepresentation2D() VTK_OVERRIDE;
 
     /// Get MRML view node as slice view node
   vtkMRMLSliceNode *GetSliceNode();
@@ -115,7 +115,7 @@ protected:
     virtual ~ControlPointsPipeline2D();
 
     vtkSmartPointer<vtkActor2D> Actor;
-    vtkSmartPointer<vtkOpenGLPolyDataMapper2D> Mapper;
+    vtkSmartPointer<vtkPolyDataMapper2D> Mapper;
     vtkSmartPointer<vtkGlyph2D> Glypher;
     vtkSmartPointer<vtkActor2D> LabelsActor;
     vtkSmartPointer<vtkLabelPlacementMapper> LabelsMapper;
@@ -135,8 +135,8 @@ protected:
   virtual void UpdateAllPointsAndLabelsFromMRML(double labelsOffset);
 
 private:
-  vtkSlicerAbstractWidgetRepresentation2D(const vtkSlicerAbstractWidgetRepresentation2D&) = delete;
-  void operator=(const vtkSlicerAbstractWidgetRepresentation2D&) = delete;
+  vtkSlicerMarkupsWidgetRepresentation2D(const vtkSlicerMarkupsWidgetRepresentation2D&) = delete;
+  void operator=(const vtkSlicerMarkupsWidgetRepresentation2D&) = delete;
 };
 
 #endif

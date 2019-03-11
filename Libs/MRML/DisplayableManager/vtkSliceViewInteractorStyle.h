@@ -24,6 +24,7 @@
 #include "vtkMRMLDisplayableManagerExport.h"
 
 class vtkMRMLAbstractDisplayableManager;
+class vtkMRMLCrosshairDisplayableManager;
 class vtkMRMLSegmentationDisplayNode;
 class vtkMRMLSliceLogic;
 class vtkMRMLDisplayableManagerGroup;
@@ -91,14 +92,16 @@ public:
     AdjustWindowLevelForeground = 32,
     BrowseSlice = 64,
     ShowSlice = 128,
-    AdjustLightbox = 256,
+    AdjustLightbox = 256, /* not used */
     SelectVolume = 512,
     SetCursorPosition = 1024, /* adjust cursor position in crosshair node as mouse is moved */
+    SetCrosshairPosition = 2048,
+    TranslateSliceIntersection = 4096,
+    RotateSliceIntersection = 8192,
     AllActionsMask = Translate | Zoom | Rotate | Blend | AdjustWindowLevelBackground | AdjustWindowLevelForeground
-      | BrowseSlice | ShowSlice | AdjustLightbox | SelectVolume | SetCursorPosition
+      | BrowseSlice | ShowSlice | AdjustLightbox | SelectVolume | SetCursorPosition | SetCrosshairPosition
+      | TranslateSliceIntersection | RotateSliceIntersection
     };
-  vtkGetMacro(ActionState, int);
-  vtkSetMacro(ActionState, int);
 
   /// Enable/disable the specified action (Translate, Zoom, Blend, etc.).
   /// Multiple actions can be specified by providing the sum of action ids.
@@ -109,100 +112,22 @@ public:
   /// If multiple actions are specified, the return value is true if all actions are enabled.
   bool GetActionEnabled(int actionsMask);
 
-  /// Helper routines
-
-  /// check for prescribed spacing, otherwise return best spacing amount
-  /// for current layer setup (use logic to look for spacing of first non-null
-  /// layer)
-  double GetSliceSpacing();
-  /// Adjust the slice position with respect to current slice node offset
-  void IncrementSlice();
-  void DecrementSlice();
-  void MoveSlice(double delta);
-  /// Adjust zoom factor. If zoomScaleFactor>1 then view is zoomed in,
-  /// if 0<zoomScaleFactor<1 then view is zoomed out.
-  void ScaleZoom(double zoomScaleFactor);
-  void DoZoom();
-
-  void DoRotate();
-
-  /// Collect some boilerplate management steps so they can be used
-  /// in more than one place
-  void StartTranslate();
-  void EndTranslate();
-
-  /// Enter a mode where the mouse moves are used to change the foreground
-  /// or labelmap opacity.
-  void StartBlend();
-  void DoBlend();
-  void EndBlend();
-
-  /// Enter a mode where the mouse moves are used to change the window/level
-  /// setting.
-  void StartAdjustWindowLevel();
-  void DoAdjustWindowLevel();
-  void EndAdjustWindowLevel();
-
-  /// Convert event coordinates (with respect to viewport) into
-  /// xyz coordinates, where z is the slice number of the lightbox
-  /// and xy is the offset within the lightbox view.  The xyz coordinates
-  /// can be used to map to RAS with the slice node's XYToRAS matrix.
-  /// The 4th component is 1 so it can be used with a homogenous transform.
-  void GetEventXYZ(double xyz[4]);
-
   ///
   /// Get/Set the SliceLogic
   void SetSliceLogic(vtkMRMLSliceLogic* SliceLogic);
   vtkGetObjectMacro(SliceLogic, vtkMRMLSliceLogic);
 
-  vtkMRMLSegmentationDisplayNode* GetVisibleSegmentationDisplayNode();
-
-  ///
-  /// Change the displayed volume in the selected layer by moving
-  /// in a loop trough the volumes available in the scene.
-  ///  - layer: are 0,1,2 for bg, fg, lb
-  ///  - direction: positive or negative (wraps through volumes in scene)
-  void CycleVolumeLayer(int layer, int direction);
-
-  /// Get/Set labelmap or segmentation opacity
-  void SetLabelOpacity(double opacity);
-  double GetLabelOpacity();
-
+  vtkMRMLCrosshairDisplayableManager* GetCrosshairDisplayableManager();
 
 protected:
   vtkSliceViewInteractorStyle();
   ~vtkSliceViewInteractorStyle();
 
-  int GetMouseInteractionMode();
-
-  /// Returns true if mouse is inside the selected layer volume.
-  /// Use background flag to choose between foreground/background layer.
-  bool IsMouseInsideVolume(bool background);
-
-  /// Returns true if the volume's window/level values are editable
-  /// on the GUI
-  bool VolumeWindowLevelEditable(const char* volumeNodeID);
-
-  int ActionState;
-  int ActionsEnabled;
-
-  int StartActionEventPosition[2];
-  double StartActionFOV[3];
-  double VolumeScalarRange[2];
-  vtkMRMLSegmentationDisplayNode* StartActionSegmentationDisplayNode;
-
-  int LastEventPosition[2];
-  double LastForegroundOpacity;
-  double LastLabelOpacity;
-  double LastVolumeWindowLevel[2];
-
   vtkMRMLSliceLogic *SliceLogic;
 
   bool MouseMovedSinceButtonDown;
 
-  /// Indicates whether the shift key was used during the previous action.
-  /// This is used to require shift-up before returning to default mode.
-  bool ShiftKeyUsedForPreviousAction;
+  bool EnableCursorUpdate;
 
   vtkWeakPointer<vtkMRMLDisplayableManagerGroup> DisplayableManagers;
   vtkMRMLAbstractDisplayableManager* FocusedDisplayableManager;

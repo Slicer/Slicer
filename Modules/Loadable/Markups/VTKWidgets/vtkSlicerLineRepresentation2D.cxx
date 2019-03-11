@@ -18,7 +18,7 @@
 
 #include "vtkSlicerLineRepresentation2D.h"
 #include "vtkCleanPolyData.h"
-#include "vtkOpenGLPolyDataMapper2D.h"
+#include "vtkPolyDataMapper2D.h"
 #include "vtkActor2D.h"
 #include "vtkAssemblyPath.h"
 #include "vtkRenderer.h"
@@ -46,7 +46,6 @@
 #include "vtkAppendPolyData.h"
 #include "vtkTubeFilter.h"
 #include "vtkStringArray.h"
-#include "vtkPickingManager.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 
 vtkStandardNewMacro(vtkSlicerLineRepresentation2D);
@@ -60,7 +59,7 @@ vtkSlicerLineRepresentation2D::vtkSlicerLineRepresentation2D()
   this->TubeFilter->SetNumberOfSides(20);
   this->TubeFilter->SetRadius(1);
 
-  this->LineMapper = vtkSmartPointer<vtkOpenGLPolyDataMapper2D>::New();
+  this->LineMapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
   this->LineMapper->SetInputConnection(this->TubeFilter->GetOutputPort());
 
   this->LineActor = vtkSmartPointer<vtkActor2D>::New();
@@ -185,13 +184,15 @@ int vtkSlicerLineRepresentation2D::RenderTranslucentPolygonalGeometry(vtkViewpor
 //-----------------------------------------------------------------------------
 vtkTypeBool vtkSlicerLineRepresentation2D::HasTranslucentPolygonalGeometry()
 {
-  int result=0;
-  if (this->LineActor->GetVisibility())
+  if (this->Superclass::HasTranslucentPolygonalGeometry())
     {
-    result |= this->LineActor->HasTranslucentPolygonalGeometry();
+    return true;
     }
-  result |= this->Superclass::HasTranslucentPolygonalGeometry();
-  return result;
+  if (this->LineActor->GetVisibility() && this->LineActor->HasTranslucentPolygonalGeometry())
+    {
+    return true;
+    }
+  return false;
 }
 
 //----------------------------------------------------------------------

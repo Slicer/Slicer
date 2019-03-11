@@ -44,6 +44,7 @@
 #include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceNode.h>
+#include <vtkMRMLSliceViewDisplayableManagerFactory.h>
 #include <vtkMRMLVolumeNode.h>
 
 // VTK includes
@@ -89,6 +90,8 @@ int qMRMLSliceWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
   etpWidget.setTestUtility(testUtility);
 
   vtkNew<vtkMRMLApplicationLogic> applicationLogic;
+  vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->SetMRMLApplicationLogic(applicationLogic);
+
   vtkNew<vtkMRMLColorLogic> colorLogic;
 
   // Test case 1

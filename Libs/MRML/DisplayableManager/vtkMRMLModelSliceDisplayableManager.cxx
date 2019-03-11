@@ -172,50 +172,20 @@ bool vtkMRMLModelSliceDisplayableManager::vtkInternal
     {
     return 0;
     }
-  bool visibleOnNode = true;
-  // for volume slice model display nodes, don't want to only show the slice
-  // intersection if the slice is visible in 3d, but do want to do the check for
-  // other types of models
-  bool isSliceModel = vtkMRMLSliceLogic::IsSliceModelDisplayNode(displayNode);
-  if (!isSliceModel)
+  if (vtkMRMLSliceLogic::IsSliceModelDisplayNode(displayNode))
     {
-    vtkMRMLSliceNode *sliceNode = this->SliceNode;
-    if (sliceNode)
-      {
-      visibleOnNode = displayNode->GetVisibility(sliceNode->GetID());
-      }
-    else
-      {
-      visibleOnNode = (displayNode->GetVisibility() == 1 ? true : false);
-      }
+    // slice intersections are displayed by vtkMRMLCrosshairDisplayableManager
+    return 0;
+    }
+  bool visibleOnNode = true;
+  vtkMRMLSliceNode *sliceNode = this->SliceNode;
+  if (sliceNode)
+    {
+    visibleOnNode = displayNode->GetVisibility(sliceNode->GetID());
     }
   else
     {
-    // Only show slice intersection if it is mapped into layout and in the same view group
-    vtkMRMLSliceNode* intersectedSliceNode = NULL;
-    vtkMRMLApplicationLogic *mrmlAppLogic = this->External->GetMRMLApplicationLogic();
-    if (mrmlAppLogic)
-      {
-      vtkMRMLSliceLogic *sliceLogic = mrmlAppLogic->GetSliceLogicByModelDisplayNode(vtkMRMLModelDisplayNode::SafeDownCast(displayNode));
-      if (sliceLogic)
-        {
-        intersectedSliceNode = sliceLogic->GetSliceNode();
-        }
-      }
-    if (intersectedSliceNode)
-      {
-      if (!intersectedSliceNode->IsMappedInLayout())
-        {
-        visibleOnNode = false;
-        }
-      else if (this->SliceNode)
-        {
-        if (this->SliceNode->GetViewGroup() != intersectedSliceNode->GetViewGroup())
-          {
-          visibleOnNode = false;
-          }
-        }
-      }
+    visibleOnNode = (displayNode->GetVisibility() == 1 ? true : false);
     }
   return visibleOnNode && (displayNode->GetSliceIntersectionVisibility() != 0) ;
 }

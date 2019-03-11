@@ -17,28 +17,17 @@
 =========================================================================*/
 
 #include "vtkSlicerPointsWidget.h"
+
+#include "vtkMRMLInteractionEventData.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkSlicerPointsRepresentation2D.h"
 #include "vtkSlicerPointsRepresentation3D.h"
-#include "vtkCommand.h"
-#include "vtkCallbackCommand.h"
-#include "vtkRenderWindowInteractor.h"
-#include "vtkObjectFactory.h"
-#include "vtkRenderer.h"
-#include "vtkWidgetCallbackMapper.h"
-#include "vtkSphereSource.h"
-#include "vtkProperty.h"
-#include "vtkProperty2D.h"
-#include "vtkEvent.h"
-#include "vtkWidgetEvent.h"
-#include "vtkPolyData.h"
 
 vtkStandardNewMacro(vtkSlicerPointsWidget);
 
 //----------------------------------------------------------------------
 vtkSlicerPointsWidget::vtkSlicerPointsWidget()
 {
-  this->SetEventTranslation(vtkCommand::RightButtonPressEvent, vtkEvent::NoModifier, WidgetPick);
 }
 
 //----------------------------------------------------------------------
@@ -50,15 +39,15 @@ vtkSlicerPointsWidget::~vtkSlicerPointsWidget()
 void vtkSlicerPointsWidget::CreateDefaultRepresentation(
   vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer)
 {
-  vtkSmartPointer<vtkSlicerAbstractWidgetRepresentation> rep = NULL;
+  vtkSmartPointer<vtkSlicerMarkupsWidgetRepresentation> rep = NULL;
   if (vtkMRMLSliceNode::SafeDownCast(viewNode))
-  {
+    {
     rep = vtkSmartPointer<vtkSlicerPointsRepresentation2D>::New();
-  }
+    }
   else
-  {
+    {
     rep = vtkSmartPointer<vtkSlicerPointsRepresentation3D>::New();
-  }
+    }
   this->SetRenderer(renderer);
   this->SetRepresentation(rep);
   rep->SetViewNode(viewNode);

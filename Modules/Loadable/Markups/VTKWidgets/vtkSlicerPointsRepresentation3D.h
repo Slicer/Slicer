@@ -21,28 +21,28 @@
  * @brief   Default representation for the points widget
  *
  * This class provides the default concrete representation for the
- * vtkSlicerAbstractWidget. See vtkSlicerAbstractWidget
+ * vtkMRMLAbstractWidget. See vtkMRMLAbstractWidget
  * for details.
  * @sa
- * vtkSlicerAbstractWidgetRepresentation3D vtkSlicerAbstractWidget
+ * vtkSlicerMarkupsWidgetRepresentation3D vtkMRMLAbstractWidget
 */
 
 #ifndef vtkSlicerPointsRepresentation3D_h
 #define vtkSlicerPointsRepresentation3D_h
 
 #include "vtkSlicerMarkupsModuleVTKWidgetsExport.h"
-#include "vtkSlicerAbstractWidgetRepresentation3D.h"
+#include "vtkSlicerMarkupsWidgetRepresentation3D.h"
 
 class vtkAppendPolyData;
 
-class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerPointsRepresentation3D : public vtkSlicerAbstractWidgetRepresentation3D
+class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerPointsRepresentation3D : public vtkSlicerMarkupsWidgetRepresentation3D
 {
 public:
   /// Instantiate this class.
   static vtkSlicerPointsRepresentation3D *New();
 
   /// Standard methods for instances of this class.
-  vtkTypeMacro(vtkSlicerPointsRepresentation3D,vtkSlicerAbstractWidgetRepresentation3D);
+  vtkTypeMacro(vtkSlicerPointsRepresentation3D,vtkSlicerMarkupsWidgetRepresentation3D);
 
 protected:
   vtkSlicerPointsRepresentation3D();

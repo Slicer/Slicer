@@ -126,6 +126,11 @@ public:
   void SetComponentIndex(int componentIndex) { this->ComponentIndex = componentIndex; }
   int GetComponentIndex() { return this->ComponentIndex; }
 
+  void SetRotation(double v) { this->Rotation = v; }
+  double GetRotation() { return this->Rotation; }
+  void SetLastRotation(double v) { this->LastRotation = v; }
+  double GetLastRotation() { return this->LastRotation; }
+
   /// Set Modifiers and Key... attributes from interactor
   void SetAttributesFromInteractor(vtkRenderWindowInteractor* interactor)
     {
@@ -145,6 +150,9 @@ public:
     this->KeyCode = interactor->GetKeyCode();
     this->KeySym = (interactor->GetKeySym() ? interactor->GetKeySym() : "");
     this->KeyRepeatCount = interactor->GetRepeatCount();
+
+    this->Rotation = interactor->GetRotation();
+    this->LastRotation = interactor->GetLastRotation();
     }
 
 protected:
@@ -161,6 +169,10 @@ protected:
   char KeyCode;
   int KeyRepeatCount;
   std::string KeySym;
+
+  // MacOSX touchpad events
+  double Rotation;
+  double LastRotation;
 
   bool Equivalent(const vtkEventData *e) const override
     {
@@ -190,6 +202,8 @@ protected:
     this->KeyRepeatCount = 0;
     this->KeyCode = 0;
     this->ViewNode = nullptr;
+    this->Rotation = 0.0;
+    this->LastRotation = 0.0;
     }
 
   ~vtkMRMLInteractionEventData() override {}

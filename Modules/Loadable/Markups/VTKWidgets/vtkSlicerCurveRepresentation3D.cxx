@@ -20,8 +20,8 @@
 
 #include "vtkCellLocator.h"
 #include "vtkCleanPolyData.h"
-#include "vtkOpenGLPolyDataMapper.h"
-#include "vtkOpenGLActor.h"
+#include "vtkPolyDataMapper.h"
+#include "vtkActor.h"
 #include "vtkActor2D.h"
 #include "vtkAssemblyPath.h"
 #include "vtkRenderer.h"
@@ -47,11 +47,10 @@
 #include "vtkCellArray.h"
 #include "vtkSphereSource.h"
 #include "vtkPropPicker.h"
-#include "vtkPickingManager.h"
 #include "vtkAppendPolyData.h"
 #include "vtkStringArray.h"
 #include "vtkTubeFilter.h"
-#include "vtkOpenGLTextActor.h"
+#include "vtkTextActor.h"
 #include "cmath"
 #include "vtkTextProperty.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
@@ -67,10 +66,10 @@ vtkSlicerCurveRepresentation3D::vtkSlicerCurveRepresentation3D()
   this->TubeFilter->SetNumberOfSides(20);
   this->TubeFilter->SetRadius(1);
 
-  this->LineMapper = vtkSmartPointer<vtkOpenGLPolyDataMapper>::New();
+  this->LineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
   this->LineMapper->SetInputConnection(this->TubeFilter->GetOutputPort());
 
-  this->LineActor = vtkSmartPointer<vtkOpenGLActor>::New();
+  this->LineActor = vtkSmartPointer<vtkActor>::New();
   this->LineActor->SetMapper(this->LineMapper);
   this->LineActor->SetProperty(this->GetControlPointsPipeline(Unselected)->Property);
 
@@ -216,13 +215,15 @@ int vtkSlicerCurveRepresentation3D::RenderTranslucentPolygonalGeometry(
 //-----------------------------------------------------------------------------
 vtkTypeBool vtkSlicerCurveRepresentation3D::HasTranslucentPolygonalGeometry()
 {
-  int result=0;
-  result |= this->Superclass::HasTranslucentPolygonalGeometry();
-  if (this->LineActor->GetVisibility())
+  if (this->Superclass::HasTranslucentPolygonalGeometry())
     {
-    result |= this->LineActor->HasTranslucentPolygonalGeometry();
+    return true;
     }
-  return result;
+  if (this->LineActor->GetVisibility() && this->LineActor->HasTranslucentPolygonalGeometry())
+    {
+    return true;
+    }
+  return false;
 }
 
 //----------------------------------------------------------------------

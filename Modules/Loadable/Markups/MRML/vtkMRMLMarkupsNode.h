@@ -245,6 +245,9 @@ public:
   /// Deprecated. Use GetNthControlPointPositionVector() method instead.
   vtkVector3d GetMarkupPointVector(int markupIndex, int) { return this->GetNthControlPointPositionVector(markupIndex); };
 
+  /// Deprecated. Use GetNthControlPointPosition method instead.
+  void GetMarkupPoint(int markupIndex, int pointIndex, double point[3]);
+
   /// Get the position of the Nth control point
   /// setting the elements of point
   void GetNthControlPointPosition(int pointIndex, double point[3]);

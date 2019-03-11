@@ -31,6 +31,7 @@
 #include <vtkMRMLLayoutLogic.h>
 #include <vtkMRMLLayoutNode.h>
 #include <vtkMRMLScene.h>
+#include <vtkMRMLSliceViewDisplayableManagerFactory.h>
 
 // VTK includes
 #include <vtkNew.h>
@@ -59,6 +60,7 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
   qMRMLLayoutManager* layoutManager = new qMRMLLayoutManager(&w, &w);
 
   vtkNew<vtkMRMLApplicationLogic> applicationLogic;
+  vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->SetMRMLApplicationLogic(applicationLogic);
 
   {
     vtkNew<vtkMRMLScene> scene;

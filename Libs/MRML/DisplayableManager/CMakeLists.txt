@@ -105,6 +105,12 @@ set(KIT_SRCS
   vtkSliceViewInteractorStyle.cxx
   vtkThreeDViewInteractorStyle.cxx
 
+  # Widgets
+  vtkMRMLAbstractWidget.cxx
+  vtkMRMLAbstractWidgetRepresentation.cxx
+  vtkSliceIntersectionWidget.cxx
+  vtkSliceIntersectionRepresentation2D.cxx
+
   # Proxy classes
   vtkMRMLLightBoxRendererManagerProxy.cxx
   )

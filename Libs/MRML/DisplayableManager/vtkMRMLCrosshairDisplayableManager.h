@@ -43,6 +43,12 @@ public:
   // Utility functions (used by 2D and 3D crosshair displayable managers)
   static vtkMRMLCrosshairNode* FindCrosshairNode(vtkMRMLScene* scene);
 
+  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &closestDistance2) VTK_OVERRIDE;
+  bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) VTK_OVERRIDE;
+
+  void SetActionsEnabled(int actions);
+  int GetActionsEnabled();
+
 protected:
   vtkMRMLCrosshairDisplayableManager();
   virtual ~vtkMRMLCrosshairDisplayableManager();

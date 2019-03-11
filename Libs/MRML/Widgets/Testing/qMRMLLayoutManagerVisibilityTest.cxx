@@ -38,6 +38,7 @@
 #include <vtkMRMLLayoutNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceNode.h>
+#include <vtkMRMLSliceViewDisplayableManagerFactory.h>
 #include <vtkMRMLViewNode.h>
 
 // VTK includes
@@ -384,6 +385,7 @@ int qMRMLLayoutManagerVisibilityTest(int argc, char * argv[] )
   qMRMLLayoutManager layoutManager(&w, &w);
 
   vtkNew<vtkMRMLApplicationLogic> applicationLogic;
+  vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->SetMRMLApplicationLogic(applicationLogic);
 
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkMRMLLayoutNode> layoutNode;

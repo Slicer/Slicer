@@ -58,8 +58,8 @@
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
-#include <vtkSlicerAbstractWidgetRepresentation2D.h>
-#include <vtkSlicerAbstractWidget.h>
+#include <vtkSlicerMarkupsWidgetRepresentation2D.h>
+#include <vtkSlicerMarkupsWidget.h>
 #include <vtkSphereSource.h>
 #include <vtkTextProperty.h>
 #include <vtkWidgetRepresentation.h>
@@ -241,7 +241,7 @@ void vtkMRMLMarkupsDisplayableManager::UpdateFromMRML()
       // display node is not in the scene anymore, delete the widget
       vtkMRMLMarkupsDisplayableManagerHelper::DisplayNodeToWidgetIt widgetIteratorToRemove = widgetIterator;
       ++widgetIterator;
-      vtkSlicerAbstractWidget* widgetToRemove = widgetIteratorToRemove->second;
+      vtkSlicerMarkupsWidget* widgetToRemove = widgetIteratorToRemove->second;
       this->Helper->DeleteWidget(widgetToRemove);
       this->Helper->MarkupsDisplayNodesToWidgets.erase(widgetIteratorToRemove);
       }
@@ -285,7 +285,7 @@ void vtkMRMLMarkupsDisplayableManager
     for (int displayNodeIndex = 0; displayNodeIndex < markupsNode->GetNumberOfDisplayNodes(); displayNodeIndex++)
       {
       vtkMRMLMarkupsDisplayNode* displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(markupsNode->GetNthDisplayNode(displayNodeIndex));
-      vtkSlicerAbstractWidget *widget = this->Helper->GetWidget(displayNode);
+      vtkSlicerMarkupsWidget *widget = this->Helper->GetWidget(displayNode);
       if (!widget)
         {
         // if a new display node is added or display node view node IDs are changed then we may need to create a new widget
@@ -317,7 +317,7 @@ void vtkMRMLMarkupsDisplayableManager
       for (vtkMRMLMarkupsDisplayableManagerHelper::DisplayNodeToWidgetIt widgetIterator = this->Helper->MarkupsDisplayNodesToWidgets.begin();
         widgetIterator != this->Helper->MarkupsDisplayNodesToWidgets.end(); ++widgetIterator)
         {
-        vtkSlicerAbstractWidget* widget = widgetIterator->second;
+        vtkSlicerMarkupsWidget* widget = widgetIterator->second;
         if (!widget)
           {
           continue;
@@ -505,7 +505,7 @@ void vtkMRMLMarkupsDisplayableManager::OnMRMLSliceNodeModifiedEvent()
   while(it != this->Helper->MarkupsDisplayNodesToWidgets.end())
     {
     // we loop through all widgets
-    vtkSlicerAbstractWidget* widget = (it->second);
+    vtkSlicerMarkupsWidget* widget = (it->second);
     widget->UpdateFromMRML(this->SliceNode, vtkCommand::ModifiedEvent);
     if (widget->GetNeedToRender())
       {
@@ -529,7 +529,7 @@ void vtkMRMLMarkupsDisplayableManager::OnInteractorStyleEvent(int eventid)
 }
 
 //---------------------------------------------------------------------------
-vtkSlicerAbstractWidget* vtkMRMLMarkupsDisplayableManager::GetWidget(vtkMRMLMarkupsDisplayNode * node)
+vtkSlicerMarkupsWidget* vtkMRMLMarkupsDisplayableManager::GetWidget(vtkMRMLMarkupsDisplayNode * node)
 {
   return this->Helper->GetWidget(node);
 }
@@ -599,15 +599,15 @@ vtkMRMLMarkupsNode* vtkMRMLMarkupsDisplayableManager::CreateNewMarkupsNode(
 }
 
 //---------------------------------------------------------------------------
-vtkSlicerAbstractWidget* vtkMRMLMarkupsDisplayableManager::FindClosestWidget(vtkMRMLInteractionEventData *callData, double &closestDistance2)
+vtkSlicerMarkupsWidget* vtkMRMLMarkupsDisplayableManager::FindClosestWidget(vtkMRMLInteractionEventData *callData, double &closestDistance2)
 {
-  vtkSlicerAbstractWidget* closestWidget = NULL;
+  vtkSlicerMarkupsWidget* closestWidget = NULL;
   closestDistance2 = VTK_DOUBLE_MAX;
 
   for (vtkMRMLMarkupsDisplayableManagerHelper::DisplayNodeToWidgetIt widgetIterator = this->Helper->MarkupsDisplayNodesToWidgets.begin();
     widgetIterator != this->Helper->MarkupsDisplayNodesToWidgets.end(); ++widgetIterator)
     {
-    vtkSlicerAbstractWidget* widget = widgetIterator->second;
+    vtkSlicerMarkupsWidget* widget = widgetIterator->second;
     if (!widget)
       {
       continue;
@@ -630,12 +630,12 @@ bool vtkMRMLMarkupsDisplayableManager::CanProcessInteractionEvent(vtkMRMLInterac
 {
   // New point can be placed anywhere
   int eventid = eventData->GetType();
-  if ( eventid == vtkCommand::MouseMoveEvent
-    || eventid == vtkCommand::LeftButtonPressEvent
+  if ( (eventid == vtkCommand::MouseMoveEvent && eventData->GetModifiers() == vtkEvent::NoModifier)
+    /*|| (eventid == vtkCommand::LeftButtonPressEvent && eventData->GetModifiers() == vtkEvent::NoModifier)
     || eventid == vtkCommand::LeftButtonReleaseEvent
     || eventid == vtkCommand::RightButtonReleaseEvent
     || eventid == vtkCommand::EnterEvent
-    || eventid == vtkCommand::LeaveEvent)
+    || eventid == vtkCommand::LeaveEvent*/)
     {
     vtkMRMLInteractionNode *interactionNode = this->GetInteractionNode();
     vtkMRMLSelectionNode *selectionNode = this->GetSelectionNode();
@@ -696,8 +696,10 @@ bool vtkMRMLMarkupsDisplayableManager::CanProcessInteractionEvent(vtkMRMLInterac
     && eventid == vtkCommand::MouseMoveEvent)
     {
     // mouse is moved away from the widget -> deactivate
-    closestDistance2 = 0.0;
-    return this->LastActiveWidget;
+    //closestDistance2 = 0.0;
+    //return this->LastActiveWidget;
+    this->LastActiveWidget->Leave();
+    this->LastActiveWidget = NULL;
     }
 
   return canProcess;
@@ -722,13 +724,13 @@ bool vtkMRMLMarkupsDisplayableManager::ProcessInteractionEvent(vtkMRMLInteractio
     }
 
   // Find/create active widget
-  vtkSlicerAbstractWidget* activeWidget = nullptr;
+  vtkSlicerMarkupsWidget* activeWidget = nullptr;
   if (this->GetInteractionNode()->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place)
     {
     activeWidget = this->GetWidgetForPlacement();
     if (activeWidget)
       {
-      activeWidget->SetWidgetState(vtkSlicerAbstractWidget::Define);
+      activeWidget->SetWidgetState(vtkSlicerMarkupsWidget::WidgetStateDefine);
       }
     }
   else
@@ -801,7 +803,7 @@ int vtkMRMLMarkupsDisplayableManager::GetCurrentInteractionMode()
 }
 
 //---------------------------------------------------------------------------
-vtkSlicerAbstractWidget* vtkMRMLMarkupsDisplayableManager::GetWidgetForPlacement()
+vtkSlicerMarkupsWidget* vtkMRMLMarkupsDisplayableManager::GetWidgetForPlacement()
 {
   if (this->GetCurrentInteractionMode() != vtkMRMLInteractionNode::Place)
     {
@@ -848,7 +850,7 @@ vtkSlicerAbstractWidget* vtkMRMLMarkupsDisplayableManager::GetWidgetForPlacement
     if (activeMarkupsNode->GetNumberOfControlPoints() == activeMarkupsNode->GetMaximumNumberOfControlPoints())
       {
       // one more point than the maximum
-      vtkSlicerAbstractWidget *slicerWidget = this->Helper->GetWidget(activeMarkupsNode);
+      vtkSlicerMarkupsWidget *slicerWidget = this->Helper->GetWidget(activeMarkupsNode);
       if (slicerWidget && !slicerWidget->IsPointPreviewed())
         {
         // no preview is shown, so the widget is actually complete
@@ -873,7 +875,7 @@ vtkSlicerAbstractWidget* vtkMRMLMarkupsDisplayableManager::GetWidgetForPlacement
     {
     return nullptr;
     }
-  vtkSlicerAbstractWidget *slicerWidget = this->Helper->GetWidget(activeMarkupsNode);
+  vtkSlicerMarkupsWidget *slicerWidget = this->Helper->GetWidget(activeMarkupsNode);
   return slicerWidget;
 }
 
@@ -900,7 +902,7 @@ bool vtkMRMLMarkupsDisplayableManager::GetInteractive()
 }
 
 //---------------------------------------------------------------------------
-vtkSlicerAbstractWidget * vtkMRMLMarkupsDisplayableManager::CreateWidget(vtkMRMLMarkupsDisplayNode* markupsDisplayNode)
+vtkSlicerMarkupsWidget * vtkMRMLMarkupsDisplayableManager::CreateWidget(vtkMRMLMarkupsDisplayNode* markupsDisplayNode)
 {
   vtkMRMLMarkupsNode* markupsNode = markupsDisplayNode->GetMarkupsNode();
   if (!markupsNode)
@@ -910,7 +912,7 @@ vtkSlicerAbstractWidget * vtkMRMLMarkupsDisplayableManager::CreateWidget(vtkMRML
   vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(this->GetMRMLDisplayableNode());
   vtkRenderer* renderer = this->GetRenderer();
 
-  vtkSlicerAbstractWidget* widget = nullptr;
+  vtkSlicerMarkupsWidget* widget = nullptr;
   if (vtkMRMLMarkupsAngleNode::SafeDownCast(markupsNode))
     {
     widget = vtkSlicerAngleWidget::New();

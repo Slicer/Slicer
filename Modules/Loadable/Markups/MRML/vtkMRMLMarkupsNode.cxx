@@ -193,9 +193,10 @@ void vtkMRMLMarkupsNode::Copy(vtkMRMLNode *anode)
   int numMarkups = node->GetNumberOfControlPoints();
   for (int n = 0; n < numMarkups; n++)
     {
-    ControlPoint *controlPoint = node->GetNthControlPoint(n);
-    int controlPointIndex = this->AddControlPoint(controlPoint);
-    *this->GetNthControlPoint(controlPointIndex) = *controlPoint;
+    ControlPoint* controlPoint = node->GetNthControlPoint(n);
+    ControlPoint* controlPointCopy = new ControlPoint;
+    (*controlPointCopy) = (*controlPoint);
+    int controlPointIndex = this->AddControlPoint(controlPointCopy);
     }
 
   this->EndModify(disabledModify);
@@ -1726,4 +1727,21 @@ void vtkMRMLMarkupsNode::GetBounds(double bounds[6])
     box.AddPoint(markupPos);
     }
   box.GetBounds(bounds);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::GetMarkupPoint(int markupIndex, int pointIndex, double point[3])
+{
+  if (markupIndex == 0)
+    {
+    this->GetNthControlPointPosition(pointIndex, point);
+    }
+  else if (pointIndex == 0)
+    {
+    this->GetNthControlPointPosition(markupIndex, point);
+    }
+  else
+    {
+    vtkErrorMacro("vtkMRMLMarkupsNode::GetMarkupPoint failed: only one markup with mutiple control points is supported.");
+    }
 }

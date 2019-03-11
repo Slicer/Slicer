@@ -18,7 +18,7 @@
 
 #include "vtkSlicerAngleRepresentation2D.h"
 #include "vtkCleanPolyData.h"
-#include "vtkOpenGLPolyDataMapper2D.h"
+#include "vtkPolyDataMapper2D.h"
 #include "vtkActor2D.h"
 #include "vtkAssemblyPath.h"
 #include "vtkRenderer.h"
@@ -46,9 +46,8 @@
 #include "vtkTextProperty.h"
 #include "vtkTubeFilter.h"
 #include "vtkStringArray.h"
-#include "vtkPickingManager.h"
 #include "vtkVectorText.h"
-#include "vtkOpenGLTextActor.h"
+#include "vtkTextActor.h"
 #include "vtkArcSource.h"
 #include "cmath"
 #include "vtkMRMLMarkupsDisplayNode.h"
@@ -72,10 +71,10 @@ vtkSlicerAngleRepresentation2D::vtkSlicerAngleRepresentation2D()
   this->ArcTubeFilter->SetNumberOfSides(20);
   this->ArcTubeFilter->SetRadius(1);
 
-  this->LineMapper = vtkSmartPointer<vtkOpenGLPolyDataMapper2D>::New();
+  this->LineMapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
   this->LineMapper->SetInputConnection(this->TubeFilter->GetOutputPort());
 
-  this->ArcMapper = vtkSmartPointer<vtkOpenGLPolyDataMapper2D>::New();
+  this->ArcMapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
   this->ArcMapper->SetInputConnection(this->ArcTubeFilter->GetOutputPort());
 
   this->LineActor = vtkSmartPointer<vtkActor2D>::New();
@@ -86,7 +85,7 @@ vtkSlicerAngleRepresentation2D::vtkSlicerAngleRepresentation2D()
   this->ArcActor->SetMapper(this->ArcMapper);
   this->ArcActor->SetProperty(this->GetControlPointsPipeline(Unselected)->Property);
 
-  this->TextActor = vtkSmartPointer<vtkOpenGLTextActor>::New();
+  this->TextActor = vtkSmartPointer<vtkTextActor>::New();
   this->TextActor->SetInput("0");
   this->TextActor->SetTextProperty(this->GetControlPointsPipeline(Unselected)->TextProperty);
 
@@ -380,22 +379,23 @@ int vtkSlicerAngleRepresentation2D::RenderTranslucentPolygonalGeometry(
 //-----------------------------------------------------------------------------
 vtkTypeBool vtkSlicerAngleRepresentation2D::HasTranslucentPolygonalGeometry()
 {
-  int result=0;
-  if (this->LineActor->GetVisibility())
+  if (this->Superclass::HasTranslucentPolygonalGeometry())
     {
-    result |= this->LineActor->HasTranslucentPolygonalGeometry();
+    return true;
     }
-  if (this->ArcActor->GetVisibility())
+  if (this->LineActor->GetVisibility() && this->LineActor->HasTranslucentPolygonalGeometry())
     {
-    result |= this->ArcActor->HasTranslucentPolygonalGeometry();
+    return true;
     }
-  if (this->TextActor->GetVisibility())
+  if (this->ArcActor->GetVisibility() && this->ArcActor->HasTranslucentPolygonalGeometry())
     {
-    result |= this->TextActor->HasTranslucentPolygonalGeometry();
+    return true;
     }
-  result |= this->Superclass::HasTranslucentPolygonalGeometry();
-
-  return result;
+  if (this->TextActor->GetVisibility() && this->TextActor->HasTranslucentPolygonalGeometry())
+    {
+    return true;
+    }
+  return false;
 }
 
 //----------------------------------------------------------------------

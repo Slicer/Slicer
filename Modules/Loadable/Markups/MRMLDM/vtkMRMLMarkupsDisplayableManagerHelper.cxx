@@ -31,8 +31,8 @@
 #include <vtkProperty.h>
 #include <vtkPickingManager.h>
 #include <vtkRenderWindowInteractor.h>
-#include <vtkSlicerAbstractWidgetRepresentation.h>
-#include <vtkSlicerAbstractWidget.h>
+#include <vtkSlicerMarkupsWidgetRepresentation.h>
+#include <vtkSlicerMarkupsWidget.h>
 #include <vtkSlicerPointsWidget.h>
 #include <vtkSlicerLineWidget.h>
 #include <vtkSlicerAngleWidget.h>
@@ -92,12 +92,12 @@ void vtkMRMLMarkupsDisplayableManagerHelper::PrintSelf(ostream& os, vtkIndent in
     if (widgetIterator->second &&
       widgetIterator->second->GetRepresentation())
       {
-      vtkSlicerAbstractWidgetRepresentation * abstractRepresentation =
-        vtkSlicerAbstractWidgetRepresentation::SafeDownCast(widgetIterator->second->GetRepresentation());
+      vtkSlicerMarkupsWidgetRepresentation * rep =
+        vtkSlicerMarkupsWidgetRepresentation::SafeDownCast(widgetIterator->second->GetRepresentation());
       int numberOfNodes = 0;
-      if (abstractRepresentation)
+      if (rep)
         {
-        numberOfNodes = abstractRepresentation->GetMarkupsNode()->GetNumberOfControlPoints();
+        numberOfNodes = rep->GetMarkupsNode()->GetNumberOfControlPoints();
         }
       else
         {
@@ -110,7 +110,7 @@ void vtkMRMLMarkupsDisplayableManagerHelper::PrintSelf(ostream& os, vtkIndent in
 
 
 //---------------------------------------------------------------------------
-vtkSlicerAbstractWidget* vtkMRMLMarkupsDisplayableManagerHelper::GetWidget(vtkMRMLMarkupsNode * markupsNode)
+vtkSlicerMarkupsWidget* vtkMRMLMarkupsDisplayableManagerHelper::GetWidget(vtkMRMLMarkupsNode * markupsNode)
 {
   if (!markupsNode)
     {
@@ -140,7 +140,7 @@ vtkSlicerAbstractWidget* vtkMRMLMarkupsDisplayableManagerHelper::GetWidget(vtkMR
 }
 
 //---------------------------------------------------------------------------
-vtkSlicerAbstractWidget * vtkMRMLMarkupsDisplayableManagerHelper::GetWidget(vtkMRMLMarkupsDisplayNode * node)
+vtkSlicerMarkupsWidget * vtkMRMLMarkupsDisplayableManagerHelper::GetWidget(vtkMRMLMarkupsDisplayNode * node)
 {
   if (!node)
     {
@@ -253,7 +253,7 @@ void vtkMRMLMarkupsDisplayableManagerHelper::RemoveMarkupsNode(vtkMRMLMarkupsNod
       // display node of the node that is being removed
       vtkMRMLMarkupsDisplayableManagerHelper::DisplayNodeToWidgetIt widgetIteratorToRemove = widgetIterator;
       ++widgetIterator;
-      vtkSlicerAbstractWidget* widgetToRemove = widgetIteratorToRemove->second;
+      vtkSlicerMarkupsWidget* widgetToRemove = widgetIteratorToRemove->second;
       this->DeleteWidget(widgetToRemove);
       this->MarkupsDisplayNodesToWidgets.erase(widgetIteratorToRemove);
       }
@@ -290,7 +290,7 @@ void vtkMRMLMarkupsDisplayableManagerHelper::AddDisplayNode(vtkMRMLMarkupsDispla
     return;
     }
 
-  vtkSlicerAbstractWidget* newWidget = this->DisplayableManager->CreateWidget(markupsDisplayNode);
+  vtkSlicerMarkupsWidget* newWidget = this->DisplayableManager->CreateWidget(markupsDisplayNode);
   if (!newWidget)
     {
     vtkErrorMacro("vtkMRMLMarkupsDisplayableManager2D: Failed to create widget");
@@ -325,14 +325,14 @@ void vtkMRMLMarkupsDisplayableManagerHelper::RemoveDisplayNode(vtkMRMLMarkupsDis
     return;
     }
 
-  vtkSlicerAbstractWidget* widget = (displayNodeIt->second);
+  vtkSlicerMarkupsWidget* widget = (displayNodeIt->second);
   this->DeleteWidget(widget);
 
   this->MarkupsDisplayNodesToWidgets.erase(markupsDisplayNode);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMarkupsDisplayableManagerHelper::DeleteWidget(vtkSlicerAbstractWidget* widget)
+void vtkMRMLMarkupsDisplayableManagerHelper::DeleteWidget(vtkSlicerMarkupsWidget* widget)
 {
   if (!widget)
     {
