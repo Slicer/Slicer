@@ -802,7 +802,7 @@ void qMRMLSegmentEditorWidgetPrivate::setEffectCursor(qSlicerSegmentEditorAbstra
       }
     else
       {
-      sliceWidget->sliceView()->unsetCursor();
+      sliceWidget->sliceView()->unsetViewCursor();
       }
     }
   for (int threeDViewId = 0; threeDViewId < layoutManager->threeDViewCount(); ++threeDViewId)
@@ -818,7 +818,7 @@ void qMRMLSegmentEditorWidgetPrivate::setEffectCursor(qSlicerSegmentEditorAbstra
       }
     else
       {
-      threeDWidget->threeDView()->unsetCursor();
+      threeDWidget->threeDView()->unsetViewCursor();
       }
     }
 }
