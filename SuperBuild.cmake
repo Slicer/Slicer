@@ -265,9 +265,10 @@ set(BRAINSTools_options
   USE_BRAINSDemonWarp:BOOL=ON
   USE_BRAINSRefacer:BOOL=OFF
   )
+
 Slicer_Remote_Add(BRAINSTools
-  GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/Slicer/BRAINSTools.git"
-  GIT_TAG "87da22c2e365da72d3c0dea2634c4efa73dbeab3" # 2017-12-09
+  GIT_REPOSITORY ${EP_GIT_PROTOCOL}://github.com/Slicer/BRAINSTools.git
+  GIT_TAG 2af1e31a8ead1471ae33656cf6b02dbb27feb217 # slicer-2019-03-07-v5.0.0-2af1e31
   LICENSE_FILES "http://www.apache.org/licenses/LICENSE-2.0.txt"
   OPTION_NAME Slicer_BUILD_BRAINSTOOLS
   OPTION_DEPENDS "Slicer_BUILD_CLI_SUPPORT;Slicer_BUILD_CLI"

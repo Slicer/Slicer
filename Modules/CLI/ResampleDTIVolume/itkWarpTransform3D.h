@@ -20,6 +20,7 @@ public:
   typedef WarpTransform3D                                    Self;
   typedef Transform<FieldDataType, 3, 3>                     Superclass;
   typedef typename Superclass::JacobianType                  JacobianType;
+  typedef typename Superclass::JacobianPositionType          JacobianPositionType;
   typedef typename Superclass::InputPointType                InputPointType;
   typedef typename Superclass::InputVectorType               InputVectorType;
   typedef typename Superclass::InputVnlVectorType            InputVnlVectorType;
@@ -49,11 +50,19 @@ public:
 
   OutputPointType TransformPoint( const InputPointType & inputPoint ) const ITK_OVERRIDE;
 
-  virtual void ComputeJacobianWithRespectToParameters(const InputPointType  & p, JacobianType & jacobian ) const ITK_OVERRIDE;
+  virtual void ComputeJacobianWithRespectToParameters(const InputPointType  & p,
+      JacobianType & jacobian ) const ITK_OVERRIDE;
 
   virtual void ComputeJacobianWithRespectToPosition(
     const InputPointType & itkNotUsed(x),
     JacobianType & itkNotUsed(j) ) const ITK_OVERRIDE
+  {
+    itkExceptionMacro("ComputeJacobianWithRespectToPosition is not implemented for WarpTransform3D");
+  }
+
+  virtual void ComputeJacobianWithRespectToPosition(
+    const InputPointType & itkNotUsed(x),
+    JacobianPositionType & itkNotUsed(j) ) const ITK_OVERRIDE
   {
     itkExceptionMacro("ComputeJacobianWithRespectToPosition is not implemented for WarpTransform3D");
   }

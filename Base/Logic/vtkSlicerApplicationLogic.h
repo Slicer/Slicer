@@ -28,7 +28,7 @@
 #include <vtkCollection.h>
 
 // ITK includes
-#include <itkMultiThreader.h>
+#include <itkPlatformMultiThreader.h>
 #include <itkMutexLock.h>
 
 class vtkMRMLSelectionNode;
@@ -216,11 +216,11 @@ protected:
   vtkSlicerApplicationLogic();
   ~vtkSlicerApplicationLogic();
 
-  /// Callback used by a MultiThreader to start a processing thread
-  static ITK_THREAD_RETURN_TYPE ProcessingThreaderCallback( void * );
+   /// Callback used by a MultiThreader to start a processing thread
+  static itk::ITK_THREAD_RETURN_TYPE ProcessingThreaderCallback( void * );
 
-  /// Callback used by a MultiThreader to start a networking thread
-  static ITK_THREAD_RETURN_TYPE NetworkingThreaderCallback( void * );
+   /// Callback used by a MultiThreader to start a networking thread
+  static itk::ITK_THREAD_RETURN_TYPE NetworkingThreaderCallback( void * );
 
   /// Task processing loop that is run in the processing thread
   void ProcessProcessingTasks();
@@ -239,7 +239,7 @@ private:
   vtkSlicerApplicationLogic(const vtkSlicerApplicationLogic&);
   void operator=(const vtkSlicerApplicationLogic&);
 
-  itk::MultiThreader::Pointer ProcessingThreader;
+  itk::PlatformMultiThreader::Pointer ProcessingThreader;
   itk::MutexLock::Pointer ProcessingThreadActiveLock;
   itk::MutexLock::Pointer ProcessingTaskQueueLock;
   itk::MutexLock::Pointer ModifiedQueueActiveLock;

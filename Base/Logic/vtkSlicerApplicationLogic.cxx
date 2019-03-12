@@ -66,7 +66,7 @@ vtkStandardNewMacro(vtkSlicerApplicationLogic);
 //----------------------------------------------------------------------------
 vtkSlicerApplicationLogic::vtkSlicerApplicationLogic()
 {
-  this->ProcessingThreader = itk::MultiThreader::New();
+  this->ProcessingThreader = itk::PlatformMultiThreader::New();
   this->ProcessingThreadId = -1;
   this->ProcessingThreadActive = false;
   this->ProcessingThreadActiveLock = itk::MutexLock::New();
@@ -279,7 +279,7 @@ void vtkSlicerApplicationLogic::TerminateProcessingThread()
 }
 
 //----------------------------------------------------------------------------
-ITK_THREAD_RETURN_TYPE
+itk::ITK_THREAD_RETURN_TYPE
 vtkSlicerApplicationLogic
 ::ProcessingThreaderCallback( void *arg )
 {
@@ -305,13 +305,13 @@ vtkSlicerApplicationLogic
   // pull out the reference to the appLogic
   vtkSlicerApplicationLogic *appLogic
     = (vtkSlicerApplicationLogic*)
-    (((itk::MultiThreader::ThreadInfoStruct *)(arg))->UserData);
+    (((itk::PlatformMultiThreader::WorkUnitInfo *)(arg))->UserData);
 
   // Tell the app to start processing any tasks slated for the
   // processing thread
   appLogic->ProcessProcessingTasks();
 
-  return ITK_THREAD_RETURN_VALUE;
+  return itk::ITK_THREAD_RETURN_DEFAULT_VALUE;
 }
 
 //----------------------------------------------------------------------------
@@ -361,7 +361,7 @@ void vtkSlicerApplicationLogic::ProcessProcessingTasks()
     }
 }
 
-ITK_THREAD_RETURN_TYPE
+itk::ITK_THREAD_RETURN_TYPE
 vtkSlicerApplicationLogic
 ::NetworkingThreaderCallback( void *arg )
 {
@@ -387,13 +387,13 @@ vtkSlicerApplicationLogic
   // pull out the reference to the appLogic
   vtkSlicerApplicationLogic *appLogic
     = (vtkSlicerApplicationLogic*)
-    (((itk::MultiThreader::ThreadInfoStruct *)(arg))->UserData);
+    (((itk::PlatformMultiThreader::WorkUnitInfo *)(arg))->UserData);
 
   // Tell the app to start processing any tasks slated for the
   // processing thread
   appLogic->ProcessNetworkingTasks();
 
-  return ITK_THREAD_RETURN_VALUE;
+  return itk::ITK_THREAD_RETURN_DEFAULT_VALUE;
 }
 
 //----------------------------------------------------------------------------

@@ -45,8 +45,13 @@ set(${PROJECT_NAME}_ITK_COMPONENTS
   ITKRegionGrowing
   ITKThresholding
   ITKVTK
+  # Needed for ITKv5 so that SimpleFastMutexLock is an alias to std::mutex in ITKv5
+  # once ITKv4 is not supported, then we can simply replace SimpleFastMutexLock with std::mutex
+  # the use the DeprecatedLib allows building without many preprocessor conditionals
+  # for ITKv5/ITKv4 differences.
+  ITKDeprecated
   )
-find_package(ITK 4.6 COMPONENTS ${${PROJECT_NAME}_ITK_COMPONENTS} REQUIRED)
+find_package(ITK 5.0 COMPONENTS ${${PROJECT_NAME}_ITK_COMPONENTS} REQUIRED)
 set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # See Libs/ITKFactoryRegistration/CMakeLists.txt
 list(APPEND ITK_LIBRARIES ITKFactoryRegistration)
 list(APPEND ITK_INCLUDE_DIRS ${ITKFactoryRegistration_INCLUDE_DIRS})
