@@ -5,7 +5,7 @@ There are many ways to contribute to Slicer, with varying levels of effort.  Do 
 look through the [documentation](https://www.slicer.org/wiki/Documentation/Nightly/Developers) first if something is unclear, and let us know how we can
 do better.
 
-  * Ask a question on the [slicer-devel email list](http://massmail.spl.harvard.edu/mailman/listinfo/slicer-devel)
+  * Ask a question on the [Slicer forum](https://discourse.slicer.org)
   * Submit a feature request or bug, or add to the discussion on the [Slicer issue tracker](http://na-mic.org/Mantis)
   * Submit a [Pull Request](https://github.com/Slicer/Slicer/pulls) to improve Slicer or its documentation
 
@@ -93,7 +93,7 @@ email.
 
 #### Decision-making process
 
-1. Given the topic of interest, initiate discussion on the [mailing list](http://massmail.spl.harvard.edu/mailman/listinfo/slicer-devel).
+1. Given the topic of interest, initiate discussion on the [Slicer forum](https://discourse.slicer.org).
 
 2. Identify a small circle of community members that are interested to study the
    topic in more depth.
