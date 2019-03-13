@@ -124,10 +124,8 @@ if(APPLE)
     endif()
   endif()
 
-  # Require minimum deployment target of 10.9. In 10.9 libc++ replaces libstdc++
-  # as the default runtime. Requiring this minimum ensures that all libraries
-  # use libc++.
-  set(required_deployment_target "10.9")
+  # Starting with 10.9, libc++ replaces libstdc++ as the default runtime.
+  set(required_deployment_target "10.11")
 
   if(CMAKE_OSX_DEPLOYMENT_TARGET VERSION_LESS ${required_deployment_target})
     message(FATAL_ERROR "CMAKE_OSX_DEPLOYMENT_TARGET must be ${required_deployment_target} or greater.")
