@@ -753,7 +753,7 @@ ImageToImageRegistrationHelper<TImage>
   typedef ResampleImageFilter<TImage, TImage, double>
   ResampleImageFilterType;
 
-  typename InterpolatorType::Pointer interpolator = ITK_NULLPTR;
+  typename InterpolatorType::Pointer interpolator = nullptr;
 
   switch( interpolationMethod )
     {

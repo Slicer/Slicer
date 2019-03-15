@@ -247,7 +247,7 @@ SetUpTransform( parameters & list,
           }
         else
           {
-          return ITK_NULLPTR;
+          return nullptr;
           }
         }
       }
@@ -340,7 +340,7 @@ SetTransformAndOrder( parameters & list,
             {
             std::cerr << "Transformation type not yet implemented"
                       << std::endl;
-            return ITK_NULLPTR;
+            return nullptr;
             }
           }
       }
@@ -351,7 +351,7 @@ SetTransformAndOrder( parameters & list,
         {
         std::cerr << "Error in the file containing the matrix transformation"
                   << std::endl;
-        return ITK_NULLPTR;
+        return nullptr;
         }
       }
     }
@@ -368,7 +368,7 @@ SetTransform( parameters & list,
               )
 {
   typedef itk::Transform<double, 3, 3> TransformType;
-  typename TransformType::Pointer transform = ITK_NULLPTR;
+  typename TransformType::Pointer transform = nullptr;
   if( list.transformationFile.compare( "" ) ) // Get transformation matrix from command line if no file given
     {
     if( !list.transformsOrder.compare( "input-to-output" ) )
@@ -500,7 +500,7 @@ SetAllTransform( parameters & list,
   if( nonRigidTransforms < 0 ) // The transform file contains a transform that is not handled by ResampleVolume2, it
                                // exits.
     {
-    return ITK_NULLPTR;
+    return nullptr;
     }
   if( list.deffield.compare( "" ) )
     {
@@ -642,7 +642,7 @@ SetAllTransform( parameters & list,
         std::cerr
         << "An affine or rigid transform was not convertible to itk::MatrixOffsetTransformBase< double , 3 , 3 >"
         << std::endl;
-        return ITK_NULLPTR;
+        return nullptr;
         }
       typename MatrixTransformType::Pointer localTransform;
       localTransform = static_cast<MatrixTransformType *>(transform.GetPointer() );
@@ -952,19 +952,19 @@ Transform3DPointer InverseTransform( const Transform3DPointer & transform )
         }
       else
         {
-        inverseTransform = ITK_NULLPTR;
+        inverseTransform = nullptr;
         }
       }
     }
   catch( ... )
     {
     std::cerr << "Exception Detected" << std::endl;
-    inverseTransform = ITK_NULLPTR;
+    inverseTransform = nullptr;
     }
   return inverseTransform;
 }
 
-// Read Measurement Frame and set it to identity if inverseTransform is not ITK_NULLPTR
+// Read Measurement Frame and set it to identity if inverseTransform is not nullptr
 itk::Matrix<double, 3, 3>
 ReadMeasurementFrame( itk::MetaDataDictionary & dico, const Transform3DPointer & inverseTransform )
 {
