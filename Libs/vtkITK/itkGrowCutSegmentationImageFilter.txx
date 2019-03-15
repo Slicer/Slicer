@@ -69,6 +69,11 @@ GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
   m_UnknownLabel = static_cast<OutputPixelType>( NumericTraits<OutputPixelType>::ZeroValue() );
 
   m_Radius.Fill(1);
+
+  // Explicitly disable MultiThreading to workaround issue https://issues.slicer.org/view.php?id=4679
+  // TODO: This class could be updated to use the ITKv5 dynamic threading system in the future
+  // See https://github.com/InsightSoftwareConsortium/ITK/blob/master/Documentation/ITK5MigrationGuide.md
+  this->DynamicMultiThreadingOff();
 }
 
 
@@ -478,6 +483,8 @@ MaskSegmentedImageByWeight( float confThresh)
 }
 
 
+// TODO: The class incorrectly overrides both: GenerateData and ThreadedGenerateData, this
+// should be fixed. See https://issues.slicer.org/view.php?id=4679
 template <class TInputImage, class TOutputImage, class TWeightPixelType>
 void
 GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
@@ -491,6 +498,12 @@ GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
   typename OutputImageType::Pointer output = this->GetOutput();
   this->Initialize(output);
 
+  // TODO: RunOneIteration does the opposite of what is intended.
+  // Superclass::GenerateData will call this class ThreadedGenerateData, so it will run multi-threaded.
+  // If m_RunOneIteration is false, ThreadedGenerateData is NOT called.
+  // To update to ITKv5, remove GenerateData, change the name of ThreadedGenerateData to
+  // DynamicThreadedGenerateData and that's it.
+  // Test if both implementations, GenerateData and ThreadedGenerateData and equivalent.
   if(m_RunOneIteration)
     {
     Superclass::GenerateData();
@@ -779,15 +792,10 @@ void GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
   outputImage->Graft(this->GetOutput() );
 
 
-  //ProgressReporter progress(this, threadID, outputRegionForThread.GetNumberOfPixels());
-
   //////////////////////////////////////////////////////////////////
 
   typename OutputImageType::IndexType regionStart = outputRegionForThread.GetIndex();
   typename OutputImageType::SizeType regionSize = outputRegionForThread.GetSize();
-
-  //std::cout<<" region "<<regionStart[0]<<" "<<regionStart[1]<<" "<<regionStart[2]<<" "<<threadId<<std::endl;
-  //std::cout<<" region size "<<regionSize[0]<<" "<<regionSize[1]<<" "<<regionSize[2]<<" "<<threadId<<std::endl;
 
   unsigned int Dimension = inputImage->GetImageDimension();
 
@@ -1041,9 +1049,6 @@ void GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
       }
     }
 
-  //std::cout<<" done in thread "<<threadId<<std::endl;
-  //time(&end);
-  //std::cout<<" time for grow cut update "<<difftime(end,start)<<std::endl;
 
 }
 

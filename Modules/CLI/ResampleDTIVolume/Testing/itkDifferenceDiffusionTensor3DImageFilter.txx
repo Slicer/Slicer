@@ -49,6 +49,14 @@ DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>
   m_IgnoreBoundaryPixels = false;
   m_MeasurementFrameValid.SetIdentity();
   m_MeasurementFrameTest.SetIdentity();
+
+  // Keep using the ITKv4 threading system.
+  // This class could be updated to use the ITKv5 dynamic threading system in the future
+  // Check the ITK migration guide:
+  // https://github.com/InsightSoftwareConsortium/ITK/blob/master/Documentation/ITK5MigrationGuide.md
+  // This class in particular does use threadId, so a more complex solution is needed
+  // Check the example of using std::atomic in the migration guide.
+  this->DynamicMultiThreadingOff();
 }
 
 // ----------------------------------------------------------------------------

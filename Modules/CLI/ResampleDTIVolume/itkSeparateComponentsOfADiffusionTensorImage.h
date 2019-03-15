@@ -61,7 +61,7 @@ public:
 protected:
   SeparateComponentsOfADiffusionTensorImage();
 
-  void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId ) ITK_OVERRIDE;
+  void DynamicThreadedGenerateData( const OutputImageRegionType & outputRegionForThread) override;
 
   void GenerateOutputInformation() ITK_OVERRIDE;
 

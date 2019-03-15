@@ -38,8 +38,7 @@ SeparateComponentsOfADiffusionTensorImage<TInput, TOutput>
 template <class TInput, class TOutput>
 void
 SeparateComponentsOfADiffusionTensorImage<TInput, TOutput>
-::ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread,
-                        ThreadIdType itkNotUsed(threadId) )
+::DynamicThreadedGenerateData( const OutputImageRegionType &outputRegionForThread)
   {
   InputIteratorType it( this->GetInput(), outputRegionForThread );
 
