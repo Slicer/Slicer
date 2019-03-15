@@ -196,7 +196,7 @@ void vtkMRMLMarkupsNode::Copy(vtkMRMLNode *anode)
     ControlPoint* controlPoint = node->GetNthControlPoint(n);
     ControlPoint* controlPointCopy = new ControlPoint;
     (*controlPointCopy) = (*controlPoint);
-    int controlPointIndex = this->AddControlPoint(controlPointCopy);
+    this->AddControlPoint(controlPointCopy);
     }
 
   this->EndModify(disabledModify);

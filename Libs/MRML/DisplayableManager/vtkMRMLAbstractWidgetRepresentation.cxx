@@ -183,7 +183,7 @@ void vtkMRMLAbstractWidgetRepresentation::AddActorsBounds(vtkBoundingBox& boundi
 
 //----------------------------------------------------------------------
 void vtkMRMLAbstractWidgetRepresentation::UpdateFromMRML(
-    vtkMRMLNode* vtkNotUsed(caller), unsigned long event, void *vtkNotUsed(callData))
+    vtkMRMLNode* vtkNotUsed(caller), unsigned long vtkNotUsed(event), void *vtkNotUsed(callData))
 {
 }
 

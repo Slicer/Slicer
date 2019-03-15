@@ -337,7 +337,7 @@ void vtkSliceIntersectionRepresentation2D::PrintSelf(ostream& os, vtkIndent inde
 
 //----------------------------------------------------------------------
 void vtkSliceIntersectionRepresentation2D::SliceNodeModifiedCallback(
-  vtkObject* caller, unsigned long eid, void* clientData, void* callData)
+  vtkObject* caller, unsigned long vtkNotUsed(eid), void* clientData, void* vtkNotUsed(callData))
 {
   vtkSliceIntersectionRepresentation2D* self = vtkSliceIntersectionRepresentation2D::SafeDownCast((vtkObject*)clientData);
 

@@ -253,13 +253,13 @@ unsigned long vtkMRMLAbstractWidget::TranslateInteractionEventToWidgetEvent(
 }
 
 //-----------------------------------------------------------------------------
-bool vtkMRMLAbstractWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &distance2)
+bool vtkMRMLAbstractWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventData* vtkNotUsed(eventData), double &vtkNotUsed(distance2))
 {
   return false;
 }
 
 //-----------------------------------------------------------------------------
-bool vtkMRMLAbstractWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
+bool vtkMRMLAbstractWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData* vtkNotUsed(eventData))
 {
   return false;
 }

@@ -474,7 +474,7 @@ double vtkSliceIntersectionWidget::GetSliceRotationAngleRad(double eventPos[2])
 
 
 //-------------------------------------------------------------------------
-bool vtkSliceIntersectionWidget::ProcessEndMouseDrag(vtkMRMLInteractionEventData* eventData)
+bool vtkSliceIntersectionWidget::ProcessEndMouseDrag(vtkMRMLInteractionEventData* vtkNotUsed(eventData))
 {
   if (this->WidgetState == WidgetStateIdle)
     {
@@ -523,7 +523,7 @@ void vtkSliceIntersectionWidget::SetMRMLApplicationLogic(vtkMRMLApplicationLogic
 }
 
 //----------------------------------------------------------------------------------
-void vtkSliceIntersectionWidget::SliceLogicsModifiedCallback(vtkObject* caller, unsigned long eid, void* clientData, void* callData)
+void vtkSliceIntersectionWidget::SliceLogicsModifiedCallback(vtkObject* vtkNotUsed(caller), unsigned long vtkNotUsed(eid), void* clientData, void* vtkNotUsed(callData))
 {
   vtkSliceIntersectionWidget* self = vtkSliceIntersectionWidget::SafeDownCast((vtkObject*)clientData);
   if (!self)
