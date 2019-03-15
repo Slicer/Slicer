@@ -51,7 +51,7 @@ vtkMRMLAbstractWidget::~vtkMRMLAbstractWidget()
 //----------------------------------------------------------------------
 void vtkMRMLAbstractWidget::SetEventTranslation(int widgetState, unsigned long interactionEvent, int modifiers, unsigned long widgetEvent)
 {
-  if (widgetState >= this->EventTranslators.size())
+  if (widgetState >= static_cast<int>(this->EventTranslators.size()))
     {
     this->EventTranslators.resize(widgetState +1);
     }
@@ -95,7 +95,7 @@ void vtkMRMLAbstractWidget::SetKeyboardEventTranslation(
   int widgetState, int modifier, char keyCode,
   int repeatCount, const char* keySym, unsigned long widgetEvent)
 {
-  if (widgetState >= this->EventTranslators.size())
+  if (widgetState >= static_cast<int>(this->EventTranslators.size()))
     {
     this->EventTranslators.resize(widgetState +1);
     }
@@ -179,7 +179,7 @@ unsigned long vtkMRMLAbstractWidget::TranslateInteractionEventToWidgetEvent(
     }
 
   // Try to process with a state-specific translator
-  if (this->WidgetState < this->EventTranslators.size())
+  if (this->WidgetState < static_cast<int>(this->EventTranslators.size()))
     {
     vtkWidgetEventTranslator* translator = this->EventTranslators[this->WidgetState];
     if (translator)

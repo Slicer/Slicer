@@ -593,7 +593,7 @@ double* vtkSliceIntersectionRepresentation2D::GetSliceIntersectionPoint()
     {
     return this->SliceIntersectionPoint;
     }
-  for (int slice1Index = 0; slice1Index < numberOfIntersections - 1; slice1Index++)
+  for (size_t slice1Index = 0; slice1Index < numberOfIntersections - 1; slice1Index++)
     {
     if (!this->Internal->SliceIntersectionDisplayPipelines[slice1Index]->GetVisibility())
       {
@@ -602,7 +602,7 @@ double* vtkSliceIntersectionRepresentation2D::GetSliceIntersectionPoint()
     vtkLineSource* line1 = this->Internal->SliceIntersectionDisplayPipelines[slice1Index]->LineSource;
     double* line1Point1 = line1->GetPoint1();
     double* line1Point2 = line1->GetPoint2();
-    for (int slice2Index = slice1Index + 1; slice2Index < numberOfIntersections; slice2Index++)
+    for (size_t slice2Index = slice1Index + 1; slice2Index < numberOfIntersections; slice2Index++)
       {
       if (!this->Internal->SliceIntersectionDisplayPipelines[slice2Index]->GetVisibility())
         {
