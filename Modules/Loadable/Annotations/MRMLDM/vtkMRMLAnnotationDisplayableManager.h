@@ -46,7 +46,7 @@ public:
 
   static vtkMRMLAnnotationDisplayableManager *New();
   vtkTypeMacro(vtkMRMLAnnotationDisplayableManager, vtkMRMLAbstractDisplayableManager);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // the following functions must be public to be accessible by the callback
   /// Propagate properties of MRML node to widget.
@@ -105,31 +105,31 @@ protected:
   vtkMRMLAnnotationDisplayableManager();
   virtual ~vtkMRMLAnnotationDisplayableManager();
 
-  virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData) VTK_OVERRIDE;
+  virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData) override;
 
-  virtual void Create() VTK_OVERRIDE;
+  virtual void Create() override;
 
   /// wrap the superclass render request in a check for batch processing
   virtual void RequestRender();
 
   /// Remove MRML observers
-  virtual void RemoveMRMLObservers() VTK_OVERRIDE;
+  virtual void RemoveMRMLObservers() override;
 
   /// Called from RequestRender method if UpdateFromMRMLRequested is true
   /// \sa RequestRender() SetUpdateFromMRMLRequested()
-  virtual void UpdateFromMRML() VTK_OVERRIDE;
+  virtual void UpdateFromMRML() override;
 
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) VTK_OVERRIDE;
+  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
 
   /// Called after the corresponding MRML event is triggered, from AbstractDisplayableManager
   /// \sa ProcessMRMLSceneEvents
-  virtual void UpdateFromMRMLScene() VTK_OVERRIDE;
-  virtual void OnMRMLSceneEndClose() VTK_OVERRIDE;
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) VTK_OVERRIDE;
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) VTK_OVERRIDE;
+  virtual void UpdateFromMRMLScene() override;
+  virtual void OnMRMLSceneEndClose() override;
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
 
   /// Called after the corresponding MRML View container was modified
-  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller) VTK_OVERRIDE;
+  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller) override;
 
   /// Handler for specific SliceView actions
   virtual void OnMRMLSliceNodeModifiedEvent(vtkMRMLSliceNode * sliceNode);
@@ -232,7 +232,7 @@ protected:
   int m_Updating;
 
   /// Respond to interactor style events
-  virtual void OnInteractorStyleEvent(int eventid) VTK_OVERRIDE;
+  virtual void OnInteractorStyleEvent(int eventid) override;
 
   /// Accessor for internal flag that disables interactor style event processing
   vtkGetMacro(DisableInteractorStyleEventsProcessing, int);

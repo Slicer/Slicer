@@ -31,7 +31,7 @@ class VTK_FreeSurfer_EXPORT vtkFSSurfaceLabelReader : public vtkDataReader
 public:
   static vtkFSSurfaceLabelReader *New();
   vtkTypeMacro(vtkFSSurfaceLabelReader,vtkDataReader);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkFloatArray *GetOutput()
       {return this->Scalars; };

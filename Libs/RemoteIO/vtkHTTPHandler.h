@@ -19,11 +19,11 @@ public:
   /// The Usual vtk class functions
   static vtkHTTPHandler *New();
   vtkTypeMacro(vtkHTTPHandler, vtkURIHandler);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// This methods returns 1 if the handler matches the uri's required
   /// protocol and returns 0 if it's not appropriate for the uri.
-  virtual int CanHandleURI ( const char *uri ) VTK_OVERRIDE;
+  virtual int CanHandleURI ( const char *uri ) override;
 
   /// Some web servers don't handle 'keep alive' socket transactions
   /// in a way that's compatible with curl on windows.  When this flag is set
@@ -33,12 +33,12 @@ public:
   int GetForbidReuse();
 
   /// This function wraps curl functionality to download a specified URL to a specified dir
-  virtual void StageFileRead(const char * source, const char * destination) VTK_OVERRIDE;
+  virtual void StageFileRead(const char * source, const char * destination) override;
   using vtkURIHandler::StageFileRead;
-  virtual void StageFileWrite(const char * source, const char * destination) VTK_OVERRIDE;
+  virtual void StageFileWrite(const char * source, const char * destination) override;
   using vtkURIHandler::StageFileWrite;
-  virtual void InitTransfer () VTK_OVERRIDE;
-  virtual int CloseTransfer () VTK_OVERRIDE;
+  virtual void InitTransfer () override;
+  virtual int CloseTransfer () override;
 
 protected:
   vtkHTTPHandler();

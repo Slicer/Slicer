@@ -41,11 +41,11 @@ class VTK_SLICER_SEGMENTATIONS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLSegme
 public:
   static vtkMRMLSegmentationsDisplayableManager2D* New();
   vtkTypeMacro(vtkMRMLSegmentationsDisplayableManager2D, vtkMRMLAbstractSliceViewDisplayableManager);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Assemble and return info string to display in Data probe for a given viewer XYZ position.
   /// \return Invalid string by default, meaning no information to display.
-  virtual std::string GetDataProbeInfoStringForPosition(double xyz[3]) VTK_OVERRIDE;
+  virtual std::string GetDataProbeInfoStringForPosition(double xyz[3]) override;
 
   /// Get list of segments visible at selected display position.
   /// segmentValues is optional, if not NULL then it returns value for each segment for fractional representations
@@ -53,21 +53,21 @@ public:
     vtkStringArray* segmentIDs, vtkDoubleArray* segmentValues = NULL);
 
 protected:
-  virtual void UnobserveMRMLScene() VTK_OVERRIDE;
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) VTK_OVERRIDE;
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) VTK_OVERRIDE;
-  virtual void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) VTK_OVERRIDE;
+  virtual void UnobserveMRMLScene() override;
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
+  virtual void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   /// Update Actors based on transforms in the scene
-  virtual void UpdateFromMRML() VTK_OVERRIDE;
+  virtual void UpdateFromMRML() override;
 
-  virtual void OnMRMLSceneStartClose() VTK_OVERRIDE;
-  virtual void OnMRMLSceneEndClose() VTK_OVERRIDE;
+  virtual void OnMRMLSceneStartClose() override;
+  virtual void OnMRMLSceneEndClose() override;
 
-  virtual void OnMRMLSceneEndBatchProcess() VTK_OVERRIDE;
+  virtual void OnMRMLSceneEndBatchProcess() override;
 
   /// Initialize the displayable manager based on its associated vtkMRMLSliceNode
-  virtual void Create() VTK_OVERRIDE;
+  virtual void Create() override;
 
 protected:
   vtkMRMLSegmentationsDisplayableManager2D();

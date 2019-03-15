@@ -37,24 +37,24 @@ class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsFiducialStorageNode : 
 public:
   static vtkMRMLMarkupsFiducialStorageNode *New();
   vtkTypeMacro(vtkMRMLMarkupsFiducialStorageNode,vtkMRMLMarkupsStorageNode);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
+  virtual vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Get node XML tag name (like Storage, Model)
-  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "MarkupsFiducialStorage";};
+  virtual const char* GetNodeTagName() override {return "MarkupsFiducialStorage";};
 
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
+  virtual void ReadXMLAttributes( const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
+  virtual void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
+  virtual void Copy(vtkMRMLNode *node) override;
 
-  virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode) VTK_OVERRIDE;
+  virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
 
   virtual bool SetPointFromString(vtkMRMLMarkupsNode *markupsNode, int pointIndex, const char* str);
 
@@ -73,13 +73,13 @@ protected:
   void operator=(const vtkMRMLMarkupsFiducialStorageNode&);
 
   /// Initialize all the supported write file types
-  virtual void InitializeSupportedReadFileTypes() VTK_OVERRIDE;
+  virtual void InitializeSupportedReadFileTypes() override;
 
   /// Initialize all the supported write file types
-  virtual void InitializeSupportedWriteFileTypes() VTK_OVERRIDE;
+  virtual void InitializeSupportedWriteFileTypes() override;
 
   /// Read data and set it in the referenced node
-  virtual int ReadDataInternal(vtkMRMLNode *refNode) VTK_OVERRIDE;
+  virtual int ReadDataInternal(vtkMRMLNode *refNode) override;
 
   /// Write data from a  referenced node.
   /// Assumes 1 point per markup for a fiducial referenced node:
@@ -89,7 +89,7 @@ protected:
   /// x,y,z,ow,ox,oy,oz,vis,sel,lock,label,id,,
   /// label can have spaces, everything up to next comma is used, no quotes
   /// necessary, same with the description
-  virtual int WriteDataInternal(vtkMRMLNode *refNode) VTK_OVERRIDE;
+  virtual int WriteDataInternal(vtkMRMLNode *refNode) override;
 
   std::string FieldDelimiterCharacters;
 };

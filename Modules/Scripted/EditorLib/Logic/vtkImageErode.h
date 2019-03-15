@@ -42,7 +42,7 @@ protected:
   float Foreground;
 
   void ThreadedExecute(vtkImageData *inData, vtkImageData *outData,
-    int extent[6], int id) VTK_OVERRIDE;
+    int extent[6], int id) override;
 };
 
 #endif

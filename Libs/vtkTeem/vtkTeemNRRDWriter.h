@@ -25,7 +25,7 @@ class VTK_Teem_EXPORT vtkTeemNRRDWriter : public vtkWriter
 public:
 
   vtkTypeMacro(vtkTeemNRRDWriter,vtkWriter);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   static vtkTeemNRRDWriter *New();
 
@@ -89,11 +89,11 @@ protected:
   vtkTeemNRRDWriter();
   ~vtkTeemNRRDWriter();
 
-  virtual int FillInputPortInformation(int port, vtkInformation *info) VTK_OVERRIDE;
+  virtual int FillInputPortInformation(int port, vtkInformation *info) override;
 
   ///
   /// Write method. It is called by vtkWriter::Write();
-  void WriteData() VTK_OVERRIDE;
+  void WriteData() override;
 
   ///
   /// Flag to set to on when a write error occurred

@@ -30,41 +30,41 @@ class VTK_MRML_EXPORT vtkMRMLHierarchyNode : public vtkMRMLNode
 public:
   static vtkMRMLHierarchyNode *New();
   vtkTypeMacro(vtkMRMLHierarchyNode,vtkMRMLNode);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
+  virtual vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
+  virtual void ReadXMLAttributes( const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
+  virtual void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
+  virtual void Copy(vtkMRMLNode *node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "Hierarchy";}
+  virtual const char* GetNodeTagName() override {return "Hierarchy";}
 
   /// Set the reference node to current scene.
-  virtual void SetSceneReferences() VTK_OVERRIDE;
+  virtual void SetSceneReferences() override;
 
   ///
   /// Updates this node if it depends on other nodes
   /// when the node is deleted in the scene
-  virtual void UpdateReferences() VTK_OVERRIDE;
+  virtual void UpdateReferences() override;
 
   ///
   /// Observe the reference transform node
-  virtual void UpdateScene(vtkMRMLScene *scene) VTK_OVERRIDE;
+  virtual void UpdateScene(vtkMRMLScene *scene) override;
 
   ///
   /// Update the stored reference to another node in the scene
-  virtual void UpdateReferenceID(const char *oldID, const char *newID) VTK_OVERRIDE;
+  virtual void UpdateReferenceID(const char *oldID, const char *newID) override;
 
   ///
   /// Associated prent MRML node

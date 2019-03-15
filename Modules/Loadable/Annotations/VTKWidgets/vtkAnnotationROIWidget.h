@@ -110,7 +110,7 @@ public:
   ///
   /// Standard class methods for type information and printing.
   vtkTypeMacro(vtkAnnotationROIWidget,vtkAbstractWidget);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   ///
   /// Specify an instance of vtkWidgetRepresentation used to represent this
@@ -138,7 +138,7 @@ public:
   ///
   /// Create the default widget representation if one is not set. By default,
   /// this is an instance of the vtkAnnotationROIRepresentation class.
-  virtual void CreateDefaultRepresentation() VTK_OVERRIDE;
+  virtual void CreateDefaultRepresentation() override;
 
 protected:
   vtkAnnotationROIWidget();

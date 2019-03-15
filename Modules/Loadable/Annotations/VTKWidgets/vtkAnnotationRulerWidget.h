@@ -29,9 +29,9 @@ public:
 
   static vtkAnnotationRulerWidget *New();
   vtkTypeMacro(vtkAnnotationRulerWidget, vtkDistanceWidget);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual void CreateDefaultRepresentation() VTK_OVERRIDE;
+  virtual void CreateDefaultRepresentation() override;
 
   /// Return True if the widget will build its 2D representation
   bool GetIs2DWidget();

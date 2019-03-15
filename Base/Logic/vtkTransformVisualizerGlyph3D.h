@@ -46,7 +46,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkTransformVisualizerGlyph3D : public vtkGly
 {
 public:
   vtkTypeMacro(vtkTransformVisualizerGlyph3D,vtkGlyph3D);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
   static vtkTransformVisualizerGlyph3D *New();
 
   /// If true then glyphs are only scaled with the scalar value along x axis (y and z scaling is 1).
@@ -88,7 +88,7 @@ protected:
   double MagnitudeThresholdLower;
   double MagnitudeThresholdUpper;
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
 private:
   vtkTransformVisualizerGlyph3D(const vtkTransformVisualizerGlyph3D&);  // Not implemented.

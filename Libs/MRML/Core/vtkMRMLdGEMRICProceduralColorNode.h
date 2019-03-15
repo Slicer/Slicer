@@ -27,40 +27,40 @@ class VTK_MRML_EXPORT vtkMRMLdGEMRICProceduralColorNode : public vtkMRMLProcedur
 public:
   static vtkMRMLdGEMRICProceduralColorNode *New();
   vtkTypeMacro(vtkMRMLdGEMRICProceduralColorNode,vtkMRMLProceduralColorNode);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
+  virtual vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
+  virtual void ReadXMLAttributes( const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
+  virtual void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
+  virtual void Copy(vtkMRMLNode *node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "dGEMRICProceduralColor";}
+  virtual const char* GetNodeTagName() override {return "dGEMRICProceduralColor";}
 
   ///
   ///
-  virtual void UpdateScene(vtkMRMLScene *scene) VTK_OVERRIDE;
+  virtual void UpdateScene(vtkMRMLScene *scene) override;
 
   ///
   /// Get/Set for Type. In SetType, set up the custom colour options for this
   /// set of colours
-  virtual void SetType(int type) VTK_OVERRIDE;
+  virtual void SetType(int type) override;
 
-  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) VTK_OVERRIDE;
+  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) override;
 
   /// The list of valid procedural types
   //enum
@@ -76,7 +76,7 @@ public:
 
   ///
   /// Create default storage node or NULL if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() VTK_OVERRIDE
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override
     {
     return Superclass::CreateDefaultStorageNode();
     }
@@ -91,10 +91,10 @@ public:
   };
 
   /// Return the lowest and the highest integers, for use in looping
-  int GetFirstType() VTK_OVERRIDE { return this->dGEMRIC15T; }
-  int GetLastType() VTK_OVERRIDE { return this->dGEMRIC3T; }
+  int GetFirstType() override { return this->dGEMRIC15T; }
+  int GetLastType() override { return this->dGEMRIC3T; }
 
-  const char *GetTypeAsString() VTK_OVERRIDE;
+  const char *GetTypeAsString() override;
   void SetTypeTo15T();
   void SetTypeTo3T();
 

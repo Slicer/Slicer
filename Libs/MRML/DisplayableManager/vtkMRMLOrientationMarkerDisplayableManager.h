@@ -36,7 +36,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLOrientationMarkerDisplayableMana
 public:
   static vtkMRMLOrientationMarkerDisplayableManager* New();
   vtkTypeMacro(vtkMRMLOrientationMarkerDisplayableManager,vtkMRMLAbstractDisplayableManager);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
 protected:
 
@@ -44,12 +44,12 @@ protected:
   virtual ~vtkMRMLOrientationMarkerDisplayableManager();
 
   /// Observe the View node and initialize the renderer accordingly.
-  virtual void Create() VTK_OVERRIDE;
+  virtual void Create() override;
 
   /// Called each time the view node is modified.
   /// Internally update the renderer from the view node.
   /// \sa UpdateFromMRMLViewNode()
-  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller) VTK_OVERRIDE;
+  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller) override;
 
   /// Update the renderer from the view node properties.
   void UpdateFromViewNode();

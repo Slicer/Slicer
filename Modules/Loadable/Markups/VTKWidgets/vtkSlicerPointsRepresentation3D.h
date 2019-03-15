@@ -46,7 +46,7 @@ public:
 
 protected:
   vtkSlicerPointsRepresentation3D();
-  ~vtkSlicerPointsRepresentation3D() VTK_OVERRIDE;
+  ~vtkSlicerPointsRepresentation3D() override;
 
 private:
   vtkSlicerPointsRepresentation3D(const vtkSlicerPointsRepresentation3D&) = delete;

@@ -86,18 +86,18 @@ public:
   void GetOutputImageToWorldMatrix(vtkMatrix4x4* imageToWorldMatrix);
 
   using Superclass::GetOutputOrigin;
-  double* GetOutputOrigin() VTK_OVERRIDE;
-  void GetOutputOrigin(double origin[3]) VTK_OVERRIDE;
+  double* GetOutputOrigin() override;
+  void GetOutputOrigin(double origin[3]) override;
 
-  void SetOutputOrigin(double origin[3]) VTK_OVERRIDE;
-  void SetOutputOrigin(double x, double y, double z) VTK_OVERRIDE;
+  void SetOutputOrigin(double origin[3]) override;
+  void SetOutputOrigin(double x, double y, double z) override;
 
   using Superclass::GetOutputSpacing;
-  double* GetOutputSpacing() VTK_OVERRIDE;
-  void GetOutputSpacing(double spacing[3]) VTK_OVERRIDE;
+  double* GetOutputSpacing() override;
+  void GetOutputSpacing(double spacing[3]) override;
 
-  void SetOutputSpacing(double spacing[3]) VTK_OVERRIDE;
-  void SetOutputSpacing(double x, double y, double z) VTK_OVERRIDE;
+  void SetOutputSpacing(double spacing[3]) override;
+  void SetOutputSpacing(double x, double y, double z) override;
 
 
   /// This method deletes the currently stored cache variables
@@ -111,9 +111,9 @@ protected:
   ~vtkPolyDataToFractionalLabelmapFilter();
 
   virtual int RequestData(vtkInformation *, vtkInformationVector **,
-                          vtkInformationVector *) VTK_OVERRIDE;
+                          vtkInformationVector *) override;
   vtkOrientedImageData *AllocateOutputData(vtkDataObject *out, int* updateExt);
-  virtual int FillOutputPortInformation(int, vtkInformation*) VTK_OVERRIDE;
+  virtual int FillOutputPortInformation(int, vtkInformation*) override;
 
   /// Create a binary image stencil for the closed surface within the current extent
   /// This method is a modified version of vtkPolyDataToImageStencil::ThreadedExecute

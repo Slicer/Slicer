@@ -39,24 +39,24 @@ class VTK_MRML_EXPORT vtkMRMLAbstractViewNode
 {
 public:
   vtkTypeMacro(vtkMRMLAbstractViewNode,vtkMRMLNode);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
+  virtual void ReadXMLAttributes( const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
+  virtual void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
+  virtual void Copy(vtkMRMLNode *node) override;
 
   /// \brief Reimplemented to preserve layout label when reset.
   /// \sa GetLayoutLabel()
-  virtual void Reset(vtkMRMLNode* defaultNode) VTK_OVERRIDE;
+  virtual void Reset(vtkMRMLNode* defaultNode) override;
 
   /// Name of the layout. Must be unique between all the view nodes of the
   /// same type because it is used as a singleton tag.

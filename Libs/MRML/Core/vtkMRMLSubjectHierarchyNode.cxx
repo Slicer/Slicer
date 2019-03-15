@@ -58,7 +58,7 @@ class vtkSubjectHierarchyItem : public vtkObject
 public:
   static vtkSubjectHierarchyItem *New();
   vtkTypeMacro(vtkSubjectHierarchyItem, vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
   void ReadXMLAttributes(const char** atts);
   void WriteXML(ostream& of, int indent, vtkMRMLNode* xmlEncoderNode);
   void DeepCopy(vtkSubjectHierarchyItem* item, bool copyChildren=true);

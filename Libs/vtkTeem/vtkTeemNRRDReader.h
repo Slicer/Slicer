@@ -92,21 +92,21 @@ public:
   /// Get unit for specified axis
   const char* GetAxisUnit(unsigned int axis);
 
-  virtual void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  virtual void PrintSelf(ostream& os, vtkIndent indent) override;
 
   ///  is the given file name a NRRD file?
-  virtual int CanReadFile(const char* filename) VTK_OVERRIDE;
+  virtual int CanReadFile(const char* filename) override;
 
   ///
   /// Valid extentsions
-  virtual const char* GetFileExtensions() VTK_OVERRIDE
+  virtual const char* GetFileExtensions() override
     {
       return ".nhdr .nrrd";
     }
 
   ///
   /// A descriptive name for this format
-  virtual const char* GetDescriptiveName() VTK_OVERRIDE
+  virtual const char* GetDescriptiveName() override
     {
       return "NRRD - Nearly Raw Raster Data";
     }
@@ -231,8 +231,8 @@ public:
       break;
     }
   }
-virtual vtkImageData * AllocateOutputData(vtkDataObject *out, vtkInformation* outInfo) VTK_OVERRIDE;
-virtual void AllocateOutputData(vtkImageData *out, vtkInformation* outInfo, int *uExtent) VTK_OVERRIDE
+virtual vtkImageData * AllocateOutputData(vtkDataObject *out, vtkInformation* outInfo) override;
+virtual void AllocateOutputData(vtkImageData *out, vtkInformation* outInfo, int *uExtent) override
     { Superclass::AllocateOutputData(out, outInfo, uExtent); }
 void AllocatePointData(vtkImageData *out, vtkInformation* outInfo);
 
@@ -263,8 +263,8 @@ protected:
   std::map<unsigned int, std::string> AxisLabels;
   std::map<unsigned int, std::string> AxisUnits;
 
-  virtual void ExecuteInformation() VTK_OVERRIDE;
-  virtual void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo) VTK_OVERRIDE;
+  virtual void ExecuteInformation() override;
+  virtual void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo) override;
 
   int tenSpaceDirectionReduce(Nrrd *nout, const Nrrd *nin, double SD[9]);
 

@@ -64,16 +64,16 @@ public:
   void SetSliceNode(vtkMRMLSliceNode* sliceNode);
   vtkMRMLSliceNode* GetSliceNode();
 
-  void SetMRMLApplicationLogic(vtkMRMLApplicationLogic* applicationLogic) VTK_OVERRIDE;
+  void SetMRMLApplicationLogic(vtkMRMLApplicationLogic* applicationLogic) override;
 
   /// Return true if the widget can process the event.
-  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &distance2) VTK_OVERRIDE;
+  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &distance2) override;
 
   /// Process interaction event.
-  bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) VTK_OVERRIDE;
+  bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
 
   /// Called when the the widget loses the focus.
-  void Leave() VTK_OVERRIDE;
+  void Leave() override;
 
   /// Widget states
   enum

@@ -47,18 +47,18 @@ public:
   /// The Usual VTK class functions
   static vtkMRMLViewLinkLogic *New();
   vtkTypeMacro(vtkMRMLViewLinkLogic,vtkMRMLAbstractLogic);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
 protected:
   vtkMRMLViewLinkLogic();
   virtual ~vtkMRMLViewLinkLogic();
 
   // On a change in scene, we need to manage the observations.
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) VTK_OVERRIDE;
+  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
 
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) VTK_OVERRIDE;
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) VTK_OVERRIDE;
-  virtual void OnMRMLNodeModified(vtkMRMLNode* node) VTK_OVERRIDE;
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
+  virtual void OnMRMLNodeModified(vtkMRMLNode* node) override;
 
   /// Broadcast a view node to other view nodes.
   void BroadcastViewNodeEvent(vtkMRMLViewNode* viewNode);

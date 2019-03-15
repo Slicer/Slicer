@@ -29,45 +29,45 @@ class VTK_MRML_EXPORT vtkMRMLFreeSurferProceduralColorNode : public vtkMRMLProce
 public:
   static vtkMRMLFreeSurferProceduralColorNode *New();
   vtkTypeMacro(vtkMRMLFreeSurferProceduralColorNode,vtkMRMLProceduralColorNode);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
+  virtual vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
+  virtual void ReadXMLAttributes( const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
+  virtual void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
+  virtual void Copy(vtkMRMLNode *node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "FreeSurferProceduralColor";};
+  virtual const char* GetNodeTagName() override {return "FreeSurferProceduralColor";};
 
   ///
   ///
-  virtual void UpdateScene(vtkMRMLScene *scene) VTK_OVERRIDE;
+  virtual void UpdateScene(vtkMRMLScene *scene) override;
 
   ///
   /// Set the lookup table as a freesurfer lookup table, and get it as a
   /// vtkLookupTable or an vtkFSLookupTable
-  vtkLookupTable *GetLookupTable() VTK_OVERRIDE;
+  vtkLookupTable *GetLookupTable() override;
   vtkFSLookupTable *GetFSLookupTable();
   virtual void SetLookupTable(vtkFSLookupTable* newLookupTable);
-  virtual vtkScalarsToColors* GetScalarsToColors() VTK_OVERRIDE;
+  virtual vtkScalarsToColors* GetScalarsToColors() override;
 
   ///
   /// Get/Set for Type
-  void SetType(int type) VTK_OVERRIDE;
+  void SetType(int type) override;
   void SetTypeToHeat();
   void SetTypeToBlueRed();
   void SetTypeToRedBlue();
@@ -76,7 +76,7 @@ public:
   void SetTypeToLabels();
   void SetTypeToCustom();
 
-  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) VTK_OVERRIDE;
+  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) override;
 
   ///
   /// The list of valid table types
@@ -102,12 +102,12 @@ public:
   ///
   /// Return the lowest and the highest integers, for use in looping (don't
   /// create labels)
-  int GetFirstType() VTK_OVERRIDE { return this->Heat; };
-  int GetLastType () VTK_OVERRIDE { return this->GreenRed; };
+  int GetFirstType() override { return this->Heat; };
+  int GetLastType () override { return this->GreenRed; };
 
   ///
   /// return a text string describing the colour look up table type
-  const char * GetTypeAsString() VTK_OVERRIDE;
+  const char * GetTypeAsString() override;
 
   ///
   /// DisplayModifiedEvent is generated when display node parameters is changed
@@ -121,8 +121,8 @@ public:
   vtkGetStringMacro(LabelsFileName);
   vtkSetStringMacro(LabelsFileName);
 
-  virtual int GetNumberOfColors() VTK_OVERRIDE;
-  virtual bool GetColor(int entry, double color[4]) VTK_OVERRIDE;
+  virtual int GetNumberOfColors() override;
+  virtual bool GetColor(int entry, double color[4]) override;
 
 protected:
   vtkMRMLFreeSurferProceduralColorNode();
@@ -133,7 +133,7 @@ protected:
   ///
   /// Set values in the names vector from the colour rgba entries in the colour
   /// table
-  bool SetNameFromColor(int index) VTK_OVERRIDE;
+  bool SetNameFromColor(int index) override;
 
   ///
   /// a lookup table tailored with FreeSurfer colours, constructed according to Type

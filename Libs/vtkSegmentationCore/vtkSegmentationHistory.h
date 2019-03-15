@@ -42,7 +42,7 @@ class vtkSegmentationCore_EXPORT vtkSegmentationHistory : public vtkObject
 public:
   static vtkSegmentationHistory* New();
   vtkTypeMacro(vtkSegmentationHistory, vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Selects a segmentation that the states will be stored of. Current state of the segmentation is not stored.
   /// \param segmentation Segmentation to store. Deletes all stored states of the previously set segmentation.

@@ -60,7 +60,7 @@ public:
   /// The Usual VTK class functions
   static vtkMRMLSliceLogic *New();
   vtkTypeMacro(vtkMRMLSliceLogic,vtkMRMLAbstractLogic);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// CompositeModifiedEvent is generated when slice composite node is modified
   enum
@@ -350,26 +350,26 @@ protected:
   vtkMRMLSliceLogic();
   virtual ~vtkMRMLSliceLogic();
 
-  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene) VTK_OVERRIDE;
+  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene) override;
 
   ///
   /// process logic events
   virtual void ProcessMRMLLogicsEvents(vtkObject * caller,
                                        unsigned long event,
-                                       void * callData) VTK_OVERRIDE;
+                                       void * callData) override;
   void ProcessMRMLLogicsEvents();
 
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) VTK_OVERRIDE;
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) VTK_OVERRIDE;
-  virtual void UpdateFromMRMLScene() VTK_OVERRIDE;
-  virtual void OnMRMLSceneStartClose() VTK_OVERRIDE;
-  virtual void OnMRMLSceneEndImport() VTK_OVERRIDE;
-  virtual void OnMRMLSceneEndRestore() VTK_OVERRIDE;
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
+  virtual void UpdateFromMRMLScene() override;
+  virtual void OnMRMLSceneStartClose() override;
+  virtual void OnMRMLSceneEndImport() override;
+  virtual void OnMRMLSceneEndRestore() override;
 
   void UpdateSliceNodes();
   void SetupCrosshairNode();
 
-  virtual void OnMRMLNodeModified(vtkMRMLNode* node) VTK_OVERRIDE;
+  virtual void OnMRMLNodeModified(vtkMRMLNode* node) override;
   static vtkMRMLSliceCompositeNode* GetSliceCompositeNode(vtkMRMLScene* scene,
                                                           const char* layoutName);
   static vtkMRMLSliceNode* GetSliceNode(vtkMRMLScene* scene,

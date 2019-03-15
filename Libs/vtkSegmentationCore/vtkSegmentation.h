@@ -128,7 +128,7 @@ public:
 public:
   static vtkSegmentation* New();
   vtkTypeMacro(vtkSegmentation, vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Set attributes from name/value pairs
   virtual void ReadXMLAttributes(const char** atts);

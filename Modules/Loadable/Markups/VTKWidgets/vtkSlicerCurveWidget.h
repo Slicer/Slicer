@@ -172,13 +172,13 @@ public:
   vtkTypeMacro(vtkSlicerCurveWidget, vtkSlicerMarkupsWidget);
 
   /// Create the default widget representation and initializes the widget and representation.
-  void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer) VTK_OVERRIDE;
+  void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer) override;
 
 protected:
   vtkSlicerCurveWidget();
   ~vtkSlicerCurveWidget() override;
 
-  bool ProcessControlPointInsert(vtkMRMLInteractionEventData* eventData) VTK_OVERRIDE;
+  bool ProcessControlPointInsert(vtkMRMLInteractionEventData* eventData) override;
 
   vtkMRMLMarkupsCurveNode* GetMarkupsCurveNode();
 

@@ -43,11 +43,11 @@ public:
   vtkTypeMacro(vtkSlicerPointsWidget, vtkSlicerMarkupsWidget);
 
   /// Create the default widget representation and initializes the widget and representation.
-  void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer) VTK_OVERRIDE;
+  void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer) override;
 
 protected:
   vtkSlicerPointsWidget();
-  ~vtkSlicerPointsWidget() VTK_OVERRIDE;
+  ~vtkSlicerPointsWidget() override;
 
 private:
   vtkSlicerPointsWidget(const vtkSlicerPointsWidget&) = delete;

@@ -57,54 +57,54 @@ public:
 
   static vtkMRMLSegmentationNode *New();
   vtkTypeMacro(vtkMRMLSegmentationNode, vtkMRMLDisplayableNode);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Create instance of a GAD node.
-  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
+  virtual vtkMRMLNode* CreateNodeInstance() override;
 
   /// Set node attributes from name/value pairs
-  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
+  virtual void ReadXMLAttributes( const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
+  virtual void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
+  virtual void Copy(vtkMRMLNode *node) override;
 
   /// Copy the entire contents of the node into this node
   virtual void DeepCopy(vtkMRMLNode* node);
 
   /// Get unique node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "Segmentation";};
+  virtual const char* GetNodeTagName() override {return "Segmentation";};
 
   /// Get bounding box in global RAS form (xmin,xmax, ymin,ymax, zmin,zmax).
   /// This method returns the bounds of the object with any transforms that may
   /// be applied to it.
   /// \sa GetBounds()
-  virtual void GetRASBounds(double bounds[6]) VTK_OVERRIDE;
+  virtual void GetRASBounds(double bounds[6]) override;
 
   /// Get bounding box in global RAS form (xmin,xmax, ymin,ymax, zmin,zmax).
   /// This method always returns the bounds of the untransformed object.
   /// \sa GetRASBounds()
-  virtual void GetBounds(double bounds[6]) VTK_OVERRIDE;
+  virtual void GetBounds(double bounds[6]) override;
 
   /// Returns true if the transformable node can apply non linear transforms
   /// \sa ApplyTransform
-  virtual bool CanApplyNonLinearTransforms()const VTK_OVERRIDE;
+  virtual bool CanApplyNonLinearTransforms()const override;
 
   /// Apply a transform matrix on the segmentation
   /// \sa SetAndObserveTransformNodeID, ApplyTransform, CanApplyNonLinearTransforms
-  virtual void ApplyTransformMatrix(vtkMatrix4x4* transformMatrix) VTK_OVERRIDE;
+  virtual void ApplyTransformMatrix(vtkMatrix4x4* transformMatrix) override;
 
   /// Apply a transform on the segmentation
   /// \sa SetAndObserveTransformNodeID, CanApplyNonLinearTransforms
-  virtual void ApplyTransform(vtkAbstractTransform* transform) VTK_OVERRIDE;
+  virtual void ApplyTransform(vtkAbstractTransform* transform) override;
 
   /// Create a segmentation storage node
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() VTK_OVERRIDE;
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
   /// Create and observe a segmentation display node
-  virtual void CreateDefaultDisplayNodes() VTK_OVERRIDE;
+  virtual void CreateDefaultDisplayNodes() override;
 
   /// Function called from segmentation logic when UID is added in a subject hierarchy node.
   /// In case the newly added UID is a volume node referenced from this segmentation,

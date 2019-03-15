@@ -27,7 +27,7 @@ class VTK_ITK_EXPORT vtkITKImageToImageFilterSS : public vtkITKImageToImageFilte
 public:
   vtkTypeMacro(vtkITKImageToImageFilterSS,vtkITKImageToImageFilter);
   static vtkITKImageToImageFilterSS* New() { return 0; }
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE
+  void PrintSelf(ostream& os, vtkIndent indent) override
   {
     Superclass::PrintSelf ( os, indent );
     os << m_Filter;
@@ -36,7 +36,7 @@ public:
   ///
   /// Portion of the SetReleaseDataFlag implementation can be
   /// implemented at this level of the hierarchy.
-  virtual void SetReleaseDataFlag(int f) VTK_OVERRIDE
+  virtual void SetReleaseDataFlag(int f) override
     {
       Superclass::SetReleaseDataFlag(f);
       m_Filter->SetReleaseDataFlag(f);

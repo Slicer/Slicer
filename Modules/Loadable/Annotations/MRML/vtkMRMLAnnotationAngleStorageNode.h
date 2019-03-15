@@ -18,16 +18,16 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationAngleStorageNo
 public:
   static vtkMRMLAnnotationAngleStorageNode *New();
   vtkTypeMacro(vtkMRMLAnnotationAngleStorageNode,vtkMRMLAnnotationLinesStorageNode);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
+  virtual vtkMRMLNode* CreateNodeInstance() override;
 
   // Description:
   // Get node XML tag name (like Storage, Model)
-  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "AnnotationAngleStorage";}
+  virtual const char* GetNodeTagName() override {return "AnnotationAngleStorage";}
 
   /// Return true if the node can be read in
-  virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode) VTK_OVERRIDE;
+  virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
 
 protected:
   vtkMRMLAnnotationAngleStorageNode();
@@ -47,10 +47,10 @@ protected:
   int ReadAnnotationAngleProperties(vtkMRMLAnnotationAngleNode *refNode, char line[1024], int &typeColumn, int& line1IDColumn,    int& line2Column, int& selColumn, int& visColumn, int& numColumns);
 
   /// Read data and set it in the referenced node
-  virtual int ReadDataInternal(vtkMRMLNode *refNode) VTK_OVERRIDE;
+  virtual int ReadDataInternal(vtkMRMLNode *refNode) override;
 
   /// Write data from a referenced node to the stream
-  virtual int WriteAnnotationDataInternal(vtkMRMLNode *refNode, fstream & of) VTK_OVERRIDE;
+  virtual int WriteAnnotationDataInternal(vtkMRMLNode *refNode, fstream & of) override;
 };
 
 #endif

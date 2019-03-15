@@ -26,7 +26,7 @@ public:
 
   vtkTypeMacro(vtkMRMLDisplayNodeTestHelper1,vtkMRMLDisplayNode);
 
-  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE
+  virtual vtkMRMLNode* CreateNodeInstance() override
     {
     return vtkMRMLDisplayNodeTestHelper1::New();
     }
@@ -42,7 +42,7 @@ public:
     return EXIT_SUCCESS;
     }
 
-  virtual const char* GetNodeTagName() VTK_OVERRIDE
+  virtual const char* GetNodeTagName() override
     {
     return "Testing is good";
     }

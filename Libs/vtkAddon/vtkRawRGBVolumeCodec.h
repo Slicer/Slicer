@@ -29,27 +29,27 @@ class VTK_ADDON_EXPORT vtkRawRGBVolumeCodec : public vtkStreamingVolumeCodec
 {
 public:
   static vtkRawRGBVolumeCodec *New();
-  virtual vtkStreamingVolumeCodec* CreateCodecInstance() VTK_OVERRIDE;
+  virtual vtkStreamingVolumeCodec* CreateCodecInstance() override;
   vtkTypeMacro(vtkRawRGBVolumeCodec, vtkStreamingVolumeCodec);
 
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // FourCC code representing 24-bit RGB using 8 bits per color
-  virtual std::string GetFourCC() VTK_OVERRIDE { return "RV24"; };
+  virtual std::string GetFourCC() override { return "RV24"; };
 
 protected:
   vtkRawRGBVolumeCodec();
   ~vtkRawRGBVolumeCodec();
 
   /// Decode the compressed frame to an image
-  virtual bool DecodeFrameInternal(vtkStreamingVolumeFrame* inputFrame, vtkImageData* outputImageData, bool saveDecodedImage = true) VTK_OVERRIDE;
+  virtual bool DecodeFrameInternal(vtkStreamingVolumeFrame* inputFrame, vtkImageData* outputImageData, bool saveDecodedImage = true) override;
 
   /// Encode the image to a compressed frame
-  virtual bool EncodeImageDataInternal(vtkImageData* outputImageData, vtkStreamingVolumeFrame* inputFrame, bool forceKeyFrame) VTK_OVERRIDE;
+  virtual bool EncodeImageDataInternal(vtkImageData* outputImageData, vtkStreamingVolumeFrame* inputFrame, bool forceKeyFrame) override;
 
   /// Update the codec parameters
   /// There are no parameters to update within this codec
-  virtual bool UpdateParameterInternal(std::string vtkNotUsed(parameterValue), std::string vtkNotUsed(parameterName)) VTK_OVERRIDE { return false; };
+  virtual bool UpdateParameterInternal(std::string vtkNotUsed(parameterValue), std::string vtkNotUsed(parameterName)) override { return false; };
 
   /// Return the codec parameter description
   /// There are no parameters to update within this codec

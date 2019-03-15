@@ -47,30 +47,30 @@ class  VTK_MRML_EXPORT vtkMRMLStreamingVolumeNode : public vtkMRMLVectorVolumeNo
 public:
   static vtkMRMLStreamingVolumeNode *New();
   vtkTypeMacro(vtkMRMLStreamingVolumeNode,vtkMRMLVectorVolumeNode);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
+  virtual vtkMRMLNode* CreateNodeInstance() override;
 
-  virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData) VTK_OVERRIDE;
+  virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData) override;
 
   /// Set node attributes
-  virtual void ReadXMLAttributes(const char** atts) VTK_OVERRIDE;
+  virtual void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
+  virtual void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
+  virtual void Copy(vtkMRMLNode *node) override;
 
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() VTK_OVERRIDE
+  virtual const char* GetNodeTagName() override
   {return "StreamingVolume";}
 
   /// Set/Get the observed image data object and and image data connections
   /// \sa vtkMRMLVolumeNode::SetAndObserveImageData(), vtkMRMLVolumeNode::GetImageData(), vtkMRMLVolumeNode::GetImageDataConnection()
-  virtual void SetAndObserveImageData(vtkImageData* imageData) VTK_OVERRIDE;
-  virtual vtkImageData* GetImageData() VTK_OVERRIDE;
-  virtual vtkAlgorithmOutput* GetImageDataConnection() VTK_OVERRIDE;
+  virtual void SetAndObserveImageData(vtkImageData* imageData) override;
+  virtual vtkImageData* GetImageData() override;
+  virtual vtkAlgorithmOutput* GetImageDataConnection() override;
 
   /// Set and observe the frame object containing the compressed image data
   /// \param frame Object containing the compressed video frame info

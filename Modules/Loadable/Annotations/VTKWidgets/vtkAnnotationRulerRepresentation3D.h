@@ -30,13 +30,13 @@ public:
 
   static vtkAnnotationRulerRepresentation3D *New();
   vtkTypeMacro(vtkAnnotationRulerRepresentation3D, vtkDistanceRepresentation3D);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   void SetDistance(double distance);
 
   // Description:
   // Get the line actor property
-  virtual vtkProperty *GetLineProperty() VTK_OVERRIDE;
+  virtual vtkProperty *GetLineProperty() override;
 
   // Description:
   // Set/Get position of the label title. 0 is at the start of the
@@ -56,14 +56,14 @@ public:
   // Required by the rendering process, check if the glyph and label actors
   // have translucency and return true if so. Fixes a bug when the label
   // was set to a non 1 opacity but was not being rendered.
-  virtual int HasTranslucentPolygonalGeometry() VTK_OVERRIDE;
+  virtual int HasTranslucentPolygonalGeometry() override;
 
 protected:
 
   vtkAnnotationRulerRepresentation3D();
   virtual ~vtkAnnotationRulerRepresentation3D();
 
-  virtual void BuildRepresentation() VTK_OVERRIDE;
+  virtual void BuildRepresentation() override;
 
   // Internal use: set the label actor's position from current world point 1
   // and 2 positions and label position factor

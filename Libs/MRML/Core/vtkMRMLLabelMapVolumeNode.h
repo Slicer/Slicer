@@ -39,11 +39,11 @@ class VTK_MRML_EXPORT vtkMRMLLabelMapVolumeNode : public vtkMRMLScalarVolumeNode
   static vtkMRMLLabelMapVolumeNode *New();
   vtkTypeMacro(vtkMRMLLabelMapVolumeNode,vtkMRMLScalarVolumeNode);
 
-  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
+  virtual vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "LabelMapVolume";}
+  virtual const char* GetNodeTagName() override {return "LabelMapVolume";}
 
   ///
   /// Make a 'None' volume node with blank image data
@@ -51,7 +51,7 @@ class VTK_MRML_EXPORT vtkMRMLLabelMapVolumeNode : public vtkMRMLScalarVolumeNode
 
   ///
   /// Create and observe default display node
-  virtual void CreateDefaultDisplayNodes() VTK_OVERRIDE;
+  virtual void CreateDefaultDisplayNodes() override;
 
 protected:
   vtkMRMLLabelMapVolumeNode();

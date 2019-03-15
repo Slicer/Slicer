@@ -56,31 +56,31 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkThreeDViewInteractorStyle :
 public:
   static vtkThreeDViewInteractorStyle *New();
   vtkTypeMacro(vtkThreeDViewInteractorStyle,vtkInteractorStyle);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   ///
   /// Event bindings controlling the effects of pressing mouse buttons
   /// or moving the mouse.
-  virtual void OnMouseMove() VTK_OVERRIDE;
-  virtual void OnEnter() VTK_OVERRIDE;
-  virtual void OnLeave() VTK_OVERRIDE;
-  virtual void OnLeftButtonDown() VTK_OVERRIDE;
-  virtual void OnLeftButtonUp() VTK_OVERRIDE;
-  virtual void OnMiddleButtonDown() VTK_OVERRIDE;
-  virtual void OnMiddleButtonUp() VTK_OVERRIDE;
-  virtual void OnRightButtonDown() VTK_OVERRIDE;
-  virtual void OnRightButtonUp() VTK_OVERRIDE;
-  virtual void OnMouseWheelForward() VTK_OVERRIDE;
-  virtual void OnMouseWheelBackward() VTK_OVERRIDE;
+  virtual void OnMouseMove() override;
+  virtual void OnEnter() override;
+  virtual void OnLeave() override;
+  virtual void OnLeftButtonDown() override;
+  virtual void OnLeftButtonUp() override;
+  virtual void OnMiddleButtonDown() override;
+  virtual void OnMiddleButtonUp() override;
+  virtual void OnRightButtonDown() override;
+  virtual void OnRightButtonUp() override;
+  virtual void OnMouseWheelForward() override;
+  virtual void OnMouseWheelBackward() override;
 
   /// Keyboard functions
-  virtual void OnChar() VTK_OVERRIDE;
-  virtual void OnKeyPress() VTK_OVERRIDE;
-  virtual void OnKeyRelease() VTK_OVERRIDE;
+  virtual void OnChar() override;
+  virtual void OnKeyPress() override;
+  virtual void OnKeyRelease() override;
 
   /// These are more esoteric events, but are useful in some cases.
-  virtual void OnExpose() VTK_OVERRIDE;
-  virtual void OnConfigure() VTK_OVERRIDE;
+  virtual void OnExpose() override;
+  virtual void OnConfigure() override;
 
   void SetDisplayableManagers(vtkMRMLDisplayableManagerGroup* displayableManagers);
 
@@ -95,7 +95,7 @@ public:
 
   ///
   /// Reimplemented to set the default interactive update rate
-  virtual void SetInteractor(vtkRenderWindowInteractor *interactor) VTK_OVERRIDE;
+  virtual void SetInteractor(vtkRenderWindowInteractor *interactor) override;
 
   ///
   /// Get/Set the ModelDisplayableManager, for picking
@@ -105,10 +105,10 @@ public:
   /// are overridden in subclasses to perform the correct motion. Since
   /// they are called by OnTimer, they do not have mouse coord parameters
   /// (use interactor's GetEventPosition and GetLastEventPosition)
-  virtual void Rotate() VTK_OVERRIDE;
-  virtual void Spin() VTK_OVERRIDE;
-  virtual void Pan() VTK_OVERRIDE;
-  virtual void Dolly() VTK_OVERRIDE;
+  virtual void Rotate() override;
+  virtual void Spin() override;
+  virtual void Pan() override;
+  virtual void Dolly() override;
   virtual void Dolly(double factor);
 
 

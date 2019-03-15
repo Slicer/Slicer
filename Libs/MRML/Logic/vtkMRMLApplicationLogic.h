@@ -51,7 +51,7 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLApplicationLogic
 public:
 
   static vtkMRMLApplicationLogic *New();
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
   vtkTypeMacro(vtkMRMLApplicationLogic, vtkMRMLAbstractLogic);
 
   /// Get default Selection node
@@ -224,7 +224,7 @@ protected:
   vtkMRMLApplicationLogic();
   virtual ~vtkMRMLApplicationLogic();
 
-  virtual void SetMRMLSceneInternal(vtkMRMLScene *newScene) VTK_OVERRIDE;
+  virtual void SetMRMLSceneInternal(vtkMRMLScene *newScene) override;
 
   void SetSelectionNode(vtkMRMLSelectionNode* );
   void SetInteractionNode(vtkMRMLInteractionNode* );

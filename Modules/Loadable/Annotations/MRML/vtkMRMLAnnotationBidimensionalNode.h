@@ -16,39 +16,39 @@ public:
   vtkTypeMacro(vtkMRMLAnnotationBidimensionalNode, vtkMRMLAnnotationLinesNode);
   // Description:
   // Just prints short summary
-  void PrintAnnotationInfo(ostream& os, vtkIndent indent, int titleFlag = 1) VTK_OVERRIDE;
+  void PrintAnnotationInfo(ostream& os, vtkIndent indent, int titleFlag = 1) override;
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
+  virtual vtkMRMLNode* CreateNodeInstance() override;
   // Description:
   // Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "AnnotationBidimensional";}
+  virtual const char* GetNodeTagName() override {return "AnnotationBidimensional";}
 
-  virtual const char* GetIcon() VTK_OVERRIDE {return ":/Icons/AnnotationBidimensional.png";}
+  virtual const char* GetIcon() override {return ":/Icons/AnnotationBidimensional.png";}
 
   // Description:
   // Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
+  virtual void ReadXMLAttributes( const char** atts) override;
 
   // Description:
   // Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
+  virtual void WriteXML(ostream& of, int indent) override;
 
 
   // Description:
   // Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
+  virtual void Copy(vtkMRMLNode *node) override;
 
-  void UpdateScene(vtkMRMLScene *scene) VTK_OVERRIDE;
+  void UpdateScene(vtkMRMLScene *scene) override;
 
   // Description:
   // alternative method to propagate events generated in Display nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
-                                   void * /*callData*/ ) VTK_OVERRIDE;
+                                   void * /*callData*/ ) override;
 
 
   // Description:
@@ -63,7 +63,7 @@ public:
 
  // Description:
   // transform utility functions
-  void Initialize(vtkMRMLScene* mrmlScene) VTK_OVERRIDE;
+  void Initialize(vtkMRMLScene* mrmlScene) override;
 
   std::vector<double> GetBidimensionalMeasurement();
   void SetBidimensionalMeasurement(double val1, double val2);

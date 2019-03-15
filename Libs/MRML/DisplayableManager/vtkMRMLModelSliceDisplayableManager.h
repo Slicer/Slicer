@@ -40,7 +40,7 @@ public:
   static vtkMRMLModelSliceDisplayableManager* New();
   vtkTypeMacro(vtkMRMLModelSliceDisplayableManager,
                        vtkMRMLAbstractSliceViewDisplayableManager);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // DisplayableNode handling customizations
   void AddDisplayableNode(vtkMRMLDisplayableNode* displayableNode);
@@ -51,19 +51,19 @@ protected:
   vtkMRMLModelSliceDisplayableManager();
   virtual ~vtkMRMLModelSliceDisplayableManager();
 
-  virtual void UnobserveMRMLScene() VTK_OVERRIDE;
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) VTK_OVERRIDE;
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) VTK_OVERRIDE;
-  virtual void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) VTK_OVERRIDE;
+  virtual void UnobserveMRMLScene() override;
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
+  virtual void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
-  virtual void UpdateFromMRML() VTK_OVERRIDE;
-  virtual void OnMRMLSceneStartClose() VTK_OVERRIDE;
-  virtual void OnMRMLSceneEndClose() VTK_OVERRIDE;
-  virtual void OnMRMLSceneEndBatchProcess() VTK_OVERRIDE;
+  virtual void UpdateFromMRML() override;
+  virtual void OnMRMLSceneStartClose() override;
+  virtual void OnMRMLSceneEndClose() override;
+  virtual void OnMRMLSceneEndBatchProcess() override;
 
   /// Initialize the displayable manager based on its associated
   /// vtkMRMLSliceNode
-  virtual void Create() VTK_OVERRIDE;
+  virtual void Create() override;
   int AddingDisplayableNode;
 
 private:

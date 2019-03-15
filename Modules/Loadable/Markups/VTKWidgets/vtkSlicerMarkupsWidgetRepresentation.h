@@ -70,10 +70,10 @@ class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerMarkupsWidgetRepresen
 public:
   /// Standard methods for instances of this class.
   vtkTypeMacro(vtkSlicerMarkupsWidgetRepresentation, vtkMRMLAbstractWidgetRepresentation);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Update the representation from markups node
-  void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = NULL) VTK_OVERRIDE;
+  void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = NULL) override;
 
   /// Get the nth node's display position. Will return
   /// 1 on success, or 0 if there are not at least
@@ -108,7 +108,7 @@ public:
 
 protected:
   vtkSlicerMarkupsWidgetRepresentation();
-  ~vtkSlicerMarkupsWidgetRepresentation() VTK_OVERRIDE;
+  ~vtkSlicerMarkupsWidgetRepresentation() override;
 
   class ControlPointsPipeline
   {

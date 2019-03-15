@@ -65,7 +65,7 @@ class VTK_SLICER_EDITORLIB_MODULE_LOGIC_EXPORT vtkPichonFastMarching
 public:
   static vtkPichonFastMarching *New();
   vtkTypeMacro(vtkPichonFastMarching,vtkImageAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   void init(int dimX, int dimY, int dimZ, double depth, double dx, double dy, double dz);
 
@@ -100,7 +100,7 @@ protected:
   vtkPichonFastMarching();
   ~vtkPichonFastMarching();
 
-  void ExecuteDataWithInformation(vtkDataObject *, vtkInformation *) VTK_OVERRIDE;
+  void ExecuteDataWithInformation(vtkDataObject *, vtkInformation *) override;
 
 
   friend void vtkPichonFastMarchingExecute(vtkPichonFastMarching *self,

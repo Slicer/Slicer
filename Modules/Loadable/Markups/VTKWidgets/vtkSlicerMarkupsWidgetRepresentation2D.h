@@ -47,11 +47,11 @@ class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerMarkupsWidgetRepresen
 public:
   /// Standard methods for instances of this class.
   vtkTypeMacro(vtkSlicerMarkupsWidgetRepresentation2D, vtkSlicerMarkupsWidgetRepresentation);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Position is displayed (slice) position
   void CanInteract(const int displayPosition[2], const double worldPosition[3],
-    int &foundComponentType, int &foundComponentIndex, double &closestDistance2) VTK_OVERRIDE;
+    int &foundComponentType, int &foundComponentIndex, double &closestDistance2) override;
 
   /// Checks if interaction with straight line between visible points is possible.
   /// Can be used on the output of CanInteract, as if no better component is found then the input is returned.
@@ -64,17 +64,17 @@ public:
   virtual void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData=NULL);
 
   /// Methods to make this class behave as a vtkProp.
-  void GetActors(vtkPropCollection *) VTK_OVERRIDE;
-  void ReleaseGraphicsResources(vtkWindow *) VTK_OVERRIDE;
-  int RenderOverlay(vtkViewport *viewport) VTK_OVERRIDE;
-  int RenderOpaqueGeometry(vtkViewport *viewport) VTK_OVERRIDE;
-  int RenderTranslucentPolygonalGeometry(vtkViewport *viewport) VTK_OVERRIDE;
-  vtkTypeBool HasTranslucentPolygonalGeometry() VTK_OVERRIDE;
+  void GetActors(vtkPropCollection *) override;
+  void ReleaseGraphicsResources(vtkWindow *) override;
+  int RenderOverlay(vtkViewport *viewport) override;
+  int RenderOpaqueGeometry(vtkViewport *viewport) override;
+  int RenderTranslucentPolygonalGeometry(vtkViewport *viewport) override;
+  vtkTypeBool HasTranslucentPolygonalGeometry() override;
 
   /// Get the nth node's position on the slice. Will return
   /// 1 on success, or 0 if there are not at least
   /// (n+1) nodes (0 based counting).
-  int GetNthNodeDisplayPosition(int n, double pos[2]) VTK_OVERRIDE;
+  int GetNthNodeDisplayPosition(int n, double pos[2]) override;
 
   /// Set the Nth node slice visibility (i.e. if it is on the slice).
   virtual void SetNthPointSliceVisibility(int n, bool visibility);
@@ -91,12 +91,12 @@ public:
 
 protected:
   vtkSlicerMarkupsWidgetRepresentation2D();
-  ~vtkSlicerMarkupsWidgetRepresentation2D() VTK_OVERRIDE;
+  ~vtkSlicerMarkupsWidgetRepresentation2D() override;
 
     /// Get MRML view node as slice view node
   vtkMRMLSliceNode *GetSliceNode();
 
-  bool GetAllControlPointsVisible() VTK_OVERRIDE;
+  bool GetAllControlPointsVisible() override;
 
   /// Check, if the point is displayable in the current slice geometry
   virtual bool IsPointDisplayableOnSlice(vtkMRMLMarkupsNode* node, int pointIndex = 0);

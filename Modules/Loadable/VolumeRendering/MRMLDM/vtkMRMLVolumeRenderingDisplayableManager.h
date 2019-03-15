@@ -41,19 +41,19 @@ class VTK_SLICER_VOLUMERENDERING_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLVol
 public:
   static vtkMRMLVolumeRenderingDisplayableManager *New();
   vtkTypeMacro(vtkMRMLVolumeRenderingDisplayableManager, vtkMRMLAbstractThreeDViewDisplayableManager);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual void OnMRMLSceneStartClose() VTK_OVERRIDE;
-  virtual void OnMRMLSceneEndClose() VTK_OVERRIDE;
-  virtual void OnMRMLSceneEndImport() VTK_OVERRIDE;
-  virtual void OnMRMLSceneEndRestore() VTK_OVERRIDE;
-  virtual void OnMRMLSceneEndBatchProcess() VTK_OVERRIDE;
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) VTK_OVERRIDE;
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) VTK_OVERRIDE;
-  virtual void UnobserveMRMLScene() VTK_OVERRIDE;
+  virtual void OnMRMLSceneStartClose() override;
+  virtual void OnMRMLSceneEndClose() override;
+  virtual void OnMRMLSceneEndImport() override;
+  virtual void OnMRMLSceneEndRestore() override;
+  virtual void OnMRMLSceneEndBatchProcess() override;
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
+  virtual void UnobserveMRMLScene() override;
 
   /// Update actors based on volumes in the scene
-  virtual void UpdateFromMRML() VTK_OVERRIDE;
+  virtual void UpdateFromMRML() override;
 
   /// Utility functions mainly used for testing
   vtkVolumeMapper* GetVolumeMapper(vtkMRMLVolumeNode* volumeNode);
@@ -61,10 +61,10 @@ public:
 
   /// Find display node managed by the displayable manager at a specified world RAS position.
   /// \return Non-zero in case a node is found at the position, 0 otherwise
-  virtual int Pick3D(double ras[3]) VTK_OVERRIDE;
+  virtual int Pick3D(double ras[3]) override;
 
   /// Get the MRML ID of the picked node, returns empty string if no pick
-  virtual const char* GetPickedNodeID() VTK_OVERRIDE;
+  virtual const char* GetPickedNodeID() override;
 
 public:
   static int DefaultGPUMemorySize;
@@ -74,16 +74,16 @@ protected:
   ~vtkMRMLVolumeRenderingDisplayableManager();
 
   /// Initialize the displayable manager
-  virtual void Create() VTK_OVERRIDE;
+  virtual void Create() override;
 
   /// Observe graphical resources created event
   void ObserveGraphicalResourcesCreatedEvent();
 
-  virtual int ActiveInteractionModes() VTK_OVERRIDE;
+  virtual int ActiveInteractionModes() override;
 
-  virtual void ProcessMRMLNodesEvents(vtkObject * caller, unsigned long event, void * callData) VTK_OVERRIDE;
+  virtual void ProcessMRMLNodesEvents(vtkObject * caller, unsigned long event, void * callData) override;
 
-  virtual void OnInteractorStyleEvent(int eventID) VTK_OVERRIDE;
+  virtual void OnInteractorStyleEvent(int eventID) override;
 
 protected:
   vtkSlicerVolumeRenderingLogic *VolumeRenderingLogic;

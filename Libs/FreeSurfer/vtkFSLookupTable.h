@@ -24,11 +24,11 @@ class VTK_FreeSurfer_EXPORT vtkFSLookupTable : public vtkLookupTable
 public:
     static vtkFSLookupTable *New();
     vtkTypeMacro(vtkFSLookupTable,vtkLookupTable);
-    void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+    void PrintSelf(ostream& os, vtkIndent indent) override;
 
     // Description:
     // Copy the contents from another LookupTable
-    void DeepCopy(vtkScalarsToColors *lut) VTK_OVERRIDE;
+    void DeepCopy(vtkScalarsToColors *lut) override;
 
     vtkGetMacro(LowThresh,float);
     vtkSetMacro(LowThresh,float);
@@ -72,23 +72,23 @@ public:
 
     ///
     /// from vtkScalarsToColors
-    double *GetRange() VTK_OVERRIDE;
+    double *GetRange() override;
     ///
     /// don't do anything as it's overriding the LUTs low threshold with the
     /// scalar values' lowest value
     using vtkLookupTable::SetRange;
-    void SetRange(double, double) VTK_OVERRIDE;
+    void SetRange(double, double) override;
     ///
     /// Given a scalar value val, return an rgba color value
     /// returns array of length 3, 0-255
-    const unsigned char *MapValue(double val) VTK_OVERRIDE;
+    const unsigned char *MapValue(double val) override;
     ///
     /// passes val to MapValue
-    void GetColor(double, double[3]) VTK_OVERRIDE;
+    void GetColor(double, double[3]) override;
     ///
     /// take input scalars and push them through the calculation to get colours
     /// to put int the output array
-    void MapScalarsThroughTable2(void* input, unsigned char* output, int inputDataType, int numberOfValues, int inputIncrement, int outputIncrement) VTK_OVERRIDE;
+    void MapScalarsThroughTable2(void* input, unsigned char* output, int inputDataType, int numberOfValues, int inputIncrement, int outputIncrement) override;
 
     ///
     /// Type constant, can have different types of colour scales
@@ -104,7 +104,7 @@ public:
 
     // Description:
     // Get the number of available colors for mapping to.
-    virtual vtkIdType GetNumberOfAvailableColors() VTK_OVERRIDE;
+    virtual vtkIdType GetNumberOfAvailableColors() override;
 protected:
     vtkFSLookupTable();
     ~vtkFSLookupTable();

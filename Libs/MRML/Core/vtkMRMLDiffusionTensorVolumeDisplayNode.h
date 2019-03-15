@@ -42,46 +42,46 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
   public:
   static vtkMRMLDiffusionTensorVolumeDisplayNode *New();
   vtkTypeMacro(vtkMRMLDiffusionTensorVolumeDisplayNode,vtkMRMLGlyphableVolumeDisplayNode);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
+  virtual vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
+  virtual void ReadXMLAttributes( const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
+  virtual void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
+  virtual void Copy(vtkMRMLNode *node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "DiffusionTensorVolumeDisplay";}
+  virtual const char* GetNodeTagName() override {return "DiffusionTensorVolumeDisplay";}
 
   //virtual vtkPolyData* ExecuteGlyphPipeLineAndGetPolyData( vtkImageData* );
 
   ///
   /// Updates this node if it depends on other nodes
   /// when the node is deleted in the scene
-  virtual void UpdateReferences() VTK_OVERRIDE;
+  virtual void UpdateReferences() override;
 
   ///
   /// Finds the storage node and read the data
-  virtual void UpdateScene(vtkMRMLScene *scene) VTK_OVERRIDE;
+  virtual void UpdateScene(vtkMRMLScene *scene) override;
 
   ///
   /// Update the stored reference to another node in the scene
-  virtual void UpdateReferenceID(const char *oldID, const char *newID) VTK_OVERRIDE;
+  virtual void UpdateReferenceID(const char *oldID, const char *newID) override;
 
   ///
   /// alternative method to propagate events generated in Display nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
-                                   void * /*callData*/ ) VTK_OVERRIDE;
+                                   void * /*callData*/ ) override;
 
   //--------------------------------------------------------------------------
   /// Display Information
@@ -145,14 +145,14 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
     };
 
   /// Get the input of the pipeline
-  virtual vtkAlgorithmOutput* GetInputImageDataConnection() VTK_OVERRIDE;
+  virtual vtkAlgorithmOutput* GetInputImageDataConnection() override;
 
   ///
   /// Get background mask stencil
   /// Reimplemented to return 0 when the background mask is not used.
-  virtual vtkAlgorithmOutput* GetBackgroundImageStencilDataConnection() VTK_OVERRIDE;
+  virtual vtkAlgorithmOutput* GetBackgroundImageStencilDataConnection() override;
 
-  virtual void UpdateImageDataPipeline() VTK_OVERRIDE;
+  virtual void UpdateImageDataPipeline() override;
 
   vtkGetObjectMacro(DTIMathematics, vtkDiffusionTensorMathematics);
   vtkGetObjectMacro(DTIMathematicsAlpha, vtkDiffusionTensorMathematics);
@@ -161,17 +161,17 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
 
   ///
   /// get associated slice glyph display node or NULL if not set
-  virtual std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*> GetSliceGlyphDisplayNodes( vtkMRMLVolumeNode* node ) VTK_OVERRIDE;
+  virtual std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*> GetSliceGlyphDisplayNodes( vtkMRMLVolumeNode* node ) override;
 
 
   ///
   /// add slice glyph display nodes if not already present and return it
-  virtual void  AddSliceGlyphDisplayNodes( vtkMRMLVolumeNode* node ) VTK_OVERRIDE;
+  virtual void  AddSliceGlyphDisplayNodes( vtkMRMLVolumeNode* node ) override;
 
   ///
   /// Defines the expected range of the output data for given imageData after
   /// having been mapped through the current display options
-  virtual void GetDisplayScalarRange(double range[2]) VTK_OVERRIDE;
+  virtual void GetDisplayScalarRange(double range[2]) override;
 
   static int GetNumberOfScalarInvariants();
   static int GetNthScalarInvariant(int i);
@@ -183,9 +183,9 @@ protected:
   void operator=(const vtkMRMLDiffusionTensorVolumeDisplayNode&);
 
   /// Set the input of the pipeline
-  virtual void SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection) VTK_OVERRIDE;
+  virtual void SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection) override;
 
-  virtual vtkAlgorithmOutput* GetScalarImageDataConnection() VTK_OVERRIDE;
+  virtual vtkAlgorithmOutput* GetScalarImageDataConnection() override;
 
   static std::vector<int> GetSupportedColorModes();
 

@@ -47,7 +47,7 @@ class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerMarkupsWidget : publi
 public:
   /// Standard methods for a VTK class.
   vtkTypeMacro(vtkSlicerMarkupsWidget, vtkMRMLAbstractWidget);
-  virtual void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  virtual void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Create the default widget representation and initializes the widget and representation.
   virtual void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer) = 0;
@@ -93,16 +93,16 @@ public:
   virtual int AddNodeOnWidget(const int displayPos[2]);
 
   /// Return true if the widget can process the event.
-  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &distance2) VTK_OVERRIDE;
+  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &distance2) override;
 
   /// Process interaction event.
-  bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) VTK_OVERRIDE;
+  bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
 
   /// Called when the the widget loses the focus.
-  void Leave() VTK_OVERRIDE;
+  void Leave() override;
 
   // Allows the widget to request interactive mode (faster updates)
-  bool GetInteractive() VTK_OVERRIDE;
+  bool GetInteractive() override;
 
   vtkMRMLMarkupsNode* GetMarkupsNode();
   vtkMRMLMarkupsDisplayNode* GetMarkupsDisplayNode();
@@ -112,7 +112,7 @@ public:
 
 protected:
   vtkSlicerMarkupsWidget();
-  ~vtkSlicerMarkupsWidget() VTK_OVERRIDE;
+  ~vtkSlicerMarkupsWidget() override;
 
   void StartWidgetInteraction(vtkMRMLInteractionEventData* eventData);
   void EndWidgetInteraction();

@@ -30,7 +30,7 @@ public:
 
   static vtkITKGrowCutSegmentationImageFilter *New();
   vtkTypeMacro(vtkITKGrowCutSegmentationImageFilter,vtkImageAlgorithm );
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Methods to set/get objectSize
   vtkSetMacro(ObjectSize, double);
@@ -54,8 +54,8 @@ protected:
   vtkITKGrowCutSegmentationImageFilter();
   ~vtkITKGrowCutSegmentationImageFilter(){}
 
-  virtual void ExecuteDataWithInformation(vtkDataObject *outData, vtkInformation *outInfo) VTK_OVERRIDE;
-  virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  virtual void ExecuteDataWithInformation(vtkDataObject *outData, vtkInformation *outInfo) override;
+  virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
 private:
   vtkITKGrowCutSegmentationImageFilter(const vtkITKGrowCutSegmentationImageFilter&);  // Not implemented.

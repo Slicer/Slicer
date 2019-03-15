@@ -28,10 +28,10 @@ public:
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
+  virtual vtkMRMLNode* CreateNodeInstance() override;
   // Description:
   // Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "AnnotationSticky";}
+  virtual const char* GetNodeTagName() override {return "AnnotationSticky";}
 
 
   int  SetSticky(const char* text,int selectedFlag);
@@ -42,7 +42,7 @@ public:
 
   int SetStickyCoordinates(double newCoord[3]) {return this->SetControlPoint(0,newCoord,1,1);}
 
-  void Initialize(vtkMRMLScene* mrmlScene) VTK_OVERRIDE;
+  void Initialize(vtkMRMLScene* mrmlScene) override;
 
 
 protected:

@@ -56,7 +56,7 @@ public:
   /// Subclasses of vtkContourCurveRepresentation must implement these methods. These
   /// are the methods that the widget and its representation use to
   /// communicate with each other.
-  void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = NULL) VTK_OVERRIDE;
+  void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = NULL) override;
 
   /// Methods to make this class behave as a vtkProp.
   void GetActors(vtkPropCollection *) override;
@@ -70,9 +70,9 @@ public:
   double *GetBounds() override;
 
   void CanInteract(const int displayPosition[2], const double worldPosition[3],
-    int &foundComponentType, int &foundComponentIndex, double &closestDistance2) VTK_OVERRIDE;
+    int &foundComponentType, int &foundComponentIndex, double &closestDistance2) override;
 
-  virtual bool GetTransformationReferencePoint(double referencePointWorld[3]) VTK_OVERRIDE;
+  virtual bool GetTransformationReferencePoint(double referencePointWorld[3]) override;
 
 protected:
   vtkSlicerAngleRepresentation2D();

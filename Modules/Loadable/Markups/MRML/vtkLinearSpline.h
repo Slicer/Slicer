@@ -42,26 +42,26 @@ public:
   static vtkLinearSpline *New();
 
   vtkTypeMacro(vtkLinearSpline,vtkSpline);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /**
    * Compute linear splines for each dependent variable
    */
-  void Compute () VTK_OVERRIDE;
+  void Compute () override;
 
   /**
    * Evaluate a 1D linear spline.
    */
-  double Evaluate (double t) VTK_OVERRIDE;
+  double Evaluate (double t) override;
 
   /**
    * Deep copy of linear spline data.
    */
-  void DeepCopy(vtkSpline *s) VTK_OVERRIDE;
+  void DeepCopy(vtkSpline *s) override;
 
 protected:
   vtkLinearSpline();
-  ~vtkLinearSpline() VTK_OVERRIDE {}
+  ~vtkLinearSpline() override {}
 
 private:
   vtkLinearSpline(const vtkLinearSpline&) = delete;

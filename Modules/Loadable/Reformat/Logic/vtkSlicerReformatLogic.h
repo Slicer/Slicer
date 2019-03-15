@@ -46,7 +46,7 @@ public:
 
   static vtkSlicerReformatLogic *New();
   vtkTypeMacro(vtkSlicerReformatLogic,vtkSlicerModuleLogic);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Set the world coordinate origin position
   void SetSliceOrigin(vtkMRMLSliceNode* node, double x, double y, double z);

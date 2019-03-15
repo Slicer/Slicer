@@ -30,7 +30,7 @@ public:
 
   static vtkAnnotationRulerRepresentation *New();
   vtkTypeMacro(vtkAnnotationRulerRepresentation, vtkDistanceRepresentation2D);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   void SetDistance(double distance);
 
@@ -43,7 +43,7 @@ protected:
   vtkAnnotationRulerRepresentation();
   virtual ~vtkAnnotationRulerRepresentation();
 
-  virtual void BuildRepresentation() VTK_OVERRIDE;
+  virtual void BuildRepresentation() override;
 
 private:
 

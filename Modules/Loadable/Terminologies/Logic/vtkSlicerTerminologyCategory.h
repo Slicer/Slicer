@@ -41,13 +41,13 @@ class VTK_SLICER_TERMINOLOGIES_LOGIC_EXPORT vtkSlicerTerminologyCategory : publi
 public:
   static vtkSlicerTerminologyCategory *New();
   vtkTypeMacro(vtkSlicerTerminologyCategory, vtkCodedEntry);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Reset state of object
-  virtual void Initialize() VTK_OVERRIDE;
+  virtual void Initialize() override;
 
   /// Copy one category into another
-  virtual void Copy(vtkCodedEntry* aCategory) VTK_OVERRIDE;
+  virtual void Copy(vtkCodedEntry* aCategory) override;
 
 public:
   vtkGetStringMacro(SNOMEDCTConceptID);

@@ -50,32 +50,32 @@ public:
 
   /// Standard methods for instances of this class.
   vtkTypeMacro(vtkSlicerAngleRepresentation3D,vtkSlicerMarkupsWidgetRepresentation3D);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Subclasses of vtkMRMLAbstractWidgetRepresentation must implement these methods. These
   /// are the methods that the widget and its representation use to
   /// communicate with each other.
-  void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData=NULL) VTK_OVERRIDE;
+  void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData=NULL) override;
 
   /// Methods to make this class behave as a vtkProp.
-  void GetActors(vtkPropCollection *) VTK_OVERRIDE;
-  void ReleaseGraphicsResources(vtkWindow *) VTK_OVERRIDE;
-  int RenderOverlay(vtkViewport *viewport) VTK_OVERRIDE;
-  int RenderOpaqueGeometry(vtkViewport *viewport) VTK_OVERRIDE;
-  int RenderTranslucentPolygonalGeometry(vtkViewport *viewport) VTK_OVERRIDE;
-  vtkTypeBool HasTranslucentPolygonalGeometry() VTK_OVERRIDE;
+  void GetActors(vtkPropCollection *) override;
+  void ReleaseGraphicsResources(vtkWindow *) override;
+  int RenderOverlay(vtkViewport *viewport) override;
+  int RenderOpaqueGeometry(vtkViewport *viewport) override;
+  int RenderTranslucentPolygonalGeometry(vtkViewport *viewport) override;
+  vtkTypeBool HasTranslucentPolygonalGeometry() override;
 
   /// Return the bounds of the representation
-  double *GetBounds() VTK_OVERRIDE;
+  double *GetBounds() override;
 
-  virtual bool GetTransformationReferencePoint(double referencePointWorld[3]) VTK_OVERRIDE;
+  virtual bool GetTransformationReferencePoint(double referencePointWorld[3]) override;
 
   void CanInteract(const int displayPosition[2], const double worldPosition[3],
-    int &foundComponentType, int &foundComponentIndex, double &closestDistance2) VTK_OVERRIDE;
+    int &foundComponentType, int &foundComponentIndex, double &closestDistance2) override;
 
 protected:
   vtkSlicerAngleRepresentation3D();
-  ~vtkSlicerAngleRepresentation3D() VTK_OVERRIDE;
+  ~vtkSlicerAngleRepresentation3D() override;
 
   vtkSmartPointer<vtkPolyData>                Line;
   vtkSmartPointer<vtkPolyDataMapper>    LineMapper;

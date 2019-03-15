@@ -30,9 +30,9 @@ public:
 
   static vtkAnnotationBidimensionalWidget *New();
   vtkTypeMacro(vtkAnnotationBidimensionalWidget, vtkBiDimensionalWidget);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual void CreateDefaultRepresentation() VTK_OVERRIDE;
+  virtual void CreateDefaultRepresentation() override;
 
 protected:
 

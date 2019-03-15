@@ -30,7 +30,7 @@ class VTK_FreeSurfer_EXPORT vtkFSSurfaceScalarReader : public vtkDataReader
 public:
   static vtkFSSurfaceScalarReader *New();
   vtkTypeMacro(vtkFSSurfaceScalarReader,vtkDataReader);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkFloatArray *GetOutput();
   void SetOutput(vtkFloatArray *output);

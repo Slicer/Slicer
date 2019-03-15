@@ -42,7 +42,7 @@ class VTK_ADDON_EXPORT vtkStreamingVolumeCodecFactory : public vtkObject
 public:
 
   vtkTypeMacro(vtkStreamingVolumeCodecFactory, vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Registers a new video compression codec
   /// \param newCodecPointer Function pointer to the codec type new function (e.g. (PointerToCodecBaseNew)&vtkStreamingVolumeCodec::New )

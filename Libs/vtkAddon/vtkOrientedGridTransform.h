@@ -26,7 +26,7 @@ class VTK_ADDON_EXPORT vtkOrientedGridTransform : public vtkGridTransform
 public:
   static vtkOrientedGridTransform *New();
   vtkTypeMacro(vtkOrientedGridTransform,vtkGridTransform);
-  virtual void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  virtual void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Set/Get the b-spline grid axis directions.
@@ -38,7 +38,7 @@ public:
 
   // Description:
   // Make another transform of the same type.
-  vtkAbstractTransform *MakeTransform() VTK_OVERRIDE;
+  vtkAbstractTransform *MakeTransform() override;
 
   /// List of custom events fired by the class.
   // ConvergenceFailureEvent is invoked when the gradient cannot be
@@ -54,11 +54,11 @@ protected:
 
   // Description:
   // Update the displacement grid.
-  void InternalUpdate() VTK_OVERRIDE;
+  void InternalUpdate() override;
 
   // Description:
   // Copy this transform from another of the same type.
-  void InternalDeepCopy(vtkAbstractTransform *transform) VTK_OVERRIDE;
+  void InternalDeepCopy(vtkAbstractTransform *transform) override;
 
   // Avoid hiding overloads from base class... these will include the float
   // overloads that forward to the double overloads (hence no need to override
@@ -69,13 +69,13 @@ protected:
 
   // Description:
   // Internal functions for calculating the transformation.
-  void ForwardTransformPoint(const double in[3], double out[3]) VTK_OVERRIDE;
+  void ForwardTransformPoint(const double in[3], double out[3]) override;
 
   void ForwardTransformDerivative(const double in[3], double out[3],
-                                  double derivative[3][3]) VTK_OVERRIDE;
+                                  double derivative[3][3]) override;
 
   void InverseTransformDerivative(const double in[3], double out[3],
-                                  double derivative[3][3]) VTK_OVERRIDE;
+                                  double derivative[3][3]) override;
 
   // Description:
   // Grid axis direction vectors (i, j, k) in the output space

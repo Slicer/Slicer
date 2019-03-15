@@ -42,7 +42,7 @@ class VTK_SLICER_SEGMENTATIONS_LOGIC_EXPORT vtkSlicerSegmentationGeometryLogic :
 public:
   static vtkSlicerSegmentationGeometryLogic* New();
   vtkTypeMacro(vtkSlicerSegmentationGeometryLogic, vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Calculate output geometry into \sa GeometryImageData with current options
   /// \return Error message. Empty when successful

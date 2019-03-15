@@ -36,7 +36,7 @@ public:
 
   static vtkMRMLAnnotationFiducialDisplayableManager *New();
   vtkTypeMacro(vtkMRMLAnnotationFiducialDisplayableManager, vtkMRMLAnnotationDisplayableManager);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
 protected:
 
@@ -44,30 +44,30 @@ protected:
   virtual ~vtkMRMLAnnotationFiducialDisplayableManager(){}
 
   /// Callback for click in RenderWindow
-  virtual void OnClickInRenderWindow(double x, double y, const char *associatedNodeID) VTK_OVERRIDE;
+  virtual void OnClickInRenderWindow(double x, double y, const char *associatedNodeID) override;
   /// Create a widget.
-  virtual vtkAbstractWidget * CreateWidget(vtkMRMLAnnotationNode* node) VTK_OVERRIDE;
+  virtual vtkAbstractWidget * CreateWidget(vtkMRMLAnnotationNode* node) override;
 
   /// Gets called when widget was created
-  virtual void OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node) VTK_OVERRIDE;
+  virtual void OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node) override;
 
   /// Propagate properties of MRML node to widget.
-  virtual void PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget) VTK_OVERRIDE;
+  virtual void PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget) override;
   /// Propagate properties of widget to MRML node.
-  virtual void PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node) VTK_OVERRIDE;
+  virtual void PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node) override;
 
   /// set up an observer on the interactor style to watch for key press events
   virtual void AdditionnalInitializeStep();
   /// respond to the interactor style event
-  virtual void OnInteractorStyleEvent(int eventid) VTK_OVERRIDE;
+  virtual void OnInteractorStyleEvent(int eventid) override;
 
   // respond to control point modified events
-  virtual void UpdatePosition(vtkAbstractWidget *widget, vtkMRMLNode *node) VTK_OVERRIDE;
+  virtual void UpdatePosition(vtkAbstractWidget *widget, vtkMRMLNode *node) override;
 
   std::map<vtkMRMLNode*, int> NodeGlyphTypes;
 
   // clean up when scene closes
-  virtual void OnMRMLSceneEndClose() VTK_OVERRIDE;
+  virtual void OnMRMLSceneEndClose() override;
 
 private:
 

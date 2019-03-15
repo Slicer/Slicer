@@ -18,39 +18,39 @@ public:
   vtkTypeMacro(vtkMRMLAnnotationROINode,vtkMRMLAnnotationLinesNode);
   /// Description:
   /// Just prints short summary
-  void PrintAnnotationInfo(ostream& os, vtkIndent indent, int titleFlag = 1) VTK_OVERRIDE;
+  void PrintAnnotationInfo(ostream& os, vtkIndent indent, int titleFlag = 1) override;
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
+  virtual vtkMRMLNode* CreateNodeInstance() override;
   /// Description:
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "AnnotationROI";}
+  virtual const char* GetNodeTagName() override {return "AnnotationROI";}
 
-  virtual const char* GetIcon() VTK_OVERRIDE {return ":/Icons/AnnotationROI.png";}
+  virtual const char* GetIcon() override {return ":/Icons/AnnotationROI.png";}
 
   // Description:
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
+  virtual void ReadXMLAttributes( const char** atts) override;
 
   /// Description:
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
+  virtual void WriteXML(ostream& of, int indent) override;
 
 
   /// Description:
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
+  virtual void Copy(vtkMRMLNode *node) override;
 
-  void UpdateScene(vtkMRMLScene *scene) VTK_OVERRIDE;
+  void UpdateScene(vtkMRMLScene *scene) override;
 
   /// Description:
   /// alternative method to propagate events generated in Display nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
-                                   void * /*callData*/ ) VTK_OVERRIDE;
+                                   void * /*callData*/ ) override;
 
   ///
   /// Indicates if the ROI is updated interactively
@@ -94,13 +94,13 @@ public:
 
   /// Description:
   /// transform utility functions
-  virtual void ApplyTransformMatrix(vtkMatrix4x4* transformMatrix) VTK_OVERRIDE;
-  virtual void ApplyTransform(vtkAbstractTransform* transform) VTK_OVERRIDE;
+  virtual void ApplyTransformMatrix(vtkMatrix4x4* transformMatrix) override;
+  virtual void ApplyTransform(vtkAbstractTransform* transform) override;
   virtual void GetTransformedPlanes(vtkPlanes *planes);
 
   /// Description:
   /// Add ROI to scene and add display nodes
-  void Initialize(vtkMRMLScene* mrmlScene) VTK_OVERRIDE;
+  void Initialize(vtkMRMLScene* mrmlScene) override;
 
   ///
   /// Get/Set for ROI Position in RAS cooridnates
@@ -154,12 +154,12 @@ public:
   /// The default implementation in the model node would not work correctly, as the polydata
   /// in this class is used for storing the centerpoint position and radius.
   /// \sa GetBounds()
-  virtual void GetRASBounds(double bounds[6]) VTK_OVERRIDE;
+  virtual void GetRASBounds(double bounds[6]) override;
 
   /// Get bounding box in global RAS form (xmin,xmax, ymin,ymax, zmin,zmax).
   /// This method always returns the bounds of the untransformed object.
   /// \sa GetRASBounds()
-  virtual void GetBounds(double bounds[6]) VTK_OVERRIDE;
+  virtual void GetBounds(double bounds[6]) override;
 
   enum
   {

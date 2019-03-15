@@ -44,33 +44,33 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkSliceViewInteractorStyle :
 public:
   static vtkSliceViewInteractorStyle *New();
   vtkTypeMacro(vtkSliceViewInteractorStyle,vtkInteractorStyleUser);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   ///
   /// Events are either handled here by changing the slice node
   /// and composite node (sometimes using the logic's methods) or
   /// they are passed to the vtkInteractorStyleUser, which conditionally
   /// passes them to observers if there are any.
-  virtual void OnMouseMove() VTK_OVERRIDE;
-  virtual void OnEnter() VTK_OVERRIDE;
-  virtual void OnLeave() VTK_OVERRIDE;
-  virtual void OnLeftButtonDown() VTK_OVERRIDE;
-  virtual void OnLeftButtonUp() VTK_OVERRIDE;
-  virtual void OnMiddleButtonDown() VTK_OVERRIDE;
-  virtual void OnMiddleButtonUp() VTK_OVERRIDE;
-  virtual void OnRightButtonDown() VTK_OVERRIDE;
-  virtual void OnRightButtonUp() VTK_OVERRIDE;
-  virtual void OnMouseWheelForward() VTK_OVERRIDE;
-  virtual void OnMouseWheelBackward() VTK_OVERRIDE;
+  virtual void OnMouseMove() override;
+  virtual void OnEnter() override;
+  virtual void OnLeave() override;
+  virtual void OnLeftButtonDown() override;
+  virtual void OnLeftButtonUp() override;
+  virtual void OnMiddleButtonDown() override;
+  virtual void OnMiddleButtonUp() override;
+  virtual void OnRightButtonDown() override;
+  virtual void OnRightButtonUp() override;
+  virtual void OnMouseWheelForward() override;
+  virtual void OnMouseWheelBackward() override;
 
   /// Keyboard functions
-  virtual void OnChar() VTK_OVERRIDE;
-  virtual void OnKeyPress() VTK_OVERRIDE;
-  virtual void OnKeyRelease() VTK_OVERRIDE;
+  virtual void OnChar() override;
+  virtual void OnKeyPress() override;
+  virtual void OnKeyRelease() override;
 
   /// These are more esoteric events, but are useful in some cases.
-  virtual void OnExpose() VTK_OVERRIDE;
-  virtual void OnConfigure() VTK_OVERRIDE;
+  virtual void OnExpose() override;
+  virtual void OnConfigure() override;
 
   void SetDisplayableManagers(vtkMRMLDisplayableManagerGroup* displayableManagers);
 

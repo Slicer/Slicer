@@ -32,7 +32,7 @@ class VTK_SLICER_EDITORLIB_MODULE_LOGIC_EXPORT vtkImageConnectivity : public vtk
 public:
   static vtkImageConnectivity *New();
   vtkTypeMacro(vtkImageConnectivity,vtkImageAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Function
   void SetFunction(int func) {
@@ -90,7 +90,7 @@ protected:
   int Function;
   int SliceBySlice;
 
-  virtual void ExecuteDataWithInformation(vtkDataObject *, vtkInformation *) VTK_OVERRIDE;
+  virtual void ExecuteDataWithInformation(vtkDataObject *, vtkInformation *) override;
 
 private:
   vtkImageConnectivity(const vtkImageConnectivity&);

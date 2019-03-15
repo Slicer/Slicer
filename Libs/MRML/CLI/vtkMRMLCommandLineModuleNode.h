@@ -28,21 +28,21 @@ class VTK_MRML_CLI_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRMLNode
 public:
   static vtkMRMLCommandLineModuleNode *New();
   vtkTypeMacro(vtkMRMLCommandLineModuleNode, vtkMRMLNode);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
+  virtual vtkMRMLNode* CreateNodeInstance() override;
 
   /// Set node attributes
-  virtual void ReadXMLAttributes(const char** atts) VTK_OVERRIDE;
+  virtual void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
+  virtual void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
+  virtual void Copy(vtkMRMLNode *node) override;
 
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() VTK_OVERRIDE
+  virtual const char* GetNodeTagName() override
     {return "CommandLineModule";}
 
   /// List of events that can be fired on or by the node.
@@ -289,11 +289,11 @@ public:
   static ModuleDescription GetRegisteredModuleDescription(const std::string& name);
 
   /// Reimplemented for internal reasons.
-  virtual void Modified() VTK_OVERRIDE;
+  virtual void Modified() override;
 protected:
   void AbortProcess();
   virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event,
-                                 void *callData) VTK_OVERRIDE;
+                                 void *callData) override;
 
 private:
   vtkMRMLCommandLineModuleNode();

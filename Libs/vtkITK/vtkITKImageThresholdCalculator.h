@@ -30,7 +30,7 @@ class VTK_ITK_EXPORT vtkITKImageThresholdCalculator : public vtkImageAlgorithm
 public:
   static vtkITKImageThresholdCalculator *New();
   vtkTypeMacro(vtkITKImageThresholdCalculator,vtkImageAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkGetMacro(Threshold, double);
 
@@ -79,7 +79,7 @@ public:
   /// to avoid hiding Update override.
   using vtkAlgorithm::Update;
   /// The main interface which triggers the writer to start.
-  virtual void Update() VTK_OVERRIDE;
+  virtual void Update() override;
 
 protected:
   vtkITKImageThresholdCalculator();

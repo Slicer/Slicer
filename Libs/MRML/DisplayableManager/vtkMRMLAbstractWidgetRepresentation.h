@@ -57,7 +57,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLAbstractWidgetRepresentation : p
 public:
   /// Standard methods for instances of this class.
   vtkTypeMacro(vtkMRMLAbstractWidgetRepresentation, vtkProp);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //@{
   /**
@@ -136,7 +136,7 @@ public:
 
  protected:
   vtkMRMLAbstractWidgetRepresentation();
-  ~vtkMRMLAbstractWidgetRepresentation() VTK_OVERRIDE;
+  ~vtkMRMLAbstractWidgetRepresentation() override;
 
   /// Helper function to add bounds of all listed actors to the supplied bounding box.
   /// additionalBounds is for convenience only, it allows defining additional bounds.

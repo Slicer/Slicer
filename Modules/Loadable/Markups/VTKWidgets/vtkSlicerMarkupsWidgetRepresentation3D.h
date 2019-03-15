@@ -51,28 +51,28 @@ class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerMarkupsWidgetRepresen
 public:
   /// Standard methods for instances of this class.
   vtkTypeMacro(vtkSlicerMarkupsWidgetRepresentation3D, vtkSlicerMarkupsWidgetRepresentation);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  void SetRenderer(vtkRenderer *ren) VTK_OVERRIDE;
+  void SetRenderer(vtkRenderer *ren) override;
 
   /// Subclasses of vtkSlicerMarkupsWidgetRepresentation3D must implement these methods. These
   /// are the methods that the widget and its representation use to
   /// communicate with each other.
-  void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = NULL) VTK_OVERRIDE;
+  void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = NULL) override;
 
   /// Methods to make this class behave as a vtkProp.
-  void GetActors(vtkPropCollection *) VTK_OVERRIDE;
-  void ReleaseGraphicsResources(vtkWindow *) VTK_OVERRIDE;
-  int RenderOverlay(vtkViewport *viewport) VTK_OVERRIDE;
-  int RenderOpaqueGeometry(vtkViewport *viewport) VTK_OVERRIDE;
-  int RenderTranslucentPolygonalGeometry(vtkViewport *viewport) VTK_OVERRIDE;
-  vtkTypeBool HasTranslucentPolygonalGeometry() VTK_OVERRIDE;
+  void GetActors(vtkPropCollection *) override;
+  void ReleaseGraphicsResources(vtkWindow *) override;
+  int RenderOverlay(vtkViewport *viewport) override;
+  int RenderOpaqueGeometry(vtkViewport *viewport) override;
+  int RenderTranslucentPolygonalGeometry(vtkViewport *viewport) override;
+  vtkTypeBool HasTranslucentPolygonalGeometry() override;
 
   /// Return the bounds of the representation
-  double *GetBounds() VTK_OVERRIDE;
+  double *GetBounds() override;
 
   void CanInteract(const int displayPosition[2], const double worldPosition[3],
-    int &foundComponentType, int &foundComponentIndex, double &closestDistance2) VTK_OVERRIDE;
+    int &foundComponentType, int &foundComponentIndex, double &closestDistance2) override;
 
   /// Checks if interaction with straight line between visible points is possible.
   /// Can be used on the output of CanInteract, as if no better component is found then the input is returned.
@@ -83,7 +83,7 @@ public:
 
 protected:
   vtkSlicerMarkupsWidgetRepresentation3D();
-  ~vtkSlicerMarkupsWidgetRepresentation3D() VTK_OVERRIDE;
+  ~vtkSlicerMarkupsWidgetRepresentation3D() override;
 
   class ControlPointsPipeline3D : public ControlPointsPipeline
   {

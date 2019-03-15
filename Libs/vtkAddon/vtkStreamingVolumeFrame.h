@@ -35,7 +35,7 @@ public:
 
   static vtkStreamingVolumeFrame* New();
   vtkTypeMacro(vtkStreamingVolumeFrame, vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Enum for frame type
   /// For more information on frame types see: https://en.wikipedia.org/wiki/Video_compression_picture_types

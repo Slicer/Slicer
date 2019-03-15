@@ -45,13 +45,13 @@ public:
 public:
   static vtkSlicerTerminologyType *New();
   vtkTypeMacro(vtkSlicerTerminologyType, vtkCodedEntry);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Reset state of object
-  virtual void Initialize() VTK_OVERRIDE;
+  virtual void Initialize() override;
 
   /// Copy one type into another
-  virtual void Copy(vtkCodedEntry* aType) VTK_OVERRIDE;
+  virtual void Copy(vtkCodedEntry* aType) override;
 
 public:
   vtkGetVector3Macro(RecommendedDisplayRGBValue, unsigned char);

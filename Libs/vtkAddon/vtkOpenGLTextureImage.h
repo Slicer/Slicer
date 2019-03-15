@@ -62,7 +62,7 @@ protected:
 public:
   static vtkOpenGLTextureImage *New();
   vtkTypeMacro(vtkOpenGLTextureImage,vtkObject);
-  virtual void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  virtual void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // The ShaderComputation used to manage the OpenGL context and shaders

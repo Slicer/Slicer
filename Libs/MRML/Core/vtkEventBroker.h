@@ -50,7 +50,7 @@ class VTK_MRML_EXPORT vtkEventBroker : public vtkObject
 {
 public:
   vtkTypeMacro(vtkEventBroker, vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   typedef std::set< vtkObservation * > ObservationVector;
 

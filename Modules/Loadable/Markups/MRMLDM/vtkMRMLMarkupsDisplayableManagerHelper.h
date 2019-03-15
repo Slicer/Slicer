@@ -55,7 +55,7 @@ public:
 
   static vtkMRMLMarkupsDisplayableManagerHelper *New();
   vtkTypeMacro(vtkMRMLMarkupsDisplayableManagerHelper, vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkGetObjectMacro(DisplayableManager, vtkMRMLMarkupsDisplayableManager);
   void SetDisplayableManager(vtkMRMLMarkupsDisplayableManager*);

@@ -68,7 +68,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLModelDisplayableManager
 public:
   static vtkMRMLModelDisplayableManager* New();
   vtkTypeMacro(vtkMRMLModelDisplayableManager,vtkMRMLAbstractThreeDViewDisplayableManager);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   ///
   /// Get/Set the ClipModels Node
@@ -105,7 +105,7 @@ public:
 
   /// Convert a RAS location to a MRML node, point ID, cell ID,
   /// as appropriate depending what's found under the position.
-  virtual int Pick3D(double ras[3]) VTK_OVERRIDE;
+  virtual int Pick3D(double ras[3]) override;
 
   /// Get/Set tolerance for Pick() method.
   /// it will call vtkCellPicker.Get/SetTolerance()
@@ -114,7 +114,7 @@ public:
 
   ///
   /// Get the MRML ID of the picked node, returns empty string if no pick
-  virtual const char* GetPickedNodeID() VTK_OVERRIDE;
+  virtual const char* GetPickedNodeID() override;
 
   ///
   /// Get/Set the picked RAS point, returns 0,0,0 if no pick
@@ -159,28 +159,28 @@ protected:
   vtkMRMLModelDisplayableManager();
   virtual ~vtkMRMLModelDisplayableManager();
 
-  virtual void AdditionalInitializeStep() VTK_OVERRIDE;
-  virtual int ActiveInteractionModes() VTK_OVERRIDE;
+  virtual void AdditionalInitializeStep() override;
+  virtual int ActiveInteractionModes() override;
 
-  virtual void UnobserveMRMLScene() VTK_OVERRIDE;
+  virtual void UnobserveMRMLScene() override;
 
-  virtual void OnMRMLSceneStartClose() VTK_OVERRIDE;
-  virtual void OnMRMLSceneEndClose() VTK_OVERRIDE;
-  virtual void UpdateFromMRMLScene() VTK_OVERRIDE;
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) VTK_OVERRIDE;
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) VTK_OVERRIDE;
+  virtual void OnMRMLSceneStartClose() override;
+  virtual void OnMRMLSceneEndClose() override;
+  virtual void UpdateFromMRMLScene() override;
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
 
-  virtual void OnInteractorStyleEvent(int eventId) VTK_OVERRIDE;
-  virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData) VTK_OVERRIDE;
+  virtual void OnInteractorStyleEvent(int eventId) override;
+  virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData) override;
 
   /// Returns true if something visible in modelNode has changed and would
   /// require a refresh.
   bool OnMRMLDisplayableModelNodeModifiedEvent(vtkMRMLDisplayableNode * modelNode);
 
   /// Updates Actors based on models in the scene
-  virtual void UpdateFromMRML() VTK_OVERRIDE;
+  virtual void UpdateFromMRML() override;
 
-  virtual void RemoveMRMLObservers() VTK_OVERRIDE;
+  virtual void RemoveMRMLObservers() override;
 
   friend class vtkThreeDViewInteractorStyle; // Access to RequestRender();
 

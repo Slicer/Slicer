@@ -46,7 +46,7 @@ public:
 
 protected:
   vtkSlicerPointsRepresentation2D();
-  ~vtkSlicerPointsRepresentation2D() VTK_OVERRIDE;
+  ~vtkSlicerPointsRepresentation2D() override;
 
 private:
   vtkSlicerPointsRepresentation2D(const vtkSlicerPointsRepresentation2D&) = delete;

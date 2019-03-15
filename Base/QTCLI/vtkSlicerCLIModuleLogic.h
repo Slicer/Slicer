@@ -45,7 +45,7 @@ class Q_SLICER_BASE_QTCLI_EXPORT vtkSlicerCLIModuleLogic :
 public:
   static vtkSlicerCLIModuleLogic *New();
   vtkTypeMacro(vtkSlicerCLIModuleLogic,vtkSlicerModuleLogic);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// The default module description is used when creating new nodes.
   /// \sa CreateNode()
@@ -109,18 +109,18 @@ public:
 //     { this->LazyEvaluateModuleTarget(node->GetModuleDescription()); }
 
   /// Set the application logic
-  virtual void SetMRMLApplicationLogic(vtkMRMLApplicationLogic* logic) VTK_OVERRIDE;
+  virtual void SetMRMLApplicationLogic(vtkMRMLApplicationLogic* logic) override;
 
 protected:
   /// Reimplemented to observe NodeAddedEvent.
-  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene) VTK_OVERRIDE;
+  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene) override;
   /// Reimplemented for AutoRun mode.
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) VTK_OVERRIDE;
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
   /// Reimplemented to observe CLI node.
   virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event,
-                                      void *callData) VTK_OVERRIDE;
+                                      void *callData) override;
   /// Reimplemented to observe vtkSlicerApplicationLogic.
-  void ProcessMRMLLogicsEvents(vtkObject*, long unsigned int, void*) VTK_OVERRIDE;
+  void ProcessMRMLLogicsEvents(vtkObject*, long unsigned int, void*) override;
 
 
   std::string ConstructTemporaryFileName(const std::string& tag,

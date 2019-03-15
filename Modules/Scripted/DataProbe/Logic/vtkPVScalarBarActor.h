@@ -42,7 +42,7 @@ class VTK_SLICER_DATAPROBELIB_MODULE_LOGIC_EXPORT vtkPVScalarBarActor : public v
 {
 public:
   vtkTypeMacro(vtkPVScalarBarActor, vtkScalarBarActor);
-  virtual void PrintSelf(ostream &os, vtkIndent indent) VTK_OVERRIDE;
+  virtual void PrintSelf(ostream &os, vtkIndent indent) override;
   static vtkPVScalarBarActor *New();
 
   // Description:
@@ -94,11 +94,11 @@ public:
   // Release any graphics resources that are being consumed by this actor.
   // The parameter window could be used to determine which graphic
   // resources to release.
-  virtual void ReleaseGraphicsResources(vtkWindow*) VTK_OVERRIDE;
+  virtual void ReleaseGraphicsResources(vtkWindow*) override;
 
   // Description:
   // Draw the scalar bar and annotation text to the screen.
-  virtual int RenderOverlay(vtkViewport* viewport) VTK_OVERRIDE;
+  virtual int RenderOverlay(vtkViewport* viewport) override;
 
 protected:
   vtkPVScalarBarActor();
@@ -106,20 +106,20 @@ protected:
 
   // Description:
   // These methods override the subclass implementation.
-  virtual void PrepareTitleText() VTK_OVERRIDE;
-  virtual void ComputeScalarBarThickness() VTK_OVERRIDE;
-  virtual void LayoutTitle() VTK_OVERRIDE;
-  virtual void ComputeScalarBarLength() VTK_OVERRIDE;
-  virtual void LayoutTicks() VTK_OVERRIDE;
-  virtual void ConfigureAnnotations() VTK_OVERRIDE;
-  virtual void ConfigureTitle() VTK_OVERRIDE;
-  virtual void ConfigureTicks() VTK_OVERRIDE;
+  virtual void PrepareTitleText() override;
+  virtual void ComputeScalarBarThickness() override;
+  virtual void LayoutTitle() override;
+  virtual void ComputeScalarBarLength() override;
+  virtual void LayoutTicks() override;
+  virtual void ConfigureAnnotations() override;
+  virtual void ConfigureTitle() override;
+  virtual void ConfigureTicks() override;
 
   // Description:
   // Annotate the min/max values on the scalar bar (in interval/ratio mode).
   //
   // This overrides the subclass implementation.
-  virtual void EditAnnotations() VTK_OVERRIDE;
+  virtual void EditAnnotations() override;
 
   // Description:
   // Set up the ScalarBar, ScalarBarMapper, and ScalarBarActor based on the

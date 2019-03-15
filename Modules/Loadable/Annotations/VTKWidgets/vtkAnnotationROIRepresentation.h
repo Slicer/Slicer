@@ -68,7 +68,7 @@ public:
   ///
   /// Standard methods for the class.
   vtkTypeMacro(vtkAnnotationROIRepresentation,vtkWidgetRepresentation);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   static const int NUMBER_HANDLES = 7;
 
@@ -166,19 +166,19 @@ public:
 
   ///
   /// These are methods that satisfy vtkWidgetRepresentation's API.
-  virtual void PlaceWidget(double bounds[6]) VTK_OVERRIDE;
-  virtual void BuildRepresentation() VTK_OVERRIDE;
-  virtual int ComputeInteractionState(int X, int Y, int modify=0) VTK_OVERRIDE;
-  virtual void StartWidgetInteraction(double e[2]) VTK_OVERRIDE;
-  virtual void WidgetInteraction(double e[2]) VTK_OVERRIDE;
-  virtual double *GetBounds() VTK_OVERRIDE;
+  virtual void PlaceWidget(double bounds[6]) override;
+  virtual void BuildRepresentation() override;
+  virtual int ComputeInteractionState(int X, int Y, int modify=0) override;
+  virtual void StartWidgetInteraction(double e[2]) override;
+  virtual void WidgetInteraction(double e[2]) override;
+  virtual double *GetBounds() override;
 
   ///
   /// Methods supporting, and required by, the rendering process.
-  virtual void ReleaseGraphicsResources(vtkWindow*) VTK_OVERRIDE;
-  virtual int RenderOpaqueGeometry(vtkViewport*) VTK_OVERRIDE;
-  virtual int RenderTranslucentPolygonalGeometry(vtkViewport*) VTK_OVERRIDE;
-  virtual int HasTranslucentPolygonalGeometry() VTK_OVERRIDE;
+  virtual void ReleaseGraphicsResources(vtkWindow*) override;
+  virtual int RenderOpaqueGeometry(vtkViewport*) override;
+  virtual int RenderTranslucentPolygonalGeometry(vtkViewport*) override;
+  virtual int HasTranslucentPolygonalGeometry() override;
 
   enum {Outside=0,MoveF0,MoveF1,MoveF2,MoveF3,MoveF4,MoveF5,Translating,Rotating,Scaling};
 
@@ -200,7 +200,7 @@ public:
   /// get 3 extents along sides of the box
   void GetExtents(double bounds[]);
 
-  virtual void GetActors(vtkPropCollection *actors) VTK_OVERRIDE;
+  virtual void GetActors(vtkPropCollection *actors) override;
 
 
 protected:

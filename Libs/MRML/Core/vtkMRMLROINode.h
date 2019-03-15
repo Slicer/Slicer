@@ -14,38 +14,38 @@ class VTK_MRML_EXPORT vtkMRMLROINode : public vtkMRMLTransformableNode
 public:
   static vtkMRMLROINode *New();
   vtkTypeMacro(vtkMRMLROINode,vtkMRMLTransformableNode);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------
   /// MRML methods
   //--------------------------------------------------------------------------
-  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
+  virtual vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
+  virtual void ReadXMLAttributes( const char** atts) override;
 
   virtual void ReadXMLString( const char *keyValuePairs);
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
+  virtual void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
+  virtual void Copy(vtkMRMLNode *node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "MRMLROINode";}
+  virtual const char* GetNodeTagName() override {return "MRMLROINode";}
 
   ///
   ///
-  virtual void UpdateScene(vtkMRMLScene *scene) VTK_OVERRIDE;
+  virtual void UpdateScene(vtkMRMLScene *scene) override;
 
   ///
   /// update display node ids
-  void UpdateReferences() VTK_OVERRIDE;
+  void UpdateReferences() override;
 
   ///
   /// Indicates if the ROI is visible
@@ -98,15 +98,15 @@ public:
   vtkSetStringMacro(LabelText);
   vtkGetStringMacro(LabelText);
 
-  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) VTK_OVERRIDE;
+  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) override;
 
   vtkGetStringMacro(VolumeNodeID);
   vtkSetStringMacro(VolumeNodeID);
 
   ///
   /// transform utility functions
-  virtual bool CanApplyNonLinearTransforms()const VTK_OVERRIDE;
-  virtual void ApplyTransform(vtkAbstractTransform* transform) VTK_OVERRIDE;
+  virtual bool CanApplyNonLinearTransforms()const override;
+  virtual void ApplyTransform(vtkAbstractTransform* transform) override;
 
   /// Description
   /// get transformed planes for the ROI region

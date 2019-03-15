@@ -43,7 +43,7 @@ public:
 
   static vtkMRMLAnnotationDisplayableManagerHelper *New();
   vtkTypeMacro(vtkMRMLAnnotationDisplayableManagerHelper, vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Lock/Unlock all widgets based on the state of the nodes
   void UpdateLockedAllWidgetsFromNodes();

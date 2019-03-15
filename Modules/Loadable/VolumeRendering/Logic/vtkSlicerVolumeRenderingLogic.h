@@ -61,7 +61,7 @@ public:
 
   static vtkSlicerVolumeRenderingLogic *New();
   vtkTypeMacro(vtkSlicerVolumeRenderingLogic,vtkSlicerModuleLogic);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Inform the logic and observers that a rendering method (class deriving
   /// from vtkMRMLVolumeRenderingDisplayNode) is available.
@@ -314,15 +314,15 @@ protected:
   vtkSlicerVolumeRenderingLogic();
   virtual ~vtkSlicerVolumeRenderingLogic();
 
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* scene) VTK_OVERRIDE;
+  virtual void SetMRMLSceneInternal(vtkMRMLScene* scene) override;
   // Register local MRML nodes
-  virtual void RegisterNodes() VTK_OVERRIDE;
+  virtual void RegisterNodes() override;
 
   /// Reimplemented to initialize display nodes in the scene.
-  void ObserveMRMLScene() VTK_OVERRIDE;
-  void OnMRMLSceneNodeAdded(vtkMRMLNode* node) VTK_OVERRIDE;
-  void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) VTK_OVERRIDE;
-  void OnMRMLNodeModified(vtkMRMLNode* node) VTK_OVERRIDE;
+  void ObserveMRMLScene() override;
+  void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
+  void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
+  void OnMRMLNodeModified(vtkMRMLNode* node) override;
 
   // Update from
   void UpdateVolumeRenderingDisplayNode(vtkMRMLVolumeRenderingDisplayNode* node);

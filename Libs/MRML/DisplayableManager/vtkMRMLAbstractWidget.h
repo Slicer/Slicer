@@ -61,7 +61,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLAbstractWidget : public vtkObjec
 public:
   /// Standard methods for a VTK class.
   vtkTypeMacro(vtkMRMLAbstractWidget, vtkObject);
-  virtual void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  virtual void PrintSelf(ostream& os, vtkIndent indent) override;
 
   virtual void SetMRMLApplicationLogic(vtkMRMLApplicationLogic* applicationLogic);
   vtkMRMLApplicationLogic* GetMRMLApplicationLogic();
@@ -177,7 +177,7 @@ public:
 
 protected:
   vtkMRMLAbstractWidget();
-  ~vtkMRMLAbstractWidget() VTK_OVERRIDE;
+  ~vtkMRMLAbstractWidget() override;
 
   /// Get ID of the node at the specified event position.
   /// Returns nullptr if nothing can be found.

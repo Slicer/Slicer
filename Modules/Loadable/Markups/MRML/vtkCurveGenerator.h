@@ -41,7 +41,7 @@ public:
   vtkTypeMacro(vtkCurveGenerator, vtkObject);
   static vtkCurveGenerator* New();
 
-  void PrintSelf(ostream &os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   // This indicates whether the curve should loop back in on itself,
   // connecting the last point back to the first point (disabled by default).

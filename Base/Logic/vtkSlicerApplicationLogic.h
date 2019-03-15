@@ -52,7 +52,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   /// The Usual vtk class functions
   static vtkSlicerApplicationLogic *New();
   vtkTypeMacro(vtkSlicerApplicationLogic, vtkMRMLApplicationLogic);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Update the data IO, local and remote, with the new scene
   /// For stand alone applications, follow the set up steps in

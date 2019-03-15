@@ -26,7 +26,7 @@ public:
   };
   static vtkSlicerAnnotationModuleLogic *New();
   vtkTypeMacro(vtkSlicerAnnotationModuleLogic,vtkSlicerModuleLogic);
-  virtual void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  virtual void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Start the place mode for annotations.
   /// By default, the singleton interaction node is updated.
@@ -53,7 +53,7 @@ public:
   // Annotation Properties (interface to MRML)
   //
   /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
-  virtual void RegisterNodes() VTK_OVERRIDE;
+  virtual void RegisterNodes() override;
 
   /// Check if node id corresponds to an annotaton node
   bool IsAnnotationNode(const char* id);
@@ -277,15 +277,15 @@ protected:
   virtual ~vtkSlicerAnnotationModuleLogic();
 
   // Initialize listening to MRML events
-  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene) VTK_OVERRIDE;
-  virtual void ObserveMRMLScene() VTK_OVERRIDE;
+  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene) override;
+  virtual void ObserveMRMLScene() override;
 
   // MRML events
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) VTK_OVERRIDE;
-  virtual void OnMRMLSceneEndClose() VTK_OVERRIDE;
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
+  virtual void OnMRMLSceneEndClose() override;
   virtual void ProcessMRMLNodesEvents(vtkObject *caller,
                                       unsigned long event,
-                                      void *callData ) VTK_OVERRIDE;
+                                      void *callData ) override;
   virtual void OnMRMLAnnotationNodeModifiedEvent(vtkMRMLNode* node);
 
 private:

@@ -44,7 +44,7 @@ public:
   // The usual VTK class functions
   static vtkSlicerScalarBarActor *New();
   vtkTypeMacro(vtkSlicerScalarBarActor,vtkScalarBarActor);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Get for the flag on using VTK6 annotation as label
   vtkGetMacro(UseAnnotationAsLabel, int);
@@ -78,11 +78,11 @@ protected:
   //
   // It centers labels on color swatches instead of placing labels
   // at the edge.
-  virtual void LayoutTicks() VTK_OVERRIDE;
+  virtual void LayoutTicks() override;
 
   // It centers labels on color swatches instead of placing labels
   // at the edge.
-  virtual void ConfigureTicks() VTK_OVERRIDE;
+  virtual void ConfigureTicks() override;
 
   /// flag for setting color name as label
   int UseAnnotationAsLabel;

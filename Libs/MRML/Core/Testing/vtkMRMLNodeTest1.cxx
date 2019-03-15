@@ -52,11 +52,11 @@ public:
     return this->NodeReferences;
     }
 
-  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE
+  virtual vtkMRMLNode* CreateNodeInstance() override
     {
     return vtkMRMLNodeTestHelper1::New();
     }
-  virtual const char* GetNodeTagName() VTK_OVERRIDE
+  virtual const char* GetNodeTagName() override
     {
     return "vtkMRMLNodeTestHelper1";
     }
@@ -68,7 +68,7 @@ public:
       }
     return this->NodeReferences[std::string(refrole)].size();
     }
-  virtual void ProcessMRMLEvents( vtkObject *caller, unsigned long event, void *callData ) VTK_OVERRIDE
+  virtual void ProcessMRMLEvents( vtkObject *caller, unsigned long event, void *callData ) override
     {
     Superclass::ProcessMRMLEvents(caller, event, callData);
     this->LastMRMLEventCaller = caller;
@@ -87,10 +87,10 @@ public:
   vtkSetStdVectorMacro(TestingFloatVector, std::vector<float>);
   vtkGetStdVectorMacro(TestingFloatVector, std::vector<float>);
 
-  virtual void SetSceneReferences() VTK_OVERRIDE;
-  virtual void UpdateReferenceID(const char *oldID, const char *newID) VTK_OVERRIDE;
-  virtual void WriteXML(ostream& of, int nIndent) VTK_OVERRIDE;
-  virtual void ReadXMLAttributes(const char** atts) VTK_OVERRIDE;
+  virtual void SetSceneReferences() override;
+  virtual void UpdateReferenceID(const char *oldID, const char *newID) override;
+  virtual void WriteXML(ostream& of, int nIndent) override;
+  virtual void ReadXMLAttributes(const char** atts) override;
 
   char*                     OtherNodeID;
   std::vector<std::string>  TestingStringVector;
@@ -124,11 +124,11 @@ public:
 
   vtkTypeMacro(vtkMRMLStorageNodeTestHelper,vtkMRMLStorageNode);
 
-  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE
+  virtual vtkMRMLNode* CreateNodeInstance() override
     {
     return vtkMRMLStorageNodeTestHelper::New();
     }
-  virtual const char* GetNodeTagName() VTK_OVERRIDE
+  virtual const char* GetNodeTagName() override
     {
     return "vtkMRMLStorageNodeTestHelper";
     }
@@ -136,25 +136,25 @@ public:
   void SetOtherNodeID(const char* id);
   vtkGetStringMacro(OtherNodeID);
 
-  virtual void SetSceneReferences() VTK_OVERRIDE;
-  virtual void UpdateReferenceID(const char *oldID, const char *newID) VTK_OVERRIDE;
-  virtual void WriteXML(ostream& of, int nIndent) VTK_OVERRIDE;
-  virtual void ReadXMLAttributes(const char** atts) VTK_OVERRIDE;
+  virtual void SetSceneReferences() override;
+  virtual void UpdateReferenceID(const char *oldID, const char *newID) override;
+  virtual void WriteXML(ostream& of, int nIndent) override;
+  virtual void ReadXMLAttributes(const char** atts) override;
 
   // Implemented to satisfy the storage node interface
-  virtual bool CanReadInReferenceNode(vtkMRMLNode* refNode) VTK_OVERRIDE
+  virtual bool CanReadInReferenceNode(vtkMRMLNode* refNode) override
     {
     return refNode->IsA("vtkMRMLNodeTestHelper1");
     }
-  virtual bool CanWriteFromReferenceNode(vtkMRMLNode* refNode) VTK_OVERRIDE
+  virtual bool CanWriteFromReferenceNode(vtkMRMLNode* refNode) override
     {
     return refNode->IsA("vtkMRMLNodeTestHelper1");
     }
-  virtual void InitializeSupportedWriteFileTypes() VTK_OVERRIDE
+  virtual void InitializeSupportedWriteFileTypes() override
     {
     this->SupportedWriteFileTypes->InsertNextValue(".noop");
     }
-  virtual int ReadDataInternal(vtkMRMLNode *refNode) VTK_OVERRIDE
+  virtual int ReadDataInternal(vtkMRMLNode *refNode) override
     {
     vtkMRMLNodeTestHelper1 * node = vtkMRMLNodeTestHelper1::SafeDownCast(refNode);
     if(!node)
@@ -164,7 +164,7 @@ public:
       }
     return 1;
     }
-  virtual int WriteDataInternal(vtkMRMLNode *refNode) VTK_OVERRIDE
+  virtual int WriteDataInternal(vtkMRMLNode *refNode) override
     {
     vtkMRMLNodeTestHelper1 * node = vtkMRMLNodeTestHelper1::SafeDownCast(refNode);
     if(!node)

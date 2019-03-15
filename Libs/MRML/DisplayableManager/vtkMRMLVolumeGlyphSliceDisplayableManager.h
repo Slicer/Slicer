@@ -37,21 +37,21 @@ public:
   static vtkMRMLVolumeGlyphSliceDisplayableManager* New();
   vtkTypeMacro(vtkMRMLVolumeGlyphSliceDisplayableManager,
                        vtkMRMLAbstractSliceViewDisplayableManager);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
 protected:
 
   vtkMRMLVolumeGlyphSliceDisplayableManager();
   virtual ~vtkMRMLVolumeGlyphSliceDisplayableManager();
 
-  virtual void UnobserveMRMLScene() VTK_OVERRIDE;
-  virtual void UpdateFromMRMLScene() VTK_OVERRIDE;
-  virtual void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) VTK_OVERRIDE;
-  virtual void OnMRMLSceneStartClose() VTK_OVERRIDE;
+  virtual void UnobserveMRMLScene() override;
+  virtual void UpdateFromMRMLScene() override;
+  virtual void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
+  virtual void OnMRMLSceneStartClose() override;
 
   /// Initialize the displayable manager based on its associated
   /// vtkMRMLSliceNode
-  virtual void Create() VTK_OVERRIDE;
+  virtual void Create() override;
 
 private:
 

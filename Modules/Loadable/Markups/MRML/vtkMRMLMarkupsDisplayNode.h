@@ -35,34 +35,34 @@ class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsDisplayNode : public 
 public:
   static vtkMRMLMarkupsDisplayNode *New();
   vtkTypeMacro ( vtkMRMLMarkupsDisplayNode,vtkMRMLDisplayNode );
-  void PrintSelf ( ostream& os, vtkIndent indent ) VTK_OVERRIDE;
+  void PrintSelf ( ostream& os, vtkIndent indent ) override;
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance (  ) VTK_OVERRIDE;
+  virtual vtkMRMLNode* CreateNodeInstance (  ) override;
 
   // Read node attributes from XML (MRML) file
-  virtual void ReadXMLAttributes ( const char** atts ) VTK_OVERRIDE;
+  virtual void ReadXMLAttributes ( const char** atts ) override;
 
   // Write this node's information to a MRML file in XML format.
-  virtual void WriteXML ( ostream& of, int indent ) VTK_OVERRIDE;
+  virtual void WriteXML ( ostream& of, int indent ) override;
 
 
   // Copy the node's attributes to this object
-  virtual void Copy ( vtkMRMLNode *node ) VTK_OVERRIDE;
+  virtual void Copy ( vtkMRMLNode *node ) override;
 
   // Get node XML tag name (like Volume, Markups)
-  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "MarkupsDisplay";};
+  virtual const char* GetNodeTagName() override {return "MarkupsDisplay";};
 
   // Finds the storage node and read the data
-  virtual void UpdateScene(vtkMRMLScene *scene) VTK_OVERRIDE;
+  virtual void UpdateScene(vtkMRMLScene *scene) override;
 
   // Alternative method to propagate events generated in Display nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
-                                   void * /*callData*/ ) VTK_OVERRIDE;
+                                   void * /*callData*/ ) override;
 
   /// Convenienve function for getting the displayable markups node
   vtkMRMLMarkupsNode* GetMarkupsNode();

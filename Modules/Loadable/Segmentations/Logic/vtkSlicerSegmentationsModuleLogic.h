@@ -54,7 +54,7 @@ class VTK_SLICER_SEGMENTATIONS_LOGIC_EXPORT vtkSlicerSegmentationsModuleLogic :
 public:
   static vtkSlicerSegmentationsModuleLogic *New();
   vtkTypeMacro(vtkSlicerSegmentationsModuleLogic,vtkSlicerModuleLogic);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Get segmentation node containing a segmentation object. As segmentation objects are out-of-MRML
   /// VTK objects, there is no direct link from it to its parent node, so must be found from the MRML scene.
@@ -342,10 +342,10 @@ public:
   void SetTerminologiesLogic(vtkSlicerTerminologiesModuleLogic* terminologiesLogic);
 
 protected:
-  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene) VTK_OVERRIDE;
+  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene) override;
 
   /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
-  virtual void RegisterNodes() VTK_OVERRIDE;
+  virtual void RegisterNodes() override;
 
   /// Callback function observing UID added events for subject hierarchy nodes.
   /// In case the newly added UID is a volume node referenced from a segmentation,
@@ -355,7 +355,7 @@ protected:
   static void OnSubjectHierarchyUIDAdded(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
 
   /// Handle MRML node added events
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) VTK_OVERRIDE;
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
 
   static bool ExportSegmentsClosedSurfaceRepresentationToStlFiles(std::string destinationFolder,
     vtkMRMLSegmentationNode* segmentationNode, std::vector<std::string>& segmentIDs, bool lps, double sizeScale, bool merge);

@@ -19,7 +19,7 @@ class VTK_ITK_EXPORT vtkITKMorphologicalContourInterpolator : public vtkSimpleIm
 public:
   static vtkITKMorphologicalContourInterpolator *New();
   vtkTypeMacro(vtkITKMorphologicalContourInterpolator, vtkSimpleImageToImageFilter);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Interpolate only this label. Interpolates all labels if set to 0 (default).
   vtkGetMacro(Label, long);
@@ -48,7 +48,7 @@ protected:
   vtkITKMorphologicalContourInterpolator();
   ~vtkITKMorphologicalContourInterpolator();
 
-  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) VTK_OVERRIDE;
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) override;
 
   long Label;
   int Axis;

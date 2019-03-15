@@ -49,38 +49,38 @@ class VTK_MRML_EXPORT vtkMRMLColorNode : public vtkMRMLStorableNode
 public:
   static vtkMRMLColorNode *New();
   vtkTypeMacro(vtkMRMLColorNode,vtkMRMLStorableNode);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
+  virtual vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
+  virtual void ReadXMLAttributes( const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
+  virtual void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
+  virtual void Copy(vtkMRMLNode *node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "Color";};
+  virtual const char* GetNodeTagName() override {return "Color";};
 
   ///
   /// Reset node attributes to the initilal state as defined in the constructor.
   /// NOTE:   it preserves values several dynamic attributes that may be set by an application: type, name
-  virtual void Reset(vtkMRMLNode* defaultNode) VTK_OVERRIDE;
+  virtual void Reset(vtkMRMLNode* defaultNode) override;
 
   ///
   ///
-  virtual void UpdateScene(vtkMRMLScene *scene) VTK_OVERRIDE;
+  virtual void UpdateScene(vtkMRMLScene *scene) override;
 
   ///
   /// Set Type to type, then build colours and set names
@@ -94,7 +94,7 @@ public:
   void SetTypeToUser();
   void SetTypeToFile();
 
-  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) VTK_OVERRIDE;
+  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) override;
 
   /// Return the lowest and highest integers, for use in looping.
   /// Override in subclasses when more enums are added.
@@ -186,7 +186,7 @@ public:
   void SetNamesFromColors();
 
   /// \sa vtkMRMLStorableNode::GetModifiedSinceRead()
-  virtual bool GetModifiedSinceRead() VTK_OVERRIDE;
+  virtual bool GetModifiedSinceRead() override;
 
   /// The list of valid color node types, added to in subclasses
   /// For backward compatibility, User and File keep the numbers that

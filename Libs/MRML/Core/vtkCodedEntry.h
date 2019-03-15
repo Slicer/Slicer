@@ -29,7 +29,7 @@ public:
 
   static vtkCodedEntry *New();
   vtkTypeMacro(vtkCodedEntry, vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Reset state of object
   virtual void Initialize();

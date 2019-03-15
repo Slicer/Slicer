@@ -115,7 +115,7 @@ public:
   static vtkMRMLMarkupsNode *New();
   vtkTypeMacro(vtkMRMLMarkupsNode,vtkMRMLDisplayableNode);
 
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   virtual const char* GetIcon() {return "";};
 
@@ -123,15 +123,15 @@ public:
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
+  virtual vtkMRMLNode* CreateNodeInstance() override;
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "Markups";};
+  virtual const char* GetNodeTagName() override {return "Markups";};
 
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
+  virtual void ReadXMLAttributes( const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
+  virtual void WriteXML(ostream& of, int indent) override;
 
   /// Write this node's information to a vector of strings for passing to a CLI,
   /// precede each datum with the prefix if not an empty string
@@ -139,22 +139,22 @@ public:
   /// multipleFlag = 1 for the whole list, 1 for the first selected control point
   virtual void WriteCLI(std::vector<std::string>& commandLine,
                         std::string prefix, int coordinateSystem = 0,
-                        int multipleFlag = 1) VTK_OVERRIDE;
+                        int multipleFlag = 1) override;
 
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
+  virtual void Copy(vtkMRMLNode *node) override;
 
   /// Alternative method to propagate events generated in Display nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
-                                   void * /*callData*/ ) VTK_OVERRIDE;
+                                   void * /*callData*/ ) override;
 
 
   /// Create default storage node or NULL if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() VTK_OVERRIDE;
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
   /// Create and observe default display node(s)
-  virtual void CreateDefaultDisplayNodes() VTK_OVERRIDE;
+  virtual void CreateDefaultDisplayNodes() override;
 
   /// Access to a VTK string array, not currently used
   int AddText(const char *newText);
@@ -413,10 +413,10 @@ public:
 
   /// Returns true since can apply non linear transforms
   /// \sa ApplyTransform
-  virtual bool CanApplyNonLinearTransforms()const VTK_OVERRIDE;
+  virtual bool CanApplyNonLinearTransforms()const override;
   /// Apply the passed transformation to all of the control points
   /// \sa CanApplyNonLinearTransforms
-  virtual void ApplyTransform(vtkAbstractTransform* transform) VTK_OVERRIDE;
+  virtual void ApplyTransform(vtkAbstractTransform* transform) override;
 
   /// Get the markup node label format string that defines the markup names.
   /// \sa SetMarkupLabelFormat
@@ -445,7 +445,7 @@ public:
   /// So if you invoke class specific modified events without calling Modified() on the
   /// markups, GetModifiedSinceRead() won't return true.
   /// \sa vtkMRMLStorableNode::GetModifiedSinceRead()
-  virtual bool GetModifiedSinceRead() VTK_OVERRIDE;
+  virtual bool GetModifiedSinceRead() override;
 
   /// Reset the id of the Nth control point according to the local policy
   /// Called after an already initialised markup has been added to the
@@ -481,8 +481,8 @@ public:
 
   int GetControlPointIndexFromInterpolatedPointIndex(vtkIdType interpolatedPointIndex);
 
-  virtual void GetRASBounds(double bounds[6]) VTK_OVERRIDE;
-  virtual void GetBounds(double bounds[6]) VTK_OVERRIDE;
+  virtual void GetRASBounds(double bounds[6]) override;
+  virtual void GetBounds(double bounds[6]) override;
 
 protected:
   vtkMRMLMarkupsNode();

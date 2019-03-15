@@ -47,7 +47,7 @@ class VTK_MRML_EXPORT vtkObservation : public vtkObject
   /// The Usual vtk class functions
   static vtkObservation *New();
   vtkTypeMacro(vtkObservation,vtkObject);
-  virtual void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  virtual void PrintSelf(ostream& os, vtkIndent indent) override;
 
   ///
   /// Accessors

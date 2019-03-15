@@ -37,7 +37,7 @@ protected:
 public:
   static vtkOpenGLShaderComputation *New();
   vtkTypeMacro(vtkOpenGLShaderComputation,vtkObject);
-  virtual void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  virtual void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Loads the required extensions

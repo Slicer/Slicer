@@ -48,7 +48,7 @@ public:
 
   static vtkMRMLMarkupsDisplayableManager *New();
   vtkTypeMacro(vtkMRMLMarkupsDisplayableManager, vtkMRMLAbstractDisplayableManager);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Check if this is a 2d SliceView displayable manager, returns true if so,
   /// false otherwise. Checks return from GetSliceNode for non null, which means
@@ -59,12 +59,12 @@ public:
 
   vtkMRMLMarkupsDisplayableManagerHelper *  GetHelper() { return this->Helper; };
 
-  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &closestDistance2) VTK_OVERRIDE;
-  bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) VTK_OVERRIDE;
+  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &closestDistance2) override;
+  bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
 
-  void SetHasFocus(bool hasFocus) VTK_OVERRIDE;
-  bool GetGrabFocus() VTK_OVERRIDE;
-  bool GetInteractive() VTK_OVERRIDE;
+  void SetHasFocus(bool hasFocus) override;
+  bool GetGrabFocus() override;
+  bool GetInteractive() override;
 
   // Updates markup point preview position.
   // Returns true if the event is processed.
@@ -88,30 +88,30 @@ protected:
 
   vtkSlicerMarkupsWidget* FindClosestWidget(vtkMRMLInteractionEventData *callData, double &closestDistance2);
 
-  virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData) VTK_OVERRIDE;
+  virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData) override;
 
   /// Wrap the superclass render request in a check for batch processing
   virtual void RequestRender();
 
   /// Called from RequestRender method if UpdateFromMRMLRequested is true
   /// \sa RequestRender() SetUpdateFromMRMLRequested()
-  virtual void UpdateFromMRML() VTK_OVERRIDE;
+  virtual void UpdateFromMRML() override;
 
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) VTK_OVERRIDE;
+  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
 
   /// Called after the corresponding MRML event is triggered, from AbstractDisplayableManager
   /// \sa ProcessMRMLSceneEvents
-  virtual void UpdateFromMRMLScene() VTK_OVERRIDE;
-  virtual void OnMRMLSceneEndClose() VTK_OVERRIDE;
-  virtual void OnMRMLSceneEndImport() VTK_OVERRIDE;
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) VTK_OVERRIDE;
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) VTK_OVERRIDE;
+  virtual void UpdateFromMRMLScene() override;
+  virtual void OnMRMLSceneEndClose() override;
+  virtual void OnMRMLSceneEndImport() override;
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
 
   /// Create a widget.
   vtkSlicerMarkupsWidget* CreateWidget(vtkMRMLMarkupsDisplayNode* node);
 
   /// Called after the corresponding MRML View container was modified
-  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller) VTK_OVERRIDE;
+  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller) override;
 
   /// Handler for specific SliceView actions, iterate over the widgets in the helper
   virtual void OnMRMLSliceNodeModifiedEvent();
@@ -141,7 +141,7 @@ protected:
   std::set<std::string> Focus;
 
   /// Respond to interactor style events
-  virtual void OnInteractorStyleEvent(int eventid) VTK_OVERRIDE;
+  virtual void OnInteractorStyleEvent(int eventid) override;
 
   /// Accessor for internal flag that disables interactor style event processing
   vtkGetMacro(DisableInteractorStyleEventsProcessing, int);

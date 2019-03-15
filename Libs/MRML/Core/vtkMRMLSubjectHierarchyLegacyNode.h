@@ -64,21 +64,21 @@ public:
   ///   call \sa CreateSubjectHierarchyNode method.
   static vtkMRMLSubjectHierarchyLegacyNode *New();
   vtkTypeMacro(vtkMRMLSubjectHierarchyLegacyNode,vtkMRMLHierarchyNode);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
+  virtual vtkMRMLNode* CreateNodeInstance() override;
 
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes(const char** atts) VTK_OVERRIDE;
+  virtual void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
+  virtual void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
+  virtual void Copy(vtkMRMLNode *node) override;
 
   /// Get node XML tag name (like Volume, Contour)
-  virtual const char* GetNodeTagName() VTK_OVERRIDE;
+  virtual const char* GetNodeTagName() override;
 
 public:
   /// Find subject hierarchy node according to a UID (by exact match)

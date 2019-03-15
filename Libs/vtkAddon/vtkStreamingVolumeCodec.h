@@ -48,7 +48,7 @@ class VTK_ADDON_EXPORT vtkStreamingVolumeCodec : public vtkObject
 {
 public:
   vtkTypeMacro(vtkStreamingVolumeCodec, vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Returns the FourCC code representing the codec
   /// See https://www.fourcc.org/codecs.php for an incomplete list

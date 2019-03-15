@@ -38,7 +38,7 @@ class VTK_MRML_EXPORT vtkMRMLModelDisplayNode : public vtkMRMLDisplayNode
 public:
   static vtkMRMLModelDisplayNode *New();
   vtkTypeMacro(vtkMRMLModelDisplayNode,vtkMRMLDisplayNode);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   enum SliceDisplayModeType
     {
@@ -50,20 +50,20 @@ public:
 
   ///
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes(const char** atts) VTK_OVERRIDE;
+  virtual void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
+  virtual void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
+  virtual void Copy(vtkMRMLNode *node) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
+  virtual vtkMRMLNode* CreateNodeInstance() override;
 
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "ModelDisplay";}
+  virtual const char* GetNodeTagName() override {return "ModelDisplay";}
 
   /// Set and observe mesh for this model. It should be the output
   /// mesh connection of the model node.
@@ -106,11 +106,11 @@ public:
   /// are removed, therefore if a GUI or other component observes the mesh, then it will detect that
   /// the scalar is deleted and so it may deactivate the selected scalar.
   /// \sa SetActiveAttributeLocation()
-  virtual void SetActiveScalarName(const char *scalarName) VTK_OVERRIDE;
+  virtual void SetActiveScalarName(const char *scalarName) override;
 
   /// Reimplemented to update pipeline with new value
   /// \sa SetActiveScalarName()
-  virtual void SetActiveAttributeLocation(int location) VTK_OVERRIDE;
+  virtual void SetActiveAttributeLocation(int location) override;
 
   /// Sets active scalar name and attribute location in one step.
   /// It is preferable to use this method instead of calling SetActiveScalarName
@@ -120,7 +120,7 @@ public:
 
   /// Reimplemented to update scalar range accordingly
   /// \sa SetActiveScalarName()
-  virtual void SetScalarRangeFlag(int flag) VTK_OVERRIDE;
+  virtual void SetScalarRangeFlag(int flag) override;
 
   /// Set whether to threshold the model display node.
   /// \sa ThresholdEnabled, GetThresholdEnabled()
@@ -178,7 +178,7 @@ protected:
 
   virtual void ProcessMRMLEvents(vtkObject *caller,
                                  unsigned long event,
-                                 void *callData) VTK_OVERRIDE;
+                                 void *callData) override;
 
   /// To be reimplemented in subclasses if the input of the pipeline changes
   virtual void SetInputToMeshPipeline(vtkAlgorithmOutput* meshConnection);

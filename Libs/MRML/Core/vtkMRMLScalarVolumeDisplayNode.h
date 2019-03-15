@@ -43,25 +43,25 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
   public:
   static vtkMRMLScalarVolumeDisplayNode *New();
   vtkTypeMacro(vtkMRMLScalarVolumeDisplayNode,vtkMRMLVolumeDisplayNode);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
+  virtual vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
+  virtual void ReadXMLAttributes( const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
+  virtual void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
+  virtual void Copy(vtkMRMLNode *node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "VolumeDisplay";}
+  virtual const char* GetNodeTagName() override {return "VolumeDisplay";}
 
 
   //--------------------------------------------------------------------------
@@ -133,27 +133,27 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
   vtkSetMacro(Interpolate, int);
   vtkBooleanMacro(Interpolate, int);
 
-  virtual void SetDefaultColorMap() VTK_OVERRIDE;
+  virtual void SetDefaultColorMap() override;
 
   ///
   /// alternative method to propagate events generated in Display nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
-                                   void * /*callData*/ ) VTK_OVERRIDE;
+                                   void * /*callData*/ ) override;
 
   /// Set the pipeline input
-  virtual void SetInputImageDataConnection(vtkAlgorithmOutput *imageDataConnection) VTK_OVERRIDE;
+  virtual void SetInputImageDataConnection(vtkAlgorithmOutput *imageDataConnection) override;
 
   /// Gets the pipeline input
-  virtual vtkAlgorithmOutput* GetInputImageDataConnection() VTK_OVERRIDE;
+  virtual vtkAlgorithmOutput* GetInputImageDataConnection() override;
 
   /// Gets the pipeline output
-  virtual vtkAlgorithmOutput* GetOutputImageDataConnection() VTK_OVERRIDE;
+  virtual vtkAlgorithmOutput* GetOutputImageDataConnection() override;
 
   ///
   /// Get/set background mask stencil
-  virtual void SetBackgroundImageStencilDataConnection(vtkAlgorithmOutput *imageDataConnection) VTK_OVERRIDE;
-  virtual vtkAlgorithmOutput* GetBackgroundImageStencilDataConnection() VTK_OVERRIDE;
+  virtual void SetBackgroundImageStencilDataConnection(vtkAlgorithmOutput *imageDataConnection) override;
+  virtual vtkAlgorithmOutput* GetBackgroundImageStencilDataConnection() override;
 
   ///
   /// Parse a string with window and level as double|double, and add a preset
@@ -192,7 +192,7 @@ protected:
   vtkMRMLScalarVolumeDisplayNode(const vtkMRMLScalarVolumeDisplayNode&);
   void operator=(const vtkMRMLScalarVolumeDisplayNode&);
 
-  virtual void SetColorNodeInternal(vtkMRMLColorNode* newColorNode) VTK_OVERRIDE;
+  virtual void SetColorNodeInternal(vtkMRMLColorNode* newColorNode) override;
   void UpdateLookupTable(vtkMRMLColorNode* newColorNode);
   void CalculateAutoLevels();
 
@@ -201,7 +201,7 @@ protected:
   vtkImageData* GetScalarImageData();
   virtual vtkAlgorithmOutput* GetScalarImageDataConnection();
 
-  virtual void SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection) VTK_OVERRIDE;
+  virtual void SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection) override;
 
   ///
   /// To hold preset values for window and level, so can restore this display

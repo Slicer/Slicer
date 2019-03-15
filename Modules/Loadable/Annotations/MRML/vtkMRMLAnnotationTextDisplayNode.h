@@ -19,40 +19,40 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationTextDisplayNod
  public:
   static vtkMRMLAnnotationTextDisplayNode *New (  );
   vtkTypeMacro ( vtkMRMLAnnotationTextDisplayNode,vtkMRMLAnnotationDisplayNode );
-  void PrintSelf ( ostream& os, vtkIndent indent ) VTK_OVERRIDE;
+  void PrintSelf ( ostream& os, vtkIndent indent ) override;
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance () VTK_OVERRIDE;
+  virtual vtkMRMLNode* CreateNodeInstance () override;
 
   // Description:
   // Read node attributes from XML (MRML) file
-  virtual void ReadXMLAttributes ( const char** atts ) VTK_OVERRIDE;
+  virtual void ReadXMLAttributes ( const char** atts ) override;
 
   // Description:
   // Write this node's information to a MRML file in XML format.
-  virtual void WriteXML ( ostream& of, int indent ) VTK_OVERRIDE;
+  virtual void WriteXML ( ostream& of, int indent ) override;
 
 
   // Description:
   // Copy the node's attributes to this object
-  virtual void Copy ( vtkMRMLNode *node ) VTK_OVERRIDE;
+  virtual void Copy ( vtkMRMLNode *node ) override;
 
   // Description:
   // Get node XML tag name (like Volume, Annotation)
-  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "AnnotationTextDisplay";}
+  virtual const char* GetNodeTagName() override {return "AnnotationTextDisplay";}
 
   // Description:
   // Finds the storage node and read the data
-  virtual void UpdateScene(vtkMRMLScene *scene) VTK_OVERRIDE;
+  virtual void UpdateScene(vtkMRMLScene *scene) override;
 
   // Description:
   // alternative method to propagate events generated in Display nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
-                                   void * /*callData*/ ) VTK_OVERRIDE;
+                                   void * /*callData*/ ) override;
 
   // Description:
   // Get/Set for Text scale
@@ -118,9 +118,9 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationTextDisplayNod
   vtkBooleanMacro(AttachEdgeOnly,int);
 
   /// Create a backup of this node and attach it.
-  void CreateBackup() VTK_OVERRIDE;
+  void CreateBackup() override;
   /// Restore an attached backup of this node.
-  void RestoreBackup() VTK_OVERRIDE;
+  void RestoreBackup() override;
 
   /// Utility function to return a new string with \n's inserted in the input
   /// string to bring each line down below the MaxCharactersPerLine. Tries to

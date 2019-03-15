@@ -190,7 +190,7 @@ public:
   static vtkSlicerErrorSink *New() {return new vtkSlicerErrorSink; }
   typedef vtkSlicerErrorSink Self;
 
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Display errors using vtkOutputWindowDisplayErrorText
   /// \sa vtkOutputWindowDisplayErrorText

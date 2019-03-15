@@ -26,7 +26,7 @@ class VTK_ADDON_EXPORT vtkPersonInformation : public vtkObject
 public:
   static vtkPersonInformation *New();
   vtkTypeMacro(vtkPersonInformation,vtkObject);
-  virtual void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  virtual void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Set/Get username.

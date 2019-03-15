@@ -39,15 +39,15 @@ public:
   static vtkMRMLMarkupsClosedCurveNode *New();
   vtkTypeMacro(vtkMRMLMarkupsClosedCurveNode, vtkMRMLMarkupsCurveNode);
 
-  virtual const char* GetIcon() VTK_OVERRIDE {return ":/Icons/MarkupsCurveMouseModePlace.png";}
+  virtual const char* GetIcon() override {return ":/Icons/MarkupsCurveMouseModePlace.png";}
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
+  virtual vtkMRMLNode* CreateNodeInstance() override;
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "MarkupsClosedCurve";}
+  virtual const char* GetNodeTagName() override {return "MarkupsClosedCurve";}
 
 protected:
   vtkMRMLMarkupsClosedCurveNode();

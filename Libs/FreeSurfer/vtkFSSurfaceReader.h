@@ -36,7 +36,7 @@ class VTK_FreeSurfer_EXPORT vtkFSSurfaceReader : public vtkAbstractPolyDataReade
 public:
   static vtkFSSurfaceReader *New();
   vtkTypeMacro(vtkFSSurfaceReader, vtkAbstractPolyDataReader);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// old previous versions constants
   enum
@@ -56,7 +56,7 @@ protected:
   int RequestData(
     vtkInformation *,
     vtkInformationVector **,
-    vtkInformationVector *outputVector) VTK_OVERRIDE;
+    vtkInformationVector *outputVector) override;
 
 private:
   vtkFSSurfaceReader(const vtkFSSurfaceReader&);  /// Not implemented.

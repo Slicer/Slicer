@@ -46,32 +46,32 @@ class vtkSegmentationCore_EXPORT vtkClosedSurfaceToFractionalLabelmapConversionR
 public:
   static vtkClosedSurfaceToFractionalLabelmapConversionRule* New();
   vtkTypeMacro(vtkClosedSurfaceToFractionalLabelmapConversionRule, vtkClosedSurfaceToBinaryLabelmapConversionRule);
-  virtual vtkSegmentationConverterRule* CreateRuleInstance() VTK_OVERRIDE;
+  virtual vtkSegmentationConverterRule* CreateRuleInstance() override;
 
   /// Constructs representation object from representation name for the supported representation classes
   /// (typically source and target representation VTK classes, subclasses of vtkDataObject)
   /// Note: Need to take ownership of the created object! For example using vtkSmartPointer<vtkDataObject>::Take
-  virtual vtkDataObject* ConstructRepresentationObjectByRepresentation(std::string representationName) VTK_OVERRIDE;
+  virtual vtkDataObject* ConstructRepresentationObjectByRepresentation(std::string representationName) override;
 
   /// Constructs representation object from class name for the supported representation classes
   /// (typically source and target representation VTK classes, subclasses of vtkDataObject)
   /// Note: Need to take ownership of the created object! For example using vtkSmartPointer<vtkDataObject>::Take
-  virtual vtkDataObject* ConstructRepresentationObjectByClass(std::string className) VTK_OVERRIDE;
+  virtual vtkDataObject* ConstructRepresentationObjectByClass(std::string className) override;
 
   /// Update the target representation based on the source representation
-  virtual bool Convert(vtkDataObject* sourceRepresentation, vtkDataObject* targetRepresentation)  VTK_OVERRIDE;
+  virtual bool Convert(vtkDataObject* sourceRepresentation, vtkDataObject* targetRepresentation)  override;
 
   /// Get the cost of the conversion.
-  virtual unsigned int GetConversionCost(vtkDataObject* sourceRepresentation=NULL, vtkDataObject* targetRepresentation=NULL) VTK_OVERRIDE;
+  virtual unsigned int GetConversionCost(vtkDataObject* sourceRepresentation=NULL, vtkDataObject* targetRepresentation=NULL) override;
 
   /// Human-readable name of the converter rule
-  virtual const char* GetName()  VTK_OVERRIDE { return "Closed surface to fractional labelmap (simple image stencil)"; };
+  virtual const char* GetName()  override { return "Closed surface to fractional labelmap (simple image stencil)"; };
 
   /// Human-readable name of the source representation
-  virtual const char* GetSourceRepresentationName() VTK_OVERRIDE { return vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName(); };
+  virtual const char* GetSourceRepresentationName() override { return vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName(); };
 
   /// Human-readable name of the target representation
-  virtual const char* GetTargetRepresentationName() VTK_OVERRIDE { return vtkSegmentationConverter::GetSegmentationFractionalLabelmapRepresentationName(); };
+  virtual const char* GetTargetRepresentationName() override { return vtkSegmentationConverter::GetSegmentationFractionalLabelmapRepresentationName(); };
 
 protected:
   // Oversampling factor that will be used to calculate the size of the binary labelmap
