@@ -45,7 +45,7 @@ public:
   typedef ctkVTKThumbnailView Superclass;
 
   /// Constructors
-  explicit qMRMLNavigationView(QWidget* parent = 0);
+  explicit qMRMLNavigationView(QWidget* parent = nullptr);
   virtual ~qMRMLNavigationView();
 
 public slots:

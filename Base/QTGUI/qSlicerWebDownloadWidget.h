@@ -39,7 +39,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebDownloadWidget
 public:
 
   /// Constructor
-  explicit qSlicerWebDownloadWidget(QWidget *parent = 0);
+  explicit qSlicerWebDownloadWidget(QWidget *parent = nullptr);
 
 public slots:
 

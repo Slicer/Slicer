@@ -30,7 +30,7 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLNavigationViewPlugin :
   Q_OBJECT
 
 public:
-  qMRMLNavigationViewPlugin(QObject *_parent = 0);
+  qMRMLNavigationViewPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;

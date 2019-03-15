@@ -49,7 +49,7 @@ class QMRML_WIDGETS_EXPORT qMRMLTableModel : public QStandardItemModel
 
 public:
   typedef QAbstractItemModel Superclass;
-  qMRMLTableModel(QObject *parent=0);
+  qMRMLTableModel(QObject *parent=nullptr);
   virtual ~qMRMLTableModel();
 
   enum ItemDataRole{
@@ -88,7 +88,7 @@ protected slots:
 
 protected:
 
-  qMRMLTableModel(qMRMLTableModelPrivate* pimpl, QObject *parent=0);
+  qMRMLTableModel(qMRMLTableModelPrivate* pimpl, QObject *parent=nullptr);
 
   static void onMRMLNodeEvent(vtkObject* vtk_obj, unsigned long event,
                               void* client_data, void* call_data);

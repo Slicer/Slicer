@@ -62,7 +62,7 @@ int vtkMRMLDoubleArrayStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   vtkMRMLDoubleArrayNode *doubleArrayNode =
     vtkMRMLDoubleArrayNode::SafeDownCast(refNode);
 
-  if (doubleArrayNode == NULL)
+  if (doubleArrayNode == nullptr)
     {
     vtkErrorMacro("ReadData: unable to cast input node " << refNode->GetID()
                   << " to a double array (measurement) node");
@@ -103,7 +103,7 @@ int vtkMRMLDoubleArrayStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       if (strncmp(line, " ", 1) != 0)
         {
         ptr = strtok(line, " ");
-        ptr = strtok(NULL, " ");
+        ptr = strtok(nullptr, " ");
         if (strcmp(ptr, "nolabels") == 0)
           {
           haslabels = false;
@@ -126,7 +126,7 @@ int vtkMRMLDoubleArrayStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         bool reTokenise = false;
         if (strncmp(line, ",", 1) == 0)
           {
-          ptr = NULL;
+          ptr = nullptr;
           reTokenise = true;
           }
         else
@@ -138,7 +138,7 @@ int vtkMRMLDoubleArrayStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 
         while (columnNumber < numColumns)
           {
-          if (ptr != NULL)
+          if (ptr != nullptr)
             {
             if (columnNumber == xColumn)
               {
@@ -176,7 +176,7 @@ int vtkMRMLDoubleArrayStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
             }
           if (reTokenise == false)
             {
-            ptr = strtok(NULL, ",");
+            ptr = strtok(nullptr, ",");
             }
           else
             {
@@ -211,7 +211,7 @@ int vtkMRMLDoubleArrayStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLDoubleArrayStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 {
-    if (this->GetFileName() == NULL)
+    if (this->GetFileName() == nullptr)
     {
         vtkErrorMacro("WriteData: file name is not set");
         return 0;
@@ -228,7 +228,7 @@ int vtkMRMLDoubleArrayStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     vtkMRMLDoubleArrayNode *doubleArrayNode =
       vtkMRMLDoubleArrayNode::SafeDownCast(refNode);
 
-    if (doubleArrayNode == NULL)
+    if (doubleArrayNode == nullptr)
     {
       vtkErrorMacro("WriteData: unable to cast input node " << refNode->GetID() << " to a known double array node");
       return 0;
@@ -249,7 +249,7 @@ int vtkMRMLDoubleArrayStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     }
 
     // put down a header
-    of << "# measurement file " << (this->GetFileName() != NULL ? this->GetFileName() : "null") << endl;
+    of << "# measurement file " << (this->GetFileName() != nullptr ? this->GetFileName() : "null") << endl;
 
     // put labels
     std::vector< std::string > labels = doubleArrayNode->GetLabels();

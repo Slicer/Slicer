@@ -40,7 +40,7 @@
 qMRMLItemDelegate::qMRMLItemDelegate(QObject *parent)
   : QStyledItemDelegate(parent)
 {
-  this->DummySpinBox = new ctkDoubleSpinBox(0);
+  this->DummySpinBox = new ctkDoubleSpinBox(nullptr);
   this->DummySpinBox->setDecimals(2);
   this->DummySpinBox->setRange(0., 1.);
 }
@@ -49,7 +49,7 @@ qMRMLItemDelegate::qMRMLItemDelegate(QObject *parent)
 qMRMLItemDelegate::~qMRMLItemDelegate()
 {
   delete this->DummySpinBox;
-  this->DummySpinBox = 0;
+  this->DummySpinBox = nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -120,7 +120,7 @@ QWidget *qMRMLItemDelegate
     }
   else if (this->is0To1Value(index))
     {
-    ctkSliderWidget* slider = new ctkSliderWidget(0);
+    ctkSliderWidget* slider = new ctkSliderWidget(nullptr);
     slider->setDecimals(2);
     slider->setSingleStep(0.1);
     slider->setRange(0., 1.);

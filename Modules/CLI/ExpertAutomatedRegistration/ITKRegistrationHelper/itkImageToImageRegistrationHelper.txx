@@ -43,17 +43,17 @@ ImageToImageRegistrationHelper<TImage>
 ::ImageToImageRegistrationHelper()
 {
   // Data
-  m_FixedImage = NULL;
-  m_MovingImage = NULL;
+  m_FixedImage = nullptr;
+  m_MovingImage = nullptr;
 
   m_SampleFromOverlap = false;
   m_SampleIntensityPortion = 0.0;
 
   // Masks
   m_UseFixedImageMaskObject = false;
-  m_FixedImageMaskObject = NULL;
+  m_FixedImageMaskObject = nullptr;
   m_UseMovingImageMaskObject = false;
-  m_MovingImageMaskObject = NULL;
+  m_MovingImageMaskObject = nullptr;
 
   m_UseRegionOfInterest = false;
   m_RegionOfInterestPoint1.Fill(0);
@@ -79,24 +79,24 @@ ImageToImageRegistrationHelper<TImage>
   m_CompletedStage = PRE_STAGE;
   m_CompletedResampling = false;
 
-  m_CurrentMovingImage = NULL;
-  m_CurrentMatrixTransform = NULL;
-  m_CurrentBSplineTransform = NULL;
+  m_CurrentMovingImage = nullptr;
+  m_CurrentMatrixTransform = nullptr;
+  m_CurrentBSplineTransform = nullptr;
 
-  m_LoadedTransformResampledImage = NULL;
-  m_MatrixTransformResampledImage = NULL;
-  m_BSplineTransformResampledImage = NULL;
+  m_LoadedTransformResampledImage = nullptr;
+  m_MatrixTransformResampledImage = nullptr;
+  m_BSplineTransformResampledImage = nullptr;
 
   // Results
   m_FinalMetricValue = 0.0;
 
   // Baseline
-  m_BaselineImage = NULL;
+  m_BaselineImage = nullptr;
   m_BaselineNumberOfFailedPixelsTolerance = 1000;
   m_BaselineIntensityTolerance = 10;
   m_BaselineRadiusTolerance = 0;
-  m_BaselineResampledMovingImage = NULL;
-  m_BaselineDifferenceImage = NULL;
+  m_BaselineResampledMovingImage = nullptr;
+  m_BaselineDifferenceImage = nullptr;
   m_BaselineNumberOfFailedPixels = 0;
   m_BaselineTestPassed = false;
 
@@ -106,18 +106,18 @@ ImageToImageRegistrationHelper<TImage>
   m_MinimizeMemory = false;
 
   // Loaded
-  m_LoadedMatrixTransform = NULL;
-  m_LoadedBSplineTransform = NULL;
+  m_LoadedMatrixTransform = nullptr;
+  m_LoadedBSplineTransform = nullptr;
 
   // Initial
   m_InitialMethodEnum = INIT_WITH_CENTERS_OF_MASS;
-  m_InitialTransform = NULL;
+  m_InitialTransform = nullptr;
 
   // Rigid
   m_RigidSamplingRatio = 0.01;
   m_RigidTargetError = 0.0001;
   m_RigidMaxIterations = 100;
-  m_RigidTransform = NULL;
+  m_RigidTransform = nullptr;
   m_RigidMetricMethodEnum = OptimizedRegistrationMethodType::MATTES_MI_METRIC;
   m_RigidInterpolationMethodEnum = OptimizedRegistrationMethodType::LINEAR_INTERPOLATION;
   m_RigidMetricValue = 0.0;
@@ -126,7 +126,7 @@ ImageToImageRegistrationHelper<TImage>
   m_AffineSamplingRatio = 0.02;
   m_AffineTargetError = 0.0001;
   m_AffineMaxIterations = 50;
-  m_AffineTransform = NULL;
+  m_AffineTransform = nullptr;
   m_AffineMetricMethodEnum = OptimizedRegistrationMethodType::MATTES_MI_METRIC;
   m_AffineInterpolationMethodEnum = OptimizedRegistrationMethodType::LINEAR_INTERPOLATION;
   m_AffineMetricValue = 0.0;
@@ -136,7 +136,7 @@ ImageToImageRegistrationHelper<TImage>
   m_BSplineTargetError = 0.0001;
   m_BSplineMaxIterations = 20;
   m_BSplineControlPointPixelSpacing = 40;
-  m_BSplineTransform = NULL;
+  m_BSplineTransform = nullptr;
   m_BSplineMetricMethodEnum = OptimizedRegistrationMethodType::MATTES_MI_METRIC;
   m_BSplineInterpolationMethodEnum = OptimizedRegistrationMethodType::BSPLINE_INTERPOLATION;
   m_BSplineMetricValue = 0.0;
@@ -216,7 +216,7 @@ ImageToImageRegistrationHelper<TImage>
 
     this->Modified();
 
-    if( maskObject != NULL )
+    if( maskObject != nullptr )
       {
       m_UseFixedImageMaskObject = true;
       }
@@ -255,18 +255,18 @@ ImageToImageRegistrationHelper<TImage>
 ::Initialize( void )
 {
   // m_LoadedTransform = 0;  Not Initialized - since it is a user parameter
-  m_InitialTransform = 0;
-  m_RigidTransform = 0;
-  m_AffineTransform = 0;
-  m_BSplineTransform = 0;
+  m_InitialTransform = nullptr;
+  m_RigidTransform = nullptr;
+  m_AffineTransform = nullptr;
+  m_BSplineTransform = nullptr;
 
   m_CompletedStage = PRE_STAGE;
 
   m_CompletedInitialization = true;
   m_CompletedResampling = false;
 
-  m_CurrentMatrixTransform = 0;
-  m_CurrentBSplineTransform = 0;
+  m_CurrentMatrixTransform = nullptr;
+  m_CurrentBSplineTransform = nullptr;
 
   m_FinalMetricValue = 0;
   m_RigidMetricValue = 0;
@@ -285,9 +285,9 @@ ImageToImageRegistrationHelper<TImage>
   // Eventually these should only be reset if necessary - that is, if the
   //   only difference is enable BSpline registration, it shouldn't be
   //   necessary to re-run the entire registration pipeline
-  m_LoadedTransformResampledImage = 0;
-  m_MatrixTransformResampledImage = 0;
-  m_BSplineTransformResampledImage = 0;
+  m_LoadedTransformResampledImage = nullptr;
+  m_MatrixTransformResampledImage = nullptr;
+  m_BSplineTransformResampledImage = nullptr;
 }
 
 /** This class provides an Update() method to fit the appearance of a
@@ -329,14 +329,14 @@ ImageToImageRegistrationHelper<TImage>
       // this->SaveImage("transform.mha",m_CurrentMovingImage);
       }
 
-    m_MatrixTransformResampledImage = 0;
-    m_BSplineTransformResampledImage = 0;
+    m_MatrixTransformResampledImage = nullptr;
+    m_BSplineTransformResampledImage = nullptr;
 
     m_CompletedStage = LOAD_STAGE;
     m_CompletedResampling = true;
 
-    m_CurrentMatrixTransform = 0;
-    m_CurrentBSplineTransform = 0;
+    m_CurrentMatrixTransform = nullptr;
+    m_CurrentBSplineTransform = nullptr;
     }
 
   if( this->GetReportProgress() )
@@ -398,7 +398,7 @@ ImageToImageRegistrationHelper<TImage>
 
   m_InitialTransform = regInit->GetAffineTransform();
   m_CurrentMatrixTransform = m_InitialTransform;
-  m_CurrentBSplineTransform = 0;
+  m_CurrentBSplineTransform = nullptr;
 
   m_CompletedStage = INIT_STAGE;
   m_CompletedResampling = false;
@@ -522,7 +522,7 @@ ImageToImageRegistrationHelper<TImage>
     // RigidTransform is a 12 parameter transform)
     m_RigidTransform->SetParametersByValue(regRigid->GetAffineTransform()->GetParameters() );
     m_CurrentMatrixTransform = regRigid->GetAffineTransform();
-    m_CurrentBSplineTransform = 0;
+    m_CurrentBSplineTransform = nullptr;
 
     m_FinalMetricValue = regRigid->GetFinalMetricValue();
     m_RigidMetricValue = m_FinalMetricValue;
@@ -641,7 +641,7 @@ ImageToImageRegistrationHelper<TImage>
 
     m_AffineTransform = regAff->GetAffineTransform();
     m_CurrentMatrixTransform = m_AffineTransform;
-    m_CurrentBSplineTransform = 0;
+    m_CurrentBSplineTransform = nullptr;
 
     m_FinalMetricValue = regAff->GetFinalMetricValue();
     m_AffineMetricValue = m_FinalMetricValue;
@@ -777,9 +777,9 @@ ImageToImageRegistrationHelper<TImage>
       break;
     }
 
-  if( movingImage == NULL
-      && matrixTransform == NULL
-      && bsplineTransform == NULL
+  if( movingImage == nullptr
+      && matrixTransform == nullptr
+      && bsplineTransform == nullptr
       && m_CompletedResampling )
     {
     return m_CurrentMovingImage;
@@ -810,7 +810,7 @@ ImageToImageRegistrationHelper<TImage>
   bool resampled = false;
   bool passedImage = false;
   typename TImage::ConstPointer mImage = m_CurrentMovingImage;
-  if( movingImage != NULL )
+  if( movingImage != nullptr )
     {
     mImage = movingImage;
 
@@ -822,20 +822,20 @@ ImageToImageRegistrationHelper<TImage>
 
   typename AffineTransformType::ConstPointer aTrans = m_CurrentMatrixTransform.GetPointer();
   typename BSplineTransformType::ConstPointer bTrans = m_CurrentBSplineTransform.GetPointer();
-  if( matrixTransform != NULL
-      || bsplineTransform != NULL )
+  if( matrixTransform != nullptr
+      || bsplineTransform != nullptr )
     {
     passedImage = true;
     doLoaded = false;
     doMatrix = false;
     doBSpline = false;
 
-    if( matrixTransform != NULL )
+    if( matrixTransform != nullptr )
       {
       aTrans = matrixTransform;
       doMatrix = true;
       }
-    if( bsplineTransform != NULL )
+    if( bsplineTransform != nullptr )
       {
       bTrans = bsplineTransform;
       doBSpline = true;
@@ -1164,7 +1164,7 @@ ImageToImageRegistrationHelper<TImage>
   m_LoadedMatrixTransform->SetOffset( tfm.GetOffset() );
 
   m_EnableLoadedRegistration = true;
-  m_LoadedTransformResampledImage = 0;
+  m_LoadedTransformResampledImage = nullptr;
   m_CurrentMovingImage = m_MovingImage;
 }
 
@@ -1178,7 +1178,7 @@ ImageToImageRegistrationHelper<TImage>
   m_LoadedBSplineTransform->SetParametersByValue( tfm.GetParameters() );
 
   m_EnableLoadedRegistration = true;
-  m_LoadedTransformResampledImage = 0;
+  m_LoadedTransformResampledImage = nullptr;
   m_CurrentMovingImage = m_MovingImage;
 }
 

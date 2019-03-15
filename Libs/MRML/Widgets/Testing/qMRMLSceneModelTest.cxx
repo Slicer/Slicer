@@ -61,8 +61,8 @@ void qMRMLSceneModelTester::testDefaults()
   QCOMPARE(sceneModel.visibilityColumn(), -1);
   QCOMPARE(sceneModel.toolTipNameColumn(), -1);
 
-  QVERIFY(sceneModel.mrmlScene() == 0);
-  QVERIFY(sceneModel.mrmlSceneItem() == 0);
+  QVERIFY(sceneModel.mrmlScene() == nullptr);
+  QVERIFY(sceneModel.mrmlSceneItem() == nullptr);
   QVERIFY(!sceneModel.mrmlSceneIndex().isValid());
 }
 
@@ -95,7 +95,7 @@ void qMRMLSceneModelTester::testSetScene()
   qMRMLSceneModel sceneModel;
   vtkNew<vtkMRMLScene> scene;
   sceneModel.setMRMLScene(scene.GetPointer());
-  QVERIFY(sceneModel.mrmlSceneItem() != 0);
+  QVERIFY(sceneModel.mrmlSceneItem() != nullptr);
   QVERIFY(sceneModel.mrmlSceneIndex().isValid());
   QCOMPARE(sceneModel.mrmlSceneIndex().row(), 0);
   QCOMPARE(sceneModel.mrmlSceneIndex().column(), 0);

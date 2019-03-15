@@ -44,7 +44,7 @@ class QMRML_WIDGETS_EXPORT qMRMLScalarInvariantComboBox : public QWidget
   Q_PROPERTY(int scalarInvariant READ scalarInvariant WRITE setScalarInvariant)
 
 public:
-  qMRMLScalarInvariantComboBox(QWidget *parent=0);
+  qMRMLScalarInvariantComboBox(QWidget *parent=nullptr);
   virtual ~qMRMLScalarInvariantComboBox();
 
   /// Return the optionally set display properties node set

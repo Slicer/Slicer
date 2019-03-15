@@ -29,7 +29,7 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLColorTableComboBoxPlugin
   Q_OBJECT
 
 public:
-  qMRMLColorTableComboBoxPlugin(QObject *_parent = 0);
+  qMRMLColorTableComboBoxPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;

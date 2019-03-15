@@ -32,7 +32,7 @@ vtkMRMLGlyphableVolumeSliceDisplayNode::vtkMRMLGlyphableVolumeSliceDisplayNode()
 {
   this->ColorMode = this->colorModeScalar;
 
-  this->SliceImagePort = NULL;
+  this->SliceImagePort = nullptr;
 
   this->SliceToXYTransformer = vtkTransformPolyDataFilter::New();
 
@@ -57,7 +57,7 @@ vtkMRMLGlyphableVolumeSliceDisplayNode::vtkMRMLGlyphableVolumeSliceDisplayNode()
 vtkMRMLGlyphableVolumeSliceDisplayNode::~vtkMRMLGlyphableVolumeSliceDisplayNode()
 {
   this->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
-  this->SetSliceImagePort(NULL);
+  this->SetSliceImagePort(nullptr);
   this->SliceToXYMatrix->Delete();
   this->SliceToXYTransform->Delete();
   this->SliceToXYTransformer->Delete();
@@ -83,7 +83,7 @@ void vtkMRMLGlyphableVolumeSliceDisplayNode::ReadXMLAttributes(const char** atts
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -166,7 +166,7 @@ vtkPolyData* vtkMRMLGlyphableVolumeSliceDisplayNode::GetOutputMesh()
   // Don't check input polydata as it is not used, but the image data instead.
   if (!this->GetOutputMeshConnection())
     {
-    return 0;
+    return nullptr;
     }
   return vtkPolyData::SafeDownCast(
     this->GetOutputMeshConnection()->GetProducer()->GetOutputDataObject(
@@ -176,7 +176,7 @@ vtkPolyData* vtkMRMLGlyphableVolumeSliceDisplayNode::GetOutputMesh()
 vtkAlgorithmOutput* vtkMRMLGlyphableVolumeSliceDisplayNode
 ::GetOutputMeshConnection()
 {
-  return 0;
+  return nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -192,7 +192,7 @@ vtkPolyData* vtkMRMLGlyphableVolumeSliceDisplayNode::GetSliceOutputPolyData()
   // Don't check input polydata as it is not used, but the image data instead.
   if (!this->GetSliceOutputPort())
     {
-    return 0;
+    return nullptr;
     }
   return vtkPolyData::SafeDownCast(
     this->GetSliceOutputPort()->GetProducer()->GetOutputDataObject(

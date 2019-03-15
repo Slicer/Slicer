@@ -41,7 +41,7 @@ vtkMRMLNodeNewMacro(vtkMRMLVolumeHeaderlessStorageNode);
 //----------------------------------------------------------------------------
 vtkMRMLVolumeHeaderlessStorageNode::vtkMRMLVolumeHeaderlessStorageNode()
 {
-  this->FileScanOrder = NULL;
+  this->FileScanOrder = nullptr;
   this->FileScalarType = VTK_SHORT;
   this->FileNumberOfScalarComponents = 0;
   this->FileLittleEndian = 0;
@@ -65,7 +65,7 @@ vtkMRMLVolumeHeaderlessStorageNode::~vtkMRMLVolumeHeaderlessStorageNode()
   if (this->FileScanOrder)
     {
     delete [] this->FileScanOrder;
-    this->FileScanOrder = NULL;
+    this->FileScanOrder = nullptr;
     }
 }
 
@@ -189,7 +189,7 @@ void vtkMRMLVolumeHeaderlessStorageNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -303,7 +303,7 @@ bool vtkMRMLVolumeHeaderlessStorageNode::CanReadInReferenceNode(vtkMRMLNode *ref
 //----------------------------------------------------------------------------
 int vtkMRMLVolumeHeaderlessStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 {
-  vtkMRMLVolumeNode *volNode = NULL;
+  vtkMRMLVolumeNode *volNode = nullptr;
 
   if ( refNode->IsA("vtkMRMLScalarVolumeNode") )
     {
@@ -317,7 +317,7 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 #endif
   if (volNode->GetImageData())
     {
-    volNode->SetAndObserveImageData (NULL);
+    volNode->SetAndObserveImageData (nullptr);
     }
 
   std::string fullName = this->GetFullNameFromFileName();
@@ -373,7 +373,7 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
       return 0;
       }
-    if (reader->GetOutput() == NULL)
+    if (reader->GetOutput() == nullptr)
       {
       vtkErrorMacro("vtkMRMLVolumeHeaderlessStorageNode: Cannot read file");
       return 0;
@@ -397,7 +397,7 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   ici->SetOutputOrigin( 0, 0, 0 );
   ici->Update();
 
-  if (ici->GetOutput() == NULL)
+  if (ici->GetOutput() == nullptr)
     {
     vtkErrorMacro("vtkMRMLVolumeHeaderlessStorageNode: Cannot read file");
     reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
@@ -433,7 +433,7 @@ int vtkMRMLVolumeHeaderlessStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 {
   vtkMRMLVolumeNode *volNode = vtkMRMLScalarVolumeNode::SafeDownCast(refNode);
 
-  if (volNode->GetImageData() == NULL)
+  if (volNode->GetImageData() == nullptr)
     {
     vtkErrorMacro("cannot write ImageData, it's NULL");
     return 0;

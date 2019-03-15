@@ -82,9 +82,9 @@ qSlicerUnitsSettingsPanelPrivate
 ::qSlicerUnitsSettingsPanelPrivate(qSlicerUnitsSettingsPanel& object)
   :q_ptr(&object)
 {
-  this->Logic = 0;
-  this->MRMLScene = 0;
-  this->SelectionNode = 0;
+  this->Logic = nullptr;
+  this->MRMLScene = nullptr;
+  this->SelectionNode = nullptr;
 }
 
 // --------------------------------------------------------------------------
@@ -201,7 +201,7 @@ void qSlicerUnitsSettingsPanelPrivate::setMRMLScene(vtkMRMLScene* scene)
     widget->unitComboBox()->setMRMLScene(this->MRMLScene);
     }
 
- vtkMRMLSelectionNode* newSelectionNode = 0;
+ vtkMRMLSelectionNode* newSelectionNode = nullptr;
   if (this->MRMLScene)
     {
     newSelectionNode = vtkMRMLSelectionNode::SafeDownCast(

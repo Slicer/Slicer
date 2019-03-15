@@ -156,35 +156,35 @@ bool TestDefaults()
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkMRMLColorLogic> colorLogic;
   colorLogic->SetMRMLScene(scene.GetPointer());
-  if (scene->GetNodeByID(colorLogic->GetDefaultVolumeColorNodeID()) == 0)
+  if (scene->GetNodeByID(colorLogic->GetDefaultVolumeColorNodeID()) == nullptr)
     {
     std::cerr << "Line " << __LINE__
               << " - Can't find default volume color node with ID: "
               << colorLogic->GetDefaultVolumeColorNodeID() << std::endl;
     return false;
     }
-  if (scene->GetNodeByID(colorLogic->GetDefaultLabelMapColorNodeID()) == 0)
+  if (scene->GetNodeByID(colorLogic->GetDefaultLabelMapColorNodeID()) == nullptr)
     {
     std::cerr << "Line " << __LINE__
               << " - Can't find default labelmap color node with ID: "
               << colorLogic->GetDefaultLabelMapColorNodeID() << std::endl;
     return false;
     }
-  if (scene->GetNodeByID(colorLogic->GetDefaultEditorColorNodeID()) == 0)
+  if (scene->GetNodeByID(colorLogic->GetDefaultEditorColorNodeID()) == nullptr)
     {
     std::cerr << "Line " << __LINE__
               << " - Can't find default editor color node with ID: "
               << colorLogic->GetDefaultEditorColorNodeID() << std::endl;
     return false;
     }
-  if (scene->GetNodeByID(colorLogic->GetDefaultModelColorNodeID()) == 0)
+  if (scene->GetNodeByID(colorLogic->GetDefaultModelColorNodeID()) == nullptr)
     {
     std::cerr << "Line " << __LINE__
               << " - Can't find default model color node with ID: "
               << colorLogic->GetDefaultModelColorNodeID() << std::endl;
     return false;
     }
-  if (scene->GetNodeByID(colorLogic->GetDefaultChartColorNodeID()) == 0)
+  if (scene->GetNodeByID(colorLogic->GetDefaultChartColorNodeID()) == nullptr)
     {
     std::cerr << "Line " << __LINE__
               << " - Can't find default chart color node with ID: "
@@ -262,7 +262,7 @@ bool TestCopy()
       }
     const char *originalColorName = originalNode->GetColorName(i);
     const char *copyColorName = copiedNode->GetColorName(i);
-    if (originalColorName != NULL && copyColorName != NULL &&
+    if (originalColorName != nullptr && copyColorName != nullptr &&
         strcmp(originalColorName, copyColorName) != 0)
       {
       std::cerr << "Line " << __LINE__
@@ -340,7 +340,7 @@ bool TestProceduralCopy()
       }
     const char *originalColorName = originalNode->GetColorName(i);
     const char *copyColorName = copiedNode->GetColorName(i);
-    if (originalColorName != NULL && copyColorName != NULL &&
+    if (originalColorName != nullptr && copyColorName != nullptr &&
         strcmp(originalColorName, copyColorName) != 0)
       {
       std::cerr << "Line " << __LINE__

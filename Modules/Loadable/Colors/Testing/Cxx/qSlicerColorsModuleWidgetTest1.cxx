@@ -62,7 +62,7 @@ int qSlicerColorsModuleWidgetTest1(int argc, char * argv [] )
 
   qSlicerColorsModule colorsModule;
   colorsModule.setMRMLScene(scene);
-  colorsModule.initialize(0);
+  colorsModule.initialize(nullptr);
 
   qSlicerColorsModuleWidget* colorsWidget =
     dynamic_cast<qSlicerColorsModuleWidget*>(colorsModule.widgetRepresentation());

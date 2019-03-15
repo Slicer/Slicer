@@ -72,11 +72,11 @@ qMRMLPlotViewControllerWidgetPrivate::qMRMLPlotViewControllerWidgetPrivate(
   qMRMLPlotViewControllerWidget& object)
   : Superclass(object)
 {
-  this->FitToWindowToolButton = 0;
+  this->FitToWindowToolButton = nullptr;
 
-  this->PlotChartNode = 0;
-  this->PlotViewNode = 0;
-  this->PlotView = 0;
+  this->PlotChartNode = nullptr;
+  this->PlotViewNode = nullptr;
+  this->PlotView = nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -136,7 +136,7 @@ vtkMRMLPlotChartNode* qMRMLPlotViewControllerWidgetPrivate::GetPlotChartNodeFrom
   if (!this->PlotViewNode || !q->mrmlScene())
     {
     // qDebug() << "No PlotViewNode or no Scene";
-    return 0;
+    return nullptr;
     }
 
   // Get the current PlotChart node
@@ -158,10 +158,10 @@ void qMRMLPlotViewControllerWidgetPrivate::onPlotChartNodeSelected(vtkMRMLNode *
     return;
     }
 
-  this->PlotViewNode->SetPlotChartNodeID(mrmlPlotChartNode ? mrmlPlotChartNode->GetID() : NULL);
+  this->PlotViewNode->SetPlotChartNodeID(mrmlPlotChartNode ? mrmlPlotChartNode->GetID() : nullptr);
 
   vtkMRMLSelectionNode* selectionNode = vtkMRMLSelectionNode::SafeDownCast(
-    q->mrmlScene() ? q->mrmlScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton") : NULL);
+    q->mrmlScene() ? q->mrmlScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton") : nullptr);
   if (selectionNode)
     {
     selectionNode->SetActivePlotChartID(mrmlPlotChartNode ? mrmlPlotChartNode->GetID() : "");
@@ -269,7 +269,7 @@ qMRMLPlotViewControllerWidget::qMRMLPlotViewControllerWidget(QWidget* parentWidg
 // --------------------------------------------------------------------------
 qMRMLPlotViewControllerWidget::~qMRMLPlotViewControllerWidget()
 {
-  this->setMRMLScene(0);
+  this->setMRMLScene(nullptr);
 }
 
 // --------------------------------------------------------------------------
@@ -371,8 +371,8 @@ void qMRMLPlotViewControllerWidget::updateWidgetFromMRML()
   d->plotChartComboBox->setCurrentNode(mrmlPlotChartNode);
   d->plotChartComboBox->blockSignals(wasBlocked);
 
-  d->plotTypeComboBox->setEnabled(mrmlPlotChartNode != NULL);
-  d->plotSeriesComboBox->setEnabled(mrmlPlotChartNode != NULL);
+  d->plotTypeComboBox->setEnabled(mrmlPlotChartNode != nullptr);
+  d->plotSeriesComboBox->setEnabled(mrmlPlotChartNode != nullptr);
 
   if (!mrmlPlotChartNode)
     {
@@ -406,7 +406,7 @@ void qMRMLPlotViewControllerWidget::updateWidgetFromMRML()
     {
     vtkMRMLPlotSeriesNode *plotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast
       (this->mrmlScene()->GetNodeByID((*it).c_str()));
-    if (plotSeriesNode == NULL)
+    if (plotSeriesNode == nullptr)
       {
       continue;
       }

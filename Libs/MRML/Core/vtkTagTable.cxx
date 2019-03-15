@@ -11,7 +11,7 @@ vtkStandardNewMacro ( vtkTagTable );
 //----------------------------------------------------------------------------
 vtkTagTable::vtkTagTable()
 {
-  this->Name = NULL;
+  this->Name = nullptr;
   this->RestoreSelectionState = 0;
 }
 
@@ -38,7 +38,7 @@ void vtkTagTable::PrintSelf(ostream& os, vtkIndent indent)
 
   Superclass::PrintSelf ( os, indent );
 
-  os << indent << "Name = " << (this->GetName() == 0 ? "(none)" : this->GetName()) << "\n";
+  os << indent << "Name = " << (this->GetName() == nullptr ? "(none)" : this->GetName()) << "\n";
 
   os << indent << "RestoreSelectionState = " << this->GetRestoreSelectionState() << "\n";
 
@@ -70,9 +70,9 @@ void vtkTagTable::AddOrUpdateTag ( const char *attribute, const char *value)
 {
   //--- add a attribute value pair. If the attribute
   //--- already exists in the table, overwrite its value and parentID.
-  if ( attribute != NULL )
+  if ( attribute != nullptr )
     {
-    if ( value == NULL )
+    if ( value == nullptr )
       {
       value = "NULL";
       }
@@ -102,9 +102,9 @@ void vtkTagTable::AddOrUpdateTag ( const char *attribute, const char *value, int
   //--- already exists in the table, overwrite its value and parentID.
 
 
-  if ( attribute != NULL )
+  if ( attribute != nullptr )
     {
-    if ( value == NULL )
+    if ( value == nullptr )
       {
       value = "NULL";
       }
@@ -135,7 +135,7 @@ void vtkTagTable::Copy( vtkTagTable *t)
   std::string att;
   std::string val;
   int selected;
-  if ( t != NULL )
+  if ( t != nullptr )
     {
     this->ClearTagTable();
     this->SetName ( t->GetName() );
@@ -166,9 +166,9 @@ void vtkTagTable::AddUniqueTag ( const char *attribute, const char *value )
 {
   //--- add a attribute value pair.
   //--- update the tag if it's present in the table.
-  if ( attribute != NULL )
+  if ( attribute != nullptr )
     {
-    if ( value == NULL )
+    if ( value == nullptr )
       {
       value = "NULL";
       }
@@ -357,7 +357,7 @@ const char * vtkTagTable::GetTagAttribute ( int index)
         return ( iter->first.c_str() );
         }
       }
-    return ( NULL );
+    return ( nullptr );
 }
 
 
@@ -379,7 +379,7 @@ const char * vtkTagTable::GetTagAttribute ( int index)
         return ( iter->second.c_str() );
         }
       }
-    return ( NULL );
+    return ( nullptr );
 }
 
 
@@ -399,7 +399,7 @@ const char * vtkTagTable::GetTagValue ( const char* attribute)
         return ( iter->second.c_str() );
         }
       }
-    return ( NULL );
+    return ( nullptr );
 }
 
 

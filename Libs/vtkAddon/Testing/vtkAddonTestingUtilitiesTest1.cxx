@@ -59,7 +59,7 @@ bool TestCheckNotNull()
 {
   int foo = 1;
   if (!CheckNotNull(__LINE__, "TestCheckNotNull", &foo)
-      || CheckNotNull(__LINE__, "TestCheckNotNull Expected Failure", 0))
+      || CheckNotNull(__LINE__, "TestCheckNotNull Expected Failure", nullptr))
     {
     std::cerr << "Line " << __LINE__ << " - TestCheckNotNull failed" << std::endl;
     return false;
@@ -71,7 +71,7 @@ bool TestCheckNotNull()
 bool TestCheckNull()
 {
   int foo = 1;
-  if (!CheckNull(__LINE__, "TestCheckNull", 0)
+  if (!CheckNull(__LINE__, "TestCheckNull", nullptr)
       || CheckNull(__LINE__, "TestCheckNull Expected Failure", &foo))
     {
     std::cerr << "Line " << __LINE__ << " - TestCheckNull failed" << std::endl;
@@ -99,10 +99,10 @@ bool TestCheckString()
 {
   const char* foo = "foo";
   const char* bar = "bar";
-  if (!CheckString(__LINE__, "TestCheckString", 0, 0)
+  if (!CheckString(__LINE__, "TestCheckString", nullptr, nullptr)
       ||!CheckString(__LINE__, "TestCheckString", foo, foo)
       || CheckString(__LINE__, "TestCheckString Expected Failure", foo, bar)
-      || CheckString(__LINE__, "TestCheckString Expected Failure", foo, 0))
+      || CheckString(__LINE__, "TestCheckString Expected Failure", foo, nullptr))
     {
     std::cerr << "Line " << __LINE__ << " - TestCheckString failed" << std::endl;
     return false;

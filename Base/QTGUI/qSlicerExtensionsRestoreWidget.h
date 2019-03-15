@@ -24,7 +24,7 @@ public:
   typedef QWidget Superclass;
 
   /// Constructor
-  explicit qSlicerExtensionsRestoreWidget(QWidget* parent = 0);
+  explicit qSlicerExtensionsRestoreWidget(QWidget* parent = nullptr);
 
   /// Destructor
   virtual ~qSlicerExtensionsRestoreWidget();

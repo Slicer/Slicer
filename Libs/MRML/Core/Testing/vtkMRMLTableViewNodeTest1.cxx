@@ -55,11 +55,11 @@ int vtkMRMLTableViewNodeTest1(int , char * [] )
   CHECK_INT(callback->GetNumberOfModified(),0);
 
   callback->ResetNumberOfEvents();
-  node1->SetTableNodeID(NULL);
+  node1->SetTableNodeID(nullptr);
   CHECK_INT(callback->GetNumberOfModified(),1);
 
   callback->ResetNumberOfEvents();
-  node1->SetTableNodeID(NULL);
+  node1->SetTableNodeID(nullptr);
   CHECK_INT(callback->GetNumberOfModified(),0);
 
   std::cout << "vtkMRMLTableViewNodeTest1 completed successfully" << std::endl;

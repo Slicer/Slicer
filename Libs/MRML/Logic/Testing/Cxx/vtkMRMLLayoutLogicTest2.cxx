@@ -41,7 +41,7 @@ int vtkMRMLLayoutLogicTest2(int , char * [] )
   scene->AddNode(layout.GetPointer());
 
   logic->SetMRMLScene(scene.GetPointer());
-  logic->SetMRMLScene(0);
+  logic->SetMRMLScene(nullptr);
   logic->SetMRMLScene(scene.GetPointer());
 
   // ConventionalView

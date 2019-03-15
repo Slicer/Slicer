@@ -9,7 +9,7 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLWindowLevelWidgetPlugin : public QObject
   Q_OBJECT
 
 public:
-  qMRMLWindowLevelWidgetPlugin(QObject *_parent = 0);
+  qMRMLWindowLevelWidgetPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;

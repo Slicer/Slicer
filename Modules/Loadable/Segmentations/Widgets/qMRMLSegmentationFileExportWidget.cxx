@@ -64,7 +64,7 @@ public:
 qMRMLSegmentationFileExportWidgetPrivate::qMRMLSegmentationFileExportWidgetPrivate(qMRMLSegmentationFileExportWidget& object)
   : q_ptr(&object)
 {
-  this->SegmentationNode = NULL;
+  this->SegmentationNode = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -118,7 +118,7 @@ void qMRMLSegmentationFileExportWidget::setSegmentationNode(vtkMRMLSegmentationN
 {
   Q_D(qMRMLSegmentationFileExportWidget);
   d->SegmentationNode = node;
-  this->setEnabled(d->SegmentationNode.GetPointer() != NULL);
+  this->setEnabled(d->SegmentationNode.GetPointer() != nullptr);
 }
 
 //-----------------------------------------------------------------------------
@@ -184,8 +184,8 @@ void qMRMLSegmentationFileExportWidget::exportToFiles()
 
   vtkSmartPointer<vtkStringArray> segmentIds;
   if (d->VisibleSegmentsOnlyCheckBox->isChecked()
-    && d->SegmentationNode != NULL
-    && vtkMRMLSegmentationDisplayNode::SafeDownCast(d->SegmentationNode->GetDisplayNode()) != NULL)
+    && d->SegmentationNode != nullptr
+    && vtkMRMLSegmentationDisplayNode::SafeDownCast(d->SegmentationNode->GetDisplayNode()) != nullptr)
     {
     segmentIds = vtkSmartPointer<vtkStringArray>::New();
     vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(d->SegmentationNode->GetDisplayNode());

@@ -34,7 +34,7 @@ qSlicerSimpleMarkupsWidgetPlugin
   Q_OBJECT
 
 public:
-  qSlicerSimpleMarkupsWidgetPlugin(QObject *_parent = 0);
+  qSlicerSimpleMarkupsWidgetPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString domXml() const;

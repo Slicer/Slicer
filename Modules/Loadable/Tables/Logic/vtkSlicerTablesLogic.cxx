@@ -65,23 +65,23 @@ vtkMRMLTableNode* vtkSlicerTablesLogic
   if (!this->GetMRMLScene())
     {
     vtkErrorMacro("vtkSlicerTablesLogic::AddTable failed: scene is invalid");
-    return 0;
+    return nullptr;
     }
   if (!fileName)
     {
     vtkErrorMacro("vtkSlicerTablesLogic::AddTable failed: fileName is invalid");
-    return 0;
+    return nullptr;
     }
 
   // Storable node
-  vtkMRMLTableNode *tableNode = 0;
+  vtkMRMLTableNode *tableNode = nullptr;
 
   // Check if the file is sqlite
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileName);
   if( extension.empty() )
     {
     vtkErrorMacro("ReadData: no file extension specified: " << fileName);
-    return 0;
+    return nullptr;
     }
   if (   !extension.compare(".db")
       || !extension.compare(".db3")
@@ -96,7 +96,7 @@ vtkMRMLTableNode* vtkSlicerTablesLogic
     if (!database->Open(password?password:"", vtkSQLiteDatabase::USE_EXISTING))
       {
       vtkErrorMacro("Failed to read tables from " << fileName);
-      return 0;
+      return nullptr;
       }
     vtkStringArray *tables = database->GetTables();
     for (int i=0; i<tables->GetNumberOfTuples(); i++)
@@ -122,7 +122,7 @@ vtkMRMLTableNode* vtkSlicerTablesLogic
         vtkErrorMacro("Failed to read tables from " << fileName);
         this->GetMRMLScene()->RemoveNode(tableStorageNode.GetPointer());
         this->GetMRMLScene()->RemoveNode(tableNode1.GetPointer());
-        return 0;
+        return nullptr;
         }
       tableNode = tableNode1.GetPointer();
       }
@@ -149,7 +149,7 @@ vtkMRMLTableNode* vtkSlicerTablesLogic
       vtkErrorMacro("vtkSlicerTablesLogic::AddTable failed: failed to read data from file: "<<fileName);
       this->GetMRMLScene()->RemoveNode(tableStorageNode.GetPointer());
       this->GetMRMLScene()->RemoveNode(tableNode1.GetPointer());
-      return 0;
+      return nullptr;
       }
     tableNode = tableNode1.GetPointer();
     }

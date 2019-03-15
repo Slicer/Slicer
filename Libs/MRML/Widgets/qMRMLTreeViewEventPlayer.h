@@ -37,7 +37,7 @@ class QMRML_WIDGETS_EXPORT qMRMLTreeViewEventPlayer :
 
 public:
   typedef pqTreeViewEventPlayer Superclass;
-  qMRMLTreeViewEventPlayer(QObject* parent = 0);
+  qMRMLTreeViewEventPlayer(QObject* parent = nullptr);
 
   using Superclass::playEvent;
   virtual bool playEvent(QObject *Object, const QString &Command, const QString &Arguments, int EventType, bool &Error);

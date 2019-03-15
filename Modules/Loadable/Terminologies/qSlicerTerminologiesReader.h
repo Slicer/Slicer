@@ -36,7 +36,7 @@ class qSlicerTerminologiesReader
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerTerminologiesReader(vtkSlicerTerminologiesModuleLogic* terminologiesLogic = 0, QObject* parent = 0);
+  qSlicerTerminologiesReader(vtkSlicerTerminologiesModuleLogic* terminologiesLogic = nullptr, QObject* parent = nullptr);
   virtual ~qSlicerTerminologiesReader();
 
   void setTerminologiesLogic(vtkSlicerTerminologiesModuleLogic* terminologiesLogic);

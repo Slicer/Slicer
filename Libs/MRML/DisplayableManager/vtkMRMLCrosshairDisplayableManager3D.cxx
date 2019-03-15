@@ -103,7 +103,7 @@ vtkMRMLCrosshairDisplayableManager3D::vtkInternal
 //---------------------------------------------------------------------------
 vtkMRMLCrosshairDisplayableManager3D::vtkInternal::~vtkInternal()
 {
-  this->SetCrosshairNode(0);
+  this->SetCrosshairNode(nullptr);
 }
 
 //---------------------------------------------------------------------------
@@ -136,7 +136,7 @@ void vtkMRMLCrosshairDisplayableManager3D::vtkInternal::BuildCrosshair()
   vtkRenderWindowInteractor* interactor = this->External->GetInteractor();
   if (!this->CrosshairNode.GetPointer() || !interactor)
     {
-    this->CrosshairWidget->SetInteractor(NULL);
+    this->CrosshairWidget->SetInteractor(nullptr);
     return;
     }
 
@@ -219,7 +219,7 @@ void vtkMRMLCrosshairDisplayableManager3D::UpdateFromMRMLScene()
 //---------------------------------------------------------------------------
 void vtkMRMLCrosshairDisplayableManager3D::UnobserveMRMLScene()
 {
-  this->Internal->SetCrosshairNode(0);
+  this->Internal->SetCrosshairNode(nullptr);
 }
 
 //---------------------------------------------------------------------------

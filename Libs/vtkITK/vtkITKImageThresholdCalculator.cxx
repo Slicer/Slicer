@@ -138,8 +138,8 @@ void vtkITKImageThresholdCalculator::Update()
   vtkImageData *inputImage = this->GetImageDataInput(0);
   vtkPointData* pointData = inputImage->GetPointData();
 
-  if ( inputImage == NULL ||
-       pointData == NULL )
+  if ( inputImage == nullptr ||
+       pointData == nullptr )
     {
     vtkErrorMacro(<<"vtkITKImageThresholdCalculator: No input image");
     return;
@@ -154,7 +154,7 @@ void vtkITKImageThresholdCalculator::Update()
         vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()), 6);
     }
 
-  if ( pointData->GetScalars() == NULL)
+  if ( pointData->GetScalars() == nullptr)
     {
     vtkErrorMacro(<<"vtkITKImageThresholdCalculator: Scalar input image is required");
     return;

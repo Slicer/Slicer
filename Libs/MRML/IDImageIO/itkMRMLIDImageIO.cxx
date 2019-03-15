@@ -98,19 +98,19 @@ MRMLIDImageIO
       if (hloc == std::string::npos)
         {
         // no hostname specified
-        return 0;
+        return nullptr;
         }
       this->m_Authority = std::string(fname.begin()+loc+2, fname.begin()+hloc);
       loc = hloc+1; // skip the slash
       }
 
     // now pull off the scene
-    vtkMRMLScene *scene = NULL;
+    vtkMRMLScene *scene = nullptr;
     hloc = fname.find("#", loc);
     if (hloc == std::string::npos)
       {
       // no scene specified
-      return 0;
+      return nullptr;
       }
     if (hloc >= loc)
       {
@@ -121,7 +121,7 @@ MRMLIDImageIO
       if (!scene)
         {
         // not a valid scene pointer
-        return 0;
+        return nullptr;
         }
       }
     else
@@ -150,7 +150,7 @@ MRMLIDImageIO
       }
     }
 
-  return 0;
+  return nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -231,12 +231,12 @@ MRMLIDImageIO
     m_Origin[0] *= -1;
     m_Origin[1] *= -1;
 
-    if (node->GetImageData() == NULL)
+    if (node->GetImageData() == nullptr)
       {
       itkWarningMacro("itkMRMLIDImageIO: ReadImageInformation: node image data is null.");
       return;
       }
-    if (node->GetImageData()->GetDimensions() == NULL)
+    if (node->GetImageData()->GetDimensions() == nullptr)
       {
       itkWarningMacro("itkMRMLIDImageIO: ReadImageInformation: node image data has null dimensions");
       return;
@@ -246,7 +246,7 @@ MRMLIDImageIO
     this->SetDimensions(2, node->GetImageData()->GetDimensions()[2]);
 
     // Number of components, PixelType
-    if (vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(node) == 0)
+    if (vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(node) == nullptr)
       {
       // Scalar, Diffusion Weighted, or Vector image
       this->SetNumberOfComponents(node->GetImageData()
@@ -265,19 +265,19 @@ MRMLIDImageIO
       this->SetPixelType(SCALAR);
       dataType = node->GetImageData()->GetScalarType();
       }
-    else if (vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(node) != 0)
+    else if (vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(node) != nullptr)
       {
       // tensor at each voxel
       this->SetPixelType(DIFFUSIONTENSOR3D);
       dataType = node->GetImageData()->GetPointData()->GetTensors()->GetDataType();
       }
-    else if (vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(node) != 0)
+    else if (vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(node) != nullptr)
       {
       // raw DWI
       this->SetPixelType(VECTOR);
       dataType = node->GetImageData()->GetScalarType();
       }
-    else if (vtkMRMLDiffusionImageVolumeNode::SafeDownCast(node) != 0)
+    else if (vtkMRMLDiffusionImageVolumeNode::SafeDownCast(node) != nullptr)
       {
       // derived data from a diffusion weighted image, e.g. Q-ball
       this->SetPixelType(VECTOR);
@@ -312,7 +312,7 @@ MRMLIDImageIO
 
     // For diffusion data, we need to get the measurement frame,
     // diffusion gradients, and b-values
-    if (vtkMRMLDiffusionImageVolumeNode::SafeDownCast(node) != 0)
+    if (vtkMRMLDiffusionImageVolumeNode::SafeDownCast(node) != nullptr)
       {
       vtkMRMLDiffusionImageVolumeNode *di
         = vtkMRMLDiffusionImageVolumeNode::SafeDownCast(node);
@@ -326,7 +326,7 @@ MRMLIDImageIO
 
       this->SetDTDictionaryValues(thisDic, di);
       }
-    else if (vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(node) != 0)
+    else if (vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(node) != nullptr)
       {
       vtkMRMLDiffusionWeightedVolumeNode *dw
         = vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(node);
@@ -361,7 +361,7 @@ MRMLIDImageIO
   if (node)
     {
     // buffer is preallocated, memcpy the data
-    if (vtkMRMLDiffusionImageVolumeNode::SafeDownCast(node) == 0)
+    if (vtkMRMLDiffusionImageVolumeNode::SafeDownCast(node) == nullptr)
       {
       // Scalar, Diffusion Weighted, or Vector image
       memcpy(buffer, node->GetImageData()->GetScalarPointer(),
@@ -407,7 +407,7 @@ MRMLIDImageIO
   if (node)
     {
     // buffer is preallocated, memcpy the data
-    if (vtkMRMLDiffusionImageVolumeNode::SafeDownCast(node) == 0)
+    if (vtkMRMLDiffusionImageVolumeNode::SafeDownCast(node) == nullptr)
       {
       // Scalar, Diffusion Weighted, or Vector image
       return node->GetImageData()->GetScalarPointer();
@@ -420,7 +420,7 @@ MRMLIDImageIO
 
   throw( "MRML Node does not contain image data." );
 
-  return static_cast< void * >( 0 );
+  return static_cast< void * >( nullptr );
 }
 
 //----------------------------------------------------------------------------
@@ -540,7 +540,7 @@ MRMLIDImageIO
     }
 
   // Number of components, PixelType
-  if (vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(node) == 0)
+  if (vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(node) == nullptr)
     {
     // Scalar, Diffusion Weighted, or Vector image
     *numberOfScalarComponents = GetNumberOfComponents();
@@ -563,7 +563,7 @@ MRMLIDImageIO
 
   // For diffusion data, we need to set the measurement frame,
   // diffusion gradients, and bvalues from values in the MetaDataDictionary
-  if (vtkMRMLDiffusionImageVolumeNode::SafeDownCast(node) != 0)
+  if (vtkMRMLDiffusionImageVolumeNode::SafeDownCast(node) != nullptr)
     {
     vtkMRMLDiffusionImageVolumeNode *di
       = vtkMRMLDiffusionImageVolumeNode::SafeDownCast(node);
@@ -572,7 +572,7 @@ MRMLIDImageIO
 
     this->SetDTNodeValues(di, thisDic);
     }
-  else if (vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(node) != 0)
+  else if (vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(node) != nullptr)
     {
     vtkMRMLDiffusionWeightedVolumeNode *dw
       = vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(node);
@@ -621,8 +621,8 @@ MRMLIDImageIO
     else
       {
       // Disconnect the observers from the image to prevent calling events on the main thread
-      img->Register(NULL);  // keep a handle
-      node->SetAndObserveImageData(NULL);
+      img->Register(nullptr);  // keep a handle
+      node->SetAndObserveImageData(nullptr);
       }
 
     // Configure the information on the node/image data
@@ -635,7 +635,7 @@ MRMLIDImageIO
     // Allocate the data, copy the data
     //
     //
-    if (vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(node) == 0)
+    if (vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(node) == nullptr)
       {
       // Everything but tensor images are passed in the scalars
       img->AllocateScalars(scalarType, numberOfScalarComponents);
@@ -678,7 +678,7 @@ MRMLIDImageIO
 
     // Connect the observers to the image
     node->SetAndObserveImageData( img );
-    img->UnRegister(NULL); // release the handle
+    img->UnRegister(nullptr); // release the handle
 
     for (int i = 0; i < node->GetNumberOfDisplayNodes(); ++i)
       {

@@ -30,7 +30,7 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLTreeViewPlugin :
   Q_OBJECT
 
 public:
-  qMRMLTreeViewPlugin(QObject *_parent = 0);
+  qMRMLTreeViewPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;

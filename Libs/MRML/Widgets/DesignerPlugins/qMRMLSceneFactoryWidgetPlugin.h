@@ -29,7 +29,7 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLSceneFactoryWidgetPlugin : public QObjec
   Q_OBJECT
 
 public:
-  qMRMLSceneFactoryWidgetPlugin(QObject *_parent = 0);
+  qMRMLSceneFactoryWidgetPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString domXml() const;

@@ -1007,7 +1007,7 @@ void qSlicerSlicer2SceneReaderPrivate::importModelGroupNode(NodeType& node)
   //         }
   //     }
   // }
-  vtkMRMLColorTableNode* cnode = 0;
+  vtkMRMLColorTableNode* cnode = nullptr;
   if (node.contains("color"))
     {
     cnode = vtkMRMLColorTableNode::SafeDownCast(
@@ -1158,7 +1158,7 @@ void qSlicerSlicer2SceneReaderPrivate::importFiducialsNode(NodeType& node)
   //   $selNode SetActiveFiducialListID [$fiducialNode GetID]
   //   $::slicer3::ApplicationLogic PropagateFiducialListSelection
   //}
-  if (selNode != 0)
+  if (selNode != nullptr)
     {
     selNode->SetActiveFiducialListID(fiducialNode->GetID());
     this->ApplicationLogic->PropagateFiducialListSelection();
@@ -1309,7 +1309,7 @@ bool qSlicerSlicer2SceneReader::load(const IOProperties& properties)
   Q_ASSERT(!file.isEmpty());
 
   d->TransformIDStack.clear();
-  d->FiducialListNode = 0;
+  d->FiducialListNode = nullptr;
   d->ParentID = "";
   d->ModelIDs.clear();
   d->LoadedNodes.clear();

@@ -30,7 +30,7 @@ qMRMLPlotChartPropertiesWidgetPlugin
   Q_OBJECT
 
 public:
-  qMRMLPlotChartPropertiesWidgetPlugin(QObject *_parent = 0);
+  qMRMLPlotChartPropertiesWidgetPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString domXml() const;

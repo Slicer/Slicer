@@ -119,8 +119,8 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
       return EXIT_FAILURE;
       }
 
-    layoutManager->setMRMLScene(0);
-    applicationLogic->SetMRMLScene(0);
+    layoutManager->setMRMLScene(nullptr);
+    applicationLogic->SetMRMLScene(nullptr);
 
     int current = scene->GetReferenceCount();
     int expected = 1;
@@ -186,7 +186,7 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
       }
 
   }
-  vtkMRMLLayoutNode* layoutNode = 0;
+  vtkMRMLLayoutNode* layoutNode = nullptr;
   {
     vtkNew<vtkMRMLScene> scene;
     vtkNew<vtkMRMLLayoutNode> newLayoutNode;

@@ -53,8 +53,8 @@ template <class TImage>
 ImageRegionMomentsCalculator<TImage>::ImageRegionMomentsCalculator(void)
 {
   m_Valid = false;
-  m_Image = NULL;
-  m_SpatialObjectMask = NULL;
+  m_Image = nullptr;
+  m_SpatialObjectMask = nullptr;
   m_M0 = NumericTraits<ScalarType>::ZeroValue();
   m_M1.Fill(NumericTraits<typename VectorType::ValueType>::ZeroValue());
   m_M2.Fill(NumericTraits<typename MatrixType::ValueType>::ZeroValue());

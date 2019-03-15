@@ -72,7 +72,7 @@ int vtkTransformVisualizerGlyph3D::RequestData(
 
   vtkDataArray *inVectors = this->GetInputArrayToProcess(ARRAY_INDEX_VECTORS,inputVector);
   vtkDataArray *inCScalars = this->GetInputArrayToProcess(ARRAY_INDEX_COLORS,inputVector);; // Scalars for Coloring
-  if (inCScalars == NULL)
+  if (inCScalars == nullptr)
     {
     vtkDataArray *inSScalars = this->GetInputArrayToProcess(ARRAY_INDEX_SCALARS,inputVector); // Scalars for Scaling
     inCScalars = inSScalars;
@@ -85,7 +85,7 @@ int vtkTransformVisualizerGlyph3D::RequestData(
     return 1;
     }
 
-  if ( inCScalars==NULL )
+  if ( inCScalars==nullptr )
     {
     vtkDebugMacro("No scalar data is available!");
     return 1;

@@ -33,7 +33,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerFileWriterOptionsWidget
 
 public:
   typedef qSlicerIOOptionsWidget Superclass;
-  explicit qSlicerFileWriterOptionsWidget(QWidget* parent = 0);
+  explicit qSlicerFileWriterOptionsWidget(QWidget* parent = nullptr);
   virtual ~qSlicerFileWriterOptionsWidget();
 
 public slots:

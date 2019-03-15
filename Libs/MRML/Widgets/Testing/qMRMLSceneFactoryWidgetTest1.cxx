@@ -51,7 +51,7 @@ int qMRMLSceneFactoryWidgetTest1( int argc, char * argv [] )
 
   qMRMLSceneFactoryWidget   sceneFactory;
   sceneFactory.generateScene();
-  if (sceneFactory.mrmlScene() == 0)
+  if (sceneFactory.mrmlScene() == nullptr)
     {
     std::cerr << "qMRMLSceneFactoryWidget::generateScene() failed" << std::endl;
     return EXIT_FAILURE;
@@ -62,7 +62,7 @@ int qMRMLSceneFactoryWidgetTest1( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
   sceneFactory.generateScene();
-  if (sceneFactory.mrmlScene() == 0)
+  if (sceneFactory.mrmlScene() == nullptr)
     {
     std::cerr << "qMRMLSceneFactoryWidget::generateScene() failed" << std::endl;
     return EXIT_FAILURE;

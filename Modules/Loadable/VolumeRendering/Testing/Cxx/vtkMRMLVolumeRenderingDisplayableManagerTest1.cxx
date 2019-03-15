@@ -231,7 +231,7 @@ int vtkMRMLVolumeRenderingDisplayableManagerTest1(int argc, char* argv[])
     CHECK_INT(mapper->GetMaxMemoryInBytes() / 1024 / 1024, 16384);
    }
 
-  vrDisplayableManager->SetMRMLApplicationLogic(0);
+  vrDisplayableManager->SetMRMLApplicationLogic(nullptr);
   applicationLogic->Delete();
   scene->Delete();
 

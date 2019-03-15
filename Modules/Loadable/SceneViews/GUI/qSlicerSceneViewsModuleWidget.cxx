@@ -89,7 +89,7 @@ qSlicerSceneViewsModuleDialog* qSlicerSceneViewsModuleWidgetPrivate::sceneViewDi
 qSlicerSceneViewsModuleWidgetPrivate::qSlicerSceneViewsModuleWidgetPrivate(qSlicerSceneViewsModuleWidget& object)
   : q_ptr(&object)
 {
-  this->SceneViewDialog = 0;
+  this->SceneViewDialog = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -136,7 +136,7 @@ void qSlicerSceneViewsModuleWidgetPrivate::updateTableRowFromSceneView(int row, 
   // Thumbnail
   vtkImageData* thumbnailImage = sceneView->GetScreenShot();
   QLabel* thumbnailWidget = dynamic_cast<QLabel*>(this->SceneViewTableWidget->cellWidget(row, SCENE_VIEW_THUMBNAIL_COLUMN));
-  if (thumbnailWidget == NULL)
+  if (thumbnailWidget == nullptr)
     {
     thumbnailWidget = new QLabel;
     this->SceneViewTableWidget->setCellWidget(row, SCENE_VIEW_THUMBNAIL_COLUMN, thumbnailWidget);
@@ -158,7 +158,7 @@ void qSlicerSceneViewsModuleWidgetPrivate::updateTableRowFromSceneView(int row, 
   // replace any carriage returns with html line breaks
   description.replace(QString("\n"), QString("<br>"));
   ctkFittedTextBrowser* descriptionWidget = dynamic_cast<ctkFittedTextBrowser*>(this->SceneViewTableWidget->cellWidget(row, SCENE_VIEW_DESCRIPTION_COLUMN));
-  if (descriptionWidget == NULL)
+  if (descriptionWidget == nullptr)
     {
     descriptionWidget = new ctkFittedTextBrowser;
     descriptionWidget->setOpenExternalLinks(true);
@@ -168,7 +168,7 @@ void qSlicerSceneViewsModuleWidgetPrivate::updateTableRowFromSceneView(int row, 
   descriptionWidget->setHtml("<h3>" + name + "</h3>\n" + description);
 
   QFrame* actionsWidget = dynamic_cast<QFrame*>(this->SceneViewTableWidget->cellWidget(row, SCENE_VIEW_ACTIONS_COLUMN));
-  if (actionsWidget == NULL)
+  if (actionsWidget == nullptr)
     {
     actionsWidget = new QFrame;
     QVBoxLayout* actionsLayout = new QVBoxLayout;
@@ -228,7 +228,7 @@ void qSlicerSceneViewsModuleWidget::moveDownSelected(QString mrmlId)
 
   const char* id = d->logic()->MoveSceneViewDown(mrmlId.toLatin1());
 
-  if (id != NULL &&
+  if (id != nullptr &&
       strcmp(id, "") != 0)
     {
     this->updateFromMRMLScene();
@@ -242,7 +242,7 @@ void qSlicerSceneViewsModuleWidget::moveUpSelected(QString mrmlId)
 
   const char* id = d->logic()->MoveSceneViewUp(mrmlId.toLatin1());
 
-  if (id != NULL &&
+  if (id != nullptr &&
       strcmp(id, "") != 0)
     {
     this->updateFromMRMLScene();
@@ -335,7 +335,7 @@ void qSlicerSceneViewsModuleWidget::updateFromMRMLScene()
 {
   Q_D(qSlicerSceneViewsModuleWidget);
 
-  if (this->mrmlScene() == NULL)
+  if (this->mrmlScene() == nullptr)
     {
     d->SceneViewTableWidget->setRowCount(0);
     return;

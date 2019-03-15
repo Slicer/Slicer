@@ -278,7 +278,7 @@ public:
   /// \param itemID Parent item of the branch
   /// \param dataNodeCollection Collection updated with the list of data nodes
   /// \param childClass Name of the class we are looking for. NULL returns associated data nodes of any kind
-  void GetDataNodesInBranch(vtkIdType itemID, vtkCollection* dataNodeCollection, const char* childClass=NULL);
+  void GetDataNodesInBranch(vtkIdType itemID, vtkCollection* dataNodeCollection, const char* childClass=nullptr);
 
   /// Get data node associated to the parent of the item associated to a data node.
   /// \param recursive Flag determining whether only the direct parent is considered (false), or
@@ -319,7 +319,7 @@ public:
 
   /// Determine if any of the children of this item is transformed (has a parent transform applied), except for an optionally given node
   /// \param exceptionNode The function still returns true if the only applied transform found is this specified node
-  bool IsAnyNodeInBranchTransformed(vtkIdType itemID, vtkMRMLTransformNode* exceptionNode=NULL);
+  bool IsAnyNodeInBranchTransformed(vtkIdType itemID, vtkMRMLTransformNode* exceptionNode=nullptr);
 
   /// Deserialize a UID list string (stored in the UID map) into a vector of UID strings
   static void DeserializeUIDList(std::string uidListString, std::vector<std::string>& deserializedUIDList);

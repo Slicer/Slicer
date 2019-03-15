@@ -45,7 +45,7 @@ public:
 
 public:
   typedef qSlicerSubjectHierarchyAbstractPlugin Superclass;
-  qSlicerSubjectHierarchyLabelMapsPlugin(QObject* parent = NULL);
+  qSlicerSubjectHierarchyLabelMapsPlugin(QObject* parent = nullptr);
   virtual ~qSlicerSubjectHierarchyLabelMapsPlugin();
 
 public:

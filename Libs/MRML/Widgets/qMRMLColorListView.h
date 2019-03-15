@@ -38,7 +38,7 @@ class QMRML_WIDGETS_EXPORT qMRMLColorListView : public QListView
   Q_OBJECT
   Q_PROPERTY(bool showOnlyNamedColors READ showOnlyNamedColors WRITE setShowOnlyNamedColors)
 public:
-  qMRMLColorListView(QWidget *parent=0);
+  qMRMLColorListView(QWidget *parent=nullptr);
   virtual ~qMRMLColorListView();
 
   vtkMRMLColorNode* mrmlColorNode()const;

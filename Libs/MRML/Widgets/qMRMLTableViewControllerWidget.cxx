@@ -64,12 +64,12 @@ qMRMLTableViewControllerWidgetPrivate::qMRMLTableViewControllerWidgetPrivate(
   qMRMLTableViewControllerWidget& object)
   : Superclass(object)
 {
-  this->TableNode = 0;
-  this->TableViewNode = 0;
-  this->TableView = 0;
-  this->CopyAction = 0;
-  this->PasteAction = 0;
-  this->PlotAction = 0;
+  this->TableNode = nullptr;
+  this->TableViewNode = nullptr;
+  this->TableView = nullptr;
+  this->CopyAction = nullptr;
+  this->PasteAction = nullptr;
+  this->PlotAction = nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -135,7 +135,7 @@ void qMRMLTableViewControllerWidgetPrivate::setupPopupUi()
   QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    this->tableComboBox, SLOT(setMRMLScene(vtkMRMLScene*)));
 
-  onTableNodeSelected(NULL);
+  onTableNodeSelected(nullptr);
 }
 
 //---------------------------------------------------------------------------
@@ -166,7 +166,7 @@ void qMRMLTableViewControllerWidgetPrivate::onTableNodeSelected(vtkMRMLNode * no
                       q, SLOT(updateWidgetFromMRML()));
   this->TableNode = node;
 
-  this->TableViewNode->SetTableNodeID(this->TableNode ? this->TableNode->GetID() : 0);
+  this->TableViewNode->SetTableNodeID(this->TableNode ? this->TableNode->GetID() : nullptr);
 
   q->updateWidgetFromMRML();
 }
@@ -298,7 +298,7 @@ qMRMLTableViewControllerWidget::qMRMLTableViewControllerWidget(QWidget* parentWi
 // --------------------------------------------------------------------------
 qMRMLTableViewControllerWidget::~qMRMLTableViewControllerWidget()
 {
-  this->setMRMLScene(0);
+  this->setMRMLScene(nullptr);
 }
 
 // --------------------------------------------------------------------------
@@ -355,10 +355,10 @@ void qMRMLTableViewControllerWidget::updateWidgetFromMRML()
     = vtkMRMLTableNode::SafeDownCast(this->mrmlScene()->GetNodeByID(d->TableViewNode->GetTableNodeID()));
 
   // TableNode selector
-  d->tableComboBox->setCurrentNodeID(tableNode ? tableNode->GetID() : NULL);
+  d->tableComboBox->setCurrentNodeID(tableNode ? tableNode->GetID() : nullptr);
 
-  bool validNode = tableNode != 0;
-  bool editableNode = tableNode != 0 && !tableNode->GetLocked();
+  bool validNode = tableNode != nullptr;
+  bool editableNode = tableNode != nullptr && !tableNode->GetLocked();
 
   d->LockTableButton->setEnabled(validNode);
   d->CopyButton->setEnabled(validNode);

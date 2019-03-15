@@ -207,9 +207,9 @@ void vtkMRMLMarkupsNode::ProcessMRMLEvents(vtkObject *caller,
                                            unsigned long event,
                                            void *callData)
 {
-  if (caller != NULL && event == vtkMRMLTransformableNode::TransformModifiedEvent)
+  if (caller != nullptr && event == vtkMRMLTransformableNode::TransformModifiedEvent)
     {
-    vtkMRMLTransformNode::GetTransformBetweenNodes(this->GetParentTransformNode(), NULL, CurvePolyToWorldTransform);
+    vtkMRMLTransformNode::GetTransformBetweenNodes(this->GetParentTransformNode(), nullptr, CurvePolyToWorldTransform);
     }
   Superclass::ProcessMRMLEvents(caller, event, callData);
 }
@@ -750,7 +750,7 @@ void vtkMRMLMarkupsNode::UpdateCurvePolyFromCurveInputPoly()
     if (line->GetNumberOfCells() == 1)
       {
       vtkIdType currentNumberOfCellPoints = 0;
-      vtkIdType* currentCellPoints = 0;
+      vtkIdType* currentCellPoints = nullptr;
       line->GetCell(0, currentNumberOfCellPoints, currentCellPoints);
       if (currentNumberOfCellPoints == numberOfCellPoints)
         {
@@ -1646,7 +1646,7 @@ vtkPoints* vtkMRMLMarkupsNode::GetCurvePointsWorld()
   vtkPolyData* curvePolyDataWorld = this->GetCurveWorld();
   if (!curvePolyDataWorld)
     {
-    return NULL;
+    return nullptr;
     }
   return curvePolyDataWorld->GetPoints();
 }
@@ -1656,7 +1656,7 @@ vtkPolyData* vtkMRMLMarkupsNode::GetCurveWorld()
 {
   if (this->GetNumberOfControlPoints() < 1)
     {
-    return NULL;
+    return nullptr;
     }
   this->CurvePolyToWorldTransformer->Update();
   vtkPolyData* curvePolyDataWorld = this->CurvePolyToWorldTransformer->GetOutput();

@@ -37,8 +37,8 @@ vtkMRMLUnitNode::vtkMRMLUnitNode()
 {
   this->HideFromEditors = 1;
 
-  this->Prefix = 0;
-  this->Suffix = 0;
+  this->Prefix = nullptr;
+  this->Suffix = nullptr;
   this->Precision = 3;
   this->MinimumValue = VTK_DOUBLE_MIN;
   this->MaximumValue = VTK_DOUBLE_MAX;
@@ -111,7 +111,7 @@ void vtkMRMLUnitNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -296,7 +296,7 @@ void vtkMRMLUnitNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLUnitNode::Reset(vtkMRMLNode* defaultNode)
 {
-  if (this->GetSingletonTag() != 0)
+  if (this->GetSingletonTag() != nullptr)
     {
     return;
     }

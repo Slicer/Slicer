@@ -39,7 +39,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerScriptedFileDialog
 
 public:
   typedef qSlicerStandardFileDialog Superclass;
-  qSlicerScriptedFileDialog(QObject* parent = 0);
+  qSlicerScriptedFileDialog(QObject* parent = nullptr);
   virtual ~qSlicerScriptedFileDialog();
 
   QString pythonSource()const;

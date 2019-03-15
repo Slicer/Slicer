@@ -91,7 +91,7 @@ public:
 
   /// Save scene into URL
   /// Returns nonzero on success
-  int Commit(const char* url=NULL);
+  int Commit(const char* url=nullptr);
 
   /// Remove nodes and clear undo/redo stacks.
   /// \param removeSingletons If set to true then it removes
@@ -206,7 +206,7 @@ public:
   ///
   /// This function is used after adding a bunch of nodes with AddNodeNoNotify()
   void NodeAdded(vtkMRMLNode *n);
-  void NodeAdded() {this->NodeAdded(NULL);};
+  void NodeAdded() {this->NodeAdded(nullptr);};
 
   /// Remove a path from the list.
   void RemoveNode(vtkMRMLNode *n);
@@ -258,8 +258,8 @@ public:
   /// \a byHideFromEditors is set, the function will only return the
   /// nodes that are either hidden from editors or the nodes that are
   /// visible in editors.
-  vtkMRMLNode *GetFirstNode(const char* byName = 0, const char* byClass = 0,
-                            const int* byHideFromEditors = 0,
+  vtkMRMLNode *GetFirstNode(const char* byName = nullptr, const char* byClass = nullptr,
+                            const int* byHideFromEditors = nullptr,
                             bool exactNameMatch = true);
 
   /// Get node given a unique ID
@@ -401,7 +401,7 @@ public:
   ///
   /// If \a checkNodes is not NULL, then only those nodes are notified that are
   /// part of the checkNodes collection.
-  void UpdateNodeReferences(vtkCollection* checkNodes=NULL);
+  void UpdateNodeReferences(vtkCollection* checkNodes=nullptr);
 
   void CopyNodeReferences(vtkMRMLScene *scene);
 
@@ -691,7 +691,7 @@ public:
   /// If \a modifiedStorableNodes is passed the modified nodes are appended.
   /// Note that the nodes see their reference count being incremented while
   /// being in the list. Don't forget to clear it as soon as you don't need it.
-  bool GetStorableNodesModifiedSinceRead(vtkCollection* modifiedStorableNodes = 0);
+  bool GetStorableNodesModifiedSinceRead(vtkCollection* modifiedStorableNodes = nullptr);
 
   /// \brief Search the scene for storable nodes that are not "ModifiedSinceRead".
   ///

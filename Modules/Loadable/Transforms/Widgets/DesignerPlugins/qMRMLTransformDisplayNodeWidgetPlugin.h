@@ -33,7 +33,7 @@ qMRMLTransformDisplayNodeWidgetPlugin
   Q_OBJECT
 
 public:
-  qMRMLTransformDisplayNodeWidgetPlugin(QObject *_parent = 0);
+  qMRMLTransformDisplayNodeWidgetPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;

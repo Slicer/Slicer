@@ -34,7 +34,7 @@ class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerMultiVolumeRendering
   Q_OBJECT
 public:
   typedef qSlicerVolumeRenderingPropertiesWidget Superclass;
-  qSlicerMultiVolumeRenderingPropertiesWidget(QWidget *parent=0);
+  qSlicerMultiVolumeRenderingPropertiesWidget(QWidget *parent=nullptr);
   virtual ~qSlicerMultiVolumeRenderingPropertiesWidget();
 
   vtkMRMLMultiVolumeRenderingDisplayNode* mrmlDisplayNode();

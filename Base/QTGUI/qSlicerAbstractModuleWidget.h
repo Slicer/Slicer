@@ -44,7 +44,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerAbstractModuleWidget
 public:
   /// Constructor
   /// \sa QWidget
-  qSlicerAbstractModuleWidget(QWidget *parent=0);
+  qSlicerAbstractModuleWidget(QWidget *parent=nullptr);
   virtual ~qSlicerAbstractModuleWidget();
 
   /// The enter and exit methods are called when the module panel changes.

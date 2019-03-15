@@ -24,7 +24,7 @@ vtkSlicerModuleLogic::vtkSlicerModuleLogic()
 //----------------------------------------------------------------------------
 vtkSlicerModuleLogic::~vtkSlicerModuleLogic()
 {
-  this->SetMRMLApplicationLogic(0);
+  this->SetMRMLApplicationLogic(nullptr);
 }
 
 //----------------------------------------------------------------------------

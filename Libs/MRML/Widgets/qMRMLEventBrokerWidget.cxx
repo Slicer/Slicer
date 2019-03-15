@@ -79,7 +79,7 @@ public:
 //------------------------------------------------------------------------------
 qMRMLEventBrokerWidgetPrivate::qMRMLEventBrokerWidgetPrivate()
 {
-  this->ConnectionsTreeWidget = 0;
+  this->ConnectionsTreeWidget = nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -87,7 +87,7 @@ vtkObservation* qMRMLEventBrokerWidgetPrivate::observation(QTreeWidgetItem* item
 {
   if (!item || !item->parent() || !item->parent()->parent())
     {
-    return 0;
+    return nullptr;
     }
   QTreeWidgetItem* eventItem = item->parent();
   unsigned long event = eventItem->text(NameColumn).toInt();
@@ -102,7 +102,7 @@ vtkObservation* qMRMLEventBrokerWidgetPrivate::observation(QTreeWidgetItem* item
       item->data(0, Qt::UserRole).toLongLong()));
 
   vtkEventBroker::ObservationVector observations =
-    vtkEventBroker::GetInstance()->GetObservations(subject, event, observer, 0, 1);
+    vtkEventBroker::GetInstance()->GetObservations(subject, event, observer, nullptr, 1);
   Q_ASSERT(observations.size());
   return observations.size() ? (*observations.begin()) : 0;
 }
@@ -112,7 +112,7 @@ QTreeWidgetItem* qMRMLEventBrokerWidgetPrivate::itemFromSubject(vtkObject* subje
 {
   if (!subject)
     {
-    return 0;
+    return nullptr;
     }
 
   for (int i = 0; i < this->ConnectionsTreeWidget->topLevelItemCount(); ++i)
@@ -135,7 +135,7 @@ QTreeWidgetItem* qMRMLEventBrokerWidgetPrivate::itemFromEvent(QTreeWidgetItem* s
 {
   if (!subjectItem)
     {
-    return 0;
+    return nullptr;
     }
 
   QString eventString = QString::number(event);
@@ -161,7 +161,7 @@ QTreeWidgetItem* qMRMLEventBrokerWidgetPrivate::itemFromObservation(vtkObservati
 {
   if (!observation)
     {
-    return 0;
+    return nullptr;
     }
 
   QTreeWidgetItem* subjectItem  = this->itemFromSubject(observation->GetSubject());
@@ -179,7 +179,7 @@ QTreeWidgetItem* qMRMLEventBrokerWidgetPrivate::itemFromObservation(vtkObservati
       return observationItem;
       }
     }
-  return 0;
+  return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -212,7 +212,7 @@ vtkObject* qMRMLEventBrokerWidgetPrivate::objectFromItem(QTreeWidgetItem* item)c
 {
   if (!item)
     {
-    return 0;
+    return nullptr;
     }
   return reinterpret_cast<vtkObject*>(item->data(NameColumn, Qt::UserRole).value<long long>());
 }

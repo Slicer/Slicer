@@ -43,7 +43,7 @@ vtkMRMLStorableNode::~vtkMRMLStorableNode()
   if ( this->UserTagTable )
     {
     this->UserTagTable->Delete();
-    this->UserTagTable = NULL;
+    this->UserTagTable = nullptr;
     }
   this->SlicerDataType.clear();
 }
@@ -130,7 +130,7 @@ void vtkMRMLStorableNode::WriteXML(ostream& of, int nIndent)
   std::stringstream ss;
 
   //---write any user tags.
-  if ( this->GetUserTagTable() != NULL )
+  if ( this->GetUserTagTable() != nullptr )
     {
     ss.clear();
     ss.str ( "" );
@@ -140,7 +140,7 @@ void vtkMRMLStorableNode::WriteXML(ostream& of, int nIndent)
       {
       kwd = this->GetUserTagTable()->GetTagAttribute(i);
       val = this->GetUserTagTable()->GetTagValue (i);
-      if (kwd != NULL && val != NULL)
+      if (kwd != nullptr && val != nullptr)
         {
         ss << kwd << "=" << val;
         if ( i < (numc-1) )
@@ -149,7 +149,7 @@ void vtkMRMLStorableNode::WriteXML(ostream& of, int nIndent)
           }
         }
       }
-    if ( ss.str().c_str()!= NULL )
+    if ( ss.str().c_str()!= nullptr )
       {
       of << " userTags=\"" << ss.str().c_str() << "\"";
       }
@@ -166,14 +166,14 @@ void vtkMRMLStorableNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
     //---Read any user tags
     if (!strcmp (attName, "userTags"))
       {
-      if ( this->GetUserTagTable() == NULL )
+      if ( this->GetUserTagTable() == nullptr )
         {
         this->UserTagTable = vtkTagTable::New();
         }
@@ -186,14 +186,14 @@ void vtkMRMLStorableNode::ReadXMLAttributes(const char** atts)
         std::string tags;
         ss >> tags;
         //--- now pull apart individual tags
-        if ( tags.c_str() != NULL )
+        if ( tags.c_str() != nullptr )
           {
           i = tags.find("=");
           if ( i != std::string::npos)
             {
             kwd = tags.substr(0, i);
             val = tags.substr(i+1, std::string::npos );
-            if ( kwd.c_str() != NULL && val.c_str() != NULL )
+            if ( kwd.c_str() != nullptr && val.c_str() != nullptr )
               {
               this->GetUserTagTable()->AddOrUpdateTag ( kwd.c_str(), val.c_str(), 0 );
               }
@@ -225,10 +225,10 @@ void vtkMRMLStorableNode::Copy(vtkMRMLNode *anode)
   //---
   //--- Copy any user tags
   //---
-  if ( node->GetUserTagTable() != NULL )
+  if ( node->GetUserTagTable() != nullptr )
     {
     //--- make sure the destination node has a TagTable.
-    if ( this->GetUserTagTable() == NULL )
+    if ( this->GetUserTagTable() == nullptr )
       {
       this->UserTagTable = vtkTagTable::New();
       }
@@ -242,7 +242,7 @@ void vtkMRMLStorableNode::Copy(vtkMRMLNode *anode)
       kwd = node->GetUserTagTable()->GetTagAttribute(j);
       val = node->GetUserTagTable()->GetTagValue (j);
       sel = node->GetUserTagTable()->IsTagSelected ( kwd );
-      if (kwd != NULL && val != NULL && sel >= 0 )
+      if (kwd != nullptr && val != nullptr && sel >= 0 )
         {
         this->UserTagTable->AddOrUpdateTag ( kwd, val, sel );
         }
@@ -292,11 +292,11 @@ void vtkMRMLStorableNode::UpdateScene(vtkMRMLScene *scene)
     std::string fname = std::string("(null)");
     if (pnode)
       {
-      if (pnode->GetFileName() != NULL)
+      if (pnode->GetFileName() != nullptr)
         {
         fname = std::string(pnode->GetFileName());
         }
-      else if (pnode->GetURI() != NULL)
+      else if (pnode->GetURI() != nullptr)
         {
         fname = std::string(pnode->GetURI());
         }
@@ -314,7 +314,7 @@ void vtkMRMLStorableNode::UpdateScene(vtkMRMLScene *scene)
       }
     else
       {
-      vtkErrorMacro("UpdateScene: error getting " << i << "th storage node, id = " << (this->GetNthStorageNodeID(i) == NULL ? "null" : this->GetNthStorageNodeID(i)));
+      vtkErrorMacro("UpdateScene: error getting " << i << "th storage node, id = " << (this->GetNthStorageNodeID(i) == nullptr ? "null" : this->GetNthStorageNodeID(i)));
       }
     }
 }
@@ -361,7 +361,7 @@ void vtkMRMLStorableNode::ProcessMRMLEvents ( vtkObject *caller,
   for (int i=0; i<numStorageNodes; i++)
     {
     vtkMRMLStorageNode *dnode = this->GetNthStorageNode(i);
-    if (dnode != NULL && dnode == vtkMRMLStorageNode::SafeDownCast(caller) &&
+    if (dnode != nullptr && dnode == vtkMRMLStorageNode::SafeDownCast(caller) &&
       event ==  vtkCommand::ModifiedEvent)
       {
       vtkDebugMacro("Got a modified event on a storage node, id = " << dnode->GetID());
@@ -374,7 +374,7 @@ void vtkMRMLStorableNode::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLStorableNode::CreateDefaultStorageNode()
 {
-  return NULL;
+  return nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -400,7 +400,7 @@ vtkTimeStamp vtkMRMLStorableNode::GetStoredTime()
   for (int i = 0; i < numStorageNodes; ++i)
     {
     vtkMRMLStorageNode *dnode = this->GetNthStorageNode(i);
-    if (dnode != NULL && storedTime < dnode->GetStoredTime())
+    if (dnode != nullptr && storedTime < dnode->GetStoredTime())
       {
       storedTime = dnode->GetStoredTime();
       }

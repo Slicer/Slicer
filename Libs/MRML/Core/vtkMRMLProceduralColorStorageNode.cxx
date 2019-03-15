@@ -63,7 +63,7 @@ int vtkMRMLProceduralColorStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   vtkMRMLProceduralColorNode *colorNode =
     vtkMRMLProceduralColorNode::SafeDownCast(refNode);
 
-  if (colorNode == NULL)
+  if (colorNode == nullptr)
     {
     vtkErrorMacro("ReadData: unable to cast input node " << refNode->GetID()
                   << " to a known procedural color node");
@@ -152,13 +152,13 @@ int vtkMRMLProceduralColorStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     }
 
   // cast the input node
-  vtkMRMLProceduralColorNode *colorNode = NULL;
+  vtkMRMLProceduralColorNode *colorNode = nullptr;
   if ( refNode->IsA("vtkMRMLProceduralColorNode") )
     {
     colorNode = dynamic_cast <vtkMRMLProceduralColorNode *> (refNode);
     }
 
-  if (colorNode == NULL)
+  if (colorNode == nullptr)
     {
     vtkErrorMacro("WriteData: unable to cast input node " << refNode->GetID() << " to a known color table node");
     return 0;
@@ -186,7 +186,7 @@ int vtkMRMLProceduralColorStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
       }
 
     // put down a header
-    of << "# Color procedural file " << (this->GetFileName() != NULL ? this->GetFileName() : "null") << endl;
+    of << "# Color procedural file " << (this->GetFileName() != nullptr ? this->GetFileName() : "null") << endl;
     int numPoints = ctf->GetSize();
     of << "# " << numPoints << " points" << endl;
     of << "# position R G B" << endl;

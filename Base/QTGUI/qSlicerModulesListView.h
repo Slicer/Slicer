@@ -48,7 +48,7 @@ public:
   typedef QListView Superclass;
 
   /// Constructor
-  explicit qSlicerModulesListView(QWidget* parent = 0);
+  explicit qSlicerModulesListView(QWidget* parent = nullptr);
 
   /// Destructor
   virtual ~qSlicerModulesListView();

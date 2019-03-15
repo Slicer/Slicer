@@ -65,7 +65,7 @@ int qSlicerVolumesModuleWidgetTest1( int argc, char * argv[] )
     }
 
   qSlicerVolumesModule module;
-  module.initialize(0);
+  module.initialize(nullptr);
 
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkSlicerVolumesLogic> volumesLogic;

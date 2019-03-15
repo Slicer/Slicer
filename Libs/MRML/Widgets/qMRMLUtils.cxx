@@ -152,7 +152,7 @@ QPixmap qMRMLUtils::createColorPixmap(QStyle * style, const QColor &color)
 //---------------------------------------------------------------------------
 bool qMRMLUtils::qImageToVtkImageData(const QImage& qImage, vtkImageData* vtkimage)
 {
-  if (vtkimage == 0)
+  if (vtkimage == nullptr)
     {
     return false;
     }

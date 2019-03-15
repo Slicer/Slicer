@@ -9,7 +9,7 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLVolumeThresholdWidgetPlugin : public QOb
   Q_OBJECT
 
 public:
-  qMRMLVolumeThresholdWidgetPlugin(QObject *_parent = 0);
+  qMRMLVolumeThresholdWidgetPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;

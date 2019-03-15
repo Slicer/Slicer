@@ -45,7 +45,7 @@ public:
 
 public:
   typedef qSlicerSubjectHierarchyAbstractPlugin Superclass;
-  qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin(QObject* parent = NULL);
+  qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin(QObject* parent = nullptr);
   virtual ~qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin();
 
 public:

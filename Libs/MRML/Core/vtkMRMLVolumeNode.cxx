@@ -65,14 +65,14 @@ vtkMRMLVolumeNode::vtkMRMLVolumeNode()
     this->Origin[i] = 0.0;
     }
 
-  this->ImageDataConnection = NULL;
-  this->DataEventForwarder = NULL;
+  this->ImageDataConnection = nullptr;
+  this->DataEventForwarder = nullptr;
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLVolumeNode::~vtkMRMLVolumeNode()
 {
-  this->SetAndObserveImageData(NULL);
+  this->SetAndObserveImageData(nullptr);
   if (this->DataEventForwarder)
     {
     this->DataEventForwarder->Delete();
@@ -114,7 +114,7 @@ void vtkMRMLVolumeNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -189,7 +189,7 @@ void vtkMRMLVolumeNode::Copy(vtkMRMLNode *anode)
     this->CopyOrientation(node);
     }
 
-  if (node->GetImageData() != NULL)
+  if (node->GetImageData() != nullptr)
     {
     // Only copy bulk data if it exists - this handles the case
     // of restoring from SceneViews, where the nodes will not
@@ -247,7 +247,7 @@ void vtkMRMLVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
     }
   os << "\n";
 
-  if (this->GetImageData() != NULL)
+  if (this->GetImageData() != nullptr)
     {
     os << indent << "ImageData:\n";
     this->GetImageData()->PrintSelf(os, indent.GetNextIndent());
@@ -389,7 +389,7 @@ void vtkMRMLVolumeNode::SetOrigin(double arg[3])
 //----------------------------------------------------------------------------
 double vtkMRMLVolumeNode::GetMinSpacing()
 {
-  if (this->GetSpacing() == NULL)
+  if (this->GetSpacing() == nullptr)
     {
     return 0;
     }
@@ -404,7 +404,7 @@ double vtkMRMLVolumeNode::GetMinSpacing()
 //----------------------------------------------------------------------------
 double vtkMRMLVolumeNode::GetMaxSpacing()
 {
-  if (this->GetSpacing() == NULL)
+  if (this->GetSpacing() == nullptr)
     {
     return 0;
     }
@@ -419,7 +419,7 @@ double vtkMRMLVolumeNode::GetMaxSpacing()
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::SetIJKToRASMatrix(vtkMatrix4x4* argMat)
 {
-  if (argMat == NULL)
+  if (argMat == nullptr)
     {
     return;
     }
@@ -547,7 +547,7 @@ bool vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(const char *order,
                                                      vtkMatrix4x4 *IJKToRAS)
 {
   IJKToRAS->Identity();
-  if (order == NULL)
+  if (order == nullptr)
     {
     return false;
     }
@@ -700,21 +700,21 @@ const char* vtkMRMLVolumeNode::ComputeScanOrderFromIJKToRAS(vtkMatrix4x4 *ijkToR
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData *imageData)
 {
-  if (imageData == 0)
+  if (imageData == nullptr)
     {
     vtkTrivialProducer* oldProducer = vtkTrivialProducer::SafeDownCast(
-      this->GetImageDataConnection() ? this->GetImageDataConnection()->GetProducer() : 0);
+      this->GetImageDataConnection() ? this->GetImageDataConnection()->GetProducer() : nullptr);
     if (oldProducer && oldProducer->GetOutputDataObject(0))
       {
       oldProducer->GetOutputDataObject(0)->RemoveObservers(
         vtkCommand::ModifiedEvent, this->DataEventForwarder);
       }
-    this->SetImageDataConnection(0);
+    this->SetImageDataConnection(nullptr);
     }
   else
     {
     vtkTrivialProducer* oldProducer = vtkTrivialProducer::SafeDownCast(
-      this->GetImageDataConnection() ? this->GetImageDataConnection()->GetProducer() : 0);
+      this->GetImageDataConnection() ? this->GetImageDataConnection()->GetProducer() : nullptr);
     if (oldProducer && oldProducer->GetOutputDataObject(0) == imageData)
       {
       return;
@@ -742,10 +742,10 @@ void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData *imageData)
 vtkImageData* vtkMRMLVolumeNode::GetImageData()
 {
   vtkAlgorithm* producer = this->ImageDataConnection ?
-    this->ImageDataConnection->GetProducer() : 0;
+    this->ImageDataConnection->GetProducer() : nullptr;
   return vtkImageData::SafeDownCast(
     producer ? producer->GetOutputDataObject(
-      this->ImageDataConnection->GetIndex()) : 0);
+      this->ImageDataConnection->GetIndex()) : nullptr);
 }
 
 //---------------------------------------------------------------------------
@@ -758,13 +758,13 @@ void vtkMRMLVolumeNode
     }
 
   vtkAlgorithm* oldImageDataAlgorithm = this->ImageDataConnection ?
-    this->ImageDataConnection->GetProducer() : 0;
+    this->ImageDataConnection->GetProducer() : nullptr;
 
   this->ImageDataConnection = newImageDataConnection;
 
   vtkAlgorithm* imageDataAlgorithm = this->ImageDataConnection ?
-    this->ImageDataConnection->GetProducer() : 0;
-  if (imageDataAlgorithm != NULL)
+    this->ImageDataConnection->GetProducer() : nullptr;
+  if (imageDataAlgorithm != nullptr)
     {
     vtkEventBroker::GetInstance()->AddObservation(
       imageDataAlgorithm, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
@@ -773,7 +773,7 @@ void vtkMRMLVolumeNode
 
   this->SetImageDataToDisplayNodes();
 
-  if (oldImageDataAlgorithm != NULL)
+  if (oldImageDataAlgorithm != nullptr)
     {
     vtkEventBroker::GetInstance()->RemoveObservations (
       oldImageDataAlgorithm, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
@@ -849,7 +849,7 @@ void vtkMRMLVolumeNode::ProcessMRMLEvents ( vtkObject *caller,
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
   // did the image data change?
-  if (this->ImageDataConnection != 0 &&
+  if (this->ImageDataConnection != nullptr &&
       this->ImageDataConnection->GetProducer() == vtkAlgorithm::SafeDownCast(caller) &&
     event ==  vtkCommand::ModifiedEvent)
     {
@@ -896,7 +896,7 @@ void vtkMRMLVolumeNode::ApplyTransformMatrix(vtkMatrix4x4* transformMatrix)
 //---------------------------------------------------------------------------
 void vtkMRMLVolumeNode::GetRASBounds(double bounds[6])
 {
-  this->GetSliceBounds(bounds, NULL);
+  this->GetSliceBounds(bounds, nullptr);
 }
 
 //---------------------------------------------------------------------------
@@ -908,7 +908,7 @@ void vtkMRMLVolumeNode::GetSliceBounds(double bounds[6], vtkMatrix4x4* rasToSlic
 //---------------------------------------------------------------------------
 void vtkMRMLVolumeNode::GetBounds(double bounds[6])
 {
-  vtkMRMLVolumeNode::GetBoundsInternal(bounds, NULL, false);
+  vtkMRMLVolumeNode::GetBoundsInternal(bounds, nullptr, false);
 }
 
 //---------------------------------------------------------------------------
@@ -1003,7 +1003,7 @@ void vtkMRMLVolumeNode::ApplyTransform(vtkAbstractTransform* transform)
 //-----------------------------------------------------------
 void vtkMRMLVolumeNode::ApplyNonLinearTransform(vtkAbstractTransform* transform)
 {
-  if (this->GetImageData() == 0 || !this->CanApplyNonLinearTransforms())
+  if (this->GetImageData() == nullptr || !this->CanApplyNonLinearTransforms())
     {
     return;
     }

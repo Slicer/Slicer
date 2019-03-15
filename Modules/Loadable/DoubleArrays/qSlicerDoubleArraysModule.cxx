@@ -114,7 +114,7 @@ bool qSlicerDoubleArraysModule::isHidden() const
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation * qSlicerDoubleArraysModule::createWidgetRepresentation()
 {
-  return 0;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------

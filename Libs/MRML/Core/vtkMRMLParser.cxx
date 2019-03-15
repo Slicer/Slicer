@@ -42,7 +42,7 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
     //--- pull out any tags describing the scene and fill the scene's tagtable.
     const char* attName;
     const char* attValue;
-    while (*atts != NULL)
+    while (*atts != nullptr)
       {
       attName = *(atts++);
       attValue = *(atts++);
@@ -52,7 +52,7 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
         }
       else if (!strcmp(attName, "userTags"))
         {
-        if ( this->MRMLScene->GetUserTagTable() == NULL )
+        if ( this->MRMLScene->GetUserTagTable() == nullptr )
           {
           //--- null table, no tags are read.
           return;
@@ -66,14 +66,14 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
           std::string tags;
           ss >> tags;
           //--- now pull apart individual tags
-          if ( tags.c_str() != NULL )
+          if ( tags.c_str() != nullptr )
             {
             i = tags.find("=");
             if ( i != std::string::npos)
               {
               kwd = tags.substr(0, i);
               val = tags.substr(i+1, std::string::npos );
-              if ( kwd.c_str() != NULL && val.c_str() != NULL )
+              if ( kwd.c_str() != nullptr && val.c_str() != nullptr )
                 {
                 this->MRMLScene->GetUserTagTable()->AddOrUpdateTag ( kwd.c_str(), val.c_str(), 0 );
                 }
@@ -138,7 +138,7 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
 
   // It is needed to have the scene set before ReadXMLAttributes is
   // called on storage nodes.
-  if (vtkMRMLStorageNode::SafeDownCast(node) != 0)
+  if (vtkMRMLStorageNode::SafeDownCast(node) != nullptr)
     {
     node->SetScene(this->GetMRMLScene());
     }
@@ -226,13 +226,13 @@ void vtkMRMLParser::EndElement(const char *name)
     }
 
   const char* className = this->MRMLScene->GetClassNameByTag(name);
-  if (className == NULL)
+  if (className == nullptr)
     {
     // check for a renamed node
     if (strcmp(name, "SceneSnapshot") == 0)
       {
       className = this->MRMLScene->GetClassNameByTag("SceneView");
-      if (className == NULL)
+      if (className == nullptr)
         {
         return;
         }

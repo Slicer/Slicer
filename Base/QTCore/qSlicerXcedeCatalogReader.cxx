@@ -440,7 +440,7 @@ void qSlicerXcedeCatalogReaderPrivate::importEntry(vtkXMLDataElement* element)
   //set fileformat [ XcedeCatalogImportFormatCheck $node($formatAttName) ]
   int fileFormat = this->checkFormat(node[formatAttName]);
   bool isRemote = false;
-  vtkURIHandler* uriHandler = 0;
+  vtkURIHandler* uriHandler = nullptr;
   QFileInfo file;
   switch (fileFormat)
     {
@@ -454,7 +454,7 @@ void qSlicerXcedeCatalogReaderPrivate::importEntry(vtkXMLDataElement* element)
 //        puts "$node($formatAttName) can handle downloads automatically"
     case 1:
 //      if {$cacheManager != ""} {
-      if (cacheManager == 0)
+      if (cacheManager == nullptr)
         {
         break;
         }
@@ -499,7 +499,7 @@ void qSlicerXcedeCatalogReaderPrivate::importEntry(vtkXMLDataElement* element)
     case 2:
 // //        puts "$node($formatAttName) is something we have to download manually if it has a remote uri"
 //      if {$cacheManager != ""} {
-      if (cacheManager == 0)
+      if (cacheManager == nullptr)
         {
         break;
         }
@@ -638,7 +638,7 @@ void qSlicerXcedeCatalogReaderPrivate::importVolumeNode(NodeType node)
   //  puts "XcedeCatalogImportEntryVolume: Unable to add Volume Node for $n(uri)."
   //  return
   //}
-  if (volumeNode == 0)
+  if (volumeNode == nullptr)
     {
     qDebug() << "Unable to add Volume node for" << node["uri"];
     return;
@@ -819,7 +819,7 @@ void qSlicerXcedeCatalogReaderPrivate::importModelNode(NodeType node)
   //   puts "XcedeCatalogImportEntryModel: couldn't created Model Node. Model $n(name) not imported."
   //   return
   // }
-  if (mnode == 0)
+  if (mnode == nullptr)
     {
     qDebug() << "qSlicerXCedeCatalogIO::importModelNode: couldn't created Model Node. Model " << node["name"] << " not imported.";
     return;
@@ -1052,7 +1052,7 @@ void qSlicerXcedeCatalogReaderPrivate::importOverlayNode(NodeType node)
   //       set mid $::XcedeCatalogMrmlID(LHmodel)
   //       set mnode [$::slicer3::MRMLScene GetNodeByID $mid]
   //   }
-  vtkMRMLModelNode* mnode = 0;
+  vtkMRMLModelNode* mnode = nullptr;
   QString mid;
   if (node["uri"].startsWith("lh."))
     {
@@ -1090,7 +1090,7 @@ void qSlicerXcedeCatalogReaderPrivate::importOverlayNode(NodeType node)
   //     puts "XcedeCatalogImportEntryOverlay: Model MRML Node corresponding to ID=$mid not found. No overlay imported."
   //     return
   // }
-  if (mnode == 0)
+  if (mnode == nullptr)
     {
     qDebug() << "qSlicerXCedeCatalogIO::importOverlayNode: Model MRML node corresponding to ID: " << mid << "not found. No overlay imported.";
     return;

@@ -37,9 +37,9 @@ class qSlicerTablesReader
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerTablesReader(QObject* parent = 0);
+  qSlicerTablesReader(QObject* parent = nullptr);
   qSlicerTablesReader(vtkSlicerTablesLogic* logic,
-                       QObject* parent = 0);
+                       QObject* parent = nullptr);
   virtual ~qSlicerTablesReader();
 
   vtkSlicerTablesLogic* logic()const;

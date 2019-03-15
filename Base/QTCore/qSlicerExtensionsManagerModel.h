@@ -64,7 +64,7 @@ public:
   typedef qSlicerExtensionsManagerModel Self;
 
   /// Constructor
-  explicit qSlicerExtensionsManagerModel(QObject* parent = 0);
+  explicit qSlicerExtensionsManagerModel(QObject* parent = nullptr);
 
   /// Destructor
   virtual ~qSlicerExtensionsManagerModel();

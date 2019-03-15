@@ -80,7 +80,7 @@ public:
   //----------------------------------------------------------------------
   virtual ~SliceIntersectionDisplayPipeline()
   {
-    this->SetAndObserveSliceLogic(NULL, NULL);
+    this->SetAndObserveSliceLogic(nullptr, nullptr);
   }
 
   //----------------------------------------------------------------------
@@ -273,7 +273,7 @@ int vtkSliceIntersectionRepresentation2D::vtkInternal::IntersectWithFinitePlane(
 //----------------------------------------------------------------------
 vtkSliceIntersectionRepresentation2D::vtkSliceIntersectionRepresentation2D()
 {
-  this->MRMLApplicationLogic = NULL;
+  this->MRMLApplicationLogic = nullptr;
 
   this->Internal = new vtkInternal(this);
   this->Internal->SliceNodeModifiedCommand->SetClientData(this);
@@ -288,8 +288,8 @@ vtkSliceIntersectionRepresentation2D::vtkSliceIntersectionRepresentation2D()
 //----------------------------------------------------------------------
 vtkSliceIntersectionRepresentation2D::~vtkSliceIntersectionRepresentation2D()
 {
-  this->SetSliceNode(NULL);
-  this->SetMRMLApplicationLogic(NULL);
+  this->SetSliceNode(nullptr);
+  this->SetMRMLApplicationLogic(nullptr);
   delete this->Internal;
 }
 
@@ -390,13 +390,13 @@ SliceIntersectionDisplayPipeline* vtkSliceIntersectionRepresentation2D::GetDispl
       return *sliceIntersectionIt;
       }
     }
-  return NULL;
+  return nullptr;
 }
 
 //----------------------------------------------------------------------
 void vtkSliceIntersectionRepresentation2D::UpdateSliceIntersectionDisplay(SliceIntersectionDisplayPipeline *pipeline)
 {
-  if (!pipeline || !this->Internal->SliceNode || pipeline->SliceLogic == NULL)
+  if (!pipeline || !this->Internal->SliceNode || pipeline->SliceLogic == nullptr)
     {
     return;
     }
@@ -409,8 +409,8 @@ void vtkSliceIntersectionRepresentation2D::UpdateSliceIntersectionDisplay(SliceI
     return;
     }
 
-  vtkMRMLModelDisplayNode* displayNode = NULL;
-  vtkMRMLSliceLogic *sliceLogic = NULL;
+  vtkMRMLModelDisplayNode* displayNode = nullptr;
+  vtkMRMLSliceLogic *sliceLogic = nullptr;
   vtkMRMLApplicationLogic *mrmlAppLogic = this->GetMRMLApplicationLogic();
   if (mrmlAppLogic)
     {

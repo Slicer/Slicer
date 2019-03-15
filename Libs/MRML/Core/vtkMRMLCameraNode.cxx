@@ -41,8 +41,8 @@ vtkMRMLNodeNewMacro(vtkMRMLCameraNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLCameraNode::vtkMRMLCameraNode()
-: Camera(NULL),
-  InternalActiveTag(NULL)
+: Camera(nullptr),
+  InternalActiveTag(nullptr)
 {
   this->HideFromEditors = 0;
 
@@ -61,7 +61,7 @@ vtkMRMLCameraNode::vtkMRMLCameraNode()
 //----------------------------------------------------------------------------
 vtkMRMLCameraNode::~vtkMRMLCameraNode()
 {
-  this->SetAndObserveCamera(NULL);
+  this->SetAndObserveCamera(nullptr);
   delete [] this->InternalActiveTag;
 
   if (this->AppliedTransform)
@@ -128,7 +128,7 @@ void vtkMRMLCameraNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -227,9 +227,9 @@ void vtkMRMLCameraNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkMRMLCameraNode::SetAndObserveCamera(vtkCamera* camera)
 {
-  if (this->Camera != NULL)
+  if (this->Camera != nullptr)
     {
-    this->SetCamera(NULL);
+    this->SetCamera(nullptr);
     }
   this->SetCamera(camera);
   if ( this->Camera )
@@ -336,7 +336,7 @@ void vtkMRMLCameraNode::ProcessMRMLEvents ( vtkObject* caller,
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  if (this->Camera != NULL &&
+  if (this->Camera != nullptr &&
       this->Camera == vtkCamera::SafeDownCast(caller) &&
       event == vtkCommand::ModifiedEvent)
     {
@@ -344,7 +344,7 @@ void vtkMRMLCameraNode::ProcessMRMLEvents ( vtkObject* caller,
     }
 
   vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
-  if (this->Camera != NULL &&
+  if (this->Camera != nullptr &&
       tnode == vtkMRMLTransformNode::SafeDownCast(caller) &&
       event == vtkMRMLTransformableNode::TransformModifiedEvent)
     {
@@ -413,10 +413,10 @@ void vtkMRMLCameraNode::UpdateReferences()
 {
   this->Superclass::UpdateReferences();
 
-  if (this->GetActiveTag() != NULL &&
-      this->Scene->GetNodeByID(this->GetActiveTag()) == NULL)
+  if (this->GetActiveTag() != nullptr &&
+      this->Scene->GetNodeByID(this->GetActiveTag()) == nullptr)
     {
-    this->SetActiveTag(NULL);
+    this->SetActiveTag(nullptr);
     }
 }
 
@@ -439,7 +439,7 @@ const char* vtkMRMLCameraNode::GetActiveTag()
 //---------------------------------------------------------------------------
 void vtkMRMLCameraNode::SetActiveTag(const char* _arg)
 {
-  if (this->GetActiveTag() == NULL && _arg == NULL)
+  if (this->GetActiveTag() == nullptr && _arg == nullptr)
     {
     return;
     }
@@ -458,9 +458,9 @@ void vtkMRMLCameraNode::SetActiveTag(const char* _arg)
 
   // If any camera is already using that new tag, let's find them and set
   // their tags to null
-  if (this->Scene != NULL && _arg != NULL)
+  if (this->Scene != nullptr && _arg != nullptr)
     {
-    vtkMRMLCameraNode* node = NULL;
+    vtkMRMLCameraNode* node = nullptr;
     int nnodes = this->Scene->GetNumberOfNodesByClass("vtkMRMLCameraNode");
     for (int n=0; n<nnodes; n++)
       {
@@ -472,7 +472,7 @@ void vtkMRMLCameraNode::SetActiveTag(const char* _arg)
           !strcmp(node->GetActiveTag(), _arg))
         {
         vtkWarningMacro("SetActiveTag: " << (this->GetID() ? this->GetID() : "NULL ID") << " found another node " << node->GetID() << " with the tag " << _arg);
-        node->SetActiveTag(NULL);
+        node->SetActiveTag(nullptr);
         }
       }
     }
@@ -481,18 +481,18 @@ void vtkMRMLCameraNode::SetActiveTag(const char* _arg)
     vtkDebugMacro("SetActiveTag: null scene or tag, not checking for duplicates on camera " << (this->GetName() ? this->GetName() : "no name")
                     << ", input arg = " << (_arg == NULL ? "NULL" : _arg));
     }
-  this->InvokeEvent(vtkMRMLCameraNode::ActiveTagModifiedEvent, NULL);
+  this->InvokeEvent(vtkMRMLCameraNode::ActiveTagModifiedEvent, nullptr);
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLCameraNode* vtkMRMLCameraNode::FindActiveTagInScene(const char* tag)
 {
-  if (this->Scene == NULL || tag == NULL)
+  if (this->Scene == nullptr || tag == nullptr)
     {
-    return NULL;
+    return nullptr;
     }
 
-  vtkMRMLCameraNode* node = NULL;
+  vtkMRMLCameraNode* node = nullptr;
   int nnodes = this->Scene->GetNumberOfNodesByClass("vtkMRMLCameraNode");
   for (int n=0; n<nnodes; n++)
     {
@@ -506,7 +506,7 @@ vtkMRMLCameraNode* vtkMRMLCameraNode::FindActiveTagInScene(const char* tag)
       }
     }
 
-  return NULL;
+  return nullptr;
 }
 
 //---------------------------------------------------------------------------

@@ -41,7 +41,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerScriptedLoadableModuleWidget
 public:
   typedef qSlicerAbstractModuleWidget Superclass;
   typedef qSlicerScriptedLoadableModuleWidgetPrivate Pimpl;
-  qSlicerScriptedLoadableModuleWidget(QWidget * parentWidget=0);
+  qSlicerScriptedLoadableModuleWidget(QWidget * parentWidget=nullptr);
   virtual ~qSlicerScriptedLoadableModuleWidget();
 
   QString pythonSource()const;

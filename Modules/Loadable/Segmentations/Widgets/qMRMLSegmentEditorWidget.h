@@ -79,7 +79,7 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentEditorWidget : pu
 public:
   typedef qMRMLWidget Superclass;
   /// Constructor
-  explicit qMRMLSegmentEditorWidget(QWidget* parent = 0);
+  explicit qMRMLSegmentEditorWidget(QWidget* parent = nullptr);
   /// Destructor
   virtual ~qMRMLSegmentEditorWidget();
 
@@ -256,7 +256,7 @@ public slots:
   /// Install keyboard shortcuts to allow quick selection of effects and segments.
   /// If parent is not specified then the main window will be used as parent.
   /// Previous keyboard shortcuts will be uninstalled.
-  void installKeyboardShortcuts(QWidget* parent = NULL);
+  void installKeyboardShortcuts(QWidget* parent = nullptr);
 
   /// Uninstall previously installed keyboard shortcuts.
   void uninstallKeyboardShortcuts();

@@ -73,7 +73,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSortFilterSubjectHier
 
 public:
   typedef QSortFilterProxyModel Superclass;
-  qMRMLSortFilterSubjectHierarchyProxyModel(QObject *parent=0);
+  qMRMLSortFilterSubjectHierarchyProxyModel(QObject *parent=nullptr);
   virtual ~qMRMLSortFilterSubjectHierarchyProxyModel();
 
   Q_INVOKABLE vtkMRMLSubjectHierarchyNode* subjectHierarchyNode()const;

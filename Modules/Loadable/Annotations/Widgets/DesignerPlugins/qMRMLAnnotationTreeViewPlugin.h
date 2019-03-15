@@ -30,7 +30,7 @@ class Q_SLICER_MODULE_ANNOTATIONS_WIDGETS_PLUGINS_EXPORT qMRMLAnnotationTreeView
   Q_OBJECT
 
 public:
-  qMRMLAnnotationTreeViewPlugin(QObject* parent = 0);
+  qMRMLAnnotationTreeViewPlugin(QObject* parent = nullptr);
 
   QWidget *createWidget(QWidget* parent);
   QString  domXml() const;

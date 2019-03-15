@@ -24,7 +24,7 @@
 //-----------------------------------------------------------------------------
 qSlicerSceneViewsModuleDialog::qSlicerSceneViewsModuleDialog()
 {
-  this->m_Logic = 0;
+  this->m_Logic = nullptr;
   this->setLayoutManager(qSlicerApplication::application()->layoutManager());
   this->setShowScaleFactorSpinBox(false);
   this->setWindowTitle(tr("3D Slicer SceneView"));
@@ -40,7 +40,7 @@ qSlicerSceneViewsModuleDialog::~qSlicerSceneViewsModuleDialog()
 
   if(this->m_Logic)
     {
-    this->m_Logic = 0;
+    this->m_Logic = nullptr;
     }
 }
 

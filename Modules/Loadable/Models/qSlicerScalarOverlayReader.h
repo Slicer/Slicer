@@ -35,7 +35,7 @@ class qSlicerScalarOverlayReader
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerScalarOverlayReader(vtkSlicerModelsLogic* modelsLogic, QObject* parent = 0);
+  qSlicerScalarOverlayReader(vtkSlicerModelsLogic* modelsLogic, QObject* parent = nullptr);
   virtual ~qSlicerScalarOverlayReader();
 
   void setModelsLogic(vtkSlicerModelsLogic* modelsLogic);

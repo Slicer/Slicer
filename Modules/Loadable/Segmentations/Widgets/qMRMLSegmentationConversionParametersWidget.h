@@ -50,7 +50,7 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentationConversionPa
 
 public:
   /// Constructor
-  explicit qMRMLSegmentationConversionParametersWidget(QWidget* parent = 0);
+  explicit qMRMLSegmentationConversionParametersWidget(QWidget* parent = nullptr);
   /// Destructor
   virtual ~qMRMLSegmentationConversionParametersWidget();
 

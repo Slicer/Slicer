@@ -47,7 +47,7 @@ class Q_SLICER_QTMODULES_VOLUMES_WIDGETS_EXPORT qSlicerDiffusionTensorVolumeDisp
 public:
   /// Constructors
   typedef qSlicerWidget Superclass;
-  explicit qSlicerDiffusionTensorVolumeDisplayWidget(QWidget* parent = 0);
+  explicit qSlicerDiffusionTensorVolumeDisplayWidget(QWidget* parent = nullptr);
   virtual ~qSlicerDiffusionTensorVolumeDisplayWidget();
 
   vtkMRMLDiffusionTensorVolumeNode* volumeNode()const;

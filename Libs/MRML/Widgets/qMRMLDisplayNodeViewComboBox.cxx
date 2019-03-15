@@ -99,7 +99,7 @@ void qMRMLDisplayNodeViewComboBox
   this->qvtkReconnect(d->MRMLDisplayNode, displayNode, vtkCommand::ModifiedEvent,
                       this, SLOT(updateWidgetFromMRML()));
   d->MRMLDisplayNode = displayNode;
-  this->setMRMLScene(d->MRMLDisplayNode ? d->MRMLDisplayNode->GetScene() : 0);
+  this->setMRMLScene(d->MRMLDisplayNode ? d->MRMLDisplayNode->GetScene() : nullptr);
   this->updateWidgetFromMRML();
 }
 
@@ -115,7 +115,7 @@ void qMRMLDisplayNodeViewComboBox
 void qMRMLDisplayNodeViewComboBox::updateWidgetFromMRML()
 {
   Q_D(qMRMLDisplayNodeViewComboBox);
-  this->setEnabled(this->mrmlScene() != 0 && d->MRMLDisplayNode != 0);
+  this->setEnabled(this->mrmlScene() != nullptr && d->MRMLDisplayNode != nullptr);
   if (!d->MRMLDisplayNode)
     {
     return;
@@ -172,11 +172,11 @@ void qMRMLDisplayNodeViewComboBox::updateMRMLFromWidget()
     {
     foreach (vtkMRMLAbstractViewNode* viewNode, this->checkedViewNodes())
       {
-      d->MRMLDisplayNode->AddViewNodeID(viewNode ? viewNode->GetID() : 0);
+      d->MRMLDisplayNode->AddViewNodeID(viewNode ? viewNode->GetID() : nullptr);
       }
     foreach (vtkMRMLAbstractViewNode* viewNode, this->uncheckedViewNodes())
       {
-      d->MRMLDisplayNode->RemoveViewNodeID(viewNode ? viewNode->GetID() : 0);
+      d->MRMLDisplayNode->RemoveViewNodeID(viewNode ? viewNode->GetID() : nullptr);
       }
     }
 

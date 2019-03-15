@@ -257,7 +257,7 @@ vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::~vtkInternal()
   if (this->DisplayObservedEvents)
     {
     this->DisplayObservedEvents->Delete();
-    this->DisplayObservedEvents = NULL;
+    this->DisplayObservedEvents = nullptr;
     }
 }
 
@@ -266,7 +266,7 @@ vtkVolumeMapper* vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetVolum
 {
   if (!displayNode)
     {
-    return NULL;
+    return nullptr;
     }
   if ( displayNode->IsA("vtkMRMLCPURayCastVolumeRenderingDisplayNode")
     || displayNode->IsA("vtkMRMLGPURayCastVolumeRenderingDisplayNode") )
@@ -275,7 +275,7 @@ vtkVolumeMapper* vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetVolum
     if (it == this->DisplayPipelines.end())
       {
       vtkErrorWithObjectMacro(this->External, "GetVolumeMapper: Failed to find pipeline for display node with ID " << displayNode->GetID());
-      return NULL;
+      return nullptr;
       }
     const Pipeline* foundPipeline = it->second;
     if (displayNode->IsA("vtkMRMLCPURayCastVolumeRenderingDisplayNode"))
@@ -302,7 +302,7 @@ vtkVolumeMapper* vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetVolum
     }
 #endif
   vtkErrorWithObjectMacro(this->External, "GetVolumeMapper: Unsupported display class " << displayNode->GetClassName());
-  return NULL;
+  return nullptr;
 };
 
 //---------------------------------------------------------------------------
@@ -449,7 +449,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::AddDisplayNode(vtkMR
     // Create a dummy volume for port zero if this is the first volume. Necessary because the first transform is ignored,
     // see https://gitlab.kitware.com/vtk/vtk/issues/17325
     //TODO: Remove this workaround when the issue is fixed in VTK
-    if (this->MultiVolumeActor->GetVolume(0) == NULL)
+    if (this->MultiVolumeActor->GetVolume(0) == nullptr)
       {
       vtkNew<vtkImageData> dummyImage;
       dummyImage->SetExtent(0,1,0,1,0,1);
@@ -557,7 +557,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdatePipelineTransf
 bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetVolumeTransformToWorld(
   vtkMRMLVolumeNode* volumeNode, vtkMatrix4x4* outputIjkToWorldMatrix)
 {
-  if (volumeNode == NULL)
+  if (volumeNode == nullptr)
     {
     vtkErrorWithObjectMacro(this->External, "GetVolumeTransformToWorld: Invalid volume node");
     return false;
@@ -565,7 +565,7 @@ bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetVolumeTransformTo
 
   // Check if we have a transform node
   vtkMRMLTransformNode* transformNode = volumeNode->GetParentTransformNode();
-  if (transformNode == NULL)
+  if (transformNode == nullptr)
     {
     volumeNode->GetIJKToRASMatrix(outputIjkToWorldMatrix);
     return true;
@@ -631,7 +631,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
     }
 
   // Get volume node
-  vtkMRMLVolumeNode* volumeNode = displayNode ? displayNode->GetVolumeNode() : NULL;
+  vtkMRMLVolumeNode* volumeNode = displayNode ? displayNode->GetVolumeNode() : nullptr;
   if (!volumeNode)
     {
     return;
@@ -801,7 +801,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
   this->UpdatePipelineROIs(displayNode, pipeline);
 
   // Set volume property
-  vtkVolumeProperty* volumeProperty = displayNode->GetVolumePropertyNode() ? displayNode->GetVolumePropertyNode()->GetVolumeProperty() : NULL;
+  vtkVolumeProperty* volumeProperty = displayNode->GetVolumePropertyNode() ? displayNode->GetVolumePropertyNode()->GetVolumeProperty() : nullptr;
   pipeline->VolumeActor->SetProperty(volumeProperty);
 
   pipeline->VolumeActor->SetPickable(volumeNode->GetSelectable());
@@ -823,7 +823,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdatePipelineROIs(
     vtkErrorWithObjectMacro(this->External, "UpdatePipelineROIs: Unable to get volume mapper");
     return;
     }
-  if (!displayNode || displayNode->GetROINode() == NULL || !displayNode->GetCroppingEnabled())
+  if (!displayNode || displayNode->GetROINode() == nullptr || !displayNode->GetCroppingEnabled())
     {
     volumeMapper->RemoveAllClippingPlanes();
     return;
@@ -891,7 +891,7 @@ vtkIdType vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetMaxMemoryInB
 void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDesiredUpdateRate(vtkMRMLVolumeRenderingDisplayNode* displayNode)
 {
   vtkRenderWindow* renderWindow = this->External->GetRenderer()->GetRenderWindow();
-  vtkRenderWindowInteractor* renderWindowInteractor = renderWindow ? renderWindow->GetInteractor() : 0;
+  vtkRenderWindowInteractor* renderWindowInteractor = renderWindow ? renderWindow->GetInteractor() : nullptr;
   if (!renderWindowInteractor)
     {
     return;
@@ -1081,7 +1081,7 @@ vtkMRMLVolumeRenderingDisplayableManager::vtkMRMLVolumeRenderingDisplayableManag
 vtkMRMLVolumeRenderingDisplayableManager::~vtkMRMLVolumeRenderingDisplayableManager()
 {
   delete this->Internal;
-  this->Internal=NULL;
+  this->Internal=nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -1103,7 +1103,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::Create()
 void vtkMRMLVolumeRenderingDisplayableManager::ObserveGraphicalResourcesCreatedEvent()
 {
   vtkMRMLViewNode* viewNode = this->GetMRMLViewNode();
-  if (viewNode == NULL)
+  if (viewNode == nullptr)
     {
     vtkErrorMacro("OnCreate: Failed to access view node");
     return;
@@ -1198,8 +1198,8 @@ void vtkMRMLVolumeRenderingDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode*
 //---------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
-  vtkMRMLVolumeNode* volumeNode = NULL;
-  vtkMRMLVolumeRenderingDisplayNode* displayNode = NULL;
+  vtkMRMLVolumeNode* volumeNode = nullptr;
+  vtkMRMLVolumeRenderingDisplayNode* displayNode = nullptr;
 
   if ( (volumeNode = vtkMRMLVolumeNode::SafeDownCast(node)) )
     {
@@ -1374,7 +1374,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::UpdateFromMRML()
     }
   this->Internal->ClearDisplayableNodes();
 
-  vtkMRMLVolumeNode* volumeNode = NULL;
+  vtkMRMLVolumeNode* volumeNode = nullptr;
   std::vector<vtkMRMLNode*> volumeNodes;
   int numOfVolumeNodes = scene ? scene->GetNodesByClass("vtkMRMLVolumeNode", volumeNodes) : 0;
   for (int i=0; i<numOfVolumeNodes; i++)
@@ -1393,13 +1393,13 @@ vtkVolumeMapper* vtkMRMLVolumeRenderingDisplayableManager::GetVolumeMapper(vtkMR
 {
   if (!volumeNode)
     {
-    return NULL;
+    return nullptr;
     }
   vtkInternal::VolumeToDisplayCacheType::iterator volumeIt = this->Internal->VolumeToDisplayNodes.find(volumeNode);
   if (volumeIt == this->Internal->VolumeToDisplayNodes.end())
     {
     vtkErrorMacro("GetVolumeMapper: No volume rendering display node found for volume " << volumeNode->GetName());
-    return NULL;
+    return nullptr;
     }
   std::set<vtkMRMLVolumeRenderingDisplayNode *> dnodes = volumeIt->second;
   if (dnodes.size() > 1)
@@ -1415,13 +1415,13 @@ vtkVolume* vtkMRMLVolumeRenderingDisplayableManager::GetVolumeActor(vtkMRMLVolum
 {
   if (!volumeNode)
     {
-    return NULL;
+    return nullptr;
     }
   vtkInternal::VolumeToDisplayCacheType::iterator volumeIt = this->Internal->VolumeToDisplayNodes.find(volumeNode);
   if (volumeIt == this->Internal->VolumeToDisplayNodes.end())
     {
     vtkErrorMacro("GetVolumeActor: No volume rendering display node found for volume " << volumeNode->GetName());
-    return NULL;
+    return nullptr;
     }
   std::set<vtkMRMLVolumeRenderingDisplayNode *> dnodes = volumeIt->second;
   if (dnodes.size() > 1)
@@ -1435,7 +1435,7 @@ vtkVolume* vtkMRMLVolumeRenderingDisplayableManager::GetVolumeActor(vtkMRMLVolum
     return pipelineIt->second->VolumeActor;
     }
   vtkErrorMacro("GetVolumeActor: Volume actor not found for volume " << volumeNode->GetName());
-  return NULL;
+  return nullptr;
 }
 
 //---------------------------------------------------------------------------

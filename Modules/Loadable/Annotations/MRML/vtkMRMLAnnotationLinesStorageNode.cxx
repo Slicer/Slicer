@@ -50,7 +50,7 @@ void vtkMRMLAnnotationLinesStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLineDisplayProperties(vtkMRMLAnnotationLineDisplayNode *refNode, std::string lineString, std::string preposition)
 {
-  if (refNode == NULL)
+  if (refNode == nullptr)
     {
       vtkErrorMacro("ReadAnnotationLineDisplayProperties: unable to get associated AnnotationPointDisplayNode");
       return -1;
@@ -192,7 +192,7 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLinesProperties(vtkMRMLAnno
       numColumns = 0;
       char *columns = (char *)str.c_str();
       char *ptr = strtok(columns, "|");
-      while (ptr != NULL)
+      while (ptr != nullptr)
     {
       if (strcmp(ptr, "type") == 0)
         {
@@ -214,7 +214,7 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLinesProperties(vtkMRMLAnno
         {
           visColumn =  numColumns;
         }
-      ptr = strtok(NULL, "|");
+      ptr = strtok(nullptr, "|");
       numColumns++;
     }
       // set the total number of columns
@@ -230,7 +230,7 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLinesProperties(vtkMRMLAnno
 int vtkMRMLAnnotationLinesStorageNode::ReadAnnotation(vtkMRMLAnnotationLinesNode *refNode)
 {
 
-  if (refNode == NULL)
+  if (refNode == nullptr)
     {
       vtkErrorMacro("ReadAnnotation: unable to cast input node " << refNode->GetID() << " to a annotation node");
       return 0;
@@ -314,7 +314,7 @@ int vtkMRMLAnnotationLinesStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   vtkMRMLAnnotationLinesNode *aNode =
     vtkMRMLAnnotationLinesNode::SafeDownCast(refNode);
 
-  if (aNode == NULL)
+  if (aNode == nullptr)
     {
     vtkErrorMacro("ReadData: unable to cast input node " << refNode->GetID() << " to a annotation control point node");
     return 0;
@@ -356,7 +356,7 @@ int vtkMRMLAnnotationLinesStorageNode::WriteAnnotationLineDisplayProperties(fstr
 int vtkMRMLAnnotationLinesStorageNode::WriteAnnotationLinesProperties(fstream& of, vtkMRMLAnnotationLinesNode *refNode)
 {
    // put down a header
-  if (refNode == NULL)
+  if (refNode == nullptr)
     {
     vtkErrorMacro("WriteAnnotationLinesProperties: ref node is null");
     return 0;
@@ -403,7 +403,7 @@ int vtkMRMLAnnotationLinesStorageNode::WriteAnnotationDataInternal(vtkMRMLNode *
   // cast the input nod
   vtkMRMLAnnotationLinesNode *aNode = vtkMRMLAnnotationLinesNode::SafeDownCast(refNode);
 
-  if (aNode == NULL)
+  if (aNode == nullptr)
     {
     vtkErrorMacro("WriteAnnotationDataInternal: unable to cast input node " << refNode->GetID() << " to a known annotation line node");
     return 0;

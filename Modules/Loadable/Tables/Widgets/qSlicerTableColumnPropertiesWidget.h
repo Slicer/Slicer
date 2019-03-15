@@ -45,7 +45,7 @@ qSlicerTableColumnPropertiesWidget : public qSlicerWidget
 
 public:
   typedef qSlicerWidget Superclass;
-  qSlicerTableColumnPropertiesWidget(QWidget *parent=0);
+  qSlicerTableColumnPropertiesWidget(QWidget *parent=nullptr);
   virtual ~qSlicerTableColumnPropertiesWidget();
 
   /// Get the table node the columns are edited of.

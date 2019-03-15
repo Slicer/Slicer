@@ -98,7 +98,7 @@ public:
   /// Create oriented image data from a volume node
   /// \param outputParentTransformNode Specifies the parent transform node where the created image data can be placed.
   /// NOTE: Need to take ownership of the created object! For example using vtkSmartPointer<vtkOrientedImageData>::Take
-  static vtkOrientedImageData* CreateOrientedImageDataFromVolumeNode(vtkMRMLScalarVolumeNode* volumeNode, vtkMRMLTransformNode* outputParentTransformNode = NULL);
+  static vtkOrientedImageData* CreateOrientedImageDataFromVolumeNode(vtkMRMLScalarVolumeNode* volumeNode, vtkMRMLTransformNode* outputParentTransformNode = nullptr);
 
   /// Utility function to determine if a labelmap contains a single label
   /// \return 0 if contains no label or multiple labels, the label if it contains a single one
@@ -116,7 +116,7 @@ public:
   ///   means that this consideration is not needed. Default value is NULL.
   /// \return Created segment that then can be added to the segmentation if needed. Need to take ownership of the created
   ///   object! For example using vtkSmartPointer<vtkSegment>::Take
-  static vtkSegment* CreateSegmentFromLabelmapVolumeNode(vtkMRMLLabelMapVolumeNode* labelmapVolumeNode, vtkMRMLSegmentationNode* segmentationNode=NULL);
+  static vtkSegment* CreateSegmentFromLabelmapVolumeNode(vtkMRMLLabelMapVolumeNode* labelmapVolumeNode, vtkMRMLSegmentationNode* segmentationNode=nullptr);
 
   /// Create segment from model MRML node.
   /// The contents are set as closed surface model representation in the segment.
@@ -127,7 +127,7 @@ public:
   ///   means that this consideration is not needed. Default value is NULL.
   /// \return Created segment that then can be added to the segmentation if needed. Need to take ownership of the created
   ///   object! For example using vtkSmartPointer<vtkSegment>::Take
-  static vtkSegment* CreateSegmentFromModelNode(vtkMRMLModelNode* modelNode, vtkMRMLSegmentationNode* segmentationNode=NULL);
+  static vtkSegment* CreateSegmentFromModelNode(vtkMRMLModelNode* modelNode, vtkMRMLSegmentationNode* segmentationNode=nullptr);
 
   /// Utility function for getting the segmentation node for a segment subject hierarchy item
   static vtkMRMLSegmentationNode* GetSegmentationNodeForSegmentSubjectHierarchyItem(vtkIdType segmentShItemID, vtkMRMLScene* scene);
@@ -172,7 +172,7 @@ public:
   /// \param labelmapNode Labelmap node to export the segments to
   /// \param referenceVolumeNode If specified, then the merged labelmap node will match the geometry of referenceVolumeNode
   static bool ExportSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode, std::vector<std::string>& segmentIDs,
-    vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode = NULL);
+    vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode = nullptr);
 
   /// Export multiple segments into a multi-label labelmap volume node
   /// \param segmentationNode Segmentation node from which the the segments are exported
@@ -180,14 +180,14 @@ public:
   /// \param labelmapNode Labelmap node to export the segments to
   /// \param referenceVolumeNode If specified, then the merged labelmap node will match the geometry of referenceVolumeNode
   static bool ExportSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* segmentIDs,
-    vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode = NULL);
+    vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode = nullptr);
 
   /// Export visible segments into a multi-label labelmap volume node
   /// \param segmentationNode Segmentation node from which the the visible segments are exported
   /// \param labelmapNode Labelmap node to export the segments to
   /// \param referenceVolumeNode If specified, then the merged labelmap node will match the geometry of referenceVolumeNode
   static bool ExportVisibleSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode,
-    vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode = NULL);
+    vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode = nullptr);
 
   /// Export all segments into a multi-label labelmap volume node
   /// \param segmentationNode Segmentation node from which the the segments are exported
@@ -218,7 +218,7 @@ public:
   /// \param updatedSegmentIDs Defines how label values 1..N are mapped to segment IDs (0..N-1).
   static bool ImportLabelmapToSegmentationNode(vtkOrientedImageData* labelmapImage,
     vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* updatedSegmentIDs,
-    vtkGeneralTransform* labelmapToSegmentationTransform=NULL );
+    vtkGeneralTransform* labelmapToSegmentationTransform=nullptr );
 
   /// Import all labels from a labelmap node to a segmentation node, each label to a separate segment.
   /// Terminology and color is set to the segments based on the color table corresponding to the labelmap volume node.
@@ -242,7 +242,7 @@ public:
   /// \param lps Save files in LPS coordinate system. If set to false then RAS coordinate system is used.
   /// \param segmentIds List of segment IDs to export
   static bool ExportSegmentsClosedSurfaceRepresentationToFiles(std::string destinationFolder,
-    vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* segmentIds = NULL,
+    vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* segmentIds = nullptr,
     std::string fileFormat = "STL", bool lps = true, double sizeScale = 1.0, bool merge = false);
 
   /// Create representation of only one segment in a segmentation.
@@ -256,7 +256,7 @@ public:
   /// Useful if we want to get a labelmap representation of a segmentation in the proper geometry for processing.
   /// \return Success flag
   static bool ApplyParentTransformToOrientedImageData(
-    vtkMRMLTransformableNode* transformableNode, vtkOrientedImageData* orientedImageData, bool linearInterpolation=false, double backgroundColor[4]=NULL );
+    vtkMRMLTransformableNode* transformableNode, vtkOrientedImageData* orientedImageData, bool linearInterpolation=false, double backgroundColor[4]=nullptr );
 
   /// Apply the parent transform of a node to a poly data.
   /// Useful if we want to get a surface or contours representation of a segmentation in the proper geometry for processing.
@@ -322,7 +322,7 @@ public:
     MODE_MERGE_MAX,
     MODE_MERGE_MIN
     };
-  static bool SetBinaryLabelmapToSegment(vtkOrientedImageData* labelmap, vtkMRMLSegmentationNode* segmentationNode, std::string segmentID, int mergeMode=MODE_REPLACE, const int extent[6]=0);
+  static bool SetBinaryLabelmapToSegment(vtkOrientedImageData* labelmap, vtkMRMLSegmentationNode* segmentationNode, std::string segmentID, int mergeMode=MODE_REPLACE, const int extent[6]=nullptr);
 
   /// Assign terminology to segments in a segmentation node based on the labels of a labelmap node. Match is made based on the
   /// 3dSlicerLabel terminology type attribute. If the terminology context does not contain that attribute, match cannot be made.

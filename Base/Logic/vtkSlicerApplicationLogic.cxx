@@ -318,7 +318,7 @@ vtkSlicerApplicationLogic
 void vtkSlicerApplicationLogic::ProcessProcessingTasks()
 {
   int active = true;
-  vtkSmartPointer<vtkSlicerTask> task = 0;
+  vtkSmartPointer<vtkSlicerTask> task = nullptr;
 
   while (active)
     {
@@ -343,7 +343,7 @@ void vtkSlicerApplicationLogic::ProcessProcessingTasks()
           }
         else
           {
-          task = NULL;
+          task = nullptr;
           }
         }
       this->ProcessingTaskQueueLock->Unlock();
@@ -352,7 +352,7 @@ void vtkSlicerApplicationLogic::ProcessProcessingTasks()
       if (task)
         {
         task->Execute();
-        task = 0;
+        task = nullptr;
         }
       }
 
@@ -400,7 +400,7 @@ vtkSlicerApplicationLogic
 void vtkSlicerApplicationLogic::ProcessNetworkingTasks()
 {
   int active = true;
-  vtkSmartPointer<vtkSlicerTask> task = 0;
+  vtkSmartPointer<vtkSlicerTask> task = nullptr;
 
   while (active)
     {
@@ -423,7 +423,7 @@ void vtkSlicerApplicationLogic::ProcessNetworkingTasks()
           }
         else
           {
-          task = NULL;
+          task = nullptr;
           }
         }
       this->ProcessingTaskQueueLock->Unlock();
@@ -432,7 +432,7 @@ void vtkSlicerApplicationLogic::ProcessNetworkingTasks()
       if (task)
         {
         task->Execute();
-        task = 0;
+        task = nullptr;
         }
       }
 
@@ -606,7 +606,7 @@ void vtkSlicerApplicationLogic::ProcessModified()
     return;
     }
 
-  vtkSmartPointer<vtkObject> obj = 0;
+  vtkSmartPointer<vtkObject> obj = nullptr;
   // pull an object off the queue to modify
   this->ModifiedQueueLock->Lock();
   if ((*this->InternalModifiedQueue).size() > 0)
@@ -630,7 +630,7 @@ void vtkSlicerApplicationLogic::ProcessModified()
     {
     obj->Modified();
     obj->Delete();
-    obj = 0;
+    obj = nullptr;
     }
 
   // schedule the next timer sooner in case there is stuff in the queue
@@ -652,7 +652,7 @@ void vtkSlicerApplicationLogic::ProcessReadData()
     }
 
   // pull an object off the queue
-  DataRequest* req = NULL;
+  DataRequest* req = nullptr;
   this->ReadDataQueueLock->Lock();
   if ((*this->InternalReadDataQueue).size() > 0)
     {
@@ -693,7 +693,7 @@ void vtkSlicerApplicationLogic::ProcessWriteData()
     }
 
   // pull an object off the queue
-  DataRequest *req = NULL;
+  DataRequest *req = nullptr;
   this->WriteDataQueueLock->Lock();
   if ((*this->InternalWriteDataQueue).size() > 0)
     {

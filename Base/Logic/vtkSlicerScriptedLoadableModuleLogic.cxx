@@ -73,7 +73,7 @@ public:
 //---------------------------------------------------------------------------
 vtkSlicerScriptedLoadableModuleLogic::vtkInternal::vtkInternal()
 {
-  this->PythonSelf = 0;
+  this->PythonSelf = nullptr;
 //  for (int i = 0; i < vtkInternal::APIMethodCount; ++i)
 //    {
 //    this->PythonAPIMethods[i] = 0;
@@ -198,7 +198,7 @@ bool vtkSlicerScriptedLoadableModuleLogic::SetPythonSource(const std::string& py
   PyObject * classToInstantiate = PyDict_GetItemString(global_dict, className.c_str());
   if (!classToInstantiate)
     {
-    PyObject * pyRes = 0;
+    PyObject * pyRes = nullptr;
     if (pythonSource.find(".py") != std::string::npos)
       {
       std::string pyRunStr = std::string("execfile('") + pythonSource + std::string("')");
@@ -235,7 +235,7 @@ bool vtkSlicerScriptedLoadableModuleLogic::SetPythonSource(const std::string& py
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(this));
 
   // Attempt to instantiate the associated python class
-  PyObject * self = PyInstance_New(classToInstantiate, arguments, 0);
+  PyObject * self = PyInstance_New(classToInstantiate, arguments, nullptr);
   Py_DECREF(arguments);
   if (!self)
     {

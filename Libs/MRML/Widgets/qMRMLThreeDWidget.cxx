@@ -63,8 +63,8 @@ public:
 qMRMLThreeDWidgetPrivate::qMRMLThreeDWidgetPrivate(qMRMLThreeDWidget& object)
   : q_ptr(&object)
 {
-  this->ThreeDView = 0;
-  this->ThreeDController = 0;
+  this->ThreeDView = nullptr;
+  this->ThreeDController = nullptr;
 }
 
 //---------------------------------------------------------------------------

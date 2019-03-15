@@ -132,14 +132,14 @@ qSlicerCoreApplicationPrivate::qSlicerCoreApplicationPrivate(
   qSlicerCoreIOManager * coreIOManager) : q_ptr(&object)
 {
   qRegisterMetaType<qSlicerCoreApplication::ReturnCode>("qSlicerCoreApplication::ReturnCode");
-  this->DefaultSettings = 0;
-  this->UserSettings = 0;
-  this->RevisionUserSettings = 0;
+  this->DefaultSettings = nullptr;
+  this->UserSettings = nullptr;
+  this->RevisionUserSettings = nullptr;
   this->ReturnCode = qSlicerCoreApplication::ExitNotRequested;
   this->CoreCommandOptions = QSharedPointer<qSlicerCoreCommandOptions>(coreCommandOptions);
   this->CoreIOManager = QSharedPointer<qSlicerCoreIOManager>(coreIOManager);
 #ifdef Slicer_BUILD_DICOM_SUPPORT
-  this->DICOMDatabase = 0;
+  this->DICOMDatabase = nullptr;
 #endif
   this->NextResourceHandle = 0;
 }
@@ -197,7 +197,7 @@ void qSlicerCoreApplicationPrivate::init()
     {
     QString msg("This message box is here to give you time to attach "
                 "your debugger to process [PID %1]");
-    QMessageBox::information(0, "Attach process", msg.arg(QCoreApplication::applicationPid()));
+    QMessageBox::information(nullptr, "Attach process", msg.arg(QCoreApplication::applicationPid()));
     }
 
   QCoreApplication::setOrganizationDomain(Slicer_ORGANIZATION_DOMAIN);
@@ -954,7 +954,7 @@ QSettings* qSlicerCoreApplication::defaultSettings()const
   Q_D(const qSlicerCoreApplication);
   if (!QFile(this->slicerDefaultSettingsFilePath()).exists())
     {
-    return 0;
+    return nullptr;
     }
   qSlicerCoreApplication* mutable_self =
     const_cast<qSlicerCoreApplication*>(this);

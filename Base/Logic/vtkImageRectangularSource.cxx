@@ -32,7 +32,7 @@ vtkImageRectangularSource::vtkImageRectangularSource()
   this->OutValue = 0.0;
   this->InsideGraySlopeFlag = 0;
 
-  this->Corners = NULL;
+  this->Corners = nullptr;
 
   this->OutputScalarType = VTK_UNSIGNED_CHAR;
 }
@@ -43,7 +43,7 @@ vtkImageRectangularSource::~vtkImageRectangularSource()
   if (this->Corners) {
     for (int i = 0; i < 4 ; i++) delete[] this->Corners[i];
     delete[] this->Corners;
-    this->Corners = NULL;
+    this->Corners = nullptr;
   }
 
 

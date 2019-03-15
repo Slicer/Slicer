@@ -39,7 +39,7 @@ qSlicerReformatModule : public qSlicerLoadableModule
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerReformatModule(QObject *parent=0);
+  explicit qSlicerReformatModule(QObject *parent=nullptr);
   virtual ~qSlicerReformatModule();
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);

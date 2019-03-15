@@ -47,7 +47,7 @@ qMRMLTransformInfoWidget
 
 public:
   typedef qMRMLWidget Superclass;
-  qMRMLTransformInfoWidget(QWidget *parent=0);
+  qMRMLTransformInfoWidget(QWidget *parent=nullptr);
   virtual ~qMRMLTransformInfoWidget();
 
   vtkMRMLTransformNode* mrmlTransformNode()const;

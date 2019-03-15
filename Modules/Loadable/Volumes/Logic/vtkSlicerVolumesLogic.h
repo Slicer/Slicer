@@ -125,12 +125,12 @@ public:
   /// higher bits are reserved for future use
   vtkMRMLVolumeNode* AddArchetypeVolume (const char* filename, const char* volname, int loadingOptions)
     {
-    return (this->AddArchetypeVolume( filename, volname, loadingOptions, NULL));
+    return (this->AddArchetypeVolume( filename, volname, loadingOptions, nullptr));
     }
   vtkMRMLVolumeNode* AddArchetypeVolume (const char* filename, const char* volname, int loadingOptions, vtkStringArray *fileList);
   vtkMRMLVolumeNode* AddArchetypeVolume (const char *filename, const char* volname)
     {
-    return this->AddArchetypeVolume( filename, volname, 0, NULL);
+    return this->AddArchetypeVolume( filename, volname, 0, nullptr);
     }
 
   /// Load a scalar volume function directly, bypassing checks of all factories done in AddArchetypeVolume.
@@ -300,7 +300,7 @@ protected:
   void InitializeStorageNode(vtkMRMLStorageNode * storageNode,
                              const char * filename,
                              vtkStringArray *fileList,
-                             vtkMRMLScene * mrmlScene = NULL);
+                             vtkMRMLScene * mrmlScene = nullptr);
 
   void SetAndObserveColorToDisplayNode(vtkMRMLDisplayNode* displayNode,
                                        int labelmap, const char* filename);

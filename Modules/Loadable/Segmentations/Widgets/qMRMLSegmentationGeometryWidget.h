@@ -50,7 +50,7 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentationGeometryWidg
 public:
   typedef qMRMLWidget Superclass;
   /// Constructor
-  explicit qMRMLSegmentationGeometryWidget(QWidget* parent = 0);
+  explicit qMRMLSegmentationGeometryWidget(QWidget* parent = nullptr);
   /// Destructor
   virtual ~qMRMLSegmentationGeometryWidget();
 

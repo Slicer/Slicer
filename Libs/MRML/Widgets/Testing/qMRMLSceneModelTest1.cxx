@@ -112,7 +112,7 @@ int qMRMLSceneModelTest1( int argc, char * argv [] )
 
   QStringList postScene;
   postScene << "post scene item";
-  sceneModel.setPostItems(postScene, 0);
+  sceneModel.setPostItems(postScene, nullptr);
 
   if (sceneModel.rowCount(sceneModel.mrmlSceneIndex()) != 18)
     {
@@ -140,7 +140,7 @@ int qMRMLSceneModelTest1( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  QTreeView* view = new QTreeView(0);
+  QTreeView* view = new QTreeView(nullptr);
   view->setSelectionMode(QAbstractItemView::SingleSelection);
   view->setSelectionBehavior(QAbstractItemView::SelectRows);
   view->setDragDropMode(QAbstractItemView::InternalMove);

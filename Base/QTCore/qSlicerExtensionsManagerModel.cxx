@@ -406,7 +406,7 @@ QStandardItem* qSlicerExtensionsManagerModelPrivate::extensionItem(const QString
       this->Model.findItems(extensionName, Qt::MatchExactly, Self::NameColumn);
   if (foundItems.count() != 1)
     {
-    return 0;
+    return nullptr;
     }
   return this->Model.item(foundItems.at(0)->row(), column);
 }
@@ -1285,7 +1285,7 @@ qSlicerExtensionsManagerModelPrivate::downloadExtension(
   ExtensionMetadataType extensionMetadata = q->retrieveExtensionMetadata(extensionId);
   if (extensionMetadata.count() == 0)
     {
-    return 0;
+    return nullptr;
     }
 
   QString itemId = extensionMetadata["item_id"].toString();
@@ -1537,7 +1537,7 @@ bool qSlicerExtensionsManagerModel::installExtension(
       msg += QString("<li>%1</li>").arg(dependencyName);
       }
     msg += "</ul><p>The extension may not function properly.</p>";
-    QMessageBox::warning(0, "Unresolved dependencies", msg);
+    QMessageBox::warning(nullptr, "Unresolved dependencies", msg);
     }
 
   // Prompt to install dependencies (if any)
@@ -1550,7 +1550,7 @@ bool qSlicerExtensionsManagerModel::installExtension(
       }
     msg += "</ul><p>Would you like to install them now?</p>";
     const QMessageBox::StandardButton result =
-      QMessageBox::question(0, "Install dependencies", msg,
+      QMessageBox::question(nullptr, "Install dependencies", msg,
                             QMessageBox::Yes | QMessageBox::No);
 
     if (result == QMessageBox::Yes)

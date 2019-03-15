@@ -78,7 +78,7 @@ void vtkMRMLVectorVolumeDisplayNode::SetInputToImageDataPipeline(vtkAlgorithmOut
 vtkAlgorithmOutput* vtkMRMLVectorVolumeDisplayNode::GetInputImageDataConnection()
 {
   return this->ShiftScale->GetNumberOfInputConnections(0) ?
-    this->ShiftScale->GetInputConnection(0,0) : 0;
+    this->ShiftScale->GetInputConnection(0,0) : nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -123,7 +123,7 @@ void vtkMRMLVectorVolumeDisplayNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);

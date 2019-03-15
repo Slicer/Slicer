@@ -88,10 +88,10 @@ const char* vtkMRMLScriptedDisplayableManager::vtkInternal::APIMethodNames[8] =
 //---------------------------------------------------------------------------
 vtkMRMLScriptedDisplayableManager::vtkInternal::vtkInternal()
 {
-  this->PythonSelf = 0;
+  this->PythonSelf = nullptr;
   for (int i = 0; i < vtkInternal::APIMethodCount; ++i)
     {
-    this->PythonAPIMethods[i] = 0;
+    this->PythonAPIMethods[i] = nullptr;
     }
 }
 
@@ -137,14 +137,14 @@ void vtkMRMLScriptedDisplayableManager::Create()
     {
     return;
     }
-  PyObject_CallObject(method, 0);
+  PyObject_CallObject(method, nullptr);
   PyErr_Print();
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLScriptedDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
-  vtkIntArray * sceneEventsAsPointer = 0;
+  vtkIntArray * sceneEventsAsPointer = nullptr;
 
   // Obtain list of event to listen
   PyObject* method =
@@ -152,7 +152,7 @@ void vtkMRMLScriptedDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* newSc
   if (method)
     {
     sceneEventsAsPointer = vtkIntArray::SafeDownCast(
-        vtkPythonUtil::GetPointerFromObject(PyObject_CallObject(method, 0), "vtkIntArray"));
+        vtkPythonUtil::GetPointerFromObject(PyObject_CallObject(method, nullptr), "vtkIntArray"));
     PyErr_Print();
     }
   vtkSmartPointer<vtkIntArray> sceneEvents;
@@ -202,7 +202,7 @@ void vtkMRMLScriptedDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller
   PyObject * arguments = PyTuple_New(3);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(caller));
   PyTuple_SET_ITEM(arguments, 1, PyInt_FromLong(event));
-  PyTuple_SET_ITEM(arguments, 2, vtkPythonUtil::GetObjectFromPointer(0));
+  PyTuple_SET_ITEM(arguments, 2, vtkPythonUtil::GetObjectFromPointer(nullptr));
 
   PyObject_CallObject(method, arguments);
   PyErr_Print();
@@ -218,7 +218,7 @@ void vtkMRMLScriptedDisplayableManager::RemoveMRMLObservers()
     {
     return;
     }
-  PyObject_CallObject(method, 0);
+  PyObject_CallObject(method, nullptr);
   PyErr_Print();
 
   this->Superclass::RemoveMRMLObservers();
@@ -232,7 +232,7 @@ void vtkMRMLScriptedDisplayableManager::UpdateFromMRML()
     {
     return;
     }
-  PyObject_CallObject(method, 0);
+  PyObject_CallObject(method, nullptr);
   PyErr_Print();
 }
 
@@ -294,7 +294,7 @@ void vtkMRMLScriptedDisplayableManager::SetPythonSource(const std::string& pytho
   PyObject * classToInstantiate = PyDict_GetItemString(global_dict, className.c_str());
   if (!classToInstantiate)
     {
-    PyObject * pyRes = 0;
+    PyObject * pyRes = nullptr;
     if (pythonSource.find(".py") != std::string::npos)
       {
       std::string pyRunStr = std::string("execfile('") + pythonSource + std::string("')");
@@ -331,7 +331,7 @@ void vtkMRMLScriptedDisplayableManager::SetPythonSource(const std::string& pytho
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(this));
 
   // Attempt to instantiate the associated python class
-  PyObject * self = PyInstance_New(classToInstantiate, arguments, 0);
+  PyObject * self = PyInstance_New(classToInstantiate, arguments, nullptr);
   Py_DECREF(arguments);
   if (!self)
     {

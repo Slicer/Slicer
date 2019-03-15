@@ -37,7 +37,7 @@ vtkMRMLNode* qMRMLSceneTransformModel::parentNode(vtkMRMLNode* node)const
     {
     return transformableNode->GetParentTransformNode();
     }
-  return 0;
+  return nullptr;
 }
 
 /*
@@ -105,7 +105,7 @@ bool qMRMLSceneTransformModel::reparent(vtkMRMLNode* node, vtkMRMLNode* newParen
       {
       return false;
       }
-    transformableNode->SetAndObserveTransformNodeID( newParent ? newParent->GetID() : 0 );
+    transformableNode->SetAndObserveTransformNodeID( newParent ? newParent->GetID() : nullptr );
     return true;
     }
   return false;

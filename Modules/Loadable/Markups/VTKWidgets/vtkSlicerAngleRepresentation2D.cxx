@@ -401,7 +401,7 @@ vtkTypeBool vtkSlicerAngleRepresentation2D::HasTranslucentPolygonalGeometry()
 //----------------------------------------------------------------------
 double *vtkSlicerAngleRepresentation2D::GetBounds()
 {
-  return NULL;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------

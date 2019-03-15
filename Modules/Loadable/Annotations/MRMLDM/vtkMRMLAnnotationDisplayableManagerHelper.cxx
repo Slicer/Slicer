@@ -38,7 +38,7 @@ void vtkMRMLAnnotationDisplayableManagerHelper::PrintSelf(ostream& os, vtkIndent
 //---------------------------------------------------------------------------
 vtkMRMLAnnotationDisplayableManagerHelper::vtkMRMLAnnotationDisplayableManagerHelper()
 {
-  this->SeedWidget = 0;
+  this->SeedWidget = nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -111,14 +111,14 @@ void vtkMRMLAnnotationDisplayableManagerHelper::UpdateLockedAllWidgets(bool lock
 void vtkMRMLAnnotationDisplayableManagerHelper::UpdateLocked(vtkMRMLAnnotationNode* node)
 {
   // Sanity checks
-  if (node == 0)
+  if (node == nullptr)
     {
     return;
     }
 
   vtkAbstractWidget * widget = this->GetWidget(node);
   // A widget is expected
-  if(widget == 0)
+  if(widget == nullptr)
     {
     return;
     }
@@ -141,14 +141,14 @@ void vtkMRMLAnnotationDisplayableManagerHelper::UpdateLocked(vtkMRMLAnnotationNo
 void vtkMRMLAnnotationDisplayableManagerHelper::UpdateVisible(vtkMRMLAnnotationNode* node, bool displayableInViewer)
 {
   // Sanity checks
-  if (node == 0)
+  if (node == nullptr)
     {
     return;
     }
 
   vtkAbstractWidget * widget = this->GetWidget(node);
   // A widget is expected
-  if(widget == 0)
+  if(widget == nullptr)
     {
     return;
     }
@@ -199,7 +199,7 @@ void vtkMRMLAnnotationDisplayableManagerHelper::UpdateWidget(
 
   vtkAbstractWidget * widget = this->GetWidget(node);
   // Widget is expected to be valid
-  if (widget == 0)
+  if (widget == nullptr)
     {
     return;
     }
@@ -216,14 +216,14 @@ vtkAbstractWidget * vtkMRMLAnnotationDisplayableManagerHelper::GetWidget(
 {
   if (!node)
     {
-    return 0;
+    return nullptr;
     }
 
   // Make sure the map contains a vtkWidget associated with this node
   WidgetsIt it = this->Widgets.find(node);
   if (it == this->Widgets.end())
     {
-    return 0;
+    return nullptr;
     }
 
   return it->second;
@@ -235,14 +235,14 @@ vtkAbstractWidget * vtkMRMLAnnotationDisplayableManagerHelper::GetIntersectionWi
 {
   if (!node)
     {
-    return 0;
+    return nullptr;
     }
 
   // Make sure the map contains a vtkWidget associated with this node
   WidgetIntersectionsIt it = this->WidgetIntersections.find(node);
   if (it == this->WidgetIntersections.end())
     {
-    return 0;
+    return nullptr;
     }
 
   return it->second;
@@ -254,14 +254,14 @@ vtkAbstractWidget * vtkMRMLAnnotationDisplayableManagerHelper::GetOverLineProjec
 {
   if (!node)
     {
-    return 0;
+    return nullptr;
     }
 
   // Make sure the map contains a vtkWidget associated with this node
   WidgetOverLineProjectionsIt it = this->WidgetOverLineProjections.find(node);
   if (it == this->WidgetOverLineProjections.end())
     {
-    return 0;
+    return nullptr;
     }
 
   return it->second;
@@ -273,14 +273,14 @@ vtkAbstractWidget * vtkMRMLAnnotationDisplayableManagerHelper::GetUnderLineProje
 {
   if (!node)
     {
-    return 0;
+    return nullptr;
     }
 
   // Make sure the map contains a vtkWidget associated with this node
   WidgetUnderLineProjectionsIt it = this->WidgetUnderLineProjections.find(node);
   if (it == this->WidgetUnderLineProjections.end())
     {
-    return 0;
+    return nullptr;
     }
 
   return it->second;
@@ -292,14 +292,14 @@ vtkAbstractWidget * vtkMRMLAnnotationDisplayableManagerHelper::GetPointProjectio
 {
   if (!node)
     {
-    return 0;
+    return nullptr;
     }
 
   // Make sure the map contains a vtkWidget associated with this node
   WidgetPointProjectionsIt it = this->WidgetPointProjections.find(node);
   if (it == this->WidgetPointProjections.end())
     {
-    return 0;
+    return nullptr;
     }
 
   return it->second;
@@ -520,7 +520,7 @@ void vtkMRMLAnnotationDisplayableManagerHelper::RemoveSeeds()
     {
     this->SeedWidget->Off();
     this->SeedWidget->Delete();
-    this->SeedWidget = 0;
+    this->SeedWidget = nullptr;
     }
 }
 
@@ -529,7 +529,7 @@ vtkHandleWidget * vtkMRMLAnnotationDisplayableManagerHelper::GetSeed(int index)
 {
   if (this->HandleWidgetList.empty())
     {
-    return 0;
+    return nullptr;
     }
 
   return this->HandleWidgetList[index];
@@ -542,7 +542,7 @@ vtkMRMLAnnotationNode * vtkMRMLAnnotationDisplayableManagerHelper::GetAnnotation
       !displayNode->GetID())
     {
     vtkErrorMacro("GetAnnotationNodeFromDisplayNode: display node or it's id is null");
-    return NULL;
+    return nullptr;
     }
   // iterate through the node list
   for (unsigned int i = 0; i < this->AnnotationNodeList.size(); i++)
@@ -564,5 +564,5 @@ vtkMRMLAnnotationNode * vtkMRMLAnnotationDisplayableManagerHelper::GetAnnotation
     }
   vtkDebugMacro("GetAnnotationNodeFromDisplayNode: unable to find annotation node that has display node "
                 << (displayNode->GetID() ? displayNode->GetID() : "null"));
-  return NULL;
+  return nullptr;
 }

@@ -30,11 +30,11 @@ vtkImageSlicePaint::vtkImageSlicePaint()
     this->TopLeft[i] = this->TopRight[i] = this->BottomLeft[i] = this->BottomRight[i] = 0;
     }
 
-  this->MaskImage = NULL;
-  this->BackgroundImage = NULL;
-  this->WorkingImage = NULL;
-  this->ExtractImage = NULL;
-  this->ReplaceImage = NULL;
+  this->MaskImage = nullptr;
+  this->BackgroundImage = nullptr;
+  this->WorkingImage = nullptr;
+  this->ExtractImage = nullptr;
+  this->ReplaceImage = nullptr;
 
   this->PaintLabel = 1;
   this->BrushCenter[0] = this->BrushCenter[1] = this->BrushCenter[2] = 0.0;
@@ -42,8 +42,8 @@ vtkImageSlicePaint::vtkImageSlicePaint()
 
   this->BackgroundIJKToWorld = vtkMatrix4x4::New();
   this->BackgroundIJKToWorld->Identity();
-  this->WorkingIJKToWorld = NULL;
-  this->MaskIJKToWorld = NULL;
+  this->WorkingIJKToWorld = nullptr;
+  this->MaskIJKToWorld = nullptr;
 
   this->ThresholdPaint = 0;
   this->ThresholdPaintRange[0] = 0;
@@ -54,15 +54,15 @@ vtkImageSlicePaint::vtkImageSlicePaint()
 //----------------------------------------------------------------------------
 vtkImageSlicePaint::~vtkImageSlicePaint()
 {
-  this->SetMaskImage (NULL);
-  this->SetBackgroundImage (NULL);
-  this->SetWorkingImage (NULL);
-  this->SetExtractImage (NULL);
-  this->SetReplaceImage (NULL);
+  this->SetMaskImage (nullptr);
+  this->SetBackgroundImage (nullptr);
+  this->SetWorkingImage (nullptr);
+  this->SetExtractImage (nullptr);
+  this->SetReplaceImage (nullptr);
 
-  this->SetBackgroundIJKToWorld (NULL);
-  this->SetWorkingIJKToWorld  (NULL);
-  this->SetMaskIJKToWorld  (NULL);
+  this->SetBackgroundIJKToWorld (nullptr);
+  this->SetWorkingIJKToWorld  (nullptr);
+  this->SetMaskIJKToWorld  (nullptr);
 }
 
 
@@ -70,7 +70,7 @@ static
 void transform3 (vtkMatrix4x4 *m, double *in, double *out)
 {
   int i;
-  if (m == NULL)
+  if (m == nullptr)
     { // treat NULL as Identity
     for (i = 0; i < 3; i++) { out[i] = in[i]; }
     return;
@@ -143,9 +143,9 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *vtkNotUsed(ptr))
 
   // Get the pointer to the extract image if available
   vtkImageData *extractImage = self->GetExtractImage();
-  T *extractPtr = NULL;
+  T *extractPtr = nullptr;
   int extracting = 0;
-  if ( extractImage != NULL )
+  if ( extractImage != nullptr )
     {
     extractImage->SetDimensions(maxColumnDelta+1, maxRowDelta+1, 1);
     extractImage->AllocateScalars(self->GetWorkingImage()->GetScalarType(), 1);
@@ -229,7 +229,7 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *vtkNotUsed(ptr))
            ijk[1] < workingExtent[2] || ijk[1] > workingExtent[3] ||
            ijk[2] < workingExtent[4] || ijk[2] > workingExtent[5] )
         {
-        workingPtr = NULL;
+        workingPtr = nullptr;
         }
       else
         {
@@ -249,14 +249,14 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *vtkNotUsed(ptr))
         if ( self->GetReplaceImage() )
           {
           // with replace image, just copy value into the working label map
-          T *replacePtr = NULL;
+          T *replacePtr = nullptr;
           replacePtr = (T *)(self->GetReplaceImage()->GetScalarPointer(column, row, 0));
           *workingPtr = *replacePtr;
           }
         else // no replace image, so paint with mask or brush
           {
 
-          if ( self->GetMaskImage() == NULL )
+          if ( self->GetMaskImage() == nullptr )
             {
             // no mask, so check brush radius
             double distSquared = ((workingWorld[0] - brushCenter[0]) *
@@ -288,7 +288,7 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *vtkNotUsed(ptr))
             void *ptr1 = self->GetMaskImage()->GetScalarPointer (
                             intMaskIJK[0], intMaskIJK[1], intMaskIJK[2] );
 
-            if ( ptr1 == NULL )
+            if ( ptr1 == nullptr )
               {
               int dimensions[3];
               self->GetMaskImage()->GetDimensions(dimensions);
@@ -390,9 +390,9 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *vtkNotUsed(ptr))
 //----------------------------------------------------------------------------
 void vtkImageSlicePaint::Paint()
 {
-  void *ptr = NULL;
+  void *ptr = nullptr;
 
-  if ( this->GetWorkingImage() == NULL )
+  if ( this->GetWorkingImage() == nullptr )
     {
     vtkErrorMacro (<< "Working image cannot be NULL\n");
     return;

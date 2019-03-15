@@ -34,7 +34,7 @@ Care Ontario.
 
 //---------------------------------------------------------------------------
 vtkStreamingVolumeCodec::vtkStreamingVolumeCodec()
-  : LastDecodedFrame(NULL)
+  : LastDecodedFrame(nullptr)
 {
 }
 

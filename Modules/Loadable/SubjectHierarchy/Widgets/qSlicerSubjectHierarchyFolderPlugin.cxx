@@ -75,9 +75,9 @@ qSlicerSubjectHierarchyFolderPluginPrivate::qSlicerSubjectHierarchyFolderPluginP
 {
   this->FolderIcon = QIcon(":Icons/Folder.png");
 
-  this->CreateFolderUnderSceneAction = NULL;
-  this->CreateFolderUnderNodeAction = NULL;
-  this->ApplyColorToBranchAction = NULL;
+  this->CreateFolderUnderSceneAction = nullptr;
+  this->CreateFolderUnderNodeAction = nullptr;
+  this->ApplyColorToBranchAction = nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -635,7 +635,7 @@ bool qSlicerSubjectHierarchyFolderPlugin::reparentItemInsideSubjectHierarchy(vtk
     // Reparent item normally
     shNode->SetItemParent(itemID, parentItemID);
     // Reparent hierarchy node under the scene
-    hierarchyNode->SetParentNodeID(NULL);
+    hierarchyNode->SetParentNodeID(nullptr);
     }
   else
     {
@@ -652,13 +652,13 @@ vtkMRMLHierarchyNode* qSlicerSubjectHierarchyFolderPlugin::hierarchyNodeForItem(
   if (!itemID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
-    return 0;
+    return nullptr;
     }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
     {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
-    return 0;
+    return nullptr;
     }
 
   // Get hierarchy node associated to the item
@@ -723,7 +723,7 @@ bool qSlicerSubjectHierarchyFolderPlugin::resolveHierarchyForItem(vtkIdType item
 
   // Get parent hierarchy node under which the subject hierarchy item needs to be reparented
   vtkMRMLHierarchyNode* parentHierarchyNode = hierarchyNode->GetParentNode();
-  vtkMRMLNode* associatedParentDataNode = NULL;
+  vtkMRMLNode* associatedParentDataNode = nullptr;
   vtkIdType parentItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
   if (!parentHierarchyNode)
     {
@@ -911,13 +911,13 @@ vtkMRMLModelDisplayNode* qSlicerSubjectHierarchyFolderPlugin::modelDisplayNodeFo
   if (!itemID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
-    return NULL;
+    return nullptr;
     }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
     {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
-    return NULL;
+    return nullptr;
     }
 
   vtkMRMLNode* dataNode = shNode->GetItemDataNode(itemID);
@@ -931,7 +931,7 @@ vtkMRMLModelDisplayNode* qSlicerSubjectHierarchyFolderPlugin::modelDisplayNodeFo
     {
     return vtkMRMLModelDisplayNode::SafeDownCast(modelHierarchyNode->GetDisplayNode());
     }
-  return NULL;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -940,13 +940,13 @@ vtkMRMLModelDisplayNode* qSlicerSubjectHierarchyFolderPlugin::createModelDisplay
   if (!itemID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
-    return NULL;
+    return nullptr;
     }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
     {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
-    return NULL;
+    return nullptr;
     }
 
   vtkNew<vtkMRMLModelDisplayNode> modelDisplayNode;
@@ -974,7 +974,7 @@ vtkMRMLModelDisplayNode* qSlicerSubjectHierarchyFolderPlugin::createModelDisplay
     qCritical() << Q_FUNC_INFO << ": Invalid associated data node " << dataNode->GetName()
       << " for folder item " << shNode->GetItemName(itemID).c_str();
     shNode->GetScene()->RemoveNode(modelDisplayNode);
-    return NULL;
+    return nullptr;
     }
 
   shNode->ItemModified(itemID);

@@ -79,7 +79,7 @@ public:
   typedef ctkCoordinatesWidget Superclass;
 
   /// Construct an empty qMRMLSliderWidget with a null scene.
-  explicit qMRMLCoordinatesWidget(QWidget* parent = 0);
+  explicit qMRMLCoordinatesWidget(QWidget* parent = nullptr);
   virtual ~qMRMLCoordinatesWidget();
 
   enum UnitAwareProperty

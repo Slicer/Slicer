@@ -80,8 +80,8 @@ inline void vtkLinearTransformDerivative(const double matrix[4][4],
 //----------------------------------------------------------------------------
 vtkOrientedBSplineTransform::vtkOrientedBSplineTransform()
 {
-  this->GridDirectionMatrix = NULL;
-  this->BulkTransformMatrix = NULL;
+  this->GridDirectionMatrix = nullptr;
+  this->BulkTransformMatrix = nullptr;
   this->GridIndexToOutputTransformMatrixCached = vtkMatrix4x4::New();
   this->OutputToGridIndexTransformMatrixCached = vtkMatrix4x4::New();
   this->InverseBulkTransformMatrixCached = vtkMatrix4x4::New();
@@ -90,22 +90,22 @@ vtkOrientedBSplineTransform::vtkOrientedBSplineTransform()
 //----------------------------------------------------------------------------
 vtkOrientedBSplineTransform::~vtkOrientedBSplineTransform()
 {
-  this->SetGridDirectionMatrix(NULL);
-  this->SetBulkTransformMatrix(NULL);
-  if (this->GridIndexToOutputTransformMatrixCached!=NULL)
+  this->SetGridDirectionMatrix(nullptr);
+  this->SetBulkTransformMatrix(nullptr);
+  if (this->GridIndexToOutputTransformMatrixCached!=nullptr)
     {
     this->GridIndexToOutputTransformMatrixCached->Delete();
-    this->GridIndexToOutputTransformMatrixCached=NULL;
+    this->GridIndexToOutputTransformMatrixCached=nullptr;
     }
-  if (this->OutputToGridIndexTransformMatrixCached!=NULL)
+  if (this->OutputToGridIndexTransformMatrixCached!=nullptr)
     {
     this->OutputToGridIndexTransformMatrixCached->Delete();
-    this->OutputToGridIndexTransformMatrixCached=NULL;
+    this->OutputToGridIndexTransformMatrixCached=nullptr;
     }
-  if (this->InverseBulkTransformMatrixCached!=NULL)
+  if (this->InverseBulkTransformMatrixCached!=nullptr)
     {
     this->InverseBulkTransformMatrixCached->Delete();
-    this->InverseBulkTransformMatrixCached=NULL;
+    this->InverseBulkTransformMatrixCached=nullptr;
     }
 }
 
@@ -163,7 +163,7 @@ void vtkOrientedBSplineTransform::ForwardTransformPoint(const double inPointTemp
 
   double displacement[3]={0.0, 0.0, 0.0};
 
-  this->CalculateSpline(point, displacement, 0,
+  this->CalculateSpline(point, displacement, nullptr,
                         gridPtr, extent, increments, this->BorderMode);
 
   outPoint[0] += displacement[0]*scale;
@@ -289,7 +289,7 @@ void vtkOrientedBSplineTransform::InverseTransformDerivative(const double inPoin
 
   // first guess at inverse_IJK point, just subtract displacement
   // (the inverse point is given in i,j,k indices plus fractions)
-  this->CalculateSpline(inPoint_IJK, deltaP, 0,
+  this->CalculateSpline(inPoint_IJK, deltaP, nullptr,
                         gridPtr, extent, increments, this->BorderMode);
 
   double inverseBulkTransformedInPoint[3];
@@ -317,7 +317,7 @@ void vtkOrientedBSplineTransform::InverseTransformDerivative(const double inPoin
                           gridPtr, extent, increments, this->BorderMode);
 
     // Get displacement and derivative from bulk
-    if (this->BulkTransformMatrix!=NULL)
+    if (this->BulkTransformMatrix!=nullptr)
       {
       vtkLinearTransformDerivative(this->BulkTransformMatrix->Element,inverse,inverseBulkTransformed,derivative);
 
@@ -464,7 +464,7 @@ void vtkOrientedBSplineTransform::InternalUpdate()
     {
     for (unsigned int col = 0; col < 3; col++)
       {
-      if (this->GridDirectionMatrix!=NULL)
+      if (this->GridDirectionMatrix!=nullptr)
         {
         this->GridIndexToOutputTransformMatrixCached->SetElement(row, col,
           this->GridSpacing[col]*this->GridDirectionMatrix->GetElement(row,col) );

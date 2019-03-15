@@ -69,9 +69,9 @@ public:
 qSlicerTransformsModuleWidgetPrivate::qSlicerTransformsModuleWidgetPrivate(qSlicerTransformsModuleWidget& object)
   : q_ptr(&object)
 {
-  this->MRMLTransformNode = 0;
-  this->CopyAction = 0;
-  this->PasteAction = 0;
+  this->MRMLTransformNode = nullptr;
+  this->CopyAction = nullptr;
+  this->PasteAction = nullptr;
 }
 //-----------------------------------------------------------------------------
 vtkSlicerTransformLogic* qSlicerTransformsModuleWidgetPrivate::logic()const
@@ -216,7 +216,7 @@ void qSlicerTransformsModuleWidget::setup()
     SLOT(updateConvertButtonState()));
 
   this->onTransformableSectionClicked(d->TransformedCollapsibleButton->isChecked());
-  this->onNodeSelected(0);
+  this->onNodeSelected(nullptr);
   this->updateConvertButtonState();
 }
 
@@ -238,13 +238,13 @@ void qSlicerTransformsModuleWidget::onNodeSelected(vtkMRMLNode* node)
 
   vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(node);
 
-  bool isLinearTransform = (transformNode!=NULL && transformNode->IsLinear());
-  bool isCompositeTransform = (transformNode!=NULL && transformNode->IsComposite());
+  bool isLinearTransform = (transformNode!=nullptr && transformNode->IsLinear());
+  bool isCompositeTransform = (transformNode!=nullptr && transformNode->IsComposite());
 
   // Enable/Disable CoordinateReference, identity, split buttons, MatrixViewGroupBox, and
   // Min/Max translation inputs
 
-  d->InvertPushButton->setEnabled(transformNode != 0);
+  d->InvertPushButton->setEnabled(transformNode != nullptr);
 
   d->TranslateFirstToolButton->setEnabled(isLinearTransform);
   d->IdentityPushButton->setEnabled(isLinearTransform);
@@ -263,7 +263,7 @@ void qSlicerTransformsModuleWidget::onNodeSelected(vtkMRMLNode* node)
   QStringList nodeTypes;
   // If no transform node, it would show the entire scene, lets shown none
   // instead.
-  if (transformNode == 0)
+  if (transformNode == nullptr)
     {
     nodeTypes << QString("vtkMRMLNotANode");
     }
@@ -285,7 +285,7 @@ void qSlicerTransformsModuleWidget::onNodeSelected(vtkMRMLNode* node)
                       vtkMRMLTransformableNode::TransformModifiedEvent,
                       this, SLOT(onMRMLTransformNodeModified(vtkObject*)));
 
-  if (d->MRMLTransformNode == 0 && transformNode != 0)
+  if (d->MRMLTransformNode == nullptr && transformNode != nullptr)
     {
     d->TransformedCollapsibleButton->setCollapsed(false);
     }
@@ -295,12 +295,12 @@ void qSlicerTransformsModuleWidget::onNodeSelected(vtkMRMLNode* node)
   // If there is no display node then collapse the display section.
   // This allows creation of transform display nodes on request:
   // the display node is created if the user expands the display section.
-  vtkMRMLTransformDisplayNode* dispNode = NULL;
+  vtkMRMLTransformDisplayNode* dispNode = nullptr;
   if (transformNode)
     {
     dispNode = vtkMRMLTransformDisplayNode::SafeDownCast(transformNode->GetDisplayNode());
     }
-  if (dispNode==NULL)
+  if (dispNode==nullptr)
     {
     d->DisplayCollapsibleButton->setCollapsed(true);
     }
@@ -364,7 +364,7 @@ void qSlicerTransformsModuleWidget::identity()
 {
   Q_D(qSlicerTransformsModuleWidget);
 
-  if (d->MRMLTransformNode==NULL || !d->MRMLTransformNode->IsLinear())
+  if (d->MRMLTransformNode==nullptr || !d->MRMLTransformNode->IsLinear())
     {
     return;
     }
@@ -394,7 +394,7 @@ void qSlicerTransformsModuleWidget::split()
 {
   Q_D(qSlicerTransformsModuleWidget);
 
-  if (d->MRMLTransformNode==NULL)
+  if (d->MRMLTransformNode==nullptr)
     {
     return;
     }
@@ -479,7 +479,7 @@ void qSlicerTransformsModuleWidget::untransformSelectedNodes()
     qSlicerTransformsModuleWidgetPrivate::getSelectedNodes(d->TransformedTreeView);
   foreach(vtkSmartPointer<vtkMRMLTransformableNode> node, nodesToTransform)
     {
-    node->SetAndObserveTransformNodeID(0);
+    node->SetAndObserveTransformNodeID(nullptr);
     }
 }
 
@@ -506,11 +506,11 @@ void qSlicerTransformsModuleWidget::onDisplaySectionClicked(bool clicked)
     {
     return;
     }
-  if (d->MRMLTransformNode==NULL)
+  if (d->MRMLTransformNode==nullptr)
     {
     return;
     }
-  if (vtkMRMLTransformDisplayNode::SafeDownCast(d->MRMLTransformNode->GetDisplayNode())==NULL)
+  if (vtkMRMLTransformDisplayNode::SafeDownCast(d->MRMLTransformNode->GetDisplayNode())==nullptr)
     {
     d->MRMLTransformNode->CreateDefaultDisplayNodes();
     // Refresh the display node section
@@ -539,17 +539,17 @@ void qSlicerTransformsModuleWidget::onTransformableSectionClicked(bool clicked)
 void qSlicerTransformsModuleWidget::convert()
 {
   Q_D(qSlicerTransformsModuleWidget);
-  if (d->MRMLTransformNode == NULL)
+  if (d->MRMLTransformNode == nullptr)
     {
     qWarning("qSlicerTransformsModuleWidget::convert failed: MRMLTransformNode is invalid");
     return;
     }
-  if (d->ConvertReferenceVolumeNodeComboBox->currentNode() == NULL)
+  if (d->ConvertReferenceVolumeNodeComboBox->currentNode() == nullptr)
     {
     qWarning("qSlicerTransformsModuleWidget::convert failed: reference volume node is invalid");
     return;
     }
-  if (d->ConvertOutputDisplacementFieldNodeComboBox->currentNode() == NULL)
+  if (d->ConvertOutputDisplacementFieldNodeComboBox->currentNode() == nullptr)
     {
     qWarning("qSlicerTransformsModuleWidget::convert failed: reference volume node is invalid");
     return;
@@ -578,12 +578,12 @@ void qSlicerTransformsModuleWidget::convert()
 void qSlicerTransformsModuleWidget::updateConvertButtonState()
 {
   Q_D(qSlicerTransformsModuleWidget);
-  bool enableConvert = (d->MRMLTransformNode != NULL
-    && d->ConvertReferenceVolumeNodeComboBox->currentNode() != NULL
-    && d->ConvertOutputDisplacementFieldNodeComboBox->currentNode() != NULL);
+  bool enableConvert = (d->MRMLTransformNode != nullptr
+    && d->ConvertReferenceVolumeNodeComboBox->currentNode() != nullptr
+    && d->ConvertOutputDisplacementFieldNodeComboBox->currentNode() != nullptr);
   d->ConvertPushButton->setEnabled(enableConvert);
 
-  bool isVolumeOutput = (vtkMRMLVolumeNode::SafeDownCast(d->ConvertOutputDisplacementFieldNodeComboBox->currentNode()) != NULL);
+  bool isVolumeOutput = (vtkMRMLVolumeNode::SafeDownCast(d->ConvertOutputDisplacementFieldNodeComboBox->currentNode()) != nullptr);
   d->ConvertMagnitudeOnlyCheckBox->setEnabled(isVolumeOutput);
   if (!isVolumeOutput)
     {

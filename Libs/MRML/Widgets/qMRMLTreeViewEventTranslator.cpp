@@ -43,7 +43,7 @@
 qMRMLTreeViewEventTranslator::qMRMLTreeViewEventTranslator(QObject *parent)
   : Superclass(parent)
 {
-  this->CurrentObject = 0;
+  this->CurrentObject = nullptr;
 }
 
 // ----------------------------------------------------------------------------
@@ -54,8 +54,8 @@ bool qMRMLTreeViewEventTranslator::translateEvent(QObject *Object,
 {
   Q_UNUSED(Error);
   
-  qMRMLTreeView* treeView = NULL;
-  for(QObject* test = Object; treeView == NULL && test != NULL; test = test->parent())
+  qMRMLTreeView* treeView = nullptr;
+  for(QObject* test = Object; treeView == nullptr && test != nullptr; test = test->parent())
     {
     treeView = qobject_cast<qMRMLTreeView*>(test);
     }
@@ -66,8 +66,8 @@ bool qMRMLTreeViewEventTranslator::translateEvent(QObject *Object,
     }
 
   // For the custom action when we have a right click
-  QMenu* menu = NULL;
-  for(QObject* test = Object; menu == NULL && test != NULL ; test = test->parent())
+  QMenu* menu = nullptr;
+  for(QObject* test = Object; menu == nullptr && test != nullptr ; test = test->parent())
     {
     menu = qobject_cast<QMenu*>(test);
     }
@@ -118,8 +118,8 @@ bool qMRMLTreeViewEventTranslator::translateEvent(QObject *Object,
 
   // We want to stop the action on the QDialog when we are renaming
   // and let passed the action for the "set_current".
-  QInputDialog* dialog = NULL;
-  for(QObject* test = Object; dialog == NULL && test != NULL; test = test->parent())
+  QInputDialog* dialog = nullptr;
+  for(QObject* test = Object; dialog == nullptr && test != nullptr; test = test->parent())
     {
     dialog = qobject_cast<QInputDialog*>(test);
     if(dialog)
@@ -135,7 +135,7 @@ bool qMRMLTreeViewEventTranslator::translateEvent(QObject *Object,
       {
       if(this->CurrentObject)
         {
-        disconnect(this->CurrentObject, 0, this, 0);
+        disconnect(this->CurrentObject, nullptr, this, nullptr);
         }
       this->CurrentObject = Object;
 
@@ -162,7 +162,7 @@ bool qMRMLTreeViewEventTranslator::translateEvent(QObject *Object,
 // ----------------------------------------------------------------------------
 void qMRMLTreeViewEventTranslator::onDestroyed(QObject* /*Object*/)
 {
-  this->CurrentObject = 0;
+  this->CurrentObject = nullptr;
 }
 
 // ----------------------------------------------------------------------------
@@ -194,7 +194,7 @@ void qMRMLTreeViewEventTranslator::onAboutToReparentByDnD(vtkMRMLNode* node , vt
 {
   if (node)
     {
-    QString parentID = newParent ? QString::fromLatin1(newParent->GetID()) : 0;
+    QString parentID = newParent ? QString::fromLatin1(newParent->GetID()) : nullptr;
     QString args = QString("%1.%2").arg(
         QString::fromLatin1(node->GetID()),
         parentID);

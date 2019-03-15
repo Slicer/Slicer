@@ -54,7 +54,7 @@ public:
   typedef QSortFilterProxyModel Superclass;
 
   /// Constructor
-  explicit qSlicerModuleFactoryFilterModel(QObject* parent = 0);
+  explicit qSlicerModuleFactoryFilterModel(QObject* parent = nullptr);
 
   /// Destructor
   virtual ~qSlicerModuleFactoryFilterModel();

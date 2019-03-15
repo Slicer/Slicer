@@ -128,7 +128,7 @@ void vtkMRMLVolumeDisplayNode
 vtkAlgorithmOutput* vtkMRMLVolumeDisplayNode
 ::GetInputImageDataConnection()
 {
-  return 0;
+  return nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -140,9 +140,9 @@ void vtkMRMLVolumeDisplayNode::SetInputToImageDataPipeline(vtkAlgorithmOutput *v
 vtkImageData* vtkMRMLVolumeDisplayNode::GetInputImageData()
 {
   vtkAlgorithmOutput* imageConnection = this->GetInputImageDataConnection();
-  vtkAlgorithm* producer = imageConnection ? imageConnection->GetProducer() : 0;
+  vtkAlgorithm* producer = imageConnection ? imageConnection->GetProducer() : nullptr;
   return vtkImageData::SafeDownCast(
-    producer ? producer->GetOutputDataObject(0) : 0);
+    producer ? producer->GetOutputDataObject(0) : nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -153,31 +153,31 @@ void vtkMRMLVolumeDisplayNode::SetBackgroundImageStencilDataConnection(vtkAlgori
 //----------------------------------------------------------------------------
 vtkAlgorithmOutput* vtkMRMLVolumeDisplayNode::GetBackgroundImageStencilDataConnection()
 {
-  return 0;
+  return nullptr;
 }
 
 //----------------------------------------------------------------------------
 vtkImageStencilData* vtkMRMLVolumeDisplayNode::GetBackgroundImageStencilData()
 {
   vtkAlgorithmOutput* imageConnection = this->GetBackgroundImageStencilDataConnection();
-  vtkAlgorithm* producer = imageConnection ? imageConnection->GetProducer() : 0;
+  vtkAlgorithm* producer = imageConnection ? imageConnection->GetProducer() : nullptr;
   return vtkImageStencilData::SafeDownCast(
-    producer ? producer->GetOutputDataObject(0) : 0);
+    producer ? producer->GetOutputDataObject(0) : nullptr);
 }
 
 //----------------------------------------------------------------------------
 vtkImageData* vtkMRMLVolumeDisplayNode::GetOutputImageData()
 {
   vtkAlgorithmOutput* imageConnection = this->GetOutputImageDataConnection();
-  vtkAlgorithm* producer = imageConnection ? imageConnection->GetProducer() : 0;
+  vtkAlgorithm* producer = imageConnection ? imageConnection->GetProducer() : nullptr;
   return vtkImageData::SafeDownCast(
-    producer ? producer->GetOutputDataObject(0) : 0);
+    producer ? producer->GetOutputDataObject(0) : nullptr);
 }
 
 //----------------------------------------------------------------------------
 vtkAlgorithmOutput* vtkMRMLVolumeDisplayNode::GetOutputImageDataConnection()
 {
-  return NULL;
+  return nullptr;
 }
 
 //----------------------------------------------------------------------------

@@ -80,11 +80,11 @@ public:
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableManagerGroup::vtkInternal::vtkInternal()
 {
-  this->MRMLDisplayableNode = 0;
-  this->Renderer = 0;
+  this->MRMLDisplayableNode = nullptr;
+  this->Renderer = nullptr;
   this->CallBackCommand = vtkSmartPointer<vtkCallbackCommand>::New();
-  this->DisplayableManagerFactory = 0;
-  this->LightBoxRendererManagerProxy = 0;
+  this->DisplayableManagerFactory = nullptr;
+  this->LightBoxRendererManagerProxy = nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -101,8 +101,8 @@ vtkMRMLDisplayableManagerGroup::vtkMRMLDisplayableManagerGroup()
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableManagerGroup::~vtkMRMLDisplayableManagerGroup()
 {
-  this->SetAndObserveDisplayableManagerFactory(0);
-  this->SetMRMLDisplayableNode(0);
+  this->SetAndObserveDisplayableManagerFactory(nullptr);
+  this->SetMRMLDisplayableNode(nullptr);
 
   for(size_t i=0; i < this->Internal->DisplayableManagers.size(); ++i)
     {
@@ -116,7 +116,7 @@ vtkMRMLDisplayableManagerGroup::~vtkMRMLDisplayableManagerGroup()
 
   if (this->Internal->LightBoxRendererManagerProxy)
     {
-    this->Internal->LightBoxRendererManagerProxy = 0;
+    this->Internal->LightBoxRendererManagerProxy = nullptr;
     }
 
   delete this->Internal;
@@ -158,7 +158,7 @@ bool vtkMRMLDisplayableManagerGroup
 vtkMRMLAbstractDisplayableManager* vtkMRMLDisplayableManagerGroup
 ::InstantiateDisplayableManager(const char* displayableManagerName)
 {
-  vtkMRMLAbstractDisplayableManager* displayableManager = 0;
+  vtkMRMLAbstractDisplayableManager* displayableManager = nullptr;
 #ifdef MRMLDisplayableManager_USE_PYTHON
   // Are we dealing with a python scripted displayable manager
   if (std::string(displayableManagerName).find(".py") != std::string::npos)
@@ -222,7 +222,7 @@ void vtkMRMLDisplayableManagerGroup::SetAndObserveDisplayableManagerFactory(
     {
     this->Internal->DisplayableManagerFactory->RemoveObserver(this->Internal->CallBackCommand);
     this->Internal->DisplayableManagerFactory->Delete();
-    this->Internal->DisplayableManagerFactory = 0;
+    this->Internal->DisplayableManagerFactory = nullptr;
     }
 
   this->Internal->DisplayableManagerFactory = factory;
@@ -258,7 +258,7 @@ void vtkMRMLDisplayableManagerGroup::AddDisplayableManager(
 
   // Make sure the displayableManager has NOT already been added
   const char * displayableManagerClassName = displayableManager->GetClassName();
-  if (this->GetDisplayableManagerByClassName(displayableManagerClassName) != 0)
+  if (this->GetDisplayableManagerByClassName(displayableManagerClassName) != nullptr)
     {
     vtkWarningMacro(<<"AddDisplayableManager - "
                     << displayableManager->GetClassName()
@@ -300,7 +300,7 @@ vtkMRMLAbstractDisplayableManager * vtkMRMLDisplayableManagerGroup::GetNthDispla
   int numManagers = this->GetDisplayableManagerCount();
   if (n < 0 || n >= numManagers)
     {
-    return 0;
+    return nullptr;
     }
   return this->Internal->DisplayableManagers[n];
 }
@@ -344,7 +344,7 @@ vtkRenderWindowInteractor* vtkMRMLDisplayableManagerGroup::GetInteractor()
   if (!this->Internal->Renderer || !this->Internal->Renderer->GetRenderWindow())
     {
     vtkDebugMacro(<< this->GetClassName() << " (" << this << "): returning Interactor address 0");
-    return 0;
+    return nullptr;
     }
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): "
                 << "returning Internal->Renderer->GetRenderWindow()->GetInteractor() address "
@@ -395,14 +395,14 @@ vtkMRMLAbstractDisplayableManager*
   if (!className)
     {
     vtkWarningMacro(<< "GetDisplayableManagerByClassName - className is NULL");
-    return 0;
+    return nullptr;
     }
   vtkInternal::NameToDisplayableManagerMapIt it =
       this->Internal->NameToDisplayableManagerMap.find(className);
 
   if (it == this->Internal->NameToDisplayableManagerMap.end())
     {
-    return 0;
+    return nullptr;
     }
 
   return it->second;

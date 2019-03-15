@@ -165,7 +165,7 @@ vtkMRMLScalarVolumeDisplayNode* qSlicerScalarVolumeDisplayWidget::volumeDisplayN
 {
   vtkMRMLVolumeNode* volumeNode = this->volumeNode();
   return volumeNode ? vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
-    volumeNode->GetDisplayNode()) : 0;
+    volumeNode->GetDisplayNode()) : nullptr;
 }
 
 // --------------------------------------------------------------------------
@@ -184,11 +184,11 @@ void qSlicerScalarVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode
   d->MRMLWindowLevelWidget->setMRMLVolumeNode(volumeNode);
   d->MRMLVolumeThresholdWidget->setMRMLVolumeNode(volumeNode);
 
-  qvtkReconnect(oldVolumeDisplayNode, volumeNode ? volumeNode->GetDisplayNode() :0,
+  qvtkReconnect(oldVolumeDisplayNode, volumeNode ? volumeNode->GetDisplayNode() :nullptr,
                 vtkCommand::ModifiedEvent,
                 this, SLOT(updateWidgetFromMRML()));
 
-  this->setEnabled(volumeNode != 0);
+  this->setEnabled(volumeNode != nullptr);
 
   this->updateWidgetFromMRML();
 }
@@ -234,12 +234,12 @@ void qSlicerScalarVolumeDisplayWidget::updateHistogram()
 
   // Get voxel array
   vtkMRMLScalarVolumeNode* volumeNode = this->volumeNode();
-  vtkImageData* imageData = volumeNode ? volumeNode->GetImageData() : 0;
-  vtkPointData* pointData = imageData ? imageData->GetPointData() : 0;
-  vtkDataArray* voxelValues = pointData ? pointData->GetScalars() : 0;
+  vtkImageData* imageData = volumeNode ? volumeNode->GetImageData() : nullptr;
+  vtkPointData* pointData = imageData ? imageData->GetPointData() : nullptr;
+  vtkDataArray* voxelValues = pointData ? pointData->GetScalars() : nullptr;
 
   // If there are no voxel values then we completely hide the histogram section
-  d->HistogramGroupBox->setVisible(voxelValues != 0);
+  d->HistogramGroupBox->setVisible(voxelValues != nullptr);
 
   d->Histogram->setDataArray(voxelValues);
   // Calling histogram build() with an empty volume causes heap corruption

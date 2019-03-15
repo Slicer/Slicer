@@ -37,5 +37,5 @@ qSlicerIO::~qSlicerIO()
 //----------------------------------------------------------------------------
 qSlicerIOOptions* qSlicerIO::options()const
 {
-  return 0;
+  return nullptr;
 }

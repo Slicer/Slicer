@@ -124,9 +124,9 @@ int vtkMRMLAnnotationDisplayableManagerTest2(int vtkNotUsed(argc), char* vtkNotU
     }
   */
 
-  annotationDM->SetMRMLApplicationLogic(0);
-  applicationLogic = 0;
-  scene = 0;
+  annotationDM->SetMRMLApplicationLogic(nullptr);
+  applicationLogic = nullptr;
+  scene = nullptr;
 
   return EXIT_SUCCESS;
 }

@@ -81,10 +81,10 @@ vtkStandardNewMacro ( vtkDataFileFormatHelper );
 //----------------------------------------------------------------------------
 vtkDataFileFormatHelper::vtkDataFileFormatHelper()
 {
-  this->SupportedWriteFileExtensions = NULL;
-  this->SupportedWriteFileGenericNames = NULL;
-  this->SupportedWriteFileClassNames = NULL;
-  this->ITKSupportedWriteFileFormats = NULL;
+  this->SupportedWriteFileExtensions = nullptr;
+  this->SupportedWriteFileGenericNames = nullptr;
+  this->SupportedWriteFileClassNames = nullptr;
+  this->ITKSupportedWriteFileFormats = nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -252,7 +252,7 @@ const char* vtkDataFileFormatHelper::GetClassNameFromFormatString(
   // if no extension found
   if(fileExt.empty())
     {
-    return NULL;
+    return nullptr;
     }
   std::string::size_type pos1 = fileformat.find("(");
   if(pos1 != std::string::npos)
@@ -277,7 +277,7 @@ const char* vtkDataFileFormatHelper::GetClassNameFromFormatString(
     }
 
   // if the file format is not expected.
-  return NULL;
+  return nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -318,7 +318,7 @@ const char* vtkDataFileFormatHelper::GetITKSupportedExtensionGenericNameByIndex(
     this->SupportedWriteFileGenericNames->GetNumberOfTuples())
     {
     vtkErrorMacro(<< "Can not find the extension generic name by given index.");
-    return NULL;
+    return nullptr;
     }
 
   return this->SupportedWriteFileGenericNames->GetValue(idx).c_str();
@@ -345,7 +345,7 @@ const char* vtkDataFileFormatHelper::GetITKSupportedExtensionClassNameByIndex(
     this->SupportedWriteFileClassNames->GetNumberOfTuples())
     {
     vtkErrorMacro(<< "Can not find the extension class name by given index.");
-    return NULL;
+    return nullptr;
     }
 
   return this->SupportedWriteFileClassNames->GetValue(idx).c_str();

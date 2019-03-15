@@ -42,19 +42,19 @@ PichonFastMarchingPDF::PichonFastMarchingPDF( int _realizationMax )
   this->realizationMax=_realizationMax;
 
   bins = new int [realizationMax+1];
-  if(bins==NULL)
+  if(bins==nullptr)
     {
     vtkGenericWarningMacro("Error in vtkFastMarching, PichonFastMarchingPDF::PichonFastMarchingPDF(...), not enough memory for allocation of 'bins'");
     }
 
   smoothedBins = new double [realizationMax+1];
-  if(smoothedBins==NULL)
+  if(smoothedBins==nullptr)
     {
     vtkGenericWarningMacro("Error in vtkFastMarching, PichonFastMarchingPDF::PichonFastMarchingPDF(...), not enough memory for allocation of 'smoothedBins'");
     }
 
   coefGauss = new double[realizationMax+1];
-  if(bins==NULL)
+  if(bins==nullptr)
     {
     vtkGenericWarningMacro("Error in vtkFastMarching, PichonFastMarchingPDF::PichonFastMarchingPDF(...), not enough memory for allocation of 'bins'");
     }

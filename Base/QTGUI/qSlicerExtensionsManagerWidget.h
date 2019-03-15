@@ -43,7 +43,7 @@ public:
   typedef QWidget Superclass;
 
   /// Constructor
-  explicit qSlicerExtensionsManagerWidget(QWidget* parent = 0);
+  explicit qSlicerExtensionsManagerWidget(QWidget* parent = nullptr);
 
   /// Destructor
   virtual ~qSlicerExtensionsManagerWidget();

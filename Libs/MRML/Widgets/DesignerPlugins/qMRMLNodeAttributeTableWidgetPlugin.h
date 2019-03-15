@@ -30,7 +30,7 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLNodeAttributeTableWidgetPlugin
   Q_OBJECT
 
 public:
-  qMRMLNodeAttributeTableWidgetPlugin(QObject *_parent = 0);
+  qMRMLNodeAttributeTableWidgetPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;

@@ -162,7 +162,7 @@ vtkSlicerMarkupsWidgetRepresentation::~vtkSlicerMarkupsWidgetRepresentation()
     this->ControlPoints[i] = nullptr;
     }
   // Force deleting variables to prevent circular dependency keeping objects alive
-  this->PointPlacer = NULL;
+  this->PointPlacer = nullptr;
 }
 
 //----------------------------------------------------------------------

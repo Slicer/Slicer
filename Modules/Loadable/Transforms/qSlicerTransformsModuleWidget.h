@@ -39,7 +39,7 @@ class Q_SLICER_QTMODULES_TRANSFORMS_EXPORT qSlicerTransformsModuleWidget :
 public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerTransformsModuleWidget(QWidget *parent=0);
+  qSlicerTransformsModuleWidget(QWidget *parent=nullptr);
   virtual ~qSlicerTransformsModuleWidget();
 
   /// Reimplemented for internal reasons

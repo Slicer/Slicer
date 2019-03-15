@@ -94,8 +94,8 @@ void qMRMLSliceInformationWidgetPrivate::updateWidgetFromMRMLSliceNode()
 {
   Q_Q(qMRMLSliceInformationWidget);
 
-  q->setEnabled(this->MRMLSliceNode != 0);
-  if (this->MRMLSliceNode == 0)
+  q->setEnabled(this->MRMLSliceNode != nullptr);
+  if (this->MRMLSliceNode == nullptr)
     {
     return;
     }

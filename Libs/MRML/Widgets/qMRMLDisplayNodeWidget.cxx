@@ -78,7 +78,7 @@ void qMRMLDisplayNodeWidgetPrivate::init()
   this->PropertyWidget->setProperty(this->Property);
   q->qvtkConnect(this->Property, vtkCommand::ModifiedEvent,
                  q, SLOT(updateNodeFromProperty()));
-  q->setEnabled(this->MRMLDisplayNode.GetPointer() != 0);
+  q->setEnabled(this->MRMLDisplayNode.GetPointer() != nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -108,7 +108,7 @@ void qMRMLDisplayNodeWidget::setMRMLDisplayableNode(vtkMRMLNode* node)
 {
   vtkMRMLDisplayableNode* displayableNode =
     vtkMRMLDisplayableNode::SafeDownCast(node);
-  this->setMRMLDisplayNode(displayableNode ? displayableNode->GetDisplayNode() : 0);
+  this->setMRMLDisplayNode(displayableNode ? displayableNode->GetDisplayNode() : nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -282,7 +282,7 @@ void qMRMLDisplayNodeWidget::setSliceIntersectionOpacityVisible(bool visible)
 void qMRMLDisplayNodeWidget::updateWidgetFromMRML()
 {
   Q_D(qMRMLDisplayNodeWidget);
-  this->setEnabled(d->MRMLDisplayNode.GetPointer() != 0);
+  this->setEnabled(d->MRMLDisplayNode.GetPointer() != nullptr);
   if (!d->MRMLDisplayNode.GetPointer())
     {
     return;

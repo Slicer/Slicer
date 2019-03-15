@@ -21,7 +21,7 @@ vtkCxxSetObjectMacro(vtkOrientedGridTransform,GridDirectionMatrix,vtkMatrix4x4);
 //----------------------------------------------------------------------------
 vtkOrientedGridTransform::vtkOrientedGridTransform()
 {
-  this->GridDirectionMatrix = NULL;
+  this->GridDirectionMatrix = nullptr;
   this->GridIndexToOutputTransformMatrixCached = vtkMatrix4x4::New();
   this->OutputToGridIndexTransformMatrixCached = vtkMatrix4x4::New();
 
@@ -31,16 +31,16 @@ vtkOrientedGridTransform::vtkOrientedGridTransform()
 //----------------------------------------------------------------------------
 vtkOrientedGridTransform::~vtkOrientedGridTransform()
 {
-  this->SetGridDirectionMatrix(NULL);
+  this->SetGridDirectionMatrix(nullptr);
   if (this->GridIndexToOutputTransformMatrixCached)
     {
     this->GridIndexToOutputTransformMatrixCached->Delete();
-    this->GridIndexToOutputTransformMatrixCached = NULL;
+    this->GridIndexToOutputTransformMatrixCached = nullptr;
     }
   if (this->OutputToGridIndexTransformMatrixCached)
     {
     this->OutputToGridIndexTransformMatrixCached->Delete();
-    this->OutputToGridIndexTransformMatrixCached = NULL;
+    this->OutputToGridIndexTransformMatrixCached = nullptr;
     }
 }
 
@@ -101,7 +101,7 @@ inline void vtkLinearTransformJacobian(double aMat[3][3], double bMat[4][4], dou
 void vtkOrientedGridTransform::ForwardTransformPoint(const double inPoint[3],
                                              double outPoint[3])
 {
-  if (this->GridDirectionMatrix == NULL || this->GridPointer == NULL)
+  if (this->GridDirectionMatrix == nullptr || this->GridPointer == nullptr)
     {
     this->Superclass::ForwardTransformPoint(inPoint,outPoint);
     return;
@@ -123,7 +123,7 @@ void vtkOrientedGridTransform::ForwardTransformPoint(const double inPoint[3],
   // plus fractions
   vtkLinearTransformPoint(this->OutputToGridIndexTransformMatrixCached->Element, inPoint, point);
 
-  this->InterpolationFunction(point,displacement,NULL,
+  this->InterpolationFunction(point,displacement,nullptr,
                               gridPtr,gridType,extent,increments);
 
   outPoint[0] = inPoint[0] + (displacement[0]*scale + shift);
@@ -136,7 +136,7 @@ void vtkOrientedGridTransform::ForwardTransformDerivative(const double inPoint[3
                                                   double outPoint[3],
                                                   double derivative[3][3])
 {
-  if (this->GridDirectionMatrix == NULL || this->GridPointer == NULL)
+  if (this->GridDirectionMatrix == nullptr || this->GridPointer == nullptr)
     {
     this->Superclass::ForwardTransformDerivative(inPoint,outPoint,derivative);
     return;
@@ -179,7 +179,7 @@ void vtkOrientedGridTransform::InverseTransformDerivative(const double inPoint[3
                                                   double outPoint[3],
                                                   double derivative[3][3])
 {
-  if (this->GridDirectionMatrix == NULL || this->GridPointer == NULL)
+  if (this->GridDirectionMatrix == nullptr || this->GridPointer == nullptr)
     {
     this->Superclass::InverseTransformDerivative(inPoint,outPoint,derivative);
     return;
@@ -213,7 +213,7 @@ void vtkOrientedGridTransform::InverseTransformDerivative(const double inPoint[3
 
   // first guess at inverse point, just subtract displacement
   // (the inverse point is given in i,j,k indices plus fractions)
-  this->InterpolationFunction(point, deltaP, NULL,
+  this->InterpolationFunction(point, deltaP, nullptr,
                               gridPtr, gridType, extent, increments);
 
   inverse[0] = inPoint[0] - (deltaP[0]*scale + shift);
@@ -368,7 +368,7 @@ void vtkOrientedGridTransform::InternalUpdate()
     {
     for (unsigned int col = 0; col < 3; col++)
       {
-      if (this->GridDirectionMatrix!=NULL)
+      if (this->GridDirectionMatrix!=nullptr)
         {
         this->GridIndexToOutputTransformMatrixCached->SetElement(row, col,
           this->GridSpacing[col]*this->GridDirectionMatrix->GetElement(row,col) );

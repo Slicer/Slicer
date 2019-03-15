@@ -48,7 +48,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerAbstractModule
 public:
 
   typedef qSlicerAbstractCoreModule Superclass;
-  qSlicerAbstractModule(QObject *parent=0);
+  qSlicerAbstractModule(QObject *parent=nullptr);
   virtual ~qSlicerAbstractModule();
 
   /// Icon of the module. Anytime a graphical representation of the module

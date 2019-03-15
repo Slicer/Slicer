@@ -60,7 +60,7 @@ public:
     //std::cout << "RenderRequestCount [" << this->RenderRequestCount << "]" << std::endl;
     }
 protected:
-  vtkRenderRequestCallback():Renderer(0), RenderRequestCount(0){}
+  vtkRenderRequestCallback():Renderer(nullptr), RenderRequestCount(0){}
   vtkRenderer * Renderer;
   int           RenderRequestCount;
 };
@@ -142,7 +142,7 @@ int vtkMRMLAnnotationDisplayableManagerTest1(int vtkNotUsed(argc), char* vtkNotU
 
   // change to place mode
   vtkMRMLNode *mrmlNode = scene->GetNodeByID("vtkMRMLInteractionNode1");
-  vtkMRMLInteractionNode *interactionNode = NULL;
+  vtkMRMLInteractionNode *interactionNode = nullptr;
   if (mrmlNode)
     {
     interactionNode = vtkMRMLInteractionNode::SafeDownCast(mrmlNode);
@@ -153,7 +153,7 @@ int vtkMRMLAnnotationDisplayableManagerTest1(int vtkNotUsed(argc), char* vtkNotU
   // OnClickInRenderWindow method
   vtkMRMLAbstractDisplayableManager * dm1 =
       displayableManagerGroup->GetDisplayableManagerByClassName("vtkMRMLAnnotationDisplayableManager");
-  vtkMRMLAnnotationDisplayableManager *adm = NULL;
+  vtkMRMLAnnotationDisplayableManager *adm = nullptr;
   if (dm1)
     {
     adm = vtkMRMLAnnotationDisplayableManager::SafeDownCast(dm1);
@@ -163,7 +163,7 @@ int vtkMRMLAnnotationDisplayableManagerTest1(int vtkNotUsed(argc), char* vtkNotU
     std::cerr << "Unable to get the annotation displayable manager from the displayble manager group!" << std::endl;
     return EXIT_FAILURE;
     }
-  if (adm ==  NULL)
+  if (adm ==  nullptr)
     {
     std::cerr << "Unable to cast the annotation displayable manager from the displayble manager!" << std::endl;
     return EXIT_FAILURE;
@@ -232,7 +232,7 @@ int vtkMRMLAnnotationDisplayableManagerTest1(int vtkNotUsed(argc), char* vtkNotU
       currentDefRenderer = displayableManagerGroup->GetRenderer();
       currentInteractoryStyle->SetCurrentRenderer(displayableManagerGroup->GetRenderer());
       currentDefRenderer = currentInteractoryStyle->GetCurrentRenderer();
-      if (currentDefRenderer == NULL)
+      if (currentDefRenderer == nullptr)
         {
         std::cerr << "ERROR: unable to set the interactor style renderer from the displayble manager group's renderer!" << std::endl;
         return EXIT_FAILURE;
@@ -274,7 +274,7 @@ int vtkMRMLAnnotationDisplayableManagerTest1(int vtkNotUsed(argc), char* vtkNotU
 
     // compare to the current camera node?
     mrmlNode = scene->GetNodeByID("vtkMRMLCameraNode1");
-    vtkMRMLCameraNode *camnode = NULL;
+    vtkMRMLCameraNode *camnode = nullptr;
     if (mrmlNode)
       {
       camnode = vtkMRMLCameraNode::SafeDownCast(mrmlNode);

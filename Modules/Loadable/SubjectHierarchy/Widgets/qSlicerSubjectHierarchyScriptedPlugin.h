@@ -65,7 +65,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyScr
 
 public:
   typedef qSlicerSubjectHierarchyAbstractPlugin Superclass;
-  qSlicerSubjectHierarchyScriptedPlugin(QObject* parent = NULL);
+  qSlicerSubjectHierarchyScriptedPlugin(QObject* parent = nullptr);
   virtual ~qSlicerSubjectHierarchyScriptedPlugin();
 
   Q_INVOKABLE QString pythonSource()const;

@@ -24,7 +24,7 @@
 
 void * ipAllocateData(const int size, const size_t elemsize)
 {
-  void *data = NULL;
+  void *data = nullptr;
 
   if( !(data = malloc(size * elemsize) ) )
     {

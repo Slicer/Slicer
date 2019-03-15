@@ -110,7 +110,7 @@ qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
       {
       this->appendInstantiateErrorString(QString("CLI description: %1").arg(xmlFilePath));
       this->appendInstantiateErrorString("Failed to read Xml Description");
-      return 0;
+      return nullptr;
       }
     // Set callback to allow lazy loading of target symbols.
     module->moduleDescription().SetTargetCallback(
@@ -123,12 +123,12 @@ qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
     xmlDescription = this->resolveXMLModuleDescriptionSymbol();
     if (!this->resolveSymbols(module->moduleDescription()))
       {
-      return 0;
+      return nullptr;
       }
     }
   if (xmlDescription.isEmpty())
     {
-    return 0;
+    return nullptr;
     }
 
   module->setModuleType("SharedObjectModule");
@@ -200,7 +200,7 @@ bool qSlicerCLILoadableModuleFactoryItem::updateLogo(qSlicerCLILoadableModuleFac
     return false;
     }
 
-  const char* logoImage = 0;
+  const char* logoImage = nullptr;
   int width = 0;
   int height = 0;
   int pixelSize = 0;

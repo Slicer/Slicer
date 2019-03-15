@@ -210,8 +210,8 @@ public:
   typename TImage::ConstPointer  ResampleImage(
     InterpolationMethodEnumType interp
       = OptimizedRegistrationMethodType
-        ::LINEAR_INTERPOLATION, const TImage * movingImage = NULL,
-    const MatrixTransformType * matrixTransform = NULL, const BSplineTransformType * bsplineTransform = NULL,
+        ::LINEAR_INTERPOLATION, const TImage * movingImage = nullptr,
+    const MatrixTransformType * matrixTransform = nullptr, const BSplineTransformType * bsplineTransform = nullptr,
     PixelType defaultPixelValue = 0 );
 
   // Returns the moving image resampled into the space of the fixed image

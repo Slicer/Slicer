@@ -47,7 +47,7 @@ public:
   typedef qMRMLWidget Superclass;
 
   /// Constructors
-  explicit qMRMLChartWidget(QWidget* parent = 0);
+  explicit qMRMLChartWidget(QWidget* parent = nullptr);
   virtual ~qMRMLChartWidget();
 
   /// Get the chart node observed by view.

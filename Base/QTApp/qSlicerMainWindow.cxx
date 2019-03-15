@@ -103,13 +103,13 @@ qSlicerMainWindowPrivate::qSlicerMainWindowPrivate(qSlicerMainWindow& object)
   : q_ptr(&object)
 {
 #ifdef Slicer_USE_PYTHONQT
-  this->PythonConsoleDockWidget = 0;
-  this->PythonConsoleToggleViewAction = 0;
+  this->PythonConsoleDockWidget = nullptr;
+  this->PythonConsoleToggleViewAction = nullptr;
 #endif
-  this->ErrorLogWidget = 0;
-  this->ErrorLogToolButton = 0;
-  this->ModuleSelectorToolBar = 0;
-  this->LayoutManager = 0;
+  this->ErrorLogWidget = nullptr;
+  this->ErrorLogToolButton = nullptr;
+  this->ModuleSelectorToolBar = nullptr;
+  this->LayoutManager = nullptr;
   this->WindowInitialShowCompleted = false;
   this->IsClosing = false;
 }
@@ -278,9 +278,9 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   //q->removeToolBar(this->UndoRedoToolBar);
   //q->removeToolBar(this->LayoutToolBar);
   delete this->UndoRedoToolBar;
-  this->UndoRedoToolBar = 0;
+  this->UndoRedoToolBar = nullptr;
   delete this->LayoutToolBar;
-  this->LayoutToolBar = 0;
+  this->LayoutToolBar = nullptr;
 
   // Color of the spacing between views:
   QFrame* layoutFrame = new QFrame(this->CentralWidget);
@@ -788,7 +788,7 @@ qSlicerMainWindow::~qSlicerMainWindow()
   // There is no need to render anything so remove the volumes from the views.
   // It is maybe not the best place to do that but I couldn't think of anywhere
   // else.
-  vtkCollection* sliceLogics = d->LayoutManager ? d->LayoutManager->mrmlSliceLogics() : 0;
+  vtkCollection* sliceLogics = d->LayoutManager ? d->LayoutManager->mrmlSliceLogics() : nullptr;
   for (int i = 0; i < sliceLogics->GetNumberOfItems(); ++i)
     {
     vtkMRMLSliceLogic* sliceLogic = vtkMRMLSliceLogic::SafeDownCast(sliceLogics->GetItemAsObject(i));
@@ -796,9 +796,9 @@ qSlicerMainWindow::~qSlicerMainWindow()
       {
       continue;
       }
-    sliceLogic->GetSliceCompositeNode()->SetReferenceBackgroundVolumeID(0);
-    sliceLogic->GetSliceCompositeNode()->SetReferenceForegroundVolumeID(0);
-    sliceLogic->GetSliceCompositeNode()->SetReferenceLabelVolumeID(0);
+    sliceLogic->GetSliceCompositeNode()->SetReferenceBackgroundVolumeID(nullptr);
+    sliceLogic->GetSliceCompositeNode()->SetReferenceForegroundVolumeID(nullptr);
+    sliceLogic->GetSliceCompositeNode()->SetReferenceLabelVolumeID(nullptr);
     }
 }
 
@@ -1346,7 +1346,7 @@ void qSlicerMainWindow::onNewFileLoaded(const qSlicerIO::IOProperties& filePrope
 void qSlicerMainWindow::on_CopyAction_triggered()
 {
   QWidget* focused = QApplication::focusWidget();
-  if (focused != 0)
+  if (focused != nullptr)
     {
     QApplication::postEvent(focused,
                             new QKeyEvent( QEvent::KeyPress,
@@ -1363,7 +1363,7 @@ void qSlicerMainWindow::on_CopyAction_triggered()
 void qSlicerMainWindow::on_PasteAction_triggered()
 {
   QWidget* focused = QApplication::focusWidget();
-  if (focused != 0)
+  if (focused != nullptr)
     {
     QApplication::postEvent(focused,
                             new QKeyEvent( QEvent::KeyPress,
@@ -1380,7 +1380,7 @@ void qSlicerMainWindow::on_PasteAction_triggered()
 void qSlicerMainWindow::on_CutAction_triggered()
 {
   QWidget* focused = QApplication::focusWidget();
-  if (focused != 0)
+  if (focused != nullptr)
     {
     QApplication::postEvent(focused,
                             new QKeyEvent( QEvent::KeyPress,
@@ -1431,7 +1431,7 @@ void qSlicerMainWindow::onModuleLoaded(const QString& moduleName)
     {
     // find the location of where to add the action.
     // Note: FavoriteModules is sorted
-    QAction* beforeAction = 0; // 0 means insert at end
+    QAction* beforeAction = nullptr; // 0 means insert at end
     foreach(QAction* toolBarAction, d->ModuleToolBar->actions())
       {
       bool isActionAFavoriteModule =

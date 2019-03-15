@@ -30,7 +30,7 @@ qMRMLPlotSeriesPropertiesWidgetPlugin
   Q_OBJECT
 
 public:
-  qMRMLPlotSeriesPropertiesWidgetPlugin(QObject *_parent = 0);
+  qMRMLPlotSeriesPropertiesWidgetPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString domXml() const;

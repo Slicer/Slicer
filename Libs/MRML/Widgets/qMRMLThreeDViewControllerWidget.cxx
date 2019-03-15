@@ -56,12 +56,12 @@ qMRMLThreeDViewControllerWidgetPrivate::qMRMLThreeDViewControllerWidgetPrivate(
   qMRMLThreeDViewControllerWidget& object)
   : Superclass(object)
 {
-  this->ViewLogic = 0;
-  this->ViewLogics = 0;
-  this->ViewNode = 0;
-  this->CameraNode = 0;
-  this->ThreeDView = 0;
-  this->CenterToolButton = 0;
+  this->ViewLogic = nullptr;
+  this->ViewLogics = nullptr;
+  this->ViewNode = nullptr;
+  this->CameraNode = nullptr;
+  this->ThreeDView = nullptr;
+  this->CenterToolButton = nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -271,9 +271,9 @@ vtkMRMLViewLogic *qMRMLThreeDViewControllerWidgetPrivate::viewNodeLogic(vtkMRMLV
 {
   if (!this->ViewLogics)
     {
-    return NULL;
+    return nullptr;
     }
-  vtkMRMLViewLogic* logic = NULL;
+  vtkMRMLViewLogic* logic = nullptr;
   vtkCollectionSimpleIterator it;
   for (this->ViewLogics->InitTraversal(it);(logic = static_cast<vtkMRMLViewLogic*>(
                                                this->ViewLogics->GetNextItemAsObject(it)));)
@@ -283,7 +283,7 @@ vtkMRMLViewLogic *qMRMLThreeDViewControllerWidgetPrivate::viewNodeLogic(vtkMRMLV
       return logic;
       }
     }
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------
@@ -308,7 +308,7 @@ void qMRMLThreeDViewControllerWidget::setThreeDView(qMRMLThreeDView* view)
 {
   Q_D(qMRMLThreeDViewControllerWidget);
   d->ThreeDView = view;
-  if(d->ThreeDView != 0)
+  if(d->ThreeDView != nullptr)
     {
     d->actionSwitchToQuadBufferStereo->setEnabled(
           d->ThreeDView->renderWindow()->GetStereoCapableWindow());
@@ -370,7 +370,7 @@ void qMRMLThreeDViewControllerWidget::setViewLink(bool linked)
     return;
     }
 
-  vtkMRMLViewNode* viewNode = 0;
+  vtkMRMLViewNode* viewNode = nullptr;
   for(viewNodes->InitTraversal();
       (viewNode = vtkMRMLViewNode::SafeDownCast(
         viewNodes->GetNextItemAsObject()));)
@@ -393,7 +393,7 @@ void qMRMLThreeDViewControllerWidget::updateWidgetFromMRMLView()
     << d->OrientationMarkerButton; // RulerButton enable state is not set here (it depends on render mode)
   foreach(QWidget* w, widgets)
     {
-    w->setEnabled(d->ViewNode != 0);
+    w->setEnabled(d->ViewNode != nullptr);
     }
 
   if (!d->ViewNode)

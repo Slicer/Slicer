@@ -39,7 +39,7 @@ int vtkSlicerDoubleArraysLogicAddFileTest( int argc, char * argv[] )
 {
   bool res = true;
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  res = testAddEmptyFile(0) && res;
+  res = testAddEmptyFile(nullptr) && res;
   res = testAddEmptyFile("") && res;
   res = testAddEmptyFile("non existing file.badextension") && res;
   res = testAddEmptyFile("non existing file.vtk") && res;
@@ -57,10 +57,10 @@ bool testAddEmptyFile(const char * filePath)
 {
   vtkNew<vtkSlicerDoubleArraysLogic> doubleArraysLogic;
   vtkMRMLDoubleArrayNode* doubleArray = doubleArraysLogic->AddDoubleArray(filePath);
-  if (doubleArray != 0)
+  if (doubleArray != nullptr)
     {
     std::cerr << "Line " << __LINE__
-              << ": Adding an invalid file (" << (filePath ? filePath : 0)
+              << ": Adding an invalid file (" << (filePath ? filePath : nullptr)
               << ") shall not return a valid doubleArray"
               << std::endl;
     return false;
@@ -72,11 +72,11 @@ bool testAddEmptyFile(const char * filePath)
 
   doubleArray = doubleArraysLogic->AddDoubleArray(filePath);
 
-  if (doubleArray != 0 ||
+  if (doubleArray != nullptr ||
       scene->GetNumberOfNodes() != nodeCount)
     {
     std::cerr << "Line " << __LINE__
-              << ": Adding an invalid file ("<< (filePath ? filePath : 0)
+              << ": Adding an invalid file ("<< (filePath ? filePath : nullptr)
               << ") shall not add nodes in scene. "
               << scene->GetNumberOfNodes() << " vs " << nodeCount
               << std::endl;
@@ -91,7 +91,7 @@ bool testAddFile(const char * filePath)
 {
   vtkNew<vtkSlicerDoubleArraysLogic> doubleArraysLogic;
   vtkMRMLDoubleArrayNode* doubleArray = doubleArraysLogic->AddDoubleArray(filePath);
-  if (doubleArray != 0)
+  if (doubleArray != nullptr)
     {
     std::cerr << "Line " << __LINE__
               << ": File can't be loaded if no scene is set."
@@ -104,7 +104,7 @@ bool testAddFile(const char * filePath)
   int nodeCount = scene->GetNumberOfNodes();
   doubleArray = doubleArraysLogic->AddDoubleArray(filePath);
 
-  if (doubleArray == 0 ||
+  if (doubleArray == nullptr ||
       scene->GetNumberOfNodes() != nodeCount + 2)
     {
     std::cerr << "Line " << __LINE__

@@ -214,7 +214,7 @@ public:
   void Reset(bool resetRotation,
              bool resetTranslation = true,
              bool resetDistance = true,
-             vtkRenderer* renderer = 0);
+             vtkRenderer* renderer = nullptr);
 
   /// Get/Set a flag indicating whether this node is actively being
   /// manipulated (usually) by a user interface. This flag is used by

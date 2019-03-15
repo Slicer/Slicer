@@ -36,7 +36,7 @@ class Q_SLICER_QTMODULES_MARKUPS_EXPORT qSlicerMarkupsModule :
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerMarkupsModule(QObject *parent=0);
+  explicit qSlicerMarkupsModule(QObject *parent=nullptr);
   virtual ~qSlicerMarkupsModule();
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);

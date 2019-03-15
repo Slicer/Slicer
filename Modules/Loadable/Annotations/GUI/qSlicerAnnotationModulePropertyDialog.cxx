@@ -38,7 +38,7 @@
 //------------------------------------------------------------------------------
 qSlicerAnnotationModulePropertyDialog::~qSlicerAnnotationModulePropertyDialog()
 {
-  this->m_logic = 0;
+  this->m_logic = nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -326,7 +326,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
 
 
   vtkMRMLAnnotationControlPointsNode *pointsNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(mrmlNode);
-  vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = NULL;
+  vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = nullptr;
   if (pointsNode)
     {
     // get the point display node
@@ -424,7 +424,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
   /// Lines
   // get the line version of the node
   vtkMRMLAnnotationLinesNode *linesNode = vtkMRMLAnnotationLinesNode::SafeDownCast(mrmlNode);
-  vtkMRMLAnnotationLineDisplayNode *lineDisplayNode = NULL;
+  vtkMRMLAnnotationLineDisplayNode *lineDisplayNode = nullptr;
   if (linesNode)
     {
     lineDisplayNode = linesNode->GetAnnotationLineDisplayNode();
@@ -1003,7 +1003,7 @@ void qSlicerAnnotationModulePropertyDialog::onVisibleInvisibleButtonClicked()
 //------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onPointsTableWidgetChanged(QTableWidgetItem *tableItem)
 {
-  if (tableItem == NULL)
+  if (tableItem == nullptr)
     {
     return;
     }
@@ -1444,7 +1444,7 @@ void qSlicerAnnotationModulePropertyDialog::getAllColor(QColor &qcolor)
     return;
     }
   int numDisplayNodes = displayableNode->GetNumberOfDisplayNodes();
-  double *firstColor = NULL;
+  double *firstColor = nullptr;
   bool allTheSame = true;
   for (int i = 0; i < numDisplayNodes; ++i)
     {

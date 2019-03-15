@@ -32,16 +32,16 @@ vtkCxxSetObjectMacro(vtkMRMLScalarVolumeNode, VoxelValueUnits, vtkCodedEntry);
 
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode::vtkMRMLScalarVolumeNode()
-: VoxelValueQuantity(NULL)
-, VoxelValueUnits(NULL)
+: VoxelValueQuantity(nullptr)
+, VoxelValueUnits(nullptr)
 {
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode::~vtkMRMLScalarVolumeNode()
 {
-  this->SetVoxelValueQuantity(NULL);
-  this->SetVoxelValueUnits(NULL);
+  this->SetVoxelValueQuantity(nullptr);
+  this->SetVoxelValueUnits(nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -69,7 +69,7 @@ void vtkMRMLScalarVolumeNode::ReadXMLAttributes(const char** atts)
   // This allows scene reader to detect that this node has to be converted to a segmentation node.
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -153,10 +153,10 @@ void vtkMRMLScalarVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
 vtkMRMLStorageNode* vtkMRMLScalarVolumeNode::CreateDefaultStorageNode()
 {
   vtkMRMLScene* scene = this->GetScene();
-  if (scene == NULL)
+  if (scene == nullptr)
     {
     vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
-    return NULL;
+    return nullptr;
     }
   return vtkMRMLStorageNode::SafeDownCast(
     scene->CreateNodeByClass("vtkMRMLVolumeArchetypeStorageNode"));
@@ -165,12 +165,12 @@ vtkMRMLStorageNode* vtkMRMLScalarVolumeNode::CreateDefaultStorageNode()
 //----------------------------------------------------------------------------
 void vtkMRMLScalarVolumeNode::CreateDefaultDisplayNodes()
 {
-  if (vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->GetDisplayNode())!=NULL)
+  if (vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->GetDisplayNode())!=nullptr)
     {
     // display node already exists
     return;
     }
-  if (this->GetScene()==NULL)
+  if (this->GetScene()==nullptr)
     {
     vtkErrorMacro("vtkMRMLScalarVolumeNode::CreateDefaultDisplayNodes failed: scene is invalid");
     return;

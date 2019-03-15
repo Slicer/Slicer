@@ -168,7 +168,7 @@ vtkAnnotationROIRepresentation::vtkAnnotationROIRepresentation()
   //this->HexPicker->AddPickList(HexActor);
   //this->HexPicker->PickFromListOn();
 
-  this->CurrentHandle = NULL;
+  this->CurrentHandle = nullptr;
 
   // Internal data members for performance
   this->Transform = vtkTransform::New();
@@ -222,7 +222,7 @@ vtkAnnotationROIRepresentation::~vtkAnnotationROIRepresentation()
  for(int i=0;i<NUMBER_HANDLES;i++)
   {
       this->HandleProperties[i]->Delete();
-      this->HandleProperties[i]=NULL;
+      this->HandleProperties[i]=nullptr;
   }
 
   this->SelectedHandleProperty->Delete();
@@ -277,7 +277,7 @@ void vtkAnnotationROIRepresentation::StartWidgetInteraction(double e[2])
 void vtkAnnotationROIRepresentation::WidgetInteraction(double e[2])
 {
   // Convert events to appropriate coordinate systems
-  vtkCamera *camera = this->Renderer->IsActiveCameraCreated() ? this->Renderer->GetActiveCamera() : NULL;
+  vtkCamera *camera = this->Renderer->IsActiveCameraCreated() ? this->Renderer->GetActiveCamera() : nullptr;
   if ( !camera )
     {
     return;
@@ -1037,11 +1037,11 @@ int vtkAnnotationROIRepresentation::ComputeInteractionState(int X, int Y, int vt
 
   vtkAssemblyPath *path;
   // Try and pick a handle first
-  this->LastPicker = NULL;
-  this->CurrentHandle = NULL;
+  this->LastPicker = nullptr;
+  this->CurrentHandle = nullptr;
   this->HandlePicker->Pick(X,Y,0.0,this->Renderer);
   path = this->HandlePicker->GetPath();
-  if ( path != NULL )
+  if ( path != nullptr )
     {
     this->ValidPick = 1;
     this->LastPicker = this->HandlePicker;
@@ -1115,7 +1115,7 @@ void vtkAnnotationROIRepresentation::SetInteractionState(int state)
       break;
     default:
       this->HighlightOutline(0);
-      this->HighlightHandle(NULL);
+      this->HighlightHandle(nullptr);
       this->HighlightFace(-1);
     }
 }

@@ -29,7 +29,7 @@ class Q_SLICER_BASE_QTCLI_PLUGINS_EXPORT qSlicerCLIProgressBarPlugin
 {
   Q_OBJECT
 public:
-  qSlicerCLIProgressBarPlugin(QObject* parent = 0);
+  qSlicerCLIProgressBarPlugin(QObject* parent = nullptr);
 
   QWidget *createWidget(QWidget* parent);
   QString domXml() const;

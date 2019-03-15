@@ -104,7 +104,7 @@ bool qSlicerFiducialsReader::load(const IOProperties& properties)
   Q_ASSERT(properties.contains("fileName"));
   QString fileName = properties["fileName"].toString();
 
-  if (d->AnnotationLogic.GetPointer() == 0)
+  if (d->AnnotationLogic.GetPointer() == nullptr)
     {
     return false;
     }
@@ -120,7 +120,7 @@ bool qSlicerFiducialsReader::load(const IOProperties& properties)
     while (ptr)
       {
       nodeIDList.append(ptr);
-      ptr = strtok(NULL, ",");
+      ptr = strtok(nullptr, ",");
       }
     this->setLoadedNodes(nodeIDList);
     }
@@ -130,7 +130,7 @@ bool qSlicerFiducialsReader::load(const IOProperties& properties)
     return false;
     }
 
-  return nodeIDs != 0;
+  return nodeIDs != nullptr;
 }
 
 // TODO: add the save() method. Use vtkSlicerTransformLogic::SaveTransform()

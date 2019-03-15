@@ -28,12 +28,12 @@ public:
   virtual QString title()const { return "A Title";}
   virtual qSlicerAbstractModuleRepresentation* createWidgetRepresentation()
   {
-    return 0;
+    return nullptr;
   }
 
   virtual vtkMRMLAbstractLogic* createLogic()
   {
-    return 0;
+    return nullptr;
   }
 protected:
   virtual void setup () {}

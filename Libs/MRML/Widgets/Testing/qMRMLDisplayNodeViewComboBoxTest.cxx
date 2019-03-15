@@ -76,7 +76,7 @@ void qMRMLDisplayNodeViewComboBoxTester::init()
 // ----------------------------------------------------------------------------
 void qMRMLDisplayNodeViewComboBoxTester::cleanup()
 {
-  if (this->ComboBox == 0)
+  if (this->ComboBox == nullptr)
     {
     return;
     }
@@ -85,15 +85,15 @@ void qMRMLDisplayNodeViewComboBoxTester::cleanup()
     this->ComboBox->mrmlScene()->Delete();
     }
   delete this->ComboBox;
-  this->ComboBox = 0;
+  this->ComboBox = nullptr;
 }
 
 // ----------------------------------------------------------------------------
 vtkMRMLNode* qMRMLDisplayNodeViewComboBoxTester::node(int index)
 {
-  if (this->ComboBox == 0)
+  if (this->ComboBox == nullptr)
     {
-    return 0;
+    return nullptr;
     }
   vtkMRMLScene* scene = this->ComboBox->mrmlScene();
   return scene->GetNthNodeByClass(index, "vtkMRMLAbstractViewNode");
@@ -107,7 +107,7 @@ void qMRMLDisplayNodeViewComboBoxTester::testDefaults()
   QCOMPARE(comboBox.checkedViewNodes().count(), 0);
   QCOMPARE(comboBox.allChecked(), true);
   QCOMPARE(comboBox.noneChecked(), true);
-  QCOMPARE(comboBox.checkState(0), Qt::Unchecked);
+  QCOMPARE(comboBox.checkState(nullptr), Qt::Unchecked);
 }
 
 // ----------------------------------------------------------------------------
@@ -180,7 +180,7 @@ void qMRMLDisplayNodeViewComboBoxTester::testAddNode()
 void qMRMLDisplayNodeViewComboBoxTester::testResetScene()
 {
   vtkMRMLScene* scene = this->ComboBox->mrmlScene();
-  this->ComboBox->setMRMLScene(0);
+  this->ComboBox->setMRMLScene(nullptr);
   QCOMPARE(this->ComboBox->checkedViewNodes().count(), 0);
   scene->Delete();
 }

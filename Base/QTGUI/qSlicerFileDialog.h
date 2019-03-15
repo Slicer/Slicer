@@ -48,7 +48,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerFileDialog : public QObject
 
 public:
   typedef QObject Superclass;
-  qSlicerFileDialog(QObject* parent =0);
+  qSlicerFileDialog(QObject* parent =nullptr);
   virtual ~qSlicerFileDialog();
 
   virtual qSlicerIO::IOFileType fileType()const = 0;
@@ -113,7 +113,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerStandardFileDialog
   Q_PROPERTY(IOAction action READ action WRITE setAction)
 
 public:
-  qSlicerStandardFileDialog(QObject* parent=0);
+  qSlicerStandardFileDialog(QObject* parent=nullptr);
   virtual ~qSlicerStandardFileDialog();
 
   /// Reimplemented to return the fileType set by setFileType()

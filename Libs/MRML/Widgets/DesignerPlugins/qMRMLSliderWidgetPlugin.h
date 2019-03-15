@@ -29,7 +29,7 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLSliderWidgetPlugin
   Q_OBJECT
 
 public:
-  qMRMLSliderWidgetPlugin(QObject *_parent = 0);
+  qMRMLSliderWidgetPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;

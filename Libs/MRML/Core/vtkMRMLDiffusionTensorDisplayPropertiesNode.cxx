@@ -61,21 +61,21 @@ vtkMRMLDiffusionTensorDisplayPropertiesNode::vtkMRMLDiffusionTensorDisplayProper
   this->SuperquadricGlyphPhiResolution = 6; // was 12
 
   // VTK Objects
-  this->GlyphConnection = NULL;
+  this->GlyphConnection = nullptr;
   this->UpdateGlyphSource();
 
   // set the type to user
   this->SetTypeToUser();
 
   // This node does not have a valid LUT
-  this->SetLookupTable(NULL);
+  this->SetLookupTable(nullptr);
 
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionTensorDisplayPropertiesNode::~vtkMRMLDiffusionTensorDisplayPropertiesNode()
 {
-  this->SetGlyphConnection(0);
+  this->SetGlyphConnection(nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -109,7 +109,7 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::ReadXMLAttributes(const char**
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
   {
       attName = *(atts++);
       attValue = *(atts++);
@@ -256,17 +256,17 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode
     }
 
   vtkAlgorithm* oldGlyphAlgorithm = this->GlyphConnection ?
-    this->GlyphConnection->GetProducer() : 0;
+    this->GlyphConnection->GetProducer() : nullptr;
 
   this->GlyphConnection = newGlyphConnection;
 
   vtkAlgorithm* glyphAlgorithm = this->GlyphConnection ?
-    this->GlyphConnection->GetProducer() : 0;
-  if (glyphAlgorithm != NULL)
+    this->GlyphConnection->GetProducer() : nullptr;
+  if (glyphAlgorithm != nullptr)
     {
     glyphAlgorithm->Register(this);
     }
-  if (oldGlyphAlgorithm != NULL)
+  if (oldGlyphAlgorithm != nullptr)
     {
     oldGlyphAlgorithm->UnRegister(this);
     }
@@ -278,7 +278,7 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::UpdateGlyphSource ( )
   vtkDebugMacro("Get Glyph Source");
 
   // Get rid of any old glyph source
-  this->SetGlyphConnection(0);
+  this->SetGlyphConnection(nullptr);
 
   // Create a new glyph source according to current settings
 

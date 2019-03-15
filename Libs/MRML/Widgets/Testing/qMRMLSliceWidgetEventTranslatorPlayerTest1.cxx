@@ -102,7 +102,7 @@ int qMRMLSliceWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
   scene->SetURL(argv[2]);
   scene->Connect();
 
-  vtkMRMLSliceNode* redSliceNode = 0;
+  vtkMRMLSliceNode* redSliceNode = nullptr;
   // search for a red slice node
   std::vector<vtkMRMLNode*> sliceNodes;
   scene->GetNodesByClass("vtkMRMLSliceNode", sliceNodes);

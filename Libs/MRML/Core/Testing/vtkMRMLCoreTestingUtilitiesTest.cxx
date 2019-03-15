@@ -70,7 +70,7 @@ vtkStandardNewMacro(vtkMRMLCoreTestingUtilitiesNode);
 bool TestCheckNodeInSceneByID()
 {
   if (CheckNodeInSceneByID(
-        __LINE__, 0, 0, 0))
+        __LINE__, nullptr, nullptr, nullptr))
     {
     return false;
     }
@@ -79,14 +79,14 @@ bool TestCheckNodeInSceneByID()
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLCoreTestingUtilitiesNode>::New());
 
   if (CheckNodeInSceneByID(
-        __LINE__, scene.GetPointer(), 0, 0))
+        __LINE__, scene.GetPointer(), nullptr, nullptr))
     {
     return false;
     }
 
   if (CheckNodeInSceneByID(
         __LINE__, scene.GetPointer(),
-        "vtkMRMLCoreTestingUtilitiesNode", 0))
+        "vtkMRMLCoreTestingUtilitiesNode", nullptr))
     {
     return false;
     }
@@ -116,7 +116,7 @@ bool TestCheckNodeInSceneByID()
 bool TestCheckNodeIdAndName()
 {
   if (CheckNodeIdAndName(
-        __LINE__, 0, 0, 0))
+        __LINE__, nullptr, nullptr, nullptr))
     {
     return false;
     }
@@ -124,7 +124,7 @@ bool TestCheckNodeIdAndName()
   vtkNew<vtkMRMLCoreTestingUtilitiesNode> node1;
 
   if (!CheckNodeIdAndName(
-        __LINE__, node1.GetPointer(), 0, 0))
+        __LINE__, node1.GetPointer(), nullptr, nullptr))
     {
     return false;
     }

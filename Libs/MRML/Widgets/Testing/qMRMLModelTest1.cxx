@@ -57,7 +57,7 @@ int qMRMLModelTest1(int argc, char * argv [] )
     ctkModelTester tester(&model);
     tester.setTestDataEnabled(false);
 
-    qMRMLSceneFactoryWidget sceneFactory(0);
+    qMRMLSceneFactoryWidget sceneFactory(nullptr);
     sceneFactory.generateScene();
 
     model.setMRMLScene(sceneFactory.mrmlScene());

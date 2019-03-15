@@ -198,7 +198,7 @@ vtkTypeBool vtkSlicerLineRepresentation2D::HasTranslucentPolygonalGeometry()
 //----------------------------------------------------------------------
 double *vtkSlicerLineRepresentation2D::GetBounds()
 {
-  return NULL;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------

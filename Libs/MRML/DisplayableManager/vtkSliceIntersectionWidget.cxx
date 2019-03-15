@@ -74,7 +74,7 @@ vtkSliceIntersectionWidget::vtkSliceIntersectionWidget()
 
   this->LastForegroundOpacity = 0.;
   this->LastLabelOpacity = 0.;
-  this->StartActionSegmentationDisplayNode = 0;
+  this->StartActionSegmentationDisplayNode = nullptr;
 
   this->ModifierKeyPressedSinceLastMouseButtonRelease = true;
 
@@ -88,7 +88,7 @@ vtkSliceIntersectionWidget::vtkSliceIntersectionWidget()
 //----------------------------------------------------------------------------------
 vtkSliceIntersectionWidget::~vtkSliceIntersectionWidget()
 {
-  this->SetMRMLApplicationLogic(NULL);
+  this->SetMRMLApplicationLogic(nullptr);
 }
 
 //----------------------------------------------------------------------
@@ -325,7 +325,7 @@ bool vtkSliceIntersectionWidget::ProcessInteractionEvent(vtkMRMLInteractionEvent
       break;
     case WidgetEventToggleLabelOpacity:
       {
-      this->StartActionSegmentationDisplayNode = NULL;
+      this->StartActionSegmentationDisplayNode = nullptr;
       double opacity = this->GetLabelOpacity();
       if (opacity != 0.0)
         {
@@ -498,8 +498,8 @@ void vtkSliceIntersectionWidget::SetMRMLApplicationLogic(vtkMRMLApplicationLogic
     return;
     }
   this->Superclass::SetMRMLApplicationLogic(appLogic);
-  vtkCollection* sliceLogics = NULL;
-  this->SliceLogic = NULL;
+  vtkCollection* sliceLogics = nullptr;
+  this->SliceLogic = nullptr;
   if (appLogic)
     {
     sliceLogics = appLogic->GetSliceLogics();
@@ -535,7 +535,7 @@ void vtkSliceIntersectionWidget::SliceLogicsModifiedCallback(vtkObject* caller, 
     {
     rep->UpdateIntersectingSliceNodes();
     }
-  self->SliceLogic = NULL;
+  self->SliceLogic = nullptr;
   if (self->GetMRMLApplicationLogic())
     {
     self->SliceLogic = self->GetMRMLApplicationLogic()->GetSliceLogic(self->GetSliceNode());
@@ -553,7 +553,7 @@ void vtkSliceIntersectionWidget::SetSliceNode(vtkMRMLSliceNode* sliceNode)
   this->SliceNode = sliceNode;
 
   // Update slice logic
-  this->SliceLogic = NULL;
+  this->SliceLogic = nullptr;
   if (this->GetMRMLApplicationLogic())
     {
     this->SliceLogic = this->GetMRMLApplicationLogic()->GetSliceLogic(this->SliceNode);
@@ -671,7 +671,7 @@ bool vtkSliceIntersectionWidget::ProcessBlend(vtkMRMLInteractionEventData* event
     this->LastForegroundOpacity + offsetY;
   newForegroundOpacity = std::min(std::max(newForegroundOpacity, 0.), 1.);
   vtkMRMLSliceCompositeNode *sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
-  if (sliceCompositeNode->GetForegroundVolumeID() != 0)
+  if (sliceCompositeNode->GetForegroundVolumeID() != nullptr)
     {
     sliceCompositeNode->SetForegroundOpacity(newForegroundOpacity);
     this->LastForegroundOpacity = newForegroundOpacity;
@@ -680,7 +680,7 @@ bool vtkSliceIntersectionWidget::ProcessBlend(vtkMRMLInteractionEventData* event
   double offsetX = (2.0 * deltaX) / windowMinSize;
   double newLabelOpacity = this->LastLabelOpacity + offsetX;
   newLabelOpacity = std::min(std::max(newLabelOpacity, 0.), 1.);
-  if (sliceCompositeNode->GetLabelVolumeID() != 0 || this->StartActionSegmentationDisplayNode != 0)
+  if (sliceCompositeNode->GetLabelVolumeID() != nullptr || this->StartActionSegmentationDisplayNode != nullptr)
     {
     this->SetLabelOpacity(newLabelOpacity);
     this->LastLabelOpacity = newLabelOpacity;
@@ -755,7 +755,7 @@ vtkMRMLSegmentationDisplayNode* vtkSliceIntersectionWidget::GetVisibleSegmentati
       return displayNode;
     }
   }
-  return NULL;
+  return nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -807,7 +807,7 @@ void vtkSliceIntersectionWidget::CycleVolumeLayer(int layer, int direction)
   // first, find the current volume index for the given layer (can be NULL)
   vtkMRMLScene *scene = this->SliceLogic->GetMRMLScene();
   vtkMRMLSliceCompositeNode *sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
-  char *volumeID = NULL;
+  char *volumeID = nullptr;
   switch (layer)
     {
     case 0: { volumeID = sliceCompositeNode->GetBackgroundVolumeID(); } break;
@@ -956,7 +956,7 @@ bool vtkSliceIntersectionWidget::VolumeWindowLevelEditable(const char* volumeNod
     }
   vtkMRMLVolumeNode* volumeNode =
     vtkMRMLVolumeNode::SafeDownCast(scene->GetNodeByID(volumeNodeID));
-  if (volumeNode == NULL)
+  if (volumeNode == nullptr)
     {
     return false;
     }

@@ -75,7 +75,7 @@ class Q_SLICER_MODULE_ANNOTATIONS_WIDGETS_EXPORT qMRMLSceneAnnotationModel
 
 public:
   typedef qMRMLSceneDisplayableModel Superclass;
-  qMRMLSceneAnnotationModel(QObject *parent=0);
+  qMRMLSceneAnnotationModel(QObject *parent=nullptr);
   virtual ~qMRMLSceneAnnotationModel();
 
   // Register the logic
@@ -127,7 +127,7 @@ public:
 
 protected:
   qMRMLSceneAnnotationModel(qMRMLSceneAnnotationModelPrivate* pimpl,
-                             QObject *parent=0);
+                             QObject *parent=nullptr);
 
   virtual void updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
 

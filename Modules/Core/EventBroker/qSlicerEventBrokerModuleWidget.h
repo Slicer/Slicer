@@ -39,7 +39,7 @@ class Q_SLICER_MODULES_CORE_EXPORT qSlicerEventBrokerModuleWidget :
 public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerEventBrokerModuleWidget(QWidget *parent=0);
+  qSlicerEventBrokerModuleWidget(QWidget *parent=nullptr);
   virtual ~qSlicerEventBrokerModuleWidget();
 
 protected slots:

@@ -153,13 +153,13 @@ void vtkMRMLAbstractThreeDViewDisplayableManager::PassThroughInteractorStyleEven
       break;
 
     case vtkCommand::DeleteEvent:
-      interactorStyle->SetInteractor(0);
+      interactorStyle->SetInteractor(nullptr);
       break;
 
     case vtkCommand::TDxMotionEvent:
     case vtkCommand::TDxButtonPressEvent:
     case vtkCommand::TDxButtonReleaseEvent:
-      interactorStyle->DelegateTDxEvent(eventid,0);
+      interactorStyle->DelegateTDxEvent(eventid,nullptr);
       break;
     }
 

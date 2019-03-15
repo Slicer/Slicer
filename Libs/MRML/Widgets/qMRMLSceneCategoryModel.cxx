@@ -104,7 +104,7 @@ QStandardItem* qMRMLSceneCategoryModel::insertCategory(const QString& category, 
   categoryItems << new QStandardItem;
   this->updateItemFromCategory(categoryItems[0], category);
   categoryItems << new QStandardItem;
-  categoryItems[1]->setFlags(0);
+  categoryItems[1]->setFlags(nullptr);
 
   this->mrmlSceneItem()->insertRow(row, categoryItems);
   Q_ASSERT(this->mrmlSceneItem()->columnCount() == 2);
@@ -160,7 +160,7 @@ void qMRMLSceneCategoryModel::updateItemFromNode(QStandardItem* item, vtkMRMLNod
   QStandardItem* newParentItem = this->itemFromCategory(category);
   // if the item has no parent, then it means it hasn't been put into the scene yet.
   // and it will do it automatically.
-  if (parentItem != 0 && (parentItem != newParentItem))
+  if (parentItem != nullptr && (parentItem != newParentItem))
     {
     QList<QStandardItem*> children = parentItem->takeRow(item->row());
     //int min = this->preItems(newParentItem).count();
@@ -182,7 +182,7 @@ void qMRMLSceneCategoryModel::updateNodeFromItem(vtkMRMLNode* node, QStandardIte
   QStandardItem* parentItem = item->parent();
   for (int i = 0; i < parentItem->columnCount(); ++i)
     {
-    if (parentItem->child(item->row(), i) == 0)
+    if (parentItem->child(item->row(), i) == nullptr)
       {
       return;
       }
@@ -190,7 +190,7 @@ void qMRMLSceneCategoryModel::updateNodeFromItem(vtkMRMLNode* node, QStandardIte
   QString category =
     (parentItem != this->mrmlSceneItem()) ? parentItem->text() : QString();
   // If the attribute has never been set, don't set it with an empty string.
-  if (!(node->GetAttribute("Category") == 0 &&
+  if (!(node->GetAttribute("Category") == nullptr &&
         category.isEmpty()))
     {
     node->SetAttribute("Category", category.toLatin1());

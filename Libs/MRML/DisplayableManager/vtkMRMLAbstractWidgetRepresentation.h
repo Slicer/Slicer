@@ -107,7 +107,7 @@ public:
   * if event is non-zero then a specific update (faster, smaller scope) is performed instead
   * of a full update.
   */
-  virtual void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = NULL);
+  virtual void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = nullptr);
 
   /// Specify tolerance for performing pick operations of points
   /// (see ActivateNode).

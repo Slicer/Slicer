@@ -40,7 +40,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWidget : public QWidget, public virtual 
   Q_OBJECT
   QVTK_OBJECT
 public:
-  qSlicerWidget(QWidget *parent=0, Qt::WindowFlags f=0);
+  qSlicerWidget(QWidget *parent=nullptr, Qt::WindowFlags f=nullptr);
   virtual ~qSlicerWidget();
 
 public slots:

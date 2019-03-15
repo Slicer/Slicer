@@ -58,7 +58,7 @@ public:
   typedef qMRMLWidget Superclass;
 
   /// Constructor
-  explicit qMRMLSegmentSelectorWidget(QWidget* parent = 0);
+  explicit qMRMLSegmentSelectorWidget(QWidget* parent = nullptr);
   /// Destructor
   virtual ~qMRMLSegmentSelectorWidget();
 

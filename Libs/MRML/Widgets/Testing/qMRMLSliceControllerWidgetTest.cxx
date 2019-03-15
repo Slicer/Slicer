@@ -82,7 +82,7 @@ void qMRMLSliceControllerWidgetTester::init()
   vtkNew<vtkMRMLColorLogic> colorLogic;
   colorLogic->SetMRMLScene(this->MRMLScene);
   // need to set it back to NULL, otherwise the logic removes the nodes that it added when it is destructed
-  colorLogic->SetMRMLScene(NULL);
+  colorLogic->SetMRMLScene(nullptr);
 
   vtkNew<vtkMRMLSliceNode> sliceNode;
   sliceNode->SetLayoutName("Red");
@@ -122,7 +122,7 @@ void qMRMLSliceControllerWidgetTester::cleanup()
 void qMRMLSliceControllerWidgetTester::testDefaults()
 {
   qMRMLSliceControllerWidget sliceControllerWidget;
-  void* nullPtr = 0;
+  void* nullPtr = nullptr;
   QCOMPARE(reinterpret_cast<void*>(sliceControllerWidget.mrmlScene()), nullPtr);
   QCOMPARE(reinterpret_cast<void*>(sliceControllerWidget.mrmlSliceNode()), nullPtr);
 
@@ -132,7 +132,7 @@ void qMRMLSliceControllerWidgetTester::testDefaults()
   QCOMPARE(sliceControllerWidget.sliceViewLabel(), QString());
   QCOMPARE(sliceControllerWidget.sliceViewColor(), QColor());
 
-  QVERIFY(sliceControllerWidget.sliceLogic() != 0);
+  QVERIFY(sliceControllerWidget.sliceLogic() != nullptr);
   QCOMPARE(sliceControllerWidget.imageDataConnection(), nullPtr);
   QCOMPARE(sliceControllerWidget.mrmlSliceCompositeNode(), nullPtr);
 
@@ -145,7 +145,7 @@ void qMRMLSliceControllerWidgetTester::testDefaults()
 void qMRMLSliceControllerWidgetTester::testSetMRMLSliceNode()
 {
   qMRMLSliceControllerWidget sliceControllerWidget;
-  void* nullPtr = 0;
+  void* nullPtr = nullptr;
 
   sliceControllerWidget.setSliceViewLabel("R");
   QCOMPARE(sliceControllerWidget.sliceViewLabel(), QString(""));
@@ -157,7 +157,7 @@ void qMRMLSliceControllerWidgetTester::testSetMRMLSliceNode()
 
   QCOMPARE(sliceControllerWidget.mrmlScene(), this->MRMLScene);
   QCOMPARE(sliceControllerWidget.mrmlSliceNode(), this->MRMLSliceNode);
-  QVERIFY(sliceControllerWidget.sliceLogic() != 0);
+  QVERIFY(sliceControllerWidget.sliceLogic() != nullptr);
   QCOMPARE(sliceControllerWidget.imageDataConnection(), nullPtr);
 
   QCOMPARE(sliceControllerWidget.mrmlSliceCompositeNode()->GetBackgroundVolumeID(), nullPtr);
@@ -184,7 +184,7 @@ void qMRMLSliceControllerWidgetTester::testSetBackgroundVolume()
 
   QFETCH(QString, volumeNodeID);
   vtkMRMLNode* volumeNode = this->MRMLScene->GetNodeByID(volumeNodeID.toLatin1());
-  sliceControllerWidget.mrmlSliceCompositeNode()->SetBackgroundVolumeID(volumeNode ? volumeNode->GetID() : 0);
+  sliceControllerWidget.mrmlSliceCompositeNode()->SetBackgroundVolumeID(volumeNode ? volumeNode->GetID() : nullptr);
 
   QFETCH(QString, expectedVolumeNodeID);
   qMRMLNodeComboBox* comboBox =
@@ -216,7 +216,7 @@ void qMRMLSliceControllerWidgetTester::testSetForegroundVolume()
 
   QFETCH(QString, volumeNodeID);
   vtkMRMLNode* volumeNode = this->MRMLScene->GetNodeByID(volumeNodeID.toLatin1());
-  sliceControllerWidget.mrmlSliceCompositeNode()->SetForegroundVolumeID(volumeNode ? volumeNode->GetID() : 0);
+  sliceControllerWidget.mrmlSliceCompositeNode()->SetForegroundVolumeID(volumeNode ? volumeNode->GetID() : nullptr);
 
   QFETCH(QString, expectedVolumeNodeID);
   qMRMLNodeComboBox* comboBox =
@@ -248,7 +248,7 @@ void qMRMLSliceControllerWidgetTester::testSetLabelVolume()
 
   QFETCH(QString, volumeNodeID);
   vtkMRMLNode* volumeNode = this->MRMLScene->GetNodeByID(volumeNodeID.toLatin1());
-  sliceControllerWidget.mrmlSliceCompositeNode()->SetLabelVolumeID(volumeNode ? volumeNode->GetID() : 0);
+  sliceControllerWidget.mrmlSliceCompositeNode()->SetLabelVolumeID(volumeNode ? volumeNode->GetID() : nullptr);
 
   QFETCH(QString, expectedVolumeNodeID);
   qMRMLNodeComboBox* comboBox =
@@ -337,7 +337,7 @@ void qMRMLSliceControllerWidgetTester::testUpdateSliceOrientationSelector()
   // Check that "Reformat" is the last item in the selector
   QComboBox* orientationSelector =
       sliceControllerWidget.findChild<QComboBox*>("SliceOrientationSelector");
-  QVERIFY(orientationSelector != 0);
+  QVERIFY(orientationSelector != nullptr);
   QStringList items;
   for(int idx = 0; idx < orientationSelector->count(); ++idx)
     {

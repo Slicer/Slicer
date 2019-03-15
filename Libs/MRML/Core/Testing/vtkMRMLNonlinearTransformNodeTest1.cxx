@@ -42,7 +42,7 @@ int vtkMRMLNonlinearTransformNodeTest1(int argc, char * argv[] )
 {
   itk::itkFactoryRegistration();
 
-  const char *filename = 0;
+  const char *filename = nullptr;
   if (argc > 1)
     {
     filename = argv[1];
@@ -230,7 +230,7 @@ int TestCompositeTransformHardenSplit(const char *filename)
   bsplineTransformNode->GetParentTransformNode()->GetTransformToWorld(hardeningTransform.GetPointer());
   hardeningTransform->Update();
   bsplineTransformNode->ApplyTransform(hardeningTransform.GetPointer());
-  bsplineTransformNode->SetAndObserveTransformNodeID(NULL);
+  bsplineTransformNode->SetAndObserveTransformNodeID(nullptr);
 
   // Test if transform to world is the same after hardening
   vtkNew<vtkGeneralTransform> transformToWorldAfterHardening;

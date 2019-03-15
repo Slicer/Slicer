@@ -71,7 +71,7 @@ vtkMRMLAnnotationSplineNode::~vtkMRMLAnnotationSplineNode()
   if (this->DistanceAnnotationFormat)
     {
       //delete [] this->DistanceAnnotationFormat;
-      this->DistanceAnnotationFormat = NULL;
+      this->DistanceAnnotationFormat = nullptr;
     }
 }
 
@@ -105,7 +105,7 @@ void vtkMRMLAnnotationSplineNode::ReadXMLAttributes(const char** atts)
   Superclass::ReadXMLAttributes(atts);
 
 
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     const char* attName = *(atts++);
     std::string attValue(*(atts++));
@@ -275,7 +275,7 @@ double* vtkMRMLAnnotationSplineNode::GetPointColour()
   vtkMRMLAnnotationPointDisplayNode *node = this->GetAnnotationPointDisplayNode();
   if (!node)
     {
-      return 0;
+      return nullptr;
     }
   return node->GetSelectedColor();
 }
@@ -298,7 +298,7 @@ double* vtkMRMLAnnotationSplineNode::GetDistanceAnnotationTextColour()
   vtkMRMLAnnotationTextDisplayNode *node = this->GetAnnotationTextDisplayNode();
   if (!node)
     {
-      return 0;
+      return nullptr;
     }
   return node->GetSelectedColor();
 }
@@ -321,7 +321,7 @@ double* vtkMRMLAnnotationSplineNode::GetLineColour()
   vtkMRMLAnnotationLineDisplayNode *node = this->GetAnnotationLineDisplayNode();
   if (!node)
     {
-      return 0;
+      return nullptr;
     }
   return node->GetSelectedColor();
 }

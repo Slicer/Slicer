@@ -36,8 +36,8 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerXcedeCatalogReader
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerXcedeCatalogReader(QObject* parent = 0);
-  qSlicerXcedeCatalogReader(vtkMRMLColorLogic* logic, QObject* parent = 0);
+  qSlicerXcedeCatalogReader(QObject* parent = nullptr);
+  qSlicerXcedeCatalogReader(vtkMRMLColorLogic* logic, QObject* parent = nullptr);
   virtual ~qSlicerXcedeCatalogReader();
 
   vtkMRMLColorLogic* colorLogic()const;

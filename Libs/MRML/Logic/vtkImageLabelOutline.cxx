@@ -277,12 +277,12 @@ void vtkImageLabelOutline::PrintSelf(ostream& os, vtkIndent indent)
     os << indent << "Outline: " << this->Outline << "\n";
     os << indent << "Background: " << this->Background<< "\n";
 
-    if (this->GetInput() != NULL)
+    if (this->GetInput() != nullptr)
       {
       os << indent << "Input0:\n";
       this->GetInput()->PrintSelf(os,indent.GetNextIndent());
       }
-    if (this->GetOutput() != NULL)
+    if (this->GetOutput() != nullptr)
       {
       os << indent << "Output0:\n";
       this->GetOutput()->PrintSelf(os,indent.GetNextIndent());

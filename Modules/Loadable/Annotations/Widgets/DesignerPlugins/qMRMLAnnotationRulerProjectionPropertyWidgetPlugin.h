@@ -33,7 +33,7 @@ qMRMLAnnotationRulerProjectionPropertyWidgetPlugin
   Q_OBJECT
 
 public:
-  qMRMLAnnotationRulerProjectionPropertyWidgetPlugin(QObject *_parent = 0);
+  qMRMLAnnotationRulerProjectionPropertyWidgetPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString domXml() const;

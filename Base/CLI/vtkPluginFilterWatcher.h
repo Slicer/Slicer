@@ -58,7 +58,7 @@ public:
    * comment string that is prepended to each event message. */
   vtkPluginFilterWatcher(vtkAlgorithm* o,
                          const char *comment="",
-                         ModuleProcessInformation *inf=0,
+                         ModuleProcessInformation *inf=nullptr,
                          double fraction = 1.0,
                          double start = 0.0);
 

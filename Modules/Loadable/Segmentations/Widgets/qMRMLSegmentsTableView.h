@@ -67,7 +67,7 @@ public:
 
   typedef qMRMLWidget Superclass;
   /// Constructor
-  explicit qMRMLSegmentsTableView(QWidget* parent = 0);
+  explicit qMRMLSegmentsTableView(QWidget* parent = nullptr);
   /// Destructor
   virtual ~qMRMLSegmentsTableView();
 

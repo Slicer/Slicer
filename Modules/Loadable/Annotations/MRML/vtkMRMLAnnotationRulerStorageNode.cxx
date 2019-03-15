@@ -166,7 +166,7 @@ int vtkMRMLAnnotationRulerStorageNode::ReadAnnotationRulerProperties(vtkMRMLAnno
       numColumns = 0;
       char *columns = (char *)str.c_str();
       char *ptr = strtok(columns, "|");
-      while (ptr != NULL)
+      while (ptr != nullptr)
     {
       if (strcmp(ptr, "type") == 0)
         {
@@ -184,7 +184,7 @@ int vtkMRMLAnnotationRulerStorageNode::ReadAnnotationRulerProperties(vtkMRMLAnno
         {
           visColumn =  numColumns;
         }
-      ptr = strtok(NULL, "|");
+      ptr = strtok(nullptr, "|");
       numColumns++;
     }
       // set the total number of columns
@@ -202,7 +202,7 @@ int vtkMRMLAnnotationRulerStorageNode::ReadAnnotationRulerProperties(vtkMRMLAnno
 int vtkMRMLAnnotationRulerStorageNode::ReadAnnotation(vtkMRMLAnnotationRulerNode *refNode)
 {
 
-  if (refNode == NULL)
+  if (refNode == nullptr)
     {
     vtkErrorMacro("ReadAnnotation: unable to cast input node " << refNode->GetID() << " to a annotation node");
     return 0;
@@ -272,7 +272,7 @@ int vtkMRMLAnnotationRulerStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   vtkMRMLAnnotationRulerNode *aNode =
     vtkMRMLAnnotationRulerNode::SafeDownCast(refNode);
 
-  if (aNode == NULL)
+  if (aNode == nullptr)
     {
     vtkErrorMacro("ReadData: unable to cast input node " << refNode->GetID() << " to a annotation control point node");
     return 0;
@@ -295,7 +295,7 @@ int vtkMRMLAnnotationRulerStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 int vtkMRMLAnnotationRulerStorageNode::ReadOneRuler(fstream & fstr, vtkMRMLAnnotationRulerNode *refNode)
 {
 
-  if (refNode == NULL)
+  if (refNode == nullptr)
     {
     vtkErrorMacro("ReadOneRuler: can't read into a null node");
     return 0;
@@ -323,7 +323,7 @@ int vtkMRMLAnnotationRulerStorageNode::ReadOneRuler(fstream & fstr, vtkMRMLAnnot
 int vtkMRMLAnnotationRulerStorageNode::WriteAnnotationRulerProperties(fstream& of, vtkMRMLAnnotationRulerNode *refNode)
 {
    // put down a header
-  if (refNode == NULL)
+  if (refNode == nullptr)
     {
     vtkWarningMacro("WriteAnnotationRulerProperties: ref node is null");
     return 0;
@@ -373,7 +373,7 @@ int vtkMRMLAnnotationRulerStorageNode::WriteAnnotationDataInternal(vtkMRMLNode *
   // cast the input nod
   vtkMRMLAnnotationRulerNode *aNode = dynamic_cast <vtkMRMLAnnotationRulerNode *> (refNode);
 
-  if (aNode == NULL)
+  if (aNode == nullptr)
     {
     vtkErrorMacro("WriteAnnotationDataInternal: unable to cast input node " << refNode->GetID() << " to a known annotation line node");
     return 0;

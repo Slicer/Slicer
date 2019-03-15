@@ -60,8 +60,8 @@ public:
   /// Constructor
   /// title is the name of the menu (can appear using right click on the
   /// toolbar area)
-  qSlicerModulesMenu(const QString& title, QWidget* parent = 0);
-  qSlicerModulesMenu(QWidget* parent = 0);
+  qSlicerModulesMenu(const QString& title, QWidget* parent = nullptr);
+  qSlicerModulesMenu(QWidget* parent = nullptr);
   virtual ~qSlicerModulesMenu();
 
   ///

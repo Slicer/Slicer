@@ -58,7 +58,7 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  if (app.coreIOManager() == 0)
+  if (app.coreIOManager() == nullptr)
     {
     std::cerr << "Problem with coreIOManager()" << std::endl;
     return EXIT_FAILURE;
@@ -75,13 +75,13 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
     }
 
   QSettings * settings = app.userSettings();
-  if( settings == 0 )
+  if( settings == nullptr )
     {
     std::cerr << "Problem with settings()" << std::endl;
     return EXIT_FAILURE;
     }
 
-  if (app.coreCommandOptions() == 0)
+  if (app.coreCommandOptions() == nullptr)
     {
     std::cerr << "Problem with coreCommandOptions()" << std::endl;
     return EXIT_FAILURE;
@@ -133,7 +133,7 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
 
   vtkSlicerApplicationLogic * logic1 = app.applicationLogic();
 
-  if( logic1 == NULL )
+  if( logic1 == nullptr )
     {
     std::cerr << "Error in appLogic() " << std::endl;
     return EXIT_FAILURE;
@@ -141,7 +141,7 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
 
   vtkMRMLScene * scene1 = app.mrmlScene();
 
-  if( scene1 == NULL )
+  if( scene1 == nullptr )
     {
     std::cerr << "Error in mrmlScene() " << std::endl;
     return EXIT_FAILURE;

@@ -38,7 +38,7 @@ class Q_SLICER_QTMODULES_COLORS_EXPORT qSlicerColorsModuleWidget
 public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerColorsModuleWidget(QWidget *parent=0);
+  qSlicerColorsModuleWidget(QWidget *parent=nullptr);
   virtual ~qSlicerColorsModuleWidget();
 
   virtual bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString());

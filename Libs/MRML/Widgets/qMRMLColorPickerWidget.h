@@ -43,7 +43,7 @@ class QMRML_WIDGETS_EXPORT qMRMLColorPickerWidget : public qMRMLWidget
   Q_OBJECT
   QVTK_OBJECT
 public:
-  qMRMLColorPickerWidget(QWidget *parent=0);
+  qMRMLColorPickerWidget(QWidget *parent=nullptr);
   virtual ~qMRMLColorPickerWidget();
 
   /// A color logic is needed to select the color default nodes.

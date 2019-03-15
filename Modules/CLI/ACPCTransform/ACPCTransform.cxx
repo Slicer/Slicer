@@ -85,7 +85,7 @@ int main(int argc, char * argv[])
     {
     }
 
-  vtkMRMLLinearTransformNode *outNode = NULL;
+  vtkMRMLLinearTransformNode *outNode = nullptr;
 
   // read in the scene, output and input transform file names should be the same
   vtkNew<vtkMRMLScene> scene;

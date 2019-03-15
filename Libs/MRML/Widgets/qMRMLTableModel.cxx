@@ -108,7 +108,7 @@ QString qMRMLTableModelPrivate::columnTooltipText(int tableCol)
 {
   Q_Q(qMRMLTableModel);
   vtkMRMLTableNode* tableNode = q->mrmlTableNode();
-  if (tableNode == NULL)
+  if (tableNode == nullptr)
     {
     return QString();
     }
@@ -197,8 +197,8 @@ void qMRMLTableModel::updateModelFromMRML()
   QObject::disconnect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onItemChanged(QStandardItem*)));
 
   vtkMRMLTableNode* tableNode = vtkMRMLTableNode::SafeDownCast(d->MRMLTableNode);
-  vtkTable* table = (tableNode ? tableNode->GetTable() : NULL);
-  if (table==NULL || table->GetNumberOfColumns()==0)
+  vtkTable* table = (tableNode ? tableNode->GetTable() : nullptr);
+  if (table==nullptr || table->GetNumberOfColumns()==0)
     {
     beginResetModel();
     // setRowCount and setColumnCount to 0 would not be enough, it's necessary to remove the header as well
@@ -253,7 +253,7 @@ void qMRMLTableModel::updateModelFromMRML()
       int modelRow = static_cast<int>(tableRow - tableRowOffset);
 
       // Use existing item if already created
-      QStandardItem* existingItem = NULL;
+      QStandardItem* existingItem = nullptr;
       if (d->Transposed)
         {
         existingItem = this->item(modelCol, modelRow);
@@ -264,7 +264,7 @@ void qMRMLTableModel::updateModelFromMRML()
         }
       QStandardItem* item = existingItem;
       // Create item if did not exist
-      if (item==NULL)
+      if (item==nullptr)
         {
         item = new QStandardItem();
         }
@@ -396,7 +396,7 @@ void qMRMLTableModel::updateModelFromMRML()
     for (vtkIdType tableRow = tableRowOffset; tableRow < numberOfTableRows; ++tableRow)
       {
       int modelRow = static_cast<int>(tableRow - tableRowOffset);
-      QStandardItem* existingItem = NULL;
+      QStandardItem* existingItem = nullptr;
       if (d->Transposed)
         {
         existingItem = this->item(modelCol, modelRow);
@@ -416,19 +416,19 @@ void qMRMLTableModel::updateModelFromMRML()
 void qMRMLTableModel::updateMRMLFromModel(QStandardItem* item)
 {
   Q_D(qMRMLTableModel);
-  if (item == NULL)
+  if (item == nullptr)
     {
     qCritical("qMRMLTableModel::updateMRMLFromModel failed: item is invalid");
     return;
     }
   vtkMRMLTableNode* tableNode = vtkMRMLTableNode::SafeDownCast(d->MRMLTableNode);
-  if (tableNode==NULL)
+  if (tableNode==nullptr)
     {
     qCritical("qMRMLTableModel::updateMRMLFromModel failed: tableNode is invalid");
     return;
     }
   vtkTable* table = tableNode->GetTable();
-  if (table==NULL)
+  if (table==nullptr)
     {
     qCritical("qMRMLTableModel::updateMRMLFromModel failed: table is invalid");
     return;

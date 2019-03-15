@@ -43,7 +43,7 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeAttributeTableWidget : public QWidget
 
 public:
   /// Constructors
-  explicit qMRMLNodeAttributeTableWidget(QWidget* parent = 0);
+  explicit qMRMLNodeAttributeTableWidget(QWidget* parent = nullptr);
   virtual ~qMRMLNodeAttributeTableWidget();
 
   /// Get node attribute table view

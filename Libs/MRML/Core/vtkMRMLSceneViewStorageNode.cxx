@@ -156,7 +156,7 @@ int vtkMRMLSceneViewStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 {
   vtkMRMLSceneViewNode *sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(refNode);
 
-  if (sceneViewNode->GetScreenShot() == NULL)
+  if (sceneViewNode->GetScreenShot() == nullptr)
     {
     // nothing to write
     return 1;

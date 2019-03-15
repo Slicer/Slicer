@@ -261,7 +261,7 @@ const char* vtkMRMLViewNode::GetAnimationModeAsString(int id)
 //-----------------------------------------------------------
 int vtkMRMLViewNode::GetAnimationModeFromString(const char* name)
 {
-  if (name == NULL)
+  if (name == nullptr)
     {
     // invalid name
     return -1;
@@ -294,7 +294,7 @@ const char* vtkMRMLViewNode::GetViewAxisModeAsString(int id)
 //-----------------------------------------------------------
 int vtkMRMLViewNode::GetViewAxisModeFromString(const char* name)
 {
-  if (name == NULL)
+  if (name == nullptr)
     {
     // invalid name
     return -1;
@@ -331,7 +331,7 @@ const char* vtkMRMLViewNode::GetSpinDirectionAsString(int id)
 //-----------------------------------------------------------
 int vtkMRMLViewNode::GetSpinDirectionFromString(const char* name)
 {
-  if (name == NULL)
+  if (name == nullptr)
     {
     // invalid name
     return -1;
@@ -370,7 +370,7 @@ const char* vtkMRMLViewNode::GetStereoTypeAsString(int id)
 //-----------------------------------------------------------
 int vtkMRMLViewNode::GetStereoTypeFromString(const char* name)
 {
-  if (name == NULL)
+  if (name == nullptr)
     {
     // invalid name
     return -1;
@@ -403,7 +403,7 @@ const char* vtkMRMLViewNode::GetRenderModeAsString(int id)
 //-----------------------------------------------------------
 int vtkMRMLViewNode::GetRenderModeFromString(const char* name)
 {
-  if (name == NULL)
+  if (name == nullptr)
     {
     // invalid name
     return -1;
@@ -437,7 +437,7 @@ const char* vtkMRMLViewNode::GetVolumeRenderingQualityAsString(int id)
 //-----------------------------------------------------------
 int vtkMRMLViewNode::GetVolumeRenderingQualityFromString(const char* name)
 {
-  if (name == NULL)
+  if (name == nullptr)
     {
     // invalid name
     return -1;
@@ -474,7 +474,7 @@ const char* vtkMRMLViewNode::GetRaycastTechniqueAsString(int id)
 //-----------------------------------------------------------
 int vtkMRMLViewNode::GetRaycastTechniqueFromString(const char* name)
 {
-  if (name == NULL)
+  if (name == nullptr)
     {
     // invalid name
     return -1;

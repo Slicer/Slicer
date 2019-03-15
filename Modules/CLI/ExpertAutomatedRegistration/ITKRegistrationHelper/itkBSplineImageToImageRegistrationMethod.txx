@@ -60,7 +60,7 @@ public:
 
   void Execute( const Object * object, const EventObject & event ) override
   {
-    if( typeid( event ) != typeid( IterationEvent ) || object == NULL )
+    if( typeid( event ) != typeid( IterationEvent ) || object == nullptr )
       {
       return;
       }
@@ -91,7 +91,7 @@ public:
 
   void Update()
   {
-    this->Execute( (const Object *)NULL, IterationEvent() );
+    this->Execute( (const Object *)nullptr, IterationEvent() );
   }
 
 protected:

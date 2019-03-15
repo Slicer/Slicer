@@ -60,8 +60,8 @@ public:
 qMRMLChartWidgetPrivate::qMRMLChartWidgetPrivate(qMRMLChartWidget& object)
   : q_ptr(&object)
 {
-  this->ChartView = 0;
-  this->ChartController = 0;
+  this->ChartView = nullptr;
+  this->ChartController = nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -117,9 +117,9 @@ qMRMLChartWidget::~qMRMLChartWidget()
   Q_D(qMRMLChartWidget);
   if (d->ChartView)
     {
-    d->ChartView->setMRMLScene(0);
+    d->ChartView->setMRMLScene(nullptr);
     }
-  d->ChartController->setMRMLScene(0);
+  d->ChartController->setMRMLScene(nullptr);
 }
 
 // --------------------------------------------------------------------------
@@ -176,7 +176,7 @@ vtkMRMLColorLogic* qMRMLChartWidget::colorLogic()const
 void qMRMLChartWidget::onAppAboutToQuit()
 {
   Q_D(qMRMLChartWidget);
-  d->ChartView->setMRMLScene(0);
+  d->ChartView->setMRMLScene(nullptr);
   delete d->ChartView;
-  d->ChartView = 0;
+  d->ChartView = nullptr;
 }

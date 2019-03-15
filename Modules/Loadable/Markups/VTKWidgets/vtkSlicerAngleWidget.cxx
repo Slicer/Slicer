@@ -44,7 +44,7 @@ vtkSlicerAngleWidget::~vtkSlicerAngleWidget()
 void vtkSlicerAngleWidget::CreateDefaultRepresentation(
   vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer)
 {
-  vtkSmartPointer<vtkSlicerMarkupsWidgetRepresentation> rep = NULL;
+  vtkSmartPointer<vtkSlicerMarkupsWidgetRepresentation> rep = nullptr;
   if (vtkMRMLSliceNode::SafeDownCast(viewNode))
     {
     rep = vtkSmartPointer<vtkSlicerAngleRepresentation2D>::New();

@@ -34,11 +34,11 @@ vtkMRMLNodeNewMacro(vtkMRMLColorNode);
 vtkMRMLColorNode::vtkMRMLColorNode()
 {
   this->SetName("");
-  this->FileName = NULL;
+  this->FileName = nullptr;
   this->Type = -1;
   this->HideFromEditors = 1;
 
-  this->NoName = NULL;
+  this->NoName = nullptr;
   this->SetNoName("(none)");
 
   this->NamesInitialised = 0;
@@ -50,13 +50,13 @@ vtkMRMLColorNode::~vtkMRMLColorNode()
   if (this->FileName)
     {
     delete [] this->FileName;
-    this->FileName = NULL;
+    this->FileName = nullptr;
     }
 
   if (this->NoName)
     {
     delete [] this->NoName;
-    this->NoName = NULL;
+    this->NoName = nullptr;
     }
 }
 
@@ -69,7 +69,7 @@ void vtkMRMLColorNode::WriteXML(ostream& of, int nIndent)
 
   of << " type=\"" << this->GetType() << "\"";
 
-  if (this->FileName != NULL)
+  if (this->FileName != nullptr)
     {
     // don't write it out, it's handled by the storage node
     }
@@ -84,7 +84,7 @@ void vtkMRMLColorNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -105,7 +105,7 @@ void vtkMRMLColorNode::ReadXMLAttributes(const char** atts)
       this->SetFileName(attValue);
       // don't read in the file with the colours, it's handled by the storage
       // node
-      if (this->GetStorageNode() == NULL)
+      if (this->GetStorageNode() == nullptr)
         {
         vtkWarningMacro("A color node has a file name, but no storage node, trying to create one");
         this->AddDefaultStorageNode(attValue);
@@ -119,7 +119,7 @@ void vtkMRMLColorNode::ReadXMLAttributes(const char** atts)
 vtkLookupTable * vtkMRMLColorNode::GetLookupTable()
 {
   vtkDebugMacro("Subclass has not implemented GetLookupTable, returning NULL");
-  return NULL;
+  return nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -375,7 +375,7 @@ const char *vtkMRMLColorNode::GetColorName(int ind)
 //---------------------------------------------------------------------------
 int vtkMRMLColorNode::GetColorIndexByName(const char *name)
 {
-  if (name == NULL)
+  if (name == nullptr)
     {
     vtkErrorMacro("vtkMRMLColorNode::GetColorIndexByName: need a non-null name as argument")
     return -1;
@@ -401,7 +401,7 @@ int vtkMRMLColorNode::GetColorIndexByName(const char *name)
 std::string vtkMRMLColorNode::GetColorNameWithoutSpaces(int ind, const char *subst)
 {
   std::string name = std::string(this->GetColorName(ind));
-  if (strstr(name.c_str(), " ") != NULL)
+  if (strstr(name.c_str(), " ") != nullptr)
     {
     std::string::size_type spaceIndex = name.find( " ", 0 );
     while (spaceIndex != std::string::npos)
@@ -442,7 +442,7 @@ int vtkMRMLColorNode::SetColorName(int ind, const char *name)
 {
   if (ind >= static_cast<int>(this->Names.size()) || ind < 0)
     {
-    vtkErrorMacro("ERROR: SetColorName, index was out of bounds: "<< ind << ", current size is " << this->Names.size() << ", table name = " << (this->GetName() == NULL ? "null" : this->GetName()));
+    vtkErrorMacro("ERROR: SetColorName, index was out of bounds: "<< ind << ", current size is " << this->Names.size() << ", table name = " << (this->GetName() == nullptr ? "null" : this->GetName()));
     return 0;
     }
   std::string newName(name);
@@ -462,7 +462,7 @@ int vtkMRMLColorNode::SetColorNameWithSpaces(int ind, const char *name, const ch
   std::string nameString = std::string(name);
   std::string substString = std::string(subst);
    // does the input name have the subst character in it?
-  if (strstr(name, substString.c_str()) != NULL)
+  if (strstr(name, substString.c_str()) != nullptr)
     {
     std::replace(nameString.begin(), nameString.end(), *subst, ' ');
     return this->SetColorName(ind, nameString.c_str());

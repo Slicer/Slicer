@@ -71,7 +71,7 @@ class QMRML_WIDGETS_EXPORT qMRMLColorModel : public QStandardItemModel
 
 public:
   typedef QAbstractItemModel Superclass;
-  qMRMLColorModel(QObject *parent=0);
+  qMRMLColorModel(QObject *parent=nullptr);
   virtual ~qMRMLColorModel();
 
   /// ColorRole is an invivisble role that contains the true color (QColor) when
@@ -136,7 +136,7 @@ protected slots:
 
 protected:
 
-  qMRMLColorModel(qMRMLColorModelPrivate* pimpl, QObject *parent=0);
+  qMRMLColorModel(qMRMLColorModelPrivate* pimpl, QObject *parent=nullptr);
   virtual void updateItemFromColor(QStandardItem* item, int color, int column);
   virtual void updateColorFromItem(int color, QStandardItem* item);
   virtual void updateNode();

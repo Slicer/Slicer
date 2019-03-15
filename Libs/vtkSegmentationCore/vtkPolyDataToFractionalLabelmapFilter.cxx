@@ -86,7 +86,7 @@ vtkOrientedImageData* vtkPolyDataToFractionalLabelmapFilter::GetOutput()
 {
   if (this->GetNumberOfOutputPorts() < 1)
     {
-    return NULL;
+    return nullptr;
     }
 
   return vtkOrientedImageData::SafeDownCast(
@@ -116,7 +116,7 @@ class EdgeLocatorNode
 {
 public:
   EdgeLocatorNode() :
-    ptId(-1), edgeId(-1), next(0) {}
+    ptId(-1), edgeId(-1), next(nullptr) {}
 
   // Free the list that this node is the head of
   void FreeList() {
@@ -125,7 +125,7 @@ public:
       {
       EdgeLocatorNode *tmp = ptr;
       ptr = ptr->next;
-      tmp->next = 0;
+      tmp->next = nullptr;
       delete tmp;
       }
   }
@@ -208,7 +208,7 @@ bool EdgeLocator::InsertUniqueEdge(
     }
 
   int i = 1;
-  while (node->next != 0)
+  while (node->next != nullptr)
     {
     i++;
     node = node->next;
@@ -344,7 +344,7 @@ vtkOrientedImageData* vtkPolyDataToFractionalLabelmapFilter::AllocateOutputData(
     {
     vtkWarningMacro("Call to AllocateOutputData with non vtkOrientedImageData"
                     " output");
-    return NULL;
+    return nullptr;
     }
 
   // Allocate output image data
@@ -356,7 +356,7 @@ vtkOrientedImageData* vtkPolyDataToFractionalLabelmapFilter::AllocateOutputData(
   if (!fractionalLabelMapVoxelsPointer)
     {
     vtkErrorMacro("Convert: Failed to allocate memory for output labelmap image!");
-    return NULL;
+    return nullptr;
     }
   else
     {
@@ -640,7 +640,7 @@ void vtkPolyDataToFractionalLabelmapFilter::FillImageStencilData(
       // get the connectivity count for each point
       vtkSmartPointer<vtkCellArray> lines = slice->GetLines();
       vtkIdType npts = 0;
-      vtkIdType *pointIds = 0;
+      vtkIdType *pointIds = nullptr;
       vtkIdType count = lines->GetNumberOfConnectivityEntries();
       for (vtkIdType loc = 0; loc < count; loc += npts + 1)
         {

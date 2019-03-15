@@ -66,7 +66,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyTreeV
 
 public:
   typedef QTreeView Superclass;
-  qMRMLSubjectHierarchyTreeView(QWidget *parent=0);
+  qMRMLSubjectHierarchyTreeView(QWidget *parent=nullptr);
   virtual ~qMRMLSubjectHierarchyTreeView();
 
 public:

@@ -241,7 +241,7 @@ qSlicerCLIModuleUIHelperPrivate::
   qSlicerCLIModuleUIHelperPrivate(qSlicerCLIModuleUIHelper& object)
   : q_ptr(&object)
 {
-  this->CLIModuleWidget = 0;
+  this->CLIModuleWidget = nullptr;
   Self::initializeMaps();
 }
 
@@ -310,7 +310,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createIntegerTagWidget(const ModulePar
   QString _label = QString::fromStdString(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());
 
-  QWidget * widget = 0;
+  QWidget * widget = nullptr;
   if (!withConstraints)
     {
     QSpinBox * spinBox = new QSpinBox;
@@ -382,7 +382,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createFloatTagWidget(const ModuleParam
   QString _name = QString::fromStdString(moduleParameter.GetName());
   int decimals = valueAsStr.indexOf('.') != -1 ? valueAsStr.length() - valueAsStr.indexOf('.') -1 : 2;
 
-  QWidget * widget = 0;
+  QWidget * widget = nullptr;
   if (!withConstraints)
     {
     ctkDoubleSpinBox * spinBox = new ctkDoubleSpinBox;
@@ -462,7 +462,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createDoubleTagWidget(const ModulePara
   QString _name = QString::fromStdString(moduleParameter.GetName());
   int decimals = valueAsStr.indexOf('.') != -1 ? valueAsStr.length() - valueAsStr.indexOf('.') -1 : 2;
 
-  QWidget * widget = 0;
+  QWidget * widget = nullptr;
   if (!withConstraints)
     {
     ctkDoubleSpinBox * spinBox = new ctkDoubleSpinBox;
@@ -629,7 +629,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createImageTagWidget(const ModuleParam
   if (channel != "input" && channel != "output")
     {
     qWarning() << "ImageTag - Unknown channel:" << channel;
-    return 0;
+    return nullptr;
     }
 
   QString type = QString::fromStdString(moduleParameter.GetType());
@@ -708,7 +708,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createGeometryTagWidget(const ModulePa
   if (channel != "input" && channel != "output")
     {
     qWarning() << "GeometryTag - Unknown channel:" << channel;
-    return 0;
+    return nullptr;
     }
 
   if (multiple && aggregate)
@@ -744,14 +744,14 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createTableTagWidget(const ModuleParam
   if (nodeType.isEmpty())
     {
     qWarning() << "TableTag - Unknown type:" << type;
-    return 0;
+    return nullptr;
     }
 
   QString channel = QString::fromStdString(moduleParameter.GetChannel());
   if (channel != "input" && channel != "output")
     {
     qWarning() << "TableTag - Unknown channel:" << channel;
-    return 0;
+    return nullptr;
     }
 
   // TODO - title + " Table"
@@ -781,14 +781,14 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createMeasurementTagWidget(const Modul
   if (nodeType.isEmpty())
     {
     qWarning() << "MeasurementTag - Unknown type:" << type;
-    return 0;
+    return nullptr;
     }
 
   QString channel = QString::fromStdString(moduleParameter.GetChannel());
   if (channel != "input" && channel != "output")
     {
     qWarning() << "MeasurementTag - Unknown channel:" << channel;
-    return 0;
+    return nullptr;
     }
 
   // TODO - title + " Measurement"
@@ -817,7 +817,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createTransformTagWidget(const ModuleP
   if (channel != "input" && channel != "output")
     {
     qWarning() << "TransformTag - Unknown channel:" << channel;
-    return 0;
+    return nullptr;
     }
 
   QString type = QString::fromStdString(moduleParameter.GetType());
@@ -1002,7 +1002,7 @@ QWidget* qSlicerCLIModuleUIHelper::createTagWidget(const ModuleParameter& module
 
   Q_ASSERT(moduleParameter.GetHidden() != "true");
 
-  QWidget * widget = 0;
+  QWidget * widget = nullptr;
 
   if (moduleParameter.GetTag() == "integer")
     {
@@ -1135,7 +1135,7 @@ void qSlicerCLIModuleUIHelper
   else if (type == QVariant::String)
     {
     QString valueAsString = value.toString();
-    vtkMRMLNode* node = 0;
+    vtkMRMLNode* node = nullptr;
     if (valueAsString.startsWith("vtkMRML"))
       {
       if (d->CLIModuleWidget->mrmlScene())
@@ -1176,7 +1176,7 @@ void qSlicerCLIModuleUIHelper::updateUi(vtkMRMLCommandLineModuleNode* commandLin
       {
       continue;
       }
-    widget->setEnabled(commandLineModuleNode!=0);
+    widget->setEnabled(commandLineModuleNode!=nullptr);
     }
 
   if (!commandLineModuleNode)

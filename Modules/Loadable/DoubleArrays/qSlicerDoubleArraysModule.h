@@ -36,7 +36,7 @@ class Q_SLICER_QTMODULES_DOUBLEARRAYS_EXPORT qSlicerDoubleArraysModule :
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerDoubleArraysModule(QObject *parent=0);
+  explicit qSlicerDoubleArraysModule(QObject *parent=nullptr);
   virtual ~qSlicerDoubleArraysModule();
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);

@@ -42,7 +42,7 @@ vtkMRMLCrosshairNode::vtkMRMLCrosshairNode()
   this->CursorPositionRASValid = false;
 
   this->CursorPositionXYZ[0] = this->CursorPositionXYZ[1] = this->CursorPositionXYZ[2] = 0.0;
-  this->CursorSliceNode = NULL;
+  this->CursorSliceNode = nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -125,7 +125,7 @@ void vtkMRMLCrosshairNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -298,8 +298,8 @@ void vtkMRMLCrosshairNode::SetCursorPositionRAS(double ras[3])
   this->CursorPositionRAS[1]=ras[1];
   this->CursorPositionRAS[2]=ras[2];
   this->CursorPositionRASValid=true;
-  this->CursorSliceNode=NULL; // slice position is not available
-  this->InvokeEvent(vtkMRMLCrosshairNode::CursorPositionModifiedEvent, NULL);
+  this->CursorSliceNode=nullptr; // slice position is not available
+  this->InvokeEvent(vtkMRMLCrosshairNode::CursorPositionModifiedEvent, nullptr);
 }
 
 //---------------------------------------------------------------------------
@@ -322,15 +322,15 @@ void vtkMRMLCrosshairNode::SetCursorPositionXYZ(double xyz[3], vtkMRMLSliceNode 
     this->CursorPositionRASValid=true;
     }
 
-  this->InvokeEvent(vtkMRMLCrosshairNode::CursorPositionModifiedEvent, NULL);
+  this->InvokeEvent(vtkMRMLCrosshairNode::CursorPositionModifiedEvent, nullptr);
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLCrosshairNode::SetCursorPositionInvalid()
 {
   this->CursorPositionRASValid = false;
-  this->CursorSliceNode = NULL;
-  this->InvokeEvent(vtkMRMLCrosshairNode::CursorPositionModifiedEvent, NULL);
+  this->CursorSliceNode = nullptr;
+  this->InvokeEvent(vtkMRMLCrosshairNode::CursorPositionModifiedEvent, nullptr);
 }
 
 //---------------------------------------------------------------------------

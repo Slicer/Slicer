@@ -40,7 +40,7 @@ class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerVolumesModule :
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  qSlicerVolumesModule(QObject *parent=0);
+  qSlicerVolumesModule(QObject *parent=nullptr);
   virtual ~qSlicerVolumesModule();
 
   virtual QString helpText()const;

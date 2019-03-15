@@ -124,7 +124,7 @@ vtkMRMLUnitNode* vtkSlicerUnitsLogic
 {
   if (!scene)
     {
-    return 0;
+    return nullptr;
     }
 
   vtkMRMLUnitNode* unitNode = vtkMRMLUnitNode::New();

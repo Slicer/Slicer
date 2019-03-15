@@ -62,7 +62,7 @@ void qSlicerTerminologyItemDelegate::setEditorData(QWidget *editor, const QModel
   if (terminologyButton->property("changeDataOnSet").toBool())
     {
     // Get terminologies module logic
-    vtkSlicerTerminologiesModuleLogic* terminologiesLogic = NULL;
+    vtkSlicerTerminologiesModuleLogic* terminologiesLogic = nullptr;
     qSlicerAbstractCoreModule* terminologiesModule = qSlicerCoreApplication::application()->moduleManager()->module("Terminologies");
     if (terminologiesModule)
       {
@@ -101,7 +101,7 @@ void qSlicerTerminologyItemDelegate::setEditorData(QWidget *editor, const QModel
 void qSlicerTerminologyItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
   // Get terminologies module logic
-  vtkSlicerTerminologiesModuleLogic* terminologiesLogic = NULL;
+  vtkSlicerTerminologiesModuleLogic* terminologiesLogic = nullptr;
   qSlicerAbstractCoreModule* terminologiesModule = qSlicerCoreApplication::application()->moduleManager()->module("Terminologies");
   if (terminologiesModule)
     {

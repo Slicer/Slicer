@@ -71,7 +71,7 @@ public:
 //-----------------------------------------------------------------------------
 qMRMLSegmentSelectorWidgetPrivate::qMRMLSegmentSelectorWidgetPrivate(qMRMLSegmentSelectorWidget& object)
   : q_ptr(&object)
-  , SegmentationNode(NULL)
+  , SegmentationNode(nullptr)
   , MultiSelection(false)
 {
 }

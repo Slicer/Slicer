@@ -484,7 +484,7 @@ public:
     //std::cout << "RenderRequestCount [" << this->RenderRequestCount << "]" << std::endl;
     }
 protected:
-  vtkRenderRequestCallback():Renderer(0), RenderRequestCount(0){}
+  vtkRenderRequestCallback():Renderer(nullptr), RenderRequestCount(0){}
   vtkRenderer * Renderer;
   int           RenderRequestCount;
 };
@@ -699,7 +699,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
       recorder->Play();
       }
     }
-  recorder->SetInteractor(NULL);
+  recorder->SetInteractor(nullptr);
 
   int retval = vtkRegressionTestImageThreshold(rw.GetPointer(), 85.0);
   if ( record || retval == vtkRegressionTester::DO_INTERACTOR)

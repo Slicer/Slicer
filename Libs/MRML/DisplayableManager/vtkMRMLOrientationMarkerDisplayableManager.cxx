@@ -98,7 +98,7 @@ public:
     }
   vtkRendererUpdateObserver()
     {
-    this->DisplayableManager = 0;
+    this->DisplayableManager = nullptr;
     }
   virtual void Execute(vtkObject* vtkNotUsed(wdg), unsigned long vtkNotUsed(event), void* vtkNotUsed(calldata))
     {
@@ -165,7 +165,7 @@ vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::vtkInternal(vtkMRMLOrie
   this->RendererUpdateObserver = vtkSmartPointer<vtkRendererUpdateObserver>::New();
   this->RendererUpdateObserver->DisplayableManager = this->External;
   this->RendererUpdateObservationId = 0;
-  this->DisplayedActor = NULL;
+  this->DisplayedActor = nullptr;
   this->MarkerRenderer = vtkSmartPointer<vtkRenderer>::New();
   // Prevent erasing Z-buffer (important for quick picking and markup label visibility assessment)
   this->MarkerRenderer->EraseOff();
@@ -201,7 +201,7 @@ void vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::RemoveRendererUpda
     {
     this->ObservedRenderer->RemoveObserver(this->RendererUpdateObservationId);
     this->RendererUpdateObservationId = 0;
-    this->ObservedRenderer = NULL;
+    this->ObservedRenderer = nullptr;
     }
 }
 
@@ -209,7 +209,7 @@ void vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::RemoveRendererUpda
 void vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::SetupMarkerRenderer()
 {
   vtkRenderer* renderer = this->External->GetRenderer();
-  if (renderer==NULL)
+  if (renderer==nullptr)
     {
     vtkErrorWithObjectMacro(this->External, "vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::SetupMarkerRenderer() failed: renderer is invalid");
     return;
@@ -328,7 +328,7 @@ void vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::UpdateMarkerType()
     }
 
   // Determine what actor to display
-  vtkProp3D* actorToDisplay = NULL;
+  vtkProp3D* actorToDisplay = nullptr;
   switch (viewNode->GetOrientationMarkerType())
     {
     case vtkMRMLAbstractViewNode::OrientationMarkerTypeCube:
@@ -348,11 +348,11 @@ void vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::UpdateMarkerType()
   // Display that actor
   if (this->DisplayedActor != actorToDisplay)
     {
-    if (this->DisplayedActor != NULL)
+    if (this->DisplayedActor != nullptr)
       {
       this->MarkerRenderer->RemoveViewProp(this->DisplayedActor);
       }
-    if (actorToDisplay != NULL)
+    if (actorToDisplay != nullptr)
       {
       this->MarkerRenderer->AddViewProp(actorToDisplay);
       }
@@ -396,12 +396,12 @@ void vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::UpdateMarkerType()
 //---------------------------------------------------------------------------
 void vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::UpdateMarkerOrientation()
 {
-  if (this->MarkerRenderer==NULL)
+  if (this->MarkerRenderer==nullptr)
     {
     return;
     }
   vtkRenderer* renderer = this->External->GetRenderer();
-  if (renderer==NULL)
+  if (renderer==nullptr)
     {
     vtkErrorWithObjectMacro(this->External, "vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::UpdateMarkerOrientation() failed: renderer is invalid");
     return;
@@ -473,7 +473,7 @@ void vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::UpdateMarkerOrient
 //---------------------------------------------------------------------------
 void vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::UpdateMarkerSize()
 {
-  if (this->MarkerRenderer==NULL)
+  if (this->MarkerRenderer==nullptr)
     {
     vtkErrorWithObjectMacro(this->External, "vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::UpdateMarkerSize() failed: MarkerRenderer is invalid");
     return;
@@ -554,7 +554,7 @@ void vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::UpdateMarkerSize()
 //---------------------------------------------------------------------------
 void vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::UpdateMarkerLabels()
 {
-  if (this->MarkerRenderer==NULL)
+  if (this->MarkerRenderer==nullptr)
     {
     vtkErrorWithObjectMacro(this->External, "vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::UpdateMarkerLabels() failed: MarkerRenderer is invalid");
     return;

@@ -44,7 +44,7 @@ public:
   typedef qSlicerWebWidget Superclass;
 
   /// Constructor
-  explicit qSlicerExtensionsInstallWidget(QWidget* parent = 0);
+  explicit qSlicerExtensionsInstallWidget(QWidget* parent = nullptr);
 
   /// Destructor
   virtual ~qSlicerExtensionsInstallWidget();

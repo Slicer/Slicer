@@ -49,7 +49,7 @@ qSlicerAbstractModuleRepresentation * qSlicerEventBrokerModule::createWidgetRepr
 //-----------------------------------------------------------------------------
 vtkMRMLAbstractLogic* qSlicerEventBrokerModule::createLogic()
 {
-  return 0;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------

@@ -37,7 +37,7 @@ vtkMRMLAnnotationDisplayNode::vtkMRMLAnnotationDisplayNode()
   this->ProjectedColor[2] = 1.0;
   this->ProjectedOpacity = 1.0;
 
-  this->m_Backup = 0;
+  this->m_Backup = nullptr;
 
 }
 
@@ -48,7 +48,7 @@ vtkMRMLAnnotationDisplayNode::~vtkMRMLAnnotationDisplayNode()
   if (this->m_Backup)
     {
     this->m_Backup->Delete();
-    this->m_Backup = 0;
+    this->m_Backup = nullptr;
     }
 
 }
@@ -106,7 +106,7 @@ void vtkMRMLAnnotationDisplayNode::ClearBackup()
   if (this->m_Backup)
     {
     this->m_Backup->Delete();
-    this->m_Backup = 0;
+    this->m_Backup = nullptr;
     }
 }
 

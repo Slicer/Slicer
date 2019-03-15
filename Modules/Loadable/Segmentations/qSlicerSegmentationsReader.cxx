@@ -112,7 +112,7 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
   QString fileName = properties["fileName"].toString();
 
   this->setLoadedNodes(QStringList());
-  if (d->SegmentationsLogic.GetPointer() == 0)
+  if (d->SegmentationsLogic.GetPointer() == nullptr)
     {
     return false;
     }
@@ -138,7 +138,7 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
       closedSurfaceRepresentation = reader->GetOutput();
       // Remove all arrays, because they could slow down all further processing
       // and consume significant amount of memory.
-      if (closedSurfaceRepresentation != NULL && closedSurfaceRepresentation->GetPointData() != NULL)
+      if (closedSurfaceRepresentation != nullptr && closedSurfaceRepresentation->GetPointData() != nullptr)
         {
         vtkPointData* pointData = closedSurfaceRepresentation->GetPointData();
         while (pointData->GetNumberOfArrays()>0)
@@ -147,7 +147,7 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
           }
         }
       }
-    if (closedSurfaceRepresentation == NULL)
+    if (closedSurfaceRepresentation == nullptr)
       {
       return false;
       }

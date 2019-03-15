@@ -39,7 +39,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerScriptedFileWriter
 
 public:
   typedef qSlicerFileWriter Superclass;
-  qSlicerScriptedFileWriter(QObject* parent = 0);
+  qSlicerScriptedFileWriter(QObject* parent = nullptr);
   virtual ~qSlicerScriptedFileWriter();
 
   QString pythonSource()const;

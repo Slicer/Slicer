@@ -48,7 +48,7 @@ qSlicerSimpleMarkupsWidget : public qSlicerWidget
 
 public:
   typedef qSlicerWidget Superclass;
-  qSlicerSimpleMarkupsWidget(QWidget *parent=0);
+  qSlicerSimpleMarkupsWidget(QWidget *parent=nullptr);
   virtual ~qSlicerSimpleMarkupsWidget();
 
   /// Get the currently selected markups node.

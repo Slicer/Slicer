@@ -42,7 +42,7 @@ vtkMRMLSceneEventRecorder::~vtkMRMLSceneEventRecorder()
 void vtkMRMLSceneEventRecorder::Execute(
   vtkObject *vtkcaller, unsigned long eid, void *vtkNotUsed(calldata))
 {
-  if (vtkMRMLScene::SafeDownCast(vtkcaller) == 0)
+  if (vtkMRMLScene::SafeDownCast(vtkcaller) == nullptr)
     {
     return;
     }

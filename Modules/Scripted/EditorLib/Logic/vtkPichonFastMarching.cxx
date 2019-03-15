@@ -724,12 +724,12 @@ vtkPichonFastMarching::vtkPichonFastMarching()
   initialized=false;
   invalidInputs=true;
 
-  node = NULL;
-  inhomo = NULL;
-  median = NULL;
+  node = nullptr;
+  inhomo = nullptr;
+  median = nullptr;
 
-  pdfIntensityIn = NULL;
-  pdfInhomoIn = NULL;
+  pdfIntensityIn = nullptr;
+  pdfInhomoIn = nullptr;
 }
 
 void vtkPichonFastMarching::init(int _dimX, int _dimY, int _dimZ, double _depth, double _dx, double _dy, double _dz)
@@ -818,7 +818,7 @@ void vtkPichonFastMarching::init(int _dimX, int _dimY, int _dimZ, double _depth,
 
   delete[] node;
   node = new FMnode[ dimX*dimY*dimZ ];
-  if(node==NULL)
+  if(node==nullptr)
     {
       vtkErrorMacro("Error in void vtkPichonFastMarching::init(), not enough memory for allocation of 'node'");
       return;
@@ -826,7 +826,7 @@ void vtkPichonFastMarching::init(int _dimX, int _dimY, int _dimZ, double _depth,
 
   delete[] inhomo;
   inhomo = new int[ dimX*dimY*dimZ ];
-  if(inhomo==NULL)
+  if(inhomo==nullptr)
     {
       vtkErrorMacro("Error in void vtkPichonFastMarching::init(), not enough memory for allocation of 'inhomo'");
       return;
@@ -834,7 +834,7 @@ void vtkPichonFastMarching::init(int _dimX, int _dimY, int _dimZ, double _depth,
 
   delete[] median;
   median = new int[ dimX*dimY*dimZ ];
-  if(median==NULL)
+  if(median==nullptr)
     {
       vtkErrorMacro("Error in void vtkPichonFastMarching::init(), not enough memory for allocation of 'median'");
       return;
@@ -842,7 +842,7 @@ void vtkPichonFastMarching::init(int _dimX, int _dimY, int _dimZ, double _depth,
 
   delete pdfIntensityIn;
   pdfIntensityIn = new PichonFastMarchingPDF( (int) _depth );
-  if(pdfIntensityIn==NULL)
+  if(pdfIntensityIn==nullptr)
     {
       vtkErrorMacro("Error in void vtkPichonFastMarching::init(), not enough memory for allocation of 'pdfIntensityIn'");
       return;
@@ -850,7 +850,7 @@ void vtkPichonFastMarching::init(int _dimX, int _dimY, int _dimZ, double _depth,
 
   delete pdfInhomoIn;
   pdfInhomoIn = new PichonFastMarchingPDF( (int) _depth );
-  if(pdfInhomoIn==NULL)
+  if(pdfInhomoIn==nullptr)
     {
       vtkErrorMacro("Error in void vtkPichonFastMarching::init(), not enough memory for allocation of 'pdfInhomoIn'");
       return;
@@ -877,16 +877,16 @@ void vtkPichonFastMarching::setOutData(short* data)
 vtkPichonFastMarching::~vtkPichonFastMarching()
 {
   delete[] node;
-  node = NULL;
+  node = nullptr;
   delete[] inhomo;
-  inhomo = NULL;
+  inhomo = nullptr;
   delete[] median;
-  median = NULL;
+  median = nullptr;
 
   delete pdfIntensityIn;
-  pdfIntensityIn = NULL;
+  pdfIntensityIn = nullptr;
   delete pdfInhomoIn;
-  pdfInhomoIn = NULL;
+  pdfInhomoIn = nullptr;
 }
 
 inline int vtkPichonFastMarching::shiftNeighbor(int n)

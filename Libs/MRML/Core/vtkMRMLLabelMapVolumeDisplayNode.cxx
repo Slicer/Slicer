@@ -90,7 +90,7 @@ vtkAlgorithmOutput* vtkMRMLLabelMapVolumeDisplayNode::GetOutputImageDataConnecti
     if (vtkLookupTable::SafeDownCast(this->MapToColors->GetLookupTable())->GetNumberOfTableValues() == 0)
       {
       vtkErrorMacro("GetOutputImageData: Lookup table exists but empty!");
-      return NULL;
+      return nullptr;
       }
     }
   return this->MapToColors->GetOutputPort();
@@ -101,20 +101,20 @@ void vtkMRMLLabelMapVolumeDisplayNode::UpdateImageDataPipeline()
 {
   Superclass::UpdateImageDataPipeline();
 
-  vtkScalarsToColors *lookupTable = NULL;
+  vtkScalarsToColors *lookupTable = nullptr;
   if (this->GetColorNode())
     {
     lookupTable = this->GetColorNode()->GetLookupTable();
-    if (lookupTable == NULL)
+    if (lookupTable == nullptr)
       {
-      if (vtkMRMLProceduralColorNode::SafeDownCast(this->GetColorNode()) != NULL)
+      if (vtkMRMLProceduralColorNode::SafeDownCast(this->GetColorNode()) != nullptr)
         {
         vtkDebugMacro("UpdateImageDataPipeline: getting a color transfer function");
         lookupTable = (vtkScalarsToColors*)(vtkMRMLProceduralColorNode::SafeDownCast(this->GetColorNode())->GetColorTransferFunction());
         }
       }
     }
-  if (lookupTable == NULL && this->ColorNodeID != NULL)
+  if (lookupTable == nullptr && this->ColorNodeID != nullptr)
     {
     // only complain if there's a scene set and that scene is not batch processing
     if (this->GetScene() && !this->GetScene()->IsBatchProcessing())

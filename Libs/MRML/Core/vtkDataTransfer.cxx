@@ -12,13 +12,13 @@ vtkCxxSetObjectMacro( vtkDataTransfer, Handler, vtkURIHandler );
 //----------------------------------------------------------------------------
 vtkDataTransfer::vtkDataTransfer()
 {
-  this->SourceURI = NULL;
-  this->DestinationURI = NULL;
-  this->Handler = NULL;
+  this->SourceURI = nullptr;
+  this->DestinationURI = nullptr;
+  this->Handler = nullptr;
   this->TransferStatus = vtkDataTransfer::Ready;
   this->TransferID = -1;
   this->TransferType = vtkDataTransfer::Unspecified;
-  this->TransferNodeID = NULL;
+  this->TransferNodeID = nullptr;
   this->Progress = 0;
   this->CancelRequested = 0;
   this->TransferCached = 0;
@@ -30,16 +30,16 @@ vtkDataTransfer::vtkDataTransfer()
 vtkDataTransfer::~vtkDataTransfer()
 {
 
-  this->SourceURI = NULL;
-  this->DestinationURI = NULL;
-  if ( this->Handler != NULL )
+  this->SourceURI = nullptr;
+  this->DestinationURI = nullptr;
+  if ( this->Handler != nullptr )
     {
-    this->SetHandler (NULL);
+    this->SetHandler (nullptr);
     }
   this->TransferStatus = vtkDataTransfer::Ready;
   this->TransferID = -1;
   this->TransferType = vtkDataTransfer::Unspecified;
-  this->TransferNodeID = NULL;
+  this->TransferNodeID = nullptr;
   this->Progress = 0;
   this->CancelRequested = 0;
   this->TransferCached = 0;

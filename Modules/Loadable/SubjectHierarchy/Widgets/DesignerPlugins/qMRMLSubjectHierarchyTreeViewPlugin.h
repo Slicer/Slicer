@@ -32,7 +32,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_PLUGINS_EXPORT qMRMLSubjectHierar
   Q_OBJECT
 
 public:
-  qMRMLSubjectHierarchyTreeViewPlugin(QObject* parent = 0);
+  qMRMLSubjectHierarchyTreeViewPlugin(QObject* parent = nullptr);
 
   QWidget *createWidget(QWidget* parent);
   QString  domXml() const;

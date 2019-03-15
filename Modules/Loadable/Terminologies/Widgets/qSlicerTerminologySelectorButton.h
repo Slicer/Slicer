@@ -39,7 +39,7 @@ class Q_SLICER_MODULE_TERMINOLOGIES_WIDGETS_EXPORT qSlicerTerminologySelectorBut
   Q_OBJECT
 
 public:
-  explicit qSlicerTerminologySelectorButton(QWidget* parent=NULL);
+  explicit qSlicerTerminologySelectorButton(QWidget* parent=nullptr);
   virtual ~qSlicerTerminologySelectorButton();
 
   /// Get selected terminology and other metadata (name, color, auto-generated flags) into given info bundle object

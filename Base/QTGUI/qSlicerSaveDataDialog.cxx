@@ -70,7 +70,7 @@ namespace
 qSlicerFileNameItemDelegate::qSlicerFileNameItemDelegate( QObject * parent )
   : Superclass(parent)
 {
-  this->MRMLScene = 0;
+  this->MRMLScene = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -154,7 +154,7 @@ QRegExp qSlicerFileNameItemDelegate::fileNameRegExp(const QString& extension)
 qSlicerSaveDataDialogPrivate::qSlicerSaveDataDialogPrivate(QWidget* parentWidget)
   : QDialog(parentWidget)
 {
-  this->MRMLScene = 0;
+  this->MRMLScene = nullptr;
 
   this->setupUi(this);
   this->FileWidget->setItemDelegateForColumn(
@@ -252,7 +252,7 @@ void qSlicerSaveDataDialogPrivate::populateItems()
 {
   // clear the list
   this->FileWidget->setRowCount(0);
-  if (this->MRMLScene == 0)
+  if (this->MRMLScene == nullptr)
     {
     return;
     }
@@ -331,7 +331,7 @@ void qSlicerSaveDataDialogPrivate::populateScene()
 
   // Get absolute filename
   QFileInfo sceneFileInfo;
-  if (this->MRMLScene->GetURL() != 0 &&
+  if (this->MRMLScene->GetURL() != nullptr &&
       strlen(this->MRMLScene->GetURL()) > 0)
     {
     sceneFileInfo = QFileInfo( QDir(this->MRMLScene->GetRootDirectory()),
@@ -525,7 +525,7 @@ QFileInfo qSlicerSaveDataDialogPrivate::nodeFileInfo(vtkMRMLStorableNode* node)
     }
 
   vtkMRMLStorageNode* snode = node->GetStorageNode();
-  if (snode == 0)
+  if (snode == nullptr)
     {
     bool success = node->AddDefaultStorageNode();
     if (!success)
@@ -562,7 +562,7 @@ QFileInfo qSlicerSaveDataDialogPrivate::nodeFileInfo(vtkMRMLStorableNode* node)
         }
       }
     }
-  if (snode->GetFileName() == 0 && !this->DirectoryButton->directory().isEmpty())
+  if (snode->GetFileName() == nullptr && !this->DirectoryButton->directory().isEmpty())
     {
     QString fileExtension = snode->GetDefaultWriteFileExtension();
     if (!fileExtension.isEmpty())
@@ -678,7 +678,7 @@ QWidget* qSlicerSaveDataDialogPrivate::createFileFormatsWidget(vtkMRMLStorableNo
   // The existing file name doesn't contain an existing extension, pick the
   // default extension if any
   if (currentFormat == -1 &&
-      snode->GetDefaultWriteFileExtension() != 0)
+      snode->GetDefaultWriteFileExtension() != nullptr)
     {
     for (int i = 0; i < fileFormats->count(); ++i)
       {
@@ -966,7 +966,7 @@ vtkMRMLNode* qSlicerSaveDataDialogPrivate::getNodeByID(char *id)const
 vtkMRMLNode* qSlicerSaveDataDialogPrivate::getNodeByID(char *id, vtkMRMLScene* scene)
 {
   vtkMRMLNode *node = scene->GetNodeByID(id);
-  if (node == 0)
+  if (node == nullptr)
     {
     // search in SceneView nodes
     std::string sID(id);
@@ -1377,7 +1377,7 @@ void qSlicerSaveDataDialogPrivate::enableNodes(bool enable)
 //-----------------------------------------------------------------------------
 qSlicerSaveDataDialog::qSlicerSaveDataDialog(QObject* parentObject)
   : qSlicerFileDialog(parentObject)
-  , d_ptr(new qSlicerSaveDataDialogPrivate(0))
+  , d_ptr(new qSlicerSaveDataDialogPrivate(nullptr))
 {
 }
 

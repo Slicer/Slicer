@@ -36,7 +36,7 @@ class qSlicerDummyIOOptionsWidget
   : public qSlicerIOOptionsWidget
 {
 public:
-  qSlicerDummyIOOptionsWidget(QWidget *parent=0): qSlicerIOOptionsWidget(parent){}
+  qSlicerDummyIOOptionsWidget(QWidget *parent=nullptr): qSlicerIOOptionsWidget(parent){}
   virtual ~qSlicerDummyIOOptionsWidget(){};
   virtual QSize minimumSizeHint()const {return QSize(300, 30);}
   virtual QSize sizeHint()const{return QSize(500,30);}
@@ -50,7 +50,7 @@ private:
 class qSlicerDummyIO: public qSlicerIO
 {
 public:
-  qSlicerDummyIO(QObject* parent = 0):qSlicerIO(parent){}
+  qSlicerDummyIO(QObject* parent = nullptr):qSlicerIO(parent){}
   virtual ~qSlicerDummyIO(){}
   virtual QString description()const{return "Dummy";}
   virtual IOFileType fileType()const{return QString("UserFile");}
@@ -71,7 +71,7 @@ bool qSlicerDummyIO::load(const IOProperties& properties)
 int qSlicerDataDialogTest1(int argc, char * argv[] )
 {
   qSlicerApplication app(argc, argv);
-  app.coreIOManager()->registerIO(new qSlicerDummyIO(0));
+  app.coreIOManager()->registerIO(new qSlicerDummyIO(nullptr));
 
   qSlicerDataDialog dataDialog;
 

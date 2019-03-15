@@ -34,8 +34,8 @@ class qSlicerVolumesReader
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerVolumesReader(QObject* parent = 0);
-  qSlicerVolumesReader(vtkSlicerVolumesLogic* logic, QObject* parent = 0);
+  qSlicerVolumesReader(QObject* parent = nullptr);
+  qSlicerVolumesReader(vtkSlicerVolumesLogic* logic, QObject* parent = nullptr);
   virtual ~qSlicerVolumesReader();
 
   vtkSlicerVolumesLogic* logic()const;

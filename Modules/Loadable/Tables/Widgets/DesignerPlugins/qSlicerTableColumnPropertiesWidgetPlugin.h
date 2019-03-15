@@ -30,7 +30,7 @@ qSlicerTableColumnPropertiesWidgetPlugin
   Q_OBJECT
 
 public:
-  qSlicerTableColumnPropertiesWidgetPlugin(QObject *_parent = 0);
+  qSlicerTableColumnPropertiesWidgetPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString domXml() const;

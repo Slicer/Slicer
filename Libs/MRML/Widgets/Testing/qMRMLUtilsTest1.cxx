@@ -54,8 +54,8 @@ int qMRMLUtilsTest1( int argc, char * argv [] )
   QColor qcolor2;
   double color1[3] = {0.0, 1.0, 0.5};
   double color2[3];
-  qMRMLUtils::colorToQColor(0, qcolor1);
-  qMRMLUtils::qColorToColor(qcolor1, 0);
+  qMRMLUtils::colorToQColor(nullptr, qcolor1);
+  qMRMLUtils::qColorToColor(qcolor1, nullptr);
   qMRMLUtils::colorToQColor(color1, qcolor2);
   if (fabs(qcolor2.redF() - 0.0) > 0.01 ||
       fabs(qcolor2.greenF() - 1.0) > 0.01 ||

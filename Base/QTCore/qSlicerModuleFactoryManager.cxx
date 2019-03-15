@@ -47,8 +47,8 @@ qSlicerModuleFactoryManagerPrivate
 ::qSlicerModuleFactoryManagerPrivate(qSlicerModuleFactoryManager& object)
   : q_ptr(&object)
 {
-  this->AppLogic = 0;
-  this->MRMLScene = 0;
+  this->AppLogic = nullptr;
+  this->MRMLScene = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -268,14 +268,14 @@ qSlicerAbstractCoreModule* qSlicerModuleFactoryManager::loadedModule(const QStri
     qDebug() << "The module" << name << "has not been registered.";
     qDebug() << "The following modules have been registered:"
              << this->registeredModuleNames();
-    return 0;
+    return nullptr;
     }
   if (!this->isInstantiated(name))
     {
     qDebug() << "The module" << name << "has been registered but not instantiated.";
     qDebug() << "The following modules have been instantiated:"
              << this->instantiatedModuleNames();
-    return 0;
+    return nullptr;
     }
 
   if (!this->isLoaded(name))
@@ -283,7 +283,7 @@ qSlicerAbstractCoreModule* qSlicerModuleFactoryManager::loadedModule(const QStri
     qDebug()<< "The module" << name << "has not been loaded.";
     qDebug() << "The following modules have been loaded:"
              << this->loadedModuleNames();
-    return 0;
+    return nullptr;
     }
   return this->moduleInstance(name);
 }

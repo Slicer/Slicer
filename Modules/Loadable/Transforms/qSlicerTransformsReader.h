@@ -35,7 +35,7 @@ class qSlicerTransformsReader
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerTransformsReader(vtkSlicerTransformLogic* transformLogic, QObject* parent = 0);
+  qSlicerTransformsReader(vtkSlicerTransformLogic* transformLogic, QObject* parent = nullptr);
   virtual ~qSlicerTransformsReader();
 
   void setTransformLogic(vtkSlicerTransformLogic* transformLogic);

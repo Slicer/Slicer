@@ -50,7 +50,7 @@ public:
   virtual int Pick3D(double vtkNotUsed(ras)[3]) { return 0; }
 
   /// Get the MRML ID of the picked node, returns empty string if no pick
-  virtual const char* GetPickedNodeID() { return NULL; }
+  virtual const char* GetPickedNodeID() { return nullptr; }
 
 protected:
 

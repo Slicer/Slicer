@@ -240,7 +240,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         readerSH->SetFileName(fullName.c_str());
         readerSH->Update();
         MeshReaderType::SceneType::Pointer scene = readerSH->GetScene();
-        MeshReaderType::SceneType::ObjectListType * objList =  scene->GetObjects(1,NULL);
+        MeshReaderType::SceneType::ObjectListType * objList =  scene->GetObjects(1,nullptr);
 
         MeshReaderType::SceneType::ObjectListType::iterator it = objList->begin();
         itk::SpatialObject<3> * curObj = *it;
@@ -303,7 +303,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     result = 0;
     }
 
-  if (modelNode->GetMesh() != NULL)
+  if (modelNode->GetMesh() != nullptr)
     {
     // is there an active scalar array?
     if (modelNode->GetDisplayNode()
@@ -569,7 +569,7 @@ vtkMRMLModelNode* vtkMRMLModelStorageNode::GetAssociatedDataNode()
 {
   if (!this->GetScene())
     {
-    return NULL;
+    return nullptr;
     }
 
   std::vector<vtkMRMLNode*> nodes;
@@ -587,5 +587,5 @@ vtkMRMLModelNode* vtkMRMLModelStorageNode::GetAssociatedDataNode()
       }
     }
 
-  return NULL;
+  return nullptr;
 }

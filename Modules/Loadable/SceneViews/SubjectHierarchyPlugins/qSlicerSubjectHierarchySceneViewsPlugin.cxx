@@ -68,7 +68,7 @@ qSlicerSubjectHierarchySceneViewsPluginPrivate::qSlicerSubjectHierarchySceneView
 {
   this->SceneViewIcon = QIcon(":Icons/SceneView.png");
 
-  this->RestoreSceneViewAction = NULL;
+  this->RestoreSceneViewAction = nullptr;
 }
 
 //------------------------------------------------------------------------------

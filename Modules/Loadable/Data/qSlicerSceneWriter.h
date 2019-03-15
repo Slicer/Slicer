@@ -33,7 +33,7 @@ class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerSceneWriter
   Q_OBJECT
 public:
   typedef qSlicerFileWriter Superclass;
-  qSlicerSceneWriter(QObject* parent = 0);
+  qSlicerSceneWriter(QObject* parent = nullptr);
   virtual ~qSlicerSceneWriter();
 
   virtual QString description()const;

@@ -43,7 +43,7 @@ class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIModule : public qSlicerAbstractModule
 public:
 
   typedef qSlicerAbstractModule Superclass;
-  qSlicerCLIModule(QWidget *parent=0);
+  qSlicerCLIModule(QWidget *parent=nullptr);
   virtual ~qSlicerCLIModule();
 
   ///

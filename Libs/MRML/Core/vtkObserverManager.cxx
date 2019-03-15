@@ -31,7 +31,7 @@ vtkStandardNewMacro(vtkObserverManager);
 vtkObserverManager::vtkObserverManager()
 {
   this->CallbackCommand = vtkCallbackCommand::New();
-  this->Owner = NULL;
+  this->Owner = nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -114,7 +114,7 @@ void vtkObserverManager::SetAndObserveObject(vtkObject **nodePtr, vtkObject *nod
   vtkDebugMacro (<< "SetAndObserveObject of " << node);
   if (*nodePtr == node)
     {
-    if (node == 0)
+    if (node == nullptr)
       {
       return;
       }
@@ -144,7 +144,7 @@ void vtkObserverManager::SetAndObserveObjectEvents(vtkObject **nodePtr, vtkObjec
   vtkDebugMacro (<< "SetAndObserveObjectEvents of " << node);
   if (*nodePtr == node)
     {
-    if (node == 0)
+    if (node == nullptr)
       {
       return;
       }
@@ -236,7 +236,7 @@ void vtkObserverManager::AddObjectEvents(vtkObject *nodePtr, vtkIntArray *events
 
   if (nodePtr)
     {
-    vtkUnsignedLongArray* objTags = NULL;
+    vtkUnsignedLongArray* objTags = nullptr;
     std::map< vtkObject*, vtkUnsignedLongArray*>::iterator it =  this->ObserverTags.find(nodePtr);
     if (it != this->ObserverTags.end())
       {
@@ -265,7 +265,7 @@ void vtkObserverManager::AddObjectEvents(vtkObject *nodePtr, vtkIntArray *events
                           << " already exists.");
           }
 #endif
-        vtkObservation *observation=0;
+        vtkObservation *observation=nullptr;
         if (!priorities)
           {
           observation = broker->AddObservation (nodePtr, events->GetValue(i), observer, this->CallbackCommand );
@@ -299,7 +299,7 @@ void vtkObserverManager::GetObjectEvents(vtkObject *nodePtr, vtkIntArray *events
 {
   events->Resize(0);
   priorities->Resize(0);
-  if (nodePtr == NULL)
+  if (nodePtr == nullptr)
     {
     // node is invalid
     return;

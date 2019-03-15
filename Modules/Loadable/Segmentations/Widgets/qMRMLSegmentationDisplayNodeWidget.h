@@ -48,7 +48,7 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentationDisplayNodeW
 
 public:
   /// Constructor
-  explicit qMRMLSegmentationDisplayNodeWidget(QWidget* parent = 0);
+  explicit qMRMLSegmentationDisplayNodeWidget(QWidget* parent = nullptr);
   /// Destructor
   virtual ~qMRMLSegmentationDisplayNodeWidget();
 

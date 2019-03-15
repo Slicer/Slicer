@@ -28,7 +28,7 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLPlotViewControllerWidgetPlugin : public 
   Q_OBJECT
 
 public:
-  qMRMLPlotViewControllerWidgetPlugin(QObject *_parent = 0);
+  qMRMLPlotViewControllerWidgetPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;

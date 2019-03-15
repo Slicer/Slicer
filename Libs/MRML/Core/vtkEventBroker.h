@@ -108,14 +108,14 @@ public:
   /// If maxReturnedObservations is != 0, only up to this number of observations are are returned
   ObservationVector GetObservations (vtkObject *subject,
                                                   unsigned long event = 0,
-                                                  vtkObject *observer = 0,
-                                                  vtkCallbackCommand *notify = 0,
+                                                  vtkObject *observer = nullptr,
+                                                  vtkCallbackCommand *notify = nullptr,
                                                   unsigned int maxReturnedObservations = 0);
   /// Returns true if such an observation exists (arguments are same as for GetObservations)
   bool GetObservationExist (vtkObject *subject,
                                                   unsigned long event = 0,
-                                                  vtkObject *observer = 0,
-                                                  vtkCallbackCommand *notify = 0);
+                                                  vtkObject *observer = nullptr,
+                                                  vtkCallbackCommand *notify = nullptr);
   ObservationVector GetObservationsForSubjectByTag (vtkObject *subject, unsigned long tag);
 
   /// Description

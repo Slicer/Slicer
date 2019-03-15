@@ -61,7 +61,7 @@ vtkMRMLModelDisplayNode::vtkMRMLModelDisplayNode()
 
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkCommand::ModifiedEvent);
-  this->AddNodeReferenceRole(SliceDistanceEncodedProjectionColorNodeReferenceRole, NULL, events.GetPointer());
+  this->AddNodeReferenceRole(SliceDistanceEncodedProjectionColorNodeReferenceRole, nullptr, events.GetPointer());
 }
 
 //-----------------------------------------------------------------------------
@@ -139,11 +139,11 @@ void vtkMRMLModelDisplayNode::ProcessMRMLEvents(vtkObject *caller,
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
 
   vtkMRMLColorNode* cnode = vtkMRMLColorNode::SafeDownCast(caller);
-  if (cnode != NULL && cnode == this->GetDistanceEncodedProjectionColorNode()
+  if (cnode != nullptr && cnode == this->GetDistanceEncodedProjectionColorNode()
     && event == vtkCommand::ModifiedEvent)
     {
     // Slice distance encoded projection color node changed
-    this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
+    this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);
     }
   else if (event == vtkCommand::ModifiedEvent)
     {
@@ -201,7 +201,7 @@ vtkUnstructuredGrid* vtkMRMLModelDisplayNode::GetInputUnstructuredGrid()
 vtkAlgorithmOutput* vtkMRMLModelDisplayNode::GetInputMeshConnection()
 {
   return this->AssignAttribute->GetNumberOfInputConnections(0) ?
-    this->AssignAttribute->GetInputConnection(0,0) : 0;
+    this->AssignAttribute->GetInputConnection(0,0) : nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -216,19 +216,19 @@ vtkPointSet* vtkMRMLModelDisplayNode::GetOutputMesh()
 {
   if (!this->GetInputMeshConnection())
     {
-    return NULL;
+    return nullptr;
     }
 
   vtkAlgorithmOutput* outputConnection = this->GetOutputMeshConnection();
   if (!outputConnection)
     {
-    return NULL;
+    return nullptr;
     }
 
   vtkAlgorithm* producer = outputConnection->GetProducer();
   if (!producer)
     {
-    return NULL;
+    return nullptr;
     }
 
   producer->Update();
@@ -367,7 +367,7 @@ void vtkMRMLModelDisplayNode::SetActiveScalarName(const char *scalarName)
     {
     return;
     }
-  if (scalarName == 0 && this->ActiveScalarName == 0)
+  if (scalarName == nullptr && this->ActiveScalarName == nullptr)
     {
     return;
     }
@@ -395,7 +395,7 @@ void vtkMRMLModelDisplayNode::SetActiveScalar(const char *scalarName, int locati
 {
   if (location == this->ActiveAttributeLocation
     && ((scalarName && this->ActiveScalarName && !strcmp(scalarName, this->ActiveScalarName))
-        || (scalarName == 0 && this->ActiveScalarName == 0)))
+        || (scalarName == nullptr && this->ActiveScalarName == nullptr)))
     {
     // no change
     return;
@@ -507,13 +507,13 @@ void vtkMRMLModelDisplayNode::UpdateScalarRange()
 //-----------------------------------------------------------
 vtkDataArray* vtkMRMLModelDisplayNode::GetActiveScalarArray()
 {
-  if (this->GetActiveScalarName() == NULL || strcmp(this->GetActiveScalarName(),"") == 0)
+  if (this->GetActiveScalarName() == nullptr || strcmp(this->GetActiveScalarName(),"") == 0)
     {
-    return NULL;
+    return nullptr;
     }
   if (!this->GetInputMesh())
     {
-    return NULL;
+    return nullptr;
     }
 
   // Use output of AssignAttribute instead of this->GetOutputMesh()
@@ -523,12 +523,12 @@ vtkDataArray* vtkMRMLModelDisplayNode::GetActiveScalarArray()
   // AssignAttribuet filter to retrieve its output mesh scalar range.
   this->AssignAttribute->Update();
   vtkPointSet* mesh = vtkPointSet::SafeDownCast(this->AssignAttribute->GetOutput());
-  if (mesh == NULL)
+  if (mesh == nullptr)
     {
-    return NULL;
+    return nullptr;
     }
 
-  vtkDataSetAttributes* attributes = NULL;
+  vtkDataSetAttributes* attributes = nullptr;
   switch (this->GetActiveAttributeLocation())
     {
     case vtkAssignAttribute::POINT_DATA:
@@ -542,9 +542,9 @@ vtkDataArray* vtkMRMLModelDisplayNode::GetActiveScalarArray()
         << this->GetActiveAttributeLocation());
       break;
     }
-  if (attributes == NULL)
+  if (attributes == nullptr)
     {
-    return NULL;
+    return nullptr;
     }
   vtkDataArray *dataArray = attributes->GetArray(this->GetActiveScalarName());
   return dataArray;
@@ -585,7 +585,7 @@ const char* vtkMRMLModelDisplayNode::GetSliceDisplayModeAsString(int id)
 //-----------------------------------------------------------
 int vtkMRMLModelDisplayNode::GetSliceDisplayModeFromString(const char* name)
 {
-  if (name == NULL)
+  if (name == nullptr)
     {
     // invalid name
     return -1;

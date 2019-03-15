@@ -35,7 +35,7 @@ class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerDataModuleWidget :
   Q_OBJECT
 public:
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerDataModuleWidget(QWidget *parentWidget = 0);
+  qSlicerDataModuleWidget(QWidget *parentWidget = nullptr);
   virtual ~qSlicerDataModuleWidget();
 
   virtual void enter();

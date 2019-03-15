@@ -30,7 +30,7 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLVolumeInfoWidgetPlugin
   Q_OBJECT
 
 public:
-  qMRMLVolumeInfoWidgetPlugin(QObject *parent = 0);
+  qMRMLVolumeInfoWidgetPlugin(QObject *parent = nullptr);
 
   QWidget *createWidget(QWidget *parent);
   QString  domXml() const;

@@ -46,7 +46,7 @@ vtkMRMLNodeNewMacro(vtkMRMLPlotChartNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLPlotChartNode::vtkMRMLPlotChartNode()
-: Title(NULL)
+: Title(nullptr)
 , TitleFontSize(20)
 , TitleVisibility(true)
 , GridVisibility(true)
@@ -56,13 +56,13 @@ vtkMRMLPlotChartNode::vtkMRMLPlotChartNode()
 , YAxisRangeAuto(true)
 , XAxisLogScale(false)
 , YAxisLogScale(false)
-, XAxisTitle(NULL)
+, XAxisTitle(nullptr)
 , XAxisTitleVisibility(true)
-, YAxisTitle(NULL)
+, YAxisTitle(nullptr)
 , YAxisTitleVisibility(true)
 , AxisTitleFontSize(16)
 , AxisLabelFontSize(12)
-, FontType(NULL)
+, FontType(nullptr)
 , EnablePointMoveAlongX(true)
 , EnablePointMoveAlongY(true)
 {
@@ -79,7 +79,7 @@ vtkMRMLPlotChartNode::vtkMRMLPlotChartNode()
   events->InsertNextValue(vtkCommand::ModifiedEvent);
   events->InsertNextValue(vtkMRMLPlotChartNode::PlotModifiedEvent);
   events->InsertNextValue(vtkMRMLPlotSeriesNode::TableModifiedEvent);
-  this->AddNodeReferenceRole(this->GetPlotSeriesNodeReferenceRole(), NULL, events.GetPointer());
+  this->AddNodeReferenceRole(this->GetPlotSeriesNodeReferenceRole(), nullptr, events.GetPointer());
 }
 
 
@@ -89,22 +89,22 @@ vtkMRMLPlotChartNode::~vtkMRMLPlotChartNode()
   if (this->Title)
     {
     delete [] this->Title;
-    this->Title = NULL;
+    this->Title = nullptr;
     }
   if (this->XAxisTitle)
     {
     delete [] this->XAxisTitle;
-    this->XAxisTitle = NULL;
+    this->XAxisTitle = nullptr;
     }
   if (this->YAxisTitle)
     {
     delete [] this->YAxisTitle;
-    this->YAxisTitle = NULL;
+    this->YAxisTitle = nullptr;
     }
   if (this->FontType)
     {
     delete [] this->FontType;
-    this->FontType = NULL;
+    this->FontType = nullptr;
     }
 }
 
@@ -389,7 +389,7 @@ void vtkMRMLPlotChartNode::ProcessMRMLEvents(vtkObject *caller,
   for (int plotIndex = 0; plotIndex < numPlotSeriesNodes; plotIndex++)
     {
     vtkMRMLPlotSeriesNode *pnode = this->GetNthPlotSeriesNode(plotIndex);
-    if (pnode != NULL && pnode == vtkMRMLPlotSeriesNode::SafeDownCast(caller) &&
+    if (pnode != nullptr && pnode == vtkMRMLPlotSeriesNode::SafeDownCast(caller) &&
        (event ==  vtkCommand::ModifiedEvent || event == vtkMRMLPlotSeriesNode::TableModifiedEvent))
       {
       this->InvokeEvent(vtkMRMLPlotChartNode::PlotModifiedEvent, pnode);

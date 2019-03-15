@@ -100,7 +100,7 @@ vtkMRMLScene* qMRMLSortFilterSubjectHierarchyProxyModel::mrmlScene()const
   qMRMLSubjectHierarchyModel* model = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
   if (!model)
     {
-    return NULL;
+    return nullptr;
     }
   return model->mrmlScene();
 }
@@ -111,7 +111,7 @@ vtkMRMLSubjectHierarchyNode* qMRMLSortFilterSubjectHierarchyProxyModel::subjectH
   qMRMLSubjectHierarchyModel* model = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
   if (!model)
     {
-    return NULL;
+    return nullptr;
     }
   return model->subjectHierarchyNode();
 }
@@ -257,7 +257,7 @@ QStandardItem* qMRMLSortFilterSubjectHierarchyProxyModel::sourceItem(const QMode
   qMRMLSubjectHierarchyModel* model = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
   if (!model)
     {
-    return NULL;
+    return nullptr;
     }
   return sourceIndex.isValid() ? model->itemFromIndex(sourceIndex) : model->invisibleRootItem();
 }
@@ -270,7 +270,7 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsRow(int sourceRow, 
     {
     return false;
     }
-  QStandardItem* item = NULL;
+  QStandardItem* item = nullptr;
 
   // Sometimes the row is not complete (DnD), search for a non null item
   for (int childIndex=0; childIndex < parentItem->columnCount(); ++childIndex)
@@ -281,7 +281,7 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsRow(int sourceRow, 
       break;
       }
     }
-  if (item == NULL)
+  if (item == nullptr)
     {
     return false;
     }

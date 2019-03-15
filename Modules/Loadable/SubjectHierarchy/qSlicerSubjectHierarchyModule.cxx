@@ -52,7 +52,7 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyModulePrivate::qSlicerSubjectHierarchyModulePrivate()
-  : PluginLogic(NULL)
+  : PluginLogic(nullptr)
 {
 }
 
@@ -62,7 +62,7 @@ qSlicerSubjectHierarchyModulePrivate::~qSlicerSubjectHierarchyModulePrivate()
   if (this->PluginLogic)
     {
     delete this->PluginLogic;
-    this->PluginLogic = NULL;
+    this->PluginLogic = nullptr;
     }
 }
 

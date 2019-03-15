@@ -90,8 +90,8 @@ public:
 qSlicerDICOMTagEditorWidgetPrivate::qSlicerDICOMTagEditorWidgetPrivate(qSlicerDICOMTagEditorWidget& object)
   : q_ptr(&object)
 {
-  this->Scene = NULL;
-  this->TagsTable = NULL;
+  this->Scene = nullptr;
+  this->TagsTable = nullptr;
   this->StudyTagsHeaderRow = 0;
 
   this->HeaderItemColor = QColor::fromRgb(240, 240, 240);
@@ -192,7 +192,7 @@ qSlicerDICOMExportable* qSlicerDICOMTagEditorWidgetPrivate::exportableForRowInde
   // If patient or study tag, then it corresponds to no exportable
   if (row < this->topSeriesHeaderRow())
     {
-    return NULL;
+    return nullptr;
     }
 
   unsigned int foundSeriesHeaderRowIndex = 0; // 0 is invalid value as it is the patient header
@@ -200,7 +200,7 @@ qSlicerDICOMExportable* qSlicerDICOMTagEditorWidgetPrivate::exportableForRowInde
   if (headerRowIndices.contains(row))
     {
     // If row is a header, then return NULL without logging error
-    return NULL;
+    return nullptr;
     }
 
   // Iterate through the series header indices from the bottom up
@@ -218,7 +218,7 @@ qSlicerDICOMExportable* qSlicerDICOMTagEditorWidgetPrivate::exportableForRowInde
   if (foundSeriesHeaderRowIndex == 0)
     {
     qCritical() << Q_FUNC_INFO << ": Failed to find series section for row index " << row;
-    return NULL;
+    return nullptr;
     }
 
   return this->SeriesTagsHeaderRows[foundSeriesHeaderRowIndex];

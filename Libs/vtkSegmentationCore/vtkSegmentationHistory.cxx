@@ -34,7 +34,7 @@ vtkStandardNewMacro(vtkSegmentationHistory);
 //----------------------------------------------------------------------------
 vtkSegmentationHistory::vtkSegmentationHistory()
 {
-  this->Segmentation = NULL;
+  this->Segmentation = nullptr;
 
   this->MaximumNumberOfStates = 5;
 
@@ -49,13 +49,13 @@ vtkSegmentationHistory::vtkSegmentationHistory()
 //----------------------------------------------------------------------------
 vtkSegmentationHistory::~vtkSegmentationHistory()
 {
-  this->SetSegmentation(NULL);
+  this->SetSegmentation(nullptr);
 
   if (this->SegmentationModifiedCallbackCommand)
     {
-    this->SegmentationModifiedCallbackCommand->SetClientData(NULL);
+    this->SegmentationModifiedCallbackCommand->SetClientData(nullptr);
     this->SegmentationModifiedCallbackCommand->Delete();
-    this->SegmentationModifiedCallbackCommand = NULL;
+    this->SegmentationModifiedCallbackCommand = nullptr;
     }
 }
 
@@ -100,7 +100,7 @@ void vtkSegmentationHistory::PrintSelf(ostream& os, vtkIndent indent)
 //---------------------------------------------------------------------------
 bool vtkSegmentationHistory::SaveState()
 {
-  if (this->Segmentation == NULL)
+  if (this->Segmentation == nullptr)
     {
     vtkWarningMacro("vtkSegmentation::SaveState failed: segmentation is invalid");
     return false;
@@ -122,14 +122,14 @@ bool vtkSegmentationHistory::SaveState()
   for (std::vector<std::string>::iterator segmentIDIt = segmentIDs.begin(); segmentIDIt != segmentIDs.end(); ++segmentIDIt)
     {
     vtkSegment* segment = this->Segmentation->GetSegment(*segmentIDIt);
-    if (segment == NULL)
+    if (segment == nullptr)
       {
       vtkErrorMacro("Failed to save state of segment " << *segmentIDIt);
       continue;
       }
     // Previous saved state of the segment
     // (if the new state has exactly the same representation then only a shallow copy will be made)
-    vtkSegment* baselineSegment = NULL;
+    vtkSegment* baselineSegment = nullptr;
     if (this->SegmentationStates.size() > 0)
       {
       SegmentsMap::iterator baselineSegmentIt = this->SegmentationStates.back().Segments.find(*segmentIDIt);
@@ -165,13 +165,13 @@ void vtkSegmentationHistory::CopySegment(vtkSegment* destination, vtkSegment* so
     representationNameIt != representationNames.end(); ++representationNameIt)
     {
     vtkDataObject* sourceRepresentation = source->GetRepresentation(*representationNameIt);
-    vtkDataObject* baselineRepresentation = NULL;
+    vtkDataObject* baselineRepresentation = nullptr;
     if (baseline)
       {
       baselineRepresentation = baseline->GetRepresentation(*representationNameIt);
       }
     // Shallow-copy from baseline if it's up-to-date, otherwise deep-copy from source
-    if (baselineRepresentation != NULL
+    if (baselineRepresentation != nullptr
       && baselineRepresentation->GetMTime() > sourceRepresentation->GetMTime())
       {
       // we already have an up-to-date copy in the baseline, so reuse that
@@ -196,7 +196,7 @@ void vtkSegmentationHistory::CopySegment(vtkSegment* destination, vtkSegment* so
 //---------------------------------------------------------------------------
 bool vtkSegmentationHistory::RestorePreviousState()
 {
-  if (this->Segmentation == NULL)
+  if (this->Segmentation == nullptr)
     {
     vtkWarningMacro("vtkSegmentation::RestorePreviousState failed: segmentation is invalid");
     return false;
@@ -227,7 +227,7 @@ bool vtkSegmentationHistory::RestorePreviousState()
 //---------------------------------------------------------------------------
 bool vtkSegmentationHistory::RestoreNextState()
 {
-  if (this->Segmentation == NULL)
+  if (this->Segmentation == nullptr)
     {
     vtkWarningMacro("vtkSegmentation::RestoreNextState failed: segmentation is invalid");
     return false;
@@ -253,7 +253,7 @@ bool vtkSegmentationHistory::RestoreState(unsigned int stateIndex)
     {
     segmentIDsToKeep.insert(restoredSegmentsIt->first);
     vtkSegment* segment = this->Segmentation->GetSegment(restoredSegmentsIt->first);
-    if (segment != NULL)
+    if (segment != nullptr)
       {
       segment->DeepCopy(restoredSegmentsIt->second);
       segment->Modified();

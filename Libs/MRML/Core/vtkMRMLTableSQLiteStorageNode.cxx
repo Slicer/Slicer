@@ -46,8 +46,8 @@ vtkMRMLNodeNewMacro(vtkMRMLTableSQLiteStorageNode);
 //----------------------------------------------------------------------------
 vtkMRMLTableSQLiteStorageNode::vtkMRMLTableSQLiteStorageNode()
 {
-  this->TableName = 0;
-  this->Password = 0;
+  this->TableName = nullptr;
+  this->Password = nullptr;
   this->DefaultWriteFileExtension = "sqlite3";
 }
 
@@ -79,7 +79,7 @@ int vtkMRMLTableSQLiteStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     return 0;
     }
   vtkMRMLTableNode *tableNode = vtkMRMLTableNode::SafeDownCast(refNode);
-  if (tableNode == NULL)
+  if (tableNode == nullptr)
     {
     vtkErrorMacro("ReadData: unable to cast input node " << refNode->GetID() << " to a table node");
     return 0;
@@ -125,7 +125,7 @@ int vtkMRMLTableSQLiteStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLTableSQLiteStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 {
-  if (this->GetFileName() == NULL)
+  if (this->GetFileName() == nullptr)
     {
     vtkErrorMacro("WriteData: file name is not set");
     return 0;
@@ -138,7 +138,7 @@ int vtkMRMLTableSQLiteStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     }
 
   vtkMRMLTableNode *tableNode = vtkMRMLTableNode::SafeDownCast(refNode);
-  if (tableNode == NULL)
+  if (tableNode == nullptr)
     {
     vtkErrorMacro("WriteData: unable to cast input node " << refNode->GetID() << " to a valid table node");
     return 0;

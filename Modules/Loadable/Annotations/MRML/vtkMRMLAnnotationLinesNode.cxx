@@ -41,7 +41,7 @@ void vtkMRMLAnnotationLinesNode::WriteXML(ostream& of, int nIndent)
     for (int i = 0; i < n; i++)
       {
       vtkIdType npts = 0;
-      vtkIdType *pts = NULL;
+      vtkIdType *pts = nullptr;
       lines->GetNextCell(npts, pts);
       for (int j= 0; j < npts; j++)
         {
@@ -93,7 +93,7 @@ void vtkMRMLAnnotationLinesNode::ReadXMLAttributes(const char** atts)
 
   Superclass::ReadXMLAttributes(atts);
 
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     const char* attName = *(atts++);
     std::string attValue(*(atts++));
@@ -193,7 +193,7 @@ void vtkMRMLAnnotationLinesNode::PrintAnnotationInfo(ostream& os, vtkIndent inde
     for (int i = 0; i < n; i++ )
       {
       vtkIdType npts;
-      vtkIdType *pts = NULL;
+      vtkIdType *pts = nullptr;
       lines->GetNextCell(npts, pts);
       if (!pts)
         {
@@ -250,7 +250,7 @@ vtkMRMLAnnotationLineDisplayNode* vtkMRMLAnnotationLinesNode::GetAnnotationLineD
     return node;
       }
     }
-  return 0;
+  return nullptr;
 }
 
 
@@ -339,9 +339,9 @@ void vtkMRMLAnnotationLinesNode::DeleteLine(int id)
   lines->InitTraversal();
   // cellLine->SetTraversalLocation(id);
 
-  vtkIdType *cPts = NULL;
+  vtkIdType *cPts = nullptr;
   vtkIdType cNpts = 0;
-  vtkIdType *nPts = NULL;
+  vtkIdType *nPts = nullptr;
   vtkIdType nNpts = 0;
   for (int i = 0; i <= id; i++ )
     {
@@ -395,7 +395,7 @@ int vtkMRMLAnnotationLinesNode::GetEndPointsId(vtkIdType id, vtkIdType ctrlPtsID
   lines->InitTraversal();
 
   vtkIdType npts = 0;
-  vtkIdType *pts = NULL;
+  vtkIdType *pts = nullptr;
 
   for (int i = 0; i < id; i++ )
     {
@@ -438,10 +438,10 @@ const char *vtkMRMLAnnotationLinesNode::GetAttributeTypesEnumAsString(int val)
 vtkMRMLStorageNode* vtkMRMLAnnotationLinesNode::CreateDefaultStorageNode()
 {
   vtkMRMLScene* scene = this->GetScene();
-  if (scene == NULL)
+  if (scene == nullptr)
     {
     vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
-    return NULL;
+    return nullptr;
     }
   return vtkMRMLStorageNode::SafeDownCast(
     scene->CreateNodeByClass("vtkMRMLAnnotationLinesStorageNode"));
@@ -491,7 +491,7 @@ int  vtkMRMLAnnotationLinesNode::SetLine(int id, int ctrlPtIdStart, int ctrlPtId
       int addCells = id - cellLine->GetNumberOfCells();
       for (int i=0; i< addCells; i++)
     {
-      cellLine->InsertNextCell(0,0);
+      cellLine->InsertNextCell(0,nullptr);
     }
       cellLine->InsertNextCell(2,lineIdList);
     }

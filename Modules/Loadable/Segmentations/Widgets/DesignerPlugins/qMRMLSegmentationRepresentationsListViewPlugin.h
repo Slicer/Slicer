@@ -30,7 +30,7 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_PLUGINS_EXPORT qMRMLSegmentationRepr
   Q_OBJECT
 
 public:
-  qMRMLSegmentationRepresentationsListViewPlugin(QObject* parent = 0);
+  qMRMLSegmentationRepresentationsListViewPlugin(QObject* parent = nullptr);
 
   QWidget *createWidget(QWidget* parent);
   QString  domXml() const;

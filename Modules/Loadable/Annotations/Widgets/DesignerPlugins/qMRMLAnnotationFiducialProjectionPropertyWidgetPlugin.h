@@ -33,7 +33,7 @@ qMRMLAnnotationFiducialProjectionPropertyWidgetPlugin
   Q_OBJECT
 
 public:
-  qMRMLAnnotationFiducialProjectionPropertyWidgetPlugin(QObject *_parent = 0);
+  qMRMLAnnotationFiducialProjectionPropertyWidgetPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString domXml() const;

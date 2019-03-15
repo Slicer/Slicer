@@ -49,7 +49,7 @@ public:
   typedef qMRMLViewControllerBar Superclass;
 
   /// Constructors
-  explicit qMRMLThreeDViewControllerWidget(QWidget* parent = 0);
+  explicit qMRMLThreeDViewControllerWidget(QWidget* parent = nullptr);
   virtual ~qMRMLThreeDViewControllerWidget();
 
   /// Set the label for the 3D view (abbreviation for the view

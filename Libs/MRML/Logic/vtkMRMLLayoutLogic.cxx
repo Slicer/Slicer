@@ -1182,19 +1182,19 @@ vtkStandardNewMacro(vtkMRMLLayoutLogic);
 //----------------------------------------------------------------------------
 vtkMRMLLayoutLogic::vtkMRMLLayoutLogic()
 {
-  this->LayoutNode = NULL;
+  this->LayoutNode = nullptr;
   this->LastValidViewArrangement = vtkMRMLLayoutNode::SlicerLayoutNone;
   this->ViewNodes = vtkCollection::New();
-  this->ConventionalLayoutRootElement = NULL;
+  this->ConventionalLayoutRootElement = nullptr;
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLLayoutLogic::~vtkMRMLLayoutLogic()
 {
-  this->SetLayoutNode(NULL);
+  this->SetLayoutNode(nullptr);
 
   this->ViewNodes->Delete();
-  this->ViewNodes = NULL;
+  this->ViewNodes = nullptr;
   if (this->ConventionalLayoutRootElement)
     {
     this->ConventionalLayoutRootElement->Delete();
@@ -1214,7 +1214,7 @@ void vtkMRMLLayoutLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 //----------------------------------------------------------------------------
 void vtkMRMLLayoutLogic::UnobserveMRMLScene()
 {
-  this->SetLayoutNode(0);
+  this->SetLayoutNode(nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -1273,7 +1273,7 @@ void vtkMRMLLayoutLogic::UpdateViewNodes()
     {
     return;
     }
-  if (this->ConventionalLayoutRootElement == NULL)
+  if (this->ConventionalLayoutRootElement == nullptr)
     {
     // vtkMRMLLayoutLogic is responsible for the returned vtkXMLDataElement
     // pointer, this is why we delete it in the ~vtkMRMLLayoutLogic()
@@ -1287,7 +1287,7 @@ void vtkMRMLLayoutLogic::UpdateLayoutNode()
 {
   if (!this->GetMRMLScene())
     {
-    this->SetLayoutNode(0);
+    this->SetLayoutNode(nullptr);
     return;
     }
   if (this->LayoutNode && this->LayoutNode->GetScene() == this->GetMRMLScene())
@@ -1647,7 +1647,7 @@ vtkMRMLNode* vtkMRMLLayoutLogic::CreateViewFromAttributes(const ViewAttributes& 
   ViewAttributes::const_iterator end = attributes.end();
   if (it == end)
     {
-    return NULL;
+    return nullptr;
     }
   const std::string& className = it->second;
   vtkMRMLNode* node = this->GetMRMLScene()->CreateNodeByClass(className.c_str());
@@ -1838,9 +1838,9 @@ vtkMRMLNode* vtkMRMLLayoutLogic::GetViewFromAttributes(const ViewAttributes& att
 {
   vtkSmartPointer<vtkCollection> nodes;
   nodes.TakeReference(this->GetViewsFromAttributes(attributes));
-  if (nodes.GetPointer() == NULL || nodes->GetNumberOfItems() == 0)
+  if (nodes.GetPointer() == nullptr || nodes->GetNumberOfItems() == 0)
     {
-    return NULL;
+    return nullptr;
     }
   return vtkMRMLNode::SafeDownCast(nodes->GetItemAsObject(0));
 }
@@ -1850,18 +1850,18 @@ vtkCollection* vtkMRMLLayoutLogic::GetViewsFromAttributes(const ViewAttributes& 
 {
   if (!this->GetMRMLScene())
     {
-    return NULL;
+    return nullptr;
     }
   // filter on the class name to remove a lot of options.
   ViewAttributes::const_iterator it = attributes.find(std::string("class"));
   ViewAttributes::const_iterator end = attributes.end();
   if (it == end)
     {
-    return NULL;
+    return nullptr;
     }
   const std::string& className = it->second;
   vtkCollection* nodes = this->GetMRMLScene()->GetNodesByClass(className.c_str());
-  if (nodes == NULL || nodes->GetNumberOfItems() == 0)
+  if (nodes == nullptr || nodes->GetNumberOfItems() == 0)
     {
     // It is not necessarily a bug to not find nodes. It just means they
     // are not in the scene and will be then created by CreateMissingViews()
@@ -1869,7 +1869,7 @@ vtkCollection* vtkMRMLLayoutLogic::GetViewsFromAttributes(const ViewAttributes& 
     if (nodes)
       {
       nodes->Delete();
-      nodes = 0;
+      nodes = nullptr;
       }
     return nodes;
     }
@@ -1967,7 +1967,7 @@ vtkCollection* vtkMRMLLayoutLogic::GetViewsFromLayout(vtkXMLDataElement* root)
 void vtkMRMLLayoutLogic::CreateMissingViews()
 {
   this->CreateMissingViews(
-    this->LayoutNode ? this->LayoutNode->GetLayoutRootElement() : 0);
+    this->LayoutNode ? this->LayoutNode->GetLayoutRootElement() : nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -2057,7 +2057,7 @@ vtkXMLDataElement* vtkMRMLLayoutLogic::GetNextViewElement(vtkXMLDataElement* vie
 {
   if (!viewElement)
     {
-    return NULL;
+    return nullptr;
     }
   while (viewElement)
     {
@@ -2068,7 +2068,7 @@ vtkXMLDataElement* vtkMRMLLayoutLogic::GetNextViewElement(vtkXMLDataElement* vie
       }
     viewElement = this->GetNextElement(viewElement);
     }
-  return NULL;
+  return nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -2076,13 +2076,13 @@ vtkXMLDataElement* vtkMRMLLayoutLogic::GetNextElement(vtkXMLDataElement* element
 {
   if (!element)
     {
-    return NULL;
+    return nullptr;
     }
   // try it's sibling first
   vtkXMLDataElement* parent = element->GetParent();
   if (!parent)
     {
-    return NULL;
+    return nullptr;
     }
   // find the index of the current element
   for (int i = 0; i < parent->GetNumberOfNestedElements() - 1; ++i)

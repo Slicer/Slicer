@@ -68,7 +68,7 @@ void vtkMRMLClipModelsNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -151,7 +151,7 @@ void vtkMRMLClipModelsNode::PrintSelf(ostream& os, vtkIndent indent)
 //-----------------------------------------------------------------------------
 int vtkMRMLClipModelsNode::GetClippingMethodFromString(const char* name)
 {
-  if (name == NULL)
+  if (name == nullptr)
     {
     // invalid name
     return -1;

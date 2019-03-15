@@ -169,7 +169,7 @@ vtkAbstractWidget * vtkMRMLAnnotationBidimensionalDisplayableManager::CreateWidg
   if (!node)
     {
     vtkErrorMacro("CreateWidget: Node not set!")
-    return 0;
+    return nullptr;
     }
 
   vtkMRMLAnnotationBidimensionalNode* bidimensionalNode = vtkMRMLAnnotationBidimensionalNode::SafeDownCast(node);
@@ -177,7 +177,7 @@ vtkAbstractWidget * vtkMRMLAnnotationBidimensionalDisplayableManager::CreateWidg
   if (!bidimensionalNode)
     {
     vtkErrorMacro("CreateWidget: Could not get bidimensional node!")
-    return 0;
+    return nullptr;
     }
 
   vtkAnnotationBidimensionalWidget * bidimensionalWidget = vtkAnnotationBidimensionalWidget::New();

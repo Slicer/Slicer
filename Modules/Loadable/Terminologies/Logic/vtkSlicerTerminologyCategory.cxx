@@ -32,10 +32,10 @@ vtkStandardNewMacro(vtkSlicerTerminologyCategory);
 //----------------------------------------------------------------------------
 vtkSlicerTerminologyCategory::vtkSlicerTerminologyCategory()
 {
-  this->SNOMEDCTConceptID = NULL;
-  this->UMLSConceptUID = NULL;
-  this->Cid = NULL;
-  this->ContextGroupName = NULL;
+  this->SNOMEDCTConceptID = nullptr;
+  this->UMLSConceptUID = nullptr;
+  this->Cid = nullptr;
+  this->ContextGroupName = nullptr;
   this->ShowAnatomy = false;
 }
 
@@ -50,10 +50,10 @@ void vtkSlicerTerminologyCategory::Initialize()
 {
   Superclass::Initialize();
 
-  this->SetSNOMEDCTConceptID(NULL);
-  this->SetUMLSConceptUID(NULL);
-  this->SetCid(NULL);
-  this->SetContextGroupName(NULL);
+  this->SetSNOMEDCTConceptID(nullptr);
+  this->SetUMLSConceptUID(nullptr);
+  this->SetCid(nullptr);
+  this->SetContextGroupName(nullptr);
   this->ShowAnatomy = false;
 }
 

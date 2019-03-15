@@ -39,7 +39,7 @@ int vtkMRMLSceneImportTest(int argc, char * argv[] )
   vtkNew<vtkMRMLScene> scene;
 
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  scene->SetURL(0);
+  scene->SetURL(nullptr);
   scene->Connect();
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
@@ -49,7 +49,7 @@ int vtkMRMLSceneImportTest(int argc, char * argv[] )
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  scene->SetURL(0);
+  scene->SetURL(nullptr);
   scene->Import();
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 

@@ -66,7 +66,7 @@ int qSlicerModelsModuleWidgetTestScene( int argc, char * argv[] )
     }
 
   qSlicerModelsModule module;
-  module.initialize(0);
+  module.initialize(nullptr);
 
   vtkNew<vtkMRMLScene> scene;
   scene->SetURL(argv[1]);

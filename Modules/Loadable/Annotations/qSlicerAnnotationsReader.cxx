@@ -118,7 +118,7 @@ bool qSlicerAnnotationsReader::load(const IOProperties& properties)
     name = properties["name"].toString();
     }
 
-  if (d->AnnotationLogic.GetPointer() == 0)
+  if (d->AnnotationLogic.GetPointer() == nullptr)
     {
     return false;
     }

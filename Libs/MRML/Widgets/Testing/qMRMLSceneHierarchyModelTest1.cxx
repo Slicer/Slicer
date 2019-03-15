@@ -57,7 +57,7 @@ int qMRMLSceneHierarchyModelTest1(int argc, char * argv [])
   QApplication app(argc, argv);
 
   qMRMLSceneHierarchyModel model;
-  qMRMLSceneFactoryWidget sceneFactory(0);
+  qMRMLSceneFactoryWidget sceneFactory(nullptr);
 
   try
     {
@@ -102,13 +102,13 @@ int qMRMLSceneHierarchyModelTest1(int argc, char * argv [])
     return EXIT_FAILURE;
     }
 
-  QTreeView view(0);
+  QTreeView view(nullptr);
   view.setDragDropMode(QAbstractItemView::InternalMove);
   view.setModel(&model);
   view.show();
   view.resize(500, 300);
 
-  QTreeView view2(0);
+  QTreeView view2(nullptr);
   view2.setWindowTitle("Filtered");
 
   qMRMLSortFilterHierarchyProxyModel sortFilterModel;

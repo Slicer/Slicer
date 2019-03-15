@@ -32,7 +32,7 @@ class Q_SLICER_MODULE_DICOMLIB_WIDGETS_PLUGINS_EXPORT qSlicerDICOMTagEditorWidge
   Q_OBJECT
 
 public:
-  qSlicerDICOMTagEditorWidgetPlugin(QObject* parent = 0);
+  qSlicerDICOMTagEditorWidgetPlugin(QObject* parent = nullptr);
 
   QWidget *createWidget(QWidget* parent);
   QString  domXml() const;

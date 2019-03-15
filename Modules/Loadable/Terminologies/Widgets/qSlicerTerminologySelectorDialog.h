@@ -44,7 +44,7 @@ public:
 public:
   typedef QObject Superclass;
   qSlicerTerminologySelectorDialog(
-    qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &initialTerminologyInfo, QObject* parent = NULL );
+    qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &initialTerminologyInfo, QObject* parent = nullptr );
   virtual ~qSlicerTerminologySelectorDialog();
 
 public:

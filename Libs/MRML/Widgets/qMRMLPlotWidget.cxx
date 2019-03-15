@@ -61,8 +61,8 @@ public:
 qMRMLPlotWidgetPrivate::qMRMLPlotWidgetPrivate(qMRMLPlotWidget& object)
   : q_ptr(&object)
 {
-  this->PlotView = NULL;
-  this->PlotController = NULL;
+  this->PlotView = nullptr;
+  this->PlotController = nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -110,8 +110,8 @@ qMRMLPlotWidget::qMRMLPlotWidget(QWidget* parentWidget)
 qMRMLPlotWidget::~qMRMLPlotWidget()
 {
   Q_D(qMRMLPlotWidget);
-  d->PlotView->setMRMLScene(0);
-  d->PlotController->setMRMLScene(0);
+  d->PlotView->setMRMLScene(nullptr);
+  d->PlotController->setMRMLScene(nullptr);
 }
 
 

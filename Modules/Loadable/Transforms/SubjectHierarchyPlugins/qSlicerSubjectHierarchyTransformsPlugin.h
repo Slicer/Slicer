@@ -44,7 +44,7 @@ public:
 
 public:
   typedef qSlicerSubjectHierarchyAbstractPlugin Superclass;
-  qSlicerSubjectHierarchyTransformsPlugin(QObject* parent = NULL);
+  qSlicerSubjectHierarchyTransformsPlugin(QObject* parent = nullptr);
   virtual ~qSlicerSubjectHierarchyTransformsPlugin();
 
 public:

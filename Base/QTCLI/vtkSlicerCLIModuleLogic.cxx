@@ -140,12 +140,12 @@ public:
 protected:
   vtkSlicerCLIRescheduleCallback()
   {
-    this->CLIModuleLogic = 0;
+    this->CLIModuleLogic = nullptr;
     this->Delay = 0;
   }
   ~vtkSlicerCLIRescheduleCallback()
   {
-    this->SetCLIModuleLogic(0);
+    this->SetCLIModuleLogic(nullptr);
   }
 
   vtkSlicerCLIModuleLogic* CLIModuleLogic;
@@ -176,7 +176,7 @@ public:
         vtkCallbackCommand *callback = vtkCallbackCommand::SafeDownCast(object);
         if (callback)
         {
-          callback->Execute(caller, eid, 0);
+          callback->Execute(caller, eid, nullptr);
 
           // delete the callback
           callback->Delete();
@@ -213,13 +213,13 @@ public:
     {
     }
     FindRequest(vtkMTimeType requestUID)
-      : Node(0)
+      : Node(nullptr)
       , LastRequestUID(requestUID)
     {
     }
     bool operator()(const std::pair<vtkMTimeType, vtkMRMLCommandLineModuleNode*>& p)
     {
-      return (this->Node != 0 && p.second == this->Node) ||
+      return (this->Node != nullptr && p.second == this->Node) ||
         (this->LastRequestUID != 0 && p.first == this->LastRequestUID);
     }
     vtkMRMLCommandLineModuleNode* Node;
@@ -822,7 +822,7 @@ void vtkSlicerCLIModuleLogic
 void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
 {
   // check if MRML node is present
-  if (clientdata == NULL)
+  if (clientdata == nullptr)
     {
     vtkErrorMacro("No input CommandLineModuleNode found");
     return;
@@ -853,7 +853,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
 
   // Determine the type of the module: command line or shared object
   int (*entryPoint)(int argc, char* argv[]);
-  entryPoint = NULL;
+  entryPoint = nullptr;
   CommandLineModuleType commandType = CommandLineModule;
 
   std::string target
@@ -871,7 +871,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     qDebug() << "Found CommandLine Module, target is "
              << node0->GetModuleDescription().GetTarget().c_str();
     commandType = CommandLineModule;
-    if ( entryPoint != NULL )
+    if ( entryPoint != nullptr )
       {
       vtkWarningMacro("Module reports that it is a Command Line Module but has a shared object module target. " << target.c_str());
       }
@@ -882,7 +882,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     qDebug() << "Found SharedObject Module";
 
     commandType = SharedObjectModule;
-    if ( entryPoint == NULL )
+    if ( entryPoint == nullptr )
       {
       vtkWarningMacro("Module reports that it is a Shared Object Module but does not have a shared object module target. " << target.c_str());
       }
@@ -1018,8 +1018,8 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     vtkMRMLNode *nd
       = this->GetMRMLScene()->GetNodeByID( (*id2fn0).first.c_str() );
 
-    vtkSmartPointer<vtkMRMLStorageNode> out = 0;
-    vtkSmartPointer<vtkMRMLStorageNode> defaultOut = 0;
+    vtkSmartPointer<vtkMRMLStorageNode> out = nullptr;
+    vtkSmartPointer<vtkMRMLStorageNode> defaultOut = nullptr;
 
     vtkMRMLStorableNode *sn = dynamic_cast<vtkMRMLStorableNode *>(nd);
     if (sn)
@@ -1074,7 +1074,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           {
           // not using a storage node.  using a mini-scene to transfer
           // the node
-          out = 0;  // don't use the storage node
+          out = nullptr;  // don't use the storage node
 
           vtkMRMLNode *cp = miniscene->CopyNode(nd);
 
@@ -1123,7 +1123,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
         {
         vtkErrorMacro("ERROR writing file " << out->GetFileName());
         }
-      out = 0;
+      out = nullptr;
       }
     }
 
@@ -1265,7 +1265,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
         "0123456789"
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         "abcdefghijklmnopqrstuvwxyz";
-    srand(time(0));
+    srand(time(nullptr));
 
     std::ostringstream code;
     for (int ii = 0; ii < 10; ii++)
@@ -1502,7 +1502,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
               if (nthHierarchyNode)
                 {
                 vtkMRMLDisplayableHierarchyNode *nthDisplayableHierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(nthHierarchyNode);
-                vtkMRMLDisplayableNode *displayableNode = NULL;
+                vtkMRMLDisplayableNode *displayableNode = nullptr;
                 if (nthDisplayableHierarchyNode)
                   {
                   displayableNode = nthDisplayableHierarchyNode->GetDisplayableNode();
@@ -1638,7 +1638,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
               if (nthHierarchyNode)
                 {
                 vtkMRMLDisplayableHierarchyNode *nthDisplayableHierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(nthHierarchyNode);
-                vtkMRMLDisplayableNode *displayableNode = NULL;
+                vtkMRMLDisplayableNode *displayableNode = nullptr;
                 if (nthDisplayableHierarchyNode)
                   {
                   displayableNode = nthDisplayableHierarchyNode->GetDisplayableNode();
@@ -1800,7 +1800,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     {
     command[i] = const_cast<char*>(commandLineAsString[i].c_str());
     }
-  command[commandLineAsString.size()] = 0;
+  command[commandLineAsString.size()] = nullptr;
 
   // print the command line
   //
@@ -1907,7 +1907,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
         }
 
       // Capture the output from the filter
-      if (length != 0 && tbuffer != 0)
+      if (length != 0 && tbuffer != nullptr)
         {
         if (pipe == itksysProcess_Pipe_STDOUT)
           {
@@ -1981,7 +1981,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
         }
       }
     this->Internal->ProcessesKillLock->Lock();
-    itksysProcess_WaitForExit(process, 0);
+    itksysProcess_WaitForExit(process, nullptr);
     this->Internal->ProcessesKillLock->Unlock();
 
     // remove the embedded XML from the stdout stream
@@ -2171,7 +2171,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
         }
 
       // run the module
-      if ( entryPoint != NULL ) {
+      if ( entryPoint != nullptr ) {
         returnValue = (*entryPoint)(commandLineAsString.size(), command);
       }
 
@@ -2493,7 +2493,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
                   // Multiple transform nodes can refer to the same transformable node (e.g., linear or bspline transform
                   // can be computed, whichever is computed should transform the moving volume),
                   // we only want to use the transform that is not None.
-                  if (trefNode != NULL && !transformNodeID.empty())
+                  if (trefNode != nullptr && !transformNodeID.empty())
                     {
                     // Place a request to update parent transform based of the referenced node
                     vtkMTimeType requestUID = this->GetApplicationLogic()

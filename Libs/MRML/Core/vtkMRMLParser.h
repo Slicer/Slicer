@@ -41,7 +41,7 @@ public:
   void SetNodeCollection(vtkCollection* scene) {this->NodeCollection = scene;};
 
 protected:
-  vtkMRMLParser() : MRMLScene(NULL),NodeCollection(NULL){};
+  vtkMRMLParser() : MRMLScene(nullptr),NodeCollection(nullptr){};
   ~vtkMRMLParser() {};
   vtkMRMLParser(const vtkMRMLParser&);
   void operator=(const vtkMRMLParser&);

@@ -47,7 +47,7 @@ qMRMLTransformDisplayNodeWidget
 
 public:
   typedef qMRMLWidget Superclass;
-  qMRMLTransformDisplayNodeWidget(QWidget *newParent = 0);
+  qMRMLTransformDisplayNodeWidget(QWidget *newParent = nullptr);
   virtual ~qMRMLTransformDisplayNodeWidget();
 
 public slots:

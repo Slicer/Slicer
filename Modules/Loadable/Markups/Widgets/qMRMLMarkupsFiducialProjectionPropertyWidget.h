@@ -46,7 +46,7 @@ qMRMLMarkupsFiducialProjectionPropertyWidget
 
 public:
   typedef qMRMLWidget Superclass;
-  qMRMLMarkupsFiducialProjectionPropertyWidget(QWidget *newParent = 0);
+  qMRMLMarkupsFiducialProjectionPropertyWidget(QWidget *newParent = nullptr);
   virtual ~qMRMLMarkupsFiducialProjectionPropertyWidget();
 
 public slots:

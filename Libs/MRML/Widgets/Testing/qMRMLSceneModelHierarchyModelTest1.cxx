@@ -54,7 +54,7 @@ int qMRMLSceneModelHierarchyModelTest1(int argc, char * argv [])
   QApplication app(argc, argv);
 
   qMRMLSceneModelHierarchyModel model;
-  qMRMLSceneFactoryWidget sceneFactory(0);
+  qMRMLSceneFactoryWidget sceneFactory(nullptr);
 
   try
     {
@@ -143,7 +143,7 @@ int qMRMLSceneModelHierarchyModelTest1(int argc, char * argv [])
   items[0]->setBackground(QLinearGradient());
   item->insertRow(0,items);
   */
-  QTreeView* view = new QTreeView(0);
+  QTreeView* view = new QTreeView(nullptr);
   //view->setSelectionBehavior(QAbstractItemView::SelectRows);
   view->setDragDropMode(QAbstractItemView::InternalMove);
   view->setModel(&model);

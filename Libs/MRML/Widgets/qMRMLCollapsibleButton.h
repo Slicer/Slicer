@@ -35,7 +35,7 @@ public:
   typedef ctkCollapsibleButton Superclass;
 
   /// Constructors
-  explicit qMRMLCollapsibleButton(QWidget* parent = 0);
+  explicit qMRMLCollapsibleButton(QWidget* parent = nullptr);
   virtual ~qMRMLCollapsibleButton(){}
 protected:
   virtual void changeEvent(QEvent* event);

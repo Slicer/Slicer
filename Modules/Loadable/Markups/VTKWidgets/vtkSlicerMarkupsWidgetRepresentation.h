@@ -73,7 +73,7 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Update the representation from markups node
-  void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = NULL) override;
+  void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = nullptr) override;
 
   /// Get the nth node's display position. Will return
   /// 1 on success, or 0 if there are not at least
@@ -108,7 +108,7 @@ public:
 
 protected:
   vtkSlicerMarkupsWidgetRepresentation();
-  ~vtkSlicerMarkupsWidgetRepresentation() override;
+  ~vtkSlicerMarkupsWidgetRepresentation() VTK_OVERRIDE;
 
   class ControlPointsPipeline
   {

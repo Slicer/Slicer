@@ -37,10 +37,10 @@ int vtkMRMLSelectionNodeTest1(int , char * [] )
   TEST_SET_GET_STRING( node1.GetPointer(), ActiveLayoutID);
 
   // annotations
-  node1->AddNewPlaceNodeClassNameToList(NULL, NULL);
-  node1->AddNewPlaceNodeClassNameToList("invalid string", NULL);
-  node1->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationFiducialNode", NULL);
-  node1->AddNewPlaceNodeClassNameToList(NULL, ":/Icons/AnnotationROI.png");
+  node1->AddNewPlaceNodeClassNameToList(nullptr, nullptr);
+  node1->AddNewPlaceNodeClassNameToList("invalid string", nullptr);
+  node1->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationFiducialNode", nullptr);
+  node1->AddNewPlaceNodeClassNameToList(nullptr, ":/Icons/AnnotationROI.png");
   node1->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationROINode", ":/Icons/AnnotationROI.png");
   node1->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationFiducialNode", ":/Icons/AnnotationPoint.png");
 
@@ -97,14 +97,14 @@ int TestUnit(vtkMRMLSelectionNode* node1 )
   CHECK_NULL(node1->GetUnitNodeID(quantity));
 
 
-  node1->SetUnitNodeID(quantity, 0);
+  node1->SetUnitNodeID(quantity, nullptr);
   CHECK_NULL(node1->GetUnitNodeID(quantity));
 
   node1->SetUnitNodeID("", unit);
   CHECK_STRING(node1->GetUnitNodeID(""), unit);
 
-  node1->SetUnitNodeID(0, unit);
-  CHECK_STRING(node1->GetUnitNodeID(0), unit);
+  node1->SetUnitNodeID(nullptr, unit);
+  CHECK_STRING(node1->GetUnitNodeID(nullptr), unit);
 
   CHECK_INT(callback->GetNumberOfEvents(vtkMRMLSelectionNode::UnitModifiedEvent), 3);
 

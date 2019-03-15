@@ -29,7 +29,7 @@ class Q_SLICER_MODULE_ANNOTATIONS_WIDGETS_PLUGINS_EXPORT qMRMLAnnotationROIWidge
   Q_OBJECT
 
 public:
-  qMRMLAnnotationROIWidgetPlugin(QObject *_parent = 0);
+  qMRMLAnnotationROIWidgetPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;

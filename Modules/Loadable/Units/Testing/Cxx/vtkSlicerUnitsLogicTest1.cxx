@@ -40,7 +40,7 @@ template <class T>void printNodes(const std::vector<T>& nodes);
 // This function will check that a given list of nodes is valid or not.
 // Note: nodes obtained using vtkMRMLSelectionNode::GetUnitNodes() are expected
 // to be alphabetically sorted
-template <class T>bool areValidNodes(const std::vector<T>& nodes, bool sorted, const char* testName = 0);
+template <class T>bool areValidNodes(const std::vector<T>& nodes, bool sorted, const char* testName = nullptr);
 
 bool testScene();
 bool testSelectionNode();

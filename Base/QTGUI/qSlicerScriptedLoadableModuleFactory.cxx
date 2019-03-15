@@ -80,7 +80,7 @@ qSlicerAbstractCoreModule* ctkFactoryScriptedItem::instanciator()
   bool ret = module->setPythonSource(this->path());
   if (!ret)
     {
-    return 0;
+    return nullptr;
     }
 
   return module.take();

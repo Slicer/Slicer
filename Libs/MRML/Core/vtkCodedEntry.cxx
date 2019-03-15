@@ -19,9 +19,9 @@ vtkStandardNewMacro(vtkCodedEntry);
 
 //----------------------------------------------------------------------------
 vtkCodedEntry::vtkCodedEntry()
-: CodeValue(NULL)
-, CodingSchemeDesignator(NULL)
-, CodeMeaning(NULL)
+: CodeValue(nullptr)
+, CodingSchemeDesignator(nullptr)
+, CodeMeaning(nullptr)
 {
 }
 
@@ -34,9 +34,9 @@ vtkCodedEntry::~vtkCodedEntry()
 //----------------------------------------------------------------------------
 void vtkCodedEntry::Initialize()
 {
-  this->SetCodeValue(NULL);
-  this->SetCodingSchemeDesignator(NULL);
-  this->SetCodeMeaning(NULL);
+  this->SetCodeValue(nullptr);
+  this->SetCodingSchemeDesignator(nullptr);
+  this->SetCodeMeaning(nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -139,12 +139,12 @@ bool vtkCodedEntry::SetFromString(const std::string& content)
       success = false;
       }
     }
-  if (this->GetCodeValue() == NULL)
+  if (this->GetCodeValue() == nullptr)
     {
     vtkWarningMacro("Parsing coded entry string failed: CodeValue is not specified in " + content);
     success = false;
     }
-  if (this->GetCodingSchemeDesignator() == NULL)
+  if (this->GetCodingSchemeDesignator() == nullptr)
     {
     vtkWarningMacro("Parsing coded entry string failed: CodingSchemeDesignator is not specified in " + content);
     success = false;

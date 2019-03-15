@@ -55,7 +55,7 @@ public:
   int ReadDataReturnValue;
 protected:
   vtkMRMLStorageNodeTestHelper1()
-    :SupportedClass(0)
+    :SupportedClass(nullptr)
     ,ReadDataReturnValue(0)
   {}
 };
@@ -97,7 +97,7 @@ int TestReadData(int referenceNodeType,
   storageNode->SetFileName("file.ext");
   vtkNew<vtkMRMLLinearTransformNode> transformNode;
   vtkNew<vtkMRMLModelNode> modelNode;
-  vtkMRMLNode* referenceNode = (referenceNodeType == 0 ? vtkMRMLNode::SafeDownCast(0):
+  vtkMRMLNode* referenceNode = (referenceNodeType == 0 ? vtkMRMLNode::SafeDownCast(nullptr):
                                (referenceNodeType == 1 ? vtkMRMLNode::SafeDownCast(transformNode.GetPointer()) :
                                   vtkMRMLNode::SafeDownCast(modelNode.GetPointer())));
   int res = storageNode->ReadData(referenceNode);

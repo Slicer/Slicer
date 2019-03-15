@@ -69,7 +69,7 @@ private:
 qMRMLSegmentationRepresentationsListViewPrivate::qMRMLSegmentationRepresentationsListViewPrivate(qMRMLSegmentationRepresentationsListView& object)
   : q_ptr(&object)
 {
-  this->SegmentationNode = NULL;
+  this->SegmentationNode = nullptr;
 }
 
 // --------------------------------------------------------------------------
@@ -325,7 +325,7 @@ void qMRMLSegmentationRepresentationsListView::createRepresentationDefault()
   if (!d->SegmentationNode->GetSegmentation()->CreateRepresentation(representationName.toLatin1().constData()))
   {
     QString message = QString("Failed to convert %1 to %2!\n\nProbably there is no valid conversion path between the master representation and %2").arg(d->SegmentationNode->GetName()).arg(representationName);
-    QMessageBox::warning(NULL, tr("Conversion failed"), message);
+    QMessageBox::warning(nullptr, tr("Conversion failed"), message);
   }
   QApplication::restoreOverrideCursor();
 
@@ -341,7 +341,7 @@ void qMRMLSegmentationRepresentationsListView::createRepresentationAdvanced()
   QString representationName = this->sender()->property(REPRESENTATION_NAME_PROPERTY).toString();
 
   // Create dialog to show the parameters widget in a popup window
-  QDialog* parametersDialog = new QDialog(NULL, Qt::Dialog);
+  QDialog* parametersDialog = new QDialog(nullptr, Qt::Dialog);
   parametersDialog->setObjectName("SegmentationConversionParametersWindow");
   parametersDialog->setWindowTitle("Advanced segmentation conversion");
   QVBoxLayout* layout = new QVBoxLayout(parametersDialog);
@@ -416,7 +416,7 @@ void qMRMLSegmentationRepresentationsListView::makeMaster()
     {
     // Warn user about the consequences of changing master representation
     QMessageBox::StandardButton answer =
-      QMessageBox::question(NULL, tr("Confirm master representation change"),
+      QMessageBox::question(nullptr, tr("Confirm master representation change"),
       tr("Changing master representation will make the 'gold standard' representation the selected one, "
       "and will result in deletion of all the other representations.\n"
       "This may mean losing important data that cannot be created again from the new master representation.\n\n"

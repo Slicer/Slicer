@@ -22,7 +22,7 @@ class Q_SLICER_QTMODULES_SCENEVIEWS_EXPORT qSlicerSceneViewsModule :
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  qSlicerSceneViewsModule(QObject *parent=0);
+  qSlicerSceneViewsModule(QObject *parent=nullptr);
   virtual ~qSlicerSceneViewsModule();
 
   /// Return the help and acknowledgement text for the SceneViews module.

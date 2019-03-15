@@ -26,7 +26,7 @@ vtkStandardNewMacro(vtkFSSurfaceWFileReader);
 //-------------------------------------------------------------------------
 vtkFSSurfaceWFileReader::vtkFSSurfaceWFileReader()
 {
-  this->Scalars = NULL;
+  this->Scalars = nullptr;
   this->NumberOfVertices = 0;
 }
 
@@ -61,7 +61,7 @@ int vtkFSSurfaceWFileReader::ReadWFile()
   vtkFloatArray *output = this->Scalars;
 
   // Do some basic sanity checks.
-  if (output == NULL)
+  if (output == nullptr)
     {
     cerr << "ERROR vtkFSSurfaceWFileReader ReadWFile() : output is null" << endl;
     return this->FS_ERROR_W_OUTPUT_NULL;
@@ -117,7 +117,7 @@ int vtkFSSurfaceWFileReader::ReadWFile()
   // make the array big enough to hold all vertices, calloc inits all values
   // to zero as a default
   FSscalars = (float*) calloc (this->NumberOfVertices, sizeof(float));
-  if (FSscalars == NULL)
+  if (FSscalars == nullptr)
     {
     vtkErrorMacro(<<"vtkFSSurfaceWFileReader: error allocating " << this->NumberOfVertices << " floats!");
     return this->FS_ERROR_W_ALLOC;

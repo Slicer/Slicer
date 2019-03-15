@@ -85,7 +85,7 @@ void vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(
     vtkRenderWindowInteractor * interactor, vtkMRMLSliceNode * sliceNode,
     double x, double y, double xyz[3])
 {
-  if (xyz == NULL || interactor == NULL || sliceNode == NULL)
+  if (xyz == nullptr || interactor == nullptr || sliceNode == nullptr)
     {
     return;
     }
@@ -113,7 +113,7 @@ void vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(
     vtkRenderer * renderer, vtkMRMLSliceNode * sliceNode,
     double x, double y, double xyz[3])
 {
-  if (xyz == NULL || renderer == NULL || sliceNode == NULL)
+  if (xyz == nullptr || renderer == nullptr || sliceNode == nullptr)
     {
     return;
     }
@@ -144,7 +144,7 @@ void vtkMRMLAbstractSliceViewDisplayableManager::ConvertRASToXYZ(double ras[3], 
 void vtkMRMLAbstractSliceViewDisplayableManager::ConvertRASToXYZ(
     vtkMRMLSliceNode * sliceNode, double ras[3], double xyz[3])
 {
-  if (sliceNode == NULL)
+  if (sliceNode == nullptr)
     {
     return;
     }
@@ -167,7 +167,7 @@ void vtkMRMLAbstractSliceViewDisplayableManager::ConvertXYZToRAS(double xyz[3], 
 void vtkMRMLAbstractSliceViewDisplayableManager::ConvertXYZToRAS(
     vtkMRMLSliceNode * sliceNode, double xyz[3], double ras[3])
 {
-  if (sliceNode == NULL)
+  if (sliceNode == nullptr)
     {
     return;
     }

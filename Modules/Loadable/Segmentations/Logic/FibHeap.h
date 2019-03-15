@@ -52,7 +52,7 @@ protected:
 
 public:
   inline FibHeapNode() {
-    Left = Right = Parent = Child = NULL;
+    Left = Right = Parent = Child = nullptr;
     Degree = Mark = NegInfinityFlag = 0;
   }
   virtual ~FibHeapNode();
@@ -84,7 +84,7 @@ public:
   FibHeapNode *ExtractMin();
   int DecreaseKey(FibHeapNode *theNode, FibHeapNode& NewKey);
   int Delete(FibHeapNode *theNode);
-  bool IsEmpty() {return (MinRoot == NULL);}
+  bool IsEmpty() {return (MinRoot == nullptr);}
 
   // Extra utility functions
   int  GetHeapOwnership() { return HeapOwnershipFlag; };
@@ -93,7 +93,7 @@ public:
   long GetNumNodes() { return NumNodes; };
   long GetNumTrees() { return NumTrees; };
   long GetNumMarkedNodes() { return NumMarkedNodes; };
-  void Print(FibHeapNode *Tree = NULL, FibHeapNode *theParent=NULL);
+  void Print(FibHeapNode *Tree = nullptr, FibHeapNode *theParent=nullptr);
 
 private:
   // Internal functions that help to implement the Standard Operations

@@ -149,7 +149,7 @@ int DoIt( int argc, char * argv[])
     pdxReader->Update();
     polyData = pdxReader->GetOutput();
     }
-  if( polyData == NULL )
+  if( polyData == nullptr )
     {
     std::cerr << "Failed to read surface " << surface << std::endl;
     return EXIT_FAILURE;

@@ -79,9 +79,9 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyRegisterPluginPrivate::qSlicerSubjectHierarchyRegisterPluginPrivate(qSlicerSubjectHierarchyRegisterPlugin& object)
 : q_ptr(&object)
-, RegisterThisAction(NULL)
-, RegisterToAction(NULL)
-, CancelAction(NULL)
+, RegisterThisAction(nullptr)
+, RegisterToAction(nullptr)
+, CancelAction(nullptr)
 {
 }
 

@@ -140,7 +140,7 @@ int TestReadWriteData(vtkMRMLScene* scene, const char *extension, vtkTable* tabl
   CHECK_BOOL(schemaExists, schemaExpected);
 
   // Clear data from model node
-  tableNode->SetAndObserveTable(NULL);
+  tableNode->SetAndObserveTable(nullptr);
   CHECK_NULL(tableNode->GetTable());
 
   // Test reading

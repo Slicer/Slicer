@@ -30,7 +30,7 @@ int vtkMRMLAnnotationRulerNodeTest1(int , char * [] )
   // Modify Properties
   // ======================
   vtkNew<vtkMRMLAnnotationRulerNode> node2;
-  node2->Reset(NULL);
+  node2->Reset(nullptr);
 
   mrmlScene->AddNode(node2.GetPointer());
   node2->CreateAnnotationPointDisplayNode();

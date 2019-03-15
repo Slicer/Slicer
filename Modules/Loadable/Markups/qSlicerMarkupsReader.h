@@ -32,8 +32,8 @@ class qSlicerMarkupsReader
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerMarkupsReader(QObject* parent = 0);
-  qSlicerMarkupsReader(vtkSlicerMarkupsLogic* logic, QObject* parent = 0);
+  qSlicerMarkupsReader(QObject* parent = nullptr);
+  qSlicerMarkupsReader(vtkSlicerMarkupsLogic* logic, QObject* parent = nullptr);
   virtual ~qSlicerMarkupsReader();
 
   vtkSlicerMarkupsLogic* markupsLogic()const;

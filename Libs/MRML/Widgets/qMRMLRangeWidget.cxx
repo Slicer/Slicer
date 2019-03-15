@@ -38,7 +38,7 @@
 qMRMLRangeWidget::qMRMLRangeWidget(QWidget* parentWidget)
   : ctkRangeWidget(parentWidget)
 {
-  this->setSlider(new qMRMLDoubleRangeSlider(0));
+  this->setSlider(new qMRMLDoubleRangeSlider(nullptr));
 
   QWidget* rangeWidget = new QWidget(this);
   QHBoxLayout* rangeLayout = new QHBoxLayout;
@@ -177,7 +177,7 @@ void qMRMLRangeWidget::setMRMLScene(vtkMRMLScene* scene)
 
   this->MinSpinBox->setMRMLScene(scene);
   this->MaxSpinBox->setMRMLScene(scene);
-  this->setEnabled(this->isEnabled() && scene != 0);
+  this->setEnabled(this->isEnabled() && scene != nullptr);
 }
 
 // --------------------------------------------------------------------------
@@ -188,7 +188,7 @@ void qMRMLRangeWidget::setMRMLScene(vtkMRMLScene* scene)
 qMRMLDoubleRangeSlider::qMRMLDoubleRangeSlider(QWidget* parentWidget)
   :ctkDoubleRangeSlider(parentWidget)
 {
-  this->setSlider(new qMRMLRangeSlider(0));
+  this->setSlider(new qMRMLRangeSlider(nullptr));
 }
 
 // --------------------------------------------------------------------------

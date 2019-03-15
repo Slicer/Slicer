@@ -31,7 +31,7 @@ void vtkMRMLAnnotationControlPointsStorageNode::PrintSelf(ostream& os, vtkIndent
 //----------------------------------------------------------------------------
 int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotationPointDisplayProperties(vtkMRMLAnnotationPointDisplayNode *refNode, std::string lineString, std::string preposition)
 {
-  if (refNode == NULL)
+  if (refNode == nullptr)
     {
       vtkErrorMacro("ReadAnnotationPointDisplayProperties: unable to get associated AnnotationPointDisplayNode");
       return -1;
@@ -198,7 +198,7 @@ int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotationControlPointsProper
       numColumns = 0;
       char *columns = (char *)str.c_str();
       char *ptr = strtok(columns, "|");
-      while (ptr != NULL)
+      while (ptr != nullptr)
     {
       if (strcmp(ptr, "type") == 0)
         {
@@ -224,7 +224,7 @@ int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotationControlPointsProper
         {
           visColumn =  numColumns;
         }
-      ptr = strtok(NULL, "|");
+      ptr = strtok(nullptr, "|");
       numColumns++;
     }
       // set the total number of columns
@@ -240,7 +240,7 @@ int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotationControlPointsProper
 int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotation(vtkMRMLAnnotationControlPointsNode *refNode)
 {
 
-  if (refNode == NULL)
+  if (refNode == nullptr)
     {
       vtkErrorMacro("ReadAnnotation: unable to cast input node " << refNode->GetID() << " to a annotation node");
       return 0;
@@ -324,7 +324,7 @@ int vtkMRMLAnnotationControlPointsStorageNode::ReadDataInternal(vtkMRMLNode *ref
   vtkMRMLAnnotationControlPointsNode *aCPNode =
     vtkMRMLAnnotationControlPointsNode::SafeDownCast(refNode);
 
-  if (aCPNode == NULL)
+  if (aCPNode == nullptr)
     {
     vtkErrorMacro("ReadData: unable to cast input node " << refNode->GetID() << " to a annotation control point node");
     return 0;
@@ -367,7 +367,7 @@ int vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationPointDisplayProper
 int vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationControlPointsProperties(fstream& of, vtkMRMLAnnotationControlPointsNode *refNode)
 {
    // put down a header
-  if (refNode == NULL)
+  if (refNode == nullptr)
     {
     vtkErrorMacro("WriteAnnotationControlPointsProperties: null control points node");
     return 0;
@@ -416,7 +416,7 @@ int vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationDataInternal(vtkMR
   // cast the input node
   vtkMRMLAnnotationControlPointsNode *annCPNode = dynamic_cast <vtkMRMLAnnotationControlPointsNode *> (refNode);
 
-  if (annCPNode == NULL)
+  if (annCPNode == nullptr)
     {
     vtkErrorMacro("WriteAnnotationDataInternal: unable to cast input node " << refNode->GetID() << " to a known annotation control point node");
     return 0;

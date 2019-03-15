@@ -52,7 +52,7 @@ public:
   typedef qMRMLWidget Superclass;
 
   /// Constructors
-  explicit qMRMLThreeDWidget(QWidget* parent = 0);
+  explicit qMRMLThreeDWidget(QWidget* parent = nullptr);
   virtual ~qMRMLThreeDWidget();
 
   /// Get slice controller

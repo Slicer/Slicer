@@ -56,9 +56,9 @@ vtkMRMLHierarchyNode::vtkMRMLHierarchyNode()
 {
   this->HideFromEditors = 0;
 
-  this->ParentNodeIDReference = NULL;
+  this->ParentNodeIDReference = nullptr;
 
-  this->AssociatedNodeIDReference = NULL;
+  this->AssociatedNodeIDReference = nullptr;
 
   this->SortingValue = 0;
 
@@ -71,12 +71,12 @@ vtkMRMLHierarchyNode::~vtkMRMLHierarchyNode()
   if (this->ParentNodeIDReference)
     {
     delete [] this->ParentNodeIDReference;
-    this->ParentNodeIDReference = NULL;
+    this->ParentNodeIDReference = nullptr;
     }
   if (this->AssociatedNodeIDReference)
     {
     delete [] this->AssociatedNodeIDReference;
-    this->AssociatedNodeIDReference = NULL;
+    this->AssociatedNodeIDReference = nullptr;
     }
 }
 
@@ -85,11 +85,11 @@ void vtkMRMLHierarchyNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  if (this->ParentNodeIDReference != NULL)
+  if (this->ParentNodeIDReference != nullptr)
     {
     of << " parentNodeRef=\"" << this->ParentNodeIDReference << "\"";
     }
-  if (this->AssociatedNodeIDReference != NULL)
+  if (this->AssociatedNodeIDReference != nullptr)
     {
     of << " associatedNodeRef=\"" << this->AssociatedNodeIDReference << "\"";
     }
@@ -120,7 +120,7 @@ void vtkMRMLHierarchyNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -192,8 +192,8 @@ void vtkMRMLHierarchyNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 vtkMRMLHierarchyNode* vtkMRMLHierarchyNode::GetParentNode()
 {
-  vtkMRMLHierarchyNode* node = NULL;
-  if (this->GetScene() && this->ParentNodeIDReference != NULL )
+  vtkMRMLHierarchyNode* node = nullptr;
+  if (this->GetScene() && this->ParentNodeIDReference != nullptr )
     {
     vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->ParentNodeIDReference);
     node = vtkMRMLHierarchyNode::SafeDownCast(snode);
@@ -220,13 +220,13 @@ void vtkMRMLHierarchyNode::UpdateReferences()
 {
   Superclass::UpdateReferences();
 
-  if (this->ParentNodeIDReference != NULL && this->Scene->GetNodeByID(this->ParentNodeIDReference) == NULL)
+  if (this->ParentNodeIDReference != nullptr && this->Scene->GetNodeByID(this->ParentNodeIDReference) == nullptr)
     {
-    this->SetParentNodeID(NULL);
+    this->SetParentNodeID(nullptr);
     }
-  if (this->AssociatedNodeIDReference != NULL && this->Scene->GetNodeByID(this->AssociatedNodeIDReference) == NULL)
+  if (this->AssociatedNodeIDReference != nullptr && this->Scene->GetNodeByID(this->AssociatedNodeIDReference) == nullptr)
     {
-    this->SetAssociatedNodeID(NULL);
+    this->SetAssociatedNodeID(nullptr);
     }
 }
 
@@ -291,9 +291,9 @@ void vtkMRMLHierarchyNode::SetParentNodeID(const char* ref)
 //----------------------------------------------------------------------------
 vtkMRMLHierarchyNode* vtkMRMLHierarchyNode::GetTopParentNode()
 {
-  vtkMRMLHierarchyNode *node = NULL;
+  vtkMRMLHierarchyNode *node = nullptr;
   vtkMRMLHierarchyNode *parent = vtkMRMLHierarchyNode::SafeDownCast(this->GetParentNode());
-  if (parent == NULL)
+  if (parent == nullptr)
     {
     node = this;
     }
@@ -307,7 +307,7 @@ vtkMRMLHierarchyNode* vtkMRMLHierarchyNode::GetTopParentNode()
 //----------------------------------------------------------------------------
 void vtkMRMLHierarchyNode::GetAllChildrenNodes(std::vector< vtkMRMLHierarchyNode *> &childrenNodes)
 {
-  if (this->GetScene() == NULL)
+  if (this->GetScene() == nullptr)
     {
     return;
     }
@@ -334,7 +334,7 @@ void vtkMRMLHierarchyNode::GetAllChildrenNodes(std::vector< vtkMRMLHierarchyNode
 std::vector< vtkMRMLHierarchyNode *> vtkMRMLHierarchyNode::GetChildrenNodes()
 {
   std::vector< vtkMRMLHierarchyNode *> childrenNodes;
-  if (this->GetScene() == NULL)
+  if (this->GetScene() == nullptr)
     {
     return childrenNodes;
     }
@@ -368,7 +368,7 @@ vtkMRMLHierarchyNode* vtkMRMLHierarchyNode::GetNthChildNode(int index)
   if (index < 0 || index > (int)(childrenNodes.size()-1))
     {
     vtkErrorMacro("vtkMRMLHierarchyNode::GetNthChildNode() index " << index << " outside the range 0-" << childrenNodes.size()-1 );
-    return NULL;
+    return nullptr;
     }
   else
     {
@@ -381,7 +381,7 @@ vtkMRMLHierarchyNode* vtkMRMLHierarchyNode::GetNthChildNode(int index)
 int vtkMRMLHierarchyNode::GetIndexInParent()
 {
   vtkMRMLHierarchyNode *pnode = this->GetParentNode();
-  if (pnode == NULL)
+  if (pnode == nullptr)
     {
     vtkErrorMacro("vtkMRMLHierarchyNode::GetIndexInParent() no parent");
     return -1;
@@ -405,7 +405,7 @@ int vtkMRMLHierarchyNode::GetIndexInParent()
 void vtkMRMLHierarchyNode::SetIndexInParent(int index)
 {
   vtkMRMLHierarchyNode *pnode = this->GetParentNode();
-  if (pnode == NULL)
+  if (pnode == nullptr)
     {
     vtkErrorMacro("vtkMRMLHierarchyNode::SetIndexInParent() no parent");
     return;
@@ -452,7 +452,7 @@ void vtkMRMLHierarchyNode::MoveInParent(int increment)
     }
 
   vtkMRMLHierarchyNode *pnode = this->GetParentNode();
-  if (pnode == NULL)
+  if (pnode == nullptr)
     {
     vtkErrorMacro("vtkMRMLHierarchyNode::MoveInParent() no parent");
     return;
@@ -492,7 +492,7 @@ void vtkMRMLHierarchyNode::MoveInParent(int increment)
 
 void vtkMRMLHierarchyNode::RemoveHierarchyChildrenNodes()
 {
-  if (this->GetScene() == NULL)
+  if (this->GetScene() == nullptr)
     {
     return;
     }
@@ -520,7 +520,7 @@ void vtkMRMLHierarchyNode::RemoveHierarchyChildrenNodes()
 //----------------------------------------------------------------------------
 void vtkMRMLHierarchyNode::RemoveAllHierarchyChildrenNodes()
 {
-  if (this->GetScene() == NULL)
+  if (this->GetScene() == nullptr)
     {
     return;
     }
@@ -542,7 +542,7 @@ void vtkMRMLHierarchyNode::RemoveAllHierarchyChildrenNodes()
 //----------------------------------------------------------------------------
 void vtkMRMLHierarchyNode::UpdateChildrenMap()
 {
-  if (this->GetScene() == NULL)
+  if (this->GetScene() == nullptr)
     {
     this->SceneHierarchyChildrenNodes.clear();
     this->SceneHierarchyChildrenNodesMTime.clear();
@@ -563,7 +563,7 @@ void vtkMRMLHierarchyNode::UpdateChildrenMap()
         SceneHierarchyChildrenNodesMTime.find(this->GetScene());
 
   std::map<std::string, std::vector< vtkMRMLHierarchyNode *> >::iterator iter;
-  if (this->GetScene() == 0)
+  if (this->GetScene() == nullptr)
     {
     for (iter  = siter->second.begin();
          iter != siter->second.end();
@@ -622,7 +622,7 @@ void vtkMRMLHierarchyNode::UpdateChildrenMap()
 
 void vtkMRMLHierarchyNode::HierarchyIsModified(vtkMRMLScene *scene)
 {
-  if (scene == NULL)
+  if (scene == nullptr)
     {
     return;
     }
@@ -633,18 +633,18 @@ void vtkMRMLHierarchyNode::HierarchyIsModified(vtkMRMLScene *scene)
 void vtkMRMLHierarchyNode::GetAssociatedChildrenNodes(vtkCollection *children,
                                                       const char* childClass)
 {
-  if (children == NULL)
+  if (children == nullptr)
     {
     return;
     }
   vtkMRMLScene *scene = this->GetScene();
-  if (scene == NULL)
+  if (scene == nullptr)
     {
     //vtkErrorMacro("GetChildrenAssociatedNodes: scene is null, cannot find children of this node");
     return;
     }
-  vtkMRMLNode *mnode = NULL;
-  vtkMRMLHierarchyNode *hnode = NULL;
+  vtkMRMLNode *mnode = nullptr;
+  vtkMRMLHierarchyNode *hnode = nullptr;
   std::string nodeClass("vtkMRMLNode");
   if (childClass)
     {
@@ -677,15 +677,15 @@ void vtkMRMLHierarchyNode::GetAssociatedChildrenNodes(vtkCollection *children,
 vtkMRMLHierarchyNode* vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(vtkMRMLScene *scene,
                                                                        const char *associatedNodeID)
 {
-  if (associatedNodeID == 0)
+  if (associatedNodeID == nullptr)
     {
     std::cerr << "GetAssociatedHierarchyNode: associated node id is null" << std::endl;
-    return NULL;
+    return nullptr;
     }
-  if (scene == 0)
+  if (scene == nullptr)
     {
     std::cerr << "GetAssociatedHierarchyNode: scene is null" << std::endl;
-    return NULL;
+    return nullptr;
     }
 
   vtkMRMLHierarchyNode::UpdateAssociatedToHierarchyMap(scene);
@@ -695,7 +695,7 @@ vtkMRMLHierarchyNode* vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(vtkMRMLSc
   if (siter == SceneAssociatedHierarchyNodes.end())
     {
     std::cerr << "GetAssociatedHierarchyNode: didn't find an associated hierarchy node type associated with the scene" << std::endl;
-    return NULL;
+    return nullptr;
     }
 
   std::map<std::string, vtkMRMLHierarchyNode *>::iterator iter;
@@ -707,14 +707,14 @@ vtkMRMLHierarchyNode* vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(vtkMRMLSc
     }
   else
     {
-    return NULL;
+    return nullptr;
     }
 }
 
 //----------------------------------------------------------------------------
 int vtkMRMLHierarchyNode::UpdateAssociatedToHierarchyMap(vtkMRMLScene *scene)
 {
-  if (scene == 0)
+  if (scene == nullptr)
     {
     SceneAssociatedHierarchyNodes.clear();
     SceneAssociatedHierarchyNodesMTime.clear();
@@ -761,7 +761,7 @@ int vtkMRMLHierarchyNode::UpdateAssociatedToHierarchyMap(vtkMRMLScene *scene)
 //----------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLHierarchyNode::GetAssociatedNode()
 {
-  vtkMRMLNode* node = NULL;
+  vtkMRMLNode* node = nullptr;
   if (this->GetScene() && this->GetAssociatedNodeID() )
     {
     node = this->GetScene()->GetNodeByID(this->AssociatedNodeIDReference);
@@ -793,7 +793,7 @@ void vtkMRMLHierarchyNode::SetAssociatedNodeID(const char* ref)
 //----------------------------------------------------------------------------
 void vtkMRMLHierarchyNode::AssociatedHierarchyIsModified(vtkMRMLScene *scene)
 {
-  if (scene == NULL)
+  if (scene == nullptr)
     {
     return;
     }

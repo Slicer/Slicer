@@ -212,7 +212,7 @@ public:
   ///
   /// Utility function that generates a color that is not used by other plot series nodes.
   /// If colorTableNodeID is not specified then vtkMRMLColorTableNodeRandom is used.
-  void SetUniqueColor(const char* colorTableNodeID = NULL);
+  void SetUniqueColor(const char* colorTableNodeID = nullptr);
 
   ///
   /// Get set line opacity

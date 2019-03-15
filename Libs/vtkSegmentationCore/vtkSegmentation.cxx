@@ -91,16 +91,16 @@ vtkSegmentation::~vtkSegmentation()
 
   if (this->SegmentCallbackCommand)
     {
-    this->SegmentCallbackCommand->SetClientData(NULL);
+    this->SegmentCallbackCommand->SetClientData(nullptr);
     this->SegmentCallbackCommand->Delete();
-    this->SegmentCallbackCommand = NULL;
+    this->SegmentCallbackCommand = nullptr;
     }
 
   if (this->MasterRepresentationCallbackCommand)
     {
-    this->MasterRepresentationCallbackCommand->SetClientData(NULL);
+    this->MasterRepresentationCallbackCommand->SetClientData(nullptr);
     this->MasterRepresentationCallbackCommand->Delete();
-    this->MasterRepresentationCallbackCommand = NULL;
+    this->MasterRepresentationCallbackCommand = nullptr;
     }
 }
 
@@ -115,9 +115,9 @@ void vtkSegmentation::WriteXML(ostream& of, int vtkNotUsed(nIndent))
 //----------------------------------------------------------------------------
 void vtkSegmentation::ReadXMLAttributes(const char** atts)
 {
-  const char* attName = NULL;
-  const char* attValue = NULL;
-  while (*atts != NULL)
+  const char* attName = nullptr;
+  const char* attValue = nullptr;
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -431,7 +431,7 @@ bool vtkSegmentation::AddSegment(vtkSegment* segment, std::string segmentId/*=""
   std::string key = segmentId;
   if (key.empty())
     {
-    if (segment->GetName() == NULL)
+    if (segment->GetName() == nullptr)
       {
       vtkErrorMacro("AddSegment: Unable to add segment without a key; neither key is given nor segment name is defined!");
       return false;
@@ -603,7 +603,7 @@ vtkSegment* vtkSegmentation::GetSegment(std::string segmentId)
   SegmentMap::iterator segmentIt = this->Segments.find(segmentId);
   if (segmentIt == this->Segments.end())
     {
-    return NULL;
+    return nullptr;
     }
 
   return segmentIt->second;
@@ -620,14 +620,14 @@ vtkSegment* vtkSegmentation::GetNthSegment(unsigned int index) const
 {
   if (index >= this->SegmentIds.size())
     {
-    return NULL;
+    return nullptr;
     }
   std::string segmentId = this->SegmentIds[index];
   SegmentMap::const_iterator segmentIt = this->Segments.find(segmentId);
   if (segmentIt == this->Segments.end())
     {
     // inconsistent segment ID and segment list
-    return NULL;
+    return nullptr;
     }
   return segmentIt->second;
 }
@@ -1041,7 +1041,7 @@ bool vtkSegmentation::CreateRepresentation(const std::string& targetRepresentati
       }
     vtkDataObject* representationAfter = segmentIt->second->GetRepresentation(targetRepresentationName);
     if (representationBefore != representationAfter
-      || (representationBefore != NULL && representationAfter != NULL && representationBefore->GetMTime() != representationAfter->GetMTime()) )
+      || (representationBefore != nullptr && representationAfter != nullptr && representationBefore->GetMTime() != representationAfter->GetMTime()) )
       {
       // representation has been modified
       const char* segmentId = segmentIt->first.c_str();
@@ -1103,7 +1103,7 @@ vtkDataObject* vtkSegmentation::GetSegmentRepresentation(std::string segmentId, 
   vtkSegment* segment = this->GetSegment(segmentId);
   if (!segment)
     {
-    return NULL;
+    return nullptr;
     }
   return segment->GetRepresentation(representationName);
 }
@@ -1154,14 +1154,14 @@ bool vtkSegmentation::IsMasterRepresentationPolyData()
     // Assume the first segment contains the same name of representations as all segments (this should be the case by design)
     vtkSegment* firstSegment = this->Segments.begin()->second;
     vtkDataObject* masterRepresentation = firstSegment->GetRepresentation(this->MasterRepresentationName);
-    return vtkPolyData::SafeDownCast(masterRepresentation) != NULL;
+    return vtkPolyData::SafeDownCast(masterRepresentation) != nullptr;
     }
   else
     {
     // There are no segments, create an empty representation to find out what type it is
     vtkSmartPointer<vtkDataObject> masterRepresentation = vtkSmartPointer<vtkDataObject>::Take(
       vtkSegmentationConverterFactory::GetInstance()->ConstructRepresentationObjectByRepresentation(this->MasterRepresentationName));
-    return vtkPolyData::SafeDownCast(masterRepresentation) != NULL;
+    return vtkPolyData::SafeDownCast(masterRepresentation) != nullptr;
     }
 }
 
@@ -1173,14 +1173,14 @@ bool vtkSegmentation::IsMasterRepresentationImageData()
     // Assume the first segment contains the same name of representations as all segments (this should be the case by design)
     vtkSegment* firstSegment = this->Segments.begin()->second;
     vtkDataObject* masterRepresentation = firstSegment->GetRepresentation(this->MasterRepresentationName);
-    return vtkOrientedImageData::SafeDownCast(masterRepresentation) != NULL;
+    return vtkOrientedImageData::SafeDownCast(masterRepresentation) != nullptr;
     }
   else
     {
     // There are no segments, create an empty representation to find out what type it is
     vtkSmartPointer<vtkDataObject> masterRepresentation = vtkSmartPointer<vtkDataObject>::Take(
       vtkSegmentationConverterFactory::GetInstance()->ConstructRepresentationObjectByRepresentation(this->MasterRepresentationName));
-    return vtkOrientedImageData::SafeDownCast(masterRepresentation) != NULL;
+    return vtkOrientedImageData::SafeDownCast(masterRepresentation) != nullptr;
     }
 }
 
@@ -1379,7 +1379,7 @@ std::string vtkSegmentation::DetermineCommonLabelmapGeometry(int extentComputati
     }
 
   // Get highest resolution reference geometry available in segments
-  vtkOrientedImageData* highestResolutionLabelmap = NULL;
+  vtkOrientedImageData* highestResolutionLabelmap = nullptr;
   double lowestSpacing[3] = {1, 1, 1}; // We'll multiply the spacings together to get the voxel size
   for (std::vector<std::string>::iterator segmentIt = mergedSegmentIDs.begin(); segmentIt != mergedSegmentIDs.end(); ++segmentIt)
     {
@@ -1486,7 +1486,7 @@ void vtkSegmentation::DetermineCommonLabelmapExtent(int commonGeometryExtent[6],
       }
     vtkOrientedImageData* currentBinaryLabelmap = vtkOrientedImageData::SafeDownCast(
       currentSegment->GetRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()));
-    if (currentBinaryLabelmap==NULL || currentBinaryLabelmap->IsEmpty())
+    if (currentBinaryLabelmap==nullptr || currentBinaryLabelmap->IsEmpty())
       {
       continue;
       }

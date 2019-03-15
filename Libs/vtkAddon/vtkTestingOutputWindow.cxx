@@ -25,7 +25,7 @@ vtkStandardNewMacro(vtkTestingOutputWindow);
 vtkTestingOutputWindow* vtkTestingOutputWindow::GetInstance()
 {
   vtkTestingOutputWindow* testingOutputWindow = vtkTestingOutputWindow::SafeDownCast(vtkOutputWindow::GetInstance());
-  if (testingOutputWindow != NULL)
+  if (testingOutputWindow != nullptr)
     {
     return testingOutputWindow;
     }

@@ -42,7 +42,7 @@ class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT qSlicerVolumeRenderingModule :
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerVolumeRenderingModule(QObject *parent=0);
+  explicit qSlicerVolumeRenderingModule(QObject *parent=nullptr);
   virtual ~qSlicerVolumeRenderingModule();
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);

@@ -43,7 +43,7 @@ vtkProperty2D *vtkAnnotationRulerRepresentation::GetLineProperty()
     }
   else
     {
-    return NULL;
+    return nullptr;
     }
 }
 

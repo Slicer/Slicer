@@ -175,7 +175,7 @@ vtkMRMLSegmentationNode* vtkMRMLSegmentationStorageNode::GetAssociatedDataNode()
 {
   if (!this->GetScene())
     {
-    return NULL;
+    return nullptr;
     }
 
   std::vector<vtkMRMLNode*> segmentationNodes;
@@ -193,7 +193,7 @@ vtkMRMLSegmentationNode* vtkMRMLSegmentationStorageNode::GetAssociatedDataNode()
       }
     }
 
-  return NULL;
+  return nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -202,7 +202,7 @@ const char* vtkMRMLSegmentationStorageNode::GetDefaultWriteFileExtension()
   vtkMRMLSegmentationNode* segmentationNode = this->GetAssociatedDataNode();
   if (!segmentationNode)
     {
-    return NULL;
+    return nullptr;
     }
   if (segmentationNode->GetSegmentation()->IsMasterRepresentationImageData())
     {
@@ -213,7 +213,7 @@ const char* vtkMRMLSegmentationStorageNode::GetDefaultWriteFileExtension()
     return "seg.vtm";
     }
   // Master representation is not supported for writing to file
-  return NULL;
+  return nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -526,7 +526,7 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
 
   // Copy image data to sequence of volume nodes
   vtkImageData* imageData = reader->GetOutput();
-  if (imageData == NULL)
+  if (imageData == nullptr)
     {
     vtkErrorMacro("vtkMRMLVolumeSequenceStorageNode::ReadDataInternal: invalid image data");
     return 0;
@@ -755,7 +755,7 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
     currentSegment->AddRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName(), currentBinaryLabelmap);
 
     // Add segment to segmentation
-    if (segmentation->GetSegment(currentSegmentID) != NULL)
+    if (segmentation->GetSegment(currentSegmentID) != nullptr)
       {
       vtkErrorMacro("Segment by ID " << currentSegmentID << " already exists in segmentation.");
       }
@@ -958,13 +958,13 @@ int vtkMRMLSegmentationStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     }
 
   vtkMRMLSegmentationNode *segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(refNode);
-  if (segmentationNode == NULL)
+  if (segmentationNode == nullptr)
     {
     vtkErrorMacro("Segmentation node expected. Unable to write node to file.");
     return 0;
     }
 
-  if (segmentationNode->GetSegmentation() == NULL)
+  if (segmentationNode->GetSegmentation() == nullptr)
     {
     vtkErrorMacro("Segmentation node does not contain segmentation object. Unable to write node to file.");
     return 0;
@@ -1167,7 +1167,7 @@ int vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation(vtkMRMLSeg
   int writeFlag = 1;
   if (writer->GetWriteError())
     {
-    vtkErrorMacro("ERROR writing NRRD file " << (writer->GetFileName() == NULL ? "null" : writer->GetFileName()));
+    vtkErrorMacro("ERROR writing NRRD file " << (writer->GetFileName() == nullptr ? "null" : writer->GetFileName()));
     writeFlag = 0;
     }
 

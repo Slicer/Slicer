@@ -33,11 +33,11 @@ vtkStandardNewMacro(vtkTopologicalHierarchy);
 //----------------------------------------------------------------------------
 vtkTopologicalHierarchy::vtkTopologicalHierarchy()
 {
-  this->InputPolyDataCollection = NULL;
+  this->InputPolyDataCollection = nullptr;
   vtkSmartPointer<vtkPolyDataCollection> inputPolyData = vtkSmartPointer<vtkPolyDataCollection>::New();
   this->SetInputPolyDataCollection(inputPolyData);
 
-  this->OutputLevels = NULL;
+  this->OutputLevels = nullptr;
   vtkSmartPointer<vtkIntArray> outputLevels = vtkSmartPointer<vtkIntArray>::New();
   this->SetOutputLevels(outputLevels);
 
@@ -49,8 +49,8 @@ vtkTopologicalHierarchy::vtkTopologicalHierarchy()
 //----------------------------------------------------------------------------
 vtkTopologicalHierarchy::~vtkTopologicalHierarchy()
 {
-  this->SetInputPolyDataCollection(NULL);
-  this->SetOutputLevels(NULL);
+  this->SetInputPolyDataCollection(nullptr);
+  this->SetOutputLevels(nullptr);
 }
 
 //----------------------------------------------------------------------------

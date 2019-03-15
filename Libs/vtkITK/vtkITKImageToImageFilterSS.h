@@ -26,7 +26,7 @@ class VTK_ITK_EXPORT vtkITKImageToImageFilterSS : public vtkITKImageToImageFilte
 {
 public:
   vtkTypeMacro(vtkITKImageToImageFilterSS,vtkITKImageToImageFilter);
-  static vtkITKImageToImageFilterSS* New() { return 0; }
+  static vtkITKImageToImageFilterSS* New() { return nullptr; }
   void PrintSelf(ostream& os, vtkIndent indent) override
   {
     Superclass::PrintSelf ( os, indent );

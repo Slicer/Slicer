@@ -125,11 +125,11 @@ int vtkMRMLTransformNodeTest1(int , char * [] )
   // Test non-equal
   CHECK_BOOL(vtkMRMLTransformNode::AreTransformsEqual(transform1.GetPointer(), transform2.GetPointer()), false);
   // Check NULL transforms
-  CHECK_BOOL(vtkMRMLTransformNode::AreTransformsEqual(transform1.GetPointer(), NULL), false);
-  CHECK_BOOL(vtkMRMLTransformNode::AreTransformsEqual(NULL, NULL), true);
+  CHECK_BOOL(vtkMRMLTransformNode::AreTransformsEqual(transform1.GetPointer(), nullptr), false);
+  CHECK_BOOL(vtkMRMLTransformNode::AreTransformsEqual(nullptr, nullptr), true);
   // check identity transform is the same as NULL transform
   vtkMRMLTransformNode::GetTransformBetweenNodes(eTransform.GetPointer(), eTransform.GetPointer(), transform1.GetPointer());
-  CHECK_BOOL(vtkMRMLTransformNode::AreTransformsEqual(transform1.GetPointer(), NULL), true);
+  CHECK_BOOL(vtkMRMLTransformNode::AreTransformsEqual(transform1.GetPointer(), nullptr), true);
 
   // Test GetMatrixTransformToNode computations
   vtkNew<vtkMatrix4x4> test_mx;
@@ -143,7 +143,7 @@ int vtkMRMLTransformNodeTest1(int , char * [] )
   CHECK_BOOL(vtkAddonMathUtilities::MatrixAreEqual(e_from_c_mx.GetPointer(), test_mx.GetPointer()), true);
 
   // GetMatrixTransformToNode: target node is world
-  eTransform->GetMatrixTransformToNode(NULL, test_mx.GetPointer());
+  eTransform->GetMatrixTransformToNode(nullptr, test_mx.GetPointer());
   CHECK_BOOL(vtkAddonMathUtilities::MatrixAreEqual(w_from_e_mx.GetPointer(), test_mx.GetPointer()), true);
 
   // GetMatrixTransformToWorld

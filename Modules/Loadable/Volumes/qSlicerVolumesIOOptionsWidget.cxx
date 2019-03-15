@@ -156,7 +156,7 @@ void qSlicerVolumesIOOptionsWidget::setFileNames(const QStringList& fileNames)
     snode = vtkMRMLVolumeArchetypeStorageNode::SafeDownCast(
       this->mrmlScene()->AddNewNodeByClass("vtkMRMLVolumeArchetypeStorageNode"));
     }
-  if (snode.GetPointer() == NULL)
+  if (snode.GetPointer() == nullptr)
     {
     qWarning("qSlicerVolumesIOOptionsWidget::setFileNames: mrmlScene is invalid, node name may not be determined accurately");
     snode = vtkSmartPointer<vtkMRMLVolumeArchetypeStorageNode>::New();
@@ -206,7 +206,7 @@ void qSlicerVolumesIOOptionsWidget::updateColorSelector()
 {
   Q_D(qSlicerVolumesIOOptionsWidget);
 
-  if (qSlicerCoreApplication::application() != NULL)
+  if (qSlicerCoreApplication::application() != nullptr)
     {
     // access the color logic which has information about default color nodes
     vtkSlicerApplicationLogic* appLogic = qSlicerCoreApplication::application()->applicationLogic();

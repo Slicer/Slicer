@@ -123,7 +123,7 @@ void vtkMRMLChartNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -292,14 +292,14 @@ const char* vtkMRMLChartNode::GetArray(const char *name)
 {
   if (!name)
     {
-    return 0;
+    return nullptr;
     }
 
   DoubleArrayIDMap::iterator it = (*this->DoubleArrayIDs).find(name);
 
   if (it == this->DoubleArrayIDs->end())
     {
-    return 0;
+    return nullptr;
     }
 
   return (*it).second.c_str();
@@ -399,13 +399,13 @@ const char *vtkMRMLChartNode::GetProperty(const char *name,
   ChartPropertyMap::iterator it = this->Properties->find(name);
   if (it == this->Properties->end())
     {
-    return 0;
+    return nullptr;
     }
 
   ArrayPropertyMap::iterator ait = (*it).second.find(property);
   if (ait == (*it).second.end())
     {
-    return 0;
+    return nullptr;
     }
 
   return (*ait).second.c_str();

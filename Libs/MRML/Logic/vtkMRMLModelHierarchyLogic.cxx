@@ -74,7 +74,7 @@ void vtkMRMLModelHierarchyLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 //----------------------------------------------------------------------------
 int vtkMRMLModelHierarchyLogic::UpdateModelToHierarchyMap()
 {
-  if (this->GetMRMLScene() == 0)
+  if (this->GetMRMLScene() == nullptr)
     {
     this->ModelHierarchyNodes.clear();
     }
@@ -105,9 +105,9 @@ int vtkMRMLModelHierarchyLogic::UpdateModelToHierarchyMap()
 //---------------------------------------------------------------------------
 vtkMRMLModelHierarchyNode* vtkMRMLModelHierarchyLogic::GetModelHierarchyNode(const char *modelNodeID)
 {
-  if (modelNodeID == 0)
+  if (modelNodeID == nullptr)
     {
-    return 0;
+    return nullptr;
     }
   this->UpdateModelToHierarchyMap();
 
@@ -120,7 +120,7 @@ vtkMRMLModelHierarchyNode* vtkMRMLModelHierarchyLogic::GetModelHierarchyNode(con
     }
   else
     {
-    return 0;
+    return nullptr;
     }
 }
 //----------------------------------------------------------------------------
@@ -239,7 +239,7 @@ void vtkMRMLModelHierarchyLogic::SetChildrenVisibility(vtkMRMLDisplayableHierarc
                                                        const char *displayableNodeClass, const char *displayNodeClass,
                                                        int visibility)
 {
-  if (displayableHierarchyNode==NULL)
+  if (displayableHierarchyNode==nullptr)
   {
     std::cerr << "vtkMRMLModelHierarchyLogic::SetChildrenVisibility failed: displayableHierarchyNode is invalid" << std::endl;
     return;
@@ -252,20 +252,20 @@ void vtkMRMLModelHierarchyLogic::SetChildrenVisibility(vtkMRMLDisplayableHierarc
 
   std::vector< vtkMRMLHierarchyNode *> children;
   displayableHierarchyNode->GetAllChildrenNodes(children);
-  vtkMRMLModelNode *model = NULL;
-  vtkMRMLNode      *node = NULL;
+  vtkMRMLModelNode *model = nullptr;
+  vtkMRMLNode      *node = nullptr;
   // When there are many child nodes in a hierarchy then show/hide is much more efficient if batch processing is enabled.
   // However, if there are few nodes only then a full refresh at the end of a batch processing takes longer than doing
   // the update on each node separately.
   bool batchProcess = (static_cast<int>(children.size()) > vtkMRMLModelHierarchyLogic::ChildrenVisibilitySetBatchUpdateThreshold);
-  vtkMRMLScene* scene=NULL;
+  vtkMRMLScene* scene=nullptr;
   if (batchProcess)
     {
-    if (!children.empty() && children.front()!=NULL)
+    if (!children.empty() && children.front()!=nullptr)
       {
       scene=children.front()->GetScene();
       }
-    if (scene!=NULL)
+    if (scene!=nullptr)
       {
       scene->StartState(vtkMRMLScene::BatchProcessState);
       }
@@ -289,7 +289,7 @@ void vtkMRMLModelHierarchyLogic::SetChildrenVisibility(vtkMRMLDisplayableHierarc
           }
         else
           {
-          model->SetDisplayClassVisibility(0, visibility);
+          model->SetDisplayClassVisibility(nullptr, visibility);
           }
         }
       }
@@ -303,7 +303,7 @@ void vtkMRMLModelHierarchyLogic::SetChildrenVisibility(vtkMRMLDisplayableHierarc
         }
       }
     }
-  if (batchProcess && scene!=NULL)
+  if (batchProcess && scene!=nullptr)
     {
     scene->EndState(vtkMRMLScene::BatchProcessState);
     }

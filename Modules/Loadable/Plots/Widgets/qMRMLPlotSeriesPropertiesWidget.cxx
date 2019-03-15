@@ -48,7 +48,7 @@
 qMRMLPlotSeriesPropertiesWidgetPrivate::qMRMLPlotSeriesPropertiesWidgetPrivate(qMRMLPlotSeriesPropertiesWidget& object)
   : q_ptr(&object)
 {
-  this->PlotSeriesNode = 0;
+  this->PlotSeriesNode = nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -90,11 +90,11 @@ void qMRMLPlotSeriesPropertiesWidgetPrivate::updateWidgetFromMRML()
 {
   Q_Q(qMRMLPlotSeriesPropertiesWidget);
 
-  q->setEnabled(this->PlotSeriesNode != 0);
+  q->setEnabled(this->PlotSeriesNode != nullptr);
 
   if (!this->PlotSeriesNode)
     {
-    this->inputTableComboBox->setCurrentNode(NULL);
+    this->inputTableComboBox->setCurrentNode(nullptr);
     this->xAxisComboBox->clear();
     this->labelsComboBox->clear();
     this->yAxisComboBox->clear();
@@ -176,7 +176,7 @@ void qMRMLPlotSeriesPropertiesWidgetPrivate::updateWidgetFromMRML()
     labelsIndex = this->labelsComboBox->findData(QString(labelsName.c_str()));
     }
   this->labelsComboBox->setCurrentIndex(labelsIndex);
-  this->labelsComboBox->setEnabled(mrmlTableNode != NULL);
+  this->labelsComboBox->setEnabled(mrmlTableNode != nullptr);
 
   std::string yAxisName = this->PlotSeriesNode->GetYColumnName();
   int yAxisIndex = this->yAxisComboBox->findData(QString(yAxisName.c_str()));
@@ -190,9 +190,9 @@ void qMRMLPlotSeriesPropertiesWidgetPrivate::updateWidgetFromMRML()
   this->xAxisComboBox->blockSignals(xAxisBlockSignals);
   this->labelsComboBox->blockSignals(labelsBlockSignals);
   this->yAxisComboBox->blockSignals(yAxisBlockSignals);
-  this->xAxisComboBox->setEnabled(mrmlTableNode != NULL && this->PlotSeriesNode->IsXColumnRequired());
+  this->xAxisComboBox->setEnabled(mrmlTableNode != nullptr && this->PlotSeriesNode->IsXColumnRequired());
 
-  this->yAxisComboBox->setEnabled(mrmlTableNode != NULL);
+  this->yAxisComboBox->setEnabled(mrmlTableNode != nullptr);
 
   // Update the PlotType ComboBox
   bool wasBlocked = this->plotTypeComboBox->blockSignals(true);

@@ -59,8 +59,8 @@ vtkMRMLNodeNewMacro(vtkMRMLTableNode);
 //----------------------------------------------------------------------------
 vtkMRMLTableNode::vtkMRMLTableNode()
 {
-  this->Table = NULL;
-  this->Schema = NULL;
+  this->Table = nullptr;
+  this->Schema = nullptr;
   this->Locked = false;
   this->UseColumnNameAsColumnHeader = false;
   this->UseFirstColumnAsRowHeader = false;
@@ -75,12 +75,12 @@ vtkMRMLTableNode::~vtkMRMLTableNode()
   if (this->Table)
     {
     this->Table->Delete();
-    this->Table = NULL;
+    this->Table = nullptr;
     }
   if (this->Schema)
     {
     this->Schema->Delete();
-    this->Schema = NULL;
+    this->Schema = nullptr;
     }
 }
 
@@ -105,7 +105,7 @@ void vtkMRMLTableNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -141,33 +141,33 @@ void vtkMRMLTableNode::Copy(vtkMRMLNode *anode)
   int disabledModify = this->StartModify();
   Superclass::Copy(anode);
   // Schema
-  if (this->GetSchema()!=NULL && node->GetSchema()==NULL)
+  if (this->GetSchema()!=nullptr && node->GetSchema()==nullptr)
     {
-    this->SetAndObserveSchema(NULL);
+    this->SetAndObserveSchema(nullptr);
     }
-  else if (this->GetSchema() == NULL && node->GetSchema() != NULL)
+  else if (this->GetSchema() == nullptr && node->GetSchema() != nullptr)
     {
     vtkNew<vtkTable> newTable;
     newTable->DeepCopy(node->GetSchema());
     this->SetAndObserveSchema(newTable.GetPointer());
     }
-  else if (this->GetSchema() != NULL && node->GetSchema() != NULL)
+  else if (this->GetSchema() != nullptr && node->GetSchema() != nullptr)
     {
     this->GetSchema()->DeepCopy(node->GetSchema());
     this->Schema->Modified();
     }
   // Table
-  if (this->GetTable()!=NULL && node->GetTable()==NULL)
+  if (this->GetTable()!=nullptr && node->GetTable()==nullptr)
     {
-    this->SetAndObserveTable(NULL);
+    this->SetAndObserveTable(nullptr);
     }
-  else if (this->GetTable()==NULL && node->GetTable()!=NULL)
+  else if (this->GetTable()==nullptr && node->GetTable()!=nullptr)
     {
     vtkNew<vtkTable> newTable;
     newTable->DeepCopy(node->GetTable());
     this->SetAndObserveTable(newTable.GetPointer());
     }
-  else if(this->GetTable() != NULL && node->GetTable() != NULL)
+  else if(this->GetTable() != nullptr && node->GetTable() != nullptr)
     {
     this->GetTable()->DeepCopy(node->GetTable());
     this->Table->Modified();
@@ -183,7 +183,7 @@ void vtkMRMLTableNode::ProcessMRMLEvents( vtkObject *caller, unsigned long event
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
   vtkTable* callerTable = vtkTable::SafeDownCast(caller);
-  if (event == vtkCommand::ModifiedEvent &&  callerTable != NULL
+  if (event == vtkCommand::ModifiedEvent &&  callerTable != nullptr
     && (this->Table == callerTable || this->Schema == callerTable))
     {
     // this indicates that the table model (that is stored in a separate file) is modified
@@ -216,7 +216,7 @@ void vtkMRMLTableNode::PrintSelf(ostream& os, vtkIndent indent)
       {
       os << indent << "  Column "<< columnIndex<<": ";
       vtkAbstractArray* column = table->GetColumn(columnIndex);
-      if (column == NULL)
+      if (column == nullptr)
         {
         os << "(invalid)\n";
         continue;
@@ -240,10 +240,10 @@ void vtkMRMLTableNode::PrintSelf(ostream& os, vtkIndent indent)
 vtkMRMLStorageNode* vtkMRMLTableNode::CreateDefaultStorageNode()
 {
   vtkMRMLScene* scene = this->GetScene();
-  if (scene == NULL)
+  if (scene == nullptr)
     {
     vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
-    return NULL;
+    return nullptr;
     }
   return vtkMRMLStorageNode::SafeDownCast(
     scene->CreateNodeByClass("vtkMRMLTableStorageNode"));
@@ -283,7 +283,7 @@ vtkAbstractArray* vtkMRMLTableNode::AddColumn(vtkAbstractArray* column)
     if (!this->Table)
       {
       vtkErrorMacro("vtkMRMLTableNode::AddColumn failed: failed to add VTK table");
-      return 0;
+      return nullptr;
       }
     }
 
@@ -354,7 +354,7 @@ vtkAbstractArray* vtkMRMLTableNode::AddColumn(vtkAbstractArray* column)
       newColumnName = ss.str();
       i++;
       }
-    while (this->Table->GetColumnByName(newColumnName.c_str())!=0);
+    while (this->Table->GetColumnByName(newColumnName.c_str())!=nullptr);
     newColumn->SetName(newColumnName.c_str());
     }
 
@@ -389,7 +389,7 @@ int vtkMRMLTableNode::GetColumnIndex(const std::string &columnName)
 //----------------------------------------------------------------------------
 int vtkMRMLTableNode::GetColumnIndex(vtkAbstractArray* column)
 {
-  if (column == 0)
+  if (column == nullptr)
     {
     return -1;
     }
@@ -413,12 +413,12 @@ int vtkMRMLTableNode::GetColumnIndex(vtkAbstractArray* column)
 //----------------------------------------------------------------------------
 std::string vtkMRMLTableNode::GetColumnName(int columnIndex)
 {
-  if (this->Table == NULL)
+  if (this->Table == nullptr)
     {
     return "";
     }
   const char* columnName = this->Table->GetColumnName(columnIndex);
-  if (columnName == NULL)
+  if (columnName == nullptr)
     {
     return "";
     }
@@ -428,7 +428,7 @@ std::string vtkMRMLTableNode::GetColumnName(int columnIndex)
 //----------------------------------------------------------------------------
 void vtkMRMLTableNode::CopyAllColumnProperties(const std::string& sourceColumnName, const std::string& targetColumnName)
 {
-  if (this->Schema == NULL)
+  if (this->Schema == nullptr)
     {
     vtkWarningMacro("vtkMRMLTableNode::CopyAllColumnProperties failed: schema is empty");
     return;
@@ -437,7 +437,7 @@ void vtkMRMLTableNode::CopyAllColumnProperties(const std::string& sourceColumnNa
   if (rowIndexTarget < 0)
     {
     vtkStringArray* nameColumn = vtkStringArray::SafeDownCast(this->Schema->GetColumnByName(SCHEMA_COLUMN_NAME));
-    if (nameColumn == NULL)
+    if (nameColumn == nullptr)
       {
       vtkErrorMacro("vtkMRMLTableNode::CopyAllColumnProperties failed: schema is invalid");
       return;
@@ -450,7 +450,7 @@ void vtkMRMLTableNode::CopyAllColumnProperties(const std::string& sourceColumnNa
   for (int schemaColumnIndex = 0; schemaColumnIndex < numberOfSchemaColumns; schemaColumnIndex++)
     {
     vtkStringArray* column = vtkStringArray::SafeDownCast(this->Schema->GetColumn(schemaColumnIndex));
-    if (column == NULL || column->GetName() == NULL // invalid column
+    if (column == nullptr || column->GetName() == nullptr // invalid column
       || !std::string(column->GetName()).compare(SCHEMA_COLUMN_NAME)) // columnName column
       {
       continue;
@@ -499,7 +499,7 @@ bool vtkMRMLTableNode::RenameColumn(int columnIndex, const char* newNamePtr)
   // If a column already exists by the new name (for example
   // this happens when a column is copied to a new column)
   // then keep the column properties, otherwise overwrite it.
-  if (this->Schema != NULL)
+  if (this->Schema != nullptr)
     {
     if (this->GetColumnIndex(newName.c_str()) < 0)
       {
@@ -512,7 +512,7 @@ bool vtkMRMLTableNode::RenameColumn(int columnIndex, const char* newNamePtr)
 
   // If no more columns exists by the old name
   // then we remove the old column properties.
-  if (this->Schema != NULL)
+  if (this->Schema != nullptr)
     {
     if (this->GetColumnIndex(oldName.c_str()) < 0)
       {
@@ -563,7 +563,7 @@ bool vtkMRMLTableNode::RemoveAllColumns()
     return false;
     }
   bool wasModified = this->StartModify();
-  this->SetAndObserveSchema(NULL);
+  this->SetAndObserveSchema(nullptr);
   this->Table->Initialize();
   this->EndModify(wasModified);
   return true;
@@ -679,12 +679,12 @@ int vtkMRMLTableNode::GetNumberOfColumns()
 //----------------------------------------------------------------------------
 vtkIdType vtkMRMLTableNode::GetPropertyRowIndex(const std::string& columnName)
 {
-  if (this->Schema == NULL)
+  if (this->Schema == nullptr)
     {
     return -1;
     }
   vtkStringArray* columnNameArray = vtkStringArray::SafeDownCast(this->Schema->GetColumnByName(SCHEMA_COLUMN_NAME));
-  if (columnNameArray == NULL)
+  if (columnNameArray == nullptr)
     {
     return -1;
     }
@@ -694,14 +694,14 @@ vtkIdType vtkMRMLTableNode::GetPropertyRowIndex(const std::string& columnName)
 //----------------------------------------------------------------------------
 void vtkMRMLTableNode::GetAllColumnPropertyNames(vtkStringArray* propertyNames)
 {
-  if (propertyNames == NULL)
+  if (propertyNames == nullptr)
     {
     vtkErrorMacro("vtkMRMLTableNode::GetAllColumnPropertyNames failed: invalid propertyNames");
     return;
     }
 
   propertyNames->Initialize();
-  if (this->Schema == NULL)
+  if (this->Schema == nullptr)
     {
     return;
     }
@@ -709,7 +709,7 @@ void vtkMRMLTableNode::GetAllColumnPropertyNames(vtkStringArray* propertyNames)
   for (int schemaColumnIndex = 0; schemaColumnIndex < numberOfSchemaColumns; schemaColumnIndex++)
     {
     vtkAbstractArray* column = this->Schema->GetColumn(schemaColumnIndex);
-    if (column == NULL || column->GetName() == NULL)
+    if (column == nullptr || column->GetName() == nullptr)
       {
       // invalid column
       continue;
@@ -727,12 +727,12 @@ void vtkMRMLTableNode::GetAllColumnPropertyNames(vtkStringArray* propertyNames)
 //----------------------------------------------------------------------------
 std::string vtkMRMLTableNode::GetColumnProperty(int columnIndex, const std::string& propertyName)
 {
-  if (this->Table == NULL)
+  if (this->Table == nullptr)
     {
     return "";
     }
   const char* columnName = this->Table->GetColumnName(columnIndex);
-  if (columnName == NULL)
+  if (columnName == nullptr)
     {
     return "";
     }
@@ -758,13 +758,13 @@ std::string vtkMRMLTableNode::GetColumnProperty(const std::string& columnName, c
 //----------------------------------------------------------------------------
 std::string vtkMRMLTableNode::GetColumnPropertyInternal(const std::string& columnName, const std::string& propertyName)
 {
-  if (this->Schema == NULL)
+  if (this->Schema == nullptr)
     {
     return "";
     }
 
   vtkStringArray* propertyArray = vtkStringArray::SafeDownCast(this->Schema->GetColumnByName(propertyName.c_str()));
-  if (propertyArray == NULL)
+  if (propertyArray == nullptr)
     {
     return "";
     }
@@ -781,12 +781,12 @@ std::string vtkMRMLTableNode::GetColumnPropertyInternal(const std::string& colum
 //----------------------------------------------------------------------------
 void vtkMRMLTableNode::SetColumnProperty(int columnIndex, const std::string& propertyName, const std::string& propertyValue)
 {
-  if (this->Table == NULL)
+  if (this->Table == nullptr)
     {
     return;
     }
   const char* columnName = this->Table->GetColumnName(columnIndex);
-  if (columnName == NULL)
+  if (columnName == nullptr)
     {
     vtkErrorMacro("vtkMRMLTableNode::SetColumnProperty failed: invalid column index");
     return;
@@ -819,14 +819,14 @@ void vtkMRMLTableNode::SetColumnProperty(const std::string& columnName, const st
 void vtkMRMLTableNode::SetColumnPropertyInternal(const std::string& columnName, const std::string& propertyName, const std::string& propertyValue)
 {
   // Make sure there is a schema
-  if (this->Schema == NULL)
+  if (this->Schema == nullptr)
     {
     vtkNew<vtkTable> newSchema;
     this->SetAndObserveSchema(newSchema.GetPointer());
     }
   // Make sure there is a column array
   vtkStringArray* columnNameArray = vtkStringArray::SafeDownCast(this->Schema->GetColumnByName(SCHEMA_COLUMN_NAME));
-  if (columnNameArray == NULL)
+  if (columnNameArray == nullptr)
     {
     vtkNew<vtkStringArray> newColumnNameArray;
     newColumnNameArray->SetName(SCHEMA_COLUMN_NAME);
@@ -842,7 +842,7 @@ void vtkMRMLTableNode::SetColumnPropertyInternal(const std::string& columnName, 
     }
   // Make sure there is an array for the selected property
   vtkStringArray* propertyArray = vtkStringArray::SafeDownCast(this->Schema->GetColumnByName(propertyName.c_str()));
-  if (propertyArray == NULL)
+  if (propertyArray == nullptr)
     {
     vtkNew<vtkStringArray> newPropertyArray;
     newPropertyArray->SetName(propertyName.c_str());
@@ -880,7 +880,7 @@ void vtkMRMLTableNode::RemoveColumnProperty(const std::string& propertyName)
     vtkErrorMacro("vtkMRMLTableNode::RemoveColumnProperty failed: reserved propertyName: " << propertyName);
     return;
     }
-  if (this->Schema == NULL)
+  if (this->Schema == nullptr)
     {
     return;
     }
@@ -890,12 +890,12 @@ void vtkMRMLTableNode::RemoveColumnProperty(const std::string& propertyName)
 //----------------------------------------------------------------------------
 void vtkMRMLTableNode::RemoveAllColumnProperties(int columnIndex)
 {
-  if (this->Table == NULL)
+  if (this->Table == nullptr)
     {
     return;
     }
   const char* columnName = this->Table->GetColumnName(columnIndex);
-  if (columnName == NULL)
+  if (columnName == nullptr)
     {
     return;
     }
@@ -905,7 +905,7 @@ void vtkMRMLTableNode::RemoveAllColumnProperties(int columnIndex)
 //----------------------------------------------------------------------------
 void vtkMRMLTableNode::RemoveAllColumnProperties(const std::string& columnName)
 {
-  if (this->Schema == NULL)
+  if (this->Schema == nullptr)
     {
     return;
     }
@@ -1008,7 +1008,7 @@ std::string vtkMRMLTableNode::GetValueTypeAsString(int valueType)
 //----------------------------------------------------------------------------
 vtkIdType vtkMRMLTableNode::InsertNextBlankRowWithNullValues(vtkTable* table)
 {
-  if (table == NULL)
+  if (table == nullptr)
     {
     vtkErrorMacro("vtkMRMLTableNode::InsertNextBlankRowWithNullValues failed: invalid table");
     return -1;
@@ -1019,7 +1019,7 @@ vtkIdType vtkMRMLTableNode::InsertNextBlankRowWithNullValues(vtkTable* table)
   for (int columnIndex = 0; columnIndex < table->GetNumberOfColumns(); ++columnIndex)
     {
     vtkAbstractArray* column = table->GetColumn(columnIndex);
-    if (column == NULL)
+    if (column == nullptr)
       {
       continue;
       }

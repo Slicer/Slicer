@@ -72,7 +72,7 @@ qSlicerVolumeRenderingPresetComboBoxPrivate::qSlicerVolumeRenderingPresetComboBo
   qSlicerVolumeRenderingPresetComboBox& object)
   : q_ptr(&object)
   , OldPresetPosition(0.0)
-  , VolumePropertyNode(NULL)
+  , VolumePropertyNode(nullptr)
 {
 }
 
@@ -101,8 +101,8 @@ void qSlicerVolumeRenderingPresetComboBoxPrivate::init()
   QObject::connect(this->PresetOffsetSlider, SIGNAL(sliderReleased()),
     q, SLOT(endInteraction()));
 
-  this->PresetComboBox->setMRMLScene(NULL);
-  this->PresetComboBox->setCurrentNode(NULL);
+  this->PresetComboBox->setMRMLScene(nullptr);
+  this->PresetComboBox->setCurrentNode(nullptr);
 }
 
 // --------------------------------------------------------------------------

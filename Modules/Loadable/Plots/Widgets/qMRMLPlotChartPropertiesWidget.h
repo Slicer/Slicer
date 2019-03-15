@@ -42,7 +42,7 @@ public:
   typedef qMRMLWidget Superclass;
 
   /// Constructors
-  explicit qMRMLPlotChartPropertiesWidget(QWidget* parent = 0);
+  explicit qMRMLPlotChartPropertiesWidget(QWidget* parent = nullptr);
   virtual ~qMRMLPlotChartPropertiesWidget();
 
   /// Get \a PlotViewNode

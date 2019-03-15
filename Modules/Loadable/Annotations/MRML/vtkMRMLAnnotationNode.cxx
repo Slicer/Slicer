@@ -31,9 +31,9 @@ vtkMRMLNodeNewMacro(vtkMRMLAnnotationNode);
 vtkMRMLAnnotationNode::vtkMRMLAnnotationNode()
 {
   this->TextList = vtkStringArray::New();
-  this->ReferenceNodeID = NULL;
+  this->ReferenceNodeID = nullptr;
   this->Locked = 0;
-  this->m_Backup = 0;
+  this->m_Backup = nullptr;
 
 }
 
@@ -49,7 +49,7 @@ vtkMRMLAnnotationNode::~vtkMRMLAnnotationNode()
   if (this->m_Backup)
     {
     this->m_Backup->Delete();
-    this->m_Backup = 0;
+    this->m_Backup = nullptr;
     }
 }
 
@@ -103,7 +103,7 @@ void vtkMRMLAnnotationNode::ReadXMLAttributes(const char** atts)
   // vtkMRMLDisplayableNode::ReadXMLAttributes(atts);
   Superclass::ReadXMLAttributes(atts);
 
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     const char* attName = *(atts++);
     std::string attValue(*(atts++));
@@ -114,7 +114,7 @@ void vtkMRMLAnnotationNode::ReadXMLAttributes(const char** atts)
     size_t  startPos = 0;
     size_t  endPos =attValue.find("|",startPos);
     while (endPos != std::string::npos) {
-      if (endPos == startPos) this->AddText(0,1,1);
+      if (endPos == startPos) this->AddText(nullptr,1,1);
       else {
         this->AddText(attValue.substr(startPos,endPos-startPos).c_str(),1,1);
       }
@@ -311,13 +311,13 @@ void vtkMRMLAnnotationNode::CreatePolyData()
 //---------------------------------------------------------------------------
 vtkPoints* vtkMRMLAnnotationNode::GetPoints()
 {
-  return this->GetPolyData() ? this->GetPolyData()->GetPoints() : 0;
+  return this->GetPolyData() ? this->GetPolyData()->GetPoints() : nullptr;
 }
 
 //---------------------------------------------------------------------------
 vtkCellArray* vtkMRMLAnnotationNode::GetLines()
 {
-  return this->GetPolyData() ? this->GetPolyData()->GetLines() : 0;
+  return this->GetPolyData() ? this->GetPolyData()->GetLines() : nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -363,7 +363,7 @@ vtkDataArray* vtkMRMLAnnotationNode::GetAnnotationAttributes(int att)
   if (!this->GetPolyData() || !this->GetPolyData()->GetPointData())
     {
       vtkErrorMacro("Annotation: " << this->GetName() << " PolyData or  PolyData->GetPointData() is NULL" );
-      return 0;
+      return nullptr;
     }
 
   return this->GetPolyData()->GetPointData()->GetScalars(this->GetAttributeTypesEnumAsString(att));
@@ -446,7 +446,7 @@ void vtkMRMLAnnotationNode::SetText(int id, const char *newText,int selectedFlag
     }
 
   // check if the same as before
-  if (((this->TextList->GetNumberOfValues() == 0) && (newText == NULL || newString == "")) ||
+  if (((this->TextList->GetNumberOfValues() == 0) && (newText == nullptr || newString == "")) ||
       ((this->TextList->GetNumberOfValues() > id) &&
        (this->TextList->GetValue(id) == newString) &&
        (this->GetAnnotationAttribute(id, TEXT_SELECTED) == selectedFlag) &&
@@ -585,10 +585,10 @@ std::string vtkMRMLAnnotationNode::GetDefaultStorageNodeClassName(const char* fi
 vtkMRMLStorageNode* vtkMRMLAnnotationNode::CreateDefaultStorageNode()
 {
   vtkMRMLScene* scene = this->GetScene();
-  if (scene == NULL)
+  if (scene == nullptr)
     {
     vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
-    return NULL;
+    return nullptr;
     }
   return vtkMRMLStorageNode::SafeDownCast(
     scene->CreateNodeByClass("vtkMRMLAnnotationStorageNode"));
@@ -598,7 +598,7 @@ vtkMRMLStorageNode* vtkMRMLAnnotationNode::CreateDefaultStorageNode()
 vtkMRMLAnnotationTextDisplayNode* vtkMRMLAnnotationNode::GetAnnotationTextDisplayNode()
 {
   int nnodes = this->GetNumberOfDisplayNodes();
-  vtkMRMLAnnotationTextDisplayNode *node = NULL;
+  vtkMRMLAnnotationTextDisplayNode *node = nullptr;
   for (int n=0; n<nnodes; n++)
     {
     node = vtkMRMLAnnotationTextDisplayNode::SafeDownCast(this->GetNthDisplayNode(n));
@@ -607,7 +607,7 @@ vtkMRMLAnnotationTextDisplayNode* vtkMRMLAnnotationNode::GetAnnotationTextDispla
     return node;
       }
     }
-  return 0;
+  return nullptr;
 }
 
 
@@ -704,7 +704,7 @@ void vtkMRMLAnnotationNode::ClearBackup()
   if (this->m_Backup)
     {
     this->m_Backup->Delete();
-    this->m_Backup = 0;
+    this->m_Backup = nullptr;
     }
 }
 
@@ -785,10 +785,10 @@ void vtkMRMLAnnotationNode::SaveView()
 void vtkMRMLAnnotationNode::RestoreView()
 {
   // if we do not have stores views, exit now
-  if (this->m_RedSliceNode.GetPointer() == 0 ||
-      this->m_YellowSliceNode.GetPointer() == 0 ||
-      this->m_GreenSliceNode.GetPointer() == 0 ||
-      this->m_CameraNode.GetPointer() == 0)
+  if (this->m_RedSliceNode.GetPointer() == nullptr ||
+      this->m_YellowSliceNode.GetPointer() == nullptr ||
+      this->m_GreenSliceNode.GetPointer() == nullptr ||
+      this->m_CameraNode.GetPointer() == nullptr)
     {
     return;
     }

@@ -160,7 +160,7 @@ void vtkMRMLAnnotationControlPointsNode::ReadXMLAttributes(const char** atts)
   Superclass::ReadXMLAttributes(atts);
 
 
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     const char* attName = *(atts++);
     std::string attValue(*(atts++));
@@ -297,7 +297,7 @@ void vtkMRMLAnnotationControlPointsNode::PrintAnnotationInfo(ostream& os, vtkInd
 vtkMRMLAnnotationPointDisplayNode* vtkMRMLAnnotationControlPointsNode::GetAnnotationPointDisplayNode()
 {
   int nnodes = this->GetNumberOfDisplayNodes();
-  vtkMRMLAnnotationPointDisplayNode *node = NULL;
+  vtkMRMLAnnotationPointDisplayNode *node = nullptr;
   for (int n=0; n<nnodes; n++)
     {
       // vtkMRMLDisplayableNode stores the ids in DisplayNodeIDs
@@ -307,7 +307,7 @@ vtkMRMLAnnotationPointDisplayNode* vtkMRMLAnnotationControlPointsNode::GetAnnota
     return node;
       }
     }
-  return 0;
+  return nullptr;
 }
 
 
@@ -435,7 +435,7 @@ double* vtkMRMLAnnotationControlPointsNode::GetControlPointCoordinates(vtkIdType
       this->GetPoints()->GetNumberOfPoints() <= id)
     {
     vtkErrorMacro("vtkMRMLAnnotationControlPointsNode::GetControlPointWorldCoordinates() no control point with index" << id) ;
-    return 0;
+    return nullptr;
     }
 
   return this->GetPoints()->GetPoint(id);
@@ -483,10 +483,10 @@ const char *vtkMRMLAnnotationControlPointsNode::GetAttributeTypesEnumAsString(in
 vtkMRMLStorageNode* vtkMRMLAnnotationControlPointsNode::CreateDefaultStorageNode()
 {
   vtkMRMLScene* scene = this->GetScene();
-  if (scene == NULL)
+  if (scene == nullptr)
     {
     vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
-    return NULL;
+    return nullptr;
     }
   return vtkMRMLStorageNode::SafeDownCast(
     scene->CreateNodeByClass("vtkMRMLAnnotationControlPointsStorageNode"));

@@ -58,7 +58,7 @@ public:
 qSlicerSettingsModulesPanelPrivate::qSlicerSettingsModulesPanelPrivate(qSlicerSettingsModulesPanel& object)
   :q_ptr(&object)
 {
-  this->ModulesMenu = 0;
+  this->ModulesMenu = nullptr;
 }
 
 // --------------------------------------------------------------------------

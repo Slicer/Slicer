@@ -123,7 +123,7 @@ struct parameters
 
 double ConvertTimeToSeconds(const char *time )
 {
-  if( time == NULL )
+  if( time == nullptr )
     {
     std::cerr << "ConvertTimeToSeconds got a NULL time string." << std::endl;
     return -1.0;
@@ -138,7 +138,7 @@ double ConvertTimeToSeconds(const char *time )
   double minutes;
   double seconds;
 
-  if( time == NULL )
+  if( time == nullptr )
     {
     return 0.0;
     }
@@ -172,12 +172,12 @@ double ConvertWeightUnits(double count, const char *fromunits, const char *touni
 
   double conversion = count;
 
-  if( fromunits == NULL )
+  if( fromunits == nullptr )
     {
     std::cout << "Got NULL parameter fromunits. A bad param was probably specified." << std::endl;
     return -1.0;
     }
-  if( tounits == NULL )
+  if( tounits == nullptr )
     {
     std::cout << "Got NULL parameter from tounits. A bad parameter was probably specified." << std::endl;
     return -1.0;
@@ -249,12 +249,12 @@ double ConvertRadioactivityUnits(double count, const char *fromunits, const char
 
   double conversion = count;
 
-  if( fromunits == NULL )
+  if( fromunits == nullptr )
     {
     std::cout << "Got NULL parameter in fromunits. A bad parameter was probably specified." << std::endl;
     return -1.0;
     }
-  if( tounits == NULL )
+  if( tounits == nullptr )
     {
     std::cout << "Got NULL parameter in tounits. A bad parameter was probably specified." << std::endl;
     return -1.0;
@@ -773,15 +773,15 @@ int LoadImagesAndComputeSUV( parameters & list, T )
   std::ofstream stringFile;
   vtkImageData *                    petVolume;
   vtkImageData *                    voiVolume;
-  vtkITKArchetypeImageSeriesReader *reader1 = NULL;
-  vtkITKArchetypeImageSeriesReader *reader2 = NULL;
-  vtkAlgorithmOutput* petVolumeConnection = 0;
-  vtkAlgorithmOutput* voiVolumeConnection = 0;
+  vtkITKArchetypeImageSeriesReader *reader1 = nullptr;
+  vtkITKArchetypeImageSeriesReader *reader2 = nullptr;
+  vtkAlgorithmOutput* petVolumeConnection = nullptr;
+  vtkAlgorithmOutput* voiVolumeConnection = nullptr;
 
   // check for the input files
   FILE * petfile;
   petfile = fopen(list.PETVolumeName.c_str(), "r");
-  if( petfile == NULL )
+  if( petfile == nullptr )
     {
     std::cerr << "ERROR: cannot open input volume file '" << list.PETVolumeName.c_str() << "'" << endl;
     return EXIT_FAILURE;
@@ -790,7 +790,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
 
   FILE * voifile;
   voifile = fopen(list.VOIVolumeName.c_str(), "r");
-  if( voifile == NULL )
+  if( voifile == nullptr )
     {
     std::cerr << "ERROR: cannot open ROI Volume  file '" << list.VOIVolumeName.c_str() << "'" << endl;
     return EXIT_FAILURE;
@@ -830,14 +830,14 @@ int LoadImagesAndComputeSUV( parameters & list, T )
   // COMPUTE SUV ///////////////////////////////////////////////////////////////////////////////RSNA CHANGE//////////////////////////
   //
 
-  if( petVolume == NULL )
+  if( petVolume == nullptr )
     {
     std::cerr << "No input PET volume found." << std::endl;
     return EXIT_FAILURE;
     }
 
   // find input labelmap volume
-  if( voiVolume == NULL )
+  if( voiVolume == nullptr )
     {
     std::cerr <<  "No input VOI volume found" << std::endl;
     return EXIT_FAILURE;
@@ -940,7 +940,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
         //---1. "070907.0705" represents a time of 7 hours, 9 minutes and 7.0705 seconds.
         //---2. "1010" represents a time of 10 hours, and 10 minutes.
         //---3. "021" is an invalid value.
-        if ( tag.c_str() == NULL || *(tag.c_str()) == '\0' )
+        if ( tag.c_str() == nullptr || *(tag.c_str()) == '\0' )
           {
           list.injectionTime  = "MODULE_INIT_NO_VALUE" ;
           }
@@ -1326,12 +1326,12 @@ int LoadImagesAndComputeSUV( parameters & list, T )
 
 
   // convert from input units.
-  if( list.radioactivityUnits.c_str() == NULL )
+  if( list.radioactivityUnits.c_str() == nullptr )
     {
     std::cerr << "ComputeSUV: Got NULL radioactivity units. No computation done." << std::endl;
     return EXIT_FAILURE;
     }
-  if( list.weightUnits.c_str() == NULL )
+  if( list.weightUnits.c_str() == nullptr )
     {
     std::cerr << "ComputeSUV: Got NULL weight units. No computation could be done." << std::endl;
     return EXIT_FAILURE;
@@ -1420,7 +1420,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
       double dose = list.injectedDose;
 
       // --- do some error checking and reporting.
-      if( list.radioactivityUnits.c_str() == NULL )
+      if( list.radioactivityUnits.c_str() == nullptr )
         {
         std::cerr << "ComputeSUV: Got null radioactivityUnits." << std::endl;
         return EXIT_FAILURE;

@@ -420,7 +420,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateSegmentPipelin
     {
     const Pipeline* pipeline = pipelineIt->second;
     vtkSegment* segment = segmentation->GetSegment(pipelineIt->first);
-    if (segment == NULL)
+    if (segment == nullptr)
       {
       PipelineMapType::iterator erasedIt = pipelineIt;
       ++pipelineIt;
@@ -541,7 +541,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayNodePip
     pipeline->Actor->GetProperty()->SetEdgeVisibility(displayNode->GetEdgeVisibility());
     pipeline->Actor->GetProperty()->SetEdgeColor(displayNode->GetEdgeColor());
 
-    pipeline->Actor->SetTexture(0);
+    pipeline->Actor->SetTexture(nullptr);
   }
 }
 
@@ -714,7 +714,7 @@ vtkMRMLSegmentationsDisplayableManager3D::vtkMRMLSegmentationsDisplayableManager
 vtkMRMLSegmentationsDisplayableManager3D::~vtkMRMLSegmentationsDisplayableManager3D()
 {
   delete this->Internal;
-  this->Internal=NULL;
+  this->Internal=nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -753,8 +753,8 @@ void vtkMRMLSegmentationsDisplayableManager3D::OnMRMLSceneNodeRemoved(vtkMRMLNod
     return;
     }
 
-  vtkMRMLSegmentationNode* segmentationNode = NULL;
-  vtkMRMLSegmentationDisplayNode* displayNode = NULL;
+  vtkMRMLSegmentationNode* segmentationNode = nullptr;
+  vtkMRMLSegmentationDisplayNode* displayNode = nullptr;
 
   bool modified = false;
   if ( (segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(node)) )
@@ -831,7 +831,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::UpdateFromMRML()
     }
   this->Internal->ClearDisplayableNodes();
 
-  vtkMRMLSegmentationNode* segmentationNode = NULL;
+  vtkMRMLSegmentationNode* segmentationNode = nullptr;
   std::vector<vtkMRMLNode*> segmentationNodes;
   int numOfSegmentationNodes = scene ? scene->GetNodesByClass("vtkMRMLSegmentationNode", segmentationNodes) : 0;
   for (int i=0; i<numOfSegmentationNodes; i++)

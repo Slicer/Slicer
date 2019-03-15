@@ -30,7 +30,7 @@ class PluginFilterWatcher: public SimpleFilterWatcher
 public:
   PluginFilterWatcher(itk::ProcessObject* o,
                       const char *comment="",
-                      ModuleProcessInformation *inf=0,
+                      ModuleProcessInformation *inf=nullptr,
                       double fraction = 1.0,
                       double start = 0.0)
     : SimpleFilterWatcher(o, comment)

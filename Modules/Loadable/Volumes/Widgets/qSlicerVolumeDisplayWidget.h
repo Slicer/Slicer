@@ -22,7 +22,7 @@ class Q_SLICER_QTMODULES_VOLUMES_WIDGETS_EXPORT qSlicerVolumeDisplayWidget : pub
 public:
   /// Constructors
   typedef QStackedWidget Superclass;
-  explicit qSlicerVolumeDisplayWidget(QWidget* parent=0);
+  explicit qSlicerVolumeDisplayWidget(QWidget* parent=nullptr);
   virtual ~qSlicerVolumeDisplayWidget();
 
 public slots:

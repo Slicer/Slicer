@@ -108,7 +108,7 @@ void qSlicerCamerasModuleWidget::setCameraToCurrentView(vtkMRMLNode* mrmlNode)
     }
   vtkMRMLViewNode *currentViewNode = vtkMRMLViewNode::SafeDownCast(
     d->ViewNodeSelector->currentNode());
-  if (currentViewNode == 0)
+  if (currentViewNode == nullptr)
     {
     return;
     }

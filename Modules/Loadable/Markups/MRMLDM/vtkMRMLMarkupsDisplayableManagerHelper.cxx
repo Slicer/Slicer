@@ -57,7 +57,7 @@ vtkStandardNewMacro (vtkMRMLMarkupsDisplayableManagerHelper);
 //---------------------------------------------------------------------------
 vtkMRMLMarkupsDisplayableManagerHelper::vtkMRMLMarkupsDisplayableManagerHelper()
 {
-  this->DisplayableManager = NULL;
+  this->DisplayableManager = nullptr;
   this->AddingMarkupsNode = false;
   this->ObservedMarkupNodeEvents.push_back(vtkCommand::ModifiedEvent);
   this->ObservedMarkupNodeEvents.push_back(vtkMRMLTransformableNode::TransformModifiedEvent);
@@ -73,7 +73,7 @@ vtkMRMLMarkupsDisplayableManagerHelper::vtkMRMLMarkupsDisplayableManagerHelper()
 vtkMRMLMarkupsDisplayableManagerHelper::~vtkMRMLMarkupsDisplayableManagerHelper()
 {
   this->RemoveAllWidgetsAndNodes();
-  this->SetDisplayableManager(NULL);
+  this->SetDisplayableManager(nullptr);
 }
 
 //---------------------------------------------------------------------------
@@ -338,8 +338,8 @@ void vtkMRMLMarkupsDisplayableManagerHelper::DeleteWidget(vtkSlicerMarkupsWidget
     {
     return;
     }
-  widget->SetRenderer(NULL);
-  widget->SetRepresentation(NULL);
+  widget->SetRenderer(nullptr);
+  widget->SetRepresentation(nullptr);
   widget->Delete();
 }
 

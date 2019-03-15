@@ -1041,7 +1041,7 @@ int vtkMRMLThreeDReformatDisplayableManagerTest1(int argc, char* argv[])
     std::cout << "Saved screenshot: " << screenshootFilename << std::endl;
     }
 
-  reformatDisplayableManager->SetMRMLApplicationLogic(0);
+  reformatDisplayableManager->SetMRMLApplicationLogic(nullptr);
   applicationLogic->Delete();
   scene->Delete();
 

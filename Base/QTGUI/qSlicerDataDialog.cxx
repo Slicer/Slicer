@@ -501,7 +501,7 @@ void qSlicerDataDialogPrivate::updateCheckBoxHeader(int itemRow, int itemColumn)
 //-----------------------------------------------------------------------------
 qSlicerDataDialog::qSlicerDataDialog(QObject* _parent)
   : qSlicerFileDialog(_parent)
-  , d_ptr(new qSlicerDataDialogPrivate(0))
+  , d_ptr(new qSlicerDataDialogPrivate(nullptr))
 {
   // FIXME give qSlicerDataDialog as a parent of qSlicerDataDialogPrivate;
 }

@@ -31,7 +31,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneModelHierarchyModel : public qMRMLSceneDisp
 
 public:
   typedef qMRMLSceneDisplayableModel Superclass;
-  qMRMLSceneModelHierarchyModel(QObject *parent=0);
+  qMRMLSceneModelHierarchyModel(QObject *parent=nullptr);
   virtual ~qMRMLSceneModelHierarchyModel();
 
   ///

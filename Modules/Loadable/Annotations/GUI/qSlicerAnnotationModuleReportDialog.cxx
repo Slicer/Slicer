@@ -23,9 +23,9 @@
 //---------------------------------------------------------------------------
 qSlicerAnnotationModuleReportDialog::qSlicerAnnotationModuleReportDialog()
 {
-  this->m_Logic = 0;
+  this->m_Logic = nullptr;
 
-  this->m_Annotations = 0;
+  this->m_Annotations = nullptr;
 
   this->ui.setupUi(this);
 
@@ -45,13 +45,13 @@ qSlicerAnnotationModuleReportDialog::~qSlicerAnnotationModuleReportDialog()
 {
   if (this->m_Logic)
     {
-    this->m_Logic = 0;
+    this->m_Logic = nullptr;
     }
 
   if (this->m_Annotations)
     {
     this->m_Annotations->Delete();
-    this->m_Annotations = 0;
+    this->m_Annotations = nullptr;
     }
 }
 
@@ -98,7 +98,7 @@ void qSlicerAnnotationModuleReportDialog::setAnnotations(vtkCollection* collecti
 
   this->m_Annotations = vtkCollection::New();
 
-  vtkObject *obj = NULL;
+  vtkObject *obj = nullptr;
   vtkCollectionSimpleIterator it;
   for (collection->InitTraversal(it);
     (obj = collection->GetNextItemAsObject(it));)
@@ -152,8 +152,8 @@ QString qSlicerAnnotationModuleReportDialog::generateReport()
 
   this->m_Html = QString("");
 
-  vtkMRMLAnnotationHierarchyNode *toplevelNode = NULL;
-  char *toplevelNodeID = this->m_Logic->GetTopLevelHierarchyNodeID(0);
+  vtkMRMLAnnotationHierarchyNode *toplevelNode = nullptr;
+  char *toplevelNodeID = this->m_Logic->GetTopLevelHierarchyNodeID(nullptr);
   if (toplevelNodeID && this->m_Logic->GetMRMLScene() &&
       this->m_Logic->GetMRMLScene()->GetNodeByID(toplevelNodeID))
     {
@@ -174,12 +174,12 @@ QString qSlicerAnnotationModuleReportDialog::generateReport()
 //---------------------------------------------------------------------------
 bool qSlicerAnnotationModuleReportDialog::isAnnotationSelected(const char* mrmlId)
 {
-  vtkMRMLNode *node = NULL;
+  vtkMRMLNode *node = nullptr;
   vtkCollectionSimpleIterator it;
   for (this->m_Annotations->InitTraversal(it);
     (node = vtkMRMLNode::SafeDownCast(this->m_Annotations->GetNextItemAsObject(it)));)
     {
-    if (node != NULL && !strcmp(mrmlId, node->GetID()))
+    if (node != nullptr && !strcmp(mrmlId, node->GetID()))
       {
       // we found it
       return true;
@@ -196,7 +196,7 @@ void qSlicerAnnotationModuleReportDialog::generateReportRecursive(int level, vtk
   currentHierarchy->GetDirectChildren(children);
 
 
-  vtkMRMLNode *node = NULL;
+  vtkMRMLNode *node = nullptr;
   vtkCollectionSimpleIterator it;
   for (this->m_Annotations->InitTraversal(it);
     (node = vtkMRMLNode::SafeDownCast(this->m_Annotations->GetNextItemAsObject(it)));)
@@ -334,7 +334,7 @@ bool qSlicerAnnotationModuleReportDialog::saveReport()
     report.replace(tempPath, imgshortdir.append("/"));
 
     // now save all graphics
-    vtkMRMLNode *node = NULL;
+    vtkMRMLNode *node = nullptr;
     vtkCollectionSimpleIterator it;
     for (this->m_Annotations->InitTraversal(it);
       (node = vtkMRMLNode::SafeDownCast(this->m_Annotations->GetNextItemAsObject(it)));)

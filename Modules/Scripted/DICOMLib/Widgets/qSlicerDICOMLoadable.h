@@ -65,7 +65,7 @@ class Q_SLICER_MODULE_DICOMLIB_WIDGETS_EXPORT qSlicerDICOMLoadable : public QObj
 
 public:
   typedef QObject Superclass;
-  qSlicerDICOMLoadable(QObject *parent = 0);
+  qSlicerDICOMLoadable(QObject *parent = nullptr);
   virtual ~qSlicerDICOMLoadable();
 
   virtual QString name()const;

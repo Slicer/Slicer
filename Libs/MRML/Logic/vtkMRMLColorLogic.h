@@ -201,7 +201,7 @@ public:
   /// it's storage node, turn off hide from editors, remove the
   /// singleton tag.
   /// \sa CreateFileNode, CreateProceduralFileNode
-  vtkMRMLColorNode* LoadColorFile(const char *fileName, const char *nodeName = NULL);
+  vtkMRMLColorNode* LoadColorFile(const char *fileName, const char *nodeName = nullptr);
 
   /// Get/Set the user defined paths where to look for extra colour files
   vtkGetStringMacro(UserColorFilePaths);

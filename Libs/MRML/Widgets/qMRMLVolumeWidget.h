@@ -43,7 +43,7 @@ class QMRML_WIDGETS_EXPORT qMRMLVolumeWidget : public QWidget
 public:
   /// Constructors
   typedef QWidget Superclass;
-  explicit qMRMLVolumeWidget(QWidget* parentWidget = 0);
+  explicit qMRMLVolumeWidget(QWidget* parentWidget = nullptr);
   virtual ~qMRMLVolumeWidget();
 
   ///
@@ -75,7 +75,7 @@ protected slots:
 protected:
   QScopedPointer<qMRMLVolumeWidgetPrivate> d_ptr;
   qMRMLVolumeWidget(qMRMLVolumeWidgetPrivate* ptr,
-                    QWidget* parentWidget = 0);
+                    QWidget* parentWidget = nullptr);
 
   /// Return the volume display node.
   vtkMRMLScalarVolumeDisplayNode* mrmlDisplayNode()const;

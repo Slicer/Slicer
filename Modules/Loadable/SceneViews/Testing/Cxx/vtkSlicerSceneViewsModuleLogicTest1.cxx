@@ -23,7 +23,7 @@ int vtkSlicerSceneViewsModuleLogicTest1(int , char * [] )
   // should fail, no scene
   std::cout << "CreateSceneView with no mrml scene or screen shot" << std::endl;
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  logic->CreateSceneView("SceneViewTest0", "this is a scene view", 0, NULL);
+  logic->CreateSceneView("SceneViewTest0", "this is a scene view", 0, nullptr);
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   logic->SetMRMLScene(scene.GetPointer());
@@ -31,7 +31,7 @@ int vtkSlicerSceneViewsModuleLogicTest1(int , char * [] )
 
   std::cout << "CreateSceneView with no screenshot" << std::endl;
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  logic->CreateSceneView("SceneViewTest1", "this is a scene view", 0, NULL);
+  logic->CreateSceneView("SceneViewTest1", "this is a scene view", 0, nullptr);
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   // should pass w/screen shot
@@ -61,7 +61,7 @@ int vtkSlicerSceneViewsModuleLogicTest1(int , char * [] )
   // test trying to remove a null node
   std::cout << "Trying to remove a null node." << std::endl;
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  logic->RemoveSceneViewNode(NULL);
+  logic->RemoveSceneViewNode(nullptr);
   TESTING_OUTPUT_ASSERT_ERRORS_END();
   // add a node to remove
   logic->CreateSceneView("SceneViewTestToRemove", "this is a scene view to remove", 0, screenShot);

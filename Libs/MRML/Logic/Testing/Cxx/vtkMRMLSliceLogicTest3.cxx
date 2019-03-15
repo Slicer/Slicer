@@ -55,7 +55,7 @@ vtkMRMLScalarVolumeNode* loadVolume(const char* volume, vtkMRMLScene* scene)
   storageNode->SetFileName(volume);
   if (storageNode->SupportedFileType(volume) == 0)
     {
-    return 0;
+    return nullptr;
     }
   scalarNode->SetName("foo");
   scalarNode->SetScene(scene);
@@ -109,7 +109,7 @@ int vtkMRMLSliceLogicTest3(int argc, char * argv [] )
   sliceLogic->SetBackgroundLayer(sliceLayerLogic.GetPointer());
 
   vtkMRMLScalarVolumeNode* scalarNode = loadVolume(argv[1], scene.GetPointer());
-  if (scalarNode == 0 || scalarNode->GetImageData() == 0)
+  if (scalarNode == nullptr || scalarNode->GetImageData() == nullptr)
     {
     std::cerr << "Not a valid volume: " << argv[1] << std::endl;
     return EXIT_FAILURE;

@@ -34,7 +34,7 @@
 vtkMRMLThreeDViewDisplayableManagerFactory* vtkMRMLThreeDViewDisplayableManagerFactory::New()
 {
   vtkMRMLThreeDViewDisplayableManagerFactory* instance = Self::GetInstance();
-  instance->Register(0);
+  instance->Register(nullptr);
   return instance;
 }
 

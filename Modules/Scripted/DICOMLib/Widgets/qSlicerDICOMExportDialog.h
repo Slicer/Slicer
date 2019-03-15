@@ -44,7 +44,7 @@ public:
 
 public:
   typedef QObject Superclass;
-  qSlicerDICOMExportDialog(QObject* parent = NULL);
+  qSlicerDICOMExportDialog(QObject* parent = nullptr);
   virtual ~qSlicerDICOMExportDialog();
 
 public:

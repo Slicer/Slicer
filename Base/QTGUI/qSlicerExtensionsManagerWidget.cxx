@@ -87,7 +87,7 @@ void setThemeIcon(QAction* action, const QString& name)
 class qSlicerExtensionsActionsWidget : public QStackedWidget, public Ui_qSlicerExtensionsActionsWidget
 {
 public:
-  qSlicerExtensionsActionsWidget(QWidget * parent = 0) : QStackedWidget(parent)
+  qSlicerExtensionsActionsWidget(QWidget * parent = nullptr) : QStackedWidget(parent)
   {
     this->setupUi(this);
   }
@@ -97,7 +97,7 @@ public:
 class qSlicerExtensionsToolsWidget : public QStackedWidget, public Ui_qSlicerExtensionsToolsWidget
 {
 public:
-  qSlicerExtensionsToolsWidget(QWidget * parent = 0) : QStackedWidget(parent)
+  qSlicerExtensionsToolsWidget(QWidget * parent = nullptr) : QStackedWidget(parent)
   {
     this->setupUi(this);
 

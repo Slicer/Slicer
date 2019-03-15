@@ -169,7 +169,7 @@ int vtkMRMLModelDisplayableManagerTest(int argc, char* argv[])
     std::cout << "Saved screenshot: " << screenshootFilename << std::endl;
     }
 
-  vrDisplayableManager->SetMRMLApplicationLogic(0);
+  vrDisplayableManager->SetMRMLApplicationLogic(nullptr);
   applicationLogic->Delete();
   scene->Delete();
 

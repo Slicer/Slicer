@@ -53,7 +53,7 @@ void vtkMRMLAnnotationHierarchyNode::DeleteDirectChildren()
 {
 
   vtkMRMLScene *scene = this->GetScene();
-  if (scene == NULL)
+  if (scene == nullptr)
     {
     vtkErrorMacro("GetChildrenDisplayableNodes: scene is null, cannot find children of this node");
     return;
@@ -61,7 +61,7 @@ void vtkMRMLAnnotationHierarchyNode::DeleteDirectChildren()
 
   vtkCollection* deleteList = vtkCollection::New();
 
-  vtkMRMLAnnotationHierarchyNode *hnode = NULL;
+  vtkMRMLAnnotationHierarchyNode *hnode = nullptr;
   int numNodes = scene->GetNumberOfNodesByClass("vtkMRMLAnnotationHierarchyNode");
   for (int n=0; n < numNodes; n++)
     {
@@ -129,7 +129,7 @@ void vtkMRMLAnnotationHierarchyNode::GetAllChildren(vtkCollection *children)
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationHierarchyNode::GetChildren(vtkCollection *children, int level)
 {
-  if (children == NULL)
+  if (children == nullptr)
     {
     return;
     }
@@ -140,13 +140,13 @@ void vtkMRMLAnnotationHierarchyNode::GetChildren(vtkCollection *children, int le
     }
 
   vtkMRMLScene *scene = this->GetScene();
-  if (scene == NULL)
+  if (scene == nullptr)
     {
     vtkErrorMacro("GetChildrenDisplayableNodes: scene is null, cannot find children of this node");
     return;
     }
 
-  vtkMRMLAnnotationHierarchyNode *hnode = NULL;
+  vtkMRMLAnnotationHierarchyNode *hnode = nullptr;
   int numNodes = scene->GetNumberOfNodesByClass("vtkMRMLAnnotationHierarchyNode");
   for (int n=0; n < numNodes; n++)
     {

@@ -142,7 +142,7 @@ vtkMRMLSliceNode * vtkMRMLMarkupsDisplayableManager::GetMRMLSliceNode()
 //---------------------------------------------------------------------------
 bool vtkMRMLMarkupsDisplayableManager::Is2DDisplayableManager()
 {
-  return this->GetMRMLSliceNode() != 0;
+  return this->GetMRMLSliceNode() != nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -601,7 +601,7 @@ vtkMRMLMarkupsNode* vtkMRMLMarkupsDisplayableManager::CreateNewMarkupsNode(
 //---------------------------------------------------------------------------
 vtkSlicerMarkupsWidget* vtkMRMLMarkupsDisplayableManager::FindClosestWidget(vtkMRMLInteractionEventData *callData, double &closestDistance2)
 {
-  vtkSlicerMarkupsWidget* closestWidget = NULL;
+  vtkSlicerMarkupsWidget* closestWidget = nullptr;
   closestDistance2 = VTK_DOUBLE_MAX;
 
   for (vtkMRMLMarkupsDisplayableManagerHelper::DisplayNodeToWidgetIt widgetIterator = this->Helper->MarkupsDisplayNodesToWidgets.begin();
@@ -678,7 +678,7 @@ bool vtkMRMLMarkupsDisplayableManager::CanProcessInteractionEvent(vtkMRMLInterac
       }
     }
 
-  if (eventid == vtkCommand::LeaveEvent && this->LastActiveWidget != NULL)
+  if (eventid == vtkCommand::LeaveEvent && this->LastActiveWidget != nullptr)
     {
     if (this->LastActiveWidget->GetMarkupsDisplayNode()
       && this->LastActiveWidget->GetMarkupsDisplayNode()->GetActiveComponentType() != vtkMRMLMarkupsDisplayNode::ComponentNone)
@@ -690,7 +690,7 @@ bool vtkMRMLMarkupsDisplayableManager::CanProcessInteractionEvent(vtkMRMLInterac
     }
 
   // Other interactions
-  bool canProcess = (this->FindClosestWidget(eventData, closestDistance2) != NULL);
+  bool canProcess = (this->FindClosestWidget(eventData, closestDistance2) != nullptr);
 
   if (!canProcess && this->LastActiveWidget != nullptr
     && eventid == vtkCommand::MouseMoveEvent)
@@ -699,7 +699,7 @@ bool vtkMRMLMarkupsDisplayableManager::CanProcessInteractionEvent(vtkMRMLInterac
     //closestDistance2 = 0.0;
     //return this->LastActiveWidget;
     this->LastActiveWidget->Leave();
-    this->LastActiveWidget = NULL;
+    this->LastActiveWidget = nullptr;
     }
 
   return canProcess;
@@ -716,10 +716,10 @@ bool vtkMRMLMarkupsDisplayableManager::ProcessInteractionEvent(vtkMRMLInteractio
 
   if (eventid == vtkCommand::LeaveEvent)
     {
-    if (this->LastActiveWidget != NULL)
+    if (this->LastActiveWidget != nullptr)
       {
       this->LastActiveWidget->Leave();
-      this->LastActiveWidget = NULL;
+      this->LastActiveWidget = nullptr;
       }
     }
 
@@ -740,7 +740,7 @@ bool vtkMRMLMarkupsDisplayableManager::ProcessInteractionEvent(vtkMRMLInteractio
     }
 
   // Deactivate previous widget
-  if (this->LastActiveWidget != NULL && this->LastActiveWidget != activeWidget)
+  if (this->LastActiveWidget != nullptr && this->LastActiveWidget != activeWidget)
     {
     this->LastActiveWidget->Leave();
     }
@@ -748,10 +748,10 @@ bool vtkMRMLMarkupsDisplayableManager::ProcessInteractionEvent(vtkMRMLInteractio
   if (!activeWidget)
     {
     // deactivate widget if we move far from it
-    if (eventid == vtkCommand::MouseMoveEvent && this->LastActiveWidget != NULL)
+    if (eventid == vtkCommand::MouseMoveEvent && this->LastActiveWidget != nullptr)
       {
       this->LastActiveWidget->Leave();
-      this->LastActiveWidget = NULL;
+      this->LastActiveWidget = nullptr;
       }
     return false;
     }
@@ -882,23 +882,23 @@ vtkSlicerMarkupsWidget* vtkMRMLMarkupsDisplayableManager::GetWidgetForPlacement(
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsDisplayableManager::SetHasFocus(bool hasFocus)
 {
-  if (!hasFocus && this->LastActiveWidget!=NULL)
+  if (!hasFocus && this->LastActiveWidget!=nullptr)
     {
     this->LastActiveWidget->Leave();
-    this->LastActiveWidget = NULL;
+    this->LastActiveWidget = nullptr;
     }
 }
 
 //---------------------------------------------------------------------------
 bool vtkMRMLMarkupsDisplayableManager::GetGrabFocus()
 {
-  return (this->LastActiveWidget != NULL && this->LastActiveWidget->GetGrabFocus());
+  return (this->LastActiveWidget != nullptr && this->LastActiveWidget->GetGrabFocus());
 }
 
 //---------------------------------------------------------------------------
 bool vtkMRMLMarkupsDisplayableManager::GetInteractive()
 {
-  return (this->LastActiveWidget != NULL && this->LastActiveWidget->GetInteractive());
+  return (this->LastActiveWidget != nullptr && this->LastActiveWidget->GetInteractive());
 }
 
 //---------------------------------------------------------------------------

@@ -165,7 +165,7 @@ bool qSlicerSceneBundleReader::load(const qSlicerIO::IOProperties& properties)
       }
     for (int i = -1; i < storageNode->GetNumberOfFileNames(); ++i)
       {
-      const char* storageFileNamePtr = NULL;
+      const char* storageFileNamePtr = nullptr;
       if (i < 0)
         {
         storageFileNamePtr = storageNode->GetFileName();

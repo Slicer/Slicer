@@ -117,9 +117,9 @@ vtkMRMLCrosshairDisplayableManager::vtkInternal
 ::vtkInternal(vtkMRMLCrosshairDisplayableManager * external)
 {
   this->External = external;
-  this->CrosshairNode = 0;
-  this->Actor = 0;
-  this->LightBoxRenderer = 0;
+  this->CrosshairNode = nullptr;
+  this->Actor = nullptr;
+  this->LightBoxRenderer = nullptr;
   this->CrosshairMode = -1;
   this->CrosshairThickness = -1;
   this->CrosshairPosition[0] = 0.0;
@@ -131,8 +131,8 @@ vtkMRMLCrosshairDisplayableManager::vtkInternal
 //---------------------------------------------------------------------------
 vtkMRMLCrosshairDisplayableManager::vtkInternal::~vtkInternal()
 {
-  this->SetCrosshairNode(0);
-  this->LightBoxRenderer = 0;
+  this->SetCrosshairNode(nullptr);
+  this->LightBoxRenderer = nullptr;
 
   if (this->SliceIntersectionWidget)
     {
@@ -160,7 +160,7 @@ void vtkMRMLCrosshairDisplayableManager::vtkInternal::Modified()
 //---------------------------------------------------------------------------
 bool vtkMRMLCrosshairDisplayableManager::vtkInternal::DidCrosshairPositionChange()
 {
-  if (this->CrosshairNode.GetPointer() == 0)
+  if (this->CrosshairNode.GetPointer() == nullptr)
     {
     return false;
     }
@@ -184,7 +184,7 @@ bool vtkMRMLCrosshairDisplayableManager::vtkInternal::DidCrosshairPositionChange
 //---------------------------------------------------------------------------
 bool vtkMRMLCrosshairDisplayableManager::vtkInternal::DidCrosshairPropertyChange()
 {
-  if (this->CrosshairNode.GetPointer() == 0)
+  if (this->CrosshairNode.GetPointer() == nullptr)
     {
     return false;
     }
@@ -220,9 +220,9 @@ void vtkMRMLCrosshairDisplayableManager::vtkInternal::UpdateSliceNode()
 //---------------------------------------------------------------------------
 void vtkMRMLCrosshairDisplayableManager::vtkInternal::UpdateIntersectingSliceNodes()
 {
-  if (this->External->GetMRMLScene() == 0)
+  if (this->External->GetMRMLScene() == nullptr)
     {
-    this->SliceIntersectionWidget->SetSliceNode(NULL);
+    this->SliceIntersectionWidget->SetSliceNode(nullptr);
     return;
     }
 
@@ -254,9 +254,9 @@ void vtkMRMLCrosshairDisplayableManager::vtkInternal
 //---------------------------------------------------------------------------
 vtkMRMLCrosshairNode* vtkMRMLCrosshairDisplayableManager::FindCrosshairNode(vtkMRMLScene* scene)
 {
-  if (scene == 0)
+  if (scene == nullptr)
     {
-    return 0;
+    return nullptr;
     }
 
   vtkMRMLNode* node;
@@ -276,7 +276,7 @@ vtkMRMLCrosshairNode* vtkMRMLCrosshairDisplayableManager::FindCrosshairNode(vtkM
     }
   // no matching crosshair node is found
   //assert(0);
-  return 0;
+  return nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -289,7 +289,7 @@ void vtkMRMLCrosshairDisplayableManager::vtkInternal::BuildCrosshair()
       {
       this->LightBoxRenderer->RemoveActor(this->Actor);
       }
-    this->Actor = 0;
+    this->Actor = nullptr;
     }
 
   if (!this->CrosshairNode.GetPointer())
@@ -462,8 +462,8 @@ void vtkMRMLCrosshairDisplayableManager::UpdateFromMRMLScene()
 //---------------------------------------------------------------------------
 void vtkMRMLCrosshairDisplayableManager::UnobserveMRMLScene()
 {
-  this->Internal->SliceIntersectionWidget->SetSliceNode(NULL);
-  this->Internal->SetCrosshairNode(0);
+  this->Internal->SliceIntersectionWidget->SetSliceNode(nullptr);
+  this->Internal->SetCrosshairNode(nullptr);
 }
 
 //---------------------------------------------------------------------------
@@ -494,7 +494,7 @@ void vtkMRMLCrosshairDisplayableManager::OnMRMLNodeModified(
       int id = (int) (floor(xyz[2] + 0.5)); // round to find the lightbox
       vtkRenderer *renderer
         = this->GetLightBoxRendererManagerProxy()->GetRenderer(id);
-      if (renderer == NULL)
+      if (renderer == nullptr)
         {
         // crosshair must not be displayed in this view
         this->Internal->Actor->SetVisibility(false);
@@ -556,7 +556,7 @@ void vtkMRMLCrosshairDisplayableManager::OnMRMLSliceNodeModifiedEvent()
     // update cursor RAS position from XYZ (normalized screen) position
     double xyz[3] = { 0.0 };
     vtkMRMLSliceNode *crosshairSliceNode = this->Internal->CrosshairNode->GetCursorPositionXYZ(xyz);
-    if (crosshairSliceNode != NULL && crosshairSliceNode == this->Internal->GetSliceNode())
+    if (crosshairSliceNode != nullptr && crosshairSliceNode == this->Internal->GetSliceNode())
       {
       this->Internal->CrosshairNode->SetCursorPositionXYZ(xyz, crosshairSliceNode);
       }

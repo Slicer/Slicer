@@ -37,7 +37,7 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLDoubleSpinBoxDelegate : 
   Q_OBJECT
 
 public:
-  qMRMLDoubleSpinBoxDelegate(QObject *parent = 0);
+  qMRMLDoubleSpinBoxDelegate(QObject *parent = nullptr);
 
   QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 

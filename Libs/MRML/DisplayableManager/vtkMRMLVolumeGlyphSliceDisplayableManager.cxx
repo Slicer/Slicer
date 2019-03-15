@@ -115,13 +115,13 @@ vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal
 ::vtkInternal(vtkMRMLVolumeGlyphSliceDisplayableManager * external)
 {
   this->External = external;
-  this->SliceCompositeNode = 0;
+  this->SliceCompositeNode = nullptr;
 }
 
 //---------------------------------------------------------------------------
 vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::~vtkInternal()
 {
-  this->SetSliceCompositeNode(0);
+  this->SetSliceCompositeNode(nullptr);
   // everything should be empty
   assert(this->SliceCompositeNode == 0);
   assert(this->VolumeNodes.size() == 0);
@@ -168,10 +168,10 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::UpdateSliceNode()
 vtkMRMLSliceCompositeNode* vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal
 ::FindSliceCompositeNode()
 {
-  if (this->External->GetMRMLScene() == 0 ||
+  if (this->External->GetMRMLScene() == nullptr ||
       !this->GetSliceNode())
     {
-    return 0;
+    return nullptr;
     }
 
   vtkMRMLNode* node;
@@ -191,7 +191,7 @@ vtkMRMLSliceCompositeNode* vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInterna
     }
   // no matching slice composite node is found
   assert(0);
-  return 0;
+  return nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -504,7 +504,7 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::UpdateActor(
       actor2D->GetMapper());
     mapper->SetInputConnection( dtiDisplayNode->GetSliceOutputPort() );
     mapper->SetLookupTable( dtiDisplayNode->GetColorNode() ?
-                            dtiDisplayNode->GetColorNode()->GetScalarsToColors() : 0);
+                            dtiDisplayNode->GetColorNode()->GetScalarsToColors() : nullptr);
     mapper->SetScalarRange(dtiDisplayNode->GetScalarRange());
     }
   actor->SetVisibility(this->IsVisible(displayNode));
@@ -569,7 +569,7 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::PrintSelf(ostream& os, vtkIndent
 void vtkMRMLVolumeGlyphSliceDisplayableManager
 ::UnobserveMRMLScene()
 {
-  this->Internal->SetSliceCompositeNode(0);
+  this->Internal->SetSliceCompositeNode(nullptr);
 }
 
 //---------------------------------------------------------------------------
@@ -598,7 +598,7 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager
     {
     if (vtkMRMLDisplayableNode::SafeDownCast(caller))
       {
-        if (callData == 0 || vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SafeDownCast((vtkObject *)callData) !=0 ) // a display node is added/removed/modified
+        if (callData == nullptr || vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SafeDownCast((vtkObject *)callData) !=nullptr ) // a display node is added/removed/modified
         {
         this->Internal->UpdateVolume(vtkMRMLDisplayableNode::SafeDownCast(caller));
         }

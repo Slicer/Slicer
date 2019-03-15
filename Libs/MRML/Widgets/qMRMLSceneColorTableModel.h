@@ -34,7 +34,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneColorTableModel : public qMRMLSceneCategory
   Q_OBJECT
 
 public:
-  qMRMLSceneColorTableModel(QObject *parent=0);
+  qMRMLSceneColorTableModel(QObject *parent=nullptr);
   virtual ~qMRMLSceneColorTableModel();
 
 protected:

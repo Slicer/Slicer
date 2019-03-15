@@ -89,7 +89,7 @@ public:
 
   /// Construct an empty qMRMLNodeComboBox with a null scene,
   /// no nodeType, where the hidden nodes are not forced on display.
-  explicit qMRMLNodeComboBox(QWidget* parent = 0);
+  explicit qMRMLNodeComboBox(QWidget* parent = nullptr);
   virtual ~qMRMLNodeComboBox();
 
   /// Get MRML scene that has been set by setMRMLScene(), there is no scene
@@ -360,8 +360,8 @@ signals:
 
 protected:
   /// qMRMLNodeComboBox will not take ownership on the model.
-  qMRMLNodeComboBox(QAbstractItemModel* model, QWidget* parent = 0);
-  qMRMLNodeComboBox(qMRMLNodeComboBoxPrivate* pimpl, QWidget* parent = 0);
+  qMRMLNodeComboBox(QAbstractItemModel* model, QWidget* parent = nullptr);
+  qMRMLNodeComboBox(qMRMLNodeComboBoxPrivate* pimpl, QWidget* parent = nullptr);
   QAbstractItemModel* rootModel()const;
 
   void setComboBox(QComboBox* comboBox);

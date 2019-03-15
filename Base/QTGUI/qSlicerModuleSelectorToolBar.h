@@ -49,8 +49,8 @@ public:
   /// Constructor
   /// title is the name of the toolbar (can appear using right click on the
   /// toolbar area)
-  qSlicerModuleSelectorToolBar(const QString& title, QWidget* parent = 0);
-  qSlicerModuleSelectorToolBar(QWidget* parent = 0);
+  qSlicerModuleSelectorToolBar(const QString& title, QWidget* parent = nullptr);
+  qSlicerModuleSelectorToolBar(QWidget* parent = nullptr);
   virtual ~qSlicerModuleSelectorToolBar();
 
   /// Returns a pointer to the modules menu used to populate the list of modules

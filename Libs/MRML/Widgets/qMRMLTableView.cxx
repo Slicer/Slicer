@@ -77,8 +77,8 @@
 //------------------------------------------------------------------------------
 qMRMLTableViewPrivate::qMRMLTableViewPrivate(qMRMLTableView& object)
   : q_ptr(&object)
-  , MRMLScene(0)
-  , MRMLTableViewNode(0)
+  , MRMLScene(nullptr)
+  , MRMLTableViewNode(nullptr)
 {
 }
 
@@ -166,7 +166,7 @@ void qMRMLTableViewPrivate::updateWidgetFromViewNode()
   Q_Q(qMRMLTableView);
   if (!this->MRMLScene || !this->MRMLTableViewNode)
     {
-    q->setMRMLTableNode((vtkMRMLNode*)NULL);
+    q->setMRMLTableNode((vtkMRMLNode*)nullptr);
     return;
     }
 
@@ -237,7 +237,7 @@ vtkMRMLTableNode* qMRMLTableView::mrmlTableNode()const
   if (!mrmlModel)
     {
     qCritical("qMRMLTableView::mrmlTableNode failed: model is invalid");
-    return 0;
+    return nullptr;
     }
   return mrmlModel->mrmlTableNode();
 }
@@ -428,7 +428,7 @@ void qMRMLTableView::pasteSelection()
         }
       // Set values in items
       QStandardItem* item = mrmlModel->item(rowIndex,columnIndex);
-      if (item != NULL)
+      if (item != nullptr)
         {
         if (item->isCheckable())
           {
@@ -482,7 +482,7 @@ void qMRMLTableView::plotSelection()
         {
         QString message = QString("Column %1 is invalid. Failed to generate a plot").arg(columnIndex);
         qCritical() << Q_FUNC_INFO << ": " << message;
-        QMessageBox::warning(NULL, tr("Failed to create Plot"), message);
+        QMessageBox::warning(nullptr, tr("Failed to create Plot"), message);
         return;
         }
       int columnDataType = column->GetDataType();
@@ -492,7 +492,7 @@ void qMRMLTableView::plotSelection()
           " Please convert the data type of this column to numeric using Table module's Column properties section,"
           " or select different columns for plotting.").arg(column->GetName());
         qCritical() << Q_FUNC_INFO << ": " << message;
-        QMessageBox::warning(NULL, tr("Failed to create Plot"), message);
+        QMessageBox::warning(nullptr, tr("Failed to create Plot"), message);
         return;
         }
       if (columnDataType == VTK_STRING)
@@ -508,7 +508,7 @@ void qMRMLTableView::plotSelection()
             " Please change selection or convert data type of this column to numeric using Table module's 'Column properties' section."
             ).arg(tableNode->GetColumnName(stringColumnIndex).c_str(), column->GetName());
           qCritical() << Q_FUNC_INFO << ": " << message;
-          QMessageBox::warning(NULL, tr("Failed to create Plot"), message);
+          QMessageBox::warning(nullptr, tr("Failed to create Plot"), message);
           return;
           }
         }
@@ -523,7 +523,7 @@ void qMRMLTableView::plotSelection()
     QString message = QString("A single 'string' type column is selected."
       " Please change selection or convert data type of this column to numeric using Table module's 'Column properties' section.");
     qCritical() << Q_FUNC_INFO << ": " << message;
-    QMessageBox::warning(NULL, tr("Failed to plot data"), message);
+    QMessageBox::warning(nullptr, tr("Failed to plot data"), message);
     return;
     }
 
@@ -600,22 +600,22 @@ void qMRMLTableView::plotSelection()
     // Check if there is already a PlotSeriesNode that has the same name as this Column and reuse that to avoid node duplication
     vtkSmartPointer<vtkCollection> colPlots = vtkSmartPointer<vtkCollection>::Take(
       this->mrmlScene()->GetNodesByClassByName("vtkMRMLPlotSeriesNode", yColumnName.c_str()));
-    if (colPlots == NULL)
+    if (colPlots == nullptr)
       {
       continue;
       }
-    vtkMRMLPlotSeriesNode *plotSeriesNode = NULL;
+    vtkMRMLPlotSeriesNode *plotSeriesNode = nullptr;
     for (int plotIndex = 0; plotIndex < colPlots->GetNumberOfItems(); plotIndex++)
       {
       plotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(colPlots->GetItemAsObject(plotIndex));
-      if (plotSeriesNode != NULL)
+      if (plotSeriesNode != nullptr)
         {
         break;
         }
       }
 
     // Create a PlotSeriesNode if a usable node has not been found
-    if (plotSeriesNode == NULL)
+    if (plotSeriesNode == nullptr)
       {
       plotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(this->mrmlScene()->AddNewNodeByClass(
         "vtkMRMLPlotSeriesNode", yColumnName.c_str()));
@@ -800,7 +800,7 @@ void qMRMLTableView::setMRMLScene(vtkMRMLScene* newScene)
 
   if (d->MRMLTableViewNode && newScene != d->MRMLTableViewNode->GetScene())
     {
-    this->setMRMLTableViewNode(0);
+    this->setMRMLTableViewNode(nullptr);
     }
 
   emit mrmlSceneChanged(newScene);

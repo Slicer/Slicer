@@ -146,23 +146,23 @@ int vtkMarkupsGlyphSource2D::RequestData(
   //Clean up
   output->SetPoints(pts);
   pts->Delete();
-  pts = NULL;
+  pts = nullptr;
 
   output->SetVerts(verts);
   verts->Delete();
-  verts = NULL;
+  verts = nullptr;
 
   output->SetLines(lines);
   lines->Delete();
-  lines = NULL;
+  lines = nullptr;
 
   output->SetPolys(polys);
   polys->Delete();
-  polys = NULL;
+  polys = nullptr;
 
   output->GetCellData()->SetScalars(colors);
   colors->Delete();
-  colors = NULL;
+  colors = nullptr;
 
   return 1;
 }
@@ -636,7 +636,7 @@ void vtkMarkupsGlyphSource2D::PrintSelf(ostream& os, vtkIndent indent)
 
 void vtkMarkupsGlyphSource2D::SetGlyphTypeAsString(const char *type)
 {
-  if (type == NULL)
+  if (type == nullptr)
     {
     vtkErrorMacro("Cannot set glyph type from a null string.");
     return;

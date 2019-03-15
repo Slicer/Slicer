@@ -34,7 +34,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerNodeWriterOptionsWidget
 
 public:
   typedef qSlicerFileWriterOptionsWidget Superclass;
-  explicit qSlicerNodeWriterOptionsWidget(QWidget* parent = 0);
+  explicit qSlicerNodeWriterOptionsWidget(QWidget* parent = nullptr);
   virtual ~qSlicerNodeWriterOptionsWidget();
 
   bool showUseCompression()const;

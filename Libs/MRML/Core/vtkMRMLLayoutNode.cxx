@@ -27,10 +27,10 @@ vtkMRMLLayoutNode::vtkMRMLLayoutNode()
   this->NumberOfCompareViewLightboxColumns = 6;
   this->MainPanelSize = 400;
   this->SecondaryPanelSize = 400;
-  this->SelectedModule = NULL;
+  this->SelectedModule = nullptr;
 
-  this->CurrentLayoutDescription = NULL;
-  this->LayoutRootElement = NULL;
+  this->CurrentLayoutDescription = nullptr;
+  this->LayoutRootElement = nullptr;
 
   // Synchronize the view description with the layout
   this->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutNone, "");
@@ -42,14 +42,14 @@ vtkMRMLLayoutNode::~vtkMRMLLayoutNode()
   if ( this->SelectedModule)
     {
     delete [] this->SelectedModule;
-    this->SelectedModule = NULL;
+    this->SelectedModule = nullptr;
     }
   if (this->LayoutRootElement)
     {
     this->LayoutRootElement->Delete();
-    this->LayoutRootElement = NULL;
+    this->LayoutRootElement = nullptr;
     }
-  this->SetCurrentLayoutDescription(0);
+  this->SetCurrentLayoutDescription(nullptr);
 }
 
 
@@ -72,9 +72,9 @@ void vtkMRMLLayoutNode::WriteXML(ostream& of, int nIndent)
   of << " numberOfLightboxColumns=\"" << this->NumberOfCompareViewLightboxColumns << "\"";
   of << " mainPanelSize=\"" << this->MainPanelSize << "\"";
   of << " secondaryPanelSize=\"" << this->SecondaryPanelSize << "\"";
-  if (this->SelectedModule != NULL)
+  if (this->SelectedModule != nullptr)
     {
-    of << " selectedModule=\"" << (this->SelectedModule != NULL ? this->SelectedModule : "") << "\"";
+    of << " selectedModule=\"" << (this->SelectedModule != nullptr ? this->SelectedModule : "") << "\"";
     }
   //of << " layout=\"" << this->CurrentLayoutDescription << "\"";
 }
@@ -90,7 +90,7 @@ void vtkMRMLLayoutNode::ReadXMLAttributes(const char** atts)
   const char* attName;
   const char* attValue;
 
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -279,7 +279,7 @@ void vtkMRMLLayoutNode::SetAndParseCurrentLayoutDescription(const char* descript
     this->LayoutRootElement->Delete();
     }
   this->LayoutRootElement = this->ParseLayout(description);
-  if (this->LayoutRootElement == NULL)
+  if (this->LayoutRootElement == nullptr)
     {
     // ParseLayout has already logged an error, if there was any
     this->SetCurrentLayoutDescription("");
@@ -294,7 +294,7 @@ vtkXMLDataElement* vtkMRMLLayoutNode::ParseLayout(const char* description)
 {
   if (!description || strlen(description) <= 0)
     {
-    return NULL;
+    return nullptr;
     }
 
   std::istringstream iss(description, std::istringstream::in);
@@ -303,15 +303,15 @@ vtkXMLDataElement* vtkMRMLLayoutNode::ParseLayout(const char* description)
   parser->Parse();
 
   vtkXMLDataElement* root = parser->GetRootElement();
-  if (root==NULL)
+  if (root==nullptr)
     {
     vtkErrorWithObjectMacro(parser, "vtkMRMLLayoutNode::ParseLayout: failed to parse layout description");
-    return NULL;
+    return nullptr;
     }
 
   // if we don't register, then the root element will be destroyed when the
   // parser gets out of scope
-  root->Register(0);
+  root->Register(nullptr);
   return root;
 }
 

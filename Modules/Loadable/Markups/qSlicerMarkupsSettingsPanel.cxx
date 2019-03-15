@@ -302,7 +302,7 @@ void qSlicerMarkupsSettingsPanel::updateMarkupsLogicDefaultGlyphType()
 {
   Q_D(qSlicerMarkupsSettingsPanel);
 
-  if (d->MarkupsLogic == 0)
+  if (d->MarkupsLogic == nullptr)
     {
     return;
     }
@@ -370,7 +370,7 @@ void qSlicerMarkupsSettingsPanel::updateMarkupsLogicDefaultGlyphScale()
 {
   Q_D(qSlicerMarkupsSettingsPanel);
 
-  if (d->MarkupsLogic == 0)
+  if (d->MarkupsLogic == nullptr)
     {
     return;
     }
@@ -390,7 +390,7 @@ void qSlicerMarkupsSettingsPanel::updateMarkupsLogicDefaultTextScale()
 {
   Q_D(qSlicerMarkupsSettingsPanel);
 
-  if (d->MarkupsLogic == 0)
+  if (d->MarkupsLogic == nullptr)
     {
     return;
     }
@@ -410,7 +410,7 @@ void qSlicerMarkupsSettingsPanel::updateMarkupsLogicDefaultOpacity()
 {
   Q_D(qSlicerMarkupsSettingsPanel);
 
-  if (d->MarkupsLogic == 0)
+  if (d->MarkupsLogic == nullptr)
     {
     return;
     }

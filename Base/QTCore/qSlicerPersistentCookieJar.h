@@ -43,7 +43,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerPersistentCookieJar: public QNetworkCoo
 {
 public:
   typedef QNetworkCookieJar Superclass;
-  qSlicerPersistentCookieJar(QObject *parent = 0);
+  qSlicerPersistentCookieJar(QObject *parent = nullptr);
   virtual ~qSlicerPersistentCookieJar();
 
   QString filePath()const;

@@ -86,10 +86,10 @@ qMRMLSortFilterProxyModel::~qMRMLSortFilterProxyModel()
 QStandardItem* qMRMLSortFilterProxyModel::sourceItem(const QModelIndex& sourceIndex)const
 {
   qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());
-  if (sceneModel == NULL)
+  if (sceneModel == nullptr)
     {
     //Q_ASSERT(sceneModel);
-    return NULL;
+    return nullptr;
     }
   return sourceIndex.isValid() ? sceneModel->itemFromIndex(sourceIndex) : sceneModel->invisibleRootItem();
 }
@@ -169,12 +169,12 @@ QVariant qMRMLSortFilterProxyModel::attributeFilter(const QString& nodeType,
 bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent)const
 {
   QStandardItem* parentItem = this->sourceItem(source_parent);
-  if (parentItem == 0)
+  if (parentItem == nullptr)
     {
     //Q_ASSERT(parentItem);
     return false;
     }
-  QStandardItem* item = 0;
+  QStandardItem* item = nullptr;
   // Sometimes the row is not complete (DnD), search for a non null item
   for (int childIndex = 0; childIndex < parentItem->columnCount(); ++childIndex)
     {
@@ -184,7 +184,7 @@ bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInd
       break;
       }
     }
-  if (item == 0)
+  if (item == nullptr)
     {
     //Q_ASSERT(item);
     return false;
@@ -310,7 +310,7 @@ qMRMLSortFilterProxyModel::AcceptType qMRMLSortFilterProxyModel
 
       //std::cout << "attribute name = " << qPrintable(attributeName) << "\n\ttestAttribute = " << qPrintable(testAttribute) << "\n\t" << node->GetID() << " nodeAttributeQString = " << qPrintable(nodeAttributeQString) << "\n\t\tas char str = " << (nodeAttribute ? nodeAttribute : "null") << "." << std::endl;
       // fail if the attribute isn't defined on the node at all
-      if (nodeAttribute == 0)
+      if (nodeAttribute == nullptr)
         {
         return RejectButPotentiallyAcceptable;
         }

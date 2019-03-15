@@ -57,7 +57,7 @@ public:
   typedef qMRMLWidget Superclass;
 
   /// Constructors
-  explicit qMRMLViewControllerBar(QWidget* parent = 0);
+  explicit qMRMLViewControllerBar(QWidget* parent = nullptr);
   virtual ~qMRMLViewControllerBar();
 
   enum LayoutBehavior {
@@ -88,7 +88,7 @@ public:
 
 protected:
   QScopedPointer<qMRMLViewControllerBarPrivate> d_ptr;
-  qMRMLViewControllerBar(qMRMLViewControllerBarPrivate* pimpl, QWidget* parent = 0);
+  qMRMLViewControllerBar(qMRMLViewControllerBarPrivate* pimpl, QWidget* parent = nullptr);
 
 private:
   Q_DECLARE_PRIVATE(qMRMLViewControllerBar);

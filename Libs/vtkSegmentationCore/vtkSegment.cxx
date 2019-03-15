@@ -52,7 +52,7 @@ vtkStandardNewMacro(vtkSegment);
 //----------------------------------------------------------------------------
 vtkSegment::vtkSegment()
 {
-  this->Name = NULL;
+  this->Name = nullptr;
   this->Color[0] = SEGMENT_COLOR_INVALID[0];
   this->Color[1] = SEGMENT_COLOR_INVALID[1];
   this->Color[2] = SEGMENT_COLOR_INVALID[2];
@@ -73,7 +73,7 @@ vtkSegment::~vtkSegment()
   if (this->Name)
     {
     delete [] this->Name;
-    this->Name = NULL;
+    this->Name = nullptr;
     }
 }
 
@@ -253,7 +253,7 @@ vtkDataObject* vtkSegment::GetRepresentation(std::string name)
     }
   else
     {
-    return NULL;
+    return nullptr;
     }
 }
 

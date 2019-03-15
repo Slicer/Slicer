@@ -96,7 +96,7 @@ qSlicerAbstractModuleFactoryManagerPrivate::fileBasedFactories()const
   QVector<qSlicerFileBasedModuleFactory*> factories;
   foreach(qSlicerModuleFactory* factory, this->Factories.keys())
     {
-    if (dynamic_cast<qSlicerFileBasedModuleFactory*>(factory) != 0)
+    if (dynamic_cast<qSlicerFileBasedModuleFactory*>(factory) != nullptr)
       {
       factories << dynamic_cast<qSlicerFileBasedModuleFactory*>(factory);
       }
@@ -111,7 +111,7 @@ qSlicerAbstractModuleFactoryManagerPrivate
 {
   if (!this->RegisteredModules.contains(moduleName))
     {
-    return 0;
+    return nullptr;
     }
   return this->RegisteredModules[moduleName];
 }
@@ -124,7 +124,7 @@ qSlicerAbstractModuleFactoryManagerPrivate
   QVector<qSlicerModuleFactory*> factories;
   foreach(qSlicerModuleFactory* factory, this->Factories.keys())
     {
-    if (dynamic_cast<qSlicerFileBasedModuleFactory*>(factory) == 0)
+    if (dynamic_cast<qSlicerFileBasedModuleFactory*>(factory) == nullptr)
       {
       factories << factory;
       }
@@ -294,7 +294,7 @@ void qSlicerAbstractModuleFactoryManager::registerModule(const QFileInfo& file)
 {
   Q_D(qSlicerAbstractModuleFactoryManager);
 
-  qSlicerFileBasedModuleFactory* moduleFactory = 0;
+  qSlicerFileBasedModuleFactory* moduleFactory = nullptr;
   foreach(qSlicerFileBasedModuleFactory* factory, d->fileBasedFactories())
     {
     if (d->Verbose)
@@ -313,7 +313,7 @@ void qSlicerAbstractModuleFactoryManager::registerModule(const QFileInfo& file)
     break;
     }
   // File not supported by any factory
-  if (moduleFactory == 0)
+  if (moduleFactory == nullptr)
     {
     return;
     }
@@ -398,13 +398,13 @@ qSlicerAbstractCoreModule* qSlicerAbstractModuleFactoryManager
   if (!factory)
     {
     qCritical() << "Fail to instantiate module " << moduleName << " (not registered)";
-    return 0;
+    return nullptr;
     }
   qSlicerAbstractCoreModule* module = factory->instantiate(moduleName);
   if (!module)
     {
     qCritical() << "Fail to instantiate module " << moduleName;
-    return NULL;
+    return nullptr;
     }
   module->setName(moduleName);
   module->setObjectName(QString("%1Module").arg(moduleName));
@@ -488,14 +488,14 @@ qSlicerAbstractCoreModule* qSlicerAbstractModuleFactoryManager::moduleInstance(c
 {
   Q_D(const qSlicerAbstractModuleFactoryManager);
   qSlicerModuleFactory* factory = d->registeredModuleFactory(moduleName);
-  return factory ? factory->instance(moduleName) : 0;
+  return factory ? factory->instance(moduleName) : nullptr;
 }
 
 //-----------------------------------------------------------------------------
 bool qSlicerAbstractModuleFactoryManager::isRegistered(const QString& moduleName)const
 {
   Q_D(const qSlicerAbstractModuleFactoryManager);
-  return (d->registeredModuleFactory(moduleName) != 0);
+  return (d->registeredModuleFactory(moduleName) != nullptr);
 }
 
 //-----------------------------------------------------------------------------
@@ -503,7 +503,7 @@ bool qSlicerAbstractModuleFactoryManager::isInstantiated(const QString& moduleNa
 {
   Q_D(const qSlicerAbstractModuleFactoryManager);
   bool instantiated = this->isRegistered(moduleName) &&
-    d->RegisteredModules[moduleName]->instance(moduleName) != 0;
+    d->RegisteredModules[moduleName]->instance(moduleName) != nullptr;
   return instantiated;
 }
 

@@ -35,8 +35,8 @@ vtkStandardNewMacro(vtkOpenGLTextureImage);
 //----------------------------------------------------------------------------
 vtkOpenGLTextureImage::vtkOpenGLTextureImage()
 {
-  this->ShaderComputation = NULL;
-  this->ImageData = NULL;
+  this->ShaderComputation = nullptr;
+  this->ImageData = nullptr;
   this->TextureName = 0;
   this->Interpolate = 1;
   this->TextureMTime = 0;
@@ -45,8 +45,8 @@ vtkOpenGLTextureImage::vtkOpenGLTextureImage()
 //----------------------------------------------------------------------------
 vtkOpenGLTextureImage::~vtkOpenGLTextureImage()
 {
-  this->SetShaderComputation(NULL);
-  this->SetImageData(NULL);
+  this->SetShaderComputation(nullptr);
+  this->SetImageData(nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -106,7 +106,7 @@ bool vtkOpenGLTextureImage::UpdateTexture()
     return true;
     }
 
-  if ( this->ImageData == 0 )
+  if ( this->ImageData == nullptr )
     {
     return false;
     }

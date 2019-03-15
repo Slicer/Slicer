@@ -44,7 +44,7 @@ public:
   typedef qMRMLWidget Superclass;
 
   /// Constructors
-  explicit qMRMLPlotSeriesPropertiesWidget(QWidget* parent = 0);
+  explicit qMRMLPlotSeriesPropertiesWidget(QWidget* parent = nullptr);
   virtual ~qMRMLPlotSeriesPropertiesWidget();
 
   /// Get \a PlotViewNode

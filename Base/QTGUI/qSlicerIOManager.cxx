@@ -69,7 +69,7 @@ public:
 qSlicerIOManagerPrivate::qSlicerIOManagerPrivate(qSlicerIOManager& object)
   :q_ptr(&object)
 {
-  this->ProgressDialog = 0;
+  this->ProgressDialog = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -92,7 +92,7 @@ bool qSlicerIOManagerPrivate::startProgressDialog(int steps)
   if (steps == 1)
     {
     // We only support cancelling a load action if we can have control over it
-    this->ProgressDialog->setCancelButton(0);
+    this->ProgressDialog->setCancelButton(nullptr);
     }
   this->ProgressDialog->setWindowModality(Qt::WindowModal);
   this->ProgressDialog->setMinimumDuration(1000);
@@ -121,7 +121,7 @@ void qSlicerIOManagerPrivate::stopProgressDialog()
                     vtkMRMLScene::NodeAddedEvent,
                     q, SLOT(updateProgressDialog()));
   delete this->ProgressDialog;
-  this->ProgressDialog = 0;
+  this->ProgressDialog = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -190,7 +190,7 @@ qSlicerFileDialog* qSlicerIOManagerPrivate
       return dialog;
       }
     }
-  return 0;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -241,7 +241,7 @@ bool qSlicerIOManager::openDialog(qSlicerIO::IOFileType fileType,
     properties["objectName"] = name;
     }
   qSlicerFileDialog* dialog = d->findDialog(fileType, action);
-  if (dialog == 0)
+  if (dialog == nullptr)
     {
     deleteDialog = true;
     qSlicerStandardFileDialog* standardDialog =
@@ -313,7 +313,7 @@ void qSlicerIOManager::dropEvent(QDropEvent *event)
     int current = 0;
     bool editable = false;
     bool ok = false;
-    selectedReader = QInputDialog::getItem(0, title, label, supportedReaders, current, editable, &ok);
+    selectedReader = QInputDialog::getItem(nullptr, title, label, supportedReaders, current, editable, &ok);
     if (!ok)
       {
       selectedReader = QString();
@@ -480,7 +480,7 @@ void qSlicerIOManager::openScreenshotDialog()
   // try opening the Annotation module's screen shot
   qSlicerModuleManager *moduleManager = qSlicerApplication::application()->moduleManager();
 
-  qSlicerAbstractCoreModule *modulePointer = NULL;
+  qSlicerAbstractCoreModule *modulePointer = nullptr;
   if (moduleManager)
     {
     modulePointer = moduleManager->module("Annotations");
@@ -516,7 +516,7 @@ void qSlicerIOManager::openSceneViewsDialog()
     }
 
   qSlicerAbstractCoreModule *modulePointer = moduleManager->module("SceneViews");
-  if (modulePointer == NULL)
+  if (modulePointer == nullptr)
     {
     qWarning() << "qSlicerIOManager::openSceneViewsDialog: Unable to get at the SceneViews module (sceneviews).";
     return;

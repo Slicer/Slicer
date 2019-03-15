@@ -39,7 +39,7 @@ class Q_SLICER_QTMODULES_CAMERAS_EXPORT qSlicerCamerasModule
   Q_INTERFACES(qSlicerLoadableModule);
 public:
   typedef qSlicerLoadableModule Superclass;
-  qSlicerCamerasModule(QObject *parent=0);
+  qSlicerCamerasModule(QObject *parent=nullptr);
   virtual ~qSlicerCamerasModule();
 
   virtual QStringList categories()const;

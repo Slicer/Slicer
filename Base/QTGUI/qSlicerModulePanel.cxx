@@ -71,7 +71,7 @@ qSlicerAbstractCoreModule* qSlicerModulePanel::currentModule()const
   qSlicerAbstractModuleWidget* currentModuleWidget =
     item ? qobject_cast<qSlicerAbstractModuleWidget*>(item->widget()) : 0;
 
-  return currentModuleWidget ? currentModuleWidget->module() : 0;
+  return currentModuleWidget ? currentModuleWidget->module() : nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -93,7 +93,7 @@ void qSlicerModulePanel::setModule(const QString& moduleName)
   // we knew which module was active.
   qDebug() << "Switch to module: " << moduleName;
 
-  qSlicerAbstractCoreModule * module = 0;
+  qSlicerAbstractCoreModule * module = nullptr;
   if (!moduleName.isEmpty())
     {
     module = this->moduleManager()->module(moduleName);
@@ -136,7 +136,7 @@ void qSlicerModulePanel::addModule(qSlicerAbstractCoreModule* module)
 
   qSlicerAbstractModuleWidget* moduleWidget =
     dynamic_cast<qSlicerAbstractModuleWidget*>(module->widgetRepresentation());
-  if (moduleWidget == 0)
+  if (moduleWidget == nullptr)
     {
     qDebug() << "Warning, there is no UI for the module"<< module->name();
     emit moduleAdded(module->name());
@@ -240,7 +240,7 @@ void qSlicerModulePanel::removeModule(qSlicerAbstractCoreModule* module)
   scrollAreaLayout->takeAt(index);
 
   moduleWidget->setVisible(false);
-  moduleWidget->setParent(0);
+  moduleWidget->setParent(nullptr);
 
   // if nobody took ownership of the module, make sure it both lost its parent and is hidden
 //   if (moduleWidget->parent() == d->Layout->parentWidget())

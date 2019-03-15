@@ -42,7 +42,7 @@ class Q_SLICER_MODULE_ANNOTATIONS_WIDGETS_EXPORT qMRMLAnnotationROIWidget : publ
 
 public:
   /// Constructors
-  explicit qMRMLAnnotationROIWidget(QWidget* parent = 0);
+  explicit qMRMLAnnotationROIWidget(QWidget* parent = nullptr);
   virtual ~qMRMLAnnotationROIWidget();
 
   /// Returns the current MRML ROI node

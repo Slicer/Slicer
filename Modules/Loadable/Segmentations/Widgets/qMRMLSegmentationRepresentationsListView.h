@@ -43,7 +43,7 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentationRepresentati
 
 public:
   /// Constructor
-  explicit qMRMLSegmentationRepresentationsListView(QWidget* parent = 0);
+  explicit qMRMLSegmentationRepresentationsListView(QWidget* parent = nullptr);
   /// Destructor
   virtual ~qMRMLSegmentationRepresentationsListView();
 

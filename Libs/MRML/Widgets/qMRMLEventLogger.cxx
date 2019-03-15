@@ -48,7 +48,7 @@ void qMRMLEventLoggerPrivate::init()
 qMRMLEventLoggerPrivate::qMRMLEventLoggerPrivate(qMRMLEventLogger& object)
   : q_ptr(&object)
 {
-  this->MRMLScene = 0;
+  this->MRMLScene = nullptr;
   this->ConsoleOutputEnabled = true;
 }
 

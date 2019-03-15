@@ -62,8 +62,8 @@ qMRMLSpinBoxPrivate::qMRMLSpinBoxPrivate(qMRMLSpinBox& object)
   :q_ptr(&object)
 {
   this->Quantity = "";
-  this->MRMLScene = 0;
-  this->SelectionNode = 0;
+  this->MRMLScene = nullptr;
+  this->SelectionNode = nullptr;
   this->Flags = qMRMLSpinBox::Prefix | qMRMLSpinBox::Suffix
     | qMRMLSpinBox::Precision
     | qMRMLSpinBox::MinimumValue | qMRMLSpinBox::MaximumValue;
@@ -81,7 +81,7 @@ void qMRMLSpinBoxPrivate::setAndObserveSelectionNode()
 {
   Q_Q(qMRMLSpinBox);
 
-  vtkMRMLSelectionNode* selectionNode = 0;
+  vtkMRMLSelectionNode* selectionNode = nullptr;
   if (this->MRMLScene)
     {
     selectionNode = vtkMRMLSelectionNode::SafeDownCast(
@@ -101,7 +101,7 @@ void qMRMLSpinBoxPrivate::updateValueProxy(vtkMRMLUnitNode* unitNode)
   Q_Q(qMRMLSpinBox);
   if (!unitNode)
     {
-    q->setValueProxy(0);
+    q->setValueProxy(nullptr);
     this->Proxy->setCoefficient(1.0);
     this->Proxy->setOffset(0.0);
     return;
@@ -167,7 +167,7 @@ void qMRMLSpinBox::setMRMLScene(vtkMRMLScene* scene)
   d->MRMLScene = scene;
   d->setAndObserveSelectionNode();
 
-  this->setEnabled(scene != 0);
+  this->setEnabled(scene != nullptr);
 }
 
 // --------------------------------------------------------------------------

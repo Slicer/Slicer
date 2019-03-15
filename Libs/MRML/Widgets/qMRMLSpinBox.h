@@ -77,7 +77,7 @@ public:
   typedef ctkDoubleSpinBox Superclass;
 
   /// Construct an empty qMRMLSpinBox with a null scene.
-  explicit qMRMLSpinBox(QWidget* parent = 0);
+  explicit qMRMLSpinBox(QWidget* parent = nullptr);
   virtual ~qMRMLSpinBox();
 
   enum UnitAwareProperty

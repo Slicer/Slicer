@@ -45,7 +45,7 @@ qMRMLAnnotationFiducialProjectionPropertyWidget
 
 public:
   typedef qMRMLWidget Superclass;
-  qMRMLAnnotationFiducialProjectionPropertyWidget(QWidget *newParent = 0);
+  qMRMLAnnotationFiducialProjectionPropertyWidget(QWidget *newParent = nullptr);
   virtual ~qMRMLAnnotationFiducialProjectionPropertyWidget();
 
 public slots:

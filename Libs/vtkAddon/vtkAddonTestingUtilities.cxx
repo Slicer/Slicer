@@ -94,9 +94,9 @@ bool CheckString(int line, const std::string& description,
   std::string testName = "CheckString";
 
   bool different = true;
-  if (current == 0 || expected == 0)
+  if (current == nullptr || expected == nullptr)
     {
-    different = !(current == 0 && expected == 0);
+    different = !(current == nullptr && expected == nullptr);
     }
   else if(strcmp(current, expected) == 0)
     {

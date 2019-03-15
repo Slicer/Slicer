@@ -85,7 +85,7 @@ QSize qMRMLNodeComboBoxDelegate::sizeHint(const QStyleOptionViewItem &option,
   if (this->isSeparator(index))
     {
     int pm = this->mCombo->style()->pixelMetric(QStyle::PM_DefaultFrameWidth,
-                                                0, this->mCombo);
+                                                nullptr, this->mCombo);
     return QSize(pm, pm);
     }
   return this->Superclass::sizeHint(option, index);

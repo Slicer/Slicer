@@ -41,7 +41,7 @@ class Q_SLICER_QTMODULES_TERMINOLOGIES_EXPORT qSlicerTerminologiesModule :
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerTerminologiesModule(QObject *parent=0);
+  explicit qSlicerTerminologiesModule(QObject *parent=nullptr);
   virtual ~qSlicerTerminologiesModule();
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);

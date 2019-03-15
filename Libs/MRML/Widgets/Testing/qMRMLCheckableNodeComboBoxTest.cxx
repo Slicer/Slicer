@@ -67,7 +67,7 @@ void qMRMLCheckableNodeComboBoxTester::init()
 // ----------------------------------------------------------------------------
 void qMRMLCheckableNodeComboBoxTester::cleanup()
 {
-  if (this->ComboBox == 0)
+  if (this->ComboBox == nullptr)
     {
     return;
     }
@@ -76,15 +76,15 @@ void qMRMLCheckableNodeComboBoxTester::cleanup()
     this->ComboBox->mrmlScene()->Delete();
     }
   delete this->ComboBox;
-  this->ComboBox = 0;
+  this->ComboBox = nullptr;
 }
 
 // ----------------------------------------------------------------------------
 vtkMRMLNode* qMRMLCheckableNodeComboBoxTester::node(int index)
 {
-  if (this->ComboBox == 0)
+  if (this->ComboBox == nullptr)
     {
-    return 0;
+    return nullptr;
     }
   vtkMRMLScene* scene = this->ComboBox->mrmlScene();
   return scene->GetNthNodeByClass(index, "vtkMRMLViewNode");
@@ -97,7 +97,7 @@ void qMRMLCheckableNodeComboBoxTester::testDefaults()
   QVERIFY(comboBox.checkedNodes().count() == 0);
   QCOMPARE(comboBox.allChecked(), true);
   QCOMPARE(comboBox.noneChecked(), true);
-  QCOMPARE(comboBox.checkState(0), Qt::Unchecked);
+  QCOMPARE(comboBox.checkState(nullptr), Qt::Unchecked);
 }
 
 // ----------------------------------------------------------------------------

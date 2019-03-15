@@ -80,7 +80,7 @@ qSlicerSubjectHierarchyVolumesPluginPrivate::qSlicerSubjectHierarchyVolumesPlugi
   this->VolumeVisibilityOffIcon = QIcon(":Icons/VolumeVisibilityOff.png");
   this->VolumeVisibilityOnIcon = QIcon(":Icons/VolumeVisibilityOn.png");
 
-  this->ShowVolumesInBranchAction = NULL;
+  this->ShowVolumesInBranchAction = nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -192,7 +192,7 @@ QString qSlicerSubjectHierarchyVolumesPlugin::tooltip(vtkIdType itemID)const
   QString tooltipString = Superclass::tooltip(itemID);
 
   vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(shNode->GetItemDataNode(itemID));
-  vtkImageData* imageData = (volumeNode ? volumeNode->GetImageData() : NULL);
+  vtkImageData* imageData = (volumeNode ? volumeNode->GetImageData() : nullptr);
   if (volumeNode && imageData)
     {
     int dimensions[3] = {0,0,0};
@@ -348,7 +348,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumeInAllViews(
   this->collectShownVolumes(subjectHierarchyItemsToUpdate, layer);
   subjectHierarchyItemsToUpdate.insert(shNode->GetItemByDataNode(node));
 
-  vtkMRMLSliceCompositeNode* compositeNode = NULL;
+  vtkMRMLSliceCompositeNode* compositeNode = nullptr;
   int numberOfCompositeNodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
   for (int i=0; i<numberOfCompositeNodes; i++)
     {
@@ -391,7 +391,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::hideVolumeFromAllViews(vtkMRMLScalarV
     }
 
   char* volumeNodeID = node->GetID();
-  vtkMRMLSliceCompositeNode* compositeNode = NULL;
+  vtkMRMLSliceCompositeNode* compositeNode = nullptr;
   int numberOfCompositeNodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
   for (int i=0; i<numberOfCompositeNodes; i++)
     {
@@ -401,15 +401,15 @@ void qSlicerSubjectHierarchyVolumesPlugin::hideVolumeFromAllViews(vtkMRMLScalarV
     char* labelVolumeID = compositeNode->GetLabelVolumeID();
     if (backgroundVolumeID && !strcmp(backgroundVolumeID, volumeNodeID))
       {
-      compositeNode->SetBackgroundVolumeID(NULL);
+      compositeNode->SetBackgroundVolumeID(nullptr);
       }
     if (foregroundVolumeID && !strcmp(foregroundVolumeID, volumeNodeID))
       {
-      compositeNode->SetForegroundVolumeID(NULL);
+      compositeNode->SetForegroundVolumeID(nullptr);
       }
     if (labelVolumeID && !strcmp(labelVolumeID, volumeNodeID))
       {
-      compositeNode->SetLabelVolumeID(NULL);
+      compositeNode->SetLabelVolumeID(nullptr);
       }
     }
 
@@ -450,7 +450,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::collectShownVolumes( QSet<vtkIdType>&
     return;
     }
 
-  vtkMRMLSliceCompositeNode* compositeNode = NULL;
+  vtkMRMLSliceCompositeNode* compositeNode = nullptr;
   const int numberOfCompositeNodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
   for (int i=0; i<numberOfCompositeNodes; i++)
     {
@@ -553,8 +553,8 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumesInBranch()
    }
 
   // Deselect all volumes before showing the ones from the branch
-  selectionNode->SetActiveVolumeID(NULL);
-  selectionNode->SetSecondaryVolumeID(NULL);
+  selectionNode->SetActiveVolumeID(nullptr);
+  selectionNode->SetSecondaryVolumeID(nullptr);
 
   // Show volumes in branch
   vtkSmartPointer<vtkCollection> childVolumeNodes = vtkSmartPointer<vtkCollection>::New();
@@ -585,7 +585,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumesInBranch()
         this->showVolumeInAllViews(volumeNode, vtkMRMLApplicationLogic::ForegroundLayer);
 
         // Make sure the secondary volume is shown in a semi-transparent way
-        vtkMRMLSliceCompositeNode* compositeNode = NULL;
+        vtkMRMLSliceCompositeNode* compositeNode = nullptr;
         int numberOfCompositeNodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
         for (int i=0; i<numberOfCompositeNodes; i++)
           {
@@ -619,7 +619,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::onLayoutChanged()
 
   // Connect Modified event of each composite node to the plugin, so that visibility icons are
   // updated when volumes are shown/hidden from outside subject hierarchy
-  vtkMRMLSliceCompositeNode* compositeNode = NULL;
+  vtkMRMLSliceCompositeNode* compositeNode = nullptr;
   int numberOfCompositeNodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
   for (int i=0; i<numberOfCompositeNodes; i++)
     {
@@ -647,7 +647,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::onSliceCompositeNodeModified()
     return;
     }
 
-  vtkMRMLScalarVolumeNode* volumeNode = NULL;
+  vtkMRMLScalarVolumeNode* volumeNode = nullptr;
   int numberOfVolumeNodes = scene->GetNumberOfNodesByClass("vtkMRMLScalarVolumeNode");
   for (int i=0; i<numberOfVolumeNodes; i++)
     {

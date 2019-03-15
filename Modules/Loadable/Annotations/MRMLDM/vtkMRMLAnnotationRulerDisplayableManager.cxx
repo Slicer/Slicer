@@ -172,17 +172,17 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
   if (!node)
     {
     vtkErrorMacro("CreateWidget: Node not set!")
-    return 0;
+    return nullptr;
     }
 
   vtkMRMLAnnotationRulerNode* rulerNode = vtkMRMLAnnotationRulerNode::SafeDownCast(node);
   vtkMRMLAnnotationLineDisplayNode* lineDisplayNode =
-    rulerNode ? rulerNode->GetAnnotationLineDisplayNode() : 0;
+    rulerNode ? rulerNode->GetAnnotationLineDisplayNode() : nullptr;
 
   if (!rulerNode)
     {
     vtkErrorMacro("CreateWidget: Could not get ruler node!")
-    return 0;
+    return nullptr;
     }
 
   vtkAnnotationRulerWidget * rulerWidget = vtkAnnotationRulerWidget::New();
@@ -439,8 +439,8 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
     // set the color
     vtkHandleRepresentation *pointrep1 = rep->GetPoint1Representation();
     vtkHandleRepresentation *pointrep2 = rep->GetPoint2Representation();
-    vtkPointHandleRepresentation2D *handle1 = NULL;
-    vtkPointHandleRepresentation2D *handle2 = NULL;
+    vtkPointHandleRepresentation2D *handle1 = nullptr;
+    vtkPointHandleRepresentation2D *handle2 = nullptr;
     if (pointrep1 && pointrep2)
       {
       handle1 = vtkPointHandleRepresentation2D::SafeDownCast(pointrep1);
@@ -547,8 +547,8 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
     // set the color
     vtkHandleRepresentation *pointrep1 = rep->GetPoint1Representation();
     vtkHandleRepresentation *pointrep2 = rep->GetPoint2Representation();
-    vtkPointHandleRepresentation3D *handle1 = NULL;
-    vtkPointHandleRepresentation3D *handle2 = NULL;
+    vtkPointHandleRepresentation3D *handle1 = nullptr;
+    vtkPointHandleRepresentation3D *handle2 = nullptr;
     if (pointrep1 && pointrep2)
       {
       handle1 = vtkPointHandleRepresentation3D::SafeDownCast(pointrep1);

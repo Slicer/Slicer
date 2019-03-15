@@ -50,7 +50,7 @@ public:
   typedef qMRMLViewControllerBar Superclass;
 
   /// Constructors
-  explicit qMRMLTableViewControllerWidget(QWidget* parent = 0);
+  explicit qMRMLTableViewControllerWidget(QWidget* parent = nullptr);
   virtual ~qMRMLTableViewControllerWidget();
 
   /// Set the label for the table view (abbreviation for the view

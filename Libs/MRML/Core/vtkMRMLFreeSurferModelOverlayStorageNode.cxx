@@ -179,7 +179,7 @@ bool vtkMRMLFreeSurferModelOverlayStorageNode::ReadScalarOverlayAnnot(const std:
     scalaridx = modelNode->GetPolyData()->GetPointData()->SetActiveScalars("labels");
     }
   vtkIntArray* scalars = vtkIntArray::SafeDownCast(modelNode->GetPolyData()->GetPointData()->GetArray(scalaridx));
-  if (scalars == NULL)
+  if (scalars == nullptr)
     {
     vtkErrorMacro("vtkMRMLFreeSurferModelOverlayStorageNode::ReadScalarOverlayAnnot failed: invalid scalars array");
     return false;
@@ -220,13 +220,13 @@ bool vtkMRMLFreeSurferModelOverlayStorageNode::ReadScalarOverlayAnnot(const std:
   if (errorCode == 6)
     {
     vtkDebugMacro("No Internal Color Table in " << fullName.c_str() << ", trying the default colours");
-    vtkMRMLColorTableNode *cnode = NULL;
+    vtkMRMLColorTableNode *cnode = nullptr;
     vtkSmartPointer<vtkCollection> labelNodes = vtkSmartPointer<vtkCollection>::Take(this->Scene->GetNodesByClassByName("vtkMRMLColorTableNode", "FSLabels"));
     if (labelNodes->GetNumberOfItems() > 0)
       {
       cnode = vtkMRMLColorTableNode::SafeDownCast(labelNodes->GetItemAsObject(0));
       }
-    if (cnode == NULL)
+    if (cnode == nullptr)
       {
       vtkErrorMacro("Unable to find an internal nor an external colour look up table for " << fullName.c_str());
       return false;
@@ -318,7 +318,7 @@ bool vtkMRMLFreeSurferModelOverlayStorageNode::ReadScalarOverlayVolume(const std
     return false;
     }
   vtkImageData *imageData = reader->GetOutput();
-  if (imageData == NULL)
+  if (imageData == nullptr)
     {
     vtkErrorMacro("vtkMRMLFreeSurferModelOverlayStorageNode::ReadScalarOverlayVolume Unable to get image data out of scalar overlay volume file "
                   << fullName.c_str());
@@ -377,9 +377,9 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadDataInternal(vtkMRMLNode *refN
 {
   vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(refNode);
 
-  if (modelNode == NULL ||
-      modelNode->GetPolyData() == NULL ||
-      modelNode->GetPolyData()->GetPointData() == NULL)
+  if (modelNode == nullptr ||
+      modelNode->GetPolyData() == nullptr ||
+      modelNode->GetPolyData()->GetPointData() == nullptr)
     {
     vtkErrorMacro("ReadData: the model node doesn't have poly data yet, resetting the overlay read state to pending, try again later.");
     this->SetReadStatePending();

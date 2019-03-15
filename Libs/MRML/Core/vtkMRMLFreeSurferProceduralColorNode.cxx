@@ -30,9 +30,9 @@ vtkMRMLNodeNewMacro(vtkMRMLFreeSurferProceduralColorNode);
 //----------------------------------------------------------------------------
 vtkMRMLFreeSurferProceduralColorNode::vtkMRMLFreeSurferProceduralColorNode()
 {
-  this->LookupTable = NULL;
+  this->LookupTable = nullptr;
   this->HideFromEditors = 1;
-  this->LabelsFileName = NULL;
+  this->LabelsFileName = nullptr;
 
   // get the colour file in the freesurfer share dir
   std::vector<std::string> filesVector;
@@ -67,7 +67,7 @@ void vtkMRMLFreeSurferProceduralColorNode::WriteXML(ostream& of, int nIndent)
   Superclass::WriteXML(of, nIndent);
 
   // only print out the look up table if ?
-  if (this->LookupTable != NULL)
+  if (this->LookupTable != nullptr)
     {
     of << " numcolors=\"" << this->LookupTable->GetNumberOfColors() << "\"";
     of << " colors=\"";
@@ -90,7 +90,7 @@ void vtkMRMLFreeSurferProceduralColorNode::ReadXMLAttributes(const char** atts)
   const char* attName;
   const char* attValue;
   int numColors;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -148,7 +148,7 @@ void vtkMRMLFreeSurferProceduralColorNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLFreeSurferProceduralColorNode *node = (vtkMRMLFreeSurferProceduralColorNode *) anode;
 
-  if (node != NULL)
+  if (node != nullptr)
     {
     this->SetName(node->Name);
     this->SetLookupTable(node->LookupTable);
@@ -167,7 +167,7 @@ void vtkMRMLFreeSurferProceduralColorNode::PrintSelf(ostream& os, vtkIndent inde
 
   Superclass::PrintSelf(os,indent);
 
-  if (this->LookupTable != NULL)
+  if (this->LookupTable != nullptr)
     {
     os << indent << "Look up table:\n";
     this->LookupTable->PrintSelf(os, indent.GetNextIndent());
@@ -296,7 +296,7 @@ void vtkMRMLFreeSurferProceduralColorNode::ProcessMRMLEvents ( vtkObject *caller
 //---------------------------------------------------------------------------
 void vtkMRMLFreeSurferProceduralColorNode::SetType(int type)
 {
-  if (this->GetLookupTable() != NULL &&
+  if (this->GetLookupTable() != nullptr &&
       this->Type == type)
     {
     vtkDebugMacro("SetType: type is already set to " << type <<  " = " << this->GetTypeAsString());
@@ -308,11 +308,11 @@ void vtkMRMLFreeSurferProceduralColorNode::SetType(int type)
     vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Type to " << type << " = " << this->GetTypeAsString());
 
     //this->LookupTable->Delete();
-    if (this->GetLookupTable() == NULL)
+    if (this->GetLookupTable() == nullptr)
       {
       vtkDebugMacro("vtkMRMLFreeSurferProceduralColorNode::SetType Creating a new lookup table (was null) of type " << this->GetTypeAsString() << "\n");
       vtkFSLookupTable * table = vtkFSLookupTable::New();
-      if (table != NULL)
+      if (table != nullptr)
         {
         this->SetLookupTable(table);
         table->Delete();
@@ -390,14 +390,14 @@ vtkFSLookupTable *vtkMRMLFreeSurferProceduralColorNode::GetFSLookupTable()
 //---------------------------------------------------------------------------
 vtkLookupTable * vtkMRMLFreeSurferProceduralColorNode::GetLookupTable()
 {
-  if (this->LookupTable == NULL)
+  if (this->LookupTable == nullptr)
     {
-    return NULL;
+    return nullptr;
     }
 
   // otherwise have to cast it
   // return (vtkLookupTable *)(this->LookupTable);
-  if (vtkLookupTable::SafeDownCast(this->LookupTable) == NULL)
+  if (vtkLookupTable::SafeDownCast(this->LookupTable) == nullptr)
     {
     vtkErrorMacro("GetLookupTable: error converting fs lookup table to vtk look up table.\n");
     }

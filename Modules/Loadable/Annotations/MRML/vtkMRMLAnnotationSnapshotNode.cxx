@@ -16,7 +16,7 @@
 //------------------------------------------------------------------------------
 vtkMRMLAnnotationSnapshotNode::vtkMRMLAnnotationSnapshotNode()
 {
-  this->ScreenShot = NULL;
+  this->ScreenShot = nullptr;
   this->ScaleFactor = 1.0;
 }
 
@@ -26,7 +26,7 @@ vtkMRMLAnnotationSnapshotNode::~vtkMRMLAnnotationSnapshotNode()
   if (this->ScreenShot)
     {
     this->ScreenShot->Delete();
-    this->ScreenShot = NULL;
+    this->ScreenShot = nullptr;
     }
 }
 
@@ -60,7 +60,7 @@ void vtkMRMLAnnotationSnapshotNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -99,10 +99,10 @@ void vtkMRMLAnnotationSnapshotNode::ReadXMLAttributes(const char** atts)
 vtkMRMLStorageNode* vtkMRMLAnnotationSnapshotNode::CreateDefaultStorageNode()
 {
   vtkMRMLScene* scene = this->GetScene();
-  if (scene == NULL)
+  if (scene == nullptr)
     {
     vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
-    return NULL;
+    return nullptr;
     }
   return vtkMRMLStorageNode::SafeDownCast(
     scene->CreateNodeByClass("vtkMRMLAnnotationSnapshotStorageNode"));

@@ -198,7 +198,7 @@ vtkPluginFilterWatcher
 {
   // Initialize state
   this->Process = o;
-  this->Process->Register(0);
+  this->Process->Register(nullptr);
 
   this->Steps = 0;
   this->Comment = comment;
@@ -251,7 +251,7 @@ vtkPluginFilterWatcher::~vtkPluginFilterWatcher()
       this->Process->RemoveObserver(this->ProgressTag);
       }
 
-    this->Process->UnRegister(0);
+    this->Process->UnRegister(nullptr);
     }
   this->StartFilterCommand->Delete();
   this->EndFilterCommand->Delete();

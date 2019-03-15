@@ -110,7 +110,7 @@ void qSlicerDTISliceDisplayWidgetPrivate::computeScalarBounds(double scalarBound
     }
   else
     {
-    vtkPolyData* glyphs = this->DisplayNode ? this->DisplayNode->GetOutputPolyData() : 0;
+    vtkPolyData* glyphs = this->DisplayNode ? this->DisplayNode->GetOutputPolyData() : nullptr;
     if (glyphs)
       {
       glyphs->GetScalarRange(scalarBounds);
@@ -132,7 +132,7 @@ qSlicerDTISliceDisplayWidget
   d->init();
 
   // disable as there is no MRML Node associated with the widget
-  this->setEnabled(d->DisplayNode != 0);
+  this->setEnabled(d->DisplayNode != nullptr);
 }
 
 // --------------------------------------------------------------------------
@@ -147,7 +147,7 @@ vtkMRMLDiffusionTensorDisplayPropertiesNode* qSlicerDTISliceDisplayWidget
 {
   Q_D(const qSlicerDTISliceDisplayWidget);
   return d->DisplayNode ?
-    d->DisplayNode->GetDiffusionTensorDisplayPropertiesNode() : 0;
+    d->DisplayNode->GetDiffusionTensorDisplayPropertiesNode() : nullptr;
 }
 
 // --------------------------------------------------------------------------
@@ -171,8 +171,8 @@ void qSlicerDTISliceDisplayWidget::setMRMLDTISliceDisplayNode(
 {
   Q_D(qSlicerDTISliceDisplayWidget);
 
-  vtkMRMLDiffusionTensorVolumeSliceDisplayNode* oldDisplayNode = 0;
-  vtkMRMLDiffusionTensorDisplayPropertiesNode* oldDisplayPropertiesNode = 0;
+  vtkMRMLDiffusionTensorVolumeSliceDisplayNode* oldDisplayNode = nullptr;
+  vtkMRMLDiffusionTensorDisplayPropertiesNode* oldDisplayPropertiesNode = nullptr;
   if (displayNode)
     {
     oldDisplayNode = this->displayNode();
@@ -195,7 +195,7 @@ void qSlicerDTISliceDisplayWidget::setMRMLDTISliceDisplayNode(
 void qSlicerDTISliceDisplayWidget::updateWidgetFromMRML()
 {
   Q_D(qSlicerDTISliceDisplayWidget);
-  this->setEnabled(d->DisplayNode != 0);
+  this->setEnabled(d->DisplayNode != nullptr);
   if (!d->DisplayNode)
     {
     return;

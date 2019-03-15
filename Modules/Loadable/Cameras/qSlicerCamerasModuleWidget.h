@@ -36,7 +36,7 @@ class Q_SLICER_QTMODULES_CAMERAS_EXPORT qSlicerCamerasModuleWidget
 public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerCamerasModuleWidget(QWidget *parent=0);
+  qSlicerCamerasModuleWidget(QWidget *parent=nullptr);
   virtual ~qSlicerCamerasModuleWidget();
 
   virtual bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString());

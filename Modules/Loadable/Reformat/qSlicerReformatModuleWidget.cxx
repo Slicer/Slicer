@@ -93,9 +93,9 @@ qSlicerReformatModuleWidgetPrivate(
   qSlicerReformatModuleWidget& object)
   : q_ptr(&object)
 {
-  this->OriginCoordinateReferenceButtonGroup = 0;
-  this->MRMLSliceNode = 0;
-  this->MRMLSliceLogic = 0;
+  this->OriginCoordinateReferenceButtonGroup = nullptr;
+  this->MRMLSliceNode = nullptr;
+  this->MRMLSliceLogic = nullptr;
   this->LastRotationValues[qSlicerReformatModuleWidget::axisX] = 0;
   this->LastRotationValues[qSlicerReformatModuleWidget::axisY] = 0;
   this->LastRotationValues[qSlicerReformatModuleWidget::axisZ] = 0;
@@ -133,7 +133,7 @@ void qSlicerReformatModuleWidgetPrivate::updateVisibilityControllers()
   bool wasVisibilityCheckBoxBlocking =
     this->VisibilityCheckBox->blockSignals(true);
 
-  this->VisibilityCheckBox->setEnabled(this->MRMLSliceNode != 0);
+  this->VisibilityCheckBox->setEnabled(this->MRMLSliceNode != nullptr);
 
   int visibility =
     (this->MRMLSliceNode) ? this->MRMLSliceNode->GetSliceVisible() : 0;
@@ -149,7 +149,7 @@ void qSlicerReformatModuleWidgetPrivate::updateVisibilityControllers()
   bool wasLockReformatWidgetCheckBoxButtonBlocking =
     this->NormalToCameraCheckablePushButton->blockSignals(true);
 
-  this->ShowReformatWidgetToolButton->setEnabled(this->MRMLSliceNode != 0);
+  this->ShowReformatWidgetToolButton->setEnabled(this->MRMLSliceNode != nullptr);
 
   int widgetVisibility =
     (this->MRMLSliceNode) ? this->MRMLSliceNode->GetWidgetVisible() : 0;

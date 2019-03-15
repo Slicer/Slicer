@@ -43,10 +43,10 @@ qMRMLVolumeWidgetPrivate
 ::qMRMLVolumeWidgetPrivate(qMRMLVolumeWidget& object)
   : q_ptr(&object)
 {
-  this->VolumeNode = 0;
-  this->VolumeDisplayNode = 0;
-  this->PopupWidget = 0;
-  this->RangeWidget = 0;
+  this->VolumeNode = nullptr;
+  this->VolumeDisplayNode = nullptr;
+  this->PopupWidget = nullptr;
+  this->RangeWidget = nullptr;
   this->DisplayScalarRange[0] = 0;
   this->DisplayScalarRange[1] = 0;
 }
@@ -55,8 +55,8 @@ qMRMLVolumeWidgetPrivate
 qMRMLVolumeWidgetPrivate::~qMRMLVolumeWidgetPrivate()
 {
   delete this->PopupWidget;
-  this->PopupWidget = 0;
-  this->RangeWidget = 0;
+  this->PopupWidget = nullptr;
+  this->RangeWidget = nullptr;
 }
 
 // --------------------------------------------------------------------------
@@ -66,7 +66,7 @@ void qMRMLVolumeWidgetPrivate::init()
 
   this->setParent(q);
   // disable as there is not MRML Node associated with the widget
-  q->setEnabled(this->VolumeDisplayNode != 0);
+  q->setEnabled(this->VolumeDisplayNode != nullptr);
 
   // we can't use the flag Qt::Popup as it automatically closes when there is
   // a click outside of the rangewidget
@@ -313,12 +313,12 @@ vtkMRMLScalarVolumeDisplayNode* qMRMLVolumeWidget::mrmlDisplayNode()const
 void qMRMLVolumeWidget::updateWidgetFromMRMLVolumeNode()
 {
   Q_D(qMRMLVolumeWidget);
-  this->setEnabled(d->VolumeDisplayNode != 0 &&
-                   d->VolumeNode != 0);
+  this->setEnabled(d->VolumeDisplayNode != nullptr &&
+                   d->VolumeNode != nullptr);
 
   vtkMRMLScalarVolumeDisplayNode* newVolumeDisplayNode = d->VolumeNode ?
     vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
-      d->VolumeNode->GetVolumeDisplayNode()) : 0;
+      d->VolumeNode->GetVolumeDisplayNode()) : nullptr;
 /*
   if (d->VolumeNode && d->VolumeNode->GetImageData())
     {
@@ -332,8 +332,8 @@ void qMRMLVolumeWidget::updateWidgetFromMRMLVolumeNode()
 void qMRMLVolumeWidget::updateWidgetFromMRMLDisplayNode()
 {
   Q_D(qMRMLVolumeWidget);
-  this->setEnabled(d->VolumeDisplayNode != 0 &&
-                   d->VolumeNode != 0);
+  this->setEnabled(d->VolumeDisplayNode != nullptr &&
+                   d->VolumeNode != nullptr);
   if (!d->VolumeDisplayNode)
     {
     return;

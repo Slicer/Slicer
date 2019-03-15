@@ -33,7 +33,7 @@ class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIModuleWidgetEventPlayer : public pqWi
 
 public:
   typedef pqWidgetEventPlayer Superclass;
-  qSlicerCLIModuleWidgetEventPlayer(QObject* parent = 0);
+  qSlicerCLIModuleWidgetEventPlayer(QObject* parent = nullptr);
 
   using Superclass::playEvent;
   bool playEvent(QObject *Object, const QString &Command, const QString &Arguments, bool &Error);

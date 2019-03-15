@@ -180,7 +180,7 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
 
   /// Add a new valid placeNode class name to the list, with optional qt resource
   /// reference string for updating GUI elements
-  void AddNewPlaceNodeClassNameToList(const char *newID, const char *resource = NULL, const char *iconName = "");
+  void AddNewPlaceNodeClassNameToList(const char *newID, const char *resource = nullptr, const char *iconName = "");
 
   // -- Units --
 

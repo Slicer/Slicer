@@ -32,7 +32,7 @@ class qSlicerLoadableHelloWorldModule : public qSlicerLoadableModule
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  qSlicerLoadableHelloWorldModule(QObject *parent=0):Superclass(parent){}
+  qSlicerLoadableHelloWorldModule(QObject *parent=nullptr):Superclass(parent){}
   virtual ~qSlicerLoadableHelloWorldModule(){}
 
   virtual QString helpText()const { return QString("helpText"); }
@@ -44,13 +44,13 @@ protected:
   /// Create and return the widget representation associated to this module
   virtual qSlicerAbstractModuleRepresentation * createWidgetRepresentation()
   {
-    return 0;
+    return nullptr;
   }
 
   /// Create and return the logic associated to this module
   virtual vtkMRMLAbstractLogic* createLogic()
   {
-    return 0;
+    return nullptr;
   }
 };
 
@@ -91,10 +91,10 @@ void qSlicerLoadableModuleWithPythonTester::testAddModuleToSlicerModules()
   QFETCH(bool, expectedResult);
 
   qSlicerAbstractModule * module = this->Modules.value(moduleName);
-  QVERIFY(moduleName.isEmpty() ? true : module != 0);
+  QVERIFY(moduleName.isEmpty() ? true : module != nullptr);
 
   bool currentResult = qSlicerLoadableModule::addModuleToSlicerModules(
-        validPythonManager ? &this->PythonManager : 0,
+        validPythonManager ? &this->PythonManager : nullptr,
         module,
         moduleName);
   QCOMPARE(currentResult, expectedResult);
@@ -126,7 +126,7 @@ void qSlicerLoadableModuleWithPythonTester::testAddModuleNameToSlicerModuleNames
   QFETCH(bool, expectedResult);
 
   bool currentResult = qSlicerLoadableModule::addModuleNameToSlicerModuleNames(
-        validPythonManager ? &this->PythonManager : 0, moduleName);
+        validPythonManager ? &this->PythonManager : nullptr, moduleName);
   QCOMPARE(currentResult, expectedResult);
 
   if (expectedResult)

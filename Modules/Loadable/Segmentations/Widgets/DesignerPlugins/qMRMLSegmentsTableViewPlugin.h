@@ -30,7 +30,7 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_PLUGINS_EXPORT qMRMLSegmentsTableVie
   Q_OBJECT
 
 public:
-  qMRMLSegmentsTableViewPlugin(QObject* parent = 0);
+  qMRMLSegmentsTableViewPlugin(QObject* parent = nullptr);
 
   QWidget *createWidget(QWidget* parent);
   QString  domXml() const;

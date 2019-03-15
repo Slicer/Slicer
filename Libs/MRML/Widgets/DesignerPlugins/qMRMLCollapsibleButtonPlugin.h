@@ -30,7 +30,7 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLCollapsibleButtonPlugin :
   Q_OBJECT
 
 public:
-  qMRMLCollapsibleButtonPlugin(QObject *_parent = 0);
+  qMRMLCollapsibleButtonPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;

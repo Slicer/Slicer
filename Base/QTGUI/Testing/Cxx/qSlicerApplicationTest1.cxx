@@ -32,7 +32,7 @@ int qSlicerApplicationTest1(int argc, char * argv[] )
 {
   qSlicerApplication app(argc, argv);
 
-  if (app.commandOptions() == 0)
+  if (app.commandOptions() == nullptr)
     {
     std::cerr << "Problem with commandOptions()" << std::endl;
     return EXIT_FAILURE;
@@ -48,7 +48,7 @@ int qSlicerApplicationTest1(int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
-  if (app.ioManager() == 0)
+  if (app.ioManager() == nullptr)
     {
     std::cerr << "Problem with ioManager()" << std::endl;
     return EXIT_FAILURE;

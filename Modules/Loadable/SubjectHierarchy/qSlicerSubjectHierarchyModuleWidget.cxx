@@ -47,7 +47,7 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyModuleWidgetPrivate::qSlicerSubjectHierarchyModuleWidgetPrivate(qSlicerSubjectHierarchyModuleWidget& object)
   : q_ptr(&object)
-  , PluginLogic(NULL)
+  , PluginLogic(nullptr)
 {
 }
 

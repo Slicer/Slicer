@@ -175,7 +175,7 @@ void vtkLinearSpline::Compute()
 void vtkLinearSpline::DeepCopy(vtkSpline *s)
 {
   vtkLinearSpline *spline = vtkLinearSpline::SafeDownCast(s);
-  if (spline == NULL)
+  if (spline == nullptr)
     {
     vtkWarningMacro("Cannot deep copy contents into spline - not of matching type.");
     return;

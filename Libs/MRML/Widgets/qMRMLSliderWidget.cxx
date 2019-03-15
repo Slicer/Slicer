@@ -61,8 +61,8 @@ qMRMLSliderWidgetPrivate::qMRMLSliderWidgetPrivate(qMRMLSliderWidget& object)
   : q_ptr(&object)
 {
   this->Quantity = "";
-  this->MRMLScene = 0;
-  this->SelectionNode = 0;
+  this->MRMLScene = nullptr;
+  this->SelectionNode = nullptr;
   this->Flags = qMRMLSliderWidget::Prefix | qMRMLSliderWidget::Suffix
     | qMRMLSliderWidget::Precision | qMRMLSliderWidget::Scaling;
   this->Proxy = new ctkLinearValueProxy;
@@ -79,7 +79,7 @@ void qMRMLSliderWidgetPrivate::setAndObserveSelectionNode()
 {
   Q_Q(qMRMLSliderWidget);
 
-  vtkMRMLSelectionNode* selectionNode = 0;
+  vtkMRMLSelectionNode* selectionNode = nullptr;
   if (this->MRMLScene)
     {
     selectionNode = vtkMRMLSelectionNode::SafeDownCast(
@@ -99,7 +99,7 @@ void qMRMLSliderWidgetPrivate::updateValueProxy(vtkMRMLUnitNode* unitNode)
   Q_Q(qMRMLSliderWidget);
   if (!unitNode)
     {
-    q->setValueProxy(0);
+    q->setValueProxy(nullptr);
     this->Proxy->setCoefficient(1.0);
     this->Proxy->setOffset(0.0);
     return;
@@ -165,7 +165,7 @@ void qMRMLSliderWidget::setMRMLScene(vtkMRMLScene* scene)
   d->MRMLScene = scene;
   d->setAndObserveSelectionNode();
 
-  this->setEnabled(scene != 0);
+  this->setEnabled(scene != nullptr);
 }
 
 // --------------------------------------------------------------------------

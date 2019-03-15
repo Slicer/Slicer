@@ -41,7 +41,7 @@ class Q_SLICER_QTMODULES_TABLES_EXPORT qSlicerTablesModule :
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerTablesModule(QObject *parent=0);
+  explicit qSlicerTablesModule(QObject *parent=nullptr);
   virtual ~qSlicerTablesModule();
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);

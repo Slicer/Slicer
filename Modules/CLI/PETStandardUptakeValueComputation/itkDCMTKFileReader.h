@@ -60,7 +60,7 @@ namespace itk
 class DCMTKSequence
 {
 public:
-  DCMTKSequence() : m_DcmSequenceOfItems(0) {}
+  DCMTKSequence() : m_DcmSequenceOfItems(nullptr) {}
   void SetDcmSequenceOfItems(DcmSequenceOfItems *seq);
   int card();
   int GetSequence(unsigned long index,
@@ -102,7 +102,7 @@ public:
       this->GetStack(group,element,&resultStack);
       DcmDecimalString *dsItem =
         dynamic_cast<DcmDecimalString *>(resultStack.top());
-      if(dsItem == 0)
+      if(dsItem == nullptr)
         {
         DCMTKException(<< "Can't get DecimalString Element at tag "
                        << std::hex << group << " "
@@ -144,8 +144,8 @@ class DCMTKFileReader
 public:
   typedef DCMTKFileReader Self;
 
-  DCMTKFileReader() : m_DFile(0),
-                      m_Dataset(0),
+  DCMTKFileReader() : m_DFile(nullptr),
+                      m_Dataset(nullptr),
                       m_Xfer(EXS_Unknown),
                       m_FrameCount(0),
                       m_FileNumber(-1L)
@@ -187,7 +187,7 @@ public:
                        << element << std::dec);
         }
       DcmDecimalString *dsItem = dynamic_cast<DcmDecimalString *>(el);
-      if(dsItem == 0)
+      if(dsItem == nullptr)
         {
         DCMTKException(<< "Can't find DecimalString element " << std::hex
                        << group << " " << std::hex

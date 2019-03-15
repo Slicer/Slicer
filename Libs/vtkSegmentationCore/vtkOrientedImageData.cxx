@@ -94,7 +94,7 @@ void vtkOrientedImageData::DeepCopy(vtkDataObject *dataObject)
 void vtkOrientedImageData::CopyDirections(vtkDataObject *dataObject)
 {
   vtkOrientedImageData *orientedImageData = vtkOrientedImageData::SafeDownCast(dataObject);
-  if (orientedImageData != NULL)
+  if (orientedImageData != nullptr)
     {
     double dirs[3][3] = {{0.0, 0.0, 0.0},
                          {0.0, 0.0, 0.0},
@@ -151,7 +151,7 @@ void vtkOrientedImageData::GetDirections(double dirs[3][3])
 //----------------------------------------------------------------------------
 double vtkOrientedImageData::GetMinSpacing()
 {
-  if (this->GetSpacing() == NULL)
+  if (this->GetSpacing() == nullptr)
     {
     return 0;
     }
@@ -166,7 +166,7 @@ double vtkOrientedImageData::GetMinSpacing()
 //----------------------------------------------------------------------------
 double vtkOrientedImageData::GetMaxSpacing()
 {
-  if (this->GetSpacing() == NULL)
+  if (this->GetSpacing() == nullptr)
     {
     return 0;
     }
@@ -181,7 +181,7 @@ double vtkOrientedImageData::GetMaxSpacing()
 //----------------------------------------------------------------------------
 void vtkOrientedImageData::SetImageToWorldMatrix(vtkMatrix4x4* argMat)
 {
-  if (argMat == NULL)
+  if (argMat == nullptr)
     {
     return;
     }
@@ -249,7 +249,7 @@ void vtkOrientedImageData::SetGeometryFromImageToWorldMatrix(vtkMatrix4x4* argMa
 //----------------------------------------------------------------------------
 void vtkOrientedImageData::GetImageToWorldMatrix(vtkMatrix4x4* mat)
 {
-  if (mat == NULL)
+  if (mat == nullptr)
     {
     return;
     }

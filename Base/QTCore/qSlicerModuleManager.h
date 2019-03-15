@@ -40,7 +40,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerModuleManager : public QObject
   Q_OBJECT
 public:
   typedef QObject Superclass;
-  qSlicerModuleManager(QObject* newParent = 0);
+  qSlicerModuleManager(QObject* newParent = nullptr);
   virtual ~qSlicerModuleManager();
 
   /// Print internal state using qDebug()

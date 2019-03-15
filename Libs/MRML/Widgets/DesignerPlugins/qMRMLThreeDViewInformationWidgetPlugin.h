@@ -9,7 +9,7 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLThreeDViewInformationWidgetPlugin : publ
   Q_OBJECT
 
 public:
-  qMRMLThreeDViewInformationWidgetPlugin(QObject *_parent = 0);
+  qMRMLThreeDViewInformationWidgetPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;

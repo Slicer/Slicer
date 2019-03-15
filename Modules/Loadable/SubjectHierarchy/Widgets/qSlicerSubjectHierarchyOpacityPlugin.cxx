@@ -68,9 +68,9 @@ public:
 qSlicerSubjectHierarchyOpacityPluginPrivate::qSlicerSubjectHierarchyOpacityPluginPrivate(qSlicerSubjectHierarchyOpacityPlugin& object)
 : q_ptr(&object)
 {
-  this->OpacityAction = NULL;
-  this->OpacityMenu = NULL;
-  this->OpacitySlider = NULL;
+  this->OpacityAction = nullptr;
+  this->OpacityMenu = nullptr;
+  this->OpacitySlider = nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -158,7 +158,7 @@ void qSlicerSubjectHierarchyOpacityPlugin::showVisibilityContextMenuActionsForIt
     d->OpacitySlider->setValue(displayNode->GetOpacity());
     }
 
-  d->OpacityAction->setVisible(displayNode != NULL);
+  d->OpacityAction->setVisible(displayNode != nullptr);
 }
 
 //---------------------------------------------------------------------------

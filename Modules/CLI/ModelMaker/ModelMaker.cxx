@@ -202,7 +202,7 @@ int main(int argc, char * argv[])
     }
 
   // if there's a color based model hierarchy file, import it into the model scene
-  vtkMRMLModelHierarchyNode *topColorHierarchyNode = NULL;
+  vtkMRMLModelHierarchyNode *topColorHierarchyNode = nullptr;
   if (ModelHierarchyFile.length() > 0)
     {
     // only try importing if the scene file exists
@@ -226,7 +226,7 @@ int main(int argc, char * argv[])
 
     // make sure we have a new model hierarchy node
     vtkMRMLNode * mnode = modelScene->GetNthNodeByClass(1,"vtkMRMLModelHierarchyNode");
-    if (mnode != NULL)
+    if (mnode != nullptr)
       {
       topColorHierarchyNode = vtkMRMLModelHierarchyNode::SafeDownCast(mnode);
       }
@@ -245,7 +245,7 @@ int main(int argc, char * argv[])
 
 
   // if have a color hierarchy node, make it a child of the passed in model hierarchy
-  if (topColorHierarchyNode != NULL)
+  if (topColorHierarchyNode != nullptr)
     {
     topColorHierarchyNode->SetParentNodeID(rtnd->GetID());
     // there's also a chance that the parent node refs weren't reset when the top color hierarchy node was re-id'd
@@ -419,7 +419,7 @@ int main(int argc, char * argv[])
     {
     FILE * infile;
     infile = fopen(InputVolume.c_str(), "r");
-    if (infile == NULL)
+    if (infile == nullptr)
       {
       std::cerr << "ERROR: cannot open input volume file " << InputVolume << endl;
       return EXIT_FAILURE;
@@ -459,8 +459,8 @@ int main(int argc, char * argv[])
     std::cout << "Adding 1 pixel padding around the image, shifting origin." << std::endl;
     if (padder)
       {
-      padder->SetInputData(NULL);
-      padder = NULL;
+      padder->SetInputData(nullptr);
+      padder = nullptr;
       }
     padder = vtkSmartPointer<vtkImageConstantPad>::New();
     vtkNew<vtkImageChangeInformation> translator;
@@ -515,7 +515,7 @@ int main(int argc, char * argv[])
         std::cout << "Read colour file  " << colorStorageNode->GetFileName() << endl;
         }
       }
-    colorStorageNode = NULL;
+    colorStorageNode = nullptr;
     }
 
   // each hierarchy node needs a display node
@@ -661,8 +661,8 @@ int main(int argc, char * argv[])
 
     if (cubes)
       {
-      cubes->SetInputData(NULL);
-      cubes = NULL;
+      cubes->SetInputData(nullptr);
+      cubes = nullptr;
       }
 
 #if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
@@ -720,8 +720,8 @@ int main(int argc, char * argv[])
       float passBand = 0.001;
       if (smoother)
         {
-        smoother->SetInputData(NULL);
-        smoother = NULL;
+        smoother->SetInputData(nullptr);
+        smoother = nullptr;
         }
       smoother = vtkSmartPointer<vtkWindowedSincPolyDataFilter>::New();
       std::stringstream stream;
@@ -816,7 +816,7 @@ int main(int argc, char * argv[])
     if (useColorNode)
       {
       // but if we didn't get a named color node, try to guess
-      if (colorNode == NULL)
+      if (colorNode == nullptr)
         {
         std::cerr << "ERROR: must have a color node! Should be associated with the input label map volume.\n";
         return EXIT_FAILURE;
@@ -856,8 +856,8 @@ int main(int argc, char * argv[])
   // to be applied to the model as it will be built in pixel space
   if (transformIJKtoRAS)
     {
-    transformIJKtoRAS->SetInput(NULL);
-    transformIJKtoRAS = NULL;
+    transformIJKtoRAS->SetInput(nullptr);
+    transformIJKtoRAS = nullptr;
     }
   transformIJKtoRAS = vtkSmartPointer<vtkTransform>::New();
   transformIJKtoRAS->SetMatrix(reader->GetRasToIjkMatrix());
@@ -919,10 +919,10 @@ int main(int argc, char * argv[])
       std::stringstream stream;
       stream <<    i;
       std::string stringI =    stream.str();
-      if (colorNode != NULL)
+      if (colorNode != nullptr)
         {
         std::string colorName = std::string(colorNode->GetColorNameAsFileName(i));
-        if (colorName.c_str() != NULL)
+        if (colorName.c_str() != nullptr)
           {
           if (!SkipUnNamed ||
               (SkipUnNamed && (colorName.compare("invalid") != 0 && colorName.compare("(none)") != 0)))
@@ -1004,9 +1004,9 @@ int main(int argc, char * argv[])
       {
       if (imageThreshold)
         {
-        imageThreshold->SetInputData(NULL);
+        imageThreshold->SetInputData(nullptr);
         imageThreshold->RemoveAllInputs();
-        imageThreshold = NULL;
+        imageThreshold = nullptr;
         }
       imageThreshold = vtkSmartPointer<vtkImageThreshold>::New();
       std::string            comment3 = "Threshold " + labelName;
@@ -1038,8 +1038,8 @@ int main(int argc, char * argv[])
 
       if (imageToStructuredPoints)
         {
-        imageToStructuredPoints->SetInputData(NULL);
-        imageToStructuredPoints = NULL;
+        imageToStructuredPoints->SetInputData(nullptr);
+        imageToStructuredPoints = nullptr;
         }
       imageToStructuredPoints = vtkSmartPointer<vtkImageToStructuredPoints>::New();
       imageToStructuredPoints->SetInputConnection(imageThreshold->GetOutputPort());
@@ -1059,8 +1059,8 @@ int main(int argc, char * argv[])
       // use the output of the smoother
       if (threshold)
         {
-        threshold->SetInputData(NULL);
-        threshold = NULL;
+        threshold->SetInputData(nullptr);
+        threshold = nullptr;
         }
       threshold = vtkSmartPointer<vtkThreshold>::New();
       std::string            comment4 = "Threshold " + labelName;
@@ -1074,7 +1074,7 @@ int main(int argc, char * argv[])
         {
         watchThreshold.QuietOn();
         }
-      if (smoother == NULL)
+      if (smoother == nullptr)
         {
         std::cerr << "\nERROR smoothing filter is null for joint smoothing!" << std::endl;
         return EXIT_FAILURE;
@@ -1089,8 +1089,8 @@ int main(int argc, char * argv[])
 
       if (geometryFilter)
         {
-        geometryFilter->SetInputData(NULL);
-        geometryFilter = NULL;
+        geometryFilter->SetInputData(nullptr);
+        geometryFilter = nullptr;
         }
       geometryFilter = vtkSmartPointer<vtkGeometryFilter>::New();
       geometryFilter->SetInputConnection(threshold->GetOutputPort());
@@ -1103,8 +1103,8 @@ int main(int argc, char * argv[])
       {
       if (mcubes)
         {
-        mcubes->SetInputData(NULL);
-        mcubes = NULL;
+        mcubes->SetInputData(nullptr);
+        mcubes = nullptr;
         }
 #if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
       mcubes = vtkSmartPointer<vtkFlyingEdges3D>::New();
@@ -1148,7 +1148,7 @@ int main(int argc, char * argv[])
                   << "\nNo polygons can be created,\nthere may be no voxels with this label in the volume." << endl;
         if (transformIJKtoRAS)
           {
-          transformIJKtoRAS = NULL;
+          transformIJKtoRAS = nullptr;
           }
         if (imageThreshold)
           {
@@ -1156,20 +1156,20 @@ int main(int argc, char * argv[])
             {
             std::cout << "Setting image threshold input to null" << endl;
             }
-          imageThreshold->SetInputData(NULL);
+          imageThreshold->SetInputData(nullptr);
           imageThreshold->RemoveAllInputs();
-          imageThreshold = NULL;
+          imageThreshold = nullptr;
 
           }
         if (imageToStructuredPoints)
           {
-          imageToStructuredPoints->SetInputData(NULL);
-          imageToStructuredPoints = NULL;
+          imageToStructuredPoints->SetInputData(nullptr);
+          imageToStructuredPoints = nullptr;
           }
         if (mcubes)
           {
-          mcubes->SetInputData(NULL);
-          mcubes = NULL;
+          mcubes->SetInputData(nullptr);
+          mcubes = nullptr;
           }
         skipLabel = 1;
         std::cout << "...continuing" << endl;
@@ -1206,8 +1206,8 @@ int main(int argc, char * argv[])
           {
           std::cerr << "ERROR: Failed to write intermediate file " << fileName.c_str() << std::endl;
           }
-        writer->SetInputData(NULL);
-        writer = NULL;
+        writer->SetInputData(nullptr);
+        writer = nullptr;
         }
       }
     else
@@ -1218,10 +1218,10 @@ int main(int argc, char * argv[])
       {
       // In switch from vtk 4 to vtk 5, vtkDecimate was deprecated from the Patented dir, use vtkDecimatePro
       // TODO: look at vtkQuadraticDecimation
-      if (decimator != NULL)
+      if (decimator != nullptr)
         {
-        decimator->SetInputData(NULL);
-        decimator = NULL;
+        decimator->SetInputData(nullptr);
+        decimator = nullptr;
         }
       decimator = vtkSmartPointer<vtkDecimatePro>::New();
       std::string            comment6 = "Decimate " + labelName;
@@ -1302,16 +1302,16 @@ int main(int argc, char * argv[])
           {
           std::cerr << "ERROR: Failed to write intermediate file " << fileName.c_str() << std::endl;
           }
-        writer->SetInputData(NULL);
-        writer = NULL;
+        writer->SetInputData(nullptr);
+        writer = nullptr;
         }
-      if (transformIJKtoRAS == NULL ||
-          transformIJKtoRAS->GetMatrix() == NULL)
+      if (transformIJKtoRAS == nullptr ||
+          transformIJKtoRAS->GetMatrix() == nullptr)
         {
         std::cout << "transformIJKtoRAS is "
                   << (transformIJKtoRAS ==
-            NULL ? "null" : "okay") << ", it's matrix is "
-                  << (transformIJKtoRAS->GetMatrix() == NULL ? "null" : "okay") << endl;
+            nullptr ? "null" : "okay") << ", it's matrix is "
+                  << (transformIJKtoRAS->GetMatrix() == nullptr ? "null" : "okay") << endl;
         }
       else if ((transformIJKtoRAS->GetMatrix())->Determinant() < 0)
         {
@@ -1322,8 +1322,8 @@ int main(int argc, char * argv[])
           }
         if (reverser)
           {
-          reverser->SetInputData(NULL);
-          reverser = NULL;
+          reverser->SetInputData(nullptr);
+          reverser = nullptr;
           }
         reverser = vtkSmartPointer<vtkReverseSense>::New();
         std::string            comment7 = "Reverse " + labelName;
@@ -1349,8 +1349,8 @@ int main(int argc, char * argv[])
 
           if (smootherSinc)
             {
-            smootherSinc->SetInputData(NULL);
-            smootherSinc = NULL;
+            smootherSinc->SetInputData(nullptr);
+            smootherSinc = nullptr;
             }
           smootherSinc = vtkSmartPointer<vtkWindowedSincPolyDataFilter>::New();
           std::string            comment8 = "Smooth " + labelName;
@@ -1396,8 +1396,8 @@ int main(int argc, char * argv[])
           {
           if (smootherPoly)
             {
-            smootherPoly->SetInputData(NULL);
-            smootherPoly = NULL;
+            smootherPoly->SetInputData(nullptr);
+            smootherPoly = nullptr;
             }
           smootherPoly = vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
           std::string            comment9 = "Smooth " + labelName;
@@ -1478,15 +1478,15 @@ int main(int argc, char * argv[])
             {
             std::cerr << "ERROR: Failed to write intermediate file " << fileName.c_str() << std::endl;
             }
-          writer->SetInputData(NULL);
-          writer = NULL;
+          writer->SetInputData(nullptr);
+          writer = nullptr;
           }
         }
 
       if (transformer)
         {
-        transformer->SetInputData(NULL);
-        transformer = NULL;
+        transformer->SetInputData(nullptr);
+        transformer = nullptr;
         }
       transformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
       std::string            comment1 = "Transform " + labelName;
@@ -1532,8 +1532,8 @@ int main(int argc, char * argv[])
       transformer->ReleaseDataFlagOn();
       if (normals)
         {
-        normals->SetInputData(NULL);
-        normals = NULL;
+        normals->SetInputData(nullptr);
+        normals = nullptr;
         }
       normals = vtkSmartPointer<vtkPolyDataNormals>::New();
       std::string            comment2 = "Normals " + labelName;
@@ -1564,8 +1564,8 @@ int main(int argc, char * argv[])
 
       if (stripper)
         {
-        stripper->SetInputData(NULL);
-        stripper = NULL;
+        stripper->SetInputData(nullptr);
+        stripper = nullptr;
         }
       stripper = vtkSmartPointer<vtkStripper>::New();
       std::string            comment3 = "Strip " + labelName;
@@ -1629,9 +1629,9 @@ int main(int argc, char * argv[])
         {
         std::cerr << "ERROR: Failed to write model file " << fileName.c_str() << std::endl;
         }
-      writer->SetInputData(NULL);
-      writer = NULL;
-      if (modelScene.GetPointer() != NULL)
+      writer->SetInputData(nullptr);
+      writer = nullptr;
+      if (modelScene.GetPointer() != nullptr)
         {
         if (debug)
           {
@@ -1645,17 +1645,17 @@ int main(int argc, char * argv[])
 
         vtkNew<vtkMRMLModelStorageNode> snode;
         snode->SetFileName(fileName.c_str());
-        if (modelScene->AddNode(snode.GetPointer()) == NULL)
+        if (modelScene->AddNode(snode.GetPointer()) == nullptr)
           {
           std::cerr << "ERROR: unable to add the storage node to the model scene" << endl;
           }
         vtkNew<vtkMRMLModelDisplayNode> dnode;
         dnode->SetColor(0.5, 0.5, 0.5);
         double *rgba;
-        if (colorNode != NULL)
+        if (colorNode != nullptr)
           {
           rgba = colorNode->GetLookupTable()->GetTableValue(i);
-          if (rgba != NULL)
+          if (rgba != nullptr)
             {
             if (debug)
               {
@@ -1674,9 +1674,9 @@ int main(int argc, char * argv[])
         modelScene->AddNode(dnode.GetPointer());
         if (debug)
           {
-          std::cout << "Added display node: id = " << (dnode->GetID() == NULL ? "(null)" : dnode->GetID()) << endl;
+          std::cout << "Added display node: id = " << (dnode->GetID() == nullptr ? "(null)" : dnode->GetID()) << endl;
           std::cout << "Setting model's storage node: id = "
-                    << (snode->GetID() == NULL ? "(null)" : snode->GetID()) << endl;
+                    << (snode->GetID() == nullptr ? "(null)" : snode->GetID()) << endl;
           }
         mnode->SetAndObserveStorageNodeID(snode->GetID());
         mnode->SetAndObserveDisplayNodeID(dnode->GetID());
@@ -1686,7 +1686,7 @@ int main(int argc, char * argv[])
         // try to find the matching color hierarchy node to make this an
         // associated node
         std::string colorName;
-        if (colorNode != NULL)
+        if (colorNode != nullptr)
           {
           colorName = std::string(colorNode->GetColorNameAsFileName(i));
           }
@@ -1702,16 +1702,16 @@ int main(int argc, char * argv[])
             std::cout << "No color node, guessing at color name being same as label number " << colorName.c_str() << std::endl;
             }
           }
-        vtkMRMLNode *mrmlNode = NULL;
+        vtkMRMLNode *mrmlNode = nullptr;
         if (colorName.compare("") != 0)
           {
           mrmlNode = modelScene->GetFirstNodeByName(colorName.c_str());
           }
         // if there's no color hierarchy, or no color name or the mrml node
         // named for the color isn't a model hierarchy node, use a flat hierarchy
-        if (topColorHierarchyNode == NULL ||
+        if (topColorHierarchyNode == nullptr ||
             colorName.compare("") == 0 ||
-            mrmlNode == NULL ||
+            mrmlNode == nullptr ||
             strcmp(mrmlNode->GetClassName(),"vtkMRMLModelHierarchyNode") != 0)
           {
           vtkNew<vtkMRMLModelHierarchyNode> mhnd;
@@ -1773,23 +1773,23 @@ int main(int argc, char * argv[])
       std::cout << ", to url: " << modelScene->GetURL() << std::endl;
       }
     // take out the colour nodes first
-    if (colorStorageNode != NULL)
+    if (colorStorageNode != nullptr)
       {
       modelScene->RemoveNode(colorStorageNode);
       }
-    if (colorNode != NULL)
+    if (colorNode != nullptr)
       {
       modelScene->RemoveNode(colorNode);
       }
     // take out any extra hierarchy nodes and display nodes
-    if (topColorHierarchyNode != NULL)
+    if (topColorHierarchyNode != nullptr)
       {
       // get all the hierarchies under it, recursively
       std::vector< vtkMRMLHierarchyNode* > allChildren;
       topColorHierarchyNode->GetAllChildrenNodes(allChildren);
       for (unsigned int i = 0; i < allChildren.size(); i++)
         {
-        if (allChildren[i]->GetAssociatedNodeID() == NULL &&
+        if (allChildren[i]->GetAssociatedNodeID() == nullptr &&
             allChildren[i]->GetNumberOfChildrenNodes() == 0)
           {
           // if this child doesn't have an associated node, nor does it have children nodes (keep the structure of the hierarchy), remove it and it's display node
@@ -1797,7 +1797,7 @@ int main(int argc, char * argv[])
             {
             std::cout << "Removing extraneous hierarchy node " << allChildren[i]->GetName() << std::endl;
             }
-          if (vtkMRMLDisplayableHierarchyNode::SafeDownCast(allChildren[i]) != NULL)
+          if (vtkMRMLDisplayableHierarchyNode::SafeDownCast(allChildren[i]) != nullptr)
             {
             vtkMRMLDisplayNode *hierarchyDisplayNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(allChildren[i])->GetDisplayNode();
             if (hierarchyDisplayNode)
@@ -1834,12 +1834,12 @@ int main(int argc, char * argv[])
       {
       std::cout << "Deleting cubes" << endl;
       }
-    cubes->SetInputData(NULL);
-    cubes = NULL;
+    cubes->SetInputData(nullptr);
+    cubes = nullptr;
     }
   if (colorNode)
     {
-    colorNode = NULL;
+    colorNode = nullptr;
     }
   if (smoother)
     {
@@ -1847,8 +1847,8 @@ int main(int argc, char * argv[])
       {
       std::cout << "Deleting smoother" << endl;
       }
-    smoother->SetInputData(NULL);
-    smoother = NULL;
+    smoother->SetInputData(nullptr);
+    smoother = nullptr;
     }
   if (hist)
     {
@@ -1856,8 +1856,8 @@ int main(int argc, char * argv[])
       {
       std::cout << "Deleting hist" << endl;
       }
-    hist->SetInputData(NULL);
-    hist = NULL;
+    hist->SetInputData(nullptr);
+    hist = nullptr;
     }
   if (smootherSinc)
     {
@@ -1865,8 +1865,8 @@ int main(int argc, char * argv[])
       {
       std::cout << "Deleting smootherSinc" << endl;
       }
-    smootherSinc->SetInputData(NULL);
-    smootherSinc = NULL;
+    smootherSinc->SetInputData(nullptr);
+    smootherSinc = nullptr;
     }
   if (smootherPoly)
     {
@@ -1874,8 +1874,8 @@ int main(int argc, char * argv[])
       {
       std::cout << "Deleting smoother poly" << endl;
       }
-    smootherPoly->SetInputData(NULL);
-    smootherPoly = NULL;
+    smootherPoly->SetInputData(nullptr);
+    smootherPoly = nullptr;
     }
   if (decimator)
     {
@@ -1883,8 +1883,8 @@ int main(int argc, char * argv[])
       {
       std::cout << "Deleting decimator" << endl;
       }
-    decimator->SetInputData(NULL);
-    decimator = NULL;
+    decimator->SetInputData(nullptr);
+    decimator = nullptr;
     }
   if (mcubes)
     {
@@ -1892,8 +1892,8 @@ int main(int argc, char * argv[])
       {
       std::cout << "Deleting mcubes" << endl;
       }
-    mcubes->SetInputData(NULL);
-    mcubes = NULL;
+    mcubes->SetInputData(nullptr);
+    mcubes = nullptr;
     }
   if (imageThreshold)
     {
@@ -1901,9 +1901,9 @@ int main(int argc, char * argv[])
       {
       std::cout << "Deleting image threshold" << endl;
       }
-    imageThreshold->SetInputData(NULL);
+    imageThreshold->SetInputData(nullptr);
     imageThreshold->RemoveAllInputs();
-    imageThreshold = NULL;
+    imageThreshold = nullptr;
     if (debug)
       {
       std::cout << "... done deleting image threshold" << endl;
@@ -1915,8 +1915,8 @@ int main(int argc, char * argv[])
       {
       cout << "Deleting threshold" << endl;
       }
-    threshold->SetInputData(NULL);
-    threshold = NULL;
+    threshold->SetInputData(nullptr);
+    threshold = nullptr;
     }
   if (imageToStructuredPoints)
     {
@@ -1924,8 +1924,8 @@ int main(int argc, char * argv[])
       {
       std::cout << "Deleting image to structured points" << endl;
       }
-    imageToStructuredPoints->SetInputData(NULL);
-    imageToStructuredPoints = NULL;
+    imageToStructuredPoints->SetInputData(nullptr);
+    imageToStructuredPoints = nullptr;
     }
   if (geometryFilter)
     {
@@ -1933,8 +1933,8 @@ int main(int argc, char * argv[])
       {
       cout << "Deleting geometry filter" << endl;
       }
-    geometryFilter->SetInputData(NULL);
-    geometryFilter = NULL;
+    geometryFilter->SetInputData(nullptr);
+    geometryFilter = nullptr;
     }
   if (transformIJKtoRAS)
     {
@@ -1942,8 +1942,8 @@ int main(int argc, char * argv[])
       {
       std::cout << "Deleting transform ijk to ras" << endl;
       }
-    transformIJKtoRAS->SetInput(NULL);
-    transformIJKtoRAS = NULL;
+    transformIJKtoRAS->SetInput(nullptr);
+    transformIJKtoRAS = nullptr;
     }
   if (reverser)
     {
@@ -1951,8 +1951,8 @@ int main(int argc, char * argv[])
       {
       std::cout << "Deleting reverser" << endl;
       }
-    reverser->SetInputData(NULL);
-    reverser = NULL;
+    reverser->SetInputData(nullptr);
+    reverser = nullptr;
     }
   if (transformer)
     {
@@ -1960,8 +1960,8 @@ int main(int argc, char * argv[])
       {
       std::cout << "Deleting transformer" << endl;
       }
-    transformer->SetInputData(NULL);
-    transformer = NULL;
+    transformer->SetInputData(nullptr);
+    transformer = nullptr;
     }
   if (normals)
     {
@@ -1969,8 +1969,8 @@ int main(int argc, char * argv[])
       {
       std::cout << "Deleting normals" << endl;
       }
-    normals->SetInputData(NULL);
-    normals = NULL;
+    normals->SetInputData(nullptr);
+    normals = nullptr;
     }
   if (stripper)
     {
@@ -1978,8 +1978,8 @@ int main(int argc, char * argv[])
       {
       std::cout << "Deleting stripper" << endl;
       }
-    stripper->SetInputData(NULL);
-    stripper = NULL;
+    stripper->SetInputData(nullptr);
+    stripper = nullptr;
     }
   if (ici.GetPointer())
     {
@@ -1987,13 +1987,13 @@ int main(int argc, char * argv[])
       {
       std::cout << "Deleting ici, no set input null" << endl;
       }
-    ici->SetInputData(NULL);
+    ici->SetInputData(nullptr);
     }
   if (debug)
     {
     std::cout << "Deleting reader" << endl;
     }
-  reader = NULL;
+  reader = nullptr;
 
   if (modelScene.GetPointer())
     {

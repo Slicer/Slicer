@@ -9,7 +9,7 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLLinearTransformSliderPlugin : public QOb
   Q_OBJECT
 
 public:
-  qMRMLLinearTransformSliderPlugin(QObject *_parent = 0);
+  qMRMLLinearTransformSliderPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString domXml() const;

@@ -39,7 +39,7 @@ enum ItemDataRole {
 class qSlicerRestoreExtensionsItemDelegate : public QStyledItemDelegate
 {
 public:
-  qSlicerRestoreExtensionsItemDelegate(QObject * parent = 0)
+  qSlicerRestoreExtensionsItemDelegate(QObject * parent = nullptr)
     : QStyledItemDelegate(parent) {};
 
   bool editorEvent(QEvent *event,

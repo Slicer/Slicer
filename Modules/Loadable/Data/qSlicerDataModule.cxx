@@ -95,12 +95,12 @@ void qSlicerDataModule::setup()
   qSlicerAbstractCoreModule* colorsModule =
     qSlicerCoreApplication::application()->moduleManager()->module("Colors");
   vtkMRMLColorLogic* colorLogic =
-    vtkMRMLColorLogic::SafeDownCast(colorsModule ? colorsModule->logic() : 0);
+    vtkMRMLColorLogic::SafeDownCast(colorsModule ? colorsModule->logic() : nullptr);
 
   qSlicerAbstractCoreModule* camerasModule =
     qSlicerCoreApplication::application()->moduleManager()->module("Cameras");
   vtkSlicerCamerasModuleLogic* camerasLogic =
-    vtkSlicerCamerasModuleLogic::SafeDownCast(camerasModule ? camerasModule->logic() : 0);
+    vtkSlicerCamerasModuleLogic::SafeDownCast(camerasModule ? camerasModule->logic() : nullptr);
 
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
 

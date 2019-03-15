@@ -36,7 +36,7 @@ public:
 qSlicerAbstractModuleRepresentationPrivate
 ::qSlicerAbstractModuleRepresentationPrivate()
 {
-  this->Module = 0;
+  this->Module = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -81,7 +81,7 @@ void qSlicerAbstractModuleRepresentation::setModule(qSlicerAbstractCoreModule* m
 {
   Q_D(qSlicerAbstractModuleRepresentation);
   d->Module = module;
-  d->Logic = module ? module->logic() : 0;
+  d->Logic = module ? module->logic() : nullptr;
   this->setup();
 }
 

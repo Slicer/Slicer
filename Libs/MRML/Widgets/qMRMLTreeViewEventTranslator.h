@@ -39,7 +39,7 @@ class QMRML_WIDGETS_EXPORT qMRMLTreeViewEventTranslator :
 
 public:
   typedef pqTreeViewEventTranslator Superclass;
-  qMRMLTreeViewEventTranslator(QObject* parent = 0);
+  qMRMLTreeViewEventTranslator(QObject* parent = nullptr);
 
   using Superclass::translateEvent;
   virtual bool translateEvent(QObject *Object, QEvent *Event, int EventType, bool &Error);

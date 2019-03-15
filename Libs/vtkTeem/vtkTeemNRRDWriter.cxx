@@ -23,7 +23,7 @@ vtkStandardNewMacro(vtkTeemNRRDWriter);
 //----------------------------------------------------------------------------
 vtkTeemNRRDWriter::vtkTeemNRRDWriter()
 {
-  this->FileName = NULL;
+  this->FileName = nullptr;
   this->BValues = vtkDoubleArray::New();
   this->DiffusionGradients = vtkDoubleArray::New();
   this->IJKToRASMatrix = vtkMatrix4x4::New();
@@ -43,17 +43,17 @@ vtkTeemNRRDWriter::vtkTeemNRRDWriter()
 //----------------------------------------------------------------------------
 vtkTeemNRRDWriter::~vtkTeemNRRDWriter()
 {
-  this->SetFileName(NULL);
-  this->SetDiffusionGradients(NULL);
-  this->SetBValues(NULL);
-  this->SetIJKToRASMatrix(NULL);
-  this->SetMeasurementFrameMatrix(NULL);
+  this->SetFileName(nullptr);
+  this->SetDiffusionGradients(nullptr);
+  this->SetBValues(nullptr);
+  this->SetIJKToRASMatrix(nullptr);
+  this->SetMeasurementFrameMatrix(nullptr);
   delete this->Attributes;
-  this->Attributes = NULL;
+  this->Attributes = nullptr;
   delete this->AxisLabels;
-  this->AxisLabels = NULL;
+  this->AxisLabels = nullptr;
   delete this->AxisUnits;
-  this->AxisUnits = NULL;
+  this->AxisUnits = nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -245,7 +245,7 @@ void* vtkTeemNRRDWriter::MakeNRRD()
     // Free the nrrd struct but don't touch nrrd->data
     nrrd = nrrdNix(nrrd);
     this->WriteErrorOn();
-    return NULL;
+    return nullptr;
     }
   nrrdAxisInfoSet_nva(nrrd, nrrdAxisInfoKind, kind);
   nrrdAxisInfoSet_nva(nrrd, nrrdAxisInfoSpaceDirection, spaceDir);
@@ -253,7 +253,7 @@ void* vtkTeemNRRDWriter::MakeNRRD()
 
   if (!this->AxisLabels->empty())
     {
-    const char* labels[NRRD_DIM_MAX] = { 0 };
+    const char* labels[NRRD_DIM_MAX] = { nullptr };
     for (unsigned int axi = 0; axi < NRRD_DIM_MAX; axi++)
       {
       if (this->AxisLabels->find(axi) != this->AxisLabels->end())
@@ -266,7 +266,7 @@ void* vtkTeemNRRDWriter::MakeNRRD()
 
   if (!this->AxisUnits->empty())
     {
-    const char* units[NRRD_DIM_MAX] = { 0 };
+    const char* units[NRRD_DIM_MAX] = { nullptr };
     for (unsigned int axi = 0; axi < NRRD_DIM_MAX; axi++)
       {
       if (this->AxisUnits->find(axi) != this->AxisUnits->end())
@@ -363,7 +363,7 @@ void* vtkTeemNRRDWriter::MakeNRRD()
 void vtkTeemNRRDWriter::WriteData()
 {
   this->WriteErrorOff();
-  if (this->GetFileName() == NULL)
+  if (this->GetFileName() == nullptr)
     {
     vtkErrorMacro("FileName has not been set. Cannot save file");
     this->WriteErrorOn();
@@ -371,7 +371,7 @@ void vtkTeemNRRDWriter::WriteData()
     }
 
   Nrrd* nrrd = (Nrrd*)this->MakeNRRD();
-  if (nrrd == NULL)
+  if (nrrd == nullptr)
     {
     return;
     }

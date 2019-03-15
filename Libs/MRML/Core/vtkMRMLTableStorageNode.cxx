@@ -73,7 +73,7 @@ int vtkMRMLTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     return 0;
     }
   vtkMRMLTableNode *tableNode = vtkMRMLTableNode::SafeDownCast(refNode);
-  if (tableNode == NULL)
+  if (tableNode == nullptr)
     {
     vtkErrorMacro("ReadData: unable to cast input node " << refNode->GetID() << " to a table node");
     return 0;
@@ -112,7 +112,7 @@ int vtkMRMLTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLTableStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 {
-  if (this->GetFileName() == NULL)
+  if (this->GetFileName() == nullptr)
     {
     vtkErrorMacro("WriteData: file name is not set");
     return 0;
@@ -125,7 +125,7 @@ int vtkMRMLTableStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     }
 
   vtkMRMLTableNode *tableNode = vtkMRMLTableNode::SafeDownCast(refNode);
-  if (tableNode == NULL)
+  if (tableNode == nullptr)
     {
     vtkErrorMacro("WriteData: unable to cast input node " << refNode->GetID() << " to a valid table node");
     return 0;
@@ -139,15 +139,15 @@ int vtkMRMLTableStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   vtkDebugMacro("WriteData: successfully wrote table to file: " << fullName);
 
   // Only write a schema file if some table properties are specified
-  bool needToWriteSchema = (!this->GetSchemaFileName().empty()) || (tableNode->GetSchema() != NULL);
-  if (!needToWriteSchema && tableNode->GetTable() != NULL)
+  bool needToWriteSchema = (!this->GetSchemaFileName().empty()) || (tableNode->GetSchema() != nullptr);
+  if (!needToWriteSchema && tableNode->GetTable() != nullptr)
     {
     // Make sure we create a schema file if there is any non-string column type
     vtkTable* table = tableNode->GetTable();
     for (int col = 0; col < table->GetNumberOfColumns(); ++col)
       {
       vtkAbstractArray* column = table->GetColumn(col);
-      if (column == NULL)
+      if (column == nullptr)
         {
         // invalid column
         continue;
@@ -291,7 +291,7 @@ bool vtkMRMLTableStorageNode::ReadSchema(std::string filename, vtkMRMLTableNode*
   reader->DetectNumericColumnsOff();
 
   // Read table
-  vtkTable* schemaTable = NULL;
+  vtkTable* schemaTable = nullptr;
   try
     {
     reader->Update();
@@ -304,7 +304,7 @@ bool vtkMRMLTableStorageNode::ReadSchema(std::string filename, vtkMRMLTableNode*
     }
 
   vtkStringArray* columnNameArray = vtkStringArray::SafeDownCast(schemaTable->GetColumnByName("columnName"));
-  if (columnNameArray == NULL)
+  if (columnNameArray == nullptr)
     {
     vtkErrorMacro("vtkMRMLTableStorageNode::ReadSchema failed from file: " << filename <<". Required 'columnName' column is not found in schema.");
     return false;
@@ -328,7 +328,7 @@ bool vtkMRMLTableStorageNode::ReadTable(std::string filename, vtkMRMLTableNode* 
   reader->DetectNumericColumnsOff();
 
   // Read table
-  vtkTable* rawTable = NULL;
+  vtkTable* rawTable = nullptr;
   try
     {
     reader->Update();
@@ -344,7 +344,7 @@ bool vtkMRMLTableStorageNode::ReadTable(std::string filename, vtkMRMLTableNode* 
   for (int col = 0; col < rawTable->GetNumberOfColumns(); ++col)
     {
     vtkStringArray* column = vtkStringArray::SafeDownCast(rawTable->GetColumn(col));
-    if (column == NULL)
+    if (column == nullptr)
       {
       // invalid column
       continue;
@@ -475,7 +475,7 @@ bool vtkMRMLTableStorageNode::WriteSchema(std::string filename, vtkMRMLTableNode
     }
 
   vtkStringArray* columnNameArray = vtkStringArray::SafeDownCast(schemaTable->GetColumnByName("columnName"));
-  if (columnNameArray == NULL)
+  if (columnNameArray == nullptr)
     {
     vtkNew<vtkStringArray> newArray;
     newArray->SetName("columnName");
@@ -485,7 +485,7 @@ bool vtkMRMLTableStorageNode::WriteSchema(std::string filename, vtkMRMLTableNode
     }
 
   vtkStringArray* columnTypeArray = vtkStringArray::SafeDownCast(schemaTable->GetColumnByName("type"));
-  if (columnTypeArray == NULL)
+  if (columnTypeArray == nullptr)
     {
     vtkNew<vtkStringArray> newArray;
     newArray->SetName("type");
@@ -496,12 +496,12 @@ bool vtkMRMLTableStorageNode::WriteSchema(std::string filename, vtkMRMLTableNode
 
   // Add column type to schema
   vtkTable* table = tableNode->GetTable();
-  if (table != NULL)
+  if (table != nullptr)
     {
     for (int col = 0; col < table->GetNumberOfColumns(); ++col)
       {
       vtkAbstractArray* column = table->GetColumn(col);
-      if (column == NULL)
+      if (column == nullptr)
         {
         // invalid column
         continue;

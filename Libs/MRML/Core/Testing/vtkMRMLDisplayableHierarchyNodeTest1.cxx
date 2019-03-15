@@ -79,18 +79,18 @@ int TestBasics()
 
   node1->SetAndObserveDisplayNodeID("testingDisplayNodeID");
   std::cout << "DisplayNodeID = "
-            << (node1->GetDisplayNodeID() == NULL ?
+            << (node1->GetDisplayNodeID() == nullptr ?
                 "NULL" : node1->GetDisplayNodeID())
             << std::endl;
 
   vtkMRMLDisplayableNode* pnode = node1->GetDisplayableNode();
   std::cout << "GetDisplayableNode returned "
-            << (pnode == NULL ? "null" : "not null")
+            << (pnode == nullptr ? "null" : "not null")
             << std::endl;
 
   vtkMRMLDisplayNode* dnode1 = node1->GetDisplayNode();
   std::cout << "GetDisplayNode returned "
-            << (dnode1 == NULL ? "null" : "not null")
+            << (dnode1 == nullptr ? "null" : "not null")
             << std::endl;
 
   TEST_SET_GET_BOOLEAN(node1, Expanded);
@@ -98,7 +98,7 @@ int TestBasics()
   vtkMRMLDisplayableHierarchyNode* pnode1 =
     node1->GetCollapsedParentNode();
   std::cout << "GetUnexpandedParentNode = "
-            << (pnode1 == NULL ? "NULL" : "not null")
+            << (pnode1 == nullptr ? "NULL" : "not null")
             << std::endl;
   return EXIT_SUCCESS;
 }
@@ -153,12 +153,12 @@ int TestHierarchyNodeCount()
   vtkMRMLDisplayableHierarchyNode* hnode3 =
     node1->GetDisplayableHierarchyNode(scene.GetPointer(), "myid");
   std::cout << "Displayable hierarchy node from id myid = "
-            << (hnode3 == NULL ? "NULL" : hnode3->GetID())
+            << (hnode3 == nullptr ? "NULL" : hnode3->GetID())
             << std::endl;
   hnode3 = node1->GetDisplayableHierarchyNode(scene.GetPointer(), modelNode->GetID());
   std::cout << "Displayable hierarchy node from id "
             << modelNode->GetID() << " = "
-            << (hnode3 == NULL ? "NULL" : hnode3->GetID())
+            << (hnode3 == nullptr ? "NULL" : hnode3->GetID())
             << std::endl;
 
   return EXIT_SUCCESS;

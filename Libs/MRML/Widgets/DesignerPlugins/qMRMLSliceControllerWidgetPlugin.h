@@ -9,7 +9,7 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLSliceControllerWidgetPlugin : public QOb
   Q_OBJECT
 
 public:
-  qMRMLSliceControllerWidgetPlugin(QObject *_parent = 0);
+  qMRMLSliceControllerWidgetPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;

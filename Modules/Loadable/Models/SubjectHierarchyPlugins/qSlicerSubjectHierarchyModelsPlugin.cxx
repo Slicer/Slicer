@@ -74,7 +74,7 @@ public:
 qSlicerSubjectHierarchyModelsPluginPrivate::qSlicerSubjectHierarchyModelsPluginPrivate(qSlicerSubjectHierarchyModelsPlugin& object)
 : q_ptr(&object)
 , ModelIcon(QIcon(":Icons/Model.png"))
-, ToggleSliceIntersectionVisibilityAction(NULL)
+, ToggleSliceIntersectionVisibilityAction(nullptr)
 {
 }
 
@@ -208,8 +208,8 @@ QString qSlicerSubjectHierarchyModelsPlugin::tooltip(vtkIdType itemID)const
   QString tooltipString = Superclass::tooltip(itemID);
 
   vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(shNode->GetItemDataNode(itemID));
-  vtkPolyData* polyData = modelNode ? modelNode->GetPolyData() : NULL;
-  vtkMRMLModelDisplayNode* displayNode = modelNode ? vtkMRMLModelDisplayNode::SafeDownCast(modelNode->GetDisplayNode()) : NULL;
+  vtkPolyData* polyData = modelNode ? modelNode->GetPolyData() : nullptr;
+  vtkMRMLModelDisplayNode* displayNode = modelNode ? vtkMRMLModelDisplayNode::SafeDownCast(modelNode->GetDisplayNode()) : nullptr;
   if (modelNode && displayNode && polyData)
     {
     bool visible = (displayNode->GetVisibility() > 0);
@@ -431,7 +431,7 @@ void qSlicerSubjectHierarchyModelsPlugin::toggleSliceIntersectionVisibility(bool
     }
 
   vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(shNode->GetItemDataNode(currentItemID));
-  vtkMRMLModelDisplayNode* displayNode = modelNode ? vtkMRMLModelDisplayNode::SafeDownCast(modelNode->GetDisplayNode()) : NULL;
+  vtkMRMLModelDisplayNode* displayNode = modelNode ? vtkMRMLModelDisplayNode::SafeDownCast(modelNode->GetDisplayNode()) : nullptr;
   if (displayNode)
     {
     displayNode->SetSliceIntersectionVisibility(on);

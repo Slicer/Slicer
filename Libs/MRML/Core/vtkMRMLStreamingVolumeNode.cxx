@@ -41,8 +41,8 @@ const int NUMBER_OF_INTERNAL_IMAGEDATA_OBSERVERS = 2;
 
 //-----------------------------------------------------------------------------
 vtkMRMLStreamingVolumeNode::vtkMRMLStreamingVolumeNode()
-  : Codec(NULL)
-  , Frame(NULL)
+  : Codec(nullptr)
+  , Frame(nullptr)
   , FrameDecoded(false)
   , FrameDecodingInProgress(false)
   , FrameModifiedCallbackCommand(vtkSmartPointer<vtkCallbackCommand>::New())
@@ -79,7 +79,7 @@ void vtkMRMLStreamingVolumeNode::FrameModifiedCallback(vtkObject *caller, unsign
 void vtkMRMLStreamingVolumeNode::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
-  if (this->ImageDataConnection != 0 &&
+  if (this->ImageDataConnection != nullptr &&
     this->ImageDataConnection->GetProducer() == vtkAlgorithm::SafeDownCast(caller) &&
     event == vtkCommand::ModifiedEvent)
     {
@@ -87,7 +87,7 @@ void vtkMRMLStreamingVolumeNode::ProcessMRMLEvents(vtkObject *caller, unsigned l
       {
       // The image data has been modified externally
       // This invalidates the contents of the current frame
-      this->SetAndObserveFrame(NULL);
+      this->SetAndObserveFrame(nullptr);
       }
     }
 }
@@ -109,7 +109,7 @@ void vtkMRMLStreamingVolumeNode::SetAndObserveImageData(vtkImageData* imageData)
     {
     // If no frame is being decoded, then this call is external
     // The current frame data is invalid
-    this->SetAndObserveFrame(NULL);
+    this->SetAndObserveFrame(nullptr);
     }
   Superclass::SetAndObserveImageData(imageData);
 }
@@ -164,7 +164,7 @@ vtkStreamingVolumeCodec* vtkMRMLStreamingVolumeNode::GetCodec()
 bool vtkMRMLStreamingVolumeNode::HasExternalImageObserver()
 {
   vtkImageData* imageData = Superclass::GetImageData();
-  if ((this->ImageDataConnection != NULL &&
+  if ((this->ImageDataConnection != nullptr &&
        this->ImageDataConnection->GetReferenceCount() > NUMBER_OF_INTERNAL_IMAGEDATACONNECTION_OBSERVERS) ||
       (imageData && imageData->GetReferenceCount() > NUMBER_OF_INTERNAL_IMAGEDATA_OBSERVERS))
     {

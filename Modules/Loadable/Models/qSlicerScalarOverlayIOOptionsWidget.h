@@ -36,7 +36,7 @@ class Q_SLICER_QTMODULES_MODELS_EXPORT qSlicerScalarOverlayIOOptionsWidget
   Q_OBJECT
 public:
   typedef qSlicerIOOptionsWidget Superclass;
-  qSlicerScalarOverlayIOOptionsWidget(QWidget *parent=0);
+  qSlicerScalarOverlayIOOptionsWidget(QWidget *parent=nullptr);
   virtual ~qSlicerScalarOverlayIOOptionsWidget();
 
   virtual bool isValid()const;

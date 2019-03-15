@@ -37,10 +37,10 @@ qSlicerVolumeDisplayWidgetPrivate::qSlicerVolumeDisplayWidgetPrivate(
   qSlicerVolumeDisplayWidget& object)
   : q_ptr(&object)
 {
-  this->ScalarVolumeDisplayWidget = 0;
-  this->LabelMapVolumeDisplayWidget = 0;
-  this->DWVolumeDisplayWidget = 0;
-  this->DTVolumeDisplayWidget = 0;
+  this->ScalarVolumeDisplayWidget = nullptr;
+  this->LabelMapVolumeDisplayWidget = nullptr;
+  this->DWVolumeDisplayWidget = nullptr;
+  this->DTVolumeDisplayWidget = nullptr;
 }
 
 // --------------------------------------------------------------------------
@@ -76,7 +76,7 @@ void qSlicerVolumeDisplayWidgetPrivate::setCurrentDisplayWidget(
     // Because removing the scene could modify the observed node (e.g setting
     // the scene to 0 on a colortable combobox will set the color node of the
     // observed node to 0.
-    vtkMRMLNode* emptyVolumeNode = 0;
+    vtkMRMLNode* emptyVolumeNode = nullptr;
     if (activeWidget == this->ScalarVolumeDisplayWidget)
       {
       this->ScalarVolumeDisplayWidget->setMRMLVolumeNode(emptyVolumeNode);
@@ -93,7 +93,7 @@ void qSlicerVolumeDisplayWidgetPrivate::setCurrentDisplayWidget(
       {
       this->DTVolumeDisplayWidget->setMRMLVolumeNode(emptyVolumeNode);
       }
-    activeWidget->setMRMLScene(0);
+    activeWidget->setMRMLScene(nullptr);
     }
   // QStackWidget::setCurrentWidget(0) is not supported
   if (displayWidget)
@@ -122,12 +122,12 @@ qSlicerVolumeDisplayWidget::~qSlicerVolumeDisplayWidget()
 void qSlicerVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLNode* volumeNode)
 {
    Q_D(qSlicerVolumeDisplayWidget);
-   qvtkDisconnect(0, vtkCommand::ModifiedEvent,
+   qvtkDisconnect(nullptr, vtkCommand::ModifiedEvent,
                   this, SLOT(updateFromMRML(vtkObject*)));
 
-  if (volumeNode == 0)
+  if (volumeNode == nullptr)
     {
-    d->setCurrentDisplayWidget(0);
+    d->setCurrentDisplayWidget(nullptr);
     return;
     }
 

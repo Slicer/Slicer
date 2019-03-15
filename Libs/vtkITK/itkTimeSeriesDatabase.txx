@@ -187,7 +187,7 @@ template <class TPixel>
 typename TimeSeriesDatabase<TPixel>::CacheBlock* TimeSeriesDatabase<TPixel>::GetCacheBlock ( unsigned long index )
 {
   CacheBlock* Buffer = this->m_Cache.find ( index );
-  if ( Buffer == 0 ) {
+  if ( Buffer == nullptr ) {
     // Fill it in
     CacheBlock B;
     int FileIdx = this->CalculateFileIndex ( index );

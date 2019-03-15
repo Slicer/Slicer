@@ -41,7 +41,7 @@ vtkMRMLdGEMRICProceduralColorNode::~vtkMRMLdGEMRICProceduralColorNode()
   if (this->ColorTransferFunction)
     {
     this->ColorTransferFunction->Delete();
-    this->ColorTransferFunction = NULL;
+    this->ColorTransferFunction = nullptr;
     }
 }
 
@@ -72,7 +72,7 @@ void vtkMRMLdGEMRICProceduralColorNode::PrintSelf(ostream& os, vtkIndent indent)
 {
 
   Superclass::PrintSelf(os,indent);
-  if (this->ColorTransferFunction != NULL)
+  if (this->ColorTransferFunction != nullptr)
     {
     os << indent << "ColorTransferFunction:" << endl;
     this->ColorTransferFunction->PrintSelf(os, indent.GetNextIndent());
@@ -128,7 +128,7 @@ void vtkMRMLdGEMRICProceduralColorNode::SetType(int type)
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Type to " << type << " = " << this->GetTypeAsString());
 
   // is it created yet?
-  if (this->ColorTransferFunction == NULL)
+  if (this->ColorTransferFunction == nullptr)
     {
     this->ColorTransferFunction = vtkColorTransferFunction::New();
     }

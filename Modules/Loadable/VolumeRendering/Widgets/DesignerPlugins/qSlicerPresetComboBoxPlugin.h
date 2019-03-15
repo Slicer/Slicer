@@ -30,7 +30,7 @@ class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_PLUGINS_EXPORT qSlicerPresetComboB
   Q_OBJECT
 
 public:
-  qSlicerPresetComboBoxPlugin(QObject *_parent = 0);
+  qSlicerPresetComboBoxPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;

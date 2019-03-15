@@ -47,7 +47,7 @@ class Q_SLICER_QTMODULES_VOLUMES_WIDGETS_EXPORT qSlicerDiffusionWeightedVolumeDi
 public:
   /// Constructors
   typedef qSlicerWidget Superclass;
-  explicit qSlicerDiffusionWeightedVolumeDisplayWidget(QWidget* parent = 0);
+  explicit qSlicerDiffusionWeightedVolumeDisplayWidget(QWidget* parent = nullptr);
   virtual ~qSlicerDiffusionWeightedVolumeDisplayWidget();
 
   vtkMRMLDiffusionWeightedVolumeNode* volumeNode()const;

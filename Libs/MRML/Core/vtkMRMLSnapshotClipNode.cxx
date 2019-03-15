@@ -51,7 +51,7 @@ void vtkMRMLSnapshotClipNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  vtkMRMLSceneViewNode * node = NULL;
+  vtkMRMLSceneViewNode * node = nullptr;
   std::stringstream ss;
   int n;
   for (n=0; n < this->SceneSnapshotNodes->GetNumberOfItems(); n++)
@@ -76,7 +76,7 @@ void vtkMRMLSnapshotClipNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -101,7 +101,7 @@ void vtkMRMLSnapshotClipNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   //vtkMRMLSnapshotClipNode *snode = (vtkMRMLSnapshotClipNode *) anode;
 
-  if (this->SceneSnapshotNodes == NULL)
+  if (this->SceneSnapshotNodes == nullptr)
     {
     this->SceneSnapshotNodes = vtkCollection::New();
     }
@@ -109,7 +109,7 @@ void vtkMRMLSnapshotClipNode::Copy(vtkMRMLNode *anode)
     {
     this->SceneSnapshotNodes->RemoveAllItems();
     }
-  vtkMRMLNode *node = NULL;
+  vtkMRMLNode *node = nullptr;
   int n;
   for (n=0; n < this->SceneSnapshotNodes->GetNumberOfItems(); n++)
     {

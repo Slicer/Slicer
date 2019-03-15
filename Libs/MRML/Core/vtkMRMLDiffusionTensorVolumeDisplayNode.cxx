@@ -102,7 +102,7 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -233,7 +233,7 @@ vtkMRMLDiffusionTensorVolumeDisplayNode::GetSliceGlyphDisplayNodes(
 {
   std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*> nodes;
   int nnodes = volumeNode->GetNumberOfDisplayNodes();
-  vtkMRMLDiffusionTensorVolumeSliceDisplayNode *node = NULL;
+  vtkMRMLDiffusionTensorVolumeSliceDisplayNode *node = nullptr;
   for (int n=0; n<nnodes; n++)
     {
     node = vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SafeDownCast(
@@ -313,7 +313,7 @@ vtkAlgorithmOutput* vtkMRMLDiffusionTensorVolumeDisplayNode
 ::GetInputImageDataConnection()
 {
   return this->DTIMathematics->GetNumberOfInputConnections(0) ?
-    this->DTIMathematics->GetInputConnection(0, 0) : 0;
+    this->DTIMathematics->GetInputConnection(0, 0) : nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -327,7 +327,7 @@ vtkAlgorithmOutput* vtkMRMLDiffusionTensorVolumeDisplayNode::GetBackgroundImageS
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMiddleEigenvector:
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMinEigenvector:
       {
-      return 0;
+      return nullptr;
       }
     default:
       return this->Superclass::GetBackgroundImageStencilDataConnection();

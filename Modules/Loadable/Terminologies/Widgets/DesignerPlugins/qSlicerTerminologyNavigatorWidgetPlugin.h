@@ -30,7 +30,7 @@ class Q_SLICER_MODULE_TERMINOLOGIES_WIDGETS_PLUGINS_EXPORT qSlicerTerminologyNav
   Q_OBJECT
 
 public:
-  qSlicerTerminologyNavigatorWidgetPlugin(QObject* parent = 0);
+  qSlicerTerminologyNavigatorWidgetPlugin(QObject* parent = nullptr);
 
   QWidget *createWidget(QWidget* parent);
   QString  domXml() const;

@@ -34,7 +34,7 @@
 qMRMLThreeDViewInformationWidgetPrivate::qMRMLThreeDViewInformationWidgetPrivate(qMRMLThreeDViewInformationWidget& object)
   : q_ptr(&object)
 {
-  this->MRMLViewNode = 0;
+  this->MRMLViewNode = nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -58,8 +58,8 @@ void qMRMLThreeDViewInformationWidgetPrivate::updateWidgetFromMRMLViewNode()
 {
   Q_Q(qMRMLThreeDViewInformationWidget);
 
-  q->setEnabled(this->MRMLViewNode != 0);
-  if (this->MRMLViewNode == 0)
+  q->setEnabled(this->MRMLViewNode != nullptr);
+  if (this->MRMLViewNode == nullptr)
     {
     return;
     }

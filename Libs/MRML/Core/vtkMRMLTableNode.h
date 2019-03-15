@@ -129,7 +129,7 @@ public:
   /// or empty elements to the array.
   /// If a column is provided that does not have a name then a name will be generated
   /// automatically that is unique among all table column names.
-  vtkAbstractArray* AddColumn(vtkAbstractArray* column = 0);
+  vtkAbstractArray* AddColumn(vtkAbstractArray* column = nullptr);
 
   ///
   /// Rename an array in the table (including associated properties).

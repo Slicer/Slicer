@@ -36,7 +36,7 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeComboBoxEventPlayer :
 
 public:
   typedef pqWidgetEventPlayer Superclass;
-  qMRMLNodeComboBoxEventPlayer(QObject* parent = 0);
+  qMRMLNodeComboBoxEventPlayer(QObject* parent = nullptr);
 
   using Superclass::playEvent;
   bool playEvent(QObject *Object, const QString &Command, const QString &Arguments, bool &Error);

@@ -33,7 +33,7 @@ public:
   typedef ctkSettingsPanel Superclass;
 
   /// Constructor
-  explicit qSlicerSettingsUserInformationPanel(QWidget* parent = 0);
+  explicit qSlicerSettingsUserInformationPanel(QWidget* parent = nullptr);
 
   /// Destructor
   virtual ~qSlicerSettingsUserInformationPanel();

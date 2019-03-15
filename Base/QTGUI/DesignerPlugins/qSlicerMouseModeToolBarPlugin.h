@@ -29,7 +29,7 @@ class Q_SLICER_DESIGNER_PLUGINS_EXPORT qSlicerMouseModeToolBarPlugin
 {
   Q_OBJECT
 public:
-  qSlicerMouseModeToolBarPlugin(QObject* parent = 0);
+  qSlicerMouseModeToolBarPlugin(QObject* parent = nullptr);
 
   QWidget *createWidget(QWidget* parent);
   QString domXml() const;

@@ -65,7 +65,7 @@ void vtkMRMLDiffusionWeightedVolumeDisplayNode::ReadXMLAttributes(const char** a
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -115,7 +115,7 @@ void vtkMRMLDiffusionWeightedVolumeDisplayNode
 vtkAlgorithmOutput* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetInputImageDataConnection()
 {
   return this->ExtractComponent->GetNumberOfInputConnections(0) ?
-    this->ExtractComponent->GetInputConnection(0,0) : 0;;
+    this->ExtractComponent->GetInputConnection(0,0) : nullptr;;
 }
 
 

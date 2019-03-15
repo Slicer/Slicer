@@ -29,7 +29,7 @@ vtkTagTableCollection::~vtkTagTableCollection ( )
 //---------------------------------------------------------------------------
 void vtkTagTableCollection::AddTableByName ( vtkTagTable *t, const char *name )
 {
-  if ( name == NULL )
+  if ( name == nullptr )
     {
     vtkErrorMacro ( "vtkTagTableCollection::AddTableByName got NULL name." );
     return;
@@ -43,7 +43,7 @@ void vtkTagTableCollection::AddTableByName ( vtkTagTable *t, const char *name )
 void vtkTagTableCollection::DeleteTableByName ( const char *name )
 {
 
-  if ( name == NULL )
+  if ( name == nullptr )
     {
     vtkErrorMacro ( "vtkTagTableCollection::DeleteTableByName got NULL name." );
     return;
@@ -52,7 +52,7 @@ void vtkTagTableCollection::DeleteTableByName ( const char *name )
   for ( int i=0; i < this->GetNumberOfItems(); i++ )
     {
     t = vtkTagTable::SafeDownCast (this->GetItemAsObject(i));
-    if ( t != NULL )
+    if ( t != nullptr )
       {
       if ( !strcmp ( t->GetName(), name ) )
         {
@@ -76,7 +76,7 @@ void vtkTagTableCollection::SetRestoreSelectionStateForAllTables ( int val )
   for ( int i=0; i < this->GetNumberOfItems(); i++ )
     {
     t = vtkTagTable::SafeDownCast (this->GetItemAsObject(i));
-    if ( t != NULL )
+    if ( t != nullptr )
       {
       t->SetRestoreSelectionState ( val );
       }
@@ -102,7 +102,7 @@ void vtkTagTableCollection::ClearAllTagTables ( )
   for ( int i=0; i < this->GetNumberOfItems(); i++ )
     {
     t = vtkTagTable::SafeDownCast (this->GetItemAsObject(i));
-    if ( t != NULL )
+    if ( t != nullptr )
       {
       t->ClearTagTable();
       }
@@ -115,16 +115,16 @@ void vtkTagTableCollection::ClearAllTagTables ( )
 vtkTagTable *vtkTagTableCollection::FindTagTableByName (const char *name )
 {
 
-  if ( name == NULL )
+  if ( name == nullptr )
     {
     vtkErrorMacro ( "vtkTagTableCollection::FindTagTableByName got NULL name." );
-    return NULL;
+    return nullptr;
     }
   vtkTagTable *t;
   for ( int i=0; i < this->GetNumberOfItems(); i++ )
     {
     t = vtkTagTable::SafeDownCast (this->GetItemAsObject(i));
-    if ( t != NULL )
+    if ( t != nullptr )
       {
       if ( !strcmp ( t->GetName(), name ) )
         {
@@ -132,6 +132,6 @@ vtkTagTable *vtkTagTableCollection::FindTagTableByName (const char *name )
         }
       }
     }
-  return ( NULL );
+  return ( nullptr );
 
 }

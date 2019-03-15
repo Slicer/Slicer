@@ -33,7 +33,7 @@ vtkMRMLInteractionNode::~vtkMRMLInteractionNode()
 //----------------------------------------------------------------------------
 int vtkMRMLInteractionNode::GetInteractionModeByString ( const char * modeString )
 {
-  if (modeString == NULL)
+  if (modeString == nullptr)
     {
     return (-1);
     }
@@ -77,7 +77,7 @@ void vtkMRMLInteractionNode::SetPlaceModePersistence ( int val )
   if (this->PlaceModePersistence != val)
     {
     this->PlaceModePersistence = val;
-    this->InvokeEvent(this->InteractionModePersistenceChangedEvent, NULL);
+    this->InvokeEvent(this->InteractionModePersistenceChangedEvent, nullptr);
     this->Modified();
     }
 }
@@ -88,7 +88,7 @@ void vtkMRMLInteractionNode::SetTransformModePersistence ( int val )
   if (this->TransformModePersistence != val)
     {
     this->TransformModePersistence = val;
-    this->InvokeEvent(this->InteractionModePersistenceChangedEvent, NULL);
+    this->InvokeEvent(this->InteractionModePersistenceChangedEvent, nullptr);
     this->Modified();
     }
 }
@@ -113,15 +113,15 @@ void vtkMRMLInteractionNode::SetCurrentInteractionMode ( int mode )
     {
     case vtkMRMLInteractionNode::Place:
       this->CurrentInteractionMode = mode;
-      this->InvokeEvent(this->InteractionModeChangedEvent, NULL);
+      this->InvokeEvent(this->InteractionModeChangedEvent, nullptr);
       break;
     case vtkMRMLInteractionNode::ViewTransform:
       this->CurrentInteractionMode = mode;
-      this->InvokeEvent(this->InteractionModeChangedEvent, NULL);
+      this->InvokeEvent(this->InteractionModeChangedEvent, nullptr);
       break;
     case vtkMRMLInteractionNode::Select:
       this->CurrentInteractionMode = mode;
-      this->InvokeEvent(this->InteractionModeChangedEvent, NULL);
+      this->InvokeEvent(this->InteractionModeChangedEvent, nullptr);
       break;
 //    case vtkMRMLInteractionNode::LassoRegion:
 //      this->CurrentInteractionMode = mode;
@@ -186,7 +186,7 @@ void vtkMRMLInteractionNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);

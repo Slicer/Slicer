@@ -36,7 +36,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebPythonProxy
 public:
 
   /// Constructor
-  explicit qSlicerWebPythonProxy(QObject *parent = 0);
+  explicit qSlicerWebPythonProxy(QObject *parent = nullptr);
 
 public slots:
 

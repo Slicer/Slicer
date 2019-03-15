@@ -22,7 +22,7 @@ class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT qSlicerAnnotationModuleWidget :
   QVTK_OBJECT
 public:
     typedef qSlicerAbstractModuleWidget Superclass;
-    qSlicerAnnotationModuleWidget(QWidget *parent=0);
+    qSlicerAnnotationModuleWidget(QWidget *parent=nullptr);
     ~qSlicerAnnotationModuleWidget();
 
     /// Different Annotation Types

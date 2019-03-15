@@ -18,7 +18,7 @@ int vtkMRMLAnnotationFiducialsStorageNodeTest1(int argc, char * argv[] )
     std::cout << "argc = " << argc<< ", arg " << a << " = " << (argv[a] ? argv[a] : "null") << std::endl;
     }
   // argv[4] is the temporary dir
-  const char *tempDir = NULL;
+  const char *tempDir = nullptr;
   if (argc > 4)
     {
     tempDir = argv[4];
@@ -27,7 +27,7 @@ int vtkMRMLAnnotationFiducialsStorageNodeTest1(int argc, char * argv[] )
   EXERCISE_ALL_BASIC_MRML_METHODS(node2.GetPointer());
 
   vtkMRMLAnnotationFiducialsStorageNode* node1 = dynamic_cast <  vtkMRMLAnnotationFiducialsStorageNode *> (node2->CreateNodeInstance());
-  if( node1 == NULL )
+  if( node1 == nullptr )
     {
       std::cerr << "Error in CreateNodeInstance()" << std::endl;
       return EXIT_FAILURE;

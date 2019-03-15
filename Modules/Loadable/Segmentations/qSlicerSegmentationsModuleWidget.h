@@ -51,7 +51,7 @@ class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsModuleWidget :
 
 public:
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerSegmentationsModuleWidget(QWidget *parent=0);
+  qSlicerSegmentationsModuleWidget(QWidget *parent=nullptr);
   virtual ~qSlicerSegmentationsModuleWidget();
 
   virtual void enter();

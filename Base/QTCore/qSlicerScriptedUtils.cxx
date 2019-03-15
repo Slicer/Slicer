@@ -36,7 +36,7 @@ bool qSlicerScriptedUtils::loadSourceAsModule(const QString& moduleName,
                                        PyObject * global_dict,
                                        PyObject * local_dict)
 {
-  PyObject* pyRes = 0;
+  PyObject* pyRes = nullptr;
   if (fileName.endsWith(".py"))
     {
     pyRes = PyRun_String(
@@ -142,7 +142,7 @@ PyObject* qSlicerPythonCppAPI::instantiateClass(QObject* cpp, const QString& cla
     qCritical() << "qSlicerPythonCppAPI::instantiateClass"
                 << " - [" << this->ObjectName << "]"
                 << " - Failed to wrap" << cpp->metaObject()->className() << "associated with " << className;
-    return 0;
+    return nullptr;
     }
 
   PyObject * arguments = PyTuple_New(1);
@@ -154,11 +154,11 @@ PyObject* qSlicerPythonCppAPI::instantiateClass(QObject* cpp, const QString& cla
   if (PyType_Check(classToInstantiate))
     {
     // New style class
-    self.setNewRef(PyObject_Call(classToInstantiate, arguments, 0));
+    self.setNewRef(PyObject_Call(classToInstantiate, arguments, nullptr));
     }
   else
     {
-    self.setNewRef(PyInstance_New(classToInstantiate, arguments, 0));
+    self.setNewRef(PyInstance_New(classToInstantiate, arguments, nullptr));
     }
 
   Py_DECREF(arguments);
@@ -169,7 +169,7 @@ PyObject* qSlicerPythonCppAPI::instantiateClass(QObject* cpp, const QString& cla
     qCritical() << "qSlicerPythonCppAPI::instantiateClass"
                 << " - [" << this->ObjectName << "]"
                 << "- Failed to instantiate scripted pythonqt class" << className << classToInstantiate;
-    return 0;
+    return nullptr;
     }
 
   foreach(int methodId, this->APIMethods.keys())
@@ -194,14 +194,14 @@ PyObject * qSlicerPythonCppAPI::callMethod(int id, PyObject * arguments)
 {
   if (!this->PythonAPIMethods.contains(id))
     {
-    return 0;
+    return nullptr;
     }
   PyObject * method = this->PythonAPIMethods.value(id).object();
   PythonQt::self()->clearError();
   PyObject * result = PyObject_CallObject(method, arguments);
   if (PythonQt::self()->handleError())
     {
-    return 0;
+    return nullptr;
     }
   return result;
 }

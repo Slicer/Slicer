@@ -212,7 +212,7 @@ int vtkMRMLVolumeNodeEventsTest(int , char * [] )
   callback->ResetNumberOfEvents();
 
   // Clear image data
-  volumeNode->SetAndObserveImageData(0);
+  volumeNode->SetAndObserveImageData(nullptr);
 
   if (!callback->GetErrorString().empty() ||
       callback->GetNumberOfEvents(vtkCommand::ModifiedEvent) != 1 ||

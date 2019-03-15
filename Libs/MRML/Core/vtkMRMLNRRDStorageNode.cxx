@@ -75,7 +75,7 @@ void vtkMRMLNRRDStorageNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -126,7 +126,7 @@ bool vtkMRMLNRRDStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 {
-  vtkMRMLVolumeNode *volNode = NULL;
+  vtkMRMLVolumeNode *volNode = nullptr;
 
   if ( refNode->IsA("vtkMRMLDiffusionTensorVolumeNode") )
     {
@@ -170,7 +170,7 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 
   if (volNode->GetImageData())
     {
-    volNode->SetAndObserveImageData (NULL);
+    volNode->SetAndObserveImageData (nullptr);
     }
 
   std::string fullName = this->GetFullNameFromFileName();
@@ -207,7 +207,7 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     {
     vtkDebugMacro("ReadData: Checking we have right info in file");
     const char *value = reader->GetHeaderValue("modality");
-    if (value == NULL)
+    if (value == nullptr)
       {
       return 0;
       }
@@ -247,7 +247,7 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   if ( refNode->IsA("vtkMRMLTensorVolumeNode") )
     {
     mat2 = reader->GetMeasurementFrameMatrix();
-    if (mat2 == NULL)
+    if (mat2 == nullptr)
       {
       vtkWarningMacro("ReadData: Measurement frame is not provided");
       }
@@ -260,7 +260,7 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   if ( refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode") )
     {
     mat2 = reader->GetMeasurementFrameMatrix();
-    if (mat2 == NULL)
+    if (mat2 == nullptr)
       {
       vtkWarningMacro("ReadData: Measurement frame is not provided");
       }
@@ -307,11 +307,11 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLNRRDStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 {
-  vtkMRMLVolumeNode *volNode = NULL;
+  vtkMRMLVolumeNode *volNode = nullptr;
   //Store volume nodes attributes.
   vtkNew<vtkMatrix4x4> mf;
-  vtkDoubleArray *grads = NULL;
-  vtkDoubleArray *bValues = NULL;
+  vtkDoubleArray *grads = nullptr;
+  vtkDoubleArray *bValues = nullptr;
   vtkNew<vtkMatrix4x4> ijkToRas;
 
   if ( refNode->IsA("vtkMRMLDiffusionTensorVolumeNode") )
@@ -359,7 +359,7 @@ int vtkMRMLNRRDStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 
   volNode->GetIJKToRASMatrix(ijkToRas.GetPointer());
 
-  if (volNode->GetImageData() == NULL)
+  if (volNode->GetImageData() == nullptr)
     {
     vtkErrorMacro("WriteData: Cannot write NULL ImageData");
     }
@@ -401,7 +401,7 @@ int vtkMRMLNRRDStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   int writeFlag = 1;
   if (writer->GetWriteError())
     {
-    vtkErrorMacro("ERROR writing NRRD file " << (writer->GetFileName() == NULL ? "null" : writer->GetFileName()));
+    vtkErrorMacro("ERROR writing NRRD file " << (writer->GetFileName() == nullptr ? "null" : writer->GetFileName()));
     writeFlag = 0;
     }
 

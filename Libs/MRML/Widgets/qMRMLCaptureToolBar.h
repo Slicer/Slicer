@@ -52,8 +52,8 @@ public:
 
   /// Constructor
   /// Title is the name of the toolbar (can appear using right click on the toolbar area)
-  qMRMLCaptureToolBar(const QString& title, QWidget* parent = 0);
-  qMRMLCaptureToolBar(QWidget* parent = 0);
+  qMRMLCaptureToolBar(const QString& title, QWidget* parent = nullptr);
+  qMRMLCaptureToolBar(QWidget* parent = nullptr);
   virtual ~qMRMLCaptureToolBar();
 
   // Get popupsTimeOut setting

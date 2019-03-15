@@ -184,12 +184,12 @@ void qSlicerScriptedLoadableModuleWidgetTester::testNodeEdit()
   vtkNew<vtkMRMLModelNode> node;
   node->SetName("Some");
 
-  QVERIFY(w.nodeEditable(NULL) == 0.3);
+  QVERIFY(w.nodeEditable(nullptr) == 0.3);
   QVERIFY(w.property("editableNodeName").toString() == QString(""));
   QVERIFY(w.nodeEditable(node.GetPointer()) == 0.7);
   QVERIFY(w.property("editableNodeName").toString() == QString("Some"));
 
-  QVERIFY(w.setEditedNode(NULL) == false);
+  QVERIFY(w.setEditedNode(nullptr) == false);
   QVERIFY(w.property("editedNodeName").toString() == QString(""));
   QVERIFY(w.setEditedNode(node.GetPointer(), "someRole", "someContext") == true);
   QVERIFY(w.property("editedNodeName").toString() == QString("Some"));

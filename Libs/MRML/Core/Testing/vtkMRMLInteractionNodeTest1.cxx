@@ -42,7 +42,7 @@ int vtkMRMLInteractionNodeTest1(int , char * [] )
     modeStr = node1->GetInteractionModeAsString(m);
     std::cout << "Interaction mode " << m << " = " << (modeStr ? modeStr : "null") << std::endl;
     }
-  int mode = node1->GetInteractionModeByString(NULL);
+  int mode = node1->GetInteractionModeByString(nullptr);
   std::cout << "For null string, interaction mode = " << mode << std::endl;
   mode = node1->GetInteractionModeByString("invalid");
   std::cout << "For 'invalid' string, interaction mode = " << mode << std::endl;

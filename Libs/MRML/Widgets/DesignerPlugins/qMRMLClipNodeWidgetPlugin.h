@@ -29,7 +29,7 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLClipNodeWidgetPlugin : public QObject,
   Q_OBJECT
 
 public:
-  qMRMLClipNodeWidgetPlugin(QObject *_parent = 0);
+  qMRMLClipNodeWidgetPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;

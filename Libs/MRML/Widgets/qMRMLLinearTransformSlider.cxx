@@ -48,7 +48,7 @@ qMRMLLinearTransformSliderPrivate::qMRMLLinearTransformSliderPrivate()
 {
   this->TypeOfTransform = qMRMLLinearTransformSlider::TRANSLATION_LR;
   this->CoordinateReference = qMRMLLinearTransformSlider::GLOBAL;
-  this->MRMLTransformNode = 0;
+  this->MRMLTransformNode = nullptr;
   this->OldPosition = 0;
 }
 
@@ -75,7 +75,7 @@ void qMRMLLinearTransformSlider::setTypeOfTransform(TransformType _typeOfTransfo
   d->TypeOfTransform = _typeOfTransform;
   if (this->isRotation())
     {
-    this->setUnitAwareProperties(0);
+    this->setUnitAwareProperties(nullptr);
     this->setSuffix(QString::fromLatin1("\xb0")); // "degree" character
     }
   else
@@ -141,7 +141,7 @@ void qMRMLLinearTransformSlider::setMRMLTransformNode(vtkMRMLTransformNode* tran
   this->onMRMLTransformNodeModified(transformNode);
   // If the node is NULL, any action on the widget is meaningless, this is why
   // the widget is disabled
-  this->setEnabled(transformNode != 0 && transformNode->IsLinear());
+  this->setEnabled(transformNode != nullptr && transformNode->IsLinear());
 }
 
 // --------------------------------------------------------------------------
@@ -171,7 +171,7 @@ void qMRMLLinearTransformSlider::onMRMLTransformNodeModified(vtkObject* caller)
     }
 
   vtkNew<vtkTransform> transform;
-  if (d->MRMLTransformNode.GetPointer() != NULL)
+  if (d->MRMLTransformNode.GetPointer() != nullptr)
     {
     qMRMLUtils::getTransformInCoordinateSystem(d->MRMLTransformNode,
       d->CoordinateReference == qMRMLLinearTransformSlider::GLOBAL, transform.GetPointer());
@@ -238,7 +238,7 @@ void qMRMLLinearTransformSlider::applyTransformation(double _sliderPosition)
 {
   Q_D(qMRMLLinearTransformSlider);
 
-  if (d->MRMLTransformNode.GetPointer() == NULL || !d->MRMLTransformNode->IsLinear())
+  if (d->MRMLTransformNode.GetPointer() == nullptr || !d->MRMLTransformNode->IsLinear())
     {
     return;
     }

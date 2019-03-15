@@ -55,7 +55,7 @@ public:
   typedef ctkLayoutViewFactory Superclass;
 
   /// Constructors
-  explicit qMRMLLayoutViewFactory(QObject* parent=0);
+  explicit qMRMLLayoutViewFactory(QObject* parent=nullptr);
   virtual ~qMRMLLayoutViewFactory();
 
   /// Returns the viewClassName property value.

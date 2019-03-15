@@ -48,7 +48,7 @@ vtkMRMLGridTransformNode::vtkMRMLGridTransformNode()
 //----------------------------------------------------------------------------
 vtkMRMLGridTransformNode::~vtkMRMLGridTransformNode()
 {
-  this->SetAndObserveTransformFromParent(NULL);
+  this->SetAndObserveTransformFromParent(nullptr);
 }
 
 //----------------------------------------------------------------------------

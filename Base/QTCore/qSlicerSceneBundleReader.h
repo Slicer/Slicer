@@ -36,7 +36,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerSceneBundleReader
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerSceneBundleReader(QObject* _parent = 0);
+  qSlicerSceneBundleReader(QObject* _parent = nullptr);
 
   virtual QString description()const;
   /// Support QString("SceneFile")

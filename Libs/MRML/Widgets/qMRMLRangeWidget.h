@@ -48,7 +48,7 @@ public:
   /// Constructor
   /// If \li parent is null, qMRMLRangeWidget will be a top-level widget
   /// \note The \li parent can be set later using QWidget::setParent()
-  explicit qMRMLRangeWidget(QWidget* parent = 0);
+  explicit qMRMLRangeWidget(QWidget* parent = nullptr);
 
   QPalette minimumHandlePalette()const;
   QPalette maximumHandlePalette()const;

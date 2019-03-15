@@ -38,15 +38,15 @@
 //---------------------------------------------------------------------------
 qMRMLViewControllerBarPrivate::qMRMLViewControllerBarPrivate(
   qMRMLViewControllerBar& object)
-  : QObject(0)
+  : QObject(nullptr)
   , q_ptr(&object)
 {
-  this->PinButton = 0;
-  this->ViewLabel = 0;
-  this->PopupWidget = 0;
-  this->BarLayout = 0;
-  this->BarWidget = 0;
-  this->ControllerLayout = 0;
+  this->PinButton = nullptr;
+  this->ViewLabel = nullptr;
+  this->PopupWidget = nullptr;
+  this->BarLayout = nullptr;
+  this->BarWidget = nullptr;
+  this->ControllerLayout = nullptr;
   this->LayoutBehavior = qMRMLViewControllerBar::Popup;
 }
 
@@ -54,13 +54,13 @@ qMRMLViewControllerBarPrivate::qMRMLViewControllerBarPrivate(
 qMRMLViewControllerBarPrivate::~qMRMLViewControllerBarPrivate()
 {
   delete this->PopupWidget;
-  this->PopupWidget = 0;
+  this->PopupWidget = nullptr;
   delete this->BarLayout;
-  this->BarLayout = 0;
+  this->BarLayout = nullptr;
   delete this->BarWidget;
-  this->BarWidget = 0;
+  this->BarWidget = nullptr;
   delete this->ControllerLayout;
-  this->ControllerLayout = 0;
+  this->ControllerLayout = nullptr;
 }
 
 //---------------------------------------------------------------------------

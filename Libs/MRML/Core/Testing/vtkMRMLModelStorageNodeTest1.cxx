@@ -87,7 +87,7 @@ int TestReadWriteData(vtkMRMLScene* scene, const char *extension, vtkPointSet *m
   CHECK_BOOL(storageNode->WriteData(modelNode.GetPointer()), true);
 
   // Clear data from model node
-  modelNode->SetAndObservePolyData(NULL);
+  modelNode->SetAndObservePolyData(nullptr);
   CHECK_NULL(modelNode->GetMesh());
 
   // Test reading

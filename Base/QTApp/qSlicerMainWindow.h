@@ -47,7 +47,7 @@ class Q_SLICER_BASE_QTAPP_EXPORT qSlicerMainWindow : public QMainWindow
 public:
   typedef QMainWindow Superclass;
 
-  qSlicerMainWindow(QWidget *parent=0);
+  qSlicerMainWindow(QWidget *parent=nullptr);
   virtual ~qSlicerMainWindow();
 
   /// Return a pointer to the module selector toolbar that can change the

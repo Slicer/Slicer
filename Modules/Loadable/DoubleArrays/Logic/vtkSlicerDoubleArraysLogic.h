@@ -44,7 +44,7 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLDoubleArrayNode* AddDoubleArray(const char* fileName,
-                                         const char* name = 0);
+                                         const char* name = nullptr);
 protected:
   vtkSlicerDoubleArraysLogic();
   virtual ~vtkSlicerDoubleArraysLogic();

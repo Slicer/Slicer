@@ -56,11 +56,11 @@ vtkMRMLNodeNewMacro(vtkMRMLSegmentationDisplayNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLSegmentationDisplayNode::vtkMRMLSegmentationDisplayNode()
-  : PreferredDisplayRepresentationName2D(NULL)
-  , PreferredDisplayRepresentationName3D(NULL)
+  : PreferredDisplayRepresentationName2D(nullptr)
+  , PreferredDisplayRepresentationName3D(nullptr)
   , NumberOfGeneratedColors(0)
   , SegmentListUpdateTime(0)
-  , SegmentListUpdateSource(0)
+  , SegmentListUpdateSource(nullptr)
   , Visibility3D(true)
   , Visibility2DFill(true)
   , Visibility2DOutline(true)
@@ -77,8 +77,8 @@ vtkMRMLSegmentationDisplayNode::vtkMRMLSegmentationDisplayNode()
 //----------------------------------------------------------------------------
 vtkMRMLSegmentationDisplayNode::~vtkMRMLSegmentationDisplayNode()
 {
-  this->SetPreferredDisplayRepresentationName2D(NULL);
-  this->SetPreferredDisplayRepresentationName3D(NULL);
+  this->SetPreferredDisplayRepresentationName2D(nullptr);
+  this->SetPreferredDisplayRepresentationName3D(nullptr);
   this->SegmentationDisplayProperties.clear();
 }
 
@@ -129,10 +129,10 @@ void vtkMRMLSegmentationDisplayNode::ReadXMLAttributes(const char** atts)
   Superclass::ReadXMLAttributes(atts);
 
   // Read all MRML node attributes from two arrays of names and values
-  const char* attName = NULL;
-  const char* attValue = NULL;
+  const char* attName = nullptr;
+  const char* attValue = nullptr;
 
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -1117,7 +1117,7 @@ void vtkMRMLSegmentationDisplayNode::GetSegmentIDs(std::vector<std::string>& seg
 //---------------------------------------------------------------------------
 void vtkMRMLSegmentationDisplayNode::GetVisibleSegmentIDs(vtkStringArray* segmentIDs)
 {
-  if (segmentIDs == NULL)
+  if (segmentIDs == nullptr)
     {
     vtkErrorMacro("vtkMRMLSegmentationDisplayNode::GetVisibleSegmentIDs failed: invalid segmentIDs");
     return;
@@ -1135,8 +1135,8 @@ void vtkMRMLSegmentationDisplayNode::GetVisibleSegmentIDs(vtkStringArray* segmen
 void vtkMRMLSegmentationDisplayNode::UpdateSegmentList(bool removeUnusedDisplayProperties /*=true*/)
 {
   vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(this->GetDisplayableNode());
-  vtkSegmentation* segmentation = segmentationNode ? segmentationNode->GetSegmentation() : NULL;
-  if (segmentation == NULL)
+  vtkSegmentation* segmentation = segmentationNode ? segmentationNode->GetSegmentation() : nullptr;
+  if (segmentation == nullptr)
     {
     // Only clear display properties if a segmentation was set before (to enable setting
     // display properties before associating with a segmentation node)
@@ -1144,7 +1144,7 @@ void vtkMRMLSegmentationDisplayNode::UpdateSegmentList(bool removeUnusedDisplayP
       {
       this->SegmentationDisplayProperties.clear();
       this->SegmentListUpdateTime = 0;
-      this->SegmentListUpdateSource = NULL;
+      this->SegmentListUpdateSource = nullptr;
       }
     return;
     }
@@ -1175,7 +1175,7 @@ void vtkMRMLSegmentationDisplayNode::UpdateSegmentList(bool removeUnusedDisplayP
     for (SegmentDisplayPropertiesMap::iterator it = this->SegmentationDisplayProperties.begin();
       it != this->SegmentationDisplayProperties.end(); ++it)
       {
-      if (segmentation->GetSegment(it->first) == NULL)
+      if (segmentation->GetSegment(it->first) == nullptr)
         {
         // The segment does not exist in segmentation
         orphanSegmentIds.push_back(it->first);

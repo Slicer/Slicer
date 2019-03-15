@@ -48,11 +48,11 @@ qMRMLEventBrokerConnection::~qMRMLEventBrokerConnection()
 void qMRMLEventBrokerConnection::addObserver(vtkObject* caller, unsigned long vtk_event,
   vtkCallbackCommand* callback, float priority)
 {
-  vtkEventBroker::GetInstance()->AddObservation(caller, vtk_event, 0, callback, priority);
+  vtkEventBroker::GetInstance()->AddObservation(caller, vtk_event, nullptr, callback, priority);
 }
 
 //-----------------------------------------------------------------------------
 void qMRMLEventBrokerConnection::removeObserver(vtkObject* caller, unsigned long vtk_event, vtkCallbackCommand* callback)
 {
-  vtkEventBroker::GetInstance()->RemoveObservations(caller, vtk_event, 0, callback);
+  vtkEventBroker::GetInstance()->RemoveObservations(caller, vtk_event, nullptr, callback);
 }

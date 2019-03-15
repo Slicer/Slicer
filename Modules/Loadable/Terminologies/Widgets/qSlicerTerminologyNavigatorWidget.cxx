@@ -79,7 +79,7 @@ qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle::~TerminologyInfoBundle
   if (this->TerminologyEntry)
     {
     this->TerminologyEntry->Delete();
-    this->TerminologyEntry = NULL;
+    this->TerminologyEntry = nullptr;
     }
   }
 
@@ -211,28 +211,28 @@ qSlicerTerminologyNavigatorWidgetPrivate::~qSlicerTerminologyNavigatorWidgetPriv
   if (this->CurrentCategoryObject)
     {
     this->CurrentCategoryObject->Delete();
-    this->CurrentCategoryObject = NULL;
+    this->CurrentCategoryObject = nullptr;
     }
   if (this->CurrentTypeObject)
     {
     this->CurrentTypeObject->Delete();
-    this->CurrentTypeObject = NULL;
+    this->CurrentTypeObject = nullptr;
     }
   if (this->CurrentTypeModifierObject)
     {
     this->CurrentTypeModifierObject->Delete();
-    this->CurrentTypeModifierObject = NULL;
+    this->CurrentTypeModifierObject = nullptr;
     }
 
   if (this->CurrentRegionObject)
     {
     this->CurrentRegionObject->Delete();
-    this->CurrentRegionObject = NULL;
+    this->CurrentRegionObject = nullptr;
     }
   if (this->CurrentRegionModifierObject)
     {
     this->CurrentRegionModifierObject->Delete();
-    this->CurrentRegionModifierObject = NULL;
+    this->CurrentRegionModifierObject = nullptr;
     }
 }
 
@@ -318,12 +318,12 @@ vtkSlicerTerminologiesModuleLogic* qSlicerTerminologyNavigatorWidgetPrivate::ter
     || !qSlicerCoreApplication::application()->moduleManager())
     {
     qCritical() << Q_FUNC_INFO << ": Module manager is not found";
-    return NULL;
+    return nullptr;
     }
   qSlicerAbstractCoreModule* terminologiesModule = qSlicerCoreApplication::application()->moduleManager()->module("Terminologies");
   if (!terminologiesModule)
     {
-    return NULL; // No error log because it makes test fail
+    return nullptr; // No error log because it makes test fail
     }
   vtkSlicerTerminologiesModuleLogic* terminologyLogic =
     vtkSlicerTerminologiesModuleLogic::SafeDownCast(terminologiesModule->logic());
@@ -340,7 +340,7 @@ void qSlicerTerminologyNavigatorWidgetPrivate::resetCurrentCategory()
   if (this->CurrentCategoryObject)
     {
     this->CurrentCategoryObject->Delete();
-    this->CurrentCategoryObject = NULL;
+    this->CurrentCategoryObject = nullptr;
     }
   this->CurrentCategoryObject = vtkSlicerTerminologyCategory::New();
 }
@@ -351,7 +351,7 @@ void qSlicerTerminologyNavigatorWidgetPrivate::resetCurrentType()
   if (this->CurrentTypeObject)
     {
     this->CurrentTypeObject->Delete();
-    this->CurrentTypeObject = NULL;
+    this->CurrentTypeObject = nullptr;
     }
   this->CurrentTypeObject = vtkSlicerTerminologyType::New();
 }
@@ -362,7 +362,7 @@ void qSlicerTerminologyNavigatorWidgetPrivate::resetCurrentTypeModifier()
   if (this->CurrentTypeModifierObject)
     {
     this->CurrentTypeModifierObject->Delete();
-    this->CurrentTypeModifierObject = NULL;
+    this->CurrentTypeModifierObject = nullptr;
     }
   this->CurrentTypeModifierObject = vtkSlicerTerminologyType::New();
 }
@@ -442,7 +442,7 @@ void qSlicerTerminologyNavigatorWidgetPrivate::resetCurrentRegion()
   if (this->CurrentRegionObject)
     {
     this->CurrentRegionObject->Delete();
-    this->CurrentRegionObject = NULL;
+    this->CurrentRegionObject = nullptr;
     }
   this->CurrentRegionObject = vtkSlicerTerminologyType::New();
 }
@@ -453,7 +453,7 @@ void qSlicerTerminologyNavigatorWidgetPrivate::resetCurrentRegionModifier()
   if (this->CurrentRegionModifierObject)
     {
     this->CurrentRegionModifierObject->Delete();
-    this->CurrentRegionModifierObject = NULL;
+    this->CurrentRegionModifierObject = nullptr;
     }
   this->CurrentRegionModifierObject = vtkSlicerTerminologyType::New();
 }
@@ -463,7 +463,7 @@ QTableWidgetItem* qSlicerTerminologyNavigatorWidgetPrivate::findTableWidgetItemF
 {
   if (!category)
     {
-    return NULL;
+    return nullptr;
     }
 
   QString categoryName(category->GetCodeMeaning());
@@ -471,7 +471,7 @@ QTableWidgetItem* qSlicerTerminologyNavigatorWidgetPrivate::findTableWidgetItemF
   QList<QTableWidgetItem*> items = this->tableWidget_Category->findItems(categoryName, flags);
   if (items.count() == 0)
     {
-    return NULL;
+    return nullptr;
     }
 
   foreach (QTableWidgetItem* item, items)
@@ -485,7 +485,7 @@ QTableWidgetItem* qSlicerTerminologyNavigatorWidgetPrivate::findTableWidgetItemF
       }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -493,7 +493,7 @@ QTableWidgetItem* qSlicerTerminologyNavigatorWidgetPrivate::findTableWidgetItemF
 {
   if (!tableWidget || !type)
     {
-    return NULL;
+    return nullptr;
     }
 
   QString typeName(type->GetCodeMeaning());
@@ -501,7 +501,7 @@ QTableWidgetItem* qSlicerTerminologyNavigatorWidgetPrivate::findTableWidgetItemF
   QList<QTableWidgetItem*> items = tableWidget->findItems(typeName, flags);
   if (items.count() == 0)
     {
-    return NULL;
+    return nullptr;
     }
 
   foreach (QTableWidgetItem* item, items)
@@ -515,7 +515,7 @@ QTableWidgetItem* qSlicerTerminologyNavigatorWidgetPrivate::findTableWidgetItemF
       }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -579,7 +579,7 @@ void qSlicerTerminologyNavigatorWidget::setTerminologyInfo(TerminologyInfoBundle
     {
     qWarning() << Q_FUNC_INFO << ": Failed to set terminology entry from given terminology info bundle";
     }
-  bool noneType = (d->CurrentTypeObject->GetCodeValue() == NULL);
+  bool noneType = (d->CurrentTypeObject->GetCodeValue() == nullptr);
 
   // Set name
   if (terminologyInfo.Name.isEmpty())
@@ -635,8 +635,8 @@ bool qSlicerTerminologyNavigatorWidget::terminologyEntry(vtkSlicerTerminologyEnt
     {
     qCritical() << Q_FUNC_INFO << ": Invalid terminology entry given";
     // Invalidate whole terminology entry
-    entry->SetTerminologyContextName(NULL);
-    entry->SetAnatomicContextName(NULL);
+    entry->SetTerminologyContextName(nullptr);
+    entry->SetAnatomicContextName(nullptr);
     return false;
     }
 
@@ -717,7 +717,7 @@ bool qSlicerTerminologyNavigatorWidget::setTerminologyEntry(vtkSlicerTerminology
   // If entry is empty then select none type for no terminology
   if (!entry->GetTerminologyContextName() && !entry->GetCategoryObject()->GetCodeValue())
     {
-    this->setCurrentType(NULL);
+    this->setCurrentType(nullptr);
     return true;
     }
 
@@ -1030,7 +1030,7 @@ void qSlicerTerminologyNavigatorWidget::populateCategoryTable()
   logic->FindCategoriesInTerminology(
     d->CurrentTerminologyName.toLatin1().constData(), categories, d->SearchBox_Category->text().toLatin1().constData() );
 
-  QTableWidgetItem* selectedItem = NULL;
+  QTableWidgetItem* selectedItem = nullptr;
   d->tableWidget_Category->setRowCount(categories.size());
   int index = 0;
   std::vector<vtkSlicerTerminologiesModuleLogic::CodeIdentifier>::iterator idIt;
@@ -1142,11 +1142,11 @@ void qSlicerTerminologyNavigatorWidget::populateTypeTable()
     ++categoryIndex;
     }
 
-    QTableWidgetItem* selectedItem = NULL;
+    QTableWidgetItem* selectedItem = nullptr;
 
     // Show none item only if search term is empty (if user is searching then they want an actual type)
     int noneTypeExists = 0;
-    QTableWidgetItem* noneItem = NULL;
+    QTableWidgetItem* noneItem = nullptr;
     if (searchTerm.empty())
     {
       noneTypeExists = 1;
@@ -1351,7 +1351,7 @@ bool qSlicerTerminologyNavigatorWidget::setCurrentCategory(vtkSlicerTerminologyC
   // Populate type table, and reset type modifier combobox and region widgets
   this->populateTypeTable();
   this->populateTypeModifierComboBox();
-  d->tableWidget_AnatomicRegion->setCurrentItem(NULL);
+  d->tableWidget_AnatomicRegion->setCurrentItem(nullptr);
   this->populateRegionModifierComboBox();
 
   // Update widget UI from current category
@@ -1861,7 +1861,7 @@ void qSlicerTerminologyNavigatorWidget::copyContextToUserDirectory(QString fileP
     QString message = QString(tr("There is a file with name '%1' in the stored contexts.\n\n"
       "Do you wish to update the stored context file with the just loaded one?")).arg(fileNameOnly);
     QMessageBox::StandardButton answer =
-      QMessageBox::question(NULL, tr("Context file exists"), message,
+      QMessageBox::question(nullptr, tr("Context file exists"), message,
       QMessageBox::Yes | QMessageBox::No, QMessageBox::No );
     if (answer == QMessageBox::No)
       {
@@ -1928,7 +1928,7 @@ void qSlicerTerminologyNavigatorWidget::populateRegionTable()
     d->CurrentAnatomicContextName.toLatin1().constData(),
     regions, d->SearchBox_AnatomicRegion->text().toLatin1().constData() );
 
-  QTableWidgetItem* selectedItem = NULL;
+  QTableWidgetItem* selectedItem = nullptr;
   d->tableWidget_AnatomicRegion->setRowCount(regions.size());
   int index = 0;
   std::vector<vtkSlicerTerminologiesModuleLogic::CodeIdentifier>::iterator idIt;

@@ -197,7 +197,7 @@ static void vtkImageConnectivityExecute(vtkImageConnectivity *self,
   short newLabel = (short)self->GetOutputLabel();
   short seedLabel = 0;
   int largest, len=1, nxy, z, nz = 0, j;
-  int *census = NULL;
+  int *census = nullptr;
   int seed[3];
   int minSize = self->GetMinSize();
   short pix;
@@ -211,14 +211,14 @@ static void vtkImageConnectivityExecute(vtkImageConnectivity *self,
   // connect
   size_t conSeedLabel = 0, i, idx, dz;
   int rank;
-  size_t *axis_len=NULL;
+  size_t *axis_len=nullptr;
   unsigned short bg = self->GetBackground();
   short bgMask = 0;
   short fgMask = 1;
   char inbackground = (char)bgMask;
-  char *conInput=NULL;
-  size_t *conOutput=NULL;
-  size_t *numIslands=NULL;
+  char *conInput=nullptr;
+  size_t *conOutput=nullptr;
+  size_t *numIslands=nullptr;
 
   // Image bounds
   outMin0 = outExt[0];   outMax0 = outExt[1];

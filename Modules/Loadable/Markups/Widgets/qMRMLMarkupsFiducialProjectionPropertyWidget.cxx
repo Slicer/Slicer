@@ -52,7 +52,7 @@ qMRMLMarkupsFiducialProjectionPropertyWidgetPrivate
 ::qMRMLMarkupsFiducialProjectionPropertyWidgetPrivate(qMRMLMarkupsFiducialProjectionPropertyWidget& object)
   : q_ptr(&object)
 {
-  this->FiducialDisplayNode = NULL;
+  this->FiducialDisplayNode = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -99,7 +99,7 @@ void qMRMLMarkupsFiducialProjectionPropertyWidget
 {
   Q_D(qMRMLMarkupsFiducialProjectionPropertyWidget);
   vtkMRMLMarkupsDisplayNode* displayNode
-    = fiducialNode ? fiducialNode->GetMarkupsDisplayNode() : NULL;
+    = fiducialNode ? fiducialNode->GetMarkupsDisplayNode() : nullptr;
 
   qvtkReconnect(d->FiducialDisplayNode, displayNode, vtkCommand::ModifiedEvent,
                 this, SLOT(updateWidgetFromDisplayNode()));
@@ -200,7 +200,7 @@ void qMRMLMarkupsFiducialProjectionPropertyWidget
 {
   Q_D(qMRMLMarkupsFiducialProjectionPropertyWidget);
 
-  this->setEnabled(d->FiducialDisplayNode != 0);
+  this->setEnabled(d->FiducialDisplayNode != nullptr);
 
   if (!d->FiducialDisplayNode)
     {

@@ -33,8 +33,8 @@ vtkMRMLNodeNewMacro(vtkMRMLDisplayableHierarchyNode);
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableHierarchyNode::vtkMRMLDisplayableHierarchyNode()
 {
-  this->DisplayNodeID = NULL;
-  this->DisplayNode = NULL;
+  this->DisplayNodeID = nullptr;
+  this->DisplayNode = nullptr;
   this->HideFromEditors = 1;
   this->Expanded = 1;
 }
@@ -42,7 +42,7 @@ vtkMRMLDisplayableHierarchyNode::vtkMRMLDisplayableHierarchyNode()
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableHierarchyNode::~vtkMRMLDisplayableHierarchyNode()
 {
-  this->SetAndObserveDisplayNodeID( NULL);
+  this->SetAndObserveDisplayNodeID( nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -52,7 +52,7 @@ void vtkMRMLDisplayableHierarchyNode::WriteXML(ostream& of, int nIndent)
 
   Superclass::WriteXML(of, nIndent);
 
-  if (this->DisplayNodeID != NULL)
+  if (this->DisplayNodeID != nullptr)
     {
     of << " displayNodeID=\"" << this->DisplayNodeID << "\"";
     }
@@ -71,7 +71,7 @@ void vtkMRMLDisplayableHierarchyNode::SetSceneReferences()
 void vtkMRMLDisplayableHierarchyNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
   Superclass::UpdateReferenceID(oldID, newID);
-  if (this->DisplayNodeID == NULL || !strcmp(oldID, this->DisplayNodeID))
+  if (this->DisplayNodeID == nullptr || !strcmp(oldID, this->DisplayNodeID))
     {
     this->SetDisplayNodeID(newID);
     }
@@ -86,7 +86,7 @@ void vtkMRMLDisplayableHierarchyNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -166,13 +166,13 @@ void vtkMRMLDisplayableHierarchyNode::UpdateReferences()
 {
   Superclass::UpdateReferences();
 
-  if (this->Scene == NULL)
+  if (this->Scene == nullptr)
     {
     return;
     }
-  if (this->DisplayNodeID != NULL && this->Scene->GetNodeByID(this->DisplayNodeID) == NULL)
+  if (this->DisplayNodeID != nullptr && this->Scene->GetNodeByID(this->DisplayNodeID) == nullptr)
     {
-    this->SetAndObserveDisplayNodeID(NULL);
+    this->SetAndObserveDisplayNodeID(nullptr);
     }
 }
 
@@ -186,7 +186,7 @@ vtkMRMLDisplayableNode* vtkMRMLDisplayableHierarchyNode::GetDisplayableNode()
 //----------------------------------------------------------------------------
 vtkMRMLDisplayNode* vtkMRMLDisplayableHierarchyNode::GetDisplayNode()
 {
-  vtkMRMLDisplayNode* node = NULL;
+  vtkMRMLDisplayNode* node = nullptr;
   if (this->GetScene() && this->GetDisplayNodeID() )
     {
     vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->DisplayNodeID);
@@ -220,10 +220,10 @@ void vtkMRMLDisplayableHierarchyNode::ProcessMRMLEvents ( vtkObject *caller,
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
   vtkMRMLDisplayNode *dnode = this->GetDisplayNode();
-  if (dnode != NULL && dnode == vtkMRMLDisplayNode::SafeDownCast(caller) &&
+  if (dnode != nullptr && dnode == vtkMRMLDisplayNode::SafeDownCast(caller) &&
       event ==  vtkCommand::ModifiedEvent)
     {
-    this->InvokeEvent(vtkMRMLDisplayableHierarchyNode::DisplayModifiedEvent, NULL);
+    this->InvokeEvent(vtkMRMLDisplayableHierarchyNode::DisplayModifiedEvent, nullptr);
     }
   return;
 }
@@ -233,7 +233,7 @@ vtkMRMLDisplayableHierarchyNode* vtkMRMLDisplayableHierarchyNode::GetCollapsedPa
 {
   // initialize the return node to null, if there are no collapsed hierarchy
   // nodes, returns null
-  vtkMRMLDisplayableHierarchyNode *node = NULL;
+  vtkMRMLDisplayableHierarchyNode *node = nullptr;
 
   // build up a vector of collapsed parents
   std::vector< vtkMRMLDisplayableHierarchyNode * > collapsedParents;
@@ -267,7 +267,7 @@ void vtkMRMLDisplayableHierarchyNode::GetChildrenDisplayableNodes(vtkCollection 
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayableHierarchyNode::RemoveChildrenNodes()
 {
-  if (this->GetScene() == NULL)
+  if (this->GetScene() == nullptr)
     {
     return;
     }
@@ -297,7 +297,7 @@ void vtkMRMLDisplayableHierarchyNode::RemoveChildrenNodes()
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayableHierarchyNode::RemoveAllChildrenNodes()
 {
-  if (this->GetScene() == NULL)
+  if (this->GetScene() == nullptr)
     {
     return;
     }

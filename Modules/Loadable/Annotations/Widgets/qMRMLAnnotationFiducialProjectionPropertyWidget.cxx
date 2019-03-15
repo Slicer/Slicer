@@ -51,7 +51,7 @@ qMRMLAnnotationFiducialProjectionPropertyWidgetPrivate
 ::qMRMLAnnotationFiducialProjectionPropertyWidgetPrivate(qMRMLAnnotationFiducialProjectionPropertyWidget& object)
   : q_ptr(&object)
 {
-  this->FiducialDisplayNode = NULL;
+  this->FiducialDisplayNode = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -181,7 +181,7 @@ void qMRMLAnnotationFiducialProjectionPropertyWidget
 {
   Q_D(qMRMLAnnotationFiducialProjectionPropertyWidget);
 
-  this->setEnabled(d->FiducialDisplayNode != 0);
+  this->setEnabled(d->FiducialDisplayNode != nullptr);
 
   if (!d->FiducialDisplayNode)
     {

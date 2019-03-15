@@ -9,8 +9,8 @@ vtkStandardNewMacro(vtkSlicerTask);
 //----------------------------------------------------------------------------
 vtkSlicerTask::vtkSlicerTask()
 {
-  this->TaskObject = 0;
-  this->TaskFunction = 0;
+  this->TaskObject = nullptr;
+  this->TaskFunction = nullptr;
   this->Type = vtkSlicerTask::Undefined;
 }
 //----------------------------------------------------------------------------

@@ -28,9 +28,9 @@ static void PrintNames(std::vector< vtkMRMLHierarchyNode *> kids)
 {
   for (unsigned int i = 0; i < kids.size(); i++)
     {
-    if (kids[i] != NULL)
+    if (kids[i] != nullptr)
       {
-      std::cout << "\t" << i << " name = " << (kids[i]->GetName() != NULL ? kids[i]->GetName() : "NULL") << std::endl;
+      std::cout << "\t" << i << " name = " << (kids[i]->GetName() != nullptr ? kids[i]->GetName() : "NULL") << std::endl;
       std::cout << "\t\tID = " << (kids[i]->GetID() ? kids[i]->GetID() : "(no id)") << std::endl;
       std::cout << "\t\tnumber of children nodes = " << kids[i]->GetNumberOfChildrenNodes() << std::endl;
       }

@@ -37,7 +37,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerFileReader
   Q_OBJECT
 public:
   typedef qSlicerIO Superclass;
-  explicit qSlicerFileReader(QObject* parent = 0);
+  explicit qSlicerFileReader(QObject* parent = nullptr);
   virtual ~qSlicerFileReader();
 
   /// Return  a list of the supported extensions. Please read
@@ -57,7 +57,7 @@ public:
   /// \param longestExtensionMatchPtr If non-zero then the method returns
   /// the length of the longest matched extension length in this argument.
   /// It can be used to determine how specifically extension matched.
-  QStringList supportedNameFilters(const QString& fileName, int* longestExtensionMatchPtr = NULL)const;
+  QStringList supportedNameFilters(const QString& fileName, int* longestExtensionMatchPtr = nullptr)const;
 
   /// Properties availables : fileMode, multipleFiles, fileType.
   virtual bool load(const IOProperties& properties);

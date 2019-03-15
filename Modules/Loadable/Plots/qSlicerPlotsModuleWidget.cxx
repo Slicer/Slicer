@@ -72,8 +72,8 @@ public:
 qSlicerPlotsModuleWidgetPrivate::qSlicerPlotsModuleWidgetPrivate(qSlicerPlotsModuleWidget& object)
   : q_ptr(&object)
 {
-  this->MRMLPlotChartNode = 0;
-  this->MRMLPlotSeriesNode = 0;
+  this->MRMLPlotChartNode = nullptr;
+  this->MRMLPlotSeriesNode = nullptr;
 }
 //-----------------------------------------------------------------------------
 vtkSlicerPlotsLogic* qSlicerPlotsModuleWidgetPrivate::logic()const
@@ -253,10 +253,10 @@ void qSlicerPlotsModuleWidget::onCopyPlotSeriesNodeClicked()
     }
 
 
-  vtkMRMLPlotSeriesNode *clonedSeriesNode = logic->CloneSeries(d->MRMLPlotSeriesNode, NULL);
+  vtkMRMLPlotSeriesNode *clonedSeriesNode = logic->CloneSeries(d->MRMLPlotSeriesNode, nullptr);
 
   // Add the cloned node to the selected chart node
-  if (d->MRMLPlotChartNode!= NULL)
+  if (d->MRMLPlotChartNode!= nullptr)
     {
     d->MRMLPlotChartNode->AddAndObservePlotSeriesNodeID(clonedSeriesNode->GetID());
     }

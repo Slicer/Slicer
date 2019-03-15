@@ -35,7 +35,7 @@ class Q_SLICER_MODULE_TERMINOLOGIES_WIDGETS_EXPORT qSlicerTerminologyItemDelegat
   Q_OBJECT
 
 public:
-  qSlicerTerminologyItemDelegate(QObject *parent = 0);
+  qSlicerTerminologyItemDelegate(QObject *parent = nullptr);
 
   enum TerminologyItemDataRole
   {

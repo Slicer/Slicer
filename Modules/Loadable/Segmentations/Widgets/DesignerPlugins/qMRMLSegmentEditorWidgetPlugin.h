@@ -30,7 +30,7 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_PLUGINS_EXPORT qMRMLSegmentEditorWid
   Q_OBJECT
 
 public:
-  qMRMLSegmentEditorWidgetPlugin(QObject* parent = 0);
+  qMRMLSegmentEditorWidgetPlugin(QObject* parent = nullptr);
 
   QWidget *createWidget(QWidget* parent);
   QString  domXml() const;

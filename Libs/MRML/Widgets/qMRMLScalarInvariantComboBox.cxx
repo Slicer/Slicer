@@ -56,8 +56,8 @@ qMRMLScalarInvariantComboBoxPrivate::qMRMLScalarInvariantComboBoxPrivate(
   qMRMLScalarInvariantComboBox& object)
   : q_ptr(&object)
 {
-  this->ComboBox = 0;
-  this->DisplayPropertiesNode = 0;
+  this->ComboBox = nullptr;
+  this->DisplayPropertiesNode = nullptr;
 }
 
 //------------------------------------------------------------------------------

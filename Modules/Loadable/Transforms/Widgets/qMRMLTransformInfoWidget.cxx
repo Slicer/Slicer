@@ -59,9 +59,9 @@ qMRMLTransformInfoWidgetPrivate
 ::qMRMLTransformInfoWidgetPrivate(qMRMLTransformInfoWidget& object)
   : q_ptr(&object)
 {
-  this->TransformNode = 0;
-  this->CrosshairNode = 0;
-  this->MRMLScene = 0;
+  this->TransformNode = nullptr;
+  this->CrosshairNode = nullptr;
+  this->MRMLScene = nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -69,7 +69,7 @@ void qMRMLTransformInfoWidgetPrivate::init()
 {
   Q_Q(qMRMLTransformInfoWidget);
   this->setupUi(q);
-  q->setEnabled(this->TransformNode.GetPointer() != 0);
+  q->setEnabled(this->TransformNode.GetPointer() != nullptr);
   this->TransformToParentInfoTextBrowser->setTextInteractionFlags(Qt::TextSelectableByMouse);
   this->TransformFromParentInfoTextBrowser->setTextInteractionFlags(Qt::TextSelectableByMouse);
 }
@@ -79,7 +79,7 @@ void qMRMLTransformInfoWidgetPrivate::setAndObserveCrosshairNode()
 {
   Q_Q(qMRMLTransformInfoWidget);
 
-  vtkMRMLCrosshairNode* crosshairNode = 0;
+  vtkMRMLCrosshairNode* crosshairNode = nullptr;
   if (this->MRMLScene.GetPointer())
     {
     crosshairNode = vtkMRMLCrosshairNode::SafeDownCast(this->MRMLScene->GetFirstNodeByClass("vtkMRMLCrosshairNode"));
@@ -201,7 +201,7 @@ void qMRMLTransformInfoWidget::updateWidgetFromMRML()
 
   updateTransformVectorDisplayFromMRML();
 
-  this->setEnabled(d->TransformNode.GetPointer() != 0);
+  this->setEnabled(d->TransformNode.GetPointer() != nullptr);
 }
 
 //------------------------------------------------------------------------------

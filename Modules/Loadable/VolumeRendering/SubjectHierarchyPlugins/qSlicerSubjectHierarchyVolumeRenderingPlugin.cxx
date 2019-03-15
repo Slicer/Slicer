@@ -72,8 +72,8 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyVolumeRenderingPluginPrivate::qSlicerSubjectHierarchyVolumeRenderingPluginPrivate(qSlicerSubjectHierarchyVolumeRenderingPlugin& object)
 : q_ptr(&object)
-, ToggleVolumeRenderingAction(NULL)
-, VolumeRenderingOptionsAction(NULL)
+, ToggleVolumeRenderingAction(nullptr)
+, VolumeRenderingOptionsAction(nullptr)
 {
 }
 
@@ -154,7 +154,7 @@ void qSlicerSubjectHierarchyVolumeRenderingPlugin::showVisibilityContextMenuActi
   if (qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes")->canOwnSubjectHierarchyItem(itemID))
     {
     vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(shNode->GetItemDataNode(itemID));
-    vtkMRMLVolumeRenderingDisplayNode* displayNode = NULL;
+    vtkMRMLVolumeRenderingDisplayNode* displayNode = nullptr;
     if (!volumeNode)
       {
       qCritical() << Q_FUNC_INFO << ": Failed to find scalar volume node associated to subject hierarchy item " << itemID;

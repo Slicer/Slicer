@@ -33,8 +33,8 @@ int vtkMRMLDisplayableHierarchyLogicTest1(int , char * [] )
 
   // test null pointers
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  char *id = displayableHierarchyLogic->AddDisplayableHierarchyNodeForNode(NULL);
-  if (id != NULL)
+  char *id = displayableHierarchyLogic->AddDisplayableHierarchyNodeForNode(nullptr);
+  if (id != nullptr)
     {
     std::cerr << "AddDisplayableHierarchyNodeForNode did not return null for a null node" << std::endl;
     return EXIT_FAILURE;
@@ -42,7 +42,7 @@ int vtkMRMLDisplayableHierarchyLogicTest1(int , char * [] )
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  bool flag =  displayableHierarchyLogic->AddChildToParent(NULL, NULL);
+  bool flag =  displayableHierarchyLogic->AddChildToParent(nullptr, nullptr);
   if (flag != false)
     {
     std::cerr << "AddChildToParent did not fail for null nodes" << std::endl;
@@ -57,7 +57,7 @@ int vtkMRMLDisplayableHierarchyLogicTest1(int , char * [] )
   scene->AddNode(m2);
 
   id = displayableHierarchyLogic->AddDisplayableHierarchyNodeForNode(m1);
-  if (id == NULL)
+  if (id == nullptr)
     {
     std::cerr << "AddDisplayableHierarchyNodeForNode returned null for valid node " << m1->GetID() << std::endl;
     return EXIT_FAILURE;

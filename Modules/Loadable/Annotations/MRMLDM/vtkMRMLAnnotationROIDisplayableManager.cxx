@@ -131,17 +131,17 @@ vtkAbstractWidget * vtkMRMLAnnotationROIDisplayableManager::CreateWidget(vtkMRML
   if (!node)
     {
     vtkErrorMacro("CreateWidget: Node not set!")
-    return 0;
+    return nullptr;
     }
 
   vtkMRMLAnnotationROINode* roiNode = vtkMRMLAnnotationROINode::SafeDownCast(node);
   if (!roiNode)
     {
     vtkErrorMacro("CreateWidget: Could not get ROI node!")
-    return 0;
+    return nullptr;
     }
 
-  vtkAnnotationROIWidget* roiWidget = NULL;
+  vtkAnnotationROIWidget* roiWidget = nullptr;
   if (this->Is2DDisplayableManager())
     {
     roiWidget = vtkAnnotationROIWidget2D::New();
@@ -243,7 +243,7 @@ void vtkMRMLAnnotationROIDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNode*
     {
     vtkAnnotationROIWidget2D* roiWidget = vtkAnnotationROIWidget2D::SafeDownCast(this->Helper->GetWidget(annotationNode));
     vtkAnnotationROIRepresentation2D* rep = vtkAnnotationROIRepresentation2D::SafeDownCast(
-      roiWidget ? roiWidget->GetRepresentation() : 0);
+      roiWidget ? roiWidget->GetRepresentation() : nullptr);
 
     if (rep)
       {
@@ -356,7 +356,7 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnota
   transformToWorld->Identity();
 
   vtkMRMLTransformNode* tnode = roiNode->GetParentTransformNode();
-  if (tnode != NULL && tnode->IsTransformToWorldLinear())
+  if (tnode != nullptr && tnode->IsTransformToWorldLinear())
     {
     tnode->GetMatrixTransformToWorld(transformToWorld.GetPointer());
     }
@@ -495,7 +495,7 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget2D(vtkMRMLAnno
   transformToWorld->Identity();
 
   vtkMRMLTransformNode* tnode = roiNode->GetParentTransformNode();
-  if (tnode != NULL && tnode->IsTransformToWorldLinear())
+  if (tnode != nullptr && tnode->IsTransformToWorldLinear())
     {
     tnode->GetMatrixTransformToWorld(transformToWorld.GetPointer());
     }
@@ -744,7 +744,7 @@ void vtkMRMLAnnotationROIDisplayableManager::SetParentTransformToWidget(vtkMRMLA
 
   // get the nodes's transform node
   vtkMRMLTransformNode* tnode = node->GetParentTransformNode();
-  if (rep != NULL && tnode != NULL && tnode->IsTransformToWorldLinear())
+  if (rep != nullptr && tnode != nullptr && tnode->IsTransformToWorldLinear())
     {
     tnode->GetMatrixTransformToWorld(transformToWorld.GetPointer());
     }

@@ -54,7 +54,7 @@ public:
   typedef QWidget Superclass;
 
   /// Constructor
-  explicit qSlicerWebWidget(QWidget* parent = 0);
+  explicit qSlicerWebWidget(QWidget* parent = nullptr);
 
   /// Destructor
   virtual ~qSlicerWebWidget();
@@ -117,7 +117,7 @@ protected slots:
   void handleSslErrors(QNetworkReply* reply, const QList<QSslError> &errors);
 
 protected:
-  qSlicerWebWidget(qSlicerWebWidgetPrivate* pimpl, QWidget* parent = 0);
+  qSlicerWebWidget(qSlicerWebWidgetPrivate* pimpl, QWidget* parent = nullptr);
   QScopedPointer<qSlicerWebWidgetPrivate> d_ptr;
 
   /// Event filter used to capture WebView Show and Hide events in order to both set

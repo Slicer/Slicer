@@ -163,7 +163,7 @@ public:
   /// \sa qSlicerCoreIOManager::saveScene
   /// If screenShot is not null, use it as the screen shot for a scene view
   /// Returns false if the save failed
-  bool SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkImageData* screenShot = NULL);
+  bool SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkImageData* screenShot = nullptr);
 
   /// Open the file into a temp directory and load the scene file
   /// inside.  Note that the first mrml file found in the extracted
@@ -207,7 +207,7 @@ public:
   void InvokeEventWithDelay(unsigned int delayInMs,
                             vtkObject* caller,
                             unsigned long eventID = vtkCommand::ModifiedEvent,
-                            void* callData = 0);
+                            void* callData = nullptr);
 
   /// Return the temporary path that was set by the application
   const char* GetTemporaryPath();

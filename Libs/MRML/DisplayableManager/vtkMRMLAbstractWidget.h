@@ -74,7 +74,7 @@ public:
   virtual vtkMRMLAbstractWidgetRepresentation *GetRepresentation();
 
   /// Build the actors of the representation with the info stored in the MRML scene
-  virtual void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = NULL);
+  virtual void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = nullptr);
 
   /// Convenient method to change what state the widget is in.
   vtkSetMacro(WidgetState,int);

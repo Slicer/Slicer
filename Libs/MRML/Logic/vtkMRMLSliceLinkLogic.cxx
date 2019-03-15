@@ -105,7 +105,7 @@ void vtkMRMLSliceLinkLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 
   this->SetAndObserveMRMLSceneEventsInternal(newScene, events.GetPointer(), priorities.GetPointer());
 
-  this->ProcessMRMLSceneEvents(newScene, vtkCommand::ModifiedEvent, 0);
+  this->ProcessMRMLSceneEvents(newScene, vtkCommand::ModifiedEvent, nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -311,7 +311,7 @@ void vtkMRMLSliceLinkLogic::PrintSelf(ostream& os, vtkIndent indent)
 bool vtkMRMLSliceLinkLogic::IsOrientationMatching(vtkMRMLSliceNode *sliceNode1, vtkMRMLSliceNode *sliceNode2,
   double comparisonTolerance /* = 0.001 */)
 {
-  if (sliceNode1 == NULL || sliceNode2 == NULL)
+  if (sliceNode1 == nullptr || sliceNode2 == nullptr)
     {
     vtkErrorMacro("vtkMRMLSliceLinkLogic::IsOrientationMatching failed: invalid input");
     return false;
@@ -598,7 +598,7 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceCompositeNodeEvent(vtkMRMLSliceComposi
 //----------------------------------------------------------------------------
 vtkMRMLSliceCompositeNode* vtkMRMLSliceLinkLogic::GetCompositeNode(vtkMRMLSliceNode* sliceNode)
 {
-  vtkMRMLSliceCompositeNode* compositeNode = 0;
+  vtkMRMLSliceCompositeNode* compositeNode = nullptr;
 
   vtkCollectionSimpleIterator it;
   vtkSmartPointer<vtkCollection> nodes;
@@ -613,7 +613,7 @@ vtkMRMLSliceCompositeNode* vtkMRMLSliceLinkLogic::GetCompositeNode(vtkMRMLSliceN
       break;
       }
 
-    compositeNode = 0;
+    compositeNode = nullptr;
     }
 
   return compositeNode;

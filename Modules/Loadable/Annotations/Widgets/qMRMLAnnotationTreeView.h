@@ -47,7 +47,7 @@ class Q_SLICER_MODULE_ANNOTATIONS_WIDGETS_EXPORT qMRMLAnnotationTreeView
 
 public:
   typedef qMRMLTreeView Superclass;
-  qMRMLAnnotationTreeView(QWidget *parent=0);
+  qMRMLAnnotationTreeView(QWidget *parent=nullptr);
   virtual ~qMRMLAnnotationTreeView();
 
   void hideScene();

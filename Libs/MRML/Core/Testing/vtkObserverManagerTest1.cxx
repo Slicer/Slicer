@@ -34,10 +34,10 @@ void TestCallback( vtkObject *caller,
     {
     std::cout << "testString = " << myCBStruct->testString << std::endl;
     }
-  if (caller != NULL)
+  if (caller != nullptr)
     {
     vtkMRMLModelNode *callNode = vtkMRMLModelNode::SafeDownCast(caller);
-    if (callNode != NULL)
+    if (callNode != nullptr)
       {
       std::cout << "Caller name = " << callNode->GetName();
       }
@@ -68,7 +68,7 @@ int vtkObserverManagerTest1(int , char * [] )
 
   // get the call back
   vtkCallbackCommand* callbackCommand = observerManager->GetCallbackCommand();
-  if (callbackCommand == NULL)
+  if (callbackCommand == nullptr)
     {
      std::cerr << "Error getting call back command."  << std::endl;
     return EXIT_FAILURE;
@@ -109,7 +109,7 @@ int vtkObserverManagerTest1(int , char * [] )
   vtkMRMLModelNode *observed4 = vtkMRMLModelNode::New();
   observerManager->SetAndObserveObjectEvents(vtkObjectPointer( &(observed4)), observed4, events.GetPointer());
   observed4->SetName("Fourth node callback");
-  observerManager->SetAndObserveObject(vtkObjectPointer(&(observed4)), NULL);
+  observerManager->SetAndObserveObject(vtkObjectPointer(&(observed4)), nullptr);
   // don't need to call delete, the prior command nulled it
   //observed4->Delete();
 

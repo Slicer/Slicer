@@ -149,13 +149,13 @@ qSlicerApplicationPrivate::qSlicerApplicationPrivate(
     qSlicerIOManager * ioManager)
   : qSlicerCoreApplicationPrivate(object, commandOptions, ioManager), q_ptr(&object)
 {
-  this->ToolTipTrapper = 0;
-  this->SettingsDialog = 0;
+  this->ToolTipTrapper = nullptr;
+  this->SettingsDialog = nullptr;
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-  this->ExtensionsManagerDialog = 0;
+  this->ExtensionsManagerDialog = nullptr;
 #endif
 #ifdef Slicer_USE_QtTesting
-  this->TestingUtility = 0;
+  this->TestingUtility = nullptr;
 #endif
 }
 
@@ -163,17 +163,17 @@ qSlicerApplicationPrivate::qSlicerApplicationPrivate(
 qSlicerApplicationPrivate::~qSlicerApplicationPrivate()
 {
   delete this->SettingsDialog;
-  this->SettingsDialog = 0;
+  this->SettingsDialog = nullptr;
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   if(this->ExtensionsManagerDialog)
     {
     delete this->ExtensionsManagerDialog;
-    this->ExtensionsManagerDialog =0;
+    this->ExtensionsManagerDialog =nullptr;
     }
 #endif
 #ifdef Slicer_USE_QtTesting
   delete this->TestingUtility;
-  this->TestingUtility = 0;
+  this->TestingUtility = nullptr;
 #endif
 }
 
@@ -246,7 +246,7 @@ void qSlicerApplicationPrivate::init()
   //----------------------------------------------------------------------------
   // Settings Dialog
   //----------------------------------------------------------------------------
-  this->SettingsDialog = new ctkSettingsDialog(0);
+  this->SettingsDialog = new ctkSettingsDialog(nullptr);
   this->SettingsDialog->setResetButton(true);
   // Some settings panels are quite large, show maximize button to allow resizing with a single click
   this->SettingsDialog->setWindowFlags(this->SettingsDialog->windowFlags() | Qt::WindowMaximizeButtonHint);
@@ -300,7 +300,7 @@ void qSlicerApplicationPrivate::init()
   // Test Utility
   //----------------------------------------------------------------------------
 #ifdef Slicer_USE_QtTesting
-  this->TestingUtility = new ctkQtTestingUtility(0);
+  this->TestingUtility = new ctkQtTestingUtility(nullptr);
   this->TestingUtility->addEventObserver(
       "xml", new ctkXMLEventObserver(this->TestingUtility));
   ctkXMLEventSource* eventSource = new ctkXMLEventSource(this->TestingUtility);
@@ -349,7 +349,7 @@ QSettings* qSlicerApplicationPrivate::newSettings()
 
 //-----------------------------------------------------------------------------
 qSlicerApplication::qSlicerApplication(int &_argc, char **_argv)
-  : Superclass(new qSlicerApplicationPrivate(*this, new qSlicerCommandOptions, 0), _argc, _argv)
+  : Superclass(new qSlicerApplicationPrivate(*this, new qSlicerCommandOptions, nullptr), _argc, _argv)
 {
   Q_D(qSlicerApplication);
   d->init();
@@ -369,7 +369,7 @@ qSlicerApplication::~qSlicerApplication()
   ctkPythonConsole* pythonConsolePtr = this->pythonConsole();
   if (pythonConsolePtr)
     {
-    if (pythonConsolePtr->parent() == NULL)
+    if (pythonConsolePtr->parent() == nullptr)
       {
       delete pythonConsolePtr;
       }
@@ -437,7 +437,7 @@ qSlicerPythonManager* qSlicerApplication::pythonManager()
 {
   if (qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
     {
-    return 0;
+    return nullptr;
     }
   qSlicerPythonManager* _pythonManager = qobject_cast<qSlicerPythonManager*>(this->corePythonManager());
   Q_ASSERT(_pythonManager);
@@ -449,7 +449,7 @@ ctkPythonConsole* qSlicerApplication::pythonConsole()
 {
   if (qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
     {
-    return 0;
+    return nullptr;
     }
   return Superclass::pythonConsole();
 }
@@ -472,9 +472,9 @@ void qSlicerApplication::setLayoutManager(qSlicerLayoutManager* layoutManager)
   if (this->applicationLogic())
     {
     this->applicationLogic()->SetSliceLogics(
-      d->LayoutManager? d->LayoutManager.data()->mrmlSliceLogics() : 0);
+      d->LayoutManager? d->LayoutManager.data()->mrmlSliceLogics() : nullptr);
     this->applicationLogic()->SetViewLogics(
-      d->LayoutManager? d->LayoutManager.data()->mrmlViewLogics() : 0);
+      d->LayoutManager? d->LayoutManager.data()->mrmlViewLogics() : nullptr);
     if (d->LayoutManager)
       {
       d->LayoutManager.data()->setMRMLColorLogic(this->applicationLogic()->GetColorLogic());
@@ -500,7 +500,7 @@ QMainWindow* qSlicerApplication::mainWindow()const
       return window;
       }
     }
-  return 0;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -687,7 +687,7 @@ void qSlicerApplication::openExtensionsManagerDialog()
   Q_D(qSlicerApplication);
   if(!d->ExtensionsManagerDialog)
     {
-    d->ExtensionsManagerDialog = new qSlicerExtensionsManagerDialog(0);
+    d->ExtensionsManagerDialog = new qSlicerExtensionsManagerDialog(nullptr);
     }
   if (!d->ExtensionsManagerDialog->extensionsManagerModel() &&
       this->mainWindow())

@@ -41,7 +41,7 @@ class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerVolumeRenderingPrese
 public:
   /// Constructors
   typedef qSlicerWidget Superclass;
-  explicit qSlicerVolumeRenderingPresetComboBox(QWidget* parent=0);
+  explicit qSlicerVolumeRenderingPresetComboBox(QWidget* parent=nullptr);
   virtual ~qSlicerVolumeRenderingPresetComboBox();
 
   /// Get selected preset node in the combobox.

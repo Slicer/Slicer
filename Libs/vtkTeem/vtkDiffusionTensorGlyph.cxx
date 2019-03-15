@@ -44,11 +44,11 @@ vtkDiffusionTensorGlyph::vtkDiffusionTensorGlyph()
   this->ScalarInvariant = vtkDiffusionTensorMathematics::VTK_TENS_FRACTIONAL_ANISOTROPY;
 
   // These can be optionally set by the user
-  this->VolumePositionMatrix = NULL;
-  this->TensorRotationMatrix = NULL;
+  this->VolumePositionMatrix = nullptr;
+  this->TensorRotationMatrix = nullptr;
 
   this->MaskGlyphs = 0;
-  this->Mask = NULL;
+  this->Mask = nullptr;
 
   // Default to highest rendering resolution
   this->Resolution = 1;
@@ -66,17 +66,17 @@ vtkDiffusionTensorGlyph::vtkDiffusionTensorGlyph()
 vtkDiffusionTensorGlyph::~vtkDiffusionTensorGlyph()
 {
   // Delete all objects (reduce ref count by one)
-  if ( this->VolumePositionMatrix != NULL )
+  if ( this->VolumePositionMatrix != nullptr )
     {
     this->VolumePositionMatrix->Delete( );
     }
 
-  if ( this->TensorRotationMatrix != NULL )
+  if ( this->TensorRotationMatrix != nullptr )
     {
     this->TensorRotationMatrix->Delete( );
     }
 
-  if ( this->Mask != NULL )
+  if ( this->Mask != nullptr )
     {
     this->Mask->Delete( );
     }
@@ -166,8 +166,8 @@ int vtkDiffusionTensorGlyph::RequestData(
   vtkDataArray *sourceNormals;
   vtkCellArray *sourceCells, *cells;
   vtkPoints *newPts;
-  vtkFloatArray *newScalars=NULL;
-  vtkFloatArray *newNormals=NULL;
+  vtkFloatArray *newScalars=nullptr;
+  vtkFloatArray *newNormals=nullptr;
   double x[3], x2[3], s;
   vtkTransform *trans;
   vtkCell *cell;
@@ -190,7 +190,7 @@ int vtkDiffusionTensorGlyph::RequestData(
   vtkIdType ptOffset = 0;
 
   // coordinate systems for DTI
-  vtkTransform *userVolumeTransform = NULL;
+  vtkTransform *userVolumeTransform = nullptr;
   // masking of glyphs
   vtkDataArray *inMask;
   // glyph timing
@@ -330,11 +330,11 @@ int vtkDiffusionTensorGlyph::RequestData(
   // we are not necessarily outputting a glyph for every point.
 
   // Figure out if we are masking some of the glyphs
-  inMask = NULL;
+  inMask = nullptr;
 
   if (this->MaskGlyphs)
     {
-    if (this->Mask != NULL)
+    if (this->Mask != nullptr)
       {
       inMask = this->Mask->GetPointData()->GetScalars();
       }
@@ -399,7 +399,7 @@ int vtkDiffusionTensorGlyph::RequestData(
     // Only display this glyph if either:
     // a) we are masking and the mask is 1 at this location.
     // b) the trace is positive and we are not masking (default).
-    if (( ( inMask != NULL ) && inMask->GetTuple1( inPtId ) ) || ( !this->MaskGlyphs && trace > 0 ))
+    if (( ( inMask != nullptr ) && inMask->GetTuple1( inPtId ) ) || ( !this->MaskGlyphs && trace > 0 ))
       {
       // copy topology of output glyph for this point
       for (cellId=0; cellId < numSourceCells; cellId++)
@@ -607,7 +607,7 @@ int vtkDiffusionTensorGlyph::RequestData(
         trans->Identity();
 
         // Actually output the scalar invariant calculated above
-        if ( newScalars != NULL )
+        if ( newScalars != nullptr )
           {
           for (i=0; i < numSourcePts; i++)
             {
@@ -629,7 +629,7 @@ int vtkDiffusionTensorGlyph::RequestData(
         input->GetPoint(inPtId, x);
 
         // If we have a user-specified matrix modifying the output point locations
-        if ( userVolumeTransform != NULL )
+        if ( userVolumeTransform != nullptr )
           {
           userVolumeTransform->TransformPoint(x,x2);
           trans->Translate(x2[0], x2[1], x2[2]);
@@ -803,19 +803,19 @@ vtkMTimeType vtkDiffusionTensorGlyph::GetMTime()
   vtkMTimeType mTime=this->vtkObject::GetMTime();
   vtkMTimeType time;
 
-  if ( this->Mask != NULL )
+  if ( this->Mask != nullptr )
     {
     time = this->Mask->GetMTime();
     mTime = ( time > mTime ? time : mTime );
     }
 
-  if ( this->VolumePositionMatrix != NULL )
+  if ( this->VolumePositionMatrix != nullptr )
     {
     time = this->VolumePositionMatrix->GetMTime();
     mTime = ( time > mTime ? time : mTime );
     }
 
-  if ( this->TensorRotationMatrix != NULL )
+  if ( this->TensorRotationMatrix != nullptr )
     {
     time = this->TensorRotationMatrix->GetMTime();
     mTime = ( time > mTime ? time : mTime );

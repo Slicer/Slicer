@@ -378,11 +378,11 @@ public:
     }
   void SetSingletonOff()
     {
-    this->SetSingletonTag(NULL);
+    this->SetSingletonTag(nullptr);
     }
   bool IsSingleton()
     {
-    return (this->GetSingletonTag() != NULL);
+    return (this->GetSingletonTag() != nullptr);
     }
 
   /// Save node with MRML scene.
@@ -493,7 +493,7 @@ public:
   /// \a callData is passed to InvokeEvent() if the event is invoked immediately.
   ///
   /// If the event is not invoked immediately then it will be sent with `callData=NULL`.
-  virtual void InvokeCustomModifiedEvent(int eventId, void *callData=NULL)
+  virtual void InvokeCustomModifiedEvent(int eventId, void *callData=nullptr)
     {
     if (!this->GetDisableModifiedEvent())
       {
@@ -604,7 +604,7 @@ public:
   /// This method is typically called in the constructors of each subclass.
   /// The optional events argument specifies what events should be observed by default (e.g., when loading the scene from file).
   /// \sa GetReferenceNodeFromMRMLAttributeName()
-  void AddNodeReferenceRole(const char *referenceRole, const char *mrmlAttributeName=0, vtkIntArray *events=0);
+  void AddNodeReferenceRole(const char *referenceRole, const char *mrmlAttributeName=nullptr, vtkIntArray *events=nullptr);
 
   /// \brief Set a reference to a node with specified nodeID from this node for a specific \a referenceRole.
   vtkMRMLNode* SetNodeReferenceID(const char* referenceRole, const char* referencedNodeID);
@@ -620,13 +620,13 @@ public:
   /// \a referenceRole.
   ///
   /// Observe Modified event by default, optionally takes array of events
-  vtkMRMLNode* SetAndObserveNodeReferenceID(const char* referenceRole , const char* referencedNodeID, vtkIntArray *events=0);
+  vtkMRMLNode* SetAndObserveNodeReferenceID(const char* referenceRole , const char* referencedNodeID, vtkIntArray *events=nullptr);
 
   /// \brief Add and observe a reference node from this node for a specific
   /// \a referenceRole.
   ///
   /// Observe Modified event by default, optionally takes array of events.
-  vtkMRMLNode* AddAndObserveNodeReferenceID(const char* referenceRole , const char* referencedNodeID, vtkIntArray *events=0);
+  vtkMRMLNode* AddAndObserveNodeReferenceID(const char* referenceRole , const char* referencedNodeID, vtkIntArray *events=nullptr);
 
   /// \brief Set and observe the Nth node ID for a specific reference role.
   ///
@@ -643,7 +643,7 @@ public:
   /// \sa SetAndObserveNodeReferenceID(const char*)
   /// \sa AddAndObserveNodeReferenceID(const char*)
   /// \sa RemoveNthNodeReferenceID(int)
-  vtkMRMLNode* SetAndObserveNthNodeReferenceID(const char* referenceRole, int n, const char *referencedNodeID, vtkIntArray *events=0);
+  vtkMRMLNode* SetAndObserveNthNodeReferenceID(const char* referenceRole, int n, const char *referencedNodeID, vtkIntArray *events=nullptr);
 
   /// Convenience method that removes the Nth node ID from the list.
   void RemoveNthNodeReferenceID(const char* referenceRole, int n);
@@ -831,7 +831,7 @@ protected:
   /// Updates references and event observations on the selected referenced nodes.
   /// If referenceRole is NULL then all the roles will be updated.
   /// \sa UpdateNthNodeReference
-  virtual void UpdateNodeReferences(const char* referenceRole = NULL);
+  virtual void UpdateNodeReferences(const char* referenceRole = nullptr);
 
   /// Updates references and event observations on the selected referenced node.
   /// Update is necessary because at the time the reference was added the referenced node might not have been

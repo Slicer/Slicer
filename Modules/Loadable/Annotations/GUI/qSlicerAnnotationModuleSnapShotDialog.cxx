@@ -23,7 +23,7 @@ qSlicerAnnotationModuleSnapShotDialog
 ::qSlicerAnnotationModuleSnapShotDialog(QWidget* parentWidget)
   :Superclass(parentWidget)
 {
-  this->m_Logic = 0;
+  this->m_Logic = nullptr;
   this->setLayoutManager(qSlicerApplication::application()->layoutManager());
   this->setWindowTitle("Annotation Screenshot");
 }
@@ -33,7 +33,7 @@ qSlicerAnnotationModuleSnapShotDialog::~qSlicerAnnotationModuleSnapShotDialog()
 {
   if (this->m_Logic)
     {
-    this->m_Logic = 0;
+    this->m_Logic = nullptr;
     }
 }
 

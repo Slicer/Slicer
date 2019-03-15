@@ -35,7 +35,7 @@ class qSlicerSaveDataDialogPrivate
   Q_OBJECT
 public:
   typedef qSlicerSaveDataDialogPrivate Self;
-  explicit qSlicerSaveDataDialogPrivate(QWidget* _parent=0);
+  explicit qSlicerSaveDataDialogPrivate(QWidget* _parent=nullptr);
   virtual ~qSlicerSaveDataDialogPrivate();
 
   void populateItems();
@@ -131,7 +131,7 @@ class qSlicerFileNameItemDelegate : public QStyledItemDelegate
 {
 public:
   typedef QStyledItemDelegate Superclass;
-  qSlicerFileNameItemDelegate( QObject * parent = 0 );
+  qSlicerFileNameItemDelegate( QObject * parent = nullptr );
   virtual QWidget* createEditor( QWidget * parent,
                                  const QStyleOptionViewItem & option,
                                  const QModelIndex & index ) const;

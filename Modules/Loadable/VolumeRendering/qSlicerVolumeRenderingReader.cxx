@@ -111,7 +111,7 @@ bool qSlicerVolumeRenderingReader::load(const IOProperties& properties)
   //  {
   //  name = properties["name"].toString();
   //  }
-  if (d->VolumeRenderingLogic.GetPointer() == 0)
+  if (d->VolumeRenderingLogic.GetPointer() == nullptr)
     {
     return false;
     }
@@ -123,5 +123,5 @@ bool qSlicerVolumeRenderingReader::load(const IOProperties& properties)
     loadedNodes << QString(node->GetID());
     }
   this->setLoadedNodes(loadedNodes);
-  return node != 0;
+  return node != nullptr;
 }

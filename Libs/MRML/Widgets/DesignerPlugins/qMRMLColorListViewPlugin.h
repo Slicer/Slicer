@@ -29,7 +29,7 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLColorListViewPlugin : public QObject,
   Q_OBJECT
 
 public:
-  qMRMLColorListViewPlugin(QObject *_parent = 0);
+  qMRMLColorListViewPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;

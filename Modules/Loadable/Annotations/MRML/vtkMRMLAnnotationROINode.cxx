@@ -30,9 +30,9 @@ vtkMRMLNodeNewMacro(vtkMRMLAnnotationROINode);
 //----------------------------------------------------------------------------
 vtkMRMLAnnotationROINode::vtkMRMLAnnotationROINode()
 {
-  this->LabelText = NULL;
+  this->LabelText = nullptr;
   this->SetLabelText("");
-  this->VolumeNodeID = NULL;
+  this->VolumeNodeID = nullptr;
   this->HideFromEditors = false;
   this->InsideOut = 0;
   this->InteractiveMode = 0;
@@ -78,7 +78,7 @@ vtkMRMLAnnotationROINode::~vtkMRMLAnnotationROINode()
   if (this->LabelText)
     {
     delete [] this->LabelText;
-    this->LabelText = NULL;
+    this->LabelText = nullptr;
     }
 }
 
@@ -88,11 +88,11 @@ void vtkMRMLAnnotationROINode::WriteXML(ostream& of, int nIndent)
   // Write all attributes not equal to their defaults
   Superclass::WriteXML(of, nIndent);
 
-  if (this->VolumeNodeID != NULL)
+  if (this->VolumeNodeID != nullptr)
     {
     of << " volumeNodeID=\"" << this->VolumeNodeID << "\"";
     }
-  if (this->LabelText != NULL)
+  if (this->LabelText != nullptr)
     {
     of << " labelText=\"" << this->LabelText << "\"";
     }
@@ -126,7 +126,7 @@ void vtkMRMLAnnotationROINode::ReadXMLAttributes(const char** atts)
   const char* attName;
   const char* attValue;
 
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -407,7 +407,7 @@ double* vtkMRMLAnnotationROINode::GetPointColor()
   vtkMRMLAnnotationPointDisplayNode *node = this->GetAnnotationPointDisplayNode();
   if (!node)
     {
-      return 0;
+      return nullptr;
     }
   return node->GetSelectedColor();
 }
@@ -430,7 +430,7 @@ double* vtkMRMLAnnotationROINode::GetROIAnnotationTextColor()
   vtkMRMLAnnotationTextDisplayNode *node = this->GetAnnotationTextDisplayNode();
   if (!node)
     {
-      return 0;
+      return nullptr;
     }
   return node->GetSelectedColor();
 }
@@ -453,7 +453,7 @@ double* vtkMRMLAnnotationROINode::GetLineColor()
   vtkMRMLAnnotationLineDisplayNode *node = this->GetAnnotationLineDisplayNode();
   if (!node)
     {
-      return 0;
+      return nullptr;
     }
   return node->GetSelectedColor();
 }
@@ -558,7 +558,7 @@ void vtkMRMLAnnotationROINode::GetTransformedPlanes(vtkPlanes *planes)
 
 
   vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
-  if (tnode != NULL)
+  if (tnode != nullptr)
     {
     vtkNew<vtkGeneralTransform> transform;
     tnode->GetTransformToWorld(transform.GetPointer());
@@ -660,7 +660,7 @@ void vtkMRMLAnnotationROINode::GetTransformedPlanes(vtkPlanes *planes)
 void vtkMRMLAnnotationROINode::GetBounds(double bounds[6])
 {
   vtkMath::UninitializeBounds(bounds);
-  if (this->GetPolyData() == NULL)
+  if (this->GetPolyData() == nullptr)
     {
     return;
     }

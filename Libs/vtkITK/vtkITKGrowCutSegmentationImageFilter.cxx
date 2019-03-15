@@ -586,7 +586,7 @@ void vtkITKGrowCutSegmentationImageFilter::ExecuteDataWithInformation(
   switch(input1->GetScalarType() ) {
     vtkTemplateMacro( ExecuteGrowCut(this, input1, input2,
              input3, out, outInfo,
-             static_cast< VTK_TT*>(0)));
+             static_cast< VTK_TT*>(nullptr)));
     break;
   }
 }
@@ -600,7 +600,7 @@ int vtkITKGrowCutSegmentationImageFilter::RequestInformation(
   // get the info objects
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(1);
 
-  if (inInfo != NULL)
+  if (inInfo != nullptr)
     {
     this->Superclass::RequestInformation(request, inputVector, outputVector);
     }

@@ -35,7 +35,7 @@ class qSlicerColorsReader
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerColorsReader(vtkSlicerColorLogic* colorLogic = 0, QObject* parent = 0);
+  qSlicerColorsReader(vtkSlicerColorLogic* colorLogic = nullptr, QObject* parent = nullptr);
   virtual ~qSlicerColorsReader();
 
   void setColorLogic(vtkSlicerColorLogic* colorLogic);

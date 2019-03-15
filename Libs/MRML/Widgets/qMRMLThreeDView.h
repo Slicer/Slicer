@@ -44,7 +44,7 @@ public:
   typedef ctkVTKRenderView Superclass;
 
   /// Constructors
-  explicit qMRMLThreeDView(QWidget* parent = 0);
+  explicit qMRMLThreeDView(QWidget* parent = nullptr);
   virtual ~qMRMLThreeDView();
 
   /// Add a displayable manager to the view,

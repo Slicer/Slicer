@@ -34,7 +34,7 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerAbstractModulePrivate::qSlicerAbstractModulePrivate()
 {
-  this->Action = 0;
+  this->Action = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -65,7 +65,7 @@ QImage qSlicerAbstractModule::logo()const
 QAction* qSlicerAbstractModule::action()
 {
   Q_D(qSlicerAbstractModule);
-  if (d->Action == 0)
+  if (d->Action == nullptr)
     {
     d->Action = new QAction(this->icon(), this->title(), this);
     d->Action->setObjectName(QString("action%1").arg(this->name()));

@@ -93,7 +93,7 @@ vtkDataObject* vtkClosedSurfaceToBinaryLabelmapConversionRule::ConstructRepresen
     }
   else
     {
-    return NULL;
+    return nullptr;
     }
 }
 
@@ -110,7 +110,7 @@ vtkDataObject* vtkClosedSurfaceToBinaryLabelmapConversionRule::ConstructRepresen
     }
   else
     {
-    return NULL;
+    return nullptr;
     }
 }
 

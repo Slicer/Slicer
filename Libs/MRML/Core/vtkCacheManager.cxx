@@ -17,7 +17,7 @@ vtkStandardNewMacro ( vtkCacheManager );
 //----------------------------------------------------------------------------
 vtkCacheManager::vtkCacheManager()
 {
-  this->MRMLScene = NULL;
+  this->MRMLScene = nullptr;
   this->CallbackCommand = vtkCallbackCommand::New();
   this->CachedFileList.clear();
   //--- what seem reasonable default values here?
@@ -35,7 +35,7 @@ vtkCacheManager::vtkCacheManager()
 vtkCacheManager::~vtkCacheManager()
 {
 
-  this->MRMLScene = NULL;
+  this->MRMLScene = nullptr;
   this->uriMap.clear();
   if (this->CallbackCommand)
     {
@@ -63,14 +63,14 @@ const char* vtkCacheManager::GetFileFromURIMap (const char *uri )
       return iter->second.c_str();
       }
 
-  return NULL;
+  return nullptr;
 }
 
 
 //----------------------------------------------------------------------------
 void vtkCacheManager::MapFileToURI ( const char *uri, const char *fname )
 {
-  if ( uri == NULL || fname == NULL )
+  if ( uri == nullptr || fname == nullptr )
     {
     vtkErrorMacro ( "MapFileToURI: got two null strings." );
     return;
@@ -330,7 +330,7 @@ int vtkCacheManager::GetCachedFileList ( const char *dirname )
 //----------------------------------------------------------------------------
 const char* vtkCacheManager::EncodeURI ( const char *uri )
 {
-    if (uri == NULL)
+    if (uri == nullptr)
     {
     return "(null)";
     }
@@ -355,7 +355,7 @@ const char* vtkCacheManager::EncodeURI ( const char *uri )
                                      "\"", "%22");
 
   const char *inStr = kwInString.c_str();
-  char *returnString = NULL;
+  char *returnString = nullptr;
   size_t n = strlen(inStr) + 1;
   char *cp1 = new char[n];
   const char *cp2 = (inStr);
@@ -370,14 +370,14 @@ const char* vtkCacheManager::EncodeURI ( const char *uri )
 const char* vtkCacheManager::AddCachePathToFilename ( const char *filename )
 {
   std::string cachedir ( this->GetRemoteCacheDirectory() );
-  if ( cachedir.c_str() != NULL )
+  if ( cachedir.c_str() != nullptr )
     {
     std::string ret = cachedir;
     ret += "/";
     ret += filename;
 
     const char *outStr = ret.c_str();
-    char *absoluteName = NULL;
+    char *absoluteName = nullptr;
     size_t n = strlen(outStr) + 1;
     char *cp1 = new char[n];
     const char *cp2 = (outStr);
@@ -388,7 +388,7 @@ const char* vtkCacheManager::AddCachePathToFilename ( const char *filename )
     }
   else
     {
-    return ( NULL );
+    return ( nullptr );
     }
 }
 
@@ -401,14 +401,14 @@ const char* vtkCacheManager::GetFilenameFromURI ( const char *uri )
   //--- (the download destination file).
 
 
-  if (uri == NULL)
+  if (uri == nullptr)
     {
     vtkDebugMacro("GetFilenameFromURI: input uri is null");
     return "(null)";
     }
 
   const char *mapcheck = this->GetFileFromURIMap( uri );
-  if ( mapcheck != NULL )
+  if ( mapcheck != nullptr )
     {
     return (mapcheck);
     }
@@ -472,17 +472,17 @@ const char* vtkCacheManager::GetFilenameFromURI ( const char *uri )
       extensionName = versionExtension;
       }
     }
-  if ( baseName.c_str() != NULL )
+  if ( baseName.c_str() != nullptr )
     {
     newFileName = baseName.c_str();
     }
-  if ( extensionName.c_str() != NULL )
+  if ( extensionName.c_str() != nullptr )
     {
     newFileName += extensionName.c_str();
     }
 
   //--- Create absolute path
-  if (this->GetRemoteCacheDirectory() == NULL ||
+  if (this->GetRemoteCacheDirectory() == nullptr ||
       strcmp(this->GetRemoteCacheDirectory(), "") == 0)
     {
     vtkErrorMacro("GetFilenameFromURI: remote cache dir is not set! The file will appear in the current working dir.");
@@ -493,7 +493,7 @@ const char* vtkCacheManager::GetFilenameFromURI ( const char *uri )
   fileName = vtksys::SystemTools::JoinPath ( pathComponents );
 
   const char *inStr = fileName.c_str();
-  char *returnString = NULL;
+  char *returnString = nullptr;
   size_t n = strlen(inStr) + 1;
   char *cp1 = new char[n];
   const char *cp2 = (inStr);
@@ -551,7 +551,7 @@ void vtkCacheManager::DeleteFromCachedFileList ( const char * target )
 //----------------------------------------------------------------------------
 void vtkCacheManager::DeleteFromCache( const char *target )
 {
-  if (target == NULL)
+  if (target == nullptr)
     {
     return;
     }
@@ -559,14 +559,14 @@ void vtkCacheManager::DeleteFromCache( const char *target )
   //--- discover if target already has Remote Cache Directory prepended to path.
   //--- if not, put it there.
 
-  if (this->FindCachedFile( target, this->GetRemoteCacheDirectory() ) == NULL)
+  if (this->FindCachedFile( target, this->GetRemoteCacheDirectory() ) == nullptr)
     {
     vtkDebugMacro("RemoveFromCache: can't find the target file " << target << ", so there's nothing to do, returning.");
     return;
     }
 
   std::string str = this->FindCachedFile( target, this->GetRemoteCacheDirectory() );
-  if ( str.c_str() != NULL )
+  if ( str.c_str() != nullptr )
     {
     this->MarkNodesBeforeDeletingDataFromCache ( target );
 
@@ -613,7 +613,7 @@ int vtkCacheManager::ClearCacheCheck()
   // if more than... 0? invoke CacheDirtyEvent.
   //
   std::string cachedir = this->GetRemoteCacheDirectory();
-  if ( cachedir.c_str() != NULL )
+  if ( cachedir.c_str() != nullptr )
     {
     unsigned long numFiles = vtksys::Directory::GetNumberOfFilesInDirectory( cachedir.c_str() );
     //--- assume method will return . and ..
@@ -638,7 +638,7 @@ int vtkCacheManager::ClearCache()
   //--- directory and all of its contents...
   //--- Removes the CacheDirectory all together
   //--- and then creates the directory again.
-  if ( this->RemoteCacheDirectory.c_str() != NULL )
+  if ( this->RemoteCacheDirectory.c_str() != nullptr )
     {
     this->MarkNodesBeforeDeletingDataFromCache ( this->RemoteCacheDirectory.c_str() );
     vtksys::SystemTools::RemoveADirectory ( this->RemoteCacheDirectory.c_str() );
@@ -658,7 +658,7 @@ int vtkCacheManager::ClearCache()
 //----------------------------------------------------------------------------
 float vtkCacheManager::GetCurrentCacheSize ()
 {
-  if ( this->RemoteCacheDirectory.c_str() == NULL )
+  if ( this->RemoteCacheDirectory.c_str() == nullptr )
     {
     return (0.0);
     }
@@ -682,12 +682,12 @@ void vtkCacheManager::MarkNode ( std::string str )
   for ( int n=0; n < nnodes; n++ )
     {
     node = vtkMRMLStorableNode::SafeDownCast ( this->MRMLScene->GetNthNodeByClass (n, "vtkMRMLStorableNode" ));
-    if ( node != NULL )
+    if ( node != nullptr )
       {
       int numStorageNodes = node->GetNumberOfStorageNodes();
       for (int i = 0; i < numStorageNodes; i++)
         {
-        if (node->GetNthStorageNode(i) != NULL )
+        if (node->GetNthStorageNode(i) != nullptr )
           {
           uri = node->GetNthStorageNode(i)->GetFullNameFromFileName();
           if ( str == uri )
@@ -713,7 +713,7 @@ void vtkCacheManager::MarkNodesBeforeDeletingDataFromCache (const char *target )
   //--- might be a slow performer....(?)
 
 
-  if ( target != NULL )
+  if ( target != nullptr )
     {
     std::string testFile;
     std::string longName;;
@@ -895,16 +895,16 @@ int vtkCacheManager::CachedFileExists ( const char *filename )
 const char* vtkCacheManager::FindCachedFile ( const char * target, const char *dirname )
 {
   std::string testFile;
-  const char *result = NULL;
+  const char *result = nullptr;
   char *returnString;
   size_t n;
   char *cp1;
   const char *cp2;
 
-  if (target == NULL || dirname == NULL)
+  if (target == nullptr || dirname == nullptr)
     {
     vtkErrorMacro("FindCachedFile: target or dirname null");
-    return ( NULL );
+    return ( nullptr );
     }
 
   if ( vtksys::SystemTools::FileIsDirectory ( dirname ) )
@@ -961,7 +961,7 @@ const char* vtkCacheManager::FindCachedFile ( const char * target, const char *d
         if(vtksys::SystemTools::FileIsDirectory(fullName.c_str()))
           {
           ///---compute dir and filename for recursive hunt
-          if ( (result = this->FindCachedFile ( target, fullName.c_str() )) != NULL )
+          if ( (result = this->FindCachedFile ( target, fullName.c_str() )) != nullptr )
             {
             n = strlen(result) + 1;
             cp1 = new char[n];
@@ -979,10 +979,10 @@ const char* vtkCacheManager::FindCachedFile ( const char * target, const char *d
     vtkDebugMacro ( "vtkCacheManager::GetCachedFileList: Cache Directory "
                     << this->GetRemoteCacheDirectory() <<
                     " doesn't look like a directory. \n" );
-    return (NULL);
+    return (nullptr);
     }
 
-  if ( result != NULL )
+  if ( result != nullptr )
     {
     n = strlen(result) + 1;
     cp1 = new char[n];
@@ -993,7 +993,7 @@ const char* vtkCacheManager::FindCachedFile ( const char * target, const char *d
     }
   else
     {
-    return (NULL);
+    return (nullptr);
     }
 
 }

@@ -52,7 +52,7 @@ class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorScriptedLabelEff
 
 public:
   typedef qSlicerSegmentEditorAbstractLabelEffect Superclass;
-  qSlicerSegmentEditorScriptedLabelEffect(QObject* parent = NULL);
+  qSlicerSegmentEditorScriptedLabelEffect(QObject* parent = nullptr);
   virtual ~qSlicerSegmentEditorScriptedLabelEffect();
 
   Q_INVOKABLE QString pythonSource()const;

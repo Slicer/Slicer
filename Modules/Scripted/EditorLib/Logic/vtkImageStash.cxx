@@ -22,8 +22,8 @@ vtkStandardNewMacro(vtkImageStash);
 //----------------------------------------------------------------------------
 vtkImageStash::vtkImageStash()
 {
-  this->StashImage = NULL;
-  this->StashedScalars = NULL;
+  this->StashImage = nullptr;
+  this->StashedScalars = nullptr;
   this->MultiThreader = vtkMultiThreader::New();
   this->Compressor = vtkZLibDataCompressor::New();
   this->CompressionLevel = 1; // corresponds to Z_BEST_SPEED
@@ -65,7 +65,7 @@ static void *vtkImageStash_ThreadFunction( vtkMultiThreader::ThreadInfo *generic
   vtkImageStash *self = static_cast<vtkImageStash *>(info->UserData);
   self->Stash();
   self->SetStashing(0);
-  return NULL;
+  return nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -124,7 +124,7 @@ void vtkImageStash::Stash()
   else
     {
     // couldn't really compress
-    this->SetStashedScalars(0);
+    this->SetStashedScalars(nullptr);
     this->SetStashingSucceeded(0);
     }
 }

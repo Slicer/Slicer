@@ -29,7 +29,7 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLEventBrokerWidgetPlugin
   Q_OBJECT
 
 public:
-  qMRMLEventBrokerWidgetPlugin(QObject *_parent = 0);
+  qMRMLEventBrokerWidgetPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;

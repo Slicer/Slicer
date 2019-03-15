@@ -44,7 +44,7 @@ int vtkSlicerTablesLogicAddFileTest( int argc, char * argv[] )
 {
   bool res = true;
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  CHECK_EXIT_SUCCESS(testAddInvalidFile(0));
+  CHECK_EXIT_SUCCESS(testAddInvalidFile(nullptr));
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();

@@ -63,7 +63,7 @@ public:
   typedef qMRMLLayoutSliceViewFactory Superclass;
   qSlicerLayoutCustomSliceViewFactory(QObject* parent):Superclass(parent)
   {
-    this->LastNode = 0;
+    this->LastNode = nullptr;
   }
 
   virtual ~qSlicerLayoutCustomSliceViewFactory()
@@ -78,7 +78,7 @@ protected:
     if (!this->layoutManager() || !viewNode)
       {// can't create a slice widget if there is no parent widget
       Q_ASSERT(viewNode);
-      return 0;
+      return nullptr;
       }
 
     // there is a unique slice widget per node
@@ -158,7 +158,7 @@ public:
   typedef qMRMLLayoutViewFactory Superclass;
   qMRMLLayoutCustomViewFactory(QObject* parent) : Superclass(parent)
   {
-    this->LastNode = 0;
+    this->LastNode = nullptr;
   }
   virtual ~qMRMLLayoutCustomViewFactory(){}
 
@@ -176,7 +176,7 @@ protected:
     if (!viewNode || !this->layoutManager() || !this->layoutManager()->viewport())
       {
       Q_ASSERT(viewNode);
-      return 0;
+      return nullptr;
       }
 
     // There must be a unique Custom widget per node

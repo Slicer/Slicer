@@ -49,7 +49,7 @@ int qSlicerWidgetTest1(int argc, char * argv[] )
 
   QApplication app(argc, argv);
   qSlicerWidget widget;
-  if (widget.mrmlScene() != 0)
+  if (widget.mrmlScene() != nullptr)
     {
     std::cerr << "scene incorrectly initialized." << std::endl;
     return EXIT_FAILURE;

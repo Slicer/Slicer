@@ -80,7 +80,7 @@ private:
 qMRMLSegmentationConversionParametersWidgetPrivate::qMRMLSegmentationConversionParametersWidgetPrivate(qMRMLSegmentationConversionParametersWidget& object)
   : q_ptr(&object)
 {
-  this->SegmentationNode = NULL;
+  this->SegmentationNode = nullptr;
 }
 
 // --------------------------------------------------------------------------
@@ -396,7 +396,7 @@ void qMRMLSegmentationConversionParametersWidget::applyConversion()
         this->selectedPath(), this->conversionParameters()))
   {
     QString message = QString("Failed to convert %1 to %2!").arg(d->SegmentationNode->GetName()).arg(d->TargetRepresentationName);
-    QMessageBox::warning(NULL, tr("Conversion failed"), message);
+    QMessageBox::warning(nullptr, tr("Conversion failed"), message);
   }
   QApplication::restoreOverrideCursor();
 

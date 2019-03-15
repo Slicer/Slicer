@@ -26,7 +26,7 @@ class Q_SLICER_QTMODULES_SCENEVIEWS_EXPORT qSlicerSceneViewsModuleWidget :
   QVTK_OBJECT
 public:
     typedef qSlicerAbstractModuleWidget Superclass;
-    qSlicerSceneViewsModuleWidget(QWidget *parent=0);
+    qSlicerSceneViewsModuleWidget(QWidget *parent=nullptr);
     ~qSlicerSceneViewsModuleWidget();
 
   /// Set up the GUI from mrml when entering

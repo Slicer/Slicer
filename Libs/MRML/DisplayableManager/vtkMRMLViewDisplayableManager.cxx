@@ -92,7 +92,7 @@ vtkMRMLViewDisplayableManager::vtkInternal::vtkInternal(vtkMRMLViewDisplayableMa
   this->External = external;
   this->BoxAxisBoundingBox = new vtkBoundingBox();
   this->CreateAxis();
-  this->CameraNode = 0;
+  this->CameraNode = nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -162,12 +162,12 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateRASBounds(double bounds[6
   //Bounds is x-min, x-max, y-min, y-max, z-min, z-max
   vtkMath::UninitializeBounds(bounds);
 
-  if (this->External->GetMRMLViewNode() == 0)
+  if (this->External->GetMRMLViewNode() == nullptr)
     {
     return;
     }
   vtkMRMLScene *scene = this->External->GetMRMLViewNode()->GetScene();
-  if (scene == NULL)
+  if (scene == nullptr)
     {
     return;
     }
@@ -371,7 +371,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxisVisibility()
 void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxisLabelVisibility()
 {
   vtkCamera *camera = this->External->GetRenderer() ?
-    this->External->GetRenderer()->GetActiveCamera() : 0;
+    this->External->GetRenderer()->GetActiveCamera() : nullptr;
   if (!camera ||
       !this->External->GetMRMLViewNode())
     {
@@ -560,7 +560,7 @@ vtkMRMLViewDisplayableManager::vtkMRMLViewDisplayableManager()
 //---------------------------------------------------------------------------
 vtkMRMLViewDisplayableManager::~vtkMRMLViewDisplayableManager()
 {
-  this->SetAndObserveCameraNode(NULL);
+  this->SetAndObserveCameraNode(nullptr);
   delete this->Internal;
 }
 

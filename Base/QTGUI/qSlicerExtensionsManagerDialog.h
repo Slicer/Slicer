@@ -40,7 +40,7 @@ public:
   typedef QDialog Superclass;
 
   /// Constructor
-  explicit qSlicerExtensionsManagerDialog(QWidget* parent = 0);
+  explicit qSlicerExtensionsManagerDialog(QWidget* parent = nullptr);
 
   /// Destructor
   virtual ~qSlicerExtensionsManagerDialog();

@@ -36,10 +36,10 @@ vtkMRMLROINode::vtkMRMLROINode()
   this->IJK[0] = this->IJK[1] = this->IJK[2] = 0;
   this->RadiusIJK[0] = this->RadiusIJK[1] = this->RadiusIJK[2] = 0;
   // so that the SetLabelText macro won't try to free memory
-  this->LabelText = NULL;
+  this->LabelText = nullptr;
   this->SetLabelText("");
   this->Selected = 0;
-  this->VolumeNodeID = NULL;
+  this->VolumeNodeID = nullptr;
   this->Visibility = 1;
   this->InteractiveMode = 1;
   this->HideFromEditors = 0;
@@ -52,17 +52,17 @@ vtkMRMLROINode::~vtkMRMLROINode()
   if (this->LabelText)
     {
     delete [] this->LabelText;
-    this->LabelText = NULL;
+    this->LabelText = nullptr;
     }
   if (this->ID)
     {
     delete [] this->ID;
-    this->ID = NULL;
+    this->ID = nullptr;
     }
   if (this->VolumeNodeID)
     {
     delete [] this->VolumeNodeID;
-    this->VolumeNodeID = NULL;
+    this->VolumeNodeID = nullptr;
     }
   return;
 }
@@ -73,11 +73,11 @@ void vtkMRMLROINode::WriteXML(ostream& of, int nIndent)
   // Write all attributes not equal to their defaults
   Superclass::WriteXML(of, nIndent);
 
-  if (this->VolumeNodeID != NULL)
+  if (this->VolumeNodeID != nullptr)
     {
     of << " volumeNodeID=\"" << this->VolumeNodeID << "\"";
     }
-  if (this->LabelText != NULL)
+  if (this->LabelText != nullptr)
     {
     of << " labelText=\"" << this->LabelText << "\"";
     }
@@ -107,7 +107,7 @@ void vtkMRMLROINode::ReadXMLAttributes( const char** atts)
   const char* attName;
   const char* attValue;
 
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -485,7 +485,7 @@ void vtkMRMLROINode::GetTransformedPlanes(vtkPlanes *planes)
   points->Delete();
 
   vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
-  if (tnode != NULL) // && tnode->IsTransformToWorldLinear())
+  if (tnode != nullptr) // && tnode->IsTransformToWorldLinear())
     {
     //vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
     //transformToWorld->Identity();

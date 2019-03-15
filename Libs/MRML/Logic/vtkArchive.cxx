@@ -90,7 +90,7 @@ void list_item_verbose(FILE *out, struct archive_entry *entry)
 
   /* Use uname if it's present, else uid. */
   p = archive_entry_uname(entry);
-  if ((p == NULL) || (*p == '\0'))
+  if ((p == nullptr) || (*p == '\0'))
     {
     sprintf(tmp, "%lu ",
             (unsigned long)archive_entry_uid(entry));
@@ -104,7 +104,7 @@ void list_item_verbose(FILE *out, struct archive_entry *entry)
   fprintf(out, "%-*s ", (int)u_width, p);
   /* Use gname if it's present, else gid. */
   p = archive_entry_gname(entry);
-  if (p != NULL && p[0] != '\0')
+  if (p != nullptr && p[0] != '\0')
     {
     fprintf(out, "%s", p);
     w = strlen(p);

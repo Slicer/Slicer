@@ -45,7 +45,7 @@ public:
   typedef qMRMLViewControllerBar Superclass;
 
   /// Constructors
-  explicit qMRMLChartViewControllerWidget(QWidget* parent = 0);
+  explicit qMRMLChartViewControllerWidget(QWidget* parent = nullptr);
   virtual ~qMRMLChartViewControllerWidget();
 
   /// Set the label for the chart view (abbreviation for the view

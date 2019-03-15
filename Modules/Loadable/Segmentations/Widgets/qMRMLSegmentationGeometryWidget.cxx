@@ -91,7 +91,7 @@ qMRMLSegmentationGeometryWidgetPrivate::~qMRMLSegmentationGeometryWidgetPrivate(
   if (this->Logic)
     {
     this->Logic->Delete();
-    this->Logic = 0;
+    this->Logic = nullptr;
     }
 }
 
@@ -377,7 +377,7 @@ void qMRMLSegmentationGeometryWidget::updateWidgetFromMRML()
     d->MRMLNodeComboBox_SourceGeometryNode->currentNode() );
   // Get possible source volumes
   vtkMRMLScalarVolumeNode* sourceVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(sourceNode);
-  bool sourceIsVolume = (sourceVolumeNode != 0) || d->Logic->IsSourceSegmentationWithBinaryLabelmapMaster();
+  bool sourceIsVolume = (sourceVolumeNode != nullptr) || d->Logic->IsSourceSegmentationWithBinaryLabelmapMaster();
 
   // If editing is disabled, then hide source node selector and use no source node even if was previously selected
   if (d->EditEnabled)
@@ -387,13 +387,13 @@ void qMRMLSegmentationGeometryWidget::updateWidgetFromMRML()
   else
     {
     d->frame_SourceGeometry->setVisible(false);
-    sourceNode = 0;
+    sourceNode = nullptr;
     }
 
   // If volume node is selected, then show volume spacing options box
-  d->groupBox_VolumeSpacingOptions->setVisible(sourceNode != 0 && sourceIsVolume);
+  d->groupBox_VolumeSpacingOptions->setVisible(sourceNode != nullptr && sourceIsVolume);
   // Otherwise enable spacing widget to allow editing if it's allowed
-  d->MRMLCoordinatesWidget_Spacing->setEnabled(sourceNode != 0 && !sourceIsVolume && d->EditEnabled);
+  d->MRMLCoordinatesWidget_Spacing->setEnabled(sourceNode != nullptr && !sourceIsVolume && d->EditEnabled);
 
   // If no source node is selected, then show the current labelmap geometry
   if (!sourceNode)
@@ -449,7 +449,7 @@ void qMRMLSegmentationGeometryWidget::setReferenceImageGeometryForSegmentationNo
 
   // Save reference geometry node (this is shown in Segmentations module
   // to gives a hint about which node the current geometry is based on)
-  const char* referenceGeometryNodeID = NULL;
+  const char* referenceGeometryNodeID = nullptr;
   if (d->Logic->GetSourceGeometryNode())
     {
     referenceGeometryNodeID = d->Logic->GetSourceGeometryNode()->GetID();

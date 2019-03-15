@@ -246,7 +246,7 @@ void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryMan
 //----------------------------------------------------------------------------
 void qSlicerApplicationHelper::showMRMLEventLoggerWidget()
 {
-  qMRMLEventLoggerWidget* logger = new qMRMLEventLoggerWidget(0);
+  qMRMLEventLoggerWidget* logger = new qMRMLEventLoggerWidget(nullptr);
   logger->setAttribute(Qt::WA_DeleteOnClose);
   logger->setConsoleOutputEnabled(false);
   logger->setMRMLScene(qSlicerApplication::application()->mrmlScene());
@@ -279,7 +279,7 @@ bool qSlicerApplicationHelper::checkRenderingCapabilities()
     "Graphics capabilities of this computer:\n\n");
   details += systemInfo->GetRenderingCapabilitiesDetails().c_str();
 
-  ctkMessageBox *messageBox = new ctkMessageBox(0);
+  ctkMessageBox *messageBox = new ctkMessageBox(nullptr);
   messageBox->setAttribute(Qt::WA_DeleteOnClose, true);
   messageBox->setIcon(QMessageBox::Warning);
   messageBox->setWindowTitle(tr("Insufficient graphics capability"));

@@ -25,7 +25,7 @@ vtkStandardNewMacro(vtkFSSurfaceLabelReader);
 //-------------------------------------------------------------------------
 vtkFSSurfaceLabelReader::vtkFSSurfaceLabelReader()
 {
-  this->Scalars = NULL;
+  this->Scalars = nullptr;
   this->NumberOfVertices = 0;
   this->NumberOfValues = 0;
   // from the freesurfer colour table, this is the index for the Left-Cerebral-Cortex
@@ -52,7 +52,7 @@ int vtkFSSurfaceLabelReader::ReadLabel()
   vtkFloatArray *output = this->Scalars;
 
   // Do some basic sanity checks.
-  if (output == NULL)
+  if (output == nullptr)
     {
     cerr << "ERROR vtkFSSurfaceLabelReader ReadLabel() : output is null" << endl;
     return this->FS_ERROR_W_OUTPUT_NULL;
@@ -78,7 +78,7 @@ int vtkFSSurfaceLabelReader::ReadLabel()
   // read the comment line
   char lineString[1024];
   char *retval = fgets (lineString, 1024, labelFile);
-  if (retval != 0)
+  if (retval != nullptr)
     {
     vtkDebugMacro("Comment string:" << lineString);
     }
@@ -111,7 +111,7 @@ int vtkFSSurfaceLabelReader::ReadLabel()
   // make the array big enough to hold all vertices, calloc inits all values
   // to zero as a default
   scalars = (float*) calloc (this->NumberOfVertices, sizeof(float));
-  if (scalars == NULL)
+  if (scalars == nullptr)
     {
     vtkErrorMacro(<<"vtkFSSurfaceLabelReader: error allocating " << this->NumberOfVertices << " floats!");
     return this->FS_ERROR_W_ALLOC;
@@ -196,7 +196,7 @@ void vtkFSSurfaceLabelReader::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Number of values in file: " << this->NumberOfValues << endl;
 
   os << indent << "Scalar array: " << endl;
-  if (this->Scalars == NULL)
+  if (this->Scalars == nullptr)
     {
     os << indent.GetNextIndent() << "null" << endl;
     }

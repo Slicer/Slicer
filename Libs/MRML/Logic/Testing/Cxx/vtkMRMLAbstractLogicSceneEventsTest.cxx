@@ -280,9 +280,9 @@ int vtkMRMLAbstractLogicSceneEventsTest(
   //---------------------------------------------------------------------------
   // SetMRMLScene(0)
   //---------------------------------------------------------------------------
-  testLogic->SetMRMLScene(0);
+  testLogic->SetMRMLScene(nullptr);
 
-  if (testLogic->GetMRMLScene() != 0 ||
+  if (testLogic->GetMRMLScene() != nullptr ||
       testLogic->CalledMethods.size() != 2 ||
       testLogic->CalledMethods[vtkMRMLTestLogic::Unobserve] != 1 ||
       testLogic->CalledMethods[vtkMRMLTestLogic::Set] != 1)

@@ -39,7 +39,7 @@
 qMRMLNodeComboBoxEventTranslator::qMRMLNodeComboBoxEventTranslator(QObject *parent)
   : pqWidgetEventTranslator(parent)
 {
-  this->CurrentObject = 0;
+  this->CurrentObject = nullptr;
 }
 
 // ----------------------------------------------------------------------------
@@ -49,8 +49,8 @@ bool qMRMLNodeComboBoxEventTranslator::translateEvent(QObject *Object,
 {
   Q_UNUSED(Error);
 
-  qMRMLNodeComboBox* widget = NULL;
-  for(QObject* test = Object; widget == NULL && test != NULL; test = test->parent())
+  qMRMLNodeComboBox* widget = nullptr;
+  for(QObject* test = Object; widget == nullptr && test != nullptr; test = test->parent())
     {
     widget = qobject_cast<qMRMLNodeComboBox*>(test);
     }
@@ -65,7 +65,7 @@ bool qMRMLNodeComboBoxEventTranslator::translateEvent(QObject *Object,
       {
       if(this->CurrentObject)
         {
-        disconnect(this->CurrentObject, 0, this, 0);
+        disconnect(this->CurrentObject, nullptr, this, nullptr);
         }
       this->CurrentObject = Object;
       connect(widget, SIGNAL(destroyed(QObject*)),
@@ -90,7 +90,7 @@ bool qMRMLNodeComboBoxEventTranslator::translateEvent(QObject *Object,
 // ----------------------------------------------------------------------------
 void qMRMLNodeComboBoxEventTranslator::onDestroyed(QObject* /*Object*/)
 {
-  this->CurrentObject = 0;
+  this->CurrentObject = nullptr;
 }
 
 // ----------------------------------------------------------------------------

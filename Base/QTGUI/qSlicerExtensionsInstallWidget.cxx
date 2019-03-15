@@ -45,7 +45,7 @@ qSlicerExtensionsInstallWidgetPrivate::qSlicerExtensionsInstallWidgetPrivate(qSl
     BrowsingEnabled(true)
 {
   Q_Q(qSlicerExtensionsInstallWidget);
-  this->ExtensionsManagerModel = 0;
+  this->ExtensionsManagerModel = nullptr;
   this->InstallWidgetForWebChannel = new ExtensionInstallWidgetWebChannelProxy;
   this->InstallWidgetForWebChannel->InstallWidget = q;
   this->HandleExternalUrlWithDesktopService = true;

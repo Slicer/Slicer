@@ -91,7 +91,7 @@ int qMRMLVolumeThresholdWidgetTest2(int argc, char * argv [] )
     std::cerr << "Scene must contain a valid vtkMRMLVolumeNode:" << node << std::endl;
     return EXIT_FAILURE;
     }
-  vtkMRMLSliceNode* redSliceNode = 0;
+  vtkMRMLSliceNode* redSliceNode = nullptr;
   std::vector<vtkMRMLNode*> sliceNodes;
   scene->GetNodesByClass("vtkMRMLSliceNode", sliceNodes);
   for (unsigned int i = 0; i < sliceNodes.size(); ++i)

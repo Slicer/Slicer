@@ -41,7 +41,7 @@ class Q_SLICER_QTMODULES_MODELS_EXPORT qSlicerModelsModuleWidget : public qSlice
 
 public:
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerModelsModuleWidget(QWidget *parent=0);
+  qSlicerModelsModuleWidget(QWidget *parent=nullptr);
   virtual ~qSlicerModelsModuleWidget();
 
   virtual void enter();

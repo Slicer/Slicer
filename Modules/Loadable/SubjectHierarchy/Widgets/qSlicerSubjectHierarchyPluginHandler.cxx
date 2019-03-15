@@ -42,7 +42,7 @@
 #include <vtkCallbackCommand.h>
 
 //----------------------------------------------------------------------------
-qSlicerSubjectHierarchyPluginHandler *qSlicerSubjectHierarchyPluginHandler::m_Instance = NULL;
+qSlicerSubjectHierarchyPluginHandler *qSlicerSubjectHierarchyPluginHandler::m_Instance = nullptr;
 
 //----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
@@ -55,7 +55,7 @@ public:
     {
     if (qSlicerSubjectHierarchyPluginHandler::m_Instance)
       {
-      qSlicerSubjectHierarchyPluginHandler::setInstance(NULL);
+      qSlicerSubjectHierarchyPluginHandler::setInstance(nullptr);
       }
     }
 };
@@ -99,9 +99,9 @@ void qSlicerSubjectHierarchyPluginHandler::setInstance(qSlicerSubjectHierarchyPl
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyPluginHandler::qSlicerSubjectHierarchyPluginHandler(QObject* parent)
   : QObject(parent)
-  , m_SubjectHierarchyNode(NULL)
-  , m_MRMLScene(NULL)
-  , m_PluginLogic(NULL)
+  , m_SubjectHierarchyNode(nullptr)
+  , m_MRMLScene(nullptr)
+  , m_PluginLogic(nullptr)
 {
   this->m_CurrentItems.clear();
 
@@ -134,7 +134,7 @@ qSlicerSubjectHierarchyPluginHandler::~qSlicerSubjectHierarchyPluginHandler()
 //---------------------------------------------------------------------------
 bool qSlicerSubjectHierarchyPluginHandler::registerPlugin(qSlicerSubjectHierarchyAbstractPlugin* pluginToRegister)
 {
-  if (pluginToRegister == NULL)
+  if (pluginToRegister == nullptr)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid plugin to register!";
     return false;
@@ -146,7 +146,7 @@ bool qSlicerSubjectHierarchyPluginHandler::registerPlugin(qSlicerSubjectHierarch
     }
 
   // Check if the same plugin has already been registered
-  qSlicerSubjectHierarchyAbstractPlugin* currentPlugin = NULL;
+  qSlicerSubjectHierarchyAbstractPlugin* currentPlugin = nullptr;
   foreach (currentPlugin, this->m_RegisteredPlugins)
     {
     if (pluginToRegister->name().compare(currentPlugin->name()) == 0)
@@ -186,11 +186,11 @@ qSlicerSubjectHierarchyAbstractPlugin* qSlicerSubjectHierarchyPluginHandler::plu
     }
   else if (name.isEmpty())
     {
-    return NULL;
+    return nullptr;
     }
 
   // Find plugin with name
-  qSlicerSubjectHierarchyAbstractPlugin* currentPlugin = NULL;
+  qSlicerSubjectHierarchyAbstractPlugin* currentPlugin = nullptr;
   foreach (currentPlugin, this->m_RegisteredPlugins)
     {
     if (currentPlugin->name().compare(name) == 0)
@@ -200,7 +200,7 @@ qSlicerSubjectHierarchyAbstractPlugin* qSlicerSubjectHierarchyPluginHandler::plu
     }
 
   qWarning() << Q_FUNC_INFO << ": Plugin named '" << name << "' cannot be found!";
-  return NULL;
+  return nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -209,7 +209,7 @@ QList<qSlicerSubjectHierarchyAbstractPlugin*> qSlicerSubjectHierarchyPluginHandl
 {
   QList<qSlicerSubjectHierarchyAbstractPlugin*> mostSuitablePlugins;
   double bestConfidence = 0.0;
-  qSlicerSubjectHierarchyAbstractPlugin* currentPlugin = NULL;
+  qSlicerSubjectHierarchyAbstractPlugin* currentPlugin = nullptr;
   foreach (currentPlugin, this->m_RegisteredPlugins)
     {
     double currentConfidence = currentPlugin->canAddNodeToSubjectHierarchy(node, parentItemID);
@@ -237,7 +237,7 @@ qSlicerSubjectHierarchyPluginHandler::pluginsForReparentingItemInSubjectHierarch
 {
   QList<qSlicerSubjectHierarchyAbstractPlugin*> mostSuitablePlugins;
   double bestConfidence = 0.0;
-  qSlicerSubjectHierarchyAbstractPlugin* currentPlugin = NULL;
+  qSlicerSubjectHierarchyAbstractPlugin* currentPlugin = nullptr;
   foreach (currentPlugin, this->m_RegisteredPlugins)
     {
     double currentConfidence = currentPlugin->canReparentItemInsideSubjectHierarchy(itemID, parentItemID);
@@ -266,12 +266,12 @@ qSlicerSubjectHierarchyPluginHandler::findOwnerPluginForSubjectHierarchyItem(vtk
   if (!this->m_SubjectHierarchyNode.GetPointer())
     {
     qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy node";
-    return NULL;
+    return nullptr;
     }
 
   QList<qSlicerSubjectHierarchyAbstractPlugin*> mostSuitablePlugins;
   double bestConfidence = 0.0;
-  qSlicerSubjectHierarchyAbstractPlugin* currentPlugin = NULL;
+  qSlicerSubjectHierarchyAbstractPlugin* currentPlugin = nullptr;
   foreach (currentPlugin, this->m_RegisteredPlugins)
     {
     double currentConfidence = currentPlugin->canOwnSubjectHierarchyItem(itemID);
@@ -291,7 +291,7 @@ qSlicerSubjectHierarchyPluginHandler::findOwnerPluginForSubjectHierarchyItem(vtk
     }
 
   // Determine owner plugin based on plugins returning the highest non-zero confidence values for the input item
-  qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin = NULL;
+  qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin = nullptr;
   if (mostSuitablePlugins.size() > 1)
     {
     // Let the user choose a plugin if more than one returned the same non-zero confidence value
@@ -321,7 +321,7 @@ qSlicerSubjectHierarchyAbstractPlugin* qSlicerSubjectHierarchyPluginHandler::fin
   if (!this->m_SubjectHierarchyNode.GetPointer())
     {
     qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy node";
-    return NULL;
+    return nullptr;
     }
 
   qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin = this->findOwnerPluginForSubjectHierarchyItem(itemID);
@@ -335,14 +335,14 @@ qSlicerSubjectHierarchyAbstractPlugin* qSlicerSubjectHierarchyPluginHandler::get
   if (!this->m_SubjectHierarchyNode.GetPointer())
     {
     qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy node";
-    return NULL;
+    return nullptr;
     }
 
   std::string ownerPluginName = this->m_SubjectHierarchyNode->GetItemOwnerPluginName(itemID);
   if (ownerPluginName.empty())
     {
     qCritical() << Q_FUNC_INFO << ": Item '" << this->m_SubjectHierarchyNode->GetItemName(itemID).c_str() << "' is not owned by any plugin!";
-    return NULL;
+    return nullptr;
     }
 
   return this->pluginByName(ownerPluginName.c_str());
@@ -367,7 +367,7 @@ qSlicerSubjectHierarchyAbstractPlugin* qSlicerSubjectHierarchyPluginHandler::sel
 
   // Show dialog with a combobox containing the plugins in the input list
   bool ok = false;
-  QString selectedPluginName = QInputDialog::getItem(NULL, "Select subject hierarchy plugin", textToDisplay, candidatePluginNames, 0, false, &ok);
+  QString selectedPluginName = QInputDialog::getItem(nullptr, "Select subject hierarchy plugin", textToDisplay, candidatePluginNames, 0, false, &ok);
   if (ok && !selectedPluginName.isEmpty())
     {
     // The user pressed OK, find the object for the selected plugin [1]

@@ -51,7 +51,7 @@ QStyle* qSlicerStylePlugin::create( const QString & key )
     {
     return new qSlicerDarkStyle();
     }
-  return 0;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------

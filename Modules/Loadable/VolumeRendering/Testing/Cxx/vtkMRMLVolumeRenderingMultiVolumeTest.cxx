@@ -68,7 +68,7 @@ void SetupRenderer(vtkRenderWindow* renderWindow, vtkRenderer* renderer)
 void SetupScene(vtkRenderer* renderer, vtkMRMLScene* scene, vtkMRMLApplicationLogic* applicationLogic, vtkMRMLDisplayableManagerGroup* displayableManagerGroup)
 {
   // Application logic - Handle creation of vtkMRMLSelectionNode and vtkMRMLInteractionNode
-  if (applicationLogic != 0)
+  if (applicationLogic != nullptr)
     {
     applicationLogic->SetMRMLScene(scene);
     }
@@ -156,11 +156,11 @@ public:
 
 //----------------------------------------------------------------------------
 vtkChangeImageCallback::vtkChangeImageCallback()
-  : VolumeNode(0)
+  : VolumeNode(nullptr)
   , ChangeImageBehavior(DeepCopyImage)
   , ImageDataCollection(vtkSmartPointer<vtkCollection>::New())
   , CurrentImageData(-1)
-  , Interactor(0)
+  , Interactor(nullptr)
 {
   const int imageCount = 5;
   for (int i = 0; i < imageCount; ++i)

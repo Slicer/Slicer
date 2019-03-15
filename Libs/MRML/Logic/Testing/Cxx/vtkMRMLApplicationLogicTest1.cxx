@@ -75,7 +75,7 @@ int SliceLogicsTest()
   // Set a null string
   {
     vtkMTimeType mtime = appLogic->GetMTime();
-    appLogic->SetSliceLogics(0);
+    appLogic->SetSliceLogics(nullptr);
     CHECK_NULL(appLogic->GetSliceLogics());
     CHECK_BOOL(appLogic->GetMTime() > mtime, false);
   }
@@ -94,7 +94,7 @@ int SliceLogicsTest()
   // Set a null collection.
   {
     vtkMTimeType mtime = appLogic->GetMTime();
-    appLogic->SetSliceLogics(0);
+    appLogic->SetSliceLogics(nullptr);
     CHECK_NULL(appLogic->GetSliceLogics());
     CHECK_BOOL(appLogic->GetMTime() > mtime, true);
   }
@@ -150,7 +150,7 @@ int TemporaryPathTest()
 {
   vtkNew<vtkMRMLApplicationLogic> MRMLAppLogic;
 
-  MRMLAppLogic->SetTemporaryPath(NULL); // Test NULL
+  MRMLAppLogic->SetTemporaryPath(nullptr); // Test NULL
   if (strlen(MRMLAppLogic->GetTemporaryPath()) != 0)
     {
     std::string temporaryEmptyString;

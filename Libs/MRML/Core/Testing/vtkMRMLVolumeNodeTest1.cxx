@@ -188,8 +188,8 @@ int vtkMRMLVolumeNodeTest1(int , char * [])
 
   // Image Data
   vtkNew<vtkImageData> imageData;
-  node1->SetAndObserveImageData(NULL);
-  if (node1->GetImageData() != NULL)
+  node1->SetAndObserveImageData(nullptr);
+  if (node1->GetImageData() != nullptr)
     {
     std::cerr << "Get image data didn't return null" << std::endl;
     return EXIT_FAILURE;

@@ -34,9 +34,9 @@ vtkMRMLSliceCompositeNode::vtkMRMLSliceCompositeNode()
 {
   this->HideFromEditors = 1;
 
-  this->BackgroundVolumeID = NULL;
-  this->ForegroundVolumeID = NULL;
-  this->LabelVolumeID = NULL;
+  this->BackgroundVolumeID = nullptr;
+  this->ForegroundVolumeID = nullptr;
+  this->LabelVolumeID = nullptr;
   this->Compositing = 0;
   this->ForegroundOpacity = 0.0; // start by showing only the background volume
   this->LabelOpacity = 1.0; // Show the label if there is one
@@ -58,15 +58,15 @@ vtkMRMLSliceCompositeNode::~vtkMRMLSliceCompositeNode()
 {
   if (this->BackgroundVolumeID)
     {
-    this->SetBackgroundVolumeID(NULL);
+    this->SetBackgroundVolumeID(nullptr);
     }
   if (this->ForegroundVolumeID)
     {
-    this->SetForegroundVolumeID(NULL);
+    this->SetForegroundVolumeID(nullptr);
     }
   if (this->LabelVolumeID)
     {
-    this->SetLabelVolumeID(NULL);
+    this->SetLabelVolumeID(nullptr);
     }
 }
 
@@ -89,7 +89,7 @@ void vtkMRMLSliceCompositeNode::WriteXML(ostream& of, int nIndent)
   of << " fiducialVisibility=\"" << this->FiducialVisibility << "\"";
   of << " fiducialLabelVisibility=\"" << this->FiducialLabelVisibility << "\"";
   of << " sliceIntersectionVisibility=\"" << this->SliceIntersectionVisibility << "\"";
-  if (this->GetLayoutName() != NULL)
+  if (this->GetLayoutName() != nullptr)
     {
     of << " layoutName=\"" << this->GetLayoutName() << "\"";
     }
@@ -172,17 +172,17 @@ void vtkMRMLSliceCompositeNode::UpdateReferences()
 {
    Superclass::UpdateReferences();
 
-  if (this->BackgroundVolumeID != NULL && this->Scene->GetNodeByID(this->BackgroundVolumeID) == NULL)
+  if (this->BackgroundVolumeID != nullptr && this->Scene->GetNodeByID(this->BackgroundVolumeID) == nullptr)
     {
-    this->SetBackgroundVolumeID(NULL);
+    this->SetBackgroundVolumeID(nullptr);
     }
-  if (this->ForegroundVolumeID != NULL && this->Scene->GetNodeByID(this->ForegroundVolumeID) == NULL)
+  if (this->ForegroundVolumeID != nullptr && this->Scene->GetNodeByID(this->ForegroundVolumeID) == nullptr)
     {
-    this->SetForegroundVolumeID(NULL);
+    this->SetForegroundVolumeID(nullptr);
     }
-  if (this->LabelVolumeID != NULL && this->Scene->GetNodeByID(this->LabelVolumeID) == NULL)
+  if (this->LabelVolumeID != nullptr && this->Scene->GetNodeByID(this->LabelVolumeID) == nullptr)
     {
-    this->SetLabelVolumeID(NULL);
+    this->SetLabelVolumeID(nullptr);
     }
 
 
@@ -214,7 +214,7 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -222,7 +222,7 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
       {
       if (attValue && *attValue == '\0')
         {
-        this->SetBackgroundVolumeID(NULL);
+        this->SetBackgroundVolumeID(nullptr);
         }
       else
         {
@@ -234,7 +234,7 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
       {
       if (attValue && *attValue == '\0')
         {
-        this->SetForegroundVolumeID(NULL);
+        this->SetForegroundVolumeID(nullptr);
         }
       else
         {
@@ -246,7 +246,7 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
       {
       if (attValue && *attValue == '\0')
         {
-        this->SetLabelVolumeID(NULL);
+        this->SetLabelVolumeID(nullptr);
         }
       else
         {

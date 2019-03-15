@@ -48,7 +48,7 @@ WarpTransform3D<FieldData>
 ::WarpTransform3D() :
   Superclass( 1 )
 {
-  m_DeformationField = 0;
+  m_DeformationField = nullptr;
 //  m_OutputSpacing.Fill( 1 ) ;
   for( int i = 0; i < 3; i++ )
     {

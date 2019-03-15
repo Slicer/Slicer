@@ -57,11 +57,11 @@ void qMRMLNodeAttributeTableWidgetTester::init()
 // ----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableWidgetTester::cleanup()
 {
-  if (this->NodeAttributeTableWidget != NULL)
+  if (this->NodeAttributeTableWidget != nullptr)
     {
-    this->NodeAttributeTableWidget->setMRMLNode(NULL);
+    this->NodeAttributeTableWidget->setMRMLNode(nullptr);
     delete this->NodeAttributeTableWidget;
-    this->NodeAttributeTableWidget = NULL;
+    this->NodeAttributeTableWidget = nullptr;
     }
 }
 
@@ -74,7 +74,7 @@ void qMRMLNodeAttributeTableWidgetTester::testSetNode()
   this->NodeAttributeTableWidget->setMRMLNode(node);
   QCOMPARE(this->NodeAttributeTableWidget->tableView()->attributeCount(), 2);
 
-  this->NodeAttributeTableWidget->setMRMLNode(NULL);
+  this->NodeAttributeTableWidget->setMRMLNode(nullptr);
   QCOMPARE(this->NodeAttributeTableWidget->tableView()->attributeCount(), 0);
 }
 

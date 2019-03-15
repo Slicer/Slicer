@@ -98,7 +98,7 @@ public:
   /// \param name Custom name. If omitted, then default postfix is added from \sa node
   /// \return Clone subject hierarchy node
   static vtkIdType CloneSubjectHierarchyItem(
-    vtkMRMLSubjectHierarchyNode* shNode, vtkIdType itemID, const char* name=NULL );
+    vtkMRMLSubjectHierarchyNode* shNode, vtkIdType itemID, const char* name=nullptr );
 
   /// Convenience function to get subject hierarchy node from the logic
   vtkMRMLSubjectHierarchyNode* GetSubjectHierarchyNode();

@@ -36,7 +36,7 @@ class qSlicerSegmentationsReader
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerSegmentationsReader(vtkSlicerSegmentationsModuleLogic* segmentationsLogic = 0, QObject* parent = 0);
+  qSlicerSegmentationsReader(vtkSlicerSegmentationsModuleLogic* segmentationsLogic = nullptr, QObject* parent = nullptr);
   virtual ~qSlicerSegmentationsReader();
 
   void setSegmentationsLogic(vtkSlicerSegmentationsModuleLogic* segmentationsLogic);

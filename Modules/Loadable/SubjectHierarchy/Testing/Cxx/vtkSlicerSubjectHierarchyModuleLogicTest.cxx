@@ -857,7 +857,7 @@ namespace
 
     // Remove transforms from study
     vtkSlicerSubjectHierarchyModuleLogic::TransformBranch(shNode, study2ShItemID, transformNode1.GetPointer());
-    vtkSlicerSubjectHierarchyModuleLogic::TransformBranch(shNode, study2ShItemID, NULL);
+    vtkSlicerSubjectHierarchyModuleLogic::TransformBranch(shNode, study2ShItemID, nullptr);
     if (shNode->IsAnyNodeInBranchTransformed(study2ShItemID))
       {
       std::cerr << "Wrong inquiry about transformed items in study2" << std::endl;

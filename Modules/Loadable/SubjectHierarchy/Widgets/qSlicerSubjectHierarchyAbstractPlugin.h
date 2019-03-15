@@ -72,7 +72,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyAbs
 
 public:
   typedef QObject Superclass;
-  qSlicerSubjectHierarchyAbstractPlugin(QObject* parent = NULL);
+  qSlicerSubjectHierarchyAbstractPlugin(QObject* parent = nullptr);
   virtual ~qSlicerSubjectHierarchyAbstractPlugin();
 
 // Role-related virtual methods

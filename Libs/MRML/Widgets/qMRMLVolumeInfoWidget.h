@@ -44,7 +44,7 @@ class QMRML_WIDGETS_EXPORT qMRMLVolumeInfoWidget : public qMRMLWidget
 public:
   typedef qMRMLWidget Superclass;
 
-  qMRMLVolumeInfoWidget(QWidget *parent=0);
+  qMRMLVolumeInfoWidget(QWidget *parent=nullptr);
   virtual ~qMRMLVolumeInfoWidget();
 
   vtkMRMLVolumeNode* volumeNode()const;

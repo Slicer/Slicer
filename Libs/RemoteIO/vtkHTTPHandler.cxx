@@ -30,14 +30,14 @@ public:
 //----------------------------------------------------------------------------
 vtkHTTPHandler::vtkInternal::vtkInternal(vtkHTTPHandler* external):External(external)
 {
-  this->CurlHandle = NULL;
+  this->CurlHandle = nullptr;
   this->ForbidReuse = 0;
 }
 
 //-----------------------------------------------------------------------------
 vtkHTTPHandler::vtkInternal::~vtkInternal()
 {
-  this->CurlHandle = NULL;
+  this->CurlHandle = nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -64,7 +64,7 @@ size_t read_callback(void *ptr, size_t size, size_t nmemb, FILE *stream)
 //----------------------------------------------------------------------------
 size_t write_callback(void *ptr, size_t size, size_t nmemb, void *stream)
 {
-  if (stream == NULL)
+  if (stream == nullptr)
     {
     std::cerr << "write_callback: can't write, stream is null. size = " << size << std::endl;
     return 0;
@@ -168,7 +168,7 @@ void vtkHTTPHandler::InitTransfer( )
   curl_global_init(CURL_GLOBAL_ALL);
   vtkDebugMacro("vtkHTTPHandler: InitTransfer: initialising CurlHandle");
   this->Internal->CurlHandle = curl_easy_init();
-  if (this->Internal->CurlHandle == NULL)
+  if (this->Internal->CurlHandle == nullptr)
     {
     vtkErrorMacro("InitTransfer: unable to initialise");
     }
@@ -185,7 +185,7 @@ int vtkHTTPHandler::CloseTransfer( )
 //----------------------------------------------------------------------------
 void vtkHTTPHandler::StageFileRead(const char * source, const char * destination)
 {
-  if (source == NULL || destination == NULL)
+  if (source == nullptr || destination == nullptr)
     {
     vtkErrorMacro("StageFileRead: source or dest is null!");
     return;
@@ -244,7 +244,7 @@ void vtkHTTPHandler::StageFileRead(const char * source, const char * destination
     //--- the reason the read command failed,
     //--- reset the 'remember check' in the permissions
     //--- prompter so that new login info  will be prompted.
-    if ( this->GetPermissionPrompter() != NULL )
+    if ( this->GetPermissionPrompter() != nullptr )
       {
       this->GetPermissionPrompter()->SetRemember ( 0 );
       }
@@ -302,7 +302,7 @@ void vtkHTTPHandler::StageFileWrite(const char * source, const char * destinatio
     //--- the reason the read command failed,
     //--- reset the 'remember check' in the permissions
     //--- prompter so that new login info  will be prompted.
-    if ( this->GetPermissionPrompter() != NULL )
+    if ( this->GetPermissionPrompter() != nullptr )
       {
       this->GetPermissionPrompter()->SetRemember ( 0 );
       }

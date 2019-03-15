@@ -72,10 +72,10 @@ public:
 qSlicerTablesModuleWidgetPrivate::qSlicerTablesModuleWidgetPrivate(qSlicerTablesModuleWidget& object)
   : q_ptr(&object)
 {
-  this->MRMLTableNode = 0;
-  this->CopyAction = 0;
-  this->PasteAction = 0;
-  this->PlotAction = 0;
+  this->MRMLTableNode = nullptr;
+  this->CopyAction = nullptr;
+  this->PasteAction = nullptr;
+  this->PlotAction = nullptr;
 }
 //-----------------------------------------------------------------------------
 vtkSlicerTablesLogic* qSlicerTablesModuleWidgetPrivate::logic()const
@@ -87,9 +87,9 @@ vtkSlicerTablesLogic* qSlicerTablesModuleWidgetPrivate::logic()const
 //-----------------------------------------------------------------------------
 vtkTable* qSlicerTablesModuleWidgetPrivate::table()const
 {
-  if (this->MRMLTableNode.GetPointer()==NULL)
+  if (this->MRMLTableNode.GetPointer()==nullptr)
     {
-    return NULL;
+    return nullptr;
     }
   return this->MRMLTableNode->GetTable();
 }
@@ -161,7 +161,7 @@ void qSlicerTablesModuleWidget::setup()
   d->NewColumnPropertiesWidget->setMRMLTableColumnName(vtkMRMLTableNode::GetDefaultColumnName());
   this->connect(d->TableNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), d->NewColumnPropertiesWidget, SLOT(setMRMLTableNode(vtkMRMLNode*)));
 
-  this->onNodeSelected(0);
+  this->onNodeSelected(nullptr);
 }
 
 //-----------------------------------------------------------------------------
@@ -189,8 +189,8 @@ void qSlicerTablesModuleWidget::onMRMLTableNodeModified(vtkObject* caller)
   Q_UNUSED(caller);
 #endif
 
-  bool validNode = d->MRMLTableNode != 0;
-  bool editableNode = d->MRMLTableNode != 0 && !d->MRMLTableNode->GetLocked();
+  bool validNode = d->MRMLTableNode != nullptr;
+  bool editableNode = d->MRMLTableNode != nullptr && !d->MRMLTableNode->GetLocked();
 
   d->DisplayEditCollapsibleWidget->setEnabled(validNode);
   d->LockTableButton->setEnabled(validNode);

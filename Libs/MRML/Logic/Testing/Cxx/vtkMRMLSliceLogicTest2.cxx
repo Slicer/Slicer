@@ -104,7 +104,7 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
   scalarNode->SetAndObserveDisplayNodeID(displayNode->GetID());
   scene->AddNode(scalarNode.GetPointer());
   storageNode->ReadData(scalarNode.GetPointer());
-  if (scalarNode->GetImageData()==NULL)
+  if (scalarNode->GetImageData()==nullptr)
     {
     std::cerr << "Failed to read volume from " <<argv[1] << std::endl;
     return EXIT_FAILURE;
@@ -165,7 +165,7 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
 
   vtkNew<vtkImageMapToColors> mapToColors;
   mapToColors->SetOutputFormatToRGB();
-  if (colorNode->GetLookupTable() == 0)
+  if (colorNode->GetLookupTable() == nullptr)
     {
     return EXIT_FAILURE;
     }

@@ -50,7 +50,7 @@ public:
   typedef ctkVTKChartView Superclass;
 
   /// Constructors
-  explicit qMRMLPlotView(QWidget* parent = 0);
+  explicit qMRMLPlotView(QWidget* parent = nullptr);
   virtual ~qMRMLPlotView();
 
   /// Return a pointer on the current MRML scene.

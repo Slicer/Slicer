@@ -59,9 +59,9 @@ public:
 qSlicerModulesMenuPrivate::qSlicerModulesMenuPrivate(qSlicerModulesMenu& object)
   : q_ptr(&object)
 {
-  this->ModuleManager = 0;
-  this->AllModulesMenu = 0;
-  this->NoModuleAction = 0;
+  this->ModuleManager = nullptr;
+  this->AllModulesMenu = nullptr;
+  this->NoModuleAction = nullptr;
   this->DuplicateActions = false;
   this->ShowHiddenModules = false;
   this->TopLevelCategoryOrder << "Wizards" << "Informatics" << "Registration"
@@ -114,7 +114,7 @@ QAction* qSlicerModulesMenuPrivate::action(const QVariant& actionData, const QMe
         }
       }
     }
-  return 0;
+  return nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -135,7 +135,7 @@ QAction* qSlicerModulesMenuPrivate::action(const QString& text, const QMenu* par
         }
       }
     }
-  return 0;
+  return nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -291,7 +291,7 @@ QMenu* qSlicerModulesMenuPrivate::actionMenu(QAction* action, QMenu* parentMenu)
         }
       }
     }
-  return 0;
+  return nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -404,7 +404,7 @@ QAction* qSlicerModulesMenu::moduleAction(const QString& moduleName)const
 void qSlicerModulesMenu::addModule(const QString& moduleName)
 {
   Q_D(qSlicerModulesMenu);
-  this->addModule(d->ModuleManager ? d->ModuleManager->module(moduleName) : 0);
+  this->addModule(d->ModuleManager ? d->ModuleManager->module(moduleName) : nullptr);
 }
 
 //---------------------------------------------------------------------------
@@ -478,7 +478,7 @@ void qSlicerModulesMenu::addModule(qSlicerAbstractCoreModule* moduleToAdd)
 void qSlicerModulesMenu::removeModule(const QString& moduleName)
 {
    Q_D(qSlicerModulesMenu);
-  this->removeModule(d->ModuleManager ? d->ModuleManager->module(moduleName) : 0);
+  this->removeModule(d->ModuleManager ? d->ModuleManager->module(moduleName) : nullptr);
 }
 
 //---------------------------------------------------------------------------

@@ -49,8 +49,8 @@ qSlicerVolumeRenderingPropertiesWidgetPrivate
   qSlicerVolumeRenderingPropertiesWidget& object)
   : q_ptr(&object)
 {
-  this->VolumeRenderingDisplayNode = 0;
-  this->VolumeNode = 0;
+  this->VolumeRenderingDisplayNode = nullptr;
+  this->VolumeNode = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -117,7 +117,7 @@ void qSlicerVolumeRenderingPropertiesWidget::updateWidgetFromMRML()
 {
   Q_D(qSlicerVolumeRenderingPropertiesWidget);
   vtkMRMLVolumeNode* newVolumeNode =
-    d->VolumeRenderingDisplayNode ? d->VolumeRenderingDisplayNode->GetVolumeNode() : 0;
+    d->VolumeRenderingDisplayNode ? d->VolumeRenderingDisplayNode->GetVolumeNode() : nullptr;
   qvtkReconnect(d->VolumeNode, newVolumeNode, vtkCommand::ModifiedEvent,
                 this, SLOT(updateWidgetFromMRMLVolumeNode()));
   d->VolumeNode = newVolumeNode;

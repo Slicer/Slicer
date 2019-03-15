@@ -59,7 +59,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyCombo
 
 public:
   typedef ctkComboBox Superclass;
-  qMRMLSubjectHierarchyComboBox(QWidget *parent=0);
+  qMRMLSubjectHierarchyComboBox(QWidget *parent=nullptr);
   virtual ~qMRMLSubjectHierarchyComboBox();
 
 public:

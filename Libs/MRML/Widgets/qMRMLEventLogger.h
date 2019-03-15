@@ -38,7 +38,7 @@ class QMRML_WIDGETS_EXPORT qMRMLEventLogger: public QObject
   Q_OBJECT
 public:
   typedef QObject Superclass;
-  explicit qMRMLEventLogger(QObject* parent = 0);
+  explicit qMRMLEventLogger(QObject* parent = nullptr);
   virtual ~qMRMLEventLogger();
 
   ///

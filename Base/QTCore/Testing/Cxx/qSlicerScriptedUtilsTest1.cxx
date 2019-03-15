@@ -78,7 +78,7 @@ int qSlicerScriptedUtilsTest1(int, char * [] )
     {
     return EXIT_FAILURE;
     }
-  if(!setModuleAttribute(__LINE__, "moduleA", "attrA", 0, false))
+  if(!setModuleAttribute(__LINE__, "moduleA", "attrA", nullptr, false))
     {
     return EXIT_FAILURE;
     }

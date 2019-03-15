@@ -31,7 +31,7 @@ vtkStandardNewMacro(vtkFSSurfaceReader);
 //-------------------------------------------------------------------------
 vtkFSSurfaceReader::vtkFSSurfaceReader()
 {
-  this->FileName = NULL;
+  this->FileName = nullptr;
   this->SetNumberOfInputPorts(0);
 }
 
@@ -39,7 +39,7 @@ vtkFSSurfaceReader::vtkFSSurfaceReader()
 vtkFSSurfaceReader::~vtkFSSurfaceReader()
 {
   delete[] this->FileName;
-  this->FileName = NULL;
+  this->FileName = nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -128,7 +128,7 @@ int vtkFSSurfaceReader::RequestData(
     {
     char *skipchars = fgets (line, 200, surfaceFile);
     int skip = fscanf (surfaceFile, "\n");
-    if (skipchars == NULL || skip > 0)
+    if (skipchars == nullptr || skip > 0)
       {
       // trying to avoid unused var warnings while checking return values
       }

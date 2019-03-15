@@ -95,7 +95,7 @@ public:
   typedef ctkLayoutFactory Superclass;
 
   /// Constructors
-  explicit qMRMLLayoutManager(QObject* parent=0);
+  explicit qMRMLLayoutManager(QObject* parent=nullptr);
   explicit qMRMLLayoutManager(QWidget* viewport, QObject* parent);
   virtual ~qMRMLLayoutManager();
 

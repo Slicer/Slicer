@@ -29,7 +29,7 @@ class Q_SLICER_MODULE_UNITS_WIDGETS_PLUGINS_EXPORT qMRMLUnitWidgetPlugin
   Q_OBJECT
 
 public:
-  qMRMLUnitWidgetPlugin(QObject *_parent = 0);
+  qMRMLUnitWidgetPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString domXml() const;

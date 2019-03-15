@@ -43,7 +43,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneDisplayableModel : public qMRMLSceneHierarc
 
 public:
   typedef qMRMLSceneHierarchyModel Superclass;
-  qMRMLSceneDisplayableModel(QObject *parent=0);
+  qMRMLSceneDisplayableModel(QObject *parent=nullptr);
   virtual ~qMRMLSceneDisplayableModel();
 
   int colorColumn()const;
@@ -62,7 +62,7 @@ public:
 
 protected:
   qMRMLSceneDisplayableModel(qMRMLSceneDisplayableModelPrivate* pimpl,
-                             QObject *parent=0);
+                             QObject *parent=nullptr);
 
   /// Reimplemented to listen to the displayable DisplayModifiedEvent event for
   /// visibility check state changes.

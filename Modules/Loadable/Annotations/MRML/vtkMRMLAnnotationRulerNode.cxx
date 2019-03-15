@@ -23,10 +23,10 @@ vtkMRMLNodeNewMacro(vtkMRMLAnnotationRulerNode);
 vtkMRMLAnnotationRulerNode::vtkMRMLAnnotationRulerNode()
 {
   this->HideFromEditors = false;
-  this->DistanceAnnotationFormat = NULL;
+  this->DistanceAnnotationFormat = nullptr;
   this->SetDistanceAnnotationFormat("%.0f mm");
-  this->ModelID1 = NULL;
-  this->ModelID2 = NULL;
+  this->ModelID1 = nullptr;
+  this->ModelID2 = nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -36,17 +36,17 @@ vtkMRMLAnnotationRulerNode::~vtkMRMLAnnotationRulerNode()
   if (this->DistanceAnnotationFormat)
     {
       delete [] this->DistanceAnnotationFormat;
-      this->DistanceAnnotationFormat = NULL;
+      this->DistanceAnnotationFormat = nullptr;
     }
   if (this->ModelID1)
     {
     delete [] this->ModelID1;
-    this->ModelID1 = NULL;
+    this->ModelID1 = nullptr;
     }
   if (this->ModelID2)
     {
     delete [] this->ModelID2;
-    this->ModelID2 = NULL;
+    this->ModelID2 = nullptr;
     }
 }
 
@@ -89,7 +89,7 @@ void vtkMRMLAnnotationRulerNode::ReadXMLAttributes(const char** atts)
   Superclass::ReadXMLAttributes(atts);
 
 
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     const char* attName = *(atts++);
     std::string attValue(*(atts++));
@@ -271,7 +271,7 @@ double* vtkMRMLAnnotationRulerNode::GetPointColour()
   vtkMRMLAnnotationPointDisplayNode *node = this->GetAnnotationPointDisplayNode();
   if (!node)
     {
-      return 0;
+      return nullptr;
     }
   return node->GetSelectedColor();
 }
@@ -294,7 +294,7 @@ double* vtkMRMLAnnotationRulerNode::GetDistanceAnnotationTextColour()
   vtkMRMLAnnotationTextDisplayNode *node = this->GetAnnotationTextDisplayNode();
   if (!node)
     {
-      return 0;
+      return nullptr;
     }
   return node->GetSelectedColor();
 }
@@ -317,7 +317,7 @@ double* vtkMRMLAnnotationRulerNode::GetLineColour()
   vtkMRMLAnnotationLineDisplayNode *node = this->GetAnnotationLineDisplayNode();
   if (!node)
     {
-      return 0;
+      return nullptr;
     }
   return node->GetSelectedColor();
 }
@@ -370,10 +370,10 @@ void vtkMRMLAnnotationRulerNode::ApplyTransform(vtkAbstractTransform* transform)
 vtkMRMLStorageNode* vtkMRMLAnnotationRulerNode::CreateDefaultStorageNode()
 {
   vtkMRMLScene* scene = this->GetScene();
-  if (scene == NULL)
+  if (scene == nullptr)
     {
     vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
-    return NULL;
+    return nullptr;
     }
   return vtkMRMLStorageNode::SafeDownCast(
     scene->CreateNodeByClass("vtkMRMLAnnotationRulerStorageNode"));

@@ -66,7 +66,7 @@ void qMRMLLabelComboBoxTester::init()
 // ----------------------------------------------------------------------------
 void qMRMLLabelComboBoxTester::cleanup()
 {
-  if (this->LabelComboBox == 0)
+  if (this->LabelComboBox == nullptr)
     {
     return;
     }
@@ -76,7 +76,7 @@ void qMRMLLabelComboBoxTester::cleanup()
 // ----------------------------------------------------------------------------
 void qMRMLLabelComboBoxTester::testSetMRMLColorNode()
 {
-  QVERIFY(this->LabelComboBox->mrmlColorNode() == 0);
+  QVERIFY(this->LabelComboBox->mrmlColorNode() == nullptr);
 
   this->LabelComboBox->setMRMLColorNode(this->ColorTableNode);
   QCOMPARE(this->LabelComboBox->mrmlColorNode(), this->ColorTableNode.GetPointer());
@@ -104,7 +104,7 @@ void qMRMLLabelComboBoxTester::testSetCurrentColor()
   QFETCH(int, currentColorToSet2);
   QFETCH(int, expectedCurrentColor2);
 
-  vtkMRMLColorNode* colorNodeToSet = 0;
+  vtkMRMLColorNode* colorNodeToSet = nullptr;
   if (shouldSetColorNode)
     {
     colorNodeToSet = this->ColorTableNode;

@@ -45,7 +45,7 @@ vtkSlicerLineWidget::~vtkSlicerLineWidget()
 void vtkSlicerLineWidget::CreateDefaultRepresentation(
   vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer)
 {
-  vtkSmartPointer<vtkSlicerMarkupsWidgetRepresentation> rep = NULL;
+  vtkSmartPointer<vtkSlicerMarkupsWidgetRepresentation> rep = nullptr;
   if (vtkMRMLSliceNode::SafeDownCast(viewNode))
     {
     rep = vtkSmartPointer<vtkSlicerLineRepresentation2D>::New();

@@ -110,12 +110,12 @@ qSlicerColorsModuleWidgetPrivate::~qSlicerColorsModuleWidgetPrivate()
   if (this->ScalarBarWidget)
     {
     this->ScalarBarWidget->Delete();
-    this->ScalarBarWidget = 0;
+    this->ScalarBarWidget = nullptr;
     }
   if (this->ScalarBarActor)
   {
     this->ScalarBarActor->Delete();
-    this->ScalarBarActor = 0;
+    this->ScalarBarActor = nullptr;
   }
 }
 
@@ -132,7 +132,7 @@ void qSlicerColorsModuleWidgetPrivate::setDefaultColorNode()
   Q_Q(qSlicerColorsModuleWidget);
   if (!q->mrmlScene() ||
       !this->ColorTableComboBox ||
-      this->ColorTableComboBox->currentNode() != 0)
+      this->ColorTableComboBox->currentNode() != nullptr)
     {
     return;
     }
@@ -202,7 +202,7 @@ void qSlicerColorsModuleWidget::setup()
 
   double validBounds[4] = {VTK_DOUBLE_MIN, VTK_DOUBLE_MAX, 0., 1.};
   d->ContinuousScalarsToColorsWidget->view()->setValidBounds(validBounds);
-  d->ContinuousScalarsToColorsWidget->view()->addColorTransferFunction(0);
+  d->ContinuousScalarsToColorsWidget->view()->addColorTransferFunction(nullptr);
 
   // Select the default color node
   d->setDefaultColorNode();
@@ -271,7 +271,7 @@ void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode
   vtkMRMLProceduralColorNode *procColorNode = vtkMRMLProceduralColorNode::SafeDownCast(colorNode);
   vtkMRMLFreeSurferProceduralColorNode *fsColorNode = vtkMRMLFreeSurferProceduralColorNode::SafeDownCast(colorNode);
 
-  if (colorTableNode != NULL || fsColorNode != NULL)
+  if (colorTableNode != nullptr || fsColorNode != nullptr)
     {
     // hide the procedural display, show the color table
     // freesurfer nodes are bit of a special case, they're defined
@@ -290,7 +290,7 @@ void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode
     Q_ASSERT(d->NumberOfColorsSpinBox->value() == colorNode->GetNumberOfColors());
 
     // set the range and the input for the scalar bar widget depending on if it's a freesurfer node or a color table node
-    double *range = NULL;
+    double *range = nullptr;
     d->LUTRangeWidget->setEnabled(colorNode->GetType() == vtkMRMLColorTableNode::User);
     if (colorTableNode && colorTableNode->GetLookupTable())
       {
@@ -337,7 +337,7 @@ void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode
       }
     d->ScalarBarActor->GetLookupTable()->SetAnnotations(indexArray.GetPointer(), stringArray.GetPointer());
     }
-  else if (procColorNode != NULL)
+  else if (procColorNode != nullptr)
     {
     // hide and disable the color table display, show the continuous one
     d->NumberOfColorsSpinBox->setEnabled(false);
@@ -429,7 +429,7 @@ void qSlicerColorsModuleWidget::copyCurrentColorNode()
     return;
     }
 
-  vtkMRMLColorNode *colorNode = NULL;
+  vtkMRMLColorNode *colorNode = nullptr;
   if (currentNode->IsA("vtkMRMLColorTableNode") ||
       currentNode->IsA("vtkMRMLFreeSurferProceduralColorNode"))
     {

@@ -143,7 +143,7 @@ public:
 
   /// Find all associated children nodes of a specified class in the hierarchy
   /// if childClass is NULL returns all associated children nodes.
-  virtual void GetAssociatedChildrenNodes(vtkCollection *children, const char* childClass=NULL);
+  virtual void GetAssociatedChildrenNodes(vtkCollection *children, const char* childClass=nullptr);
 
   ///
   /// Get Hierarchy node for a given associated node
@@ -225,7 +225,7 @@ protected:
   /// it parent, and also on a parent that add/remove/move a child
   /// Invoke the event on the passed node if not null, otherwise on the
   /// associated node if not null.
-  void InvokeHierarchyModifiedEvent(vtkMRMLNode *node = NULL);
+  void InvokeHierarchyModifiedEvent(vtkMRMLNode *node = nullptr);
 };
 
 #endif

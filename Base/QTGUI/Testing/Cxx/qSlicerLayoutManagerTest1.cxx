@@ -48,7 +48,7 @@ int qSlicerLayoutManagerTest1(int argc, char * argv[] )
 #endif
 
   QApplication app(argc, argv);
-  qSlicerLayoutManager* layoutManager = new qSlicerLayoutManager(0);
+  qSlicerLayoutManager* layoutManager = new qSlicerLayoutManager(nullptr);
   delete layoutManager;
   return EXIT_SUCCESS;
 }

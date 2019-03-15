@@ -29,7 +29,7 @@ class Q_SLICER_DESIGNER_PLUGINS_EXPORT qSlicerModulesListViewPlugin
 {
   Q_OBJECT
 public:
-  qSlicerModulesListViewPlugin(QObject* parent = 0);
+  qSlicerModulesListViewPlugin(QObject* parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString domXml() const;

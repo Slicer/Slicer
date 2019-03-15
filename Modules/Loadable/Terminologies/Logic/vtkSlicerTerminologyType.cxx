@@ -38,11 +38,11 @@ vtkSlicerTerminologyType::vtkSlicerTerminologyType()
   this->RecommendedDisplayRGBValue[0] = INVALID_COLOR[0];
   this->RecommendedDisplayRGBValue[1] = INVALID_COLOR[1];
   this->RecommendedDisplayRGBValue[2] = INVALID_COLOR[2];
-  this->SlicerLabel = NULL;
-  this->SNOMEDCTConceptID = NULL;
-  this->UMLSConceptUID = NULL;
-  this->Cid = NULL;
-  this->ContextGroupName = NULL;
+  this->SlicerLabel = nullptr;
+  this->SNOMEDCTConceptID = nullptr;
+  this->UMLSConceptUID = nullptr;
+  this->Cid = nullptr;
+  this->ContextGroupName = nullptr;
   this->HasModifiers = false;
 }
 
@@ -57,11 +57,11 @@ void vtkSlicerTerminologyType::Initialize()
 {
   Superclass::Initialize();
 
-  this->SetSlicerLabel(NULL);
-  this->SetSNOMEDCTConceptID(NULL);
-  this->SetUMLSConceptUID(NULL);
-  this->SetCid(NULL);
-  this->SetContextGroupName(NULL);
+  this->SetSlicerLabel(nullptr);
+  this->SetSNOMEDCTConceptID(nullptr);
+  this->SetUMLSConceptUID(nullptr);
+  this->SetCid(nullptr);
+  this->SetContextGroupName(nullptr);
   this->RecommendedDisplayRGBValue[0] = INVALID_COLOR[0];
   this->RecommendedDisplayRGBValue[1] = INVALID_COLOR[1];
   this->RecommendedDisplayRGBValue[2] = INVALID_COLOR[2];

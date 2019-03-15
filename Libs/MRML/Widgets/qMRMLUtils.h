@@ -44,7 +44,7 @@ class QMRML_WIDGETS_EXPORT qMRMLUtils : public QObject
   Q_OBJECT;
 public:
   typedef qMRMLUtils Self;
-  qMRMLUtils(QObject* parent = 0);
+  qMRMLUtils(QObject* parent = nullptr);
   virtual ~qMRMLUtils();
 
   ///

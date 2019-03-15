@@ -33,27 +33,27 @@ vtkStandardNewMacro(vtkSlicerTerminologyEntry);
 //----------------------------------------------------------------------------
 vtkSlicerTerminologyEntry::vtkSlicerTerminologyEntry()
 {
-  this->TerminologyContextName = NULL;
+  this->TerminologyContextName = nullptr;
 
-  this->CategoryObject = NULL;
+  this->CategoryObject = nullptr;
   vtkSmartPointer<vtkSlicerTerminologyCategory> category = vtkSmartPointer<vtkSlicerTerminologyCategory>::New();
   this->SetCategoryObject(category);
 
-  this->TypeObject = NULL;
+  this->TypeObject = nullptr;
   vtkSmartPointer<vtkSlicerTerminologyType> type = vtkSmartPointer<vtkSlicerTerminologyType>::New();
   this->SetTypeObject(type);
 
-  this->TypeModifierObject = NULL;
+  this->TypeModifierObject = nullptr;
   vtkSmartPointer<vtkSlicerTerminologyType> typeModifier = vtkSmartPointer<vtkSlicerTerminologyType>::New();
   this->SetTypeModifierObject(typeModifier);
 
-  this->AnatomicContextName = NULL;
+  this->AnatomicContextName = nullptr;
 
-  this->AnatomicRegionObject = NULL;
+  this->AnatomicRegionObject = nullptr;
   vtkSmartPointer<vtkSlicerTerminologyType> anatomicRegion = vtkSmartPointer<vtkSlicerTerminologyType>::New();
   this->SetAnatomicRegionObject(anatomicRegion);
 
-  this->AnatomicRegionModifierObject = NULL;
+  this->AnatomicRegionModifierObject = nullptr;
   vtkSmartPointer<vtkSlicerTerminologyType> anatomicRegionModifier = vtkSmartPointer<vtkSlicerTerminologyType>::New();
   this->SetAnatomicRegionModifierObject(anatomicRegionModifier);
 }
@@ -61,16 +61,16 @@ vtkSlicerTerminologyEntry::vtkSlicerTerminologyEntry()
 //----------------------------------------------------------------------------
 vtkSlicerTerminologyEntry::~vtkSlicerTerminologyEntry()
 {
-  this->SetTerminologyContextName(NULL);
+  this->SetTerminologyContextName(nullptr);
 
-  this->SetCategoryObject(NULL);
-  this->SetTypeObject(NULL);
-  this->SetTypeModifierObject(NULL);
+  this->SetCategoryObject(nullptr);
+  this->SetTypeObject(nullptr);
+  this->SetTypeModifierObject(nullptr);
 
-  this->SetAnatomicContextName(NULL);
+  this->SetAnatomicContextName(nullptr);
 
-  this->SetAnatomicRegionObject(NULL);
-  this->SetAnatomicRegionModifierObject(NULL);
+  this->SetAnatomicRegionObject(nullptr);
+  this->SetAnatomicRegionModifierObject(nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -142,8 +142,8 @@ void vtkSlicerTerminologyEntry::Copy(vtkSlicerTerminologyEntry* aEntry)
     {
     vtkErrorMacro("Copy: Invalid terminology entry given");
     // Invalidate whole terminology entry
-    this->SetTerminologyContextName(NULL);
-    this->SetAnatomicContextName(NULL);
+    this->SetTerminologyContextName(nullptr);
+    this->SetAnatomicContextName(nullptr);
     return;
     }
 

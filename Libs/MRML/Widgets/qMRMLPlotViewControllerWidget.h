@@ -47,7 +47,7 @@ public:
   typedef qMRMLViewControllerBar Superclass;
 
   /// Constructors
-  explicit qMRMLPlotViewControllerWidget(QWidget* parent = 0);
+  explicit qMRMLPlotViewControllerWidget(QWidget* parent = nullptr);
   virtual ~qMRMLPlotViewControllerWidget();
 
   /// Set the label for the Plot view (abbreviation for the view name).

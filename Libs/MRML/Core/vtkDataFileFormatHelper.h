@@ -36,7 +36,7 @@ class VTK_MRML_EXPORT vtkDataFileFormatHelper : public vtkObject
   virtual vtkStringArray* GetITKSupportedWriteFileFormats();
   virtual vtkStringArray* GetITKSupportedReadFileFormats()
     {
-    return NULL;
+    return nullptr;
     }
   virtual vtkStringArray* GetITKSupportedWriteFileExtensions();
   virtual const char* GetITKSupportedExtensionGenericNameByIndex(int idx);

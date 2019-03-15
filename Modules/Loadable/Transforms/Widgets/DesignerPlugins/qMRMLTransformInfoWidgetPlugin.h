@@ -33,7 +33,7 @@ qMRMLTransformInfoWidgetPlugin
   Q_OBJECT
 
 public:
-  qMRMLTransformInfoWidgetPlugin(QObject *_parent = 0);
+  qMRMLTransformInfoWidgetPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;

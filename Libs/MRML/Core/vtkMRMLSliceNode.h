@@ -357,7 +357,7 @@ public:
   /// If jumpMode is set to vtkMRMLSliceNode::DefaultJumpSlice then jump mode set in the slice node will be used.
   /// specified in the slice node will be used.
   static void JumpAllSlices(vtkMRMLScene* scene, double r, double a, double s,
-    int jumpMode = vtkMRMLSliceNode::DefaultJumpSlice, int viewGroup = -1, vtkMRMLSliceNode* exclude = NULL);
+    int jumpMode = vtkMRMLSliceNode::DefaultJumpSlice, int viewGroup = -1, vtkMRMLSliceNode* exclude = nullptr);
   void JumpSliceByOffsetting(double r, double a, double s);
   void JumpSliceByOffsetting(int k, double r, double a, double s);
   void JumpSliceByCentering(double r, double a, double s);

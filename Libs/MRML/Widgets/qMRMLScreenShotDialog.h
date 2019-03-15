@@ -50,7 +50,7 @@ public:
     FullLayout = 4
     };
 
-  qMRMLScreenShotDialog(QWidget *parent = 0);
+  qMRMLScreenShotDialog(QWidget *parent = nullptr);
   ~qMRMLScreenShotDialog();
 
   void setLayoutManager(qMRMLLayoutManager* newlayoutManager);

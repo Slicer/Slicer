@@ -35,8 +35,8 @@ class qSlicerAnnotationsReader
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerAnnotationsReader(QObject* parent = 0);
-  qSlicerAnnotationsReader(vtkSlicerAnnotationModuleLogic* logic, QObject* parent = 0);
+  qSlicerAnnotationsReader(QObject* parent = nullptr);
+  qSlicerAnnotationsReader(vtkSlicerAnnotationModuleLogic* logic, QObject* parent = nullptr);
   virtual ~qSlicerAnnotationsReader();
 
   vtkSlicerAnnotationModuleLogic* annotationLogic()const;

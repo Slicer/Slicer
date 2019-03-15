@@ -53,11 +53,11 @@ int vtkMRMLPlotViewNodeTest1(int , char * [] )
   CHECK_INT(callback->GetNumberOfModified(),0);
 
   callback->ResetNumberOfEvents();
-  node1->SetPlotChartNodeID(NULL);
+  node1->SetPlotChartNodeID(nullptr);
   CHECK_INT(callback->GetNumberOfModified(),1);
 
   callback->ResetNumberOfEvents();
-  node1->SetPlotChartNodeID(NULL);
+  node1->SetPlotChartNodeID(nullptr);
   CHECK_INT(callback->GetNumberOfModified(),0);
 
   std::cout << "vtkMRMLPlotViewNodeTest1 completed successfully" << std::endl;

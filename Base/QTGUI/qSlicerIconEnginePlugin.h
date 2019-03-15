@@ -49,7 +49,7 @@ class Q_SLICER_BASE_QTGUI_ICON_ENGINE_EXPORT qSlicerIconEnginePlugin: public ctk
 {
   Q_OBJECT
 public:
-  qSlicerIconEnginePlugin(QObject* parent = 0);
+  qSlicerIconEnginePlugin(QObject* parent = nullptr);
 };
 
 #endif

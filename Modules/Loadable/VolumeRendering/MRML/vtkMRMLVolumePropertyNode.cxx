@@ -23,7 +23,7 @@ vtkMRMLNodeNewMacro(vtkMRMLVolumePropertyNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLVolumePropertyNode::vtkMRMLVolumePropertyNode()
-  : VolumeProperty(NULL)
+  : VolumeProperty(nullptr)
 #if __cplusplus >= 201103L
   , EffectiveRange{0.0,-1.0}
 #endif
@@ -310,7 +310,7 @@ std::string vtkMRMLVolumePropertyNode::GetColorTransferFunctionString(vtkColorTr
 void vtkMRMLVolumePropertyNode::GetPiecewiseFunctionFromString(
   const std::string& str,vtkPiecewiseFunction* result)
 {
-  double* data = 0;
+  double* data = nullptr;
   int size = vtkMRMLVolumePropertyNode::NodesFromString(str, data, 2);
   if (size)
     {
@@ -323,7 +323,7 @@ void vtkMRMLVolumePropertyNode::GetPiecewiseFunctionFromString(
 void vtkMRMLVolumePropertyNode::GetColorTransferFunctionFromString(
   const std::string& str, vtkColorTransferFunction* result)
 {
-  double* data = 0;
+  double* data = nullptr;
   int size = vtkMRMLVolumePropertyNode::NodesFromString(str, data, 4);
   if (size)
     {
@@ -370,10 +370,10 @@ double vtkMRMLVolumePropertyNode::HigherAndUnique(double value, double &previous
 vtkMRMLStorageNode* vtkMRMLVolumePropertyNode::CreateDefaultStorageNode()
 {
   vtkMRMLScene* scene = this->GetScene();
-  if (scene == NULL)
+  if (scene == nullptr)
     {
     vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
-    return NULL;
+    return nullptr;
     }
   return vtkMRMLStorageNode::SafeDownCast(
     scene->CreateNodeByClass("vtkMRMLVolumePropertyStorageNode"));

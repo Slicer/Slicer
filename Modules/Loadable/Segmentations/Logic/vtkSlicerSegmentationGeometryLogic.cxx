@@ -56,8 +56,8 @@ vtkSlicerSegmentationGeometryLogic::vtkSlicerSegmentationGeometryLogic()
 , SourceAxisIndexForInputAxis{ 0, 1, 2 }
 
 {
-  this->InputSegmentationNode = 0;
-  this->SourceGeometryNode = 0;
+  this->InputSegmentationNode = nullptr;
+  this->SourceGeometryNode = nullptr;
   this->OversamplingFactor = 1.0;
   this->IsotropicSpacing = false;
 
@@ -67,12 +67,12 @@ vtkSlicerSegmentationGeometryLogic::vtkSlicerSegmentationGeometryLogic()
 //----------------------------------------------------------------------------
 vtkSlicerSegmentationGeometryLogic::~vtkSlicerSegmentationGeometryLogic()
 {
-  this->SetInputSegmentationNode(NULL);
+  this->SetInputSegmentationNode(nullptr);
 
   if (this->OutputGeometryImageData)
     {
     this->OutputGeometryImageData->Delete();
-    this->OutputGeometryImageData = 0;
+    this->OutputGeometryImageData = nullptr;
     }
 }
 
@@ -347,7 +347,7 @@ bool vtkSlicerSegmentationGeometryLogic::IsSourceSegmentationWithBinaryLabelmapM
 //-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationGeometryLogic::InputSegmentationCanBeResampled()
 {
-  if ( this->InputSegmentationNode != 0
+  if ( this->InputSegmentationNode != nullptr
     &&  this->InputSegmentationNode->GetSegmentation()->GetNumberOfSegments() > 0
     && this->InputSegmentationNode->GetSegmentation()->ContainsRepresentation(
         vtkSegmentationConverter::GetBinaryLabelmapRepresentationName())

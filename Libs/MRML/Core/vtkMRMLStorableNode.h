@@ -112,11 +112,11 @@ public:
   /// provided file name and node content.
   /// If the method is not overwritten by subclass then it uses
   /// CreateDefaultStorageNode to determine storage node class name.
-  virtual std::string GetDefaultStorageNodeClassName(const char* filename = NULL);
+  virtual std::string GetDefaultStorageNodeClassName(const char* filename = nullptr);
 
   /// Returns true on success. If storage node is not needed then
   /// storage node is not created and the method returns with true.
-  virtual bool AddDefaultStorageNode(const char* filename = NULL);
+  virtual bool AddDefaultStorageNode(const char* filename = nullptr);
 
   /// Returns true if the node is more recent than the file on disk.
   /// This information can be used by the application to know which node

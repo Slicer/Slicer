@@ -101,12 +101,12 @@ void MergeImageGeneric2(
   BaseImageScalarType* baseImagePtr = static_cast<BaseImageScalarType*>(baseImage->GetScalarPointerForExtent(updateExt));
   ModifierImageScalarType* modifierImagePtr = static_cast<ModifierImageScalarType*>(modifierImage->GetScalarPointerForExtent(updateExt));
 
-  if (baseImagePtr == NULL)
+  if (baseImagePtr == nullptr)
     {
     vtkGenericWarningMacro("vtkOrientedImageDataResample::MergeImageGeneric: Base image pointer is invalid");
     return;
     }
-  if (modifierImagePtr == NULL)
+  if (modifierImagePtr == nullptr)
     {
     vtkGenericWarningMacro("vtkOrientedImageDataResample::MergeImageGeneric: Modifier image pointer is invalid");
     return;
@@ -273,7 +273,7 @@ bool vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage
 
   // Simply copy input into output if the reference has the same geometry as the input, so no resampling is necessary
   bool isInputImageTransformIdentity = false;
-  if (inputImageTransform == NULL)
+  if (inputImageTransform == nullptr)
     {
     isInputImageTransformIdentity = true;
     }
@@ -544,7 +544,7 @@ template <typename T> void CalculateEffectiveExtentGeneric(vtkOrientedImageData*
   effectiveExtent[4] = wholeExt[5]+1;
   effectiveExtent[5] = wholeExt[4]-1;
 
-  if (image->GetScalarPointer() == NULL)
+  if (image->GetScalarPointer() == nullptr)
     {
     // no image data is allocated, return with empty extent
     return;
@@ -957,7 +957,7 @@ bool vtkOrientedImageDataResample::DoesTransformMatrixContainShear(vtkMatrix4x4*
 //----------------------------------------------------------------------------
 bool vtkOrientedImageDataResample::PadImageToContainImage(vtkOrientedImageData* inputImage, vtkOrientedImageData* containedImage, vtkOrientedImageData* outputImage)
 {
-  return vtkOrientedImageDataResample::PadImageToContainImage(inputImage, containedImage, outputImage, NULL);
+  return vtkOrientedImageDataResample::PadImageToContainImage(inputImage, containedImage, outputImage, nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -1018,7 +1018,7 @@ bool vtkOrientedImageDataResample::MergeImage(
     double fillValue /*=1*/,
     bool *outputModified /*=NULL*/)
 {
-  if (outputModified != NULL)
+  if (outputModified != nullptr)
     {
     (*outputModified) = false;
     }
@@ -1052,7 +1052,7 @@ bool vtkOrientedImageDataResample::MergeImage(
     return false;
     }
   vtkMTimeType outputImageMTimeAfter = outputImage->GetMTime();
-  if (outputModified != NULL)
+  if (outputModified != nullptr)
     {
     (*outputModified) = (outputImageMTimeBefore<outputImageMTimeAfter);
     }
@@ -1274,7 +1274,7 @@ void vtkOrientedImageDataResample::PrintImageInformation(vtkImageData* imageData
 //----------------------------------------------------------------------------
 template <typename T> void FillImageGeneric(vtkImageData* image, T fillValue, const int extent[6])
 {
-  if (image->GetScalarPointer() == NULL)
+  if (image->GetScalarPointer() == nullptr)
     {
     // no image data is allocated, return with empty extent
     return;
@@ -1312,7 +1312,7 @@ void vtkOrientedImageDataResample::FillImage(vtkImageData* image, double fillVal
     {
     return;
     }
-  if (image->GetPointData() == NULL || image->GetPointData()->GetScalars() == NULL)
+  if (image->GetPointData() == nullptr || image->GetPointData()->GetScalars() == nullptr)
     {
     return;
     }

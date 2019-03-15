@@ -106,7 +106,7 @@ void qMRMLClipNodeWidgetPrivate::init()
                    q, SLOT(updateNodeClippingMethod()));
 
 
-  q->setEnabled(this->MRMLClipNode.GetPointer() != 0);
+  q->setEnabled(this->MRMLClipNode.GetPointer() != nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -254,8 +254,8 @@ vtkMRMLClipModelsNode::ClippingMethodType qMRMLClipNodeWidget::clippingMethod()c
 void qMRMLClipNodeWidget::updateWidgetFromMRML()
 {
   Q_D(qMRMLClipNodeWidget);
-  this->setEnabled(d->MRMLClipNode.GetPointer() != 0);
-  if (d->MRMLClipNode.GetPointer() == 0)
+  this->setEnabled(d->MRMLClipNode.GetPointer() != nullptr);
+  if (d->MRMLClipNode.GetPointer() == nullptr)
     {
     return;
     }

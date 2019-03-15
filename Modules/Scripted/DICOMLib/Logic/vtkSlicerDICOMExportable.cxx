@@ -35,13 +35,13 @@ vtkStandardNewMacro(vtkSlicerDICOMExportable);
 //----------------------------------------------------------------------------
 vtkSlicerDICOMExportable::vtkSlicerDICOMExportable()
 {
-  this->Name = NULL;
+  this->Name = nullptr;
   this->SetName("Unknown exporter");
-  this->Tooltip = NULL;
+  this->Tooltip = nullptr;
   this->SetTooltip("Creates a DICOM file from the selected data");
   this->SubjectHierarchyItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
-  this->PluginClass = NULL;
-  this->Directory = NULL;
+  this->PluginClass = nullptr;
+  this->Directory = nullptr;
   this->Confidence = 0.0;
   this->Tags.clear();
 }

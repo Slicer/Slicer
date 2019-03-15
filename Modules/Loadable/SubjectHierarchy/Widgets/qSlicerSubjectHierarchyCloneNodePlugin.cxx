@@ -64,7 +64,7 @@ public:
 qSlicerSubjectHierarchyCloneNodePluginPrivate::qSlicerSubjectHierarchyCloneNodePluginPrivate(qSlicerSubjectHierarchyCloneNodePlugin& object)
 : q_ptr(&object)
 {
-  this->CloneItemAction = NULL;
+  this->CloneItemAction = nullptr;
 }
 
 //------------------------------------------------------------------------------

@@ -181,7 +181,7 @@ int vtkMRMLSceneIDTest(
   greenSlice2->SetLayoutName("Green"); // sets the singleton tag
   scene->AddNode(greenSlice2.GetPointer());
 
-  if (greenSlice2->GetID() != 0 ||
+  if (greenSlice2->GetID() != nullptr ||
       scene->GetNodeByID("vtkMRMLSliceNodeGreen") != greenSlice.GetPointer())
     {
     std::cerr << __LINE__ << " Node ID failed: "

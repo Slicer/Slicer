@@ -119,7 +119,7 @@ class QMRML_WIDGETS_EXPORT qMRMLTreeView : public QTreeView
 public:
   typedef QTreeView Superclass;
 
-  qMRMLTreeView(QWidget *parent=0);
+  qMRMLTreeView(QWidget *parent=nullptr);
   virtual ~qMRMLTreeView();
 
   vtkMRMLScene* mrmlScene()const;
@@ -317,7 +317,7 @@ protected slots:
   void loadTreeExpandState();
 
 protected:
-  qMRMLTreeView(qMRMLTreeViewPrivate* pimpl, QWidget *parent=0);
+  qMRMLTreeView(qMRMLTreeViewPrivate* pimpl, QWidget *parent=nullptr);
 
 protected:
   QScopedPointer<qMRMLTreeViewPrivate> d_ptr;

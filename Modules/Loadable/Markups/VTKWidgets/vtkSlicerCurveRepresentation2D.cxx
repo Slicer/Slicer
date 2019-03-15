@@ -314,7 +314,7 @@ vtkTypeBool vtkSlicerCurveRepresentation2D::HasTranslucentPolygonalGeometry()
 //----------------------------------------------------------------------
 double *vtkSlicerCurveRepresentation2D::GetBounds()
 {
-  return NULL;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------

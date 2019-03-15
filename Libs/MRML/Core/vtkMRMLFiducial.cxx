@@ -31,9 +31,9 @@ vtkMRMLFiducial::vtkMRMLFiducial()
   this->OrientationWXYZ[0] = this->OrientationWXYZ[1] = this->OrientationWXYZ[2]  = 0.0;
   this->OrientationWXYZ[3] = 1.0;
   // so that the SetLabelText macro won't try to free memory
-  this->LabelText = NULL;
+  this->LabelText = nullptr;
   this->SetLabelText("");
-  this->ID = NULL;
+  this->ID = nullptr;
   this->SetID("");
   this->Selected = false;
   this->Visibility = true;
@@ -45,12 +45,12 @@ vtkMRMLFiducial::~vtkMRMLFiducial()
     if (this->LabelText)
     {
         delete [] this->LabelText;
-        this->LabelText = NULL;
+        this->LabelText = nullptr;
     }
     if (this->ID)
     {
         delete [] this->ID;
-        this->ID = NULL;
+        this->ID = nullptr;
     }
 }
 
@@ -68,11 +68,11 @@ void vtkMRMLFiducial::WriteXML(ostream& of, int vtkNotUsed(nIndent))
 
 
   // now that it's not a first class node, write it out simply
-  if (this->ID != NULL)
+  if (this->ID != nullptr)
     {
     of << "id " << this->ID;
     }
-  if (this->LabelText != NULL)
+  if (this->LabelText != nullptr)
     {
     of << " labeltext " << this->LabelText;
     }
@@ -207,7 +207,7 @@ void vtkMRMLFiducial::ReadXMLAttributes(const char** atts)
 
   //std::cout << "vtkMRMLFiducial::ReadXMLAttributes\n";
 
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);

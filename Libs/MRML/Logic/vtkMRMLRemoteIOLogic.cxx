@@ -45,12 +45,12 @@ vtkMRMLRemoteIOLogic::~vtkMRMLRemoteIOLogic()
 {
   if (this->DataIOManager)
     {
-    this->DataIOManager->SetCacheManager(NULL);
-    this->SetDataIOManager(NULL);
+    this->DataIOManager->SetCacheManager(nullptr);
+    this->SetDataIOManager(nullptr);
     }
   if (this->CacheManager)
     {
-    this->SetCacheManager(NULL);
+    this->SetCacheManager(nullptr);
     }
 }
 
@@ -109,7 +109,7 @@ void vtkMRMLRemoteIOLogic::RemoveDataIOFromScene()
     {
     vtkErrorMacro("Cannot remove DataIOHandlers -- scene not set");
     }
-  this->GetMRMLScene()->SetURIHandlerCollection(NULL);
-  this->GetMRMLScene()->SetUserTagTable( NULL );
+  this->GetMRMLScene()->SetURIHandlerCollection(nullptr);
+  this->GetMRMLScene()->SetUserTagTable( nullptr );
 }
 

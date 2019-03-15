@@ -29,7 +29,7 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLDisplayNodeWidgetPlugin : public QObject
   Q_OBJECT
 
 public:
-  qMRMLDisplayNodeWidgetPlugin(QObject *_parent = 0);
+  qMRMLDisplayNodeWidgetPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;

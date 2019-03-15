@@ -40,7 +40,7 @@ public:
 
   typedef qSlicerLoadableModule Self;
   typedef qSlicerAbstractModule Superclass;
-  qSlicerLoadableModule(QObject *parent=0);
+  qSlicerLoadableModule(QObject *parent=nullptr);
   virtual ~qSlicerLoadableModule();
 
   /// Return help/acknowledgement text

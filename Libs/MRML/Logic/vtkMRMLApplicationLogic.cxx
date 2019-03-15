@@ -229,10 +229,10 @@ GetSliceLogic(vtkMRMLSliceNode* sliceNode) const
 {
   if(!sliceNode || !this->Internal->SliceLogics)
     {
-    return 0;
+    return nullptr;
     }
 
-  vtkMRMLSliceLogic* logic = 0;
+  vtkMRMLSliceLogic* logic = nullptr;
   vtkCollectionSimpleIterator it;
   vtkCollection* logics = this->Internal->SliceLogics;
 
@@ -244,7 +244,7 @@ GetSliceLogic(vtkMRMLSliceNode* sliceNode) const
       break;
       }
 
-    logic = 0;
+    logic = nullptr;
     }
 
   return logic;
@@ -256,10 +256,10 @@ GetSliceLogicByLayoutName(const char* layoutName) const
 {
   if(!layoutName || !this->Internal->SliceLogics)
     {
-    return 0;
+    return nullptr;
     }
 
-  vtkMRMLSliceLogic* logic = 0;
+  vtkMRMLSliceLogic* logic = nullptr;
   vtkCollectionSimpleIterator it;
   vtkCollection* logics = this->Internal->SliceLogics;
 
@@ -275,7 +275,7 @@ GetSliceLogicByLayoutName(const char* layoutName) const
       }
     }
 
-  return 0;
+  return nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -284,10 +284,10 @@ GetSliceLogicByModelDisplayNode(vtkMRMLModelDisplayNode* displayNode) const
 {
   if (!displayNode || !this->Internal->SliceLogics)
     {
-    return 0;
+    return nullptr;
     }
 
-  vtkMRMLSliceLogic* logic = 0;
+  vtkMRMLSliceLogic* logic = nullptr;
   vtkCollectionSimpleIterator it;
   vtkCollection* logics = this->Internal->SliceLogics;
 
@@ -300,7 +300,7 @@ GetSliceLogicByModelDisplayNode(vtkMRMLModelDisplayNode* displayNode) const
       }
     }
 
-  return 0;
+  return nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -326,10 +326,10 @@ GetViewLogic(vtkMRMLViewNode* viewNode) const
 {
   if(!viewNode || !this->Internal->ViewLogics)
     {
-    return 0;
+    return nullptr;
     }
 
-  vtkMRMLViewLogic* logic = 0;
+  vtkMRMLViewLogic* logic = nullptr;
   vtkCollectionSimpleIterator it;
   vtkCollection* logics = this->Internal->ViewLogics;
 
@@ -341,7 +341,7 @@ GetViewLogic(vtkMRMLViewNode* viewNode) const
       break;
       }
 
-    logic = 0;
+    logic = nullptr;
     }
 
   return logic;
@@ -353,10 +353,10 @@ GetViewLogicByLayoutName(const char* layoutName) const
 {
   if(!layoutName || !this->Internal->ViewLogics)
     {
-    return 0;
+    return nullptr;
     }
 
-  vtkMRMLViewLogic* logic = 0;
+  vtkMRMLViewLogic* logic = nullptr;
   vtkCollectionSimpleIterator it;
   vtkCollection* logics = this->Internal->ViewLogics;
 
@@ -372,13 +372,13 @@ GetViewLogicByLayoutName(const char* layoutName) const
       }
     }
 
-  return 0;
+  return nullptr;
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLApplicationLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
-  vtkMRMLNode* selectionNode = 0;
+  vtkMRMLNode* selectionNode = nullptr;
   if (newScene)
     {
     // Selection Node
@@ -391,7 +391,7 @@ void vtkMRMLApplicationLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
     }
   this->SetSelectionNode(vtkMRMLSelectionNode::SafeDownCast(selectionNode));
 
-  vtkMRMLNode* interactionNode = 0;
+  vtkMRMLNode* interactionNode = nullptr;
   if (newScene)
     {
     // Interaction Node
@@ -516,11 +516,11 @@ void vtkMRMLApplicationLogic::PropagatePlotChartSelection()
 //----------------------------------------------------------------------------
 void vtkMRMLApplicationLogic::FitSliceToAll(bool onlyIfPropagateVolumeSelectionAllowed /* =false */)
 {
-  if (this->Internal->SliceLogics.GetPointer() == 0)
+  if (this->Internal->SliceLogics.GetPointer() == nullptr)
     {
     return;
     }
-  vtkMRMLSliceLogic* sliceLogic = 0;
+  vtkMRMLSliceLogic* sliceLogic = nullptr;
   vtkCollectionSimpleIterator it;
   for(this->Internal->SliceLogics->InitTraversal(it);
       (sliceLogic = vtkMRMLSliceLogic::SafeDownCast(
@@ -529,7 +529,7 @@ void vtkMRMLApplicationLogic::FitSliceToAll(bool onlyIfPropagateVolumeSelectionA
     if (onlyIfPropagateVolumeSelectionAllowed)
       {
       vtkMRMLSliceCompositeNode* sliceCompositeNode = sliceLogic->GetSliceCompositeNode();
-      if (sliceCompositeNode!=NULL && !sliceCompositeNode->GetDoPropagateVolumeSelection())
+      if (sliceCompositeNode!=nullptr && !sliceCompositeNode->GetDoPropagateVolumeSelection())
         {
         // propagate volume selection is disabled, skip this slice
         continue;
@@ -1113,13 +1113,13 @@ int vtkMRMLApplicationLogic::LoadDefaultParameterSets(vtkMRMLScene* scene,
 #else
     DIR* dp;
     struct dirent* dirp;
-    if ((dp  = opendir(dirString.c_str())) == NULL)
+    if ((dp  = opendir(dirString.c_str())) == nullptr)
       {
       vtkGenericWarningMacro("Error(" << errno << ") opening " << dirString.c_str());
       }
     else
       {
-      while ((dirp = readdir(dp)) != NULL)
+      while ((dirp = readdir(dp)) != nullptr)
         {
         // add this file to the vector holding the base dir name
         filesVector.push_back(std::string(dirp->d_name));
@@ -1176,9 +1176,9 @@ int vtkMRMLApplicationLogic::LoadDefaultParameterSets(vtkMRMLScene* scene,
 vtkMRMLApplicationLogic
 ::InvokeRequest::InvokeRequest()
   : Delay (100)
-  , Caller(0)
+  , Caller(nullptr)
   , EventID(vtkCommand::ModifiedEvent)
-  , CallData(0)
+  , CallData(nullptr)
 {
 }
 
@@ -1204,7 +1204,7 @@ const char* vtkMRMLApplicationLogic::GetTemporaryPath()
 //----------------------------------------------------------------------------
 void vtkMRMLApplicationLogic::SetTemporaryPath(const char* path)
 {
-    if (path == NULL)
+    if (path == nullptr)
       {
       this->Internal->TemporaryPath.clear();
       }
@@ -1222,7 +1222,7 @@ void vtkMRMLApplicationLogic::SetTemporaryPath(const char* path)
 //----------------------------------------------------------------------------
 void vtkMRMLApplicationLogic::SaveSceneScreenshot(vtkImageData* screenshot)
 {
-  if (this->GetMRMLScene() == NULL || this->GetMRMLScene()->GetURL() == NULL)
+  if (this->GetMRMLScene() == nullptr || this->GetMRMLScene()->GetURL() == nullptr)
   {
     vtkErrorMacro("vtkMRMLApplicationLogic::SaveSceneScreenshot failed: invalid scene or URL");
     return;

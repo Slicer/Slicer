@@ -62,8 +62,8 @@ public:
 //----------------------------------------------------------------------------
 vtkMRMLAbstractLogic::vtkInternal::vtkInternal()
 {
-  this->MRMLApplicationLogic = 0;
-  this->MRMLScene = 0;
+  this->MRMLApplicationLogic = nullptr;
+  this->MRMLScene = nullptr;
 
   this->MRMLSceneObserverManager = vtkObserverManager::New();
   this->InMRMLSceneCallbackFlag = false;
@@ -117,7 +117,7 @@ vtkMRMLAbstractLogic::vtkMRMLAbstractLogic()
 //----------------------------------------------------------------------------
 vtkMRMLAbstractLogic::~vtkMRMLAbstractLogic()
 {
-  this->SetMRMLScene(0);
+  this->SetMRMLScene(nullptr);
   delete this->Internal;
 }
 
@@ -273,7 +273,7 @@ void vtkMRMLAbstractLogic::SetMRMLScene(vtkMRMLScene * newScene)
     return;
     }
 
-  if (this->Internal->MRMLScene != 0)
+  if (this->Internal->MRMLScene != nullptr)
     {
     this->UnobserveMRMLScene();
     }
@@ -303,7 +303,7 @@ void vtkMRMLAbstractLogic::SetAndObserveMRMLScene(vtkMRMLScene *newScene)
     return;
     }
 
-  if (this->Internal->MRMLScene != 0)
+  if (this->Internal->MRMLScene != nullptr)
     {
     this->UnobserveMRMLScene();
     }
@@ -438,7 +438,7 @@ void vtkMRMLAbstractLogic
   (void)caller;
 #endif
 
-  vtkMRMLNode * node = 0;
+  vtkMRMLNode * node = nullptr;
 
   switch(event)
     {

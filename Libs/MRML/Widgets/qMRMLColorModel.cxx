@@ -242,7 +242,7 @@ int qMRMLColorModel::colorFromItem(QStandardItem* colorItem)const
 {
   Q_D(const qMRMLColorModel);
   // TODO: fasten by saving the pointer into the data
-  if (d->MRMLColorNode == 0 || colorItem == 0)
+  if (d->MRMLColorNode == nullptr || colorItem == nullptr)
     {
     return -1;
     }
@@ -260,7 +260,7 @@ QStandardItem* qMRMLColorModel::itemFromColor(int color, int column)const
   //Q_D(const qMRMLColorModel);
   if (color == -1)
     {
-    return 0;
+    return nullptr;
     }
   QModelIndexList indexes = this->match(this->index(0,0), qMRMLColorModel::ColorEntryRole,
                                       color, 1,
@@ -274,7 +274,7 @@ QStandardItem* qMRMLColorModel::itemFromColor(int color, int column)const
     indexes = this->match(indexes[0], qMRMLColorModel::ColorEntryRole, color, 1,
                           Qt::MatchExactly | Qt::MatchRecursive);
     }
-  return 0;
+  return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -288,7 +288,7 @@ QModelIndexList qMRMLColorModel::indexes(int color)const
 QColor qMRMLColorModel::qcolorFromColor(int entry)const
 {
   Q_D(const qMRMLColorModel);
-  if (d->MRMLColorNode == 0 || entry < 0)
+  if (d->MRMLColorNode == nullptr || entry < 0)
     {
     return QColor();
     }
@@ -301,7 +301,7 @@ QColor qMRMLColorModel::qcolorFromColor(int entry)const
 QString qMRMLColorModel::nameFromColor(int entry)const
 {
   Q_D(const qMRMLColorModel);
-  if (d->MRMLColorNode == 0 || entry < 0)
+  if (d->MRMLColorNode == nullptr || entry < 0)
     {
     return QString();
     }
@@ -312,7 +312,7 @@ QString qMRMLColorModel::nameFromColor(int entry)const
 int qMRMLColorModel::colorFromName(const QString& name)const
 {
   Q_D(const qMRMLColorModel);
-  if (d->MRMLColorNode == 0)
+  if (d->MRMLColorNode == nullptr)
     {
     return -1;
     }
@@ -331,7 +331,7 @@ void qMRMLColorModel::updateNode()
     }
   d->IsUpdatingWidgetFromMRML = true;
 
-  if (d->MRMLColorNode == 0)
+  if (d->MRMLColorNode == nullptr)
     {
     this->setRowCount(this->noneEnabled() ? 1 : 0);
     d->IsUpdatingWidgetFromMRML = false;

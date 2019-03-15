@@ -273,17 +273,17 @@ bool qMRMLSceneAnnotationModel::canBeAParent(vtkMRMLNode* node)const
 //------------------------------------------------------------------------------
 vtkMRMLNode* qMRMLSceneAnnotationModel::parentNode(vtkMRMLNode* node)const
 {
-  if (node == NULL)
+  if (node == nullptr)
     {
-    return 0;
+    return nullptr;
     }
 
   vtkMRMLDisplayableHierarchyNode* displayableHierarchyNode =
     vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
-  if (displayableHierarchyNode == 0)
+  if (displayableHierarchyNode == nullptr)
     {
     vtkMRMLDisplayableNode *displayableNode = vtkMRMLDisplayableNode::SafeDownCast(node);
-    if (displayableNode != 0)
+    if (displayableNode != nullptr)
       {
       // get the displayable hierarchy node associated with this displayable node
       displayableHierarchyNode =
@@ -296,7 +296,7 @@ vtkMRMLNode* qMRMLSceneAnnotationModel::parentNode(vtkMRMLNode* node)const
         }
       }
     }
-  if (displayableHierarchyNode != 0)
+  if (displayableHierarchyNode != nullptr)
     {
     // this is a hidden hierarchy node, so we do not want to display it
     // instead, we will return the parent of the hidden hierarchy node
@@ -313,7 +313,7 @@ vtkMRMLNode* qMRMLSceneAnnotationModel::parentNode(vtkMRMLNode* node)const
       }
     return parent;
     }
-  return 0;
+  return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -322,7 +322,7 @@ vtkMRMLNode* qMRMLSceneAnnotationModel
 {
   if (!mrmlNode)
     {
-    return 0;
+    return nullptr;
     }
 
   if(mrmlNode->IsA("vtkMRMLAnnotationHierarchyNode"))
@@ -346,7 +346,7 @@ vtkMRMLNode* qMRMLSceneAnnotationModel
       return hnode->GetParentNode();
       }
     }
-  return 0;
+  return nullptr;
 }
 
 //------------------------------------------------------------------------------

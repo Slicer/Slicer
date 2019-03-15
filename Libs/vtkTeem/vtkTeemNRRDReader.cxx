@@ -72,7 +72,7 @@ vtkTeemNRRDReader::vtkTeemNRRDReader()
 vtkTeemNRRDReader::~vtkTeemNRRDReader()
 {
   nrrdNuke(this->nrrd);
-  this->nrrd = NULL;
+  this->nrrd = nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -131,7 +131,7 @@ const char* vtkTeemNRRDReader::GetHeaderValue(const char *key)
   }
   else
   {
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -140,7 +140,7 @@ const char* vtkTeemNRRDReader::GetAxisLabel(unsigned int axis)
 {
   if (this->AxisLabels.find(axis) == this->AxisLabels.end())
     {
-    return NULL;
+    return nullptr;
     }
   return this->AxisLabels[axis].c_str();
 }
@@ -150,7 +150,7 @@ const char* vtkTeemNRRDReader::GetAxisUnit(unsigned int axis)
 {
   if (this->AxisUnits.find(axis) == this->AxisUnits.end())
     {
-    return NULL;
+    return nullptr;
     }
   return this->AxisUnits[axis].c_str();
 }
@@ -363,7 +363,7 @@ void vtkTeemNRRDReader::ExecuteInformation()
     char *err = biffGetDone(NRRD);
     vtkErrorMacro("Error reading " << this->GetFileName() << ": " << err);
     free(err); // err points to malloc'd data!!
-    err = NULL;
+    err = nullptr;
     nio = nrrdIoStateNix(nio);
     this->ReadStatus = 1;
     return;
@@ -591,31 +591,31 @@ void vtkTeemNRRDReader::ExecuteInformation()
   // Push extra key/value pair data into std::map
   for (unsigned int i = 0; i < nrrdKeyValueSize(this->nrrd); i++)
     {
-    char *key = NULL;
-    char *val = NULL;
+    char *key = nullptr;
+    char *val = nullptr;
     nrrdKeyValueIndex(this->nrrd, &key, &val, i);
     HeaderKeyValue[std::string(key)] = std::string(val);
     free(key);  // key and val point to malloc'd data!!
     free(val);
     }
 
-  const char* labels[NRRD_DIM_MAX] = { 0 };
+  const char* labels[NRRD_DIM_MAX] = { nullptr };
   nrrdAxisInfoGet_nva(nrrd, nrrdAxisInfoLabel, labels);
   this->AxisLabels.clear();
   for (unsigned int axi = 0; axi < NRRD_DIM_MAX; axi++)
     {
-    if (labels[axi] != NULL)
+    if (labels[axi] != nullptr)
       {
       this->AxisLabels[axi] = labels[axi];
       }
     }
 
-  const char* units[NRRD_DIM_MAX] = { 0 };
+  const char* units[NRRD_DIM_MAX] = { nullptr };
   nrrdAxisInfoGet_nva(nrrd, nrrdAxisInfoUnits, units);
   this->AxisUnits.clear();
   for (unsigned int axi = 0; axi < NRRD_DIM_MAX; axi++)
     {
-    if (units[axi] != NULL)
+    if (units[axi] != nullptr)
       {
       this->AxisUnits[axi] = units[axi];
       }
@@ -675,7 +675,7 @@ vtkImageData *vtkTeemNRRDReader::AllocateOutputData(vtkDataObject *out, vtkInfor
   if (!res)
     {
     vtkWarningMacro("Call to AllocateOutputData with non vtkImageData output");
-    return NULL;
+    return nullptr;
     }
 
   // I would like to eliminate this method which requires extra "information"
@@ -907,7 +907,7 @@ void vtkTeemNRRDReader::ExecuteDataWithInformation(vtkDataObject *output, vtkInf
 
   vtkImageData *imageData = this->AllocateOutputData(output, outInfo);
 
-  if (this->GetFileName() == NULL)
+  if (this->GetFileName() == nullptr)
     {
     vtkErrorMacro(<< "Either a FileName or FilePrefix must be specified.");
     return;
@@ -915,20 +915,20 @@ void vtkTeemNRRDReader::ExecuteDataWithInformation(vtkDataObject *output, vtkInf
 
   // Read in the this->nrrd.  Yes, this means that the header is being read
   // twice: once by ExecuteInformation, and once here
-  if ( nrrdLoad(this->nrrd, this->GetFileName(), NULL) != 0 )
+  if ( nrrdLoad(this->nrrd, this->GetFileName(), nullptr) != 0 )
     {
     char *err =  biffGetDone(NRRD); // would be nice to free(err)
     vtkErrorMacro("Read: Error reading " << this->GetFileName() << ":\n" << err);
     return;
     }
 
-  if (this->nrrd->data == NULL)
+  if (this->nrrd->data == nullptr)
     {
     vtkErrorMacro(<< "data is null.");
     return;
     }
 
-  void *ptr = NULL;
+  void *ptr = nullptr;
   switch(this->PointDataType)
     {
     case vtkDataSetAttributes::SCALARS:

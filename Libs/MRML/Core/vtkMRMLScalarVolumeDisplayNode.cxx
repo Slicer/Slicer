@@ -105,8 +105,8 @@ vtkMRMLScalarVolumeDisplayNode::vtkMRMLScalarVolumeDisplayNode()
   this->AppendComponents->AddInputConnection(0, this->ExtractRGB->GetOutputPort() );
   this->AppendComponents->AddInputConnection(0, this->AlphaLogic->GetOutputPort() );
 
-  this->Bimodal = NULL;
-  this->Accumulate = NULL;
+  this->Bimodal = nullptr;
+  this->Accumulate = nullptr;
   this->IsInCalculateAutoLevels = false;
 
   vtkEventBroker::GetInstance()->AddObservation(
@@ -116,7 +116,7 @@ vtkMRMLScalarVolumeDisplayNode::vtkMRMLScalarVolumeDisplayNode()
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeDisplayNode::~vtkMRMLScalarVolumeDisplayNode()
 {
-  this->SetAndObserveColorNodeID( NULL);
+  this->SetAndObserveColorNodeID( nullptr);
 
   this->AlphaLogic->Delete();
   this->MapToColors->Delete();
@@ -130,12 +130,12 @@ vtkMRMLScalarVolumeDisplayNode::~vtkMRMLScalarVolumeDisplayNode()
   if (this->Bimodal)
     {
     this->Bimodal->Delete();
-    this->Bimodal = NULL;
+    this->Bimodal = nullptr;
     }
   if (this->Accumulate)
     {
     this->Accumulate->Delete();
-    this->Accumulate = NULL;
+    this->Accumulate = nullptr;
     }
 }
 
@@ -153,9 +153,9 @@ void vtkMRMLScalarVolumeDisplayNode::SetInputImageDataConnection(vtkAlgorithmOut
     return;
     }
   vtkAlgorithm* oldInputImageDataAlgorithm = this->GetInputImageDataConnection() ?
-    this->GetInputImageDataConnection()->GetProducer() : 0;
+    this->GetInputImageDataConnection()->GetProducer() : nullptr;
 
-  if (oldInputImageDataAlgorithm != NULL)
+  if (oldInputImageDataAlgorithm != nullptr)
     {
     vtkEventBroker::GetInstance()->RemoveObservations(
       oldInputImageDataAlgorithm, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
@@ -164,8 +164,8 @@ void vtkMRMLScalarVolumeDisplayNode::SetInputImageDataConnection(vtkAlgorithmOut
   this->Superclass::SetInputImageDataConnection(imageDataConnection);
 
   vtkAlgorithm* inputImageDataAlgorithm = this->GetInputImageDataConnection() ?
-    this->GetInputImageDataConnection()->GetProducer() : 0;
-  if (inputImageDataAlgorithm != NULL)
+    this->GetInputImageDataConnection()->GetProducer() : nullptr;
+  if (inputImageDataAlgorithm != nullptr)
     {
     vtkEventBroker::GetInstance()->AddObservation(
       inputImageDataAlgorithm, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
@@ -193,14 +193,14 @@ vtkAlgorithmOutput* vtkMRMLScalarVolumeDisplayNode::GetBackgroundImageStencilDat
   // 0 = foreground image, 1 = background image, 2 = stencil
   const int stencilInputPort = 2;
   return this->MultiplyAlpha->GetNumberOfInputConnections(0)>stencilInputPort ?
-    this->MultiplyAlpha->GetInputConnection(0,stencilInputPort) : 0;
+    this->MultiplyAlpha->GetInputConnection(0,stencilInputPort) : nullptr;
 }
 
 //----------------------------------------------------------------------------
 vtkAlgorithmOutput* vtkMRMLScalarVolumeDisplayNode::GetInputImageDataConnection()
 {
   return this->MapToWindowLevelColors->GetNumberOfInputConnections(0) ?
-    this->MapToWindowLevelColors->GetInputConnection(0,0) : 0;
+    this->MapToWindowLevelColors->GetInputConnection(0,0) : nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -277,7 +277,7 @@ void vtkMRMLScalarVolumeDisplayNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -558,13 +558,13 @@ void vtkMRMLScalarVolumeDisplayNode::SetColorNodeInternal(vtkMRMLColorNode* newC
 //---------------------------------------------------------------------------
 void vtkMRMLScalarVolumeDisplayNode::UpdateLookupTable(vtkMRMLColorNode* newColorNode)
 {
-  vtkScalarsToColors *lookupTable = NULL;
+  vtkScalarsToColors *lookupTable = nullptr;
   if (newColorNode)
     {
     lookupTable = newColorNode->GetLookupTable();
-    if (lookupTable == NULL)
+    if (lookupTable == nullptr)
       {
-      if (vtkMRMLProceduralColorNode::SafeDownCast(newColorNode) != NULL)
+      if (vtkMRMLProceduralColorNode::SafeDownCast(newColorNode) != nullptr)
         {
         vtkDebugMacro("UpdateImageDataPipeline: getting color transfer function");
         lookupTable = vtkMRMLProceduralColorNode::SafeDownCast(newColorNode)->GetColorTransferFunction();
@@ -581,7 +581,7 @@ void vtkMRMLScalarVolumeDisplayNode::AddWindowLevelPresetFromString(const char *
   double window = 0.0;
   double level = 0.0;
 
-  if (preset == NULL)
+  if (preset == nullptr)
     {
     vtkErrorMacro("AddWindowLevelPresetFromString: null input string!");
     return;
@@ -591,12 +591,12 @@ void vtkMRMLScalarVolumeDisplayNode::AddWindowLevelPresetFromString(const char *
   char *presetChars = new char [presetString.size()+1];
   strcpy(presetChars, presetString.c_str());
   char *pos = strtok(presetChars, "|");
-  if (pos != NULL)
+  if (pos != nullptr)
     {
     window = atof(pos);
     }
-  pos = strtok(NULL, "|");
-  if (pos != NULL)
+  pos = strtok(nullptr, "|");
+  if (pos != nullptr)
     {
     level = atof(pos);
     }
@@ -667,8 +667,8 @@ void vtkMRMLScalarVolumeDisplayNode::ResetWindowLevelPresets()
 vtkImageData* vtkMRMLScalarVolumeDisplayNode::GetScalarImageData()
 {
   vtkAlgorithm* producer = this->GetScalarImageDataConnection() ?
-    this->GetScalarImageDataConnection()->GetProducer() : 0;
-  return vtkImageData::SafeDownCast(producer ? producer->GetOutputDataObject(0) : 0);
+    this->GetScalarImageDataConnection()->GetProducer() : nullptr;
+  return vtkImageData::SafeDownCast(producer ? producer->GetOutputDataObject(0) : nullptr);
 }
 
 //---------------------------------------------------------------------------
@@ -737,11 +737,11 @@ void vtkMRMLScalarVolumeDisplayNode::CalculateAutoLevels()
     return;
     }
 
-  if (this->Bimodal == NULL)
+  if (this->Bimodal == nullptr)
     {
     this->Bimodal = vtkImageBimodalAnalysis::New();
     }
-  if (this->Accumulate == NULL)
+  if (this->Accumulate == nullptr)
     {
     this->Accumulate = vtkImageAccumulate::New();
     }

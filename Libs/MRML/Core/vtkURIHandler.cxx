@@ -10,35 +10,35 @@ vtkCxxSetObjectMacro( vtkURIHandler, PermissionPrompter, vtkPermissionPrompter )
 //----------------------------------------------------------------------------
 vtkURIHandler::vtkURIHandler()
 {
-  this->LocalFile = NULL;
+  this->LocalFile = nullptr;
   this->RequiresPermission = 0;
-  this->PermissionPrompter = NULL;
-  this->Prefix = NULL;
-  this->Name = NULL;
-  this->HostName = NULL;
+  this->PermissionPrompter = nullptr;
+  this->Prefix = nullptr;
+  this->Name = nullptr;
+  this->HostName = nullptr;
 }
 
 
 //----------------------------------------------------------------------------
 vtkURIHandler::~vtkURIHandler()
 {
-  this->LocalFile = NULL;
-  if ( this->PermissionPrompter != NULL )
+  this->LocalFile = nullptr;
+  if ( this->PermissionPrompter != nullptr )
     {
     this->PermissionPrompter->Delete();
-    this->PermissionPrompter = NULL;
+    this->PermissionPrompter = nullptr;
     }
-  if ( this->Prefix != NULL )
+  if ( this->Prefix != nullptr )
     {
-    this->SetPrefix ( NULL );
+    this->SetPrefix ( nullptr );
     }
-  if ( this->Name != NULL )
+  if ( this->Name != nullptr )
     {
-    this->SetName ( NULL );
+    this->SetName ( nullptr );
     }
-  if ( this->HostName != NULL )
+  if ( this->HostName != nullptr )
     {
-    this->SetHostName (NULL );
+    this->SetHostName (nullptr );
     }
 }
 
@@ -80,7 +80,7 @@ int vtkURIHandler::ProgressCallback ( FILE * vtkNotUsed(outputFile), double dlto
 //----------------------------------------------------------------------------
 size_t vtkURIHandler::BufferedWrite ( char *buffer, size_t size, size_t nitems )
 {
-  if ( this->LocalFile != NULL )
+  if ( this->LocalFile != nullptr )
     {
     //this->LocalFile->write(buffer,size*nitems);
     size_t size_written = fwrite(buffer, sizeof(char), size*nitems, this->LocalFile);

@@ -41,7 +41,7 @@ int vtkSlicerTransformLogicTest1(int argc, char * argv [])
     }
 
   vtkMRMLTransformNode* transform = transformModuleLogic->AddTransform(argv[1], scene);
-  if (transform == 0)
+  if (transform == nullptr)
     {
     std::cerr << "Could not read transform file: " << argv[1] << std::endl;
     return EXIT_FAILURE;

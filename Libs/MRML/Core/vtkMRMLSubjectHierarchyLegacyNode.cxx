@@ -46,8 +46,8 @@ vtkMRMLNodeNewMacro(vtkMRMLSubjectHierarchyLegacyNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLSubjectHierarchyLegacyNode::vtkMRMLSubjectHierarchyLegacyNode()
-  : Level(NULL)
-  , OwnerPluginName(NULL)
+  : Level(nullptr)
+  , OwnerPluginName(nullptr)
 {
   this->SetLevel("Other");
 
@@ -59,8 +59,8 @@ vtkMRMLSubjectHierarchyLegacyNode::~vtkMRMLSubjectHierarchyLegacyNode()
 {
   this->UIDs.clear();
 
-  this->SetLevel(0);
-  this->SetOwnerPluginName(0);
+  this->SetLevel(nullptr);
+  this->SetOwnerPluginName(nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -98,7 +98,7 @@ void vtkMRMLSubjectHierarchyLegacyNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -209,7 +209,7 @@ vtkMRMLSubjectHierarchyLegacyNode* vtkMRMLSubjectHierarchyLegacyNode::GetSubject
   if (!scene || !uidName || !uidValue)
     {
     std::cerr << "vtkMRMLSubjectHierarchyLegacyNode::GetSubjectHierarchyNodeByUID: Invalid scene or searched UID!" << std::endl;
-    return NULL;
+    return nullptr;
     }
 
   std::vector<vtkMRMLNode*> subjectHierarchyNodes;
@@ -228,7 +228,7 @@ vtkMRMLSubjectHierarchyLegacyNode* vtkMRMLSubjectHierarchyLegacyNode::GetSubject
       }
     }
 
-  return NULL;
+  return nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -238,7 +238,7 @@ vtkMRMLSubjectHierarchyLegacyNode* vtkMRMLSubjectHierarchyLegacyNode::GetSubject
   if (!scene || !uidName || !uidValue)
     {
     std::cerr << "vtkMRMLSubjectHierarchyLegacyNode::GetSubjectHierarchyNodeByUID: Invalid scene or searched UID!" << std::endl;
-    return NULL;
+    return nullptr;
     }
 
   std::vector<vtkMRMLNode*> subjectHierarchyNodes;
@@ -256,7 +256,7 @@ vtkMRMLSubjectHierarchyLegacyNode* vtkMRMLSubjectHierarchyLegacyNode::GetSubject
       }
     }
 
-  return NULL;
+  return nullptr;
 }
 
 //---------------------------------------------------------------------------

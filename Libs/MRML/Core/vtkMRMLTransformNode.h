@@ -324,7 +324,7 @@ public:
   /// with true if all the transform components are linear.
   /// If concatenatedLinearTransform is specified and the transform is linear then it returns the concatenated linear
   /// transformation matrix.
-  static bool IsGeneralTransformLinear(vtkAbstractTransform* inputTransform, vtkTransform* concatenatedLinearTransform=NULL);
+  static bool IsGeneralTransformLinear(vtkAbstractTransform* inputTransform, vtkTransform* concatenatedLinearTransform=nullptr);
 
   ///
   /// Utility function that determines if a transform is computed from its inverse.

@@ -33,19 +33,19 @@ vtkStandardNewMacro(vtkSlicerDICOMLoadable);
 //----------------------------------------------------------------------------
 vtkSlicerDICOMLoadable::vtkSlicerDICOMLoadable()
 {
-  this->Name = NULL;
+  this->Name = nullptr;
   this->SetName("Unknown");
-  this->Tooltip = NULL;
+  this->Tooltip = nullptr;
   this->SetTooltip("No further information available");
-  this->Warning = NULL;
+  this->Warning = nullptr;
   this->Selected = false;
   this->Confidence = 0.5;
 
-  this->Files = NULL;
+  this->Files = nullptr;
   vtkSmartPointer<vtkStringArray> files = vtkSmartPointer<vtkStringArray>::New();
   this->SetFiles(files);
 
-  this->ReferencedInstanceUIDs = NULL;
+  this->ReferencedInstanceUIDs = nullptr;
   vtkSmartPointer<vtkStringArray> referencedInstanceUIDs = vtkSmartPointer<vtkStringArray>::New();
   this->SetReferencedInstanceUIDs(referencedInstanceUIDs);
 }
@@ -53,8 +53,8 @@ vtkSlicerDICOMLoadable::vtkSlicerDICOMLoadable()
 //----------------------------------------------------------------------------
 vtkSlicerDICOMLoadable::~vtkSlicerDICOMLoadable()
 {
-  this->SetFiles(NULL);
-  this->SetReferencedInstanceUIDs(NULL);
+  this->SetFiles(nullptr);
+  this->SetReferencedInstanceUIDs(nullptr);
 }
 
 //----------------------------------------------------------------------------

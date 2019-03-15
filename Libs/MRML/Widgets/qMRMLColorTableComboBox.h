@@ -39,7 +39,7 @@ public:
 
   /// Construct an empty qMRMLColorTableComboBox with a null scene,
   /// no nodeType, where the hidden nodes are not forced on display.
-  explicit qMRMLColorTableComboBox(QWidget* parent = 0);
+  explicit qMRMLColorTableComboBox(QWidget* parent = nullptr);
   virtual ~qMRMLColorTableComboBox();
   virtual void setMRMLScene(vtkMRMLScene* scene);
 

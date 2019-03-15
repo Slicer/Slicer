@@ -45,9 +45,9 @@ public:
 qMRMLLabelComboBoxPrivate::qMRMLLabelComboBoxPrivate(qMRMLLabelComboBox& object)
   : q_ptr(&object)
 {
-  this->ComboBox = 0;
+  this->ComboBox = nullptr;
   this->NoneEnabled = false;
-  this->ColorNode = 0;
+  this->ColorNode = nullptr;
   this->CurrentColor = -1;
   this->MaximumColorCount = 0;
   this->ColorNameVisible = true;
@@ -65,7 +65,7 @@ void qMRMLLabelComboBoxPrivate::setMRMLColorNode(vtkMRMLColorNode * newMRMLColor
     }
   q->qvtkReconnect(this->ColorNode, newMRMLColorNode, vtkCommand::ModifiedEvent,
                       q, SLOT(updateWidgetFromMRML()));
-  q->setEnabled(newMRMLColorNode != 0);
+  q->setEnabled(newMRMLColorNode != nullptr);
   this->ColorNode = newMRMLColorNode;
 
   if (this->ColorNode)
@@ -82,7 +82,7 @@ void qMRMLLabelComboBoxPrivate::setMRMLColorNode(vtkMRMLColorNode * newMRMLColor
 QColor qMRMLLabelComboBoxPrivate::colorFromIndex(int index) const
 {
   //qDebug() << "qMRMLLabelComboBox::colorFromIndex - index:" << index;
-  if (index < 0 || this->ColorNode == 0)
+  if (index < 0 || this->ColorNode == nullptr)
     {
     return QColor::Invalid;
     }

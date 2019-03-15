@@ -36,7 +36,7 @@ class qSlicerModelsReader
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerModelsReader(vtkSlicerModelsLogic* modelsLogic = 0, QObject* parent = 0);
+  qSlicerModelsReader(vtkSlicerModelsLogic* modelsLogic = nullptr, QObject* parent = nullptr);
   virtual ~qSlicerModelsReader();
 
   void setModelsLogic(vtkSlicerModelsLogic* modelsLogic);

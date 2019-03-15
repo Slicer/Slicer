@@ -46,7 +46,7 @@ public:
   typedef QWebEngineView Superclass;
 
   /// Constructors
-  explicit qMRMLChartView(QWidget* parent = 0);
+  explicit qMRMLChartView(QWidget* parent = nullptr);
   virtual ~qMRMLChartView();
 
   /// Return a pointer on the current MRML scene

@@ -75,7 +75,7 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerDataModuleWidgetPrivate::qSlicerDataModuleWidgetPrivate(qSlicerDataModuleWidget& object)
   : q_ptr(&object)
-  , HardenTransformAction(NULL)
+  , HardenTransformAction(nullptr)
   , ContextMenusHintShown(0)
 {
   this->CallBack = vtkSmartPointer<vtkCallbackCommand>::New();
@@ -346,7 +346,7 @@ void qSlicerDataModuleWidget::onCurrentNodeChanged(vtkMRMLNode* newCurrentNode)
   vtkMRMLTransformableNode* transformableNode =
     vtkMRMLTransformableNode::SafeDownCast(newCurrentNode);
   vtkMRMLTransformNode* transformNode =
-    transformableNode ? transformableNode->GetParentTransformNode() : 0;
+    transformableNode ? transformableNode->GetParentTransformNode() : nullptr;
   if (transformNode &&
       (transformNode->CanApplyNonLinearTransforms() ||
       transformNode->IsTransformToWorldLinear()))
@@ -412,7 +412,7 @@ void qSlicerDataModuleWidget::setDataNodeFromSubjectHierarchyItem(vtkIdType item
     return;
     }
 
-  vtkMRMLNode* dataNode = NULL;
+  vtkMRMLNode* dataNode = nullptr;
   if (itemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     dataNode = shNode->GetItemDataNode(itemID);

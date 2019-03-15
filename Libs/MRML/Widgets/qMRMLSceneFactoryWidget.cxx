@@ -47,7 +47,7 @@ public:
 qMRMLSceneFactoryWidgetPrivate::qMRMLSceneFactoryWidgetPrivate(qMRMLSceneFactoryWidget& object)
   : q_ptr(&object)
 {
-  this->MRMLScene = 0;
+  this->MRMLScene = nullptr;
 }
 
 // --------------------------------------------------------------------------
@@ -113,9 +113,9 @@ void qMRMLSceneFactoryWidget::deleteScene()
     }
   d->setNodeActionsEnabled(false);
   d->DeleteSceneButton->setEnabled(false);
-  emit this->mrmlSceneChanged(0);
+  emit this->mrmlSceneChanged(nullptr);
   d->MRMLScene->Delete();
-  d->MRMLScene = 0;
+  d->MRMLScene = nullptr;
 }
 
 // --------------------------------------------------------------------------
@@ -129,7 +129,7 @@ vtkMRMLScene* qMRMLSceneFactoryWidget::mrmlScene()const
 vtkMRMLNode* qMRMLSceneFactoryWidget::generateNode()
 {
   Q_D(qMRMLSceneFactoryWidget);
-  Q_ASSERT(d->MRMLScene != 0);
+  Q_ASSERT(d->MRMLScene != nullptr);
   QString nodeClassName = d->NewNodeLineEdit->text();
   if (nodeClassName.isEmpty())
     {
@@ -158,7 +158,7 @@ vtkMRMLNode* qMRMLSceneFactoryWidget::generateNode(const QString& className)
 {
   Q_D(qMRMLSceneFactoryWidget);
   Q_ASSERT(!className.isEmpty());
-  Q_ASSERT(d->MRMLScene != 0);
+  Q_ASSERT(d->MRMLScene != nullptr);
   vtkMRMLNode* node = qMRMLNodeFactory::createNode(d->MRMLScene, className);
   Q_ASSERT(node);
   if (node)
@@ -172,7 +172,7 @@ vtkMRMLNode* qMRMLSceneFactoryWidget::generateNode(const QString& className)
 void qMRMLSceneFactoryWidget::deleteNode()
 {
   Q_D(qMRMLSceneFactoryWidget);
-  Q_ASSERT(d->MRMLScene != 0);
+  Q_ASSERT(d->MRMLScene != nullptr);
   QString nodeClassName = d->DeleteNodeLineEdit->text();
   if (!nodeClassName.isEmpty())
     {
@@ -195,7 +195,7 @@ void qMRMLSceneFactoryWidget::deleteNode(const QString& className)
 {
   Q_D(qMRMLSceneFactoryWidget);
   Q_ASSERT(!className.isEmpty());
-  Q_ASSERT(d->MRMLScene != 0);
+  Q_ASSERT(d->MRMLScene != nullptr);
   int numNodes = d->MRMLScene->GetNumberOfNodesByClass(className.toLatin1());
   if (numNodes == 0)
     {

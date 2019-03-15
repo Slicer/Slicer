@@ -46,7 +46,7 @@ int vtkMRMLAnnotationROINodeTest1(int , char * [] )
   // ======================
   // Modify Properties
   // ======================
-  node2->Reset(NULL);
+  node2->Reset(nullptr);
 
   vtkNew<vtkMRMLNodeCallback> spy;
   node2->AddObserver(vtkCommand::AnyEvent, spy.GetPointer());
@@ -94,8 +94,8 @@ int TestGetTransformedPlanes(vtkMRMLScene* scene, vtkMRMLAnnotationROINode* node
   node->GetTransformedPlanes(planes.GetPointer());
   CHECK_INT(planes->GetNumberOfPlanes(), 6);
 
-  double* planeOrigin = 0;
-  double* planeNormal = 0;
+  double* planeOrigin = nullptr;
+  double* planeNormal = nullptr;
 
   // Without transform
 

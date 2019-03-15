@@ -33,7 +33,7 @@ VTK_MRML_LOGIC_EXPORT bool list_archive(
 // Warning, it extracts the archive into the current directory
 // With Qt, you can change the current directory using QDir::setCurrent()
 VTK_MRML_LOGIC_EXPORT bool extract_tar(const char* tarFileName, bool verbose, bool extract,
-                                       std::vector<std::string> * extracted_files = 0);
+                                       std::vector<std::string> * extracted_files = nullptr);
 
 // creates a zip file with the full contents of the directory (recurses)
 // zip entries will include relative path of including tail of directoryToZip

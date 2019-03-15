@@ -144,7 +144,7 @@ bool qSlicerTablesReader::load(const IOProperties& properties)
     if (!database->Open("", vtkSQLiteDatabase::USE_EXISTING))
       {
       bool ok;
-      QString text = QInputDialog::getText(0, tr("QInputDialog::getText()"),
+      QString text = QInputDialog::getText(nullptr, tr("QInputDialog::getText()"),
                                            tr("Database Password:"), QLineEdit::Normal,
                                            "", &ok);
       if (ok && !text.isEmpty())
@@ -154,8 +154,8 @@ bool qSlicerTablesReader::load(const IOProperties& properties)
       }
     }
 
-  vtkMRMLTableNode* node = NULL;
-  if (d->Logic!=NULL)
+  vtkMRMLTableNode* node = nullptr;
+  if (d->Logic!=nullptr)
     {
     node = d->Logic->AddTable(fileName.toLatin1(),uname.c_str(), true, password.c_str());
     }
@@ -163,7 +163,7 @@ bool qSlicerTablesReader::load(const IOProperties& properties)
     {
     // Show table in viewers
     vtkSlicerApplicationLogic* appLogic = d->Logic->GetApplicationLogic();
-    vtkMRMLSelectionNode* selectionNode = appLogic ? appLogic->GetSelectionNode() : 0;
+    vtkMRMLSelectionNode* selectionNode = appLogic ? appLogic->GetSelectionNode() : nullptr;
     if (selectionNode)
       {
       selectionNode->SetActiveTableID(node->GetID());
@@ -179,5 +179,5 @@ bool qSlicerTablesReader::load(const IOProperties& properties)
     qCritical("Failed to read table from %s", qPrintable(fileName));
     this->setLoadedNodes(QStringList());
     }
-  return node != 0;
+  return node != nullptr;
 }

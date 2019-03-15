@@ -33,7 +33,7 @@ const char* vtkMRMLTransformableNode::TransformNodeReferenceMRMLAttributeName = 
 //----------------------------------------------------------------------------
 vtkMRMLTransformableNode::vtkMRMLTransformableNode()
 {
-  this->TransformNodeIDInternal = 0;
+  this->TransformNodeIDInternal = nullptr;
 
   this->HideFromEditors = 0;
 
@@ -110,7 +110,7 @@ bool vtkMRMLTransformableNode::SetAndObserveTransformNodeID(const char *transfor
 {
   // Prevent circular reference in transform tree
   vtkMRMLTransformNode* newParentTransformNode = vtkMRMLTransformNode::SafeDownCast(
-    this->GetScene() != 0 ? this->GetScene()->GetNodeByID(transformNodeID) : 0);
+    this->GetScene() != nullptr ? this->GetScene()->GetNodeByID(transformNodeID) : nullptr);
   if (newParentTransformNode)
     {
     vtkMRMLTransformNode* thisTransform = vtkMRMLTransformNode::SafeDownCast(this);
@@ -136,7 +136,7 @@ void vtkMRMLTransformableNode::ProcessMRMLEvents ( vtkObject *caller,
 {
   // as retrieving the parent transform node can be costly (browse the scene)
   // do some checks here to prevent retrieving the node for nothing.
-  if (caller == NULL ||
+  if (caller == nullptr ||
       (event != vtkCommand::ModifiedEvent &&
       event != vtkMRMLTransformableNode::TransformModifiedEvent))
     {
@@ -145,7 +145,7 @@ void vtkMRMLTransformableNode::ProcessMRMLEvents ( vtkObject *caller,
   vtkMRMLTransformNode *tnode = this->GetParentTransformNode();
   if (tnode == caller)
     {
-    this->InvokeCustomModifiedEvent(vtkMRMLTransformableNode::TransformModifiedEvent, NULL);
+    this->InvokeCustomModifiedEvent(vtkMRMLTransformableNode::TransformModifiedEvent, nullptr);
     }
 }
 
@@ -192,7 +192,7 @@ bool vtkMRMLTransformableNode::HardenTransform()
     this->ApplyTransform(hardeningTransform.GetPointer());
     }
 
-  this->SetAndObserveTransformNodeID(NULL);
+  this->SetAndObserveTransformNodeID(nullptr);
   return true;
 }
 
@@ -200,7 +200,7 @@ bool vtkMRMLTransformableNode::HardenTransform()
 void vtkMRMLTransformableNode::TransformPointToWorld(const double inLocal[3], double outWorld[3])
 {
   vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
-  if (tnode == NULL)
+  if (tnode == nullptr)
     {
     // not transformed
     outWorld[0] = inLocal[0];
@@ -221,7 +221,7 @@ void vtkMRMLTransformableNode::TransformPointToWorld(const double inLocal[3], do
 void vtkMRMLTransformableNode::TransformPointFromWorld(const double inWorld[3], double outLocal[3])
 {
   vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
-  if (tnode == NULL)
+  if (tnode == nullptr)
     {
     // not transformed
     outLocal[0] = inWorld[0];

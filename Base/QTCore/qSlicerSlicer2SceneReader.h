@@ -35,8 +35,8 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerSlicer2SceneReader
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerSlicer2SceneReader(QObject* parent = 0);
-  qSlicerSlicer2SceneReader(vtkSlicerApplicationLogic* logic, QObject* parent = 0);
+  qSlicerSlicer2SceneReader(QObject* parent = nullptr);
+  qSlicerSlicer2SceneReader(vtkSlicerApplicationLogic* logic, QObject* parent = nullptr);
   virtual ~qSlicerSlicer2SceneReader();
 
   vtkSlicerApplicationLogic* applicationLogic()const;

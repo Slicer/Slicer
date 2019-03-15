@@ -40,7 +40,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLTransformItemDelegate
 {
   Q_OBJECT
 public:
-  qMRMLTransformItemDelegate(QObject *parent = 0);
+  qMRMLTransformItemDelegate(QObject *parent = nullptr);
   virtual ~qMRMLTransformItemDelegate();
 
   void setMRMLScene(vtkMRMLScene* scene);
@@ -98,7 +98,7 @@ class DelegateMenu : public QMenu
 {
   Q_OBJECT
 public:
-  explicit DelegateMenu(QWidget* parent = 0);
+  explicit DelegateMenu(QWidget* parent = nullptr);
   QString SelectedTransformNodeID;
 protected:
   virtual void showEvent(QShowEvent* event);

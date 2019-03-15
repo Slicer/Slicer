@@ -43,7 +43,7 @@
 qSlicerCorePythonManager::qSlicerCorePythonManager(QObject* _parent)
   : Superclass(_parent)
 {
-  this->Factory = 0;
+  this->Factory = nullptr;
 
   // If it applies, disable import of user site packages
   QString noUserSite = qgetenv("PYTHONNOUSERSITE");
@@ -62,7 +62,7 @@ qSlicerCorePythonManager::~qSlicerCorePythonManager()
   if (this->Factory)
     {
     delete this->Factory;
-    this->Factory = 0;
+    this->Factory = nullptr;
     }
 }
 

@@ -9,11 +9,11 @@ vtkStandardNewMacro ( vtkPermissionPrompter );
 //----------------------------------------------------------------------------
 vtkPermissionPrompter::vtkPermissionPrompter()
 {
-  this->Username = NULL;
-  this->Password = NULL;
-  this->HostName = NULL;
-  this->PromptMessage = NULL;
-  this->PromptTitle = NULL;
+  this->Username = nullptr;
+  this->Password = nullptr;
+  this->HostName = nullptr;
+  this->PromptMessage = nullptr;
+  this->PromptTitle = nullptr;
   this->Remember = 0;
 }
 
@@ -22,23 +22,23 @@ vtkPermissionPrompter::~vtkPermissionPrompter()
 {
   if ( this->Username )
     {
-    this->SetUsername ( NULL );
+    this->SetUsername ( nullptr );
     }
   if ( this->Password )
     {
-    this->SetPassword ( NULL );
+    this->SetPassword ( nullptr );
     }
   if ( this->HostName)
     {
-    this->SetHostName ( NULL );
+    this->SetHostName ( nullptr );
     }
   if ( this->PromptMessage )
     {
-    this->SetPromptMessage ( NULL );
+    this->SetPromptMessage ( nullptr );
     }
-  if ( this->PromptTitle!= NULL )
+  if ( this->PromptTitle!= nullptr )
     {
-    this->SetPromptTitle ( NULL );
+    this->SetPromptTitle ( nullptr );
     }
 }
 

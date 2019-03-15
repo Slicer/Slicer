@@ -38,7 +38,7 @@ class Q_SLICER_MODULES_CORE_EXPORT qSlicerEventBrokerModule :
 public:
 
   typedef qSlicerCoreModule Superclass;
-  qSlicerEventBrokerModule(QObject *parent=0);
+  qSlicerEventBrokerModule(QObject *parent=nullptr);
   virtual ~qSlicerEventBrokerModule();
 
   virtual QStringList categories()const;

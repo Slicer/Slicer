@@ -40,7 +40,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerSingletonViewFactory : public ctkLayoutV
   Q_OBJECT
 public:
   typedef ctkLayoutViewFactory Superclass;
-  qSlicerSingletonViewFactory(QObject* parent=0);
+  qSlicerSingletonViewFactory(QObject* parent=nullptr);
   virtual ~qSlicerSingletonViewFactory();
 
   /// Reimplemented to support custom element names

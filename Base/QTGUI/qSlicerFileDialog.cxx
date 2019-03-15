@@ -185,7 +185,7 @@ ctkFileDialog* qSlicerStandardFileDialog::createFileDialog(
   if(ioProperties["objectName"].toString().isEmpty())
     {
     qWarning() << "Impossible to create the ctkFileDialog - No object name has been set";
-    return 0;
+    return nullptr;
     }
 
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
@@ -235,17 +235,17 @@ qSlicerIOOptions* qSlicerStandardFileDialog
   Q_D(const qSlicerStandardFileDialog);
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
   // warning: we are responsible for the memory of options
-  qSlicerIOOptions* options = 0;
+  qSlicerIOOptions* options = nullptr;
   if (d->Action == qSlicerFileDialog::Read)
     {
     QStringList fileDescriptions = ioManager->fileDescriptionsByType(this->fileType());
     options = fileDescriptions.count() ?
-      ioManager->fileOptions(fileDescriptions[0]) : 0;
+      ioManager->fileOptions(fileDescriptions[0]) : nullptr;
     }
   else if (d->Action == qSlicerFileDialog::Write)
     {
     vtkMRMLScene* scene = qSlicerCoreApplication::application()->mrmlScene();
-    vtkMRMLNode* nodeToSave = 0;
+    vtkMRMLNode* nodeToSave = nullptr;
     if (!ioProperties["nodeID"].toString().isEmpty())
       {
       nodeToSave = scene->GetNodeByID(ioProperties["nodeID"].toString().toLatin1());
@@ -253,7 +253,7 @@ qSlicerIOOptions* qSlicerStandardFileDialog
     QStringList fileDescriptions =
       ioManager->fileWriterDescriptions(this->fileType());
     options = fileDescriptions.count() ?
-      ioManager->fileWriterOptions(nodeToSave, fileDescriptions[0]) : 0;
+      ioManager->fileWriterOptions(nodeToSave, fileDescriptions[0]) : nullptr;
     }
   // Update options widget based on properties.
   // This allows customizing default settings in the widget. For example,
@@ -358,7 +358,7 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
   if (!optionsWidget)
     {
     delete options;
-    options = 0;
+    options = nullptr;
     }
 
   delete fileDialog;

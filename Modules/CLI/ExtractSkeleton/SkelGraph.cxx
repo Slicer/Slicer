@@ -167,8 +167,8 @@ void SkelGraph::ExtractSkeletalGraph(const unsigned char *image, const int dim[3
 
   // done
 
-  delete [] label_image; label_image = NULL;
-  image = NULL; // no delete, since image points to original
+  delete [] label_image; label_image = nullptr;
+  image = nullptr; // no delete, since image points to original
 
   // if (DEBUG_VSKEL)
   //   std::cout << m_Graph.size() << " Branches found" << std::endl;
@@ -280,7 +280,7 @@ void SkelGraph::FindMaximalPath()
       // std::cout << "A " << act_pos_id  << std::endl;
       for( int i = 0; i < 2; i++ )
         {
-        std::deque<int> * cont_end = NULL;
+        std::deque<int> * cont_end = nullptr;
         Coord3i cont_end_point;
         if( i == 0 )
           {
@@ -330,7 +330,7 @@ void SkelGraph::FindMaximalPath()
       }
 
     // look for maximum
-    skel_branch * act_max_node = NULL;
+    skel_branch * act_max_node = nullptr;
     double act_max_val = -1;
     for (std::deque<skel_branch>::iterator branch = m_Graph.begin(); branch != m_Graph.end(); ++branch)
       {
@@ -376,7 +376,7 @@ void SkelGraph::FindMaximalPath()
   // Get Maximum of all maximal paths (which is double contained, otherweise it would
   // not be maximal )
 
-  skel_branch* maximalPathStartBranch = NULL;
+  skel_branch* maximalPathStartBranch = nullptr;
   m_MaximalPathLength = -1.0;
   for (std::deque<skel_branch>::iterator branch = m_Graph.begin(); branch != m_Graph.end(); ++branch)
     {
@@ -400,7 +400,7 @@ void SkelGraph::SampleAlongMaximalPath(int requestedNumberOfPoints, std::deque<C
 {
   axis_points.clear();
   double minimumDistance = m_MaximalPathLength / (requestedNumberOfPoints - 1);
-  skel_branch* previousBranch = NULL;
+  skel_branch* previousBranch = nullptr;
   Coord3i previousPointPosition;
   for (std::deque<int>::iterator branchId = m_MaximalPath.begin(); branchId != m_MaximalPath.end(); ++branchId)
     {

@@ -70,8 +70,8 @@ public:
 //----------------------------------------------------------------------------
 vtkSlicerCropVolumeLogic::vtkInternal::vtkInternal()
 {
-  this->VolumesLogic = 0;
-  this->ResampleLogic = 0;
+  this->VolumesLogic = nullptr;
+  this->ResampleLogic = nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -194,7 +194,7 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
     if (outputTransform && !outputTransform->IsTransformToWorldLinear())
       {
       // Output node must not be under non-linear transform
-      outputVolume->SetAndObserveTransformNodeID(NULL);
+      outputVolume->SetAndObserveTransformNodeID(nullptr);
       }
     }
 
@@ -229,7 +229,7 @@ bool vtkSlicerCropVolumeLogic::GetVoxelBasedCropOutputExtent(vtkMRMLAnnotationRO
   if (roiTransform && !roiTransform->IsTransformToWorldLinear())
     {
     vtkGenericWarningMacro("CropVolume: ROI is transformed using a non-linear transform. The transformation will be ignored");
-    roiTransform = NULL;
+    roiTransform = nullptr;
     }
 
   if (inputVolume->GetParentTransformNode() && !inputVolume->GetParentTransformNode()->IsTransformToWorldLinear())
@@ -308,7 +308,7 @@ int vtkSlicerCropVolumeLogic::CropVoxelBased(vtkMRMLAnnotationROINode* roi, vtkM
   if (!inputVolume->GetImageData())
     {
     vtkGenericWarningMacro("vtkSlicerCropVolumeLogic::CropVoxelBased: input image is empty")
-    outputVolume->SetAndObserveImageData(NULL);
+    outputVolume->SetAndObserveImageData(nullptr);
     return 0;
     }
 
@@ -420,7 +420,7 @@ int vtkSlicerCropVolumeLogic::CropInterpolated(vtkMRMLAnnotationROINode* roi, vt
     return -1;
     }
 
-  if (this->Internal->ResampleLogic == 0)
+  if (this->Internal->ResampleLogic == nullptr)
     {
     vtkErrorMacro("CropVolume: resample logic is not set");
     return -3;
@@ -484,7 +484,7 @@ int vtkSlicerCropVolumeLogic::CropInterpolated(vtkMRMLAnnotationROINode* roi, vt
     }
 
   vtkMRMLCommandLineModuleNode* cmdNode = this->Internal->ResampleLogic->CreateNodeInScene();
-  if (cmdNode == NULL)
+  if (cmdNode == nullptr)
     {
     vtkErrorMacro("CropVolume: failed to create resample node");
     return -4;
@@ -545,8 +545,8 @@ int vtkSlicerCropVolumeLogic::CropInterpolated(vtkMRMLAnnotationROINode* roi, vt
 
   cmdNode->SetParameterAsString("directionMatrix", directionStream.str());
 
-  vtkMRMLTransformNode* inputToRASTransformNodeToRemove = NULL;
-  if (inputVolume->GetParentTransformNode() != NULL)
+  vtkMRMLTransformNode* inputToRASTransformNodeToRemove = nullptr;
+  if (inputVolume->GetParentTransformNode() != nullptr)
     {
     vtkNew<vtkGeneralTransform> inputToRASTransform;
     inputVolume->GetParentTransformNode()->GetTransformToNode(outputVolume->GetParentTransformNode(), inputToRASTransform.GetPointer());
@@ -582,7 +582,7 @@ int vtkSlicerCropVolumeLogic::CropInterpolated(vtkMRMLAnnotationROINode* roi, vt
 
   this->GetMRMLScene()->RemoveNode(cmdNode);
   this->GetMRMLScene()->RemoveNode(originMarkupNode.GetPointer());
-  if (inputToRASTransformNodeToRemove != NULL)
+  if (inputToRASTransformNodeToRemove != nullptr)
     {
     this->GetMRMLScene()->RemoveNode(inputToRASTransformNodeToRemove);
     }
@@ -608,12 +608,12 @@ bool vtkSlicerCropVolumeLogic::FitROIToInputVolume(vtkMRMLCropVolumeParametersNo
   vtkMRMLTransformNode* roiTransform = roiNode->GetParentTransformNode();
   if (roiTransform && !roiTransform->IsTransformToWorldLinear())
     {
-    roiTransform = NULL;
-    roiNode->SetAndObserveTransformNodeID(NULL);
+    roiTransform = nullptr;
+    roiNode->SetAndObserveTransformNodeID(nullptr);
     parametersNode->DeleteROIAlignmentTransformNode();
     }
   vtkNew<vtkMatrix4x4> worldToROI;
-  vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(NULL, roiTransform, worldToROI.GetPointer());
+  vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(nullptr, roiTransform, worldToROI.GetPointer());
 
   double volumeBounds_ROI[6] = { 0 }; // volume bounds in ROI's coordinate system
   volumeNode->GetSliceBounds(volumeBounds_ROI, worldToROI.GetPointer());
@@ -651,9 +651,9 @@ void vtkSlicerCropVolumeLogic::SnapROIToVoxelGrid(vtkMRMLCropVolumeParametersNod
   parametersNode->GetROINode()->GetRASBounds(originalBounds_World);
 
   // If we don't transform it, is it aligned?
-  if (parametersNode->GetROINode()->GetParentTransformNode() != NULL)
+  if (parametersNode->GetROINode()->GetParentTransformNode() != nullptr)
     {
-    parametersNode->GetROINode()->SetAndObserveTransformNodeID(NULL);
+    parametersNode->GetROINode()->SetAndObserveTransformNodeID(nullptr);
     if (IsROIAlignedWithInputVolume(parametersNode))
       {
       // ROI is aligned if it's not transformed, no need for ROI alignment transform
@@ -672,7 +672,7 @@ void vtkSlicerCropVolumeLogic::SnapROIToVoxelGrid(vtkMRMLCropVolumeParametersNod
   // It's a non-trivial rotation, use the ROI alignment transform node to align
   vtkNew<vtkMatrix4x4> volumeRasToWorld;
   vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(parametersNode->GetInputVolumeNode()->GetParentTransformNode(),
-    NULL, volumeRasToWorld.GetPointer());
+    nullptr, volumeRasToWorld.GetPointer());
   vtkNew<vtkMatrix4x4> volumeIJKToRAS;
   parametersNode->GetInputVolumeNode()->GetIJKToRASMatrix(volumeIJKToRAS.GetPointer());
   vtkNew<vtkMatrix4x4> volumeIJKToWorld;
@@ -688,7 +688,7 @@ void vtkSlicerCropVolumeLogic::SnapROIToVoxelGrid(vtkMRMLCropVolumeParametersNod
     parametersNode->GetScene()->AddNode(roiTransformNode.GetPointer());
     parametersNode->SetROIAlignmentTransformNodeID(roiTransformNode->GetID());
     }
-  parametersNode->GetROIAlignmentTransformNode()->SetAndObserveTransformNodeID(NULL);
+  parametersNode->GetROIAlignmentTransformNode()->SetAndObserveTransformNodeID(nullptr);
   parametersNode->GetROIAlignmentTransformNode()->SetMatrixTransformToParent(volumeIJKToWorld.GetPointer());
   parametersNode->GetROINode()->SetAndObserveTransformNodeID(parametersNode->GetROIAlignmentTransformNode()->GetID());
 

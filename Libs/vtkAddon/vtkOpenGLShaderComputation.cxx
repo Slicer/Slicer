@@ -39,9 +39,9 @@ vtkOpenGLShaderComputation::vtkOpenGLShaderComputation()
 {
   this->Initialized = false;
   this->ErrorOccurred = false;
-  this->VertexShaderSource = NULL;
-  this->FragmentShaderSource = NULL;
-  this->ResultImageData = NULL;
+  this->VertexShaderSource = nullptr;
+  this->FragmentShaderSource = nullptr;
+  this->ResultImageData = nullptr;
   this->ProgramObject = 0;
   this->ProgramObjectMTime = 0;
 
@@ -64,15 +64,15 @@ vtkOpenGLShaderComputation::~vtkOpenGLShaderComputation()
     glDeleteFramebuffers(1, &(this->FramebufferID));
     }
   this->ReleaseResultRenderbuffer();
-  this->SetVertexShaderSource(NULL);
-  this->SetFragmentShaderSource(NULL);
-  this->SetResultImageData(NULL);
+  this->SetVertexShaderSource(nullptr);
+  this->SetFragmentShaderSource(nullptr);
+  this->SetResultImageData(nullptr);
   if (this->ProgramObject > 0)
     {
     glDeleteProgram ( this->ProgramObject );
     this->ProgramObject = 0;
     }
-  this->SetRenderWindow(NULL);
+  this->SetRenderWindow(nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -165,7 +165,7 @@ static GLuint CompileShader ( vtkOpenGLShaderComputation *self, GLenum type, con
     }
 
   // Load the shader source
-  glShaderSource ( shader, 1, &shaderSource, NULL );
+  glShaderSource ( shader, 1, &shaderSource, nullptr );
 
   // Compile the shader
   glCompileShader ( shader );
@@ -180,7 +180,7 @@ static GLuint CompileShader ( vtkOpenGLShaderComputation *self, GLenum type, con
     if ( infoLen > 1 )
       {
       char *infoLog = (char *) malloc ( sizeof ( char ) * infoLen );
-      glGetShaderInfoLog ( shader, infoLen, NULL, infoLog );
+      glGetShaderInfoLog ( shader, infoLen, nullptr, infoLog );
       switch(type)
         {
         case GL_VERTEX_SHADER:
@@ -267,7 +267,7 @@ bool vtkOpenGLShaderComputation::UpdateProgram()
       {
       char *infoLog = (char *) malloc ( sizeof ( char ) * infoLen );
 
-      glGetProgramInfoLog ( this->ProgramObject, infoLen, NULL, infoLog );
+      glGetProgramInfoLog ( this->ProgramObject, infoLen, nullptr, infoLog );
       vtkErrorMacro ( "Error linking program\n" << infoLog );
       this->ErrorOccurred = true;
 
@@ -407,7 +407,7 @@ void vtkOpenGLShaderComputation::ReleaseResultRenderbuffer()
 void vtkOpenGLShaderComputation::Compute(float slice)
 {
   // bail out early if we aren't configured correctly
-  if (this->VertexShaderSource == NULL || this->FragmentShaderSource == NULL)
+  if (this->VertexShaderSource == nullptr || this->FragmentShaderSource == nullptr)
     {
     vtkErrorMacro("Both vertex and fragment shaders are needed for a shader computation.");
     this->ErrorOccurred = true;
@@ -465,7 +465,7 @@ void vtkOpenGLShaderComputation::Compute(float slice)
   glBindBuffer(GL_ARRAY_BUFFER, planeVerticesBuffer);
   glBufferData(GL_ARRAY_BUFFER, planeVerticesSize, planeVertices, GL_STATIC_DRAW);
   glEnableVertexAttribArray ( vertexLocation );
-  glVertexAttribPointer ( vertexLocation, 3, GL_FLOAT, GL_FALSE, 0, 0 );
+  glVertexAttribPointer ( vertexLocation, 3, GL_FLOAT, GL_FALSE, 0, nullptr );
   vtkOpenGLCheckErrorMacro("after vertices");
 
   // texture coordinates in a buffer
@@ -476,7 +476,7 @@ void vtkOpenGLShaderComputation::Compute(float slice)
   glBindBuffer(GL_ARRAY_BUFFER, textureCoordinatesBuffer);
   glBufferData(GL_ARRAY_BUFFER, planeTextureCoordinatesSize, planeTextureCoordinates, GL_STATIC_DRAW);
   glEnableVertexAttribArray ( textureCoordinatesLocation );
-  glVertexAttribPointer ( textureCoordinatesLocation, 2, GL_FLOAT, GL_FALSE, 0, 0 );
+  glVertexAttribPointer ( textureCoordinatesLocation, 2, GL_FLOAT, GL_FALSE, 0, nullptr );
   vtkOpenGLCheckErrorMacro("after texture coordinates");
 
   // Iterate through all standard texture units and if one of them
@@ -547,13 +547,13 @@ void vtkOpenGLShaderComputation::ReadResult()
   this->MakeCurrent();
   vtkOpenGLClearErrorMacro();
   // check and set up the result area
-  if (this->ResultImageData == NULL
+  if (this->ResultImageData == nullptr
       ||
-      this->ResultImageData->GetPointData() == NULL
+      this->ResultImageData->GetPointData() == nullptr
       ||
-      this->ResultImageData->GetPointData()->GetScalars() == NULL
+      this->ResultImageData->GetPointData()->GetScalars() == nullptr
       ||
-      this->ResultImageData->GetPointData()->GetScalars()->GetVoidPointer(0) == NULL)
+      this->ResultImageData->GetPointData()->GetScalars()->GetVoidPointer(0) == nullptr)
     {
     vtkErrorMacro("Result image data is not correctly set up.");
     this->ErrorOccurred = true;

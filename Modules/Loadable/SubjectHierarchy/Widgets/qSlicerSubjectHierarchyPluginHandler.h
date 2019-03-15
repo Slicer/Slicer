@@ -222,7 +222,7 @@ protected:
 public:
   /// Private constructor made public to enable python wrapping
   /// IMPORTANT: Should not be used for creating plugin handler! Use instance() instead.
-  qSlicerSubjectHierarchyPluginHandler(QObject* parent=NULL);
+  qSlicerSubjectHierarchyPluginHandler(QObject* parent=nullptr);
 
   /// Private destructor made public to enable python wrapping
   virtual ~qSlicerSubjectHierarchyPluginHandler();

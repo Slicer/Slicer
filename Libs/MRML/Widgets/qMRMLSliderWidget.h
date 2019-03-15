@@ -77,7 +77,7 @@ public:
   typedef ctkSliderWidget Superclass;
 
   /// Construct an empty qMRMLSliderWidget with a null scene.
-  explicit qMRMLSliderWidget(QWidget* parent = 0);
+  explicit qMRMLSliderWidget(QWidget* parent = nullptr);
   virtual ~qMRMLSliderWidget();
 
   enum UnitAwareProperty

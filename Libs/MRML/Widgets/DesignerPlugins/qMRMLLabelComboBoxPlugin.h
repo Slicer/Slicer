@@ -10,7 +10,7 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLLabelComboBoxPlugin :
   Q_OBJECT
 
 public:
-  qMRMLLabelComboBoxPlugin(QObject *_parent = 0);
+  qMRMLLabelComboBoxPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;

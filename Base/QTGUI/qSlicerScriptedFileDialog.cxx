@@ -64,9 +64,9 @@ public:
 qSlicerScriptedFileDialogPrivate::qSlicerScriptedFileDialogPrivate()
 {
   this->Action = qSlicerFileDialog::Read;
-  this->MimeData = 0;
+  this->MimeData = nullptr;
   this->MimeDataAccepted = false;
-  this->DropEvent = 0;
+  this->DropEvent = nullptr;
 
   this->PythonCppAPI.declareMethod(Self::ExecMethod, "execDialog");
   this->PythonCppAPI.declareMethod(Self::IsMimeDataAcceptedMethod, "isMimeDataAccepted");

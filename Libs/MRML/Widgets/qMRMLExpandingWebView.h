@@ -40,7 +40,7 @@ public:
   typedef QWebEngineView Superclass;
 
   /// Constructors
-  explicit qMRMLExpandingWebView(QWidget* parent = 0);
+  explicit qMRMLExpandingWebView(QWidget* parent = nullptr);
   virtual ~qMRMLExpandingWebView();
 
   /// Return a pointer on the current MRML scene

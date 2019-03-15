@@ -62,7 +62,7 @@ int vtkMRMLColorTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   vtkMRMLColorTableNode *colorNode =
     vtkMRMLColorTableNode::SafeDownCast(refNode);
 
-  if (colorNode == NULL)
+  if (colorNode == nullptr)
     {
     vtkErrorMacro("ReadData: unable to cast input node " << refNode->GetID() << " to a known color table node");
     return 0;
@@ -252,13 +252,13 @@ int vtkMRMLColorTableStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     }
 
   // cast the input node
-  vtkMRMLColorTableNode *colorNode = NULL;
+  vtkMRMLColorTableNode *colorNode = nullptr;
   if ( refNode->IsA("vtkMRMLColorTableNode") )
     {
     colorNode = dynamic_cast <vtkMRMLColorTableNode *> (refNode);
     }
 
-  if (colorNode == NULL)
+  if (colorNode == nullptr)
     {
     vtkErrorMacro("WriteData: unable to cast input node " << refNode->GetID() << " to a known color table node");
     return 0;
@@ -276,8 +276,8 @@ int vtkMRMLColorTableStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     }
 
   // put down a header
-  of << "# Color table file " << (this->GetFileName() != NULL ? this->GetFileName() : "null") << endl;
-  if (colorNode->GetLookupTable() != NULL)
+  of << "# Color table file " << (this->GetFileName() != nullptr ? this->GetFileName() : "null") << endl;
+  if (colorNode->GetLookupTable() != nullptr)
     {
     of << "# " << colorNode->GetLookupTable()->GetNumberOfTableValues() << " values" << endl;
     for (int i = 0; i < colorNode->GetLookupTable()->GetNumberOfTableValues(); i++)

@@ -29,7 +29,7 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLCaptureToolBarPlugin : public QObject,
   Q_OBJECT
 
 public:
-  qMRMLCaptureToolBarPlugin(QObject *_parent = 0);
+  qMRMLCaptureToolBarPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;

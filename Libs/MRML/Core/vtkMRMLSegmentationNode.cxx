@@ -72,7 +72,7 @@ vtkMRMLSegmentationNode::vtkMRMLSegmentationNode()
   this->SegmentCenterTmp[3] = 1.0;
 
   // Create empty segmentations object
-  this->Segmentation = NULL;
+  this->Segmentation = nullptr;
   vtkSmartPointer<vtkSegmentation> segmentation = vtkSmartPointer<vtkSegmentation>::New();
   this->SetAndObserveSegmentation(segmentation);
 }
@@ -80,10 +80,10 @@ vtkMRMLSegmentationNode::vtkMRMLSegmentationNode()
 //----------------------------------------------------------------------------
 vtkMRMLSegmentationNode::~vtkMRMLSegmentationNode()
 {
-  this->SetAndObserveSegmentation(NULL);
+  this->SetAndObserveSegmentation(nullptr);
 
   // Make sure this callback cannot call this object
-  this->SegmentationModifiedCallbackCommand->SetClientData(NULL);
+  this->SegmentationModifiedCallbackCommand->SetClientData(nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -140,7 +140,7 @@ void vtkMRMLSegmentationNode::Copy(vtkMRMLNode *anode)
     }
   else
     {
-    this->SetAndObserveSegmentation(NULL);
+    this->SetAndObserveSegmentation(nullptr);
     }
 
   this->EndModify(wasModified);
@@ -379,10 +379,10 @@ void vtkMRMLSegmentationNode::OnSubjectHierarchyUIDAdded(
 vtkMRMLStorageNode* vtkMRMLSegmentationNode::CreateDefaultStorageNode()
 {
   vtkMRMLScene* scene = this->GetScene();
-  if (scene == NULL)
+  if (scene == nullptr)
     {
     vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
-    return NULL;
+    return nullptr;
     }
   return vtkMRMLStorageNode::SafeDownCast(
     scene->CreateNodeByClass("vtkMRMLSegmentationStorageNode"));
@@ -396,7 +396,7 @@ void vtkMRMLSegmentationNode::CreateDefaultDisplayNodes()
     // Display node already exists
     return;
     }
-  if (this->GetScene() == NULL)
+  if (this->GetScene() == nullptr)
     {
     vtkErrorMacro("vtkMRMLSegmentationNode::CreateDefaultDisplayNodes failed: Scene is invalid");
     return;
@@ -439,8 +439,8 @@ void vtkMRMLSegmentationNode::ApplyTransform(vtkAbstractTransform* transform)
 
   // Make sure preferred display representations exist after transformation
   // (it is invalidated in the process unless it is the master representation)
-  char* preferredDisplayRepresentation2D = NULL;
-  char* preferredDisplayRepresentation3D = NULL;
+  char* preferredDisplayRepresentation2D = nullptr;
+  char* preferredDisplayRepresentation3D = nullptr;
   vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(this->GetDisplayNode());
   if (displayNode)
     {
@@ -477,7 +477,7 @@ bool vtkMRMLSegmentationNode::CanApplyNonLinearTransforms() const
 //---------------------------------------------------------------------------
 void vtkMRMLSegmentationNode::GetRASBounds(double bounds[6])
 {
-  if (this->GetParentTransformNode() == NULL)
+  if (this->GetParentTransformNode() == nullptr)
     {
     // Segmentation is not transformed
     this->GetBounds(bounds);
@@ -486,7 +486,7 @@ void vtkMRMLSegmentationNode::GetRASBounds(double bounds[6])
     {
     // Segmentation is transformed
     vtkNew<vtkGeneralTransform> segmentationToRASTransform;
-    vtkMRMLTransformNode::GetTransformBetweenNodes(this->GetParentTransformNode(), NULL, segmentationToRASTransform.GetPointer());
+    vtkMRMLTransformNode::GetTransformBetweenNodes(this->GetParentTransformNode(), nullptr, segmentationToRASTransform.GetPointer());
     double bounds_Segmentation[6] = { 1, -1, 1, -1, 1, -1 };
     this->GetBounds(bounds_Segmentation);
     vtkOrientedImageDataResample::TransformBounds(bounds_Segmentation, segmentationToRASTransform.GetPointer(), bounds);
@@ -644,7 +644,7 @@ bool vtkMRMLSegmentationNode::GenerateMergedLabelmap(
           mergedImageData,
           binaryLabelmap,
           vtkOrientedImageDataResample::OPERATION_MASKING,
-          NULL,
+          nullptr,
           0,
           colorIndex);
     }
@@ -809,7 +809,7 @@ bool vtkMRMLSegmentationNode::GenerateEditMask(vtkOrientedImageData* maskImage, 
     }
 
   // Apply threshold mask if paint threshold is turned on
-  if (masterVolume != NULL && editableIntensityRange != NULL)
+  if (masterVolume != nullptr && editableIntensityRange != nullptr)
     {
     // Create threshold image
     vtkNew<vtkImageThreshold> threshold;
@@ -926,7 +926,7 @@ std::string vtkMRMLSegmentationNode::AddSegmentFromClosedSurfaceRepresentation(v
     {
     newSegment->SetName(segmentName.c_str());
     }
-  if (color!=NULL)
+  if (color!=nullptr)
     {
     newSegment->SetColor(color);
     }
@@ -953,7 +953,7 @@ std::string vtkMRMLSegmentationNode::AddSegmentFromBinaryLabelmapRepresentation(
     {
     newSegment->SetName(segmentName.c_str());
     }
-  if (color != NULL)
+  if (color != nullptr)
     {
     newSegment->SetColor(color);
     }
@@ -1004,13 +1004,13 @@ vtkOrientedImageData* vtkMRMLSegmentationNode::GetBinaryLabelmapRepresentation(c
   if (!this->Segmentation)
     {
     vtkErrorMacro("GetBinaryLabelmapRepresentation: Invalid segmentation");
-    return NULL;
+    return nullptr;
     }
   vtkSegment* segment = this->Segmentation->GetSegment(segmentId);
   if (!segment)
     {
     vtkErrorMacro("GetBinaryLabelmapRepresentation: Invalid segment");
-    return NULL;
+    return nullptr;
     }
   return vtkOrientedImageData::SafeDownCast(segment->GetRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()));
 }
@@ -1043,13 +1043,13 @@ vtkPolyData* vtkMRMLSegmentationNode::GetClosedSurfaceRepresentation(const std::
   if (!this->Segmentation)
     {
     vtkErrorMacro("GetClosedSurfaceRepresentation: Invalid segmentation");
-    return NULL;
+    return nullptr;
     }
   vtkSegment* segment = this->Segmentation->GetSegment(segmentId);
   if (!segment)
     {
     vtkErrorMacro("GetClosedSurfaceRepresentation: Invalid segment");
-    return NULL;
+    return nullptr;
     }
   return vtkPolyData::SafeDownCast(segment->GetRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName()));
 }
@@ -1084,13 +1084,13 @@ double* vtkMRMLSegmentationNode::GetSegmentCenter(const std::string& segmentID)
   if (!this->Segmentation)
     {
     vtkErrorMacro("GetSegmentCenter: Invalid segmentation");
-    return NULL;
+    return nullptr;
     }
   vtkSegment* currentSegment = this->Segmentation->GetSegment(segmentID);
   if (!currentSegment)
     {
     vtkErrorMacro("GetSegmentCenter: Segment not found: " << segmentID);
-    return NULL;
+    return nullptr;
     }
 
   if (this->Segmentation->ContainsRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName()))
@@ -1100,7 +1100,7 @@ double* vtkMRMLSegmentationNode::GetSegmentCenter(const std::string& segmentID)
     if (!vtkOrientedImageDataResample::CalculateEffectiveExtent(labelmap, labelOrientedImageDataEffectiveExtent))
       {
       vtkWarningMacro("GetSegmentCenter: segment " << segmentID << " is empty");
-      return NULL;
+      return nullptr;
       }
     // segmentCenter_Image is floored to put the center exactly in the center of a voxel
     // (otherwise center position would be set at the boundary between two voxels when extent size is an even number)
@@ -1122,7 +1122,7 @@ double* vtkMRMLSegmentationNode::GetSegmentCenter(const std::string& segmentID)
     if (bounds[0]>bounds[1] || bounds[2]>bounds[3] || bounds[4]>bounds[5])
       {
       vtkWarningMacro("GetSegmentCenter: segment " << segmentID << " is empty");
-      return NULL;
+      return nullptr;
       }
     this->SegmentCenterTmp[0] = (bounds[0] + bounds[1]) / 2.0;
     this->SegmentCenterTmp[1] = (bounds[2] + bounds[3]) / 2.0;
@@ -1139,12 +1139,12 @@ double* vtkMRMLSegmentationNode::GetSegmentCenterRAS(const std::string& segmentI
   double* segmentCenter_Segment = this->GetSegmentCenter(segmentID);
   if (!segmentCenter_Segment)
     {
-    return NULL;
+    return nullptr;
     }
 
   // If segmentation node is transformed, apply that transform to get RAS coordinates
   vtkNew<vtkGeneralTransform> transformSegmentToRas;
-  vtkMRMLTransformNode::GetTransformBetweenNodes(this->GetParentTransformNode(), NULL, transformSegmentToRas.GetPointer());
+  vtkMRMLTransformNode::GetTransformBetweenNodes(this->GetParentTransformNode(), nullptr, transformSegmentToRas.GetPointer());
   transformSegmentToRas->TransformPoint(segmentCenter_Segment, this->SegmentCenterTmp);
 
   return this->SegmentCenterTmp;

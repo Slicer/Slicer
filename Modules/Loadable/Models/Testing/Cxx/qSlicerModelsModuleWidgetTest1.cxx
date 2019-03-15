@@ -65,7 +65,7 @@ int qSlicerModelsModuleWidgetTest1( int argc, char * argv[] )
     }
 
   qSlicerModelsModule module;
-  module.initialize(0);
+  module.initialize(nullptr);
 
   vtkNew<vtkMRMLScene> scene;
 

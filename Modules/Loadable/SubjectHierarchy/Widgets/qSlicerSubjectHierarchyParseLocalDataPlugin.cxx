@@ -66,7 +66,7 @@ public:
 qSlicerSubjectHierarchyParseLocalDataPluginPrivate::qSlicerSubjectHierarchyParseLocalDataPluginPrivate(qSlicerSubjectHierarchyParseLocalDataPlugin& object)
 : q_ptr(&object)
 {
-  this->CreateHierarchyFromLoadedLocalDirectoriesAction = NULL;
+  this->CreateHierarchyFromLoadedLocalDirectoriesAction = nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -131,7 +131,7 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::showContextMenuActionsForItem(
     // That is to have nodes in the scene with storage nodes with valid file names outside subject hierarchy
     vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
     vtkSmartPointer<vtkCollection> storableNodes = vtkSmartPointer<vtkCollection>::Take( scene->GetNodesByClass("vtkMRMLStorableNode") );
-    vtkObject* nextObject = NULL;
+    vtkObject* nextObject = nullptr;
     for (storableNodes->InitTraversal(); (nextObject = storableNodes->GetNextItemAsObject()); )
       {
       vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(nextObject);
@@ -169,7 +169,7 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
 
   // Get all file paths from the storable nodes into the list
   vtkSmartPointer<vtkCollection> storableNodes = vtkSmartPointer<vtkCollection>::Take( scene->GetNodesByClass("vtkMRMLStorableNode") );
-  vtkObject* nextObject = NULL;
+  vtkObject* nextObject = nullptr;
   for (storableNodes->InitTraversal(); (nextObject = storableNodes->GetNextItemAsObject()); )
     {
     vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(nextObject);

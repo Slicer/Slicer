@@ -63,8 +63,8 @@ qMRMLCoordinatesWidgetPrivate
 ::qMRMLCoordinatesWidgetPrivate(qMRMLCoordinatesWidget& object)
   : q_ptr(&object)
 {
-  this->MRMLScene = 0;
-  this->SelectionNode = 0;
+  this->MRMLScene = nullptr;
+  this->SelectionNode = nullptr;
   this->Flags = qMRMLCoordinatesWidget::Prefix | qMRMLCoordinatesWidget::Suffix
     | qMRMLCoordinatesWidget::Precision | qMRMLCoordinatesWidget::MinimumValue
     | qMRMLCoordinatesWidget::MaximumValue;
@@ -82,7 +82,7 @@ void qMRMLCoordinatesWidgetPrivate::setAndObserveSelectionNode()
 {
   Q_Q(qMRMLCoordinatesWidget);
 
-  vtkMRMLSelectionNode* selectionNode = 0;
+  vtkMRMLSelectionNode* selectionNode = nullptr;
   if (this->MRMLScene)
     {
     selectionNode = vtkMRMLSelectionNode::SafeDownCast(
@@ -102,7 +102,7 @@ void qMRMLCoordinatesWidgetPrivate::updateValueProxy(vtkMRMLUnitNode* unitNode)
   Q_Q(qMRMLCoordinatesWidget);
   if (!unitNode)
     {
-    q->setValueProxy(0);
+    q->setValueProxy(nullptr);
     this->Proxy->setCoefficient(1.0);
     this->Proxy->setOffset(0.0);
     return;

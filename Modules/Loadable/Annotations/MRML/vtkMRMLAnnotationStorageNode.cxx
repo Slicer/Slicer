@@ -32,7 +32,7 @@ void vtkMRMLAnnotationStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 int vtkMRMLAnnotationStorageNode::ReadAnnotationDisplayProperties(vtkMRMLAnnotationDisplayNode *annotationDisplayNode, std::string lineString, std::string preposition)
 {
-  if (annotationDisplayNode == NULL)
+  if (annotationDisplayNode == nullptr)
     {
     vtkErrorMacro("ReadAnnotationDisplayProperties: null associated AnnotationDisplayNode");
     return -1;
@@ -68,17 +68,17 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationDisplayProperties(vtkMRMLAnnotat
      char *ptr;
      char *colours = (char *)(str.c_str());
      ptr = strtok(colours, ",");
-     if (ptr != NULL)
+     if (ptr != nullptr)
        {
      r = atof(ptr);
        }
-     ptr = strtok(NULL, ",");
-     if (ptr != NULL)
+     ptr = strtok(nullptr, ",");
+     if (ptr != nullptr)
        {
      g = atof(ptr);
        }
-     ptr = strtok(NULL, ",");
-     if (ptr != NULL)
+     ptr = strtok(nullptr, ",");
+     if (ptr != nullptr)
        {
      b = atof(ptr);
        }
@@ -153,7 +153,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationDisplayProperties(vtkMRMLAnnotat
 //----------------------------------------------------------------------------
 int vtkMRMLAnnotationStorageNode::ReadAnnotationTextDisplayProperties(vtkMRMLAnnotationTextDisplayNode *annotationDisplayNode, std::string lineString, std::string preposition)
 {
-  if (annotationDisplayNode == NULL)
+  if (annotationDisplayNode == nullptr)
     {
       vtkErrorMacro("ReadAnnotationTextDisplayProperties: null associated AnnotationTextDisplayNode");
       return -1;
@@ -192,7 +192,7 @@ int vtkMRMLAnnotationStorageNode::OpenFileToRead(fstream& fstr, vtkMRMLNode *ref
     return 0;
     }
 
-  if (this->GetFileName() == NULL && this->GetURI() == NULL)
+  if (this->GetFileName() == nullptr && this->GetURI() == nullptr)
     {
     vtkErrorMacro("OpenFileToRead: file name and uri not set");
     return 0;
@@ -352,7 +352,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationTextProperties(vtkMRMLAnnotation
       numColumns = 0;
       char *columns = (char *)str.c_str();
       char *ptr = strtok(columns, "|");
-      while (ptr != NULL)
+      while (ptr != nullptr)
     {
       if (strcmp(ptr, "type") == 0)
         {
@@ -370,7 +370,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationTextProperties(vtkMRMLAnnotation
         {
           visColumn =  numColumns;
         }
-      ptr = strtok(NULL, "|");
+      ptr = strtok(nullptr, "|");
       numColumns++;
     }
       // set the total number of columns
@@ -384,7 +384,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationTextProperties(vtkMRMLAnnotation
 // assumes that ResetAnnotations is executed
 int vtkMRMLAnnotationStorageNode::ReadAnnotation(vtkMRMLAnnotationNode *annotationNode)
 {
-  if (annotationNode == NULL)
+  if (annotationNode == nullptr)
     {
       vtkErrorMacro("ReadAnnotation: input is NULL");
       return 0;
@@ -462,7 +462,7 @@ int vtkMRMLAnnotationStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   vtkMRMLAnnotationNode *annotationNode =
     vtkMRMLAnnotationNode::SafeDownCast (refNode);
 
-  if (annotationNode == NULL)
+  if (annotationNode == nullptr)
     {
     vtkErrorMacro("ReadData: unable to cast input node " << refNode->GetID() << " to a annotation node");
     return 0;
@@ -526,13 +526,13 @@ int vtkMRMLAnnotationStorageNode::WriteAnnotationTextDisplayProperties(fstream& 
 int vtkMRMLAnnotationStorageNode::WriteAnnotationTextProperties(fstream& of, vtkMRMLAnnotationNode *refNode)
 {
   // put down a header
-  if (refNode == NULL)
+  if (refNode == nullptr)
     {
     vtkWarningMacro("WriteAnnotationTextProperties: reference node is null");
     return 0;
     }
   vtkMRMLAnnotationTextDisplayNode *annDisNode = refNode->GetAnnotationTextDisplayNode();
-  if (annDisNode == NULL)
+  if (annDisNode == nullptr)
     {
     vtkWarningMacro("WriteAnnotationTextProperties: annotation text display node is null");
     return 0;
@@ -569,7 +569,7 @@ int vtkMRMLAnnotationStorageNode::WriteAnnotationData(fstream& of, vtkMRMLAnnota
 //----------------------------------------------------------------------------
 int vtkMRMLAnnotationStorageNode::OpenFileToWrite(fstream& of)
 {
-  if (this->GetFileName() == NULL)
+  if (this->GetFileName() == nullptr)
     {
     vtkErrorMacro("OpenFileToWrite: file name is not set");
     return 0;
@@ -590,7 +590,7 @@ int vtkMRMLAnnotationStorageNode::OpenFileToWrite(fstream& of)
     return 0;
     }
 
-  of << "# Annotation file " << (this->GetFileName() != NULL ? this->GetFileName() : "null") << endl;
+  of << "# Annotation file " << (this->GetFileName() != nullptr ? this->GetFileName() : "null") << endl;
 
 
   return 1;
@@ -605,7 +605,7 @@ int vtkMRMLAnnotationStorageNode::WriteAnnotationDataInternal(vtkMRMLNode *refNo
   vtkMRMLAnnotationNode *annotationNode =
     vtkMRMLAnnotationNode::SafeDownCast(refNode);
 
-  if (annotationNode == NULL)
+  if (annotationNode == nullptr)
     {
     vtkErrorMacro("WriteAnnotationDataInternal: unable to cast input node " << refNode->GetID() << " to a known annotation node");
     return 0;

@@ -321,7 +321,7 @@ int SetOrientationTest()
   vtkNew<vtkMRMLSliceNode> sliceNode;
 
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  CHECK_BOOL(sliceNode->SetOrientation(0), false);
+  CHECK_BOOL(sliceNode->SetOrientation(nullptr), false);
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();

@@ -34,7 +34,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerIOOptionsWidget
   Q_OBJECT
 public:
   typedef qSlicerIOOptions Superclass;
-  explicit qSlicerIOOptionsWidget(QWidget* parent = 0);
+  explicit qSlicerIOOptionsWidget(QWidget* parent = nullptr);
   virtual ~qSlicerIOOptionsWidget();
 
   /// Returns true if the options have been set and if they are

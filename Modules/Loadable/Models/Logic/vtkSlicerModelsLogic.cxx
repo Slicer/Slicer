@@ -45,22 +45,22 @@ vtkCxxSetObjectMacro(vtkSlicerModelsLogic, ColorLogic, vtkMRMLColorLogic);
 //----------------------------------------------------------------------------
 vtkSlicerModelsLogic::vtkSlicerModelsLogic()
 {
-  this->ActiveModelNode = NULL;
-  this->ColorLogic = NULL;
+  this->ActiveModelNode = nullptr;
+  this->ColorLogic = nullptr;
 }
 
 //----------------------------------------------------------------------------
 vtkSlicerModelsLogic::~vtkSlicerModelsLogic()
 {
-  if (this->ActiveModelNode != NULL)
+  if (this->ActiveModelNode != nullptr)
     {
     this->ActiveModelNode->Delete();
-    this->ActiveModelNode = NULL;
+    this->ActiveModelNode = nullptr;
     }
-  if (this->ColorLogic != NULL)
+  if (this->ColorLogic != nullptr)
     {
     this->ColorLogic->Delete();
-    this->ColorLogic = NULL;
+    this->ColorLogic = nullptr;
     }
 }
 
@@ -76,7 +76,7 @@ void vtkSlicerModelsLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 void vtkSlicerModelsLogic::ObserveMRMLScene()
 {
   if (this->GetMRMLScene() &&
-    this->GetMRMLScene()->GetFirstNodeByClass("vtkMRMLClipModelsNode") == 0)
+    this->GetMRMLScene()->GetFirstNodeByClass("vtkMRMLClipModelsNode") == nullptr)
     {
     // vtkMRMLClipModelsNode is a singleton
     this->GetMRMLScene()->AddNode(vtkSmartPointer<vtkMRMLClipModelsNode>::New());
@@ -94,9 +94,9 @@ void vtkSlicerModelsLogic::SetActiveModelNode(vtkMRMLModelNode *activeNode)
 //----------------------------------------------------------------------------
 vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel(vtkPolyData* polyData)
 {
-  if (this->GetMRMLScene() == 0)
+  if (this->GetMRMLScene() == nullptr)
     {
-    return 0;
+    return nullptr;
     }
 
   vtkNew<vtkMRMLModelDisplayNode> display;
@@ -113,9 +113,9 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel(vtkPolyData* polyData)
 //----------------------------------------------------------------------------
 vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel(vtkAlgorithmOutput* polyData)
 {
-  if (this->GetMRMLScene() == 0)
+  if (this->GetMRMLScene() == nullptr)
     {
-    return 0;
+    return nullptr;
     }
 
   vtkNew<vtkMRMLModelDisplayNode> display;
@@ -147,7 +147,7 @@ int vtkSlicerModelsLogic::AddModels (const char* dirname, const char* suffix )
         {
         std::string fullPath = std::string(dir.GetPath())
             + "/" + filename;
-        if (this->AddModel(fullPath.c_str()) == NULL)
+        if (this->AddModel(fullPath.c_str()) == nullptr)
           {
           res = 0;
           }
@@ -160,10 +160,10 @@ int vtkSlicerModelsLogic::AddModels (const char* dirname, const char* suffix )
 //----------------------------------------------------------------------------
 vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
 {
-  if (this->GetMRMLScene() == 0 ||
-      filename == 0)
+  if (this->GetMRMLScene() == nullptr ||
+      filename == nullptr)
     {
-    return 0;
+    return nullptr;
     }
   vtkNew<vtkMRMLModelNode> modelNode;
   vtkNew<vtkMRMLModelDisplayNode> displayNode;
@@ -174,12 +174,12 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
 
   // check for local or remote files
   int useURI = 0; // false;
-  if (this->GetMRMLScene()->GetCacheManager() != NULL)
+  if (this->GetMRMLScene()->GetCacheManager() != nullptr)
     {
     useURI = this->GetMRMLScene()->GetCacheManager()->IsRemoteReference(filename);
     vtkDebugMacro("AddModel: file name is remote: " << filename);
     }
-  const char *localFile=0;
+  const char *localFile=nullptr;
   if (useURI)
     {
     mStorageNode->SetURI(filename);
@@ -220,7 +220,7 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
     storageNode = fsmStorageNode;
     }
   */
-  if (storageNode != NULL)
+  if (storageNode != nullptr)
     {
     std::string baseName = itksys::SystemTools::GetFilenameWithoutExtension(fname);
     std::string uname( this->GetMRMLScene()->GetUniqueNameByString(baseName.c_str()));
@@ -246,13 +246,13 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
       {
       vtkErrorMacro("AddModel: error reading " << filename);
       this->GetMRMLScene()->RemoveNode(modelNode.GetPointer());
-      return 0;
+      return nullptr;
       }
     }
   else
     {
     vtkErrorMacro("Couldn't read file: " << filename);
-    return 0;
+    return nullptr;
     }
 
   return modelNode.GetPointer();
@@ -261,22 +261,22 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
 //----------------------------------------------------------------------------
 int vtkSlicerModelsLogic::SaveModel (const char* filename, vtkMRMLModelNode *modelNode)
 {
-   if (modelNode == NULL || filename == NULL)
+   if (modelNode == nullptr || filename == nullptr)
     {
     vtkErrorMacro("SaveModel: unable to proceed, filename is " <<
-                  (filename == NULL ? "null" : filename) <<
+                  (filename == nullptr ? "null" : filename) <<
                   ", model node is " <<
-                  (modelNode == NULL ? "null" : modelNode->GetID()));
+                  (modelNode == nullptr ? "null" : modelNode->GetID()));
     return 0;
     }
 
-  vtkMRMLModelStorageNode *storageNode = NULL;
+  vtkMRMLModelStorageNode *storageNode = nullptr;
   vtkMRMLStorageNode *snode = modelNode->GetStorageNode();
-  if (snode != NULL)
+  if (snode != nullptr)
     {
     storageNode = vtkMRMLModelStorageNode::SafeDownCast(snode);
     }
-  if (storageNode == NULL)
+  if (storageNode == nullptr)
     {
     storageNode = vtkMRMLModelStorageNode::New();
     storageNode->SetScene(this->GetMRMLScene());
@@ -286,7 +286,7 @@ int vtkSlicerModelsLogic::SaveModel (const char* filename, vtkMRMLModelNode *mod
     }
 
   // check for a remote file
-  if ((this->GetMRMLScene()->GetCacheManager() != NULL) &&
+  if ((this->GetMRMLScene()->GetCacheManager() != nullptr) &&
       this->GetMRMLScene()->GetCacheManager()->IsRemoteReference(filename))
     {
     storageNode->SetURI(filename);
@@ -319,8 +319,8 @@ void vtkSlicerModelsLogic::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 bool vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRMLModelNode *modelNode)
 {
-  if (modelNode == NULL ||
-      filename == NULL)
+  if (modelNode == nullptr ||
+      filename == nullptr)
     {
     vtkErrorMacro("Model node or file name are null.");
     return false;
@@ -331,7 +331,7 @@ bool vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRMLModelNode *mod
   // check for local or remote files
   int useURI = 0; //false ;
   if (this->GetMRMLScene() &&
-      this->GetMRMLScene()->GetCacheManager() != NULL)
+      this->GetMRMLScene()->GetCacheManager() != nullptr)
     {
     useURI = this->GetMRMLScene()->GetCacheManager()->IsRemoteReference(filename);
     vtkDebugMacro("AddScalar: file name is remote: " << filename);
@@ -374,14 +374,14 @@ bool vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRMLModelNode *mod
 
   // check to see if the model display node has a colour node already
   vtkMRMLModelDisplayNode *displayNode = modelNode->GetModelDisplayNode();
-  if (displayNode == NULL)
+  if (displayNode == nullptr)
     {
     vtkWarningMacro("Model " << modelNode->GetName() << "'s display node is null\n");
     }
   else
     {
     vtkMRMLColorNode *colorNode = displayNode->GetColorNode();
-    if (colorNode == NULL && this->ColorLogic != NULL)
+    if (colorNode == nullptr && this->ColorLogic != nullptr)
       {
       displayNode->SetAndObserveColorNodeID(
         this->ColorLogic->GetDefaultModelColorNodeID());
@@ -390,7 +390,7 @@ bool vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRMLModelNode *mod
 
   //--- tag for informatics and invoke event for anyone who cares.
   vtkTagTable *tt = modelNode->GetUserTagTable();
-  if ( tt != NULL )
+  if ( tt != nullptr )
     {
     modelNode->SetSlicerDataType ( "FreeSurferModelWithOverlay" );
     tt = modelNode->GetUserTagTable();
@@ -447,7 +447,7 @@ void vtkSlicerModelsLogic::TransformModel(vtkMRMLTransformNode *tnode,
     modelOut->SetPolyDataConnection(normals->GetOutputPort());
    }
 
-  modelOut->SetAndObserveTransformNodeID(mtnode == NULL ? NULL : mtnode->GetID());
+  modelOut->SetAndObserveTransformNodeID(mtnode == nullptr ? nullptr : mtnode->GetID());
 
   return;
 }
@@ -455,12 +455,12 @@ void vtkSlicerModelsLogic::TransformModel(vtkMRMLTransformNode *tnode,
 //----------------------------------------------------------------------------
 void vtkSlicerModelsLogic::SetAllModelsVisibility(int flag)
 {
-  if (this->GetMRMLScene() == 0)
+  if (this->GetMRMLScene() == nullptr)
     {
     return;
     }
 
-  vtkMRMLSelectionNode *selectionNode = 0;
+  vtkMRMLSelectionNode *selectionNode = nullptr;
   if (this->GetMRMLScene())
     {
     selectionNode = vtkMRMLSelectionNode::SafeDownCast(
@@ -483,7 +483,7 @@ void vtkSlicerModelsLogic::SetAllModelsVisibility(int flag)
     // Doing so will avoid updating annotation and fiber bundle node
     // visibility since they derive from vtkMRMLModelNode
     // See http://www.na-mic.org/Bug/view.php?id=2576
-    if (mrmlNode != NULL
+    if (mrmlNode != nullptr
         && !vtkMRMLSliceLogic::IsSliceModelNode(mrmlNode)
         && strcmp(mrmlNode->GetClassName(), "vtkMRMLModelNode") == 0)
       {
@@ -495,7 +495,7 @@ void vtkSlicerModelsLogic::SetAllModelsVisibility(int flag)
         }
       }
 
-    if (flag != 2 && mrmlNode != NULL
+    if (flag != 2 && mrmlNode != nullptr
         && !vtkMRMLSliceLogic::IsSliceModelNode(mrmlNode) )
       {
       vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(mrmlNode);

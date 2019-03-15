@@ -88,7 +88,7 @@ int qMRMLLayoutManagerTest3(int argc, char * argv[] )
   vtkNew<vtkMRMLApplicationLogic> applicationLogic;
   vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->SetMRMLApplicationLogic(applicationLogic);
 
-  vtkMRMLLayoutNode * layoutNode = 0;
+  vtkMRMLLayoutNode * layoutNode = nullptr;
   {
     vtkNew<vtkMRMLLayoutNode> newLayoutNode;
 

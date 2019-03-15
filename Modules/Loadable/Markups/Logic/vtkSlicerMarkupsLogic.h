@@ -80,7 +80,7 @@ public:
   /// class, and also make it the active on on the selection node, otherwise
   /// add to the passed scene.
   /// On success, return the id, on failure return an empty string.
-  std::string AddNewFiducialNode(const char *name = "F", vtkMRMLScene *scene = NULL);
+  std::string AddNewFiducialNode(const char *name = "F", vtkMRMLScene *scene = nullptr);
 
   /// Add a new fiducial to the currently active list at the given RAS
   /// coordinates (default 0,0,0). Will create a list is one is not active.
@@ -91,10 +91,10 @@ public:
   /// jump the slice windows to the given coordinate
   /// If viewGroup is -1 then all all slice views are updated, otherwise only those views
   /// that are in the specified group.
-  void JumpSlicesToLocation(double x, double y, double z, bool centered, int viewGroup = -1, vtkMRMLSliceNode* exclude = NULL);
+  void JumpSlicesToLocation(double x, double y, double z, bool centered, int viewGroup = -1, vtkMRMLSliceNode* exclude = nullptr);
   /// jump the slice windows to the nth markup with the mrml id id
   /// \sa JumpSlicesToLocation
-  void JumpSlicesToNthPointInMarkup(const char *id, int n, bool centered = false, int viewGroup = -1, vtkMRMLSliceNode* exclude = NULL);
+  void JumpSlicesToNthPointInMarkup(const char *id, int n, bool centered = false, int viewGroup = -1, vtkMRMLSliceNode* exclude = nullptr);
   /// refocus all of the 3D cameras to the nth markup with the mrml id id
   /// \sa FocusCameraOnNthPointInMarkup
   void FocusCamerasOnNthPointInMarkup(const char *id, int n);
@@ -201,7 +201,7 @@ public:
   /// Return true on successfully going into place mode, false otherwise.
   /// By default, the default interaction node is updated.
   /// \sa SetActiveIDList
-  bool StartPlaceMode(bool persistent, vtkMRMLInteractionNode* interactionNode = NULL);
+  bool StartPlaceMode(bool persistent, vtkMRMLInteractionNode* interactionNode = nullptr);
 
   /// Inspect all the slice composite nodes in the scene. Return 1 if all have
   /// SliceIntersectionVisibility set to true, 0 if all have it set to false,

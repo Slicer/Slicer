@@ -84,12 +84,12 @@ const char *plotPostscript =
 qMRMLChartViewPrivate::qMRMLChartViewPrivate(qMRMLChartView& object)
   : q_ptr(&object)
 {
-  this->MRMLScene = 0;
-  this->MRMLChartViewNode = 0;
-  this->MRMLChartNode = 0;
-  this->ColorLogic = 0;
-  this->PinButton = 0;
-  this->PopupWidget = 0;
+  this->MRMLScene = nullptr;
+  this->MRMLChartViewNode = nullptr;
+  this->MRMLChartNode = nullptr;
+  this->ColorLogic = nullptr;
+  this->PinButton = nullptr;
+  this->PopupWidget = nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -166,7 +166,7 @@ void qMRMLChartViewPrivate::onChartNodeChanged()
 {
   //qDebug() << "onChartNodeChanged()";
 
-  vtkMRMLChartNode *newChartNode=0;
+  vtkMRMLChartNode *newChartNode=nullptr;
 
   if (this->MRMLChartViewNode && this->MRMLChartViewNode->GetChartNodeID())
     {
@@ -827,7 +827,7 @@ QString qMRMLChartViewPrivate::lineOptions(vtkMRMLChartNode *cn)
   // work. If seriesColors is defined in seriesDefaults, then only bar
   // charts observe it.
   const char* defaultChartColorNodeID =
-    this->ColorLogic ? this->ColorLogic->GetDefaultChartColorNodeID() : 0;
+    this->ColorLogic ? this->ColorLogic->GetDefaultChartColorNodeID() : nullptr;
   vtkMRMLColorNode *defaultColorNode = vtkMRMLColorNode::SafeDownCast(
     this->MRMLScene->GetNodeByID(defaultChartColorNodeID));
   vtkMRMLColorNode *colorNode = defaultColorNode;
@@ -1060,7 +1060,7 @@ QString qMRMLChartViewPrivate::barData(vtkMRMLChartNode *cn)
 
     if (dn)
       {
-      vtkMRMLColorNode *seriesColorNode = 0;
+      vtkMRMLColorNode *seriesColorNode = nullptr;
       const char *seriesLookupTable
         = cn->GetProperty(arrayNames->GetValue(idx).c_str(), "lookupTable");
       if (seriesLookupTable)
@@ -1222,7 +1222,7 @@ QString qMRMLChartViewPrivate::barOptions(vtkMRMLChartNode *cn)
   // work. If seriesColors is defined in seriesDefaults, then only bar
   // charts observe it.
   const char* defaultChartColorNodeID =
-    this->ColorLogic ? this->ColorLogic->GetDefaultChartColorNodeID() : 0;
+    this->ColorLogic ? this->ColorLogic->GetDefaultChartColorNodeID() : nullptr;
   vtkMRMLColorNode *defaultColorNode = vtkMRMLColorNode::SafeDownCast(
     this->MRMLScene->GetNodeByID(defaultChartColorNodeID));
   vtkMRMLColorNode *colorNode = defaultColorNode;
@@ -1427,7 +1427,7 @@ QString qMRMLChartViewPrivate::boxOptions(vtkMRMLChartNode *cn)
   // Use a default set of colors defined by Slicer or specified by the
   // chart node.
   const char* defaultChartColorNodeID =
-    this->ColorLogic ? this->ColorLogic->GetDefaultChartColorNodeID() : 0;
+    this->ColorLogic ? this->ColorLogic->GetDefaultChartColorNodeID() : nullptr;
   vtkMRMLColorNode *defaultColorNode = vtkMRMLColorNode::SafeDownCast(
     this->MRMLScene->GetNodeByID(defaultChartColorNodeID));
   vtkMRMLColorNode *colorNode = defaultColorNode;
@@ -1707,7 +1707,7 @@ qMRMLChartView::qMRMLChartView(QWidget* _parent) : Superclass(_parent)
 // --------------------------------------------------------------------------
 qMRMLChartView::~qMRMLChartView()
 {
-  this->setMRMLScene(0);
+  this->setMRMLScene(nullptr);
 }
 
 
@@ -1724,7 +1724,7 @@ void qMRMLChartView::setMRMLScene(vtkMRMLScene* newScene)
 
   if (d->MRMLChartViewNode && newScene != d->MRMLChartViewNode->GetScene())
     {
-    this->setMRMLChartViewNode(0);
+    this->setMRMLChartViewNode(nullptr);
     }
 
   emit mrmlSceneChanged(newScene);

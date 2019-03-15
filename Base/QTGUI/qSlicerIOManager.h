@@ -29,7 +29,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerIOManager : public qSlicerCoreIOManager
   QVTK_OBJECT;
 public:
   typedef qSlicerCoreIOManager Superclass;
-  qSlicerIOManager(QObject* parent = 0);
+  qSlicerIOManager(QObject* parent = nullptr);
   virtual ~qSlicerIOManager();
 
   /// Search for the most appropriate dialog based on the action and fileType,
@@ -45,7 +45,7 @@ public:
   Q_INVOKABLE bool openDialog(qSlicerIO::IOFileType fileType,
                               qSlicerFileDialog::IOAction action,
                               qSlicerIO::IOProperties ioProperties = qSlicerIO::IOProperties(),
-                              vtkCollection* loadedNodes = 0);
+                              vtkCollection* loadedNodes = nullptr);
 
   void addHistory(const QString& path);
   const QStringList& history()const;
@@ -63,12 +63,12 @@ public:
   /// a node is added.
   Q_INVOKABLE virtual bool loadNodes(const qSlicerIO::IOFileType& fileType,
                                      const qSlicerIO::IOProperties& parameters,
-                                     vtkCollection* loadedNodes = 0);
+                                     vtkCollection* loadedNodes = nullptr);
   /// If you have a list of nodes to load, it's best to use this function
   /// in order to have a unique progress dialog instead of multiple ones.
   /// It internally calls loadNodes() for each file.
   virtual bool loadNodes(const QList<qSlicerIO::IOProperties>& files,
-                         vtkCollection* loadedNodes = 0);
+                         vtkCollection* loadedNodes = nullptr);
 
   /// dragEnterEvents can be forwarded to the IOManager, if a registered dialog
   /// supports it, the event is accepted, otherwise ignored.

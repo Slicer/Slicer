@@ -38,7 +38,7 @@ class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerDataModule
   Q_INTERFACES(qSlicerLoadableModule);
 public:
   typedef qSlicerLoadableModule Superclass;
-  qSlicerDataModule(QObject *parent=0);
+  qSlicerDataModule(QObject *parent=nullptr);
   virtual ~qSlicerDataModule();
 
   virtual void setup();

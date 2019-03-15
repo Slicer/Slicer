@@ -89,16 +89,16 @@ void qMRMLNodeAttributeTableViewTester::init()
 // ----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableViewTester::cleanup()
 {
-  QVERIFY(this->NodeAttributeTableView != NULL);
-  this->NodeAttributeTableView->setInspectedNode(NULL);
+  QVERIFY(this->NodeAttributeTableView != nullptr);
+  this->NodeAttributeTableView->setInspectedNode(nullptr);
   delete this->NodeAttributeTableView;
-  this->NodeAttributeTableView = NULL;
+  this->NodeAttributeTableView = nullptr;
 }
 
 // ----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableViewTester::testDefaults()
 {
-  QCOMPARE((this->NodeAttributeTableView->inspectedNode() == NULL), true);
+  QCOMPARE((this->NodeAttributeTableView->inspectedNode() == nullptr), true);
   QCOMPARE(this->NodeAttributeTableView->attributeCount(), 0);
 }
 
@@ -202,8 +202,8 @@ void qMRMLNodeAttributeTableViewTester::testSetAttribute()
   QFETCH(QString, value);
   if (setOnNode)
     {
-    node->SetAttribute(attribute.isNull() ? static_cast<const char*>(0) : attribute.toLatin1().constData(),
-                       value.isNull() ? static_cast<const char*>(0) : value.toLatin1().constData());
+    node->SetAttribute(attribute.isNull() ? static_cast<const char*>(nullptr) : attribute.toLatin1().constData(),
+                       value.isNull() ? static_cast<const char*>(nullptr) : value.toLatin1().constData());
     }
   else
     {
@@ -298,7 +298,7 @@ void qMRMLNodeAttributeTableViewTester::testSelect()
     }
   else
     {
-    this->NodeAttributeTableView->setInspectedNode(NULL);
+    this->NodeAttributeTableView->setInspectedNode(nullptr);
     }
 
   this->NodeAttributeTableView->selectItemRange( rangeToSelect[0]
@@ -490,11 +490,11 @@ void qMRMLNodeAttributeTableViewTester::testRemove()
         = this->NodeAttributeTableView->inspectedNode()->GetAttribute(attributeExist.first.toLatin1());
     if (isEmpty)
       {
-      QVERIFY(inspectedNodeAttributeValue == NULL);
+      QVERIFY(inspectedNodeAttributeValue == nullptr);
       }
     else
       {
-      QVERIFY(inspectedNodeAttributeValue != NULL);
+      QVERIFY(inspectedNodeAttributeValue != nullptr);
       }
     }
   

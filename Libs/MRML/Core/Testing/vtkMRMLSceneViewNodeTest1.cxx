@@ -27,7 +27,7 @@ int vtkMRMLSceneViewNodeTest1(int , char * [] )
   // test with null scene
   node1->StoreScene();
   node1->SetAbsentStorageFileNames();
-  vtkCollection *col = node1->GetNodesByClass(NULL);
+  vtkCollection *col = node1->GetNodesByClass(nullptr);
   CHECK_NULL(col);
 
   // make a scene and test again
@@ -37,13 +37,13 @@ int vtkMRMLSceneViewNodeTest1(int , char * [] )
   node1->StoreScene();
 
   vtkMRMLScene *storedScene = node1->GetStoredScene();
-  std::cout << "GetStoredScene returned " << (storedScene == NULL ? "null" : "not null") << std::endl;
+  std::cout << "GetStoredScene returned " << (storedScene == nullptr ? "null" : "not null") << std::endl;
 
   node1->SetAbsentStorageFileNames();
 
   TEST_SET_GET_STRING( node1.GetPointer(), SceneViewDescription);
 
-  node1->SetScreenShot(NULL);
+  node1->SetScreenShot(nullptr);
   vtkImageData *nullImage = node1->GetScreenShot();
   CHECK_NULL(nullImage);
 

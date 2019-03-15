@@ -61,7 +61,7 @@ qSlicerAbstractCoreModulePrivate::qSlicerAbstractCoreModulePrivate()
 {
   this->Hidden = false;
   this->Name = "NA";
-  this->WidgetRepresentation = 0;
+  this->WidgetRepresentation = nullptr;
   this->Installed = false;
   this->BuiltIn = false;
   this->WidgetRepresentationCreationEnabled = true;
@@ -241,7 +241,7 @@ qSlicerAbstractModuleRepresentation* qSlicerAbstractCoreModule::createNewWidgetR
 
   if (!this->isWidgetRepresentationCreationEnabled())
     {
-    return 0;
+    return nullptr;
     }
 
   // Since 'logic()' should have been called in 'initialize(), let's make
@@ -255,10 +255,10 @@ qSlicerAbstractModuleRepresentation* qSlicerAbstractCoreModule::createNewWidgetR
   qSlicerAbstractModuleRepresentation *newWidgetRepresentation;
   newWidgetRepresentation = this->createWidgetRepresentation();
 
-  if (newWidgetRepresentation == 0)
+  if (newWidgetRepresentation == nullptr)
     {
     qDebug() << "Warning, the module "<<this->name()<< "has no widget representation";
-    return 0;
+    return nullptr;
     }
   // internally sets the logic and call setup,
   newWidgetRepresentation->setModule(this);
@@ -311,7 +311,7 @@ void qSlicerAbstractCoreModule::representationDeleted(qSlicerAbstractModuleRepre
   // deleted by caller.
   if (d->WidgetRepresentation == representation)
     {
-    d->WidgetRepresentation = 0;
+    d->WidgetRepresentation = nullptr;
     }
   d->WidgetRepresentations.removeAll(representation);
 }

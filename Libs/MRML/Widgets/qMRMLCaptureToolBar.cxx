@@ -76,9 +76,9 @@ public slots:
 qMRMLCaptureToolBarPrivate::qMRMLCaptureToolBarPrivate(qMRMLCaptureToolBar& object)
   : q_ptr(&object)
 {
-  this->ScreenshotAction = 0;
-  this->SceneViewAction = 0;
-  this->SceneViewMenu = 0;
+  this->ScreenshotAction = nullptr;
+  this->SceneViewAction = nullptr;
+  this->SceneViewMenu = nullptr;
   this->timeOutFlag = false;
 }
 
@@ -87,8 +87,8 @@ void qMRMLCaptureToolBarPrivate::updateWidgetFromMRML()
 {
   Q_Q(qMRMLCaptureToolBar);
   // Enable buttons
-  q->setEnabled(this->MRMLScene != 0);
-  this->ScreenshotAction->setEnabled(this->ActiveMRMLThreeDViewNode != 0);
+  q->setEnabled(this->MRMLScene != nullptr);
+  this->ScreenshotAction->setEnabled(this->ActiveMRMLThreeDViewNode != nullptr);
 }
 
 //---------------------------------------------------------------------------

@@ -112,13 +112,13 @@ bool qSlicerScalarOverlayReader::load(const IOProperties& properties)
   QString modelNodeId = properties["modelNodeId"].toString();
   vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(
       this->mrmlScene()->GetNodeByID(modelNodeId.toLatin1()));
-  if (modelNode == NULL)
+  if (modelNode == nullptr)
     {
     qCritical() << Q_FUNC_INFO << " failed: modelNodeId refers to invalid/non-existent node";
     return false;
     }
 
-  if (d->ModelsLogic == 0)
+  if (d->ModelsLogic == nullptr)
     {
     qCritical() << Q_FUNC_INFO << " failed: invalid models module logic";
     return false;

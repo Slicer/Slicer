@@ -29,7 +29,7 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLColorTableViewPlugin : public QObject,
   Q_OBJECT
 
 public:
-  qMRMLColorTableViewPlugin(QObject *_parent = 0);
+  qMRMLColorTableViewPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;

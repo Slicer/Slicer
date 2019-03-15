@@ -42,22 +42,22 @@ vtkStandardNewMacro(vtkCalculateOversamplingFactor);
 //----------------------------------------------------------------------------
 vtkCalculateOversamplingFactor::vtkCalculateOversamplingFactor()
 {
-  this->InputPolyData = NULL;
-  this->ReferenceGeometryImageData = NULL;
+  this->InputPolyData = nullptr;
+  this->ReferenceGeometryImageData = nullptr;
   this->OutputOversamplingFactor = 1;
   this->OutputRelativeStructureSize = 0.0;
   this->OutputComplexityMeasure = 0.0;
   this->OutputNormalizedShapeIndex = 0.0;
-  this->MassPropertiesAlgorithm = NULL;
+  this->MassPropertiesAlgorithm = nullptr;
   this->LogSpeedMeasurementsOff();
 }
 
 //----------------------------------------------------------------------------
 vtkCalculateOversamplingFactor::~vtkCalculateOversamplingFactor()
 {
-  this->SetInputPolyData(NULL);
-  this->SetReferenceGeometryImageData(NULL);
-  this->SetMassPropertiesAlgorithm(NULL);
+  this->SetInputPolyData(nullptr);
+  this->SetReferenceGeometryImageData(nullptr);
+  this->SetMassPropertiesAlgorithm(nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -128,7 +128,7 @@ bool vtkCalculateOversamplingFactor::CalculateOversamplingFactor()
     }
 
   // Clean up (triggers destruction of member)
-  this->SetMassPropertiesAlgorithm(NULL);
+  this->SetMassPropertiesAlgorithm(nullptr);
 
   return true;
 }

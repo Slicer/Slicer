@@ -29,7 +29,7 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLCoordinatesWidgetPlugin
   Q_OBJECT
 
 public:
-  qMRMLCoordinatesWidgetPlugin(QObject *_parent = 0);
+  qMRMLCoordinatesWidgetPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;

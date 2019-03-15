@@ -41,7 +41,7 @@ class Q_SLICER_QTMODULES_SUBJECTHIERARCHY_EXPORT qSlicerSubjectHierarchyModuleWi
 
 public:
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerSubjectHierarchyModuleWidget(QWidget *parent=0);
+  qSlicerSubjectHierarchyModuleWidget(QWidget *parent=nullptr);
   virtual ~qSlicerSubjectHierarchyModuleWidget();
 
   Q_INVOKABLE qSlicerSubjectHierarchyPluginLogic* pluginLogic();

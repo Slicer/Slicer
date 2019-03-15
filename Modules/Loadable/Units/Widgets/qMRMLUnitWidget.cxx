@@ -57,7 +57,7 @@ qMRMLUnitWidgetPrivate::qMRMLUnitWidgetPrivate(
   qMRMLUnitWidget& object)
   : q_ptr(&object)
 {
-  this->CurrentUnitNode = 0;
+  this->CurrentUnitNode = nullptr;
   this->DisplayFlags = qMRMLUnitWidget::All;
   this->EditableProperties = qMRMLUnitWidget::All;
   this->EditableProperties &= ~qMRMLUnitWidget::Quantity;
@@ -289,15 +289,15 @@ void qMRMLUnitWidget::updateWidgetFromNode()
 {
   Q_D(qMRMLUnitWidget);
 
-  d->PresetNodeComboBox->setEnabled(d->CurrentUnitNode != 0);
-  d->NameLineEdit->setEnabled(d->CurrentUnitNode != 0);
-  d->PrefixLineEdit->setEnabled(d->CurrentUnitNode != 0);
-  d->SuffixLineEdit->setEnabled(d->CurrentUnitNode != 0);
-  d->PrecisionSpinBox->setEnabled(d->CurrentUnitNode != 0);
-  d->MinimumSpinBox->setEnabled(d->CurrentUnitNode != 0);
-  d->MaximumSpinBox->setEnabled(d->CurrentUnitNode != 0);
-  d->CoefficientSpinBox->setEnabled(d->CurrentUnitNode != 0);
-  d->OffsetSpinBox->setEnabled(d->CurrentUnitNode != 0);
+  d->PresetNodeComboBox->setEnabled(d->CurrentUnitNode != nullptr);
+  d->NameLineEdit->setEnabled(d->CurrentUnitNode != nullptr);
+  d->PrefixLineEdit->setEnabled(d->CurrentUnitNode != nullptr);
+  d->SuffixLineEdit->setEnabled(d->CurrentUnitNode != nullptr);
+  d->PrecisionSpinBox->setEnabled(d->CurrentUnitNode != nullptr);
+  d->MinimumSpinBox->setEnabled(d->CurrentUnitNode != nullptr);
+  d->MaximumSpinBox->setEnabled(d->CurrentUnitNode != nullptr);
+  d->CoefficientSpinBox->setEnabled(d->CurrentUnitNode != nullptr);
+  d->OffsetSpinBox->setEnabled(d->CurrentUnitNode != nullptr);
 
   if (!d->CurrentUnitNode)
     {
@@ -310,7 +310,7 @@ void qMRMLUnitWidget::updateWidgetFromNode()
   d->PresetNodeComboBox->addAttribute(
     "vtkMRMLUnitNode", "Quantity", d->CurrentUnitNode->GetQuantity());
   d->PresetNodeComboBox->setMRMLScene(this->mrmlScene());
-  d->PresetNodeComboBox->setCurrentNode(0);
+  d->PresetNodeComboBox->setCurrentNode(nullptr);
   d->PresetNodeComboBox->blockSignals(modifying);
 
   d->NameLineEdit->setText(d->CurrentUnitNode->GetName());

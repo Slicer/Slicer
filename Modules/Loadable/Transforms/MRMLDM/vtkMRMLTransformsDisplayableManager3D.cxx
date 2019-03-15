@@ -293,7 +293,7 @@ void vtkMRMLTransformsDisplayableManager3D::vtkInternal::UpdateDisplayNodePipeli
     }
 
   vtkMRMLTransformNode* transformNode=vtkMRMLTransformNode::SafeDownCast(displayNode->GetDisplayableNode());
-  if (transformNode==NULL)
+  if (transformNode==nullptr)
     {
     pipeline->Actor->SetVisibility(false);
     return;
@@ -305,7 +305,7 @@ void vtkMRMLTransformsDisplayableManager3D::vtkInternal::UpdateDisplayNodePipeli
     // If a node is specified for glyph visualization then region is ignored.
     regionNode = displayNode->GetGlyphPointsNode();
     }
-  if (regionNode==NULL)
+  if (regionNode==nullptr)
     {
     pipeline->Actor->SetVisibility(false);
     return;
@@ -405,7 +405,7 @@ void vtkMRMLTransformsDisplayableManager3D::vtkInternal::SetTransformDisplayProp
   if (displayNode->GetScalarVisibility())
     {
     vtkColorTransferFunction* colorTransferFunction=displayNode->GetColorMap();
-    if (colorTransferFunction != 0 && colorTransferFunction->GetSize()>0)
+    if (colorTransferFunction != nullptr && colorTransferFunction->GetSize()>0)
       {
       // Copy the transfer function to not share them between multiple mappers
       vtkNew<vtkColorTransferFunction> colorTransferFunctionCopy;
@@ -448,7 +448,7 @@ void vtkMRMLTransformsDisplayableManager3D::vtkInternal::SetTransformDisplayProp
   actor->GetProperty()->SetEdgeVisibility(displayNode->GetEdgeVisibility());
   actor->GetProperty()->SetEdgeColor(displayNode->GetEdgeColor());
 
-  actor->SetTexture(0);
+  actor->SetTexture(nullptr);
 }
 
 //---------------------------------------------------------------------------
@@ -464,7 +464,7 @@ vtkMRMLTransformsDisplayableManager3D::vtkMRMLTransformsDisplayableManager3D()
 vtkMRMLTransformsDisplayableManager3D::~vtkMRMLTransformsDisplayableManager3D()
 {
   delete this->Internal;
-  this->Internal=NULL;
+  this->Internal=nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -503,8 +503,8 @@ void vtkMRMLTransformsDisplayableManager3D::OnMRMLSceneNodeRemoved(vtkMRMLNode* 
     return;
     }
 
-  vtkMRMLTransformNode* transformNode = NULL;
-  vtkMRMLTransformDisplayNode* displayNode = NULL;
+  vtkMRMLTransformNode* transformNode = nullptr;
+  vtkMRMLTransformDisplayNode* displayNode = nullptr;
 
   bool modified = false;
   if ( (transformNode = vtkMRMLTransformNode::SafeDownCast(node)) )
@@ -570,7 +570,7 @@ void vtkMRMLTransformsDisplayableManager3D::UpdateFromMRML()
     }
   this->Internal->ClearDisplayableNodes();
 
-  vtkMRMLTransformNode* mNode = NULL;
+  vtkMRMLTransformNode* mNode = nullptr;
   std::vector<vtkMRMLNode *> mNodes;
   int nnodes = scene ? scene->GetNodesByClass("vtkMRMLTransformNode", mNodes) : 0;
   for (int i=0; i<nnodes; i++)

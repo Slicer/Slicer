@@ -44,8 +44,8 @@ bool qMRMLCheckableNodeComboBoxEventPlayer::playEvent(QObject *Object,
     return false;
     }
 
-  qMRMLCheckableNodeComboBox* parent = NULL;
-  for(QObject* test = Object; parent == NULL && test != NULL; test = test->parent())
+  qMRMLCheckableNodeComboBox* parent = nullptr;
+  for(QObject* test = Object; parent == nullptr && test != nullptr; test = test->parent())
     {
     parent = qobject_cast<qMRMLCheckableNodeComboBox*>(test);
     }

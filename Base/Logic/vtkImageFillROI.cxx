@@ -25,7 +25,7 @@ vtkStandardNewMacro(vtkImageFillROI);
 //----------------------------------------------------------------------------
 vtkImageFillROI::vtkImageFillROI()
 {
-  this->Points = NULL;
+  this->Points = nullptr;
   this->Value = 255;
   this->Shape = SHAPE_POLYGON;
   this->Radius = 0;
@@ -35,7 +35,7 @@ vtkImageFillROI::vtkImageFillROI()
 vtkImageFillROI::~vtkImageFillROI()
 {
   // We must UnRegister any object that has a vtkSetObjectMacro
-  if (this->Points != NULL)
+  if (this->Points != nullptr)
     {
     this->Points->UnRegister(this);
     }
@@ -67,7 +67,7 @@ void vtkImageFillROI::PrintSelf(ostream& os, vtkIndent indent)
 class Edge
 {
 public:
-  Edge() {this->next = NULL;};
+  Edge() {this->next = nullptr;};
   int yUpper;
   int dx, dy, dy2, dx2, dydx2, r, xInc, x;
   Edge *next;
@@ -79,11 +79,11 @@ void InsertEdge(Edge *list, Edge *edge)
   Edge *p, *q = list;
 
   p = q->next;
-  while (p != NULL)
+  while (p != nullptr)
     {
     if (edge->x < p->x)
       {
-      p = NULL;
+      p = nullptr;
       }
     else
       {
@@ -290,7 +290,7 @@ static void vtkImageFillROIDrawPolygon(int nx, int ny, int nPts, int *xPts, int 
 
       // ResortActiveList(Edge *active)
       p = active->next;
-      active->next = NULL;
+      active->next = nullptr;
       while (p)
         {
         q = p->next;
@@ -673,7 +673,7 @@ static void vtkImageFillROIExecute(vtkImageFillROI* self,
   double *pt;
 
   vtkPoints *points = self->GetPoints();
-  if (points == NULL)
+  if (points == nullptr)
     return;
 
   outData->GetExtent(outExt);
@@ -760,7 +760,7 @@ int vtkImageFillROI::RequestData(
     outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
   // Make sure the Input has been set.
-  if ( input == NULL )
+  if ( input == nullptr )
     {
     vtkErrorMacro(<< "ExecuteData: Input is not set.");
     return 0;
@@ -775,7 +775,7 @@ int vtkImageFillROI::RequestData(
     return 0;
     }
 
-  void *ptr = NULL;
+  void *ptr = nullptr;
   int x1, inExt[6];
 
   // ensure 1 component data

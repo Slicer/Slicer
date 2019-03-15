@@ -61,8 +61,8 @@ vtkDiffusionTensorMathematics::vtkDiffusionTensorMathematics()
 
   this->ScaleFactor = 1.0;
   this->ExtractEigenvalues = 1;
-  this->TensorRotationMatrix = NULL;
-  this->ScalarMask = NULL;
+  this->TensorRotationMatrix = nullptr;
+  this->ScalarMask = nullptr;
   this->MaskWithScalars = 0;
   this->FixNegativeEigenvalues = 1;
   this->MaskLabelValue = 1;
@@ -149,7 +149,7 @@ int vtkDiffusionTensorMathematics
     vtkInformation* info = outputVector->GetInformationObject(i);
     vtkImageData *outData = static_cast<vtkImageData *>(
       info->Get(vtkDataObject::DATA_OBJECT()));
-    outData->GetPointData()->SetTensors(NULL);
+    outData->GetPointData()->SetTensors(nullptr);
     }
   return res;
 }
@@ -261,7 +261,7 @@ static void vtkDiffusionTensorMathematicsExecute1(vtkDiffusionTensorMathematics 
   float* inPtr = reinterpret_cast<float*>(in1Data->GetArrayPointerForExtent(inTensors, outExt));
 
   bool doMasking = false;
-  short * inMaskPtr = 0;
+  short * inMaskPtr = nullptr;
   vtkIdType maskIncX = 0;
   vtkIdType maskIncY = 0;
   vtkIdType maskIncZ = 0;
@@ -269,7 +269,7 @@ static void vtkDiffusionTensorMathematicsExecute1(vtkDiffusionTensorMathematics 
     {
     self->GetScalarMask()->GetContinuousIncrements(outExt, maskIncX, maskIncY, maskIncZ);
     inMaskPtr = reinterpret_cast<short *>(self->GetScalarMask()->GetScalarPointerForExtent(outExt));
-    doMasking = self->GetScalarMask()->GetPointData()->GetScalars() != 0;
+    doMasking = self->GetScalarMask()->GetPointData()->GetScalars() != nullptr;
     }
 
   for (idxZ = 0; idxZ <= maxZ; idxZ++)
@@ -465,7 +465,7 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
 
   // Check for masking
   bool doMasking = false;
-  short * inMaskPtr = 0;
+  short * inMaskPtr = nullptr;
   vtkIdType maskIncX = 0;
   vtkIdType maskIncY = 0;
   vtkIdType maskIncZ = 0;
@@ -473,7 +473,7 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
     {
     self->GetScalarMask()->GetContinuousIncrements(outExt, maskIncX, maskIncY, maskIncZ);
     inMaskPtr = reinterpret_cast<short *>(self->GetScalarMask()->GetScalarPointerForExtent(outExt));
-    doMasking = self->GetScalarMask()->GetPointData()->GetScalars() != 0;
+    doMasking = self->GetScalarMask()->GetPointData()->GetScalars() != nullptr;
     }
 
    //vtkGenericWarningMacro( "Do masking: " << doMasking );
@@ -838,12 +838,12 @@ void vtkDiffusionTensorMathematics::ThreadedRequestData(
 {
   void *outPtr;
 
-  if (inData[0][0] == NULL)
+  if (inData[0][0] == nullptr)
     {
     vtkErrorMacro(<< "Input " << 0 << " must be specified.");
     return;
     }
-  if (inData[0][0]->GetPointData() == NULL || inData[0][0]->GetPointData()->GetTensors() == NULL)
+  if (inData[0][0]->GetPointData() == nullptr || inData[0][0]->GetPointData()->GetTensors() == nullptr)
     {
     vtkErrorMacro(<< "Input " << 0 << " must have tensors. PointData: " << inData[0][0]->GetPointData());
     return;
@@ -1307,8 +1307,8 @@ int vtkDiffusionTensorMathematics::TeemEigenSolver(double **m, double *w, double
      t[5] = m[1][2];
      t[6] = m[2][2];
 
-    if (v == NULL)
-        res=tenEigensolve_d(eval,NULL,t);
+    if (v == nullptr)
+        res=tenEigensolve_d(eval,nullptr,t);
     else
         res=tenEigensolve_d(eval,evec,t);
 
@@ -1357,7 +1357,7 @@ int vtkDiffusionTensorMathematics::TeemEigenSolver(double **m, double *w, double
       }
     }
     //Assigned output eigenvalues
-    if (v != NULL) {
+    if (v != nullptr) {
         v[eval_indices[0]][0] = evec[0]; v[eval_indices[1]][0] = evec[1]; v[eval_indices[2]][0] = evec[2];
         v[eval_indices[0]][1] = evec[3]; v[eval_indices[1]][1] = evec[4]; v[eval_indices[2]][1] = evec[5];
         v[eval_indices[0]][2] = evec[6]; v[eval_indices[1]][2] = evec[7]; v[eval_indices[2]][2] = evec[8];

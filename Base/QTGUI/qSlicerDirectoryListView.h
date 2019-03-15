@@ -40,7 +40,7 @@ public:
   typedef QWidget Superclass;
 
   /// Constructor
-  explicit qSlicerDirectoryListView(QWidget* parent = 0);
+  explicit qSlicerDirectoryListView(QWidget* parent = nullptr);
 
   /// Destructor
   virtual ~qSlicerDirectoryListView();

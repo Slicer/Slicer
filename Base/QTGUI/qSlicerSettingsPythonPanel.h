@@ -42,7 +42,7 @@ public:
   typedef ctkSettingsPanel Superclass;
 
   /// Constructor
-  explicit qSlicerSettingsPythonPanel(QWidget* parent = 0);
+  explicit qSlicerSettingsPythonPanel(QWidget* parent = nullptr);
 
   /// Destructor
   virtual ~qSlicerSettingsPythonPanel();

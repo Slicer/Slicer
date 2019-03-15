@@ -32,7 +32,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerFileWriter
 {
   Q_OBJECT
 public:
-  qSlicerFileWriter(QObject* parent = 0);
+  qSlicerFileWriter(QObject* parent = nullptr);
   virtual ~qSlicerFileWriter();
 
   /// Return true if the object is handled by the writer.

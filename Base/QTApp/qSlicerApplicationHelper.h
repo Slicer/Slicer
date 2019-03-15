@@ -41,7 +41,7 @@ public:
   typedef QObject Superclass;
   typedef qSlicerApplicationHelper Self;
 
-  qSlicerApplicationHelper(QObject * parent = 0);
+  qSlicerApplicationHelper(QObject * parent = nullptr);
   virtual ~qSlicerApplicationHelper();
 
   static void preInitializeApplication(const char* argv0, ctkProxyStyle* style);

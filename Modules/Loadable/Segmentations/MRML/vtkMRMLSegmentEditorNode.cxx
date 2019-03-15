@@ -47,10 +47,10 @@ vtkMRMLNodeNewMacro(vtkMRMLSegmentEditorNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLSegmentEditorNode::vtkMRMLSegmentEditorNode()
-  : SelectedSegmentID(NULL)
-  , ActiveEffectName(NULL)
+  : SelectedSegmentID(nullptr)
+  , ActiveEffectName(nullptr)
   , MaskMode(PaintAllowedEverywhere)
-  , MaskSegmentID(NULL)
+  , MaskSegmentID(nullptr)
   , OverwriteMode(OverwriteAllSegments)
   , MasterVolumeIntensityMask(false)
 {
@@ -62,9 +62,9 @@ vtkMRMLSegmentEditorNode::vtkMRMLSegmentEditorNode()
 //----------------------------------------------------------------------------
 vtkMRMLSegmentEditorNode::~vtkMRMLSegmentEditorNode()
 {
-  this->SetSelectedSegmentID(NULL);
-  this->SetActiveEffectName(NULL);
-  this->SetMaskSegmentID(NULL);
+  this->SetSelectedSegmentID(nullptr);
+  this->SetActiveEffectName(nullptr);
+  this->SetMaskSegmentID(nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -90,10 +90,10 @@ void vtkMRMLSegmentEditorNode::ReadXMLAttributes(const char** atts)
   Superclass::ReadXMLAttributes(atts);
 
   // Read all MRML node attributes from two arrays of names and values
-  const char* attName = NULL;
-  const char* attValue = NULL;
+  const char* attName = nullptr;
+  const char* attValue = nullptr;
 
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -181,7 +181,7 @@ vtkMRMLScalarVolumeNode* vtkMRMLSegmentEditorNode::GetMasterVolumeNode()
 //----------------------------------------------------------------------------
 void vtkMRMLSegmentEditorNode::SetAndObserveMasterVolumeNode(vtkMRMLScalarVolumeNode* node)
 {
-  this->SetNodeReferenceID(MASTER_VOLUME_REFERENCE_ROLE, (node ? node->GetID() : NULL));
+  this->SetNodeReferenceID(MASTER_VOLUME_REFERENCE_ROLE, (node ? node->GetID() : nullptr));
 }
 
 //----------------------------------------------------------------------------
@@ -193,7 +193,7 @@ vtkMRMLSegmentationNode* vtkMRMLSegmentEditorNode::GetSegmentationNode()
 //----------------------------------------------------------------------------
 void vtkMRMLSegmentEditorNode::SetAndObserveSegmentationNode(vtkMRMLSegmentationNode* node)
 {
-  this->SetNodeReferenceID(SEGMENTATION_REFERENCE_ROLE, (node ? node->GetID() : NULL));
+  this->SetNodeReferenceID(SEGMENTATION_REFERENCE_ROLE, (node ? node->GetID() : nullptr));
 }
 
 //----------------------------------------------------------------------------

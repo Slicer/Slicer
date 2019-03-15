@@ -81,8 +81,8 @@ qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate::qSlicerSubjectHierar
 {
   this->DiffusionTensorVolumeIcon = QIcon(":Icons/DiffusionTensorVolume.png");
 
-  this->TractographyLabelMapSeedingAction = NULL;
-  this->TractographyInteractiveSeedingAction = NULL;
+  this->TractographyLabelMapSeedingAction = nullptr;
+  this->TractographyInteractiveSeedingAction = nullptr;
 }
 
 //------------------------------------------------------------------------------

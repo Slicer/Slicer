@@ -50,7 +50,7 @@ public:
 
   /// Construct an empty qMRMLColorTableComboBox with a null scene,
   /// no nodeType, where the hidden nodes are not forced on display.
-  explicit qMRMLLabelComboBox(QWidget* newParent = 0);
+  explicit qMRMLLabelComboBox(QWidget* newParent = nullptr);
   virtual ~qMRMLLabelComboBox();
 
   /// Set/Get NoneEnabled flags

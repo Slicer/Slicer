@@ -50,7 +50,7 @@ class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorScriptedEffect
 
 public:
   typedef qSlicerSegmentEditorAbstractEffect Superclass;
-  qSlicerSegmentEditorScriptedEffect(QObject* parent = NULL);
+  qSlicerSegmentEditorScriptedEffect(QObject* parent = nullptr);
   virtual ~qSlicerSegmentEditorScriptedEffect();
 
   Q_INVOKABLE QString pythonSource()const;

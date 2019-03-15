@@ -161,7 +161,7 @@ void vtkMRMLTransformDisplayNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -285,7 +285,7 @@ void vtkMRMLTransformDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 //---------------------------------------------------------------------------
 void vtkMRMLTransformDisplayNode::ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData )
 {
-  if (caller!=NULL
+  if (caller!=nullptr
     && (event==vtkCommand::ModifiedEvent || event==vtkMRMLTransformableNode::TransformModifiedEvent)
     && caller==GetRegionNode()
     && this->Visibility)
@@ -296,7 +296,7 @@ void vtkMRMLTransformDisplayNode::ProcessMRMLEvents ( vtkObject *caller, unsigne
     // If 3D visibility is disabled then we can ignore this event, as the region is only used for 3D display.
     this->Modified();
     }
-  else if (caller!=NULL
+  else if (caller!=nullptr
     && (event==vtkCommand::ModifiedEvent || event==vtkMRMLTransformableNode::TransformModifiedEvent)
     && caller==GetGlyphPointsNode()
     && this->VisualizationMode == VIS_MODE_GLYPH
@@ -305,7 +305,7 @@ void vtkMRMLTransformDisplayNode::ProcessMRMLEvents ( vtkObject *caller, unsigne
     // update visualization if glyph points are changed
     this->Modified();
     }
-  else if (caller!=NULL
+  else if (caller!=nullptr
     && event==vtkCommand::ModifiedEvent
     && caller==GetColorNode())
     {
@@ -324,7 +324,7 @@ vtkMRMLNode* vtkMRMLTransformDisplayNode::GetRegionNode()
 //----------------------------------------------------------------------------
 void vtkMRMLTransformDisplayNode::SetAndObserveRegionNode(vtkMRMLNode* node)
 {
-  this->SetAndObserveNthNodeReferenceID(RegionReferenceRole, 0, node ? node->GetID() : NULL);
+  this->SetAndObserveNthNodeReferenceID(RegionReferenceRole, 0, node ? node->GetID() : nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -336,7 +336,7 @@ vtkMRMLNode* vtkMRMLTransformDisplayNode::GetGlyphPointsNode()
 //----------------------------------------------------------------------------
 void vtkMRMLTransformDisplayNode::SetAndObserveGlyphPointsNode(vtkMRMLNode* node)
 {
-  this->SetAndObserveNthNodeReferenceID(GlyphPointsReferenceRole, 0, node ? node->GetID() : NULL);
+  this->SetAndObserveNthNodeReferenceID(GlyphPointsReferenceRole, 0, node ? node->GetID() : nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -355,7 +355,7 @@ double* vtkMRMLTransformDisplayNode::GetContourLevelsMm()
 {
   if (this->ContourLevelsMm.size()==0)
     {
-    return NULL;
+    return nullptr;
     }
   // std::vector values are guaranteed to be stored in a continuous block in memory,
   // so we can return the address to the first one
@@ -383,7 +383,7 @@ const char* vtkMRMLTransformDisplayNode::ConvertVisualizationModeToString(int mo
 //----------------------------------------------------------------------------
 int vtkMRMLTransformDisplayNode::ConvertVisualizationModeFromString(const char* modeString)
 {
-  if (modeString==NULL)
+  if (modeString==nullptr)
     {
     return -1;
     }
@@ -412,7 +412,7 @@ const char* vtkMRMLTransformDisplayNode::ConvertGlyphTypeToString(int modeIndex)
 //----------------------------------------------------------------------------
 int vtkMRMLTransformDisplayNode::ConvertGlyphTypeFromString(const char* modeString)
 {
-  if (modeString==NULL)
+  if (modeString==nullptr)
     {
     return -1;
     }
@@ -546,17 +546,17 @@ void vtkMRMLTransformDisplayNode::SetDefaultColors()
 vtkColorTransferFunction* vtkMRMLTransformDisplayNode::GetColorMap()
 {
   vtkMRMLProceduralColorNode* colorNode=vtkMRMLProceduralColorNode::SafeDownCast(GetColorNode());
-  if (colorNode==NULL
-    || colorNode->GetColorTransferFunction()==NULL
+  if (colorNode==nullptr
+    || colorNode->GetColorTransferFunction()==nullptr
     || colorNode->GetColorTransferFunction()->GetSize()==0)
     {
     // We don't have a color node or it is not the right type
     this->SetDefaultColors();
     colorNode=vtkMRMLProceduralColorNode::SafeDownCast(this->GetColorNode());
-    if (colorNode==NULL)
+    if (colorNode==nullptr)
       {
       vtkErrorMacro("vtkMRMLTransformDisplayNode::GetColorMap failed: could not create default color node");
-      return NULL;
+      return nullptr;
       }
     }
   vtkColorTransferFunction* colorMap=colorNode->GetColorTransferFunction();
@@ -568,15 +568,15 @@ void vtkMRMLTransformDisplayNode::SetColorMap(vtkColorTransferFunction* newColor
 {
   int oldModified=this->StartModify();
   vtkMRMLProceduralColorNode* colorNode=vtkMRMLProceduralColorNode::SafeDownCast(this->GetColorNode());
-  if (colorNode==NULL)
+  if (colorNode==nullptr)
     {
     // We don't have a color node or it is not the right type
     this->SetDefaultColors();
     colorNode=vtkMRMLProceduralColorNode::SafeDownCast(this->GetColorNode());
     }
-  if (colorNode!=NULL)
+  if (colorNode!=nullptr)
     {
-    if (colorNode->GetColorTransferFunction()==NULL)
+    if (colorNode->GetColorTransferFunction()==nullptr)
       {
       vtkNew<vtkColorTransferFunction> ctf;
       colorNode->SetAndObserveColorTransferFunction(ctf.GetPointer());

@@ -25,7 +25,7 @@ class qMRMLNodeObject : public QObject
 {
   Q_OBJECT
 public:
-  qMRMLNodeObject(vtkMRMLNode* node, QObject* parent = 0);
+  qMRMLNodeObject(vtkMRMLNode* node, QObject* parent = nullptr);
 
   void setProcessEvents(bool process);
   bool processEvents()const;

@@ -379,7 +379,7 @@ qSlicerIOOptions* qSlicerCoreIOManager::fileOptions(const QString& readerDescrip
   qSlicerFileReader* reader = this->reader(readerDescription);
   if (!reader)
     {
-    return 0;
+    return nullptr;
     }
   reader->setMRMLScene(d->currentScene());
   return reader->options();
@@ -390,7 +390,7 @@ qSlicerIOOptions* qSlicerCoreIOManager::fileWriterOptions(
   vtkObject* object, const QString& extension)const
 {
   Q_D(const qSlicerCoreIOManager);
-  qSlicerFileWriter* bestWriter = 0;
+  qSlicerFileWriter* bestWriter = nullptr;
   foreach(qSlicerFileWriter* writer, d->Writers)
     {
     if (writer->canWriteObject(object))
@@ -402,7 +402,7 @@ qSlicerIOOptions* qSlicerCoreIOManager::fileWriterOptions(
         }
       }
     }
-  return bestWriter ? bestWriter->options() : 0;
+  return bestWriter ? bestWriter->options() : nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -414,7 +414,7 @@ QString qSlicerCoreIOManager::completeSlicerWritableFileNameSuffix(vtkMRMLStorab
     qWarning() << Q_FUNC_INFO << " failed: no storage node is available";
     return QString(".");
     }
-  QString ext = QString::fromStdString(storageNode->GetSupportedFileExtension(NULL, false, true));
+  QString ext = QString::fromStdString(storageNode->GetSupportedFileExtension(nullptr, false, true));
   if (!ext.isEmpty())
     {
     // found
@@ -557,12 +557,12 @@ vtkMRMLStorageNode* qSlicerCoreIOManager::createAndAddDefaultStorageNode(
   if (!node)
     {
     qCritical() << Q_FUNC_INFO << " failed: invalid input node";
-    return 0;
+    return nullptr;
     }
   if (!node->AddDefaultStorageNode())
     {
     qCritical() << Q_FUNC_INFO << " failed: error while adding default storage node";
-    return 0;
+    return nullptr;
     }
   return node->GetStorageNode();
 }

@@ -56,7 +56,7 @@ vtkAnnotationROIRepresentation2D::vtkAnnotationROIRepresentation2D()
   this->LastEventPosition2D[1]=0;
   this->LastEventPosition2D[2]=0;
   this->LastEventPosition2D[3]=1;
-  this->LastPicker2D = NULL;
+  this->LastPicker2D = nullptr;
 
   this->SliceIntersectionVisibility = 1;
 
@@ -105,8 +105,8 @@ vtkAnnotationROIRepresentation2D::vtkAnnotationROIRepresentation2D()
     //this->Handle2D[i]->SetVisibility(0);
     }
 
-  this->LastPicker2D = NULL;
-  this->CurrentHandle2D = NULL;
+  this->LastPicker2D = nullptr;
+  this->CurrentHandle2D = nullptr;
 
   this->PositionHandles();
 
@@ -139,7 +139,7 @@ vtkAnnotationROIRepresentation2D::~vtkAnnotationROIRepresentation2D()
   for(int i=0;i<NUMBER_HANDLES;i++)
     {
     this->HandleProperties2D[i]->Delete();
-    this->HandleProperties2D[i]=NULL;
+    this->HandleProperties2D[i]=nullptr;
     }
   this->SelectedHandleProperty2D->Delete();
   this->SelectedFaceProperty2D->Delete();
@@ -326,7 +326,7 @@ void vtkAnnotationROIRepresentation2D::SetInteractionState(int state)
       this->HighlightFace(-1);
       break;
     default:
-      this->HighlightHandle(NULL);
+      this->HighlightHandle(nullptr);
       this->HighlightFace(-1);
     }
 }
@@ -339,7 +339,7 @@ int vtkAnnotationROIRepresentation2D::HighlightHandle(vtkProp *prop)
     {
       this->Handle2D[i]->SetProperty(this->HandleProperties2D[i]);
     }
-  this->CurrentHandle2D = NULL;
+  this->CurrentHandle2D = nullptr;
   if (prop)
     {
     this->CurrentHandle2D = static_cast<vtkActor2D *>(prop);
@@ -388,7 +388,7 @@ void vtkAnnotationROIRepresentation2D::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkAnnotationROIRepresentation2D::ComputeIntersectionLine(vtkPolyData* inputIntersectionFace, vtkPlane* inputPlane, vtkPolyData* outputIntersectionFacesIntersection)
 {
-  if (inputIntersectionFace==NULL || inputPlane==NULL || outputIntersectionFacesIntersection==NULL)
+  if (inputIntersectionFace==nullptr || inputPlane==nullptr || outputIntersectionFacesIntersection==nullptr)
     {
     vtkWarningMacro("ComputeIntersectionLine received invalid input");
     return;
@@ -535,7 +535,7 @@ void vtkAnnotationROIRepresentation2D::PositionHandles()
 void vtkAnnotationROIRepresentation2D::WidgetInteraction(double e[2])
 {
   // Convert events to appropriate coordinate systems
-  vtkCamera *camera = this->Renderer->IsActiveCameraCreated() ? this->Renderer->GetActiveCamera() : NULL;
+  vtkCamera *camera = this->Renderer->IsActiveCameraCreated() ? this->Renderer->GetActiveCamera() : nullptr;
   if ( !camera )
     {
     return;
@@ -640,11 +640,11 @@ int vtkAnnotationROIRepresentation2D::ComputeInteractionState(int X, int Y, int 
 
   vtkAssemblyPath *path;
   // Try and pick a handle first
-  this->LastPicker2D = NULL;
-  this->CurrentHandle2D = NULL;
+  this->LastPicker2D = nullptr;
+  this->CurrentHandle2D = nullptr;
   this->HandlePicker2D->Pick(X,Y,0.0,this->Renderer);
   path = this->HandlePicker2D->GetPath();
-  if ( path != NULL )
+  if ( path != nullptr )
     {
     this->ValidPick = 1;
     this->LastPicker2D = this->HandlePicker2D;

@@ -49,7 +49,7 @@ public:
   typedef qMRMLWidget Superclass;
 
   /// Constructors
-  explicit qMRMLPlotWidget(QWidget* parent = 0);
+  explicit qMRMLPlotWidget(QWidget* parent = nullptr);
   virtual ~qMRMLPlotWidget();
 
   /// Get the Plot node observed by view.

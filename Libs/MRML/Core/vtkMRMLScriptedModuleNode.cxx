@@ -27,7 +27,7 @@ vtkMRMLScriptedModuleNode::vtkMRMLScriptedModuleNode()
 {
   this->HideFromEditors = 1;
 
-  this->ModuleName = 0;
+  this->ModuleName = nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -36,7 +36,7 @@ vtkMRMLScriptedModuleNode::~vtkMRMLScriptedModuleNode()
   if (this->ModuleName)
     {
     delete [] this->ModuleName;
-    this->ModuleName = 0;
+    this->ModuleName = nullptr;
     }
 }
 
@@ -47,7 +47,7 @@ void vtkMRMLScriptedModuleNode::WriteXML(ostream& of, int nIndent)
 
   // Write all MRML node attributes into output stream
 
-  if (this->ModuleName != 0)
+  if (this->ModuleName != nullptr)
     {
     of << " ModuleName =\"" << this->XMLAttributeEncodeString(this->ModuleName) << "\"";
     }
@@ -73,7 +73,7 @@ void vtkMRMLScriptedModuleNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != 0)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);

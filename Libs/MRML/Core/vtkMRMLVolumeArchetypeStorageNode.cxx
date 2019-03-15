@@ -91,7 +91,7 @@ void vtkMRMLVolumeArchetypeStorageNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -180,7 +180,7 @@ vtkMRMLVolumeArchetypeStorageNode::InstantiateVectorVolumeReader(const std::stri
     }
   catch ( ... )
     {
-    return 0;
+    return nullptr;
     }
 
   unsigned int numberOfFileNames = reader->GetNumberOfFileNames();
@@ -197,7 +197,7 @@ vtkMRMLVolumeArchetypeStorageNode::InstantiateVectorVolumeReader(const std::stri
       }
     catch ( ... )
       {
-      return 0;
+      return nullptr;
       }
     }
 
@@ -205,9 +205,9 @@ vtkMRMLVolumeArchetypeStorageNode::InstantiateVectorVolumeReader(const std::stri
 
   if (reader->GetNumberOfComponents() < 3)
     {
-    return 0;
+    return nullptr;
     }
-  reader->Register(0);
+  reader->Register(nullptr);
   return reader;
 #else
   (void)fullName;
@@ -285,7 +285,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   //
 
   vtkMRMLScalarVolumeNode * volNode = vtkMRMLScalarVolumeNode::SafeDownCast(refNode);
-  if(volNode == NULL)
+  if(volNode == nullptr)
     {
     vtkErrorMacro("ReadData: Reference node is expected to be a vtkMRMLScalarVolumeNode");
     return 0;
@@ -310,7 +310,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     reader->SetUseOrientationFromFile( this->GetUseOrientationFromFile() );
     }
 
-  if (reader.GetPointer() == NULL)
+  if (reader.GetPointer() == nullptr)
     {
     vtkErrorMacro("ReadData: Failed to instantiate a file reader");
     return 0;
@@ -320,7 +320,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 
   if (volNode->GetImageData())
     {
-    volNode->SetAndObserveImageData(NULL);
+    volNode->SetAndObserveImageData(nullptr);
     }
 
   // Set the list of file names on the reader
@@ -363,7 +363,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   if (!readingWorked)
     {
     std::string reader0thFileName;
-    if (reader->GetFileName(0) != NULL)
+    if (reader->GetFileName(0) != nullptr)
       {
       reader0thFileName = std::string("reader 0th file name = ") + std::string(reader->GetFileName(0));
       }
@@ -380,7 +380,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     return 0;
     }
 
-  if (reader->GetOutput() == NULL || reader->GetOutput()->GetPointData() == NULL)
+  if (reader->GetOutput() == nullptr || reader->GetOutput()->GetPointData() == nullptr)
     {
     vtkErrorMacro("ReadData: Unable to read data from file: " << fullName);
     return 0;
@@ -389,7 +389,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   vtkPointData * pointData = reader->GetOutput()->GetPointData();
   if (volNode->IsA("vtkMRMLDiffusionTensorVolumeNode"))
     {
-    if (pointData->GetTensors() == NULL || pointData->GetTensors()->GetNumberOfTuples() == 0)
+    if (pointData->GetTensors() == nullptr || pointData->GetTensors()->GetNumberOfTuples() == 0)
       {
       vtkErrorMacro("ReadData: Unable to read DiffusionTensorVolume data from file: " << fullName );
       return 0;
@@ -397,7 +397,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     }
   else
     {
-    if (pointData->GetScalars() == NULL || pointData->GetScalars()->GetNumberOfTuples() == 0)
+    if (pointData->GetScalars() == nullptr || pointData->GetScalars()->GetNumberOfTuples() == 0)
       {
       vtkErrorMacro("ReadData: Unable to read ScalarVolume data from file: " << fullName );
       return 0;
@@ -448,7 +448,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   ici->SetOutputOrigin( 0, 0, 0 );
   ici->Update();
 
-  if (ici->GetOutput() == NULL)
+  if (ici->GetOutput() == nullptr)
     {
     vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode: Cannot read file: " << fullName);
     return 0;
@@ -465,7 +465,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     <<". Pixel type: "<<vtkImageScalarTypeNameMacro(iciOutputCopy->GetScalarType())<<".");
 
   vtkMatrix4x4* mat = reader->GetRasToIjkMatrix();
-  if ( mat == NULL )
+  if ( mat == nullptr )
     {
     vtkErrorMacro ("Reader returned NULL RasToIjkMatrix");
     }
@@ -487,7 +487,7 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 
   vtkMRMLVolumeNode *volNode = vtkMRMLScalarVolumeNode::SafeDownCast(refNode);
 
-  if (volNode->GetImageData() == NULL)
+  if (volNode->GetImageData() == nullptr)
     {
     vtkErrorMacro("cannot write ImageData, it's NULL");
     return 0;
@@ -638,7 +638,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
 
   vtkMRMLVolumeNode *volNode = vtkMRMLScalarVolumeNode::SafeDownCast(refNode);
 
-  if (volNode == NULL || volNode->GetImageData() == NULL)
+  if (volNode == nullptr || volNode->GetImageData() == nullptr)
     {
     vtkErrorMacro("UpdateFileList: cannot write ImageData, it's NULL");
     return returnString;
@@ -761,7 +761,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
     }
   else
     {
-    if (volNode->GetScene() != NULL &&
+    if (volNode->GetScene() != nullptr &&
         strlen(volNode->GetScene()->GetRootDirectory()) )
       {
       // use the scene's root dir, all the files in the list will be

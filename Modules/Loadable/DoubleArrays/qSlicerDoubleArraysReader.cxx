@@ -119,5 +119,5 @@ bool qSlicerDoubleArraysReader::load(const IOProperties& properties)
     {
     this->setLoadedNodes(QStringList());
     }
-  return node != 0;
+  return node != nullptr;
 }

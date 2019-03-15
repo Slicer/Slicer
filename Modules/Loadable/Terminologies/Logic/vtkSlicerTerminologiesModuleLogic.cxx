@@ -302,11 +302,11 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::PopulateTerminologyCategory
 
   category->SetCodeMeaning(codeMeaning->value.GetString());
   category->SetCodingSchemeDesignator(codingScheme->value.GetString());
-  category->SetSNOMEDCTConceptID(SNOMEDCTConceptID != categoryObject.MemberEnd() ? SNOMEDCTConceptID->value.GetString() : NULL);
-  category->SetUMLSConceptUID(UMLSConceptUID != categoryObject.MemberEnd() ? UMLSConceptUID->value.GetString() : NULL);
-  category->SetCid(cid != categoryObject.MemberEnd() ? cid->value.GetString() : NULL);
+  category->SetSNOMEDCTConceptID(SNOMEDCTConceptID != categoryObject.MemberEnd() ? SNOMEDCTConceptID->value.GetString() : nullptr);
+  category->SetUMLSConceptUID(UMLSConceptUID != categoryObject.MemberEnd() ? UMLSConceptUID->value.GetString() : nullptr);
+  category->SetCid(cid != categoryObject.MemberEnd() ? cid->value.GetString() : nullptr);
   category->SetCodeValue(codeValue->value.GetString());
-  category->SetContextGroupName(contextGroupName != categoryObject.MemberEnd() ? contextGroupName->value.GetString() : NULL);
+  category->SetContextGroupName(contextGroupName != categoryObject.MemberEnd() ? contextGroupName->value.GetString() : nullptr);
   if (showAnatomy == categoryObject.MemberEnd())
     {
     category->SetShowAnatomy(true); // Default
@@ -410,12 +410,12 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::PopulateTerminologyTypeFrom
 
   type->SetCodeMeaning(codeMeaning->value.GetString());
   type->SetCodingSchemeDesignator(codingScheme->value.GetString());
-  type->SetSlicerLabel(slicerLabel != typeObject.MemberEnd() ? slicerLabel->value.GetString() : NULL);
-  type->SetSNOMEDCTConceptID(SNOMEDCTConceptID != typeObject.MemberEnd() ? SNOMEDCTConceptID->value.GetString() : NULL);
-  type->SetUMLSConceptUID(UMLSConceptUID != typeObject.MemberEnd() ? UMLSConceptUID->value.GetString() : NULL);
-  type->SetCid(cid != typeObject.MemberEnd() ? cid->value.GetString() : NULL);
+  type->SetSlicerLabel(slicerLabel != typeObject.MemberEnd() ? slicerLabel->value.GetString() : nullptr);
+  type->SetSNOMEDCTConceptID(SNOMEDCTConceptID != typeObject.MemberEnd() ? SNOMEDCTConceptID->value.GetString() : nullptr);
+  type->SetUMLSConceptUID(UMLSConceptUID != typeObject.MemberEnd() ? UMLSConceptUID->value.GetString() : nullptr);
+  type->SetCid(cid != typeObject.MemberEnd() ? cid->value.GetString() : nullptr);
   type->SetCodeValue(codeValue->value.GetString());
-  type->SetContextGroupName(contextGroupName != typeObject.MemberEnd() ? contextGroupName->value.GetString() : NULL);
+  type->SetContextGroupName(contextGroupName != typeObject.MemberEnd() ? contextGroupName->value.GetString() : nullptr);
 
   if (recommendedDisplayRGBValue != typeObject.MemberEnd()
     && (recommendedDisplayRGBValue->value).IsArray() && (recommendedDisplayRGBValue->value).Size() == 3)
@@ -995,7 +995,7 @@ void vtkSlicerTerminologiesModuleLogic::vtkInternal::GetJsonCodeFromIdentifier(
 
 //----------------------------------------------------------------------------
 vtkSlicerTerminologiesModuleLogic::vtkSlicerTerminologiesModuleLogic()
-  : UserContextsPath(NULL)
+  : UserContextsPath(nullptr)
 {
   this->Internal = new vtkInternal();
 }
@@ -1004,9 +1004,9 @@ vtkSlicerTerminologiesModuleLogic::vtkSlicerTerminologiesModuleLogic()
 vtkSlicerTerminologiesModuleLogic::~vtkSlicerTerminologiesModuleLogic()
 {
   delete this->Internal;
-  this->Internal = NULL;
+  this->Internal = nullptr;
 
-  this->SetUserContextsPath(NULL);
+  this->SetUserContextsPath(nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -1155,7 +1155,7 @@ bool vtkSlicerTerminologiesModuleLogic::LoadTerminologyFromSegmentDescriptorFile
     }
 
   // Convert the loaded descriptor json file into terminology dictionary context json format
-  rapidjson::Document* convertedDoc = NULL;
+  rapidjson::Document* convertedDoc = nullptr;
   vtkInternal::TerminologyMap::iterator termIt = this->Internal->LoadedTerminologies.find(contextName);
   if (termIt != this->Internal->LoadedTerminologies.end() && termIt->second != NULL)
     {
@@ -1269,7 +1269,7 @@ bool vtkSlicerTerminologiesModuleLogic::LoadAnatomicContextFromSegmentDescriptor
     }
 
   // Convert the loaded descriptor json file into anatomic context json format
-  rapidjson::Document* convertedDoc = NULL;
+  rapidjson::Document* convertedDoc = nullptr;
   vtkInternal::TerminologyMap::iterator anIt = this->Internal->LoadedAnatomicContexts.find(contextName);
   if (anIt != this->Internal->LoadedAnatomicContexts.end() && anIt->second != NULL)
     {
@@ -1862,8 +1862,8 @@ bool vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(std::string 
     }
 
   // Clear terminology entry object
-  entry->SetTerminologyContextName(NULL);
-  entry->SetAnatomicContextName(NULL);
+  entry->SetTerminologyContextName(nullptr);
+  entry->SetAnatomicContextName(nullptr);
 
   if ( !entry->GetCategoryObject() || !entry->GetTypeObject() || !entry->GetTypeModifierObject()
     || !entry->GetAnatomicRegionObject() || !entry->GetAnatomicRegionModifierObject() )
@@ -1891,7 +1891,7 @@ bool vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(std::string 
     return false;
     }
   std::string terminologyName(entryComponents[0]);
-  entry->SetTerminologyContextName(terminologyName.empty()?NULL:terminologyName.c_str());
+  entry->SetTerminologyContextName(terminologyName.empty()?nullptr:terminologyName.c_str());
 
   // Category
   std::vector<vtksys::String> categoryIds = vtksys::SystemTools::SplitString(entryComponents[1], '^');
@@ -1943,7 +1943,7 @@ bool vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(std::string 
 
   // Anatomic context name (optional)
   std::string anatomicContextName = entryComponents[4];
-  entry->SetAnatomicContextName(anatomicContextName.empty()?NULL:anatomicContextName.c_str());
+  entry->SetAnatomicContextName(anatomicContextName.empty()?nullptr:anatomicContextName.c_str());
 
   // Anatomic region (optional)
   std::vector<vtksys::String> regionIds = vtksys::SystemTools::SplitString(entryComponents[5], '^');

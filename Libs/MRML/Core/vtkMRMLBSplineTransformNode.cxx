@@ -47,7 +47,7 @@ vtkMRMLBSplineTransformNode::vtkMRMLBSplineTransformNode()
 //----------------------------------------------------------------------------
 vtkMRMLBSplineTransformNode::~vtkMRMLBSplineTransformNode()
 {
-  this->SetAndObserveTransformFromParent(NULL);
+  this->SetAndObserveTransformFromParent(nullptr);
 }
 
 //----------------------------------------------------------------------------

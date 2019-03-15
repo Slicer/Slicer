@@ -62,7 +62,7 @@ vtkEventBrokerInitialize::~vtkEventBrokerInitialize()
 vtkEventBroker* vtkEventBroker::New()
 {
   vtkEventBroker* ret = vtkEventBroker::GetInstance();
-  ret->Register(NULL);
+  ret->Register(nullptr);
   return ret;
 }
 
@@ -95,9 +95,9 @@ vtkEventBroker::vtkEventBroker()
   this->EventNestingLevel = 0;
   this->TimerLog = vtkTimerLog::New();
   this->CompressCallData = 0;
-  this->LogFileName = NULL;
-  this->ScriptHandler = NULL;
-  this->ScriptHandlerClientData = NULL;
+  this->LogFileName = nullptr;
+  this->ScriptHandler = nullptr;
+  this->ScriptHandlerClientData = nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -226,7 +226,7 @@ void vtkEventBroker::AttachObservation ( vtkObservation *observation )
   tag = observation->GetSubject()->AddObserver( vtkCommand::DeleteEvent, observation->GetObservationCallbackCommand());
   observation->SetSubjectDeleteEventTag( tag );
 
-  if ( observation->GetObserver() != NULL && (observation->GetSubject() != observation->GetObserver()) )
+  if ( observation->GetObserver() != nullptr && (observation->GetSubject() != observation->GetObserver()) )
     {
     // there may be no Observer (e.g. for a Script)
     tag = observation->GetObserver()->AddObserver( vtkCommand::DeleteEvent, observation->GetObservationCallbackCommand() );
@@ -267,7 +267,7 @@ void vtkEventBroker::DetachObservation ( vtkObservation *observation )
 //----------------------------------------------------------------------------
 void vtkEventBroker::RemoveObservation ( vtkObservation *observation )
 {
-  if (observation == 0)
+  if (observation == nullptr)
     {
     return;
     }
@@ -375,7 +375,7 @@ vtkEventBroker::ObservationVector vtkEventBroker::GetObservations (
 {
   ObservationVector observationList;
   // Special case for fast return
-  if (event == 0 && observer == 0 && notify == 0)
+  if (event == 0 && observer == nullptr && notify == nullptr)
     {
     observationList = this->GetSubjectObservations(subject);
     return observationList;
@@ -387,10 +387,10 @@ vtkEventBroker::ObservationVector vtkEventBroker::GetObservations (
       obsIter != subjectList.end();
       ++obsIter)
     {
-    if ( (observer == 0 || (*obsIter)->GetObserver() == observer) &&
+    if ( (observer == nullptr || (*obsIter)->GetObserver() == observer) &&
          //(subject == 0 || (*obsIter)->GetSubject() == subject) &&
          (event == 0 || (*obsIter)->GetEvent() == event) &&
-         (notify == 0 || (*obsIter)->GetCallbackCommand() == notify))
+         (notify == nullptr || (*obsIter)->GetCallbackCommand() == notify))
       {
       observationList.insert( *obsIter );
       if (maxReturnedObservations && observationList.size()>=maxReturnedObservations)
@@ -501,7 +501,7 @@ vtkObservation *vtkEventBroker::GetNthObservation ( int n )
 {
   if ( n < 0 )
     {
-    return NULL;
+    return nullptr;
     }
 
   size_t count = 0;
@@ -519,7 +519,7 @@ vtkObservation *vtkEventBroker::GetNthObservation ( int n )
       count += iter->second.size();
       }
     }
-  return (NULL);
+  return (nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -543,7 +543,7 @@ int vtkEventBroker::GenerateGraphFile ( const char *graphFile )
     {
     observation = this->GetNthObservation( count );
     file << "# " << observation->GetReferenceCount() << "\n";
-    if ( observation->GetScript() != NULL )
+    if ( observation->GetScript() != nullptr )
       {
       file << " " \
           << "\"" << observation->GetScript() << "\""
@@ -592,7 +592,7 @@ void vtkEventBroker::CloseLogFile ()
 //----------------------------------------------------------------------------
 void vtkEventBroker::LogEvent ( vtkObservation *observation )
 {
-  if ( this->LogFileName == NULL )
+  if ( this->LogFileName == nullptr )
     {
     // if we don't have a log file, we can't do anything
     return;
@@ -613,7 +613,7 @@ void vtkEventBroker::LogEvent ( vtkObservation *observation )
 
   char eventString[BUFSIZ];
   const char *eventStringPointer;
-  if ( this->EventLogging && observation != NULL )
+  if ( this->EventLogging && observation != nullptr )
     {
 
     // indent to indicate nesting
@@ -630,7 +630,7 @@ void vtkEventBroker::LogEvent ( vtkObservation *observation )
       }
 
     // log the actual event
-    if ( observation->GetScript() != NULL )
+    if ( observation->GetScript() != nullptr )
       {
       this->LogFile << " " \
           << observation->GetSubject()->GetClassName()
@@ -792,7 +792,7 @@ vtkObservation *vtkEventBroker::GetNthQueuedObservation ( int n )
 {
   if ( n < 0 || n >= this->GetNumberOfQueuedObservations() )
     {
-    return NULL;
+    return nullptr;
     }
   return (this->EventQueue[n]);
 }
@@ -821,7 +821,7 @@ void vtkEventBroker::InvokeObservation ( vtkObservation *observation,
   // - run script if available, otherwise run callback command
   //  -- pass back the client data to the script handler (for
   //     example it could be the interpreter to use)
-  if ( observation->GetScript() != NULL )
+  if ( observation->GetScript() != nullptr )
     {
     if ( this->ScriptHandler )
       {
@@ -923,5 +923,5 @@ void vtkEventBroker::classInitialize()
 void vtkEventBroker::classFinalize()
 {
   vtkEventBrokerInstance->Delete();
-  vtkEventBrokerInstance = 0;
+  vtkEventBrokerInstance = nullptr;
 }

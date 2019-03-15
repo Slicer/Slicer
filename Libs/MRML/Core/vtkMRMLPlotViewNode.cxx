@@ -150,7 +150,7 @@ void vtkMRMLPlotViewNode::ProcessMRMLEvents(vtkObject *caller, unsigned long eve
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
   vtkMRMLPlotChartNode *pnode = this->GetPlotChartNode();
-  if (pnode != NULL && pnode == vtkMRMLPlotChartNode::SafeDownCast(caller) &&
+  if (pnode != nullptr && pnode == vtkMRMLPlotChartNode::SafeDownCast(caller) &&
      (event ==  vtkCommand::ModifiedEvent || event == vtkMRMLPlotChartNode::PlotModifiedEvent))
     {
     this->InvokeEvent(vtkMRMLPlotViewNode::PlotChartNodeChangedEvent, pnode);
@@ -219,7 +219,7 @@ const char* vtkMRMLPlotViewNode::GetInteractionModeAsString(int id)
 //-----------------------------------------------------------
 int vtkMRMLPlotViewNode::GetInteractionModeFromString(const char* name)
 {
-  if (name == NULL)
+  if (name == nullptr)
   {
     // invalid name
     return -1;

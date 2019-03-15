@@ -37,8 +37,8 @@ int main( int argc, char * argv[] )
 
   vtkDebugLeaks::SetExitError(true);
 
-  vtkAlgorithmOutput* reader1 = NULL;
-  vtkAlgorithmOutput* reader2 = NULL;
+  vtkAlgorithmOutput* reader1 = nullptr;
+  vtkAlgorithmOutput* reader2 = nullptr;
 
   // do we have vtk or vtp models?
   std::string extension = vtksys::SystemTools::LowerCase(

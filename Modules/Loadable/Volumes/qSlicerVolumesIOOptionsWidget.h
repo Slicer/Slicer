@@ -38,7 +38,7 @@ class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerVolumesIOOptionsWidget :
 {
   Q_OBJECT
 public:
-  qSlicerVolumesIOOptionsWidget(QWidget *parent=0);
+  qSlicerVolumesIOOptionsWidget(QWidget *parent=nullptr);
   virtual ~qSlicerVolumesIOOptionsWidget();
 
   /// Allows custom handling of image sets as volumes

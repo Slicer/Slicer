@@ -52,7 +52,7 @@ public:
 
 public:
   typedef qSlicerSubjectHierarchyAbstractPlugin Superclass;
-  qSlicerSubjectHierarchyVolumesPlugin(QObject* parent = NULL);
+  qSlicerSubjectHierarchyVolumesPlugin(QObject* parent = nullptr);
   virtual ~qSlicerSubjectHierarchyVolumesPlugin();
 
 public:

@@ -84,7 +84,7 @@ int testAddVolumePropertyFromFile(const std::string& temporaryDirectory)
 
   // null file name
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  vpNode = logic->AddVolumePropertyFromFile(NULL);
+  vpNode = logic->AddVolumePropertyFromFile(nullptr);
   TESTING_OUTPUT_ASSERT_ERRORS_END();
   CHECK_NULL(vpNode);
 

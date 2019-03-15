@@ -72,9 +72,9 @@ protected:
 //------------------------------------------------------------------------------
 qMRMLLayoutViewFactoryPrivate::qMRMLLayoutViewFactoryPrivate(qMRMLLayoutViewFactory& object)
   : q_ptr(&object)
-  , LayoutManager(0)
-  , MRMLScene(0)
-  , ActiveViewNode(0)
+  , LayoutManager(nullptr)
+  , MRMLScene(nullptr)
+  , ActiveViewNode(nullptr)
 {
 }
 
@@ -96,7 +96,7 @@ vtkMRMLAbstractViewNode* qMRMLLayoutViewFactoryPrivate
       return viewNode;
       }
     }
-  return NULL;
+  return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -110,7 +110,7 @@ vtkMRMLAbstractViewNode* qMRMLLayoutViewFactoryPrivate
       return viewNode;
       }
     }
-  return NULL;
+  return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -450,7 +450,7 @@ void qMRMLLayoutViewFactory::onSceneModified()
 QWidget* qMRMLLayoutViewFactory::createViewFromNode(vtkMRMLAbstractViewNode* viewNode)
 {
   Q_UNUSED(viewNode);
-  return 0;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------
@@ -471,14 +471,14 @@ void qMRMLLayoutViewFactory::deleteView(vtkMRMLAbstractViewNode* viewNode)
   qMRMLWidget* mrmlWidgetToDelete = qobject_cast<qMRMLWidget*>(widgetToDelete);
   if (mrmlWidgetToDelete)
     {
-    mrmlWidgetToDelete->setMRMLScene(0);
+    mrmlWidgetToDelete->setMRMLScene(nullptr);
     }
   this->unregisterView(widgetToDelete);
   d->Views.remove(viewNode);
   widgetToDelete->deleteLater();
   if (this->activeViewNode() == viewNode)
     {
-    this->setActiveViewNode(0);
+    this->setActiveViewNode(nullptr);
     }
 }
 
@@ -508,13 +508,13 @@ vtkRenderer* qMRMLLayoutViewFactory::activeRenderer()const
   QWidget* activeViewWidget = this->viewWidget(this->activeViewNode());
   if (!activeViewWidget)
     {
-    return 0;
+    return nullptr;
     }
   ctkVTKAbstractView* view = activeViewWidget->findChild<ctkVTKAbstractView*>();
-  vtkRenderWindow* renderWindow = view ? view->renderWindow() : 0;
+  vtkRenderWindow* renderWindow = view ? view->renderWindow() : nullptr;
   vtkRendererCollection* renderers =
-    renderWindow ? renderWindow->GetRenderers() : 0;
-  return renderers ? renderers->GetFirstRenderer() : 0;
+    renderWindow ? renderWindow->GetRenderers() : nullptr;
+  return renderers ? renderers->GetFirstRenderer() : nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -565,7 +565,7 @@ QList<vtkMRMLAbstractViewNode*> qMRMLLayoutViewFactory
     this->layoutManager()->layoutLogic()->GetViewsFromAttributes(attributes);
 
   QList<vtkMRMLAbstractViewNode*> res;
-  for (vtkMRMLAbstractViewNode* node = 0;
+  for (vtkMRMLAbstractViewNode* node = nullptr;
        (node = vtkMRMLAbstractViewNode::SafeDownCast(viewNodes->GetNextItemAsObject()));)
     {
     res << node;

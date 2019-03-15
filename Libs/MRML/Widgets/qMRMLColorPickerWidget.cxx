@@ -138,9 +138,9 @@ void qMRMLColorPickerWidget::setCurrentColorNodeToDefault()
     return;
     }
   vtkMRMLNode* defaultColorNode =
-    this->mrmlScene()->GetNodeByID( d->ColorLogic.GetPointer() != 0 ?
+    this->mrmlScene()->GetNodeByID( d->ColorLogic.GetPointer() != nullptr ?
                                     d->ColorLogic->GetDefaultEditorColorNodeID() :
-                                    0);
+                                    nullptr);
   if (defaultColorNode)
     {
     this->setCurrentColorNode(defaultColorNode);
@@ -153,7 +153,7 @@ void qMRMLColorPickerWidget::onNodeAdded(vtkObject* scene, vtkObject* nodeObject
   Q_D(qMRMLColorPickerWidget);
   Q_UNUSED(scene);
   vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(nodeObject);
-  if (node != 0 && d->ColorLogic.GetPointer() != 0 &&
+  if (node != nullptr && d->ColorLogic.GetPointer() != nullptr &&
       QString(node->GetID()) == d->ColorLogic->GetDefaultEditorColorNodeID())
     {
     this->setCurrentColorNode(node);
@@ -164,7 +164,7 @@ void qMRMLColorPickerWidget::onNodeAdded(vtkObject* scene, vtkObject* nodeObject
 void qMRMLColorPickerWidget::setMRMLScene(vtkMRMLScene* scene)
 {
   Q_D(qMRMLColorPickerWidget);
-  this->setCurrentColorNode(0); // eventually disconnect NodeAddedEvent
+  this->setCurrentColorNode(nullptr); // eventually disconnect NodeAddedEvent
   this->qMRMLWidget::setMRMLScene(scene);
   if (scene && !d->ColorTableComboBox->currentNode())
     {

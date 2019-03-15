@@ -30,7 +30,7 @@ class Q_SLICER_QTMODULES_MODELS_WIDGETS_PLUGINS_EXPORT qMRMLModelDisplayNodeWidg
   Q_OBJECT
 
 public:
-  qMRMLModelDisplayNodeWidgetPlugin(QObject * newParent = 0);
+  qMRMLModelDisplayNodeWidgetPlugin(QObject * newParent = nullptr);
 
   QWidget *createWidget(QWidget *newParent);
   QString  domXml() const;

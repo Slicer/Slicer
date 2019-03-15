@@ -376,12 +376,12 @@ void vtkFSLookupTable::MapScalarsThroughTable2(void *input, unsigned char *outpu
     vtkDebugMacro( << "MapScalarsThroughTable2:\n");
     vtkDebugMacro( << "\tinputDataType = " << inputDataType << ", number of vals = " << numberOfValues << ", input incr = " << inputIncrement << ",\noutput incr = " << outputIncrement << ", VTK_RGBA data type = "<< VTK_RGBA << ", lut type = " << this->LutType << endl);
 
-    if (input == NULL)
+    if (input == nullptr)
       {
       vtkErrorMacro(<<"Input scalars are null!");
       return;
       }
-    if (output == NULL)
+    if (output == nullptr)
       {
       vtkErrorMacro(<<"Output array is null!");
       return;

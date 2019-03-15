@@ -53,7 +53,7 @@ qSlicerMarkupsPlaceWidget : public qSlicerWidget
 
 public:
   typedef qSlicerWidget Superclass;
-  qSlicerMarkupsPlaceWidget(QWidget *parent=0);
+  qSlicerMarkupsPlaceWidget(QWidget *parent=nullptr);
   virtual ~qSlicerMarkupsPlaceWidget();
 
   enum PlaceMultipleMarkupsType

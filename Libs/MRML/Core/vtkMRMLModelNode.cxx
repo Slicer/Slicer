@@ -53,8 +53,8 @@ vtkMRMLNodeNewMacro(vtkMRMLModelNode);
 //----------------------------------------------------------------------------
 vtkMRMLModelNode::vtkMRMLModelNode()
 {
-  this->MeshConnection = NULL;
-  this->DataEventForwarder = NULL;
+  this->MeshConnection = nullptr;
+  this->DataEventForwarder = nullptr;
 
   // for backward compatibility, we assume that if no
   // mesh were set, it is a polydata.
@@ -64,7 +64,7 @@ vtkMRMLModelNode::vtkMRMLModelNode()
 //----------------------------------------------------------------------------
 vtkMRMLModelNode::~vtkMRMLModelNode()
 {
-  this->SetMeshConnection(0);
+  this->SetMeshConnection(nullptr);
   if (this->DataEventForwarder)
     {
     this->DataEventForwarder->Delete();
@@ -106,7 +106,7 @@ void vtkMRMLModelNode::ProcessMRMLEvents ( vtkObject *caller,
       event ==  vtkCommand::ModifiedEvent)
     {
     this->StorableModifiedTime.Modified();
-    this->InvokeCustomModifiedEvent(vtkMRMLModelNode::MeshModifiedEvent, NULL);
+    this->InvokeCustomModifiedEvent(vtkMRMLModelNode::MeshModifiedEvent, nullptr);
     }
 }
 
@@ -147,9 +147,9 @@ void vtkMRMLModelNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkMRMLModelNode::SetAndObserveMesh(vtkPointSet *mesh)
 {
-  if (mesh == 0)
+  if (mesh == nullptr)
     {
-    this->SetMeshConnection(0);
+    this->SetMeshConnection(nullptr);
     }
   else
     {
@@ -163,7 +163,7 @@ void vtkMRMLModelNode::SetAndObserveMesh(vtkPointSet *mesh)
       }
 
     vtkTrivialProducer* oldProducer = vtkTrivialProducer::SafeDownCast(
-      this->MeshConnection ? this->MeshConnection->GetProducer() : 0);
+      this->MeshConnection ? this->MeshConnection->GetProducer() : nullptr);
     if (oldProducer && oldProducer->GetOutputDataObject(0) == mesh)
       {
       return;
@@ -207,7 +207,7 @@ vtkPointSet *vtkMRMLModelNode::GetMesh()
 {
   if (!this->MeshConnection)
     {
-    return NULL;
+    return nullptr;
     }
 
   vtkAlgorithm* producer = this->MeshConnection->GetProducer();
@@ -215,7 +215,7 @@ vtkPointSet *vtkMRMLModelNode::GetMesh()
   if (!producer)
     {
     vtkErrorMacro("Could not retrieve mesh connection producer.")
-    return NULL;
+    return nullptr;
     }
 
   producer->Update();
@@ -286,13 +286,13 @@ void vtkMRMLModelNode
     }
 
   vtkAlgorithm* oldMeshAlgorithm = this->MeshConnection ?
-    this->MeshConnection->GetProducer() : 0;
+    this->MeshConnection->GetProducer() : nullptr;
 
   this->MeshConnection = newMeshConnection;
 
   vtkAlgorithm* newMeshAlgorithm = this->MeshConnection ?
-    this->MeshConnection->GetProducer() : 0;
-  if (newMeshAlgorithm != NULL)
+    this->MeshConnection->GetProducer() : nullptr;
+  if (newMeshAlgorithm != nullptr)
     {
     vtkEventBroker::GetInstance()->AddObservation(
       newMeshAlgorithm, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
@@ -301,7 +301,7 @@ void vtkMRMLModelNode
 
   this->SetMeshToDisplayNodes();
 
-  if (oldMeshAlgorithm != NULL)
+  if (oldMeshAlgorithm != nullptr)
     {
     vtkEventBroker::GetInstance()->RemoveObservations (
       oldMeshAlgorithm, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
@@ -333,14 +333,14 @@ void vtkMRMLModelNode
 vtkAlgorithmOutput* vtkMRMLModelNode::GetPolyDataConnection()
 {
   return (this->MeshType == vtkMRMLModelNode::PolyDataMeshType) ?
-    this->GetMeshConnection() : NULL;
+    this->GetMeshConnection() : nullptr;
 }
 
 //---------------------------------------------------------------------------
 vtkAlgorithmOutput* vtkMRMLModelNode::GetUnstructuredGridConnection()
 {
   return (this->MeshType == vtkMRMLModelNode::UnstructuredGridMeshType) ?
-    this->GetMeshConnection() : NULL;
+    this->GetMeshConnection() : nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -358,11 +358,11 @@ void vtkMRMLModelNode::AddCellScalars(vtkDataArray *array)
 //---------------------------------------------------------------------------
 void vtkMRMLModelNode::AddScalars(vtkDataArray *array, int location)
 {
-  if (array == NULL)
+  if (array == nullptr)
     {
     return;
     }
-  if (this->GetMesh() == NULL)
+  if (this->GetMesh() == nullptr)
     {
     vtkErrorMacro("AddScalars: No mesh on model "
                   << (this->GetName() ? this->GetName() : "no_name"));
@@ -388,12 +388,12 @@ void vtkMRMLModelNode::AddScalars(vtkDataArray *array, int location)
 //---------------------------------------------------------------------------
 void vtkMRMLModelNode::RemoveScalars(const char *scalarName)
 {
-  if (scalarName == NULL)
+  if (scalarName == nullptr)
     {
     vtkErrorMacro("Scalar name is null");
     return;
     }
-  if (this->GetMesh() == NULL)
+  if (this->GetMesh() == nullptr)
     {
     vtkErrorMacro("RemoveScalars: No poly data on model "
                   << (this->GetName() ? this->GetName() : "no_name"));
@@ -415,34 +415,34 @@ void vtkMRMLModelNode::RemoveScalars(const char *scalarName)
 //---------------------------------------------------------------------------
 const char * vtkMRMLModelNode::GetActivePointScalarName(int type)
 {
-  if (this->GetMesh() == NULL ||
-      this->GetMesh()->GetPointData() == NULL)
+  if (this->GetMesh() == nullptr ||
+      this->GetMesh()->GetPointData() == nullptr)
     {
-    return NULL;
+    return nullptr;
     }
   vtkAbstractArray* attributeArray =
     this->GetMesh()->GetPointData()->GetAbstractAttribute(type);
-  return attributeArray ? attributeArray->GetName() : NULL;
+  return attributeArray ? attributeArray->GetName() : nullptr;
 }
 
 //---------------------------------------------------------------------------
 const char * vtkMRMLModelNode::GetActiveCellScalarName(int type)
 {
-  if (this->GetMesh() == NULL ||
-      this->GetMesh()->GetCellData() == NULL)
+  if (this->GetMesh() == nullptr ||
+      this->GetMesh()->GetCellData() == nullptr)
     {
-    return NULL;
+    return nullptr;
     }
   vtkAbstractArray* attributeArray =
     this->GetMesh()->GetCellData()->GetAbstractAttribute(type);
-  return attributeArray ? attributeArray->GetName() : NULL;
+  return attributeArray ? attributeArray->GetName() : nullptr;
 }
 
 //---------------------------------------------------------------------------
 bool vtkMRMLModelNode::HasPointScalarName(const char* scalarName)
 {
-  if (this->GetMesh() == NULL ||
-      this->GetMesh()->GetPointData() == NULL)
+  if (this->GetMesh() == nullptr ||
+      this->GetMesh()->GetPointData() == nullptr)
     {
     return false;
     }
@@ -453,8 +453,8 @@ bool vtkMRMLModelNode::HasPointScalarName(const char* scalarName)
 //---------------------------------------------------------------------------
 bool vtkMRMLModelNode::HasCellScalarName(const char* scalarName)
 {
-  if (this->GetMesh() == NULL ||
-      this->GetMesh()->GetCellData() == NULL)
+  if (this->GetMesh() == nullptr ||
+      this->GetMesh()->GetCellData() == nullptr)
     {
     return false;
     }
@@ -465,7 +465,7 @@ bool vtkMRMLModelNode::HasCellScalarName(const char* scalarName)
 //---------------------------------------------------------------------------
 int vtkMRMLModelNode::GetAttributeTypeFromString(const char* typeName)
 {
-  if (typeName != NULL && (strcmp(typeName, "") != 0))
+  if (typeName != nullptr && (strcmp(typeName, "") != 0))
     {
     for (int a = 0; a < vtkDataSetAttributes::NUM_ATTRIBUTES; a++)
       {
@@ -481,7 +481,7 @@ int vtkMRMLModelNode::GetAttributeTypeFromString(const char* typeName)
 //---------------------------------------------------------------------------
 int vtkMRMLModelNode::SetActivePointScalars(const char *scalarName, int attributeType)
 {
-  if (this->GetMesh() == NULL)
+  if (this->GetMesh() == nullptr)
     {
     return -1;
     }
@@ -494,7 +494,7 @@ int vtkMRMLModelNode::SetActivePointScalars(const char *scalarName, int attribut
 //---------------------------------------------------------------------------
 int vtkMRMLModelNode::SetActiveCellScalars(const char *scalarName, int attributeType)
 {
-  if (this->GetMesh() == NULL)
+  if (this->GetMesh() == nullptr)
     {
     return -1;
     }
@@ -510,7 +510,7 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
                                        int showOverlayPositive, int showOverlayNegative,
                                        int reverseOverlay)
 {
-    if (backgroundName == NULL || overlayName == NULL)
+    if (backgroundName == nullptr || overlayName == nullptr)
       {
       vtkErrorMacro("CompositeScalars: one of the input array names is null");
       return 0;
@@ -518,8 +518,8 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
 
     bool haveCurvScalars = false;
     // is there a curv scalar in the composite?
-    if (strstr(backgroundName, "curv") != NULL ||
-        strstr(overlayName, "curv") != NULL)
+    if (strstr(backgroundName, "curv") != nullptr ||
+        strstr(overlayName, "curv") != nullptr)
       {
       haveCurvScalars = true;
       }
@@ -527,7 +527,7 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
     // get the scalars to composite, putting any curv file in scalars 1
     vtkDataArray *scalars1, *scalars2;
     if (!haveCurvScalars ||
-        strstr(backgroundName, "curv") != NULL)
+        strstr(backgroundName, "curv") != nullptr)
       {
       scalars1 = this->GetMesh()->GetPointData()->GetScalars(backgroundName);
       scalars2 = this->GetMesh()->GetPointData()->GetScalars(overlayName);
@@ -537,7 +537,7 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
       scalars1 = this->GetMesh()->GetPointData()->GetScalars(overlayName);
       scalars2 = this->GetMesh()->GetPointData()->GetScalars(backgroundName);
       }
-    if (scalars1 == NULL || scalars2 == NULL)
+    if (scalars1 == nullptr || scalars2 == nullptr)
       {
       vtkErrorMacro("CompositeScalars: unable to find the named scalar arrays " << backgroundName << " and/or " << overlayName);
       return 0;
@@ -663,7 +663,7 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
     // use the new colornode
     this->Scene->AddNode(colorNode);
     vtkDebugMacro("CompositeScalars: created color transfer function, and added proc color node to scene, id = " << colorNode->GetID());
-    if (colorNode->GetID() != NULL)
+    if (colorNode->GetID() != nullptr)
       {
       this->GetModelDisplayNode()->SetAndObserveColorNodeID(colorNode->GetID());
       this->GetModelDisplayNode()->SetScalarRange(-overlayMax, overlayMax);
@@ -677,9 +677,9 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
 
     // clean up
     colorNode->Delete();
-    colorNode = NULL;
+    colorNode = nullptr;
     composedScalars->Delete();
-    composedScalars = NULL;
+    composedScalars = nullptr;
 
     return 1;
 }
@@ -693,7 +693,7 @@ bool vtkMRMLModelNode::CanApplyNonLinearTransforms()const
 //---------------------------------------------------------------------------
 void vtkMRMLModelNode::ApplyTransform(vtkAbstractTransform* transform)
 {
-  if (this->GetMesh() == 0)
+  if (this->GetMesh() == nullptr)
     {
     return;
     }
@@ -703,7 +703,7 @@ void vtkMRMLModelNode::ApplyTransform(vtkAbstractTransform* transform)
   transformFilter->SetTransform(transform);
 
   bool isInPipeline = !vtkTrivialProducer::SafeDownCast(
-     this->MeshConnection ? this->MeshConnection->GetProducer() : 0);
+     this->MeshConnection ? this->MeshConnection->GetProducer() : nullptr);
 
   // If mesh was set through pipeline (SetMeshConnection), append
   // transform filter to that pipeline
@@ -736,7 +736,7 @@ void vtkMRMLModelNode::GetBounds(double bounds[6])
 {
   this->Superclass::GetBounds(bounds);
 
-  if (this->GetMesh() == NULL)
+  if (this->GetMesh() == nullptr)
     {
     return;
     }
@@ -804,10 +804,10 @@ void vtkMRMLModelNode::TransformBoundsToRAS(double inputBounds_Local[6], double 
 vtkMRMLStorageNode* vtkMRMLModelNode::CreateDefaultStorageNode()
 {
   vtkMRMLScene* scene = this->GetScene();
-  if (scene == NULL)
+  if (scene == nullptr)
     {
     vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
-    return NULL;
+    return nullptr;
     }
   return vtkMRMLStorageNode::SafeDownCast(
     scene->CreateNodeByClass("vtkMRMLModelStorageNode"));
@@ -837,13 +837,13 @@ std::string vtkMRMLModelNode::GetDefaultStorageNodeClassName(const char* filenam
 //----------------------------------------------------------------------------
 void vtkMRMLModelNode::CreateDefaultDisplayNodes()
 {
-  if (vtkMRMLModelDisplayNode::SafeDownCast(this->GetDisplayNode())!=NULL)
+  if (vtkMRMLModelDisplayNode::SafeDownCast(this->GetDisplayNode())!=nullptr)
     {
     // display node already exists
     return;
     }
   vtkMRMLScene* scene = this->GetScene();
-  if (scene == NULL)
+  if (scene == nullptr)
     {
     vtkErrorMacro("vtkMRMLModelNode::CreateDefaultDisplayNodes failed: scene is invalid");
     return;

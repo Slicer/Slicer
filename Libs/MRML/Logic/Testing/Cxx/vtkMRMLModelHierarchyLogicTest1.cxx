@@ -37,7 +37,7 @@ int vtkMRMLModelHierarchyLogicTest1(int , char * [] )
 
   modelHierarchyLogic->SetMRMLScene(scene.GetPointer());
 
-  vtkMRMLModelHierarchyNode *hnode = modelHierarchyLogic->GetModelHierarchyNode(0);
+  vtkMRMLModelHierarchyNode *hnode = modelHierarchyLogic->GetModelHierarchyNode(nullptr);
   if (hnode)
     {
     std::cerr << "GetModelHierarchyNode with null id returned a node!";
@@ -46,7 +46,7 @@ int vtkMRMLModelHierarchyLogicTest1(int , char * [] )
 
   std::cout << "Number of models in Hierarchy = " << modelHierarchyLogic->GetNumberOfModelsInHierarchy() << std::endl;
 
-  vtkMRMLModelHierarchyNodeList nodeList = modelHierarchyLogic->GetHierarchyChildrenNodes(0);
+  vtkMRMLModelHierarchyNodeList nodeList = modelHierarchyLogic->GetHierarchyChildrenNodes(nullptr);
   if (nodeList.size() != 0)
     {
     std::cerr << "Getting hierarchy children nodes failed on null, returned size of " << nodeList.size() << std::endl;

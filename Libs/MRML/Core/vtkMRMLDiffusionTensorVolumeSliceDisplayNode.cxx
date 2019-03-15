@@ -37,8 +37,8 @@ vtkMRMLDiffusionTensorVolumeSliceDisplayNode::vtkMRMLDiffusionTensorVolumeSliceD
 {
 
   // Enumerated
-  this->DiffusionTensorDisplayPropertiesNode = NULL;
-  this->DiffusionTensorDisplayPropertiesNodeID = NULL;
+  this->DiffusionTensorDisplayPropertiesNode = nullptr;
+  this->DiffusionTensorDisplayPropertiesNodeID = nullptr;
 
 
   this->DiffusionTensorGlyphFilter = vtkDiffusionTensorGlyph::New();
@@ -55,7 +55,7 @@ vtkMRMLDiffusionTensorVolumeSliceDisplayNode::vtkMRMLDiffusionTensorVolumeSliceD
 vtkMRMLDiffusionTensorVolumeSliceDisplayNode::~vtkMRMLDiffusionTensorVolumeSliceDisplayNode()
 {
   this->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
-  this->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(NULL);
+  this->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(nullptr);
   this->DiffusionTensorGlyphFilter->Delete();
 }
 
@@ -66,7 +66,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::WriteXML(ostream& of, int nIn
 
   Superclass::WriteXML(of, nIndent);
 
-  if (this->DiffusionTensorDisplayPropertiesNodeID != NULL)
+  if (this->DiffusionTensorDisplayPropertiesNodeID != nullptr)
     {
     of << " DiffusionTensorDisplayPropertiesNodeRef=\"" << this->DiffusionTensorDisplayPropertiesNodeID << "\"";
     }
@@ -82,7 +82,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::ReadXMLAttributes(const char*
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -162,10 +162,10 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::UpdateAssignedAttribute()
 
   this->DiffusionTensorGlyphFilter->SetSourceConnection(
     dtDPN ?
-    dtDPN->GetGlyphConnection() : 0 );
+    dtDPN->GetGlyphConnection() : nullptr );
 
-  if (dtDPN == NULL ||
-      this->SliceImagePort == NULL ||
+  if (dtDPN == nullptr ||
+      this->SliceImagePort == nullptr ||
       dtDPN->GetGlyphGeometry( ) == vtkMRMLDiffusionTensorDisplayPropertiesNode::Superquadrics)
     {
     this->ScalarVisibilityOff();
@@ -281,7 +281,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::UpdateAssignedAttribute()
   if (this->GetVisibility() &&
       this->GetScalarVisibility() &&
       this->GetAutoScalarRange() &&
-      this->SliceImagePort != NULL)
+      this->SliceImagePort != nullptr)
     {
           int ScalarInvariant =  0;
           if ( DiffusionTensorDisplayPropertiesNode )
@@ -305,7 +305,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::UpdateAssignedAttribute()
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionTensorDisplayPropertiesNode* vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetDiffusionTensorDisplayPropertiesNode ( )
 {
-  vtkMRMLDiffusionTensorDisplayPropertiesNode* node = NULL;
+  vtkMRMLDiffusionTensorDisplayPropertiesNode* node = nullptr;
 
   // Find the node corresponding to the ID we have saved.
   if  ( this->GetScene() && this->GetDiffusionTensorDisplayPropertiesNodeID() )
@@ -324,7 +324,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetAndObserveDiffusionTensorD
 
   if (
       (id != this->GetDiffusionTensorDisplayPropertiesNodeID())
-      && id != NULL && this->GetDiffusionTensorDisplayPropertiesNodeID() != NULL
+      && id != nullptr && this->GetDiffusionTensorDisplayPropertiesNodeID() != nullptr
       && (strcmp(id, this->GetDiffusionTensorDisplayPropertiesNodeID()) == 0)
       )
     {
@@ -362,9 +362,9 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::ProcessMRMLEvents ( vtkObject
   // Let everyone know that the "display" has changed.
   vtkMRMLDiffusionTensorDisplayPropertiesNode* propertiesNode =
     vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(caller);
-  if (propertiesNode != NULL &&
-      this->DiffusionTensorDisplayPropertiesNodeID != NULL &&
-      propertiesNode->GetID() != NULL &&
+  if (propertiesNode != nullptr &&
+      this->DiffusionTensorDisplayPropertiesNodeID != nullptr &&
+      propertiesNode->GetID() != nullptr &&
       strcmp(this->DiffusionTensorDisplayPropertiesNodeID,
              propertiesNode->GetID()) == 0 &&
       event ==  vtkCommand::ModifiedEvent)
@@ -386,9 +386,9 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::UpdateReferences()
 {
   Superclass::UpdateReferences();
 
-  if (this->DiffusionTensorDisplayPropertiesNodeID != NULL && this->Scene->GetNodeByID(this->DiffusionTensorDisplayPropertiesNodeID) == NULL)
+  if (this->DiffusionTensorDisplayPropertiesNodeID != nullptr && this->Scene->GetNodeByID(this->DiffusionTensorDisplayPropertiesNodeID) == nullptr)
     {
-    this->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(NULL);
+    this->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(nullptr);
     }
 }
 

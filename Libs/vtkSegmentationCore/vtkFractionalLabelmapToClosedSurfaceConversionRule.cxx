@@ -82,7 +82,7 @@ vtkDataObject* vtkFractionalLabelmapToClosedSurfaceConversionRule::ConstructRepr
     }
   else
     {
-    return NULL;
+    return nullptr;
     }
 }
 
@@ -99,7 +99,7 @@ vtkDataObject* vtkFractionalLabelmapToClosedSurfaceConversionRule::ConstructRepr
     }
   else
     {
-    return NULL;
+    return nullptr;
     }
 }
 

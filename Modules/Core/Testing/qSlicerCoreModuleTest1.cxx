@@ -30,11 +30,11 @@ public:
   }
   virtual qSlicerAbstractModuleRepresentation* createWidgetRepresentation()
   {
-    return 0;
+    return nullptr;
   }
   vtkMRMLAbstractLogic* createLogic()
   {
-    return 0;
+    return nullptr;
   }
 };
 

@@ -54,7 +54,7 @@ int PopulateScene(vtkMRMLScene *scene)
   std::vector<vtkMRMLNode*> nodes;
   std::vector<vtkMRMLNode*> parentNodes;
 
-  vtkMRMLNode* parentNode = 0;
+  vtkMRMLNode* parentNode = nullptr;
   // add model hierarchy nodes
   for (int i = 0; i < 5; i++)
     {
@@ -217,7 +217,7 @@ int ImportIDModelHierarchyParentIDConflictTestXMLString()
     std::cout << "expectedParentID = " << expectedParentID << std::endl;
 
     CHECK_NOT_NULL_ADD_REPORT(hierarchyNode, PrintModelHierarchyNodes(__LINE__, scene.GetPointer()));
-    CHECK_STRING_ADD_REPORT(hierarchyNode->GetParentNodeID(), (index == 0 || index == 5) ? 0 : expectedParentID.c_str(), PrintModelHierarchyNodes(__LINE__, scene.GetPointer()));
+    CHECK_STRING_ADD_REPORT(hierarchyNode->GetParentNodeID(), (index == 0 || index == 5) ? nullptr : expectedParentID.c_str(), PrintModelHierarchyNodes(__LINE__, scene.GetPointer()));
     }
 
   return EXIT_SUCCESS;

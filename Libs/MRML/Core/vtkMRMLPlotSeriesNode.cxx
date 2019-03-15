@@ -186,7 +186,7 @@ void vtkMRMLPlotSeriesNode::ProcessMRMLEvents(vtkObject *caller, unsigned long e
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  if (caller == NULL ||
+  if (caller == nullptr ||
       (event != vtkCommand::ModifiedEvent &&
        event != vtkMRMLPlotSeriesNode::TableModifiedEvent))
     {
@@ -195,7 +195,7 @@ void vtkMRMLPlotSeriesNode::ProcessMRMLEvents(vtkObject *caller, unsigned long e
 
   vtkMRMLTableNode *tnode = this->GetTableNode();
   vtkMRMLTableNode *callerTable = vtkMRMLTableNode::SafeDownCast(caller);
-  if (callerTable != NULL && tnode != NULL && tnode == callerTable &&
+  if (callerTable != nullptr && tnode != nullptr && tnode == callerTable &&
       event == vtkCommand::ModifiedEvent)
     {
     this->InvokeCustomModifiedEvent(vtkMRMLPlotSeriesNode::TableModifiedEvent, callerTable);
@@ -255,7 +255,7 @@ const char* vtkMRMLPlotSeriesNode::GetPlotTypeAsString(int id)
 //-----------------------------------------------------------
 int vtkMRMLPlotSeriesNode::GetPlotTypeFromString(const char* name)
 {
-  if (name == NULL)
+  if (name == nullptr)
     {
     // invalid name
     return -1;
@@ -292,7 +292,7 @@ const char* vtkMRMLPlotSeriesNode::GetMarkerStyleAsString(int id)
 //-----------------------------------------------------------
 int vtkMRMLPlotSeriesNode::GetMarkerStyleFromString(const char* name)
 {
-  if (name == NULL)
+  if (name == nullptr)
     {
     // invalid name
     return -1;
@@ -329,7 +329,7 @@ const char* vtkMRMLPlotSeriesNode::GetLineStyleAsString(int id)
 //-----------------------------------------------------------
 int vtkMRMLPlotSeriesNode::GetLineStyleFromString(const char* name)
 {
-  if (name == NULL)
+  if (name == nullptr)
     {
     // invalid name
     return -1;
@@ -355,17 +355,17 @@ bool vtkMRMLPlotSeriesNode::IsXColumnRequired()
 //-----------------------------------------------------------
 void vtkMRMLPlotSeriesNode::SetUniqueColor(const char* colorTableNodeID)
 {
-  if (this->GetScene() == NULL)
+  if (this->GetScene() == nullptr)
     {
     vtkGenericWarningMacro("vtkMRMLPlotSeriesNode::GenerateUniqueColor failed: node is not added to scene");
     return;
     }
-  if (colorTableNodeID == NULL)
+  if (colorTableNodeID == nullptr)
     {
     colorTableNodeID = "vtkMRMLColorTableNodeRandom";
     }
   vtkMRMLColorTableNode* colorTableNode = vtkMRMLColorTableNode::SafeDownCast(this->GetScene()->GetNodeByID(colorTableNodeID));
-  if (colorTableNode == NULL)
+  if (colorTableNode == nullptr)
     {
     vtkGenericWarningMacro("vtkMRMLPlotSeriesNode::GenerateUniqueColor failed: color table node by ID "
       << (colorTableNodeID ? colorTableNodeID : "(none)") << " not found in scene");

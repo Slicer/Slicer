@@ -22,12 +22,12 @@ vtkMRMLNodeNewMacro(vtkMRMLAnnotationAngleNode);
 vtkMRMLAnnotationAngleNode::vtkMRMLAnnotationAngleNode()
 {
   this->HideFromEditors = false;
-  this->LabelFormat = NULL;
+  this->LabelFormat = nullptr;
   this->SetLabelFormat("%-#6.3g");
   this->Resolution = 5;
-  this->ModelID1 = NULL;
-  this->ModelID2 = NULL;
-  this->ModelIDCenter = NULL;
+  this->ModelID1 = nullptr;
+  this->ModelID2 = nullptr;
+  this->ModelIDCenter = nullptr;
 }
 //----------------------------------------------------------------------------
 // void vtkMRMLAnnotationAngleNode::Initialize(vtkMRMLScene* mrmlScene)
@@ -99,22 +99,22 @@ vtkMRMLAnnotationAngleNode::~vtkMRMLAnnotationAngleNode()
   if (this->LabelFormat)
     {
       delete [] this->LabelFormat;
-      this->LabelFormat = NULL;
+      this->LabelFormat = nullptr;
     }
   if (this->ModelID1)
     {
     delete [] this->ModelID1;
-    this->ModelID1 = NULL;
+    this->ModelID1 = nullptr;
     }
   if (this->ModelID2)
     {
     delete [] this->ModelID2;
-    this->ModelID2 = NULL;
+    this->ModelID2 = nullptr;
     }
   if (this->ModelIDCenter)
     {
     delete [] this->ModelIDCenter;
-    this->ModelIDCenter = NULL;
+    this->ModelIDCenter = nullptr;
     }
 }
 
@@ -160,7 +160,7 @@ void vtkMRMLAnnotationAngleNode::ReadXMLAttributes(const char** atts)
 
   Superclass::ReadXMLAttributes(atts);
 
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     const char* attName = *(atts++);
     std::string attValue(*(atts++));
@@ -386,7 +386,7 @@ double* vtkMRMLAnnotationAngleNode::GetPointColour()
   vtkMRMLAnnotationPointDisplayNode *node = this->GetAnnotationPointDisplayNode();
   if (!node)
     {
-      return 0;
+      return nullptr;
     }
   return node->GetSelectedColor();
 }
@@ -409,7 +409,7 @@ double* vtkMRMLAnnotationAngleNode::GetLabelTextColour()
   vtkMRMLAnnotationTextDisplayNode *node = this->GetAnnotationTextDisplayNode();
   if (!node)
     {
-      return 0;
+      return nullptr;
     }
   return node->GetSelectedColor();
 }
@@ -432,7 +432,7 @@ double* vtkMRMLAnnotationAngleNode::GetLineColour()
   vtkMRMLAnnotationLineDisplayNode *node = this->GetAnnotationLineDisplayNode();
   if (!node)
     {
-      return 0;
+      return nullptr;
     }
   return node->GetSelectedColor();
 }
@@ -497,10 +497,10 @@ void vtkMRMLAnnotationAngleNode::ApplyTransform(vtkAbstractTransform* transform)
 vtkMRMLStorageNode* vtkMRMLAnnotationAngleNode::CreateDefaultStorageNode()
 {
   vtkMRMLScene* scene = this->GetScene();
-  if (scene == NULL)
+  if (scene == nullptr)
     {
     vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
-    return NULL;
+    return nullptr;
     }
   return vtkMRMLStorageNode::SafeDownCast(
     scene->CreateNodeByClass("vtkMRMLAnnotationAngleStorageNode"));

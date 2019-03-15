@@ -436,7 +436,7 @@ void vtkMRMLLinearTransformsDisplayableManager3D::vtkInternal
 
   vtkMRMLTransformNode* transformNode =
     vtkMRMLTransformNode::SafeDownCast(displayNode->GetDisplayableNode());
-  if (transformNode==NULL)
+  if (transformNode==nullptr)
     {
     pipeline->Widget->SetEnabled(false);
     return;
@@ -533,7 +533,7 @@ vtkMRMLLinearTransformsDisplayableManager3D::vtkMRMLLinearTransformsDisplayableM
 vtkMRMLLinearTransformsDisplayableManager3D::~vtkMRMLLinearTransformsDisplayableManager3D()
 {
   delete this->Internal;
-  this->Internal=NULL;
+  this->Internal=nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -573,8 +573,8 @@ void vtkMRMLLinearTransformsDisplayableManager3D::OnMRMLSceneNodeRemoved(vtkMRML
     return;
     }
 
-  vtkMRMLTransformNode* transformNode = NULL;
-  vtkMRMLTransformDisplayNode* displayNode = NULL;
+  vtkMRMLTransformNode* transformNode = nullptr;
+  vtkMRMLTransformDisplayNode* displayNode = nullptr;
 
   bool modified = false;
   if ( (transformNode = vtkMRMLTransformNode::SafeDownCast(node)) )
@@ -650,7 +650,7 @@ void vtkMRMLLinearTransformsDisplayableManager3D::UpdateFromMRML()
     }
   this->Internal->ClearDisplayableNodes();
 
-  vtkMRMLTransformNode* mNode = NULL;
+  vtkMRMLTransformNode* mNode = nullptr;
   std::vector<vtkMRMLNode *> mNodes;
   int nnodes = scene ? scene->GetNodesByClass("vtkMRMLTransformNode", mNodes) : 0;
   for (int i=0; i<nnodes; i++)
@@ -721,5 +721,5 @@ vtkAbstractWidget* vtkMRMLLinearTransformsDisplayableManager3D
     {
     return pipelineIter->second->Widget;
     }
-  return NULL;
+  return nullptr;
 }

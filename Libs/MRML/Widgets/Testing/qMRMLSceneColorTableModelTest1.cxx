@@ -59,7 +59,7 @@ int qMRMLSceneColorTableModelTest1(int argc, char * argv [])
   qMRMLSceneColorTableModel model;
 
   vtkNew<vtkMRMLScene> scene;
-  qMRMLNodeFactory nodeFactory(0);
+  qMRMLNodeFactory nodeFactory(nullptr);
   nodeFactory.setMRMLScene(scene.GetPointer());
   nodeFactory.addAttribute("Category", "First category");
   vtkMRMLNode* node = nodeFactory.createNode("vtkMRMLColorTableNode");
@@ -71,7 +71,7 @@ int qMRMLSceneColorTableModelTest1(int argc, char * argv [])
   model.setMRMLScene(scene.GetPointer());
   colorNode->SetTypeToCool1();
 
-  QTreeView* view = new QTreeView(0);
+  QTreeView* view = new QTreeView(nullptr);
   view->setModel(&model);
   view->show();
   view->resize(500, 800);

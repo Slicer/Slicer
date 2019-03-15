@@ -63,7 +63,7 @@ public:
 qMRMLSegmentationDisplayNodeWidgetPrivate::qMRMLSegmentationDisplayNodeWidgetPrivate(qMRMLSegmentationDisplayNodeWidget& object)
   : q_ptr(&object)
 {
-  this->SegmentationDisplayNode = NULL;
+  this->SegmentationDisplayNode = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -177,7 +177,7 @@ void qMRMLSegmentationDisplayNodeWidget::setSegmentationDisplayNode(vtkMRMLSegme
 void qMRMLSegmentationDisplayNodeWidget::setSegmentationNode(vtkMRMLSegmentationNode* node)
 {
   this->setSegmentationDisplayNode(
-    node ? vtkMRMLSegmentationDisplayNode::SafeDownCast(node->GetDisplayNode()) : NULL );
+    node ? vtkMRMLSegmentationDisplayNode::SafeDownCast(node->GetDisplayNode()) : nullptr );
 }
 
 //-----------------------------------------------------------------------------

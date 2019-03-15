@@ -48,7 +48,7 @@ int qSlicerModuleFactoryManagerTest1(int argc, char * argv[])
 
   qSlicerAbstractCoreModule * abstractModule =
     moduleFactoryManager.moduleInstance(moduleName);
-  if( abstractModule == NULL )
+  if( abstractModule == nullptr )
     {
     moduleFactoryManager.printAdditionalInfo();
     std::cerr << __LINE__ << " - Error in loadModule()" << std::endl;
@@ -71,7 +71,7 @@ int qSlicerModuleFactoryManagerTest1(int argc, char * argv[])
   moduleFactoryManager.loadModules();
   abstractModule = moduleFactoryManager.moduleInstance(moduleName);
 
-  if( abstractModule == NULL )
+  if( abstractModule == nullptr )
     {
     moduleFactoryManager.printAdditionalInfo();
     std::cerr << __LINE__ << " - Error in instantiateModule()" << std::endl;

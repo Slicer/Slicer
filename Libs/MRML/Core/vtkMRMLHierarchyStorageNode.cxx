@@ -57,13 +57,13 @@ int vtkMRMLHierarchyStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     }
 
   // cast the input node
-  vtkMRMLHierarchyNode *hierarchyNode = NULL;
+  vtkMRMLHierarchyNode *hierarchyNode = nullptr;
   if ( refNode->IsA("vtkMRMLHierarchyNode") )
     {
     hierarchyNode = dynamic_cast <vtkMRMLHierarchyNode *> (refNode);
     }
 
-  if (hierarchyNode == NULL)
+  if (hierarchyNode == nullptr)
     {
     vtkErrorMacro("ReadData: unable to cast input node " << refNode->GetID() << " to a hierarchy node");
     return 0;
@@ -109,13 +109,13 @@ int vtkMRMLHierarchyStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     }
 
   // cast the input node
-  vtkMRMLHierarchyNode *hierarchyNode = NULL;
+  vtkMRMLHierarchyNode *hierarchyNode = nullptr;
   if ( refNode->IsA("vtkMRMLHierarchyNode") )
     {
     hierarchyNode = dynamic_cast <vtkMRMLHierarchyNode *> (refNode);
     }
 
-  if (hierarchyNode == NULL)
+  if (hierarchyNode == nullptr)
     {
     vtkErrorMacro("WriteData: unable to cast input node " << refNode->GetID() << " to a known hierarchy node");
     return 0;
@@ -133,7 +133,7 @@ int vtkMRMLHierarchyStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   }
 
   // put down a header
-  of << "# hierarchy file " << (this->GetFileName() != NULL ? this->GetFileName() : "null") << endl;
+  of << "# hierarchy file " << (this->GetFileName() != nullptr ? this->GetFileName() : "null") << endl;
 
   of.close();
 

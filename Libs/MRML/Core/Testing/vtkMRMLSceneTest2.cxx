@@ -372,7 +372,7 @@ int vtkMRMLSceneTest2(int argc, char * argv [] )
   // Expected number of nodes that should removed
   int numberOfNodes = scene->GetNumberOfNodes();
   callback->ResetNumberOfEvents();
-  scene = NULL;
+  scene = nullptr;
   CHECK_EXIT_SUCCESS(callback->CheckStatus());
   CHECK_INT(callback->GetNumberOfEvents(vtkMRMLScene::NodeRemovedEvent), numberOfNodes);
 

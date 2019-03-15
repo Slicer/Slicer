@@ -68,7 +68,7 @@ int qSlicerVolumeRenderingModuleWidgetTest2( int argc, char * argv[] )
 
   qSlicerVolumeRenderingModule module;
   module.setMRMLScene(app.mrmlScene());
-  module.initialize(0);
+  module.initialize(nullptr);
 
   qSlicerVolumeRenderingModuleWidget* moduleWidget =
     dynamic_cast<qSlicerVolumeRenderingModuleWidget*>(

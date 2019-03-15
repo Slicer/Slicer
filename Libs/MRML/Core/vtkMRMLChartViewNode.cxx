@@ -30,7 +30,7 @@ vtkMRMLNodeNewMacro(vtkMRMLChartViewNode);
 //----------------------------------------------------------------------------
 vtkMRMLChartViewNode::vtkMRMLChartViewNode()
 {
-  this->ChartNodeID = 0;
+  this->ChartNodeID = nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -38,7 +38,7 @@ vtkMRMLChartViewNode::~vtkMRMLChartViewNode()
 {
   if (this->ChartNodeID)
     {
-    this->SetChartNodeID(0);
+    this->SetChartNodeID(nullptr);
     }
 }
 
@@ -68,7 +68,7 @@ void vtkMRMLChartViewNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -119,9 +119,9 @@ void vtkMRMLChartViewNode::UpdateReferences()
 {
    Superclass::UpdateReferences();
 
-  if (this->ChartNodeID != NULL && this->Scene->GetNodeByID(this->ChartNodeID) == NULL)
+  if (this->ChartNodeID != nullptr && this->Scene->GetNodeByID(this->ChartNodeID) == nullptr)
     {
-    this->SetChartNodeID(NULL);
+    this->SetChartNodeID(nullptr);
     }
 }
 

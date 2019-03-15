@@ -73,9 +73,9 @@ public:
 qSlicerModulesListViewPrivate::qSlicerModulesListViewPrivate(qSlicerModulesListView& object)
   :q_ptr(&object)
 {
-  this->ModulesListModel = 0;
-  this->FilterModel = 0;
-  this->FactoryManager = 0;
+  this->ModulesListModel = nullptr;
+  this->FilterModel = nullptr;
+  this->FactoryManager = nullptr;
   this->CheckBoxVisible = false;
 }
 
@@ -117,7 +117,7 @@ void qSlicerModulesListViewPrivate::updateItem(QStandardItem* item)
     }
   if (this->CheckBoxVisible)
     {
-    if (this->FactoryManager == 0 ||
+    if (this->FactoryManager == nullptr ||
         this->FactoryManager->modulesToIgnore().contains(moduleName) )
       {
       item->setCheckState(Qt::Unchecked);
@@ -133,7 +133,7 @@ void qSlicerModulesListViewPrivate::updateItem(QStandardItem* item)
     }
   QString text = moduleName;
   QString tooltip = moduleName;
-  qSlicerAbstractCoreModule* coreModule = (this->FactoryManager ? this->FactoryManager->moduleInstance(moduleName) : NULL);
+  qSlicerAbstractCoreModule* coreModule = (this->FactoryManager ? this->FactoryManager->moduleInstance(moduleName) : nullptr);
   if (coreModule)
     {
     text = coreModule->title();
@@ -194,7 +194,7 @@ QStandardItem* qSlicerModulesListViewPrivate
                                                                 /* hits= */ 1, Qt::MatchExactly);
   if (moduleIndexes.count() == 0)
     {
-    return 0;
+    return nullptr;
     }
   return this->ModulesListModel->itemFromIndex(moduleIndexes.at(0));
 }
@@ -220,7 +220,7 @@ void qSlicerModulesListViewPrivate
   foreach(const QString& moduleName, q->modules())
     {
     QStandardItem* moduleItem = this->moduleItem(moduleName);
-    if (moduleItem == 0)
+    if (moduleItem == nullptr)
       {
       continue;
       }
@@ -258,7 +258,7 @@ qSlicerModulesListView::~qSlicerModulesListView()
 void qSlicerModulesListView::setFactoryManager(qSlicerAbstractModuleFactoryManager* factoryManager)
 {
   Q_D(qSlicerModulesListView);
-  if (d->FactoryManager != 0)
+  if (d->FactoryManager != nullptr)
     {
     disconnect(d->FactoryManager, SIGNAL(moduleInstantiated(QString)),
                this, SLOT(updateModule(QString)));
@@ -271,7 +271,7 @@ void qSlicerModulesListView::setFactoryManager(qSlicerAbstractModuleFactoryManag
     d->removeModules();
     }
   d->FactoryManager = factoryManager;
-  if (d->FactoryManager != 0)
+  if (d->FactoryManager != nullptr)
     {
     connect(d->FactoryManager, SIGNAL(moduleInstantiated(QString)),
             this, SLOT(updateModule(QString)));
@@ -319,7 +319,7 @@ QStringList qSlicerModulesListView::modules()const
 {
   Q_D(const qSlicerModulesListView);
   QStringList modules;
-  if (d->FactoryManager != 0)
+  if (d->FactoryManager != nullptr)
     {
     modules << d->FactoryManager->registeredModuleNames();
     modules << d->FactoryManager->modulesToIgnore();
@@ -431,7 +431,7 @@ void qSlicerModulesListView::addModules(const QStringList& moduleNames)
 void qSlicerModulesListView::addModule(const QString& moduleName)
 {
   Q_D(qSlicerModulesListView);
-  Q_ASSERT(d->moduleItem(moduleName) == 0);
+  Q_ASSERT(d->moduleItem(moduleName) == nullptr);
   QStandardItem * item = new QStandardItem();
   item->setData(moduleName, Qt::UserRole);
   d->updateItem(item);
@@ -459,7 +459,7 @@ void qSlicerModulesListView::updateModule(const QString& moduleName)
 {
   Q_D(qSlicerModulesListView);
   QStandardItem * item = d->moduleItem(moduleName);
-  if (item == 0)
+  if (item == nullptr)
     {
     this->addModule(moduleName);
     }

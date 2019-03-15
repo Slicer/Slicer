@@ -76,7 +76,7 @@ int qMRMLSliceWidgetTest1(int argc, char * argv [] )
     std::cerr << "Can't load scene:" << argv[1] << " error: " <<scene->GetErrorMessage() << std::endl;
     return EXIT_FAILURE;
     }
-  vtkMRMLSliceNode* redSliceNode = 0;
+  vtkMRMLSliceNode* redSliceNode = nullptr;
   // search for a red slice node
   std::vector<vtkMRMLNode*> sliceNodes;
   scene->GetNodesByClass("vtkMRMLSliceNode", sliceNodes);

@@ -30,7 +30,7 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_PLUGINS_EXPORT qMRMLSegmentationConv
   Q_OBJECT
 
 public:
-  qMRMLSegmentationConversionParametersWidgetPlugin(QObject* parent = 0);
+  qMRMLSegmentationConversionParametersWidgetPlugin(QObject* parent = nullptr);
 
   QWidget *createWidget(QWidget* parent);
   QString  domXml() const;

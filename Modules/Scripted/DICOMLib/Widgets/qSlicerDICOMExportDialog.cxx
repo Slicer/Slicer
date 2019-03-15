@@ -90,9 +90,9 @@ private:
 //-----------------------------------------------------------------------------
 qSlicerDICOMExportDialogPrivate::qSlicerDICOMExportDialogPrivate(qSlicerDICOMExportDialog& object)
   : q_ptr(&object)
-  , Scene(NULL)
+  , Scene(nullptr)
   , ItemToSelect(vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-  , SelectedExportable(NULL)
+  , SelectedExportable(nullptr)
 {
 }
 
@@ -604,7 +604,7 @@ void qSlicerDICOMExportDialog::exportSeries()
     {
     QString message = QString("DICOM dataset successfully exported to %1%2").arg(
       isDicomDatabaseFolder ? "the DICOM database folder " : "").arg(outputFolder.absolutePath());
-    QMessageBox::information(NULL, tr("Export successful"), message);
+    QMessageBox::information(nullptr, tr("Export successful"), message);
     }
 
   // Close the export dialog after successful export
@@ -640,7 +640,7 @@ void qSlicerDICOMExportDialog::exportEntireScene()
       {
       QString message = QString("Scene successfully exported as DICOM to %1/dicomExport").arg(
         qSlicerApplication::application()->temporaryPath());
-      QMessageBox::information(NULL, tr("Export successful"), message);
+      QMessageBox::information(nullptr, tr("Export successful"), message);
       }
     }
   else

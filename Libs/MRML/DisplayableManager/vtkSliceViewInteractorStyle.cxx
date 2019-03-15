@@ -54,13 +54,13 @@ vtkSliceViewInteractorStyle::vtkSliceViewInteractorStyle()
   this->FocusedDisplayableManager = nullptr;
   this->MouseMovedSinceButtonDown = false;
   this->EnableCursorUpdate = true;
-  this->SliceLogic = 0;
+  this->SliceLogic = nullptr;
 }
 
 //----------------------------------------------------------------------------
 vtkSliceViewInteractorStyle::~vtkSliceViewInteractorStyle()
 {
-  this->SetSliceLogic(0);
+  this->SetSliceLogic(nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -290,7 +290,7 @@ bool vtkSliceViewInteractorStyle::ForwardInteractionEventToDisplayableManagers(u
     }
   double canProcessEvent = false;
   double closestDistance2 = VTK_DOUBLE_MAX;
-  vtkMRMLAbstractDisplayableManager* closestDisplayableManager = NULL;
+  vtkMRMLAbstractDisplayableManager* closestDisplayableManager = nullptr;
   int numberOfDisplayableManagers = this->DisplayableManagers->GetDisplayableManagerCount();
 
   // Get display and world position

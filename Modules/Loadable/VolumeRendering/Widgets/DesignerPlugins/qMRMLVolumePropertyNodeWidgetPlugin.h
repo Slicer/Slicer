@@ -30,7 +30,7 @@ class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_PLUGINS_EXPORT qMRMLVolumeProperty
   Q_OBJECT
 
 public:
-  qMRMLVolumePropertyNodeWidgetPlugin(QObject *parent = 0);
+  qMRMLVolumePropertyNodeWidgetPlugin(QObject *parent = nullptr);
 
   QWidget *createWidget(QWidget *parent);
   QString  domXml() const;

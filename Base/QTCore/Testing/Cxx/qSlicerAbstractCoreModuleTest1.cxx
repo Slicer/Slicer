@@ -62,7 +62,7 @@ public:
 
   virtual vtkMRMLAbstractLogic* createLogic()
   {
-    return 0;
+    return nullptr;
   }
 protected:
   virtual void setup () {}

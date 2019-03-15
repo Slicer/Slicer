@@ -53,7 +53,7 @@ public:
 qMRMLAnnotationROIWidgetPrivate::qMRMLAnnotationROIWidgetPrivate(qMRMLAnnotationROIWidget& object)
   : q_ptr(&object)
 {
-  this->ROINode = 0;
+  this->ROINode = nullptr;
   this->IsProcessingOnMRMLNodeModified = false;
   this->AutoRange = true;
 }
@@ -73,7 +73,7 @@ void qMRMLAnnotationROIWidgetPrivate::init()
                    q, SLOT(updateROI()));
   QObject::connect(this->ISRangeWidget, SIGNAL(valuesChanged(double,double)),
                    q, SLOT(updateROI()));
-  q->setEnabled(this->ROINode != 0);
+  q->setEnabled(this->ROINode != nullptr);
 }
 
 // --------------------------------------------------------------------------
@@ -115,7 +115,7 @@ void qMRMLAnnotationROIWidget::setMRMLAnnotationROINode(vtkMRMLAnnotationROINode
 
   this->onMRMLNodeModified();
   this->onMRMLDisplayNodeModified();
-  this->setEnabled(roiNode != 0);
+  this->setEnabled(roiNode != nullptr);
 }
 
 // --------------------------------------------------------------------------

@@ -50,7 +50,7 @@
 qMRMLPlotChartPropertiesWidgetPrivate::qMRMLPlotChartPropertiesWidgetPrivate(qMRMLPlotChartPropertiesWidget& object)
   : q_ptr(&object)
 {
-  this->PlotChartNode = 0;
+  this->PlotChartNode = nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -118,7 +118,7 @@ void qMRMLPlotChartPropertiesWidgetPrivate::updateWidgetFromMRML()
 {
   Q_Q(qMRMLPlotChartPropertiesWidget);
 
-  q->setEnabled(this->PlotChartNode != 0 && q->mrmlScene() != NULL);
+  q->setEnabled(this->PlotChartNode != nullptr && q->mrmlScene() != nullptr);
 
   if (!this->PlotChartNode || !q->mrmlScene())
     {
@@ -225,7 +225,7 @@ void qMRMLPlotChartPropertiesWidgetPrivate::updateWidgetFromMRML()
     {
     vtkMRMLPlotSeriesNode *plotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast
       (q->mrmlScene()->GetNodeByID((*it).c_str()));
-    if (plotSeriesNode == NULL)
+    if (plotSeriesNode == nullptr)
       {
       continue;
       }

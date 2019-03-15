@@ -48,7 +48,7 @@ vtkMRMLDoubleArrayNode::~vtkMRMLDoubleArrayNode()
   if (this->Array)
     {
     this->Array->Delete();
-    this->Array = NULL;
+    this->Array = nullptr;
     }
 }
 
@@ -109,7 +109,7 @@ void vtkMRMLDoubleArrayNode::ReadXMLAttributes(const char** atts)
   valueY.clear();
   valueYErr.clear();
 
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -642,10 +642,10 @@ const vtkMRMLDoubleArrayNode::LabelsVectorType & vtkMRMLDoubleArrayNode::GetLabe
 vtkMRMLStorageNode* vtkMRMLDoubleArrayNode::CreateDefaultStorageNode()
 {
   vtkMRMLScene* scene = this->GetScene();
-  if (scene == NULL)
+  if (scene == nullptr)
     {
     vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
-    return NULL;
+    return nullptr;
     }
   return vtkMRMLStorageNode::SafeDownCast(
     scene->CreateNodeByClass("vtkMRMLDoubleArrayStorageNode"));

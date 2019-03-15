@@ -73,12 +73,12 @@ void qSlicerModelsModuleWidgetTester::testClearCurrentNode()
 " <ModelHierarchy id=\"vtkMRMLModelHierarchyNode2\"  name=\"ModelHierarchy\" parentNodeRef=\"vtkMRMLModelHierarchyNode1\"  associatedNodeRef=\"vtkMRMLModelNode4\"  expanded=\"true\" ></ModelHierarchy>"
 " </MRML>");
   scene->Connect();
-  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(scene->GetFirstNode(0, "vtkMRMLModelNode"));
+  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(scene->GetFirstNode(nullptr, "vtkMRMLModelNode"));
 
   // Instantiate Models module panel
   qSlicerModelsModule module;
   TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
-  module.initialize(0);
+  module.initialize(nullptr);
   TESTING_OUTPUT_ASSERT_WARNINGS_END(); // warning due to using 0 as application logic
   module.setMRMLScene(scene.GetPointer());
 

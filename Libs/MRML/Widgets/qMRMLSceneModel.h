@@ -95,7 +95,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneModel : public QStandardItemModel
   Q_PROPERTY( int extraItemColumn READ extraItemColumn WRITE setExtraItemColumn)
 public:
   typedef QStandardItemModel Superclass;
-  qMRMLSceneModel(QObject *parent=0);
+  qMRMLSceneModel(QObject *parent=nullptr);
   virtual ~qMRMLSceneModel();
 
   enum NodeTypes
@@ -261,7 +261,7 @@ signals:
   void sceneUpdated();
 
 protected:
-  qMRMLSceneModel(qMRMLSceneModelPrivate* pimpl, QObject *parent=0);
+  qMRMLSceneModel(qMRMLSceneModelPrivate* pimpl, QObject *parent=nullptr);
 
   virtual void updateScene();
   virtual void populateScene();

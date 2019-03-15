@@ -62,7 +62,7 @@ int vtkMRMLAnnotationNodeTest1(int , char * [] )
   // ======================
   // Modify Properties
   // ======================
-  node2->Reset(NULL);
+  node2->Reset(nullptr);
   node2->StartModify();
 
   node2->SetName("AnnotationNodeTest") ;

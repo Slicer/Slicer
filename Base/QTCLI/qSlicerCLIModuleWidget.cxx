@@ -40,12 +40,12 @@
 qSlicerCLIModuleWidgetPrivate::qSlicerCLIModuleWidgetPrivate(qSlicerCLIModuleWidget& object)
   :q_ptr(&object)
 {
-  this->CLIModuleUIHelper = 0;
-  this->CommandLineModuleNode = 0;
-  this->AutoRunWhenParameterChanged = 0;
-  this->AutoRunWhenInputModified = 0;
-  this->AutoRunOnOtherInputEvents = 0;
-  this->AutoRunCancelsRunningProcess = 0;
+  this->CLIModuleUIHelper = nullptr;
+  this->CommandLineModuleNode = nullptr;
+  this->AutoRunWhenParameterChanged = nullptr;
+  this->AutoRunWhenInputModified = nullptr;
+  this->AutoRunOnOtherInputEvents = nullptr;
+  this->AutoRunCancelsRunningProcess = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -171,13 +171,13 @@ void qSlicerCLIModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 void qSlicerCLIModuleWidgetPrivate::updateUiFromCommandLineModuleNode(
   vtkObject* commandLineModuleNode)
 {
-  this->AutoRunPushButton->setEnabled(commandLineModuleNode != 0);
+  this->AutoRunPushButton->setEnabled(commandLineModuleNode != nullptr);
   if (!commandLineModuleNode)
     {
     this->ApplyPushButton->setEnabled(false);
     this->CancelPushButton->setEnabled(false);
     this->DefaultPushButton->setEnabled(false);
-    this->CLIModuleUIHelper->updateUi(0); // disable widgets
+    this->CLIModuleUIHelper->updateUi(nullptr); // disable widgets
     return;
     }
 
@@ -325,7 +325,7 @@ void qSlicerCLIModuleWidgetPrivate::onValueChanged(const QString& name, const QV
     return;
     }
   // Make sure a command line module node is created
-  if (this->CommandLineModuleNode == 0)
+  if (this->CommandLineModuleNode == nullptr)
     {
     // if not, then create a default node
     this->MRMLCommandLineModuleNodeSelector->addNode();
@@ -374,7 +374,7 @@ void qSlicerCLIModuleWidget::enter()
 
   // Make sure a command line module node is available when the module widget
   // is activated. If no CLI node is available then create a new one.
-  if (d->MRMLCommandLineModuleNodeSelector->currentNode() == NULL)
+  if (d->MRMLCommandLineModuleNodeSelector->currentNode() == nullptr)
     {
     bool wasBlocked = d->MRMLCommandLineModuleNodeSelector->blockSignals(true);
     vtkMRMLCommandLineModuleNode* node = vtkMRMLCommandLineModuleNode::SafeDownCast(d->MRMLCommandLineModuleNodeSelector->addNode());

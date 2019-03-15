@@ -32,7 +32,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_PLUGINS_EXPORT qMRMLSubjectHierar
   Q_OBJECT
 
 public:
-  qMRMLSubjectHierarchyComboBoxPlugin(QObject* parent = 0);
+  qMRMLSubjectHierarchyComboBoxPlugin(QObject* parent = nullptr);
 
   QWidget *createWidget(QWidget* parent);
   QString  domXml() const;

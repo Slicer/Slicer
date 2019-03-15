@@ -621,7 +621,7 @@ void tilg_iso_3D(int dx, int dy, int dz,
   workbuf = data;
   nzz = nx * ny;
   /* Speicher allozieren */
-  if( (list = (int *) malloc(nzz * nz * sizeof(int) / 4) ) == NULL )
+  if( (list = (int *) malloc(nzz * nz * sizeof(int) / 4) ) == nullptr )
     {
     printf("out of memory\n");
     return;

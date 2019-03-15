@@ -59,10 +59,10 @@ void vtkSlicerCamerasModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
 vtkMRMLCameraNode* vtkSlicerCamerasModuleLogic
 ::GetViewActiveCameraNode(vtkMRMLViewNode* viewNode)
 {
-  vtkCollection* nodes = this->GetMRMLScene() ? this->GetMRMLScene()->GetNodes() : 0;
-  if (nodes == 0 || viewNode == 0)
+  vtkCollection* nodes = this->GetMRMLScene() ? this->GetMRMLScene()->GetNodes() : nullptr;
+  if (nodes == nullptr || viewNode == nullptr)
     {
-    return 0;
+    return nullptr;
     }
   vtkMRMLNode *node;
   vtkCollectionSimpleIterator it;
@@ -77,7 +77,7 @@ vtkMRMLCameraNode* vtkSlicerCamerasModuleLogic
       return cameraNode;
       }
     }
-  return 0;
+  return nullptr;
 }
 
 //---------------------------------------------------------------------------

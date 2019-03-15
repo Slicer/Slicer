@@ -91,7 +91,7 @@ qSlicerModelsModuleWidget::~qSlicerModelsModuleWidget()
     this->mrmlScene()->RemoveObserver(d->CallBack);
     }
 
-  this->setMRMLScene(0);
+  this->setMRMLScene(nullptr);
 }
 
 //-----------------------------------------------------------------------------
@@ -218,7 +218,7 @@ void qSlicerModelsModuleWidget::setMRMLScene(vtkMRMLScene* scene)
     d->CallBack->SetCallback(qSlicerModelsModuleWidget::onMRMLSceneEvent);
 
     scene->AddObserver(vtkMRMLScene::EndImportEvent, d->CallBack);
-    this->onMRMLSceneEvent(scene, vtkMRMLScene::EndImportEvent, this, 0);
+    this->onMRMLSceneEvent(scene, vtkMRMLScene::EndImportEvent, this, nullptr);
     }
 }
 
@@ -242,7 +242,7 @@ void qSlicerModelsModuleWidget::onMRMLSceneEvent(vtkObject* vtk_obj, unsigned lo
 //-----------------------------------------------------------------------------
 void qSlicerModelsModuleWidget::showAllModels()
 {
-  if (this->logic() == 0)
+  if (this->logic() == nullptr)
     {
     return;
     }
@@ -256,7 +256,7 @@ void qSlicerModelsModuleWidget::showAllModels()
 //-----------------------------------------------------------------------------
 void qSlicerModelsModuleWidget::hideAllModels()
 {
-  if (this->logic() == 0)
+  if (this->logic() == nullptr)
     {
     return;
     }
@@ -321,7 +321,7 @@ void qSlicerModelsModuleWidget::onDisplayClassChanged(int index)
 //-----------------------------------------------------------------------------
 vtkMRMLSelectionNode* qSlicerModelsModuleWidget::getSelectionNode()
 {
-  vtkMRMLSelectionNode* selectionNode = 0;
+  vtkMRMLSelectionNode* selectionNode = nullptr;
   if (this->mrmlScene())
     {
     selectionNode = vtkMRMLSelectionNode::SafeDownCast(
@@ -439,9 +439,9 @@ void qSlicerModelsModuleWidget::onDisplayNodeChanged()
   Q_D(qSlicerModelsModuleWidget);
   vtkMRMLModelDisplayNode* displayNode = d->ModelDisplayWidget->mrmlModelDisplayNode();
   bool wasBlocked = d->ClipSelectedModelCheckBox->blockSignals(true);
-  d->ClipSelectedModelLabel->setEnabled(displayNode != NULL);
-  d->ClipSelectedModelCheckBox->setEnabled(displayNode != NULL);
-  d->ClipSelectedModelCheckBox->setChecked(displayNode != NULL && displayNode->GetClipping());
+  d->ClipSelectedModelLabel->setEnabled(displayNode != nullptr);
+  d->ClipSelectedModelCheckBox->setEnabled(displayNode != nullptr);
+  d->ClipSelectedModelCheckBox->setChecked(displayNode != nullptr && displayNode->GetClipping());
   d->ClipSelectedModelCheckBox->blockSignals(wasBlocked);
 }
 
@@ -460,7 +460,7 @@ void qSlicerModelsModuleWidget::onClipSelectedModelToggled(bool toggled)
       {
       displayNode->BackfaceCullingOff();
       displayNode->FrontfaceCullingOff();
-      if (d->MRMLClipNodeWidget->mrmlClipNode() != NULL
+      if (d->MRMLClipNodeWidget->mrmlClipNode() != nullptr
         && d->MRMLClipNodeWidget->redSliceClipState() == vtkMRMLClipModelsNode::ClipOff
         && d->MRMLClipNodeWidget->greenSliceClipState() == vtkMRMLClipModelsNode::ClipOff
         && d->MRMLClipNodeWidget->yellowSliceClipState() == vtkMRMLClipModelsNode::ClipOff)
@@ -486,13 +486,13 @@ void qSlicerModelsModuleWidget::setCurrentNodeFromSubjectHierarchyItem(vtkIdType
     return;
     }
 
-  vtkMRMLNode* dataNode = NULL;
+  vtkMRMLNode* dataNode = nullptr;
   if (itemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     dataNode = shNode->GetItemDataNode(itemID);
     }
   // Only set model node to info widget if it's visible
-  d->MRMLModelInfoWidget->setMRMLModelNode(d->InformationButton->collapsed() ? NULL : dataNode);
+  d->MRMLModelInfoWidget->setMRMLModelNode(d->InformationButton->collapsed() ? nullptr : dataNode);
 
   if (dataNode && dataNode->IsA("vtkMRMLModelDisplayNode"))
     {

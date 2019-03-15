@@ -35,10 +35,10 @@
 //----------------------------------------------------------------------
 vtkMRMLAbstractWidget::vtkMRMLAbstractWidget()
 {
-  this->ApplicationLogic = NULL;
-  this->Renderer = NULL;
+  this->ApplicationLogic = nullptr;
+  this->Renderer = nullptr;
 
-  this->WidgetRep = NULL;
+  this->WidgetRep = nullptr;
   this->WidgetState = vtkMRMLAbstractWidget::WidgetStateIdle;
 }
 

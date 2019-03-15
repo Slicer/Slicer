@@ -41,7 +41,7 @@ class Q_SLICER_QTMODULES_PLOTS_EXPORT qSlicerPlotsModuleWidget :
 public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerPlotsModuleWidget(QWidget *parent=0);
+  qSlicerPlotsModuleWidget(QWidget *parent=nullptr);
   virtual ~qSlicerPlotsModuleWidget();
 
   virtual bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString());

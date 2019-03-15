@@ -124,7 +124,7 @@ vtkMRMLDiffusionTensorVolumeDisplayNode* qSlicerDiffusionTensorVolumeDisplayWidg
 {
   vtkMRMLDiffusionTensorVolumeNode* volumeNode = this->volumeNode();
   return volumeNode ? vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(
-    volumeNode->GetDisplayNode()) : 0;
+    volumeNode->GetDisplayNode()) : nullptr;
 }
 
 // --------------------------------------------------------------------------
@@ -156,13 +156,13 @@ void qSlicerDiffusionTensorVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLDiffusi
 
   vtkMRMLDiffusionTensorVolumeDisplayNode* oldVolumeDisplayNode = this->volumeDisplayNode();
 
-  qvtkReconnect(oldVolumeDisplayNode, volumeNode ? volumeNode->GetDisplayNode() :0,
+  qvtkReconnect(oldVolumeDisplayNode, volumeNode ? volumeNode->GetDisplayNode() :nullptr,
                 vtkCommand::ModifiedEvent,
                 this, SLOT(updateWidgetFromMRML()));
   d->VolumeNode = volumeNode;
   d->ScalarVolumeDisplayWidget->setMRMLVolumeNode(volumeNode);
   vtkMRMLDiffusionTensorVolumeDisplayNode* newVolumeDisplayNode = this->volumeDisplayNode();
-  vtkMRMLGlyphableVolumeSliceDisplayNode* glyphableVolumeSliceNode = 0;
+  vtkMRMLGlyphableVolumeSliceDisplayNode* glyphableVolumeSliceNode = nullptr;
   if (newVolumeDisplayNode)
     {
     std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*> dtiSliceDisplayNodes =
@@ -188,7 +188,7 @@ void qSlicerDiffusionTensorVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLDiffusi
     }
   // The update tasks are also needed when scene is closed (newVolumeDisplayNode is NULL)
   d->DTISliceDisplayWidget->setMRMLDTISliceDisplayNode(glyphableVolumeSliceNode);
-  qvtkDisconnect(0, vtkCommand::ModifiedEvent, this, SLOT(synchronizeSliceDisplayNodes()));
+  qvtkDisconnect(nullptr, vtkCommand::ModifiedEvent, this, SLOT(synchronizeSliceDisplayNodes()));
   qvtkConnect(glyphableVolumeSliceNode, vtkCommand::ModifiedEvent,
               this, SLOT(synchronizeSliceDisplayNodes()));
   this->synchronizeSliceDisplayNodes();
@@ -199,7 +199,7 @@ void qSlicerDiffusionTensorVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLDiffusi
 void qSlicerDiffusionTensorVolumeDisplayWidget::updateWidgetFromMRML()
 {
   Q_D(qSlicerDiffusionTensorVolumeDisplayWidget);
-  this->setEnabled(d->VolumeNode != 0);
+  this->setEnabled(d->VolumeNode != nullptr);
   vtkMRMLDiffusionTensorVolumeDisplayNode* displayNode =
     this->volumeDisplayNode();
   if (!displayNode)

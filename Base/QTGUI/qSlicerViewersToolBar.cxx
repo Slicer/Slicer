@@ -41,29 +41,29 @@
 qSlicerViewersToolBarPrivate::qSlicerViewersToolBarPrivate(qSlicerViewersToolBar& object)
   : q_ptr(&object)
 {
-  this->CrosshairToolButton = 0;
-  this->CrosshairMenu = 0;
+  this->CrosshairToolButton = nullptr;
+  this->CrosshairMenu = nullptr;
 
-  this->CrosshairJumpSlicesMapper = 0;
-  this->CrosshairJumpSlicesDisabledAction = 0;
-  this->CrosshairJumpSlicesOffsetAction = 0;
-  this->CrosshairJumpSlicesCenteredAction = 0;
+  this->CrosshairJumpSlicesMapper = nullptr;
+  this->CrosshairJumpSlicesDisabledAction = nullptr;
+  this->CrosshairJumpSlicesOffsetAction = nullptr;
+  this->CrosshairJumpSlicesCenteredAction = nullptr;
 
-  this->CrosshairMapper = 0;
-  this->CrosshairNoAction = 0;
-  this->CrosshairBasicAction = 0;
-  this->CrosshairBasicIntersectionAction = 0;
-  this->CrosshairSmallBasicAction = 0;
-  this->CrosshairSmallBasicIntersectionAction = 0;
+  this->CrosshairMapper = nullptr;
+  this->CrosshairNoAction = nullptr;
+  this->CrosshairBasicAction = nullptr;
+  this->CrosshairBasicIntersectionAction = nullptr;
+  this->CrosshairSmallBasicAction = nullptr;
+  this->CrosshairSmallBasicIntersectionAction = nullptr;
 
-  this->CrosshairThicknessMapper = 0;
-  this->CrosshairFineAction = 0;
-  this->CrosshairMediumAction = 0;
-  this->CrosshairThickAction = 0;
+  this->CrosshairThicknessMapper = nullptr;
+  this->CrosshairFineAction = nullptr;
+  this->CrosshairMediumAction = nullptr;
+  this->CrosshairThickAction = nullptr;
 
-  this->CrosshairSliceIntersectionsAction = 0;
+  this->CrosshairSliceIntersectionsAction = nullptr;
 
-  this->CrosshairToggleAction = 0;
+  this->CrosshairToggleAction = nullptr;
 
   this->CrosshairLastMode = vtkMRMLCrosshairNode::ShowBasic;
 }
@@ -247,7 +247,7 @@ void qSlicerViewersToolBarPrivate::setCrosshairJumpSlicesMode(int jumpSlicesMode
     {
     return;
     }
-  vtkMRMLCrosshairNode* node = 0;
+  vtkMRMLCrosshairNode* node = nullptr;
   vtkCollectionSimpleIterator it;
   for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLCrosshairNode*>(
                                    nodes->GetNextItemAsObject(it)));)
@@ -267,7 +267,7 @@ void qSlicerViewersToolBarPrivate::setCrosshairEnabled(bool enabled)
     {
     return;
     }
-  vtkMRMLCrosshairNode* node = 0;
+  vtkMRMLCrosshairNode* node = nullptr;
   vtkCollectionSimpleIterator it;
   for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLCrosshairNode*>(
                                    nodes->GetNextItemAsObject(it)));)
@@ -294,7 +294,7 @@ void qSlicerViewersToolBarPrivate::setCrosshairMode(int mode)
     {
     return;
     }
-  vtkMRMLCrosshairNode* node = 0;
+  vtkMRMLCrosshairNode* node = nullptr;
   vtkCollectionSimpleIterator it;
   for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLCrosshairNode*>(
                                    nodes->GetNextItemAsObject(it)));)
@@ -320,7 +320,7 @@ void qSlicerViewersToolBarPrivate::setCrosshairThickness(int thickness)
     {
     return;
     }
-  vtkMRMLCrosshairNode* node = 0;
+  vtkMRMLCrosshairNode* node = nullptr;
   vtkCollectionSimpleIterator it;
   for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLCrosshairNode*>(
                                    nodes->GetNextItemAsObject(it)));)
@@ -339,7 +339,7 @@ void qSlicerViewersToolBarPrivate::setSliceIntersectionVisible(bool visible)
     {
     return;
     }
-  vtkMRMLSliceCompositeNode* node = 0;
+  vtkMRMLSliceCompositeNode* node = nullptr;
   vtkCollectionSimpleIterator it;
   for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLSliceCompositeNode*>(
                                    nodes->GetNextItemAsObject(it)));)
@@ -411,7 +411,7 @@ void qSlicerViewersToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
     }
 
   // Update UI
-  q->setEnabled(this->MRMLScene != 0);
+  q->setEnabled(this->MRMLScene != nullptr);
   if (this->MRMLScene)
     {
     this->updateWidgetFromMRML();
@@ -427,7 +427,7 @@ void qSlicerViewersToolBarPrivate::updateWidgetFromMRML()
 
   vtkMRMLNode *node;
   vtkCollectionSimpleIterator it;
-  vtkMRMLCrosshairNode* crosshairNode = 0;
+  vtkMRMLCrosshairNode* crosshairNode = nullptr;
   vtkSmartPointer<vtkCollection> crosshairs;
   crosshairs.TakeReference(this->MRMLScene->GetNodesByClass("vtkMRMLCrosshairNode"));
   for (crosshairs->InitTraversal(it);
@@ -445,7 +445,7 @@ void qSlicerViewersToolBarPrivate::updateWidgetFromMRML()
     //
 
     // jump slices
-    if (this->CrosshairJumpSlicesMapper->mapping(crosshairNode->GetCrosshairBehavior()) != NULL)
+    if (this->CrosshairJumpSlicesMapper->mapping(crosshairNode->GetCrosshairBehavior()) != nullptr)
       {
       QAction* action = (QAction *)(this->CrosshairJumpSlicesMapper->mapping(crosshairNode->GetCrosshairBehavior()));
       if (action)
@@ -455,7 +455,7 @@ void qSlicerViewersToolBarPrivate::updateWidgetFromMRML()
       }
 
     // style of crosshair
-    if (this->CrosshairMapper->mapping(crosshairNode->GetCrosshairMode()) != NULL)
+    if (this->CrosshairMapper->mapping(crosshairNode->GetCrosshairMode()) != nullptr)
       {
       QAction* action = (QAction *)(this->CrosshairMapper->mapping(crosshairNode->GetCrosshairMode()));
       if (action)
@@ -465,7 +465,7 @@ void qSlicerViewersToolBarPrivate::updateWidgetFromMRML()
       }
 
     // thickness
-    if (this->CrosshairThicknessMapper->mapping(crosshairNode->GetCrosshairThickness()) != NULL)
+    if (this->CrosshairThicknessMapper->mapping(crosshairNode->GetCrosshairThickness()) != nullptr)
       {
       QAction* action = (QAction *)(this->CrosshairThicknessMapper->mapping(crosshairNode->GetCrosshairThickness()));
       if (action)

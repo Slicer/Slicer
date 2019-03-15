@@ -16,7 +16,7 @@ int vtkMRMLAnnotationLinesStorageNodeTest1(int , char * [] )
   EXERCISE_ALL_BASIC_MRML_METHODS(node2.GetPointer());
 
   vtkMRMLAnnotationLinesStorageNode* node1 = dynamic_cast <  vtkMRMLAnnotationLinesStorageNode *> (node2->CreateNodeInstance());
-  if( node1 == NULL )
+  if( node1 == nullptr )
     {
       std::cerr << "Error in CreateNodeInstance()" << std::endl;
       return EXIT_FAILURE;

@@ -29,7 +29,7 @@ class Q_SLICER_DESIGNER_PLUGINS_EXPORT qSlicerDirectoryListViewPlugin
 {
   Q_OBJECT
 public:
-  qSlicerDirectoryListViewPlugin(QObject* parent = 0);
+  qSlicerDirectoryListViewPlugin(QObject* parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString domXml() const;

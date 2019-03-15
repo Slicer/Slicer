@@ -152,7 +152,7 @@ public:
   /// \return True if attribute location in display node is vtkAssignAttribute::CELL_DATA
   ///   or active cell scalar name in the model node is vtkDataSetAttributes::SCALARS.
   ///   False otherwise.
-  static bool IsCellScalarsActive(vtkMRMLDisplayNode* displayNode, vtkMRMLModelNode* model = 0);
+  static bool IsCellScalarsActive(vtkMRMLDisplayNode* displayNode, vtkMRMLModelNode* model = nullptr);
 
 protected:
 
@@ -198,7 +198,7 @@ protected:
   int GetDisplayedModelsVisibility(vtkMRMLDisplayNode *model);
 
   const char* GetActiveScalarName(vtkMRMLDisplayNode* displayNode,
-                                  vtkMRMLModelNode* model = 0);
+                                  vtkMRMLModelNode* model = nullptr);
 
   /// Returns not null if modified
   int UpdateClipSlicesFromMRML();

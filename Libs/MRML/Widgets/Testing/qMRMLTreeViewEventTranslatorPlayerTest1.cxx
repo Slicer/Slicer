@@ -136,7 +136,7 @@ int qMRMLTreeViewEventTranslatorPlayerTest1(int argc, char * argv [] )
   widget2.setSceneModelType("ModelHierarchy");
   widget2.setMRMLScene(scene2.GetPointer());
 
-  QAction* insertTransformAction = new QAction("Insert transform", 0);
+  QAction* insertTransformAction = new QAction("Insert transform", nullptr);
   widget2.prependNodeMenuAction(insertTransformAction);
   widget2.prependSceneMenuAction(insertTransformAction);
 

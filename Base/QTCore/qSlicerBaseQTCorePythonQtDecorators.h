@@ -39,7 +39,7 @@ public:
     {
     PythonQt::self()->registerClass(&qSlicerCoreApplication::staticMetaObject);
     PythonQt::self()->registerClass(&qSlicerAbstractCoreModule::staticMetaObject);
-    PythonQt::self()->registerCPPClass("qSlicerUtils", 0, "qSlicerBaseQTCore");
+    PythonQt::self()->registerCPPClass("qSlicerUtils", nullptr, "qSlicerBaseQTCore");
     // Note: Use registerCPPClassForPythonQt to register pure Cpp classes
     }
 

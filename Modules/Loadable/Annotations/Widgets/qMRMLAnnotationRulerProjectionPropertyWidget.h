@@ -45,7 +45,7 @@ qMRMLAnnotationRulerProjectionPropertyWidget
 
 public:
   typedef qMRMLWidget Superclass;
-  qMRMLAnnotationRulerProjectionPropertyWidget(QWidget *newParent = 0);
+  qMRMLAnnotationRulerProjectionPropertyWidget(QWidget *newParent = nullptr);
   virtual ~qMRMLAnnotationRulerProjectionPropertyWidget();
 
 public slots:

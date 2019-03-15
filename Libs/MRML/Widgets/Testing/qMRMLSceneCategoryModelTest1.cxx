@@ -58,7 +58,7 @@ int qMRMLSceneCategoryModelTest1(int argc, char * argv [])
   qMRMLSceneCategoryModel model;
 
   vtkNew<vtkMRMLScene> scene;
-  qMRMLNodeFactory nodeFactory(0);
+  qMRMLNodeFactory nodeFactory(nullptr);
   nodeFactory.setMRMLScene(scene.GetPointer());
   nodeFactory.createNode("vtkMRMLROINode");
   nodeFactory.addAttribute("Category", "First Category");
@@ -78,10 +78,10 @@ int qMRMLSceneCategoryModelTest1(int argc, char * argv [])
 
   QStringList scenePreItems =
     QStringList() << "pre 1" << "pre 2" << "separator";
-  model.setPreItems(scenePreItems, 0);
+  model.setPreItems(scenePreItems, nullptr);
   model.setPreItems(scenePreItems, model.mrmlSceneItem());
 
-  if (model.itemFromCategory("Second Category") == 0 ||
+  if (model.itemFromCategory("Second Category") == nullptr ||
       model.itemFromCategory("Second Category") == model.mrmlSceneItem())
     {
     std::cerr << "Wrong category. Item: "
@@ -91,7 +91,7 @@ int qMRMLSceneCategoryModelTest1(int argc, char * argv [])
     }
   model.setPreItems(scenePreItems, model.itemFromCategory("Second Category"));
 
-  QTreeView* view = new QTreeView(0);
+  QTreeView* view = new QTreeView(nullptr);
   view->setModel(&model);
   view->show();
   view->resize(500, 800);

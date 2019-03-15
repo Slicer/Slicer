@@ -120,8 +120,8 @@ int qMRMLNodeComboBoxTest1( int argc, char * argv [] )
     }
   */
 
-  nodeSelector.setMRMLScene(0);
-  if (nodeSelector.mrmlScene() != 0)
+  nodeSelector.setMRMLScene(nullptr);
+  if (nodeSelector.mrmlScene() != nullptr)
     {
     std::cerr << __LINE__ << " - qMRMLNodeSelector::setMRMLScene() failed." << std::endl;
     return EXIT_FAILURE;
@@ -175,7 +175,7 @@ int qMRMLNodeComboBoxTest1( int argc, char * argv [] )
               << std::endl;
     return EXIT_FAILURE;
     }
-  if (nodeSelector.currentNode() != 0)
+  if (nodeSelector.currentNode() != nullptr)
     {
     std::cerr << __LINE__ << " - qMRMLNodeSelector: currentNode failed."
               << std::endl;
@@ -271,7 +271,7 @@ int qMRMLNodeComboBoxTest1( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  nodeSelector.setMRMLScene(0);
+  nodeSelector.setMRMLScene(nullptr);
 
   currentCount = nodeSelector.nodeCount();
   if (currentCount != 0)

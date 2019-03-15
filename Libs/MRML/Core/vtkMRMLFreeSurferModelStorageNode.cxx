@@ -68,7 +68,7 @@ void vtkMRMLFreeSurferModelStorageNode::ReadXMLAttributes(const char** atts)
   vtkMRMLStorageNode::ReadXMLAttributes(atts);
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -139,7 +139,7 @@ int vtkMRMLFreeSurferModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       {
       stripper->SetInputConnection( normals->GetOutputPort() );
       stripper->Update();
-      if (stripper->GetOutput() == NULL ||
+      if (stripper->GetOutput() == nullptr ||
           stripper->GetOutput()->GetNumberOfCells() == 0)
         {
         vtkDebugMacro("Surface file error: no output from triangle stripper.");
@@ -153,7 +153,7 @@ int vtkMRMLFreeSurferModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     else
       {
       normals->Update();
-      if (normals->GetOutput() == NULL ||
+      if (normals->GetOutput() == nullptr ||
           normals->GetOutput()->GetNumberOfCells() == 0)
         {
         vtkDebugMacro("Surface file error: no output from the normals");
@@ -174,7 +174,7 @@ int vtkMRMLFreeSurferModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     result = 0;
     }
 
-  if (modelNode->GetPolyData() != NULL)
+  if (modelNode->GetPolyData() != nullptr)
     {
     //modelNode->GetPolyData()->Modified();
     }

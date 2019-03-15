@@ -224,7 +224,7 @@ void qSlicerExtensionsManagerModelTester::installHelper(qSlicerExtensionsManager
                                                         int extensionId,
                                                         const QString& tmp)
 {
-  QVERIFY(model != 0);
+  QVERIFY(model != nullptr);
   QVERIFY(extensionId >= 0 && extensionId <= 3);
 
   QString inputArchiveFile = QString(":/extension-%1-%2.tar.gz").arg(os).arg(extensionId);

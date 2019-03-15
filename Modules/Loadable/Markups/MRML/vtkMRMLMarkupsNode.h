@@ -214,7 +214,7 @@ public:
   /// Return true if n is a valid control point, false otherwise
   /// If failedMethodName is specified and the control point does not exist
   /// then an error is logged.
-  bool ControlPointExists(int n, const char* failedMethodName = NULL);
+  bool ControlPointExists(int n, const char* failedMethodName = nullptr);
   /// Return the number of control points that are stored in this node
   int GetNumberOfControlPoints();
   /// Deprecated. Use GetNumberOfControlPoints() instead.
@@ -227,7 +227,7 @@ public:
   /// If point is specified then all control point positions will be initialized to that position,
   /// otherwise control poin positions are initialized to (0,0,0).
   /// Return index of the last placed control point, -1 on failure.
-  int AddNControlPoints(int n, std::string label = std::string(), vtkVector3d* point = NULL);
+  int AddNControlPoints(int n, std::string label = std::string(), vtkVector3d* point = nullptr);
   /// Add a new control point, defined in the world coordinate system.
   /// Return index of point index, -1 on failure.
   int AddControlPointWorld(vtkVector3d point, std::string label = std::string());

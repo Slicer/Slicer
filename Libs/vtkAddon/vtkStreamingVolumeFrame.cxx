@@ -29,10 +29,10 @@ vtkStandardNewMacro(vtkStreamingVolumeFrame);
 
 //---------------------------------------------------------------------------
 vtkStreamingVolumeFrame::vtkStreamingVolumeFrame()
-  : FrameData(NULL)
+  : FrameData(nullptr)
   , FrameType(vtkStreamingVolumeFrame::PFrame)
   , NumberOfComponents(3)
-  , PreviousFrame(NULL)
+  , PreviousFrame(nullptr)
   , VTKScalarType(VTK_UNSIGNED_CHAR)
 {
   this->Dimensions[0] = 0;

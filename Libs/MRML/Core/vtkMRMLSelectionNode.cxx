@@ -50,18 +50,18 @@ vtkMRMLSelectionNode::vtkMRMLSelectionNode()
 
   this->SetSingletonTag("Singleton");
 
-  this->ActiveVolumeID = NULL;
-  this->SecondaryVolumeID = NULL;
-  this->ActiveLabelVolumeID = NULL;
-  this->ActiveFiducialListID = NULL;
-  this->ActivePlaceNodeID = NULL;
-  this->ActivePlaceNodeClassName = NULL;
-  this->ActiveROIListID  =NULL;
-  this->ActiveCameraID = NULL;
-  this->ActiveTableID = NULL;
-  this->ActiveViewID = NULL;
-  this->ActiveLayoutID = NULL;
-  this->ActivePlotChartID = NULL;
+  this->ActiveVolumeID = nullptr;
+  this->SecondaryVolumeID = nullptr;
+  this->ActiveLabelVolumeID = nullptr;
+  this->ActiveFiducialListID = nullptr;
+  this->ActivePlaceNodeID = nullptr;
+  this->ActivePlaceNodeClassName = nullptr;
+  this->ActiveROIListID  =nullptr;
+  this->ActiveCameraID = nullptr;
+  this->ActiveTableID = nullptr;
+  this->ActiveViewID = nullptr;
+  this->ActiveLayoutID = nullptr;
+  this->ActivePlotChartID = nullptr;
 
   this->AddNodeReferenceRole(this->GetUnitNodeReferenceRole(),
                              this->GetUnitNodeReferenceMRMLAttributeName());
@@ -73,58 +73,58 @@ vtkMRMLSelectionNode::~vtkMRMLSelectionNode()
   if (this->ActiveVolumeID)
     {
     delete [] this->ActiveVolumeID;
-    this->ActiveVolumeID = NULL;
+    this->ActiveVolumeID = nullptr;
     }
   if (this->SecondaryVolumeID)
     {
     delete [] this->SecondaryVolumeID;
-    this->SecondaryVolumeID = NULL;
+    this->SecondaryVolumeID = nullptr;
     }
   if (this->ActiveLabelVolumeID)
     {
     delete [] this->ActiveLabelVolumeID;
-    this->ActiveLabelVolumeID = NULL;
+    this->ActiveLabelVolumeID = nullptr;
     }
   if (this->ActiveFiducialListID)
     {
     delete [] this->ActiveFiducialListID;
-    this->ActiveFiducialListID = NULL;
+    this->ActiveFiducialListID = nullptr;
     }
   if (this->ActivePlaceNodeID)
     {
     delete [] this->ActivePlaceNodeID;
-    this->ActivePlaceNodeID = NULL;
+    this->ActivePlaceNodeID = nullptr;
     }
-  this->SetActivePlaceNodeClassName(NULL);
+  this->SetActivePlaceNodeClassName(nullptr);
   if (this->ActiveROIListID)
     {
     delete [] this->ActiveROIListID;
-    this->ActiveROIListID = NULL;
+    this->ActiveROIListID = nullptr;
     }
   if ( this->ActiveCameraID )
     {
     delete [] this->ActiveCameraID;
-    this->ActiveCameraID = NULL;
+    this->ActiveCameraID = nullptr;
     }
   if ( this->ActiveTableID )
     {
     delete [] this->ActiveTableID;
-    this->ActiveTableID = NULL;
+    this->ActiveTableID = nullptr;
     }
   if ( this->ActiveViewID)
     {
     delete []  this->ActiveViewID;
-    this->ActiveViewID = NULL;
+    this->ActiveViewID = nullptr;
     }
   if ( this->ActiveLayoutID)
     {
     delete [] this->ActiveLayoutID;
-    this->ActiveLayoutID = NULL;
+    this->ActiveLayoutID = nullptr;
     }
   if ( this->ActivePlotChartID)
     {
     delete [] this->ActivePlotChartID;
-    this->ActivePlotChartID = NULL;
+    this->ActivePlotChartID = nullptr;
     }
 }
 
@@ -246,45 +246,45 @@ void vtkMRMLSelectionNode::UpdateReferences()
 {
    Superclass::UpdateReferences();
 
-  if (this->ActiveVolumeID != NULL && this->Scene->GetNodeByID(this->ActiveVolumeID) == NULL)
+  if (this->ActiveVolumeID != nullptr && this->Scene->GetNodeByID(this->ActiveVolumeID) == nullptr)
     {
-    this->SetActiveVolumeID(NULL);
+    this->SetActiveVolumeID(nullptr);
     }
-  if (this->SecondaryVolumeID != NULL && this->Scene->GetNodeByID(this->SecondaryVolumeID) == NULL)
+  if (this->SecondaryVolumeID != nullptr && this->Scene->GetNodeByID(this->SecondaryVolumeID) == nullptr)
     {
-    this->SetSecondaryVolumeID(NULL);
+    this->SetSecondaryVolumeID(nullptr);
     }
-  if (this->ActiveLabelVolumeID != NULL && this->Scene->GetNodeByID(this->ActiveLabelVolumeID) == NULL)
+  if (this->ActiveLabelVolumeID != nullptr && this->Scene->GetNodeByID(this->ActiveLabelVolumeID) == nullptr)
     {
-    this->SetActiveLabelVolumeID(NULL);
+    this->SetActiveLabelVolumeID(nullptr);
     }
-  if (this->ActiveFiducialListID != NULL && this->Scene->GetNodeByID(this->ActiveFiducialListID) == NULL)
+  if (this->ActiveFiducialListID != nullptr && this->Scene->GetNodeByID(this->ActiveFiducialListID) == nullptr)
     {
-    this->SetActiveFiducialListID(NULL);
+    this->SetActiveFiducialListID(nullptr);
     }
-  if (this->ActivePlaceNodeID != NULL && this->Scene->GetNodeByID(this->ActivePlaceNodeID) == NULL)
+  if (this->ActivePlaceNodeID != nullptr && this->Scene->GetNodeByID(this->ActivePlaceNodeID) == nullptr)
     {
-    this->SetActivePlaceNodeID(NULL);
+    this->SetActivePlaceNodeID(nullptr);
     }
-  if (this->ActiveViewID != NULL && this->Scene->GetNodeByID(this->ActiveViewID) == NULL)
+  if (this->ActiveViewID != nullptr && this->Scene->GetNodeByID(this->ActiveViewID) == nullptr)
     {
-    this->SetActiveViewID(NULL);
+    this->SetActiveViewID(nullptr);
     }
-  if (this->ActiveLayoutID != NULL && this->Scene->GetNodeByID(this->ActiveLayoutID) == NULL)
+  if (this->ActiveLayoutID != nullptr && this->Scene->GetNodeByID(this->ActiveLayoutID) == nullptr)
     {
-    this->SetActiveLayoutID(NULL);
+    this->SetActiveLayoutID(nullptr);
     }
-  if (this->ActiveCameraID != NULL && this->Scene->GetNodeByID(this->ActiveCameraID) == NULL)
+  if (this->ActiveCameraID != nullptr && this->Scene->GetNodeByID(this->ActiveCameraID) == nullptr)
     {
-    this->SetActiveCameraID(NULL);
+    this->SetActiveCameraID(nullptr);
     }
-  if (this->ActiveTableID != NULL && this->Scene->GetNodeByID(this->ActiveTableID) == NULL)
+  if (this->ActiveTableID != nullptr && this->Scene->GetNodeByID(this->ActiveTableID) == nullptr)
     {
-    this->SetActiveTableID(NULL);
+    this->SetActiveTableID(nullptr);
     }
-  if (this->ActivePlotChartID != NULL && this->Scene->GetNodeByID(this->ActivePlotChartID) == NULL)
+  if (this->ActivePlotChartID != nullptr && this->Scene->GetNodeByID(this->ActivePlotChartID) == nullptr)
     {
-    this->SetActivePlotChartID(NULL);
+    this->SetActivePlotChartID(nullptr);
     }
 }
 //----------------------------------------------------------------------------
@@ -299,7 +299,7 @@ void vtkMRMLSelectionNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL)
+  while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -483,7 +483,7 @@ void vtkMRMLSelectionNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkMRMLSelectionNode::AddNewPlaceNodeClassNameToList(const char *newClassName, const char *resource, const char *iconName)
 {
-  if (newClassName == NULL)
+  if (newClassName == nullptr)
     {
     return;
     }
@@ -496,7 +496,7 @@ void vtkMRMLSelectionNode::AddNewPlaceNodeClassNameToList(const char *newClassNa
     resourceString = std::string(resource);
     }
   std::string iconNameString;
-  if (iconName != NULL)
+  if (iconName != nullptr)
     {
     iconNameString = std::string(iconName);
     }
@@ -532,7 +532,7 @@ void vtkMRMLSelectionNode::AddNewPlaceNodeClassNameToList(const char *newClassNa
 //----------------------------------------------------------------------------
 void vtkMRMLSelectionNode::RemovePlaceNodeClassNameFromList(const char *className)
 {
-  if (className == NULL)
+  if (className == nullptr)
     {
     return;
     }
@@ -555,7 +555,7 @@ void vtkMRMLSelectionNode::RemovePlaceNodeClassNameFromList(const char *classNam
       classNameString.compare(this->GetActivePlaceNodeClassName()) == 0)
     {
     // make it inactive
-    this->SetActivePlaceNodeClassName(NULL);
+    this->SetActivePlaceNodeClassName(nullptr);
     }
   this->InvokeEvent(vtkMRMLSelectionNode::PlaceNodeClassNameListModifiedEvent);
   this->Modified();

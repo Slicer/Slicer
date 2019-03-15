@@ -41,7 +41,7 @@ class QMRML_WIDGETS_EXPORT qMRMLItemDelegate: public QStyledItemDelegate
 {
   Q_OBJECT
 public:
-  qMRMLItemDelegate(QObject *parent = 0);
+  qMRMLItemDelegate(QObject *parent = nullptr);
   virtual ~qMRMLItemDelegate();
   typedef QStyledItemDelegate Superclass;
 

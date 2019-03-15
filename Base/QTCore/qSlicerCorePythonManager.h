@@ -39,7 +39,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCorePythonManager : public ctkAbstractP
 
 public:
   typedef ctkAbstractPythonManager Superclass;
-  qSlicerCorePythonManager(QObject* parent=0);
+  qSlicerCorePythonManager(QObject* parent=nullptr);
   ~qSlicerCorePythonManager();
 
   /// Convenient function allowing to add a VTK object to the interpreter main module

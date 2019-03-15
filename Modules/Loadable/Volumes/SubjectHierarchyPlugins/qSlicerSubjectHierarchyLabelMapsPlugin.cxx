@@ -79,7 +79,7 @@ qSlicerSubjectHierarchyLabelMapsPluginPrivate::qSlicerSubjectHierarchyLabelMapsP
 {
   this->LabelmapIcon = QIcon(":Icons/Labelmap.png");
 
-  this->ToggleOutlineVisibilityAction = NULL;
+  this->ToggleOutlineVisibilityAction = nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -340,7 +340,7 @@ void qSlicerSubjectHierarchyLabelMapsPlugin::showVisibilityContextMenuActionsFor
 void qSlicerSubjectHierarchyLabelMapsPlugin::toggle2DOutlineVisibility(bool checked)
 {
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
-  vtkMRMLSliceNode* sliceNode = NULL;
+  vtkMRMLSliceNode* sliceNode = nullptr;
   const int numberOfSliceNodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceNode");
 
   for (int i=0; i<numberOfSliceNodes; i++)

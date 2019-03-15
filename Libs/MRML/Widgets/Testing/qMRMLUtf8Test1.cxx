@@ -48,16 +48,16 @@
 #include <cstring>
 #include <iostream>
 
-vtkMRMLScene* myScene = 0;
-vtkMRMLNode* myNode = 0;
-QLineEdit* myLineEdit = 0;
+vtkMRMLScene* myScene = nullptr;
+vtkMRMLNode* myNode = nullptr;
+QLineEdit* myLineEdit = nullptr;
 
 //------------------------------------------------------------------------------
 void saveScene(void* vtkNotUsed(data))
 {
   myNode->SetName(myLineEdit->text().toUtf8());
 
-  QLabel* label = new QLabel(QString::fromUtf8(myNode->GetName()), 0);
+  QLabel* label = new QLabel(QString::fromUtf8(myNode->GetName()), nullptr);
   label->show();
   label->setAttribute(Qt::WA_DeleteOnClose);
   QTimer::singleShot(500, label, SLOT(close()));
@@ -95,7 +95,7 @@ int qMRMLUtf8Test1(int argc, char * argv [] )
   std::string newName = cameraName.erase(0, std::strlen("camera"));
   myNode->SetName(newName.c_str());
 
-  myLineEdit = new QLineEdit(0);
+  myLineEdit = new QLineEdit(nullptr);
   myLineEdit->setText(QString::fromUtf8(myNode->GetName()));
   myLineEdit->show();
 

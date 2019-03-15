@@ -46,7 +46,7 @@ public:
   typedef ctkVTKSliceView Superclass;
 
   /// Constructors
-  explicit qMRMLSliceView(QWidget* parent = 0);
+  explicit qMRMLSliceView(QWidget* parent = nullptr);
   virtual ~qMRMLSliceView();
 
   /// Add a displayable manager to the view,

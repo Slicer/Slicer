@@ -34,9 +34,9 @@ class qSlicerDoubleArraysReader
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerDoubleArraysReader(QObject* parent = 0);
+  qSlicerDoubleArraysReader(QObject* parent = nullptr);
   qSlicerDoubleArraysReader(vtkSlicerDoubleArraysLogic* logic,
-                       QObject* parent = 0);
+                       QObject* parent = nullptr);
   virtual ~qSlicerDoubleArraysReader();
 
   vtkSlicerDoubleArraysLogic* logic()const;

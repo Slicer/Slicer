@@ -37,7 +37,7 @@ class qMRMLNodeFactoryPrivate
 public:
   qMRMLNodeFactoryPrivate()
     {
-    this->MRMLScene = 0;
+    this->MRMLScene = nullptr;
     }
   vtkMRMLScene * MRMLScene;
   QHash<QString, QString> BaseNames;
@@ -67,7 +67,7 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
 
   if (!d->MRMLScene || className.isEmpty())
     {
-    return 0;
+    return nullptr;
     }
   vtkSmartPointer<vtkMRMLNode> node;
   node.TakeReference( d->MRMLScene->CreateNodeByClass( className.toLatin1() ) );
@@ -75,16 +75,16 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
   Q_ASSERT_X(node, "createNode",
              QString("Failed to create node of type [%1]").arg(className).toLatin1());
 
-  if (node == 0)
+  if (node == nullptr)
     {
-    return 0;
+    return nullptr;
     }
 
   emit this->nodeInstantiated(node);
   // Optionally adding the node into a scene must be done only in
   // signal nodeInitialized. It's a bit arbitrary and feel free to remove
   // the restriction.
-  Q_ASSERT(node->GetScene() == 0);
+  Q_ASSERT(node->GetScene() == nullptr);
 
   QString baseName;
   if (d->BaseNames.contains(className) &&
@@ -117,7 +117,7 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
     {
     vtkMRMLNode* nodeAdded = d->MRMLScene->AddNode(node);
     Q_ASSERT(nodeAdded == node ||
-             node->GetSingletonTag() != 0);
+             node->GetSingletonTag() != nullptr);
     node = nodeAdded;
     }
   emit this->nodeAdded(node);

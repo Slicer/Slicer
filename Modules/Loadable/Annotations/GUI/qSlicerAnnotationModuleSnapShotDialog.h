@@ -11,7 +11,7 @@ class qSlicerAnnotationModuleSnapShotDialog : public qMRMLScreenShotDialog
   Q_OBJECT
 public:
   typedef qMRMLScreenShotDialog Superclass;
-  qSlicerAnnotationModuleSnapShotDialog(QWidget* parent = 0);
+  qSlicerAnnotationModuleSnapShotDialog(QWidget* parent = nullptr);
   virtual ~qSlicerAnnotationModuleSnapShotDialog();
 
   /// Set the Annotation module logic.

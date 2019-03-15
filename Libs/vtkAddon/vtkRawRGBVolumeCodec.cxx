@@ -118,7 +118,7 @@ bool vtkRawRGBVolumeCodec::EncodeImageDataInternal(vtkImageData* inputImageData,
   outputFrame->SetNumberOfComponents(inputImageData->GetNumberOfScalarComponents());
   outputFrame->SetFrameType(vtkStreamingVolumeFrame::IFrame);
   outputFrame->SetCodecFourCC(this->GetFourCC());
-  outputFrame->SetPreviousFrame(NULL);
+  outputFrame->SetPreviousFrame(nullptr);
 
   return true;
 }

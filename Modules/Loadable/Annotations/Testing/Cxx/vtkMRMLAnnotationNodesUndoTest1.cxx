@@ -45,7 +45,7 @@ public:
     //std::cout << "RenderRequestCount [" << this->RenderRequestCount << "]" << std::endl;
     }
 protected:
-  vtkRenderRequestCallback():Renderer(0), RenderRequestCount(0){}
+  vtkRenderRequestCallback():Renderer(nullptr), RenderRequestCount(0){}
   vtkRenderer * Renderer;
   int           RenderRequestCount;
 };

@@ -83,14 +83,14 @@ public:
 qSlicerSubjectHierarchySegmentationsPluginPrivate::qSlicerSubjectHierarchySegmentationsPluginPrivate(qSlicerSubjectHierarchySegmentationsPlugin& object)
 : q_ptr(&object)
 , SegmentationIcon(QIcon(":Icons/Segmentation.png"))
-, ExportBinaryLabelmapAction(NULL)
-, ExportClosedSurfaceAction(NULL)
-, ConvertLabelmapToSegmentationAction(NULL)
-, ConvertModelToSegmentationAction(NULL)
-, ConvertModelHierarchyToSegmentationAction(NULL)
-, Toggle2DFillVisibilityAction(NULL)
-, Toggle2DOutlineVisibilityAction(NULL)
-, Toggle3DVisibilityAction(NULL)
+, ExportBinaryLabelmapAction(nullptr)
+, ExportClosedSurfaceAction(nullptr)
+, ConvertLabelmapToSegmentationAction(nullptr)
+, ConvertModelToSegmentationAction(nullptr)
+, ConvertModelHierarchyToSegmentationAction(nullptr)
+, Toggle2DFillVisibilityAction(nullptr)
+, Toggle2DOutlineVisibilityAction(nullptr)
+, Toggle3DVisibilityAction(nullptr)
 , SegmentSubjectHierarchyItemRemovalInProgress(false)
 {
 }
@@ -808,7 +808,7 @@ void qSlicerSubjectHierarchySegmentationsPlugin::exportToBinaryLabelmap()
       "conversion parameters!\n\nPlease visit the Segmentation module and try the advanced create representation function.").
       arg(segmentationNode->GetName() );
     qCritical() << Q_FUNC_INFO << ": " << message;
-    QMessageBox::warning(NULL, tr("Failed to export segmentation to labelmap node"), message);
+    QMessageBox::warning(nullptr, tr("Failed to export segmentation to labelmap node"), message);
     return;
     }
 
@@ -837,7 +837,7 @@ void qSlicerSubjectHierarchySegmentationsPlugin::exportToBinaryLabelmap()
       "Most probably the segment cannot be converted into binary labelmap representation").
       arg(segmentationNode->GetName());
     qCritical() << Q_FUNC_INFO << ": " << message;
-    QMessageBox::warning(NULL, tr("Failed to export segments"), message);
+    QMessageBox::warning(nullptr, tr("Failed to export segments"), message);
     return;
     }
 }
@@ -879,7 +879,7 @@ void qSlicerSubjectHierarchySegmentationsPlugin::exportToClosedSurface()
       "conversion parameters!\n\nPlease visit the Segmentation module and try the advanced create representation function.").
       arg(segmentationNode->GetName() );
     qCritical() << Q_FUNC_INFO << ": " << message;
-    QMessageBox::warning(NULL, tr("Failed to export segmentation to model hierarchy"), message);
+    QMessageBox::warning(nullptr, tr("Failed to export segmentation to model hierarchy"), message);
     return;
     }
 
@@ -908,7 +908,7 @@ void qSlicerSubjectHierarchySegmentationsPlugin::exportToClosedSurface()
       "Most probably the segment cannot be converted into closed surface representation.").
       arg(segmentationNode->GetName());
     qCritical() << Q_FUNC_INFO << ": " << message;
-    QMessageBox::warning(NULL, tr("Failed to export segments"), message);
+    QMessageBox::warning(nullptr, tr("Failed to export segments"), message);
     return;
     }
 }

@@ -29,7 +29,7 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLNodeComboBoxPlugin : public QObject,
   Q_OBJECT
 
 public:
-  qMRMLNodeComboBoxPlugin(QObject *_parent = 0);
+  qMRMLNodeComboBoxPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;

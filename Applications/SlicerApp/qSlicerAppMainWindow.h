@@ -33,7 +33,7 @@ class Q_SLICER_APP_EXPORT qSlicerAppMainWindow : public qSlicerMainWindow
 public:
   typedef qSlicerMainWindow Superclass;
 
-  qSlicerAppMainWindow(QWidget *parent=0);
+  qSlicerAppMainWindow(QWidget *parent=nullptr);
   virtual ~qSlicerAppMainWindow();
 
 public slots:

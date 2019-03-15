@@ -151,7 +151,7 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotationFiducialsProperties(vtk
     numColumns = 0;
     char *columns = (char *)str.c_str();
     char *ptr = strtok(columns, separatorString);
-    while (ptr != NULL)
+    while (ptr != nullptr)
       {
       if (strcmp(ptr, "label") == 0)
         {
@@ -177,7 +177,7 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotationFiducialsProperties(vtk
         {
         visColumn =  numColumns;
         }
-      ptr = strtok(NULL, separatorString);
+      ptr = strtok(nullptr, separatorString);
       numColumns++;
       }
     // set the total number of columns
@@ -193,7 +193,7 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotationFiducialsProperties(vtk
 int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotation(vtkMRMLAnnotationFiducialNode *refNode)
 {
 
-  if (refNode == NULL)
+  if (refNode == nullptr)
     {
     vtkErrorMacro("ReadAnnotation: unable to read into a null annotation fiducial node node");
     return 0;
@@ -318,7 +318,7 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadDataInternal(vtkMRMLNode *refNode
 //----------------------------------------------------------------------------
 int vtkMRMLAnnotationFiducialsStorageNode::ReadOneFiducial(fstream & fstr, vtkMRMLAnnotationFiducialNode *refNode)
 {
-  if (refNode == NULL)
+  if (refNode == nullptr)
     {
     vtkErrorMacro("ReadOneFiducial: can't read into a null node");
     return 0;

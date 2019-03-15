@@ -181,7 +181,7 @@ void vtkMRMLCommandLineModuleNode::ReadXMLAttributes(const char** atts)
   std::string moduleVersion;
 
   const char **tatts = atts;
-  const char *attName = NULL;
+  const char *attName = nullptr;
   const char *attValue;
   while (*tatts)
     {
@@ -475,7 +475,7 @@ bool vtkMRMLCommandLineModuleNode
     if (this->GetAutoRunMode()
         & vtkMRMLCommandLineModuleNode::AutoRunOnChangedParameter)
       {
-      this->InvokeEvent(vtkMRMLCommandLineModuleNode::AutoRunEvent, 0);
+      this->InvokeEvent(vtkMRMLCommandLineModuleNode::AutoRunEvent, nullptr);
       }
     this->Modified();
     return true;

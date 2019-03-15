@@ -44,7 +44,7 @@ qSlicerSettingsUserInformationPanelPrivate
 ::qSlicerSettingsUserInformationPanelPrivate(qSlicerSettingsUserInformationPanel& object)
   :q_ptr(&object)
 {
-  this->UserInformation = 0;
+  this->UserInformation = nullptr;
 }
 
 // --------------------------------------------------------------------------
@@ -110,7 +110,7 @@ void qSlicerSettingsUserInformationPanel::updateFromUserInformation()
 {
   Q_D(qSlicerSettingsUserInformationPanel);
 
-  if (d->UserInformation == 0)
+  if (d->UserInformation == nullptr)
     {
     return;
     }

@@ -34,7 +34,7 @@ vtkMRMLNodeNewMacro(vtkMRMLProceduralColorNode);
 //----------------------------------------------------------------------------
 vtkMRMLProceduralColorNode::vtkMRMLProceduralColorNode()
 {
-  this->ColorTransferFunction = NULL;
+  this->ColorTransferFunction = nullptr;
   vtkColorTransferFunction* ctf=vtkColorTransferFunction::New();
   this->SetAndObserveColorTransferFunction(ctf);
   ctf->Delete();
@@ -46,7 +46,7 @@ vtkMRMLProceduralColorNode::vtkMRMLProceduralColorNode()
 //----------------------------------------------------------------------------
 vtkMRMLProceduralColorNode::~vtkMRMLProceduralColorNode()
 {
-  this->SetAndObserveColorTransferFunction(NULL);
+  this->SetAndObserveColorTransferFunction(nullptr);
   this->ConvertedCTFtoLUT->Delete();
 }
 
@@ -81,9 +81,9 @@ void vtkMRMLProceduralColorNode::Copy(vtkMRMLNode *anode)
     }
 
   int oldModified=this->StartModify();
-  if (node->GetColorTransferFunction()!=NULL)
+  if (node->GetColorTransferFunction()!=nullptr)
     {
-    if (this->ColorTransferFunction==NULL)
+    if (this->ColorTransferFunction==nullptr)
       {
       vtkColorTransferFunction* ctf=vtkColorTransferFunction::New();
       this->SetAndObserveColorTransferFunction(ctf);
@@ -96,7 +96,7 @@ void vtkMRMLProceduralColorNode::Copy(vtkMRMLNode *anode)
     }
   else
     {
-    this->SetAndObserveColorTransferFunction(NULL);
+    this->SetAndObserveColorTransferFunction(nullptr);
     }
   this->EndModify(oldModified);
 
@@ -107,7 +107,7 @@ void vtkMRMLProceduralColorNode::PrintSelf(ostream& os, vtkIndent indent)
 {
 
   Superclass::PrintSelf(os,indent);
-  if (this->ColorTransferFunction != NULL)
+  if (this->ColorTransferFunction != nullptr)
     {
     os << indent << "ColorTransferFunction:" << endl;
     this->ColorTransferFunction->PrintSelf(os, indent.GetNextIndent());
@@ -127,7 +127,7 @@ void vtkMRMLProceduralColorNode::ProcessMRMLEvents ( vtkObject *caller,
                                            void *callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
-  if (caller!=NULL && caller==this->ColorTransferFunction && event==vtkCommand::ModifiedEvent)
+  if (caller!=nullptr && caller==this->ColorTransferFunction && event==vtkCommand::ModifiedEvent)
     {
     Modified();
     }
@@ -226,7 +226,7 @@ int vtkMRMLProceduralColorNode::GetNumberOfColors()
     }
   return numPoints;
   */
-  if (this->ColorTransferFunction==NULL)
+  if (this->ColorTransferFunction==nullptr)
     {
     return 0;
     }
@@ -264,10 +264,10 @@ bool vtkMRMLProceduralColorNode::GetColor(int entry, double color[4])
 vtkMRMLStorageNode * vtkMRMLProceduralColorNode::CreateDefaultStorageNode()
 {
   vtkMRMLScene* scene = this->GetScene();
-  if (scene == NULL)
+  if (scene == nullptr)
     {
     vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
-    return NULL;
+    return nullptr;
     }
   return vtkMRMLStorageNode::SafeDownCast(
     scene->CreateNodeByClass("vtkMRMLProceduralColorStorageNode"));
@@ -280,12 +280,12 @@ void vtkMRMLProceduralColorNode::SetAndObserveColorTransferFunction(vtkColorTran
     {
     return;
     }
-  if (this->ColorTransferFunction != NULL)
+  if (this->ColorTransferFunction != nullptr)
     {
     vtkEventBroker::GetInstance()->RemoveObservations(
       this->ColorTransferFunction, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
     this->ColorTransferFunction->UnRegister(this);
-    this->ColorTransferFunction=NULL;
+    this->ColorTransferFunction=nullptr;
     }
   this->ColorTransferFunction=ctf;
   if ( this->ColorTransferFunction )
@@ -304,7 +304,7 @@ bool vtkMRMLProceduralColorNode::IsColorMapEqual(vtkColorTransferFunction* tf1, 
     {
     return true;
     }
-  if (tf1==NULL || tf2==NULL)
+  if (tf1==nullptr || tf2==nullptr)
     {
     return false;
     }

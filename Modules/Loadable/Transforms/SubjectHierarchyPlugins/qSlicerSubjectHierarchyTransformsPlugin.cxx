@@ -78,8 +78,8 @@ qSlicerSubjectHierarchyTransformsPluginPrivate::qSlicerSubjectHierarchyTransform
 {
   this->TransformIcon = QIcon(":Icons/Transform.png");
 
-  this->InvertAction = NULL;
-  this->IdentityAction = NULL;
+  this->InvertAction = nullptr;
+  this->IdentityAction = nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -170,7 +170,7 @@ bool qSlicerSubjectHierarchyTransformsPlugin::reparentItemInsideSubjectHierarchy
   if (shNode->IsAnyNodeInBranchTransformed(itemID))
     {
     QMessageBox::StandardButton answer =
-      QMessageBox::question(NULL, tr("Some nodes in the branch are already transformed"),
+      QMessageBox::question(nullptr, tr("Some nodes in the branch are already transformed"),
       tr("Do you want to harden all already applied transforms before setting the new one?\n\n"
       "  Note: If you choose no, then the applied transform will simply be replaced."),
       QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel,

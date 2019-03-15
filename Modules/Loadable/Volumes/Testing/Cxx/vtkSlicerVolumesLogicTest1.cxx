@@ -145,12 +145,12 @@ vtkMRMLScalarVolumeNode * TestScalarVolumeLoading( const char* volumeName,
     {
     std::cerr << "Line " << __LINE__
               << " - Failed to load as scalar volume !" << std::endl;
-    return NULL;
+    return nullptr;
     }
 
   if(!isImageDataValid(__LINE__, volume->GetImageDataConnection()))
     {
-    return NULL;
+    return nullptr;
     }
 
   vtkMRMLScalarVolumeNode *scalarVolume =
@@ -159,7 +159,7 @@ vtkMRMLScalarVolumeNode * TestScalarVolumeLoading( const char* volumeName,
     {
     std::cerr << "Line " << __LINE__
               << " - Failed to read as scalar volume !" << std::endl;
-    return NULL;
+    return nullptr;
     }
 
   return scalarVolume;
@@ -175,12 +175,12 @@ vtkMRMLLabelMapVolumeNode * TestLabelMapVolumeLoading( const char* volumeName,
     {
     std::cerr << "Line " << __LINE__
               << " - Failed to load as scalar volume !" << std::endl;
-    return NULL;
+    return nullptr;
     }
 
   if(!isImageDataValid(__LINE__, volume->GetImageDataConnection()))
     {
-    return NULL;
+    return nullptr;
     }
 
   vtkMRMLLabelMapVolumeNode *labelMapVolume =
@@ -189,7 +189,7 @@ vtkMRMLLabelMapVolumeNode * TestLabelMapVolumeLoading( const char* volumeName,
     {
     std::cerr << "Line " << __LINE__
               << " - Failed to read as label map volume !" << std::endl;
-    return NULL;
+    return nullptr;
     }
 
   return labelMapVolume;
@@ -202,7 +202,7 @@ int TestCheckForLabelVolumeValidity( vtkMRMLScalarVolumeNode* scalarVolume,
 {
   std::string warnings;
 
-  warnings = logic->CheckForLabelVolumeValidity(NULL, NULL);
+  warnings = logic->CheckForLabelVolumeValidity(nullptr, nullptr);
   if (warnings.empty())
     {
     std::cerr << "Line " << __LINE__
@@ -210,7 +210,7 @@ int TestCheckForLabelVolumeValidity( vtkMRMLScalarVolumeNode* scalarVolume,
     return EXIT_FAILURE;
     }
 
-  warnings = logic->CheckForLabelVolumeValidity(scalarVolume, NULL);
+  warnings = logic->CheckForLabelVolumeValidity(scalarVolume, nullptr);
   if (warnings.empty())
     {
     std::cerr << "Line " << __LINE__
@@ -218,7 +218,7 @@ int TestCheckForLabelVolumeValidity( vtkMRMLScalarVolumeNode* scalarVolume,
     return EXIT_FAILURE;
     }
 
-  warnings = logic->CheckForLabelVolumeValidity(NULL, labelMapVolume);
+  warnings = logic->CheckForLabelVolumeValidity(nullptr, labelMapVolume);
   if (warnings.empty())
     {
     std::cerr << "Line " << __LINE__

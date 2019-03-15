@@ -69,21 +69,21 @@ int main(int argc, char * argv[])
     }
 
   // vtk and helper variables
-  vtkITKArchetypeImageSeriesReader* reader = NULL;
+  vtkITKArchetypeImageSeriesReader* reader = nullptr;
   vtkImageData *                    image;
-  vtkWindowedSincPolyDataFilter *   smootherSinc = NULL;
-  vtkDecimatePro *                  decimator = NULL;
+  vtkWindowedSincPolyDataFilter *   smootherSinc = nullptr;
+  vtkDecimatePro *                  decimator = nullptr;
 #if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
-  vtkFlyingEdges3D *                mcubes = NULL;
+  vtkFlyingEdges3D *                mcubes = nullptr;
 #else
   vtkMarchingCubes *                mcubes = NULL;
 #endif
-  vtkTransform *                    transformIJKtoRAS = NULL;
-  vtkReverseSense *                 reverser = NULL;
-  vtkTransformPolyDataFilter *      transformer = NULL;
-  vtkPolyDataNormals *              normals = NULL;
-  vtkStripper *                     stripper = NULL;
-  vtkXMLPolyDataWriter *            writer = NULL;
+  vtkTransform *                    transformIJKtoRAS = nullptr;
+  vtkReverseSense *                 reverser = nullptr;
+  vtkTransformPolyDataFilter *      transformer = nullptr;
+  vtkPolyDataNormals *              normals = nullptr;
+  vtkStripper *                     stripper = nullptr;
+  vtkXMLPolyDataWriter *            writer = nullptr;
 
   // check for the input file
   // - strings that start with slicer: are shared memory references, so they won't exist.
@@ -93,7 +93,7 @@ int main(int argc, char * argv[])
     // check for the input file
     FILE * infile;
     infile = fopen(InputVolume.c_str(), "r");
-    if( infile == NULL )
+    if( infile == nullptr )
       {
       std::cerr << "ERROR: cannot open input volume file " << InputVolume << endl;
       return EXIT_FAILURE;

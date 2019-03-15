@@ -43,7 +43,7 @@ int qSlicerMouseModeToolBarTest1(int argc, char * argv[] )
 
   // now reset it to null and set with app logic
   vtkSlicerApplicationLogic *appLogic = vtkSlicerApplicationLogic::New();
-  mouseToolBar.setMRMLScene(NULL);
+  mouseToolBar.setMRMLScene(nullptr);
   appLogic->SetMRMLScene(scene);
   mouseToolBar.setApplicationLogic(appLogic);
   mouseToolBar.setMRMLScene(scene);
@@ -64,7 +64,7 @@ int qSlicerMouseModeToolBarTest1(int argc, char * argv[] )
   // get the selection and interaction nodes that the mouse mode tool bar
   // listens to
   vtkMRMLNode *mrmlNode;
-  vtkMRMLSelectionNode *selectionNode = NULL;
+  vtkMRMLSelectionNode *selectionNode = nullptr;
   //QString activeActionText;
   mrmlNode = scene->GetNodeByID("vtkMRMLSelectionNodeSingleton");
   if (mrmlNode)
@@ -120,7 +120,7 @@ int qSlicerMouseModeToolBarTest1(int argc, char * argv[] )
       }
     }
 
-  vtkMRMLInteractionNode *interactionNode = NULL;
+  vtkMRMLInteractionNode *interactionNode = nullptr;
   mrmlNode = scene->GetNodeByID("vtkMRMLInteractionNodeSingleton");
   if (mrmlNode)
     {

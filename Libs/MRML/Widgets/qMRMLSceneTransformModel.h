@@ -30,7 +30,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneTransformModel : public qMRMLSceneModel
   Q_OBJECT
 
 public:
-  qMRMLSceneTransformModel(QObject *parent=0);
+  qMRMLSceneTransformModel(QObject *parent=nullptr);
   virtual ~qMRMLSceneTransformModel();
 
   ///
