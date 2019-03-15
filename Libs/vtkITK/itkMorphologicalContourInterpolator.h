@@ -238,7 +238,7 @@ protected:
 
   /** Does the real work. */
   virtual void
-  GenerateData() ITK_OVERRIDE;
+  GenerateData() override;
 
   /** Determines correspondances between two slices and calls appropriate methods. */
   void
@@ -339,7 +339,7 @@ protected:
 
   /** Copied from ImageSource and changed to allocate a cleared buffer. */
   virtual void
-  AllocateOutputs() ITK_OVERRIDE;
+  AllocateOutputs() override;
 
   /** Returns the centroid of given regions */
   typename SliceType::IndexType

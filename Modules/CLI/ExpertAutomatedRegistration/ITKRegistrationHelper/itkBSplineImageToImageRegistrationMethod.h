@@ -66,7 +66,7 @@ public:
   // Methods from Superclass
   //
 
-  virtual void GenerateData( void ) ITK_OVERRIDE;
+  virtual void GenerateData( void ) override;
 
   //
   // Custom Methods
@@ -111,13 +111,13 @@ protected:
   typedef InterpolateImageFunction<TImage, double> InterpolatorType;
   typedef ImageToImageMetric<TImage, TImage>       MetricType;
 
-  virtual void Optimize( MetricType * metric, InterpolatorType * interpolator ) ITK_OVERRIDE;
+  virtual void Optimize( MetricType * metric, InterpolatorType * interpolator ) override;
 
   virtual void GradientOptimize( MetricType * metric, InterpolatorType * interpolator );
 
   virtual void MultiResolutionOptimize( MetricType * metric, InterpolatorType * interpolator );
 
-  virtual void PrintSelf( std::ostream & os, Indent indent ) const ITK_OVERRIDE;
+  virtual void PrintSelf( std::ostream & os, Indent indent ) const override;
 
 private:
 

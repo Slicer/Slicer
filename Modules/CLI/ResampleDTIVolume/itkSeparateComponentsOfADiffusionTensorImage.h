@@ -63,9 +63,9 @@ protected:
 
   void DynamicThreadedGenerateData( const OutputImageRegionType & outputRegionForThread) override;
 
-  void GenerateOutputInformation() ITK_OVERRIDE;
+  void GenerateOutputInformation() override;
 
-  void GenerateInputRequestedRegion() ITK_OVERRIDE;
+  void GenerateInputRequestedRegion() override;
 
 private:
 

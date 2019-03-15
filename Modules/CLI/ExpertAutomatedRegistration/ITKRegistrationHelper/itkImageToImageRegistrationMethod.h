@@ -132,9 +132,9 @@ protected:
   /** Method that actually computes the registration. This method is intended
    * to be overloaded by derived classes. Those overload, however, must
    * invoke this method in the base class. */
-  void GenerateData( void ) ITK_OVERRIDE;
+  void GenerateData( void ) override;
 
-  void PrintSelf( std::ostream & os, Indent indent ) const ITK_OVERRIDE;
+  void PrintSelf( std::ostream & os, Indent indent ) const override;
 
   /** Provide derived classes with access to the Transform member variable. */
   itkSetObjectMacro( Transform, TransformType );
@@ -142,9 +142,9 @@ protected:
   itkGetConstObjectMacro( Transform, TransformType );
 
   using Superclass::MakeOutput;
-  virtual DataObjectPointer   MakeOutput( DataObjectPointerArraySizeType idx ) ITK_OVERRIDE;
+  virtual DataObjectPointer   MakeOutput( DataObjectPointerArraySizeType idx ) override;
 
-  unsigned long               GetMTime( void ) const ITK_OVERRIDE;
+  unsigned long               GetMTime( void ) const override;
 
 protected:
 

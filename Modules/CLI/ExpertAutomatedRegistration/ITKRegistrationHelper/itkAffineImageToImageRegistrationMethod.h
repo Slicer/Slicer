@@ -60,7 +60,7 @@ public:
   // Superclass Methods
   //
 
-  void GenerateData( void ) ITK_OVERRIDE;
+  void GenerateData( void ) override;
 
   //
   // Custom Methods
@@ -100,7 +100,7 @@ protected:
   AffineImageToImageRegistrationMethod( void );
   virtual ~AffineImageToImageRegistrationMethod( void );
 
-  void PrintSelf( std::ostream & os, Indent indent ) const ITK_OVERRIDE;
+  void PrintSelf( std::ostream & os, Indent indent ) const override;
 
 private:
 

@@ -57,7 +57,7 @@ public:
   itkTypeMacro(DiffusionTensor3DFSAffineTransform, DiffusionTensor3DAffineTransform);
 
 protected:
-  void PreCompute() ITK_OVERRIDE;
+  void PreCompute() override;
 
 private:
   MatrixTransformType ComputeMatrixSquareRoot( MatrixTransformType matrix );

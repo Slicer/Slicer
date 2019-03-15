@@ -63,7 +63,7 @@ public:
    *
    * ImageFunction::IsInsideBuffer() can be used to check bounds before
    * calling the method. */
-  virtual bool Evaluate( const PointType& point ) const ITK_OVERRIDE
+  virtual bool Evaluate( const PointType& point ) const override
     {
       IndexType index;
       this->ConvertPointToNearestIndex( point, index );
@@ -79,7 +79,7 @@ public:
    * ImageFunction::IsInsideBuffer() can be used to check bounds before
    * calling the method. */
   virtual bool EvaluateAtContinuousIndex(
-    const ContinuousIndexType & index ) const ITK_OVERRIDE
+    const ContinuousIndexType & index ) const override
     {
       IndexType nindex;
 
@@ -95,7 +95,7 @@ public:
    *
    * ImageFunction::IsInsideBuffer() can be used to check bounds before
    * calling the method. */
-  virtual bool EvaluateAtIndex( const IndexType & index ) const ITK_OVERRIDE
+  virtual bool EvaluateAtIndex( const IndexType & index ) const override
     {
       // Create an N-d neighborhood kernel, using a zeroflux boundary condition
       ConstNeighborhoodIterator<InputImageType>

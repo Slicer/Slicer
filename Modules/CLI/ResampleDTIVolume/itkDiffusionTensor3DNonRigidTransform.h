@@ -47,13 +47,13 @@ public:
   itkNewMacro( Self );
   // /Set the transform
   itkSetObjectMacro( Transform, TransformType );
-  TransformType::Pointer GetTransform() ITK_OVERRIDE;
+  TransformType::Pointer GetTransform() override;
 
   // /Evaluate the position of the transformed tensor in the output image
-  PointType EvaluateTensorPosition( const PointType & point ) ITK_OVERRIDE;
+  PointType EvaluateTensorPosition( const PointType & point ) override;
 
   // /Evaluate the transformed tensor
-  virtual TensorDataType EvaluateTransformedTensor( TensorDataType & tensor, PointType & outputPosition ) ITK_OVERRIDE;
+  virtual TensorDataType EvaluateTransformedTensor( TensorDataType & tensor, PointType & outputPosition ) override;
 
   void SetAffineTransformType(typename AffineTransform::Pointer transform);
 protected:

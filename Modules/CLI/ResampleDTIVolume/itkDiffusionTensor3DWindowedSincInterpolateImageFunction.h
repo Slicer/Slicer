@@ -51,7 +51,7 @@ public:
 
   itkNewMacro(Self);
 protected:
-  void AllocateInterpolator() ITK_OVERRIDE;
+  void AllocateInterpolator() override;
 
   typename WindowedSincInterpolateImageFunctionType::Pointer windowedSincInterpolator[6];
 };

@@ -68,12 +68,12 @@ public:
   itkSetMacro(DontShowParameters, bool);
   itkSetMacro(UpdateInterval, int);
 
-  void Execute( Object * caller, const EventObject & event ) ITK_OVERRIDE
+  void Execute( Object * caller, const EventObject & event ) override
   {
     Execute( (const Object *)caller, event );
   }
 
-  void Execute( const Object * object, const EventObject & event ) ITK_OVERRIDE
+  void Execute( const Object * object, const EventObject & event ) override
   {
     if( typeid( event ) != typeid( IterationEvent ) || object == NULL )
       {

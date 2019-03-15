@@ -56,12 +56,12 @@ public:
 
   itkNewMacro( Self );
   using Superclass::EvaluateTransformedTensor;
-  virtual TensorDataType EvaluateTransformedTensor( TensorDataType & tensor ) ITK_OVERRIDE;
+  virtual TensorDataType EvaluateTransformedTensor( TensorDataType & tensor ) override;
 
   void SetMatrix( MatrixTransformType & matrix );
 
 protected:
-  void PreCompute() ITK_OVERRIDE;
+  void PreCompute() override;
 
   InternalMatrixTransformType ComputeMatrixFromAxisAndAngle( VectorType axis, double cosangle );
 

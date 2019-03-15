@@ -48,7 +48,7 @@ public:
   // /Set the Spline Order, supports 0th - 5th order splines. The default is a 1st order spline.
   itkSetMacro( SplineOrder, unsigned int );
 protected:
-  void AllocateInterpolator() ITK_OVERRIDE;
+  void AllocateInterpolator() override;
 
   DiffusionTensor3DBSplineInterpolateImageFunction();
   unsigned int m_SplineOrder;

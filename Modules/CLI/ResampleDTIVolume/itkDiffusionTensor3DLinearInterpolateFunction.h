@@ -42,7 +42,7 @@ public:
 
   itkNewMacro(Self);
 protected:
-  void AllocateInterpolator() ITK_OVERRIDE;
+  void AllocateInterpolator() override;
 
   typename LinearInterpolateImageFunctionType::Pointer linearInterpolator[6];
 };

@@ -46,7 +46,7 @@ public:
   itkNewMacro( Self );
   // /Evaluate the value of a tensor at a given position
 //  TensorDataType Evaluate( const PointType &point ) ;
-  TensorDataType EvaluateAtContinuousIndex( const ContinuousIndexType & index ) const ITK_OVERRIDE;
+  TensorDataType EvaluateAtContinuousIndex( const ContinuousIndexType & index ) const override;
 
 protected:
 };
