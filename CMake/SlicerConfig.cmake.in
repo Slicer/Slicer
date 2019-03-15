@@ -516,7 +516,7 @@ endforeach()
 @Slicer_EP_USE_SYSTEM_VARS_CONFIG@
 
 # This block should be added after VTK and CTK are found.
-# Indeed, it will check if both VTK_QT_QMAKE_EXECUTABLE and CTK_QT_QMAKE_EXECUTABLE are valid.
+# It will check if CTK_Qt5_DIR is valid.
 include(${Slicer_CMAKE_DIR}/SlicerBlockFindQtAndCheckVersion.cmake)
 
 # --------------------------------------------------------------------------

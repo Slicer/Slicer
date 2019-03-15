@@ -18,11 +18,6 @@
 #
 ################################################################################
 
-#
-# The CMake code used to find Qt4 has been factored out into this CMake script so that
-# it can be used in both Slicer/CMakelists.txt and Slicer/UseSlicer.cmake
-#
-
 macro(__SlicerBlockFindQtAndCheckVersion_find_qt)
     find_package(Qt5 COMPONENTS ${Slicer_REQUIRED_QT_MODULES})
     set(_found_var Qt5_FOUND)
@@ -63,7 +58,7 @@ foreach(v ${expected_defined_vars})
   endif()
 endforeach()
 
-# Check QT_QMAKE_EXECUTABLE provided by VTK
+# Check Qt5_DIR provided by CTK
 set(extra_error_message)
   if(DEFINED CTK_Qt5_DIR AND NOT EXISTS "${CTK_Qt5_DIR}")
     message(FATAL_ERROR "error: You should probably re-configure CTK. CTK_Qt5_DIR points to a nonexistent directory: ${CTK_Qt5_DIR}")
