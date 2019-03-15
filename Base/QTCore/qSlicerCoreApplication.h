@@ -413,7 +413,7 @@ public:
   QString os()const;
 
 #ifdef Slicer_BUILD_DICOM_SUPPORT
-  /// Return the active slicer dicom database (will be NULL until set by dicom
+  /// Return the active slicer dicom database (will be nullptr until set by dicom
   /// management code).
   Q_INVOKABLE ctkDICOMDatabase* dicomDatabase() const;
 

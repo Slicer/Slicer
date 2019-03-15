@@ -127,7 +127,7 @@ public:
   virtual void ApplyTransform(vtkAbstractTransform* transform) override;
 
   // Description:
-  // Create default storage node or NULL if does not have one
+  // Create default storage node or nullptr if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
   //  void Initialize(vtkMRMLScene* mrmlScene);

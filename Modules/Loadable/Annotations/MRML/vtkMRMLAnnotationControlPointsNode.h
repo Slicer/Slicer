@@ -93,11 +93,11 @@ public:
     }
 
   // Description:
-  // get associated display node or NULL if not set
+  // get associated display node or nullptr if not set
   vtkMRMLAnnotationPointDisplayNode* GetAnnotationPointDisplayNode();
 
   // Description:
-  // Create default storage node or NULL if does not have one
+  // Create default storage node or nullptr if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
   int  AddControlPoint(double newControl[3],int selectedFlag, int visibleFlag);

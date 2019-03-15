@@ -157,20 +157,20 @@ public:
   /// Find child by ID
   /// \param itemID ID to find
   /// \param recursive Flag whether to find only direct children (false) or in the whole branch (true). True by default
-  /// \return Item if found, NULL otherwise
+  /// \return Item if found, nullptr otherwise
   vtkSubjectHierarchyItem* FindChildByID(vtkIdType itemID, bool recursive=true);
   /// Find child by associated data MRML node
   /// \param dataNode Data MRML node to find
   /// \param recursive Flag whether to find only direct children (false) or in the whole branch (true). True by default
-  /// \return Item if found, NULL otherwise
+  /// \return Item if found, nullptr otherwise
   vtkSubjectHierarchyItem* FindChildByDataNode(vtkMRMLNode* dataNode, bool recursive=true);
   /// Find child by UID (exact match)
   /// \param recursive Flag whether to find only direct children (false) or in the whole branch (true). True by default
-  /// \return Item if found, NULL otherwise
+  /// \return Item if found, nullptr otherwise
   vtkSubjectHierarchyItem* FindChildByUID(std::string uidName, std::string uidValue, bool recursive=true);
   /// Find child by UID list (containing). For example find UID in instance UID list
   /// \param recursive Flag whether to find only direct children (false) or in the whole branch (true). True by default
-  /// \return Item if found, NULL otherwise
+  /// \return Item if found, nullptr otherwise
   vtkSubjectHierarchyItem* FindChildByUIDList(std::string uidName, std::string uidValue, bool recursive=true);
   /// Find children by name
   /// \param name Name (or part of a name) to find
@@ -178,7 +178,7 @@ public:
   /// \param contains Flag whether string containment is enough to determine match. True means a substring is searched
   ///   (case insensitive), false means that the name needs to match exactly (case sensitive)
   /// \param recursive Flag whether to find only direct children (false) or in the whole branch (true). True by default
-  /// \return Item if found, NULL otherwise
+  /// \return Item if found, nullptr otherwise
   void FindChildrenByName( std::string name, std::vector<vtkIdType> &foundItemIDs,
                            bool contains=false, bool recursive=true );
   /// Get data nodes (of a certain type) associated to items in the branch of this item
@@ -193,7 +193,7 @@ public:
   /// Reparent item under new parent
   bool Reparent(vtkSubjectHierarchyItem* newParentItem);
   /// Move item before given item under the same parent
-  /// \param beforeItem Item to move given item before. If NULL then insert to the end
+  /// \param beforeItem Item to move given item before. If nullptr then insert to the end
   /// \return Success flag
   bool Move(vtkSubjectHierarchyItem* beforeItem);
   /// Get position of item under its parent
@@ -344,7 +344,7 @@ vtkIdType vtkSubjectHierarchyItem::AddToTree(vtkSubjectHierarchyItem* parent, st
   else if (! ( (!name.compare("Scene") && !level.compare("Scene"))
             || (!name.compare("UnresolvedItems") && !level.compare("UnresolvedItems")) ) )
     {
-    // Only the scene item or the unresolved items parent can have NULL parent
+    // Only the scene item or the unresolved items parent can have nullptr parent
     vtkErrorMacro("AddToTree: Invalid parent of non-scene item to add");
     }
 
@@ -859,7 +859,7 @@ void vtkSubjectHierarchyItem::FindChildrenByName(std::string name, std::vector<v
 }
 
 //---------------------------------------------------------------------------
-void vtkSubjectHierarchyItem::GetDataNodesInBranch(vtkCollection* dataNodeCollection, const char* childClass/*=NULL*/)
+void vtkSubjectHierarchyItem::GetDataNodesInBranch(vtkCollection* dataNodeCollection, const char* childClass/*=nullptr*/)
 {
   if (dataNodeCollection == nullptr)
     {
@@ -1609,7 +1609,7 @@ bool vtkMRMLSubjectHierarchyNode::vtkInternal::ResolveUnresolvedItems()
           }
         if (!dataNode)
           {
-          vtkErrorWithObjectMacro(this->External, "ResolveUnresolvedItems: Unable to find data node with ID " << (newDataNodeID ? newDataNodeID : "(NULL)"));
+          vtkErrorWithObjectMacro(this->External, "ResolveUnresolvedItems: Unable to find data node with ID " << (newDataNodeID ? newDataNodeID : "(nullptr)"));
           }
         // Resolve data node pointer
         item->DataNode = dataNode;
@@ -2567,7 +2567,7 @@ bool vtkMRMLSubjectHierarchyNode::MoveItem(vtkIdType itemID, vtkIdType beforeIte
     return false;
     }
 
-  // If before item ID is invalid (and the item is NULL), then move to the end
+  // If before item ID is invalid (and the item is nullptr), then move to the end
   vtkSubjectHierarchyItem* beforeItem = this->Internal->SceneItem->FindChildByID(beforeItemID);
 
   // Perform move
@@ -2639,7 +2639,7 @@ vtkIdType vtkMRMLSubjectHierarchyNode::GetItemChildWithName(vtkIdType parentItem
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSubjectHierarchyNode::GetDataNodesInBranch(vtkIdType itemID, vtkCollection* dataNodeCollection, const char* childClass/*=NULL*/)
+void vtkMRMLSubjectHierarchyNode::GetDataNodesInBranch(vtkIdType itemID, vtkCollection* dataNodeCollection, const char* childClass/*=nullptr*/)
 {
   vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
   if (!item)
@@ -2842,7 +2842,7 @@ vtkIdType vtkMRMLSubjectHierarchyNode::GetItemAncestorAtLevel(vtkIdType itemID, 
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLSubjectHierarchyNode::IsAnyNodeInBranchTransformed(vtkIdType itemID, vtkMRMLTransformNode* exceptionNode/*=NULL*/)
+bool vtkMRMLSubjectHierarchyNode::IsAnyNodeInBranchTransformed(vtkIdType itemID, vtkMRMLTransformNode* exceptionNode/*=nullptr*/)
 {
   // Check transformable node from the item itself if any
   vtkSubjectHierarchyItem* item = this->Internal->SceneItem->FindChildByID(itemID);

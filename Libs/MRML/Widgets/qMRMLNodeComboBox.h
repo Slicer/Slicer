@@ -284,7 +284,7 @@ public slots:
   ///
   /// Its name is generated using \a basename.
   ///
-  /// \return The new node or NULL if \a nodeType is not among the allowed
+  /// \return The new node or nullptr if \a nodeType is not among the allowed
   /// node types specified using setNodeTypes().
   ///
   /// \sa nodeTypes()
@@ -312,7 +312,7 @@ public slots:
   virtual void renameCurrentNode();
 
 signals:
-  /// This signal is sent anytime the current node is changed. NULL if
+  /// This signal is sent anytime the current node is changed. nullptr if
   /// no node is current or the current item is "None".
   void currentNodeChanged(vtkMRMLNode* node);
 

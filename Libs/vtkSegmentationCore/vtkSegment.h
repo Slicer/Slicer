@@ -74,7 +74,7 @@ public:
   /// Get representation of a given type. This class is not responsible for conversion, only storage!
   /// \param name Representation name. Default representation names can be queried from \sa vtkSegmentationConverter,
   ///   for example by calling vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()
-  /// \return The specified representation object, NULL if not present
+  /// \return The specified representation object, nullptr if not present
   vtkDataObject* GetRepresentation(std::string name);
 
   /// Add representation

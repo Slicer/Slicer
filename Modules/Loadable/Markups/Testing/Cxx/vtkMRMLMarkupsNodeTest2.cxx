@@ -147,17 +147,17 @@ int vtkMRMLMarkupsNodeTest2(int , char * [] )
       }
     }
 
-  // Check returned value with a NULL ID
+  // Check returned value with a nullptr ID
   vtkMRMLMarkupsNode::ControlPoint* markupNull = node1->GetNthControlPointByID(nullptr);
   int indexNull = node1->GetNthControlPointIndexByID(nullptr);
   if (markupNull)
     {
-    std::cerr << "Get Markup by ID with NULL parameters failed" << std::endl;
+    std::cerr << "Get Markup by ID with nullptr parameters failed" << std::endl;
     return EXIT_FAILURE;
     }
   if (indexNull >= 0)
     {
-    std::cerr << "Get Markup index by ID with NULL parameters failed" << std::endl;
+    std::cerr << "Get Markup index by ID with nullptr parameters failed" << std::endl;
     return EXIT_FAILURE;
     }
 

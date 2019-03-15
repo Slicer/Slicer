@@ -1553,7 +1553,7 @@ void vtkMRMLSliceNode::JumpAllSlices(double r, double a, double s)
 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::JumpAllSlices(vtkMRMLScene* scene, double r, double a, double s,
-  int jumpMode /* =vtkMRMLSliceNode::DefaultJumpSlice */, int viewGroup /* =-1 */, vtkMRMLSliceNode* exclude /*=NULL*/)
+  int jumpMode /* =vtkMRMLSliceNode::DefaultJumpSlice */, int viewGroup /* =-1 */, vtkMRMLSliceNode* exclude /*=nullptr*/)
 {
   if (!scene)
     {

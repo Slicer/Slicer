@@ -31,7 +31,7 @@ void vtkTagTableCollection::AddTableByName ( vtkTagTable *t, const char *name )
 {
   if ( name == nullptr )
     {
-    vtkErrorMacro ( "vtkTagTableCollection::AddTableByName got NULL name." );
+    vtkErrorMacro ( "vtkTagTableCollection::AddTableByName got nullptr name." );
     return;
     }
   t->SetName ( name );
@@ -45,7 +45,7 @@ void vtkTagTableCollection::DeleteTableByName ( const char *name )
 
   if ( name == nullptr )
     {
-    vtkErrorMacro ( "vtkTagTableCollection::DeleteTableByName got NULL name." );
+    vtkErrorMacro ( "vtkTagTableCollection::DeleteTableByName got nullptr name." );
     return;
     }
   vtkTagTable *t;
@@ -117,7 +117,7 @@ vtkTagTable *vtkTagTableCollection::FindTagTableByName (const char *name )
 
   if ( name == nullptr )
     {
-    vtkErrorMacro ( "vtkTagTableCollection::FindTagTableByName got NULL name." );
+    vtkErrorMacro ( "vtkTagTableCollection::FindTagTableByName got nullptr name." );
     return nullptr;
     }
   vtkTagTable *t;

@@ -14,11 +14,11 @@ vtkMRMLPETProceduralColorNode::vtkMRMLPETProceduralColorNode()
 {
 
   // all this is done in the superclass...
-  //this->Name = NULL;
+  //this->Name = nullptr;
   //this->SetName("");
-  //this->FileName = NULL;
+  //this->FileName = nullptr;
 
-  //this->ColorTransferFunction = NULL;
+  //this->ColorTransferFunction = nullptr;
   //this->ColorTransferFunction = vtkColorTransferFunction::New();
 }
 

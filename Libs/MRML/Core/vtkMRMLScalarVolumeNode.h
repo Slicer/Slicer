@@ -65,7 +65,7 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
   virtual vtkMRMLScalarVolumeDisplayNode* GetScalarVolumeDisplayNode();
 
   ///
-  /// Create default storage node or NULL if does not have one
+  /// Create default storage node or nullptr if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
   ///

@@ -49,7 +49,7 @@
 ///
 /// \endcode
 
-/// Verifies that pointer is NULL
+/// Verifies that pointer is nullptr
 #define CHECK_NULL(pointer) \
   { \
   const void* pointerValue = (pointer); \
@@ -59,7 +59,7 @@
     } \
   }
 
-/// Verifies that pointer is not NULL
+/// Verifies that pointer is not nullptr
 #define CHECK_NOT_NULL(pointer) \
   { \
   if (!vtkAddonTestingUtilities::CheckNotNull(__LINE__,#pointer " is NULL", (pointer))) \
@@ -68,7 +68,7 @@
     } \
   }
 
-/// Verifies that pointer is NULL,
+/// Verifies that pointer is nullptr,
 /// if check fails then it calls methodToCallOnFailure before returning with failure
 #define CHECK_NOT_NULL_ADD_REPORT(pointer, methodToCallOnFailure) \
   { \
@@ -153,7 +153,7 @@
   }
 
 /// Verifies if actual const char* value is the same as expected.
-/// It can handle NULL pointer inputs.
+/// It can handle nullptr pointer inputs.
 #define CHECK_STRING(actual, expected) \
   { \
   if (!vtkAddonTestingUtilities::CheckString(__LINE__,#actual " != " #expected, (actual), (expected))) \
@@ -164,7 +164,7 @@
 
 /// Verifies if actual std::string value is the same as expected.
 /// It is safe to use for comparing std::string values.
-/// It cannot handle NULL pointer inputs.
+/// It cannot handle nullptr pointer inputs.
 #define CHECK_STD_STRING(actual, expected) \
   { \
   std::string a = (actual); \
@@ -177,7 +177,7 @@
 
 /// Verifies if actual const char* value is the same as expected,
 /// if check fails then it calls methodToCallOnFailure before returning with failure
-/// It can handle NULL pointer inputs.
+/// It can handle nullptr pointer inputs.
 #define CHECK_STRING_ADD_REPORT(actual, expected, methodToCallOnFailure) \
   { \
   if (!vtkAddonTestingUtilities::CheckString(__LINE__,#actual " != " #expected, (actual), (expected))) \
@@ -188,7 +188,7 @@
   }
 
 /// Verifies if actual const char* value is not the same as expected.
-/// It can handle NULL pointer inputs.
+/// It can handle nullptr pointer inputs.
 #define CHECK_STRING_DIFFERENT(actual, expected) \
   { \
   if (!vtkAddonTestingUtilities::CheckString(__LINE__,#actual " != " #expected, (actual), (expected), false)) \
@@ -199,7 +199,7 @@
 
 /// Verifies if actual std::string value is not the same as expected.
 /// It is safe to use for comparing std::string values.
-/// It cannot handle NULL pointer inputs.
+/// It cannot handle nullptr pointer inputs.
 #define CHECK_STD_STRING_DIFFERENT(actual, expected) \
   { \
   std::string a = (actual); \

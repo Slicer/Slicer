@@ -326,7 +326,7 @@ void qSlicerCoreApplicationPrivate::init()
   // -- allows any dependent nodes to be created
   // Note that Interaction and Selection Node are now created
   // in MRMLApplicationLogic.
-  //this->AppLogic->ProcessMRMLEvents(scene, vtkCommand::ModifiedEvent, NULL);
+  //this->AppLogic->ProcessMRMLEvents(scene, vtkCommand::ModifiedEvent, nullptr);
   //this->AppLogic->SetAndObserveMRMLScene(scene);
   this->AppLogic->CreateProcessingThread();
 

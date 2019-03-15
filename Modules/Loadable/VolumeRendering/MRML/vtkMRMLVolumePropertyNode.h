@@ -159,7 +159,7 @@ public:
   /// Reimplemented for internal reasons.
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData) override;
 
-  /// Create default storage node or NULL if does not have one
+  /// Create default storage node or nullptr if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
   /// \sa vtkMRMLStorableNode::GetModifiedSinceRead()

@@ -32,7 +32,7 @@ vtkMRMLAnnotationRulerNode::vtkMRMLAnnotationRulerNode()
 //----------------------------------------------------------------------------
 vtkMRMLAnnotationRulerNode::~vtkMRMLAnnotationRulerNode()
 {
-  vtkDebugMacro("Destructing...." << (this->GetID() != NULL ? this->GetID() : "null id"));
+  vtkDebugMacro("Destructing...." << (this->GetID() != nullptr ? this->GetID() : "null id"));
   if (this->DistanceAnnotationFormat)
     {
       delete [] this->DistanceAnnotationFormat;

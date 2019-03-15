@@ -241,7 +241,7 @@ void SkelGraph::FindMaximalPath()
   for (std::deque<skel_branch>::iterator act_endbranch = m_Graph.begin(); act_endbranch != m_Graph.end(); ++act_endbranch)
     {
     //  search for next entry that has neighbors but
-    // end_1_neighbors == NULL OR act_endbranch->end_2_neighbors != NULL
+    // end_1_neighbors == nullptr OR act_endbranch->end_2_neighbors != nullptr
     if (act_endbranch->end_1_neighbors.empty() && act_endbranch->end_2_neighbors.empty())
       {
       // no neighbors

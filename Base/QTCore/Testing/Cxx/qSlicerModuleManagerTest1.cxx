@@ -38,7 +38,7 @@ int qSlicerModuleManagerTest1(int argc, char * argv [] )
 
   qSlicerModuleFactory * factory = moduleManager.factory();
 
-  if( factory == NULL )
+  if( factory == nullptr )
     {
     std::cerr << "Error in factory()" << std::endl;
     return EXIT_FAILURE;
@@ -72,7 +72,7 @@ int qSlicerModuleManagerTest1(int argc, char * argv [] )
 
   qSlicerAbstractModule * module = moduleManager.module( moduleName );
 
-  if( module == NULL )
+  if( module == nullptr )
     {
     std::cerr << "Error in getModule() " << std::endl;
     return EXIT_FAILURE;

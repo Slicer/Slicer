@@ -804,7 +804,7 @@ void vtkSliceIntersectionWidget::MoveSlice(double delta)
 //----------------------------------------------------------------------------
 void vtkSliceIntersectionWidget::CycleVolumeLayer(int layer, int direction)
 {
-  // first, find the current volume index for the given layer (can be NULL)
+  // first, find the current volume index for the given layer (can be nullptr)
   vtkMRMLScene *scene = this->SliceLogic->GetMRMLScene();
   vtkMRMLSliceCompositeNode *sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
   char *volumeID = nullptr;

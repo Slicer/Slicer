@@ -339,7 +339,7 @@ std::vector<vtkMRMLStorageNode*> vtkMRMLStorableNode::GetStorageNodes()const
 //----------------------------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLStorableNode::GetStorageNode()
 {
-  vtkMRMLStorageNode* node = NULL;
+  vtkMRMLStorageNode* node = nullptr;
   if (this->GetScene() && this->GetStorageNodeID() )
     {
     vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->StorageNodeID);
@@ -409,7 +409,7 @@ vtkTimeStamp vtkMRMLStorableNode::GetStoredTime()
 }
 
 //---------------------------------------------------------------------------
-std::string vtkMRMLStorableNode::GetDefaultStorageNodeClassName(const char* vtkNotUsed(filename) /* =NULL */)
+std::string vtkMRMLStorableNode::GetDefaultStorageNodeClassName(const char* vtkNotUsed(filename) /* =nullptr */)
 {
   std::string defaultStorageNodeClassName;
   vtkSmartPointer<vtkMRMLStorageNode> defaultStorageNode = vtkSmartPointer<vtkMRMLStorageNode>::Take(this->CreateDefaultStorageNode());
@@ -421,7 +421,7 @@ std::string vtkMRMLStorableNode::GetDefaultStorageNodeClassName(const char* vtkN
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLStorableNode::AddDefaultStorageNode(const char* filename /* =NULL */)
+bool vtkMRMLStorableNode::AddDefaultStorageNode(const char* filename /* =nullptr */)
 {
   vtkMRMLStorageNode* storageNode = this->GetStorageNode();
   if (storageNode)

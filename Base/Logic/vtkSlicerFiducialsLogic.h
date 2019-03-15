@@ -37,7 +37,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerFiducialsLogic : public vtkMRMLAbstr
   vtkTypeMacro(vtkSlicerFiducialsLogic, vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  /// Get the currently selected list from the scene. Returns NULL if no
+  /// Get the currently selected list from the scene. Returns nullptr if no
   /// selection node or no active fiducial list id is set on the selection
   /// node.
   vtkMRMLFiducialListNode *GetSelectedList();
@@ -67,7 +67,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerFiducialsLogic : public vtkMRMLAbstr
   int AddFiducialPicked(float x, float y, float z, int selected = 0);
 
   ///
-  /// Load a fiducial list from file, returns NULL on failure
+  /// Load a fiducial list from file, returns nullptr on failure
   vtkMRMLFiducialListNode *LoadFiducialList(const char *path);
 
 protected:

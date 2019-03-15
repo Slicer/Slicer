@@ -178,7 +178,7 @@ void vtkSlicerAngleRepresentation2D::BuildArc()
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerAngleRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData /*=NULL*/)
+void vtkSlicerAngleRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData /*=nullptr*/)
 {
   Superclass::UpdateFromMRML(caller, event, callData);
 

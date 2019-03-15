@@ -98,7 +98,7 @@ public:
   /// Get segment ID of selected segment
   Q_INVOKABLE QString currentSegmentID()const;
 
-  /// Return active effect if selected, NULL otherwise
+  /// Return active effect if selected, nullptr otherwise
   /// \sa m_ActiveEffect, setActiveEffect()
   Q_INVOKABLE qSlicerSegmentEditorAbstractEffect* activeEffect()const;
   /// Set active effect
@@ -106,7 +106,7 @@ public:
   Q_INVOKABLE void setActiveEffect(qSlicerSegmentEditorAbstractEffect* effect);
 
   /// Get an effect object by name
-  /// \return The effect instance if exists, NULL otherwise
+  /// \return The effect instance if exists, nullptr otherwise
   Q_INVOKABLE qSlicerSegmentEditorAbstractEffect* effectByName(QString name);
 
   /// Get list of all registered effect names that can be displayed in the widget.
@@ -135,7 +135,7 @@ public:
   Q_INVOKABLE int effectCount();
 
   /// Get n-th effect shown in the widget. n>=0 and n<effectCount().
-  /// \return The effect instance if exists, NULL otherwise
+  /// \return The effect instance if exists, nullptr otherwise
   Q_INVOKABLE qSlicerSegmentEditorAbstractEffect* effectByIndex(int index);
 
   /// Create observations between slice view interactor and the widget.

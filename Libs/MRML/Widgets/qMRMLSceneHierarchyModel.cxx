@@ -209,7 +209,7 @@ int qMRMLSceneHierarchyModel::nodeIndex(vtkMRMLNode* node)const
   for (nodes->InitTraversal(it);
        (n = (vtkMRMLNode*)nodes->GetNextItemAsObject(it)) ;)
     {
-    // note: parent can be NULL, it means that the scene is the parent
+    // note: parent can be nullptr, it means that the scene is the parent
     vtkMRMLHierarchyNode *currentHierarchyNode =
       vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(d->MRMLScene, n->GetID());
     vtkMRMLNode *currentParentNode =

@@ -81,7 +81,7 @@ public:
   /// Apply transform node as parent transform on subject hierarchy node and on all children, recursively
   /// \param shNode Subject hierarchy where item can be found
   /// \param itemID Subject hierarchy item defining branch to apply transform on
-  /// \param transformNode Transform node to apply. If NULL, then any existing transform is removed
+  /// \param transformNode Transform node to apply. If nullptr, then any existing transform is removed
   /// \param hardenExistingTransforms Mode of handling already transformed nodes. If true (default), then the possible parent transforms
   ///   of target nodes are hardened before applying the specified transform. If false, then the already applied parent transforms are
   ///   transformed with the specified transform (Note: this latter approach may result in unwanted transformations of other nodes)

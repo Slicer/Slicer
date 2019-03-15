@@ -563,7 +563,7 @@ int ExerciseAllBasicMRMLMethods(vtkMRMLNode* node)
 }
 
 // ----------------------------------------------------------------------------
-int ExerciseSceneLoadingMethods(const char * sceneFilePath, vtkMRMLScene* inputScene /* = NULL */)
+int ExerciseSceneLoadingMethods(const char * sceneFilePath, vtkMRMLScene* inputScene /* = nullptr */)
 {
   vtkSmartPointer<vtkMRMLScene> scene;
   if (inputScene)

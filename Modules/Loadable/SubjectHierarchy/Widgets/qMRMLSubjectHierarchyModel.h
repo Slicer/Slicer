@@ -113,7 +113,7 @@ public:
 
   vtkMRMLSubjectHierarchyNode* subjectHierarchyNode()const;
 
-  /// NULL until a valid scene is set
+  /// nullptr until a valid scene is set
   QStandardItem* subjectHierarchySceneItem()const;
   /// Invalid until a valid scene is set
   QModelIndex subjectHierarchySceneIndex()const;

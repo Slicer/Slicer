@@ -576,7 +576,7 @@ const char *vtkMRMLAnnotationNode::GetAttributeTypesEnumAsString(int val)
 };
 
 //---------------------------------------------------------------------------
-std::string vtkMRMLAnnotationNode::GetDefaultStorageNodeClassName(const char* filename /* =NULL */)
+std::string vtkMRMLAnnotationNode::GetDefaultStorageNodeClassName(const char* filename /* =nullptr */)
 {
   return vtkMRMLStorableNode::GetDefaultStorageNodeClassName(filename);
 }

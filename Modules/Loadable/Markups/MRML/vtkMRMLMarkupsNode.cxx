@@ -560,7 +560,7 @@ int vtkMRMLMarkupsNode::AddControlPoint(ControlPoint *controlPoint)
 }
 
 //-----------------------------------------------------------
-int vtkMRMLMarkupsNode::AddNControlPoints(int n, std::string label /*=std::string()*/, vtkVector3d* point /*=NULL*/)
+int vtkMRMLMarkupsNode::AddNControlPoints(int n, std::string label /*=std::string()*/, vtkVector3d* point /*=nullptr*/)
 {
   int controlPointIndex = -1;
   if (n < 0)

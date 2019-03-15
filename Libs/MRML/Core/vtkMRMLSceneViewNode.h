@@ -108,7 +108,7 @@ class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLStorableNode
 
 
   ///
-  /// Create default storage node or NULL if does not have one
+  /// Create default storage node or nullptr if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
   /// Get vector of nodes of a specified class in the scene.
@@ -117,7 +117,7 @@ class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLStorableNode
   int GetNodesByClass(const char *className, std::vector<vtkMRMLNode *> &nodes);
   /// Get a collection of nodes of a specified class (for python access)
   /// You are responsible for deleting the returned collection.
-  /// Returns NULL on failure.
+  /// Returns nullptr on failure.
   /// \sa vtkMRMLScene::GetNodesByClass
   vtkCollection* GetNodesByClass(const char *className);
 

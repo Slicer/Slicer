@@ -39,7 +39,7 @@
 // NOTE:
 //
 // For decorators it is assumed that the methods will never be called
-// with the self argument as NULL.  The self argument is the first argument
+// with the self argument as nullptr.  The self argument is the first argument
 // for non-static methods.
 //
 

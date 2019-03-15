@@ -61,7 +61,7 @@ public:
   unsigned int topSeriesHeaderRow();
 
   /// Find exportable for tags table row index
-  /// \return NULL if patient or study row, or if header row. The corresponding exportable otherwise.
+  /// \return nullptr if patient or study row, or if header row. The corresponding exportable otherwise.
   qSlicerDICOMExportable* exportableForRowIndex(unsigned int row);
 
   /// Insert empty row in tags table and make sure the header row indices are updated accordingly
@@ -199,7 +199,7 @@ qSlicerDICOMExportable* qSlicerDICOMTagEditorWidgetPrivate::exportableForRowInde
   QList<unsigned int> headerRowIndices = this->SeriesTagsHeaderRows.keys();
   if (headerRowIndices.contains(row))
     {
-    // If row is a header, then return NULL without logging error
+    // If row is a header, then return nullptr without logging error
     return nullptr;
     }
 

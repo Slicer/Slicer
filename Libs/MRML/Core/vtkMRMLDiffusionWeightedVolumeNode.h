@@ -93,7 +93,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeNode : public vtkMRMLScalarV
   virtual vtkMRMLDiffusionWeightedVolumeDisplayNode* GetDiffusionWeightedVolumeDisplayNode();
 
   ///
-  /// Create default storage node or NULL if does not have one
+  /// Create default storage node or nullptr if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
   ///

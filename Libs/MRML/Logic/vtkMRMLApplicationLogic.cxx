@@ -1064,7 +1064,7 @@ int vtkMRMLApplicationLogic::LoadDefaultParameterSets(vtkMRMLScene* scene,
 //   UserParameterSetsPath to the object and some window
 //
 //   // add the list of dirs set from the application
-//   if (this->UserColorFilePaths != NULL)
+//   if (this->UserColorFilePaths != nullptr)
 //     {
 //     vtkDebugMacro("\nFindColorFiles: got user color file paths = " << this->UserColorFilePaths);
 //     // parse out the list, breaking at delimiter strings
@@ -1074,12 +1074,12 @@ int vtkMRMLApplicationLogic::LoadDefaultParameterSets(vtkMRMLScene* scene,
 //     const char *delim = ":";
 // #endif
 //     char *ptr = strtok(this->UserColorFilePaths, delim);
-//     while (ptr != NULL)
+//     while (ptr != nullptr)
 //       {
 //       std::string dir = std::string(ptr);
 //       vtkDebugMacro("\nFindColorFiles: Adding user dir " << dir.c_str() << " to the directories to check");
 //       DirectoriesToCheck.push_back(dir);
-//       ptr = strtok(NULL, delim);
+//       ptr = strtok(nullptr, delim);
 //       }
 //     } else { vtkDebugMacro("\nFindColorFiles: oops, the user color file paths aren't set!"); }
 

@@ -215,7 +215,7 @@ int vtkFSSurfaceReader::RequestData(
   // the normals. If we can't, no big deal.
   vertices = (FSVertex*) calloc (numVertices, sizeof(FSVertex));
   faces = (FSFace*) calloc (numFaces, sizeof(FSFace));
-  if (NULL == vertices || NULL == faces) {
+  if (nullptr == vertices || nullptr == faces) {
     vtkErrorMacro (<< "Couldn't allocate vertex or face connectivity "
            "structures, unable to calc normals");
   }
@@ -223,7 +223,7 @@ int vtkFSSurfaceReader::RequestData(
 
   totalSteps = numVertices + (numFaces*faceMultiplier/faceIncrement * numVerticesPerFace);
 #if FS_CALC_NORMALS
-  if (NULL != vertices && NULL != faces) {
+  if (nullptr != vertices && nullptr != faces) {
       for (vIndex = 0; vIndex < numVertices; vIndex++) {
           fv1 = &vertices[vIndex];
           for (fvIndex = 0; fvIndex < fv1->numFaces; fvIndex++) {
@@ -266,7 +266,7 @@ int vtkFSSurfaceReader::RequestData(
 #if FS_CALC_NORMALS
     // If we have connectivity info, fill out the location and
     // initialize the normals to 0 for this vertex.
-      if (NULL != vertices && NULL != faces) {
+      if (nullptr != vertices && nullptr != faces) {
           v = &vertices[vIndex];
           v->x = locations[0];
           v->y = locations[1];
@@ -321,7 +321,7 @@ int vtkFSSurfaceReader::RequestData(
         // the vertex index and add this face index to its list of
         // faces. Then add this vertex index to the list of indices in
         // the face.
-        if (NULL != vertices && NULL != faces) {
+        if (nullptr != vertices && nullptr != faces) {
             v = &vertices[tmpfIndex];
             v->faces[v->numFaces] = fIndex;
             v->indicesInFace[v->numFaces] = fvIndex;
@@ -352,7 +352,7 @@ int vtkFSSurfaceReader::RequestData(
 
   // If we allocated the space for our vertex and face connectivity,
   // calculate the normals.
-  if (NULL != vertices && NULL != faces) {
+  if (nullptr != vertices && nullptr != faces) {
       // For each vertex...
       for (vIndex = 0; vIndex < numVertices; vIndex++) {
 

@@ -198,7 +198,7 @@ vtkMRMLDisplayNode* vtkMRMLDisplayableHierarchyNode::GetDisplayNode()
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayableHierarchyNode::SetAndObserveDisplayNodeID(const char *displayNodeID)
 {
-  vtkSetAndObserveMRMLObjectMacro(this->DisplayNode, NULL);
+  vtkSetAndObserveMRMLObjectMacro(this->DisplayNode, nullptr);
 
   this->SetDisplayNodeID(displayNodeID);
 

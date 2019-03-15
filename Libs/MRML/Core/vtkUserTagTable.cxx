@@ -38,7 +38,7 @@ vtkUserTagTable::~vtkUserTagTable()
       }
 
     this->TagTable->Delete();
-    this->TagTable = NULL;
+    this->TagTable = nullptr;
     }
 }
 
@@ -55,9 +55,9 @@ void vtkUserTagTable::PrintSelf(ostream& os, vtkIndent indent)
 int vtkUserTagTable::AddKeywordValuePair ( const char *keyword, const char *value)
 {
 
-  if ( this->TagTable && keyword != NULL )
+  if ( this->TagTable && keyword != nullptr )
     {
-    if ( value == NULL )
+    if ( value == nullptr )
       {
       value = "NULL";
       }
@@ -85,10 +85,10 @@ int vtkUserTagTable::AddKeywordValuePair ( const char *keyword, const char *valu
 int vtkUserTagTable::AddKeywordValuePair ( const char *keyword, void *value)
 {
 
-  if ( this->TagTable && keyword != NULL )
+  if ( this->TagTable && keyword != nullptr )
     {
       std::stringstream ss;
-    if ( value != NULL )
+    if ( value != nullptr )
       {
       ss << value;
       }
@@ -131,7 +131,7 @@ const char * vtkUserTagTable::GetUserTagKeyword ( int index)
       return ( this->TagTable->GetColumnName( index ) );
       }
     }
-  return ( NULL );
+  return ( nullptr );
 }
 
 
@@ -158,7 +158,7 @@ int vtkUserTagTable::GetKeywordColumn ( const char* keyword )
 //----------------------------------------------------------------------------
  const char * vtkUserTagTable::GetUserTagValue ( int index)
 {
-  char * returnString = NULL;
+  char * returnString = nullptr;
   const char *val;
   vtkVariant d;
   std::string s;
@@ -185,7 +185,7 @@ int vtkUserTagTable::GetKeywordColumn ( const char* keyword )
 //----------------------------------------------------------------------------
 const char * vtkUserTagTable::GetUserTagValue ( const char* keyword)
 {
-  char * returnString = NULL;
+  char * returnString = nullptr;
   const char *val;
   vtkVariant d;
   std::string ss;

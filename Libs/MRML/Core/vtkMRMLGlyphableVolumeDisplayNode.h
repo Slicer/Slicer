@@ -115,7 +115,7 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeDisplayNode : public vtkMRMLScalarVo
   void SetDefaultColorMap(/*int isLabelMap*/) override;
 
   ///
-  /// get associated slice glyph display node or NULL if not set
+  /// get associated slice glyph display node or nullptr if not set
   virtual std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*>
     GetSliceGlyphDisplayNodes( vtkMRMLVolumeNode* vtkNotUsed(node) )
     {

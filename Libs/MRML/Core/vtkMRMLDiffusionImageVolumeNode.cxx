@@ -33,7 +33,7 @@ vtkMRMLDiffusionImageVolumeNode::vtkMRMLDiffusionImageVolumeNode()
   this->MaskNodeID = nullptr;
   this->DiffusionWeightedNodeID = nullptr;
   //Pair of ID-pointer for observing the corresponding Display node.
-  //this->DisplayNodeID = NULL;
+  //this->DisplayNodeID = nullptr;
   this->Order = 2; //Second order Tensor
 }
 
@@ -166,7 +166,7 @@ vtkMRMLDiffusionWeightedVolumeNode* vtkMRMLDiffusionImageVolumeNode::GetDiffusio
 //----------------------------------------------------------------------------
 //vtkMRMLVolumeDisplayNode* vtkMRMLVolumeNode::GetDisplayNode()
 //{
-//  vtkMRMLDiffusionImageVolumeDisplayNode* node = NULL;
+//  vtkMRMLDiffusionImageVolumeDisplayNode* node = nullptr;
 //  if (this->GetScene() && this->GetDisplayNodeID() )
 //    {
 //    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->DisplayNodeID);

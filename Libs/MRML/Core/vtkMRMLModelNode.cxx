@@ -814,7 +814,7 @@ vtkMRMLStorageNode* vtkMRMLModelNode::CreateDefaultStorageNode()
 }
 
 //---------------------------------------------------------------------------
-std::string vtkMRMLModelNode::GetDefaultStorageNodeClassName(const char* filename /* =NULL */)
+std::string vtkMRMLModelNode::GetDefaultStorageNodeClassName(const char* filename /* =nullptr */)
 {
   if (!filename)
     {

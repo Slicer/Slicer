@@ -160,7 +160,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
 
 
   ///
-  /// get associated slice glyph display node or NULL if not set
+  /// get associated slice glyph display node or nullptr if not set
   virtual std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*> GetSliceGlyphDisplayNodes( vtkMRMLVolumeNode* node ) override;
 
 

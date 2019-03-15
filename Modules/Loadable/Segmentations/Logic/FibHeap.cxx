@@ -56,7 +56,7 @@ using namespace std;
 //***************************************************************************
 
 //FibHeapNode::FibHeapNode() {
-//  Left = Right = Parent = Child = NULL;
+//  Left = Right = Parent = Child = nullptr;
 //  Degree = Mark = NegInfinityFlag = 0;
 //}
 
@@ -181,7 +181,7 @@ FibHeap::~FibHeap() {
 // of the work of inserting is done by other operations such as
 // ExtractMin(), which is where tree-balancing occurs.
 //
-// The child pointer is deliberately not set to NULL because Insert()
+// The child pointer is deliberately not set to nullptr because Insert()
 // is also used internally to help put whole trees onto the root list.
 //===========================================================================
 
@@ -313,7 +313,7 @@ FibHeapNode *FibHeap::ExtractMin() {
 
   // If MinRoot==Result then there was only one root tree, so the
   // root list is simply the child list of that node (which is
-  // NULL if this is the last node in the list)
+  // nullptr if this is the last node in the list)
 
   else if (MinRoot == Result)
     MinRoot = Result->Child;
@@ -424,12 +424,12 @@ void FibHeap::Print(FibHeapNode *Tree, FibHeapNode *theParent) {
   Temp = Tree;
   do {
     if (Temp->Left == nullptr)
-      cout << "(Left is NULL)";
+      cout << "(Left is nullptr)";
     Temp->Print();
     if (Temp->Parent != theParent)
       cout << "(Parent is incorrect)";
     if (Temp->Right == nullptr)
-      cout << "(Right is NULL)";
+      cout << "(Right is nullptr)";
     else if (Temp->Right->Left != Temp)
       cout << "(Error in left link left) ->";
     else cout << " <-> ";
@@ -483,7 +483,7 @@ void FibHeap::Print(FibHeapNode *Tree, FibHeapNode *theParent) {
 // root list.  The search could be O(n) since all nodes could be on
 // the root list.  So, we reorganize the tree into more of a binomial forest
 // structure, and then find the new minimum on the consolidated O(lg n) sized
-// root list, and in the process set each Parent pointer to NULL, and count
+// root list, and in the process set each Parent pointer to nullptr, and count
 // the number of resulting subtrees.
 //
 // Note that after a list of n inserts, there will be n nodes on the root
@@ -546,7 +546,7 @@ void FibHeap::_Consolidate() {
   } while (w != nullptr);
 
   // Now we rebuild the root list, find the new minimum,
-  // set all root list nodes' parent pointers to NULL and
+  // set all root list nodes' parent pointers to nullptr and
   // count the number of subtrees.
 
   MinRoot = nullptr;

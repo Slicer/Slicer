@@ -54,15 +54,15 @@ public: \
   vtkTypeMacro(vtkRep##from##ToRep##to##Rule, vtkSegmentationConverterRule); \
   virtual vtkSegmentationConverterRule* CreateRuleInstance() override; \
   virtual vtkDataObject* ConstructRepresentationObjectByRepresentation( \
-    std::string vtkNotUsed(representationName))  override { return NULL; }; \
+    std::string vtkNotUsed(representationName))  override { return nullptr; }; \
   virtual vtkDataObject* ConstructRepresentationObjectByClass( \
-    std::string vtkNotUsed(className)) override { return NULL; }; \
+    std::string vtkNotUsed(className)) override { return nullptr; }; \
   virtual bool Convert( \
     vtkDataObject* vtkNotUsed(sourceRepresentation),\
     vtkDataObject* vtkNotUsed(targetRepresentation)) override { return true; } \
   virtual unsigned int GetConversionCost( \
-    vtkDataObject* sourceRepresentation=NULL, \
-    vtkDataObject* targetRepresentation=NULL)  override \
+    vtkDataObject* sourceRepresentation=nullptr, \
+    vtkDataObject* targetRepresentation=nullptr)  override \
   { \
     (void)sourceRepresentation; \
     (void)targetRepresentation; \

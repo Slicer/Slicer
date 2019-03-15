@@ -86,9 +86,9 @@ vtkSlicerPlotsLogic* qSlicerPlotsModuleWidgetPrivate::logic()const
 //-----------------------------------------------------------------------------
 vtkPlot* qSlicerPlotsModuleWidgetPrivate::table()const
 {
-  if (this->MRMLPlotChartNode.GetPointer()==NULL)
+  if (this->MRMLPlotChartNode.GetPointer()==nullptr)
     {
-    return NULL;
+    return nullptr;
     }
   return this->MRMLPlotChartNode->GetPlot();
 }

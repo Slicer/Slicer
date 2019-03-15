@@ -84,7 +84,7 @@ void qSlicerSubjectHierarchyPluginHandler::setInstance(qSlicerSubjectHierarchyPl
     {
     return;
     }
-  // Preferably this will be NULL
+  // Preferably this will be nullptr
   if (qSlicerSubjectHierarchyPluginHandler::m_Instance)
     {
     delete qSlicerSubjectHierarchyPluginHandler::m_Instance;

@@ -147,7 +147,7 @@ public:
 
   ///
   /// the tail of the pipeline
-  /// -- returns NULL if none of the inputs exist
+  /// -- returns nullptr if none of the inputs exist
   vtkAlgorithmOutput *GetImageDataConnection();
 
   ///

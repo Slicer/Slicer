@@ -60,7 +60,7 @@ public:
   /// VTK objects, there is no direct link from it to its parent node, so must be found from the MRML scene.
   /// \param scene MRML scene
   /// \param segmentation Segmentation to find
-  /// \return Segmentation node containing the given segmentation if any, NULL otherwise
+  /// \return Segmentation node containing the given segmentation if any, nullptr otherwise
   static vtkMRMLSegmentationNode* GetSegmentationNodeForSegmentation(vtkMRMLScene* scene, vtkSegmentation* segmentation);
 
   /// Get segmentation node containing a given segment. As segments are out-of-MRML
@@ -68,7 +68,7 @@ public:
   /// \param scene MRML scene
   /// \param segment Segment to find
   /// \param segmentId Output argument for the ID of the found segment
-  /// \return Segmentation node containing the given segment if any, NULL otherwise
+  /// \return Segmentation node containing the given segment if any, nullptr otherwise
   static vtkMRMLSegmentationNode* GetSegmentationNodeForSegment(vtkMRMLScene* scene, vtkSegment* segment, std::string& segmentId);
 
   /// Load segmentation from file
@@ -108,12 +108,12 @@ public:
   static void GetAllLabelValues(vtkIntArray* labels, vtkImageData* labelmap);
 
   /// Create segment from labelmap volume MRML node. The contents are set as binary labelmap representation in the segment.
-  /// Returns NULL if labelmap contains more than one label. In that case \sa ImportLabelmapToSegmentationNode needs to be used.
+  /// Returns nullptr if labelmap contains more than one label. In that case \sa ImportLabelmapToSegmentationNode needs to be used.
   /// NOTE: Need to take ownership of the created object! For example using vtkSmartPointer<vtkSegment>::Take
   /// \param labelmapVolumeNode Model node containing image data that will be the binary labelmap representation in the created segment
   /// \param segmentationNode Segmentation node that will be the container of the segment. It is used to get parent transform to
-  ///   make sure the created segment will be located the same place the image was, considering all transforms involved. NULL value
-  ///   means that this consideration is not needed. Default value is NULL.
+  ///   make sure the created segment will be located the same place the image was, considering all transforms involved. nullptr value
+  ///   means that this consideration is not needed. Default value is nullptr.
   /// \return Created segment that then can be added to the segmentation if needed. Need to take ownership of the created
   ///   object! For example using vtkSmartPointer<vtkSegment>::Take
   static vtkSegment* CreateSegmentFromLabelmapVolumeNode(vtkMRMLLabelMapVolumeNode* labelmapVolumeNode, vtkMRMLSegmentationNode* segmentationNode=nullptr);
@@ -123,8 +123,8 @@ public:
   /// NOTE: Need to take ownership of the created object! For example using vtkSmartPointer<vtkSegment>::Take
   /// \param modelNode Model node containing poly data that will be the closed surface representation in the created segment
   /// \param segmentationNode Segmentation node that will be the container of the segment. It is used to get parent transform to
-  ///   make sure the created segment will be located the same place the model was, considering all transforms involved. NULL value
-  ///   means that this consideration is not needed. Default value is NULL.
+  ///   make sure the created segment will be located the same place the model was, considering all transforms involved. nullptr value
+  ///   means that this consideration is not needed. Default value is nullptr.
   /// \return Created segment that then can be added to the segmentation if needed. Need to take ownership of the created
   ///   object! For example using vtkSmartPointer<vtkSegment>::Take
   static vtkSegment* CreateSegmentFromModelNode(vtkMRMLModelNode* modelNode, vtkMRMLSegmentationNode* segmentationNode=nullptr);
@@ -249,7 +249,7 @@ public:
   /// Useful if only one segment is processed, and we do not want to convert all segments to a certain
   /// segmentation to save time.
   /// NOTE: Need to take ownership of the created object! For example using vtkSmartPointer<vtkDataObject>::Take
-  /// \return Representation of the specified segment if found or can be created, NULL otherwise
+  /// \return Representation of the specified segment if found or can be created, nullptr otherwise
   static vtkDataObject* CreateRepresentationForOneSegment(vtkSegmentation* segmentation, std::string segmentID, std::string representationName);
 
   /// Apply the parent transform of a node to an oriented image data.

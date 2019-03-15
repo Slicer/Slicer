@@ -582,7 +582,7 @@ vtkMRMLFreeSurferProceduralColorNode* vtkMRMLColorLogic::CreateFreeSurferNode(in
     }
   vtkDebugMacro("vtkMRMLColorLogic::AddDefaultColorNodes: set proc node name to " << node->GetName());
   /*
-  if (this->GetFreeSurferColorNodeID(i) == NULL)
+  if (this->GetFreeSurferColorNodeID(i) == nullptr)
     {
     vtkDebugMacro("Error getting default node id for freesurfer node " << i);
     }
@@ -808,7 +808,7 @@ vtkMRMLProceduralColorNode* vtkMRMLColorLogic::CreateProceduralFileNode(const ch
 void vtkMRMLColorLogic::AddLabelsNode()
 {
   vtkMRMLColorTableNode* labelsNode = this->CreateLabelsNode();
-  //if (this->GetMRMLScene()->GetNodeByID(labelsNode->GetSingletonTag()) == NULL)
+  //if (this->GetMRMLScene()->GetNodeByID(labelsNode->GetSingletonTag()) == nullptr)
     {
     //this->GetMRMLScene()->RequestNodeID(labelsNode, labelsNode->GetSingletonTag());
     this->GetMRMLScene()->AddNode(labelsNode);
@@ -822,7 +822,7 @@ void vtkMRMLColorLogic::AddDefaultTableNode(int i)
   vtkMRMLColorTableNode* node = this->CreateDefaultTableNode(i);
   //if (node->GetSingletonTag())
     {
-    //if (this->GetMRMLScene()->GetNodeByID(node->GetSingletonTag()) == NULL)
+    //if (this->GetMRMLScene()->GetNodeByID(node->GetSingletonTag()) == nullptr)
       {
       vtkDebugMacro("vtkMRMLColorLogic::AddDefaultColorNodes: requesting id " << node->GetSingletonTag() << endl);
       //this->GetMRMLScene()->RequestNodeID(node, node->GetSingletonTag());
@@ -855,7 +855,7 @@ void vtkMRMLColorLogic::AddDefaultProceduralNodes()
 void vtkMRMLColorLogic::AddFreeSurferNode(int type)
 {
   vtkMRMLFreeSurferProceduralColorNode* node = this->CreateFreeSurferNode(type);
-  //if (this->GetMRMLScene()->GetNodeByID(node->GetSingletonTag()) == NULL)
+  //if (this->GetMRMLScene()->GetNodeByID(node->GetSingletonTag()) == nullptr)
     {
     //this->GetMRMLScene()->RequestNodeID(node, node->GetSingletonTag());
     this->GetMRMLScene()->AddNode(node);
@@ -874,7 +874,7 @@ void vtkMRMLColorLogic::AddFreeSurferFileNode(vtkMRMLFreeSurferProceduralColorNo
   vtkMRMLColorTableNode* node = this->CreateFreeSurferFileNode(basicFSNode->GetLabelsFileName());
   if (node)
     {
-    //if (this->GetMRMLScene()->GetNodeByID(node->GetSingletonTag()) == NULL)
+    //if (this->GetMRMLScene()->GetNodeByID(node->GetSingletonTag()) == nullptr)
       {
       //this->GetMRMLScene()->RequestNodeID(node, node->GetSingletonTag());
       this->GetMRMLScene()->AddNode(node);
@@ -895,7 +895,7 @@ void vtkMRMLColorLogic::AddPETNode(int type)
 {
   vtkDebugMacro("AddDefaultColorNodes: adding PET nodes");
   vtkMRMLPETProceduralColorNode *nodepcn = this->CreatePETColorNode(type);
-  //if (this->GetMRMLScene()->GetNodeByID( nodepcn->GetSingletonTag() ) == NULL)
+  //if (this->GetMRMLScene()->GetNodeByID( nodepcn->GetSingletonTag() ) == nullptr)
     {
     //this->GetMRMLScene()->RequestNodeID(nodepcn, nodepcn->GetSingletonTag() );
     this->GetMRMLScene()->AddNode(nodepcn);
@@ -908,7 +908,7 @@ void vtkMRMLColorLogic::AddDGEMRICNode(int type)
 {
   vtkDebugMacro("AddDefaultColorNodes: adding dGEMRIC nodes");
   vtkMRMLdGEMRICProceduralColorNode *pcnode = this->CreatedGEMRICColorNode(type);
-  //if (this->GetMRMLScene()->GetNodeByID(pcnode->GetSingletonTag()) == NULL)
+  //if (this->GetMRMLScene()->GetNodeByID(pcnode->GetSingletonTag()) == nullptr)
     {
     //this->GetMRMLScene()->RequestNodeID(pcnode, pcnode->GetSingletonTag());
     this->GetMRMLScene()->AddNode(pcnode);
@@ -922,7 +922,7 @@ void vtkMRMLColorLogic::AddDefaultFileNode(int i)
   vtkMRMLColorTableNode* ctnode =  this->CreateDefaultFileNode(this->ColorFiles[i]);
   if (ctnode)
     {
-    //if (this->GetMRMLScene()->GetNodeByID(ctnode->GetSingletonTag()) == NULL)
+    //if (this->GetMRMLScene()->GetNodeByID(ctnode->GetSingletonTag()) == nullptr)
       {
         //this->GetMRMLScene()->RequestNodeID(ctnode, ctnode->GetSingletonTag());
         this->GetMRMLScene()->AddNode(ctnode);
@@ -946,7 +946,7 @@ void vtkMRMLColorLogic::AddUserFileNode(int i)
   vtkMRMLColorTableNode* ctnode = this->CreateUserFileNode(this->UserColorFiles[i]);
   if (ctnode)
     {
-    //if (this->GetMRMLScene()->GetNodeByID(ctnode->GetSingletonTag()) == NULL)
+    //if (this->GetMRMLScene()->GetNodeByID(ctnode->GetSingletonTag()) == nullptr)
       {
       //this->GetMRMLScene()->RequestNodeID(ctnode, ctnode->GetSingletonTag());
       this->GetMRMLScene()->AddNode(ctnode);

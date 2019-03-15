@@ -982,9 +982,9 @@ int main(int argc, char * argv[])
       // just make one
       labelName = Name;
       /*
-      if (colorNode != NULL)
+      if (colorNode != nullptr)
         {
-        if (colorNode->GetColorNameAsFileName(i).c_str() != NULL)
+        if (colorNode->GetColorNameAsFileName(i).c_str() != nullptr)
           {
           std::stringstream    stream;
           stream <<    i;

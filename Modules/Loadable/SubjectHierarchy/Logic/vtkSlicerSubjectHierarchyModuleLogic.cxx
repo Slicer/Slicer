@@ -375,7 +375,7 @@ void vtkSlicerSubjectHierarchyModuleLogic::HardenTransformOnBranch(vtkMRMLSubjec
 
 //---------------------------------------------------------------------------
 vtkIdType vtkSlicerSubjectHierarchyModuleLogic::CloneSubjectHierarchyItem(
-  vtkMRMLSubjectHierarchyNode* shNode, vtkIdType itemID, const char* name/*=NULL*/)
+  vtkMRMLSubjectHierarchyNode* shNode, vtkIdType itemID, const char* name/*=nullptr*/)
 {
   if (!shNode)
     {

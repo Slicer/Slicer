@@ -150,7 +150,7 @@ public:
                                    void * /*callData*/ ) override;
 
 
-  /// Create default storage node or NULL if does not have one
+  /// Create default storage node or nullptr if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
   /// Create and observe default display node(s)
@@ -434,7 +434,7 @@ public:
 
   /// If the MarkupLabelFormat contains the string %N, return a string
   /// in which that has been replaced with the list name. If the list name is
-  /// NULL, replace it with an empty string. If the MarkupLabelFormat doesn't
+  /// nullptr, replace it with an empty string. If the MarkupLabelFormat doesn't
   /// contain %N, return MarkupLabelFormat
   std::string ReplaceListNameInMarkupLabelFormat();
 

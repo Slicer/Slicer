@@ -863,7 +863,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnInteractorStyleEvent(int eve
     char *keySym = this->GetInteractor()->GetKeySym();
     vtkDebugMacro("OnInteractorStyleEvent " << (this->Is2DDisplayableManager() ? this->GetSliceNode()->GetName() : "3D")
                   << ": key press event position = " << this->GetInteractor()->GetEventPosition()[0] << ", " << this->GetInteractor()->GetEventPosition()[1]
-                  << ", key sym = " << (keySym == NULL ? "null" : keySym));
+                  << ", key sym = " << (keySym == nullptr ? "null" : keySym));
     if (!keySym)
       {
       return;
@@ -891,7 +891,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnInteractorStyleEvent(int eve
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationFiducialDisplayableManager::UpdatePosition(vtkAbstractWidget *widget, vtkMRMLNode *node)
 {
-//  vtkWarningMacro("UpdatePosition, node is " << (node == NULL ? "null" : node->GetID()));
+//  vtkWarningMacro("UpdatePosition, node is " << (node == nullptr ? "null" : node->GetID()));
   if (!node)
     {
     return;

@@ -38,9 +38,9 @@
   xmlWriteOutputStream << " " #xmlAttributeName "=\"" << (Get##propertyName() ? "true" : "false") << "\"";
 
 /// Macro for writing char* node property to XML.
-/// If pointer is NULL then the attribute will not be written to XML.
+/// If pointer is nullptr then the attribute will not be written to XML.
 #define vtkMRMLWriteXMLStringMacro(xmlAttributeName, propertyName) \
-  if (Get##propertyName() != NULL) \
+  if (Get##propertyName() != nullptr) \
     { \
     xmlWriteOutputStream << " " #xmlAttributeName "=\""; \
     xmlWriteOutputStream << vtkMRMLNode::XMLAttributeEncodeString(Get##propertyName()); \
@@ -55,7 +55,7 @@
 /// Requires Get(propertyName)AsString method to convert from numeric value to code string.
 #define vtkMRMLWriteXMLEnumMacro(xmlAttributeName, propertyName) \
   xmlWriteOutputStream << " " #xmlAttributeName "=\""; \
-  if (Get##propertyName##AsString(Get##propertyName()) != NULL) \
+  if (Get##propertyName##AsString(Get##propertyName()) != nullptr) \
     { \
     xmlWriteOutputStream << vtkMRMLNode::XMLAttributeEncodeString(Get##propertyName##AsString(Get##propertyName())); \
     } \
@@ -74,7 +74,7 @@
   { \
     xmlWriteOutputStream << " " #xmlAttributeName "=\""; \
     vectorType* vectorPtr = Get##propertyName(); \
-    if (vectorPtr != NULL) \
+    if (vectorPtr != nullptr) \
       { \
       for (int i=0; i<vectorSize; i++) \
         { \
@@ -148,11 +148,11 @@
   const char* xmlReadAttName; \
   const char* xmlReadAttValue; \
   const char** xmlReadAtts = atts; \
-  while (*xmlReadAtts != NULL) \
+  while (*xmlReadAtts != nullptr) \
     { \
     xmlReadAttName = *(xmlReadAtts++); \
     xmlReadAttValue = *(xmlReadAtts++); \
-    if (xmlReadAttValue == NULL) \
+    if (xmlReadAttValue == nullptr) \
       { \
       break; \
       }
@@ -335,7 +335,7 @@
 #define vtkMRMLCopyBeginMacro(sourceNode) \
   { \
   vtkMRMLNode* copySourceNode = this->SafeDownCast(sourceNode); \
-  if (copySourceNode != NULL) \
+  if (copySourceNode != nullptr) \
     {
 
 /// This macro must be placed after the last value copying macro.
@@ -377,7 +377,7 @@
     /* Currently, vectorType and vectorSize is not essential, but in the future */ \
     /* this information may be used more. */ \
     vectorType* sourceVector = this->SafeDownCast(copySourceNode)->Get##propertyName(); \
-    if (sourceVector != NULL) \
+    if (sourceVector != nullptr) \
       { \
       this->Set##propertyName(sourceVector); \
       } \
@@ -427,7 +427,7 @@
 
 /// Macro for printing char* node property value.
 #define vtkMRMLPrintStringMacro(propertyName) \
-  printOutputStream << printOutputIndent << #propertyName ": " << (this->Get##propertyName() != NULL ? this->Get##propertyName() : "(none)")  << "\n";
+  printOutputStream << printOutputIndent << #propertyName ": " << (this->Get##propertyName() != nullptr ? this->Get##propertyName() : "(none)")  << "\n";
 
 /// Macro for printing std::string node property value.
 #define vtkMRMLPrintStdStringMacro(propertyName) \

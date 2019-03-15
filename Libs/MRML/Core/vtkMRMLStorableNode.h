@@ -102,7 +102,7 @@ public:
   vtkMRMLStorageNode* GetStorageNode();
 
   /// Create a storage node for this node type.
-  /// If it returns NULL then it means the node can be stored
+  /// If it returns nullptr then it means the node can be stored
   /// in the scene (in XML), without using a storage node.
   /// Null by default.
   /// This must be overwritten by subclasses that use storage nodes.

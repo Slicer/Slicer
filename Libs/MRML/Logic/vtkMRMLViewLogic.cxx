@@ -82,7 +82,7 @@ void vtkMRMLViewLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
   // Sanity checks
   if (!this->GetName() || strlen(this->GetName()) == 0)
     {
-    vtkErrorMacro(<< "Name is NULL - Make sure you call SetName before SetMRMLScene !");
+    vtkErrorMacro(<< "Name is nullptr - Make sure you call SetName before SetMRMLScene !");
     return;
     }
 

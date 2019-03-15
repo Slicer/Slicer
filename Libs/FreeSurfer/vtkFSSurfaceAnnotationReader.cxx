@@ -427,7 +427,7 @@ if (labelIndex % 1000 == 0) {
   {
       // both loops are causing bus errors/seg faults
       vtkDebugMacro( << colorTableEntryIndex << "\t");
-      if (colorTableNames[colorTableEntryIndex] != NULL)
+      if (colorTableNames[colorTableEntryIndex] != nullptr)
       {
           free (colorTableNames[colorTableEntryIndex]);
       }
@@ -436,7 +436,7 @@ if (labelIndex % 1000 == 0) {
           vtkDebugMacro( << "WARNING: tried to free null entry in colorTableNames at index " << colorTableEntryIndex << endl);
       }
 
-      if (colorTableRGBs[colorTableEntryIndex] != NULL)
+      if (colorTableRGBs[colorTableEntryIndex] != nullptr)
       {
           free (colorTableRGBs[colorTableEntryIndex]);
       }

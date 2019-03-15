@@ -388,7 +388,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteractWithLine(
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerMarkupsWidgetRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData /*=NULL*/)
+void vtkSlicerMarkupsWidgetRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData /*=nullptr*/)
 {
   // Update from slice node
   if (!caller || caller == this->ViewNode.GetPointer())

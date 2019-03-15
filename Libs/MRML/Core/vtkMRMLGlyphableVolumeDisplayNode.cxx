@@ -197,7 +197,7 @@ void vtkMRMLGlyphableVolumeDisplayNode::SetAndObserveGlyphColorNodeID(std::strin
 //----------------------------------------------------------------------------
 void vtkMRMLGlyphableVolumeDisplayNode::SetAndObserveGlyphColorNodeID(const char *glyphColorNodeID)
 {
-  vtkSetAndObserveMRMLObjectMacro(this->GlyphColorNode, NULL);
+  vtkSetAndObserveMRMLObjectMacro(this->GlyphColorNode, nullptr);
 
   this->SetGlyphColorNodeID(glyphColorNodeID);
 

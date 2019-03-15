@@ -357,7 +357,7 @@ int vtkMRMLSceneTest2(int argc, char * argv [] )
 
   std::cout << "List of Node Names in this Scene" << std::endl;
   vtkCollectionSimpleIterator it;
-  vtkMRMLNode* node = NULL;
+  vtkMRMLNode* node = nullptr;
   vtkCollection *nodes = scene->GetNodes();
   for (nodes->InitTraversal(it);
     (node = vtkMRMLNode::SafeDownCast(nodes->GetNextItemAsObject(it)));)

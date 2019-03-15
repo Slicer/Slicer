@@ -389,7 +389,7 @@ void vtkMRMLFiducialListNode::Copy(vtkMRMLNode *anode)
       }
     // turn on modified events
     this->Modified();
-    vtkDebugMacro("Copy: throwing a fid modified event w/NULL id");
+    vtkDebugMacro("Copy: throwing a fid modified event w/nullptr id");
     this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, nullptr);
     }
   this->EndModify(disabledModify);
@@ -653,7 +653,7 @@ void vtkMRMLFiducialListNode::UpdateScene(vtkMRMLScene *scene)
 {
     Superclass::UpdateScene(scene);
     /*
-    if (this->GetStorageNodeID() == NULL)
+    if (this->GetStorageNodeID() == nullptr)
     {
         //vtkErrorMacro("No reference StorageNodeID found");
         return;
@@ -1213,7 +1213,7 @@ int vtkMRMLFiducialListNode::AddFiducialWithLabelXYZSelectedVisibility(const cha
 //----------------------------------------------------------------------------
 void vtkMRMLFiducialListNode::RemoveFiducial(vtkMRMLFiducial *o)
 {
-  // char *pointID = NULL;
+  // char *pointID = nullptr;
   std::string pointIDStr;
     if (o != nullptr)
       {
@@ -1281,9 +1281,9 @@ void vtkMRMLFiducialListNode::UpdateReferences()
    Superclass::UpdateReferences();
 
 /*
-  if (this->DisplayNodeID != NULL && this->Scene->GetNodeByID(this->DisplayNodeID) == NULL)
+  if (this->DisplayNodeID != nullptr && this->Scene->GetNodeByID(this->DisplayNodeID) == nullptr)
     {
-    this->SetAndObserveDisplayNodeID(NULL);
+    this->SetAndObserveDisplayNodeID(nullptr);
     }
 */
 }
@@ -1291,7 +1291,7 @@ void vtkMRMLFiducialListNode::UpdateReferences()
 //----------------------------------------------------------------------------
 vtkMRMLFiducialListDisplayNode* vtkMRMLFiducialListNode::GetDisplayNode()
 {
-  vtkMRMLFiducialListDisplayNode* node = NULL;
+  vtkMRMLFiducialListDisplayNode* node = nullptr;
   if (this->GetScene() && this->GetDisplayNodeID() )
     {
     vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->DisplayNodeID);
@@ -1303,17 +1303,17 @@ vtkMRMLFiducialListDisplayNode* vtkMRMLFiducialListNode::GetDisplayNode()
 //----------------------------------------------------------------------------
 void vtkMRMLFiducialListNode::SetAndObserveDisplayNodeID(const char *displayNodeID)
 {
-  if (this->DisplayNodeID != NULL)
+  if (this->DisplayNodeID != nullptr)
     {
     vtkMRMLFiducialListDisplayNode *dnode = this->GetDisplayNode();
-    if (dnode != NULL)
+    if (dnode != nullptr)
       {
       dnode->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
       }
     }
   this->SetDisplayNodeID(displayNodeID);
   vtkMRMLFiducialListDisplayNode *dnode = this->GetDisplayNode();
-  if (dnode != NULL)
+  if (dnode != nullptr)
     {
     dnode->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
     }
@@ -1327,10 +1327,10 @@ void vtkMRMLFiducialListNode::ProcessMRMLEvents ( vtkObject *caller,
   Superclass::ProcessMRMLEvents(caller, event, callData);
 /*
   vtkMRMLFiducialListDisplayNode *dnode = this->GetDisplayNode();
-  if (dnode != NULL && dnode == vtkMRMLFiducialListDisplayNode::SafeDownCast(caller) &&
+  if (dnode != nullptr && dnode == vtkMRMLFiducialListDisplayNode::SafeDownCast(caller) &&
       event ==  vtkCommand::ModifiedEvent)
     {
-        this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent, NULL);
+        this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent, nullptr);
     }
 */
   // check for one of the fiducials being modified, if so, trigger a modified

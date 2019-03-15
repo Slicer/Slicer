@@ -382,7 +382,7 @@ bool vtkSlicerSegmentationsModuleLogic::CopyOrientedImageDataToVolumeNode(
 }
 
 //-----------------------------------------------------------------------------
-vtkOrientedImageData* vtkSlicerSegmentationsModuleLogic::CreateOrientedImageDataFromVolumeNode(vtkMRMLScalarVolumeNode* volumeNode, vtkMRMLTransformNode* outputParentTransformNode /* = NULL */)
+vtkOrientedImageData* vtkSlicerSegmentationsModuleLogic::CreateOrientedImageDataFromVolumeNode(vtkMRMLScalarVolumeNode* volumeNode, vtkMRMLTransformNode* outputParentTransformNode /* = nullptr */)
 {
   if (!volumeNode || !volumeNode->GetImageData())
     {
@@ -477,7 +477,7 @@ void vtkSlicerSegmentationsModuleLogic::GetAllLabelValues(vtkIntArray* labels, v
 
 
 //-----------------------------------------------------------------------------
-vtkSegment* vtkSlicerSegmentationsModuleLogic::CreateSegmentFromLabelmapVolumeNode(vtkMRMLLabelMapVolumeNode* labelmapVolumeNode, vtkMRMLSegmentationNode* segmentationNode/*=NULL*/)
+vtkSegment* vtkSlicerSegmentationsModuleLogic::CreateSegmentFromLabelmapVolumeNode(vtkMRMLLabelMapVolumeNode* labelmapVolumeNode, vtkMRMLSegmentationNode* segmentationNode/*=nullptr*/)
 {
   if (!labelmapVolumeNode)
     {
@@ -545,7 +545,7 @@ vtkSegment* vtkSlicerSegmentationsModuleLogic::CreateSegmentFromLabelmapVolumeNo
 }
 
 //-----------------------------------------------------------------------------
-vtkSegment* vtkSlicerSegmentationsModuleLogic::CreateSegmentFromModelNode(vtkMRMLModelNode* modelNode, vtkMRMLSegmentationNode* segmentationNode/*=NULL*/)
+vtkSegment* vtkSlicerSegmentationsModuleLogic::CreateSegmentFromModelNode(vtkMRMLModelNode* modelNode, vtkMRMLSegmentationNode* segmentationNode/*=nullptr*/)
 {
   if (!modelNode)
     {
@@ -953,7 +953,7 @@ bool vtkSlicerSegmentationsModuleLogic::ExportAllSegmentsToModelHierarchy(vtkMRM
 
 //-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode,
-  std::vector<std::string>& segmentIDs, vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode /*=NULL*/)
+  std::vector<std::string>& segmentIDs, vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode /*=nullptr*/)
 {
   if (!segmentationNode)
     {
@@ -1112,7 +1112,7 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
 
 //-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode,
-  vtkStringArray* segmentIds, vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode /*=NULL*/)
+  vtkStringArray* segmentIds, vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode /*=nullptr*/)
 {
   std::vector<std::string> segmentIdsVector;
   if (segmentIds == nullptr)
@@ -1129,7 +1129,7 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
 
 //-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationsModuleLogic::ExportVisibleSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode,
-  vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode /*=NULL*/)
+  vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode /*=nullptr*/)
 {
   if (!segmentationNode)
     {
@@ -1464,7 +1464,7 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(
 //-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(
   vtkOrientedImageData* labelmapImage, vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* updatedSegmentIDs,
-  vtkGeneralTransform* labelmapToSegmentationTransform /*=NULL*/)
+  vtkGeneralTransform* labelmapToSegmentationTransform /*=nullptr*/)
 {
   if (!segmentationNode && !segmentationNode->GetSegmentation())
     {
@@ -1604,7 +1604,7 @@ vtkDataObject* vtkSlicerSegmentationsModuleLogic::CreateRepresentationForOneSegm
 
 //-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationsModuleLogic::ApplyParentTransformToOrientedImageData(
-  vtkMRMLTransformableNode* transformableNode, vtkOrientedImageData* orientedImageData, bool linearInterpolation/*=false*/, double backgroundColor[4]/*=NULL*/ )
+  vtkMRMLTransformableNode* transformableNode, vtkOrientedImageData* orientedImageData, bool linearInterpolation/*=false*/, double backgroundColor[4]/*=nullptr*/ )
 {
   if (!transformableNode || !orientedImageData)
     {
@@ -2026,7 +2026,7 @@ bool vtkSlicerSegmentationsModuleLogic::SetTerminologyToSegmentationFromLabelmap
 
 //-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentationToFiles(std::string destinationFolder,
-  vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* segmentIds /*=NULL*/,
+  vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* segmentIds /*=nullptr*/,
   std::string fileFormat /*="STL"*/, bool lps /*=true*/, double sizeScale /*=1.0*/, bool merge /*=false*/)
 {
   if (!segmentationNode || !segmentationNode->GetSegmentation())

@@ -771,7 +771,7 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
       {
       continue;
       }
-    // If it is NULL then it means that there is no usable associated plot data node
+    // If it is nullptr then it means that there is no usable associated plot data node
     // and so the plot should be removed.
     vtkMRMLPlotSeriesNode* plotSeriesNode = this->plotSeriesNodeFromPlot(plot);
     if (plotSeriesNode != nullptr)

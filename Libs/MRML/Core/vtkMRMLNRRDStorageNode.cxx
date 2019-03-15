@@ -361,7 +361,7 @@ int vtkMRMLNRRDStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 
   if (volNode->GetImageData() == nullptr)
     {
-    vtkErrorMacro("WriteData: Cannot write NULL ImageData");
+    vtkErrorMacro("WriteData: Cannot write nullptr ImageData");
     }
 
   std::string fullName = this->GetFullNameFromFileName();

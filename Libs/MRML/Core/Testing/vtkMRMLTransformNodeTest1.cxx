@@ -124,10 +124,10 @@ int vtkMRMLTransformNodeTest1(int , char * [] )
   vtkMRMLTransformNode::GetTransformBetweenNodes(bTransform.GetPointer(), cTransform.GetPointer(), transform2.GetPointer());
   // Test non-equal
   CHECK_BOOL(vtkMRMLTransformNode::AreTransformsEqual(transform1.GetPointer(), transform2.GetPointer()), false);
-  // Check NULL transforms
+  // Check nullptr transforms
   CHECK_BOOL(vtkMRMLTransformNode::AreTransformsEqual(transform1.GetPointer(), nullptr), false);
   CHECK_BOOL(vtkMRMLTransformNode::AreTransformsEqual(nullptr, nullptr), true);
-  // check identity transform is the same as NULL transform
+  // check identity transform is the same as nullptr transform
   vtkMRMLTransformNode::GetTransformBetweenNodes(eTransform.GetPointer(), eTransform.GetPointer(), transform1.GetPointer());
   CHECK_BOOL(vtkMRMLTransformNode::AreTransformsEqual(transform1.GetPointer(), nullptr), true);
 

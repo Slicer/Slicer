@@ -261,7 +261,7 @@ vtkOrientedImageDataResample::~vtkOrientedImageDataResample()
 }
 
 //-----------------------------------------------------------------------------
-bool vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(vtkOrientedImageData* inputImage, vtkOrientedImageData* referenceImage, vtkOrientedImageData* outputImage, bool linearInterpolation/*=false*/, bool padImage/*=false*/, vtkAbstractTransform* inputImageTransform/*=NULL*/, double backgroundValue/*=0*/)
+bool vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(vtkOrientedImageData* inputImage, vtkOrientedImageData* referenceImage, vtkOrientedImageData* outputImage, bool linearInterpolation/*=false*/, bool padImage/*=false*/, vtkAbstractTransform* inputImageTransform/*=nullptr*/, double backgroundValue/*=0*/)
 {
   if (!inputImage || !referenceImage || !outputImage)
     {
@@ -1016,7 +1016,7 @@ bool vtkOrientedImageDataResample::MergeImage(
     const int extent[6]/*=0*/,
     double maskThreshold /*=0*/,
     double fillValue /*=1*/,
-    bool *outputModified /*=NULL*/)
+    bool *outputModified /*=nullptr*/)
 {
   if (outputModified != nullptr)
     {
@@ -1119,7 +1119,7 @@ void vtkOrientedImageDataResample::TransformOrientedImage(
     bool geometryOnly/*=false*/,
     bool alwaysResample/*=false*/,
     bool linearInterpolation/*=false*/,
-    double backgroundColor[4]/*=NULL*/)
+    double backgroundColor[4]/*=nullptr*/)
 {
   if (!image || !transform)
     {
@@ -1306,7 +1306,7 @@ template <typename T> void FillImageGeneric(vtkImageData* image, T fillValue, co
 }
 
 //----------------------------------------------------------------------------
-void vtkOrientedImageDataResample::FillImage(vtkImageData* image, double fillValue, const int extent[6]/*=NULL*/)
+void vtkOrientedImageDataResample::FillImage(vtkImageData* image, double fillValue, const int extent[6]/*=nullptr*/)
 {
   if (!image)
     {

@@ -37,7 +37,7 @@ public:
     }
 
   // for testing purposes, return a valid storage node,
-  // vtkMRMLStorageNode::New returns NULL
+  // vtkMRMLStorageNode::New returns nullptr
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override { return vtkMRMLModelStorageNode::New(); }
 };
 vtkStandardNewMacro(vtkMRMLStorableNodeTestHelper1);

@@ -337,7 +337,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::SetCenterSliceVisibility(bool visib
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerMarkupsWidgetRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData/*=NULL*/)
+void vtkSlicerMarkupsWidgetRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData/*=nullptr*/)
 {
   Superclass::UpdateFromMRML(caller, event, callData);
 

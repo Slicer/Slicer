@@ -332,7 +332,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetAndObserveDiffusionTensorD
     }
 
   // Stop observing any old node
-  vtkSetAndObserveMRMLObjectMacro ( this->DiffusionTensorDisplayPropertiesNode, NULL );
+  vtkSetAndObserveMRMLObjectMacro ( this->DiffusionTensorDisplayPropertiesNode, nullptr );
 
   // Set the ID. This is the "ground truth" reference to the node.
   this->SetDiffusionTensorDisplayPropertiesNodeID ( id );

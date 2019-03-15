@@ -221,7 +221,7 @@ rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetCodeInArray
 rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetTerminologyRootByName(std::string terminologyName)
 {
   TerminologyMap::iterator termIt = this->LoadedTerminologies.find(terminologyName);
-  if (termIt != this->LoadedTerminologies.end() && termIt->second != NULL)
+  if (termIt != this->LoadedTerminologies.end() && termIt->second != nullptr)
     {
     return *(termIt->second);
     }
@@ -508,7 +508,7 @@ rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetTypeModifie
 rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetAnatomicContextRootByName(std::string anatomicContextName)
 {
   TerminologyMap::iterator anIt = this->LoadedAnatomicContexts.find(anatomicContextName);
-  if (anIt != this->LoadedAnatomicContexts.end() && anIt->second != NULL)
+  if (anIt != this->LoadedAnatomicContexts.end() && anIt->second != nullptr)
     {
     return *(anIt->second);
     }
@@ -1157,7 +1157,7 @@ bool vtkSlicerTerminologiesModuleLogic::LoadTerminologyFromSegmentDescriptorFile
   // Convert the loaded descriptor json file into terminology dictionary context json format
   rapidjson::Document* convertedDoc = nullptr;
   vtkInternal::TerminologyMap::iterator termIt = this->Internal->LoadedTerminologies.find(contextName);
-  if (termIt != this->Internal->LoadedTerminologies.end() && termIt->second != NULL)
+  if (termIt != this->Internal->LoadedTerminologies.end() && termIt->second != nullptr)
     {
     convertedDoc = termIt->second;
     }
@@ -1271,7 +1271,7 @@ bool vtkSlicerTerminologiesModuleLogic::LoadAnatomicContextFromSegmentDescriptor
   // Convert the loaded descriptor json file into anatomic context json format
   rapidjson::Document* convertedDoc = nullptr;
   vtkInternal::TerminologyMap::iterator anIt = this->Internal->LoadedAnatomicContexts.find(contextName);
-  if (anIt != this->Internal->LoadedAnatomicContexts.end() && anIt->second != NULL)
+  if (anIt != this->Internal->LoadedAnatomicContexts.end() && anIt->second != nullptr)
     {
     convertedDoc = anIt->second;
     }

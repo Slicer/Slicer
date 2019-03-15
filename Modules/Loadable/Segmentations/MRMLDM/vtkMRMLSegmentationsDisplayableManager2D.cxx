@@ -1449,7 +1449,7 @@ std::string vtkMRMLSegmentationsDisplayableManager2D::GetDataProbeInfoStringForP
 
 //---------------------------------------------------------------------------
 void vtkMRMLSegmentationsDisplayableManager2D::GetVisibleSegmentsForPosition(double ras[3],
-  vtkMRMLSegmentationDisplayNode* displayNode, vtkStringArray* segmentIDs, vtkDoubleArray* segmentValues/*=NULL*/)
+  vtkMRMLSegmentationDisplayNode* displayNode, vtkStringArray* segmentIDs, vtkDoubleArray* segmentValues/*=nullptr*/)
 {
   if (!segmentIDs)
     {

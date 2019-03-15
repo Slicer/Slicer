@@ -112,7 +112,7 @@ public:
   Q_INVOKABLE virtual const QString roleForPlugin()const;
 
   /// Get icon of an owned subject hierarchy item
-  /// \return Icon to set, NULL if nothing to set
+  /// \return Icon to set, nullptr if nothing to set
   virtual QIcon icon(vtkIdType itemID);
 
   /// Get visibility icon for a visibility state
@@ -201,7 +201,7 @@ public:
   /// Get hierarchy node for subject hierarchy item.
   /// The item can be associated directly to a hierarchy node (if it's an intermediate hierarchy node),
   /// or it can be associated to a data node that is associated to a hierarchy node.
-  /// \return The hierarchy node associated to the item either directly or indirectly. NULL otherwise
+  /// \return The hierarchy node associated to the item either directly or indirectly. nullptr otherwise
   Q_INVOKABLE vtkMRMLHierarchyNode* hierarchyNodeForItem(vtkIdType itemID);
 
   /// Get subject hierarchy item for a hierarchy node.

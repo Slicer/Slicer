@@ -50,7 +50,7 @@ class VTK_MRML_EXPORT vtkMRMLBSplineTransformNode : public vtkMRMLTransformNode
   virtual const char* GetNodeTagName() override {return "BSplineTransform";};
 
   ///
-  /// Create default storage node or NULL if does not have one
+  /// Create default storage node or nullptr if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override
     {
     return Superclass::CreateDefaultStorageNode();

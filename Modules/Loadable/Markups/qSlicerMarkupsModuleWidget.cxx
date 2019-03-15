@@ -640,7 +640,7 @@ void qSlicerMarkupsModuleWidget::removeShortcuts()
     //qDebug() << "removeShortcuts";
     this->pToAddShortcut->disconnect(SIGNAL(activated()));
     // TODO: when parent is set to null, using the mouse to place a fid when outside the Markups module is triggering a crash
-    //       this->pToAddShortcut->setParent(NULL);
+    //       this->pToAddShortcut->setParent(nullptr);
     }
 }
 

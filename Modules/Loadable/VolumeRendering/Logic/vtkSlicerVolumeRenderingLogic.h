@@ -224,7 +224,7 @@ public:
 
   /// Update DisplayNode from VolumeNode,
   /// Can pass a VolumePropertyNode and a AnnotationROINode to be the display node.
-  /// If they are NULL and the display node does not already have any, new ones
+  /// If they are nullptr and the display node does not already have any, new ones
   /// will be created then set and observed to the display node.
   void UpdateDisplayNodeFromVolumeNode(vtkMRMLVolumeRenderingDisplayNode *displayNode,
                                        vtkMRMLVolumeNode *volumeNode,

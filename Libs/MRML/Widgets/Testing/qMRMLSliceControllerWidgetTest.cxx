@@ -81,7 +81,7 @@ void qMRMLSliceControllerWidgetTester::init()
   // Add default color nodes
   vtkNew<vtkMRMLColorLogic> colorLogic;
   colorLogic->SetMRMLScene(this->MRMLScene);
-  // need to set it back to NULL, otherwise the logic removes the nodes that it added when it is destructed
+  // need to set it back to nullptr, otherwise the logic removes the nodes that it added when it is destructed
   colorLogic->SetMRMLScene(nullptr);
 
   vtkNew<vtkMRMLSliceNode> sliceNode;

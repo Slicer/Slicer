@@ -467,7 +467,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   vtkMatrix4x4* mat = reader->GetRasToIjkMatrix();
   if ( mat == nullptr )
     {
-    vtkErrorMacro ("Reader returned NULL RasToIjkMatrix");
+    vtkErrorMacro ("Reader returned nullptr RasToIjkMatrix");
     }
   volNode->SetRASToIJKMatrix(mat);
 

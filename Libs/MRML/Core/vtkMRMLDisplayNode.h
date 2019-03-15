@@ -450,7 +450,7 @@ public:
   /// \sa ViewNodeIDs, GetViewNodeIDs(), AddViewNodeID()
   inline int GetNumberOfViewNodeIDs()const;
   /// Get View Node ID's for the view to display this node in.
-  /// If NULL, display in all views
+  /// If nullptr, display in all views
   /// \sa ViewNodeIDs, GetViewNodeIDs(), AddViewNodeID()
   const char* GetNthViewNodeID(unsigned int index);
   /// Get all View Node ID's for the view to display this node in.
@@ -496,7 +496,7 @@ protected:
 
   /// Associated ImageDataConnection to apply as texture. The image data port is
   /// observed and when modified, vtkMRMLDisplayNode fires a ModifiedEvent too.
-  /// No texture (NULL) by default.
+  /// No texture (nullptr) by default.
   /// \sa SetTextureImageDataConnection(), GetTextureImageDataConnection()
   /// InterpolateTexture
   vtkAlgorithmOutput    *TextureImageDataConnection;

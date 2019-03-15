@@ -1104,7 +1104,7 @@ void vtkAnnotationROIRepresentation::SetInteractionState(int state)
       break;
     case vtkAnnotationROIRepresentation::Rotating:
       //this->HighlightOutline(0);
-      //this->HighlightHandle(NULL);
+      //this->HighlightHandle(nullptr);
       //this->HighlightFace(this->HexPicker->GetCellId());
       break;
     case vtkAnnotationROIRepresentation::Translating:

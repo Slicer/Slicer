@@ -142,7 +142,7 @@ public:
 
   ///
   /// Get concatenated transforms from source to target node
-  /// Source and target nodes are allowed to be NULL, which means that transform is the world transform.
+  /// Source and target nodes are allowed to be nullptr, which means that transform is the world transform.
   static void GetTransformBetweenNodes(vtkMRMLTransformNode* sourceNode,
     vtkMRMLTransformNode* targetNode, vtkGeneralTransform* transformSourceToTarget);
 
@@ -174,14 +174,14 @@ public:
 
   ///
   /// Get concatenated transforms from source to target node
-  /// Source and target nodes are allowed to be NULL, which means that transform is the world transform.
+  /// Source and target nodes are allowed to be nullptr, which means that transform is the world transform.
   /// Returns 0 if the transform is not linear (cannot be described by a matrix).
   static int GetMatrixTransformBetweenNodes(vtkMRMLTransformNode* sourceNode,
     vtkMRMLTransformNode* targetNode, vtkMatrix4x4* transformSourceToTarget);
 
   ///
   /// Returns 1 if this node is one of the node's descendents
-  /// NULL designates the world transform node and so always returns with 1.
+  /// nullptr designates the world transform node and so always returns with 1.
   int IsTransformNodeMyParent(vtkMRMLTransformNode* node);
 
   ///
@@ -190,7 +190,7 @@ public:
 
   ///
   /// Get the first common parent of he current and the target transform node
-  /// If there are no common parents then NULL is returned
+  /// If there are no common parents then nullptr is returned
   /// \param targetNode The transform for which the current transform will be determined
   vtkMRMLTransformNode* GetFirstCommonParent(vtkMRMLTransformNode* targetNode);
 
@@ -203,7 +203,7 @@ public:
   /// returns 0 if the transform is non-linear or composite and therefore
   /// cannot be updated.
   /// To overwrite a non-linear or composite transform first remove
-  /// the old transform by calling SetAndObserveTransformToParent(NULL)
+  /// the old transform by calling SetAndObserveTransformToParent(nullptr)
   /// and then set the matrix.
   /// \sa SetMatrixTransformFromParent
   virtual int SetMatrixTransformToParent(vtkMatrix4x4 *matrix);
@@ -247,7 +247,7 @@ public:
   virtual int Split();
 
   ///
-  /// Create default storage node or NULL if does not have one
+  /// Create default storage node or nullptr if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
   ///
@@ -278,15 +278,15 @@ public:
 
   ///
   /// Retrieves the transform as the specified transform class.
-  /// If modifiableOnly is set to true then NULL will be returned for transforms that cannot be modified (e.g., because it is computed from its inverse).
-  /// Returns NULL if the transform is not a kind of transform that was requested.
+  /// If modifiableOnly is set to true then nullptr will be returned for transforms that cannot be modified (e.g., because it is computed from its inverse).
+  /// Returns nullptr if the transform is not a kind of transform that was requested.
   /// Example usage: vtkOrientedBSplineTransform* bsplineTransform=vtkOrientedBSplineTransform::SafeDownCast(GetTransformToParentAs("vtkOrientedBSplineTransform"));
   vtkAbstractTransform* GetTransformToParentAs(const char* transformType, bool logErrorIfFails = true, bool modifiableOnly = false);
 
   ///
   /// Retrieves the transform as the specified transform class.
-  /// If modifiableOnly is set to true then NULL will be returned for transforms that cannot be modified (e.g., because it is computed from its inverse).
-  /// Returns NULL if the transform is not a kind of transform that was requested.
+  /// If modifiableOnly is set to true then nullptr will be returned for transforms that cannot be modified (e.g., because it is computed from its inverse).
+  /// Returns nullptr if the transform is not a kind of transform that was requested.
   /// Example usage: vtkOrientedBSplineTransform* bsplineTransform=vtkOrientedBSplineTransform::SafeDownCast(GetTransformFromParentAs("vtkOrientedBSplineTransform"));
   vtkAbstractTransform* GetTransformFromParentAs(const char* transformType, bool logErrorIfFails = true, bool modifiableOnly = false);
 
@@ -362,7 +362,7 @@ protected:
   ///
   /// Retrieves a simple transform from a generic transform
   /// If the generic transform is composed of multiple transform or contains a different
-  /// transform type then it returns NULL.
+  /// transform type then it returns nullptr.
   virtual vtkAbstractTransform* GetAbstractTransformAs(vtkAbstractTransform* inputTransform, const char* transformClassName, bool logErrorIfFails);
 
   ///

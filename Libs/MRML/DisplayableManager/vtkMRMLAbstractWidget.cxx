@@ -152,7 +152,7 @@ vtkMRMLAbstractWidgetRepresentation* vtkMRMLAbstractWidget::GetRepresentation()
 }
 
 //-------------------------------------------------------------------------
-void vtkMRMLAbstractWidget::UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData/*=NULL*/)
+void vtkMRMLAbstractWidget::UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData/*=nullptr*/)
 {
   if (!this->WidgetRep)
     {

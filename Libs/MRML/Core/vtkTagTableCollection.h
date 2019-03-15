@@ -27,7 +27,7 @@ public:
   this->vtkCollection::AddItem ( (vtkObject *)t); };
 
   ///
-  /// Get the next Table in the list. Return NULL
+  /// Get the next Table in the list. Return nullptr
   /// when at the end of the list.
   vtkTagTable *GetNextTable();
 

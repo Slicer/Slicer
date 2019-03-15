@@ -101,7 +101,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   /// \sa ThreeDViewIDs, GetThreeDViewIDs(), AddThreeDViewID()
   int GetNumberOfThreeDViewIDs()const;
   /// Get View Node ID's for the view to display this node in.
-  /// If NULL, display in all views
+  /// If nullptr, display in all views
   /// \sa ThreeDViewIDs, GetThreeDViewIDs(), AddThreeDViewID()
   const char* GetNthThreeDViewID(unsigned int index);
   /// Get all View Node ID's for the view to display this node in.
@@ -353,7 +353,7 @@ public:
   /// Jump all slices in the scene.
   /// viewGroup can be used to jump only slice views that are in a specific group.
   /// By default viewGroup is set to -1, which means that all slice views are jumped.
-  /// If a non-NULL exclude pointer is specified then position of that slice node will not be changed.
+  /// If a non-nullptr exclude pointer is specified then position of that slice node will not be changed.
   /// If jumpMode is set to vtkMRMLSliceNode::DefaultJumpSlice then jump mode set in the slice node will be used.
   /// specified in the slice node will be used.
   static void JumpAllSlices(vtkMRMLScene* scene, double r, double a, double s,

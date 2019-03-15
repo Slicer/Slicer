@@ -710,7 +710,7 @@ void vtkMRMLScalarVolumeDisplayNode::CalculateAutoLevels()
 {
   if (!this->GetAutoWindowLevel() && !this->GetAutoThreshold())
     {
-    vtkDebugMacro("CalculateScalarAutoLevels: " << (this->GetID() == NULL ? "nullid" : this->GetID())
+    vtkDebugMacro("CalculateScalarAutoLevels: " << (this->GetID() == nullptr ? "nullid" : this->GetID())
                   << ": Auto window level not turned on, returning.");
     return;
     }

@@ -439,13 +439,13 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadOneFiducial(fstream & fstr, vtkMR
 //     }
 //
 //   // cast the input node
-//   vtkMRMLAnnotationFiducialsNode *annotationNode = NULL;
+//   vtkMRMLAnnotationFiducialsNode *annotationNode = nullptr;
 //   if ( refNode->IsA("vtkMRMLAnnotationFiducialsNode") )
 //     {
 //     annotationNode = dynamic_cast <vtkMRMLAnnotationFiducialsNode *> (refNode);
 //     }
 //
-//   if (annotationNode == NULL)
+//   if (annotationNode == nullptr)
 //     {
 //     vtkErrorMacro("ReadData: unable to cast input node " << refNode->GetID() << " to a annotation node");
 //     return 0;
@@ -454,7 +454,7 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadOneFiducial(fstream & fstr, vtkMR
 //
 //   // cast the input node
 //   vtkMRMLAnnotationTextDisplayNode *annotationDisplayNode = annotationNode->GetAnnotationTextDisplayNode();
-//   if (annotationDisplayNode == NULL)
+//   if (annotationDisplayNode == nullptr)
 //     {
 //       vtkErrorMacro("ReadData: unable to get associated AnnotationTextDisplayNode");
 //       return 0;
@@ -556,17 +556,17 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadOneFiducial(fstream & fstr, vtkMR
 //             char *ptr;
 //             char *colours = (char *)(str.c_str());
 //             ptr = strtok(colours, ",");
-//             if (ptr != NULL)
+//             if (ptr != nullptr)
 //               {
 //             r = atof(ptr);
 //               }
-//             ptr = strtok(NULL, ",");
-//             if (ptr != NULL)
+//             ptr = strtok(nullptr, ",");
+//             if (ptr != nullptr)
 //               {
 //             g = atof(ptr);
 //               }
-//             ptr = strtok(NULL, ",");
-//             if (ptr != NULL)
+//             ptr = strtok(nullptr, ",");
+//             if (ptr != nullptr)
 //               {
 //             b = atof(ptr);
 //               }
@@ -645,7 +645,7 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadOneFiducial(fstream & fstr, vtkMR
 //                   int columnNumber = 0;
 //                   char *columns = (char *)str.c_str();
 //                   char *ptr = strtok(columns, ",");
-//                   while (ptr != NULL)
+//                   while (ptr != nullptr)
 //                    {
 //                    if (strcmp(ptr, "label") == 0)
 //                      {
@@ -671,7 +671,7 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadOneFiducial(fstream & fstr, vtkMR
 //                      {
 //                      visColumn = columnNumber;
 //                      }
-//                    ptr = strtok(NULL, ",");
+//                    ptr = strtok(nullptr, ",");
 //                    columnNumber++;
 //                    }
 //                  // set the total number of columns
@@ -696,7 +696,7 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadOneFiducial(fstream & fstr, vtkMR
 //             bool reTokenise = false;
 //             if (strncmp(line, ",", 1) == 0)
 //               {
-//               ptr = NULL;
+//               ptr = nullptr;
 //               reTokenise = true;
 //               }
 //             else
@@ -709,7 +709,7 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadOneFiducial(fstream & fstr, vtkMR
 //             int columnNumber = 0;
 //             while (columnNumber < numColumns)
 //               {
-//               if (ptr != NULL)
+//               if (ptr != nullptr)
 //                 {
 //                 if (columnNumber == labelColumn)
 //                   {
@@ -738,7 +738,7 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadOneFiducial(fstream & fstr, vtkMR
 //                 }
 //               if (reTokenise == false)
 //                 {
-//                 ptr = strtok(NULL, ",");
+//                 ptr = strtok(nullptr, ",");
 //                 }
 //               else
 //                 {

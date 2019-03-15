@@ -671,7 +671,7 @@ std::string vtkMRMLStorageNode::GetFullNameFromNthFileName(int n)
       }
     else
       {
-      vtkDebugMacro("GetFullNameFromNthFileName: scene root dir = " << (this->Scene->GetRootDirectory() != NULL ? this->Scene->GetRootDirectory() : "null") << ", relative = " << (this->IsFilePathRelative(fileName) ? "yes" : "no"));
+      vtkDebugMacro("GetFullNameFromNthFileName: scene root dir = " << (this->Scene->GetRootDirectory() != nullptr ? this->Scene->GetRootDirectory() : "null") << ", relative = " << (this->IsFilePathRelative(fileName) ? "yes" : "no"));
       }
     fullName = std::string(fileName);
     }
@@ -948,7 +948,7 @@ vtkStringArray* vtkMRMLStorageNode::GetSupportedWriteFileTypes()
 //------------------------------------------------------------------------------
 const char* vtkMRMLStorageNode::GetDefaultWriteFileExtension()
 {
-  // for backward compatibility, we return NULL by default
+  // for backward compatibility, we return nullptr by default
   if (this->DefaultWriteFileExtension.empty())
     {
     return nullptr;
@@ -984,7 +984,7 @@ void vtkMRMLStorageNode::GetFileExtensionsFromFileTypes(vtkStringArray* inputFil
 }
 
 //------------------------------------------------------------------------------
-std::string vtkMRMLStorageNode::GetSupportedFileExtension(const char* fileName /* =NULL */, bool includeReadable /* =true */, bool includeWriteable /* =true */)
+std::string vtkMRMLStorageNode::GetSupportedFileExtension(const char* fileName /* =nullptr */, bool includeReadable /* =true */, bool includeWriteable /* =true */)
 {
   std::string fileNameStr;
   if (fileName)
@@ -1195,8 +1195,8 @@ int vtkMRMLStorageNode::ReadData(vtkMRMLNode* refNode, bool temporary)
     return 0;
     }
   vtkDebugMacro("ReadData: read state is ready, "
-    <<  "URI = " << (this->GetURI() == NULL ? "null" : this->GetURI()) << ", "
-    << "filename = " << (this->GetFileName() == NULL ? "null" : this->GetFileName()));
+    <<  "URI = " << (this->GetURI() == nullptr ? "null" : this->GetURI()) << ", "
+    << "filename = " << (this->GetFileName() == nullptr ? "null" : this->GetFileName()));
   int res = this->ReadDataInternal(refNode);
   if (res)
     {
@@ -1267,7 +1267,7 @@ std::string vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(const std::str
 }
 
 //------------------------------------------------------------------------------
-std::string vtkMRMLStorageNode::GetFileNameWithoutExtension(const char* filePath /* =NULL */)
+std::string vtkMRMLStorageNode::GetFileNameWithoutExtension(const char* filePath /* =nullptr */)
 {
   std::string filePathStd = (filePath ? filePath : "");
   if (filePathStd.empty())

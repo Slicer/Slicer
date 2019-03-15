@@ -168,7 +168,7 @@ public:
   /// Enable or disable effects and their options based on input selection
   void updateEffectsEnabledFromMRML();
 
-  /// Set cursor for effect. If effect is NULL then the cursor is reset to default.
+  /// Set cursor for effect. If effect is nullptr then the cursor is reset to default.
   void setEffectCursor(qSlicerSegmentEditorAbstractEffect* effect);
 
   /// Updates default modifier labelmap based on reference geometry (to set origin, spacing, and directions)
@@ -1025,7 +1025,7 @@ void qMRMLSegmentEditorWidget::updateEffectList()
 
   if (d->toolButton(nullptr) == nullptr)
     {
-    // Add NULL effect (arrow button to deactivate all effects)
+    // Add nullptr effect (arrow button to deactivate all effects)
     QToolButton* effectButton = new QToolButton(d->EffectsGroupBox);
     effectButton->setObjectName(NULL_EFFECT_NAME);
     effectButton->setCheckable(true);
@@ -1033,7 +1033,7 @@ void qMRMLSegmentEditorWidget::updateEffectList()
     effectButton->setText("None");
     effectButton->setToolTip("No editing");
     effectButton->setToolButtonStyle(d->EffectButtonStyle);
-    effectButton->setProperty("Effect", QVariant::fromValue<QObject*>(NULL));
+    effectButton->setProperty("Effect", QVariant::fromValue<QObject*>(nullptr));
     effectButton->setSizePolicy(QSizePolicy::MinimumExpanding, effectButton->sizePolicy().verticalPolicy());
     d->EffectButtonGroup.addButton(effectButton);
     }
@@ -1097,7 +1097,7 @@ void qMRMLSegmentEditorWidget::updateEffectList()
   QList<qSlicerSegmentEditorAbstractEffect*> unorderedEffects = d->RegisteredEffects;
 
   // Add null effect first
-  displayedEffects << NULL;
+  displayedEffects << nullptr;
 
   // Add effects in the requested order
   foreach(QString effectName, d->EffectNameOrder)
@@ -1578,7 +1578,7 @@ void qMRMLSegmentEditorWidget::updateEffectsSectionFromMRML()
         effectButton->property("Effect").value<QObject*>());
       if (!effect)
         {
-        // NULL effect
+        // nullptr effect
         continue;
         }
       effectButton->setEnabled(segmentAvailable && (segmentSelected || !effect->perSegment()));
@@ -2950,7 +2950,7 @@ void qMRMLSegmentEditorWidget::onSegmentationHistoryChanged()
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSegmentEditorWidget::installKeyboardShortcuts(QWidget* parent /*=NULL*/)
+void qMRMLSegmentEditorWidget::installKeyboardShortcuts(QWidget* parent /*=nullptr*/)
 {
   Q_D(qMRMLSegmentEditorWidget);
   this->uninstallKeyboardShortcuts();

@@ -1237,7 +1237,7 @@ bool vtkSegmentation::CanAcceptSegment(vtkSegment* segment)
 }
 
 //-----------------------------------------------------------------------------
-std::string vtkSegmentation::AddEmptySegment(std::string segmentId/*=""*/, std::string segmentName/*=""*/, double* color/*=NULL*/)
+std::string vtkSegmentation::AddEmptySegment(std::string segmentId/*=""*/, std::string segmentName/*=""*/, double* color/*=nullptr*/)
 {
   vtkSmartPointer<vtkSegment> segment = vtkSmartPointer<vtkSegment>::New();
   if (color)
@@ -1351,7 +1351,7 @@ std::string vtkSegmentation::DetermineCommonLabelmapGeometry(int extentComputati
 
 //-----------------------------------------------------------------------------
 void vtkSegmentation::DetermineCommonLabelmapExtent(int commonGeometryExtent[6], vtkOrientedImageData* commonGeometryImage,
-  vtkStringArray* segmentIds /*=NULL*/, bool computeEffectiveExtent /*=false*/, bool addPadding /*=false*/)
+  vtkStringArray* segmentIds /*=nullptr*/, bool computeEffectiveExtent /*=false*/, bool addPadding /*=false*/)
 {
   std::vector<std::string> segmentIdsVector;
   if (segmentIds)
@@ -1548,7 +1548,7 @@ void vtkSegmentation::DetermineCommonLabelmapExtent(int commonGeometryExtent[6],
 }
 
 //----------------------------------------------------------------------------
-bool vtkSegmentation::SetImageGeometryFromCommonLabelmapGeometry(vtkOrientedImageData* imageData, vtkStringArray* segmentIDs /*=NULL*/,
+bool vtkSegmentation::SetImageGeometryFromCommonLabelmapGeometry(vtkOrientedImageData* imageData, vtkStringArray* segmentIDs /*=nullptr*/,
   int extentComputationMode /*=vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS*/)
 {
   std::string commonGeometryString = this->DetermineCommonLabelmapGeometry(extentComputationMode, segmentIDs);

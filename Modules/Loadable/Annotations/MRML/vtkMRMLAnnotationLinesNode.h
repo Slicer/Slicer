@@ -57,11 +57,11 @@ public:
 
 
   // Description:
-  // get associated display node or NULL if not set
+  // get associated display node or nullptr if not set
   vtkMRMLAnnotationLineDisplayNode* GetAnnotationLineDisplayNode();
 
   // Description:
-  // Create default storage node or NULL if does not have one
+  // Create default storage node or nullptr if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
   // Define line between control points

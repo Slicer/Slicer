@@ -60,7 +60,7 @@ void vtkSlicerTablesLogic::PrintSelf(ostream& os, vtkIndent indent)
 
 //----------------------------------------------------------------------------
 vtkMRMLTableNode* vtkSlicerTablesLogic
-::AddTable(const char* fileName, const char* name /*=NULL*/, bool findSchema /*=true*/, const char* password /*=0*/)
+::AddTable(const char* fileName, const char* name /*=nullptr*/, bool findSchema /*=true*/, const char* password /*=0*/)
 {
   if (!this->GetMRMLScene())
     {

@@ -72,7 +72,7 @@ public slots:
   /// If scene is set then scene has to be set before MRMLTableNode is set.
   void setMRMLScene(vtkMRMLScene* newScene);
 
-  /// Set the current \a viewNode to observe. If NULL then view properties are not stored in the scene.
+  /// Set the current \a viewNode to observe. If nullptr then view properties are not stored in the scene.
   void setMRMLTableViewNode(vtkMRMLTableViewNode* newTableViewNode);
 
   void setMRMLTableNode(vtkMRMLTableNode* tableNode);

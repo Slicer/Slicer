@@ -119,7 +119,7 @@ public:
 
   /// Get the mesh type of that model. The safest way
   /// to know if the mesh is unstructuredGrid is to check
-  /// if GetUnstructuredGrid() is not NULL, but it requires
+  /// if GetUnstructuredGrid() is not nullptr, but it requires
   /// to update the pipeline.
   /// \sa MeshType, GetUnstructuredGrid()
   vtkGetMacro(MeshType, MeshTypeHint);
@@ -235,7 +235,7 @@ public:
 
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
-  virtual std::string GetDefaultStorageNodeClassName(const char* filename /* =NULL */) override;
+  virtual std::string GetDefaultStorageNodeClassName(const char* filename /* =nullptr */) override;
 
   /// Create and observe default display node
   virtual void CreateDefaultDisplayNodes() override;

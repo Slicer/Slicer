@@ -570,7 +570,7 @@ int vtkSlicerMarkupsLogic::AddFiducial(double r, double a, double s)
 
 //---------------------------------------------------------------------------
 void vtkSlicerMarkupsLogic::JumpSlicesToLocation(double x, double y, double z, bool centered,
-  int viewGroup /* =-1 */, vtkMRMLSliceNode* exclude /* =NULL */)
+  int viewGroup /* =-1 */, vtkMRMLSliceNode* exclude /* =nullptr */)
 {
   if (!this->GetMRMLScene())
     {
@@ -586,7 +586,7 @@ void vtkSlicerMarkupsLogic::JumpSlicesToLocation(double x, double y, double z, b
 
 //---------------------------------------------------------------------------
 void vtkSlicerMarkupsLogic::JumpSlicesToNthPointInMarkup(const char *id, int n, bool centered,
-  int viewGroup /* =-1 */, vtkMRMLSliceNode* exclude /* =NULL */)
+  int viewGroup /* =-1 */, vtkMRMLSliceNode* exclude /* =nullptr */)
 {
   if (!id)
     {

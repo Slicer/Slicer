@@ -59,8 +59,8 @@ vtkMRMLTransformNode::vtkMRMLTransformNode()
 //----------------------------------------------------------------------------
 vtkMRMLTransformNode::~vtkMRMLTransformNode()
 {
-  vtkSetAndObserveMRMLObjectMacro(this->TransformToParent, NULL);
-  vtkSetAndObserveMRMLObjectMacro(this->TransformFromParent, NULL);
+  vtkSetAndObserveMRMLObjectMacro(this->TransformToParent, nullptr);
+  vtkSetAndObserveMRMLObjectMacro(this->TransformFromParent, nullptr);
 
   this->CachedMatrixTransformToParent->Delete();
   this->CachedMatrixTransformToParent=nullptr;
@@ -557,7 +557,7 @@ int vtkMRMLTransformNode::IsTransformNodeMyParent(vtkMRMLTransformNode* node)
 {
   if (node == nullptr)
     {
-    // the NULL (world) node is parent of all nodes, we don't have to iterate through the parents to know that it's
+    // the nullptr (world) node is parent of all nodes, we don't have to iterate through the parents to know that it's
     // the parent of this transform node
     return 1;
     }
@@ -1119,8 +1119,8 @@ void vtkMRMLTransformNode::SetAndObserveTransform(vtkAbstractTransform** origina
 
   vtkSetAndObserveMRMLObjectMacro((*originalTransformPtr), transform);
 
-  // We set the inverse to NULL, which means that it's unknown and will be computed atuomatically from the original transform
-  vtkSetAndObserveMRMLObjectMacro((*inverseTransformPtr), NULL);
+  // We set the inverse to nullptr, which means that it's unknown and will be computed atuomatically from the original transform
+  vtkSetAndObserveMRMLObjectMacro((*inverseTransformPtr), nullptr);
 
   this->StorableModifiedTime.Modified();
   this->TransformModified();
@@ -1167,7 +1167,7 @@ void vtkMRMLTransformNode::Inverse()
 {
   if (this->TransformToParent==this->TransformFromParent)
     {
-    // this should only happen if they are both NULL
+    // this should only happen if they are both nullptr
     return;
     }
   vtkAbstractTransform* oldTransformToParent=this->TransformToParent;
@@ -1458,7 +1458,7 @@ int vtkMRMLTransformNode::SetMatrixTransformToParent(vtkMatrix4x4 *matrix)
 {
   if (!this->IsLinear())
     {
-    vtkErrorMacro("Cannot set matrix because vtkMRMLTransformNode contains a composite or non-linear transform. To overwrite the transform, first reset it by calling SetAndObserveTransformToParent(NULL).");
+    vtkErrorMacro("Cannot set matrix because vtkMRMLTransformNode contains a composite or non-linear transform. To overwrite the transform, first reset it by calling SetAndObserveTransformToParent(nullptr).");
     return 0;
     }
 
@@ -1564,7 +1564,7 @@ int vtkMRMLTransformNode::SetAndObserveMatrixTransformFromParent(vtkMatrix4x4 *m
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLTransformNode::IsGeneralTransformLinear(vtkAbstractTransform* inputTransform, vtkTransform* concatenatedLinearTransform/*=NULL*/)
+bool vtkMRMLTransformNode::IsGeneralTransformLinear(vtkAbstractTransform* inputTransform, vtkTransform* concatenatedLinearTransform/*=nullptr*/)
 {
   if (inputTransform==nullptr)
     {

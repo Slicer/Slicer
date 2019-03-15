@@ -128,7 +128,7 @@ public:
   /// of signed short type. Label value of n-th segment in segmentIDs list will be (n + 1). Label value of background = 0.
   /// \param extentComputationMode Determines how to compute extents (EXTENT_REFERENCE_GEOMETRY, EXTENT_UNION_OF_SEGMENTS,
   ///   EXTENT_UNION_OF_SEGMENTS_PADDED, EXTENT_UNION_OF_EFFECTIVE_SEGMENTS, or EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED).
-  /// \param mergedLabelmapGeometry Determines geometry of merged labelmap if not NULL, automatically determined otherwise
+  /// \param mergedLabelmapGeometry Determines geometry of merged labelmap if not nullptr, automatically determined otherwise
   /// \param segmentIDs List of IDs of segments to include in the merged labelmap. If empty or missing, then all segments are included
   /// \return Success flag
   virtual bool GenerateMergedLabelmap(vtkOrientedImageData* mergedImageData, int extentComputationMode, vtkOrientedImageData* mergedLabelmapGeometry = nullptr, const std::vector<std::string>& segmentIDs = std::vector<std::string>());

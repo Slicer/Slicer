@@ -25,11 +25,11 @@ ImageToImageRegistrationMethodTestingHelper<TRegistrationMethod>
 ::ImageToImageRegistrationMethodTestingHelper()
 {
   this->m_RegistrationMethod  = RegistrationMethodType::New();
-  this->m_FixedImageReader    = NULL;     // ImageReaderType::New();
-  this->m_MovingImageReader   = NULL;     // ImageReaderType::New();
-  this->m_MovingImageWriter   = NULL;     // ImageWriterType::New();
-  this->m_BaselineImageReader = NULL;     // ImageReaderType::New();
-  this->m_DifferenceImageWriter   = NULL; // ImageWriterType::New();
+  this->m_FixedImageReader    = nullptr;     // ImageReaderType::New();
+  this->m_MovingImageReader   = nullptr;     // ImageReaderType::New();
+  this->m_MovingImageWriter   = nullptr;     // ImageWriterType::New();
+  this->m_BaselineImageReader = nullptr;     // ImageReaderType::New();
+  this->m_DifferenceImageWriter   = nullptr; // ImageWriterType::New();
   this->m_ResampleFilter      = ResampleFilterType::New();
   this->m_DifferenceFilter    = DifferenceFilterType::New();
   this->m_NumberOfFailedPixelsTolerance = 100;
@@ -51,14 +51,14 @@ void
 ImageToImageRegistrationMethodTestingHelper<TRegistrationMethod>
 ::SetFixedImageFileName( const char * filename )
 {
-  if( filename != NULL && strlen(filename) > 2 )
+  if( filename != nullptr && strlen(filename) > 2 )
     {
     this->m_FixedImageReader    = ImageReaderType::New();
     this->m_FixedImageReader->SetFileName( filename );
     }
   else
     {
-    this->m_FixedImageReader    = NULL;
+    this->m_FixedImageReader    = nullptr;
     }
 }
 
@@ -67,14 +67,14 @@ void
 ImageToImageRegistrationMethodTestingHelper<TRegistrationMethod>
 ::SetMovingImageFileName( const char * filename )
 {
-  if( filename != NULL && strlen(filename) > 2 )
+  if( filename != nullptr && strlen(filename) > 2 )
     {
     this->m_MovingImageReader    = ImageReaderType::New();
     this->m_MovingImageReader->SetFileName( filename );
     }
   else
     {
-    this->m_MovingImageReader    = NULL;
+    this->m_MovingImageReader    = nullptr;
     }
 }
 
@@ -83,7 +83,7 @@ void
 ImageToImageRegistrationMethodTestingHelper<TRegistrationMethod>
 ::SetResampledImageFileName( const char * filename )
 {
-  if( filename != NULL && strlen(filename) > 2 )
+  if( filename != nullptr && strlen(filename) > 2 )
     {
     this->m_MovingImageWriter    = ImageWriterType::New();
     this->m_MovingImageWriter->SetFileName( filename );
@@ -91,7 +91,7 @@ ImageToImageRegistrationMethodTestingHelper<TRegistrationMethod>
     }
   else
     {
-    this->m_MovingImageWriter    = NULL;
+    this->m_MovingImageWriter    = nullptr;
     }
 }
 
@@ -100,14 +100,14 @@ void
 ImageToImageRegistrationMethodTestingHelper<TRegistrationMethod>
 ::SetBaselineImageFileName( const char * filename )
 {
-  if( filename != NULL && strlen(filename) > 2 )
+  if( filename != nullptr && strlen(filename) > 2 )
     {
     this->m_BaselineImageReader    = ImageReaderType::New();
     this->m_BaselineImageReader->SetFileName( filename );
     }
   else
     {
-    this->m_BaselineImageReader    = NULL;
+    this->m_BaselineImageReader    = nullptr;
     }
 }
 
@@ -116,7 +116,7 @@ void
 ImageToImageRegistrationMethodTestingHelper<TRegistrationMethod>
 ::SetDifferenceImageFileName( const char * filename )
 {
-  if( filename != NULL && strlen(filename) > 2 )
+  if( filename != nullptr && strlen(filename) > 2 )
     {
     this->m_DifferenceImageWriter    = ImageWriterType::New();
     this->m_DifferenceImageWriter->SetFileName( filename );
@@ -124,7 +124,7 @@ ImageToImageRegistrationMethodTestingHelper<TRegistrationMethod>
     }
   else
     {
-    this->m_DifferenceImageWriter    = NULL;
+    this->m_DifferenceImageWriter    = nullptr;
     }
 }
 

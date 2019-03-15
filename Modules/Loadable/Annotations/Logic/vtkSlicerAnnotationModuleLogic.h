@@ -244,14 +244,14 @@ public:
 
 
   /// Add a model display node to the scene for a passed in hierarchy node, if
-  /// it doesn't already have one, return the ID, NULL on failure
+  /// it doesn't already have one, return the ID, nullptr on failure
   const char* AddDisplayNodeForHierarchyNode(vtkMRMLAnnotationHierarchyNode *hnode);
 
   /// Legacy support: load a Slicer3 fiducial list from file. Uses FiducialsLogic to load into a legacy node first, then translates into annotation nodes
   /// returns a comma separated list of the annot nodes loaded
   char *LoadFiducialList(const char *filename);
 
-  /// Load an annotation from file, return NULL on error, node ID string
+  /// Load an annotation from file, return nullptr on error, node ID string
   /// otherwise. Adds the appropriate storage and display nodes to the scene
   /// as well. fileType is from this class's enum
   char *LoadAnnotation(const char *filename, const char *name, int fileType);
@@ -266,7 +266,7 @@ public:
 
   /// Add a new fiducial to the currently active hierarchy. Places the
   /// fiducial at the given RAS coordinates (default 0,0,0) with the
-  /// given label (if NULL, uses default naming convention).
+  /// given label (if nullptr, uses default naming convention).
   /// Returns the ID of the newly added node.
   char *AddFiducial(double r=0.0, double a=0.0, double s=0.0, const char *label=nullptr);
 

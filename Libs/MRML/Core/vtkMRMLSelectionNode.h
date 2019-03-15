@@ -188,7 +188,7 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   /// This is how the GUI or the logic can access the current node for
   /// a quantity. Changing the current node for a given quantity should only
   /// be done through the unit node settings panel.
-  /// There can be no node (i.e. NULL) associated to a quantity.
+  /// There can be no node (i.e. nullptr) associated to a quantity.
   /// To make sure to have the correct unit node, one should observe the
   /// selection node for UnitModifiedEvent.
   /// \sa GetUnitNode(), GetNodeReferenceID(), SetAndObserveNodeReferenceID()

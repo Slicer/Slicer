@@ -59,7 +59,7 @@ class vtkCallbackCommand;
 #endif
 
 #ifndef vtkSetAndObserveMRMLObjectEventsMacroNoWarning
-#define vtkSetAndObserveMRMLObjectEventsMacroNoWarning(node,value,events)  {this->MRMLObserverManager->SetAndObserveObjectEvents ( vtkObjectPointer( &(node)), (value), (events), NULL /* priorities */, false /* no warning */);};
+#define vtkSetAndObserveMRMLObjectEventsMacroNoWarning(node,value,events)  {this->MRMLObserverManager->SetAndObserveObjectEvents ( vtkObjectPointer( &(node)), (value), (events), nullptr /* priorities */, false /* no warning */);};
 #endif
 
 #ifndef vtkObserveMRMLObjectMacro
@@ -77,7 +77,7 @@ class vtkCallbackCommand;
 #ifndef vtkSetReferenceStringBodyMacro
 #define vtkSetReferenceStringBodyMacro(name) \
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting " << #name " to " << (_arg?_arg:"(null)") ); \
-  if ( this->name == NULL && _arg == NULL) { return;} \
+  if ( this->name == nullptr && _arg == nullptr) { return;} \
   if ( this->name && _arg && (!strcmp(this->name,_arg))) { return;} \
   std::string oldValue; \
   if (this->name) { oldValue = this->name; delete [] this->name;  } \
@@ -91,7 +91,7 @@ class vtkCallbackCommand;
     } \
    else \
     { \
-    this->name = NULL; \
+    this->name = nullptr; \
     } \
   this->Modified(); \
   if (this->Scene && this->name) \
@@ -235,7 +235,7 @@ public:
   /// * SingletonTag.
   ///
   /// If a defaultNode pointer is passed then the values stored in that node
-  /// will be used to set the node contents. If defaultNode is NULL then the values
+  /// will be used to set the node contents. If defaultNode is nullptr then the values
   /// set in the constructor of the class will be used to set the node contents.
   ///
   /// \note Other attributes that needs to be preserved should be handled in the subclass.
@@ -300,7 +300,7 @@ public:
 
   /// \brief Get value of a name value pair attribute.
   ///
-  /// Return NULL if the name does not exists.
+  /// Return nullptr if the name does not exists.
   const char* GetAttribute(const char* name);
 
   /// Get all attribute names.
@@ -346,9 +346,9 @@ public:
 
   /// \brief Tag that make this node a singleton in the scene.
   ///
-  /// If set to NULL, multiple instances of this node class are allowed.
+  /// If set to nullptr, multiple instances of this node class are allowed.
   ///
-  /// If set to a non-NULL string, the node will be a singleton and
+  /// If set to a non-nullptr string, the node will be a singleton and
   /// the scene will replace this node instead of adding new instances.
   ///
   /// The SingletonTag is used by the scene to build a unique ID.
@@ -492,7 +492,7 @@ public:
   ///
   /// \a callData is passed to InvokeEvent() if the event is invoked immediately.
   ///
-  /// If the event is not invoked immediately then it will be sent with `callData=NULL`.
+  /// If the event is not invoked immediately then it will be sent with `callData=nullptr`.
   virtual void InvokeCustomModifiedEvent(int eventId, void *callData=nullptr)
     {
     if (!this->GetDisableModifiedEvent())
@@ -656,7 +656,7 @@ public:
   /// \brief Return true if \a referencedNodeID is in the node ID list for a
   /// specific \a referenceRole.
   ///
-  /// If NULL is specified as role then all roles are checked.
+  /// If nullptr is specified as role then all roles are checked.
   bool HasNodeReferenceID(const char* referenceRole, const char* referencedNodeID);
 
   /// \brief Return the number of node IDs for a specific reference role (and nodes as they always
@@ -755,7 +755,7 @@ protected:
     /// \brief Set the events that will be observed when the referenced node
     /// will be available.
     ///
-    /// If set to NULL then the default event list (specified for the role) will be observed.
+    /// If set to nullptr then the default event list (specified for the role) will be observed.
     /// If set to an empty event list then no events will be observed.
     void SetEvents(vtkIntArray* events);
     vtkIntArray* GetEvents() const;
@@ -829,7 +829,7 @@ protected:
   virtual bool IsReferenceRoleGeneric(const char* refRole);
 
   /// Updates references and event observations on the selected referenced nodes.
-  /// If referenceRole is NULL then all the roles will be updated.
+  /// If referenceRole is nullptr then all the roles will be updated.
   /// \sa UpdateNthNodeReference
   virtual void UpdateNodeReferences(const char* referenceRole = nullptr);
 
@@ -873,7 +873,7 @@ protected:
     this->InvokeEvent(vtkMRMLNode::ReferenceModifiedEvent, reference);
   }
 
-  /// Called when a referenced node pointer is removed (set to NULL).
+  /// Called when a referenced node pointer is removed (set to nullptr).
   virtual void OnNodeReferenceRemoved(vtkMRMLNodeReference *reference)
   {
     this->InvokeEvent(vtkMRMLNode::ReferenceRemovedEvent, reference);

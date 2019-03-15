@@ -70,7 +70,7 @@ void qSlicerSegmentEditorEffectFactory::setInstance(qSlicerSegmentEditorEffectFa
     {
     return;
     }
-  // Preferably this will be NULL
+  // Preferably this will be nullptr
   if (qSlicerSegmentEditorEffectFactory::m_Instance)
     {
     delete qSlicerSegmentEditorEffectFactory::m_Instance;
@@ -155,7 +155,7 @@ QList<qSlicerSegmentEditorAbstractEffect*> qSlicerSegmentEditorEffectFactory::co
     qSlicerSegmentEditorAbstractEffect* clonedEffect = effect->clone();
     if (!clonedEffect)
       {
-      // make sure we don't put a NULL pointer in the effect list
+      // make sure we don't put a nullptr pointer in the effect list
       qCritical() << Q_FUNC_INFO << " failed to clone effect: " << effect->name();
       continue;
       }

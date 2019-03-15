@@ -48,7 +48,7 @@ public:
   virtual std::string GetDataProbeInfoStringForPosition(double xyz[3]) override;
 
   /// Get list of segments visible at selected display position.
-  /// segmentValues is optional, if not NULL then it returns value for each segment for fractional representations
+  /// segmentValues is optional, if not nullptr then it returns value for each segment for fractional representations
   virtual void GetVisibleSegmentsForPosition(double ras[3], vtkMRMLSegmentationDisplayNode* displayNode,
     vtkStringArray* segmentIDs, vtkDoubleArray* segmentValues = nullptr);
 

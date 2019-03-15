@@ -125,7 +125,7 @@ double ConvertTimeToSeconds(const char *time )
 {
   if( time == nullptr )
     {
-    std::cerr << "ConvertTimeToSeconds got a NULL time string." << std::endl;
+    std::cerr << "ConvertTimeToSeconds got a nullptr time string." << std::endl;
     return -1.0;
     }
 
@@ -174,12 +174,12 @@ double ConvertWeightUnits(double count, const char *fromunits, const char *touni
 
   if( fromunits == nullptr )
     {
-    std::cout << "Got NULL parameter fromunits. A bad param was probably specified." << std::endl;
+    std::cout << "Got nullptr parameter fromunits. A bad param was probably specified." << std::endl;
     return -1.0;
     }
   if( tounits == nullptr )
     {
-    std::cout << "Got NULL parameter from tounits. A bad parameter was probably specified." << std::endl;
+    std::cout << "Got nullptr parameter from tounits. A bad parameter was probably specified." << std::endl;
     return -1.0;
     }
 
@@ -251,12 +251,12 @@ double ConvertRadioactivityUnits(double count, const char *fromunits, const char
 
   if( fromunits == nullptr )
     {
-    std::cout << "Got NULL parameter in fromunits. A bad parameter was probably specified." << std::endl;
+    std::cout << "Got nullptr parameter in fromunits. A bad parameter was probably specified." << std::endl;
     return -1.0;
     }
   if( tounits == nullptr )
     {
-    std::cout << "Got NULL parameter in tounits. A bad parameter was probably specified." << std::endl;
+    std::cout << "Got nullptr parameter in tounits. A bad parameter was probably specified." << std::endl;
     return -1.0;
     }
 
@@ -1328,12 +1328,12 @@ int LoadImagesAndComputeSUV( parameters & list, T )
   // convert from input units.
   if( list.radioactivityUnits.c_str() == nullptr )
     {
-    std::cerr << "ComputeSUV: Got NULL radioactivity units. No computation done." << std::endl;
+    std::cerr << "ComputeSUV: Got nullptr radioactivity units. No computation done." << std::endl;
     return EXIT_FAILURE;
     }
   if( list.weightUnits.c_str() == nullptr )
     {
-    std::cerr << "ComputeSUV: Got NULL weight units. No computation could be done." << std::endl;
+    std::cerr << "ComputeSUV: Got nullptr weight units. No computation could be done." << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -1427,7 +1427,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
         }
       if( dose == 0.0 )
         {
-        std::cerr << "ComputeSUV: Got NULL dose!" << std::endl;
+        std::cerr << "ComputeSUV: Got nullptr dose!" << std::endl;
         return EXIT_FAILURE;
         }
       if( weight == 0.0 )

@@ -62,7 +62,7 @@ void vtkMRMLAnnotationBidimensionalNode::Initialize(vtkMRMLScene* mrmlScene)
 //----------------------------------------------------------------------------
 vtkMRMLAnnotationBidimensionalNode::~vtkMRMLAnnotationBidimensionalNode()
 {
-  vtkDebugMacro("Destructing...." << (this->GetID() != NULL ? this->GetID() : "null id"));
+  vtkDebugMacro("Destructing...." << (this->GetID() != nullptr ? this->GetID() : "null id"));
   if (this->AnnotationFormat)
     {
       delete [] this->AnnotationFormat;

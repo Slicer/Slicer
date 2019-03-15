@@ -145,7 +145,7 @@ void qMRMLItemDelegate::setEditorData(QWidget *editor,
     {
     QColor color = index.data(this->colorRole(index)).value<QColor>();
     ctkColorPickerButton* colorPicker = qobject_cast<ctkColorPickerButton*>(editor);
-    if (colorPicker) // colorPicker may be NULL, don't make the application crash when that happens
+    if (colorPicker) // colorPicker may be nullptr, don't make the application crash when that happens
       {
       colorPicker->blockSignals(true);
       colorPicker->setColor(color);
@@ -165,7 +165,7 @@ void qMRMLItemDelegate::setEditorData(QWidget *editor,
     {
     ctkSliderWidget *sliderWidget = qobject_cast<ctkSliderWidget*>(editor);
     double value = index.data(Qt::EditRole).toDouble();
-    if (sliderWidget) // sliderWidget may be NULL, don't make the application crash when that happens
+    if (sliderWidget) // sliderWidget may be nullptr, don't make the application crash when that happens
       {
       sliderWidget->setValue(value);
       }

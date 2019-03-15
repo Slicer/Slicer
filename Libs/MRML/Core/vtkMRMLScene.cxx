@@ -1331,7 +1331,7 @@ void vtkMRMLScene::RemoveNode(vtkMRMLNode *n)
     }
   // As callbacks may want to look for the removed node, the nodeID list should
   // be up to date.
-  if (this->GetNodeByID(n->GetID()) == NULL)
+  if (this->GetNodeByID(n->GetID()) == nullptr)
     {
     vtkErrorMacro("RemoveNode: class: " << n->GetClassName() << " name:"
                   << n->GetName() << " id: " << n->GetID()
@@ -2917,7 +2917,7 @@ const char* vtkMRMLScene::GetChangedID(const char* id)
 }
 
 //------------------------------------------------------------------------------
-void vtkMRMLScene::UpdateNodeReferences(vtkCollection* checkNodes/*=NULL*/)
+void vtkMRMLScene::UpdateNodeReferences(vtkCollection* checkNodes/*=nullptr*/)
 {
   for (std::map< std::string, std::string>::const_iterator iterChanged = this->ReferencedIDChanges.begin();
     iterChanged != this->ReferencedIDChanges.end(); iterChanged++)
@@ -3181,7 +3181,7 @@ vtkURIHandler * vtkMRMLScene::FindURIHandlerByName(const char *name)
     u = vtkURIHandler::SafeDownCast(object);
     if ( u == nullptr )
       {
-      vtkErrorMacro("FindURIHandlerByName: Got NULL URIHandler from URIHandlerCollection." );
+      vtkErrorMacro("FindURIHandlerByName: Got nullptr URIHandler from URIHandlerCollection." );
       return nullptr;
       }
     if (  !strcmp (u->GetName(), name ) )

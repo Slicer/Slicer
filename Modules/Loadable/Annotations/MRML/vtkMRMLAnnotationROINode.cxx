@@ -64,7 +64,7 @@ void vtkMRMLAnnotationROINode::Initialize(vtkMRMLScene* mrmlScene)
 //
 //    // so that the SetLabelText macro won't try to free memory
 //    this->Selected = 0;
-//    this->VolumeNodeID = NULL;
+//    this->VolumeNodeID = nullptr;
 //    this->InteractiveMode = 1;
 //    this->HideFromEditors = 0;
 //
@@ -74,7 +74,7 @@ void vtkMRMLAnnotationROINode::Initialize(vtkMRMLScene* mrmlScene)
 //----------------------------------------------------------------------------
 vtkMRMLAnnotationROINode::~vtkMRMLAnnotationROINode()
 {
-  vtkDebugMacro("Destructing...." << (this->GetID() != NULL ? this->GetID() : "null id"));
+  vtkDebugMacro("Destructing...." << (this->GetID() != nullptr ? this->GetID() : "null id"));
   if (this->LabelText)
     {
     delete [] this->LabelText;

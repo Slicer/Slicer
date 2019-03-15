@@ -238,7 +238,7 @@ void vtkSystemInformation::RunRenderingCheck()
   this->RenderingCapabilities |= ONSCREEN_RENDERING;
 #elif defined(VTK_USE_X)
   // if using X, need to check if display is accessible.
-  Display* dId = XOpenDisplay((char*)NULL);
+  Display* dId = XOpenDisplay(nullptr);
   if (dId)
   {
     XCloseDisplay(dId);

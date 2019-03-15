@@ -87,7 +87,7 @@ vtkMRMLPlotSeriesNode* vtkSlicerPlotsLogic::CloneSeries(vtkMRMLPlotSeriesNode* s
 {
   if (!source || source->GetScene() == nullptr)
     {
-    vtkErrorMacro("vtkSlicerPlotsLogic::CloneSeries failed: source is NULL or not added to a a scene");
+    vtkErrorMacro("vtkSlicerPlotsLogic::CloneSeries failed: source is nullptr or not added to a a scene");
     return nullptr;
     }
 

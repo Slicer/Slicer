@@ -238,7 +238,7 @@ ImageToImageRegistrationHelper<TImage>
 
     this->Modified();
 
-    if( maskObject != NULL )
+    if( maskObject != nullptr )
       {
       m_UseMovingImageMaskObject = true;
       }
@@ -1036,8 +1036,8 @@ ImageToImageRegistrationHelper<TImage>
     {
     std::cerr << "Error: ComputeBaselineDifference called prior to setting a baseline image."
               << std::endl;
-    m_BaselineResampledMovingImage = NULL;
-    m_BaselineDifferenceImage = NULL;
+    m_BaselineResampledMovingImage = nullptr;
+    m_BaselineDifferenceImage = nullptr;
     m_BaselineNumberOfFailedPixels = 0;
     m_BaselineTestPassed = false;
     return;

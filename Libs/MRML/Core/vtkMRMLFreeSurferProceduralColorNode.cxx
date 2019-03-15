@@ -184,7 +184,7 @@ void vtkMRMLFreeSurferProceduralColorNode::UpdateScene(vtkMRMLScene *scene)
 {
   Superclass::UpdateScene(scene);
   /*
-    if (this->GetStorageNodeID() == NULL)
+    if (this->GetStorageNodeID() == nullptr)
     {
     //vtkErrorMacro("No reference StorageNodeID found");
     return;
@@ -284,10 +284,10 @@ void vtkMRMLFreeSurferProceduralColorNode::ProcessMRMLEvents ( vtkObject *caller
   Superclass::ProcessMRMLEvents(caller, event, callData);
 /*
   vtkMRMLFreeSurferProceduralColorDisplayNode *dnode = this->GetDisplayNode();
-  if (dnode != NULL && dnode == vtkMRMLFreeSurferProceduralColorDisplayNode::SafeDownCast(caller) &&
+  if (dnode != nullptr && dnode == vtkMRMLFreeSurferProceduralColorDisplayNode::SafeDownCast(caller) &&
       event ==  vtkCommand::ModifiedEvent)
     {
-        this->InvokeEvent(vtkMRMLFreeSurferProceduralColorNode::DisplayModifiedEvent, NULL);
+        this->InvokeEvent(vtkMRMLFreeSurferProceduralColorNode::DisplayModifiedEvent, nullptr);
     }
 */
   return;

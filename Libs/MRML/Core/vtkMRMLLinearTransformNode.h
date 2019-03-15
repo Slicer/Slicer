@@ -54,7 +54,7 @@ class VTK_MRML_EXPORT vtkMRMLLinearTransformNode : public vtkMRMLTransformNode
   virtual const char* GetNodeTagName() override {return "LinearTransform";};
 
   ///
-  /// Create default storage node or NULL if does not have one
+  /// Create default storage node or nullptr if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override
     {
     return Superclass::CreateDefaultStorageNode();

@@ -186,7 +186,7 @@ void qSlicerDiffusionTensorVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLDiffusi
 
     glyphableVolumeSliceNode = dtiSliceDisplayNodes[0];
     }
-  // The update tasks are also needed when scene is closed (newVolumeDisplayNode is NULL)
+  // The update tasks are also needed when scene is closed (newVolumeDisplayNode is nullptr)
   d->DTISliceDisplayWidget->setMRMLDTISliceDisplayNode(glyphableVolumeSliceNode);
   qvtkDisconnect(nullptr, vtkCommand::ModifiedEvent, this, SLOT(synchronizeSliceDisplayNodes()));
   qvtkConnect(glyphableVolumeSliceNode, vtkCommand::ModifiedEvent,

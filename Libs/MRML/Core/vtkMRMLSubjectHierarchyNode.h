@@ -277,7 +277,7 @@ public:
   /// Re-implemented to handle nested associations \sa GetAssociatedNode
   /// \param itemID Parent item of the branch
   /// \param dataNodeCollection Collection updated with the list of data nodes
-  /// \param childClass Name of the class we are looking for. NULL returns associated data nodes of any kind
+  /// \param childClass Name of the class we are looking for. nullptr returns associated data nodes of any kind
   void GetDataNodesInBranch(vtkIdType itemID, vtkCollection* dataNodeCollection, const char* childClass=nullptr);
 
   /// Get data node associated to the parent of the item associated to a data node.

@@ -311,15 +311,15 @@ bool qSlicerApplicationHelper::checkRenderingCapabilities()
     SHELLEXECUTEINFO shExecInfo;
     shExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
     shExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
-    shExecInfo.hwnd = NULL;
+    shExecInfo.hwnd = nullptr;
     // tscon requires administrator access, therefore "runas" verb is needed.
     // UAC popup will be displayed.
     shExecInfo.lpVerb = "runas";
     shExecInfo.lpFile = "tscon.exe";
     shExecInfo.lpParameters = "1 /dest:console";
-    shExecInfo.lpDirectory = NULL;
+    shExecInfo.lpDirectory = nullptr;
     shExecInfo.nShow = SW_MAXIMIZE;
-    shExecInfo.hInstApp = NULL;
+    shExecInfo.hInstApp = nullptr;
     ShellExecuteEx(&shExecInfo);
     WaitForSingleObject(shExecInfo.hProcess, INFINITE);
 

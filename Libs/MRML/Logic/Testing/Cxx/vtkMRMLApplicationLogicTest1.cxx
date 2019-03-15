@@ -150,7 +150,7 @@ int TemporaryPathTest()
 {
   vtkNew<vtkMRMLApplicationLogic> MRMLAppLogic;
 
-  MRMLAppLogic->SetTemporaryPath(nullptr); // Test NULL
+  MRMLAppLogic->SetTemporaryPath(nullptr); // Test nullptr
   if (strlen(MRMLAppLogic->GetTemporaryPath()) != 0)
     {
     std::string temporaryEmptyString;

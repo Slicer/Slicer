@@ -153,7 +153,7 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
   if (pythonManager)
     {
     std::cerr << "Line " << __LINE__ << " - Problem with  corePythonManager()"
-              << " - NULL pointer is expected." << std::endl;
+              << " - nullptr pointer is expected." << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -165,7 +165,7 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
   if (!pythonManager)
     {
     std::cerr << "Line " << __LINE__ << " - Problem with corePythonManager()"
-              << " - Return a NULL pointer." << std::endl;
+              << " - Return a nullptr pointer." << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -183,7 +183,7 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
   if (pythonConsole)
     {
     std::cerr << "Line " << __LINE__ << " - Problem with  pythonConsole()"
-              << " - NULL pointer is expected." << std::endl;
+              << " - nullptr pointer is expected." << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -195,7 +195,7 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
   if (!pythonConsole)
     {
     std::cerr << "Line " << __LINE__ << " - Problem with pythonConsole()"
-              << " - Return a NULL pointer." << std::endl;
+              << " - Return a nullptr pointer." << std::endl;
     return EXIT_FAILURE;
     }
 

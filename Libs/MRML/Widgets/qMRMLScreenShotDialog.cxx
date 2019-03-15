@@ -60,7 +60,7 @@ public:
   QPointer<qMRMLLayoutManager>   LayoutManager;
   vtkSmartPointer<vtkImageData>      ImageData;
   /// The ID of the associated snapshot node.
-  /// This is NULL if the dialog has no associated snapshot node (== new snapshot mode).
+  /// This is nullptr if the dialog has no associated snapshot node (== new snapshot mode).
   QVariant                           Data;
   QButtonGroup*                      WidgetTypeGroup;
 

@@ -49,7 +49,7 @@ public:
   QVector<qSlicerModuleFactory*> notFileBasedFactories()const;
 
   // Helper function that returns module factory for a module name, without
-  // the risk of creating a NULL entry if the module is not registered.
+  // the risk of creating a nullptr entry if the module is not registered.
   qSlicerModuleFactory* registeredModuleFactory(const QString& moduleName)const;
 
   QStringList SearchPaths;

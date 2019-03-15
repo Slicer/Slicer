@@ -131,7 +131,7 @@ double qSlicerSubjectHierarchyVolumesPlugin::canAddNodeToSubjectHierarchy(
   Q_UNUSED(parentItemID);
   if (!node)
     {
-    qCritical() << Q_FUNC_INFO << ": Input node is NULL!";
+    qCritical() << Q_FUNC_INFO << ": Input node is nullptr!";
     return 0.0;
     }
   else if (node->IsA("vtkMRMLScalarVolumeNode"))
@@ -326,7 +326,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumeInAllViews(
 {
   if (!node)
     {
-    qCritical() << Q_FUNC_INFO << ": NULL node!";
+    qCritical() << Q_FUNC_INFO << ": nullptr node!";
     return;
     }
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
@@ -380,7 +380,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::hideVolumeFromAllViews(vtkMRMLScalarV
 {
   if (!node || !node->GetID())
     {
-    qCritical() << Q_FUNC_INFO << ": NULL node!";
+    qCritical() << Q_FUNC_INFO << ": nullptr node!";
     return;
     }
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();

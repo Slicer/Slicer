@@ -118,7 +118,7 @@ public:
   vtkSetMacro(UseColumnNameAsColumnHeader, bool);
 
   ///
-  /// Create default storage node or NULL if does not have one
+  /// Create default storage node or nullptr if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
   ///
@@ -249,7 +249,7 @@ public:
 
   ///
   /// Remove all properties defined for the specified column.
-  /// To remove all properties for all columns, use SetAndObserveScheme(NULL).
+  /// To remove all properties for all columns, use SetAndObserveScheme(nullptr).
   void RemoveAllColumnProperties(const std::string& columnName);
   void RemoveAllColumnProperties(int columnIndex);
 

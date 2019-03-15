@@ -69,7 +69,7 @@ vtkMRMLVolumePropertyNode::~vtkMRMLVolumePropertyNode(void)
     vtkUnObserveMRMLObjectMacro(this->VolumeProperty->GetScalarOpacity());
     vtkUnObserveMRMLObjectMacro(this->VolumeProperty->GetGradientOpacity());
     vtkUnObserveMRMLObjectMacro(this->VolumeProperty->GetRGBTransferFunction());
-    vtkSetAndObserveMRMLObjectMacro(this->VolumeProperty, NULL);
+    vtkSetAndObserveMRMLObjectMacro(this->VolumeProperty, nullptr);
     }
   this->ObservedEvents->Delete();
 }

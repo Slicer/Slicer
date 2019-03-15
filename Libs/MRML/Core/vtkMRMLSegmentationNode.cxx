@@ -507,7 +507,7 @@ void vtkMRMLSegmentationNode::GetBounds(double bounds[6])
 bool vtkMRMLSegmentationNode::GenerateMergedLabelmap(
   vtkOrientedImageData* mergedImageData,
   int extentComputationMode,
-  vtkOrientedImageData* mergedLabelmapGeometry/*=NULL*/,
+  vtkOrientedImageData* mergedLabelmapGeometry/*=nullptr*/,
   const std::vector<std::string>& segmentIDs/*=std::vector<std::string>()*/
   )
 {
@@ -586,7 +586,7 @@ bool vtkMRMLSegmentationNode::GenerateMergedLabelmap(
   short* mergedImagePtr = (short*)mergedImageData->GetScalarPointerForExtent(referenceExtent);
   if (!mergedImagePtr)
     {
-    // Setting the extent may invoke this function again via ImageDataModified, in which case the pointer is NULL
+    // Setting the extent may invoke this function again via ImageDataModified, in which case the pointer is nullptr
     return false;
     }
 
@@ -654,7 +654,7 @@ bool vtkMRMLSegmentationNode::GenerateMergedLabelmap(
 
 //---------------------------------------------------------------------------
 bool vtkMRMLSegmentationNode::GenerateMergedLabelmapForAllSegments(vtkOrientedImageData* mergedImageData, int extentComputationMode,
-  vtkOrientedImageData* mergedLabelmapGeometry /*=NULL*/, vtkStringArray* segmentIDs /*=NULL*/)
+  vtkOrientedImageData* mergedLabelmapGeometry /*=nullptr*/, vtkStringArray* segmentIDs /*=nullptr*/)
 {
   std::vector<std::string> segmentIDsVector;
   if (segmentIDs)
@@ -671,8 +671,8 @@ bool vtkMRMLSegmentationNode::GenerateMergedLabelmapForAllSegments(vtkOrientedIm
 bool vtkMRMLSegmentationNode::GenerateEditMask(vtkOrientedImageData* maskImage, int editMode,
   vtkOrientedImageData* referenceGeometry,
   std::string editedSegmentID/*=""*/, std::string maskSegmentID/*=""*/,
-  vtkOrientedImageData* masterVolume/*=NULL*/, double editableIntensityRange[2]/*=NULL*/,
-  vtkMRMLSegmentationDisplayNode* displayNode/*=NULL*/)
+  vtkOrientedImageData* masterVolume/*=nullptr*/, double editableIntensityRange[2]/*=nullptr*/,
+  vtkMRMLSegmentationDisplayNode* displayNode/*=nullptr*/)
 {
   if (!maskImage)
     {
@@ -913,7 +913,7 @@ void vtkMRMLSegmentationNode::SetReferenceImageGeometryParameterFromVolumeNode(v
 
 //---------------------------------------------------------------------------
 std::string vtkMRMLSegmentationNode::AddSegmentFromClosedSurfaceRepresentation(vtkPolyData* polyData,
-  std::string segmentName/* ="" */, double color[3] /* =NULL */,
+  std::string segmentName/* ="" */, double color[3] /* =nullptr */,
   std::string vtkNotUsed(segmentId)/* ="" */)
 {
   if (!this->Segmentation)
@@ -940,7 +940,7 @@ std::string vtkMRMLSegmentationNode::AddSegmentFromClosedSurfaceRepresentation(v
 
 //---------------------------------------------------------------------------
 std::string vtkMRMLSegmentationNode::AddSegmentFromBinaryLabelmapRepresentation(vtkOrientedImageData* imageData,
-  std::string segmentName/* ="" */, double color[3] /* =NULL */,
+  std::string segmentName/* ="" */, double color[3] /* =nullptr */,
   std::string vtkNotUsed(segmentId)/* ="" */)
 {
   if (!this->Segmentation)

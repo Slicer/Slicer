@@ -79,7 +79,7 @@ public:
   vtkGetMacro(BrushRadius, double);
 
   ///
-  /// The mask image: used instead of brush if non NULL
+  /// The mask image: used instead of brush if non nullptr
   /// - image corresponds to the PaintRegion but is
   ///   in World coordinates.
   vtkSetObjectMacro(MaskImage, vtkImageData);

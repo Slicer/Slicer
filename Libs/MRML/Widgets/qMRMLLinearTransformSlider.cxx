@@ -139,7 +139,7 @@ void qMRMLLinearTransformSlider::setMRMLTransformNode(vtkMRMLTransformNode* tran
 
   d->MRMLTransformNode = transformNode;
   this->onMRMLTransformNodeModified(transformNode);
-  // If the node is NULL, any action on the widget is meaningless, this is why
+  // If the node is nullptr, any action on the widget is meaningless, this is why
   // the widget is disabled
   this->setEnabled(transformNode != nullptr && transformNode->IsLinear());
 }

@@ -191,7 +191,7 @@ void vtkMRMLCameraNode::Copy(vtkMRMLNode* anode)
 
     // Important, do not call SetActiveTag() or the owner of the current tag
     // (node) will lose its tag, and the active camera will be untagged, and
-    // a the active camera of the current view will be reset to NULL, and a
+    // a the active camera of the current view will be reset to nullptr, and a
     // new camera will be created on the fly by VTK the next time an active
     // camera is need, one completely disconnected from Slicer3's MRML/internals
     this->SetInternalActiveTag(node->GetActiveTag());
@@ -479,7 +479,7 @@ void vtkMRMLCameraNode::SetActiveTag(const char* _arg)
   else
     {
     vtkDebugMacro("SetActiveTag: null scene or tag, not checking for duplicates on camera " << (this->GetName() ? this->GetName() : "no name")
-                    << ", input arg = " << (_arg == NULL ? "NULL" : _arg));
+                    << ", input arg = " << (_arg == nullptr ? "NULL" : _arg));
     }
   this->InvokeEvent(vtkMRMLCameraNode::ActiveTagModifiedEvent, nullptr);
 }

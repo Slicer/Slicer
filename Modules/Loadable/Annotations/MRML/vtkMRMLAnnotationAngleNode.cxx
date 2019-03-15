@@ -95,7 +95,7 @@ vtkMRMLAnnotationAngleNode::vtkMRMLAnnotationAngleNode()
 //----------------------------------------------------------------------------
 vtkMRMLAnnotationAngleNode::~vtkMRMLAnnotationAngleNode()
 {
-  vtkDebugMacro("Destructing...." << (this->GetID() != NULL ? this->GetID() : "null id"));
+  vtkDebugMacro("Destructing...." << (this->GetID() != nullptr ? this->GetID() : "null id"));
   if (this->LabelFormat)
     {
       delete [] this->LabelFormat;

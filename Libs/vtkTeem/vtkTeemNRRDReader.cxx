@@ -815,7 +815,7 @@ int vtkTeemNRRDReader::tenSpaceDirectionReduce(Nrrd *nout, const Nrrd *nin, doub
 
   if (!(nout && nin))
     {
-    sprintf(err, "%s: got NULL pointer", me);
+    sprintf(err, "%s: got nullptr pointer", me);
     biffAdd(TEN, err);
     return 1;
     }

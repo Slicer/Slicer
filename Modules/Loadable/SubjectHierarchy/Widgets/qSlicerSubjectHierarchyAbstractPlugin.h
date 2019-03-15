@@ -199,7 +199,7 @@ public:
   Q_INVOKABLE bool isThisPluginOwnerOfItem(vtkIdType itemID)const;
 
   /// Switch to module with given name
-  /// \return Widget representation of the module if found, NULL otherwise
+  /// \return Widget representation of the module if found, nullptr otherwise
   Q_INVOKABLE static qSlicerAbstractModuleWidget* switchToModule(QString moduleName);
 
 public:

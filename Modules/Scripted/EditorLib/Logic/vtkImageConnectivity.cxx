@@ -76,7 +76,7 @@ int connect(
      char *inimage,
      char inbackground,
      size_t *outimage,
-     size_t *num_components) /* set to NULL if not interested */
+     size_t *num_components) /* set to nullptr if not interested */
 {
   unsigned int i;
   unsigned int axisv;

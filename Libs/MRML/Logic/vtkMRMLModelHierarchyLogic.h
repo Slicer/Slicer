@@ -42,7 +42,7 @@ public:
 
   ///
   /// Given model id return it's hierarchy
-  /// or NULL if it does not have one
+  /// or nullptr if it does not have one
   vtkMRMLModelHierarchyNode* GetModelHierarchyNode(const char *modelNodeID);
 
   ///

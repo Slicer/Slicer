@@ -936,7 +936,7 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic
 //----------------------------------------------------------------------------
 void vtkSlicerVolumeRenderingLogic::UpdateDisplayNodeFromVolumeNode(
   vtkMRMLVolumeRenderingDisplayNode *displayNode, vtkMRMLVolumeNode *volumeNode,
-  vtkMRMLVolumePropertyNode *propNode /*=NULL*/, vtkMRMLAnnotationROINode *roiNode /*=NULL*/ )
+  vtkMRMLVolumePropertyNode *propNode /*=nullptr*/, vtkMRMLAnnotationROINode *roiNode /*=nullptr*/ )
 {
   if (displayNode == nullptr)
     {
@@ -1191,7 +1191,7 @@ bool vtkSlicerVolumeRenderingLogic::IsDifferentFunction(vtkColorTransferFunction
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerVolumeRenderingLogic::AddPreset(vtkMRMLVolumePropertyNode* preset, vtkImageData* icon /* = NULL */)
+void vtkSlicerVolumeRenderingLogic::AddPreset(vtkMRMLVolumePropertyNode* preset, vtkImageData* icon /* = nullptr */)
 {
   if (preset == nullptr)
     {

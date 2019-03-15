@@ -148,7 +148,7 @@ public:
   Q_INVOKABLE QList<qSlicerSubjectHierarchyAbstractPlugin*> allPlugins();
 
   /// Get a plugin by name
-  /// \return The plugin instance if exists, NULL otherwise
+  /// \return The plugin instance if exists, nullptr otherwise
   Q_INVOKABLE qSlicerSubjectHierarchyAbstractPlugin* pluginByName(QString name);
 
   /// Returns the plugin that can handle a node the best for adding it from outside to inside the subject hierarchy

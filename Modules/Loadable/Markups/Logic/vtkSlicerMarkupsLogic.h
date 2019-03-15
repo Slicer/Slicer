@@ -103,7 +103,7 @@ public:
   /// \sa FocusCamerasOnNthPointInMarkup
   void FocusCameraOnNthPointInMarkup(const char *cameraNodeID, const char *markupNodeID, int n);
 
-  /// Load a markups fiducial list from fileName, return NULL on error, node ID string
+  /// Load a markups fiducial list from fileName, return nullptr on error, node ID string
   /// otherwise. Adds the appropriate storage and display nodes to the scene
   /// as well.
   char *LoadMarkupsFiducials(const char *fileName, const char *fidsName);

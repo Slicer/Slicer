@@ -124,7 +124,7 @@ double qSlicerSubjectHierarchyLabelMapsPlugin::canAddNodeToSubjectHierarchy(
   Q_UNUSED(parentItemID);
   if (!node)
     {
-    qCritical() << Q_FUNC_INFO << ": Input node is NULL!";
+    qCritical() << Q_FUNC_INFO << ": Input node is nullptr!";
     return 0.0;
     }
   else if (node->IsA("vtkMRMLLabelMapVolumeNode"))

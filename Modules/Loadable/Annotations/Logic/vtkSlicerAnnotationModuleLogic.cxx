@@ -2873,7 +2873,7 @@ char * vtkSlicerAnnotationModuleLogic::GetTopLevelHierarchyNodeIDForNodeClass(vt
 
       if (!toplevelHierarchyNodeID)
         {
-        vtkErrorMacro("AddNewHierarchyNode: Toplevel hierarchy node was NULL.")
+        vtkErrorMacro("AddNewHierarchyNode: Toplevel hierarchy node was nullptr.")
         return false;
         }
       this->SetActiveHierarchyNodeID(toplevelHierarchyNodeID);

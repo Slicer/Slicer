@@ -76,7 +76,7 @@ public:
 
   vtkMRMLPlotSeriesNode* plotSeriesNodeFromPlot(vtkPlot* plot);
 
-  // Tries to update the existing plot. If returns NULL then it means the existing plot must be deleted.
+  // Tries to update the existing plot. If returns nullptr then it means the existing plot must be deleted.
   // If returned plot differs from the existin plot, then existing plot must be replaced by the returned one.
   vtkSmartPointer<vtkPlot> updatePlotFromPlotSeriesNode(vtkMRMLPlotSeriesNode* plotSeriesNode, vtkPlot* existingPlot);
 

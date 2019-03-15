@@ -55,7 +55,7 @@ public:
   virtual QList<QAction*> itemContextMenuActions()const;
 
   /// Show context menu actions valid for  given subject hierarchy node.
-  /// \param node Subject Hierarchy node to show the context menu items for. If NULL, then shows menu items for the scene
+  /// \param node Subject Hierarchy node to show the context menu items for. If nullptr, then shows menu items for the scene
   virtual void showContextMenuActionsForItem(vtkIdType itemID);
 
 protected slots:

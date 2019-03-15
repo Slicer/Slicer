@@ -309,7 +309,7 @@ public:
   /// Get the number of registered node classes (is probably greater than the current number
   /// of nodes instantiated in the scene)
   int GetNumberOfRegisteredNodeClasses();
-  /// Get the nth registered node class, returns NULL if n is out of the range 0-GetNumberOfRegisteredNodeClasses
+  /// Get the nth registered node class, returns nullptr if n is out of the range 0-GetNumberOfRegisteredNodeClasses
   /// Useful for iterating through nodes to find all the possible storage nodes.
   vtkMRMLNode * GetNthRegisteredNodeClass(int n);
 
@@ -399,7 +399,7 @@ public:
   /// vtkMRMLNode::UpdateReferenceID() is called for all the nodes that refer
   /// to a node with a changed ID.
   ///
-  /// If \a checkNodes is not NULL, then only those nodes are notified that are
+  /// If \a checkNodes is not nullptr, then only those nodes are notified that are
   /// part of the checkNodes collection.
   void UpdateNodeReferences(vtkCollection* checkNodes=nullptr);
 
@@ -419,7 +419,7 @@ public:
   void RemoveReservedIDs();
 
   /// get the new id of the node that is different from one in the mrml file
-  /// or NULL if id has not changed
+  /// or nullptr if id has not changed
   const char* GetChangedID(const char* id);
 
   /// \brief Return collection of all nodes referenced directly or indirectly by
@@ -505,7 +505,7 @@ public:
   /// \brief Find a URI handler in the collection that can work on the
   /// passed URI.
   ///
-  /// Returns NULL on failure
+  /// Returns nullptr on failure
   vtkURIHandler *FindURIHandler(const char *URI);
   /// Returns a URIhandler of a specific type if its name is known.
   vtkURIHandler *FindURIHandlerByName ( const char *name );

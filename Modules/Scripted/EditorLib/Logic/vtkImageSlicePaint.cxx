@@ -71,7 +71,7 @@ void transform3 (vtkMatrix4x4 *m, double *in, double *out)
 {
   int i;
   if (m == nullptr)
-    { // treat NULL as Identity
+    { // treat nullptr as Identity
     for (i = 0; i < 3; i++) { out[i] = in[i]; }
     return;
     }

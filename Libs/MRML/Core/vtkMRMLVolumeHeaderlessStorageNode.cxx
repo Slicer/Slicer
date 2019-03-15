@@ -49,7 +49,7 @@ vtkMRMLVolumeHeaderlessStorageNode::vtkMRMLVolumeHeaderlessStorageNode()
   memset(this->FileSpacing,0,3*sizeof(double));
   this->CenterImage = 0;
 
-  // ScanOrder can never be NULL
+  // ScanOrder can never be nullptr
   this->FileScanOrder = new char[3];
   strcpy(this->FileScanOrder, "");
 

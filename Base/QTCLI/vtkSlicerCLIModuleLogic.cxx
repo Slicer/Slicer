@@ -2311,7 +2311,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
 //       (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()),
 //       (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()));
 //
-//     if (v == NULL || PyErr_Occurred())
+//     if (v == nullptr || PyErr_Occurred())
 //       {
 //       node0->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
 //       PyErr_Print();

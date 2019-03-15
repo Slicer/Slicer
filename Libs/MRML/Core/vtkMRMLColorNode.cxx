@@ -209,10 +209,10 @@ void vtkMRMLColorNode::ProcessMRMLEvents ( vtkObject *caller,
   Superclass::ProcessMRMLEvents(caller, event, callData);
 /*
   vtkMRMLColorDisplayNode *dnode = this->GetDisplayNode();
-  if (dnode != NULL && dnode == vtkMRMLColorDisplayNode::SafeDownCast(caller) &&
+  if (dnode != nullptr && dnode == vtkMRMLColorDisplayNode::SafeDownCast(caller) &&
       event ==  vtkCommand::ModifiedEvent)
     {
-        this->InvokeEvent(vtkMRMLColorNode::DisplayModifiedEvent, NULL);
+        this->InvokeEvent(vtkMRMLColorNode::DisplayModifiedEvent, nullptr);
     }
 */
   return;

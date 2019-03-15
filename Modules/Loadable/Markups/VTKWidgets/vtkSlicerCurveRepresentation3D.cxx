@@ -82,7 +82,7 @@ vtkSlicerCurveRepresentation3D::~vtkSlicerCurveRepresentation3D()
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerCurveRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData /*=NULL*/)
+void vtkSlicerCurveRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData /*=nullptr*/)
 {
   Superclass::UpdateFromMRML(caller, event, callData);
 

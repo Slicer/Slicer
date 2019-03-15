@@ -60,7 +60,7 @@ bool qSlicerFileReader::canLoadFile(const QString& fileName)const
 }
 
 //----------------------------------------------------------------------------
-QStringList qSlicerFileReader::supportedNameFilters(const QString& fileName, int* longestExtensionMatchPtr /* =NULL */)const
+QStringList qSlicerFileReader::supportedNameFilters(const QString& fileName, int* longestExtensionMatchPtr /* =nullptr */)const
 {
   if (longestExtensionMatchPtr)
     {

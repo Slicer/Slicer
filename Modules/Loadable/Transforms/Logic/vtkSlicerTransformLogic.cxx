@@ -106,7 +106,7 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform(const char* filename
 
   if (scene == nullptr)
   {
-    vtkErrorMacro("scene == NULL in vtkSlicerTransformLogic::AddTransform");
+    vtkErrorMacro("scene == nullptr in vtkSlicerTransformLogic::AddTransform");
     return nullptr;
   }
 
@@ -307,7 +307,7 @@ void vtkSlicerTransformLogic::GetTransformedPointSamples(vtkPointSet* outputPoin
 //----------------------------------------------------------------------------
 void vtkSlicerTransformLogic::GetTransformedPointSamplesOnSlice(vtkPointSet* outputPointSet, vtkMRMLTransformNode* inputTransformNode,
   vtkMatrix4x4* sliceToRAS, double* fieldOfViewOrigin, double* fieldOfViewSize,
-  double pointSpacing, int pointGroupSize/*=1*/, int* numGridPoints/*=0*/, vtkPoints* samplePositions_RAS /*=NULL*/)
+  double pointSpacing, int pointGroupSize/*=1*/, int* numGridPoints/*=0*/, vtkPoints* samplePositions_RAS /*=nullptr*/)
 {
   if (samplePositions_RAS)
     {
@@ -444,7 +444,7 @@ bool vtkSlicerTransformLogic::GetTransformedPointSamplesAsMagnitudeImage(vtkImag
 
 //----------------------------------------------------------------------------
 vtkMRMLVolumeNode* vtkSlicerTransformLogic::CreateDisplacementVolumeFromTransform(vtkMRMLTransformNode* inputTransformNode,
-  vtkMRMLVolumeNode* referenceVolumeNode, bool magnitude/*=true*/, vtkMRMLVolumeNode* existingOutputVolumeNode /* = NULL */)
+  vtkMRMLVolumeNode* referenceVolumeNode, bool magnitude/*=true*/, vtkMRMLVolumeNode* existingOutputVolumeNode /* = nullptr */)
 {
   if (inputTransformNode == nullptr)
   {
@@ -554,7 +554,7 @@ vtkMRMLVolumeNode* vtkSlicerTransformLogic::CreateDisplacementVolumeFromTransfor
 
 //----------------------------------------------------------------------------
 vtkMRMLTransformNode* vtkSlicerTransformLogic::ConvertToGridTransform(vtkMRMLTransformNode* inputTransformNode,
-  vtkMRMLVolumeNode* referenceVolumeNode /* = NULL */, vtkMRMLTransformNode* existingOutputTransformNode /* = NULL */)
+  vtkMRMLVolumeNode* referenceVolumeNode /* = nullptr */, vtkMRMLTransformNode* existingOutputTransformNode /* = nullptr */)
 {
   if (inputTransformNode == nullptr)
   {
@@ -953,7 +953,7 @@ int vtkSlicerTransformLogic::GetGridSubdivision(vtkMRMLTransformDisplayNode* dis
 
 //----------------------------------------------------------------------------
 void vtkSlicerTransformLogic::CreateGrid(vtkPolyData* gridPolyData,
-  vtkMRMLTransformDisplayNode* displayNode, int numGridPoints[3], vtkPolyData* warpedGrid/*=NULL*/)
+  vtkMRMLTransformDisplayNode* displayNode, int numGridPoints[3], vtkPolyData* warpedGrid/*=nullptr*/)
 {
   vtkNew<vtkCellArray> grid;
   vtkNew<vtkLine> line;
@@ -1213,7 +1213,7 @@ void vtkSlicerTransformLogic::GetContourVisualization3d(vtkPolyData* output, vtk
 //----------------------------------------------------------------------------
 bool vtkSlicerTransformLogic::GetVisualization2d(vtkPolyData* output_RAS,
   vtkMRMLTransformDisplayNode* displayNode, vtkMRMLSliceNode* sliceNode,
-  vtkMRMLMarkupsFiducialNode* glyphPointsNode /*=NULL*/)
+  vtkMRMLMarkupsFiducialNode* glyphPointsNode /*=nullptr*/)
 {
   if (displayNode == nullptr || output_RAS == nullptr || sliceNode == nullptr)
   {
@@ -1237,7 +1237,7 @@ bool vtkSlicerTransformLogic::GetVisualization2d(vtkPolyData* output_RAS,
 
 //----------------------------------------------------------------------------
 bool vtkSlicerTransformLogic::GetVisualization2d(vtkPolyData* output, vtkMRMLTransformDisplayNode* displayNode,
-  vtkMatrix4x4* sliceToRAS, double* fieldOfViewOrigin, double* fieldOfViewSize, vtkPoints* samplePositions_RAS /*=NULL*/)
+  vtkMatrix4x4* sliceToRAS, double* fieldOfViewOrigin, double* fieldOfViewSize, vtkPoints* samplePositions_RAS /*=nullptr*/)
 {
   if (displayNode == nullptr || output == nullptr || sliceToRAS == nullptr || fieldOfViewOrigin == nullptr || fieldOfViewSize == nullptr)
   {
@@ -1337,7 +1337,7 @@ bool vtkSlicerTransformLogic::GetVisualization3d(vtkPolyData* output, vtkMRMLTra
 
 //----------------------------------------------------------------------------
 bool vtkSlicerTransformLogic::GetVisualization3d(vtkPolyData* output, vtkMRMLTransformDisplayNode* displayNode,
-  vtkMatrix4x4* roiToRAS, int* roiSize, vtkPoints* samplePositions_RAS /*=NULL*/)
+  vtkMatrix4x4* roiToRAS, int* roiSize, vtkPoints* samplePositions_RAS /*=nullptr*/)
 {
   if (displayNode == nullptr || output == nullptr || roiToRAS == nullptr || roiSize == nullptr)
   {

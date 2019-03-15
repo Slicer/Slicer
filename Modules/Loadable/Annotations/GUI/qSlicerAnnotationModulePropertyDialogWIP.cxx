@@ -174,7 +174,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     return;
     }
   vtkMRMLAnnotationControlPointsNode *pointsNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(mrmlNode);
-  vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = NULL;
+  vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = nullptr;
   if (pointsNode)
     {
     // get the point display node
@@ -269,7 +269,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
   /// Lines
   // get the line version of the node
   vtkMRMLAnnotationLinesNode *linesNode = vtkMRMLAnnotationLinesNode::SafeDownCast(mrmlNode);
-  vtkMRMLAnnotationLineDisplayNode *lineDisplayNode = NULL;
+  vtkMRMLAnnotationLineDisplayNode *lineDisplayNode = nullptr;
   if (linesNode)
     {
     lineDisplayNode = linesNode->GetAnnotationLineDisplayNode();
@@ -429,7 +429,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
 
    // Lock/Unlock properties
    if (vtkMRMLAnnotationNode::SafeDownCast(
-   node) != NULL)
+   node) != nullptr)
    {
    if (vtkMRMLAnnotationNode::SafeDownCast(
    node)->GetLocked() == 1)
@@ -1240,7 +1240,7 @@ void qSlicerAnnotationModulePropertyDialog::onVisibleInvisibleButtonClicked()
 //------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onPointsTableWidgetChanged(QTableWidgetItem *tableItem)
 {
-  if (tableItem == NULL)
+  if (tableItem == nullptr)
     {
     return;
     }

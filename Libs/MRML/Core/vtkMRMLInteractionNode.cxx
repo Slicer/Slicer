@@ -125,7 +125,7 @@ void vtkMRMLInteractionNode::SetCurrentInteractionMode ( int mode )
       break;
 //    case vtkMRMLInteractionNode::LassoRegion:
 //      this->CurrentInteractionMode = mode;
-//      this->InvokeEvent(this->InteractionModeChangedEvent, NULL);
+//      this->InvokeEvent(this->InteractionModeChangedEvent, nullptr);
 //      break;
     default:
       break;
